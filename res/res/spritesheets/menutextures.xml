@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TextureAtlas imagePath="res/spritesheets/menutextures.png" width="64" height="64">
+    <sprite n="panelFancy0" x="44" y="22" w="18" h="18" oX="2" oY="2" oW="20" oH="20"/>
+    <sprite n="panelFancy1" x="22" y="22" w="20" h="18" oX="0" oY="2" oW="20" oH="20"/>
+    <sprite n="panelFancy2" x="2" y="22" w="18" h="18" oX="0" oY="2" oW="20" oH="20"/>
+    <sprite n="panelFancy3" x="44" y="42" w="18" h="20" oX="2" oY="0" oW="20" oH="20"/>
+    <sprite n="panelFancy4" x="22" y="42" w="20" h="20"/>
+    <sprite n="panelFancy5" x="2" y="42" w="18" h="20" oX="0" oY="0" oW="20" oH="20"/>
+    <sprite n="panelFancy6" x="44" y="2" w="18" h="18" oX="2" oY="0" oW="20" oH="20"/>
+    <sprite n="panelFancy7" x="22" y="2" w="20" h="18" oX="0" oY="0" oW="20" oH="20"/>
+    <sprite n="panelFancy8" x="2" y="2" w="18" h="18" oX="0" oY="0" oW="20" oH="20"/>
+</TextureAtlas>
