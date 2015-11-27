@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # built application files
 *.apk
 *.ap_
@@ -17,3 +18,17 @@ local.properties
 
 # Eclipse project/lnked files
 *.classpath/main
+=======
+*.class
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
+>>>>>>> 7c48738b866e5be8f067572bbba5bf7ecb3d1ea8
