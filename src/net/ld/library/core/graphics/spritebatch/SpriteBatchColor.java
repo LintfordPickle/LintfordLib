@@ -31,8 +31,8 @@ public class SpriteBatchColor {
 
 	private static final int MAX_SPRITES = 1000;
 
-	private static final String VERT_FILENAME = "res/shaders/shader_basic_col.vert";
-	private static final String FRAG_FILENAME = "res/shaders/shader_basic_col.frag";
+	private static final String VERT_FILENAME = "bin/res/shaders/shader_basic_col.vert";
+	private static final String FRAG_FILENAME = "bin/res/shaders/shader_basic_col.frag";
 
 	// =============================================
 	// Variables

@@ -47,7 +47,7 @@ public class ResourceManager {
 		// Force creation here if not already
 		TextureManager.textureManager();
 		
-		TextureManager.textureManager().loadTexture("Font", "res/textures/font.png");
+		TextureManager.textureManager().loadTexture("Font", "bin/res/textures/font.png");
 	}
 
 	// =============================================

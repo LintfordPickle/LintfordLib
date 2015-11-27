@@ -12,7 +12,7 @@ public class SpriteSheetManager {
 	// Constants
 	// =============================================
 
-	public static final String GAME_SPRITEPACK_FILENAME = "res/spritesheets/spritesheets_meta.xml";
+	public static final String GAME_SPRITEPACK_FILENAME = "bin/res/spritesheets/spritesheets_meta.xml";
 
 	// =============================================
 	// Variables

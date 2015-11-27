@@ -68,7 +68,7 @@ public class LoadingScreen extends Screen {
 
 		mResourceManager = pResourceManager;
 		mTextureSpriteBatch.loadContent(pResourceManager);
-		mUITexture = TextureManager.textureManager().loadTexture("UITexture", "res/textures/ui.png");
+		mUITexture = TextureManager.textureManager().loadTexture("UITexture", "bin/res/textures/ui.png");
 
 	}
 
