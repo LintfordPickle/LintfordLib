@@ -15,7 +15,6 @@ import net.ld.library.core.camera.ICamera;
 import net.ld.library.core.graphics.ResourceManager;
 import net.ld.library.core.graphics.VertexDataStructurePT;
 import net.ld.library.core.graphics.shaders.ShaderMVP_PT;
-import net.ld.library.core.graphics.sprites.ISprite;
 import net.ld.library.core.graphics.textures.Texture;
 import net.ld.library.core.maths.Matrix4f;
 import net.ld.library.core.maths.Vector4f;
@@ -99,6 +98,11 @@ public class SpriteBatch {
 
 	}
 
+	public void unloadContent(){
+		cleanUp();
+		
+	}
+	
 	// =============================================
 	// Methods
 	// =============================================
@@ -134,18 +138,6 @@ public class SpriteBatch {
 			lPosX += lCharImageWidth * pScale;
 		}
 
-	}
-
-	public void draw(ISprite pSprite, float pPX, float pPY, float pZ, float pWidth, float pHeight, Texture pTexture) {
-		draw(pSprite, pPX, pPY, pZ, pWidth, pHeight, 0f, 1f, pTexture);
-	}
-
-	public void draw(ISprite pSprite, float pPX, float pPY, float pZ, float pWidth, float pHeight, float pRotation, float pScale, Texture pTexture) {
-		if (pSprite == null) {
-			return;
-		}
-
-		draw(pSprite.getX(), pSprite.getY(), pSprite.getWidth(), pSprite.getHeight(), pPX, pPY, pZ, pWidth, pHeight, pRotation, 0, 0, pScale, pTexture);
 	}
 
 	public void draw(float pSX, float pSY, float pSW, float pSH, float x, float y, float pZ, float w, float h, float pRotation, float pROX, float pROY, float pScale, Texture pTexture) {
@@ -319,4 +311,5 @@ public class SpriteBatch {
 		if (mVboId != -1)
 			GL15.glDeleteBuffers(mVboId);
 	}
+	
 }

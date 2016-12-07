@@ -15,6 +15,7 @@ import static org.lwjgl.opengl.GL11.GL_TRUE;
 import net.ld.library.GameInfo;
 import net.ld.library.core.camera.HUD;
 import net.ld.library.core.config.DisplayConfig;
+import net.ld.library.core.graphics.textures.TextureManager;
 import net.ld.library.core.input.InputState;
 import net.ld.library.core.time.GameTime;
 
@@ -34,14 +35,14 @@ public abstract class LWJGLCore {
 	// Properties
 	// =============================================
 
-	public GameTime gameTime(){
+	public GameTime gameTime() {
 		return mGameTime;
 	}
-	
+
 	public InputState inputState() {
 		return mInputState;
 	}
-	
+
 	public HUD hud() {
 		return mHUDCamera;
 	}
@@ -51,10 +52,14 @@ public abstract class LWJGLCore {
 	// =============================================
 
 	public LWJGLCore(GameInfo pGameInfo) {
-		// Load the configuration files saved previously by the user (else create new ones)
-		// FIXME: Load the config files (or just create new ones)
+		// Load the configuration files saved previously by the user (else
+		// create new ones)
+		// FIXME: Load the configuration files (or just create new ones)
 		mGameInfo = pGameInfo;
 		mDisplayConfig = new DisplayConfig(mGameInfo);
+
+		// Print out the working directory
+		System.out.println("working directory: " + System.getProperty("user.dir"));
 	}
 
 	// =============================================
@@ -78,6 +83,9 @@ public abstract class LWJGLCore {
 
 		onInitialiseGL();
 
+		// Lazy initialisation of texture manager
+		TextureManager.textureManager();
+
 		onInitialiseApp();
 
 		onLoadContent();
@@ -97,7 +105,7 @@ public abstract class LWJGLCore {
 		// Game loop
 		while (glfwWindowShouldClose(mDisplayConfig.windowID()) == GL_FALSE) {
 			mGameTime.update();
-			
+
 			onHandleInput();
 
 			onUpdate(mGameTime);

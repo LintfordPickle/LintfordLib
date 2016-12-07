@@ -2,7 +2,7 @@ package net.ld.library.screenmanager.dialogs;
 
 import net.ld.library.core.graphics.ResourceManager;
 import net.ld.library.core.graphics.spritebatch.SpriteBatch;
-import net.ld.library.core.graphics.sprites.SpriteSheet;
+import net.ld.library.core.graphics.spritebatch.SpriteBatch9Patch;
 import net.ld.library.core.graphics.textures.TextureManager;
 import net.ld.library.core.input.InputState;
 import net.ld.library.core.rendering.RenderState;
@@ -22,6 +22,7 @@ public abstract class BaseDialog extends MenuScreen {
 	protected float mDialogHeight;
 
 	private SpriteBatch mSpriteBatch;
+	private SpriteBatch9Patch m9Patch;
 
 	// ===========================================================
 	// Constructor
@@ -31,6 +32,8 @@ public abstract class BaseDialog extends MenuScreen {
 		super(pScreenManager, "");
 
 		mSpriteBatch = new SpriteBatch();
+		m9Patch = new SpriteBatch9Patch();
+
 		mTitleString = pDialogTitle;
 		mMessageString = pDialogMessage;
 
@@ -44,7 +47,19 @@ public abstract class BaseDialog extends MenuScreen {
 	@Override
 	public void loadContent(ResourceManager pResourceManager) {
 		super.loadContent(pResourceManager);
+
 		mSpriteBatch.loadContent(pResourceManager);
+		m9Patch.loadContent(pResourceManager);
+
+	}
+
+	@Override
+	public void unloadContent() {
+		super.unloadContent();
+
+		mSpriteBatch.unloadContent();
+		m9Patch.unloadContent();
+
 	}
 
 	@Override
@@ -65,14 +80,15 @@ public abstract class BaseDialog extends MenuScreen {
 		final float lDialogWidth = 400f;
 		final float lDialogHeight = 199f;
 
-		/* position the buttons at the bottom of the dynamically sized dialog ... */
+		/*
+		 * position the buttons at the bottom of the dynamically sized dialog ...
+		 */
 		mEntryOffsetFromTop = lScreenHeightHalf + lDialogHeight * 0.5f - 120;
 
 		/* Render background panel */
-		SpriteSheet lSpriteSheet = mScreenManager.resources().spriteSheetManager().getSpriteSheet("MenuTextures");
-		mSpriteBatch.begin(mScreenManager.HUD());
-		mSpriteBatch.draw(lSpriteSheet.getSprite("DialogBackground"), lScreenWidthHalf - lDialogWidth * 0.5f, lScreenHeightHalf - lDialogHeight * 0.5f, -.4f, lDialogWidth, lDialogHeight, lSpriteSheet.texture());
-		mSpriteBatch.end();
+		m9Patch.begin(mScreenManager.HUD());
+		m9Patch.draw9Patch(lScreenWidthHalf - lDialogWidth * 0.5f, lScreenHeightHalf - lDialogHeight * 0.5f, -.4f, lDialogWidth, lDialogHeight, 1f, TextureManager.textureManager().getTexture(ScreenManager.SCREEN_MANAGER_PATCH_TEXTURE_NAME));
+		m9Patch.end();
 
 		/* Render title and message */
 

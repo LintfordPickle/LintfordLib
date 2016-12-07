@@ -4,7 +4,6 @@ import net.ld.library.core.config.DisplayConfig;
 import net.ld.library.core.graphics.ResourceManager;
 import net.ld.library.core.graphics.spritebatch.SpriteBatch;
 import net.ld.library.core.graphics.spritebatch.SpriteBatch9Patch;
-import net.ld.library.core.graphics.sprites.SpriteSheet;
 import net.ld.library.core.graphics.textures.TextureManager;
 import net.ld.library.core.input.InputState;
 import net.ld.library.core.maths.Matrix4f;
@@ -230,8 +229,6 @@ public class MenuEntry {
 		if (!mEnabled || !mIsInitialised || !mIsLoaded)
 			return;
 
-		SpriteSheet lSpriteSheet = mScreenManager.resources().spriteSheetManager().getSpriteSheet("menutextures");
-
 		if (drawBackground) {
 			m9Patch.begin(mScreenManager.HUD());
 
@@ -245,13 +242,13 @@ public class MenuEntry {
 			}
 
 			// draw 9 patch
-			m9Patch.draw9Patch(mPosition.x - lMenuEntryWidthHalf, mPosition.y - MENUENTRY_HEIGHT, mZ, lMenuEntryWidthHalf * 2f, MENUENTRY_HEIGHT * 2f, 0.5f, lSpriteSheet, "panelFancy");
+			m9Patch.draw9Patch(mPosition.x - lMenuEntryWidthHalf, mPosition.y - MENUENTRY_HEIGHT, mZ, lMenuEntryWidthHalf * 2f, MENUENTRY_HEIGHT * 2f, 0.5f, TextureManager.textureManager().getTexture(ScreenManager.SCREEN_MANAGER_PATCH_TEXTURE_NAME));
 			m9Patch.end();
 
 			/* Draw the button highlight when this element has focus. */
 			if (mHasFocus) {
 				mSpriteBatch.begin(mScreenManager.HUD());
-				mSpriteBatch.draw(lSpriteSheet.getSprite("MenuEntryBackgroundSelected"), mPosition.x - lMenuEntryWidthHalf, mPosition.y - MENUENTRY_HEIGHT, mZ, lMenuEntryWidthHalf * 2f, MENUENTRY_HEIGHT * 2f, lSpriteSheet.texture());
+				mSpriteBatch.draw(0, 0, 0, 0, mPosition.x - lMenuEntryWidthHalf, mPosition.y - MENUENTRY_HEIGHT, mZ, lMenuEntryWidthHalf * 2f, MENUENTRY_HEIGHT * 2f, 1f, TextureManager.textureManager().getTexture(ScreenManager.SCREEN_MANAGER_TEXTURE_NAME));
 				mSpriteBatch.end();
 			}
 		}

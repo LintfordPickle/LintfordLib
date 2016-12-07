@@ -9,6 +9,7 @@ import net.ld.library.core.camera.Camera;
 import net.ld.library.core.camera.ICamera;
 import net.ld.library.core.config.DisplayConfig;
 import net.ld.library.core.graphics.ResourceManager;
+import net.ld.library.core.graphics.textures.TextureManager;
 import net.ld.library.core.input.InputState;
 import net.ld.library.core.rendering.RenderState;
 import net.ld.library.core.time.GameTime;
@@ -16,6 +17,16 @@ import net.ld.library.screenmanager.Screen.ScreenState;
 
 public class ScreenManager {
 
+	// =============================================
+	// Constants
+	// =============================================
+	
+	/** The default texture name for the ScreenManager core textures. */
+	public static final String SCREEN_MANAGER_TEXTURE_NAME = "ScreenManager_Texture";
+	
+	/** The default texture name for the ScreenManager core 9Patch textures. */
+	public static final String SCREEN_MANAGER_PATCH_TEXTURE_NAME = "ScreenManager__9Patch_Texture";
+	
 	// =============================================
 	// Variables
 	// =============================================
@@ -115,7 +126,9 @@ public class ScreenManager {
 	}
 
 	public void loadContent() {
-		mResources.loadContent();
+		// Load the minimum font for the screen manager (contains textures for buttons and windows etc.)
+		TextureManager.textureManager().loadTexture(SCREEN_MANAGER_TEXTURE_NAME, "/res/textures/screenmanager.png");
+		TextureManager.textureManager().loadTexture(SCREEN_MANAGER_PATCH_TEXTURE_NAME, "/res/textures/menu9patch.png");
 
 		int lCount = mScreens.size();
 		for (int i = 0; i < lCount; i++) {
