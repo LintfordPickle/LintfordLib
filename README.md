@@ -19,12 +19,16 @@ public static void main(String args[]) {
 
 The LDLibrary also has a couple of resource files that are used as standard by the ScreenManager (such as a 'default' font and texture file). In order to get Eclipse to automatically copy the needed resource files into your project /bin, you need to link a new source folder from:
 
+```
 WORKSPACE_LOC\projects\Java-LDLibraryGL\res
+```
 
 into your new project workspace.
 Also, because when running an application from within Eclipse uses a different working directory, you should set the working directory for your new project to:
 
+```
 ${workspace_loc:<project folder>/bin}.
+```
 
 
 # GameInfo
