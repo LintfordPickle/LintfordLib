@@ -58,10 +58,10 @@ public class TextureManager {
 			Texture lTex = null;
 			switch (lItems.get(i).filterType) {
 			case 1:
-				lTex = Texture.loadTexture(lItems.get(i).textureLocation, GL11.GL_NEAREST);
+				lTex = Texture.loadTextureFromFile(lItems.get(i).textureLocation, GL11.GL_NEAREST);
 				break;
 			default:
-				lTex = Texture.loadTexture(lItems.get(i).textureLocation, GL11.GL_LINEAR);
+				lTex = Texture.loadTextureFromFile(lItems.get(i).textureLocation, GL11.GL_LINEAR);
 				break;
 			}
 
@@ -73,16 +73,31 @@ public class TextureManager {
 	// Methods
 	// =============================================
 
-	public Texture loadTexture(String pName, String pTextureLocation) {
-		return loadTexture(pName, pTextureLocation, GL11.GL_LINEAR);
+	public Texture loadTextureFromFile(String pName, String pTextureLocation) {
+		return loadTextureFromFile(pName, pTextureLocation, GL11.GL_LINEAR);
 	}
 
-	public Texture loadTexture(String pName, String pTextureLocation, int pFilter) {
+	public Texture loadTextureFromFile(String pName, String pTextureLocation, int pFilter) {
 		if (mTextures.containsKey(pName)) {
 			return mTextures.get(pName);
 		}
 
-		Texture lTex = Texture.loadTexture(pTextureLocation, pFilter);
+		Texture lTex = Texture.loadTextureFromFile(pTextureLocation, pFilter);
+		mTextures.put(pName, lTex); // cache
+
+		return lTex;
+	}
+
+	public Texture loadTextureFromResource(String pName, String pTextureLocation) {
+		return loadTextureFromResource(pName, pTextureLocation, GL11.GL_LINEAR);
+	}
+
+	public Texture loadTextureFromResource(String pName, String pTextureLocation, int pFilter) {
+		if (mTextures.containsKey(pName)) {
+			return mTextures.get(pName);
+		}
+
+		Texture lTex = Texture.loadTextureFromResource(pTextureLocation, pFilter);
 		mTextures.put(pName, lTex); // cache
 
 		return lTex;

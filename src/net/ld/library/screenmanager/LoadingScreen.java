@@ -4,9 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.ld.library.core.graphics.ResourceManager;
-import net.ld.library.core.graphics.spritebatch.SpriteBatch;
-import net.ld.library.core.graphics.textures.Texture;
-import net.ld.library.core.graphics.textures.TextureManager;
 import net.ld.library.core.rendering.RenderState;
 import net.ld.library.core.time.GameTime;
 import net.ld.library.core.time.TimeSpan;
@@ -18,10 +15,8 @@ public class LoadingScreen extends Screen {
 	// =============================================
 
 	private Screen[] mScreensToLoad;
-	private Texture mUITexture;
 
 	private int mPartsLoaded;
-	private SpriteBatch mTextureSpriteBatch;
 
 	private boolean mLoadingStarted;
 	private List<GameLoaderPart> mGameLoaderParts;
@@ -36,7 +31,6 @@ public class LoadingScreen extends Screen {
 
 		mScreensToLoad = pScreensToLoad;
 
-		mTextureSpriteBatch = new SpriteBatch();
 		mGameLoaderParts = new ArrayList<>();
 		mLoadingStarted = false;
 		mPartsLoaded = 0;
@@ -66,15 +60,12 @@ public class LoadingScreen extends Screen {
 	@Override
 	public void loadContent(ResourceManager pResourceManager) {
 		mResourceManager = pResourceManager;
-		mTextureSpriteBatch.loadContent(pResourceManager);
-		mUITexture = TextureManager.textureManager().loadTexture("UITexture", "bin/res/textures/ui.png");
 
 	}
-	
+
 	@Override
 	public void unloadContent() {
-		mTextureSpriteBatch.unloadContent();
-		
+
 	}
 
 	@Override
@@ -93,7 +84,7 @@ public class LoadingScreen extends Screen {
 						lScreen.initialise();
 
 						if (!lScreen.isLoaded()) {
-							lScreen.loadContent(mScreenManager.resources());
+							lScreen.loadContent(mScreenManager.resourceManager());
 
 							mGameLoaderParts.addAll(lScreen.mGameLoadableParts);
 
@@ -131,20 +122,7 @@ public class LoadingScreen extends Screen {
 
 	@Override
 	public void draw(RenderState pRenderState) {
-		if (!mLoadingStarted)
-			return;
-
-		final float lScreenWidthHalf = pRenderState.displayConfig().windowWidth() * 0.5f;
-		final float lScreenHeightHalf = pRenderState.displayConfig().windowHeight() * 0.5f;
-
-		final float lBarWidth = 480f / mGameLoaderParts.size() * mPartsLoaded;
-
-		mTextureSpriteBatch.begin(mScreenManager.HUD());
-		final String lLoadingString = mGameLoaderParts.get(mPartsLoaded).getTitle();
-		mTextureSpriteBatch.draw(lLoadingString, lScreenWidthHalf - (lLoadingString.length() * 32f * .6f) * .5f, lScreenHeightHalf + 54, -0.5f, 0.6f, TextureManager.textureManager().getTexture("Font"));
-		mTextureSpriteBatch.draw(0, 0, 480, 48, lScreenWidthHalf - 480f * .5f, lScreenHeightHalf, 0.5f, 480, 48, 1f, mUITexture);
-		mTextureSpriteBatch.draw(0, 48, 480, 48, lScreenWidthHalf - lBarWidth * .5f, lScreenHeightHalf, 0.5f, lBarWidth, 48, 1f, mUITexture);
-		mTextureSpriteBatch.end();
+		// TODO Auto-generated method stub
 
 	}
 

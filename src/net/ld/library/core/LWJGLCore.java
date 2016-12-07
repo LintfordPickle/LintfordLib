@@ -15,6 +15,7 @@ import static org.lwjgl.opengl.GL11.GL_TRUE;
 import net.ld.library.GameInfo;
 import net.ld.library.core.camera.HUD;
 import net.ld.library.core.config.DisplayConfig;
+import net.ld.library.core.graphics.ResourceManager;
 import net.ld.library.core.graphics.textures.TextureManager;
 import net.ld.library.core.input.InputState;
 import net.ld.library.core.time.GameTime;
@@ -27,6 +28,7 @@ public abstract class LWJGLCore {
 
 	protected GameInfo mGameInfo;
 	protected DisplayConfig mDisplayConfig;
+	protected ResourceManager mResourceManager;
 	protected GameTime mGameTime;
 	protected HUD mHUDCamera;
 	protected InputState mInputState;
@@ -57,6 +59,7 @@ public abstract class LWJGLCore {
 		// FIXME: Load the configuration files (or just create new ones)
 		mGameInfo = pGameInfo;
 		mDisplayConfig = new DisplayConfig(mGameInfo);
+		mResourceManager = new ResourceManager(mDisplayConfig);
 
 		// Print out the working directory
 		System.out.println("working directory: " + System.getProperty("user.dir"));
@@ -128,6 +131,7 @@ public abstract class LWJGLCore {
 	protected void onUpdate(GameTime pGameTime) {
 		mInputState.update(pGameTime);
 		mHUDCamera.update(pGameTime);
+		mResourceManager.update(pGameTime);
 	}
 
 	protected abstract void onDraw();

@@ -58,31 +58,18 @@ public class Texture {
 	// Methods
 	// =============================================
 
-	// package access (textures should be loaded using the texture manager.
-	static Texture loadTexture(String pFilename) {
-		return loadTexture(pFilename, GL11.GL_NEAREST);
+	static Texture loadTextureFromFile(String pFilename) {
+		return loadTextureFromResource(pFilename, GL11.GL_NEAREST);
 	}
 
-	// package access (textures should be loaded using the texture manager.
-	static Texture loadTexture(String pFilename, int pFilter) {
-		System.out.println("Loading texture from : " + pFilename);
-
-		BufferedImage lImage = null;
-		int[] lPixels = null;
-		int lTexWidth = 0;
-		int lTexHeight = 0;
-
-		// 1. load the image
+	static Texture loadTextureFromFile(String pFilename, int pFilter) {
 		try {
+			System.out.println("Loading texture from file: " + pFilename);
 
-			InputStream lala = Texture.class.getResourceAsStream(pFilename);
-			lImage = ImageIO.read(lala);
+			File lFile = new File(pFilename);
+			BufferedImage lImage = ImageIO.read(lFile);
 
-			lTexWidth = lImage.getWidth();
-			lTexHeight = lImage.getHeight();
-
-			lPixels = new int[lTexWidth * lTexHeight];
-			lImage.getRGB(0, 0, lTexWidth, lTexHeight, lPixels, 0, lTexWidth);
+			return createTexture(lImage, pFilename, pFilter);
 
 		} catch (FileNotFoundException e) {
 			System.out.println("Error loading texture (File not found at " + pFilename + " )");
@@ -98,6 +85,49 @@ public class Texture {
 			// TODO: Errors with texture loading shouldn't throw a runtime exception. We should handle it gracefully and continue.
 			throw new RuntimeException("Failed to load texture resource");
 		}
+
+	}
+
+	static Texture loadTextureFromResource(String pFilename) {
+		return loadTextureFromResource(pFilename, GL11.GL_NEAREST);
+	}
+
+	static Texture loadTextureFromResource(String pFilename, int pFilter) {
+		try {
+			System.out.println("Loading texture from resource: " + pFilename);
+
+			InputStream lInputStream = Texture.class.getResourceAsStream(pFilename);
+			if (lInputStream == null) {
+				throw new FileNotFoundException();
+			}
+
+			BufferedImage lImage = ImageIO.read(lInputStream);
+
+			return createTexture(lImage, pFilename, pFilter);
+
+		} catch (FileNotFoundException e) {
+			System.out.println("Error loading texture (File not found at " + pFilename + " )");
+			e.printStackTrace();
+
+			// TODO: Errors with texture loading shouldn't throw a runtime exception. We should handle it gracefully and continue.
+			throw new RuntimeException("Failed to load texture resource");
+
+		} catch (IOException e) {
+			System.out.println("Error loading texture from " + pFilename);
+			e.printStackTrace();
+
+			// TODO: Errors with texture loading shouldn't throw a runtime exception. We should handle it gracefully and continue.
+			throw new RuntimeException("Failed to load texture resource");
+		}
+
+	}
+
+	private static Texture createTexture(BufferedImage lImage, String pFilename, int pFilter) {
+		int lTexWidth = lImage.getWidth();
+		int lTexHeight = lImage.getHeight();
+
+		int[] lPixels = new int[lTexWidth * lTexHeight];
+		lImage.getRGB(0, 0, lTexWidth, lTexHeight, lPixels, 0, lTexWidth);
 
 		// 2. change channel order
 		int[] lTextureData = new int[lTexWidth * lTexHeight];

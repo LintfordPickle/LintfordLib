@@ -20,13 +20,13 @@ public class ScreenManager {
 	// =============================================
 	// Constants
 	// =============================================
-	
+
 	/** The default texture name for the ScreenManager core textures. */
 	public static final String SCREEN_MANAGER_TEXTURE_NAME = "ScreenManager_Texture";
-	
+
 	/** The default texture name for the ScreenManager core 9Patch textures. */
 	public static final String SCREEN_MANAGER_PATCH_TEXTURE_NAME = "ScreenManager__9Patch_Texture";
-	
+
 	// =============================================
 	// Variables
 	// =============================================
@@ -40,11 +40,10 @@ public class ScreenManager {
 
 	private ArrayList<Screen> mScreens;
 	private ArrayList<Screen> mScreensToUpdate;
+	private ResourceManager mResourceManager;
 
 	private boolean mIsInitialised;
 	private boolean mIsLoaded;
-
-	protected ResourceManager mResources;
 
 	// =============================================
 	// Properties
@@ -54,8 +53,8 @@ public class ScreenManager {
 		return mRenderState;
 	}
 
-	public ResourceManager resources() {
-		return mResources;
+	public ResourceManager resourceManager() {
+		return mResourceManager;
 	}
 
 	public DisplayConfig displayConfig() {
@@ -82,12 +81,12 @@ public class ScreenManager {
 		return mWorldCamera;
 	}
 
-	public void setWorldCamera(ICamera pNewCamera){
-		if(mRenderState != null){
+	public void setWorldCamera(ICamera pNewCamera) {
+		if (mRenderState != null) {
 			mRenderState.gameCamera(pNewCamera);
 		}
 	}
-	
+
 	// =============================================
 	// Constructors
 	// =============================================
@@ -98,7 +97,6 @@ public class ScreenManager {
 		mScreens = new ArrayList<Screen>();
 		mScreensToUpdate = new ArrayList<Screen>();
 
-		mResources = new ResourceManager(mDisplayConfig);
 		mWorldCamera = new Camera(pDisplayConfig);
 		mRenderState = new RenderState();
 
@@ -125,14 +123,17 @@ public class ScreenManager {
 		mIsInitialised = true;
 	}
 
-	public void loadContent() {
+	public void loadContent(ResourceManager pResourceManager) {
+		// Store the reference to the resource manager as we'll be loading more screens later
+		mResourceManager = pResourceManager;
+
 		// Load the minimum font for the screen manager (contains textures for buttons and windows etc.)
-		TextureManager.textureManager().loadTexture(SCREEN_MANAGER_TEXTURE_NAME, "/res/textures/screenmanager.png");
-		TextureManager.textureManager().loadTexture(SCREEN_MANAGER_PATCH_TEXTURE_NAME, "/res/textures/menu9patch.png");
+		TextureManager.textureManager().loadTextureFromResource(SCREEN_MANAGER_TEXTURE_NAME, "/res/textures/screenmanager.png");
+		TextureManager.textureManager().loadTextureFromResource(SCREEN_MANAGER_PATCH_TEXTURE_NAME, "/res/textures/menu9patch.png");
 
 		int lCount = mScreens.size();
 		for (int i = 0; i < lCount; i++) {
-			mScreens.get(i).loadContent(mResources);
+			mScreens.get(i).loadContent(pResourceManager);
 		}
 
 		mIsLoaded = true;
@@ -186,11 +187,11 @@ public class ScreenManager {
 
 				}
 
-//				if (!lScreen.isPopup()) {
-//
-//					lCoveredByOtherScreen = true;
-//
-//				}
+				// if (!lScreen.isPopup()) {
+				//
+				// lCoveredByOtherScreen = true;
+				//
+				// }
 
 			}
 
@@ -233,7 +234,7 @@ public class ScreenManager {
 			if (mIsLoaded) { // screen manager already loaded? then load this
 								// screen manually
 				if (!pScreen.mIsLoaded) {
-					pScreen.loadContent(mResources);
+					pScreen.loadContent(mResourceManager);
 				}
 			}
 		}
