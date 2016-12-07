@@ -1,7 +1,5 @@
 package net.ld.library.core.time;
 
-import net.ld.library.AppConstants;
-
 public class GameTime {
 
 	// =============================================
@@ -14,11 +12,20 @@ public class GameTime {
 	private int mFPSCounter;
 	private int mFPS;
 	private float mLastFPSTimer;
+	private boolean mShowFPSInConsole;
 
 	// =============================================
 	// Properties
 	// =============================================
 
+	public boolean showFPS(){
+		return mShowFPSInConsole;
+	}
+	
+	public void showFPS(boolean pNewValue){
+		mShowFPSInConsole = pNewValue;
+	}
+	
 	public int fps() {
 		return mFPS;
 	}
@@ -57,7 +64,7 @@ public class GameTime {
 		if (mTotalGameTime - mLastFPSTimer > 1000) {
 			mLastFPSTimer += 1000;
 			mFPS = mFPSCounter;
-			if (AppConstants.SHOW_FPS) {
+			if (mShowFPSInConsole) {
 				System.out.println("FPS: " + mFPS);
 			}
 

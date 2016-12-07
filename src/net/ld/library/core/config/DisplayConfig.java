@@ -34,7 +34,7 @@ import org.lwjgl.glfw.GLFWFramebufferSizeCallback;
 import org.lwjgl.glfw.GLFWvidmode;
 import org.lwjgl.opengl.GLContext;
 
-import net.ld.library.AppConstants;
+import net.ld.library.GameInfo;
 import net.ld.library.core.input.InputState;
 
 public class DisplayConfig extends BaseConfig {
@@ -135,14 +135,14 @@ public class DisplayConfig extends BaseConfig {
 	// Constructor
 	// =============================================
 
-	public DisplayConfig(String pConfigFilename) {
-		super(pConfigFilename);
+	public DisplayConfig(GameInfo pGameInfo) {
+		super(pGameInfo);
 
 		/* set some defaults */
-		mWindowWidth = 800;
-		mWindowHeight = 600;
-		mFullScreen = true;
-		mWindowIsResizable = true;
+		mWindowWidth = mGameInfo.windowWidth();
+		mWindowHeight = mGameInfo.windowHeight();
+		mFullScreen = mGameInfo.windowCanBeFullscreen();
+		mWindowIsResizable = mGameInfo.windowResizeable();
 		mVSYNCEnabled = true;
 		mTargetFPS = TARGET_FPS.fps60;
 
@@ -221,7 +221,7 @@ public class DisplayConfig extends BaseConfig {
 
 		// FIXME: Full screen toggling doesn't work
 		mFullScreen = false;
-		if (mFullScreen) {
+		if (mFullScreen && mGameInfo.windowCanBeFullscreen()) {
 
 			// Get the native resolution
 			ByteBuffer lVidMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
@@ -241,7 +241,7 @@ public class DisplayConfig extends BaseConfig {
 		// Create a new windowed window
 		else {
 
-			mWindowID = glfwCreateWindow(windowWidth(), windowHeight(), AppConstants.WINDOW_NAME, NULL, NULL);
+			mWindowID = glfwCreateWindow(windowWidth(), windowHeight(), mGameInfo.windowTitle(), NULL, NULL);
 			if (mWindowID == NULL) {
 				System.err.println("Unable to create window!");
 				throw new IllegalStateException("Unable to create window!");

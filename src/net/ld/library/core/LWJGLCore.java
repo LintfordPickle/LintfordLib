@@ -12,7 +12,7 @@ import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 import static org.lwjgl.opengl.GL11.GL_FALSE;
 import static org.lwjgl.opengl.GL11.GL_TRUE;
 
-import net.ld.library.AppConstants;
+import net.ld.library.GameInfo;
 import net.ld.library.core.camera.HUD;
 import net.ld.library.core.config.DisplayConfig;
 import net.ld.library.core.input.InputState;
@@ -24,6 +24,7 @@ public abstract class LWJGLCore {
 	// Variables
 	// =============================================
 
+	protected GameInfo mGameInfo;
 	protected DisplayConfig mDisplayConfig;
 	protected GameTime mGameTime;
 	protected HUD mHUDCamera;
@@ -49,10 +50,11 @@ public abstract class LWJGLCore {
 	// Constructor(s)
 	// =============================================
 
-	public LWJGLCore() {
+	public LWJGLCore(GameInfo pGameInfo) {
 		// Load the configuration files saved previously by the user (else create new ones)
 		// FIXME: Load the config files (or just create new ones)
-		mDisplayConfig = new DisplayConfig("");
+		mGameInfo = pGameInfo;
+		mDisplayConfig = new DisplayConfig(mGameInfo);
 	}
 
 	// =============================================
@@ -61,7 +63,7 @@ public abstract class LWJGLCore {
 
 	public void createWindow() {
 
-		mHUDCamera = new HUD(mDisplayConfig, 0, 0, AppConstants.WINDOW_WIDTH * AppConstants.WINDOW_SCALE, AppConstants.WINDOW_HEIGHT * AppConstants.WINDOW_SCALE);
+		mHUDCamera = new HUD(mDisplayConfig, 0, 0, mGameInfo.windowWidth(), mGameInfo.windowHeight());
 		mGameTime = new GameTime();
 		mInputState = new InputState(mDisplayConfig, mGameTime);
 

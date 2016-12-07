@@ -2,21 +2,23 @@ package net.ld.library.core.config;
 
 import java.io.IOException;
 
+import net.ld.library.GameInfo;
+
 public class BaseConfig {
 
 	// =============================================
 	// Variables
 	// =============================================
 
-	protected final String CONFIG_FILENAME;
+	protected GameInfo mGameInfo;
 	protected IniFile mConfigFile;
 
 	// =============================================
 	// Constructor
 	// =============================================
 
-	public BaseConfig(String pConfigFilename) {
-		CONFIG_FILENAME = pConfigFilename;
+	public BaseConfig(GameInfo pGameInfo) {
+		mGameInfo = pGameInfo;
 
 	}
 
@@ -26,10 +28,9 @@ public class BaseConfig {
 
 	public void loadConfig() {
 		try {
-			mConfigFile = new IniFile(CONFIG_FILENAME);
+			mConfigFile = new IniFile(mGameInfo.configFileLocation());
 
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 			// TODO: Need to revert to default in this case
 		}
@@ -37,7 +38,7 @@ public class BaseConfig {
 
 	public void saveConfig() {
 		try {
-			mConfigFile.saveConfig(CONFIG_FILENAME);
+			mConfigFile.saveConfig(mGameInfo.configFileLocation());
 
 		} catch (IOException e) {
 			e.printStackTrace();
