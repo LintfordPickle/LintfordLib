@@ -23,8 +23,8 @@ public abstract class Shader {
 	// Constants
 	// =============================================
 
-	public static final String BASIC_VERT_FILENAME = "res/shaders/shader_basic.vert";
-	public static final String BASIC_FRAG_FILENAME = "res/shaders/shader_basic.frag";
+	public static final String BASIC_VERT_FILENAME = "/res/shaders/shader_basic.vert";
+	public static final String BASIC_FRAG_FILENAME = "/res/shaders/shader_basic.frag";
 
 	// =============================================
 	// Variables
@@ -57,8 +57,8 @@ public abstract class Shader {
 	// =============================================
 
 	public void loadContent() {
-		String lVertexSource = FileUtils.loadAsString(mVertPathname);
-		String lFragmentSource = FileUtils.loadAsString(mFragPathname);
+		String lVertexSource = FileUtils.loadStringFromResource(mVertPathname);
+		String lFragmentSource = FileUtils.loadStringFromResource(mFragPathname);
 		mShaderID = create(lVertexSource, lFragmentSource);
 		glUseProgram(mShaderID);
 		getUniformLocations();
@@ -74,8 +74,8 @@ public abstract class Shader {
 	// =============================================
 
 	public void recompile() {
-		String lVertexSource = FileUtils.loadAsString(mVertPathname);
-		String lFragmentSource = FileUtils.loadAsString(mFragPathname);
+		String lVertexSource = FileUtils.loadStringFromResource(mVertPathname);
+		String lFragmentSource = FileUtils.loadStringFromResource(mFragPathname);
 
 		mShaderID = create(lVertexSource, lFragmentSource);
 

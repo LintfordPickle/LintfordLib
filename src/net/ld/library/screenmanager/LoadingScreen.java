@@ -65,11 +65,16 @@ public class LoadingScreen extends Screen {
 
 	@Override
 	public void loadContent(ResourceManager pResourceManager) {
-
 		mResourceManager = pResourceManager;
 		mTextureSpriteBatch.loadContent(pResourceManager);
 		mUITexture = TextureManager.textureManager().loadTexture("UITexture", "bin/res/textures/ui.png");
 
+	}
+	
+	@Override
+	public void unloadContent() {
+		mTextureSpriteBatch.unloadContent();
+		
 	}
 
 	@Override

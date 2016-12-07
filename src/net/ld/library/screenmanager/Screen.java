@@ -111,10 +111,7 @@ public abstract class Screen implements LoadableScreen {
 
 	public abstract void loadContent(ResourceManager pResourceManager);
 
-	public void unloadContent() {
-		// TODO Auto-generated method stub
-
-	}
+	public abstract void unloadContent();
 
 	public void handleInput(GameTime pGameTime, InputState pInputState, boolean pAcceptMouse, boolean pAcceptKeyboard) {
 
@@ -170,9 +167,7 @@ public abstract class Screen implements LoadableScreen {
 
 	}
 
-	public void draw(RenderState pRenderState) {
-
-	}
+	public abstract void draw(RenderState pRenderState);
 
 	// =============================================
 	// Methods

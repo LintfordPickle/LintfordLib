@@ -55,8 +55,6 @@ public abstract class BaseDialog extends MenuScreen {
 
 	@Override
 	public void unloadContent() {
-		super.unloadContent();
-
 		mSpriteBatch.unloadContent();
 		m9Patch.unloadContent();
 
