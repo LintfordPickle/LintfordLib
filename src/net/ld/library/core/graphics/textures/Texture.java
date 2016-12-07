@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.IntBuffer;
@@ -74,8 +75,8 @@ public class Texture {
 		// 1. load the image
 		try {
 
-			File lTextureFile = new File(pFilename);
-			lImage = ImageIO.read(lTextureFile);
+			InputStream lala = Texture.class.getResourceAsStream(pFilename);
+			lImage = ImageIO.read(lala);
 
 			lTexWidth = lImage.getWidth();
 			lTexHeight = lImage.getHeight();
