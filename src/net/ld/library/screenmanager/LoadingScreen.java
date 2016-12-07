@@ -58,13 +58,13 @@ public class LoadingScreen extends Screen {
 	}
 
 	@Override
-	public void loadContent(ResourceManager pResourceManager) {
+	public void loadGLContent(ResourceManager pResourceManager) {
 		mResourceManager = pResourceManager;
 
 	}
 
 	@Override
-	public void unloadContent() {
+	public void unloadGLContent() {
 
 	}
 
@@ -84,7 +84,7 @@ public class LoadingScreen extends Screen {
 						lScreen.initialise();
 
 						if (!lScreen.isLoaded()) {
-							lScreen.loadContent(mScreenManager.resourceManager());
+							lScreen.loadGLContent(mScreenManager.resourceManager());
 
 							mGameLoaderParts.addAll(lScreen.mGameLoadableParts);
 

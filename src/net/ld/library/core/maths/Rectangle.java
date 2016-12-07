@@ -6,50 +6,29 @@ public class Rectangle {
 	// Variables
 	// ===========================================================
 
-	public float mX;
-	public float mY;
-	public float mWidth;
-	public float mHeight;
-	private Vector2f mCenter;
+	public float x;
+	public float y;
+	public float width;
+	public float height;
 
 	// ===========================================================
 	// Properties
 	// ===========================================================
 
 	public float left() {
-		return mX;
+		return x;
 	}
 
 	public float right() {
-		return mX + mWidth;
-	}
-
-	public float x() {
-		return mX;
-	}
-
-	public float y() {
-		return mY;
+		return x + width;
 	}
 
 	public float top() {
-		return mY;
+		return y;
 	}
 
 	public float bottom() {
-		return mY + mHeight;
-	}
-
-	public float width() {
-		return mWidth;
-	}
-
-	public float height() {
-		return mHeight;
-	}
-
-	public Vector2f center() {
-		return mCenter;
+		return y + height;
 	}
 
 	// ===========================================================
@@ -57,15 +36,24 @@ public class Rectangle {
 	// ===========================================================
 
 	public Rectangle() {
-		this(0, 0, 0, 0);
+		x = 0;
+		y = 0;
+		width = 0;
+		height = 0;
+	}
+
+	public Rectangle(Rectangle pCopy) {
+		x = pCopy.x;
+		y = pCopy.y;
+		width = pCopy.width;
+		height = pCopy.height;
 	}
 
 	public Rectangle(float pX, float pY, float pWidth, float pHeight) {
-		mX = pX;
-		mY = pY;
-		mWidth = pWidth;
-		mHeight = pHeight;
-		mCenter = new Vector2f(0, 0);
+		x = pX;
+		y = pY;
+		width = pWidth;
+		height = pHeight;
 	}
 
 	// ===========================================================
@@ -73,34 +61,37 @@ public class Rectangle {
 	// ===========================================================
 
 	/**
-	 * This rectangle intersects that rectangle.
+	 * This Rectangle contains that rectangle.
 	 * 
 	 * @param otherRect
-	 * @Returns True if this rectangle instance intersects the given rectangle. False otherwise.
+	 * @Returns True if this rectangle instance entirely contains the given rectangle. False otherwise.
 	 */
-	public boolean intersects(Rectangle pValue) {
-		return ((((pValue.mX < (this.mX + this.mWidth)) && (this.mX < (pValue.mX + pValue.mWidth))) && (pValue.mY < (this.mY + this.mHeight))) && (this.mY < (pValue.mY + pValue.mHeight)));
+	public boolean intersects(Rectangle pOtherRect) {
+		return ((((pOtherRect.x < (this.x + this.width)) && (this.x < (pOtherRect.x + pOtherRect.width))) && (pOtherRect.y < (this.y + this.height))) && (this.y < (pOtherRect.y + pOtherRect.height)));
 	}
 
-	/*
-	 * This rectangle intersects that rectangle.
+	/**
+	 * This Rectangle contains that point.
 	 * 
 	 * @param otherRect
-	 * 
-	 * @Returns True if this rectangle instance intersects the given rectangle. False otherwise.
+	 * @Returns True if this rectangle instance entirely contains the given point. False otherwise.
 	 */
-	public boolean intersects(Vector2f pValue) {
-		return ((((pValue.x < (this.mX + this.mWidth)) && (this.mX < (pValue.x))) && (pValue.y < (this.mY + this.mHeight))) && (this.mY < (pValue.y)));
+	public boolean intersects(Vector2f pPoint) {
+		return ((((this.x <= pPoint.x) && (pPoint.x < (this.x + this.width))) && (this.y <= pPoint.y)) && (pPoint.y < (this.y + this.height)));
 	}
-	
-	/* This rectangle intersects that rectangle.
+
+	/**
+	 * This Rectangle contains that point.
 	 * 
 	 * @param otherRect
-	 * 
-	 * @Returns True if this rectangle instance intersects the given rectangle. False otherwise.
+	 * @Returns True if this rectangle instance entirely contains the given point. False otherwise.
 	 */
-	public boolean intersects(float x, float y) {
-		return ((((x < (this.mX + this.mWidth)) && (this.mX < (x))) && (y < (this.mY + this.mHeight))) && (this.mY < (y)));
+	public boolean intersects(float pX, float pY) {
+		return pX >= x && pX <= right() && pY >= y && pY <= bottom();
+	}
+
+	public boolean intersects(float pX, float pY, float pW, float pH) {
+		return ((((pX < (this.x + this.width)) && (this.x < (pX + pW))) && (pY < (this.y + this.height))) && (this.y < (pY + pH)));
 	}
 
 	/**
@@ -109,21 +100,17 @@ public class Rectangle {
 	 * @Returs True if everything is zero.
 	 */
 	public boolean isEmpty() {
-		return ((((this.mWidth == 0) && (this.mHeight == 0)) && (this.mX == 0)) && (this.mY == 0));
+		return ((((this.width == 0) && (this.height == 0)) && (this.x == 0)) && (this.y == 0));
 	}
 
-	/**
-	 * @Returns The center X coordinate of this rectangle.
-	 */
+	/** @Returns The center X coordinate of this rectangle. */
 	public float centerX() {
-		return this.mX + (this.mWidth / 2);
+		return this.x + (this.width / 2);
 	}
 
-	/**
-	 * @Returns The center Y coordinate of this rectangle.
-	 */
+	/** @Returns The center Y coordinate of this rectangle. */
 	public float centerY() {
-		return this.mY + (this.mHeight / 2);
+		return this.y + (this.height / 2);
 	}
 
 	/**
@@ -133,63 +120,37 @@ public class Rectangle {
 	 * @param y
 	 */
 	public void setCenterPosition(float pX, float pY) {
-		mX = pX - (mWidth * 0.5f);
-		mY = pY - (mHeight * 0.5f);
+		x = pX - (width * 0.5f);
+		y = pY - (height * 0.5f);
 	}
 
 	public void setPosition(float pX, float pY) {
-		mX = pX;
-		mY = pY;
+		x = pX;
+		y = pY;
 	}
 
 	public void setWidth(float pWidth) {
-		mWidth = pWidth;
+		width = pWidth;
 	}
 
 	public void setHeight(float pHeight) {
-		mHeight = pHeight;
+		height = pHeight;
 	}
 
-	public void setbounds(float x, float y, float w, float h) {
-		this.mX = x;
-		this.mY = y;
-		this.mWidth = w;
-		this.mHeight = h;
-		updateCenter();
-	}
-
-	private void updateCenter() {
-		mCenter.x = this.mX + (this.mWidth / 2);
-		mCenter.y = this.mY + (this.mHeight / 2);
-	}
-
-	public void setSize(float pWidth, float pHeight) {
-		mWidth = pWidth;
-		mHeight = pHeight;
-	}
-
-	public static Vector2f getIntersectionDepth(Rectangle pRectA, Rectangle pRectB) {
-
-		float halfWidthA = pRectA.width() / 2.0f;
-		float halfHeightA = pRectA.height() / 2.0f;
-		float halfWidthB = pRectB.width() / 2.0f;
-		float halfHeightB = pRectB.height() / 2.0f;
-
-		Vector2f centerA = new Vector2f(pRectA.x() + halfWidthA, pRectA.y() + halfHeightA);
-		Vector2f centerB = new Vector2f(pRectB.x() + halfWidthB, pRectB.y() + halfHeightB);
-
-		float distanceX = centerA.x - centerB.x;
-		float distanceY = centerA.y - centerB.y;
-		float minDistanceX = halfWidthA + halfWidthB;
-		float minDistanceY = halfHeightA + halfHeightB;
-
-		if (Math.abs(distanceX) >= minDistanceX || Math.abs(distanceY) >= minDistanceY)
-			return new Vector2f();
-
-		// Calculate and return intersection depths.
-		float depthX = distanceX > 0 ? minDistanceX - distanceX : -minDistanceX - distanceX;
-		float depthY = distanceY > 0 ? minDistanceY - distanceY : -minDistanceY - distanceY;
-		return new Vector2f(depthX, depthY);
+	public void set(float pX, float pY, float pWidth, float pHeight) {
+		x = pX;
+		y = pY;
+		width = pWidth;
+		height = pHeight;
 
 	}
+
+	public void set(Rectangle pRect) {
+		x = pRect.x;
+		y = pRect.y;
+		width = pRect.width;
+		height = pRect.height;
+
+	}
+
 }

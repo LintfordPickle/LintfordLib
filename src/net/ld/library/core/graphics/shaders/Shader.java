@@ -8,6 +8,7 @@ import static org.lwjgl.opengl.GL20.glAttachShader;
 import static org.lwjgl.opengl.GL20.glCompileShader;
 import static org.lwjgl.opengl.GL20.glCreateProgram;
 import static org.lwjgl.opengl.GL20.glCreateShader;
+import static org.lwjgl.opengl.GL20.glDeleteProgram;
 import static org.lwjgl.opengl.GL20.glGetShaderInfoLog;
 import static org.lwjgl.opengl.GL20.glGetShaderi;
 import static org.lwjgl.opengl.GL20.glLinkProgram;
@@ -56,13 +57,18 @@ public abstract class Shader {
 	// Core-Methods
 	// =============================================
 
-	public void loadContent() {
+	public void loadGLContent() {
 		String lVertexSource = FileUtils.loadStringFromResource(mVertPathname);
 		String lFragmentSource = FileUtils.loadStringFromResource(mFragPathname);
 		mShaderID = create(lVertexSource, lFragmentSource);
 		glUseProgram(mShaderID);
 		getUniformLocations();
 
+	}
+
+	public void unloadGLContent() {
+		glDeleteProgram(mShaderID);
+		// I think I should be deleting shaders here as well
 	}
 
 	protected void update() {

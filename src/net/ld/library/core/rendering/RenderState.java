@@ -74,13 +74,6 @@ public class RenderState {
 
 	}
 
-	public void update(GameTime pGameTime) {
-
-		mHUDCamera.update(pGameTime);
-		mGameCamera.update(pGameTime);
-
-	}
-
 	// =============================================
 	// Methods
 	// =============================================

@@ -1,5 +1,7 @@
 package net.ld.library.core.input;
 
+import java.util.Arrays;
+
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWCharModsCallback;
 import org.lwjgl.glfw.GLFWCursorPosCallback;
@@ -7,6 +9,7 @@ import org.lwjgl.glfw.GLFWKeyCallback;
 import org.lwjgl.glfw.GLFWMouseButtonCallback;
 import org.lwjgl.glfw.GLFWScrollCallback;
 
+import net.ld.library.core.camera.ICamera;
 import net.ld.library.core.config.DisplayConfig;
 import net.ld.library.core.maths.Vector2f;
 import net.ld.library.core.time.GameTime;
@@ -35,6 +38,7 @@ public class InputState {
 
 		@Override
 		public void invoke(long pWindow, int pKey, int pScanCode, int pAction, int pMods) {
+			mLastInputActive = INPUT_TYPES.Keyboard;
 
 			// We need to handle keypressed differently depending on whether or not some UI component is
 			// using 'buffered' input.
@@ -42,7 +46,6 @@ public class InputState {
 				// Buffered input (here we just listen for special keys (backspace, return etc.)
 				if (pAction == GLFW.GLFW_PRESS) {
 					if (mIBufferedInputCallback != null) {
-
 						if (pKey == GLFW.GLFW_KEY_ENTER) {
 							mIBufferedInputCallback.onEnterPressed();
 							if (mIBufferedInputCallback.getEnterFinishesInput()) {
@@ -58,6 +61,15 @@ public class InputState {
 						else if (pKey == GLFW.GLFW_KEY_BACKSPACE) {
 							if (mIBufferedInputCallback.getStringBuilder().length() > 0) {
 								mIBufferedInputCallback.getStringBuilder().delete(mIBufferedInputCallback.getStringBuilder().length() - 1, mIBufferedInputCallback.getStringBuilder().length());
+								mIBufferedInputCallback.onKeyPressed((char) pKey);
+							}
+						}
+
+						// Treat some keys as unbuffered
+						else if (pKey == GLFW.GLFW_KEY_LEFT || pKey == GLFW.GLFW_KEY_UP || pKey == GLFW.GLFW_KEY_RIGHT || pKey == GLFW.GLFW_KEY_DOWN) {
+							if (pKey < InputState.KEY_LIMIT) {
+								if (pKey != -1)
+									mInputState.mKeyButtonStates[pKey] = !(pAction == GLFW.GLFW_RELEASE);
 							}
 						}
 					}
@@ -66,14 +78,14 @@ public class InputState {
 			} else {
 				// normal Keyboad events
 				if (pKey < InputState.KEY_LIMIT) {
-					if(pKey != -1)
+					if (pKey != -1)
 						mInputState.mKeyButtonStates[pKey] = !(pAction == GLFW.GLFW_RELEASE);
 				}
 			}
 
 			// however, if this was a key release, then at least set the array to 0
 			if (pAction == GLFW.GLFW_RELEASE) {
-				if(pKey != -1)
+				if (pKey != -1)
 					mInputState.mKeyButtonStates[pKey] = false;
 			}
 
@@ -103,9 +115,9 @@ public class InputState {
 
 		@Override
 		public void invoke(long pWindow, int pButton, int pAction, int pMods) {
-			if(pButton >= 0 && pButton < mInputState.mMouseButtonStates.length){
-				mInputState.mMouseButtonStates[pButton] = !(pAction == GLFW.GLFW_RELEASE);
-			}
+			if (pButton < 0 || pButton >= mInputState.mMouseButtonStates.length)
+				return; // OOB
+			mInputState.mMouseButtonStates[pButton] = !(pAction == GLFW.GLFW_RELEASE);
 		}
 
 	}
@@ -152,11 +164,10 @@ public class InputState {
 				// Buffered input
 				if (mIBufferedInputCallback != null) {
 					mIBufferedInputCallback.getStringBuilder().append((char) codepoint);
+					mIBufferedInputCallback.onKeyPressed((char) codepoint);
 				}
-
 			}
 		}
-
 	}
 
 	public class MouseScrollCallback extends GLFWScrollCallback {
@@ -185,8 +196,12 @@ public class InputState {
 	// Constants
 	// =============================================
 
+	public enum INPUT_TYPES {
+		Mouse, Keyboard,
+	}
+
 	private static final float TIMED_CLICK_DELAY = 250f; // seconds
-	private static final float TIMED_KEY_DELAY = 500f; // seconds
+	private static final float TIMED_KEY_DELAY = 200f; // seconds
 
 	final static int KEY_LIMIT = 512;
 	final static int MOUSE_BUTTONS_LIMIT = 3;
@@ -195,29 +210,32 @@ public class InputState {
 	// Variables
 	// =============================================
 
-	private DisplayConfig mDisplayConfig;
 	private GameTime mGameTime;
 	boolean[] mKeyButtonStates;
 	boolean[] mMouseButtonStates;
-	double mMouseXPosition;
-	double mMouseYPosition;
 
 	private float mMouseWheelXOffset;
 	private float mMouseWheelYOffset;
 
 	private boolean mLeftClickHandled;
 	private boolean mRightClickHandled;
+	private int mLeftClickOwner;
+	private int mRightClickOwner;
 
-	private Vector2f mMouseScreenCoord;
+	private Vector2f mMouseWindowCoords;
 
 	public KeyCallback mKeyCallback;
 	public TextCallback mTextCallback;
 	public MouseButtonCallback mMouseButtonCallback;
 	public MousePositionCallback mMousePositionCallback;
 	public MouseScrollCallback mMouseScrollCallback;
+	private INPUT_TYPES mLastInputActive = INPUT_TYPES.Keyboard; // we use this because sometimes the user is locked to a text input
 
 	private float mMenuClickTimer;
 	private float mKeyTimer;
+
+	private ICamera mCamera;
+	private ICamera mHUD;
 
 	private boolean mCaptureKeyboardInput;
 	private IBufferedInputCallback mIBufferedInputCallback;
@@ -225,6 +243,26 @@ public class InputState {
 	// =============================================
 	// Properties
 	// =============================================
+
+	public void leftClickOwner(int pOwnerHash) {
+		mLeftClickOwner = pOwnerHash;
+	}
+
+	public int leftClickOwner() {
+		return mLeftClickOwner;
+	}
+
+	public void rightClickOwner(int pOwnerHash) {
+		mRightClickOwner = pOwnerHash;
+	}
+
+	public int rightClickOwner() {
+		return mRightClickOwner;
+	}
+
+	public INPUT_TYPES lastInputActive() {
+		return mLastInputActive;
+	}
 
 	public float mouseWheelXOffset() {
 		return mMouseWheelXOffset;
@@ -234,13 +272,45 @@ public class InputState {
 		return mMouseWheelYOffset;
 	}
 
+	public ICamera camera() {
+		return mCamera;
+	}
+
+	public ICamera HUD() {
+		return mHUD;
+	}
+
+	public boolean isMouseTimedLeftClickAvailable() {
+		if (!mLeftClickHandled && mouseLeftClick() && mMenuClickTimer > TIMED_CLICK_DELAY) {
+			return true;
+		}
+		return false;
+	}
+
+	public boolean isMouseTimedRightClickAvailable() {
+		if (!mRightClickHandled && mouseRightClick() && mMenuClickTimer > TIMED_CLICK_DELAY) {
+			return true;
+		}
+		return false;
+	}
+
 	public boolean mouseTimedLeftClick() {
-		if (!mLeftClickHandled && mMouseButtonStates[GLFW.GLFW_MOUSE_BUTTON_LEFT] && mMenuClickTimer > TIMED_CLICK_DELAY) {
+		if (!mLeftClickHandled && mouseLeftClick() && mMenuClickTimer > TIMED_CLICK_DELAY) {
 			mLeftClickHandled = true;
 			mMenuClickTimer = 0;
 			return true;
 		}
 		return false;
+	}
+
+	public void setLeftMouseClickHandled() {
+		mLeftClickHandled = true;
+		mMenuClickTimer = 0;
+	}
+
+	public void setRightMouseClickHandled() {
+		mRightClickHandled = true;
+		mMenuClickTimer = 0;
 	}
 
 	public boolean mouseLeftClick() {
@@ -259,21 +329,16 @@ public class InputState {
 		return mMouseButtonStates[GLFW.GLFW_MOUSE_BUTTON_RIGHT];
 	}
 
-	public double getMouseX() {
-		return mMouseXPosition;
-	}
-
-	public double getMouseY() {
-		return mMouseYPosition;
-	}
-
-	public Vector2f mouseScreenCoords() {
-		return mMouseScreenCoord;
+	public Vector2f mouseWindowCoords() {
+		return mMouseWindowCoords;
 	}
 
 	void setMousePosition(double pXPos, double pYPos) {
-		mMouseXPosition = pXPos - 1;
-		mMouseYPosition = mDisplayConfig.windowHeight() - pYPos - 1;
+		mMouseWindowCoords.x = (float) pXPos;
+		mMouseWindowCoords.y = (float) pYPos;
+
+		mLastInputActive = INPUT_TYPES.Mouse;
+
 	}
 
 	public boolean keyDown(int pKeyCode) {
@@ -323,9 +388,7 @@ public class InputState {
 	// Constructor(s)
 	// =============================================
 
-	public InputState(DisplayConfig pDisplayConfig, GameTime pGameTime) {
-		mDisplayConfig = pDisplayConfig;
-		mGameTime = pGameTime;
+	public InputState(DisplayConfig pDisplayConfig, ICamera pCamera, ICamera pHUD, GameTime pGameTime) {
 		mKeyButtonStates = new boolean[KEY_LIMIT];
 		mMouseButtonStates = new boolean[MOUSE_BUTTONS_LIMIT];
 
@@ -335,7 +398,11 @@ public class InputState {
 		mMousePositionCallback = new MousePositionCallback(this);
 		mMouseScrollCallback = new MouseScrollCallback(this);
 
-		mMouseScreenCoord = new Vector2f();
+		mMouseWindowCoords = new Vector2f();
+
+		mGameTime = pGameTime;
+		mCamera = pCamera;
+		mHUD = pHUD;
 	}
 
 	// =============================================
@@ -348,11 +415,22 @@ public class InputState {
 		mKeyTimer += lElapsed;
 		mMenuClickTimer += lElapsed;
 
-		mLeftClickHandled = false;
-		mRightClickHandled = false;
+		// Releasing the left click will automatically reset the owner
+		if (!mouseLeftClick()) {
+			mLeftClickHandled = false;
+			mLeftClickOwner = -1;
+		}
 
-		mMouseScreenCoord.x = (float) (mMouseXPosition - 1);
-		mMouseScreenCoord.y = (float) (mDisplayConfig.windowHeight() - mMouseYPosition - 1);
+		// Releasing the right click will automatically reset the owner
+		if (!mouseRightClick()) {
+			mRightClickHandled = false;
+			mRightClickOwner = -1;
+		}
+
+	}
+
+	public void resetKeyFlags() {
+		Arrays.fill(mKeyButtonStates, false);
 	}
 
 	public void resetFlags() {
@@ -365,5 +443,39 @@ public class InputState {
 	// =============================================
 	// Methods
 	// =============================================
+
+	public boolean tryAquireLeftClickOwnership(int pHash) {
+		if (!mouseLeftClick())
+			return false;
+		if (mLeftClickOwner == -1 || mLeftClickOwner == pHash) {
+			mLeftClickOwner = pHash;
+			return true;
+
+		}
+		return false;
+	}
+
+	public void tryReleaseLeftLock(int pHash) {
+		if (!mouseLeftClick())
+			return;
+
+		if (mLeftClickOwner == pHash) {
+			mLeftClickOwner = -1;
+
+		}
+
+		return;
+	}
+
+	public boolean tryAquireRightClickOwnership(int pHash) {
+		if (!mouseRightClick())
+			return false;
+		if (mRightClickOwner == -1 || mRightClickOwner == pHash) {
+			mRightClickOwner = pHash;
+			return true;
+
+		}
+		return false;
+	}
 
 }

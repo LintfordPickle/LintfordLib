@@ -14,6 +14,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.List;
 
 import net.ld.library.core.config.DisplayConfig;
+import net.ld.library.core.graphics.fonts.FontManager;
 import net.ld.library.core.graphics.textures.TextureManager;
 import net.ld.library.core.time.GameTime;
 
@@ -28,24 +29,38 @@ public class ResourceManager {
 	// =============================================
 
 	protected DisplayConfig mDisplayConfig;
+	
+	private FontManager mFontManager;
 
 	private Path mResourcePath;
 	private WatchService mTexturePathWatcher;
+	
+	private boolean mIsLoaded;
 
 	// =============================================
 	// Properties
 	// =============================================
 
+	public FontManager fontManager() {
+		return mFontManager;
+	}
+	
 	public DisplayConfig displayConfig() {
 		return mDisplayConfig;
 	}
 
+	public boolean isLoaded() {
+		return mIsLoaded;
+	}
+	
 	// =============================================
 	// Constructor
 	// =============================================
 
 	public ResourceManager(DisplayConfig pDisplayConfig) {
 		mDisplayConfig = pDisplayConfig;
+		
+		mFontManager = new FontManager();
 
 	}
 
@@ -53,6 +68,20 @@ public class ResourceManager {
 	// Core-Method
 	// =============================================
 
+	public void loadGLContent(){
+		mFontManager.loadGLContent(this);
+		
+		mIsLoaded = true;
+		
+	}
+	
+	public void unloadGLContent(){
+		mFontManager.unloadGLContent();
+		
+		mIsLoaded = false;
+		
+	}
+	
 	public void update(GameTime pGameTime) {
 		if (mTexturePathWatcher != null) {
 			WatchKey lKey = mTexturePathWatcher.poll();

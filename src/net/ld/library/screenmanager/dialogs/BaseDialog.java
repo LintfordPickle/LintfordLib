@@ -45,18 +45,18 @@ public abstract class BaseDialog extends MenuScreen {
 	// =============================================
 
 	@Override
-	public void loadContent(ResourceManager pResourceManager) {
-		super.loadContent(pResourceManager);
+	public void loadGLContent(ResourceManager pResourceManager) {
+		super.loadGLContent(pResourceManager);
 
-		mSpriteBatch.loadContent(pResourceManager);
-		m9Patch.loadContent(pResourceManager);
+		mSpriteBatch.loadGLContent(pResourceManager);
+		m9Patch.loadGLContent(pResourceManager);
 
 	}
 
 	@Override
-	public void unloadContent() {
-		mSpriteBatch.unloadContent();
-		m9Patch.unloadContent();
+	public void unloadGLContent() {
+		mSpriteBatch.unloadGLContent();
+		m9Patch.unloadGLContent();
 
 	}
 
@@ -92,17 +92,18 @@ public abstract class BaseDialog extends MenuScreen {
 
 		if (mTitleString != null) {
 			mSpriteBatch.begin(mScreenManager.HUD());
-			mSpriteBatch.draw(mTitleString, lScreenWidthHalf - lDialogWidth * 0.5f + 2, lScreenHeightHalf - lDialogHeight * 0.5f - 4, -0.5f, 0.9f, TextureManager.textureManager().getTexture("Font"));
+			// mSpriteBatch.draw(mTitleString, lScreenWidthHalf - lDialogWidth * 0.5f + 2, lScreenHeightHalf - lDialogHeight * 0.5f - 4, -0.5f, 0.9f, TextureManager.textureManager().getTexture("Font"));
 			mSpriteBatch.end();
 		}
 
 		if (mMessageString != null) {
 			mSpriteBatch.begin(mScreenManager.HUD());
-			mSpriteBatch.draw(mMessageString, lScreenWidthHalf - lDialogWidth * 0.5f + 15, lScreenHeightHalf - lDialogHeight * 0.5f + 25, -0.5f, 0.85f, TextureManager.textureManager().getTexture("Font"));
+			// mSpriteBatch.draw(mMessageString, lScreenWidthHalf - lDialogWidth * 0.5f + 15, lScreenHeightHalf - lDialogHeight * 0.5f + 25, -0.5f, 0.85f, TextureManager.textureManager().getTexture("Font"));
 			mSpriteBatch.end();
 		}
 
 		/* Render buttons */
 		super.draw(pRenderState);
 	}
+
 }

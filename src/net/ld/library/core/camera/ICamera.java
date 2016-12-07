@@ -3,10 +3,8 @@ package net.ld.library.core.camera;
 import net.ld.library.core.maths.Matrix4f;
 import net.ld.library.core.maths.Rectangle;
 import net.ld.library.core.maths.Vector2f;
-import net.ld.library.core.time.GameTime;
 
 public interface ICamera {
-	
 	// =============================================
 	// Properties
 	// =============================================
@@ -31,14 +29,27 @@ public interface ICamera {
 	
 	public abstract Vector2f getPosition();
 	
+	public abstract float getZoomFactor();
+	
+	public abstract void setZoomFactor(float pNewValue);
+	
+	public abstract float getZoomFactorOverOne();
+	
 	// =============================================
 	// Methods
 	// =============================================
 
-	public abstract void update(GameTime pGameTime);
+	public abstract void setPosition(float pX, float pY);
+
+	public abstract Vector2f getMouseCameraSpace();
 	
-	public abstract void setTargetPosition(float pX, float pY);
+	public abstract float getMouseCameraSpaceX();
 	
-	public abstract Vector2f getMouseCameraSpace(double pMouseX, double pMouseY);
+	public abstract float getMouseCameraSpaceY();
+	
+	public abstract float getPointCameraSpaceX(float pPointX);
+	
+	public abstract float getPointCameraSpaceY(float pPointY);
+	
 	
 }

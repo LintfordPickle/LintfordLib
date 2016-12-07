@@ -1,13 +1,15 @@
 package net.ld.library.screenmanager;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.opengl.GL11;
 
 import net.ld.library.core.graphics.ResourceManager;
-import net.ld.library.core.graphics.spritebatch.SpriteBatch;
-import net.ld.library.core.graphics.textures.TextureManager;
+import net.ld.library.core.graphics.fonts.FontUnit;
 import net.ld.library.core.input.InputState;
+import net.ld.library.core.maths.Rectangle;
 import net.ld.library.core.rendering.RenderState;
 import net.ld.library.core.time.GameTime;
 import net.ld.library.screenmanager.entries.IMenuEntryClickListener;
@@ -15,22 +17,111 @@ import net.ld.library.screenmanager.entries.MenuEntry;
 
 public abstract class MenuScreen extends Screen implements IMenuEntryClickListener {
 
-	// =============================================
+	public class ClickAction {
+
+		// --------------------------------------
+		// Variables
+		// --------------------------------------
+
+		private int mButtonID = -1;
+		private boolean mConsumed = false;
+
+		// --------------------------------------
+		// Properties
+		// --------------------------------------
+
+		public boolean isConsumed() {
+			return mConsumed;
+		}
+
+		// --------------------------------------
+		// Constructor
+		// --------------------------------------
+
+		public ClickAction() {
+			mConsumed = false;
+		}
+
+		public ClickAction(int pButtonID) {
+			mConsumed = false;
+			mButtonID = pButtonID;
+		}
+
+		// --------------------------------------
+		// Methods
+		// --------------------------------------
+
+		public int consume() {
+			mConsumed = true;
+			return mButtonID;
+		}
+
+		public void setNewClick(int pEntryID) {
+			mConsumed = false;
+			mButtonID = pEntryID;
+
+		}
+	}
+
+	// --------------------------------------
+	// Constants
+	// --------------------------------------
+
+	public static final String MENUSCREEN_FONT_NAME = "MenuScreenFont";
+	public static final String MENUSCREEN_TITLE_FONT_NAME = "MenuScreenTitleFont";
+
+	public static final float ANIMATION_TIMER_LENGTH = 130; // ms
+
+	public enum ORIENTATION {
+		horizontal, vertical,
+	}
+
+	public enum ALIGNMENT {
+		left, center, right // top, center, bottom
+	}
+
+	// --------------------------------------
 	// Variables
-	// =============================================
+	// --------------------------------------
+
+	protected ORIENTATION mOrientation;
+	protected ALIGNMENT mAlignment;
 
 	private ArrayList<MenuEntry> mMenuEntries;
-	private int mSelectedEntry = 0;
 	private String mMenuTitle;
+	protected int mSelectedEntry = 0;
 	protected float mEntryOffsetFromTop;
-	protected boolean mDisplayTitle;
-	protected SpriteBatch mSpriteBatch;
 
-	// =============================================
+	protected float mLeftMargin;
+	protected float mRightMargin;
+	protected float mTopMargin;
+	protected float mBottomMargin;
+
+	protected boolean mESCBackEnabled;
+
+	protected ClickAction mClickAction;
+	protected float mAnimationTimer;
+
+	protected FontUnit mMenuFont;
+	protected FontUnit mMenuTitleFont;
+
+	// --------------------------------------
 	// Properties
-	// =============================================
+	// --------------------------------------
 
-	protected ArrayList<MenuEntry> menuEntries() {
+	public FontUnit font() {
+		return mMenuFont;
+	}
+
+	public FontUnit fontTitle() {
+		return mMenuTitleFont;
+	}
+
+	public boolean isAnimating() {
+		return mAnimationTimer > 0;
+	}
+
+	protected List<MenuEntry> menuEntries() {
 		return mMenuEntries;
 	}
 
@@ -41,56 +132,71 @@ public abstract class MenuScreen extends Screen implements IMenuEntryClickListen
 		return (float) Math.pow(mTransitionPosition, 2) * 256;
 	}
 
-	public boolean displayTitle() {
-		return mDisplayTitle;
-	}
-
-	public void displayTitle(boolean pNewValue) {
-		mDisplayTitle = pNewValue;
-	}
-
-	// =============================================
-	// Constructors
-	// =============================================
+	// --------------------------------------
+	// Constructor
+	// --------------------------------------
 
 	public MenuScreen(ScreenManager pScreenManager, String pMenuTitle) {
 		super(pScreenManager);
 
+		mMenuEntries = new ArrayList<>();
+
 		mMenuTitle = pMenuTitle;
 
-		mMenuEntries = new ArrayList<>();
-		mEntryOffsetFromTop = 90.0f;
+		mOrientation = ORIENTATION.vertical;
+		mAlignment = ALIGNMENT.center;
 
-		mSpriteBatch = new SpriteBatch();
+		mTopMargin = 90f;
+		mBottomMargin = 80f;
+		mLeftMargin = 80f;
+		mRightMargin = 80f;
+
+		mClickAction = new ClickAction();
+		mESCBackEnabled = true;
+
+		mEntryOffsetFromTop = 90;
+
 	}
 
-	// =============================================
+	// --------------------------------------
 	// Core-Methods
-	// =============================================
+	// --------------------------------------
 
 	@Override
 	public void initialise() {
-		int lCount = mMenuEntries.size();
+		final int lCount = mMenuEntries.size();
 		for (int i = 0; i < lCount; i++) {
 			mMenuEntries.get(i).initialise();
+
 		}
+
 	}
 
 	@Override
-	public void loadContent(ResourceManager pResourceManager) {
-		int lCount = mMenuEntries.size();
+	public void loadGLContent(ResourceManager pResourceManager) {
+		final int lCount = mMenuEntries.size();
 		for (int i = 0; i < lCount; i++) {
-			mMenuEntries.get(i).loadContent(pResourceManager);
+			mMenuEntries.get(i).loadGLContent(pResourceManager);
+
 		}
 
-		mSpriteBatch.loadContent(pResourceManager);
+		mMenuFont = pResourceManager.fontManager().loadFontFromResource(MENUSCREEN_FONT_NAME, "/res/fonts/agencyfb.ttf", 25);
+		mMenuTitleFont = pResourceManager.fontManager().loadFontFromResource(MENUSCREEN_TITLE_FONT_NAME, "/res/fonts/agencyfb.ttf", 84);
+
+	}
+
+	@Override
+	public void unloadGLContent() {
+
 	}
 
 	@Override
 	public void handleInput(GameTime pGameTime, InputState pInputState, boolean pAcceptMouse, boolean pAcceptKeyboard) {
-		final int lCount = menuEntries().size();
+		// TODO: Animations should be handled in another object
+		if (mAnimationTimer > 0 || mClickAction.isConsumed())
+			return; // don't handle input if 'animation' is playing
 
-		if (pInputState.keyDownTimed(GLFW.GLFW_KEY_ESCAPE)) {
+		if (mESCBackEnabled && pInputState.keyDownTimed(GLFW.GLFW_KEY_ESCAPE)) {
 			if (mScreenState == ScreenState.Active) {
 				exitScreen();
 				return;
@@ -100,6 +206,9 @@ public abstract class MenuScreen extends Screen implements IMenuEntryClickListen
 		if (menuEntries() == null || menuEntries().size() == 0)
 			return; // nothing to do
 
+		final int lCount = menuEntries().size();
+
+		// Respond to UP key
 		if (pInputState.keyDownTimed(GLFW.GLFW_KEY_UP)) {
 			boolean lFound = false;
 			int lIterCount = 0;
@@ -125,6 +234,7 @@ public abstract class MenuScreen extends Screen implements IMenuEntryClickListen
 			// TODO: play sound for menu entry changed
 		}
 
+		// Respond to DOWN key
 		if (pInputState.keyDownTimed(GLFW.GLFW_KEY_DOWN)) {
 			boolean lFound = false;
 			int lIterCount = 0;
@@ -150,6 +260,7 @@ public abstract class MenuScreen extends Screen implements IMenuEntryClickListen
 			// TODO: play sound for menu entry changed
 		}
 
+		// Process ENTER key press
 		if (pInputState.keyDownTimed(GLFW.GLFW_KEY_ENTER)) {
 
 			// TODO: Play menu click sound
@@ -160,49 +271,9 @@ public abstract class MenuScreen extends Screen implements IMenuEntryClickListen
 
 		for (int i = 0; i < lCount; i++) {
 			MenuEntry lMenuEntry = menuEntries().get(i);
-			if (lMenuEntry.handleInput(pGameTime, pInputState))
+			if (lMenuEntry.handleInput(pInputState))
 				break;
 		}
-	}
-
-	@Override
-	public void update(GameTime pGameTime, boolean pOtherScreenHasFocus, boolean pCoveredByOtherScreen) {
-		super.update(pGameTime, pOtherScreenHasFocus, pCoveredByOtherScreen);
-
-		int lCount = mMenuEntries.size();
-		for (int i = 0; i < lCount; i++) {
-
-			boolean lIsSelected = isActive() && (i == mSelectedEntry);
-
-			mMenuEntries.get(i).update(pGameTime, this, lIsSelected);
-		}
-	}
-
-	@Override
-	public void draw(RenderState pRenderState) {
-
-		// make sure our entries are in the right place before we draw them
-		updateMenuEntryLocations(pRenderState);
-
-		// Draw each menu entry in turn.
-		int lCount = menuEntries().size();
-		for (int i = 0; i < lCount; i++) {
-			menuEntries().get(i).draw(this, pRenderState.displayConfig(), mSelectedEntry == i);
-		}
-
-		if (mDisplayTitle) {
-			mSpriteBatch.begin(pRenderState.hudCamera());
-			mSpriteBatch.draw(mMenuTitle, 5 + transitionOffset(), 20, -0.5f, 1f, TextureManager.textureManager().getTexture("Font"));
-			mSpriteBatch.end();
-		}
-	}
-
-	// =============================================
-	// Methods
-	// =============================================
-
-	protected void onCancel() {
-		exitScreen();
 	}
 
 	protected void updateMenuEntryLocations(RenderState pRenderState) {
@@ -215,7 +286,9 @@ public abstract class MenuScreen extends Screen implements IMenuEntryClickListen
 		// the movement slow down as it nears the end).
 		float lTransitionOffset = transitionOffset();
 
-		float lPosY = 20.0f;
+		Rectangle lHUDRect = pRenderState.hudCamera().boundingRectangle();
+
+		float lPosY = lHUDRect.top();
 
 		int lCount = menuEntries().size();
 		for (int i = 0; i < lCount; i++) {
@@ -223,23 +296,86 @@ public abstract class MenuScreen extends Screen implements IMenuEntryClickListen
 			MenuEntry lEntry = menuEntries().get(i);
 
 			// each entry is centered horizontally
-			float lX = lWindowWidth / 2;
+			float lX = -320 + lWindowWidth / 2;
 
 			lX += lTransitionOffset;
 
-			lEntry.position().x = lX;
-			lEntry.position().y = lPosY + lOffsetFromTop;
+			lEntry.x = lX - lEntry.width / 2;
+			lEntry.y = lPosY + lOffsetFromTop;
 
-			lPosY += (lEntry.entryHeight() + 35);
+			lPosY += (lEntry.height + 35);
 		}
 	}
 
-	public void setFocusOn(InputState pInputState, MenuEntry pMenuEntry, boolean pForce) {
+	@Override
+	public void update(GameTime pGameTime, boolean pOtherScreenHasFocus, boolean pCoveredByOtherScreen) {
+		super.update(pGameTime, pOtherScreenHasFocus, pCoveredByOtherScreen);
 
-		// If another entry has locked the focus (e.g. input entries), then don't change focus
-		if (!pForce && focusLocked())
+		if (mAnimationTimer > 0) {
+			mAnimationTimer -= pGameTime.elapseGameTime();
+
+		} else if (mClickAction.mButtonID != -1 && !mClickAction.isConsumed()) { // something was clicked
+			handleOnClick();
+			mClickAction.setNewClick(-1);
 			return;
 
+		}
+
+		final int lCount = mMenuEntries.size();
+		for (int i = 0; i < lCount; i++) {
+			boolean lIsSelected = isActive() && (i == mSelectedEntry);
+			mMenuEntries.get(i).update(pGameTime, this, lIsSelected);
+
+		}
+
+	}
+
+	@Override
+	public void draw(RenderState pRenderState) {
+		if (mScreenState != ScreenState.Active && mScreenState != ScreenState.TransitionOn && mScreenState != ScreenState.TransitionOff)
+			return;
+
+		// make sure our entries are in the right place before we draw them
+		updateMenuEntryLocations(pRenderState);
+
+		GL11.glDisable(GL11.GL_DEPTH_TEST);
+
+		Rectangle lHUDRect = mScreenManager.HUD().boundingHUDRectange();
+		
+		mMenuTitleFont.begin(mScreenManager.HUD());
+		mMenuTitleFont.draw(mMenuTitle, lHUDRect.left() + 5, lHUDRect.top() + 5, 1f, 1f, 1f, 1f, 1f, 1f);
+		mMenuTitleFont.end();
+
+		mMenuFont.begin(mScreenManager.HUD());
+
+		int lCount = menuEntries().size();
+		for (int i = 0; i < lCount; i++) {
+			menuEntries().get(i).draw(this, pRenderState, mSelectedEntry == i);
+		}
+
+		mMenuFont.end();
+	}
+
+	// --------------------------------------
+	// Methods
+	// --------------------------------------
+
+	protected void onCancel() {
+		exitScreen();
+	}
+
+	public boolean hasElementFocus() {
+		final int lLayoutCount = mMenuEntries.size();
+		for (int i = 0; i < lLayoutCount; i++) {
+			if (mMenuEntries.get(i).hasFocus()) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	public void setFocusOn(InputState pInputState, MenuEntry pMenuEntry, boolean pForce) {
 		// Set focus to this entry
 		pMenuEntry.onClick(pInputState);
 
@@ -257,47 +393,34 @@ public abstract class MenuScreen extends Screen implements IMenuEntryClickListen
 		}
 	}
 
-	public void setHoveringOn(MenuEntry pMenuEntry) {
-		if (focusLocked())
-			return;
+	public void setFocusOffAll() {
 
-		// if no other entry has locked the focus (e.g. input entries)
-		// Set focus to this entry
+	}
+
+	public void setHoveringOn(MenuEntry pMenuEntry) {
 		pMenuEntry.hoveredOver(true);
 
-		// and disable focus on the rest
 		int lCount = menuEntries().size();
 		for (int i = 0; i < lCount; i++) {
-			if (!menuEntries().get(i).equals(pMenuEntry)) {
+			if (pMenuEntry != menuEntries().get(i)) {
 				menuEntries().get(i).hasFocus(false);
 				menuEntries().get(i).hoveredOver(false);
+
 			} else {
 				mSelectedEntry = i;
 			}
 		}
+
 	}
 
-	public void setFocusOnAll(boolean pValue) {
-		int lCount = menuEntries().size();
-		for (int i = 0; i < lCount; i++) {
-			menuEntries().get(i).hasFocus(pValue);
-		}
+	public void setHoveringOffAll() {
+
 	}
 
-	public void setHoveringOnAll(boolean pValue) {
-		int lCount = menuEntries().size();
-		for (int i = 0; i < lCount; i++) {
-			menuEntries().get(i).hoveredOver(pValue);
-		}
+	public void onClick(int pEntryID) {
+		mClickAction.setNewClick(pEntryID);
+		mAnimationTimer = ANIMATION_TIMER_LENGTH;
 	}
 
-	public boolean focusLocked() {
-		int lCount = menuEntries().size();
-		for (int i = 0; i < lCount; i++) {
-			if (menuEntries().get(i).focusLocked())
-				return true;
-		}
-		return false;
-	}
-
+	protected abstract void handleOnClick();
 }

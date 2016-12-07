@@ -1,6 +1,5 @@
 package net.ld.library.screenmanager.dialogs;
 
-import net.ld.library.core.input.InputState;
 import net.ld.library.screenmanager.MenuScreen;
 import net.ld.library.screenmanager.ScreenManager;
 import net.ld.library.screenmanager.entries.MenuEntry;
@@ -53,25 +52,20 @@ public class ConfirmationDialog extends BaseDialog {
 	}
 
 	// ===========================================================
+	// Core-Methods
+	// ===========================================================
+	
+	@Override
+	protected void handleOnClick() {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	// ===========================================================
 	// Methods
 	// ===========================================================
 
-	@Override
-	public void onClick(InputState pInputState, int pEntryID) {
 
-		switch (pEntryID) {
-		case BUTTON_CONFIRM_YES:
-
-			break;
-
-		case BUTTON_CONFIRM_NO:
-
-			break;
-
-		default:
-			break;
-		}
-
-	}
+	
 
 }

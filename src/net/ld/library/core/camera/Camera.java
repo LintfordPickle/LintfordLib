@@ -1,7 +1,5 @@
 package net.ld.library.core.camera;
 
-import org.lwjgl.opengl.GL11;
-
 import net.ld.library.core.config.DisplayConfig;
 import net.ld.library.core.input.InputState;
 import net.ld.library.core.maths.Matrix4f;
@@ -15,26 +13,39 @@ public class Camera implements ICamera {
 	// Constants
 	// =============================================
 
+	/** Determines the maximum zoom in amount */
+	public static final float ZOOM_LEVEL_MAX = 3.0f;
+
+	/** Determines the maximum zoom out amount */
+	public static final float ZOOM_LEVEL_MIN = 0.9f; // 0.8f
+
+	protected static final float ZOOM_ACCELERATE_AMOUNT = 9.0f;
 	protected static final float DRAG = 0.9365f;
+	protected static final boolean CAMERA_LAG_EFFECT = false;
 
 	// =============================================
 	// Variables
 	// =============================================
 
 	protected DisplayConfig mDisplayConfig;
-	protected Rectangle mBoundingRectangle;
 
+	protected Rectangle mBoundingRectangle;
 	protected Vector2f mPosition;
+	protected Vector2f mAcceleration;
+	protected Vector2f mVelocity;
 	protected Vector2f mTargetPosition;
-	public boolean mIsTransitioning;
-	public Vector2f mStartPosition = new Vector2f();
+	protected Vector2f mOffsetPosition;
 	protected Matrix4f mProjectionMatrix;
 	protected Matrix4f mViewMatrix;
 	protected float mMinX;
 	protected float mMaxX;
 	protected float mMinY;
 	protected float mMaxY;
+	protected float mZoomFactor = 1.0f;
 	protected float mRotation = 0.0f;
+	protected float mZoomAcceleration;
+	protected float mZoomVelocity;
+	protected boolean mAllowZoom = true;
 	protected int mWindowWidth;
 	protected int mWindowHeight;
 	protected float mScaledWindowWidth;
@@ -42,15 +53,16 @@ public class Camera implements ICamera {
 	protected float mzNear;
 	protected float mzFar;
 
+	protected Vector2f mMouseCameraSpace;
+
 	// =============================================
 	// Properties
 	// =============================================
 
 	@Override
-	public void setTargetPosition(float pX, float pY) {
+	public void setPosition(float pX, float pY) {
 		mTargetPosition.x = pX;
 		mTargetPosition.y = pY;
-
 	}
 
 	public float getScaledCenterX() {
@@ -59,11 +71,6 @@ public class Camera implements ICamera {
 
 	public float getScaledCenterY() {
 		return mMinY + (mMaxY - mMinY) * 0.5f;
-	}
-
-	public void setPosition(float pX, float pY) {
-		mPosition.x = pX;
-		mPosition.y = pY;
 	}
 
 	@Override
@@ -109,6 +116,14 @@ public class Camera implements ICamera {
 		this.mRotation = newValue;
 	}
 
+	public float zoomFactor() {
+		return mZoomFactor;
+	}
+
+	public void zoomFactor(float newValue) {
+		this.mZoomFactor = newValue;
+	}
+
 	public float zNear() {
 		return mzNear;
 	}
@@ -150,16 +165,30 @@ public class Camera implements ICamera {
 	// Constructor(s)
 	// =============================================
 
-	public Camera(DisplayConfig pDisplayConfig) {
+	public Camera(DisplayConfig pDisplayConfig, final float pX, final float pY, final float pWidth, final float pHeight) {
 		mDisplayConfig = pDisplayConfig;
-		mBoundingRectangle = new Rectangle();
+
+		this.mMinX = pX;
+		this.mMaxX = pX + pWidth;
+		this.mMinY = pY;
+		this.mMaxY = pY + pHeight;
+
+		mBoundingRectangle = new Rectangle(mMinX, mMinY, pWidth, pHeight);
 
 		mPosition = new Vector2f();
+		mAcceleration = new Vector2f();
+		mVelocity = new Vector2f();
+
+		mOffsetPosition = new Vector2f();
 		mTargetPosition = new Vector2f();
 
 		mProjectionMatrix = new Matrix4f();
-		mProjectionMatrix.createOrtho(-mDisplayConfig.windowWidth() * 0.5f, mDisplayConfig.windowWidth() * 0.5f, mDisplayConfig.windowHeight() * 0.5f, -mDisplayConfig.windowHeight() * 0.5f, 1.0f, -1.0f);
 		mViewMatrix = new Matrix4f();
+
+		mMouseCameraSpace = new Vector2f();
+		mZoomFactor = 1.7f;
+
+		createOrtho(pWidth, pHeight);
 
 	}
 
@@ -168,49 +197,77 @@ public class Camera implements ICamera {
 	// =============================================
 
 	public void handleInput(InputState pInputState) {
+		// Update the MouseCameraSpace instance
+		mMouseCameraSpace.x = pInputState.mouseWindowCoords().x * 1f * getZoomFactorOverOne() + this.getMinX();
+		mMouseCameraSpace.y = pInputState.mouseWindowCoords().y * 1f * getZoomFactorOverOne() + this.getMinY();
 
-	}
-
-	@Override
-	public void update(GameTime pGameTime) {
-
-		mWindowWidth = mDisplayConfig.windowWidth();
-		mWindowHeight = mDisplayConfig.windowHeight();
-
-		if (mIsTransitioning) {
-			float transitionDelta = (float) -Math.pow((pGameTime.elapseGameTime() / 5f), 2);
-
-			float xSign = Math.signum(mStartPosition.x - mTargetPosition.x);
-			float ySign = Math.signum(mStartPosition.y - mTargetPosition.y);
-
-			mPosition.x += transitionDelta * xSign * pGameTime.elapseGameTime() / 10f;
-			mPosition.y += transitionDelta * ySign * pGameTime.elapseGameTime() / 10f;
-
-			if (xSign < 0 && mPosition.x > mTargetPosition.x)
-				mPosition.x = mTargetPosition.x;
-			if (xSign > 0 && mPosition.x < mTargetPosition.x)
-				mPosition.x = mTargetPosition.x;
-
-			if (ySign < 0 && mPosition.y > mTargetPosition.y)
-				mPosition.y = mTargetPosition.y;
-			if (ySign > 0 && mPosition.y < mTargetPosition.y)
-				mPosition.y = mTargetPosition.y;
-
-			if (mPosition.x == mTargetPosition.x && mPosition.y == mTargetPosition.y) {
-				mIsTransitioning = false;
-			}
-
+		// static zoom factor
+		if (mAllowZoom) {
+			mZoomAcceleration += pInputState.mouseWheelYOffset() * ZOOM_ACCELERATE_AMOUNT * pInputState.gameTime().elapseGameTime() / 1000f * getZoomFactor();
 		}
 
-		build();
+	}
+
+	public void update(GameTime pGameTime) {
+
+		mWindowWidth = (int) mDisplayConfig.WINDOW_WIDTH;
+		mWindowHeight = (int) mDisplayConfig.WINDOW_HEIGHT;
+
+		if (CAMERA_LAG_EFFECT) {
+			mAcceleration.x = mTargetPosition.x - mPosition.x;
+			mAcceleration.y = mTargetPosition.y - mPosition.y;
+
+			// apply movement //
+			mVelocity.x += mAcceleration.x * pGameTime.elapseGameTime() / 1000.0f;
+			mVelocity.y += mAcceleration.y * pGameTime.elapseGameTime() / 1000.0f;
+
+			// don't let the camera go miles off course
+			if (Math.abs(mPosition.x) > Math.abs(mTargetPosition.x) * 20.5) {
+				mVelocity.x *= 0.45f;
+			}
+
+			if (Math.abs(mPosition.y) > Math.abs(mTargetPosition.y) * 20.5) {
+				mVelocity.y *= 0.45f;
+			}
+
+			mPosition.x += mVelocity.x;
+			mPosition.y += mVelocity.y;
+
+			mAcceleration.x = 0.0f;
+			mAcceleration.y = 0.0f;
+
+			// slow down the vel
+			mVelocity.x *= 0.98f;
+			mVelocity.y *= 0.98f;
+		} else {
+			mPosition.x = mTargetPosition.x;
+			mPosition.y = mTargetPosition.y;
+
+			mAcceleration.x = 0.0f;
+			mAcceleration.y = 0.0f;
+		}
+
+		// apply zoom //
+		mZoomVelocity += mZoomAcceleration;
+		mZoomVelocity *= DRAG;
+		mZoomFactor += mZoomVelocity * pGameTime.elapseGameTime() / 1000.0f;
+		mZoomAcceleration = 0.0f;
+
+		// Check bounds
+		if (mZoomFactor < ZOOM_LEVEL_MIN)
+			mZoomFactor = ZOOM_LEVEL_MIN;
+		if (mZoomFactor > ZOOM_LEVEL_MAX)
+			mZoomFactor = ZOOM_LEVEL_MAX;
+
+		build(mWindowWidth, mWindowHeight);
 
 	}
 
-	public void build() {
+	public void build(float pW, float pH) {
 
 		// Update the scaled camera position, width and height.
-		mScaledWindowWidth = mWindowWidth;
-		mScaledWindowHeight = mWindowHeight;
+		mScaledWindowWidth = pW * getZoomFactorOverOne();
+		mScaledWindowHeight = pH * getZoomFactorOverOne();
 
 		// Update the camera position
 		mMinX = -mPosition.x - mScaledWindowWidth / 2.0f;
@@ -220,18 +277,23 @@ public class Camera implements ICamera {
 		mMaxY = -mPosition.y + mScaledWindowHeight / 2.0f;
 
 		// update the bounding rectangle so we can properly do frustum culling
-		mBoundingRectangle.mX = mMinX;
-		mBoundingRectangle.mY = mMinY;
-		mBoundingRectangle.mWidth = mMaxX - mMinX;
-		mBoundingRectangle.mHeight = mMaxY - mMinY;
+		mBoundingRectangle.x = mMinX;
+		mBoundingRectangle.y = mMinY;
+		mBoundingRectangle.width = mMaxX - mMinX;
+		mBoundingRectangle.height = mMaxY - mMinY;
 
 		mViewMatrix = new Matrix4f();
-		mViewMatrix.translate(-mPosition.x, -mPosition.y, 0f);
+		mViewMatrix.scale(mZoomFactor, mZoomFactor, 1f);
+		mViewMatrix.translate(mPosition.x * getZoomFactor(), mPosition.y * getZoomFactor(), 0f);
 
-		GL11.glViewport(0, 0, mDisplayConfig.windowWidth(), mDisplayConfig.windowHeight());
+		createOrtho(pW, pH);
 
-		// This is where we can stretch and thin the display
-		mProjectionMatrix.createOrtho(-mDisplayConfig.windowWidth() * 0.5f, mDisplayConfig.windowWidth() * 0.5f, mDisplayConfig.windowHeight() * 0.5f, -mDisplayConfig.windowHeight() * 0.5f, -1.0f, 10.0f);
+	}
+
+	private void createOrtho(final float pW, final float pH) {
+
+		mProjectionMatrix.setIdentity();
+		mProjectionMatrix.createOrtho(-pW * 0.5f, pW * 0.5f, pH * 0.5f, -pH * 0.5f, -1.0f, 10.0f);
 
 	}
 
@@ -239,12 +301,37 @@ public class Camera implements ICamera {
 	// Methods
 	// =============================================
 
+	public void changePerspectiveMatrix(float pW, float pH) {
+		build(pW, pH);
+
+	}
+
 	protected float getCenterX() {
 		return mPosition.x + (mScaledWindowWidth * 0.5f);
 	}
 
 	protected float getCenterY() {
 		return mPosition.y + (mScaledWindowHeight * 0.5f);
+	}
+
+	@Override
+	public float getZoomFactor() {
+		return mZoomFactor;
+	}
+
+	@Override
+	public void setZoomFactor(float pNewValue) {
+		mZoomFactor = pNewValue;
+
+		// if (mZoomFactor < ZOOM_LEVEL_MIN)
+		// mZoomFactor = ZOOM_LEVEL_MIN;
+		// if (mZoomFactor > ZOOM_LEVEL_MAX)
+		// mZoomFactor = ZOOM_LEVEL_MAX;
+	}
+
+	@Override
+	public float getZoomFactorOverOne() {
+		return 1f / mZoomFactor;
 	}
 
 	public void resetState() {
@@ -261,38 +348,33 @@ public class Camera implements ICamera {
 	}
 
 	@Override
-	public Vector2f getMouseCameraSpace(double pMouseX, double pMouseY) {
-		float lMouseX = (float) (pMouseX);
-		float lMouseY = (float) (mWindowHeight - pMouseY);
+	public float getMouseCameraSpaceX() {
+		return mMouseCameraSpace.x;
 
-		float lWorldX = lMouseX + this.getMinX();
-		float lWorldY = lMouseY + this.getMinY();
-
-		// TODO: don't create a new vector here each time
-		return new Vector2f(lWorldX, lWorldY);
 	}
 
-	public Vector2f convertPointToCameraSpace(Vector2f pInput) {
-		return new Vector2f(pInput.x + this.getMinX(), pInput.y + this.getMinY());
+	@Override
+	public float getMouseCameraSpaceY() {
+		return mMouseCameraSpace.y;
+
 	}
 
-	public void startTransition(Vector2f target) {
-		mIsTransitioning = true;
+	@Override
+	public Vector2f getMouseCameraSpace() {
+		return mMouseCameraSpace;
 
-		mTargetPosition.x = target.x;
-		mTargetPosition.y = target.y;
-
-		mStartPosition.x = mPosition.x;
-		mStartPosition.y = mPosition.y;
 	}
 
-	public void startTransition(float pX, float pY) {
-		mIsTransitioning = true;
+	@Override
+	public float getPointCameraSpaceX(float pPointX) {
+		return pPointX * getZoomFactorOverOne() + this.getMinX();
 
-		mTargetPosition.x = mPosition.x + pX;
-		mTargetPosition.y = mPosition.y + pY;
-
-		mStartPosition.x = mPosition.x;
-		mStartPosition.y = mPosition.y;
 	}
+
+	@Override
+	public float getPointCameraSpaceY(float pPointY) {
+		return pPointY * getZoomFactorOverOne() + this.getMinX();
+
+	}
+
 }

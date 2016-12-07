@@ -109,9 +109,9 @@ public abstract class Screen implements LoadableScreen {
 		mIsExiting = false;
 	}
 
-	public abstract void loadContent(ResourceManager pResourceManager);
+	public abstract void loadGLContent(ResourceManager pResourceManager);
 
-	public abstract void unloadContent();
+	public abstract void unloadGLContent();
 
 	public void handleInput(GameTime pGameTime, InputState pInputState, boolean pAcceptMouse, boolean pAcceptKeyboard) {
 

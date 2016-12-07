@@ -155,7 +155,7 @@ public class Texture {
 
 	}
 
-	private static Texture createTexture(BufferedImage lImage, String pFilename, int pFilter) {
+	static Texture createTexture(BufferedImage lImage, String pFilename, int pFilter) {
 		int lTexWidth = lImage.getWidth();
 		int lTexHeight = lImage.getHeight();
 

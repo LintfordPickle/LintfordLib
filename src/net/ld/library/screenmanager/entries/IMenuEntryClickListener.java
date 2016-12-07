@@ -4,6 +4,6 @@ import net.ld.library.core.input.InputState;
 
 public interface IMenuEntryClickListener {
 	
-	public void onClick(InputState pInputState, int pEntryID);
+	public void onClick(int pEntryID);
 	
 }

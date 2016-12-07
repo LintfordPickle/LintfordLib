@@ -1,7 +1,5 @@
 package net.ld.library.core.camera;
 
-import org.lwjgl.opengl.GL11;
-
 import net.ld.library.core.config.DisplayConfig;
 import net.ld.library.core.input.InputState;
 import net.ld.library.core.maths.Matrix4f;
@@ -11,24 +9,28 @@ import net.ld.library.core.time.GameTime;
 
 public class HUD implements ICamera {
 
+	private static final float Z_NEAR = -1.0f;
+	private static final float Z_FAR = 10.0f;
+
 	// =============================================
 	// Variables
 	// =============================================
 
-	private DisplayConfig mDisplayConfig;
-
-	private Rectangle mBoundingRectangle;
+	private Rectangle mHUDRectangle;
 
 	private float mRotation = 0.0f;
 
-	private int mWindowWidth;
-	private int mWindowHeight;
+	// These are not the dimensions of the window, but rather the dimensions of the canvas to use for the HUD (i.e. menu system)
+	private float mWindowWidth;
+	private float mWindowHeight;
 
 	private float mzNear;
 	private float mzFar;
 
 	private Matrix4f mProjectionMatrix;
 	private Matrix4f mViewMatrix;
+
+	private Vector2f mMouseHUDSpace;
 
 	// =============================================
 	// Properties
@@ -88,31 +90,32 @@ public class HUD implements ICamera {
 		this.mzFar = newValue;
 	}
 
-	public int windowWidth() {
+	public float windowWidth() {
 		return mWindowWidth;
 	}
 
-	public int windowHeight() {
+	public float windowHeight() {
 		return mWindowHeight;
 	}
 
-	@Override
-	public Rectangle boundingRectangle() {
-		return mBoundingRectangle;
+	public Rectangle boundingHUDRectange() {
+		return mHUDRectangle;
 	}
 
 	// =============================================
 	// Constructor(s)
 	// =============================================
 
-	public HUD(DisplayConfig pDisplayConfig, final float pX, final float pY, final float pWidth, final float pHeight) {
-		mDisplayConfig = pDisplayConfig;
+	public HUD(final float pX, final float pY, final float pWidth, final float pHeight) {
+		mWindowWidth = pWidth;
+		mWindowHeight = pHeight;
 
-		mBoundingRectangle = new Rectangle(getMinX(), getMinY(), windowWidth(), windowHeight());
+		mHUDRectangle = new Rectangle(-pWidth / 2, -pHeight / 2, pWidth, pHeight);
 
 		mProjectionMatrix = new Matrix4f();
-		mProjectionMatrix.createOrtho(-mDisplayConfig.windowWidth(), 0.0f, 0.0f, -mDisplayConfig.windowHeight(), 1.0f, -1.0f);
 		mViewMatrix = new Matrix4f();
+
+		mMouseHUDSpace = new Vector2f();
 
 	}
 
@@ -121,24 +124,25 @@ public class HUD implements ICamera {
 	// =============================================
 
 	public void handleInput(InputState pInputState) {
-
-		// TODO: Need to reimplement the mouse scroll wheel for zooming
+		mMouseHUDSpace.x = (float) (-DisplayConfig.WINDOW_WIDTH * 0.5f + (pInputState.mouseWindowCoords().x - 1));
+		mMouseHUDSpace.y = (float) (-DisplayConfig.WINDOW_HEIGHT * 0.5f + (pInputState.mouseWindowCoords().y - 1));
 
 	}
 
-	@Override
 	public void update(GameTime pGameTime) {
+		mWindowWidth = DisplayConfig.WINDOW_WIDTH;
+		mWindowHeight = DisplayConfig.WINDOW_HEIGHT;
 
-		GL11.glViewport(0, 0, mDisplayConfig.windowWidth(), mDisplayConfig.windowHeight());
+		mHUDRectangle.set(getMinX(), getMinY(), getWidth(), getHeight());
 
-		mProjectionMatrix.createOrtho(-mDisplayConfig.windowWidth(), 0.0f, 0.0f, -mDisplayConfig.windowHeight(), 1.0f, -1.0f);
+		if (mWindowWidth == 0 || mWindowHeight == 0)
+			return;
 
 		mViewMatrix.setIdentity();
 		mViewMatrix.scale(1f, 1f, 1f);
-		// mViewMatrix.translate(getWidth()/2f, getHeight()/2f, 0f);
 
-		mWindowWidth = mDisplayConfig.windowWidth();
-		mWindowHeight = mDisplayConfig.windowHeight();
+		mProjectionMatrix.setIdentity();
+		mProjectionMatrix.createOrtho(getMinX(), getMaxX(), getMaxY(), getMinY(), Z_NEAR, Z_FAR);
 
 	}
 
@@ -157,13 +161,28 @@ public class HUD implements ICamera {
 	}
 
 	@Override
-	public Vector2f getMouseCameraSpace(double pMouseXPosition, double pMouseYPosition) {
+	public Vector2f getMouseCameraSpace() {
+		return mMouseHUDSpace;
+	}
 
-		Vector2f mMouseScreenCoord = new Vector2f();
-		mMouseScreenCoord.x = (float) (pMouseXPosition - 1);
-		mMouseScreenCoord.y = (float) (mDisplayConfig.windowHeight() - pMouseYPosition - 1);
+	@Override
+	public float getMouseCameraSpaceX() {
+		return mMouseHUDSpace.x;
+	}
 
-		return mMouseScreenCoord;
+	@Override
+	public float getMouseCameraSpaceY() {
+		return mMouseHUDSpace.y;
+	}
+
+	@Override
+	public float getPointCameraSpaceX(float pPointX) {
+		return (-mWindowWidth * 0.5f + (pPointX - 1));
+	}
+
+	@Override
+	public float getPointCameraSpaceY(float pPointY) {
+		return (-mWindowWidth * 0.5f + (pPointY - 1));
 	}
 
 	@Override
@@ -172,7 +191,28 @@ public class HUD implements ICamera {
 	}
 
 	@Override
-	public void setTargetPosition(float pX, float pY) {
+	public void setPosition(float pX, float pY) {
+
+	}
+
+	@Override
+	public float getZoomFactor() {
+		return 1f;
+	}
+
+	@Override
+	public void setZoomFactor(float pNewValue) {
+
+	}
+
+	@Override
+	public float getZoomFactorOverOne() {
+		return 1f;
+	}
+
+	@Override
+	public Rectangle boundingRectangle() {
+		return mHUDRectangle;
 
 	}
 

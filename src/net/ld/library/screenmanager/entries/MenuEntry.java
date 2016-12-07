@@ -3,30 +3,28 @@ package net.ld.library.screenmanager.entries;
 import net.ld.library.core.config.DisplayConfig;
 import net.ld.library.core.graphics.ResourceManager;
 import net.ld.library.core.graphics.spritebatch.SpriteBatch;
-import net.ld.library.core.graphics.spritebatch.SpriteBatch9Patch;
 import net.ld.library.core.graphics.textures.TextureManager;
 import net.ld.library.core.input.InputState;
-import net.ld.library.core.maths.Matrix4f;
+import net.ld.library.core.input.InputState.INPUT_TYPES;
 import net.ld.library.core.maths.Rectangle;
-import net.ld.library.core.maths.Vector2f;
-import net.ld.library.core.sounds.SoundManager;
+import net.ld.library.core.rendering.RenderState;
 import net.ld.library.core.time.GameTime;
 import net.ld.library.screenmanager.MenuScreen;
 import net.ld.library.screenmanager.Screen;
 import net.ld.library.screenmanager.ScreenManager;
 
-public class MenuEntry {
+public class MenuEntry extends Rectangle {
 
 	// =============================================
 	// Constants
 	// =============================================
 
-	protected static final float MENUENTRY_WIDTH = 310; // half width
-	protected static final float MENUENTRY_HEIGHT = 16; // half height
+	protected static final float MENUENTRY_WIDTH = 310;
+	protected static final float MENUENTRY_HEIGHT = 32;
 	protected static final float FOCUS_TIMER = .050f; // seconds
 
 	public enum BUTTON_SIZE {
-		narrow, normal, wide;
+		tiny, narrow, normal, wide;
 	}
 
 	// =============================================
@@ -36,31 +34,68 @@ public class MenuEntry {
 	protected ScreenManager mScreenManager;
 	protected DisplayConfig mDisplayConfig;
 	protected MenuScreen mParentScreen;
-	protected boolean mEnabled;
+	protected boolean mActive; // Not drawn/updated etc.
+	protected boolean mEnabled; // drawn but greyed out
 	protected String mText;
-	protected Vector2f mPosition;
 	protected float mScale;
 	private float mScaleCounter;
 	protected IMenuEntryClickListener mClickListener;
 	protected int mMenuEntryID;
-	protected Rectangle mBounds;
+	protected boolean mDrawBackground;
+	protected boolean mScaleonHover;
+
+	protected float mAnimationTimer;
+
 	protected boolean mHoveredOver;
-	protected boolean mToolTipEnabled;
-	protected float mToolTipTimer;
-	protected String mToolTip;
+	protected boolean mCanHoverOver;
 	protected boolean mHasFocus;
 	protected boolean mFocusLocked;
+	protected boolean mCanHaveFocus;
 	protected float mClickTimer;
 	protected BUTTON_SIZE mButtonSize = BUTTON_SIZE.normal;
-	private SpriteBatch mSpriteBatch;
-	private SpriteBatch9Patch m9Patch;
+
+	protected SpriteBatch mSpriteBatch;
+
 	private boolean mIsInitialised, mIsLoaded;
-	private float mZ;
-	public boolean drawBackground;
+	public float mZ;
+
+	protected float mHorizontalPadding = 5f;
+	protected float mVerticalPadding = 5f;
+
+	boolean isAnimating;
+	float animationTimeRemaining;
 
 	// =============================================
 	// Properties
 	// =============================================
+
+	public MenuScreen parentScreen() {
+		return mParentScreen;
+	}
+
+	public boolean canHaveFocus() {
+		return mCanHaveFocus;
+	}
+
+	public void canHaveFocus(boolean pNewValue) {
+		mCanHaveFocus = pNewValue;
+	}
+
+	public boolean canHoverOver() {
+		return mCanHoverOver;
+	}
+
+	public void canHoverOver(boolean pNewValue) {
+		mCanHoverOver = pNewValue;
+	}
+
+	public float paddingHorizontal() {
+		return mHorizontalPadding;
+	}
+
+	public float paddingVertical() {
+		return mVerticalPadding;
+	}
 
 	public void entryID(int pNewValue) {
 		mMenuEntryID = pNewValue;
@@ -78,11 +113,11 @@ public class MenuEntry {
 		mButtonSize = pNewSize;
 	}
 
-	public float entryWidth() {
-		return MENUENTRY_WIDTH;
+	public float getWidth() {
+		return width;
 	}
 
-	public float entryHeight() {
+	public float getHeight() {
 		return MENUENTRY_HEIGHT;
 	}
 
@@ -102,16 +137,12 @@ public class MenuEntry {
 		mHasFocus = pNewValue;
 	}
 
-	public boolean focusLocked() {
+	public boolean hasFocusLock() {
 		return mFocusLocked;
 	}
 
-	public void focusLocked(boolean pNewValue) {
+	public void hasFocusLock(boolean pNewValue) {
 		mFocusLocked = pNewValue;
-	}
-
-	public Rectangle bounds() {
-		return mBounds;
 	}
 
 	public boolean enabled() {
@@ -122,12 +153,16 @@ public class MenuEntry {
 		mEnabled = pEnabled;
 	}
 
-	public int entryID() {
-		return mMenuEntryID;
+	public boolean active() {
+		return mActive;
 	}
 
-	public Vector2f position() {
-		return mPosition;
+	public void active(boolean pEnabled) {
+		mActive = pEnabled;
+	}
+
+	public int entryID() {
+		return mMenuEntryID;
 	}
 
 	// =============================================
@@ -138,14 +173,17 @@ public class MenuEntry {
 		mScreenManager = pScreenManager;
 		mDisplayConfig = pScreenManager.displayConfig();
 		mParentScreen = pParentScreen;
-		mPosition = new Vector2f();
 		mText = pMenuEntryLabel;
-		mEnabled = true;
-		mBounds = new Rectangle();
+
 		mSpriteBatch = new SpriteBatch();
-		m9Patch = new SpriteBatch9Patch();
-		mZ = -0.5f;
-		drawBackground = true;
+
+		mActive = true;
+		mEnabled = true;
+		mCanHaveFocus = true;
+		mCanHoverOver = true;
+		mDrawBackground = true;
+		mScaleonHover = false;
+
 	}
 
 	// =============================================
@@ -153,139 +191,130 @@ public class MenuEntry {
 	// =============================================
 
 	public void initialise() {
+		switch (mButtonSize) {
+		case tiny:
+			width = MENUENTRY_WIDTH * 0.5f;
+			break;
+		case narrow:
+			width = MENUENTRY_WIDTH * 0.75f;
+			break;
+		case normal:
+			width = MENUENTRY_WIDTH;
+			break;
+		case wide:
+			width = MENUENTRY_WIDTH * 1.35f;
+			break;
+		}
+
+		height = MENUENTRY_HEIGHT;
 
 		mIsInitialised = true;
+
 	}
 
-	public void loadContent(ResourceManager pResourceManager) {
-		mSpriteBatch.loadContent(pResourceManager);
-		m9Patch.loadContent(pResourceManager);
+	public void loadGLContent(ResourceManager pResourceManager) {
+		mSpriteBatch.loadGLContent(pResourceManager);
 
 		mIsLoaded = true;
 	}
 
-	public boolean handleInput(GameTime pGameTime, InputState pInputState) {
-		if (bounds().intersects(pInputState.mouseScreenCoords())) {
+	public void unloadGLContent() {
+		mSpriteBatch.unloadGLContent();
 
-			if (pInputState.mouseTimedLeftClick()) {
-				if (mEnabled) {
-					mParentScreen.setFocusOn(pInputState, this, false);
+		mIsLoaded = false;
 
-					// play menu click sound
-					SoundManager.soundManager().playSound("UI_CLICK");
+	}
 
-				}
-			} else {
+	public boolean handleInput(InputState pInputState) {
+		if (!mActive || !mEnabled || isAnimating)
+			return false;
 
-				hasFocus(true);
+		// TODO(John): Why is the last input active needed and remove if not!
+		if (intersects(mScreenManager.HUD().getMouseCameraSpace()) && pInputState.lastInputActive() == INPUT_TYPES.Mouse) {
+			// We should make sure no other component is currently using this leftClick.
+
+			hasFocus(true);
+			if (canHoverOver() && pInputState.leftClickOwner() == -1) {
+				mParentScreen.setHoveringOn(this);
 			}
 
-			mParentScreen.setHoveringOn(this);
+			if (canHaveFocus() && pInputState.mouseLeftClick()) {
+				if (!pInputState.tryAquireLeftClickOwnership(hashCode()))
+					return false;
 
-			// Check if tool tips are enabled.
-			if (mToolTipEnabled) {
-				mToolTipTimer += pGameTime.elapseGameTime();
+				pInputState.setLeftMouseClickHandled();
+				mParentScreen.setFocusOn(pInputState, this, false);
+
+				return true;
 			}
-
-			return true;
 
 		} else {
-
+			hasFocus(false);
 			hoveredOver(false);
-			mToolTipTimer = 0;
 		}
 
 		return false;
 	}
 
-	public void update(GameTime pGameTime, MenuScreen pScreen, boolean pIsSelected) {
-
-		mClickTimer += pGameTime.elapseGameTime();
-
-		if (mHasFocus) {
-			mScaleCounter += pGameTime.elapseGameTime() / 500.0f;
-			mScale = 0.75f + (float) (Math.cos(mScaleCounter) * 0.05f);
-		}
-
-		else if (mHoveredOver) {
-			mScaleCounter += pGameTime.elapseGameTime() / 500.0f;
-			mScale = 0.75f + (float) (Math.cos(mScaleCounter) * 0.05f);
-		}
-
-		else {
-
-			mScale = 0.75f;
-		}
-
-		mBounds.mX = (mPosition.x - MENUENTRY_WIDTH * 0.5f);
-		mBounds.mY = (mPosition.y - MENUENTRY_HEIGHT * 0.5f);
-
-		mBounds.mWidth = MENUENTRY_WIDTH;
-		mBounds.mHeight = MENUENTRY_HEIGHT;
+	public void updateStructure(RenderState pRenderState) {
 
 	}
 
-	public void draw(Screen pScreen, DisplayConfig display, boolean pIsSelected) {
-		if (!mEnabled || !mIsInitialised || !mIsLoaded)
+	public void update(GameTime pGameTime, MenuScreen pScreen, boolean pIsSelected) {
+		if (!mActive)
 			return;
 
-		if (drawBackground) {
-			m9Patch.begin(mScreenManager.HUD());
+		if (mAnimationTimer > 0) {
+			mAnimationTimer -= pGameTime.elapseGameTime();
 
-			/* Draw the element background */
-			float lMenuEntryWidthHalf = MENUENTRY_WIDTH * 0.5f;
+		}
+		mClickTimer += pGameTime.elapseGameTime();
 
-			if (mButtonSize == BUTTON_SIZE.narrow) {
-				lMenuEntryWidthHalf *= 0.5f;
-			} else if (mButtonSize == BUTTON_SIZE.wide) {
-				lMenuEntryWidthHalf *= 1.5f;
-			}
-
-			// draw 9 patch
-			m9Patch.draw9Patch(mPosition.x - lMenuEntryWidthHalf, mPosition.y - MENUENTRY_HEIGHT, mZ, lMenuEntryWidthHalf * 2f, MENUENTRY_HEIGHT * 2f, 0.5f, TextureManager.textureManager().getTexture(ScreenManager.SCREEN_MANAGER_PATCH_TEXTURE_NAME));
-			m9Patch.end();
-
-			/* Draw the button highlight when this element has focus. */
-			if (mHasFocus) {
-				mSpriteBatch.begin(mScreenManager.HUD());
-				mSpriteBatch.draw(0, 0, 0, 0, mPosition.x - lMenuEntryWidthHalf, mPosition.y - MENUENTRY_HEIGHT, mZ, lMenuEntryWidthHalf * 2f, MENUENTRY_HEIGHT * 2f, 1f, TextureManager.textureManager().getTexture(ScreenManager.SCREEN_MANAGER_TEXTURE_NAME));
-				mSpriteBatch.end();
-			}
+		if (mScaleonHover && mHasFocus && canHaveFocus()) {
+			mScaleCounter += pGameTime.elapseGameTime() / 500.0f;
+			mScale = 0.75f + (float) (Math.cos(mScaleCounter) * 0.05f);
 		}
 
-		/* render the element text */
-		mSpriteBatch.modelMatrix(Matrix4f.IDENTITY);
-		mSpriteBatch.begin(mScreenManager.HUD());
-		mSpriteBatch.draw(mText, mPosition.x - getTextWidth(mText, 0.5f) * 0.5f, mPosition.y - (getTextHeight(mText, 0.5f) - 10) * 0.5f,-0.5f, .5f, TextureManager.textureManager().getTexture("Font"));
-		mSpriteBatch.end();
+		else if (mScaleonHover && mHoveredOver) {
+			mScaleCounter += pGameTime.elapseGameTime() / 500.0f;
+			mScale = 0.75f + (float) (Math.cos(mScaleCounter) * 0.05f);
 
+		}
+
+		else {
+			mScale = 0.75f;
+		}
+
+	}
+
+	public void draw(Screen pScreen, RenderState pRenderState, boolean pIsSelected) {
+		if (!mActive || !mIsInitialised || !mIsLoaded)
+			return;
+
+		// The colour of the entry background is determined by its enabled and hovered states
+		// Hovered Normal Disabled
+		float lSY = mAnimationTimer > 0 ? 0 : mHoveredOver ? 0 : 16;
+		float lSX = mAnimationTimer > 0 ? 16 : 0;
+
+		if (mDrawBackground) {
+			mSpriteBatch.begin(mScreenManager.HUD());
+			mSpriteBatch.draw(lSX, lSY, 16, 16, x, y, mZ, width, 32, 1f, 1f, 1f, 1f, 1f, TextureManager.textureManager().getTexture(ScreenManager.SCREEN_MANAGER_TEXTURE_NAME));
+			mSpriteBatch.end();
+		}
+
+		/* Draw the button highlight when this element has focus. */
+		// ---> TODO: 
+
+		// Render the MenuEntry label
+		float lScale = 1f;
+		mParentScreen.font().begin(mScreenManager.HUD());
+		mParentScreen.font().draw(mText, x + width / 2 - mParentScreen.font().bitmap().getStringWidth(mText, lScale) * 0.5f, y + height / 2 - 10, -0.5f, 0.97f, .92f, .95f, 1f, lScale);
+		mParentScreen.font().end();
 	}
 
 	// =============================================
 	// Methods
 	// =============================================
-
-	public void setToolTip(String pToolTipText) {
-		if (pToolTipText == null || pToolTipText.length() == 0) {
-			mToolTipEnabled = false;
-			return;
-		}
-
-		mToolTipEnabled = true;
-		mToolTip = pToolTipText;
-	}
-
-	public float getWidth() {
-		return MENUENTRY_WIDTH;
-	}
-
-	public float getTextWidth(String pText, float pScale) {
-		return (pText.length() - 1) * 32f * pScale;
-	}
-
-	public float getTextHeight(String pText, float pScale) {
-		return 32f * pScale;
-	}
 
 	public void registerClickListener(IMenuEntryClickListener pListener, int pID) {
 		mMenuEntryID = pID;
@@ -299,6 +328,10 @@ public class MenuEntry {
 		if (mClickTimer < FOCUS_TIMER)
 			return;
 
-		mClickListener.onClick(pInputState, mMenuEntryID);
+		mAnimationTimer = MenuScreen.ANIMATION_TIMER_LENGTH;
+
+		// Play a button click animation, then call the listeners
+		mClickListener.onClick(mMenuEntryID);
 	}
+
 }

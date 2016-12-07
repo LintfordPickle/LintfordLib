@@ -44,6 +44,10 @@ public class DisplayConfig extends BaseConfig {
 	// =============================================
 
 	public static final float GEOMETRY_SCREEN_SAFE_AREA = 20; // px overdraw
+	
+	// TODO: Take these from the GameInfo
+	public static int WINDOW_WIDTH;
+	public static int WINDOW_HEIGHT;
 
 	// =============================================
 	// Enums
@@ -68,8 +72,6 @@ public class DisplayConfig extends BaseConfig {
 	// =============================================
 
 	private boolean mFullScreen;
-	private int mWindowWidth;
-	private int mWindowHeight;
 	private boolean mVSYNCEnabled;
 	private boolean mWindowIsResizable;
 	private boolean mWindowWasResized;
@@ -104,11 +106,11 @@ public class DisplayConfig extends BaseConfig {
 	}
 
 	public int windowWidth() {
-		return mWindowWidth;
+		return WINDOW_WIDTH;
 	}
 
 	public int windowHeight() {
-		return mWindowHeight;
+		return WINDOW_HEIGHT;
 	}
 
 	public boolean vsyncEnabled() {
@@ -139,8 +141,9 @@ public class DisplayConfig extends BaseConfig {
 		super(pGameInfo);
 
 		/* set some defaults */
-		mWindowWidth = mGameInfo.windowWidth();
-		mWindowHeight = mGameInfo.windowHeight();
+		WINDOW_WIDTH = mGameInfo.windowWidth();
+		WINDOW_HEIGHT = mGameInfo.windowHeight();
+		
 		mFullScreen = mGameInfo.windowCanBeFullscreen();
 		mWindowIsResizable = mGameInfo.windowResizeable();
 		mVSYNCEnabled = true;
@@ -178,8 +181,8 @@ public class DisplayConfig extends BaseConfig {
 
 		mWindowWasResized = true;
 
-		mWindowWidth = pWidth;
-		mWindowHeight = pHeight;
+		WINDOW_WIDTH = pWidth;
+		WINDOW_HEIGHT = pHeight;
 
 		int lListenerCount = mResizeListeners.size();
 		for (int i = 0; i < lListenerCount; i++) {

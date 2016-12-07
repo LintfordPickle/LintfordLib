@@ -6,6 +6,7 @@ import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 
 import net.ld.library.core.camera.Camera;
+import net.ld.library.core.camera.HUD;
 import net.ld.library.core.camera.ICamera;
 import net.ld.library.core.config.DisplayConfig;
 import net.ld.library.core.graphics.ResourceManager;
@@ -25,7 +26,7 @@ public class ScreenManager {
 	public static final String SCREEN_MANAGER_TEXTURE_NAME = "ScreenManager_Texture";
 
 	/** The default texture name for the ScreenManager core 9Patch textures. */
-	public static final String SCREEN_MANAGER_PATCH_TEXTURE_NAME = "ScreenManager__9Patch_Texture";
+	public static final String SCREEN_MANAGER_PATCH_TEXTURE_NAME = "ScreenManager_9Patch_Texture";
 
 	// =============================================
 	// Variables
@@ -35,8 +36,8 @@ public class ScreenManager {
 	private GameTime mGameTime;
 	private InputState mInputState;
 	private RenderState mRenderState;
-	private ICamera mHUDCamera;
-	private ICamera mWorldCamera;
+	private HUD mHUDCamera;
+	private Camera mWorldCamera;
 
 	private ArrayList<Screen> mScreens;
 	private ArrayList<Screen> mScreensToUpdate;
@@ -73,11 +74,11 @@ public class ScreenManager {
 		return mGameTime;
 	}
 
-	public ICamera HUD() {
+	public HUD HUD() {
 		return mHUDCamera;
 	}
 
-	public ICamera gameCamera() {
+	public Camera gameCamera() {
 		return mWorldCamera;
 	}
 
@@ -97,7 +98,6 @@ public class ScreenManager {
 		mScreens = new ArrayList<Screen>();
 		mScreensToUpdate = new ArrayList<Screen>();
 
-		mWorldCamera = new Camera(pDisplayConfig);
 		mRenderState = new RenderState();
 
 		mIsInitialised = false;
@@ -108,9 +108,10 @@ public class ScreenManager {
 	// Core-Methods
 	// =============================================
 
-	public void initialise(InputState pInputState, GameTime pGameTime, ICamera pHUDCamera) {
+	public void initialise(InputState pInputState, GameTime pGameTime, HUD pHUDCamera, Camera pGameCamera) {
 		mInputState = pInputState;
 		mGameTime = pGameTime;
+		mWorldCamera = pGameCamera;
 		mHUDCamera = pHUDCamera;
 
 		int lCount = mScreens.size();
@@ -123,27 +124,27 @@ public class ScreenManager {
 		mIsInitialised = true;
 	}
 
-	public void loadContent(ResourceManager pResourceManager) {
+	public void loadGLContent(ResourceManager pResourceManager) {
 		// Store the reference to the resource manager as we'll be loading more screens later
 		mResourceManager = pResourceManager;
 
 		// Load the minimum font for the screen manager (contains textures for buttons and windows etc.)
-		TextureManager.textureManager().loadTextureFromResource(SCREEN_MANAGER_TEXTURE_NAME, "/res/textures/screenmanager.png");
-		TextureManager.textureManager().loadTextureFromResource(SCREEN_MANAGER_PATCH_TEXTURE_NAME, "/res/textures/menu9patch.png");
+		TextureManager.textureManager().loadTextureFromResource(SCREEN_MANAGER_TEXTURE_NAME, "/res/textures/screenmanager.png", GL11.GL_NEAREST);
+		TextureManager.textureManager().loadTextureFromResource(SCREEN_MANAGER_PATCH_TEXTURE_NAME, "/res/textures/menu9patch.png", GL11.GL_NEAREST);
 
 		int lCount = mScreens.size();
 		for (int i = 0; i < lCount; i++) {
-			mScreens.get(i).loadContent(pResourceManager);
+			mScreens.get(i).loadGLContent(pResourceManager);
 		}
 
 		mIsLoaded = true;
 	}
 
-	public void unloadContent() {
+	public void unloadGLContent() {
 		int lCount = mScreens.size();
 		for (int i = 0; i < lCount; i++) {
 
-			mScreens.get(i).unloadContent();
+			mScreens.get(i).unloadGLContent();
 
 		}
 	}
@@ -153,8 +154,6 @@ public class ScreenManager {
 			return;
 
 		mScreensToUpdate.clear();
-
-		mRenderState.update(pGameTime);
 
 		int lCount = mScreens.size();
 		for (int i = 0; i < lCount; i++) {
@@ -234,7 +233,7 @@ public class ScreenManager {
 			if (mIsLoaded) { // screen manager already loaded? then load this
 								// screen manually
 				if (!pScreen.mIsLoaded) {
-					pScreen.loadContent(mResourceManager);
+					pScreen.loadGLContent(mResourceManager);
 				}
 			}
 		}
@@ -246,7 +245,7 @@ public class ScreenManager {
 	public void removeScreen(Screen pScreen) {
 
 		if (mIsInitialised) {
-			pScreen.unloadContent();
+			pScreen.unloadGLContent();
 		}
 
 		if (mScreens.contains(pScreen))

@@ -13,6 +13,7 @@ import static org.lwjgl.opengl.GL11.GL_FALSE;
 import static org.lwjgl.opengl.GL11.GL_TRUE;
 
 import net.ld.library.GameInfo;
+import net.ld.library.core.camera.Camera;
 import net.ld.library.core.camera.HUD;
 import net.ld.library.core.config.DisplayConfig;
 import net.ld.library.core.graphics.ResourceManager;
@@ -30,6 +31,7 @@ public abstract class LWJGLCore {
 	protected DisplayConfig mDisplayConfig;
 	protected ResourceManager mResourceManager;
 	protected GameTime mGameTime;
+	protected Camera mGameCamera;
 	protected HUD mHUDCamera;
 	protected InputState mInputState;
 
@@ -47,6 +49,10 @@ public abstract class LWJGLCore {
 
 	public HUD hud() {
 		return mHUDCamera;
+	}
+
+	public Camera gameCamera() {
+		return mGameCamera;
 	}
 
 	// =============================================
@@ -71,9 +77,11 @@ public abstract class LWJGLCore {
 
 	public void createWindow() {
 
-		mHUDCamera = new HUD(mDisplayConfig, 0, 0, mGameInfo.windowWidth(), mGameInfo.windowHeight());
+		mGameCamera = new Camera(mDisplayConfig, 0, 0, DisplayConfig.WINDOW_WIDTH, DisplayConfig.WINDOW_HEIGHT);
+		mHUDCamera = new HUD(-DisplayConfig.WINDOW_WIDTH / 2, -DisplayConfig.WINDOW_HEIGHT / 2, DisplayConfig.WINDOW_WIDTH / 2, DisplayConfig.WINDOW_HEIGHT / 2);
+		
 		mGameTime = new GameTime();
-		mInputState = new InputState(mDisplayConfig, mGameTime);
+		mInputState = new InputState(mDisplayConfig, mGameCamera, mHUDCamera, mGameTime);
 
 		long lWindowID = mDisplayConfig.onCreateWindow();
 
@@ -91,7 +99,7 @@ public abstract class LWJGLCore {
 
 		onInitialiseApp();
 
-		onLoadContent();
+		onLoadGLContent();
 
 		// Starts the game loop.
 		onRunGameLoop();
@@ -101,7 +109,10 @@ public abstract class LWJGLCore {
 
 	public abstract void onInitialiseApp();
 
-	protected abstract void onLoadContent();
+	protected void onLoadGLContent() {
+		mResourceManager.loadGLContent();
+
+	}
 
 	protected void onRunGameLoop() {
 
@@ -126,11 +137,16 @@ public abstract class LWJGLCore {
 		System.exit(0);
 	}
 
-	protected abstract void onHandleInput();
+	protected void onHandleInput(){
+		mHUDCamera.handleInput(mInputState);
+		mGameCamera.handleInput(mInputState);
+		
+	}
 
 	protected void onUpdate(GameTime pGameTime) {
 		mInputState.update(pGameTime);
 		mHUDCamera.update(pGameTime);
+		mGameCamera.update(pGameTime);
 		mResourceManager.update(pGameTime);
 	}
 

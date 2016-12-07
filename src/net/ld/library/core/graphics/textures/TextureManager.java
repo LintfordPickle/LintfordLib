@@ -1,5 +1,6 @@
 package net.ld.library.core.graphics.textures;
 
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -103,6 +104,22 @@ public class TextureManager {
 		return lTex;
 	}
 
+	public Texture createFontTexture(String pName, BufferedImage pImage) {
+		return createFontTexture(pName, pImage, GL11.GL_NEAREST);
+	}
+
+	public Texture createFontTexture(String pName, BufferedImage pImage, int pFilter) {
+		if (mTextures.containsKey(pName)) {
+			return mTextures.get(pName);
+		}
+
+		Texture lTex = Texture.createTexture(pImage, pName, pFilter);
+		lTex.reloadable(false);
+		mTextures.put(pName, lTex);
+
+		return lTex;
+	}
+	
 	public void reloadTextures() {
 		System.out.println("Reloading all textures ..");
 
