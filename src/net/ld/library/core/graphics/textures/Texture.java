@@ -25,6 +25,14 @@ public class Texture {
 	private int mTextureHeight;
 	private int mFilter;
 
+	// In order to detect changes to the texture wher trying to reload textures, we will store the file size of the texture
+	// each time it is loaded.
+	private long mFileSizeOnLoad;
+
+	// Some textures, like textures generated from system fonts, do not need to be reloaded when checking for changes
+	// to textures on the hard-disk. Setting this Boolean to false will skip the texture reload requests on this texture.
+	private boolean mReloadable;
+
 	// =============================================
 	// Properties
 	// =============================================
@@ -39,6 +47,22 @@ public class Texture {
 
 	public int getTextureHeight() {
 		return mTextureHeight;
+	}
+
+	public boolean reloadable() {
+		return mReloadable;
+	}
+
+	public void reloadable(boolean v) {
+		mReloadable = v;
+	}
+
+	public long fileSizeOnLoad() {
+		return mFileSizeOnLoad;
+	}
+
+	public void fileSizeOnLoad(long v) {
+		mFileSizeOnLoad = v;
 	}
 
 	// =============================================
@@ -69,7 +93,12 @@ public class Texture {
 			File lFile = new File(pFilename);
 			BufferedImage lImage = ImageIO.read(lFile);
 
-			return createTexture(lImage, pFilename, pFilter);
+			Texture lReturnTexture = createTexture(lImage, pFilename, pFilter);
+
+			// Do not try to reload textures loaded from an embedded resource
+			lReturnTexture.fileSizeOnLoad(lFile.length());
+			lReturnTexture.reloadable(true);
+			return lReturnTexture;
 
 		} catch (FileNotFoundException e) {
 			System.out.println("Error loading texture (File not found at " + pFilename + " )");
@@ -103,7 +132,11 @@ public class Texture {
 
 			BufferedImage lImage = ImageIO.read(lInputStream);
 
-			return createTexture(lImage, pFilename, pFilter);
+			Texture lReturnTexture = createTexture(lImage, pFilename, pFilter);
+
+			// Do not try to reload textures loaded from an embedded resource
+			lReturnTexture.reloadable(false);
+			return lReturnTexture;
 
 		} catch (FileNotFoundException e) {
 			System.out.println("Error loading texture (File not found at " + pFilename + " )");
@@ -159,6 +192,12 @@ public class Texture {
 	}
 
 	public void reload() {
+		if (!mReloadable) {
+			System.out.println("Skipping texture reload, not reloadable " + mTextureLocation);
+
+			return;
+		}
+
 		System.out.println("Reloading texture from : " + mTextureLocation);
 
 		BufferedImage lImage = null;
@@ -170,6 +209,12 @@ public class Texture {
 		try {
 
 			File lTextureFile = new File(mTextureLocation);
+
+			if (mFileSizeOnLoad == lTextureFile.length()) {
+				System.out.println("  ... skipping reload, no file changes");
+				return;
+			}
+
 			lImage = ImageIO.read(lTextureFile);
 
 			lTexWidth = lImage.getWidth();

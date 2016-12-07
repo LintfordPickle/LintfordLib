@@ -107,7 +107,11 @@ public class TextureManager {
 		System.out.println("Reloading all textures ..");
 
 		for (Texture lTexture : mTextures.values()) {
-			lTexture.reload();
+			if (lTexture != null) {
+				if (!lTexture.reloadable())
+					continue;
+				lTexture.reload();
+			}
 		}
 	}
 }
