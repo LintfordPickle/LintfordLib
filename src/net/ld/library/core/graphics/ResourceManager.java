@@ -47,7 +47,43 @@ public class ResourceManager {
 	public ResourceManager(DisplayConfig pDisplayConfig) {
 		mDisplayConfig = pDisplayConfig;
 
-		mResourcePath = Paths.get("res/res/textures/");
+	}
+
+	// =============================================
+	// Core-Method
+	// =============================================
+
+	public void update(GameTime pGameTime) {
+		if (mTexturePathWatcher != null) {
+			WatchKey lKey = mTexturePathWatcher.poll();
+			if (lKey != null) {
+
+				List<WatchEvent<?>> events = lKey.pollEvents();
+				for (WatchEvent<?> event : events) {
+					if (event.kind() == StandardWatchEventKinds.ENTRY_MODIFY) {
+						System.out.println("Detected change in texture folder. Reload of textures triggered ...");
+
+						TextureManager.textureManager().reloadTextures();
+					}
+				}
+
+				lKey.reset();
+			}
+
+		}
+
+	}
+
+	// =============================================
+	// Methods
+	// =============================================
+
+	public void watchTextureDirectory(String pPath) {
+		if (pPath == null || pPath.length() == 0) {
+			System.out.println("Cannot watch texture directory. No valid directory supplied");
+			return;
+		}
+		mResourcePath = Paths.get(pPath);
 
 		try {
 			System.out.println("Create directory watcher on " + mResourcePath);
@@ -67,33 +103,6 @@ public class ResourceManager {
 			e.printStackTrace();
 
 		}
-
 	}
-
-	// =============================================
-	// Core-Method
-	// =============================================
-
-	public void update(GameTime pGameTime) {
-		WatchKey lKey = mTexturePathWatcher.poll();
-		if (lKey != null) {
-
-			List<WatchEvent<?>> events = lKey.pollEvents();
-			for (WatchEvent<?> event : events) {
-				if (event.kind() == StandardWatchEventKinds.ENTRY_MODIFY) {
-					System.out.println("Detected change in texture folder. Reload of textures triggered ...");
-
-					TextureManager.textureManager().reloadTextures();
-				}
-			}
-
-			lKey.reset();
-		}
-
-	}
-
-	// =============================================
-	// Methods
-	// =============================================
 
 }

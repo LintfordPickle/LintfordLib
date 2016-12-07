@@ -34,6 +34,14 @@ LWJGLCore is an abstract class which defines a couple of core methods for an Ope
 # Resource Files
 The LDLibrary also has a couple of resource files that are used as standard by the ScreenManager (such as a 'default' font and texture file). These resources are loaded from with the jar.
 
+You can specify to the ResourceManager in LWJGLCore to watch a texture directory for changes. Any changes to texture
+files at runtime will be automatically reloaded and updated in the running game. To do this, for example, use:
+
+```
+mResourceManager.watchDirectory("res/textures");
+```
+
+
 # GameInfo
 The GameInfo interface provides default methods (Java 1.8) specifying the behaviour of the LWJGL window to be created. Simply override any of the methods to provide custom behvaiour:
 
