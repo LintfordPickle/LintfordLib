@@ -2,12 +2,11 @@
 A Java game library containing LWJGL natives and a game state management framework.
 
 # Usage
-In order to use the framework, you need to download or clone the project and add it to you existing Java project as a library on the build path.
-
-In your main class, you can create a LWJGL window using:
+In order to use the framework, you need to download or clone the project and add it as a 'required project' on the build path. Once you have done this, you should be able to use the classes within. To get started and open a window, you can use:
 
 ```
 public class GameBase extends LWJGLCore {
+
 /** Main entry point for your  application */
 public static void main(String args[]) {
 	GameInfo lGameInfo = new GameInfo() { };
@@ -17,6 +16,22 @@ public static void main(String args[]) {
 }
 ```
 
+LWJGLCore is an abstract class which defines a couple of core methods for an OpenGL game. These methods are called automatically, and are:
+
+void onInitialiseGL(): This is called once at the start of the application. From here you can set the initial state for OpenGL.
+
+void onInitialiseApp(): This method is also called once, and it provides a convenient place to initialise any other classes for your game.
+
+void onLoadContent(): This is called once at the beginning of the application and after onInitialiseGL(). Here you can begin loading OpenGL resources and using the OpenGL context.
+
+boolean onHandleInput(): Called once per frame, before onUpdate(), and is where you can handle input.
+
+void onUpdate(GameTime pGameTime): Called once per frame.
+
+void onDraw(): Called once per frame.
+
+
+# Resource Files
 The LDLibrary also has a couple of resource files that are used as standard by the ScreenManager (such as a 'default' font and texture file). In order to get Eclipse to automatically copy the needed resource files into your project /bin, you need to link a new source folder from:
 
 ```
