@@ -12,6 +12,7 @@ import org.lwjgl.opengl.GL30;
 import net.ld.library.core.camera.ICamera;
 import net.ld.library.core.graphics.ResourceManager;
 import net.ld.library.core.graphics.shaders.ShaderMVP_PT;
+import net.ld.library.core.graphics.sprites.ISprite;
 import net.ld.library.core.graphics.textures.Texture;
 import net.ld.library.core.maths.Matrix4f;
 import net.ld.library.core.maths.Vector4f;
@@ -287,6 +288,42 @@ public class SpriteBatch {
 
 		mCurNumSprites++;
 
+	}
+
+	public void draw(ISprite pSprite, float pPX, float pPY, float pZ, float pWidth, float pHeight, float pScale, Texture pTexture) {
+		draw(pSprite, pPX, pPY, pZ, pWidth, pHeight, 0f, pScale, pTexture);
+	}
+
+	public void draw(ISprite pSprite, float pPX, float pPY, float pZ, float pWidth, float pHeight, float pRotation, float pScale, Texture pTexture) {
+		if (pSprite == null) {
+			return;
+		}
+
+		float lR = 1f;
+		float lG = 1f;
+		float lB = 1f;
+		float lA = 1f;
+
+		float lRotOriginX = 0;
+		float lRotOriginY = 0;
+
+		draw(pSprite.getX(), pSprite.getY(), pSprite.getWidth(), pSprite.getHeight(), pPX, pPY, pZ, pWidth, pHeight, lR, lG, lB, lA, pRotation, lRotOriginX, lRotOriginY, pScale, pScale, pTexture);
+	}
+
+	public void draw(ISprite pSprite, float pPX, float pPY, float pZ, float pWidth, float pHeight, float pRotation, float pRotX, float pRotY, float pScale, Texture pTexture) {
+		if (pSprite == null) {
+			return;
+		}
+
+		draw(pSprite.getX(), pSprite.getY(), pSprite.getWidth(), pSprite.getHeight(), pPX, pPY, pZ, pWidth, pHeight, 1f, 1f, 1f, 1f, pRotation, pRotX, pRotY, pScale, pScale, pTexture);
+	}
+
+	public void draw(ISprite pSprite, float pPX, float pPY, float pZ, float pWidth, float pHeight, float pScale, float pR, float pG, float pB, float pA, Texture pTexture) {
+		if (pSprite == null) {
+			return;
+		}
+
+		draw(pSprite.getX(), pSprite.getY(), pSprite.getWidth(), pSprite.getHeight(), pPX, pPY, pZ, pWidth, pHeight, pScale, pR, pG, pB, pA, pTexture);
 	}
 
 	private void addVertToBuffer(float x, float y, float z, float w, float r, float g, float b, float a, float u, float v) {
