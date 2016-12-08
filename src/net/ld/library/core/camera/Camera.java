@@ -210,8 +210,8 @@ public class Camera implements ICamera {
 
 	public void update(GameTime pGameTime) {
 
-		mWindowWidth = (int) mDisplayConfig.WINDOW_WIDTH;
-		mWindowHeight = (int) mDisplayConfig.WINDOW_HEIGHT;
+		mWindowWidth = (int) DisplayConfig.WINDOW_WIDTH;
+		mWindowHeight = (int) DisplayConfig.WINDOW_HEIGHT;
 
 		if (CAMERA_LAG_EFFECT) {
 			mAcceleration.x = mTargetPosition.x - mPosition.x;
