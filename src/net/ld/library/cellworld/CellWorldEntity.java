@@ -26,6 +26,8 @@ public class CellWorldEntity extends Rectangle {
 	public int cy;
 	public float rx;
 	public float ry;
+	
+	public float radius;
 
 	// Resulting coords
 	public float xx;
