@@ -210,10 +210,11 @@ public class Texture {
 
 			File lTextureFile = new File(mTextureLocation);
 
-			if (mFileSizeOnLoad == lTextureFile.length()) {
-				System.out.println("  ... skipping reload, no file changes");
-				return;
-			}
+			// This isn't always correct. I think it depends on how the png is compressed (small changes don't cause a different in file size).
+//			if (mFileSizeOnLoad == lTextureFile.length()) {
+//				System.out.println("  ... skipping reload, no file changes");
+//				return;
+//			}
 
 			lImage = ImageIO.read(lTextureFile);
 
