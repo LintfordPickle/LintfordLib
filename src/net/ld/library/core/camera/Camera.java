@@ -14,14 +14,14 @@ public class Camera implements ICamera {
 	// =============================================
 
 	/** Determines the maximum zoom in amount */
-	public static final float ZOOM_LEVEL_MAX = 3.0f;
+	public static final float ZOOM_LEVEL_MAX = 1f;
 
 	/** Determines the maximum zoom out amount */
-	public static final float ZOOM_LEVEL_MIN = 0.9f; // 0.8f
+	public static final float ZOOM_LEVEL_MIN = 1f; // 0.8f
 
 	protected static final float ZOOM_ACCELERATE_AMOUNT = 9.0f;
 	protected static final float DRAG = 0.9365f;
-	protected static final boolean CAMERA_LAG_EFFECT = false;
+	protected static final boolean CAMERA_LAG_EFFECT = true;
 
 	// =============================================
 	// Variables
