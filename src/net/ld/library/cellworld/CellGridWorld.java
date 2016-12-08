@@ -39,6 +39,10 @@ public class CellGridWorld {
 	// Properties
 	// =============================================
 	
+	public List<CellWorldEntity> entities(){
+		return mEntities;
+	}
+	
 	public SpriteBatch spriteBatch(){
 		return mSpriteBatch;
 	}
@@ -148,6 +152,25 @@ public class CellGridWorld {
 		// Check entities
 
 		return lResult;
+	}
+	
+	public boolean overlaps(CellWorldEntity e){
+		final int lEntityCount = mEntities.size();
+		for (int i = 0; i < lEntityCount; i++) {
+			CellWorldEntity e1 = mEntities.get(i);
+			if(e1 == e) continue;
+			if(!e1.isInUse()) continue;
+			
+			float lMaxDist = mEntities.get(i).radius + e.radius;
+			float lDistSqr = (e.xx-e1.xx)*(e.xx-e1.xx) + (e.yy-e1.yy)*(e.yy-e1.yy);
+			
+			if(lDistSqr <= lMaxDist*lMaxDist){
+				return true;
+			}
+			
+		}
+		
+		return false;
 	}
 
 	public void addEntity(CellWorldEntity pWorldEntity) {

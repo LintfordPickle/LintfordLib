@@ -58,7 +58,7 @@ public class CellWorldEntity extends Rectangle {
 	// =============================================
 
 	public CellWorldEntity() {
-
+		radius = 16;
 	}
 
 	// =============================================
@@ -96,6 +96,29 @@ public class CellWorldEntity extends Rectangle {
 		if (mParent.hasCollisionAt(cx, cy - 1) && ry <= 0.3f) {
 			ry = 0.3f; // limit ratio
 			dy = 0; // kill vel
+		}
+
+		// Check collisions with other entities
+		int lEntCount = mParent.entities().size();
+		for(int i = 0; i < lEntCount; i++){
+			CellWorldEntity e = mParent.entities().get(i);
+			if(e == this || !e.isInUse()) continue;
+			
+			// Fast distance check
+			if( e!=this && Math.abs(cx-e.cx) <= 2 && Math.abs(cy-e.cy) <= 2 ) {
+				// Real distance check
+				float dist = (float)Math.sqrt( (e.xx-xx)*(e.xx-xx) + (e.yy-yy)*(e.yy-yy) );
+				if( dist <= radius+e.radius ) {
+					float ang = (float)Math.atan2(e.yy-yy, e.xx-xx);
+					float force = 0.2f;
+					float repelPower = (radius+e.radius - dist) / (radius+e.radius);
+					dx -= Math.cos(ang) * repelPower * force;
+					dy -= Math.sin(ang) * repelPower * force;
+					e.dx += Math.cos(ang) * repelPower * force;
+					e.dy += Math.sin(ang) * repelPower * force;
+				}
+			}
+			
 		}
 
 
