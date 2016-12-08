@@ -19,6 +19,7 @@ import net.ld.library.core.config.DisplayConfig;
 import net.ld.library.core.graphics.ResourceManager;
 import net.ld.library.core.graphics.textures.TextureManager;
 import net.ld.library.core.input.InputState;
+import net.ld.library.core.rendering.RenderState;
 import net.ld.library.core.time.GameTime;
 
 public abstract class LWJGLCore {
@@ -34,7 +35,8 @@ public abstract class LWJGLCore {
 	protected Camera mGameCamera;
 	protected HUD mHUDCamera;
 	protected InputState mInputState;
-
+	protected RenderState mRenderState;
+	
 	// =============================================
 	// Properties
 	// =============================================
@@ -66,6 +68,7 @@ public abstract class LWJGLCore {
 		mGameInfo = pGameInfo;
 		mDisplayConfig = new DisplayConfig(mGameInfo);
 		mResourceManager = new ResourceManager(mDisplayConfig);
+		mRenderState = new RenderState();
 
 		// Print out the working directory
 		System.out.println("working directory: " + System.getProperty("user.dir"));
@@ -82,6 +85,8 @@ public abstract class LWJGLCore {
 		
 		mGameTime = new GameTime();
 		mInputState = new InputState(mDisplayConfig, mGameCamera, mHUDCamera, mGameTime);
+		
+		mRenderState.initialise(mHUDCamera, mGameCamera, mGameTime, mDisplayConfig);
 
 		long lWindowID = mDisplayConfig.onCreateWindow();
 
