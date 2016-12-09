@@ -5,7 +5,6 @@ import net.ld.library.core.input.InputState;
 import net.ld.library.core.maths.Matrix4f;
 import net.ld.library.core.maths.Rectangle;
 import net.ld.library.core.maths.Vector2f;
-import net.ld.library.core.maths.Vector3f;
 import net.ld.library.core.time.GameTime;
 
 public class Camera implements ICamera {
@@ -14,16 +13,13 @@ public class Camera implements ICamera {
 	// Constants
 	// =============================================
 
-	/** Determines the maximum zoom in amount */
-	public static final float ZOOM_LEVEL_MAX = 1f;
-
-	/** Determines the maximum zoom out amount */
-	public static final float ZOOM_LEVEL_MIN = 1f; // 0.8f
-
 	protected static final float ZOOM_ACCELERATE_AMOUNT = 9.0f;
 	protected static final float DRAG = 0.9365f;
-	protected static final boolean CAMERA_LAG_EFFECT = true;
+	protected static final boolean CAMERA_PHYSICS = true;
 
+	protected static final float MIN_CAMERA_ZOOM = 0.75f;
+	protected static final float MAX_CAMERA_ZOOM = 2f;
+	
 	// =============================================
 	// Variables
 	// =============================================
@@ -54,6 +50,12 @@ public class Camera implements ICamera {
 	protected float mzNear;
 	protected float mzFar;
 	
+	/** Smaller is further out */
+	protected float mCameraMinZoom;
+	
+	/** Larger is more zoomed in */
+	protected float mCameraMaxZoom;
+	
 	// XNA Camera Chase Sample
 	float stifness = 1800f; // 
 	float damping = 600f; // 
@@ -70,6 +72,29 @@ public class Camera implements ICamera {
 	// Properties
 	// =============================================
 
+	public void setZoomConstraints(float pMin, float pMax){
+		mCameraMinZoom = pMin;
+		
+		if(pMin < MIN_CAMERA_ZOOM){
+			pMin = MIN_CAMERA_ZOOM;
+		}
+		
+		if(pMax > MAX_CAMERA_ZOOM){
+			pMax = MAX_CAMERA_ZOOM;
+		}
+		
+		if(pMin > pMax){
+			// Just crazy talk
+			pMin = pMax = mCameraMaxZoom = 1f;
+			
+		}
+		else{
+			mCameraMaxZoom = pMax;
+			
+		}
+		
+	}
+	
 	@Override
 	public void setPosition(float pX, float pY) {
 		mTargetPosition.x = pX;
@@ -183,6 +208,9 @@ public class Camera implements ICamera {
 		this.mMaxX = pX + pWidth;
 		this.mMinY = pY;
 		this.mMaxY = pY + pHeight;
+		
+		// Set some sane def.
+		mCameraMinZoom = mCameraMaxZoom = 1.0f;
 
 		mBoundingRectangle = new Rectangle(mMinX, mMinY, pWidth, pHeight);
 
@@ -224,7 +252,7 @@ public class Camera implements ICamera {
 		mWindowWidth = (int) DisplayConfig.WINDOW_WIDTH;
 		mWindowHeight = (int) DisplayConfig.WINDOW_HEIGHT;
 
-		if (CAMERA_LAG_EFFECT) {
+		if (CAMERA_PHYSICS) {
 			// XNA Camera Sample (Follow on physics)
 			stretch.x = mPosition.x - mTargetPosition.x;
 			stretch.y = mPosition.y - mTargetPosition.y;
@@ -277,10 +305,10 @@ public class Camera implements ICamera {
 		mZoomAcceleration = 0.0f;
 
 		// Check bounds
-		if (mZoomFactor < ZOOM_LEVEL_MIN)
-			mZoomFactor = ZOOM_LEVEL_MIN;
-		if (mZoomFactor > ZOOM_LEVEL_MAX)
-			mZoomFactor = ZOOM_LEVEL_MAX;
+		if (mZoomFactor < mCameraMinZoom)
+			mZoomFactor = mCameraMinZoom;
+		if (mZoomFactor > mCameraMaxZoom)
+			mZoomFactor = mCameraMaxZoom;
 
 		build(mWindowWidth, mWindowHeight);
 
