@@ -16,6 +16,7 @@ import static org.lwjgl.glfw.GLFW.glfwInit;
 import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
 import static org.lwjgl.glfw.GLFW.glfwSetErrorCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetFramebufferSizeCallback;
+import static org.lwjgl.glfw.GLFW.glfwSetWindowFocusCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowPos;
 import static org.lwjgl.glfw.GLFW.glfwShowWindow;
 import static org.lwjgl.glfw.GLFW.glfwSwapInterval;
@@ -31,6 +32,7 @@ import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallbackI;
 import org.lwjgl.glfw.GLFWFramebufferSizeCallback;
 import org.lwjgl.glfw.GLFWVidMode;
+import org.lwjgl.glfw.GLFWWindowFocusCallback;
 import org.lwjgl.opengl.GL;
 
 import net.ld.library.GameInfo;
@@ -80,7 +82,9 @@ public class DisplayConfig extends BaseConfig {
 	// We need to keep this reference alive
 	@SuppressWarnings("unused")
 	private GLFWFramebufferSizeCallback mFrameBufferSizeCallback;
+	private GLFWWindowFocusCallback mWindowCallbackFunction;
 	private long mWindowID;
+	private boolean mWindowHasFocus;
 	private boolean mRecompileShaders = false;
 
 	List<IResizeListener> mResizeListeners;
@@ -88,6 +92,10 @@ public class DisplayConfig extends BaseConfig {
 	// =============================================
 	// Properties
 	// =============================================
+
+	public boolean hasFocus() {
+		return mWindowHasFocus;
+	}
 
 	public long windowID() {
 		return mWindowID;
@@ -166,24 +174,24 @@ public class DisplayConfig extends BaseConfig {
 			mRecompileShaders = true;
 		}
 
-//		if (pInputState.keyDownTimed(GLFW.GLFW_KEY_F11)) {
-//			mGoFullScreen = !mGoFullScreen;
-//		}
+		// if (pInputState.keyDownTimed(GLFW.GLFW_KEY_F11)) {
+		// mGoFullScreen = !mGoFullScreen;
+		// }
 	}
 
-	public void update(GameTime pGameTime){
-//		if(mGoFullScreen != mFullScreen)
-//		{
-//			mFullScreen = mGoFullScreen;
-//			onCreateWindow();
-//			// Need to cleanup the input buffers etc.
-//		}
+	public void update(GameTime pGameTime) {
+		// if(mGoFullScreen != mFullScreen)
+		// {
+		// mFullScreen = mGoFullScreen;
+		// onCreateWindow();
+		// // Need to cleanup the input buffers etc.
+		// }
 	}
-	
+
 	public void resetFlags() {
 		mRecompileShaders = false;
 		mWindowWasResized = false;
-		
+
 	}
 
 	public void changeResolution(int pWidth, int pHeight) {
@@ -283,11 +291,22 @@ public class DisplayConfig extends BaseConfig {
 			@Override
 			public void invoke(long window, int width, int height) {
 				changeResolution(width, height);
-				;
 
 			}
 		});
-		
+
+		// Add a focus listener on our window
+		glfwSetWindowFocusCallback(mWindowID, mWindowCallbackFunction = new GLFWWindowFocusCallback() {
+
+			@Override
+			public void invoke(long pWindowID, boolean pFocus) {
+				if (pWindowID == mWindowID) // don't know why it wouldn't ..
+					mWindowHasFocus = pFocus;
+
+			}
+
+		});
+
 		GL.createCapabilities();
 
 		return mWindowID;

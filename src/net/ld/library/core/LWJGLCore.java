@@ -127,7 +127,12 @@ public abstract class LWJGLCore {
 
 		// Game loop
 		while (!glfwWindowShouldClose(mDisplayConfig.windowID())) {
-			mGameTime.update();
+
+			// Only update time if window has focus
+			if(mDisplayConfig.hasFocus()){
+				mGameTime.update();
+				
+			}
 
 			onHandleInput();
 
