@@ -125,12 +125,16 @@ public class ScreenManager {
 	}
 
 	public void loadGLContent(ResourceManager pResourceManager) {
-		// Store the reference to the resource manager as we'll be loading more screens later
+		// Store the reference to the resource manager as we'll be loading more
+		// screens later
 		mResourceManager = pResourceManager;
 
-		// Load the minimum font for the screen manager (contains textures for buttons and windows etc.)
-		TextureManager.textureManager().loadTextureFromResource(SCREEN_MANAGER_TEXTURE_NAME, "/res/textures/screenmanager.png", GL11.GL_NEAREST);
-		TextureManager.textureManager().loadTextureFromResource(SCREEN_MANAGER_PATCH_TEXTURE_NAME, "/res/textures/menu9patch.png", GL11.GL_NEAREST);
+		// Load the minimum font for the screen manager (contains textures for
+		// buttons and windows etc.)
+		TextureManager.textureManager().loadTextureFromResource(SCREEN_MANAGER_TEXTURE_NAME,
+				"/res/textures/screenmanager.png", GL11.GL_NEAREST);
+		TextureManager.textureManager().loadTextureFromResource(SCREEN_MANAGER_PATCH_TEXTURE_NAME,
+				"/res/textures/menu9patch.png", GL11.GL_NEAREST);
 
 		int lCount = mScreens.size();
 		for (int i = 0; i < lCount; i++) {
@@ -264,7 +268,7 @@ public class ScreenManager {
 
 	public void exitGame() {
 		// Quit the app
-		GLFW.glfwSetWindowShouldClose(mDisplayConfig.windowID(), GL11.GL_TRUE);
+		GLFW.glfwSetWindowShouldClose(mDisplayConfig.windowID(), true);
 	}
 
 }
