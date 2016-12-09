@@ -1,6 +1,5 @@
 package net.ld.library.core.config;
 
-import static org.lwjgl.glfw.Callbacks.errorCallbackPrint;
 import static org.lwjgl.glfw.GLFW.GLFW_CONTEXT_VERSION_MAJOR;
 import static org.lwjgl.glfw.GLFW.GLFW_CONTEXT_VERSION_MINOR;
 import static org.lwjgl.glfw.GLFW.GLFW_OPENGL_CORE_PROFILE;
@@ -25,17 +24,18 @@ import static org.lwjgl.opengl.GL11.GL_FALSE;
 import static org.lwjgl.opengl.GL11.GL_TRUE;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFWErrorCallbackI;
 import org.lwjgl.glfw.GLFWFramebufferSizeCallback;
-import org.lwjgl.glfw.GLFWvidmode;
-import org.lwjgl.opengl.GLContext;
+import org.lwjgl.glfw.GLFWVidMode;
+import org.lwjgl.opengl.GL;
 
 import net.ld.library.GameInfo;
 import net.ld.library.core.input.InputState;
+import net.ld.library.core.time.GameTime;
 
 public class DisplayConfig extends BaseConfig {
 
@@ -44,13 +44,13 @@ public class DisplayConfig extends BaseConfig {
 	// =============================================
 
 	public static final float GEOMETRY_SCREEN_SAFE_AREA = 20; // px overdraw
-	
+
 	// TODO: Take these from the GameInfo
 	public static int WINDOW_WIDTH;
 	public static int WINDOW_HEIGHT;
 
 	// =============================================
-	// Enums
+	// Enumerations
 	// =============================================
 
 	public enum TARGET_FPS {
@@ -143,7 +143,7 @@ public class DisplayConfig extends BaseConfig {
 		/* set some defaults */
 		WINDOW_WIDTH = mGameInfo.windowWidth();
 		WINDOW_HEIGHT = mGameInfo.windowHeight();
-		
+
 		mFullScreen = mGameInfo.windowCanBeFullscreen();
 		mWindowIsResizable = mGameInfo.windowResizeable();
 		mVSYNCEnabled = true;
@@ -166,15 +166,24 @@ public class DisplayConfig extends BaseConfig {
 			mRecompileShaders = true;
 		}
 
-		if (pInputState.keyDownTimed(GLFW.GLFW_KEY_F11)) {
-			mFullScreen = !mFullScreen;
-			onCreateWindow();
-		}
+//		if (pInputState.keyDownTimed(GLFW.GLFW_KEY_F11)) {
+//			mGoFullScreen = !mGoFullScreen;
+//		}
 	}
 
+	public void update(GameTime pGameTime){
+//		if(mGoFullScreen != mFullScreen)
+//		{
+//			mFullScreen = mGoFullScreen;
+//			onCreateWindow();
+//			// Need to cleanup the input buffers etc.
+//		}
+	}
+	
 	public void resetFlags() {
 		mRecompileShaders = false;
 		mWindowWasResized = false;
+		
 	}
 
 	public void changeResolution(int pWidth, int pHeight) {
@@ -199,12 +208,17 @@ public class DisplayConfig extends BaseConfig {
 
 	}
 
+	GLFWErrorCallbackI d() {
+		return null;
+
+	}
+
 	public long onCreateWindow() {
 
 		// All GLFW errors to the system err print stream
-		glfwSetErrorCallback(errorCallbackPrint(System.err));
+		glfwSetErrorCallback(d());
 
-		if (glfwInit() != GL_TRUE) {
+		if (!glfwInit()) {
 			System.err.println("Unable to initialize GLFW");
 			throw new IllegalStateException("Unable to initialize GLFW");
 		}
@@ -226,10 +240,11 @@ public class DisplayConfig extends BaseConfig {
 		mFullScreen = false;
 		if (mFullScreen && mGameInfo.windowCanBeFullscreen()) {
 
-			// Get the native resolution
-			ByteBuffer lVidMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-			int lFullScreenWidth = GLFWvidmode.width(lVidMode);
-			int lFullScreenHeight = GLFWvidmode.height(lVidMode);
+			// Get the resolution of the primary monitor
+			GLFWVidMode lVidMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+
+			int lFullScreenWidth = lVidMode.width();
+			int lFullScreenHeight = lVidMode.height();
 
 			// Make sure to set the resolution we are actually using
 			changeResolution(lFullScreenWidth, lFullScreenHeight);
@@ -252,17 +267,16 @@ public class DisplayConfig extends BaseConfig {
 		}
 
 		// center the window
-		ByteBuffer lVidMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-		glfwSetWindowPos(mWindowID, (GLFWvidmode.width(lVidMode) - windowWidth()) / 2, (GLFWvidmode.height(lVidMode) - windowHeight()) / 2);
+		// Get the resolution of the primary monitor
+		GLFWVidMode lVidMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+
+		glfwSetWindowPos(mWindowID, (lVidMode.width() - windowWidth()) / 2, (lVidMode.height() - windowHeight()) / 2);
 
 		// Make the openGL the current context
 		glfwMakeContextCurrent(mWindowID);
 
 		glfwSwapInterval(1); // cap to 60 (v-sync)
 		glfwShowWindow(mWindowID);
-
-		//
-		GLContext.createFromCurrent();
 
 		glfwSetFramebufferSizeCallback(mWindowID, mFrameBufferSizeCallback = new GLFWFramebufferSizeCallback() {
 
@@ -273,6 +287,8 @@ public class DisplayConfig extends BaseConfig {
 
 			}
 		});
+		
+		GL.createCapabilities();
 
 		return mWindowID;
 

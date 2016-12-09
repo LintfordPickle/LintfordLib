@@ -40,10 +40,12 @@ public class InputState {
 		public void invoke(long pWindow, int pKey, int pScanCode, int pAction, int pMods) {
 			mLastInputActive = INPUT_TYPES.Keyboard;
 
-			// We need to handle keypressed differently depending on whether or not some UI component is
+			// We need to handle keypressed differently depending on whether or
+			// not some UI component is
 			// using 'buffered' input.
 			if (mCaptureKeyboardInput) {
-				// Buffered input (here we just listen for special keys (backspace, return etc.)
+				// Buffered input (here we just listen for special keys
+				// (backspace, return etc.)
 				if (pAction == GLFW.GLFW_PRESS) {
 					if (mIBufferedInputCallback != null) {
 						if (pKey == GLFW.GLFW_KEY_ENTER) {
@@ -60,16 +62,20 @@ public class InputState {
 
 						else if (pKey == GLFW.GLFW_KEY_BACKSPACE) {
 							if (mIBufferedInputCallback.getStringBuilder().length() > 0) {
-								mIBufferedInputCallback.getStringBuilder().delete(mIBufferedInputCallback.getStringBuilder().length() - 1, mIBufferedInputCallback.getStringBuilder().length());
+								mIBufferedInputCallback.getStringBuilder().delete(
+										mIBufferedInputCallback.getStringBuilder().length() - 1,
+										mIBufferedInputCallback.getStringBuilder().length());
 								mIBufferedInputCallback.onKeyPressed((char) pKey);
 							}
 						}
 
 						// Treat some keys as unbuffered
-						else if (pKey == GLFW.GLFW_KEY_LEFT || pKey == GLFW.GLFW_KEY_UP || pKey == GLFW.GLFW_KEY_RIGHT || pKey == GLFW.GLFW_KEY_DOWN) {
+						else if (pKey == GLFW.GLFW_KEY_LEFT || pKey == GLFW.GLFW_KEY_UP || pKey == GLFW.GLFW_KEY_RIGHT
+								|| pKey == GLFW.GLFW_KEY_DOWN) {
 							if (pKey < InputState.KEY_LIMIT) {
 								if (pKey != -1)
 									mInputState.mKeyButtonStates[pKey] = !(pAction == GLFW.GLFW_RELEASE);
+
 							}
 						}
 					}
@@ -80,10 +86,12 @@ public class InputState {
 				if (pKey < InputState.KEY_LIMIT) {
 					if (pKey != -1)
 						mInputState.mKeyButtonStates[pKey] = !(pAction == GLFW.GLFW_RELEASE);
+
 				}
 			}
 
-			// however, if this was a key release, then at least set the array to 0
+			// however, if this was a key release, then at least set the array
+			// to 0
 			if (pAction == GLFW.GLFW_RELEASE) {
 				if (pKey != -1)
 					mInputState.mKeyButtonStates[pKey] = false;
@@ -229,7 +237,13 @@ public class InputState {
 	public MouseButtonCallback mMouseButtonCallback;
 	public MousePositionCallback mMousePositionCallback;
 	public MouseScrollCallback mMouseScrollCallback;
-	private INPUT_TYPES mLastInputActive = INPUT_TYPES.Keyboard; // we use this because sometimes the user is locked to a text input
+	private INPUT_TYPES mLastInputActive = INPUT_TYPES.Keyboard; // we use this
+																	// because
+																	// sometimes
+																	// the user
+																	// is locked
+																	// to a text
+																	// input
 
 	private float mMenuClickTimer;
 	private float mKeyTimer;
@@ -318,7 +332,8 @@ public class InputState {
 	}
 
 	public boolean mouseTimedRightClick() {
-		if (!mRightClickHandled && mMouseButtonStates[GLFW.GLFW_MOUSE_BUTTON_RIGHT] && mMenuClickTimer > TIMED_CLICK_DELAY) {
+		if (!mRightClickHandled && mMouseButtonStates[GLFW.GLFW_MOUSE_BUTTON_RIGHT]
+				&& mMenuClickTimer > TIMED_CLICK_DELAY) {
 			mRightClickHandled = true;
 			return true;
 		}

@@ -9,8 +9,6 @@ import static org.lwjgl.glfw.GLFW.glfwSetScrollCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
-import static org.lwjgl.opengl.GL11.GL_FALSE;
-import static org.lwjgl.opengl.GL11.GL_TRUE;
 
 import net.ld.library.GameInfo;
 import net.ld.library.core.camera.Camera;
@@ -118,11 +116,17 @@ public abstract class LWJGLCore {
 		mResourceManager.loadGLContent();
 
 	}
+	
+	protected void onUnloadGLContent() {
+		mResourceManager.unloadGLContent();
+		
+
+	}
 
 	protected void onRunGameLoop() {
 
 		// Game loop
-		while (glfwWindowShouldClose(mDisplayConfig.windowID()) == GL_FALSE) {
+		while (!glfwWindowShouldClose(mDisplayConfig.windowID())) {
 			mGameTime.update();
 
 			onHandleInput();
@@ -138,17 +142,21 @@ public abstract class LWJGLCore {
 
 			glfwPollEvents();
 		}
+		
+		onUnloadGLContent();
 
 		System.exit(0);
 	}
 
 	protected void onHandleInput(){
+		mDisplayConfig.handleInput(mInputState);
 		mHUDCamera.handleInput(mInputState);
 		mGameCamera.handleInput(mInputState);
 		
 	}
 
 	protected void onUpdate(GameTime pGameTime) {
+		mDisplayConfig.update(pGameTime);
 		mInputState.update(pGameTime);
 		mHUDCamera.update(pGameTime);
 		mGameCamera.update(pGameTime);
@@ -158,8 +166,8 @@ public abstract class LWJGLCore {
 	protected abstract void onDraw();
 
 	public void closeApp() {
-		// Close the glfw window
-		glfwSetWindowShouldClose(mDisplayConfig.windowID(), GL_TRUE);
+		// Close the GLFW window
+		glfwSetWindowShouldClose(mDisplayConfig.windowID(), true);
 	}
 
 	// =============================================

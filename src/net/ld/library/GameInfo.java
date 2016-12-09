@@ -11,6 +11,7 @@ public interface GameInfo {
 	}
 
 	public default String configFileLocation() {
+		// GL11.GL_LINEAR;
 		return "";
 	}
 
