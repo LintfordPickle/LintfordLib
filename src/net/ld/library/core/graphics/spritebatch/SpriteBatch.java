@@ -1,8 +1,10 @@
 package net.ld.library.core.graphics.spritebatch;
 
+import static org.lwjgl.system.jemalloc.JEmalloc.je_free;
+import static org.lwjgl.system.jemalloc.JEmalloc.je_malloc;
+
 import java.nio.FloatBuffer;
 
-import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL15;
@@ -119,7 +121,9 @@ public class SpriteBatch {
 		mModelMatrix = new Matrix4f();
 		mTempVector = new Vector4f();
 
-		mBuffer = BufferUtils.createFloatBuffer(MAX_SPRITES * NUM_VERTS_PER_SPRITE * stride);
+		// mBuffer = BufferUtils.createFloatBuffer(MAX_SPRITES * NUM_VERTS_PER_SPRITE * stride);
+		
+		
 	}
 
 	// =============================================
@@ -131,6 +135,8 @@ public class SpriteBatch {
 
 		mVaoId = GL30.glGenVertexArrays();
 		mVboId = GL15.glGenBuffers();
+		
+		mBuffer = je_malloc(MAX_SPRITES * NUM_VERTS_PER_SPRITE * stride).asFloatBuffer();
 
 		mIsLoaded = true;
 	}
@@ -140,6 +146,8 @@ public class SpriteBatch {
 
 		GL30.glDeleteVertexArrays(mVaoId);
 		GL15.glDeleteBuffers(mVboId);
+		
+		je_free(mBuffer);
 
 		mIsLoaded = false;
 	}
