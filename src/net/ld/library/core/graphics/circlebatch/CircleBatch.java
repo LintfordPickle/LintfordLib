@@ -16,7 +16,6 @@ import net.ld.library.core.graphics.VertexDataStructurePC;
 import net.ld.library.core.graphics.shaders.ShaderMVP_PT;
 import net.ld.library.core.maths.Matrix4f;
 
-
 public class CircleBatch {
 
 	// =============================================
@@ -72,7 +71,7 @@ public class CircleBatch {
 
 		mVaoId = GL30.glGenVertexArrays();
 		mVboId = GL15.glGenBuffers();
-		
+
 		final int NUM_VERTS_PER_LINE = 2;
 		mBuffer = je_malloc(MAX_LINES * NUM_VERTS_PER_LINE * VertexDataStructurePC.stride).asFloatBuffer();
 
@@ -85,7 +84,7 @@ public class CircleBatch {
 
 		GL30.glDeleteVertexArrays(mVaoId);
 		GL15.glDeleteBuffers(mVboId);
-		
+
 		je_free(mBuffer);
 
 		mIsLoaded = false;
@@ -104,26 +103,31 @@ public class CircleBatch {
 	}
 
 	public void draw(float pX, float pY, float pRadius, float pZ) {
+		draw(pX, pY, pRadius, 0f, pZ);
+
+	}
+
+	public void draw(float pX, float pY, float pRadius, float pRotation, float pZ) {
 
 		if (!mIsDrawing)
 			return;
 
 		int lNumPoints = 32;
-		float lAng = 0;
-		float lDegPerSeg = (float)(Math.PI * 2) / lNumPoints;
-		
-		for(int i = 0; i < lNumPoints; i++){
-			float lXX = (float)Math.cos(lAng) * pRadius;
-			float lYY = (float)Math.sin(lAng) * pRadius;
-			
+		float lAng = (float) Math.toRadians(pRotation);
+		float lDegPerSeg = (float) (Math.PI * 2) / lNumPoints;
+
+		for (int i = 0; i < lNumPoints; i++) {
+			float lXX = (float) Math.cos(lAng) * pRadius;
+			float lYY = (float) Math.sin(lAng) * pRadius;
+
 			lAng += lDegPerSeg;
-			
+
 			addVertToBuffer(pX + lXX, pY + lYY, pZ, 1f, r, g, b, a);
-			
+
 		}
 
 	}
-	
+
 	private void addVertToBuffer(float x, float y, float z, float w, float r, float g, float b, float a) {
 		mBuffer.put(x);
 		mBuffer.put(y);
@@ -155,8 +159,10 @@ public class CircleBatch {
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, mVboId);
 		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, mBuffer, GL15.GL_DYNAMIC_DRAW);
 
-		GL20.glVertexAttribPointer(0, VertexDataStructurePC.positionElementCount, GL11.GL_FLOAT, false, VertexDataStructurePC.stride, VertexDataStructurePC.positionByteOffset);
-		GL20.glVertexAttribPointer(1, VertexDataStructurePC.colorElementCount, GL11.GL_FLOAT, false, VertexDataStructurePC.stride, VertexDataStructurePC.colorByteOffset);
+		GL20.glVertexAttribPointer(0, VertexDataStructurePC.positionElementCount, GL11.GL_FLOAT, false,
+				VertexDataStructurePC.stride, VertexDataStructurePC.positionByteOffset);
+		GL20.glVertexAttribPointer(1, VertexDataStructurePC.colorElementCount, GL11.GL_FLOAT, false,
+				VertexDataStructurePC.stride, VertexDataStructurePC.colorByteOffset);
 
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
 		GL30.glBindVertexArray(0);
