@@ -4,8 +4,6 @@ import static org.lwjgl.system.jemalloc.JEmalloc.je_free;
 import static org.lwjgl.system.jemalloc.JEmalloc.je_malloc;
 
 import java.nio.FloatBuffer;
-import java.util.LinkedList;
-import java.util.Queue;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
@@ -27,6 +25,7 @@ public class LineBatch {
 	// =============================================
 
 	private static final int MAX_LINES = 400;
+	protected static final int NUM_VERTS_PER_SPRITE = 2;
 
 	private static final String VERT_FILENAME = "/res/shaders/shader_basic_col.vert";
 	private static final String FRAG_FILENAME = "/res/shaders/shader_basic_col.frag";
@@ -40,7 +39,6 @@ public class LineBatch {
 	private int mVertexCount = 0;
 	public float r, g, b, a;
 
-	private Queue<VertexDataStructurePC> mTempVertQueue;
 	private ICamera mCamera;
 	private ShaderMVP_PT mShader;
 	private Matrix4f mModelMatrix;
@@ -62,11 +60,7 @@ public class LineBatch {
 			}
 		};
 
-		mTempVertQueue = new LinkedList<>();
-
 		a = r = g = b = 1f;
-
-		
 
 		mModelMatrix = new Matrix4f();
 		mIsLoaded = false;
@@ -106,10 +100,11 @@ public class LineBatch {
 	// =============================================
 
 	public void begin(ICamera pCamera) {
-		mTempVertQueue.clear();
 		mCamera = pCamera;
 		mCurNumSprites = 0;
 		mIsDrawing = true;
+		mVertexCount = 0;
+		mBuffer.clear();
 	}
 
 	public void drawRect(Rectangle pRect, float pZ) {
@@ -143,20 +138,31 @@ public class LineBatch {
 			mCurNumSprites = 0;
 		}
 
-		// begin
-		VertexDataStructurePC lNewVertex0 = new VertexDataStructurePC();
-		lNewVertex0.xyzw(pP1X, pP1Y, pZ, 1f);
-		lNewVertex0.rgba(r, g, b, a);
-
-		// end
-		VertexDataStructurePC lNewVertex1 = new VertexDataStructurePC();
-		lNewVertex1.xyzw(pP2X, pP2Y, pZ, 1f);
-		lNewVertex1.rgba(r, g, b, a);
-
-		mTempVertQueue.add(lNewVertex0);
-		mTempVertQueue.add(lNewVertex1);
-
+		addVertToBuffer(pP1X, pP1Y, pZ, 1f, 1f, 1f, 1f, 1f);
+		addVertToBuffer(pP2X, pP2Y, pZ, 1f, 1f, 1f, 1f, 1f);
+		
 		mCurNumSprites++;
+	}
+	
+	private void addVertToBuffer(float x, float y, float z, float w, float r, float g, float b, float a) {
+		// If the buffer is already full, we need to draw what is currently in the buffer and start a new one.
+		if (mCurNumSprites >= MAX_LINES * NUM_VERTS_PER_SPRITE - 1) {
+			flush();
+
+		}
+
+		mBuffer.put(x);
+		mBuffer.put(y);
+		mBuffer.put(z);
+		mBuffer.put(w);
+
+		mBuffer.put(r);
+		mBuffer.put(g);
+		mBuffer.put(b);
+		mBuffer.put(a);
+
+		mVertexCount++;
+
 	}
 
 	public void end() {
@@ -165,14 +171,8 @@ public class LineBatch {
 	}
 
 	private void flush() {
-		mVertexCount = mTempVertQueue.size();
 		if (mVertexCount == 0 || !mIsLoaded)
 			return;
-
-		mBuffer.clear();
-		for (int i = 0; i < mVertexCount; i++) {
-			mBuffer.put(mTempVertQueue.poll().getElements());
-		}
 
 		mBuffer.flip();
 		mCurNumSprites = 0;
