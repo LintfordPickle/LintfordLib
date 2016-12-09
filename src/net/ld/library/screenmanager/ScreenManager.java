@@ -131,10 +131,8 @@ public class ScreenManager {
 
 		// Load the minimum font for the screen manager (contains textures for
 		// buttons and windows etc.)
-		TextureManager.textureManager().loadTextureFromResource(SCREEN_MANAGER_TEXTURE_NAME,
-				"/res/textures/screenmanager.png", GL11.GL_NEAREST);
-		TextureManager.textureManager().loadTextureFromResource(SCREEN_MANAGER_PATCH_TEXTURE_NAME,
-				"/res/textures/menu9patch.png", GL11.GL_NEAREST);
+		TextureManager.textureManager().loadTextureFromResource(SCREEN_MANAGER_TEXTURE_NAME, "/res/textures/screenmanager.png", GL11.GL_NEAREST);
+		TextureManager.textureManager().loadTextureFromResource(SCREEN_MANAGER_PATCH_TEXTURE_NAME, "/res/textures/menu9patch.png", GL11.GL_NEAREST);
 
 		int lCount = mScreens.size();
 		for (int i = 0; i < lCount; i++) {
@@ -190,11 +188,10 @@ public class ScreenManager {
 
 				}
 
-				// if (!lScreen.isPopup()) {
-				//
-				// lCoveredByOtherScreen = true;
-				//
-				// }
+				if (!lScreen.isPopup()) {
+					lCoveredByOtherScreen = true;
+
+				}
 
 			}
 
