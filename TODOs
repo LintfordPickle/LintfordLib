@@ -1,8 +1,21 @@
+This is a preparation for the LUDUM DARE
+37.
+
+Getting boiler plate java (lwjgl) code out 
+of the way.
+
+
+
 TODOs
 ----------------------
 
-+ particle system
-+ DebugLineRenderer, DebugRectangleRenderer and DebugCircleRenderer
++ need dialogs to inform players of stuff
+   - check that dialogs are cleaned up after
+     closing
+   
+
++ Particle system
+
 + OpenAL
-+ Camera zoom constants should be set from within the application (def: 1f)
-+ add a CellGridWorldRenderer
+
++ Add a CellGridWorldRenderer

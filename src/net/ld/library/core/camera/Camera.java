@@ -13,6 +13,9 @@ public class Camera implements ICamera {
 	// Constants
 	// =============================================
 
+	protected static final float Z_NEAR = -1f;
+	protected static final float Z_FAR = 10f;
+	
 	protected static final float ZOOM_ACCELERATE_AMOUNT = 9.0f;
 	protected static final float DRAG = 0.9365f;
 	protected static final boolean CAMERA_PHYSICS = true;
@@ -47,8 +50,8 @@ public class Camera implements ICamera {
 	protected int mWindowHeight;
 	protected float mScaledWindowWidth;
 	protected float mScaledWindowHeight;
-	protected float mzNear;
-	protected float mzFar;
+	protected float mzNear = Z_NEAR;
+	protected float mzFar = Z_FAR;
 
 	/** Smaller is further out */
 	protected float mCameraMinZoom;
@@ -333,7 +336,7 @@ public class Camera implements ICamera {
 	private void createOrtho(final float pW, final float pH) {
 
 		mProjectionMatrix.setIdentity();
-		mProjectionMatrix.createOrtho(-pW * 0.5f, pW * 0.5f, pH * 0.5f, -pH * 0.5f, -1.0f, 10.0f);
+		mProjectionMatrix.createOrtho(-pW * 0.5f, pW * 0.5f, pH * 0.5f, -pH * 0.5f, mzNear, mzFar);
 
 	}
 

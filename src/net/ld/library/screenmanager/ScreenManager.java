@@ -10,6 +10,7 @@ import net.ld.library.core.camera.HUD;
 import net.ld.library.core.camera.ICamera;
 import net.ld.library.core.config.DisplayConfig;
 import net.ld.library.core.graphics.ResourceManager;
+import net.ld.library.core.graphics.spritebatch.SpriteBatch;
 import net.ld.library.core.graphics.textures.TextureManager;
 import net.ld.library.core.input.InputState;
 import net.ld.library.core.rendering.RenderState;
@@ -46,9 +47,16 @@ public class ScreenManager {
 	private boolean mIsInitialised;
 	private boolean mIsLoaded;
 
+	// Common SpriteBatch (all entries/windows share textures)
+	SpriteBatch mSpriteBatch;
+
 	// =============================================
 	// Properties
 	// =============================================
+
+	public SpriteBatch spriteBatch() {
+		return mSpriteBatch;
+	}
 
 	public RenderState renderState() {
 		return mRenderState;
@@ -98,6 +106,8 @@ public class ScreenManager {
 		mScreens = new ArrayList<Screen>();
 		mScreensToUpdate = new ArrayList<Screen>();
 
+		mSpriteBatch = new SpriteBatch();
+
 		mRenderState = new RenderState();
 
 		mIsInitialised = false;
@@ -139,6 +149,8 @@ public class ScreenManager {
 			mScreens.get(i).loadGLContent(pResourceManager);
 		}
 
+		mSpriteBatch.loadGLContent(pResourceManager);
+
 		mIsLoaded = true;
 	}
 
@@ -149,6 +161,9 @@ public class ScreenManager {
 			mScreens.get(i).unloadGLContent();
 
 		}
+
+		mSpriteBatch.unloadGLContent();
+
 	}
 
 	public void update(GameTime pGameTime) {
@@ -224,15 +239,11 @@ public class ScreenManager {
 			pScreen.screenManager(this);
 			pScreen.isExiting(false);
 
-			if (mIsInitialised) {// screen manager already initialized? then
-									// load this screen manually
-				// TODO: Add some kind of check for already initialise (as we do
-				// this in multiple places)
+			if (mIsInitialised) {
 				pScreen.initialise();
 			}
 
-			if (mIsLoaded) { // screen manager already loaded? then load this
-								// screen manually
+			if (mIsLoaded) {
 				if (!pScreen.mIsLoaded) {
 					pScreen.loadGLContent(mResourceManager);
 				}

@@ -2,9 +2,9 @@ package net.ld.library.screenmanager.dialogs;
 
 import net.ld.library.core.graphics.ResourceManager;
 import net.ld.library.core.graphics.spritebatch.SpriteBatch;
-import net.ld.library.core.graphics.spritebatch.SpriteBatch9Patch;
 import net.ld.library.core.graphics.textures.TextureManager;
 import net.ld.library.core.input.InputState;
+import net.ld.library.core.maths.Rectangle;
 import net.ld.library.core.rendering.RenderState;
 import net.ld.library.core.time.GameTime;
 import net.ld.library.screenmanager.MenuScreen;
@@ -22,7 +22,6 @@ public abstract class BaseDialog extends MenuScreen {
 	protected float mDialogHeight;
 
 	private SpriteBatch mSpriteBatch;
-	private SpriteBatch9Patch m9Patch;
 
 	// ===========================================================
 	// Constructor
@@ -32,11 +31,11 @@ public abstract class BaseDialog extends MenuScreen {
 		super(pScreenManager, "");
 
 		mSpriteBatch = new SpriteBatch();
-		m9Patch = new SpriteBatch9Patch();
 
 		mTitleString = pDialogTitle;
 		mMessageString = pDialogMessage;
 
+		mZ = 3f; // default to 3 for dialogs
 		mIsPopup = true; // don't hide underlying screens
 	}
 
@@ -49,14 +48,12 @@ public abstract class BaseDialog extends MenuScreen {
 		super.loadGLContent(pResourceManager);
 
 		mSpriteBatch.loadGLContent(pResourceManager);
-		m9Patch.loadGLContent(pResourceManager);
 
 	}
 
 	@Override
 	public void unloadGLContent() {
 		mSpriteBatch.unloadGLContent();
-		m9Patch.unloadGLContent();
 
 	}
 
@@ -72,34 +69,34 @@ public abstract class BaseDialog extends MenuScreen {
 
 	@Override
 	public void draw(RenderState pRenderState) {
-		final float lScreenWidthHalf = mDisplayConfig.windowWidth() * 0.5f;
-		final float lScreenHeightHalf = mDisplayConfig.windowHeight() * 0.5f;
-
 		final float lDialogWidth = 400f;
-		final float lDialogHeight = 199f;
+		final float lDialogHeight = 200f;
 
 		/*
 		 * position the buttons at the bottom of the dynamically sized dialog ...
 		 */
-		mEntryOffsetFromTop = lScreenHeightHalf + lDialogHeight * 0.5f - 120;
+		mEntryOffsetFromTop = 220;
+
+		Rectangle lHUDRect = pRenderState.hudCamera().boundingRectangle();
 
 		/* Render background panel */
-		m9Patch.begin(mScreenManager.HUD());
-		m9Patch.draw9Patch(lScreenWidthHalf - lDialogWidth * 0.5f, lScreenHeightHalf - lDialogHeight * 0.5f, -.4f, lDialogWidth, lDialogHeight, 1f, TextureManager.textureManager().getTexture(ScreenManager.SCREEN_MANAGER_PATCH_TEXTURE_NAME));
-		m9Patch.end();
+		mScreenManager.spriteBatch().begin(pRenderState.hudCamera());
+		mScreenManager.spriteBatch().draw(0, 0, 16, 16, lHUDRect.centerX() - lDialogWidth / 2, lHUDRect.centerY() - lDialogHeight / 2, mZ, lDialogWidth, lDialogHeight, 1f,
+				TextureManager.textureManager().getTexture(ScreenManager.SCREEN_MANAGER_TEXTURE_NAME));
+		mScreenManager.spriteBatch().end();
 
 		/* Render title and message */
 
 		if (mTitleString != null) {
-			mSpriteBatch.begin(mScreenManager.HUD());
-			// mSpriteBatch.draw(mTitleString, lScreenWidthHalf - lDialogWidth * 0.5f + 2, lScreenHeightHalf - lDialogHeight * 0.5f - 4, -0.5f, 0.9f, TextureManager.textureManager().getTexture("Font"));
-			mSpriteBatch.end();
+			mMenuTitleFont.begin(pRenderState.hudCamera());
+			mMenuTitleFont.draw(mTitleString, lHUDRect.centerX() - lDialogWidth / 2 + 5, lHUDRect.centerY() - lDialogHeight / 2 + 5, mZ + 0.1f, 1.0f);
+			mMenuTitleFont.end();
 		}
 
 		if (mMessageString != null) {
-			mSpriteBatch.begin(mScreenManager.HUD());
-			// mSpriteBatch.draw(mMessageString, lScreenWidthHalf - lDialogWidth * 0.5f + 15, lScreenHeightHalf - lDialogHeight * 0.5f + 25, -0.5f, 0.85f, TextureManager.textureManager().getTexture("Font"));
-			mSpriteBatch.end();
+			mMenuFont.begin(pRenderState.hudCamera());
+			mMenuFont.draw(mMessageString, lHUDRect.centerX() - lDialogWidth / 2 + 5, lHUDRect.centerY() - lDialogHeight / 2 + 40, mZ + 0.1f, 1f);
+			mMenuFont.end();
 		}
 
 		/* Render buttons */

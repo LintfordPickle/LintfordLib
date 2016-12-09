@@ -31,6 +31,8 @@ public class MenuEntry extends Rectangle {
 	// Variables
 	// =============================================
 
+	protected IMenuEntryClickListener mClickListener;
+	
 	protected ScreenManager mScreenManager;
 	protected DisplayConfig mDisplayConfig;
 	protected MenuScreen mParentScreen;
@@ -39,10 +41,9 @@ public class MenuEntry extends Rectangle {
 	protected String mText;
 	protected float mScale;
 	private float mScaleCounter;
-	protected IMenuEntryClickListener mClickListener;
 	protected int mMenuEntryID;
 	protected boolean mDrawBackground;
-	protected boolean mScaleonHover;
+	protected boolean mScaleOnHover;
 
 	protected float mAnimationTimer;
 
@@ -54,16 +55,17 @@ public class MenuEntry extends Rectangle {
 	protected float mClickTimer;
 	protected BUTTON_SIZE mButtonSize = BUTTON_SIZE.normal;
 
+	// FIXME: Get rid of this (not batching if it is one SpriteBatch per menu entry!)
 	protected SpriteBatch mSpriteBatch;
 
 	private boolean mIsInitialised, mIsLoaded;
-	public float mZ;
 
 	protected float mHorizontalPadding = 5f;
 	protected float mVerticalPadding = 5f;
 
 	boolean isAnimating;
 	float animationTimeRemaining;
+	public float mZ;
 
 	// =============================================
 	// Properties
@@ -182,7 +184,9 @@ public class MenuEntry extends Rectangle {
 		mCanHaveFocus = true;
 		mCanHoverOver = true;
 		mDrawBackground = true;
-		mScaleonHover = false;
+		mScaleOnHover = false;
+		
+		mZ = 2f;
 
 	}
 
@@ -220,6 +224,8 @@ public class MenuEntry extends Rectangle {
 
 	public void unloadGLContent() {
 		mSpriteBatch.unloadGLContent();
+		
+		mClickListener = null; // kill reference
 
 		mIsLoaded = false;
 
@@ -270,12 +276,12 @@ public class MenuEntry extends Rectangle {
 		}
 		mClickTimer += pGameTime.elapseGameTime();
 
-		if (mScaleonHover && mHasFocus && canHaveFocus()) {
+		if (mScaleOnHover && mHasFocus && canHaveFocus()) {
 			mScaleCounter += pGameTime.elapseGameTime() / 500.0f;
 			mScale = 0.75f + (float) (Math.cos(mScaleCounter) * 0.05f);
 		}
 
-		else if (mScaleonHover && mHoveredOver) {
+		else if (mScaleOnHover && mHoveredOver) {
 			mScaleCounter += pGameTime.elapseGameTime() / 500.0f;
 			mScale = 0.75f + (float) (Math.cos(mScaleCounter) * 0.05f);
 
@@ -308,7 +314,7 @@ public class MenuEntry extends Rectangle {
 		// Render the MenuEntry label
 		float lScale = 1f;
 		mParentScreen.font().begin(mScreenManager.HUD());
-		mParentScreen.font().draw(mText, x + width / 2 - mParentScreen.font().bitmap().getStringWidth(mText, lScale) * 0.5f, y + height / 2 - 10, -0.5f, 0.97f, .92f, .95f, 1f, lScale);
+		mParentScreen.font().draw(mText, x + width / 2 - mParentScreen.font().bitmap().getStringWidth(mText, lScale) * 0.5f, y + height / 2 - 10, mZ + 0.1f, 0.97f, .92f, .95f, 1f, lScale);
 		mParentScreen.font().end();
 	}
 

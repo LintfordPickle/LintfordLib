@@ -49,11 +49,21 @@ public class ConfirmationDialog extends BaseDialog {
 
 		menuEntries().add(mCancelEntry);
 		menuEntries().add(mConfirmEntry);
+		
 	}
 
 	// ===========================================================
 	// Core-Methods
 	// ===========================================================
+	
+	@Override
+	public void unloadGLContent() {
+		super.unloadGLContent();
+		
+		mCancelEntry.unloadGLContent();
+		mConfirmEntry.unloadGLContent();
+		
+	}
 	
 	@Override
 	protected void handleOnClick() {

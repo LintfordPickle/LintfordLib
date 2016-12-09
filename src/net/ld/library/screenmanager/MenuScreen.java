@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.lwjgl.glfw.GLFW;
-import org.lwjgl.opengl.GL11;
 
 import net.ld.library.core.graphics.ResourceManager;
 import net.ld.library.core.graphics.fonts.FontUnit;
@@ -96,6 +95,7 @@ public abstract class MenuScreen extends Screen implements IMenuEntryClickListen
 	protected float mRightMargin;
 	protected float mTopMargin;
 	protected float mBottomMargin;
+	protected float mZ; // some windows (dialogs) need better control of the z order
 
 	protected boolean mESCBackEnabled;
 
@@ -155,6 +155,7 @@ public abstract class MenuScreen extends Screen implements IMenuEntryClickListen
 		mESCBackEnabled = true;
 
 		mEntryOffsetFromTop = 90;
+		mZ = 2f; // default to 2
 
 	}
 
@@ -302,6 +303,7 @@ public abstract class MenuScreen extends Screen implements IMenuEntryClickListen
 
 			lEntry.x = lX - lEntry.width / 2;
 			lEntry.y = lPosY + lOffsetFromTop;
+			lEntry.mZ = mZ + 0.1f;
 
 			lPosY += (lEntry.height + 35);
 		}
@@ -338,12 +340,10 @@ public abstract class MenuScreen extends Screen implements IMenuEntryClickListen
 		// make sure our entries are in the right place before we draw them
 		updateMenuEntryLocations(pRenderState);
 
-		GL11.glDisable(GL11.GL_DEPTH_TEST);
-
 		Rectangle lHUDRect = mScreenManager.HUD().boundingHUDRectange();
 		
 		mMenuTitleFont.begin(mScreenManager.HUD());
-		mMenuTitleFont.draw(mMenuTitle, lHUDRect.left() + 5, lHUDRect.top() + 5, 1f, 1f, 1f, 1f, 1f, 1f);
+		mMenuTitleFont.draw(mMenuTitle, lHUDRect.left() + 5, lHUDRect.top() + 5, 2f, 1f, 1f, 1f, 1f, 1f);
 		mMenuTitleFont.end();
 
 		mMenuFont.begin(mScreenManager.HUD());

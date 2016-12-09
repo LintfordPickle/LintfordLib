@@ -87,10 +87,6 @@ public class FontUnit {
 		mFontSpriteBatch.begin(pCamera);
 	}
 
-	public void draw(String pText, float pX, float pY, float pScale) {
-		mFontSpriteBatch.draw(pText, pX, pY, pScale);
-	}
-
 	public void draw(String pText, float pX, float pY, float pZ, float pScale) {
 		mFontSpriteBatch.draw(pText, pX, pY, pZ, pScale, AWTBitmapFontSpriteBatch.NO_WORD_WRAP);
 	}

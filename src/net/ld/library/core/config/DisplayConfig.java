@@ -308,6 +308,8 @@ public class DisplayConfig extends BaseConfig {
 		});
 
 		GL.createCapabilities();
+		
+		mWindowHasFocus = true;
 
 		return mWindowID;
 
