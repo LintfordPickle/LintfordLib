@@ -5,6 +5,7 @@ import net.ld.library.core.input.InputState;
 import net.ld.library.core.maths.Matrix4f;
 import net.ld.library.core.maths.Rectangle;
 import net.ld.library.core.maths.Vector2f;
+import net.ld.library.core.maths.Vector3f;
 import net.ld.library.core.time.GameTime;
 
 public class Camera implements ICamera {
@@ -52,6 +53,16 @@ public class Camera implements ICamera {
 	protected float mScaledWindowHeight;
 	protected float mzNear;
 	protected float mzFar;
+	
+	// XNA Camera Chase Sample
+	float stifness = 1800f; // 
+	float damping = 600f; // 
+	float mass = 50f;
+	
+	Vector2f stretch = new Vector2f();
+	Vector2f force = new Vector2f();
+	
+	// END
 
 	protected Vector2f mMouseCameraSpace;
 
@@ -214,24 +225,34 @@ public class Camera implements ICamera {
 		mWindowHeight = (int) DisplayConfig.WINDOW_HEIGHT;
 
 		if (CAMERA_LAG_EFFECT) {
-			mAcceleration.x = mTargetPosition.x - mPosition.x;
-			mAcceleration.y = mTargetPosition.y - mPosition.y;
+			// XNA Camera Sample (Follow on physics)
+			stretch.x = mPosition.x - mTargetPosition.x;
+			stretch.y = mPosition.y - mTargetPosition.y;
+			
+			// Calc force
+			force.x = -stifness * stretch.x - damping * mVelocity.x;
+			force.y = -stifness * stretch.y - damping * mVelocity.y;
 
+			mAcceleration.x = force.x / mass;
+			mAcceleration.y = force.y / mass;
+
+			float elapsed = (float) pGameTime.elapseGameTime() / 1000.0f;
+			
 			// apply movement //
-			mVelocity.x += mAcceleration.x * pGameTime.elapseGameTime() / 1000.0f;
-			mVelocity.y += mAcceleration.y * pGameTime.elapseGameTime() / 1000.0f;
+			mVelocity.x += mAcceleration.x * elapsed;
+			mVelocity.y += mAcceleration.y * elapsed;
 
-			// don't let the camera go miles off course
-			if (Math.abs(mPosition.x) > Math.abs(mTargetPosition.x) * 20.5) {
-				mVelocity.x *= 0.45f;
-			}
+//			// don't let the camera go miles off course
+//			if (Math.abs(mPosition.x) > Math.abs(mTargetPosition.x) * 20.5) {
+//				mVelocity.x *= 0.45f;
+//			}
+//
+//			if (Math.abs(mPosition.y) > Math.abs(mTargetPosition.y) * 20.5) {
+//				mVelocity.y *= 0.45f;
+//			}
 
-			if (Math.abs(mPosition.y) > Math.abs(mTargetPosition.y) * 20.5) {
-				mVelocity.y *= 0.45f;
-			}
-
-			mPosition.x += mVelocity.x;
-			mPosition.y += mVelocity.y;
+			mPosition.x += mVelocity.x * elapsed;
+			mPosition.y += mVelocity.y * elapsed;
 
 			mAcceleration.x = 0.0f;
 			mAcceleration.y = 0.0f;
@@ -239,7 +260,9 @@ public class Camera implements ICamera {
 			// slow down the vel
 			mVelocity.x *= 0.98f;
 			mVelocity.y *= 0.98f;
-		} else {
+		} 
+		
+		else {
 			mPosition.x = mTargetPosition.x;
 			mPosition.y = mTargetPosition.y;
 
