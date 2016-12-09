@@ -19,7 +19,7 @@ public class Camera implements ICamera {
 
 	protected static final float MIN_CAMERA_ZOOM = 0.75f;
 	protected static final float MAX_CAMERA_ZOOM = 2f;
-	
+
 	// =============================================
 	// Variables
 	// =============================================
@@ -49,21 +49,21 @@ public class Camera implements ICamera {
 	protected float mScaledWindowHeight;
 	protected float mzNear;
 	protected float mzFar;
-	
+
 	/** Smaller is further out */
 	protected float mCameraMinZoom;
-	
+
 	/** Larger is more zoomed in */
 	protected float mCameraMaxZoom;
-	
+
 	// XNA Camera Chase Sample
-	float stifness = 1800f; // 
-	float damping = 600f; // 
+	float stifness = 1800f; //
+	float damping = 600f; //
 	float mass = 50f;
-	
+
 	Vector2f stretch = new Vector2f();
 	Vector2f force = new Vector2f();
-	
+
 	// END
 
 	protected Vector2f mMouseCameraSpace;
@@ -72,29 +72,28 @@ public class Camera implements ICamera {
 	// Properties
 	// =============================================
 
-	public void setZoomConstraints(float pMin, float pMax){
+	public void setZoomConstraints(float pMin, float pMax) {
 		mCameraMinZoom = pMin;
-		
-		if(pMin < MIN_CAMERA_ZOOM){
+
+		if (pMin < MIN_CAMERA_ZOOM) {
 			pMin = MIN_CAMERA_ZOOM;
 		}
-		
-		if(pMax > MAX_CAMERA_ZOOM){
+
+		if (pMax > MAX_CAMERA_ZOOM) {
 			pMax = MAX_CAMERA_ZOOM;
 		}
-		
-		if(pMin > pMax){
+
+		if (pMin > pMax) {
 			// Just crazy talk
 			pMin = pMax = mCameraMaxZoom = 1f;
-			
-		}
-		else{
+
+		} else {
 			mCameraMaxZoom = pMax;
-			
+
 		}
-		
+
 	}
-	
+
 	@Override
 	public void setPosition(float pX, float pY) {
 		mTargetPosition.x = pX;
@@ -208,8 +207,8 @@ public class Camera implements ICamera {
 		this.mMaxX = pX + pWidth;
 		this.mMinY = pY;
 		this.mMaxY = pY + pHeight;
-		
-		// Set some sane def.
+
+		// No zoom by default
 		mCameraMinZoom = mCameraMaxZoom = 1.0f;
 
 		mBoundingRectangle = new Rectangle(mMinX, mMinY, pWidth, pHeight);
@@ -253,10 +252,9 @@ public class Camera implements ICamera {
 		mWindowHeight = (int) DisplayConfig.WINDOW_HEIGHT;
 
 		if (CAMERA_PHYSICS) {
-			// XNA Camera Sample (Follow on physics)
 			stretch.x = mPosition.x - mTargetPosition.x;
 			stretch.y = mPosition.y - mTargetPosition.y;
-			
+
 			// Calc force
 			force.x = -stifness * stretch.x - damping * mVelocity.x;
 			force.y = -stifness * stretch.y - damping * mVelocity.y;
@@ -265,19 +263,10 @@ public class Camera implements ICamera {
 			mAcceleration.y = force.y / mass;
 
 			float elapsed = (float) pGameTime.elapseGameTime() / 1000.0f;
-			
+
 			// apply movement //
 			mVelocity.x += mAcceleration.x * elapsed;
 			mVelocity.y += mAcceleration.y * elapsed;
-
-//			// don't let the camera go miles off course
-//			if (Math.abs(mPosition.x) > Math.abs(mTargetPosition.x) * 20.5) {
-//				mVelocity.x *= 0.45f;
-//			}
-//
-//			if (Math.abs(mPosition.y) > Math.abs(mTargetPosition.y) * 20.5) {
-//				mVelocity.y *= 0.45f;
-//			}
 
 			mPosition.x += mVelocity.x * elapsed;
 			mPosition.y += mVelocity.y * elapsed;
@@ -285,11 +274,11 @@ public class Camera implements ICamera {
 			mAcceleration.x = 0.0f;
 			mAcceleration.y = 0.0f;
 
-			// slow down the vel
+			// slow down the velocity
 			mVelocity.x *= 0.98f;
 			mVelocity.y *= 0.98f;
-		} 
-		
+		}
+
 		else {
 			mPosition.x = mTargetPosition.x;
 			mPosition.y = mTargetPosition.y;
