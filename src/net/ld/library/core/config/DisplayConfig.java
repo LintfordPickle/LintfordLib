@@ -82,7 +82,6 @@ public class DisplayConfig extends BaseConfig {
 	// We need to keep this reference alive
 	@SuppressWarnings("unused")
 	private GLFWFramebufferSizeCallback mFrameBufferSizeCallback;
-	private GLFWWindowFocusCallback mWindowCallbackFunction;
 	private long mWindowID;
 	private boolean mWindowHasFocus;
 	private boolean mRecompileShaders = false;
@@ -296,7 +295,7 @@ public class DisplayConfig extends BaseConfig {
 		});
 
 		// Add a focus listener on our window
-		glfwSetWindowFocusCallback(mWindowID, mWindowCallbackFunction = new GLFWWindowFocusCallback() {
+		glfwSetWindowFocusCallback(mWindowID, new GLFWWindowFocusCallback() {
 
 			@Override
 			public void invoke(long pWindowID, boolean pFocus) {
@@ -308,7 +307,7 @@ public class DisplayConfig extends BaseConfig {
 		});
 
 		GL.createCapabilities();
-		
+
 		mWindowHasFocus = true;
 
 		return mWindowID;
