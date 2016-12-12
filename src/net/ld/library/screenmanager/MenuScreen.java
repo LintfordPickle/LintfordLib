@@ -279,7 +279,6 @@ public abstract class MenuScreen extends Screen implements IMenuEntryClickListen
 
 	protected void updateMenuEntryLocations(RenderState pRenderState) {
 
-		int lWindowWidth = mDisplayConfig.windowWidth();
 		int lOffsetFromTop = (int) mEntryOffsetFromTop;
 
 		// Make the menu slide into place during transitions, using a
@@ -296,8 +295,7 @@ public abstract class MenuScreen extends Screen implements IMenuEntryClickListen
 
 			MenuEntry lEntry = menuEntries().get(i);
 
-			// each entry is centered horizontally
-			float lX = -320 + lWindowWidth / 2;
+			float lX = 0;
 
 			lX += lTransitionOffset;
 
@@ -341,7 +339,7 @@ public abstract class MenuScreen extends Screen implements IMenuEntryClickListen
 		updateMenuEntryLocations(pRenderState);
 
 		Rectangle lHUDRect = mScreenManager.HUD().boundingHUDRectange();
-		
+
 		mMenuTitleFont.begin(mScreenManager.HUD());
 		mMenuTitleFont.draw(mMenuTitle, lHUDRect.left() + 5, lHUDRect.top() + 5, 2f, 1f, 1f, 1f, 1f, 1f);
 		mMenuTitleFont.end();
