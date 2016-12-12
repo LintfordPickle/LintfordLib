@@ -39,11 +39,16 @@ public abstract class Screen implements LoadableScreen {
 	protected boolean mOtherScreenHasFocus;
 	protected boolean mIsLoaded;
 	protected List<GameLoaderPart> mGameLoadableParts;
-
+	protected boolean mShowInBackground;
+	
 	// =============================================
 	// Properties
 	// =============================================
 
+	public boolean showInBackground(){
+		return mShowInBackground;
+	}
+	
 	public boolean showMouseCursor() {
 		return mShowMouseCursor;
 	}
