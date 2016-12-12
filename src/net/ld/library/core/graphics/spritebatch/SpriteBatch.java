@@ -120,9 +120,6 @@ public class SpriteBatch {
 
 		mModelMatrix = new Matrix4f();
 		mTempVector = new Vector4f();
-
-		// mBuffer = BufferUtils.createFloatBuffer(MAX_SPRITES * NUM_VERTS_PER_SPRITE * stride);
-		
 		
 	}
 
@@ -199,32 +196,35 @@ public class SpriteBatch {
 		if (mCurNumSprites >= MAX_SPRITES) {
 			flush();
 		}
+		
+		// FIXME: Without this small offset, I get texture bleeding on the texture atlas
+		final float TINY = 0.01f;
 
 		// Vertex 0
-		float x0 = x;
-		float y0 = y + h * pScale;
+		float x0 = x - TINY;
+		float y0 = y + (h + TINY) * pScale;
 		float u0 = pSX / pTexture.getTextureWidth();
 		float v0 = (pSY + pSH) / pTexture.getTextureHeight();
 
 		// Vertex 1
-		float x1 = x;
-		float y1 = y;
+		float x1 = x - TINY;
+		float y1 = y - TINY;
 		float u1 = pSX / pTexture.getTextureWidth();
 		float v1 = pSY / pTexture.getTextureHeight();
 
 		// Vertex 2
-		float x2 = x + w * pScale;
-		float y2 = y;
+		float x2 = x + (w + TINY) * pScale;
+		float y2 = y - TINY;
 		float u2 = (pSX + pSW) / pTexture.getTextureWidth();
 		float v2 = pSY / pTexture.getTextureHeight();
 
 		// Vertex 3
-		float x3 = x + w * pScale;
-		float y3 = y + h * pScale;
+		float x3 = x + (w + TINY) * pScale;
+		float y3 = y + (h + TINY) * pScale;
 		float u3 = (pSX + pSW) / pTexture.getTextureWidth();
 		float v3 = (pSY + pSH) / pTexture.getTextureHeight();
 
-		addVertToBuffer(x0, y0, pZ, 1f, pR, pG, pB, pA, u0, v0); // 0
+		addVertToBuffer(x0 , y0, pZ, 1f, pR, pG, pB, pA, u0, v0); // 0
 		addVertToBuffer(x1, y1, pZ, 1f, pR, pG, pB, pA, u1, v1); // 1
 		addVertToBuffer(x2, y2, pZ, 1f, pR, pG, pB, pA, u2, v2); // 2
 		addVertToBuffer(x2, y2, pZ, 1f, pR, pG, pB, pA, u2, v2); // 2
