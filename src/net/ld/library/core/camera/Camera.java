@@ -1,5 +1,7 @@
 package net.ld.library.core.camera;
 
+import java.util.Random;
+
 import net.ld.library.core.config.DisplayConfig;
 import net.ld.library.core.input.InputState;
 import net.ld.library.core.maths.Matrix4f;
@@ -15,21 +17,30 @@ public class Camera implements ICamera {
 
 	protected static final float Z_NEAR = -1f;
 	protected static final float Z_FAR = 10f;
-	
+
 	protected static final float ZOOM_ACCELERATE_AMOUNT = 9.0f;
 	protected static final float DRAG = 0.9365f;
 	protected static final boolean CAMERA_PHYSICS = true;
 
-	protected static final float MIN_CAMERA_ZOOM = 0.75f;
-	protected static final float MAX_CAMERA_ZOOM = 2f;
+	public static final float MIN_CAMERA_ZOOM = 0.75f;
+	public static final float MAX_CAMERA_ZOOM = 1.4f;
 
 	// =============================================
 	// Variables
 	// =============================================
 
+	protected Random mRandom = new Random();
+	protected boolean mIsShaking;
+	protected float mShakeMag;
+	protected float mShakeDur;
+	protected float mShakeTimer;
+	protected float mShakeOffX;
+	protected float mShakeOffY;
+
 	protected DisplayConfig mDisplayConfig;
 
 	protected Rectangle mBoundingRectangle;
+	protected Rectangle mRestrictArea;
 	protected Vector2f mPosition;
 	protected Vector2f mAcceleration;
 	protected Vector2f mVelocity;
@@ -101,6 +112,14 @@ public class Camera implements ICamera {
 	public void setPosition(float pX, float pY) {
 		mTargetPosition.x = pX;
 		mTargetPosition.y = pY;
+	}
+	
+	public void setAbsPosition(float pX, float pY) {
+		mTargetPosition.x = pX;
+		mTargetPosition.y = pY;
+		
+		mPosition.x = pX;
+		mPosition.y = pY;
 	}
 
 	public float getScaledCenterX() {
@@ -199,6 +218,14 @@ public class Camera implements ICamera {
 		return mBoundingRectangle;
 	}
 
+	public void setRestrictiveBounds(float pMinX, float pMinY, float pMaxX, float pMaxY) {
+		mRestrictArea.x = pMinX;
+		mRestrictArea.x = pMinY;
+		mRestrictArea.width = pMaxY;
+		mRestrictArea.height = pMaxY;
+
+	}
+
 	// =============================================
 	// Constructor(s)
 	// =============================================
@@ -210,6 +237,8 @@ public class Camera implements ICamera {
 		this.mMaxX = pX + pWidth;
 		this.mMinY = pY;
 		this.mMaxY = pY + pHeight;
+
+		mRestrictArea = new Rectangle();
 
 		// No zoom by default
 		mCameraMinZoom = mCameraMaxZoom = 1.0f;
@@ -253,6 +282,25 @@ public class Camera implements ICamera {
 
 		mWindowWidth = (int) DisplayConfig.WINDOW_WIDTH;
 		mWindowHeight = (int) DisplayConfig.WINDOW_HEIGHT;
+
+		if (mIsShaking) {
+
+			mShakeTimer += pGameTime.elapseGameTime();
+
+			if (mShakeTimer > mShakeDur) {
+				mIsShaking = false;
+				mShakeTimer = mShakeDur;
+			}
+
+			// normal time
+			float progress = mShakeTimer / mShakeDur;
+
+			float lMagnitude = mShakeMag * (1f - (progress * progress));
+			
+			mShakeOffX = mRandom.nextFloat() * lMagnitude;
+			mShakeOffY = mRandom.nextFloat() * lMagnitude;
+
+		}
 
 		if (CAMERA_PHYSICS) {
 			stretch.x = mPosition.x - mTargetPosition.x;
@@ -312,12 +360,21 @@ public class Camera implements ICamera {
 		mScaledWindowWidth = pW * getZoomFactorOverOne();
 		mScaledWindowHeight = pH * getZoomFactorOverOne();
 
-		// Update the camera position
-		mMinX = -mPosition.x - mScaledWindowWidth / 2.0f;
-		mMinY = -mPosition.y - mScaledWindowHeight / 2.0f;
+		if (mPosition.x - mScaledWindowWidth * 0.5f < mRestrictArea.x) {
+			mPosition.x = mRestrictArea.x + mScaledWindowWidth * 0.5f;
+		}
 
-		mMaxX = -mPosition.x + mScaledWindowWidth / 2.0f;
-		mMaxY = -mPosition.y + mScaledWindowHeight / 2.0f;
+		if (mPosition.y - mScaledWindowHeight * 0.5f < mRestrictArea.y) {
+			mPosition.y = mRestrictArea.y + mScaledWindowHeight * 0.5f;
+		}
+
+		// Update the camera position
+		// THis is insane!
+		mMinX = mPosition.x - mScaledWindowWidth / 2.0f;
+		mMinY = mPosition.y - mScaledWindowHeight / 2.0f;
+
+		mMaxX = mPosition.x + mScaledWindowWidth / 2.0f;
+		mMaxY = mPosition.y + mScaledWindowHeight / 2.0f;
 
 		// update the bounding rectangle so we can properly do frustum culling
 		mBoundingRectangle.x = mMinX;
@@ -327,7 +384,9 @@ public class Camera implements ICamera {
 
 		mViewMatrix = new Matrix4f();
 		mViewMatrix.scale(mZoomFactor, mZoomFactor, 1f);
-		mViewMatrix.translate(mPosition.x * getZoomFactor(), mPosition.y * getZoomFactor(), 0f);
+
+		// This seems way backwards
+		mViewMatrix.translate(-(mPosition.x + mShakeOffY) * getZoomFactor(), -(mPosition.y + mShakeOffY) * getZoomFactor(), 0f);
 
 		createOrtho(pW, pH);
 
@@ -417,6 +476,18 @@ public class Camera implements ICamera {
 	@Override
 	public float getPointCameraSpaceY(float pPointY) {
 		return pPointY * getZoomFactorOverOne() + this.getMinX();
+
+	}
+
+	public void shake(float pDuration, float pMagnitude) {
+		if (pDuration <= 0)
+			return;
+
+		mIsShaking = true;
+		mShakeDur = pDuration;
+		mShakeMag = pMagnitude;
+
+		mShakeTimer = 0;
 
 	}
 
