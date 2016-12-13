@@ -155,7 +155,7 @@ public abstract class MenuScreen extends Screen implements IMenuEntryClickListen
 		mESCBackEnabled = true;
 
 		mEntryOffsetFromTop = 90;
-		mZ = 2f; // default to 2
+		mZ = 2.1f; // default to 2.1
 
 	}
 
@@ -181,8 +181,8 @@ public abstract class MenuScreen extends Screen implements IMenuEntryClickListen
 
 		}
 
-		mMenuFont = pResourceManager.fontManager().loadFontFromResource(MENUSCREEN_FONT_NAME, "/res/fonts/agencyfb.ttf", 25);
-		mMenuTitleFont = pResourceManager.fontManager().loadFontFromResource(MENUSCREEN_TITLE_FONT_NAME, "/res/fonts/agencyfb.ttf", 84);
+		mMenuFont = pResourceManager.fontManager().loadFontFromResource(MENUSCREEN_FONT_NAME, "/res/fonts/pixel.ttf", 40);
+		mMenuTitleFont = pResourceManager.fontManager().loadFontFromResource(MENUSCREEN_TITLE_FONT_NAME, "/res/fonts/pixel.ttf", 84);
 
 	}
 
@@ -279,7 +279,6 @@ public abstract class MenuScreen extends Screen implements IMenuEntryClickListen
 
 	protected void updateMenuEntryLocations(RenderState pRenderState) {
 
-		int lWindowWidth = mDisplayConfig.windowWidth();
 		int lOffsetFromTop = (int) mEntryOffsetFromTop;
 
 		// Make the menu slide into place during transitions, using a
@@ -296,8 +295,7 @@ public abstract class MenuScreen extends Screen implements IMenuEntryClickListen
 
 			MenuEntry lEntry = menuEntries().get(i);
 
-			// each entry is centered horizontally
-			float lX = -320 + lWindowWidth / 2;
+			float lX = 0;
 
 			lX += lTransitionOffset;
 
@@ -341,9 +339,9 @@ public abstract class MenuScreen extends Screen implements IMenuEntryClickListen
 		updateMenuEntryLocations(pRenderState);
 
 		Rectangle lHUDRect = mScreenManager.HUD().boundingHUDRectange();
-		
+
 		mMenuTitleFont.begin(mScreenManager.HUD());
-		mMenuTitleFont.draw(mMenuTitle, lHUDRect.left() + 5, lHUDRect.top() + 5, 2f, 1f, 1f, 1f, 1f, 1f);
+		mMenuTitleFont.draw(mMenuTitle, lHUDRect.left() + 5, lHUDRect.top() + 5, 3f, 1f, 1f, 1f, 1f, 1f);
 		mMenuTitleFont.end();
 
 		mMenuFont.begin(mScreenManager.HUD());

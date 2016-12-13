@@ -220,7 +220,7 @@ public class ScreenManager {
 
 		int lCount = mScreens.size();
 		for (int i = 0; i < lCount; i++) {
-			if (mScreens.get(i).screenState() == ScreenState.Hidden)
+			if (mScreens.get(i).screenState() == ScreenState.Hidden && !mScreens.get(i).showInBackground())
 				continue;
 
 			// FIXME: Start rendering from here using a RenderState object

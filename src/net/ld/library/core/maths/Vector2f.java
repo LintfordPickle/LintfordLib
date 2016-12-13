@@ -93,6 +93,15 @@ public final class Vector2f {
 	    float num3 = (num2 * num2) + (num * num);
 	    return (float) Math.sqrt(num3);
 	}
+	
+	// Need to be squared ??
+	public static float distance(float value1X, float value1Y, float value2X, float value2Y)
+	{
+		float num2 = value1X - value2X;
+	    float num = value1Y - value2Y;
+	    float num3 = (num2 * num2) + (num * num);
+	    return (float) Math.sqrt(num3);
+	}
 
 	/**
 	 * @return The squared euclidian length
@@ -177,6 +186,14 @@ public final class Vector2f {
 	 */
 	public float dot (Vector2f v) {
 		return x * v.x + y * v.y;
+	}
+	
+	public float dot (float vx, float vy) {
+		return x * vx + y * vy;
+	}
+	
+	public static float dot (float vx0, float vy0, float vx1, float vy1) {
+		return vx0 * vx1 + vy0 * vy1;
 	}
 
 	/**

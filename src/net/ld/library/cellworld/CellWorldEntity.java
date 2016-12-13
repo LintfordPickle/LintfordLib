@@ -4,6 +4,7 @@ import net.ld.library.core.maths.Rectangle;
 import net.ld.library.core.rendering.RenderState;
 import net.ld.library.core.time.GameTime;
 
+
 /**
  * A simple entity class for a cell grid based world.
  * 
@@ -19,7 +20,7 @@ public class CellWorldEntity extends Rectangle {
 	// Variables
 	// =============================================
 
-	private CellGridWorld mParent;
+	protected CellGridWorld mParent;
 
 	// base grid coordinates
 	public int cx;
@@ -27,7 +28,11 @@ public class CellWorldEntity extends Rectangle {
 	public float rx;
 	public float ry;
 
+	public boolean isAlive; // used for state of player in game world
+	// TODO: --> Add isFree for pool
+
 	public float radius;
+	public int coll_repel_precedence;
 
 	// Resulting coordinates
 	public float xx;
@@ -69,62 +74,106 @@ public class CellWorldEntity extends Rectangle {
 		if (!isInUse())
 			return;
 
+		// COLLISION
+
 		rx += dx * pGameTime.elapseGameTime() / 1000.0f;
 		ry += dy * pGameTime.elapseGameTime() / 1000.0f;
-
+		
 		dx *= 0.96f;
 		dy *= 0.96f;
 
-		// COLLISION
-		// Check collisions to the right
-		if (mParent.hasCollisionAt(cx + 1, cy) && rx > 0.7f) {
-			rx = 0.7f; // limit ratio
-			dx = 0; // kill vel
-		}
+		if (isAlive) {
 
-		// Check collision to the left
-		if (mParent.hasCollisionAt(cx - 1, cy) && rx <= 0.3f) {
-			rx = 0.3f; // limit ratio
-			dx = 0; // kill vel
-		}
+			// Check collisions to the right
+			if (mParent.hasCollisionAt(cx + 1, cy) && rx > 0.7f) {
+				rx = 0.7f; // limit ratio
+				dx = 0; // kill vel
+			}
 
-		if (mParent.hasCollisionAt(cx, cy + 1) && ry > 0.7f) {
-			ry = 0.7f; // limit ratio
-			dy = 0; // kill vel
-		}
+			// Check collision to the left
+			if (mParent.hasCollisionAt(cx - 1, cy) && rx <= 0.3f) {
+				rx = 0.3f; // limit ratio
+				dx = 0; // kill vel
+			}
 
-		// Check collision to the left
-		if (mParent.hasCollisionAt(cx, cy - 1) && ry <= 0.3f) {
-			ry = 0.3f; // limit ratio
-			dy = 0; // kill vel
-		}
+			if (mParent.hasCollisionAt(cx, cy + 1) && ry > 0.7f) {
+				ry = 0.7f; // limit ratio
+				dy = 0; // kill vel
+			}
 
-		// Check collisions with other entities
-		int lEntCount = mParent.entities().size();
-		for (int i = 0; i < lEntCount; i++) {
-			CellWorldEntity e = mParent.entities().get(i);
-			if (e == this || !e.isInUse())
-				continue;
+			// Check collision to the left
+			if (mParent.hasCollisionAt(cx, cy - 1) && ry <= 0.3f) {
+				ry = 0.3f; // limit ratio
+				dy = 0; // kill vel
+			}
 
-			// Fast distance check
-			if (e != this && Math.abs(cx - e.cx) <= 2 && Math.abs(cy - e.cy) <= 2) {
-				// pre-compute
-				float exx = e.xx - xx;
-				float eyy = e.yy - yy;
-				
-				// Real distance check
-				float dist = (float) Math.sqrt(exx*exx + eyy*eyy);
-				if (dist <= radius + e.radius) {
-					float force = 0.2f;
-					float repelPower = (radius + e.radius - dist) / (radius + e.radius);
-					dx -= (exx / dist) * repelPower * force;
-					dy -= (eyy / dist) * repelPower * force;
-					e.dx += (exx / dist) * repelPower * force;
-					e.dy += (eyy / dist) * repelPower * force;
+			// Check collisions with other entities
+			int lEntCount = mParent.entities().size();
+			for (int i = 0; i < lEntCount; i++) {
+				CellWorldEntity e = mParent.entities().get(i);
+				if (e == this || !e.isInUse())
+					continue;
+
+				// Fast distance check
+				if (e != this && Math.abs(cx - e.cx) <= 12 && Math.abs(cy - e.cy) <= 12) {
+					float exx = e.xx - xx;
+					float eyy = e.yy - yy;
+
+					float dist = (float) Math.sqrt(exx * exx + eyy * eyy);
+					if (dist == 0) {
+						dx -= 0.1f;
+						dy -= 0.1f;
+						e.dx += 0.1f;
+						e.dy += 0.1f;
+					}
+
+					else if (dist <= radius + e.radius) {
+
+						float force = 0.1f;
+
+						// figure out who to repel ..
+						if (coll_repel_precedence < e.coll_repel_precedence) {
+							// I go
+							float repelPower = (radius + e.radius - dist) / (radius + e.radius);
+
+							dx -= (exx / dist) * repelPower * force * 2;
+							dy -= (eyy / dist) * repelPower * force * 2;
+						} else if (coll_repel_precedence > e.coll_repel_precedence) {
+							// They go
+							float repelPower = (radius + e.radius - dist) / (radius + e.radius);
+
+							e.dx += (exx / dist) * repelPower * force * 2;
+							e.dy += (eyy / dist) * repelPower * force * 2;
+						} else {
+							// We go
+							float repelPower = (radius + e.radius - dist) / (radius + e.radius);
+
+							dx -= (exx / dist) * repelPower * force;
+							dy -= (eyy / dist) * repelPower * force;
+							e.dx += (exx / dist) * repelPower * force;
+							e.dy += (eyy / dist) * repelPower * force;
+						}
+						
+						
+					}
+					
+					
 				}
+
 			}
 
 		}
+
+		final float cap = 3;
+		if (dx < -cap)
+			dx = -cap;
+		if (dy < -cap)
+			dy = -cap;
+
+		if (dx > cap)
+			dx = cap;
+		if (dy > cap)
+			dy = cap;
 
 		while (rx < 0) {
 			rx++;
@@ -168,14 +217,26 @@ public class CellWorldEntity extends Rectangle {
 	// =============================================
 	// Methods
 	// =============================================
+	
+ 	public void init() {
+		isAlive = true;
 
-	public void setCoordinate(float pX, float pY) {
-		xx = x;
-		yy = y;
-		cx = (int) (xx / 16f);
-		cy = (int) (yy / 16f);
-		rx = (xx - cx * 16) / 16;
-		ry = (yy - cy * 16) / 16;
+	}
+
+	public void kill() {
+		isAlive = false;
+
+	}
+
+	public void setCoordinate(float pX, float pY, int pCellSize) {
+		xx = pX;
+		yy = pY;
+		x = xx;
+		y = yy;
+		cx = (int) (xx / (float) pCellSize);
+		cy = (int) (yy / (float) pCellSize);
+		rx = (xx - cx * pCellSize) / pCellSize;
+		ry = (yy - cy * pCellSize) / pCellSize;
 
 	}
 
@@ -186,6 +247,22 @@ public class CellWorldEntity extends Rectangle {
 
 	public void detachParent() {
 		mParent = null;
+
+	}
+
+	public boolean checkCollision(float xY, float pY, float pR) {
+		float exx = xY - xx;
+		float eyy = pY - yy;
+
+		float dist = (float) Math.sqrt(exx * exx + eyy * eyy);
+
+		if (dist <= radius + pR) {
+			return true;
+
+		}
+
+		// nothing
+		return false;
 
 	}
 

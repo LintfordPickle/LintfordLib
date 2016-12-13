@@ -79,7 +79,7 @@ public class CellGridWorld {
 
 		}
 
-		final int lEntityUpdateCount = mEntities.size();
+		final int lEntityUpdateCount = mEntitiesToUpdate.size();
 		for (int i = 0; i < lEntityUpdateCount; i++) {
 			CellWorldEntity lEntity = mEntitiesToUpdate.get(i);
 
@@ -118,12 +118,16 @@ public class CellGridWorld {
 			if (!e1.isInUse())
 				continue;
 
+			// TODO: Might not work for larger objects (larger than 1 cell)
+			// if (e != e1 && Math.abs(e1.cx - e.cx) <= 2 && Math.abs(e1.cy - e.cy) <= 2) {
 			float lMaxDist = mEntities.get(i).radius + e.radius;
 			float lDistSqr = (e.xx - e1.xx) * (e.xx - e1.xx) + (e.yy - e1.yy) * (e.yy - e1.yy);
 
 			if (lDistSqr <= lMaxDist * lMaxDist) {
 				return true;
 			}
+
+			// }
 
 		}
 
@@ -132,7 +136,9 @@ public class CellGridWorld {
 
 	public void addEntity(CellWorldEntity pWorldEntity) {
 		if (!mEntities.contains(pWorldEntity)) {
+
 			pWorldEntity.attachParent(this);
+
 			mEntities.add(pWorldEntity);
 
 		}

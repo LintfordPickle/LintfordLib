@@ -34,7 +34,7 @@ public abstract class LWJGLCore {
 	protected HUD mHUDCamera;
 	protected InputState mInputState;
 	protected RenderState mRenderState;
-	
+
 	// =============================================
 	// Properties
 	// =============================================
@@ -79,11 +79,12 @@ public abstract class LWJGLCore {
 	public void createWindow() {
 
 		mGameCamera = new Camera(mDisplayConfig, 0, 0, DisplayConfig.WINDOW_WIDTH, DisplayConfig.WINDOW_HEIGHT);
-		mHUDCamera = new HUD(-DisplayConfig.WINDOW_WIDTH / 2, -DisplayConfig.WINDOW_HEIGHT / 2, DisplayConfig.WINDOW_WIDTH / 2, DisplayConfig.WINDOW_HEIGHT / 2);
-		
+		mHUDCamera = new HUD(-DisplayConfig.WINDOW_WIDTH / 2, -DisplayConfig.WINDOW_HEIGHT / 2,
+				DisplayConfig.WINDOW_WIDTH / 2, DisplayConfig.WINDOW_HEIGHT / 2);
+
 		mGameTime = new GameTime();
 		mInputState = new InputState(mDisplayConfig, mGameCamera, mHUDCamera, mGameTime);
-		
+
 		mRenderState.initialise(mHUDCamera, mGameCamera, mGameTime, mDisplayConfig);
 
 		long lWindowID = mDisplayConfig.onCreateWindow();
@@ -96,11 +97,11 @@ public abstract class LWJGLCore {
 		glfwSetScrollCallback(lWindowID, mInputState.mMouseScrollCallback);
 
 		onInitialiseGL();
+		
+		onInitialiseApp();
 
 		// Lazy initialisation of texture manager
 		TextureManager.textureManager();
-
-		onInitialiseApp();
 
 		onLoadGLContent();
 
@@ -116,10 +117,9 @@ public abstract class LWJGLCore {
 		mResourceManager.loadGLContent();
 
 	}
-	
+
 	protected void onUnloadGLContent() {
 		mResourceManager.unloadGLContent();
-		
 
 	}
 
@@ -127,19 +127,17 @@ public abstract class LWJGLCore {
 
 		// Game loop
 		while (!glfwWindowShouldClose(mDisplayConfig.windowID())) {
-
-			// Only update time if window has focus
-			if(mDisplayConfig.hasFocus()){
-				mGameTime.update();
-				
-			}
+			mGameTime.update();
 
 			onHandleInput();
 
-			onUpdate(mGameTime);
+//			if (mDisplayConfig.hasFocus()) {
+				onUpdate(mGameTime);
+
+//			}
 
 			onDraw();
-
+			
 			glfwSwapBuffers(mDisplayConfig.windowID());
 
 			mDisplayConfig.resetFlags();
@@ -147,17 +145,17 @@ public abstract class LWJGLCore {
 
 			glfwPollEvents();
 		}
-		
+
 		onUnloadGLContent();
 
 		System.exit(0);
 	}
 
-	protected void onHandleInput(){
+	protected void onHandleInput() {
 		mDisplayConfig.handleInput(mInputState);
 		mHUDCamera.handleInput(mInputState);
 		mGameCamera.handleInput(mInputState);
-		
+
 	}
 
 	protected void onUpdate(GameTime pGameTime) {
