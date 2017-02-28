@@ -1,7 +1,28 @@
 # Java-LDLibraryGL
 A Java game library containing LWJGL natives and a game state management framework.
 
-# Usage
+# Linking
+You can add the Java-LDLibraryGL to an existing git project as a submodule, which will allow you to get the lastest versions using versioning. If you want to add the Java-LDLibraryGL project to your existing git project, type the following at the git Bash:
+
+```
+git submodule add https://github.com/LintfordPickle/Java-LDLibraryGL.git <directory>
+```
+
+This will register the git repository as a submodule under the directory specified. This command will automatically clone the submodule into the repository. You can check the status of the submodules using:
+
+```
+git status
+```
+
+and you can pull the latest version of the submodule with the following command:
+
+```
+git submodule update
+```
+
+note: a git clone of a repository will not by default pull any submodules. In this case you need to submodule init and then submodule update.
+
+# Library Usage
 In order to use the framework, you need to download or clone the project and add it as a 'required project' on the build path. Once you have done this, you should be able to use the classes within. To get started and open a window, you can use:
 
 ```
