@@ -1,5 +1,6 @@
 # Java-LDLibraryGL
 A Java game library containing LWJGL natives and a game state management framework.
+The library project and metadata was created in Eclipse Neon (4.6.0). The project was compiled with Java 1.8.0_112 64-bit and contains LGWJL3 jars and native libraries.
 
 # Linking
 You can add the Java-LDLibraryGL to an existing git project as a submodule, which will allow you to get the lastest versions using versioning. If you want to add the Java-LDLibraryGL project to your existing git project, type the following at the git Bash:
