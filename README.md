@@ -2,8 +2,9 @@
 A Java game library containing LWJGL natives and a game state management framework.
 The library project and metadata was created in Eclipse Neon (4.6.0). The project was compiled with Java 1.8.0_112 64-bit and contains LGWJL3 jars and native libraries.
 
-# Linking
-You can add the Java-LDLibraryGL to an existing git project as a submodule, which will allow you to get the lastest versions using versioning. If you want to add the Java-LDLibraryGL project to your existing git project, type the following at the git Bash:
+# Getting the repository
+You can get the Java-LDLibraryGL project by either by cloning the repository or by adding it as a submodule to an existing git repository.
+If you want to add the Java-LDLibraryGL project to your existing git project, type the following at the git Bash:
 
 ```
 git submodule add https://github.com/LintfordPickle/Java-LDLibraryGL.git <directory>
@@ -24,12 +25,26 @@ git submodule update
 note: a git clone of a repository will not by default pull any submodules. In this case you need to submodule init and then submodule update.
 
 # Library Usage
-In order to use the framework, you need to download or clone the project and add it as a 'required project' on the build path. Once you have done this, you should be able to use the classes within. To get started and open a window, you can use:
+Once you have cloned the Java-LDLibraryGL repository, you can import it into your IDE workspace. It should then be added as a project to your game project's classpath. This can be done either using the project properties dialog (e.g. in Eclipse), or by added the following to the .classpath:
 
 ```
+<classpathentry combineaccessrules="false" kind="src" path="<relative_path_to_ldlibrary_folder>"/>
+```
+
+Once you have done this, you should be able to import the packages from the LDLibrary and access the classes within. To test the setup and get started, you can open a new LWJGL window by adding the following class to your project:
+
+```
+// Import the OpenGL bindings from within the LWJGL framework
+import org.lwjgl.opengl.GL11;
+
+// import LDLibrary classes
+import net.ld.library.GameInfo;
+import net.ld.library.core.LWJGLCore;
+
+/** Create a class which extends LWJGLCore. This will be responsible for instantiating and opening an OpenGL window. */
 public class GameBase extends LWJGLCore {
 
-/** Main entry point for your  application */
+/** Main entry point for the game. */
 public static void main(String args[]) {
 	GameInfo lGameInfo = new GameInfo() { };
 
@@ -38,7 +53,7 @@ public static void main(String args[]) {
 }
 ```
 
-LWJGLCore is an abstract class which defines a couple of core methods for an OpenGL game. These methods are called automatically, and are:
+LWJGLCore is an abstract class which defines core methods for an OpenGL game. These methods are called automatically, and are:
 
 **void onInitialiseGL()**: This is called once at the start of the application. From here you can set the initial state for OpenGL.
 
