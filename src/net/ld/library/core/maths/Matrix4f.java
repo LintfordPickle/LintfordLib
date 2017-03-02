@@ -6,35 +6,40 @@ import org.lwjgl.BufferUtils;
 
 /** A column-major Matrix4f class.
  * 
- * Some of the static methods came from LWJGL2 source: *https://github.com/LWJGL/lwjgl/blob/master/src/java/org/lwjgl/util/vector/Matrix4f.java* */
+ * Reference LWJGL2 source: *https://github.com/LWJGL/lwjgl/blob/master/src/java/org/lwjgl/util/vector/Matrix4f.java 
+ */
 public class Matrix4f {
 
-	// =============================================
+	// --------------------------------------
 	// Constants
-	// =============================================
-	
-	public static final Matrix4f IDENTITY = new Matrix4f();
-	
-	// =============================================
-	// Variables
-	// =============================================
+	// --------------------------------------
 
+	public static final Matrix4f IDENTITY = new Matrix4f();
+
+	// --------------------------------------
+	// Variables
+	// --------------------------------------
+
+	private FloatBuffer mMatrixBuffer;
+	
 	public float m00, m01, m02, m03;
 	public float m10, m11, m12, m13;
 	public float m20, m21, m22, m23;
 	public float m30, m31, m32, m33;
 
-	// =============================================
+	// --------------------------------------
 	// Constructor
-	// =============================================
+	// --------------------------------------
 
 	public Matrix4f() {
+		mMatrixBuffer = BufferUtils.createFloatBuffer(16);
+		
 		setIdentity();
 	}
 
-	// =============================================
+	// --------------------------------------
 	// Methods
-	// =============================================
+	// --------------------------------------
 
 	public final void setIdentity() {
 
@@ -97,7 +102,7 @@ public class Matrix4f {
 		this.m33 = l33;
 
 	}
-	
+
 	public static Matrix4f mul(Matrix4f left, Matrix4f right, Matrix4f dest) {
 		if (dest == null)
 			dest = new Matrix4f();
@@ -145,12 +150,12 @@ public class Matrix4f {
 		m01 = 0.0f;
 		m02 = 0.0f;
 		m03 = 0.0f;
-		
+
 		m10 = 0.0f;
 		m11 = 2.0f / (pTop - pBottom);
 		m12 = 0.0f;
 		m13 = 0.0f;
-		
+
 		m20 = 0.0f;
 		m21 = 0.0f;
 		m22 = -2.0f / (pFar - pNear);
@@ -190,18 +195,20 @@ public class Matrix4f {
 		rotate(pAngle, pRotationAxis.x, pRotationAxis.y, pRotationAxis.z);
 	}
 
+	static Vector3f temp = new Vector3f();
+	
 	public void rotate(float angle, float x, float y, float z) {
-
 		float c = (float) Math.cos(Math.toRadians(angle));
 		float s = (float) Math.sin(Math.toRadians(angle));
 
-		// TODO: Garbage
-		Vector3f vec = new Vector3f(x, y, z);
-		if (vec.length() != 1f) {
-			vec = vec.normalize();
-			x = vec.x;
-			y = vec.y;
-			z = vec.z;
+		temp.x = x;
+		temp.y = y;
+		temp.z = z;
+		if (temp.length() != 1f) {
+			temp = temp.normalize();
+			x = temp.x;
+			y = temp.y;
+			z = temp.z;
 		}
 
 		m00 = x * x * (1f - c) + c;
@@ -213,28 +220,30 @@ public class Matrix4f {
 		m02 = x * z * (1f - c) + y * s;
 		m12 = y * z * (1f - c) - x * s;
 		m22 = z * z * (1f - c) + c;
-		
+
 	}
 
 	/** According to opengl.org, a col-maj matrix has translation elements at position 15,16 and 17. (http://www.opengl.org/archives/resources/faq/technical/transformations.htm)
 	 * 
 	 * @return A FloatBuffer containing a col-maj matrix */
 	public FloatBuffer getBuffer() {
-		FloatBuffer buffer = BufferUtils.createFloatBuffer(16);
+		mMatrixBuffer.clear();
 
-		buffer.put(m00).put(m01).put(m02).put(m03);
-		buffer.put(m10).put(m11).put(m12).put(m13);
-		buffer.put(m20).put(m21).put(m22).put(m23);
-		buffer.put(m30).put(m31).put(m32).put(m33);
+		mMatrixBuffer.put(m00).put(m01).put(m02).put(m03);
+		mMatrixBuffer.put(m10).put(m11).put(m12).put(m13);
+		mMatrixBuffer.put(m20).put(m21).put(m22).put(m23);
+		mMatrixBuffer.put(m30).put(m31).put(m32).put(m33);
 
-		buffer.flip();
-		return buffer;
+		mMatrixBuffer.flip();
+		return mMatrixBuffer;
 	}
 
 	/** According to opengl.org, a col-maj matrix has translation elements at position 15,16 and 17. (http://www.opengl.org/archives/resources/faq/technical/transformations.htm)
 	 * 
 	 * @return A FloatBuffer containing a col-maj matrix */
 	public FloatBuffer store(FloatBuffer buf) {
+		mMatrixBuffer.clear();
+		
 		buf.put(m00);
 		buf.put(m01);
 		buf.put(m02);
@@ -256,21 +265,21 @@ public class Matrix4f {
 
 	/** @return A FloatBuffer containing a row-maj matrix */
 	public FloatBuffer getBufferTranspose() {
+		mMatrixBuffer.clear();
+		
+		mMatrixBuffer.put(m00).put(m10).put(m20).put(m30);
+		mMatrixBuffer.put(m01).put(m11).put(m21).put(m31);
+		mMatrixBuffer.put(m02).put(m12).put(m22).put(m32);
+		mMatrixBuffer.put(m03).put(m13).put(m23).put(m33);
 
-		FloatBuffer buffer = BufferUtils.createFloatBuffer(16);
-
-		buffer.put(m00).put(m10).put(m20).put(m30);
-		buffer.put(m01).put(m11).put(m21).put(m31);
-		buffer.put(m02).put(m12).put(m22).put(m32);
-		buffer.put(m03).put(m13).put(m23).put(m33);
-
-		buffer.flip();
-		return buffer;
+		mMatrixBuffer.flip();
+		
+		return mMatrixBuffer;
 	}
 
-	// =============================================
+	// --------------------------------------
 	// Static-Methods
-	// =============================================
+	// --------------------------------------
 
 	public static Matrix4f transpose(Matrix4f src, Matrix4f dest) {
 		if (dest == null)
@@ -313,6 +322,9 @@ public class Matrix4f {
 		return dest;
 	}
 
+	/**
+	 * @deprecated use {@link Matrix4f.IDENTITY} instead. 
+	 * */
 	public static Matrix4f identity() {
 		return new Matrix4f();
 	}
@@ -371,24 +383,23 @@ public class Matrix4f {
 		return dest;
 	}
 
-	public void copy(Matrix4f pCopyFrom){
-		
+	public void copy(Matrix4f pCopyFrom) {
+
 		m00 = pCopyFrom.m00;
 		m01 = pCopyFrom.m01;
 		m02 = pCopyFrom.m02;
-		
+
 		m10 = pCopyFrom.m10;
 		m11 = pCopyFrom.m11;
 		m12 = pCopyFrom.m12;
-		
+
 		m20 = pCopyFrom.m20;
 		m21 = pCopyFrom.m21;
 		m22 = pCopyFrom.m22;
-		
+
 		m30 = pCopyFrom.m30;
 		m31 = pCopyFrom.m31;
 		m32 = pCopyFrom.m32;
-		
-		
+
 	}
 }
