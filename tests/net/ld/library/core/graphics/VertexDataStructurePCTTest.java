@@ -49,26 +49,26 @@ public class VertexDataStructurePCTTest {
 			assert (vertex0.getUV()[0] == -0.25f) : "vertex0 UV getter array returns incorrect U component";
 			assert (vertex0.getUV()[1] == -0.75f) : "vertex0 UV getter array returns incorrect V component";
 			
-			assert (lElements.length == 8) : "The number of elements in vertex.elements in not correct.";
+			assert (lElements.length == 10) : "The number of elements in vertex.elements in not correct.";
 			assert (lElements.length == VertexDataStructurePCT.elementCount) : "The number of elements in vertex.elements in not correct.";
 
 		}
 
 		{ // vertex 1 checks
 
-			assert (vertex1.getXYZW()[0] == 2) : "vertex1 XYZW getter returns incorrect X component";
-			assert (vertex1.getXYZW()[1] == 4) : "vertex1 XYZW getter returns incorrect Y component";
-			assert (vertex1.getXYZW()[2] == 8) : "vertex1 XYZW getter returns incorrect Z component";
+			assert (vertex1.getXYZW()[0] == 1) : "vertex1 XYZW getter returns incorrect X component";
+			assert (vertex1.getXYZW()[1] == 2) : "vertex1 XYZW getter returns incorrect Y component";
+			assert (vertex1.getXYZW()[2] == 3) : "vertex1 XYZW getter returns incorrect Z component";
 			assert (vertex1.getXYZW()[3] == 1) : "vertex1 XYZW getter returns incorrect W component";
 
-			assert (vertex1.getXYZ()[0] == 2) : "vertex1 XYZ getter returns incorrect X component";
-			assert (vertex1.getXYZ()[1] == 4) : "vertex1 XYZ getter array returns incorrect Y component";
-			assert (vertex1.getXYZ()[2] == 8) : "vertex1 XYZ getter array returns incorrect Z component";
+			assert (vertex1.getXYZ()[0] == 1) : "vertex1 XYZ getter returns incorrect X component";
+			assert (vertex1.getXYZ()[1] == 2) : "vertex1 XYZ getter array returns incorrect Y component";
+			assert (vertex1.getXYZ()[2] == 3) : "vertex1 XYZ getter array returns incorrect Z component";
 
 			assert (vertex1.getRGBA()[0] == 3) : "vertex1 RGBA getter array returns incorrect R component";
 			assert (vertex1.getRGBA()[1] == 6) : "vertex1 RGBA getter array returns incorrect G component";
 			assert (vertex1.getRGBA()[2] == 9) : "vertex1 RGBA getter array returns incorrect B component";
-			assert (vertex1.getRGBA()[3] == 12) : "vertex1 RGBA getter array returns incorrect A component";
+			assert (vertex1.getRGBA()[3] == 1) : "vertex1 RGBA getter array returns incorrect A component";
 			
 			assert (vertex1.getUV()[0] == 0.25f) : "vertex1 UV getter array returns incorrect U component";
 			assert (vertex1.getUV()[1] == 0.75f) : "vertex1 UV getter array returns incorrect V component";

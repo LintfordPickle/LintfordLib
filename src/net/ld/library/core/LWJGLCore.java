@@ -132,22 +132,21 @@ public abstract class LWJGLCore {
 		}
 
 		mGameCamera = new Camera(mDisplayConfig, 0, 0, DisplayConfig.WINDOW_WIDTH, DisplayConfig.WINDOW_HEIGHT);
-		mHUDCamera = new HUD(-DisplayConfig.WINDOW_WIDTH / 2, -DisplayConfig.WINDOW_HEIGHT / 2,
-				DisplayConfig.WINDOW_WIDTH / 2, DisplayConfig.WINDOW_HEIGHT / 2);
+		mHUDCamera = new HUD(-DisplayConfig.WINDOW_WIDTH / 2, -DisplayConfig.WINDOW_HEIGHT / 2, DisplayConfig.WINDOW_WIDTH / 2, DisplayConfig.WINDOW_HEIGHT / 2);
 
 		mGameTime = new GameTime();
 		mInputState = new InputState(mDisplayConfig, mGameCamera, mHUDCamera, mGameTime);
 
 		mRenderState.initialise(mHUDCamera, mGameCamera, mGameTime, mDisplayConfig);
 
-		long lWindowID = mDisplayConfig.onCreateWindow();
-
-		// set key callbacks
-		glfwSetKeyCallback(lWindowID, mInputState.mKeyCallback);
-		glfwSetCharModsCallback(lWindowID, mInputState.mTextCallback);
-		glfwSetMouseButtonCallback(lWindowID, mInputState.mMouseButtonCallback);
-		glfwSetCursorPosCallback(lWindowID, mInputState.mMousePositionCallback);
-		glfwSetScrollCallback(lWindowID, mInputState.mMouseScrollCallback);
+//		long lWindowID = mDisplayConfig.onCreateWindow();
+//
+//		// set key callbacks
+//		glfwSetKeyCallback(lWindowID, mInputState.mKeyCallback);
+//		glfwSetCharModsCallback(lWindowID, mInputState.mTextCallback);
+//		glfwSetMouseButtonCallback(lWindowID, mInputState.mMouseButtonCallback);
+//		glfwSetCursorPosCallback(lWindowID, mInputState.mMousePositionCallback);
+//		glfwSetScrollCallback(lWindowID, mInputState.mMouseScrollCallback);
 
 		onInitialiseGL();
 

@@ -33,13 +33,13 @@ public class TimeSpan {
 	// Variables
 	// =============================================
 
-	private long mTicks;
+	private double mTicks;
 
 	// =============================================
 	// Properties
 	// =============================================
 
-	public long ticks() {
+	public double ticks() {
 		return mTicks;
 	}
 

@@ -19,6 +19,7 @@ public class GameTime {
 	 */
 	public double totalGameTime() {
 		return mTotalGameTime / 1000.0f;
+		
 	}
 
 	/**
@@ -26,6 +27,7 @@ public class GameTime {
 	 */
 	public double elapseGameTime() {
 		return mElapsedGameTime;
+		
 	}
 
 	// =============================================
@@ -42,7 +44,6 @@ public class GameTime {
 	// =============================================
 
 	public void update() {
-
 		mElapsedGameTime = getDelta();
 		mTotalGameTime += mElapsedGameTime;
 
@@ -59,4 +60,5 @@ public class GameTime {
 
 		return lDelta;
 	}
+
 }
