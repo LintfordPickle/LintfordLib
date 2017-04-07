@@ -48,7 +48,14 @@ public class GameBase extends LWJGLCore {
 public static void main(String args[]) {
 	GameInfo lGameInfo = new GameInfo() { };
 
-	new GameBase(lGameInfo).createWindow();
+	GameBase lGameBase = new GameBase(lGameInfo);
+	
+	// Create the main application window
+	if( lGameBase.createWindow() ) {
+		// If successful, begin the game loop
+		lGameBase.onRunGameLoop();
+	
+	}
   
 }
 ```
@@ -117,3 +124,9 @@ onDraw():
 	// Clear the depth buffer and color buffer
 	GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 ```
+
+## Unit Tests
+
+Units tests are created with JUnit 4, which must be present in the project build path.
+
+Units tests have been included in the /test/ source folder. The unit tests share the same package names as the classes they test (to allow package level access modifiers).
