@@ -3,11 +3,9 @@
  */
 package net.ld.library.core;
 
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import net.ld.library.GameInfo;
-import net.ld.library.core.LWJGLCore;
 import net.ld.library.core.rendering.RenderState;
 
 /**
@@ -15,12 +13,6 @@ import net.ld.library.core.rendering.RenderState;
  * is extended.
  */
 public class LWJGLCoreTest {
-
-	@BeforeClass
-	public static void runOnceBeforeClass() {
-		System.out.println("@BeforeClass - runOnceBeforeClass");
-
-	}
 
 	/** Tests the creation of an OpenGL window */
 	@Test
@@ -33,6 +25,8 @@ public class LWJGLCoreTest {
 
 		// Assert (Test the action was performed correctly)
 		assert (result) : "LGWJGLCore failed to create window";
+
+		lCoreObject.closeApp();
 
 	}
 
@@ -51,6 +45,8 @@ public class LWJGLCoreTest {
 		// Assert (Test the action was performed correctly)
 		assert (lCoreObject.gameTime() != null) : "LGWJGLCore failed to instantiate a valid GameTime object";
 
+		lCoreObject.closeApp();
+
 	}
 
 	/**
@@ -68,6 +64,8 @@ public class LWJGLCoreTest {
 		// Assert (Test the action was performed correctly)
 		assert (lCoreObject.inputState() != null) : "LGWJGLCore failed to instantiate a valid InputState object";
 
+		lCoreObject.closeApp();
+
 	}
 
 	/**
@@ -84,6 +82,8 @@ public class LWJGLCoreTest {
 
 		// Assert (Test the action was performed correctly)
 		assert (lCoreObject.hud() != null) : "LGWJGLCore failed to instantiate a valid HUD object";
+
+		lCoreObject.closeApp();
 
 	}
 
