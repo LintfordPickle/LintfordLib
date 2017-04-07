@@ -9,26 +9,10 @@ public class GameTime {
 	private long mLastFrame;
 	private double mTotalGameTime;
 	private double mElapsedGameTime;
-	private int mFPSCounter;
-	private int mFPS;
-	private float mLastFPSTimer;
-	private boolean mShowFPSInConsole;
 
 	// =============================================
 	// Properties
 	// =============================================
-
-	public boolean showFPS(){
-		return mShowFPSInConsole;
-	}
-	
-	public void showFPS(boolean pNewValue){
-		mShowFPSInConsole = pNewValue;
-	}
-	
-	public int fps() {
-		return mFPS;
-	}
 
 	/**
 	 * @return The total game time in seconds.
@@ -50,6 +34,7 @@ public class GameTime {
 
 	public GameTime() {
 		getDelta(); // needs to be called once at least
+
 	}
 
 	// =============================================
@@ -60,17 +45,6 @@ public class GameTime {
 
 		mElapsedGameTime = getDelta();
 		mTotalGameTime += mElapsedGameTime;
-
-		if (mTotalGameTime - mLastFPSTimer > 1000) {
-			mLastFPSTimer += 1000;
-			mFPS = mFPSCounter;
-			if (mShowFPSInConsole) {
-				System.out.println("FPS: " + mFPS);
-			}
-
-			mFPSCounter = 0;
-		}
-		mFPSCounter++;
 
 	}
 
