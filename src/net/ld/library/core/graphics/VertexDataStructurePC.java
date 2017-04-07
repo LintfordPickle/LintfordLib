@@ -29,19 +29,19 @@ public class VertexDataStructurePC {
 	// The size of a vertex in bytes (sizeOf())
 	public static final int stride = positionBytesCount + colorBytesCount;
 
-	public void xyzw(Vector3f pPosition) {
+	public void xyz(Vector3f pPosition) {
 		mXYZW = new float[] { pPosition.x, pPosition.y, pPosition.z, 1f };
 	}
 
-	public void xyzw(float x, float y, float z) {
+	public void xyz(float x, float y, float z) {
 		mXYZW = new float[] { x, y, z, 1f };
 	}
 
-	public void rgba(Vector3f pCol) {
+	public void rgb(Vector3f pCol) {
 		mRGBA = new float[] { pCol.x, pCol.y, pCol.z, 1f };
 	}
 
-	public void rgba(float r, float g, float b) {
+	public void rgb(float r, float g, float b) {
 		mRGBA = new float[] { r, g, b, 1f };
 	}
 

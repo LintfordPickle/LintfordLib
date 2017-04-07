@@ -6,7 +6,7 @@ public class VertexDataStructurePT {
 	private float[] mUV = new float[] { 0f, 0f };
 
 	// The number of bytes an element has (all elements are floats here)
-	public static final int elementBytes = 4;
+	public static final int elementBytes = Float.BYTES;
 
 	// Elements per parameter
 	public static final int positionElementCount = 4;
@@ -62,7 +62,7 @@ public class VertexDataStructurePT {
 		return new float[] {this.mXYZW[0], this.mXYZW[1], this.mXYZW[2]};
 	}
 	
-	public float[] getST() {
+	public float[] getUV() {
 		return new float[] {this.mUV[0], this.mUV[1]};
 	}
 	

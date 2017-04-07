@@ -14,6 +14,7 @@ import net.ld.library.core.config.DisplayConfig;
 import net.ld.library.core.maths.Vector2f;
 import net.ld.library.core.time.GameTime;
 
+/** The {@link InputState} sets up callback listeners */
 public class InputState {
 
 	public class KeyCallback extends GLFWKeyCallback {
@@ -237,13 +238,12 @@ public class InputState {
 	public MouseButtonCallback mMouseButtonCallback;
 	public MousePositionCallback mMousePositionCallback;
 	public MouseScrollCallback mMouseScrollCallback;
-	private INPUT_TYPES mLastInputActive = INPUT_TYPES.Keyboard; // we use this
-																	// because
-																	// sometimes
-																	// the user
-																	// is locked
-																	// to a text
-																	// input
+	// we use this
+	// because
+	// sometimes
+	// the user
+	// is locked to a text input
+	private INPUT_TYPES mLastInputActive = INPUT_TYPES.Keyboard; 
 
 	private float mMenuClickTimer;
 	private float mKeyTimer;

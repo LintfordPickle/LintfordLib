@@ -89,6 +89,14 @@ public abstract class LWJGLCore {
 		return mGameCamera;
 	}
 
+	/**
+	 * Returns an instance of {@link RenderState} which contains state
+	 * information about the current rendering pass.
+	 */
+	public RenderState renderState() {
+		return mRenderState;
+	}
+
 	// =============================================
 	// Constructor(s)
 	// =============================================
@@ -114,12 +122,12 @@ public abstract class LWJGLCore {
 	 * Creates a new OpenGL window and instantiates all auxiliary classes needed
 	 * for a LWJGL game.
 	 */
-	public void createWindow() {
+	public boolean createWindow() {
 		// Don't allow the user to create more than one window per LWJGL (this)
 		// instance.
 		if (mWindowCreated) {
 			System.err.println("You can only created one window per LWJGL instance!");
-			return;
+			return false;
 
 		}
 
@@ -145,13 +153,12 @@ public abstract class LWJGLCore {
 
 		onInitialiseApp();
 
-		// Lazy initialisation of texture manager
+		// Lazy initialization of texture manager
 		TextureManager.textureManager();
 
 		onLoadGLContent();
 
-		// Starts the game loop.
-		onRunGameLoop();
+		return true;
 	}
 
 	/**
@@ -193,9 +200,10 @@ public abstract class LWJGLCore {
 
 			onHandleInput();
 
-			// FIXME: Don't update the time if the window doesn't have focus (this is application specific).
+			// FIXME: Don't update the time if the window doesn't have focus
+			// (this is application specific).
 			// if (mDisplayConfig.hasFocus()) {
-				onUpdate(mGameTime);
+			onUpdate(mGameTime);
 
 			// }
 

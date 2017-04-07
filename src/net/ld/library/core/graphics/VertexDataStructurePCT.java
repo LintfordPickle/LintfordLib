@@ -11,7 +11,7 @@ public class VertexDataStructurePCT {
 	private float[] mUV = new float[] { 0f, 0f };
 
 	// The number of bytes an element has (all elements are floats here)
-	public static final int elementBytes = 4;
+	public static final int elementBytes = Float.BYTES;
 
 	// Elements per parameter
 	public static final int positionElementCount = 4;
@@ -34,28 +34,12 @@ public class VertexDataStructurePCT {
 	// The size of a vertex in bytes (sizeOf())
 	public static final int stride = positionBytesCount + colorBytesCount + textureBytesCount;
 
-	public void xyzw(Vector3f pPosition) {
+	public void xyz(Vector3f pPosition) {
 		mXYZW = new float[] { pPosition.x, pPosition.y, pPosition.z, 1f };
 	}
 
-	public void xyzw(float x, float y, float z) {
+	public void xyz(float x, float y, float z) {
 		mXYZW = new float[] { x, y, z, 1f };
-	}
-
-	public void rgba(Vector3f pCol) {
-		mRGBA = new float[] { pCol.x, pCol.y, pCol.z, 1f };
-	}
-
-	public void rgba(float r, float g, float b) {
-		mRGBA = new float[] { r, g, b, 1f };
-	}
-
-	public void uv(float u, float v) {
-		mUV = new float[] { u, v };
-	}
-
-	public void uv(Vector2f pTexCoord) {
-		mUV = new float[] { pTexCoord.x, pTexCoord.y };
 	}
 
 	public void xyzw(float x, float y, float z, float w) {
@@ -66,12 +50,28 @@ public class VertexDataStructurePCT {
 		mXYZW = new float[] { pPosition.x, pPosition.y, pPosition.z, pPosition.w };
 	}
 
+	public void rgb(Vector3f pCol) {
+		mRGBA = new float[] { pCol.x, pCol.y, pCol.z, 1f };
+	}
+
+	public void rgb(float r, float g, float b) {
+		mRGBA = new float[] { r, g, b, 1f };
+	}
+
 	public void rgba(float r, float g, float b, float a) {
 		mRGBA = new float[] { r, g, b, a };
 	}
 
 	public void rgba(Vector4f pCol) {
 		mRGBA = new float[] { pCol.x, pCol.y, pCol.z, pCol.w };
+	}
+
+	public void uv(float u, float v) {
+		mUV = new float[] { u, v };
+	}
+
+	public void uv(Vector2f pTexCoord) {
+		mUV = new float[] { pTexCoord.x, pTexCoord.y };
 	}
 
 	public float[] getElements() {
@@ -111,7 +111,7 @@ public class VertexDataStructurePCT {
 		return new float[] { this.mRGBA[0], this.mRGBA[1], this.mRGBA[2] };
 	}
 
-	public float[] getST() {
+	public float[] getUV() {
 		return new float[] { this.mUV[0], this.mUV[1] };
 	}
 
