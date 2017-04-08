@@ -17,18 +17,27 @@ import net.ld.library.core.time.GameTime;
 /** The {@link InputState} sets up callback listeners */
 public class InputState {
 
+	/**
+	 * {@link KeyCallback} handles the keyboard input events received from the
+	 * LWJGL/GLFW window
+	 */
 	public class KeyCallback extends GLFWKeyCallback {
 
 		// ---------------------------------------------
 		// Variables
 		// ---------------------------------------------
 
+		/**
+		 * Reference to the InputState to be called on {@link KeyCallback}
+		 * events,
+		 */
 		private InputState mInputState;
 
 		// ---------------------------------------------
 		// Constructor
 		// ---------------------------------------------
 
+		/** ctor. */
 		private KeyCallback(InputState pInputState) {
 			mInputState = pInputState;
 		}
@@ -37,6 +46,10 @@ public class InputState {
 		// Methods
 		// ---------------------------------------------
 
+		/**
+		 * Overridden callback method, called when a key is pressed, repeated or
+		 * released.
+		 */
 		@Override
 		public void invoke(long pWindow, int pKey, int pScanCode, int pAction, int pMods) {
 			mLastInputActive = INPUT_TYPES.Keyboard;
@@ -201,9 +214,9 @@ public class InputState {
 
 	}
 
-	// =============================================
+	// ---------------------------------------------
 	// Constants
-	// =============================================
+	// ---------------------------------------------
 
 	public enum INPUT_TYPES {
 		Mouse, Keyboard,
@@ -215,9 +228,9 @@ public class InputState {
 	final static int KEY_LIMIT = 512;
 	final static int MOUSE_BUTTONS_LIMIT = 3;
 
-	// =============================================
+	// ---------------------------------------------
 	// Variables
-	// =============================================
+	// ---------------------------------------------
 
 	private GameTime mGameTime;
 	boolean[] mKeyButtonStates;
@@ -238,12 +251,12 @@ public class InputState {
 	public MouseButtonCallback mMouseButtonCallback;
 	public MousePositionCallback mMousePositionCallback;
 	public MouseScrollCallback mMouseScrollCallback;
-	// we use this
-	// because
-	// sometimes
-	// the user
-	// is locked to a text input
-	private INPUT_TYPES mLastInputActive = INPUT_TYPES.Keyboard; 
+
+	/**
+	 * We store the last input type so we can hide the mouse pointer when the
+	 * user decides to use the keyboard when navigating the menus.
+	 */
+	private INPUT_TYPES mLastInputActive = INPUT_TYPES.Keyboard;
 
 	private float mMenuClickTimer;
 	private float mKeyTimer;
@@ -254,9 +267,9 @@ public class InputState {
 	private boolean mCaptureKeyboardInput;
 	private IBufferedInputCallback mIBufferedInputCallback;
 
-	// =============================================
+	// ---------------------------------------------
 	// Properties
-	// =============================================
+	// ---------------------------------------------
 
 	public void leftClickOwner(int pOwnerHash) {
 		mLeftClickOwner = pOwnerHash;
@@ -356,6 +369,10 @@ public class InputState {
 
 	}
 
+	/**
+	 * Returns true if the given keyboard key is currently pressed. false
+	 * otherwise. See GLFW.GLFW_KEYS
+	 */
 	public boolean keyDown(int pKeyCode) {
 		if (pKeyCode >= KEY_LIMIT) {
 			System.err.println("Key " + pKeyCode + " out of range! ");
@@ -365,6 +382,11 @@ public class InputState {
 		return mKeyButtonStates[pKeyCode];
 	}
 
+	/**
+	 * Returns true if the given key is currently pressed, and this method has
+	 * not previously been called this frame (first come, first server timed
+	 * keyboard input). false is returned otherwise.
+	 */
 	public boolean keyDownTimed(int pKeyCode) {
 		if (mKeyTimer < TIMED_KEY_DELAY)
 			return false;
@@ -381,28 +403,34 @@ public class InputState {
 		return false;
 	}
 
-	public void simulateMenuKeyPress() {
-		mKeyTimer = 0;
-	}
-
+	/**
+	 * captures keyboard input and directs it towards the
+	 * {@link IBufferedInputCallback} given.
+	 */
 	public void startCapture(IBufferedInputCallback pCallbackFunction) {
 		mIBufferedInputCallback = pCallbackFunction;
 		mCaptureKeyboardInput = true;
 	}
 
+	/** stops any buffered keyboard input capturing. */
 	public void stopCapture() {
 		mIBufferedInputCallback = null;
 		mCaptureKeyboardInput = false;
 	}
 
+	/**
+	 * Returns the {@link GameTime} object associated with the InputState. This
+	 * allows you to use time to manipulate input.
+	 */
 	public GameTime gameTime() {
 		return mGameTime;
 	}
 
-	// =============================================
-	// Constructor(s)
-	// =============================================
+	// ---------------------------------------------
+	// Constructor
+	// ---------------------------------------------
 
+	/** ctor. */
 	public InputState(DisplayConfig pDisplayConfig, ICamera pCamera, ICamera pHUD, GameTime pGameTime) {
 		mKeyButtonStates = new boolean[KEY_LIMIT];
 		mMouseButtonStates = new boolean[MOUSE_BUTTONS_LIMIT];
@@ -420,10 +448,14 @@ public class InputState {
 		mHUD = pHUD;
 	}
 
-	// =============================================
+	// ---------------------------------------------
 	// Core-Methods
-	// =============================================
+	// ---------------------------------------------
 
+	/**
+	 * update called once per frame. handles timer info for tracking long clicks
+	 * etc.
+	 */
 	public void update(GameTime pGameTime) {
 		final double lElapsed = pGameTime.elapseGameTime();
 
@@ -444,21 +476,29 @@ public class InputState {
 
 	}
 
+	/** Clears the key flag buffer to zero (as if no keys have been pressed). */
 	public void resetKeyFlags() {
 		Arrays.fill(mKeyButtonStates, false);
+
 	}
 
+	/** resets an state flags which should not persist across update frames. */
 	public void resetFlags() {
-
 		mMouseWheelXOffset = 0;
 		mMouseWheelYOffset = 0;
 
 	}
 
-	// =============================================
+	// ---------------------------------------------
 	// Methods
-	// =============================================
+	// ---------------------------------------------
 
+	/**
+	 * Helper method, calling objects can check a soft lock on the current left
+	 * mouse click ownership. If the calling object wins the lock, true is
+	 * returned and the calling object's hash is stored. false is returned if
+	 * another object owns the current left click.
+	 */
 	public boolean tryAquireLeftClickOwnership(int pHash) {
 		if (!mouseLeftClick())
 			return false;
@@ -470,6 +510,10 @@ public class InputState {
 		return false;
 	}
 
+	/**
+	 * releases a lock on the left mouse click if the calling object's hash
+	 * matches the current left click owner's hash.
+	 */
 	public void tryReleaseLeftLock(int pHash) {
 		if (!mouseLeftClick())
 			return;
@@ -482,6 +526,12 @@ public class InputState {
 		return;
 	}
 
+	/**
+	 * Helper method, calling objects can check a soft lock on the current right
+	 * mouse click ownership. If the calling object wins the lock, true is
+	 * returned and the calling object's hash is stored. false is returned if
+	 * another object owns the current right click.
+	 */
 	public boolean tryAquireRightClickOwnership(int pHash) {
 		if (!mouseRightClick())
 			return false;
@@ -491,6 +541,22 @@ public class InputState {
 
 		}
 		return false;
+	}
+
+	/**
+	 * releases a lock on the right mouse click if the calling object's hash
+	 * matches the current left click owner's hash.
+	 */
+	public void tryReleaseRightLock(int pHash) {
+		if (!mouseRightClick())
+			return;
+
+		if (mRightClickOwner == pHash) {
+			mRightClickOwner = -1;
+
+		}
+
+		return;
 	}
 
 }
