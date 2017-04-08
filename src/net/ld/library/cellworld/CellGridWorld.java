@@ -2,18 +2,18 @@ package net.ld.library.cellworld;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import net.ld.library.core.time.GameTime;
 
 /**
- * Creates a simple world based on a cell grid. Also contains a collection of level tiles and entities.
+ * Creates a simple world based on a cell grid. Also contains a collection of
+ * level tiles and entities.
  */
 public class CellGridWorld {
 
-	// =============================================
+	// -------------------------------------
 	// Variables
-	// =============================================
+	// -------------------------------------
 
 	protected CellGridLevel mLevelTiles;
 
@@ -24,18 +24,23 @@ public class CellGridWorld {
 	protected List<CellWorldEntity> mEntities;
 	protected List<CellWorldEntity> mEntitiesToUpdate;
 
-	// =============================================
+	// -------------------------------------
 	// Properties
-	// =============================================
+	// -------------------------------------
 
+	/** Returns a list of entities currently registered in the world. */
 	public List<CellWorldEntity> entities() {
 		return mEntities;
 	}
 
-	// =============================================
+	// -------------------------------------
 	// Constructor
-	// =============================================
+	// -------------------------------------
 
+	/**
+	 * ctor. Creates a {@link CellGridLevel} of the given dimensions and sets up
+	 * the internal structures for storing {@link CellWorldEntity}s.
+	 */
 	public CellGridWorld(int pCellSize, int pCellsWide, int pCellsHigh) {
 		cellSize = pCellSize;
 		cellsWide = pCellsWide;
@@ -48,24 +53,19 @@ public class CellGridWorld {
 
 	}
 
-	// =============================================
+	// -------------------------------------
 	// Core-Methods
-	// =============================================
+	// -------------------------------------
 
+	/** Called once after instantiation. */
 	public void initialise() {
-		Random lRand = new Random();
-
-		for (int x = 0; x < cellsWide; x++) {
-			for (int y = 0; y < cellsHigh; y++) {
-				mLevelTiles.mLevelGrid[x][y] = lRand.nextInt(10);
-				mLevelTiles.mLevelGrid[x][y] = mLevelTiles.mLevelGrid[x][y] > 7 ? 1 : 0;
-
-			}
-
-		}
 
 	}
 
+	/**
+	 * Called once per frame, updates the entities registered in the
+	 * {@link CellGridWorld}
+	 */
 	public void update(GameTime pGameTime) {
 		mEntitiesToUpdate.clear();
 
@@ -89,26 +89,29 @@ public class CellGridWorld {
 
 	}
 
-	// =============================================
+	// -------------------------------------
 	// Methods
-	// =============================================
+	// -------------------------------------
 
-	public boolean hasCollisionAt(int pX, int pY) {
-		boolean lResult = false;
-
-		if (pX < 0 || pX >= cellsWide)
-			return true;
-		if (pY < 0 || pY >= cellsHigh)
-			return true;
+	/**
+	 * Checks the level tile at the given coordinates, and returns true if the
+	 * tile is non-zero.
+	 */
+	public boolean hasLevelCollisionAt(int pX, int pY) {
+		final int ARRAY_INDEX = mLevelTiles.getIndex(pX, pY);
+		if (ARRAY_INDEX == CellGridLevel.INVALID_TILE_INDEX)
+			return false;
 
 		// Check world
-		lResult = mLevelTiles.mLevelGrid[pX][pY] != 0;
+		return mLevelTiles.mLevelGrid[ARRAY_INDEX] != 0;
 
-		// Check entities
-
-		return lResult;
 	}
 
+	/**
+	 * Returns true if the given {@link CellWorldEntity} instance overlaps
+	 * spatially another {@link CellWorldEntity} on the level. false is returned
+	 * otherwise.
+	 */
 	public boolean overlaps(CellWorldEntity e) {
 		final int lEntityCount = mEntities.size();
 		for (int i = 0; i < lEntityCount; i++) {
@@ -119,7 +122,8 @@ public class CellGridWorld {
 				continue;
 
 			// TODO: Might not work for larger objects (larger than 1 cell)
-			// if (e != e1 && Math.abs(e1.cx - e.cx) <= 2 && Math.abs(e1.cy - e.cy) <= 2) {
+			// if (e != e1 && Math.abs(e1.cx - e.cx) <= 2 && Math.abs(e1.cy -
+			// e.cy) <= 2) {
 			float lMaxDist = mEntities.get(i).radius + e.radius;
 			float lDistSqr = (e.xx - e1.xx) * (e.xx - e1.xx) + (e.yy - e1.yy) * (e.yy - e1.yy);
 
@@ -127,24 +131,35 @@ public class CellGridWorld {
 				return true;
 			}
 
-			// }
-
 		}
 
 		return false;
 	}
 
-	public void addEntity(CellWorldEntity pWorldEntity) {
+	/**
+	 * Adds the given {@link CellWorldEntity} to the {@link CellGridWorld} and
+	 * updates its reference to the world. true is returned if the object is
+	 * successfully added, false is returned otherwise.
+	 */
+	public boolean addEntity(CellWorldEntity pWorldEntity) {
 		if (!mEntities.contains(pWorldEntity)) {
 
 			pWorldEntity.attachParent(this);
-
 			mEntities.add(pWorldEntity);
+
+			return true;
 
 		}
 
+		// Apparently this entity already exists in the world.
+		return false;
+
 	}
 
+	/**
+	 * Removes the given {@link CellWorldEntity} from the world, if it has
+	 * previously been registered.
+	 */
 	public void removeEntity(CellWorldEntity pWorldEntity) {
 		if (mEntities.contains(pWorldEntity)) {
 			pWorldEntity.detachParent();

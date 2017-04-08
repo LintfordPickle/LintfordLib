@@ -4,17 +4,12 @@ import net.ld.library.core.maths.Rectangle;
 import net.ld.library.core.rendering.RenderState;
 import net.ld.library.core.time.GameTime;
 
-
 /**
  * A simple entity class for a cell grid based world.
  * 
  * @ref http://deepnight.net/a-simple-platformer-engine-part-1-basics/
  */
 public class CellWorldEntity extends Rectangle {
-
-	// =============================================
-	// Constants
-	// =============================================
 
 	// =============================================
 	// Variables
@@ -29,7 +24,6 @@ public class CellWorldEntity extends Rectangle {
 	public float ry;
 
 	public boolean isAlive; // used for state of player in game world
-	// TODO: --> Add isFree for pool
 
 	public float radius;
 	public int coll_repel_precedence;
@@ -52,7 +46,7 @@ public class CellWorldEntity extends Rectangle {
 
 	public boolean isOnGround() {
 		if (mParent != null) {
-			return (mParent.hasCollisionAt(cx, cy + 1) && ry > 0.5f);
+			return (mParent.hasLevelCollisionAt(cx, cy + 1) && ry > 0.5f);
 		}
 
 		return false;
@@ -78,33 +72,33 @@ public class CellWorldEntity extends Rectangle {
 
 		rx += dx * pGameTime.elapseGameTime() / 1000.0f;
 		ry += dy * pGameTime.elapseGameTime() / 1000.0f;
-		
+
 		dx *= 0.96f;
 		dy *= 0.96f;
 
 		if (isAlive) {
 
 			// Check collisions to the right
-			if (mParent.hasCollisionAt(cx + 1, cy) && rx > 0.7f) {
+			if (mParent.hasLevelCollisionAt(cx + 1, cy) && rx > 0.7f) {
 				rx = 0.7f; // limit ratio
-				dx = 0; // kill vel
+				dx = 0; // kill velocity
 			}
 
 			// Check collision to the left
-			if (mParent.hasCollisionAt(cx - 1, cy) && rx <= 0.3f) {
+			if (mParent.hasLevelCollisionAt(cx - 1, cy) && rx <= 0.3f) {
 				rx = 0.3f; // limit ratio
-				dx = 0; // kill vel
+				dx = 0; // kill velocity
 			}
 
-			if (mParent.hasCollisionAt(cx, cy + 1) && ry > 0.7f) {
+			if (mParent.hasLevelCollisionAt(cx, cy + 1) && ry > 0.7f) {
 				ry = 0.7f; // limit ratio
-				dy = 0; // kill vel
+				dy = 0; // kill velocity
 			}
 
 			// Check collision to the left
-			if (mParent.hasCollisionAt(cx, cy - 1) && ry <= 0.3f) {
+			if (mParent.hasLevelCollisionAt(cx, cy - 1) && ry <= 0.3f) {
 				ry = 0.3f; // limit ratio
-				dy = 0; // kill vel
+				dy = 0; // kill velocity
 			}
 
 			// Check collisions with other entities
@@ -153,11 +147,9 @@ public class CellWorldEntity extends Rectangle {
 							e.dx += (exx / dist) * repelPower * force;
 							e.dy += (eyy / dist) * repelPower * force;
 						}
-						
-						
+
 					}
-					
-					
+
 				}
 
 			}
@@ -217,8 +209,8 @@ public class CellWorldEntity extends Rectangle {
 	// =============================================
 	// Methods
 	// =============================================
-	
- 	public void init() {
+
+	public void init() {
 		isAlive = true;
 
 	}
