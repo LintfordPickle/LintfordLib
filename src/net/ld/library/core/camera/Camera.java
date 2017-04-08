@@ -86,6 +86,11 @@ public class Camera implements ICamera {
 	// Properties
 	// =============================================
 
+	/** Returns the current target position the camera will move towards. */
+	public Vector2f targetPosition() {
+		return mTargetPosition;
+	}
+
 	public void setZoomConstraints(float pMin, float pMax) {
 		mCameraMinZoom = pMin;
 
@@ -113,11 +118,11 @@ public class Camera implements ICamera {
 		mTargetPosition.x = pX;
 		mTargetPosition.y = pY;
 	}
-	
+
 	public void setAbsPosition(float pX, float pY) {
 		mTargetPosition.x = pX;
 		mTargetPosition.y = pY;
-		
+
 		mPosition.x = pX;
 		mPosition.y = pY;
 	}
@@ -230,7 +235,8 @@ public class Camera implements ICamera {
 	// Constructor(s)
 	// =============================================
 
-	public Camera(DisplayConfig pDisplayConfig, final float pX, final float pY, final float pWidth, final float pHeight) {
+	public Camera(DisplayConfig pDisplayConfig, final float pX, final float pY, final float pWidth,
+			final float pHeight) {
 		mDisplayConfig = pDisplayConfig;
 
 		this.mMinX = pX;
@@ -273,7 +279,8 @@ public class Camera implements ICamera {
 
 		// static zoom factor
 		if (mAllowZoom) {
-			mZoomAcceleration += pInputState.mouseWheelYOffset() * ZOOM_ACCELERATE_AMOUNT * pInputState.gameTime().elapseGameTime() / 1000f * getZoomFactor();
+			mZoomAcceleration += pInputState.mouseWheelYOffset() * ZOOM_ACCELERATE_AMOUNT
+					* pInputState.gameTime().elapseGameTime() / 1000f * getZoomFactor();
 		}
 
 	}
@@ -296,7 +303,7 @@ public class Camera implements ICamera {
 			float progress = mShakeTimer / mShakeDur;
 
 			float lMagnitude = mShakeMag * (1f - (progress * progress));
-			
+
 			mShakeOffX = mRandom.nextFloat() * lMagnitude;
 			mShakeOffY = mRandom.nextFloat() * lMagnitude;
 
@@ -386,7 +393,8 @@ public class Camera implements ICamera {
 		mViewMatrix.scale(mZoomFactor, mZoomFactor, 1f);
 
 		// This seems way backwards
-		mViewMatrix.translate(-(mPosition.x + mShakeOffY) * getZoomFactor(), -(mPosition.y + mShakeOffY) * getZoomFactor(), 0f);
+		mViewMatrix.translate(-(mPosition.x + mShakeOffY) * getZoomFactor(),
+				-(mPosition.y + mShakeOffY) * getZoomFactor(), 0f);
 
 		createOrtho(pW, pH);
 
