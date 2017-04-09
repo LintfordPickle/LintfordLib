@@ -9,7 +9,8 @@ import org.lwjgl.glfw.GLFWKeyCallback;
 import org.lwjgl.glfw.GLFWMouseButtonCallback;
 import org.lwjgl.glfw.GLFWScrollCallback;
 
-import net.ld.library.core.camera.ICamera;
+import net.ld.library.core.camera.Camera;
+import net.ld.library.core.camera.HUD;
 import net.ld.library.core.config.DisplayConfig;
 import net.ld.library.core.maths.Vector2f;
 import net.ld.library.core.time.GameTime;
@@ -261,8 +262,8 @@ public class InputState {
 	private float mMenuClickTimer;
 	private float mKeyTimer;
 
-	private ICamera mCamera;
-	private ICamera mHUD;
+	private Camera mCamera;
+	private HUD mHUD;
 
 	private boolean mCaptureKeyboardInput;
 	private IBufferedInputCallback mIBufferedInputCallback;
@@ -299,11 +300,11 @@ public class InputState {
 		return mMouseWheelYOffset;
 	}
 
-	public ICamera camera() {
+	public Camera camera() {
 		return mCamera;
 	}
 
-	public ICamera HUD() {
+	public HUD HUD() {
 		return mHUD;
 	}
 
@@ -361,6 +362,7 @@ public class InputState {
 		return mMouseWindowCoords;
 	}
 
+	/** Callback which sets the position of the mouse in window space. */
 	void setMousePosition(double pXPos, double pYPos) {
 		mMouseWindowCoords.x = (float) pXPos;
 		mMouseWindowCoords.y = (float) pYPos;
@@ -431,7 +433,7 @@ public class InputState {
 	// ---------------------------------------------
 
 	/** ctor. */
-	public InputState(DisplayConfig pDisplayConfig, ICamera pCamera, ICamera pHUD, GameTime pGameTime) {
+	public InputState(DisplayConfig pDisplayConfig, Camera pCamera, HUD pHUD, GameTime pGameTime) {
 		mKeyButtonStates = new boolean[KEY_LIMIT];
 		mMouseButtonStates = new boolean[MOUSE_BUTTONS_LIMIT];
 

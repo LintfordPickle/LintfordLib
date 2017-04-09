@@ -7,7 +7,6 @@ import org.lwjgl.opengl.GL11;
 
 import net.ld.library.core.camera.Camera;
 import net.ld.library.core.camera.HUD;
-import net.ld.library.core.camera.ICamera;
 import net.ld.library.core.config.DisplayConfig;
 import net.ld.library.core.graphics.ResourceManager;
 import net.ld.library.core.graphics.spritebatch.SpriteBatch;
@@ -90,7 +89,7 @@ public class ScreenManager {
 		return mWorldCamera;
 	}
 
-	public void setWorldCamera(ICamera pNewCamera) {
+	public void setWorldCamera(Camera pNewCamera) {
 		if (mRenderState != null) {
 			mRenderState.gameCamera(pNewCamera);
 		}
@@ -141,8 +140,10 @@ public class ScreenManager {
 
 		// Load the minimum font for the screen manager (contains textures for
 		// buttons and windows etc.)
-		TextureManager.textureManager().loadTextureFromResource(SCREEN_MANAGER_TEXTURE_NAME, "/res/textures/screenmanager.png", GL11.GL_NEAREST);
-		TextureManager.textureManager().loadTextureFromResource(SCREEN_MANAGER_PATCH_TEXTURE_NAME, "/res/textures/menu9patch.png", GL11.GL_NEAREST);
+		TextureManager.textureManager().loadTextureFromResource(SCREEN_MANAGER_TEXTURE_NAME,
+				"/res/textures/screenmanager.png", GL11.GL_NEAREST);
+		TextureManager.textureManager().loadTextureFromResource(SCREEN_MANAGER_PATCH_TEXTURE_NAME,
+				"/res/textures/menu9patch.png", GL11.GL_NEAREST);
 
 		int lCount = mScreens.size();
 		for (int i = 0; i < lCount; i++) {

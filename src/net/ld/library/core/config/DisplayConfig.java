@@ -21,7 +21,6 @@ import static org.lwjgl.glfw.GLFW.glfwSetWindowPos;
 import static org.lwjgl.glfw.GLFW.glfwShowWindow;
 import static org.lwjgl.glfw.GLFW.glfwSwapInterval;
 import static org.lwjgl.glfw.GLFW.glfwWindowHint;
-import static org.lwjgl.opengl.GL11.GL_FALSE;
 import static org.lwjgl.opengl.GL11.GL_TRUE;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
@@ -39,6 +38,7 @@ import net.ld.library.GameInfo;
 import net.ld.library.core.input.InputState;
 import net.ld.library.core.time.GameTime;
 
+// TODO: This class needs massively refactoring and expanding. All the window flags should be defined per application!
 public class DisplayConfig extends BaseConfig {
 
 	// =============================================
@@ -193,8 +193,11 @@ public class DisplayConfig extends BaseConfig {
 
 	}
 
+	/**
+	 * Called from the GLFW onWindowResize callback. Use it to notify listeners
+	 * about changes in the window size.
+	 */
 	public void changeResolution(int pWidth, int pHeight) {
-
 		mWindowWasResized = true;
 
 		WINDOW_WIDTH = pWidth;
@@ -203,6 +206,7 @@ public class DisplayConfig extends BaseConfig {
 		int lListenerCount = mResizeListeners.size();
 		for (int i = 0; i < lListenerCount; i++) {
 			mResizeListeners.get(i).onResize(pWidth, pHeight);
+
 		}
 
 	}
@@ -236,8 +240,8 @@ public class DisplayConfig extends BaseConfig {
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-		glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
-		glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+		glfwWindowHint(GLFW_VISIBLE, GL_TRUE);
+		glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
 
 		if (mWindowID != NULL) {
 			glfwDestroyWindow(mWindowID);

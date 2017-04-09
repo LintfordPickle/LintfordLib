@@ -1,7 +1,7 @@
 package net.ld.library.controllers;
 
 import net.ld.library.cellworld.CellWorldEntity;
-import net.ld.library.core.camera.ICamera;
+import net.ld.library.core.camera.Camera;
 import net.ld.library.core.time.GameTime;
 
 public class CameraFollowCellEntityController {
@@ -11,7 +11,7 @@ public class CameraFollowCellEntityController {
 	// -----------------------------------
 
 	private CellWorldEntity mTarget;
-	private ICamera mCamera;
+	private Camera mCamera;
 
 	// --------------------------------------
 	// Properties
@@ -21,7 +21,7 @@ public class CameraFollowCellEntityController {
 		mTarget = pTarget;
 	}
 
-	public void setCamera(ICamera pCamera) {
+	public void setCamera(Camera pCamera) {
 		mCamera = pCamera;
 	}
 
@@ -37,7 +37,7 @@ public class CameraFollowCellEntityController {
 	// Core-Methods
 	// -----------------------------------
 
-	public void initialise(ICamera pCamera, CellWorldEntity pTarget) {
+	public void initialise(Camera pCamera, CellWorldEntity pTarget) {
 		mCamera = pCamera;
 		mTarget = pTarget;
 

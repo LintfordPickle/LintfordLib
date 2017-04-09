@@ -1,6 +1,7 @@
 package net.ld.library.core.rendering;
 
-import net.ld.library.core.camera.ICamera;
+import net.ld.library.core.camera.Camera;
+import net.ld.library.core.camera.HUD;
 import net.ld.library.core.config.DisplayConfig;
 import net.ld.library.core.time.GameTime;
 
@@ -8,7 +9,8 @@ import net.ld.library.core.time.GameTime;
  * The {@link RenderState} class contains information and object references for
  * use when rendering in OpenGL.
  */
-// TODO: it would make sense to improve this class to allow it to be easily extended for adding things like RENDER_PASSES for game specific cases
+// TODO: it would make sense to improve this class to allow it to be easily
+// extended for adding things like RENDER_PASSES for game specific cases
 public class RenderState {
 
 	// =============================================
@@ -25,8 +27,8 @@ public class RenderState {
 	// =============================================
 
 	private DisplayConfig mDisplayConfig;
-	private ICamera mHUDCamera;
-	private ICamera mGameCamera;
+	private HUD mHUDCamera;
+	private Camera mGameCamera;
 	private RENDER_PASS mRenderPass;
 	private GameTime mGameTime;
 
@@ -51,7 +53,7 @@ public class RenderState {
 	 * Returns the HUD camera instance, for use when rendering objects in HUD
 	 * space.
 	 */
-	public ICamera hudCamera() {
+	public HUD hudCamera() {
 		return mHUDCamera;
 	}
 
@@ -59,12 +61,12 @@ public class RenderState {
 	 * Returns the {@link ICamera} instance, for use when rendering objects in
 	 * game-world space.
 	 */
-	public ICamera gameCamera() {
+	public Camera gameCamera() {
 		return mGameCamera;
 	}
 
-	/** Sets the game Cam. */
-	public void gameCamera(ICamera pNewCamera) {
+	/** Sets the game {@link Camera}. */
+	public void gameCamera(Camera pNewCamera) {
 		mGameCamera = pNewCamera;
 	}
 
@@ -93,7 +95,7 @@ public class RenderState {
 	// =============================================
 
 	/** Initialises the {@link RenderState} instance. */
-	public void initialise(ICamera pHUD, ICamera pCamera, GameTime pGameTime, DisplayConfig pDisplayConfig) {
+	public void initialise(HUD pHUD, Camera pCamera, GameTime pGameTime, DisplayConfig pDisplayConfig) {
 
 		mDisplayConfig = pDisplayConfig;
 		mHUDCamera = pHUD;

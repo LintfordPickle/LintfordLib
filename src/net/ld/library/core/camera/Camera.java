@@ -1,46 +1,31 @@
 package net.ld.library.core.camera;
 
-import java.util.Random;
+import org.lwjgl.opengl.GL11;
 
-import net.ld.library.core.config.DisplayConfig;
+import net.ld.library.core.config.IResizeListener;
 import net.ld.library.core.input.InputState;
 import net.ld.library.core.maths.Matrix4f;
 import net.ld.library.core.maths.Rectangle;
 import net.ld.library.core.maths.Vector2f;
 import net.ld.library.core.time.GameTime;
 
-public class Camera implements ICamera {
+public class Camera implements ICamera, IResizeListener {
 
-	// =============================================
+	// ---------------------------------------------
 	// Constants
-	// =============================================
+	// ---------------------------------------------
 
-	protected static final float Z_NEAR = -1f;
-	protected static final float Z_FAR = 10f;
+	public static final float Z_NEAR = -1f;
+	public static final float Z_FAR = 10f;
 
-	protected static final float ZOOM_ACCELERATE_AMOUNT = 9.0f;
-	protected static final float DRAG = 0.9365f;
+	protected static final float DRAG = 0.987f;
 	protected static final boolean CAMERA_PHYSICS = true;
 
-	public static final float MIN_CAMERA_ZOOM = 0.75f;
-	public static final float MAX_CAMERA_ZOOM = 1.4f;
-
-	// =============================================
+	// ---------------------------------------------
 	// Variables
-	// =============================================
-
-	protected Random mRandom = new Random();
-	protected boolean mIsShaking;
-	protected float mShakeMag;
-	protected float mShakeDur;
-	protected float mShakeTimer;
-	protected float mShakeOffX;
-	protected float mShakeOffY;
-
-	protected DisplayConfig mDisplayConfig;
+	// ---------------------------------------------
 
 	protected Rectangle mBoundingRectangle;
-	protected Rectangle mRestrictArea;
 	protected Vector2f mPosition;
 	protected Vector2f mAcceleration;
 	protected Vector2f mVelocity;
@@ -48,134 +33,101 @@ public class Camera implements ICamera {
 	protected Vector2f mOffsetPosition;
 	protected Matrix4f mProjectionMatrix;
 	protected Matrix4f mViewMatrix;
-	protected float mMinX;
-	protected float mMaxX;
-	protected float mMinY;
-	protected float mMaxY;
 	protected float mZoomFactor = 1.0f;
-	protected float mRotation = 0.0f;
-	protected float mZoomAcceleration;
-	protected float mZoomVelocity;
-	protected boolean mAllowZoom = true;
+
 	protected int mWindowWidth;
 	protected int mWindowHeight;
-	protected float mScaledWindowWidth;
-	protected float mScaledWindowHeight;
-	protected float mzNear = Z_NEAR;
-	protected float mzFar = Z_FAR;
-
-	/** Smaller is further out */
-	protected float mCameraMinZoom;
-
-	/** Larger is more zoomed in */
-	protected float mCameraMaxZoom;
-
-	// XNA Camera Chase Sample
-	float stifness = 1800f; //
-	float damping = 600f; //
-	float mass = 50f;
-
-	Vector2f stretch = new Vector2f();
-	Vector2f force = new Vector2f();
-
-	// END
 
 	protected Vector2f mMouseCameraSpace;
 
-	// =============================================
+	// ---------------------------------------------
 	// Properties
-	// =============================================
+	// ---------------------------------------------
+
+	/** Returns this camera's view matrix */
+	@Override
+	public Matrix4f view() {
+		return mViewMatrix;
+	}
+
+	/** Returns this camera's projection matrix */
+	@Override
+	public Matrix4f projection() {
+		return mProjectionMatrix;
+	}
+
+	/** Returns the view frustum of this camera. */
+	@Override
+	public Rectangle boundingRectangle() {
+		return mBoundingRectangle;
+	}
 
 	/** Returns the current target position the camera will move towards. */
 	public Vector2f targetPosition() {
 		return mTargetPosition;
 	}
 
-	public void setZoomConstraints(float pMin, float pMax) {
-		mCameraMinZoom = pMin;
-
-		if (pMin < MIN_CAMERA_ZOOM) {
-			pMin = MIN_CAMERA_ZOOM;
-		}
-
-		if (pMax > MAX_CAMERA_ZOOM) {
-			pMax = MAX_CAMERA_ZOOM;
-		}
-
-		if (pMin > pMax) {
-			// Just crazy talk
-			pMin = pMax = mCameraMaxZoom = 1f;
-
-		} else {
-			mCameraMaxZoom = pMax;
-
-		}
-
-	}
-
-	@Override
+	/**
+	 * Sets the target position of the camera, which the camera will slowly move
+	 * towards over time.
+	 */
 	public void setPosition(float pX, float pY) {
 		mTargetPosition.x = pX;
 		mTargetPosition.y = pY;
 	}
 
+	/**
+	 * Sets the position of the camera and kills the velocity and acceleration.
+	 */
 	public void setAbsPosition(float pX, float pY) {
 		mTargetPosition.x = pX;
 		mTargetPosition.y = pY;
 
 		mPosition.x = pX;
 		mPosition.y = pY;
+
+		mVelocity.x = 0;
+		mVelocity.y = 0;
+
+		mAcceleration.x = 0;
+		mAcceleration.y = 0;
+
 	}
 
 	public float getScaledCenterX() {
-		return mMinX + (mMaxX - mMinX) * 0.5f;
+		return this.mBoundingRectangle.centerX();
 	}
 
 	public float getScaledCenterY() {
-		return mMinY + (mMaxY - mMinY) * 0.5f;
+		return this.mBoundingRectangle.centerY();
 	}
 
-	@Override
 	public Vector2f getPosition() {
 		return mPosition;
 	}
 
-	@Override
 	public float getMinX() {
-		return mMinX;
+		return this.mBoundingRectangle.left();
 	}
 
-	@Override
 	public float getMaxX() {
-		return mMaxX;
+		return this.mBoundingRectangle.right();
 	}
 
-	@Override
 	public float getMinY() {
-		return mMinY;
+		return this.mBoundingRectangle.top();
 	}
 
-	@Override
 	public float getMaxY() {
-		return mMaxY;
+		return this.mBoundingRectangle.bottom();
 	}
 
-	@Override
 	public float getWidth() {
-		return mMaxX - mMinX;
+		return this.mBoundingRectangle.width;
 	}
 
-	@Override
 	public float getHeight() {
-		return mMaxY - mMinY;
-	}
-
-	public float rotation() {
-		return mRotation;
-	}
-
-	public void rotation(float newValue) {
-		this.mRotation = newValue;
+		return this.mBoundingRectangle.height;
 	}
 
 	public float zoomFactor() {
@@ -186,28 +138,12 @@ public class Camera implements ICamera {
 		this.mZoomFactor = newValue;
 	}
 
-	public float zNear() {
-		return mzNear;
-	}
-
-	public void zNear(float newValue) {
-		this.mzNear = newValue;
-	}
-
-	public float zFar() {
-		return mzFar;
-	}
-
-	public void zFar(float newValue) {
-		this.mzFar = newValue;
-	}
-
 	public float scaledWindowWidth() {
-		return mScaledWindowWidth;
+		return this.mWindowWidth * this.getZoomFactorOverOne();
 	}
 
 	public float scaledWindowHeight() {
-		return mScaledWindowHeight;
+		return this.mWindowHeight * this.getZoomFactorOverOne();
 	}
 
 	public int windowWidth() {
@@ -218,121 +154,84 @@ public class Camera implements ICamera {
 		return mWindowHeight;
 	}
 
-	@Override
-	public Rectangle boundingRectangle() {
-		return mBoundingRectangle;
-	}
+	// ---------------------------------------------
+	// Constructor
+	// ---------------------------------------------
 
-	public void setRestrictiveBounds(float pMinX, float pMinY, float pMaxX, float pMaxY) {
-		mRestrictArea.x = pMinX;
-		mRestrictArea.x = pMinY;
-		mRestrictArea.width = pMaxY;
-		mRestrictArea.height = pMaxY;
+	/**
+	 * Camera constructor. Creates a camera and all needed matrices to support
+	 * an OpenGL game. The camera matrices will be constructor col-maj, using
+	 * the given parameters.
+	 */
+	public Camera(final float pX, final float pY, final int pWidth, final int pHeight) {
+		this.mWindowWidth = pWidth;
+		this.mWindowHeight = pHeight;
 
-	}
+		this.mBoundingRectangle = new Rectangle(pX - pWidth * 0.5f, pY - pHeight * 0.5f, pWidth, pHeight);
 
-	// =============================================
-	// Constructor(s)
-	// =============================================
+		this.mPosition = new Vector2f();
+		this.mOffsetPosition = new Vector2f();
+		this.mAcceleration = new Vector2f();
+		this.mVelocity = new Vector2f();
 
-	public Camera(DisplayConfig pDisplayConfig, final float pX, final float pY, final float pWidth,
-			final float pHeight) {
-		mDisplayConfig = pDisplayConfig;
+		this.mMouseCameraSpace = new Vector2f();
+		this.mTargetPosition = new Vector2f();
 
-		this.mMinX = pX;
-		this.mMaxX = pX + pWidth;
-		this.mMinY = pY;
-		this.mMaxY = pY + pHeight;
+		this.mProjectionMatrix = new Matrix4f();
+		this.mViewMatrix = new Matrix4f();
 
-		mRestrictArea = new Rectangle();
+		this.mZoomFactor = 1.7f;
 
-		// No zoom by default
-		mCameraMinZoom = mCameraMaxZoom = 1.0f;
-
-		mBoundingRectangle = new Rectangle(mMinX, mMinY, pWidth, pHeight);
-
-		mPosition = new Vector2f();
-		mAcceleration = new Vector2f();
-		mVelocity = new Vector2f();
-
-		mOffsetPosition = new Vector2f();
-		mTargetPosition = new Vector2f();
-
-		mProjectionMatrix = new Matrix4f();
-		mViewMatrix = new Matrix4f();
-
-		mMouseCameraSpace = new Vector2f();
-		mZoomFactor = 1.7f;
-
-		createOrtho(pWidth, pHeight);
+		createView();
+		createOrtho();
+		updateZoomBounds();
 
 	}
 
-	// =============================================
+	// ---------------------------------------------
 	// Core-Methods
-	// =============================================
+	// ---------------------------------------------
 
+	/**
+	 * handleInput called once per frame. Stores the position of the mouse for
+	 * future reference (within camera space). Tracks mouse wheel movement to
+	 * change zoom factor.
+	 */
 	public void handleInput(InputState pInputState) {
 		// Update the MouseCameraSpace instance
-		mMouseCameraSpace.x = pInputState.mouseWindowCoords().x * 1f * getZoomFactorOverOne() + this.getMinX();
-		mMouseCameraSpace.y = pInputState.mouseWindowCoords().y * 1f * getZoomFactorOverOne() + this.getMinY();
-
-		// static zoom factor
-		if (mAllowZoom) {
-			mZoomAcceleration += pInputState.mouseWheelYOffset() * ZOOM_ACCELERATE_AMOUNT
-					* pInputState.gameTime().elapseGameTime() / 1000f * getZoomFactor();
-		}
+		// TODO: Add this to a Controller and move
+		mMouseCameraSpace.x = this.getMinX() + pInputState.mouseWindowCoords().x * getZoomFactorOverOne();
+		mMouseCameraSpace.y = this.getMinY() + pInputState.mouseWindowCoords().y * getZoomFactorOverOne();
 
 	}
 
 	public void update(GameTime pGameTime) {
-
-		mWindowWidth = (int) DisplayConfig.WINDOW_WIDTH;
-		mWindowHeight = (int) DisplayConfig.WINDOW_HEIGHT;
-
-		if (mIsShaking) {
-
-			mShakeTimer += pGameTime.elapseGameTime();
-
-			if (mShakeTimer > mShakeDur) {
-				mIsShaking = false;
-				mShakeTimer = mShakeDur;
-			}
-
-			// normal time
-			float progress = mShakeTimer / mShakeDur;
-
-			float lMagnitude = mShakeMag * (1f - (progress * progress));
-
-			mShakeOffX = mRandom.nextFloat() * lMagnitude;
-			mShakeOffY = mRandom.nextFloat() * lMagnitude;
-
-		}
+		final float DELTA_TIME = (float) pGameTime.elapseGameTime() / 1000.0f;
 
 		if (CAMERA_PHYSICS) {
-			stretch.x = mPosition.x - mTargetPosition.x;
-			stretch.y = mPosition.y - mTargetPosition.y;
-
-			// Calc force
-			force.x = -stifness * stretch.x - damping * mVelocity.x;
-			force.y = -stifness * stretch.y - damping * mVelocity.y;
-
-			mAcceleration.x = force.x / mass;
-			mAcceleration.y = force.y / mass;
-
-			float elapsed = (float) pGameTime.elapseGameTime() / 1000.0f;
+			mAcceleration.x = mTargetPosition.x - mPosition.x;
+			mAcceleration.y = mTargetPosition.y - mPosition.y;
 
 			// apply movement //
-			mVelocity.x += mAcceleration.x * elapsed;
-			mVelocity.y += mAcceleration.y * elapsed;
+			mVelocity.x += mAcceleration.x * DELTA_TIME;
+			mVelocity.y += mAcceleration.y * DELTA_TIME;
 
-			mPosition.x += mVelocity.x * elapsed;
-			mPosition.y += mVelocity.y * elapsed;
+			// don't let the camera go miles off course
+			if (Math.abs(mPosition.x) > Math.abs(mTargetPosition.x) * 20.5) {
+				mVelocity.x *= 0.45f;
+			}
+
+			if (Math.abs(mPosition.y) > Math.abs(mTargetPosition.y) * 20.5) {
+				mVelocity.y *= 0.45f;
+			}
+
+			mPosition.x += mVelocity.x;
+			mPosition.y += mVelocity.y;
 
 			mAcceleration.x = 0.0f;
 			mAcceleration.y = 0.0f;
 
-			// slow down the velocity
+			// slow down the vel
 			mVelocity.x *= 0.98f;
 			mVelocity.y *= 0.98f;
 		}
@@ -345,91 +244,86 @@ public class Camera implements ICamera {
 			mAcceleration.y = 0.0f;
 		}
 
-		// apply zoom //
-		mZoomVelocity += mZoomAcceleration;
-		mZoomVelocity *= DRAG;
-		mZoomFactor += mZoomVelocity * pGameTime.elapseGameTime() / 1000.0f;
-		mZoomAcceleration = 0.0f;
+		createView();
+		createOrtho();
+		updateZoomBounds();
 
-		// Check bounds
-		if (mZoomFactor < mCameraMinZoom)
-			mZoomFactor = mCameraMinZoom;
-		if (mZoomFactor > mCameraMaxZoom)
-			mZoomFactor = mCameraMaxZoom;
-
-		build(mWindowWidth, mWindowHeight);
+		applyGameViewport();
 
 	}
 
-	public void build(float pW, float pH) {
+	private void createView() {
+		this.mViewMatrix.setIdentity();
+		this.mViewMatrix.scale(mZoomFactor, mZoomFactor, 1f);
+		this.mViewMatrix.translate((-mPosition.x + mOffsetPosition.x) * getZoomFactor(),
+				(-mPosition.y + mOffsetPosition.y) * getZoomFactor(), 0f);
 
+	}
+
+	private void createOrtho() {
+		this.mProjectionMatrix.setIdentity();
+		this.mProjectionMatrix.createOrtho(-this.mWindowWidth * 0.5f, this.mWindowWidth * 0.5f,
+				this.mWindowHeight * 0.5f, -this.mWindowHeight * 0.5f, -1.0f, 10.0f);
+
+	}
+
+	private void updateZoomBounds() {
 		// Update the scaled camera position, width and height.
-		mScaledWindowWidth = pW * getZoomFactorOverOne();
-		mScaledWindowHeight = pH * getZoomFactorOverOne();
-
-		if (mPosition.x - mScaledWindowWidth * 0.5f < mRestrictArea.x) {
-			mPosition.x = mRestrictArea.x + mScaledWindowWidth * 0.5f;
-		}
-
-		if (mPosition.y - mScaledWindowHeight * 0.5f < mRestrictArea.y) {
-			mPosition.y = mRestrictArea.y + mScaledWindowHeight * 0.5f;
-		}
-
-		// Update the camera position
-		// THis is insane!
-		mMinX = mPosition.x - mScaledWindowWidth / 2.0f;
-		mMinY = mPosition.y - mScaledWindowHeight / 2.0f;
-
-		mMaxX = mPosition.x + mScaledWindowWidth / 2.0f;
-		mMaxY = mPosition.y + mScaledWindowHeight / 2.0f;
+		final float lScaledWindowWidth = this.scaledWindowWidth();
+		final float lScaledWindowHeight = this.scaledWindowHeight();
 
 		// update the bounding rectangle so we can properly do frustum culling
-		mBoundingRectangle.x = mMinX;
-		mBoundingRectangle.y = mMinY;
-		mBoundingRectangle.width = mMaxX - mMinX;
-		mBoundingRectangle.height = mMaxY - mMinY;
-
-		mViewMatrix = new Matrix4f();
-		mViewMatrix.scale(mZoomFactor, mZoomFactor, 1f);
-
-		// This seems way backwards
-		mViewMatrix.translate(-(mPosition.x + mShakeOffY) * getZoomFactor(),
-				-(mPosition.y + mShakeOffY) * getZoomFactor(), 0f);
-
-		createOrtho(pW, pH);
+		this.mBoundingRectangle.x = mPosition.x - lScaledWindowWidth / 2.0f;
+		this.mBoundingRectangle.y = mPosition.y - lScaledWindowHeight / 2.0f;
+		this.mBoundingRectangle.width = (this.mPosition.x + lScaledWindowWidth / 2.0f) - this.mBoundingRectangle.x;
+		this.mBoundingRectangle.height = (this.mPosition.y + lScaledWindowHeight / 2.0f) - this.mBoundingRectangle.y;
 
 	}
 
-	private void createOrtho(final float pW, final float pH) {
-
-		mProjectionMatrix.setIdentity();
-		mProjectionMatrix.createOrtho(-pW * 0.5f, pW * 0.5f, pH * 0.5f, -pH * 0.5f, mzNear, mzFar);
+	/**
+	 * Sets the OpenGL viewport size. Typically will be set to the window or
+	 * render-target dimensions.
+	 */
+	public void applyGameViewport() {
+		GL11.glViewport(0, 0, this.mWindowWidth, this.mWindowHeight);
 
 	}
 
-	// =============================================
+	// ---------------------------------------------
 	// Methods
-	// =============================================
+	// ---------------------------------------------
 
-	public void changePerspectiveMatrix(float pW, float pH) {
-		build(pW, pH);
+	/**
+	 * Rebuilds the projection matrix of this camera with the given dimensions.
+	 * Throws IllegalArgumentException is the input values are less than or
+	 * equal to zero.
+	 */
+	public void changePerspectiveMatrix(int pNewWidth, int pNewHeight) throws IllegalArgumentException {
+		if (pNewWidth <= 0 || pNewHeight <= 0) {
+			throw new IllegalArgumentException(
+					"You cannot set the new width or new height of the camera to zero or less.");
+
+		}
+
+		mWindowWidth = pNewWidth;
+		mWindowHeight = pNewHeight;
+
+		createOrtho();
 
 	}
 
 	protected float getCenterX() {
-		return mPosition.x + (mScaledWindowWidth * 0.5f);
+		return mPosition.x + (this.scaledWindowWidth() * 0.5f);
 	}
 
 	protected float getCenterY() {
-		return mPosition.y + (mScaledWindowHeight * 0.5f);
+		return mPosition.y + (this.scaledWindowHeight() * 0.5f);
 	}
 
-	@Override
 	public float getZoomFactor() {
 		return mZoomFactor;
 	}
 
-	@Override
 	public void setZoomFactor(float pNewValue) {
 		mZoomFactor = pNewValue;
 
@@ -439,7 +333,6 @@ public class Camera implements ICamera {
 		// mZoomFactor = ZOOM_LEVEL_MAX;
 	}
 
-	@Override
 	public float getZoomFactorOverOne() {
 		return 1f / mZoomFactor;
 	}
@@ -447,55 +340,37 @@ public class Camera implements ICamera {
 	public void resetState() {
 	}
 
-	@Override
-	public Matrix4f projection() {
-		return mProjectionMatrix;
-	}
-
-	@Override
-	public Matrix4f view() {
-		return mViewMatrix;
-	}
-
-	@Override
-	public float getMouseCameraSpaceX() {
-		return mMouseCameraSpace.x;
-
-	}
-
-	@Override
-	public float getMouseCameraSpaceY() {
-		return mMouseCameraSpace.y;
-
-	}
-
-	@Override
 	public Vector2f getMouseCameraSpace() {
 		return mMouseCameraSpace;
 
 	}
 
-	@Override
+	/**
+	 * Converts the given point from window space to camera (world) space.
+	 * Taking into consideration zoom and camera position.
+	 */
 	public float getPointCameraSpaceX(float pPointX) {
 		return pPointX * getZoomFactorOverOne() + this.getMinX();
 
 	}
 
-	@Override
+	/**
+	 * Converts the given point from window space to camera (world) space.
+	 * Taking into consideration zoom and camera position.
+	 */
 	public float getPointCameraSpaceY(float pPointY) {
 		return pPointY * getZoomFactorOverOne() + this.getMinX();
 
 	}
 
-	public void shake(float pDuration, float pMagnitude) {
-		if (pDuration <= 0)
-			return;
+	// ---------------------------------------------
+	// Inherited Methods
+	// ---------------------------------------------
 
-		mIsShaking = true;
-		mShakeDur = pDuration;
-		mShakeMag = pMagnitude;
-
-		mShakeTimer = 0;
+	/** Called (from GLFW) when the window is resized */
+	@Override
+	public void onResize(int pWidth, int pHeight) {
+		changePerspectiveMatrix(pWidth, pHeight);
 
 	}
 

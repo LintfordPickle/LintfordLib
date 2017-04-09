@@ -28,9 +28,9 @@ import net.ld.library.core.time.GameTime;
  */
 public abstract class LWJGLCore {
 
-	// =============================================
+	// ---------------------------------------------
 	// Variables
-	// =============================================
+	// ---------------------------------------------
 
 	protected GameInfo mGameInfo;
 	protected DisplayConfig mDisplayConfig;
@@ -48,9 +48,9 @@ public abstract class LWJGLCore {
 	 */
 	private boolean mWindowCreated;
 
-	// =============================================
+	// ---------------------------------------------
 	// Properties
-	// =============================================
+	// ---------------------------------------------
 
 	/**
 	 * Returns the instance of {@link GameTime} which was created when the LWJGL
@@ -97,9 +97,9 @@ public abstract class LWJGLCore {
 		return mRenderState;
 	}
 
-	// =============================================
-	// Constructor(s)
-	// =============================================
+	// ---------------------------------------------
+	// Constructor
+	// ---------------------------------------------
 
 	public LWJGLCore(GameInfo pGameInfo) {
 		// Load the configuration files saved previously by the user (else
@@ -114,9 +114,9 @@ public abstract class LWJGLCore {
 		System.out.println("working directory: " + System.getProperty("user.dir"));
 	}
 
-	// =============================================
+	// ---------------------------------------------
 	// Core-Methods
-	// =============================================
+	// ---------------------------------------------
 
 	/**
 	 * Creates a new OpenGL window and instantiates all auxiliary classes needed
@@ -131,7 +131,7 @@ public abstract class LWJGLCore {
 
 		}
 
-		mGameCamera = new Camera(mDisplayConfig, 0, 0, DisplayConfig.WINDOW_WIDTH, DisplayConfig.WINDOW_HEIGHT);
+		mGameCamera = new Camera(0, 0, DisplayConfig.WINDOW_WIDTH, DisplayConfig.WINDOW_HEIGHT);
 		mHUDCamera = new HUD(-DisplayConfig.WINDOW_WIDTH / 2, -DisplayConfig.WINDOW_HEIGHT / 2, DisplayConfig.WINDOW_WIDTH / 2, DisplayConfig.WINDOW_HEIGHT / 2);
 
 		mGameTime = new GameTime();
@@ -139,14 +139,17 @@ public abstract class LWJGLCore {
 
 		mRenderState.initialise(mHUDCamera, mGameCamera, mGameTime, mDisplayConfig);
 
-//		long lWindowID = mDisplayConfig.onCreateWindow();
-//
-//		// set key callbacks
-//		glfwSetKeyCallback(lWindowID, mInputState.mKeyCallback);
-//		glfwSetCharModsCallback(lWindowID, mInputState.mTextCallback);
-//		glfwSetMouseButtonCallback(lWindowID, mInputState.mMouseButtonCallback);
-//		glfwSetCursorPosCallback(lWindowID, mInputState.mMousePositionCallback);
-//		glfwSetScrollCallback(lWindowID, mInputState.mMouseScrollCallback);
+		long lWindowID = mDisplayConfig.onCreateWindow();
+		mDisplayConfig.addResizeListener(mHUDCamera);
+		mDisplayConfig.addResizeListener(mGameCamera);
+
+		// set key callbacks
+		// TODO: Add these to the InputState class
+		glfwSetKeyCallback(lWindowID, mInputState.mKeyCallback);
+		glfwSetCharModsCallback(lWindowID, mInputState.mTextCallback);
+		glfwSetMouseButtonCallback(lWindowID, mInputState.mMouseButtonCallback);
+		glfwSetCursorPosCallback(lWindowID, mInputState.mMousePositionCallback);
+		glfwSetScrollCallback(lWindowID, mInputState.mMouseScrollCallback);
 
 		onInitialiseGL();
 

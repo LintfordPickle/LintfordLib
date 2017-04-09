@@ -1,13 +1,14 @@
 package net.ld.library.core.camera;
 
 import net.ld.library.core.config.DisplayConfig;
+import net.ld.library.core.config.IResizeListener;
 import net.ld.library.core.input.InputState;
 import net.ld.library.core.maths.Matrix4f;
 import net.ld.library.core.maths.Rectangle;
 import net.ld.library.core.maths.Vector2f;
 import net.ld.library.core.time.GameTime;
 
-public class HUD implements ICamera {
+public class HUD implements ICamera, IResizeListener {
 
 	private static final float Z_NEAR = -1.0f;
 	private static final float Z_FAR = 10.0f;
@@ -18,14 +19,10 @@ public class HUD implements ICamera {
 
 	private Rectangle mHUDRectangle;
 
-	private float mRotation = 0.0f;
-
-	// These are not the dimensions of the window, but rather the dimensions of the canvas to use for the HUD (i.e. menu system)
+	// These are not the dimensions of the window, but rather the dimensions of
+	// the canvas to use for the HUD (i.e. menu system)
 	private float mWindowWidth;
 	private float mWindowHeight;
-
-	private float mzNear;
-	private float mzFar;
 
 	private Matrix4f mProjectionMatrix;
 	private Matrix4f mViewMatrix;
@@ -36,58 +33,28 @@ public class HUD implements ICamera {
 	// Properties
 	// =============================================
 
-	@Override
 	public float getMinX() {
 		return -mWindowWidth / 2f;
 	}
 
-	@Override
 	public float getMaxX() {
 		return mWindowWidth / 2f;
 	}
 
-	@Override
 	public float getMinY() {
 		return -mWindowHeight / 2f;
 	}
 
-	@Override
 	public float getMaxY() {
 		return mWindowHeight / 2f;
 	}
 
-	@Override
 	public float getWidth() {
 		return mWindowWidth;
 	}
 
-	@Override
 	public float getHeight() {
 		return mWindowHeight;
-	}
-
-	public float rotation() {
-		return mRotation;
-	}
-
-	public void rotation(float newValue) {
-		this.mRotation = newValue;
-	}
-
-	public float zNear() {
-		return mzNear;
-	}
-
-	public void zNear(float newValue) {
-		this.mzNear = newValue;
-	}
-
-	public float zFar() {
-		return mzFar;
-	}
-
-	public void zFar(float newValue) {
-		this.mzFar = newValue;
 	}
 
 	public float windowWidth() {
@@ -138,16 +105,90 @@ public class HUD implements ICamera {
 		if (mWindowWidth == 0 || mWindowHeight == 0)
 			return;
 
-		mViewMatrix.setIdentity();
-		mViewMatrix.scale(1f, 1f, 1f);
+		createView();
+		createProjection();
 
-		mProjectionMatrix.setIdentity();
-		mProjectionMatrix.createOrtho(getMinX(), getMaxX(), getMaxY(), getMinY(), Z_NEAR, Z_FAR);
+	}
+
+	/** recreates the view matrix. */
+	private void createView() {
+		this.mViewMatrix.setIdentity();
+		this.mViewMatrix.scale(1f, 1f, 1f);
+
+	}
+
+	/** Creates a new projection matrix (orthographic projection) */
+	private void createProjection() {
+		this.mProjectionMatrix.setIdentity();
+		this.mProjectionMatrix.createOrtho(getMinX(), getMaxX(), getMaxY(), getMinY(), Z_NEAR, Z_FAR);
 
 	}
 
 	// =============================================
 	// Methods
+	// =============================================
+
+	public Vector2f getMouseCameraSpace() {
+		return mMouseHUDSpace;
+	}
+
+	public float getMouseCameraSpaceX() {
+		return mMouseHUDSpace.x;
+	}
+
+	public float getMouseCameraSpaceY() {
+		return mMouseHUDSpace.y;
+	}
+
+	public float getPointCameraSpaceX(float pPointX) {
+		return (-mWindowWidth * 0.5f + (pPointX - 1));
+	}
+
+	public float getPointCameraSpaceY(float pPointY) {
+		return (-mWindowWidth * 0.5f + (pPointY - 1));
+	}
+
+	public Vector2f getPosition() {
+		return new Vector2f();
+	}
+
+	public void setPosition(float pX, float pY) {
+
+	}
+
+	public float getZoomFactor() {
+		return 1f;
+	}
+
+	public void setZoomFactor(float pNewValue) {
+
+	}
+
+	public float getZoomFactorOverOne() {
+		return 1f;
+	}
+
+	/**
+	 * Rebuilds the projection matrix of this camera with the given dimensions.
+	 * Throws IllegalArgumentException is the input values are less than or
+	 * equal to zero.
+	 */
+	public void changePerspectiveMatrix(int pNewWidth, int pNewHeight) throws IllegalArgumentException {
+		if (pNewWidth <= 0 || pNewHeight <= 0) {
+			throw new IllegalArgumentException(
+					"You cannot set the new width or new height of the camera to zero or less.");
+
+		}
+
+		mWindowWidth = pNewWidth;
+		mWindowHeight = pNewHeight;
+
+		createProjection();
+
+	}
+
+	// =============================================
+	// Inherited-Methods
 	// =============================================
 
 	@Override
@@ -161,58 +202,15 @@ public class HUD implements ICamera {
 	}
 
 	@Override
-	public Vector2f getMouseCameraSpace() {
-		return mMouseHUDSpace;
-	}
-
-	@Override
-	public float getMouseCameraSpaceX() {
-		return mMouseHUDSpace.x;
-	}
-
-	@Override
-	public float getMouseCameraSpaceY() {
-		return mMouseHUDSpace.y;
-	}
-
-	@Override
-	public float getPointCameraSpaceX(float pPointX) {
-		return (-mWindowWidth * 0.5f + (pPointX - 1));
-	}
-
-	@Override
-	public float getPointCameraSpaceY(float pPointY) {
-		return (-mWindowWidth * 0.5f + (pPointY - 1));
-	}
-
-	@Override
-	public Vector2f getPosition() {
-		return new Vector2f();
-	}
-
-	@Override
-	public void setPosition(float pX, float pY) {
-
-	}
-
-	@Override
-	public float getZoomFactor() {
-		return 1f;
-	}
-
-	@Override
-	public void setZoomFactor(float pNewValue) {
-
-	}
-
-	@Override
-	public float getZoomFactorOverOne() {
-		return 1f;
-	}
-
-	@Override
 	public Rectangle boundingRectangle() {
 		return mHUDRectangle;
+
+	}
+
+	/** Called (from GLFW) when the window is resized */
+	@Override
+	public void onResize(int pWidth, int pHeight) {
+		changePerspectiveMatrix(pWidth, pHeight);
 
 	}
 
