@@ -21,13 +21,13 @@ public class CameraZoomController {
 	 * Specifies the amount of DRAG to be applied to the zoom factor velocity
 	 * over time.
 	 */
-	public static final float ZOOM_VELOCITY_DRAG = 0.987f;
+	public static final float ZOOM_VELOCITY_DRAG = 0.8f;
 
 	/**
-	 * A coefficient for the speed of the zoom (modifys the mouse scroll wheel
+	 * A coefficient for the speed of the zoom (modifies the mouse scroll wheel
 	 * speed)
 	 */
-	public static final float ZOOM_ACCELERATE_AMOUNT = 9.0f;
+	public static final float ZOOM_ACCELERATE_AMOUNT = 50.0f;
 
 	// ---------------------------------------------
 	// Variables

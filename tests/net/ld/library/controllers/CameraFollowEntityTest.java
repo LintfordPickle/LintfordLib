@@ -10,9 +10,14 @@ public class CameraFollowEntityTest {
 
 	@Test
 	public void cameraFollowPositionSetupTest() {
+		// Arrange
+		final int lX = 0;
+		final int lY = 0;
+		final int lWidth = 800;
+		final int lHeight = 600;
 
-		// Assign
-		Camera lCamera = new Camera(null, 0, 0, 800, 600);
+		final Camera lCamera = new Camera(lX, lY, lWidth, lHeight);
+		
 		CameraFollowCellEntityController lFollowController = new CameraFollowCellEntityController();
 		CellWorldEntity lEntity = new CellWorldEntity();
 		GameTime lGameTime = new GameTime();
@@ -32,8 +37,14 @@ public class CameraFollowEntityTest {
 	@Test
 	public void cameraFollowPositionTest() {
 
-		// Assign
-		Camera lCamera = new Camera(null, 0, 0, 800, 600);
+		// Arrange
+		final int lX = 0;
+		final int lY = 0;
+		final int lWidth = 800;
+		final int lHeight = 600;
+
+		final Camera lCamera = new Camera(lX, lY, lWidth, lHeight);
+		
 		CameraFollowCellEntityController lFollowController = new CameraFollowCellEntityController();
 		CellWorldEntity lEntity = new CellWorldEntity();
 		lEntity.setPosition(50f, 76f);

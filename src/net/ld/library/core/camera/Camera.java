@@ -33,12 +33,11 @@ public class Camera implements ICamera, IResizeListener {
 	protected Vector2f mOffsetPosition;
 	protected Matrix4f mProjectionMatrix;
 	protected Matrix4f mViewMatrix;
-	protected float mZoomFactor = 1.0f;
+	protected Vector2f mMouseCameraSpace;
 
 	protected int mWindowWidth;
 	protected int mWindowHeight;
-
-	protected Vector2f mMouseCameraSpace;
+	protected float mZoomFactor;
 
 	// ---------------------------------------------
 	// Properties
@@ -91,6 +90,8 @@ public class Camera implements ICamera, IResizeListener {
 
 		mAcceleration.x = 0;
 		mAcceleration.y = 0;
+
+		updateZoomBounds();
 
 	}
 
@@ -169,7 +170,7 @@ public class Camera implements ICamera, IResizeListener {
 
 		this.mBoundingRectangle = new Rectangle(pX - pWidth * 0.5f, pY - pHeight * 0.5f, pWidth, pHeight);
 
-		this.mPosition = new Vector2f();
+		this.mPosition = new Vector2f(pX, pY);
 		this.mOffsetPosition = new Vector2f();
 		this.mAcceleration = new Vector2f();
 		this.mVelocity = new Vector2f();
@@ -180,7 +181,7 @@ public class Camera implements ICamera, IResizeListener {
 		this.mProjectionMatrix = new Matrix4f();
 		this.mViewMatrix = new Matrix4f();
 
-		this.mZoomFactor = 1.7f;
+		this.mZoomFactor = 1.0f;
 
 		createView();
 		createOrtho();
@@ -205,9 +206,13 @@ public class Camera implements ICamera, IResizeListener {
 
 	}
 
+	/** Updates the state of the camera */
 	public void update(GameTime pGameTime) {
 		final float DELTA_TIME = (float) pGameTime.elapseGameTime() / 1000.0f;
 
+		// TODO (John): When moving to MVC pattern, move these physics out of
+		// the
+		// camera class.
 		if (CAMERA_PHYSICS) {
 			mAcceleration.x = mTargetPosition.x - mPosition.x;
 			mAcceleration.y = mTargetPosition.y - mPosition.y;
@@ -252,6 +257,7 @@ public class Camera implements ICamera, IResizeListener {
 
 	}
 
+	/** creates a view matrix from the current camera state (zoom & position) */
 	private void createView() {
 		this.mViewMatrix.setIdentity();
 		this.mViewMatrix.scale(mZoomFactor, mZoomFactor, 1f);
@@ -260,6 +266,10 @@ public class Camera implements ICamera, IResizeListener {
 
 	}
 
+	/**
+	 * creates a projection matrix from the current camera state (window
+	 * dimensions)
+	 */
 	private void createOrtho() {
 		this.mProjectionMatrix.setIdentity();
 		this.mProjectionMatrix.createOrtho(-this.mWindowWidth * 0.5f, this.mWindowWidth * 0.5f,
@@ -267,6 +277,10 @@ public class Camera implements ICamera, IResizeListener {
 
 	}
 
+	/**
+	 * Updates the bounding rectangle properties based on this camera state
+	 * (position, size and zoom)
+	 */
 	private void updateZoomBounds() {
 		// Update the scaled camera position, width and height.
 		final float lScaledWindowWidth = this.scaledWindowWidth();
@@ -312,32 +326,35 @@ public class Camera implements ICamera, IResizeListener {
 
 	}
 
+	/**
+	 * Gets the centre X point of this camera (taking into consideration
+	 * position, size and zoom).
+	 */
 	protected float getCenterX() {
 		return mPosition.x + (this.scaledWindowWidth() * 0.5f);
 	}
 
+	/**
+	 * Gets the centre Y point of this camera (taking into consideration
+	 * position, size and zoom).
+	 */
 	protected float getCenterY() {
 		return mPosition.y + (this.scaledWindowHeight() * 0.5f);
 	}
 
+	/** Gets the current zoom factor of this camera. */
 	public float getZoomFactor() {
 		return mZoomFactor;
 	}
 
+	/** Sets the current zoom factor of this camera. */
 	public void setZoomFactor(float pNewValue) {
 		mZoomFactor = pNewValue;
 
-		// if (mZoomFactor < ZOOM_LEVEL_MIN)
-		// mZoomFactor = ZOOM_LEVEL_MIN;
-		// if (mZoomFactor > ZOOM_LEVEL_MAX)
-		// mZoomFactor = ZOOM_LEVEL_MAX;
 	}
 
 	public float getZoomFactorOverOne() {
 		return 1f / mZoomFactor;
-	}
-
-	public void resetState() {
 	}
 
 	public Vector2f getMouseCameraSpace() {
