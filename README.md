@@ -128,5 +128,6 @@ onDraw():
 ## Unit Tests
 
 Units tests are created with JUnit 4, which must be present in the project build path.
+The unit test coverage is currently very low, and unit tests are still being added.
 
 Units tests have been included in the /test/ source folder. The unit tests share the same package names as the classes they test (to allow package level access modifiers).
