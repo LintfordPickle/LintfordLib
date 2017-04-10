@@ -2,6 +2,7 @@ package net.ld.library.core.maths;
 
 public class MathHelper {
 
+	/** A catmulrom interpolation method. */
 	public static float catmullRom(float value1, float value2, float value3, float value4, float amount) {
 		float num = amount * amount;
 		float num2 = amount * num;
@@ -10,15 +11,7 @@ public class MathHelper {
 				+ ((((-value1 + (3f * value2)) - (3f * value3)) + value4) * num2)));
 	}
 
-	/** Clamps the value within the given range. */
-	public static float clamp(float value, float min, float max) {
-		return Math.max(min, Math.min(max, value));
-	}
-
-	public static float distance(float value1, float value2) {
-		return Math.abs((value1 - value2));
-	}
-
+	/** A hermite spline interpolation method */
 	public static float hermite(float value1, float tangent1, float value2, float tangent2, float amount) {
 		float num3 = amount;
 		float num = num3 * num3;
@@ -30,6 +23,7 @@ public class MathHelper {
 		return ((((value1 * num7) + (value2 * num6)) + (tangent1 * num5)) + (tangent2 * num4));
 	}
 
+	/** A smooth interpolation method using the hermite spline. */
 	public static float smoothStep(float value1, float value2, float amount) {
 		float returnValue = MathHelper.clamp(amount, 0f, 1f);
 		returnValue = MathHelper.hermite(value1, 0f, value2, 0f, amount);
@@ -37,36 +31,103 @@ public class MathHelper {
 		return returnValue;
 	}
 
-	public static float lerp(float value1, float value2, float amount) {
-		return (value1 + ((value2 - value1) * amount));
+	/**
+	 * Clamps the value within the given range.
+	 * 
+	 * @param pValue
+	 *            the value to be clamped
+	 * @param pMin
+	 *            the minimum bound
+	 * @param pMax
+	 *            the maximum bound
+	 * @return the new value clamped between pMin and pMax
+	 */
+	public static float clamp(float pValue, float pMin, float pMax) {
+		return Math.max(pMin, Math.min(pMax, pValue));
 	}
 
+	/**
+	 * Returns the distance between two points.
+	 * 
+	 * @param pValue1
+	 *            the first point
+	 * @param pValue2
+	 *            the second point
+	 * @return the distance between the points
+	 */
+	public static float distance(float value1, float value2) {
+		return Math.abs((value1 - value2));
+	}
+
+	/**
+	 * linearly interpolates between value1 and value2 by the given amount.
+	 * 
+	 * @param pMinValue
+	 *            the starting bound
+	 * @param pMaxValue
+	 *            the ending bound
+	 * @param pAmount
+	 *            The normalized [0,1] amount to interpolate between the values
+	 *            by
+	 * 
+	 * @return the interpolated value
+	 */
+	public static float lerp(float pMinValue, float pMaxValue, float pAmount) {
+		return (pMinValue + ((pMaxValue - pMinValue) * pAmount));
+	}
+
+	/** Returns the higher value of the two given values. */
 	public static float max(float value1, float value2) {
 		return Math.max(value1, value2);
 	}
 
+	/** Returns the lower value of the two given values. */
 	public static float min(float value1, float value2) {
 		return Math.min(value1, value2);
 	}
 
-	public static float toDegrees(float radians) {
-		return (radians * 57.29578f);
+	/**
+	 * Converts a given radian angle into a degree angle
+	 * 
+	 * @param pRadians
+	 *            the angle in degrees to be converted to radians.
+	 * @return The angle in radians
+	 */
+	public static float toDegrees(float pRadians) {
+		// π rad = 180°
+		// 1 rad = 180°/π = 57.295779513°
+		return (float) (pRadians * (180 / Math.PI));
 	}
 
-	public static float toRadians(float degrees) {
-		return (degrees * 0.01745329f);
+	/**
+	 * Converts a given degree angle into a radian angle
+	 * 
+	 * @param pDegrees
+	 *            the angle in degrees to be converted to radians.
+	 * @return The angle in radians
+	 */
+	public static float toRadians(float pDegrees) {
+		return (pDegrees * 0.01745329f);
 	}
 
-	public static float wrapAngle(float angle) {
-		angle = (float) Math.IEEEremainder(angle, 6.2831854820251465);
-		if (angle <= -3.141593f) {
-			angle += 6.283185f;
-			return angle;
+	/**
+	 * Wraps the given angle around a circle and returns the new, normalized
+	 * value.
+	 * 
+	 * @param pAngle
+	 *            the angle to wrap around a circle, in radians
+	 * @return The normalized angle in radians in the range [-2PI, 2PI]
+	 */
+	public static float wrapAngle(float pAngle) {
+		pAngle = (float) Math.IEEEremainder(pAngle, 6.2831854820251465);
+		if (pAngle <= -3.141593f) {
+			pAngle += 6.283185f;
+			return pAngle;
 		}
-		if (angle > 3.141593f) {
-			angle -= 6.283185f;
+		if (pAngle > 3.141593f) {
+			pAngle -= 6.283185f;
 		}
-		return angle;
+		return pAngle;
 	}
 
 }
