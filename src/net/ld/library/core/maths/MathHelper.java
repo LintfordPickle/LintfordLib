@@ -119,13 +119,13 @@ public class MathHelper {
 	 * @return The normalized angle in radians in the range [-2PI, 2PI]
 	 */
 	public static float wrapAngle(float pAngle) {
-		pAngle = (float) Math.IEEEremainder(pAngle, 6.2831854820251465);
-		if (pAngle <= -3.141593f) {
-			pAngle += 6.283185f;
+		pAngle = (float) Math.IEEEremainder(pAngle, Math.PI * 2);
+		if (pAngle <= -Math.PI) {
+			pAngle += Math.PI * 2;
 			return pAngle;
 		}
-		if (pAngle > 3.141593f) {
-			pAngle -= 6.283185f;
+		if (pAngle > Math.PI) {
+			pAngle -= Math.PI * 2;
 		}
 		return pAngle;
 	}
