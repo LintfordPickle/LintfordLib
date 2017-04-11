@@ -16,6 +16,7 @@ import static org.lwjgl.opengl.GL20.glShaderSource;
 import static org.lwjgl.opengl.GL20.glUseProgram;
 import static org.lwjgl.opengl.GL20.glValidateProgram;
 
+import net.ld.library.core.graphics.ResourceManager;
 import net.ld.library.core.helpers.FileUtils;
 
 public abstract class Shader {
@@ -57,7 +58,7 @@ public abstract class Shader {
 	// Core-Methods
 	// =============================================
 
-	public void loadGLContent() {
+	public void loadGLContent(ResourceManager pResourceManager) {
 		String lVertexSource = FileUtils.loadStringFromResource(mVertPathname);
 		String lFragmentSource = FileUtils.loadStringFromResource(mFragPathname);
 		mShaderID = create(lVertexSource, lFragmentSource);

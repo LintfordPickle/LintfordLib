@@ -2,7 +2,7 @@ package net.ld.library.screenmanager.entries;
 
 import net.ld.library.core.config.DisplayConfig;
 import net.ld.library.core.graphics.ResourceManager;
-import net.ld.library.core.graphics.spritebatch.SpriteBatch;
+import net.ld.library.core.graphics.texturebatch.TextureBatchRenderer;
 import net.ld.library.core.graphics.textures.TextureManager;
 import net.ld.library.core.input.InputState;
 import net.ld.library.core.input.InputState.INPUT_TYPES;
@@ -56,7 +56,7 @@ public class MenuEntry extends Rectangle {
 	protected BUTTON_SIZE mButtonSize = BUTTON_SIZE.normal;
 
 	// FIXME: Get rid of this (not batching if it is one SpriteBatch per menu entry!)
-	protected SpriteBatch mSpriteBatch;
+	protected TextureBatchRenderer mSpriteBatch;
 
 	private boolean mIsInitialised, mIsLoaded;
 
@@ -177,7 +177,7 @@ public class MenuEntry extends Rectangle {
 		mParentScreen = pParentScreen;
 		mText = pMenuEntryLabel;
 
-		mSpriteBatch = new SpriteBatch();
+		mSpriteBatch = new TextureBatchRenderer();
 
 		mActive = true;
 		mEnabled = true;

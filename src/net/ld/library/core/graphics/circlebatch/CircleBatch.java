@@ -67,7 +67,7 @@ public class CircleBatch {
 	// =============================================
 
 	public void loadGLContent(ResourceManager pResourceManager) {
-		mShader.loadGLContent();
+		mShader.loadGLContent(pResourceManager);
 
 		mVaoId = GL30.glGenVertexArrays();
 		mVboId = GL15.glGenBuffers();

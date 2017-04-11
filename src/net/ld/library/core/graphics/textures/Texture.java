@@ -15,9 +15,9 @@ import org.lwjgl.opengl.GL11;
 
 public class Texture {
 
-	// =============================================
+	// --------------------------------------
 	// Variables
-	// =============================================
+	// --------------------------------------
 
 	private final int mTextureID;
 	private final String mTextureLocation;
@@ -25,50 +25,96 @@ public class Texture {
 	private int mTextureHeight;
 	private int mFilter;
 
-	// In order to detect changes to the texture wher trying to reload textures, we will store the file size of the texture
+	// In order to detect changes to the texture wher trying to reload textures,
+	// we will store the file size of the texture
 	// each time it is loaded.
 	private long mFileSizeOnLoad;
 
-	// Some textures, like textures generated from system fonts, do not need to be reloaded when checking for changes
-	// to textures on the hard-disk. Setting this Boolean to false will skip the texture reload requests on this texture.
+	// Some textures, like textures generated from system fonts, do not need to
+	// be reloaded when checking for changes
+	// to textures on the hard-disk. Setting this Boolean to false will skip the
+	// texture reload requests on this texture.
 	private boolean mReloadable;
 
-	// =============================================
+	// --------------------------------------
 	// Properties
-	// =============================================
+	// --------------------------------------
 
+	/** Returns the OPenGL resource id of this texture. */
 	public int getTextureID() {
 		return mTextureID;
 	}
 
+	/** Returns the width of this texture. */
 	public int getTextureWidth() {
 		return mTextureWidth;
 	}
 
+	/** Returns the height of this texture. */
 	public int getTextureHeight() {
 		return mTextureHeight;
 	}
 
+	/** returns true if this texture is marked as reloadable. */
 	public boolean reloadable() {
 		return mReloadable;
 	}
 
+	/** Sets whether this texture is reloadable. */
 	public void reloadable(boolean v) {
 		mReloadable = v;
 	}
 
+	/**
+	 * Returns the filesize of the texture (bytes) as it was when it was loaded.
+	 */
 	public long fileSizeOnLoad() {
 		return mFileSizeOnLoad;
 	}
 
-	public void fileSizeOnLoad(long v) {
+	/**
+	 * Sets the stored filesize of the texture (used for live texture
+	 * reloading).
+	 */
+	void fileSizeOnLoad(long v) {
 		mFileSizeOnLoad = v;
 	}
 
-	// =============================================
-	// Constructor
-	// =============================================
+	/**
+	 * Returns the texture file location on disk (used for live texture
+	 * reloading).
+	 */
+	public String textureLocation() {
+		return mTextureLocation;
+	}
 
+	/** Returns the texture filter applied to this texture. */
+	public int getFilter() {
+		return mFilter;
+	}
+
+	/** Sets the OpenGL filter mode of {@link Texture}. */
+	public void setFilter(final int pNewFilter) {
+		// TODO: Check OpenGL is initialized before continuing
+
+		// Only proceed if there is an actual change in the filter.
+		if (mFilter == pNewFilter)
+			return;
+
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, mTextureID);
+
+		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, pNewFilter);
+		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, pNewFilter);
+
+		mFilter = pNewFilter;
+
+	}
+
+	// --------------------------------------
+	// Constructor
+	// --------------------------------------
+
+	/** ctor. */
 	public Texture(int pTextureID, String pFilename, int pWidth, int pHeight, int pFilter) {
 		mTextureID = pTextureID;
 		mTextureLocation = pFilename;
@@ -78,9 +124,9 @@ public class Texture {
 
 	}
 
-	// =============================================
+	// --------------------------------------
 	// Methods
-	// =============================================
+	// --------------------------------------
 
 	static Texture loadTextureFromFile(String pFilename) {
 		return loadTextureFromResource(pFilename, GL11.GL_NEAREST);
@@ -104,14 +150,16 @@ public class Texture {
 			System.out.println("Error loading texture (File not found at " + pFilename + " )");
 			e.printStackTrace();
 
-			// TODO: Errors with texture loading shouldn't throw a runtime exception. We should handle it gracefully and continue.
+			// TODO: Errors with texture loading shouldn't throw a runtime
+			// exception. We should handle it gracefully and continue.
 			throw new RuntimeException("Failed to load texture resource");
 
 		} catch (IOException e) {
 			System.out.println("Error loading texture from " + pFilename);
 			e.printStackTrace();
 
-			// TODO: Errors with texture loading shouldn't throw a runtime exception. We should handle it gracefully and continue.
+			// TODO: Errors with texture loading shouldn't throw a runtime
+			// exception. We should handle it gracefully and continue.
 			throw new RuntimeException("Failed to load texture resource");
 		}
 
@@ -142,14 +190,16 @@ public class Texture {
 			System.out.println("Error loading texture (File not found at " + pFilename + " )");
 			e.printStackTrace();
 
-			// TODO: Errors with texture loading shouldn't throw a runtime exception. We should handle it gracefully and continue.
+			// TODO: Errors with texture loading shouldn't throw a runtime
+			// exception. We should handle it gracefully and continue.
 			throw new RuntimeException("Failed to load texture resource");
 
 		} catch (IOException e) {
 			System.out.println("Error loading texture from " + pFilename);
 			e.printStackTrace();
 
-			// TODO: Errors with texture loading shouldn't throw a runtime exception. We should handle it gracefully and continue.
+			// TODO: Errors with texture loading shouldn't throw a runtime
+			// exception. We should handle it gracefully and continue.
 			throw new RuntimeException("Failed to load texture resource");
 		}
 
@@ -174,20 +224,32 @@ public class Texture {
 		}
 
 		// 3. Create OpenGL texture and return ID
-		int lTexID = GL11.glGenTextures();
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, lTexID);
+		final int TEXTURE_ID = GL11.glGenTextures();
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, TEXTURE_ID);
 
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, pFilter);
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, pFilter);
 
-		IntBuffer lBuffer = ByteBuffer.allocateDirect(lTextureData.length * 4).order(ByteOrder.nativeOrder()).asIntBuffer();
+		IntBuffer lBuffer = ByteBuffer.allocateDirect(lTextureData.length * 4).order(ByteOrder.nativeOrder())
+				.asIntBuffer();
 		lBuffer.put(lTextureData);
 		lBuffer.flip();
 
-		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, lTexWidth, lTexHeight, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, lBuffer);
+		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, lTexWidth, lTexHeight, 0, GL11.GL_RGBA,
+				GL11.GL_UNSIGNED_BYTE, lBuffer);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 
-		return new Texture(lTexID, pFilename, lTexWidth, lTexHeight, pFilter);
+		return new Texture(TEXTURE_ID, pFilename, lTexWidth, lTexHeight, pFilter);
+
+	}
+
+	/** Unloads the given texture. */
+	static void unloadTexture(Texture pTexture) {
+		if (pTexture == null)
+			return;
+
+		GL11.glDeleteTextures(pTexture.mTextureID);
+		pTexture = null;
 
 	}
 
@@ -210,11 +272,12 @@ public class Texture {
 
 			File lTextureFile = new File(mTextureLocation);
 
-			// This isn't always correct. I think it depends on how the png is compressed (small changes don't cause a different in file size).
-//			if (mFileSizeOnLoad == lTextureFile.length()) {
-//				System.out.println("  ... skipping reload, no file changes");
-//				return;
-//			}
+			// This isn't always correct. I think it depends on how the png is
+			// compressed (small changes don't cause a different in file size).
+			// if (mFileSizeOnLoad == lTextureFile.length()) {
+			// System.out.println(" ... skipping reload, no file changes");
+			// return;
+			// }
 
 			lImage = ImageIO.read(lTextureFile);
 
@@ -250,11 +313,13 @@ public class Texture {
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, mFilter);
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, mFilter);
 
-		IntBuffer lBuffer = ByteBuffer.allocateDirect(lTextureData.length * 4).order(ByteOrder.nativeOrder()).asIntBuffer();
+		IntBuffer lBuffer = ByteBuffer.allocateDirect(lTextureData.length * 4).order(ByteOrder.nativeOrder())
+				.asIntBuffer();
 		lBuffer.put(lTextureData);
 		lBuffer.flip();
 
-		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, lTexWidth, lTexHeight, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, lBuffer);
+		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, lTexWidth, lTexHeight, 0, GL11.GL_RGBA,
+				GL11.GL_UNSIGNED_BYTE, lBuffer);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 	}
 }

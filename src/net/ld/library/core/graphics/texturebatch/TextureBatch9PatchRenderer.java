@@ -1,14 +1,14 @@
-package net.ld.library.core.graphics.spritebatch;
+package net.ld.library.core.graphics.texturebatch;
 
 import net.ld.library.core.graphics.textures.Texture;
 
-public class SpriteBatch9Patch extends SpriteBatch {
+public class TextureBatch9PatchRenderer extends TextureBatchRenderer {
 
 	// =============================================
 	// Constructor
 	// =============================================
 
-	public SpriteBatch9Patch() {
+	public TextureBatch9PatchRenderer() {
 		super();
 	}
 

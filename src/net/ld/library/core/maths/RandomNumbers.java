@@ -9,4 +9,5 @@ public class RandomNumbers
 	// ===========================================================
 	
 	public static Random Random = new Random();
+	
 }

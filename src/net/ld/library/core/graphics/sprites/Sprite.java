@@ -1,75 +1,81 @@
 package net.ld.library.core.graphics.sprites;
 
-import net.ld.library.core.time.GameTime;
-
+/** Defines a single sprite animation frame */
 public class Sprite implements ISprite {
 
-	// =============================================
+	// --------------------------------------
 	// Variables
-	// =============================================
+	// --------------------------------------
 
-	public final float mX;
-	public final float mY;
-	private final int mWidth;
-	private final int mHeight;
+	/** The x coordinate within the spritesheet of this frame */
+	public int x;
 
-	// =============================================
-	// Properties
-	// =============================================
+	/** The y coordinate within the spritesheet of this frame */
+	public int y;
 
-	// =============================================
+	/** The width of the frame */
+	public int width;
+
+	/** The height of the frame */
+	public int height;
+
+	/** The x coordinate within the spritesheet of the anchor point */
+	public int ax;
+
+	/** The y coordinate within the spritesheet of the anchor point */
+	public int ay;
+
+	/** pivot point x */
+	public int px;
+
+	/** pivot point y */
+	public int py;
+
+	// --------------------------------------
 	// Constructor
-	// =============================================
+	// --------------------------------------
 
-	public Sprite(final float pX, final float pY, final int pWidth, final int pHeight) {
-		mX = pX;
-		mY = pY;
-		mWidth = pWidth;
-		mHeight = pHeight;
+	public Sprite(final int pX, final int pY, final int pWidth, final int pHeight) {
+		x = pX;
+		y = pY;
+		width = pWidth;
+		height = pHeight;
 	}
 
-	// =============================================
-	// Core-Methods
-	// =============================================
-
-	@Override
-	public void update(GameTime pGameTime) {
-
-	}
-
-	// =============================================
-	// Methods
-	// =============================================
+	// --------------------------------------
+	// Inherited-Methods
+	// --------------------------------------
 
 	@Override
 	public float getX() {
-
-		return mX;
+		return x;
 	}
 
 	@Override
 	public float getY() {
-
-		return mY;
+		return y;
 	}
 
 	@Override
 	public int getWidth() {
-		return mWidth;
+		return width;
 	}
 
 	@Override
 	public int getHeight() {
-		return mHeight;
-	}
-
-	public Sprite getSprite() {
-		return this;
+		return height;
 	}
 
 	@Override
-	public ISprite copy() {
-		return new Sprite(mX, mY, mWidth, mHeight);
+	public float getAX() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public float getAY() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 }

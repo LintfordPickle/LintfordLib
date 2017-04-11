@@ -1,10 +1,8 @@
 package net.ld.library.core.graphics.spritebatch;
 
-import static org.lwjgl.system.jemalloc.JEmalloc.je_free;
-import static org.lwjgl.system.jemalloc.JEmalloc.je_malloc;
-
 import java.nio.FloatBuffer;
 
+import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL15;
@@ -15,23 +13,22 @@ import net.ld.library.core.camera.ICamera;
 import net.ld.library.core.graphics.ResourceManager;
 import net.ld.library.core.graphics.shaders.ShaderMVP_PT;
 import net.ld.library.core.graphics.sprites.ISprite;
+import net.ld.library.core.graphics.sprites.SpriteSheet;
 import net.ld.library.core.graphics.textures.Texture;
 import net.ld.library.core.maths.Matrix4f;
 import net.ld.library.core.maths.Vector4f;
 
-// TODO: Need to implement the spritebatch like TileSetRendererVBO, i.e. with separate shaders 
-// TODO: Need to differentiate between batching and caching. Currently we are only batching sprites per frame, but not caching them!!
+// TODO(John): The SpriteBatch doesn't actually allow to cache buffers between frames if there is no change.
 public class SpriteBatch {
 
-	// =============================================
+	// --------------------------------------
 	// Constants
-	// =============================================
+	// --------------------------------------
 
 	protected static final int MAX_SPRITES = 1000;
 
-	// These default shaders are loaded from embedded resources
-	protected static final String VERT_FILENAME = "/res/shaders/shader_basic.vert";
-	protected static final String FRAG_FILENAME = "/res/shaders/shader_basic.frag";
+	protected static final String VERT_FILENAME = "res/shaders/shader_basic.vert";
+	protected static final String FRAG_FILENAME = "res/shaders/shader_basic.frag";
 
 	protected static final int NUM_VERTS_PER_SPRITE = 6;
 
@@ -59,57 +56,57 @@ public class SpriteBatch {
 	// The size of a vertex in bytes (sizeOf())
 	protected static final int stride = positionBytesCount + colorBytesCount + textureBytesCount;
 
-	// =============================================
+	// --------------------------------------
 	// Variables
-	// =============================================
+	// --------------------------------------
 
-	protected int mVaoId = -1;
-	protected int mVboId = -1;
-	protected int mVertexCount = 0;
-	protected int mCurrentTexID;
+	protected int vaoId = -1;
+	protected int vboId = -1;
+	protected int vertexCount = 0;
+	protected int currentTexID;
 
-	protected ICamera mCamera;
-	protected ShaderMVP_PT mShader;
-	protected Matrix4f mModelMatrix;
-	protected FloatBuffer mBuffer;
-	protected int mCurNumSprites;
+	protected ICamera camera;
+	protected ShaderMVP_PT shader;
+	protected Matrix4f modelMatrix;
+	protected FloatBuffer buffer;
+	protected int currentNumSprites;
 
-	protected Vector4f mTempVector;
+	protected Vector4f tempVector;
 
-	protected boolean mIsLoaded;
-	protected boolean mIsDrawing;
+	protected boolean isLoaded;
+	protected boolean isDrawing;
 
-	// =============================================
+	// --------------------------------------
 	// Properties
-	// =============================================
+	// --------------------------------------
 
 	public boolean isDrawing() {
-		return mIsDrawing;
+		return isDrawing;
 	}
 
 	public boolean isLoaded() {
-		return mIsLoaded;
+		return isLoaded;
 	}
 
 	public void modelMatrix(Matrix4f pNewMatrix) {
 		if (pNewMatrix == null) {
-			mModelMatrix = new Matrix4f();
-			mModelMatrix.setIdentity();
+			modelMatrix = new Matrix4f();
+			modelMatrix.setIdentity();
 		} else {
-			mModelMatrix = pNewMatrix;
+			modelMatrix = pNewMatrix;
 		}
 	}
 
 	public Matrix4f modelMatrix() {
-		return mModelMatrix;
+		return modelMatrix;
 	}
 
-	// =============================================
+	// --------------------------------------
 	// Constructor
-	// =============================================
+	// --------------------------------------
 
 	public SpriteBatch() {
-		mShader = new ShaderMVP_PT(VERT_FILENAME, FRAG_FILENAME) {
+		shader = new ShaderMVP_PT(VERT_FILENAME, FRAG_FILENAME) {
 			@Override
 			protected void bindAtrributeLocations(int pShaderID) {
 				GL20.glBindAttribLocation(pShaderID, 0, "inPosition");
@@ -118,174 +115,209 @@ public class SpriteBatch {
 			}
 		};
 
-		mModelMatrix = new Matrix4f();
-		mTempVector = new Vector4f();
-		
+		modelMatrix = new Matrix4f();
+		tempVector = new Vector4f();
+
+		buffer = BufferUtils.createFloatBuffer(MAX_SPRITES * NUM_VERTS_PER_SPRITE * stride);
 	}
 
-	// =============================================
+	// --------------------------------------
 	// Core-Methods
-	// =============================================
+	// --------------------------------------
 
 	public void loadGLContent(ResourceManager pResourceManager) {
-		mShader.loadGLContent();
+		shader.loadGLContent(pResourceManager);
 
-		mVaoId = GL30.glGenVertexArrays();
-		mVboId = GL15.glGenBuffers();
-		
-		mBuffer = je_malloc(MAX_SPRITES * NUM_VERTS_PER_SPRITE * stride).asFloatBuffer();
+		vaoId = GL30.glGenVertexArrays();
+		vboId = GL15.glGenBuffers();
 
-		mIsLoaded = true;
+		isLoaded = true;
 	}
 
 	public void unloadGLContent() {
-		mShader.unloadGLContent();
+		shader.unloadGLContent();
 
-		GL30.glDeleteVertexArrays(mVaoId);
-		GL15.glDeleteBuffers(mVboId);
-		
-		je_free(mBuffer);
+		GL30.glDeleteVertexArrays(vaoId);
+		GL15.glDeleteBuffers(vboId);
 
-		mIsLoaded = false;
+		isLoaded = false;
 	}
 
-	// =============================================
+	// --------------------------------------
 	// Methods
-	// =============================================
-
-	// FIXME: Need to make a nicer, more encompassing set of methods for the SpriteBatch rendering
-	// FIXME(John): calling draw without first calling begin() doesn't fail gracefully - it crashes
-	// TODO(John): The SpriteBatch doesn't actually allow to cache buffers between frames if there is no change.
+	// --------------------------------------
 
 	public void begin(ICamera pCamera) {
-		if (mIsDrawing)
+		if (isDrawing)
 			return; // already drawing, don't want to flush too early
 
-		mCurrentTexID = -1;
-		mCamera = pCamera;
+		currentTexID = -1;
+		camera = pCamera;
 
-		mBuffer.clear();
-		mVertexCount = 0;
-		mCurNumSprites = 0;
-		mIsDrawing = true;
+		buffer.clear();
+		vertexCount = 0;
+		currentNumSprites = 0;
+		isDrawing = true;
 
 	}
 
-	public void draw(float pSX, float pSY, float pSW, float pSH, float x, float y, float pZ, float w, float h, float pScale, Texture pTexture) {
-		draw(pSX, pSY, pSW, pSH, x, y, pZ, w, h, pScale, 1, 1, 1, 1, pTexture);
-	}
-
-	public void draw(float pSX, float pSY, float pSW, float pSH, float x, float y, float pZ, float w, float h, float pScale, float pAlpha, Texture pTexture) {
-		draw(pSX, pSY, pSW, pSH, x, y, pZ, w, h, pScale, 1, 1, 1, pAlpha, pTexture);
-	}
-
-	public void draw(float pSX, float pSY, float pSW, float pSH, float x, float y, float pZ, float w, float h, float pScale, float pR, float pG, float pB, float pA, Texture pTexture) {
-		if (!mIsDrawing)
+	public void draw(SpriteSheet pSpriteSheet, String pSpriteName, float pDstX, float pDstY, float pZ, float pDstW,
+			float pDstH, float pScale, float pR, float pG, float pB, float pA) {
+		if (!isDrawing)
 			return;
 
-		if (pTexture == null)
+		if (pSpriteSheet == null || !pSpriteSheet.isLoaded())
 			return;
 
-		if (mCurrentTexID == -1) { // first texture
-			mCurrentTexID = pTexture.getTextureID();
-		} else if (mCurrentTexID != pTexture.getTextureID()) {
+		final ISprite SPRITE = pSpriteSheet.getSprite(pSpriteName);
+
+		draw(pSpriteSheet, SPRITE, pDstX, pDstY, pZ, pDstW, pDstH, pScale, pR, pG, pB, pA);
+
+	}
+
+	public void draw(SpriteSheet pSpriteSheet, ISprite pSprite, float pDstX, float pDstY, float pZ, float pDstW,
+			float pDstH, float pScale, float pR, float pG, float pB, float pA) {
+		draw(pSpriteSheet, pSprite, pDstX, pDstY, pZ, pDstW, pDstH, false, pScale, pR, pG, pB, pA);
+
+	}
+
+	public void draw(SpriteSheet pSpriteSheet, ISprite pSprite, float pDstX, float pDstY, float pZ, float pDstW,
+			float pDstH, boolean pFlipH, float pScale, float pR, float pG, float pB, float pA) {
+		if (!isDrawing)
+			return;
+
+		if (pSprite == null)
+			return;
+
+		if (pSpriteSheet == null || !pSpriteSheet.isLoaded())
+			return;
+
+		final Texture TEXTURE = pSpriteSheet.texture();
+
+		if (currentTexID == -1) { // first texture
+			currentTexID = TEXTURE.getTextureID();
+		} else if (currentTexID != TEXTURE.getTextureID()) {
 			flush();
-			mCurrentTexID = pTexture.getTextureID();
+			currentTexID = TEXTURE.getTextureID();
 		}
 
-		if (mCurNumSprites >= MAX_SPRITES) {
+		if (currentNumSprites >= MAX_SPRITES) {
 			flush();
 		}
-		
-		// FIXME: Without this small offset, I get texture bleeding on the texture atlas
-		final float TINY = 0.01f;
+
+		final float lx = !pFlipH ? pSprite.getX() : pSprite.getX() + pSprite.getWidth();
+		final float gx = pFlipH ? pSprite.getX() : pSprite.getX() + pSprite.getWidth();
 
 		// Vertex 0
-		float x0 = x - TINY;
-		float y0 = y + (h + TINY) * pScale;
-		float u0 = pSX / pTexture.getTextureWidth();
-		float v0 = (pSY + pSH) / pTexture.getTextureHeight();
+		final float x0 = pDstX;
+		final float y0 = pDstY + pDstH * pScale;
+		final float u0 = lx / TEXTURE.getTextureWidth();
+		final float v0 = (pSprite.getY() + pSprite.getHeight()) / TEXTURE.getTextureHeight();
 
 		// Vertex 1
-		float x1 = x - TINY;
-		float y1 = y - TINY;
-		float u1 = pSX / pTexture.getTextureWidth();
-		float v1 = pSY / pTexture.getTextureHeight();
+		final float x1 = pDstX;
+		final float y1 = pDstY;
+		final float u1 = lx / TEXTURE.getTextureWidth();
+		final float v1 = pSprite.getY() / TEXTURE.getTextureHeight();
 
 		// Vertex 2
-		float x2 = x + (w + TINY) * pScale;
-		float y2 = y - TINY;
-		float u2 = (pSX + pSW) / pTexture.getTextureWidth();
-		float v2 = pSY / pTexture.getTextureHeight();
+		final float x2 = pDstX + pDstW * pScale;
+		final float y2 = pDstY;
+		final float u2 = gx / TEXTURE.getTextureWidth();
+		final float v2 = pSprite.getY() / TEXTURE.getTextureHeight();
 
 		// Vertex 3
-		float x3 = x + (w + TINY) * pScale;
-		float y3 = y + (h + TINY) * pScale;
-		float u3 = (pSX + pSW) / pTexture.getTextureWidth();
-		float v3 = (pSY + pSH) / pTexture.getTextureHeight();
+		final float x3 = pDstX + pDstW * pScale;
+		final float y3 = pDstY + pDstH * pScale;
+		final float u3 = gx / TEXTURE.getTextureWidth();
+		final float v3 = (pSprite.getY() + pSprite.getHeight()) / TEXTURE.getTextureHeight();
 
-		addVertToBuffer(x0 , y0, pZ, 1f, pR, pG, pB, pA, u0, v0); // 0
+		addVertToBuffer(x0, y0, pZ, 1f, pR, pG, pB, pA, u0, v0); // 0
 		addVertToBuffer(x1, y1, pZ, 1f, pR, pG, pB, pA, u1, v1); // 1
 		addVertToBuffer(x2, y2, pZ, 1f, pR, pG, pB, pA, u2, v2); // 2
 		addVertToBuffer(x2, y2, pZ, 1f, pR, pG, pB, pA, u2, v2); // 2
 		addVertToBuffer(x3, y3, pZ, 1f, pR, pG, pB, pA, u3, v3); // 3
 		addVertToBuffer(x0, y0, pZ, 1f, pR, pG, pB, pA, u0, v0); // 0
 
-		mCurNumSprites++;
+		currentNumSprites++;
 
 	}
 
-	public void draw(float pSX, float pSY, float pSW, float pSH, float x, float y, float pZ, float w, float h, float pR, float pG, float pB, float pA, float pRotation, float pROX, float pROY, float pScaleX, float pScaleY, Texture pTexture) {
-		if (!mIsDrawing)
+	public void draw(SpriteSheet pSpriteSheet, String pSpriteName, float pDstX, float pDstY, float pZ, float pDstW,
+			float pDstH, float pR, float pG, float pB, float pA, float pRotation, float pROX, float pROY, float pScaleX,
+			float pScaleY) {
+		if (!isDrawing)
 			return;
 
-		if (pTexture == null)
+		if (pSpriteSheet == null || !pSpriteSheet.isLoaded())
 			return;
 
-		if (mCurrentTexID == -1) { // first texture
-			mCurrentTexID = pTexture.getTextureID();
-		} else if (mCurrentTexID != pTexture.getTextureID()) {
+		final ISprite SPRITE = pSpriteSheet.getSprite(pSpriteName);
+
+		draw(pSpriteSheet, SPRITE, pDstX, pDstY, pZ, pDstW, pDstH, pR, pG, pB, pA, pRotation, pROX, pROY, pScaleX,
+				pScaleY);
+	}
+
+	public void draw(SpriteSheet pSpriteSheet, ISprite pSprite, float pDstX, float pDstZ, float pZ, float pDstW,
+			float pDstH, float pR, float pG, float pB, float pA, float pRotation, float pROX, float pROY, float pScaleX,
+			float pScaleY) {
+		if (!isDrawing)
+			return;
+
+		if (pSpriteSheet == null || !pSpriteSheet.isLoaded())
+			return;
+
+		final Texture TEXTURE = pSpriteSheet.texture();
+
+		if (currentTexID == -1) { // first texture
+			currentTexID = TEXTURE.getTextureID();
+		} else if (currentTexID != TEXTURE.getTextureID()) {
 			flush();
-			mCurrentTexID = pTexture.getTextureID();
+			currentTexID = TEXTURE.getTextureID();
 		}
 
-		if (mCurNumSprites >= MAX_SPRITES) {
+		if (currentNumSprites >= MAX_SPRITES) {
 			flush();
 		}
 
 		float sin = (float) (Math.sin(pRotation));
 		float cos = (float) (Math.cos(pRotation));
 
-		// Should be passed into method
+		// Translate the sprite to the origin
 		float dx = -pROX * pScaleX;
 		float dy = -pROY * pScaleY;
 
+		// Apply the difference back to the global positions
+		pDstX += pROX * pScaleX;
+		pDstZ += pROY * pScaleY;
+
 		// Vertex 0
-		float x0 = x + dx * cos - (dy + h * pScaleX) * sin;
-		float y0 = y + dx * sin + (dy + h * pScaleY) * cos;
-		float u0 = pSX / pTexture.getTextureWidth();
-		float v0 = (pSY + pSH) / pTexture.getTextureHeight();
+		/////////////////////////
+		float x0 = pDstX + dx * cos - (dy + pDstH * pScaleX) * sin;
+		float y0 = pDstZ + dx * sin + (dy + pDstH * pScaleY) * cos;
+		float u0 = pSprite.getX() / TEXTURE.getTextureWidth();
+		float v0 = (pSprite.getY() + pSprite.getHeight()) / TEXTURE.getTextureHeight();
 
 		// Vertex 1
 		/////////////////////////
-		float x1 = x + dx * cos - dy * sin;
-		float y1 = y + dx * sin + dy * cos;
-		float u1 = pSX / pTexture.getTextureWidth();
-		float v1 = pSY / pTexture.getTextureHeight();
+		float x1 = pDstX + dx * cos - dy * sin;
+		float y1 = pDstZ + dx * sin + dy * cos;
+		float u1 = pSprite.getX() / TEXTURE.getTextureWidth();
+		float v1 = pSprite.getY() / TEXTURE.getTextureHeight();
 
 		// Vertex 2
 		/////////////////////////
-		float x2 = x + (dx + w * pScaleX) * cos - dy * sin;
-		float y2 = y + (dx + w * pScaleY) * sin + dy * cos;
-		float u2 = (pSX + pSW) / pTexture.getTextureWidth();
-		float v2 = pSY / pTexture.getTextureHeight();
+		float x2 = pDstX + (dx + pDstW * pScaleX) * cos - dy * sin;
+		float y2 = pDstZ + (dx + pDstW * pScaleY) * sin + dy * cos;
+		float u2 = (pSprite.getX() + pSprite.getWidth()) / TEXTURE.getTextureWidth();
+		float v2 = pSprite.getY() / TEXTURE.getTextureHeight();
 
 		// Vertex 3
 		/////////////////////////
-		float x3 = x + (dx + w * pScaleX) * cos - (dy + h * pScaleX) * sin;
-		float y3 = y + (dx + w * pScaleY) * sin + (dy + h * pScaleY) * cos;
-		float u3 = (pSX + pSW) / pTexture.getTextureWidth();
-		float v3 = (pSY + pSH) / pTexture.getTextureHeight();
+		float x3 = pDstX + (dx + pDstW * pScaleX) * cos - (dy + pDstH * pScaleX) * sin;
+		float y3 = pDstZ + (dx + pDstW * pScaleY) * sin + (dy + pDstH * pScaleY) * cos;
+		float u3 = (pSprite.getX() + pSprite.getWidth()) / TEXTURE.getTextureWidth();
+		float v3 = (pSprite.getY() + pSprite.getHeight()) / TEXTURE.getTextureHeight();
 
 		addVertToBuffer(x0, y0, pZ, 1f, pR, pG, pB, pA, u0, v0); // 0
 		addVertToBuffer(x1, y1, pZ, 1f, pR, pG, pB, pA, u1, v1); // 1
@@ -294,136 +326,97 @@ public class SpriteBatch {
 		addVertToBuffer(x3, y3, pZ, 1f, pR, pG, pB, pA, u3, v3); // 3
 		addVertToBuffer(x0, y0, pZ, 1f, pR, pG, pB, pA, u0, v0); // 0
 
-		mCurNumSprites++;
+		currentNumSprites++;
 
 	}
 
-	public void draw(ISprite pSprite, float pPX, float pPY, float pZ, float pWidth, float pHeight, float pScale, Texture pTexture) {
-		draw(pSprite, pPX, pPY, pZ, pWidth, pHeight, 0f, pScale, pTexture);
-	}
-
-	public void draw(ISprite pSprite, float pPX, float pPY, float pZ, float pWidth, float pHeight, float pRotation, float pScale, Texture pTexture) {
-		if (pSprite == null) {
-			return;
-		}
-
-		float lR = 1f;
-		float lG = 1f;
-		float lB = 1f;
-		float lA = 1f;
-
-		float lRotOriginX = 0;
-		float lRotOriginY = 0;
-
-		draw(pSprite.getX(), pSprite.getY(), pSprite.getWidth(), pSprite.getHeight(), pPX, pPY, pZ, pWidth, pHeight, lR, lG, lB, lA, pRotation, lRotOriginX, lRotOriginY, pScale, pScale, pTexture);
-	}
-
-	public void draw(ISprite pSprite, float pPX, float pPY, float pZ, float pWidth, float pHeight, float pRotation, float pRotX, float pRotY, float pScale, Texture pTexture) {
-		if (pSprite == null) {
-			return;
-		}
-
-		draw(pSprite.getX(), pSprite.getY(), pSprite.getWidth(), pSprite.getHeight(), pPX, pPY, pZ, pWidth, pHeight, 1f, 1f, 1f, 1f, pRotation, pRotX, pRotY, pScale, pScale, pTexture);
-	}
-
-	public void draw(ISprite pSprite, float pPX, float pPY, float pZ, float pWidth, float pHeight, float pScale, float pR, float pG, float pB, float pA, Texture pTexture) {
-		if (pSprite == null) {
-			return;
-		}
-
-		draw(pSprite.getX(), pSprite.getY(), pSprite.getWidth(), pSprite.getHeight(), pPX, pPY, pZ, pWidth, pHeight, pScale, pR, pG, pB, pA, pTexture);
-	}
-
-	private void addVertToBuffer(float x, float y, float z, float w, float r, float g, float b, float a, float u, float v) {
-		// If the buffer is already full, we need to draw what is currently in the buffer and start a new one.
-		if (mCurNumSprites >= MAX_SPRITES * NUM_VERTS_PER_SPRITE - 1) {
+	private void addVertToBuffer(float x, float y, float z, float w, float r, float g, float b, float a, float u,
+			float v) {
+		// If the buffer is already full, we need to draw what is currently in
+		// the buffer and start a new one.
+		if (currentNumSprites >= MAX_SPRITES * NUM_VERTS_PER_SPRITE - 1) {
 			flush();
 
 		}
 
-		mBuffer.put(x);
-		mBuffer.put(y);
-		mBuffer.put(z);
-		mBuffer.put(w);
+		buffer.put(x);
+		buffer.put(y);
+		buffer.put(z);
+		buffer.put(w);
 
-		mBuffer.put(r);
-		mBuffer.put(g);
-		mBuffer.put(b);
-		mBuffer.put(a);
+		buffer.put(r);
+		buffer.put(g);
+		buffer.put(b);
+		buffer.put(a);
 
-		mBuffer.put(u);
-		mBuffer.put(v);
+		buffer.put(u);
+		buffer.put(v);
 
-		mVertexCount++;
+		vertexCount++;
 
 	}
 
 	public void end() {
-		mIsDrawing = false;
+		if (!isDrawing)
+			return;
+
+		isDrawing = false;
 		flush();
 
 	}
 
 	private void flush() {
-		if (!mIsLoaded)
+		if (!isLoaded)
 			return;
 
-		if (mVertexCount == 0)
+		if (vertexCount == 0)
 			return;
 
-		mBuffer.flip();
+		buffer.flip();
 
-		GL30.glBindVertexArray(mVaoId);
+		GL13.glActiveTexture(GL13.GL_TEXTURE0);
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, currentTexID);
 
-		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, mVboId);
-		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, mBuffer, GL15.GL_DYNAMIC_DRAW);
+		GL30.glBindVertexArray(vaoId);
+
+		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboId);
+		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, buffer, GL15.GL_DYNAMIC_DRAW);
 
 		GL20.glVertexAttribPointer(0, positionElementCount, GL11.GL_FLOAT, false, stride, positionByteOffset);
 		GL20.glVertexAttribPointer(1, colorElementCount, GL11.GL_FLOAT, false, stride, colorByteOffset);
 		GL20.glVertexAttribPointer(2, textureElementCount, GL11.GL_FLOAT, false, stride, textureByteOffset);
 
-		// Is this needed (bind, unbind, rebind ??)
-		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
-		GL30.glBindVertexArray(0);
-
-		GL13.glActiveTexture(GL13.GL_TEXTURE0);
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, mCurrentTexID);
-
-		mShader.projectionMatrix(mCamera.projection());
-		mShader.viewMatrix(mCamera.view());
-		mShader.modelMatrix(mModelMatrix);
-
-		mShader.bind();
-
-		GL30.glBindVertexArray(mVaoId);
 		GL20.glEnableVertexAttribArray(0);
 		GL20.glEnableVertexAttribArray(1);
 		GL20.glEnableVertexAttribArray(2);
 
-		GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, mVertexCount);
+		shader.projectionMatrix(camera.projection());
+		shader.viewMatrix(camera.view());
+		shader.modelMatrix(modelMatrix);
 
-		GL20.glDisableVertexAttribArray(0);
-		GL20.glDisableVertexAttribArray(1);
-		GL20.glDisableVertexAttribArray(2);
+		shader.bind();
+
+		GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, vertexCount);
+
 		GL30.glBindVertexArray(0);
 
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 
-		mShader.unbind();
+		shader.unbind();
 
-		mBuffer.clear();
-		mCurNumSprites = 0;
+		buffer.clear();
+		currentNumSprites = 0;
 
-		mCurNumSprites = 0;
-		mVertexCount = 0;
+		currentNumSprites = 0;
+		vertexCount = 0;
 
 	}
 
 	public void cleanUp() {
-		if (mVaoId != -1)
-			GL15.glDeleteBuffers(mVaoId);
+		if (vaoId != -1)
+			GL15.glDeleteBuffers(vaoId);
 
-		if (mVboId != -1)
-			GL15.glDeleteBuffers(mVboId);
+		if (vboId != -1)
+			GL15.glDeleteBuffers(vboId);
 	}
 }

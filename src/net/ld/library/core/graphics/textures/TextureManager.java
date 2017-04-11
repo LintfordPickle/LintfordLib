@@ -1,26 +1,27 @@
 package net.ld.library.core.graphics.textures;
 
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.lwjgl.opengl.GL11;
 
-import net.ld.library.core.graphics.textures.xml.TextureMetaLoader;
-
 public class TextureManager {
 
-	// =============================================
+	// --------------------------------------
+	// Constants
+	// --------------------------------------
+
+	// --------------------------------------
 	// Variables
-	// =============================================
+	// --------------------------------------
 
 	private static TextureManager mTextureManager;
 	private Map<String, Texture> mTextures;
 
-	// =============================================
+	// --------------------------------------
 	// Properties
-	// =============================================
+	// --------------------------------------
 
 	/**
 	 * Returns an instance of {@link TextureManager}, which can be used to load
@@ -46,9 +47,9 @@ public class TextureManager {
 		return null;
 	}
 
-	// =============================================
+	// --------------------------------------
 	// Constructor
-	// =============================================
+	// --------------------------------------
 
 	/**
 	 * Creates a new instance of {@link TextureManager}. The TextureManager uses
@@ -59,34 +60,9 @@ public class TextureManager {
 		mTextures = new HashMap<String, Texture>();
 	}
 
-	// =============================================
-	// Core-Methods
-	// =============================================
-
-	/** Loads a list of textures from the given meta data file. */
-	public void loadTexturesFromMetafile(String pMetaFileLoation) {
-		final TextureMetaLoader lLoader = new TextureMetaLoader();
-		final ArrayList<TextureMetaItem> lItems = lLoader.loadTextureMetaFile(pMetaFileLoation);
-
-		final int lNumTextures = lItems.size();
-		for (int i = 0; i < lNumTextures; i++) {
-			Texture lTex = null;
-			switch (lItems.get(i).filterType) {
-			case 1:
-				lTex = Texture.loadTextureFromFile(lItems.get(i).textureLocation, GL11.GL_NEAREST);
-				break;
-			default:
-				lTex = Texture.loadTextureFromFile(lItems.get(i).textureLocation, GL11.GL_LINEAR);
-				break;
-			}
-
-			mTextures.put(lItems.get(i).textureName, lTex);
-		}
-	}
-
-	// =============================================
+	// --------------------------------------
 	// Methods
-	// =============================================
+	// --------------------------------------
 
 	/**
 	 * loads a texture from the given filename and assigns it the given name.
@@ -137,6 +113,24 @@ public class TextureManager {
 		return lTex;
 	}
 
+	/** Unloads the specified texture, if applicable. */
+	public boolean unloadTexture(Texture pTexture) {
+		if (pTexture == null)
+			return false; // already lost reference
+
+		if (mTextures.containsValue(pTexture)) {
+
+			Texture.unloadTexture(pTexture);
+
+			mTextures.remove(pTexture);
+
+			return true;
+		}
+
+		return false;
+
+	}
+
 	public Texture createFontTexture(String pName, BufferedImage pImage) {
 		return createFontTexture(pName, pImage, GL11.GL_NEAREST);
 	}
@@ -165,4 +159,5 @@ public class TextureManager {
 			}
 		}
 	}
+
 }

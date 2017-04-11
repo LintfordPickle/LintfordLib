@@ -7,108 +7,150 @@ import net.ld.library.core.time.GameTime;
 
 public class AnimatedSprite implements ISprite {
 
-	// =============================================
+	// --------------------------------------
 	// Variables
-	// =============================================
+	// --------------------------------------
 
-	private List<ISprite> mSpriteFrames;
-	private int mCurrentFrame;
-	private float mCurTime;
-	private float mFrameLength;
-	private boolean mLoopEnabled;
-	private boolean mActive;
-	private IAnimatedSpriteListener mAnimatedSpriteListener;
+	/** The duration of each frame, in milliseconds */
+	private float frameDuration;
 
-	// =============================================
+	/** If true, the animation loops back to the beginning when finished. */
+	private boolean loopAnimation;
+
+	/** If true, animations are played, otherwise, animation is stopped. */
+	private boolean animationEnabled;
+
+	/** A list of names of Sprites which make up this animation. */
+	private String[] animationSprites;
+
+	/** A collection of sprites which make up this animation. */
+	private transient List<ISprite> spriteFrames;
+
+	/** The current frame of the animation */
+	private transient int currentFrame;
+
+	/** A timer to track when to change frames */
+	private transient float timer;
+
+	/**
+	 * A listener to allow subscribers to be notified of changes to the state of
+	 * an {@link AnimatedSprite}
+	 */
+	private transient AnimatedSpriteListener animatedSpriteListener;
+
+	/** true if this AnimatedSprite has been loaded, false otherwise. */
+	private boolean isLoaded;
+
+	// --------------------------------------
 	// Properties
-	// =============================================
+	// --------------------------------------
 
-	public List<ISprite> frames() {
-		return mSpriteFrames;
+	/**
+	 * Returns true if this AnimatedSprite has beene loaded, false otherwise.
+	 */
+	public boolean isLoaded() {
+		return this.isLoaded;
 	}
 
-	public void frames(List<ISprite> pNewFrames) {
-		mSpriteFrames = pNewFrames;
+	public List<ISprite> frames() {
+		return spriteFrames;
 	}
 
 	public float frameLength() {
-		return mFrameLength;
+		return frameDuration;
 	}
 
 	public void frameLength(float pFrameLength) {
-		mFrameLength = pFrameLength;
+		frameDuration = pFrameLength;
 	}
 
 	public boolean enabled() {
-		return mActive;
+		return animationEnabled;
 	}
 
 	public void enabled(boolean pEnabled) {
-		mActive = pEnabled;
+		animationEnabled = pEnabled;
 
-		if (mActive) {
-			if (mAnimatedSpriteListener != null) {
+		if (animationEnabled) {
+			if (animatedSpriteListener != null) {
 				// mAnimatedSpriteListener.onStarted(this);
 			}
 		}
 	}
 
 	public boolean loopEnabled() {
-		return mLoopEnabled;
+		return loopAnimation;
 	}
 
 	public void loopEnabled(boolean pLoopEnabled) {
-		mLoopEnabled = pLoopEnabled;
+		loopAnimation = pLoopEnabled;
 	}
 
-	public IAnimatedSpriteListener animatedSpriteListender() {
-		return mAnimatedSpriteListener;
+	public AnimatedSpriteListener animatedSpriteListender() {
+		return animatedSpriteListener;
 	}
 
-	public void animatedSpriteListender(IAnimatedSpriteListener pNewListener) {
-		mAnimatedSpriteListener = pNewListener;
+	public void animatedSpriteListender(AnimatedSpriteListener pNewListener) {
+		animatedSpriteListener = pNewListener;
 	}
 
-	// =============================================
+	// --------------------------------------
 	// Constructor
-	// =============================================
+	// --------------------------------------
 
 	public AnimatedSprite() {
-		mSpriteFrames = new ArrayList<>();
-		mFrameLength = 100.0f;
-		mLoopEnabled = true;
-		mActive = true;
+		spriteFrames = new ArrayList<>();
+		frameDuration = 100.0f;
+		loopAnimation = true;
+		animationEnabled = true;
 	}
 
-	// =============================================
+	// --------------------------------------
 	// Core-Methods
-	// =============================================
+	// --------------------------------------
 
-	@Override
-	public void update(GameTime pGameTime) {
-		if (mFrameLength == 0.0)
+	public void loadContent(final SpriteSheet pSpriteSheet) {
+		final int SPRITE_COUNT = animationSprites.length;
+		for (int i = 0; i < SPRITE_COUNT; i++) {
+			final ISprite SPRITE = pSpriteSheet.getSprite(animationSprites[i]);
+
+			if (SPRITE == null) {
+				System.err.println("AnimatedSprite missing Sprite in spritesheet: " + animationSprites[i]);
+				continue;
+			}
+
+			spriteFrames.add(SPRITE);
+
+		}
+
+		isLoaded = true;
+
+	}
+
+	public void update(GameTime pGameTime, float pTimeModifier) {
+		if (frameDuration == 0.0)
 			return;
-		if (mActive) {
-			mCurTime += pGameTime.elapseGameTime();
+		if (animationEnabled) {
+			timer += pGameTime.elapseGameTime() * pTimeModifier;
 		}
 
 		// update the current frame
-		while (mCurTime > mFrameLength) {
-			mCurrentFrame++;
-			mCurTime -= mFrameLength;
+		while (timer > frameDuration) {
+			currentFrame++;
+			timer -= frameDuration;
 
-			if (mCurrentFrame >= mSpriteFrames.size()) {
+			if (currentFrame >= spriteFrames.size()) {
 
-				if (mLoopEnabled) {
-					mCurrentFrame = 0;
-					if (mAnimatedSpriteListener != null) {
-						mAnimatedSpriteListener.onLooped(this);
+				if (loopAnimation) {
+					currentFrame = 0;
+					if (animatedSpriteListener != null) {
+						animatedSpriteListener.onLooped(this);
 					}
 				} else {
-					mActive = false;
-					mCurrentFrame--;
-					if (mAnimatedSpriteListener != null) {
-						mAnimatedSpriteListener.onStopped(this);
+					animationEnabled = false;
+					currentFrame--;
+					if (animatedSpriteListener != null) {
+						animatedSpriteListener.onStopped(this);
 					}
 				}
 
@@ -118,83 +160,54 @@ public class AnimatedSprite implements ISprite {
 
 	}
 
-	// =============================================
+	// --------------------------------------
 	// Methods
-	// =============================================
+	// --------------------------------------
 
-	public void addFrame(ISprite pSprite) {
-		if (!mSpriteFrames.contains(pSprite)) {
-			mSpriteFrames.add(pSprite);
+	/**
+	 * Adds the given {@link Sprite} instance to this animation collection, at
+	 * the end of the current animation.
+	 */
+	public void addFrame(final Sprite pSprite) {
+		if (!spriteFrames.contains(pSprite)) {
+			spriteFrames.add(pSprite);
 		}
 	}
 
 	public void removeFrame(Sprite pSprite) {
-		if (mSpriteFrames.contains(pSprite)) {
-			mSpriteFrames.remove(pSprite);
+		if (spriteFrames.contains(pSprite)) {
+			spriteFrames.remove(pSprite);
 		}
 	}
 
-	public void loadGridSpriteSheet(int pSrcX, int pSrcY, int pWidth, int pHeight, int pNumFramesWide, int pNumFramesHigh, int pNumFrames) {
-
-		for (int y = 0; y < pNumFramesHigh; y++) {
-			for (int x = 0; x < pNumFramesWide; x++) {
-				final float lFrameX = pSrcX + (x * pWidth);
-				final float lFrameY = pSrcY + (y * pHeight);
-
-				// FIXME: This call creates garbage. Such animations should be stored in a definition (and the state tracked by an object instance).
-				mSpriteFrames.add(new Sprite(lFrameX, lFrameY, pWidth, pHeight));
-			}
-		}
-
+	public ISprite getSprite() {
+		if (spriteFrames == null || spriteFrames.size() == 0)
+			return null;
+		return spriteFrames.get(currentFrame);
 	}
 
-	// =============================================
+	// --------------------------------------
 	// Inherited-Methods
-	// =============================================
+	// --------------------------------------
 
 	@Override
 	public float getX() {
-		return mSpriteFrames.get(mCurrentFrame).getX();
+		return spriteFrames.get(currentFrame).getX();
 	}
 
 	@Override
 	public float getY() {
-		return mSpriteFrames.get(mCurrentFrame).getY();
-	}
-
-	public ISprite getSprite(int pFrame) {
-		if (mSpriteFrames == null || mSpriteFrames.size() == 0)
-			return null;
-		
-		if(pFrame < 0 || pFrame >= mSpriteFrames.size())
-			return null;
-		
-		return mSpriteFrames.get(pFrame);
-	}
-	
-	public ISprite getSprite() {
-		if (mSpriteFrames == null || mSpriteFrames.size() == 0)
-			return null;
-		return mSpriteFrames.get(mCurrentFrame);
+		return spriteFrames.get(currentFrame).getY();
 	}
 
 	@Override
 	public int getWidth() {
-		return mSpriteFrames.get(mCurrentFrame).getWidth();
+		return spriteFrames.get(currentFrame).getWidth();
 	}
 
 	@Override
 	public int getHeight() {
-		return mSpriteFrames.get(mCurrentFrame).getHeight();
-	}
-
-	@Override
-	public ISprite copy() {
-		AnimatedSprite lNewSprite = new AnimatedSprite();
-		lNewSprite.frames(mSpriteFrames);
-		lNewSprite.frameLength(mFrameLength);
-
-		return lNewSprite;
+		return spriteFrames.get(currentFrame).getHeight();
 	}
 
 }
