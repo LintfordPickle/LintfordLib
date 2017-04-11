@@ -1,14 +1,33 @@
 package net.ld.library.core.maths;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
 
 public class MathHelperTests {
 
 	// Missing static method tests:
-	// Hermite
-	// Catmullrom spline
-	// smoothStep
-	// WrapAngle
+	//   Hermite
+	//   Catmullrom spline
+	//   SmoothStep
+
+	@Test
+	public void wrapAngleTest() {
+		// Arrange
+		final float LOW_OOB_ANGLE = MathHelper.toRadians(-370);
+		final float LOW_ANGLE = MathHelper.toRadians(-100);
+		final float HIGH_ANGLE = MathHelper.toRadians(120);
+		final float HIGH_OOB_ANGLE = MathHelper.toRadians(380);
+
+		// Act
+
+		// Assert
+		assertEquals(MathHelper.wrapAngle(LOW_OOB_ANGLE), MathHelper.toRadians(-10), 0.001f);
+		assertEquals(MathHelper.wrapAngle(LOW_ANGLE), MathHelper.toRadians(-100), 0.001f);
+		assertEquals(MathHelper.wrapAngle(HIGH_ANGLE), MathHelper.toRadians(120), 0.001f);
+		assertEquals(MathHelper.wrapAngle(HIGH_OOB_ANGLE), MathHelper.toRadians(20), 0.001f);
+		
+	}
 
 	@Test
 	public void clampTest() {
@@ -68,6 +87,5 @@ public class MathHelperTests {
 		assert (MathHelper.min(2f, 2f) == 2f) : "Max returned incorrect version";
 
 	}
-
 
 }
