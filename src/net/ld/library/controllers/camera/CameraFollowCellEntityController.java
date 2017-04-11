@@ -1,4 +1,4 @@
-package net.ld.library.controllers;
+package net.ld.library.controllers.camera;
 
 import net.ld.library.cellworld.CellWorldEntity;
 import net.ld.library.core.camera.Camera;

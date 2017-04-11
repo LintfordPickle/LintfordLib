@@ -1,7 +1,7 @@
 package net.ld.library.screenmanager.dialogs;
 
 import net.ld.library.core.graphics.ResourceManager;
-import net.ld.library.core.graphics.texturebatch.TextureBatchRenderer;
+import net.ld.library.core.graphics.texturebatch.TextureBatch;
 import net.ld.library.core.graphics.textures.TextureManager;
 import net.ld.library.core.input.InputState;
 import net.ld.library.core.maths.Rectangle;
@@ -21,7 +21,7 @@ public abstract class BaseDialog extends MenuScreen {
 	protected float mDialogWidth;
 	protected float mDialogHeight;
 
-	private TextureBatchRenderer mSpriteBatch;
+	private TextureBatch mSpriteBatch;
 
 	// ===========================================================
 	// Constructor
@@ -30,7 +30,7 @@ public abstract class BaseDialog extends MenuScreen {
 	public BaseDialog(ScreenManager pScreenManager, MenuScreen pParentScreen, String pDialogTitle, String pDialogMessage) {
 		super(pScreenManager, "");
 
-		mSpriteBatch = new TextureBatchRenderer();
+		mSpriteBatch = new TextureBatch();
 
 		mTitleString = pDialogTitle;
 		mMessageString = pDialogMessage;

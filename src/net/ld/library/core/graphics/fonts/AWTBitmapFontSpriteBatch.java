@@ -1,10 +1,10 @@
 package net.ld.library.core.graphics.fonts;
 
 import net.ld.library.core.graphics.fonts.BitmapFont.Glyph;
-import net.ld.library.core.graphics.texturebatch.TextureBatchRenderer;
+import net.ld.library.core.graphics.texturebatch.TextureBatch;
 
 // TODO: Need to implement the sprite batch like TileSetRendererVBO, i.e. with separate shaders and 
-public class AWTBitmapFontSpriteBatch extends TextureBatchRenderer {
+public class AWTBitmapFontSpriteBatch extends TextureBatch {
 
 	public static final int NO_WORD_WRAP = -1;
 

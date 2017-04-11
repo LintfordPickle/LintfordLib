@@ -3,6 +3,7 @@ package net.ld.library.controllers;
 import org.junit.Test;
 
 import net.ld.library.cellworld.CellWorldEntity;
+import net.ld.library.controllers.camera.CameraFollowCellEntityController;
 import net.ld.library.core.camera.Camera;
 import net.ld.library.core.time.GameTime;
 

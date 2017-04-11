@@ -9,7 +9,7 @@ import net.ld.library.core.camera.Camera;
 import net.ld.library.core.camera.HUD;
 import net.ld.library.core.config.DisplayConfig;
 import net.ld.library.core.graphics.ResourceManager;
-import net.ld.library.core.graphics.texturebatch.TextureBatchRenderer;
+import net.ld.library.core.graphics.texturebatch.TextureBatch;
 import net.ld.library.core.graphics.textures.TextureManager;
 import net.ld.library.core.input.InputState;
 import net.ld.library.core.rendering.RenderState;
@@ -47,13 +47,13 @@ public class ScreenManager {
 	private boolean mIsLoaded;
 
 	// Common SpriteBatch (all entries/windows share textures)
-	TextureBatchRenderer mSpriteBatch;
+	TextureBatch mSpriteBatch;
 
 	// =============================================
 	// Properties
 	// =============================================
 
-	public TextureBatchRenderer spriteBatch() {
+	public TextureBatch spriteBatch() {
 		return mSpriteBatch;
 	}
 
@@ -105,7 +105,7 @@ public class ScreenManager {
 		mScreens = new ArrayList<Screen>();
 		mScreensToUpdate = new ArrayList<Screen>();
 
-		mSpriteBatch = new TextureBatchRenderer();
+		mSpriteBatch = new TextureBatch();
 
 		mRenderState = new RenderState();
 

@@ -6,9 +6,7 @@ public class MathHelper {
 	public static float catmullRom(float value1, float value2, float value3, float value4, float amount) {
 		float num = amount * amount;
 		float num2 = amount * num;
-		return (0.5f * ((((2f * value2) + ((-value1 + value3) * amount))
-				+ (((((2f * value1) - (5f * value2)) + (4f * value3)) - value4) * num))
-				+ ((((-value1 + (3f * value2)) - (3f * value3)) + value4) * num2)));
+		return (0.5f * ((((2f * value2) + ((-value1 + value3) * amount)) + (((((2f * value1) - (5f * value2)) + (4f * value3)) - value4) * num)) + ((((-value1 + (3f * value2)) - (3f * value3)) + value4) * num2)));
 	}
 
 	/** A hermite spline interpolation method */
@@ -67,8 +65,7 @@ public class MathHelper {
 	 * @param pMaxValue
 	 *            the ending bound
 	 * @param pAmount
-	 *            The normalized [0,1] amount to interpolate between the values
-	 *            by
+	 *            The normalized [0,1] amount to interpolate between the values by
 	 * 
 	 * @return the interpolated value
 	 */
@@ -111,8 +108,7 @@ public class MathHelper {
 	}
 
 	/**
-	 * Wraps the given angle around a circle and returns the new, normalized
-	 * value.
+	 * Wraps the given angle around a circle and returns the new, normalized value.
 	 * 
 	 * @param pAngle
 	 *            the angle to wrap around a circle, in radians
@@ -128,6 +124,15 @@ public class MathHelper {
 			pAngle -= Math.PI * 2;
 		}
 		return pAngle;
+	}
+
+	/** Scales the given value from one range into another range */
+	public static float scaleToRange(final float oldValue, final float oldMin, final float oldMax, final float newMin, final float newMax) {
+		float oldRange = oldMax - oldMin;
+		float newRange = newMax - newMin;
+
+		float newValue = ((oldValue - oldMin) * newRange / oldRange) + newMin;
+		return newValue;
 	}
 
 }

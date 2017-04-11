@@ -2,7 +2,7 @@ package net.ld.library.core.graphics.texturebatch;
 
 import net.ld.library.core.graphics.textures.Texture;
 
-public class TextureBatch9PatchRenderer extends TextureBatchRenderer {
+public class TextureBatch9PatchRenderer extends TextureBatch {
 
 	// =============================================
 	// Constructor

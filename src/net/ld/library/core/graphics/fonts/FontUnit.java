@@ -12,11 +12,11 @@ public class FontUnit {
 	// Variables
 	// --------------------------------------
 
-	private AWTBitmapFontSpriteBatch mFontSpriteBatch;
-	private BitmapFont mBitmapFont;
 	private String mFontName;
 	private String mFontPath;
 	private int mFontPointSize;
+	private BitmapFont mBitmapFont;
+	private AWTBitmapFontSpriteBatch mFontSpriteBatch;
 	private boolean mIsLoaded;
 
 	// --------------------------------------

@@ -21,7 +21,7 @@ import net.ld.library.core.maths.Vector4f;
 
 // TODO: Need to implement the spritebatch like TileSetRendererVBO, i.e. with separate shaders 
 // TODO: Need to differentiate between batching and caching. Currently we are only batching sprites per frame, but not caching them!!
-public class TextureBatchRenderer {
+public class TextureBatch {
 
 	// =============================================
 	// Constants
@@ -108,7 +108,7 @@ public class TextureBatchRenderer {
 	// Constructor
 	// =============================================
 
-	public TextureBatchRenderer() {
+	public TextureBatch() {
 		mShader = new ShaderMVP_PT(VERT_FILENAME, FRAG_FILENAME) {
 			@Override
 			protected void bindAtrributeLocations(int pShaderID) {
