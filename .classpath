@@ -1,26 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="src" path="libs/sources"/>
 	<classpathentry kind="src" path="res"/>
 	<classpathentry kind="src" path="tests"/>
-	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
-	<classpathentry exported="true" kind="lib" path="libs/lwjgl-glfw.jar" sourcepath="libs/sources/lwjgl-glfw-sources.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="jar:platform:/resource/ldlibrary/libs/javadocs/lwjgl-glfw-javadoc.jar!/"/>
-		</attributes>
-	</classpathentry>
+	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry exported="true" kind="lib" path="libs/lwjgl-glfw.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/lwjgl-javadoc.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/lwjgl-jemalloc.jar"/>
-	<classpathentry exported="true" kind="lib" path="libs/lwjgl-nuklear.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/lwjgl-openal.jar"/>
-	<classpathentry exported="true" kind="lib" path="libs/lwjgl-opengl.jar" sourcepath="libs/sources/lwjgl-opengl-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/lwjgl-opengl.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/lwjgl-stb.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/lwjgl.jar"/>
-	<classpathentry exported="true" kind="lib" path="libs/lwjgl-glfw-natives-windows.jar"/>
-	<classpathentry exported="true" kind="lib" path="libs/lwjgl-jemalloc-natives-windows.jar"/>
-	<classpathentry exported="true" kind="lib" path="libs/lwjgl-natives-windows.jar"/>
-	<classpathentry exported="true" kind="lib" path="libs/lwjgl-nuklear-natives-windows.jar"/>
-	<classpathentry exported="true" kind="lib" path="libs/lwjgl-openal-natives-windows.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
-	<classpathentry kind="lib" path="libs/gson-2.8.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/natives/lwjgl-glfw-natives-linux.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/natives/lwjgl-glfw-natives-macos.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/natives/lwjgl-glfw-natives-windows.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/natives/lwjgl-jemalloc-natives-linux.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/natives/lwjgl-jemalloc-natives-macos.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/natives/lwjgl-jemalloc-natives-windows.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/natives/lwjgl-natives-linux.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/natives/lwjgl-natives-macos.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/natives/lwjgl-natives-windows.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/natives/lwjgl-openal-natives-linux.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/natives/lwjgl-openal-natives-macos.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/natives/lwjgl-openal-natives-windows.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/natives/lwjgl-opengl-natives-linux.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/natives/lwjgl-opengl-natives-macos.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/natives/lwjgl-opengl-natives-windows.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/natives/lwjgl-stb-natives-linux.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/natives/lwjgl-stb-natives-macos.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/natives/lwjgl-stb-natives-windows.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/src/lwjgl-glfw-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/src/lwjgl-jemalloc-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/src/lwjgl-openal-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/src/lwjgl-opengl-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/src/lwjgl-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/src/lwjgl-stb-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/gson-2.8.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
