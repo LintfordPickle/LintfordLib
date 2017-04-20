@@ -33,8 +33,76 @@ import org.lwjgl.openal.ALUtil;
 
 public class AudioManager {
 
-	public static void init() {
+	// --------------------------------------
+	// Constants
+	// --------------------------------------
 
+	public static final String TAG = AudioManager.class.getSimpleName();
+
+	private static Map<String, AudioData> mBuffers;
+
+	private long mContext;
+	private long mDevice;
+
+	private int mMaxSourceCount;
+
+	/** Defines a maximum number of 'fire-and'forget' audio sources created by the AudioManager. */
+	private static final int AUDIO_FAF_SOURCE_POOL_SIZE = 8;
+
+	// --------------------------------------
+	// Variables
+	// --------------------------------------
+
+	/** A pool of {@link AudioSource}s, for fire and forget sounds */
+	private List<AudioSource> mFaFSourcePool;
+
+	/** A pool of {@link AudioSource}s created for other objects (and can be reused). */
+	private List<AudioSource> mAudioSources;
+
+	// --------------------------------------
+	// Properties
+	// --------------------------------------
+
+	/** Returns the maximum numbers of sources supported by the OpenAL context. */
+	public int maxSources() {
+		return mMaxSourceCount;
+	}
+
+	/** Returns true if an AL context has been assigned. false otherwise. */
+	public boolean contextIDAssigned() {
+		return mDevice != NULL;
+	}
+
+	/** Returns true if an AL device has been assigned. false otherwise. */
+	public boolean deviceConnected() {
+		return mDevice != NULL;
+	}
+
+	/** Returns true if AudioManager has been properly initialized, otherwise false is returned. */
+	public boolean isInitialised() {
+		return contextIDAssigned() && deviceConnected();
+	}
+
+	// --------------------------------------
+	// Constructor
+	// --------------------------------------
+
+	public AudioManager() {
+		mBuffers = new HashMap<>();
+
+		mAudioSources = new ArrayList<>();
+		mFaFSourcePool = new ArrayList<>(AUDIO_FAF_SOURCE_POOL_SIZE);
+
+		mContext = NULL;
+		mDevice = NULL;
+
+	}
+
+	// --------------------------------------
+	// Core-Methods
+	// --------------------------------------
+
+	public void initialise() {
 		mDevice = alcOpenDevice((ByteBuffer) null);
 		if (mDevice == NULL)
 			throw new IllegalStateException("Failed to open the default device.");
@@ -86,10 +154,21 @@ public class AudioManager {
 
 		}
 
+		// Setup some initial listener data
+		setListenerData(0, 0, -2);
+
+		for (int i = 0; i < AUDIO_FAF_SOURCE_POOL_SIZE; i++) {
+			// Create a new audio source, add it to the pool and assign it to this controller.
+			AudioSource lAudioSource = new AudioSource();
+			lAudioSource.assign(hashCode());
+
+			mFaFSourcePool.add(lAudioSource);
+
+		}
 	}
 
 	/** Cleans up the OpenAL resources and removes the device and context. */
-	public static void cleanUp() {
+	public void cleanUp() {
 		// Remove all the sound buffers
 		for (AudioData lAudioData : mBuffers.values()) {
 			lAudioData.unloadAudioData();
@@ -104,146 +183,6 @@ public class AudioManager {
 
 		mContext = NULL;
 		mDevice = NULL;
-
-	}
-
-	// --------------------------------------
-	// Constants
-	// --------------------------------------
-
-	public static final String TAG = AudioManager.class.getSimpleName();
-
-	private static Map<String, AudioData> mBuffers;
-
-	private static long mContext;
-	private static long mDevice;
-
-	private static AudioManager mAudioManager;
-	private static int mMaxSourceCount;
-
-	/** Defines a maximum number of 'fire-and'forget' audio sources created by the AudioManager. */
-	private static final int AUDIO_FAF_SOURCE_POOL_SIZE = 8;
-
-	// --------------------------------------
-	// Variables
-	// --------------------------------------
-
-	/** A pool of {@link AudioSource}s, for fire and forget sounds */
-	private List<AudioSource> mFaFSourcePool;
-
-	/** A pool of {@link AudioSource}s created for other objects (and can be reused). */
-	private List<AudioSource> mAudioSources;
-
-	// --------------------------------------
-	// Properties
-	// --------------------------------------
-
-	/** Returns an instance of the {@link AudioManager} singleton. */
-	public static AudioManager audioManager() {
-		if (mAudioManager == null) {
-			mAudioManager = new AudioManager();
-			AudioManager.init();
-			mAudioManager.initialise();
-		}
-
-		return mAudioManager;
-	}
-
-	/** Returns the maximum numbers of sources supported by the OpenAL context. */
-	public static int maxSources() {
-		return mMaxSourceCount;
-	}
-
-	/** Returns true if an AL context has been assigned. false otherwise. */
-	public boolean contextIDAssigned() {
-		return mDevice != NULL;
-	}
-
-	/** Returns true if an AL device has been assigned. false otherwise. */
-	public boolean deviceConnected() {
-		return mDevice != NULL;
-	}
-
-	/** Returns true if AudioManager has been properly initialised, flase otherwise. */
-	public boolean isInitialised() {
-		return contextIDAssigned() && deviceConnected();
-	}
-
-	// --------------------------------------
-	// Constructor
-	// --------------------------------------
-
-	private AudioManager() {
-		mBuffers = new HashMap<>();
-
-		mAudioSources = new ArrayList<>();
-		mFaFSourcePool = new ArrayList<>(AUDIO_FAF_SOURCE_POOL_SIZE);
-
-		mContext = NULL;
-		mDevice = NULL;
-
-	}
-
-	// --------------------------------------
-	// Core-Methods
-	// --------------------------------------
-
-	void initialise() {
-		// Setup some initial listener data
-		setListenerData(0, 0, -2);
-
-		for (int i = 0; i < AUDIO_FAF_SOURCE_POOL_SIZE; i++) {
-			// Create a new audio source, add it to the pool and assign it to this controller.
-			AudioSource lAudioSource = new AudioSource();
-			lAudioSource.assign(hashCode());
-
-			mFaFSourcePool.add(lAudioSource);
-
-		}
-	}
-
-	public AudioData loadWavSound(String pName, String pFilename) {
-		if (pName == null || pName.length() == 0) {
-			System.err.println("Cannot load an audio file, null/no filename provided!");
-			return null;
-
-		}
-
-		// First, check to see if a sound resource with the given name already exists and if so, return it.
-		if (mBuffers.containsKey(pName)) {
-			return mBuffers.get(pName);
-
-		}
-
-		AudioData lNewWavData = new WaveAudioData();
-		if (lNewWavData.loadAudioFromFile(pFilename)) {
-			mBuffers.put(pName, lNewWavData);
-
-		}
-
-		return lNewWavData;
-
-	}
-
-	public AudioData loadOggSound(String pName, String pFilename) {
-		if (pName == null || pName.length() == 0) {
-			System.err.println("Cannot load an audio file, null/no filename provided!");
-			return null;
-
-		}
-
-		// First, check to see if a sound resource with the given name already exists and if so, return it.
-		if (mBuffers.containsKey(pName)) {
-			return mBuffers.get(pName);
-
-		}
-
-		OGGAudioData lNewOggData = new OGGAudioData();
-		if (lNewOggData.loadAudioFromFile(pFilename)) {
-
-		}
-
-		return lNewOggData;
 
 	}
 
@@ -303,6 +242,53 @@ public class AudioManager {
 	// Helper Methods
 	// --------------------------------------
 
+	/** Loads an WAV file extension and returns a new {@link AudioData} wrapper object. */
+	public AudioData loadWavSound(String pName, String pFilename) {
+		if (pName == null || pName.length() == 0) {
+			System.err.println("Cannot load an audio file, null/no filename provided!");
+			return null;
+
+		}
+
+		// First, check to see if a sound resource with the given name already exists and if so, return it.
+		if (mBuffers.containsKey(pName)) {
+			return mBuffers.get(pName);
+
+		}
+
+		AudioData lNewWavData = new WaveAudioData();
+		if (lNewWavData.loadAudioFromFile(pFilename)) {
+			mBuffers.put(pName, lNewWavData);
+
+		}
+
+		return lNewWavData;
+
+	}
+
+	/** Loads an OGG file extension and returns a new {@link AudioData} wrapper object. */
+	public AudioData loadOggSound(String pName, String pFilename) {
+		if (pName == null || pName.length() == 0) {
+			System.err.println("Cannot load an audio file, null/no filename provided!");
+			return null;
+
+		}
+
+		// First, check to see if a sound resource with the given name already exists and if so, return it.
+		if (mBuffers.containsKey(pName)) {
+			return mBuffers.get(pName);
+
+		}
+
+		OGGAudioData lNewOggData = new OGGAudioData();
+		if (lNewOggData.loadAudioFromFile(pFilename)) {
+
+		}
+
+		return lNewOggData;
+
+	}
+
 	/** Plays the given {@link AudioData}. */
 	public void play(AudioData pData) {
 		if (pData == null || !pData.isLoaded())
@@ -312,6 +298,7 @@ public class AudioManager {
 
 	}
 
+	/** Plays the given {@link AudioData} at the specified volume and pitch. */
 	public void play(AudioData pData, float pGain, float pPitch) {
 		if (pData == null || !pData.isLoaded())
 			return;
@@ -319,7 +306,6 @@ public class AudioManager {
 		AudioSource lAS = getFAFAudioSource();
 
 		if (lAS != null) {
-			System.out.println("FaF source ID: " + lAS.sourceID());
 			lAS.play(pData.bufferID(), pGain, pPitch);
 		}
 

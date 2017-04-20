@@ -8,13 +8,14 @@ public class AudioManagerTest {
 	@Test
 	public void audioManagerCreationTest() {
 
-		AudioManager.init();
+		final AudioManager AUDIO_MANAGER = new AudioManager(); 
+		AUDIO_MANAGER.initialise();
 
-		assert (AudioManager.audioManager().isInitialised()) : "AudioManager was not properly initialised.";
+		assert (AUDIO_MANAGER.isInitialised()) : "AudioManager was not properly initialised.";
 
-		AudioManager.cleanUp();
+		AUDIO_MANAGER.cleanUp();
 
-		assert (!AudioManager.audioManager().isInitialised()) : "AudioManager was not properly disposed.";
+		assert (!AUDIO_MANAGER.isInitialised()) : "AudioManager was not properly disposed.";
 
 	}
 
