@@ -20,7 +20,6 @@ local.properties
 *.classpath/main
 
 # Package Files #
-*.jar
 *.war
 *.ear
 

@@ -3,10 +3,11 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="res"/>
 	<classpathentry kind="src" path="tests"/>
-	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry exported="true" kind="lib" path="libs/gson-2.8.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/lwjgl-egl.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/lwjgl-glfw.jar"/>
-	<classpathentry exported="true" kind="lib" path="libs/lwjgl-javadoc.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/lwjgl-jemalloc.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/lwjgl-openal.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/lwjgl-opengl.jar"/>
@@ -30,12 +31,5 @@
 	<classpathentry exported="true" kind="lib" path="libs/natives/lwjgl-stb-natives-linux.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/natives/lwjgl-stb-natives-macos.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/natives/lwjgl-stb-natives-windows.jar"/>
-	<classpathentry exported="true" kind="lib" path="libs/src/lwjgl-glfw-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="libs/src/lwjgl-jemalloc-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="libs/src/lwjgl-openal-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="libs/src/lwjgl-opengl-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="libs/src/lwjgl-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="libs/src/lwjgl-stb-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="libs/gson-2.8.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
