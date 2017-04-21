@@ -12,7 +12,7 @@
 	<classpathentry exported="true" kind="lib" path="libs/lwjgl-openal.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/lwjgl-opengl.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/lwjgl-stb.jar"/>
-	<classpathentry exported="true" kind="lib" path="libs/lwjgl.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/lwjgl.jar" sourcepath="libs/source/lwjgl-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/natives/lwjgl-glfw-natives-linux.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/natives/lwjgl-glfw-natives-macos.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/natives/lwjgl-glfw-natives-windows.jar"/>
