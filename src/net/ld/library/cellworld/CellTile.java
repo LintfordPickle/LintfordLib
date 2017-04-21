@@ -8,7 +8,7 @@ public class CellTile {
 	// -------------------------------------
 
 	/**
-	 * Represents an empty tile in the {@link CellGridWorld}, with an index of
+	 * Represents an empty tile in the {@link EntityManager}, with an index of
 	 * 0.
 	 */
 	public static final CellTile EMPTY_TILE = new CellTile(0, "Empty");
@@ -35,14 +35,14 @@ public class CellTile {
 
 	/**
 	 * Sets the collidable flag on this {@link CellTile}. Collidable tiles
-	 * cannot be entered by a {@link CellWorldEntity}.
+	 * cannot be entered by a {@link CellEntity}.
 	 */
 	public void collidable(boolean pNewValue) {
 		mCollidable = pNewValue;
 	}
 
 	/**
-	 * Returns whether or not this tile is colliable by {@link CellWorldEntity}.
+	 * Returns whether or not this tile is colliable by {@link CellEntity}.
 	 * A collidable tile cannot be traversed or entered.
 	 */
 	public boolean collidable() {

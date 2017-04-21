@@ -169,14 +169,12 @@ public class HUD implements ICamera, IResizeListener {
 	}
 
 	/**
-	 * Rebuilds the projection matrix of this camera with the given dimensions.
-	 * Throws IllegalArgumentException is the input values are less than or
-	 * equal to zero.
+	 * Rebuilds the projection matrix of this camera with the given dimensions. Throws IllegalArgumentException is the input values are less than or equal to zero.
 	 */
 	public void changePerspectiveMatrix(int pNewWidth, int pNewHeight) throws IllegalArgumentException {
 		if (pNewWidth <= 0 || pNewHeight <= 0) {
-			throw new IllegalArgumentException(
-					"You cannot set the new width or new height of the camera to zero or less.");
+			// Window minimised?
+			return;
 
 		}
 
@@ -210,7 +208,16 @@ public class HUD implements ICamera, IResizeListener {
 	/** Called (from GLFW) when the window is resized */
 	@Override
 	public void onResize(int pWidth, int pHeight) {
-		changePerspectiveMatrix(pWidth, pHeight);
+		mWindowWidth = pWidth;
+
+		// Force the window height to be an even number (because it messes up some pixel rendering)
+		if ((pHeight % 2) == 1) {
+			System.out.println("New window size odd pixel height (" + pHeight + "). Setting height to (" + (pHeight + 1) + ")");
+			pHeight = pHeight + 1;
+
+		}
+
+		mWindowHeight = pHeight;
 
 	}
 

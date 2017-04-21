@@ -13,9 +13,10 @@ public class CellGridLevel {
 	// Variables
 	// -------------------------------------
 	
+	public final int cellSize;
 	public final int cellsWide;
 	public final int cellsHigh;
-	int[] mLevelGrid;
+	protected int[] mLevelGrid;
 	
 	// -------------------------------------
 	// Properties
@@ -44,7 +45,8 @@ public class CellGridLevel {
 	// -------------------------------------
 	
 	/** ctor for the a cell-based (grid) level. */
-	public CellGridLevel(final int pCellsWide, final int pCellsHigh){
+	public CellGridLevel(final int pCellSize, final int pCellsWide, final int pCellsHigh){
+		cellSize = pCellSize;
 		cellsWide = pCellsWide;
 		cellsHigh = pCellsHigh;
 		

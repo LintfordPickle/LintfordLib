@@ -314,8 +314,8 @@ public class Camera implements ICamera, IResizeListener {
 	 */
 	public void changePerspectiveMatrix(int pNewWidth, int pNewHeight) throws IllegalArgumentException {
 		if (pNewWidth <= 0 || pNewHeight <= 0) {
-			throw new IllegalArgumentException(
-					"You cannot set the new width or new height of the camera to zero or less.");
+			// Minimized window?
+			return;
 
 		}
 
@@ -376,7 +376,7 @@ public class Camera implements ICamera, IResizeListener {
 	 * Taking into consideration zoom and camera position.
 	 */
 	public float getPointCameraSpaceY(float pPointY) {
-		return pPointY * getZoomFactorOverOne() + this.getMinX();
+		return pPointY * getZoomFactorOverOne() + this.getMinY();
 
 	}
 

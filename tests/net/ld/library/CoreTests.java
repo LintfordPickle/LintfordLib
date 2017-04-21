@@ -4,7 +4,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
-import net.ld.library.cellworld.CellGridLevelTest;
 import net.ld.library.cellworld.CellTileTest;
 import net.ld.library.core.camera.CameraTest;
 import net.ld.library.core.graphics.VertexDataStructurePCTest;
@@ -25,7 +24,6 @@ import net.ld.library.core.time.TimeSpanTest;
 	GameTimeTest.class, 
 	TimeSpanTest.class,
 
-	CellGridLevelTest.class, 
 	CellTileTest.class,
 	
 	CameraTest.class
