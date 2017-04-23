@@ -91,6 +91,7 @@ public class Camera implements ICamera, IResizeListener {
 		mAcceleration.x = 0;
 		mAcceleration.y = 0;
 
+		createView();
 		updateZoomBounds();
 
 	}
@@ -214,12 +215,13 @@ public class Camera implements ICamera, IResizeListener {
 		// the
 		// camera class.
 		if (CAMERA_PHYSICS) {
+			final float lSpring = 1.3f;
 			mAcceleration.x = mTargetPosition.x - mPosition.x;
 			mAcceleration.y = mTargetPosition.y - mPosition.y;
 
 			// apply movement //
-			mVelocity.x += mAcceleration.x * DELTA_TIME;
-			mVelocity.y += mAcceleration.y * DELTA_TIME;
+			mVelocity.x += mAcceleration.x * DELTA_TIME * lSpring;
+			mVelocity.y += mAcceleration.y * DELTA_TIME * lSpring;
 
 			// don't let the camera go miles off course
 			if (Math.abs(mPosition.x) > Math.abs(mTargetPosition.x) * 20.5) {

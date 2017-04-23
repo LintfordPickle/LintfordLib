@@ -28,7 +28,7 @@ public class RectangleEntityController {
 	/** If a {@link IEntityCollider} object is available, each of the {@link RectangleEntity}s in the {@code mEntityManager} will be checked for collisions against it. */
 	protected IEntityCollider mEntityColliders;
 
-	protected EntityManager mEntityManager;
+	protected EntityManager<CellEntity> mEntityManager;
 
 	public float gravity;
 	public float frictionX;
@@ -65,7 +65,7 @@ public class RectangleEntityController {
 	// -------------------------------------
 
 	/** Initializes the {@link RectangleEntityController} with an {@link EntityManager}. All {@link RectangleEntity}s within the {@link EntityManager} will be updated. */
-	public void initialise(EntityManager pEntityManager) {
+	public void initialise(EntityManager<CellEntity> pEntityManager) {
 		mEntityManager = pEntityManager;
 
 	}
@@ -77,7 +77,7 @@ public class RectangleEntityController {
 		// Iterate through the RectangleEntities in the EntityManager and update them
 		final int MOB_COUNT = mEntityManager.entities().size();
 		for (int i = 0; i < MOB_COUNT; i++) {
-			final CellEntity CELL_ENTITY = mEntityManager.entities().get(i);
+			final CellEntity CELL_ENTITY = (CellEntity) mEntityManager.entities().get(i);
 
 			if (CELL_ENTITY == null)
 				continue;

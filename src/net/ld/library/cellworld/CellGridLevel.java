@@ -16,6 +16,9 @@ public class CellGridLevel {
 	public final int cellSize;
 	public final int cellsWide;
 	public final int cellsHigh;
+	
+	public final int totalTiles;
+	
 	protected int[] mLevelGrid;
 	
 	// -------------------------------------
@@ -49,6 +52,8 @@ public class CellGridLevel {
 		cellSize = pCellSize;
 		cellsWide = pCellsWide;
 		cellsHigh = pCellsHigh;
+		
+		totalTiles = cellsWide * cellsHigh;
 		
 		mLevelGrid = new int[pCellsWide * pCellsHigh];
 		

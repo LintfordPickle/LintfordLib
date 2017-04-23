@@ -6,22 +6,20 @@ import java.util.List;
 /**
  * The {@link EntityManager} is a convenient stores for a collect of {@link CellEntity}s, for things like saving and loading.
  */
-public class EntityManager {
+public class EntityManager<T extends CellEntity> {
 
 	// -------------------------------------
 	// Variables
 	// -------------------------------------
 
-	protected int mMaxPoolSize;
-
-	protected List<CellEntity> mEntities;
+	protected List<T> mEntities;
 
 	// -------------------------------------
 	// Properties
 	// -------------------------------------
 
 	/** Returns a list of entities currently registered in the world. */
-	public List<CellEntity> entities() {
+	public List<T> entities() {
 		return mEntities;
 	}
 
@@ -53,7 +51,7 @@ public class EntityManager {
 	/**
 	 * Adds the given {@link CellEntity} to the {@link EntityManager} and updates its reference to the world. true is returned if the object is successfully added, false is returned otherwise.
 	 */
-	public boolean addEntity(CellEntity pWorldEntity) {
+	public boolean addEntity(T pWorldEntity) {
 		if (!mEntities.contains(pWorldEntity)) {
 			mEntities.add(pWorldEntity);
 
@@ -69,12 +67,12 @@ public class EntityManager {
 	/**
 	 * Removes the given {@link CellEntity} from the world, if it has previously been registered.
 	 */
-	public void removeEntity(CellEntity pWorldEntity) {
+	public void removeEntity(T pWorldEntity) {
 		if (mEntities.contains(pWorldEntity)) {
 			mEntities.remove(pWorldEntity);
 
 		}
 
 	}
-
+	
 }

@@ -312,9 +312,11 @@ public class MenuEntry extends Rectangle {
 		// ---> TODO: 
 
 		// Render the MenuEntry label
+		final float TEXT_HEIGHT = mParentScreen.font().bitmap().fontHeight();
+		
 		float lScale = 1f;
 		mParentScreen.font().begin(mScreenManager.HUD());
-		mParentScreen.font().draw(mText, x + width / 2 - mParentScreen.font().bitmap().getStringWidth(mText, lScale) * 0.5f, y + height / 2 - 10, mZ + 0.1f, 0.97f, .92f, .95f, 1f, lScale);
+		mParentScreen.font().draw(mText, x + width / 2 - mParentScreen.font().bitmap().getStringWidth(mText, lScale) * 0.5f, y + height / 2 - TEXT_HEIGHT / 2, mZ + 0.1f, 0.97f, .92f, .95f, 1f, lScale);
 		mParentScreen.font().end();
 	}
 

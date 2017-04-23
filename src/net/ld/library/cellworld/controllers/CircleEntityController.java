@@ -29,7 +29,7 @@ public class CircleEntityController {
 	/** If a {@link IEntityCollider} object is available, each of the {@link RectangleEntity}s in the {@code mEntityManager} will be checked for collisions against it. */
 	protected IEntityCollider mEntityColliders;
 
-	protected EntityManager mEntityManager;
+	protected EntityManager<CellEntity> mEntityManager;
 
 	public float gravity;
 	public float frictionX;
@@ -68,7 +68,7 @@ public class CircleEntityController {
 	// -------------------------------------
 
 	/** Initializes the {@link CircleEntityController} with an {@link EntityManager}. All {@link RectangleEntity}s within the {@link EntityManager} will be updated. */
-	public void initialise(EntityManager pEntityManager) {
+	public void initialise(EntityManager<CellEntity> pEntityManager) {
 		mEntityManager = pEntityManager;
 
 	}
@@ -80,7 +80,7 @@ public class CircleEntityController {
 		// Iterate through the circle entities in the EntityManager and update them
 		final int MOB_COUNT = mEntityManager.entities().size();
 		for (int i = 0; i < MOB_COUNT; i++) {
-			final CellEntity CELL_ENTITY = mEntityManager.entities().get(i);
+			final CellEntity CELL_ENTITY = (CellEntity) mEntityManager.entities().get(i);
 
 			if (CELL_ENTITY == null)
 				continue;
@@ -223,6 +223,9 @@ public class CircleEntityController {
 	/** If a valid {@link IEntityCollider} reference is available, we will use it to check for collision against the given CellEntity. */
 	protected void checkEntityCollisions(GameTime pGameTime, CellEntity pCellWorldEntity) {
 		// Check this entity against other entities in the world
+		
+		
+		
 
 	}
 

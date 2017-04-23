@@ -1,9 +1,7 @@
 package net.ld.library.core.time;
 
 /**
- * The {@link GameTime} class is used to track the progression of time
- * throughout the lifetime of the application. It tracks and recorded the frame
- * elapsed time as well as the total game time.
+ * The {@link GameTime} class is used to track the progression of time throughout the lifetime of the application. It tracks and recorded the frame elapsed time as well as the total game time.
  */
 public class GameTime {
 
@@ -50,11 +48,14 @@ public class GameTime {
 	// -------------------------------------
 
 	/**
-	 * update called once per frame. It records the amount of time elapsed since
-	 * the last time update was called.
+	 * update called once per frame. It records the amount of time elapsed since the last time update was called.
 	 */
 	public void update() {
 		mElapsedGameTime = getDelta();
+		while (mElapsedGameTime > 100f) {
+			mElapsedGameTime -= 100f;
+		}
+
 		mTotalGameTime += mElapsedGameTime;
 
 	}
@@ -64,8 +65,7 @@ public class GameTime {
 	// -------------------------------------
 
 	/**
-	 * Returns the delta time (in milliseconds) since the last time this method
-	 * was called.
+	 * Returns the delta time (in milliseconds) since the last time this method was called.
 	 */
 	private double getDelta() {
 		long time = System.nanoTime();
@@ -73,6 +73,11 @@ public class GameTime {
 		mLastFrame = time;
 
 		return lDelta;
+	}
+
+	public void resetElapsed() {
+		mElapsedGameTime = getDelta();
+
 	}
 
 }

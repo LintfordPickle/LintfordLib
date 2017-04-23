@@ -21,4 +21,6 @@ public interface IGridCollider {
 
 	}
 
+	public abstract int getGridCollision(final int pWorldTileX, final int pWorldTileY);
+	
 }
