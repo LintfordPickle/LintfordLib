@@ -1,6 +1,8 @@
-# Java-LDLibraryGL
+# Introduction: Java-LDLibraryGL
 A Java game library containing LWJGL natives and a game state management framework.
 The library project and metadata was created in Eclipse Neon (4.6.0). The project was compiled with Java 1.8.0_112 64-bit and contains LGWJL3 jars and native libraries.
+
+The development of this project takes place predominantly during the Ludum Dare game jam events. It therefore misses the benefits of code review, comprehensive unit testing or the application of many clean code principles. It is strongly recommended to **not use this code ina production environment**.
 
 # Getting the repository
 You can get the Java-LDLibraryGL project by either by cloning the repository or by adding it as a submodule to an existing git repository.
