@@ -1,12 +1,9 @@
 package net.ld.library.cellworld.collisions;
 
-import net.ld.library.cellworld.CircleEntity;
-import net.ld.library.cellworld.RectangleEntity;
+import net.ld.library.cellworld.entities.CellEntity;
 
-public interface IEntityCollider {
-
-	public abstract void checkEntityCollisions(CircleEntity pEntity);
+public interface IEntityCollider<T extends CellEntity> {
 	
-	public abstract void checkEntityCollisions(RectangleEntity pEntity);
+	public abstract void checkEntityCollisions(T pEntity);
 	
 }

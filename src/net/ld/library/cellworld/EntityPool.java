@@ -3,10 +3,13 @@ package net.ld.library.cellworld;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.ld.library.cellworld.collisions.IEntityCollider;
+import net.ld.library.cellworld.entities.CellEntity;
+
 /**
- * The {@link EntityManager} is a convenient stores for a collect of {@link CellEntity}s, for things like saving and loading.
+ * The {@link EntityPool} is a convenient stores for a collect of {@link CellEntity}s, for things like saving and loading.
  */
-public class EntityManager<T extends CellEntity> {
+public class EntityPool<T extends CellEntity> implements IEntityCollider<T> {
 
 	// -------------------------------------
 	// Variables
@@ -30,7 +33,7 @@ public class EntityManager<T extends CellEntity> {
 	/**
 	 * 
 	 */
-	public EntityManager() {
+	public EntityPool() {
 		mEntities = new ArrayList<>(64);
 
 	}
@@ -49,7 +52,7 @@ public class EntityManager<T extends CellEntity> {
 	// -------------------------------------
 
 	/**
-	 * Adds the given {@link CellEntity} to the {@link EntityManager} and updates its reference to the world. true is returned if the object is successfully added, false is returned otherwise.
+	 * Adds the given {@link CellEntity} to the {@link EntityPool} and updates its reference to the world. true is returned if the object is successfully added, false is returned otherwise.
 	 */
 	public boolean addEntity(T pWorldEntity) {
 		if (!mEntities.contains(pWorldEntity)) {
@@ -74,5 +77,11 @@ public class EntityManager<T extends CellEntity> {
 		}
 
 	}
-	
+
+	@Override
+	public void checkEntityCollisions(CellEntity pEntity) {
+		// 
+
+	}
+
 }

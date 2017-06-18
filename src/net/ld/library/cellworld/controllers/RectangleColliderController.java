@@ -1,15 +1,15 @@
 package net.ld.library.cellworld.controllers;
 
-import net.ld.library.cellworld.CellEntity;
-import net.ld.library.cellworld.EntityManager;
-import net.ld.library.cellworld.RectangleEntity;
+import net.ld.library.cellworld.EntityPool;
 import net.ld.library.cellworld.collisions.IEntityCollider;
 import net.ld.library.cellworld.collisions.IGridCollider;
+import net.ld.library.cellworld.entities.CellEntity;
+import net.ld.library.cellworld.entities.RectangleCollider;
 import net.ld.library.core.maths.MathHelper;
 import net.ld.library.core.time.GameTime;
 
 /** Controller a single instance of {@link CellEntity}. */
-public class RectangleEntityController {
+public class RectangleColliderController {
 
 	// -------------------------------------
 	// Constants
@@ -22,13 +22,13 @@ public class RectangleEntityController {
 	// Variables
 	// -------------------------------------
 
-	/** If a {@link IGridCollider} object is available, each of the {@link RectangleEntity}s in the {@code mEntityManager} will be checked for collisions against it. */
+	/** If a {@link IGridCollider} object is available, each of the {@link RectangleCollider}s in the {@code mEntityManager} will be checked for collisions against it. */
 	protected IGridCollider mGridCollider;
 
-	/** If a {@link IEntityCollider} object is available, each of the {@link RectangleEntity}s in the {@code mEntityManager} will be checked for collisions against it. */
-	protected IEntityCollider mEntityColliders;
+	/** If a {@link IEntityCollider} object is available, each of the {@link RectangleCollider}s in the {@code mEntityManager} will be checked for collisions against it. */
+	protected IEntityCollider<CellEntity> mEntityColliders;
 
-	protected EntityManager<CellEntity> mEntityManager;
+	protected EntityPool<CellEntity> mEntityManager;
 
 	public float gravity;
 	public float frictionX;
@@ -38,7 +38,7 @@ public class RectangleEntityController {
 	// Properties
 	// -------------------------------------
 
-	/** The {@link RectangleEntityController} is considered initialized if it holds a valid reference to an {@link EntityManager}. */
+	/** The {@link RectangleColliderController} is considered initialized if it holds a valid reference to an {@link EntityPool}. */
 	public boolean isInitialised() {
 		return mEntityManager != null;
 	}
@@ -47,7 +47,7 @@ public class RectangleEntityController {
 		mGridCollider = pGridCollider;
 	}
 
-	public void setEntityCollider(IEntityCollider pEntityCollider) {
+	public void setEntityCollider(IEntityCollider<CellEntity> pEntityCollider) {
 		mEntityColliders = pEntityCollider;
 	}
 
@@ -56,7 +56,7 @@ public class RectangleEntityController {
 	// -------------------------------------
 
 	/** constructor, nothing to see. */
-	public RectangleEntityController() {
+	public RectangleColliderController() {
 
 	}
 
@@ -64,8 +64,8 @@ public class RectangleEntityController {
 	// Core-Methods
 	// -------------------------------------
 
-	/** Initializes the {@link RectangleEntityController} with an {@link EntityManager}. All {@link RectangleEntity}s within the {@link EntityManager} will be updated. */
-	public void initialise(EntityManager<CellEntity> pEntityManager) {
+	/** Initialises the {@link RectangleColliderController} with an {@link EntityPool}. All {@link RectangleCollider}s within the {@link EntityPool} will be updated. */
+	public void initialise(EntityPool<CellEntity> pEntityManager) {
 		mEntityManager = pEntityManager;
 
 	}
@@ -77,13 +77,13 @@ public class RectangleEntityController {
 		// Iterate through the RectangleEntities in the EntityManager and update them
 		final int MOB_COUNT = mEntityManager.entities().size();
 		for (int i = 0; i < MOB_COUNT; i++) {
-			final CellEntity CELL_ENTITY = (CellEntity) mEntityManager.entities().get(i);
+			final CellEntity cellEntity = (CellEntity) mEntityManager.entities().get(i);
 
-			if (CELL_ENTITY == null)
+			if (cellEntity == null)
 				continue;
 
-			if (CELL_ENTITY instanceof RectangleEntity) {
-				updateCharacterPhysics(pGameTime, (RectangleEntity) CELL_ENTITY);
+			if (cellEntity instanceof RectangleCollider) {
+				updateRectanglePhysics(pGameTime, cellEntity);
 
 				// TODO (John): Entity STATES can be derived here from the current properties of the object
 
@@ -93,19 +93,25 @@ public class RectangleEntityController {
 
 	}
 
-	// TODO (John): Remove some code pertaining to leftFacing and isOnGround (this should be added somewhere else).
-	// TODO (John): This code doesn't work if the RectangleEntities are smaller than CELL_SIZE
-	// TODO (John): Remove the hardcoded CELL_SIZE (this is dependent on the CellGridLevel).
-	protected void updateCharacterPhysics(GameTime pGameTime, RectangleEntity pCharacter) {
+	protected void updateRectanglePhysics(GameTime pGameTime, CellEntity pCharacter) {
+		// TODO (John): Remove some code pertaining to leftFacing and isOnGround (this should be added somewhere else).
+		// TODO (John): This code doesn't work if the RectangleEntities are smaller than CELL_SIZE
+		// TODO (John): Remove the hard coded CELL_SIZE (this is dependent on the CellGridLevel).
+
 		if (pCharacter == null)
 			return;
+
+		if (!(pCharacter instanceof RectangleCollider))
+			return;
+
+		RectangleCollider lRectEntity = (RectangleCollider) pCharacter;
 
 		// TODO (John): Get the actual world grid size from somewhere.
 		final int CELL_SIZE = 64;
 		float lDelta = (float) (pGameTime.elapseGameTime() / 1000.0f);
 
-		int blockSize_x = 1 + (int) (pCharacter.width / 2 / CELL_SIZE);
-		int blockSize_y = 1 + (int) (pCharacter.height / 2 / CELL_SIZE);
+		int blockSize_x = 1 + (int) (lRectEntity.getWidth() / 2 / CELL_SIZE);
+		int blockSize_y = 1 + (int) (lRectEntity.getHeight() / 2 / CELL_SIZE);
 
 		// REPEL ENTITY CODE
 		checkEntityCollisions(pGameTime, pCharacter);
@@ -117,8 +123,8 @@ public class RectangleEntityController {
 		pCharacter.dx *= frictionX;
 
 		// Figure out, based on the width of the character, how much 'room' is left in the edge cells
-		final float SIZE_REMAINING_X = ((pCharacter.width / 2) % CELL_SIZE) / CELL_SIZE;
-		final float SIZE_REMAINING_Y = ((pCharacter.height / 2) % CELL_SIZE) / CELL_SIZE;
+		final float SIZE_REMAINING_X = ((lRectEntity.getWidth() / 2) % CELL_SIZE) / CELL_SIZE;
+		final float SIZE_REMAINING_Y = ((lRectEntity.getHeight() / 2) % CELL_SIZE) / CELL_SIZE;
 
 		// EPISON
 		if (Math.abs(pCharacter.dx) < MOVEMENT_EPSILON) {
@@ -134,7 +140,7 @@ public class RectangleEntityController {
 
 				final float TILE_CENTER_Y = ((pCharacter.cy + y) * CELL_SIZE + CELL_SIZE / 2) + (MathHelper.clamp(-y, -1, 1) * CELL_SIZE / 2);
 				final float CHARACTER_CENTER_Y = (pCharacter.yy);
-				if (Math.abs(TILE_CENTER_Y - CHARACTER_CENTER_Y) >= pCharacter.height / 2)
+				if (Math.abs(TILE_CENTER_Y - CHARACTER_CENTER_Y) >= lRectEntity.getHeight() / 2)
 					continue;
 
 				if (pCharacter.dx < 0 && hasLevelCollision(pCharacter.cx - blockSize_x, pCharacter.cy + y) && pCharacter.rx < SIZE_REMAINING_X) {
@@ -182,7 +188,7 @@ public class RectangleEntityController {
 
 			final float TILE_CENTER_X = ((pCharacter.cx + x) * CELL_SIZE + CELL_SIZE / 2) + (MathHelper.clamp(-x, -1, 1) * CELL_SIZE / 2);
 			final float CHARACTER_CENTER_X = (pCharacter.xx);
-			if (Math.abs(TILE_CENTER_X - CHARACTER_CENTER_X) >= pCharacter.width / 2)
+			if (Math.abs(TILE_CENTER_X - CHARACTER_CENTER_X) >= lRectEntity.getWidth() / 2)
 				continue;
 
 			// Collision with ceiling
@@ -238,14 +244,14 @@ public class RectangleEntityController {
 	}
 
 	/** If a valid {@link IGridCollider} reference is available, we will use it to check for collision against the given point. */
-	protected boolean hasLevelCollision(int pCX, int pCY) {
-		// To prevent the character from dropping through the level when the level is loading, we assume there are collisions until
-		// we can check otherwise
-
+	protected boolean hasLevelCollision(int pCellGridX, int pCellGridY) {
 		if (mGridCollider == null)
 			return true;
+		
+		int[] levelGrid = mGridCollider.getGrid();
+		int levelGridWidth = mGridCollider.getGridWidth();
 
-		return mGridCollider.hasGridCollision(pCX, pCY);
+		return levelGrid[pCellGridY * levelGridWidth + pCellGridX] > 0;
 
 	}
 

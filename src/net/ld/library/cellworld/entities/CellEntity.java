@@ -1,7 +1,9 @@
-package net.ld.library.cellworld;
+package net.ld.library.cellworld.entities;
+
+import net.ld.library.core.time.GameTime;
 
 /** A simple entity class for a cell grid based world. */
-public abstract class CellEntity {
+public abstract class CellEntity implements CircleCollider {
 
 	// -------------------------------------
 	// Variables
@@ -12,6 +14,8 @@ public abstract class CellEntity {
 	public int cy;
 	public float rx;
 	public float ry;
+
+	public float radius;
 
 	/** Assigns a precedence (of weight) to this {@link CellEntity}. On collisions, heavier objects cannot be moved by lighter objects. */
 	public int coll_repel_precedence;
@@ -27,6 +31,33 @@ public abstract class CellEntity {
 	public boolean isOnGround;
 	public boolean isLeftFacing;
 
+	public int health;
+
+	// -------------------------------------
+	// Properties
+	// -------------------------------------
+
+	@Override
+	public float getRadius() {
+		return radius;
+	}
+
+	@Override
+	public void setRadius(float pNewValue) {
+		radius = pNewValue;
+
+	}
+
+	public int health() {
+		return health;
+
+	}
+
+	public boolean isAlive() {
+		return health > 0;
+
+	}
+
 	// -------------------------------------
 	// Constructor
 	// -------------------------------------
@@ -39,6 +70,16 @@ public abstract class CellEntity {
 		copy(pCopy);
 
 	}
+
+	// -------------------------------------
+	// Core-Methods
+	// -------------------------------------
+
+	public abstract void init();
+
+	public abstract void kill();
+
+	public abstract void update(final GameTime pGameTime);
 
 	// -------------------------------------
 	// Methods

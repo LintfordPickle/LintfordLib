@@ -1,16 +1,16 @@
 package net.ld.library.cellworld.controllers;
 
-import net.ld.library.cellworld.CellEntity;
-import net.ld.library.cellworld.CircleEntity;
-import net.ld.library.cellworld.EntityManager;
-import net.ld.library.cellworld.RectangleEntity;
+import net.ld.library.cellworld.EntityPool;
 import net.ld.library.cellworld.collisions.IEntityCollider;
 import net.ld.library.cellworld.collisions.IGridCollider;
+import net.ld.library.cellworld.entities.CellEntity;
+import net.ld.library.cellworld.entities.CircleCollider;
+import net.ld.library.cellworld.entities.RectangleCollider;
 import net.ld.library.core.maths.MathHelper;
 import net.ld.library.core.time.GameTime;
 
 /** Controller a single instance of {@link CellEntity}. */
-public class CircleEntityController {
+public abstract class CirclePlatformerController {
 
 	// -------------------------------------
 	// Constants
@@ -23,13 +23,13 @@ public class CircleEntityController {
 	// Variables
 	// -------------------------------------
 
-	/** If a {@link IGridCollider} object is available, each of the {@link RectangleEntity}s in the {@code mEntityManager} will be checked for collisions against it. */
+	/** If a {@link IGridCollider} object is available, each of the {@link RectangleCollider}s in the {@code mEntityManager} will be checked for collisions against it. */
 	protected IGridCollider mGridCollider;
 
-	/** If a {@link IEntityCollider} object is available, each of the {@link RectangleEntity}s in the {@code mEntityManager} will be checked for collisions against it. */
-	protected IEntityCollider mEntityColliders;
+	/** If a {@link IEntityCollider} object is available, each of the {@link RectangleCollider}s in the {@code mEntityManager} will be checked for collisions against it. */
+	protected IEntityCollider<CellEntity> mEntityColliders;
 
-	protected EntityManager<CellEntity> mEntityManager;
+	protected EntityPool<CellEntity> mEntityPool;
 
 	public float gravity;
 	public float frictionX;
@@ -39,16 +39,16 @@ public class CircleEntityController {
 	// Properties
 	// -------------------------------------
 
-	/** The {@link CircleEntityController} is considered initialized if it holds a valid reference to an {@link EntityManager}. */
+	/** The {@link CirclePlatformerController} is considered initialised if it holds a valid reference to an {@link EntityPool}. */
 	public boolean isInitialised() {
-		return mEntityManager != null;
+		return mEntityPool != null;
 	}
 
 	public void setGridCollider(IGridCollider pGridCollider) {
 		mGridCollider = pGridCollider;
 	}
 
-	public void setEntityCollider(IEntityCollider pEntityCollider) {
+	public void setEntityCollider(IEntityCollider<CellEntity> pEntityCollider) {
 		mEntityColliders = pEntityCollider;
 	}
 
@@ -57,7 +57,7 @@ public class CircleEntityController {
 	// -------------------------------------
 
 	/** constructor, nothing to see. */
-	public CircleEntityController() {
+	public CirclePlatformerController() {
 		frictionX = 0.96f;
 		frictionY = 0.96f;
 		
@@ -67,9 +67,9 @@ public class CircleEntityController {
 	// Core-Methods
 	// -------------------------------------
 
-	/** Initializes the {@link CircleEntityController} with an {@link EntityManager}. All {@link RectangleEntity}s within the {@link EntityManager} will be updated. */
-	public void initialise(EntityManager<CellEntity> pEntityManager) {
-		mEntityManager = pEntityManager;
+	/** Initialises the {@link CirclePlatformerController} with an {@link EntityPool}. All {@link RectangleCollider}s within the {@link EntityPool} will be updated. */
+	public void initialise(EntityPool<CellEntity> pEntitypool) {
+		mEntityPool = pEntitypool;
 
 	}
 
@@ -78,15 +78,15 @@ public class CircleEntityController {
 			return;
 
 		// Iterate through the circle entities in the EntityManager and update them
-		final int MOB_COUNT = mEntityManager.entities().size();
+		final int MOB_COUNT = mEntityPool.entities().size();
 		for (int i = 0; i < MOB_COUNT; i++) {
-			final CellEntity CELL_ENTITY = (CellEntity) mEntityManager.entities().get(i);
+			final CellEntity CELL_ENTITY = (CellEntity) mEntityPool.entities().get(i);
 
 			if (CELL_ENTITY == null)
 				continue;
 
-			if (CELL_ENTITY instanceof CircleEntity) {
-				updateCharacterPhysics(pGameTime, (CircleEntity) CELL_ENTITY);
+			if (CELL_ENTITY instanceof CircleCollider) {
+				updateEntityPhysics(pGameTime, CELL_ENTITY);
 
 				// TODO (John): Entity STATES can be derived here from the current properties of the object
 
@@ -98,7 +98,7 @@ public class CircleEntityController {
 
 	// TODO (John): Remove some code pertaining to leftFacing and isOnGround (this should be added somewhere else).
 	// TODO (John): Remove the hard-coded CELL_SIZE (this is dependent on the CellGridLevel).
-	protected void updateCharacterPhysics(GameTime pGameTime, CircleEntity pCharacter) {
+	protected void updateEntityPhysics(GameTime pGameTime, CellEntity pCharacter) {
 		if (pCharacter == null)
 			return;
 
@@ -221,24 +221,9 @@ public class CircleEntityController {
 	}
 
 	/** If a valid {@link IEntityCollider} reference is available, we will use it to check for collision against the given CellEntity. */
-	protected void checkEntityCollisions(GameTime pGameTime, CellEntity pCellWorldEntity) {
-		// Check this entity against other entities in the world
-		
-		
-		
-
-	}
+	protected abstract void checkEntityCollisions(GameTime pGameTime, CellEntity pCellWorldEntity);
 
 	/** If a valid {@link IGridCollider} reference is available, we will use it to check for collision against the given point. */
-	protected boolean hasLevelCollision(int pCX, int pCY) {
-		// To prevent the character from dropping through the level when the level is loading, we assume there are collisions until
-		// we can check otherwise
-
-		if (mGridCollider == null)
-			return true;
-
-		return mGridCollider.hasGridCollision(pCX, pCY);
-
-	}
+	protected abstract boolean hasLevelCollision(int pCellGridX, int pCellGridY);
 
 }
