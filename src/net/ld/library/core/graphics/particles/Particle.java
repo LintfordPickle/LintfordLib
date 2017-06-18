@@ -1,9 +1,10 @@
 package net.ld.library.core.graphics.particles;
 
-import net.ld.library.cellworld.CircleEntity;
+import net.ld.library.cellworld.entities.CellEntity;
 import net.ld.library.core.graphics.particles.initialisers.IParticleInitialiser;
+import net.ld.library.core.time.GameTime;
 
-public class Particle extends CircleEntity {
+public class Particle extends CellEntity {
 
 	// --------------------------------------
 	// Constants
@@ -27,6 +28,8 @@ public class Particle extends CircleEntity {
 	public float scaleX;
 	public float scaleY;
 
+	public float radius;
+
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
@@ -46,6 +49,9 @@ public class Particle extends CircleEntity {
 
 	public Particle() {
 		reset();
+
+		radius = 8;
+
 	}
 
 	// --------------------------------------
@@ -91,7 +97,7 @@ public class Particle extends CircleEntity {
 
 		dx = 0f;
 		dy = 0f;
-		
+
 		scaleX = 1f;
 		scaleY = 1f;
 
@@ -102,6 +108,24 @@ public class Particle extends CircleEntity {
 			return;
 
 		p.initialise(this);
+
+	}
+
+	@Override
+	public void init() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void kill() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void update(GameTime pGameTime) {
+		// TODO Auto-generated method stub
 
 	}
 

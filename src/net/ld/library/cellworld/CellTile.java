@@ -1,5 +1,7 @@
 package net.ld.library.cellworld;
 
+import net.ld.library.cellworld.entities.CellEntity;
+
 /** A simple class representing a tile in a tile based game world. */
 public class CellTile {
 
@@ -8,7 +10,7 @@ public class CellTile {
 	// -------------------------------------
 
 	/**
-	 * Represents an empty tile in the {@link EntityManager}, with an index of
+	 * Represents an empty tile in the {@link EntityPool}, with an index of
 	 * 0.
 	 */
 	public static final CellTile EMPTY_TILE = new CellTile(0, "Empty");

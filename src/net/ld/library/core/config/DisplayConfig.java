@@ -194,8 +194,7 @@ public class DisplayConfig extends BaseConfig {
 	}
 
 	/**
-	 * Called from the GLFW onWindowResize callback. Use it to notify listeners
-	 * about changes in the window size.
+	 * Called from the GLFW onWindowResize callback. Use it to notify listeners about changes in the window size.
 	 */
 	public void changeResolution(int pWidth, int pHeight) {
 		mWindowWasResized = true;

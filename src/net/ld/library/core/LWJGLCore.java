@@ -187,18 +187,28 @@ public abstract class LWJGLCore {
 	/** The main game loop. */
 	protected void onRunGameLoop() {
 
+		boolean lFocusRegained = false;
+		
 		// Game loop
 		while (!glfwWindowShouldClose(mDisplayConfig.windowID())) {
-			mGameTime.update();
+			if (mDisplayConfig.hasFocus()) {
+				if(!lFocusRegained){
+					mGameTime.resetElapsed();
+					lFocusRegained = true;
+					
+				}
+				
+				onHandleInput();
+				
+				mGameTime.update();
+				
+				onUpdate(mGameTime);
 
-			onHandleInput();
-
-			// FIXME: Don't update the time if the window doesn't have focus
-			// (this is application specific).
-			// if (mDisplayConfig.hasFocus()) {
-			onUpdate(mGameTime);
-
-			// }
+			}
+			else{
+				lFocusRegained = false;
+				
+			}
 
 			onDraw(mRenderState);
 

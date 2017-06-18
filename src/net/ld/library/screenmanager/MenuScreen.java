@@ -181,8 +181,8 @@ public abstract class MenuScreen extends Screen implements IMenuEntryClickListen
 
 		}
 
-		mMenuFont = pResourceManager.fontManager().loadFontFromResource(MENUSCREEN_FONT_NAME, "/res/fonts/pixel.ttf", 40);
-		mMenuTitleFont = pResourceManager.fontManager().loadFontFromResource(MENUSCREEN_TITLE_FONT_NAME, "/res/fonts/pixel.ttf", 84);
+		mMenuFont = pResourceManager.fontManager().loadFontFromResource(MENUSCREEN_FONT_NAME, "/res/fonts/MONOFONT.ttf", 40);
+		mMenuTitleFont = pResourceManager.fontManager().loadFontFromResource(MENUSCREEN_TITLE_FONT_NAME, "/res/fonts/MONOFONT.ttf", 84);
 
 	}
 

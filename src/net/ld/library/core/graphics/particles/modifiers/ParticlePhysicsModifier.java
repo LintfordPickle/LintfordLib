@@ -2,6 +2,7 @@ package net.ld.library.core.graphics.particles.modifiers;
 
 import net.ld.library.cellworld.collisions.IEntityCollider;
 import net.ld.library.cellworld.collisions.IGridCollider;
+import net.ld.library.cellworld.entities.CellEntity;
 import net.ld.library.core.graphics.particles.Particle;
 import net.ld.library.core.maths.RandomNumbers;
 import net.ld.library.core.time.GameTime;
@@ -20,7 +21,7 @@ public class ParticlePhysicsModifier implements IParticleModifier {
 	// --------------------------------------
 
 	public IGridCollider mLevelGridCollider;
-	public IEntityCollider mEntityCollider;
+	public IEntityCollider<CellEntity> mEntityCollider;
 
 	// --------------------------------------
 	// Properties
@@ -31,7 +32,7 @@ public class ParticlePhysicsModifier implements IParticleModifier {
 
 	}
 
-	public void setEntityCollider(IEntityCollider pEntityCollider) {
+	public void setEntityCollider(IEntityCollider<CellEntity> pEntityCollider) {
 		mEntityCollider = pEntityCollider;
 
 	}
@@ -116,11 +117,14 @@ public class ParticlePhysicsModifier implements IParticleModifier {
 
 	}
 
-	private boolean hasCollision(int pCX, int pCY) {
+	private boolean hasCollision(int pCellGridX, int pCellGridY) {
 		if (mLevelGridCollider == null)
 			return false;
 
-		return mLevelGridCollider.hasGridCollision(pCX, pCY);
+		int[] levelGrid = mLevelGridCollider.getGrid();
+		int levelGridWidth = mLevelGridCollider.getGridWidth();
+
+		return levelGrid[pCellGridY * levelGridWidth + pCellGridX] > 0;
 
 	}
 
