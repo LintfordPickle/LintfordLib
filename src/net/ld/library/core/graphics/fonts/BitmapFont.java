@@ -130,22 +130,20 @@ public class BitmapFont {
 
 	}
 
-	public boolean loadFontFromResource(String pResourceLocation) {
-		mFontFileLocation = pResourceLocation;
+	public boolean loadFontFromResource(String pFilepath) {
+		mFontFileLocation = pFilepath;
+
+		System.out.println("Loading font from Resource: " + pFilepath);
 
 		// Try and load the file
-		InputStream lInputStream = BitmapFont.class.getResourceAsStream(pResourceLocation);
+		InputStream lInputStream = Texture.class.getResourceAsStream(pFilepath);
 
 		if (lInputStream == null) {
-			System.err.println("Cannot load font from resource: " + pResourceLocation + ". Resource doesn't exit.");
+			System.err.println("Cannot load font from resource: " + pFilepath + ". Resource doesn't exit  (InputStream null).");
 			mIsLoaded = false;
 			return false;
 		}
 
-		// Create new awt.Font instance, specifying the size and style attribs
-
-		// This font looks really nice
-		// mFont = new Font(Font.MONOSPACED, mBold ? Font.BOLD : Font.PLAIN, (int) mPointSize);
 		try {
 			Font lFont = Font.createFont(Font.TRUETYPE_FONT, lInputStream).deriveFont(mPointSize);
 
@@ -153,8 +151,10 @@ public class BitmapFont {
 
 		} catch (FontFormatException e) {
 			e.printStackTrace();
+			
 		} catch (IOException e) {
 			e.printStackTrace();
+			
 		}
 
 		return true;
