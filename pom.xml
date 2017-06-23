@@ -1,23 +1,21 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>LDLibrary</groupId>
 	<artifactId>LDLibrary</artifactId>
 	<version>0.1</version>
+
 	<name>LDLibrary</name>
 	<description>AN OpenGL Ludum Dare Game Library</description>
+
 	<build>
+
 		<sourceDirectory>src</sourceDirectory>
 		<testSourceDirectory>tests</testSourceDirectory>
-		<resources>
-			<resource>
-				<directory>res</directory>
-				<excludes>
-					<exclude>**/*.java</exclude>
-				</excludes>
-			</resource>
-		</resources>
+
 		<plugins>
+
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.5.1</version>
@@ -26,13 +24,43 @@
 					<target>1.8</target>
 				</configuration>
 			</plugin>
+
+			<!-- We need to specify a different outputlocation for the resources to maintain the correct directory structure -->
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>3.0.2</version>
+				<executions>
+					<execution>
+						<id>copy-resources</id>
+						<!-- here the phase you need -->
+						<phase>validate</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${basedir}/target/classes/res</outputDirectory>
+							<resources>
+								<resource>
+									<directory>res</directory>
+									<filtering>true</filtering>
+								</resource>
+							</resources>
+							
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
 		</plugins>
+
 	</build>
+
 	<properties>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<lwjgl.version>3.1.2</lwjgl.version>
 	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.lwjgl</groupId>
@@ -127,6 +155,7 @@
 		</dependency>
 
 	</dependencies>
+
 	<profiles>
 		<profile>
 			<id>lwjgl-natives-linux</id>
@@ -163,4 +192,5 @@
 			</properties>
 		</profile>
 	</profiles>
+
 </project>
