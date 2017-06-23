@@ -103,6 +103,8 @@ public class BitmapFont {
 	public boolean loadFontFromFile(String pFilepath) {
 		mFontFileLocation = pFilepath;
 
+		System.out.println("loading font from file: " + pFilepath);
+
 		// Try and load the file
 		File lFontFile = new File(mFontFileLocation);
 		if (!lFontFile.exists()) {
@@ -114,9 +116,12 @@ public class BitmapFont {
 		// Create new awt.Font instance, specifying the size and style attribs
 
 		// This font looks really nice
-		// mFont = new Font(Font.MONOSPACED, mBold ? Font.BOLD : Font.PLAIN, (int) mPointSize);
+		// mFont = new Font(Font.MONOSPACED, mBold ? Font.BOLD : Font.PLAIN,
+		// (int) mPointSize);
 		try {
 			Font lFont = Font.createFont(Font.TRUETYPE_FONT, lFontFile).deriveFont(mPointSize);
+			
+			
 
 			loadBitmapFont(lFont);
 
@@ -139,7 +144,7 @@ public class BitmapFont {
 		InputStream lInputStream = Texture.class.getResourceAsStream(pFilepath);
 
 		if (lInputStream == null) {
-			System.err.println("Cannot load font from resource: " + pFilepath + ". Resource doesn't exit  (InputStream null).");
+			System.err.println("Cannot load font from resource: " + pFilepath + ". Resource doesn't exit");
 			mIsLoaded = false;
 			return false;
 		}
@@ -179,10 +184,12 @@ public class BitmapFont {
 
 		}
 
-		// Store the height of the largest glyph as the height of the font bitmap
+		// Store the height of the largest glyph as the height of the font
+		// bitmap
 		// mFontHeight = imageHeight;
 
-		// Create a new buffered image with the font height and the sum of the width
+		// Create a new buffered image with the font height and the sum of the
+		// width
 		BufferedImage lFontImage = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D lGraphics = lFontImage.createGraphics();
 
@@ -208,7 +215,8 @@ public class BitmapFont {
 
 		}
 
-		// TODO: Need to be able to specify if the texture loaded for a bitmap font is GL_NEAREST or GL_LINEAR
+		// TODO: Need to be able to specify if the texture loaded for a bitmap
+		// font is GL_NEAREST or GL_LINEAR
 		mFontTexture = TextureManager.textureManager().createFontTexture(mFontName, lFontImage, GL11.GL_NEAREST);
 
 		mIsLoaded = true;

@@ -95,7 +95,8 @@ public abstract class MenuScreen extends Screen implements IMenuEntryClickListen
 	protected float mRightMargin;
 	protected float mTopMargin;
 	protected float mBottomMargin;
-	protected float mZ; // some windows (dialogs) need better control of the z order
+	protected float mZ; // some windows (dialogs) need better control of the z
+						// order
 
 	protected boolean mESCBackEnabled;
 
@@ -314,7 +315,9 @@ public abstract class MenuScreen extends Screen implements IMenuEntryClickListen
 		if (mAnimationTimer > 0) {
 			mAnimationTimer -= pGameTime.elapseGameTime();
 
-		} else if (mClickAction.mButtonID != -1 && !mClickAction.isConsumed()) { // something was clicked
+		} else if (mClickAction.mButtonID != -1 && !mClickAction.isConsumed()) { // something
+																					// was
+																					// clicked
 			handleOnClick();
 			mClickAction.setNewClick(-1);
 			return;
@@ -332,7 +335,8 @@ public abstract class MenuScreen extends Screen implements IMenuEntryClickListen
 
 	@Override
 	public void draw(RenderState pRenderState) {
-		if (mScreenState != ScreenState.Active && mScreenState != ScreenState.TransitionOn && mScreenState != ScreenState.TransitionOff)
+		if (mScreenState != ScreenState.Active && mScreenState != ScreenState.TransitionOn
+				&& mScreenState != ScreenState.TransitionOff)
 			return;
 
 		// make sure our entries are in the right place before we draw them
