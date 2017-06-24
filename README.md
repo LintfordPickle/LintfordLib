@@ -127,6 +127,10 @@ onDraw():
 	GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 ```
 
+## Build
+THe project includes a Maven pom which will automatically compile the project files and include the resources from the classpath into the compiled jar file. All resources used by the library are loaded from the jar as ByteStreams.
+n.b. that the package artefact doesn't contain the LWJGL dependencies. These are included by the implementing project (see [Gist](https://gist.github.com/LintfordPickle/a9df43c245270f7cc121f5f46e3ae054)).
+
 ## Unit Tests
 
 Units tests are created with JUnit 4, which must be present in the project build path.
