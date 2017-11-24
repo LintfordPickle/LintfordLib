@@ -111,7 +111,7 @@ public class CameraZoomController {
 		// static zoom factor
 		if (mAllowZoom) {
 			mZoomAcceleration += pInputState.mouseWheelYOffset() * ZOOM_ACCELERATE_AMOUNT
-					* pInputState.gameTime().elapseGameTime() / 1000f * mCamera.zoomFactor();
+					* pInputState.gameTime().elapseGameTimeSeconds() * mCamera.zoomFactor();
 		}
 
 	}
@@ -124,7 +124,7 @@ public class CameraZoomController {
 		if (this.mCamera == null)
 			return;
 
-		final float DELTA_TIME = (float) pGameTime.elapseGameTime() / 1000.0f;
+		final float DELTA_TIME = (float) pGameTime.elapseGameTimeSeconds();
 		float lZoomFactor = mCamera.zoomFactor();
 
 		// apply zoom //

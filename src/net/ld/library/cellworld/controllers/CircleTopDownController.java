@@ -105,7 +105,7 @@ public abstract class CircleTopDownController {
 		final float CHARACTER_RADIUS = pCharacter.radius - 1.0f;
 
 		final int CELL_SIZE = 64;
-		float lDelta = (float) (pGameTime.elapseGameTime() / 1000.0f);
+		float lDelta = (float) (pGameTime.elapseGameTimeSeconds());
 
 		int blockSize = 1 + (int) (CHARACTER_RADIUS / CELL_SIZE);
 

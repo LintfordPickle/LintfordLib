@@ -141,7 +141,7 @@ public class UIInputText extends Rectangle implements IBufferedInputCallback {
 	}
 
 	public void update(GameTime pGameTime) {
-		mCaretFlashTimer += pGameTime.elapseGameTime();
+		mCaretFlashTimer += pGameTime.elapseGameTimeMilli();
 
 		final int lCANCEL_RECT_SIZE = 24;
 		mCancelRectangle.x = x + width - lCANCEL_RECT_SIZE - 2;

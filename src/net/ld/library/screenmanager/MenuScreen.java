@@ -313,7 +313,7 @@ public abstract class MenuScreen extends Screen implements IMenuEntryClickListen
 		super.update(pGameTime, pOtherScreenHasFocus, pCoveredByOtherScreen);
 
 		if (mAnimationTimer > 0) {
-			mAnimationTimer -= pGameTime.elapseGameTime();
+			mAnimationTimer -= pGameTime.elapseGameTimeMilli();
 
 		} else if (mClickAction.mButtonID != -1 && !mClickAction.isConsumed()) { // something
 																					// was
@@ -342,7 +342,7 @@ public abstract class MenuScreen extends Screen implements IMenuEntryClickListen
 		// make sure our entries are in the right place before we draw them
 		updateMenuEntryLocations(pRenderState);
 
-		Rectangle lHUDRect = mScreenManager.HUD().boundingHUDRectange();
+		Rectangle lHUDRect = mScreenManager.HUD().boundingRectangle();
 
 		mMenuTitleFont.begin(mScreenManager.HUD());
 		mMenuTitleFont.draw(mMenuTitle, lHUDRect.left() + 5, lHUDRect.top() + 5, 3f, 1f, 1f, 1f, 1f, 1f);

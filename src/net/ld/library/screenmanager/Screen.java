@@ -186,8 +186,10 @@ public abstract class Screen implements LoadableScreen {
 		if (pTime.equals(0))
 			transitionDelta = 1;
 		else
-			transitionDelta = (float) (pGameTime.elapseGameTime() / pTime.milliseconds());
+			transitionDelta = (float) (pGameTime.elapseGameTimeMilli() / pTime.milliseconds());
 
+		// TODO:
+		
 		// Update the transition position.
 		mTransitionPosition += transitionDelta * pDirection;
 

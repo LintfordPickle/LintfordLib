@@ -137,6 +137,12 @@ public class Texture {
 			System.out.println("Loading texture from file: " + pFilename);
 
 			File lFile = new File(pFilename);
+			
+			if(lFile == null || !lFile.exists()) {
+				throw new RuntimeException("Couldn't load texture, file doesn't exist!");
+				
+			}
+			
 			BufferedImage lImage = ImageIO.read(lFile);
 
 			Texture lReturnTexture = createTexture(lImage, pFilename, pFilter);

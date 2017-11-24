@@ -131,7 +131,7 @@ public class AnimatedSprite implements ISprite {
 		if (frameDuration == 0.0)
 			return;
 		if (animationEnabled) {
-			timer += pGameTime.elapseGameTime() * pTimeModifier;
+			timer += pGameTime.elapseGameTimeMilli() * pTimeModifier;
 		}
 
 		// update the current frame

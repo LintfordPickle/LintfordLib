@@ -16,13 +16,17 @@ import net.ld.library.core.camera.Camera;
 import net.ld.library.core.camera.HUD;
 import net.ld.library.core.config.DisplayConfig;
 import net.ld.library.core.graphics.ResourceManager;
+import net.ld.library.core.graphics.rendertarget.RenderTarget;
+import net.ld.library.core.graphics.rendertarget.RenderTargetManager;
 import net.ld.library.core.graphics.textures.TextureManager;
 import net.ld.library.core.input.InputState;
 import net.ld.library.core.rendering.RenderState;
 import net.ld.library.core.time.GameTime;
 
 /**
- * The LWJGLCore tracks the core state of an LWJGL application including a {@link DisplayConfig}, {@link ResourceManager}, {@link GameTime}, {@link Camera}, {@link HUD}, {@link InputState} and {@link RenderState}. It
+ * The LWJGLCore tracks the core state of an LWJGL application including a
+ * {@link DisplayConfig}, {@link ResourceManager}, {@link GameTime},
+ * {@link Camera}, {@link HUD}, {@link InputState} and {@link RenderState}. It
  * also defines the behaviour for creating an OpenGL window.
  */
 public abstract class LWJGLCore {
@@ -41,8 +45,12 @@ public abstract class LWJGLCore {
 	protected RenderState mRenderState;
 	protected AudioManager mAudioManager;
 
+	protected RenderTargetManager mRenderTargetManager;
+
 	/**
-	 * Tracks if a window has been created or not. Because certain objects are tied to the creation of a window, we should only allow one window to be created per LWJGL instance.
+	 * Tracks if a window has been created or not. Because certain objects are tied
+	 * to the creation of a window, we should only allow one window to be created
+	 * per LWJGL instance.
 	 */
 	private boolean mWindowCreated;
 
@@ -51,44 +59,66 @@ public abstract class LWJGLCore {
 	// ---------------------------------------------
 
 	/**
-	 * Returns the instance of {@link GameTime} which was created when the LWJGL window was created. GameTime tracks the application time. null is returned if the LWJGL window has not yet been created.
+	 * Returns the instance of {@link GameTime} which was created when the LWJGL
+	 * window was created. GameTime tracks the application time. null is returned if
+	 * the LWJGL window has not yet been created.
 	 */
 	public GameTime gameTime() {
 		return mGameTime;
 	}
 
 	/**
-	 * Returns the instance of {@link InputState} which was created when the LWJGL window was created. InputState is updated per-frame and tracks user input from the mouse and keyboard. null is returned if the LWJGL
-	 * window has not yet been created.
+	 * Returns the instance of {@link InputState} which was created when the LWJGL
+	 * window was created. InputState is updated per-frame and tracks user input
+	 * from the mouse and keyboard. null is returned if the LWJGL window has not yet
+	 * been created.
 	 */
 	public InputState inputState() {
 		return mInputState;
 	}
 
 	/**
-	 * Returns the instance of {@link HUD} camera created when the LWJGL window was created. null is returned if the LWJGL window has not yet been created.
+	 * Returns the instance of {@link HUD} camera created when the LWJGL window was
+	 * created. null is returned if the LWJGL window has not yet been created.
 	 */
 	public HUD hud() {
 		return mHUDCamera;
 	}
 
 	/**
-	 * Returns the instance of game {@link Camera} created when the LWJGL window was created. null is returned if the LWJGL window has not yet been created.
+	 * Returns the instance of game {@link Camera} created when the LWJGL window was
+	 * created. null is returned if the LWJGL window has not yet been created.
 	 */
 	public Camera gameCamera() {
 		return mGameCamera;
 	}
 
 	/**
-	 * Returns an instance of {@link RenderState} which contains state information about the current rendering pass.
+	 * Returns an instance of {@link RenderState} which contains state information
+	 * about the current rendering pass.
 	 */
 	public RenderState renderState() {
 		return mRenderState;
 	}
 
-	/** Returns an OpenAL {@link AudioManager} instance which can be used for playing back audio files. */
+	public DisplayConfig displayConfig() {
+		return mDisplayConfig;
+	}
+
+	/**
+	 * Returns an OpenAL {@link AudioManager} instance which can be used for playing
+	 * back audio files.
+	 */
 	public AudioManager audioManager() {
 		return mAudioManager;
+	}
+
+	/**
+	 * Returns an instance of the {@link RenderTargetManager}, which can be used to
+	 * manage the {@link RenderTarget}s.
+	 */
+	public RenderTargetManager renderTargetManager() {
+		return mRenderTargetManager;
 	}
 
 	// ---------------------------------------------
@@ -100,12 +130,14 @@ public abstract class LWJGLCore {
 		// create new ones)
 		// FIXME: Load the configuration files (or just create new ones)
 		mGameInfo = pGameInfo;
-		mDisplayConfig = new DisplayConfig(mGameInfo);
+		mDisplayConfig = new DisplayConfig();
 		mResourceManager = new ResourceManager(mDisplayConfig);
 		mRenderState = new RenderState();
 		mAudioManager = new AudioManager();
 		mAudioManager.initialise();
-		
+
+		mRenderTargetManager = new RenderTargetManager();
+
 		// Print out the working directory
 		System.out.println("working directory: " + System.getProperty("user.dir"));
 	}
@@ -115,7 +147,8 @@ public abstract class LWJGLCore {
 	// ---------------------------------------------
 
 	/**
-	 * Creates a new OpenGL window and instantiates all auxiliary classes needed for a LWJGL game.
+	 * Creates a new OpenGL window and instantiates all auxiliary classes needed for
+	 * a LWJGL game.
 	 */
 	public boolean createWindow() {
 		// Don't allow the user to create more than one window per LWJGL (this)
@@ -126,8 +159,9 @@ public abstract class LWJGLCore {
 
 		}
 
-		mGameCamera = new Camera(0, 0, DisplayConfig.WINDOW_WIDTH, DisplayConfig.WINDOW_HEIGHT);
-		mHUDCamera = new HUD(-DisplayConfig.WINDOW_WIDTH / 2, -DisplayConfig.WINDOW_HEIGHT / 2, DisplayConfig.WINDOW_WIDTH / 2, DisplayConfig.WINDOW_HEIGHT / 2);
+		mGameCamera = new Camera(displayConfig(), 0, 0, 640, 480);
+		// mGameCamera.setZoomFactor(1f);
+		mHUDCamera = new HUD(displayConfig(), -400, -300, 400, 300);
 
 		mGameTime = new GameTime();
 		mInputState = new InputState(mDisplayConfig, mGameCamera, mHUDCamera, mGameTime);
@@ -136,10 +170,8 @@ public abstract class LWJGLCore {
 
 		long lWindowID = mDisplayConfig.onCreateWindow();
 		mDisplayConfig.addResizeListener(mHUDCamera);
-		mDisplayConfig.addResizeListener(mGameCamera);
 
 		// set key callbacks
-		// TODO: Add these to the InputState class
 		glfwSetKeyCallback(lWindowID, mInputState.mKeyCallback);
 		glfwSetCharModsCallback(lWindowID, mInputState.mTextCallback);
 		glfwSetMouseButtonCallback(lWindowID, mInputState.mMouseButtonCallback);
@@ -164,12 +196,14 @@ public abstract class LWJGLCore {
 	public abstract void onInitialiseGL();
 
 	/**
-	 * Implemented in the sub-class. Sets the default state of the application (note. OpenGL context is not available at this point).
+	 * Implemented in the sub-class. Sets the default state of the application
+	 * (note. OpenGL context is not available at this point).
 	 */
 	public abstract void onInitialiseApp();
 
 	/**
-	 * Called automatically before entering the main game loop. OpenGL content can be setup.
+	 * Called automatically before entering the main game loop. OpenGL content can
+	 * be setup.
 	 */
 	protected void onLoadGLContent() {
 		mResourceManager.loadGLContent();
@@ -177,7 +211,8 @@ public abstract class LWJGLCore {
 	}
 
 	/**
-	 * Called automatically after exiting the main game loop. OpenGL resources should be released.
+	 * Called automatically after exiting the main game loop. OpenGL resources
+	 * should be released.
 	 */
 	protected void onUnloadGLContent() {
 		mResourceManager.unloadGLContent();
@@ -187,48 +222,33 @@ public abstract class LWJGLCore {
 	/** The main game loop. */
 	protected void onRunGameLoop() {
 
-		boolean lFocusRegained = false;
-		
 		// Game loop
 		while (!glfwWindowShouldClose(mDisplayConfig.windowID())) {
-			if (mDisplayConfig.hasFocus()) {
-				if(!lFocusRegained){
-					mGameTime.resetElapsed();
-					lFocusRegained = true;
-					
-				}
-				
-				onHandleInput();
-				
-				mGameTime.update();
-				
-				onUpdate(mGameTime);
+			if (displayConfig().isWindowFocused()) {
 
 			}
-			else{
-				lFocusRegained = false;
-				
-			}
+			mGameTime.update();
+			onHandleInput();
+			onUpdate(mGameTime);
 
 			onDraw(mRenderState);
 
 			glfwSwapBuffers(mDisplayConfig.windowID());
 
-			mDisplayConfig.resetFlags();
-			mInputState.resetFlags();
-
 			glfwPollEvents();
+
 		}
 
 		onUnloadGLContent();
-		
+
 		mAudioManager.cleanUp();
 
 		System.exit(0);
 	}
 
 	/**
-	 * handle input for auxiliary classes. If extended in sub-classes, ensure to handleInput on auxiliary classes!
+	 * handle input for auxiliary classes. If extended in sub-classes, ensure to
+	 * handleInput on auxiliary classes!
 	 */
 	protected void onHandleInput() {
 		mDisplayConfig.handleInput(mInputState);
@@ -238,7 +258,8 @@ public abstract class LWJGLCore {
 	}
 
 	/**
-	 * update auxiliary classes. If extended in sub-classes, ensure to update the auxiliary classes!
+	 * update auxiliary classes. If extended in sub-classes, ensure to update the
+	 * auxiliary classes!
 	 */
 	protected void onUpdate(GameTime pGameTime) {
 		mDisplayConfig.update(pGameTime);

@@ -271,18 +271,18 @@ public class MenuEntry extends Rectangle {
 			return;
 
 		if (mAnimationTimer > 0) {
-			mAnimationTimer -= pGameTime.elapseGameTime();
+			mAnimationTimer -= pGameTime.elapseGameTimeMilli();
 
 		}
-		mClickTimer += pGameTime.elapseGameTime();
+		mClickTimer += pGameTime.elapseGameTimeMilli();
 
 		if (mScaleOnHover && mHasFocus && canHaveFocus()) {
-			mScaleCounter += pGameTime.elapseGameTime() / 500.0f;
+			mScaleCounter += pGameTime.elapseGameTimeMilli() / 500.0f;
 			mScale = 0.75f + (float) (Math.cos(mScaleCounter) * 0.05f);
 		}
 
 		else if (mScaleOnHover && mHoveredOver) {
-			mScaleCounter += pGameTime.elapseGameTime() / 500.0f;
+			mScaleCounter += pGameTime.elapseGameTimeMilli() / 500.0f;
 			mScale = 0.75f + (float) (Math.cos(mScaleCounter) * 0.05f);
 
 		}

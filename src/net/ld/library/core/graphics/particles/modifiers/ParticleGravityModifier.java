@@ -37,7 +37,7 @@ public class ParticleGravityModifier implements IParticleModifier {
 
 	@Override
 	public void updateParticle(Particle pParticle, GameTime pGameTime) {
-		pParticle.dy += mGravity * pGameTime.elapseGameTime() / 1000.0f;
+		pParticle.dy += mGravity * pGameTime.elapseGameTimeSeconds();
 
 	}
 

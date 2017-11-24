@@ -1,28 +1,20 @@
 package net.ld.library.core.maths;
 
+import java.io.Serializable;
+
 /**
  * Encapsulates a 2D vector. Allows chaining methods by returning a reference to itself
  * @author badlogicgames@gmail.com
  * 
  */
-public final class Vector2f {
+public final class Vector2f implements Serializable {
+	
+	private static final long serialVersionUID = -2295169699757910995L;
+
 	private final static Vector2f tmp = new Vector2f();
 
-	/**
-	 * 
-	 * @Return Vector2(0, 0)
-	 */
-	public final static Vector2f Zero(){
-		return new Vector2f(0, 0);
-	}
-	
-	/**
-	 * 
-	 * @Return Vector2(1, 1)
-	 */
-	public final static Vector2f One(){
-		return new Vector2f(1, 1);
-	}
+	public final static Vector2f Zero = new Vector2f();
+	public final static Vector2f One = new Vector2f();
 	
 	/** the x-component of this vector **/
 	public float x;
@@ -86,19 +78,10 @@ public final class Vector2f {
 	    return returnVector;
 	}
 
-	public static float distance(Vector2f value1, Vector2f value2)
+	public static float Distance(Vector2f value1, Vector2f value2)
 	{
 		float num2 = value1.x - value2.x;
 	    float num = value1.y - value2.y;
-	    float num3 = (num2 * num2) + (num * num);
-	    return (float) Math.sqrt(num3);
-	}
-	
-	// Need to be squared ??
-	public static float distance(float value1X, float value1Y, float value2X, float value2Y)
-	{
-		float num2 = value1X - value2X;
-	    float num = value1Y - value2Y;
 	    float num3 = (num2 * num2) + (num * num);
 	    return (float) Math.sqrt(num3);
 	}
@@ -186,14 +169,6 @@ public final class Vector2f {
 	 */
 	public float dot (Vector2f v) {
 		return x * v.x + y * v.y;
-	}
-	
-	public float dot (float vx, float vy) {
-		return x * vx + y * vy;
-	}
-	
-	public static float dot (float vx0, float vy0, float vx1, float vy1) {
-		return vx0 * vx1 + vy0 * vy1;
 	}
 
 	/**

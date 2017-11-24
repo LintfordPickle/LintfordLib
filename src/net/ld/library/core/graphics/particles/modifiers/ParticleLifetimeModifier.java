@@ -26,7 +26,7 @@ public class ParticleLifetimeModifier implements IParticleModifier {
 	
 	@Override
 	public void updateParticle(Particle pParticle, GameTime pGameTime) {
-		pParticle.timeSinceStart += pGameTime.elapseGameTime();
+		pParticle.timeSinceStart += pGameTime.elapseGameTimeMilli();
 		if (pParticle.timeSinceStart >= pParticle.lifeTime()) {
 			// kill the particle
 			pParticle.reset();

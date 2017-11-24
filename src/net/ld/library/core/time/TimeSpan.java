@@ -69,7 +69,7 @@ public class TimeSpan {
 
 	public void update(GameTime pGameTime) {
 		// check for overflow
-		mTicks += pGameTime.elapseGameTime() * TicksPerMillisecond;
+		mTicks += pGameTime.elapseGameTimeMilli() * TicksPerMillisecond;
 	}
 
 	// =============================================

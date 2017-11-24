@@ -108,7 +108,7 @@ public class RectangleColliderController {
 
 		// TODO (John): Get the actual world grid size from somewhere.
 		final int CELL_SIZE = 64;
-		float lDelta = (float) (pGameTime.elapseGameTime() / 1000.0f);
+		float lDelta = (float) (pGameTime.elapseGameTimeSeconds());
 
 		int blockSize_x = 1 + (int) (lRectEntity.getWidth() / 2 / CELL_SIZE);
 		int blockSize_y = 1 + (int) (lRectEntity.getHeight() / 2 / CELL_SIZE);

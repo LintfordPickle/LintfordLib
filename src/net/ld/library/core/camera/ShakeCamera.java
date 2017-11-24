@@ -2,6 +2,7 @@ package net.ld.library.core.camera;
 
 import java.util.Random;
 
+import net.ld.library.core.config.DisplayConfig;
 import net.ld.library.core.time.GameTime;
 
 public class ShakeCamera extends Camera {
@@ -20,9 +21,9 @@ public class ShakeCamera extends Camera {
 	// Constructor
 	// ---------------------------------------------
 
-	public ShakeCamera(float pX, float pY, int pWidth, int pHeight) {
-		super(pX, pY, pWidth, pHeight);
-		// TODO Auto-generated constructor stub
+	public ShakeCamera(DisplayConfig pDisplayConfig, float pX, float pY, int pWidth, int pHeight) {
+		super(pDisplayConfig, pX, pY, pWidth, pHeight);
+
 	}
 
 	// ---------------------------------------------
@@ -33,7 +34,7 @@ public class ShakeCamera extends Camera {
 	public void update(GameTime pGameTime) {
 		if (mIsShaking) {
 
-			mShakeTimer += pGameTime.elapseGameTime();
+			mShakeTimer += pGameTime.elapseGameTimeMilli();
 
 			if (mShakeTimer > mShakeDur) {
 				mIsShaking = false;
@@ -58,8 +59,8 @@ public class ShakeCamera extends Camera {
 	// ---------------------------------------------
 
 	/**
-	 * Shakes the camera for the specified amount of time (milliseconds) with
-	 * the specified magnitude (pxs)
+	 * Shakes the camera for the specified amount of time (milliseconds) with the
+	 * specified magnitude (pxs)
 	 */
 	public void shake(float pDuration, float pMagnitude) {
 		if (pDuration <= 0)

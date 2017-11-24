@@ -27,7 +27,7 @@ public class TextureBatch {
 	// Constants
 	// =============================================
 
-	protected static final int MAX_SPRITES = 1000;
+	protected static final int MAX_SPRITES = 2048;
 
 	// These default shaders are loaded from embedded resources
 	protected static final String VERT_FILENAME = "/res/shaders/shader_basic.vert";
@@ -120,7 +120,7 @@ public class TextureBatch {
 
 		mModelMatrix = new Matrix4f();
 		mTempVector = new Vector4f();
-		
+
 	}
 
 	// =============================================
@@ -132,7 +132,7 @@ public class TextureBatch {
 
 		mVaoId = GL30.glGenVertexArrays();
 		mVboId = GL15.glGenBuffers();
-		
+
 		mBuffer = je_malloc(MAX_SPRITES * NUM_VERTS_PER_SPRITE * stride).asFloatBuffer();
 
 		mIsLoaded = true;
@@ -143,7 +143,7 @@ public class TextureBatch {
 
 		GL30.glDeleteVertexArrays(mVaoId);
 		GL15.glDeleteBuffers(mVboId);
-		
+
 		je_free(mBuffer);
 
 		mIsLoaded = false;
@@ -153,9 +153,12 @@ public class TextureBatch {
 	// Methods
 	// =============================================
 
-	// FIXME: Need to make a nicer, more encompassing set of methods for the SpriteBatch rendering
-	// FIXME(John): calling draw without first calling begin() doesn't fail gracefully - it crashes
-	// TODO(John): The SpriteBatch doesn't actually allow to cache buffers between frames if there is no change.
+	// FIXME: Need to make a nicer, more encompassing set of methods for the
+	// SpriteBatch rendering
+	// FIXME(John): calling draw without first calling begin() doesn't fail
+	// gracefully - it crashes
+	// TODO(John): The SpriteBatch doesn't actually allow to cache buffers between
+	// frames if there is no change.
 
 	public void begin(ICamera pCamera) {
 		if (mIsDrawing)
@@ -171,60 +174,69 @@ public class TextureBatch {
 
 	}
 
-	public void draw(float pSX, float pSY, float pSW, float pSH, float x, float y, float pZ, float w, float h, float pScale, Texture pTexture) {
+	public void draw(float pSX, float pSY, float pSW, float pSH, float x, float y, float pZ, float w, float h,
+			float pScale, Texture pTexture) {
 		draw(pSX, pSY, pSW, pSH, x, y, pZ, w, h, pScale, 1, 1, 1, 1, pTexture);
 	}
 
-	public void draw(float pSX, float pSY, float pSW, float pSH, float x, float y, float pZ, float w, float h, float pScale, float pAlpha, Texture pTexture) {
+	public void draw(float pSX, float pSY, float pSW, float pSH, float x, float y, float pZ, float w, float h,
+			float pScale, float pAlpha, Texture pTexture) {
 		draw(pSX, pSY, pSW, pSH, x, y, pZ, w, h, pScale, 1, 1, 1, pAlpha, pTexture);
 	}
 
-	public void draw(float pSX, float pSY, float pSW, float pSH, float x, float y, float pZ, float w, float h, float pScale, float pR, float pG, float pB, float pA, Texture pTexture) {
-		if (!mIsDrawing)
-			return;
-
+	public void draw(float pSX, float pSY, float pSW, float pSH, float x, float y, float pZ, float w, float h,
+			float pScale, float pR, float pG, float pB, float pA, Texture pTexture) {
 		if (pTexture == null)
 			return;
 
+		draw(pSX, pSY, pSW, pSH, x, y, pZ, w, h, pScale, 1, 1, 1, pA, pTexture.getTextureID(),
+				pTexture.getTextureWidth(), pTexture.getTextureHeight());
+	}
+
+	public void draw(float pSX, float pSY, float pSW, float pSH, float x, float y, float pZ, float w, float h,
+			float pScale, float pR, float pG, float pB, float pA, int pTextureID, int pTW, int pTH) {
+		if (!mIsDrawing)
+			return;
+
 		if (mCurrentTexID == -1) { // first texture
-			mCurrentTexID = pTexture.getTextureID();
-		} else if (mCurrentTexID != pTexture.getTextureID()) {
+			mCurrentTexID = pTextureID;
+		} else if (mCurrentTexID != pTextureID) {
 			flush();
-			mCurrentTexID = pTexture.getTextureID();
+			mCurrentTexID = pTextureID;
 		}
 
 		if (mCurNumSprites >= MAX_SPRITES) {
 			flush();
 		}
-		
+
 		// FIXME: Without this small offset, I get texture bleeding on the texture atlas
 		final float TINY = 0.01f;
 
 		// Vertex 0
 		float x0 = x - TINY;
 		float y0 = y + (h + TINY) * pScale;
-		float u0 = pSX / pTexture.getTextureWidth();
-		float v0 = (pSY + pSH) / pTexture.getTextureHeight();
+		float u0 = pSX / pTW;
+		float v0 = (pSY + pSH) / pTH;
 
 		// Vertex 1
 		float x1 = x - TINY;
 		float y1 = y - TINY;
-		float u1 = pSX / pTexture.getTextureWidth();
-		float v1 = pSY / pTexture.getTextureHeight();
+		float u1 = pSX / pTW;
+		float v1 = pSY / pTH;
 
 		// Vertex 2
 		float x2 = x + (w + TINY) * pScale;
 		float y2 = y - TINY;
-		float u2 = (pSX + pSW) / pTexture.getTextureWidth();
-		float v2 = pSY / pTexture.getTextureHeight();
+		float u2 = (pSX + pSW) / pTW;
+		float v2 = pSY / pTH;
 
 		// Vertex 3
 		float x3 = x + (w + TINY) * pScale;
 		float y3 = y + (h + TINY) * pScale;
-		float u3 = (pSX + pSW) / pTexture.getTextureWidth();
-		float v3 = (pSY + pSH) / pTexture.getTextureHeight();
+		float u3 = (pSX + pSW) / pTW;
+		float v3 = (pSY + pSH) / pTH;
 
-		addVertToBuffer(x0 , y0, pZ, 1f, pR, pG, pB, pA, u0, v0); // 0
+		addVertToBuffer(x0, y0, pZ, 1f, pR, pG, pB, pA, u0, v0); // 0
 		addVertToBuffer(x1, y1, pZ, 1f, pR, pG, pB, pA, u1, v1); // 1
 		addVertToBuffer(x2, y2, pZ, 1f, pR, pG, pB, pA, u2, v2); // 2
 		addVertToBuffer(x2, y2, pZ, 1f, pR, pG, pB, pA, u2, v2); // 2
@@ -235,7 +247,9 @@ public class TextureBatch {
 
 	}
 
-	public void draw(float pSX, float pSY, float pSW, float pSH, float x, float y, float pZ, float w, float h, float pR, float pG, float pB, float pA, float pRotation, float pROX, float pROY, float pScaleX, float pScaleY, Texture pTexture) {
+	public void draw(float pSX, float pSY, float pSW, float pSH, float x, float y, float pZ, float w, float h, float pR,
+			float pG, float pB, float pA, float pRotation, float pROX, float pROY, float pScaleX, float pScaleY,
+			Texture pTexture) {
 		if (!mIsDrawing)
 			return;
 
@@ -298,11 +312,13 @@ public class TextureBatch {
 
 	}
 
-	public void draw(ISprite pSprite, float pPX, float pPY, float pZ, float pWidth, float pHeight, float pScale, Texture pTexture) {
+	public void draw(ISprite pSprite, float pPX, float pPY, float pZ, float pWidth, float pHeight, float pScale,
+			Texture pTexture) {
 		draw(pSprite, pPX, pPY, pZ, pWidth, pHeight, 0f, pScale, pTexture);
 	}
 
-	public void draw(ISprite pSprite, float pPX, float pPY, float pZ, float pWidth, float pHeight, float pRotation, float pScale, Texture pTexture) {
+	public void draw(ISprite pSprite, float pPX, float pPY, float pZ, float pWidth, float pHeight, float pRotation,
+			float pScale, Texture pTexture) {
 		if (pSprite == null) {
 			return;
 		}
@@ -315,27 +331,34 @@ public class TextureBatch {
 		float lRotOriginX = 0;
 		float lRotOriginY = 0;
 
-		draw(pSprite.getX(), pSprite.getY(), pSprite.getWidth(), pSprite.getHeight(), pPX, pPY, pZ, pWidth, pHeight, lR, lG, lB, lA, pRotation, lRotOriginX, lRotOriginY, pScale, pScale, pTexture);
+		draw(pSprite.getX(), pSprite.getY(), pSprite.getWidth(), pSprite.getHeight(), pPX, pPY, pZ, pWidth, pHeight, lR,
+				lG, lB, lA, pRotation, lRotOriginX, lRotOriginY, pScale, pScale, pTexture);
 	}
 
-	public void draw(ISprite pSprite, float pPX, float pPY, float pZ, float pWidth, float pHeight, float pRotation, float pRotX, float pRotY, float pScale, Texture pTexture) {
+	public void draw(ISprite pSprite, float pPX, float pPY, float pZ, float pWidth, float pHeight, float pRotation,
+			float pRotX, float pRotY, float pScale, Texture pTexture) {
 		if (pSprite == null) {
 			return;
 		}
 
-		draw(pSprite.getX(), pSprite.getY(), pSprite.getWidth(), pSprite.getHeight(), pPX, pPY, pZ, pWidth, pHeight, 1f, 1f, 1f, 1f, pRotation, pRotX, pRotY, pScale, pScale, pTexture);
+		draw(pSprite.getX(), pSprite.getY(), pSprite.getWidth(), pSprite.getHeight(), pPX, pPY, pZ, pWidth, pHeight, 1f,
+				1f, 1f, 1f, pRotation, pRotX, pRotY, pScale, pScale, pTexture);
 	}
 
-	public void draw(ISprite pSprite, float pPX, float pPY, float pZ, float pWidth, float pHeight, float pScale, float pR, float pG, float pB, float pA, Texture pTexture) {
+	public void draw(ISprite pSprite, float pPX, float pPY, float pZ, float pWidth, float pHeight, float pScale,
+			float pR, float pG, float pB, float pA, Texture pTexture) {
 		if (pSprite == null) {
 			return;
 		}
 
-		draw(pSprite.getX(), pSprite.getY(), pSprite.getWidth(), pSprite.getHeight(), pPX, pPY, pZ, pWidth, pHeight, pScale, pR, pG, pB, pA, pTexture);
+		draw(pSprite.getX(), pSprite.getY(), pSprite.getWidth(), pSprite.getHeight(), pPX, pPY, pZ, pWidth, pHeight,
+				pScale, pR, pG, pB, pA, pTexture);
 	}
 
-	private void addVertToBuffer(float x, float y, float z, float w, float r, float g, float b, float a, float u, float v) {
-		// If the buffer is already full, we need to draw what is currently in the buffer and start a new one.
+	private void addVertToBuffer(float x, float y, float z, float w, float r, float g, float b, float a, float u,
+			float v) {
+		// If the buffer is already full, we need to draw what is currently in the
+		// buffer and start a new one.
 		if (mCurNumSprites >= MAX_SPRITES * NUM_VERTS_PER_SPRITE - 1) {
 			flush();
 

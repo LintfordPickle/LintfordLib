@@ -1,8 +1,12 @@
 package net.ld.library.core.graphics.textures;
 
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.imageio.ImageIO;
 
 import org.lwjgl.opengl.GL11;
 
@@ -105,6 +109,34 @@ public class TextureManager {
 		return lTex;
 	}
 
+	public boolean saveTextureToFile(int pWidth, int pHeight, int[] pData, String pFileLocation) {
+		BufferedImage lImage = new BufferedImage(pWidth, pHeight, BufferedImage.TYPE_INT_ARGB);
+
+		// Convert our ABGR to output ARGB
+		int[] lTextureData = new int[pWidth * pHeight];
+		for (int i = 0; i < pWidth * pHeight; i++) {
+			int a = (pData[i] & 0xff000000) >> 24;
+			int b = (pData[i] & 0xff0000) >> 16;
+			int g = (pData[i] & 0xff00) >> 8;
+			int r = (pData[i] & 0xff);
+
+			lTextureData[i] = a << 24 | r << 16 | g << 8 | b;
+		}
+
+		lImage.setRGB(0, 0, pWidth, pHeight, lTextureData, 0, pWidth);
+
+		File outputfile = new File(pFileLocation);
+		try {
+			ImageIO.write(lImage, "png", outputfile);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
+
+		return true;
+
+	}
+	
 	/** Unloads the specified texture, if applicable. */
 	public boolean unloadTexture(Texture pTexture) {
 		if (pTexture == null)

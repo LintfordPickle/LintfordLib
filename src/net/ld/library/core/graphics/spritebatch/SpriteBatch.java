@@ -25,7 +25,7 @@ public class SpriteBatch {
 	// Constants
 	// --------------------------------------
 
-	protected static final int MAX_SPRITES = 1000;
+	protected static final int MAX_SPRITES = 2048;
 
 	protected static final String VERT_FILENAME = "res/shaders/shader_basic.vert";
 	protected static final String FRAG_FILENAME = "res/shaders/shader_basic.frag";

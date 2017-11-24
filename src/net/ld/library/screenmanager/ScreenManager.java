@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 
+import net.ld.library.core.LWJGLCore;
 import net.ld.library.core.camera.Camera;
 import net.ld.library.core.camera.HUD;
 import net.ld.library.core.config.DisplayConfig;
@@ -48,11 +49,16 @@ public class ScreenManager {
 
 	// Common SpriteBatch (all entries/windows share textures)
 	TextureBatch mSpriteBatch;
+	LWJGLCore mLWJGLCore;
 
 	// =============================================
 	// Properties
 	// =============================================
 
+	public LWJGLCore core() {
+		return mLWJGLCore;
+	}
+	
 	public TextureBatch spriteBatch() {
 		return mSpriteBatch;
 	}
@@ -99,8 +105,9 @@ public class ScreenManager {
 	// Constructors
 	// =============================================
 
-	public ScreenManager(DisplayConfig pDisplayConfig) {
-		mDisplayConfig = pDisplayConfig;
+	public ScreenManager(LWJGLCore pLWJGLCore) {
+		mLWJGLCore = pLWJGLCore;
+		mDisplayConfig = pLWJGLCore.displayConfig();
 
 		mScreens = new ArrayList<Screen>();
 		mScreensToUpdate = new ArrayList<Screen>();

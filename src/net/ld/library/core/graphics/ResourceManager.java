@@ -29,7 +29,6 @@ public class ResourceManager {
 	// =============================================
 
 	protected DisplayConfig mDisplayConfig;
-	
 	private FontManager mFontManager;
 
 	private Path mResourcePath;

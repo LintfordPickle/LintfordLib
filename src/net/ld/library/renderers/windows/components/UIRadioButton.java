@@ -121,7 +121,7 @@ public class UIRadioButton extends UIWidget {
 	public void update(final GameTime pGameTime) {
 		super.update(pGameTime);
 
-		mClickTimer += pGameTime.elapseGameTime();
+		mClickTimer += pGameTime.elapseGameTimeMilli();
 	}
 
 	@Override

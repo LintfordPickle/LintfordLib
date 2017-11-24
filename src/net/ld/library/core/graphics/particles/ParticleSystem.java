@@ -113,13 +113,13 @@ public class ParticleSystem {
 			mModifiers.get(j).update(pGameTime);
 		}
 
-		mParticleAssignTimer += pGameTime.elapseGameTime();
+		mParticleAssignTimer += pGameTime.elapseGameTimeMilli();
 		for (int i = 0; i < mCapacity; i++) {
 			Particle p = mParticles.get(i);
 
 			// Kill the particle if it exceeds its lifetime (unless lifeTime is NO_DO_DESPAWN
 			if (p.lifeTime() != Particle.DO_NOT_DESPAWN_LIFETIME) {
-				p.timeSinceStart += pGameTime.elapseGameTime();
+				p.timeSinceStart += pGameTime.elapseGameTimeMilli();
 				if (p.timeSinceStart >= p.lifeTime()) {
 					// kill the particle
 					p.reset();

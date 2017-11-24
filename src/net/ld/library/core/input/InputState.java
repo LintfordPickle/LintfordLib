@@ -459,7 +459,7 @@ public class InputState {
 	 * etc.
 	 */
 	public void update(GameTime pGameTime) {
-		final double lElapsed = pGameTime.elapseGameTime();
+		final double lElapsed = pGameTime.elapseGameTimeMilli();
 
 		mKeyTimer += lElapsed;
 		mMenuClickTimer += lElapsed;

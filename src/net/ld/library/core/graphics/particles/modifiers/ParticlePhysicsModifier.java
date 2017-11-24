@@ -57,7 +57,7 @@ public class ParticlePhysicsModifier implements IParticleModifier {
 
 	@Override
 	public void updateParticle(Particle pParticle, GameTime pGameTime) {
-		float lDelta = (float) (pGameTime.elapseGameTime() / 1000.0f);
+		float lDelta = (float) (pGameTime.elapseGameTimeSeconds());
 
 		checkEntityCollisions(pParticle, pGameTime);
 
