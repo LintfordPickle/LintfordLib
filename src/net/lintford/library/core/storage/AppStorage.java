@@ -1,6 +1,6 @@
 package net.lintford.library.core.storage;
 
-public class GameStorage {
+public class AppStorage {
 
 	public static final String APPLICATION_NAME = System.getProperty("program.name");
 	public static final String FILE_SEPERATOR = System.getProperty("file.separator");
