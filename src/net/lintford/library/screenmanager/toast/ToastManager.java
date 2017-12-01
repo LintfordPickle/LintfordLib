@@ -1,0 +1,187 @@
+package net.lintford.library.screenmanager.toast;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.graphics.ResourceManager;
+import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
+import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
+
+public class ToastManager {
+
+	// --------------------------------------
+	// Constants
+	// --------------------------------------
+
+	private static final int MAX_TOASTPOOL_SIZE = 48;
+	private static final int MIN_TIME_BETWEEN_ADD = 250;
+
+	public static final String TOAST_FONT_NAME = "ToastFontName";
+
+	public static final String MENUSCREEN_FONT_NAME = "MenuScreenFont";
+
+	// --------------------------------------
+	// Variables
+	// --------------------------------------
+
+	private TextureBatch mTextureBatch;
+	private FontUnit mFontUnit;
+	private List<ToastMessage> mToastMessages;
+	private List<ToastMessage> mToastMessagePool;
+	private List<ToastMessage> mToastMessageUpdate;
+	private int mToastCounter;
+
+	private float mAddTimer;
+
+	// --------------------------------------
+	// Constructor
+	// --------------------------------------
+
+	public ToastManager() {
+		mToastMessages = new ArrayList<>();
+		mToastMessagePool = new ArrayList<>();
+		mToastMessageUpdate = new ArrayList<>();
+
+		mTextureBatch = new TextureBatch();
+
+		mToastCounter = 0;
+		allocateNewMesssages(8);
+
+	}
+
+	// --------------------------------------
+	// Core-Methods
+	// --------------------------------------
+
+	public void loadGLContent(ResourceManager pResourceManager) {
+		mTextureBatch.loadGLContent(pResourceManager);
+
+		// TODO: Make this customisable from the application side
+		mFontUnit = pResourceManager.fontManager().getFont(TOAST_FONT_NAME);
+
+	}
+
+	public void unloadGLContent() {
+		mTextureBatch.unloadGLContent();
+	}
+
+	public void update(LintfordCore pCore) {
+
+		mAddTimer += pCore.time().elapseGameTimeMilli();
+
+		mToastMessageUpdate.clear();
+		final int SIZE_T = mToastMessages.size();
+		for (int i = 0; i < SIZE_T; i++) {
+			mToastMessageUpdate.add(mToastMessages.get(i));
+
+		}
+
+		float lFinalX = -pCore.config().display().windowSize().x / 2;
+		float lFinalY = pCore.config().display().windowSize().y / 2 - 30;
+
+		for (int i = 0; i < SIZE_T; i++) {
+			ToastMessage lTM = mToastMessageUpdate.get(i);
+
+			lTM.liveLeft -= pCore.time().elapseGameTimeMilli();
+
+			if (lTM.liveLeft < 0) {
+				lTM.reset();
+				mToastMessages.remove(lTM);
+				continue;
+			}
+
+			lTM.x = lTM.xx = lFinalX;
+			lTM.yy = lFinalY;
+
+			if (lTM.y < lTM.yy)
+				lTM.y += 500f * pCore.time().elapseGameTimeMilli() / 1000f;
+
+			lFinalY -= 25;
+
+		}
+
+	}
+
+	public void draw(LintfordCore pCore) {
+
+		mToastMessageUpdate.clear();
+		final int SIZE_T = mToastMessages.size();
+		for (int i = 0; i < SIZE_T; i++) {
+			mToastMessageUpdate.add(mToastMessages.get(i));
+
+		}
+
+		mTextureBatch.begin(pCore.HUD());
+		mFontUnit.begin(pCore.HUD());
+
+		final int TOAST_SIZE = mToastMessageUpdate.size();
+		for (int i = 0; i < TOAST_SIZE; i++) {
+			mToastMessageUpdate.get(i).draw(pCore, mFontUnit, mTextureBatch);
+
+		}
+
+		mFontUnit.end();
+		mTextureBatch.end();
+
+	}
+
+	// --------------------------------------
+	// Methods
+	// --------------------------------------
+
+	public void addMessage(String pTitle, String pMessage) {
+		if (mAddTimer < MIN_TIME_BETWEEN_ADD)
+			return;
+
+		if (pMessage == null || pMessage.length() == 0)
+			return;
+
+		mAddTimer = 0;
+
+		ToastMessage tm = getFreeToast();
+		mToastMessages.add(tm);
+
+		if (tm == null)
+			return;
+
+		tm.y = 0;
+
+		tm.init(pTitle, pMessage, 3000);
+
+	}
+
+	private ToastMessage getFreeToast() {
+		if (mToastMessagePool.size() > 0) {
+			ToastMessage lTM = mToastMessagePool.get(mToastMessagePool.size() - 1);
+			mToastMessagePool.remove(mToastMessagePool.size() - 1);
+			return lTM;
+		}
+
+		return allocateNewMesssages(8);
+
+	}
+
+	private ToastMessage allocateNewMesssages(int pAmt) {
+		if (pAmt < 1)
+			pAmt = 2;
+
+		if (mToastCounter + pAmt > MAX_TOASTPOOL_SIZE) {
+			pAmt = MAX_TOASTPOOL_SIZE - mToastCounter;
+
+		}
+
+		ToastMessage lReturn = new ToastMessage();
+		mToastCounter++;
+
+		for (int i = 0; i < pAmt - 1; i++) {
+			mToastCounter++;
+			mToastMessagePool.add(new ToastMessage());
+
+		}
+
+		return lReturn;
+
+	}
+
+}

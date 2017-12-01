@@ -120,7 +120,7 @@ public abstract class MenuScreen extends Screen implements IMenuEntryClickListen
 		return mMenuFont;
 	}
 
-	/** Returns a medium sized {@link FontUnit} which can be used to render menu subheading text to the screen. */
+	/** Returns a medium sized {@link FontUnit} which can be used to render menu sub heading text to the screen. */
 	public FontUnit fontHeader() {
 		return mMenuHeaderFont;
 	}

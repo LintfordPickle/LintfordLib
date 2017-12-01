@@ -1,7 +1,6 @@
 package net.lintford.library.screenmanager;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.lwjgl.opengl.GL11;
 
@@ -9,15 +8,13 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.screenmanager.Screen.ScreenState;
+import net.lintford.library.screenmanager.toast.ToastManager;
 
 public class ScreenManager {
 
 	// --------------------------------------
 	// Constants
 	// --------------------------------------
-
-	// TODO: MAX_TOAST_AGE belongs in the toast package
-	private static final float MAX_TOAST_AGE = 5000f; // ms
 
 	public static final String SCREENMANAGER_TEXTURE_NAME = "ScreenManagerTexture";
 
@@ -32,7 +29,7 @@ public class ScreenManager {
 	// private GameSettings mGameSettings;
 	private ToolTip mToolTip;
 	private ResourceManager mResourceManager;
-	private List<ToastMessage> mToastMessages;
+	private ToastManager mToastManager;
 	private String mFontPathname;
 
 	private boolean mIsInitialised;
@@ -74,7 +71,7 @@ public class ScreenManager {
 		mLWJGLCore = pCore;
 		// mGameSettings = new GameSettings();
 
-		mToastMessages = new ArrayList<>();
+		mToastManager = new ToastManager();
 		mScreens = new ArrayList<Screen>();
 		mScreensToUpdate = new ArrayList<Screen>();
 
@@ -110,6 +107,7 @@ public class ScreenManager {
 		}
 
 		mToolTip.loadGLContent(pResourceManager);
+		mToastManager.loadGLContent(pResourceManager);
 		TextureManager.textureManager().loadTexture(SCREENMANAGER_TEXTURE_NAME, "/res/textures/core/screenmanager.png");
 
 		mIsLoaded = true;
@@ -124,6 +122,7 @@ public class ScreenManager {
 		}
 
 		mToolTip.unloadGLContent();
+		mToastManager.unloadGLContent();
 
 		mIsLoaded = false;
 
@@ -154,14 +153,7 @@ public class ScreenManager {
 
 		}
 
-		if (mToastMessages.size() > 0) {
-			mToastMessages.get(0).update(pCore);
-			if (mToastMessages.get(0).timeLeft() <= 0) {
-				// FIXME: Reuse the toast messages!
-				mToastMessages.get(0).unloadGLContent();
-				mToastMessages.remove(0);
-			}
-		}
+		mToastManager.update(pCore);
 
 		boolean lOtherScreenHasFocus = false;
 		boolean lCoveredByOtherScreen = false;
@@ -204,9 +196,7 @@ public class ScreenManager {
 
 		}
 
-		if (mToastMessages.size() > 0) {
-			mToastMessages.get(0).draw(pCore);
-		}
+		mToastManager.draw(pCore);
 
 	}
 
@@ -277,15 +267,4 @@ public class ScreenManager {
 
 	}
 
-	public void displayToast(String pTitle, String pMessage, float pTimeToDisplay) {
-		// FIXME: GC Add a toast message and pool these resources!
-		ToastMessage lToast = new ToastMessage(this);
-		lToast.loadGLContent(mResourceManager);
-		if (pTimeToDisplay > MAX_TOAST_AGE)
-			pTimeToDisplay = MAX_TOAST_AGE;
-
-		lToast.setupToast(pTitle, pMessage, pTimeToDisplay);
-
-		mToastMessages.add(lToast);
-	}
 }

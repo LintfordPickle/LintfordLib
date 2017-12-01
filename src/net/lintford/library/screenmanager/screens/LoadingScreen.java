@@ -1,4 +1,4 @@
-package net.lintford.library.screenmanager;
+package net.lintford.library.screenmanager.screens;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,6 +6,9 @@ import java.util.List;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.time.TimeSpan;
+import net.lintford.library.screenmanager.Screen;
+import net.lintford.library.screenmanager.ScreenManager;
+import net.lintford.library.screenmanager.Screen.ScreenState;
 import net.lintford.library.screenmanager.transitions.TransitionFadeIn;
 import net.lintford.library.screenmanager.transitions.TransitionFadeOut;
 
