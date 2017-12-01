@@ -6,18 +6,15 @@ import java.util.List;
 
 import org.lwjgl.glfw.GLFW;
 
+import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.camera.HUD;
-import net.lintford.library.core.camera.ICamera;
 import net.lintford.library.core.debug.DebugLogger.LogMessage;
 import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 import net.lintford.library.core.input.IBufferedInputCallback;
-import net.lintford.library.core.input.InputState;
 import net.lintford.library.core.maths.Vector3f;
-import net.lintford.library.core.rendering.RenderState;
-import net.lintford.library.core.time.GameTime;
 import net.lintford.library.options.DisplayConfig;
 import net.lintford.library.renderers.windows.UIRectangle;
 import net.lintford.library.renderers.windows.components.IScrollBarArea;
@@ -179,7 +176,7 @@ public class DebugConsole extends UIRectangle implements IBufferedInputCallback,
 		if (!CONSOLE_ENABLED)
 			return;
 
-		mDisplayConfig = pResourceManager.masterConfig().displayConfig();
+		mDisplayConfig = pResourceManager.masterConfig().display();
 		mConsoleFont = pResourceManager.fontManager().systemFont();
 
 		mSpriteBatch.loadGLContent(pResourceManager);
@@ -197,11 +194,11 @@ public class DebugConsole extends UIRectangle implements IBufferedInputCallback,
 
 	}
 
-	public void handleInput(InputState pInputState, ICamera pHUDCamera) {
+	public void handleInput(LintfordCore pCore) {
 		if (!CONSOLE_ENABLED)
 			return;
 
-		if (mScrollBar.handleInput(pInputState, pHUDCamera)) {
+		if (mScrollBar.handleInput(pCore)) {
 			mAutoScroll = false;
 
 			final float FONT_HEIGHT = mConsoleFont.bitmap().getStringHeight(" ");
@@ -219,7 +216,7 @@ public class DebugConsole extends UIRectangle implements IBufferedInputCallback,
 		}
 
 		// listen for opening and closing
-		if (pInputState.keyDownTimed(GLFW.GLFW_KEY_F1)) {
+		if (pCore.input().keyDownTimed(GLFW.GLFW_KEY_F1)) {
 			mOpen = !mOpen;
 			mHasFocus = false;
 			if (mOpen) {
@@ -229,40 +226,40 @@ public class DebugConsole extends UIRectangle implements IBufferedInputCallback,
 
 		if (mOpen) {
 
-			if (mFocusTimer > FOCUS_TIMER && pInputState.mouseWindowCoords().y < openHeight() && pInputState.tryAquireLeftClickOwnership(hashCode())) {
+			if (mFocusTimer > FOCUS_TIMER && pCore.input().mouseWindowCoords().y < openHeight() && pCore.input().tryAquireLeftClickOwnership(hashCode())) {
 				mHasFocus = !mHasFocus;
-				pInputState.stopCapture();
+				pCore.input().stopCapture();
 				mFocusTimer = 0;
 
 				// If the debug console is open and has 'consumed' this click, don't let other windows use it
-				pInputState.setLeftMouseClickHandled();
+				pCore.input().setLeftMouseClickHandled();
 
 			}
 
 			if (mHasFocus) {
-				pInputState.startCapture(this);
+				pCore.input().startCapture(this);
 			}
 
 			float lHUDMouseX = mHUD.getMouseWorldSpaceX();
 			float lHUDMouseY = mHUD.getMouseWorldSpaceY();
 
-			if (pInputState.mouseLeftClick() && intersects(lHUDMouseX, lHUDMouseY)) {
+			if (pCore.input().mouseLeftClick() && intersects(lHUDMouseX, lHUDMouseY)) {
 				// Consume the left click
-				pInputState.tryAquireLeftClickOwnership(hashCode());
+				pCore.input().tryAquireLeftClickOwnership(hashCode());
 
 			}
 
 		}
 	}
 
-	public void update(GameTime pGameTime) {
+	public void update(LintfordCore pCore) {
 		if (!CONSOLE_ENABLED)
 			return;
 
 		if (!mActive)
 			return;
 
-		final float lDeltaTime = (float) pGameTime.elapseGameTimeMilli() / 1000f;
+		final float lDeltaTime = (float) pCore.time().elapseGameTimeMilli() / 1000f;
 
 		mFocusTimer += lDeltaTime;
 		mCaretTimer += lDeltaTime;
@@ -305,10 +302,10 @@ public class DebugConsole extends UIRectangle implements IBufferedInputCallback,
 			mScrollYPosition = mScrollBar.getScrollYBottomPosition();
 		}
 
-		mScrollBar.update(pGameTime);
+		mScrollBar.update(pCore);
 	}
 
-	public void draw(RenderState pRenderState) {
+	public void draw(LintfordCore pCore) {
 		if (!CONSOLE_ENABLED)
 			return;
 
@@ -320,13 +317,13 @@ public class DebugConsole extends UIRectangle implements IBufferedInputCallback,
 		float lTextPosition = 0;
 
 		// Draw the console background (with a black border for the text input region)
-		mSpriteBatch.begin(pRenderState.HUDCamera());
+		mSpriteBatch.begin(pCore.HUD());
 		mSpriteBatch.draw(32, 0, 32, 32, x, y, Z_DEPTH, width, height, 1.0f, 0f, 0f, 0f, 0.85f, TextureManager.TEXTURE_CORE_UI);
 		mSpriteBatch.end();
 
 		// mContentRectangle.preDraw(pRenderState, mSpriteBatch);
 
-		mConsoleFont.begin(pRenderState.HUDCamera());
+		mConsoleFont.begin(pCore.HUD());
 
 		final List<LogMessage> LOG_MESSAGES = DebugManager.DEBUG_MANAGER.logger().logLines();
 
@@ -367,7 +364,7 @@ public class DebugConsole extends UIRectangle implements IBufferedInputCallback,
 
 		mConsoleFont.end();
 
-		mScrollBar.draw(pRenderState, mSpriteBatch, Z_DEPTH + 0.1f);
+		mScrollBar.draw(pCore, mSpriteBatch, Z_DEPTH + 0.1f);
 
 	}
 

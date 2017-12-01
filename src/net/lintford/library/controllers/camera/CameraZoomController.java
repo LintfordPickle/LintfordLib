@@ -2,9 +2,8 @@ package net.lintford.library.controllers.camera;
 
 import net.lintford.library.controllers.BaseController;
 import net.lintford.library.controllers.core.ControllerManager;
+import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.camera.Camera;
-import net.lintford.library.core.input.InputState;
-import net.lintford.library.core.time.GameTime;
 
 /** Controls the zoom factor of a {@link Camera} object. */
 public class CameraZoomController extends BaseController {
@@ -118,27 +117,28 @@ public class CameraZoomController extends BaseController {
 	 * Listens to mouse scroll wheel input and updates the zoom of the associated {@link Camera} if available.
 	 */
 	@Override
-	public boolean handleInput(InputState pInputState) {
+	public boolean handleInput(LintfordCore pCore) {
 		if (mCamera == null)
 			return false;
 
 		// static zoom factor
 		if (mAllowZoom) {
-			mZoomAcceleration += pInputState.mouseWheelYOffset() * ZOOM_ACCELERATE_AMOUNT * pInputState.gameTime().elapseGameTimeSeconds() * mCamera.zoomFactor();
+			mZoomAcceleration += pCore.input().mouseWheelYOffset() * ZOOM_ACCELERATE_AMOUNT * pCore.time().elapseGameTimeSeconds() * mCamera.zoomFactor();
 		}
 
-		return super.handleInput(pInputState);
+		return super.handleInput(pCore);
 
 	}
 
 	/**
 	 * Controls the zoom factor of the associated {@link Camera} object, if present and applicable.
 	 */
-	public void update(final GameTime pGameTime) {
+	@Override
+	public void update(LintfordCore pCore) {
 		if (this.mCamera == null)
 			return;
 
-		final float DELTA_TIME = (float) pGameTime.elapseGameTimeSeconds();
+		final float DELTA_TIME = (float) pCore.time().elapseGameTimeSeconds();
 		float lZoomFactor = mCamera.zoomFactor();
 
 		// apply zoom //

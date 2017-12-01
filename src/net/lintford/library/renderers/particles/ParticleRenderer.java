@@ -2,13 +2,13 @@ package net.lintford.library.renderers.particles;
 
 import java.util.List;
 
+import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.particles.Particle;
 import net.lintford.library.core.graphics.particles.ParticleSystem;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
-import net.lintford.library.core.rendering.RenderState;
 
 /**  */
 public class ParticleRenderer {
@@ -70,14 +70,14 @@ public class ParticleRenderer {
 
 	}
 
-	public void draw(RenderState pRenderState) {
+	public void draw(LintfordCore pCore) {
 		if (!mIsLoaded || !mIsParticleLoaded || !mIsAssigned)
 			return;
 
 		final List<Particle> PARTICLES = mParticleSystem.particles();
 		final int PARTICLE_COUNT = PARTICLES.size();
 
-		mSpriteBatch.begin(pRenderState.gameCamera());
+		mSpriteBatch.begin(pCore.gameCamera());
 		for (int i = 0; i < PARTICLE_COUNT; i++) {
 			final Particle PART = PARTICLES.get(i);
 

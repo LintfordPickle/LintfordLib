@@ -9,8 +9,8 @@ import org.lwjgl.glfw.GLFWKeyCallback;
 import org.lwjgl.glfw.GLFWMouseButtonCallback;
 import org.lwjgl.glfw.GLFWScrollCallback;
 
+import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.maths.Vector2f;
-import net.lintford.library.core.time.GameTime;
 
 public class InputState {
 
@@ -208,7 +208,6 @@ public class InputState {
 	// Variables
 	// --------------------------------------
 
-	private GameTime mGameTime;
 	boolean[] mKeyButtonStates;
 	boolean[] mMouseButtonStates;
 
@@ -220,6 +219,7 @@ public class InputState {
 	private int mLeftClickOwner;
 	private int mRightClickOwner;
 
+	/** This is filled by a LWJGL callback with the mouse position */
 	private Vector2f mMouseWindowCoords;
 
 	public KeyCallback mKeyCallback;
@@ -367,15 +367,11 @@ public class InputState {
 		mCaptureKeyboardInput = false;
 	}
 
-	public GameTime gameTime() {
-		return mGameTime;
-	}
-
 	// --------------------------------------
 	// Constructor(s)
 	// --------------------------------------
 
-	public InputState(GameTime pGameTime) {
+	public InputState() {
 		mKeyButtonStates = new boolean[KEY_LIMIT];
 		mMouseButtonStates = new boolean[MOUSE_BUTTONS_LIMIT];
 
@@ -386,16 +382,14 @@ public class InputState {
 		mMouseScrollCallback = new MouseScrollCallback(this);
 
 		mMouseWindowCoords = new Vector2f();
-
-		mGameTime = pGameTime;
 	}
 
 	// --------------------------------------
 	// Core-Methods
 	// --------------------------------------
 
-	public void update(GameTime pGameTime) {
-		final double lDeltaTime = pGameTime.elapseGameTimeMilli();
+	public void update(LintfordCore pCore) {
+		final double lDeltaTime = pCore.time().elapseGameTimeMilli();
 
 		mKeyTimer += lDeltaTime;
 		mMenuClickTimer += lDeltaTime;

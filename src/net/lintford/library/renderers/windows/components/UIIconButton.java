@@ -1,12 +1,10 @@
 package net.lintford.library.renderers.windows.components;
 
-import net.lintford.library.core.camera.ICamera;
+import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
-import net.lintford.library.core.input.InputState;
 import net.lintford.library.core.maths.Rectangle;
-import net.lintford.library.core.rendering.RenderState;
 import net.lintford.library.renderers.windows.UIWindow;
 import net.lintford.library.screenmanager.entries.IMenuEntryClickListener;
 
@@ -78,11 +76,11 @@ public class UIIconButton extends UIWidget {
 	// --------------------------------------
 
 	@Override
-	public boolean handleInput(final InputState pInputState, ICamera pHUDCamera) {
-		if (intersects(pHUDCamera.getMouseCameraSpace())) {
+	public boolean handleInput(LintfordCore pCore) {
+		if (intersects(pCore.HUD().getMouseCameraSpace())) {
 			mHoveredOver = true;
 
-			if (pInputState.tryAquireLeftClickOwnership(hashCode())) {
+			if (pCore.input().tryAquireLeftClickOwnership(hashCode())) {
 				// Callback to the listener and pass our ID
 				if (mCallback != null) {
 					mCallback.onClick(mClickID);
@@ -101,7 +99,7 @@ public class UIIconButton extends UIWidget {
 	}
 
 	@Override
-	public void draw(final RenderState pRenderState) {
+	public void draw(LintfordCore pCore) {
 
 		mR = 0.19f;
 		mG = 0.13f;
@@ -114,7 +112,7 @@ public class UIIconButton extends UIWidget {
 		final TextureBatch SPRITE_BATCH = mParentWindow.rendererManager().uiSpriteBatch();
 
 		// Draw the button background
-		SPRITE_BATCH.begin(pRenderState.HUDCamera());
+		SPRITE_BATCH.begin(pCore.HUD());
 		SPRITE_BATCH.draw(0, 0, 32, 32, x, y, 0f, width, height, 1f, lR, lG, lB, 1f, TextureManager.TEXTURE_CORE_UI);
 
 		if (mButtonTexture != null) {

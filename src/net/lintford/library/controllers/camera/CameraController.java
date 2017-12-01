@@ -2,8 +2,8 @@ package net.lintford.library.controllers.camera;
 
 import net.lintford.library.controllers.BaseController;
 import net.lintford.library.controllers.core.ControllerManager;
+import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.camera.Camera;
-import net.lintford.library.core.time.GameTime;
 
 /** Controls the zoom factor of a {@link Camera} object. */
 public class CameraController extends BaseController {
@@ -54,12 +54,13 @@ public class CameraController extends BaseController {
 	/**
 	 * Controls the zoom factor of the associated {@link Camera} object, if present and applicable.
 	 */
-	public void update(final GameTime pGameTime) {
+	@Override
+	public void update(LintfordCore pCore) {
 		if (this.mCamera == null)
 			return;
 
 		// Apply the new zoom factor to the camera object
-		mCamera.update(pGameTime);
+		mCamera.update(pCore);
 
 	}
 

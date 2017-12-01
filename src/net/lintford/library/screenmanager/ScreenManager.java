@@ -5,14 +5,9 @@ import java.util.List;
 
 import org.lwjgl.opengl.GL11;
 
-import net.lintford.library.core.LWJGLCore;
-import net.lintford.library.core.camera.HUD;
+import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.textures.TextureManager;
-import net.lintford.library.core.input.InputState;
-import net.lintford.library.core.rendering.RenderState;
-import net.lintford.library.core.time.GameTime;
-import net.lintford.library.options.MasterConfig;
 import net.lintford.library.screenmanager.Screen.ScreenState;
 
 public class ScreenManager {
@@ -30,8 +25,7 @@ public class ScreenManager {
 	// Variables
 	// --------------------------------------
 
-	private LWJGLCore mLWJGLCore;
-	private MasterConfig mMasterConfig;
+	private LintfordCore mLWJGLCore;
 	private ArrayList<Screen> mScreens;
 	private ArrayList<Screen> mScreensToUpdate;
 	// Needs to be passed in by some abstract class
@@ -56,10 +50,6 @@ public class ScreenManager {
 		return mResourceManager;
 	}
 
-	public MasterConfig masterConfig() {
-		return mMasterConfig;
-	}
-
 	public ToolTip toolTip() {
 		return mToolTip;
 	}
@@ -68,23 +58,11 @@ public class ScreenManager {
 		return mScreens;
 	}
 
-	public InputState inputState() {
-		return mLWJGLCore.inputState();
-	}
-
-	public GameTime gameTime() {
-		return mLWJGLCore.gameTime();
-	}
-
-	public HUD HUD() {
-		return mLWJGLCore.HUD();
-	}
-
 	public String fontPathname() {
 		return mFontPathname;
 	}
 
-	public LWJGLCore core() {
+	public LintfordCore core() {
 		return mLWJGLCore;
 	}
 
@@ -92,9 +70,8 @@ public class ScreenManager {
 	// Constructor
 	// --------------------------------------
 
-	public ScreenManager(LWJGLCore pCore) {
+	public ScreenManager(LintfordCore pCore) {
 		mLWJGLCore = pCore;
-		mMasterConfig = pCore.configuration();
 		// mGameSettings = new GameSettings();
 
 		mToastMessages = new ArrayList<>();
@@ -152,20 +129,20 @@ public class ScreenManager {
 
 	}
 
-	public void handleInput(final InputState pInputState) {
+	public void handleInput(LintfordCore pCore) {
 		if (mScreens == null || mScreens.size() == 0)
 			return;
 
 		// Maybe we are missing out on the 'pOtherScreenHasFocus'
 		Screen lScreen = mScreens.get(mScreens.size() - 1);
 		if (lScreen.screenState() == ScreenState.TransitionOn || lScreen.screenState() == ScreenState.Active) {
-			lScreen.handleInput(mLWJGLCore.gameTime(), mLWJGLCore.inputState(), true, true);
+			lScreen.handleInput(pCore, true, true);
 
 		}
 
 	}
 
-	public void update(GameTime pGameTime) {
+	public void update(LintfordCore pCore) {
 		if (!mIsInitialised || !mIsLoaded)
 			return;
 
@@ -178,7 +155,7 @@ public class ScreenManager {
 		}
 
 		if (mToastMessages.size() > 0) {
-			mToastMessages.get(0).update(pGameTime);
+			mToastMessages.get(0).update(pCore);
 			if (mToastMessages.get(0).timeLeft() <= 0) {
 				// FIXME: Reuse the toast messages!
 				mToastMessages.get(0).unloadGLContent();
@@ -195,10 +172,10 @@ public class ScreenManager {
 			mScreensToUpdate.remove(mScreensToUpdate.size() - 1);
 
 			// update the screen positioning (recursive, children too).
-			lScreen.updateStructure();
+			lScreen.updateStructure(pCore);
 
 			// Update the screen
-			lScreen.update(pGameTime, lOtherScreenHasFocus, lCoveredByOtherScreen);
+			lScreen.update(pCore, lOtherScreenHasFocus, lCoveredByOtherScreen);
 
 			if (lScreen.screenState() == ScreenState.TransitionOn || lScreen.screenState() == ScreenState.Active) {
 				lOtherScreenHasFocus = true;
@@ -214,7 +191,7 @@ public class ScreenManager {
 
 	}
 
-	public void draw(RenderState pRenderState) {
+	public void draw(LintfordCore pCore) {
 		if (!mIsInitialised || !mIsLoaded)
 			return;
 
@@ -223,12 +200,12 @@ public class ScreenManager {
 			if (mScreens.get(i).screenState() == ScreenState.Hidden && !mScreens.get(i).showInBackground())
 				continue;
 
-			mScreens.get(i).draw(pRenderState);
+			mScreens.get(i).draw(pCore);
 
 		}
 
 		if (mToastMessages.size() > 0) {
-			mToastMessages.get(0).draw();
+			mToastMessages.get(0).draw(pCore);
 		}
 
 	}
@@ -257,8 +234,6 @@ public class ScreenManager {
 			if (mIsLoaded) { // screen manager already loaded? then load this screen manually
 				pScreen.loadGLContent(mResourceManager);
 			}
-
-			pScreen.updateStructure();
 
 		}
 

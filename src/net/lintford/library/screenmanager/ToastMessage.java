@@ -1,9 +1,8 @@
 package net.lintford.library.screenmanager;
 
+import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
-import net.lintford.library.core.time.GameTime;
-import net.lintford.library.options.DisplayConfig;
 
 public class ToastMessage {
 
@@ -12,7 +11,6 @@ public class ToastMessage {
 	// --------------------------------------
 
 	private ScreenManager mScreenManager;
-	private DisplayConfig mDisplayConfig;
 	private TextureBatch mSpriteBatch;
 	private float mTimeToDisplay;
 	private String mMessageText;
@@ -32,7 +30,6 @@ public class ToastMessage {
 
 	public ToastMessage(ScreenManager pScreenManager) {
 		mScreenManager = pScreenManager;
-		mDisplayConfig = mScreenManager.masterConfig().displayConfig();
 		mSpriteBatch = new TextureBatch();
 	}
 
@@ -50,12 +47,12 @@ public class ToastMessage {
 
 	}
 
-	public void update(GameTime pGameTime) {
-		final float deltaTime = (float) pGameTime.elapseGameTimeMilli() / 1000f;
+	public void update(LintfordCore pCore) {
+		final float deltaTime = (float) pCore.time().elapseGameTimeSeconds();
 		mTimeToDisplay -= deltaTime;
 	}
 
-	public void draw() {
+	public void draw(LintfordCore pCore) {
 
 		// float pX = mDisplayConfig.windowSize().x * 0.5f;
 		// float pY = mDisplayConfig.windowSize().y * 0.75f;

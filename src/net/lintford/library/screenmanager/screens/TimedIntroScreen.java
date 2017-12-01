@@ -1,12 +1,11 @@
 package net.lintford.library.screenmanager.screens;
 
+import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
-import net.lintford.library.core.input.InputState;
-import net.lintford.library.core.rendering.RenderState;
-import net.lintford.library.core.time.GameTime;
+import net.lintford.library.options.DisplayConfig;
 import net.lintford.library.screenmanager.IMenuAction;
 import net.lintford.library.screenmanager.Screen;
 import net.lintford.library.screenmanager.ScreenManager;
@@ -32,7 +31,7 @@ public class TimedIntroScreen extends Screen {
 	private boolean mStretchBackgroundToFit;
 
 	// --------------------------------------
-	// Properites
+	// Properties
 	// --------------------------------------
 
 	public boolean stretchBackgroundToFit() {
@@ -83,12 +82,12 @@ public class TimedIntroScreen extends Screen {
 	}
 
 	@Override
-	public void handleInput(GameTime pGameTime, InputState pInputState, boolean pAcceptMouse, boolean pAcceptKeyboard) {
-		super.handleInput(pGameTime, pInputState, pAcceptMouse, pAcceptKeyboard);
+	public void handleInput(LintfordCore pCore, boolean pAcceptMouse, boolean pAcceptKeyboard) {
+		super.handleInput(pCore, pAcceptMouse, pAcceptKeyboard);
 
 		if (!mTimedActionPerformed) {
-			if (pInputState.isMouseTimedLeftClickAvailable()) {
-				pInputState.setLeftMouseClickHandled();
+			if (pCore.input().isMouseTimedLeftClickAvailable()) {
+				pCore.input().setLeftMouseClickHandled();
 				mUserRequestSkip = true;
 
 			}
@@ -98,11 +97,11 @@ public class TimedIntroScreen extends Screen {
 	}
 
 	@Override
-	public void update(GameTime pGameTime, boolean pOtherScreenHasFocus, boolean pCoveredByOtherScreen) {
-		super.update(pGameTime, pOtherScreenHasFocus, pCoveredByOtherScreen);
+	public void update(LintfordCore pCore, boolean pOtherScreenHasFocus, boolean pCoveredByOtherScreen) {
+		super.update(pCore, pOtherScreenHasFocus, pCoveredByOtherScreen);
 
 		if (!mTimedActionPerformed) {
-			final float deltaTime = (float) pGameTime.elapseGameTimeMilli() / 1000f;
+			final float deltaTime = (float) pCore.time().elapseGameTimeMilli() / 1000f;
 
 			mShowImageTime += deltaTime;
 
@@ -121,8 +120,8 @@ public class TimedIntroScreen extends Screen {
 	}
 
 	@Override
-	public void draw(RenderState pRenderState) {
-		super.draw(pRenderState);
+	public void draw(LintfordCore pCore) {
+		super.draw(pCore);
 
 		float lLeft = -mBackgroundTexture.getTextureWidth() / 2;
 		float lRight = mBackgroundTexture.getTextureWidth();
@@ -130,13 +129,14 @@ public class TimedIntroScreen extends Screen {
 		float lBottom = mBackgroundTexture.getTextureHeight();
 
 		if (mStretchBackgroundToFit) {
-			lLeft = -pRenderState.displayConfig().windowSize().x / 2;
-			lRight = pRenderState.displayConfig().windowSize().x;
-			lTop = -pRenderState.displayConfig().windowSize().y / 2;
-			lBottom = pRenderState.displayConfig().windowSize().y;
+			DisplayConfig lDisplay = pCore.config().display();
+			lLeft = -lDisplay.windowSize().x / 2;
+			lRight = lDisplay.windowSize().x;
+			lTop = -lDisplay.windowSize().y / 2;
+			lBottom = lDisplay.windowSize().y;
 		}
 
-		mTextureBatch.begin(pRenderState.HUDCamera());
+		mTextureBatch.begin(pCore.HUD());
 		mTextureBatch.draw(0, 0, 800, 600, lLeft, lTop, -1f, lRight, lBottom, 1f, mA, mBackgroundTexture);
 		mTextureBatch.end();
 

@@ -4,15 +4,13 @@ package net.lintford.library.renderers.windows;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.camera.ICamera;
 import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
-import net.lintford.library.core.input.InputState;
 import net.lintford.library.core.maths.Rectangle;
-import net.lintford.library.core.rendering.RenderState;
-import net.lintford.library.core.time.GameTime;
 import net.lintford.library.renderers.BaseRenderer;
 import net.lintford.library.renderers.RendererManager;
 import net.lintford.library.renderers.windows.components.IScrollBarArea;
@@ -158,22 +156,22 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 
 	}
 
-	public boolean handleInput(InputState pInputState, ICamera pHUDCamera) {
+	public boolean handleInput(LintfordCore pCore) {
 		if (!isOpen())
 			return false;
 
-		final float lMouseScreenSpaceX = pHUDCamera.getMouseWorldSpaceX();
-		final float lMouseScreenSpaceY = pHUDCamera.getMouseWorldSpaceY();
+		final float lMouseScreenSpaceX = pCore.HUD().getMouseWorldSpaceX();
+		final float lMouseScreenSpaceY = pCore.HUD().getMouseWorldSpaceY();
 
 		// First check if the scroll bar has been used
-		if (mScrollBar.handleInput(pInputState, pHUDCamera)) {
+		if (mScrollBar.handleInput(pCore)) {
 			return true;
 		}
 
 		// Update the window components
 		final int lComponentCount = mComponents.size();
 		for (int i = 0; i < lComponentCount; i++) {
-			if (mComponents.get(i).handleInput(pInputState, pHUDCamera)) {
+			if (mComponents.get(i).handleInput(pCore)) {
 				return true;
 
 			}
@@ -182,18 +180,19 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 
 		if (mIsWindowMoving) {
 			// check if user has stopped dragging the window (worst case we skip this frame)
-			if (!pInputState.mouseLeftClick()) {
+			if (!pCore.input().mouseLeftClick()) {
 				mIsWindowMoving = false;
 				mMouseDownLastUpdate = false;
 				return false;
 			}
 
-			mWindowArea.x += (pInputState.mouseWindowCoords().x - dx);
-			mWindowArea.y += (pInputState.mouseWindowCoords().y - dy);
+			// FIXME: Check history
+			mWindowArea.x += (pCore.input().mouseWindowCoords().x - dx);
+			mWindowArea.y += (pCore.input().mouseWindowCoords().y - dy);
 
 			// update the delta
-			dx = pInputState.mouseWindowCoords().x;
-			dy = pInputState.mouseWindowCoords().y;
+			dx = pCore.input().mouseWindowCoords().x;
+			dy = pCore.input().mouseWindowCoords().y;
 
 			return true;
 
@@ -203,25 +202,25 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 
 		// 2. window captures mouse clicks even if not dragging
 
-		if (mIsWindowMoveable && !mIsWindowMoving && mWindowArea.intersects(pHUDCamera.getMouseCameraSpace())) {
+		if (mIsWindowMoveable && !mIsWindowMoving && mWindowArea.intersects(pCore.HUD().getMouseCameraSpace())) {
 
 			// Only acquire lock when we are ready to move ...
-			if (pInputState.tryAquireLeftClickOwnership(hashCode())) {
+			if (pCore.input().tryAquireLeftClickOwnership(hashCode())) {
 				if (!mMouseDownLastUpdate) {
 					mMouseDownLastUpdate = true;
-					dx = pInputState.mouseWindowCoords().x;
-					dy = pInputState.mouseWindowCoords().y;
+					dx = pCore.input().mouseWindowCoords().x;
+					dy = pCore.input().mouseWindowCoords().y;
 
 				}
 
-				float nx = pInputState.mouseWindowCoords().x;
-				float ny = pInputState.mouseWindowCoords().y;
+				float nx = pCore.input().mouseWindowCoords().x;
+				float ny = pCore.input().mouseWindowCoords().y;
 
 				final int MINIMUM_TOLERENCE = 3;
 
 				if (Math.abs(nx - dx) > MINIMUM_TOLERENCE || Math.abs(ny - dy) > MINIMUM_TOLERENCE) {
-					// Now we can tryto acquire the lock, and if we get it, start dragging the window
-					if (pInputState.tryAquireLeftClickOwnership(hashCode())) {
+					// Now we can try to acquire the lock, and if we get it, start dragging the window
+					if (pCore.input().tryAquireLeftClickOwnership(hashCode())) {
 						mIsWindowMoving = true;
 
 					}
@@ -232,14 +231,14 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 
 		}
 
-		if (!pInputState.mouseLeftClick()) {
+		if (!pCore.input().mouseLeftClick()) {
 			mIsWindowMoving = false;
 			mMouseDownLastUpdate = false;
 		}
 
 		// If the mouse was clicked within the window, then we need to process the click anyway
 		if (mWindowArea.intersects(lMouseScreenSpaceX, lMouseScreenSpaceY)) {
-			return pInputState.tryAquireLeftClickOwnership(hashCode());
+			return pCore.input().tryAquireLeftClickOwnership(hashCode());
 
 		}
 
@@ -247,38 +246,38 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 
 	}
 
-	public void update(GameTime pGameTime) {
+	public void update(LintfordCore pCore) {
 		if (!isOpen())
 			return;
 
-		mScrollBar.update(pGameTime);
+		mScrollBar.update(pCore);
 
 		// Update the window components
 		final int lComponentCount = mComponents.size();
 		for (int i = 0; i < lComponentCount; i++) {
-			mComponents.get(i).update(pGameTime);
+			mComponents.get(i).update(pCore);
 		}
 
 	}
 
 	@Override
-	public void draw(RenderState pRenderState) {
+	public void draw(LintfordCore pCore) {
 		if (!isOpen())
 			return;
 
-		updateWindowPosition(pRenderState.HUDCamera());
-		
+		updateWindowPosition(pCore.HUD());
+
 		mWindowAlpha = 0.95f;
 
 		final TextureBatch SPRITE_BATCH_UI = mRendererManager.uiSpriteBatch();
 
 		// Draw the window background
-		SPRITE_BATCH_UI.begin(pRenderState.HUDCamera());
+		SPRITE_BATCH_UI.begin(pCore.HUD());
 		SPRITE_BATCH_UI.draw(96, 0, 32, 32, mWindowArea.x, mWindowArea.y + getTitleBarHeight() + 5, Z_DEPTH, mWindowArea.width, mWindowArea.height - getTitleBarHeight() - 5, 1f, 1f, 1f, 0.7f, 0f, 0f, 0f, 1f, 1f, TextureManager.TEXTURE_CORE_UI);
 		SPRITE_BATCH_UI.end();
 
 		// Draw the title bar
-		SPRITE_BATCH_UI.begin(pRenderState.HUDCamera());
+		SPRITE_BATCH_UI.begin(pCore.HUD());
 		SPRITE_BATCH_UI.draw(32, 0, 32, 32, mWindowArea.x, mWindowArea.y, Z_DEPTH, mWindowArea.width, getTitleBarHeight(), 1f, 1f, 1f, mWindowAlpha, 0f, 0f, 0f, 1f, 1f, TextureManager.TEXTURE_CORE_UI);
 
 		float lTitleX = mWindowArea.x + WINDOW_CONTENT_PADDING_X;
@@ -297,19 +296,19 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 
 		// Draw the window title
 		FontUnit lTitleFontUnit = mRendererManager.titleFont();
-		lTitleFontUnit.begin(pRenderState.HUDCamera());
+		lTitleFontUnit.begin(pCore.HUD());
 		lTitleFontUnit.draw(mWindowTitle, lTitleX, lTitleY + 2, Z_DEPTH, 1f, 1f, 1f, 1f, 1f, -1);
 		lTitleFontUnit.end();
 
 		if (mContentRectangle.height - windowArea().height > 0) {
-			mScrollBar.draw(pRenderState, SPRITE_BATCH_UI, Z_DEPTH);
+			mScrollBar.draw(pCore, SPRITE_BATCH_UI, Z_DEPTH);
 
 		}
 
 		// Draw the window components
 		final int lComponentCount = mComponents.size();
 		for (int i = 0; i < lComponentCount; i++) {
-			mComponents.get(i).draw(pRenderState);
+			mComponents.get(i).draw(pCore);
 
 		}
 

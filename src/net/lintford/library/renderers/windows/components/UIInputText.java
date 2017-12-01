@@ -1,14 +1,12 @@
 package net.lintford.library.renderers.windows.components;
 
-import net.lintford.library.core.camera.ICamera;
+import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 import net.lintford.library.core.input.IBufferedInputCallback;
 import net.lintford.library.core.input.InputState;
 import net.lintford.library.core.maths.Rectangle;
-import net.lintford.library.core.rendering.RenderState;
-import net.lintford.library.core.time.GameTime;
 import net.lintford.library.renderers.RendererManager;
 
 public class UIInputText extends Rectangle implements IBufferedInputCallback {
@@ -102,18 +100,18 @@ public class UIInputText extends Rectangle implements IBufferedInputCallback {
 	// Core-Methods
 	// --------------------------------------
 
-	public boolean handleInput(InputState pInputState, ICamera pHUDCamera) {
-		if (pInputState.isMouseTimedLeftClickAvailable()) {
-			if (mCancelRectangle.intersects(pHUDCamera.getMouseCameraSpace())) {
+	public boolean handleInput(LintfordCore pCore) {
+		if (pCore.input().isMouseTimedLeftClickAvailable()) {
+			if (mCancelRectangle.intersects(pCore.HUD().getMouseCameraSpace())) {
 				if (mInputField.length() > 0) {
-					pInputState.mouseTimedLeftClick();
+					pCore.input().mouseTimedLeftClick();
 					if (mInputField.length() > 0)
 						mInputField.delete(0, mInputField.length());
 					mStringLength = 0;
 
 					mInputField.append(mEmptyString);
 
-					pInputState.stopCapture();
+					pCore.input().stopCapture();
 
 					mHasFocus = false;
 					mShowCaret = false;
@@ -122,11 +120,11 @@ public class UIInputText extends Rectangle implements IBufferedInputCallback {
 			}
 		}
 
-		if (pInputState.isMouseTimedLeftClickAvailable()) {
-			if (intersects(pHUDCamera.getMouseCameraSpace())) {
-				pInputState.mouseTimedLeftClick();
+		if (pCore.input().isMouseTimedLeftClickAvailable()) {
+			if (intersects(pCore.HUD().getMouseCameraSpace())) {
+				pCore.input().mouseTimedLeftClick();
 
-				onClick(pInputState);
+				onClick(pCore.input());
 
 				return true;
 
@@ -141,8 +139,8 @@ public class UIInputText extends Rectangle implements IBufferedInputCallback {
 		return false;
 	}
 
-	public void update(GameTime pGameTime) {
-		mCaretFlashTimer += pGameTime.elapseGameTimeMilli();
+	public void update(LintfordCore pCore) {
+		mCaretFlashTimer += pCore.time().elapseGameTimeMilli();
 
 		final int lCANCEL_RECT_SIZE = 24;
 		mCancelRectangle.x = x + width - lCANCEL_RECT_SIZE - 2;
@@ -160,14 +158,14 @@ public class UIInputText extends Rectangle implements IBufferedInputCallback {
 
 	}
 
-	public void draw(RenderState pRenderState, TextureBatch pUISpriteBatch) {
+	public void draw(LintfordCore pCore, TextureBatch pUISpriteBatch) {
 
-		pUISpriteBatch.begin(pRenderState.HUDCamera());
+		pUISpriteBatch.begin(pCore.HUD());
 		pUISpriteBatch.draw(64, 0, 32, 32, x, y, -0.1f, width, height, 1f, 1f, 1f, 1f, 1, TextureManager.TEXTURE_CORE_UI);
 		pUISpriteBatch.end();
 
 		// Draw the cancel button rectangle
-		pUISpriteBatch.begin(pRenderState.HUDCamera());
+		pUISpriteBatch.begin(pCore.HUD());
 		pUISpriteBatch.draw(320, 96, 32, 32, mCancelRectangle.x, mCancelRectangle.y, -0.1f, mCancelRectangle.width, mCancelRectangle.height, 1f, 1f, 1f, 1f, 1, TextureManager.TEXTURE_CORE_UI);
 		pUISpriteBatch.end();
 
@@ -177,16 +175,16 @@ public class UIInputText extends Rectangle implements IBufferedInputCallback {
 
 		String lText = mInputField.toString();
 		float lAlpha = 1f;
-		if(lText.length() == 0) {
+		if (lText.length() == 0) {
 			lText = "<search>";
 			lAlpha = 0.5f;
 		}
-		
-		lFont.begin(pRenderState.HUDCamera());
+
+		lFont.begin(pCore.HUD());
 		lFont.draw(lText, x + 5, y, -0.1f, 1f, 1f, 1f, lAlpha, 1f, -1);
 
 		if (mShowCaret && mHasFocus) {
-			lFont.draw("|", x + lInputTextWidth + SPACE_BETWEEN_TEXT*3, y, 1f);
+			lFont.draw("|", x + lInputTextWidth + SPACE_BETWEEN_TEXT * 3, y, 1f);
 		}
 
 		lFont.end();

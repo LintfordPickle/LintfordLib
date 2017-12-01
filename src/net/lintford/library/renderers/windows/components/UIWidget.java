@@ -1,10 +1,7 @@
 package net.lintford.library.renderers.windows.components;
 
-import net.lintford.library.core.camera.ICamera;
+import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.graphics.ResourceManager;
-import net.lintford.library.core.input.InputState;
-import net.lintford.library.core.rendering.RenderState;
-import net.lintford.library.core.time.GameTime;
 import net.lintford.library.renderers.windows.UIRectangle;
 import net.lintford.library.renderers.windows.UIWindow;
 
@@ -50,14 +47,14 @@ public abstract class UIWidget extends UIRectangle {
 
 	}
 
-	public boolean handleInput(final InputState pInputState, ICamera pHUDCamera) {
+	public boolean handleInput(LintfordCore pCore) {
 		return false;
 	}
 
-	public void update(final GameTime pGameTime) {
+	public void update(LintfordCore pCore) {
 
 	}
 
-	public abstract void draw(final RenderState pRenderState);
+	public abstract void draw(LintfordCore pCore);
 
 }

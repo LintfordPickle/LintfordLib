@@ -1,10 +1,8 @@
 package net.lintford.library.renderers;
 
+import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.debug.DebugManager;
 import net.lintford.library.core.graphics.ResourceManager;
-import net.lintford.library.core.input.InputState;
-import net.lintford.library.core.rendering.RenderState;
-import net.lintford.library.core.time.GameTime;
 
 public abstract class BaseRenderer {
 
@@ -97,15 +95,15 @@ public abstract class BaseRenderer {
 
 	}
 
-	public boolean handleInput(InputState pInputState) {
+	public boolean handleInput(LintfordCore pCore) {
 		return false;
 	}
 
-	public void update(GameTime pGameTime) {
+	public void update(LintfordCore pCore) {
 
 	}
 
-	public abstract void draw(RenderState pRenderState);
+	public abstract void draw(LintfordCore pCore);
 
 	// --------------------------------------
 	// Methods

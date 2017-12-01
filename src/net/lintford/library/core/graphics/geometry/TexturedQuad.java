@@ -8,10 +8,10 @@ import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
+import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.vertices.VertexDataStructurePT;
 import net.lintford.library.core.maths.Matrix4f;
-import net.lintford.library.core.rendering.RenderState;
 
 public class TexturedQuad {
 
@@ -144,7 +144,7 @@ public class TexturedQuad {
 	// Core-Methods
 	// --------------------------------------
 
-	public void draw(RenderState pRenderState) {
+	public void draw(LintfordCore pCore) {
 
 		// Bind to the VAO that has all the information about the quad vertices
 		GL30.glBindVertexArray(mVaoId);

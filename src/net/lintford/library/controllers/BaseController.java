@@ -1,8 +1,7 @@
 package net.lintford.library.controllers;
 
 import net.lintford.library.controllers.core.ControllerManager;
-import net.lintford.library.core.input.InputState;
-import net.lintford.library.core.time.GameTime;
+import net.lintford.library.core.LintfordCore;
 
 public abstract class BaseController {
 
@@ -83,12 +82,12 @@ public abstract class BaseController {
 
 	public abstract void initialise();
 
-	public boolean handleInput(InputState pInputState) {
+	public boolean handleInput(LintfordCore pCore) {
 
 		return false;
 	}
 
-	public void update(GameTime pGameTime) {
+	public void update(LintfordCore pCore) {
 
 	}
 

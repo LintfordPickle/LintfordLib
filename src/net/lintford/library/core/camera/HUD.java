@@ -1,10 +1,9 @@
 package net.lintford.library.core.camera;
 
-import net.lintford.library.core.input.InputState;
+import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.maths.Matrix4f;
 import net.lintford.library.core.maths.Rectangle;
 import net.lintford.library.core.maths.Vector2f;
-import net.lintford.library.core.time.GameTime;
 import net.lintford.library.options.DisplayConfig;
 import net.lintford.library.options.IResizeListener;
 
@@ -124,16 +123,16 @@ public class HUD implements ICamera, IResizeListener {
 	// Core-Methods
 	// --------------------------------------
 
-	public void handleInput(InputState pInputState) {
+	public void handleInput(LintfordCore pCore) {
 		mRatioW = ((float) mWindowWidth / (float) mDisplayConfig.windowSize().x);
 		mRatioH = ((float) mWindowHeight / (float) mDisplayConfig.windowSize().y);
 
-		mMouseHUDSpace.x = (float) (-mWindowWidth * 0.5f + (pInputState.mouseWindowCoords().x - 1) * mRatioW);
-		mMouseHUDSpace.y = (float) (-mWindowHeight * 0.5f + (pInputState.mouseWindowCoords().y - 1) * mRatioH);
+		mMouseHUDSpace.x = (float) (-mWindowWidth * 0.5f + (pCore.input().mouseWindowCoords().x - 1) * mRatioW);
+		mMouseHUDSpace.y = (float) (-mWindowHeight * 0.5f + (pCore.input().mouseWindowCoords().y - 1) * mRatioH);
 
 	}
 
-	public void update(GameTime pGameTime) {
+	public void update(LintfordCore pCore) {
 		if (mWindowWidth == 0 || mWindowHeight == 0)
 			return;
 

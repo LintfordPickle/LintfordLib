@@ -1,12 +1,9 @@
 package net.lintford.library.renderers.windows.components;
 
-import net.lintford.library.core.camera.ICamera;
+import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
-import net.lintford.library.core.input.InputState;
 import net.lintford.library.core.maths.MathHelper;
-import net.lintford.library.core.rendering.RenderState;
-import net.lintford.library.core.time.GameTime;
 import net.lintford.library.renderers.windows.UIWindow;
 import net.lintford.library.screenmanager.entries.IMenuEntryClickListener;
 
@@ -77,12 +74,12 @@ public class UISlider extends UIWidget {
 	// --------------------------------------
 
 	@Override
-	public boolean handleInput(final  InputState pInputState, ICamera pHUDCamera) {
-		if (intersects(pHUDCamera.getMouseCameraSpace())) {
-			if (pInputState.tryAquireLeftClickOwnership(hashCode())) {
+	public boolean handleInput(LintfordCore pCore) {
+		if (intersects(pCore.HUD().getMouseCameraSpace())) {
+			if (pCore.input().tryAquireLeftClickOwnership(hashCode())) {
 
 				float lWindowX = x;
-				float lMouseX = pHUDCamera.getMouseCameraSpace().x;
+				float lMouseX = pCore.HUD().getMouseCameraSpace().x;
 				mCurrentPosition = MathHelper.clamp(lMouseX - lWindowX, 0, width);
 				mCurrentValue = MathHelper.scaleToRange(mCurrentPosition, 0, width, mMinValue, mMaxValue);
 
@@ -101,13 +98,13 @@ public class UISlider extends UIWidget {
 	}
 
 	@Override
-	public void update(final GameTime pGameTime) {
-		super.update(pGameTime);
+	public void update(LintfordCore pCore) {
+		super.update(pCore);
 
 	}
 
 	@Override
-	public void draw(final RenderState pRenderState) {
+	public void draw(LintfordCore pCore) {
 
 		// Seconds
 		mMinValue = 0;
@@ -115,11 +112,11 @@ public class UISlider extends UIWidget {
 
 		final float SLIDER_RAIL_HEIGHT = 4;
 		final float SLIDER_WIDTH = 10;
-		
+
 		final TextureBatch SPRITE_BATCH = mParentWindow.rendererManager().uiSpriteBatch();
 
 		// Draw the button background
-		SPRITE_BATCH.begin(pRenderState.HUDCamera());
+		SPRITE_BATCH.begin(pCore.HUD());
 		SPRITE_BATCH.draw(0, 0, 32, 32, x, y + height / 2 - SLIDER_RAIL_HEIGHT / 2, 0f, width, SLIDER_RAIL_HEIGHT, 1f, mR, mG, mB, 1f, TextureManager.TEXTURE_CORE_UI);
 		SPRITE_BATCH.draw(0, 0, 32, 32, x + mCurrentPosition - SLIDER_WIDTH / 2, y, 0f, SLIDER_WIDTH, height, 1f, mB, mG, mR, 1f, TextureManager.TEXTURE_CORE_UI);
 

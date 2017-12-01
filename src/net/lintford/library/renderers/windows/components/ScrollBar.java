@@ -1,11 +1,8 @@
 package net.lintford.library.renderers.windows.components;
 
-import net.lintford.library.core.camera.ICamera;
+import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
-import net.lintford.library.core.input.InputState;
-import net.lintford.library.core.rendering.RenderState;
-import net.lintford.library.core.time.GameTime;
 import net.lintford.library.renderers.windows.UIRectangle;
 
 public class ScrollBar extends UIRectangle {
@@ -50,14 +47,14 @@ public class ScrollBar extends UIRectangle {
 	// Core-Methods
 	// --------------------------------------
 
-	public boolean handleInput(InputState pInputState, ICamera pHUDCamera) {
-		final float lMouseScreenSpaceX = pHUDCamera.getMouseWorldSpaceX();
-		final float lMouseScreenSpaceY = pHUDCamera.getMouseWorldSpaceY();
+	public boolean handleInput(LintfordCore pCore) {
+		final float lMouseScreenSpaceX = pCore.HUD().getMouseWorldSpaceX();
+		final float lMouseScreenSpaceY = pCore.HUD().getMouseWorldSpaceY();
 
 		final float lMaxDiff = mScrollBarArea.contentArea().height - mScrollBarArea.windowArea().height;
 
 		// First check the mouse is within bounds
-		if (!pInputState.mouseLeftClick()) {
+		if (!pCore.input().mouseLeftClick()) {
 			mClickActive = false; // Cannot be active if mouse not clicked
 			return false;
 
@@ -67,7 +64,7 @@ public class ScrollBar extends UIRectangle {
 			return false;
 		}
 
-		if (!pInputState.tryAquireLeftClickOwnership(hashCode()))
+		if (!pCore.input().tryAquireLeftClickOwnership(hashCode()))
 			return false;
 
 		if (!mClickActive) {
@@ -99,7 +96,7 @@ public class ScrollBar extends UIRectangle {
 		return true;
 	}
 
-	public void update(GameTime pGameTime) {
+	public void update(LintfordCore pCore) {
 		float lViewportHeight = mScrollBarArea.windowArea().height;
 		float lContentHeight = mScrollBarArea.contentArea().height;
 
@@ -116,8 +113,8 @@ public class ScrollBar extends UIRectangle {
 		height = mScrollBarArea.windowArea().height;
 	}
 
-	public void draw(RenderState pRenderState, TextureBatch pSpriteBatch, float pZDepth) {
-		pSpriteBatch.begin(pRenderState.HUDCamera());
+	public void draw(LintfordCore pCore, TextureBatch pSpriteBatch, float pZDepth) {
+		pSpriteBatch.begin(pCore.HUD());
 
 		// Scroll bar background
 		pSpriteBatch.draw(0, 0, 32, 32, x, y, pZDepth, width, height, 1f, 0.23f, 0.22f, 0.32f, 0.9f, TextureManager.TEXTURE_CORE_UI);

@@ -3,10 +3,9 @@ package net.lintford.library.screenmanager.entries;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.lintford.library.core.camera.ICamera;
+import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.graphics.fonts.BitmapFont;
 import net.lintford.library.core.input.InputState;
-import net.lintford.library.core.rendering.RenderState;
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.Screen;
@@ -57,20 +56,20 @@ public class MenuDropDownEntry extends MenuEntry {
 	// --------------------------------------
 
 	@Override
-	public boolean handleInput(InputState pInputState, ICamera pHUDCamera) {
+	public boolean handleInput(LintfordCore pCore) {
 		if (mHasFocus) {
 
 		} else {
 			mFocusLocked = false; // no lock if not focused
 		}
 
-		if (intersects(mScreenManager.HUD().getMouseCameraSpace())) {
-			if (pInputState.mouseTimedLeftClick()) {
+		if (intersects(pCore.HUD().getMouseCameraSpace())) {
+			if (pCore.input().mouseTimedLeftClick()) {
 				if (mEnabled) {
 
 					// TODO: play the menu clicked sound
 
-					mParentScreen.setFocusOn(pInputState, this, true);
+					mParentScreen.setFocusOn(pCore.input(), this, true);
 					// mParentScreen.setHoveringOn(this);
 
 				}
@@ -81,7 +80,7 @@ public class MenuDropDownEntry extends MenuEntry {
 
 			// Check if tool tips are enabled.
 			if (mToolTipEnabled) {
-				mToolTipTimer += pInputState.gameTime().elapseGameTimeMilli();
+				mToolTipTimer += pCore.time().elapseGameTimeMilli();
 			}
 
 			return true;
@@ -94,8 +93,8 @@ public class MenuDropDownEntry extends MenuEntry {
 	}
 
 	@Override
-	public void draw(Screen pScreen, RenderState pRenderState, boolean pIsSelected, float pParentZDepth) {
-		super.draw(pScreen, pRenderState, pIsSelected, pParentZDepth);
+	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pParentZDepth) {
+		super.draw(pCore, pScreen, pIsSelected, pParentZDepth);
 
 		BitmapFont lFontBitmap = mParentScreen.font().bitmap();
 

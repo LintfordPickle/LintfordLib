@@ -4,6 +4,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
 
+import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.camera.ICamera;
 import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.geometry.TexturedQuad;
@@ -12,7 +13,6 @@ import net.lintford.library.core.graphics.shaders.ShaderMVP_PT;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
-import net.lintford.library.core.rendering.RenderState;
 
 public class DebugDrawers {
 
@@ -90,18 +90,18 @@ public class DebugDrawers {
 		mTextureBatch.draw(pSourceX, pSourceY, pSourceWidth, pSourceHeight, pDestinationPositionX, pDestinationPositionY, pDestinationZ, pDestinationWidth, pDestinationHeight, 1f, pTexture);
 	}
 
-	public void drawRenderTarget(RenderState pRenderState, float pDestinationPositionX, float pDestinationPositionY, float pDestinationWidth, float pDestinationHeight, float pDestinationZ, RenderTarget pRenderTarget) {
+	public void drawRenderTarget(LintfordCore pCore, float pDestinationPositionX, float pDestinationPositionY, float pDestinationWidth, float pDestinationHeight, float pDestinationZ, RenderTarget pRenderTarget) {
 		GL13.glActiveTexture(GL13.GL_TEXTURE0); // add scene texture
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, pRenderTarget.colorTextureID());
 
-		mBasicShader.projectionMatrix(pRenderState.HUDCamera().projection());
-		mBasicShader.viewMatrix(pRenderState.HUDCamera().view());
+		mBasicShader.projectionMatrix(pCore.HUD().projection());
+		mBasicShader.viewMatrix(pCore.HUD().view());
 
 		mTexturedQuad.createModelMatrix(pDestinationPositionX, pDestinationPositionY, 200, 200, -1f);
 		mBasicShader.modelMatrix(mTexturedQuad.modelMatrix());
 
 		mBasicShader.bind();
-		mTexturedQuad.draw(pRenderState);
+		mTexturedQuad.draw(pCore);
 		mBasicShader.unbind();
 
 		GL13.glActiveTexture(GL13.GL_TEXTURE0); //

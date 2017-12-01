@@ -4,12 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.lintford.library.ConstantsTable;
-import net.lintford.library.core.camera.ICamera;
+import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.textures.TextureManager;
-import net.lintford.library.core.input.InputState;
-import net.lintford.library.core.rendering.RenderState;
-import net.lintford.library.core.time.GameTime;
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.Screen;
@@ -103,11 +100,11 @@ public class HorizontalEntryGroup extends MenuEntry {
 	}
 
 	@Override
-	public boolean handleInput(InputState pInputState, ICamera pHUDCamera) {
-		if (intersects(mScreenManager.HUD().getMouseCameraSpace())) {
+	public boolean handleInput(LintfordCore pCore) {
+		if (intersects(pCore.HUD().getMouseCameraSpace())) {
 			int lCount = mChildEntries.size();
 			for (int i = 0; i < lCount; i++) {
-				if (mChildEntries.get(i).handleInput(pInputState, pHUDCamera)) {
+				if (mChildEntries.get(i).handleInput(pCore)) {
 					return true;
 				}
 
@@ -118,7 +115,6 @@ public class HorizontalEntryGroup extends MenuEntry {
 		} else {
 			mToolTipTimer = 0;
 
-			// We
 			int lCount = mChildEntries.size();
 			for (int i = 0; i < lCount; i++) {
 				mChildEntries.get(i).hasFocus(false);
@@ -145,20 +141,20 @@ public class HorizontalEntryGroup extends MenuEntry {
 	}
 
 	@Override
-	public void update(GameTime pGameTime, MenuScreen pScreen, boolean pIsSelected) {
-		super.update(pGameTime, pScreen, pIsSelected);
+	public void update(LintfordCore pCore, MenuScreen pScreen, boolean pIsSelected) {
+		super.update(pCore, pScreen, pIsSelected);
 
 		int lCount = mChildEntries.size();
 		for (int i = 0; i < lCount; i++) {
-			mChildEntries.get(i).update(pGameTime, pScreen, pIsSelected);
+			mChildEntries.get(i).update(pCore, pScreen, pIsSelected);
 		}
 
 	}
 
 	@Override
-	public void draw(Screen pScreen, RenderState pRenderState, boolean pIsSelected, float pParentZDepth) {
+	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pParentZDepth) {
 		if (ConstantsTable.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
-			mSpriteBatch.begin(mScreenManager.HUD());
+			mSpriteBatch.begin(pCore.HUD());
 			final float SCALE = 1f;
 			final float ALPHA = 0.3f;
 			mSpriteBatch.draw(0, 0, 32, 32, x, y, pParentZDepth + .1f, width, height, SCALE, 0.5f * mParentScreen.r(), 0.2f * mParentScreen.g(), ALPHA * mParentScreen.b(), mParentScreen.a(), TextureManager.TEXTURE_CORE_UI);
@@ -167,7 +163,7 @@ public class HorizontalEntryGroup extends MenuEntry {
 
 		int lCount = mChildEntries.size();
 		for (int i = 0; i < lCount; i++) {
-			mChildEntries.get(i).draw(pScreen, pRenderState, pIsSelected, pParentZDepth);
+			mChildEntries.get(i).draw(pCore, pScreen, pIsSelected, pParentZDepth);
 		}
 	}
 

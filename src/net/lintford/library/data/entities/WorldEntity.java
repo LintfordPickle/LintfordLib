@@ -1,10 +1,9 @@
 package net.lintford.library.data.entities;
 
-import java.io.Serializable;
-
 import net.lintford.library.core.time.GameTime;
+import net.lintford.library.data.BaseData;
 
-public abstract class WorldEntity implements Serializable {
+public abstract class WorldEntity extends BaseData {
 
 	// --------------------------------------
 	// Constants

@@ -3,9 +3,8 @@ package net.lintford.library.screenmanager;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.graphics.ResourceManager;
-import net.lintford.library.core.rendering.RenderState;
-import net.lintford.library.core.time.GameTime;
 import net.lintford.library.core.time.TimeSpan;
 import net.lintford.library.screenmanager.transitions.TransitionFadeIn;
 import net.lintford.library.screenmanager.transitions.TransitionFadeOut;
@@ -80,10 +79,10 @@ public class LoadingScreen extends Screen {
 	}
 
 	@Override
-	public void update(GameTime pGameTime, boolean pOtherScreenHasFocus, boolean pCoveredByOtherScreen) {
-		super.update(pGameTime, pOtherScreenHasFocus, pCoveredByOtherScreen);
+	public void update(LintfordCore pCore, boolean pOtherScreenHasFocus, boolean pCoveredByOtherScreen) {
+		super.update(pCore, pOtherScreenHasFocus, pCoveredByOtherScreen);
 
-		final double lDeltaTime = pGameTime.elapseGameTimeMilli() / 1000f;
+		final double lDeltaTime = pCore.time().elapseGameTimeMilli() / 1000f;
 		
 		mBlinkTimer += lDeltaTime;
 
@@ -129,7 +128,7 @@ public class LoadingScreen extends Screen {
 	}
 
 	@Override
-	public void draw(RenderState pRenderState) {
+	public void draw(LintfordCore pCore) {
 		if (mDisplayLoadingText) {
 
 			// TODO(John): Implement the pixel font here

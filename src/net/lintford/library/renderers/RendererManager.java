@@ -4,14 +4,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.debug.DebugManager;
 import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.rendertarget.RenderTarget;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
-import net.lintford.library.core.input.InputState;
 import net.lintford.library.core.rendering.RenderState;
-import net.lintford.library.core.time.GameTime;
 import net.lintford.library.options.DisplayConfig;
 import net.lintford.library.options.IResizeListener;
 import net.lintford.library.renderers.windows.UIWindow;
@@ -30,6 +29,7 @@ public class RendererManager {
 	// variables
 	// --------------------------------------
 
+	private LintfordCore mCore;
 	private ResourceManager mResourceManager;
 	private List<BaseRenderer> mRenderers;
 	private List<UIWindow> mWindowRenderers;
@@ -56,6 +56,14 @@ public class RendererManager {
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public LintfordCore core() {
+		return mCore;
+	}
+
+	public RenderState currentRenderState() {
+		return mCore.renderState();
+	}
 
 	public boolean isInitialised() {
 		return mIsInitialised;
@@ -93,7 +101,9 @@ public class RendererManager {
 	// Constructor
 	// --------------------------------------
 
-	public RendererManager() {
+	public RendererManager(LintfordCore pCore) {
+		mCore = pCore;
+
 		mRenderers = new ArrayList<>();
 		mWindowRenderers = new ArrayList<>();
 		mRenderTargets = new ArrayList<>();
@@ -125,7 +135,7 @@ public class RendererManager {
 		if (mIsLoaded)
 			return;
 
-		DebugManager.DEBUG_MANAGER.logger().i(getClass().getSimpleName(), "Loading GL content for all rendererins");
+		DebugManager.DEBUG_MANAGER.logger().i(getClass().getSimpleName(), "Loading GL content for all registered renderers");
 
 		mResourceManager = pResourceManager;
 
@@ -136,7 +146,7 @@ public class RendererManager {
 		mWindowTextFont = pResourceManager.fontManager().loadNewFont("WindowTextFont", "res/fonts/monofonto.ttf", 18);
 
 		// Some windows will use this to orientate themselves to the window
-		mDisplayConfig = pResourceManager.masterConfig().displayConfig();
+		mDisplayConfig = pResourceManager.masterConfig().display();
 
 		// Load all of the renderers that have been added so far
 		final int RENDERER_COUNT = mRenderers.size();
@@ -181,14 +191,14 @@ public class RendererManager {
 
 	}
 
-	public boolean handleInput(InputState pInputState) {
+	public boolean handleInput(LintfordCore pCore) {
 
 		final int NUM_WINDOW_RENDERERS = mWindowRenderers.size();
 
 		// We handle the input to the UI Windows in the game with priority.
 		for (int i = 0; i < NUM_WINDOW_RENDERERS; i++) {
 			final UIWindow WINDOW = mWindowRenderers.get(i);
-			boolean lResult = WINDOW.handleInput(pInputState);
+			boolean lResult = WINDOW.handleInput(pCore);
 			if (lResult && WINDOW.exclusiveHandleInput()) {
 				return true;
 
@@ -200,7 +210,7 @@ public class RendererManager {
 
 		// Handle the base renderer input
 		for (int i = 0; i < NUM_RENDERERS; i++) {
-			mRenderers.get(i).handleInput(pInputState);
+			mRenderers.get(i).handleInput(pCore);
 
 		}
 
@@ -209,7 +219,7 @@ public class RendererManager {
 	}
 
 	/** Checks to make sure that all active {@link BaseRenderer} instances have been properly loaded, and loads them if not. */
-	public void update(GameTime pGameTime) {
+	public void update(LintfordCore pCore) {
 		final int RENDERER_COUNT = mRenderers.size();
 		for (int i = 0; i < RENDERER_COUNT; i++) {
 			if (!mRenderers.get(i).isActive())
@@ -222,7 +232,7 @@ public class RendererManager {
 			}
 
 			// Update the renderer
-			mRenderers.get(i).update(pGameTime);
+			mRenderers.get(i).update(pCore);
 
 		}
 
@@ -237,13 +247,13 @@ public class RendererManager {
 			}
 
 			// Update the renderer
-			mWindowRenderers.get(i).update(pGameTime);
+			mWindowRenderers.get(i).update(pCore);
 
 		}
 
 	}
 
-	public void draw(RenderState pRenderState) {
+	public void draw(LintfordCore pCore) {
 		final int RENDERER_COUNT = mRenderers.size();
 		for (int i = 0; i < RENDERER_COUNT; i++) {
 			if (!mRenderers.get(i).isActive())
@@ -256,7 +266,7 @@ public class RendererManager {
 			}
 
 			// Update the renderer
-			mRenderers.get(i).draw(pRenderState);
+			mRenderers.get(i).draw(pCore);
 
 		}
 
@@ -271,7 +281,7 @@ public class RendererManager {
 			}
 
 			// Update the renderer
-			mWindowRenderers.get(i).draw(pRenderState);
+			mWindowRenderers.get(i).draw(pCore);
 
 		}
 

@@ -6,8 +6,8 @@
 	<artifactId>LDLibrary</artifactId>
 	<version>0.1</version>
 
-	<name>LDLibrary</name>
-	<description>AN OpenGL Ludum Dare Game Library</description>
+	<name>LintfordLib</name>
+	<description>A personal library to make Java game developmenet easier</description>
 
 	<build>
 
@@ -25,7 +25,8 @@
 				</configuration>
 			</plugin>
 
-			<!-- We need to specify a different outputlocation for the resources to maintain the correct directory structure -->
+			<!-- We need to specify a different outputlocation for the resources to 
+				maintain the correct directory structure -->
 			<plugin>
 				<artifactId>maven-resources-plugin</artifactId>
 				<version>3.0.2</version>
@@ -44,7 +45,7 @@
 									<filtering>true</filtering>
 								</resource>
 							</resources>
-							
+
 						</configuration>
 					</execution>
 				</executions>

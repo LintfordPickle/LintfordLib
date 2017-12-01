@@ -1,13 +1,10 @@
 package net.lintford.library.renderers.windows.components;
 
-import net.lintford.library.core.camera.ICamera;
+import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
-import net.lintford.library.core.input.InputState;
 import net.lintford.library.core.maths.Rectangle;
-import net.lintford.library.core.rendering.RenderState;
-import net.lintford.library.renderers.RendererManager;
 
 public class IconIntFilter {
 
@@ -95,14 +92,14 @@ public class IconIntFilter {
 	// Core-Methods
 	// --------------------------------------
 
-	public boolean handleInput(InputState pInputState, ICamera pHUDCamera) {
-		if (mUIDstRectangle.intersects(pHUDCamera.getMouseCameraSpace())) {
+	public boolean handleInput(LintfordCore pCore) {
+		if (mUIDstRectangle.intersects(pCore.HUD().getMouseCameraSpace())) {
 			mHoveredOver = true;
 
-			if (pInputState.isMouseTimedLeftClickAvailable()) {
+			if (pCore.input().isMouseTimedLeftClickAvailable()) {
 				mUIIconFilter.onFilterClick(this);
 
-				pInputState.mouseTimedLeftClick();
+				pCore.input().mouseTimedLeftClick();
 				return true;
 			}
 		}
@@ -110,15 +107,16 @@ public class IconIntFilter {
 		return false;
 	}
 
-	public void draw(RenderState pRenderState, TextureBatch pUISpriteBatch, FontUnit lFont) {
+	public void draw(LintfordCore pCore, TextureBatch pUISpriteBatch, FontUnit lFont) {
 
 		float lAR = mEnabled ? r : 1f;
 		float lAG = mEnabled ? g : 1f;
 		float lAB = mEnabled ? b : 1f;
 
-		pUISpriteBatch.begin(pRenderState.HUDCamera());
+		pUISpriteBatch.begin(pCore.HUD());
 		// Draw the background icon
-		// pUISpriteBatch.draw(mUISrcRectangle.x, mUISrcRectangle.y, mUISrcRectangle.width, mUISrcRectangle.height, mUIDstRectangle.x, mUIDstRectangle.y, 0.5f, mUIDstRectangle.width, mUIDstRectangle.height, 1f, lAR, lAG, lAB, 1f, RendererManager.GAME_UI);
+		// pUISpriteBatch.draw(mUISrcRectangle.x, mUISrcRectangle.y, mUISrcRectangle.width, mUISrcRectangle.height, mUIDstRectangle.x, mUIDstRectangle.y, 0.5f, mUIDstRectangle.width, mUIDstRectangle.height, 1f, lAR, lAG, lAB, 1f,
+		// RendererManager.GAME_UI);
 
 		// Draw the 'tab' background
 		if (mEnabled) {
@@ -144,7 +142,7 @@ public class IconIntFilter {
 		if (mHoveredOver) {
 			float lTextHalfW = lFont.bitmap().getStringWidth(mFilterName) / 2;
 
-			lFont.begin(pRenderState.HUDCamera());
+			lFont.begin(pCore.HUD());
 			lFont.draw(mFilterName, mUIDstRectangle.x + 16 - lTextHalfW, mUIDstRectangle.y - 19, 1.5f, 1f);
 			lFont.end();
 		}

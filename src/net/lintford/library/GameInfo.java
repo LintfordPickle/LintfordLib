@@ -1,8 +1,8 @@
 package net.lintford.library;
 
-import net.lintford.library.core.LWJGLCore;
+import net.lintford.library.core.LintfordCore;
 
-/** The {@link GameInfo} interface defines the properties used by {@link LWJGLCore} when creating an OpenGL window. */
+/** The {@link GameInfo} interface defines the properties used by {@link LintfordCore} when creating an OpenGL window. */
 public interface GameInfo {
 
 	/** Returns the application name. */

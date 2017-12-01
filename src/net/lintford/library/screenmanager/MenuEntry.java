@@ -1,7 +1,8 @@
 package net.lintford.library.screenmanager;
 
 import net.lintford.library.ConstantsTable;
-import net.lintford.library.core.camera.ICamera;
+import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.audio.AudioData;
 import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.TextureManager;
@@ -9,9 +10,6 @@ import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 import net.lintford.library.core.input.InputState;
 import net.lintford.library.core.input.InputState.INPUT_TYPES;
 import net.lintford.library.core.maths.Vector2f;
-import net.lintford.library.core.rendering.RenderState;
-import net.lintford.library.core.time.GameTime;
-import net.lintford.library.options.DisplayConfig;
 import net.lintford.library.renderers.windows.UIRectangle;
 import net.lintford.library.screenmanager.entries.IMenuEntryClickListener;
 
@@ -34,7 +32,6 @@ public class MenuEntry extends UIRectangle {
 	// --------------------------------------
 
 	protected ScreenManager mScreenManager;
-	protected DisplayConfig mDisplayConfig;
 	protected MenuScreen mParentScreen;
 	protected boolean mActive; // Not drawn/updated etc.
 	protected boolean mEnabled; // drawn but greyed out
@@ -61,6 +58,7 @@ public class MenuEntry extends UIRectangle {
 	protected BUTTON_SIZE mButtonSize = BUTTON_SIZE.normal;
 
 	protected TextureBatch mSpriteBatch;
+	protected AudioData mUIClickSound;
 
 	private boolean mIsInitialised, mIsLoaded;
 	public float mZ;
@@ -177,7 +175,6 @@ public class MenuEntry extends UIRectangle {
 
 	public MenuEntry(ScreenManager pScreenManager, MenuScreen pParentScreen, String pMenuEntryLabel) {
 		mScreenManager = pScreenManager;
-		mDisplayConfig = pScreenManager.masterConfig().displayConfig();
 		mParentScreen = pParentScreen;
 		mText = pMenuEntryLabel;
 
@@ -222,6 +219,8 @@ public class MenuEntry extends UIRectangle {
 	public void loadGLContent(ResourceManager pResourceManager) {
 		mSpriteBatch.loadGLContent(pResourceManager);
 
+		mUIClickSound = pResourceManager.audioManager().loadWavSound("UIClick", "res/sound/soundUIClick.wav");
+
 		mIsLoaded = true;
 
 	}
@@ -233,14 +232,14 @@ public class MenuEntry extends UIRectangle {
 
 	}
 
-	public boolean handleInput(InputState pInputState, ICamera pHUDCamera) {
+	public boolean handleInput(LintfordCore pCore) {
 		if (!mActive || !mEnabled || isAnimating)
 			return false;
 
-		final float deltaTime = (float) pInputState.gameTime().elapseGameTimeMilli() / 1000f;
+		final float deltaTime = (float) pCore.time().elapseGameTimeMilli() / 1000f;
 
-		// TODO(John): Why is the last input active needed and remvoe if not!
-		if (intersects(mScreenManager.HUD().getMouseCameraSpace()) && pInputState.lastInputActive() == INPUT_TYPES.Mouse) {
+		// TODO(John): Why is the last input active needed and remove if not!
+		if (intersects(pCore.HUD().getMouseCameraSpace()) && pCore.input().lastInputActive() == INPUT_TYPES.Mouse) {
 			// We should make sure no other component is currently using this leftClick.
 
 			// Check if tool tips are enabled.
@@ -249,13 +248,16 @@ public class MenuEntry extends UIRectangle {
 			}
 
 			hasFocus(true);
-			if (canHoverOver() && pInputState.leftClickOwner() == -1) {
+			if (canHoverOver() && pCore.input().leftClickOwner() == -1) {
 				mParentScreen.setHoveringOn(this);
 			}
 
-			if (canHaveFocus() && pInputState.tryAquireLeftClickOwnership(hashCode())) {
-				pInputState.setLeftMouseClickHandled();
-				mParentScreen.setFocusOn(pInputState, this, false);
+			if (canHaveFocus() && pCore.input().tryAquireLeftClickOwnership(hashCode())) {
+				pCore.input().setLeftMouseClickHandled();
+				mParentScreen.setFocusOn(pCore.input(), this, false);
+
+				if (mUIClickSound != null)
+					mScreenManager.resources().audioManager().play(mUIClickSound, 1f, 1f);
 
 				return true;
 			}
@@ -273,11 +275,11 @@ public class MenuEntry extends UIRectangle {
 
 	}
 
-	public void update(GameTime pGameTime, MenuScreen pScreen, boolean pIsSelected) {
+	public void update(LintfordCore pCore, MenuScreen pScreen, boolean pIsSelected) {
 		if (!mActive)
 			return;
 
-		final float deltaTime = (float) pGameTime.elapseGameTimeMilli();
+		final float deltaTime = (float) pCore.time().elapseGameTimeMilli();
 
 		if (mAnimationTimer > 0) {
 			mAnimationTimer -= deltaTime;
@@ -302,7 +304,7 @@ public class MenuEntry extends UIRectangle {
 
 	}
 
-	public void draw(Screen pScreen, RenderState pRenderState, boolean pIsSelected, float pParentZDepth) {
+	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pParentZDepth) {
 		if (!mActive || !mIsInitialised || !mIsLoaded)
 			return;
 
@@ -312,20 +314,20 @@ public class MenuEntry extends UIRectangle {
 		float lB = mEnabled ? 1f : .35f;
 
 		// Draw the menu entry background
-		
+
 		final float ENTRY_WIDTH = 320;
 		final float ENTRY_HEIGHT = 32;
-		
+
 		Texture lTexture = TextureManager.textureManager().getTexture(ScreenManager.SCREENMANAGER_TEXTURE_NAME);
-		
+
 		// Draw the button highlight when this element has focus.
 		if (mHasFocus && mHighlightOnHover) {
-			mSpriteBatch.begin(mScreenManager.HUD());
-			mSpriteBatch.draw(32, 32, 320, 32, centerX() - ENTRY_WIDTH / 2, centerY() - ENTRY_HEIGHT / 2,-2f, ENTRY_WIDTH, ENTRY_HEIGHT, 1f, mParentScreen.mA, lTexture);
+			mSpriteBatch.begin(pCore.HUD());
+			mSpriteBatch.draw(32, 32, 320, 32, centerX() - ENTRY_WIDTH / 2, centerY() - ENTRY_HEIGHT / 2, -2f, ENTRY_WIDTH, ENTRY_HEIGHT, 1f, mParentScreen.mA, lTexture);
 			mSpriteBatch.end();
 
 		} else if (mDrawBackground) {
-			mSpriteBatch.begin(mScreenManager.HUD());
+			mSpriteBatch.begin(pCore.HUD());
 			mSpriteBatch.draw(32, 0, 320, 32, centerX() - ENTRY_WIDTH / 2, centerY() - ENTRY_HEIGHT / 2, -2f, ENTRY_WIDTH, ENTRY_HEIGHT, 1f, lR, lG, lB, mParentScreen.mA, lTexture);
 			mSpriteBatch.end();
 		}
@@ -333,24 +335,26 @@ public class MenuEntry extends UIRectangle {
 		// Render the MenuEntry label
 		if (mText != null && mText.length() > 0) {
 			final float FONT_SCALE = 1f;
-			mParentScreen.font().begin(mScreenManager.HUD());
-			mParentScreen.font().draw(mText, centerX() - mParentScreen.font().bitmap().getStringWidth(mText, FONT_SCALE) * 0.5f, centerY() - mParentScreen.font().bitmap().fontHeight() * FONT_SCALE / 2, -1f, 0.97f, .92f, mParentScreen.mA, mParentScreen.mA, FONT_SCALE);
+			mParentScreen.font().begin(pCore.HUD());
+			mParentScreen.font().draw(mText, centerX() - mParentScreen.font().bitmap().getStringWidth(mText, FONT_SCALE) * 0.5f, centerY() - mParentScreen.font().bitmap().fontHeight() * FONT_SCALE / 2, -1f, 0.97f, .92f, mParentScreen.mA,
+					mParentScreen.mA, FONT_SCALE);
 			mParentScreen.font().end();
 
 		}
 
 		if (mToolTipEnabled && mToolTipTimer >= 1000) {
-			Vector2f lToolTipPosition = mScreenManager.inputState().mouseWindowCoords();
+			Vector2f lToolTipPosition = pCore.input().mouseWindowCoords();
 			mScreenManager.toolTip().draw(mToolTip, lToolTipPosition.x, lToolTipPosition.y);
+			
 		}
 
 		if (ConstantsTable.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
-			mSpriteBatch.begin(mScreenManager.HUD());
+			mSpriteBatch.begin(pCore.HUD());
 			final float SCALE = 1f;
 			final float ALPHA = 0.3f;
 			mSpriteBatch.draw(0, 0, 32, 32, x, y, mZ, width, height, SCALE, 1f, 0.2f, 0.2f, ALPHA, TextureManager.TEXTURE_CORE_UI);
 			mSpriteBatch.end();
-			
+
 		}
 
 	}

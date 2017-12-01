@@ -3,14 +3,11 @@ package net.lintford.library.renderers.windows.components;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.lintford.library.core.camera.ICamera;
+import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
-import net.lintford.library.core.input.InputState;
 import net.lintford.library.core.maths.Rectangle;
-import net.lintford.library.core.rendering.RenderState;
-import net.lintford.library.core.time.GameTime;
 
 public class UIIconFilter extends Rectangle {
 
@@ -86,14 +83,14 @@ public class UIIconFilter extends Rectangle {
 
 	}
 
-	public boolean handleInput(InputState pInputState, ICamera pHUDCamera) {
+	public boolean handleInput(LintfordCore pCore) {
 		int lCount = mIconFilters.size();
 		for (int i = 0; i < lCount; i++) {
 			mIconFilters.get(i).resetHovered();
 		}
 
 		for (int i = 0; i < lCount; i++) {
-			if (mIconFilters.get(i).handleInput(pInputState, pHUDCamera)) {
+			if (mIconFilters.get(i).handleInput(pCore)) {
 				return true;
 			}
 		}
@@ -101,7 +98,7 @@ public class UIIconFilter extends Rectangle {
 		return false;
 	}
 
-	public void update(GameTime pGameTime) {
+	public void update(LintfordCore pCore) {
 
 		float lPosX = x;
 		float lPosY = y;
@@ -117,14 +114,14 @@ public class UIIconFilter extends Rectangle {
 		}
 	}
 
-	public void draw(RenderState pRenderState, TextureBatch pSpriteBatch, FontUnit lFont) {
-		pSpriteBatch.begin(pRenderState.HUDCamera());
+	public void draw(LintfordCore pCore, TextureBatch pSpriteBatch, FontUnit lFont) {
+		pSpriteBatch.begin(pCore.HUD());
 
 		int lCount = mIconFilters.size();
 		for (int i = 0; i < lCount; i++) {
 			IconIntFilter lFilter = mIconFilters.get(i);
 
-			lFilter.draw(pRenderState, pSpriteBatch, lFont);
+			lFilter.draw(pCore, pSpriteBatch, lFont);
 		}
 
 		pSpriteBatch.end();

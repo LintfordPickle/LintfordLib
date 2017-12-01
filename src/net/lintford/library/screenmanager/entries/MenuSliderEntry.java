@@ -1,9 +1,7 @@
 package net.lintford.library.screenmanager.entries;
 
-import net.lintford.library.core.camera.ICamera;
-import net.lintford.library.core.graphics.fonts.BitmapFont;
+import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.input.InputState;
-import net.lintford.library.core.rendering.RenderState;
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.Screen;
@@ -63,7 +61,7 @@ public class MenuSliderEntry extends MenuEntry {
 	// --------------------------------------
 
 	@Override
-	public boolean handleInput(InputState pInputState, ICamera pHUDCamera) {
+	public boolean handleInput(LintfordCore pCore) {
 
 		if (mHasFocus) {
 
@@ -71,13 +69,13 @@ public class MenuSliderEntry extends MenuEntry {
 			mFocusLocked = false; // no lock if not focused
 		}
 
-		if (intersects(mScreenManager.HUD().getMouseCameraSpace())) {
-			if (pInputState.mouseTimedLeftClick()) {
+		if (intersects(pCore.HUD().getMouseCameraSpace())) {
+			if (pCore.input().mouseTimedLeftClick()) {
 				if (mEnabled) {
 
 					// TODO: Play menu click sound
 
-					mParentScreen.setFocusOn(pInputState, this, true);
+					mParentScreen.setFocusOn(pCore.input(), this, true);
 					// mParentScreen.setHoveringOn(this);
 
 					mIsChecked = !mIsChecked;
@@ -92,7 +90,7 @@ public class MenuSliderEntry extends MenuEntry {
 
 			// Check if tool tips are enabled.
 			if (mToolTipEnabled) {
-				mToolTipTimer += pInputState.gameTime().elapseGameTimeMilli();
+				mToolTipTimer += pCore.time().elapseGameTimeMilli();
 			}
 
 			return true;
@@ -105,13 +103,13 @@ public class MenuSliderEntry extends MenuEntry {
 	}
 
 	@Override
-	public void draw(Screen pScreen, RenderState pRenderState, boolean pIsSelected, float pParentZDepth) {
-		super.draw(pScreen, pRenderState, pIsSelected, pParentZDepth);
+	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pParentZDepth) {
+		super.draw(pCore, pScreen, pIsSelected, pParentZDepth);
 
-		BitmapFont lFont = mParentScreen.font().bitmap();
+		// BitmapFont lFont = mParentScreen.font().bitmap();
 
-		final float lLabelWidth = lFont.getStringWidth(mLabel);
-		final float lSeparatorHalfWidth = lFont.getStringWidth(mSeparator) * 0.5f;
+		// final float lLabelWidth = lFont.getStringWidth(mLabel);
+		// final float lSeparatorHalfWidth = lFont.getStringWidth(mSeparator) * 0.5f;
 
 		// draw the label to the left //
 		// TODO(John): Implement the pixel font here

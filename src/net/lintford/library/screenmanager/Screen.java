@@ -1,12 +1,9 @@
 package net.lintford.library.screenmanager;
 
+import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.graphics.ResourceManager;
-import net.lintford.library.core.graphics.rendertarget.RenderTarget;
-import net.lintford.library.core.input.InputState;
-import net.lintford.library.core.rendering.RenderState;
 import net.lintford.library.core.time.GameTime;
 import net.lintford.library.core.time.TimeSpan;
-import net.lintford.library.options.DisplayConfig;
 import net.lintford.library.screenmanager.transitions.BaseTransition;
 import net.lintford.library.screenmanager.transitions.TransitionFadeIn;
 import net.lintford.library.screenmanager.transitions.TransitionFadeOut;
@@ -38,7 +35,6 @@ public abstract class Screen {
 	// --------------------------------------
 
 	protected ScreenManager mScreenManager;
-	protected DisplayConfig mDisplayConfig;
 	protected BaseTransition mTransitionOn;
 	protected BaseTransition mTransitionOff;
 	protected ScreenState mScreenState;
@@ -49,9 +45,6 @@ public abstract class Screen {
 	protected boolean mIsPopup;
 	protected boolean mShowMouseCursor;
 	protected float mR, mG, mB, mA;
-
-	protected RenderTarget mScreenRenderTarget;
-
 	protected boolean mShowInBackground;
 
 	// --------------------------------------
@@ -132,7 +125,6 @@ public abstract class Screen {
 	public Screen(ScreenManager pScreenManager) {
 
 		mScreenManager = pScreenManager;
-		mDisplayConfig = pScreenManager.masterConfig().displayConfig();
 
 		mTransitionOn = new TransitionFadeIn(new TimeSpan(250));
 		mTransitionOff = new TransitionFadeOut(new TimeSpan(250));
@@ -160,17 +152,17 @@ public abstract class Screen {
 
 	public abstract void unloadGLContent();
 
-	public void handleInput(GameTime pGameTime, InputState pInputState, boolean pAcceptMouse, boolean pAcceptKeyboard) {
+	public void handleInput(LintfordCore pCore, boolean pAcceptMouse, boolean pAcceptKeyboard) {
 
 	}
 
-	public void update(GameTime pGameTime, boolean pOtherScreenHasFocus, boolean pCoveredByOtherScreen) {
+	public void update(LintfordCore pCore, boolean pOtherScreenHasFocus, boolean pCoveredByOtherScreen) {
 		mOtherScreenHasFocus = pOtherScreenHasFocus;
 
 		if (mIsExiting) {
 			mScreenState = ScreenState.TransitionOff;
 
-			if (updateTransition(pGameTime, mTransitionOff)) {
+			if (updateTransition(pCore.time(), mTransitionOff)) {
 				mScreenManager.removeScreen(this);
 
 			}
@@ -179,8 +171,8 @@ public abstract class Screen {
 
 		else if (pCoveredByOtherScreen) {
 
-			// if covered, then transitiion the screen off before hiding it.
-			if (mScreenState != ScreenState.Hidden && !updateTransition(pGameTime, mTransitionOff)) {
+			// if covered, then transition the screen off before hiding it.
+			if (mScreenState != ScreenState.Hidden && !updateTransition(pCore.time(), mTransitionOff)) {
 				mScreenState = ScreenState.TransitionOff;
 
 			}
@@ -196,8 +188,8 @@ public abstract class Screen {
 
 		else {
 
-			// if not covered, then transitiion the screen on before activing it.
-			if (mScreenState != ScreenState.Active && !updateTransition(pGameTime, mTransitionOn)) {
+			// If not covered, then transition the screen on before activating it.
+			if (mScreenState != ScreenState.Active && !updateTransition(pCore.time(), mTransitionOn)) {
 				mScreenState = ScreenState.TransitionOn;
 
 			}
@@ -213,11 +205,11 @@ public abstract class Screen {
 
 	}
 
-	public void updateStructure() {
+	public void updateStructure(LintfordCore pCore) {
 
 	}
 
-	public void draw(RenderState pRenderState) {
+	public void draw(LintfordCore pCore) {
 
 	}
 
@@ -250,7 +242,7 @@ public abstract class Screen {
 	public void onGainedFocus() {
 
 		// Don't allow keyboard capture across screens
-		mScreenManager.inputState().stopCapture();
+		mScreenManager.core().input().stopCapture();
 
 	}
 

@@ -2,16 +2,14 @@ package net.lintford.library.core.camera;
 
 import org.lwjgl.opengl.GL11;
 
-import net.lintford.library.core.input.InputState;
+import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.maths.Matrix4f;
 import net.lintford.library.core.maths.Rectangle;
 import net.lintford.library.core.maths.Vector2f;
-import net.lintford.library.core.time.GameTime;
 import net.lintford.library.options.DisplayConfig;
 
 /**
- * Defines a simple Game Camera which implements the {@link ICamera} interface.
- * The HUD renders objects from -0 (-Z_NEAR) to -10 (-Z_FAR)
+ * Defines a simple Game Camera which implements the {@link ICamera} interface. The HUD renders objects from -0 (-Z_NEAR) to -10 (-Z_FAR)
  */
 public class Camera implements ICamera {
 
@@ -20,20 +18,18 @@ public class Camera implements ICamera {
 	// --------------------------------------
 
 	/**
-	 * The near plane (Z_NEAR) distance for front clipping. This defines the closest
-	 * distance objects will be rendered from the HUD position.
+	 * The near plane (Z_NEAR) distance for front clipping. This defines the closest distance objects will be rendered from the HUD position.
 	 */
 	public static final float Z_NEAR = 0.0f;
 
 	/**
-	 * The far plane (Z_FAR) distance for rear clipping. This defines the closest
-	 * distance objects will be rendered from the HUD position.
+	 * The far plane (Z_FAR) distance for rear clipping. This defines the closest distance objects will be rendered from the HUD position.
 	 */
 	public static final float Z_FAR = 10.0f;
 
 	protected static final float ZOOM_ACCELERATE_AMOUNT = 0.1f;
 	protected static final float DRAG = 0.9365f;
-	protected static final boolean CAMERA_LAG_EFFECT = false;
+	protected static final boolean CAMERA_LAG_EFFECT = true;
 
 	// --------------------------------------
 	// Variables
@@ -160,15 +156,15 @@ public class Camera implements ICamera {
 	// Constructor(s)
 	// --------------------------------------
 
-	public Camera(DisplayConfig pDisplayConfig, final float pX, final float pY, final float pWidth, final float pHeight) {
+	public Camera(DisplayConfig pDisplayConfig) {
 		mDisplayConfig = pDisplayConfig;
 
-		this.mMinX = pX;
-		this.mMaxX = pX + pWidth;
-		this.mMinY = pY;
-		this.mMaxY = pY + pHeight;
+		this.mMinX = 0;
+		this.mMaxX = 0 + pDisplayConfig.gameViewportSize().x;
+		this.mMinY = 0;
+		this.mMaxY = 0 + pDisplayConfig.gameViewportSize().y;
 
-		mBoundingRectangle = new Rectangle(mMinX, mMinY, pWidth, pHeight);
+		mBoundingRectangle = new Rectangle(mMinX, mMinY, pDisplayConfig.gameViewportSize().x, pDisplayConfig.gameViewportSize().y);
 
 		mPosition = new Vector2f();
 		mAcceleration = new Vector2f();
@@ -193,16 +189,14 @@ public class Camera implements ICamera {
 	// Core-Methods
 	// --------------------------------------
 
-	public void handleInput(InputState pInputState) {
+	public void handleInput(LintfordCore pCore) {
 		// Update the MouseCameraSpace instance
-		mMouseWorldSpace.x = pInputState.mouseWindowCoords().x * getZoomFactorOverOne() + this.getMinX();
-		mMouseWorldSpace.y = pInputState.mouseWindowCoords().y * getZoomFactorOverOne() + this.getMinY();
+		mMouseWorldSpace.x = pCore.input().mouseWindowCoords().x * getZoomFactorOverOne() + this.getMinX();
+		mMouseWorldSpace.y = pCore.input().mouseWindowCoords().y * getZoomFactorOverOne() + this.getMinY();
 
 	}
 
-	public void update(GameTime pGameTime) {
-		final float lDeltaTime = (float) pGameTime.elapseGameTimeMilli() / 1000f;
-
+	public void update(LintfordCore pCore) {
 		mWindowWidth = mDisplayConfig.windowSize().x;
 		mWindowHeight = mDisplayConfig.windowSize().y;
 
@@ -217,39 +211,11 @@ public class Camera implements ICamera {
 			lGameViewportHeight = lGameViewportHeight + 1;
 		}
 
-		if (CAMERA_LAG_EFFECT) {
-			mAcceleration.x = mTargetPosition.x - mPosition.x;
-			mAcceleration.y = mTargetPosition.y - mPosition.y;
+		mPosition.x = mTargetPosition.x;
+		mPosition.y = mTargetPosition.y;
 
-			// apply movement //
-			mVelocity.x += mAcceleration.x * lDeltaTime;
-			mVelocity.y += mAcceleration.y * lDeltaTime;
-
-			// don't let the camera go miles off course
-			if (Math.abs(mPosition.x) > Math.abs(mTargetPosition.x) * 20.5) {
-				mVelocity.x *= 0.45f;
-			}
-
-			if (Math.abs(mPosition.y) > Math.abs(mTargetPosition.y) * 20.5) {
-				mVelocity.y *= 0.45f;
-			}
-
-			mPosition.x += mVelocity.x;
-			mPosition.y += mVelocity.y;
-
-			mAcceleration.x = 0.0f;
-			mAcceleration.y = 0.0f;
-
-			// slow down the vel
-			mVelocity.x *= 0.98f;
-			mVelocity.y *= 0.98f;
-		} else {
-			mPosition.x = mTargetPosition.x;
-			mPosition.y = mTargetPosition.y;
-
-			mAcceleration.x = 0.0f;
-			mAcceleration.y = 0.0f;
-		}
+		mAcceleration.x = 0.0f;
+		mAcceleration.y = 0.0f;
 
 		createView();
 		createOrtho(lGameViewportWidth, lGameViewportHeight);
@@ -268,8 +234,7 @@ public class Camera implements ICamera {
 
 	private void createOrtho(final float pGameViewportWidth, final float pGameViewportheight) {
 		mProjectionMatrix.setIdentity();
-		mProjectionMatrix.createOrtho(-pGameViewportWidth * 0.5f, pGameViewportWidth * 0.5f, pGameViewportheight * 0.5f,
-				-pGameViewportheight * 0.5f, Z_NEAR, Z_FAR);
+		mProjectionMatrix.createOrtho(-pGameViewportWidth * 0.5f, pGameViewportWidth * 0.5f, pGameViewportheight * 0.5f, -pGameViewportheight * 0.5f, Z_NEAR, Z_FAR);
 
 	}
 

@@ -1,7 +1,7 @@
 package net.lintford.library.screenmanager.entries;
 
+import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.graphics.fonts.BitmapFont;
-import net.lintford.library.core.rendering.RenderState;
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.MenuScreen.ALIGNMENT;
@@ -106,8 +106,8 @@ public class MenuLabelEntry extends MenuEntry {
 	}
 
 	@Override
-	public void draw(Screen pScreen, RenderState pRenderState, boolean pIsSelected, float pParentZDepth) {
-		// We don't want to draw the background menuentry for a label
+	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pParentZDepth) {
+		// We don't want to draw the background menu entry for a label
 		// super.draw(pScreen, display, pIsSelected);
 
 		BitmapFont lFontBitmap = mParentScreen.fontHeader().bitmap();
@@ -128,7 +128,7 @@ public class MenuLabelEntry extends MenuEntry {
 		}
 
 		final float FONT_SCALE = 1f;
-		mParentScreen.fontHeader().begin(mScreenManager.HUD());
+		mParentScreen.fontHeader().begin(pCore.HUD());
 		mParentScreen.fontHeader().draw(mText, lX, y, pParentZDepth + .1f, mR, mG, mB, mParentScreen.a(), FONT_SCALE);
 		mParentScreen.fontHeader().end();
 

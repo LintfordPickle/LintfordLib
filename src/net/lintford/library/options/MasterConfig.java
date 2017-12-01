@@ -2,8 +2,7 @@ package net.lintford.library.options;
 
 import org.lwjgl.system.MemoryUtil;
 
-import net.lintford.library.core.input.InputState;
-import net.lintford.library.core.time.GameTime;
+import net.lintford.library.core.LintfordCore;
 
 public class MasterConfig {
 
@@ -34,19 +33,19 @@ public class MasterConfig {
 	// Properties
 	// --------------------------------------
 
-	public GameConfig gameConfig() {
+	public GameConfig game() {
 		return mGameConfig;
 	}
 
-	public SoundConfig soundConfig() {
+	public SoundConfig sound() {
 		return mSoundConfig;
 	}
 
-	public MusicConfig musicConfig() {
+	public MusicConfig music() {
 		return mMusicConfig;
 	}
 
-	public DisplayConfig displayConfig() {
+	public DisplayConfig display() {
 		return DISPLAY_CONFIG;
 	}
 
@@ -62,12 +61,12 @@ public class MasterConfig {
 	// Core-Methods
 	// --------------------------------------
 
-	public void handleInput(final InputState pInputState) {
+	public void handleInput(LintfordCore pCore) {
 
 	}
 
-	public void update(GameTime pGameTime) {
-		DISPLAY_CONFIG.update(pGameTime);
+	public void update(LintfordCore pCore) {
+		DISPLAY_CONFIG.update(pCore);
 
 	}
 

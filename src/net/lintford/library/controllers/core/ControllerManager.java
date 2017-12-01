@@ -4,9 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.lintford.library.controllers.BaseController;
+import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.debug.DebugManager;
-import net.lintford.library.core.input.InputState;
-import net.lintford.library.core.time.GameTime;
 import net.lintford.library.renderers.BaseRenderer;
 import net.lintford.library.renderers.RendererManager;
 
@@ -16,6 +15,7 @@ public class ControllerManager {
 	// Variables
 	// --------------------------------------
 
+	private LintfordCore mCore;
 	private List<BaseController> mControllers;
 
 	// --------------------------------------
@@ -28,11 +28,16 @@ public class ControllerManager {
 
 	}
 
+	public LintfordCore core() {
+		return mCore;
+	}
+
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
-	public ControllerManager() {
+	public ControllerManager(LintfordCore pCore) {
+		mCore = pCore;
 		mControllers = new ArrayList<>();
 
 	}
@@ -41,13 +46,13 @@ public class ControllerManager {
 	// Core-Methods
 	// --------------------------------------
 
-	public boolean handleInput(InputState pInputState) {
+	public boolean handleInput(LintfordCore pCore) {
 		int lCount = mControllers.size();
 		for (int i = 0; i < lCount; i++) {
 			if (!mControllers.get(i).isActive())
 				continue;
 
-			if (mControllers.get(i).handleInput(pInputState)) {
+			if (mControllers.get(i).handleInput(pCore)) {
 				return true;
 
 			}
@@ -58,13 +63,13 @@ public class ControllerManager {
 
 	}
 
-	public void update(GameTime pGameTime) {
+	public void update(LintfordCore pCore) {
 		int lCount = mControllers.size();
 		for (int i = 0; i < lCount; i++) {
 			if (!mControllers.get(i).isActive())
 				continue;
 
-			mControllers.get(i).update(pGameTime);
+			mControllers.get(i).update(pCore);
 
 		}
 

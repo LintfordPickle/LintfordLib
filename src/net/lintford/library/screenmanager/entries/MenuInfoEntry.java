@@ -1,7 +1,7 @@
 package net.lintford.library.screenmanager.entries;
 
+import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.graphics.fonts.BitmapFont;
-import net.lintford.library.core.rendering.RenderState;
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.MenuScreen.ALIGNMENT;
@@ -98,7 +98,7 @@ public class MenuInfoEntry extends MenuEntry {
 	}
 
 	@Override
-	public void draw(Screen pScreen, RenderState pRenderState, boolean pIsSelected, float pParentZDepth) {
+	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pParentZDepth) {
 		// We don't want to draw the background menuentry for a label
 		// super.draw(pScreen, display, pIsSelected);
 

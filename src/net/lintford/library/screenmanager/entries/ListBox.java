@@ -5,15 +5,13 @@ import java.util.List;
 
 import org.lwjgl.opengl.GL11;
 
-import net.lintford.library.core.camera.ICamera;
+import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 import net.lintford.library.core.input.InputState;
 import net.lintford.library.core.maths.Vector2f;
-import net.lintford.library.core.rendering.RenderState;
-import net.lintford.library.core.time.GameTime;
 import net.lintford.library.renderers.windows.UIRectangle;
 import net.lintford.library.renderers.windows.components.IScrollBarArea;
 import net.lintford.library.renderers.windows.components.ScrollBar;
@@ -110,40 +108,40 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 	}
 
 	@Override
-	public boolean handleInput(InputState pInputState, ICamera pHUDCamera) {
-		final Vector2f lMouseHUDCoords = mScreenManager.HUD().getMouseCameraSpace();
+	public boolean handleInput(LintfordCore pCore) {
+		final Vector2f lMouseHUDCoords = pCore.HUD().getMouseCameraSpace();
 
-		// Check if the mouse is clicked outside of this listbox
-		// In this case, we shouldn't deselct the current selected entry, otherwise we'd never be able to click a button outside of this listbox
-		if (!mScrollBar.clickAction() && pInputState.mouseLeftClick() && (lMouseHUDCoords.x < x || lMouseHUDCoords.x > x + getWidth() || lMouseHUDCoords.y < y || lMouseHUDCoords.y > y + getHeight())) {
+		// Check if the mouse is clicked outside of this list box
+		// In this case, we shouldn't un-select the current selected entry, otherwise we'd never be able to click a button outside of this list box
+		if (!mScrollBar.clickAction() && pCore.input().mouseLeftClick() && (lMouseHUDCoords.x < x || lMouseHUDCoords.x > x + getWidth() || lMouseHUDCoords.y < y || lMouseHUDCoords.y > y + getHeight())) {
 			return false;
 		}
 
 		for (int i = 0; i < mItems.size(); i++) {
 			// TODO(John): Don't like how the item.handleInput is used explicitly (only) for selecting the item and NOT
 			// handling the input
-			boolean lResult = mItems.get(i).handleInput(pInputState);
+			boolean lResult = mItems.get(i).handleInput(pCore);
 			if (lResult) {
 				return true;
 			}
 
-			if (pInputState.mouseLeftClick()) {
+			if (pCore.input().mouseLeftClick()) {
 				mSelectedItem = -1;
 			}
 		}
 
-		if (mScrollBar.handleInput(pInputState, pHUDCamera)) {
+		if (mScrollBar.handleInput(pCore)) {
 			mClickActive = false;
 			return true;
 		}
 
-		if (!pInputState.mouseLeftClick()) {
+		if (!pCore.input().mouseLeftClick()) {
 			mClickActive = false;
 
 			return false;
 		}
 
-		if (!pInputState.tryAquireLeftClickOwnership(hashCode())) {
+		if (!pCore.input().tryAquireLeftClickOwnership(hashCode())) {
 			mClickActive = false;
 			return false;
 
@@ -184,8 +182,8 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 
 	}
 
-	public void update(GameTime pGameTime) {
-		mScrollBar.update(pGameTime);
+	public void update(LintfordCore pCore) {
+		mScrollBar.update(pCore);
 
 		mContentArea.width = width;
 		mContentArea.height = mItems.size() * (ListBoxItem.LISTBOXITEM_HEIGHT + LISTBOX_ITEM_VPADDING) + LISTBOX_ITEM_VPADDING;
@@ -207,9 +205,9 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 	}
 
 	@Override
-	public void draw(Screen pScreen, RenderState pRenderState, boolean pIsSelected, float pParentZDepth) {
+	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pParentZDepth) {
 
-		// We need to use a stencil buffer to clip the listbox items (which, when scrolling, could appear out-of-bounds of the listbox).
+		// We need to use a stencil buffer to clip the list box items (which, when scrolling, could appear out-of-bounds of the listbox).
 		GL11.glEnable(GL11.GL_STENCIL_TEST);
 
 		GL11.glStencilFunc(GL11.GL_ALWAYS, 1, 0xFF); // Set any stencil to 1
@@ -221,17 +219,17 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 
 		Texture lTexture = TextureManager.textureManager().getTexture(ScreenManager.SCREENMANAGER_TEXTURE_NAME);
 		
-		mSpriteBatch.begin(mScreenManager.HUD());
+		mSpriteBatch.begin(pCore.HUD());
 		mSpriteBatch.draw(32, 0, 32, 32, x, y, -8f, getWidth(), getHeight(), 1.0f, 1, 1, 1, 0.75f, lTexture);
 		mSpriteBatch.end();
 
 		// Start the stencil buffer test to filter out everything outside of the scroll view
 		GL11.glStencilFunc(GL11.GL_EQUAL, 1, 0xFF); // Pass test if stencil value is 1
 
-		mParentScreen.font().begin(mScreenManager.HUD());
+		mParentScreen.font().begin(pCore.HUD());
 
 		for (int i = 0; i < mItems.size(); i++) {
-			mItems.get(i).draw(pScreen, pRenderState, mSpriteBatch, mSelectedItem == mItems.get(i).mItemIndex, pParentZDepth);
+			mItems.get(i).draw(pCore, pScreen, mSpriteBatch, mSelectedItem == mItems.get(i).mItemIndex, pParentZDepth);
 		}
 
 		mParentScreen.font().end();
@@ -239,7 +237,7 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 		GL11.glDisable(GL11.GL_STENCIL_TEST);
 
 		if (mScrollBarsEnabled) {
-			mScrollBar.draw(pRenderState, mSpriteBatch, pParentZDepth);
+			mScrollBar.draw(pCore, mSpriteBatch, pParentZDepth);
 		}
 
 	}

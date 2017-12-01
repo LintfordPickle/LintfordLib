@@ -1,10 +1,8 @@
 package net.lintford.library.screenmanager.entries;
 
+import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
-import net.lintford.library.core.input.InputState;
 import net.lintford.library.core.maths.Vector2f;
-import net.lintford.library.core.rendering.RenderState;
-import net.lintford.library.core.time.GameTime;
 import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.Screen;
 import net.lintford.library.screenmanager.ScreenManager;
@@ -46,14 +44,14 @@ public abstract class ListBoxItem {
 
 	}
 
-	public boolean handleInput(InputState pInputState) {
+	public boolean handleInput(LintfordCore pCore) {
 
-		Vector2f lMouseMenuSpace = mScreenManager.HUD().getMouseCameraSpace();
+		Vector2f lMouseMenuSpace = pCore.HUD().getMouseCameraSpace();
 
 		float lAbsPosX = mParentListBox.x + (mParentListBox.width / 2) + mXPos;
 		float lAbsPosY = mParentListBox.y + mYPos + 15;
 
-		if ((lMouseMenuSpace.x > lAbsPosX && lMouseMenuSpace.x < lAbsPosX + LISTBOXITEM_WIDTH && lMouseMenuSpace.y > lAbsPosY && lMouseMenuSpace.y < lAbsPosY + LISTBOXITEM_HEIGHT) && pInputState.tryAquireLeftClickOwnership(hashCode()) ) {
+		if ((lMouseMenuSpace.x > lAbsPosX && lMouseMenuSpace.x < lAbsPosX + LISTBOXITEM_WIDTH && lMouseMenuSpace.y > lAbsPosY && lMouseMenuSpace.y < lAbsPosY + LISTBOXITEM_HEIGHT) && pCore.input().tryAquireLeftClickOwnership(hashCode())) {
 			mParentListBox.setSelectedItem(mItemIndex);
 
 			return true;
@@ -63,10 +61,10 @@ public abstract class ListBoxItem {
 
 	}
 
-	public void update(GameTime pGameTime, MenuScreen pScreen, boolean pIsSelected) {
+	public void update(LintfordCore pCore, MenuScreen pScreen, boolean pIsSelected) {
 
 	}
 
-	public abstract void draw(Screen pScreen, RenderState pRenderState, TextureBatch pSpriteBatch, boolean pIsSelected, float pParentZDepth);
+	public abstract void draw(LintfordCore pCore, Screen pScreen, TextureBatch pSpriteBatch, boolean pIsSelected, float pParentZDepth);
 
 }

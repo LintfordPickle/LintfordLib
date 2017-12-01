@@ -30,7 +30,7 @@ public class FullScreenTexturedQuad extends TexturedQuad implements IResizeListe
 	public void loadGLContent(ResourceManager pResourceManager) {
 		super.loadGLContent(pResourceManager);
 
-		mDisplayConfig = pResourceManager.masterConfig().displayConfig();
+		mDisplayConfig = pResourceManager.masterConfig().display();
 		mDisplayConfig.addResizeListener(this);
 
 		mWindowWidth = mDisplayConfig.windowSize().x;

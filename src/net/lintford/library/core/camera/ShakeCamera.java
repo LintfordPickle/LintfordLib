@@ -2,7 +2,7 @@ package net.lintford.library.core.camera;
 
 import java.util.Random;
 
-import net.lintford.library.core.time.GameTime;
+import net.lintford.library.core.LintfordCore;
 import net.lintford.library.options.DisplayConfig;
 
 public class ShakeCamera extends Camera {
@@ -21,8 +21,8 @@ public class ShakeCamera extends Camera {
 	// Constructor
 	// ---------------------------------------------
 
-	public ShakeCamera(DisplayConfig pDisplayConfig, float pX, float pY, int pWidth, int pHeight) {
-		super(pDisplayConfig, pX, pY, pWidth, pHeight);
+	public ShakeCamera(DisplayConfig pDisplayConfig) {
+		super(pDisplayConfig);
 
 	}
 
@@ -31,10 +31,10 @@ public class ShakeCamera extends Camera {
 	// ---------------------------------------------
 
 	@Override
-	public void update(GameTime pGameTime) {
+	public void update(LintfordCore pCore) {
 		if (mIsShaking) {
 
-			mShakeTimer += pGameTime.elapseGameTimeMilli();
+			mShakeTimer += pCore.time().elapseGameTimeMilli();
 
 			if (mShakeTimer > mShakeDur) {
 				mIsShaking = false;
@@ -51,7 +51,8 @@ public class ShakeCamera extends Camera {
 
 		}
 
-		super.update(pGameTime);
+		super.update(pCore);
+		
 	}
 
 	// ---------------------------------------------
@@ -59,8 +60,7 @@ public class ShakeCamera extends Camera {
 	// ---------------------------------------------
 
 	/**
-	 * Shakes the camera for the specified amount of time (milliseconds) with the
-	 * specified magnitude (pxs)
+	 * Shakes the camera for the specified amount of time (milliseconds) with the specified magnitude (pxs)
 	 */
 	public void shake(float pDuration, float pMagnitude) {
 		if (pDuration <= 0)

@@ -3,10 +3,7 @@ package net.lintford.library.renderers.windows.components;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.lintford.library.core.camera.ICamera;
-import net.lintford.library.core.input.InputState;
-import net.lintford.library.core.rendering.RenderState;
-import net.lintford.library.core.time.GameTime;
+import net.lintford.library.core.LintfordCore;
 import net.lintford.library.renderers.windows.UIWindow;
 import net.lintford.library.screenmanager.entries.IMenuEntryClickListener;
 
@@ -35,11 +32,11 @@ public class UIRadioGroup extends UIWidget implements IMenuEntryClickListener {
 	// --------------------------------------
 
 	@Override
-	public boolean handleInput(final InputState pInputState, ICamera pHUDCamera) {
-		if (intersects(pHUDCamera.getMouseCameraSpace())) {
+	public boolean handleInput(LintfordCore pCore) {
+		if (intersects(pCore.HUD().getMouseCameraSpace())) {
 			final int lButtonCount = mButtons.size();
 			for (int i = 0; i < lButtonCount; i++) {
-				if (mButtons.get(i).handleInput(pInputState, pHUDCamera)) {
+				if (mButtons.get(i).handleInput(pCore)) {
 
 					return true;
 				}
@@ -52,8 +49,8 @@ public class UIRadioGroup extends UIWidget implements IMenuEntryClickListener {
 	}
 
 	@Override
-	public void update(final GameTime pGameTime) {
-		super.update(pGameTime);
+	public void update(LintfordCore pCore) {
+		super.update(pCore);
 
 		updateLayout();
 
@@ -67,18 +64,18 @@ public class UIRadioGroup extends UIWidget implements IMenuEntryClickListener {
 
 			lYPos += 35;
 
-			mButtons.get(i).update(pGameTime);
+			mButtons.get(i).update(pCore);
 
 		}
 
 	}
 
 	@Override
-	public void draw(final RenderState pRenderState) {
+	public void draw(LintfordCore pCore) {
 
 		final int lButtonCount = mButtons.size();
 		for (int i = 0; i < lButtonCount; i++) {
-			mButtons.get(i).draw(pRenderState);
+			mButtons.get(i).draw(pCore);
 
 		}
 

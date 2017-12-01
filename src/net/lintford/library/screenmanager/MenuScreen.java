@@ -5,12 +5,11 @@ import java.util.List;
 
 import org.lwjgl.glfw.GLFW;
 
+import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.input.InputState;
 import net.lintford.library.core.maths.Rectangle;
-import net.lintford.library.core.rendering.RenderState;
-import net.lintford.library.core.time.GameTime;
 import net.lintford.library.screenmanager.entries.IMenuEntryClickListener;
 import net.lintford.library.screenmanager.layouts.BaseLayout;
 
@@ -202,12 +201,12 @@ public abstract class MenuScreen extends Screen implements IMenuEntryClickListen
 	}
 
 	@Override
-	public void handleInput(GameTime pGameTime, InputState pInputState, boolean pAcceptMouse, boolean pAcceptKeyboard) {
+	public void handleInput(LintfordCore pCore, boolean pAcceptMouse, boolean pAcceptKeyboard) {
 		// TODO: Animations should be handled in another object
 		if (mAnimationTimer > 0 || mClickAction.isConsumed())
-			return; // don't hanlde input if 'animation' is playing
+			return; // don't handle input if 'animation' is playing
 
-		if (mESCBackEnabled && pInputState.keyDownTimed(GLFW.GLFW_KEY_ESCAPE)) {
+		if (mESCBackEnabled && pCore.input().keyDownTimed(GLFW.GLFW_KEY_ESCAPE)) {
 			if (mScreenState == ScreenState.Active) {
 				exitScreen();
 				return;
@@ -217,8 +216,8 @@ public abstract class MenuScreen extends Screen implements IMenuEntryClickListen
 		if (mLayouts.size() == 0)
 			return; // nothing to do
 
-		// Repsond to UP key
-		if (pInputState.keyDownTimed(GLFW.GLFW_KEY_UP)) {
+		// Respond to UP key
+		if (pCore.input().keyDownTimed(GLFW.GLFW_KEY_UP)) {
 
 			if (mSelectedEntry > 0) {
 				mSelectedEntry--; //
@@ -231,7 +230,7 @@ public abstract class MenuScreen extends Screen implements IMenuEntryClickListen
 
 			// Set focus on the new entry
 			if (lLayout.menuEntries().get(mSelectedEntry).enabled()) {
-				lLayout.setFocusOffAll(pInputState.mouseLeftClick());
+				lLayout.setFocusOffAll(pCore.input().mouseLeftClick());
 				lLayout.menuEntries().get(mSelectedEntry).hasFocus(true);
 			}
 
@@ -240,7 +239,7 @@ public abstract class MenuScreen extends Screen implements IMenuEntryClickListen
 		}
 
 		// Respond to DOWN key
-		if (pInputState.keyDownTimed(GLFW.GLFW_KEY_DOWN)) {
+		if (pCore.input().keyDownTimed(GLFW.GLFW_KEY_DOWN)) {
 
 			BaseLayout lLayout = mLayouts.get(mSelectedLayout);
 
@@ -253,7 +252,7 @@ public abstract class MenuScreen extends Screen implements IMenuEntryClickListen
 
 			// Set focus on the new entry
 			if (lLayout.menuEntries().get(mSelectedEntry).enabled()) {
-				lLayout.setFocusOffAll(pInputState.mouseLeftClick());
+				lLayout.setFocusOffAll(pCore.input().mouseLeftClick());
 				lLayout.menuEntries().get(mSelectedEntry).hasFocus(true);
 			}
 
@@ -262,25 +261,25 @@ public abstract class MenuScreen extends Screen implements IMenuEntryClickListen
 		}
 
 		// Process ENTER key press
-		if (pInputState.keyDownTimed(GLFW.GLFW_KEY_ENTER)) {
+		if (pCore.input().keyDownTimed(GLFW.GLFW_KEY_ENTER)) {
 			BaseLayout lLayout = mLayouts.get(mSelectedLayout);
 			if (!lLayout.hasEntry(mSelectedEntry))
 				return;
 
-			lLayout.menuEntries().get(mSelectedEntry).onClick(pInputState);
+			lLayout.menuEntries().get(mSelectedEntry).onClick(pCore.input());
 		}
 
 		// Process Mouse input
 		int lLayoutCount = mLayouts.size();
 		for (int i = 0; i < lLayoutCount; i++) {
 			BaseLayout lLayout = mLayouts.get(i);
-			lLayout.handleInput(pGameTime, pInputState, mScreenManager.HUD());
+			lLayout.handleInput(pCore);
 		}
 	}
 
 	@Override
-	public void updateStructure() {
-		Rectangle lHUDRect = mScreenManager.HUD().boundingRectangle();
+	public void updateStructure(LintfordCore pCore) {
+		Rectangle lHUDRect = pCore.HUD().boundingRectangle();
 
 		if (mOrientation == ORIENTATION.vertical) {
 			float lYPos = lHUDRect.top() + mTopMargin;
@@ -325,10 +324,10 @@ public abstract class MenuScreen extends Screen implements IMenuEntryClickListen
 	}
 
 	@Override
-	public void update(GameTime pGameTime, boolean pOtherScreenHasFocus, boolean pCoveredByOtherScreen) {
-		super.update(pGameTime, pOtherScreenHasFocus, pCoveredByOtherScreen);
+	public void update(LintfordCore pCore, boolean pOtherScreenHasFocus, boolean pCoveredByOtherScreen) {
+		super.update(pCore, pOtherScreenHasFocus, pCoveredByOtherScreen);
 
-		final double lDeltaTime = pGameTime.elapseGameTimeMilli();
+		final double lDeltaTime = pCore.time().elapseGameTimeMilli();
 
 		if (mAnimationTimer > 0) {
 			mAnimationTimer -= lDeltaTime;
@@ -342,26 +341,26 @@ public abstract class MenuScreen extends Screen implements IMenuEntryClickListen
 
 		final int lCount = layouts().size();
 		for (int i = 0; i < lCount; i++) {
-			mLayouts.get(i).update(pGameTime);
+			mLayouts.get(i).update(pCore);
 		}
 
 	}
 
 	@Override
-	public void draw(RenderState pRenderState) {
+	public void draw(LintfordCore pCore) {
 		if (mScreenState != ScreenState.Active && mScreenState != ScreenState.TransitionOn && mScreenState != ScreenState.TransitionOff)
 			return;
 
-		Rectangle lHUDRect = mScreenManager.HUD().boundingRectangle();
+		Rectangle lHUDRect = pCore.HUD().boundingRectangle();
 
-		mMenuTitleFont.begin(mScreenManager.HUD());
+		mMenuTitleFont.begin(pCore.HUD());
 		mMenuTitleFont.draw(mMenuTitle, lHUDRect.left() + TITLE_PADDING_X, lHUDRect.top(), Z_DEPTH, mR, mG, mB, mA, 1f);
 		mMenuTitleFont.end();
 
 		// Draw each layout in turn.
 		final int lCount = layouts().size();
 		for (int i = 0; i < lCount; i++) {
-			mLayouts.get(i).draw(pRenderState, Z_DEPTH);
+			mLayouts.get(i).draw(pCore, Z_DEPTH);
 
 		}
 

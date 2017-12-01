@@ -4,15 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.lintford.library.ConstantsTable;
-import net.lintford.library.core.camera.HUD;
-import net.lintford.library.core.camera.ICamera;
+import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 import net.lintford.library.core.input.InputState;
-import net.lintford.library.core.rendering.RenderState;
-import net.lintford.library.core.time.GameTime;
-import net.lintford.library.options.DisplayConfig;
 import net.lintford.library.renderers.windows.UIRectangle;
 import net.lintford.library.renderers.windows.components.IScrollBarArea;
 import net.lintford.library.renderers.windows.components.ScrollBar;
@@ -42,7 +38,6 @@ public abstract class BaseLayout extends UIRectangle implements IScrollBarArea {
 	protected ANCHOR mAnchor;
 
 	protected MenuScreen mParentScreen;
-	protected DisplayConfig mDisplayConfig;
 	protected List<MenuEntry> mMenuEntries;
 	protected int mSelectedEntry = 0;
 	protected int mNumberEntries;
@@ -166,8 +161,6 @@ public abstract class BaseLayout extends UIRectangle implements IScrollBarArea {
 		mParentScreen = pParentScreen;
 		mMenuEntries = new ArrayList<>();
 
-		mDisplayConfig = pParentScreen.screenManager().masterConfig().displayConfig();
-
 		mSpriteBatch = new TextureBatch();
 
 		// Set some defaults
@@ -228,36 +221,34 @@ public abstract class BaseLayout extends UIRectangle implements IScrollBarArea {
 
 	}
 
-	public boolean handleInput(GameTime pGameTime, InputState pInputState, ICamera pHUDCamera) {
+	public boolean handleInput(LintfordCore pCore) {
 		if (menuEntries() == null || menuEntries().size() == 0)
 			return false; // nothing to do
 
-		setFocusOffAll(pInputState.mouseLeftClick());
+		setFocusOffAll(pCore.input().mouseLeftClick());
 
-		HUD lHUD = mParentScreen.screenManager().HUD();
-		
-		if (mContentArea.intersects(lHUD.getMouseCameraSpace())) {
+		if (mContentArea.intersects(pCore.HUD().getMouseCameraSpace())) {
 			final int lEntryCount = menuEntries().size();
 			for (int i = 0; i < lEntryCount; i++) {
 				MenuEntry lMenuEntry = menuEntries().get(i);
-				if (lMenuEntry.handleInput(pInputState, pHUDCamera)) {
+				if (lMenuEntry.handleInput(pCore)) {
 					return true;
 				}
 			}
 		}
 
 		if (mScrollBarsEnabled) {
-			mScrollBar.handleInput(pInputState, pHUDCamera);
+			mScrollBar.handleInput(pCore);
 		}
 
 		return false;
 	}
 
-	public void update(GameTime pGameTime) {
+	public void update(LintfordCore pCore) {
 		final int lCount = mMenuEntries.size();
 		for (int i = 0; i < lCount; i++) {
 			boolean lIsSelected = mParentScreen.isActive() && (i == mSelectedEntry);
-			mMenuEntries.get(i).update(pGameTime, mParentScreen, lIsSelected);
+			mMenuEntries.get(i).update(pCore, mParentScreen, lIsSelected);
 		}
 
 		height = getHeight();
@@ -267,15 +258,15 @@ public abstract class BaseLayout extends UIRectangle implements IScrollBarArea {
 		mContentArea.width = width;
 		mContentArea.height = getEntryHeight();
 
-		mScrollBar.update(pGameTime);
+		mScrollBar.update(pCore);
 		mScrollBarsEnabled = mContentArea.height - getHeight() > 0;
 
 	}
 
-	public void draw(RenderState pRenderState, float pParentZDepth) {
+	public void draw(LintfordCore pCore, float pParentZDepth) {
 
 		if (ConstantsTable.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
-			mSpriteBatch.begin(mParentScreen.screenManager().HUD());
+			mSpriteBatch.begin(pCore.HUD());
 			final float SCALE = 1f;
 			final float ALPHA = 0.6f;
 			mSpriteBatch.draw(0, 0, 32, 32, x, y, pParentZDepth + .1f, width, height, SCALE, 1f, 0.2f, 1f, ALPHA, TextureManager.TEXTURE_CORE_UI);
@@ -283,7 +274,7 @@ public abstract class BaseLayout extends UIRectangle implements IScrollBarArea {
 		}
 
 		if (mDrawBackground) {
-			mSpriteBatch.begin(mParentScreen.screenManager().HUD());
+			mSpriteBatch.begin(pCore.HUD());
 			final float SCALE = 1f;
 			mSpriteBatch.draw(0, 0, 32, 32, x, y, pParentZDepth + .1f, width, height, SCALE, mR, mG, mB, mA, TextureManager.TEXTURE_CORE_UI);
 			mSpriteBatch.end();
@@ -291,20 +282,20 @@ public abstract class BaseLayout extends UIRectangle implements IScrollBarArea {
 
 		if (mScrollBarsEnabled) {
 			// TODO: SPRITE
-			mContentArea.preDraw(pRenderState, mSpriteBatch);
+			mContentArea.preDraw(pCore, mSpriteBatch);
 
 		}
 
 		int lCount = menuEntries().size();
 		for (int i = 0; i < lCount; i++) {
-			menuEntries().get(i).draw(mParentScreen, pRenderState, mSelectedEntry == i, pParentZDepth + i * .1f);
-			
+			menuEntries().get(i).draw(pCore, mParentScreen, mSelectedEntry == i, pParentZDepth + i * .1f);
+
 		}
 
 		if (mScrollBarsEnabled) {
-			mContentArea.postDraw(pRenderState);
-			mScrollBar.draw(pRenderState, mSpriteBatch, pParentZDepth + .1f);
-			
+			mContentArea.postDraw(pCore);
+			mScrollBar.draw(pCore, mSpriteBatch, pParentZDepth + .1f);
+
 		}
 
 	}

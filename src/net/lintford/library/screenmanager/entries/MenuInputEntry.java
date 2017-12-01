@@ -1,11 +1,9 @@
 package net.lintford.library.screenmanager.entries;
 
-import net.lintford.library.core.camera.ICamera;
+import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.graphics.fonts.BitmapFont;
 import net.lintford.library.core.input.IBufferedInputCallback;
 import net.lintford.library.core.input.InputState;
-import net.lintford.library.core.rendering.RenderState;
-import net.lintford.library.core.time.GameTime;
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.Screen;
@@ -94,15 +92,15 @@ public class MenuInputEntry extends MenuEntry implements IBufferedInputCallback 
 	// --------------------------------------
 
 	@Override
-	public boolean handleInput(InputState pInputState, ICamera pHUDCamera) {
-		boolean lResult = super.handleInput(pInputState, pHUDCamera);
+	public boolean handleInput(LintfordCore pCore) {
+		boolean lResult = super.handleInput(pCore);
 
 		/*
 		 * The code for handling the input for this InputMenuEntry is handled for us in the super class. The only addition to that code is the need to capture the keyboard buffered input, which is below.
 		 */
 		if (mHasFocus) {
 			// Update the string displayed with the input received
-			pInputState.startCapture(this);
+			pCore.input().startCapture(this);
 		} else {
 			mFocusLocked = false; // no lock if not focused
 			mHasFocus = false;
@@ -112,10 +110,10 @@ public class MenuInputEntry extends MenuEntry implements IBufferedInputCallback 
 	}
 
 	@Override
-	public void update(GameTime pGameTime, MenuScreen pScreen, boolean pIsSelected) {
-		super.update(pGameTime, pScreen, pIsSelected);
+	public void update(LintfordCore pCore, MenuScreen pScreen, boolean pIsSelected) {
+		super.update(pCore, pScreen, pIsSelected);
 
-		final double lDeltaTime = pGameTime.elapseGameTimeMilli();
+		final double lDeltaTime = pCore.time().elapseGameTimeMilli();
 
 		mCaretFlashTimer += lDeltaTime;
 
@@ -129,8 +127,8 @@ public class MenuInputEntry extends MenuEntry implements IBufferedInputCallback 
 	}
 
 	@Override
-	public void draw(Screen pScreen, RenderState pRenderState, boolean pIsSelected, float pParentZDepth) {
-		super.draw(pScreen, pRenderState, pIsSelected, pParentZDepth);
+	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pParentZDepth) {
+		super.draw(pCore, pScreen, pIsSelected, pParentZDepth);
 
 		BitmapFont lFontBitmap = mParentScreen.font().bitmap();
 
@@ -139,7 +137,7 @@ public class MenuInputEntry extends MenuEntry implements IBufferedInputCallback 
 		final float lFontHeight = lFontBitmap.fontHeight();
 		final float lSeparatorHalfWidth = lFontBitmap.getStringWidth(mSeparator) * 0.5f;
 
-		mParentScreen.font().begin(mScreenManager.HUD());
+		mParentScreen.font().begin(pCore.HUD());
 		mParentScreen.font().draw(mLabel, x + width / 2 - 10 - lLabelWidth - lSeparatorHalfWidth, y + height / 2 - lFontHeight * 0.5f, pParentZDepth + .1f, 1f);
 		mParentScreen.font().draw(mSeparator, x + width / 2 - lSeparatorHalfWidth, y + height / 2 - lFontHeight * 0.5f, pParentZDepth + .1f, 1f);
 		mParentScreen.font().draw(mInputField.toString(), x + width / 2 + lSeparatorHalfWidth + SPACE_BETWEEN_TEXT, y + height / 2 - lFontHeight * 0.5f, pParentZDepth + .1f, 1f);

@@ -1,11 +1,8 @@
 package net.lintford.library.core.debug;
 
-import net.lintford.library.core.camera.ICamera;
+import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.debug.DebugLogger.LogMessage;
 import net.lintford.library.core.graphics.ResourceManager;
-import net.lintford.library.core.input.InputState;
-import net.lintford.library.core.rendering.RenderState;
-import net.lintford.library.core.time.GameTime;
 
 public class DebugManager {
 
@@ -42,7 +39,7 @@ public class DebugManager {
 	// Enums
 	// --------------------------------------
 
-	/** A convienence class to constrain the value given in a {@link LogMessage}'s log level. */
+	/** A convenience class to constrain the value given in a {@link LogMessage}'s log level. */
 	public enum DebugLogLevel {
 		verbose(LOG_LEVEL_VERBOSE), info(LOG_LEVEL_INFO), warning(LOG_LEVEL_WARNING), error(LOG_LEVEL_ERROR), system(LOG_LEVEL_SYSTEM), user(LOG_LEVEL_USER), off(LOG_LEVEL_OFF);
 
@@ -117,21 +114,21 @@ public class DebugManager {
 
 	}
 
-	public void handleInput(final InputState pInputState, ICamera pHUDCamera) {
-		mDebugConsole.handleInput(pInputState, pHUDCamera);
+	public void handleInput(LintfordCore pCore) {
+		mDebugConsole.handleInput(pCore);
 
 	}
 
-	public void update(final GameTime pGameTime) {
-		mDebugConsole.update(pGameTime);
+	public void update(LintfordCore pCore) {
+		mDebugConsole.update(pCore);
 
 	}
 
-	public void draw(final RenderState pRenderState) {
+	public void draw(LintfordCore pCore) {
 		if (!mIsGLLoaded)
 			return;
 
-		mDebugConsole.draw(pRenderState);
+		mDebugConsole.draw(pCore);
 
 	}
 

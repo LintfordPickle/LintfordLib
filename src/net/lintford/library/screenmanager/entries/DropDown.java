@@ -5,13 +5,11 @@ import java.util.List;
 
 import org.lwjgl.opengl.GL11;
 
-import net.lintford.library.core.camera.ICamera;
+import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 import net.lintford.library.core.input.InputState;
-import net.lintford.library.core.rendering.RenderState;
-import net.lintford.library.core.time.GameTime;
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.Screen;
@@ -109,29 +107,29 @@ public class DropDown extends MenuEntry {
 	}
 
 	@Override
-	public boolean handleInput(InputState pInputState, ICamera pHUDCamera) {
-		final float lMouseX = pInputState.mouseWindowCoords().x;
-		final float lMouseY = pInputState.mouseWindowCoords().y;
+	public boolean handleInput(LintfordCore pCore) {
+		final float lMouseX = pCore.input().mouseWindowCoords().x;
+		final float lMouseY = pCore.input().mouseWindowCoords().y;
 
 		// Culling
-		if (pInputState.mouseLeftClick() && (lMouseX < x || lMouseX > x + getWidth() || lMouseY < y || lMouseY > y + getHeight())) {
+		if (pCore.input().mouseLeftClick() && (lMouseX < x || lMouseX > x + getWidth() || lMouseY < y || lMouseY > y + getHeight())) {
 			return false;
 		}
 
 		// TODO: Selection
 		for (int i = 0; i < mItems.size(); i++) {
-			boolean lResult = mItems.get(i).handleInput(pInputState);
+			boolean lResult = mItems.get(i).handleInput(pCore);
 			if (lResult)
 				return true;
 
-			if (pInputState.mouseLeftClick()) {
+			if (pCore.input().mouseLeftClick()) {
 				mSelectedItem = -1;
 			}
 		}
 
-		if (!pInputState.mouseLeftClick())
+		if (!pCore.input().mouseLeftClick())
 			return false;
-		if (!pInputState.tryAquireLeftClickOwnership(hashCode()))
+		if (!pCore.input().tryAquireLeftClickOwnership(hashCode()))
 			return false;
 
 		if (!mClickActive) {
@@ -172,7 +170,7 @@ public class DropDown extends MenuEntry {
 	}
 
 	@Override
-	public void update(GameTime pGameTime, MenuScreen pScreen, boolean pIsSelected) {
+	public void update(LintfordCore pCore, MenuScreen pScreen, boolean pIsSelected) {
 
 		mListBoxInnerHeight = mItems.size() * (ListBoxItem.LISTBOXITEM_HEIGHT + LISTBOX_ITEM_VPADDING);
 		mScrollBarsEnabled = mListBoxInnerHeight - getHeight() > 0;
@@ -182,7 +180,7 @@ public class DropDown extends MenuEntry {
 	}
 
 	@Override
-	public void draw(Screen pScreen, RenderState pRenderState, boolean pIsSelected, float pParentZDepth) {
+	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pParentZDepth) {
 
 		// We need to use a stencil buffer to clip the listbox items (which, when scrolling, could appear out-of-bounds of the listbox).
 		GL11.glEnable(GL11.GL_STENCIL_TEST);
@@ -194,20 +192,20 @@ public class DropDown extends MenuEntry {
 		// Make sure we are starting with a fresh stencil buffer
 		GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT); // Clear the stencil buffer
 
-		mSpriteBatch.begin(mScreenManager.HUD());
+		mSpriteBatch.begin(pCore.HUD());
 		mSpriteBatch.draw(0, 0, 32, 32, x, y, pParentZDepth + .1f, getWidth(), getHeight(), 1.0f, 0.23f, 0.12f, 0.12f, 0.5f, TextureManager.TEXTURE_CORE_UI);
 		mSpriteBatch.end();
 
 		GL11.glStencilFunc(GL11.GL_EQUAL, 1, 0xFF); // Pass test if stencil value is 1
 
 		for (int i = 0; i < mItems.size(); i++) {
-			mItems.get(i).draw(pScreen, pRenderState, mSpriteBatch, mSelectedItem == mItems.get(i).mItemIndex, pParentZDepth);
+			mItems.get(i).draw(pCore, pScreen, mSpriteBatch, mSelectedItem == mItems.get(i).mItemIndex, pParentZDepth);
 		}
 
 		GL11.glDisable(GL11.GL_STENCIL_TEST);
 
 		if (mScrollBarsEnabled) {
-			// TODO(John): Need to implement scrollbars
+			// TODO(John): Need to implement scroll bars
 		}
 
 	}

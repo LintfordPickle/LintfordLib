@@ -3,13 +3,10 @@ package net.lintford.library.screenmanager.entries;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.lintford.library.core.camera.HUD;
-import net.lintford.library.core.camera.ICamera;
+import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.graphics.fonts.BitmapFont;
 import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.input.InputState;
-import net.lintford.library.core.rendering.RenderState;
-import net.lintford.library.core.time.GameTime;
 import net.lintford.library.renderers.windows.UIRectangle;
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
@@ -104,47 +101,45 @@ public class MenuEnumEntry extends MenuEntry {
 	// --------------------------------------
 
 	@Override
-	public boolean handleInput(InputState pInputState, ICamera pHUDCamera) {
+	public boolean handleInput(LintfordCore pCore) {
 		if (mHasFocus) {
 
 		} else {
 			mFocusLocked = false; // no lock if not focused
 		}
 
-		HUD lHUD = mScreenManager.HUD();
-
 		if (mButtonsEnabled) {
-			if (pInputState.isMouseTimedLeftClickAvailable()) {
-				if (mLeftButtonRectangle.intersects(lHUD.getMouseCameraSpace())) {
+			if (pCore.input().isMouseTimedLeftClickAvailable()) {
+				if (mLeftButtonRectangle.intersects(pCore.HUD().getMouseCameraSpace())) {
 					mSelectedIndex--;
 					if (mSelectedIndex < 0) {
 						mSelectedIndex = mItems.size() - 1;
 					}
 
-					mParentScreen.setFocusOn(pInputState, this, true);
+					mParentScreen.setFocusOn(pCore.input(), this, true);
 
 					if (mInteractionListener != null) {
 						mInteractionListener.menuEntryChanged(this);
 					}
 
-					pInputState.mouseTimedLeftClick();
+					pCore.input().mouseTimedLeftClick();
 					return true;
 				}
 
-				else if (mRightButtonRectangle.intersects(lHUD.getMouseCameraSpace())) {
+				else if (mRightButtonRectangle.intersects(pCore.HUD().getMouseCameraSpace())) {
 
 					mSelectedIndex++;
 					if (mSelectedIndex >= mItems.size()) {
 						mSelectedIndex = 0;
 					}
 
-					mParentScreen.setFocusOn(pInputState, this, true);
+					mParentScreen.setFocusOn(pCore.input(), this, true);
 
 					if (mInteractionListener != null) {
 						mInteractionListener.menuEntryChanged(this);
 					}
 
-					pInputState.mouseTimedLeftClick();
+					pCore.input().mouseTimedLeftClick();
 					return true;
 				}
 
@@ -152,8 +147,8 @@ public class MenuEnumEntry extends MenuEntry {
 
 		}
 
-		if (intersects(mScreenManager.HUD().getMouseCameraSpace())) {
-			if (pInputState.mouseTimedLeftClick()) {
+		if (intersects(pCore.HUD().getMouseCameraSpace())) {
+			if (pCore.input().mouseTimedLeftClick()) {
 				if (mEnabled) {
 
 					mSelectedIndex++;
@@ -163,7 +158,7 @@ public class MenuEnumEntry extends MenuEntry {
 
 					// TODO: Play a menu click sound
 
-					mParentScreen.setFocusOn(pInputState, this, true);
+					mParentScreen.setFocusOn(pCore.input(), this, true);
 					// mParentScreen.setHoveringOn(this);
 
 					if (mInteractionListener != null) {
@@ -180,7 +175,7 @@ public class MenuEnumEntry extends MenuEntry {
 
 			// Check if tool tips are enabled.
 			if (mToolTipEnabled) {
-				mToolTipTimer += pInputState.gameTime().elapseGameTimeMilli();
+				mToolTipTimer += pCore.time().elapseGameTimeMilli();
 			}
 
 			return true;
@@ -194,10 +189,10 @@ public class MenuEnumEntry extends MenuEntry {
 	}
 
 	@Override
-	public void update(GameTime pGameTime, MenuScreen pScreen, boolean pIsSelected) {
-		super.update(pGameTime, pScreen, pIsSelected);
+	public void update(LintfordCore pCore, MenuScreen pScreen, boolean pIsSelected) {
+		super.update(pCore, pScreen, pIsSelected);
 
-		// Update the button posisitions to line up with this entry
+		// Update the button positions to line up with this entry
 		// TODO(John): Need to implement left/right buttons for MenuEnumEntries.
 		mLeftButtonRectangle.x = x + width / 2 + 16;
 		mLeftButtonRectangle.y = y;
@@ -209,8 +204,8 @@ public class MenuEnumEntry extends MenuEntry {
 	}
 
 	@Override
-	public void draw(Screen pScreen, RenderState pRenderState, boolean pIsSelected, float pParentZDepth) {
-		super.draw(pScreen, pRenderState, pIsSelected, pParentZDepth);
+	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pParentZDepth) {
+		super.draw(pCore, pScreen, pIsSelected, pParentZDepth);
 
 		BitmapFont lFontBitmap = mParentScreen.font().bitmap();
 
@@ -221,7 +216,7 @@ public class MenuEnumEntry extends MenuEntry {
 		// TODO(John): we could make this a lot more readable and save on the individual calculations of the width/height of the same strings
 
 		// Draw the left/right buttons
-		mSpriteBatch.begin(mScreenManager.HUD());
+		mSpriteBatch.begin(pCore.HUD());
 		final float ARROW_BUTTON_SIZE = 16;
 		final float ARROW_PADDING_X = mLeftButtonRectangle.width - ARROW_BUTTON_SIZE;
 		final float ARROW_PADDING_Y = mLeftButtonRectangle.height - ARROW_BUTTON_SIZE;
@@ -236,7 +231,7 @@ public class MenuEnumEntry extends MenuEntry {
 
 		mSpriteBatch.end();
 
-		mParentScreen.font().begin(mScreenManager.HUD());
+		mParentScreen.font().begin(pCore.HUD());
 		mParentScreen.font().draw(mLabel, x + width / 2 - 10 - lLabelWidth - lSeparatorHalfWidth, y + height / 2 - TEXT_HEIGHT * 0.5f, pParentZDepth, mParentScreen.r(), mParentScreen.g(), mParentScreen.b(), mParentScreen.a(), 1.0f, -1);
 		mParentScreen.font().draw(mSeparator, x + width / 2 - lSeparatorHalfWidth, y + height / 2 - TEXT_HEIGHT * 0.5f, pParentZDepth, mParentScreen.r(), mParentScreen.g(), mParentScreen.b(), mParentScreen.a(), 1.0f, -1);
 

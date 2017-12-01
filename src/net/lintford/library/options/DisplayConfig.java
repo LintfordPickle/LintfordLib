@@ -40,12 +40,12 @@ import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 
 import net.lintford.library.ConstantsTable;
+import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.debug.DebugManager;
 import net.lintford.library.core.debug.DebugManager.DebugLogLevel;
 import net.lintford.library.core.debug.GLDebug;
 import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.maths.Vector2i;
-import net.lintford.library.core.time.GameTime;
 
 /** FIXME: Need to correct toggle between fullscreen, borderless window etc. FIXME: Need to add a dirty flag to confirm options */
 
@@ -241,7 +241,7 @@ public class DisplayConfig extends BaseConfig {
 	// Core-Methods
 	// --------------------------------------
 
-	public void update(GameTime pGameTime) {
+	public void update(LintfordCore pCore) {
 		if (mWindowResolutionChanged /* && !pInputState.mouseLeftClick() */) {
 			synchronized (this) {
 				DebugManager.DEBUG_MANAGER.logger().i(getClass().getSimpleName(), "Change Resolution changed: " + mWindowSize.x + "," + mWindowSize.y);

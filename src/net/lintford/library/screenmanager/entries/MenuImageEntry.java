@@ -1,8 +1,8 @@
 package net.lintford.library.screenmanager.entries;
 
+import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.graphics.fonts.BitmapFont;
 import net.lintford.library.core.graphics.textures.Texture;
-import net.lintford.library.core.rendering.RenderState;
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.MenuScreen.ALIGNMENT;
@@ -136,7 +136,7 @@ public class MenuImageEntry extends MenuEntry {
 	}
 
 	@Override
-	public void draw(Screen pScreen, RenderState pRenderState, boolean pIsSelected, float pParentZDepth) {
+	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pParentZDepth) {
 
 		BitmapFont lFontBitmap = mParentScreen.font().bitmap();
 
@@ -158,7 +158,7 @@ public class MenuImageEntry extends MenuEntry {
 		float lLabelHeightOffset = 0;
 		if (mShowLabel) {
 			final float FONT_SCALE = 1f;
-			mParentScreen.font().begin(mScreenManager.HUD());
+			mParentScreen.font().begin(pCore.HUD());
 			mParentScreen.font().draw(mText, lX, y, pParentZDepth + .1f, mR * mParentScreen.r(), mG * mParentScreen.g(), mB * mParentScreen.b(), mParentScreen.a(), FONT_SCALE);
 			mParentScreen.font().end();
 
@@ -166,7 +166,7 @@ public class MenuImageEntry extends MenuEntry {
 
 		}
 
-		mSpriteBatch.begin(pRenderState.HUDCamera());
+		mSpriteBatch.begin(pCore.HUD());
 
 		height = 240;
 

@@ -1,12 +1,9 @@
 package net.lintford.library.renderers.windows.components;
 
-import net.lintford.library.core.camera.ICamera;
+import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
-import net.lintford.library.core.input.InputState;
-import net.lintford.library.core.rendering.RenderState;
-import net.lintford.library.core.time.GameTime;
 import net.lintford.library.renderers.windows.UIWindow;
 import net.lintford.library.screenmanager.entries.IMenuEntryClickListener;
 
@@ -95,8 +92,8 @@ public class UIRadioButton extends UIWidget {
 	// --------------------------------------
 
 	@Override
-	public boolean handleInput(final InputState pInputState, ICamera pHUDCamera) {
-		if (intersects(pHUDCamera.getMouseCameraSpace()) && !mIsClicked && pInputState.tryAquireLeftClickOwnership(hashCode())) {
+	public boolean handleInput(LintfordCore pCore) {
+		if (intersects(pCore.HUD().getMouseCameraSpace()) && !mIsClicked && pCore.input().tryAquireLeftClickOwnership(hashCode())) {
 			mIsClicked = true;
 			final float MINIMUM_CLICK_TIMER = 1000;
 			// Callback to the listener and pass our ID
@@ -109,7 +106,7 @@ public class UIRadioButton extends UIWidget {
 
 		}
 
-		if (!pInputState.mouseLeftClick()) {
+		if (!pCore.input().mouseLeftClick()) {
 			mIsClicked = false;
 
 		}
@@ -118,14 +115,14 @@ public class UIRadioButton extends UIWidget {
 	}
 
 	@Override
-	public void update(final GameTime pGameTime) {
-		super.update(pGameTime);
+	public void update(LintfordCore pCore) {
+		super.update(pCore);
 
-		mClickTimer += pGameTime.elapseGameTimeMilli();
+		mClickTimer += pCore.time().elapseGameTimeMilli();
 	}
 
 	@Override
-	public void draw(final RenderState pRenderState) {
+	public void draw(LintfordCore pCore) {
 
 		float lR = mIsSelected ? 0.4f : 0.3f;
 		float lG = mIsSelected ? 0.4f : 0.34f;
@@ -134,7 +131,7 @@ public class UIRadioButton extends UIWidget {
 		final TextureBatch SPRITE_BATCH = mParentWindow.rendererManager().uiSpriteBatch();
 
 		// Draw the button background
-		SPRITE_BATCH.begin(pRenderState.HUDCamera());
+		SPRITE_BATCH.begin(pCore.HUD());
 		SPRITE_BATCH.draw(0, 0, 32, 32, x, y, 0f, width, height, 1f, lR, lG, lB, 1f, TextureManager.TEXTURE_CORE_UI);
 		SPRITE_BATCH.end();
 
@@ -143,7 +140,7 @@ public class UIRadioButton extends UIWidget {
 		final String lButtonText = mButtonLabel != null ? mButtonLabel : NO_LABEL_TEXT;
 		final float lTextWidth = lFontRenderer.bitmap().getStringWidth(lButtonText);
 
-		lFontRenderer.begin(pRenderState.HUDCamera());
+		lFontRenderer.begin(pCore.HUD());
 		lFontRenderer.draw(lButtonText, x + width / 2f - lTextWidth / 2f, y + height / 2f - lFontRenderer.bitmap().fontHeight() / 4f, 1f);
 		lFontRenderer.end();
 

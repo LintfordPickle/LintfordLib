@@ -21,6 +21,7 @@ import org.lwjgl.openal.AL10;
 import com.sun.media.sound.WaveFileReader;
 
 import net.lintford.library.core.debug.DebugManager;
+import net.lintford.library.core.storage.FileUtils;
 
 /* 
  * Copyright (c) 2002-2008 LWJGL Project
@@ -55,7 +56,7 @@ import net.lintford.library.core.debug.DebugManager;
  */
 
 /**
- * Utitlity class for loading wavefiles.
+ * Utility class for loading WAV files.
  *
  * @author Brian Matzon <brian@matzon.dk>
  * @version $Revision$ $Id$
@@ -87,7 +88,7 @@ public class WaveData {
 		this.samplerate = samplerate;
 	}
 
-	/** Disposes the wavedata */
+	/** Disposes the {@link WaveData}. */
 	public void dispose() {
 		data.clear();
 	}
@@ -120,16 +121,34 @@ public class WaveData {
 	 *            path to file (relative, and in classpath)
 	 * @return WaveData containing data, or null if a failure occured
 	 */
-	public static WaveData create(String path) {
-		File lNewFile = new File(path);
-		try {
-			return create(new BufferedInputStream(new FileInputStream(lNewFile)));
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+	public static WaveData create(String pPathName) {
+
+		if (pPathName.charAt(0) == '/') {
+			return createFromResource(pPathName);
+
+		} else {
+			return createFromFile(pPathName);
+
 		}
 
-		return null;
+	}
+
+	private static WaveData createFromResource(String pPathName) {
+		InputStream lInputStream = FileUtils.class.getResourceAsStream(pPathName);
+		return create(new BufferedInputStream(lInputStream));
+
+	}
+
+	private static WaveData createFromFile(String pPathName) {
+		File lNewFile = new File(pPathName);
+		try {
+			return create(new BufferedInputStream(new FileInputStream(lNewFile)));
+
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			return null;
+
+		}
 	}
 
 	/**

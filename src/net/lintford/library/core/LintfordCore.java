@@ -19,6 +19,7 @@ import net.lintford.library.controllers.core.ControllerManager;
 import net.lintford.library.controllers.core.RendererController;
 import net.lintford.library.core.camera.Camera;
 import net.lintford.library.core.camera.HUD;
+import net.lintford.library.core.camera.ICamera;
 import net.lintford.library.core.debug.DebugManager;
 import net.lintford.library.core.debug.DebugManager.DebugLogLevel;
 import net.lintford.library.core.debug.DebugMemory;
@@ -35,7 +36,7 @@ import net.lintford.library.renderers.RendererManager;
  * The LWJGLCore tracks the core state of an LWJGL application including a {@link DisplayConfig}, {@link ResourceManager}, {@link GameTime}, {@link Camera}, {@link HUD}, {@link InputState} and {@link RenderState}. It also defines the behaviour for
  * creating an OpenGL window.
  */
-public abstract class LWJGLCore {
+public abstract class LintfordCore {
 
 	// ---------------------------------------------
 	// Variables
@@ -51,6 +52,7 @@ public abstract class LWJGLCore {
 	protected RendererManager mRendererManager;
 	protected ResourceManager mResourceManager;
 
+	protected ICamera mGameCamera;
 	protected HUD mHUD;
 	protected RenderState mRenderState;
 
@@ -61,18 +63,23 @@ public abstract class LWJGLCore {
 	/**
 	 * Returns the instance of {@link GameTime} which was created when the LWJGL window was created. GameTime tracks the application time. null is returned if the LWJGL window has not yet been created.
 	 */
-	public GameTime gameTime() {
+	public GameTime time() {
 		return mGameTime;
 	}
 
 	/**
 	 * Returns the instance of {@link InputState} which was created when the LWJGL window was created. InputState is updated per-frame and tracks user input from the mouse and keyboard. null is returned if the LWJGL window has not yet been created.
 	 */
-	public InputState inputState() {
+	public InputState input() {
 		return mInputState;
 	}
 
-	public MasterConfig configuration() {
+	/** Returns the {@link ResourceManager}. */
+	public ResourceManager resources() {
+		return mResourceManager;
+	}
+
+	public MasterConfig config() {
 		return mMasterConfig;
 	}
 
@@ -84,8 +91,24 @@ public abstract class LWJGLCore {
 		return mControllerManager;
 	}
 
-	public HUD HUD() {
+	/**
+	 * Returns the active HUD {@link ICamera} instance assigned to this {@link RenderState}.
+	 */
+	public ICamera HUD() {
 		return mHUD;
+	}
+
+	/**
+	 * Returns the active game {@link ICamera} instance assigned to this {@link RenderState}. This can return null if no game camera has been explicitly set!
+	 */
+	public ICamera gameCamera() {
+		if (mGameCamera == null) {
+			DebugManager.DEBUG_MANAGER.logger().w(getClass().getSimpleName(), "GameCamera not registered with LWJGLCore! Are you trying to access the game camera outside of a GameScreen?");
+			return ICamera.EMPTY;
+
+		}
+
+		return mGameCamera;
 	}
 
 	public RenderState renderState() {
@@ -96,7 +119,7 @@ public abstract class LWJGLCore {
 	// Constructor
 	// ---------------------------------------------
 
-	public LWJGLCore(GameInfo pGameInfo) {
+	public LintfordCore(GameInfo pGameInfo) {
 		mGameInfo = pGameInfo;
 
 		ConstantsTable.setAppConstants(pGameInfo.applicationName());
@@ -123,7 +146,7 @@ public abstract class LWJGLCore {
 		mMasterConfig.loadConfigFiles(MasterConfig.configuration.all);
 
 		mGameTime = new GameTime();
-		mInputState = new InputState(mGameTime);
+		mInputState = new InputState();
 
 		initialiseGLFWWindow();
 
@@ -132,29 +155,29 @@ public abstract class LWJGLCore {
 		// Load the singleton subsystems
 		TextureManager.textureManager();
 
-		mControllerManager = new ControllerManager();
-		mRendererManager = new RendererManager();
+		mControllerManager = new ControllerManager(this);
+		mRendererManager = new RendererManager(this);
 
-		mHUD = new HUD(mMasterConfig.displayConfig());
-		mRenderState = new RenderState(mMasterConfig.displayConfig(), mHUD, mGameTime);
+		mHUD = new HUD(mMasterConfig.display());
+		mRenderState = new RenderState();
 
 		mControllerManager.addController(new RendererController(mControllerManager, mRendererManager, BaseControllerGroups.CONTROLLER_CORE_GROUP_ID));
 
 		onRunGameLoop();
 
-	}
-;
+	};
+
 	/**
 	 * Implemented in the sub-classe. Sets the default OpenGL state for the game.
 	 */
-	public void onInitialiseGL() {
+	protected void onInitialiseGL() {
 
 	}
 
 	/**
 	 * Implemented in the sub-class. Sets the default state of the application (note. OpenGL context is not available at this point).
 	 */
-	public void onInitialiseApp() {
+	protected void onInitialiseApp() {
 
 	}
 
@@ -183,12 +206,12 @@ public abstract class LWJGLCore {
 
 		onInitialiseApp();
 
-		// Lazy initialization of texture manager
+		// Lazy initialisation of texture manager
 		TextureManager.textureManager();
 
 		onLoadGLContent();
 
-		DisplayConfig lDisplayConfig = mMasterConfig.displayConfig();
+		DisplayConfig lDisplayConfig = mMasterConfig.display();
 
 		// Game loop
 		while (!glfwWindowShouldClose(lDisplayConfig.windowID())) {
@@ -196,10 +219,12 @@ public abstract class LWJGLCore {
 
 			}
 			mGameTime.update();
-			onHandleInput();
-			onUpdate(mGameTime);
 
-			onDraw(mRenderState);
+			onHandleInput();
+
+			onUpdate();
+
+			onDraw();
 
 			glfwSwapBuffers(lDisplayConfig.windowID());
 
@@ -221,35 +246,36 @@ public abstract class LWJGLCore {
 
 		}
 
-		mHUD.handleInput(mInputState);
+		DebugManager.DEBUG_MANAGER.handleInput(this);
 
-		mControllerManager.handleInput(mInputState);
+		mHUD.handleInput(this);
+
+		mControllerManager.handleInput(this);
 
 	}
 
 	/**
 	 * update auxiliary classes. If extended in sub-classes, ensure to update the auxiliary classes!
 	 */
-	protected void onUpdate(GameTime pGameTime) {
-		mMasterConfig.update(pGameTime);
-		mInputState.update(pGameTime);
-		mResourceManager.update(pGameTime);
+	protected void onUpdate() {
+		mMasterConfig.update(this);
+		mInputState.update(this);
+		mResourceManager.update(this);
+		mHUD.update(this);
+		mControllerManager.update(this);
 
-		mHUD.update(pGameTime);
-
-		mControllerManager.update(pGameTime);
 	}
 
 	/** Implemented in sub-class. Draws the game components. */
-	protected void onDraw(RenderState pRenderState) {
-		mRendererManager.draw(pRenderState);
+	protected void onDraw() {
+		mRendererManager.draw(this);
 
 	}
 
 	/** When called, sends the glfwWindowShouldClose message to GLFW. */
 	public void closeApp() {
 		// Close the GLFW window
-		glfwSetWindowShouldClose(mMasterConfig.displayConfig().windowID(), true);
+		glfwSetWindowShouldClose(mMasterConfig.display().windowID(), true);
 
 	}
 
@@ -258,7 +284,7 @@ public abstract class LWJGLCore {
 	// ---------------------------------------------
 
 	public void toggleFullscreen() {
-		DisplayConfig lDisplay = mMasterConfig.displayConfig();
+		DisplayConfig lDisplay = mMasterConfig.display();
 		if (lDisplay == null)
 			return; // has the game been properly started yet?
 
@@ -289,7 +315,17 @@ public abstract class LWJGLCore {
 		glfwSetScrollCallback(lWindowID, mInputState.mMouseScrollCallback);
 
 		mInputState.resetFlags();
-		
+
+	}
+
+	public void setNewGameCamera() {
+		mGameCamera = new Camera(mMasterConfig.display());
+
+	}
+
+	public void removeGameCamera() {
+		mGameCamera = ICamera.EMPTY;
+
 	}
 
 }

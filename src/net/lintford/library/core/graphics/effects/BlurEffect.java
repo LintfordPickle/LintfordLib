@@ -3,13 +3,13 @@ package net.lintford.library.core.graphics.effects;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 
+import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.geometry.FullScreenTexturedQuad;
 import net.lintford.library.core.graphics.rendertarget.RenderTarget;
 import net.lintford.library.core.graphics.shaders.BlurShader;
 import net.lintford.library.core.graphics.shaders.Shader;
 import net.lintford.library.core.maths.Matrix4f;
-import net.lintford.library.core.rendering.RenderState;
 
 public class BlurEffect {
 
@@ -74,30 +74,32 @@ public class BlurEffect {
 		mBlurShader.unloadGLContent();
 	}
 
-	public void render(RenderTarget pTarget, RenderState pRenderState) {
-		render(pTarget, pRenderState, BLUR_DIRECTION.horizontal);
-		render(pTarget, pRenderState, BLUR_DIRECTION.vertical);
+	public void render(LintfordCore pCore, RenderTarget pTarget) {
+		render(pCore, pTarget, BLUR_DIRECTION.horizontal);
+		render(pCore, pTarget, BLUR_DIRECTION.vertical);
 
 	}
 
-	public void render(RenderTarget pTarget, RenderState pRenderState, BLUR_DIRECTION pDir) {
+	public void render(LintfordCore pCore, RenderTarget pTarget, BLUR_DIRECTION pDir) {
 		GL13.glActiveTexture(GL13.GL_TEXTURE0);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, pTarget.colorTextureID());
 
 		pTarget.bind();
 
-		mBlurShader.resolution(pRenderState.displayConfig().windowSize().x);
+		final int lWindowWidth = pCore.config().display().windowSize().x;
+		
+		mBlurShader.resolution(lWindowWidth);
 		mBlurShader.radius(mRadius);
 		mBlurShader.direction().x = pDir == BLUR_DIRECTION.horizontal ? 1f : 0f;
 		mBlurShader.direction().y = pDir == BLUR_DIRECTION.horizontal ? 0f : 1f;
 
-		mBlurShader.projectionMatrix(pRenderState.HUDCamera().projection());
+		mBlurShader.projectionMatrix(pCore.HUD().projection());
 		mBlurShader.viewMatrix(Matrix4f.IDENTITY);
 		mFullScreenQuad.createModelMatrix();
 		mBlurShader.modelMatrix(mFullScreenQuad.modelMatrix());
 
 		mBlurShader.bind();
-		mFullScreenQuad.draw(pRenderState);
+		mFullScreenQuad.draw(pCore);
 		mBlurShader.unbind();
 
 		pTarget.unbind();

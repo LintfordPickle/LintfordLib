@@ -14,11 +14,11 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.List;
 
 import net.lintford.library.ConstantsTable;
+import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.audio.AudioManager;
 import net.lintford.library.core.graphics.fonts.FontManager;
 import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetManager;
 import net.lintford.library.core.graphics.textures.TextureManager;
-import net.lintford.library.core.time.GameTime;
 import net.lintford.library.options.MasterConfig;
 
 /**
@@ -65,6 +65,10 @@ public class ResourceManager {
 		return mFontManager;
 	}
 
+	public AudioManager audioManager() {
+		return mAudioManager;
+	}
+	
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
@@ -128,7 +132,7 @@ public class ResourceManager {
 		mIsLoaded = false;
 	}
 
-	public void update(GameTime pGameTime) {
+	public void update(LintfordCore pCore) {
 		if (ConstantsTable.getBooleanValueDef("DEBUG_TEXTURE_RELOAD_WATCHER", true)) {
 			WatchKey lKey = mTexturePathWatcher.poll();
 			if (lKey != null) {

@@ -1,7 +1,7 @@
 package net.lintford.library.controllers.core;
 
 import net.lintford.library.controllers.BaseController;
-import net.lintford.library.core.time.GameTime;
+import net.lintford.library.core.LintfordCore;
 import net.lintford.library.renderers.RendererManager;
 
 public class RendererController extends BaseController {
@@ -56,13 +56,13 @@ public class RendererController extends BaseController {
 	}
 
 	@Override
-	public void update(GameTime pGameTime) {
+	public void update(LintfordCore pCore) {
 		if (!isInitialised())
 			return;
 
-		super.update(pGameTime);
+		super.update(pCore);
 
-		mRendererManager.update(pGameTime);
+		mRendererManager.update(pCore);
 
 	}
 
