@@ -9,7 +9,7 @@ You can get the Java-LDLibraryGL project by either by cloning the repository or 
 If you want to add the Java-LDLibraryGL project to your existing git project, type the following at the git Bash:
 
 ```
-git submodule add https://github.com/LintfordPickle/Java-LDLibraryGL.git <directory>
+git submodule add https://github.com/LintfordPickle/LintfordLib.git
 ```
 
 This will register the git repository as a submodule under the directory specified. This command will automatically clone the submodule into the repository. You can check the status of the submodules using:
@@ -78,7 +78,34 @@ LWJGLCore is an abstract class which defines core methods for an OpenGL game. Th
 
 
 # Resource Files
-The LDLibrary also has a couple of resource files that are used as standard by the ScreenManager (such as a 'default' font and texture file). These resources are embedded in the jar and streamed at runtime.
+The LDLibrary also has a couple of resource files that are used as standard by the ScreenManager (such as a 'default' font and texture file). These resources are embedded in the jar and streamed at runtime. When loading media from an embedded resource as a stream, don't forget that the path name should start with a / (which indicates the path is relative to the JAR root.) For example:
+
+Loading a texture from an embedded resource:
+
+```
+Texture myTexture = TextureManager.textureManager().loadTexture("world", "/res/textures/world.png");
+```
+
+Loading a texture from a file:
+
+```
+Texture myTexture = TextureManager.textureManager().loadTexture("world", "res/textures/world.png");
+```
+
+You can customise the 'core' texture that the ScreenManager uses by loading a texture in the TextureManager with an ID of ScreenManager.SCREENMANAGER___TEXTURE_NAME. 
+
+For example:
+
+```
+TextureManager.textureManager().loadTexture(ScreenManager.SCREENMANAGER_TEXTURE_NAME, "res/textures/screenmanager.png");
+```
+will load the png file from the res/textures directory.
+
+Similarly you can load a custom font for the screen manager like this:
+
+```
+mResourceManager.fontManager().loadNewFont(ToastManager.TOAST_FONT_NAME, "res/fonts/system.ttf", 20);
+```
 
 You can specify to the ResourceManager in LWJGLCore to watch a texture directory for changes. Any changes to texture
 files at runtime will be automatically reloaded and updated in the running game. To do this, for example, use:

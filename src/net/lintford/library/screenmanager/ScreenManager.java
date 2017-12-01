@@ -2,8 +2,6 @@ package net.lintford.library.screenmanager;
 
 import java.util.ArrayList;
 
-import org.lwjgl.opengl.GL11;
-
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.textures.TextureManager;
@@ -203,14 +201,6 @@ public class ScreenManager {
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
-
-	public void setScreenManagerTexture(String pTexturePath) {
-		if (pTexturePath == null || pTexturePath.length() == 0)
-			return;
-
-		TextureManager.textureManager().loadTexture(SCREENMANAGER_TEXTURE_NAME, pTexturePath, GL11.GL_NEAREST, true);
-
-	}
 
 	public void addScreen(Screen pScreen) {
 		if (!pScreen.isLoaded()) {
