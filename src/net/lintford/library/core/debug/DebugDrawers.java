@@ -20,8 +20,8 @@ public class DebugDrawers {
 	// Constants
 	// --------------------------------------
 
-	protected static final String VERT_FILENAME = "//res//shaders//shader_basic_pt.vert";
-	protected static final String FRAG_FILENAME = "//res//shaders//shader_basic_pt.frag";
+	protected static final String VERT_FILENAME = "/res/shaders/shader_basic_pt.vert";
+	protected static final String FRAG_FILENAME = "/res/shaders/shader_basic_pt.frag";
 
 	// --------------------------------------
 	// Variables

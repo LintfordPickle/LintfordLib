@@ -26,8 +26,8 @@ public abstract class Shader {
 	// Constants
 	// --------------------------------------
 
-	public static final String BASIC_VERT_FILENAME = "//res//shaders//shader_basic_pct.vert";
-	public static final String BASIC_FRAG_FILENAME = "//res//shaders//shader_basic_pct.frag";
+	public static final String BASIC_VERT_FILENAME = "/res/shaders/shader_basic_pct.vert";
+	public static final String BASIC_FRAG_FILENAME = "/res/shaders/shader_basic_pct.frag";
 
 	// --------------------------------------
 	// Variables

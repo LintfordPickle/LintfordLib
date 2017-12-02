@@ -33,7 +33,7 @@ import net.lintford.library.options.MasterConfig;
 import net.lintford.library.renderers.RendererManager;
 
 /**
- * The LWJGLCore tracks the core state of an LWJGL application including a {@link DisplayConfig}, {@link ResourceManager}, {@link GameTime}, {@link Camera}, {@link HUD}, {@link InputState} and {@link RenderState}. It also defines the behaviour for
+ * The LintfordCore tracks the core state of an LWJGL application including a {@link DisplayConfig}, {@link ResourceManager}, {@link GameTime}, {@link Camera}, {@link HUD}, {@link InputState} and {@link RenderState}. It also defines the behaviour for
  * creating an OpenGL window.
  */
 public abstract class LintfordCore {
@@ -188,12 +188,17 @@ public abstract class LintfordCore {
 		mResourceManager.loadGLContent();
 		mRendererManager.loadGLContent(mResourceManager);
 
+		DebugManager.DEBUG_MANAGER.loadGLContent(mResourceManager);
+
 	}
 
 	/**
 	 * Called automatically after exiting the main game loop. OpenGL resources should be released.
 	 */
 	protected void onUnloadGLContent() {
+
+		DebugManager.DEBUG_MANAGER.unloadGLContent();
+
 		mResourceManager.unloadContent();
 		mRendererManager.unloadGLContent();
 
@@ -264,11 +269,15 @@ public abstract class LintfordCore {
 		mHUD.update(this);
 		mControllerManager.update(this);
 
+		DebugManager.DEBUG_MANAGER.update(this);
+
 	}
 
 	/** Implemented in sub-class. Draws the game components. */
 	protected void onDraw() {
 		mRendererManager.draw(this);
+
+		DebugManager.DEBUG_MANAGER.draw(this);
 
 	}
 

@@ -7,7 +7,6 @@ import java.util.List;
 import org.lwjgl.glfw.GLFW;
 
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.camera.HUD;
 import net.lintford.library.core.debug.DebugLogger.LogMessage;
 import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
@@ -72,7 +71,6 @@ public class DebugConsole extends UIRectangle implements IBufferedInputCallback,
 	// Variables
 	// --------------------------------------
 
-	private transient DisplayConfig mDisplayConfig;
 	private transient boolean mActive;
 	private transient boolean mOpen;
 	private transient float mFocusTimer;
@@ -103,8 +101,7 @@ public class DebugConsole extends UIRectangle implements IBufferedInputCallback,
 	private transient int mConsoleLineHeight;
 
 	private transient boolean mAutoScroll;
-
-	private HUD mHUD;
+	private boolean mIsLoaded;
 
 	// --------------------------------------
 	// Properties
@@ -161,6 +158,8 @@ public class DebugConsole extends UIRectangle implements IBufferedInputCallback,
 
 		}
 
+		mIsLoaded = false;
+
 	}
 
 	// --------------------------------------
@@ -176,10 +175,11 @@ public class DebugConsole extends UIRectangle implements IBufferedInputCallback,
 		if (!CONSOLE_ENABLED)
 			return;
 
-		mDisplayConfig = pResourceManager.masterConfig().display();
 		mConsoleFont = pResourceManager.fontManager().systemFont();
 
 		mSpriteBatch.loadGLContent(pResourceManager);
+
+		mIsLoaded = true;
 
 	}
 
@@ -191,6 +191,8 @@ public class DebugConsole extends UIRectangle implements IBufferedInputCallback,
 
 		mSpriteBatch.unloadGLContent();
 		// TODO: Unload fonts when no longer needed?
+
+		mIsLoaded = false;
 
 	}
 
@@ -240,8 +242,8 @@ public class DebugConsole extends UIRectangle implements IBufferedInputCallback,
 				pCore.input().startCapture(this);
 			}
 
-			float lHUDMouseX = mHUD.getMouseWorldSpaceX();
-			float lHUDMouseY = mHUD.getMouseWorldSpaceY();
+			float lHUDMouseX = pCore.HUD().getMouseWorldSpaceX();
+			float lHUDMouseY = pCore.HUD().getMouseWorldSpaceY();
 
 			if (pCore.input().mouseLeftClick() && intersects(lHUDMouseX, lHUDMouseY)) {
 				// Consume the left click
@@ -283,10 +285,11 @@ public class DebugConsole extends UIRectangle implements IBufferedInputCallback,
 			mOpenHeight -= OPEN_SPEED * lDeltaTime;
 		}
 
+		DisplayConfig lDisplay = pCore.config().display();
 		// Update the bounds of the window view
-		x = -mDisplayConfig.windowSize().x * 0.5f;
-		y = -mDisplayConfig.windowSize().y * 0.5f;
-		width = mDisplayConfig.windowSize().x;
+		x = -lDisplay.windowSize().x * 0.5f;
+		y = -lDisplay.windowSize().y * 0.5f;
+		width = lDisplay.windowSize().x;
 		height = openHeight();
 
 		mConsoleLineHeight = (int) (mConsoleFont.bitmap().getStringHeight(" ") + 4);
@@ -327,6 +330,8 @@ public class DebugConsole extends UIRectangle implements IBufferedInputCallback,
 
 		final List<LogMessage> LOG_MESSAGES = DebugManager.DEBUG_MANAGER.logger().logLines();
 
+		DisplayConfig lDisplay = pCore.config().display();
+
 		// output the messages
 		if (LOG_MESSAGES != null && LOG_MESSAGES.size() > 0) {
 			for (int i = mLowerBound; i < mUpperBound; i++) {
@@ -339,12 +344,12 @@ public class DebugConsole extends UIRectangle implements IBufferedInputCallback,
 					final float lB = getMessageRGB(MESSAGE.type).z;
 
 					// Draw TAG
-					mConsoleFont.draw(MESSAGE.tag, x + PADDING_LEFT, -mDisplayConfig.windowSize().y * 0.5f - lTextPosition, Z_DEPTH + 0.1f, lR, lG, lB, 1.0f, 1f, -1, 18);
+					mConsoleFont.draw(MESSAGE.tag, x + PADDING_LEFT, -lDisplay.windowSize().y * 0.5f - lTextPosition, Z_DEPTH + 0.1f, lR, lG, lB, 1.0f, 1f, -1, 18);
 
 					// Draw MESSAGE
 					final float MESSAGE_POSITION_OFFSET = 200;
 
-					mConsoleFont.draw(MESSAGE.message, x + PADDING_LEFT + MESSAGE_POSITION_OFFSET, -mDisplayConfig.windowSize().y * 0.5f - lTextPosition, Z_DEPTH + 0.1f, lR, lG, lB, 1.0f, 1f, -1, -1);
+					mConsoleFont.draw(MESSAGE.message, x + PADDING_LEFT + MESSAGE_POSITION_OFFSET, -lDisplay.windowSize().y * 0.5f - lTextPosition, Z_DEPTH + 0.1f, lR, lG, lB, 1.0f, 1f, -1, -1);
 
 				}
 
@@ -355,11 +360,10 @@ public class DebugConsole extends UIRectangle implements IBufferedInputCallback,
 		// the input line from the user will always be visible at the bottom of the console.
 		if (mInputText != null) {
 			final float INPUT_Y_OFFSET = 0;
-			mConsoleFont.draw(PROMT_CHAR, -mDisplayConfig.windowSize().x * 0.5f + PADDING_LEFT, y + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET, Z_DEPTH + 0.1f, 1f);
-			mConsoleFont.draw(mInputText.toString(), -mDisplayConfig.windowSize().x * 0.5f + PADDING_LEFT + lInputTextXOffset, y + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET, Z_DEPTH + 0.1f, 1f);
+			mConsoleFont.draw(PROMT_CHAR, -lDisplay.windowSize().x * 0.5f + PADDING_LEFT, y + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET, Z_DEPTH + 0.1f, 1f);
+			mConsoleFont.draw(mInputText.toString(), -lDisplay.windowSize().x * 0.5f + PADDING_LEFT + lInputTextXOffset, y + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET, Z_DEPTH + 0.1f, 1f);
 			if (mShowCaret && mHasFocus)
-				mConsoleFont.draw("|", -mDisplayConfig.windowSize().x * 0.5f + PADDING_LEFT + lInputTextXOffset + mConsoleFont.bitmap().getStringWidth(mInputText.toString()), y + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET, Z_DEPTH + 0.1f,
-						1f);
+				mConsoleFont.draw("|", -lDisplay.windowSize().x * 0.5f + PADDING_LEFT + lInputTextXOffset + mConsoleFont.bitmap().getStringWidth(mInputText.toString()), y + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET, Z_DEPTH + 0.1f, 1f);
 		}
 
 		mConsoleFont.end();

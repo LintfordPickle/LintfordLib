@@ -95,8 +95,8 @@ public class DisplayConfig extends BaseConfig {
 		normal, wide, u_wide,
 	}
 
-	public static final int WINDOW_MINIMUM_WIDTH = 1024;
-	public static final int WINDOW_MINIMUM_HEIGHT = 768;
+	public static final int WINDOW_MINIMUM_WIDTH = 640;
+	public static final int WINDOW_MINIMUM_HEIGHT = 480;
 
 	// --------------------------------------
 	// Enums
