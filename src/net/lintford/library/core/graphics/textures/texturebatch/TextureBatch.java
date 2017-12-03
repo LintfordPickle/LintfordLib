@@ -264,31 +264,27 @@ public class TextureBatch {
 		float dx = -pROX * pScaleX;
 		float dy = -pROY * pScaleY;
 
-		// Apply the difference back to the global positions
-		x += pROX * pScaleX;
-		y += pROY * pScaleY;
-
 		// Vertex 0
-		float x0 = x + dx * cos - (dy + h * pScaleX) * sin;
-		float y0 = y + dx * sin + (dy + h * pScaleY) * cos;
+		float x0 = x + (dx * cos - (dy + h * pScaleX) * sin);
+		float y0 = y + (dx * sin + (dy + h * pScaleY) * cos);
 		float u0 = pSX / pTexture.getTextureWidth();
 		float v0 = (pSY + pSH) / pTexture.getTextureHeight();
 
 		// Vertex 1
-		float x1 = x + dx * cos - dy * sin;
-		float y1 = y + dx * sin + dy * cos;
+		float x1 = x + (dx * cos - dy * sin);
+		float y1 = y + (dx * sin + dy * cos);
 		float u1 = pSX / pTexture.getTextureWidth();
 		float v1 = pSY / pTexture.getTextureHeight();
 
 		// Vertex 2
-		float x2 = x + (dx + w * pScaleX) * cos - dy * sin;
-		float y2 = y + (dx + w * pScaleY) * sin + dy * cos;
+		float x2 = x + ((dx + w * pScaleX) * cos - dy * sin);
+		float y2 = y + ((dx + w * pScaleY) * sin + dy * cos);
 		float u2 = (pSX + pSW) / pTexture.getTextureWidth();
 		float v2 = pSY / pTexture.getTextureHeight();
 
 		// Vertex 3
-		float x3 = x + (dx + w * pScaleX) * cos - (dy + h * pScaleX) * sin;
-		float y3 = y + (dx + w * pScaleY) * sin + (dy + h * pScaleY) * cos;
+		float x3 = x + ((dx + w * pScaleX) * cos - (dy + h * pScaleX) * sin);
+		float y3 = y + ((dx + w * pScaleY) * sin + (dy + h * pScaleY) * cos);
 		float u3 = (pSX + pSW) / pTexture.getTextureWidth();
 		float v3 = (pSY + pSH) / pTexture.getTextureHeight();
 

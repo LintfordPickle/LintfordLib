@@ -55,12 +55,14 @@ public class CameraFollowController extends BaseController {
 	// Constructor
 	// ---------------------------------------------
 
-	public CameraFollowController(ControllerManager pControllerManager, int pControllerGroup) {
+	public CameraFollowController(ControllerManager pControllerManager, ICamera pCamera, WorldEntity pTrackEntity, int pControllerGroup) {
 		super(pControllerManager, CONTROLLER_NAME, pControllerGroup);
 
 		mVelocity = new Vector2f();
 
-		// default to track player
+		//
+		mGameCamera = pCamera;
+		mTrackedEntity = pTrackEntity;
 		mTrackPlayer = true;
 
 	}
@@ -113,9 +115,11 @@ public class CameraFollowController extends BaseController {
 
 	@Override
 	public void update(LintfordCore pCore) {
+		if (mGameCamera == null)
+			;
 		mTrackPlayer = true;
 		if (mTrackPlayer && mTrackedEntity != null) {
-			
+
 			mGameCamera.setPosition(-mTrackedEntity.x, -mTrackedEntity.y);
 
 		} else {

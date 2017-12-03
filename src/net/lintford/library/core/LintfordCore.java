@@ -52,7 +52,7 @@ public abstract class LintfordCore {
 	protected RendererManager mRendererManager;
 	protected ResourceManager mResourceManager;
 
-	protected ICamera mGameCamera;
+	protected Camera mGameCamera;
 	protected HUD mHUD;
 	protected RenderState mRenderState;
 
@@ -230,6 +230,8 @@ public abstract class LintfordCore {
 			onUpdate();
 
 			onDraw();
+			
+			mInputState.resetFlags();
 
 			glfwSwapBuffers(lDisplayConfig.windowID());
 
@@ -267,6 +269,8 @@ public abstract class LintfordCore {
 		mInputState.update(this);
 		mResourceManager.update(this);
 		mHUD.update(this);
+		if (mGameCamera != null)
+			mGameCamera.update(this);
 		mControllerManager.update(this);
 
 		DebugManager.DEBUG_MANAGER.update(this);
@@ -333,7 +337,7 @@ public abstract class LintfordCore {
 	}
 
 	public void removeGameCamera() {
-		mGameCamera = ICamera.EMPTY;
+		mGameCamera = null;
 
 	}
 

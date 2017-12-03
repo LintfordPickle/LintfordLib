@@ -29,9 +29,6 @@ public class HUD implements ICamera, IResizeListener {
 	 */
 	public static final float Z_FAR = 10.0f;
 
-	public static final int HUD_SIZE_WIDTH = 1024;
-	public static final int HUD_SIZE_HEIGHT = 768;
-
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
@@ -110,7 +107,7 @@ public class HUD implements ICamera, IResizeListener {
 		mWindowHeight = pDisplayConfig.windowSize().y;
 
 		// TODO (John): HUD Bounds needs to change based on the size of the window
-		mBoundingRectangle = new Rectangle(-HUD_SIZE_WIDTH / 2, -HUD_SIZE_HEIGHT / 2, HUD_SIZE_WIDTH, HUD_SIZE_HEIGHT);
+		mBoundingRectangle = new Rectangle(-mWindowWidth / 2, -mWindowHeight / 2, mWindowWidth, mWindowHeight);
 
 		mProjectionMatrix = new Matrix4f();
 		mViewMatrix = new Matrix4f();

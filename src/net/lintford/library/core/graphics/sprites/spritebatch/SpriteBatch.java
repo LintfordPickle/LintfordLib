@@ -274,6 +274,10 @@ public class SpriteBatch {
 	public void draw(Texture pTexture, ISprite pSprite, float pDstX, float pDstZ, float pZ, float pDstW, float pDstH, float pR, float pG, float pB, float pA, float pRotation, float pROX, float pROY, float pScaleX, float pScaleY) {
 		if (!mIsDrawing)
 			return;
+		
+		if(pSprite == null) {
+			return;
+		}
 
 		if (pTexture == null)
 			return;

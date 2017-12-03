@@ -1,8 +1,8 @@
 package net.lintford.library.core.graphics.particles.modifiers;
 
 import net.lintford.library.ConstantsTable;
+import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.graphics.particles.Particle;
-import net.lintford.library.core.time.GameTime;
 
 public class ParticleDragModifier implements IParticleModifier {
 
@@ -23,12 +23,12 @@ public class ParticleDragModifier implements IParticleModifier {
 	}
 
 	@Override
-	public void update(GameTime pGameTime) {
+	public void update(LintfordCore pCore) {
 
 	}
 
 	@Override
-	public void updateParticle(Particle pParticle, GameTime pGameTime) {
+	public void updateParticle(Particle pParticle, LintfordCore pCore) {
 		pParticle.dx *= DRAG_CONSTANT;
 		pParticle.dy *= DRAG_CONSTANT;
 

@@ -75,6 +75,10 @@ public final class Vector2f implements Serializable {
 		return (float) Math.sqrt(x.x * y.x + x.y * y.y);
 	}
 
+	public static float len(float x1, float y1, float x2, float y2) {
+		return (float) Math.sqrt(x1 * x2 + y1 * y2);
+	}
+
 	public static Vector2f CatmullRom(Vector2f value1, Vector2f value2, Vector2f value3, Vector2f value4, float amount, Vector2f returnVector) {
 		float num = amount * amount;
 		float num2 = amount * num;
@@ -189,6 +193,10 @@ public final class Vector2f implements Serializable {
 		return x * v.x + y * v.y;
 	}
 
+	public static float dot(float x1, float y1, float x2, float y2) {
+		return x1 * x2 + y1 * y2;
+	}
+
 	/**
 	 * Multiplies this vector by a scalar
 	 * 
@@ -279,4 +287,20 @@ public final class Vector2f implements Serializable {
 	public float lenManhattan() {
 		return Math.abs(this.x) + Math.abs(this.y);
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		//
+		if (obj instanceof Vector2f) {
+			Vector2f other = (Vector2f) obj;
+			return x == other.x && y == other.y && super.equals(obj);
+		}
+
+		return false;
+	}
+
+	public final Vector2f reflected(Vector2f normal) {
+		return normal.mul(-2 * this.dot(normal)).add(this);
+	}
+
 }

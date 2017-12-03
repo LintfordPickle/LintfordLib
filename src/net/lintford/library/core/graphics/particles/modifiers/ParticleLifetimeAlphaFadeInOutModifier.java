@@ -1,7 +1,7 @@
 package net.lintford.library.core.graphics.particles.modifiers;
 
+import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.graphics.particles.Particle;
-import net.lintford.library.core.time.GameTime;
 
 public class ParticleLifetimeAlphaFadeInOutModifier implements IParticleModifier {
 
@@ -19,12 +19,12 @@ public class ParticleLifetimeAlphaFadeInOutModifier implements IParticleModifier
 	}
 
 	@Override
-	public void update(GameTime pGameTime) {
-		
+	public void update(LintfordCore pCore) {
+
 	}
-	
+
 	@Override
-	public void updateParticle(Particle p, GameTime pGameTime) {
+	public void updateParticle(Particle p, LintfordCore pCore) {
 		// normalized lifetime is a value from 0 to 1 and represents how far
 		// a particle is through its life. 0 means it just started, .5 is half
 		// way through, and 1.0 means it's just about to be finished.

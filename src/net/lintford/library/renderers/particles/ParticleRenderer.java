@@ -84,7 +84,7 @@ public class ParticleRenderer {
 			if (PART.isFree())
 				continue;
 
-			mSpriteBatch.draw(PART.sx, PART.sy, PART.sw, PART.sh, PART.x - PART.radius, PART.y - PART.radius, 0f, PART.radius * 2, PART.radius * 2, PART.r, PART.g, PART.b, PART.a, PART.rot, PART.rox, PART.roy, 1, 1, mTexture);
+			mSpriteBatch.draw(PART.sx, PART.sy, PART.sw, PART.sh, PART.x - PART.radius, PART.y - PART.radius, -2, PART.radius * 2, PART.radius * 2, PART.r, PART.g, PART.b, PART.a, PART.rot, PART.radius, PART.radius, 2, 2, mTexture);
 
 		}
 

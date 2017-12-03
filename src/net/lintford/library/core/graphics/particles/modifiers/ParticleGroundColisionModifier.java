@@ -1,8 +1,8 @@
 package net.lintford.library.core.graphics.particles.modifiers;
 
+import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.collisions.IGridCollider;
 import net.lintford.library.core.graphics.particles.Particle;
-import net.lintford.library.core.time.GameTime;
 
 /** Particles collide with ground */
 public class ParticleGroundColisionModifier implements IParticleModifier {
@@ -31,12 +31,12 @@ public class ParticleGroundColisionModifier implements IParticleModifier {
 	}
 
 	@Override
-	public void update(GameTime pGameTime) {
+	public void update(LintfordCore pCore) {
 
 	}
 
 	@Override
-	public void updateParticle(Particle pParticle, GameTime pGameTime) {
+	public void updateParticle(Particle pParticle, LintfordCore pCore) {
 		// TODO: unimplemented method
 	}
 }

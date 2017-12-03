@@ -1,7 +1,7 @@
 package net.lintford.library.core.graphics.particles.modifiers;
 
+import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.graphics.particles.Particle;
-import net.lintford.library.core.time.GameTime;
 
 public class ParticleGravityModifier implements IParticleModifier {
 
@@ -31,13 +31,13 @@ public class ParticleGravityModifier implements IParticleModifier {
 	}
 
 	@Override
-	public void update(GameTime pGameTime) {
+	public void update(LintfordCore pCore) {
 
 	}
 
 	@Override
-	public void updateParticle(Particle pParticle, GameTime pGameTime) {
-		final float lDeltaTime = (float) pGameTime.elapseGameTimeMilli() / 1000f;
+	public void updateParticle(Particle pParticle, LintfordCore pCore) {
+		final float lDeltaTime = (float) pCore.time().elapseGameTimeSeconds();
 		pParticle.dy += mGravity * lDeltaTime;
 
 	}

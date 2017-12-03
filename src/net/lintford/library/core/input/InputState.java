@@ -417,8 +417,8 @@ public class InputState {
 		mMouseWheelXOffset = 0;
 		mMouseWheelYOffset = 0;
 		
-		 Arrays.fill(mKeyButtonStates, false);
-		 Arrays.fill(mMouseButtonStates, false);
+//		 Arrays.fill(mKeyButtonStates, false);
+//		 Arrays.fill(mMouseButtonStates, false);
 
 	}
 

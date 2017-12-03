@@ -24,8 +24,8 @@ public class LineBatch {
 	public static final int MAX_LINES = 2048;
 	public static final int NUM_VERTS_PER_LINE = 2;
 
-	private static final String VERT_FILENAME = "res/shaders/color.vert";
-	private static final String FRAG_FILENAME = "res/shaders/color.frag";
+	private static final String VERT_FILENAME = "/res/shaders/shader_basic_col.vert";
+	private static final String FRAG_FILENAME = "/res/shaders/shader_basic_col.frag";
 
 	// --------------------------------------
 	// Variables
@@ -109,14 +109,17 @@ public class LineBatch {
 	// --------------------------------------
 
 	public void begin(ICamera pCamera) {
+		if (pCamera == null)
+			return;
+
 		if (mIsDrawing)
 			return;
 
 		mCamera = pCamera;
 
 		mBuffer.clear();
-		mCurNumLines = 0;
 		mVertexCount = 0;
+		mCurNumLines = 0;
 		mIsDrawing = true;
 
 	}
@@ -172,7 +175,6 @@ public class LineBatch {
 
 		if (mCurNumLines >= MAX_LINES) {
 			flush();
-			mCurNumLines = 0;
 		}
 
 		// Add both vertices to the buffer
@@ -208,11 +210,13 @@ public class LineBatch {
 	}
 
 	private void flush() {
-		if (mVertexCount == 0 || !mIsLoaded)
+		if (!mIsLoaded)
+			return;
+
+		if (mVertexCount == 0)
 			return;
 
 		mBuffer.flip();
-		mCurNumLines = 0;
 
 		GL30.glBindVertexArray(mVaoId);
 
@@ -222,25 +226,25 @@ public class LineBatch {
 		GL20.glVertexAttribPointer(0, VertexDataStructurePC.positionElementCount, GL11.GL_FLOAT, false, VertexDataStructurePC.stride, VertexDataStructurePC.positionByteOffset);
 		GL20.glVertexAttribPointer(1, VertexDataStructurePC.colorElementCount, GL11.GL_FLOAT, false, VertexDataStructurePC.stride, VertexDataStructurePC.colorByteOffset);
 
+		GL20.glEnableVertexAttribArray(0);
+		GL20.glEnableVertexAttribArray(1);
+
 		mShader.projectionMatrix(mCamera.projection());
 		mShader.viewMatrix(mCamera.view());
 		mShader.modelMatrix(mModelMatrix);
 
 		mShader.bind();
 
-		GL20.glEnableVertexAttribArray(0);
-		GL20.glEnableVertexAttribArray(1);
-
 		GL11.glDrawArrays(GL11.GL_LINES, 0, mVertexCount);
 
-		GL20.glDisableVertexAttribArray(0);
-		GL20.glDisableVertexAttribArray(1);
+		GL30.glBindVertexArray(0);
 
 		mShader.unbind();
 
-		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
+		mBuffer.clear();
 
-		GL30.glBindVertexArray(0);
+		mCurNumLines = 0;
+		mVertexCount = 0;
 
 	}
 

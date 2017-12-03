@@ -79,6 +79,19 @@ public class ControllerManager {
 	// Methods
 	// --------------------------------------
 
+	public void initialiseControllers() {
+		int lCount = mControllers.size();
+		for (int i = 0; i < lCount; i++) {
+			if (!mControllers.get(i).isActive())
+				continue;
+			
+			if (mControllers.get(i).isInitialised())
+				continue;
+
+			mControllers.get(i).initialise();
+		}
+	}
+	
 	public BaseController getControllerByType(Class<?> pClass) {
 		int lCount = mControllers.size();
 		for (int i = 0; i < lCount; i++) {

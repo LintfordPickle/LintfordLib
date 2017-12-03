@@ -65,7 +65,7 @@ public abstract class MenuScreen extends Screen implements IMenuEntryClickListen
 	// Constants
 	// --------------------------------------
 
-	private static final float Z_DEPTH = -2f;
+	private static final float Z_DEPTH = -1f;
 
 	public static final String MENUSCREEN_FONT_NAME = "MenuScreenFont";
 	public static final String MENUSCREEN_HEADER_FONT_NAME = "MenuScreenHeaderFont";
@@ -354,7 +354,7 @@ public abstract class MenuScreen extends Screen implements IMenuEntryClickListen
 		Rectangle lHUDRect = pCore.HUD().boundingRectangle();
 
 		mMenuTitleFont.begin(pCore.HUD());
-		mMenuTitleFont.draw(mMenuTitle, lHUDRect.left() + TITLE_PADDING_X, lHUDRect.top(), Z_DEPTH, mR, mG, mB, mA, 1f);
+		mMenuTitleFont.draw(mMenuTitle, lHUDRect.left() + TITLE_PADDING_X, lHUDRect.top(), -0f, mR, mG, mB, mA, 1f);
 		mMenuTitleFont.end();
 
 		// Draw each layout in turn.

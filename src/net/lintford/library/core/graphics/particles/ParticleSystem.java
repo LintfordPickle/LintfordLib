@@ -3,9 +3,9 @@ package net.lintford.library.core.graphics.particles;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.graphics.particles.initialisers.IParticleInitialiser;
 import net.lintford.library.core.graphics.particles.modifiers.IParticleModifier;
-import net.lintford.library.core.time.GameTime;
 
 public class ParticleSystem {
 
@@ -20,9 +20,6 @@ public class ParticleSystem {
 	private List<IParticleModifier> mModifiers;
 	private final int mCapacity;
 
-	private float mParticleAssignTimer;
-	private float mParticleAssignTimeBetween;
-
 	private String mTextureName;
 	private String mTextureFilename;
 
@@ -36,14 +33,6 @@ public class ParticleSystem {
 	/** Returns the collection of {@link Particle}s in this {@link ParticleSystem}. */
 	public List<Particle> particles() {
 		return mParticles;
-	}
-
-	public float timeBetweenParticleSpawns() {
-		return mParticleAssignTimeBetween;
-	}
-
-	public void timeBetweenParticleSpawns(float pNewTime) {
-		mParticleAssignTimeBetween = pNewTime;
 	}
 
 	public boolean isInitialised() {
@@ -83,8 +72,6 @@ public class ParticleSystem {
 			pCap = 32;
 		mCapacity = pCap;
 
-		mParticleAssignTimeBetween = 0f;
-
 		for (int i = 0; i < mCapacity; i++) {
 			mParticles.add(new Particle());
 		}
@@ -105,16 +92,15 @@ public class ParticleSystem {
 
 	}
 
-	public void update(GameTime pGameTime) {
-		final float lDeltaTime = (float) pGameTime.elapseGameTimeMilli() / 1000f;
+	public void update(LintfordCore pCore) {
+		final float lDeltaTime = (float) pCore.time().elapseGameTimeMilli();
 
 		// Update the modifiers independently of the particles
 		final int lNumModifiers = mModifiers.size();
 		for (int j = 0; j < lNumModifiers; j++) {
-			mModifiers.get(j).update(pGameTime);
+			mModifiers.get(j).update(pCore);
 		}
 
-		mParticleAssignTimer += lDeltaTime;
 		for (int i = 0; i < mCapacity; i++) {
 			Particle p = mParticles.get(i);
 
@@ -123,7 +109,7 @@ public class ParticleSystem {
 
 			// Kill the particle if it exceeds its lifetime (unless lifeTime is NO_DO_DESPAWN
 			if (p.lifeTime() != Particle.DO_NOT_DESPAWN_LIFETIME) {
-				p.timeSinceStart += pGameTime.elapseGameTimeMilli();
+				p.timeSinceStart += pCore.time().elapseGameTimeMilli();
 				if (p.timeSinceStart >= p.lifeTime()) {
 					// kill the particle
 					p.reset();
@@ -135,7 +121,7 @@ public class ParticleSystem {
 				continue;
 
 			for (int j = 0; j < lNumModifiers; j++) {
-				mModifiers.get(j).updateParticle(mParticles.get(i), pGameTime);
+				mModifiers.get(j).updateParticle(mParticles.get(i), pCore);
 			}
 		}
 	}
@@ -173,8 +159,6 @@ public class ParticleSystem {
 
 	/** Spawns a new {@link Particle} and applys the {@link IParticleInitialiser} attached to this {@link ParticleSystem}. */
 	public Particle spawnParticle(float pX, float pY, float pVelX, float pVelY, float pLife) {
-		if (mParticleAssignTimer < mParticleAssignTimeBetween)
-			return null; // wait till the time is up
 		for (int i = 0; i < mCapacity; i++) {
 			Particle p = mParticles.get(i);
 			if (!p.isFree())
@@ -187,7 +171,6 @@ public class ParticleSystem {
 				mInitialisers.get(j).initialise(p);
 			}
 
-			mParticleAssignTimer = 0;
 			return p;
 		}
 

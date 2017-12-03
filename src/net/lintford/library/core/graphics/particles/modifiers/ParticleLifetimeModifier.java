@@ -1,7 +1,7 @@
 package net.lintford.library.core.graphics.particles.modifiers;
 
+import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.graphics.particles.Particle;
-import net.lintford.library.core.time.GameTime;
 
 public class ParticleLifetimeModifier implements IParticleModifier {
 
@@ -20,14 +20,14 @@ public class ParticleLifetimeModifier implements IParticleModifier {
 	}
 
 	@Override
-	public void update(GameTime pGameTime) {
+	public void update(LintfordCore pCore) {
 		
 	}
 	
 	@Override
-	public void updateParticle(Particle pParticle, GameTime pGameTime) {
+	public void updateParticle(Particle pParticle, LintfordCore pCore) {
 		
-		final float lDeltaTime = (float) pGameTime.elapseGameTimeMilli();
+		final float lDeltaTime = (float) pCore.time().elapseGameTimeMilli();
 		
 		pParticle.timeSinceStart += lDeltaTime;
 		if (pParticle.timeSinceStart >= pParticle.lifeTime()) {

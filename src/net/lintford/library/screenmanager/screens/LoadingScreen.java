@@ -8,7 +8,6 @@ import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.time.TimeSpan;
 import net.lintford.library.screenmanager.Screen;
 import net.lintford.library.screenmanager.ScreenManager;
-import net.lintford.library.screenmanager.Screen.ScreenState;
 import net.lintford.library.screenmanager.transitions.TransitionFadeIn;
 import net.lintford.library.screenmanager.transitions.TransitionFadeOut;
 

@@ -15,20 +15,20 @@ public class CameraZoomController extends BaseController {
 	public static final String CONTROLLER_NAME = "CameraZoomController";
 
 	/** Specifies the minimum amount of camera zoom */
-	public static final float MIN_CAMERA_ZOOM = 0.75f;
+	public static final float MIN_CAMERA_ZOOM = 0.1f;
 
 	/** Specifies the maximum amount of camera zoom */
-	public static final float MAX_CAMERA_ZOOM = 1.4f;
+	public static final float MAX_CAMERA_ZOOM = 2f;
 
 	/**
 	 * Specifies the amount of DRAG to be applied to the zoom factor velocity over time.
 	 */
-	public static final float ZOOM_VELOCITY_DRAG = 0.8f;
+	public static final float ZOOM_VELOCITY_DRAG = 0.98f;
 
 	/**
 	 * A coefficient for the speed of the zoom (modifies the mouse scroll wheel speed)
 	 */
-	public static final float ZOOM_ACCELERATE_AMOUNT = 50.0f;
+	public static final float ZOOM_ACCELERATE_AMOUNT = 10.0f;
 
 	// ---------------------------------------------
 	// Variables
@@ -86,6 +86,14 @@ public class CameraZoomController extends BaseController {
 
 	}
 
+	public float zoomFactor() {
+		return mCamera.zoomFactor();
+	}
+	
+	public void zoomFactor(float pNewValue) {
+		mCamera.zoomFactor(pNewValue);
+	}
+	
 	@Override
 	public boolean isInitialised() {
 		return mCamera != null;
@@ -143,7 +151,7 @@ public class CameraZoomController extends BaseController {
 
 		// apply zoom //
 		mZoomVelocity += mZoomAcceleration;
-		mZoomVelocity *= ZOOM_VELOCITY_DRAG;
+		mZoomVelocity *= 0.97f;
 		lZoomFactor += mZoomVelocity * DELTA_TIME;
 		mZoomAcceleration = 0.0f;
 
