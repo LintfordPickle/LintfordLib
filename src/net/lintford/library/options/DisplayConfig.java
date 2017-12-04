@@ -40,6 +40,7 @@ import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 
 import net.lintford.library.ConstantsTable;
+import net.lintford.library.GameInfo;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.debug.DebugManager;
 import net.lintford.library.core.debug.DebugManager.DebugLogLevel;
@@ -95,8 +96,8 @@ public class DisplayConfig extends BaseConfig {
 		normal, wide, u_wide,
 	}
 
-	public static final int WINDOW_MINIMUM_WIDTH = 640;
-	public static final int WINDOW_MINIMUM_HEIGHT = 480;
+	public static final int WINDOW_MINIMUM_WIDTH = 800;
+	public static final int WINDOW_MINIMUM_HEIGHT = 600;
 
 	// --------------------------------------
 	// Enums
@@ -276,7 +277,7 @@ public class DisplayConfig extends BaseConfig {
 		mFullScreen = !mFullScreen;
 	}
 
-	public long onCreateWindow() {
+	public long onCreateWindow(GameInfo pGameInfo) {
 		DebugManager.DEBUG_MANAGER.logger().i(getClass().getSimpleName(), "Creating GLFWWindow");
 
 		// All GLFW errors to the system err print stream
@@ -294,7 +295,7 @@ public class DisplayConfig extends BaseConfig {
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 		glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
-		glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
+		glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
 		if (mFullScreen) {
 			// Get the native resolution
@@ -305,7 +306,7 @@ public class DisplayConfig extends BaseConfig {
 			mWindowSize.x = lFullScreenWidth;
 			mWindowSize.y = lFullScreenHeight;
 
-			long lNewWindowID = glfwCreateWindow(lFullScreenWidth, lFullScreenHeight, ConstantsTable.getStringValueDef("WINDOW_TITLE", "LintfordLib"), glfwGetPrimaryMonitor(), mWindowID);
+			long lNewWindowID = glfwCreateWindow(lFullScreenWidth, lFullScreenHeight, pGameInfo.windowTitle(), glfwGetPrimaryMonitor(), mWindowID);
 			if (mWindowID != NULL) {
 				glfwDestroyWindow(mWindowID);
 			}
@@ -327,7 +328,7 @@ public class DisplayConfig extends BaseConfig {
 			mWindowSize.x = WINDOW_MINIMUM_WIDTH;
 			mWindowSize.y = WINDOW_MINIMUM_HEIGHT;
 
-			long lNewWindowID = glfwCreateWindow(mWindowSize.x, mWindowSize.y, ConstantsTable.getStringValueDef("WINDOW_TITLE", "LintfordLib"), NULL, mWindowID);
+			long lNewWindowID = glfwCreateWindow(mWindowSize.x, mWindowSize.y, pGameInfo.windowTitle(), NULL, mWindowID);
 			if (mWindowID != NULL) {
 				glfwDestroyWindow(mWindowID);
 			}

@@ -66,11 +66,11 @@ public class ShakeCamera extends Camera {
 		if (pDuration <= 0)
 			return;
 
-		mIsShaking = true;
-		mShakeDur = pDuration;
-		mShakeMag = pMagnitude;
-
-		mShakeTimer = 0;
+//		mIsShaking = true;
+//		mShakeDur = pDuration;
+//		mShakeMag = pMagnitude;
+//
+//		mShakeTimer = 0;
 
 	}
 

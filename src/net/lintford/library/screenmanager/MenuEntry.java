@@ -2,7 +2,6 @@ package net.lintford.library.screenmanager;
 
 import net.lintford.library.ConstantsTable;
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.audio.AudioData;
 import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.TextureManager;
@@ -58,7 +57,6 @@ public class MenuEntry extends UIRectangle {
 	protected BUTTON_SIZE mButtonSize = BUTTON_SIZE.normal;
 
 	protected TextureBatch mSpriteBatch;
-	protected AudioData mUIClickSound;
 
 	private boolean mIsInitialised, mIsLoaded;
 	public float mZ;
@@ -219,8 +217,6 @@ public class MenuEntry extends UIRectangle {
 	public void loadGLContent(ResourceManager pResourceManager) {
 		mSpriteBatch.loadGLContent(pResourceManager);
 
-		mUIClickSound = pResourceManager.audioManager().loadWavSound("UIClick", "res/sound/soundUIClick.wav");
-
 		mIsLoaded = true;
 
 	}
@@ -255,9 +251,6 @@ public class MenuEntry extends UIRectangle {
 			if (canHaveFocus() && pCore.input().tryAquireLeftClickOwnership(hashCode())) {
 				pCore.input().setLeftMouseClickHandled();
 				mParentScreen.setFocusOn(pCore.input(), this, false);
-
-				if (mUIClickSound != null)
-					mScreenManager.resources().audioManager().play(mUIClickSound, 1f, 1f);
 
 				return true;
 			}

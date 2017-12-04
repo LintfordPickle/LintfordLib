@@ -300,24 +300,26 @@ public class AudioManager {
 	}
 
 	/** Plays the given {@link AudioData}. */
-	public void play(AudioData pData) {
+	public AudioSource play(AudioData pData) {
 		if (pData == null || !pData.isLoaded())
-			return;
+			return null ;
 
-		play(pData, 1f, 1f);
+		return play(pData, 1f, 1f);
 
 	}
 
 	/** Plays the given {@link AudioData} at the specified volume and pitch. */
-	public void play(AudioData pData, float pGain, float pPitch) {
+	public AudioSource play(AudioData pData, float pGain, float pPitch) {
 		if (pData == null || !pData.isLoaded())
-			return;
+			return null;
 
 		AudioSource lAS = getFAFAudioSource();
-
 		if (lAS != null) {
 			lAS.play(pData.bufferID(), pGain, pPitch);
+			return lAS;
 		}
+		
+		return null;
 
 	}
 

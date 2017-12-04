@@ -2,6 +2,7 @@ package net.lintford.library.options;
 
 import org.lwjgl.system.MemoryUtil;
 
+import net.lintford.library.GameInfo;
 import net.lintford.library.core.LintfordCore;
 
 public class MasterConfig {
@@ -74,8 +75,8 @@ public class MasterConfig {
 	// Methods
 	// --------------------------------------
 
-	public long onCreateWindow() {
-		long lWindowID = DISPLAY_CONFIG.onCreateWindow();
+	public long onCreateWindow(GameInfo pGameInfo) {
+		long lWindowID = DISPLAY_CONFIG.onCreateWindow(pGameInfo);
 
 		if (lWindowID == MemoryUtil.NULL) {
 			throw new RuntimeException("Failed to get correct GLFWWindow handle");

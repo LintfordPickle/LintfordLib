@@ -1,6 +1,7 @@
 package net.lintford.library.screenmanager.screens;
 
 import net.lintford.library.controllers.BaseControllerGroups;
+import net.lintford.library.core.camera.Camera;
 import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.renderers.BaseRendererGroups;
 import net.lintford.library.screenmanager.Screen;
@@ -16,6 +17,13 @@ public abstract class BaseGameScreen extends Screen {
 		super(pScreenManager);
 
 		mScreenManager.core().setNewGameCamera();
+
+	}
+	
+	public BaseGameScreen(ScreenManager pScreenManager, Camera pCamera) {
+		super(pScreenManager);
+
+		mScreenManager.core().setNewGameCamera(pCamera);
 
 	}
 

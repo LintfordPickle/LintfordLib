@@ -26,6 +26,7 @@ public abstract class WorldEntity extends BaseData {
 	public float x, y; // center position
 	public transient float oldX, oldY; // old center positions
 	public float dx, dy; // movement
+	public float dr; 
 	public transient float oldDX, oldDY; // movement
 
 	// --------------------------------------

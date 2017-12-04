@@ -200,8 +200,8 @@ public class Camera implements ICamera {
 		mWindowWidth = mDisplayConfig.windowSize().x;
 		mWindowHeight = mDisplayConfig.windowSize().y;
 
-		int lGameViewportWidth = mDisplayConfig.windowSize().x;
-		int lGameViewportHeight = mDisplayConfig.windowSize().y;
+		int lGameViewportWidth = mDisplayConfig.gameViewportSize().x;
+		int lGameViewportHeight = mDisplayConfig.gameViewportSize().y;
 
 		if ((lGameViewportWidth % 2) == 1) {
 			lGameViewportWidth = lGameViewportWidth + 1;
@@ -211,8 +211,8 @@ public class Camera implements ICamera {
 			lGameViewportHeight = lGameViewportHeight + 1;
 		}
 
-		mPosition.x = mTargetPosition.x;
-		mPosition.y = mTargetPosition.y;
+		mPosition.x = mTargetPosition.x + mOffsetPosition.x;
+		mPosition.y = mTargetPosition.y + mOffsetPosition.y;
 
 		mAcceleration.x = 0.0f;
 		mAcceleration.y = 0.0f;

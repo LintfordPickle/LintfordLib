@@ -38,6 +38,8 @@ import net.lintford.library.renderers.RendererManager;
  */
 public abstract class LintfordCore {
 
+	public static final boolean TOGGLE_FULLENABLE_ENABLED = false;
+	
 	// ---------------------------------------------
 	// Variables
 	// ---------------------------------------------
@@ -253,7 +255,7 @@ public abstract class LintfordCore {
 
 		}
 
-		DebugManager.DEBUG_MANAGER.handleInput(this);
+		// DebugManager.DEBUG_MANAGER.handleInput(this);
 
 		mHUD.handleInput(this);
 
@@ -297,6 +299,8 @@ public abstract class LintfordCore {
 	// ---------------------------------------------
 
 	public void toggleFullscreen() {
+		if(!TOGGLE_FULLENABLE_ENABLED) return;
+		
 		DisplayConfig lDisplay = mMasterConfig.display();
 		if (lDisplay == null)
 			return; // has the game been properly started yet?
@@ -306,7 +310,7 @@ public abstract class LintfordCore {
 		onUnloadGLContent();
 
 		lDisplay.toggleFullScreenFlag();
-		mMasterConfig.onCreateWindow();
+		mMasterConfig.onCreateWindow(mGameInfo);
 
 		initialiseGLFWWindow();
 
@@ -318,7 +322,7 @@ public abstract class LintfordCore {
 	}
 
 	public void initialiseGLFWWindow() {
-		long lWindowID = mMasterConfig.onCreateWindow();
+		long lWindowID = mMasterConfig.onCreateWindow(mGameInfo);
 
 		// set key callbacks
 		glfwSetKeyCallback(lWindowID, mInputState.mKeyCallback);
@@ -332,7 +336,12 @@ public abstract class LintfordCore {
 	}
 
 	public void setNewGameCamera() {
-		mGameCamera = new Camera(mMasterConfig.display());
+		setNewGameCamera(new Camera(mMasterConfig.display()));
+
+	}
+	
+	public void setNewGameCamera(Camera pCamera) {
+		mGameCamera = pCamera;
 
 	}
 
