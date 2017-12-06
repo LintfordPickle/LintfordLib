@@ -58,10 +58,11 @@
 	<properties>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
-		<lwjgl.version>3.1.2</lwjgl.version>
+		<lwjgl.version>3.1.5</lwjgl.version>
 	</properties>
 
 	<dependencies>
+
 		<dependency>
 			<groupId>org.lwjgl</groupId>
 			<artifactId>lwjgl</artifactId>
@@ -69,7 +70,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.lwjgl</groupId>
-			<artifactId>lwjgl-egl</artifactId>
+			<artifactId>lwjgl-assimp</artifactId>
 			<version>${lwjgl.version}</version>
 		</dependency>
 		<dependency>
@@ -102,42 +103,49 @@
 			<artifactId>lwjgl</artifactId>
 			<version>${lwjgl.version}</version>
 			<classifier>${lwjgl.natives}</classifier>
-			<scope>runtime</scope>
+
+		</dependency>
+		<dependency>
+			<groupId>org.lwjgl</groupId>
+			<artifactId>lwjgl-assimp</artifactId>
+			<version>${lwjgl.version}</version>
+			<classifier>${lwjgl.natives}</classifier>
+
 		</dependency>
 		<dependency>
 			<groupId>org.lwjgl</groupId>
 			<artifactId>lwjgl-glfw</artifactId>
 			<version>${lwjgl.version}</version>
 			<classifier>${lwjgl.natives}</classifier>
-			<scope>runtime</scope>
+
 		</dependency>
 		<dependency>
 			<groupId>org.lwjgl</groupId>
 			<artifactId>lwjgl-jemalloc</artifactId>
 			<version>${lwjgl.version}</version>
 			<classifier>${lwjgl.natives}</classifier>
-			<scope>runtime</scope>
+
 		</dependency>
 		<dependency>
 			<groupId>org.lwjgl</groupId>
 			<artifactId>lwjgl-openal</artifactId>
 			<version>${lwjgl.version}</version>
 			<classifier>${lwjgl.natives}</classifier>
-			<scope>runtime</scope>
+
 		</dependency>
 		<dependency>
 			<groupId>org.lwjgl</groupId>
 			<artifactId>lwjgl-opengl</artifactId>
 			<version>${lwjgl.version}</version>
 			<classifier>${lwjgl.natives}</classifier>
-			<scope>runtime</scope>
+
 		</dependency>
 		<dependency>
 			<groupId>org.lwjgl</groupId>
 			<artifactId>lwjgl-stb</artifactId>
 			<version>${lwjgl.version}</version>
 			<classifier>${lwjgl.natives}</classifier>
-			<scope>runtime</scope>
+
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
@@ -157,17 +165,10 @@
 	</dependencies>
 
 	<profiles>
-		<profile>
-			<id>lwjgl-natives-linux</id>
-			<activation>
-				<os>
-					<family>unix</family>
-				</os>
-			</activation>
-			<properties>
-				<lwjgl.natives>natives-linux</lwjgl.natives>
-			</properties>
-		</profile>
+
+		<!-- Only the natives for the last entry in the profiles section will be 
+			exported. -->
+
 		<profile>
 			<id>lwjgl-natives-macos</id>
 			<activation>
@@ -179,9 +180,21 @@
 				<lwjgl.natives>natives-macos</lwjgl.natives>
 			</properties>
 		</profile>
+
+		<profile>
+			<id>lwjgl-natives-linux</id>
+			<activation>
+				<os>
+					<family>unix</family>
+				</os>
+			</activation>
+			<properties>
+				<lwjgl.natives>natives-linux</lwjgl.natives>
+			</properties>
+		</profile>
+
 		<profile>
 			<id>lwjgl-natives-windows</id>
-
 			<activation>
 				<os>
 					<family>windows</family>
@@ -191,6 +204,7 @@
 				<lwjgl.natives>natives-windows</lwjgl.natives>
 			</properties>
 		</profile>
+
 	</profiles>
 
 </project>

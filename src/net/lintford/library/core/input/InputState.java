@@ -393,6 +393,11 @@ public class InputState {
 
 		mKeyTimer += lDeltaTime;
 		mMenuClickTimer += lDeltaTime;
+		
+		if(mouseLeftClick() && mCaptureKeyboardInput) {
+			stopCapture();
+			
+		}
 
 		// Releasing the left click will automatically reset the owner
 		if (!mouseLeftClick()) {
