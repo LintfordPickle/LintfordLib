@@ -101,6 +101,14 @@ public final class Vector2f implements Serializable {
 		return x * x + y * y;
 	}
 
+	public Vector2f div(float pX, float pY) {
+		if (pX == 0 || pY == 0)
+			return this;
+		x /= pX;
+		y /= pY;
+		return this;
+	}
+
 	/**
 	 * Sets this vector from the given vector
 	 * 
@@ -185,6 +193,48 @@ public final class Vector2f implements Serializable {
 	}
 
 	/**
+	 * Rotates the Vector2 by the given angle, counter-clockwise assuming the y-axis points up.
+	 * 
+	 * @param degrees
+	 *            the angle in degrees
+	 */
+	public Vector2f rotate(float degrees) {
+		return rotateRad((float) Math.toRadians(degrees));
+	}
+
+	/**
+	 * Rotates the Vector2 by the given angle, counter-clockwise assuming the y-axis points up.
+	 * 
+	 * @param radians
+	 *            the angle in radians
+	 */
+	public Vector2f rotateRad(float radians) {
+		float cos = (float) Math.cos(radians);
+		float sin = (float) Math.sin(radians);
+
+		float newX = this.x * cos - this.y * sin;
+		float newY = this.x * sin + this.y * cos;
+
+		this.x = newX;
+		this.y = newY;
+
+		return this;
+	}
+
+	/** Rotates the Vector2 by 90 degrees in the specified direction, where >= 0 is counter-clockwise and < 0 is clockwise. */
+	public Vector2f rotate90(int dir) {
+		float x = this.x;
+		if (dir >= 0) {
+			this.x = -y;
+			y = x;
+		} else {
+			this.x = y;
+			y = -x;
+		}
+		return this;
+	}
+
+	/**
 	 * @param v
 	 *            The other vector
 	 * @return The dot product between this and the other vector
@@ -245,9 +295,17 @@ public final class Vector2f implements Serializable {
 		return x_d * x_d + y_d * y_d;
 	}
 
-	@Override
-	public String toString() {
-		return "[" + x + ":" + y + "]";
+	public Vector2f scale(float scalar) {
+		x *= scalar;
+		y *= scalar;
+		return this;
+	}
+
+	/** Multiplies this vector by a scalar */
+	public Vector2f scale(float x, float y) {
+		this.x *= x;
+		this.y *= y;
+		return this;
 	}
 
 	/**
@@ -301,6 +359,11 @@ public final class Vector2f implements Serializable {
 
 	public final Vector2f reflected(Vector2f normal) {
 		return normal.mul(-2 * this.dot(normal)).add(this);
+	}
+
+	@Override
+	public String toString() {
+		return "[" + x + ":" + y + "]";
 	}
 
 }

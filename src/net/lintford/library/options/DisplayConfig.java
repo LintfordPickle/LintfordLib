@@ -96,8 +96,8 @@ public class DisplayConfig extends BaseConfig {
 		normal, wide, u_wide,
 	}
 
-	public static final int WINDOW_MINIMUM_WIDTH = 800;
-	public static final int WINDOW_MINIMUM_HEIGHT = 600;
+	public static final int WINDOW_MINIMUM_WIDTH = 1024;
+	public static final int WINDOW_MINIMUM_HEIGHT = 768;
 
 	// --------------------------------------
 	// Enums
@@ -295,7 +295,7 @@ public class DisplayConfig extends BaseConfig {
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 		glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
-		glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+		glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
 
 		if (mFullScreen) {
 			// Get the native resolution

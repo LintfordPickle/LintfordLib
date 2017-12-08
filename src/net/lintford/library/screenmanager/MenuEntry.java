@@ -243,9 +243,13 @@ public class MenuEntry extends UIRectangle {
 				mToolTipTimer += deltaTime;
 			}
 
-			hasFocus(true);
-			if (canHoverOver() && pCore.input().leftClickOwner() == -1) {
-				mParentScreen.setHoveringOn(this);
+			if (canHoverOver()) {
+				hasFocus(true);
+
+				if (pCore.input().leftClickOwner() == -1) {
+					mParentScreen.setHoveringOn(this);
+					
+				}
 			}
 
 			if (canHaveFocus() && pCore.input().tryAquireLeftClickOwnership(hashCode())) {
@@ -338,7 +342,7 @@ public class MenuEntry extends UIRectangle {
 		if (mToolTipEnabled && mToolTipTimer >= 1000) {
 			Vector2f lToolTipPosition = pCore.input().mouseWindowCoords();
 			mScreenManager.toolTip().draw(mToolTip, lToolTipPosition.x, lToolTipPosition.y);
-			
+
 		}
 
 		if (ConstantsTable.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {

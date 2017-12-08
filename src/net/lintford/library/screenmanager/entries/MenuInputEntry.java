@@ -82,6 +82,8 @@ public class MenuInputEntry extends MenuEntry implements IBufferedInputCallback 
 
 		mDrawBackground = false;
 		mHighlightOnHover = false;
+		
+		mCanHoverOver = false;
 
 		mInputField = new StringBuilder();
 
