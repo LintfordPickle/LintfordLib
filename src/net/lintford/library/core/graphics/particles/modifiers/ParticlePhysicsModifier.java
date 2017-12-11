@@ -39,7 +39,7 @@ public class ParticlePhysicsModifier implements IParticleModifier {
 	// --------------------------------------
 
 	@Override
-	public void updateParticle(Particle pParticle, LintfordCore pCore) {
+	public void updateParticle(LintfordCore pCore, Particle pParticle) {
 		float lDelta = (float) pCore.time().elapseGameTimeMilli();
 
 		// X component

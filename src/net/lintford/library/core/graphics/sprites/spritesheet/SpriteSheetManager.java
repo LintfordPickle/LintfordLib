@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -67,7 +68,7 @@ public class SpriteSheetManager {
 
 	}
 
-	public SpriteSheet loadSpriteSheetFromFile(String pFilepath) {
+	private SpriteSheet loadSpriteSheetFromFile(String pFilepath) {
 		if (pFilepath == null || pFilepath.length() == 0)
 			return null;
 
@@ -115,7 +116,7 @@ public class SpriteSheetManager {
 		}
 	}
 
-	public SpriteSheet loadSpriteSheetFromResource(String pFilepath) {
+	private SpriteSheet loadSpriteSheetFromResource(String pFilepath) {
 		if (pFilepath == null || pFilepath.length() == 0)
 			return null;
 
@@ -164,6 +165,86 @@ public class SpriteSheetManager {
 			return null;
 
 		}
+	}
+
+	/** Loads a set of spritesheets from a meta file at the given location. */
+	public void loadSpriteSheetFromMeta(final String pMetaFileLocation) {
+		if (pMetaFileLocation == null || pMetaFileLocation.length() == 0) {
+			DebugManager.DEBUG_MANAGER.logger().w(getClass().getSimpleName(), "SpriteSheetManager meta file cannot be null or empty when loading SpriteSheets.");
+			return;
+
+		}
+
+		final Gson GSON = new GsonBuilder().create();
+
+		// Load the Sprite meta data
+		String META_CONTENTS = null;
+		SpriteMeta SPRITE_META = null;
+		try {
+			META_CONTENTS = new String(Files.readAllBytes(Paths.get(pMetaFileLocation)));
+			SPRITE_META = GSON.fromJson(META_CONTENTS, SpriteMeta.class);
+
+			if (SPRITE_META == null || SPRITE_META.Sprite_Files == null || SPRITE_META.Sprite_Files.length == 0) {
+				System.out.println();
+				DebugManager.DEBUG_MANAGER.logger().w(getClass().getSimpleName(), "Couldn't load sprites from sprite meta file");
+
+				return;
+
+			}
+		} catch (IOException e1) {
+			e1.printStackTrace();
+
+		}
+
+		if (SPRITE_META == null) {
+			DebugManager.DEBUG_MANAGER.logger().w(getClass().getSimpleName(), "Unable to load SpriteSheet Meta file from location: " + pMetaFileLocation);
+
+			return;
+		}
+
+		// Iterate through the sprite files, and load the individual sprites
+		final int SPRITE_COUNT = SPRITE_META.Sprite_Files.length;
+		for (int i = 0; i < SPRITE_COUNT; i++) {
+			final File SPRITE_FILE = new File(SPRITE_META.Sprite_Directory + SPRITE_META.Sprite_Files[i]);
+
+			if (!SPRITE_FILE.exists()) {
+				DebugManager.DEBUG_MANAGER.logger().w(getClass().getSimpleName(), "Error loading sprite sheet from " + SPRITE_FILE.getPath() + " doesn't exist!");
+
+				continue;
+
+			}
+
+			try {
+
+				final String SPRITE_FILE_CONTENTS = new String(Files.readAllBytes(SPRITE_FILE.toPath()));
+				final SpriteSheet SPRITE_SHEET = GSON.fromJson(SPRITE_FILE_CONTENTS, SpriteSheet.class);
+
+				// Check the integrity of the loaded spritsheet
+				if (SPRITE_SHEET == null || SPRITE_SHEET.getSpriteCount() == 0) {
+					System.err.println("Error loading spritesheet " + SPRITE_FILE.getPath());
+					continue;
+
+				}
+
+				SPRITE_SHEET.loadGLContent();
+
+				// Add the spritesheet to the collection, using the FILENAME as the key
+				this.spriteSheetMap.put(SPRITE_SHEET.spriteSheetName, SPRITE_SHEET);
+
+			} catch (JsonSyntaxException e) {
+				DebugManager.DEBUG_MANAGER.logger().e(getClass().getSimpleName(), "Failed to parse JSON SpriteSheet (Syntax): " + SPRITE_FILE.getPath());
+
+				continue;
+
+			} catch (IOException e) {
+				DebugManager.DEBUG_MANAGER.logger().e(getClass().getSimpleName(), "Failed to parse JSON SpriteSheet (IO): " + SPRITE_FILE.getPath());
+
+				continue;
+
+			}
+
+		}
+
 	}
 
 	// --------------------------------------

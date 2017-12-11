@@ -23,15 +23,15 @@ public class SpriteSheet {
 	public String spriteSheetName;
 
 	/** The name of the {@link Texture} associated to this {@link SpriteSheet} */
-	private String textureName;
+	protected String textureName;
 
 	/** The filename of the {@link Texture} associated to this {@link SpriteSheet} */
-	private String textureFilename;
+	protected String textureFilename;
 
 	/** A collection of {@link ISprite} instances contained within this {@link SpriteSheet} */
-	private Map<String, Sprite> spriteMap;
+	protected Map<String, Sprite> spriteMap;
 
-	private Map<String, AnimatedSprite> animationMap;
+	protected Map<String, AnimatedSprite> animationMap;
 
 	/** The width of the associated texture. */
 	public transient float textureWidth;

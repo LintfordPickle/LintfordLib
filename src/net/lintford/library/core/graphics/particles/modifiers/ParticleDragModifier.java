@@ -28,7 +28,7 @@ public class ParticleDragModifier implements IParticleModifier {
 	}
 
 	@Override
-	public void updateParticle(Particle pParticle, LintfordCore pCore) {
+	public void updateParticle(LintfordCore pCore, Particle pParticle) {
 		pParticle.dx *= DRAG_CONSTANT;
 		pParticle.dy *= DRAG_CONSTANT;
 

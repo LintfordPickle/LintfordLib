@@ -146,7 +146,7 @@ public class RendererManager {
 		mWindowTextFont = pResourceManager.fontManager().loadNewFont("WindowTextFont", "res/fonts/system.ttf", 18);
 
 		// Some windows will use this to orientate themselves to the window
-		mDisplayConfig = pResourceManager.masterConfig().display();
+		mDisplayConfig = pResourceManager.config().display();
 
 		// Load all of the renderers that have been added so far
 		final int RENDERER_COUNT = mRenderers.size();

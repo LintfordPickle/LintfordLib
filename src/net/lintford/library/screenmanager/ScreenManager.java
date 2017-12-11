@@ -106,7 +106,7 @@ public class ScreenManager {
 
 		mToolTip.loadGLContent(pResourceManager);
 		mToastManager.loadGLContent(pResourceManager);
-		TextureManager.textureManager().loadTexture(SCREENMANAGER_TEXTURE_NAME, "/res/textures/core/screenmanager.png");
+		TextureManager.textureManager().loadTexture(SCREENMANAGER_TEXTURE_NAME, "/res/textures/core/core_ui.png");
 
 		mIsLoaded = true;
 	}

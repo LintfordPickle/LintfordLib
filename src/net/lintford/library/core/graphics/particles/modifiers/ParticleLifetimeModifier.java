@@ -21,14 +21,14 @@ public class ParticleLifetimeModifier implements IParticleModifier {
 
 	@Override
 	public void update(LintfordCore pCore) {
-		
+
 	}
-	
+
 	@Override
-	public void updateParticle(Particle pParticle, LintfordCore pCore) {
-		
+	public void updateParticle(LintfordCore pCore, Particle pParticle) {
+
 		final float lDeltaTime = (float) pCore.time().elapseGameTimeMilli();
-		
+
 		pParticle.timeSinceStart += lDeltaTime;
 		if (pParticle.timeSinceStart >= pParticle.lifeTime()) {
 			// kill the particle

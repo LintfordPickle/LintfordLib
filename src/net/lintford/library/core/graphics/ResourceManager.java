@@ -31,7 +31,7 @@ public class ResourceManager {
 	// Variables
 	// --------------------------------------
 
-	protected MasterConfig mMasterConfig;
+	protected MasterConfig mConfig;
 
 	protected Path mResourceTexturePath;
 	protected WatchService mTexturePathWatcher;
@@ -53,8 +53,8 @@ public class ResourceManager {
 		return mIsLoaded;
 	}
 
-	public MasterConfig masterConfig() {
-		return mMasterConfig;
+	public MasterConfig config() {
+		return mConfig;
 	}
 
 	public SpriteSheetManager spriteSheetManager() {
@@ -68,13 +68,13 @@ public class ResourceManager {
 	public AudioManager audioManager() {
 		return mAudioManager;
 	}
-	
+
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
 	public ResourceManager(MasterConfig pConfig) {
-		mMasterConfig = pConfig;
+		mConfig = pConfig;
 
 		mFontManager = new FontManager();
 
@@ -151,5 +151,5 @@ public class ResourceManager {
 		}
 
 	}
-	
+
 }

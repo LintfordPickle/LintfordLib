@@ -2,7 +2,7 @@ package net.lintford.library.core.collisions;
 
 import java.io.Serializable;
 
-import net.lintford.library.core.time.GameTime;
+import net.lintford.library.core.LintfordCore;
 
 public class PhysicsState implements Serializable {
 
@@ -56,7 +56,7 @@ public class PhysicsState implements Serializable {
 
 	}
 
-	public void update(GameTime pGameTime) {
+	public void update(LintfordCore pCore) {
 		mWasOnGround = mOnGround;
 		mPushedRightWall = mPushesRightWall;
 		mPushedLeftWall = mPushesLeftWall;

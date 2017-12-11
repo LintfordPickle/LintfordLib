@@ -15,6 +15,7 @@ import org.lwjgl.glfw.GLFW;
 import net.lintford.library.ConstantsTable;
 import net.lintford.library.GameInfo;
 import net.lintford.library.controllers.BaseControllerGroups;
+import net.lintford.library.controllers.camera.CameraController;
 import net.lintford.library.controllers.core.ControllerManager;
 import net.lintford.library.controllers.core.RendererController;
 import net.lintford.library.core.camera.Camera;
@@ -39,7 +40,7 @@ import net.lintford.library.renderers.RendererManager;
 public abstract class LintfordCore {
 
 	public static final boolean TOGGLE_FULLENABLE_ENABLED = false;
-	
+
 	// ---------------------------------------------
 	// Variables
 	// ---------------------------------------------
@@ -57,6 +58,8 @@ public abstract class LintfordCore {
 	protected Camera mGameCamera;
 	protected HUD mHUD;
 	protected RenderState mRenderState;
+
+	protected boolean mIsHeadlessMode;
 
 	// ---------------------------------------------
 	// Properties
@@ -122,7 +125,13 @@ public abstract class LintfordCore {
 	// ---------------------------------------------
 
 	public LintfordCore(GameInfo pGameInfo) {
+		this(pGameInfo, false);
+
+	}
+
+	public LintfordCore(GameInfo pGameInfo, boolean pHeadless) {
 		mGameInfo = pGameInfo;
+		mIsHeadlessMode = pHeadless;
 
 		ConstantsTable.setAppConstants(pGameInfo.applicationName());
 
@@ -132,7 +141,6 @@ public abstract class LintfordCore {
 
 		// Print out the working directory
 		System.out.println("working directory: " + System.getProperty("user.dir"));
-
 	}
 
 	// ---------------------------------------------
@@ -231,8 +239,9 @@ public abstract class LintfordCore {
 
 			onUpdate();
 
-			onDraw();
-			
+			if (!mIsHeadlessMode)
+				onDraw();
+
 			mInputState.resetFlags();
 
 			glfwSwapBuffers(lDisplayConfig.windowID());
@@ -281,6 +290,9 @@ public abstract class LintfordCore {
 
 	/** Implemented in sub-class. Draws the game components. */
 	protected void onDraw() {
+		if (mIsHeadlessMode)
+			return;
+
 		mRendererManager.draw(this);
 
 		DebugManager.DEBUG_MANAGER.draw(this);
@@ -299,8 +311,9 @@ public abstract class LintfordCore {
 	// ---------------------------------------------
 
 	public void toggleFullscreen() {
-		if(!TOGGLE_FULLENABLE_ENABLED) return;
-		
+		if (!TOGGLE_FULLENABLE_ENABLED)
+			return;
+
 		DisplayConfig lDisplay = mMasterConfig.display();
 		if (lDisplay == null)
 			return; // has the game been properly started yet?
@@ -339,9 +352,10 @@ public abstract class LintfordCore {
 		setNewGameCamera(new Camera(mMasterConfig.display()));
 
 	}
-	
+
 	public void setNewGameCamera(Camera pCamera) {
 		mGameCamera = pCamera;
+		mControllerManager.addController(new CameraController(mControllerManager, mGameCamera, BaseControllerGroups.CONTROLLER_GAME_GROUP_ID));
 
 	}
 

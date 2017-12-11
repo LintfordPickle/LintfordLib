@@ -18,7 +18,7 @@ public class MenuEntry extends UIRectangle {
 	// Constants
 	// --------------------------------------
 
-	protected static final float MENUENTRY_WIDTH = 310;
+	protected static final float MENUENTRY_WIDTH = 288;
 	protected static final float MENUENTRY_HEIGHT = 32;
 	protected static final float FOCUS_TIMER = 500f; // milli
 
@@ -309,23 +309,31 @@ public class MenuEntry extends UIRectangle {
 		float lR = mEnabled ? 1f : .35f;
 		float lG = mEnabled ? 1f : .35f;
 		float lB = mEnabled ? 1f : .35f;
-
-		// Draw the menu entry background
-
-		final float ENTRY_WIDTH = 320;
-		final float ENTRY_HEIGHT = 32;
-
+		
+		float tile_size = 32;
+		
+		// Scale the width depending on the button size
 		Texture lTexture = TextureManager.textureManager().getTexture(ScreenManager.SCREENMANAGER_TEXTURE_NAME);
 
 		// Draw the button highlight when this element has focus.
 		if (mHasFocus && mHighlightOnHover) {
 			mSpriteBatch.begin(pCore.HUD());
-			mSpriteBatch.draw(32, 32, 320, 32, centerX() - ENTRY_WIDTH / 2, centerY() - ENTRY_HEIGHT / 2, -2f, ENTRY_WIDTH, ENTRY_HEIGHT, 1f, mParentScreen.mA, lTexture);
+			mSpriteBatch.draw(0, 64, 32, 32, centerX() - width / 2, centerY() - height / 2, -2f, tile_size, height, 1f, mParentScreen.mA, lTexture);
+			switch(mButtonSize) {
+			default:
+				mSpriteBatch.draw(32, 64, 224, 32, centerX() - (width / 2) + tile_size, centerY() - height / 2, -2f, width - tile_size*2, height, 1f, mParentScreen.mA, lTexture);
+				mSpriteBatch.draw(256, 64, 32, 32, centerX() + (width / 2) - tile_size, centerY() - height / 2, -2f, tile_size, height, 1f, mParentScreen.mA, lTexture);		
+			}
 			mSpriteBatch.end();
 
 		} else if (mDrawBackground) {
 			mSpriteBatch.begin(pCore.HUD());
-			mSpriteBatch.draw(32, 0, 320, 32, centerX() - ENTRY_WIDTH / 2, centerY() - ENTRY_HEIGHT / 2, -2f, ENTRY_WIDTH, ENTRY_HEIGHT, 1f, lR, lG, lB, mParentScreen.mA, lTexture);
+			mSpriteBatch.draw(0, 32, 32, 32, centerX() - width / 2, centerY() - height / 2, -2f, 32, height, 1f, lR, lG, lB, mParentScreen.mA, lTexture);
+			switch(mButtonSize) {
+			default:
+				mSpriteBatch.draw(32, 32, 224, 32, centerX() - (width / 2) + 32, centerY() - height / 2, -2f, width - 64, height, 1f, mParentScreen.mA, lTexture);
+				mSpriteBatch.draw(256, 32, 32, 32, centerX() + (width / 2) - 32, centerY() - height / 2, -2f, 32, height, 1f, mParentScreen.mA, lTexture);	
+			}
 			mSpriteBatch.end();
 		}
 

@@ -36,7 +36,7 @@ public class ParticleGravityModifier implements IParticleModifier {
 	}
 
 	@Override
-	public void updateParticle(Particle pParticle, LintfordCore pCore) {
+	public void updateParticle(LintfordCore pCore, Particle pParticle) {
 		final float lDeltaTime = (float) pCore.time().elapseGameTimeSeconds();
 		pParticle.dy += mGravity * lDeltaTime;
 

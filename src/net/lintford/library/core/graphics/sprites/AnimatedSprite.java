@@ -3,9 +3,10 @@ package net.lintford.library.core.graphics.sprites;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheet;
-import net.lintford.library.core.time.GameTime;
 
+// TODO: Need to make an AnimatedSpriteState which should be sent when updating a specfic instance of AnimatedSprite.
 public class AnimatedSprite implements ISprite {
 
 	// --------------------------------------
@@ -128,11 +129,11 @@ public class AnimatedSprite implements ISprite {
 
 	}
 
-	public void update(GameTime pGameTime, float pTimeModifier) {
+	public void update(LintfordCore pCore, float pTimeModifier) {
 		if (frameDuration == 0.0)
 			return;
 
-		final float lDeltaTime = (float) pGameTime.elapseGameTimeMilli();
+		final float lDeltaTime = (float) pCore.time().elapseGameTimeMilli();
 
 		if (animationEnabled) {
 			timer += lDeltaTime * pTimeModifier;

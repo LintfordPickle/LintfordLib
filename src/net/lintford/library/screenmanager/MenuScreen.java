@@ -69,7 +69,6 @@ public abstract class MenuScreen extends Screen implements IMenuEntryClickListen
 
 	public static final String MENUSCREEN_FONT_NAME = "MenuScreenFont";
 	public static final String MENUSCREEN_HEADER_FONT_NAME = "MenuScreenHeaderFont";
-	public static final String MENUSCREEN_TITLE_FONT_NAME = "MenuScreenTitleFont";
 
 	public static final float ANIMATION_TIMER_LENGTH = 130; // ms
 
@@ -107,7 +106,6 @@ public abstract class MenuScreen extends Screen implements IMenuEntryClickListen
 
 	protected FontUnit mMenuFont;
 	protected FontUnit mMenuHeaderFont;
-	protected FontUnit mMenuTitleFont;
 
 	protected float mContentHeight;
 
@@ -123,11 +121,6 @@ public abstract class MenuScreen extends Screen implements IMenuEntryClickListen
 	/** Returns a medium sized {@link FontUnit} which can be used to render menu sub heading text to the screen. */
 	public FontUnit fontHeader() {
 		return mMenuHeaderFont;
-	}
-
-	/** Returns a large {@link FontUnit} which can be used to render menu title text to the screen. */
-	public FontUnit fontTitle() {
-		return mMenuTitleFont;
 	}
 
 	public boolean isAnimating() {
@@ -187,7 +180,6 @@ public abstract class MenuScreen extends Screen implements IMenuEntryClickListen
 		final String lFontPathname = mScreenManager.fontPathname();
 		mMenuFont = pResourceManager.fontManager().loadNewFont(MENUSCREEN_FONT_NAME, lFontPathname, 24, true);
 		mMenuHeaderFont = pResourceManager.fontManager().loadNewFont(MENUSCREEN_HEADER_FONT_NAME, lFontPathname, 35, false);
-		mMenuTitleFont = pResourceManager.fontManager().loadNewFont(MENUSCREEN_TITLE_FONT_NAME, lFontPathname, 64, false);
 		
 	}
 
@@ -353,9 +345,9 @@ public abstract class MenuScreen extends Screen implements IMenuEntryClickListen
 
 		Rectangle lHUDRect = pCore.HUD().boundingRectangle();
 
-		mMenuTitleFont.begin(pCore.HUD());
-		mMenuTitleFont.draw(mMenuTitle, lHUDRect.left() + TITLE_PADDING_X, lHUDRect.top(), -0f, mR, mG, mB, mA, 1f);
-		mMenuTitleFont.end();
+		mMenuHeaderFont.begin(pCore.HUD());
+		mMenuHeaderFont.draw(mMenuTitle, lHUDRect.left() + TITLE_PADDING_X, lHUDRect.top(), -0f, mR, mG, mB, mA, 1f);
+		mMenuHeaderFont.end();
 
 		// Draw each layout in turn.
 		final int lCount = layouts().size();

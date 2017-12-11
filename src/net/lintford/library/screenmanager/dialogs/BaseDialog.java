@@ -129,7 +129,7 @@ public abstract class BaseDialog extends MenuScreen {
 		if (mDrawBackground) {
 			mSpriteBatch.begin(pCore.HUD());
 			final float SCALE = 1f;
-			mSpriteBatch.draw(64, 64, 32, 32, -lDialogWidth * 0.5f, -lDialogHeight * 0.5f, -1.5f, lDialogWidth, lDialogHeight, SCALE, mR, mG, mB, mA, TextureManager.TEXTURE_CORE_UI);
+			mSpriteBatch.draw(64, 0, 32, 32, -lDialogWidth * 0.5f, -lDialogHeight * 0.5f, -1.5f, lDialogWidth, lDialogHeight, SCALE, mR, mG, mB, mA, TextureManager.TEXTURE_CORE_UI);
 			mSpriteBatch.end();
 		}
 

@@ -265,7 +265,7 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 		if (!isOpen())
 			return;
 
-		updateWindowPosition(pCore.HUD());
+		updateWindowPosition(pCore);
 
 		mWindowAlpha = 0.95f;
 
@@ -318,18 +318,18 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 	// Methods
 	// --------------------------------------
 
-	public void updateWindowPosition(ICamera pHUD) {
-		final Rectangle HUD_BOUNDING_RECT = pHUD.boundingRectangle();
+	public void updateWindowPosition(LintfordCore pCore) {
+		final Rectangle lHUDBoundingRect = pCore.HUD().boundingRectangle();
 
-		if (HUD_BOUNDING_RECT == null) {
+		if (lHUDBoundingRect == null) {
 			System.err.println("Cannot update window position - RendererManager.UIManager.HUDCamera not set to an instance of an HUD object!");
 			return;
 		}
 
-		mWindowArea.x = HUD_BOUNDING_RECT.left() + SCREEN_PADDING;
-		mWindowArea.y = HUD_BOUNDING_RECT.top() + 50;
-		mWindowArea.width = HUD_BOUNDING_RECT.width * 0.5f - WINDOW_PADDING - SCREEN_PADDING;
-		mWindowArea.height = HUD_BOUNDING_RECT.height / 2 - WINDOW_PADDING - 50;
+		mWindowArea.x = lHUDBoundingRect.left() + SCREEN_PADDING;
+		mWindowArea.y = lHUDBoundingRect.top() + 50;
+		mWindowArea.width = lHUDBoundingRect.width * 0.5f - WINDOW_PADDING - SCREEN_PADDING;
+		mWindowArea.height = lHUDBoundingRect.height / 2 - WINDOW_PADDING - 50;
 
 	}
 

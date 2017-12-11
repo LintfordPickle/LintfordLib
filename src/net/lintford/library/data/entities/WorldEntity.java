@@ -1,6 +1,6 @@
 package net.lintford.library.data.entities;
 
-import net.lintford.library.core.time.GameTime;
+import net.lintford.library.core.LintfordCore;
 import net.lintford.library.data.BaseData;
 
 public abstract class WorldEntity extends BaseData {
@@ -64,7 +64,7 @@ public abstract class WorldEntity extends BaseData {
 		return false;
 	}
 
-	public void update(GameTime pGameTime)
+	public void update(LintfordCore pCore)
 	{
 	    oldX = x;
 	    oldY = y;

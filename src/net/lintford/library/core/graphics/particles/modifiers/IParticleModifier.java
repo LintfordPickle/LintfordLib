@@ -2,7 +2,6 @@ package net.lintford.library.core.graphics.particles.modifiers;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.graphics.particles.Particle;
-import net.lintford.library.core.time.GameTime;
 
 public interface IParticleModifier {
 
@@ -13,6 +12,6 @@ public interface IParticleModifier {
 	public abstract void update(LintfordCore pCore);
 
 	/** A method to update the state of a {@link Particle} instance. */
-	public abstract void updateParticle(Particle pParticle, LintfordCore pCore);
+	public abstract void updateParticle(LintfordCore pCore, Particle pParticle);
 
 }

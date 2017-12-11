@@ -35,6 +35,10 @@ public class CameraController extends BaseController {
 
 	}
 
+	public Camera camera() {
+		return mCamera; 
+	}
+	
 	// ---------------------------------------------
 	// Constructor
 	// ---------------------------------------------

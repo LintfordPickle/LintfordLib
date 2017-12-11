@@ -42,12 +42,12 @@ public class ParticleLevelPhysicsModifier implements IParticleModifier {
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
-	
+
 	public ParticleLevelPhysicsModifier() {
 		mPhysicsState = new PhysicsState();
-		
+
 	}
-	
+
 	// --------------------------------------
 	// Core-Methods
 	// --------------------------------------
@@ -67,10 +67,10 @@ public class ParticleLevelPhysicsModifier implements IParticleModifier {
 	// --------------------------------------
 
 	@Override
-	public void updateParticle(Particle pParticle, LintfordCore pCore) {
+	public void updateParticle(LintfordCore pCore, Particle pParticle) {
 		float lDelta = (float) pCore.time().elapseGameTimeMilli();
 
-		checkEntityCollisions(pParticle, pCore);
+		checkEntityCollisions(pCore, pParticle);
 
 		// X component
 		pParticle.x += pParticle.dx * lDelta;
@@ -91,7 +91,7 @@ public class ParticleLevelPhysicsModifier implements IParticleModifier {
 		if (pParticle.dy < 0 && LevelCollisions.hasCeiling(mLevelGridCollider, pParticle, mPhysicsState)) {
 			pParticle.y = mPhysicsState.collisionY + pParticle.radius;
 			pParticle.dy = -pParticle.dy;
-			
+
 		}
 
 		// floor collision
@@ -105,7 +105,7 @@ public class ParticleLevelPhysicsModifier implements IParticleModifier {
 
 	}
 
-	private void checkEntityCollisions(Particle pParticle, LintfordCore pCore) {
+	private void checkEntityCollisions(LintfordCore pCore, Particle pParticle) {
 		if (mEntityCollider == null)
 			return;
 

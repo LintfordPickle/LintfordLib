@@ -312,7 +312,7 @@ public class DebugConsole extends UIRectangle implements IBufferedInputCallback,
 		if (!CONSOLE_ENABLED)
 			return;
 
-		if (!mActive || !mOpen)
+		if (!mActive || !mIsLoaded || !mOpen)
 			return;
 
 		final float PADDING_LEFT = 15;
@@ -363,7 +363,8 @@ public class DebugConsole extends UIRectangle implements IBufferedInputCallback,
 			mConsoleFont.draw(PROMT_CHAR, -lDisplay.windowSize().x * 0.5f + PADDING_LEFT, y + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET, Z_DEPTH + 0.1f, 1f);
 			mConsoleFont.draw(mInputText.toString(), -lDisplay.windowSize().x * 0.5f + PADDING_LEFT + lInputTextXOffset, y + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET, Z_DEPTH + 0.1f, 1f);
 			if (mShowCaret && mHasFocus)
-				mConsoleFont.draw("|", -lDisplay.windowSize().x * 0.5f + PADDING_LEFT + lInputTextXOffset + mConsoleFont.bitmap().getStringWidth(mInputText.toString()), y + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET, Z_DEPTH + 0.1f, 1f);
+				mConsoleFont.draw("|", -lDisplay.windowSize().x * 0.5f + PADDING_LEFT + lInputTextXOffset + mConsoleFont.bitmap().getStringWidth(mInputText.toString()),
+						y + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET, Z_DEPTH + 0.1f, 1f);
 		}
 
 		mConsoleFont.end();

@@ -20,7 +20,7 @@ public class ParticleLifetimeAlphaFadeOutModifier implements IParticleModifier {
 	}
 	
 	@Override
-	public void updateParticle(Particle p, LintfordCore pCore) {
+	public void updateParticle(LintfordCore pCore, Particle p) {
 		// normalized lifetime is a value from 0 to 1 and represents how far
 		// a particle is through its life. 0 means it just started, .5 is half
 		// way through, and 1.0 means it's just about to be finished.

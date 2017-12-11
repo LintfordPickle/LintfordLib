@@ -215,9 +215,6 @@ public class SpriteBatch {
 			flush();
 		}
 
-		final float lx = !pFlipH ? pSprite.getX() : pSprite.getX() + pSprite.getW();
-		final float gx = pFlipH ? pSprite.getX() : pSprite.getX() + pSprite.getW();
-
 		// Vertex 0
 		float x0 = x;
 		float y0 = y + h * pScale;

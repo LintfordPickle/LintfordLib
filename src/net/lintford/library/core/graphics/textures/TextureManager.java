@@ -3,6 +3,7 @@ package net.lintford.library.core.graphics.textures;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,6 +13,7 @@ import org.lwjgl.opengl.GL11;
 
 import net.lintford.library.ConstantsTable;
 import net.lintford.library.core.debug.DebugManager;
+import net.lintford.library.core.graphics.textures.xml.TextureMetaLoader;
 
 public class TextureManager {
 
@@ -230,4 +232,31 @@ public class TextureManager {
 
 	}
 
+	/** Batch load textures */
+	public void loadTexturesFromMetafile(String pMetaFileLoation) {
+		final TextureMetaLoader lLoader = new TextureMetaLoader();
+		final ArrayList<TextureMetaItem> lItems = lLoader.loadTextureMetaFile(pMetaFileLoation);
+
+		final int lNumTextures = lItems.size();
+		for (int i = 0; i < lNumTextures; i++) {
+			int GL_FILTER_MODE = GL11.GL_NEAREST;
+			switch (lItems.get(i).filterType) {
+			case 1:
+				GL_FILTER_MODE = GL11.GL_NEAREST;
+				break;
+			default:
+				GL_FILTER_MODE = GL11.GL_LINEAR;
+				break;
+			}
+
+			Texture lTex = loadTexture(lItems.get(i).textureName, lItems.get(i).textureLocation, GL_FILTER_MODE);
+
+			if (lTex != null) {
+				lTex.reloadable(true);
+				mTextures.put(lItems.get(i).textureName, lTex);
+
+			}
+		}
+	}
+	
 }

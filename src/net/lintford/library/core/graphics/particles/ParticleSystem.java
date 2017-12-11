@@ -93,8 +93,6 @@ public class ParticleSystem {
 	}
 
 	public void update(LintfordCore pCore) {
-		final float lDeltaTime = (float) pCore.time().elapseGameTimeMilli();
-
 		// Update the modifiers independently of the particles
 		final int lNumModifiers = mModifiers.size();
 		for (int j = 0; j < lNumModifiers; j++) {
@@ -121,7 +119,7 @@ public class ParticleSystem {
 				continue;
 
 			for (int j = 0; j < lNumModifiers; j++) {
-				mModifiers.get(j).updateParticle(mParticles.get(i), pCore);
+				mModifiers.get(j).updateParticle(pCore, mParticles.get(i));
 			}
 		}
 	}
