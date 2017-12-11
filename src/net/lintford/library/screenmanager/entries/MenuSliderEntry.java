@@ -163,10 +163,10 @@ public class MenuSliderEntry extends MenuEntry {
 		lFont.draw("" + mValue, x + mValuePosX - valueWith / 2, y + 2, -2f, 1f);
 		lFont.end();
 
-		// TODO(John): Render the box and tick (if checked)
+		// TODO: This should be a slider as well ..
 		mTextureBatch.begin(pCore.HUD());
-		mTextureBatch.draw(32, 64, 32, 32, mDownButton.x, mDownButton.y, -2f, 32, 32, 1f, lTexture);
-		mTextureBatch.draw(64, 64, 32, 32, mUpButton.x, mUpButton.y, -2f, 32, 32, 1f, lTexture);
+		mTextureBatch.draw(160, 0, 32, 32, mDownButton.x, mDownButton.y, -2f, 32, 32, 1f, lTexture);
+		mTextureBatch.draw(224, 0, 32, 32, mUpButton.x, mUpButton.y, -2f, 32, 32, 1f, lTexture);
 		mTextureBatch.end();
 
 	}
