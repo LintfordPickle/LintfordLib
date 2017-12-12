@@ -74,10 +74,7 @@ public class ConstantsTable {
 	}
 
 	public static void registerValue(String pName, String pValue) {
-		if (!constTab.containsKey(pName)) {
-			constTab.put(pName, pValue);
-
-		}
+		constTab.put(pName, pValue);
 
 	}
 
