@@ -155,15 +155,15 @@ public class TextureManager {
 	public boolean saveTextureToFile(int pWidth, int pHeight, int[] pData, String pFileLocation) {
 		BufferedImage lImage = new BufferedImage(pWidth, pHeight, BufferedImage.TYPE_INT_ARGB);
 
-		// Convert our ABGR to output ARGB
+		// Convert our ARGB to output ABGR
 		int[] lTextureData = new int[pWidth * pHeight];
 		for (int i = 0; i < pWidth * pHeight; i++) {
-			int r = (pData[i] & 0xff000000) >> 24;
-			int g = (pData[i] & 0xff0000) >> 16;
-			int b = (pData[i] & 0xff00) >> 8;
-			int a = (pData[i] & 0xff);
+			int a = (pData[i] & 0xff000000) >> 24;
+			int r = (pData[i] & 0xff0000) >> 16;
+			int g = (pData[i] & 0xff00) >> 8;
+			int b = (pData[i] & 0xff);
 
-			lTextureData[i] = a << 24 | r << 16 | g << 8 | b;
+			lTextureData[i] = a << 24 | b << 16 | g << 8 | r;
 		}
 
 		lImage.setRGB(0, 0, pWidth, pHeight, lTextureData, 0, pWidth);
@@ -258,5 +258,5 @@ public class TextureManager {
 			}
 		}
 	}
-	
+
 }
