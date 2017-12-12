@@ -110,7 +110,7 @@ public class MenuLabelEntry extends MenuEntry {
 		// We don't want to draw the background menu entry for a label
 		// super.draw(pScreen, display, pIsSelected);
 
-		BitmapFont lFontBitmap = mParentScreen.fontHeader().bitmap();
+		BitmapFont lFontBitmap = mParentScreen.font().bitmap();
 
 		final float lLabelWidth = lFontBitmap.getStringWidth(mText);
 
@@ -128,9 +128,9 @@ public class MenuLabelEntry extends MenuEntry {
 		}
 
 		final float FONT_SCALE = 1f;
-		mParentScreen.fontHeader().begin(pCore.HUD());
-		mParentScreen.fontHeader().draw(mText, lX, y, pParentZDepth + .1f, mR, mG, mB, mParentScreen.a(), FONT_SCALE);
-		mParentScreen.fontHeader().end();
+		mParentScreen.font().begin(pCore.HUD());
+		mParentScreen.font().draw(mText, lX, y, pParentZDepth + .1f, mR, mG, mB, mParentScreen.a(), FONT_SCALE);
+		mParentScreen.font().end();
 
 	}
 

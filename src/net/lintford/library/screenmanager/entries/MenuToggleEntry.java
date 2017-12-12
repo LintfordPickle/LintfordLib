@@ -129,16 +129,11 @@ public class MenuToggleEntry extends MenuEntry {
 		// Draw the left/right buttons
 		mSpriteBatch.begin(pCore.HUD());
 
-		final float srcx = 352;
-		final float srcy = 96;
-		final float srcw = 32;
-		final float srch = 32;
-
 		// Render the check box (either ticked or empty)
 		if (mIsChecked)
-			mSpriteBatch.draw(srcx + 32, srcy, srcw, srch, x + width / 2 + 32, y + height / 2 - 8, pParentZDepth + .1f, 24, 24, 1f, TextureManager.TEXTURE_CORE_UI);
+			mSpriteBatch.draw(288, 128, 32, 32, x + width / 2 + 64, y + height / 2 - 8, pParentZDepth + .1f, 24, 24, 1f, TextureManager.TEXTURE_CORE_UI);
 		else
-			mSpriteBatch.draw(srcx, srcy, srcw, srch, x + width / 2 + 32, y + height / 2 - 8, pParentZDepth + .1f, 24, 24, 1f, TextureManager.TEXTURE_CORE_UI);
+			mSpriteBatch.draw(288, 160, 32, 32, x + width / 2 + 64, y + height / 2 - 8, pParentZDepth + .1f, 24, 24, 1f, TextureManager.TEXTURE_CORE_UI);
 
 		mSpriteBatch.end();
 
