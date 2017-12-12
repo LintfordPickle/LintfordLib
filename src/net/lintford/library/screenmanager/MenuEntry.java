@@ -313,7 +313,7 @@ public class MenuEntry extends UIRectangle {
 		float tile_size = 32;
 		
 		// Scale the width depending on the button size
-		Texture lTexture = TextureManager.textureManager().getTexture(ScreenManager.SCREENMANAGER_TEXTURE_NAME);
+		Texture lTexture = TextureManager.TEXTURE_CORE_UI;
 
 		// Draw the button highlight when this element has focus.
 		if (mHasFocus && mHighlightOnHover) {

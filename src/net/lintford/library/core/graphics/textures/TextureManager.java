@@ -26,7 +26,8 @@ public class TextureManager {
 	public static final Texture TEXTURE_BLACK = TextureManager.textureManager().loadTexture("BLACK", new int[] { 0x0, 0x0, 0x0, 0x0 }, 2, 2);
 
 	/** A static texture which contains 'generic' icons which can be used for core components and debugging. */
-	public static final Texture TEXTURE_CORE_UI = TextureManager.textureManager().loadTexture("CORE_UI", "/res/textures/core/core_ui.png", GL11.GL_NEAREST);
+	public static final String CORE_UI_TEXTURE_NAME = "CORE_UI";
+	public static final Texture TEXTURE_CORE_UI = TextureManager.textureManager().loadTexture(CORE_UI_TEXTURE_NAME, "/res/textures/core/core_ui.png", GL11.GL_NEAREST);
 
 	// --------------------------------------
 	// Variables
@@ -92,6 +93,7 @@ public class TextureManager {
 	public Texture loadTexture(String pName, String pTextureLocation, int pFilter, boolean pReload) {
 		if (pTextureLocation == null || pTextureLocation.length() == 0) {
 			return null;
+
 		}
 
 		Texture lTex = null;
@@ -120,6 +122,11 @@ public class TextureManager {
 
 		}
 
+		if (lTex == null) {
+			return TextureManager.TEXTURE_NOT_FOUND;
+
+		}
+
 		return lTex;
 	}
 
@@ -134,7 +141,7 @@ public class TextureManager {
 		}
 
 		if (lResult != null) {
-			lResult.reload(pColorData, pWidth, pHeight);
+			lResult.updateGLTextureData(pColorData, pWidth, pHeight);
 
 			return lResult;
 		} else {

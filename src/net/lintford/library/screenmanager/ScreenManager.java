@@ -4,17 +4,10 @@ import java.util.ArrayList;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.graphics.ResourceManager;
-import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.screenmanager.Screen.ScreenState;
 import net.lintford.library.screenmanager.toast.ToastManager;
 
 public class ScreenManager {
-
-	// --------------------------------------
-	// Constants
-	// --------------------------------------
-
-	public static final String SCREENMANAGER_TEXTURE_NAME = "ScreenManagerTexture";
 
 	// --------------------------------------
 	// Variables
@@ -106,7 +99,6 @@ public class ScreenManager {
 
 		mToolTip.loadGLContent(pResourceManager);
 		mToastManager.loadGLContent(pResourceManager);
-		TextureManager.textureManager().loadTexture(SCREENMANAGER_TEXTURE_NAME, "/res/textures/core/core_ui.png");
 
 		mIsLoaded = true;
 	}

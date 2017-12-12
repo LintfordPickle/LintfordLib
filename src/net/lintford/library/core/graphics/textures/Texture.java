@@ -23,8 +23,8 @@ public class Texture {
 	// --------------------------------------
 
 	private String mName;
-	private final int mTextureID;
-	private final String mTextureLocation;
+	private int mTextureID;
+	private String mTextureLocation;
 	private int mTextureWidth;
 	private int mTextureHeight;
 	private int mFilter;
@@ -90,6 +90,7 @@ public class Texture {
 		mTextureWidth = pWidth;
 		mTextureHeight = pHeight;
 		mFilter = pFilter;
+		mReloadable = true;
 
 	}
 
@@ -222,18 +223,7 @@ public class Texture {
 		final int[] lPixels = new int[lWidth * lHeight];
 		pImage.getRGB(0, 0, lWidth, lHeight, lPixels, 0, lWidth);
 
-		// 2. change channel order
-		int[] lTextureData = new int[lWidth * lHeight];
-		for (int i = 0; i < lWidth * lHeight; i++) {
-			int a = (lPixels[i] & 0xff000000) >> 24;
-			int r = (lPixels[i] & 0xff0000) >> 16;
-			int g = (lPixels[i] & 0xff00) >> 8;
-			int b = (lPixels[i] & 0xff);
-
-			lTextureData[i] = a << 24 | b << 16 | g << 8 | r;
-		}
-
-		return createTexture(pName, pTextureLocation, lTextureData, lWidth, lHeight, pFilter);
+		return createTexture(pName, pTextureLocation, changeARGBtoABGR(lPixels, lWidth, lHeight), lWidth, lHeight, pFilter);
 	}
 
 	/**
@@ -256,9 +246,68 @@ public class Texture {
 		return new Texture(pName, lTexID, mTextureLocation, pWidth, pHeight, pFilter);
 	}
 
-	public void reload(int[] pColorData, int pWidth, int pHeight) {
-		if (mTextureWidth != pWidth || mTextureHeight != pHeight)
+	public void reloadTexture(String pFilename) {
+		// If a new filename is explicitly passed in, then ignore the reloadable flag
+		String lCleanFilename = cleanFilename(pFilename);
+
+		BufferedImage lImage = null;
+		long lFileSize = 0;
+
+		try {
+			// Load the file from the path, ignoring whitespace, tabs and new lines from the path string.
+			File lTextureFile = new File(lCleanFilename);
+			lFileSize = lTextureFile.length();
+
+			lImage = ImageIO.read(lTextureFile);
+
+			final int lWidth = lImage.getWidth();
+			final int lHeight = lImage.getHeight();
+
+			// Get the pixels from the buffered image
+			final int[] lPixels = new int[lWidth * lHeight];
+			lImage.getRGB(0, 0, lWidth, lHeight, lPixels, 0, lWidth);
+
+			updateGLTextureData(changeARGBtoABGR(lPixels, lWidth, lHeight), lWidth, lHeight);
+
+			mTextureWidth = lWidth;
+			mTextureHeight = lHeight;
+
+			mTextureLocation = lCleanFilename;
+			fileSizeOnLoad(lFileSize);
+			reloadable(true);
+
+			if (ConstantsTable.getBooleanValueDef("DEBUG_APP", false)) {
+				DebugManager.DEBUG_MANAGER.logger().i(getClass().getSimpleName(), "Reloaded texture: " + mTextureLocation);
+
+			}
+
 			return;
+
+		} catch (FileNotFoundException e) {
+			DebugManager.DEBUG_MANAGER.logger().e(Texture.class.getSimpleName(), "Error loading texture from file (" + pFilename + ")");
+
+			return;
+
+		} catch (IOException e) {
+			System.err.println("Error loading texture from " + pFilename);
+			System.err.println(e.getMessage());
+
+			return;
+		}
+
+	}
+
+	public void reload() {
+		if (!mReloadable) {
+			return;
+
+		}
+		
+		reloadTexture(mTextureLocation);
+
+	}
+
+	void updateGLTextureData(int[] pColorData, int pWidth, int pHeight) {
 		if (pColorData.length != pWidth * pHeight)
 			return;
 
@@ -276,78 +325,32 @@ public class Texture {
 
 	}
 
-	public void reload() {
-		if (!mReloadable) {
-			return;
+	static int[] changeARGBtoABGR(int[] pInput, int pWidth, int pHeight) {
+		int[] lReturnData = new int[pWidth * pHeight];
+		for (int i = 0; i < pWidth * pHeight; i++) {
+			int a = (pInput[i] & 0xff000000) >> 24;
+			int r = (pInput[i] & 0xff0000) >> 16;
+			int g = (pInput[i] & 0xff00) >> 8;
+			int b = (pInput[i] & 0xff);
 
+			lReturnData[i] = a << 24 | b << 16 | g << 8 | r;
 		}
 
-		BufferedImage lImage = null;
-		int[] lPixels = null;
-		int lTexWidth = 0;
-		int lTexHeight = 0;
+		return lReturnData;
+	}
 
-		// 1. load the image
-		try {
-			File lTextureFile = new File(mTextureLocation);
+	static int[] changeABGRtoARGB(int[] pInput, int pWidth, int pHeight) {
+		int[] lReturnData = new int[pWidth * pHeight];
+		for (int i = 0; i < pWidth * pHeight; i++) {
+			int a = (pInput[i] & 0xff000000) >> 24;
+			int b = (pInput[i] & 0xff0000) >> 16;
+			int g = (pInput[i] & 0xff00) >> 8;
+			int r = (pInput[i] & 0xff);
 
-			// Check the file size to see if the texture has changed
-			long lLatestSize = lTextureFile.length();
-			if (lLatestSize == mFileSizeOnLoad) {
-				return;
-
-			}
-
-			mFileSizeOnLoad = lLatestSize;
-
-			lImage = ImageIO.read(lTextureFile);
-
-			lTexWidth = lImage.getWidth();
-			lTexHeight = lImage.getHeight();
-
-			lPixels = new int[lTexWidth * lTexHeight];
-			lImage.getRGB(0, 0, lTexWidth, lTexHeight, lPixels, 0, lTexWidth);
-
-		} catch (FileNotFoundException e) {
-			DebugManager.DEBUG_MANAGER.logger().e(getClass().getSimpleName(), "Error reloading texture (File not found at " + mTextureLocation + " )");
-
-			return;
-
-		} catch (IOException e) {
-			DebugManager.DEBUG_MANAGER.logger().e(getClass().getSimpleName(), "Error reloading texture from " + mTextureLocation);
-
-			return;
+			lReturnData[i] = a << 24 | r << 16 | g << 8 | b;
 		}
 
-		// 2. change channel order
-		int[] lTextureData = new int[lTexWidth * lTexHeight];
-		for (int i = 0; i < lTexWidth * lTexHeight; i++) {
-			int a = (lPixels[i] & 0xff000000) >> 24;
-			int r = (lPixels[i] & 0xff0000) >> 16;
-			int g = (lPixels[i] & 0xff00) >> 8;
-			int b = (lPixels[i] & 0xff);
-
-			lTextureData[i] = a << 24 | b << 16 | g << 8 | r;
-		}
-
-		// 3. Create OpenGL texture and return ID
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, mTextureID);
-
-		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, mFilter);
-		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, mFilter);
-
-		IntBuffer lBuffer = ByteBuffer.allocateDirect(lTextureData.length * 4).order(ByteOrder.nativeOrder()).asIntBuffer();
-		lBuffer.put(lTextureData);
-		lBuffer.flip();
-
-		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, lTexWidth, lTexHeight, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, lBuffer);
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
-
-		if (ConstantsTable.getBooleanValueDef("DEBUG_APP", false)) {
-			DebugManager.DEBUG_MANAGER.logger().i(getClass().getSimpleName(), "Reloaded texture: " + mTextureLocation);
-
-		}
-
+		return lReturnData;
 	}
 
 }

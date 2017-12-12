@@ -24,6 +24,9 @@ public class RendererManager {
 
 	public static final int NO_WINDOW_INDEX = -1;
 	public static final int WINDOW_ALREADY_REGISTERED = -2;
+	
+	public static final String WINDOWS_TEXT_FONT_NAME = "WindowTextFont";
+	public static final String WINDOWS_TITLE_FONT_NAME = "WindowTitleFont";
 
 	// --------------------------------------
 	// variables
@@ -142,8 +145,8 @@ public class RendererManager {
 		mSpriteBatch.loadGLContent(pResourceManager);
 
 		// TODO: We should add a more concise method for getting fonts which are already loaded...
-		mWindowTitleFont = pResourceManager.fontManager().loadNewFont("WindowTitleFont", "res/fonts/system.ttf", 22);
-		mWindowTextFont = pResourceManager.fontManager().loadNewFont("WindowTextFont", "res/fonts/system.ttf", 18);
+		mWindowTitleFont = pResourceManager.fontManager().loadNewFont(WINDOWS_TITLE_FONT_NAME, "/res/fonts/system.ttf", 22);
+		mWindowTextFont = pResourceManager.fontManager().loadNewFont(WINDOWS_TEXT_FONT_NAME, "/res/fonts/system.ttf", 18);
 
 		// Some windows will use this to orientate themselves to the window
 		mDisplayConfig = pResourceManager.config().display();

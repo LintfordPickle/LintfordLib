@@ -217,7 +217,7 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 		// Make sure we are starting with a fresh stencil buffer
 		GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT); // Clear the stencil buffer
 
-		Texture lTexture = TextureManager.textureManager().getTexture(ScreenManager.SCREENMANAGER_TEXTURE_NAME);
+		Texture lTexture = TextureManager.TEXTURE_CORE_UI;
 		
 		mSpriteBatch.begin(pCore.HUD());
 		mSpriteBatch.draw(32, 0, 32, 32, x, y, -8f, getWidth(), getHeight(), 1.0f, 1, 1, 1, 0.75f, lTexture);

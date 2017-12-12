@@ -15,6 +15,7 @@ import java.util.Map;
 
 import org.lwjgl.opengl.GL11;
 
+import net.lintford.library.core.debug.DebugManager;
 import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.TextureManager;
@@ -131,9 +132,11 @@ public class BitmapFont {
 				mFont = Font.createFont(Font.TRUETYPE_FONT, lFontInputStream).deriveFont(mPointSize);
 
 			} catch (FontFormatException e) {
+				DebugManager.DEBUG_MANAGER.logger().e(getClass().getSimpleName(), "Font format exception with font file: " + mFontFileLocation);
 				e.printStackTrace();
 
 			} catch (IOException e) {
+				DebugManager.DEBUG_MANAGER.logger().e(getClass().getSimpleName(), "Specified font file not found: " + mFontFileLocation);
 				e.printStackTrace();
 
 			}

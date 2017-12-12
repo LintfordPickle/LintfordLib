@@ -150,10 +150,8 @@ public class MenuSliderEntry extends MenuEntry {
 
 	@Override
 	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pParentZDepth) {
-		// super.draw(pCore, pScreen, pIsSelected, pParentZDepth);
-
 		FontUnit lFont = mParentScreen.font();
-		Texture lTexture = TextureManager.textureManager().getTexture(ScreenManager.SCREENMANAGER_TEXTURE_NAME);
+		Texture lTexture = TextureManager.TEXTURE_CORE_UI;
 
 		float valueWith = lFont.bitmap().getStringWidth("" + mValue);
 		
