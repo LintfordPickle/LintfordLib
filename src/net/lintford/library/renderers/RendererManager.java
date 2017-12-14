@@ -24,7 +24,7 @@ public class RendererManager {
 
 	public static final int NO_WINDOW_INDEX = -1;
 	public static final int WINDOW_ALREADY_REGISTERED = -2;
-	
+
 	public static final String WINDOWS_TEXT_FONT_NAME = "WindowTextFont";
 	public static final String WINDOWS_TITLE_FONT_NAME = "WindowTitleFont";
 

@@ -36,9 +36,9 @@ public class CameraController extends BaseController {
 	}
 
 	public Camera camera() {
-		return mCamera; 
+		return mCamera;
 	}
-	
+
 	// ---------------------------------------------
 	// Constructor
 	// ---------------------------------------------
@@ -54,6 +54,18 @@ public class CameraController extends BaseController {
 	// ---------------------------------------------
 	// Core-Methods
 	// ---------------------------------------------
+
+	@Override
+	public boolean handleInput(LintfordCore pCore) {
+		if (this.mCamera == null)
+			return false;
+
+		// Apply the new zoom factor to the camera object
+		mCamera.handleInput(pCore);
+
+		return super.handleInput(pCore);
+
+	}
 
 	/**
 	 * Controls the zoom factor of the associated {@link Camera} object, if present and applicable.
