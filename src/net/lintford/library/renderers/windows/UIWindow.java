@@ -75,9 +75,19 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 	/** If true, this base renderer consumes input and ends the handleInput invocation chain. */
 	protected boolean mExclusiveHandleInput;
 
+	protected boolean mIsDebugWindow;
+
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public boolean isDebugWindow() {
+		return mIsDebugWindow;
+	}
+
+	public UIRectangle iconSrcRectangle() {
+		return mIconSrcRectangle;
+	}
 
 	public boolean exclusiveHandleInput() {
 		return mExclusiveHandleInput;

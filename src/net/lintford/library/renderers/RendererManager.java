@@ -100,6 +100,10 @@ public class RendererManager {
 		return mSpriteBatch;
 	}
 
+	public List<UIWindow> windows() {
+		return mWindowRenderers;
+	}
+
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
@@ -145,8 +149,8 @@ public class RendererManager {
 		mSpriteBatch.loadGLContent(pResourceManager);
 
 		// TODO: We should add a more concise method for getting fonts which are already loaded...
-		mWindowTitleFont = pResourceManager.fontManager().loadNewFont(WINDOWS_TITLE_FONT_NAME, "/res/fonts/system.ttf", 22);
-		mWindowTextFont = pResourceManager.fontManager().loadNewFont(WINDOWS_TEXT_FONT_NAME, "/res/fonts/system.ttf", 18);
+		mWindowTitleFont = pResourceManager.fontManager().loadNewFont(WINDOWS_TITLE_FONT_NAME, "/res/fonts/system.ttf", 18);
+		mWindowTextFont = pResourceManager.fontManager().loadNewFont(WINDOWS_TEXT_FONT_NAME, "/res/fonts/system.ttf", 14);
 
 		// Some windows will use this to orientate themselves to the window
 		mDisplayConfig = pResourceManager.config().display();
@@ -263,7 +267,7 @@ public class RendererManager {
 				continue;
 
 			if (!mRenderers.get(i).isLoaded() && mIsLoaded) {
-				DebugManager.DEBUG_MANAGER.logger().w(getClass().getSimpleName(), "Reloading contenet in Update() (BaseRenderer) ");
+				DebugManager.DEBUG_MANAGER.logger().w(getClass().getSimpleName(), "Reloading content in Update() (BaseRenderer) ");
 				mRenderers.get(i).loadGLContent(mResourceManager);
 
 			}

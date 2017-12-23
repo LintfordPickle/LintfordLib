@@ -1,7 +1,5 @@
 package net.lintford.library.options;
 
-import java.io.IOException;
-
 import net.lintford.library.options.reader.IniFile;
 
 public class BaseConfig {

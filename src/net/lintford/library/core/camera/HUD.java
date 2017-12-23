@@ -132,6 +132,9 @@ public class HUD implements ICamera, IResizeListener {
 	public void update(LintfordCore pCore) {
 		if (mWindowWidth == 0 || mWindowHeight == 0)
 			return;
+		
+		mWindowWidth = pCore.config().display().gameViewportSize().x;
+		mWindowHeight = pCore.config().display().gameViewportSize().y;
 
 		mViewMatrix.setIdentity(); // points at -Z
 		mViewMatrix.translate(0, 0, 0);

@@ -1,6 +1,7 @@
 package net.lintford.library;
 
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.options.DisplayConfig;
 
 /** The {@link GameInfo} interface defines the properties used by {@link LintfordCore} when creating an OpenGL window. */
 public interface GameInfo {
@@ -39,6 +40,20 @@ public interface GameInfo {
 	/** Returns true if the OpenGL window can be toggled fullscreen. */
 	public default boolean windowCanBeFullscreen() {
 		return false;
+	}
+
+	/**
+	 * If return value is true, the game will use a constant size backbuffer to render the game, which will be stretched to fit the window.
+	 */
+	public default boolean stretchGameViewportToWindow() {
+		return false;
+	}
+
+	/**
+	 * If return value is true, the {@link DisplayConfig} will take the aspect ratio into account when stretching the back buffer to fit the window.
+	 */
+	public default boolean maintainAspectRatio() {
+		return true;
 	}
 
 }

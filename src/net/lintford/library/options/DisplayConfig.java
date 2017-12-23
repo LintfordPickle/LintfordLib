@@ -123,6 +123,7 @@ public class DisplayConfig extends BaseConfig {
 
 	private boolean mFullScreen;
 	private Vector2i mWindowSize;
+	private Vector2i mAspectRatio;
 	private Vector2i mHUDSize;
 	private Vector2i mGameViewportSize;
 
@@ -135,6 +136,9 @@ public class DisplayConfig extends BaseConfig {
 	private GLFWFramebufferSizeCallback mFrameBufferSizeCallback;
 	private long mWindowID = NULL;
 	private boolean mRecompileShaders = false;
+
+	private boolean mStretchToFit;
+//	private boolean mMaintainAspectRatio;
 
 	List<IResizeListener> mWindowResizeListeners;
 	List<IResizeListener> mGameResizeListeners;
@@ -223,6 +227,10 @@ public class DisplayConfig extends BaseConfig {
 		mGameViewportSize = new Vector2i();
 		mGameViewportSize.x = WINDOW_MINIMUM_WIDTH;
 		mGameViewportSize.y = WINDOW_MINIMUM_HEIGHT;
+		
+		mAspectRatio = new Vector2i();
+		mAspectRatio.x = 1;
+		mAspectRatio.y = 1;
 
 		mFullScreen = true;
 		mWindowIsResizable = true;
@@ -296,6 +304,9 @@ public class DisplayConfig extends BaseConfig {
 		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 		glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
 		glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
+
+		mStretchToFit = pGameInfo.stretchGameViewportToWindow();
+//		mMaintainAspectRatio = pGameInfo.maintainAspectRatio();
 
 		if (mFullScreen) {
 			// Get the native resolution
@@ -417,6 +428,17 @@ public class DisplayConfig extends BaseConfig {
 
 		mWindowSize.x = pWidth;
 		mWindowSize.y = pHeight;
+
+		if (!mStretchToFit) {
+			// Scale gameview port (for game world and HUD) to size of window
+			mGameViewportSize.x = pWidth;
+			mGameViewportSize.y = pHeight;
+
+		} else {
+			// mGameViewport should remain the same size regardless of the window it is displayed in
+			// TODO: Need to render to a texture for this
+			
+		}
 
 		mHUDSize.x = pWidth;
 		mHUDSize.y = pHeight;
