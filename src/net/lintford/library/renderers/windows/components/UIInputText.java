@@ -161,12 +161,12 @@ public class UIInputText extends Rectangle implements IBufferedInputCallback {
 	public void draw(LintfordCore pCore, TextureBatch pUISpriteBatch) {
 
 		pUISpriteBatch.begin(pCore.HUD());
-		pUISpriteBatch.draw(64, 0, 32, 32, x, y, -0.1f, width, height, 1f, 1f, 1f, 1f, 1, TextureManager.TEXTURE_CORE_UI);
+		pUISpriteBatch.draw(64, 0, 32, 32, x, y + 3, -0.1f, width, height - 6, 1f, 1f, 1f, 1f, 1, TextureManager.TEXTURE_CORE_UI);
 		pUISpriteBatch.end();
 
 		// Draw the cancel button rectangle
 		pUISpriteBatch.begin(pCore.HUD());
-		pUISpriteBatch.draw(320, 96, 32, 32, mCancelRectangle.x, mCancelRectangle.y, -0.1f, mCancelRectangle.width, mCancelRectangle.height, 1f, 1f, 1f, 1f, 1, TextureManager.TEXTURE_CORE_UI);
+		pUISpriteBatch.draw(288, 64, 32, 32, mCancelRectangle.x, mCancelRectangle.y, -0.1f, mCancelRectangle.width, mCancelRectangle.height, 1f, 1f, 1f, 1f, 1, TextureManager.TEXTURE_CORE_UI);
 		pUISpriteBatch.end();
 
 		FontUnit lFont = mRendererManager.textFont();

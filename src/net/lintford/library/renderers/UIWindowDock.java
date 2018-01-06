@@ -85,9 +85,12 @@ public class UIWindowDock extends BaseRenderer {
 			{
 
 				// Draw the button background
-				mTextureBatch.draw(32, 0, 32, 32, lPosX, lPosY, -0.1f, 64, 64, 1f, TextureManager.TEXTURE_CORE_UI);
-				if(lWindow.iconSrcRectangle() != null)
-					mTextureBatch.draw(lWindow.iconSrcRectangle().x, lWindow.iconSrcRectangle().y, lWindow.iconSrcRectangle().width, lWindow.iconSrcRectangle().height, lPosX, lPosY, -0.1f, 64, 64, 1f, TextureManager.TEXTURE_CORE_UI);
+				mTextureBatch.draw(320, 64, 64, 64, lPosX, lPosY, -0.1f, 64, 64, 1f, TextureManager.TEXTURE_CORE_UI);
+				if(lWindow.iconSrcRectangle() != null) {
+					float lMargin =  12;
+					mTextureBatch.draw(lWindow.iconSrcRectangle().x, lWindow.iconSrcRectangle().y, lWindow.iconSrcRectangle().width, lWindow.iconSrcRectangle().height, lPosX + lMargin, lPosY + lMargin, -0.1f, 64 - lMargin*2, 64 - lMargin*2, 1f, TextureManager.TEXTURE_CORE_UI);
+				}
+					
 
 				lPosY += 64 + 3;
 

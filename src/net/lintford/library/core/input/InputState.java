@@ -394,7 +394,7 @@ public class InputState {
 		mKeyTimer += lDeltaTime;
 		mMenuClickTimer += lDeltaTime;
 		
-		if(mouseLeftClick() && mCaptureKeyboardInput) {
+		if(isMouseTimedLeftClickAvailable() && mCaptureKeyboardInput) {
 			stopCapture();
 			
 		}

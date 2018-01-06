@@ -135,6 +135,14 @@ public class HUD implements ICamera, IResizeListener {
 		
 		mWindowWidth = pCore.config().display().gameViewportSize().x;
 		mWindowHeight = pCore.config().display().gameViewportSize().y;
+		
+		if ((mWindowWidth % 2) == 1) {
+			mWindowWidth = mWindowWidth + 1;
+		}
+
+		if ((mWindowHeight % 2) == 1) {
+			mWindowHeight = mWindowHeight + 1;
+		}
 
 		mViewMatrix.setIdentity(); // points at -Z
 		mViewMatrix.translate(0, 0, 0);

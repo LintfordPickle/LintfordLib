@@ -288,7 +288,9 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 
 		// Draw the title bar
 		SPRITE_BATCH_UI.begin(pCore.HUD());
-		SPRITE_BATCH_UI.draw(32, 0, 32, 32, mWindowArea.x, mWindowArea.y, Z_DEPTH, mWindowArea.width, getTitleBarHeight(), 1f, 1f, 1f, mWindowAlpha, 0f, 0f, 0f, 1f, 1f, TextureManager.TEXTURE_CORE_UI);
+		SPRITE_BATCH_UI.draw(448, 0, 32, 32, mWindowArea.x, mWindowArea.y, Z_DEPTH, 32, getTitleBarHeight(), 1f, 1f, 1f, mWindowAlpha, 0f, 0f, 0f, 1f, 1f, TextureManager.TEXTURE_CORE_UI);
+		SPRITE_BATCH_UI.draw(480, 0, 32, 32, mWindowArea.x + 32, mWindowArea.y, Z_DEPTH, mWindowArea.width - 64, getTitleBarHeight(), 1f, 1f, 1f, mWindowAlpha, 0f, 0f, 0f, 1f, 1f, TextureManager.TEXTURE_CORE_UI);
+		SPRITE_BATCH_UI.draw(512, 0, 32, 32, mWindowArea.x + mWindowArea.width - 32, mWindowArea.y, Z_DEPTH, 32, getTitleBarHeight(), 1f, 1f, 1f, mWindowAlpha, 0f, 0f, 0f, 1f, 1f, TextureManager.TEXTURE_CORE_UI);
 
 		float lTitleX = mWindowArea.x + WINDOW_CONTENT_PADDING_X;
 		float lTitleY = mWindowArea.y;
