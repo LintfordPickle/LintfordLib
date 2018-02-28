@@ -21,7 +21,7 @@ public class Matrix4f implements Serializable {
 	// --------------------------------------
 
 	private static Vector3f TEMP_VECTOR = new Vector3f();
-	private FloatBuffer mMatrixBuffer;
+	private transient FloatBuffer mMatrixBuffer;
 
 	public float m00, m01, m02, m03;
 	public float m10, m11, m12, m13;

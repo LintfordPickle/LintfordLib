@@ -18,7 +18,7 @@ public class CameraZoomController extends BaseController {
 	public static final float MIN_CAMERA_ZOOM = 0.1f;
 
 	/** Specifies the maximum amount of camera zoom */
-	public static final float MAX_CAMERA_ZOOM = 2f;
+	public static final float MAX_CAMERA_ZOOM = 10f;
 
 	/**
 	 * Specifies the amount of DRAG to be applied to the zoom factor velocity over time.
@@ -89,11 +89,11 @@ public class CameraZoomController extends BaseController {
 	public float zoomFactor() {
 		return mCamera.zoomFactor();
 	}
-	
+
 	public void zoomFactor(float pNewValue) {
 		mCamera.zoomFactor(pNewValue);
 	}
-	
+
 	@Override
 	public boolean isInitialised() {
 		return mCamera != null;
@@ -156,10 +156,15 @@ public class CameraZoomController extends BaseController {
 		mZoomAcceleration = 0.0f;
 
 		// Check bounds
-		if (lZoomFactor < mCameraMinZoom)
+		if (lZoomFactor < mCameraMinZoom) {
 			lZoomFactor = mCameraMinZoom;
-		if (lZoomFactor > mCameraMaxZoom)
+			mZoomVelocity = 0;
+		}
+
+		if (lZoomFactor > mCameraMaxZoom) {
 			lZoomFactor = mCameraMaxZoom;
+			mZoomVelocity = 0;
+		}
 
 		// Apply the new zoom factor to the camera object
 		mCamera.setZoomFactor(lZoomFactor);

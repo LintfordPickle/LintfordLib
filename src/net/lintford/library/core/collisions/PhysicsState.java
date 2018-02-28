@@ -26,9 +26,17 @@ public class PhysicsState implements Serializable {
 
 	public boolean mPushedRightWall;
 	public boolean mPushesRightWall;
+	
+	// Collision with right wall is foot height
+	public boolean mPushesRightWallFoot;
+	public boolean mPushesRightWallWaist;
 
 	public boolean mPushedLeftWall;
 	public boolean mPushesLeftWall;
+	
+	// Collision with left wall is foot height
+	public boolean mPushesLeftWallFoot;
+	public boolean mPushesLeftWallWaist;
 
 	public boolean isBlockOverhead; // Is block in the next tile above
 	public boolean isBlockOverheadPlusOne; // Is block overhead +1
@@ -49,6 +57,10 @@ public class PhysicsState implements Serializable {
 
 		mPushesLeftWall = false;
 		mPushesRightWall = false;
+		mPushesLeftWallFoot = false;
+		mPushesLeftWallWaist = false;
+		mPushesRightWallFoot = false;
+		mPushesRightWallWaist = false;
 		mOnGround = false;
 		mAtCeiling = false;
 

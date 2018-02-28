@@ -250,6 +250,7 @@ public class DisplayConfig extends BaseConfig {
 	// Core-Methods
 	// --------------------------------------
 
+	
 	public void update(LintfordCore pCore) {
 		if (mWindowResolutionChanged /* && !pInputState.mouseLeftClick() */) {
 			synchronized (this) {

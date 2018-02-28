@@ -1,5 +1,6 @@
 package net.lintford.library.options;
 
+import org.lwjgl.glfw.GLFW;
 import org.lwjgl.system.MemoryUtil;
 
 import net.lintford.library.GameInfo;
@@ -30,11 +31,13 @@ public class MasterConfig {
 	private static final MusicConfig mMusicConfig = new MusicConfig(MUSIC_CONFIG_FILENAME);
 	private static final DisplayConfig DISPLAY_CONFIG = new DisplayConfig(DISPLAY_CONFIG_FILENAME);
 
+	private GameInfo mGameInfo;
+	
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
 
-	public GameConfig game() {
+ 	public GameConfig game() {
 		return mGameConfig;
 	}
 
@@ -63,7 +66,15 @@ public class MasterConfig {
 	// --------------------------------------
 
 	public void handleInput(LintfordCore pCore) {
-
+		if(pCore.input().keyDownTimed(GLFW.GLFW_KEY_F11)) {
+			if(mGameInfo.windowCanBeFullscreen()) {
+				DISPLAY_CONFIG.toggleFullScreenFlag();
+				DISPLAY_CONFIG.onCreateWindow(mGameInfo);
+				
+			}
+			
+		}
+		
 	}
 
 	public void update(LintfordCore pCore) {
@@ -76,6 +87,8 @@ public class MasterConfig {
 	// --------------------------------------
 
 	public long onCreateWindow(GameInfo pGameInfo) {
+		mGameInfo = pGameInfo;
+		
 		long lWindowID = DISPLAY_CONFIG.onCreateWindow(pGameInfo);
 
 		if (lWindowID == MemoryUtil.NULL) {

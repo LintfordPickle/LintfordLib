@@ -6,10 +6,10 @@ import java.util.List;
 import org.lwjgl.glfw.GLFW;
 
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.geometry.AARectangle;
 import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.input.InputState;
-import net.lintford.library.core.maths.Rectangle;
 import net.lintford.library.screenmanager.entries.IMenuEntryClickListener;
 import net.lintford.library.screenmanager.layouts.BaseLayout;
 
@@ -159,7 +159,7 @@ public abstract class MenuScreen extends Screen implements IMenuEntryClickListen
 
 	// --------------------------------------
 	// Core-Methods
-	// --------------------------------------
+	// --------------------------------------<
 
 	@Override
 	public void initialise() {
@@ -180,7 +180,7 @@ public abstract class MenuScreen extends Screen implements IMenuEntryClickListen
 		final String lFontPathname = mScreenManager.fontPathname();
 		mMenuFont = pResourceManager.fontManager().loadNewFont(MENUSCREEN_FONT_NAME, lFontPathname, 24, true);
 		mMenuHeaderFont = pResourceManager.fontManager().loadNewFont(MENUSCREEN_HEADER_FONT_NAME, lFontPathname, 35, false);
-		
+
 	}
 
 	@Override
@@ -271,7 +271,7 @@ public abstract class MenuScreen extends Screen implements IMenuEntryClickListen
 
 	@Override
 	public void updateStructure(LintfordCore pCore) {
-		Rectangle lHUDRect = pCore.HUD().boundingRectangle();
+		AARectangle lHUDRect = pCore.HUD().boundingRectangle();
 
 		if (mOrientation == ORIENTATION.vertical) {
 			float lYPos = lHUDRect.top() + mTopMargin;
@@ -343,7 +343,7 @@ public abstract class MenuScreen extends Screen implements IMenuEntryClickListen
 		if (mScreenState != ScreenState.Active && mScreenState != ScreenState.TransitionOn && mScreenState != ScreenState.TransitionOff)
 			return;
 
-		Rectangle lHUDRect = pCore.HUD().boundingRectangle();
+		AARectangle lHUDRect = pCore.HUD().boundingRectangle();
 
 		mMenuHeaderFont.begin(pCore.HUD());
 		mMenuHeaderFont.draw(mMenuTitle, lHUDRect.left() + TITLE_PADDING_X, lHUDRect.top(), -0f, mR, mG, mB, mA, 1f);

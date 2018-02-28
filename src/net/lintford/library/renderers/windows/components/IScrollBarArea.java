@@ -1,6 +1,6 @@
 package net.lintford.library.renderers.windows.components;
 
-import net.lintford.library.renderers.windows.UIRectangle;
+import net.lintford.library.core.geometry.AARectangle;
 
 public interface IScrollBarArea {
 
@@ -10,7 +10,7 @@ public interface IScrollBarArea {
 
 	public abstract void AbsCurrentYPos(float pValue);
 
-	public abstract UIRectangle windowArea();
+	public abstract AARectangle windowArea();
 
 	public abstract ScrollBarContentRectangle contentArea();
 

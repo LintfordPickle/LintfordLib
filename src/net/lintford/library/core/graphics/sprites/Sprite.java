@@ -1,87 +1,106 @@
 package net.lintford.library.core.graphics.sprites;
 
+import java.io.Serializable;
+
+import net.lintford.library.core.geometry.Rectangle;
+import net.lintford.library.core.geometry.spritegraph.SpriteGraphAnchorDef;
+
 /** Defines a single sprite animation frame */
-public class Sprite implements ISprite {
+// TODO: Check out the serialized version of this class - it contains a lot of potentially superflous information.
+public class Sprite extends Rectangle implements Serializable, ISprite {
+
+	private static final long serialVersionUID = 3808825740133201931L;
 
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
 	/** The x coordinate within the spritesheet of this frame */
-	public int x;
+	public float x;
 
 	/** The y coordinate within the spritesheet of this frame */
-	public int y;
+	public float y;
 
 	/** The width of the frame */
-	public int w;
+	public float w;
 
 	/** The height of the frame */
-	public int h;
-
-	/** The x coordinate within the spritesheet of the anchor point */
-	public int ax;
-
-	/** The y coordinate within the spritesheet of the anchor point */
-	public int ay;
-
-	/** pivot point x */
-	public int px;
-
-	/** pivot point y */
-	public int py;
+	public float h;
+	
+	public SpriteGraphAnchorDef[] anchors;
 
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
-	public Sprite(final int pX, final int pY, final int pWidth, final int pHeight) {
-		x = pX;
-		y = pY;
-		w = pWidth;
-		h = pHeight;
+	public Sprite() {
+
+	}
+
+	public Sprite(float pSrcX, float pSrcY, float pSrcW, float pSrcH) {
+		x = pSrcX;
+		y = pSrcY;
+		w = pSrcW;
+		h = pSrcH;
 	}
 
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
-	
-	
-	
+
 	// --------------------------------------
 	// Inherited-Methods
 	// --------------------------------------
-	
+
 	@Override
-	public float getX() {
+	public float getSrcX() {
 		return x;
 	}
 
 	@Override
-	public float getY() {
+	public float getSrcY() {
 		return y;
 	}
 
 	@Override
-	public int getW() {
+	public float getSrcWidth() {
 		return w;
 	}
 
 	@Override
-	public int getH() {
+	public float getSrcHeight() {
 		return h;
 	}
 
 	@Override
-	public float getAX() {
-		// TODO Auto-generated method stub
-		return 0;
+	public float getRotation() {
+		return rot;
+	}
+	
+	@Override
+	public SpriteGraphAnchorDef getAnchorPoint(String pName) {
+		if (anchors == null || anchors.length == 0)
+			return null;
+
+		final int SIZE = anchors.length;
+		for (int i = 0; i < SIZE; i++) {
+			if (anchors[i].name.equals(pName))
+				return anchors[i];
+
+		}
+
+		return null;
+
 	}
 
 	@Override
-	public float getAY() {
-		// TODO Auto-generated method stub
-		return 0;
+	public float getPivotPointX() {
+		return pivotX();
 	}
-	
+
+	@Override
+	public float getPivotPointY() {
+		return pivotY();
+	}
+
 }

@@ -1,13 +1,13 @@
 package net.lintford.library.screenmanager.entries;
 
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.geometry.AARectangle;
 import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 import net.lintford.library.core.input.InputState;
-import net.lintford.library.renderers.windows.UIRectangle;
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.Screen;
@@ -19,8 +19,8 @@ public class MenuSliderEntry extends MenuEntry {
 	// Variables
 	// --------------------------------------
 
-	private UIRectangle mDownButton;
-	private UIRectangle mUpButton;
+	private AARectangle mDownButton;
+	private AARectangle mUpButton;
 	private TextureBatch mTextureBatch;
 	private String mLabel;
 	private int mValue;
@@ -62,8 +62,8 @@ public class MenuSliderEntry extends MenuEntry {
 
 		mLabel = "Label:";
 
-		mDownButton = new UIRectangle(0, 0, 32, 32);
-		mUpButton = new UIRectangle(0, 0, 32, 32);
+		mDownButton = new AARectangle(0, 0, 32, 32);
+		mUpButton = new AARectangle(0, 0, 32, 32);
 
 		mTextureBatch = new TextureBatch();
 

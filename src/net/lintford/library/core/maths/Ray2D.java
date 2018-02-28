@@ -1,5 +1,7 @@
 package net.lintford.library.core.maths;
 
+import net.lintford.library.core.geometry.Rectangle;
+
 public class Ray2D extends Ray {
 
 	// ===========================================================

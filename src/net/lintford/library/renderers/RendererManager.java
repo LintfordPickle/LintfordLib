@@ -233,7 +233,7 @@ public class RendererManager {
 				continue;
 
 			if (!mRenderers.get(i).isLoaded() && mIsLoaded) {
-				DebugManager.DEBUG_MANAGER.logger().w(getClass().getSimpleName(), "Reloading contenet in Update() (BaseRenderer) ");
+				DebugManager.DEBUG_MANAGER.logger().w(getClass().getSimpleName(), "Reloading content in Update() (BaseRenderer) ");
 				mRenderers.get(i).loadGLContent(mResourceManager);
 
 			}
@@ -249,7 +249,7 @@ public class RendererManager {
 				continue;
 
 			if (!mWindowRenderers.get(i).isLoaded() && mIsLoaded) {
-				DebugManager.DEBUG_MANAGER.logger().w(getClass().getSimpleName(), "Reloading contenet in Update() (UIWindow) ");
+				DebugManager.DEBUG_MANAGER.logger().w(getClass().getSimpleName(), "Reloading content in Update() (UIWindow) ");
 				mWindowRenderers.get(i).loadGLContent(mResourceManager);
 			}
 

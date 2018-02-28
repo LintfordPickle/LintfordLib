@@ -3,8 +3,8 @@ package net.lintford.library.core.camera;
 import org.lwjgl.opengl.GL11;
 
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.geometry.AARectangle;
 import net.lintford.library.core.maths.Matrix4f;
-import net.lintford.library.core.maths.Rectangle;
 import net.lintford.library.core.maths.Vector2f;
 import net.lintford.library.options.DisplayConfig;
 
@@ -37,7 +37,7 @@ public class Camera implements ICamera {
 
 	protected DisplayConfig mDisplayConfig;
 
-	protected Rectangle mBoundingRectangle;
+	protected AARectangle mBoundingRectangle;
 	protected Vector2f mPosition;
 	protected Vector2f mAcceleration;
 	protected Vector2f mVelocity;
@@ -148,7 +148,7 @@ public class Camera implements ICamera {
 	}
 
 	@Override
-	public Rectangle boundingRectangle() {
+	public AARectangle boundingRectangle() {
 		return mBoundingRectangle;
 	}
 
@@ -164,7 +164,7 @@ public class Camera implements ICamera {
 		this.mMinY = 0;
 		this.mMaxY = 0 + pDisplayConfig.gameViewportSize().y;
 
-		mBoundingRectangle = new Rectangle(mMinX, mMinY, pDisplayConfig.gameViewportSize().x, pDisplayConfig.gameViewportSize().y);
+		mBoundingRectangle = new AARectangle(mMinX, mMinY, pDisplayConfig.gameViewportSize().x, pDisplayConfig.gameViewportSize().y);
 
 		mPosition = new Vector2f();
 		mAcceleration = new Vector2f();
@@ -251,10 +251,9 @@ public class Camera implements ICamera {
 		mMaxY = -mPosition.y + mScaledWindowHeight / 2.0f;
 
 		// update the bounding rectangle so we can properly do frustum culling
-		mBoundingRectangle.x = mMinX;
-		mBoundingRectangle.y = mMinY;
-		mBoundingRectangle.width = mMaxX - mMinX;
-		mBoundingRectangle.height = mMaxY - mMinY;
+		mBoundingRectangle.setCenterPosition(-mPosition.x, -mPosition.y);
+		mBoundingRectangle.setWidth(mScaledWindowWidth);
+		mBoundingRectangle.setHeight(mScaledWindowHeight);
 
 	}
 

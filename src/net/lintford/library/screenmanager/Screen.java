@@ -234,8 +234,10 @@ public abstract class Screen {
 	public void exitScreen() {
 		if (mTransitionOff == null || mTransitionOff.timeSpan().equals(TimeSpan.zero())) {
 			mScreenManager.removeScreen(this);
+
 		} else {
 			mIsExiting = true;
+
 		}
 	}
 

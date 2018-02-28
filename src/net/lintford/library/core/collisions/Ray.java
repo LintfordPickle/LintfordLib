@@ -1,6 +1,6 @@
 package net.lintford.library.core.collisions;
 
-import net.lintford.library.core.maths.Rectangle;
+import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.maths.Vector2f;
 
 public class Ray {

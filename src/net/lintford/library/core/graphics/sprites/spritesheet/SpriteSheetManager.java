@@ -24,11 +24,8 @@ public class SpriteSheetManager {
 	// Inner-Classes
 	// --------------------------------------
 
-	/** A class which holds meta information about {@link SpriteSheet}s to be loaded. */
-	public class SpriteMeta {
-		public String Sprite_Directory;
-
-		public String[] Sprite_Files;
+	public class SpriteSheetMetaData {
+		public String[] spriteSheetLocations;
 
 	}
 
@@ -38,6 +35,16 @@ public class SpriteSheetManager {
 
 	/** Contains a collection of SpriteSheets which has been loaded by this {@link SpriteSheetManager}. */
 	private Map<String, SpriteSheet> spriteSheetMap;
+
+	// --------------------------------------
+	// Properties
+	// --------------------------------------
+
+	/** Returns the {@link SpriteSheet} to which the specified key string is mapped, or null if no such {@link SpriteSheet} exists. */
+	public SpriteSheet getSpriteSheet(String string) {
+		return this.spriteSheetMap.get(string);
+
+	}
 
 	// --------------------------------------
 	// Constructor
@@ -179,13 +186,12 @@ public class SpriteSheetManager {
 
 		// Load the Sprite meta data
 		String META_CONTENTS = null;
-		SpriteMeta SPRITE_META = null;
+		SpriteSheetMetaData SPRITE_META = null;
 		try {
 			META_CONTENTS = new String(Files.readAllBytes(Paths.get(pMetaFileLocation)));
-			SPRITE_META = GSON.fromJson(META_CONTENTS, SpriteMeta.class);
+			SPRITE_META = GSON.fromJson(META_CONTENTS, SpriteSheetMetaData.class);
 
-			if (SPRITE_META == null || SPRITE_META.Sprite_Files == null || SPRITE_META.Sprite_Files.length == 0) {
-				System.out.println();
+			if (SPRITE_META == null || SPRITE_META.spriteSheetLocations == null || SPRITE_META.spriteSheetLocations.length == 0) {
 				DebugManager.DEBUG_MANAGER.logger().w(getClass().getSimpleName(), "Couldn't load sprites from sprite meta file");
 
 				return;
@@ -203,9 +209,9 @@ public class SpriteSheetManager {
 		}
 
 		// Iterate through the sprite files, and load the individual sprites
-		final int SPRITE_COUNT = SPRITE_META.Sprite_Files.length;
+		final int SPRITE_COUNT = SPRITE_META.spriteSheetLocations.length;
 		for (int i = 0; i < SPRITE_COUNT; i++) {
-			final File SPRITE_FILE = new File(SPRITE_META.Sprite_Directory + SPRITE_META.Sprite_Files[i]);
+			final File SPRITE_FILE = new File(SPRITE_META.spriteSheetLocations[i]);
 
 			if (!SPRITE_FILE.exists()) {
 				DebugManager.DEBUG_MANAGER.logger().w(getClass().getSimpleName(), "Error loading sprite sheet from " + SPRITE_FILE.getPath() + " doesn't exist!");
@@ -233,27 +239,19 @@ public class SpriteSheetManager {
 
 			} catch (JsonSyntaxException e) {
 				DebugManager.DEBUG_MANAGER.logger().e(getClass().getSimpleName(), "Failed to parse JSON SpriteSheet (Syntax): " + SPRITE_FILE.getPath());
-
+				DebugManager.DEBUG_MANAGER.logger().e(getClass().getSimpleName(), e.getMessage());
+				
 				continue;
 
 			} catch (IOException e) {
 				DebugManager.DEBUG_MANAGER.logger().e(getClass().getSimpleName(), "Failed to parse JSON SpriteSheet (IO): " + SPRITE_FILE.getPath());
-
+				DebugManager.DEBUG_MANAGER.logger().e(getClass().getSimpleName(), e.getMessage());
+				
 				continue;
 
 			}
 
 		}
-
-	}
-
-	// --------------------------------------
-	// Methods
-	// --------------------------------------
-
-	/** Returns the {@link SpriteSheet} to which the specified key string is mapped, or null if no such {@link SpriteSheet} exists. */
-	public SpriteSheet getSpriteSheet(String string) {
-		return this.spriteSheetMap.get(string);
 
 	}
 

@@ -6,13 +6,13 @@ import java.util.List;
 import org.lwjgl.opengl.GL11;
 
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.geometry.AARectangle;
 import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 import net.lintford.library.core.input.InputState;
 import net.lintford.library.core.maths.Vector2f;
-import net.lintford.library.renderers.windows.UIRectangle;
 import net.lintford.library.renderers.windows.components.IScrollBarArea;
 import net.lintford.library.renderers.windows.components.ScrollBar;
 import net.lintford.library.renderers.windows.components.ScrollBarContentRectangle;
@@ -81,7 +81,7 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 
 		mContentArea = new ScrollBarContentRectangle(this);
 
-		mScrollBar = new ScrollBar(this, new UIRectangle(x + getWidth() - ScrollBar.BAR_WIDTH, y, 20, getHeight()));
+		mScrollBar = new ScrollBar(this, new AARectangle(x + getWidth() - ScrollBar.BAR_WIDTH, y, 20, getHeight()));
 
 	}
 
@@ -306,7 +306,7 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 	}
 
 	@Override
-	public UIRectangle windowArea() {
+	public AARectangle windowArea() {
 		return this;
 	}
 

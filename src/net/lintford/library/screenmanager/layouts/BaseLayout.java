@@ -5,11 +5,11 @@ import java.util.List;
 
 import net.lintford.library.ConstantsTable;
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.geometry.AARectangle;
 import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 import net.lintford.library.core.input.InputState;
-import net.lintford.library.renderers.windows.UIRectangle;
 import net.lintford.library.renderers.windows.components.IScrollBarArea;
 import net.lintford.library.renderers.windows.components.ScrollBar;
 import net.lintford.library.renderers.windows.components.ScrollBarContentRectangle;
@@ -17,7 +17,7 @@ import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.MenuScreen.ALIGNMENT;
 
-public abstract class BaseLayout extends UIRectangle implements IScrollBarArea {
+public abstract class BaseLayout extends AARectangle implements IScrollBarArea {
 
 	public static final float USE_HEIGHT_OF_ENTRIES = -1;
 
@@ -463,7 +463,7 @@ public abstract class BaseLayout extends UIRectangle implements IScrollBarArea {
 	}
 
 	@Override
-	public UIRectangle windowArea() {
+	public AARectangle windowArea() {
 		return this;
 	}
 

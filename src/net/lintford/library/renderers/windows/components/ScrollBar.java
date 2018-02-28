@@ -1,11 +1,11 @@
 package net.lintford.library.renderers.windows.components;
 
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.geometry.AARectangle;
 import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
-import net.lintford.library.renderers.windows.UIRectangle;
 
-public class ScrollBar extends UIRectangle {
+public class ScrollBar extends AARectangle {
 
 	// --------------------------------------
 	// Constants
@@ -36,7 +36,7 @@ public class ScrollBar extends UIRectangle {
 	// Constructor
 	// --------------------------------------
 
-	public ScrollBar(IScrollBarArea pWindowBounds, UIRectangle pContentBounds) {
+	public ScrollBar(IScrollBarArea pWindowBounds, AARectangle pContentBounds) {
 		super(pContentBounds);
 
 		mScrollBarArea = pWindowBounds;

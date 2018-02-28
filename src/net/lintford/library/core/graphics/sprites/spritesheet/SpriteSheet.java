@@ -33,6 +33,11 @@ public class SpriteSheet {
 
 	protected Map<String, AnimatedSprite> animationMap;
 
+	/**
+	 * A collection of names for the types of sprite contained within this {@link SpriteSheet}. Types could be, for example, "Red", "Green", "00", "01", "02" etc.)
+	 */
+	protected String[] spriteTypes;
+
 	/** The width of the associated texture. */
 	public transient float textureWidth;
 
@@ -42,6 +47,11 @@ public class SpriteSheet {
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	/** Returns an array of the types of the item defined within the spritesheet. E.g. for hats, there may be 5 different types, 00 through 04. */
+	public String[] types() {
+		return spriteTypes;
+	}
 
 	/** Returns true if this {@link SpriteSheet}'s GL resources have been laoded, false otherwise. */
 	public boolean isLoaded() {
@@ -131,7 +141,7 @@ public class SpriteSheet {
 	}
 
 	/** Returns the ISprite identified by the given name. null is returned if the {@link SpriteSheet} doesn*t contains a Sprite instance of the given name. */
-	public Sprite getSprite(final String pSpriteName) {
+	public ISprite getSprite(final String pSpriteName) {
 
 		if (this.spriteMap.containsKey(pSpriteName)) {
 			return this.spriteMap.get(pSpriteName);
@@ -142,13 +152,13 @@ public class SpriteSheet {
 	}
 
 	/** Returns the ISprite identified by the given name. null is returned if the {@link SpriteSheet} doesn*t contains a Sprite instance of the given name. */
-	public AnimatedSprite getAnimation(final String pAnimationName) {
+	public ISprite getAnimation(final String pAnimationName) {
 		if (this.animationMap.containsKey(pAnimationName)) {
 			return this.animationMap.get(pAnimationName);
 		}
 
-		// No matching ISprite found.
-		return null;
+		// Else search for a sprite
+		return getSprite(pAnimationName);
 	}
-
+	
 }

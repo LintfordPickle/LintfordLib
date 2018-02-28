@@ -1,4 +1,4 @@
-package net.lintford.library.core.graphics.linebatch;
+package net.lintford.library.core.graphics.polybatch;
 
 import java.nio.FloatBuffer;
 
@@ -14,8 +14,10 @@ import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.shaders.ShaderMVP_PT;
 import net.lintford.library.core.graphics.vertices.VertexDataStructurePC;
 import net.lintford.library.core.maths.Matrix4f;
+import net.lintford.library.core.maths.Vector2f;
 
-public class LineBatch {
+// TODO: Inherit from LineBatch
+public class PolyBatch {
 
 	// --------------------------------------
 	// Constants
@@ -48,7 +50,7 @@ public class LineBatch {
 	// Constructor
 	// --------------------------------------
 
-	public LineBatch() {
+	public PolyBatch() {
 		mShader = new ShaderMVP_PT(VERT_FILENAME, FRAG_FILENAME) {
 			@Override
 			protected void bindAtrributeLocations(int pShaderID) {
@@ -124,59 +126,46 @@ public class LineBatch {
 
 	}
 
-	public void drawRect(Rectangle pRect, float pZ) {
-		if (!mIsDrawing)
+	public void drawRect(Rectangle pRect, float pZ, float pR, float pG, float pB) {
+		if (!mIsDrawing || pRect == null)
 			return;
 
-		drawRect(pRect, 1f, pZ);
+		Vector2f[] verts = pRect.getVertices();
+		
+		draw(verts[0].x, verts[0].y, verts[1].x, verts[1].y, pZ, pR, pG, pB);
+		draw(verts[0].x, verts[0].y, verts[2].x, verts[2].y, pZ, pR, pG, pB);
+		draw(verts[2].x, verts[2].y, verts[3].x, verts[3].y, pZ, pR, pG, pB);
+		draw(verts[1].x, verts[1].y, verts[3].x, verts[3].y, pZ, pR, pG, pB);
 
-	}
-
-	public void drawRect(Rectangle pRect, float pScale, float pZ) {
-		if (!mIsDrawing)
-			return;
-
-		drawRect(pRect, 0f, 0f, pScale, pZ);
-	}
-
-	public void drawRect(Rectangle pRect, float pOX, float pOY, float pScale, float pZ) {
-		if (!mIsDrawing)
-			return;
-
-		final float lModWidth = pRect.width() * pScale;
-		final float lModHeight = pRect.height() * pScale;
-
-		final float lModX = pRect.left() - pOX * pScale;
-		final float lModY = pRect.top() - pOY * pScale;
-
-		draw(lModX, lModY, lModX + lModWidth, lModY, pZ, 1f, 1f, 1f); // top
-		draw(lModX, lModY + lModHeight, lModX + lModWidth, lModY + lModHeight, pZ, 1f, 1f, 1f); // bottom
-		draw(lModX, lModY, lModX, lModY + lModHeight, pZ, 1f, 1f, 1f); // left
-		draw(lModX + lModWidth, lModY, lModX + lModWidth, lModY + lModHeight, pZ, 1f, 1f, 1f); // right
-
-	}
-
-	public void drawRect(float pX, float pY, float pW, float pH, float pZ) {
-		if (!mIsDrawing)
-			return;
-		draw(pX, pY, pX + pW, pY, pZ, 1f, 1f, 1f); // top
-		draw(pX, pY + pH, pX + pW, pY + pH, pZ, 1f, 1f, 1f); // bottom
-
-		draw(pX, pY, pX, pY + pH, pZ, 1f, 1f, 1f); // left
-		draw(pX + pW, pY, pX + pW, pY + pH, pZ, 1f, 1f, 1f); // right
 	}
 	
-	public void drawRect(float pX, float pY, float pW, float pH, float pZ, float pR, float pG, float pB) {
-		if (!mIsDrawing)
+	public void drawRect(Vector2f[] pVertexArray, float pZ, boolean pClose, float pR, float pG, float pB) {
+		if (!mIsDrawing || pVertexArray == null || pVertexArray.length < 2)
 			return;
-		draw(pX, pY, pX + pW, pY, pZ, pR, pG, pB); // top
-		draw(pX, pY + pH, pX + pW, pY + pH, pZ, pR, pG, pB); // bottom
 
-		draw(pX, pY, pX, pY + pH, pZ, pR, pG, pB); // left
-		draw(pX + pW, pY, pX + pW, pY + pH, pZ, pR, pG, pB); // right
+		final int ARRAY_SIZE = pVertexArray.length;
+		for (int i = 0; i < ARRAY_SIZE - 1; i++) {
+			float px0 = pVertexArray[i].x;
+			float py0 = pVertexArray[i].y;
+			float px1 = pVertexArray[i + 1].x;
+			float py1 = pVertexArray[i + 1].y;
+
+			draw(px0, py0, px1, py1, pZ, pR, pG, pB); // top
+		}
+
+		if (pClose) {
+			float px0 = pVertexArray[0].x;
+			float py0 = pVertexArray[0].y;
+			float px1 = pVertexArray[ARRAY_SIZE - 1].x;
+			float py1 = pVertexArray[ARRAY_SIZE - 1].y;
+
+			draw(px0, py0, px1, py1, pZ, pR, pG, pB); // top
+
+		}
+
 	}
 
-	public void draw(float pP1X, float pP1Y, float pP2X, float pP2Y, float pZ, float pR, float pG, float pB) {
+	private void draw(float pP1X, float pP1Y, float pP2X, float pP2Y, float pZ, float pR, float pG, float pB) {
 
 		if (!mIsDrawing)
 			return;

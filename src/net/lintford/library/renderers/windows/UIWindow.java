@@ -6,11 +6,11 @@ import java.util.List;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.camera.ICamera;
+import net.lintford.library.core.geometry.AARectangle;
 import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
-import net.lintford.library.core.maths.Rectangle;
 import net.lintford.library.renderers.BaseRenderer;
 import net.lintford.library.renderers.RendererManager;
 import net.lintford.library.renderers.windows.components.IScrollBarArea;
@@ -53,7 +53,7 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 
 	// This is the area within which any scrollable content will be displayed. Scrollbars are only visible if the
 	// height of the mContentDisplayArea is smaller than the height of the mContentRectangle (below).
-	protected UIRectangle mContentDisplayArea;
+	protected AARectangle mContentDisplayArea;
 
 	// This is the area that the content would take up, if not limited by the window bounds (i.e. the area of the 'content' visualisation).
 	protected ScrollBarContentRectangle mContentRectangle;
@@ -67,10 +67,10 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 
 	// Window icons are loaded from the UI_TEXTURE_NAME. If this is null, no icon
 	// is displayed
-	protected UIRectangle mIconSrcRectangle;
+	protected AARectangle mIconSrcRectangle;
 
 	/** Stores the window area of this renderer window */
-	protected UIRectangle mWindowArea;
+	protected AARectangle mWindowArea;
 
 	/** If true, this base renderer consumes input and ends the handleInput invocation chain. */
 	protected boolean mExclusiveHandleInput;
@@ -85,7 +85,7 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 		return mIsDebugWindow;
 	}
 
-	public UIRectangle iconSrcRectangle() {
+	public AARectangle iconSrcRectangle() {
 		return mIconSrcRectangle;
 	}
 
@@ -123,9 +123,9 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 
 		mComponents = new ArrayList<>();
 
-		mWindowArea = new UIRectangle();
-		mIconSrcRectangle = new UIRectangle();
-		mContentDisplayArea = new UIRectangle();
+		mWindowArea = new AARectangle();
+		mIconSrcRectangle = new AARectangle();
+		mContentDisplayArea = new AARectangle();
 
 		// Set some sane defaults
 		mWindowArea.x = 10;
@@ -331,7 +331,7 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 	// --------------------------------------
 
 	public void updateWindowPosition(LintfordCore pCore) {
-		final Rectangle lHUDBoundingRect = pCore.HUD().boundingRectangle();
+		final AARectangle lHUDBoundingRect = pCore.HUD().boundingRectangle();
 
 		if (lHUDBoundingRect == null) {
 			System.err.println("Cannot update window position - RendererManager.UIManager.HUDCamera not set to an instance of an HUD object!");
@@ -371,7 +371,7 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 	}
 
 	@Override
-	public UIRectangle windowArea() {
+	public AARectangle windowArea() {
 		return mWindowArea;
 	}
 

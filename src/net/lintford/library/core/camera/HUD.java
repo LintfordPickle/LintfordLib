@@ -1,15 +1,14 @@
 package net.lintford.library.core.camera;
 
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.geometry.AARectangle;
 import net.lintford.library.core.maths.Matrix4f;
-import net.lintford.library.core.maths.Rectangle;
 import net.lintford.library.core.maths.Vector2f;
 import net.lintford.library.options.DisplayConfig;
 import net.lintford.library.options.IResizeListener;
 
 /**
- * Defines a simple HUD Camera which implements the {@link ICamera} interface.
- * The HUD renders objects from -0 (-Z_NEAR) to -10 (-Z_FAR)
+ * Defines a simple HUD Camera which implements the {@link ICamera} interface. The HUD renders objects from -0 (-Z_NEAR) to -10 (-Z_FAR)
  */
 public class HUD implements ICamera, IResizeListener {
 
@@ -18,14 +17,12 @@ public class HUD implements ICamera, IResizeListener {
 	// --------------------------------------
 
 	/**
-	 * The near plane (Z_NEAR) distance for front clipping. This defines the closest
-	 * distance objects will be rendered from the HUD position.
+	 * The near plane (Z_NEAR) distance for front clipping. This defines the closest distance objects will be rendered from the HUD position.
 	 */
 	public static final float Z_NEAR = 0.0f;
 
 	/**
-	 * The far plane (Z_FAR) distance for rear clipping. This defines the closest
-	 * distance objects will be rendered from the HUD position.
+	 * The far plane (Z_FAR) distance for rear clipping. This defines the closest distance objects will be rendered from the HUD position.
 	 */
 	public static final float Z_FAR = 10.0f;
 
@@ -35,7 +32,7 @@ public class HUD implements ICamera, IResizeListener {
 
 	private DisplayConfig mDisplayConfig;
 
-	private Rectangle mBoundingRectangle;
+	private AARectangle mBoundingRectangle;
 
 	/** The width of the window. */
 	private float mWindowWidth;
@@ -92,7 +89,7 @@ public class HUD implements ICamera, IResizeListener {
 	}
 
 	@Override
-	public Rectangle boundingRectangle() {
+	public AARectangle boundingRectangle() {
 		return mBoundingRectangle;
 	}
 
@@ -106,8 +103,7 @@ public class HUD implements ICamera, IResizeListener {
 		mWindowWidth = pDisplayConfig.windowSize().x;
 		mWindowHeight = pDisplayConfig.windowSize().y;
 
-		// TODO (John): HUD Bounds needs to change based on the size of the window
-		mBoundingRectangle = new Rectangle(-mWindowWidth / 2, -mWindowHeight / 2, mWindowWidth, mWindowHeight);
+		mBoundingRectangle = new AARectangle(-mWindowWidth / 2, -mWindowHeight / 2, mWindowWidth, mWindowHeight);
 
 		mProjectionMatrix = new Matrix4f();
 		mViewMatrix = new Matrix4f();
@@ -132,10 +128,10 @@ public class HUD implements ICamera, IResizeListener {
 	public void update(LintfordCore pCore) {
 		if (mWindowWidth == 0 || mWindowHeight == 0)
 			return;
-		
+
 		mWindowWidth = pCore.config().display().gameViewportSize().x;
 		mWindowHeight = pCore.config().display().gameViewportSize().y;
-		
+
 		if ((mWindowWidth % 2) == 1) {
 			mWindowWidth = mWindowWidth + 1;
 		}
@@ -149,6 +145,11 @@ public class HUD implements ICamera, IResizeListener {
 
 		mProjectionMatrix.setIdentity();
 		mProjectionMatrix.createOrtho(getMinX(), getMaxX(), getMaxY(), getMinY(), Z_NEAR, Z_FAR);
+
+		// update the bounding rectangle so we can properly do frustum culling
+		mBoundingRectangle.setCenterPosition(0, 0);
+		mBoundingRectangle.setWidth(mWindowWidth);
+		mBoundingRectangle.setHeight(mWindowHeight);
 
 	}
 
@@ -193,7 +194,7 @@ public class HUD implements ICamera, IResizeListener {
 
 	@Override
 	public Vector2f getPosition() {
-		return new Vector2f();
+		return Vector2f.Zero;
 	}
 
 	@Override

@@ -1,13 +1,17 @@
 package net.lintford.library.core.graphics.sprites;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.geometry.spritegraph.SpriteGraphAnchorDef;
 import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheet;
 
 // TODO: Need to make an AnimatedSpriteState which should be sent when updating a specfic instance of AnimatedSprite.
-public class AnimatedSprite implements ISprite {
+public class AnimatedSprite implements ISprite, Serializable {
+
+	private static final long serialVersionUID = -2995518836520839609L;
 
 	// --------------------------------------
 	// Variables
@@ -202,9 +206,9 @@ public class AnimatedSprite implements ISprite {
 		currentFrame = pFrameNumber;
 		timer -= frameDuration;
 
-		if(currentFrame < 0)
+		if (currentFrame < 0)
 			currentFrame = 0;
-		
+
 		if (currentFrame >= spriteFrames.size()) {
 			currentFrame = spriteFrames.size() - 1;
 
@@ -223,28 +227,59 @@ public class AnimatedSprite implements ISprite {
 
 	}
 
+	public void playFromBeginning() {
+		setFrame(0);
+		enabled(true);
+		
+	}
+	
 	// --------------------------------------
 	// Inherited-Methods
 	// --------------------------------------
 
 	@Override
-	public float getX() {
-		return spriteFrames.get(currentFrame).getX();
+	public float getSrcX() {
+		return spriteFrames.get(currentFrame).getSrcX();
 	}
 
 	@Override
-	public float getY() {
-		return spriteFrames.get(currentFrame).getY();
+	public float getSrcY() {
+		return spriteFrames.get(currentFrame).getSrcY();
 	}
 
 	@Override
-	public int getW() {
-		return spriteFrames.get(currentFrame).getW();
+	public float getSrcWidth() {
+		return spriteFrames.get(currentFrame).getSrcWidth();
 	}
 
 	@Override
-	public int getH() {
-		return spriteFrames.get(currentFrame).getH();
+	public float getSrcHeight() {
+		return spriteFrames.get(currentFrame).getSrcHeight();
+	}
+
+	@Override
+	public float getRotation() {
+		return spriteFrames.get(currentFrame).getRotation();
+	}
+
+	@Override
+	public SpriteGraphAnchorDef getAnchorPoint(String pName) {
+		ISprite lSprite = spriteFrames.get(currentFrame);
+		if (lSprite == null)
+			return SpriteGraphAnchorDef.ZERO_ANCHOR;
+
+		return lSprite.getAnchorPoint(pName);
+
+	}
+
+	@Override
+	public float getPivotPointX() {
+		return spriteFrames.get(currentFrame).getPivotPointX();
+	}
+
+	@Override
+	public float getPivotPointY() {
+		return spriteFrames.get(currentFrame).getPivotPointY();
 	}
 
 }

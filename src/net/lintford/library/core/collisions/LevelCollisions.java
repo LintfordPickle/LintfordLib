@@ -283,6 +283,12 @@ public class LevelCollisions {
 						pPhysicsState.collisionX = (tileIndexX + 1) * ConstantsTable.BLOCK_SIZE_PIXELS + SKIN_WIDTH;
 						pPhysicsState.mPushesLeftWall = true;
 
+						if (checkedTileY - SKIN_WIDTH > bly - ConstantsTable.BLOCK_SIZE_PIXELS)
+							pPhysicsState.mPushesLeftWallFoot = true;
+
+						if (checkedTileY - SKIN_WIDTH > bly - ConstantsTable.BLOCK_SIZE_PIXELS * 2)
+							pPhysicsState.mPushesLeftWallWaist = true;
+
 					}
 
 					return true;
@@ -336,6 +342,12 @@ public class LevelCollisions {
 						// Store the result (the tile's left hand edge) in the physics state
 						pPhysicsState.collisionX = tileIndexX * ConstantsTable.BLOCK_SIZE_PIXELS - SKIN_WIDTH;
 						pPhysicsState.mPushesRightWall = true;
+
+						if (checkedTileY - SKIN_WIDTH > bry - ConstantsTable.BLOCK_SIZE_PIXELS)
+							pPhysicsState.mPushesRightWallFoot = true;
+
+						if (checkedTileY - SKIN_WIDTH > bry - ConstantsTable.BLOCK_SIZE_PIXELS * 2)
+							pPhysicsState.mPushesRightWallWaist = true;
 
 					}
 

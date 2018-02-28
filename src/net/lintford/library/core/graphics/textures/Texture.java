@@ -12,6 +12,7 @@ import java.nio.IntBuffer;
 import javax.imageio.ImageIO;
 
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL12;
 
 import net.lintford.library.ConstantsTable;
 import net.lintford.library.core.debug.DebugManager;
@@ -235,7 +236,7 @@ public class Texture {
 
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, pFilter);
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, pFilter);
-
+		
 		IntBuffer lBuffer = ByteBuffer.allocateDirect(pPixels.length * 4).order(ByteOrder.nativeOrder()).asIntBuffer();
 		lBuffer.put(pPixels);
 		lBuffer.flip();

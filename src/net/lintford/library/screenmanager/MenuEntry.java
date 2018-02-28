@@ -2,6 +2,7 @@ package net.lintford.library.screenmanager;
 
 import net.lintford.library.ConstantsTable;
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.geometry.AARectangle;
 import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.TextureManager;
@@ -9,10 +10,9 @@ import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 import net.lintford.library.core.input.InputState;
 import net.lintford.library.core.input.InputState.INPUT_TYPES;
 import net.lintford.library.core.maths.Vector2f;
-import net.lintford.library.renderers.windows.UIRectangle;
 import net.lintford.library.screenmanager.entries.IMenuEntryClickListener;
 
-public class MenuEntry extends UIRectangle {
+public class MenuEntry extends AARectangle {
 
 	// --------------------------------------
 	// Constants
@@ -248,7 +248,7 @@ public class MenuEntry extends UIRectangle {
 
 				if (pCore.input().leftClickOwner() == -1) {
 					mParentScreen.setHoveringOn(this);
-					
+
 				}
 			}
 
@@ -309,9 +309,9 @@ public class MenuEntry extends UIRectangle {
 		float lR = mEnabled ? 1f : .35f;
 		float lG = mEnabled ? 1f : .35f;
 		float lB = mEnabled ? 1f : .35f;
-		
+
 		float tile_size = 32;
-		
+
 		// Scale the width depending on the button size
 		Texture lTexture = TextureManager.TEXTURE_CORE_UI;
 
@@ -319,20 +319,20 @@ public class MenuEntry extends UIRectangle {
 		if (mHasFocus && mHighlightOnHover) {
 			mSpriteBatch.begin(pCore.HUD());
 			mSpriteBatch.draw(0, 64, 32, 32, centerX() - width / 2, centerY() - height / 2, -2f, tile_size, height, 1f, mParentScreen.mA, lTexture);
-			switch(mButtonSize) {
+			switch (mButtonSize) {
 			default:
-				mSpriteBatch.draw(32, 64, 224, 32, centerX() - (width / 2) + tile_size, centerY() - height / 2, -2f, width - tile_size*2, height, 1f, mParentScreen.mA, lTexture);
-				mSpriteBatch.draw(256, 64, 32, 32, centerX() + (width / 2) - tile_size, centerY() - height / 2, -2f, tile_size, height, 1f, mParentScreen.mA, lTexture);		
+				mSpriteBatch.draw(32, 64, 224, 32, centerX() - (width / 2) + tile_size, centerY() - height / 2, -2f, width - tile_size * 2, height, 1f, mParentScreen.mA, lTexture);
+				mSpriteBatch.draw(256, 64, 32, 32, centerX() + (width / 2) - tile_size, centerY() - height / 2, -2f, tile_size, height, 1f, mParentScreen.mA, lTexture);
 			}
 			mSpriteBatch.end();
 
 		} else if (mDrawBackground) {
 			mSpriteBatch.begin(pCore.HUD());
 			mSpriteBatch.draw(0, 32, 32, 32, centerX() - width / 2, centerY() - height / 2, -2f, 32, height, 1f, lR, lG, lB, mParentScreen.mA, lTexture);
-			switch(mButtonSize) {
+			switch (mButtonSize) {
 			default:
 				mSpriteBatch.draw(32, 32, 224, 32, centerX() - (width / 2) + 32, centerY() - height / 2, -2f, width - 64, height, 1f, mParentScreen.mA, lTexture);
-				mSpriteBatch.draw(256, 32, 32, 32, centerX() + (width / 2) - 32, centerY() - height / 2, -2f, 32, height, 1f, mParentScreen.mA, lTexture);	
+				mSpriteBatch.draw(256, 32, 32, 32, centerX() + (width / 2) - 32, centerY() - height / 2, -2f, 32, height, 1f, mParentScreen.mA, lTexture);
 			}
 			mSpriteBatch.end();
 		}

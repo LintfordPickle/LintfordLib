@@ -1,10 +1,10 @@
 package net.lintford.library.renderers.windows.components;
 
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.geometry.AARectangle;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
-import net.lintford.library.core.maths.Rectangle;
 import net.lintford.library.renderers.windows.UIWindow;
 import net.lintford.library.screenmanager.entries.IMenuEntryClickListener;
 
@@ -27,7 +27,7 @@ public class UIToggleButton extends UIWidget {
 	private boolean mHoveredOver;
 
 	private Texture mButtonTexture;
-	private Rectangle mSourceRectangle;
+	private AARectangle mSourceRectangle;
 
 	private boolean mIsEnabled;
 
@@ -80,7 +80,7 @@ public class UIToggleButton extends UIWidget {
 		mG = 0.34f;
 		mB = 0.65f;
 
-		mSourceRectangle = new Rectangle();
+		mSourceRectangle = new AARectangle();
 
 	}
 

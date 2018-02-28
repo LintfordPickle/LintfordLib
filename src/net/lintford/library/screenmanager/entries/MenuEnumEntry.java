@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.geometry.AARectangle;
 import net.lintford.library.core.graphics.fonts.BitmapFont;
 import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.input.InputState;
-import net.lintford.library.renderers.windows.UIRectangle;
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.Screen;
@@ -32,8 +32,8 @@ public class MenuEnumEntry extends MenuEntry {
 	private int mSelectedIndex;
 
 	private boolean mButtonsEnabled;
-	private UIRectangle mLeftButtonRectangle;
-	private UIRectangle mRightButtonRectangle;
+	private AARectangle mLeftButtonRectangle;
+	private AARectangle mRightButtonRectangle;
 	private EntryInteractions mInteractionListener;
 
 	// --------------------------------------
@@ -88,8 +88,8 @@ public class MenuEnumEntry extends MenuEntry {
 		mItems = new ArrayList<>();
 		mSelectedIndex = 0;
 
-		mLeftButtonRectangle = new UIRectangle(0, 0, 25, 25);
-		mRightButtonRectangle = new UIRectangle(0, 0, 25, 25);
+		mLeftButtonRectangle = new AARectangle(0, 0, 25, 25);
+		mRightButtonRectangle = new AARectangle(0, 0, 25, 25);
 
 		mHighlightOnHover = false;
 		mDrawBackground = false;

@@ -1,7 +1,7 @@
 package net.lintford.library.data.entities;
 
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.maths.Rectangle;
+import net.lintford.library.core.geometry.Rectangle;
 
 public class RectangleEntity extends WorldEntity {
 
@@ -70,14 +70,10 @@ public class RectangleEntity extends WorldEntity {
 	// Core-Methods
 	// --------------------------------------
 
-	public void initialize() {
-
-	}
-
 	public void update(LintfordCore pCore) {
 		super.update(pCore);
 
-		mBounds.set(x - width / 2, y - height / 2, width, height);
+		mBounds.set(x, y, width, height);
 
 	}
 

@@ -25,8 +25,10 @@ public class TextureManager {
 	public static final Texture TEXTURE_WHITE = TextureManager.textureManager().loadTexture("WHITE", new int[] { 0xF, 0xF, 0xF, 0xF }, 2, 2);
 	public static final Texture TEXTURE_BLACK = TextureManager.textureManager().loadTexture("BLACK", new int[] { 0x0, 0x0, 0x0, 0x0 }, 2, 2);
 
-	/** A static texture which contains 'generic' icons which can be used for core components and debugging. */
+	/** To reload the CORE_UI textures, use this name as the identifier (e.g. TextureManager.reload(CORE_UI, "<texture_filename>);" */
 	public static final String CORE_UI_TEXTURE_NAME = "CORE_UI";
+	
+	/** A static texture which contains 'generic' icons which can be used for core components and debugging. */
 	public static final Texture TEXTURE_CORE_UI = TextureManager.textureManager().loadTexture(CORE_UI_TEXTURE_NAME, "/res/textures/core/core_ui.png", GL11.GL_NEAREST);
 
 	// --------------------------------------

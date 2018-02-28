@@ -26,9 +26,9 @@ public class TransitionFadeIn extends BaseTransition {
 
 		final float ms = (float) mTransitionTime.milliseconds();
 		final float amt = (float) (mProgress / ms);
-
+		
 		float alpha = MathHelper.clamp(amt, 0, 1);
-
+		
 		alpha = Math.min(1f, Math.max(0f, alpha));
 		pScreen.color(pScreen.r(), pScreen.g(), pScreen.b(), alpha);
 

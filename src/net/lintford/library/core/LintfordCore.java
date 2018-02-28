@@ -18,6 +18,7 @@ import net.lintford.library.controllers.BaseControllerGroups;
 import net.lintford.library.controllers.camera.CameraController;
 import net.lintford.library.controllers.core.ControllerManager;
 import net.lintford.library.controllers.core.RendererController;
+import net.lintford.library.controllers.core.ResourceController;
 import net.lintford.library.core.camera.Camera;
 import net.lintford.library.core.camera.HUD;
 import net.lintford.library.core.camera.ICamera;
@@ -54,6 +55,8 @@ public abstract class LintfordCore {
 	protected ControllerManager mControllerManager;
 	protected RendererManager mRendererManager;
 	protected ResourceManager mResourceManager;
+
+	protected ResourceController mResourceController;
 
 	protected Camera mGameCamera;
 	protected HUD mHUD;
@@ -168,6 +171,8 @@ public abstract class LintfordCore {
 		mControllerManager = new ControllerManager(this);
 		mRendererManager = new RendererManager(this);
 
+		mResourceController = new ResourceController(mControllerManager, mResourceManager, BaseControllerGroups.CONTROLLER_CORE_GROUP_ID);
+
 		mHUD = new HUD(mMasterConfig.display());
 		mRenderState = new RenderState();
 
@@ -239,8 +244,13 @@ public abstract class LintfordCore {
 
 			onUpdate();
 
-			if (!mIsHeadlessMode)
+			if (!mIsHeadlessMode) {
 				onDraw();
+
+				// TODO: Add a debugging flag
+				DebugManager.DEBUG_MANAGER.draw(this);
+
+			}
 
 			mInputState.resetFlags();
 
@@ -294,8 +304,6 @@ public abstract class LintfordCore {
 			return;
 
 		mRendererManager.draw(this);
-
-		DebugManager.DEBUG_MANAGER.draw(this);
 
 	}
 

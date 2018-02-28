@@ -10,6 +10,7 @@ import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
 import net.lintford.library.core.camera.ICamera;
+import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.shaders.ShaderMVP_PT;
 import net.lintford.library.core.graphics.sprites.ISprite;
@@ -18,7 +19,8 @@ import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.maths.Matrix4f;
 import net.lintford.library.core.maths.Vector4f;
 
-// TODO(John): The SpriteBatch doesn't actually allow to cache buffers between frames if there is no change.
+// TODO: Add caching to buffers if no changes since the last frame (no vertex + transformations).
+// TODO: Add Batch types (call, texture, Z-Order).
 public class SpriteBatch {
 
 	// --------------------------------------
@@ -126,30 +128,32 @@ public class SpriteBatch {
 	// --------------------------------------
 
 	public void loadGLContent(ResourceManager pResourceManager) {
-		if(mIsLoaded) return;
-		
+		if (mIsLoaded)
+			return;
+
 		mShader.loadGLContent(pResourceManager);
 
-		if(mVaoID == -1)
+		if (mVaoID == -1)
 			mVaoID = GL30.glGenVertexArrays();
-		
-		if(mVboID == -1)
+
+		if (mVboID == -1)
 			mVboID = GL15.glGenBuffers();
-		
+
 		mIsLoaded = true;
 	}
 
 	public void unloadGLContent() {
-		if(!mIsLoaded) return;
-		
+		if (!mIsLoaded)
+			return;
+
 		mShader.unloadGLContent();
-		
-		if(mVaoID > -1)
+
+		if (mVaoID > -1)
 			GL30.glDeleteVertexArrays(mVaoID);
-		
-		if(mVboID > -1)
+
+		if (mVboID > -1)
 			GL15.glDeleteBuffers(mVboID);
-		
+
 		mIsLoaded = false;
 	}
 
@@ -218,34 +222,34 @@ public class SpriteBatch {
 		// Vertex 0
 		float x0 = x;
 		float y0 = y + h * pScale;
-		float u0 = pSprite.getX() / pTexture.getTextureWidth();
-		float v0 = (pSprite.getY() + pSprite.getH()) / (float) pTexture.getTextureHeight();
+		float u0 = pSprite.getSrcX() / pTexture.getTextureWidth();
+		float v0 = (pSprite.getSrcY() + pSprite.getSrcHeight()) / (float) pTexture.getTextureHeight();
 
 		// Vertex 1
 		float x1 = x;
 		float y1 = y;
-		float u1 = pSprite.getX() / pTexture.getTextureWidth();
-		float v1 = pSprite.getY() / pTexture.getTextureHeight();
+		float u1 = pSprite.getSrcX() / pTexture.getTextureWidth();
+		float v1 = pSprite.getSrcY() / pTexture.getTextureHeight();
 
 		// Vertex 2
 		float x2 = x + w * pScale;
 		float y2 = y;
-		float u2 = (pSprite.getX() + pSprite.getW()) / pTexture.getTextureWidth();
-		float v2 = pSprite.getY() / pTexture.getTextureHeight();
+		float u2 = (pSprite.getSrcX() + pSprite.getSrcWidth()) / pTexture.getTextureWidth();
+		float v2 = pSprite.getSrcY() / pTexture.getTextureHeight();
 
 		// Vertex 3
 		float x3 = x + w * pScale;
 		float y3 = y + h * pScale;
-		float u3 = (pSprite.getX() + pSprite.getW()) / pTexture.getTextureWidth();
-		float v3 = (pSprite.getY() + pSprite.getH()) / pTexture.getTextureHeight();
+		float u3 = (pSprite.getSrcX() + pSprite.getSrcWidth()) / pTexture.getTextureWidth();
+		float v3 = (pSprite.getSrcY() + pSprite.getSrcHeight()) / pTexture.getTextureHeight();
 
 		// CCW 102203
-		addVertToBuffer(x1, y1, pZ, 1f, pR, pG, pB, pA, u1, v1); // 1
-		addVertToBuffer(x0, y0, pZ, 1f, pR, pG, pB, pA, u0, v0); // 0
-		addVertToBuffer(x2, y2, pZ, 1f, pR, pG, pB, pA, u2, v2); // 2
-		addVertToBuffer(x2, y2, pZ, 1f, pR, pG, pB, pA, u2, v2); // 2
-		addVertToBuffer(x0, y0, pZ, 1f, pR, pG, pB, pA, u0, v0); // 0
-		addVertToBuffer(x3, y3, pZ, 1f, pR, pG, pB, pA, u3, v3); // 3
+		addVertToBuffer(x1, y1, pZ, 1f, pR, pG, pB, pA, !pFlipH ? u1 : u2, v1); // 1
+		addVertToBuffer(x0, y0, pZ, 1f, pR, pG, pB, pA, !pFlipH ? u0 : u3, v0); // 0
+		addVertToBuffer(x2, y2, pZ, 1f, pR, pG, pB, pA, !pFlipH ? u2 : u1, v2); // 2
+		addVertToBuffer(x2, y2, pZ, 1f, pR, pG, pB, pA, !pFlipH ? u2 : u1, v2); // 2
+		addVertToBuffer(x0, y0, pZ, 1f, pR, pG, pB, pA, !pFlipH ? u0 : u3, v0); // 0
+		addVertToBuffer(x3, y3, pZ, 1f, pR, pG, pB, pA, !pFlipH ? u3 : u0, v3); // 3
 
 		mCurrentNumSprites++;
 
@@ -271,8 +275,8 @@ public class SpriteBatch {
 	public void draw(Texture pTexture, ISprite pSprite, float pDstX, float pDstZ, float pZ, float pDstW, float pDstH, float pR, float pG, float pB, float pA, float pRotation, float pROX, float pROY, float pScaleX, float pScaleY) {
 		if (!mIsDrawing)
 			return;
-		
-		if(pSprite == null) {
+
+		if (pSprite == null) {
 			return;
 		}
 
@@ -304,26 +308,26 @@ public class SpriteBatch {
 		// Vertex 0
 		float x0 = pDstX + dx * cos - (dy + pDstH * pScaleX) * sin;
 		float y0 = pDstZ + dx * sin + (dy + pDstH * pScaleY) * cos;
-		float u0 = pSprite.getX() / pTexture.getTextureWidth();
-		float v0 = (pSprite.getY() + pSprite.getH()) / pTexture.getTextureHeight();
+		float u0 = pSprite.getSrcX() / pTexture.getTextureWidth();
+		float v0 = (pSprite.getSrcY() + pSprite.getSrcHeight()) / pTexture.getTextureHeight();
 
 		// Vertex 1
 		float x1 = pDstX + dx * cos - dy * sin;
 		float y1 = pDstZ + dx * sin + dy * cos;
-		float u1 = pSprite.getX() / pTexture.getTextureWidth();
-		float v1 = pSprite.getY() / pTexture.getTextureHeight();
+		float u1 = pSprite.getSrcX() / pTexture.getTextureWidth();
+		float v1 = pSprite.getSrcY() / pTexture.getTextureHeight();
 
 		// Vertex 2
 		float x2 = pDstX + (dx + pDstW * pScaleX) * cos - dy * sin;
 		float y2 = pDstZ + (dx + pDstW * pScaleY) * sin + dy * cos;
-		float u2 = (pSprite.getX() + pSprite.getW()) / pTexture.getTextureWidth();
-		float v2 = pSprite.getY() / pTexture.getTextureHeight();
+		float u2 = (pSprite.getSrcX() + pSprite.getSrcWidth()) / pTexture.getTextureWidth();
+		float v2 = pSprite.getSrcY() / pTexture.getTextureHeight();
 
 		// Vertex 3
 		float x3 = pDstX + (dx + pDstW * pScaleX) * cos - (dy + pDstH * pScaleX) * sin;
 		float y3 = pDstZ + (dx + pDstW * pScaleY) * sin + (dy + pDstH * pScaleY) * cos;
-		float u3 = (pSprite.getX() + pSprite.getW()) / pTexture.getTextureWidth();
-		float v3 = (pSprite.getY() + pSprite.getH()) / pTexture.getTextureHeight();
+		float u3 = (pSprite.getSrcX() + pSprite.getSrcWidth()) / pTexture.getTextureWidth();
+		float v3 = (pSprite.getSrcY() + pSprite.getSrcHeight()) / pTexture.getTextureHeight();
 
 		// CCW 102203
 		addVertToBuffer(x1, y1, pZ, 1f, pR, pG, pB, pA, u1, v1); // 1
@@ -413,6 +417,71 @@ public class SpriteBatch {
 		mCurrentNumSprites = 0;
 		mVertexCount = 0;
 
+	}
+
+	// TEST
+	public void draw(SpriteSheet pSpriteSheet, ISprite pSprite, Rectangle pDstRectangle, float pZ, float pR, float pG, float pB, float pA) {
+		if (pSpriteSheet == null)
+			return;
+
+		draw(pSpriteSheet.texture(), pSprite, pDstRectangle, pZ, pR, pG, pB, pA);
+	}
+
+	public void draw(Texture pTexture, ISprite pSprite, Rectangle pDstRectangle, float pZ, float pR, float pG, float pB, float pA) {
+		if (!mIsDrawing)
+			return;
+
+		if (pSprite == null) {
+			return;
+		}
+
+		if (pTexture == null)
+			return;
+
+		if (mCurrentTexID == -1) { // first texture
+			mCurrentTexID = pTexture.getTextureID();
+		} else if (mCurrentTexID != pTexture.getTextureID()) {
+			flush();
+			mCurrentTexID = pTexture.getTextureID();
+		}
+
+		if (mCurrentNumSprites >= MAX_SPRITES) {
+			flush();
+		}
+
+		// Vertex 0
+		float x0 = pDstRectangle.getVertices()[0].x;
+		float y0 = pDstRectangle.getVertices()[0].y;
+		float u0 = pSprite.getSrcX() / pTexture.getTextureWidth();
+		float v0 = pSprite.getSrcY() / pTexture.getTextureHeight();
+
+		// Vertex 1
+		float x1 = pDstRectangle.getVertices()[1].x;
+		float y1 = pDstRectangle.getVertices()[1].y;
+		float u1 = (pSprite.getSrcX() + pSprite.getSrcWidth()) / pTexture.getTextureWidth();
+		float v1 = (pSprite.getSrcY()) / pTexture.getTextureHeight();
+
+		// Vertex 2
+		float x2 = pDstRectangle.getVertices()[2].x;
+		float y2 = pDstRectangle.getVertices()[2].y;
+		float u2 = pSprite.getSrcX() / pTexture.getTextureWidth();
+		float v2 = (pSprite.getSrcY() + pSprite.getSrcHeight()) / pTexture.getTextureHeight();
+
+		// Vertex 3
+		float x3 = pDstRectangle.getVertices()[3].x;
+		float y3 = pDstRectangle.getVertices()[3].y;
+		float u3 = (pSprite.getSrcX() + pSprite.getSrcWidth()) / pTexture.getTextureWidth();
+		float v3 = (pSprite.getSrcY() + pSprite.getSrcHeight()) / pTexture.getTextureHeight();
+
+		// CCW 102123
+		addVertToBuffer(x1, y1, pZ, 1f, pR, pG, pB, pA, u1, v1); // 1
+		addVertToBuffer(x0, y0, pZ, 1f, pR, pG, pB, pA, u0, v0); // 0
+		addVertToBuffer(x2, y2, pZ, 1f, pR, pG, pB, pA, u2, v2); // 2
+		addVertToBuffer(x1, y1, pZ, 1f, pR, pG, pB, pA, u1, v1); // 1
+		addVertToBuffer(x2, y2, pZ, 1f, pR, pG, pB, pA, u2, v2); // 2
+		addVertToBuffer(x3, y3, pZ, 1f, pR, pG, pB, pA, u3, v3); // 3
+
+		mCurrentNumSprites++;
 	}
 
 }

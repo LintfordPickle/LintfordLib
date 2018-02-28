@@ -1,21 +1,20 @@
 package net.lintford.library.renderers.windows.components;
 
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.geometry.AARectangle;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 import net.lintford.library.core.input.IBufferedInputCallback;
 import net.lintford.library.core.input.InputState;
-import net.lintford.library.core.maths.Rectangle;
 import net.lintford.library.renderers.RendererManager;
 
-public class UIInputText extends Rectangle implements IBufferedInputCallback {
+public class UIInputText extends AARectangle implements IBufferedInputCallback {
 
 	// --------------------------------------
 	// Constants
 	// --------------------------------------
 
-	private static final long serialVersionUID = 7395700800937138779L;
 	private static final float SPACE_BETWEEN_TEXT = 1;
 	private static final float CARET_FLASH_TIME = 250;
 
@@ -31,7 +30,7 @@ public class UIInputText extends Rectangle implements IBufferedInputCallback {
 	private transient String mTempString;
 	private transient String mEmptyString;
 
-	private transient Rectangle mCancelRectangle;
+	private transient AARectangle mCancelRectangle;
 
 	// A little wierd, we store the string length to check if the string has changed since the last frame (since
 	// working with the length (int) doesn't cause a heap allocation as toString() does )
@@ -91,7 +90,7 @@ public class UIInputText extends Rectangle implements IBufferedInputCallback {
 		mResetOnDefaultClick = true;
 		mInputField = new StringBuilder();
 
-		mCancelRectangle = new Rectangle();
+		mCancelRectangle = new AARectangle();
 		mEmptyString = "";
 
 	}

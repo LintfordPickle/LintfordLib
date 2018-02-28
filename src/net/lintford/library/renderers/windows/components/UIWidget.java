@@ -1,11 +1,11 @@
 package net.lintford.library.renderers.windows.components;
 
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.geometry.AARectangle;
 import net.lintford.library.core.graphics.ResourceManager;
-import net.lintford.library.renderers.windows.UIRectangle;
 import net.lintford.library.renderers.windows.UIWindow;
 
-public abstract class UIWidget extends UIRectangle {
+public abstract class UIWidget extends AARectangle {
 
 	// --------------------------------------
 	// Variables
@@ -24,7 +24,7 @@ public abstract class UIWidget extends UIRectangle {
 
 	}
 
-	public UIWidget(final UIWindow pParentWindow, final UIRectangle pBounds) {
+	public UIWidget(final UIWindow pParentWindow, final AARectangle pBounds) {
 		super(pBounds);
 
 		mParentWindow = pParentWindow;

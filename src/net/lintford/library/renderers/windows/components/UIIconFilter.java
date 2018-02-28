@@ -4,18 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.geometry.AARectangle;
 import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
-import net.lintford.library.core.maths.Rectangle;
 
-public class UIIconFilter extends Rectangle {
+public class UIIconFilter extends AARectangle {
 
 	// --------------------------------------
 	// Constants
 	// --------------------------------------
-	
-	private static final long serialVersionUID = -5287653520977797364L;
 
 	private static final float HORIZONTAL_PADDING = 10;
 

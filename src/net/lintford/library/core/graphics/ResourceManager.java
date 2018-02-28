@@ -16,6 +16,7 @@ import java.util.List;
 import net.lintford.library.ConstantsTable;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.audio.AudioManager;
+import net.lintford.library.core.geometry.spritegraph.SpriteGraphManager;
 import net.lintford.library.core.graphics.fonts.FontManager;
 import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetManager;
 import net.lintford.library.core.graphics.textures.TextureManager;
@@ -38,6 +39,7 @@ public class ResourceManager {
 
 	protected FontManager mFontManager;
 	protected SpriteSheetManager mSpriteSheetManager;
+	protected SpriteGraphManager mSpriteGraphManager;
 	protected AudioManager mAudioManager;
 
 	// SoundManager
@@ -61,6 +63,10 @@ public class ResourceManager {
 		return mSpriteSheetManager;
 	}
 
+	public SpriteGraphManager spriteGraphManager() {
+		return mSpriteGraphManager;
+	}
+
 	public FontManager fontManager() {
 		return mFontManager;
 	}
@@ -82,6 +88,7 @@ public class ResourceManager {
 
 		// Setup the SpritesheetManager
 		mSpriteSheetManager = new SpriteSheetManager();
+		mSpriteGraphManager = new SpriteGraphManager();
 		mAudioManager = new AudioManager();
 
 		// Setup the AnimationManager
@@ -102,6 +109,7 @@ public class ResourceManager {
 
 			} catch (Exception e) {
 				e.printStackTrace();
+
 			}
 		}
 
@@ -115,7 +123,7 @@ public class ResourceManager {
 		// Force creation here if not already
 		TextureManager.textureManager();
 		mAudioManager.loadALContent();
-
+		mSpriteGraphManager.loadGLContent(this);
 		mFontManager.loadGLContent(this);
 
 		// TODO: Need the resource manager to also manage shaders (so they can be recompiled etc).

@@ -1,8 +1,11 @@
-package net.lintford.library.renderers.windows;
+package net.lintford.library.core.geometry;
 
 import net.lintford.library.core.maths.Vector2f;
 
-public class UIRectangle {
+/**
+ * Represents an axis-aligned rectangle and collision methods.
+ */
+public class AARectangle {
 
 	// --------------------------------------
 	// Variables
@@ -37,21 +40,21 @@ public class UIRectangle {
 	// Constructors
 	// --------------------------------------
 
-	public UIRectangle() {
+	public AARectangle() {
 		x = 0;
 		y = 0;
 		width = 0;
 		height = 0;
 	}
 
-	public UIRectangle(UIRectangle pCopy) {
+	public AARectangle(AARectangle pCopy) {
 		x = pCopy.x;
 		y = pCopy.y;
 		width = pCopy.width;
 		height = pCopy.height;
 	}
 
-	public UIRectangle(float pX, float pY, float pWidth, float pHeight) {
+	public AARectangle(float pX, float pY, float pWidth, float pHeight) {
 		x = pX;
 		y = pY;
 		width = pWidth;
@@ -68,7 +71,7 @@ public class UIRectangle {
 	 * @param otherRect
 	 * @Returns True if this rectangle instance entirely contains the given rectangle. False otherwise.
 	 */
-	public boolean intersects(UIRectangle pOtherRect) {
+	public boolean intersects(AARectangle pOtherRect) {
 		return ((((pOtherRect.x < (this.x + this.width)) && (this.x < (pOtherRect.x + pOtherRect.width))) && (pOtherRect.y < (this.y + this.height))) && (this.y < (pOtherRect.y + pOtherRect.height)));
 	}
 
@@ -89,7 +92,8 @@ public class UIRectangle {
 	 * @Returns True if this rectangle instance entirely contains the given point. False otherwise.
 	 */
 	public boolean intersects(float pX, float pY) {
-		return pX >= x && pX <= right() && pY >= y && pY <= bottom();
+		boolean lResult = pX >= left() && pX <= right() && pY >= top() && pY <= bottom();
+		return lResult;
 	}
 
 	public boolean intersects(float pX, float pY, float pW, float pH) {
@@ -147,7 +151,7 @@ public class UIRectangle {
 
 	}
 
-	public void set(UIRectangle pRect) {
+	public void set(AARectangle pRect) {
 		x = pRect.x;
 		y = pRect.y;
 		width = pRect.width;
@@ -155,7 +159,7 @@ public class UIRectangle {
 
 	}
 
-	public void set(UIRectangle pRect, float pRatio) {
+	public void set(AARectangle pRect, float pRatio) {
 		final float NEW_WIDTH = pRect.width * pRatio;
 		final float NEW_HEIGHT = pRect.height * pRatio;
 
@@ -166,7 +170,7 @@ public class UIRectangle {
 
 	}
 
-	public void set(UIRectangle pRect, float pWRatio, float pHRatio) {
+	public void set(AARectangle pRect, float pWRatio, float pHRatio) {
 		final float NEW_WIDTH = pRect.width * pWRatio;
 		final float NEW_HEIGHT = pRect.height * pHRatio;
 

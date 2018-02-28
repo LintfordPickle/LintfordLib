@@ -1,10 +1,10 @@
 package net.lintford.library.renderers.windows.components;
 
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.geometry.AARectangle;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
-import net.lintford.library.core.maths.Rectangle;
 import net.lintford.library.renderers.windows.UIWindow;
 import net.lintford.library.screenmanager.entries.IMenuEntryClickListener;
 
@@ -27,7 +27,7 @@ public class UIIconButton extends UIWidget {
 	private transient boolean mHoveredOver;
 
 	private transient Texture mButtonTexture;
-	private transient Rectangle mSourceRectangle;
+	private transient AARectangle mSourceRectangle;
 
 	// --------------------------------------
 	// Properties
@@ -67,7 +67,7 @@ public class UIIconButton extends UIWidget {
 		height = 25;
 
 		mR = mG = mB = 1f;
-		mSourceRectangle = new Rectangle();
+		mSourceRectangle = new AARectangle();
 
 	}
 

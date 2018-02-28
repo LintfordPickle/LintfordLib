@@ -8,6 +8,7 @@ import org.lwjgl.glfw.GLFW;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.debug.DebugLogger.LogMessage;
+import net.lintford.library.core.geometry.AARectangle;
 import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.TextureManager;
@@ -15,12 +16,11 @@ import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 import net.lintford.library.core.input.IBufferedInputCallback;
 import net.lintford.library.core.maths.Vector3f;
 import net.lintford.library.options.DisplayConfig;
-import net.lintford.library.renderers.windows.UIRectangle;
 import net.lintford.library.renderers.windows.components.IScrollBarArea;
 import net.lintford.library.renderers.windows.components.ScrollBar;
 import net.lintford.library.renderers.windows.components.ScrollBarContentRectangle;
 
-public class DebugConsole extends UIRectangle implements IBufferedInputCallback, IScrollBarArea {
+public class DebugConsole extends AARectangle implements IBufferedInputCallback, IScrollBarArea {
 
 	// --------------------------------------
 	// Constants
@@ -504,7 +504,7 @@ public class DebugConsole extends UIRectangle implements IBufferedInputCallback,
 	}
 
 	@Override
-	public UIRectangle windowArea() {
+	public AARectangle windowArea() {
 		return this;
 	}
 

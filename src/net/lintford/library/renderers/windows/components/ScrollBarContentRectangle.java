@@ -3,11 +3,11 @@ package net.lintford.library.renderers.windows.components;
 import org.lwjgl.opengl.GL11;
 
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.geometry.AARectangle;
 import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
-import net.lintford.library.renderers.windows.UIRectangle;
 
-public class ScrollBarContentRectangle extends UIRectangle {
+public class ScrollBarContentRectangle extends AARectangle {
 
 	// --------------------------------------
 	// Contants
