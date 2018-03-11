@@ -2,8 +2,6 @@ package net.lintford.library.core.geometry.spritegraph;
 
 import java.io.Serializable;
 
-import net.lintford.library.core.maths.Vector2f;
-
 public class SpriteGraphAnchorDef implements Serializable {
 
 	// --------------------------------------

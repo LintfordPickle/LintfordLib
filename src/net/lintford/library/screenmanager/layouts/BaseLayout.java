@@ -132,8 +132,8 @@ public abstract class BaseLayout extends AARectangle implements IScrollBarArea {
 		x = pCenterX + -pWidth / 2;
 		y = pCenterY + -pHeight / 2;
 
-		width = pWidth;
-		height = pHeight;
+		w = pWidth;
+		h = pHeight;
 	}
 
 	/** @returns A list of menu entries so derived classes can change the menu contents. */
@@ -171,8 +171,8 @@ public abstract class BaseLayout extends AARectangle implements IScrollBarArea {
 		mTopPadding = 5f;
 		mBottomPadding = 5f;
 
-		width = 800;
-		x = -width / 2;
+		w = 800;
+		x = -w / 2;
 
 		mForcedEntryHeight = USE_HEIGHT_OF_ENTRIES;
 		mForcedHeight = USE_HEIGHT_OF_ENTRIES;
@@ -193,7 +193,7 @@ public abstract class BaseLayout extends AARectangle implements IScrollBarArea {
 		}
 
 		// width = getEntryWidth();
-		height = getHeight();
+		h = getHeight();
 
 	}
 
@@ -251,15 +251,15 @@ public abstract class BaseLayout extends AARectangle implements IScrollBarArea {
 			mMenuEntries.get(i).update(pCore, mParentScreen, lIsSelected);
 		}
 
-		height = getHeight();
+		h = getHeight();
 
 		mContentArea.x = x;
 		mContentArea.y = y;
-		mContentArea.width = width;
-		mContentArea.height = getEntryHeight();
+		mContentArea.w = w;
+		mContentArea.h = getEntryHeight();
 
 		mScrollBar.update(pCore);
-		mScrollBarsEnabled = mContentArea.height - getHeight() > 0;
+		mScrollBarsEnabled = mContentArea.h - getHeight() > 0;
 
 	}
 
@@ -267,21 +267,17 @@ public abstract class BaseLayout extends AARectangle implements IScrollBarArea {
 
 		if (ConstantsTable.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
 			mSpriteBatch.begin(pCore.HUD());
-			final float SCALE = 1f;
-			final float ALPHA = 0.6f;
-			mSpriteBatch.draw(0, 0, 32, 32, x, y, pParentZDepth + .1f, width, height, SCALE, 1f, 0.2f, 1f, ALPHA, TextureManager.TEXTURE_CORE_UI);
+			mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, x, y, w, h, pParentZDepth + .1f, 1f, 0.2f, 1f, 0.6f);
 			mSpriteBatch.end();
 		}
 
 		if (mDrawBackground) {
 			mSpriteBatch.begin(pCore.HUD());
-			final float SCALE = 1f;
-			mSpriteBatch.draw(0, 0, 32, 32, x, y, pParentZDepth + .1f, width, height, SCALE, mR, mG, mB, mA, TextureManager.TEXTURE_CORE_UI);
+			mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, x, y, w, h, pParentZDepth + .1f, mR, mG, mB, mA);
 			mSpriteBatch.end();
 		}
 
 		if (mScrollBarsEnabled) {
-			// TODO: SPRITE
 			mContentArea.preDraw(pCore, mSpriteBatch);
 
 		}
@@ -425,7 +421,7 @@ public abstract class BaseLayout extends AARectangle implements IScrollBarArea {
 			// return the tallest entry
 			float lResult = 0;
 			for (int i = 0; i < lEntryCount; i++) {
-				float lTemp = menuEntries().get(i).paddingVertical() + menuEntries().get(i).height + menuEntries().get(i).paddingVertical();
+				float lTemp = menuEntries().get(i).paddingVertical() + menuEntries().get(i).h + menuEntries().get(i).paddingVertical();
 				if (lTemp > lResult) {
 					lResult = lTemp;
 				}

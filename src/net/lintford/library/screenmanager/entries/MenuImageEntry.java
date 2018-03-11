@@ -43,7 +43,7 @@ public class MenuImageEntry extends MenuEntry {
 			// Height of image + title + padding between
 			if (!mParentScreen.isLoaded())
 				return 30f;
-			return height + mParentScreen.fontHeader().bitmap().fontHeight() + 10;
+			return h + mParentScreen.fontHeader().bitmap().fontHeight() + 10;
 
 		}
 
@@ -130,8 +130,8 @@ public class MenuImageEntry extends MenuEntry {
 	public void initialise() {
 		super.initialise();
 
-		width = getWidth();
-		height = MENUENTRY_HEIGHT;
+		w = getWidth();
+		h = MENUENTRY_HEIGHT;
 
 	}
 
@@ -142,7 +142,7 @@ public class MenuImageEntry extends MenuEntry {
 
 		final float lLabelWidth = lFontBitmap.getStringWidth(mText);
 		mAlignment = ALIGNMENT.center;
-		float lX = x + width / 2 - lLabelWidth / 2;
+		float lX = x + w / 2 - lLabelWidth / 2;
 		switch (mAlignment) {
 		case left:
 			lX = x + 5;
@@ -151,7 +151,7 @@ public class MenuImageEntry extends MenuEntry {
 			lX = x - 5 - lLabelWidth;
 			break;
 		default:
-			lX = x + width / 2 - lLabelWidth / 2;
+			lX = x + w / 2 - lLabelWidth / 2;
 			break;
 		}
 
@@ -166,19 +166,19 @@ public class MenuImageEntry extends MenuEntry {
 
 		}
 
-		mSpriteBatch.begin(pCore.HUD());
+		mTextureBatch.begin(pCore.HUD());
 
-		height = 240;
+		h = 240;
 
 		switch (mAlignment) {
 		case left:
 			lX = x + 5;
 			break;
 		case right:
-			lX = x - 5 - width;
+			lX = x - 5 - w;
 			break;
 		default:
-			lX = x + width / 2 - 320 / 2;
+			lX = x + w / 2 - 320 / 2;
 			break;
 		}
 
@@ -186,12 +186,13 @@ public class MenuImageEntry extends MenuEntry {
 			final int width = mTexture.getTextureWidth();
 			final int height = mTexture.getTextureHeight();
 
+			// TODO: Something needs fixing here
 			lX = -width / 2;
-			mSpriteBatch.draw(0, 0, width, height, lX + 5, y + lLabelHeightOffset, pParentZDepth + .1f, width, height, 1f, mTexture);
+			mTextureBatch.draw(mTexture, 0, 0, width, height, lX + 5, y + lLabelHeightOffset, width, height, pParentZDepth + .1f, 1f, 1f, 1f, 1f);
 
 		}
 
-		mSpriteBatch.end();
+		mTextureBatch.end();
 
 	}
 

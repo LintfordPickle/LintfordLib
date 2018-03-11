@@ -140,12 +140,12 @@ public class MenuInputEntry extends MenuEntry implements IBufferedInputCallback 
 		final float lSeparatorHalfWidth = lFontBitmap.getStringWidth(mSeparator) * 0.5f;
 
 		mParentScreen.font().begin(pCore.HUD());
-		mParentScreen.font().draw(mLabel, x + width / 2 - 10 - lLabelWidth - lSeparatorHalfWidth, y + height / 2 - lFontHeight * 0.5f, pParentZDepth + .1f, 1f);
-		mParentScreen.font().draw(mSeparator, x + width / 2 - lSeparatorHalfWidth, y + height / 2 - lFontHeight * 0.5f, pParentZDepth + .1f, 1f);
-		mParentScreen.font().draw(mInputField.toString(), x + width / 2 + lSeparatorHalfWidth + SPACE_BETWEEN_TEXT, y + height / 2 - lFontHeight * 0.5f, pParentZDepth + .1f, 1f);
+		mParentScreen.font().draw(mLabel, x + w / 2 - 10 - lLabelWidth - lSeparatorHalfWidth, y + h / 2 - lFontHeight * 0.5f, pParentZDepth + .1f, 1f);
+		mParentScreen.font().draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - lFontHeight * 0.5f, pParentZDepth + .1f, 1f);
+		mParentScreen.font().draw(mInputField.toString(), x + w / 2 + lSeparatorHalfWidth + SPACE_BETWEEN_TEXT, y + h / 2 - lFontHeight * 0.5f, pParentZDepth + .1f, 1f);
 
 		if (mShowCaret && mFocusLocked) {
-			mParentScreen.font().draw("|", x + width / 2 + lSeparatorHalfWidth + SPACE_BETWEEN_TEXT + lInputTextWidth, y + height / 2 - lFontHeight * 0.5f, pParentZDepth + .1f, 1.0f);
+			mParentScreen.font().draw("|", x + w / 2 + lSeparatorHalfWidth + SPACE_BETWEEN_TEXT + lInputTextWidth, y + h / 2 - lFontHeight * 0.5f, pParentZDepth + .1f, 1.0f);
 		}
 
 		mParentScreen.font().end();

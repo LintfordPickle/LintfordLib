@@ -138,7 +138,7 @@ public class MenuSliderEntry extends MenuEntry {
 	public void update(LintfordCore pCore, MenuScreen pScreen, boolean pIsSelected) {
 		super.update(pCore, pScreen, pIsSelected);
 
-		mValuePosX = width / 2 + width / 4;
+		mValuePosX = w / 2 + w / 4;
 
 		mDownButton.x = x + mValuePosX - 32 - 16;
 		mDownButton.y = y;
@@ -154,7 +154,7 @@ public class MenuSliderEntry extends MenuEntry {
 		Texture lTexture = TextureManager.TEXTURE_CORE_UI;
 
 		float valueWith = lFont.bitmap().getStringWidth("" + mValue);
-		
+
 		// draw the label to the left //
 		lFont.begin(pCore.HUD());
 		lFont.draw(mLabel, x + 2, y + 2, -2f, 1f);
@@ -163,8 +163,8 @@ public class MenuSliderEntry extends MenuEntry {
 
 		// TODO: This should be a slider as well ..
 		mTextureBatch.begin(pCore.HUD());
-		mTextureBatch.draw(160, 0, 32, 32, mDownButton.x, mDownButton.y, -2f, 32, 32, 1f, lTexture);
-		mTextureBatch.draw(224, 0, 32, 32, mUpButton.x, mUpButton.y, -2f, 32, 32, 1f, lTexture);
+		mTextureBatch.draw(lTexture, 160, 0, 32, 32, mDownButton.x, mDownButton.y, 32, 32, -2f, 1f, 1f, 1f, 1f);
+		mTextureBatch.draw(lTexture, 224, 0, 32, 32, mUpButton.x,   mUpButton.y,   32, 32, -2f, 1f, 1f, 1f, 1f);
 		mTextureBatch.end();
 
 	}

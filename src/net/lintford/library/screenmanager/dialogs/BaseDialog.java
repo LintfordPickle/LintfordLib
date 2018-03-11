@@ -96,15 +96,15 @@ public abstract class BaseDialog extends MenuScreen {
 				lLayout.x = lLayout.paddingLeft();
 				break;
 			case center:
-				lLayout.x = -lLayout.width / 2;
+				lLayout.x = -lLayout.w / 2;
 				break;
 			case right:
-				lLayout.x = pCore.config().display().windowSize().x - lLayout.width - lLayout.paddingRight();
+				lLayout.x = pCore.config().display().windowSize().x - lLayout.w - lLayout.paddingRight();
 				break;
 			}
 
 			lLayout.y = lYPos;
-			lYPos += lLayout.height + lLayout.paddingBottom();
+			lYPos += lLayout.h + lLayout.paddingBottom();
 
 			layouts().get(i).updateStructure();
 
@@ -126,10 +126,9 @@ public abstract class BaseDialog extends MenuScreen {
 		final float lDialogWidth = mDialogWidth;
 		final float lDialogHeight = 150 + font().bitmap().getStringHeight(mMessageString);
 
-		final float SCALE = 1f;
 		if (mDrawBackground) {
 			mSpriteBatch.begin(pCore.HUD());
-			mSpriteBatch.draw(64, 0, 32, 32, -lDialogWidth * 0.5f, -lDialogHeight * 0.5f, -1.5f, lDialogWidth, lDialogHeight, SCALE, mR, mG, mB, mA, TextureManager.TEXTURE_CORE_UI);
+			mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 64, 0, 32, 32, -lDialogWidth * 0.5f, -lDialogHeight * 0.5f, lDialogWidth, lDialogHeight, -1.5f, mR, mG, mB, mA);
 			mSpriteBatch.end();
 		}
 
@@ -141,7 +140,7 @@ public abstract class BaseDialog extends MenuScreen {
 		font().end();
 
 		super.draw(pCore);
-		
+
 	}
 
 }

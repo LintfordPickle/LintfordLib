@@ -10,10 +10,6 @@ import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 public class ScrollBarContentRectangle extends AARectangle {
 
 	// --------------------------------------
-	// Contants
-	// --------------------------------------
-
-	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
@@ -53,7 +49,7 @@ public class ScrollBarContentRectangle extends AARectangle {
 		// Draw into the stencil buffer to mark the 'active' bits
 		pTextureBatch.begin(pCore.HUD());
 
-		pTextureBatch.draw(0, 0, 32, 32, mParentArea.windowArea().x, mParentArea.windowArea().y, -8.0f, mParentArea.windowArea().width, mParentArea.windowArea().height, 1.0f, 0.23f, 0.12f, 0.0f, 0.0f, TextureManager.TEXTURE_CORE_UI);
+		pTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, mParentArea.windowArea().x, mParentArea.windowArea().y, mParentArea.windowArea().w, mParentArea.windowArea().h, -8.0f, 0.23f, 0.12f, 0.0f, 0.0f);
 
 		pTextureBatch.end();
 
@@ -65,9 +61,5 @@ public class ScrollBarContentRectangle extends AARectangle {
 	public void postDraw(LintfordCore pCore) {
 		GL11.glDisable(GL11.GL_STENCIL_TEST);
 	}
-
-	// --------------------------------------
-	// Methods
-	// --------------------------------------
 
 }

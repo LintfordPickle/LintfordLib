@@ -68,7 +68,7 @@ public class PixelFontSpriteBatch extends TextureBatch {
 			float u = xx * mCharImageSize;
 			float v = yy * mCharImageSize;
 
-			draw(u, v, mCharImageSize, mCharImageSize, lPosX, lPosY, pZ, mCharImageSize, mCharImageSize, pScale, pR, pG, pB, pA, mTexture);
+			draw(mTexture, u, v, mCharImageSize, mCharImageSize, lPosX, lPosY, mCharImageSize, mCharImageSize, pZ, pR, pG, pB, pA);
 			lPosX += mCharImageSize * pScale;
 		}
 

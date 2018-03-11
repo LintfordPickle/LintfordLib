@@ -60,7 +60,7 @@ public class UIRadioGroup extends UIWidget implements IMenuEntryClickListener {
 		for (int i = 0; i < lButtonCount; i++) {
 			mButtons.get(i).x = x;
 			mButtons.get(i).y = lYPos;
-			mButtons.get(i).width = 50;
+			mButtons.get(i).w = 50;
 
 			lYPos += 35;
 

@@ -142,10 +142,10 @@ public class UIInputText extends AARectangle implements IBufferedInputCallback {
 		mCaretFlashTimer += pCore.time().elapseGameTimeMilli();
 
 		final int lCANCEL_RECT_SIZE = 24;
-		mCancelRectangle.x = x + width - lCANCEL_RECT_SIZE - 2;
+		mCancelRectangle.x = x + w - lCANCEL_RECT_SIZE - 2;
 		mCancelRectangle.y = y + 2;
-		mCancelRectangle.width = lCANCEL_RECT_SIZE;
-		mCancelRectangle.height = lCANCEL_RECT_SIZE;
+		mCancelRectangle.w = lCANCEL_RECT_SIZE;
+		mCancelRectangle.h = lCANCEL_RECT_SIZE;
 
 		if (mHasFocus) {
 			// flash and update the location of the caret
@@ -158,14 +158,13 @@ public class UIInputText extends AARectangle implements IBufferedInputCallback {
 	}
 
 	public void draw(LintfordCore pCore, TextureBatch pUISpriteBatch) {
-
 		pUISpriteBatch.begin(pCore.HUD());
-		pUISpriteBatch.draw(64, 0, 32, 32, x, y + 3, -0.1f, width, height - 6, 1f, 1f, 1f, 1f, 1, TextureManager.TEXTURE_CORE_UI);
+		pUISpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 64, 0, 32, 32, x, y + 3, w, h - 6, -0.1f, 1f, 1f, 1f, 1);
 		pUISpriteBatch.end();
 
 		// Draw the cancel button rectangle
 		pUISpriteBatch.begin(pCore.HUD());
-		pUISpriteBatch.draw(288, 64, 32, 32, mCancelRectangle.x, mCancelRectangle.y, -0.1f, mCancelRectangle.width, mCancelRectangle.height, 1f, 1f, 1f, 1f, 1, TextureManager.TEXTURE_CORE_UI);
+		pUISpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 288, 64, 32, 32, mCancelRectangle.x, mCancelRectangle.y, mCancelRectangle.w, mCancelRectangle.h, -0.1f, 1f, 1f, 1f, 1);
 		pUISpriteBatch.end();
 
 		FontUnit lFont = mRendererManager.textFont();

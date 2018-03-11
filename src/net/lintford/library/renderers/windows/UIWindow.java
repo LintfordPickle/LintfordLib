@@ -130,8 +130,8 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 		// Set some sane defaults
 		mWindowArea.x = 10;
 		mWindowArea.y = 10;
-		mWindowArea.width = 320;
-		mWindowArea.height = 240;
+		mWindowArea.w = 320;
+		mWindowArea.h = 240;
 
 		mWindowAlpha = 1.0f;
 
@@ -140,8 +140,8 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 
 		mContentRectangle.x = mWindowArea.x;
 		mContentRectangle.y = mWindowArea.y + DEFAULT_TITLEBAR_HEIGHT;
-		mContentRectangle.width = 0;
-		mContentRectangle.height = 0;
+		mContentRectangle.w = 0;
+		mContentRectangle.h = 0;
 
 		// sane default
 		mWindowTitle = "<unnamed>";
@@ -156,7 +156,7 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 
 	public void loadGLContent(ResourceManager pResourceManager) {
 		mContentDisplayArea.y = mWindowArea.y + getTitleBarHeight();
-		mContentDisplayArea.height = mWindowArea.height - +getTitleBarHeight();
+		mContentDisplayArea.h = mWindowArea.h - +getTitleBarHeight();
 
 		mIsLoaded = true;
 
@@ -279,32 +279,31 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 
 		mWindowAlpha = 0.95f;
 
-		final TextureBatch SPRITE_BATCH_UI = mRendererManager.uiSpriteBatch();
+		final TextureBatch lTextureBatch = mRendererManager.uiTextureBatch();
 
 		// Draw the window background
-		SPRITE_BATCH_UI.begin(pCore.HUD());
-		SPRITE_BATCH_UI.draw(96, 0, 32, 32, mWindowArea.x, mWindowArea.y + getTitleBarHeight() + 5, Z_DEPTH, mWindowArea.width, mWindowArea.height - getTitleBarHeight() - 5, 1f, 1f, 1f, 0.7f, 0f, 0f, 0f, 1f, 1f, TextureManager.TEXTURE_CORE_UI);
-		SPRITE_BATCH_UI.end();
+		lTextureBatch.begin(pCore.HUD());
+		lTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 96, 0, 32, 32, mWindowArea.x, mWindowArea.y + getTitleBarHeight() + 5, mWindowArea.w, mWindowArea.h - getTitleBarHeight() - 5, Z_DEPTH, 1f, 1f, 1f, 0.7f);
+		lTextureBatch.end();
 
 		// Draw the title bar
-		SPRITE_BATCH_UI.begin(pCore.HUD());
-		SPRITE_BATCH_UI.draw(448, 0, 32, 32, mWindowArea.x, mWindowArea.y, Z_DEPTH, 32, getTitleBarHeight(), 1f, 1f, 1f, mWindowAlpha, 0f, 0f, 0f, 1f, 1f, TextureManager.TEXTURE_CORE_UI);
-		SPRITE_BATCH_UI.draw(480, 0, 32, 32, mWindowArea.x + 32, mWindowArea.y, Z_DEPTH, mWindowArea.width - 64, getTitleBarHeight(), 1f, 1f, 1f, mWindowAlpha, 0f, 0f, 0f, 1f, 1f, TextureManager.TEXTURE_CORE_UI);
-		SPRITE_BATCH_UI.draw(512, 0, 32, 32, mWindowArea.x + mWindowArea.width - 32, mWindowArea.y, Z_DEPTH, 32, getTitleBarHeight(), 1f, 1f, 1f, mWindowAlpha, 0f, 0f, 0f, 1f, 1f, TextureManager.TEXTURE_CORE_UI);
+		lTextureBatch.begin(pCore.HUD());
+		lTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 448, 0, 32, 32, mWindowArea.x, mWindowArea.y, 32, getTitleBarHeight(), Z_DEPTH, 1f, 1f, 1f, mWindowAlpha);
+		lTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 480, 0, 32, 32, mWindowArea.x + 32, mWindowArea.y, mWindowArea.w - 64, getTitleBarHeight(), Z_DEPTH, 1f, 1f, 1f, mWindowAlpha);
+		lTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 512, 0, 32, 32, mWindowArea.x + mWindowArea.w - 32, mWindowArea.y, Z_DEPTH, 32, getTitleBarHeight(), 1f, 1f, 1f, mWindowAlpha);
 
 		float lTitleX = mWindowArea.x + WINDOW_CONTENT_PADDING_X;
 		float lTitleY = mWindowArea.y;
 
 		// Render the icons from the game ui texture
 		if (mIconSrcRectangle != null && !mIconSrcRectangle.isEmpty()) {
-			SPRITE_BATCH_UI.draw(mIconSrcRectangle.x, mIconSrcRectangle.y, mIconSrcRectangle.width, mIconSrcRectangle.height, lTitleX, lTitleY, Z_DEPTH, getTitleBarHeight(), getTitleBarHeight(), 1f, 1f, 1f, mWindowAlpha, 0f, 0f, 0f, 1f, 1f,
-					TextureManager.TEXTURE_CORE_UI);
+			lTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, mIconSrcRectangle.x, mIconSrcRectangle.y, mIconSrcRectangle.w, mIconSrcRectangle.h, lTitleX, lTitleY, getTitleBarHeight(), getTitleBarHeight(), Z_DEPTH, 1f, 1f, 1f, mWindowAlpha);
 
 			lTitleX += 32 + WINDOW_CONTENT_PADDING_X;
 
 		}
 
-		SPRITE_BATCH_UI.end();
+		lTextureBatch.end();
 
 		// Draw the window title
 		FontUnit lTitleFontUnit = mRendererManager.titleFont();
@@ -312,8 +311,8 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 		lTitleFontUnit.draw(mWindowTitle, lTitleX, lTitleY + 2, Z_DEPTH, 1f, 1f, 1f, 1f, 1f, -1);
 		lTitleFontUnit.end();
 
-		if (mContentRectangle.height - windowArea().height > 0) {
-			mScrollBar.draw(pCore, SPRITE_BATCH_UI, Z_DEPTH);
+		if (mContentRectangle.h - windowArea().h > 0) {
+			mScrollBar.draw(pCore, lTextureBatch, Z_DEPTH);
 
 		}
 
@@ -340,8 +339,8 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 
 		mWindowArea.x = lHUDBoundingRect.left() + SCREEN_PADDING;
 		mWindowArea.y = lHUDBoundingRect.top() + 50;
-		mWindowArea.width = lHUDBoundingRect.width * 0.5f - WINDOW_PADDING - SCREEN_PADDING;
-		mWindowArea.height = lHUDBoundingRect.height / 2 - WINDOW_PADDING - 50;
+		mWindowArea.w = lHUDBoundingRect.w * 0.5f - WINDOW_PADDING - SCREEN_PADDING;
+		mWindowArea.h = lHUDBoundingRect.h / 2 - WINDOW_PADDING - 50;
 
 	}
 

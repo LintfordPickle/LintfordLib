@@ -19,16 +19,13 @@ public abstract class Shape implements Serializable {
 
 	protected float centerX;
 	protected float centerY;
-	
+
 	protected float py;
 	protected float px;
 
 	protected float rot;
 
 	protected float rad;
-
-	protected float sx;
-	protected float sy;
 
 	protected boolean transformed;
 	protected Matrix4f transformationMatrix = new Matrix4f();
@@ -61,24 +58,24 @@ public abstract class Shape implements Serializable {
 	public float pivotX() {
 		return px;
 	}
-	
+
 	public void pivotX(float pNewValue) {
 		px = pNewValue;
 	}
-	
+
 	public float pivotY() {
 		return py;
 	}
-	
+
 	public void pivotY(float pNewValue) {
 		py = pNewValue;
 	}
-	
+
 	public void setPivotPoint(float pX, float pY) {
 		py = pX;
 		py = pY;
 	}
-	
+
 	// --------------------------------------
 	// Constructors
 	// --------------------------------------
@@ -100,6 +97,7 @@ public abstract class Shape implements Serializable {
 	public abstract Vector2f[] getAxes();
 
 	public abstract void rotateRel(float pRotateAmt);
+
 	public abstract void rotateAbs(float pRotateAmt);
 
 }

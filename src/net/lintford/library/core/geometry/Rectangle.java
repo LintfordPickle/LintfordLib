@@ -23,6 +23,11 @@ public class Rectangle extends Shape {
 	private boolean mIsAABB; // Block rotations
 	private float mWidth;
 	private float mHeight;
+	protected float sx;
+	protected float sy;
+
+	protected boolean mFlipH;
+	protected boolean mFlipV;
 
 	// --------------------------------------
 	// Properties
@@ -60,6 +65,41 @@ public class Rectangle extends Shape {
 		return mHeight;
 	}
 
+	public float scaleX() {
+		return sx;
+	}
+
+	public void scaleX(float pNewValue) {
+		if (sx != pNewValue) {
+			setDirty();
+
+		}
+
+		sx = pNewValue;
+	}
+
+	public float scaleY() {
+		return sy;
+	}
+
+	public void scaleY(float pNewValue) {
+		if (sy != pNewValue) {
+			setDirty();
+
+		}
+
+		sy = pNewValue;
+
+	}
+
+	public void setScale(float pX, float pY) {
+		setDirty();
+
+		sx = pX;
+		sy = pY;
+
+	}
+
 	public Vector2f[] getVertices() {
 		if (mIsDirty) {
 			updateVertices();
@@ -71,7 +111,27 @@ public class Rectangle extends Shape {
 	public void setDirty() {
 		mIsDirty = true;
 	}
-	
+
+	public boolean flipH() {
+		return mFlipH;
+	}
+
+	public void flipH(boolean pNewValue) {
+		if (pNewValue != mFlipH)
+			mIsDirty = true;
+		mFlipH = pNewValue;
+	}
+
+	public boolean flipV() {
+		return mFlipV;
+	}
+
+	public void flipV(boolean pNewValue) {
+		if (pNewValue != mFlipV)
+			mIsDirty = true;
+		mFlipV = pNewValue;
+	}
+
 	// --------------------------------------
 	// Constructors
 	// --------------------------------------
@@ -136,9 +196,9 @@ public class Rectangle extends Shape {
 
 	@Override
 	public Vector2f[] getAxes() {
-		if(mIsDirty)
+		if (mIsDirty)
 			updateVertices();
-		
+
 		final int AXES_LENGTH = 2;
 		Vector2f[] axes = new Vector2f[AXES_LENGTH]; // Rectangle only has two axis to be tested against
 
@@ -249,18 +309,25 @@ public class Rectangle extends Shape {
 	}
 
 	private void updateVertices() {
+
+		final float lWidth = mFlipH ? -mWidth : mWidth;
+		final float lHeight = mFlipV ? -mHeight : mHeight;
+
+		final float lPX = mFlipH ? -px : px;
+		final float lPY = mFlipV ? -py : py;
+
 		// Get local space vertex positions
-		mVertices[0].x = -mWidth / 2;
-		mVertices[0].y = -mHeight / 2;
+		mVertices[0].x = -lWidth / 2;
+		mVertices[0].y = -lHeight / 2;
 
-		mVertices[1].x = mWidth / 2;
-		mVertices[1].y = -mHeight / 2;
+		mVertices[1].x = lWidth / 2;
+		mVertices[1].y = -lHeight / 2;
 
-		mVertices[2].x = -mWidth / 2;
-		mVertices[2].y = mHeight / 2;
+		mVertices[2].x = -lWidth / 2;
+		mVertices[2].y = lHeight / 2;
 
-		mVertices[3].x = mWidth / 2;
-		mVertices[3].y = mHeight / 2;
+		mVertices[3].x = lWidth / 2;
+		mVertices[3].y = lHeight / 2;
 
 		float sin = (float) (Math.sin(rot));
 		float cos = (float) (Math.cos(rot));
@@ -268,12 +335,11 @@ public class Rectangle extends Shape {
 		// iterate over the vertices, rotating them by the given amt around the origin point of the rectangle.
 		for (int i = 0; i < NUM_VERTICES; i++) {
 			// Scale the vertices out from local center (before applying world translation)
-			float dx = -px + mVertices[i].x * sx;
-			float dy = -py + mVertices[i].y * sy;
+			float dx = -lPX + mVertices[i].x * sx;
+			float dy = -lPY + mVertices[i].y * sy;
 
-			mVertices[i].x = centerX + (dx * cos - (dy * 1f) * sin);
-			mVertices[i].y = centerY + (dx * sin + (dy * 1f) * cos);
-			
+			mVertices[i].x = centerX + (dx * cos - (dy * 1f) * sin) * sx;
+			mVertices[i].y = centerY + (dx * sin + (dy * 1f) * cos) * sy;
 
 		}
 

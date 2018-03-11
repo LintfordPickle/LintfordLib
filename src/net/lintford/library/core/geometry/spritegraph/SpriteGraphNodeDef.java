@@ -3,7 +3,7 @@ package net.lintford.library.core.geometry.spritegraph;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheet;
+import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDef;
 
 public class SpriteGraphNodeDef {
 
@@ -13,7 +13,7 @@ public class SpriteGraphNodeDef {
 
 	public String name;
 
-	/** List of possible types is loaded from the {@link SpriteSheet}. */
+	/** List of possible types is loaded from the {@link SpriteSheetDef}. */
 	public String type;
 
 	/**

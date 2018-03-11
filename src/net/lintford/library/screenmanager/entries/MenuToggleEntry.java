@@ -124,23 +124,21 @@ public class MenuToggleEntry extends MenuEntry {
 		final float TEXT_HEIGHT = lFontBitmap.getStringHeight(mLabel);
 		final float lSeparatorHalfWidth = lFontBitmap.getStringWidth(mSeparator) * 0.5f;
 
-		// TODO(John): we could make this a lot more readable and save on the individual calculations of the width/height of the same strings
-
 		// Draw the left/right buttons
-		mSpriteBatch.begin(pCore.HUD());
+		mTextureBatch.begin(pCore.HUD());
 
 		// Render the check box (either ticked or empty)
 		if (mIsChecked)
-			mSpriteBatch.draw(288, 128, 32, 32, x + width / 2 + 64, y + height / 2 - 8, pParentZDepth + .1f, 24, 24, 1f, TextureManager.TEXTURE_CORE_UI);
+			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 288, 128, 32, 32, x + w / 2 + 64, y + h / 2 - 8, 24, 24, pParentZDepth + .1f, 1f, 1f, 1f, 1f);
 		else
-			mSpriteBatch.draw(288, 160, 32, 32, x + width / 2 + 64, y + height / 2 - 8, pParentZDepth + .1f, 24, 24, 1f, TextureManager.TEXTURE_CORE_UI);
+			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 288, 160, 32, 32, x + w / 2 + 64, y + h / 2 - 8, 24, 24, pParentZDepth + .1f, 1f, 1f, 1f, 1f);
 
-		mSpriteBatch.end();
+		mTextureBatch.end();
 
 		mParentScreen.font().begin(pCore.HUD());
-		mParentScreen.font().draw(mLabel, x + width / 2 - lLabelWidth - SPACE_BETWEEN_TEXT - lSeparatorHalfWidth, y + height / 2 - lFontBitmap.getStringHeight(mLabel) * 0.5f, pParentZDepth + .1f, mParentScreen.r(), mParentScreen.g(),
-				mParentScreen.b(), mParentScreen.a(), 1.0f, -1);
-		mParentScreen.font().draw(mSeparator, x + width / 2 - lSeparatorHalfWidth, y + height / 2 - TEXT_HEIGHT * 0.5f, pParentZDepth + .1f, mParentScreen.r(), mParentScreen.g(), mParentScreen.b(), mParentScreen.a(), 1.0f, -1);
+		mParentScreen.font().draw(mLabel, x + w / 2 - lLabelWidth - SPACE_BETWEEN_TEXT - lSeparatorHalfWidth, y + h / 2 - lFontBitmap.getStringHeight(mLabel) * 0.5f, pParentZDepth + .1f, mParentScreen.r(), mParentScreen.g(), mParentScreen.b(),
+				mParentScreen.a(), 1.0f, -1);
+		mParentScreen.font().draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - TEXT_HEIGHT * 0.5f, pParentZDepth + .1f, mParentScreen.r(), mParentScreen.g(), mParentScreen.b(), mParentScreen.a(), 1.0f, -1);
 
 		// Render the items
 		mParentScreen.font().end();

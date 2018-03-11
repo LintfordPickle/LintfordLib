@@ -194,13 +194,13 @@ public class MenuEnumEntry extends MenuEntry {
 
 		// Update the button positions to line up with this entry
 		// TODO(John): Need to implement left/right buttons for MenuEnumEntries.
-		mLeftButtonRectangle.x = x + width / 2 + 16;
+		mLeftButtonRectangle.x = x + w / 2 + 16;
 		mLeftButtonRectangle.y = y;
-		mLeftButtonRectangle.height = height;
+		mLeftButtonRectangle.h = h;
 
-		mRightButtonRectangle.x = x + width + 64;
+		mRightButtonRectangle.x = x + w + 64;
 		mRightButtonRectangle.y = y;
-		mRightButtonRectangle.height = height;
+		mRightButtonRectangle.h = h;
 	}
 
 	@Override
@@ -216,29 +216,28 @@ public class MenuEnumEntry extends MenuEntry {
 		// TODO(John): we could make this a lot more readable and save on the individual calculations of the width/height of the same strings
 
 		// Draw the left/right buttons
-		mSpriteBatch.begin(pCore.HUD());
+		mTextureBatch.begin(pCore.HUD());
 		final float ARROW_BUTTON_SIZE = 16;
-		final float ARROW_PADDING_X = mLeftButtonRectangle.width - ARROW_BUTTON_SIZE;
-		final float ARROW_PADDING_Y = mLeftButtonRectangle.height - ARROW_BUTTON_SIZE;
+		final float ARROW_PADDING_X = mLeftButtonRectangle.w - ARROW_BUTTON_SIZE;
+		final float ARROW_PADDING_Y = mLeftButtonRectangle.h - ARROW_BUTTON_SIZE;
 
 		// Render the two arrows either side of the enumeration options
 		if (mButtonsEnabled) {
-			mSpriteBatch.draw(384, 64, 32, 32, mLeftButtonRectangle.x + ARROW_BUTTON_SIZE + ARROW_PADDING_X, mLeftButtonRectangle.y + ARROW_PADDING_Y, pParentZDepth, -ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, 1f, 1f, 1f, 1f, 1f,
-					TextureManager.TEXTURE_CORE_UI);
-			mSpriteBatch.draw(384, 64, 32, 32, mRightButtonRectangle.x + ARROW_PADDING_X, mRightButtonRectangle.y + ARROW_PADDING_Y, pParentZDepth, ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, 1f, 1f, 1f, 1f, 1f, TextureManager.TEXTURE_CORE_UI);
+			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 384, 64, 32, 32, mLeftButtonRectangle.x + ARROW_BUTTON_SIZE + ARROW_PADDING_X, mLeftButtonRectangle.y + ARROW_PADDING_Y, -ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, pParentZDepth, 1f, 1f, 1f, 1f);
+			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 384, 64, 32, 32, mRightButtonRectangle.x + ARROW_PADDING_X, mRightButtonRectangle.y + ARROW_PADDING_Y, ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, pParentZDepth, 1f, 1f, 1f, 1f);
 
 		}
 
-		mSpriteBatch.end();
+		mTextureBatch.end();
 
 		mParentScreen.font().begin(pCore.HUD());
-		mParentScreen.font().draw(mLabel, x + width / 2 - 10 - lLabelWidth - lSeparatorHalfWidth, y + height / 2 - TEXT_HEIGHT * 0.5f, pParentZDepth, mParentScreen.r(), mParentScreen.g(), mParentScreen.b(), mParentScreen.a(), 1.0f, -1);
-		mParentScreen.font().draw(mSeparator, x + width / 2 - lSeparatorHalfWidth, y + height / 2 - TEXT_HEIGHT * 0.5f, pParentZDepth, mParentScreen.r(), mParentScreen.g(), mParentScreen.b(), mParentScreen.a(), 1.0f, -1);
+		mParentScreen.font().draw(mLabel, x + w / 2 - 10 - lLabelWidth - lSeparatorHalfWidth, y + h / 2 - TEXT_HEIGHT * 0.5f, pParentZDepth, mParentScreen.r(), mParentScreen.g(), mParentScreen.b(), mParentScreen.a(), 1.0f, -1);
+		mParentScreen.font().draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - TEXT_HEIGHT * 0.5f, pParentZDepth, mParentScreen.r(), mParentScreen.g(), mParentScreen.b(), mParentScreen.a(), 1.0f, -1);
 
 		// Render the items
 		if (mItems.size() > 0) {
 			String lCurItem = mItems.get(mSelectedIndex);
-			mParentScreen.font().draw(lCurItem, x + width / 2 + lSeparatorHalfWidth + SPACE_BETWEEN_TEXT + 32, y + height / 2 - TEXT_HEIGHT * 0.5f, pParentZDepth, mParentScreen.r(), mParentScreen.g(), mParentScreen.b(), mParentScreen.a(), 1.0f, -1);
+			mParentScreen.font().draw(lCurItem, x + w / 2 + lSeparatorHalfWidth + SPACE_BETWEEN_TEXT + 32, y + h / 2 - TEXT_HEIGHT * 0.5f, pParentZDepth, mParentScreen.r(), mParentScreen.g(), mParentScreen.b(), mParentScreen.a(), 1.0f, -1);
 		}
 		mParentScreen.font().end();
 

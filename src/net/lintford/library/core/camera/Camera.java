@@ -180,8 +180,8 @@ public class Camera implements ICamera {
 		mZoomFactor = 1.0f;
 
 		createView();
-		createOrtho(mBoundingRectangle.width, mBoundingRectangle.height);
-		updateZoomBounds(mBoundingRectangle.width, mBoundingRectangle.height);
+		createOrtho(mBoundingRectangle.w, mBoundingRectangle.h);
+		updateZoomBounds(mBoundingRectangle.w, mBoundingRectangle.h);
 
 	}
 

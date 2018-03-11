@@ -13,8 +13,8 @@ public class AARectangle {
 
 	public float x;
 	public float y;
-	public float width;
-	public float height;
+	public float w;
+	public float h;
 
 	// --------------------------------------
 	// Properties
@@ -25,7 +25,7 @@ public class AARectangle {
 	}
 
 	public float right() {
-		return x + width;
+		return x + w;
 	}
 
 	public float top() {
@@ -33,7 +33,7 @@ public class AARectangle {
 	}
 
 	public float bottom() {
-		return y + height;
+		return y + h;
 	}
 
 	// --------------------------------------
@@ -43,22 +43,22 @@ public class AARectangle {
 	public AARectangle() {
 		x = 0;
 		y = 0;
-		width = 0;
-		height = 0;
+		w = 0;
+		h = 0;
 	}
 
 	public AARectangle(AARectangle pCopy) {
 		x = pCopy.x;
 		y = pCopy.y;
-		width = pCopy.width;
-		height = pCopy.height;
+		w = pCopy.w;
+		h = pCopy.h;
 	}
 
 	public AARectangle(float pX, float pY, float pWidth, float pHeight) {
 		x = pX;
 		y = pY;
-		width = pWidth;
-		height = pHeight;
+		w = pWidth;
+		h = pHeight;
 	}
 
 	// --------------------------------------
@@ -72,7 +72,7 @@ public class AARectangle {
 	 * @Returns True if this rectangle instance entirely contains the given rectangle. False otherwise.
 	 */
 	public boolean intersects(AARectangle pOtherRect) {
-		return ((((pOtherRect.x < (this.x + this.width)) && (this.x < (pOtherRect.x + pOtherRect.width))) && (pOtherRect.y < (this.y + this.height))) && (this.y < (pOtherRect.y + pOtherRect.height)));
+		return ((((pOtherRect.x < (this.x + this.w)) && (this.x < (pOtherRect.x + pOtherRect.w))) && (pOtherRect.y < (this.y + this.h))) && (this.y < (pOtherRect.y + pOtherRect.h)));
 	}
 
 	/**
@@ -82,7 +82,7 @@ public class AARectangle {
 	 * @Returns True if this rectangle instance entirely contains the given point. False otherwise.
 	 */
 	public boolean intersects(Vector2f pPoint) {
-		return ((((this.x <= pPoint.x) && (pPoint.x < (this.x + this.width))) && (this.y <= pPoint.y)) && (pPoint.y < (this.y + this.height)));
+		return ((((this.x <= pPoint.x) && (pPoint.x < (this.x + this.w))) && (this.y <= pPoint.y)) && (pPoint.y < (this.y + this.h)));
 	}
 
 	/**
@@ -97,7 +97,7 @@ public class AARectangle {
 	}
 
 	public boolean intersects(float pX, float pY, float pW, float pH) {
-		return ((((pX < (this.x + this.width)) && (this.x < (pX + pW))) && (pY < (this.y + this.height))) && (this.y < (pY + pH)));
+		return ((((pX < (this.x + this.w)) && (this.x < (pX + pW))) && (pY < (this.y + this.h))) && (this.y < (pY + pH)));
 	}
 
 	/**
@@ -106,17 +106,17 @@ public class AARectangle {
 	 * @Returs True if everything is zero.
 	 */
 	public boolean isEmpty() {
-		return ((((this.width == 0) && (this.height == 0)) && (this.x == 0)) && (this.y == 0));
+		return ((((this.w == 0) && (this.h == 0)) && (this.x == 0)) && (this.y == 0));
 	}
 
 	/** @Returns The center X coordinate of this rectangle. */
 	public float centerX() {
-		return this.x + (this.width / 2);
+		return this.x + (this.w / 2);
 	}
 
 	/** @Returns The center Y coordinate of this rectangle. */
 	public float centerY() {
-		return this.y + (this.height / 2);
+		return this.y + (this.h / 2);
 	}
 
 	/**
@@ -126,8 +126,8 @@ public class AARectangle {
 	 * @param cy
 	 */
 	public void setCenterPosition(float pX, float pY) {
-		x = pX - (width * 0.5f);
-		y = pY - (height * 0.5f);
+		x = pX - (w * 0.5f);
+		y = pY - (h * 0.5f);
 	}
 
 	public void setPosition(float pX, float pY) {
@@ -136,57 +136,57 @@ public class AARectangle {
 	}
 
 	public void setWidth(float pWidth) {
-		width = pWidth;
+		w = pWidth;
 	}
 
 	public void setHeight(float pHeight) {
-		height = pHeight;
+		h = pHeight;
 	}
 
 	public void set(float pX, float pY, float pWidth, float pHeight) {
 		x = pX;
 		y = pY;
-		width = pWidth;
-		height = pHeight;
+		w = pWidth;
+		h = pHeight;
 
 	}
 
 	public void set(AARectangle pRect) {
 		x = pRect.x;
 		y = pRect.y;
-		width = pRect.width;
-		height = pRect.height;
+		w = pRect.w;
+		h = pRect.h;
 
 	}
 
 	public void set(AARectangle pRect, float pRatio) {
-		final float NEW_WIDTH = pRect.width * pRatio;
-		final float NEW_HEIGHT = pRect.height * pRatio;
+		final float NEW_WIDTH = pRect.w * pRatio;
+		final float NEW_HEIGHT = pRect.h * pRatio;
 
 		x = pRect.x - NEW_WIDTH / 2f;
 		y = pRect.y - NEW_HEIGHT / 2f;
-		width = NEW_WIDTH;
-		height = NEW_HEIGHT;
+		w = NEW_WIDTH;
+		h = NEW_HEIGHT;
 
 	}
 
 	public void set(AARectangle pRect, float pWRatio, float pHRatio) {
-		final float NEW_WIDTH = pRect.width * pWRatio;
-		final float NEW_HEIGHT = pRect.height * pHRatio;
+		final float NEW_WIDTH = pRect.w * pWRatio;
+		final float NEW_HEIGHT = pRect.h * pHRatio;
 
 		x = pRect.x - NEW_WIDTH / 2f;
 		y = pRect.y - NEW_HEIGHT / 2f;
-		width = NEW_WIDTH;
-		height = NEW_HEIGHT;
+		w = NEW_WIDTH;
+		h = NEW_HEIGHT;
 
 	}
 
 	/** Expands the bounds of this rectangle by the given amount. */
 	public void expand(float pAmt) {
-		x += pAmt * 0.5f;
-		width -= pAmt * 2;
-		y += pAmt * 0.5f;
-		height -= pAmt * 2;
+		x -= pAmt * 0.5f;
+		w += pAmt * 2;
+		y -= pAmt * 0.5f;
+		h += pAmt * 2;
 	}
 
 }

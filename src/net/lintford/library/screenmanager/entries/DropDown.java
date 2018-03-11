@@ -193,7 +193,7 @@ public class DropDown extends MenuEntry {
 		GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT); // Clear the stencil buffer
 
 		mSpriteBatch.begin(pCore.HUD());
-		mSpriteBatch.draw(0, 0, 32, 32, x, y, pParentZDepth + .1f, getWidth(), getHeight(), 1.0f, 0.23f, 0.12f, 0.12f, 0.5f, TextureManager.TEXTURE_CORE_UI);
+		mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, x, y, getWidth(), getHeight(), pParentZDepth + .1f, 0.23f, 0.12f, 0.12f, 0.5f);
 		mSpriteBatch.end();
 
 		GL11.glStencilFunc(GL11.GL_EQUAL, 1, 0xFF); // Pass test if stencil value is 1

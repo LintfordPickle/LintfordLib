@@ -176,4 +176,14 @@ public class MathHelper {
 		return t * t * t * (t * (t * 6 - 15) + 10);
 	}
 
+	// simple linear tweening - no easing, no acceleration
+	public static double linearInOut(float pTime, float pStart, float pChangeInValue, float pDuration) {
+		return pChangeInValue * pTime / pDuration + pStart;
+	};
+
+	// sinusoidal easing in/out - accelerating until halfway, then decelerating
+	public static double sinusoidalInOut(float pTime, float pStart, float pChangeInValue, float pDuration) {
+		return -pChangeInValue / 2 * (Math.cos(Math.PI * pTime / pDuration) - 1) + pStart;
+	};
+
 }

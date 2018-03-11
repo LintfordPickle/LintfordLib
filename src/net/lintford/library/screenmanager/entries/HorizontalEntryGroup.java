@@ -33,7 +33,7 @@ public class HorizontalEntryGroup extends MenuEntry {
 		float lTotalWidth = 0;
 		for (int i = 0; i < lCount; i++) {
 			lTotalWidth += mChildEntries.get(i).paddingHorizontal();
-			lTotalWidth += mChildEntries.get(i).width;
+			lTotalWidth += mChildEntries.get(i).w;
 			lTotalWidth += mChildEntries.get(i).paddingHorizontal();
 		}
 
@@ -154,16 +154,17 @@ public class HorizontalEntryGroup extends MenuEntry {
 	@Override
 	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pParentZDepth) {
 		if (ConstantsTable.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
-			mSpriteBatch.begin(pCore.HUD());
-			final float SCALE = 1f;
+			mTextureBatch.begin(pCore.HUD());
 			final float ALPHA = 0.3f;
-			mSpriteBatch.draw(0, 0, 32, 32, x, y, pParentZDepth + .1f, width, height, SCALE, 0.5f * mParentScreen.r(), 0.2f * mParentScreen.g(), ALPHA * mParentScreen.b(), mParentScreen.a(), TextureManager.TEXTURE_CORE_UI);
-			mSpriteBatch.end();
+			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, x, y, w, h, pParentZDepth + .1f, 0.5f * mParentScreen.r(), 0.2f * mParentScreen.g(), ALPHA * mParentScreen.b(), mParentScreen.a());
+			mTextureBatch.end();
+
 		}
 
 		int lCount = mChildEntries.size();
 		for (int i = 0; i < lCount; i++) {
 			mChildEntries.get(i).draw(pCore, pScreen, pIsSelected, pParentZDepth);
+
 		}
 	}
 
@@ -182,11 +183,11 @@ public class HorizontalEntryGroup extends MenuEntry {
 		float lTotalHeight = 0;
 		for (int i = 0; i < lCount; i++) {
 			lTotalWidth += mChildEntries.get(i).paddingHorizontal();
-			lTotalWidth += mChildEntries.get(i).width;
+			lTotalWidth += mChildEntries.get(i).w;
 			lTotalWidth += mChildEntries.get(i).paddingHorizontal();
 
-			if (mChildEntries.get(i).height + mChildEntries.get(i).paddingVertical() * 2 > lTotalHeight) {
-				lTotalHeight = mChildEntries.get(i).height + mChildEntries.get(i).paddingVertical() * 2;
+			if (mChildEntries.get(i).h + mChildEntries.get(i).paddingVertical() * 2 > lTotalHeight) {
+				lTotalHeight = mChildEntries.get(i).h + mChildEntries.get(i).paddingVertical() * 2;
 			}
 		}
 
@@ -204,8 +205,8 @@ public class HorizontalEntryGroup extends MenuEntry {
 
 		}
 
-		width = lTotalWidth;
-		height = lTotalHeight;
+		w = lTotalWidth;
+		h = lTotalHeight;
 	}
 
 	public void addEntry(MenuEntry pEntry) {

@@ -63,8 +63,8 @@ public class UIIconButton extends UIWidget {
 		mClickID = pClickID;
 
 		mButtonLabel = NO_LABEL_TEXT;
-		width = 200;
-		height = 25;
+		w = 200;
+		h = 25;
 
 		mR = mG = mB = 1f;
 		mSourceRectangle = new AARectangle();
@@ -109,17 +109,17 @@ public class UIIconButton extends UIWidget {
 		float lG = mHoveredOver ? 0.34f : mG;
 		float lB = mHoveredOver ? 0.65f : mB;
 
-		final TextureBatch SPRITE_BATCH = mParentWindow.rendererManager().uiSpriteBatch();
+		final TextureBatch lTextureBatch = mParentWindow.rendererManager().uiTextureBatch();
 
 		// Draw the button background
-		SPRITE_BATCH.begin(pCore.HUD());
-		SPRITE_BATCH.draw(0, 0, 32, 32, x, y, 0f, width, height, 1f, lR, lG, lB, 1f, TextureManager.TEXTURE_CORE_UI);
+		lTextureBatch.begin(pCore.HUD());
+		lTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, x, y, w, h, 0f, lR, lG, lB, 1f);
 
 		if (mButtonTexture != null) {
-			SPRITE_BATCH.draw(mSourceRectangle.x, mSourceRectangle.y, mSourceRectangle.width, mSourceRectangle.height, x, y, 0f, width, height, 1f, lR, lG, lB, 1f, mButtonTexture);
+			lTextureBatch.draw(mButtonTexture, mSourceRectangle.x, mSourceRectangle.y, mSourceRectangle.w, mSourceRectangle.h, x, y, w, h, 0f, lR, lG, lB, 1f);
 		}
 
-		SPRITE_BATCH.end();
+		lTextureBatch.end();
 
 	}
 
@@ -140,8 +140,8 @@ public class UIIconButton extends UIWidget {
 
 		mSourceRectangle.x = pSrcX;
 		mSourceRectangle.y = pSrcY;
-		mSourceRectangle.width = pSrcW;
-		mSourceRectangle.height = pSrcH;
+		mSourceRectangle.w = pSrcW;
+		mSourceRectangle.h = pSrcH;
 
 	}
 

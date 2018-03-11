@@ -5,9 +5,8 @@ import net.lintford.library.core.debug.DebugManager;
 import net.lintford.library.core.geometry.spritegraph.SpriteGraphInst;
 import net.lintford.library.core.geometry.spritegraph.SpriteGraphNodeInst;
 import net.lintford.library.core.graphics.sprites.spritebatch.SpriteBatch;
-import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheet;
+import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDef;
 
-//TODO: Need to implement the anchor and pivot system
 public class SpriteGraphRenderer extends SpriteBatch {
 
 	// --------------------------------------
@@ -17,20 +16,12 @@ public class SpriteGraphRenderer extends SpriteBatch {
 	public static final boolean RENDER_COLLIBABLES = true;
 
 	// --------------------------------------
-	// Properties
-	// --------------------------------------
-
-	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
 	public SpriteGraphRenderer() {
 		// TODO Auto-generated constructor stub
 	}
-
-	// --------------------------------------
-	// Core-Methods
-	// --------------------------------------
 
 	// --------------------------------------
 	// Methods
@@ -48,9 +39,8 @@ public class SpriteGraphRenderer extends SpriteBatch {
 
 		// Render this node
 		if (pSpriteGraphNode.nodeSprite != null) {
-			SpriteSheet lNodeSpriteSheet = pCore.resources().spriteSheetManager().getSpriteSheet(pSpriteGraphNode.spriteSheetNameRef);
-			
-			// TODO: isLeftFacing
+			SpriteSheetDef lNodeSpriteSheet = pCore.resources().spriteSheetManager().getSpriteSheet(pSpriteGraphNode.spriteSheetNameRef);
+
 			draw(lNodeSpriteSheet, pSpriteGraphNode.nodeSprite, pSpriteGraphNode, -0.1f, 1f, 1f, 1f, 1f);
 
 		}

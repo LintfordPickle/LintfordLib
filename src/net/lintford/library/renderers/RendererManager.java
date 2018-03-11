@@ -9,6 +9,7 @@ import net.lintford.library.core.debug.DebugManager;
 import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.rendertarget.RenderTarget;
+import net.lintford.library.core.graphics.sprites.spritebatch.SpriteBatch;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 import net.lintford.library.core.rendering.RenderState;
 import net.lintford.library.options.DisplayConfig;
@@ -48,7 +49,8 @@ public class RendererManager {
 	private FontUnit mWindowTitleFont;
 	private FontUnit mWindowTextFont;
 
-	private TextureBatch mSpriteBatch;
+	private SpriteBatch mSpriteBatch;
+	private TextureBatch mTextureBatch;
 	private DisplayConfig mDisplayConfig;
 
 	// TODO: Make a dedicated RenderTargetManager
@@ -96,7 +98,11 @@ public class RendererManager {
 		return mDisplayConfig;
 	}
 
-	public TextureBatch uiSpriteBatch() {
+	public TextureBatch uiTextureBatch() {
+		return mTextureBatch;
+	}
+	
+	public SpriteBatch uiSpriteBatch() {
 		return mSpriteBatch;
 	}
 
@@ -116,7 +122,8 @@ public class RendererManager {
 		mRenderTargets = new ArrayList<>();
 		mRenderTargetAutoResize = new ArrayList<>();
 
-		mSpriteBatch = new TextureBatch();
+		mSpriteBatch = new SpriteBatch();
+		mTextureBatch = new TextureBatch();
 
 		mListeners = new ArrayList<>();
 
@@ -147,6 +154,7 @@ public class RendererManager {
 		mResourceManager = pResourceManager;
 
 		mSpriteBatch.loadGLContent(pResourceManager);
+		mTextureBatch.loadGLContent(pResourceManager);
 
 		// TODO: We should add a more concise method for getting fonts which are already loaded...
 		mWindowTitleFont = pResourceManager.fontManager().loadNewFont(WINDOWS_TITLE_FONT_NAME, "/res/fonts/system.ttf", 18);
@@ -193,6 +201,7 @@ public class RendererManager {
 		}
 
 		mSpriteBatch.unloadGLContent();
+		mTextureBatch.unloadGLContent();
 
 		mIsLoaded = false;
 

@@ -5,6 +5,7 @@ import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 
 // TODO: Need to implement the spritebatch like TileSetRendererVBO, i.e. with separate shaders and 
 // TODO: Add option for shadows
+// TODO: Text scaling (global and local) needs implementing (it was removed from the TextureBatch, so the destRect needs to be adapted).
 public class AWTBitmapFontSpriteBatch extends TextureBatch {
 
 	public static final int NO_WORD_WRAP = -1;
@@ -34,10 +35,6 @@ public class AWTBitmapFontSpriteBatch extends TextureBatch {
 		mBitmapFont = pBitmapFont;
 
 	}
-
-	// --------------------------------------
-	// Core-Methods
-	// --------------------------------------
 
 	// --------------------------------------
 	// Methods
@@ -116,8 +113,8 @@ public class AWTBitmapFontSpriteBatch extends TextureBatch {
 			Glyph lCharGlyph = mBitmapFont.glyphs().get(ch);
 
 			if (lCharGlyph != null) {
-				draw(lCharGlyph.x, lCharGlyph.y, lCharGlyph.width, lCharGlyph.height, lPosX - 2, lPosY + 2, pZ, lCharGlyph.width, lCharGlyph.height, pScale, 0f, 0f, 0f, pA, mBitmapFont.fontTexture());
-				draw(lCharGlyph.x, lCharGlyph.y, lCharGlyph.width, lCharGlyph.height, lPosX, lPosY, pZ, lCharGlyph.width, lCharGlyph.height, pScale, pR, pG, pB, pA, mBitmapFont.fontTexture());
+				draw(mBitmapFont.fontTexture(), lCharGlyph.x, lCharGlyph.y, lCharGlyph.width, lCharGlyph.height, lPosX - 2, lPosY + 2, lCharGlyph.width, lCharGlyph.height, pZ, 0f, 0f, 0f, pA);
+				draw(mBitmapFont.fontTexture(), lCharGlyph.x, lCharGlyph.y, lCharGlyph.width, lCharGlyph.height, lPosX, lPosY, lCharGlyph.width, lCharGlyph.height, pZ, pR, pG, pB, pA);
 				lPosX += lCharGlyph.width * pScale;
 
 			} else {
@@ -133,8 +130,8 @@ public class AWTBitmapFontSpriteBatch extends TextureBatch {
 
 			for (int i = 0; i < 3; i++) {
 				if (lCharGlyph != null) {
-					draw(lCharGlyph.x, lCharGlyph.y, lCharGlyph.width, lCharGlyph.height, lPosX - 2, lPosY + 2, pZ, lCharGlyph.width, lCharGlyph.height, pScale, 0f, 0f, 0f, pA, mBitmapFont.fontTexture());
-					draw(lCharGlyph.x, lCharGlyph.y, lCharGlyph.width, lCharGlyph.height, lPosX, lPosY, pZ, lCharGlyph.width, lCharGlyph.height, pScale, pR, pG, pB, pA, mBitmapFont.fontTexture());
+					draw(mBitmapFont.fontTexture(), lCharGlyph.x, lCharGlyph.y, lCharGlyph.width, lCharGlyph.height, lPosX - 2, lPosY + 2, lCharGlyph.width, lCharGlyph.height, pZ, 0f, 0f, 0f, pA);
+					draw(mBitmapFont.fontTexture(), lCharGlyph.x, lCharGlyph.y, lCharGlyph.width, lCharGlyph.height, lPosX, lPosY, lCharGlyph.width, lCharGlyph.height, pZ, pR, pG, pB, pA);
 					lPosX += lCharGlyph.width * pScale;
 
 				} else {

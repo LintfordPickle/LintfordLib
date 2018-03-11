@@ -12,7 +12,6 @@ import java.nio.IntBuffer;
 import javax.imageio.ImageIO;
 
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL12;
 
 import net.lintford.library.ConstantsTable;
 import net.lintford.library.core.debug.DebugManager;
@@ -31,7 +30,7 @@ public class Texture {
 	private int mFilter;
 
 	/**
-	 * In order to detect changes to the texture wher trying to reload textures, we will store the file size of the texture each time it is loaded.
+	 * In order to detect changes to the texture when trying to reload textures, we will store the file size of the texture each time it is loaded.
 	 */
 	private long mFileSizeOnLoad;
 

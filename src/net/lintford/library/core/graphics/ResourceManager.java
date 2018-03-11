@@ -28,6 +28,9 @@ import net.lintford.library.options.MasterConfig;
  */
 public class ResourceManager {
 
+	public static final String DEBUG_LIVE_RESOURCES_RELOAD_NAME = "DEBUG_LIVE_TEXTURE_RELOAD";
+	public static final String DEBUG_LIVE_RESOURCES_RELOAD_ENABLED = "true";
+
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
@@ -35,7 +38,9 @@ public class ResourceManager {
 	protected MasterConfig mConfig;
 
 	protected Path mResourceTexturePath;
+	protected Path mResourceSpriteSheetPath;
 	protected WatchService mTexturePathWatcher;
+	protected WatchService mSpriteSheetPathWatcher;
 
 	protected FontManager mFontManager;
 	protected SpriteSheetManager mSpriteSheetManager;
@@ -84,8 +89,6 @@ public class ResourceManager {
 
 		mFontManager = new FontManager();
 
-		mResourceTexturePath = Paths.get("res//textures//");
-
 		// Setup the SpritesheetManager
 		mSpriteSheetManager = new SpriteSheetManager();
 		mSpriteGraphManager = new SpriteGraphManager();
@@ -93,18 +96,31 @@ public class ResourceManager {
 
 		// Setup the AnimationManager
 
+		ConstantsTable.registerValue(DEBUG_LIVE_RESOURCES_RELOAD_NAME, DEBUG_LIVE_RESOURCES_RELOAD_ENABLED);
+
 		// Setup the Texture Manager*
 		// *textureManager is actually setup as a singletonclass in the LWJGLCore. Here we just add a directory watcher to watch for changes.
-		if (ConstantsTable.getBooleanValueDef("DEBUG_TEXTURE_RELOAD_WATCHER", true)) {
+		if (ConstantsTable.getBooleanValueDef(DEBUG_LIVE_RESOURCES_RELOAD_NAME, false)) {
 			try {
-				mTexturePathWatcher = mResourceTexturePath.getFileSystem().newWatchService();
-
-				Files.walkFileTree(mResourceTexturePath, new SimpleFileVisitor<Path>() {
+				Path lTexturesDirectory = Paths.get("res//textures//");
+				mTexturePathWatcher = lTexturesDirectory.getFileSystem().newWatchService();
+				Files.walkFileTree(lTexturesDirectory, new SimpleFileVisitor<Path>() {
 					@Override
 					public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
 						dir.register(mTexturePathWatcher, StandardWatchEventKinds.ENTRY_MODIFY);
 						return FileVisitResult.CONTINUE;
 					}
+				});
+
+				Path lSpriteSheetDirectory = Paths.get("res//spritesheets//game//");
+				mSpriteSheetPathWatcher = lSpriteSheetDirectory.getFileSystem().newWatchService();
+				Files.walkFileTree(lSpriteSheetDirectory, new SimpleFileVisitor<Path>() {
+					@Override
+					public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+						dir.register(mSpriteSheetPathWatcher, StandardWatchEventKinds.ENTRY_MODIFY);
+						return FileVisitResult.CONTINUE;
+					}
+					
 				});
 
 			} catch (Exception e) {
@@ -118,7 +134,7 @@ public class ResourceManager {
 	// --------------------------------------
 	// Core-Methods
 	// --------------------------------------
-
+	
 	public void loadGLContent() {
 		// Force creation here if not already
 		TextureManager.textureManager();
@@ -155,6 +171,21 @@ public class ResourceManager {
 				}
 
 				lKey.reset();
+			}
+
+			WatchKey lSpriteFileKey = mSpriteSheetPathWatcher.poll();
+			if (lSpriteFileKey != null) {
+
+				List<WatchEvent<?>> events = lSpriteFileKey.pollEvents();
+				for (WatchEvent<?> event : events) {
+					if (event.kind() == StandardWatchEventKinds.ENTRY_MODIFY) {
+						// Reload the spritesheet in question ...
+						mSpriteSheetManager.reload();
+					}
+
+				}
+
+				lSpriteFileKey.reset();
 			}
 		}
 

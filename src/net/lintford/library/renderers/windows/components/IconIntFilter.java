@@ -66,8 +66,8 @@ public class IconIntFilter {
 	public void setDstRectangle(float pX, float pY, float pW, float pH) {
 		mUIDstRectangle.x = pX;
 		mUIDstRectangle.y = pY;
-		mUIDstRectangle.width = pW;
-		mUIDstRectangle.height = pH;
+		mUIDstRectangle.w = pW;
+		mUIDstRectangle.h = pH;
 	}
 
 	// --------------------------------------
@@ -109,23 +109,20 @@ public class IconIntFilter {
 
 	public void draw(LintfordCore pCore, TextureBatch pUISpriteBatch, FontUnit lFont) {
 
-		float lAR = mEnabled ? r : 1f;
-		float lAG = mEnabled ? g : 1f;
-		float lAB = mEnabled ? b : 1f;
+		float lR = mEnabled ? r : 1f;
+		float lG = mEnabled ? g : 1f;
+		float lB = mEnabled ? b : 1f;
 
 		pUISpriteBatch.begin(pCore.HUD());
-		// Draw the background icon
-		// pUISpriteBatch.draw(mUISrcRectangle.x, mUISrcRectangle.y, mUISrcRectangle.width, mUISrcRectangle.height, mUIDstRectangle.x, mUIDstRectangle.y, 0.5f, mUIDstRectangle.width, mUIDstRectangle.height, 1f, lAR, lAG, lAB, 1f,
-		// RendererManager.GAME_UI);
 
 		// Draw the 'tab' background
 		if (mEnabled) {
 			// Draw a 'open' tab
-			pUISpriteBatch.draw(384, 0, 64, 64, mUIDstRectangle.x - 2, mUIDstRectangle.y - 2, 0.5f, mUIDstRectangle.width + 4, mUIDstRectangle.height + 6, 1f, 1f, 1f, 1f, 1f, TextureManager.TEXTURE_CORE_UI);
+			pUISpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 384, 0, 64, 64, mUIDstRectangle.x - 2, mUIDstRectangle.y - 2, mUIDstRectangle.w + 4, mUIDstRectangle.h + 6, -0.5f, lR, lG, lB, 1f);
 
 		} else {
 			// Draw a 'closed' tab
-			pUISpriteBatch.draw(320, 0, 64, 64, mUIDstRectangle.x - 2, mUIDstRectangle.y - 2, 0.5f, mUIDstRectangle.width + 4, mUIDstRectangle.height + 6, 1f, 1f, 1f, 1f, 1f, TextureManager.TEXTURE_CORE_UI);
+			pUISpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 320, 0, 64, 64, mUIDstRectangle.x - 2, mUIDstRectangle.y - 2, mUIDstRectangle.w + 4, mUIDstRectangle.h + 6, -0.5f, lR, lG, lB, 1f);
 
 		}
 
@@ -133,9 +130,12 @@ public class IconIntFilter {
 			float lTextHalfW = lFont.bitmap().getStringWidth(mFilterName) / 2;
 
 			// Draw a background texture behind the texture so it is always legible.
-			pUISpriteBatch.draw(128, 0, 32, 32, mUIDstRectangle.x + 16 - lTextHalfW - 2, mUIDstRectangle.y - 25, 1.4f, lTextHalfW * 2 + 4, lFont.bitmap().fontHeight(), 1f, 0.5f, 0.5f, 0.5f, 1.0f, TextureManager.TEXTURE_CORE_UI);
-
+			pUISpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 64, 0, 32, 32, mUIDstRectangle.x + 16 - lTextHalfW, mUIDstRectangle.y - 19, lTextHalfW * 2 + 4, lFont.bitmap().fontHeight(), -0.2f, 1f, 1f, 1f, 1.0f);
+			
 		}
+
+		// Draw the background icon
+		pUISpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, mUISrcRectangle.x, mUISrcRectangle.y, mUISrcRectangle.w, mUISrcRectangle.h, mUIDstRectangle.x, mUIDstRectangle.y, mUIDstRectangle.w, mUIDstRectangle.h, -0.5f, lR, lG, lB, 1f);
 
 		pUISpriteBatch.end();
 
@@ -143,7 +143,7 @@ public class IconIntFilter {
 			float lTextHalfW = lFont.bitmap().getStringWidth(mFilterName) / 2;
 
 			lFont.begin(pCore.HUD());
-			lFont.draw(mFilterName, mUIDstRectangle.x + 16 - lTextHalfW, mUIDstRectangle.y - 19, 1.5f, 1f);
+			lFont.draw(mFilterName, mUIDstRectangle.x + 16 - lTextHalfW, mUIDstRectangle.y - 19, -0.2f, 1f);
 			lFont.end();
 		}
 

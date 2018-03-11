@@ -73,8 +73,8 @@ public class UIToggleButton extends UIWidget {
 		mClickID = pClickID;
 
 		mButtonLabel = NO_LABEL_TEXT;
-		width = 200;
-		height = 25;
+		w = 200;
+		h = 25;
 
 		mR = 0.3f;
 		mG = 0.34f;
@@ -118,14 +118,14 @@ public class UIToggleButton extends UIWidget {
 		float lG = mIsEnabled ? 0.13f : mHoveredOver ? 0.34f : mG;
 		float lB = mIsEnabled ? 0.19f : mHoveredOver ? 0.65f : mB;
 		
-		final TextureBatch SPRITE_BATCH = mParentWindow.rendererManager().uiSpriteBatch();
+		final TextureBatch SPRITE_BATCH = mParentWindow.rendererManager().uiTextureBatch();
 
 		// Draw the button background
 		SPRITE_BATCH.begin(pCore.HUD());
-		SPRITE_BATCH.draw(0, 0, 32, 32, x, y, 0f, width, height, 1f, lR, lG, lB, 1f, TextureManager.TEXTURE_CORE_UI);
+		SPRITE_BATCH.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, x, y, w, h, 0f, lR, lG, lB, 1f);
 
 		if (mButtonTexture != null) {
-			SPRITE_BATCH.draw(mSourceRectangle.x, mSourceRectangle.y, mSourceRectangle.width, mSourceRectangle.height, x, y, 0f, width, height, 1f, lR, lG, lB, 1f, mButtonTexture);
+			SPRITE_BATCH.draw(mButtonTexture, mSourceRectangle.x, mSourceRectangle.y, mSourceRectangle.w, mSourceRectangle.h, x, y, w, h, 0f, lR, lG, lB, 1f);
 		}
 
 		SPRITE_BATCH.end();
@@ -149,8 +149,8 @@ public class UIToggleButton extends UIWidget {
 
 		mSourceRectangle.x = pSrcX;
 		mSourceRectangle.y = pSrcY;
-		mSourceRectangle.width = pSrcW;
-		mSourceRectangle.height = pSrcH;
+		mSourceRectangle.w = pSrcW;
+		mSourceRectangle.h = pSrcH;
 
 	}
 

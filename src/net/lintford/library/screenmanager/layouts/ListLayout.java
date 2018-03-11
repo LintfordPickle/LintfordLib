@@ -32,8 +32,8 @@ public class ListLayout extends BaseLayout {
 	public ListLayout(MenuScreen pParentScreen, float pX, float pY, float pW, float pH) {
 		this(pParentScreen, pX, pY);
 
-		width = pW;
-		height = pH;
+		w = pW;
+		h = pH;
 	}
 
 	// --------------------------------------
@@ -46,7 +46,7 @@ public class ListLayout extends BaseLayout {
 			float lYPos = y + mYScrollPos;
 
 			if (mAnchor == ANCHOR.bottom)
-				lYPos = y + height;
+				lYPos = y + h;
 
 			int lEntryCount = menuEntries().size();
 			for (int i = 0; i < lEntryCount; i++) {
@@ -66,10 +66,10 @@ public class ListLayout extends BaseLayout {
 					lEntry.x = x + lEntry.paddingHorizontal();
 					break;
 				case center:
-					lEntry.x = x + width / 2 - lEntry.getWidth() / 2;
+					lEntry.x = x + w / 2 - lEntry.getWidth() / 2;
 					break;
 				case right:
-					lEntry.x = x + width - lEntry.getWidth() - lEntry.paddingHorizontal();
+					lEntry.x = x + w - lEntry.getWidth() - lEntry.paddingHorizontal();
 					break;
 				}
 

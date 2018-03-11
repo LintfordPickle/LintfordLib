@@ -8,7 +8,6 @@ import org.lwjgl.opengl.GL11;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.geometry.AARectangle;
 import net.lintford.library.core.graphics.ResourceManager;
-import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 import net.lintford.library.core.input.InputState;
@@ -154,7 +153,7 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 		}
 
 		// Allow us to scroll the listbox by clicking and dragging within its bounds
-		final float lMaxDiff = mContentArea.height - getHeight();
+		final float lMaxDiff = mContentArea.h - getHeight();
 
 		// Scrolling
 		if (mClickActive) {
@@ -185,22 +184,22 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 	public void update(LintfordCore pCore) {
 		mScrollBar.update(pCore);
 
-		mContentArea.width = width;
-		mContentArea.height = mItems.size() * (ListBoxItem.LISTBOXITEM_HEIGHT + LISTBOX_ITEM_VPADDING) + LISTBOX_ITEM_VPADDING;
+		mContentArea.w = w;
+		mContentArea.h = mItems.size() * (ListBoxItem.LISTBOXITEM_HEIGHT + LISTBOX_ITEM_VPADDING) + LISTBOX_ITEM_VPADDING;
 
-		mScrollBarsEnabled = mContentArea.height - getHeight() > 0;
+		mScrollBarsEnabled = mContentArea.h - getHeight() > 0;
 
 		int lCount = mItems.size();
 		float mItemYPos = 0;
 		for (int i = 0; i < lCount; i++) {
-			mItems.get(i).mXPos = x + width / 2 - ListBoxItem.LISTBOXITEM_WIDTH / 2;
+			mItems.get(i).mXPos = x + w / 2 - ListBoxItem.LISTBOXITEM_WIDTH / 2;
 			mItems.get(i).mYPos = mYScrollPos + mItemYPos;
 
 			mItemYPos += ListBoxItem.LISTBOXITEM_HEIGHT + LISTBOX_ITEM_VPADDING;
 		}
 
-		width = 800;
-		height = LISTBOX_HEIGHT;
+		w = 800;
+		h = LISTBOX_HEIGHT;
 
 	}
 
@@ -217,10 +216,8 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 		// Make sure we are starting with a fresh stencil buffer
 		GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT); // Clear the stencil buffer
 
-		Texture lTexture = TextureManager.TEXTURE_CORE_UI;
-		
 		mSpriteBatch.begin(pCore.HUD());
-		mSpriteBatch.draw(32, 0, 32, 32, x, y, -8f, getWidth(), getHeight(), 1.0f, 1, 1, 1, 0.75f, lTexture);
+		mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 32, 0, 32, 32, x, y, getWidth(), getHeight(), -8f, 1, 1, 1, 0.75f);
 		mSpriteBatch.end();
 
 		// Start the stencil buffer test to filter out everything outside of the scroll view

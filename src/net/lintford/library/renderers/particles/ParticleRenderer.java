@@ -19,7 +19,7 @@ public class ParticleRenderer {
 
 	private ParticleSystem mParticleSystem;
 
-	private TextureBatch mSpriteBatch;
+	private TextureBatch mTextureBatch;
 	private Texture mTexture;
 
 	private boolean mIsLoaded;
@@ -44,7 +44,7 @@ public class ParticleRenderer {
 	// --------------------------------------
 
 	public ParticleRenderer() {
-		mSpriteBatch = new TextureBatch();
+		mTextureBatch = new TextureBatch();
 		mIsAssigned = false;
 
 	}
@@ -58,14 +58,14 @@ public class ParticleRenderer {
 	}
 
 	public void loadGLContent(ResourceManager pResourceManager) {
-		mSpriteBatch.loadGLContent(pResourceManager);
+		mTextureBatch.loadGLContent(pResourceManager);
 
 		mIsLoaded = true;
 
 	}
 
 	public void unloadGLContent() {
-		mSpriteBatch.unloadGLContent();
+		mTextureBatch.unloadGLContent();
 		mIsLoaded = false;
 
 	}
@@ -77,18 +77,18 @@ public class ParticleRenderer {
 		final List<Particle> PARTICLES = mParticleSystem.particles();
 		final int PARTICLE_COUNT = PARTICLES.size();
 
-		mSpriteBatch.begin(pCore.gameCamera());
+		mTextureBatch.begin(pCore.gameCamera());
 		for (int i = 0; i < PARTICLE_COUNT; i++) {
 			final Particle PART = PARTICLES.get(i);
 
 			if (PART.isFree())
 				continue;
 
-			mSpriteBatch.draw(PART.sx, PART.sy, PART.sw, PART.sh, PART.x - PART.radius, PART.y - PART.radius, -2, PART.radius * 2, PART.radius * 2, PART.r, PART.g, PART.b, PART.a, PART.rot, PART.radius, PART.radius, 2, 2, mTexture);
+			mTextureBatch.draw(mTexture, PART.sx, PART.sy, PART.sw, PART.sh, PART.x - PART.radius, PART.y - PART.radius, -2, PART.radius * 2, PART.radius * 2, PART.r, PART.g, PART.b, PART.a);
 
 		}
 
-		mSpriteBatch.end();
+		mTextureBatch.end();
 
 	}
 

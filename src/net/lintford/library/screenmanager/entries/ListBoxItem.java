@@ -48,7 +48,7 @@ public abstract class ListBoxItem {
 
 		Vector2f lMouseMenuSpace = pCore.HUD().getMouseCameraSpace();
 
-		float lAbsPosX = mParentListBox.x + (mParentListBox.width / 2) + mXPos;
+		float lAbsPosX = mParentListBox.x + (mParentListBox.w / 2) + mXPos;
 		float lAbsPosY = mParentListBox.y + mYPos + 15;
 
 		if ((lMouseMenuSpace.x > lAbsPosX && lMouseMenuSpace.x < lAbsPosX + LISTBOXITEM_WIDTH && lMouseMenuSpace.y > lAbsPosY && lMouseMenuSpace.y < lAbsPosY + LISTBOXITEM_HEIGHT) && pCore.input().tryAquireLeftClickOwnership(hashCode())) {

@@ -82,8 +82,8 @@ public class UIRadioButton extends UIWidget {
 		mClickID = pClickID;
 
 		mButtonLabel = pLabel;
-		width = 200;
-		height = 25;
+		w = 200;
+		h = 25;
 
 	}
 
@@ -128,11 +128,11 @@ public class UIRadioButton extends UIWidget {
 		float lG = mIsSelected ? 0.4f : 0.34f;
 		float lB = mIsSelected ? 0.4f : 0.65f;
 
-		final TextureBatch SPRITE_BATCH = mParentWindow.rendererManager().uiSpriteBatch();
+		final TextureBatch SPRITE_BATCH = mParentWindow.rendererManager().uiTextureBatch();
 
 		// Draw the button background
 		SPRITE_BATCH.begin(pCore.HUD());
-		SPRITE_BATCH.draw(0, 0, 32, 32, x, y, 0f, width, height, 1f, lR, lG, lB, 1f, TextureManager.TEXTURE_CORE_UI);
+		SPRITE_BATCH.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, x, y, w, h, 0f, lR, lG, lB, 1f);
 		SPRITE_BATCH.end();
 
 		FontUnit lFontRenderer = mParentWindow.rendererManager().textFont();
@@ -141,7 +141,7 @@ public class UIRadioButton extends UIWidget {
 		final float lTextWidth = lFontRenderer.bitmap().getStringWidth(lButtonText);
 
 		lFontRenderer.begin(pCore.HUD());
-		lFontRenderer.draw(lButtonText, x + width / 2f - lTextWidth / 2f, y + height / 2f - lFontRenderer.bitmap().fontHeight() / 4f, 1f);
+		lFontRenderer.draw(lButtonText, x + w / 2f - lTextWidth / 2f, y + h / 2f - lFontRenderer.bitmap().fontHeight() / 4f, 1f);
 		lFontRenderer.end();
 
 	}

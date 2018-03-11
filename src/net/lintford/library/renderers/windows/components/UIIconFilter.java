@@ -107,7 +107,7 @@ public class UIIconFilter extends AARectangle {
 
 			lFilter.setDstRectangle(lPosX, lPosY, 32, 32);
 
-			lPosX += lFilter.uiDstRectangle().width + HORIZONTAL_PADDING;
+			lPosX += lFilter.uiDstRectangle().w + HORIZONTAL_PADDING;
 
 		}
 	}

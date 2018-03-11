@@ -120,7 +120,7 @@ public class SpriteGraphManager {
 
 	public SpriteGraphInst getInstanceOfGraph(String pGraphDefName) {
 		// TODO: Check the pool of SpriteGraphs and return a recycled, unused one
-		
+
 		SpriteGraphDef lGraphDefinition = mSpriteGraphs.get(pGraphDefName);
 		if (lGraphDefinition == null) {
 			DebugManager.DEBUG_MANAGER.logger().e(getClass().getSimpleName(), "Couldn't return SpriteGraphDef with ID " + pGraphDefName);

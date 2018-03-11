@@ -266,7 +266,7 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 		mFocusTimer += lDeltaTime;
 		mCaretTimer += lDeltaTime;
 
-		contentArea().set(x, y, width - mScrollBar.width, DebugManager.DEBUG_MANAGER.logger().logLines().size() * 25);
+		contentArea().set(x, y, w - mScrollBar.w, DebugManager.DEBUG_MANAGER.logger().logLines().size() * 25);
 
 		if (mCaretTimer > 250) {
 			mCaretTimer = 0;
@@ -289,12 +289,12 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 		// Update the bounds of the window view
 		x = -lDisplay.windowSize().x * 0.5f;
 		y = -lDisplay.windowSize().y * 0.5f;
-		width = lDisplay.windowSize().x;
-		height = openHeight();
+		w = lDisplay.windowSize().x;
+		h = openHeight();
 
 		mConsoleLineHeight = (int) (mConsoleFont.bitmap().getStringHeight(" ") + 4);
 		final int MAX_NUM_LINES = (int) ((openHeight() - mConsoleLineHeight * 2) / mConsoleLineHeight);
-		mContentRectangle.height = (DebugManager.DEBUG_MANAGER.logger().logLines().size() + 2) * mConsoleLineHeight;
+		mContentRectangle.h = (DebugManager.DEBUG_MANAGER.logger().logLines().size() + 2) * mConsoleLineHeight;
 
 		mLowerBound = (int) -((mScrollYPosition) / mConsoleLineHeight) + 1;
 		mUpperBound = mLowerBound + MAX_NUM_LINES;
@@ -321,7 +321,7 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 
 		// Draw the console background (with a black border for the text input region)
 		mSpriteBatch.begin(pCore.HUD());
-		mSpriteBatch.draw(32, 0, 32, 32, x, y, Z_DEPTH, width, height, 1.0f, 0f, 0f, 0f, 0.85f, TextureManager.TEXTURE_CORE_UI);
+		mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 32, 0, 32, 32, x, y, w, h, Z_DEPTH, 0f, 0f, 0f, 0.85f);
 		mSpriteBatch.end();
 
 		// mContentRectangle.preDraw(pRenderState, mSpriteBatch);
@@ -363,8 +363,7 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 			mConsoleFont.draw(PROMT_CHAR, -lDisplay.windowSize().x * 0.5f + PADDING_LEFT, y + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET, Z_DEPTH + 0.1f, 1f);
 			mConsoleFont.draw(mInputText.toString(), -lDisplay.windowSize().x * 0.5f + PADDING_LEFT + lInputTextXOffset, y + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET, Z_DEPTH + 0.1f, 1f);
 			if (mShowCaret && mHasFocus)
-				mConsoleFont.draw("|", -lDisplay.windowSize().x * 0.5f + PADDING_LEFT + lInputTextXOffset + mConsoleFont.bitmap().getStringWidth(mInputText.toString()),
-						y + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET, Z_DEPTH + 0.1f, 1f);
+				mConsoleFont.draw("|", -lDisplay.windowSize().x * 0.5f + PADDING_LEFT + lInputTextXOffset + mConsoleFont.bitmap().getStringWidth(mInputText.toString()), y + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET, Z_DEPTH + 0.1f, 1f);
 		}
 
 		mConsoleFont.end();

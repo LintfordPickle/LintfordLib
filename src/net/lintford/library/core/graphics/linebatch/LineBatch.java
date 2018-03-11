@@ -45,6 +45,14 @@ public class LineBatch {
 	private boolean mIsLoaded;
 
 	// --------------------------------------
+	// Properties
+	// --------------------------------------
+
+	public boolean isDrawing() {
+		return mIsDrawing;
+	}
+
+	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
@@ -165,7 +173,7 @@ public class LineBatch {
 		draw(pX, pY, pX, pY + pH, pZ, 1f, 1f, 1f); // left
 		draw(pX + pW, pY, pX + pW, pY + pH, pZ, 1f, 1f, 1f); // right
 	}
-	
+
 	public void drawRect(float pX, float pY, float pW, float pH, float pZ, float pR, float pG, float pB) {
 		if (!mIsDrawing)
 			return;

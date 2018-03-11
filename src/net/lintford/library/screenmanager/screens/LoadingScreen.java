@@ -167,9 +167,9 @@ public class LoadingScreen extends Screen {
 			final float textTextureHeight = mLoadingTextTexture.getTextureHeight();
 
 			mTextureBatch.begin(pCore.HUD());
-			mTextureBatch.draw(0, 0, textureWidth, textureHeight, -textureWidth / 2, -textureHeight / 2, -0.1f, textureWidth, textureHeight, 1f, mLoadingTexture);
+			mTextureBatch.draw(mLoadingTexture, 0, 0, textureWidth, textureHeight, -textureWidth / 2, -textureHeight / 2, textureWidth, textureHeight, -0.1f, 1f, 1f, 1f, 1f);
 			if (mDisplayLoadingText)
-				mTextureBatch.draw(0, 0, textTextureWidth, textTextureHeight, textureWidth / 2 - textTextureWidth - 10, textureHeight / 2 - textTextureHeight - 10, -0.1f, textTextureWidth, textTextureHeight, 1f, mLoadingTextTexture);
+				mTextureBatch.draw(mLoadingTextTexture, 0, 0, textTextureWidth, textTextureHeight, textureWidth / 2 - textTextureWidth - 10, textureHeight / 2 - textTextureHeight - 10, textTextureWidth, textTextureHeight, -0.1f, 1f, 1f, 1f, 1f);
 			mTextureBatch.end();
 
 		}

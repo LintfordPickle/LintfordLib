@@ -6,11 +6,12 @@ import java.util.List;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.ResourceManager;
-import net.lintford.library.core.graphics.sprites.AnimatedSprite;
-import net.lintford.library.core.graphics.sprites.ISprite;
-import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheet;
+import net.lintford.library.core.graphics.sprites.AnimatedSpriteListener;
+import net.lintford.library.core.graphics.sprites.SpriteFrame;
+import net.lintford.library.core.graphics.sprites.SpriteInstance;
+import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDef;
 
-public class SpriteGraphNodeInst extends Rectangle {
+public class SpriteGraphNodeInst extends Rectangle implements AnimatedSpriteListener {
 
 	// --------------------------------------
 	// Constants
@@ -26,7 +27,7 @@ public class SpriteGraphNodeInst extends Rectangle {
 
 	public String name;
 
-	/** List of possible types is loaded from the {@link SpriteSheet}. */
+	/** List of possible types is loaded from the {@link SpriteSheetDef}. */
 	public String type;
 
 	/** The ID of the {@link SpriteGraphAnchorDef} on the parent. */
@@ -43,28 +44,44 @@ public class SpriteGraphNodeInst extends Rectangle {
 
 	// Save an instance of the sprite here, because AnimatedSprites have frame state information specific to each
 	// SpriteGraphNode.
-	public transient ISprite nodeSprite;
-	public String currentSpriteName;
+	public transient SpriteInstance nodeSprite;
+	public String currentStateName;
 
 	/** Some nodes are just holders for placing itms in (e.g. a placeholder for a sword or gun in a character's shand). */
 	public boolean isPlaceHolder;
 
 	public float nodeDepth;
 
+	public boolean angToPointEnabled;
+	public float angToPoint;
+	public float staticRotationOffset;
+
+	public SpriteGraphInst mParentGraphInst;
+
+	/** Used to identify the current state of this Node (e.g. ATTACK) */
+	private String mActionKeyName;
+
+	/** Used to resolve a specific animation (e.g. _shootrange) */
+	private String mActionStateName;
+
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
 
 	public float pivotX() {
-		if (nodeSprite == null)
+		if (nodeSprite == null || nodeSprite.isFree())
 			return 0;
-		return nodeSprite.getPivotPointX();
+
+		return nodeSprite.getFrame().getPivotPointX();
+
 	}
 
 	public float pivotY() {
 		if (nodeSprite == null)
 			return 0;
-		return nodeSprite.getPivotPointY();
+
+		return nodeSprite.getFrame().getPivotPointY();
+
 	}
 
 	public SpriteGraphNodeInst getNode(String pName) {
@@ -93,21 +110,22 @@ public class SpriteGraphNodeInst extends Rectangle {
 
 	}
 
-	public SpriteGraphNodeInst(SpriteGraphNodeDef pGraphNodeDef) {
-		this(pGraphNodeDef, 0);
+	public SpriteGraphNodeInst(SpriteGraphInst pSpriteGraphInst, SpriteGraphNodeDef pGraphNodeDef) {
+		this(pSpriteGraphInst, pGraphNodeDef, 0);
 	}
 
-	public SpriteGraphNodeInst(SpriteGraphNodeDef pGraphNodeDef, float pNodeDepth) {
+	public SpriteGraphNodeInst(SpriteGraphInst pSpriteGraphInst, SpriteGraphNodeDef pGraphNodeDef, float pNodeDepth) {
 		this();
 		name = pGraphNodeDef.name;
 		type = pGraphNodeDef.type;
 		nodeDepth = pNodeDepth;
 		spriteSheetNameRef = pGraphNodeDef.defaultSpriteSheetName;
+		mParentGraphInst = pSpriteGraphInst;
 
 		int COUNT_SIZE = pGraphNodeDef.childParts.size();
 		for (int i = 0; i < COUNT_SIZE; i++) {
 			SpriteGraphNodeDef lNodeDef = pGraphNodeDef.childParts.get(i);
-			SpriteGraphNodeInst lNewNodeInst = new SpriteGraphNodeInst(lNodeDef, nodeDepth + 1);
+			SpriteGraphNodeInst lNewNodeInst = new SpriteGraphNodeInst(pSpriteGraphInst, lNodeDef, nodeDepth + 1);
 
 			childNodes.add(lNewNodeInst);
 
@@ -149,21 +167,20 @@ public class SpriteGraphNodeInst extends Rectangle {
 
 		if (pParentGraphNode != null) {
 			lRot = pParentGraphNode.rot;
+
 			float sin = (float) (Math.sin(lRot));
 			float cos = (float) (Math.cos(lRot));
 
 			SpriteGraphAnchorDef lAnchorPoint = null;
-			if (pParentGraphNode != null) {
-				lAnchorPoint = pParentGraphNode.getAnchorPoint(name);
-				if (lAnchorPoint != null) {
-					// Anchor point needs to be rotated with the parent node ..
-					float dx = -pParentGraphNode.pivotX() + lAnchorPoint.x * sx;
-					float dy = -pParentGraphNode.pivotY() + lAnchorPoint.y * sy;
+			lAnchorPoint = pParentGraphNode.getAnchorPoint(name);
+			if (lAnchorPoint != null) {
+				// Anchor point needs to be rotated with the parent node ..
+				float dx = -pParentGraphNode.pivotX() + (lAnchorPoint.x * (mFlipH ? -1f : 1f)) * sx;
+				float dy = -pParentGraphNode.pivotY() + (lAnchorPoint.y * (mFlipV ? -1f : 1f)) * sy;
 
-					lX += (dx * cos - (dy * 1f) * sin);
-					lY += (dx * sin + (dy * 1f) * cos);
-
-				}
+				lX += (dx * cos - (dy * 1f) * sin);
+				lY += (dx * sin + (dy * 1f) * cos);
+				lRot += (float) Math.toRadians(lAnchorPoint.rot);
 
 			}
 
@@ -176,45 +193,70 @@ public class SpriteGraphNodeInst extends Rectangle {
 		}
 
 		// Update the spritegraphnode
-		SpriteSheet lNodeSpriteSheet = pCore.resources().spriteSheetManager().getSpriteSheet(spriteSheetNameRef);
+		SpriteSheetDef lNodeSpriteSheet = pCore.resources().spriteSheetManager().getSpriteSheet(spriteSheetNameRef);
 		if (lNodeSpriteSheet != null) {
 			// e.g. Torso00_idle
-			String lResolvedName = name + type + pParentGraph.objectState;
-			if (!lResolvedName.equals(currentSpriteName)) {
-				nodeSprite = lNodeSpriteSheet.getAnimation(lResolvedName);
-				if (nodeSprite instanceof AnimatedSprite) {
-					AnimatedSprite lAnim = (AnimatedSprite) nodeSprite;
-					lAnim.playFromBeginning();
+			// TODO: ---> Overide with local node states (e.g. ARM_SWING, ARM_STAB)
+			String lResolvedName = name + type;
+			if (mActionStateName != null)
+				lResolvedName += mActionStateName;
+			else
+				lResolvedName += pParentGraph.objectState;
+
+			// Check to see if the animation state of this node has changed
+			if (!lResolvedName.equals(currentStateName)) {
+				nodeSprite = lNodeSpriteSheet.getSpriteInstance(lResolvedName);
+
+				if (nodeSprite != null) {
+					// When we change to a new animation, we need to
+					nodeSprite.animatedSpriteListender(this);
+					nodeSprite.playFromBeginning();
+
+				} else {
+					// If the sprite equals null, then try and fallback to some default (the first sprite in the SpriteMap).
+					nodeSprite = lNodeSpriteSheet.getSpriteInstance(name + type + DEFAULT_ACTION_STATE);
 
 				}
 
-				currentSpriteName = lResolvedName;
+				// Only do this once
+				currentStateName = lResolvedName;
 
-				// If the sprite equals null, then try and fallback to some default (the first sprite in the SpriteMap).
-				if (nodeSprite == null) {
-					nodeSprite = lNodeSpriteSheet.getAnimation(name + type + DEFAULT_ACTION_STATE);
-				}
 			}
 
 		}
 
-		if (nodeSprite != null) {
-			if (nodeSprite instanceof AnimatedSprite) {
-				((AnimatedSprite) nodeSprite).update(pCore, 1f);
-			}
+		mFlipH = pParentGraph.mFlipHorizontal;
 
-			rot = (float) Math.toRadians(nodeSprite.getRotation());
+		if (nodeSprite != null) {
+			nodeSprite.update(pCore);
+
+			SpriteFrame lCurrentFrame = nodeSprite.getFrame();
+
+			rot = (float) Math.toRadians(lCurrentFrame.getDefaultRotation());
 
 			// Set the pivot point of this GraphNode to that of the current Sprite's.
-			pivotX(nodeSprite.getPivotPointX());
-			pivotY(nodeSprite.getPivotPointY());
-			rotateAbs(rot);
-			set(lX, lY, nodeSprite.getSrcWidth(), nodeSprite.getSrcHeight());
+			pivotX(lCurrentFrame.getPivotPointX());
+			pivotY(lCurrentFrame.getPivotPointY());
+
+			float signum = mFlipH ? -1f : 1f;
+			if (angToPointEnabled) {
+				rotateAbs(rot * signum);
+				rotateRel(angToPoint);
+				rotateRel(staticRotationOffset);
+			} else {
+				rotateAbs(rot * signum);
+				rotateRel(staticRotationOffset);
+
+			}
+
+			set(lX, lY, lCurrentFrame.w, lCurrentFrame.h);
+
 			if (pParentGraphNode != null)
 				rotateAbs(lRot + rot);
 
 		} else {
 			setPosition(lX, lY);
+			rotateAbs(lRot);
 
 		}
 
@@ -253,10 +295,61 @@ public class SpriteGraphNodeInst extends Rectangle {
 
 	public SpriteGraphAnchorDef getAnchorPoint(String pName) {
 		if (nodeSprite != null) {
-			return nodeSprite.getAnchorPoint(pName);
+			return nodeSprite.getFrame().getAnchorPoint(pName);
+
 		}
 
 		return SpriteGraphAnchorDef.ZERO_ANCHOR;
+	}
+
+	/** Sets the state of the object until the next {@link AnimatedSpriteListener} transition. */
+	public void setActionState(String pActionKeyName, String pActionTagName) {
+		if (nodeSprite != null) {
+			// Unregister the current callback
+			mParentGraphInst.nodeAnimationStopped(this, mActionKeyName, mActionStateName);
+
+		}
+		
+		mActionKeyName = pActionKeyName;
+		mActionStateName = pActionTagName;
+
+	}
+
+	public void stopAnimation() {
+		mParentGraphInst.nodeAnimationStopped(this, mActionKeyName, mActionStateName);
+		mActionKeyName = null;
+		mActionStateName = null;
+
+	}
+
+	public void setAngToPoint(float pNewValue) {
+		angToPoint = pNewValue;
+
+	}
+
+	// --------------------------------------
+	// Event-Listeners
+	// --------------------------------------
+
+	@Override
+	public void onStarted(SpriteInstance pSender) {
+		mParentGraphInst.nodeAnimationStarted(this, mActionKeyName, mActionStateName);
+
+	}
+
+	@Override
+	public void onLooped(SpriteInstance pSender) {
+		mParentGraphInst.nodeAnimationStarted(this, mActionKeyName, mActionStateName);
+		mActionKeyName = null;
+		mActionStateName = null;
+
+	}
+
+	@Override
+	public void onStopped(SpriteInstance pSender) {
+		pSender.animatedSpriteListender(null);
+		stopAnimation();
+
 	}
 
 }

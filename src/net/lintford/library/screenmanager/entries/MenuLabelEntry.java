@@ -100,8 +100,8 @@ public class MenuLabelEntry extends MenuEntry {
 	public void initialise() {
 		super.initialise();
 
-		width = getWidth();
-		height = MENUENTRY_HEIGHT;
+		w = getWidth();
+		h = MENUENTRY_HEIGHT;
 
 	}
 
@@ -114,7 +114,7 @@ public class MenuLabelEntry extends MenuEntry {
 
 		final float lLabelWidth = lFontBitmap.getStringWidth(mText);
 
-		float lX = x + width / 2 - lLabelWidth / 2;
+		float lX = x + w / 2 - lLabelWidth / 2;
 		switch (mAlignment) {
 		case left:
 			lX = x + 5;
@@ -123,7 +123,7 @@ public class MenuLabelEntry extends MenuEntry {
 			lX = x - 5 - lLabelWidth;
 			break;
 		default:
-			lX = x + width / 2 - lLabelWidth / 2;
+			lX = x + w / 2 - lLabelWidth / 2;
 			break;
 		}
 

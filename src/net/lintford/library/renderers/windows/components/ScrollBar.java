@@ -51,7 +51,7 @@ public class ScrollBar extends AARectangle {
 		final float lMouseScreenSpaceX = pCore.HUD().getMouseWorldSpaceX();
 		final float lMouseScreenSpaceY = pCore.HUD().getMouseWorldSpaceY();
 
-		final float lMaxDiff = mScrollBarArea.contentArea().height - mScrollBarArea.windowArea().height;
+		final float lMaxDiff = mScrollBarArea.contentArea().h - mScrollBarArea.windowArea().h;
 
 		// First check the mouse is within bounds
 		if (!pCore.input().mouseLeftClick()) {
@@ -97,8 +97,8 @@ public class ScrollBar extends AARectangle {
 	}
 
 	public void update(LintfordCore pCore) {
-		float lViewportHeight = mScrollBarArea.windowArea().height;
-		float lContentHeight = mScrollBarArea.contentArea().height;
+		float lViewportHeight = mScrollBarArea.windowArea().h;
+		float lContentHeight = mScrollBarArea.contentArea().h;
 
 		float lViewableRatio = lViewportHeight / lContentHeight;
 		mMarkerBarHeight = lViewportHeight * lViewableRatio;
@@ -107,25 +107,25 @@ public class ScrollBar extends AARectangle {
 		float lScrollThumbSpace = lViewportHeight - mMarkerBarHeight;
 		mMarkerMoveMod = lScrollTrackSpace / lScrollThumbSpace;
 
-		x = mScrollBarArea.windowArea().x + mScrollBarArea.windowArea().width - 20;
+		x = mScrollBarArea.windowArea().x + mScrollBarArea.windowArea().w - 20;
 		y = mScrollBarArea.windowArea().y;
-		width = 20;
-		height = mScrollBarArea.windowArea().height;
+		w = 20;
+		h = mScrollBarArea.windowArea().h;
 	}
 
 	public void draw(LintfordCore pCore, TextureBatch pSpriteBatch, float pZDepth) {
 		pSpriteBatch.begin(pCore.HUD());
 
 		// Scroll bar background
-		pSpriteBatch.draw(0, 0, 32, 32, x, y, pZDepth, width, height, 1f, 0.23f, 0.22f, 0.32f, 0.9f, TextureManager.TEXTURE_CORE_UI);
+		pSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, x, y, w, h, pZDepth, 0.23f, 0.22f, 0.32f, 0.9f);
 
 		// Render the actual scroll bar
-		final float bx = mScrollBarArea.windowArea().x + mScrollBarArea.windowArea().width - 15;
+		final float bx = mScrollBarArea.windowArea().x + mScrollBarArea.windowArea().w - 15;
 		final float by = mScrollBarArea.windowArea().y - (mScrollBarArea.currentYPos() / mMarkerMoveMod);
 
 		// Draw the marker bar
-		pSpriteBatch.draw(0, 0, 32, 32, x + 9, y, pZDepth, 2, height, 1.0f, 1f, 1f, 1f, 1f, TextureManager.TEXTURE_CORE_UI);
-		pSpriteBatch.draw(0, 0, 32, 32, bx, by, pZDepth, 10, mMarkerBarHeight, 1.0f, 1f, 1f, 1f, 1f, TextureManager.TEXTURE_CORE_UI);
+		pSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, x + 9, y, 2, h, pZDepth, 1f, 1f, 1f, 1f);
+		pSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, bx, by, 10, mMarkerBarHeight, pZDepth, 1f, 1f, 1f, 1f);
 
 		pSpriteBatch.end();
 
@@ -145,7 +145,7 @@ public class ScrollBar extends AARectangle {
 	}
 
 	public float getScrollYBottomPosition() {
-		return -mScrollBarArea.contentArea().height + height;
+		return -mScrollBarArea.contentArea().h + h;
 	}
 
 }

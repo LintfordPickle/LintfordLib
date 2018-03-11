@@ -92,8 +92,8 @@ public class MenuInfoEntry extends MenuEntry {
 	public void initialise() {
 		super.initialise();
 
-		width = getWidth();
-		height = MENUENTRY_HEIGHT;
+		w = getWidth();
+		h = MENUENTRY_HEIGHT;
 
 	}
 
@@ -109,16 +109,16 @@ public class MenuInfoEntry extends MenuEntry {
 		// TODO(John): Implement the pixel font here
 		// FontSpriteBatch lSpriteBatch = BitmapFontManager.bitmapFontManager().getBitmapFont("Main").mFontSpriteBatch;
 
-		float lX = x + width / 2 - lLabelWidth / 2;
+		float lX = x + w / 2 - lLabelWidth / 2;
 		switch (mAlignment) {
 		case left:
 			lX = x;
 			break;
 		case right:
-			lX = width - lLabelWidth;
+			lX = w - lLabelWidth;
 			break;
 		default:
-			lX = x + width / 2 - lLabelWidth / 2;
+			lX = x + w / 2 - lLabelWidth / 2;
 			break;
 		}
 
@@ -132,7 +132,7 @@ public class MenuInfoEntry extends MenuEntry {
 
 	@Override
 	public float getWidth() {
-		return width; // getTextWidth(mText);
+		return w; // getTextWidth(mText);
 	}
 
 }

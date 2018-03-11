@@ -56,7 +56,7 @@ public class MenuEntry extends AARectangle {
 	protected float mClickTimer;
 	protected BUTTON_SIZE mButtonSize = BUTTON_SIZE.normal;
 
-	protected TextureBatch mSpriteBatch;
+	protected TextureBatch mTextureBatch;
 
 	private boolean mIsInitialised, mIsLoaded;
 	public float mZ;
@@ -116,7 +116,7 @@ public class MenuEntry extends AARectangle {
 	}
 
 	public float getWidth() {
-		return width;
+		return w;
 	}
 
 	public float getHeight() {
@@ -176,7 +176,7 @@ public class MenuEntry extends AARectangle {
 		mParentScreen = pParentScreen;
 		mText = pMenuEntryLabel;
 
-		mSpriteBatch = new TextureBatch();
+		mTextureBatch = new TextureBatch();
 
 		mActive = true;
 		mEnabled = true;
@@ -195,34 +195,34 @@ public class MenuEntry extends AARectangle {
 	public void initialise() {
 		switch (mButtonSize) {
 		case tiny:
-			width = MENUENTRY_WIDTH * 0.5f;
+			w = MENUENTRY_WIDTH * 0.5f;
 			break;
 		case narrow:
-			width = MENUENTRY_WIDTH * 0.75f;
+			w = MENUENTRY_WIDTH * 0.75f;
 			break;
 		case normal:
-			width = MENUENTRY_WIDTH;
+			w = MENUENTRY_WIDTH;
 			break;
 		case wide:
-			width = MENUENTRY_WIDTH * 1.35f;
+			w = MENUENTRY_WIDTH * 1.35f;
 			break;
 		}
 
-		height = MENUENTRY_HEIGHT;
+		h = MENUENTRY_HEIGHT;
 
 		mIsInitialised = true;
 
 	}
 
 	public void loadGLContent(ResourceManager pResourceManager) {
-		mSpriteBatch.loadGLContent(pResourceManager);
+		mTextureBatch.loadGLContent(pResourceManager);
 
 		mIsLoaded = true;
 
 	}
 
 	public void unloadGLContent() {
-		mSpriteBatch.unloadGLContent();
+		mTextureBatch.unloadGLContent();
 
 		mIsLoaded = false;
 
@@ -317,24 +317,24 @@ public class MenuEntry extends AARectangle {
 
 		// Draw the button highlight when this element has focus.
 		if (mHasFocus && mHighlightOnHover) {
-			mSpriteBatch.begin(pCore.HUD());
-			mSpriteBatch.draw(0, 64, 32, 32, centerX() - width / 2, centerY() - height / 2, -2f, tile_size, height, 1f, mParentScreen.mA, lTexture);
+			mTextureBatch.begin(pCore.HUD());
+			mTextureBatch.draw(lTexture, 0, 64, 32, 32, centerX() - w / 2, centerY() - h / 2, tile_size, h, -2f, 1f, 1f, 1f, mParentScreen.mA);
 			switch (mButtonSize) {
 			default:
-				mSpriteBatch.draw(32, 64, 224, 32, centerX() - (width / 2) + tile_size, centerY() - height / 2, -2f, width - tile_size * 2, height, 1f, mParentScreen.mA, lTexture);
-				mSpriteBatch.draw(256, 64, 32, 32, centerX() + (width / 2) - tile_size, centerY() - height / 2, -2f, tile_size, height, 1f, mParentScreen.mA, lTexture);
+				mTextureBatch.draw(lTexture, 32, 64, 224, 32, centerX() - (w / 2) + tile_size, centerY() - h / 2, w - tile_size * 2, h, -2f, 1f, 1f, 1f, mParentScreen.mA);
+				mTextureBatch.draw(lTexture, 256, 64, 32, 32, centerX() + (w / 2) - tile_size, centerY() - h / 2, tile_size, h, -2f, 1f, 1f, 1f, mParentScreen.mA);
 			}
-			mSpriteBatch.end();
+			mTextureBatch.end();
 
 		} else if (mDrawBackground) {
-			mSpriteBatch.begin(pCore.HUD());
-			mSpriteBatch.draw(0, 32, 32, 32, centerX() - width / 2, centerY() - height / 2, -2f, 32, height, 1f, lR, lG, lB, mParentScreen.mA, lTexture);
+			mTextureBatch.begin(pCore.HUD());
+			mTextureBatch.draw(lTexture, 0, 32, 32, 32, centerX() - w / 2, centerY() - h / 2, 32, h, -2f, lR, lG, lB, mParentScreen.mA);
 			switch (mButtonSize) {
 			default:
-				mSpriteBatch.draw(32, 32, 224, 32, centerX() - (width / 2) + 32, centerY() - height / 2, -2f, width - 64, height, 1f, mParentScreen.mA, lTexture);
-				mSpriteBatch.draw(256, 32, 32, 32, centerX() + (width / 2) - 32, centerY() - height / 2, -2f, 32, height, 1f, mParentScreen.mA, lTexture);
+				mTextureBatch.draw(lTexture, 32, 32, 224, 32, centerX() - (w / 2) + 32, centerY() - h / 2, w - 64, h, -2f, 1f, 1f, 1f, mParentScreen.mA);
+				mTextureBatch.draw(lTexture, 256, 32, 32, 32, centerX() + (w / 2) - 32, centerY() - h / 2, 32, h, -2f, 1f, 1f, 1f, mParentScreen.mA);
 			}
-			mSpriteBatch.end();
+			mTextureBatch.end();
 		}
 
 		// Render the MenuEntry label
@@ -354,11 +354,10 @@ public class MenuEntry extends AARectangle {
 		}
 
 		if (ConstantsTable.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
-			mSpriteBatch.begin(pCore.HUD());
-			final float SCALE = 1f;
+			mTextureBatch.begin(pCore.HUD());
 			final float ALPHA = 0.3f;
-			mSpriteBatch.draw(0, 0, 32, 32, x, y, mZ, width, height, SCALE, 1f, 0.2f, 0.2f, ALPHA, TextureManager.TEXTURE_CORE_UI);
-			mSpriteBatch.end();
+			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, x, y, w, h, mZ, 1f, 0.2f, 0.2f, ALPHA);
+			mTextureBatch.end();
 
 		}
 

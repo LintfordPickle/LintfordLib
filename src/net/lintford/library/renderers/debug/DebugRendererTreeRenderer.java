@@ -25,7 +25,7 @@ public class DebugRendererTreeRenderer extends UIWindow {
 
 	private FontUnit mFontUnit;
 	private TextureBatch mTextureBatch;
-	
+
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
@@ -34,7 +34,7 @@ public class DebugRendererTreeRenderer extends UIWindow {
 	public int ZDepth() {
 		return 1;
 	}
-	
+
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
@@ -43,7 +43,7 @@ public class DebugRendererTreeRenderer extends UIWindow {
 		super(pRendererManager, RENDERER_NAME, pRendererGroup);
 
 		mTextureBatch = new TextureBatch();
-		
+
 	}
 
 	// --------------------------------------
@@ -53,50 +53,50 @@ public class DebugRendererTreeRenderer extends UIWindow {
 	@Override
 	public void loadGLContent(ResourceManager pResourceManager) {
 		super.loadGLContent(pResourceManager);
-		
+
 		mTextureBatch.loadGLContent(pResourceManager);
 		mFontUnit = pResourceManager.fontManager().loadNewFont("DebugFont", "res/fonts/system.ttf", 14, true);
-		
+
 	}
-	
+
 	@Override
 	public void unloadGLContent() {
 		super.unloadGLContent();
-		
+
 		mTextureBatch.unloadGLContent();
 		mFontUnit.unloadGLContent();
-		
+
 	}
-	
+
 	@Override
 	public void draw(LintfordCore pCore) {
-		
+
 		// Get a list of controllers to .. control
 		List<BaseController> lControllers = mRendererManager.core().controllerManager().controllers();
 		final int CONTROLLER_COUNT = lControllers.size();
-		
+
 		float lWindowWidth = pCore.config().display().windowSize().x / 2f;
 		float lWindowHeight = pCore.config().display().windowSize().y / 2f;
-		
+
 		float lCurrentHeight = 0;
-		
+
 		mFontUnit.begin(pCore.HUD());
 		mTextureBatch.begin(pCore.HUD());
-		
-		for(int i = 0; i < CONTROLLER_COUNT; i++) {
+
+		for (int i = 0; i < CONTROLLER_COUNT; i++) {
 			BaseController lCurrentController = lControllers.get(i);
-			mTextureBatch.draw(32, 0, 32, 32, -lWindowWidth, -lWindowHeight + lCurrentHeight, -0.1f, 256, lCurrentHeight + 25, 1f, TextureManager.TEXTURE_CORE_UI);
+			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 32, 0, 32, 32, -lWindowWidth, -lWindowHeight + lCurrentHeight, 256, lCurrentHeight + 25, -0.1f, 1f, 1f, 1f, 1f);
 			mFontUnit.draw(lCurrentController.getClass().getSimpleName(), -lWindowWidth, -lWindowHeight + lCurrentHeight, 1.0f);
-			
-			lCurrentHeight+= 25;
-			
+
+			lCurrentHeight += 25;
+
 		}
-		
+
 		mTextureBatch.end();
 		mFontUnit.end();
-		
+
 	}
-	
+
 	// --------------------------------------
 	// Methods
 	// --------------------------------------

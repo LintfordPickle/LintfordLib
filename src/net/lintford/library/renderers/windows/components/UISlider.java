@@ -60,8 +60,8 @@ public class UISlider extends UIWidget {
 		mClickID = pClickID;
 
 		mSliderLabel = NO_LABEL_TEXT;
-		width = 200;
-		height = 25;
+		w = 200;
+		h = 25;
 
 		mR = 0.19f;
 		mG = 0.13f;
@@ -80,8 +80,8 @@ public class UISlider extends UIWidget {
 
 				float lWindowX = x;
 				float lMouseX = pCore.HUD().getMouseCameraSpace().x;
-				mCurrentPosition = MathHelper.clamp(lMouseX - lWindowX, 0, width);
-				mCurrentValue = MathHelper.scaleToRange(mCurrentPosition, 0, width, mMinValue, mMaxValue);
+				mCurrentPosition = MathHelper.clamp(lMouseX - lWindowX, 0, w);
+				mCurrentValue = MathHelper.scaleToRange(mCurrentPosition, 0, w, mMinValue, mMaxValue);
 
 				if (mCallback != null) {
 					// Notify subscribers that something changes
@@ -113,12 +113,12 @@ public class UISlider extends UIWidget {
 		final float SLIDER_RAIL_HEIGHT = 4;
 		final float SLIDER_WIDTH = 10;
 
-		final TextureBatch SPRITE_BATCH = mParentWindow.rendererManager().uiSpriteBatch();
+		final TextureBatch SPRITE_BATCH = mParentWindow.rendererManager().uiTextureBatch();
 
 		// Draw the button background
 		SPRITE_BATCH.begin(pCore.HUD());
-		SPRITE_BATCH.draw(0, 0, 32, 32, x, y + height / 2 - SLIDER_RAIL_HEIGHT / 2, 0f, width, SLIDER_RAIL_HEIGHT, 1f, mR, mG, mB, 1f, TextureManager.TEXTURE_CORE_UI);
-		SPRITE_BATCH.draw(0, 0, 32, 32, x + mCurrentPosition - SLIDER_WIDTH / 2, y, 0f, SLIDER_WIDTH, height, 1f, mB, mG, mR, 1f, TextureManager.TEXTURE_CORE_UI);
+		SPRITE_BATCH.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, x, y + h / 2 - SLIDER_RAIL_HEIGHT / 2, w, SLIDER_RAIL_HEIGHT, 0f, mR, mG, mB, 1f);
+		SPRITE_BATCH.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, x + mCurrentPosition - SLIDER_WIDTH / 2, y, SLIDER_WIDTH, h, 0f, mB, mG, mR, 1f);
 
 		SPRITE_BATCH.end();
 

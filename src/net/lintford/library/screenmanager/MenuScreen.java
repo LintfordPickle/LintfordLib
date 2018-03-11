@@ -282,7 +282,7 @@ public abstract class MenuScreen extends Screen implements IMenuEntryClickListen
 				BaseLayout lLayout = layouts().get(i);
 
 				// lLayout.width = lLayout.getEntryWidth();
-				lLayout.height = lLayout.getHeight();
+				lLayout.h = lLayout.getHeight();
 
 				lYPos += lLayout.paddingTop();
 
@@ -291,16 +291,16 @@ public abstract class MenuScreen extends Screen implements IMenuEntryClickListen
 					lLayout.x = lHUDRect.left() + lLayout.paddingLeft();
 					break;
 				case center:
-					lLayout.x = lHUDRect.left() + lHUDRect.width / 2 - lLayout.width / 2;
+					lLayout.x = lHUDRect.left() + lHUDRect.w / 2 - lLayout.w / 2;
 					break;
 				case right:
-					lLayout.x = lHUDRect.right() - lLayout.width - lLayout.paddingRight();
+					lLayout.x = lHUDRect.right() - lLayout.w - lLayout.paddingRight();
 					break;
 				}
 
 				lLayout.y = lYPos;
 
-				lYPos += lLayout.height + lLayout.paddingBottom();
+				lYPos += lLayout.h + lLayout.paddingBottom();
 
 			}
 
