@@ -235,8 +235,13 @@ public class SpriteSheetManager {
 
 				// Check the integrity of the loaded spritsheet
 				if (lSpriteSheet == null) {
-					System.err.println("Error loading spritesheet " + lSpriteSheetFile.getPath());
+					DebugManager.DEBUG_MANAGER.logger().e(getClass().getSimpleName(), "Error loading spritesheet " + lSpriteSheetFile.getPath());
 					continue;
+
+				}
+
+				if (lSpriteSheet.spriteMap == null || lSpriteSheet.spriteMap.size() == 0) {
+					DebugManager.DEBUG_MANAGER.logger().w(getClass().getSimpleName(), "Loaded SpriteSheetDefinition which has no Sprites defined within: " + lSpriteSheetFile.getPath());
 
 				}
 
@@ -244,9 +249,8 @@ public class SpriteSheetManager {
 				lSpriteSheet.spriteSheetFilename = lSpriteSheetFile.getPath();
 				lSpriteSheet.loadGLContent();
 
-				if (lSpriteSheet.getSpriteCount() == 0) {
-					System.err.println("Error loading spritesheet " + lSpriteSheetFile.getPath() + ". It contains no Sprites.");
-					continue;
+				if (lSpriteSheet.spriteMap == null || lSpriteSheet.spriteMap.size() == 0) {
+					DebugManager.DEBUG_MANAGER.logger().e(getClass().getSimpleName(), "Loaded SpriteSheetDefinition which has neither sprites nor frames defined within: " + lSpriteSheetFile.getPath());
 
 				}
 
@@ -256,13 +260,11 @@ public class SpriteSheetManager {
 			} catch (JsonSyntaxException e) {
 				DebugManager.DEBUG_MANAGER.logger().e(getClass().getSimpleName(), "Failed to parse SpriteSheet (Syntax): " + lSpriteSheetFile.getPath());
 				DebugManager.DEBUG_MANAGER.logger().e(getClass().getSimpleName(), e.getMessage());
-
 				continue;
 
 			} catch (IOException e) {
 				DebugManager.DEBUG_MANAGER.logger().e(getClass().getSimpleName(), "Failed to parse SpriteSheet (IO): " + lSpriteSheetFile.getPath());
 				DebugManager.DEBUG_MANAGER.logger().e(getClass().getSimpleName(), e.getMessage());
-
 				continue;
 
 			}

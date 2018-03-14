@@ -13,7 +13,7 @@ public class SpriteGraphRenderer extends SpriteBatch {
 	// Constants
 	// --------------------------------------
 
-	public static final boolean RENDER_COLLIBABLES = true;
+	public static final boolean RENDER_COLLIBABLES = false;
 
 	// --------------------------------------
 	// Constructor

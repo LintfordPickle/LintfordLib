@@ -105,7 +105,7 @@ public class SpriteInstance extends Rectangle {
 	public void init(SpriteDefinition pSpriteDef) {
 		mSpriteDefinition = pSpriteDef;
 		loopingEnabled = pSpriteDef.loopEnabled();
-		animationEnabled = true;
+		animationEnabled = true; 
 
 	}
 

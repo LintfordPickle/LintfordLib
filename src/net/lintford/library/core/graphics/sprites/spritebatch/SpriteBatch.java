@@ -7,6 +7,7 @@ import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDef;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 
+// TODO: ---> Add batching based on SpriteSheetDef (or rather, the Texture).
 public class SpriteBatch extends TextureBatch {
 
 	// --------------------------------------
@@ -27,6 +28,26 @@ public class SpriteBatch extends TextureBatch {
 			return;
 
 		draw(pSpriteSheet, pSprite, pSprite, pZ, pR, pG, pB, pA);
+
+	}
+
+	public void draw(SpriteSheetDef pSpriteSheet, SpriteFrame pSpriteFrame, Rectangle pDstRectangle, float pZ, float pR, float pG, float pB, float pA) {
+		if (pSpriteSheet == null)
+			return;
+
+		if (!mIsDrawing)
+			return;
+
+		if (pSpriteFrame == null) {
+			return;
+		}
+
+		Texture lTexture = pSpriteSheet.texture();
+
+		if (lTexture == null)
+			return;
+
+		draw(lTexture, pSpriteFrame, pDstRectangle, pZ, pR, pG, pB, pA);
 
 	}
 

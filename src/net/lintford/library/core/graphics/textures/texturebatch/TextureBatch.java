@@ -181,6 +181,7 @@ public class TextureBatch {
 
 	public void draw(Texture pTexture, AARectangle pSrcRect, Rectangle pDestRect, float pZ, float pR, float pG, float pB, float pA) {
 		draw(pTexture, pSrcRect.x, pSrcRect.y, pSrcRect.w, pSrcRect.h, pDestRect, pZ, pR, pG, pB, pA);
+		
 	}
 
 	public void draw(Texture pTexture, float pSX, float pSY, float pSW, float pSH, Rectangle pDestRect, float pZ, float pR, float pG, float pB, float pA) {
