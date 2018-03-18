@@ -55,18 +55,15 @@ public class SpriteBatch extends TextureBatch {
 		if (pSpriteSheet == null)
 			return;
 
-		if (!mIsDrawing)
-			return;
-
 		if (pSprite == null) {
 			return;
 		}
 
+		if (!mIsDrawing)
+			return;
+
 		Texture lTexture = pSpriteSheet.texture();
 		SpriteFrame lCurrentFrame = pSprite.getFrame();
-
-		if (lTexture == null)
-			return;
 
 		draw(lTexture, lCurrentFrame, pDstRectangle, pZ, pR, pG, pB, pA);
 

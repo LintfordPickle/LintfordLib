@@ -41,7 +41,7 @@ public class AWTBitmapFontSpriteBatch extends TextureBatch {
 	// --------------------------------------
 
 	public void draw(String pText, float pX, float pY, float pScale) {
-		draw(pText, pX, pY, 0f, 1f, 1f, 1f, 1f, pScale, NO_WORD_WRAP);
+		draw(pText, pX, pY, -0.1f, 1f, 1f, 1f, 1f, pScale, NO_WORD_WRAP);
 	}
 
 	public void draw(String pText, float pX, float pY, float pZ, float pScale, float pWordWrapWidth) {

@@ -108,7 +108,7 @@ public class UITextButton extends UIWidget {
 
 		// Draw the button background
 		SPRITE_BATCH.begin(pCore.HUD());
-		SPRITE_BATCH.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, x, y, w, h, 0f, lR, lG, lB, 1f);
+		SPRITE_BATCH.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, x, y, 32, 32, -0.1f, lR, lG, lB, 1f);
 		SPRITE_BATCH.end();
 
 		FontUnit lFontRenderer = mParentWindow.rendererManager().textFont();

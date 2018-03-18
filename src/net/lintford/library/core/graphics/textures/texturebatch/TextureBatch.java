@@ -16,6 +16,7 @@ import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.shaders.ShaderMVP_PT;
 import net.lintford.library.core.graphics.textures.Texture;
+import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.maths.Matrix4f;
 import net.lintford.library.core.maths.Vector4f;
 
@@ -78,11 +79,17 @@ public class TextureBatch {
 
 	protected boolean mIsLoaded;
 	protected boolean mIsDrawing;
+	
+	private boolean mUseCheckerPattern;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
 
+	public void useCheckerPattern(boolean pNewValue) {
+		mUseCheckerPattern = pNewValue;
+	}
+	
 	public boolean isDrawing() {
 		return mIsDrawing;
 	}
@@ -181,7 +188,7 @@ public class TextureBatch {
 
 	public void draw(Texture pTexture, AARectangle pSrcRect, Rectangle pDestRect, float pZ, float pR, float pG, float pB, float pA) {
 		draw(pTexture, pSrcRect.x, pSrcRect.y, pSrcRect.w, pSrcRect.h, pDestRect, pZ, pR, pG, pB, pA);
-		
+
 	}
 
 	public void draw(Texture pTexture, float pSX, float pSY, float pSW, float pSH, Rectangle pDestRect, float pZ, float pR, float pG, float pB, float pA) {
@@ -191,8 +198,21 @@ public class TextureBatch {
 		if (!mIsDrawing)
 			return;
 
-		if (pTexture == null)
-			return;
+		if (pTexture == null) {
+			// Resolve to use a default texture, or the 'MISSING_TEXTURE'
+			if (TextureManager.USE_DEBUG_MISSING_TEXTURES) {
+				pTexture = TextureManager.TEXTURE_NOT_FOUND;
+
+			} else {
+				return;
+
+			}
+		}
+		
+		if(mUseCheckerPattern) {
+			pTexture = TextureManager.TEXTURE_CHECKER_I;
+			
+		}
 
 		if (mCurrentTexID == -1) { // first texture
 			mCurrentTexID = pTexture.getTextureID();
@@ -239,13 +259,26 @@ public class TextureBatch {
 
 		mCurNumSprites++;
 	}
-	
+
 	public void draw(Texture pTexture, float pSX, float pSY, float pSW, float pSH, float pDX, float pDY, float pDW, float pDH, float pZ, float pR, float pG, float pB, float pA) {
 		if (!mIsDrawing)
 			return;
 
-		if (pTexture == null)
-			return;
+		if (pTexture == null) {
+			// Resolve to use a default texture, or the 'MISSING_TEXTURE'
+			if (TextureManager.USE_DEBUG_MISSING_TEXTURES) {
+				pTexture = TextureManager.TEXTURE_NOT_FOUND;
+
+			} else {
+				return;
+
+			}
+		}
+		
+		if(mUseCheckerPattern) {
+			pTexture = TextureManager.TEXTURE_CHECKER_I;
+			
+		}
 
 		if (mCurrentTexID == -1) { // first texture
 			mCurrentTexID = pTexture.getTextureID();
@@ -258,7 +291,6 @@ public class TextureBatch {
 			flush();
 		}
 
-		
 		// Vertex 0
 		float x0 = pDX;
 		float y0 = pDY;
@@ -268,14 +300,14 @@ public class TextureBatch {
 		// Vertex 1
 		float x1 = pDX + pDW;
 		float y1 = pDY;
-		float u1 = (pSX + pSW)  / pTexture.getTextureWidth();
+		float u1 = (pSX + pSW) / pTexture.getTextureWidth();
 		float v1 = pSY / pTexture.getTextureHeight();
 
 		// Vertex 2
 		float x2 = pDX;
 		float y2 = pDY + pDH;
 		float u2 = pSX / pTexture.getTextureWidth();
-		float v2 = (pSY + pSH)  / pTexture.getTextureHeight();
+		float v2 = (pSY + pSH) / pTexture.getTextureHeight();
 
 		// Vertex 3
 		float x3 = pDX + pDW;
@@ -302,8 +334,21 @@ public class TextureBatch {
 		if (!mIsDrawing)
 			return;
 
-		if (pTexture == null)
-			return;
+		if (pTexture == null) {
+			// Resolve to use a default texture, or the 'MISSING_TEXTURE'
+			if (TextureManager.USE_DEBUG_MISSING_TEXTURES) {
+				pTexture = TextureManager.TEXTURE_NOT_FOUND;
+
+			} else {
+				return;
+
+			}
+		}
+		
+		if(mUseCheckerPattern) {
+			pTexture = TextureManager.TEXTURE_CHECKER_I;
+			
+		}
 
 		if (mCurrentTexID == -1) { // first texture
 			mCurrentTexID = pTexture.getTextureID();
