@@ -187,13 +187,16 @@ public class MenuInputEntry extends MenuEntry implements IBufferedInputCallback 
 	}
 
 	@Override
-	public void onEnterPressed() {
+	public boolean onEnterPressed() {
 		mHasFocus = false;
 		mShowCaret = false;
 
 		if (mInputField.length() == 0) {
 			setDefaultText("Empty", true);
 		}
+		
+		return getEnterFinishesInput();
+		
 	}
 
 	@Override
@@ -202,7 +205,7 @@ public class MenuInputEntry extends MenuEntry implements IBufferedInputCallback 
 	}
 
 	@Override
-	public void onEscapePressed() {
+	public boolean onEscapePressed() {
 		if (mInputField.length() > 0) {
 			mInputField.delete(0, mInputField.length());
 		}
@@ -212,6 +215,9 @@ public class MenuInputEntry extends MenuEntry implements IBufferedInputCallback 
 
 		mHasFocus = false;
 		mShowCaret = false;
+		
+		return getEscapeFinishesInput();
+		
 	}
 
 	@Override

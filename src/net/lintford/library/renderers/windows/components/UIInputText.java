@@ -7,7 +7,6 @@ import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 import net.lintford.library.core.input.IBufferedInputCallback;
 import net.lintford.library.core.input.InputState;
-import net.lintford.library.renderers.RendererManager;
 
 public class UIInputText extends AARectangle implements IBufferedInputCallback {
 
@@ -21,8 +20,6 @@ public class UIInputText extends AARectangle implements IBufferedInputCallback {
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
-
-	private transient RendererManager mRendererManager;
 
 	private transient boolean mHasFocus;
 	private transient float mCaretFlashTimer;
@@ -84,9 +81,7 @@ public class UIInputText extends AARectangle implements IBufferedInputCallback {
 	// Constructor
 	// --------------------------------------
 
-	public UIInputText(final RendererManager pRendererManager) {
-		mRendererManager = pRendererManager;
-
+	public UIInputText() {
 		mResetOnDefaultClick = true;
 		mInputField = new StringBuilder();
 
@@ -157,7 +152,7 @@ public class UIInputText extends AARectangle implements IBufferedInputCallback {
 
 	}
 
-	public void draw(LintfordCore pCore, TextureBatch pUISpriteBatch) {
+	public void draw(LintfordCore pCore, TextureBatch pUISpriteBatch, FontUnit pTextFont) {
 		pUISpriteBatch.begin(pCore.HUD());
 		pUISpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 64, 0, 32, 32, x, y + 3, w, h - 6, -0.1f, 1f, 1f, 1f, 1);
 		pUISpriteBatch.end();
@@ -167,9 +162,7 @@ public class UIInputText extends AARectangle implements IBufferedInputCallback {
 		pUISpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 288, 64, 32, 32, mCancelRectangle.x, mCancelRectangle.y, mCancelRectangle.w, mCancelRectangle.h, -0.1f, 1f, 1f, 1f, 1);
 		pUISpriteBatch.end();
 
-		FontUnit lFont = mRendererManager.textFont();
-
-		final float lInputTextWidth = lFont.bitmap().getStringWidth(mInputField.toString());
+		final float lInputTextWidth = pTextFont.bitmap().getStringWidth(mInputField.toString());
 
 		String lText = mInputField.toString();
 		float lAlpha = 1f;
@@ -178,14 +171,15 @@ public class UIInputText extends AARectangle implements IBufferedInputCallback {
 			lAlpha = 0.5f;
 		}
 
-		lFont.begin(pCore.HUD());
-		lFont.draw(lText, x + 5, y, -0.1f, 1f, 1f, 1f, lAlpha, 1f, -1);
+		pTextFont.begin(pCore.HUD());
+		pTextFont.draw(lText, x + 5, y, -0.1f, 1f, 1f, 1f, lAlpha, 1f, -1);
 
 		if (mShowCaret && mHasFocus) {
-			lFont.draw("|", x + lInputTextWidth + SPACE_BETWEEN_TEXT * 3, y, 1f);
+			pTextFont.draw("|", x + lInputTextWidth + SPACE_BETWEEN_TEXT * 3, y, 1f);
+
 		}
 
-		lFont.end();
+		pTextFont.end();
 
 	}
 
@@ -221,16 +215,16 @@ public class UIInputText extends AARectangle implements IBufferedInputCallback {
 	}
 
 	@Override
-	public void onEnterPressed() {
+	public boolean onEnterPressed() {
 		mHasFocus = false;
 		mShowCaret = false;
+
+		return getEnterFinishesInput();
 
 	}
 
 	@Override
 	public void onKeyPressed(char pCh) {
-		// By changing the mStringLength, we provide a way for listeners to poll if there have been any changes
-		// TODO: Use a proper listener interface
 		mStringLength = mInputField.length();
 
 	}
@@ -241,7 +235,7 @@ public class UIInputText extends AARectangle implements IBufferedInputCallback {
 	}
 
 	@Override
-	public void onEscapePressed() {
+	public boolean onEscapePressed() {
 		if (mInputField.length() > 0) {
 			mInputField.delete(0, mInputField.length());
 		}
@@ -253,6 +247,9 @@ public class UIInputText extends AARectangle implements IBufferedInputCallback {
 
 		mHasFocus = false;
 		mShowCaret = false;
+
+		return getEscapeFinishesInput();
+
 	}
 
 	@Override

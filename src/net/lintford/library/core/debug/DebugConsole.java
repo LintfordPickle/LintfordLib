@@ -221,10 +221,28 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 		// listen for opening and closing
 		if (pCore.input().keyDownTimed(GLFW.GLFW_KEY_F1)) {
 			mOpen = !mOpen;
-			mHasFocus = false;
 			if (mOpen) {
 				mInputText.delete(0, mInputText.length());
+				// if default to capture on open
+				mHasFocus = true;
+				pCore.input().startCapture(this);
+				
 			}
+			else {
+				mHasFocus = false;
+				
+			}
+		}
+		
+		if (pCore.input().keyDownTimed(GLFW.GLFW_KEY_ESCAPE)) {
+			if (mOpen) {
+				mOpen = false;
+				mInputText.delete(0, mInputText.length());
+				mHasFocus = false;
+				pCore.input().stopCapture();
+				
+			}
+			
 		}
 
 		if (mOpen) {
@@ -402,33 +420,30 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 
 	}
 
-	public void open() {
-
-	}
-
-	public void close() {
-
-	}
-
 	// --------------------------------------
 	// Implements
 	// --------------------------------------
-
+	
 	@Override
-	public void onEscapePressed() {
+	public boolean onEscapePressed() {
 		mHasFocus = false;
+		mOpen = false;
 
 		if (mInputText.length() > 0) {
 			mInputText.delete(0, mInputText.length());
 		}
+		
+		return true;
+		
 	}
 
 	@Override
-	public void onEnterPressed() {
+	public boolean onEnterPressed() {
 
 		if (mInputText.length() == 0) {
 			mHasFocus = false;
-			return;
+			return true; // finish keyboard capture
+
 		}
 
 		final String INPUT_STRING = mInputText.toString();
@@ -454,6 +469,8 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 
 		// Automatically scroll to the bottom when the user enters some text
 		mAutoScroll = true;
+		
+		return getEnterFinishesInput();
 
 	}
 

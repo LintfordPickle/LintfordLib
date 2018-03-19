@@ -45,12 +45,18 @@ public class InputState {
 				if (pAction == GLFW.GLFW_PRESS) {
 					if (mIBufferedInputCallback != null) {
 						if (pKey == GLFW.GLFW_KEY_ENTER) {
-							mIBufferedInputCallback.onEnterPressed();
+							if (mIBufferedInputCallback.onEnterPressed()) {
+								stopCapture();
+								return;
+							}
 							if (mIBufferedInputCallback.getEnterFinishesInput()) {
 								stopCapture();
 							}
 						} else if (pKey == GLFW.GLFW_KEY_ESCAPE) {
-							mIBufferedInputCallback.onEscapePressed();
+							if (mIBufferedInputCallback.onEscapePressed()) {
+								stopCapture();
+								return;
+							}
 							if (mIBufferedInputCallback.getEscapeFinishesInput()) {
 								stopCapture();
 							}
@@ -363,7 +369,7 @@ public class InputState {
 	}
 
 	public void stopCapture() {
-		if(mIBufferedInputCallback != null) {
+		if (mIBufferedInputCallback != null) {
 			mIBufferedInputCallback.captureStopped();
 		}
 		mIBufferedInputCallback = null;
@@ -396,10 +402,10 @@ public class InputState {
 
 		mKeyTimer += lDeltaTime;
 		mMenuClickTimer += lDeltaTime;
-		
-		if(isMouseTimedLeftClickAvailable() && mCaptureKeyboardInput) {
+
+		if (isMouseTimedLeftClickAvailable() && mCaptureKeyboardInput) {
 			stopCapture();
-			
+
 		}
 
 		// Releasing the left click will automatically reset the owner
@@ -424,9 +430,9 @@ public class InputState {
 	public void resetFlags() {
 		mMouseWheelXOffset = 0;
 		mMouseWheelYOffset = 0;
-		
-//		 Arrays.fill(mKeyButtonStates, false);
-//		 Arrays.fill(mMouseButtonStates, false);
+
+		// Arrays.fill(mKeyButtonStates, false);
+		// Arrays.fill(mMouseButtonStates, false);
 
 	}
 
