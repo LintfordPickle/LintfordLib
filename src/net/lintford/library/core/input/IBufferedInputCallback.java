@@ -14,4 +14,8 @@ public interface IBufferedInputCallback {
 	
 	public abstract boolean getEscapeFinishesInput();
 	
+	public default void captureStopped() {
+		
+	}
+	
 }

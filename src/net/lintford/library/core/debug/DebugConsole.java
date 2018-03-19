@@ -44,7 +44,6 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 	public static final Vector3f USER_MESSAGE_RGB = new Vector3f(0.47f, 0.77f, 0.9f);
 	public static final Vector3f SYS_MESSAGE_RGB = new Vector3f(0.83f, 0.27f, 0f);
 
-	// TODO (John): RGB doesn't belong in the logger class. Move it
 	public static Vector3f getMessageRGB(final int pMessageType) {
 		switch (pMessageType) {
 		case DebugManager.LOG_LEVEL_SYSTEM:
@@ -190,7 +189,6 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 		DebugManager.DEBUG_MANAGER.logger().v(getClass().getSimpleName(), "DebugConsole unloading GL content");
 
 		mSpriteBatch.unloadGLContent();
-		// TODO: Unload fonts when no longer needed?
 
 		mIsLoaded = false;
 
@@ -203,15 +201,18 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 		if (mScrollBar.handleInput(pCore)) {
 			mAutoScroll = false;
 
-			final float FONT_HEIGHT = mConsoleFont.bitmap().getStringHeight(" ");
-			final int MAX_NUM_LINES = (int) ((openHeight() - FONT_HEIGHT) / FONT_HEIGHT);
+			mConsoleLineHeight = (int) (mConsoleFont.bitmap().getStringHeight(" ") + 4);
+			final int MAX_NUM_LINES = (int) ((openHeight() - mConsoleLineHeight * 2) / mConsoleLineHeight);
 
-			mUpperBound = (int) -((mScrollYPosition) / FONT_HEIGHT) + MAX_NUM_LINES;
+			int lLB = (int) -((mScrollYPosition) / mConsoleLineHeight) + 1;
+			int lUB = lLB + MAX_NUM_LINES;
 
-			if (mUpperBound == DebugManager.DEBUG_MANAGER.logger().logLines().size()) {
+			if (lUB == DebugManager.DEBUG_MANAGER.logger().logLines().size()) {
 				mAutoScroll = true;
+
 			} else {
 				mAutoScroll = false;
+
 			}
 
 			return;
@@ -236,18 +237,9 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 				// If the debug console is open and has 'consumed' this click, don't let other windows use it
 				pCore.input().setLeftMouseClickHandled();
 
-			}
-
-			if (mHasFocus) {
-				pCore.input().startCapture(this);
-			}
-
-			float lHUDMouseX = pCore.HUD().getMouseWorldSpaceX();
-			float lHUDMouseY = pCore.HUD().getMouseWorldSpaceY();
-
-			if (pCore.input().mouseLeftClick() && intersects(lHUDMouseX, lHUDMouseY)) {
-				// Consume the left click
-				pCore.input().tryAquireLeftClickOwnership(hashCode());
+				if (mHasFocus) {
+					pCore.input().startCapture(this);
+				}
 
 			}
 
@@ -263,8 +255,8 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 
 		final float lDeltaTime = (float) pCore.time().elapseGameTimeMilli() / 1000f;
 
-		mFocusTimer += lDeltaTime;
-		mCaretTimer += lDeltaTime;
+		mFocusTimer += lDeltaTime * 1000f;
+		mCaretTimer += lDeltaTime * 1000f;
 
 		contentArea().set(x, y, w - mScrollBar.w, DebugManager.DEBUG_MANAGER.logger().logLines().size() * 25);
 
@@ -279,10 +271,12 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 
 		} else if (mOpen && mOpenHeight > lOPEN_HEIGHT) {
 			mOpenHeight = lOPEN_HEIGHT;
+
 		}
 
 		else if (!mOpen && mOpenHeight > 0.0f) {
 			mOpenHeight -= OPEN_SPEED * lDeltaTime;
+
 		}
 
 		DisplayConfig lDisplay = pCore.config().display();
@@ -386,19 +380,11 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 			return;
 
 		if (pNewChar == '\n' || pNewChar == '\r') {
+			// Add this string to the log
+			DebugManager.DEBUG_MANAGER.logger().u("User", mInputText.toString());
 
-			if (mInputText.equals("")) {
-				if (mInputText.length() > 0) {
-					mInputText.delete(0, mInputText.length());
-				}
-			} else {
-
-				// Add this string to the log
-				DebugManager.DEBUG_MANAGER.logger().u("User", mInputText.toString());
-
-				if (mInputText.length() > 0) {
-					mInputText.delete(0, mInputText.length());
-				}
+			if (mInputText.length() > 0) {
+				mInputText.delete(0, mInputText.length());
 			}
 
 		} else {
@@ -478,7 +464,8 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 
 	@Override
 	public boolean getEnterFinishesInput() {
-		return true;
+		return false;
+
 	}
 
 	@Override
@@ -542,4 +529,11 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 		}
 
 	}
+
+	@Override
+	public void captureStopped() {
+		mHasFocus = false;
+
+	}
+
 }

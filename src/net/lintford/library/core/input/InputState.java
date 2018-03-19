@@ -363,6 +363,9 @@ public class InputState {
 	}
 
 	public void stopCapture() {
+		if(mIBufferedInputCallback != null) {
+			mIBufferedInputCallback.captureStopped();
+		}
 		mIBufferedInputCallback = null;
 		mCaptureKeyboardInput = false;
 	}
