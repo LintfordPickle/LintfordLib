@@ -35,9 +35,19 @@ public class UIInputText extends AARectangle implements IBufferedInputCallback {
 	private transient StringBuilder mInputField;
 	private transient boolean mResetOnDefaultClick;
 
+	private String mTextureName;
+
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public void textureName(String pTextureName) {
+		mTextureName = pTextureName;
+	}
+
+	public String textureName() {
+		return mTextureName;
+	}
 
 	public String emptyString() {
 		return mEmptyString;
@@ -55,7 +65,7 @@ public class UIInputText extends AARectangle implements IBufferedInputCallback {
 	}
 
 	public boolean isEmpty() {
-		return mInputField.toString().equals(mEmptyString);
+		return isEmptyString();
 	}
 
 	public boolean hasFocus() {
@@ -75,6 +85,10 @@ public class UIInputText extends AARectangle implements IBufferedInputCallback {
 
 	public StringBuilder inputString() {
 		return mInputField;
+	}
+
+	public boolean isEmptyString() {
+		return mInputField.toString().equals(mEmptyString);
 	}
 
 	// --------------------------------------
@@ -103,7 +117,7 @@ public class UIInputText extends AARectangle implements IBufferedInputCallback {
 						mInputField.delete(0, mInputField.length());
 					mStringLength = 0;
 
-					mInputField.append(mEmptyString);
+					// mInputField.append(mEmptyString);
 
 					pCore.input().stopCapture();
 
@@ -111,6 +125,8 @@ public class UIInputText extends AARectangle implements IBufferedInputCallback {
 					mShowCaret = false;
 
 				}
+
+				pCore.input().setLeftMouseClickHandled();
 			}
 		}
 
@@ -119,6 +135,8 @@ public class UIInputText extends AARectangle implements IBufferedInputCallback {
 				pCore.input().mouseTimedLeftClick();
 
 				onClick(pCore.input());
+
+				pCore.input().setLeftMouseClickHandled();
 
 				return true;
 
@@ -136,9 +154,9 @@ public class UIInputText extends AARectangle implements IBufferedInputCallback {
 	public void update(LintfordCore pCore) {
 		mCaretFlashTimer += pCore.time().elapseGameTimeMilli();
 
-		final int lCANCEL_RECT_SIZE = 24;
+		final int lCANCEL_RECT_SIZE = 18;
 		mCancelRectangle.x = x + w - lCANCEL_RECT_SIZE - 2;
-		mCancelRectangle.y = y + 2;
+		mCancelRectangle.y = y + 4;
 		mCancelRectangle.w = lCANCEL_RECT_SIZE;
 		mCancelRectangle.h = lCANCEL_RECT_SIZE;
 
@@ -152,22 +170,31 @@ public class UIInputText extends AARectangle implements IBufferedInputCallback {
 
 	}
 
-	public void draw(LintfordCore pCore, TextureBatch pUISpriteBatch, FontUnit pTextFont) {
-		pUISpriteBatch.begin(pCore.HUD());
-		pUISpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 64, 0, 32, 32, x, y + 3, w, h - 6, -0.1f, 1f, 1f, 1f, 1);
-		pUISpriteBatch.end();
+	public void draw(LintfordCore pCore, TextureBatch pTextureBatch, FontUnit pTextFont) {
+		if(mTextureName == null) mTextureName = TextureManager.TEXTURE_CORE_UI_NAME;
+		
+		pTextureBatch.begin(pCore.HUD());
+		pTextureBatch.draw(TextureManager.textureManager().getTexture(mTextureName), 64, 0, 32, 32, x, y + 3, w, h - 6, -0.1f, 1f, 1f, 1f, 1);
+		pTextureBatch.end();
 
 		// Draw the cancel button rectangle
-		pUISpriteBatch.begin(pCore.HUD());
-		pUISpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 288, 64, 32, 32, mCancelRectangle.x, mCancelRectangle.y, mCancelRectangle.w, mCancelRectangle.h, -0.1f, 1f, 1f, 1f, 1);
-		pUISpriteBatch.end();
+		pTextureBatch.begin(pCore.HUD());
+		pTextureBatch.draw(TextureManager.textureManager().getTexture(mTextureName), 288, 64, 32, 32, mCancelRectangle.x, mCancelRectangle.y, mCancelRectangle.w, mCancelRectangle.h, -0.1f, 1f, 1f, 1f, 1);
+		pTextureBatch.end();
 
 		final float lInputTextWidth = pTextFont.bitmap().getStringWidth(mInputField.toString());
 
 		String lText = mInputField.toString();
 		float lAlpha = 1f;
 		if (lText.length() == 0) {
-			lText = "<search>";
+			if (mEmptyString.isEmpty()) {
+				lText = "<search>";
+
+			} else {
+				lText = mEmptyString;
+
+			}
+
 			lAlpha = 0.5f;
 		}
 

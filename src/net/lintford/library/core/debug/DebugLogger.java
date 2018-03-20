@@ -4,9 +4,11 @@ import java.io.BufferedOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import net.lintford.library.ConstantsTable;
 import net.lintford.library.core.debug.DebugManager.DebugLogLevel;
@@ -30,6 +32,7 @@ public class DebugLogger {
 		// Variables
 		// --------------------------------------
 
+		String timestamp;
 		String tag;
 		String message;
 		int type;
@@ -42,10 +45,11 @@ public class DebugLogger {
 
 		}
 
-		public void setMessage(String pTag, String pMessage, DebugLogLevel pLevel) {
+		public void setMessage(String pTag, String pMessage, String pTimestamp, DebugLogLevel pLevel) {
 			// Check the level
 
 			tag = pTag;
+			timestamp = pTimestamp;
 			message = pMessage;
 			type = pLevel.logLevel;
 		}
@@ -148,10 +152,11 @@ public class DebugLogger {
 				return;
 			}
 
-			lLogMessage.setMessage(pTag, pMessage, pLogLevel);
+			String lTimeStamp = new SimpleDateFormat("HH.mm.ss.SSS", Locale.US).format(new Date());
+			lLogMessage.setMessage(pTag, pMessage, lTimeStamp, pLogLevel);
 
 			if (DEBUG_LOG_DEBUG_TO_FILE) {
-				writeDebugMessageToFile(lLogMessage.tag, lLogMessage.message);
+				writeDebugMessageToFile(lLogMessage.tag, lLogMessage.timestamp, lLogMessage.message);
 
 			}
 
@@ -197,12 +202,14 @@ public class DebugLogger {
 	}
 
 	/** Appends the given message into a file at the given location. */
-	public boolean writeDebugMessageToFile(String pTag, String pMessage) {
+	public boolean writeDebugMessageToFile(String pTag, String pTimestamp, String pMessage) {
 		if (mDebugLogBufferedOutputStream == null)
 			return false;
 
 		try {
 
+			mDebugLogBufferedOutputStream.write(pTimestamp.getBytes());
+			mDebugLogBufferedOutputStream.write(": ".getBytes());
 			mDebugLogBufferedOutputStream.write(pTag.getBytes());
 			mDebugLogBufferedOutputStream.write(": ".getBytes());
 			mDebugLogBufferedOutputStream.write(pMessage.getBytes());

@@ -202,7 +202,7 @@ public abstract class LintfordCore {
 	protected void onLoadGLContent() {
 		mResourceManager.loadGLContent();
 		mRendererManager.loadGLContent(mResourceManager);
-
+		
 		DebugManager.DEBUG_MANAGER.loadGLContent(mResourceManager);
 
 	}

@@ -19,6 +19,7 @@ import net.lintford.library.options.DisplayConfig;
 import net.lintford.library.renderers.windows.components.IScrollBarArea;
 import net.lintford.library.renderers.windows.components.ScrollBar;
 import net.lintford.library.renderers.windows.components.ScrollBarContentRectangle;
+import net.lintford.library.renderers.windows.components.UIInputText;
 
 public class DebugConsole extends AARectangle implements IBufferedInputCallback, IScrollBarArea {
 
@@ -27,6 +28,7 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 	// --------------------------------------
 
 	private static final boolean CONSOLE_ENABLED = true;
+	private static final boolean AUTO_CAPTURE_ON_OPEN = false;
 
 	private static final float Z_DEPTH = -1f;
 
@@ -102,6 +104,14 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 	private transient boolean mAutoScroll;
 	private boolean mIsLoaded;
 
+	private UIInputText mTAGFilterText;
+	private UIInputText mMessageFilterText;
+
+	protected boolean mProcessed; // is filter applied?
+	protected List<LogMessage> mProcessedMessages;
+	protected List<LogMessage> mUpdateMessageList;
+	protected boolean mDirty;
+
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
@@ -152,6 +162,17 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 			mConsoleCommands = new ArrayList<>();
 			mAutoScroll = true;
 
+			mTAGFilterText = new UIInputText();
+			mTAGFilterText.emptyString("Filter");
+			mTAGFilterText.textureName(TextureManager.TEXTURE_SYSTEM_UI_NAME);
+
+			mMessageFilterText = new UIInputText();
+			mMessageFilterText.emptyString("Filter");
+			mMessageFilterText.textureName(TextureManager.TEXTURE_SYSTEM_UI_NAME);
+
+			mProcessedMessages = new ArrayList<>();
+			mUpdateMessageList = new ArrayList<>();
+
 		} else {
 			mActive = false;
 
@@ -198,6 +219,9 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 		if (!CONSOLE_ENABLED)
 			return;
 
+		mTAGFilterText.handleInput(pCore);
+		mMessageFilterText.handleInput(pCore);
+
 		if (mScrollBar.handleInput(pCore)) {
 			mAutoScroll = false;
 
@@ -207,7 +231,8 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 			int lLB = (int) -((mScrollYPosition) / mConsoleLineHeight) + 1;
 			int lUB = lLB + MAX_NUM_LINES;
 
-			if (lUB == DebugManager.DEBUG_MANAGER.logger().logLines().size()) {
+			int lNumberLinesInConsole = mProcessed ? mProcessedMessages.size() : DebugManager.DEBUG_MANAGER.logger().logLines().size();
+			if (lUB == lNumberLinesInConsole) {
 				mAutoScroll = true;
 
 			} else {
@@ -224,30 +249,41 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 			if (mOpen) {
 				mInputText.delete(0, mInputText.length());
 				// if default to capture on open
-				mHasFocus = true;
-				pCore.input().startCapture(this);
-				
-			}
-			else {
+
+				if (AUTO_CAPTURE_ON_OPEN) {
+					mHasFocus = true;
+					pCore.input().startCapture(this);
+
+				}
+
+			} else {
 				mHasFocus = false;
-				
+
 			}
 		}
-		
+
 		if (pCore.input().keyDownTimed(GLFW.GLFW_KEY_ESCAPE)) {
 			if (mOpen) {
 				mOpen = false;
 				mInputText.delete(0, mInputText.length());
 				mHasFocus = false;
 				pCore.input().stopCapture();
-				
+
 			}
-			
+
 		}
 
 		if (mOpen) {
 
-			if (mFocusTimer > FOCUS_TIMER && pCore.input().mouseWindowCoords().y < openHeight() && pCore.input().tryAquireLeftClickOwnership(hashCode())) {
+			if (mTAGFilterText.intersects(pCore.HUD().getMouseCameraSpace())) {
+
+			}
+
+			else if (mMessageFilterText.intersects(pCore.HUD().getMouseCameraSpace())) {
+
+			}
+
+			else if (mFocusTimer > FOCUS_TIMER && pCore.input().mouseWindowCoords().y < openHeight() && pCore.input().tryAquireLeftClickOwnership(hashCode())) {
 				mHasFocus = !mHasFocus;
 				pCore.input().stopCapture();
 				mFocusTimer = 0;
@@ -271,12 +307,18 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 		if (!mActive)
 			return;
 
+		doFilterText();
+
+		mTAGFilterText.update(pCore);
+		mMessageFilterText.update(pCore);
+
 		final float lDeltaTime = (float) pCore.time().elapseGameTimeMilli() / 1000f;
 
 		mFocusTimer += lDeltaTime * 1000f;
 		mCaretTimer += lDeltaTime * 1000f;
 
-		contentArea().set(x, y, w - mScrollBar.w, DebugManager.DEBUG_MANAGER.logger().logLines().size() * 25);
+		final int lNumberLinesInConsole = mProcessed ? mProcessedMessages.size() : DebugManager.DEBUG_MANAGER.logger().logLines().size();
+		contentArea().set(x, y, w - mScrollBar.w, lNumberLinesInConsole * 25);
 
 		if (mCaretTimer > 250) {
 			mCaretTimer = 0;
@@ -306,14 +348,26 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 
 		mConsoleLineHeight = (int) (mConsoleFont.bitmap().getStringHeight(" ") + 4);
 		final int MAX_NUM_LINES = (int) ((openHeight() - mConsoleLineHeight * 2) / mConsoleLineHeight);
-		mContentRectangle.h = (DebugManager.DEBUG_MANAGER.logger().logLines().size() + 2) * mConsoleLineHeight;
+		mContentRectangle.h = (lNumberLinesInConsole + 2) * mConsoleLineHeight;
 
-		mLowerBound = (int) -((mScrollYPosition) / mConsoleLineHeight) + 1;
+		mLowerBound = (int) -((mScrollYPosition) / mConsoleLineHeight);
+		// Lower bound should not be lower than the last item (occurs when filtering texture and number of lines decreases).
+		if (mProcessed && mLowerBound > mProcessedMessages.size()) {
+			mLowerBound = mProcessedMessages.size() - MAX_NUM_LINES;
+			if (mLowerBound < 0)
+				mLowerBound = 0;
+
+			mScrollYPosition = mScrollBar.getScrollYBottomPosition();
+
+		}
 		mUpperBound = mLowerBound + MAX_NUM_LINES;
 
+		// mAutoScroll = true;
 		if (mAutoScroll) {
-			mUpperBound = DebugManager.DEBUG_MANAGER.logger().logLines().size();
+			int lNumLines = mProcessed ? mProcessedMessages.size() : DebugManager.DEBUG_MANAGER.logger().logLines().size();
+			mUpperBound = lNumLines;
 			mLowerBound = mUpperBound - MAX_NUM_LINES;
+
 			mScrollYPosition = mScrollBar.getScrollYBottomPosition();
 		}
 
@@ -327,9 +381,16 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 		if (!mActive || !mIsLoaded || !mOpen)
 			return;
 
-		final float PADDING_LEFT = 15;
+		final float POSITION_OFFSET_TIME = 5;
+		final float POSITION_OFFSET_TAG = 130;
+		final float POSITION_OFFSET_MESSAGE = 350;
+
+		final float PADDING_LEFT = 5;
 		final float lInputTextXOffset = 14;
-		float lTextPosition = 0;
+		float lTextPosition = -10;
+
+		mTAGFilterText.set(x + POSITION_OFFSET_TAG, y + 5, 200, 25);
+		mMessageFilterText.set(x + POSITION_OFFSET_MESSAGE, y + 5, 200, 25);
 
 		// Draw the console background (with a black border for the text input region)
 		mSpriteBatch.begin(pCore.HUD());
@@ -340,28 +401,34 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 
 		mConsoleFont.begin(pCore.HUD());
 
-		final List<LogMessage> LOG_MESSAGES = DebugManager.DEBUG_MANAGER.logger().logLines();
+		List<LogMessage> lMessages = mProcessed ? mProcessedMessages : DebugManager.DEBUG_MANAGER.logger().logLines();
 
 		DisplayConfig lDisplay = pCore.config().display();
 
 		// output the messages
-		if (LOG_MESSAGES != null && LOG_MESSAGES.size() > 0) {
+		final int MESSAGE_COUNT = lMessages.size();
+		if (lMessages != null && MESSAGE_COUNT > 0) {
 			for (int i = mLowerBound; i < mUpperBound; i++) {
-				if (i > 0 && i < LOG_MESSAGES.size()) {
-					final LogMessage MESSAGE = LOG_MESSAGES.get(i);
+				if (i >= 0 && i < MESSAGE_COUNT) {
+					// TODO: Check this, on a LinkedList this would be SLOW!
+					final LogMessage MESSAGE = lMessages.get(i);
+					if (MESSAGE == null)
+						continue;
+
 					lTextPosition -= mConsoleLineHeight;
 
 					final float lR = getMessageRGB(MESSAGE.type).x;
 					final float lG = getMessageRGB(MESSAGE.type).y;
 					final float lB = getMessageRGB(MESSAGE.type).z;
 
+					// Draw Timestamp
+					mConsoleFont.draw(MESSAGE.timestamp, x + POSITION_OFFSET_TIME, -lDisplay.windowSize().y * 0.5f - lTextPosition, Z_DEPTH + 0.1f, lR, lG, lB, 1.0f, 1f, -1, 18);
+
 					// Draw TAG
-					mConsoleFont.draw(MESSAGE.tag, x + PADDING_LEFT, -lDisplay.windowSize().y * 0.5f - lTextPosition, Z_DEPTH + 0.1f, lR, lG, lB, 1.0f, 1f, -1, 18);
+					mConsoleFont.draw(MESSAGE.tag, x + POSITION_OFFSET_TAG, -lDisplay.windowSize().y * 0.5f - lTextPosition, Z_DEPTH + 0.1f, lR, lG, lB, 1.0f, 1f, -1, 18);
 
 					// Draw MESSAGE
-					final float MESSAGE_POSITION_OFFSET = 200;
-
-					mConsoleFont.draw(MESSAGE.message, x + PADDING_LEFT + MESSAGE_POSITION_OFFSET, -lDisplay.windowSize().y * 0.5f - lTextPosition, Z_DEPTH + 0.1f, lR, lG, lB, 1.0f, 1f, -1, -1);
+					mConsoleFont.draw(MESSAGE.message, x + POSITION_OFFSET_MESSAGE, -lDisplay.windowSize().y * 0.5f - lTextPosition, Z_DEPTH + 0.1f, lR, lG, lB, 1.0f, 1f, -1, -1);
 
 				}
 
@@ -378,6 +445,9 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 				mConsoleFont.draw("|", -lDisplay.windowSize().x * 0.5f + PADDING_LEFT + lInputTextXOffset + mConsoleFont.bitmap().getStringWidth(mInputText.toString()), y + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET, Z_DEPTH + 0.1f, 1f);
 		}
 
+		mTAGFilterText.draw(pCore, mSpriteBatch, mConsoleFont);
+		mMessageFilterText.draw(pCore, mSpriteBatch, mConsoleFont);
+
 		mConsoleFont.end();
 
 		mScrollBar.draw(pCore, mSpriteBatch, Z_DEPTH + 0.1f);
@@ -387,6 +457,83 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
+
+	protected void doFilterText() {
+		// TODO: ---> Don't update every frame (listen for changes to filter text)
+		mDirty = true;
+		if (mDirty) {
+			mProcessed = false;
+			mScrollBar.resetBarTop();
+
+			mProcessedMessages.clear();
+			mProcessed = !mTAGFilterText.isEmpty() || !mMessageFilterText.isEmpty();
+
+			List<LogMessage> lLogLines = DebugManager.DEBUG_MANAGER.logger().logLines();
+			// First, assume all LogMessages are accepted
+			final int LOG_LINE_COUNT = lLogLines.size();
+			for (int i = 0; i < LOG_LINE_COUNT; i++) {
+				mProcessedMessages.add(lLogLines.get(i));
+
+			}
+
+			if (mProcessed) {
+				if (!mTAGFilterText.isEmpty()) {
+					mUpdateMessageList.clear();
+
+					// First copy the whole LogMessages to the linkedlist, unfettered
+					final int FILTER_LOG_COUNT = mProcessedMessages.size();
+					for (int i = 0; i < FILTER_LOG_COUNT; i++) {
+						mUpdateMessageList.add(mProcessedMessages.get(i));
+
+					}
+
+					mProcessedMessages.clear();
+					final String lFilterText = mTAGFilterText.inputString().toString().toUpperCase();
+					final int lUpdateMessageCount = mUpdateMessageList.size();
+					for (int i = 0; i < lUpdateMessageCount; i++) {
+						String lStringA = mUpdateMessageList.get(i).tag.toString().toUpperCase();
+						String lStringB = lFilterText;
+						if (lStringA.contains(lStringB)) {
+							mProcessedMessages.add(mUpdateMessageList.get(i));
+
+						}
+
+					}
+
+				}
+
+				if (!mMessageFilterText.isEmpty()) {
+					mUpdateMessageList.clear();
+
+					// First copy the whole LogMessages to the linkedlist, unfettered
+					final int FILTER_LOG_COUNT = mProcessedMessages.size();
+					for (int i = 0; i < FILTER_LOG_COUNT; i++) {
+						mUpdateMessageList.add(mProcessedMessages.get(i));
+
+					}
+
+					mProcessedMessages.clear();
+					final String lFilterText = mMessageFilterText.inputString().toString().toUpperCase();
+					final int lUpdateMessageCount = mUpdateMessageList.size();
+					for (int i = 0; i < lUpdateMessageCount; i++) {
+						String lStringA = mUpdateMessageList.get(i).message.toString().toUpperCase();
+						String lStringB = lFilterText;
+						if (lStringA.contains(lStringB)) {
+							mProcessedMessages.add(mUpdateMessageList.get(i));
+
+						}
+
+					}
+
+				}
+
+			}
+
+			mDirty = false;
+
+		}
+
+	}
 
 	/**
 	 * Used to pass the console output stream to the debugconsole (character-by-character).
@@ -423,7 +570,7 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 	// --------------------------------------
 	// Implements
 	// --------------------------------------
-	
+
 	@Override
 	public boolean onEscapePressed() {
 		mHasFocus = false;
@@ -432,9 +579,9 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 		if (mInputText.length() > 0) {
 			mInputText.delete(0, mInputText.length());
 		}
-		
+
 		return true;
-		
+
 	}
 
 	@Override
@@ -469,7 +616,7 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 
 		// Automatically scroll to the bottom when the user enters some text
 		mAutoScroll = true;
-		
+
 		return getEnterFinishesInput();
 
 	}
@@ -518,6 +665,7 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 
 	@Override
 	public void onKeyPressed(char pCh) {
+		mDirty = true;
 
 	}
 

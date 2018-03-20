@@ -98,7 +98,7 @@ public class ScrollBar extends AARectangle {
 
 	public void update(LintfordCore pCore) {
 		float lViewportHeight = mScrollBarArea.windowArea().h;
-		float lContentHeight = mScrollBarArea.contentArea().h;
+		float lContentHeight = Math.max(mScrollBarArea.windowArea().h, mScrollBarArea.contentArea().h);
 
 		float lViewableRatio = lViewportHeight / lContentHeight;
 		mMarkerBarHeight = lViewportHeight * lViewableRatio;

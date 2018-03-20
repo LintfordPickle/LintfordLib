@@ -21,28 +21,28 @@ public class TextureManager {
 	// Constants
 	// --------------------------------------
 
-	/** When enabled, missing textures will be filled with a magenta color.  */
+	/** When enabled, missing textures will be filled with a magenta color. */
 	public static final boolean USE_DEBUG_MISSING_TEXTURES = true;
-	
+
 	public static final String TEXTURE_WHITE_NAME = "WHITE_W";
 	public static final String TEXTURE_BLACK_NAME = "BLACK_T";
 	public static final String TEXTURE_NOT_FOUND_NAME = "NOT_FOUND";
-	
+
 	public static final String TEXTURE_CHECKER_BOARD_NAME = "CHECKER";
 	public static final String TEXTURE_CHECKER_BOARD_INDEXED_NAME = "CHECKERI";
-	
+	public static final String TEXTURE_CORE_UI_NAME = "CORE_UI";
+	public static final String TEXTURE_SYSTEM_UI_NAME = "SYS_UI";
+
 	public static final Texture TEXTURE_NOT_FOUND = TextureManager.textureManager().loadTexture(TEXTURE_NOT_FOUND_NAME, new int[] { 0xFFFF00FF, 0xFFFF00FF, 0xFFFF00FF, 0xFFFF00FF }, 2, 2);
 	public static final Texture TEXTURE_WHITE = TextureManager.textureManager().loadTexture(TEXTURE_WHITE_NAME, new int[] { 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF }, 2, 2);
 	public static final Texture TEXTURE_BLACK = TextureManager.textureManager().loadTexture(TEXTURE_BLACK_NAME, new int[] { 0xFF000000, 0xFF000000, 0xFF000000, 0xFF000000 }, 2, 2);
-	
+
 	public static final Texture TEXTURE_CHECKER = TextureManager.textureManager().loadTexture(TEXTURE_CHECKER_BOARD_NAME, "/res/textures/CheckerBoard.png", GL11.GL_NEAREST);
 	public static final Texture TEXTURE_CHECKER_I = TextureManager.textureManager().loadTexture(TEXTURE_CHECKER_BOARD_INDEXED_NAME, "/res/textures/CheckerBoardIndexed.png", GL11.GL_NEAREST);
 
-	/** To reload the CORE_UI textures, use this name as the identifier (e.g. TextureManager.reload(CORE_UI, "<texture_filename>);" */
-	public static final String CORE_UI_TEXTURE_NAME = "CORE_UI";
-	
 	/** A static texture which contains 'generic' icons which can be used for core components and debugging. */
-	public static final Texture TEXTURE_CORE_UI = TextureManager.textureManager().loadTexture(CORE_UI_TEXTURE_NAME, "/res/textures/core/core_ui.png", GL11.GL_NEAREST);
+	public static final Texture TEXTURE_CORE_UI = TextureManager.textureManager().loadTexture(TEXTURE_CORE_UI_NAME, "/res/textures/core/core_ui.png", GL11.GL_NEAREST);
+	public static final Texture TEXTURE_SYS_UI = TextureManager.textureManager().loadTexture(TEXTURE_SYSTEM_UI_NAME, "/res/textures/core/system.png", GL11.GL_NEAREST);
 
 	// --------------------------------------
 	// Variables
