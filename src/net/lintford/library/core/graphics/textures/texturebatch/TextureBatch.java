@@ -10,6 +10,7 @@ import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
 import net.lintford.library.core.camera.ICamera;
+import net.lintford.library.core.debug.GLDebug;
 import net.lintford.library.core.geometry.AARectangle;
 import net.lintford.library.core.geometry.Circle;
 import net.lintford.library.core.geometry.Rectangle;
@@ -79,7 +80,7 @@ public class TextureBatch {
 
 	protected boolean mIsLoaded;
 	protected boolean mIsDrawing;
-	
+
 	private boolean mUseCheckerPattern;
 
 	// --------------------------------------
@@ -89,7 +90,7 @@ public class TextureBatch {
 	public void useCheckerPattern(boolean pNewValue) {
 		mUseCheckerPattern = pNewValue;
 	}
-	
+
 	public boolean isDrawing() {
 		return mIsDrawing;
 	}
@@ -156,11 +157,17 @@ public class TextureBatch {
 
 		mShader.unloadGLContent();
 
-		if (mVaoId > -1)
+		if (mVaoId > -1) {
 			GL30.glDeleteVertexArrays(mVaoId);
+			mVaoId = -1;
 
-		if (mVboId > -1)
+		}
+
+		if (mVboId > -1) {
 			GL15.glDeleteBuffers(mVboId);
+			mVboId = -1;
+
+		}
 
 		mIsLoaded = false;
 	}
@@ -208,10 +215,10 @@ public class TextureBatch {
 
 			}
 		}
-		
-		if(mUseCheckerPattern) {
+
+		if (mUseCheckerPattern) {
 			pTexture = TextureManager.TEXTURE_CHECKER_I;
-			
+
 		}
 
 		if (mCurrentTexID == -1) { // first texture
@@ -274,10 +281,10 @@ public class TextureBatch {
 
 			}
 		}
-		
-		if(mUseCheckerPattern) {
+
+		if (mUseCheckerPattern) {
 			pTexture = TextureManager.TEXTURE_CHECKER_I;
-			
+
 		}
 
 		if (mCurrentTexID == -1) { // first texture
@@ -344,10 +351,10 @@ public class TextureBatch {
 
 			}
 		}
-		
-		if(mUseCheckerPattern) {
+
+		if (mUseCheckerPattern) {
 			pTexture = TextureManager.TEXTURE_CHECKER_I;
-			
+
 		}
 
 		if (mCurrentTexID == -1) { // first texture
@@ -441,7 +448,7 @@ public class TextureBatch {
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, mCurrentTexID);
 
 		GL30.glBindVertexArray(mVaoId);
-
+		
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, mVboId);
 		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, mBuffer, GL15.GL_DYNAMIC_DRAW);
 
@@ -471,6 +478,8 @@ public class TextureBatch {
 
 		mCurNumSprites = 0;
 		mVertexCount = 0;
+		
+		GLDebug.checkGLErrorsException(getClass().getSimpleName());
 
 	}
 

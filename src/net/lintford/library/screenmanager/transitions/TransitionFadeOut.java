@@ -28,8 +28,6 @@ public class TransitionFadeOut extends BaseTransition {
 		final float amt = (float) (mProgress / ms);
 
 		float alpha = MathHelper.clamp(1 - amt, 0, 1);
-		
-		System.out.println("TransitionFadeOut: " + alpha);
 
 		pScreen.color(pScreen.r(), pScreen.g(), pScreen.b(), alpha);
 

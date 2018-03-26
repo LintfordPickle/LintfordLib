@@ -6,17 +6,28 @@ import org.lwjgl.opengl.GL30;
 public class GLDebug {
 
 	public static boolean checkGLErrorsException() {
-		checkGLErrors(true);
+		checkGLErrors("GLDebug");
+
+		return false;
+	}
+
+	public static boolean checkGLErrorsException(String pCustomTAG) {
+		checkGLErrors(pCustomTAG, true);
 
 		return false;
 	}
 
 	public static boolean checkGLErrors() {
-		return checkGLErrors(false);
+		return checkGLErrors("GLDebug");
 
 	}
 
-	private static boolean checkGLErrors(boolean pPrintStackTrace) {
+	public static boolean checkGLErrors(String pCustomTAG) {
+		return checkGLErrors(pCustomTAG, false);
+
+	}
+
+	private static boolean checkGLErrors(String pCustomTAG, boolean pPrintStackTrace) {
 		final int lGLError = GL11.glGetError();
 		if (lGLError == GL11.GL_NO_ERROR)
 			return false;

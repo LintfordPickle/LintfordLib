@@ -122,6 +122,7 @@ public class DisplayConfig extends BaseConfig {
 	// --------------------------------------
 
 	private boolean mFullScreen;
+	private Vector2i mOldWindowSize;
 	private Vector2i mWindowSize;
 	private Vector2i mAspectRatio;
 	private Vector2i mHUDSize;
@@ -138,7 +139,7 @@ public class DisplayConfig extends BaseConfig {
 	private boolean mRecompileShaders = false;
 
 	private boolean mStretchToFit;
-//	private boolean mMaintainAspectRatio;
+	// private boolean mMaintainAspectRatio;
 
 	List<IResizeListener> mWindowResizeListeners;
 	List<IResizeListener> mGameResizeListeners;
@@ -220,6 +221,10 @@ public class DisplayConfig extends BaseConfig {
 		mWindowSize.x = WINDOW_MINIMUM_WIDTH;
 		mWindowSize.y = WINDOW_MINIMUM_HEIGHT;
 
+		mOldWindowSize = new Vector2i();
+		mOldWindowSize.x = WINDOW_MINIMUM_WIDTH;
+		mOldWindowSize.y = WINDOW_MINIMUM_HEIGHT;
+
 		mHUDSize = new Vector2i();
 		mHUDSize.x = WINDOW_MINIMUM_WIDTH;
 		mHUDSize.y = WINDOW_MINIMUM_HEIGHT;
@@ -227,7 +232,7 @@ public class DisplayConfig extends BaseConfig {
 		mGameViewportSize = new Vector2i();
 		mGameViewportSize.x = WINDOW_MINIMUM_WIDTH;
 		mGameViewportSize.y = WINDOW_MINIMUM_HEIGHT;
-		
+
 		mAspectRatio = new Vector2i();
 		mAspectRatio.x = 1;
 		mAspectRatio.y = 1;
@@ -250,7 +255,6 @@ public class DisplayConfig extends BaseConfig {
 	// Core-Methods
 	// --------------------------------------
 
-	
 	public void update(LintfordCore pCore) {
 		if (mWindowResolutionChanged /* && !pInputState.mouseLeftClick() */) {
 			synchronized (this) {
@@ -286,7 +290,7 @@ public class DisplayConfig extends BaseConfig {
 		mFullScreen = !mFullScreen;
 	}
 
-	public long onCreateWindow(GameInfo pGameInfo) {
+	public long createWindow(GameInfo pGameInfo) {
 		DebugManager.DEBUG_MANAGER.logger().i(getClass().getSimpleName(), "Creating GLFWWindow");
 
 		// All GLFW errors to the system err print stream
@@ -302,12 +306,10 @@ public class DisplayConfig extends BaseConfig {
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-		glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
-		glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
+		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_FALSE);
 
 		mStretchToFit = pGameInfo.stretchGameViewportToWindow();
-//		mMaintainAspectRatio = pGameInfo.maintainAspectRatio();
+		// mMaintainAspectRatio = pGameInfo.maintainAspectRatio();
 
 		if (mFullScreen) {
 			// Get the native resolution
@@ -318,19 +320,14 @@ public class DisplayConfig extends BaseConfig {
 			mWindowSize.x = lFullScreenWidth;
 			mWindowSize.y = lFullScreenHeight;
 
+			glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
+			glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+
 			long lNewWindowID = glfwCreateWindow(lFullScreenWidth, lFullScreenHeight, pGameInfo.windowTitle(), glfwGetPrimaryMonitor(), mWindowID);
-			if (mWindowID != NULL) {
-				glfwDestroyWindow(mWindowID);
-			}
+			glfwDestroyWindow(mWindowID);
 
 			mWindowID = lNewWindowID;
 
-			if (mWindowID == NULL) {
-				DebugManager.DEBUG_MANAGER.logger().e(getClass().getSimpleName(), "Unable to create window!");
-
-				throw new IllegalStateException("Unable to create GLFWWindow!");
-
-			}
 		}
 
 		// Create a new windowed window
@@ -340,22 +337,17 @@ public class DisplayConfig extends BaseConfig {
 			mWindowSize.x = WINDOW_MINIMUM_WIDTH;
 			mWindowSize.y = WINDOW_MINIMUM_HEIGHT;
 
+			glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
+			glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
+
 			long lNewWindowID = glfwCreateWindow(mWindowSize.x, mWindowSize.y, pGameInfo.windowTitle(), NULL, mWindowID);
-			if (mWindowID != NULL) {
-				glfwDestroyWindow(mWindowID);
-			}
+			glfwDestroyWindow(mWindowID);
+
 			mWindowID = lNewWindowID;
 
-			if (mWindowID == NULL) {
-				DebugManager.DEBUG_MANAGER.logger().e(getClass().getSimpleName(), "Unable to create window!");
-
-				throw new IllegalStateException("Unable to create GLFWWindow!");
-
-			}
-
 			// center the window
-
 			glfwSetWindowPos(mWindowID, (lVidMode.width() - mWindowSize.x) / 2, (lVidMode.height() - mWindowSize.y) / 2);
+
 		}
 
 		// Set a minimum window
@@ -388,6 +380,7 @@ public class DisplayConfig extends BaseConfig {
 		}
 		glfwSetFramebufferSizeCallback(mWindowID, mFrameBufferSizeCallback);
 		glfwSetWindowFocusCallback(mWindowID, new GLFWWindowFocusCallback() {
+
 			@Override
 			public void invoke(long pWindowID, boolean pIsFocused) {
 				mIsWindowFocused = pIsFocused;
@@ -438,7 +431,7 @@ public class DisplayConfig extends BaseConfig {
 		} else {
 			// mGameViewport should remain the same size regardless of the window it is displayed in
 			// TODO: Need to render to a texture for this
-			
+
 		}
 
 		mHUDSize.x = pWidth;

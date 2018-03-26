@@ -111,11 +111,17 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 	protected List<LogMessage> mProcessedMessages;
 	protected List<LogMessage> mUpdateMessageList;
 	protected boolean mDirty;
+	
+	protected PrintStream mErrPrintStream; 
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
 
+	public PrintStream err() {
+		return mErrPrintStream;
+	}
+	
 	public boolean hasFocus() {
 		return mHasFocus;
 	}
@@ -137,7 +143,7 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 		if (CONSOLE_ENABLED) {
 
 			// Intercept the system out and copy any strings into our debug console so we can see it in the game.
-			PrintStream lPrintStream = new PrintStream(System.out) {
+			mErrPrintStream = new PrintStream(System.out) {
 				public void print(String s) {
 					if (!s.isEmpty()) {
 						super.print(s);
@@ -147,7 +153,9 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 
 			};
 
-			System.setOut(lPrintStream);
+			// TODO: There is something not quite right here. LWJGL error out is not being redirected/captured by our console logger.
+			System.setOut(mErrPrintStream);
+			System.setErr(mErrPrintStream);
 
 			mInputText = new StringBuilder();
 
@@ -196,7 +204,6 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 			return;
 
 		mConsoleFont = pResourceManager.fontManager().systemFont();
-
 		mSpriteBatch.loadGLContent(pResourceManager);
 
 		mIsLoaded = true;
@@ -221,27 +228,6 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 
 		mTAGFilterText.handleInput(pCore);
 		mMessageFilterText.handleInput(pCore);
-
-		if (mScrollBar.handleInput(pCore)) {
-			mAutoScroll = false;
-
-			mConsoleLineHeight = (int) (mConsoleFont.bitmap().getStringHeight(" ") + 4);
-			final int MAX_NUM_LINES = (int) ((openHeight() - mConsoleLineHeight * 2) / mConsoleLineHeight);
-
-			int lLB = (int) -((mScrollYPosition) / mConsoleLineHeight) + 1;
-			int lUB = lLB + MAX_NUM_LINES;
-
-			int lNumberLinesInConsole = mProcessed ? mProcessedMessages.size() : DebugManager.DEBUG_MANAGER.logger().logLines().size();
-			if (lUB == lNumberLinesInConsole) {
-				mAutoScroll = true;
-
-			} else {
-				mAutoScroll = false;
-
-			}
-
-			return;
-		}
 
 		// listen for opening and closing
 		if (pCore.input().keyDownTimed(GLFW.GLFW_KEY_F1)) {
@@ -275,7 +261,10 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 
 		if (mOpen) {
 
-			if (mTAGFilterText.intersects(pCore.HUD().getMouseCameraSpace())) {
+			if (mScrollBar.handleInput(pCore)) {
+				return;
+
+			} else if (mTAGFilterText.intersects(pCore.HUD().getMouseCameraSpace())) {
 
 			}
 
@@ -301,30 +290,27 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 	}
 
 	public void update(LintfordCore pCore) {
-		if (!CONSOLE_ENABLED)
+		if (!mActive || !CONSOLE_ENABLED)
 			return;
-
-		if (!mActive)
-			return;
-
-		doFilterText();
-
-		mTAGFilterText.update(pCore);
-		mMessageFilterText.update(pCore);
 
 		final float lDeltaTime = (float) pCore.time().elapseGameTimeMilli() / 1000f;
 
+		// Update timers
 		mFocusTimer += lDeltaTime * 1000f;
 		mCaretTimer += lDeltaTime * 1000f;
-
-		final int lNumberLinesInConsole = mProcessed ? mProcessedMessages.size() : DebugManager.DEBUG_MANAGER.logger().logLines().size();
-		contentArea().set(x, y, w - mScrollBar.w, lNumberLinesInConsole * 25);
 
 		if (mCaretTimer > 250) {
 			mCaretTimer = 0;
 			mShowCaret = !mShowCaret;
 		}
 
+		// Update text filters
+		mTAGFilterText.update(pCore);
+		mMessageFilterText.update(pCore);
+
+		doFilterText();
+
+		// Update the window
 		final int lOPEN_HEIGHT = 500;
 		if (mOpen && mOpenHeight < lOPEN_HEIGHT) {
 			mOpenHeight += OPEN_SPEED * lDeltaTime;
@@ -339,6 +325,14 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 
 		}
 
+		// Update the window content
+		mAutoScroll = true;
+		mConsoleLineHeight = (int) (mConsoleFont.bitmap().getStringHeight(" ") + 1);
+		final int MAX_NUM_LINES = (int) ((openHeight() - mConsoleLineHeight * 2) / mConsoleLineHeight);
+
+		final int lNumberLinesInConsole = mProcessed ? mProcessedMessages.size() : DebugManager.DEBUG_MANAGER.logger().logLines().size();
+		contentArea().set(x, y, w - mScrollBar.w, lNumberLinesInConsole * 25);
+
 		DisplayConfig lDisplay = pCore.config().display();
 		// Update the bounds of the window view
 		x = -lDisplay.windowSize().x * 0.5f;
@@ -346,11 +340,7 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 		w = lDisplay.windowSize().x;
 		h = openHeight();
 
-		mConsoleLineHeight = (int) (mConsoleFont.bitmap().getStringHeight(" ") + 4);
-		final int MAX_NUM_LINES = (int) ((openHeight() - mConsoleLineHeight * 2) / mConsoleLineHeight);
-		mContentRectangle.h = (lNumberLinesInConsole + 2) * mConsoleLineHeight;
-
-		mLowerBound = (int) -((mScrollYPosition) / mConsoleLineHeight);
+		mLowerBound = (int) -((mScrollYPosition) / mConsoleLineHeight) + 1;
 		// Lower bound should not be lower than the last item (occurs when filtering texture and number of lines decreases).
 		if (mProcessed && mLowerBound > mProcessedMessages.size()) {
 			mLowerBound = mProcessedMessages.size() - MAX_NUM_LINES;
@@ -362,6 +352,16 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 		}
 		mUpperBound = mLowerBound + MAX_NUM_LINES;
 
+		if (mUpperBound > lNumberLinesInConsole) {
+			mAutoScroll = true;
+
+		} else {
+			mAutoScroll = false;
+
+		}
+
+		mContentRectangle.h = (lNumberLinesInConsole + 2) * mConsoleLineHeight;
+
 		// mAutoScroll = true;
 		if (mAutoScroll) {
 			int lNumLines = mProcessed ? mProcessedMessages.size() : DebugManager.DEBUG_MANAGER.logger().logLines().size();
@@ -369,9 +369,11 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 			mLowerBound = mUpperBound - MAX_NUM_LINES;
 
 			mScrollYPosition = mScrollBar.getScrollYBottomPosition();
+
 		}
 
 		mScrollBar.update(pCore);
+
 	}
 
 	public void draw(LintfordCore pCore) {
@@ -670,6 +672,9 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 	}
 
 	public void addConsoleCommand(ConsoleCommand pConsoleCommand) {
+		if (!CONSOLE_ENABLED)
+			return;
+
 		if (!mConsoleCommands.contains(pConsoleCommand)) {
 			mConsoleCommands.add(pConsoleCommand);
 

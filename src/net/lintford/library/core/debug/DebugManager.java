@@ -57,6 +57,7 @@ public class DebugManager {
 
 	private DebugLogger mDebugLogger;
 	private DebugConsole mDebugConsole;
+	private DebugProfiler mDebugProfiler;
 	private DebugDrawers mDebugDrawers;
 
 	private boolean mIsGLLoaded;
@@ -80,6 +81,10 @@ public class DebugManager {
 
 	}
 
+	public DebugProfiler profiler() {
+		return mDebugProfiler;
+	}
+	
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
@@ -88,6 +93,7 @@ public class DebugManager {
 		mDebugLogger = new DebugLogger();
 		mDebugDrawers = new DebugDrawers();
 		mDebugConsole = new DebugConsole();
+		mDebugProfiler = new DebugProfiler();
 
 		addDebugConsoleCommands();
 
@@ -102,6 +108,7 @@ public class DebugManager {
 	public void loadGLContent(final ResourceManager pResourceManager) {
 		mDebugConsole.loadGLContent(pResourceManager);
 		mDebugDrawers.loadGLContent(pResourceManager);
+		mDebugProfiler.loadGLContent(pResourceManager);
 		mIsGLLoaded = true;
 
 	}
@@ -109,18 +116,34 @@ public class DebugManager {
 	public void unloadGLContent() {
 		mDebugConsole.unloadGLContent();
 		mDebugDrawers.unloadGLContent();
-
+		mDebugProfiler.unloadGLContent();
 		mIsGLLoaded = false;
 
 	}
 
 	public void handleInput(LintfordCore pCore) {
 		mDebugConsole.handleInput(pCore);
+		mDebugProfiler.handleInput(pCore);
 
 	}
 
 	public void update(LintfordCore pCore) {
+		
+		// Update the relative positions of the components based on which are currently enabled
+		float lWindowWidth = -pCore.config().display().windowSize().x / 2;
+		float lPosY = -pCore.config().display().windowSize().y / 2;
+		if(mDebugConsole.isOpen()) {
+			mDebugConsole.setPosition(lWindowWidth, lPosY);
+			lPosY+=mDebugConsole.h;
+		}
+		
+		if(mDebugProfiler.isOpen()) {
+			mDebugProfiler.setPosition(lWindowWidth, lPosY);
+			lPosY+=mDebugProfiler.h;
+		}
+		
 		mDebugConsole.update(pCore);
+		mDebugProfiler.update(pCore);
 
 	}
 
@@ -129,6 +152,7 @@ public class DebugManager {
 			return;
 
 		mDebugConsole.draw(pCore);
+		mDebugProfiler.draw(pCore);
 
 	}
 

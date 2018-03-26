@@ -9,8 +9,10 @@ import static org.lwjgl.glfw.GLFW.glfwSetScrollCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
+import static org.lwjgl.opengl.GL11.glClearColor;
 
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.opengl.GL11;
 
 import net.lintford.library.ConstantsTable;
 import net.lintford.library.GameInfo;
@@ -25,6 +27,7 @@ import net.lintford.library.core.camera.ICamera;
 import net.lintford.library.core.debug.DebugManager;
 import net.lintford.library.core.debug.DebugManager.DebugLogLevel;
 import net.lintford.library.core.debug.DebugMemory;
+import net.lintford.library.core.debug.GLDebug;
 import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.input.InputState;
@@ -39,8 +42,6 @@ import net.lintford.library.renderers.RendererManager;
  * creating an OpenGL window.
  */
 public abstract class LintfordCore {
-
-	public static final boolean TOGGLE_FULLENABLE_ENABLED = false;
 
 	// ---------------------------------------------
 	// Variables
@@ -143,7 +144,8 @@ public abstract class LintfordCore {
 		DebugMemory.dumpMemoryToLog();
 
 		// Print out the working directory
-		System.out.println("working directory: " + System.getProperty("user.dir"));
+		DebugManager.DEBUG_MANAGER.logger().i(getClass().getSimpleName(), "Working directory: " + System.getProperty("user.dir"));
+
 	}
 
 	// ---------------------------------------------
@@ -186,6 +188,24 @@ public abstract class LintfordCore {
 	 * Implemented in the sub-classe. Sets the default OpenGL state for the game.
 	 */
 	protected void onInitialiseGL() {
+		// glClearColor(0f, 0f, 0f, 1.0f);
+		glClearColor(100.0f / 255.0f, 149.0f / 255.0f, 237.0f / 255.0f, 1.0f);
+
+		// Enable backface culling
+		GL11.glEnable(GL11.GL_CULL_FACE);
+
+		// Enable depth testing
+		GL11.glEnable(GL11.GL_BLEND);
+		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+
+		// Enable depth testing
+		GL11.glDisable(GL11.GL_DEPTH_TEST);
+		GL11.glDepthFunc(GL11.GL_LEQUAL);
+
+		// 2D Game - no face culling required (no 3d meshes)
+		GL11.glFrontFace(GL11.GL_CCW);
+		GL11.glCullFace(GL11.GL_BACK);
+		GL11.glDisable(GL11.GL_CULL_FACE);
 
 	}
 
@@ -214,8 +234,8 @@ public abstract class LintfordCore {
 
 		DebugManager.DEBUG_MANAGER.unloadGLContent();
 
-		mResourceManager.unloadContent();
 		mRendererManager.unloadGLContent();
+		mResourceManager.unloadContent();
 
 	}
 
@@ -247,16 +267,17 @@ public abstract class LintfordCore {
 			if (!mIsHeadlessMode) {
 				onDraw();
 
-				// TODO: Add a debugging flag
 				DebugManager.DEBUG_MANAGER.draw(this);
 
 			}
 
-			mInputState.resetFlags();
-
 			glfwSwapBuffers(lDisplayConfig.windowID());
 
 			glfwPollEvents();
+			
+			mInputState.endUpdate();
+
+			GLDebug.checkGLErrorsException();
 
 		}
 
@@ -275,9 +296,8 @@ public abstract class LintfordCore {
 		}
 
 		// DebugManager.DEBUG_MANAGER.handleInput(this);
-
+		DebugManager.DEBUG_MANAGER.handleInput(this);
 		mHUD.handleInput(this);
-
 		mControllerManager.handleInput(this);
 
 	}
@@ -303,6 +323,8 @@ public abstract class LintfordCore {
 		if (mIsHeadlessMode)
 			return;
 
+		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
+
 		mRendererManager.draw(this);
 
 	}
@@ -319,26 +341,21 @@ public abstract class LintfordCore {
 	// ---------------------------------------------
 
 	public void toggleFullscreen() {
-		if (!TOGGLE_FULLENABLE_ENABLED)
-			return;
-
 		DisplayConfig lDisplay = mMasterConfig.display();
 		if (lDisplay == null)
 			return; // has the game been properly started yet?
 
 		DebugManager.DEBUG_MANAGER.logger().i(getClass().getSimpleName(), "Toggling fullscreen (to " + (lDisplay.fullscreen() ? "Fullscreen)" : "Windowed)"));
 
-		onUnloadGLContent();
+		// onUnloadGLContent();
 
 		lDisplay.toggleFullScreenFlag();
-		mMasterConfig.onCreateWindow(mGameInfo);
-
 		initialiseGLFWWindow();
 
 		// Recreate the OpenGL State
 		onInitialiseGL();
 
-		onLoadGLContent();
+		// onLoadGLContent();
 
 	}
 

@@ -20,6 +20,7 @@ public class DebugLogger {
 	// Constants
 	// --------------------------------------
 
+	public static final boolean LOGGER_ENABLED = true;
 	public static boolean DEBUG_LOG_DEBUG_TO_FILE = true;
 	public static final int LOG_BUFFER_LINE_COUNT = 1000;
 
@@ -137,6 +138,16 @@ public class DebugLogger {
 	}
 
 	public void log(DebugLogLevel pLogLevel, String pTag, String pMessage) {
+		if(!LOGGER_ENABLED) {
+			switch(pLogLevel) {
+			default:
+				System.out.println(padRight(pTag, 15) + ":" + pMessage);
+				
+			}
+			
+			// return;
+		}
+		
 		if (pLogLevel.logLevel >= mCurrentLoggingLevel.logLevel) {
 
 			LogMessage lLogMessage = null;
@@ -249,4 +260,8 @@ public class DebugLogger {
 
 	}
 
+	public static String padRight(String s, int n) {
+	     return String.format("%1$-" + n + "s", s);  
+	}
+	
 }

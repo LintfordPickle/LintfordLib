@@ -124,7 +124,6 @@ public class ResourceManager {
 				});
 
 			} catch (Exception e) {
-				e.printStackTrace();
 
 			}
 		}
@@ -173,19 +172,22 @@ public class ResourceManager {
 				lKey.reset();
 			}
 
-			WatchKey lSpriteFileKey = mSpriteSheetPathWatcher.poll();
-			if (lSpriteFileKey != null) {
-
-				List<WatchEvent<?>> events = lSpriteFileKey.pollEvents();
-				for (WatchEvent<?> event : events) {
-					if (event.kind() == StandardWatchEventKinds.ENTRY_MODIFY) {
-						// Reload the spritesheet in question ...
-						mSpriteSheetManager.reload();
+			if(mSpriteSheetPathWatcher != null) {
+				WatchKey lSpriteFileKey = mSpriteSheetPathWatcher.poll();
+				if (lSpriteFileKey != null) {
+					
+					List<WatchEvent<?>> events = lSpriteFileKey.pollEvents();
+					for (WatchEvent<?> event : events) {
+						if (event.kind() == StandardWatchEventKinds.ENTRY_MODIFY) {
+							// Reload the spritesheet in question ...
+							mSpriteSheetManager.reload();
+						}
+						
 					}
-
+					
+					lSpriteFileKey.reset();
 				}
-
-				lSpriteFileKey.reset();
+				
 			}
 		}
 

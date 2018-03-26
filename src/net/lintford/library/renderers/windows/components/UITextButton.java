@@ -24,6 +24,8 @@ public class UITextButton extends UIWidget {
 	private String mButtonLabel;
 	private float mR, mG, mB;
 	private boolean mHoveredOver;
+	private boolean mIsClicked;
+	private float mClickTimer;
 
 	// --------------------------------------
 	// Properties
@@ -72,27 +74,44 @@ public class UITextButton extends UIWidget {
 
 	@Override
 	public boolean handleInput(LintfordCore pCore) {
-		if (intersects(pCore.HUD().getMouseCameraSpace())) {
+		if (!mIsClicked && intersects(pCore.HUD().getMouseCameraSpace())) {
 			mHoveredOver = true;
 
 			if (pCore.input().tryAquireLeftClickOwnership(hashCode())) {
+				mIsClicked = true;
+				final float MINIMUM_CLICK_TIMER = 200;
 				// Callback to the listener and pass our ID
-				if (mCallback != null) {
+				if (mCallback != null && mClickTimer > MINIMUM_CLICK_TIMER) {
+					mClickTimer = 0;
 					mCallback.onClick(mClickID);
-
+					return true;
 				}
 
-				return true;
+				
 
 			}
 
 		} else {
 			mHoveredOver = false;
 		}
+		
+		if (!pCore.input().mouseLeftClick()) {
+			mIsClicked = false;
+
+		}
 
 		return false;
+		
 	}
 
+	@Override
+	public void update(LintfordCore pCore) {
+		super.update(pCore);
+
+		mClickTimer += pCore.time().elapseGameTimeMilli();
+		
+	}
+	
 	@Override
 	public void draw(LintfordCore pCore) {
 

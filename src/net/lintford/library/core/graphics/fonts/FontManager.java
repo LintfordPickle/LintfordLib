@@ -144,7 +144,7 @@ public class FontManager {
 
 	// TODO (John): The system font should be dynamically loaded (dependency on external .ttf file).
 	public static final String SYSTEM_FONT_NAME = "SystemFont18";
-	public static final String SYSTEM_FONT_PATH = "res/fonts/monofonto.ttf";
+	public static final String SYSTEM_FONT_PATH = " ";
 	public static final int SYSTEM_FONT_SIZE = 18;
 
 	// --------------------------------------
@@ -186,6 +186,7 @@ public class FontManager {
 	public void loadGLContent(ResourceManager pResourceManager) {
 		for (FontUnit lFont : mFontMap.values()) {
 			lFont.loadGLContent(pResourceManager);
+			
 		}
 
 		mResourceManager = pResourceManager;
@@ -196,9 +197,8 @@ public class FontManager {
 	public void unloadGLContent() {
 		for (FontUnit lFont : mFontMap.values()) {
 			lFont.unloadGLContent();
+			
 		}
-
-		mFontMap.clear();
 
 	}
 

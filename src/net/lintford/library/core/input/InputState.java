@@ -364,11 +364,11 @@ public class InputState {
 	}
 
 	public void startCapture(IBufferedInputCallback pCallbackFunction) {
-		if(mIBufferedInputCallback != null) {
+		if (mIBufferedInputCallback != null) {
 			mIBufferedInputCallback.captureStopped();
-			
+
 		}
-		
+
 		mIBufferedInputCallback = pCallbackFunction;
 		mCaptureKeyboardInput = true;
 	}
@@ -426,6 +426,12 @@ public class InputState {
 		}
 
 	}
+	
+	public void endUpdate() {
+		mMouseWheelXOffset = 0;
+		mMouseWheelYOffset = 0;
+		
+	}
 
 	public void resetKeyFlags() {
 		Arrays.fill(mKeyButtonStates, false);
@@ -435,9 +441,10 @@ public class InputState {
 	public void resetFlags() {
 		mMouseWheelXOffset = 0;
 		mMouseWheelYOffset = 0;
-
-		// Arrays.fill(mKeyButtonStates, false);
-		// Arrays.fill(mMouseButtonStates, false);
+		
+		// This is needed in the case of toggling the GLFW window
+		Arrays.fill(mKeyButtonStates, false);
+		Arrays.fill(mMouseButtonStates, false);
 
 	}
 

@@ -115,10 +115,10 @@ public class BitmapFont {
 				mFont = Font.createFont(Font.TRUETYPE_FONT, lFontInputStream).deriveFont(mPointSize);
 
 			} catch (FontFormatException e) {
-				e.printStackTrace();
+				DebugManager.DEBUG_MANAGER.logger().e(getClass().getSimpleName(), "Font format exception with font resource: " + mFontFileLocation);
 
 			} catch (IOException e) {
-				e.printStackTrace();
+				DebugManager.DEBUG_MANAGER.logger().e(getClass().getSimpleName(), "Specified font resource not found: " + mFontFileLocation);
 
 			}
 		} else {
@@ -133,11 +133,9 @@ public class BitmapFont {
 
 			} catch (FontFormatException e) {
 				DebugManager.DEBUG_MANAGER.logger().e(getClass().getSimpleName(), "Font format exception with font file: " + mFontFileLocation);
-				e.printStackTrace();
 
 			} catch (IOException e) {
 				DebugManager.DEBUG_MANAGER.logger().e(getClass().getSimpleName(), "Specified font file not found: " + mFontFileLocation);
-				e.printStackTrace();
 
 			}
 

@@ -111,6 +111,7 @@ public class ScrollBar extends AARectangle {
 		y = mScrollBarArea.windowArea().y;
 		w = 20;
 		h = mScrollBarArea.windowArea().h;
+		
 	}
 
 	public void draw(LintfordCore pCore, TextureBatch pSpriteBatch, float pZDepth) {
