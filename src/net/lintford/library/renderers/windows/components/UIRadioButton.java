@@ -5,7 +5,7 @@ import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 import net.lintford.library.renderers.windows.UIWindow;
-import net.lintford.library.screenmanager.entries.IMenuEntryClickListener;
+import net.lintford.library.screenmanager.entries.EntryInteractions;
 
 public class UIRadioButton extends UIWidget {
 
@@ -19,7 +19,7 @@ public class UIRadioButton extends UIWidget {
 	// Variables
 	// --------------------------------------
 
-	IMenuEntryClickListener mCallback;
+	private EntryInteractions mCallback;
 	private int mClickID;
 	private String mButtonLabel;
 	private boolean mIsSelected;
@@ -99,7 +99,7 @@ public class UIRadioButton extends UIWidget {
 			// Callback to the listener and pass our ID
 			if (mCallback != null && mClickTimer > MINIMUM_CLICK_TIMER) {
 				mClickTimer = 0;
-				mCallback.onClick(mClickID);
+				mCallback.menuEntryOnClick(mClickID);
 				return true;
 
 			}
@@ -150,11 +150,11 @@ public class UIRadioButton extends UIWidget {
 	// Methods
 	// --------------------------------------
 
-	public void setClickListener(final IMenuEntryClickListener pCallbackObject) {
+	public void setClickListener(final EntryInteractions pCallbackObject) {
 		mCallback = pCallbackObject;
 	}
 
-	public void removeClickListener(final IMenuEntryClickListener pCallbackObject) {
+	public void removeClickListener(final EntryInteractions pCallbackObject) {
 		mCallback = null;
 	}
 

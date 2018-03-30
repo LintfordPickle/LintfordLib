@@ -50,7 +50,7 @@ public class GLDebug {
 			DebugManager.DEBUG_MANAGER.logger().e(GLDebug.class.getSimpleName(), "GL_INVALID_OPERATION");
 			if (pPrintStackTrace) {
 				Thread.dumpStack();
-				throw new RuntimeException("GL_INVALID_OPERATION exception occured");
+				// throw new RuntimeException("GL_INVALID_OPERATION exception occured");
 			}
 
 			return true;

@@ -56,16 +56,6 @@ public class RendererController extends BaseController {
 	}
 
 	@Override
-	public boolean handleInput(LintfordCore pCore) {
-		if (mRendererManager.handleInput(pCore)) {
-			
-		}
-
-		return super.handleInput(pCore);
-
-	}
-
-	@Override
 	public void update(LintfordCore pCore) {
 		if (!isInitialised())
 			return;

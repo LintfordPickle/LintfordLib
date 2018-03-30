@@ -6,7 +6,7 @@ import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 import net.lintford.library.renderers.windows.UIWindow;
-import net.lintford.library.screenmanager.entries.IMenuEntryClickListener;
+import net.lintford.library.screenmanager.entries.EntryInteractions;
 
 public class UIIconButton extends UIWidget {
 
@@ -20,7 +20,7 @@ public class UIIconButton extends UIWidget {
 	// Variables
 	// --------------------------------------
 
-	private transient IMenuEntryClickListener mCallback;
+	private transient EntryInteractions mCallback;
 	private transient int mClickID;
 	private transient String mButtonLabel;
 	private transient float mR, mG, mB;
@@ -83,7 +83,7 @@ public class UIIconButton extends UIWidget {
 			if (pCore.input().tryAquireLeftClickOwnership(hashCode())) {
 				// Callback to the listener and pass our ID
 				if (mCallback != null) {
-					mCallback.onClick(mClickID);
+					mCallback.menuEntryOnClick(mClickID);
 
 				}
 
@@ -127,11 +127,11 @@ public class UIIconButton extends UIWidget {
 	// Methods
 	// --------------------------------------
 
-	public void setClickListener(final IMenuEntryClickListener pCallbackObject) {
+	public void setClickListener(final EntryInteractions pCallbackObject) {
 		mCallback = pCallbackObject;
 	}
 
-	public void removeClickListener(final IMenuEntryClickListener pCallbackObject) {
+	public void removeClickListener(final EntryInteractions pCallbackObject) {
 		mCallback = null;
 	}
 

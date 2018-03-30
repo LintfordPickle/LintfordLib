@@ -222,7 +222,7 @@ public abstract class LintfordCore {
 	protected void onLoadGLContent() {
 		mResourceManager.loadGLContent();
 		mRendererManager.loadGLContent(mResourceManager);
-		
+
 		DebugManager.DEBUG_MANAGER.loadGLContent(mResourceManager);
 
 	}
@@ -274,7 +274,7 @@ public abstract class LintfordCore {
 			glfwSwapBuffers(lDisplayConfig.windowID());
 
 			glfwPollEvents();
-			
+
 			mInputState.endUpdate();
 
 			GLDebug.checkGLErrorsException();
@@ -298,6 +298,7 @@ public abstract class LintfordCore {
 		// DebugManager.DEBUG_MANAGER.handleInput(this);
 		DebugManager.DEBUG_MANAGER.handleInput(this);
 		mHUD.handleInput(this);
+		mRendererManager.handleInput(this);
 		mControllerManager.handleInput(this);
 
 	}
@@ -345,22 +346,14 @@ public abstract class LintfordCore {
 		if (lDisplay == null)
 			return; // has the game been properly started yet?
 
-		DebugManager.DEBUG_MANAGER.logger().i(getClass().getSimpleName(), "Toggling fullscreen (to " + (lDisplay.fullscreen() ? "Fullscreen)" : "Windowed)"));
-
-		// onUnloadGLContent();
-
-		lDisplay.toggleFullScreenFlag();
-		initialiseGLFWWindow();
-
-		// Recreate the OpenGL State
-		onInitialiseGL();
-
-		// onLoadGLContent();
+		lDisplay.toggleFullscreen();
 
 	}
 
 	public void initialiseGLFWWindow() {
-		long lWindowID = mMasterConfig.onCreateWindow(mGameInfo);
+		// TODO: Load default/saved window settings (fullscreen, width and height etc.).
+
+		long lWindowID = mMasterConfig.onCreateWindow(mGameInfo, false, 1600, 900);
 
 		// set key callbacks
 		glfwSetKeyCallback(lWindowID, mInputState.mKeyCallback);

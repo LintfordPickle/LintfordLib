@@ -6,7 +6,7 @@ import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 import net.lintford.library.renderers.windows.UIWindow;
-import net.lintford.library.screenmanager.entries.IMenuEntryClickListener;
+import net.lintford.library.screenmanager.entries.EntryInteractions;
 
 public class UIToggleButton extends UIWidget {
 
@@ -20,7 +20,7 @@ public class UIToggleButton extends UIWidget {
 	// Variables
 	// --------------------------------------
 
-	IMenuEntryClickListener mCallback;
+	EntryInteractions mCallback;
 	private int mClickID;
 	private String mButtonLabel;
 	private float mR, mG, mB;
@@ -97,7 +97,7 @@ public class UIToggleButton extends UIWidget {
 
 				// Callback to the listener and pass our ID
 				if (mCallback != null) {
-					mCallback.onClick(mClickID);
+					mCallback.menuEntryOnClick(mClickID);
 				}
 
 				return true;
@@ -117,7 +117,7 @@ public class UIToggleButton extends UIWidget {
 		float lR = mIsEnabled ? 0.3f : mHoveredOver ? 0.3f : mR;
 		float lG = mIsEnabled ? 0.13f : mHoveredOver ? 0.34f : mG;
 		float lB = mIsEnabled ? 0.19f : mHoveredOver ? 0.65f : mB;
-		
+
 		final TextureBatch SPRITE_BATCH = mParentWindow.rendererManager().uiTextureBatch();
 
 		// Draw the button background
@@ -136,11 +136,11 @@ public class UIToggleButton extends UIWidget {
 	// Methods
 	// --------------------------------------
 
-	public void setClickListener(final IMenuEntryClickListener pCallbackObject) {
+	public void setClickListener(final EntryInteractions pCallbackObject) {
 		mCallback = pCallbackObject;
 	}
 
-	public void removeClickListener(final IMenuEntryClickListener pCallbackObject) {
+	public void removeClickListener(final EntryInteractions pCallbackObject) {
 		mCallback = null;
 	}
 

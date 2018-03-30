@@ -10,7 +10,7 @@ import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 import net.lintford.library.core.input.InputState;
 import net.lintford.library.core.input.InputState.INPUT_TYPES;
 import net.lintford.library.core.maths.Vector2f;
-import net.lintford.library.screenmanager.entries.IMenuEntryClickListener;
+import net.lintford.library.screenmanager.entries.EntryInteractions;
 
 public class MenuEntry extends AARectangle {
 
@@ -37,7 +37,7 @@ public class MenuEntry extends AARectangle {
 	protected String mText;
 	protected float mScale;
 	private float mScaleCounter;
-	protected IMenuEntryClickListener mClickListener;
+	protected EntryInteractions mClickListener;
 	protected int mMenuEntryID;
 	protected boolean mDrawBackground;
 	protected boolean mHighlightOnHover;
@@ -252,7 +252,8 @@ public class MenuEntry extends AARectangle {
 				}
 			}
 
-			if (canHaveFocus() && pCore.input().tryAquireLeftClickOwnership(hashCode())) {
+			if (canHaveFocus() && pCore.input().mouseLeftClick()) {
+				pCore.input().tryAquireLeftClickOwnership(hashCode());
 				pCore.input().setLeftMouseClickHandled();
 				mParentScreen.setFocusOn(pCore.input(), this, false);
 
@@ -377,7 +378,7 @@ public class MenuEntry extends AARectangle {
 		mToolTip = pToolTipText;
 	}
 
-	public void registerClickListener(IMenuEntryClickListener pListener, int pID) {
+	public void registerClickListener(EntryInteractions pListener, int pID) {
 		mMenuEntryID = pID;
 		mClickListener = pListener;
 	}
@@ -392,7 +393,7 @@ public class MenuEntry extends AARectangle {
 		mAnimationTimer = MenuScreen.ANIMATION_TIMER_LENGTH;
 
 		// Play a button click animation, then call the listeners
-		mClickListener.onClick(mMenuEntryID);
+		mClickListener.menuEntryOnClick(mMenuEntryID);
 	}
 
 }

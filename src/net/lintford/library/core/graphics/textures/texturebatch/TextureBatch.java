@@ -446,7 +446,6 @@ public class TextureBatch {
 
 		GL13.glActiveTexture(GL13.GL_TEXTURE0);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, mCurrentTexID);
-
 		GL30.glBindVertexArray(mVaoId);
 		
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, mVboId);

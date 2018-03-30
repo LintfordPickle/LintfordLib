@@ -107,9 +107,9 @@ public class MenuLabelEntry extends MenuEntry {
 
 	@Override
 	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pParentZDepth) {
-		// We don't want to draw the background menu entry for a label
-		// super.draw(pScreen, display, pIsSelected);
-
+		if (!enabled())
+			return;
+		
 		BitmapFont lFontBitmap = mParentScreen.font().bitmap();
 
 		final float lLabelWidth = lFontBitmap.getStringWidth(mText);

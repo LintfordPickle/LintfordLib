@@ -8,6 +8,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_OPENGL_FORWARD_COMPAT;
 import static org.lwjgl.glfw.GLFW.GLFW_OPENGL_PROFILE;
 import static org.lwjgl.glfw.GLFW.GLFW_RESIZABLE;
 import static org.lwjgl.glfw.GLFW.GLFW_VISIBLE;
+import static org.lwjgl.glfw.GLFW.GLFW_DECORATED;
 import static org.lwjgl.glfw.GLFW.glfwCreateWindow;
 import static org.lwjgl.glfw.GLFW.glfwDefaultWindowHints;
 import static org.lwjgl.glfw.GLFW.glfwDestroyWindow;
@@ -15,11 +16,13 @@ import static org.lwjgl.glfw.GLFW.glfwGetPrimaryMonitor;
 import static org.lwjgl.glfw.GLFW.glfwGetVersionString;
 import static org.lwjgl.glfw.GLFW.glfwGetVideoMode;
 import static org.lwjgl.glfw.GLFW.glfwGetWindowAttrib;
+import static org.lwjgl.glfw.GLFW.glfwGetWindowMonitor;
 import static org.lwjgl.glfw.GLFW.glfwInit;
 import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
 import static org.lwjgl.glfw.GLFW.glfwSetErrorCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetFramebufferSizeCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowFocusCallback;
+import static org.lwjgl.glfw.GLFW.glfwSetWindowMonitor;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowPos;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowSizeLimits;
 import static org.lwjgl.glfw.GLFW.glfwShowWindow;
@@ -32,6 +35,7 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWFramebufferSizeCallback;
 import org.lwjgl.glfw.GLFWVidMode;
@@ -48,46 +52,12 @@ import net.lintford.library.core.debug.GLDebug;
 import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.maths.Vector2i;
 
-/** FIXME: Need to correct toggle between fullscreen, borderless window etc. FIXME: Need to add a dirty flag to confirm options */
-
-/** TODO: Implement GameResizeListener for all GLContent reloading */
+// FIXME: Need to correct toggle between fullscreen, borderless window etc. 
+// FIXME: Need to add a dirty flag to confirm options 
+// TODO: Implement GameResizeListener for all GLContent reloading 
+// TODO: Need to load the last display configuration from file
 public class DisplayConfig extends BaseConfig {
-
-	public class DisplayResolution {
-		public final String displayName;
-		public final int width;
-		public final int height;
-
-		public DisplayResolution(String pDisplayName, int pWidth, int pHeight) {
-			displayName = pDisplayName;
-			width = pWidth;
-			height = pHeight;
-
-		}
-
-	}
-
-	public void fillFillResolutionList() {
-
-		List<DisplayResolution> mResolutions = new ArrayList<>();
-		mResolutions.add(new DisplayResolution("800x600 (4:3)", 800, 600));
-		mResolutions.add(new DisplayResolution("1024x768 (4:3)", 1024, 768));
-		mResolutions.add(new DisplayResolution("1280x720 (16:9)", 1280, 720));
-		mResolutions.add(new DisplayResolution("1280x768 (5:3)", 1280, 768));
-		mResolutions.add(new DisplayResolution("1280x800 (8:5)", 1280, 800));
-		mResolutions.add(new DisplayResolution("1280x1024 (5:4)", 1280, 1024));
-		mResolutions.add(new DisplayResolution("1360x768 (16:9)", 1360, 768)); // Not sure about this
-		mResolutions.add(new DisplayResolution("1366x768 (16:9)", 1366, 768));
-		mResolutions.add(new DisplayResolution("1440x900 (8:5)", 1440, 900));
-		mResolutions.add(new DisplayResolution("1536x864 (16:9)", 1536, 864));
-		mResolutions.add(new DisplayResolution("1600x900 (16:9)", 1600, 900));
-		mResolutions.add(new DisplayResolution("1600x1200 (4:3)", 1600, 1200));
-		mResolutions.add(new DisplayResolution("1680x1050 (8:5)", 1680, 1050));
-		mResolutions.add(new DisplayResolution("1920x1080 (16:9)", 1920, 1080));
-		mResolutions.add(new DisplayResolution("1920x1200 (8:5)", 1920, 1200));
-
-	}
-
+	
 	// --------------------------------------
 	// Constants / Enums
 	// --------------------------------------
@@ -96,8 +66,11 @@ public class DisplayConfig extends BaseConfig {
 		normal, wide, u_wide,
 	}
 
-	public static final int WINDOW_MINIMUM_WIDTH = 1024;
-	public static final int WINDOW_MINIMUM_HEIGHT = 768;
+	public static final int WINDOW_MINIMUM_WIDTH = 800;
+	public static final int WINDOW_MINIMUM_HEIGHT = 600;
+
+	public static final int WINDOW_DEFAULT_WIDTH = 1600;
+	public static final int WINDOW_DEFAULT_HEIGHT = 900;
 
 	// --------------------------------------
 	// Enums
@@ -121,8 +94,7 @@ public class DisplayConfig extends BaseConfig {
 	// Class Variables
 	// --------------------------------------
 
-	private boolean mFullScreen;
-	private Vector2i mOldWindowSize;
+	public boolean mFullScreen;
 	private Vector2i mWindowSize;
 	private Vector2i mAspectRatio;
 	private Vector2i mHUDSize;
@@ -131,6 +103,8 @@ public class DisplayConfig extends BaseConfig {
 	private boolean mVSYNCEnabled;
 	private boolean mWindowIsResizable;
 	private boolean mWindowWasResized;
+
+	GLFWVidMode mDesktopVideoMode;
 
 	private TARGET_FPS mTargetFPS;
 
@@ -157,6 +131,10 @@ public class DisplayConfig extends BaseConfig {
 	// Properties
 	// --------------------------------------
 
+	public GLFWVidMode desktopVideoMode() {
+		return mDesktopVideoMode;
+	}
+	
 	public boolean isWindowFocused() {
 		return mIsWindowFocused;
 	}
@@ -218,20 +196,16 @@ public class DisplayConfig extends BaseConfig {
 
 		/* set some defaults */
 		mWindowSize = new Vector2i();
-		mWindowSize.x = WINDOW_MINIMUM_WIDTH;
-		mWindowSize.y = WINDOW_MINIMUM_HEIGHT;
-
-		mOldWindowSize = new Vector2i();
-		mOldWindowSize.x = WINDOW_MINIMUM_WIDTH;
-		mOldWindowSize.y = WINDOW_MINIMUM_HEIGHT;
+		mWindowSize.x = WINDOW_DEFAULT_WIDTH;
+		mWindowSize.y = WINDOW_DEFAULT_HEIGHT;
 
 		mHUDSize = new Vector2i();
-		mHUDSize.x = WINDOW_MINIMUM_WIDTH;
-		mHUDSize.y = WINDOW_MINIMUM_HEIGHT;
+		mHUDSize.x = WINDOW_DEFAULT_WIDTH;
+		mHUDSize.y = WINDOW_DEFAULT_HEIGHT;
 
 		mGameViewportSize = new Vector2i();
-		mGameViewportSize.x = WINDOW_MINIMUM_WIDTH;
-		mGameViewportSize.y = WINDOW_MINIMUM_HEIGHT;
+		mGameViewportSize.x = WINDOW_DEFAULT_WIDTH;
+		mGameViewportSize.y = WINDOW_DEFAULT_HEIGHT;
 
 		mAspectRatio = new Vector2i();
 		mAspectRatio.x = 1;
@@ -245,8 +219,6 @@ public class DisplayConfig extends BaseConfig {
 		mWindowResizeListeners = new ArrayList<>();
 		mGameResizeListeners = new ArrayList<>();
 
-		// DEBUG
-		// TODO: Need to load the last display configuration from file
 		mFullScreen = false;
 
 	}
@@ -258,12 +230,10 @@ public class DisplayConfig extends BaseConfig {
 	public void update(LintfordCore pCore) {
 		if (mWindowResolutionChanged /* && !pInputState.mouseLeftClick() */) {
 			synchronized (this) {
-				DebugManager.DEBUG_MANAGER.logger().i(getClass().getSimpleName(), "Change Resolution changed: " + mWindowSize.x + "," + mWindowSize.y);
-
 				mLockedListeners = true;
-				int lListenerCount = mWindowResizeListeners.size();
+				final int COUNT = mWindowResizeListeners.size();
 
-				for (int i = 0; i < lListenerCount; i++) {
+				for (int i = 0; i < COUNT; i++) {
 					if (mWindowResizeListeners.get(i) == null)
 						continue;
 
@@ -286,11 +256,7 @@ public class DisplayConfig extends BaseConfig {
 	// Methods
 	// --------------------------------------
 
-	public void toggleFullScreenFlag() {
-		mFullScreen = !mFullScreen;
-	}
-
-	public long createWindow(GameInfo pGameInfo) {
+	public long createWindow(GameInfo pGameInfo, boolean pFullScreen, int pWidth, int pHeight) {
 		DebugManager.DEBUG_MANAGER.logger().i(getClass().getSimpleName(), "Creating GLFWWindow");
 
 		// All GLFW errors to the system err print stream
@@ -307,9 +273,13 @@ public class DisplayConfig extends BaseConfig {
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_FALSE);
+		glfwWindowHint(GLFW_DECORATED, GL_TRUE);		
 
 		mStretchToFit = pGameInfo.stretchGameViewportToWindow();
 		// mMaintainAspectRatio = pGameInfo.maintainAspectRatio();
+
+		// Get the current desktop video mode
+		mDesktopVideoMode = GLFW.glfwGetVideoMode(GLFW.glfwGetPrimaryMonitor());
 
 		if (mFullScreen) {
 			// Get the native resolution
@@ -334,8 +304,8 @@ public class DisplayConfig extends BaseConfig {
 		else {
 
 			GLFWVidMode lVidMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-			mWindowSize.x = WINDOW_MINIMUM_WIDTH;
-			mWindowSize.y = WINDOW_MINIMUM_HEIGHT;
+			mWindowSize.x = WINDOW_DEFAULT_WIDTH;
+			mWindowSize.y = WINDOW_DEFAULT_HEIGHT;
 
 			glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
 			glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
@@ -396,6 +366,56 @@ public class DisplayConfig extends BaseConfig {
 		changeResolution(mWindowSize.x, mWindowSize.y);
 
 		return mWindowID;
+
+	}
+
+	public void toggleFullscreen() {
+		if (glfwGetWindowMonitor(mWindowID) == NULL) {
+			// Is currently in windows mode, set fullscreen on primary monitor
+			GLFWVidMode lVidMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+			int lFullScreenWidth = lVidMode.width();
+			int lFullScreenHeight = lVidMode.height();
+
+			setGLFWMonitor(glfwGetPrimaryMonitor(), 0, 0, lFullScreenWidth, lFullScreenHeight, mVSYNCEnabled);
+
+		} else {
+			GLFWVidMode lVidMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+			int lFullScreenWidth = lVidMode.width();
+			int lFullScreenHeight = lVidMode.height();
+
+			// Is currently in fullscreen mode
+			final int lWindowWidth = 1600;
+			final int lWindowHeight = 900;
+
+			setGLFWMonitor(NULL, lFullScreenWidth / 2 - lWindowWidth / 2, lFullScreenHeight / 2 - lWindowHeight / 2, lWindowWidth, lWindowHeight, mVSYNCEnabled);
+
+		}
+
+	}
+
+	public void setGLFWMonitor(long pMonitorHandle, int pX, int pY, int pWidth, int pHeight, boolean pVSync) {
+		DebugManager.DEBUG_MANAGER.logger().i(getClass().getSimpleName(), "Changing videomode to Monitor(" + pMonitorHandle + ") " + pWidth + "x" + pHeight);
+		glfwSetWindowMonitor(mWindowID, pMonitorHandle, pX, pY, pWidth, pHeight, 60);
+
+		mFullScreen = pMonitorHandle != NULL;
+		
+		changeResolution(pWidth, pHeight);
+
+		if (pMonitorHandle == NULL) { // windowed mode
+			// The repoll the monitor to get the OS resolution
+			if (mDesktopVideoMode == null)
+				mDesktopVideoMode = GLFW.glfwGetVideoMode(GLFW.glfwGetPrimaryMonitor());
+			int lMonitorWidth = mDesktopVideoMode.width();
+			int lMonitorHeight = mDesktopVideoMode.height();
+
+			System.out.println("(" + lMonitorWidth + "," + lMonitorHeight + ") (" + pWidth + "," + pHeight + ")");
+
+			GLFW.glfwSetWindowPos(mWindowID, lMonitorWidth / 2 - pWidth / 2, lMonitorHeight / 2 - pHeight / 2);
+
+		}
+		
+		mVSYNCEnabled = pVSync;
+		glfwSwapInterval(mVSYNCEnabled ? 1 : 0); // cap to 60 (v-sync)
 
 	}
 

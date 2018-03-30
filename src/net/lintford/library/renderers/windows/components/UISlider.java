@@ -5,7 +5,7 @@ import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 import net.lintford.library.core.maths.MathHelper;
 import net.lintford.library.renderers.windows.UIWindow;
-import net.lintford.library.screenmanager.entries.IMenuEntryClickListener;
+import net.lintford.library.screenmanager.entries.EntryInteractions;
 
 public class UISlider extends UIWidget {
 
@@ -19,7 +19,7 @@ public class UISlider extends UIWidget {
 	// Variables
 	// --------------------------------------
 
-	IMenuEntryClickListener mCallback;
+	private EntryInteractions mCallback;
 	private int mClickID;
 	private String mSliderLabel;
 	private float mR, mG, mB;
@@ -85,7 +85,7 @@ public class UISlider extends UIWidget {
 
 				if (mCallback != null) {
 					// Notify subscribers that something changes
-					mCallback.onClick(mClickID);
+					mCallback.menuEntryOnClick(mClickID);
 				}
 
 				return true;
@@ -128,13 +128,13 @@ public class UISlider extends UIWidget {
 	// Methods
 	// --------------------------------------
 
-	public void setClickListener(final IMenuEntryClickListener pCallbackObject, final int pNewLIstenerID) {
+	public void setClickListener(final EntryInteractions pCallbackObject, final int pNewLIstenerID) {
 		mCallback = pCallbackObject;
 		mClickID = pNewLIstenerID;
 
 	}
 
-	public void removeClickListener(final IMenuEntryClickListener pCallbackObject) {
+	public void removeClickListener(final EntryInteractions pCallbackObject) {
 		mCallback = null;
 	}
 

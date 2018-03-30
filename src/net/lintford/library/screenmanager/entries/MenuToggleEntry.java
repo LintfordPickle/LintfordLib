@@ -85,7 +85,13 @@ public class MenuToggleEntry extends MenuEntry {
 					mIsChecked = !mIsChecked;
 
 					// TODO: notify somebody that this click has been handled this frame
+					if(mClickListener != null) {
+						mClickListener.menuEntryChanged(this);
+						
+					}
+					
 					// pInputState.handleTimedLeftClick();
+					
 				}
 			} else {
 				// mParentScreen.setHoveringOn(this);

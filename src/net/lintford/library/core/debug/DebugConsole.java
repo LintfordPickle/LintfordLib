@@ -226,8 +226,11 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 		if (!CONSOLE_ENABLED)
 			return;
 
-		mTAGFilterText.handleInput(pCore);
-		mMessageFilterText.handleInput(pCore);
+		if(mOpen) {
+			mTAGFilterText.handleInput(pCore);
+			mMessageFilterText.handleInput(pCore);
+			
+		}
 
 		// listen for opening and closing
 		if (pCore.input().keyDownTimed(GLFW.GLFW_KEY_F1)) {

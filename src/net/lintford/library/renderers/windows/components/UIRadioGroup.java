@@ -5,16 +5,16 @@ import java.util.List;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.renderers.windows.UIWindow;
-import net.lintford.library.screenmanager.entries.IMenuEntryClickListener;
+import net.lintford.library.screenmanager.entries.EntryInteractions;
 
-public class UIRadioGroup extends UIWidget implements IMenuEntryClickListener {
+public class UIRadioGroup extends UIWidget implements EntryInteractions {
 
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
 	private List<UIRadioButton> mButtons;
-	private IMenuEntryClickListener mCallback;
+	private EntryInteractions mCallback;
 
 	// --------------------------------------
 	// Constructor
@@ -110,7 +110,7 @@ public class UIRadioGroup extends UIWidget implements IMenuEntryClickListener {
 	}
 
 	@Override
-	public void onClick(final int pEntryID) {
+	public void menuEntryOnClick(int pEntryID) {
 		final int lButtonCount = mButtons.size();
 		for (int i = 0; i < lButtonCount; i++) {
 			if (mButtons.get(i).buttonListenerID() == pEntryID) {
@@ -128,17 +128,17 @@ public class UIRadioGroup extends UIWidget implements IMenuEntryClickListener {
 		}
 
 		if (mCallback != null) {
-			mCallback.onClick(pEntryID);
+			mCallback.menuEntryOnClick(pEntryID);
 
 		}
 
 	}
 
-	public void setClickListener(final IMenuEntryClickListener pCallbackObject) {
+	public void setClickListener(final EntryInteractions pCallbackObject) {
 		mCallback = pCallbackObject;
 	}
 
-	public void removeClickListener(final IMenuEntryClickListener pCallbackObject) {
+	public void removeClickListener(final EntryInteractions pCallbackObject) {
 		mCallback = null;
 	}
 

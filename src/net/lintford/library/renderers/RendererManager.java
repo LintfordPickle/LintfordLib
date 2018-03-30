@@ -270,35 +270,40 @@ public class RendererManager {
 	}
 
 	public void draw(LintfordCore pCore) {
-		final int RENDERER_COUNT = mRenderers.size();
-		for (int i = 0; i < RENDERER_COUNT; i++) {
-			if (!mRenderers.get(i).isActive())
-				continue;
-
-			if (!mRenderers.get(i).isLoaded() && mIsLoaded) {
-				DebugManager.DEBUG_MANAGER.logger().w(getClass().getSimpleName(), "Reloading content in Update() (BaseRenderer) ");
-				mRenderers.get(i).loadGLContent(mResourceManager);
-
+		
+		if(true) {
+			final int RENDERER_COUNT = mRenderers.size();
+			for (int i = 0; i < RENDERER_COUNT; i++) {
+				if (!mRenderers.get(i).isActive())
+					continue;
+	
+				if (!mRenderers.get(i).isLoaded() && mIsLoaded) {
+					DebugManager.DEBUG_MANAGER.logger().w(getClass().getSimpleName(), "Reloading content in Update() (BaseRenderer) ");
+					mRenderers.get(i).loadGLContent(mResourceManager);
+	
+				}
+	
+				// Update the renderer
+				mRenderers.get(i).draw(pCore);
+	
 			}
-
-			// Update the renderer
-			mRenderers.get(i).draw(pCore);
-
 		}
-
-		final int WINDOW_RENDERER_COUNT = mWindowRenderers.size();
-		for (int i = 0; i < WINDOW_RENDERER_COUNT; i++) {
-			if (!mWindowRenderers.get(i).isActive())
-				continue;
-
-			if (!mWindowRenderers.get(i).isLoaded() && mIsLoaded) {
-				DebugManager.DEBUG_MANAGER.logger().w(getClass().getSimpleName(), "Reloading content in Update() (UIWindow) ");
-				mWindowRenderers.get(i).loadGLContent(mResourceManager);
+		
+		if(true) {
+			final int WINDOW_RENDERER_COUNT = mWindowRenderers.size();
+			for (int i = 0; i < WINDOW_RENDERER_COUNT; i++) {
+				if (!mWindowRenderers.get(i).isActive())
+					continue;
+	
+				if (!mWindowRenderers.get(i).isLoaded() && mIsLoaded) {
+					DebugManager.DEBUG_MANAGER.logger().w(getClass().getSimpleName(), "Reloading content in Update() (UIWindow) ");
+					mWindowRenderers.get(i).loadGLContent(mResourceManager);
+				}
+	
+				// Update the renderer
+				mWindowRenderers.get(i).draw(pCore);
+	
 			}
-
-			// Update the renderer
-			mWindowRenderers.get(i).draw(pCore);
-
 		}
 
 	}

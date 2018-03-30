@@ -30,10 +30,12 @@ public class RenderTarget {
 	// Properties
 	// --------------------------------------
 
-	/** Sets the texture filter mode for mag. and min. (default: GL11.GL_LINEAR).
+	/**
+	 * Sets the texture filter mode for mag. and min. (default: GL11.GL_LINEAR).
 	 * 
 	 * @param pParam
-	 *            The GL11 filter mode */
+	 *            The GL11 filter mode
+	 */
 	public void textureFilter(int pParam) {
 		mTextureFilter = pParam;
 	}
@@ -136,6 +138,7 @@ public class RenderTarget {
 
 		// Configure the frame buffer
 		GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0, GL11.GL_TEXTURE_2D, mColorTextureID, 0);
+
 		GL11.glDrawBuffer(GL30.GL_COLOR_ATTACHMENT0);
 
 		// Depth buffer
@@ -145,7 +148,6 @@ public class RenderTarget {
 			GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, mDepthTextureID);
 			GL30.glRenderbufferStorage(GL30.GL_RENDERBUFFER, GL14.GL_DEPTH_COMPONENT16, mWidth, mHeight);
 			GL30.glFramebufferRenderbuffer(GL30.GL_FRAMEBUFFER, GL30.GL_DEPTH_ATTACHMENT, GL30.GL_RENDERBUFFER, mDepthTextureID); //
-
 		}
 
 		if (GL30.glCheckFramebufferStatus(GL30.GL_FRAMEBUFFER) != GL30.GL_FRAMEBUFFER_COMPLETE) {
@@ -164,7 +166,9 @@ public class RenderTarget {
 			return;
 
 		GL15.glDeleteBuffers(mFramebufferID);
+		mFramebufferID = -1;
 		GL11.glDeleteTextures(mColorTextureID);
+		mColorTextureID = -1;
 
 		if (mDepthBufferEnabled) {
 			GL15.glDeleteBuffers(mDepthTextureID);
@@ -188,7 +192,7 @@ public class RenderTarget {
 
 		if (!mIsLoaded)
 			return;
-
+		
 		mWidth = pWidth;
 		mHeight = pHeight;
 
@@ -198,8 +202,11 @@ public class RenderTarget {
 		// Create an empty texture
 		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, mWidth, mHeight, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, BufferUtils.createByteBuffer(mWidth * mHeight * 4));
 
-		GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, mDepthTextureID);
-		GL30.glRenderbufferStorage(GL30.GL_RENDERBUFFER, GL14.GL_DEPTH_COMPONENT16, mWidth, mHeight);
+		if (mDepthBufferEnabled) {
+			GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, mDepthTextureID);
+			GL30.glRenderbufferStorage(GL30.GL_RENDERBUFFER, GL14.GL_DEPTH_COMPONENT16, mWidth, mHeight);
+
+		}
 
 		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
 

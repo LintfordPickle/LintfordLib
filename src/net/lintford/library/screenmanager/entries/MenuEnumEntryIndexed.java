@@ -13,8 +13,19 @@ import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.Screen;
 import net.lintford.library.screenmanager.ScreenManager;
 
-public class MenuEnumEntry extends MenuEntry {
-	
+public class MenuEnumEntryIndexed<T> extends MenuEntry {
+
+	public class MenuEnumEntryItem {
+		public String name;
+		public T value;
+
+		public MenuEnumEntryItem(String pName, T pValue) {
+			name = pName;
+			value = pValue;
+
+		}
+	}
+
 	// --------------------------------------
 	// Constants
 	// --------------------------------------
@@ -28,7 +39,7 @@ public class MenuEnumEntry extends MenuEntry {
 	private String mLabel;
 	private boolean mIsChecked;
 	private final String mSeparator = " : ";
-	private List<String> mItems;
+	private List<MenuEnumEntryItem> mItems;
 	private int mSelectedIndex;
 
 	private boolean mButtonsEnabled;
@@ -38,6 +49,10 @@ public class MenuEnumEntry extends MenuEntry {
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public List<MenuEnumEntryItem> items() {
+		return mItems;
+	}
 
 	public void setListener(EntryInteractions pListener) {
 		mClickListener = pListener;
@@ -51,12 +66,17 @@ public class MenuEnumEntry extends MenuEntry {
 		return mButtonsEnabled;
 	}
 
+	public MenuEnumEntryItem selectedItem() {
+		return mItems.get(mSelectedIndex);
+
+	}
+
 	public int selectedEntry() {
 		return mSelectedIndex;
 	}
 
 	public String selectedEntryName() {
-		return mItems.get(mSelectedIndex);
+		return mItems.get(mSelectedIndex).name;
 
 	}
 
@@ -65,7 +85,9 @@ public class MenuEnumEntry extends MenuEntry {
 			pIndex = 0;
 		if (pIndex >= mItems.size())
 			pIndex = mItems.size() - 1;
+		
 		mSelectedIndex = pIndex;
+		
 	}
 
 	public void setSelectedEntry(String pName) {
@@ -77,6 +99,16 @@ public class MenuEnumEntry extends MenuEntry {
 			}
 		}
 
+	}
+
+	public void setSelectEntry(T pValue) {
+		final int COUNT = mItems.size();
+		for (int i = 0; i < COUNT; i++) {
+			if (mItems.get(i).value.equals(pValue)) {
+				mSelectedIndex = i;
+				return;
+			}
+		}
 	}
 
 	public void label(String pNewLabel) {
@@ -99,7 +131,7 @@ public class MenuEnumEntry extends MenuEntry {
 	// Constructor
 	// --------------------------------------
 
-	public MenuEnumEntry(ScreenManager pScreenManager, MenuScreen pParentScreen, String pLabel) {
+	public MenuEnumEntryIndexed(ScreenManager pScreenManager, MenuScreen pParentScreen, String pLabel) {
 		super(pScreenManager, pParentScreen, "");
 
 		mLabel = pLabel;
@@ -120,6 +152,8 @@ public class MenuEnumEntry extends MenuEntry {
 
 	@Override
 	public boolean handleInput(LintfordCore pCore) {
+		if(!mEnabled) return false;
+		
 		if (mHasFocus) {
 
 		} else {
@@ -241,22 +275,26 @@ public class MenuEnumEntry extends MenuEntry {
 
 		// Render the two arrows either side of the enumeration options
 		if (mButtonsEnabled) {
-			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 384, 64, 32, 32, mLeftButtonRectangle.x + ARROW_BUTTON_SIZE + ARROW_PADDING_X, mLeftButtonRectangle.y + ARROW_PADDING_Y, -ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, pParentZDepth, 1f, 1f, 1f,
-					1f);
+			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 384, 64, 32, 32, mLeftButtonRectangle.x + ARROW_BUTTON_SIZE + ARROW_PADDING_X, mLeftButtonRectangle.y + ARROW_PADDING_Y, -ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, pParentZDepth, 1f, 1f, 1f, 1f);
 			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 384, 64, 32, 32, mRightButtonRectangle.x + ARROW_PADDING_X, mRightButtonRectangle.y + ARROW_PADDING_Y, ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, pParentZDepth, 1f, 1f, 1f, 1f);
 
 		}
 
 		mTextureBatch.end();
+		
+		float lTextR = mEnabled ? mParentScreen.r() : 0.24f;
+		float lTextG = mEnabled ? mParentScreen.g() : 0.24f;
+		float lTextB = mEnabled ? mParentScreen.b() : 0.24f;
+		
 
 		mParentScreen.font().begin(pCore.HUD());
-		mParentScreen.font().draw(mLabel, x + w / 2 - 10 - lLabelWidth - lSeparatorHalfWidth, y + h / 2 - TEXT_HEIGHT * 0.5f, pParentZDepth, mParentScreen.r(), mParentScreen.g(), mParentScreen.b(), mParentScreen.a(), 1.0f, -1);
-		mParentScreen.font().draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - TEXT_HEIGHT * 0.5f, pParentZDepth, mParentScreen.r(), mParentScreen.g(), mParentScreen.b(), mParentScreen.a(), 1.0f, -1);
+		mParentScreen.font().draw(mLabel, x + w / 2 - 10 - lLabelWidth - lSeparatorHalfWidth, y + h / 2 - TEXT_HEIGHT * 0.5f, pParentZDepth, lTextR, lTextG, lTextB, mParentScreen.a(), 1.0f, -1);
+		mParentScreen.font().draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - TEXT_HEIGHT * 0.5f, pParentZDepth, lTextR, lTextG, lTextB, mParentScreen.a(), 1.0f, -1);
 
 		// Render the items
-		if (mItems.size() > 0) {
-			String lCurItem = mItems.get(mSelectedIndex);
-			mParentScreen.font().draw(lCurItem, x + w / 2 + lSeparatorHalfWidth + SPACE_BETWEEN_TEXT + 32, y + h / 2 - TEXT_HEIGHT * 0.5f, pParentZDepth, mParentScreen.r(), mParentScreen.g(), mParentScreen.b(), mParentScreen.a(), 1.0f, -1);
+		if (mSelectedIndex >= 0 && mSelectedIndex < mItems.size()) {
+			String lCurItem = mItems.get(mSelectedIndex).name;
+			mParentScreen.font().draw(lCurItem, x + w / 2 + lSeparatorHalfWidth + SPACE_BETWEEN_TEXT + 32, y + h / 2 - TEXT_HEIGHT * 0.5f, pParentZDepth, lTextR, lTextG, lTextB, mParentScreen.a(), 1.0f, -1);
 		}
 		mParentScreen.font().end();
 
@@ -280,7 +318,7 @@ public class MenuEnumEntry extends MenuEntry {
 		}
 	}
 
-	public void addItem(String pItem) {
+	public void addItem(MenuEnumEntryItem pItem) {
 		if (pItem == null)
 			return;
 
@@ -289,7 +327,7 @@ public class MenuEnumEntry extends MenuEntry {
 		}
 	}
 
-	public void addItems(String... pItems) {
+	public void addItems(MenuEnumEntryItem[] pItems) {
 		if (pItems == null)
 			return;
 
@@ -299,5 +337,10 @@ public class MenuEnumEntry extends MenuEntry {
 				mItems.add(pItems[i]);
 			}
 		}
+	}
+
+	public void clearItems() {
+		mItems.clear();
+
 	}
 }

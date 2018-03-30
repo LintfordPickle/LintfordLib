@@ -81,10 +81,10 @@ public class MasterConfig {
 	// Methods
 	// --------------------------------------
 
-	public long onCreateWindow(GameInfo pGameInfo) {
+	public long onCreateWindow(GameInfo pGameInfo, boolean pFullscreen, int pWidth, int pHeight) {
 		mGameInfo = pGameInfo;
 
-		long lWindowID = DISPLAY_CONFIG.createWindow(pGameInfo);
+		long lWindowID = DISPLAY_CONFIG.createWindow(pGameInfo, pFullscreen, pWidth, pHeight);
 
 		if (lWindowID == MemoryUtil.NULL) {
 			throw new RuntimeException("Failed to get correct GLFWWindow handle");
@@ -93,7 +93,7 @@ public class MasterConfig {
 		return lWindowID;
 
 	}
-	
+
 	public void loadConfigFiles(configuration c) {
 		switch (c) {
 		case musicConfig:
