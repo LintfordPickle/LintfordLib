@@ -220,6 +220,8 @@ public abstract class LintfordCore {
 	 * Called automatically before entering the main game loop. OpenGL content can be setup.
 	 */
 	protected void onLoadGLContent() {
+		DebugManager.DEBUG_MANAGER.logger().i(getClass().getSimpleName(), "Loading GL content");
+		
 		mResourceManager.loadGLContent();
 		mRendererManager.loadGLContent(mResourceManager);
 
@@ -231,7 +233,8 @@ public abstract class LintfordCore {
 	 * Called automatically after exiting the main game loop. OpenGL resources should be released.
 	 */
 	protected void onUnloadGLContent() {
-
+		DebugManager.DEBUG_MANAGER.logger().i(getClass().getSimpleName(), "Unloading GL content");
+		
 		DebugManager.DEBUG_MANAGER.unloadGLContent();
 
 		mRendererManager.unloadGLContent();

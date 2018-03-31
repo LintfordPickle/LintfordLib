@@ -353,10 +353,14 @@ public class InputState {
 		}
 
 		if (mKeyButtonStates[pKeyCode]) {
-			mKeyTimer = 0;
 			return true;
 		}
+		
 		return false;
+	}
+	
+	public void handleKeyTimed() {
+		mKeyTimer = 0;
 	}
 
 	public void simulateMenuKeyPress() {

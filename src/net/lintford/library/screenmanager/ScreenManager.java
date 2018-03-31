@@ -16,23 +16,16 @@ public class ScreenManager {
 	private LintfordCore mLWJGLCore;
 	private ArrayList<Screen> mScreens;
 	private ArrayList<Screen> mScreensToUpdate;
-	// Needs to be passed in by some abstract class
-	// private GameSettings mGameSettings;
 	private ToolTip mToolTip;
 	private ResourceManager mResourceManager;
 	private ToastManager mToastManager;
 	private String mFontPathname;
-
 	private boolean mIsInitialised;
 	private boolean mIsLoaded;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
-
-	// public GameSettings gameSettings() {
-	// return mGameSettings;
-	// }
 
 	public ResourceManager resources() {
 		return mResourceManager;
@@ -243,7 +236,6 @@ public class ScreenManager {
 
 	}
 
-	/** When called, notifies the LWJGLCore instance to close application. */
 	public void exitGame() {
 		mLWJGLCore.closeApp();
 

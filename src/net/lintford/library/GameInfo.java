@@ -39,7 +39,7 @@ public interface GameInfo {
 
 	/** Returns true if the OpenGL window can be toggled fullscreen. */
 	public default boolean windowCanBeFullscreen() {
-		return false;
+		return true;
 	}
 
 	/**
