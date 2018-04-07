@@ -155,8 +155,8 @@ public class UIInputText extends AARectangle implements IBufferedInputCallback {
 		mCaretFlashTimer += pCore.time().elapseGameTimeMilli();
 
 		final int lCANCEL_RECT_SIZE = 18;
-		mCancelRectangle.x = x + w - lCANCEL_RECT_SIZE - 2;
-		mCancelRectangle.y = y + 4;
+		mCancelRectangle.x = x + w - lCANCEL_RECT_SIZE - 10;
+		mCancelRectangle.y = y + h / 2 - lCANCEL_RECT_SIZE / 2;
 		mCancelRectangle.w = lCANCEL_RECT_SIZE;
 		mCancelRectangle.h = lCANCEL_RECT_SIZE;
 
@@ -166,15 +166,25 @@ public class UIInputText extends AARectangle implements IBufferedInputCallback {
 				mShowCaret = !mShowCaret;
 				mCaretFlashTimer = 0;
 			}
+			
+			// Limit the number of characters which can be entered
+			if(mInputField.length() > 15)
+				mInputField.delete(15, mInputField.length() - 1);
+			
 		}
+		
+		
 
 	}
 
 	public void draw(LintfordCore pCore, TextureBatch pTextureBatch, FontUnit pTextFont) {
 		if(mTextureName == null) mTextureName = TextureManager.TEXTURE_CORE_UI_NAME;
 		
+		// Renders the background of the input text widget
 		pTextureBatch.begin(pCore.HUD());
-		pTextureBatch.draw(TextureManager.textureManager().getTexture(mTextureName), 64, 0, 32, 32, x, y + 3, w, h - 6, -0.1f, 1f, 1f, 1f, 1);
+		pTextureBatch.draw(TextureManager.textureManager().getTexture(mTextureName), 448     , 32, 32, 32, x,          y, 32,     32, -0.1f, 1f, 1f, 1f, 1);
+		pTextureBatch.draw(TextureManager.textureManager().getTexture(mTextureName), 448 + 32, 32, 32, 32, x + 32,     y, w - 64, 32, -0.1f, 1f, 1f, 1f, 1);
+		pTextureBatch.draw(TextureManager.textureManager().getTexture(mTextureName), 448 + 64, 32, 32, 32, x + w - 32, y, 32, 32, -0.1f, 1f, 1f, 1f, 1);
 		pTextureBatch.end();
 
 		// Draw the cancel button rectangle
@@ -185,9 +195,10 @@ public class UIInputText extends AARectangle implements IBufferedInputCallback {
 		final float lInputTextWidth = pTextFont.bitmap().getStringWidth(mInputField.toString());
 
 		String lText = mInputField.toString();
+		final float lTextHeight = pTextFont.bitmap().fontHeight();
 		float lAlpha = 1f;
-		if (lText.length() == 0) {
-			if (mEmptyString.isEmpty()) {
+		if (lText.length() == 0 && !mHasFocus) {
+			if (mEmptyString.isEmpty() ) {
 				lText = "<search>";
 
 			} else {
@@ -199,10 +210,10 @@ public class UIInputText extends AARectangle implements IBufferedInputCallback {
 		}
 
 		pTextFont.begin(pCore.HUD());
-		pTextFont.draw(lText, x + 5, y, -0.1f, 1f, 1f, 1f, lAlpha, 1f, -1);
+		pTextFont.draw(lText, x + 10, y + h / 2 - lTextHeight / 2, -0.1f, 1f, 1f, 1f, lAlpha, 1f, -1);
 
 		if (mShowCaret && mHasFocus) {
-			pTextFont.draw("|", x + lInputTextWidth + SPACE_BETWEEN_TEXT * 3, y, 1f);
+			pTextFont.draw("|", x + 10 + lInputTextWidth + SPACE_BETWEEN_TEXT * 3, y + h / 2 - lTextHeight / 2, 1f);
 
 		}
 

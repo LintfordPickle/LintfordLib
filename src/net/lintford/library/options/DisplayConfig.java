@@ -57,7 +57,7 @@ import net.lintford.library.core.maths.Vector2i;
 // TODO: Implement GameResizeListener for all GLContent reloading 
 // TODO: Need to load the last display configuration from file
 public class DisplayConfig extends BaseConfig {
-	
+
 	// --------------------------------------
 	// Constants / Enums
 	// --------------------------------------
@@ -134,7 +134,7 @@ public class DisplayConfig extends BaseConfig {
 	public GLFWVidMode desktopVideoMode() {
 		return mDesktopVideoMode;
 	}
-	
+
 	public boolean isWindowFocused() {
 		return mIsWindowFocused;
 	}
@@ -242,6 +242,8 @@ public class DisplayConfig extends BaseConfig {
 					mWindowResizeListeners.get(i).onResize(mWindowSize.x, mWindowSize.y);
 
 				}
+				
+//				changeResolution(mWindowSize.x, mWindowSize.y);
 
 				mLockedListeners = false;
 
@@ -273,7 +275,7 @@ public class DisplayConfig extends BaseConfig {
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_FALSE);
-		glfwWindowHint(GLFW_DECORATED, GL_TRUE);		
+		glfwWindowHint(GLFW_DECORATED, GL_TRUE);
 
 		mStretchToFit = pGameInfo.stretchGameViewportToWindow();
 		// mMaintainAspectRatio = pGameInfo.maintainAspectRatio();
@@ -335,19 +337,21 @@ public class DisplayConfig extends BaseConfig {
 
 		GLDebug.checkGLErrors();
 
-		// Create only one size callback thing
-		if (mFrameBufferSizeCallback == null) {
-			mFrameBufferSizeCallback = new GLFWFramebufferSizeCallback() {
+		// TODO: JoH Fix this thing
+		// // Create only one size callback thing
+		 if (mFrameBufferSizeCallback == null) {
+		 mFrameBufferSizeCallback = new GLFWFramebufferSizeCallback() {
+		
+		 @Override
+		 public void invoke(long window, int width, int height) {
+		 changeResolution(width, height);
+		
+		 }
+		
+		 };
+		
+		 }
 
-				@Override
-				public void invoke(long window, int width, int height) {
-					changeResolution(width, height);
-
-				}
-
-			};
-
-		}
 		glfwSetFramebufferSizeCallback(mWindowID, mFrameBufferSizeCallback);
 		glfwSetWindowFocusCallback(mWindowID, new GLFWWindowFocusCallback() {
 
@@ -369,25 +373,16 @@ public class DisplayConfig extends BaseConfig {
 
 	}
 
-	public void toggleFullscreen() {
-		if (glfwGetWindowMonitor(mWindowID) == NULL) {
-			// Is currently in windows mode, set fullscreen on primary monitor
-			GLFWVidMode lVidMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-			int lFullScreenWidth = lVidMode.width();
-			int lFullScreenHeight = lVidMode.height();
-
-			setGLFWMonitor(glfwGetPrimaryMonitor(), 0, 0, lFullScreenWidth, lFullScreenHeight, mVSYNCEnabled);
+	public void toggleFullscreen(int pWidth, int pHeight) {
+		if (glfwGetWindowMonitor(mWindowID) == NULL) { // Currently in windowed mode
+			setGLFWMonitor(glfwGetPrimaryMonitor(), 0, 0, pWidth, pHeight, mVSYNCEnabled);
 
 		} else {
 			GLFWVidMode lVidMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 			int lFullScreenWidth = lVidMode.width();
 			int lFullScreenHeight = lVidMode.height();
 
-			// Is currently in fullscreen mode
-			final int lWindowWidth = 1600;
-			final int lWindowHeight = 900;
-
-			setGLFWMonitor(NULL, lFullScreenWidth / 2 - lWindowWidth / 2, lFullScreenHeight / 2 - lWindowHeight / 2, lWindowWidth, lWindowHeight, mVSYNCEnabled);
+			setGLFWMonitor(NULL, lFullScreenWidth / 2 - pWidth / 2, lFullScreenHeight / 2 - pHeight / 2, pWidth, pHeight, mVSYNCEnabled);
 
 		}
 
@@ -398,7 +393,7 @@ public class DisplayConfig extends BaseConfig {
 		glfwSetWindowMonitor(mWindowID, pMonitorHandle, pX, pY, pWidth, pHeight, 60);
 
 		mFullScreen = pMonitorHandle != NULL;
-		
+
 		changeResolution(pWidth, pHeight);
 
 		if (pMonitorHandle == NULL) { // windowed mode
@@ -413,7 +408,7 @@ public class DisplayConfig extends BaseConfig {
 			GLFW.glfwSetWindowPos(mWindowID, lMonitorWidth / 2 - pWidth / 2, lMonitorHeight / 2 - pHeight / 2);
 
 		}
-		
+
 		mVSYNCEnabled = pVSync;
 		glfwSwapInterval(mVSYNCEnabled ? 1 : 0); // cap to 60 (v-sync)
 
@@ -437,7 +432,7 @@ public class DisplayConfig extends BaseConfig {
 		if (pWidth == 0 || pHeight == 0)
 			return;
 
-		mWindowResolutionChanged = true;
+		// mWindowResolutionChanged = true;
 		mWindowWasResized = true;
 
 		mWindowSize.x = pWidth;

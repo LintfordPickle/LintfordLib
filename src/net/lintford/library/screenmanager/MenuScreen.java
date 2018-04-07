@@ -65,7 +65,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	// Constants
 	// --------------------------------------
 
-	private static final float Z_DEPTH = -1f;
+	protected static final float Z_DEPTH = -1f;
 
 	public static final String MENUSCREEN_FONT_NAME = "MenuScreenFont";
 	public static final String MENUSCREEN_HEADER_FONT_NAME = "MenuScreenHeaderFont";

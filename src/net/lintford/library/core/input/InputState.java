@@ -353,6 +353,7 @@ public class InputState {
 		}
 
 		if (mKeyButtonStates[pKeyCode]) {
+			mKeyTimer = 0;
 			return true;
 		}
 		

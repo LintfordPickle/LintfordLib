@@ -276,9 +276,8 @@ public abstract class LintfordCore {
 
 			glfwSwapBuffers(lDisplayConfig.windowID());
 
-			glfwPollEvents();
-
 			mInputState.endUpdate();
+			glfwPollEvents();
 
 			GLDebug.checkGLErrorsException();
 
@@ -287,6 +286,7 @@ public abstract class LintfordCore {
 		onUnloadGLContent();
 
 		System.exit(0);
+		
 	}
 
 	/**
@@ -349,7 +349,7 @@ public abstract class LintfordCore {
 		if (lDisplay == null)
 			return; // has the game been properly started yet?
 
-		lDisplay.toggleFullscreen();
+		lDisplay.toggleFullscreen(800, 600);
 
 	}
 

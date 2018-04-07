@@ -34,6 +34,7 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 
 	private static final float OPEN_SPEED = 3.0f;
 	private static final String PROMT_CHAR = "> ";
+	private static final String CARET_CHAR = "|";
 	private static final float FOCUS_TIMER = 250;
 
 	public static final String CONSOLE_FONT_NAME = "Console Font";
@@ -105,14 +106,16 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 	private boolean mIsLoaded;
 
 	private UIInputText mTAGFilterText;
+	private int mTAGFilterLastSize;
 	private UIInputText mMessageFilterText;
+	private int mMessageFilterLastSize;
 
 	protected boolean mProcessed; // is filter applied?
 	protected List<LogMessage> mProcessedMessages;
 	protected List<LogMessage> mUpdateMessageList;
 	protected boolean mDirty;
-	
-	protected PrintStream mErrPrintStream; 
+
+	protected PrintStream mErrPrintStream;
 
 	// --------------------------------------
 	// Properties
@@ -121,7 +124,7 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 	public PrintStream err() {
 		return mErrPrintStream;
 	}
-	
+
 	public boolean hasFocus() {
 		return mHasFocus;
 	}
@@ -226,10 +229,10 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 		if (!CONSOLE_ENABLED)
 			return;
 
-		if(mOpen) {
+		if (mOpen) {
 			mTAGFilterText.handleInput(pCore);
 			mMessageFilterText.handleInput(pCore);
-			
+
 		}
 
 		// listen for opening and closing
@@ -265,9 +268,20 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 		if (mOpen) {
 
 			if (mScrollBar.handleInput(pCore)) {
+
+				if (mScrollBar.isAtBottomPosition()) {
+					mAutoScroll = true;
+
+				} else {
+					mAutoScroll = false;
+
+				}
+
 				return;
 
-			} else if (mTAGFilterText.intersects(pCore.HUD().getMouseCameraSpace())) {
+			}
+
+			else if (mTAGFilterText.intersects(pCore.HUD().getMouseCameraSpace())) {
 
 			}
 
@@ -329,7 +343,6 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 		}
 
 		// Update the window content
-		mAutoScroll = true;
 		mConsoleLineHeight = (int) (mConsoleFont.bitmap().getStringHeight(" ") + 1);
 		final int MAX_NUM_LINES = (int) ((openHeight() - mConsoleLineHeight * 2) / mConsoleLineHeight);
 
@@ -354,14 +367,6 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 
 		}
 		mUpperBound = mLowerBound + MAX_NUM_LINES;
-
-		if (mUpperBound > lNumberLinesInConsole) {
-			mAutoScroll = true;
-
-		} else {
-			mAutoScroll = false;
-
-		}
 
 		mContentRectangle.h = (lNumberLinesInConsole + 2) * mConsoleLineHeight;
 
@@ -447,7 +452,8 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 			mConsoleFont.draw(PROMT_CHAR, -lDisplay.windowSize().x * 0.5f + PADDING_LEFT, y + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET, Z_DEPTH + 0.1f, 1f);
 			mConsoleFont.draw(mInputText.toString(), -lDisplay.windowSize().x * 0.5f + PADDING_LEFT + lInputTextXOffset, y + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET, Z_DEPTH + 0.1f, 1f);
 			if (mShowCaret && mHasFocus)
-				mConsoleFont.draw("|", -lDisplay.windowSize().x * 0.5f + PADDING_LEFT + lInputTextXOffset + mConsoleFont.bitmap().getStringWidth(mInputText.toString()), y + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET, Z_DEPTH + 0.1f, 1f);
+				mConsoleFont.draw(CARET_CHAR, -lDisplay.windowSize().x * 0.5f + PADDING_LEFT + lInputTextXOffset + mConsoleFont.bitmap().getStringWidth(mInputText.toString()), y + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET, Z_DEPTH + 0.1f,
+						1f);
 		}
 
 		mTAGFilterText.draw(pCore, mSpriteBatch, mConsoleFont);
@@ -464,9 +470,19 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 	// --------------------------------------
 
 	protected void doFilterText() {
-		// TODO: ---> Don't update every frame (listen for changes to filter text)
-		mDirty = true;
+
+		if (mTAGFilterLastSize != mTAGFilterText.inputString().length()) {
+			mDirty = true;
+			mTAGFilterLastSize = mTAGFilterText.inputString().length();
+		}
+
+		if (mMessageFilterLastSize != mMessageFilterText.inputString().length()) {
+			mDirty = true;
+			mMessageFilterLastSize = mMessageFilterText.inputString().length();
+		}
+
 		if (mDirty) {
+			mAutoScroll = true;
 			mProcessed = false;
 			mScrollBar.resetBarTop();
 

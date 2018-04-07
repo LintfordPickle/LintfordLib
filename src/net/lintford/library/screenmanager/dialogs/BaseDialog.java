@@ -19,7 +19,7 @@ public abstract class BaseDialog extends MenuScreen {
 	protected float mDialogHeight;
 	protected boolean mDrawBackground;
 
-	private TextureBatch mSpriteBatch;
+	protected TextureBatch mSpriteBatch;
 
 	// --------------------------------------
 	// Properties

@@ -111,10 +111,12 @@ public class DebugProfiler extends AARectangle {
 			return;
 
 		final float lWindowWidth = pCore.config().display().windowSize().x;
-		final float lWindowHeight = pCore.config().display().windowSize().y;
-		// setPosition(-lWindowWidth / 2, -lWindowHeight / 2);
+//		final float lWindowHeight = pCore.config().display().windowSize().y;
+//		setPosition(-lWindowWidth / 2, -lWindowHeight / 2);
+		
 		setWidth(lWindowWidth);
 		setHeight(mSimpleHeight);
+		
 	}
 
 	double deltaDraw;

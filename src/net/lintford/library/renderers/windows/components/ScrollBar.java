@@ -141,6 +141,15 @@ public class ScrollBar extends AARectangle {
 	// Methods
 	// --------------------------------------
 
+	public boolean isAtBottomPosition() {
+		float oy = mScrollBarArea.currentYPos();
+		float ny = getScrollYBottomPosition();
+		boolean lResult = oy == ny;
+		
+		return lResult;
+		
+	}
+	
 	public float getScrollYTopPosition() {
 		return 0;
 	}
