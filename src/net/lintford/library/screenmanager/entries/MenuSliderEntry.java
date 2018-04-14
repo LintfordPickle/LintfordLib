@@ -99,7 +99,7 @@ public class MenuSliderEntry extends MenuEntry {
 		}
 
 		if (intersects(pCore.HUD().getMouseCameraSpace())) {
-			if (pCore.input().mouseTimedLeftClick()) {
+			if (pCore.input().isMouseTimedLeftClickAvailable()) {
 				if (mEnabled) {
 
 					// TODO: Play menu click sound
@@ -109,7 +109,7 @@ public class MenuSliderEntry extends MenuEntry {
 						setValue(mValue + mStep);
 					}
 
-					mParentScreen.setFocusOn(pCore.input(), this, true);
+					mParentScreen.setFocusOn(pCore, this, true);
 					mParentScreen.setHoveringOn(this);
 
 					pCore.input().setLeftMouseClickHandled();
@@ -129,6 +129,7 @@ public class MenuSliderEntry extends MenuEntry {
 
 		} else {
 			mToolTipTimer = 0;
+			
 		}
 
 		return false;
@@ -164,7 +165,7 @@ public class MenuSliderEntry extends MenuEntry {
 		// TODO: This should be a slider as well ..
 		mTextureBatch.begin(pCore.HUD());
 		mTextureBatch.draw(lTexture, 160, 0, 32, 32, mDownButton.x, mDownButton.y, 32, 32, -2f, 1f, 1f, 1f, 1f);
-		mTextureBatch.draw(lTexture, 224, 0, 32, 32, mUpButton.x,   mUpButton.y,   32, 32, -2f, 1f, 1f, 1f, 1f);
+		mTextureBatch.draw(lTexture, 224, 0, 32, 32, mUpButton.x, mUpButton.y, 32, 32, -2f, 1f, 1f, 1f, 1f);
 		mTextureBatch.end();
 
 	}

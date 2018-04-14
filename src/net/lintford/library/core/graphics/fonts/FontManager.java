@@ -144,7 +144,7 @@ public class FontManager {
 
 	// TODO (John): The system font should be dynamically loaded (dependency on external .ttf file).
 	public static final String SYSTEM_FONT_NAME = "SystemFont18";
-	public static final String SYSTEM_FONT_PATH = " ";
+	public static final String SYSTEM_FONT_PATH = "/res/fonts/Pixel.ttf";
 	public static final int SYSTEM_FONT_SIZE = 18;
 
 	// --------------------------------------
@@ -207,15 +207,23 @@ public class FontManager {
 	// --------------------------------------
 
 	public FontUnit loadNewFont(String pName, String pFontPath, int pPointSize) {
-		return this.loadNewFont(pName, pFontPath, pPointSize, true);
+		return this.loadNewFont(pName, pFontPath, pPointSize, true, false);
+
+	}
+	
+	public FontUnit loadNewFont(String pName, String pFontPath, int pPointSize, boolean pReload) {
+		return this.loadNewFont(pName, pFontPath, pPointSize, true, pReload);
 
 	}
 
-	public FontUnit loadNewFont(String pName, String pFontPath, int pPointSize, boolean pAntiAlias) {
+	public FontUnit loadNewFont(String pName, String pFontPath, int pPointSize, boolean pAntiAlias, boolean pReload) {
 		// First check if this font already exists:
 		if (mFontMap.containsKey(pName)) {
-			// and if so, return the loaded font of the same name.
-			return mFontMap.get(pName);
+			if(!pReload)
+				return mFontMap.get(pName);
+			
+			mFontMap.remove(pName);
+			
 		}
 
 		// First check to see if the fontpath is valid and the font exists
@@ -225,6 +233,10 @@ public class FontManager {
 
 		}
 
+		if(pName.equals(SYSTEM_FONT_NAME)) {
+			mSystemFont = lNewFont;
+		}
+		
 		mFontMap.put(pName, lNewFont);
 
 		return lNewFont;

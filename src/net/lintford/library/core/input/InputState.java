@@ -276,21 +276,15 @@ public class InputState {
 	public boolean isMouseTimedLeftClickAvailable() {
 		if (!mLeftClickHandled && mouseLeftClick() && mMenuClickTimer > TIMED_CLICK_DELAY) {
 			return true;
+
 		}
+
 		return false;
+
 	}
 
 	public boolean isMouseTimedRightClickAvailable() {
 		if (!mRightClickHandled && mouseRightClick() && mMenuClickTimer > TIMED_CLICK_DELAY) {
-			return true;
-		}
-		return false;
-	}
-
-	public boolean mouseTimedLeftClick() {
-		if (!mLeftClickHandled && mouseLeftClick() && mMenuClickTimer > TIMED_CLICK_DELAY) {
-			mLeftClickHandled = true;
-			mMenuClickTimer = 0;
 			return true;
 		}
 		return false;
@@ -356,10 +350,10 @@ public class InputState {
 			mKeyTimer = 0;
 			return true;
 		}
-		
+
 		return false;
 	}
-	
+
 	public void handleKeyTimed() {
 		mKeyTimer = 0;
 	}
@@ -431,11 +425,11 @@ public class InputState {
 		}
 
 	}
-	
+
 	public void endUpdate() {
 		mMouseWheelXOffset = 0;
 		mMouseWheelYOffset = 0;
-		
+
 	}
 
 	public void resetKeyFlags() {
@@ -446,7 +440,7 @@ public class InputState {
 	public void resetFlags() {
 		mMouseWheelXOffset = 0;
 		mMouseWheelYOffset = 0;
-		
+
 		// This is needed in the case of toggling the GLFW window
 		Arrays.fill(mKeyButtonStates, false);
 		Arrays.fill(mMouseButtonStates, false);

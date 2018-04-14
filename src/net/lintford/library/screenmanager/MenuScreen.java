@@ -9,7 +9,7 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.geometry.AARectangle;
 import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
-import net.lintford.library.core.input.InputState;
+import net.lintford.library.renderers.ZLayers;
 import net.lintford.library.screenmanager.entries.EntryInteractions;
 import net.lintford.library.screenmanager.layouts.BaseLayout;
 
@@ -64,8 +64,6 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	// --------------------------------------
 	// Constants
 	// --------------------------------------
-
-	protected static final float Z_DEPTH = -1f;
 
 	public static final String MENUSCREEN_FONT_NAME = "MenuScreenFont";
 	public static final String MENUSCREEN_HEADER_FONT_NAME = "MenuScreenHeaderFont";
@@ -222,7 +220,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 			// Set focus on the new entry
 			if (lLayout.menuEntries().get(mSelectedEntry).enabled()) {
-				lLayout.setFocusOffAll(pCore.input().mouseLeftClick());
+				lLayout.updateFocusOffAllBut(pCore, lLayout.menuEntries().get(mSelectedEntry));
 				lLayout.menuEntries().get(mSelectedEntry).hasFocus(true);
 			}
 
@@ -244,7 +242,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 			// Set focus on the new entry
 			if (lLayout.menuEntries().get(mSelectedEntry).enabled()) {
-				lLayout.setFocusOffAll(pCore.input().mouseLeftClick());
+				lLayout.updateFocusOffAllBut(pCore, lLayout.menuEntries().get(mSelectedEntry));
 				lLayout.menuEntries().get(mSelectedEntry).hasFocus(true);
 			}
 
@@ -267,6 +265,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 			BaseLayout lLayout = mLayouts.get(i);
 			lLayout.handleInput(pCore);
 		}
+
 	}
 
 	@Override
@@ -342,17 +341,19 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	public void draw(LintfordCore pCore) {
 		if (mScreenState != ScreenState.Active && mScreenState != ScreenState.TransitionOn && mScreenState != ScreenState.TransitionOff)
 			return;
+		
+		final float MENUSCREEN_Z_DEPTH = ZLayers.LAYER_SCREENMANAGER;
 
 		AARectangle lHUDRect = pCore.HUD().boundingRectangle();
 
 		mMenuHeaderFont.begin(pCore.HUD());
-		mMenuHeaderFont.draw(mMenuTitle, lHUDRect.left() + TITLE_PADDING_X, lHUDRect.top(), -0f, mR, mG, mB, mA, 1f);
+		mMenuHeaderFont.draw(mMenuTitle, lHUDRect.left() + TITLE_PADDING_X, lHUDRect.top(), MENUSCREEN_Z_DEPTH, mR, mG, mB, mA, 1f);
 		mMenuHeaderFont.end();
 
 		// Draw each layout in turn.
 		final int lCount = layouts().size();
 		for (int i = 0; i < lCount; i++) {
-			mLayouts.get(i).draw(pCore, Z_DEPTH);
+			mLayouts.get(i).draw(pCore, MENUSCREEN_Z_DEPTH + (i * 0.001f));
 
 		}
 
@@ -377,16 +378,15 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		return false;
 	}
 
-	public void setFocusOn(InputState pInputState, MenuEntry pMenuEntry, boolean pForce) {
-
+	/** Sets the focus to a specific {@link MenuEntry}, clearing the focus from all other entries. */
+	public void setFocusOn(LintfordCore pCore, MenuEntry pMenuEntry, boolean pForce) {
 		if (mLayouts.size() == 0)
 			return; // nothing to do
 
 		BaseLayout lLayout = mLayouts.get(mSelectedLayout);
+		lLayout.updateFocusOffAllBut(pCore, pMenuEntry);
 
-		lLayout.setFocusOffAll(pInputState.mouseLeftClick());
-		// Set focus to this entry
-		pMenuEntry.onClick(pInputState);
+		pMenuEntry.hasFocus(true);
 
 	}
 
@@ -399,16 +399,16 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 			return;
 
 		BaseLayout lLayout = mLayouts.get(mSelectedLayout);
-
 		pMenuEntry.hoveredOver(true);
 
 		int lCount = lLayout.menuEntries().size();
 		for (int i = 0; i < lCount; i++) {
 			if (!lLayout.menuEntries().get(i).equals(pMenuEntry)) {
-				lLayout.menuEntries().get(i).hasFocus(false);
 				lLayout.menuEntries().get(i).hoveredOver(false);
+
 			} else {
 				mSelectedEntry = i;
+
 			}
 		}
 
@@ -421,7 +421,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	@Override
 	public void menuEntryOnClick(int pEntryID) {
 		mClickAction.setNewClick(pEntryID);
-		mAnimationTimer = ANIMATION_TIMER_LENGTH;
+		mAnimationTimer = ANIMATION_TIMER_LENGTH * 2f;
 	}
 
 	protected abstract void handleOnClick();

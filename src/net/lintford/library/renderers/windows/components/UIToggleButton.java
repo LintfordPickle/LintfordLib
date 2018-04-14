@@ -2,6 +2,7 @@ package net.lintford.library.renderers.windows.components;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.geometry.AARectangle;
+import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
@@ -113,22 +114,20 @@ public class UIToggleButton extends UIWidget {
 	}
 
 	@Override
-	public void draw(LintfordCore pCore) {
+	public void draw(LintfordCore pCore, TextureBatch pTextureBatch, FontUnit pTextFont, float pComponentZDepth) {
 		float lR = mIsEnabled ? 0.3f : mHoveredOver ? 0.3f : mR;
 		float lG = mIsEnabled ? 0.13f : mHoveredOver ? 0.34f : mG;
 		float lB = mIsEnabled ? 0.19f : mHoveredOver ? 0.65f : mB;
 
-		final TextureBatch SPRITE_BATCH = mParentWindow.rendererManager().uiTextureBatch();
-
 		// Draw the button background
-		SPRITE_BATCH.begin(pCore.HUD());
-		SPRITE_BATCH.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, x, y, w, h, 0f, lR, lG, lB, 1f);
+		pTextureBatch.begin(pCore.HUD());
+		pTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, x, y, w, h, pComponentZDepth, lR, lG, lB, 1f);
 
 		if (mButtonTexture != null) {
-			SPRITE_BATCH.draw(mButtonTexture, mSourceRectangle.x, mSourceRectangle.y, mSourceRectangle.w, mSourceRectangle.h, x, y, w, h, 0f, lR, lG, lB, 1f);
+			pTextureBatch.draw(mButtonTexture, mSourceRectangle.x, mSourceRectangle.y, mSourceRectangle.w, mSourceRectangle.h, x, y, w, h, pComponentZDepth, lR, lG, lB, 1f);
 		}
 
-		SPRITE_BATCH.end();
+		pTextureBatch.end();
 
 	}
 

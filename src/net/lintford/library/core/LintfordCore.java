@@ -14,7 +14,6 @@ import static org.lwjgl.opengl.GL11.glClearColor;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 
-import net.lintford.library.ConstantsTable;
 import net.lintford.library.GameInfo;
 import net.lintford.library.controllers.BaseControllerGroups;
 import net.lintford.library.controllers.camera.CameraController;
@@ -137,8 +136,6 @@ public abstract class LintfordCore {
 		mGameInfo = pGameInfo;
 		mIsHeadlessMode = pHeadless;
 
-		ConstantsTable.setAppConstants(pGameInfo.applicationName());
-
 		DebugManager.DEBUG_MANAGER.startDebug(DebugLogLevel.info);
 
 		DebugMemory.dumpMemoryToLog();
@@ -191,15 +188,12 @@ public abstract class LintfordCore {
 		// glClearColor(0f, 0f, 0f, 1.0f);
 		glClearColor(100.0f / 255.0f, 149.0f / 255.0f, 237.0f / 255.0f, 1.0f);
 
-		// Enable backface culling
-		GL11.glEnable(GL11.GL_CULL_FACE);
-
 		// Enable depth testing
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
 		// Enable depth testing
-		GL11.glDisable(GL11.GL_DEPTH_TEST);
+		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glDepthFunc(GL11.GL_LEQUAL);
 
 		// 2D Game - no face culling required (no 3d meshes)
@@ -221,7 +215,7 @@ public abstract class LintfordCore {
 	 */
 	protected void onLoadGLContent() {
 		DebugManager.DEBUG_MANAGER.logger().i(getClass().getSimpleName(), "Loading GL content");
-		
+
 		mResourceManager.loadGLContent();
 		mRendererManager.loadGLContent(mResourceManager);
 
@@ -234,7 +228,7 @@ public abstract class LintfordCore {
 	 */
 	protected void onUnloadGLContent() {
 		DebugManager.DEBUG_MANAGER.logger().i(getClass().getSimpleName(), "Unloading GL content");
-		
+
 		DebugManager.DEBUG_MANAGER.unloadGLContent();
 
 		mRendererManager.unloadGLContent();
@@ -286,7 +280,7 @@ public abstract class LintfordCore {
 		onUnloadGLContent();
 
 		System.exit(0);
-		
+
 	}
 
 	/**
@@ -327,7 +321,7 @@ public abstract class LintfordCore {
 		if (mIsHeadlessMode)
 			return;
 
-		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
+		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 
 		mRendererManager.draw(this);
 

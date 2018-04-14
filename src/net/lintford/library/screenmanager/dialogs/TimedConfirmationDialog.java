@@ -3,11 +3,13 @@ package net.lintford.library.screenmanager.dialogs;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.geometry.AARectangle;
 import net.lintford.library.core.graphics.textures.TextureManager;
+import net.lintford.library.renderers.ZLayers;
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuEntry.BUTTON_SIZE;
 import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.ScreenManager;
 import net.lintford.library.screenmanager.layouts.BaseLayout.ANCHOR;
+import net.lintford.library.screenmanager.layouts.BaseLayout;
 import net.lintford.library.screenmanager.layouts.ListLayout;
 import net.lintford.library.screenmanager.screens.VideoOptionsScreen;
 
@@ -103,50 +105,83 @@ public class TimedConfirmationDialog extends BaseDialog {
 	}
 
 	@Override
+	public void updateStructure(LintfordCore pCore) {
+		// Need to apply an offset on the y-axis to account for the timer.
+		float lTextHeight = font().bitmap().getStringHeight(mMessageString) + 150;
+
+		// Get the Y Start position of the menu entries
+		float lYPos = -DIALOG_HEIGHT * 0.5f + font().bitmap().getStringHeight(mMessageString) + lTextHeight / 2;
+
+		final int lLayoutCount = layouts().size();
+		for (int i = 0; i < lLayoutCount; i++) {
+			// TODO: Ignore floating layouts
+			BaseLayout lLayout = layouts().get(i);
+
+			lYPos += lLayout.paddingTop();
+
+			switch (mChildAlignment) {
+			case left:
+				lLayout.x = lLayout.paddingLeft();
+				break;
+			case center:
+				lLayout.x = -lLayout.w / 2;
+				break;
+			case right:
+				lLayout.x = pCore.config().display().windowSize().x - lLayout.w - lLayout.paddingRight();
+				break;
+			}
+
+			lLayout.y = lYPos;
+			lYPos += lLayout.h + lLayout.paddingBottom();
+
+			layouts().get(i).updateStructure();
+
+		}
+
+	}
+
+	@Override
 	public void draw(LintfordCore pCore) {
 		if (mScreenState != ScreenState.Active && mScreenState != ScreenState.TransitionOn && mScreenState != ScreenState.TransitionOff)
 			return;
 
-		final float TEXT_HORIZONTAL_PADDING = 20;
-		mDialogWidth = font().bitmap().getStringWidth(mMessageString) + TEXT_HORIZONTAL_PADDING * 2;
+		// TODO: Put the ZDEPTH somewhere where all Dialogs have access to it
+		final float ZDEPTH = ZLayers.LAYER_SCREENMANAGER + 0.05f;
 
-		final float lDialogWidth = mDialogWidth;
-		final float lDialogHeight = 250 + font().bitmap().getStringHeight(mMessageString);
+		final float TEXT_HORIZONTAL_PADDING = 20;
 
 		if (mDrawBackground) {
 			mSpriteBatch.begin(pCore.HUD());
-			mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 64, 0, 32, 32, -lDialogWidth * 0.5f, -lDialogHeight * 0.5f, lDialogWidth, lDialogHeight, -1.5f, mR, mG, mB, mA);
+			mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 64, 0, 32, 32, -DIALOG_WIDTH * 0.5f, -DIALOG_HEIGHT * 0.5f, DIALOG_WIDTH, DIALOG_HEIGHT, ZDEPTH, mR, mG, mB, mA);
 			mSpriteBatch.end();
 		}
 
 		font().begin(pCore.HUD());
 
 		/* Render title and message */
-		font().draw(mMessageString, -lDialogWidth * 0.5f + TEXT_HORIZONTAL_PADDING, -lDialogHeight * 0.5f + 30, -1.5f, 1f, lDialogWidth);
+		font().draw(mMessageString, -DIALOG_WIDTH * 0.5f + TEXT_HORIZONTAL_PADDING, -DIALOG_HEIGHT * 0.5f + 30, ZDEPTH, 1f, DIALOG_WIDTH);
 
 		font().end();
 
 		AARectangle lHUDRect = pCore.HUD().boundingRectangle();
 
 		mMenuHeaderFont.begin(pCore.HUD());
-		mMenuHeaderFont.draw(mMenuTitle, lHUDRect.left() + TITLE_PADDING_X, lHUDRect.top(), -0f, mR, mG, mB, mA, 1f);
+		mMenuHeaderFont.draw(mMenuTitle, lHUDRect.left() + TITLE_PADDING_X, lHUDRect.top(), ZDEPTH, mR, mG, mB, mA, 1f);
 		mMenuHeaderFont.end();
 
 		// Draw each layout in turn.
 		final int lCount = layouts().size();
 		for (int i = 0; i < lCount; i++) {
-			mLayouts.get(i).draw(pCore, Z_DEPTH);
+			mLayouts.get(i).draw(pCore, ZDEPTH + (i * 0.001f));
 
 		}
 
 		final String lTimeMessage = "[" + (int) ((mTimeToWait - mTimer) / 1000f) + " Sec(s)]";
-		final float lTimeDialogWidth = mDialogWidth;
-
-		font().begin(pCore.HUD());
+		final float lTimeDialogWidth = DIALOG_WIDTH;
 
 		/* Render title and message */
-		font().draw(lTimeMessage, -lTimeDialogWidth * 0.5f + TEXT_HORIZONTAL_PADDING, -lDialogHeight * 0.5f + 65, -1.5f, 1f, lTimeDialogWidth);
-
+		font().begin(pCore.HUD());
+		font().draw(lTimeMessage, -lTimeDialogWidth * 0.5f + TEXT_HORIZONTAL_PADDING, -DIALOG_HEIGHT * 0.5f + 65, ZDEPTH, 1f, lTimeDialogWidth);
 		font().end();
 
 	}

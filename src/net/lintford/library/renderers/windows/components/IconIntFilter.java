@@ -99,52 +99,56 @@ public class IconIntFilter {
 			if (pCore.input().isMouseTimedLeftClickAvailable()) {
 				mUIIconFilter.onFilterClick(this);
 
-				pCore.input().mouseTimedLeftClick();
+				pCore.input().setLeftMouseClickHandled();
+
 				return true;
+
 			}
+
 		}
 
 		return false;
 	}
 
-	public void draw(LintfordCore pCore, TextureBatch pUISpriteBatch, FontUnit lFont) {
+	public void draw(LintfordCore pCore, TextureBatch pTextureBatch, FontUnit pTextFont, float pComponentZDepth) {
 
 		float lR = mEnabled ? r : 1f;
 		float lG = mEnabled ? g : 1f;
 		float lB = mEnabled ? b : 1f;
 
-		pUISpriteBatch.begin(pCore.HUD());
+		pTextureBatch.begin(pCore.HUD());
 
 		// Draw the 'tab' background
 		if (mEnabled) {
 			// Draw a 'open' tab
-			pUISpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 384, 0, 64, 64, mUIDstRectangle.x - 2, mUIDstRectangle.y - 2, mUIDstRectangle.w + 4, mUIDstRectangle.h + 6, -0.5f, lR, lG, lB, 1f);
+			pTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 384, 0, 64, 64, mUIDstRectangle.x - 2, mUIDstRectangle.y - 2, mUIDstRectangle.w + 4, mUIDstRectangle.h + 6, -0.5f, lR, lG, lB, 1f);
 
 		} else {
 			// Draw a 'closed' tab
-			pUISpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 320, 0, 64, 64, mUIDstRectangle.x - 2, mUIDstRectangle.y - 2, mUIDstRectangle.w + 4, mUIDstRectangle.h + 6, -0.5f, lR, lG, lB, 1f);
+			pTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 320, 0, 64, 64, mUIDstRectangle.x - 2, mUIDstRectangle.y - 2, mUIDstRectangle.w + 4, mUIDstRectangle.h + 6, -0.5f, lR, lG, lB, 1f);
 
 		}
 
 		if (mHoveredOver) {
-			float lTextHalfW = lFont.bitmap().getStringWidth(mFilterName) / 2;
+			final float lTextHalfW = pTextFont.bitmap().getStringWidth(mFilterName) / 2;
+			final float lTextHeight = pTextFont.bitmap().fontHeight();
 
 			// Draw a background texture behind the texture so it is always legible.
-			pUISpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 64, 0, 32, 32, mUIDstRectangle.x + 16 - lTextHalfW, mUIDstRectangle.y - 19, lTextHalfW * 2 + 4, lFont.bitmap().fontHeight(), -0.2f, 1f, 1f, 1f, 1.0f);
-			
+			pTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 64, 0, 32, 32, mUIDstRectangle.x + 16 - lTextHalfW, mUIDstRectangle.y - 19, lTextHalfW * 2 + 4, lTextHeight, -0.2f, 1f, 1f, 1f, 1.0f);
+
 		}
 
 		// Draw the background icon
-		pUISpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, mUISrcRectangle.x, mUISrcRectangle.y, mUISrcRectangle.w, mUISrcRectangle.h, mUIDstRectangle.x, mUIDstRectangle.y, mUIDstRectangle.w, mUIDstRectangle.h, -0.5f, lR, lG, lB, 1f);
+		pTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, mUISrcRectangle.x, mUISrcRectangle.y, mUISrcRectangle.w, mUISrcRectangle.h, mUIDstRectangle.x, mUIDstRectangle.y, mUIDstRectangle.w, mUIDstRectangle.h, -0.5f, lR, lG, lB, 1f);
 
-		pUISpriteBatch.end();
+		pTextureBatch.end();
 
 		if (mHoveredOver) {
-			float lTextHalfW = lFont.bitmap().getStringWidth(mFilterName) / 2;
+			final float lTextHalfW = pTextFont.bitmap().getStringWidth(mFilterName) / 2;
 
-			lFont.begin(pCore.HUD());
-			lFont.draw(mFilterName, mUIDstRectangle.x + 16 - lTextHalfW, mUIDstRectangle.y - 19, -0.2f, 1f);
-			lFont.end();
+			pTextFont.begin(pCore.HUD());
+			pTextFont.draw(mFilterName, mUIDstRectangle.x + 16 - lTextHalfW, mUIDstRectangle.y - 19, -0.2f, 1f);
+			pTextFont.end();
 		}
 
 	}

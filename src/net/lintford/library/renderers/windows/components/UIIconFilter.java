@@ -112,17 +112,17 @@ public class UIIconFilter extends AARectangle {
 		}
 	}
 
-	public void draw(LintfordCore pCore, TextureBatch pSpriteBatch, FontUnit lFont) {
-		pSpriteBatch.begin(pCore.HUD());
+	public void draw(LintfordCore pCore, TextureBatch pTextureBatch, FontUnit pTextFont, float pComponentZDepth) {
+		pTextureBatch.begin(pCore.HUD());
 
 		int lCount = mIconFilters.size();
 		for (int i = 0; i < lCount; i++) {
 			IconIntFilter lFilter = mIconFilters.get(i);
 
-			lFilter.draw(pCore, pSpriteBatch, lFont);
+			lFilter.draw(pCore, pTextureBatch, pTextFont, pComponentZDepth);
 		}
 
-		pSpriteBatch.end();
+		pTextureBatch.end();
 
 	}
 

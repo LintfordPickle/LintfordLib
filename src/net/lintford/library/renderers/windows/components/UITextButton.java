@@ -111,7 +111,7 @@ public class UITextButton extends UIWidget {
 	}
 
 	@Override
-	public void draw(LintfordCore pCore) {
+	public void draw(LintfordCore pCore, TextureBatch pTextureBatch, FontUnit pTextFont, float pComponentZDepth) {
 
 		mR = 0.19f;
 		mG = 0.13f;
@@ -121,12 +121,10 @@ public class UITextButton extends UIWidget {
 		float lG = mHoveredOver ? 0.34f : mG;
 		float lB = mHoveredOver ? 0.65f : mB;
 
-		final TextureBatch SPRITE_BATCH = mParentWindow.rendererManager().uiTextureBatch();
-
 		// Draw the button background
-		SPRITE_BATCH.begin(pCore.HUD());
-		SPRITE_BATCH.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, x, y, 32, 32, -0.1f, lR, lG, lB, 1f);
-		SPRITE_BATCH.end();
+		pTextureBatch.begin(pCore.HUD());
+		pTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, x, y, 32, 32, pComponentZDepth, lR, lG, lB, 1f);
+		pTextureBatch.end();
 
 		FontUnit lFontRenderer = mParentWindow.rendererManager().textFont();
 
@@ -134,7 +132,7 @@ public class UITextButton extends UIWidget {
 		final float lTextWidth = lFontRenderer.bitmap().getStringWidth(lButtonText);
 
 		lFontRenderer.begin(pCore.HUD());
-		lFontRenderer.draw(lButtonText, x + w / 2f - lTextWidth / 2f, y + h / 2f - lFontRenderer.bitmap().fontHeight() / 4f, 1f);
+		lFontRenderer.draw(lButtonText, x + w / 2f - lTextWidth / 2f, y + h / 2f - lFontRenderer.bitmap().fontHeight() / 4f, pComponentZDepth, 1f);
 		lFontRenderer.end();
 
 	}

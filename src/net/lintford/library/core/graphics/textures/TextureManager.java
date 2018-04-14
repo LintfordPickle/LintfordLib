@@ -41,7 +41,9 @@ public class TextureManager {
 	public static final Texture TEXTURE_CHECKER_I = TextureManager.textureManager().loadTexture(TEXTURE_CHECKER_BOARD_INDEXED_NAME, "/res/textures/CheckerBoardIndexed.png", GL11.GL_NEAREST);
 
 	/** A static texture which contains 'generic' icons which can be used for core components and debugging. */
-	public static final Texture TEXTURE_CORE_UI = TextureManager.textureManager().loadTexture(TEXTURE_CORE_UI_NAME, "/res/textures/core/core_ui.png", GL11.GL_NEAREST);
+	public static final Texture TEXTURE_CORE_UI = TextureManager.textureManager().loadTexture(TEXTURE_CORE_UI_NAME, "/res/textures/core/system.png", GL11.GL_NEAREST);
+	
+	/** The System texture never changes. It just makes sure LintfordCore always has a basic set of geometry to use for rendering. */
 	public static final Texture TEXTURE_SYS_UI = TextureManager.textureManager().loadTexture(TEXTURE_SYSTEM_UI_NAME, "/res/textures/core/system.png", GL11.GL_NEAREST);
 
 	// --------------------------------------

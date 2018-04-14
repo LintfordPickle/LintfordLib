@@ -37,6 +37,13 @@ public class MenuInputEntry extends MenuEntry implements IBufferedInputCallback 
 	// --------------------------------------
 
 	@Override
+	public void hasFocus(boolean pNewValue) {
+		if (!mFocusLocked)
+			super.hasFocus(pNewValue);
+
+	}
+
+	@Override
 	public boolean hasFocus() {
 		return super.hasFocus();
 	}
@@ -82,7 +89,7 @@ public class MenuInputEntry extends MenuEntry implements IBufferedInputCallback 
 
 		mDrawBackground = false;
 		mHighlightOnHover = false;
-		
+
 		mCanHoverOver = false;
 
 		mInputField = new StringBuilder();
@@ -97,15 +104,10 @@ public class MenuInputEntry extends MenuEntry implements IBufferedInputCallback 
 	public boolean handleInput(LintfordCore pCore) {
 		boolean lResult = super.handleInput(pCore);
 
-		/*
-		 * The code for handling the input for this InputMenuEntry is handled for us in the super class. The only addition to that code is the need to capture the keyboard buffered input, which is below.
-		 */
 		if (mHasFocus) {
-			// Update the string displayed with the input received
 			pCore.input().startCapture(this);
 		} else {
-			mFocusLocked = false; // no lock if not focused
-			mHasFocus = false;
+			// pCore.input().stopCapture();
 		}
 
 		return lResult;
@@ -119,13 +121,15 @@ public class MenuInputEntry extends MenuEntry implements IBufferedInputCallback 
 
 		mCaretFlashTimer += lDeltaTime;
 
-		if (mFocusLocked) {
+		if (mHasFocus) {
 			// flash and update the location of the carot
 			if (mCaretFlashTimer > CARET_FLASH_TIME) {
 				mShowCaret = !mShowCaret;
 				mCaretFlashTimer = 0;
 			}
+
 		}
+
 	}
 
 	@Override
@@ -144,7 +148,7 @@ public class MenuInputEntry extends MenuEntry implements IBufferedInputCallback 
 		mParentScreen.font().draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - lFontHeight * 0.5f, pParentZDepth + .1f, 1f);
 		mParentScreen.font().draw(mInputField.toString(), x + w / 2 + lSeparatorHalfWidth + SPACE_BETWEEN_TEXT, y + h / 2 - lFontHeight * 0.5f, pParentZDepth + .1f, 1f);
 
-		if (mShowCaret && mFocusLocked) {
+		if (mShowCaret && mHasFocus) {
 			mParentScreen.font().draw("|", x + w / 2 + lSeparatorHalfWidth + SPACE_BETWEEN_TEXT + lInputTextWidth, y + h / 2 - lFontHeight * 0.5f, pParentZDepth + .1f, 1.0f);
 		}
 
@@ -160,25 +164,19 @@ public class MenuInputEntry extends MenuEntry implements IBufferedInputCallback 
 	public void onClick(InputState pInputState) {
 		super.onClick(pInputState);
 
-		mHasFocus = !mHasFocus;
-		System.out.println("focus : " + mHasFocus);
-		if (mHasFocus) {
-			mFocusLocked = true;
+		// Store the current string in case the user cancels the input, in which case, we
+		// can restore the previous entry.
+		if (mInputField.length() > 0)
+			mTempString = mInputField.toString();
 
-			// Store the current string in case the user cancels the input, in which case, we
-			// can restore the previous entry.
-			if (mInputField.length() > 0)
-				mTempString = mInputField.toString();
-
-			if (mResetOnDefaultClick && mInputField.toString().equals(mDefaultText)) {
-				if (mInputField.length() > 0) {
-					mInputField.delete(0, mInputField.length());
-				}
+		if (mResetOnDefaultClick && mInputField.toString().equals(mDefaultText)) {
+			if (mInputField.length() > 0) {
+				mInputField.delete(0, mInputField.length());
+				
 			}
-
-		} else {
-			mFocusLocked = false; // no lock if not focused
+			
 		}
+
 	}
 
 	@Override
@@ -194,9 +192,9 @@ public class MenuInputEntry extends MenuEntry implements IBufferedInputCallback 
 		if (mInputField.length() == 0) {
 			setDefaultText("Empty", true);
 		}
-		
+
 		return getEnterFinishesInput();
-		
+
 	}
 
 	@Override
@@ -215,9 +213,9 @@ public class MenuInputEntry extends MenuEntry implements IBufferedInputCallback 
 
 		mHasFocus = false;
 		mShowCaret = false;
-		
+
 		return getEscapeFinishesInput();
-		
+
 	}
 
 	@Override

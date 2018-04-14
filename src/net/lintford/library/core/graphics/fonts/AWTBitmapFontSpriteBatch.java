@@ -77,7 +77,10 @@ public class AWTBitmapFontSpriteBatch extends TextureBatch {
 				continue;
 			}
 			if (ch == '\r') {
-				/* Carriage return, just skip it */
+				/* Carriage return, set x and y to draw at the next line */			
+				lPosY += mBitmapFont.fontHeight() * pScale;
+				lPosX = pX;
+				lWrapWidth = 0;
 				continue;
 			}
 

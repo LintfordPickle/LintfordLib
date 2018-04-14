@@ -103,7 +103,7 @@ public class DebugDrawers {
 
 	public void drawRect(ICamera pCamera, float pX, float pY, float pW, float pH, float pR, float pG, float pB) {
 		mLineBatch.begin(pCamera);
-		mLineBatch.drawRect(pX, pY, pW, pH, -0.1f, pR, pG, pB);
+		mLineBatch.drawRect(pX, pY, pW, pH, 0f, pR, pG, pB);
 		mLineBatch.end();
 	}
 

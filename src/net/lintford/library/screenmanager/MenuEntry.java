@@ -18,9 +18,13 @@ public class MenuEntry extends AARectangle {
 	// Constants
 	// --------------------------------------
 
-	protected static final float MENUENTRY_WIDTH = 288;
+	protected static final float MENUENTRY_BUTTON_WIDTH = 300;
+	protected static final float MENUENTRY_UIWIDGET_WIDTH = 500;
 	protected static final float MENUENTRY_HEIGHT = 32;
 	protected static final float FOCUS_TIMER = 500f; // milli
+
+	protected static final float Z_STATE_MODIFIER_PASSIVE = 0.005f; // Entry passive
+	protected static final float Z_STATE_MODIFIER_ACTIVE = 0.006f; // Entry active
 
 	public enum BUTTON_SIZE {
 		tiny, narrow, normal, wide;
@@ -51,7 +55,7 @@ public class MenuEntry extends AARectangle {
 	protected float mToolTipTimer;
 	protected String mToolTip;
 	protected boolean mHasFocus;
-	protected boolean mFocusLocked;
+	protected boolean mFocusLocked; // used only for buffered input
 	protected boolean mCanHaveFocus;
 	protected float mClickTimer;
 	protected BUTTON_SIZE mButtonSize = BUTTON_SIZE.normal;
@@ -195,16 +199,16 @@ public class MenuEntry extends AARectangle {
 	public void initialise() {
 		switch (mButtonSize) {
 		case tiny:
-			w = MENUENTRY_WIDTH * 0.5f;
+			w = MENUENTRY_BUTTON_WIDTH * 0.5f;
 			break;
 		case narrow:
-			w = MENUENTRY_WIDTH * 0.75f;
+			w = MENUENTRY_BUTTON_WIDTH * 0.75f;
 			break;
 		case normal:
-			w = MENUENTRY_WIDTH;
+			w = MENUENTRY_BUTTON_WIDTH;
 			break;
 		case wide:
-			w = MENUENTRY_WIDTH * 1.35f;
+			w = MENUENTRY_BUTTON_WIDTH * 1.35f;
 			break;
 		}
 
@@ -234,13 +238,12 @@ public class MenuEntry extends AARectangle {
 
 		final float deltaTime = (float) pCore.time().elapseGameTimeMilli() / 1000f;
 
-		// TODO(John): Why is the last input active needed and remove if not!
 		if (intersects(pCore.HUD().getMouseCameraSpace()) && pCore.input().lastInputActive() == INPUT_TYPES.Mouse) {
 			// We should make sure no other component is currently using this leftClick.
 
 			// Check if tool tips are enabled.
 			if (mToolTipEnabled) {
-				mToolTipTimer += deltaTime;
+				mToolTipTimer += deltaTime * 1000f;
 			}
 
 			if (canHoverOver()) {
@@ -255,15 +258,17 @@ public class MenuEntry extends AARectangle {
 			if (canHaveFocus() && pCore.input().mouseLeftClick()) {
 				pCore.input().tryAquireLeftClickOwnership(hashCode());
 				pCore.input().setLeftMouseClickHandled();
-				mParentScreen.setFocusOn(pCore.input(), this, false);
+				mParentScreen.setFocusOn(pCore, this, false);
+
+				onClick(pCore.input());
 
 				return true;
 			}
 
 		} else {
-			hasFocus(false);
 			hoveredOver(false);
 			mToolTipTimer = 0;
+
 		}
 
 		return false;
@@ -283,6 +288,7 @@ public class MenuEntry extends AARectangle {
 			mAnimationTimer -= deltaTime;
 
 		}
+
 		mClickTimer += deltaTime;
 
 		if (mScaleonHover && mHasFocus && canHaveFocus()) {
@@ -306,9 +312,11 @@ public class MenuEntry extends AARectangle {
 		if (!mActive || !mIsInitialised || !mIsLoaded)
 			return;
 
+		mZ = pParentZDepth;
+
 		// Set the tint of the back based on whether the button is enabled or not
-		float lR = mEnabled ? 1f : .35f;
-		float lG = mEnabled ? 1f : .35f;
+		float lR = mEnabled ? mAnimationTimer <= 0 ? 1f : 0.75f : .35f;
+		float lG = mEnabled ? mAnimationTimer <= 0 ? 1f : 0.75f : .35f;
 		float lB = mEnabled ? 1f : .35f;
 
 		float tile_size = 32;
@@ -317,23 +325,23 @@ public class MenuEntry extends AARectangle {
 		Texture lTexture = TextureManager.TEXTURE_CORE_UI;
 
 		// Draw the button highlight when this element has focus.
-		if (mHasFocus && mHighlightOnHover) {
+		if (mHoveredOver && mHighlightOnHover) {
 			mTextureBatch.begin(pCore.HUD());
-			mTextureBatch.draw(lTexture, 0, 64, 32, 32, centerX() - w / 2, centerY() - h / 2, tile_size, h, -2f, 1f, 1f, 1f, mParentScreen.mA);
+			mTextureBatch.draw(lTexture, 0, 64, 32, 32, centerX() - w / 2, centerY() - h / 2, tile_size, h, mZ, lR, lG, lB, mParentScreen.mA);
 			switch (mButtonSize) {
 			default:
-				mTextureBatch.draw(lTexture, 32, 64, 224, 32, centerX() - (w / 2) + tile_size, centerY() - h / 2, w - tile_size * 2, h, -2f, 1f, 1f, 1f, mParentScreen.mA);
-				mTextureBatch.draw(lTexture, 256, 64, 32, 32, centerX() + (w / 2) - tile_size, centerY() - h / 2, tile_size, h, -2f, 1f, 1f, 1f, mParentScreen.mA);
+				mTextureBatch.draw(lTexture, 32, 64, 224, 32, centerX() - (w / 2) + tile_size, centerY() - h / 2, w - tile_size * 2, h, mZ, lR, lG, lB, mParentScreen.mA);
+				mTextureBatch.draw(lTexture, 256, 64, 32, 32, centerX() + (w / 2) - tile_size, centerY() - h / 2, tile_size, h, mZ, lR, lG, lB, mParentScreen.mA);
 			}
 			mTextureBatch.end();
 
 		} else if (mDrawBackground) {
 			mTextureBatch.begin(pCore.HUD());
-			mTextureBatch.draw(lTexture, 0, 32, 32, 32, centerX() - w / 2, centerY() - h / 2, 32, h, -2f, lR, lG, lB, mParentScreen.mA);
+			mTextureBatch.draw(lTexture, 0, 32, 32, 32, centerX() - w / 2, centerY() - h / 2, 32, h, mZ, lR, lG, lB, mParentScreen.mA);
 			switch (mButtonSize) {
 			default:
-				mTextureBatch.draw(lTexture, 32, 32, 224, 32, centerX() - (w / 2) + 32, centerY() - h / 2, w - 64, h, -2f, 1f, 1f, 1f, mParentScreen.mA);
-				mTextureBatch.draw(lTexture, 256, 32, 32, 32, centerX() + (w / 2) - 32, centerY() - h / 2, 32, h, -2f, 1f, 1f, 1f, mParentScreen.mA);
+				mTextureBatch.draw(lTexture, 32, 32, 224, 32, centerX() - (w / 2) + 32, centerY() - h / 2, w - 64, h, mZ, lR, lG, lB, mParentScreen.mA);
+				mTextureBatch.draw(lTexture, 256, 32, 32, 32, centerX() + (w / 2) - 32, centerY() - h / 2, 32, h, mZ, lR, lG, lB, mParentScreen.mA);
 			}
 			mTextureBatch.end();
 		}
@@ -342,15 +350,15 @@ public class MenuEntry extends AARectangle {
 		if (mText != null && mText.length() > 0) {
 			final float FONT_SCALE = 1f;
 			mParentScreen.font().begin(pCore.HUD());
-			mParentScreen.font().draw(mText, centerX() - mParentScreen.font().bitmap().getStringWidth(mText, FONT_SCALE) * 0.5f, centerY() - mParentScreen.font().bitmap().fontHeight() * FONT_SCALE / 2, -1f, 0.97f, .92f, mParentScreen.mA,
+			mParentScreen.font().draw(mText, centerX() - mParentScreen.font().bitmap().getStringWidth(mText, FONT_SCALE) * 0.5f, centerY() - mParentScreen.font().bitmap().fontHeight() * FONT_SCALE / 2, mZ, 0.97f, .92f, mParentScreen.mA,
 					mParentScreen.mA, FONT_SCALE);
 			mParentScreen.font().end();
 
 		}
 
 		if (mToolTipEnabled && mToolTipTimer >= 1000) {
-			Vector2f lToolTipPosition = pCore.input().mouseWindowCoords();
-			mScreenManager.toolTip().draw(mToolTip, lToolTipPosition.x, lToolTipPosition.y);
+			Vector2f lToolTipPosition = pCore.HUD().getMouseCameraSpace();
+			mScreenManager.toolTip().draw(pCore, mToolTip, lToolTipPosition.x, lToolTipPosition.y);
 
 		}
 
@@ -394,6 +402,7 @@ public class MenuEntry extends AARectangle {
 
 		// Play a button click animation, then call the listeners
 		mClickListener.menuEntryOnClick(mMenuEntryID);
+
 	}
 
 }

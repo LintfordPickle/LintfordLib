@@ -3,6 +3,8 @@ package net.lintford.library.renderers.windows.components;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.geometry.AARectangle;
 import net.lintford.library.core.graphics.ResourceManager;
+import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
+import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 import net.lintford.library.renderers.windows.UIWindow;
 
 public abstract class UIWidget extends AARectangle {
@@ -55,6 +57,7 @@ public abstract class UIWidget extends AARectangle {
 
 	}
 
-	public abstract void draw(LintfordCore pCore);
+	/** Everything for rendering should be provided by the {@link UIWindow} container. */
+	public abstract void draw(LintfordCore pCore, TextureBatch pTextureBatch, FontUnit pTextFont, float pComponentZDepth);
 
 }

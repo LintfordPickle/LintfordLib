@@ -42,13 +42,29 @@ public class HorizontalEntryGroup extends MenuEntry {
 
 	@Override
 	public void hasFocus(boolean pNewValue) {
-		// if(!pNewValue){
-		// int lCount = entries().size();
-		// for(int i = 0; i < lCount; i++) {
-		// entries().get(i).hasFocus(false);
-		// }
-		// }
+		if (!pNewValue) {
+			int lCount = entries().size();
+			for (int i = 0; i < lCount; i++) {
+				entries().get(i).hasFocus(false);
+			}
+			
+		}
+		
 		super.hasFocus(pNewValue);
+		
+	}
+	
+	@Override
+	public void hoveredOver(boolean pNewValue) {
+		if (!pNewValue) {
+			int lCount = entries().size();
+			for (int i = 0; i < lCount; i++) {
+				entries().get(i).hoveredOver(false);
+			}
+			
+		}
+		
+		super.hoveredOver(pNewValue);
 	}
 
 	// --------------------------------------

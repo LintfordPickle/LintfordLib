@@ -13,6 +13,7 @@ import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 import net.lintford.library.renderers.BaseRenderer;
 import net.lintford.library.renderers.RendererManager;
+import net.lintford.library.renderers.ZLayers;
 import net.lintford.library.renderers.windows.components.IScrollBarArea;
 import net.lintford.library.renderers.windows.components.ScrollBar;
 import net.lintford.library.renderers.windows.components.ScrollBarContentRectangle;
@@ -280,6 +281,7 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 		mWindowAlpha = 0.95f;
 
 		final TextureBatch lTextureBatch = mRendererManager.uiTextureBatch();
+		final FontUnit lTextFont = mRendererManager.textFont();
 
 		// Draw the window background
 		lTextureBatch.begin(pCore.HUD());
@@ -319,7 +321,7 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 		// Draw the window components
 		final int lComponentCount = mComponents.size();
 		for (int i = 0; i < lComponentCount; i++) {
-			mComponents.get(i).draw(pCore);
+			mComponents.get(i).draw(pCore, lTextureBatch, lTextFont, ZLayers.LAYER_GAME_UI + ((float) i * 0.001f));
 
 		}
 

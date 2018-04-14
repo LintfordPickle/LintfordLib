@@ -14,7 +14,7 @@ import net.lintford.library.screenmanager.Screen;
 import net.lintford.library.screenmanager.ScreenManager;
 
 public class MenuEnumEntry extends MenuEntry {
-	
+
 	// --------------------------------------
 	// Constants
 	// --------------------------------------
@@ -134,13 +134,14 @@ public class MenuEnumEntry extends MenuEntry {
 						mSelectedIndex = mItems.size() - 1;
 					}
 
-					mParentScreen.setFocusOn(pCore.input(), this, true);
+					mParentScreen.setFocusOn(pCore, this, true);
 
 					if (mClickListener != null) {
 						mClickListener.menuEntryChanged(this);
 					}
 
-					pCore.input().mouseTimedLeftClick();
+					pCore.input().setLeftMouseClickHandled();
+
 					return true;
 				}
 
@@ -151,13 +152,14 @@ public class MenuEnumEntry extends MenuEntry {
 						mSelectedIndex = 0;
 					}
 
-					mParentScreen.setFocusOn(pCore.input(), this, true);
+					mParentScreen.setFocusOn(pCore, this, true);
 
 					if (mClickListener != null) {
 						mClickListener.menuEntryChanged(this);
 					}
 
-					pCore.input().mouseTimedLeftClick();
+					pCore.input().setLeftMouseClickHandled();
+
 					return true;
 				}
 
@@ -166,7 +168,7 @@ public class MenuEnumEntry extends MenuEntry {
 		}
 
 		if (intersects(pCore.HUD().getMouseCameraSpace())) {
-			if (pCore.input().mouseTimedLeftClick()) {
+			if (pCore.input().isMouseTimedLeftClickAvailable()) {
 				if (mEnabled) {
 
 					mSelectedIndex++;
@@ -176,7 +178,7 @@ public class MenuEnumEntry extends MenuEntry {
 
 					// TODO: Play a menu click sound
 
-					mParentScreen.setFocusOn(pCore.input(), this, true);
+					mParentScreen.setFocusOn(pCore, this, true);
 					// mParentScreen.setHoveringOn(this);
 
 					if (mClickListener != null) {
@@ -185,10 +187,13 @@ public class MenuEnumEntry extends MenuEntry {
 
 					mIsChecked = !mIsChecked;
 
+					pCore.input().setLeftMouseClickHandled();
+
 				}
+
 			} else {
-				// mParentScreen.setHoveringOn(this);
 				hasFocus(true);
+				
 			}
 
 			// Check if tool tips are enabled.

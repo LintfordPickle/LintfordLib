@@ -20,6 +20,7 @@ import net.lintford.library.screenmanager.dialogs.TimedConfirmationDialog;
 import net.lintford.library.screenmanager.dialogs.TimedDialogInterface;
 import net.lintford.library.screenmanager.entries.EntryInteractions;
 import net.lintford.library.screenmanager.entries.HorizontalEntryGroup;
+import net.lintford.library.screenmanager.entries.MenuDropDownEntry;
 import net.lintford.library.screenmanager.entries.MenuEnumEntryIndexed;
 import net.lintford.library.screenmanager.entries.MenuLabelEntry;
 import net.lintford.library.screenmanager.entries.MenuToggleEntry;
@@ -104,7 +105,7 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 	private MenuEnumEntryIndexed<Integer> mFullScreenEntry;
 	private MenuEnumEntryIndexed<Integer> mAspectRatio;
 	private MenuEnumEntryIndexed<Long> mMonitorEntry;
-	private MenuEnumEntryIndexed<GLFWVidMode> mResolutionEntry;
+	private MenuDropDownEntry<GLFWVidMode> mResolutionEntry;
 
 	// Quality settings
 	private MenuLabelEntry mChangesPendingWarning;
@@ -174,11 +175,11 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 
 	private void createVideoSection(BaseLayout lLayout) {
 		mFullScreenEntry = new MenuEnumEntryIndexed<>(mScreenManager, this, "Fullscreen");
-		mResolutionEntry = new MenuEnumEntryIndexed<>(mScreenManager, this, "Resolution");
+		mResolutionEntry = new MenuDropDownEntry<>(mScreenManager, this, "Resolution");
 		mMonitorEntry = new MenuEnumEntryIndexed<>(mScreenManager, this, "Monitor");
 		mAspectRatio = new MenuEnumEntryIndexed<>(mScreenManager, this, "Aspect Ratio");
 		mVSync = new MenuToggleEntry(mScreenManager, this);
-
+		
 		// Setup buttons
 		mFullScreenEntry.addItem(mFullScreenEntry.new MenuEnumEntryItem(FULLSCREEN_YES, FULLSCREEN_YES_INDEX));
 		mFullScreenEntry.addItem(mFullScreenEntry.new MenuEnumEntryItem(FULLSCREEN_NO, FULLSCREEN_NO_INDEX));
@@ -273,9 +274,9 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 			if (mConfirmationDialog != null)
 				mScreenManager.removeScreen(mConfirmationDialog);
 
-			// Apply any changes to the DisplayConfig
-			applyModifiedSettings();
-
+			modifiedVideoConfig.copy(currentVideoConfig);
+			
+			exitScreen();
 			break;
 
 		case ConfirmationDialog.BUTTON_CONFIRM_NO: // go back and dont exit yet
@@ -341,9 +342,11 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 			if (mAspectRatio.selectedItem().value == ASPECTRATIO_1) {
 				// 16:9
 				fillResolutions(mResolutionEntry, lSelectMonitorHandle, 16, 9);
+				
 			} else {
 				// 4:3
 				fillResolutions(mResolutionEntry, lSelectMonitorHandle, 4, 3);
+				
 			}
 			break;
 
@@ -516,7 +519,7 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 
 	}
 
-	private void fillResolutions(MenuEnumEntryIndexed<GLFWVidMode> pEntry, long pWindowHandle, float w, float h) {
+	private void fillResolutions(MenuDropDownEntry<GLFWVidMode> pEntry, long pWindowHandle, float w, float h) {
 		pEntry.clearItems();
 
 		float lARResult = w / h;
@@ -529,13 +532,13 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 			// Ignore resolution entries based on low refresh rates 
 			if(lVidMode.refreshRate() < 40) continue;
 			
-			String lName = lVidMode.width() + "x" + lVidMode.height() + "@" + lVidMode.refreshRate();
+			String lName = lVidMode.width() + "x" + lVidMode.height(); // + "@" + lVidMode.refreshRate();
 
 			float lResult = ((float) lVidMode.width() / (float) lVidMode.height());
 
 			// Only add resolutions which meet our minimum and the selected aspect ratio
 			if (lResult == lARResult && lVidMode.width() > DisplayConfig.WINDOW_MINIMUM_WIDTH && lVidMode.height() > DisplayConfig.WINDOW_MINIMUM_HEIGHT) {
-				MenuEnumEntryIndexed<GLFWVidMode>.MenuEnumEntryItem lTest = pEntry.new MenuEnumEntryItem(lName, lVidMode);
+				MenuDropDownEntry<GLFWVidMode>.MenuEnumEntryItem lTest = pEntry.new MenuEnumEntryItem(lName, lVidMode);
 				pEntry.addItem(lTest);
 
 			}
@@ -543,7 +546,7 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 		}
 
 	}
-
+	
 	private void setResolutionEntry(int pWidth, int pHeight, int pRefresh) {
 		final int COUNT = mResolutionEntry.items().size();
 		GLFWVidMode lBestFit = null;

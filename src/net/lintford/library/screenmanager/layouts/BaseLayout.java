@@ -10,6 +10,7 @@ import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 import net.lintford.library.core.input.InputState;
+import net.lintford.library.renderers.ZLayers;
 import net.lintford.library.renderers.windows.components.IScrollBarArea;
 import net.lintford.library.renderers.windows.components.ScrollBar;
 import net.lintford.library.renderers.windows.components.ScrollBarContentRectangle;
@@ -225,9 +226,7 @@ public abstract class BaseLayout extends AARectangle implements IScrollBarArea {
 		if (menuEntries() == null || menuEntries().size() == 0)
 			return false; // nothing to do
 
-		setFocusOffAll(pCore.input().mouseLeftClick());
-
-		if (mContentArea.intersects(pCore.HUD().getMouseCameraSpace())) {
+		//if (mContentArea.intersects(pCore.HUD().getMouseCameraSpace())) {
 			final int lEntryCount = menuEntries().size();
 			for (int i = 0; i < lEntryCount; i++) {
 				MenuEntry lMenuEntry = menuEntries().get(i);
@@ -235,10 +234,14 @@ public abstract class BaseLayout extends AARectangle implements IScrollBarArea {
 					return true;
 				}
 			}
-		}
+
+		//}
+
+		updateFocusOfAll(pCore);
 
 		if (mScrollBarsEnabled) {
 			mScrollBar.handleInput(pCore);
+
 		}
 
 		return false;
@@ -263,17 +266,17 @@ public abstract class BaseLayout extends AARectangle implements IScrollBarArea {
 
 	}
 
-	public void draw(LintfordCore pCore, float pParentZDepth) {
+	public void draw(LintfordCore pCore, float pComponentDepth) {
 
 		if (ConstantsTable.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
 			mSpriteBatch.begin(pCore.HUD());
-			mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, x, y, w, h, pParentZDepth + .1f, 1f, 0.2f, 1f, 0.6f);
+			mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, x, y, w, h, ZLayers.LAYER_DEBUG, 1f, 0.2f, 1f, 0.6f);
 			mSpriteBatch.end();
 		}
 
 		if (mDrawBackground) {
 			mSpriteBatch.begin(pCore.HUD());
-			mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, x, y, w, h, pParentZDepth + .1f, mR, mG, mB, mA);
+			mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, x, y, w, h, pComponentDepth, mR, mG, mB, mA);
 			mSpriteBatch.end();
 		}
 
@@ -281,16 +284,16 @@ public abstract class BaseLayout extends AARectangle implements IScrollBarArea {
 			mContentArea.preDraw(pCore, mSpriteBatch);
 
 		}
-
+		
 		int lCount = menuEntries().size();
-		for (int i = 0; i < lCount; i++) {
-			menuEntries().get(i).draw(pCore, mParentScreen, mSelectedEntry == i, pParentZDepth + i * .1f);
+		for (int i = lCount - 1; i >= 0; --i) {
+			menuEntries().get(i).draw(pCore, mParentScreen, mSelectedEntry == i, pComponentDepth + i * .001f);
 
 		}
-
+		
 		if (mScrollBarsEnabled) {
 			mContentArea.postDraw(pCore);
-			mScrollBar.draw(pCore, mSpriteBatch, pParentZDepth + .1f);
+			mScrollBar.draw(pCore, mSpriteBatch, pComponentDepth + .1f);
 
 		}
 
@@ -345,15 +348,59 @@ public abstract class BaseLayout extends AARectangle implements IScrollBarArea {
 		}
 	}
 
-	/** Turns off the focus for all elements in this layout. */
-	public void setFocusOffAll(boolean pLeftMouseClicked) {
+	/** Updates the focus of all {@link MenuEntry}s in this layout, based on the current {@link InputState}. */
+	public void updateFocusOfAll(LintfordCore pCore) {
 		int lCount = menuEntries().size();
 		for (int i = 0; i < lCount; i++) {
-			if (!menuEntries().get(i).hasFocusLock() || pLeftMouseClicked) {
-				menuEntries().get(i).hasFocus(false);
-				menuEntries().get(i).hoveredOver(false);
+			MenuEntry lMenuEntry = menuEntries().get(i);
+
+			// Update the hovered over status (needed to disable hovering on entries)
+			if (lMenuEntry.intersects(pCore.HUD().getMouseCameraSpace())) {
+				lMenuEntry.hoveredOver(true);
+
+			} else {
+				lMenuEntry.hoveredOver(false);
+
 			}
+
+			// Update the focus of entries where the mouse is clicked in other areas (other than any
+			// one specific entry).
+			if (pCore.input().mouseLeftClick()) {
+				if (lMenuEntry.intersects(pCore.HUD().getMouseCameraSpace())) {
+					lMenuEntry.hasFocus(true);
+
+				} else {
+					lMenuEntry.hasFocus(false);
+
+				}
+
+			}
+
 		}
+
+	}
+
+	/** Sets the focus of a specific {@link MenuEntry}, removing focus from all other entries. */
+	public void updateFocusOffAllBut(LintfordCore pCore, MenuEntry pMenuEntry) {
+		int lCount = menuEntries().size();
+		for (int i = 0; i < lCount; i++) {
+			MenuEntry lMenuEntry = menuEntries().get(i);
+			if (pMenuEntry == lMenuEntry)
+				continue;
+
+			if (pCore.input().mouseLeftClick()) {
+				if (lMenuEntry.intersects(pCore.HUD().getMouseCameraSpace())) {
+					lMenuEntry.hasFocus(true);
+
+				} else {
+					lMenuEntry.hasFocus(false);
+
+				}
+
+			}
+
+		}
+
 	}
 
 	public void setHoverOffAll() {
