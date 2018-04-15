@@ -179,7 +179,7 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 		mMonitorEntry = new MenuEnumEntryIndexed<>(mScreenManager, this, "Monitor");
 		mAspectRatio = new MenuEnumEntryIndexed<>(mScreenManager, this, "Aspect Ratio");
 		mVSync = new MenuToggleEntry(mScreenManager, this);
-		
+
 		// Setup buttons
 		mFullScreenEntry.addItem(mFullScreenEntry.new MenuEnumEntryItem(FULLSCREEN_YES, FULLSCREEN_YES_INDEX));
 		mFullScreenEntry.addItem(mFullScreenEntry.new MenuEnumEntryItem(FULLSCREEN_NO, FULLSCREEN_NO_INDEX));
@@ -275,7 +275,7 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 				mScreenManager.removeScreen(mConfirmationDialog);
 
 			modifiedVideoConfig.copy(currentVideoConfig);
-			
+
 			exitScreen();
 			break;
 
@@ -342,11 +342,11 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 			if (mAspectRatio.selectedItem().value == ASPECTRATIO_1) {
 				// 16:9
 				fillResolutions(mResolutionEntry, lSelectMonitorHandle, 16, 9);
-				
+
 			} else {
 				// 4:3
 				fillResolutions(mResolutionEntry, lSelectMonitorHandle, 4, 3);
-				
+
 			}
 			break;
 
@@ -528,10 +528,11 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 		final int COUNT = modes.limit();
 		for (int i = 0; i < COUNT; i++) {
 			GLFWVidMode lVidMode = modes.get();
-			
-			// Ignore resolution entries based on low refresh rates 
-			if(lVidMode.refreshRate() < 40) continue;
-			
+
+			// Ignore resolution entries based on low refresh rates
+			if (lVidMode.refreshRate() < 40)
+				continue;
+
 			String lName = lVidMode.width() + "x" + lVidMode.height(); // + "@" + lVidMode.refreshRate();
 
 			float lResult = ((float) lVidMode.width() / (float) lVidMode.height());
@@ -546,7 +547,7 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 		}
 
 	}
-	
+
 	private void setResolutionEntry(int pWidth, int pHeight, int pRefresh) {
 		final int COUNT = mResolutionEntry.items().size();
 		GLFWVidMode lBestFit = null;

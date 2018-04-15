@@ -101,6 +101,9 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 	}
 
 	public MenuEnumEntryItem selectedItem() {
+		if (mItems == null || mItems.size() == 0)
+			return null;
+		
 		return mItems.get(mSelectedIndex);
 
 	}
@@ -182,6 +185,9 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 
 	@Override
 	public boolean handleInput(LintfordCore pCore) {
+		if (mItems == null || mItems.size() == 0)
+			 return false;
+		
 		if (mScrollBar.handleInput(pCore)) {
 
 		} else if (intersects(pCore.HUD().getMouseCameraSpace())) {
@@ -242,6 +248,9 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 
 	@Override
 	public void update(LintfordCore pCore, MenuScreen pScreen, boolean pIsSelected) {
+		if (mItems == null || mItems.size() == 0)
+			return;
+		
 		super.update(pCore, pScreen, pIsSelected);
 
 		mTopEntry.set(x + w / 2, y, w / 2, MENUENTRY_HEIGHT);
@@ -257,6 +266,8 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 
 	@Override
 	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pComponentDepth) {
+
+		
 		BitmapFont lFontBitmap = mParentScreen.font().bitmap();
 
 		// TITLE BAR
@@ -276,6 +287,14 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 		mParentScreen.font().draw(mLabel, x + w / 2 - 10 - lLabelWidth - lSeparatorHalfWidth, y, mZ, lTextR, lTextG, lTextB, mParentScreen.a(), 1.0f, -1);
 		mParentScreen.font().draw(lSeparator, x + w / 2 - lSeparatorHalfWidth, y, mZ, lTextR, lTextG, lTextB, mParentScreen.a(), 1.0f, -1);
 
+		if (mItems == null || mItems.size() == 0) {
+			// LOCALIZATION: No entries added to dropdown list
+			final String lNoEntriesText = "No items found";
+			mParentScreen.font().draw(lNoEntriesText, x + w / 2 + lSeparatorHalfWidth + SPACE_BETWEEN_TEXT, y, mZ, lTextR, lTextG, lTextB, mParentScreen.a(), 1.0f, -1);	
+			mParentScreen.font().end();
+			return;
+		}
+		
 		MenuEnumEntryItem lSelectItem = mItems.get(mSelectedIndex);
 		float lYPos = y + mScrollYPosition;
 		// Render the selected item in the 'top spot'
@@ -399,6 +418,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 	}
 
 	public void clearItems() {
+		mSelectedIndex = 0;
 		mItems.clear();
 
 	}
