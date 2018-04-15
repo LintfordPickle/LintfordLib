@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.graphics.ResourceManager;
+import net.lintford.library.core.graphics.fonts.FontManager;
 import net.lintford.library.screenmanager.Screen.ScreenState;
 import net.lintford.library.screenmanager.toast.ToastManager;
 
@@ -58,6 +59,9 @@ public class ScreenManager {
 		mToastManager = new ToastManager();
 		mScreens = new ArrayList<Screen>();
 		mScreensToUpdate = new ArrayList<Screen>();
+		
+		// This can and probably should be overriden with a game specific font
+		mFontPathname = FontManager.SYSTEM_FONT_PATH;
 
 		mToolTip = new ToolTip(this);
 

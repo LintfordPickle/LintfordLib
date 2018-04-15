@@ -142,9 +142,8 @@ public class FontManager {
 	public static final int SYSTEM_FONT_POINTSIZE_NORMAL = 24;
 	public static final int SYSTEM_FONT_POINTSIZE_LARGE = 35;
 
-	// TODO (John): The system font should be dynamically loaded (dependency on external .ttf file).
 	public static final String SYSTEM_FONT_NAME = "SystemFont18";
-	public static final String SYSTEM_FONT_PATH = "/res/fonts/Pixel.ttf";
+	public static final String SYSTEM_FONT_PATH = "res/fonts/Pixel.ttf";
 	public static final int SYSTEM_FONT_SIZE = 18;
 
 	// --------------------------------------

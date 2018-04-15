@@ -100,6 +100,7 @@ public class BitmapFont {
 		mPointSize = pPointSize;
 		mIsLoaded = false;
 		mFontHeight = pPointSize;
+
 	}
 
 	// --------------------------------------
