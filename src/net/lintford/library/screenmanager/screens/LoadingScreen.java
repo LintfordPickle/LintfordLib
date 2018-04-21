@@ -72,7 +72,8 @@ public class LoadingScreen extends Screen {
 
 		int lScreenCount = lScreenList.size();
 		for (int i = 0; i < lScreenCount; i++) {
-			lScreenList.get(i).exitScreen();
+			if(!lScreenList.get(i).isExiting())
+				lScreenList.get(i).exitScreen();
 
 		}
 

@@ -298,29 +298,32 @@ public class TextureBatch {
 			flush();
 		}
 
+		final float lHalfWPixel = (1f / pTexture.getTextureWidth()) * 0.5f;
+		final float lHalfHPixel = (1f / pTexture.getTextureHeight()) * 0.5f;
+
 		// Vertex 0
 		float x0 = pDX;
 		float y0 = pDY;
-		float u0 = pSX / pTexture.getTextureWidth();
-		float v0 = pSY / (float) pTexture.getTextureHeight();
+		float u0 = pSX / pTexture.getTextureWidth() + lHalfWPixel;
+		float v0 = pSY / (float) pTexture.getTextureHeight() + lHalfHPixel;
 
 		// Vertex 1
 		float x1 = pDX + pDW;
 		float y1 = pDY;
-		float u1 = (pSX + pSW) / pTexture.getTextureWidth();
-		float v1 = pSY / pTexture.getTextureHeight();
+		float u1 = (pSX + pSW) / pTexture.getTextureWidth() - lHalfWPixel;
+		float v1 = pSY / pTexture.getTextureHeight() + lHalfHPixel;
 
 		// Vertex 2
 		float x2 = pDX;
 		float y2 = pDY + pDH;
-		float u2 = pSX / pTexture.getTextureWidth();
-		float v2 = (pSY + pSH) / pTexture.getTextureHeight();
+		float u2 = pSX / pTexture.getTextureWidth() + lHalfWPixel;
+		float v2 = (pSY + pSH) / pTexture.getTextureHeight() - lHalfHPixel;
 
 		// Vertex 3
 		float x3 = pDX + pDW;
 		float y3 = pDY + pDH;
-		float u3 = (pSX + pSW) / pTexture.getTextureWidth();
-		float v3 = (pSY + pSH) / pTexture.getTextureHeight();
+		float u3 = (pSX + pSW) / pTexture.getTextureWidth() - lHalfWPixel;
+		float v3 = (pSY + pSH) / pTexture.getTextureHeight() - lHalfHPixel;
 
 		// CCW 102203
 		addVertToBuffer(x1, y1, pZ, 1f, pR, pG, pB, pA, u1, v1); // 1
@@ -447,7 +450,7 @@ public class TextureBatch {
 		GL13.glActiveTexture(GL13.GL_TEXTURE0);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, mCurrentTexID);
 		GL30.glBindVertexArray(mVaoId);
-		
+
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, mVboId);
 		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, mBuffer, GL15.GL_DYNAMIC_DRAW);
 
@@ -477,7 +480,7 @@ public class TextureBatch {
 
 		mCurNumSprites = 0;
 		mVertexCount = 0;
-		
+
 		GLDebug.checkGLErrorsException(getClass().getSimpleName());
 
 	}

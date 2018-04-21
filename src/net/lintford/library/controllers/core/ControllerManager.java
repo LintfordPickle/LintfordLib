@@ -163,7 +163,7 @@ public class ControllerManager {
 
 	}
 
-	/** Unloads all {@link BaseRenderer} instances registered to this {@link RendererManager} which have the given gorup ID assigned to them. */
+	/** Unloads all {@link BaseRenderer} instances registered to this {@link RendererManager} which have the given group ID assigned to them. */
 	public void removeControllerGroup(final int pGroupID) {
 		// Heap assignment
 		final List<BaseController> CONTROLLER_UPDATE_LIST = new ArrayList<>();

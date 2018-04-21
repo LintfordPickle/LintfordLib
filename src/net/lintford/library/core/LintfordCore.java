@@ -11,7 +11,6 @@ import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 import static org.lwjgl.opengl.GL11.glClearColor;
 
-import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 
 import net.lintford.library.GameInfo;
@@ -37,8 +36,10 @@ import net.lintford.library.options.MasterConfig;
 import net.lintford.library.renderers.RendererManager;
 
 /**
- * The LintfordCore tracks the core state of an LWJGL application including a {@link DisplayConfig}, {@link ResourceManager}, {@link GameTime}, {@link Camera}, {@link HUD}, {@link InputState} and {@link RenderState}. It also defines the behaviour for
- * creating an OpenGL window.
+ * The LintfordCore tracks the core state of an LWJGL application including a
+ * {@link DisplayConfig}, {@link ResourceManager}, {@link GameTime},
+ * {@link Camera}, {@link HUD}, {@link InputState} and {@link RenderState}. It
+ * also defines the behaviour for creating an OpenGL window.
  */
 public abstract class LintfordCore {
 
@@ -69,14 +70,19 @@ public abstract class LintfordCore {
 	// ---------------------------------------------
 
 	/**
-	 * Returns the instance of {@link GameTime} which was created when the LWJGL window was created. GameTime tracks the application time. null is returned if the LWJGL window has not yet been created.
+	 * Returns the instance of {@link GameTime} which was created when the LWJGL
+	 * window was created. GameTime tracks the application time. null is returned if
+	 * the LWJGL window has not yet been created.
 	 */
 	public GameTime time() {
 		return mGameTime;
 	}
 
 	/**
-	 * Returns the instance of {@link InputState} which was created when the LWJGL window was created. InputState is updated per-frame and tracks user input from the mouse and keyboard. null is returned if the LWJGL window has not yet been created.
+	 * Returns the instance of {@link InputState} which was created when the LWJGL
+	 * window was created. InputState is updated per-frame and tracks user input
+	 * from the mouse and keyboard. null is returned if the LWJGL window has not yet
+	 * been created.
 	 */
 	public InputState input() {
 		return mInputState;
@@ -100,18 +106,22 @@ public abstract class LintfordCore {
 	}
 
 	/**
-	 * Returns the active HUD {@link ICamera} instance assigned to this {@link RenderState}.
+	 * Returns the active HUD {@link ICamera} instance assigned to this
+	 * {@link RenderState}.
 	 */
 	public ICamera HUD() {
 		return mHUD;
 	}
 
 	/**
-	 * Returns the active game {@link ICamera} instance assigned to this {@link RenderState}. This can return null if no game camera has been explicitly set!
+	 * Returns the active game {@link ICamera} instance assigned to this
+	 * {@link RenderState}. This can return null if no game camera has been
+	 * explicitly set!
 	 */
 	public ICamera gameCamera() {
 		if (mGameCamera == null) {
-			DebugManager.DEBUG_MANAGER.logger().w(getClass().getSimpleName(), "GameCamera not registered with LWJGLCore! Are you trying to access the game camera outside of a GameScreen?");
+			DebugManager.DEBUG_MANAGER.logger().w(getClass().getSimpleName(),
+					"GameCamera not registered with LWJGLCore! Are you trying to access the game camera outside of a GameScreen?");
 			return ICamera.EMPTY;
 
 		}
@@ -141,7 +151,8 @@ public abstract class LintfordCore {
 		DebugMemory.dumpMemoryToLog();
 
 		// Print out the working directory
-		DebugManager.DEBUG_MANAGER.logger().i(getClass().getSimpleName(), "Working directory: " + System.getProperty("user.dir"));
+		DebugManager.DEBUG_MANAGER.logger().i(getClass().getSimpleName(),
+				"Working directory: " + System.getProperty("user.dir"));
 
 	}
 
@@ -150,10 +161,12 @@ public abstract class LintfordCore {
 	// ---------------------------------------------
 
 	/**
-	 * Creates a new OpenGL window, instantiates all auxiliary classes and starts the main game loop.
+	 * Creates a new OpenGL window, instantiates all auxiliary classes and starts
+	 * the main game loop.
 	 */
 	public void createWindow() {
-		// Load the configuration files saved previously by the user (else create new ones)
+		// Load the configuration files saved previously by the user (else create new
+		// ones)
 		mMasterConfig = new MasterConfig();
 		mMasterConfig.loadConfigFiles(MasterConfig.configuration.all);
 
@@ -170,12 +183,14 @@ public abstract class LintfordCore {
 		mControllerManager = new ControllerManager(this);
 		mRendererManager = new RendererManager(this);
 
-		mResourceController = new ResourceController(mControllerManager, mResourceManager, BaseControllerGroups.CONTROLLER_CORE_GROUP_ID);
+		mResourceController = new ResourceController(mControllerManager, mResourceManager,
+				BaseControllerGroups.CONTROLLER_CORE_GROUP_ID);
 
 		mHUD = new HUD(mMasterConfig.display());
 		mRenderState = new RenderState();
 
-		mControllerManager.addController(new RendererController(mControllerManager, mRendererManager, BaseControllerGroups.CONTROLLER_CORE_GROUP_ID));
+		mControllerManager.addController(new RendererController(mControllerManager, mRendererManager,
+				BaseControllerGroups.CONTROLLER_CORE_GROUP_ID));
 
 		onRunGameLoop();
 
@@ -204,14 +219,16 @@ public abstract class LintfordCore {
 	}
 
 	/**
-	 * Implemented in the sub-class. Sets the default state of the application (note. OpenGL context is not available at this point).
+	 * Implemented in the sub-class. Sets the default state of the application
+	 * (note. OpenGL context is not available at this point).
 	 */
 	protected void onInitialiseApp() {
 
 	}
 
 	/**
-	 * Called automatically before entering the main game loop. OpenGL content can be setup.
+	 * Called automatically before entering the main game loop. OpenGL content can
+	 * be setup.
 	 */
 	protected void onLoadGLContent() {
 		DebugManager.DEBUG_MANAGER.logger().i(getClass().getSimpleName(), "Loading GL content");
@@ -224,7 +241,8 @@ public abstract class LintfordCore {
 	}
 
 	/**
-	 * Called automatically after exiting the main game loop. OpenGL resources should be released.
+	 * Called automatically after exiting the main game loop. OpenGL resources
+	 * should be released.
 	 */
 	protected void onUnloadGLContent() {
 		DebugManager.DEBUG_MANAGER.logger().i(getClass().getSimpleName(), "Unloading GL content");
@@ -284,15 +302,10 @@ public abstract class LintfordCore {
 	}
 
 	/**
-	 * handle input for auxiliary classes. If extended in sub-classes, ensure to handleInput on auxiliary classes!
+	 * handle input for auxiliary classes. If extended in sub-classes, ensure to
+	 * handleInput on auxiliary classes!
 	 */
 	protected void onHandleInput() {
-		if (mInputState.keyDownTimed(GLFW.GLFW_KEY_F11)) {
-			toggleFullscreen();
-
-		}
-
-		// DebugManager.DEBUG_MANAGER.handleInput(this);
 		DebugManager.DEBUG_MANAGER.handleInput(this);
 		mHUD.handleInput(this);
 		mRendererManager.handleInput(this);
@@ -301,7 +314,8 @@ public abstract class LintfordCore {
 	}
 
 	/**
-	 * update auxiliary classes. If extended in sub-classes, ensure to update the auxiliary classes!
+	 * update auxiliary classes. If extended in sub-classes, ensure to update the
+	 * auxiliary classes!
 	 */
 	protected void onUpdate() {
 		mMasterConfig.update(this);
@@ -350,7 +364,8 @@ public abstract class LintfordCore {
 	public void initialiseGLFWWindow() {
 		// TODO: Load default/saved window settings (fullscreen, width and height etc.).
 
-		long lWindowID = mMasterConfig.onCreateWindow(mGameInfo, false, 1600, 900);
+		long lWindowID = mMasterConfig.onCreateWindow(mGameInfo, false, mGameInfo.windowWidth(),
+				mGameInfo.windowHeight(), mGameInfo.windowResizeable());
 
 		// set key callbacks
 		glfwSetKeyCallback(lWindowID, mInputState.mKeyCallback);
@@ -370,7 +385,8 @@ public abstract class LintfordCore {
 
 	public void setNewGameCamera(Camera pCamera) {
 		mGameCamera = pCamera;
-		mControllerManager.addController(new CameraController(mControllerManager, mGameCamera, BaseControllerGroups.CONTROLLER_GAME_GROUP_ID));
+		mControllerManager.addController(
+				new CameraController(mControllerManager, mGameCamera, BaseControllerGroups.CONTROLLER_GAME_GROUP_ID));
 
 	}
 

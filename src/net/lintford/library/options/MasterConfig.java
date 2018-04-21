@@ -81,10 +81,10 @@ public class MasterConfig {
 	// Methods
 	// --------------------------------------
 
-	public long onCreateWindow(GameInfo pGameInfo, boolean pFullscreen, int pWidth, int pHeight) {
+	public long onCreateWindow(GameInfo pGameInfo, boolean pFullscreen, int pWidth, int pHeight, boolean pResizable) {
 		mGameInfo = pGameInfo;
 
-		long lWindowID = DISPLAY_CONFIG.createWindow(pGameInfo, pFullscreen, pWidth, pHeight);
+		long lWindowID = DISPLAY_CONFIG.createWindow(pGameInfo, pFullscreen, pWidth, pHeight, pResizable);
 
 		if (lWindowID == MemoryUtil.NULL) {
 			throw new RuntimeException("Failed to get correct GLFWWindow handle");

@@ -16,6 +16,7 @@ public class AWTBitmapFontSpriteBatch extends TextureBatch {
 	// --------------------------------------
 
 	private BitmapFont mBitmapFont;
+	private boolean mDrawShadow; 
 
 	// --------------------------------------
 	// Properties
@@ -25,6 +26,14 @@ public class AWTBitmapFontSpriteBatch extends TextureBatch {
 		return mBitmapFont;
 	}
 
+	public boolean shadowEnabled() {
+		return mDrawShadow;
+	}
+	
+	public void shadowEnabled(boolean pNewValue) {
+		mDrawShadow = pNewValue;
+	}
+	
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
@@ -33,6 +42,7 @@ public class AWTBitmapFontSpriteBatch extends TextureBatch {
 		super();
 
 		mBitmapFont = pBitmapFont;
+		mDrawShadow = true;
 
 	}
 
@@ -116,7 +126,8 @@ public class AWTBitmapFontSpriteBatch extends TextureBatch {
 			Glyph lCharGlyph = mBitmapFont.glyphs().get(ch);
 
 			if (lCharGlyph != null) {
-				draw(mBitmapFont.fontTexture(), lCharGlyph.x, lCharGlyph.y, lCharGlyph.width, lCharGlyph.height, lPosX - 2, lPosY + 2, lCharGlyph.width, lCharGlyph.height, pZ, 0f, 0f, 0f, pA);
+				if(mDrawShadow)
+					draw(mBitmapFont.fontTexture(), lCharGlyph.x, lCharGlyph.y, lCharGlyph.width, lCharGlyph.height, lPosX - 2, lPosY + 2, lCharGlyph.width, lCharGlyph.height, pZ, 0f, 0f, 0f, pA);
 				draw(mBitmapFont.fontTexture(), lCharGlyph.x, lCharGlyph.y, lCharGlyph.width, lCharGlyph.height, lPosX, lPosY, lCharGlyph.width, lCharGlyph.height, pZ, pR, pG, pB, pA);
 				lPosX += lCharGlyph.width * pScale;
 
@@ -133,7 +144,8 @@ public class AWTBitmapFontSpriteBatch extends TextureBatch {
 
 			for (int i = 0; i < 3; i++) {
 				if (lCharGlyph != null) {
-					draw(mBitmapFont.fontTexture(), lCharGlyph.x, lCharGlyph.y, lCharGlyph.width, lCharGlyph.height, lPosX - 2, lPosY + 2, lCharGlyph.width, lCharGlyph.height, pZ, 0f, 0f, 0f, pA);
+					if(mDrawShadow)
+						draw(mBitmapFont.fontTexture(), lCharGlyph.x, lCharGlyph.y, lCharGlyph.width, lCharGlyph.height, lPosX - 2, lPosY + 2, lCharGlyph.width, lCharGlyph.height, pZ, 0f, 0f, 0f, pA);
 					draw(mBitmapFont.fontTexture(), lCharGlyph.x, lCharGlyph.y, lCharGlyph.width, lCharGlyph.height, lPosX, lPosY, lCharGlyph.width, lCharGlyph.height, pZ, pR, pG, pB, pA);
 					lPosX += lCharGlyph.width * pScale;
 

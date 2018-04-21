@@ -71,8 +71,10 @@ public abstract class BaseRenderer {
 		mRendererManager = pRendererManager;
 		mRendererName = pRendererName;
 
-		if(pRendererManager != null)
+		if(pRendererManager != null) {
 			pRendererManager.addRenderer(this);
+
+		}
 
 		mGroupID = pGroupID;
 

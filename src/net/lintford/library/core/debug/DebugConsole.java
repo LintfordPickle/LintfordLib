@@ -447,7 +447,7 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 
 		mConsoleFont.end();
 
-		mScrollBar.draw(pCore, mSpriteBatch, Z_DEPTH + 0.01f);
+		mScrollBar.draw(pCore, mSpriteBatch, Z_DEPTH + 0.1f);
 
 	}
 
