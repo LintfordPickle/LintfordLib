@@ -27,12 +27,6 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 	}
 
 	// --------------------------------------
-	// Constants
-	// --------------------------------------
-
-	private static final float SPACE_BETWEEN_TEXT = 15;
-
-	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
@@ -256,7 +250,7 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 		mLeftButtonRectangle.y = y;
 		mLeftButtonRectangle.h = h;
 
-		mRightButtonRectangle.x = x + w + 64;
+		mRightButtonRectangle.x = x + w - 32;
 		mRightButtonRectangle.y = y;
 		mRightButtonRectangle.h = h;
 	}
@@ -271,7 +265,7 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 		if (mButtonsEnabled) {
 			// Draw the left/right buttons
 			mTextureBatch.begin(pCore.HUD());
-			final float ARROW_BUTTON_SIZE = 16;
+			final float ARROW_BUTTON_SIZE = 32;
 			final float ARROW_PADDING_X = mLeftButtonRectangle.w - ARROW_BUTTON_SIZE;
 			final float ARROW_PADDING_Y = mLeftButtonRectangle.h - ARROW_BUTTON_SIZE;
 
@@ -287,6 +281,7 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 		final float TEXT_HEIGHT = lFontBitmap.getStringHeight(mLabel);
 		final float lSeparatorHalfWidth = lFontBitmap.getStringWidth(mSeparator) * 0.5f;
 
+		// Change text color depending on enabled or not
 		float lTextR = mEnabled ? mParentScreen.r() : 0.24f;
 		float lTextG = mEnabled ? mParentScreen.g() : 0.24f;
 		float lTextB = mEnabled ? mParentScreen.b() : 0.24f;
@@ -298,7 +293,9 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 		// Render the items
 		if (mSelectedIndex >= 0 && mSelectedIndex < mItems.size()) {
 			String lCurItem = mItems.get(mSelectedIndex).name;
-			mParentScreen.font().draw(lCurItem, x + w / 2 + lSeparatorHalfWidth + SPACE_BETWEEN_TEXT, y + h / 2 - TEXT_HEIGHT * 0.5f, mZ, lTextR, lTextG, lTextB, mParentScreen.a(), 1.0f, -1);
+			final float EntryWidth = mParentScreen.font().bitmap().getStringWidth(lCurItem);
+
+			mParentScreen.font().draw(lCurItem, x + (w/4*3) - EntryWidth / 2, y + h / 2 - TEXT_HEIGHT * 0.5f, pComponentDepth, lTextR, lTextG, lTextB, mParentScreen.a(), 1.0f, -1);
 		}
 
 		mParentScreen.font().end();
@@ -348,5 +345,5 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 		mItems.clear();
 
 	}
-	
+
 }

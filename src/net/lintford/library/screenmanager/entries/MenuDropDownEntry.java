@@ -255,7 +255,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 
 		mTopEntry.set(x + w / 2, y, w / 2, MENUENTRY_HEIGHT);
 
-		w = MENUENTRY_UIWIDGET_WIDTH;
+		w = MENUENTRY_DEF_BUTTON_WIDTH;
 		h = mOpen ? OPEN_HEIGHT : MENUENTRY_HEIGHT;
 
 		mContentRectangle.set(x, y + mScrollYPosition, w, mItems.size() * 25);

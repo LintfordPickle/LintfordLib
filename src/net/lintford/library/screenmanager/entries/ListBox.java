@@ -206,6 +206,22 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 	@Override
 	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pParentZDepth) {
 
+		final float TILE_SIZE = 32f;
+
+		mSpriteBatch.begin(pCore.HUD());
+		mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 448, 64, TILE_SIZE, TILE_SIZE, x, y, TILE_SIZE, TILE_SIZE, pParentZDepth, 1, 1, 1, 0.85f);
+		mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 480, 64, TILE_SIZE, TILE_SIZE, x + TILE_SIZE, y, getWidth() - 64, TILE_SIZE, pParentZDepth, 1, 1, 1, 0.85f);
+		mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 512, 64, TILE_SIZE, TILE_SIZE, x + getWidth() - 32, y, TILE_SIZE, TILE_SIZE, pParentZDepth, 1, 1, 1, 0.85f);
+
+		mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 448, 96, TILE_SIZE, TILE_SIZE, x, y + 32, TILE_SIZE, getHeight() - 64, pParentZDepth, 1, 1, 1, 0.85f);
+		mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 480, 96, TILE_SIZE, TILE_SIZE, x + TILE_SIZE, y + 32, getWidth() - 64, getHeight() - 64, pParentZDepth, 1, 1, 1, 0.85f);
+		mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 512, 96, TILE_SIZE, TILE_SIZE, x + getWidth() - 32, y + 32, TILE_SIZE, getHeight() - 64, pParentZDepth, 1, 1, 1, 0.85f);
+
+		mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 448, 128, TILE_SIZE, TILE_SIZE, x, y + getHeight() - 32, TILE_SIZE, TILE_SIZE, pParentZDepth, 1, 1, 1, 0.85f);
+		mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 480, 128, TILE_SIZE, TILE_SIZE, x + TILE_SIZE, y + getHeight() - 32, getWidth() - 64, TILE_SIZE, pParentZDepth, 1, 1, 1, 0.85f);
+		mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 512, 128, TILE_SIZE, TILE_SIZE, x + getWidth() - 32, y + getHeight() - 32, TILE_SIZE, TILE_SIZE, pParentZDepth, 1, 1, 1, 0.85f);
+		mSpriteBatch.end();
+
 		// We need to use a stencil buffer to clip the list box items (which, when scrolling, could appear out-of-bounds of the listbox).
 		GL11.glEnable(GL11.GL_STENCIL_TEST);
 
@@ -216,8 +232,10 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 		// Make sure we are starting with a fresh stencil buffer
 		GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT); // Clear the stencil buffer
 
+		final float DEPTH_PADDING = 6f;
+
 		mSpriteBatch.begin(pCore.HUD());
-		mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 32, 0, 32, 32, x, y, getWidth(), getHeight(), -8f, 1, 1, 1, 0.75f);
+		mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 32, 0, 32, 32, x + DEPTH_PADDING, y + DEPTH_PADDING, getWidth() - DEPTH_PADDING * 2, getHeight() - DEPTH_PADDING * 2, pParentZDepth, 1, 1, 1, 0f);
 		mSpriteBatch.end();
 
 		// Start the stencil buffer test to filter out everything outside of the scroll view
@@ -231,11 +249,12 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 
 		mParentScreen.font().end();
 
-		GL11.glDisable(GL11.GL_STENCIL_TEST);
-
 		if (mScrollBarsEnabled) {
 			mScrollBar.draw(pCore, mSpriteBatch, pParentZDepth);
+
 		}
+
+		GL11.glDisable(GL11.GL_STENCIL_TEST);
 
 	}
 

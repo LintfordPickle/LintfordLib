@@ -40,12 +40,6 @@ public class BitmapFont {
 	}
 
 	// --------------------------------------
-	// Constants
-	// --------------------------------------
-
-	public static String CHARACTER_GLYPHS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890!\"§$%&/()=?<>,.-_*+[]{}#äöü~^°:@€| ";
-
-	// --------------------------------------
 	// Variables
 	// --------------------------------------
 

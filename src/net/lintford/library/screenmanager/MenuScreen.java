@@ -271,7 +271,6 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	@Override
 	public void updateStructure(LintfordCore pCore) {
 		AARectangle lHUDRect = pCore.HUD().boundingRectangle();
-
 		if (mOrientation == ORIENTATION.vertical) {
 			float lYPos = lHUDRect.top() + mTopMargin;
 
@@ -317,7 +316,6 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	@Override
 	public void update(LintfordCore pCore, boolean pOtherScreenHasFocus, boolean pCoveredByOtherScreen) {
 		super.update(pCore, pOtherScreenHasFocus, pCoveredByOtherScreen);
-
 		final double lDeltaTime = pCore.time().elapseGameTimeMilli();
 
 		if (mAnimationTimer > 0) {
@@ -341,7 +339,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	public void draw(LintfordCore pCore) {
 		if (mScreenState != ScreenState.Active && mScreenState != ScreenState.TransitionOn && mScreenState != ScreenState.TransitionOff)
 			return;
-		
+
 		final float MENUSCREEN_Z_DEPTH = ZLayers.LAYER_SCREENMANAGER;
 
 		AARectangle lHUDRect = pCore.HUD().boundingRectangle();

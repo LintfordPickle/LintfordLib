@@ -107,6 +107,7 @@ public abstract class BaseDialog extends MenuScreen {
 
 			lLayout.y = lYPos;
 			lYPos += lLayout.h + lLayout.paddingBottom();
+			lLayout.w = DIALOG_WIDTH - 32;
 
 			layouts().get(i).updateStructure();
 
@@ -130,16 +131,31 @@ public abstract class BaseDialog extends MenuScreen {
 		final float TEXT_HORIZONTAL_PADDING = 20;
 
 		if (mDrawBackground) {
+			final float a = 1f;
+
+			final float TILE_SIZE = 32f;
+			final float x = -DIALOG_WIDTH / 2;
+			final float y = -DIALOG_HEIGHT / 2;
+			final float w = DIALOG_WIDTH;
+			final float h = DIALOG_HEIGHT;
+
 			mSpriteBatch.begin(pCore.HUD());
-			mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 64, 0, 32, 32, -DIALOG_WIDTH * 0.5f, -DIALOG_HEIGHT * 0.5f, DIALOG_WIDTH, DIALOG_HEIGHT, ZDEPTH, mR, mG, mB, mA);
+			mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 448, 64, TILE_SIZE, TILE_SIZE, x, y, TILE_SIZE, TILE_SIZE, ZDEPTH, 1, 1, 1, a);
+			mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 480, 64, TILE_SIZE, TILE_SIZE, x + TILE_SIZE, y, w - 64, TILE_SIZE, ZDEPTH, 1, 1, 1, a);
+			mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 512, 64, TILE_SIZE, TILE_SIZE, x + w - 32, y, TILE_SIZE, TILE_SIZE, ZDEPTH, 1, 1, 1, a);
+
+			mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 448, 96, TILE_SIZE, TILE_SIZE, x, y + 32, TILE_SIZE, h - 64, ZDEPTH, 1, 1, 1, a);
+			mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 480, 96, TILE_SIZE, TILE_SIZE, x + TILE_SIZE, y + 32, w - 64, h - 64, ZDEPTH, 1, 1, 1, a);
+			mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 512, 96, TILE_SIZE, TILE_SIZE, x + w - 32, y + 32, TILE_SIZE, h - 64, ZDEPTH, 1, 1, 1, a);
+
+			mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 448, 128, TILE_SIZE, TILE_SIZE, x, y + h - 32, TILE_SIZE, TILE_SIZE, ZDEPTH, 1, 1, 1, a);
+			mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 480, 128, TILE_SIZE, TILE_SIZE, x + TILE_SIZE, y + h - 32, w - 64, TILE_SIZE, ZDEPTH, 1, 1, 1, a);
+			mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 512, 128, TILE_SIZE, TILE_SIZE, x + w - 32, y + h - 32, TILE_SIZE, TILE_SIZE, ZDEPTH, 1, 1, 1, a);
 			mSpriteBatch.end();
 		}
 
 		font().begin(pCore.HUD());
-
-		/* Render title and message */
 		font().draw(mMessageString, -DIALOG_WIDTH * 0.5f + TEXT_HORIZONTAL_PADDING, -DIALOG_HEIGHT * 0.5f + 30, ZDEPTH, 1f, DIALOG_WIDTH);
-
 		font().end();
 
 		AARectangle lHUDRect = pCore.HUD().boundingRectangle();

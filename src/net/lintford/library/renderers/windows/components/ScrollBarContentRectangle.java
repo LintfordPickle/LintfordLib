@@ -15,6 +15,20 @@ public class ScrollBarContentRectangle extends AARectangle {
 
 	private transient IScrollBarArea mParentArea;
 
+	private float mDepthPadding = 0f;
+
+	// --------------------------------------
+	// Properties
+	// --------------------------------------
+
+	public float depthPadding() {
+		return mDepthPadding;
+	}
+
+	public void depthPadding(float pNewValue) {
+		mDepthPadding = pNewValue;
+	}
+
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
@@ -49,7 +63,8 @@ public class ScrollBarContentRectangle extends AARectangle {
 		// Draw into the stencil buffer to mark the 'active' bits
 		pTextureBatch.begin(pCore.HUD());
 
-		pTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, mParentArea.windowArea().x, mParentArea.windowArea().y, mParentArea.windowArea().w, mParentArea.windowArea().h, -8.0f, 0.23f, 0.12f, 0.0f, 0.0f);
+		pTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, mParentArea.windowArea().x + mDepthPadding, mParentArea.windowArea().y + mDepthPadding, mParentArea.windowArea().w - mDepthPadding * 2,
+				mParentArea.windowArea().h - mDepthPadding * 2, -10.0f, 0.0f, 0.0f, 0.0f, 0.0f);
 
 		pTextureBatch.end();
 

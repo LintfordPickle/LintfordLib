@@ -47,6 +47,11 @@ public class MenuToggleEntry extends MenuEntry {
 		mIsChecked = pNewValue;
 	}
 
+	@Override
+	public float getHeight() {
+		return MENUENTRY_HEIGHT+6;
+	}
+	
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
@@ -133,11 +138,13 @@ public class MenuToggleEntry extends MenuEntry {
 		// Draw the left/right buttons
 		mTextureBatch.begin(pCore.HUD());
 
+		final float TILE_SIZE = 32;
+		
 		// Render the check box (either ticked or empty)
 		if (mIsChecked)
-			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 288, 128, 32, 32, x + w / 2 + 32, y + h / 2 - 8, 24, 24, mZ, 1f, 1f, 1f, 1f);
+			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 288, 128, 32, 32, x + (w/4*3), y + h / 2 - 8, TILE_SIZE, TILE_SIZE, mZ, 1f, 1f, 1f, 1f);
 		else
-			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 288, 160, 32, 32, x + w / 2 + 32, y + h / 2 - 8, 24, 24, mZ, 1f, 1f, 1f, 1f);
+			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 288, 160, 32, 32, x + (w/4*3), y + h / 2 - 8, TILE_SIZE, TILE_SIZE, mZ, 1f, 1f, 1f, 1f);
 
 		mTextureBatch.end();
 

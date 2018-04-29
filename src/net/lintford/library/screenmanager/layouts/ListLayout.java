@@ -4,9 +4,11 @@ import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.MenuScreen.ALIGNMENT;
 
-/** The list layout lays out all the menu entries linearly down the layout.
+/**
+ * The list layout lays out all the menu entries linearly down the layout.
  * 
- * @author Lintford Pickle */
+ * @author Lintford Pickle
+ */
 public class ListLayout extends BaseLayout {
 
 	// --------------------------------------
@@ -74,6 +76,7 @@ public class ListLayout extends BaseLayout {
 				}
 
 				lEntry.y = lYPos;
+				lEntry.w = w - paddingLeft()*3 - paddingRight()*3;
 
 				if (mAnchor == ANCHOR.top) {
 					lYPos += lEntry.getHeight();

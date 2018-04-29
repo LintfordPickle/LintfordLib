@@ -16,12 +16,6 @@ import net.lintford.library.screenmanager.ScreenManager;
 public class MenuEnumEntry extends MenuEntry {
 
 	// --------------------------------------
-	// Constants
-	// --------------------------------------
-
-	private static final float SPACE_BETWEEN_TEXT = 15;
-
-	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
@@ -106,8 +100,8 @@ public class MenuEnumEntry extends MenuEntry {
 		mItems = new ArrayList<>();
 		mSelectedIndex = 0;
 
-		mLeftButtonRectangle = new AARectangle(0, 0, 25, 25);
-		mRightButtonRectangle = new AARectangle(0, 0, 25, 25);
+		mLeftButtonRectangle = new AARectangle(0, 0, 32, 32);
+		mRightButtonRectangle = new AARectangle(0, 0, 32, 32);
 
 		mHighlightOnHover = false;
 		mDrawBackground = false;
@@ -193,7 +187,7 @@ public class MenuEnumEntry extends MenuEntry {
 
 			} else {
 				hasFocus(true);
-				
+
 			}
 
 			// Check if tool tips are enabled.
@@ -217,13 +211,14 @@ public class MenuEnumEntry extends MenuEntry {
 
 		// Update the button positions to line up with this entry
 		// TODO(John): Need to implement left/right buttons for MenuEnumEntries.
+		
 		mLeftButtonRectangle.x = x + w / 2 + 16;
 		mLeftButtonRectangle.y = y;
-		mLeftButtonRectangle.h = h;
 
-		mRightButtonRectangle.x = x + w + 64;
+		
+		mRightButtonRectangle.x = x + w - 32;
 		mRightButtonRectangle.y = y;
-		mRightButtonRectangle.h = h;
+		
 	}
 
 	@Override
@@ -240,15 +235,14 @@ public class MenuEnumEntry extends MenuEntry {
 
 		// Draw the left/right buttons
 		mTextureBatch.begin(pCore.HUD());
-		final float ARROW_BUTTON_SIZE = 16;
+		final float ARROW_BUTTON_SIZE = 32;
 		final float ARROW_PADDING_X = mLeftButtonRectangle.w - ARROW_BUTTON_SIZE;
 		final float ARROW_PADDING_Y = mLeftButtonRectangle.h - ARROW_BUTTON_SIZE;
 
 		// Render the two arrows either side of the enumeration options
 		if (mButtonsEnabled) {
-			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 384, 64, 32, 32, mLeftButtonRectangle.x + ARROW_BUTTON_SIZE + ARROW_PADDING_X, mLeftButtonRectangle.y + ARROW_PADDING_Y, -ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, pParentZDepth, 1f, 1f, 1f,
-					1f);
-			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 384, 64, 32, 32, mRightButtonRectangle.x + ARROW_PADDING_X, mRightButtonRectangle.y + ARROW_PADDING_Y, ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, pParentZDepth, 1f, 1f, 1f, 1f);
+			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 384, 64, 32, 32, mLeftButtonRectangle.x + ARROW_BUTTON_SIZE + ARROW_PADDING_X, mLeftButtonRectangle.y + ARROW_PADDING_Y, -ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, 0f, 1f, 1f, 1f, 1f);
+			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 384, 64, 32, 32, mRightButtonRectangle.x + ARROW_PADDING_X, mRightButtonRectangle.y + ARROW_PADDING_Y, ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, 0f, 1f, 1f, 1f, 1f);
 
 		}
 
@@ -261,7 +255,10 @@ public class MenuEnumEntry extends MenuEntry {
 		// Render the items
 		if (mItems.size() > 0) {
 			String lCurItem = mItems.get(mSelectedIndex);
-			mParentScreen.font().draw(lCurItem, x + w / 2 + lSeparatorHalfWidth + SPACE_BETWEEN_TEXT + 32, y + h / 2 - TEXT_HEIGHT * 0.5f, pParentZDepth, mParentScreen.r(), mParentScreen.g(), mParentScreen.b(), mParentScreen.a(), 1.0f, -1);
+
+			final float EntryWidth = mParentScreen.font().bitmap().getStringWidth(lCurItem);
+
+			mParentScreen.font().draw(lCurItem, x + (w/4*3) - EntryWidth / 2, y + h / 2 - TEXT_HEIGHT * 0.5f, pParentZDepth, mParentScreen.r(), mParentScreen.g(), mParentScreen.b(), mParentScreen.a(), 1.0f, -1);
 		}
 		mParentScreen.font().end();
 

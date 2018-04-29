@@ -18,8 +18,7 @@ public class MenuEntry extends AARectangle {
 	// Constants
 	// --------------------------------------
 
-	protected static final float MENUENTRY_BUTTON_WIDTH = 300;
-	protected static final float MENUENTRY_UIWIDGET_WIDTH = 500;
+	protected static final float MENUENTRY_DEF_BUTTON_WIDTH = 300;
 	protected static final float MENUENTRY_HEIGHT = 32;
 	protected static final float FOCUS_TIMER = 500f; // milli
 
@@ -199,16 +198,16 @@ public class MenuEntry extends AARectangle {
 	public void initialise() {
 		switch (mButtonSize) {
 		case tiny:
-			w = MENUENTRY_BUTTON_WIDTH * 0.5f;
+			w = MENUENTRY_DEF_BUTTON_WIDTH * 0.5f;
 			break;
 		case narrow:
-			w = MENUENTRY_BUTTON_WIDTH * 0.75f;
+			w = MENUENTRY_DEF_BUTTON_WIDTH * 0.75f;
 			break;
 		case normal:
-			w = MENUENTRY_BUTTON_WIDTH;
+			w = MENUENTRY_DEF_BUTTON_WIDTH;
 			break;
 		case wide:
-			w = MENUENTRY_BUTTON_WIDTH * 1.35f;
+			w = MENUENTRY_DEF_BUTTON_WIDTH * 1.35f;
 			break;
 		}
 

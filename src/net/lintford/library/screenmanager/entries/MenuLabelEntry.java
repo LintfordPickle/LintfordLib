@@ -15,12 +15,23 @@ public class MenuLabelEntry extends MenuEntry {
 	// --------------------------------------
 
 	private ALIGNMENT mAlignment = ALIGNMENT.center;
+	private float mPadding = 15f;
 	private boolean mShow;
 	private float mR, mG, mB;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	/** Padding is applied when the label is either aligned left or right (not when centered). */
+	public float padding() {
+		return mPadding;
+	}
+
+	/** Padding is applied when the label is either aligned left or right (not when centered). */
+	public void padding(float pNewValue) {
+		mPadding = pNewValue;
+	}
 
 	@Override
 	public float getHeight() {
@@ -109,7 +120,7 @@ public class MenuLabelEntry extends MenuEntry {
 	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pParentZDepth) {
 		if (!enabled())
 			return;
-		
+
 		BitmapFont lFontBitmap = mParentScreen.font().bitmap();
 
 		final float lLabelWidth = lFontBitmap.getStringWidth(mText);
@@ -117,10 +128,10 @@ public class MenuLabelEntry extends MenuEntry {
 		float lX = x + w / 2 - lLabelWidth / 2;
 		switch (mAlignment) {
 		case left:
-			lX = x + 5;
+			lX = x + mPadding;
 			break;
 		case right:
-			lX = x - 5 - lLabelWidth;
+			lX = x - mPadding - lLabelWidth;
 			break;
 		default:
 			lX = x + w / 2 - lLabelWidth / 2;

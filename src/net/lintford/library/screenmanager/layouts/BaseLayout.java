@@ -22,6 +22,8 @@ public abstract class BaseLayout extends AARectangle implements IScrollBarArea {
 
 	public static final float USE_HEIGHT_OF_ENTRIES = -1;
 
+	public final static float LAYOUT_WIDTH = 800;
+	
 	public enum ORIENTATION {
 		horizontal, vertical;
 	}
@@ -172,7 +174,7 @@ public abstract class BaseLayout extends AARectangle implements IScrollBarArea {
 		mTopPadding = 5f;
 		mBottomPadding = 5f;
 
-		w = 800;
+		w = LAYOUT_WIDTH;
 		x = -w / 2;
 
 		mForcedEntryHeight = USE_HEIGHT_OF_ENTRIES;
@@ -267,7 +269,6 @@ public abstract class BaseLayout extends AARectangle implements IScrollBarArea {
 	}
 
 	public void draw(LintfordCore pCore, float pComponentDepth) {
-
 		if (ConstantsTable.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
 			mSpriteBatch.begin(pCore.HUD());
 			mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, x, y, w, h, ZLayers.LAYER_DEBUG, 1f, 0.2f, 1f, 0.6f);
@@ -275,12 +276,25 @@ public abstract class BaseLayout extends AARectangle implements IScrollBarArea {
 		}
 
 		if (mDrawBackground) {
+			final float TILE_SIZE = 32f;
+			
 			mSpriteBatch.begin(pCore.HUD());
-			mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, x, y, w, h, pComponentDepth, mR, mG, mB, mA);
+			mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 448, 64, TILE_SIZE, TILE_SIZE, x, y, TILE_SIZE, TILE_SIZE, pComponentDepth, 1, 1, 1, 0.85f);
+			mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 480, 64, TILE_SIZE, TILE_SIZE, x + TILE_SIZE, y, w - 64, TILE_SIZE, pComponentDepth, 1, 1, 1, 0.85f);
+			mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 512, 64, TILE_SIZE, TILE_SIZE, x + w - 32, y, TILE_SIZE, TILE_SIZE, pComponentDepth, 1, 1, 1, 0.85f);
+
+			mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 448, 96, TILE_SIZE, TILE_SIZE, x, y + 32, TILE_SIZE, getHeight() - 64, pComponentDepth, 1, 1, 1, 0.85f);
+			mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 480, 96, TILE_SIZE, TILE_SIZE, x + TILE_SIZE, y + 32, w - 64, getHeight() - 64, pComponentDepth, 1, 1, 1, 0.85f);
+			mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 512, 96, TILE_SIZE, TILE_SIZE, x + w - 32, y + 32, TILE_SIZE, getHeight() - 64, pComponentDepth, 1, 1, 1, 0.85f);
+
+			mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 448, 128, TILE_SIZE, TILE_SIZE, x, y + getHeight() - 32, TILE_SIZE, TILE_SIZE, pComponentDepth, 1, 1, 1, 0.85f);
+			mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 480, 128, TILE_SIZE, TILE_SIZE, x + TILE_SIZE, y + getHeight() - 32, w - 64, TILE_SIZE, pComponentDepth, 1, 1, 1, 0.85f);
+			mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 512, 128, TILE_SIZE, TILE_SIZE, x + w - 32, y + getHeight() - 32, TILE_SIZE, TILE_SIZE, pComponentDepth, 1, 1, 1, 0.85f);
 			mSpriteBatch.end();
 		}
 
 		if (mScrollBarsEnabled) {
+			mContentArea.depthPadding(6f);
 			mContentArea.preDraw(pCore, mSpriteBatch);
 
 		}
@@ -292,8 +306,8 @@ public abstract class BaseLayout extends AARectangle implements IScrollBarArea {
 		}
 		
 		if (mScrollBarsEnabled) {
-			mContentArea.postDraw(pCore);
 			mScrollBar.draw(pCore, mSpriteBatch, pComponentDepth + .1f);
+			mContentArea.postDraw(pCore);
 
 		}
 
