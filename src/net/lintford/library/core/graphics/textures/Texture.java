@@ -12,6 +12,7 @@ import java.nio.IntBuffer;
 import javax.imageio.ImageIO;
 
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL12;
 
 import net.lintford.library.ConstantsTable;
 import net.lintford.library.core.debug.DebugManager;
@@ -189,13 +190,16 @@ public class Texture {
 	}
 
 	public void saveTextureToFile(String pPathname) {
-		int pWidth = mTextureWidth;
-		int pHeight = mTextureHeight;
+		int lWidth = mTextureWidth;
+		int lHeight = mTextureHeight;
 
-		int[] colorRGB = new int[pWidth * pHeight];
-		GL11.glGetTexImage(mTextureID, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, colorRGB);
+		int[] colorRGB = new int[lWidth * lHeight];
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, mTextureID);
+		GL11.glGetTexImage(GL11.GL_TEXTURE_2D, 0, GL12.GL_BGRA, GL11.GL_UNSIGNED_BYTE, colorRGB);
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 
-		TextureManager.textureManager().saveTextureToFile(pWidth, pHeight, colorRGB, pPathname);
+		// needs ARGB
+		TextureManager.textureManager().saveTextureToFile(lWidth, lHeight, changeBGRAtoARGB(colorRGB, lWidth, lHeight), pPathname);
 
 	}
 
@@ -232,10 +236,9 @@ public class Texture {
 	static Texture createTexture(String pName, String mTextureLocation, int[] pPixels, int pWidth, int pHeight, int pFilter) {
 		final int lTexID = GL11.glGenTextures();
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, lTexID);
-
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, pFilter);
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, pFilter);
-		
+
 		IntBuffer lBuffer = ByteBuffer.allocateDirect(pPixels.length * 4).order(ByteOrder.nativeOrder()).asIntBuffer();
 		lBuffer.put(pPixels);
 		lBuffer.flip();
@@ -302,7 +305,7 @@ public class Texture {
 			return;
 
 		}
-		
+
 		reloadTexture(mTextureLocation);
 
 	}
@@ -346,6 +349,34 @@ public class Texture {
 			int b = (pInput[i] & 0xff0000) >> 16;
 			int g = (pInput[i] & 0xff00) >> 8;
 			int r = (pInput[i] & 0xff);
+
+			lReturnData[i] = a << 24 | r << 16 | g << 8 | b;
+		}
+
+		return lReturnData;
+	}
+
+	static int[] changeBGRAtoARGB(int[] pInput, int pWidth, int pHeight) {
+		int[] lReturnData = new int[pWidth * pHeight];
+		for (int i = 0; i < pWidth * pHeight; i++) {
+			int b = (pInput[i] & 0xff000000) >> 24;
+			int g = (pInput[i] & 0xff0000) >> 16;
+			int r = (pInput[i] & 0xff00) >> 8;
+			int a = (pInput[i] & 0xff);
+
+			lReturnData[i] = a << 24 | r << 16 | g << 8 | b;
+		}
+
+		return lReturnData;
+	}
+
+	static int[] changeRGBtoARGB(int[] pInput, int pWidth, int pHeight) {
+		int[] lReturnData = new int[pWidth * pHeight];
+		for (int i = 0; i < pWidth * pHeight; i++) {
+			int b = (pInput[i] & 0xff000000) >> 24;
+			int g = (pInput[i] & 0xff0000) >> 16;
+			int r = (pInput[i] & 0xff00) >> 8;
+			int a = (pInput[i] & 0xff);
 
 			lReturnData[i] = a << 24 | r << 16 | g << 8 | b;
 		}

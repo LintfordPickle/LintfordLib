@@ -44,6 +44,7 @@ public class BitmapFont {
 	// --------------------------------------
 
 	private Font mFont;
+	private Font mFontOutline;
 	private String mFontFileLocation;
 	private String mFontName;
 	private Texture mFontTexture;
@@ -108,6 +109,7 @@ public class BitmapFont {
 			try {
 				InputStream lFontInputStream = FileUtils.class.getResourceAsStream(mFontFileLocation);
 				mFont = Font.createFont(Font.TRUETYPE_FONT, lFontInputStream).deriveFont(mPointSize);
+				mFontOutline = Font.createFont(Font.TRUETYPE_FONT, lFontInputStream).deriveFont(mPointSize + 4);
 
 			} catch (FontFormatException e) {
 				DebugManager.DEBUG_MANAGER.logger().e(getClass().getSimpleName(), "Font format exception with font resource: " + mFontFileLocation);
@@ -125,6 +127,7 @@ public class BitmapFont {
 				}
 				InputStream lFontInputStream = new FileInputStream(lFontFile);
 				mFont = Font.createFont(Font.TRUETYPE_FONT, lFontInputStream).deriveFont(mPointSize);
+				mFontOutline = Font.createFont(Font.TRUETYPE_FONT, lFontInputStream).deriveFont(mPointSize + 4);
 
 			} catch (FontFormatException e) {
 				DebugManager.DEBUG_MANAGER.logger().e(getClass().getSimpleName(), "Font format exception with font file: " + mFontFileLocation);
