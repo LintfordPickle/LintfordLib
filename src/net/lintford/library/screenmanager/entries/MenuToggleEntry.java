@@ -49,9 +49,9 @@ public class MenuToggleEntry extends MenuEntry {
 
 	@Override
 	public float getHeight() {
-		return MENUENTRY_HEIGHT+6;
+		return MENUENTRY_HEIGHT + 6;
 	}
-	
+
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
@@ -92,13 +92,13 @@ public class MenuToggleEntry extends MenuEntry {
 						mClickListener.menuEntryChanged(this);
 
 					}
-					
+
 					pCore.input().setLeftMouseClickHandled();
 
 				}
 			} else {
 				hasFocus(true);
-				
+
 			}
 
 			return true;
@@ -128,7 +128,7 @@ public class MenuToggleEntry extends MenuEntry {
 		super.draw(pCore, pScreen, pIsSelected, pParentZDepth);
 
 		mZ = pParentZDepth;
-		
+
 		BitmapFont lFontBitmap = mParentScreen.font().bitmap();
 
 		final float lLabelWidth = lFontBitmap.getStringWidth(mLabel);
@@ -139,18 +139,18 @@ public class MenuToggleEntry extends MenuEntry {
 		mTextureBatch.begin(pCore.HUD());
 
 		final float TILE_SIZE = 32;
-		
+
 		// Render the check box (either ticked or empty)
 		if (mIsChecked)
-			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 288, 128, 32, 32, x + (w/4*3), y + h / 2 - 8, TILE_SIZE, TILE_SIZE, mZ, 1f, 1f, 1f, 1f);
+			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 288, 128, 32, 32, x + (w / 4 * 3) - TILE_SIZE / 2, y + h / 2 - TILE_SIZE / 2, TILE_SIZE, TILE_SIZE, mZ, 1f, 1f, 1f, 1f);
 		else
-			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 288, 160, 32, 32, x + (w/4*3), y + h / 2 - 8, TILE_SIZE, TILE_SIZE, mZ, 1f, 1f, 1f, 1f);
+			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 288, 160, 32, 32, x + (w / 4 * 3) - TILE_SIZE / 2, y + h / 2 - TILE_SIZE / 2, TILE_SIZE, TILE_SIZE, mZ, 1f, 1f, 1f, 1f);
 
 		mTextureBatch.end();
 
 		mParentScreen.font().begin(pCore.HUD());
-		mParentScreen.font().draw(mLabel, x + w / 2 - lLabelWidth - SPACE_BETWEEN_TEXT - lSeparatorHalfWidth, y + h / 2 - lFontBitmap.getStringHeight(mLabel) * 0.5f, mZ, mParentScreen.r(), mParentScreen.g(), mParentScreen.b(),
-				mParentScreen.a(), 1.0f, -1);
+		mParentScreen.font().draw(mLabel, x + w / 2 - lLabelWidth - SPACE_BETWEEN_TEXT - lSeparatorHalfWidth, y + h / 2 - lFontBitmap.getStringHeight(mLabel) * 0.5f, mZ, mParentScreen.r(), mParentScreen.g(), mParentScreen.b(), mParentScreen.a(),
+				1.0f, -1);
 		mParentScreen.font().draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - TEXT_HEIGHT * 0.5f, mZ, mParentScreen.r(), mParentScreen.g(), mParentScreen.b(), mParentScreen.a(), 1.0f, -1);
 
 		// Render the items

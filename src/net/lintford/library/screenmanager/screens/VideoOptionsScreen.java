@@ -114,6 +114,7 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 	private VideoOptionsConfig currentVideoConfig;
 	private VideoOptionsConfig lastVideoConfig; // last known working config, in case we need to revert
 
+	private ListLayout mConfirmChangesLayout;
 	private ListLayout mVideoList;
 
 	// --------------------------------------
@@ -129,11 +130,11 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 		mChildAlignment = ALIGNMENT.center;
 
 		mVideoList = new ListLayout(this);
-		mVideoList.setDrawBackground(true, 0f, 0f, 0f, 0.75f);
+		mVideoList.setDrawBackground(true, 0f, 0f, 0f, 0.85f);
 		mVideoList.setPadding(mVideoList.paddingTop(), mVideoList.paddingLeft(), mVideoList.paddingRight(), 25f);
 		mVideoList.forceHeight(400);
 
-		ListLayout lComfirmChangesMessageList = new ListLayout(this);
+		mConfirmChangesLayout = new ListLayout(this);
 		ListLayout lNavList = new ListLayout(this);
 
 		createVideoSection(mVideoList);
@@ -149,7 +150,8 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 		mChangesPendingWarning.labelColor(0.86f, 0.22f, 0.37f);
 		mChangesPendingWarning.enabled(false);
 
-		lComfirmChangesMessageList.menuEntries().add(mChangesPendingWarning);
+		mConfirmChangesLayout.menuEntries().add(mChangesPendingWarning);
+		mConfirmChangesLayout.setDrawBackground(true, 1f, 1f, 1f, 0.85f);
 
 		/* Screen control buttons */
 		HorizontalEntryGroup lGroup = new HorizontalEntryGroup(pScreenManager, this);
@@ -168,7 +170,7 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 
 		// Add the layouts to the screen
 		layouts().add(mVideoList);
-		layouts().add(lComfirmChangesMessageList);
+		layouts().add(mConfirmChangesLayout);
 		layouts().add(lNavList);
 
 	}
@@ -221,6 +223,7 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 		super.update(pCore, pOtherScreenHasFocus, pCoveredByOtherScreen);
 
 		mChangesPendingWarning.enabled(modifiedVideoConfig.isDifferent(currentVideoConfig));
+		mConfirmChangesLayout.enabled(modifiedVideoConfig.isDifferent(currentVideoConfig));
 
 		float lWindowHeight = pCore.config().display().windowSize().y;
 		mVideoList.forceHeight(lWindowHeight / 2);

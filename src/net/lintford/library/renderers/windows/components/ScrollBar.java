@@ -128,12 +128,11 @@ public class ScrollBar extends AARectangle {
 		pTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, x, y, w, h, pZDepth, 0.13f, 0.12f, 0.22f, 0.9f);
 
 		// Render the actual scroll bar
-		final float bx = mScrollBarArea.windowArea().x + mScrollBarArea.windowArea().w - 15;
 		final float by = mScrollBarArea.windowArea().y - (mScrollBarArea.currentYPos() / mMarkerMoveMod);
 
 		// Draw the marker bar
 		pTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, x + 9, y, 2, h, pZDepth, 1f, 1f, 1f, 1f);
-		pTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, bx, by, 10, mMarkerBarHeight, pZDepth, 1f, 1f, 1f, 1f);
+		pTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, x + 5, by, 10, mMarkerBarHeight, pZDepth, 1f, 1f, 1f, 1f);
 
 		pTextureBatch.end();
 

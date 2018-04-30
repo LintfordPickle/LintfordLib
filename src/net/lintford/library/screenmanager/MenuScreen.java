@@ -281,7 +281,6 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 				// lLayout.width = lLayout.getEntryWidth();
 				lLayout.h = lLayout.getHeight();
-
 				lYPos += lLayout.paddingTop();
 
 				switch (mChildAlignment) {

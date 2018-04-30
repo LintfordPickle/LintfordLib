@@ -103,7 +103,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 	public MenuEnumEntryItem selectedItem() {
 		if (mItems == null || mItems.size() == 0)
 			return null;
-		
+
 		return mItems.get(mSelectedIndex);
 
 	}
@@ -186,8 +186,8 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 	@Override
 	public boolean handleInput(LintfordCore pCore) {
 		if (mItems == null || mItems.size() == 0)
-			 return false;
-		
+			return false;
+
 		if (mScrollBar.handleInput(pCore)) {
 
 		} else if (intersects(pCore.HUD().getMouseCameraSpace())) {
@@ -250,16 +250,17 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 	public void update(LintfordCore pCore, MenuScreen pScreen, boolean pIsSelected) {
 		if (mItems == null || mItems.size() == 0)
 			return;
-		
+
 		super.update(pCore, pScreen, pIsSelected);
 
 		mTopEntry.set(x + w / 2, y, w / 2, MENUENTRY_HEIGHT);
 
-		w = MENUENTRY_DEF_BUTTON_WIDTH;
+		// w = MENUENTRY_DEF_BUTTON_WIDTH;
 		h = mOpen ? OPEN_HEIGHT : MENUENTRY_HEIGHT;
 
 		mContentRectangle.set(x, y + mScrollYPosition, w, mItems.size() * 25);
-		mWindowRectangle.set(x, y + 25, w, h - 50);
+		// We need to offset the window rectangle so it doesn't obscure the current selected item
+		mWindowRectangle.set(x + w / 2, y + 25, w / 2, h - 50);
 
 		mScrollBar.update(pCore);
 	}
@@ -267,7 +268,6 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 	@Override
 	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pComponentDepth) {
 
-		
 		BitmapFont lFontBitmap = mParentScreen.font().bitmap();
 
 		// TITLE BAR
@@ -290,16 +290,17 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 		if (mItems == null || mItems.size() == 0) {
 			// LOCALIZATION: No entries added to dropdown list
 			final String lNoEntriesText = "No items found";
-			mParentScreen.font().draw(lNoEntriesText, x + w / 2 + lSeparatorHalfWidth + SPACE_BETWEEN_TEXT, y, mZ, lTextR, lTextG, lTextB, mParentScreen.a(), 1.0f, -1);	
+			mParentScreen.font().draw(lNoEntriesText, x + w / 2 + lSeparatorHalfWidth + SPACE_BETWEEN_TEXT, y, mZ, lTextR, lTextG, lTextB, mParentScreen.a(), 1.0f, -1);
 			mParentScreen.font().end();
 			return;
 		}
-		
+
 		MenuEnumEntryItem lSelectItem = mItems.get(mSelectedIndex);
 		float lYPos = y + mScrollYPosition;
 		// Render the selected item in the 'top spot'
 		final String lCurItem = lSelectItem.name;
-		mParentScreen.font().draw(lCurItem, x + w / 2 + lSeparatorHalfWidth + SPACE_BETWEEN_TEXT, y, mZ, lTextR, lTextG, lTextB, mParentScreen.a(), 1.0f, -1);
+		final float lSelectedTextWidth = mParentScreen.font().bitmap().getStringWidth(lCurItem);
+		mParentScreen.font().draw(lCurItem, x + (w / 4 * 3) + -lSelectedTextWidth / 2, y, mZ, lTextR, lTextG, lTextB, mParentScreen.a(), 1.0f, -1);
 		lYPos += 25;
 
 		mParentScreen.font().end();
@@ -310,7 +311,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 
 		if (mOpen) {
 			mTextureBatch.begin(pCore.HUD());
-			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 96, 0, 32, 32, mWindowRectangle.x + getWidth() / 2f, mWindowRectangle.y, getWidth() / 2f, mWindowRectangle.h, mZ, 1, 1, 1, 1);
+			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 96, 0, 32, 32, mWindowRectangle.x, mWindowRectangle.y, mWindowRectangle.w, mWindowRectangle.h, mZ, 1, 1, 1, 1);
 			mTextureBatch.end();
 
 		}
@@ -327,7 +328,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 		GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT); // Clear the stencil buffer
 
 		mTextureBatch.begin(pCore.HUD());
-		mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 32, 0, 32, 32, mWindowRectangle.x, mWindowRectangle.y, getWidth(), mWindowRectangle.h, -8f, 1, 1, 1, 0);
+		mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 32, 0, 32, 32, mWindowRectangle.x, mWindowRectangle.y, mWindowRectangle.w, mWindowRectangle.h, -8f, 1, 1, 1, 0);
 		mTextureBatch.end();
 
 		// Start the stencil buffer test to filter out everything outside of the scroll view
@@ -336,7 +337,8 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 		if (mOpen) {
 			for (int i = 0; i < mItems.size(); i++) {
 				MenuEnumEntryItem lItem = mItems.get(i);
-				mParentScreen.font().draw(lItem.name, x + w / 2 + lSeparatorHalfWidth + SPACE_BETWEEN_TEXT, lYPos, mZ + 0.1f, lTextR, lTextG, lTextB, mParentScreen.a(), 1.0f, -1);
+				final float lItemTextWidth = mParentScreen.font().bitmap().getStringWidth(lItem.name);
+				mParentScreen.font().draw(lItem.name, x + (w / 4 * 3) - lItemTextWidth / 2, lYPos, mZ + 0.1f, lTextR, lTextG, lTextB, mParentScreen.a(), 1.0f, -1);
 				lYPos += 25;
 
 			}

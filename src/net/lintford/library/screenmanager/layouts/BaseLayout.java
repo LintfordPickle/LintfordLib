@@ -23,7 +23,7 @@ public abstract class BaseLayout extends AARectangle implements IScrollBarArea {
 	public static final float USE_HEIGHT_OF_ENTRIES = -1;
 
 	public final static float LAYOUT_WIDTH = 800;
-	
+
 	public enum ORIENTATION {
 		horizontal, vertical;
 	}
@@ -65,6 +65,7 @@ public abstract class BaseLayout extends AARectangle implements IScrollBarArea {
 	protected float mYScrollPos;
 	protected ScrollBar mScrollBar;
 	protected boolean mScrollBarsEnabled;
+	protected boolean mEnabled;
 
 	// --------------------------------------
 	// Properties
@@ -154,6 +155,14 @@ public abstract class BaseLayout extends AARectangle implements IScrollBarArea {
 		mForcedEntryHeight = pNewHeight;
 	}
 
+	public boolean enabled() {
+		return mEnabled;
+	}
+
+	public void enabled(boolean pEnabled) {
+		mEnabled = pEnabled;
+	}
+
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
@@ -165,6 +174,7 @@ public abstract class BaseLayout extends AARectangle implements IScrollBarArea {
 		mMenuEntries = new ArrayList<>();
 
 		mSpriteBatch = new TextureBatch();
+		mEnabled = true;
 
 		// Set some defaults
 		mAlignment = ALIGNMENT.center;
@@ -228,16 +238,16 @@ public abstract class BaseLayout extends AARectangle implements IScrollBarArea {
 		if (menuEntries() == null || menuEntries().size() == 0)
 			return false; // nothing to do
 
-		//if (mContentArea.intersects(pCore.HUD().getMouseCameraSpace())) {
-			final int lEntryCount = menuEntries().size();
-			for (int i = 0; i < lEntryCount; i++) {
-				MenuEntry lMenuEntry = menuEntries().get(i);
-				if (lMenuEntry.handleInput(pCore)) {
-					return true;
-				}
+		// if (mContentArea.intersects(pCore.HUD().getMouseCameraSpace())) {
+		final int lEntryCount = menuEntries().size();
+		for (int i = 0; i < lEntryCount; i++) {
+			MenuEntry lMenuEntry = menuEntries().get(i);
+			if (lMenuEntry.handleInput(pCore)) {
+				return true;
 			}
+		}
 
-		//}
+		// }
 
 		updateFocusOfAll(pCore);
 
@@ -269,6 +279,9 @@ public abstract class BaseLayout extends AARectangle implements IScrollBarArea {
 	}
 
 	public void draw(LintfordCore pCore, float pComponentDepth) {
+		if (!mEnabled)
+			return;
+
 		if (ConstantsTable.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
 			mSpriteBatch.begin(pCore.HUD());
 			mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, x, y, w, h, ZLayers.LAYER_DEBUG, 1f, 0.2f, 1f, 0.6f);
@@ -277,7 +290,7 @@ public abstract class BaseLayout extends AARectangle implements IScrollBarArea {
 
 		if (mDrawBackground) {
 			final float TILE_SIZE = 32f;
-			
+
 			mSpriteBatch.begin(pCore.HUD());
 			mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 448, 64, TILE_SIZE, TILE_SIZE, x, y, TILE_SIZE, TILE_SIZE, pComponentDepth, 1, 1, 1, 0.85f);
 			mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 480, 64, TILE_SIZE, TILE_SIZE, x + TILE_SIZE, y, w - 64, TILE_SIZE, pComponentDepth, 1, 1, 1, 0.85f);
@@ -298,13 +311,13 @@ public abstract class BaseLayout extends AARectangle implements IScrollBarArea {
 			mContentArea.preDraw(pCore, mSpriteBatch);
 
 		}
-		
+
 		int lCount = menuEntries().size();
 		for (int i = lCount - 1; i >= 0; --i) {
 			menuEntries().get(i).draw(pCore, mParentScreen, mSelectedEntry == i, pComponentDepth + i * .001f);
 
 		}
-		
+
 		if (mScrollBarsEnabled) {
 			mScrollBar.draw(pCore, mSpriteBatch, pComponentDepth + .1f);
 			mContentArea.postDraw(pCore);
@@ -321,7 +334,9 @@ public abstract class BaseLayout extends AARectangle implements IScrollBarArea {
 		final int lCount = mMenuEntries.size();
 		for (int i = 0; i < lCount; i++) {
 			mMenuEntries.get(i).updateStructure();
+			
 		}
+		
 	}
 
 	/**

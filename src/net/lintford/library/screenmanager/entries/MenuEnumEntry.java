@@ -210,15 +210,12 @@ public class MenuEnumEntry extends MenuEntry {
 		super.update(pCore, pScreen, pIsSelected);
 
 		// Update the button positions to line up with this entry
-		// TODO(John): Need to implement left/right buttons for MenuEnumEntries.
-		
 		mLeftButtonRectangle.x = x + w / 2 + 16;
 		mLeftButtonRectangle.y = y;
 
-		
 		mRightButtonRectangle.x = x + w - 32;
 		mRightButtonRectangle.y = y;
-		
+
 	}
 
 	@Override
@@ -258,7 +255,7 @@ public class MenuEnumEntry extends MenuEntry {
 
 			final float EntryWidth = mParentScreen.font().bitmap().getStringWidth(lCurItem);
 
-			mParentScreen.font().draw(lCurItem, x + (w/4*3) - EntryWidth / 2, y + h / 2 - TEXT_HEIGHT * 0.5f, pParentZDepth, mParentScreen.r(), mParentScreen.g(), mParentScreen.b(), mParentScreen.a(), 1.0f, -1);
+			mParentScreen.font().draw(lCurItem, x + (w / 4 * 3) - EntryWidth / 2, y + h / 2 - TEXT_HEIGHT * 0.5f, pParentZDepth, mParentScreen.r(), mParentScreen.g(), mParentScreen.b(), mParentScreen.a(), 1.0f, -1);
 		}
 		mParentScreen.font().end();
 

@@ -197,7 +197,7 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 
 			mItemYPos += ListBoxItem.LISTBOXITEM_HEIGHT + LISTBOX_ITEM_VPADDING;
 		}
-
+		
 		w = 800;
 		h = LISTBOX_HEIGHT;
 
