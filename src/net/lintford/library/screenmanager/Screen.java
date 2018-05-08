@@ -1,9 +1,11 @@
 package net.lintford.library.screenmanager;
 
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.entity.EntityID;
 import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.time.GameTime;
 import net.lintford.library.core.time.TimeSpan;
+import net.lintford.library.renderers.RendererManager;
 import net.lintford.library.screenmanager.transitions.BaseTransition;
 import net.lintford.library.screenmanager.transitions.TransitionFadeIn;
 import net.lintford.library.screenmanager.transitions.TransitionFadeOut;
@@ -34,7 +36,11 @@ public abstract class Screen {
 	// Variables
 	// --------------------------------------
 
+	/** Used both as a ControllerGroupID and RendererGroupID */
+	public final int entityGroupID;
+
 	protected ScreenManager mScreenManager;
+	protected RendererManager mRendererManager;
 	protected BaseTransition mTransitionOn;
 	protected BaseTransition mTransitionOff;
 	protected ScreenState mScreenState;
@@ -118,13 +124,19 @@ public abstract class Screen {
 		mScreenManager = pScreenManager;
 	}
 
+	public RendererManager rendererManager() {
+		return mRendererManager;
+	}
+
 	// --------------------------------------
 	// Constructors
 	// --------------------------------------
 
 	public Screen(ScreenManager pScreenManager) {
+		entityGroupID = EntityID.getEntityNumber();
 
 		mScreenManager = pScreenManager;
+		mRendererManager = new RendererManager(pScreenManager.core(), getClass().getSimpleName());
 
 		mTransitionOn = new TransitionFadeIn(new TimeSpan(250));
 		mTransitionOff = new TransitionFadeOut(new TimeSpan(250));
@@ -148,15 +160,24 @@ public abstract class Screen {
 
 	}
 
-	public abstract void loadGLContent(ResourceManager pResourceManager);
+	public void loadGLContent(ResourceManager pResourceManager) {
+		mRendererManager.loadGLContent(pResourceManager);
+	}
 
-	public abstract void unloadGLContent();
+	public void unloadGLContent() {
+		mRendererManager.unloadGLContent();
+	}
 
 	public void handleInput(LintfordCore pCore, boolean pAcceptMouse, boolean pAcceptKeyboard) {
-
+		mScreenManager.core().controllerManager().handleInput(mScreenManager.core(), entityGroupID);
+		
 	}
 
 	public void update(LintfordCore pCore, boolean pOtherScreenHasFocus, boolean pCoveredByOtherScreen) {
+
+		if (!mRendererManager.isLoaded())
+			throw new RuntimeException("RendererManager not loaded");
+
 		mOtherScreenHasFocus = pOtherScreenHasFocus;
 
 		if (mIsExiting) {
@@ -200,6 +221,8 @@ public abstract class Screen {
 					mTransitionOn.reset();
 
 			}
+			
+			mScreenManager.core().controllerManager().update(mScreenManager.core(), entityGroupID);
 
 		}
 
@@ -210,6 +233,7 @@ public abstract class Screen {
 	}
 
 	public void draw(LintfordCore pCore) {
+		mRendererManager.draw(pCore);
 
 	}
 
@@ -241,8 +265,15 @@ public abstract class Screen {
 		}
 	}
 
-	public void onGainedFocus() {
+	/** Called when a {@link Screen} is removed from the {@link ScreenManager}. */
+	public void onScreenRemovedFromScreenManager() {
+		mRendererManager.removeAllListeners();
+		mRendererManager.removeAllRenderers();
+		mRendererManager = null;
 
+	}
+
+	public void onGainedFocus() {
 		// Don't allow keyboard capture across screens
 		mScreenManager.core().input().stopCapture();
 

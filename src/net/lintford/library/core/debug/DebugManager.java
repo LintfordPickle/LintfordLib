@@ -176,6 +176,7 @@ public class DebugManager {
 	}
 
 	public void addDebugConsoleCommands() {
+		// TODO: Add ConsoleCommands for all the static variables within ConstantsTable
 		ConsoleCommand lSaveLogCommand = new ConsoleCommand("DebugLogger", "save_log", "writes the current console log to a file on the hard disk (info.log)") {
 			@Override
 			public boolean doCommand() {
@@ -183,7 +184,6 @@ public class DebugManager {
 
 			}
 		};
-
 		ConsoleCommand lListConsoleCommands = new ConsoleCommand("System", "help", "Lists all the console commands available") {
 
 			@Override

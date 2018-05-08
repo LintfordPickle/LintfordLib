@@ -30,11 +30,6 @@ public class CameraController extends BaseController {
 		return mCamera != null;
 	}
 
-	@Override
-	public void initialise() {
-
-	}
-
 	public Camera camera() {
 		return mCamera;
 	}
@@ -54,6 +49,17 @@ public class CameraController extends BaseController {
 	// ---------------------------------------------
 	// Core-Methods
 	// ---------------------------------------------
+
+	@Override
+	public void initialise() {
+
+	}
+
+	@Override
+	public void unload() {
+		mCamera = null;
+
+	}
 
 	@Override
 	public boolean handleInput(LintfordCore pCore) {

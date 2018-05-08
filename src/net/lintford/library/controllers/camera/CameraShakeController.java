@@ -61,24 +61,28 @@ public class CameraShakeController extends BaseController {
 
 		}
 
-
 		return false;
 
 	}
 
 	@Override
 	public void initialise() {
-		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void unload() {
+		mGameCamera = null;
 
 	}
 
 	// ---------------------------------------------
 	// Methods
 	// ---------------------------------------------
-	
+
 	public void shake(float pDurMS, float pMag) {
 		mGameCamera.shake(pDurMS, pMag);
-		
+
 	}
-	
+
 }

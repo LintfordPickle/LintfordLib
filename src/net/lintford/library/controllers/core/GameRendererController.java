@@ -4,13 +4,14 @@ import net.lintford.library.controllers.BaseController;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.renderers.RendererManager;
 
-public class RendererController extends BaseController {
+/** A {@link BaseController} instance which stores a handle to a {@link RendererManager} instantiated by a game screen. */
+public class GameRendererController extends BaseController {
 
 	// --------------------------------------
 	// Constants
 	// --------------------------------------
 
-	public static final String CONTROLLER_NAME = "RendererController";
+	public static final String CONTROLLER_NAME = "GameRendererController";
 
 	// --------------------------------------
 	// Variables
@@ -38,7 +39,7 @@ public class RendererController extends BaseController {
 	// Constructor
 	// --------------------------------------
 
-	public RendererController(ControllerManager pControllerManager, RendererManager pRendererManager, final int pGroupID) {
+	public GameRendererController(ControllerManager pControllerManager, RendererManager pRendererManager, final int pGroupID) {
 		super(pControllerManager, CONTROLLER_NAME, pGroupID);
 
 		mRendererManager = pRendererManager;
@@ -51,7 +52,12 @@ public class RendererController extends BaseController {
 
 	@Override
 	public void initialise() {
-		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void unload() {
+		mRendererManager = null;
 
 	}
 

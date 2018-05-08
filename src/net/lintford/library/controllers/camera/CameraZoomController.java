@@ -99,11 +99,6 @@ public class CameraZoomController extends BaseController {
 		return mCamera != null;
 	}
 
-	@Override
-	public void initialise() {
-
-	}
-
 	// ---------------------------------------------
 	// Constructor
 	// ---------------------------------------------
@@ -120,6 +115,17 @@ public class CameraZoomController extends BaseController {
 	// ---------------------------------------------
 	// Core-Methods
 	// ---------------------------------------------
+
+	@Override
+	public void initialise() {
+
+	}
+
+	@Override
+	public void unload() {
+		mCamera = null;
+
+	}
 
 	/**
 	 * Listens to mouse scroll wheel input and updates the zoom of the associated {@link Camera} if available.

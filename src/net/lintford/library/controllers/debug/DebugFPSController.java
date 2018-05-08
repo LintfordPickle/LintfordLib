@@ -61,6 +61,11 @@ public class DebugFPSController extends BaseController {
 
 	}
 
+	@Override
+	public void unload() {
+		
+	}
+	
 	public void update(GameTime pGameTime) {
 		if (!mEnableFPSDisplay)
 			return;

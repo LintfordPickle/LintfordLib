@@ -1,7 +1,6 @@
 package net.lintford.library.controllers.audio;
 
 import net.lintford.library.controllers.BaseController;
-import net.lintford.library.controllers.BaseControllerGroups;
 import net.lintford.library.controllers.core.ControllerManager;
 import net.lintford.library.core.audio.AudioManager;
 
@@ -33,8 +32,8 @@ public class AudioManagerController extends BaseController {
 	// Constructor
 	// --------------------------------------
 
-	public AudioManagerController(final ControllerManager pControllerManager, final AudioManager pAudioManager) {
-		super(pControllerManager, CONTORLLER_NAME, BaseControllerGroups.CONTROLLER_CORE_GROUP_ID);
+	public AudioManagerController(final ControllerManager pControllerManager, final AudioManager pAudioManager, int pGroupID) {
+		super(pControllerManager, CONTORLLER_NAME, pGroupID);
 
 		mAudioManager = pAudioManager;
 
@@ -42,6 +41,12 @@ public class AudioManagerController extends BaseController {
 
 	@Override
 	public void initialise() {
+
+	}
+
+	@Override
+	public void unload() {
+		mAudioManager = null;
 
 	}
 

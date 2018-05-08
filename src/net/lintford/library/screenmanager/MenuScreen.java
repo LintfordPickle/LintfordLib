@@ -170,6 +170,8 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 	@Override
 	public void loadGLContent(ResourceManager pResourceManager) {
+		super.loadGLContent(pResourceManager);
+
 		final int lCount = layouts().size();
 		for (int i = 0; i < lCount; i++) {
 			mLayouts.get(i).loadGLContent(pResourceManager);
@@ -183,6 +185,8 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 	@Override
 	public void unloadGLContent() {
+		super.unloadGLContent();
+
 		final int lCount = layouts().size();
 		for (int i = 0; i < lCount; i++) {
 			mLayouts.get(i).unloadGLContent();

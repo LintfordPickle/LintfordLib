@@ -33,6 +33,7 @@ public class RendererManager {
 	// variables
 	// --------------------------------------
 
+	private String mScreenOwner;
 	private LintfordCore mCore;
 	private ResourceManager mResourceManager;
 	private List<BaseRenderer> mRenderers;
@@ -61,6 +62,10 @@ public class RendererManager {
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public String ownerName() {
+		return mScreenOwner;
+	}
 
 	public LintfordCore core() {
 		return mCore;
@@ -101,7 +106,7 @@ public class RendererManager {
 	public TextureBatch uiTextureBatch() {
 		return mTextureBatch;
 	}
-	
+
 	public SpriteBatch uiSpriteBatch() {
 		return mSpriteBatch;
 	}
@@ -114,7 +119,8 @@ public class RendererManager {
 	// Constructor
 	// --------------------------------------
 
-	public RendererManager(LintfordCore pCore) {
+	public RendererManager(LintfordCore pCore, String pOwnerName) {
+		mScreenOwner = pOwnerName;
 		mCore = pCore;
 
 		mRenderers = new ArrayList<>();
@@ -149,7 +155,7 @@ public class RendererManager {
 		if (mIsLoaded)
 			return;
 
-		DebugManager.DEBUG_MANAGER.logger().i(getClass().getSimpleName(), "Loading GL content for all registered renderers");
+		DebugManager.DEBUG_MANAGER.logger().i(getClass().getSimpleName(), mScreenOwner + "Loading GL content for all registered renderers");
 
 		mResourceManager = pResourceManager;
 
@@ -191,7 +197,7 @@ public class RendererManager {
 		if (!mIsLoaded)
 			return;
 
-		DebugManager.DEBUG_MANAGER.logger().i(getClass().getSimpleName(), "Unloading GL content for all renderers");
+		DebugManager.DEBUG_MANAGER.logger().i(getClass().getSimpleName(), mScreenOwner + "Unloading GL content for all renderers");
 
 		// Unloaded each of the renderers
 		final int RENDERER_COUNT = mRenderers.size();
@@ -208,7 +214,6 @@ public class RendererManager {
 	}
 
 	public boolean handleInput(LintfordCore pCore) {
-
 		final int NUM_WINDOW_RENDERERS = mWindowRenderers.size();
 
 		// We handle the input to the UI Windows in the game with priority.
@@ -270,39 +275,40 @@ public class RendererManager {
 	}
 
 	public void draw(LintfordCore pCore) {
-		
-		if(true) {
+
+		// TODO: RendererManager we can probably get rid of the draw() space resource loading
+		if (true) {
 			final int RENDERER_COUNT = mRenderers.size();
 			for (int i = 0; i < RENDERER_COUNT; i++) {
 				if (!mRenderers.get(i).isActive())
 					continue;
-	
+
 				if (!mRenderers.get(i).isLoaded() && mIsLoaded) {
-					DebugManager.DEBUG_MANAGER.logger().w(getClass().getSimpleName(), "Reloading content in Update() (BaseRenderer) ");
+					DebugManager.DEBUG_MANAGER.logger().w(getClass().getSimpleName(), mScreenOwner + "Reloading content in Update() (BaseRenderer) ");
 					mRenderers.get(i).loadGLContent(mResourceManager);
-	
+
 				}
-	
+
 				// Update the renderer
 				mRenderers.get(i).draw(pCore);
-	
+
 			}
 		}
-		
-		if(true) {
+
+		if (true) {
 			final int WINDOW_RENDERER_COUNT = mWindowRenderers.size();
 			for (int i = 0; i < WINDOW_RENDERER_COUNT; i++) {
 				if (!mWindowRenderers.get(i).isActive())
 					continue;
-	
+
 				if (!mWindowRenderers.get(i).isLoaded() && mIsLoaded) {
 					DebugManager.DEBUG_MANAGER.logger().w(getClass().getSimpleName(), "Reloading content in Update() (UIWindow) ");
 					mWindowRenderers.get(i).loadGLContent(mResourceManager);
 				}
-	
+
 				// Update the renderer
 				mWindowRenderers.get(i).draw(pCore);
-	
+
 			}
 		}
 

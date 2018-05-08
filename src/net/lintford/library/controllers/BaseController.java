@@ -62,11 +62,11 @@ public abstract class BaseController {
 			mControllerManager = pControllerManager;
 			mControllerName = pControllerName;
 
-			if (mUniqueController && mControllerManager.controllerExists(pControllerName)) {
+			if (mUniqueController && mControllerManager.controllerExists(pControllerName, pGroupID)) {
 				throw new RuntimeException("Cannot register two controllers with the same name if they are specified to be unique (" + pControllerName + ")");
 			}
 
-			mControllerManager.addController(this);
+			mControllerManager.addController(this, pGroupID);
 
 			mGroupID = pGroupID;
 
@@ -80,11 +80,14 @@ public abstract class BaseController {
 	// Core-Methods
 	// --------------------------------------
 
+	// TODO: The initialise method in this form is pretty useless!
 	public abstract void initialise();
 
-	public boolean handleInput(LintfordCore pCore) {
+	public abstract void unload();
 
+	public boolean handleInput(LintfordCore pCore) {
 		return false;
+		
 	}
 
 	public void update(LintfordCore pCore) {

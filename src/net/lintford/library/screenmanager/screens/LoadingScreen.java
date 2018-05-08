@@ -88,6 +88,8 @@ public class LoadingScreen extends Screen {
 
 	@Override
 	public void loadGLContent(ResourceManager pResourceManager) {
+		super.loadGLContent(pResourceManager);
+		
 		mTextureBatch = new TextureBatch();
 		mTextureBatch.loadGLContent(pResourceManager);
 
@@ -98,6 +100,8 @@ public class LoadingScreen extends Screen {
 
 	@Override
 	public void unloadGLContent() {
+		super.unloadGLContent();
+		
 		if (mTextureBatch != null) {
 			mTextureBatch.unloadGLContent();
 

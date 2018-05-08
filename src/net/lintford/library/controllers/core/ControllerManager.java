@@ -1,13 +1,13 @@
 package net.lintford.library.controllers.core;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import net.lintford.library.controllers.BaseController;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.debug.DebugManager;
-import net.lintford.library.renderers.BaseRenderer;
-import net.lintford.library.renderers.RendererManager;
 
 public class ControllerManager {
 
@@ -16,15 +16,15 @@ public class ControllerManager {
 	// --------------------------------------
 
 	private LintfordCore mCore;
-	private List<BaseController> mControllers;
+	private Map<Integer, List<BaseController>> mControllers;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
 
 	/** Returns a list of controllers currently registered with the {@link ControllerManager}. */
-	public List<BaseController> controllers() {
-		return mControllers;
+	public List<BaseController> controllers(int pControllerGroupID) {
+		return mControllers.get(pControllerGroupID);
 
 	}
 
@@ -38,7 +38,7 @@ public class ControllerManager {
 
 	public ControllerManager(LintfordCore pCore) {
 		mCore = pCore;
-		mControllers = new ArrayList<>();
+		mControllers = new HashMap<>();
 
 	}
 
@@ -46,13 +46,17 @@ public class ControllerManager {
 	// Core-Methods
 	// --------------------------------------
 
-	public boolean handleInput(LintfordCore pCore) {
-		int lCount = mControllers.size();
+	public boolean handleInput(LintfordCore pCore, int pControllerGroup) {
+		List<BaseController> lControllerList = controllers(pControllerGroup);
+		if (lControllerList == null)
+			return false;
+
+		int lCount = lControllerList.size();
 		for (int i = 0; i < lCount; i++) {
-			if (!mControllers.get(i).isActive())
+			if (!lControllerList.get(i).isActive())
 				continue;
 
-			if (mControllers.get(i).handleInput(pCore)) {
+			if (lControllerList.get(i).handleInput(pCore)) {
 				return true;
 
 			}
@@ -63,13 +67,17 @@ public class ControllerManager {
 
 	}
 
-	public void update(LintfordCore pCore) {
-		int lCount = mControllers.size();
+	public void update(LintfordCore pCore, int pControllerGroup) {
+		List<BaseController> lControllerList = controllers(pControllerGroup);
+		if (lControllerList == null)
+			return;
+
+		int lCount = lControllerList.size();
 		for (int i = 0; i < lCount; i++) {
-			if (!mControllers.get(i).isActive())
+			if (!lControllerList.get(i).isActive())
 				continue;
 
-			mControllers.get(i).update(pCore);
+			lControllerList.get(i).update(pCore);
 
 		}
 
@@ -80,54 +88,74 @@ public class ControllerManager {
 	// --------------------------------------
 
 	public void initialiseControllers() {
-		int lCount = mControllers.size();
-		for (int i = 0; i < lCount; i++) {
-			if (!mControllers.get(i).isActive())
-				continue;
-			
-			if (mControllers.get(i).isInitialised())
-				continue;
 
-			mControllers.get(i).initialise();
-		}
-	}
-	
-	public BaseController getControllerByType(Class<?> pClass) {
-		int lCount = mControllers.size();
-		for (int i = 0; i < lCount; i++) {
-			if (mControllers.get(i).getClass().equals(pClass)) {
-				return mControllers.get(i);
+		for (Map.Entry<Integer, List<BaseController>> lEntry : mControllers.entrySet()) {
+			List<BaseController> lControllerList = lEntry.getValue();
+
+			int lCount = lControllerList.size();
+			for (int i = 0; i < lCount; i++) {
+				if (!lControllerList.get(i).isActive())
+					continue;
+
+				if (lControllerList.get(i).isInitialised())
+					continue;
+
+				lControllerList.get(i).initialise();
 			}
+
+		}
+
+	}
+
+	public BaseController getControllerByType(Class<?> pClass, int pGroupID) {
+		List<BaseController> lControllerList = controllers(pGroupID);
+		if (lControllerList == null)
+			return null;
+
+		int lCount = lControllerList.size();
+		for (int i = 0; i < lCount; i++) {
+			if (lControllerList.get(i).getClass().equals(pClass)) {
+				return lControllerList.get(i);
+
+			}
+
 		}
 
 		return null;
 	}
 
 	/** Returns the controller with the given name. In case no {@link BaseController} instance with the given name is found (i.e. has not been registered) or has not been initialised, an exception will be thrown. */
-	public BaseController getControllerByNameRequired(String pControllerName) {
-		final BaseController RESULT = getControllerByName(pControllerName);
+	public BaseController getControllerByNameRequired(String pControllerName, int pGroupID) {
+		final BaseController RESULT = getControllerByName(pControllerName, pGroupID);
 
 		// In case this required controller is missing, then throw an exception.
 		// TODO: Don't throw an exception in the future, rather gracefully quit and inform the player.
 		if (RESULT == null) {
+			DebugManager.DEBUG_MANAGER.logger().e(getClass().getSimpleName(), "Required controller not found: " + pControllerName);
+
 			throw new RuntimeException("Required controller not found: " + pControllerName);
+
 		}
 
 		return RESULT;
 	}
 
 	/** Returns the controller with the given name. If no controller is found, null is returned. */
-	public BaseController getControllerByName(String pControllerName) {
+	public BaseController getControllerByName(String pControllerName, int pGroupID) {
 		if (pControllerName == null || pControllerName.length() == 0) {
 			DebugManager.DEBUG_MANAGER.logger().w(getClass().getSimpleName(), "Controller requested but no identifier given");
 
 			return null;
 		}
 
-		int lCount = mControllers.size();
+		List<BaseController> lControllerList = controllers(pGroupID);
+		if (lControllerList == null)
+			return null;
+
+		int lCount = lControllerList.size();
 		for (int i = 0; i < lCount; i++) {
-			if (mControllers.get(i).controllerName().equals(pControllerName)) {
-				return mControllers.get(i);
+			if (lControllerList.get(i).controllerName().equals(pControllerName)) {
+				return lControllerList.get(i);
 			}
 		}
 
@@ -136,22 +164,39 @@ public class ControllerManager {
 	}
 
 	/** Returns true if a {@link BaseController} has been registered with the given name. */
-	public boolean controllerExists(final String pControllerName) {
-		return getControllerByName(pControllerName) != null;
+	public boolean controllerExists(final String pControllerName, int pGroupID) {
+		return getControllerByName(pControllerName, pGroupID) != null;
 	}
 
-	public void addController(BaseController pController) {
+	public void addController(BaseController pController, int pGroupID) {
 		// Only add one controller of each time (and with unique names).
-		if (getControllerByName(pController.controllerName()) == null) {
-			mControllers.add(pController);
+		if (getControllerByName(pController.controllerName(), pGroupID) == null) {
+			List<BaseController> lControllerList = controllers(pGroupID);
+			if (lControllerList == null) {
+				// In this case, the ControllerList itself doesn't exit, so we need to create one
+				lControllerList = new ArrayList<>();
+				mControllers.put(pGroupID, lControllerList);
+				
+			}
 
+			lControllerList.add(pController);
+
+		}
+		else {
+			// Controller already exists
+			
 		}
 
 	}
 
-	public void removeController(BaseController pController) {
-		if (mControllers.contains(pController)) {
-			mControllers.remove(pController);
+	public void removeController(BaseController pController, int pGroupID) {
+		List<BaseController> lControllerList = controllers(pGroupID);
+		if (lControllerList == null)
+			return;
+
+		if (lControllerList.contains(pController)) {
+			lControllerList.remove(pController);
+
 		}
 
 	}
@@ -163,29 +208,21 @@ public class ControllerManager {
 
 	}
 
-	/** Unloads all {@link BaseRenderer} instances registered to this {@link RendererManager} which have the given group ID assigned to them. */
+	/** Unloads all {@link BaseController} instances registered to this {@link ControllerManager} which have the given group ID assigned to them. */
 	public void removeControllerGroup(final int pGroupID) {
 		// Heap assignment
-		final List<BaseController> CONTROLLER_UPDATE_LIST = new ArrayList<>();
-		final int CONTROLLER_COUNT = mControllers.size();
+		final List<BaseController> lControllerList = mControllers.get(pGroupID);
+		if (lControllerList == null)
+			return;
+
+		final int CONTROLLER_COUNT = lControllerList.size();
 		for (int i = 0; i < CONTROLLER_COUNT; i++) {
-			CONTROLLER_UPDATE_LIST.add(mControllers.get(i));
+			lControllerList.get(i).unload();
 
 		}
 
-		for (int i = 0; i < CONTROLLER_COUNT; i++) {
-			if (CONTROLLER_UPDATE_LIST.get(i).groupID() == pGroupID) {
-				// Unload this BaseRenderer instance
-				final BaseController CONTROLLER = CONTROLLER_UPDATE_LIST.get(i);
-
-				// TODO: Need to explicitly unload controllers?
-
-				// Remove the BaseRenderer instance from the mWindowRenderers list
-				mControllers.remove(CONTROLLER);
-
-			}
-
-		}
+		lControllerList.clear();
+		mControllers.remove(pGroupID);
 
 	}
 

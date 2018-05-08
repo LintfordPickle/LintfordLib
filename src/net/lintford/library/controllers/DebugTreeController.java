@@ -49,7 +49,16 @@ public class DebugTreeController extends BaseController {
 
 	@Override
 	public void initialise() {
-		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void unload() {
+		if (mDebugTreeComponents != null) {
+			mDebugTreeComponents.clear();
+			mDebugTreeComponents = null;
+
+		}
 
 	}
 

@@ -14,10 +14,8 @@ import static org.lwjgl.opengl.GL11.glClearColor;
 import org.lwjgl.opengl.GL11;
 
 import net.lintford.library.GameInfo;
-import net.lintford.library.controllers.BaseControllerGroups;
 import net.lintford.library.controllers.camera.CameraController;
 import net.lintford.library.controllers.core.ControllerManager;
-import net.lintford.library.controllers.core.RendererController;
 import net.lintford.library.controllers.core.ResourceController;
 import net.lintford.library.core.camera.Camera;
 import net.lintford.library.core.camera.HUD;
@@ -26,6 +24,7 @@ import net.lintford.library.core.debug.DebugManager;
 import net.lintford.library.core.debug.DebugManager.DebugLogLevel;
 import net.lintford.library.core.debug.DebugMemory;
 import net.lintford.library.core.debug.GLDebug;
+import net.lintford.library.core.entity.EntityID;
 import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.input.InputState;
@@ -33,19 +32,18 @@ import net.lintford.library.core.rendering.RenderState;
 import net.lintford.library.core.time.GameTime;
 import net.lintford.library.options.DisplayConfig;
 import net.lintford.library.options.MasterConfig;
-import net.lintford.library.renderers.RendererManager;
 
 /**
- * The LintfordCore tracks the core state of an LWJGL application including a
- * {@link DisplayConfig}, {@link ResourceManager}, {@link GameTime},
- * {@link Camera}, {@link HUD}, {@link InputState} and {@link RenderState}. It
- * also defines the behaviour for creating an OpenGL window.
+ * The LintfordCore tracks the core state of an LWJGL application including a {@link DisplayConfig}, {@link ResourceManager}, {@link GameTime}, {@link Camera}, {@link HUD}, {@link InputState} and {@link RenderState}. It also defines the behaviour for
+ * creating an OpenGL window.
  */
 public abstract class LintfordCore {
 
 	// ---------------------------------------------
 	// Variables
 	// ---------------------------------------------
+
+	public final int CORE_ID = EntityID.getEntityNumber();
 
 	protected GameInfo mGameInfo;
 	protected MasterConfig mMasterConfig;
@@ -54,10 +52,9 @@ public abstract class LintfordCore {
 	protected GameTime mGameTime;
 
 	protected ControllerManager mControllerManager;
-	protected RendererManager mRendererManager;
 	protected ResourceManager mResourceManager;
-
 	protected ResourceController mResourceController;
+	protected CameraController mCameraController;
 
 	protected Camera mGameCamera;
 	protected HUD mHUD;
@@ -70,19 +67,14 @@ public abstract class LintfordCore {
 	// ---------------------------------------------
 
 	/**
-	 * Returns the instance of {@link GameTime} which was created when the LWJGL
-	 * window was created. GameTime tracks the application time. null is returned if
-	 * the LWJGL window has not yet been created.
+	 * Returns the instance of {@link GameTime} which was created when the LWJGL window was created. GameTime tracks the application time. null is returned if the LWJGL window has not yet been created.
 	 */
 	public GameTime time() {
 		return mGameTime;
 	}
 
 	/**
-	 * Returns the instance of {@link InputState} which was created when the LWJGL
-	 * window was created. InputState is updated per-frame and tracks user input
-	 * from the mouse and keyboard. null is returned if the LWJGL window has not yet
-	 * been created.
+	 * Returns the instance of {@link InputState} which was created when the LWJGL window was created. InputState is updated per-frame and tracks user input from the mouse and keyboard. null is returned if the LWJGL window has not yet been created.
 	 */
 	public InputState input() {
 		return mInputState;
@@ -97,31 +89,23 @@ public abstract class LintfordCore {
 		return mMasterConfig;
 	}
 
-	public RendererManager rendererManager() {
-		return mRendererManager;
-	}
-
 	public ControllerManager controllerManager() {
 		return mControllerManager;
 	}
 
 	/**
-	 * Returns the active HUD {@link ICamera} instance assigned to this
-	 * {@link RenderState}.
+	 * Returns the active HUD {@link ICamera} instance assigned to this {@link RenderState}.
 	 */
 	public ICamera HUD() {
 		return mHUD;
 	}
 
 	/**
-	 * Returns the active game {@link ICamera} instance assigned to this
-	 * {@link RenderState}. This can return null if no game camera has been
-	 * explicitly set!
+	 * Returns the active game {@link ICamera} instance assigned to this {@link RenderState}. This can return null if no game camera has been explicitly set!
 	 */
 	public ICamera gameCamera() {
 		if (mGameCamera == null) {
-			DebugManager.DEBUG_MANAGER.logger().w(getClass().getSimpleName(),
-					"GameCamera not registered with LWJGLCore! Are you trying to access the game camera outside of a GameScreen?");
+			DebugManager.DEBUG_MANAGER.logger().w(getClass().getSimpleName(), "GameCamera not registered with LWJGLCore! Are you trying to access the game camera outside of a GameScreen?");
 			return ICamera.EMPTY;
 
 		}
@@ -151,8 +135,7 @@ public abstract class LintfordCore {
 		DebugMemory.dumpMemoryToLog();
 
 		// Print out the working directory
-		DebugManager.DEBUG_MANAGER.logger().i(getClass().getSimpleName(),
-				"Working directory: " + System.getProperty("user.dir"));
+		DebugManager.DEBUG_MANAGER.logger().i(getClass().getSimpleName(), "Working directory: " + System.getProperty("user.dir"));
 
 	}
 
@@ -161,8 +144,7 @@ public abstract class LintfordCore {
 	// ---------------------------------------------
 
 	/**
-	 * Creates a new OpenGL window, instantiates all auxiliary classes and starts
-	 * the main game loop.
+	 * Creates a new OpenGL window, instantiates all auxiliary classes and starts the main game loop.
 	 */
 	public void createWindow() {
 		// Load the configuration files saved previously by the user (else create new
@@ -181,16 +163,11 @@ public abstract class LintfordCore {
 		TextureManager.textureManager();
 
 		mControllerManager = new ControllerManager(this);
-		mRendererManager = new RendererManager(this);
 
-		mResourceController = new ResourceController(mControllerManager, mResourceManager,
-				BaseControllerGroups.CONTROLLER_CORE_GROUP_ID);
+		mResourceController = new ResourceController(mControllerManager, mResourceManager, CORE_ID);
 
 		mHUD = new HUD(mMasterConfig.display());
 		mRenderState = new RenderState();
-
-		mControllerManager.addController(new RendererController(mControllerManager, mRendererManager,
-				BaseControllerGroups.CONTROLLER_CORE_GROUP_ID));
 
 		onRunGameLoop();
 
@@ -219,37 +196,32 @@ public abstract class LintfordCore {
 	}
 
 	/**
-	 * Implemented in the sub-class. Sets the default state of the application
-	 * (note. OpenGL context is not available at this point).
+	 * Implemented in the sub-class. Sets the default state of the application (note. OpenGL context is not available at this point).
 	 */
 	protected void onInitialiseApp() {
 
 	}
 
 	/**
-	 * Called automatically before entering the main game loop. OpenGL content can
-	 * be setup.
+	 * Called automatically before entering the main game loop. OpenGL content can be setup.
 	 */
 	protected void onLoadGLContent() {
 		DebugManager.DEBUG_MANAGER.logger().i(getClass().getSimpleName(), "Loading GL content");
 
 		mResourceManager.loadGLContent();
-		mRendererManager.loadGLContent(mResourceManager);
 
 		DebugManager.DEBUG_MANAGER.loadGLContent(mResourceManager);
 
 	}
 
 	/**
-	 * Called automatically after exiting the main game loop. OpenGL resources
-	 * should be released.
+	 * Called automatically after exiting the main game loop. OpenGL resources should be released.
 	 */
 	protected void onUnloadGLContent() {
 		DebugManager.DEBUG_MANAGER.logger().i(getClass().getSimpleName(), "Unloading GL content");
 
 		DebugManager.DEBUG_MANAGER.unloadGLContent();
 
-		mRendererManager.unloadGLContent();
 		mResourceManager.unloadContent();
 
 	}
@@ -302,20 +274,19 @@ public abstract class LintfordCore {
 	}
 
 	/**
-	 * handle input for auxiliary classes. If extended in sub-classes, ensure to
-	 * handleInput on auxiliary classes!
+	 * handle input for auxiliary classes. If extended in sub-classes, ensure to handleInput on auxiliary classes!
 	 */
 	protected void onHandleInput() {
 		DebugManager.DEBUG_MANAGER.handleInput(this);
 		mHUD.handleInput(this);
-		mRendererManager.handleInput(this);
-		mControllerManager.handleInput(this);
+
+		// TODO: Problems with Z?
+		mControllerManager.handleInput(this, CORE_ID);
 
 	}
 
 	/**
-	 * update auxiliary classes. If extended in sub-classes, ensure to update the
-	 * auxiliary classes!
+	 * update auxiliary classes. If extended in sub-classes, ensure to update the auxiliary classes!
 	 */
 	protected void onUpdate() {
 		mMasterConfig.update(this);
@@ -324,7 +295,7 @@ public abstract class LintfordCore {
 		mHUD.update(this);
 		if (mGameCamera != null)
 			mGameCamera.update(this);
-		mControllerManager.update(this);
+		mControllerManager.update(this, CORE_ID);
 
 		DebugManager.DEBUG_MANAGER.update(this);
 
@@ -336,8 +307,6 @@ public abstract class LintfordCore {
 			return;
 
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-
-		mRendererManager.draw(this);
 
 	}
 
@@ -362,10 +331,9 @@ public abstract class LintfordCore {
 	}
 
 	public void initialiseGLFWWindow() {
-		// TODO: Load default/saved window settings (fullscreen, width and height etc.).
+		// TODO: Load default/saved window settings (fullscreen, dimensions, position etc.).
 
-		long lWindowID = mMasterConfig.onCreateWindow(mGameInfo, false, mGameInfo.windowWidth(),
-				mGameInfo.windowHeight(), mGameInfo.windowResizeable());
+		long lWindowID = mMasterConfig.onCreateWindow(mGameInfo, false, mGameInfo.windowWidth(), mGameInfo.windowHeight(), mGameInfo.windowResizeable());
 
 		// set key callbacks
 		glfwSetKeyCallback(lWindowID, mInputState.mKeyCallback);
@@ -378,20 +346,24 @@ public abstract class LintfordCore {
 
 	}
 
-	public void setNewGameCamera() {
-		setNewGameCamera(new Camera(mMasterConfig.display()));
-
-	}
-
 	public void setNewGameCamera(Camera pCamera) {
 		mGameCamera = pCamera;
-		mControllerManager.addController(
-				new CameraController(mControllerManager, mGameCamera, BaseControllerGroups.CONTROLLER_GAME_GROUP_ID));
+
+		if (pCamera == null)
+			mGameCamera = new Camera(mMasterConfig.display());
+
+		mCameraController = new CameraController(mControllerManager, mGameCamera, CORE_ID);
 
 	}
 
 	public void removeGameCamera() {
 		mGameCamera = null;
+
+		if (mCameraController != null) {
+			mControllerManager.removeController(mCameraController, CORE_ID);
+			mCameraController = null;
+
+		}
 
 	}
 

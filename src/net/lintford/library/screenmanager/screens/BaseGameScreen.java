@@ -1,9 +1,7 @@
 package net.lintford.library.screenmanager.screens;
 
-import net.lintford.library.controllers.BaseControllerGroups;
+import net.lintford.library.controllers.core.GameRendererController;
 import net.lintford.library.core.camera.Camera;
-import net.lintford.library.core.graphics.ResourceManager;
-import net.lintford.library.renderers.BaseRendererGroups;
 import net.lintford.library.screenmanager.Screen;
 import net.lintford.library.screenmanager.ScreenManager;
 
@@ -13,17 +11,10 @@ public abstract class BaseGameScreen extends Screen {
 	// Constructor
 	// --------------------------------------
 
-	public BaseGameScreen(ScreenManager pScreenManager) {
-		super(pScreenManager);
-
-		mScreenManager.core().setNewGameCamera();
-
-	}
-	
 	public BaseGameScreen(ScreenManager pScreenManager, Camera pCamera) {
 		super(pScreenManager);
 
-		mScreenManager.core().setNewGameCamera(pCamera);
+		new GameRendererController(pScreenManager.core().controllerManager(), mRendererManager, entityGroupID);
 
 	}
 
@@ -32,12 +23,10 @@ public abstract class BaseGameScreen extends Screen {
 	// --------------------------------------
 
 	@Override
-	public void loadGLContent(ResourceManager pResourceManager) {
+	public void initialise() {
+		super.initialise();
 
-	}
-
-	@Override
-	public void unloadGLContent() {
+		mScreenManager.core().setNewGameCamera(null);
 
 	}
 
@@ -47,14 +36,10 @@ public abstract class BaseGameScreen extends Screen {
 
 	@Override
 	public void exitScreen() {
+		super.exitScreen();
 
 		mScreenManager.core().removeGameCamera();
 
-		// Remove all controllers and renderers related to the game
-		mScreenManager.core().controllerManager().removeControllerGroup(BaseControllerGroups.CONTROLLER_GAME_GROUP_ID);
-		mScreenManager.core().rendererManager().removeRendererGroup(BaseRendererGroups.RENDERER_GAME_GROUP_ID);
-
-		super.exitScreen();
 	}
 
 }

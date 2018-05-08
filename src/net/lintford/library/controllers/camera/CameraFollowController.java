@@ -71,12 +71,22 @@ public class CameraFollowController extends BaseController {
 	// Core-Methods
 	// ---------------------------------------------
 
+	@Override
+	public void initialise() {
+
+	}
+	
 	public void initialise(ICamera pGameCamera, WorldEntity pTrackedEntity) {
 		mGameCamera = pGameCamera;
 		mTrackedEntity = pTrackedEntity;
 
 	}
 
+	@Override
+	public void unload() {
+		
+	}
+	
 	@Override
 	public boolean handleInput(LintfordCore pCore) {
 		if (mGameCamera == null)
@@ -151,18 +161,13 @@ public class CameraFollowController extends BaseController {
 
 	}
 
+	// ---------------------------------------------
+	// Methods
+	// ---------------------------------------------
+
 	public void zoomIn() {
 		mGameCamera.setZoomFactor(CameraZoomController.MAX_CAMERA_ZOOM);
 
 	}
 
-	@Override
-	public void initialise() {
-		// TODO Auto-generated method stub
-
-	}
-
-	// ---------------------------------------------
-	// Methods
-	// ---------------------------------------------
 }

@@ -50,4 +50,9 @@ public class ResourceController extends BaseController {
 
 	}
 
+	@Override
+	public void unload() {
+		
+	}
+	
 }

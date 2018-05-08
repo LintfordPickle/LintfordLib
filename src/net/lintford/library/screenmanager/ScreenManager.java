@@ -23,6 +23,7 @@ public class ScreenManager {
 	private String mFontPathname;
 	private boolean mIsInitialised;
 	private boolean mIsLoaded;
+	private int mScreenCounter;
 
 	// --------------------------------------
 	// Properties
@@ -48,18 +49,24 @@ public class ScreenManager {
 		return mLWJGLCore;
 	}
 
+	/** Returns a new ID for a screen. */
+	public int getNewUUID() {
+		return mScreenCounter++;
+	}
+
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
 	public ScreenManager(LintfordCore pCore) {
 		mLWJGLCore = pCore;
+		mScreenCounter = 100;
 		// mGameSettings = new GameSettings();
 
 		mToastManager = new ToastManager();
 		mScreens = new ArrayList<Screen>();
 		mScreensToUpdate = new ArrayList<Screen>();
-		
+
 		// This can and probably should be overriden with a game specific font
 		mFontPathname = FontManager.SYSTEM_FONT_PATH;
 
@@ -218,7 +225,10 @@ public class ScreenManager {
 
 		if (mIsInitialised) {
 			pScreen.unloadGLContent();
+
 		}
+
+		pScreen.onScreenRemovedFromScreenManager();
 
 		if (mScreens.contains(pScreen)) {
 			// if this screen was the top screen, then the screen below gains focus
