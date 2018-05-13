@@ -287,6 +287,12 @@ public class Camera implements ICamera {
 	@Override
 	public void setZoomFactor(float pNewValue) {
 		mZoomFactor = pNewValue;
+		
+		int lGameViewportWidth = mDisplayConfig.gameViewportSize().x;
+		int lGameViewportHeight = mDisplayConfig.gameViewportSize().y;
+		
+		createView();
+		updateZoomBounds(lGameViewportWidth, lGameViewportHeight);
 
 	}
 

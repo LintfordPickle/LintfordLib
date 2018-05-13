@@ -169,12 +169,12 @@ public abstract class Screen {
 	}
 
 	public void handleInput(LintfordCore pCore, boolean pAcceptMouse, boolean pAcceptKeyboard) {
+		mRendererManager.handleInput(pCore);
 		mScreenManager.core().controllerManager().handleInput(mScreenManager.core(), entityGroupID);
 		
 	}
 
 	public void update(LintfordCore pCore, boolean pOtherScreenHasFocus, boolean pCoveredByOtherScreen) {
-
 		if (!mRendererManager.isLoaded())
 			throw new RuntimeException("RendererManager not loaded");
 

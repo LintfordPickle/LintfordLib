@@ -174,7 +174,7 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 		final float lMouseScreenSpaceX = pCore.HUD().getMouseWorldSpaceX();
 		final float lMouseScreenSpaceY = pCore.HUD().getMouseWorldSpaceY();
 
-		// First check if the scroll bar has been used
+		// 1. Check if the scroll bar has been used
 		if (mScrollBar.handleInput(pCore)) {
 			return true;
 		}
@@ -208,8 +208,6 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 			return true;
 
 		}
-
-		// one problem ..
 
 		// 2. window captures mouse clicks even if not dragging
 

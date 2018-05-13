@@ -251,19 +251,18 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 			}
 		}
 
-		if (pCore.input().keyDownTimed(GLFW.GLFW_KEY_ESCAPE)) {
-			if (mOpen) {
-				mOpen = false;
-				mInputText.delete(0, mInputText.length());
-				mHasFocus = false;
-				pCore.input().stopCapture();
+		if (mOpen) {
+			if (pCore.input().keyDownTimed(GLFW.GLFW_KEY_ESCAPE)) {
+				if (mOpen) {
+					mOpen = false;
+					mInputText.delete(0, mInputText.length());
+					mHasFocus = false;
+					pCore.input().stopCapture();
+
+				}
 
 			}
-
-		}
-
-		if (mOpen) {
-
+			
 			if (mScrollBar.handleInput(pCore)) {
 
 				if (mScrollBar.isAtBottomPosition()) {

@@ -78,13 +78,14 @@ public class ParticleRenderer {
 		final int PARTICLE_COUNT = PARTICLES.size();
 
 		mTextureBatch.begin(pCore.gameCamera());
+		
 		for (int i = 0; i < PARTICLE_COUNT; i++) {
 			final Particle PART = PARTICLES.get(i);
 
 			if (PART.isFree())
 				continue;
 
-			mTextureBatch.draw(mTexture, PART.sx, PART.sy, PART.sw, PART.sh, PART.x - PART.radius, PART.y - PART.radius, -2, PART.radius * 2, PART.radius * 2, PART.r, PART.g, PART.b, PART.a);
+			mTextureBatch.draw(mTexture, PART.sx, PART.sy, PART.sw, PART.sh, PART.x - PART.radius, PART.y - PART.radius, PART.radius, PART.radius, -0.2f, PART.r, PART.g, PART.b, PART.a);
 
 		}
 
