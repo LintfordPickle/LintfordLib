@@ -167,11 +167,11 @@ public class LineBatch {
 	public void drawRect(float pX, float pY, float pW, float pH, float pZ) {
 		if (!mIsDrawing)
 			return;
-		draw(pX, pY, pX + pW, pY, pZ, 1f, 1f, 1f); // top
-		draw(pX, pY + pH, pX + pW, pY + pH, pZ, 1f, 1f, 1f); // bottom
+		draw(pX, pY, pX + pW, pY, pZ, r, g, b); // top
+		draw(pX, pY + pH, pX + pW, pY + pH, pZ, r, g, b); // bottom
 
-		draw(pX, pY, pX, pY + pH, pZ, 1f, 1f, 1f); // left
-		draw(pX + pW, pY, pX + pW, pY + pH, pZ, 1f, 1f, 1f); // right
+		draw(pX, pY, pX, pY + pH, pZ, r, g, b); // left
+		draw(pX + pW, pY, pX + pW, pY + pH, pZ, r, g, b); // right
 	}
 
 	public void drawRect(float pX, float pY, float pW, float pH, float pZ, float pR, float pG, float pB) {

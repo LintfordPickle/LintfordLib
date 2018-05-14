@@ -40,6 +40,11 @@ public class RectangleEntity extends WorldEntity {
 		return mBounds;
 	}
 
+	@Override
+	public float maxLength() {
+		return Math.max(width, height);
+	}
+
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------

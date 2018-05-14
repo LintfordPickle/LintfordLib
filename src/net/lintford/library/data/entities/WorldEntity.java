@@ -41,6 +41,9 @@ public abstract class WorldEntity extends BaseData {
 
 	}
 
+	/** Returns the max length of this entity (for simple distance culling) */
+	public abstract float maxLength();
+	
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
@@ -58,10 +61,6 @@ public abstract class WorldEntity extends BaseData {
 		dx = pVelX;
 		dy = pVelY;
 
-	}
-
-	public boolean hasCollision(int x, int y) {
-		return false;
 	}
 
 	public void update(LintfordCore pCore)

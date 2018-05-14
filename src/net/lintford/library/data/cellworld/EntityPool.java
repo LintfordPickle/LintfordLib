@@ -81,7 +81,7 @@ public class EntityPool<T extends CellEntity> implements IEntityCollider {
 
 	@Override
 	public void checkEntityCollisions(WorldEntity pEntity) {
-		// 
+		//
 
 	}
 

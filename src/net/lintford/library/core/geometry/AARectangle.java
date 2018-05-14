@@ -1,12 +1,16 @@
 package net.lintford.library.core.geometry;
 
+import java.io.Serializable;
+
 import net.lintford.library.core.maths.Vector2f;
 
 /**
  * Represents an axis-aligned rectangle and collision methods.
  */
-public class AARectangle {
+public class AARectangle implements Serializable {
 
+	private static final long serialVersionUID = -2882875960939792798L;
+	
 	// --------------------------------------
 	// Variables
 	// --------------------------------------

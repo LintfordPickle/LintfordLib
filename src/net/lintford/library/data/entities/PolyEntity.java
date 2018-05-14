@@ -37,6 +37,11 @@ public class PolyEntity extends WorldEntity {
 
 	}
 
+	@Override
+	public float maxLength() {
+		return Math.max(width, height);
+	}
+	
 	// --------------------------------------
 	// Methods
 	// --------------------------------------

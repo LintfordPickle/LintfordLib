@@ -22,6 +22,11 @@ public class CircleEntity extends WorldEntity {
 		return radius;
 	}
 
+	@Override
+	public float maxLength() {
+		return radius;
+	}
+	
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
