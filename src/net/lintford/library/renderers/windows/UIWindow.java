@@ -74,7 +74,7 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 	protected AARectangle mWindowArea;
 
 	/** If true, this base renderer consumes input and ends the handleInput invocation chain. */
-	protected boolean mExclusiveHandleInput;
+	protected boolean mExclusiveHandleInput = true;
 
 	protected boolean mIsDebugWindow;
 
@@ -168,7 +168,7 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 	}
 
 	public boolean handleInput(LintfordCore pCore) {
-		if (!isOpen())
+ 		if (!isOpen())
 			return false;
 
 		final float lMouseScreenSpaceX = pCore.HUD().getMouseWorldSpaceX();

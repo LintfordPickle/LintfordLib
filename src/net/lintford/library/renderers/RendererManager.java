@@ -45,6 +45,7 @@ public class RendererManager {
 	// Stuff from the UI Manager
 	private List<UIWindowChangeListener> mListeners;
 	private float mUIScale;
+	private float mUITextScale;
 
 	// Maybe put these in a kind of RendererResourcePool
 	private FontUnit mWindowTitleFont;
@@ -97,6 +98,10 @@ public class RendererManager {
 
 	public float getUIScale() {
 		return mUIScale;
+	}
+
+	public float getUITextScale() {
+		return mUITextScale;
 	}
 
 	public DisplayConfig displayConfig() {
