@@ -2,6 +2,7 @@ package net.lintford.library.controllers.debug;
 
 import net.lintford.library.controllers.BaseController;
 import net.lintford.library.controllers.core.ControllerManager;
+import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.time.GameTime;
 
 /** If enabled, prints the FPS to the console. */
@@ -57,7 +58,7 @@ public class DebugFPSController extends BaseController {
 	// --------------------------------------
 
 	@Override
-	public void initialise() {
+	public void initialise(LintfordCore pCore) {
 
 	}
 

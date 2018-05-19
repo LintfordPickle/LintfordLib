@@ -51,7 +51,7 @@ public class GameRendererController extends BaseController {
 	// --------------------------------------
 
 	@Override
-	public void initialise() {
+	public void initialise(LintfordCore pCore) {
 
 	}
 

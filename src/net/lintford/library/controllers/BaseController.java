@@ -80,14 +80,13 @@ public abstract class BaseController {
 	// Core-Methods
 	// --------------------------------------
 
-	// TODO: The initialise method in this form is pretty useless!
-	public abstract void initialise();
+	public abstract void initialise(LintfordCore pCore);
 
 	public abstract void unload();
 
 	public boolean handleInput(LintfordCore pCore) {
 		return false;
-		
+
 	}
 
 	public void update(LintfordCore pCore) {

@@ -155,6 +155,11 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 	// Core-Methods
 	// --------------------------------------
 
+	@Override
+	public void initialise(LintfordCore pCore) {
+		
+	}
+	
 	public void loadGLContent(ResourceManager pResourceManager) {
 		mContentDisplayArea.y = mWindowArea.y + getTitleBarHeight();
 		mContentDisplayArea.h = mWindowArea.h - +getTitleBarHeight();

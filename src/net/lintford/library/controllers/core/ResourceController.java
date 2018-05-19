@@ -1,6 +1,7 @@
 package net.lintford.library.controllers.core;
 
 import net.lintford.library.controllers.BaseController;
+import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.graphics.ResourceManager;
 
 public class ResourceController extends BaseController {
@@ -46,7 +47,7 @@ public class ResourceController extends BaseController {
 	// ---------------------------------------------
 
 	@Override
-	public void initialise() {
+	public void initialise(LintfordCore pCore) {
 
 	}
 

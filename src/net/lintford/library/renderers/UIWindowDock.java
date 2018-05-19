@@ -24,10 +24,6 @@ public class UIWindowDock extends BaseRenderer {
 	private TextureBatch mTextureBatch;
 
 	// --------------------------------------
-	// Properties
-	// --------------------------------------
-
-	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
@@ -42,6 +38,11 @@ public class UIWindowDock extends BaseRenderer {
 	// Core-Methods
 	// --------------------------------------
 
+	@Override
+	public void initialise(LintfordCore pCore) {
+		
+	}
+	
 	@Override
 	public void loadGLContent(ResourceManager pResourceManager) {
 		super.loadGLContent(pResourceManager);

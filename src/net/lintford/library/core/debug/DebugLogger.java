@@ -212,6 +212,10 @@ public class DebugLogger {
 
 	}
 
+	public void printException(String pTag, Exception pException) {
+		
+	}
+	
 	/** Appends the given message into a file at the given location. */
 	public boolean writeDebugMessageToFile(String pTag, String pTimestamp, String pMessage) {
 		if (mDebugLogBufferedOutputStream == null)

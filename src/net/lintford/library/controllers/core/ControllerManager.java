@@ -87,7 +87,7 @@ public class ControllerManager {
 	// Methods
 	// --------------------------------------
 
-	public void initialiseControllers() {
+	public void initialiseControllers(LintfordCore pCore) {
 
 		for (Map.Entry<Integer, List<BaseController>> lEntry : mControllers.entrySet()) {
 			List<BaseController> lControllerList = lEntry.getValue();
@@ -100,7 +100,7 @@ public class ControllerManager {
 				if (lControllerList.get(i).isInitialised())
 					continue;
 
-				lControllerList.get(i).initialise();
+				lControllerList.get(i).initialise(pCore);
 			}
 
 		}

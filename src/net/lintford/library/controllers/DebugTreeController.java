@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.lintford.library.controllers.core.ControllerManager;
+import net.lintford.library.core.LintfordCore;
 
 public class DebugTreeController extends BaseController {
 
@@ -48,7 +49,7 @@ public class DebugTreeController extends BaseController {
 	// --------------------------------------
 
 	@Override
-	public void initialise() {
+	public void initialise(LintfordCore pCore) {
 
 	}
 

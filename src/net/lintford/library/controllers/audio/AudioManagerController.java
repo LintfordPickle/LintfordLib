@@ -2,6 +2,7 @@ package net.lintford.library.controllers.audio;
 
 import net.lintford.library.controllers.BaseController;
 import net.lintford.library.controllers.core.ControllerManager;
+import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.audio.AudioManager;
 
 public class AudioManagerController extends BaseController {
@@ -40,7 +41,7 @@ public class AudioManagerController extends BaseController {
 	}
 
 	@Override
-	public void initialise() {
+	public void initialise(LintfordCore pCore) {
 
 	}
 

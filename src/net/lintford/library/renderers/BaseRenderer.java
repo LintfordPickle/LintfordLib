@@ -71,7 +71,7 @@ public abstract class BaseRenderer {
 		mRendererManager = pRendererManager;
 		mRendererName = pRendererName;
 
-		if(pRendererManager != null) {
+		if (pRendererManager != null) {
 			pRendererManager.addRenderer(this);
 
 		}
@@ -85,6 +85,8 @@ public abstract class BaseRenderer {
 	// --------------------------------------
 	// Core-Methods
 	// --------------------------------------
+
+	public abstract void initialise(LintfordCore pCore);
 
 	public void loadGLContent(ResourceManager pResourceManager) {
 		DebugManager.DEBUG_MANAGER.logger().i(TAG, "Loading GL Content (" + getClass().getSimpleName() + ")");

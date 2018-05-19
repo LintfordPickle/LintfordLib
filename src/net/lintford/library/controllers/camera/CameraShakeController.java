@@ -66,7 +66,7 @@ public class CameraShakeController extends BaseController {
 	}
 
 	@Override
-	public void initialise() {
+	public void initialise(LintfordCore pCore) {
 
 	}
 

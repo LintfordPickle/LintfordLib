@@ -72,10 +72,11 @@ public class CameraFollowController extends BaseController {
 	// ---------------------------------------------
 
 	@Override
-	public void initialise() {
+	public void initialise(LintfordCore pCore) {
 
 	}
 	
+	// FIXME: Duplicate initialise method - rename to something else or clean up design!
 	public void initialise(ICamera pGameCamera, WorldEntity pTrackedEntity) {
 		mGameCamera = pGameCamera;
 		mTrackedEntity = pTrackedEntity;

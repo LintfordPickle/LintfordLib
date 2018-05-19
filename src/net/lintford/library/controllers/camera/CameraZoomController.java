@@ -117,7 +117,7 @@ public class CameraZoomController extends BaseController {
 	// ---------------------------------------------
 
 	@Override
-	public void initialise() {
+	public void initialise(LintfordCore pCore) {
 
 	}
 
