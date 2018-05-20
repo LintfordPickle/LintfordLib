@@ -169,10 +169,6 @@ public abstract class Screen {
 	}
 
 	public void handleInput(LintfordCore pCore, boolean pAcceptMouse, boolean pAcceptKeyboard) {
-		boolean lResult = mRendererManager.handleInput(pCore);
-		
-		// if(lResult) return;
-		
 		mScreenManager.core().controllerManager().handleInput(mScreenManager.core(), entityGroupID);
 		
 	}
