@@ -408,12 +408,12 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 	}
 
 	@Override
-	public AARectangle windowArea() {
+	public AARectangle contentDisplayArea() {
 		return mWindowRectangle;
 	}
 
 	@Override
-	public ScrollBarContentRectangle contentArea() {
+	public ScrollBarContentRectangle fullContentArea() {
 		// mContentRectangle.set(x, y, w, mEntries.size() * 25);
 		return mContentRectangle;
 

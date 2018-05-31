@@ -28,6 +28,8 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 	// Constants
 	// --------------------------------------
 
+	private static final long serialVersionUID = 7219958843491782625L;
+	
 	private static final boolean CONSOLE_ENABLED = true;
 	private static final boolean AUTO_CAPTURE_ON_OPEN = false;
 
@@ -331,7 +333,7 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 		final int MAX_NUM_LINES = (int) ((openHeight() - mConsoleLineHeight * 2) / mConsoleLineHeight) - 1;
 
 		final int lNumberLinesInConsole = mProcessed ? mProcessedMessages.size() : DebugManager.DEBUG_MANAGER.logger().logLines().size();
-		contentArea().set(x, y, w - mScrollBar.w, lNumberLinesInConsole * 25);
+		fullContentArea().set(x, y, w - mScrollBar.w, lNumberLinesInConsole * 25);
 
 		DisplayConfig lDisplay = pCore.config().display();
 		// Update the bounds of the window view
@@ -661,12 +663,12 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 	}
 
 	@Override
-	public AARectangle windowArea() {
+	public AARectangle contentDisplayArea() {
 		return this;
 	}
 
 	@Override
-	public ScrollBarContentRectangle contentArea() {
+	public ScrollBarContentRectangle fullContentArea() {
 		return mContentRectangle;
 	}
 

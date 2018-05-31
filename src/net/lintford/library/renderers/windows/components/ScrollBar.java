@@ -11,6 +11,8 @@ public class ScrollBar extends AARectangle {
 	// Constants
 	// --------------------------------------
 
+	private static final long serialVersionUID = 1303829783855348106L;
+
 	public static final float BAR_WIDTH = 20;
 
 	// --------------------------------------
@@ -33,8 +35,8 @@ public class ScrollBar extends AARectangle {
 	}
 
 	public boolean areaNeedsScrolling() {
-		float lViewportHeight = mScrollBarArea.windowArea().h;
-		float lContentHeight = Math.max(mScrollBarArea.windowArea().h, mScrollBarArea.contentArea().h);
+		float lViewportHeight = mScrollBarArea.contentDisplayArea().h;
+		float lContentHeight = Math.max(mScrollBarArea.contentDisplayArea().h, mScrollBarArea.fullContentArea().h);
 		
 		return lContentHeight > lViewportHeight;
 	}
@@ -58,19 +60,21 @@ public class ScrollBar extends AARectangle {
 		final float lMouseScreenSpaceX = pCore.HUD().getMouseWorldSpaceX();
 		final float lMouseScreenSpaceY = pCore.HUD().getMouseWorldSpaceY();
 
-		final float lMaxDiff = mScrollBarArea.contentArea().h - mScrollBarArea.windowArea().h;
+		final float lMaxDiff = mScrollBarArea.fullContentArea().h - mScrollBarArea.contentDisplayArea().h;
 
-		// First check the mouse is within bounds
+		// First check that the left mouse button is down 
 		if (!pCore.input().mouseLeftClick()) {
 			mClickActive = false; // Cannot be active if mouse not clicked
 			return false;
 
 		}
 
+		// check the mouse is within bounds
 		if (!mClickActive && !intersects(lMouseScreenSpaceX, lMouseScreenSpaceY)) {
 			return false;
 		}
 
+		// and check the mouse click isn't being handled elsewhere
 		if (!pCore.input().tryAquireLeftClickOwnership(hashCode()))
 			return false;
 
@@ -104,8 +108,8 @@ public class ScrollBar extends AARectangle {
 	}
 
 	public void update(LintfordCore pCore) {
-		float lViewportHeight = mScrollBarArea.windowArea().h;
-		float lContentHeight = Math.max(mScrollBarArea.windowArea().h, mScrollBarArea.contentArea().h);
+		float lViewportHeight = mScrollBarArea.contentDisplayArea().h;
+		float lContentHeight = mScrollBarArea.fullContentArea().h;
 
 		float lViewableRatio = lViewportHeight / lContentHeight;
 		mMarkerBarHeight = lViewportHeight * lViewableRatio;
@@ -114,10 +118,10 @@ public class ScrollBar extends AARectangle {
 		float lScrollThumbSpace = lViewportHeight - mMarkerBarHeight;
 		mMarkerMoveMod = lScrollTrackSpace / lScrollThumbSpace;
 
-		x = mScrollBarArea.windowArea().x + mScrollBarArea.windowArea().w - 20;
-		y = mScrollBarArea.windowArea().y;
+		x = mScrollBarArea.contentDisplayArea().x + mScrollBarArea.contentDisplayArea().w - 20;
+		y = mScrollBarArea.contentDisplayArea().y;
 		w = 20;
-		h = mScrollBarArea.windowArea().h;
+		h = mScrollBarArea.contentDisplayArea().h;
 		
 	}
 
@@ -128,7 +132,7 @@ public class ScrollBar extends AARectangle {
 		pTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, x, y, w, h, pZDepth, 0.13f, 0.12f, 0.22f, 0.9f);
 
 		// Render the actual scroll bar
-		final float by = mScrollBarArea.windowArea().y - (mScrollBarArea.currentYPos() / mMarkerMoveMod);
+		final float by = mScrollBarArea.contentDisplayArea().y - (mScrollBarArea.currentYPos() / mMarkerMoveMod);
 
 		// Draw the marker bar
 		pTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, x + 9, y, 2, h, pZDepth, 1f, 1f, 1f, 1f);
@@ -139,7 +143,6 @@ public class ScrollBar extends AARectangle {
 	}
 
 	public void resetBarTop() {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -161,7 +164,7 @@ public class ScrollBar extends AARectangle {
 	}
 
 	public float getScrollYBottomPosition() {
-		return -mScrollBarArea.contentArea().h + h;
+		return -mScrollBarArea.fullContentArea().h + h;
 	}
 
 }

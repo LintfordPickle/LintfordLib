@@ -26,6 +26,8 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 	// Constants
 	// --------------------------------------
 
+	private static final long serialVersionUID = 6606453352329315889L;
+	
 	public static int LISTBOX_HEIGHT = 350;
 	public static float LISTBOX_ITEM_VPADDING = 15; // The amound of space vertically between items
 
@@ -117,9 +119,8 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 		}
 
 		for (int i = 0; i < mItems.size(); i++) {
-			// TODO(John): Don't like how the item.handleInput is used explicitly (only) for selecting the item and NOT
-			// handling the input
 			boolean lResult = mItems.get(i).handleInput(pCore);
+			// Was this item clicked on?
 			if (lResult) {
 				return true;
 			}
@@ -322,12 +323,12 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 	}
 
 	@Override
-	public AARectangle windowArea() {
+	public AARectangle contentDisplayArea() {
 		return this;
 	}
 
 	@Override
-	public ScrollBarContentRectangle contentArea() {
+	public ScrollBarContentRectangle fullContentArea() {
 		return mContentArea;
 	}
 

@@ -10,8 +10,16 @@ public interface IScrollBarArea {
 
 	public abstract void AbsCurrentYPos(float pValue);
 
-	public abstract AARectangle windowArea();
+	/**
+	 * This is the area within which you want to contrain the data to be displayed. 
+	 * @return
+	 */
+	public abstract AARectangle contentDisplayArea();
 
-	public abstract ScrollBarContentRectangle contentArea();
+	/**
+	 * This is the area of which the content takes up in its entireity.
+	 * @return
+	 */
+	public abstract ScrollBarContentRectangle fullContentArea();
 
 }

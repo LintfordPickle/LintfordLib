@@ -535,12 +535,12 @@ public abstract class BaseLayout extends AARectangle implements IScrollBarArea {
 	}
 
 	@Override
-	public AARectangle windowArea() {
+	public AARectangle contentDisplayArea() {
 		return this;
 	}
 
 	@Override
-	public ScrollBarContentRectangle contentArea() {
+	public ScrollBarContentRectangle fullContentArea() {
 		return mContentArea;
 	}
 

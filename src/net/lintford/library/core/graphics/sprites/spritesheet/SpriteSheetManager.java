@@ -105,7 +105,7 @@ public class SpriteSheetManager {
 
 			// Check the integrity of the loaded spritsheet
 			if (lSpriteSheet == null || lSpriteSheet.getSpriteCount() == 0) {
-				System.err.println("Error loading spritesheet " + lFile.getPath());
+				DebugManager.DEBUG_MANAGER.logger().w(getClass().getSimpleName(), "Error loading spritesheet " + lFile.getPath());
 				return null;
 
 			}
@@ -127,10 +127,12 @@ public class SpriteSheetManager {
 
 		} catch (JsonSyntaxException e) {
 			DebugManager.DEBUG_MANAGER.logger().e(getClass().getSimpleName(), "Failed to parse JSON SpriteSheet (Syntax): " + lFile.getPath());
+			DebugManager.DEBUG_MANAGER.logger().printException(getClass().getSimpleName(), e);
 			return null;
 
 		} catch (IOException e) {
 			DebugManager.DEBUG_MANAGER.logger().e(getClass().getSimpleName(), "Failed to parse JSON SpriteSheet (IO): " + lFile.getPath());
+			DebugManager.DEBUG_MANAGER.logger().printException(getClass().getSimpleName(), e);
 			return null;
 
 		}
@@ -159,7 +161,7 @@ public class SpriteSheetManager {
 
 			// Check the integrity of the loaded spritsheet
 			if (lSpriteSheet == null || lSpriteSheet.getSpriteCount() == 0) {
-				DebugManager.DEBUG_MANAGER.logger().v(getClass().getSimpleName(), "Error loading spritesheet " + lFile.getPath());
+				DebugManager.DEBUG_MANAGER.logger().w(getClass().getSimpleName(), "Error loading spritesheet " + lFile.getPath());
 				return null;
 
 			}
@@ -179,10 +181,12 @@ public class SpriteSheetManager {
 
 		} catch (JsonSyntaxException e) {
 			DebugManager.DEBUG_MANAGER.logger().e(getClass().getSimpleName(), "Failed to parse JSON SpriteSheet (Syntax): " + lFile.getPath());
+			DebugManager.DEBUG_MANAGER.logger().printException(getClass().getSimpleName(), e);
 			return null;
 
 		} catch (IOException e) {
 			DebugManager.DEBUG_MANAGER.logger().e(getClass().getSimpleName(), "Failed to parse JSON SpriteSheet (IO): " + lFile.getPath());
+			DebugManager.DEBUG_MANAGER.logger().printException(getClass().getSimpleName(), e);
 			return null;
 
 		}

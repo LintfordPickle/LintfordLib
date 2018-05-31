@@ -48,7 +48,6 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 
 	protected String mWindowTitle;
 	protected boolean mIsOpen;
-	protected ScrollBar mScrollBar;
 
 	protected boolean mMouseDownLastUpdate;
 
@@ -57,13 +56,16 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 	protected AARectangle mContentDisplayArea;
 
 	// This is the area that the content would take up, if not limited by the window bounds (i.e. the area of the 'content' visualisation).
-	protected ScrollBarContentRectangle mContentRectangle;
+	protected ScrollBarContentRectangle mFullContentRectangle;
 
 	protected boolean mUIInputFromUIManager;
 	protected boolean mIsWindowMoveable;
 	protected boolean mIsWindowMoving;
 	protected float dx, dy;
 	protected float mWindowAlpha;
+	
+	
+	protected ScrollBar mScrollBar;
 	protected float mYScrollVal;
 
 	// Window icons are loaded from the UI_TEXTURE_NAME. If this is null, no icon
@@ -136,13 +138,13 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 
 		mWindowAlpha = 1.0f;
 
-		mContentRectangle = new ScrollBarContentRectangle(this);
-		mScrollBar = new ScrollBar(this, mContentRectangle);
+		mFullContentRectangle = new ScrollBarContentRectangle(this);
+		mScrollBar = new ScrollBar(this, mFullContentRectangle);
 
-		mContentRectangle.x = mWindowArea.x;
-		mContentRectangle.y = mWindowArea.y + DEFAULT_TITLEBAR_HEIGHT;
-		mContentRectangle.w = 0;
-		mContentRectangle.h = 0;
+		mFullContentRectangle.x = mWindowArea.x;
+		mFullContentRectangle.y = mWindowArea.y + DEFAULT_TITLEBAR_HEIGHT;
+		mFullContentRectangle.w = 0;
+		mFullContentRectangle.h = 0;
 
 		// sane default
 		mWindowTitle = "<unnamed>";
@@ -193,7 +195,7 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 			}
 
 		}
-
+		
 		if (mIsWindowMoving) {
 			// check if user has stopped dragging the window (worst case we skip this frame)
 			if (!pCore.input().mouseLeftClick()) {
@@ -215,7 +217,6 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 		}
 
 		// 2. window captures mouse clicks even if not dragging
-
 		if (mIsWindowMoveable && !mIsWindowMoving && mWindowArea.intersects(pCore.HUD().getMouseCameraSpace())) {
 
 			// Only acquire lock when we are ready to move ...
@@ -316,7 +317,7 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 		lTitleFontUnit.draw(mWindowTitle, lTitleX, lTitleY + 2, Z_DEPTH, 1f, 1f, 1f, 1f, 1f, -1);
 		lTitleFontUnit.end();
 
-		if (mContentRectangle.h - windowArea().h > 0) {
+		if (mFullContentRectangle.h - contentDisplayArea().h > 0) {
 			mScrollBar.draw(pCore, lTextureBatch, Z_DEPTH);
 
 		}
@@ -375,13 +376,13 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 	}
 
 	@Override
-	public AARectangle windowArea() {
-		return mWindowArea;
+	public AARectangle contentDisplayArea() {
+		return mContentDisplayArea;
 	}
 
 	@Override
-	public ScrollBarContentRectangle contentArea() {
-		return mContentRectangle;
+	public ScrollBarContentRectangle fullContentArea() {
+		return mFullContentRectangle;
 	}
 
 	public void addComponent(UIWidget pComponent) {
