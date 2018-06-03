@@ -18,6 +18,8 @@ public class MenuEntry extends AARectangle {
 	// Constants
 	// --------------------------------------
 
+	private static final long serialVersionUID = -226493862481815669L;
+	
 	protected static final float MENUENTRY_DEF_BUTTON_WIDTH = 300;
 	protected static final float MENUENTRY_HEIGHT = 32;
 	protected static final float FOCUS_TIMER = 500f; // milli

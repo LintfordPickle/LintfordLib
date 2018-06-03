@@ -151,9 +151,9 @@ public class TimedConfirmationDialog extends BaseDialog {
 		final float TEXT_HORIZONTAL_PADDING = 20;
 
 		if (mDrawBackground) {
-			mSpriteBatch.begin(pCore.HUD());
-			mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 64, 0, 32, 32, -DIALOG_WIDTH * 0.5f, -DIALOG_HEIGHT * 0.5f, DIALOG_WIDTH, DIALOG_HEIGHT, ZDEPTH, mR, mG, mB, mA);
-			mSpriteBatch.end();
+			mTextureBatch.begin(pCore.HUD());
+			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 64, 0, 32, 32, -DIALOG_WIDTH * 0.5f, -DIALOG_HEIGHT * 0.5f, DIALOG_WIDTH, DIALOG_HEIGHT, ZDEPTH, mR, mG, mB, mA);
+			mTextureBatch.end();
 		}
 
 		font().begin(pCore.HUD());

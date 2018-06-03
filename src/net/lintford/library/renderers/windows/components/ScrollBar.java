@@ -129,7 +129,7 @@ public class ScrollBar extends AARectangle {
 		pTextureBatch.begin(pCore.HUD());
 
 		// Scroll bar background
-		pTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, x, y, w, h, pZDepth, 0.13f, 0.12f, 0.22f, 0.9f);
+		// pTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, x, y, w, h, pZDepth, 0.13f, 0.12f, 0.22f, 0.9f);
 
 		// Render the actual scroll bar
 		final float by = mScrollBarArea.contentDisplayArea().y - (mScrollBarArea.currentYPos() / mMarkerMoveMod);

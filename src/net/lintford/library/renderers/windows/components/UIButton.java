@@ -1,38 +1,32 @@
 package net.lintford.library.renderers.windows.components;
 
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.geometry.AARectangle;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
-import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 import net.lintford.library.renderers.windows.UIWindow;
 import net.lintford.library.screenmanager.entries.EntryInteractions;
 
-public class UIIconButton extends UIWidget {
+public class UIButton extends UIWidget {
 
 	// --------------------------------------
 	// Constants
 	// --------------------------------------
 
-	private static final long serialVersionUID = -5431518038383191422L;
+	private static final long serialVersionUID = 7704116387039308007L;
 
 	private static final String NO_LABEL_TEXT = "unlabled";
-	private static final int CLICK_TIMER = 250;
 
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
-	private transient EntryInteractions mCallback;
-	private transient int mClickID;
-	private transient String mButtonLabel;
-	private transient float mR, mG, mB;
-	private transient boolean mHoveredOver;
-	private transient float mClickTimer;
-
-	private transient Texture mButtonTexture;
-	private transient AARectangle mSourceRectangle;
+	private EntryInteractions mCallback;
+	private int mClickID;
+	private String mButtonLabel;
+	private boolean mHoveredOver;
+	private boolean mIsClicked;
+	private float mClickTimer;
 
 	// --------------------------------------
 	// Properties
@@ -58,11 +52,11 @@ public class UIIconButton extends UIWidget {
 	// Constructor
 	// --------------------------------------
 
-	public UIIconButton(final UIWindow pParentWindow) {
+	public UIButton(final UIWindow pParentWindow) {
 		this(pParentWindow, 0);
 	}
 
-	public UIIconButton(final UIWindow pParentWindow, final int pClickID) {
+	public UIButton(final UIWindow pParentWindow, final int pClickID) {
 		super(pParentWindow);
 
 		mClickID = pClickID;
@@ -70,9 +64,6 @@ public class UIIconButton extends UIWidget {
 		mButtonLabel = NO_LABEL_TEXT;
 		w = 200;
 		h = 25;
-
-		mR = mG = mB = 1f;
-		mSourceRectangle = new AARectangle();
 
 	}
 
@@ -82,30 +73,32 @@ public class UIIconButton extends UIWidget {
 
 	@Override
 	public boolean handleInput(LintfordCore pCore) {
-		if (intersects(pCore.HUD().getMouseCameraSpace())) {
+		if (!mIsClicked && intersects(pCore.HUD().getMouseCameraSpace())) {
 			mHoveredOver = true;
 
-			if (mClickTimer > CLICK_TIMER) {
-				if (pCore.input().tryAquireLeftClickOwnership(hashCode())) {
-					// Callback to the listener and pass our ID
-					if (mCallback != null) {
-						mCallback.menuEntryOnClick(mClickID);
-
-					}
-
+			if (pCore.input().tryAquireLeftClickOwnership(hashCode())) {
+				mIsClicked = true;
+				final float MINIMUM_CLICK_TIMER = 200;
+				// Callback to the listener and pass our ID
+				if (mCallback != null && mClickTimer > MINIMUM_CLICK_TIMER) {
 					mClickTimer = 0;
-
+					mCallback.menuEntryOnClick(mClickID);
 					return true;
-
 				}
+
 			}
 
 		} else {
 			mHoveredOver = false;
-			
+		}
+
+		if (!pCore.input().mouseLeftClick()) {
+			mIsClicked = false;
+
 		}
 
 		return false;
+
 	}
 
 	@Override
@@ -119,25 +112,25 @@ public class UIIconButton extends UIWidget {
 	@Override
 	public void draw(LintfordCore pCore, TextureBatch pTextureBatch, FontUnit pTextFont, float pComponentZDepth) {
 
-		mR = 0.19f;
-		mG = 0.13f;
-		mB = 0.3f;
-
-		float lR = mHoveredOver ? 0.3f : mR;
-		float lG = mHoveredOver ? 0.34f : mG;
-		float lB = mHoveredOver ? 0.65f : mB;
-
-		final TextureBatch lTextureBatch = mParentWindow.rendererManager().uiTextureBatch();
+		float lR = mHoveredOver ? 1f : 0.9f;
+		float lG = mHoveredOver ? 1f : 0.9f;
+		float lB = mHoveredOver ? 1f : 0.9f;
 
 		// Draw the button background
-		lTextureBatch.begin(pCore.HUD());
-		lTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, x, y, w, h, 0f, lR, lG, lB, 1f);
+		pTextureBatch.begin(pCore.HUD());
+		pTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 0, 32, 32, 32, centerX() - w / 2, centerY() - h / 2, 32, h, pComponentZDepth, lR, lG, lB, 1f);
+		pTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 32, 32, 224, 32, centerX() - (w / 2) + 32, centerY() - h / 2, w - 64, h, pComponentZDepth, lR, lG, lB, 1f);
+		pTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 256, 32, 32, 32, centerX() + (w / 2) - 32, centerY() - h / 2, 32, h, pComponentZDepth, lR, lG, lB, 1f);
+		pTextureBatch.end();
 
-		if (mButtonTexture != null) {
-			lTextureBatch.draw(mButtonTexture, mSourceRectangle.x, mSourceRectangle.y, mSourceRectangle.w, mSourceRectangle.h, x, y, w, h, 0f, lR, lG, lB, 1f);
-		}
+		FontUnit lFontRenderer = mParentWindow.rendererManager().textFont();
 
-		lTextureBatch.end();
+		final String lButtonText = mButtonLabel != null ? mButtonLabel : NO_LABEL_TEXT;
+		final float lTextWidth = lFontRenderer.bitmap().getStringWidth(lButtonText);
+
+		lFontRenderer.begin(pCore.HUD());
+		lFontRenderer.draw(lButtonText, x + w / 2f - lTextWidth / 2f, y + h / 2f - lFontRenderer.bitmap().fontHeight() / 2f, pComponentZDepth, 1f);
+		lFontRenderer.end();
 
 	}
 
@@ -151,16 +144,6 @@ public class UIIconButton extends UIWidget {
 
 	public void removeClickListener(final EntryInteractions pCallbackObject) {
 		mCallback = null;
-	}
-
-	public void setTextureSource(final Texture pTexture, final float pSrcX, final float pSrcY, final float pSrcW, final float pSrcH) {
-		mButtonTexture = pTexture;
-
-		mSourceRectangle.x = pSrcX;
-		mSourceRectangle.y = pSrcY;
-		mSourceRectangle.w = pSrcW;
-		mSourceRectangle.h = pSrcH;
-
 	}
 
 }

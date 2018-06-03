@@ -11,6 +11,7 @@ import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
+import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch9Patch;
 import net.lintford.library.renderers.BaseRenderer;
 import net.lintford.library.renderers.RendererManager;
 import net.lintford.library.renderers.ZLayers;
@@ -63,8 +64,7 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 	protected boolean mIsWindowMoving;
 	protected float dx, dy;
 	protected float mWindowAlpha;
-	
-	
+
 	protected ScrollBar mScrollBar;
 	protected float mYScrollVal;
 
@@ -159,9 +159,9 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 
 	@Override
 	public void initialise(LintfordCore pCore) {
-		
+
 	}
-	
+
 	public void loadGLContent(ResourceManager pResourceManager) {
 		mContentDisplayArea.y = mWindowArea.y + getTitleBarHeight();
 		mContentDisplayArea.h = mWindowArea.h - +getTitleBarHeight();
@@ -175,7 +175,7 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 	}
 
 	public boolean handleInput(LintfordCore pCore) {
- 		if (!isOpen())
+		if (!isOpen())
 			return false;
 
 		final float lMouseScreenSpaceX = pCore.HUD().getMouseWorldSpaceX();
@@ -195,7 +195,7 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 			}
 
 		}
-		
+
 		if (mIsWindowMoving) {
 			// check if user has stopped dragging the window (worst case we skip this frame)
 			if (!pCore.input().mouseLeftClick()) {
@@ -271,6 +271,7 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 		final int lComponentCount = mComponents.size();
 		for (int i = 0; i < lComponentCount; i++) {
 			mComponents.get(i).update(pCore);
+			
 		}
 
 	}
@@ -289,14 +290,14 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 
 		// Draw the window background
 		lTextureBatch.begin(pCore.HUD());
-		lTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 96, 0, 32, 32, mWindowArea.x, mWindowArea.y + getTitleBarHeight() + 5, mWindowArea.w, mWindowArea.h - getTitleBarHeight() - 5, Z_DEPTH, 1f, 1f, 1f, 0.7f);
+		TextureBatch9Patch.draw9Patch(lTextureBatch, 32, mWindowArea.x, mWindowArea.y + getTitleBarHeight() + 5, mWindowArea.w, mWindowArea.h - getTitleBarHeight() - 5, Z_DEPTH, 1f);
 		lTextureBatch.end();
 
 		// Draw the title bar
 		lTextureBatch.begin(pCore.HUD());
 		lTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 448, 0, 32, 32, mWindowArea.x, mWindowArea.y, 32, getTitleBarHeight(), Z_DEPTH, 1f, 1f, 1f, mWindowAlpha);
 		lTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 480, 0, 32, 32, mWindowArea.x + 32, mWindowArea.y, mWindowArea.w - 64, getTitleBarHeight(), Z_DEPTH, 1f, 1f, 1f, mWindowAlpha);
-		lTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 512, 0, 32, 32, mWindowArea.x + mWindowArea.w - 32, mWindowArea.y, Z_DEPTH, 32, getTitleBarHeight(), 1f, 1f, 1f, mWindowAlpha);
+		lTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 512, 0, 32, 32, mWindowArea.x + mWindowArea.w - 32, mWindowArea.y, 32, getTitleBarHeight(), Z_DEPTH, 1f, 1f, 1f, mWindowAlpha);
 
 		float lTitleX = mWindowArea.x + WINDOW_CONTENT_PADDING_X;
 		float lTitleY = mWindowArea.y;
