@@ -15,6 +15,8 @@ public class UIInputText extends UIWidget implements IBufferedInputCallback {
 	// Constants
 	// --------------------------------------
 
+	private static final long serialVersionUID = 3637330515154931480L;
+
 	private static final float SPACE_BETWEEN_TEXT = 1;
 	private static final float CARET_FLASH_TIME = 250;
 

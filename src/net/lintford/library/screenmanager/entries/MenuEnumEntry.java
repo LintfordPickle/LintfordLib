@@ -16,6 +16,12 @@ import net.lintford.library.screenmanager.ScreenManager;
 public class MenuEnumEntry extends MenuEntry {
 
 	// --------------------------------------
+	// Constants
+	// --------------------------------------
+
+	private static final long serialVersionUID = 2194989174357016245L;
+
+	// --------------------------------------
 	// Variables
 	// --------------------------------------
 

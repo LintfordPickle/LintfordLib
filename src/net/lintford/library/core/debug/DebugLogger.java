@@ -213,7 +213,8 @@ public class DebugLogger {
 	}
 
 	public void printException(String pTag, Exception pException) {
-		
+		e(pTag, pException.getMessage());
+		// TODO: Print StackTrace to DebugLogger
 	}
 	
 	/** Appends the given message into a file at the given location. */

@@ -271,7 +271,7 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 		final int lComponentCount = mComponents.size();
 		for (int i = 0; i < lComponentCount; i++) {
 			mComponents.get(i).update(pCore);
-			
+
 		}
 
 	}
@@ -340,8 +340,8 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 		final AARectangle lHUDBoundingRect = pCore.HUD().boundingRectangle();
 
 		if (lHUDBoundingRect == null) {
-			System.err.println("Cannot update window position - RendererManager.UIManager.HUDCamera not set to an instance of an HUD object!");
 			return;
+
 		}
 
 		mWindowArea.x = lHUDBoundingRect.left() + SCREEN_PADDING;
