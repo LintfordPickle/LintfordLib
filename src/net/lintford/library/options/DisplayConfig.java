@@ -98,7 +98,6 @@ public class DisplayConfig extends BaseConfig {
 	private Vector2i mWindowSize;
 	private Vector2i mAspectRatio;
 	private Vector2i mHUDSize;
-	private Vector2i mGameViewportSize;
 
 	private boolean mVSYNCEnabled;
 	private boolean mWindowIsResizable;
@@ -112,7 +111,7 @@ public class DisplayConfig extends BaseConfig {
 	private long mWindowID = NULL;
 	private boolean mRecompileShaders = false;
 
-	private boolean mStretchToFit;
+	// private boolean mStretchToFit;
 	// private boolean mMaintainAspectRatio;
 
 	List<IResizeListener> mWindowResizeListeners;
@@ -123,9 +122,7 @@ public class DisplayConfig extends BaseConfig {
 	boolean mWaitForMouseRelease;
 
 	/**
-	 * We lock the local listeners while traversing the Listeners list after a
-	 * resolution change is detected. This prevents the programmer's from changing
-	 * the size of the list.
+	 * We lock the local listeners while traversing the Listeners list after a resolution change is detected. This prevents the programmer's from changing the size of the list.
 	 */
 	private boolean mLockedListeners;
 
@@ -167,10 +164,6 @@ public class DisplayConfig extends BaseConfig {
 		return mWindowSize;
 	}
 
-	public Vector2i gameViewportSize() {
-		return mGameViewportSize;
-	}
-
 	public boolean vsyncEnabled() {
 		return mVSYNCEnabled;
 	}
@@ -207,13 +200,9 @@ public class DisplayConfig extends BaseConfig {
 		mHUDSize.x = WINDOW_DEFAULT_WIDTH;
 		mHUDSize.y = WINDOW_DEFAULT_HEIGHT;
 
-		mGameViewportSize = new Vector2i();
-		mGameViewportSize.x = WINDOW_DEFAULT_WIDTH;
-		mGameViewportSize.y = WINDOW_DEFAULT_HEIGHT;
-
 		mAspectRatio = new Vector2i();
-		mAspectRatio.x = 1;
-		mAspectRatio.y = 1;
+		mAspectRatio.x = 16;
+		mAspectRatio.y = 9;
 
 		mFullScreen = true;
 		mWindowIsResizable = true;
@@ -241,9 +230,7 @@ public class DisplayConfig extends BaseConfig {
 					if (mWindowResizeListeners.get(i) == null)
 						continue;
 
-					DebugManager.DEBUG_MANAGER.logger().log(DebugLogLevel.info, "SYSTEM",
-							"calling window resize listener: "
-									+ mWindowResizeListeners.get(i).getClass().getSimpleName());
+					DebugManager.DEBUG_MANAGER.logger().log(DebugLogLevel.info, "SYSTEM", "calling window resize listener: " + mWindowResizeListeners.get(i).getClass().getSimpleName());
 
 					mWindowResizeListeners.get(i).onResize(mWindowSize.x, mWindowSize.y);
 
@@ -283,7 +270,7 @@ public class DisplayConfig extends BaseConfig {
 		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_FALSE);
 		glfwWindowHint(GLFW_DECORATED, GL_TRUE);
 
-		mStretchToFit = pGameInfo.stretchGameViewportToWindow();
+		// mStretchToFit = pGameInfo.stretchGameViewportToWindow();
 		// mMaintainAspectRatio = pGameInfo.maintainAspectRatio();
 
 		// Get the current desktop video mode
@@ -301,8 +288,7 @@ public class DisplayConfig extends BaseConfig {
 			glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
 			glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
-			long lNewWindowID = glfwCreateWindow(lFullScreenWidth, lFullScreenHeight, pGameInfo.windowTitle(),
-					glfwGetPrimaryMonitor(), mWindowID);
+			long lNewWindowID = glfwCreateWindow(lFullScreenWidth, lFullScreenHeight, pGameInfo.windowTitle(), glfwGetPrimaryMonitor(), mWindowID);
 			glfwDestroyWindow(mWindowID);
 
 			mWindowID = lNewWindowID;
@@ -319,15 +305,13 @@ public class DisplayConfig extends BaseConfig {
 			glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
 			glfwWindowHint(GLFW_RESIZABLE, pResizable ? GL_TRUE : GL_FALSE);
 
-			long lNewWindowID = glfwCreateWindow(mWindowSize.x, mWindowSize.y, pGameInfo.windowTitle(), NULL,
-					mWindowID);
+			long lNewWindowID = glfwCreateWindow(mWindowSize.x, mWindowSize.y, pGameInfo.windowTitle(), NULL, mWindowID);
 			glfwDestroyWindow(mWindowID);
 
 			mWindowID = lNewWindowID;
 
 			// center the window
-			glfwSetWindowPos(mWindowID, (lVidMode.width() - mWindowSize.x) / 2,
-					(lVidMode.height() - mWindowSize.y) / 2);
+			glfwSetWindowPos(mWindowID, (lVidMode.width() - mWindowSize.x) / 2, (lVidMode.height() - mWindowSize.y) / 2);
 
 		}
 
@@ -391,16 +375,14 @@ public class DisplayConfig extends BaseConfig {
 			int lFullScreenWidth = lVidMode.width();
 			int lFullScreenHeight = lVidMode.height();
 
-			setGLFWMonitor(NULL, lFullScreenWidth / 2 - pWidth / 2, lFullScreenHeight / 2 - pHeight / 2, pWidth,
-					pHeight, mVSYNCEnabled);
+			setGLFWMonitor(NULL, lFullScreenWidth / 2 - pWidth / 2, lFullScreenHeight / 2 - pHeight / 2, pWidth, pHeight, mVSYNCEnabled);
 
 		}
 
 	}
 
 	public void setGLFWMonitor(long pMonitorHandle, int pX, int pY, int pWidth, int pHeight, boolean pVSync) {
-		DebugManager.DEBUG_MANAGER.logger().i(getClass().getSimpleName(),
-				"Changing videomode to Monitor(" + pMonitorHandle + ") " + pWidth + "x" + pHeight);
+		DebugManager.DEBUG_MANAGER.logger().i(getClass().getSimpleName(), "Changing videomode to Monitor(" + pMonitorHandle + ") " + pWidth + "x" + pHeight);
 		glfwSetWindowMonitor(mWindowID, pMonitorHandle, pX, pY, pWidth, pHeight, 60);
 
 		mFullScreen = pMonitorHandle != NULL;
@@ -426,18 +408,15 @@ public class DisplayConfig extends BaseConfig {
 	}
 
 	private void onInitialiseGL() {
-		DebugManager.DEBUG_MANAGER.logger().i(getClass().getSimpleName(),
-				"OpenGL version: " + GL11.glGetString(GL11.GL_VERSION));
+		DebugManager.DEBUG_MANAGER.logger().i(getClass().getSimpleName(), "OpenGL version: " + GL11.glGetString(GL11.GL_VERSION));
 		DebugManager.DEBUG_MANAGER.logger().i(getClass().getSimpleName(), "GLFW Version" + glfwGetVersionString());
 
 		GL11.glClearStencil(0); // Specify the index used when stencil buffer is cleared
 
 		if (ConstantsTable.getBooleanValueDef("DENBUG_APP", false)) {
-			GL11.glClearColor(ColorConstants.BUFFER_CLEAR_DEBUG.x, ColorConstants.BUFFER_CLEAR_DEBUG.y,
-					ColorConstants.BUFFER_CLEAR_DEBUG.z, 1.0f);
+			GL11.glClearColor(ColorConstants.BUFFER_CLEAR_DEBUG.x, ColorConstants.BUFFER_CLEAR_DEBUG.y, ColorConstants.BUFFER_CLEAR_DEBUG.z, 1.0f);
 		} else {
-			GL11.glClearColor(ColorConstants.BUFFER_CLEAR_RELEASE.x, ColorConstants.BUFFER_CLEAR_RELEASE.y,
-					ColorConstants.BUFFER_CLEAR_RELEASE.z, 1.0f);
+			GL11.glClearColor(ColorConstants.BUFFER_CLEAR_RELEASE.x, ColorConstants.BUFFER_CLEAR_RELEASE.y, ColorConstants.BUFFER_CLEAR_RELEASE.z, 1.0f);
 		}
 
 	}
@@ -446,27 +425,15 @@ public class DisplayConfig extends BaseConfig {
 		if (pWidth == 0 || pHeight == 0)
 			return;
 
-		// mWindowResolutionChanged = true;
+		mWindowResolutionChanged = true;
 		mWindowWasResized = true;
 
 		mWindowSize.x = pWidth;
 		mWindowSize.y = pHeight;
 
-		if (!mStretchToFit) {
-			// Scale gameview port (for game world and HUD) to size of window
-			mGameViewportSize.x = pWidth;
-			mGameViewportSize.y = pHeight;
-
-		} else {
-			// mGameViewport should remain the same size regardless of the window it is
-			// displayed in
-			// TODO: Need to render to a texture for this
-
-		}
-
 		mHUDSize.x = pWidth;
 		mHUDSize.y = pHeight;
-
+		
 		GL11.glViewport(0, 0, pWidth, pHeight);
 
 	}
@@ -510,8 +477,7 @@ public class DisplayConfig extends BaseConfig {
 
 	public void removeGameResizeListener(IResizeListener pListener) throws IllegalStateException {
 		if (mLockedListeners)
-			throw new IllegalStateException(
-					"Cannot remove game viewport size listeners from within onResize() callback.");
+			throw new IllegalStateException("Cannot remove game viewport size listeners from within onResize() callback.");
 
 		if (mGameResizeListeners.contains(pListener)) {
 			mGameResizeListeners.remove(pListener);

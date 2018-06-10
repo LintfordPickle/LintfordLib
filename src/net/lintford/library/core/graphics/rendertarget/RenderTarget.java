@@ -25,6 +25,7 @@ public class RenderTarget {
 
 	private int mWidth;
 	private int mHeight;
+	private float mScale;
 
 	// --------------------------------------
 	// Properties
@@ -68,6 +69,10 @@ public class RenderTarget {
 		return mHeight;
 	}
 
+	public float scale() {
+		return mScale;
+	}
+
 	public int colorTextureID() {
 		return mColorTextureID;
 	}
@@ -106,7 +111,7 @@ public class RenderTarget {
 	// Methods
 	// --------------------------------------
 
-	public void loadGLContent(int pWidth, int pHeight) {
+	public void loadGLContent(int pWidth, int pHeight, float pScale) {
 		if (pWidth == 0 || pHeight == 0)
 			return;
 
@@ -115,6 +120,7 @@ public class RenderTarget {
 
 		mWidth = pWidth;
 		mHeight = pHeight;
+		mScale = pScale;
 
 		mFramebufferID = GL30.glGenFramebuffers(); // gen container for texture and optional depth buffer
 		mColorTextureID = GL11.glGenTextures(); // gen texture to hold RGB data
@@ -192,13 +198,21 @@ public class RenderTarget {
 
 		if (!mIsLoaded)
 			return;
-		
+
 		mWidth = pWidth;
 		mHeight = pHeight;
 
 		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, mFramebufferID);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, mColorTextureID);
 
+		// Set the texture filtering mode
+		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, mTextureFilter);
+		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, mTextureFilter);
+
+		// Set the texture wrap mode
+		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL12.GL_CLAMP_TO_EDGE);
+		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL12.GL_CLAMP_TO_EDGE);
+		
 		// Create an empty texture
 		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, mWidth, mHeight, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, BufferUtils.createByteBuffer(mWidth * mHeight * 4));
 

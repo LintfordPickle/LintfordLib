@@ -86,7 +86,7 @@ public class BlurEffect {
 
 		pTarget.bind();
 
-		final int lWindowWidth = pCore.config().display().windowSize().x;
+		final int lWindowWidth = pCore.config().display().windowSize().x / 2;
 		
 		mBlurShader.resolution(lWindowWidth);
 		mBlurShader.radius(mRadius);

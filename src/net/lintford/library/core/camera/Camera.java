@@ -160,11 +160,11 @@ public class Camera implements ICamera {
 		mDisplayConfig = pDisplayConfig;
 
 		this.mMinX = 0;
-		this.mMaxX = 0 + pDisplayConfig.gameViewportSize().x;
+		this.mMaxX = 0 + pDisplayConfig.windowSize().x;
 		this.mMinY = 0;
-		this.mMaxY = 0 + pDisplayConfig.gameViewportSize().y;
+		this.mMaxY = 0 + pDisplayConfig.windowSize().y;
 
-		mBoundingRectangle = new AARectangle(mMinX, mMinY, pDisplayConfig.gameViewportSize().x, pDisplayConfig.gameViewportSize().y);
+		mBoundingRectangle = new AARectangle(mMinX, mMinY, pDisplayConfig.windowSize().x, pDisplayConfig.windowSize().y);
 
 		mPosition = new Vector2f();
 		mAcceleration = new Vector2f();
@@ -200,17 +200,6 @@ public class Camera implements ICamera {
 		mWindowWidth = mDisplayConfig.windowSize().x;
 		mWindowHeight = mDisplayConfig.windowSize().y;
 
-		int lGameViewportWidth = mDisplayConfig.gameViewportSize().x;
-		int lGameViewportHeight = mDisplayConfig.gameViewportSize().y;
-
-		if ((lGameViewportWidth % 2) == 1) {
-			lGameViewportWidth = lGameViewportWidth + 1;
-		}
-
-		if ((lGameViewportHeight % 2) == 1) {
-			lGameViewportHeight = lGameViewportHeight + 1;
-		}
-
 		mPosition.x = mTargetPosition.x + mOffsetPosition.x;
 		mPosition.y = mTargetPosition.y + mOffsetPosition.y;
 
@@ -218,8 +207,8 @@ public class Camera implements ICamera {
 		mAcceleration.y = 0.0f;
 
 		createView();
-		createOrtho(lGameViewportWidth, lGameViewportHeight);
-		updateZoomBounds(lGameViewportWidth, lGameViewportHeight);
+		createOrtho(mWindowWidth, mWindowHeight);
+		updateZoomBounds(mWindowWidth, mWindowHeight);
 
 		applyGameViewport();
 
@@ -287,12 +276,9 @@ public class Camera implements ICamera {
 	@Override
 	public void setZoomFactor(float pNewValue) {
 		mZoomFactor = pNewValue;
-		
-		int lGameViewportWidth = mDisplayConfig.gameViewportSize().x;
-		int lGameViewportHeight = mDisplayConfig.gameViewportSize().y;
-		
+
 		createView();
-		updateZoomBounds(lGameViewportWidth, lGameViewportHeight);
+		updateZoomBounds(mWindowWidth, mWindowHeight);
 
 	}
 

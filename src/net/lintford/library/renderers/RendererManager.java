@@ -482,6 +482,10 @@ public class RendererManager {
 	}
 
 	public RenderTarget createRenderTarget(String pName, int pWidth, int pHeight, boolean pResizeWithWindow) {
+		return createRenderTarget(pName, pWidth, pHeight, 1f, pResizeWithWindow);
+	}
+
+	public RenderTarget createRenderTarget(String pName, int pWidth, int pHeight, float pScale, boolean pResizeWithWindow) {
 		// First check to see if the render target exists
 		RenderTarget lResult = getRenderTarget(pName);
 
@@ -489,7 +493,7 @@ public class RendererManager {
 			return lResult;
 
 		lResult = new RenderTarget();
-		lResult.loadGLContent(pWidth, pHeight);
+		lResult.loadGLContent(pWidth, pHeight, pScale);
 		lResult.targetName = pName;
 
 		mRenderTargets.add(lResult);
