@@ -15,6 +15,8 @@ public class MenuInputEntry extends MenuEntry implements IBufferedInputCallback 
 	// Constants
 	// --------------------------------------
 
+	private static final long serialVersionUID = 3017844090126571950L;
+	
 	private static final float SPACE_BETWEEN_TEXT = 15;
 	private static final float CARET_FLASH_TIME = 250; // ms
 

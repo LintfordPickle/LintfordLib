@@ -15,6 +15,8 @@ import net.lintford.library.screenmanager.ScreenManager;
 
 public class MenuEnumEntryIndexed<T> extends MenuEntry {
 
+	private static final long serialVersionUID = -4902595949146396834L;
+
 	public class MenuEnumEntryItem {
 		public String name;
 		public T value;

@@ -13,6 +13,8 @@ public class UIRadioButton extends UIWidget {
 	// Constants
 	// --------------------------------------
 
+	private static final long serialVersionUID = 8110750137089332530L;
+
 	private static final String NO_LABEL_TEXT = "unlabled";
 
 	// --------------------------------------

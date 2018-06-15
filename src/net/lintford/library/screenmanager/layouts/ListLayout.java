@@ -11,6 +11,8 @@ import net.lintford.library.screenmanager.MenuScreen.ALIGNMENT;
  */
 public class ListLayout extends BaseLayout {
 
+	private static final long serialVersionUID = -7568188688210642680L;
+
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
@@ -76,7 +78,7 @@ public class ListLayout extends BaseLayout {
 				}
 
 				lEntry.y = lYPos;
-				lEntry.w = w - paddingLeft()*3 - paddingRight()*3;
+				lEntry.w = w - paddingLeft() * 3 - paddingRight() * 3;
 
 				if (mAnchor == ANCHOR.top) {
 					lYPos += lEntry.getHeight();

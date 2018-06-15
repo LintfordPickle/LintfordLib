@@ -24,6 +24,8 @@ import net.lintford.library.screenmanager.ScreenManager;
 /**  */
 public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 
+	private static final long serialVersionUID = -2874418532803740656L;
+
 	public class MenuEnumEntryItem {
 		public String name;
 		public T value;

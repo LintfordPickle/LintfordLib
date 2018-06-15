@@ -20,6 +20,8 @@ import net.lintford.library.screenmanager.MenuScreen.ALIGNMENT;
 
 public abstract class BaseLayout extends AARectangle implements IScrollBarArea {
 
+	private static final long serialVersionUID = 5742176250891551930L;
+
 	public static final float USE_HEIGHT_OF_ENTRIES = -1;
 
 	public final static float LAYOUT_WIDTH = 800;
@@ -334,9 +336,9 @@ public abstract class BaseLayout extends AARectangle implements IScrollBarArea {
 		final int lCount = mMenuEntries.size();
 		for (int i = 0; i < lCount; i++) {
 			mMenuEntries.get(i).updateStructure();
-			
+
 		}
-		
+
 	}
 
 	/**

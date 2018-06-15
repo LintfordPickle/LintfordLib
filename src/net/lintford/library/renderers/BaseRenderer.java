@@ -22,7 +22,7 @@ public abstract class BaseRenderer {
 	protected boolean mIsLoaded;
 
 	/** A group ID is assigned to all {@link BaseRenderer} instances. It allows the developer to programmatically unload batches of particular parts of the game when required (i.e. unload the game controllers when returning to the main menu) */
-	protected int mGroupID;
+	protected int mEntityID;
 
 	// --------------------------------------
 	// Properties
@@ -30,7 +30,7 @@ public abstract class BaseRenderer {
 
 	/** A group ID is assigned to all {@link BaseRenderer} instances. It allows the developer to programmatically unload batches of particular parts of the game when required (i.e. unload the game controllers when returning to the main menu) */
 	public int groupID() {
-		return mGroupID;
+		return mEntityID;
 	}
 
 	/** Returns the comparative Z depth for this renderer. See RendererZTable for a list of relative values. */
@@ -76,7 +76,7 @@ public abstract class BaseRenderer {
 
 		}
 
-		mGroupID = pGroupID;
+		mEntityID = pGroupID;
 
 		isActive(true);
 

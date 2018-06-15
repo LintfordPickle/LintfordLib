@@ -15,6 +15,8 @@ public class UIIconFilter extends AARectangle {
 	// Constants
 	// --------------------------------------
 
+	private static final long serialVersionUID = 200319889967127089L;
+
 	private static final float HORIZONTAL_PADDING = 10;
 
 	// --------------------------------------

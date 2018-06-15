@@ -9,6 +9,8 @@ import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 
 public class ScrollBarContentRectangle extends AARectangle {
 
+	private static final long serialVersionUID = -4159498990402852368L;
+
 	// --------------------------------------
 	// Variables
 	// --------------------------------------

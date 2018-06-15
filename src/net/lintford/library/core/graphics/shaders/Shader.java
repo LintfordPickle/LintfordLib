@@ -91,7 +91,7 @@ public abstract class Shader {
 			System.out.println("Recompiling shader .. ");
 			System.out.println("  " + mVertPathname);
 			System.out.println("  " + mFragPathname);
-			
+
 		}
 
 		String lVertexSource = FileUtils.loadString(mVertPathname);

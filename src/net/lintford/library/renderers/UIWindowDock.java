@@ -40,9 +40,9 @@ public class UIWindowDock extends BaseRenderer {
 
 	@Override
 	public void initialise(LintfordCore pCore) {
-		
+
 	}
-	
+
 	@Override
 	public void loadGLContent(ResourceManager pResourceManager) {
 		super.loadGLContent(pResourceManager);

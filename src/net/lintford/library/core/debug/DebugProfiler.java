@@ -13,7 +13,10 @@ import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 import net.lintford.library.core.time.TimeSpan;
 
+// TODO: DebugProfiler is currently pretty useless and not finished.
 public class DebugProfiler extends AARectangle {
+
+	private static final long serialVersionUID = 3330444673644866887L;
 
 	public static final float Z_DEPTH = -0.1f;
 
@@ -28,14 +31,17 @@ public class DebugProfiler extends AARectangle {
 	private boolean mIsOpen;
 	private boolean mIsSimple;
 
-	long prevTimeDraw;
-	long prevTimeUp;
-	int deltaFrameCount;
-	int frameCount;
-	long timer;
-	float xMarker;
-	float mSimpleHeight = 25;
-	float mExtendedHeight = 60;
+	private long prevTimeDraw;
+	private long prevTimeUp;
+	private int deltaFrameCount;
+	private int frameCount;
+	private long timer;
+	private float xMarker;
+	private float mSimpleHeight = 25;
+	private float mExtendedHeight = 60;
+	private double deltaDraw;
+	private final int HISTORY_COUNT = 50;
+	private LinkedList<Float> mFPSHistory;
 
 	// --------------------------------------
 	// Properties
@@ -118,10 +124,6 @@ public class DebugProfiler extends AARectangle {
 		setHeight(mSimpleHeight);
 		
 	}
-
-	double deltaDraw;
-	private final int HISTORY_COUNT = 50;
-	private LinkedList<Float> mFPSHistory;
 
 	public void draw(LintfordCore pCore) {
 

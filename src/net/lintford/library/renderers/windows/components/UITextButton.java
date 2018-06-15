@@ -13,6 +13,8 @@ public class UITextButton extends UIWidget {
 	// Constants
 	// --------------------------------------
 
+	private static final long serialVersionUID = -532019333230394347L;
+
 	private static final String NO_LABEL_TEXT = "unlabled";
 
 	// --------------------------------------

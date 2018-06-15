@@ -14,6 +14,8 @@ public class UISlider extends UIWidget {
 	// Constants
 	// --------------------------------------
 
+	private static final long serialVersionUID = 5982888162840234990L;
+
 	public static final String NO_LABEL_TEXT = "Slider";
 
 	// --------------------------------------

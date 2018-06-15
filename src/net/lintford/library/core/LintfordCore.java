@@ -24,7 +24,7 @@ import net.lintford.library.core.debug.DebugManager;
 import net.lintford.library.core.debug.DebugManager.DebugLogLevel;
 import net.lintford.library.core.debug.DebugMemory;
 import net.lintford.library.core.debug.GLDebug;
-import net.lintford.library.core.entity.EntityID;
+import net.lintford.library.core.entity.BaseEntity;
 import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.input.InputState;
@@ -43,7 +43,7 @@ public abstract class LintfordCore {
 	// Variables
 	// ---------------------------------------------
 
-	public final int CORE_ID = EntityID.getEntityNumber();
+	public final int CORE_ID = BaseEntity.getEntityNumber();
 
 	protected GameInfo mGameInfo;
 	protected MasterConfig mMasterConfig;
@@ -262,8 +262,6 @@ public abstract class LintfordCore {
 
 			mInputState.endUpdate();
 			glfwPollEvents();
-
-			GLDebug.checkGLErrorsException();
 
 		}
 

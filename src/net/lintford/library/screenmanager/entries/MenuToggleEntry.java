@@ -15,6 +15,7 @@ public class MenuToggleEntry extends MenuEntry {
 	// Constants
 	// --------------------------------------
 
+	private static final long serialVersionUID = 51472065385268475L;
 	private static final float SPACE_BETWEEN_TEXT = 15;
 
 	// --------------------------------------

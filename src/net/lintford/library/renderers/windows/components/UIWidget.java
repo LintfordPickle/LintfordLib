@@ -9,6 +9,8 @@ import net.lintford.library.renderers.windows.UIWindow;
 
 public abstract class UIWidget extends AARectangle {
 
+	private static final long serialVersionUID = 8734195273392955490L;
+
 	// --------------------------------------
 	// Variables
 	// --------------------------------------

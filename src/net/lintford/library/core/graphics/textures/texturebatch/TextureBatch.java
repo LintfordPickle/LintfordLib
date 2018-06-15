@@ -72,6 +72,7 @@ public class TextureBatch {
 
 	protected ICamera mCamera;
 	protected ShaderMVP_PT mShader;
+	protected ShaderMVP_PT mCustomShader;
 	protected Matrix4f mModelMatrix;
 	protected FloatBuffer mBuffer;
 	protected int mCurNumSprites;
@@ -81,7 +82,7 @@ public class TextureBatch {
 	protected boolean mIsLoaded;
 	protected boolean mIsDrawing;
 
-	private boolean mUseCheckerPattern;
+	protected boolean mUseCheckerPattern;
 
 	// --------------------------------------
 	// Properties
@@ -176,12 +177,17 @@ public class TextureBatch {
 	// Methods
 	// --------------------------------------
 
-	public void begin(ICamera pCamera) {
+	public void begin(ICamera pCamera, ShaderMVP_PT pCustomShader) {
 		if (pCamera == null)
 			return;
 
 		if (mIsDrawing)
 			return; // already drawing, don't want to flush too early
+
+		if (pCustomShader != null)
+			mCustomShader = pCustomShader;
+		else
+			mCustomShader = mShader;
 
 		mCurrentTexID = -1;
 		mCamera = pCamera;
@@ -193,8 +199,14 @@ public class TextureBatch {
 
 	}
 
+	public void begin(ICamera pCamera) {
+		begin(pCamera, mShader);
+
+	}
+
 	public void draw(Texture pTexture, AARectangle pSrcRect, Rectangle pDestRect, float pZ, float pR, float pG, float pB, float pA) {
-		if(pSrcRect == null || pDestRect == null) return;
+		if (pSrcRect == null || pDestRect == null)
+			return;
 		draw(pTexture, pSrcRect.x, pSrcRect.y, pSrcRect.w, pSrcRect.h, pDestRect, pZ, pR, pG, pB, pA);
 
 	}
@@ -206,66 +218,16 @@ public class TextureBatch {
 		if (!mIsDrawing)
 			return;
 
-		if (pTexture == null) {
-			// Resolve to use a default texture, or the 'MISSING_TEXTURE'
-			if (TextureManager.USE_DEBUG_MISSING_TEXTURES) {
-				pTexture = TextureManager.TEXTURE_NOT_FOUND;
+		if (pDestRect == null)
+			return;
 
-			} else {
-				return;
+		final float lX = pDestRect.getVertices()[0].x;
+		final float lY = pDestRect.getVertices()[0].y;
+		final float lWidth = pDestRect.getVertices()[1].x - pDestRect.getVertices()[0].x;
+		final float lHeight = pDestRect.getVertices()[2].y - pDestRect.getVertices()[0].y;
 
-			}
-		}
+		draw(pTexture, pSX, pSY, pSW, pSH, lX, lY, lWidth, lHeight, pZ, pR, pG, pB, pA);
 
-		if (mUseCheckerPattern) {
-			pTexture = TextureManager.TEXTURE_CHECKER_I;
-
-		}
-
-		if (mCurrentTexID == -1) { // first texture
-			mCurrentTexID = pTexture.getTextureID();
-		} else if (mCurrentTexID != pTexture.getTextureID()) {
-			flush();
-			mCurrentTexID = pTexture.getTextureID();
-		}
-
-		if (mCurNumSprites >= MAX_SPRITES) {
-			flush();
-		}
-
-		// Vertex 0
-		float x0 = pDestRect.getVertices()[0].x;
-		float y0 = pDestRect.getVertices()[0].y;
-		float u0 = pSX / pTexture.getTextureWidth();
-		float v0 = pSY / pTexture.getTextureHeight();
-
-		// Vertex 1
-		float x1 = pDestRect.getVertices()[1].x;
-		float y1 = pDestRect.getVertices()[1].y;
-		float u1 = (pSX + pSW) / pTexture.getTextureWidth();
-		float v1 = pSY / pTexture.getTextureHeight();
-
-		// Vertex 2
-		float x2 = pDestRect.getVertices()[2].x;
-		float y2 = pDestRect.getVertices()[2].y;
-		float u2 = pSX / pTexture.getTextureWidth();
-		float v2 = (pSY + pSH) / pTexture.getTextureHeight();
-
-		// Vertex 3
-		float x3 = pDestRect.getVertices()[3].x;
-		float y3 = pDestRect.getVertices()[3].y;
-		float u3 = (pSX + pSW) / pTexture.getTextureWidth();
-		float v3 = (pSY + pSH) / pTexture.getTextureHeight();
-
-		// CCW 102123
-		addVertToBuffer(x1, y1, pZ, 1f, pR, pG, pB, pA, u1, v1); // 1
-		addVertToBuffer(x0, y0, pZ, 1f, pR, pG, pB, pA, u0, v0); // 0
-		addVertToBuffer(x2, y2, pZ, 1f, pR, pG, pB, pA, u2, v2); // 2
-		addVertToBuffer(x1, y1, pZ, 1f, pR, pG, pB, pA, u1, v1); // 1
-		addVertToBuffer(x2, y2, pZ, 1f, pR, pG, pB, pA, u2, v2); // 2
-		addVertToBuffer(x3, y3, pZ, 1f, pR, pG, pB, pA, u3, v3); // 3
-
-		mCurNumSprites++;
 	}
 
 	public void draw(Texture pTexture, float pSX, float pSY, float pSW, float pSH, float pDX, float pDY, float pDW, float pDH, float pZ, float pR, float pG, float pB, float pA) {
@@ -406,7 +368,7 @@ public class TextureBatch {
 
 	}
 
-	private void addVertToBuffer(float x, float y, float z, float w, float r, float g, float b, float a, float u, float v) {
+	protected void addVertToBuffer(float x, float y, float z, float w, float r, float g, float b, float a, float u, float v) {
 		// If the buffer is already full, we need to draw what is currently in the buffer and start a new one.
 		if (mCurNumSprites >= MAX_SPRITES * NUM_VERTS_PER_SPRITE - 1) {
 			flush();
@@ -439,7 +401,7 @@ public class TextureBatch {
 
 	}
 
-	private void flush() {
+	protected void flush() {
 		if (!mIsLoaded)
 			return;
 
@@ -463,11 +425,11 @@ public class TextureBatch {
 		GL20.glEnableVertexAttribArray(1);
 		GL20.glEnableVertexAttribArray(2);
 
-		mShader.projectionMatrix(mCamera.projection());
-		mShader.viewMatrix(mCamera.view());
-		mShader.modelMatrix(mModelMatrix);
+		mCustomShader.projectionMatrix(mCamera.projection());
+		mCustomShader.viewMatrix(mCamera.view());
+		mCustomShader.modelMatrix(mModelMatrix);
 
-		mShader.bind();
+		mCustomShader.bind();
 
 		GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, mVertexCount);
 
@@ -475,7 +437,7 @@ public class TextureBatch {
 
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 
-		mShader.unbind();
+		mCustomShader.unbind();
 
 		mBuffer.clear();
 

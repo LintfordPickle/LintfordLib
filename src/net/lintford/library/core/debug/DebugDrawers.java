@@ -128,6 +128,8 @@ public class DebugDrawers {
 	}
 
 	public void drawRenderTarget(LintfordCore pCore, float pDestinationPositionX, float pDestinationPositionY, float pDestinationWidth, float pDestinationHeight, float pDestinationZ, RenderTarget pRenderTarget) {
+		if(pRenderTarget == null) return;
+		
 		GL13.glActiveTexture(GL13.GL_TEXTURE0); // add scene texture
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, pRenderTarget.colorTextureID());
 

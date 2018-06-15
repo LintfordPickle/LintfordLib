@@ -1,7 +1,7 @@
 package net.lintford.library.screenmanager;
 
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.entity.EntityID;
+import net.lintford.library.core.entity.BaseEntity;
 import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.time.GameTime;
 import net.lintford.library.core.time.TimeSpan;
@@ -133,7 +133,7 @@ public abstract class Screen {
 	// --------------------------------------
 
 	public Screen(ScreenManager pScreenManager) {
-		entityGroupID = EntityID.getEntityNumber();
+		entityGroupID = BaseEntity.getEntityNumber();
 
 		mScreenManager = pScreenManager;
 		mRendererManager = new RendererManager(pScreenManager.core(), getClass().getSimpleName());

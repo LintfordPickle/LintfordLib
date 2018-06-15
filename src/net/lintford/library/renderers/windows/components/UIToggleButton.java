@@ -15,6 +15,8 @@ public class UIToggleButton extends UIWidget {
 	// Constants
 	// --------------------------------------
 
+	private static final long serialVersionUID = -8326753044931375276L;
+
 	private static final String NO_LABEL_TEXT = "unlabled";
 
 	// --------------------------------------

@@ -14,6 +14,8 @@ import net.lintford.library.screenmanager.ScreenManager;
 
 public class HorizontalEntryGroup extends MenuEntry {
 
+	private static final long serialVersionUID = -7105496211645061681L;
+
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
@@ -47,13 +49,13 @@ public class HorizontalEntryGroup extends MenuEntry {
 			for (int i = 0; i < lCount; i++) {
 				entries().get(i).hasFocus(false);
 			}
-			
+
 		}
-		
+
 		super.hasFocus(pNewValue);
-		
+
 	}
-	
+
 	@Override
 	public void hoveredOver(boolean pNewValue) {
 		if (!pNewValue) {
@@ -61,9 +63,9 @@ public class HorizontalEntryGroup extends MenuEntry {
 			for (int i = 0; i < lCount; i++) {
 				entries().get(i).hoveredOver(false);
 			}
-			
+
 		}
-		
+
 		super.hoveredOver(pNewValue);
 	}
 

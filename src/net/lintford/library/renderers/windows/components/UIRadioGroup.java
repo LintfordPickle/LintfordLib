@@ -15,6 +15,8 @@ public class UIRadioGroup extends UIWidget implements EntryInteractions {
 	// Variables
 	// --------------------------------------
 
+	private static final long serialVersionUID = -3191987692148151157L;
+	
 	private List<UIRadioButton> mButtons;
 	private EntryInteractions mCallback;
 

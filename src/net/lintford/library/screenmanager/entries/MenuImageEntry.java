@@ -11,6 +11,8 @@ import net.lintford.library.screenmanager.ScreenManager;
 
 public class MenuImageEntry extends MenuEntry {
 
+	private static final long serialVersionUID = 4053035578493366108L;
+
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
