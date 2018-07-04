@@ -23,7 +23,6 @@ import net.lintford.library.core.camera.ICamera;
 import net.lintford.library.core.debug.DebugManager;
 import net.lintford.library.core.debug.DebugManager.DebugLogLevel;
 import net.lintford.library.core.debug.DebugMemory;
-import net.lintford.library.core.debug.GLDebug;
 import net.lintford.library.core.entity.BaseEntity;
 import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.textures.TextureManager;
@@ -136,6 +135,9 @@ public abstract class LintfordCore {
 
 		// Print out the working directory
 		DebugManager.DEBUG_MANAGER.logger().i(getClass().getSimpleName(), "Working directory: " + System.getProperty("user.dir"));
+		DebugManager.DEBUG_MANAGER.logger().i(getClass().getSimpleName(), System.getProperty("java.vendor"));
+		DebugManager.DEBUG_MANAGER.logger().i(getClass().getSimpleName(), System.getProperty("java.vendor.url"));
+		DebugManager.DEBUG_MANAGER.logger().i(getClass().getSimpleName(), System.getProperty("java.version"));
 
 	}
 

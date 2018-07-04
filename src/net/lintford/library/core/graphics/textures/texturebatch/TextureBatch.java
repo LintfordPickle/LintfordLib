@@ -218,15 +218,66 @@ public class TextureBatch {
 		if (!mIsDrawing)
 			return;
 
-		if (pDestRect == null)
-			return;
+		if (pTexture == null) {
+			// Resolve to use a default texture, or the 'MISSING_TEXTURE'
+			if (TextureManager.USE_DEBUG_MISSING_TEXTURES) {
+				pTexture = TextureManager.TEXTURE_NOT_FOUND;
 
-		final float lX = pDestRect.getVertices()[0].x;
-		final float lY = pDestRect.getVertices()[0].y;
-		final float lWidth = pDestRect.getVertices()[1].x - pDestRect.getVertices()[0].x;
-		final float lHeight = pDestRect.getVertices()[2].y - pDestRect.getVertices()[0].y;
+			} else {
+				return;
 
-		draw(pTexture, pSX, pSY, pSW, pSH, lX, lY, lWidth, lHeight, pZ, pR, pG, pB, pA);
+			}
+		}
+
+		if (mUseCheckerPattern) {
+			pTexture = TextureManager.TEXTURE_CHECKER_I;
+
+		}
+
+		if (mCurrentTexID == -1) { // first texture
+			mCurrentTexID = pTexture.getTextureID();
+		} else if (mCurrentTexID != pTexture.getTextureID()) {
+			flush();
+			mCurrentTexID = pTexture.getTextureID();
+		}
+
+		if (mCurNumSprites >= MAX_SPRITES) {
+			flush();
+		}
+
+		// Vertex 0
+		float x0 = pDestRect.getVertices()[0].x;
+		float y0 = pDestRect.getVertices()[0].y;
+		float u0 = pSX / pTexture.getTextureWidth();
+		float v0 = pSY / pTexture.getTextureHeight();
+
+		// Vertex 1
+		float x1 = pDestRect.getVertices()[1].x;
+		float y1 = pDestRect.getVertices()[1].y;
+		float u1 = (pSX + pSW) / pTexture.getTextureWidth();
+		float v1 = pSY / pTexture.getTextureHeight();
+
+		// Vertex 2
+		float x2 = pDestRect.getVertices()[2].x;
+		float y2 = pDestRect.getVertices()[2].y;
+		float u2 = pSX / pTexture.getTextureWidth();
+		float v2 = (pSY + pSH) / pTexture.getTextureHeight();
+
+		// Vertex 3
+		float x3 = pDestRect.getVertices()[3].x;
+		float y3 = pDestRect.getVertices()[3].y;
+		float u3 = (pSX + pSW) / pTexture.getTextureWidth();
+		float v3 = (pSY + pSH) / pTexture.getTextureHeight();
+
+		// CCW 102123
+		addVertToBuffer(x1, y1, pZ, 1f, pR, pG, pB, pA, u1, v1); // 1
+		addVertToBuffer(x0, y0, pZ, 1f, pR, pG, pB, pA, u0, v0); // 0
+		addVertToBuffer(x2, y2, pZ, 1f, pR, pG, pB, pA, u2, v2); // 2
+		addVertToBuffer(x1, y1, pZ, 1f, pR, pG, pB, pA, u1, v1); // 1
+		addVertToBuffer(x2, y2, pZ, 1f, pR, pG, pB, pA, u2, v2); // 2
+		addVertToBuffer(x3, y3, pZ, 1f, pR, pG, pB, pA, u3, v3); // 3
+
+		mCurNumSprites++;
 
 	}
 

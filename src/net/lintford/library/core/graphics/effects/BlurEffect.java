@@ -75,17 +75,15 @@ public class BlurEffect {
 	}
 
 	public void render(LintfordCore pCore, RenderTarget pTarget) {
-		render(pCore, pTarget, BLUR_DIRECTION.horizontal);
-		render(pCore, pTarget, BLUR_DIRECTION.vertical);
-
-	}
-
-	public void render(LintfordCore pCore, RenderTarget pTarget, BLUR_DIRECTION pDir) {
 		GL13.glActiveTexture(GL13.GL_TEXTURE0);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, pTarget.colorTextureID());
+		
+		render(pCore, pTarget, BLUR_DIRECTION.horizontal);
+		render(pCore, pTarget, BLUR_DIRECTION.vertical);
+		
+	}
 
-		pTarget.bind();
-
+	private void render(LintfordCore pCore, RenderTarget pTarget, BLUR_DIRECTION pDir) {
 		final int lWindowWidth = pCore.config().display().windowSize().x / 2;
 		
 		mBlurShader.resolution(lWindowWidth);
@@ -101,8 +99,6 @@ public class BlurEffect {
 		mBlurShader.bind();
 		mFullScreenQuad.draw(pCore);
 		mBlurShader.unbind();
-
-		pTarget.unbind();
 
 	}
 

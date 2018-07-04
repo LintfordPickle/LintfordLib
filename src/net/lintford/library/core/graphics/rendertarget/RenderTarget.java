@@ -16,11 +16,13 @@ public class RenderTarget {
 	public String targetName;
 	private int mColorTextureID;
 	private int mDepthTextureID;
+	private int mStencilTextureID;
 	private int mFramebufferID;
 	private int mTextureFilter;
 	private int mTextureWrapModeS;
 	private int mTextureWrapModeT;
 	private boolean mDepthBufferEnabled;
+	private boolean mStencilBufferEnabled;
 	private boolean mIsLoaded;
 
 	private int mWidth;
@@ -149,15 +151,43 @@ public class RenderTarget {
 
 		// Depth buffer
 		// TODO: Extend this class to be more flexible with regard to buffer sizes (def. 16-bit depth should be enough)
+		mDepthBufferEnabled = true;
 		if (mDepthBufferEnabled) {
 			mDepthTextureID = GL30.glGenRenderbuffers();
 			GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, mDepthTextureID);
-			GL30.glRenderbufferStorage(GL30.GL_RENDERBUFFER, GL14.GL_DEPTH_COMPONENT16, mWidth, mHeight);
-			GL30.glFramebufferRenderbuffer(GL30.GL_FRAMEBUFFER, GL30.GL_DEPTH_ATTACHMENT, GL30.GL_RENDERBUFFER, mDepthTextureID); //
+			GL30.glRenderbufferStorage(GL30.GL_RENDERBUFFER, GL30.GL_DEPTH24_STENCIL8, mWidth, mHeight);
+			GL30.glFramebufferRenderbuffer(GL30.GL_FRAMEBUFFER, GL30.GL_DEPTH_STENCIL_ATTACHMENT, GL30.GL_RENDERBUFFER, mDepthTextureID); //
 		}
 
-		if (GL30.glCheckFramebufferStatus(GL30.GL_FRAMEBUFFER) != GL30.GL_FRAMEBUFFER_COMPLETE) {
-			throw new RuntimeException("FBO creation failed!");
+		int lCreationStatus = GL30.glCheckFramebufferStatus(GL30.GL_FRAMEBUFFER);
+		if (lCreationStatus != GL30.GL_FRAMEBUFFER_COMPLETE) {
+			switch (lCreationStatus) {
+			case GL30.GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
+				throw new RuntimeException("GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT");
+
+			case GL30.GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
+				throw new RuntimeException("GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT ");
+
+			case GL30.GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER:
+				throw new RuntimeException("GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER ");
+
+			case GL30.GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE:
+				throw new RuntimeException("GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE ");
+
+			case GL30.GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER:
+				throw new RuntimeException("GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER  ");
+
+			case GL30.GL_FRAMEBUFFER_UNSUPPORTED:
+				throw new RuntimeException("GL_FRAMEBUFFER_UNSUPPORTED  ");
+
+			case GL30.GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE:
+				throw new RuntimeException("GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE   ");
+
+			case GL30.GL_FRAMEBUFFER_UNDEFINED:
+				throw new RuntimeException("GL_FRAMEBUFFER_UNDEFINED    ");
+
+			}
+
 		}
 
 		// unbind
@@ -212,13 +242,13 @@ public class RenderTarget {
 		// Set the texture wrap mode
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL12.GL_CLAMP_TO_EDGE);
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL12.GL_CLAMP_TO_EDGE);
-		
+
 		// Create an empty texture
 		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, mWidth, mHeight, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, BufferUtils.createByteBuffer(mWidth * mHeight * 4));
 
 		if (mDepthBufferEnabled) {
 			GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, mDepthTextureID);
-			GL30.glRenderbufferStorage(GL30.GL_RENDERBUFFER, GL14.GL_DEPTH_COMPONENT16, mWidth, mHeight);
+			GL30.glRenderbufferStorage(GL30.GL_RENDERBUFFER, GL30.GL_DEPTH24_STENCIL8, mWidth, mHeight);
 
 		}
 

@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 import net.lintford.library.core.LintfordCore;
 
+// TODO: PhysicsState needs to implement an interface such that multiple controllers can modify the physics of a character
+// in a frame without breaking the physics
 public class PhysicsState implements Serializable {
 
 	// --------------------------------------

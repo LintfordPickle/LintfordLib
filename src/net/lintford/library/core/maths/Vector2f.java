@@ -8,7 +8,7 @@ import java.io.Serializable;
  * @author badlogicgames@gmail.com
  * 
  */
-public final class Vector2f implements Serializable {
+public class Vector2f implements Serializable {
 
 	private static final long serialVersionUID = -2295169699757910995L;
 
@@ -78,7 +78,7 @@ public final class Vector2f implements Serializable {
 	public static float len(float x1, float y1, float x2, float y2) {
 		return (float) Math.sqrt(x1 * x2 + y1 * y2);
 	}
-
+	
 	public static Vector2f CatmullRom(Vector2f value1, Vector2f value2, Vector2f value3, Vector2f value4, float amount, Vector2f returnVector) {
 		float num = amount * amount;
 		float num2 = amount * num;
@@ -161,6 +161,12 @@ public final class Vector2f implements Serializable {
 		return this;
 	}
 
+	public static Vector2f sub(Vector2f v0, Vector2f v1) {
+		float x = v0.x - v1.x;
+		float y = v0.y - v1.y;
+		return new Vector2f(x, y);
+	}
+	
 	/**
 	 * Normalizes this vector
 	 * 
@@ -186,6 +192,12 @@ public final class Vector2f implements Serializable {
 		x += v.x;
 		y += v.y;
 		return this;
+	}
+	
+	public static Vector2f add(Vector2f v0, Vector2f v1) {
+		float x = v0.x + v1.x;
+		float y = v0.y + v1.y;
+		return new Vector2f(x, y);
 	}
 
 	/**
@@ -310,6 +322,12 @@ public final class Vector2f implements Serializable {
 		x *= scalar;
 		y *= scalar;
 		return this;
+	}
+	
+	public static Vector2f scale(Vector2f v, float scalar) {
+		float x = v.x * scalar;
+		float y = v.y * scalar;
+		return new Vector2f(x, y);
 	}
 
 	/** Multiplies this vector by a scalar */

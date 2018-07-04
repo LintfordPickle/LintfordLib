@@ -165,8 +165,7 @@ public class PolyBatch {
 
 	}
 
-	private void draw(float pP1X, float pP1Y, float pP2X, float pP2Y, float pZ, float pR, float pG, float pB) {
-
+	public void draw(float pP1X, float pP1Y, float pP2X, float pP2Y, float pZ, float pR, float pG, float pB) {
 		if (!mIsDrawing)
 			return;
 
@@ -231,8 +230,9 @@ public class PolyBatch {
 		mShader.modelMatrix(mModelMatrix);
 
 		mShader.bind();
-
-		GL11.glDrawArrays(GL11.GL_LINES, 0, mVertexCount);
+ 
+		// GL11.glDrawArrays(GL11.GL_LINES, 0, mVertexCount);
+		GL11.glDrawArrays(GL11.GL_TRIANGLE_FAN, 0, mVertexCount);
 
 		GL30.glBindVertexArray(0);
 
