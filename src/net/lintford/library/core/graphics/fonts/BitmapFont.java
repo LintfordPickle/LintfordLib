@@ -123,9 +123,12 @@ public class BitmapFont {
 			try {
 				File lFontFile = new File(mFontFileLocation);
 				if (!lFontFile.exists()) {
+					DebugManager.DEBUG_MANAGER.logger().e(getClass().getSimpleName(), "Font file not found at location: " + mFontFileLocation);
 					// TODO(John): Handle the case that this font file doesn't exist. Maybe load a default BitmapFont).
 				}
+
 				InputStream lFontInputStream = new FileInputStream(lFontFile);
+
 				mFont = Font.createFont(Font.TRUETYPE_FONT, lFontInputStream).deriveFont(mPointSize);
 				mFontOutline = Font.createFont(Font.TRUETYPE_FONT, lFontInputStream).deriveFont(mPointSize + 4);
 

@@ -7,7 +7,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.ShortBuffer;
@@ -17,8 +16,6 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 
 import org.lwjgl.openal.AL10;
-
-import com.sun.media.sound.WaveFileReader;
 
 import net.lintford.library.core.debug.DebugManager;
 import net.lintford.library.core.storage.FileUtils;
@@ -91,27 +88,6 @@ public class WaveData {
 	/** Disposes the {@link WaveData}. */
 	public void dispose() {
 		data.clear();
-	}
-
-	/**
-	 * Creates a WaveData container from the specified url
-	 * 
-	 * @param path
-	 *            URL to file
-	 * @return WaveData containing data, or null if a failure occured
-	 */
-	public static WaveData create(URL path) {
-		try {
-			// due to an issue with AudioSystem.getAudioInputStream
-			// and mixing unsigned and signed code
-			// we will use the reader directly
-			WaveFileReader wfr = new WaveFileReader();
-			return create(wfr.getAudioInputStream(new BufferedInputStream(path.openStream())));
-		} catch (Exception e) {
-			DebugManager.DEBUG_MANAGER.logger().e(WaveData.class.getSimpleName(), "Unable to create from: " + path + ", " + e.getMessage());
-
-			return null;
-		}
 	}
 
 	/**

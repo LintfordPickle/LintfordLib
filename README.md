@@ -135,32 +135,28 @@ There is also a ScreenManager framework contained within net.ld.library.screenma
 The following elements can be added directly into your game class which extends LWJGLCore, to provide some basic features:
 
 onInitialiseGL:
+
 ```
-	// Enable depth testing
-	GL11.glEnable(GL11.GL_BLEND);
-	GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-	
-	// Enable depth testing
-	GL11.glEnable(GL11.GL_DEPTH_TEST);
-	GL11.glDepthFunc(GL11.GL_LEQUAL);
-	
-	// Set the clear color to corn flower blue
-	GL11.glClearColor(100.0f / 255.0f, 149.0f / 255.0f, 237.0f / 255.0f, 1.0f);
+// Enable depth testing
+GL11.glEnable(GL11.GL_BLEND);
+GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+
+// Enable depth testing
+GL11.glEnable(GL11.GL_DEPTH_TEST);
+GL11.glDepthFunc(GL11.GL_LEQUAL);
+
+// Set the clear color to corn flower blue
+GL11.glClearColor(100.0f / 255.0f, 149.0f / 255.0f, 237.0f / 255.0f, 1.0f);
 ```
 
 onDraw():
+
 ```
-	// Clear the depth buffer and color buffer
-	GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+// Clear the depth buffer and color buffer
+GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 ```
 
-## Build
-THe project includes a Maven pom which will automatically compile the project files and include the resources from the classpath into the compiled jar file. All resources used by the library are loaded from the jar as ByteStreams.
+# Build
+The project includes an ANT script to build the library project.
+All of the resources used by the library are loaded from the jar as ByteStreams, and are loaded from within the LDLibrary JAR. This allows the library to reference resources which you may not otherwise have included in your project.
 n.b. that the package artefact doesn't contain the LWJGL dependencies. These are included by the implementing project (see [Gist](https://gist.github.com/LintfordPickle/a9df43c245270f7cc121f5f46e3ae054)).
-
-## Unit Tests
-
-Units tests are created with JUnit 4, which must be present in the project build path.
-The unit test coverage is currently very low, and unit tests are still being added.
-
-Units tests have been included in the /test/ source folder. The unit tests share the same package names as the classes they test (to allow package level access modifiers).

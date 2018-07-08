@@ -311,11 +311,6 @@ public class Matrix4f implements Serializable {
 		return dest;
 	}
 
-	/** @deprecated use {@link Matrix4f.IDENTITY} instead. */
-	public static Matrix4f identity() {
-		return new Matrix4f();
-	}
-
 	/**
 	 * Transform a Vector by a matrix and return the result in a destination vector.
 	 * 

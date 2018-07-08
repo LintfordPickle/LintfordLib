@@ -1,0 +1,106 @@
+<!-- ====================================================================== 
+     04.07.2018                                                        
+
+     project     :	LDLibrary
+     description :	Creates a JAR, including resources, of LDLibrary
+     
+			     	root / 
+					    build /         // all items of subfolders within this directory are included *within* the jar
+					        classes / 
+					        res /
+					    dist /
+					        docs / 
+					        res /
+					        libs /
+
+====================================================================== -->
+     
+<!-- LDLibrary Build  -->
+<project name="LDLibrary" basedir="." default="main">
+
+	<property name="client-main-class">net.lintford.library.LintfordMain</property>
+	
+	<!-- Input directories -->
+	<property name="input.src.dir" value="src" />
+	<property name="input.lib.dir" value="libs" />
+	<property name="input.res.dir" value="res/res" />
+	
+	<!-- Output directories -->
+	<property name="base.output.dir" value="f:/dist/java/LDLibrary" />
+	
+	<property name="build.dir" value="${base.output.dir}/build" />
+	<property name="dist.dir" value="${base.output.dir}/bin" />
+		
+	<property name="dist.jar" value="${dist.dir}/" />
+	<property name="dist.lib" value="${dist.dir}/lib/" />
+	<property name="dist.doc" value="${dist.dir}/docs/" />
+	<property name="dist.res" value="${build.dir}/res/" />
+	
+	<!-- Define the set of .jar files in the input lib dir as the classpath -->
+	<path id="build.class.path">
+		<fileset dir="${input.lib.dir}" includes="**/*.jar" />
+	</path>
+	
+	<!-- We will add this jar files to the manifests classpath -->
+	<pathconvert property="manifest.classpath" pathsep=" ">
+	  <path refid="build.class.path"/>
+	  <mapper>
+	    <chainedmapper>
+	       <flattenmapper/>
+	       <globmapper from="*.jar" to="lib/*.jar"/>
+	    </chainedmapper>
+	  </mapper>
+	</pathconvert>
+		    	
+	<!-- clean build -->
+	<target name="clean">
+		<delete dir="${build.dir}"/>
+		<delete dir="${dist.dir}"/>
+		<delete dir="${base.output.dir}"/>
+	</target>
+	
+	<!-- Create the output destination folders -->
+    <target name="init">
+    	<mkdir dir="${base.output.dir}" />
+    	<mkdir dir="${build.dir}/classes" />
+    	<mkdir dir="${dist.jar}" />
+    	<mkdir dir="${dist.lib}" />
+    	<mkdir dir="${dist.doc}" />
+    	<mkdir dir="${dist.res}" />
+    </target>
+
+	<!-- This is to copy the resources into the correct dist subdirectory (not used by the library) -->
+	<target name="copy.dep">
+		<echo message="copying embedded resources"/>
+		<copy todir="${dist.res}/res">
+		   <fileset dir="${basedir}/${input.res.dir}">
+		      <include name="**/*.*" />
+		   </fileset>
+		</copy>
+		<copy todir="${dist.lib}">
+		   <fileset dir="${basedir}/${input.lib.dir}">
+		      <include name="**/*.*" />
+		   </fileset>
+		</copy>
+	</target>
+	
+	<!-- compile source -->
+	<target name="compile">
+		<javac srcdir="${input.src.dir}" destdir="${build.dir}/classes" classpathref="build.class.path" includeantruntime="false" />
+	</target>
+	
+	<!-- create jar -->
+	<target name="createjar" depends="compile">
+		<echo message="createjar"/>
+		<jar destfile="${dist.jar}/LDLibrary.jar" basedir="${build.dir}/classes">
+			<fileset dir="${dist.res}" />
+			<manifest>
+				<attribute name="Main-Class" value="${client-main-class}" />
+				<attribute name="Class-Path" value="${manifest.classpath}"/>
+			</manifest>
+		</jar>
+	</target>
+
+	<target name="main" depends="clean, init, copy.dep, compile, createjar" />
+
+</project>
