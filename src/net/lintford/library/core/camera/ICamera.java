@@ -107,6 +107,16 @@ public interface ICamera {
 			return mRectangle;
 		}
 
+		@Override
+		public CameraState getCameraState() {
+			return null;
+		}
+
+		@Override
+		public void setCameraState(CameraState pCameraState) {
+
+		}
+
 	};
 
 	// --------------------------------------
@@ -142,6 +152,10 @@ public interface ICamera {
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
+
+	public abstract CameraState getCameraState();
+
+	public abstract void setCameraState(CameraState pCameraState);
 
 	public abstract void setPosition(float pX, float pY);
 

@@ -232,4 +232,15 @@ public class HUD implements ICamera, IResizeListener {
 
 	}
 
+	@Override
+	public CameraState getCameraState() {
+		return null;
+
+	}
+
+	@Override
+	public void setCameraState(CameraState pCameraState) {
+
+	}
+
 }

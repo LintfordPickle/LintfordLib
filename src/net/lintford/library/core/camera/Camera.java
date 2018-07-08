@@ -255,6 +255,51 @@ public class Camera implements ICamera {
 	// Methods
 	// --------------------------------------
 
+	@Override
+	public CameraState getCameraState() {
+		CameraState pReturnState = new CameraState();
+
+		pReturnState.acceleration.x = mAcceleration.x;
+		pReturnState.acceleration.y = mAcceleration.y;
+
+		pReturnState.velocity.x = mVelocity.x;
+		pReturnState.velocity.y = mTargetPosition.y;
+
+		pReturnState.targetPosition.x = mTargetPosition.x;
+		pReturnState.targetPosition.y = mTargetPosition.y;
+
+		pReturnState.offsetPosition.x = mOffsetPosition.x;
+		pReturnState.offsetPosition.y = mOffsetPosition.y;
+
+		pReturnState.zoomFactor = mZoomFactor;
+		pReturnState.rotation = mRotation;
+
+		return pReturnState;
+
+	}
+
+	@Override
+	public void setCameraState(CameraState pCameraState) {
+		if (pCameraState == null)
+			return;
+
+		mAcceleration.x = pCameraState.acceleration.x;
+		mAcceleration.y = pCameraState.acceleration.y;
+
+		mVelocity.x = pCameraState.velocity.x;
+		mVelocity.y = pCameraState.velocity.y;
+
+		mTargetPosition.x = pCameraState.targetPosition.x;
+		mTargetPosition.y = pCameraState.targetPosition.y;
+
+		mOffsetPosition.x = pCameraState.offsetPosition.x;
+		mOffsetPosition.y = pCameraState.offsetPosition.y;
+
+		mZoomFactor = pCameraState.zoomFactor;
+		mRotation = pCameraState.rotation;
+
+	}
+
 	public void changePerspectiveMatrix(float pW, float pH) {
 		createOrtho(pW, pH);
 
