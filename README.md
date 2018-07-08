@@ -157,6 +157,18 @@ GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 ```
 
 # Build
-The project includes an ANT script to build the library project.
-All of the resources used by the library are loaded from the jar as ByteStreams, and are loaded from within the LDLibrary JAR. This allows the library to reference resources which you may not otherwise have included in your project.
-n.b. that the package artefact doesn't contain the LWJGL dependencies. These are included by the implementing project (see [Gist](https://gist.github.com/LintfordPickle/a9df43c245270f7cc121f5f46e3ae054)).
+The project includes an ANT script to build the library project. The LDLibrary is, by default, build into the following directory structure:
+
+```
+drive:root / 
+	    build /
+	        classes / 
+	        res /     -- contains resources files which will be copied *into* the LDLIbrary JAR once it is built 
+	    dist /
+	        docs /    -- contains documentation to be included in the distribution
+	        res /     -- contains binary resources to be included in the distribution (not used by LDLibrary)
+	        libs /    -- contains dependency JAR files (e.g. LWJGL 3 and gson)
+```
+
+All of the resources used by the library are loaded from the jar as ByteStreams, and are loaded from within the LDLibrary JAR. 
+

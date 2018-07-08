@@ -18,6 +18,7 @@
 <!-- LDLibrary Build  -->
 <project name="LDLibrary" basedir="." default="main">
 
+	<property name="build-drive">f:</property>
 	<property name="client-main-class">net.lintford.library.LintfordMain</property>
 	
 	<!-- Input directories -->
@@ -26,7 +27,7 @@
 	<property name="input.res.dir" value="res/res" />
 	
 	<!-- Output directories -->
-	<property name="base.output.dir" value="f:/dist/java/LDLibrary" />
+	<property name="base.output.dir" value="${build-drive}/dist/java/LDLibrary" />
 	
 	<property name="build.dir" value="${base.output.dir}/build" />
 	<property name="dist.dir" value="${base.output.dir}/bin" />
