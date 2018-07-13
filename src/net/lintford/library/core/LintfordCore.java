@@ -33,8 +33,8 @@ import net.lintford.library.options.DisplayConfig;
 import net.lintford.library.options.MasterConfig;
 
 /**
- * The LintfordCore tracks the core state of an LWJGL application including a {@link DisplayConfig}, {@link ResourceManager}, {@link GameTime}, {@link Camera}, {@link HUD}, {@link InputState} and {@link RenderState}. It also defines the behaviour for
- * creating an OpenGL window.
+ * The LintfordCore tracks the core state of an LWJGL application including a {@link DisplayConfig}, {@link ResourceManager}, {@link GameTime}, {@link Camera}, {@link HUD}, {@link InputState} and {@link RenderState}. It
+ * also defines the behaviour for creating an OpenGL window.
  */
 public abstract class LintfordCore {
 
@@ -73,7 +73,8 @@ public abstract class LintfordCore {
 	}
 
 	/**
-	 * Returns the instance of {@link InputState} which was created when the LWJGL window was created. InputState is updated per-frame and tracks user input from the mouse and keyboard. null is returned if the LWJGL window has not yet been created.
+	 * Returns the instance of {@link InputState} which was created when the LWJGL window was created. InputState is updated per-frame and tracks user input from the mouse and keyboard. null is returned if the LWJGL
+	 * window has not yet been created.
 	 */
 	public InputState input() {
 		return mInputState;
@@ -348,6 +349,9 @@ public abstract class LintfordCore {
 
 	public void setNewGameCamera(Camera pCamera) {
 		mGameCamera = pCamera;
+
+		if (mMasterConfig == null)
+			throw new RuntimeException("mMasterConfig not initialised. You must call setNewGameCamera from LintfordCore.initialise (or later)!");
 
 		if (pCamera == null)
 			mGameCamera = new Camera(mMasterConfig.display());

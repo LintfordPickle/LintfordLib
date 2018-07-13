@@ -75,7 +75,7 @@ public class CameraFollowController extends BaseController {
 	public void initialise(LintfordCore pCore) {
 
 	}
-	
+
 	// FIXME: Duplicate initialise method - rename to something else or clean up design!
 	public void initialise(ICamera pGameCamera, WorldEntity pTrackedEntity) {
 		mGameCamera = pGameCamera;
@@ -85,9 +85,9 @@ public class CameraFollowController extends BaseController {
 
 	@Override
 	public void unload() {
-		
+
 	}
-	
+
 	@Override
 	public boolean handleInput(LintfordCore pCore) {
 		if (mGameCamera == null)
@@ -127,10 +127,10 @@ public class CameraFollowController extends BaseController {
 	@Override
 	public void update(LintfordCore pCore) {
 		if (mGameCamera == null)
-			;
-		mTrackPlayer = true;
-		if (mTrackPlayer && mTrackedEntity != null) {
+			return;
 
+		mTrackPlayer = mTrackedEntity != null;
+		if (mTrackPlayer) {
 			mGameCamera.setPosition(-mTrackedEntity.x, -mTrackedEntity.y);
 
 		} else {

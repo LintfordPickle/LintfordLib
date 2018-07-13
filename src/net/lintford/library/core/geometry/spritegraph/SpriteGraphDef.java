@@ -22,6 +22,7 @@ public class SpriteGraphDef {
 	public String name;
 	public String filename;
 	public SpriteGraphNodeDef rootNode;
+	public boolean updateAnimSpritePositions;
 
 	// --------------------------------------
 	// Properties
@@ -36,6 +37,10 @@ public class SpriteGraphDef {
 	// --------------------------------------
 
 	SpriteGraphDef() {
+
+	}
+
+	SpriteGraphDef(String pName, String pFilename, SpriteGraphNodeDef pNodeDef) {
 
 	}
 
@@ -88,10 +93,12 @@ public class SpriteGraphDef {
 
 		} catch (JsonSyntaxException e) {
 			DebugManager.DEBUG_MANAGER.logger().e(SpriteGraphDef.class.getSimpleName(), "Failed to parse JSON SpriteGraphDef (Syntax): " + pFile.getPath());
+			DebugManager.DEBUG_MANAGER.logger().printException(SpriteGraphDef.class.getSimpleName(), e);
 			return null;
 
 		} catch (IOException e) {
 			DebugManager.DEBUG_MANAGER.logger().e(SpriteGraphDef.class.getSimpleName(), "Failed to parse JSON SpriteGraphDef (IO): " + pFile.getPath());
+			DebugManager.DEBUG_MANAGER.logger().printException(SpriteGraphDef.class.getSimpleName(), e);
 			return null;
 
 		}

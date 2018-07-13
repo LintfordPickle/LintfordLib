@@ -116,12 +116,14 @@ public class SpriteGraphNodeInst extends Rectangle implements AnimatedSpriteList
 
 	public SpriteGraphNodeInst(SpriteGraphInst pSpriteGraphInst, SpriteGraphNodeDef pGraphNodeDef, float pNodeDepth) {
 		this();
+		mParentGraphInst = pSpriteGraphInst;
+
 		name = pGraphNodeDef.name;
 		type = pGraphNodeDef.type;
 		nodeDepth = pNodeDepth;
 		spriteSheetNameRef = pGraphNodeDef.defaultSpriteSheetName;
-		mParentGraphInst = pSpriteGraphInst;
 
+		// Setup the child nodes
 		int COUNT_SIZE = pGraphNodeDef.childParts.size();
 		for (int i = 0; i < COUNT_SIZE; i++) {
 			SpriteGraphNodeDef lNodeDef = pGraphNodeDef.childParts.get(i);
@@ -130,6 +132,16 @@ public class SpriteGraphNodeInst extends Rectangle implements AnimatedSpriteList
 			childNodes.add(lNewNodeInst);
 
 		}
+
+	}
+
+	public SpriteGraphNodeInst(SpriteGraphInst pSpriteGraphInst, String pSpriteSheetName, String pName, String pType, float pNodeDepth) {
+		this();
+		mParentGraphInst = pSpriteGraphInst;
+		name = pName;
+		type = pType;
+		nodeDepth = pNodeDepth;
+		spriteSheetNameRef = pSpriteSheetName;
 
 	}
 
@@ -160,6 +172,30 @@ public class SpriteGraphNodeInst extends Rectangle implements AnimatedSpriteList
 
 	public void update(LintfordCore pCore, SpriteGraphInst pParentGraph, SpriteGraphNodeInst pParentGraphNode) {
 
+		if (pParentGraph == null)
+			return;
+
+		if (pParentGraph.updateAnimSpritePositions) {
+			updateAnimSpritePosition(pCore, pParentGraph, pParentGraphNode);
+
+		} else {
+			updateAbsPosition(pCore, pParentGraph, pParentGraphNode);
+
+		}
+
+		final int COUNT = childNodes.size();
+		for (int i = 0; i < COUNT; i++) {
+			childNodes.get(i).update(pCore, pParentGraph, this);
+
+		}
+
+	}
+
+	// --------------------------------------
+	// Methods
+	// --------------------------------------
+
+	private void updateAnimSpritePosition(LintfordCore pCore, SpriteGraphInst pParentGraph, SpriteGraphNodeInst pParentGraphNode) {
 		// Update our position, relative to the parent
 		float lX = 0;
 		float lY = 0;
@@ -182,25 +218,35 @@ public class SpriteGraphNodeInst extends Rectangle implements AnimatedSpriteList
 				lY += (dx * sin + (dy * 1f) * cos);
 				lRot += (float) Math.toRadians(lAnchorPoint.rot);
 
-			}
+				lX += pParentGraph.positionX;
+				lY += pParentGraph.positionY;
 
-			lX += pParentGraphNode.centerX;
-			lY += pParentGraphNode.centerY;
+			} else {
+				lX = pParentGraph.positionX + centerX;
+				lY = pParentGraph.positionY + centerY;
+				lRot = rot;
+
+			}
 
 		} else {
 			lX = centerX;
 			lY = centerY;
+
 		}
 
 		// Update the spritegraphnode
 		SpriteSheetDef lNodeSpriteSheet = pCore.resources().spriteSheetManager().getSpriteSheet(spriteSheetNameRef);
 		if (lNodeSpriteSheet != null) {
+
+			// The states are needed to change the sprite animations/variations being used when rendering sprite graphs.
+			// The states can originate from two places, either on the node (i.e. locally) or on the graph object (i.e. globally).
+			// stats on the local node take precedence.
 			// e.g. Torso00_idle
 			// TODO: ---> Overide with local node states (e.g. ARM_SWING, ARM_STAB)
 			String lResolvedName = name + type;
 			if (mActionStateName != null)
 				lResolvedName += mActionStateName;
-			else
+			else if (pParentGraph.objectState != null)
 				lResolvedName += pParentGraph.objectState;
 
 			// Check to see if the animation state of this node has changed
@@ -260,17 +306,52 @@ public class SpriteGraphNodeInst extends Rectangle implements AnimatedSpriteList
 
 		}
 
-		final int COUNT = childNodes.size();
-		for (int i = 0; i < COUNT; i++) {
-			childNodes.get(i).update(pCore, pParentGraph, this);
+	}
+
+	private void updateAbsPosition(LintfordCore pCore, SpriteGraphInst pParentGraph, SpriteGraphNodeInst pParentGraphNode) {
+		// Update the spritegraphnode
+		SpriteSheetDef lNodeSpriteSheet = pCore.resources().spriteSheetManager().getSpriteSheet(spriteSheetNameRef);
+		if (lNodeSpriteSheet != null) {
+
+			// The states are needed to change the sprite animations/variations being used when rendering sprite graphs.
+			// The states can originate from two places, either on the node (i.e. locally) or on the graph object (i.e. globally).
+			// stats on the local node take precedence.
+			// e.g. Torso00_idle
+			// TODO: ---> Overide with local node states (e.g. ARM_SWING, ARM_STAB)
+			String lResolvedName = name + type;
+			if (mActionStateName != null)
+				lResolvedName += mActionStateName;
+			else if (pParentGraph.objectState != null)
+				lResolvedName += pParentGraph.objectState;
+
+			// Check to see if the animation state of this node has changed
+			if (!lResolvedName.equals(currentStateName)) {
+				nodeSprite = lNodeSpriteSheet.getSpriteInstance(lResolvedName);
+
+				if (nodeSprite != null) {
+					// When we change to a new animation, we need to
+					nodeSprite.animatedSpriteListender(this);
+					nodeSprite.playFromBeginning();
+
+				} else {
+					// If the sprite equals null, then try and fallback to some default (the first sprite in the SpriteMap).
+					nodeSprite = lNodeSpriteSheet.getSpriteInstance(name + type + DEFAULT_ACTION_STATE);
+
+				}
+
+				// Only do this once
+				currentStateName = lResolvedName;
+
+			}
 
 		}
 
-	}
+		mFlipH = pParentGraph.mFlipHorizontal;
 
-	// --------------------------------------
-	// Methods
-	// --------------------------------------
+//		setDimensions(32, 32);
+//		rotateAbs(rot);
+		
+	}
 
 	public void addChild(SpriteGraphNodeInst pPart) {
 		if (!childNodes.contains(pPart)) {
@@ -309,7 +390,7 @@ public class SpriteGraphNodeInst extends Rectangle implements AnimatedSpriteList
 			mParentGraphInst.nodeAnimationStopped(this, mActionKeyName, mActionStateName);
 
 		}
-		
+
 		mActionKeyName = pActionKeyName;
 		mActionStateName = pActionTagName;
 

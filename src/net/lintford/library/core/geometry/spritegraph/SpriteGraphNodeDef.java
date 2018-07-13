@@ -15,9 +15,12 @@ public class SpriteGraphNodeDef {
 
 	/** List of possible types is loaded from the {@link SpriteSheetDef}. */
 	public String type;
+	
+	/** Rules are used during the creation of objects within a L-System */
+	public String rules;
 
 	/**
-	 * If this sprite node represents some object (like a steelshirt being worn on the torso), then add the object reference link here. Any object referenced here will be included as default on all {@link SpriteGraphNodeDef} instantiated from this
+	 * If this sprite node represents some object (like a steel shirt being worn on the torso), then add the object reference link here. Any object referenced here will be included as default on all {@link SpriteGraphNodeDef} instantiated from this
 	 * definition file.
 	 */
 	public int mObjectReferenceType;

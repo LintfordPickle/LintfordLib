@@ -29,6 +29,12 @@ public class SpriteGraphInst implements Serializable {
 	public float positionX;
 	public float positionY;
 
+	/**
+	 * There are two kinds of updates which can be performed on a SpriteGraph - either the positions and rotations of each child node is taken from the anchors and pivots of the animation sprites (on a per frame basis),
+	 * else they are taken from an absolute position and rotation assigned when created (like in the case of building a SpriteGraph from a L-System).
+	 */
+	public boolean updateAnimSpritePositions;
+
 	public Map<String, String> currentActions;
 
 	// --------------------------------------
@@ -70,6 +76,9 @@ public class SpriteGraphInst implements Serializable {
 		this();
 
 		spriteGraphName = pSpriteGraphDef.name;
+		updateAnimSpritePositions = pSpriteGraphDef.updateAnimSpritePositions;
+
+		// Create the SpriteGraph tree using the definition
 		rootNode = new SpriteGraphNodeInst(this, pSpriteGraphDef.rootNode);
 
 	}
