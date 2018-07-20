@@ -42,7 +42,7 @@ public abstract class LintfordCore {
 	// Variables
 	// ---------------------------------------------
 
-	public final int CORE_ID = BaseEntity.getEntityNumber();
+	public static final int CORE_ID = BaseEntity.getEntityNumber();
 
 	protected GameInfo mGameInfo;
 	protected MasterConfig mMasterConfig;

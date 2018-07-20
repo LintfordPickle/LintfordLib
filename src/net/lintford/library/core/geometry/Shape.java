@@ -43,7 +43,7 @@ public abstract class Shape implements Serializable {
 		return rad;
 	}
 
-	public float rotate() {
+	public float rotation() {
 		return rot;
 	}
 
@@ -72,7 +72,7 @@ public abstract class Shape implements Serializable {
 	}
 
 	public void setPivotPoint(float pX, float pY) {
-		py = pX;
+		px = pX;
 		py = pY;
 	}
 
@@ -83,10 +83,6 @@ public abstract class Shape implements Serializable {
 	public Shape() {
 
 	}
-
-	// --------------------------------------
-	// Core-Methods
-	// --------------------------------------
 
 	// --------------------------------------
 	// Methods

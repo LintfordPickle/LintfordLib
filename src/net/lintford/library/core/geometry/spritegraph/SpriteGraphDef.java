@@ -23,6 +23,7 @@ public class SpriteGraphDef {
 	public String filename;
 	public SpriteGraphNodeDef rootNode;
 	public boolean updateAnimSpritePositions;
+	public boolean useSpriteFrameReferences;
 
 	// --------------------------------------
 	// Properties

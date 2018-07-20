@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.graphics.ResourceManager;
 
 /**
  * Represents a geometric instance of a SpriteGraphDef in the world, complete with information about transforms and part types (if for example multiple types are available per part).
@@ -25,15 +24,15 @@ public class SpriteGraphInst implements Serializable {
 	public String objectState;
 	public boolean mFlipHorizontal;
 	public boolean mFlipVertical;
-	private boolean mIsLoaded;
 	public float positionX;
 	public float positionY;
 
 	/**
-	 * There are two kinds of updates which can be performed on a SpriteGraph - either the positions and rotations of each child node is taken from the anchors and pivots of the animation sprites (on a per frame basis),
-	 * else they are taken from an absolute position and rotation assigned when created (like in the case of building a SpriteGraph from a L-System).
+	 * There are two kinds of anchors which can be used when constructing a SpriteGraph: the first are the anchors within each SpriteFrame, which allow a per-frame update of nodes based on Sprite animations. The second
+	 * kind of anchors are placed within the nodes themselves. These are created when building a SpriteGraph from a Lindenmayer System.
 	 */
-	public boolean updateAnimSpritePositions;
+	public boolean useSpriteAnchors;
+	public boolean useSpriteFrameReferences;
 
 	public Map<String, String> currentActions;
 
@@ -43,10 +42,6 @@ public class SpriteGraphInst implements Serializable {
 
 	public boolean isFree() {
 		return !(spriteGraphName != null && spriteGraphName.length() > 0);
-	}
-
-	public boolean isLoaded() {
-		return mIsLoaded;
 	}
 
 	public SpriteGraphNodeInst getNode(String pName) {
@@ -76,7 +71,8 @@ public class SpriteGraphInst implements Serializable {
 		this();
 
 		spriteGraphName = pSpriteGraphDef.name;
-		updateAnimSpritePositions = pSpriteGraphDef.updateAnimSpritePositions;
+		useSpriteAnchors = pSpriteGraphDef.updateAnimSpritePositions;
+		useSpriteFrameReferences = pSpriteGraphDef.useSpriteFrameReferences;
 
 		// Create the SpriteGraph tree using the definition
 		rootNode = new SpriteGraphNodeInst(this, pSpriteGraphDef.rootNode);
@@ -87,25 +83,10 @@ public class SpriteGraphInst implements Serializable {
 	// Core-Methods
 	// --------------------------------------
 
-	public void loadGLContent(ResourceManager pResourceManager) {
-		rootNode.loadContent(pResourceManager);
-		mIsLoaded = true;
-
-	}
-
-	public void unloadGLContent() {
-		rootNode.unloadContent();
-		mIsLoaded = false;
-
-	}
-
 	/**
 	 * Updates the {@link SpriteGraphInst} and all its {@link SpriteGraphNodeInst} child parts, updating their positions and vertices.
 	 */
 	public void update(LintfordCore pCore) {
-		if (!mIsLoaded)
-			return;
-
 		rootNode.setPosition(positionX, positionY);
 		rootNode.update(pCore, this, null);
 
@@ -179,8 +160,6 @@ public class SpriteGraphInst implements Serializable {
 	}
 
 	public void reset() {
-		unloadGLContent();
-
 		// reset child nodes
 		rootNode.reset();
 		spriteGraphName = null;

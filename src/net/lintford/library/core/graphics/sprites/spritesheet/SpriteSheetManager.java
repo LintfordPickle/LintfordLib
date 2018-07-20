@@ -105,8 +105,7 @@ public class SpriteSheetManager {
 
 			// Check the integrity of the loaded spritsheet
 			if (lSpriteSheet == null || lSpriteSheet.getSpriteCount() == 0) {
-				DebugManager.DEBUG_MANAGER.logger().w(getClass().getSimpleName(), "Error loading spritesheet " + lFile.getPath());
-				return null;
+				DebugManager.DEBUG_MANAGER.logger().w(getClass().getSimpleName(), lSpriteSheet.spriteSheetName + " has no SpriteMap Sprites defined (SpriteMap is empty!) " + lFile.getPath());
 
 			}
 

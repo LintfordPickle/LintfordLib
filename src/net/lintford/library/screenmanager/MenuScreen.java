@@ -66,7 +66,9 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	// --------------------------------------
 
 	public static final String MENUSCREEN_FONT_NAME = "MenuScreenFont";
+	public static final int    MENUSCREEN_FONT_POINT_SIZE = 20;
 	public static final String MENUSCREEN_HEADER_FONT_NAME = "MenuScreenHeaderFont";
+	public static final int    MENUSCREEN_HEADER_FONT_POINT_SIZE = 48;
 
 	public static final float ANIMATION_TIMER_LENGTH = 130; // ms
 
@@ -178,8 +180,8 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		}
 
 		final String lFontPathname = mScreenManager.fontPathname();
-		mMenuFont = pResourceManager.fontManager().loadNewFont(MENUSCREEN_FONT_NAME, lFontPathname, 24, true);
-		mMenuHeaderFont = pResourceManager.fontManager().loadNewFont(MENUSCREEN_HEADER_FONT_NAME, lFontPathname, 35, false);
+		mMenuFont = pResourceManager.fontManager().loadNewFont(MENUSCREEN_FONT_NAME, lFontPathname, MENUSCREEN_FONT_POINT_SIZE, true);
+		mMenuHeaderFont = pResourceManager.fontManager().loadNewFont(MENUSCREEN_HEADER_FONT_NAME, lFontPathname, MENUSCREEN_HEADER_FONT_POINT_SIZE, false);
 
 	}
 

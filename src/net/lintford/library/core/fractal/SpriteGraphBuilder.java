@@ -1,12 +1,11 @@
-package net.lintford.library.core.graphics.sprites.spritegraph;
+package net.lintford.library.core.fractal;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
 
+import net.lintford.library.core.geometry.Anchor;
 import net.lintford.library.core.geometry.spritegraph.SpriteGraphInst;
 import net.lintford.library.core.geometry.spritegraph.SpriteGraphNodeInst;
-import net.lintford.library.core.graphics.sprites.SpriteFrame;
-import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDef;
 import net.lintford.library.core.maths.RandomNumbers;
 
 /** Builds SpriteGraphDefintions based on L-Systems. */
@@ -31,11 +30,11 @@ public class SpriteGraphBuilder {
 
 		}
 
-		public LCursor(float pX, float pY, float pCurRotation, SpriteGraphNodeInst pCurSprite, int pDepth) {
-			x = pX;
-			y = pY;
-			curRotation = pCurRotation;
-			currentNode = pCurSprite;
+		public LCursor(SpriteGraphNodeInst pCurGraphNode, int pDepth) {
+			currentNode = pCurGraphNode;
+			x = currentNode.centerX();
+			y = currentNode.centerY();
+			curRotation = currentNode.rotation();
 			depth = pDepth;
 
 		}
@@ -43,7 +42,7 @@ public class SpriteGraphBuilder {
 		public Deque<LCursor> cursorStack = new ArrayDeque<>();
 
 		public void saveState() {
-			cursorStack.push(new LCursor(x, y, curRotation, currentNode, depth));
+			cursorStack.push(new LCursor(currentNode, depth));
 		}
 
 		public void restoreState() {
@@ -66,18 +65,20 @@ public class SpriteGraphBuilder {
 	// Methods
 	// --------------------------------------
 
-	public SpriteGraphInst createSpriteGraphFromLSystem(final String pLSystemString, SpriteSheetDef pSpriteSheetDef) {
+	public SpriteGraphInst createSpriteGraphFromLSystem(final String pLSystemString, LSystemDefinition pLSystemDef) {
 		// We require a pSpriteSheetDef for the construction of the SpriteGraph because we need to know the visual properties
 		// of each of the SpriteGraph nodes. The origin of the SpriteSheetDef is un-important.
 
 		SpriteGraphInst lNewInst = new SpriteGraphInst();
 		lNewInst.spriteGraphName = "Tree";
+		lNewInst.useSpriteAnchors = false;
 
-		lNewInst.rootNode = new SpriteGraphNodeInst(lNewInst, "TreeSpriteSheet", "TreeRoot", "", 0);
+		lNewInst.rootNode = new SpriteGraphNodeInst(lNewInst, pLSystemDef.SpriteSheetName, pLSystemDef.rootNodeSpriteName, "", 0);
 		lNewInst.rootNode.setPosition(0, 250);
+		lNewInst.rootNode.setPivotPoint(pLSystemDef.getPivotX(0), pLSystemDef.getPivotY(0));
 
 		// Now we need to 'draw' the L-System (i.e. create the sprites and the graph)
-		LCursor lCursor = new LCursor(0, 250, -90, lNewInst.rootNode, 0);
+		LCursor lCursor = new LCursor(lNewInst.rootNode, 0);
 
 		for (int i = 0; i < pLSystemString.length(); i++) {
 			char lCurrentInstruction = pLSystemString.charAt(i);
@@ -85,50 +86,47 @@ public class SpriteGraphBuilder {
 			// Update the cursor position ready for the next node in the tree
 			switch (lCurrentInstruction) {
 			case 'F':
-				String lSpriteName = "TreeRoot";
-				if (lCursor.depth > 0)
-					lSpriteName = "TreeTrunk";
-
-				SpriteFrame lSectionSpriteFrame = pSpriteSheetDef.getSpriteFrame(lSpriteName);
-
-				// TODO: Get the height of the current sprite used for this node
-				final float lHeight = lSectionSpriteFrame.h;
-
-				lCursor.x += (float) Math.cos(Math.toRadians(lCursor.curRotation)) * lHeight;
-				lCursor.y += (float) Math.sin(Math.toRadians(lCursor.curRotation)) * lHeight;
+				// TODO: Need to properly determine if this is a leaf node or a branch
+				final boolean lIsLeafNode = lCursor.depth > 6;//pLSystemDef.leafNodeDepth;
+				final String lSpriteName = !lIsLeafNode ? pLSystemDef.branchNodeSpriteName : pLSystemDef.leafNodeSpriteName;
 
 				// Create a new anchor position in the current sprite ready for the next node of the graph
+				lCursor.currentNode.nodeAnchor = new Anchor(lSpriteName, pLSystemDef.getAnchorPointX(lCursor.depth), pLSystemDef.getAnchorPointY(lCursor.depth), lCursor.curRotation);
 
 				SpriteGraphNodeInst lNewNodeInst = new SpriteGraphNodeInst(lNewInst, "TreeSpriteSheet", lSpriteName, "", lCursor.depth);
-				lNewNodeInst.setPosition(lCursor.x, lCursor.y);
-				lNewNodeInst.setDimensions(lSectionSpriteFrame.w, lSectionSpriteFrame.h);
-				lNewNodeInst.rotateAbs((float) Math.toRadians(lCursor.curRotation + 90));
+				lNewNodeInst.setPivotPoint(pLSystemDef.getPivotX(lCursor.depth), pLSystemDef.getPivotY(lCursor.depth));
 
 				lCursor.currentNode.childNodes.add(lNewNodeInst);
 				lCursor.currentNode = lNewNodeInst;
 
-				lCursor.depth++;
+				// All rotations are relative to the current cursor heading
+				lCursor.curRotation = 0;
 
+				lCursor.depth++;
 				break;
+
 			case '-':
-				lCursor.curRotation -= RandomNumbers.random(20, 45);
+				lCursor.curRotation -= RandomNumbers.random(pLSystemDef.getMinAngle(lCursor.depth), pLSystemDef.getMaxAngle(lCursor.depth));
 				break;
+
 			case '+':
-				lCursor.curRotation += RandomNumbers.random(20, 45);
+				lCursor.curRotation += RandomNumbers.random(pLSystemDef.getMinAngle(lCursor.depth), pLSystemDef.getMaxAngle(lCursor.depth));
 				break;
+
 			case '[':
 				lCursor.saveState();
 				break;
+
 			case ']':
 				lCursor.restoreState();
 				break;
+
 			}
 
 		}
 
-		// MAGIC
-
 		return lNewInst;
+
 	}
 
 }

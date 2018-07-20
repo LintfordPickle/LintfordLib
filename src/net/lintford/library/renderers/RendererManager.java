@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.lwjgl.opengl.GL11;
+
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.debug.DebugManager;
 import net.lintford.library.core.graphics.ResourceManager;
@@ -22,6 +24,12 @@ public class RendererManager {
 	// --------------------------------------
 	// Constants
 	// --------------------------------------
+
+	/** This refers to the BaseRenderers responsible for rendering the game components. */
+	public static final boolean RENDER_GAME_RENDERABLES = true;
+
+	/** This refers to the BaseRenderers responsible for rendering the UI components. */
+	public static final boolean RENDER_UI_WINDOWS = true;
 
 	public static final int NO_WINDOW_INDEX = -1;
 	public static final int WINDOW_ALREADY_REGISTERED = -2;
@@ -59,6 +67,7 @@ public class RendererManager {
 	private List<RenderTarget> mRenderTargets;
 	private List<RenderTarget> mRenderTargetAutoResize;
 	private RenderTarget mCurrentTarget;
+	private RenderTarget mUIRenderTarget;
 
 	// --------------------------------------
 	// Properties
@@ -168,8 +177,8 @@ public class RendererManager {
 		mTextureBatch.loadGLContent(pResourceManager);
 
 		// TODO: We should add a more concise method for getting fonts which are already loaded...
-		mWindowTitleFont = pResourceManager.fontManager().loadNewFont(WINDOWS_TITLE_FONT_NAME, "res/fonts/Pixel.ttf", 18);
-		mWindowTextFont = pResourceManager.fontManager().loadNewFont(WINDOWS_TEXT_FONT_NAME, "res/fonts/Pixel.ttf", 14);
+		mWindowTitleFont = pResourceManager.fontManager().loadNewFont(WINDOWS_TITLE_FONT_NAME, "res/fonts/OxygenMono-Regular.ttf", 18);
+		mWindowTextFont = pResourceManager.fontManager().loadNewFont(WINDOWS_TEXT_FONT_NAME, "res/fonts/OxygenMono-Regular.ttf", 14);
 
 		// Some windows will use this to orientate themselves to the window
 		mDisplayConfig = pResourceManager.config().display();
@@ -193,6 +202,13 @@ public class RendererManager {
 			}
 
 		});
+
+		// TODO: make sure to maintain the correct Aspect Ratio with the window
+		final int lBufferWidth = 1280;
+		final int lBufferHeight = 900;
+
+		mUIRenderTarget = createRenderTarget("EmissiveRT", lBufferWidth, lBufferHeight, true);
+		mUIRenderTarget.textureFilter(GL11.GL_NEAREST);
 
 		mIsLoaded = true;
 
@@ -280,9 +296,7 @@ public class RendererManager {
 	}
 
 	public void draw(LintfordCore pCore) {
-
-		// TODO: RendererManager we can probably get rid of the draw() space resource loading
-		if (true) {
+		if (RENDER_GAME_RENDERABLES) {
 			final int RENDERER_COUNT = mRenderers.size();
 			for (int i = 0; i < RENDERER_COUNT; i++) {
 				if (!mRenderers.get(i).isActive())
@@ -300,7 +314,7 @@ public class RendererManager {
 			}
 		}
 
-		if (true) {
+		if (RENDER_UI_WINDOWS) {
 			final int WINDOW_RENDERER_COUNT = mWindowRenderers.size();
 			for (int i = 0; i < WINDOW_RENDERER_COUNT; i++) {
 				if (!mWindowRenderers.get(i).isActive())

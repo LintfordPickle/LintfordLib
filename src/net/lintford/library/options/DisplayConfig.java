@@ -69,9 +69,6 @@ public class DisplayConfig extends BaseConfig {
 	public static final int WINDOW_MINIMUM_WIDTH = 800;
 	public static final int WINDOW_MINIMUM_HEIGHT = 600;
 
-	public static final int WINDOW_DEFAULT_WIDTH = 1600;
-	public static final int WINDOW_DEFAULT_HEIGHT = 900;
-
 	// --------------------------------------
 	// Enums
 	// --------------------------------------
@@ -97,7 +94,6 @@ public class DisplayConfig extends BaseConfig {
 	public boolean mFullScreen;
 	private Vector2i mWindowSize;
 	private Vector2i mAspectRatio;
-	private Vector2i mHUDSize;
 
 	private boolean mVSYNCEnabled;
 	private boolean mWindowIsResizable;
@@ -110,9 +106,6 @@ public class DisplayConfig extends BaseConfig {
 	private GLFWFramebufferSizeCallback mFrameBufferSizeCallback;
 	private long mWindowID = NULL;
 	private boolean mRecompileShaders = false;
-
-	// private boolean mStretchToFit;
-	// private boolean mMaintainAspectRatio;
 
 	List<IResizeListener> mWindowResizeListeners;
 	List<IResizeListener> mGameResizeListeners;
@@ -156,10 +149,6 @@ public class DisplayConfig extends BaseConfig {
 		return mFullScreen;
 	}
 
-	public Vector2i HUDSize() {
-		return mHUDSize;
-	}
-
 	public Vector2i windowSize() {
 		return mWindowSize;
 	}
@@ -193,12 +182,8 @@ public class DisplayConfig extends BaseConfig {
 
 		/* set some defaults */
 		mWindowSize = new Vector2i();
-		mWindowSize.x = WINDOW_DEFAULT_WIDTH;
-		mWindowSize.y = WINDOW_DEFAULT_HEIGHT;
-
-		mHUDSize = new Vector2i();
-		mHUDSize.x = WINDOW_DEFAULT_WIDTH;
-		mHUDSize.y = WINDOW_DEFAULT_HEIGHT;
+		mWindowSize.x = 1600;
+		mWindowSize.y = 900;
 
 		mAspectRatio = new Vector2i();
 		mAspectRatio.x = 16;
@@ -431,9 +416,6 @@ public class DisplayConfig extends BaseConfig {
 		mWindowSize.x = pWidth;
 		mWindowSize.y = pHeight;
 
-		mHUDSize.x = pWidth;
-		mHUDSize.y = pHeight;
-		
 		GL11.glViewport(0, 0, pWidth, pHeight);
 
 	}

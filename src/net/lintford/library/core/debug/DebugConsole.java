@@ -205,7 +205,7 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 		if (!CONSOLE_ENABLED)
 			return;
 
-		mConsoleFont = pResourceManager.fontManager().systemFont();
+		mConsoleFont = pResourceManager.fontManager().loadNewFont(CONSOLE_FONT_NAME, "/res/fonts/OxygenMono-Regular.ttf", 14);
 		mSpriteBatch.loadGLContent(pResourceManager);
 
 		mIsLoaded = true;

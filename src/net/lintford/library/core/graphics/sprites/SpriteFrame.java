@@ -3,7 +3,7 @@ package net.lintford.library.core.graphics.sprites;
 import java.io.Serializable;
 
 import net.lintford.library.core.geometry.AARectangle;
-import net.lintford.library.core.geometry.spritegraph.SpriteGraphAnchorDef;
+import net.lintford.library.core.geometry.Anchor;
 
 /** Defines a single sprite animation frame */
 // TODO: Check out the serialized version of this class - it contains a lot of potentially superflous information.
@@ -25,7 +25,7 @@ public class SpriteFrame extends AARectangle implements Serializable {
 	public float py;
 
 	/** A list of named anchor points. */
-	public SpriteGraphAnchorDef[] anchors;
+	public Anchor[] anchors;
 
 	// --------------------------------------
 	// Properties
@@ -62,7 +62,7 @@ public class SpriteFrame extends AARectangle implements Serializable {
 	// Inherited-Methods
 	// --------------------------------------
 
-	public SpriteGraphAnchorDef getAnchorPoint(String pName) {
+	public Anchor getAnchorPoint(String pName) {
 		if (anchors == null || anchors.length == 0)
 			return null;
 

@@ -28,7 +28,7 @@ public class SpriteGraphRenderer extends SpriteBatch {
 	// --------------------------------------
 
 	public void draw(LintfordCore pCore, SpriteGraphInst pSpriteGraphInst) {
-		if (pSpriteGraphInst == null || pSpriteGraphInst.isFree() || !pSpriteGraphInst.isLoaded())
+		if (pSpriteGraphInst == null || pSpriteGraphInst.isFree())
 			return;
 
 		renderSpriteTreeNode(pCore, pSpriteGraphInst, pSpriteGraphInst.rootNode);

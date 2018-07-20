@@ -80,6 +80,7 @@ public class SpriteDefinition implements Serializable {
 	// --------------------------------------
 
 	public void loadContent(final SpriteSheetDef pSpriteSheet) {
+		if(animationSprites == null) return;
 		final int SPRITE_COUNT = animationSprites.length;
 		for (int i = 0; i < SPRITE_COUNT; i++) {
 			final SpriteFrame lSpriteFrame = pSpriteSheet.getSpriteFrame(animationSprites[i]);
