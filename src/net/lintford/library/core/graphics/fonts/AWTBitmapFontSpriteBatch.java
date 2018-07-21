@@ -127,8 +127,8 @@ public class AWTBitmapFontSpriteBatch extends TextureBatch {
 
 			if (lCharGlyph != null) {
 				if(mDrawShadow)
-					draw(mBitmapFont.fontTexture(), lCharGlyph.x, lCharGlyph.y, lCharGlyph.width, lCharGlyph.height, lPosX - 2, lPosY + 2, lCharGlyph.width, lCharGlyph.height, pZ, 0f, 0f, 0f, pA);
-				draw(mBitmapFont.fontTexture(), lCharGlyph.x, lCharGlyph.y, lCharGlyph.width, lCharGlyph.height, lPosX, lPosY, lCharGlyph.width, lCharGlyph.height, pZ, pR, pG, pB, pA);
+					draw(mBitmapFont.fontTexture(), lCharGlyph.x, lCharGlyph.y, lCharGlyph.width, lCharGlyph.height, lPosX - 1f*pScale, lPosY + 1f*pScale, lCharGlyph.width*pScale, lCharGlyph.height*pScale, pZ, 0f, 0f, 0f, pA);
+				draw(mBitmapFont.fontTexture(), lCharGlyph.x, lCharGlyph.y, lCharGlyph.width, lCharGlyph.height, lPosX, lPosY, lCharGlyph.width*pScale, lCharGlyph.height*pScale, pZ, pR, pG, pB, pA);
 				lPosX += lCharGlyph.width * pScale;
 
 			} else {
@@ -145,8 +145,8 @@ public class AWTBitmapFontSpriteBatch extends TextureBatch {
 			for (int i = 0; i < 3; i++) {
 				if (lCharGlyph != null) {
 					if(mDrawShadow)
-						draw(mBitmapFont.fontTexture(), lCharGlyph.x, lCharGlyph.y, lCharGlyph.width, lCharGlyph.height, lPosX - 2, lPosY + 2, lCharGlyph.width, lCharGlyph.height, pZ, 0f, 0f, 0f, pA);
-					draw(mBitmapFont.fontTexture(), lCharGlyph.x, lCharGlyph.y, lCharGlyph.width, lCharGlyph.height, lPosX, lPosY, lCharGlyph.width, lCharGlyph.height, pZ, pR, pG, pB, pA);
+						draw(mBitmapFont.fontTexture(), lCharGlyph.x, lCharGlyph.y, lCharGlyph.width, lCharGlyph.height, lPosX - 2, lPosY + 2, lCharGlyph.width*pScale, lCharGlyph.height*pScale, pZ, 0f, 0f, 0f, pA);
+					draw(mBitmapFont.fontTexture(), lCharGlyph.x, lCharGlyph.y, lCharGlyph.width, lCharGlyph.height, lPosX, lPosY, lCharGlyph.width*pScale, lCharGlyph.height*pScale, pZ, pR, pG, pB, pA);
 					lPosX += lCharGlyph.width * pScale;
 
 				} else {
