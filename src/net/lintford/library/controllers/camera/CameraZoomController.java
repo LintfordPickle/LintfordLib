@@ -14,11 +14,11 @@ public class CameraZoomController extends BaseController {
 
 	public static final String CONTROLLER_NAME = "CameraZoomController";
 
-	/** Specifies the minimum amount of camera zoom */
-	public static final float MIN_CAMERA_ZOOM = 0.1f;
+	/** Specifies the minimum amount of camera zoom (zooming out) */
+	public static final float MIN_CAMERA_ZOOM = 0.2f; // 1.5f
 
-	/** Specifies the maximum amount of camera zoom */
-	public static final float MAX_CAMERA_ZOOM = 10f;
+	/** Specifies the maximum amount of camera zoom (zooming in) */
+	public static final float MAX_CAMERA_ZOOM = 10f; // 2f
 
 	/**
 	 * Specifies the amount of DRAG to be applied to the zoom factor velocity over time.

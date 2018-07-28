@@ -1,8 +1,12 @@
 package net.lintford.library.core.fractal;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
+import net.lintford.library.core.geometry.spritegraph.SpriteGraphInst;
 import net.lintford.library.core.geometry.spritegraph.SpriteGraphNodeInst;
+import net.lintford.library.core.geometry.spritegraph.animators.LSystemAnimator;
 import net.lintford.library.core.graphics.ResourceManager;
 
 public class LSystemDefinition implements Serializable {
@@ -17,18 +21,25 @@ public class LSystemDefinition implements Serializable {
 	// Variables
 	// --------------------------------------
 
+	public LSystemAnimator mLSystemAnimator = new LSystemAnimator();
+
+	public String axiom;
+	public List<LRuleSet> rules;
+
 	public String SpriteSheetName;
 	public String rootNodeSpriteName;
 	public String branchNodeSpriteName;
 	public String leafNodeSpriteName;
-	
-	public int leafNodeDepth = 4; 
+
+	public int leafNodeDepth;
 
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
 	public LSystemDefinition() {
+		rules = new ArrayList<>();
+		leafNodeDepth = 4;
 
 	}
 
@@ -71,7 +82,7 @@ public class LSystemDefinition implements Serializable {
 	}
 
 	public float getPivotY(int pNodeDepth) {
-		return 16;
+		return 0;
 	}
 
 	public float getMinAngle(int pNodeDepth) {
@@ -86,15 +97,15 @@ public class LSystemDefinition implements Serializable {
 		return 1f;
 	}
 
-	public void onRootNodeCreated(SpriteGraphNodeInst pNode) {
+	public void onGraphCreation(SpriteGraphInst pInst) {
+		pInst.animator(mLSystemAnimator);
+	}
+
+	public void onRootNodeCreation(SpriteGraphNodeInst pNode) {
 
 	}
 
-	public void onBranchNodeCreated(SpriteGraphNodeInst pNode) {
-
-	}
-
-	public void onLeafNodeCreated(SpriteGraphNodeInst pNode) {
+	public void onNodeCreation(SpriteGraphNodeInst pNode) {
 
 	}
 

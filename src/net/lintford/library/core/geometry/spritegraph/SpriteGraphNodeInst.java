@@ -7,7 +7,6 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.geometry.Anchor;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.sprites.AnimatedSpriteListener;
-import net.lintford.library.core.graphics.sprites.SpriteFrame;
 import net.lintford.library.core.graphics.sprites.SpriteInstance;
 import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDef;
 
@@ -62,9 +61,12 @@ public class SpriteGraphNodeInst extends Rectangle implements AnimatedSpriteList
 	private String mActionKeyName;
 
 	/** Used to resolve a specific animation (e.g. _shootrange) */
-	private String mActionStateName;
+	public String mActionStateName;
 
 	public Anchor nodeAnchor;
+
+	public boolean useSpriteAnimationDimensions;
+	public boolean useSpriteAnimationRotations;
 
 	// --------------------------------------
 	// Properties
@@ -74,10 +76,7 @@ public class SpriteGraphNodeInst extends Rectangle implements AnimatedSpriteList
 		if (nodeSprite == null || nodeSprite.isFree())
 			return 0;
 
-		if (mParentGraphInst != null && mParentGraphInst.useSpriteFrameReferences)
-			return nodeSprite.getFrame().getPivotPointX();
-
-		return px;
+		return nodeSprite.getFrame().getPivotPointX();
 
 	}
 
@@ -85,10 +84,7 @@ public class SpriteGraphNodeInst extends Rectangle implements AnimatedSpriteList
 		if (nodeSprite == null)
 			return 0;
 
-		if (mParentGraphInst != null && mParentGraphInst.useSpriteFrameReferences)
-			return nodeSprite.getFrame().getPivotPointY();
-
-		return py;
+		return nodeSprite.getFrame().getPivotPointY();
 
 	}
 
@@ -162,13 +158,12 @@ public class SpriteGraphNodeInst extends Rectangle implements AnimatedSpriteList
 		if (pParentGraph == null)
 			return;
 
-//		if (pParentGraph.useSpriteAnchors) {
-		updateAnimSpritePosition(pCore, pParentGraph, pParentGraphNode);
+		if (pParentGraph.animator() != null) {
+			SpriteSheetDef lNodeSpriteSheet = pCore.resources().spriteSheetManager().getSpriteSheet(spriteSheetNameRef);
 
-//		} else {
-//			updateAbsPosition(pCore, pParentGraph, pParentGraphNode);
-//
-//		}
+			pParentGraph.animator().animate(pCore, pParentGraph, pParentGraphNode, this, lNodeSpriteSheet);
+
+		}
 
 		final int COUNT = childNodes.size();
 		for (int i = 0; i < COUNT; i++) {
@@ -181,114 +176,6 @@ public class SpriteGraphNodeInst extends Rectangle implements AnimatedSpriteList
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
-
-	private void updateAnimSpritePosition(LintfordCore pCore, SpriteGraphInst pParentGraph, SpriteGraphNodeInst pParentGraphNode) {
-		// Update our position, relative to the parent
-		float lX = 0;
-		float lY = 0;
-		float lRot = 0;
-
-		if (pParentGraphNode != null) {
-			lRot = pParentGraphNode.rot;
-
-			float sin = (float) (Math.sin(lRot));
-			float cos = (float) (Math.cos(lRot));
-
-			Anchor lAnchorPoint = null;
-			lAnchorPoint = pParentGraphNode.getAnchorPoint(name);
-			if (lAnchorPoint != null) {
-				// Anchor point needs to be rotated with the parent node ..
-				float dx = -pParentGraphNode.pivotX() + (lAnchorPoint.x * (mFlipH ? -1f : 1f)) * sx;
-				float dy = -pParentGraphNode.pivotY() + (lAnchorPoint.y * (mFlipV ? -1f : 1f)) * sy;
-
-				lX += (dx * cos - (dy * 1f) * sin);
-				lY += (dx * sin + (dy * 1f) * cos);
-				lRot += (float) Math.toRadians(lAnchorPoint.rot);
-
-			}
-
-			lX += pParentGraphNode.centerX + pParentGraphNode.pivotX();
-			lY += pParentGraphNode.centerY + pParentGraphNode.pivotY();
-
-		} else {
-			lX = centerX;
-			lY = centerY;
-			lRot = rot;
-
-		}
-
-		// Update the spritegraphnode
-		SpriteSheetDef lNodeSpriteSheet = pCore.resources().spriteSheetManager().getSpriteSheet(spriteSheetNameRef);
-		if (lNodeSpriteSheet != null) {
-
-			// The states are needed to change the sprite animations/variations being used when rendering sprite graphs.
-			// The states can originate from two places, either on the node (i.e. locally) or on the graph object (i.e. globally).
-			// stats on the local node take precedence.
-			// e.g. Torso00_idle
-			// TODO: ---> Overide with local node states (e.g. ARM_SWING, ARM_STAB)
-			String lResolvedName = name + type;
-			if (mActionStateName != null)
-				lResolvedName += mActionStateName;
-			else if (pParentGraph.objectState != null)
-				lResolvedName += pParentGraph.objectState;
-
-			// Check to see if the animation state of this node has changed
-			if (!lResolvedName.equals(currentStateName)) {
-				nodeSprite = lNodeSpriteSheet.getSpriteInstance(lResolvedName);
-
-				if (nodeSprite != null) {
-					// When we change to a new animation, we need to
-					nodeSprite.animatedSpriteListender(this);
-					nodeSprite.playFromBeginning();
-
-				} else {
-					// If the sprite equals null, then try and fallback to some default (the first sprite in the SpriteMap).
-					nodeSprite = lNodeSpriteSheet.getSpriteInstance(name + type + DEFAULT_ACTION_STATE);
-
-				}
-
-				// Only do this once
-				currentStateName = lResolvedName;
-
-			}
-
-		}
-
-		mFlipH = pParentGraph.mFlipHorizontal;
-
-		if (nodeSprite != null) {
-			nodeSprite.update(pCore);
-
-			SpriteFrame lCurrentFrame = nodeSprite.getFrame();
-
-			if (mParentGraphInst.useSpriteFrameReferences) {
-				rot = (float) Math.toRadians(lCurrentFrame.getDefaultRotation());
-				pivotX(lCurrentFrame.getPivotPointX());
-				pivotY(lCurrentFrame.getPivotPointY());
-			}
-
-			float signum = mFlipH ? -1f : 1f;
-			if (angToPointEnabled) {
-				rotateAbs(rot * signum);
-				rotateRel(angToPoint);
-				rotateRel(staticRotationOffset);
-			} else {
-				rotateAbs(rot * signum);
-				rotateRel(staticRotationOffset);
-
-			}
-
-			set(lX, lY, lCurrentFrame.w, lCurrentFrame.h);
-
-			rotateAbs(lRot);
-
-		} else {
-			setPosition(lX, lY);
-			// rotateAbs(lRot);
-
-		}
-
-	}
 
 	public void addChild(SpriteGraphNodeInst pPart) {
 		if (!childNodes.contains(pPart)) {
@@ -315,7 +202,7 @@ public class SpriteGraphNodeInst extends Rectangle implements AnimatedSpriteList
 	}
 
 	public Anchor getAnchorPoint(String pName) {
-		if (mParentGraphInst.useSpriteAnchors && nodeSprite != null) {
+		if (nodeSprite != null) {
 			return nodeSprite.getFrame().getAnchorPoint(pName);
 
 		}

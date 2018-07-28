@@ -45,7 +45,7 @@ public class SpriteGraphRenderer extends SpriteBatch {
 
 		}
 
-		if (RENDER_COLLIBABLES) {
+		if (RENDER_COLLIBABLES && pSpriteGraphNode.nodeDepth == 0) {
 			DebugManager.DEBUG_MANAGER.drawers().drawPoly(pCore.gameCamera(), pSpriteGraphNode);
 
 		}

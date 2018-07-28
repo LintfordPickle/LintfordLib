@@ -43,6 +43,20 @@ public abstract class LintfordCore {
 	// ---------------------------------------------
 
 	public static final int CORE_ID = BaseEntity.getEntityNumber();
+	private static boolean DEBUG_MODE = false;
+
+	public static boolean DEBUG_MODE() {
+		return DEBUG_MODE;
+	}
+
+	protected static void setDebugMode(boolean pNewValue) {
+		DEBUG_MODE = pNewValue;
+
+		if (DEBUG_MODE) {
+			DebugManager.DEBUG_MANAGER.logger().w("LintfordCore", "DEBUG_MODE::ENABLED");
+		}
+
+	}
 
 	protected GameInfo mGameInfo;
 	protected MasterConfig mMasterConfig;
@@ -243,27 +257,55 @@ public abstract class LintfordCore {
 
 		DisplayConfig lDisplayConfig = mMasterConfig.display();
 
+		long lastTime = System.nanoTime();
+		double delta = 0.0;
+		double ns = 1000000000.0 / 60.0;
+		long timer = System.currentTimeMillis();
+
+		int updates = 0;
+		int frames = 0;
+
 		// Game loop
 		while (!glfwWindowShouldClose(lDisplayConfig.windowID())) {
+
+			long now = System.nanoTime();
+			delta += (now - lastTime) / ns;
+
+			lastTime = now;
+			if (delta >= 1.0) {
+				mGameTime.update();
+
+				onHandleInput();
+
+				onUpdate();
+
+				updates++;
+				delta--;
+			}
+
 			if (lDisplayConfig.isWindowFocused()) {
 
 			}
-			mGameTime.update();
-
-			onHandleInput();
-
-			onUpdate();
 
 			if (!mIsHeadlessMode) {
 				onDraw();
+				frames++;
 
 				DebugManager.DEBUG_MANAGER.draw(this);
 
 			}
 
+			if (System.currentTimeMillis() - timer > 1000) {
+				timer += 1000;
+				System.out.println(updates + " ups, " + frames + " fps");
+				updates = 0;
+				frames = 0;
+			}
+
 			glfwSwapBuffers(lDisplayConfig.windowID());
 
 			mInputState.endUpdate();
+
 			glfwPollEvents();
 
 		}

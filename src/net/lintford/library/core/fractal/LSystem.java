@@ -1,16 +1,6 @@
 package net.lintford.library.core.fractal;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class LSystem {
-
-	// --------------------------------------
-	// Variables
-	// --------------------------------------
-
-	public String axiom;
-	public List<LRuleSet> rules = new ArrayList<>();
 
 	// --------------------------------------
 	// Constructor
@@ -24,12 +14,12 @@ public class LSystem {
 	// Methods
 	// --------------------------------------
 
-	public String getLSystemString(int pIterations) {
-		String lCurrentString = axiom;
+	public String getLSystemString(LSystemDefinition pLSystemDef, int pIterations) {
+		String lCurrentString = pLSystemDef.axiom;
 		for (int i = 0; i < pIterations; i++) {
-			final int RULESET_SIZE = rules.size();
+			final int RULESET_SIZE = pLSystemDef.rules.size();
 			for (int j = 0; j < RULESET_SIZE; j++) {
-				lCurrentString = rules.get(j).processRule(lCurrentString);
+				lCurrentString = pLSystemDef.rules.get(j).processRule(lCurrentString);
 
 			}
 

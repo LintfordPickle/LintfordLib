@@ -6,6 +6,7 @@ import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.time.GameTime;
 import net.lintford.library.core.time.TimeSpan;
 import net.lintford.library.renderers.RendererManager;
+import net.lintford.library.renderers.core.RendererManagerRenderer;
 import net.lintford.library.screenmanager.transitions.BaseTransition;
 import net.lintford.library.screenmanager.transitions.TransitionFadeIn;
 import net.lintford.library.screenmanager.transitions.TransitionFadeOut;
@@ -146,6 +147,7 @@ public abstract class Screen {
 
 		mR = mG = mB = 1f;
 		mA = 0f; // because we are fading in and out
+
 	}
 
 	// --------------------------------------
@@ -162,6 +164,14 @@ public abstract class Screen {
 
 	public void loadGLContent(ResourceManager pResourceManager) {
 		mRendererManager.loadGLContent(pResourceManager);
+
+		if (LintfordCore.DEBUG_MODE()) {
+			RendererManagerRenderer lNewRenderer = new RendererManagerRenderer(mRendererManager, LintfordCore.CORE_ID);
+			mRendererManager.addRenderer(lNewRenderer);
+			lNewRenderer.loadGLContent(pResourceManager);
+
+		}
+
 	}
 
 	public void unloadGLContent() {
@@ -170,9 +180,9 @@ public abstract class Screen {
 
 	public void handleInput(LintfordCore pCore, boolean pAcceptMouse, boolean pAcceptKeyboard) {
 		mRendererManager.handleInput(pCore);
-		
+
 		mScreenManager.core().controllerManager().handleInput(mScreenManager.core(), entityGroupID);
-		
+
 	}
 
 	public void update(LintfordCore pCore, boolean pOtherScreenHasFocus, boolean pCoveredByOtherScreen) {
@@ -222,7 +232,7 @@ public abstract class Screen {
 					mTransitionOn.reset();
 
 			}
-			
+
 			mScreenManager.core().controllerManager().update(mScreenManager.core(), entityGroupID);
 
 		}

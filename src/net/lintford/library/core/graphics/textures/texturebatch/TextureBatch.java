@@ -65,23 +65,19 @@ public class TextureBatch {
 	// Variables
 	// --------------------------------------
 
-	protected int mVaoId = -1;
-	protected int mVboId = -1;
-	protected int mVertexCount = 0;
-	protected int mCurrentTexID;
-
+	protected Vector4f mTempVector;
 	protected ICamera mCamera;
 	protected ShaderMVP_PT mShader;
 	protected ShaderMVP_PT mCustomShader;
 	protected Matrix4f mModelMatrix;
 	protected FloatBuffer mBuffer;
+	protected int mVaoId = -1;
+	protected int mVboId = -1;
+	protected int mVertexCount = 0;
+	protected int mCurrentTexID;
 	protected int mCurNumSprites;
-
-	protected Vector4f mTempVector;
-
 	protected boolean mIsLoaded;
 	protected boolean mIsDrawing;
-
 	protected boolean mUseCheckerPattern;
 
 	// --------------------------------------
@@ -461,12 +457,10 @@ public class TextureBatch {
 
 		mBuffer.flip();
 
-		GL13.glActiveTexture(GL13.GL_TEXTURE0);
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, mCurrentTexID);
 		GL30.glBindVertexArray(mVaoId);
 
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, mVboId);
-		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, mBuffer, GL15.GL_DYNAMIC_DRAW);
+		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, mBuffer, GL15.GL_STATIC_DRAW);
 
 		GL20.glVertexAttribPointer(0, positionElementCount, GL11.GL_FLOAT, false, stride, positionByteOffset);
 		GL20.glVertexAttribPointer(1, colorElementCount, GL11.GL_FLOAT, false, stride, colorByteOffset);
@@ -476,6 +470,26 @@ public class TextureBatch {
 		GL20.glEnableVertexAttribArray(1);
 		GL20.glEnableVertexAttribArray(2);
 
+		redraw();
+
+		mBuffer.clear();
+
+		GLDebug.checkGLErrorsException(getClass().getSimpleName());
+
+	}
+
+	public void redraw() {
+		if (mVertexCount == 0)
+			return;
+
+		GL30.glBindVertexArray(mVaoId);
+
+		if (mCurrentTexID != -1) {
+			GL13.glActiveTexture(GL13.GL_TEXTURE0);
+			GL11.glBindTexture(GL11.GL_TEXTURE_2D, mCurrentTexID);
+
+		}
+
 		mCustomShader.projectionMatrix(mCamera.projection());
 		mCustomShader.viewMatrix(mCamera.view());
 		mCustomShader.modelMatrix(mModelMatrix);
@@ -484,18 +498,9 @@ public class TextureBatch {
 
 		GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, mVertexCount);
 
-		GL30.glBindVertexArray(0);
-
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 
 		mCustomShader.unbind();
-
-		mBuffer.clear();
-
-		mCurNumSprites = 0;
-		mVertexCount = 0;
-
-		GLDebug.checkGLErrorsException(getClass().getSimpleName());
 
 	}
 

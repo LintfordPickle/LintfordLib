@@ -17,17 +17,17 @@ public abstract class Shape implements Serializable {
 	// Variables
 	// --------------------------------------
 
-	protected float centerX;
-	protected float centerY;
+	public float centerX;
+	public float centerY;
 
-	protected float py;
-	protected float px;
+	public float py;
+	public float px;
 
-	protected float rot;
+	public float rot;
 
-	protected float rad;
+	public float rad;
 
-	protected boolean transformed;
+	public boolean transformed;
 	protected Matrix4f transformationMatrix = new Matrix4f();
 
 	// --------------------------------------

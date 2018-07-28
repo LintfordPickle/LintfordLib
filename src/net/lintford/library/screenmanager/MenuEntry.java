@@ -351,7 +351,7 @@ public class MenuEntry extends AARectangle {
 		if (mText != null && mText.length() > 0) {
 			final float FONT_SCALE = 1f;
 			mParentScreen.font().begin(pCore.HUD());
-			mParentScreen.font().draw(mText, centerX() - mParentScreen.font().bitmap().getStringWidth(mText, FONT_SCALE) * 0.5f, centerY() - mParentScreen.font().bitmap().fontHeight() * FONT_SCALE / 2, mZ, 0.97f, .92f, mParentScreen.mA,
+			mParentScreen.font().draw(mText, centerX() - mParentScreen.font().bitmap().getStringWidth(mText, FONT_SCALE) * 0.5f, centerY() - mParentScreen.font().bitmap().fontHeight() * FONT_SCALE / 2 - 2f, mZ, 0.97f, .92f, mParentScreen.mA,
 					mParentScreen.mA, FONT_SCALE);
 			mParentScreen.font().end();
 

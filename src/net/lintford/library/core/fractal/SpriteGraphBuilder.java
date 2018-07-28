@@ -3,7 +3,6 @@ package net.lintford.library.core.fractal;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
-import net.lintford.library.core.geometry.Anchor;
 import net.lintford.library.core.geometry.spritegraph.SpriteGraphInst;
 import net.lintford.library.core.geometry.spritegraph.SpriteGraphNodeInst;
 import net.lintford.library.core.maths.RandomNumbers;
@@ -66,19 +65,16 @@ public class SpriteGraphBuilder {
 	// --------------------------------------
 
 	public SpriteGraphInst createSpriteGraphFromLSystem(final String pLSystemString, LSystemDefinition pLSystemDef) {
-		// We require a pSpriteSheetDef for the construction of the SpriteGraph because we need to know the visual properties
-		// of each of the SpriteGraph nodes. The origin of the SpriteSheetDef is un-important.
-
+		// Create a new instance of a SpriteGraph
 		SpriteGraphInst lNewInst = new SpriteGraphInst();
-		lNewInst.spriteGraphName = "Tree";
-		lNewInst.useSpriteAnchors = false;
+		pLSystemDef.onGraphCreation(lNewInst);
 
+		// Add a root node from which to build on
 		lNewInst.rootNode = new SpriteGraphNodeInst(lNewInst, pLSystemDef.SpriteSheetName, pLSystemDef.rootNodeSpriteName, "", 0);
-		lNewInst.rootNode.setPosition(0, 250);
-		lNewInst.rootNode.setPivotPoint(pLSystemDef.getPivotX(0), pLSystemDef.getPivotY(0));
+		pLSystemDef.onRootNodeCreation(lNewInst.rootNode);
 
 		// Now we need to 'draw' the L-System (i.e. create the sprites and the graph)
-		LCursor lCursor = new LCursor(lNewInst.rootNode, 0);
+		LCursor lCursor = new LCursor(lNewInst.rootNode, 1);
 
 		for (int i = 0; i < pLSystemString.length(); i++) {
 			char lCurrentInstruction = pLSystemString.charAt(i);
@@ -86,21 +82,16 @@ public class SpriteGraphBuilder {
 			// Update the cursor position ready for the next node in the tree
 			switch (lCurrentInstruction) {
 			case 'F':
-				// TODO: Need to properly determine if this is a leaf node or a branch
-				final boolean lIsLeafNode = lCursor.depth > 6;//pLSystemDef.leafNodeDepth;
-				final String lSpriteName = !lIsLeafNode ? pLSystemDef.branchNodeSpriteName : pLSystemDef.leafNodeSpriteName;
-
-				// Create a new anchor position in the current sprite ready for the next node of the graph
-				lCursor.currentNode.nodeAnchor = new Anchor(lSpriteName, pLSystemDef.getAnchorPointX(lCursor.depth), pLSystemDef.getAnchorPointY(lCursor.depth), lCursor.curRotation);
-
+				final String lSpriteName = lCursor.depth > 5 ? pLSystemDef.branchNodeSpriteName : pLSystemDef.leafNodeSpriteName;
 				SpriteGraphNodeInst lNewNodeInst = new SpriteGraphNodeInst(lNewInst, "TreeSpriteSheet", lSpriteName, "", lCursor.depth);
-				lNewNodeInst.setPivotPoint(pLSystemDef.getPivotX(lCursor.depth), pLSystemDef.getPivotY(lCursor.depth));
+				lNewNodeInst.rotateRel((float)Math.toRadians(lCursor.curRotation));
+				pLSystemDef.onNodeCreation(lNewNodeInst);
 
 				lCursor.currentNode.childNodes.add(lNewNodeInst);
 				lCursor.currentNode = lNewNodeInst;
 
 				// All rotations are relative to the current cursor heading
-				lCursor.curRotation = 0;
+				// lCursor.curRotation = 0;
 
 				lCursor.depth++;
 				break;

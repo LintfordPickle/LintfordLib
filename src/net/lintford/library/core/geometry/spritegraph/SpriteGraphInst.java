@@ -20,25 +20,32 @@ public class SpriteGraphInst implements Serializable {
 	public SpriteGraphNodeListener mCallbackSubscriber;
 	public SpriteGraphManager mSpriteGraphManager;
 	public SpriteGraphNodeInst rootNode;
+
 	public String spriteGraphName;
 	public String objectState;
 	public boolean mFlipHorizontal;
 	public boolean mFlipVertical;
+
 	public float positionX;
 	public float positionY;
 
-	/**
-	 * There are two kinds of anchors which can be used when constructing a SpriteGraph: the first are the anchors within each SpriteFrame, which allow a per-frame update of nodes based on Sprite animations. The second
-	 * kind of anchors are placed within the nodes themselves. These are created when building a SpriteGraph from a Lindenmayer System.
-	 */
-	public boolean useSpriteAnchors;
-	public boolean useSpriteFrameReferences;
-
 	public Map<String, String> currentActions;
+
+	public ISpriteNodeInstanceAnimator mAnimator;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public void animator(ISpriteNodeInstanceAnimator pNewAnimator) {
+		mAnimator = pNewAnimator;
+
+	}
+
+	public ISpriteNodeInstanceAnimator animator() {
+		return mAnimator;
+
+	}
 
 	public boolean isFree() {
 		return !(spriteGraphName != null && spriteGraphName.length() > 0);
@@ -71,8 +78,6 @@ public class SpriteGraphInst implements Serializable {
 		this();
 
 		spriteGraphName = pSpriteGraphDef.name;
-		useSpriteAnchors = pSpriteGraphDef.updateAnimSpritePositions;
-		useSpriteFrameReferences = pSpriteGraphDef.useSpriteFrameReferences;
 
 		// Create the SpriteGraph tree using the definition
 		rootNode = new SpriteGraphNodeInst(this, pSpriteGraphDef.rootNode);

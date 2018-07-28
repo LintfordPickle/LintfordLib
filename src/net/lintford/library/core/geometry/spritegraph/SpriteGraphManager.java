@@ -88,7 +88,7 @@ public class SpriteGraphManager {
 
 		}
 
-		// Iterate through the sprite files, and load the individual sprites
+		// Iterate through the SpriteGraphs files and load them
 		final int SPRITE_COUNT = lSpriteGraphMetaData.spriteGraphLocations.length;
 		for (int i = 0; i < SPRITE_COUNT; i++) {
 			final File lSpriteGraphFile = new File(lSpriteGraphMetaData.spriteGraphLocations[i]);

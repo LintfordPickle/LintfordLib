@@ -22,8 +22,6 @@ public class SpriteGraphDef {
 	public String name;
 	public String filename;
 	public SpriteGraphNodeDef rootNode;
-	public boolean updateAnimSpritePositions;
-	public boolean useSpriteFrameReferences;
 
 	// --------------------------------------
 	// Properties
@@ -37,11 +35,7 @@ public class SpriteGraphDef {
 	// Constructor
 	// --------------------------------------
 
-	SpriteGraphDef() {
-
-	}
-
-	SpriteGraphDef(String pName, String pFilename, SpriteGraphNodeDef pNodeDef) {
+	public SpriteGraphDef() {
 
 	}
 
