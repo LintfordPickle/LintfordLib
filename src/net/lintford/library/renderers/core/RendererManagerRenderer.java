@@ -2,8 +2,6 @@ package net.lintford.library.renderers.core;
 
 import net.lintford.library.controllers.core.ControllerManagerController;
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.debug.DebugManager;
-import net.lintford.library.core.geometry.AARectangle;
 import net.lintford.library.renderers.RendererManager;
 import net.lintford.library.renderers.windows.UIWindow;
 
@@ -48,8 +46,6 @@ public class RendererManagerRenderer extends UIWindow {
 	@Override
 	public void draw(LintfordCore pCore) {
 		super.draw(pCore);
-
-		DebugManager.DEBUG_MANAGER.drawers().drawRect(pCore.HUD(), new AARectangle(-100, -100, 200, 200), 1, 1, 1);
 
 	}
 
