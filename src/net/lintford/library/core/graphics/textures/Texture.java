@@ -125,18 +125,19 @@ public class Texture {
 			lNewTexture.reloadable(true);
 
 			DebugManager.DEBUG_MANAGER.logger().i(Texture.class.getSimpleName(), "Loaded texture from file: " + pFilename);
-
+			
 			return lNewTexture;
 
 		} catch (FileNotFoundException e) {
 			DebugManager.DEBUG_MANAGER.logger().e(Texture.class.getSimpleName(), "Error loading texture from file (" + pFilename + ")");
-
+			DebugManager.DEBUG_MANAGER.logger().printException(Texture.class.getSimpleName(), e);
+			
 			return TextureManager.TEXTURE_NOT_FOUND;
 
 		} catch (IOException e) {
-			System.err.println("Error loading texture from " + pFilename);
-			System.err.println(e.getMessage());
-
+			DebugManager.DEBUG_MANAGER.logger().e(Texture.class.getSimpleName(), "Error loading texture from file (" + pFilename + ")");
+			DebugManager.DEBUG_MANAGER.logger().printException(Texture.class.getSimpleName(), e);
+			
 			return null;
 		}
 
