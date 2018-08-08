@@ -1,4 +1,4 @@
-# Introduction: Java-LDLibraryGL
+# Introduction: LintfordLib
 A Java game library containing LWJGL natives and a game state management framework.
 The library project and metadata was created in Eclipse Neon (4.6.0). The project was compiled with Java 1.8.0_112 64-bit and contains LGWJL3 jars and native libraries.
 
