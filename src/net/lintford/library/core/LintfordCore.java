@@ -262,9 +262,6 @@ public abstract class LintfordCore {
 		double ns = 1000000000.0 / 60.0;
 		long timer = System.currentTimeMillis();
 
-		int updates = 0;
-		int frames = 0;
-
 		// Game loop
 		while (!glfwWindowShouldClose(lDisplayConfig.windowID())) {
 
@@ -279,7 +276,6 @@ public abstract class LintfordCore {
 
 				onUpdate();
 
-				updates++;
 				delta--;
 			}
 
@@ -289,7 +285,6 @@ public abstract class LintfordCore {
 
 			if (!mIsHeadlessMode) {
 				onDraw();
-				frames++;
 
 				DebugManager.DEBUG_MANAGER.draw(this);
 
@@ -297,9 +292,7 @@ public abstract class LintfordCore {
 
 			if (System.currentTimeMillis() - timer > 1000) {
 				timer += 1000;
-				System.out.println(updates + " ups, " + frames + " fps");
-				updates = 0;
-				frames = 0;
+				
 			}
 
 			glfwSwapBuffers(lDisplayConfig.windowID());

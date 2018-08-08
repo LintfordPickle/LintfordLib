@@ -1,13 +1,13 @@
-package net.lintford.library.core.graphics.sprites.spritegraph;
+package net.lintford.library.core.geometry.spritegraph.renderers;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.debug.DebugManager;
 import net.lintford.library.core.geometry.spritegraph.SpriteGraphInst;
 import net.lintford.library.core.geometry.spritegraph.SpriteGraphNodeInst;
-import net.lintford.library.core.graphics.sprites.spritebatch.SpriteBatch;
+import net.lintford.library.core.graphics.linebatch.LineBatch;
 import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDef;
 
-public class SpriteGraphRenderer extends SpriteBatch {
+public class SpriteGraphLineRenderer extends LineBatch {
 
 	// --------------------------------------
 	// Constants
@@ -19,7 +19,7 @@ public class SpriteGraphRenderer extends SpriteBatch {
 	// Constructor
 	// --------------------------------------
 
-	public SpriteGraphRenderer() {
+	public SpriteGraphLineRenderer() {
 		// TODO Auto-generated constructor stub
 	}
 
@@ -41,12 +41,7 @@ public class SpriteGraphRenderer extends SpriteBatch {
 		if (pSpriteGraphNode.nodeSprite != null) {
 			SpriteSheetDef lNodeSpriteSheet = pCore.resources().spriteSheetManager().getSpriteSheet(pSpriteGraphNode.spriteSheetNameRef);
 
-			draw(lNodeSpriteSheet, pSpriteGraphNode.nodeSprite, pSpriteGraphNode, -0.1f, 1f, 1f, 1f, 1f);
-
-		}
-
-		if (RENDER_COLLIBABLES && pSpriteGraphNode.nodeDepth == 0) {
-			DebugManager.DEBUG_MANAGER.drawers().drawPoly(pCore.gameCamera(), pSpriteGraphNode);
+			// draw(lNodeSpriteSheet, pSpriteGraphNode.nodeSprite, pSpriteGraphNode, -0.1f, 1f, 1f, 1f, 1f);
 
 		}
 

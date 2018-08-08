@@ -31,6 +31,8 @@ public class LSystemDefinition implements Serializable {
 	public String branchNodeSpriteName;
 	public String leafNodeSpriteName;
 
+	public int maxDepth;
+	public int maxDepthPerIteration;
 	public int leafNodeDepth;
 
 	// --------------------------------------
@@ -105,7 +107,11 @@ public class LSystemDefinition implements Serializable {
 
 	}
 
-	public void onNodeCreation(SpriteGraphNodeInst pNode) {
+	public void onNodeCreation(SpriteGraphNodeInst pNode, SpriteGraphNodeInst pParentNode) {
+
+	}
+
+	public void onLeafCreation(SpriteGraphNodeInst pNode, SpriteGraphNodeInst pParentNode) {
 
 	}
 

@@ -17,15 +17,13 @@ public class Rectangle extends Shape {
 	// Variables
 	// --------------------------------------
 
-	private Vector2f[] mVertices;
-	private boolean mIsDirty;
-
-	private boolean mIsAABB; // Block rotations
-	private float mWidth;
-	private float mHeight;
+	protected Vector2f[] mVertices;
+	protected boolean mIsDirty;
+	protected boolean mIsAABB; // Blocks rotations
+	protected float mWidth;
+	protected float mHeight;
 	protected float sx;
 	protected float sy;
-
 	protected boolean mFlipH;
 	protected boolean mFlipV;
 
@@ -202,6 +200,7 @@ public class Rectangle extends Shape {
 		final int AXES_LENGTH = 2;
 		Vector2f[] axes = new Vector2f[AXES_LENGTH]; // Rectangle only has two axis to be tested against
 
+		// FIXME: Garbage created
 		// The order of the vertices used here depends on the winding-order
 		axes[0] = new Vector2f((mVertices[0].y - mVertices[1].y), -(mVertices[0].x - mVertices[1].x)).nor();
 		axes[1] = new Vector2f((mVertices[0].y - mVertices[2].y), -(mVertices[0].x - mVertices[2].x)).nor();
@@ -308,7 +307,7 @@ public class Rectangle extends Shape {
 
 	}
 
-	private void updateVertices() {
+	protected void updateVertices() {
 
 		final float lWidth = mFlipH ? -mWidth : mWidth;
 		final float lHeight = mFlipV ? -mHeight : mHeight;

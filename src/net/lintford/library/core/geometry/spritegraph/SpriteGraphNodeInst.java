@@ -9,6 +9,7 @@ import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.sprites.AnimatedSpriteListener;
 import net.lintford.library.core.graphics.sprites.SpriteInstance;
 import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDef;
+import net.lintford.library.core.maths.Vector2f;
 
 public class SpriteGraphNodeInst extends Rectangle implements AnimatedSpriteListener {
 
@@ -67,6 +68,8 @@ public class SpriteGraphNodeInst extends Rectangle implements AnimatedSpriteList
 
 	public boolean useSpriteAnimationDimensions;
 	public boolean useSpriteAnimationRotations;
+	
+	public float r = 1, g = 1, b = 1, a = 1;
 
 	// --------------------------------------
 	// Properties
@@ -260,6 +263,56 @@ public class SpriteGraphNodeInst extends Rectangle implements AnimatedSpriteList
 	public void onStopped(SpriteInstance pSender) {
 		pSender.animatedSpriteListender(null);
 		stopAnimation();
+
+	}
+
+	public void setVertices(Vector2f[] pNewVertices) {
+		if (pNewVertices != null && pNewVertices.length == 4)
+			mVertices = pNewVertices;
+
+	}
+
+	/**
+	 * Override because not all GraphNodes will be rectangular in shape.
+	 */
+	@Override
+	protected void updateVertices() {
+//		final float lWidth = mFlipH ? -mWidth : mWidth;
+//		final float lHeight = mFlipV ? -mHeight : mHeight;
+//
+//		final float lPX = mFlipH ? -px : px;
+//		final float lPY = mFlipV ? -py : py;
+
+//		// Get local space vertex positions
+//		mVertices[0].x = -lWidth / 2;
+//		mVertices[0].y = -lHeight / 2;
+//
+//		mVertices[1].x = lWidth / 2;
+//		mVertices[1].y = -lHeight / 2;
+//
+//		mVertices[2].x = -lWidth / 2;
+//		mVertices[2].y = lHeight / 2;
+//
+//		mVertices[3].x = lWidth / 2;
+//		mVertices[3].y = lHeight / 2;
+
+//		float sin = (float) (Math.sin(rot));
+//		float cos = (float) (Math.cos(rot));
+//
+//		// iterate over the vertices, rotating them by the given amt around the origin point of the GraphNode.
+//		for (int i = 0; i < NUM_VERTICES; i++) {
+//			// Scale the vertices out from local center (before applying world translation)
+//			float dx = -lPX + mVertices[i].x * sx;
+//			float dy = -lPY + mVertices[i].y * sy;
+//
+//			mVertices[i].x = centerX + (dx * cos - (dy * 1f) * sin) * sx;
+//			mVertices[i].y = centerY + (dx * sin + (dy * 1f) * cos) * sy;
+//
+//		}
+
+		mIsAABB = rot == 0;
+
+		mIsDirty = false;
 
 	}
 
