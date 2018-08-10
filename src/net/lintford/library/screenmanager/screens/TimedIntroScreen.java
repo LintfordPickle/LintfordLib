@@ -69,6 +69,8 @@ public class TimedIntroScreen extends Screen {
 
 	@Override
 	public void loadGLContent(ResourceManager pResourceManager) {
+		super.loadGLContent(pResourceManager);
+
 		mBackgroundTexture = TextureManager.textureManager().loadTexture(mImageLocation, mImageLocation);
 
 		mTextureBatch.loadGLContent(pResourceManager);
@@ -77,6 +79,8 @@ public class TimedIntroScreen extends Screen {
 
 	@Override
 	public void unloadGLContent() {
+		super.unloadGLContent();
+
 		mTextureBatch.unloadGLContent();
 
 	}
