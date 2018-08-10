@@ -207,7 +207,11 @@ public class Camera implements ICamera {
 		mAcceleration.y = 0.0f;
 
 		createView();
-		createOrtho(mWindowWidth, mWindowHeight);
+		if (mDisplayConfig.stretchGameScreen()) {
+			createOrtho(mDisplayConfig.baseGameResolutionWidth(), mDisplayConfig.baseGameResolutionHeight());
+		} else
+			createOrtho(mWindowWidth, mWindowHeight);
+
 		updateZoomBounds(mWindowWidth, mWindowHeight);
 
 		applyGameViewport();

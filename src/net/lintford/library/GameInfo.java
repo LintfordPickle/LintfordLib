@@ -6,6 +6,9 @@ import net.lintford.library.options.DisplayConfig;
 /** The {@link GameInfo} interface defines the properties used by {@link LintfordCore} when creating an OpenGL window. */
 public interface GameInfo {
 
+	public static final int DEF_BASE_GAME_RESOLUTION_W = 640;
+	public static final int DEF_BASE_GAME_RESOLUTION_H = 480;
+
 	/** Returns the application name. */
 	public default String applicationName() {
 		return "unnamed";
@@ -30,6 +33,18 @@ public interface GameInfo {
 	/** Returns the startup height of the OpenGL window to be created. */
 	public default int windowHeight() {
 		return 600;
+	}
+
+	public default boolean stretchGameResolution() {
+		return false;
+	}
+
+	public default int baseGameResolutionWidth() {
+		return DEF_BASE_GAME_RESOLUTION_W;
+	}
+
+	public default int baseGameResolutionHeight() {
+		return DEF_BASE_GAME_RESOLUTION_H;
 	}
 
 	/** Returns true if the OpenGL window is resizable or not. */

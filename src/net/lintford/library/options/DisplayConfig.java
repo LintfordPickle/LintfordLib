@@ -95,6 +95,10 @@ public class DisplayConfig extends BaseConfig {
 	private Vector2i mWindowSize;
 	private Vector2i mAspectRatio;
 
+	private boolean mStretchGameScreen = false;
+	private int mBaseGameResolutionWidth = 640;
+	private int mBaseGameResolutionHeight = 480;
+
 	private boolean mVSYNCEnabled;
 	private boolean mWindowIsResizable;
 	private boolean mWindowWasResized;
@@ -163,6 +167,18 @@ public class DisplayConfig extends BaseConfig {
 
 	public boolean windowWasResized() {
 		return mWindowWasResized;
+	}
+
+	public boolean stretchGameScreen() {
+		return mStretchGameScreen;
+	}
+
+	public int baseGameResolutionWidth() {
+		return mBaseGameResolutionWidth;
+	}
+
+	public int baseGameResolutionHeight() {
+		return mBaseGameResolutionHeight;
 	}
 
 	public void resizeListeners(List<IResizeListener> pV) {
@@ -349,6 +365,10 @@ public class DisplayConfig extends BaseConfig {
 
 		// Set our default OpenGL variables
 		onInitialiseGL();
+
+		mStretchGameScreen = pGameInfo.stretchGameResolution();
+		mBaseGameResolutionWidth = pGameInfo.baseGameResolutionWidth();
+		mBaseGameResolutionHeight = pGameInfo.baseGameResolutionHeight();
 
 		// Setup the UI to match the new resolution
 		changeResolution(mWindowSize.x, mWindowSize.y);
