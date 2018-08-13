@@ -16,7 +16,7 @@ import static org.lwjgl.opengl.GL20.glShaderSource;
 import static org.lwjgl.opengl.GL20.glUseProgram;
 import static org.lwjgl.opengl.GL20.glValidateProgram;
 
-import net.lintford.library.ConstantsTable;
+import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.storage.FileUtils;
 
@@ -87,12 +87,9 @@ public abstract class Shader {
 
 	public void recompile() {
 
-		if (ConstantsTable.getBooleanValueDef("DEBUG_APP", false)) {
-			System.out.println("Recompiling shader .. ");
-			System.out.println("  " + mVertPathname);
-			System.out.println("  " + mFragPathname);
-
-		}
+		Debug.debugManager().logger().i(getClass().getSimpleName(), "Recompiling shader .. ");
+		Debug.debugManager().logger().i(getClass().getSimpleName(), "  " + mVertPathname);
+		Debug.debugManager().logger().i(getClass().getSimpleName(), "  " + mFragPathname);
 
 		String lVertexSource = FileUtils.loadString(mVertPathname);
 		String lFragmentSource = FileUtils.loadString(mFragPathname);
@@ -114,20 +111,26 @@ public abstract class Shader {
 
 		glCompileShader(lVertID);
 		if (glGetShaderi(lVertID, GL_COMPILE_STATUS) == GL_FALSE) {
-			System.err.println("Failed to compile vertex shader!" + mVertPathname);
-			System.err.println(glGetShaderInfoLog(lVertID, 2048));
+			Debug.debugManager().logger().e(getClass().getSimpleName(), "Failed to compile vertex shader!" + mVertPathname);
+			Debug.debugManager().logger().i(getClass().getSimpleName(), glGetShaderInfoLog(lVertID, 2048));
+
 			throw new RuntimeException("Failed to compile vertex shader (" + GL_VERTEX_SHADER + ")");
+
 		} else {
-			System.out.println(glGetShaderInfoLog(lVertID, 2048));
+			Debug.debugManager().logger().i(getClass().getSimpleName(), glGetShaderInfoLog(lVertID, 2048));
+
 		}
 
 		glCompileShader(lFragID);
 		if (glGetShaderi(lFragID, GL_COMPILE_STATUS) == GL_FALSE) {
-			System.err.println("Failed to compile fragment shader!" + mFragPathname);
-			System.err.println(glGetShaderInfoLog(lFragID, 2048));
+			Debug.debugManager().logger().e(getClass().getSimpleName(), "Failed to compile fragment shader!" + mFragPathname);
+			Debug.debugManager().logger().i(getClass().getSimpleName(), glGetShaderInfoLog(lFragID, 2048));
+
 			throw new RuntimeException("Failed to compile fragment shader (" + GL_FRAGMENT_SHADER + ")");
+
 		} else {
-			System.out.println(glGetShaderInfoLog(lFragID, 2048));
+			Debug.debugManager().logger().i(getClass().getSimpleName(), glGetShaderInfoLog(lFragID, 2048));
+
 		}
 
 		glAttachShader(lProgramID, lVertID);

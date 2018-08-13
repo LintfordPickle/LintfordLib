@@ -19,7 +19,7 @@ public class ParticleRandomSizeInitialiser extends ParticleSingleValueInitialise
 
 	@Override
 	public void onIntialiseParticle(Particle pParticle, float pValue) {
-		pParticle.radius = pValue;
+		pParticle.scale = pValue;
 
 	}
 

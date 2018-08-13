@@ -1,7 +1,7 @@
 package net.lintford.library.core.geometry.spritegraph.renderers;
 
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.debug.DebugManager;
+import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.geometry.spritegraph.SpriteGraphInst;
 import net.lintford.library.core.geometry.spritegraph.SpriteGraphNodeInst;
 import net.lintford.library.core.graphics.linebatch.LineBatch;

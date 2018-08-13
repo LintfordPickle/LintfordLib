@@ -24,6 +24,8 @@ public class DebugProfiler extends AARectangle {
 	// Variables
 	// --------------------------------------
 
+	private final Debug mDebugManager;
+
 	private transient TextureBatch mSpriteBatch;
 	private transient FontUnit mConsoleFont;
 	private LineBatch mLineBatch;
@@ -63,7 +65,12 @@ public class DebugProfiler extends AARectangle {
 	// Constructor
 	// --------------------------------------
 
-	public DebugProfiler() {
+	public DebugProfiler(final Debug pDebugManager) {
+		mDebugManager = pDebugManager;
+
+		if (!mDebugManager.debugManagerEnabled())
+			return;
+
 		mSpriteBatch = new TextureBatch();
 		mLineBatch = new LineBatch();
 
@@ -79,7 +86,10 @@ public class DebugProfiler extends AARectangle {
 	// --------------------------------------
 
 	public void loadGLContent(ResourceManager pResourceManager) {
-		DebugManager.DEBUG_MANAGER.logger().v(getClass().getSimpleName(), "DebugProfiler loading GL content");
+		if (!mDebugManager.debugManagerEnabled())
+			return;
+
+		Debug.debugManager().logger().v(getClass().getSimpleName(), "DebugProfiler loading GL content");
 
 		mConsoleFont = pResourceManager.fontManager().systemFont();
 
@@ -88,7 +98,10 @@ public class DebugProfiler extends AARectangle {
 	}
 
 	public void unloadGLContent() {
-		DebugManager.DEBUG_MANAGER.logger().v(getClass().getSimpleName(), "DebugProfiler unloading GL content");
+		if (!mDebugManager.debugManagerEnabled())
+			return;
+
+		Debug.debugManager().logger().v(getClass().getSimpleName(), "DebugProfiler unloading GL content");
 
 		mSpriteBatch.unloadGLContent();
 		mLineBatch.unloadGLContent();
@@ -96,6 +109,9 @@ public class DebugProfiler extends AARectangle {
 	}
 
 	public void handleInput(LintfordCore pCore) {
+		if (!mDebugManager.debugManagerEnabled())
+			return;
+
 		if (pCore.input().keyDownTimed(GLFW.GLFW_KEY_F3)) {
 			// three way open/close mech
 			if (!mIsOpen) {
@@ -112,20 +128,22 @@ public class DebugProfiler extends AARectangle {
 	}
 
 	public void update(LintfordCore pCore) {
+		if (!mDebugManager.debugManagerEnabled())
+			return;
 
 		if (!mIsOpen)
 			return;
 
 		final float lWindowWidth = pCore.config().display().windowSize().x;
-//		final float lWindowHeight = pCore.config().display().windowSize().y;
-//		setPosition(-lWindowWidth / 2, -lWindowHeight / 2);
-		
+
 		setWidth(lWindowWidth);
 		setHeight(mSimpleHeight);
-		
+
 	}
 
 	public void draw(LintfordCore pCore) {
+		if (!mDebugManager.debugManagerEnabled())
+			return;
 
 		long lTimeNow = System.nanoTime();
 		deltaDraw = ((lTimeNow - prevTimeDraw) / TimeSpan.NanoToMilli);
@@ -140,13 +158,13 @@ public class DebugProfiler extends AARectangle {
 			deltaFrameCount = 0;
 			timer -= 1000;
 
-			if(!mIsSimple) {
+			if (!mIsSimple) {
 				mFPSHistory.add((float) frameCount);
 				if (mFPSHistory.size() > HISTORY_COUNT)
 					mFPSHistory.remove();
-				
+
 				xMarker = 0;
-				
+
 			}
 
 		}
@@ -191,7 +209,7 @@ public class DebugProfiler extends AARectangle {
 
 			if (mFPSHistory.size() > 0) {
 				float lTY = mFPSHistory.get(0);
-				float lOffsetX = (stepSizeX * HISTORY_COUNT+2) - (mFPSHistory.size() * stepSizeX);
+				float lOffsetX = (stepSizeX * HISTORY_COUNT + 2) - (mFPSHistory.size() * stepSizeX);
 
 				for (int i = 1; i < mFPSHistory.size(); i++) {
 

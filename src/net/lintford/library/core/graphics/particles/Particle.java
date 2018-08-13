@@ -26,6 +26,7 @@ public class Particle extends CircleEntity {
 	public float rox, roy, rot, rotv;
 
 	public float r, g, b, a;
+	public float scale;
 
 	// --------------------------------------
 	// Properties
@@ -84,6 +85,7 @@ public class Particle extends CircleEntity {
 		mIsFree = true;
 		mLifeTime = 0;
 		timeSinceStart = 0;
+		scale = 1f;
 
 		x = 0;
 		y = 0;

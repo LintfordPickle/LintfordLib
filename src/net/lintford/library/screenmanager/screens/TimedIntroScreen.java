@@ -1,6 +1,7 @@
 package net.lintford.library.screenmanager.screens;
 
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.geometry.AARectangle;
 import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.TextureManager;
@@ -26,6 +27,8 @@ public class TimedIntroScreen extends Screen {
 	private boolean mUserRequestSkip;
 	private boolean mTimedActionPerformed;
 
+	private AARectangle mSrcTextureRect;
+
 	private IMenuAction mActionCallback;
 
 	private boolean mStretchBackgroundToFit;
@@ -40,6 +43,11 @@ public class TimedIntroScreen extends Screen {
 
 	public void stretchBackgroundToFit(boolean pNewValue) {
 		mStretchBackgroundToFit = pNewValue;
+	}
+
+	public void setTextureSrcRectangle(float pX, float pY, float pW, float pH) {
+		mSrcTextureRect.set(pX, pY, pW, pH);
+
 	}
 
 	// --------------------------------------
@@ -60,6 +68,7 @@ public class TimedIntroScreen extends Screen {
 		mShowImageTimer = pTimer;
 
 		mTextureBatch = new TextureBatch();
+		mSrcTextureRect = new AARectangle(0, 0, 800, 600);
 
 	}
 
@@ -141,7 +150,7 @@ public class TimedIntroScreen extends Screen {
 		}
 
 		mTextureBatch.begin(pCore.HUD());
-		mTextureBatch.draw(mBackgroundTexture, 0, 0, 800, 600, lLeft, lTop, lRight, lBottom, -1f, 1f, 1f, 1f, mA);
+		mTextureBatch.draw(mBackgroundTexture, mSrcTextureRect.x, mSrcTextureRect.y, mSrcTextureRect.w, mSrcTextureRect.h, lLeft, lTop, lRight, lBottom, -1f, 1f, 1f, 1f, mA);
 		mTextureBatch.end();
 
 	}

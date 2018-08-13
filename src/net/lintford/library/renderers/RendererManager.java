@@ -7,7 +7,7 @@ import java.util.List;
 import org.lwjgl.opengl.GL11;
 
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.debug.DebugManager;
+import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.rendertarget.RenderTarget;
@@ -160,7 +160,13 @@ public class RendererManager {
 	// --------------------------------------
 
 	public void initialise() {
+		final int RENDERER_COUNT = mRenderers.size();
+		for (int i = 0; i < RENDERER_COUNT; i++) {
+			if (!mRenderers.get(i).isLoaded() && mIsLoaded) {
+				mRenderers.get(i).initialise(mCore);
+			}
 
+		}
 		mIsInitialised = true;
 
 	}
@@ -169,7 +175,7 @@ public class RendererManager {
 		if (mIsLoaded)
 			return;
 
-		DebugManager.DEBUG_MANAGER.logger().i(getClass().getSimpleName(), mScreenOwner + "Loading GL content for all registered renderers");
+		Debug.debugManager().logger().i(getClass().getSimpleName(), mScreenOwner + "Loading GL content for all registered renderers");
 
 		mResourceManager = pResourceManager;
 
@@ -218,7 +224,7 @@ public class RendererManager {
 		if (!mIsLoaded)
 			return;
 
-		DebugManager.DEBUG_MANAGER.logger().i(getClass().getSimpleName(), mScreenOwner + "Unloading GL content for all renderers");
+		Debug.debugManager().logger().i(getClass().getSimpleName(), mScreenOwner + "Unloading GL content for all renderers");
 
 		// Unloaded each of the renderers
 		final int RENDERER_COUNT = mRenderers.size();
@@ -268,7 +274,7 @@ public class RendererManager {
 				continue;
 
 			if (!mRenderers.get(i).isLoaded() && mIsLoaded) {
-				DebugManager.DEBUG_MANAGER.logger().w(getClass().getSimpleName(), "Reloading content in Update() (BaseRenderer) ");
+				Debug.debugManager().logger().w(getClass().getSimpleName(), "Reloading content in Update() (BaseRenderer) ");
 				mRenderers.get(i).loadGLContent(mResourceManager);
 
 			}
@@ -284,7 +290,7 @@ public class RendererManager {
 				continue;
 
 			if (!mWindowRenderers.get(i).isLoaded() && mIsLoaded) {
-				DebugManager.DEBUG_MANAGER.logger().w(getClass().getSimpleName(), "Reloading content in Update() (UIWindow) ");
+				Debug.debugManager().logger().w(getClass().getSimpleName(), "Reloading content in Update() (UIWindow) ");
 				mWindowRenderers.get(i).loadGLContent(mResourceManager);
 			}
 
@@ -303,7 +309,7 @@ public class RendererManager {
 					continue;
 
 				if (!mRenderers.get(i).isLoaded() && mIsLoaded) {
-					DebugManager.DEBUG_MANAGER.logger().w(getClass().getSimpleName(), mScreenOwner + "Reloading content in Update() (BaseRenderer) ");
+					Debug.debugManager().logger().w(getClass().getSimpleName(), mScreenOwner + "Reloading content in Update() (BaseRenderer) ");
 					mRenderers.get(i).loadGLContent(mResourceManager);
 
 				}
@@ -321,7 +327,7 @@ public class RendererManager {
 					continue;
 
 				if (!mWindowRenderers.get(i).isLoaded() && mIsLoaded) {
-					DebugManager.DEBUG_MANAGER.logger().w(getClass().getSimpleName(), "Reloading content in Update() (UIWindow) ");
+					Debug.debugManager().logger().w(getClass().getSimpleName(), "Reloading content in Update() (UIWindow) ");
 					mWindowRenderers.get(i).loadGLContent(mResourceManager);
 				}
 
@@ -383,7 +389,7 @@ public class RendererManager {
 
 		} else {
 			// Output this as an error so that it is visible in the debuglog for corrective action.
-			DebugManager.DEBUG_MANAGER.logger().e(getClass().getSimpleName(), "Cannot add the same renderer twice! (" + pRenderer.getClass().getSimpleName() + "/" + pRenderer.mRendererName + ")");
+			Debug.debugManager().logger().e(getClass().getSimpleName(), "Cannot add the same renderer twice! (" + pRenderer.getClass().getSimpleName() + "/" + pRenderer.mRendererName + ")");
 
 		}
 
@@ -403,7 +409,7 @@ public class RendererManager {
 	}
 
 	public void removeAllRenderers() {
-		DebugManager.DEBUG_MANAGER.logger().i(getClass().getSimpleName(), "RendererManager: Removing all renderers");
+		Debug.debugManager().logger().i(getClass().getSimpleName(), "RendererManager: Removing all renderers");
 
 		mWindowRenderers.clear();
 		mRenderers.clear();
@@ -511,8 +517,6 @@ public class RendererManager {
 		lResult.targetName = pName;
 
 		mRenderTargets.add(lResult);
-
-		System.out.println("Rendertargets size: " + mRenderTargets.size());
 
 		if (pResizeWithWindow) {
 			mRenderTargetAutoResize.add(lResult);

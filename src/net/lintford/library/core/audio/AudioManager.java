@@ -31,7 +31,7 @@ import org.lwjgl.openal.ALC;
 import org.lwjgl.openal.ALCCapabilities;
 import org.lwjgl.openal.ALUtil;
 
-import net.lintford.library.core.debug.DebugManager;
+import net.lintford.library.core.debug.Debug;
 
 public class AudioManager {
 
@@ -97,7 +97,7 @@ public class AudioManager {
 
 	public void loadALContent() {
 		if (mOpenALInitialized) {
-			DebugManager.DEBUG_MANAGER.logger().i(TAG, "AudioManager already initialized.");
+			Debug.debugManager().logger().i(TAG, "AudioManager already initialized.");
 			return;
 
 		}
@@ -108,9 +108,9 @@ public class AudioManager {
 
 		ALCCapabilities deviceCaps = ALC.createCapabilities(mDevice);
 
-		DebugManager.DEBUG_MANAGER.logger().i(TAG, "OpenALC10: " + deviceCaps.OpenALC10);
-		DebugManager.DEBUG_MANAGER.logger().i(TAG, "OpenALC11: " + deviceCaps.OpenALC11);
-		DebugManager.DEBUG_MANAGER.logger().i(TAG, "caps.ALC_EXT_EFX = " + deviceCaps.ALC_EXT_EFX);
+		Debug.debugManager().logger().i(TAG, "OpenALC10: " + deviceCaps.OpenALC10);
+		Debug.debugManager().logger().i(TAG, "OpenALC11: " + deviceCaps.OpenALC11);
+		Debug.debugManager().logger().i(TAG, "caps.ALC_EXT_EFX = " + deviceCaps.ALC_EXT_EFX);
 
 		// Check the caps of the sound devie
 		if (deviceCaps.OpenALC11) {
@@ -120,7 +120,7 @@ public class AudioManager {
 
 			} else {
 				for (int i = 0; i < devices.size(); i++) {
-					DebugManager.DEBUG_MANAGER.logger().i(TAG, i + ": " + devices.get(i));
+					Debug.debugManager().logger().i(TAG, i + ": " + devices.get(i));
 
 				}
 
@@ -130,22 +130,23 @@ public class AudioManager {
 
 		// Chose which sound device to use
 		String defaultDeviceName = alcGetString(0, ALC_DEFAULT_DEVICE_SPECIFIER);
-		DebugManager.DEBUG_MANAGER.logger().i(TAG, "Default device: " + defaultDeviceName);
+		Debug.debugManager().logger().i(TAG, "Default device: " + defaultDeviceName);
 		// Assert true: defaultDeviceName != null
 
 		mContext = alcCreateContext(mDevice, (IntBuffer) null);
 		alcSetThreadContext(mContext);
 		AL.createCapabilities(deviceCaps);
 
-		DebugManager.DEBUG_MANAGER.logger().i(TAG, "ALC_FREQUENCY: " + alcGetInteger(mDevice, ALC_FREQUENCY) + "Hz");
-		DebugManager.DEBUG_MANAGER.logger().i(TAG, "ALC_REFRESH: " + alcGetInteger(mDevice, ALC_REFRESH) + "Hz");
-		DebugManager.DEBUG_MANAGER.logger().i(TAG, "ALC_SYNC: " + (alcGetInteger(mDevice, ALC_SYNC) == ALC_TRUE));
 		mMaxSourceCount = alcGetInteger(mDevice, ALC_MONO_SOURCES);
-		DebugManager.DEBUG_MANAGER.logger().i(TAG, "ALC_MONO_SOURCES: " + mMaxSourceCount);
-		DebugManager.DEBUG_MANAGER.logger().i(TAG, "ALC_STEREO_SOURCES: " + alcGetInteger(mDevice, ALC_STEREO_SOURCES));
+
+		Debug.debugManager().logger().i(TAG, "ALC_FREQUENCY: " + alcGetInteger(mDevice, ALC_FREQUENCY) + "Hz");
+		Debug.debugManager().logger().i(TAG, "ALC_REFRESH: " + alcGetInteger(mDevice, ALC_REFRESH) + "Hz");
+		Debug.debugManager().logger().i(TAG, "ALC_SYNC: " + (alcGetInteger(mDevice, ALC_SYNC) == ALC_TRUE));
+		Debug.debugManager().logger().i(TAG, "ALC_MONO_SOURCES: " + mMaxSourceCount);
+		Debug.debugManager().logger().i(TAG, "ALC_STEREO_SOURCES: " + alcGetInteger(mDevice, ALC_STEREO_SOURCES));
 
 		if (mMaxSourceCount == 0) {
-			DebugManager.DEBUG_MANAGER.logger().e(TAG, "AudioManager not initialised correctly. Unable to assign AudioSources!");
+			Debug.debugManager().logger().e(TAG, "AudioManager not initialised correctly. Unable to assign AudioSources!");
 
 		}
 
@@ -176,16 +177,16 @@ public class AudioManager {
 		mBuffers.clear();
 
 		// Dipose of the Fire-and-Forget AudioSources.
-		for(AudioSource lAudioSource : mFaFSourcePool) {
+		for (AudioSource lAudioSource : mFaFSourcePool) {
 			lAudioSource.unassign(hashCode());
 			lAudioSource.dispose();
-			
+
 		}
-		
+
 		// Dispose of the assignable AudioSources.
-		for(AudioSource lAudioSource : mAudioSources) {
+		for (AudioSource lAudioSource : mAudioSources) {
 			lAudioSource.dispose();
-			
+
 		}
 
 		alcMakeContextCurrent(NULL);
@@ -302,7 +303,7 @@ public class AudioManager {
 	/** Plays the given {@link AudioData}. */
 	public AudioSource play(AudioData pData) {
 		if (pData == null || !pData.isLoaded())
-			return null ;
+			return null;
 
 		return play(pData, 1f, 1f);
 
@@ -318,7 +319,7 @@ public class AudioManager {
 			lAS.play(pData.bufferID(), pGain, pPitch);
 			return lAS;
 		}
-		
+
 		return null;
 
 	}

@@ -2,7 +2,7 @@ package net.lintford.library.core.audio;
 
 import org.lwjgl.openal.AL10;
 
-import net.lintford.library.core.debug.DebugManager;
+import net.lintford.library.core.debug.Debug;
 
 public class AudioSource {
 
@@ -33,7 +33,7 @@ public class AudioSource {
 		return mOwnerHash == NO_OWNER;
 
 	}
-	
+
 	/** Returns true if the sourceID has been assigned and is not equal to AL10-AL_INVALID (-1, 0xFFFFFFFF) */
 	public boolean isValidSource() {
 		return mSourceID != AL10.AL_INVALID;
@@ -48,7 +48,7 @@ public class AudioSource {
 		mSourceID = AL10.alGenSources();
 
 		if (mSourceID == AL10.AL_INVALID) {
-			DebugManager.DEBUG_MANAGER.logger().e("AudioSource", "You have reached the limit of OpenAL Audio Sources");
+			Debug.debugManager().logger().e("AudioSource", "You have reached the limit of OpenAL Audio Sources");
 
 		}
 
@@ -73,9 +73,11 @@ public class AudioSource {
 
 	}
 
-	/** Checks if the current lock held on this {@link AudioSource} matches the given hash value. It the hashes match, the lock is released.
+	/**
+	 * Checks if the current lock held on this {@link AudioSource} matches the given hash value. It the hashes match, the lock is released.
 	 * 
-	 * @return true if this {@link AudioSource} is free after calling this method, false otherwise. */
+	 * @return true if this {@link AudioSource} is free after calling this method, false otherwise.
+	 */
 	public boolean unassign(int pOwnerHash) {
 		if (isFree())
 			return true;
@@ -92,16 +94,16 @@ public class AudioSource {
 
 	/** Disposes of this AudioSource, and frees up the AudioSource in the AudioManager. */
 	public void dispose() {
-		if(!isFree()) {
+		if (!isFree()) {
 			mOwnerHash = NO_OWNER;
-			
+
 		}
-		
-		if(isValidSource()){
+
+		if (isValidSource()) {
 			AL10.alDeleteSources(mSourceID);
-			
+
 		}
-		
+
 	}
 
 	// --------------------------------------

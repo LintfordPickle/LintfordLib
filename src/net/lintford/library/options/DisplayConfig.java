@@ -46,8 +46,8 @@ import org.lwjgl.opengl.GL11;
 import net.lintford.library.ConstantsTable;
 import net.lintford.library.GameInfo;
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.debug.DebugManager;
-import net.lintford.library.core.debug.DebugManager.DebugLogLevel;
+import net.lintford.library.core.debug.Debug;
+import net.lintford.library.core.debug.Debug.DebugLogLevel;
 import net.lintford.library.core.debug.GLDebug;
 import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.maths.Vector2i;
@@ -231,7 +231,7 @@ public class DisplayConfig extends BaseConfig {
 					if (mWindowResizeListeners.get(i) == null)
 						continue;
 
-					DebugManager.DEBUG_MANAGER.logger().log(DebugLogLevel.info, "SYSTEM", "calling window resize listener: " + mWindowResizeListeners.get(i).getClass().getSimpleName());
+					Debug.debugManager().logger().log(DebugLogLevel.info, "SYSTEM", "calling window resize listener: " + mWindowResizeListeners.get(i).getClass().getSimpleName());
 
 					mWindowResizeListeners.get(i).onResize(mWindowSize.x, mWindowSize.y);
 
@@ -253,13 +253,13 @@ public class DisplayConfig extends BaseConfig {
 	// --------------------------------------
 
 	public long createWindow(GameInfo pGameInfo, boolean pFullScreen, int pWidth, int pHeight, boolean pResizable) {
-		DebugManager.DEBUG_MANAGER.logger().i(getClass().getSimpleName(), "Creating GLFWWindow");
+		Debug.debugManager().logger().i(getClass().getSimpleName(), "Creating GLFWWindow");
 
 		// All GLFW errors to the system err print stream
 		glfwSetErrorCallback(GLFWErrorCallback.createPrint(System.err));
 
 		if (!glfwInit()) {
-			DebugManager.DEBUG_MANAGER.logger().e(getClass().getSimpleName(), "Unable to initialize GLFW");
+			Debug.debugManager().logger().e(getClass().getSimpleName(), "Unable to initialize GLFW");
 			throw new IllegalStateException("Unable to initialize GLFW");
 		}
 
@@ -393,7 +393,8 @@ public class DisplayConfig extends BaseConfig {
 	}
 
 	public void setGLFWMonitor(long pMonitorHandle, int pX, int pY, int pWidth, int pHeight, boolean pVSync) {
-		DebugManager.DEBUG_MANAGER.logger().i(getClass().getSimpleName(), "Changing videomode to Monitor(" + pMonitorHandle + ") " + pWidth + "x" + pHeight);
+		Debug.debugManager().logger().i(getClass().getSimpleName(), "Changing videomode to Monitor(" + pMonitorHandle + ") " + pWidth + "x" + pHeight);
+		
 		glfwSetWindowMonitor(mWindowID, pMonitorHandle, pX, pY, pWidth, pHeight, 60);
 
 		mFullScreen = pMonitorHandle != NULL;
@@ -407,8 +408,6 @@ public class DisplayConfig extends BaseConfig {
 			int lMonitorWidth = mDesktopVideoMode.width();
 			int lMonitorHeight = mDesktopVideoMode.height();
 
-			System.out.println("(" + lMonitorWidth + "," + lMonitorHeight + ") (" + pWidth + "," + pHeight + ")");
-
 			GLFW.glfwSetWindowPos(mWindowID, lMonitorWidth / 2 - pWidth / 2, lMonitorHeight / 2 - pHeight / 2);
 
 		}
@@ -419,8 +418,8 @@ public class DisplayConfig extends BaseConfig {
 	}
 
 	private void onInitialiseGL() {
-		DebugManager.DEBUG_MANAGER.logger().i(getClass().getSimpleName(), "OpenGL version: " + GL11.glGetString(GL11.GL_VERSION));
-		DebugManager.DEBUG_MANAGER.logger().i(getClass().getSimpleName(), "GLFW Version" + glfwGetVersionString());
+		Debug.debugManager().logger().i(getClass().getSimpleName(), "OpenGL version: " + GL11.glGetString(GL11.GL_VERSION));
+		Debug.debugManager().logger().i(getClass().getSimpleName(), "GLFW Version" + glfwGetVersionString());
 
 		GL11.glClearStencil(0); // Specify the index used when stencil buffer is cleared
 

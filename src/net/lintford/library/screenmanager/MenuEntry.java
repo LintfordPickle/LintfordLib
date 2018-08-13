@@ -19,7 +19,7 @@ public class MenuEntry extends AARectangle {
 	// --------------------------------------
 
 	private static final long serialVersionUID = -226493862481815669L;
-	
+
 	protected static final float MENUENTRY_DEF_BUTTON_WIDTH = 300;
 	protected static final float MENUENTRY_HEIGHT = 32;
 	protected static final float FOCUS_TIMER = 500f; // milli
@@ -75,6 +75,14 @@ public class MenuEntry extends AARectangle {
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public boolean drawButtonBackground() {
+		return mDrawBackground;
+	}
+
+	public void drawButtonBackground(boolean pNewValue) {
+		mDrawBackground = pNewValue;
+	}
 
 	public MenuScreen parentScreen() {
 		return mParentScreen;
@@ -326,7 +334,7 @@ public class MenuEntry extends AARectangle {
 		Texture lTexture = TextureManager.TEXTURE_CORE_UI;
 
 		// Draw the button highlight when this element has focus.
-		if (mHoveredOver && mHighlightOnHover) {
+		if (mDrawBackground && mHoveredOver && mHighlightOnHover) {
 			mTextureBatch.begin(pCore.HUD());
 			mTextureBatch.draw(lTexture, 0, 64, 32, 32, centerX() - w / 2, centerY() - h / 2, tile_size, h, mZ, lR, lG, lB, mParentScreen.mA);
 			switch (mButtonSize) {
@@ -350,9 +358,12 @@ public class MenuEntry extends AARectangle {
 		// Render the MenuEntry label
 		if (mText != null && mText.length() > 0) {
 			final float FONT_SCALE = 1f;
+
+			float lColMod = (mHoveredOver && mHighlightOnHover) ? 0.7f : 1f;
+
 			mParentScreen.font().begin(pCore.HUD());
-			mParentScreen.font().draw(mText, centerX() - mParentScreen.font().bitmap().getStringWidth(mText, FONT_SCALE) * 0.5f, centerY() - mParentScreen.font().bitmap().fontHeight() * FONT_SCALE / 2 - 2f, mZ, 0.97f, .92f, mParentScreen.mA,
-					mParentScreen.mA, FONT_SCALE);
+			mParentScreen.font().draw(mText, centerX() - mParentScreen.font().bitmap().getStringWidth(mText, FONT_SCALE) * 0.5f, centerY() - mParentScreen.font().bitmap().fontHeight() * FONT_SCALE / 2 - 2f, mZ,
+					0.97f * lColMod, .92f * lColMod, .92f * lColMod, mParentScreen.mA, FONT_SCALE);
 			mParentScreen.font().end();
 
 		}

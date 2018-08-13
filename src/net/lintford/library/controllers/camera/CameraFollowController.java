@@ -26,7 +26,8 @@ public class CameraFollowController extends BaseController {
 
 	private ICamera mGameCamera;
 	private WorldEntity mTrackedEntity;
-	private boolean mTrackPlayer;
+	private boolean mAllowManualControl;
+	private boolean mIsTrackingPlayer;
 	private Vector2f mVelocity;
 
 	// ---------------------------------------------
@@ -38,11 +39,19 @@ public class CameraFollowController extends BaseController {
 	}
 
 	public boolean trackPlayer() {
-		return mTrackPlayer;
+		return mIsTrackingPlayer;
 	}
 
 	public void trackPlayer(boolean pNewValue) {
-		mTrackPlayer = pNewValue;
+		mIsTrackingPlayer = pNewValue;
+	}
+
+	public boolean allowManualControl() {
+		return mAllowManualControl;
+	}
+
+	public void allowManualControl(boolean pNewValue) {
+		mAllowManualControl = pNewValue;
 	}
 
 	@Override
@@ -63,7 +72,7 @@ public class CameraFollowController extends BaseController {
 		//
 		mGameCamera = pCamera;
 		mTrackedEntity = pTrackEntity;
-		mTrackPlayer = true;
+		mIsTrackingPlayer = true;
 
 	}
 
@@ -93,31 +102,34 @@ public class CameraFollowController extends BaseController {
 		if (mGameCamera == null)
 			return false;
 
-		final float speed = CAMERA_MAN_MOVE_SPEED;
+		if (mAllowManualControl) {
+			final float speed = CAMERA_MAN_MOVE_SPEED;
 
-		// Just listener for clicks - couldn't be easier !!?!
-		if (pCore.input().keyDown(GLFW.GLFW_KEY_A)) {
-			mVelocity.x -= speed;
-			mTrackPlayer = false;
+			// Just listener for clicks - couldn't be easier !!?!
+			if (pCore.input().keyDown(GLFW.GLFW_KEY_A)) {
+				mVelocity.x -= speed;
+				mIsTrackingPlayer = false;
 
-		}
+			}
 
-		if (pCore.input().keyDown(GLFW.GLFW_KEY_D)) {
-			mVelocity.x += speed;
-			mTrackPlayer = false;
+			if (pCore.input().keyDown(GLFW.GLFW_KEY_D)) {
+				mVelocity.x += speed;
+				mIsTrackingPlayer = false;
 
-		}
+			}
 
-		if (pCore.input().keyDown(GLFW.GLFW_KEY_S)) {
-			mVelocity.y += speed;
-			mTrackPlayer = false;
+			if (pCore.input().keyDown(GLFW.GLFW_KEY_S)) {
+				mVelocity.y += speed;
+				mIsTrackingPlayer = false;
 
-		}
+			}
 
-		if (pCore.input().keyDown(GLFW.GLFW_KEY_W)) {
-			mVelocity.y -= speed;
-			mTrackPlayer = false;
+			if (pCore.input().keyDown(GLFW.GLFW_KEY_W)) {
+				mVelocity.y -= speed;
+				mIsTrackingPlayer = false;
 
+			}
+			
 		}
 
 		return false;
@@ -129,8 +141,8 @@ public class CameraFollowController extends BaseController {
 		if (mGameCamera == null)
 			return;
 
-		mTrackPlayer = mTrackedEntity != null;
-		if (mTrackPlayer) {
+		mIsTrackingPlayer = mTrackedEntity != null;
+		if (mIsTrackingPlayer) {
 			mGameCamera.setPosition(-mTrackedEntity.x, -mTrackedEntity.y);
 
 		} else {

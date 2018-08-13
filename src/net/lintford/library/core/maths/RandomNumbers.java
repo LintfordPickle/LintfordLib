@@ -35,6 +35,9 @@ public class RandomNumbers {
 	}
 
 	public static final int random(final int pMin, final int pMax) {
+		if (pMax <= 0)
+			return 0;
+
 		return pMin + RANDOM.nextInt(pMax - pMin);
 	}
 

@@ -57,6 +57,8 @@ public class LoadingScreen extends Screen {
 
 		mTransitionOn = new TransitionFadeIn(new TimeSpan(500));
 		mTransitionOff = new TransitionFadeOut(new TimeSpan(500));
+		
+		mIsPopup = true;
 
 	}
 

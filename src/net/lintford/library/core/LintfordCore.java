@@ -11,6 +11,8 @@ import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 import static org.lwjgl.opengl.GL11.glClearColor;
 
+import javax.management.RuntimeErrorException;
+
 import org.lwjgl.opengl.GL11;
 
 import net.lintford.library.GameInfo;
@@ -20,8 +22,8 @@ import net.lintford.library.controllers.core.ResourceController;
 import net.lintford.library.core.camera.Camera;
 import net.lintford.library.core.camera.HUD;
 import net.lintford.library.core.camera.ICamera;
-import net.lintford.library.core.debug.DebugManager;
-import net.lintford.library.core.debug.DebugManager.DebugLogLevel;
+import net.lintford.library.core.debug.Debug;
+import net.lintford.library.core.debug.Debug.DebugLogLevel;
 import net.lintford.library.core.debug.DebugMemory;
 import net.lintford.library.core.entity.BaseEntity;
 import net.lintford.library.core.graphics.ResourceManager;
@@ -43,20 +45,6 @@ public abstract class LintfordCore {
 	// ---------------------------------------------
 
 	public static final int CORE_ID = BaseEntity.getEntityNumber();
-	private static boolean DEBUG_MODE = false;
-
-	public static boolean DEBUG_MODE() {
-		return DEBUG_MODE;
-	}
-
-	protected static void setDebugMode(boolean pNewValue) {
-		DEBUG_MODE = pNewValue;
-
-		if (DEBUG_MODE) {
-			DebugManager.DEBUG_MANAGER.logger().w("LintfordCore", "DEBUG_MODE::ENABLED");
-		}
-
-	}
 
 	protected GameInfo mGameInfo;
 	protected MasterConfig mMasterConfig;
@@ -119,7 +107,7 @@ public abstract class LintfordCore {
 	 */
 	public ICamera gameCamera() {
 		if (mGameCamera == null) {
-			DebugManager.DEBUG_MANAGER.logger().w(getClass().getSimpleName(), "GameCamera not registered with LWJGLCore! Are you trying to access the game camera outside of a GameScreen?");
+			Debug.debugManager().logger().w(getClass().getSimpleName(), "GameCamera not registered with LWJGLCore! Are you trying to access the game camera outside of a GameScreen?");
 			return ICamera.EMPTY;
 
 		}
@@ -136,23 +124,48 @@ public abstract class LintfordCore {
 	// ---------------------------------------------
 
 	public LintfordCore(GameInfo pGameInfo) {
-		this(pGameInfo, false);
+		this(pGameInfo, null);
 
 	}
 
-	public LintfordCore(GameInfo pGameInfo, boolean pHeadless) {
+	public LintfordCore(GameInfo pGameInfo, String[] pArgs) {
+		this(pGameInfo, pArgs, false);
+
+	}
+
+	public LintfordCore(GameInfo pGameInfo, String[] pArgs, boolean pHeadless) {
 		mGameInfo = pGameInfo;
 		mIsHeadlessMode = pHeadless;
 
-		DebugManager.DEBUG_MANAGER.startDebug(DebugLogLevel.info);
+		// initially take the DebugLogLevel defined at compile time
+		DebugLogLevel lNewLogLevel = pGameInfo.debugLogLevel();
 
+		final int lArgsCount = pArgs.length;
+		for (int i = 0; i < lArgsCount; i++) {
+			if (pArgs[i].contains("debug")) {
+				try {
+					String lRightSide = pArgs[i].substring(pArgs[i].lastIndexOf("=") + 1);
+					lNewLogLevel = DebugLogLevel.valueOf(lRightSide);
+
+				} catch (IllegalArgumentException e) {
+					System.err.println("Unable to process the command line argument: " + pArgs[i]);
+
+				}
+
+			}
+
+		}
+
+		Debug.debugManager(lNewLogLevel);
+
+		// FIXME: Move this into the DebugManager
 		DebugMemory.dumpMemoryToLog();
 
 		// Print out the working directory
-		DebugManager.DEBUG_MANAGER.logger().i(getClass().getSimpleName(), "Working directory: " + System.getProperty("user.dir"));
-		DebugManager.DEBUG_MANAGER.logger().i(getClass().getSimpleName(), System.getProperty("java.vendor"));
-		DebugManager.DEBUG_MANAGER.logger().i(getClass().getSimpleName(), System.getProperty("java.vendor.url"));
-		DebugManager.DEBUG_MANAGER.logger().i(getClass().getSimpleName(), System.getProperty("java.version"));
+		Debug.debugManager().logger().i(getClass().getSimpleName(), "Working directory: " + System.getProperty("user.dir"));
+		Debug.debugManager().logger().i(getClass().getSimpleName(), System.getProperty("java.vendor"));
+		Debug.debugManager().logger().i(getClass().getSimpleName(), System.getProperty("java.vendor.url"));
+		Debug.debugManager().logger().i(getClass().getSimpleName(), System.getProperty("java.version"));
 
 	}
 
@@ -223,11 +236,11 @@ public abstract class LintfordCore {
 	 * Called automatically before entering the main game loop. OpenGL content can be setup.
 	 */
 	protected void onLoadGLContent() {
-		DebugManager.DEBUG_MANAGER.logger().i(getClass().getSimpleName(), "Loading GL content");
+		Debug.debugManager().logger().i(getClass().getSimpleName(), "Loading GL content");
 
 		mResourceManager.loadGLContent();
 
-		DebugManager.DEBUG_MANAGER.loadGLContent(mResourceManager);
+		Debug.debugManager().loadGLContent(mResourceManager);
 
 	}
 
@@ -235,9 +248,9 @@ public abstract class LintfordCore {
 	 * Called automatically after exiting the main game loop. OpenGL resources should be released.
 	 */
 	protected void onUnloadGLContent() {
-		DebugManager.DEBUG_MANAGER.logger().i(getClass().getSimpleName(), "Unloading GL content");
+		Debug.debugManager().logger().i(getClass().getSimpleName(), "Unloading GL content");
 
-		DebugManager.DEBUG_MANAGER.unloadGLContent();
+		Debug.debugManager().unloadGLContent();
 
 		mResourceManager.unloadContent();
 
@@ -257,43 +270,15 @@ public abstract class LintfordCore {
 
 		DisplayConfig lDisplayConfig = mMasterConfig.display();
 
-		long lastTime = System.nanoTime();
-		double delta = 0.0;
-		double ns = 1000000000.0 / 60.0;
-		long timer = System.currentTimeMillis();
-
 		// Game loop
 		while (!glfwWindowShouldClose(lDisplayConfig.windowID())) {
+			mGameTime.update();
+			onHandleInput();
+			onUpdate();
 
-			long now = System.nanoTime();
-			delta += (now - lastTime) / ns;
+			onDraw();
 
-			lastTime = now;
-			if (delta >= 1.0) {
-				mGameTime.update();
-
-				onHandleInput();
-
-				onUpdate();
-
-				delta--;
-			}
-
-			if (lDisplayConfig.isWindowFocused()) {
-
-			}
-
-			if (!mIsHeadlessMode) {
-				onDraw();
-
-				DebugManager.DEBUG_MANAGER.draw(this);
-
-			}
-
-			if (System.currentTimeMillis() - timer > 1000) {
-				timer += 1000;
-				
-			}
+			Debug.debugManager().draw(this);
 
 			glfwSwapBuffers(lDisplayConfig.windowID());
 
@@ -313,7 +298,7 @@ public abstract class LintfordCore {
 	 * handle input for auxiliary classes. If extended in sub-classes, ensure to handleInput on auxiliary classes!
 	 */
 	protected void onHandleInput() {
-		DebugManager.DEBUG_MANAGER.handleInput(this);
+		Debug.debugManager().handleInput(this);
 		mHUD.handleInput(this);
 
 		// TODO: Problems with Z?
@@ -333,7 +318,7 @@ public abstract class LintfordCore {
 			mGameCamera.update(this);
 		mControllerManager.update(this, CORE_ID);
 
-		DebugManager.DEBUG_MANAGER.update(this);
+		Debug.debugManager().update(this);
 
 	}
 

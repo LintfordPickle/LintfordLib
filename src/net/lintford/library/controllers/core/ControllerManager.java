@@ -7,7 +7,7 @@ import java.util.Map;
 
 import net.lintford.library.controllers.BaseController;
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.debug.DebugManager;
+import net.lintford.library.core.debug.Debug;
 
 public class ControllerManager {
 
@@ -131,7 +131,7 @@ public class ControllerManager {
 		// In case this required controller is missing, then throw an exception.
 		// TODO: Don't throw an exception in the future, rather gracefully quit and inform the player.
 		if (RESULT == null) {
-			DebugManager.DEBUG_MANAGER.logger().e(getClass().getSimpleName(), "Required controller not found: " + pControllerName);
+			Debug.debugManager().logger().e(getClass().getSimpleName(), "Required controller not found: " + pControllerName);
 
 			throw new RuntimeException("Required controller not found: " + pControllerName);
 
@@ -143,7 +143,7 @@ public class ControllerManager {
 	/** Returns the controller with the given name. If no controller is found, null is returned. */
 	public BaseController getControllerByName(String pControllerName, int pGroupID) {
 		if (pControllerName == null || pControllerName.length() == 0) {
-			DebugManager.DEBUG_MANAGER.logger().w(getClass().getSimpleName(), "Controller requested but no identifier given");
+			Debug.debugManager().logger().w(getClass().getSimpleName(), "Controller requested but no identifier given");
 
 			return null;
 		}
@@ -176,15 +176,14 @@ public class ControllerManager {
 				// In this case, the ControllerList itself doesn't exit, so we need to create one
 				lControllerList = new ArrayList<>();
 				mControllers.put(pGroupID, lControllerList);
-				
+
 			}
 
 			lControllerList.add(pController);
 
-		}
-		else {
+		} else {
 			// Controller already exists
-			
+
 		}
 
 	}
@@ -202,7 +201,7 @@ public class ControllerManager {
 	}
 
 	public void removeAllControllers() {
-		DebugManager.DEBUG_MANAGER.logger().i(getClass().getSimpleName(), "ControllerManager: Removing all controllers");
+		Debug.debugManager().logger().i(getClass().getSimpleName(), "ControllerManager: Removing all controllers");
 
 		mControllers.clear();
 

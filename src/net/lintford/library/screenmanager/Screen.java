@@ -6,7 +6,6 @@ import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.time.GameTime;
 import net.lintford.library.core.time.TimeSpan;
 import net.lintford.library.renderers.RendererManager;
-import net.lintford.library.renderers.core.RendererManagerRenderer;
 import net.lintford.library.screenmanager.transitions.BaseTransition;
 import net.lintford.library.screenmanager.transitions.TransitionFadeIn;
 import net.lintford.library.screenmanager.transitions.TransitionFadeOut;
@@ -158,19 +157,14 @@ public abstract class Screen {
 		mIsExiting = false;
 		mIsLoaded = false;
 
+		mRendererManager.initialise();
+
 		mIsInitialised = true;
 
 	}
 
 	public void loadGLContent(ResourceManager pResourceManager) {
 		mRendererManager.loadGLContent(pResourceManager);
-
-		if (LintfordCore.DEBUG_MODE()) {
-			RendererManagerRenderer lNewRenderer = new RendererManagerRenderer(mRendererManager, LintfordCore.CORE_ID);
-			mRendererManager.addRenderer(lNewRenderer);
-			lNewRenderer.loadGLContent(pResourceManager);
-
-		}
 
 	}
 

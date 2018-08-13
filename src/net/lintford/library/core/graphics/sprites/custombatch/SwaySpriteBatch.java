@@ -1,6 +1,5 @@
 package net.lintford.library.core.graphics.sprites.custombatch;
 
-import net.lintford.library.core.debug.DebugManager;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.sprites.SpriteFrame;
 import net.lintford.library.core.graphics.sprites.SpriteInstance;
@@ -11,8 +10,8 @@ import net.lintford.library.core.graphics.textures.TextureManager;
 
 public class SwaySpriteBatch extends SpriteBatch {
 
-	public boolean bottom; 
-	
+	public boolean bottom;
+
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
@@ -38,11 +37,6 @@ public class SwaySpriteBatch extends SpriteBatch {
 
 		Texture lTexture = pSpriteSheet.texture();
 		SpriteFrame lCurrentFrame = pSprite.getFrame();
-
-		if (lCurrentFrame == null) {
-			DebugManager.DEBUG_MANAGER.logger().w(getClass().getSimpleName(), "SpriteInstance trying to access frames which don't exist");
-
-		}
 
 		drawGrass(lTexture, lCurrentFrame.x, lCurrentFrame.y, lCurrentFrame.w, lCurrentFrame.h, pDstRectangle, pZ, pA);
 

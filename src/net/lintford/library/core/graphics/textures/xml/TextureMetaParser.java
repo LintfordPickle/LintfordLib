@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
+import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.graphics.textures.TextureMetaItem;
 import net.lintford.library.core.xml.XMLParser;
 
@@ -77,10 +78,12 @@ public class TextureMetaParser extends XMLParser<ArrayList<TextureMetaItem>> {
 			mName = null;
 			mLocation = null;
 			mFilter = -1;
+
 		} else {
 			// Report that this tag was not recognized in the file //
-				System.out.println("Unrecognised xml tag in TextureMetaParser (" + mAssetFilename + ")");
+			Debug.debugManager().logger().e(getClass().getSimpleName(), "Unrecognised xml tag in TextureMetaParser (" + mAssetFilename + ")");
 
 		}
 	}
+
 }

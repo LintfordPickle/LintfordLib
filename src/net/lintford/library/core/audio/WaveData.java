@@ -17,7 +17,7 @@ import javax.sound.sampled.AudioSystem;
 
 import org.lwjgl.openal.AL10;
 
-import net.lintford.library.core.debug.DebugManager;
+import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.storage.FileUtils;
 
 /* 
@@ -58,7 +58,6 @@ import net.lintford.library.core.storage.FileUtils;
  * @author Brian Matzon <brian@matzon.dk>
  * @version $Revision$ $Id$
  */
-@SuppressWarnings("restriction")
 public class WaveData {
 	/** actual wave data */
 	public final ByteBuffer data;
@@ -72,12 +71,9 @@ public class WaveData {
 	/**
 	 * Creates a new WaveData
 	 * 
-	 * @param data
-	 *            actual wavedata
-	 * @param format
-	 *            format of wave data
-	 * @param samplerate
-	 *            sample rate of data
+	 * @param data       actual wavedata
+	 * @param format     format of wave data
+	 * @param samplerate sample rate of data
 	 */
 	private WaveData(ByteBuffer data, int format, int samplerate) {
 		this.data = data;
@@ -93,8 +89,7 @@ public class WaveData {
 	/**
 	 * Creates a WaveData container from the specified in the classpath
 	 * 
-	 * @param path
-	 *            path to file (relative, and in classpath)
+	 * @param path path to file (relative, and in classpath)
 	 * @return WaveData containing data, or null if a failure occured
 	 */
 	public static WaveData create(String pPathName) {
@@ -130,15 +125,14 @@ public class WaveData {
 	/**
 	 * Creates a WaveData container from the specified inputstream
 	 * 
-	 * @param is
-	 *            InputStream to read from
+	 * @param is InputStream to read from
 	 * @return WaveData containing data, or null if a failure occured
 	 */
 	public static WaveData create(InputStream is) {
 		try {
 			return create(AudioSystem.getAudioInputStream(is));
 		} catch (Exception e) {
-			DebugManager.DEBUG_MANAGER.logger().e(WaveData.class.getSimpleName(), "Unable to create from inputstream, " + e.getMessage());
+			Debug.debugManager().logger().e(WaveData.class.getSimpleName(), "Unable to create from inputstream, " + e.getMessage());
 			return null;
 		}
 	}
@@ -146,24 +140,25 @@ public class WaveData {
 	/**
 	 * Creates a WaveData container from the specified bytes
 	 *
-	 * @param buffer
-	 *            array of bytes containing the complete wave file
+	 * @param buffer array of bytes containing the complete wave file
 	 * @return WaveData containing data, or null if a failure occured
 	 */
 	public static WaveData create(byte[] buffer) {
 		try {
 			return create(AudioSystem.getAudioInputStream(new BufferedInputStream(new ByteArrayInputStream(buffer))));
 		} catch (Exception e) {
-			DebugManager.DEBUG_MANAGER.logger().e(WaveData.class.getSimpleName(), "Unable to create from byte array, " + e.getMessage());
+			Debug.debugManager().logger().e(WaveData.class.getSimpleName(), "Unable to create from byte array, " + e.getMessage());
+			Debug.debugManager().logger().printException(WaveData.class.getSimpleName(), e);
+
 			return null;
+
 		}
 	}
 
 	/**
 	 * Creates a WaveData container from the specified ByetBuffer. If the buffer is backed by an array, it will be used directly, else the contents of the buffer will be copied using get(byte[]).
 	 *
-	 * @param buffer
-	 *            ByteBuffer containing sound file
+	 * @param buffer ByteBuffer containing sound file
 	 * @return WaveData containing data, or null if a failure occured
 	 */
 	public static WaveData create(ByteBuffer buffer) {
@@ -178,16 +173,18 @@ public class WaveData {
 			}
 			return create(bytes);
 		} catch (Exception e) {
-			DebugManager.DEBUG_MANAGER.logger().e(WaveData.class.getSimpleName(), "Unable to create from ByteBuffer, " + e.getMessage());
+			Debug.debugManager().logger().e(WaveData.class.getSimpleName(), "Unable to create from ByteBuffer, " + e.getMessage());
+			Debug.debugManager().logger().printException(WaveData.class.getSimpleName(), e);
+
 			return null;
+
 		}
 	}
 
 	/**
 	 * Creates a WaveData container from the specified stream
 	 * 
-	 * @param ais
-	 *            AudioInputStream to read from
+	 * @param ais AudioInputStream to read from
 	 * @return WaveData containing data, or null if a failure occured
 	 */
 	public static WaveData create(AudioInputStream ais) {

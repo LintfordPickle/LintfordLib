@@ -150,8 +150,8 @@ public class MenuToggleEntry extends MenuEntry {
 		mTextureBatch.end();
 
 		mParentScreen.font().begin(pCore.HUD());
-		mParentScreen.font().draw(mLabel, x + w / 2 - lLabelWidth - SPACE_BETWEEN_TEXT - lSeparatorHalfWidth, y + h / 2 - lFontBitmap.getStringHeight(mLabel) * 0.5f, mZ, mParentScreen.r(), mParentScreen.g(), mParentScreen.b(), mParentScreen.a(),
-				1.0f, -1);
+		mParentScreen.font().draw(mLabel, x + w / 2 - lLabelWidth - SPACE_BETWEEN_TEXT - lSeparatorHalfWidth, y + h / 2 - lFontBitmap.getStringHeight(mLabel) * 0.5f, mZ, mParentScreen.r(), mParentScreen.g(),
+				mParentScreen.b(), mParentScreen.a(), 1.0f, -1);
 		mParentScreen.font().draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - TEXT_HEIGHT * 0.5f, mZ, mParentScreen.r(), mParentScreen.g(), mParentScreen.b(), mParentScreen.a(), 1.0f, -1);
 
 		// Render the items
@@ -166,10 +166,10 @@ public class MenuToggleEntry extends MenuEntry {
 		mHasFocus = !mHasFocus;
 		if (mHasFocus) {
 			mFocusLocked = true;
-			System.out.println("locking focus");
 
 		} else {
-			mFocusLocked = false; // no lock if not focused
+			mFocusLocked = false;
+
 		}
 	}
 }

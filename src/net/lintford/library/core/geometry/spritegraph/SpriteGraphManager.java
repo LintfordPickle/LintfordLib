@@ -12,7 +12,7 @@ import java.util.Map;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import net.lintford.library.core.debug.DebugManager;
+import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.graphics.ResourceManager;
 
 public class SpriteGraphManager {
@@ -63,7 +63,7 @@ public class SpriteGraphManager {
 
 	public void loadSpriteGraphsFromMeta(final String pMetaFileLocation) {
 		if (pMetaFileLocation == null || pMetaFileLocation.length() == 0) {
-			DebugManager.DEBUG_MANAGER.logger().w(getClass().getSimpleName(), "SpriteGraphManager meta file cannot be null or empty when loading SpriteSheets.");
+			Debug.debugManager().logger().w(getClass().getSimpleName(), "SpriteGraphManager meta file cannot be null or empty when loading SpriteSheets.");
 			return;
 
 		}
@@ -78,7 +78,7 @@ public class SpriteGraphManager {
 			lSpriteGraphMetaData = GSON.fromJson(lMetaFileContents, SpriteGraphMetaData.class);
 
 			if (lSpriteGraphMetaData == null || lSpriteGraphMetaData.spriteGraphLocations == null || lSpriteGraphMetaData.spriteGraphLocations.length == 0) {
-				DebugManager.DEBUG_MANAGER.logger().w(getClass().getSimpleName(), "Couldn't load sprites from SpriteGraphDef meta file: " + pMetaFileLocation);
+				Debug.debugManager().logger().w(getClass().getSimpleName(), "Couldn't load sprites from SpriteGraphDef meta file: " + pMetaFileLocation);
 
 				return;
 
@@ -94,7 +94,7 @@ public class SpriteGraphManager {
 			final File lSpriteGraphFile = new File(lSpriteGraphMetaData.spriteGraphLocations[i]);
 
 			if (!lSpriteGraphFile.exists()) {
-				DebugManager.DEBUG_MANAGER.logger().w(getClass().getSimpleName(), "Error loading SpriteGraphDef from " + lSpriteGraphFile.getPath() + ". File doesn't exist!");
+				Debug.debugManager().logger().w(getClass().getSimpleName(), "Error loading SpriteGraphDef from " + lSpriteGraphFile.getPath() + ". File doesn't exist!");
 				continue;
 
 			}
@@ -123,7 +123,7 @@ public class SpriteGraphManager {
 
 		SpriteGraphDef lGraphDefinition = mSpriteGraphs.get(pGraphDefName);
 		if (lGraphDefinition == null) {
-			DebugManager.DEBUG_MANAGER.logger().e(getClass().getSimpleName(), "Couldn't return SpriteGraphDef with ID " + pGraphDefName);
+			Debug.debugManager().logger().e(getClass().getSimpleName(), "Couldn't return SpriteGraphDef with ID " + pGraphDefName);
 			return null;
 
 		}

@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Locale;
 
 import net.lintford.library.ConstantsTable;
-import net.lintford.library.core.debug.DebugManager.DebugLogLevel;
+import net.lintford.library.core.debug.Debug.DebugLogLevel;
 import net.lintford.library.core.time.DateHelper;
 
 public class DebugLogger {
@@ -33,6 +33,7 @@ public class DebugLogger {
 		// Variables
 		// --------------------------------------
 
+		boolean isAssigned;
 		String timestamp;
 		String tag;
 		String message;
@@ -43,11 +44,26 @@ public class DebugLogger {
 		// --------------------------------------
 
 		public LogMessage() {
+			reset();
+
+		}
+
+		// --------------------------------------
+		// Methods
+		// --------------------------------------
+
+		public void reset() {
+			isAssigned = false;
+			tag = "";
+			timestamp = "";
+			message = "";
+
+			type = DebugLogLevel.off.logLevel;
 
 		}
 
 		public void setMessage(String pTag, String pMessage, String pTimestamp, DebugLogLevel pLevel) {
-			// Check the level
+			isAssigned = true;
 
 			tag = pTag;
 			timestamp = pTimestamp;
@@ -61,9 +77,10 @@ public class DebugLogger {
 	// Variables
 	// --------------------------------------
 
-	private List<LogMessage> mLogLines;
+	private final Debug mDebugManager;
 
-	private DebugLogLevel mCurrentLoggingLevel;
+	private List<LogMessage> mLogLinePool;
+	private List<LogMessage> mLogLines;
 
 	BufferedOutputStream mDebugLogBufferedOutputStream;
 
@@ -76,18 +93,23 @@ public class DebugLogger {
 		return mLogLines;
 	}
 
-	/** Returns the current logging level. */
-	public DebugLogLevel getLogLevel() {
-		return mCurrentLoggingLevel;
-	}
-
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
-	DebugLogger() {
-		mLogLines = new ArrayList<>();
-		mCurrentLoggingLevel = DebugLogLevel.off;
+	DebugLogger(final Debug pDebugManager) {
+		mDebugManager = pDebugManager;
+
+		if (!mDebugManager.debugManagerEnabled())
+			return;
+
+		mLogLines = new ArrayList<>(LOG_BUFFER_LINE_COUNT);
+		mLogLinePool = new ArrayList<>(LOG_BUFFER_LINE_COUNT);
+
+		for (int i = 0; i < LOG_BUFFER_LINE_COUNT; i++) {
+			mLogLinePool.add(new LogMessage());
+
+		}
 
 		openDebugLogOutputStream();
 
@@ -126,33 +148,33 @@ public class DebugLogger {
 		}
 	}
 
-	/** Sets the logging level. */
-	public void setLoggingLevel(final DebugLogLevel pNewLoggingLevel) {
-		if (pNewLoggingLevel == null) {
-			mCurrentLoggingLevel = DebugLogLevel.off;
+	public void log(DebugLogLevel pLogLevel, String pTag, String pMessage) {
+		if (!mDebugManager.debugManagerEnabled())
+			return;
+
+		// Don't 'log' empty messages
+		if (pTag.equals("") || pMessage.equals("")) {
+			return;
+
+		}
+
+		if (!mDebugManager.debugManagerEnabled()) {
+			switch (pLogLevel) {
+			default:
+				System.out.println(padRight(pTag, 15) + ":" + pMessage);
+
+			}
+
 			return;
 		}
 
-		mCurrentLoggingLevel = pNewLoggingLevel;
-
-	}
-
-	public void log(DebugLogLevel pLogLevel, String pTag, String pMessage) {
-		if(!LOGGER_ENABLED) {
-			switch(pLogLevel) {
-			default:
-				System.out.println(padRight(pTag, 15) + ":" + pMessage);
-				
-			}
-			
-			// return;
-		}
-		
-		if (pLogLevel.logLevel >= mCurrentLoggingLevel.logLevel) {
+		if (pLogLevel.logLevel >= mDebugManager.getLogLevel().logLevel) {
 
 			LogMessage lLogMessage = null;
-			if (mLogLines.size() < LOG_BUFFER_LINE_COUNT) {
-				lLogMessage = new LogMessage();
+			if (mLogLinePool.size() > 0) {
+				// Remove from the pool until empty
+				lLogMessage = mLogLinePool.remove(0);
+
 			} else {
 				// Non free, get the first from the linked list
 				lLogMessage = mLogLines.remove(0);
@@ -178,47 +200,72 @@ public class DebugLogger {
 
 	/** Adds a new EROR level message to the log. */
 	public void e(String pTag, String pMessage) {
+		if (!mDebugManager.debugManagerEnabled())
+			return;
+
 		log(DebugLogLevel.error, pTag, pMessage);
 
 	}
 
 	/** Adds a new WARNING level message to the log. */
 	public void w(String pTag, String pMessage) {
+		if (!mDebugManager.debugManagerEnabled())
+			return;
+
 		log(DebugLogLevel.warning, pTag, pMessage);
 
 	}
 
 	/** Adds a new INFO level message to the log. */
 	public void i(String pTag, String pMessage) {
+		if (!mDebugManager.debugManagerEnabled())
+			return;
+
 		log(DebugLogLevel.info, pTag, pMessage);
 
 	}
 
 	/** Adds a new VERBOSE level message to the log. */
 	public void v(String pTag, String pMessage) {
+		if (!mDebugManager.debugManagerEnabled())
+			return;
+
 		log(DebugLogLevel.verbose, pTag, pMessage);
 
 	}
 
 	/** Adds a new SYSTEM level message to the log. */
 	public void s(String pTag, String pMessage) {
+		if (!mDebugManager.debugManagerEnabled())
+			return;
+
 		log(DebugLogLevel.system, pTag, pMessage);
 
 	}
 
 	/** Adds a new USER level message to the log. */
 	public void u(String pTag, String pMessage) {
+		if (!mDebugManager.debugManagerEnabled())
+			return;
+
 		log(DebugLogLevel.user, pTag, pMessage);
 
 	}
 
 	public void printException(String pTag, Exception pException) {
+		if (!mDebugManager.debugManagerEnabled())
+			return;
+
 		e(pTag, pException.getMessage());
 		// TODO: Print StackTrace to DebugLogger
+
 	}
-	
+
 	/** Appends the given message into a file at the given location. */
 	public boolean writeDebugMessageToFile(String pTag, String pTimestamp, String pMessage) {
+		if (!mDebugManager.debugManagerEnabled())
+			return false;
+
 		if (mDebugLogBufferedOutputStream == null)
 			return false;
 
@@ -235,7 +282,9 @@ public class DebugLogger {
 
 		} catch (IOException e) {
 			e.printStackTrace();
+
 			return false;
+
 		}
 
 	}
@@ -266,7 +315,7 @@ public class DebugLogger {
 	}
 
 	public static String padRight(String s, int n) {
-	     return String.format("%1$-" + n + "s", s);  
+		return String.format("%1$-" + n + "s", s);
 	}
-	
+
 }

@@ -1,6 +1,5 @@
 package net.lintford.library.core.graphics.sprites.spritebatch;
 
-import net.lintford.library.core.debug.DebugManager;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.sprites.SpriteFrame;
 import net.lintford.library.core.graphics.sprites.SpriteInstance;
@@ -65,11 +64,6 @@ public class SpriteBatch extends TextureBatch {
 
 		Texture lTexture = pSpriteSheet.texture();
 		SpriteFrame lCurrentFrame = pSprite.getFrame();
-
-		if (lCurrentFrame == null) {
-			// FIXME: This is not the correct place to output this message, nor is the message helpful
-			DebugManager.DEBUG_MANAGER.logger().w(getClass().getSimpleName(), "SpriteInstance trying to access frames which don't exist");
-		}
 
 		draw(lTexture, lCurrentFrame, pDstRectangle, pZ, pR, pG, pB, pA);
 

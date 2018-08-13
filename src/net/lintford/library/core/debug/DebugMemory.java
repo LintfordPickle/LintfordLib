@@ -3,7 +3,10 @@ package net.lintford.library.core.debug;
 public class DebugMemory {
 
 	public static void dumpMemoryToLog() {
-		final DebugLogger LOGGER = DebugManager.DEBUG_MANAGER.logger();
+		if (!Debug.debugManager().debugModeEnabled())
+			return;
+		
+		final DebugLogger LOGGER = Debug.debugManager().logger();
 
 		// Returns the maximum amount of memory that the JVM will attempt to use
 		LOGGER.i(DebugMemory.class.getSimpleName(), "Maximum memory (bytes): " + Runtime.getRuntime().maxMemory());

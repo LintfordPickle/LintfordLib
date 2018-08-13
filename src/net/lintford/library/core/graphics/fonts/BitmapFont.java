@@ -15,7 +15,7 @@ import java.util.Map;
 
 import org.lwjgl.opengl.GL11;
 
-import net.lintford.library.core.debug.DebugManager;
+import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.TextureManager;
@@ -110,19 +110,22 @@ public class BitmapFont {
 				mFont = Font.createFont(Font.TRUETYPE_FONT, lFontInputStream).deriveFont(mPointSize);
 
 			} catch (FontFormatException e) {
-				DebugManager.DEBUG_MANAGER.logger().e(getClass().getSimpleName(), "Font format exception with font resource: " + mFontFileLocation);
+				Debug.debugManager().logger().e(getClass().getSimpleName(), "Font format exception with font resource: " + mFontFileLocation);
+				Debug.debugManager().logger().printException(getClass().getSimpleName(), e);
 
 			} catch (IOException e) {
-				DebugManager.DEBUG_MANAGER.logger().e(getClass().getSimpleName(), "Specified font resource not found: " + mFontFileLocation);
+				Debug.debugManager().logger().e(getClass().getSimpleName(), "Specified font resource not found: " + mFontFileLocation);
+				Debug.debugManager().logger().printException(getClass().getSimpleName(), e);
 
 			}
+
 		} else {
 			// Load from file
 			try {
 				File lFontFile = new File(mFontFileLocation);
 				if (!lFontFile.exists()) {
-					DebugManager.DEBUG_MANAGER.logger().e(getClass().getSimpleName(), "Font file not found at location: " + mFontFileLocation);
-					// TODO: Handle the case that this font file doesn't exist. Maybe load a default BitmapFont).
+					Debug.debugManager().logger().e(getClass().getSimpleName(), "Font file not found at location: " + mFontFileLocation);
+					return;
 				}
 
 				InputStream lFontInputStream = new FileInputStream(lFontFile);
@@ -130,10 +133,12 @@ public class BitmapFont {
 				mFont = Font.createFont(Font.TRUETYPE_FONT, lFontInputStream).deriveFont(mPointSize);
 
 			} catch (FontFormatException e) {
-				DebugManager.DEBUG_MANAGER.logger().e(getClass().getSimpleName(), "Font format exception with font file: " + mFontFileLocation);
+				Debug.debugManager().logger().e(getClass().getSimpleName(), "Font format exception with font file: " + mFontFileLocation);
+				Debug.debugManager().logger().printException(getClass().getSimpleName(), e);
 
 			} catch (IOException e) {
-				DebugManager.DEBUG_MANAGER.logger().e(getClass().getSimpleName(), "Specified font file not found: " + mFontFileLocation);
+				Debug.debugManager().logger().e(getClass().getSimpleName(), "Specified font file not found: " + mFontFileLocation);
+				Debug.debugManager().logger().printException(getClass().getSimpleName(), e);
 
 			}
 
@@ -186,7 +191,7 @@ public class BitmapFont {
 		final int[] lPixels = new int[imageWidth * imageHeight];
 		lFontImage.getRGB(0, 0, imageWidth, imageHeight, lPixels, 0, imageWidth);
 
-		mFontTexture = TextureManager.textureManager().createFontTexture(mFontName, lFontImage, GL11.GL_NEAREST);
+		mFontTexture = TextureManager.textureManager().createFontTexture(mFontName, lFontImage, GL11.GL_LINEAR);
 
 		mIsLoaded = true;
 	}

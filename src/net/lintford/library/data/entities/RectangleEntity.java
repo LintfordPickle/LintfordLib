@@ -13,6 +13,7 @@ public class RectangleEntity extends WorldEntity {
 
 	protected Rectangle mBounds;
 
+	public float rotation;
 	public float width;
 	public float height;
 
@@ -78,6 +79,7 @@ public class RectangleEntity extends WorldEntity {
 	public void update(LintfordCore pCore) {
 		super.update(pCore);
 
+		mBounds.rotateAbs(rotation + (float) Math.toRadians(90));
 		mBounds.set(x, y, width, height);
 
 	}
@@ -89,6 +91,7 @@ public class RectangleEntity extends WorldEntity {
 	public void setDimensions(float pWidth, float pHeight) {
 		width = pWidth;
 		height = pHeight;
+
 	}
 
 	@Override
@@ -110,7 +113,29 @@ public class RectangleEntity extends WorldEntity {
 
 		// Circle
 		else if (pOther instanceof CircleEntity) {
-			// TODO: Rectangle <-> Circle collision
+			CircleEntity c = (CircleEntity) pOther;
+			float circleDistX = Math.abs(c.x - this.x);
+			float circleDistY = Math.abs(c.y - this.y);
+
+			if (circleDistX > (this.width / 2 + c.radius)) {
+				return false;
+			}
+			if (circleDistY > (this.height / 2 + c.radius)) {
+				return false;
+			}
+
+			if (circleDistX <= (this.width / 2)) {
+				return true;
+			}
+			if (circleDistY <= (this.height / 2)) {
+				return true;
+			}
+
+			float dist_sq = (circleDistX - this.width / 2) * (circleDistX - this.width / 2) + (circleDistY - this.height / 2) * (circleDistX - this.width / 2) * (circleDistX - this.width / 2)
+					+ (circleDistY - this.height / 2);
+
+			return (dist_sq <= (c.radius * c.radius));
+
 		}
 
 		// no collision

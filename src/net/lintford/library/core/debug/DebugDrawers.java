@@ -31,6 +31,8 @@ public class DebugDrawers {
 	// Variables
 	// --------------------------------------
 
+	private final Debug mDebugManager;
+
 	private LineBatch mLineBatch;
 	private PolyBatch mPolyBatch;
 	private TextureBatch mTextureBatch;
@@ -41,7 +43,12 @@ public class DebugDrawers {
 	// Constructor
 	// --------------------------------------
 
-	public DebugDrawers() {
+	public DebugDrawers(final Debug pDebugManager) {
+		mDebugManager = pDebugManager;
+
+		if (!mDebugManager.debugManagerEnabled())
+			return;
+
 		mTextureBatch = new TextureBatch();
 		mLineBatch = new LineBatch();
 		mPolyBatch = new PolyBatch();
@@ -62,14 +69,21 @@ public class DebugDrawers {
 	// --------------------------------------
 
 	public void loadGLContent(ResourceManager pResourceManager) {
+		if (!mDebugManager.debugManagerEnabled())
+			return;
+
 		mTextureBatch.loadGLContent(pResourceManager);
 		mBasicShader.loadGLContent(pResourceManager);
 		mTexturedQuad.loadGLContent(pResourceManager);
 		mLineBatch.loadGLContent(pResourceManager);
 		mPolyBatch.loadGLContent(pResourceManager);
+
 	}
 
 	public void unloadGLContent() {
+		if (!mDebugManager.debugManagerEnabled())
+			return;
+
 		mTextureBatch.unloadGLContent();
 		mBasicShader.unloadGLContent();
 		mTexturedQuad.unloadGLContent();
@@ -82,54 +96,88 @@ public class DebugDrawers {
 	// --------------------------------------
 
 	public void startTextureRenderer(ICamera pCamera) {
+		if (!mDebugManager.debugManagerEnabled())
+			return;
+
 		mTextureBatch.begin(pCamera);
 	}
 
 	public void drawRect(ICamera pCamera, Rectangle pDstRect) {
+		if (!mDebugManager.debugManagerEnabled())
+			return;
+
 		drawRect(pCamera, pDstRect.left(), pDstRect.top(), pDstRect.width(), pDstRect.height());
 	}
 
 	public void drawRect(ICamera pCamera, Rectangle pDstRect, float pR, float pG, float pB) {
+		if (!mDebugManager.debugManagerEnabled())
+			return;
+
 		drawRect(pCamera, pDstRect.left(), pDstRect.top(), pDstRect.width(), pDstRect.height(), pR, pG, pB);
 	}
-	
+
 	public void drawRect(ICamera pCamera, AARectangle pDstRect, float pR, float pG, float pB) {
+		if (!mDebugManager.debugManagerEnabled())
+			return;
+
 		drawRect(pCamera, pDstRect.x, pDstRect.y, pDstRect.w, pDstRect.h, pR, pG, pB);
 	}
 
 	public void drawRect(ICamera pCamera, float pX, float pY, float pW, float pH) {
+		if (!mDebugManager.debugManagerEnabled())
+			return;
+
 		drawRect(pCamera, pX, pY, pW, pH, 1f, 1f, 1f);
 	}
 
 	public void drawRect(ICamera pCamera, float pX, float pY, float pW, float pH, float pR, float pG, float pB) {
+		if (!mDebugManager.debugManagerEnabled())
+			return;
+
 		mLineBatch.begin(pCamera);
 		mLineBatch.drawRect(pX, pY, pW, pH, 0f, pR, pG, pB);
 		mLineBatch.end();
 	}
 
 	public void drawPoly(ICamera pCamera, Rectangle pRect) {
+		if (!mDebugManager.debugManagerEnabled())
+			return;
+
 		mPolyBatch.begin(pCamera);
 		mPolyBatch.drawRect(pRect, -0.1f, 1f, 1f, 1f);
 		mPolyBatch.end();
 	}
 
 	public void drawPoly(ICamera pCamera, Vector2f[] pVertices, boolean pClose) {
+		if (!mDebugManager.debugManagerEnabled())
+			return;
+
 		mPolyBatch.begin(pCamera);
 		mPolyBatch.drawRect(pVertices, -0.1f, pClose, 1f, 1f, 1f);
 		mPolyBatch.end();
 	}
 
 	public void drawTexture(Texture pTexture, float pDX, float pDY, float pDW, float pDH, float pDZ) {
+		if (!mDebugManager.debugManagerEnabled())
+			return;
+
 		drawTexture(pTexture, 0, 0, pTexture.getTextureWidth(), pTexture.getTextureHeight(), pDX, pDY, pDW, pDH, pDZ);
 	}
 
 	public void drawTexture(Texture pTexture, float pSourceX, float pSourceY, float pSourceWidth, float pSourceHeight, float pDX, float pDY, float pDW, float pDH, float pDZ) {
+		if (!mDebugManager.debugManagerEnabled())
+			return;
+
 		mTextureBatch.draw(pTexture, pSourceX, pSourceY, pSourceWidth, pSourceHeight, pDX, pDY, pDW, pDH, pDZ, 1f, 1f, 1f, 1f);
 	}
 
 	public void drawRenderTarget(LintfordCore pCore, float pDestinationPositionX, float pDestinationPositionY, float pDestinationWidth, float pDestinationHeight, float pDestinationZ, RenderTarget pRenderTarget) {
-		if(pRenderTarget == null) return;
-		
+		if (!mDebugManager.debugManagerEnabled())
+			return;
+
+		if (pRenderTarget == null)
+			return;
+
 		GL13.glActiveTexture(GL13.GL_TEXTURE0); // add scene texture
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, pRenderTarget.colorTextureID());
 
@@ -148,21 +196,43 @@ public class DebugDrawers {
 	}
 
 	public void endTextureRenderer() {
+		if (!mDebugManager.debugManagerEnabled())
+			return;
+
 		mTextureBatch.end();
 	}
 
 	public void startLineRenderer(ICamera pCamera) {
+		if (!mDebugManager.debugManagerEnabled())
+			return;
+
 		mLineBatch.begin(pCamera);
 	}
 
 	public void drawLine(float pSX, float pSY, float pEX, float pEY) {
+		if (!mDebugManager.debugManagerEnabled())
+			return;
+
 		if (!mLineBatch.isDrawing())
 			return;
 
 		mLineBatch.draw(pSX, pSY, pEX, pEY, -0.01f, 1f, 1f, 1f);
 	}
 
+	public void drawLine(float pSX, float pSY, float pEX, float pEY, float pR, float pG, float pB) {
+		if (!mDebugManager.debugManagerEnabled())
+			return;
+
+		if (!mLineBatch.isDrawing())
+			return;
+
+		mLineBatch.draw(pSX, pSY, pEX, pEY, -0.01f, pR, pG, pB);
+	}
+
 	public void endLineRenderer() {
+		if (!mDebugManager.debugManagerEnabled())
+			return;
+
 		mLineBatch.end();
 	}
 

@@ -17,7 +17,7 @@ import net.lintford.library.screenmanager.ScreenManager;
 public class MenuSliderEntry extends MenuEntry {
 
 	private static final long serialVersionUID = -8125859270010821953L;
-	
+
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
@@ -288,10 +288,10 @@ public class MenuSliderEntry extends MenuEntry {
 		mHasFocus = !mHasFocus;
 		if (mHasFocus) {
 			mFocusLocked = true;
-			System.out.println("locking focus");
 
 		} else {
-			mFocusLocked = false; // no lock if not focused
+			mFocusLocked = false;
+			
 		}
 	}
 

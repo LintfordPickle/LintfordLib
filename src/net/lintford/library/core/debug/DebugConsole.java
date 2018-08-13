@@ -29,8 +29,7 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 	// --------------------------------------
 
 	private static final long serialVersionUID = 7219958843491782625L;
-	
-	private static final boolean CONSOLE_ENABLED = true;
+
 	private static final boolean AUTO_CAPTURE_ON_OPEN = false;
 
 	private static final String PROMT_CHAR = "> ";
@@ -49,17 +48,17 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 
 	public static Vector3f getMessageRGB(final int pMessageType) {
 		switch (pMessageType) {
-		case DebugManager.LOG_LEVEL_SYSTEM:
+		case Debug.LOG_LEVEL_SYSTEM:
 			return SYS_MESSAGE_RGB;
-		case DebugManager.LOG_LEVEL_USER:
+		case Debug.LOG_LEVEL_USER:
 			return USER_MESSAGE_RGB;
-		case DebugManager.LOG_LEVEL_ERROR:
+		case Debug.LOG_LEVEL_ERROR:
 			return ERR_MESSAGE_RGB;
-		case DebugManager.LOG_LEVEL_WARNING:
+		case Debug.LOG_LEVEL_WARNING:
 			return WARN_MESSAGE_RGB;
-		case DebugManager.LOG_LEVEL_INFO:
+		case Debug.LOG_LEVEL_INFO:
 			return INFO_MESSAGE_RGB;
-		case DebugManager.LOG_LEVEL_VERBOSE:
+		case Debug.LOG_LEVEL_VERBOSE:
 			return VERBOSE_MESSAGE_RGB;
 
 		default:
@@ -73,7 +72,8 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 	// Variables
 	// --------------------------------------
 
-	private transient boolean mActive;
+	private final Debug mDebugManager;
+
 	private transient boolean mOpen;
 	private transient float mFocusTimer;
 	private transient StringBuilder mInputText;
@@ -141,8 +141,10 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 	// Constructor
 	// --------------------------------------
 
-	DebugConsole() {
-		if (CONSOLE_ENABLED) {
+	DebugConsole(final Debug pDebugManager) {
+		mDebugManager = pDebugManager;
+
+		if (pDebugManager.debugManagerEnabled()) {
 
 			// Intercept the system out and copy any strings into our debug console so we can see it in the game.
 			mErrPrintStream = new PrintStream(System.out) {
@@ -161,7 +163,6 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 
 			mInputText = new StringBuilder();
 
-			mActive = true;
 			mOpen = false;
 
 			mSpriteBatch = new TextureBatch();
@@ -183,9 +184,6 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 			mProcessedMessages = new ArrayList<>();
 			mUpdateMessageList = new ArrayList<>();
 
-		} else {
-			mActive = false;
-
 		}
 
 		mIsLoaded = false;
@@ -197,13 +195,10 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 	// --------------------------------------
 
 	public void loadGLContent(ResourceManager pResourceManager) {
-		if (!CONSOLE_ENABLED)
+		if (!mDebugManager.debugManagerEnabled())
 			return;
 
-		DebugManager.DEBUG_MANAGER.logger().v(getClass().getSimpleName(), "DebugConsole loading GL content");
-
-		if (!CONSOLE_ENABLED)
-			return;
+		Debug.debugManager().logger().v(getClass().getSimpleName(), "DebugConsole loading GL content");
 
 		mConsoleFont = pResourceManager.fontManager().loadNewFont(CONSOLE_FONT_NAME, "/res/fonts/OxygenMono-Regular.ttf", 14);
 		mSpriteBatch.loadGLContent(pResourceManager);
@@ -213,10 +208,10 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 	}
 
 	public void unloadGLContent() {
-		if (!CONSOLE_ENABLED)
+		if (!mDebugManager.debugManagerEnabled())
 			return;
 
-		DebugManager.DEBUG_MANAGER.logger().v(getClass().getSimpleName(), "DebugConsole unloading GL content");
+		Debug.debugManager().logger().v(getClass().getSimpleName(), "DebugConsole unloading GL content");
 
 		mSpriteBatch.unloadGLContent();
 
@@ -225,7 +220,7 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 	}
 
 	public void handleInput(LintfordCore pCore) {
-		if (!CONSOLE_ENABLED)
+		if (!mDebugManager.debugManagerEnabled())
 			return;
 
 		if (mOpen) {
@@ -264,7 +259,7 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 				}
 
 			}
-			
+
 			if (mScrollBar.handleInput(pCore)) {
 
 				if (mScrollBar.isAtBottomPosition()) {
@@ -305,9 +300,9 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 	}
 
 	public void update(LintfordCore pCore) {
-		if (!mActive || !CONSOLE_ENABLED)
+		if (!mDebugManager.debugManagerEnabled())
 			return;
-		
+
 		final float lDeltaTime = (float) pCore.time().elapseGameTimeMilli() / 1000f;
 
 		// Update timers
@@ -332,7 +327,7 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 		mConsoleLineHeight = (int) (mConsoleFont.bitmap().getStringHeight(" ") + 1);
 		final int MAX_NUM_LINES = (int) ((openHeight() - mConsoleLineHeight * 2) / mConsoleLineHeight) - 1;
 
-		final int lNumberLinesInConsole = mProcessed ? mProcessedMessages.size() : DebugManager.DEBUG_MANAGER.logger().logLines().size();
+		final int lNumberLinesInConsole = mProcessed ? mProcessedMessages.size() : Debug.debugManager().logger().logLines().size();
 		fullContentArea().set(x, y, w - mScrollBar.w, lNumberLinesInConsole * 25);
 
 		DisplayConfig lDisplay = pCore.config().display();
@@ -358,7 +353,7 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 
 		// mAutoScroll = true;
 		if (mAutoScroll) {
-			int lNumLines = mProcessed ? mProcessedMessages.size() : DebugManager.DEBUG_MANAGER.logger().logLines().size();
+			int lNumLines = mProcessed ? mProcessedMessages.size() : Debug.debugManager().logger().logLines().size();
 			mUpperBound = lNumLines;
 			mLowerBound = mUpperBound - MAX_NUM_LINES;
 
@@ -371,12 +366,12 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 	}
 
 	public void draw(LintfordCore pCore) {
-		if (!CONSOLE_ENABLED)
+		if (!mDebugManager.debugManagerEnabled())
 			return;
 
-		if (!mActive || !mIsLoaded || !mOpen)
+		if (!mIsLoaded || !mOpen)
 			return;
-		
+
 		final float Z_DEPTH = ZLayers.LAYER_DEBUG;
 
 		final float POSITION_OFFSET_TIME = 5;
@@ -399,7 +394,7 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 
 		mConsoleFont.begin(pCore.HUD());
 
-		List<LogMessage> lMessages = mProcessed ? mProcessedMessages : DebugManager.DEBUG_MANAGER.logger().logLines();
+		List<LogMessage> lMessages = mProcessed ? mProcessedMessages : Debug.debugManager().logger().logLines();
 
 		DisplayConfig lDisplay = pCore.config().display();
 
@@ -439,12 +434,12 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 			mConsoleFont.draw(PROMT_CHAR, -lDisplay.windowSize().x * 0.5f + PADDING_LEFT, y + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET, Z_DEPTH + 0.1f, 1f);
 			mConsoleFont.draw(mInputText.toString(), -lDisplay.windowSize().x * 0.5f + PADDING_LEFT + lInputTextXOffset, y + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET, Z_DEPTH + 0.1f, 1f);
 			if (mShowCaret && mHasFocus)
-				mConsoleFont.draw(CARET_CHAR, -lDisplay.windowSize().x * 0.5f + PADDING_LEFT + lInputTextXOffset + mConsoleFont.bitmap().getStringWidth(mInputText.toString()), y + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET, Z_DEPTH + 0.1f,
-						1f);
+				mConsoleFont.draw(CARET_CHAR, -lDisplay.windowSize().x * 0.5f + PADDING_LEFT + lInputTextXOffset + mConsoleFont.bitmap().getStringWidth(mInputText.toString()),
+						y + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET, Z_DEPTH + 0.1f, 1f);
 		}
 
-		mTAGFilterText.draw(pCore, mSpriteBatch, mConsoleFont, Z_DEPTH+0.01f);
-		mMessageFilterText.draw(pCore, mSpriteBatch, mConsoleFont, Z_DEPTH+0.01f);
+		mTAGFilterText.draw(pCore, mSpriteBatch, mConsoleFont, Z_DEPTH + 0.01f);
+		mMessageFilterText.draw(pCore, mSpriteBatch, mConsoleFont, Z_DEPTH + 0.01f);
 
 		mConsoleFont.end();
 
@@ -476,7 +471,7 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 			mProcessedMessages.clear();
 			mProcessed = !mTAGFilterText.isEmpty() || !mMessageFilterText.isEmpty();
 
-			List<LogMessage> lLogLines = DebugManager.DEBUG_MANAGER.logger().logLines();
+			List<LogMessage> lLogLines = Debug.debugManager().logger().logLines();
 			// First, assume all LogMessages are accepted
 			final int LOG_LINE_COUNT = lLogLines.size();
 			for (int i = 0; i < LOG_LINE_COUNT; i++) {
@@ -549,12 +544,12 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 	 * @param pNewChar
 	 */
 	protected void updateConsole(final char pNewChar) {
-		if (!CONSOLE_ENABLED)
+		if (!mDebugManager.debugManagerEnabled())
 			return;
 
 		if (pNewChar == '\n' || pNewChar == '\r') {
 			// Add this string to the log
-			DebugManager.DEBUG_MANAGER.logger().u("User", mInputText.toString());
+			Debug.debugManager().logger().u("User", mInputText.toString());
 
 			if (mInputText.length() > 0) {
 				mInputText.delete(0, mInputText.length());
@@ -568,10 +563,10 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 	}
 
 	protected void updateConsole(String pS) {
-		if (!CONSOLE_ENABLED)
+		if (!mDebugManager.debugManagerEnabled())
 			return;
 
-		DebugManager.DEBUG_MANAGER.logger().v("Console", pS);
+		Debug.debugManager().logger().v("Console", pS);
 
 	}
 
@@ -604,14 +599,14 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 		final String INPUT_STRING = mInputText.toString();
 
 		if (INPUT_STRING != null) {
-			DebugManager.DEBUG_MANAGER.logger().u("User", INPUT_STRING);
+			Debug.debugManager().logger().u("User", INPUT_STRING);
 
 			boolean lResult = false;
 			final int CONSOLE_COMMANDS = mConsoleCommands.size();
 			for (int i = 0; i < CONSOLE_COMMANDS; i++) {
 				if (INPUT_STRING.equals(mConsoleCommands.get(i).Command)) {
 					lResult = mConsoleCommands.get(i).doCommand();
-					DebugManager.DEBUG_MANAGER.logger().u("", "  completed " + (lResult ? "successfully" : "with errors"));
+					Debug.debugManager().logger().u("", "  completed " + (lResult ? "successfully" : "with errors"));
 
 				}
 
@@ -679,7 +674,7 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 	}
 
 	public void addConsoleCommand(ConsoleCommand pConsoleCommand) {
-		if (!CONSOLE_ENABLED)
+		if (!mDebugManager.debugManagerEnabled())
 			return;
 
 		if (!mConsoleCommands.contains(pConsoleCommand)) {
@@ -701,7 +696,7 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 	public void listConsoleCommands() {
 		final int CONSOLE_COMMAND_COUNT = mConsoleCommands.size();
 		for (int i = 0; i < CONSOLE_COMMAND_COUNT; i++) {
-			DebugManager.DEBUG_MANAGER.logger().i("", mConsoleCommands.get(i).Command + ": " + mConsoleCommands.get(i).Description);
+			Debug.debugManager().logger().i("", mConsoleCommands.get(i).Command + ": " + mConsoleCommands.get(i).Description);
 
 		}
 

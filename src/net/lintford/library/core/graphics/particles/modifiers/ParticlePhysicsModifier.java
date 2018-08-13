@@ -42,11 +42,9 @@ public class ParticlePhysicsModifier implements IParticleModifier {
 	public void updateParticle(LintfordCore pCore, Particle pParticle) {
 		float lDelta = (float) pCore.time().elapseGameTimeMilli() / 1000f;
 
-		// X component
 		pParticle.x += pParticle.dx * lDelta;
 		pParticle.y += pParticle.dy * lDelta;
-
-		pParticle.dy *= 0.98f; // ConstantsTable.FRICTION_Y;
+		pParticle.rot += Math.toRadians(pParticle.dr * lDelta);
 
 	}
 

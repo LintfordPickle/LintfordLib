@@ -14,8 +14,7 @@ import javax.imageio.ImageIO;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
-import net.lintford.library.ConstantsTable;
-import net.lintford.library.core.debug.DebugManager;
+import net.lintford.library.core.debug.Debug;
 
 public class Texture {
 
@@ -36,7 +35,8 @@ public class Texture {
 	private long mFileSizeOnLoad;
 
 	/**
-	 * Some textures, like textures generated from system fonts, do not need to be reloaded when checking for changes to textures on the harddisk. Setting this Boolean to false will skip the texture reload requests on this texture.
+	 * Some textures, like textures generated from system fonts, do not need to be reloaded when checking for changes to textures on the harddisk. Setting this Boolean to false will skip the texture reload requests on
+	 * this texture.
 	 */
 	private boolean mReloadable;
 
@@ -124,20 +124,20 @@ public class Texture {
 			lNewTexture.fileSizeOnLoad(lFileSize);
 			lNewTexture.reloadable(true);
 
-			DebugManager.DEBUG_MANAGER.logger().i(Texture.class.getSimpleName(), "Loaded texture from file: " + pFilename);
-			
+			Debug.debugManager().logger().i(Texture.class.getSimpleName(), "Loaded texture from file: " + pFilename);
+
 			return lNewTexture;
 
 		} catch (FileNotFoundException e) {
-			DebugManager.DEBUG_MANAGER.logger().e(Texture.class.getSimpleName(), "Error loading texture from file (" + pFilename + ")");
-			DebugManager.DEBUG_MANAGER.logger().printException(Texture.class.getSimpleName(), e);
-			
+			Debug.debugManager().logger().e(Texture.class.getSimpleName(), "Error loading texture from file (" + pFilename + ")");
+			Debug.debugManager().logger().printException(Texture.class.getSimpleName(), e);
+
 			return TextureManager.TEXTURE_NOT_FOUND;
 
 		} catch (IOException e) {
-			DebugManager.DEBUG_MANAGER.logger().e(Texture.class.getSimpleName(), "Error loading texture from file (" + pFilename + ")");
-			DebugManager.DEBUG_MANAGER.logger().printException(Texture.class.getSimpleName(), e);
-			
+			Debug.debugManager().logger().e(Texture.class.getSimpleName(), "Error loading texture from file (" + pFilename + ")");
+			Debug.debugManager().logger().printException(Texture.class.getSimpleName(), e);
+
 			return null;
 		}
 
@@ -172,18 +172,19 @@ public class Texture {
 			// Don't attempt to reload textures loaded from the embedded resources
 			lNewTexture.reloadable(false);
 
-			DebugManager.DEBUG_MANAGER.logger().i(Texture.class.getSimpleName(), "Loaded texture from resource: " + pFilename);
+			Debug.debugManager().logger().i(Texture.class.getSimpleName(), "Loaded texture from resource: " + pFilename);
 
 			return lNewTexture;
 
 		} catch (FileNotFoundException e) {
-			DebugManager.DEBUG_MANAGER.logger().e(Texture.class.getSimpleName(), "Error loading texture from resource (" + pFilename + " )");
+			Debug.debugManager().logger().e(Texture.class.getSimpleName(), "Error loading texture from resource (" + pFilename + " )");
+			Debug.debugManager().logger().printException(Texture.class.getSimpleName(), e);
 
 			return TextureManager.TEXTURE_NOT_FOUND;
 
 		} catch (IOException e) {
-			System.err.println("Error loading texture from " + pFilename);
-			System.err.println(e.getMessage());
+			Debug.debugManager().logger().e(Texture.class.getSimpleName(), "Error loading texture from resource (" + pFilename + " )");
+			Debug.debugManager().logger().printException(Texture.class.getSimpleName(), e);
 
 			return null;
 		}
@@ -280,23 +281,22 @@ public class Texture {
 			fileSizeOnLoad(lFileSize);
 			reloadable(true);
 
-			if (ConstantsTable.getBooleanValueDef("DEBUG_APP", false)) {
-				DebugManager.DEBUG_MANAGER.logger().i(getClass().getSimpleName(), "Reloaded texture: " + mTextureLocation);
-
-			}
+			Debug.debugManager().logger().i(getClass().getSimpleName(), "Reloaded texture: " + mTextureLocation);
 
 			return;
 
 		} catch (FileNotFoundException e) {
-			DebugManager.DEBUG_MANAGER.logger().e(Texture.class.getSimpleName(), "Error loading texture from file (" + pFilename + ")");
+			Debug.debugManager().logger().e(Texture.class.getSimpleName(), "Error loading texture from file (" + pFilename + ")");
+			Debug.debugManager().logger().printException(Texture.class.getSimpleName(), e);
 
 			return;
 
 		} catch (IOException e) {
-			System.err.println("Error loading texture from " + pFilename);
-			System.err.println(e.getMessage());
+			Debug.debugManager().logger().e(Texture.class.getSimpleName(), "Error loading texture from file (" + pFilename + ")");
+			Debug.debugManager().logger().printException(Texture.class.getSimpleName(), e);
 
 			return;
+
 		}
 
 	}

@@ -11,8 +11,7 @@ import javax.imageio.ImageIO;
 
 import org.lwjgl.opengl.GL11;
 
-import net.lintford.library.ConstantsTable;
-import net.lintford.library.core.debug.DebugManager;
+import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.graphics.textures.xml.TextureMetaLoader;
 
 public class TextureManager {
@@ -221,10 +220,7 @@ public class TextureManager {
 	}
 
 	public void reloadTextures() {
-		if (ConstantsTable.getBooleanValueDef("DEBUG_APP", false)) {
-			DebugManager.DEBUG_MANAGER.logger().v(getClass().getSimpleName(), "Reloading all modified files");
-
-		}
+		Debug.debugManager().logger().v(getClass().getSimpleName(), "Reloading all modified files");
 
 		for (Texture lTexture : mTextures.values()) {
 			if (lTexture != null) {

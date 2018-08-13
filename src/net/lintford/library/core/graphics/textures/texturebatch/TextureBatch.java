@@ -347,6 +347,78 @@ public class TextureBatch {
 
 	}
 
+	public void draw(Texture pTexture, float pSX, float pSY, float pSW, float pSH, float pDX, float pDY, float pDW, float pDH, float pZ, float pRot, float pROX, float pROY, float pScale, float pR, float pG, float pB, float pA) {
+		if (!mIsLoaded)
+			return;
+
+		if (!mIsDrawing)
+			return;
+
+		if (pTexture == null)
+			return;
+
+		if (mCurrentTexID == -1) { // first texture
+			mCurrentTexID = pTexture.getTextureID();
+		} else if (mCurrentTexID != pTexture.getTextureID()) {
+			flush();
+			mCurrentTexID = pTexture.getTextureID();
+		}
+
+		if (mCurNumSprites >= MAX_SPRITES) {
+			flush();
+		}
+
+		float sin = (float) (Math.sin(pRot));
+		float cos = (float) (Math.cos(pRot));
+
+		// TODO: Need to make the scaling more consistent - 
+		// We cannot apply the scaling in this function if the geometric offsets have
+		// already been set outside of the function, i.e. POS_X - HALF_WIDTH
+		// because here we would be resizing the dimensions and the offset will not work
+		
+		// Translate the sprite to the origin
+		float dx = -pROX;
+		float dy = -pROY;
+
+		// Apply the difference back to the global positions
+		pDX += pROX;
+		pDY += pROY;
+
+		// Vertex 0
+		float x0 = pDX + dx * cos - (dy + pDH) * sin;
+		float y0 = pDY + dx * sin + (dy + pDH) * cos;
+		float u0 = pSX / pTexture.getTextureWidth();
+		float v0 = (pSY + pSH) / pTexture.getTextureHeight();
+
+		// Vertex 1
+		float x1 = pDX + dx * cos - dy * sin;
+		float y1 = pDY + dx * sin + dy * cos;
+		float u1 = pSX / pTexture.getTextureWidth();
+		float v1 = pSY / pTexture.getTextureHeight();
+
+		// Vertex 2
+		float x2 = pDX + (dx + pDW) * cos - dy * sin;
+		float y2 = pDY + (dx + pDW) * sin + dy * cos;
+		float u2 = (pSX + pSW) / pTexture.getTextureWidth();
+		float v2 = pSY / pTexture.getTextureHeight();
+
+		// Vertex 3
+		float x3 = pDX + (dx + pDW) * cos - (dy + pDH) * sin;
+		float y3 = pDY + (dx + pDW) * sin + (dy + pDH) * cos;
+		float u3 = (pSX + pSW) / pTexture.getTextureWidth();
+		float v3 = (pSY + pSH) / pTexture.getTextureHeight();
+
+		// CCW 102203
+		addVertToBuffer(x1, y1, pZ, 1f, pR, pG, pB, pA, u1, v1); // 1
+		addVertToBuffer(x0, y0, pZ, 1f, pR, pG, pB, pA, u0, v0); // 0
+		addVertToBuffer(x2, y2, pZ, 1f, pR, pG, pB, pA, u2, v2); // 2
+		addVertToBuffer(x2, y2, pZ, 1f, pR, pG, pB, pA, u2, v2); // 2
+		addVertToBuffer(x0, y0, pZ, 1f, pR, pG, pB, pA, u0, v0); // 0
+		addVertToBuffer(x3, y3, pZ, 1f, pR, pG, pB, pA, u3, v3); // 3
+
+		mCurNumSprites++;
+	}
+
 	public void draw(Texture pTexture, float pSX, float pSY, float pSW, float pSH, Circle dstCircle, float pZ, float pR, float pG, float pB, float pA) {
 		if (!mIsLoaded)
 			return;

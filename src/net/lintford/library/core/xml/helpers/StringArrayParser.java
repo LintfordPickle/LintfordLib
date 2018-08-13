@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
+import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.xml.XMLParser;
 
 public class StringArrayParser extends XMLParser<String[]> {
@@ -62,12 +63,11 @@ public class StringArrayParser extends XMLParser<String[]> {
 
 		else if (qName.equalsIgnoreCase(StringArrayConstants.STRINGARRAY_ITEM_TAG)) {
 			mListOfStrings.add(mStringBuilder.toString());
-		}
 
-		else {
-
-			System.out.println("StringArrayParser unrecognized tag in XML : " + qName);
+		} else {
+			Debug.debugManager().logger().e(getClass().getSimpleName(), "StringArrayParser unrecognized tag in XML : " + qName);
 
 		}
 	}
+
 }

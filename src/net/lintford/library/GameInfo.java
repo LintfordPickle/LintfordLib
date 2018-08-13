@@ -1,6 +1,7 @@
 package net.lintford.library;
 
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.debug.Debug.DebugLogLevel;
 import net.lintford.library.options.DisplayConfig;
 
 /** The {@link GameInfo} interface defines the properties used by {@link LintfordCore} when creating an OpenGL window. */
@@ -8,6 +9,11 @@ public interface GameInfo {
 
 	public static final int DEF_BASE_GAME_RESOLUTION_W = 640;
 	public static final int DEF_BASE_GAME_RESOLUTION_H = 480;
+
+	/* Specifies the debug logging level. Default is off (no logs are generated). */
+	public default DebugLogLevel debugLogLevel() {
+		return DebugLogLevel.off;
+	}
 
 	/** Returns the application name. */
 	public default String applicationName() {

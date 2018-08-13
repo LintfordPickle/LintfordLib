@@ -1,7 +1,7 @@
 package net.lintford.library.renderers;
 
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.debug.DebugManager;
+import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.graphics.ResourceManager;
 
 public abstract class BaseRenderer {
@@ -21,14 +21,20 @@ public abstract class BaseRenderer {
 	protected boolean mIsActive;
 	protected boolean mIsLoaded;
 
-	/** A group ID is assigned to all {@link BaseRenderer} instances. It allows the developer to programmatically unload batches of particular parts of the game when required (i.e. unload the game controllers when returning to the main menu) */
+	/**
+	 * A group ID is assigned to all {@link BaseRenderer} instances. It allows the developer to programmatically unload batches of particular parts of the game when required (i.e. unload the game controllers when
+	 * returning to the main menu)
+	 */
 	protected int mEntityID;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
 
-	/** A group ID is assigned to all {@link BaseRenderer} instances. It allows the developer to programmatically unload batches of particular parts of the game when required (i.e. unload the game controllers when returning to the main menu) */
+	/**
+	 * A group ID is assigned to all {@link BaseRenderer} instances. It allows the developer to programmatically unload batches of particular parts of the game when required (i.e. unload the game controllers when
+	 * returning to the main menu)
+	 */
 	public int groupID() {
 		return mEntityID;
 	}
@@ -89,13 +95,13 @@ public abstract class BaseRenderer {
 	public abstract void initialise(LintfordCore pCore);
 
 	public void loadGLContent(ResourceManager pResourceManager) {
-		DebugManager.DEBUG_MANAGER.logger().i(TAG, "Loading GL Content (" + getClass().getSimpleName() + ")");
+		Debug.debugManager().logger().i(TAG, "Loading GL Content (" + getClass().getSimpleName() + ")");
 		mIsLoaded = true;
 
 	}
 
 	public void unloadGLContent() {
-		DebugManager.DEBUG_MANAGER.logger().i(TAG, "Unloading GL Content (" + getClass().getSimpleName() + ")");
+		Debug.debugManager().logger().i(TAG, "Unloading GL Content (" + getClass().getSimpleName() + ")");
 		mIsLoaded = false;
 
 	}

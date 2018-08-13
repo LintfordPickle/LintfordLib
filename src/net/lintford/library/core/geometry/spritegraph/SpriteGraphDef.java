@@ -10,8 +10,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 
-import net.lintford.library.ConstantsTable;
-import net.lintford.library.core.debug.DebugManager;
+import net.lintford.library.core.debug.Debug;
 
 public class SpriteGraphDef {
 
@@ -49,7 +48,7 @@ public class SpriteGraphDef {
 
 		File lFile = new File(pFilepath);
 		if (!lFile.exists()) {
-			DebugManager.DEBUG_MANAGER.logger().w(SpriteGraphDef.class.getSimpleName(), "Error: SpriteGraphDef file " + pFilepath + " doesn't exist!");
+			Debug.debugManager().logger().w(SpriteGraphDef.class.getSimpleName(), "Error: SpriteGraphDef file " + pFilepath + " doesn't exist!");
 			return null;
 
 		}
@@ -60,7 +59,7 @@ public class SpriteGraphDef {
 
 	public static SpriteGraphDef load(File pFile) {
 		if (!pFile.exists()) {
-			DebugManager.DEBUG_MANAGER.logger().w(SpriteGraphDef.class.getSimpleName(), "Error: SpriteGraphDef file. File doesn't exist!");
+			Debug.debugManager().logger().w(SpriteGraphDef.class.getSimpleName(), "Error: SpriteGraphDef file. File doesn't exist!");
 			return null;
 
 		}
@@ -79,21 +78,20 @@ public class SpriteGraphDef {
 
 			}
 
-			if (ConstantsTable.getBooleanValueDef("DEBUG_APP", false)) {
-				DebugManager.DEBUG_MANAGER.logger().v(SpriteGraphDef.class.getSimpleName(), "SpriteGraphDef " + pFile.getPath() + " loaded (" + lSpriteGraphDef.name + ")");
-
-			}
+			Debug.debugManager().logger().v(SpriteGraphDef.class.getSimpleName(), "SpriteGraphDef " + pFile.getPath() + " loaded (" + lSpriteGraphDef.name + ")");
 
 			return lSpriteGraphDef;
 
 		} catch (JsonSyntaxException e) {
-			DebugManager.DEBUG_MANAGER.logger().e(SpriteGraphDef.class.getSimpleName(), "Failed to parse JSON SpriteGraphDef (Syntax): " + pFile.getPath());
-			DebugManager.DEBUG_MANAGER.logger().printException(SpriteGraphDef.class.getSimpleName(), e);
+			Debug.debugManager().logger().e(SpriteGraphDef.class.getSimpleName(), "Failed to parse JSON SpriteGraphDef (Syntax): " + pFile.getPath());
+			Debug.debugManager().logger().printException(SpriteGraphDef.class.getSimpleName(), e);
+
 			return null;
 
 		} catch (IOException e) {
-			DebugManager.DEBUG_MANAGER.logger().e(SpriteGraphDef.class.getSimpleName(), "Failed to parse JSON SpriteGraphDef (IO): " + pFile.getPath());
-			DebugManager.DEBUG_MANAGER.logger().printException(SpriteGraphDef.class.getSimpleName(), e);
+			Debug.debugManager().logger().e(SpriteGraphDef.class.getSimpleName(), "Failed to parse JSON SpriteGraphDef (IO): " + pFile.getPath());
+			Debug.debugManager().logger().printException(SpriteGraphDef.class.getSimpleName(), e);
+
 			return null;
 
 		}

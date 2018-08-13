@@ -3,7 +3,7 @@ package net.lintford.library;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.lintford.library.core.debug.DebugManager;
+import net.lintford.library.core.debug.Debug;
 
 // TODO: This needs to be read from a settings file (otherwise it isn't game agnostic)
 // TODO: Remove non game-agnostic values
@@ -76,7 +76,7 @@ public class ConstantsTable {
 	}
 
 	public static void registerValue(String pName, String pValue) {
-		DebugManager.DEBUG_MANAGER.logger().i("ConstantsTable", "Registered value: " + pName + " : " + pValue );
+		Debug.debugManager().logger().i("ConstantsTable", "Registered value: " + pName + " : " + pValue);
 		constTab.put(pName, pValue);
 
 	}

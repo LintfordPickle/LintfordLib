@@ -123,7 +123,6 @@ public class SpriteGraphInst implements Serializable {
 
 		if (lNode != null) {
 			lNode.stopAnimation();
-			System.out.println("Stopped action '" + pActionKeyName + "'");
 
 		}
 

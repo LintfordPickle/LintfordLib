@@ -35,8 +35,8 @@ public class HUD implements ICamera, IResizeListener {
 	private AARectangle mBoundingRectangle;
 
 	/** The width of the window. */
-	private float mWindowWidth;
 	/** The height of the window. */
+	private float mWindowWidth;
 	private float mWindowHeight;
 
 	private Matrix4f mProjectionMatrix;
@@ -117,11 +117,25 @@ public class HUD implements ICamera, IResizeListener {
 	// --------------------------------------
 
 	public void handleInput(LintfordCore pCore) {
+		float lWindowWidth = mWindowWidth;
+		float lWindowHeight = mWindowHeight;
+		
 		mRatioW = ((float) mWindowWidth / (float) mDisplayConfig.windowSize().x);
 		mRatioH = ((float) mWindowHeight / (float) mDisplayConfig.windowSize().y);
 
-		mMouseHUDSpace.x = (float) (-mWindowWidth * 0.5f + (pCore.input().mouseWindowCoords().x - 1) * mRatioW);
-		mMouseHUDSpace.y = (float) (-mWindowHeight * 0.5f + (pCore.input().mouseWindowCoords().y - 1) * mRatioH);
+		if (mDisplayConfig.stretchGameScreen()) {
+//			lWindowWidth = mDisplayConfig.baseGameResolutionWidth();
+//			lWindowHeight = mDisplayConfig.baseGameResolutionHeight();
+//
+//			mRatioW = ((float) lWindowWidth / (float) mDisplayConfig.windowSize().x);
+//			mRatioH = ((float) lWindowHeight / (float) mDisplayConfig.windowSize().y);
+		} else {
+			mRatioW = ((float) mWindowWidth / (float) mDisplayConfig.windowSize().x);
+			mRatioH = ((float) mWindowHeight / (float) mDisplayConfig.windowSize().y);
+		}
+
+		mMouseHUDSpace.x = (float) (-lWindowWidth * 0.5f + (pCore.input().mouseWindowCoords().x - 1) * mRatioW);
+		mMouseHUDSpace.y = (float) (-lWindowHeight * 0.5f + (pCore.input().mouseWindowCoords().y - 1) * mRatioH);
 
 	}
 
@@ -129,8 +143,15 @@ public class HUD implements ICamera, IResizeListener {
 		if (mWindowWidth == 0 || mWindowHeight == 0)
 			return;
 
-		mWindowWidth = pCore.config().display().windowSize().x;
-		mWindowHeight = pCore.config().display().windowSize().y;
+		if (mDisplayConfig.stretchGameScreen()) {
+			mWindowWidth = mDisplayConfig.baseGameResolutionWidth();
+			mWindowHeight = mDisplayConfig.baseGameResolutionHeight();
+			
+		} else {
+			mWindowWidth = pCore.config().display().windowSize().x;
+			mWindowHeight = pCore.config().display().windowSize().y;
+			
+		}
 
 		if ((mWindowWidth % 2) == 1) {
 			mWindowWidth = mWindowWidth + 1;
@@ -143,8 +164,7 @@ public class HUD implements ICamera, IResizeListener {
 		mViewMatrix.setIdentity(); // points at -Z
 		mViewMatrix.translate(0, 0, 0);
 
-		mProjectionMatrix.setIdentity();
-		mProjectionMatrix.createOrtho(getMinX(), getMaxX(), getMaxY(), getMinY(), Z_NEAR, Z_FAR);
+		createOrtho(mWindowWidth, mWindowHeight);
 
 		// update the bounding rectangle so we can properly do frustum culling
 		mBoundingRectangle.setCenterPosition(0, 0);
@@ -156,6 +176,12 @@ public class HUD implements ICamera, IResizeListener {
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
+
+	private void createOrtho(final float pGameViewportWidth, final float pGameViewportheight) {
+		mProjectionMatrix.setIdentity();
+		mProjectionMatrix.createOrtho(-pGameViewportWidth * 0.5f, pGameViewportWidth * 0.5f, pGameViewportheight * 0.5f, -pGameViewportheight * 0.5f, Z_NEAR, Z_FAR);
+
+	}
 
 	@Override
 	public Matrix4f projection() {
