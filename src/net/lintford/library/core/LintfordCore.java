@@ -11,8 +11,6 @@ import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 import static org.lwjgl.opengl.GL11.glClearColor;
 
-import javax.management.RuntimeErrorException;
-
 import org.lwjgl.opengl.GL11;
 
 import net.lintford.library.GameInfo;
@@ -140,15 +138,18 @@ public abstract class LintfordCore {
 		// initially take the DebugLogLevel defined at compile time
 		DebugLogLevel lNewLogLevel = pGameInfo.debugLogLevel();
 
-		final int lArgsCount = pArgs.length;
-		for (int i = 0; i < lArgsCount; i++) {
-			if (pArgs[i].contains("debug")) {
-				try {
-					String lRightSide = pArgs[i].substring(pArgs[i].lastIndexOf("=") + 1);
-					lNewLogLevel = DebugLogLevel.valueOf(lRightSide);
+		if (pArgs != null) {
+			final int lArgsCount = pArgs.length;
+			for (int i = 0; i < lArgsCount; i++) {
+				if (pArgs[i].contains("debug")) {
+					try {
+						String lRightSide = pArgs[i].substring(pArgs[i].lastIndexOf("=") + 1);
+						lNewLogLevel = DebugLogLevel.valueOf(lRightSide);
 
-				} catch (IllegalArgumentException e) {
-					System.err.println("Unable to process the command line argument: " + pArgs[i]);
+					} catch (IllegalArgumentException e) {
+						System.err.println("Unable to process the command line argument: " + pArgs[i]);
+
+					}
 
 				}
 
