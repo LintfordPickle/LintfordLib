@@ -135,7 +135,7 @@ public class DebugDrawers {
 			return;
 
 		mLineBatch.begin(pCamera);
-		mLineBatch.drawRect(pX, pY, pW, pH, 0f, pR, pG, pB);
+		mLineBatch.drawRect(pX, pY, pW, pH, -.01f, pR, pG, pB);
 		mLineBatch.end();
 	}
 

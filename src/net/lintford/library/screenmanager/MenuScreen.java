@@ -66,9 +66,9 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	// --------------------------------------
 
 	public static final String MENUSCREEN_FONT_NAME = "MenuScreenFont";
-	public static final int    MENUSCREEN_FONT_POINT_SIZE = 28;
+	public static final int MENUSCREEN_FONT_POINT_SIZE = 28;
 	public static final String MENUSCREEN_HEADER_FONT_NAME = "MenuScreenHeaderFont";
-	public static final int    MENUSCREEN_HEADER_FONT_POINT_SIZE = 48;
+	public static final int MENUSCREEN_HEADER_FONT_POINT_SIZE = 48;
 
 	public static final float ANIMATION_TIMER_LENGTH = 130; // ms
 
@@ -93,6 +93,8 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	protected String mMenuTitle;
 	protected int mSelectedEntry = 0;
 	protected int mSelectedLayout = 0;
+	protected float mChildPositionOffsetX;
+	protected float mChildPositionOffsetY;
 
 	protected float mLeftMargin;
 	protected float mRightMargin;
@@ -291,17 +293,17 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 				switch (mChildAlignment) {
 				case left:
-					lLayout.x = lHUDRect.left() + lLayout.paddingLeft();
+					lLayout.x = lHUDRect.left() + lLayout.paddingLeft() + mChildPositionOffsetX;
 					break;
 				case center:
-					lLayout.x = lHUDRect.left() + lHUDRect.w / 2 - lLayout.w / 2;
+					lLayout.x = lHUDRect.left() + lHUDRect.w / 2 - lLayout.w / 2 + mChildPositionOffsetX;
 					break;
 				case right:
-					lLayout.x = lHUDRect.right() - lLayout.w - lLayout.paddingRight();
+					lLayout.x = lHUDRect.right() - lLayout.w - lLayout.paddingRight() + mChildPositionOffsetX;
 					break;
 				}
 
-				lLayout.y = lYPos;
+				lLayout.y = lYPos + mChildPositionOffsetY;
 
 				lYPos += lLayout.h + lLayout.paddingBottom();
 
