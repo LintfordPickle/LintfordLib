@@ -124,9 +124,6 @@ public class DebugDrawers {
 	}
 
 	public void drawRect(ICamera pCamera, float pX, float pY, float pW, float pH) {
-		if (!mDebugManager.debugManagerEnabled())
-			return;
-
 		drawRect(pCamera, pX, pY, pW, pH, 1f, 1f, 1f);
 	}
 
@@ -155,6 +152,34 @@ public class DebugDrawers {
 		mPolyBatch.begin(pCamera);
 		mPolyBatch.drawRect(pVertices, -0.1f, pClose, 1f, 1f, 1f);
 		mPolyBatch.end();
+	}
+
+	public void drawCircle(ICamera pCamera, float pX, float pY, float pRadius) {
+		drawCircle(pCamera, pX, pY, pRadius, 50);
+
+	}
+
+	public void drawCircle(ICamera pCamera, float pX, float pY, float pRadius, int pSegCount) {
+		if (!mDebugManager.debugManagerEnabled())
+			return;
+
+		mLineBatch.setLineType(GL11.GL_LINE_STRIP);
+		mLineBatch.begin(pCamera);
+
+		final int lNumSegments = pSegCount / 2;
+		for (float i = 0; i < 2 * Math.PI; i += Math.PI / lNumSegments) {
+
+			float xx = pX + (float) (pRadius * Math.cos(i));
+			float yy = pY + (float) (pRadius * Math.sin(i));
+
+			mLineBatch.draw(xx, yy, -0.01f, 1f, 1f, 1f);
+
+		}
+
+		// Add the first vert again
+		mLineBatch.draw(pX + (float) (pRadius * Math.cos(0)), pY + (float) (pRadius * Math.sin(0)), -0.01f, 1f, 1f, 1f);
+
+		mLineBatch.end();
 	}
 
 	public void drawTexture(Texture pTexture, float pDX, float pDY, float pDW, float pDH, float pDZ) {
