@@ -40,13 +40,23 @@ public class LineBatch {
 	private ShaderMVP_PT mShader;
 	private Matrix4f mModelMatrix;
 	private FloatBuffer mBuffer;
-	private int mCurNumLines;
 	private boolean mIsDrawing;
 	private boolean mIsLoaded;
+	private int mGLLineType;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	/** Sets the line type to use by OpenGL. Choices are either GL11.GL_LINE_STRIP or GL11.GL_LINES */
+	public void setLineType(int pGLLineType) {
+		mGLLineType = pGLLineType;
+
+		if (mGLLineType != GL11.GL_LINE_STRIP || mGLLineType != GL11.GL_LINES) {
+			mGLLineType = GL11.GL_LINES;
+		}
+
+	}
 
 	public boolean isDrawing() {
 		return mIsDrawing;
@@ -127,7 +137,6 @@ public class LineBatch {
 
 		mBuffer.clear();
 		mVertexCount = 0;
-		mCurNumLines = 0;
 		mIsDrawing = true;
 
 	}
@@ -189,15 +198,27 @@ public class LineBatch {
 		if (!mIsDrawing)
 			return;
 
-		if (mCurNumLines >= MAX_LINES) {
+		if (mVertexCount * 2 >= MAX_LINES) {
+			flush();
+		}
+
+		// Add both vertices to the buffer
+		draw(pP1X, pP1Y, pZ, pR, pG, pB);
+		draw(pP2X, pP2Y, pZ, pR, pG, pB);
+
+	}
+
+	public void draw(float pP1X, float pP1Y, float pZ, float pR, float pG, float pB) {
+
+		if (!mIsDrawing)
+			return;
+
+		if (mVertexCount * 2 >= MAX_LINES) {
 			flush();
 		}
 
 		// Add both vertices to the buffer
 		addVertToBuffer(pP1X, pP1Y, pZ, 1f, pR, pG, pB, a);
-		addVertToBuffer(pP2X, pP2Y, pZ, 1f, pR, pG, pB, a);
-
-		mCurNumLines++;
 
 	}
 
@@ -251,7 +272,7 @@ public class LineBatch {
 
 		mShader.bind();
 
-		GL11.glDrawArrays(GL11.GL_LINES, 0, mVertexCount);
+		GL11.glDrawArrays(GL11.GL_LINE_STRIP, 0, mVertexCount);
 
 		GL30.glBindVertexArray(0);
 
@@ -259,7 +280,6 @@ public class LineBatch {
 
 		mBuffer.clear();
 
-		mCurNumLines = 0;
 		mVertexCount = 0;
 
 	}
