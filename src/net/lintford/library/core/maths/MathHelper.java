@@ -13,6 +13,9 @@ public class MathHelper {
 	public static final float PiOver4 = 0.7853982f;
 	public static final float TwoPi = 6.283185f;
 
+	public static final float RadiansPos90 = (float) Math.toRadians(90);
+	public static final float RadiansMinus90 = (float) Math.toRadians(-90);
+
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
@@ -113,18 +116,12 @@ public class MathHelper {
 	/**
 	 * Gradually changes a value towards a desired goal over time.
 	 * 
-	 * @param current
-	 *            The current position
-	 * @param target
-	 *            The position we are trying to reach
-	 * @param currentVelocity
-	 *            The current velocity (ref set by this method)
-	 * @param smoothTime
-	 *            Approximately the time it will take to reach the target. Smaller values will reach the target faster
-	 * @param maxSpeed
-	 *            optionally allows you to clamp the maximum speed
-	 * @param deltaTime
-	 *            The time since the last call to this method.
+	 * @param current         The current position
+	 * @param target          The position we are trying to reach
+	 * @param currentVelocity The current velocity (ref set by this method)
+	 * @param smoothTime      Approximately the time it will take to reach the target. Smaller values will reach the target faster
+	 * @param maxSpeed        optionally allows you to clamp the maximum speed
+	 * @param deltaTime       The time since the last call to this method.
 	 * @return The new position
 	 */
 	public static float SmoothDamp(float current, float target, float currentVelocity, float smoothTime, float maxSpeed, float deltaTime) {
