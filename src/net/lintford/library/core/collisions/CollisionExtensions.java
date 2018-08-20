@@ -1,5 +1,6 @@
 package net.lintford.library.core.collisions;
 
+import net.lintford.library.core.maths.Vector2f;
 import net.lintford.library.data.entities.CircleEntity;
 import net.lintford.library.data.entities.RectangleEntity;
 
@@ -32,6 +33,33 @@ public class CollisionExtensions {
 		return (cornerDistance_sq <= pCircle.rad() * pCircle.rad());
 	}
 
-	
-	
+	/** Checks if a point is within a given circle */
+	public static boolean intersectsCirclePoint(CircleEntity pCircle, Vector2f pPoint) {
+		return intersectsCirclePoint(pCircle.x, pCircle.y, pCircle.radius, pPoint.x, pPoint.y);
+
+	}
+
+	/** Checks if a point is within a given circle */
+	public static boolean intersectsCirclePoint(float pCircleX, float pCircleY, float pCircleRadius, float pPointX, float pPointY) {
+		float lDist = (float) Math.sqrt((pCircleX - pPointX) * (pCircleX - pPointX) + (pCircleY - pPointY) * (pCircleY - pPointY));
+		if (lDist < pCircleRadius) {
+			return true;
+
+		}
+
+		return false;
+
+	}
+
+	/** A quick approximate distance check which doesn't rely on a square root */
+	public static boolean fastIntersects(float pPoint1X, float pPoint1Y, float pPoint2X, float pPoint2Y, float pObjectSize) {
+		if (Math.abs(pPoint1X - pPoint1Y) < pObjectSize && Math.abs(pPoint1X - pPoint1Y) < pObjectSize) {
+			return true;
+
+		}
+
+		return false;
+
+	}
+
 }
