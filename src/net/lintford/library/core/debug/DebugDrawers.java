@@ -6,7 +6,6 @@ import org.lwjgl.opengl.GL20;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.camera.ICamera;
-import net.lintford.library.core.geometry.AARectangle;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.geometry.TexturedQuad;
@@ -114,13 +113,6 @@ public class DebugDrawers {
 			return;
 
 		drawRect(pCamera, pDstRect.left(), pDstRect.top(), pDstRect.width(), pDstRect.height(), pR, pG, pB);
-	}
-
-	public void drawRect(ICamera pCamera, AARectangle pDstRect, float pR, float pG, float pB) {
-		if (!mDebugManager.debugManagerEnabled())
-			return;
-
-		drawRect(pCamera, pDstRect.x, pDstRect.y, pDstRect.w, pDstRect.h, pR, pG, pB);
 	}
 
 	public void drawRect(ICamera pCamera, float pX, float pY, float pW, float pH) {

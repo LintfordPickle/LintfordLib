@@ -80,7 +80,7 @@ public class RectangleEntity extends WorldEntity {
 		super.update(pCore);
 
 		mBounds.rotateAbs(rotation + (float) Math.toRadians(90));
-		mBounds.set(x, y, width, height);
+		mBounds.setCenter(x, y, width, height);
 
 	}
 

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.geometry.AARectangle;
+import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.fonts.BitmapFont;
 import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.input.InputState;
@@ -39,8 +39,8 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 	private int mSelectedIndex;
 
 	private boolean mButtonsEnabled;
-	private AARectangle mLeftButtonRectangle;
-	private AARectangle mRightButtonRectangle;
+	private Rectangle mLeftButtonRectangle;
+	private Rectangle mRightButtonRectangle;
 
 	// --------------------------------------
 	// Properties
@@ -134,8 +134,8 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 		mItems = new ArrayList<>();
 		mSelectedIndex = 0;
 
-		mLeftButtonRectangle = new AARectangle(0, 0, 25, 25);
-		mRightButtonRectangle = new AARectangle(0, 0, 25, 25);
+		mLeftButtonRectangle = new Rectangle(0, 0, 25, 25);
+		mRightButtonRectangle = new Rectangle(0, 0, 25, 25);
 
 		mHighlightOnHover = false;
 		mDrawBackground = false;
@@ -159,7 +159,7 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 
 		if (mButtonsEnabled) {
 			if (pCore.input().isMouseTimedLeftClickAvailable()) {
-				if (mLeftButtonRectangle.intersects(pCore.HUD().getMouseCameraSpace())) {
+				if (mLeftButtonRectangle.intersectsAA(pCore.HUD().getMouseCameraSpace())) {
 					mSelectedIndex--;
 					if (mSelectedIndex < 0) {
 						mSelectedIndex = mItems.size() - 1;
@@ -176,7 +176,7 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 					return true;
 				}
 
-				else if (mRightButtonRectangle.intersects(pCore.HUD().getMouseCameraSpace())) {
+				else if (mRightButtonRectangle.intersectsAA(pCore.HUD().getMouseCameraSpace())) {
 
 					mSelectedIndex++;
 					if (mSelectedIndex >= mItems.size()) {
@@ -198,7 +198,7 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 
 		}
 
-		if (intersects(pCore.HUD().getMouseCameraSpace())) {
+		if (intersectsAA(pCore.HUD().getMouseCameraSpace())) {
 			if (pCore.input().isMouseTimedLeftClickAvailable()) {
 				if (mEnabled) {
 

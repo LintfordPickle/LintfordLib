@@ -95,7 +95,7 @@ public class UIRadioButton extends UIWidget {
 
 	@Override
 	public boolean handleInput(LintfordCore pCore) {
-		if (intersects(pCore.HUD().getMouseCameraSpace()) && !mIsClicked && pCore.input().tryAquireLeftClickOwnership(hashCode())) {
+		if (intersectsAA(pCore.HUD().getMouseCameraSpace()) && !mIsClicked && pCore.input().tryAquireLeftClickOwnership(hashCode())) {
 			mIsClicked = true;
 			final float MINIMUM_CLICK_TIMER = 200;
 			// Callback to the listener and pass our ID

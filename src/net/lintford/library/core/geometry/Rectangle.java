@@ -18,10 +18,11 @@ public class Rectangle extends Shape {
 	// --------------------------------------
 
 	protected Vector2f[] mVertices;
-	protected boolean mIsDirty;
 	protected boolean mIsAABB; // Blocks rotations
-	protected float mWidth;
-	protected float mHeight;
+	public float x;
+	public float y;
+	public float w;
+	public float h;
 	protected float sx;
 	protected float sy;
 	protected boolean mFlipH;
@@ -40,27 +41,27 @@ public class Rectangle extends Shape {
 	}
 
 	public float left() {
-		return centerX - mWidth / 2f;
+		return x;
 	}
 
 	public float right() {
-		return centerX + mWidth / 2f;
+		return x + w;
 	}
 
 	public float top() {
-		return centerY - mHeight / 2f;
+		return y;
 	}
 
 	public float bottom() {
-		return centerY + mHeight / 2f;
+		return y + h;
 	}
 
 	public float width() {
-		return mWidth;
+		return w;
 	}
 
 	public float height() {
-		return mHeight;
+		return h;
 	}
 
 	public float scaleX() {
@@ -68,11 +69,6 @@ public class Rectangle extends Shape {
 	}
 
 	public void scaleX(float pNewValue) {
-		if (sx != pNewValue) {
-			setDirty();
-
-		}
-
 		sx = pNewValue;
 	}
 
@@ -81,33 +77,19 @@ public class Rectangle extends Shape {
 	}
 
 	public void scaleY(float pNewValue) {
-		if (sy != pNewValue) {
-			setDirty();
-
-		}
-
 		sy = pNewValue;
 
 	}
 
 	public void setScale(float pX, float pY) {
-		setDirty();
-
 		sx = pX;
 		sy = pY;
 
 	}
 
 	public Vector2f[] getVertices() {
-		if (mIsDirty) {
-			updateVertices();
-		}
-
+		updateVertices();
 		return mVertices;
-	}
-
-	public void setDirty() {
-		mIsDirty = true;
 	}
 
 	public boolean flipH() {
@@ -115,8 +97,6 @@ public class Rectangle extends Shape {
 	}
 
 	public void flipH(boolean pNewValue) {
-		if (pNewValue != mFlipH)
-			mIsDirty = true;
 		mFlipH = pNewValue;
 	}
 
@@ -125,9 +105,15 @@ public class Rectangle extends Shape {
 	}
 
 	public void flipV(boolean pNewValue) {
-		if (pNewValue != mFlipV)
-			mIsDirty = true;
 		mFlipV = pNewValue;
+	}
+
+	public float centerX() {
+		return x + w / 2;
+	}
+
+	public float centerY() {
+		return y + h / 2;
 	}
 
 	// --------------------------------------
@@ -139,17 +125,22 @@ public class Rectangle extends Shape {
 
 	}
 
-	public Rectangle(float pCenterX, float pCenterY, float pWidth, float pHeight) {
-		centerX = pCenterX;
-		centerY = pCenterY;
-		mWidth = pWidth;
-		mHeight = pHeight;
+	public Rectangle(Rectangle pRectangle) {
+		this(pRectangle.x, pRectangle.y, pRectangle.width(), pRectangle.height());
+
+	}
+
+	public Rectangle(float pX, float pY, float pWidth, float pHeight) {
+		x = pX;
+		y = pY;
+		w = pWidth;
+		h = pHeight;
 
 		mVertices = new Vector2f[NUM_VERTICES];
-		mVertices[0] = new Vector2f(centerX - mWidth / 2, centerY - mHeight / 2);
-		mVertices[1] = new Vector2f(centerX + mWidth / 2, centerY - mHeight / 2);
-		mVertices[2] = new Vector2f(centerX - mWidth / 2, centerY + mHeight / 2);
-		mVertices[3] = new Vector2f(centerX + mWidth / 2, centerY + mHeight / 2);
+		mVertices[0] = new Vector2f(x, y);
+		mVertices[1] = new Vector2f(x + w, y);
+		mVertices[2] = new Vector2f(x, y + h);
+		mVertices[3] = new Vector2f(x + w, y + h);
 
 		sx = 1f;
 		sy = 1f;
@@ -194,8 +185,7 @@ public class Rectangle extends Shape {
 
 	@Override
 	public Vector2f[] getAxes() {
-		if (mIsDirty)
-			updateVertices();
+		updateVertices();
 
 		final int AXES_LENGTH = 2;
 		Vector2f[] axes = new Vector2f[AXES_LENGTH]; // Rectangle only has two axis to be tested against
@@ -245,7 +235,7 @@ public class Rectangle extends Shape {
 	 * @Returs True if everything is zero.
 	 */
 	public boolean isEmpty() {
-		return (this.mWidth == 0 && this.mHeight == 0);
+		return (this.w == 0 && this.h == 0);
 	}
 
 	/**
@@ -255,62 +245,79 @@ public class Rectangle extends Shape {
 	 * @param cy
 	 */
 	public void setPosition(float pX, float pY) {
-		set(pX, pY, mWidth, mHeight);
+		setCenter(pX, pY, w, h);
+
+	}
+
+	public void setCenterPosition(float pNewCenterX, float pNewCenterY) {
+		x = pNewCenterX - w / 2;
+		y = pNewCenterY - h / 2;
 
 	}
 
 	public void setWidth(float pWidth) {
-		set(centerX, centerY, pWidth, mHeight);
+		w = pWidth;
+
 	}
 
 	public void setHeight(float pHeight) {
-		set(centerX, centerY, mWidth, pHeight);
+		h = pHeight;
 
 	}
 
 	public void setDimensions(float pWidth, float pHeight) {
-		set(centerX, centerY, pWidth, pHeight);
+		w = pWidth;
+		h = pHeight;
 
 	}
 
 	public void set(Rectangle pRect) {
-		set(pRect.centerX, pRect.centerY, pRect.mWidth, pRect.mHeight);
+		x = pRect.x;
+		y = pRect.y;
+		w = pRect.w;
+		h = pRect.h;
 
 	}
 
-	public void set(float pCenterX, float pCenterY, float pWidth, float pHeight) {
-		centerX = pCenterX;
-		centerY = pCenterY;
-		mWidth = pWidth;
-		mHeight = pHeight;
+	public void set(float pX, float pY, float pWidth, float pHeight) {
+		x = pX;
+		y = pY;
+		w = pWidth;
+		h = pHeight;
 
-		mIsDirty = true;
+	}
+
+	public void setCenter(float pCenterX, float pCenterY, float pWidth, float pHeight) {
+		x = pCenterX - pWidth / 2;
+		y = pCenterY - pHeight / 2;
+		w = pWidth;
+		h = pHeight;
+
 	}
 
 	public void expand(float pAmt) {
-		mWidth += pAmt * 2;
-		mHeight += pAmt * 2;
-		mIsDirty = true;
+		x -= pAmt * 0.5f;
+		y -= pAmt * 0.5f;
+		w += pAmt * 2;
+		h += pAmt * 2;
 	}
 
 	@Override
 	public void rotateRel(float pRotAmt) {
 		rot += pRotAmt;
-		mIsDirty = true;
 
 	}
 
 	@Override
 	public void rotateAbs(float pRotAmt) {
 		rot = pRotAmt;
-		mIsDirty = true;
 
 	}
 
 	protected void updateVertices() {
 
-		final float lWidth = mFlipH ? -mWidth : mWidth;
-		final float lHeight = mFlipV ? -mHeight : mHeight;
+		final float lWidth = mFlipH ? -w : w;
+		final float lHeight = mFlipV ? -h : h;
 
 		final float lPX = mFlipH ? -px : px;
 		final float lPY = mFlipV ? -py : py;
@@ -337,14 +344,13 @@ public class Rectangle extends Shape {
 			float dx = -lPX + mVertices[i].x * sx;
 			float dy = -lPY + mVertices[i].y * sy;
 
-			mVertices[i].x = centerX + (dx * cos - (dy * 1f) * sin) * sx;
-			mVertices[i].y = centerY + (dx * sin + (dy * 1f) * cos) * sy;
+			mVertices[i].x = centerX() + (dx * cos - (dy * 1f) * sin) * sx;
+			mVertices[i].y = centerY() + (dx * sin + (dy * 1f) * cos) * sy;
 
 		}
 
 		mIsAABB = rot == 0;
 
-		mIsDirty = false;
 	}
 
 }

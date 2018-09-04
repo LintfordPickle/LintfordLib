@@ -1,13 +1,13 @@
 package net.lintford.library.renderers.windows.components;
 
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.geometry.AARectangle;
+import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 import net.lintford.library.renderers.windows.UIWindow;
 
-public abstract class UIWidget extends AARectangle {
+public abstract class UIWidget extends Rectangle {
 
 	private static final long serialVersionUID = 8734195273392955490L;
 
@@ -28,7 +28,7 @@ public abstract class UIWidget extends AARectangle {
 
 	}
 
-	public UIWidget(final UIWindow pParentWindow, final AARectangle pBounds) {
+	public UIWidget(final UIWindow pParentWindow, final Rectangle pBounds) {
 		super(pBounds);
 
 		mParentWindow = pParentWindow;

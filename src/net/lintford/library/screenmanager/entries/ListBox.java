@@ -6,7 +6,7 @@ import java.util.List;
 import org.lwjgl.opengl.GL11;
 
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.geometry.AARectangle;
+import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
@@ -82,7 +82,7 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 
 		mContentArea = new ScrollBarContentRectangle(this);
 
-		mScrollBar = new ScrollBar(this, new AARectangle(x + getWidth() - ScrollBar.BAR_WIDTH, y, 20, getHeight()));
+		mScrollBar = new ScrollBar(this, new Rectangle(x + getWidth() - ScrollBar.BAR_WIDTH, y, 20, getHeight()));
 
 	}
 
@@ -323,7 +323,7 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 	}
 
 	@Override
-	public AARectangle contentDisplayArea() {
+	public Rectangle contentDisplayArea() {
 		return this;
 	}
 

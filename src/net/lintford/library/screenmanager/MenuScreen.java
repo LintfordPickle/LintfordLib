@@ -6,7 +6,7 @@ import java.util.List;
 import org.lwjgl.glfw.GLFW;
 
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.geometry.AARectangle;
+import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.renderers.ZLayers;
@@ -66,7 +66,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	// --------------------------------------
 
 	public static final String MENUSCREEN_FONT_NAME = "MenuScreenFont";
-	public static final int MENUSCREEN_FONT_POINT_SIZE = 28;
+	public static final int MENUSCREEN_FONT_POINT_SIZE = 16;
 	public static final String MENUSCREEN_HEADER_FONT_NAME = "MenuScreenHeaderFont";
 	public static final int MENUSCREEN_HEADER_FONT_POINT_SIZE = 48;
 
@@ -278,7 +278,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 	@Override
 	public void updateStructure(LintfordCore pCore) {
-		AARectangle lHUDRect = pCore.HUD().boundingRectangle();
+		Rectangle lHUDRect = pCore.HUD().boundingRectangle();
 		if (mOrientation == ORIENTATION.vertical) {
 			float lYPos = lHUDRect.top() + mTopMargin;
 
@@ -349,7 +349,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 		final float MENUSCREEN_Z_DEPTH = ZLayers.LAYER_SCREENMANAGER;
 
-		AARectangle lHUDRect = pCore.HUD().boundingRectangle();
+		Rectangle lHUDRect = pCore.HUD().boundingRectangle();
 
 		mMenuHeaderFont.begin(pCore.HUD());
 		mMenuHeaderFont.draw(mMenuTitle, lHUDRect.left() + TITLE_PADDING_X, lHUDRect.top(), MENUSCREEN_Z_DEPTH, mR, mG, mB, mA, 1f);

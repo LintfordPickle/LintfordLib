@@ -6,7 +6,7 @@ import java.util.List;
 import org.lwjgl.opengl.GL11;
 
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.geometry.AARectangle;
+import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.fonts.BitmapFont;
 import net.lintford.library.core.graphics.textures.TextureManager;
@@ -61,7 +61,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 	private transient ScrollBar mScrollBar;
 	private transient float mScrollYPosition;
 
-	private AARectangle mTopEntry;
+	private Rectangle mTopEntry;
 	private boolean mAllowDuplicates;
 
 	// --------------------------------------
@@ -157,7 +157,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 		mContentRectangle = new ScrollBarContentRectangle(this);
 		mWindowRectangle = new ScrollBarContentRectangle(this);
 		mScrollBar = new ScrollBar(this, mContentRectangle);
-		mTopEntry = new AARectangle();
+		mTopEntry = new Rectangle();
 
 		mTextureBatch = new TextureBatch();
 
@@ -192,7 +192,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 
 		if (mScrollBar.handleInput(pCore)) {
 
-		} else if (intersects(pCore.HUD().getMouseCameraSpace())) {
+		} else if (intersectsAA(pCore.HUD().getMouseCameraSpace())) {
 
 			//
 			mParentScreen.setHoveringOn(this);
@@ -235,6 +235,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 			// Check if tool tips are enabled.
 			if (mToolTipEnabled) {
 				mToolTipTimer += pCore.time().elapseGameTimeMilli();
+				
 			}
 
 			return true;
@@ -255,7 +256,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 
 		super.update(pCore, pScreen, pIsSelected);
 
-		mTopEntry.set(x + w / 2, y, w / 2, MENUENTRY_HEIGHT);
+		mTopEntry.setCenter(x + w / 2, y, w / 2, MENUENTRY_HEIGHT);
 
 		// w = MENUENTRY_DEF_BUTTON_WIDTH;
 		h = mOpen ? OPEN_HEIGHT : MENUENTRY_HEIGHT;
@@ -313,7 +314,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 
 		if (mOpen) {
 			mTextureBatch.begin(pCore.HUD());
-			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 96, 0, 32, 32, mWindowRectangle.x, mWindowRectangle.y, mWindowRectangle.w, mWindowRectangle.h, mZ, 1, 1, 1, 1);
+			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 96, 0, 32, 32, mWindowRectangle, mZ, 1, 1, 1, 1);
 			mTextureBatch.end();
 
 		}
@@ -330,7 +331,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 		GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT); // Clear the stencil buffer
 
 		mTextureBatch.begin(pCore.HUD());
-		mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 32, 0, 32, 32, mWindowRectangle.x, mWindowRectangle.y, mWindowRectangle.w, mWindowRectangle.h, -8f, 1, 1, 1, 0);
+		mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 32, 0, 32, 32, mWindowRectangle, -8f, 1, 1, 1, 0);
 		mTextureBatch.end();
 
 		// Start the stencil buffer test to filter out everything outside of the scroll view
@@ -410,7 +411,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 	}
 
 	@Override
-	public AARectangle contentDisplayArea() {
+	public Rectangle contentDisplayArea() {
 		return mWindowRectangle;
 	}
 

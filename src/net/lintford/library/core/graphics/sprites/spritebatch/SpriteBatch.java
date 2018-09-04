@@ -32,6 +32,11 @@ public class SpriteBatch extends TextureBatch {
 	}
 
 	public void draw(SpriteSheetDef pSpriteSheet, SpriteFrame pSpriteFrame, Rectangle pDstRectangle, float pZ, float pR, float pG, float pB, float pA) {
+		draw(pSpriteSheet, pSpriteFrame, pDstRectangle.x, pDstRectangle.y, pDstRectangle.w, pDstRectangle.h, pZ, pR, pG, pB, pA);
+
+	}
+
+	public void draw(SpriteSheetDef pSpriteSheet, SpriteFrame pSpriteFrame, float pDX, float pDY, float pDW, float pDH, float pZ, float pR, float pG, float pB, float pA) {
 		if (pSpriteSheet == null)
 			return;
 
@@ -47,7 +52,7 @@ public class SpriteBatch extends TextureBatch {
 		if (lTexture == null)
 			return;
 
-		draw(lTexture, pSpriteFrame, pDstRectangle, pZ, pR, pG, pB, pA);
+		draw(lTexture, pSpriteFrame.x, pSpriteFrame.y, pSpriteFrame.w, pSpriteFrame.h, pDX, pDY, pDW, pDH, pZ, pR, pG, pB, pA);
 
 	}
 

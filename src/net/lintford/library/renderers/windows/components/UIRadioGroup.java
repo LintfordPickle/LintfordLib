@@ -37,7 +37,7 @@ public class UIRadioGroup extends UIWidget implements EntryInteractions {
 
 	@Override
 	public boolean handleInput(LintfordCore pCore) {
-		if (intersects(pCore.HUD().getMouseCameraSpace())) {
+		if (intersectsAA(pCore.HUD().getMouseCameraSpace())) {
 			final int lButtonCount = mButtons.size();
 			for (int i = 0; i < lButtonCount; i++) {
 				if (mButtons.get(i).handleInput(pCore)) {

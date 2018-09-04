@@ -1,7 +1,7 @@
 package net.lintford.library.renderers.windows.components;
 
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.geometry.AARectangle;
+import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
@@ -30,7 +30,7 @@ public class UIInputText extends UIWidget implements IBufferedInputCallback {
 	private transient String mTempString;
 	private transient String mEmptyString;
 
-	private transient AARectangle mCancelRectangle;
+	private transient Rectangle mCancelRectangle;
 
 	// A little wierd, we store the string length to check if the string has changed since the last frame (since
 	// working with the length (int) doesn't cause a heap allocation as toString() does )
@@ -104,7 +104,7 @@ public class UIInputText extends UIWidget implements IBufferedInputCallback {
 		mResetOnDefaultClick = true;
 		mInputField = new StringBuilder();
 
-		mCancelRectangle = new AARectangle();
+		mCancelRectangle = new Rectangle();
 		mEmptyString = "";
 
 	}
@@ -115,7 +115,7 @@ public class UIInputText extends UIWidget implements IBufferedInputCallback {
 
 	public boolean handleInput(LintfordCore pCore) {
 		if (pCore.input().isMouseTimedLeftClickAvailable()) {
-			if (mCancelRectangle.intersects(pCore.HUD().getMouseCameraSpace())) {
+			if (mCancelRectangle.intersectsAA(pCore.HUD().getMouseCameraSpace())) {
 				if (mInputField.length() > 0) {
 
 					if (mInputField.length() > 0)
@@ -136,7 +136,7 @@ public class UIInputText extends UIWidget implements IBufferedInputCallback {
 		}
 
 		if (pCore.input().isMouseTimedLeftClickAvailable()) {
-			if (intersects(pCore.HUD().getMouseCameraSpace())) {
+			if (intersectsAA(pCore.HUD().getMouseCameraSpace())) {
 
 				onClick(pCore.input());
 

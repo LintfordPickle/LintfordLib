@@ -48,12 +48,12 @@ public class SpriteSheetAnimator implements ISpriteNodeInstanceAnimator, Seriali
 
 			}
 
-			lX += pParentNode.centerX + pParentNode.pivotX();
-			lY += pParentNode.centerY + pParentNode.pivotY();
+			lX += pParentNode.x + pParentNode.pivotX();
+			lY += pParentNode.y + pParentNode.pivotY();
 
 		} else {
-			lX = pNode.centerX;
-			lY = pNode.centerY;
+			lX = pNode.x;
+			lY = pNode.y;
 			lRot = pNode.rot;
 
 		}
@@ -118,7 +118,7 @@ public class SpriteSheetAnimator implements ISpriteNodeInstanceAnimator, Seriali
 
 			}
 
-			pNode.set(lX, lY, lCurrentFrame.w, lCurrentFrame.h);
+			pNode.setCenter(lX, lY, lCurrentFrame.w, lCurrentFrame.h);
 
 			pNode.rotateAbs(lRot);
 

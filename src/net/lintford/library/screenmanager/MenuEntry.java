@@ -2,7 +2,7 @@ package net.lintford.library.screenmanager;
 
 import net.lintford.library.ConstantsTable;
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.geometry.AARectangle;
+import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.TextureManager;
@@ -12,7 +12,7 @@ import net.lintford.library.core.input.InputState.INPUT_TYPES;
 import net.lintford.library.core.maths.Vector2f;
 import net.lintford.library.screenmanager.entries.EntryInteractions;
 
-public class MenuEntry extends AARectangle {
+public class MenuEntry extends Rectangle {
 
 	// --------------------------------------
 	// Constants
@@ -247,7 +247,7 @@ public class MenuEntry extends AARectangle {
 
 		final float deltaTime = (float) pCore.time().elapseGameTimeMilli() / 1000f;
 
-		if (intersects(pCore.HUD().getMouseCameraSpace()) && pCore.input().lastInputActive() == INPUT_TYPES.Mouse) {
+		if (intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().lastInputActive() == INPUT_TYPES.Mouse) {
 			// We should make sure no other component is currently using this leftClick.
 
 			// Check if tool tips are enabled.

@@ -3,7 +3,7 @@ package net.lintford.library.renderers;
 import java.util.List;
 
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.geometry.AARectangle;
+import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
@@ -87,7 +87,7 @@ public class UIWindowDock extends BaseRenderer {
 				// Draw the button background
 				mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 320, 64, 64, 64, lPosX, lPosY, 64, 64, -0.1f, 1f, 1f, 1f, 1f);
 				if (lWindow.iconSrcRectangle() != null) {
-					AARectangle lSrcRect = lWindow.iconSrcRectangle();
+					Rectangle lSrcRect = lWindow.iconSrcRectangle();
 					float lMargin = 12;
 
 					mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, lSrcRect.x, lSrcRect.y, lSrcRect.w, lSrcRect.h, lPosX + lMargin, lPosY + lMargin, 64 - lMargin * 2, 64 - lMargin * 2, -0.1f, 1f, 1f, 1f, 1f);

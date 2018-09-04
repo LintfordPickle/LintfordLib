@@ -1,7 +1,7 @@
 package net.lintford.library.screenmanager.dialogs;
 
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.geometry.AARectangle;
+import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.renderers.ZLayers;
 import net.lintford.library.screenmanager.MenuEntry;
@@ -163,7 +163,7 @@ public class TimedConfirmationDialog extends BaseDialog {
 
 		font().end();
 
-		AARectangle lHUDRect = pCore.HUD().boundingRectangle();
+		Rectangle lHUDRect = pCore.HUD().boundingRectangle();
 
 		mMenuHeaderFont.begin(pCore.HUD());
 		mMenuHeaderFont.draw(mMenuTitle, lHUDRect.left() + TITLE_PADDING_X, lHUDRect.top(), ZDEPTH, mR, mG, mB, mA, 1f);

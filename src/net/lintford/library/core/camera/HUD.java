@@ -1,7 +1,7 @@
 package net.lintford.library.core.camera;
 
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.geometry.AARectangle;
+import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.maths.Matrix4f;
 import net.lintford.library.core.maths.Vector2f;
 import net.lintford.library.options.DisplayConfig;
@@ -32,7 +32,7 @@ public class HUD implements ICamera, IResizeListener {
 
 	private DisplayConfig mDisplayConfig;
 
-	private AARectangle mBoundingRectangle;
+	private Rectangle mBoundingRectangle;
 
 	/** The width of the window. */
 	/** The height of the window. */
@@ -89,7 +89,7 @@ public class HUD implements ICamera, IResizeListener {
 	}
 
 	@Override
-	public AARectangle boundingRectangle() {
+	public Rectangle boundingRectangle() {
 		return mBoundingRectangle;
 	}
 
@@ -103,7 +103,7 @@ public class HUD implements ICamera, IResizeListener {
 		mWindowWidth = pDisplayConfig.windowSize().x;
 		mWindowHeight = pDisplayConfig.windowSize().y;
 
-		mBoundingRectangle = new AARectangle(-mWindowWidth / 2, -mWindowHeight / 2, mWindowWidth, mWindowHeight);
+		mBoundingRectangle = new Rectangle(-mWindowWidth / 2, -mWindowHeight / 2, mWindowWidth, mWindowHeight);
 
 		mProjectionMatrix = new Matrix4f();
 		mViewMatrix = new Matrix4f();

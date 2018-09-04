@@ -2,7 +2,6 @@ package net.lintford.library.core.geometry;
 
 import java.io.Serializable;
 
-import net.lintford.library.core.maths.Matrix4f;
 import net.lintford.library.core.maths.Vector2f;
 
 public abstract class Shape implements Serializable {
@@ -17,18 +16,10 @@ public abstract class Shape implements Serializable {
 	// Variables
 	// --------------------------------------
 
-	public float centerX;
-	public float centerY;
-
 	public float py;
 	public float px;
-
 	public float rot;
-
 	public float rad;
-
-	public boolean transformed;
-	protected Matrix4f transformationMatrix = new Matrix4f();
 
 	// --------------------------------------
 	// Properties
@@ -45,14 +36,6 @@ public abstract class Shape implements Serializable {
 
 	public float rotation() {
 		return rot;
-	}
-
-	public float centerX() {
-		return centerX;
-	}
-
-	public float centerY() {
-		return centerY;
 	}
 
 	public float pivotX() {
@@ -75,6 +58,10 @@ public abstract class Shape implements Serializable {
 		px = pX;
 		py = pY;
 	}
+
+	public abstract float centerX();
+
+	public abstract float centerY();
 
 	// --------------------------------------
 	// Constructors

@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import org.lwjgl.glfw.GLFW;
 
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.geometry.AARectangle;
+import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.linebatch.LineBatch;
@@ -14,7 +14,7 @@ import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 import net.lintford.library.core.time.TimeSpan;
 
 // TODO: DebugProfiler is currently pretty useless and not finished.
-public class DebugProfiler extends AARectangle {
+public class DebugProfiler extends Rectangle {
 
 	private static final long serialVersionUID = 3330444673644866887L;
 

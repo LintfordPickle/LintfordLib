@@ -1,11 +1,11 @@
 package net.lintford.library.renderers.windows.components;
 
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.geometry.AARectangle;
+import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 
-public class ScrollBar extends AARectangle {
+public class ScrollBar extends Rectangle {
 
 	// --------------------------------------
 	// Constants
@@ -45,7 +45,7 @@ public class ScrollBar extends AARectangle {
 	// Constructor
 	// --------------------------------------
 
-	public ScrollBar(IScrollBarArea pWindowBounds, AARectangle pContentBounds) {
+	public ScrollBar(IScrollBarArea pWindowBounds, Rectangle pContentBounds) {
 		super(pContentBounds);
 
 		mScrollBarArea = pWindowBounds;
@@ -70,7 +70,7 @@ public class ScrollBar extends AARectangle {
 		}
 
 		// check the mouse is within bounds
-		if (!mClickActive && !intersects(lMouseScreenSpaceX, lMouseScreenSpaceY)) {
+		if (!mClickActive && !intersectsAA(lMouseScreenSpaceX, lMouseScreenSpaceY)) {
 			return false;
 		}
 

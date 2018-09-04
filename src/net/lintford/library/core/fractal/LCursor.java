@@ -23,8 +23,8 @@ public class LCursor {
 
 	public LCursor(SpriteGraphNodeInst pCurGraphNode, int pDepth) {
 		currentNode = pCurGraphNode;
-		x = currentNode.centerX();
-		y = currentNode.centerY();
+		x = currentNode.x;
+		y = currentNode.y;
 		curRotation = currentNode.rotation();
 		depth = pDepth;
 

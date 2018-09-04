@@ -40,14 +40,14 @@ public class LSystemAnimator implements ISpriteNodeInstanceAnimator, Serializabl
 
 			}
 
-			lX += pParentNode.centerX + pParentNode.pivotX();
-			lY += pParentNode.centerY + pParentNode.pivotY();
+			lX += pParentNode.x + pParentNode.pivotX();
+			lY += pParentNode.y + pParentNode.pivotY();
 			lRot = pNode.rot;
 
 		} else {
 			// This is the root node, so give it the objects position in the world (the child nodes will all take a relative position
-			lX = pNode.centerX;
-			lY = pNode.centerY;
+			lX = pNode.x;
+			lY = pNode.y;
 			lRot = pNode.rot;
 
 		}
@@ -96,7 +96,7 @@ public class LSystemAnimator implements ISpriteNodeInstanceAnimator, Serializabl
 			pNode.pivotX(lCurrentFrame.getPivotPointX());
 			pNode.pivotY(lCurrentFrame.getPivotPointY());
 
-			pNode.set(lX, lY, lCurrentFrame.w, lCurrentFrame.h);
+			pNode.setCenter(lX, lY, lCurrentFrame.w, lCurrentFrame.h);
 
 		}
 

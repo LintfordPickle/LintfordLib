@@ -76,7 +76,7 @@ public class UITextButton extends UIWidget {
 
 	@Override
 	public boolean handleInput(LintfordCore pCore) {
-		if (!mIsClicked && intersects(pCore.HUD().getMouseCameraSpace())) {
+		if (!mIsClicked && intersectsAA(pCore.HUD().getMouseCameraSpace())) {
 			mHoveredOver = true;
 
 			if (pCore.input().tryAquireLeftClickOwnership(hashCode())) {

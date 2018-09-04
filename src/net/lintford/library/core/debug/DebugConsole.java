@@ -8,7 +8,7 @@ import org.lwjgl.glfw.GLFW;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.debug.DebugLogger.LogMessage;
-import net.lintford.library.core.geometry.AARectangle;
+import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.TextureManager;
@@ -22,7 +22,7 @@ import net.lintford.library.renderers.windows.components.ScrollBar;
 import net.lintford.library.renderers.windows.components.ScrollBarContentRectangle;
 import net.lintford.library.renderers.windows.components.UIInputText;
 
-public class DebugConsole extends AARectangle implements IBufferedInputCallback, IScrollBarArea {
+public class DebugConsole extends Rectangle implements IBufferedInputCallback, IScrollBarArea {
 
 	// --------------------------------------
 	// Constants
@@ -200,7 +200,7 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 
 		Debug.debugManager().logger().v(getClass().getSimpleName(), "DebugConsole loading GL content");
 
-		mConsoleFont = pResourceManager.fontManager().loadNewFont(CONSOLE_FONT_NAME, "/res/fonts/OxygenMono-Regular.ttf", 14);
+		mConsoleFont = pResourceManager.fontManager().loadNewFont(CONSOLE_FONT_NAME, "/res/fonts/OxygenMono-Regular.ttf", 16);
 		mSpriteBatch.loadGLContent(pResourceManager);
 
 		mIsLoaded = true;
@@ -274,11 +274,11 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 
 			}
 
-			else if (mTAGFilterText.intersects(pCore.HUD().getMouseCameraSpace())) {
+			else if (mTAGFilterText.intersectsAA(pCore.HUD().getMouseCameraSpace())) {
 
 			}
 
-			else if (mMessageFilterText.intersects(pCore.HUD().getMouseCameraSpace())) {
+			else if (mMessageFilterText.intersectsAA(pCore.HUD().getMouseCameraSpace())) {
 
 			}
 
@@ -328,7 +328,7 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 		final int MAX_NUM_LINES = (int) ((openHeight() - mConsoleLineHeight * 2) / mConsoleLineHeight) - 1;
 
 		final int lNumberLinesInConsole = mProcessed ? mProcessedMessages.size() : Debug.debugManager().logger().logLines().size();
-		fullContentArea().set(x, y, w - mScrollBar.w, lNumberLinesInConsole * 25);
+		fullContentArea().setCenter(x, y, w - mScrollBar.w, lNumberLinesInConsole * 25);
 
 		DisplayConfig lDisplay = pCore.config().display();
 		// Update the bounds of the window view
@@ -658,7 +658,7 @@ public class DebugConsole extends AARectangle implements IBufferedInputCallback,
 	}
 
 	@Override
-	public AARectangle contentDisplayArea() {
+	public Rectangle contentDisplayArea() {
 		return this;
 	}
 

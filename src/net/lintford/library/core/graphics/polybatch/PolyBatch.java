@@ -131,14 +131,14 @@ public class PolyBatch {
 			return;
 
 		Vector2f[] verts = pRect.getVertices();
-		
+
 		draw(verts[0].x, verts[0].y, verts[1].x, verts[1].y, pZ, pR, pG, pB);
 		draw(verts[0].x, verts[0].y, verts[2].x, verts[2].y, pZ, pR, pG, pB);
 		draw(verts[2].x, verts[2].y, verts[3].x, verts[3].y, pZ, pR, pG, pB);
 		draw(verts[1].x, verts[1].y, verts[3].x, verts[3].y, pZ, pR, pG, pB);
 
 	}
-	
+
 	public void drawRect(Vector2f[] pVertexArray, float pZ, boolean pClose, float pR, float pG, float pB) {
 		if (!mIsDrawing || pVertexArray == null || pVertexArray.length < 2)
 			return;
@@ -230,9 +230,9 @@ public class PolyBatch {
 		mShader.modelMatrix(mModelMatrix);
 
 		mShader.bind();
- 
-		// GL11.glDrawArrays(GL11.GL_LINES, 0, mVertexCount);
-		GL11.glDrawArrays(GL11.GL_TRIANGLE_FAN, 0, mVertexCount);
+
+		GL11.glDrawArrays(GL11.GL_LINES, 0, mVertexCount);
+//		GL11.glDrawArrays(GL11.GL_TRIANGLE_FAN, 0, mVertexCount);
 
 		GL30.glBindVertexArray(0);
 

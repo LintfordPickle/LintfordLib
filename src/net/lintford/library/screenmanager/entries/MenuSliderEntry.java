@@ -2,7 +2,7 @@ package net.lintford.library.screenmanager.entries;
 
 import net.lintford.library.ConstantsTable;
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.geometry.AARectangle;
+import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.TextureManager;
@@ -22,8 +22,8 @@ public class MenuSliderEntry extends MenuEntry {
 	// Variables
 	// --------------------------------------
 
-	private AARectangle mDownButton;
-	private AARectangle mUpButton;
+	private Rectangle mDownButton;
+	private Rectangle mUpButton;
 	private TextureBatch mTextureBatch;
 	private String mLabel;
 	private final String mSeparator = " : ";
@@ -119,8 +119,8 @@ public class MenuSliderEntry extends MenuEntry {
 
 		mLabel = "Label:";
 
-		mDownButton = new AARectangle(0, 0, 32, 32);
-		mUpButton = new AARectangle(0, 0, 32, 32);
+		mDownButton = new Rectangle(0, 0, 32, 32);
+		mUpButton = new Rectangle(0, 0, 32, 32);
 
 		mTextureBatch = new TextureBatch();
 
@@ -155,14 +155,14 @@ public class MenuSliderEntry extends MenuEntry {
 			mFocusLocked = false; // no lock if not focused
 		}
 
-		if (intersects(pCore.HUD().getMouseCameraSpace())) {
+		if (intersectsAA(pCore.HUD().getMouseCameraSpace())) {
 			if (pCore.input().isMouseTimedLeftClickAvailable()) {
 				if (mEnabled) {
 
 					// TODO: Play menu click sound
-					if (mDownButton.intersects(pCore.HUD().getMouseCameraSpace())) {
+					if (mDownButton.intersectsAA(pCore.HUD().getMouseCameraSpace())) {
 						setValue(mValue - mStep);
-					} else if (mUpButton.intersects(pCore.HUD().getMouseCameraSpace())) {
+					} else if (mUpButton.intersectsAA(pCore.HUD().getMouseCameraSpace())) {
 						setValue(mValue + mStep);
 					}
 

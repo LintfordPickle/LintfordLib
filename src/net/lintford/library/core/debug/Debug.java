@@ -166,12 +166,14 @@ public class Debug {
 		float lPosY = -pCore.config().display().windowSize().y / 2;
 		if (mDebugConsole.isOpen()) {
 			mDebugConsole.setPosition(lWindowWidth, lPosY);
-			lPosY += mDebugConsole.h;
+			lPosY += mDebugConsole.height();
+			
 		}
 
 		if (mDebugProfiler.isOpen()) {
 			mDebugProfiler.setPosition(lWindowWidth, lPosY);
-			lPosY += mDebugProfiler.h;
+			lPosY += mDebugProfiler.height();
+			
 		}
 
 		mDebugConsole.update(pCore);

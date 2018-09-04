@@ -78,7 +78,7 @@ public class UISlider extends UIWidget {
 
 	@Override
 	public boolean handleInput(LintfordCore pCore) {
-		if (intersects(pCore.HUD().getMouseCameraSpace())) {
+		if (intersectsAA(pCore.HUD().getMouseCameraSpace())) {
 			if (pCore.input().tryAquireLeftClickOwnership(hashCode())) {
 
 				float lWindowX = x;

@@ -1,7 +1,7 @@
 package net.lintford.library.renderers.windows.components;
 
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.geometry.AARectangle;
+import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
@@ -14,8 +14,8 @@ public class IconIntFilter {
 
 	private UIIconFilter mUIIconFilter;
 	private int mFilterValue;
-	private AARectangle mUISrcRectangle;
-	private AARectangle mUIDstRectangle;
+	private Rectangle mUISrcRectangle;
+	private Rectangle mUIDstRectangle;
 	private boolean mEnabled;
 	private String mFilterName;
 	private boolean mHoveredOver;
@@ -39,11 +39,11 @@ public class IconIntFilter {
 		return mFilterName;
 	}
 
-	public AARectangle uiSrcRectangle() {
+	public Rectangle uiSrcRectangle() {
 		return mUISrcRectangle;
 	}
 
-	public AARectangle uiDstRectangle() {
+	public Rectangle uiDstRectangle() {
 		return mUIDstRectangle;
 	}
 
@@ -74,12 +74,12 @@ public class IconIntFilter {
 	// Constructor
 	// --------------------------------------
 
-	public IconIntFilter(UIIconFilter pParent, AARectangle pSrcRect, String pName, int pFilterValue) {
+	public IconIntFilter(UIIconFilter pParent, Rectangle pSrcRect, String pName, int pFilterValue) {
 		mEnabled = false;
 
 		mUIIconFilter = pParent;
 		mUISrcRectangle = pSrcRect;
-		mUIDstRectangle = new AARectangle();
+		mUIDstRectangle = new Rectangle();
 		mFilterName = pName;
 		mFilterValue = pFilterValue;
 
@@ -93,7 +93,7 @@ public class IconIntFilter {
 	// --------------------------------------
 
 	public boolean handleInput(LintfordCore pCore) {
-		if (mUIDstRectangle.intersects(pCore.HUD().getMouseCameraSpace())) {
+		if (mUIDstRectangle.intersectsAA(pCore.HUD().getMouseCameraSpace())) {
 			mHoveredOver = true;
 
 			if (pCore.input().isMouseTimedLeftClickAvailable()) {

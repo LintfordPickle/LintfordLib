@@ -3,11 +3,11 @@ package net.lintford.library.renderers.windows.components;
 import org.lwjgl.opengl.GL11;
 
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.geometry.AARectangle;
+import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 
-public class ScrollBarContentRectangle extends AARectangle {
+public class ScrollBarContentRectangle extends Rectangle {
 
 	private static final long serialVersionUID = -4159498990402852368L;
 

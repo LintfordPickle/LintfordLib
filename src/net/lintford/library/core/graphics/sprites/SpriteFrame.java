@@ -2,27 +2,18 @@ package net.lintford.library.core.graphics.sprites;
 
 import java.io.Serializable;
 
-import net.lintford.library.core.geometry.AARectangle;
 import net.lintford.library.core.geometry.Anchor;
+import net.lintford.library.core.geometry.Rectangle;
 
 /** Defines a single sprite animation frame */
 // TODO: Check out the serialized version of this class - it contains a lot of potentially superflous information.
-public class SpriteFrame extends AARectangle implements Serializable {
+public class SpriteFrame extends Rectangle implements Serializable {
 
 	private static final long serialVersionUID = 3808825740133201931L;
 
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
-
-	/** Defines a default rotation for this sprite. */
-	public float rot;
-
-	/** The pivot point X component. */
-	public float px;
-
-	/** The pivot point Y component. */
-	public float py;
 
 	/** A list of named anchor points. */
 	public Anchor[] anchors;

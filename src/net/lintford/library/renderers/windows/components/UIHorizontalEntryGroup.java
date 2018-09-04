@@ -79,7 +79,7 @@ public class UIHorizontalEntryGroup extends UIWidget {
 
 	@Override
 	public boolean handleInput(LintfordCore pCore) {
-		if (intersects(pCore.HUD().getMouseCameraSpace())) {
+		if (intersectsAA(pCore.HUD().getMouseCameraSpace())) {
 			int lCount = mChildEntries.size();
 			for (int i = 0; i < lCount; i++) {
 				if (mChildEntries.get(i).handleInput(pCore)) {

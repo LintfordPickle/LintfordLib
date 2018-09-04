@@ -1,7 +1,7 @@
 package net.lintford.library.renderers.windows.components;
 
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.geometry.AARectangle;
+import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.TextureManager;
@@ -32,7 +32,7 @@ public class UIIconButton extends UIWidget {
 	private transient float mClickTimer;
 
 	private transient Texture mButtonTexture;
-	private transient AARectangle mSourceRectangle;
+	private transient Rectangle mSourceRectangle;
 
 	// --------------------------------------
 	// Properties
@@ -72,7 +72,7 @@ public class UIIconButton extends UIWidget {
 		h = 25;
 
 		mR = mG = mB = 1f;
-		mSourceRectangle = new AARectangle();
+		mSourceRectangle = new Rectangle();
 
 	}
 
@@ -82,7 +82,7 @@ public class UIIconButton extends UIWidget {
 
 	@Override
 	public boolean handleInput(LintfordCore pCore) {
-		if (intersects(pCore.HUD().getMouseCameraSpace())) {
+		if (intersectsAA(pCore.HUD().getMouseCameraSpace())) {
 			mHoveredOver = true;
 
 			if (mClickTimer > CLICK_TIMER) {

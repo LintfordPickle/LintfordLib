@@ -79,7 +79,7 @@ public class MenuToggleEntry extends MenuEntry {
 			mFocusLocked = false; // no lock if not focused
 		}
 
-		if (intersects(pCore.HUD().getMouseCameraSpace())) {
+		if (intersectsAA(pCore.HUD().getMouseCameraSpace())) {
 			if (pCore.input().isMouseTimedLeftClickAvailable()) {
 				if (mEnabled) {
 

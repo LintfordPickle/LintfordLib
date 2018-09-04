@@ -6,7 +6,7 @@ import java.util.List;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.camera.ICamera;
-import net.lintford.library.core.geometry.AARectangle;
+import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.TextureManager;
@@ -54,7 +54,7 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 
 	// This is the area within which any scrollable content will be displayed. Scrollbars are only visible if the
 	// height of the mContentDisplayArea is smaller than the height of the mContentRectangle (below).
-	protected AARectangle mContentDisplayArea;
+	protected Rectangle mContentDisplayArea;
 
 	// This is the area that the content would take up, if not limited by the window bounds (i.e. the area of the 'content' visualisation).
 	protected ScrollBarContentRectangle mFullContentRectangle;
@@ -70,10 +70,10 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 
 	// Window icons are loaded from the UI_TEXTURE_NAME. If this is null, no icon
 	// is displayed
-	protected AARectangle mIconSrcRectangle;
+	protected Rectangle mIconSrcRectangle;
 
 	/** Stores the window area of this renderer window */
-	protected AARectangle mWindowArea;
+	protected Rectangle mWindowArea;
 
 	/** If true, this base renderer consumes input and ends the handleInput invocation chain. */
 	protected boolean mExclusiveHandleInput = true;
@@ -88,7 +88,7 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 		return mIsDebugWindow;
 	}
 
-	public AARectangle iconSrcRectangle() {
+	public Rectangle iconSrcRectangle() {
 		return mIconSrcRectangle;
 	}
 
@@ -126,9 +126,9 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 
 		mComponents = new ArrayList<>();
 
-		mWindowArea = new AARectangle();
-		mIconSrcRectangle = new AARectangle();
-		mContentDisplayArea = new AARectangle();
+		mWindowArea = new Rectangle();
+		mIconSrcRectangle = new Rectangle();
+		mContentDisplayArea = new Rectangle();
 
 		// Set some sane defaults
 		mWindowArea.x = 10;
@@ -217,7 +217,7 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 		}
 
 		// 2. window captures mouse clicks even if not dragging
-		if (mIsWindowMoveable && !mIsWindowMoving && mWindowArea.intersects(pCore.HUD().getMouseCameraSpace())) {
+		if (mIsWindowMoveable && !mIsWindowMoving && mWindowArea.intersectsAA(pCore.HUD().getMouseCameraSpace())) {
 
 			// Only acquire lock when we are ready to move ...
 			if (pCore.input().tryAquireLeftClickOwnership(hashCode())) {
@@ -252,7 +252,7 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 		}
 
 		// If the mouse was clicked within the window, then we need to process the click anyway
-		if (mWindowArea.intersects(lMouseScreenSpaceX, lMouseScreenSpaceY)) {
+		if (mWindowArea.intersectsAA(lMouseScreenSpaceX, lMouseScreenSpaceY)) {
 			return pCore.input().tryAquireLeftClickOwnership(hashCode());
 
 		}
@@ -337,7 +337,7 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 	// --------------------------------------
 
 	public void updateWindowPosition(LintfordCore pCore) {
-		final AARectangle lHUDBoundingRect = pCore.HUD().boundingRectangle();
+		final Rectangle lHUDBoundingRect = pCore.HUD().boundingRectangle();
 
 		if (lHUDBoundingRect == null) {
 			return;
@@ -377,7 +377,7 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 	}
 
 	@Override
-	public AARectangle contentDisplayArea() {
+	public Rectangle contentDisplayArea() {
 		return mContentDisplayArea;
 	}
 

@@ -1,7 +1,7 @@
 package net.lintford.library.screenmanager.dialogs;
 
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.geometry.AARectangle;
+import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
@@ -155,7 +155,7 @@ public abstract class BaseDialog extends MenuScreen {
 		font().draw(mMessageString, -DIALOG_WIDTH * 0.5f + TEXT_HORIZONTAL_PADDING, -DIALOG_HEIGHT * 0.5f + 30, ZDEPTH, 1f, DIALOG_WIDTH);
 		font().end();
 
-		AARectangle lHUDRect = pCore.HUD().boundingRectangle();
+		Rectangle lHUDRect = pCore.HUD().boundingRectangle();
 
 		mMenuHeaderFont.begin(pCore.HUD());
 		mMenuHeaderFont.draw(mMenuTitle, lHUDRect.left() + TITLE_PADDING_X, lHUDRect.top(), ZDEPTH, mR, mG, mB, mA, 1f);

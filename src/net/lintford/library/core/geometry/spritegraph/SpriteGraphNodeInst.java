@@ -68,7 +68,7 @@ public class SpriteGraphNodeInst extends Rectangle implements AnimatedSpriteList
 
 	public boolean useSpriteAnimationDimensions;
 	public boolean useSpriteAnimationRotations;
-	
+
 	public float r = 1, g = 1, b = 1, a = 1;
 
 	// --------------------------------------
@@ -311,8 +311,6 @@ public class SpriteGraphNodeInst extends Rectangle implements AnimatedSpriteList
 //		}
 
 		mIsAABB = rot == 0;
-
-		mIsDirty = false;
 
 	}
 

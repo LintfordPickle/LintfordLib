@@ -17,7 +17,8 @@ public class Circle extends Shape {
 	// Variables
 	// --------------------------------------
 
-	private Vector2f[] mVertices;;
+	private float x, y;
+	private Vector2f[] mVertices;
 
 	private float mRadius;
 
@@ -34,6 +35,14 @@ public class Circle extends Shape {
 		return mVertices;
 	}
 
+	public float centerX() {
+		return x;
+	}
+
+	public float centerY() {
+		return y;
+	}
+
 	// --------------------------------------
 	// Constructors
 	// --------------------------------------
@@ -44,12 +53,12 @@ public class Circle extends Shape {
 	}
 
 	public Circle(float pCenterX, float pCenterY, float pRadius) {
-		centerX = pCenterX;
-		centerY = pCenterY;
+		x = pCenterX;
+		y = pCenterY;
 		mRadius = pRadius;
 
 		mVertices = new Vector2f[NUM_VERTICES];
-		mVertices[0] = new Vector2f(centerX, centerY);
+		mVertices[0] = new Vector2f(x, y);
 
 	}
 
@@ -69,11 +78,11 @@ public class Circle extends Shape {
 
 		final int NUM_VERTICES = pOtherShape.getVertices().length;
 		for (int i = 0; i < NUM_VERTICES; i++) {
-			float distTo = Vector2f.distance(centerX, centerY, pOtherShape.getVertices()[i].x, pOtherShape.getVertices()[i].y);
+			float distTo = Vector2f.distance(x, y, pOtherShape.getVertices()[i].x, pOtherShape.getVertices()[i].y);
 
 			if (distTo < min) {
-				pToFill.x = pOtherShape.getVertices()[i].x - centerX;
-				pToFill.y = pOtherShape.getVertices()[i].y - centerY;
+				pToFill.x = pOtherShape.getVertices()[i].x - x;
+				pToFill.y = pOtherShape.getVertices()[i].y - y;
 
 				min = distTo;
 			}
@@ -89,7 +98,7 @@ public class Circle extends Shape {
 	@Override
 	public Vector2f project(Vector2f pAxis, Vector2f pToFill) {
 
-		float c = Vector2f.dot(centerX, centerY, pAxis.x, pAxis.y);
+		float c = Vector2f.dot(x, y, pAxis.x, pAxis.y);
 
 		pToFill.x = c - mRadius;
 		pToFill.y = c + mRadius;
@@ -118,20 +127,21 @@ public class Circle extends Shape {
 	}
 
 	public void setRadius(float pRadius) {
-		set(centerX, centerY, pRadius);
+		set(x, y, pRadius);
 	}
 
 	public void set(float pX, float pY, float pRadius) {
-		centerX = pX;
-		centerY = pY;
+		x = pX;
+		y = pY;
 		mRadius = pRadius;
 
 	}
 
-	public void set(Circle pRect) {
-		centerX = pRect.centerX;
-		centerY = pRect.centerY;
-		mRadius = pRect.mRadius;
+	public void set(Circle pOtherCicle) {
+		x = pOtherCicle.x;
+		y = pOtherCicle.y;
+		
+		mRadius = pOtherCicle.mRadius;
 
 	}
 

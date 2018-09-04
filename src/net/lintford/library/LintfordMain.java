@@ -4,12 +4,12 @@ import net.lintford.library.core.LintfordCore;
 
 public class LintfordMain extends LintfordCore {
 
-	public LintfordMain(GameInfo pGameInfo) {
-		super(pGameInfo);
-		// TODO Auto-generated constructor stub
+	public LintfordMain(GameInfo pGameInfo, String[] pArgs) {
+		super(pGameInfo, pArgs);
+
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] pArgs) {
 		GameInfo lGameInfo = new GameInfo() {
 			@Override
 			public String applicationName() {
@@ -40,9 +40,9 @@ public class LintfordMain extends LintfordCore {
 
 		// ExcavationClient def constructor will automatically create a window and load the previous
 		// settings (if they exist).
-		LintfordMain lClient = new LintfordMain(lGameInfo);
+		LintfordMain lClient = new LintfordMain(lGameInfo, pArgs);
 		lClient.createWindow();
-		
+
 	}
 
 }

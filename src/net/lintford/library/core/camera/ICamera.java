@@ -1,6 +1,6 @@
 package net.lintford.library.core.camera;
 
-import net.lintford.library.core.geometry.AARectangle;
+import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.maths.Matrix4f;
 import net.lintford.library.core.maths.Vector2f;
 
@@ -10,7 +10,7 @@ public interface ICamera {
 		Matrix4f mView = new Matrix4f();
 		Matrix4f mProjection = new Matrix4f();
 		Vector2f mPosition = new Vector2f();
-		AARectangle mRectangle = new AARectangle();
+		Rectangle mRectangle = new Rectangle();
 
 		@Override
 		public Matrix4f view() {
@@ -103,7 +103,7 @@ public interface ICamera {
 		}
 
 		@Override
-		public AARectangle boundingRectangle() {
+		public Rectangle boundingRectangle() {
 			return mRectangle;
 		}
 
@@ -127,7 +127,7 @@ public interface ICamera {
 
 	public abstract Matrix4f view();
 
-	public abstract AARectangle boundingRectangle();
+	public abstract Rectangle boundingRectangle();
 
 	public abstract float getMinX();
 

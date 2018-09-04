@@ -11,7 +11,6 @@ import org.lwjgl.opengl.GL30;
 
 import net.lintford.library.core.camera.ICamera;
 import net.lintford.library.core.debug.GLDebug;
-import net.lintford.library.core.geometry.AARectangle;
 import net.lintford.library.core.geometry.Circle;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.ResourceManager;
@@ -200,7 +199,7 @@ public class TextureBatch {
 
 	}
 
-	public void draw(Texture pTexture, AARectangle pSrcRect, Rectangle pDestRect, float pZ, float pR, float pG, float pB, float pA) {
+	public void draw(Texture pTexture, Rectangle pSrcRect, Rectangle pDestRect, float pZ, float pR, float pG, float pB, float pA) {
 		if (pSrcRect == null || pDestRect == null)
 			return;
 		draw(pTexture, pSrcRect.x, pSrcRect.y, pSrcRect.w, pSrcRect.h, pDestRect, pZ, pR, pG, pB, pA);
@@ -347,7 +346,8 @@ public class TextureBatch {
 
 	}
 
-	public void draw(Texture pTexture, float pSX, float pSY, float pSW, float pSH, float pDX, float pDY, float pDW, float pDH, float pZ, float pRot, float pROX, float pROY, float pScale, float pR, float pG, float pB, float pA) {
+	public void draw(Texture pTexture, float pSX, float pSY, float pSW, float pSH, float pDX, float pDY, float pDW, float pDH, float pZ, float pRot, float pROX, float pROY, float pScale, float pR, float pG, float pB,
+			float pA) {
 		if (!mIsLoaded)
 			return;
 
@@ -371,11 +371,11 @@ public class TextureBatch {
 		float sin = (float) (Math.sin(pRot));
 		float cos = (float) (Math.cos(pRot));
 
-		// TODO: Need to make the scaling more consistent - 
+		// TODO: Need to make the scaling more consistent -
 		// We cannot apply the scaling in this function if the geometric offsets have
 		// already been set outside of the function, i.e. POS_X - HALF_WIDTH
 		// because here we would be resizing the dimensions and the offset will not work
-		
+
 		// Translate the sprite to the origin
 		float dx = -pROX;
 		float dy = -pROY;

@@ -1,7 +1,7 @@
 package net.lintford.library.screenmanager.screens;
 
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.geometry.AARectangle;
+import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.TextureManager;
@@ -27,7 +27,7 @@ public class TimedIntroScreen extends Screen {
 	private boolean mUserRequestSkip;
 	private boolean mTimedActionPerformed;
 
-	private AARectangle mSrcTextureRect;
+	private Rectangle mSrcTextureRect;
 
 	private IMenuAction mActionCallback;
 
@@ -46,7 +46,7 @@ public class TimedIntroScreen extends Screen {
 	}
 
 	public void setTextureSrcRectangle(float pX, float pY, float pW, float pH) {
-		mSrcTextureRect.set(pX, pY, pW, pH);
+		mSrcTextureRect.setCenter(pX, pY, pW, pH);
 
 	}
 
@@ -68,7 +68,7 @@ public class TimedIntroScreen extends Screen {
 		mShowImageTimer = pTimer;
 
 		mTextureBatch = new TextureBatch();
-		mSrcTextureRect = new AARectangle(0, 0, 800, 600);
+		mSrcTextureRect = new Rectangle(0, 0, 800, 600);
 
 	}
 

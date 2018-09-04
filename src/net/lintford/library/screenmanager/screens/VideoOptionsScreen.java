@@ -203,8 +203,8 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 		// TODO: Add ToolTips for all menu options
 
 		// Add the menu entries to the window
-		lLayout.menuEntries().add(mFullScreenEntry);
 		lLayout.menuEntries().add(mMonitorEntry);
+		lLayout.menuEntries().add(mFullScreenEntry);
 		lLayout.menuEntries().add(mAspectRatio);
 		lLayout.menuEntries().add(mResolutionEntry);
 		lLayout.menuEntries().add(mVSync);

@@ -5,7 +5,7 @@ import java.util.List;
 
 import net.lintford.library.ConstantsTable;
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.geometry.AARectangle;
+import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
@@ -18,7 +18,7 @@ import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.MenuScreen.ALIGNMENT;
 
-public abstract class BaseLayout extends AARectangle implements IScrollBarArea {
+public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 
 	private static final long serialVersionUID = 5742176250891551930L;
 
@@ -386,7 +386,7 @@ public abstract class BaseLayout extends AARectangle implements IScrollBarArea {
 			MenuEntry lMenuEntry = menuEntries().get(i);
 
 			// Update the hovered over status (needed to disable hovering on entries)
-			if (lMenuEntry.intersects(pCore.HUD().getMouseCameraSpace())) {
+			if (lMenuEntry.intersectsAA(pCore.HUD().getMouseCameraSpace())) {
 				lMenuEntry.hoveredOver(true);
 
 			} else {
@@ -397,7 +397,7 @@ public abstract class BaseLayout extends AARectangle implements IScrollBarArea {
 			// Update the focus of entries where the mouse is clicked in other areas (other than any
 			// one specific entry).
 			if (pCore.input().mouseLeftClick()) {
-				if (lMenuEntry.intersects(pCore.HUD().getMouseCameraSpace())) {
+				if (lMenuEntry.intersectsAA(pCore.HUD().getMouseCameraSpace())) {
 					lMenuEntry.hasFocus(true);
 
 				} else {
@@ -420,7 +420,7 @@ public abstract class BaseLayout extends AARectangle implements IScrollBarArea {
 				continue;
 
 			if (pCore.input().mouseLeftClick()) {
-				if (lMenuEntry.intersects(pCore.HUD().getMouseCameraSpace())) {
+				if (lMenuEntry.intersectsAA(pCore.HUD().getMouseCameraSpace())) {
 					lMenuEntry.hasFocus(true);
 
 				} else {
@@ -537,7 +537,7 @@ public abstract class BaseLayout extends AARectangle implements IScrollBarArea {
 	}
 
 	@Override
-	public AARectangle contentDisplayArea() {
+	public Rectangle contentDisplayArea() {
 		return this;
 	}
 

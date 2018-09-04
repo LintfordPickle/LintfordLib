@@ -3,7 +3,7 @@ package net.lintford.library.core.camera;
 import org.lwjgl.opengl.GL11;
 
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.geometry.AARectangle;
+import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.maths.Matrix4f;
 import net.lintford.library.core.maths.Vector2f;
 import net.lintford.library.options.DisplayConfig;
@@ -37,7 +37,7 @@ public class Camera implements ICamera {
 
 	protected DisplayConfig mDisplayConfig;
 
-	protected AARectangle mBoundingRectangle;
+	protected Rectangle mBoundingRectangle;
 	protected Vector2f mPosition;
 	protected Vector2f mAcceleration;
 	protected Vector2f mVelocity;
@@ -148,7 +148,7 @@ public class Camera implements ICamera {
 	}
 
 	@Override
-	public AARectangle boundingRectangle() {
+	public Rectangle boundingRectangle() {
 		return mBoundingRectangle;
 	}
 
@@ -164,7 +164,7 @@ public class Camera implements ICamera {
 		this.mMinY = 0;
 		this.mMaxY = 0 + pDisplayConfig.windowSize().y;
 
-		mBoundingRectangle = new AARectangle(mMinX, mMinY, pDisplayConfig.windowSize().x, pDisplayConfig.windowSize().y);
+		mBoundingRectangle = new Rectangle(mMinX, mMinY, pDisplayConfig.windowSize().x, pDisplayConfig.windowSize().y);
 
 		mPosition = new Vector2f();
 		mAcceleration = new Vector2f();
@@ -180,8 +180,8 @@ public class Camera implements ICamera {
 		mZoomFactor = 1.0f;
 
 		createView();
-		createOrtho(mBoundingRectangle.w, mBoundingRectangle.h);
-		updateZoomBounds(mBoundingRectangle.w, mBoundingRectangle.h);
+		createOrtho(mBoundingRectangle.width(), mBoundingRectangle.height());
+		updateZoomBounds(mBoundingRectangle.width(), mBoundingRectangle.height());
 
 	}
 
