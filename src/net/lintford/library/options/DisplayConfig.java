@@ -96,8 +96,8 @@ public class DisplayConfig extends BaseConfig {
 	private Vector2i mAspectRatio;
 
 	private boolean mStretchGameScreen = false;
-	private int mBaseGameResolutionWidth = 640;
-	private int mBaseGameResolutionHeight = 480;
+	private int mBaseGameResolutionWidth = WINDOW_MINIMUM_WIDTH;
+	private int mBaseGameResolutionHeight = WINDOW_MINIMUM_HEIGHT;
 
 	private boolean mVSYNCEnabled;
 	private boolean mWindowIsResizable;
@@ -317,7 +317,7 @@ public class DisplayConfig extends BaseConfig {
 		}
 
 		// Set a minimum window
-		glfwSetWindowSizeLimits(mWindowID, pWidth, pHeight, GLFW_DONT_CARE, GLFW_DONT_CARE);
+		glfwSetWindowSizeLimits(mWindowID, WINDOW_MINIMUM_WIDTH, WINDOW_MINIMUM_HEIGHT, GLFW_DONT_CARE, GLFW_DONT_CARE);
 
 		// Make the openGL the current context
 		glfwMakeContextCurrent(mWindowID);

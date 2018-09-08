@@ -177,7 +177,9 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 
 	private void createVideoSection(BaseLayout lLayout) {
 		mFullScreenEntry = new MenuEnumEntryIndexed<>(mScreenManager, this, "Fullscreen");
+		mFullScreenEntry.buttonSize(BUTTON_SIZE.wide);
 		mResolutionEntry = new MenuDropDownEntry<>(mScreenManager, this, "Resolution");
+		mResolutionEntry.buttonSize(BUTTON_SIZE.wide);
 		mMonitorEntry = new MenuEnumEntryIndexed<>(mScreenManager, this, "Monitor");
 		mAspectRatio = new MenuEnumEntryIndexed<>(mScreenManager, this, "Aspect Ratio");
 		mVSync = new MenuToggleEntry(mScreenManager, this);

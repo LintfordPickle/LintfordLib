@@ -200,6 +200,7 @@ public class Rectangle extends Shape {
 
 	@Override
 	public Vector2f project(Vector2f pAxis, Vector2f pToFill) {
+		if(pAxis == null) return pToFill;
 		float min = Vector2f.dot(mVertices[0].x, mVertices[0].y, pAxis.x, pAxis.y);
 		float max = min;
 		for (int i = 1; i < mVertices.length; i++) {

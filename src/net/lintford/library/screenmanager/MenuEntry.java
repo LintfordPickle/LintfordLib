@@ -126,6 +126,22 @@ public class MenuEntry extends Rectangle {
 
 	public void buttonSize(BUTTON_SIZE pNewSize) {
 		mButtonSize = pNewSize;
+		
+		switch (mButtonSize) {
+		case tiny:
+			w = MENUENTRY_DEF_BUTTON_WIDTH * 0.5f;
+			break;
+		case narrow:
+			w = MENUENTRY_DEF_BUTTON_WIDTH * 0.75f;
+			break;
+		case normal:
+			w = MENUENTRY_DEF_BUTTON_WIDTH;
+			break;
+		case wide:
+			w = MENUENTRY_DEF_BUTTON_WIDTH * 2f;
+			break;
+		}
+		
 	}
 
 	public float getWidth() {
@@ -217,7 +233,7 @@ public class MenuEntry extends Rectangle {
 			w = MENUENTRY_DEF_BUTTON_WIDTH;
 			break;
 		case wide:
-			w = MENUENTRY_DEF_BUTTON_WIDTH * 1.35f;
+			w = MENUENTRY_DEF_BUTTON_WIDTH * 2f;
 			break;
 		}
 

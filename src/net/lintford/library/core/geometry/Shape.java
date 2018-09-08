@@ -25,7 +25,7 @@ public abstract class Shape implements Serializable {
 	// Properties
 	// --------------------------------------
 
-	public abstract Vector2f[] getVertices(); // Local or world space?
+	public abstract Vector2f[] getVertices();
 
 	/**
 	 * Returns the maximum radius of the shape

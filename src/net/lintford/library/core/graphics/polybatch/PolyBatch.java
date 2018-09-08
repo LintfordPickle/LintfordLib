@@ -143,23 +143,32 @@ public class PolyBatch {
 		if (!mIsDrawing || pVertexArray == null || pVertexArray.length < 2)
 			return;
 
+		int lLastIndex = 1;
+
 		final int ARRAY_SIZE = pVertexArray.length;
 		for (int i = 0; i < ARRAY_SIZE - 1; i++) {
+			if (pVertexArray[i] == null || pVertexArray[i + 1] == null)
+				continue;
 			float px0 = pVertexArray[i].x;
 			float py0 = pVertexArray[i].y;
 			float px1 = pVertexArray[i + 1].x;
 			float py1 = pVertexArray[i + 1].y;
 
+			lLastIndex++;
+
 			draw(px0, py0, px1, py1, pZ, pR, pG, pB); // top
 		}
 
 		if (pClose) {
-			float px0 = pVertexArray[0].x;
-			float py0 = pVertexArray[0].y;
-			float px1 = pVertexArray[ARRAY_SIZE - 1].x;
-			float py1 = pVertexArray[ARRAY_SIZE - 1].y;
+			if (pVertexArray[0] != null && pVertexArray[lLastIndex - 1] != null) {
+				float px0 = pVertexArray[0].x;
+				float py0 = pVertexArray[0].y;
+				float px1 = pVertexArray[lLastIndex - 1].x;
+				float py1 = pVertexArray[lLastIndex - 1].y;
 
-			draw(px0, py0, px1, py1, pZ, pR, pG, pB); // top
+				draw(px0, py0, px1, py1, pZ, pR, pG, pB); // top
+
+			}
 
 		}
 

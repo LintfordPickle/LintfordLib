@@ -78,7 +78,7 @@ public class ListLayout extends BaseLayout {
 				}
 
 				lEntry.y = lYPos;
-				lEntry.w = w - paddingLeft() * 3 - paddingRight() * 3;
+				// lEntry.w = w - paddingLeft() * 3 - paddingRight() * 3;
 
 				if (mAnchor == ANCHOR.top) {
 					lYPos += lEntry.getHeight();

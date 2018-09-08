@@ -118,13 +118,12 @@ public class SpriteSheetAnimator implements ISpriteNodeInstanceAnimator, Seriali
 
 			}
 
-			pNode.setCenter(lX, lY, lCurrentFrame.w, lCurrentFrame.h);
+			pNode.set(lX, lY, lCurrentFrame.w, lCurrentFrame.h);
 
 			pNode.rotateAbs(lRot);
 
 		} else {
 			pNode.setPosition(lX, lY);
-			// rotateAbs(lRot);
 
 		}
 	}

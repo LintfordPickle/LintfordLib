@@ -46,7 +46,6 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 	// --------------------------------------
 
 	protected List<UIWidget> mComponents;
-
 	protected String mWindowTitle;
 	protected boolean mIsOpen;
 
@@ -68,9 +67,8 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 	protected ScrollBar mScrollBar;
 	protected float mYScrollVal;
 
-	// Window icons are loaded from the UI_TEXTURE_NAME. If this is null, no icon
-	// is displayed
 	protected Rectangle mIconSrcRectangle;
+	protected String mIconName;
 
 	/** Stores the window area of this renderer window */
 	protected Rectangle mWindowArea;
@@ -304,7 +302,8 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 
 		// Render the icons from the game ui texture
 		if (mIconSrcRectangle != null && !mIconSrcRectangle.isEmpty()) {
-			lTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, mIconSrcRectangle.x, mIconSrcRectangle.y, mIconSrcRectangle.w, mIconSrcRectangle.h, lTitleX, lTitleY, getTitleBarHeight(), getTitleBarHeight(), Z_DEPTH, 1f, 1f, 1f, mWindowAlpha);
+			lTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, mIconSrcRectangle.x, mIconSrcRectangle.y, mIconSrcRectangle.w, mIconSrcRectangle.h, lTitleX, lTitleY, getTitleBarHeight(), getTitleBarHeight(), Z_DEPTH, 1f,
+					1f, 1f, mWindowAlpha);
 
 			lTitleX += 32 + WINDOW_CONTENT_PADDING_X;
 

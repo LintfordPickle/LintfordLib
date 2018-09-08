@@ -277,38 +277,38 @@ public class SpriteGraphNodeInst extends Rectangle implements AnimatedSpriteList
 	 */
 	@Override
 	protected void updateVertices() {
-//		final float lWidth = mFlipH ? -mWidth : mWidth;
-//		final float lHeight = mFlipV ? -mHeight : mHeight;
-//
-//		final float lPX = mFlipH ? -px : px;
-//		final float lPY = mFlipV ? -py : py;
+		final float lWidth = mFlipH ? -w : w;
+		final float lHeight = mFlipV ? -h : h;
 
-//		// Get local space vertex positions
-//		mVertices[0].x = -lWidth / 2;
-//		mVertices[0].y = -lHeight / 2;
-//
-//		mVertices[1].x = lWidth / 2;
-//		mVertices[1].y = -lHeight / 2;
-//
-//		mVertices[2].x = -lWidth / 2;
-//		mVertices[2].y = lHeight / 2;
-//
-//		mVertices[3].x = lWidth / 2;
-//		mVertices[3].y = lHeight / 2;
+		final float lPX = mFlipH ? -px : px;
+		final float lPY = mFlipV ? -py : py;
 
-//		float sin = (float) (Math.sin(rot));
-//		float cos = (float) (Math.cos(rot));
-//
-//		// iterate over the vertices, rotating them by the given amt around the origin point of the GraphNode.
-//		for (int i = 0; i < NUM_VERTICES; i++) {
-//			// Scale the vertices out from local center (before applying world translation)
-//			float dx = -lPX + mVertices[i].x * sx;
-//			float dy = -lPY + mVertices[i].y * sy;
-//
-//			mVertices[i].x = centerX + (dx * cos - (dy * 1f) * sin) * sx;
-//			mVertices[i].y = centerY + (dx * sin + (dy * 1f) * cos) * sy;
-//
-//		}
+		// Get local space vertex positions
+		mVertices[0].x = -lWidth / 2;
+		mVertices[0].y = -lHeight / 2;
+
+		mVertices[1].x = lWidth / 2;
+		mVertices[1].y = -lHeight / 2;
+
+		mVertices[2].x = -lWidth / 2;
+		mVertices[2].y = lHeight / 2;
+
+		mVertices[3].x = lWidth / 2;
+		mVertices[3].y = lHeight / 2;
+
+		float sin = (float) (Math.sin(rot));
+		float cos = (float) (Math.cos(rot));
+
+		// iterate over the vertices, rotating them by the given amt around the origin point of the GraphNode.
+		for (int i = 0; i < NUM_VERTICES; i++) {
+			// Scale the vertices out from local center (before applying world translation)
+			float dx = -lPX + mVertices[i].x * sx;
+			float dy = -lPY + mVertices[i].y * sy;
+
+			mVertices[i].x = centerX() + (dx * cos - (dy * 1f) * sin) * sx;
+			mVertices[i].y = centerY() + (dx * sin + (dy * 1f) * cos) * sy;
+
+		}
 
 		mIsAABB = rot == 0;
 

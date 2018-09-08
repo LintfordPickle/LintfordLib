@@ -235,7 +235,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 			// Check if tool tips are enabled.
 			if (mToolTipEnabled) {
 				mToolTipTimer += pCore.time().elapseGameTimeMilli();
-				
+
 			}
 
 			return true;
@@ -285,7 +285,6 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 
 		final float lLabelWidth = lFontBitmap.getStringWidth(mLabel);
 		final float lSeparatorHalfWidth = lFontBitmap.getStringWidth(lSeparator) * 0.5f;
-
 		mParentScreen.font().begin(pCore.HUD());
 		mParentScreen.font().draw(mLabel, x + w / 2 - 10 - lLabelWidth - lSeparatorHalfWidth, y, mZ, lTextR, lTextG, lTextB, mParentScreen.a(), 1.0f, -1);
 		mParentScreen.font().draw(lSeparator, x + w / 2 - lSeparatorHalfWidth, y, mZ, lTextR, lTextG, lTextB, mParentScreen.a(), 1.0f, -1);

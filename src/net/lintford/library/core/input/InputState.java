@@ -334,7 +334,8 @@ public class InputState {
 	}
 
 	public boolean isMouseTimedLeftClickAvailable() {
-		if (!mLeftClickHandled && mouseLeftClick() && mMenuClickTimer > TIMED_CLICK_DELAY) {
+		boolean clickValue = mouseLeftClick();
+		if (!mLeftClickHandled && clickValue && mMenuClickTimer > TIMED_CLICK_DELAY) {
 			return true;
 
 		}
