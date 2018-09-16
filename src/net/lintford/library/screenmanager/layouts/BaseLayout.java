@@ -18,6 +18,9 @@ import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.MenuScreen.ALIGNMENT;
 
+/**
+ * The dimensions of the BaseLayout are set by the parent screen.
+ */
 public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 
 	private static final long serialVersionUID = 5742176250891551930L;
@@ -26,21 +29,16 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 
 	public final static float LAYOUT_WIDTH = 800;
 
-	public enum ORIENTATION {
-		horizontal, vertical;
-	}
-
-	public enum ANCHOR {
-		top, bottom;
-	}
+	public enum FILL_TYPE {
+		DYNAMIC, STATIC
+	};
 
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
-	protected ORIENTATION mOrientation;
+	protected FILL_TYPE mFillType = FILL_TYPE.STATIC;
 	protected ALIGNMENT mAlignment;
-	protected ANCHOR mAnchor;
 
 	protected MenuScreen mParentScreen;
 	protected List<MenuEntry> mMenuEntries;
@@ -51,13 +49,14 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 	protected boolean mDrawBackground;
 	protected float mR, mG, mB, mA = 1;
 
-	protected float mTopPadding;
-	protected float mBottomPadding;
-	protected float mLeftPadding;
-	protected float mRightPadding;
+	// The margin is applied to the outside of this component
+	protected float mTopMargin;
+	protected float mBottomMargin;
+	protected float mLeftMargin;
+	protected float mRightMargin;
 
-	protected float mMaxWidth;
-	protected float mMaxHeight;
+	protected float mMinWidth;
+	protected float mMinHeight;
 	protected float mForcedHeight;
 	protected float mForcedEntryHeight;
 
@@ -73,6 +72,28 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 	// Properties
 	// --------------------------------------
 
+	public FILL_TYPE fillType() {
+		return mFillType;
+	}
+
+	public void fillType(FILL_TYPE pValue) {
+		mFillType = pValue;
+	}
+
+	public void minWidth(float pNewValue) {
+		mMinWidth = pNewValue;
+
+	}
+
+	public void minHeight(float pNewValue) {
+		mMinHeight = pNewValue;
+
+	}
+
+	public MenuScreen parentScreen() {
+		return mParentScreen;
+	}
+
 	public void setDrawBackground(boolean pEnabled, float pR, float pG, float pB, float pA) {
 		mDrawBackground = pEnabled;
 		mR = pR;
@@ -86,44 +107,36 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 		return mIsLoaded;
 	}
 
-	public float paddingLeft() {
-		return mLeftPadding;
+	public float marginLeft() {
+		return mLeftMargin;
 	}
 
-	public float paddingRight() {
-		return mRightPadding;
+	public float marginRight() {
+		return mRightMargin;
 	}
 
-	public float paddingTop() {
-		return mTopPadding;
+	public float marginTop() {
+		return mTopMargin;
 	}
 
-	public float paddingBottom() {
-		return mBottomPadding;
+	public float marginBottom() {
+		return mBottomMargin;
 	}
 
-	public void setPadding(float pTop, float pLeft, float pRight, float pBottom) {
-		mTopPadding = pTop;
-		mLeftPadding = pLeft;
-		mRightPadding = pRight;
-		mBottomPadding = pBottom;
-
+	public void marginLeft(float pNewValue) {
+		mLeftMargin = pNewValue;
 	}
 
-	public ANCHOR anchor() {
-		return mAnchor;
+	public void marginRight(float pNewValue) {
+		mRightMargin = pNewValue;
 	}
 
-	public void anchor(ANCHOR pNewAnchor) {
-		mAnchor = pNewAnchor;
+	public void marginTop(float pNewValue) {
+		mTopMargin = pNewValue;
 	}
 
-	public ORIENTATION orientation() {
-		return mOrientation;
-	}
-
-	public void orientation(ORIENTATION pNewAlignment) {
-		mOrientation = pNewAlignment;
+	public void marginBottom(float pNewValue) {
+		mBottomMargin = pNewValue;
 	}
 
 	public ALIGNMENT alignment() {
@@ -132,14 +145,6 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 
 	public void alignment(ALIGNMENT pNewAlignment) {
 		mAlignment = pNewAlignment;
-	}
-
-	public void setCenterPosition(float pCenterX, float pCenterY, float pWidth, float pHeight) {
-		x = pCenterX + -pWidth / 2;
-		y = pCenterY + -pHeight / 2;
-
-		w = pWidth;
-		h = pHeight;
 	}
 
 	/** @returns A list of menu entries so derived classes can change the menu contents. */
@@ -180,14 +185,17 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 
 		// Set some defaults
 		mAlignment = ALIGNMENT.center;
-		mOrientation = ORIENTATION.vertical;
-		mLeftPadding = 10f;
-		mRightPadding = 10f;
-		mTopPadding = 5f;
-		mBottomPadding = 5f;
 
 		w = LAYOUT_WIDTH;
 		x = -w / 2;
+
+		mTopMargin = 10f;
+		mBottomMargin = 10f;
+		mLeftMargin = 5f;
+		mRightMargin = 5f;
+
+		mMinWidth = 100f;
+		mMinHeight = 10f;
 
 		mForcedEntryHeight = USE_HEIGHT_OF_ENTRIES;
 		mForcedHeight = USE_HEIGHT_OF_ENTRIES;
@@ -208,7 +216,7 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 		}
 
 		// width = getEntryWidth();
-		h = getHeight();
+		h = getDesiredHeight();
 
 	}
 
@@ -266,9 +274,8 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 		for (int i = 0; i < lCount; i++) {
 			boolean lIsSelected = mParentScreen.isActive() && (i == mSelectedEntry);
 			mMenuEntries.get(i).update(pCore, mParentScreen, lIsSelected);
-		}
 
-		h = getHeight();
+		}
 
 		mContentArea.x = x;
 		mContentArea.y = y;
@@ -276,19 +283,13 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 		mContentArea.h = getEntryHeight();
 
 		mScrollBar.update(pCore);
-		mScrollBarsEnabled = mContentArea.h - getHeight() > 0;
+		mScrollBarsEnabled = mContentArea.h - h > 0;
 
 	}
 
 	public void draw(LintfordCore pCore, float pComponentDepth) {
 		if (!mEnabled)
 			return;
-
-		if (ConstantsTable.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
-			mSpriteBatch.begin(pCore.HUD());
-			mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, x, y, w, h, ZLayers.LAYER_DEBUG, 1f, 0.2f, 1f, 0.6f);
-			mSpriteBatch.end();
-		}
 
 		if (mDrawBackground) {
 			final float TILE_SIZE = 32f;
@@ -298,13 +299,13 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 			mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 480, 64, TILE_SIZE, TILE_SIZE, x + TILE_SIZE, y, w - 64, TILE_SIZE, pComponentDepth, 1, 1, 1, 0.85f);
 			mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 512, 64, TILE_SIZE, TILE_SIZE, x + w - 32, y, TILE_SIZE, TILE_SIZE, pComponentDepth, 1, 1, 1, 0.85f);
 
-			mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 448, 96, TILE_SIZE, TILE_SIZE, x, y + 32, TILE_SIZE, getHeight() - 64, pComponentDepth, 1, 1, 1, 0.85f);
-			mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 480, 96, TILE_SIZE, TILE_SIZE, x + TILE_SIZE, y + 32, w - 64, getHeight() - 64, pComponentDepth, 1, 1, 1, 0.85f);
-			mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 512, 96, TILE_SIZE, TILE_SIZE, x + w - 32, y + 32, TILE_SIZE, getHeight() - 64, pComponentDepth, 1, 1, 1, 0.85f);
+			mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 448, 96, TILE_SIZE, TILE_SIZE, x, y + 32, TILE_SIZE, h - 64, pComponentDepth, 1, 1, 1, 0.85f);
+			mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 480, 96, TILE_SIZE, TILE_SIZE, x + TILE_SIZE, y + 32, w - 64, h - 64, pComponentDepth, 1, 1, 1, 0.85f);
+			mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 512, 96, TILE_SIZE, TILE_SIZE, x + w - 32, y + 32, TILE_SIZE, h - 64, pComponentDepth, 1, 1, 1, 0.85f);
 
-			mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 448, 128, TILE_SIZE, TILE_SIZE, x, y + getHeight() - 32, TILE_SIZE, TILE_SIZE, pComponentDepth, 1, 1, 1, 0.85f);
-			mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 480, 128, TILE_SIZE, TILE_SIZE, x + TILE_SIZE, y + getHeight() - 32, w - 64, TILE_SIZE, pComponentDepth, 1, 1, 1, 0.85f);
-			mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 512, 128, TILE_SIZE, TILE_SIZE, x + w - 32, y + getHeight() - 32, TILE_SIZE, TILE_SIZE, pComponentDepth, 1, 1, 1, 0.85f);
+			mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 448, 128, TILE_SIZE, TILE_SIZE, x, y + h - 32, TILE_SIZE, TILE_SIZE, pComponentDepth, 1, 1, 1, 0.85f);
+			mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 480, 128, TILE_SIZE, TILE_SIZE, x + TILE_SIZE, y + h - 32, w - 64, TILE_SIZE, pComponentDepth, 1, 1, 1, 0.85f);
+			mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 512, 128, TILE_SIZE, TILE_SIZE, x + w - 32, y + h - 32, TILE_SIZE, TILE_SIZE, pComponentDepth, 1, 1, 1, 0.85f);
 			mSpriteBatch.end();
 		}
 
@@ -326,16 +327,31 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 
 		}
 
+		if (ConstantsTable.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
+			mSpriteBatch.begin(pCore.HUD());
+			mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, x, y, w, h, ZLayers.LAYER_DEBUG, 1f, 0.2f, 1f, 0.4f);
+			mSpriteBatch.end();
+		}
+
 	}
 
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
 
-	public void updateStructure() {
+	public void updateStructureDimensions() {
 		final int lCount = mMenuEntries.size();
 		for (int i = 0; i < lCount; i++) {
-			mMenuEntries.get(i).updateStructure();
+			mMenuEntries.get(i).updateStructureDimensions();
+
+		}
+
+	}
+
+	public void updateStructurePositions() {
+		final int lCount = mMenuEntries.size();
+		for (int i = 0; i < lCount; i++) {
+			mMenuEntries.get(i).updateStructurePositions();
 
 		}
 
@@ -453,25 +469,16 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 		if (lEntryCount == 0)
 			return 0;
 
-		if (mOrientation == ORIENTATION.horizontal) {
-			float lResult = 0;
-			for (int i = 0; i < lEntryCount; i++) {
-				lResult += menuEntries().get(i).paddingHorizontal();
-				lResult += menuEntries().get(i).getWidth();
-				lResult += menuEntries().get(i).paddingHorizontal();
+		// return the widest entry
+		float lResult = 0;
+		for (int i = 0; i < lEntryCount; i++) {
+			float lTemp = menuEntries().get(i).marginLeft() + menuEntries().get(i).w + menuEntries().get(i).marginRight();
+			if (lTemp > lResult) {
+				lResult = lTemp;
 			}
-			return lResult;
-		} else {
-			// return the widest entry
-			float lResult = 0;
-			for (int i = 0; i < lEntryCount; i++) {
-				float lTemp = menuEntries().get(i).paddingHorizontal() + menuEntries().get(i).getWidth() + menuEntries().get(i).paddingHorizontal();
-				if (lTemp > lResult) {
-					lResult = lTemp;
-				}
-			}
-			return lResult;
 		}
+
+		return lResult;
 
 	}
 
@@ -483,34 +490,27 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 		if (lEntryCount == 0)
 			return 0;
 
-		if (mOrientation == ORIENTATION.vertical) {
-			// Return the combined height
-			float lResult = paddingTop();
-			for (int i = 0; i < lEntryCount; i++) {
-				lResult += menuEntries().get(i).paddingVertical();
-				lResult += menuEntries().get(i).getHeight();
-				lResult += menuEntries().get(i).paddingVertical();
-			}
+		// Return the combined height
+		float lResult = 0;
 
-			lResult += paddingBottom();
+		for (int i = 0; i < lEntryCount; i++) {
+			MenuEntry lEntry = menuEntries().get(i);
+//			if (!menuEntries().get(i).enabled())
+//				continue;
 
-			return lResult;
-		} else {
-			// return the tallest entry
-			float lResult = 0;
-			for (int i = 0; i < lEntryCount; i++) {
-				float lTemp = menuEntries().get(i).paddingVertical() + menuEntries().get(i).h + menuEntries().get(i).paddingVertical();
-				if (lTemp > lResult) {
-					lResult = lTemp;
-				}
-			}
-			return 0;
+			lResult += lEntry.marginTop();
+			lResult += lEntry.h;
+			lResult += lEntry.marginBottom();
 		}
+
+		return lResult;
+
 	}
 
-	public float getHeight() {
+	public float getDesiredHeight() {
 		if (mForcedHeight != USE_HEIGHT_OF_ENTRIES && mForcedHeight >= 0)
 			return mForcedHeight;
+
 		return getEntryHeight();
 
 	}

@@ -12,6 +12,7 @@ import net.lintford.library.screenmanager.entries.MenuSliderEntry;
 import net.lintford.library.screenmanager.entries.MenuToggleEntry;
 import net.lintford.library.screenmanager.layouts.BaseLayout;
 import net.lintford.library.screenmanager.layouts.ListLayout;
+import net.lintford.library.screenmanager.layouts.BaseLayout.FILL_TYPE;
 
 public class AudioOptionsScreen extends MenuScreen implements EntryInteractions {
 
@@ -27,7 +28,6 @@ public class AudioOptionsScreen extends MenuScreen implements EntryInteractions 
 	// --------------------------------------
 
 	private ConfirmationDialog mConfirmationDialog;
-	private boolean mIsDirty;
 
 	// --------------------------------------==============
 	// Constructor
@@ -37,21 +37,21 @@ public class AudioOptionsScreen extends MenuScreen implements EntryInteractions 
 		super(pScreenManager, "Audio Options");
 
 		ListLayout lAudioList = new ListLayout(this);
+		lAudioList.fillType(FILL_TYPE.DYNAMIC);
 		lAudioList.setDrawBackground(true, 0f, 0f, 0f, 0.75f);
-		lAudioList.setPadding(lAudioList.paddingTop(), lAudioList.paddingLeft(), lAudioList.paddingRight(), 25f);
-		lAudioList.forceHeight(400);
 
 		ListLayout lNavList = new ListLayout(this);
+		lNavList.fillType(FILL_TYPE.STATIC);
 
 		createAudioSection(lAudioList);
 
 		/* Screen control buttons */
-		HorizontalEntryGroup lGroup = new HorizontalEntryGroup(pScreenManager, this);
+		HorizontalEntryGroup lGroup = new HorizontalEntryGroup(pScreenManager, lNavList);
 
-		MenuEntry lButton1 = new MenuEntry(pScreenManager, this, "Back");
+		MenuEntry lButton1 = new MenuEntry(pScreenManager, lNavList, "Back");
 		lButton1.buttonSize(BUTTON_SIZE.narrow);
 		lButton1.registerClickListener(this, BUTTON_CANCEL_CHANGES);
-		MenuEntry lButton2 = new MenuEntry(pScreenManager, this, "Apply");
+		MenuEntry lButton2 = new MenuEntry(pScreenManager, lNavList, "Apply");
 		lButton2.buttonSize(BUTTON_SIZE.narrow);
 		lButton2.registerClickListener(this, BUTTON_APPLY_CHANGES);
 
@@ -64,18 +64,16 @@ public class AudioOptionsScreen extends MenuScreen implements EntryInteractions 
 		layouts().add(lAudioList);
 		layouts().add(lNavList);
 
-		mIsDirty = true;
-
 	}
 
 	private void createAudioSection(BaseLayout lLayout) {
-		MenuLabelEntry lMusicOptionsTitle = new MenuLabelEntry(mScreenManager, this);
+		MenuLabelEntry lMusicOptionsTitle = new MenuLabelEntry(mScreenManager, lLayout);
 		lMusicOptionsTitle.label("Music Options");
 		lMusicOptionsTitle.alignment(ALIGNMENT.left);
 
-		MenuToggleEntry mMusicEnabledEntry = new MenuToggleEntry(mScreenManager, this);
+		MenuToggleEntry mMusicEnabledEntry = new MenuToggleEntry(mScreenManager, lLayout);
 		mMusicEnabledEntry.label("Music Enabled");
-		MenuSliderEntry mMusicVolumnEntry = new MenuSliderEntry(mScreenManager, this);
+		MenuSliderEntry mMusicVolumnEntry = new MenuSliderEntry(mScreenManager, lLayout);
 		mMusicVolumnEntry.label("Music Volume");
 		mMusicVolumnEntry.setBounds(0, 100, 5);
 		mMusicVolumnEntry.setValue(75); // TODO: Music volume should be loaded from the config onLoad.
@@ -84,14 +82,14 @@ public class AudioOptionsScreen extends MenuScreen implements EntryInteractions 
 		mMusicVolumnEntry.showValueUnit(true);
 		mMusicVolumnEntry.showValueGuides(false);
 
-		MenuLabelEntry lSoundOptionsTitle = new MenuLabelEntry(mScreenManager, this);
+		MenuLabelEntry lSoundOptionsTitle = new MenuLabelEntry(mScreenManager, lLayout);
 		lSoundOptionsTitle.label("Sound Options");
 		lSoundOptionsTitle.alignment(ALIGNMENT.left);
 
-		MenuToggleEntry mSoundEnabledEntry = new MenuToggleEntry(mScreenManager, this);
+		MenuToggleEntry mSoundEnabledEntry = new MenuToggleEntry(mScreenManager, lLayout);
 		mSoundEnabledEntry.label("SoundFX Enabled");
 
-		MenuSliderEntry mSoundVolumnEntry = new MenuSliderEntry(mScreenManager, this);
+		MenuSliderEntry mSoundVolumnEntry = new MenuSliderEntry(mScreenManager, lLayout);
 		mSoundVolumnEntry.label("SoundFX Volume");
 		mSoundVolumnEntry.setBounds(0, 100, 5);
 		mSoundVolumnEntry.setValue(75); // TODO: Sound volume should be loaded from the config onLoad.
@@ -123,7 +121,6 @@ public class AudioOptionsScreen extends MenuScreen implements EntryInteractions 
 
 		case BUTTON_APPLY_CHANGES:
 			// Temp
-			mIsDirty = false;
 			exitScreen();
 			break;
 

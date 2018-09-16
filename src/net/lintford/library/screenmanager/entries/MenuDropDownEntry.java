@@ -5,10 +5,11 @@ import java.util.List;
 
 import org.lwjgl.opengl.GL11;
 
+import net.lintford.library.ConstantsTable;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.ResourceManager;
-import net.lintford.library.core.graphics.fonts.BitmapFont;
+import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 import net.lintford.library.core.input.InputState;
@@ -20,6 +21,7 @@ import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.Screen;
 import net.lintford.library.screenmanager.ScreenManager;
+import net.lintford.library.screenmanager.layouts.BaseLayout;
 
 /**  */
 public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
@@ -89,11 +91,6 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 	}
 
 	@Override
-	public float getHeight() {
-		return mOpen ? MENUENTRY_HEIGHT : MENUENTRY_HEIGHT;
-	}
-
-	@Override
 	public void hasFocus(boolean pNewValue) {
 		super.hasFocus(pNewValue);
 
@@ -145,8 +142,8 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 	// Constructor
 	// --------------------------------------
 
-	public MenuDropDownEntry(ScreenManager pScreenManager, MenuScreen pParentScreen, String pLabel) {
-		super(pScreenManager, pParentScreen, "");
+	public MenuDropDownEntry(ScreenManager pScreenManager, BaseLayout pParentLayout, String pLabel) {
+		super(pScreenManager, pParentLayout, "");
 
 		mItems = new ArrayList<>();
 		mLabel = pLabel;
@@ -195,7 +192,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 		} else if (intersectsAA(pCore.HUD().getMouseCameraSpace())) {
 
 			//
-			mParentScreen.setHoveringOn(this);
+			mParentLayout.parentScreen().setHoveringOn(this);
 
 			if (pCore.input().isMouseTimedLeftClickAvailable()) {
 				if (mEnabled) {
@@ -224,7 +221,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 
 					mOpen = !mOpen;
 
-					mParentScreen.setFocusOn(pCore, this, true);
+					mParentLayout.parentScreen().setFocusOn(pCore, this, true);
 
 					pCore.input().setLeftMouseClickHandled();
 
@@ -250,20 +247,26 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 	}
 
 	@Override
+	public void updateStructureDimensions() {
+		w = Math.min(mParentLayout.w - 50f, MENUENTRY_MAX_WIDTH);
+
+	}
+
+	@Override
 	public void update(LintfordCore pCore, MenuScreen pScreen, boolean pIsSelected) {
 		if (mItems == null || mItems.size() == 0)
 			return;
 
 		super.update(pCore, pScreen, pIsSelected);
 
-		mTopEntry.setCenter(x + w / 2, y, w / 2, MENUENTRY_HEIGHT);
+		mTopEntry.setCenter(x + w / 2, y, w / 2, MENUENTRY_DEF_BUTTON_WIDTH);
 
 		// w = MENUENTRY_DEF_BUTTON_WIDTH;
-		h = mOpen ? OPEN_HEIGHT : MENUENTRY_HEIGHT;
+		h = mOpen ? OPEN_HEIGHT : MENUENTRY_DEF_BUTTON_HEIGHT;
 
 		mContentRectangle.set(x, y + mScrollYPosition, w, mItems.size() * 25);
 		// We need to offset the window rectangle so it doesn't obscure the current selected item
-		mWindowRectangle.set(x + w / 2, y + 25, w / 2, h - 50);
+		mWindowRectangle.set(x + w / 2, y + 32, w / 2, h - 50);
 
 		mScrollBar.update(pCore);
 	}
@@ -271,43 +274,42 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 	@Override
 	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pComponentDepth) {
 
-		BitmapFont lFontBitmap = mParentScreen.font().bitmap();
+		FontUnit lFontUnit = mParentLayout.parentScreen().font();
 
 		// TITLE BAR
 		mZ = mOpen ? ZLayers.LAYER_SCREENMANAGER + Z_STATE_MODIFIER_ACTIVE : ZLayers.LAYER_SCREENMANAGER + Z_STATE_MODIFIER_PASSIVE;
 
 		// Render the label
-		float lTextR = mEnabled ? mParentScreen.r() : 0.24f;
-		float lTextG = mEnabled ? mParentScreen.g() : 0.24f;
-		float lTextB = mEnabled ? mParentScreen.b() : 0.24f;
+		float lTextR = mEnabled ? mParentLayout.parentScreen().r() : 0.24f;
+		float lTextG = mEnabled ? mParentLayout.parentScreen().g() : 0.24f;
+		float lTextB = mEnabled ? mParentLayout.parentScreen().b() : 0.24f;
+		float lTextA = mEnabled ? mParentLayout.parentScreen().a() : 1f;
 
 		final String lSeparator = " : ";
 
-		final float lLabelWidth = lFontBitmap.getStringWidth(mLabel);
-		final float lSeparatorHalfWidth = lFontBitmap.getStringWidth(lSeparator) * 0.5f;
-		mParentScreen.font().begin(pCore.HUD());
-		mParentScreen.font().draw(mLabel, x + w / 2 - 10 - lLabelWidth - lSeparatorHalfWidth, y, mZ, lTextR, lTextG, lTextB, mParentScreen.a(), 1.0f, -1);
-		mParentScreen.font().draw(lSeparator, x + w / 2 - lSeparatorHalfWidth, y, mZ, lTextR, lTextG, lTextB, mParentScreen.a(), 1.0f, -1);
+		final float lLabelWidth = lFontUnit.bitmap().getStringWidth(mLabel);
+		final float lFontHeight = lFontUnit.bitmap().fontHeight();
+
+		final float lSeparatorHalfWidth = lFontUnit.bitmap().getStringWidth(lSeparator) * 0.5f;
+		lFontUnit.begin(pCore.HUD());
+		lFontUnit.draw(mLabel, x + w / 2 - 10 - lLabelWidth - lSeparatorHalfWidth, y + lFontHeight / 2f, mZ, lTextR, lTextG, lTextB, lTextA, 1.0f, -1);
+		lFontUnit.draw(lSeparator, x + w / 2 - lSeparatorHalfWidth, y + lFontHeight / 2f, mZ, lTextR, lTextG, lTextB, lTextA, 1.0f, -1);
 
 		if (mItems == null || mItems.size() == 0) {
 			// LOCALIZATION: No entries added to dropdown list
 			final String lNoEntriesText = "No items found";
-			mParentScreen.font().draw(lNoEntriesText, x + w / 2 + lSeparatorHalfWidth + SPACE_BETWEEN_TEXT, y, mZ, lTextR, lTextG, lTextB, mParentScreen.a(), 1.0f, -1);
-			mParentScreen.font().end();
+			mParentLayout.parentScreen().font().draw(lNoEntriesText, x + w / 2 + lSeparatorHalfWidth + SPACE_BETWEEN_TEXT, y, mZ, lTextR, lTextG, lTextB, lTextA, 1.0f, -1);
+			mParentLayout.parentScreen().font().end();
 			return;
 		}
 
 		MenuEnumEntryItem lSelectItem = mItems.get(mSelectedIndex);
-		float lYPos = y + mScrollYPosition;
+
 		// Render the selected item in the 'top spot'
 		final String lCurItem = lSelectItem.name;
-		final float lSelectedTextWidth = mParentScreen.font().bitmap().getStringWidth(lCurItem);
-		mParentScreen.font().draw(lCurItem, x + (w / 4 * 3) + -lSelectedTextWidth / 2, y, mZ, lTextR, lTextG, lTextB, mParentScreen.a(), 1.0f, -1);
-		lYPos += 25;
-
-		mParentScreen.font().end();
-
-		mParentScreen.font().begin(pCore.HUD());
+		final float lSelectedTextWidth = lFontUnit.bitmap().getStringWidth(lCurItem);
+		lFontUnit.draw(lCurItem, x + (w / 4 * 3) + -lSelectedTextWidth / 2, y + lFontHeight / 2f, mZ, lTextR, lTextG, lTextB, lTextA, 1.0f, -1);
+		lFontUnit.end();
 
 		// CONTENT PANE
 
@@ -316,44 +318,59 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 96, 0, 32, 32, mWindowRectangle, mZ, 1, 1, 1, 1);
 			mTextureBatch.end();
 
-		}
+			lFontUnit.begin(pCore.HUD());
 
-		// We need to use a stencil buffer to clip the list box items (which, when scrolling, could appear out-of-bounds of the listbox).
-		GL11.glEnable(GL11.GL_STENCIL_TEST);
-		GL11.glDisable(GL11.GL_DEPTH_TEST);
+			// We need to use a stencil buffer to clip the list box items (which, when scrolling, could appear out-of-bounds of the listbox).
+			GL11.glEnable(GL11.GL_STENCIL_TEST);
+			GL11.glDisable(GL11.GL_DEPTH_TEST);
 
-		GL11.glStencilFunc(GL11.GL_ALWAYS, 1, 0xFF); // Set any stencil to 1
-		GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_REPLACE); // What should happen to stencil values
-		GL11.glStencilMask(0xFF); // Write to stencil buffer
+			GL11.glStencilFunc(GL11.GL_ALWAYS, 1, 0xFF); // Set any stencil to 1
+			GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_REPLACE); // What should happen to stencil values
+			GL11.glStencilMask(0xFF); // Write to stencil buffer
 
-		// Make sure we are starting with a fresh stencil buffer
-		GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT); // Clear the stencil buffer
+			// Make sure we are starting with a fresh stencil buffer
+			GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT); // Clear the stencil buffer
 
-		mTextureBatch.begin(pCore.HUD());
-		mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 32, 0, 32, 32, mWindowRectangle, -8f, 1, 1, 1, 0);
-		mTextureBatch.end();
+			mTextureBatch.begin(pCore.HUD());
+			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 32, 0, 32, 32, mWindowRectangle, -8f, 1, 1, 1, 0);
+			mTextureBatch.end();
 
-		// Start the stencil buffer test to filter out everything outside of the scroll view
-		GL11.glStencilFunc(GL11.GL_EQUAL, 1, 0xFF); // Pass test if stencil value is 1
+			// Start the stencil buffer test to filter out everything outside of the scroll view
+			GL11.glStencilFunc(GL11.GL_EQUAL, 1, 0xFF); // Pass test if stencil value is 1
 
-		if (mOpen) {
+			float lYPos = y + mScrollYPosition;
+			lYPos += 32;
+
 			for (int i = 0; i < mItems.size(); i++) {
 				MenuEnumEntryItem lItem = mItems.get(i);
-				final float lItemTextWidth = mParentScreen.font().bitmap().getStringWidth(lItem.name);
-				mParentScreen.font().draw(lItem.name, x + (w / 4 * 3) - lItemTextWidth / 2, lYPos, mZ + 0.1f, lTextR, lTextG, lTextB, mParentScreen.a(), 1.0f, -1);
+				final float lItemTextWidth = lFontUnit.bitmap().getStringWidth(lItem.name);
+				lFontUnit.draw(lItem.name, x + (w / 4 * 3) - lItemTextWidth / 2, lYPos, mZ + 0.1f, lTextR, lTextG, lTextB, lTextA, 1.0f, -1);
 				lYPos += 25;
 
 			}
 
+			lFontUnit.end();
+
+			GL11.glDisable(GL11.GL_STENCIL_TEST);
+			GL11.glEnable(GL11.GL_DEPTH_TEST);
+
 		}
-
-		mParentScreen.font().end();
-
-		GL11.glDisable(GL11.GL_STENCIL_TEST);
-		GL11.glEnable(GL11.GL_DEPTH_TEST);
 
 		if (mOpen && mScrollBar.areaNeedsScrolling())
 			mScrollBar.draw(pCore, mTextureBatch, -0.1f);
+
+		// Draw the down arrow
+		mTextureBatch.begin(pCore.HUD());
+		mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 416, 192, 32, 32, right() - 32 - 8f, top(), 32, 32, mZ, 1f, 1f, 1f, 1f);
+		mTextureBatch.end();
+
+		if (ConstantsTable.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
+			mTextureBatch.begin(pCore.HUD());
+			final float ALPHA = 0.3f;
+			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, x, y, w, h, mZ, 1f, 0.2f, 0.2f, ALPHA);
+			mTextureBatch.end();
+
+		}
 
 	}
 

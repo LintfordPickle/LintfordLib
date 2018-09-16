@@ -2,6 +2,7 @@ package net.lintford.library.screenmanager;
 
 import java.util.ArrayList;
 
+import net.lintford.library.controllers.display.UIHUDController;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.fonts.FontManager;
@@ -24,10 +25,15 @@ public class ScreenManager {
 	private boolean mIsInitialised;
 	private boolean mIsLoaded;
 	private int mScreenCounter;
+	private UIHUDController mUIHUDController;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public UIHUDController UIHUDController() {
+		return mUIHUDController;
+	}
 
 	public ResourceManager resources() {
 		return mResourceManager;
@@ -89,6 +95,8 @@ public class ScreenManager {
 			mScreens.get(i).initialise();
 		}
 
+		mUIHUDController = (UIHUDController) mLWJGLCore.controllerManager().getControllerByNameRequired(UIHUDController.CONTROLLER_NAME, LintfordCore.CORE_ID);
+
 		mIsInitialised = true;
 
 	}
@@ -139,6 +147,9 @@ public class ScreenManager {
 		if (!mIsInitialised || !mIsLoaded)
 			return;
 
+		boolean lOtherScreenHasFocus = false;
+		boolean lCoveredByOtherScreen = false;
+		
 		mScreensToUpdate.clear();
 
 		int lCount = mScreens.size();
@@ -147,18 +158,16 @@ public class ScreenManager {
 
 		}
 
-		mToastManager.update(pCore);
-
-		boolean lOtherScreenHasFocus = false;
-		boolean lCoveredByOtherScreen = false;
-
 		while (mScreensToUpdate.size() > 0) {
 			Screen lScreen = mScreensToUpdate.get(mScreensToUpdate.size() - 1);
 
 			mScreensToUpdate.remove(mScreensToUpdate.size() - 1);
 
-			// update the screen positioning (recursive, children too).
-			lScreen.updateStructure(pCore);
+			// update the screen dimenions (recursive)
+			lScreen.updateStructureDimensions(pCore);
+
+			// update the screen positioning (recursive).
+			lScreen.updateStructurePositions(pCore);
 
 			// Update the screen
 			lScreen.update(pCore, lOtherScreenHasFocus, lCoveredByOtherScreen);
@@ -174,6 +183,8 @@ public class ScreenManager {
 			}
 
 		}
+		
+		mToastManager.update(pCore);
 
 	}
 
@@ -189,6 +200,8 @@ public class ScreenManager {
 			mScreens.get(i).draw(pCore);
 
 		}
+
+		// Debug.debugManager().drawers().drawRect(pCore.HUD(), mUIHUDController.HUDRectangle());
 
 		mToastManager.draw(pCore);
 

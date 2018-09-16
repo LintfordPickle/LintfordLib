@@ -45,7 +45,7 @@ public abstract class BaseDialog extends MenuScreen {
 		mTransitionOff = null;
 		mA = 1f;
 
-		mTopMargin = 400f;
+		mPaddingTop = 400f;
 
 		mIsPopup = true; // don't hide underlying screens
 	}
@@ -76,7 +76,13 @@ public abstract class BaseDialog extends MenuScreen {
 	}
 
 	@Override
-	public void updateStructure(LintfordCore pCore) {
+	public void updateStructureDimensions(LintfordCore pCore) {
+		super.updateStructureDimensions(pCore);
+
+	}
+
+	@Override
+	public void updateStructurePositions(LintfordCore pCore) {
 		float lTextHeight = font().bitmap().getStringHeight(mMessageString);
 
 		// Get the Y Start position of the menu entries
@@ -87,25 +93,25 @@ public abstract class BaseDialog extends MenuScreen {
 			// TODO: Ignore floating layouts
 			BaseLayout lLayout = layouts().get(i);
 
-			lYPos += lLayout.paddingTop();
+			lYPos += 0;//lLayout.paddingTop();
 
 			switch (mChildAlignment) {
 			case left:
-				lLayout.x = lLayout.paddingLeft();
+				lLayout.x = 0;//lLayout.paddingLeft();
 				break;
 			case center:
 				lLayout.x = -lLayout.w / 2;
 				break;
 			case right:
-				lLayout.x = pCore.config().display().windowSize().x - lLayout.w - lLayout.paddingRight();
+				lLayout.x = pCore.config().display().windowSize().x - lLayout.w;// - lLayout.paddingRight();
 				break;
 			}
 
 			lLayout.y = lYPos;
-			lYPos += lLayout.h + lLayout.paddingBottom();
+			lYPos += lLayout.h;// + lLayout.paddingBottom();
 			lLayout.w = DIALOG_WIDTH - 32;
 
-			layouts().get(i).updateStructure();
+			layouts().get(i).updateStructurePositions();
 
 		}
 
@@ -148,7 +154,7 @@ public abstract class BaseDialog extends MenuScreen {
 			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 480, 128, TILE_SIZE, TILE_SIZE, x + TILE_SIZE, y + h - 32, w - 64, TILE_SIZE, ZDEPTH, 1, 1, 1, a);
 			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 512, 128, TILE_SIZE, TILE_SIZE, x + w - 32, y + h - 32, TILE_SIZE, TILE_SIZE, ZDEPTH, 1, 1, 1, a);
 			mTextureBatch.end();
-			
+
 		}
 
 		font().begin(pCore.HUD());

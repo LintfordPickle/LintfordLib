@@ -37,10 +37,10 @@ public class ScrollBar extends Rectangle {
 	public boolean areaNeedsScrolling() {
 		float lViewportHeight = mScrollBarArea.contentDisplayArea().h;
 		float lContentHeight = Math.max(mScrollBarArea.contentDisplayArea().h, mScrollBarArea.fullContentArea().h);
-		
+
 		return lContentHeight > lViewportHeight;
 	}
-	
+
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
@@ -62,7 +62,7 @@ public class ScrollBar extends Rectangle {
 
 		final float lMaxDiff = mScrollBarArea.fullContentArea().h - mScrollBarArea.contentDisplayArea().h;
 
-		// First check that the left mouse button is down 
+		// First check that the left mouse button is down
 		if (!pCore.input().mouseLeftClick()) {
 			mClickActive = false; // Cannot be active if mouse not clicked
 			return false;
@@ -122,7 +122,7 @@ public class ScrollBar extends Rectangle {
 		y = mScrollBarArea.contentDisplayArea().y;
 		w = 20;
 		h = mScrollBarArea.contentDisplayArea().h;
-		
+
 	}
 
 	public void draw(LintfordCore pCore, TextureBatch pTextureBatch, float pZDepth) {
@@ -136,7 +136,13 @@ public class ScrollBar extends Rectangle {
 
 		// Draw the marker bar
 		pTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, x + 9, y, 2, h, pZDepth, 1f, 1f, 1f, 1f);
-		pTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, x + 5, by, 10, mMarkerBarHeight, pZDepth, 1f, 1f, 1f, 1f);
+
+		// Draw the moving bar
+		float lR = mClickActive ? 0.5f : 1f;
+		float lG = mClickActive ? 0.5f : 1f;
+		float lB = mClickActive ? 0.5f : 1f;
+
+		pTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, x + 5, by, 10, mMarkerBarHeight, pZDepth, lR, lG, lB, 1f);
 
 		pTextureBatch.end();
 
@@ -154,11 +160,11 @@ public class ScrollBar extends Rectangle {
 		float oy = mScrollBarArea.currentYPos();
 		float ny = getScrollYBottomPosition();
 		boolean lResult = oy == ny;
-		
+
 		return lResult;
-		
+
 	}
-	
+
 	public float getScrollYTopPosition() {
 		return 0;
 	}

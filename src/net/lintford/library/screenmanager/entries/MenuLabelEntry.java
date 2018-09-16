@@ -1,17 +1,20 @@
 package net.lintford.library.screenmanager.entries;
 
+import net.lintford.library.ConstantsTable;
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.graphics.fonts.BitmapFont;
+import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
+import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.MenuScreen.ALIGNMENT;
 import net.lintford.library.screenmanager.Screen;
 import net.lintford.library.screenmanager.ScreenManager;
+import net.lintford.library.screenmanager.layouts.BaseLayout;
 
 public class MenuLabelEntry extends MenuEntry {
 
 	private static final long serialVersionUID = -6246272207476797676L;
-	
+
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
@@ -33,15 +36,6 @@ public class MenuLabelEntry extends MenuEntry {
 	/** Padding is applied when the label is either aligned left or right (not when centered). */
 	public void padding(float pNewValue) {
 		mPadding = pNewValue;
-	}
-
-	@Override
-	public float getHeight() {
-		if (mParentScreen.fontHeader() != null) {
-			return mParentScreen.fontHeader().bitmap().fontHeight();
-		}
-
-		return super.getHeight();
 	}
 
 	public void alignment(ALIGNMENT center) {
@@ -92,8 +86,8 @@ public class MenuLabelEntry extends MenuEntry {
 	// Constructor
 	// --------------------------------------
 
-	public MenuLabelEntry(ScreenManager pScreenManager, MenuScreen pParentScreen) {
-		super(pScreenManager, pParentScreen, "");
+	public MenuLabelEntry(ScreenManager pScreenManager, BaseLayout pParentLayout) {
+		super(pScreenManager, pParentLayout, "");
 
 		mText = "Add your message";
 		mShow = true;
@@ -113,8 +107,15 @@ public class MenuLabelEntry extends MenuEntry {
 	public void initialise() {
 		super.initialise();
 
-		w = getWidth();
-		h = MENUENTRY_HEIGHT;
+		w = MENUENTRY_DEF_BUTTON_WIDTH;
+		h = MENUENTRY_DEF_BUTTON_HEIGHT;
+
+	}
+
+	@Override
+	public void updateStructureDimensions() {
+		// TODO: This -50 is because of the scrollbar - this is why I needed to keep the padding :(
+		w = Math.min(mParentLayout.w - 50f, MENUENTRY_MAX_WIDTH);
 
 	}
 
@@ -123,37 +124,43 @@ public class MenuLabelEntry extends MenuEntry {
 		if (!enabled())
 			return;
 
-		BitmapFont lFontBitmap = mParentScreen.font().bitmap();
+		final float lUIFontScaleFactor = mScreenManager.UIHUDController().uiTextScaleFactor();
 
-		final float lLabelWidth = lFontBitmap.getStringWidth(mText);
+		final MenuScreen lParentScreen = mParentLayout.parentScreen();
+		final FontUnit lFont = lParentScreen.font();
 
-		float lX = x + w / 2 - lLabelWidth / 2;
+		final float lLabelWidth = lFont.bitmap().getStringWidth(mText, lUIFontScaleFactor);
+		final float lFontHeight = lFont.bitmap().fontHeight();
+
+		float lX = x + w / 2 - lLabelWidth / 2; // Center label
 		switch (mAlignment) {
 		case left:
-			lX = x + mPadding;
+			lX = x;
 			break;
 		case right:
 			lX = x - mPadding - lLabelWidth;
 			break;
 		default:
-			lX = x + w / 2 - lLabelWidth / 2;
+			lX = x + w / 2 - lLabelWidth / 2; // Center label
 			break;
 		}
 
-		final float FONT_SCALE = 1f;
-		mParentScreen.font().begin(pCore.HUD());
-		mParentScreen.font().draw(mText, lX, y, pParentZDepth + .1f, mR, mG, mB, mParentScreen.a(), FONT_SCALE);
-		mParentScreen.font().end();
+		lFont.begin(pCore.HUD());
+		lFont.draw(mText, lX, y + lFontHeight / 2, pParentZDepth + .1f, mR, mG, mB, lParentScreen.a(), lUIFontScaleFactor);
+		lFont.end();
+
+		if (ConstantsTable.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
+			mTextureBatch.begin(pCore.HUD());
+			final float lAlpha = 0.3f;
+			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, x, y, w, h, mZ, 1f, 0.2f, 0.2f, lAlpha);
+			mTextureBatch.end();
+
+		}
 
 	}
 
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
-
-	@Override
-	public float getWidth() {
-		return 800; // getTextWidth(mText);
-	}
 
 }

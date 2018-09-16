@@ -57,7 +57,7 @@ public class LoadingScreen extends Screen {
 
 		mTransitionOn = new TransitionFadeIn(new TimeSpan(500));
 		mTransitionOff = new TransitionFadeOut(new TimeSpan(500));
-		
+
 		mIsPopup = true;
 
 	}
@@ -74,7 +74,7 @@ public class LoadingScreen extends Screen {
 
 		int lScreenCount = lScreenList.size();
 		for (int i = 0; i < lScreenCount; i++) {
-			if(!lScreenList.get(i).isExiting())
+			if (!lScreenList.get(i).isExiting())
 				lScreenList.get(i).exitScreen();
 
 		}
@@ -91,7 +91,7 @@ public class LoadingScreen extends Screen {
 	@Override
 	public void loadGLContent(ResourceManager pResourceManager) {
 		super.loadGLContent(pResourceManager);
-		
+
 		mTextureBatch = new TextureBatch();
 		mTextureBatch.loadGLContent(pResourceManager);
 
@@ -103,11 +103,21 @@ public class LoadingScreen extends Screen {
 	@Override
 	public void unloadGLContent() {
 		super.unloadGLContent();
-		
+
 		if (mTextureBatch != null) {
 			mTextureBatch.unloadGLContent();
 
 		}
+
+	}
+
+	@Override
+	public void updateStructureDimensions(LintfordCore pCore) {
+
+	}
+
+	@Override
+	public void updateStructurePositions(LintfordCore pCore) {
 
 	}
 
@@ -176,7 +186,8 @@ public class LoadingScreen extends Screen {
 			mTextureBatch.begin(pCore.HUD());
 			mTextureBatch.draw(mLoadingTexture, 0, 0, textureWidth, textureHeight, -textureWidth / 2, -textureHeight / 2, textureWidth, textureHeight, -0.1f, 1f, 1f, 1f, 1f);
 			if (mDisplayLoadingText)
-				mTextureBatch.draw(mLoadingTextTexture, 0, 0, textTextureWidth, textTextureHeight, textureWidth / 2 - textTextureWidth - 10, textureHeight / 2 - textTextureHeight - 10, textTextureWidth, textTextureHeight, -0.1f, 1f, 1f, 1f, 1f);
+				mTextureBatch.draw(mLoadingTextTexture, 0, 0, textTextureWidth, textTextureHeight, textureWidth / 2 - textTextureWidth - 10, textureHeight / 2 - textTextureHeight - 10, textTextureWidth,
+						textTextureHeight, -0.1f, 1f, 1f, 1f, 1f);
 			mTextureBatch.end();
 
 		}

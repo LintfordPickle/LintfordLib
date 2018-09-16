@@ -13,6 +13,7 @@ import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.Screen;
 import net.lintford.library.screenmanager.ScreenManager;
+import net.lintford.library.screenmanager.layouts.BaseLayout;
 
 public class MenuSliderEntry extends MenuEntry {
 
@@ -97,25 +98,12 @@ public class MenuSliderEntry extends MenuEntry {
 
 	}
 
-	@Override
-	public float getHeight() {
-		float lHeight = super.getHeight(); // Base height
-
-		if (mShowGuideValuesEnabled)
-			lHeight += 32;
-
-		if (mShowValueEnabled)
-			lHeight += 32;
-
-		return lHeight;
-	}
-
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
-	public MenuSliderEntry(ScreenManager pScreenManager, MenuScreen pParentScreen) {
-		super(pScreenManager, pParentScreen, "");
+	public MenuSliderEntry(ScreenManager pScreenManager, BaseLayout pParentLayout) {
+		super(pScreenManager, pParentLayout, "");
 
 		mLabel = "Label:";
 
@@ -166,8 +154,8 @@ public class MenuSliderEntry extends MenuEntry {
 						setValue(mValue + mStep);
 					}
 
-					mParentScreen.setFocusOn(pCore, this, true);
-					mParentScreen.setHoveringOn(this);
+					mParentLayout.parentScreen().setFocusOn(pCore, this, true);
+					mParentLayout.parentScreen().setHoveringOn(this);
 
 					pCore.input().setLeftMouseClickHandled();
 
@@ -175,6 +163,7 @@ public class MenuSliderEntry extends MenuEntry {
 			} else {
 				// mParentScreen.setHoveringOn(this);
 				hasFocus(true);
+
 			}
 
 			// Check if tool tips are enabled.
@@ -193,12 +182,17 @@ public class MenuSliderEntry extends MenuEntry {
 	}
 
 	@Override
+	public void updateStructureDimensions() {
+		// TODO: This -50 is because of the scrollbar - this is why I needed to keep the padding :(
+		w = Math.min(mParentLayout.w - 50f, MENUENTRY_MAX_WIDTH);
+
+	}
+
+	@Override
 	public void update(LintfordCore pCore, MenuScreen pScreen, boolean pIsSelected) {
 		super.update(pCore, pScreen, pIsSelected);
 
 		final float yPos = mShowGuideValuesEnabled ? y + 32 : y;
-
-		h = getHeight();
 
 		mDownButton.x = x + w / 2 + 16;
 		mDownButton.y = yPos;
@@ -209,9 +203,8 @@ public class MenuSliderEntry extends MenuEntry {
 
 	@Override
 	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pParentZDepth) {
-		// super.draw(pCore, pScreen, pIsSelected, pParentZDepth);
-
-		FontUnit lFont = mParentScreen.font();
+		MenuScreen lParentScreen = mParentLayout.parentScreen();
+		FontUnit lFont = lParentScreen.font();
 
 		final float yPos = mShowGuideValuesEnabled ? y + 32 : y;
 
@@ -226,8 +219,8 @@ public class MenuSliderEntry extends MenuEntry {
 			final float ARROW_PADDING_X = mDownButton.w - ARROW_BUTTON_SIZE;
 			final float ARROW_PADDING_Y = mDownButton.h - ARROW_BUTTON_SIZE;
 
-			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 384, 64, 32, 32, mDownButton.x + ARROW_BUTTON_SIZE + ARROW_PADDING_X, yPos + ARROW_PADDING_Y, -ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, mZ, 1f, 1f, 1f, 1f);
-			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 384, 64, 32, 32, mUpButton.x + ARROW_PADDING_X, yPos + ARROW_PADDING_Y, ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, mZ, 1f, 1f, 1f, 1f);
+			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 160, 0, 32, 32, mDownButton.x + ARROW_PADDING_X, yPos + ARROW_PADDING_Y, ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, mZ, 1f, 1f, 1f, 1f);
+			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 224, 0, 32, 32, mUpButton.x + ARROW_PADDING_X, yPos + ARROW_PADDING_Y, ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, mZ, 1f, 1f, 1f, 1f);
 
 			mTextureBatch.end();
 		}
@@ -240,19 +233,20 @@ public class MenuSliderEntry extends MenuEntry {
 
 		final float lCaretPos = MathHelper.scaleToRange(mValue, mLowerBound, mUpperBound, lBarPosX, lBarWidth - 16);
 
-		mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 544, 0, 32, 32, lBarPosX, yPos, 32, 32, mZ, 1f, 1f, 1f, 1f);
-		mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 576, 0, 32, 32, lBarPosX + 32, yPos, lBarWidth - 64 - 32, 32, mZ, 1f, 1f, 1f, 1f);
-		mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 608, 0, 32, 32, lBarPosX + lBarWidth - 64, yPos, 32, 32, mZ, 1f, 1f, 1f, 1f);
+		mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 0, 192, 32, 32, lBarPosX, yPos, 32, 32, mZ, 1f, 1f, 1f, 1f);
+		mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 32, 192, 32, 32, lBarPosX + 32, yPos, lBarWidth - 64 - 32, 32, mZ, 1f, 1f, 1f, 1f);
+		mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 64, 192, 32, 32, lBarPosX + lBarWidth - 64, yPos, 32, 32, mZ, 1f, 1f, 1f, 1f);
 
 		// Draw the caret
-		mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 544, 32, 32, 32, lCaretPos, yPos, 32, 32, mZ, 1f, 1f, 1f, 1f);
+		mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 192, 192, 32, 32, lCaretPos, yPos, 32, 32, mZ, 1f, 1f, 1f, 1f);
 
 		mTextureBatch.end();
 
 		// draw the label to the left and the value //
 		lFont.begin(pCore.HUD());
 		lFont.draw(mLabel, x + w / 2 - labelWidth - 10 - lSeparatorHalfWidth, yPos + 2, -2f, 1f);
-		mParentScreen.font().draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, yPos + 2, pParentZDepth, mParentScreen.r(), mParentScreen.g(), mParentScreen.b(), mParentScreen.a(), 1.0f, -1);
+		lFont.draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, yPos + 2, pParentZDepth, lParentScreen.r(), lParentScreen.g(), lParentScreen.b(), lParentScreen.a(), 1.0f, -1);
+
 		if (mShowValueEnabled) {
 			float valueWith = lFont.bitmap().getStringWidth("" + mValue);
 			float lowerWith = lFont.bitmap().getStringWidth("" + mLowerBound);
@@ -262,13 +256,13 @@ public class MenuSliderEntry extends MenuEntry {
 			if (mShowUnit && mUnit != null && lValueString.length() > 0) {
 				lValueString += mUnit;
 			}
-
 			if (mShowGuideValuesEnabled)
 				lFont.draw("" + mLowerBound, lBarPosX - lowerWith / 2 + 16, y + 2, -2f, 1f);
-			lFont.draw("" + lValueString, lCaretPos + 16 - valueWith / 2, yPos + 2 + 32, -2f, 1f);
+			lFont.draw("" + lValueString, centerX() + w/4 - valueWith / 2, yPos + 2 - 8f, -2f, 1f);
 			if (mShowGuideValuesEnabled)
 				lFont.draw("" + mUpperBound, lBarPosX + lBarWidth - upperWith / 2 - 48, y + 2, -2f, 1f);
 		}
+
 		lFont.end();
 
 		if (ConstantsTable.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
@@ -291,7 +285,7 @@ public class MenuSliderEntry extends MenuEntry {
 
 		} else {
 			mFocusLocked = false;
-			
+
 		}
 	}
 

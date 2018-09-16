@@ -21,9 +21,8 @@ public class ListLayout extends BaseLayout {
 		super(pParentScreen);
 
 		// Set some defaults
-		mOrientation = ORIENTATION.vertical;
 		mAlignment = ALIGNMENT.center;
-		mAnchor = ANCHOR.top;
+
 	}
 
 	public ListLayout(MenuScreen pParentScreen, float pX, float pY) {
@@ -45,58 +44,40 @@ public class ListLayout extends BaseLayout {
 	// --------------------------------------
 
 	@Override
-	public void updateStructure() {
-		if (mOrientation == ORIENTATION.vertical) {
-			float lYPos = y + mYScrollPos;
+	public void updateStructurePositions() {
+		super.updateStructurePositions();
 
-			if (mAnchor == ANCHOR.bottom)
-				lYPos = y + h;
+		if (mContentArea.h < h)
+			mYScrollPos = 0;
 
-			int lEntryCount = menuEntries().size();
-			for (int i = 0; i < lEntryCount; i++) {
-				MenuEntry lEntry = menuEntries().get(i);
+		float lYPos = y + mYScrollPos;
 
-				if (mAnchor == ANCHOR.top) {
-					lYPos += lEntry.paddingVertical();
+		int lEntryCount = menuEntries().size();
+		for (int i = 0; i < lEntryCount; i++) {
+			MenuEntry lEntry = menuEntries().get(i);
+//			if (!menuEntries().get(i).enabled())
+//				continue;
 
-				} else {
-					lYPos -= lEntry.paddingVertical();
-					lYPos -= lEntry.getHeight();
-
-				}
-
-				switch (mAlignment) {
-				case left:
-					lEntry.x = x + lEntry.paddingHorizontal();
-					break;
-				case center:
-					lEntry.x = x + w / 2 - lEntry.getWidth() / 2;
-					break;
-				case right:
-					lEntry.x = x + w - lEntry.getWidth() - lEntry.paddingHorizontal();
-					break;
-				}
-
-				lEntry.y = lYPos;
-				// lEntry.w = w - paddingLeft() * 3 - paddingRight() * 3;
-
-				if (mAnchor == ANCHOR.top) {
-					lYPos += lEntry.getHeight();
-					lYPos += lEntry.paddingVertical();
-
-				} else {
-					lYPos -= lEntry.paddingVertical();
-
-				}
-
+			switch (mAlignment) {
+			case left:
+				lEntry.x = x;
+				break;
+			case center:
+				lEntry.x = centerX() - lEntry.w / 2;
+				break;
+			case right:
+				lEntry.x = x + w - lEntry.w;
+				break;
 			}
 
+			lEntry.y = lYPos;
+
+			lYPos += lEntry.marginTop();
+			lYPos += lEntry.h;
+			lYPos += lEntry.marginBottom();
+
 		}
 
-		final int lCount = mMenuEntries.size();
-		for (int i = 0; i < lCount; i++) {
-			mMenuEntries.get(i).updateStructure();
-		}
 	}
 
 }

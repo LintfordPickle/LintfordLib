@@ -4,7 +4,6 @@ import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuEntry.BUTTON_SIZE;
 import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.ScreenManager;
-import net.lintford.library.screenmanager.layouts.BaseLayout.ANCHOR;
 import net.lintford.library.screenmanager.layouts.ListLayout;
 
 public class ConfirmationDialog extends BaseDialog {
@@ -43,12 +42,11 @@ public class ConfirmationDialog extends BaseDialog {
 		super(pScreenManager, pParentScreen, pDialogMessage);
 
 		ListLayout lListLayout = new ListLayout(this);
-		lListLayout.anchor(ANCHOR.bottom);
 
-		mConfirmEntry = new MenuEntry(pScreenManager, this, "Okay");
+		mConfirmEntry = new MenuEntry(pScreenManager, lListLayout, "Okay");
 		mConfirmEntry.registerClickListener(pParentScreen, BUTTON_CONFIRM_YES);
 		mConfirmEntry.buttonSize(BUTTON_SIZE.narrow);
-		mCancelEntry = new MenuEntry(pScreenManager, this, "Cancel");
+		mCancelEntry = new MenuEntry(pScreenManager, lListLayout, "Cancel");
 		mCancelEntry.registerClickListener(pParentScreen, BUTTON_CONFIRM_NO);
 		mCancelEntry.buttonSize(BUTTON_SIZE.narrow);
 

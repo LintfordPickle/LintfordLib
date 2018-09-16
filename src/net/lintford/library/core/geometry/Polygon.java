@@ -11,14 +11,13 @@ public class Polygon extends Shape {
 
 	private static final long serialVersionUID = -1795671904806528834L;
 
-	public static final int MAX_NUM_VERTICES = 10;
-
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
 	protected Vector2f[] mVertices;
-	private int mVertexCounter = 0;
+	protected Vector2f[] mAxes;
+	protected boolean mDirty;
 	public float x;
 	public float y;
 
@@ -54,8 +53,6 @@ public class Polygon extends Shape {
 	public Polygon(float pCenterX, float pCenterY) {
 		x = pCenterX;
 		y = pCenterY;
-
-		mVertices = new Vector2f[MAX_NUM_VERTICES];
 
 	}
 
@@ -99,23 +96,46 @@ public class Polygon extends Shape {
 
 	@Override
 	public Vector2f[] getAxes() {
-		final int AXES_LENGTH = 2;
-		Vector2f[] axes = new Vector2f[MAX_NUM_VERTICES]; // Rectangle only has two axis to be tested against
+		if (mDirty || mAxes == null) {
+			if (mAxes == null || mAxes.length != mVertices.length)
+				mAxes = new Vector2f[mVertices.length];
 
-		// NOTE: Pay attention to winding order here (of the axes won't be correct)?
+			// FIXME: Garbage created
+			for (int i = 0; i < mVertices.length; i++) {
+				int nextIndex = i < mVertices.length - 1 ? i + 1 : 0;
 
-		return axes;
+				if (mVertices[i] == null || mVertices[nextIndex] == null)
+					continue;
+
+				if (mAxes[i] == null)
+					mAxes[i] = new Vector2f();
+
+				// This could cause problems later
+				mAxes[i].x = (mVertices[i].y - mVertices[nextIndex].y);
+				mAxes[i].y = -(mVertices[i].x - mVertices[nextIndex].x);
+				mAxes[i].nor();
+
+			}
+
+			mDirty = false;
+
+		}
+
+		return mAxes;
+
 	}
 
 	@Override
 	public Vector2f project(Vector2f pAxis, Vector2f pToFill) {
-		if(pAxis == null) return pToFill;
-		
+		if (pAxis == null)
+			return pToFill;
+
 		float min = Vector2f.dot(mVertices[0].x, mVertices[0].y, pAxis.x, pAxis.y);
 		float max = min;
 		for (int i = 1; i < mVertices.length; i++) {
-			if(mVertices[i] == null) continue;
-			
+			if (mVertices[i] == null)
+				continue;
+
 			float p = Vector2f.dot(mVertices[i].x, mVertices[i].y, pAxis.x, pAxis.y);
 			if (p < min) {
 				min = p;
@@ -148,7 +168,7 @@ public class Polygon extends Shape {
 	 * @Returs True if this polygon has no vertices.
 	 */
 	public boolean isEmpty() {
-		return mVertexCounter == 0;
+		return mVertices == null || mVertices.length == 0;
 	}
 
 	public void setCenterPosition(float pNewCenterX, float pNewCenterY) {
@@ -159,24 +179,24 @@ public class Polygon extends Shape {
 
 	@Override
 	public void rotateRel(float pRotAmt) {
+		mDirty = true;
 		rot += pRotAmt;
 
 	}
 
 	@Override
 	public void rotateAbs(float pRotAmt) {
+		mDirty = true;
 		rot = pRotAmt;
 
 	}
 
-	public void addVertex(Vector2f pNewVertex) {
-		if (mVertexCounter >= MAX_NUM_VERTICES)
-			return; // Cannot add more vertices
-
-		if (pNewVertex == null)
+	public void addVertices(Vector2f... pNewVertices) {
+		if (pNewVertices == null)
 			return;
 
-		mVertices[mVertexCounter++] = pNewVertex;
+		mVertices = pNewVertices;
+		mDirty = true;
 
 	}
 

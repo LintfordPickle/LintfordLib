@@ -8,7 +8,6 @@ import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuEntry.BUTTON_SIZE;
 import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.ScreenManager;
-import net.lintford.library.screenmanager.layouts.BaseLayout.ANCHOR;
 import net.lintford.library.screenmanager.layouts.BaseLayout;
 import net.lintford.library.screenmanager.layouts.ListLayout;
 import net.lintford.library.screenmanager.screens.VideoOptionsScreen;
@@ -63,21 +62,16 @@ public class TimedConfirmationDialog extends BaseDialog {
 		super(pScreenManager, pParentScreen, pDialogMessage);
 
 		ListLayout lListLayout = new ListLayout(this);
-		lListLayout.anchor(ANCHOR.bottom);
 
-		mConfirmEntry = new MenuEntry(pScreenManager, this, "Okay");
+		mConfirmEntry = new MenuEntry(pScreenManager, lListLayout, "Okay");
 		mConfirmEntry.registerClickListener(pParentScreen, BUTTON_TIMED_CONFIRM_YES);
 		mConfirmEntry.buttonSize(BUTTON_SIZE.narrow);
-		mCancelEntry = new MenuEntry(pScreenManager, this, "Cancel");
+		mCancelEntry = new MenuEntry(pScreenManager, lListLayout, "Cancel");
 		mCancelEntry.registerClickListener(pParentScreen, BUTTON_TIMED_CONFIRM_NO);
 		mCancelEntry.buttonSize(BUTTON_SIZE.narrow);
 
-		lListLayout.menuEntries().add(mCancelEntry);
-		lListLayout.menuEntries().add(mConfirmEntry);
-
 		layouts().add(lListLayout);
 
-		// mEntryOffsetFromTop = 285f;
 	}
 
 	// --------------------------------------
@@ -105,7 +99,13 @@ public class TimedConfirmationDialog extends BaseDialog {
 	}
 
 	@Override
-	public void updateStructure(LintfordCore pCore) {
+	public void updateStructureDimensions(LintfordCore pCore) {
+		super.updateStructureDimensions(pCore);
+
+	}
+
+	@Override
+	public void updateStructurePositions(LintfordCore pCore) {
 		// Need to apply an offset on the y-axis to account for the timer.
 		float lTextHeight = font().bitmap().getStringHeight(mMessageString) + 150;
 
@@ -117,24 +117,24 @@ public class TimedConfirmationDialog extends BaseDialog {
 			// TODO: Ignore floating layouts
 			BaseLayout lLayout = layouts().get(i);
 
-			lYPos += lLayout.paddingTop();
+			lYPos += 0;//lLayout.paddingTop();
 
 			switch (mChildAlignment) {
 			case left:
-				lLayout.x = lLayout.paddingLeft();
+				lLayout.x = 0;
 				break;
 			case center:
 				lLayout.x = -lLayout.w / 2;
 				break;
 			case right:
-				lLayout.x = pCore.config().display().windowSize().x - lLayout.w - lLayout.paddingRight();
+				lLayout.x = pCore.config().display().windowSize().x - lLayout.w;// - lLayout.paddingRight();
 				break;
 			}
 
 			lLayout.y = lYPos;
-			lYPos += lLayout.h + lLayout.paddingBottom();
+			lYPos += lLayout.h;// + lLayout.paddingBottom();
 
-			layouts().get(i).updateStructure();
+			layouts().get(i).updateStructurePositions();
 
 		}
 

@@ -5,13 +5,14 @@ import java.util.List;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.geometry.Rectangle;
-import net.lintford.library.core.graphics.fonts.BitmapFont;
+import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.input.InputState;
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.Screen;
 import net.lintford.library.screenmanager.ScreenManager;
+import net.lintford.library.screenmanager.layouts.BaseLayout;
 
 public class MenuEnumEntry extends MenuEntry {
 
@@ -99,8 +100,8 @@ public class MenuEnumEntry extends MenuEntry {
 	// Constructor
 	// --------------------------------------
 
-	public MenuEnumEntry(ScreenManager pScreenManager, MenuScreen pParentScreen, String pLabel) {
-		super(pScreenManager, pParentScreen, "");
+	public MenuEnumEntry(ScreenManager pScreenManager, BaseLayout pParentLayout, String pLabel) {
+		super(pScreenManager, pParentLayout, "");
 
 		mLabel = pLabel;
 		mItems = new ArrayList<>();
@@ -134,7 +135,7 @@ public class MenuEnumEntry extends MenuEntry {
 						mSelectedIndex = mItems.size() - 1;
 					}
 
-					mParentScreen.setFocusOn(pCore, this, true);
+					mParentLayout.parentScreen().setFocusOn(pCore, this, true);
 
 					if (mClickListener != null) {
 						mClickListener.menuEntryChanged(this);
@@ -152,7 +153,7 @@ public class MenuEnumEntry extends MenuEntry {
 						mSelectedIndex = 0;
 					}
 
-					mParentScreen.setFocusOn(pCore, this, true);
+					mParentLayout.parentScreen().setFocusOn(pCore, this, true);
 
 					if (mClickListener != null) {
 						mClickListener.menuEntryChanged(this);
@@ -178,7 +179,7 @@ public class MenuEnumEntry extends MenuEntry {
 
 					// TODO: Play a menu click sound
 
-					mParentScreen.setFocusOn(pCore, this, true);
+					mParentLayout.parentScreen().setFocusOn(pCore, this, true);
 					// mParentScreen.setHoveringOn(this);
 
 					if (mClickListener != null) {
@@ -212,6 +213,13 @@ public class MenuEnumEntry extends MenuEntry {
 	}
 
 	@Override
+	public void updateStructureDimensions() {
+		// TODO: This -50 is because of the scrollbar - this is why I needed to keep the padding :(
+		w = Math.min(mParentLayout.w - 50f, MENUENTRY_MAX_WIDTH);
+
+	}
+
+	@Override
 	public void update(LintfordCore pCore, MenuScreen pScreen, boolean pIsSelected) {
 		super.update(pCore, pScreen, pIsSelected);
 
@@ -228,11 +236,12 @@ public class MenuEnumEntry extends MenuEntry {
 	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pParentZDepth) {
 		super.draw(pCore, pScreen, pIsSelected, pParentZDepth);
 
-		BitmapFont lFontBitmap = mParentScreen.font().bitmap();
+		MenuScreen lParentScreen = mParentLayout.parentScreen();
+		FontUnit lFontBitmap = lParentScreen.font();
 
-		final float lLabelWidth = lFontBitmap.getStringWidth(mLabel);
-		final float TEXT_HEIGHT = lFontBitmap.getStringHeight(mLabel);
-		final float lSeparatorHalfWidth = lFontBitmap.getStringWidth(mSeparator) * 0.5f;
+		final float lTextWidth = lFontBitmap.bitmap().getStringWidth(mLabel);
+		final float lTextHeight = lFontBitmap.bitmap().getStringHeight(mLabel);
+		final float lSeparatorHalfWidth = lFontBitmap.bitmap().getStringWidth(mSeparator) * 0.5f;
 
 		// TODO(John): we could make this a lot more readable and save on the individual calculations of the width/height of the same strings
 
@@ -244,26 +253,33 @@ public class MenuEnumEntry extends MenuEntry {
 
 		// Render the two arrows either side of the enumeration options
 		if (mButtonsEnabled) {
-			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 384, 64, 32, 32, mLeftButtonRectangle.x + ARROW_BUTTON_SIZE + ARROW_PADDING_X, mLeftButtonRectangle.y + ARROW_PADDING_Y, -ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, 0f, 1f, 1f, 1f, 1f);
-			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 384, 64, 32, 32, mRightButtonRectangle.x + ARROW_PADDING_X, mRightButtonRectangle.y + ARROW_PADDING_Y, ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, 0f, 1f, 1f, 1f, 1f);
+			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 160, 0, 32, 32, mLeftButtonRectangle.x + ARROW_PADDING_X, mLeftButtonRectangle.y + ARROW_PADDING_Y, ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, 0f, 1f, 1f, 1f,
+					1f);
+			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 224, 0, 32, 32, mRightButtonRectangle.x + ARROW_PADDING_X, mRightButtonRectangle.y + ARROW_PADDING_Y, ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, 0f, 1f, 1f, 1f,
+					1f);
 
 		}
 
 		mTextureBatch.end();
 
-		mParentScreen.font().begin(pCore.HUD());
-		mParentScreen.font().draw(mLabel, x + w / 2 - 10 - lLabelWidth - lSeparatorHalfWidth, y + h / 2 - TEXT_HEIGHT * 0.5f, pParentZDepth, mParentScreen.r(), mParentScreen.g(), mParentScreen.b(), mParentScreen.a(), 1.0f, -1);
-		mParentScreen.font().draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - TEXT_HEIGHT * 0.5f, pParentZDepth, mParentScreen.r(), mParentScreen.g(), mParentScreen.b(), mParentScreen.a(), 1.0f, -1);
+		final float lR = lParentScreen.r();
+		final float lG = lParentScreen.g();
+		final float lB = lParentScreen.b();
+		final float lA = lParentScreen.a();
+
+		lFontBitmap.begin(pCore.HUD());
+		lFontBitmap.draw(mLabel, x + w / 2 - 10 - lTextWidth - lSeparatorHalfWidth, y + h / 2 - lTextHeight * 0.5f, pParentZDepth, lR, lG, lB, lA, 1.0f, -1);
+		lFontBitmap.draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - lTextHeight * 0.5f, pParentZDepth, lR, lG, lB, lA, 1.0f, -1);
 
 		// Render the items
 		if (mItems.size() > 0) {
 			String lCurItem = mItems.get(mSelectedIndex);
 
-			final float EntryWidth = mParentScreen.font().bitmap().getStringWidth(lCurItem);
+			final float EntryWidth = lFontBitmap.bitmap().getStringWidth(lCurItem);
 
-			mParentScreen.font().draw(lCurItem, x + (w / 4 * 3) - EntryWidth / 2, y + h / 2 - TEXT_HEIGHT * 0.5f, pParentZDepth, mParentScreen.r(), mParentScreen.g(), mParentScreen.b(), mParentScreen.a(), 1.0f, -1);
+			lFontBitmap.draw(lCurItem, x + (w / 4 * 3) - EntryWidth / 2, y + h / 2 - lTextHeight * 0.5f, pParentZDepth, lR, lG, lB, lA, 1.0f, -1);
 		}
-		mParentScreen.font().end();
+		lFontBitmap.end();
 
 	}
 

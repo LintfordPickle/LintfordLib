@@ -1,13 +1,14 @@
 package net.lintford.library.screenmanager.entries;
 
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.graphics.fonts.BitmapFont;
+import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.input.InputState;
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.Screen;
 import net.lintford.library.screenmanager.ScreenManager;
+import net.lintford.library.screenmanager.layouts.BaseLayout;
 
 public class MenuToggleEntry extends MenuEntry {
 
@@ -48,17 +49,12 @@ public class MenuToggleEntry extends MenuEntry {
 		mIsChecked = pNewValue;
 	}
 
-	@Override
-	public float getHeight() {
-		return MENUENTRY_HEIGHT + 6;
-	}
-
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
-	public MenuToggleEntry(ScreenManager pScreenManager, MenuScreen pParentScreen) {
-		super(pScreenManager, pParentScreen, "");
+	public MenuToggleEntry(ScreenManager pScreenManager, BaseLayout pParentlayout) {
+		super(pScreenManager, pParentlayout, "");
 
 		mLabel = "Label:";
 
@@ -85,7 +81,7 @@ public class MenuToggleEntry extends MenuEntry {
 
 					// TODO: Play menu click sound
 
-					mParentScreen.setFocusOn(pCore, this, true);
+					mParentLayout.parentScreen().setFocusOn(pCore, this, true);
 
 					mIsChecked = !mIsChecked;
 
@@ -112,6 +108,12 @@ public class MenuToggleEntry extends MenuEntry {
 	}
 
 	@Override
+	public void updateStructureDimensions() {
+		w = Math.min(mParentLayout.w - 50f, MENUENTRY_MAX_WIDTH);
+
+	}
+	
+	@Override
 	public void update(LintfordCore pCore, MenuScreen pScreen, boolean pIsSelected) {
 		super.update(pCore, pScreen, pIsSelected);
 
@@ -128,13 +130,14 @@ public class MenuToggleEntry extends MenuEntry {
 	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pParentZDepth) {
 		super.draw(pCore, pScreen, pIsSelected, pParentZDepth);
 
+		MenuScreen lParentScreen = mParentLayout.parentScreen();
+		FontUnit lFont = lParentScreen.font();
+
+		final float lLabelWidth = lFont.bitmap().getStringWidth(mLabel);
+		final float lTextHeight = lFont.bitmap().getStringHeight(mLabel);
+		final float lSeparatorHalfWidth = lFont.bitmap().getStringWidth(mSeparator) * 0.5f;
+
 		mZ = pParentZDepth;
-
-		BitmapFont lFontBitmap = mParentScreen.font().bitmap();
-
-		final float lLabelWidth = lFontBitmap.getStringWidth(mLabel);
-		final float TEXT_HEIGHT = lFontBitmap.getStringHeight(mLabel);
-		final float lSeparatorHalfWidth = lFontBitmap.getStringWidth(mSeparator) * 0.5f;
 
 		// Draw the left/right buttons
 		mTextureBatch.begin(pCore.HUD());
@@ -143,21 +146,24 @@ public class MenuToggleEntry extends MenuEntry {
 
 		// Render the check box (either ticked or empty)
 		if (mIsChecked)
-			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 288, 128, 32, 32, x + (w / 4 * 3) - TILE_SIZE / 2, y + h / 2 - TILE_SIZE / 2, TILE_SIZE, TILE_SIZE, mZ, 1f, 1f, 1f, 1f);
+			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 288, 128, 32, 32, centerX() + TILE_SIZE / 2, y + h / 2 - TILE_SIZE / 2, TILE_SIZE, TILE_SIZE, mZ, 1f, 1f, 1f, 1f);
 		else
-			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 288, 160, 32, 32, x + (w / 4 * 3) - TILE_SIZE / 2, y + h / 2 - TILE_SIZE / 2, TILE_SIZE, TILE_SIZE, mZ, 1f, 1f, 1f, 1f);
+			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 288, 160, 32, 32, centerX() + TILE_SIZE / 2, y + h / 2 - TILE_SIZE / 2, TILE_SIZE, TILE_SIZE, mZ, 1f, 1f, 1f, 1f);
 
 		mTextureBatch.end();
 
-		mParentScreen.font().begin(pCore.HUD());
-		mParentScreen.font().draw(mLabel, x + w / 2 - lLabelWidth - SPACE_BETWEEN_TEXT - lSeparatorHalfWidth, y + h / 2 - lFontBitmap.getStringHeight(mLabel) * 0.5f, mZ, mParentScreen.r(), mParentScreen.g(),
-				mParentScreen.b(), mParentScreen.a(), 1.0f, -1);
-		mParentScreen.font().draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - TEXT_HEIGHT * 0.5f, mZ, mParentScreen.r(), mParentScreen.g(), mParentScreen.b(), mParentScreen.a(), 1.0f, -1);
+		lFont.begin(pCore.HUD());
+		lFont.draw(mLabel, x + w / 2 - lLabelWidth - SPACE_BETWEEN_TEXT - lSeparatorHalfWidth, y + h / 2 - lTextHeight * 0.5f, mZ, lParentScreen.r(), lParentScreen.g(), lParentScreen.b(), lParentScreen.a(), 1.0f, -1);
+		lFont.draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - lTextHeight * 0.5f, mZ, lParentScreen.r(), lParentScreen.g(), lParentScreen.b(), lParentScreen.a(), 1.0f, -1);
 
 		// Render the items
-		mParentScreen.font().end();
+		lFont.end();
 
 	}
+
+	// --------------------------------------
+	// Methods
+	// --------------------------------------
 
 	@Override
 	public void onClick(InputState pInputState) {

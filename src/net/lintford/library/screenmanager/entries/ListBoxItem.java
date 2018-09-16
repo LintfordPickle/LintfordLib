@@ -1,16 +1,16 @@
 package net.lintford.library.screenmanager.entries;
 
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 import net.lintford.library.core.maths.Vector2f;
 import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.Screen;
 import net.lintford.library.screenmanager.ScreenManager;
 
-public abstract class ListBoxItem {
+public abstract class ListBoxItem extends Rectangle {
 
-	public static final float LISTBOXITEM_WIDTH = 600;
-	public static final float LISTBOXITEM_HEIGHT = 64;
+	private static final long serialVersionUID = -1093948958243532531L;
 
 	// --------------------------------------
 	// Variables
@@ -18,9 +18,6 @@ public abstract class ListBoxItem {
 
 	protected ScreenManager mScreenManager;
 	protected ListBox mParentListBox;
-
-	public float mXPos;
-	public float mYPos;
 
 	protected int mItemIndex;
 
@@ -34,6 +31,9 @@ public abstract class ListBoxItem {
 
 		mItemIndex = pIndex;
 
+		w = 600;
+		h = 64;
+
 	}
 
 	// --------------------------------------
@@ -45,16 +45,12 @@ public abstract class ListBoxItem {
 	}
 
 	public boolean handleInput(LintfordCore pCore) {
+		final Vector2f lMouseMenuSpace = pCore.HUD().getMouseCameraSpace();
 
-		Vector2f lMouseMenuSpace = pCore.HUD().getMouseCameraSpace();
-
-		float lAbsPosX = mParentListBox.x + (mParentListBox.w / 2) + mXPos;
-		float lAbsPosY = mParentListBox.y + mYPos + 15;
-
-		if ((lMouseMenuSpace.x > lAbsPosX && lMouseMenuSpace.x < lAbsPosX + LISTBOXITEM_WIDTH && lMouseMenuSpace.y > lAbsPosY && lMouseMenuSpace.y < lAbsPosY + LISTBOXITEM_HEIGHT) && pCore.input().tryAquireLeftClickOwnership(hashCode())) {
+		if (intersectsAA(lMouseMenuSpace) && pCore.input().tryAquireLeftClickOwnership(hashCode())) {
 			mParentListBox.setSelectedItem(mItemIndex);
-
 			return true;
+
 		}
 
 		return false;

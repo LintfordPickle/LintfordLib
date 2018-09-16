@@ -26,6 +26,7 @@ import net.lintford.library.screenmanager.entries.MenuLabelEntry;
 import net.lintford.library.screenmanager.entries.MenuToggleEntry;
 import net.lintford.library.screenmanager.layouts.BaseLayout;
 import net.lintford.library.screenmanager.layouts.ListLayout;
+import net.lintford.library.screenmanager.layouts.BaseLayout.FILL_TYPE;
 
 // TODO: Monitor and Aspect Ratio are only considered in fullscreen mode
 // TODO: Need to add a 15 second cooldown when applying settings for the first time
@@ -85,8 +86,8 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 			if (pOther == null)
 				return true;
 
-			return fullScreenIndex != pOther.fullScreenIndex || windowWidth != pOther.windowWidth || windowHeight != pOther.windowHeight || aspectRatioIndex != pOther.aspectRatioIndex || monitorHandle != pOther.monitorHandle
-					|| vSyncEnabled != pOther.vSyncEnabled;
+			return fullScreenIndex != pOther.fullScreenIndex || windowWidth != pOther.windowWidth || windowHeight != pOther.windowHeight || aspectRatioIndex != pOther.aspectRatioIndex
+					|| monitorHandle != pOther.monitorHandle || vSyncEnabled != pOther.vSyncEnabled;
 
 		}
 	}
@@ -124,6 +125,8 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 	public VideoOptionsScreen(ScreenManager pScreenManager) {
 		super(pScreenManager, "VIDEO SETTINGS");
 
+		mPaddingTop = 0;
+
 		// Get the config options
 		mDisplayConfig = pScreenManager.core().config().display();
 
@@ -131,11 +134,15 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 
 		mVideoList = new ListLayout(this);
 		mVideoList.setDrawBackground(true, 0f, 0f, 0f, 0.85f);
-		mVideoList.setPadding(mVideoList.paddingTop(), mVideoList.paddingLeft(), mVideoList.paddingRight(), 25f);
-		mVideoList.forceHeight(400);
+		//mVideoList.setPadding(mVideoList.paddingTop(), mVideoList.paddingLeft(), mVideoList.paddingRight(), 25f);
+		mVideoList.fillType(FILL_TYPE.DYNAMIC);
+		// mVideoList.forceHeight(400);
 
 		mConfirmChangesLayout = new ListLayout(this);
+		mConfirmChangesLayout.fillType(FILL_TYPE.STATIC);
+
 		ListLayout lNavList = new ListLayout(this);
+		lNavList.fillType(FILL_TYPE.STATIC);
 
 		createVideoSection(mVideoList);
 
@@ -145,26 +152,26 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 		lastVideoConfig = new VideoOptionsConfig(currentVideoConfig);
 		modifiedVideoConfig = new VideoOptionsConfig(currentVideoConfig);
 
-		mChangesPendingWarning = new MenuLabelEntry(mScreenManager, this);
+		mChangesPendingWarning = new MenuLabelEntry(mScreenManager, mConfirmChangesLayout);
 		mChangesPendingWarning.label("Current changes have not yet been applied!");
 		mChangesPendingWarning.labelColor(0.86f, 0.22f, 0.37f);
-		mChangesPendingWarning.enabled(false);
+		mChangesPendingWarning.enabled(true);
 
 		mConfirmChangesLayout.menuEntries().add(mChangesPendingWarning);
 		mConfirmChangesLayout.setDrawBackground(true, 1f, 1f, 1f, 0.85f);
 
 		/* Screen control buttons */
-		HorizontalEntryGroup lGroup = new HorizontalEntryGroup(pScreenManager, this);
+		HorizontalEntryGroup lGroup = new HorizontalEntryGroup(pScreenManager, lNavList);
 
-		MenuEntry lButton1 = new MenuEntry(pScreenManager, this, "Back");
-		lButton1.buttonSize(BUTTON_SIZE.narrow);
-		lButton1.registerClickListener(this, BUTTON_CANCEL_CHANGES);
-		MenuEntry lButton2 = new MenuEntry(pScreenManager, this, "Apply");
-		lButton2.buttonSize(BUTTON_SIZE.narrow);
-		lButton2.registerClickListener(this, BUTTON_APPLY_CHANGES);
+		MenuEntry lBackButton = new MenuEntry(pScreenManager, lNavList, "Back");
+		lBackButton.buttonSize(BUTTON_SIZE.narrow);
+		lBackButton.registerClickListener(this, BUTTON_CANCEL_CHANGES);
+		MenuEntry lApplyButton = new MenuEntry(pScreenManager, lNavList, "Apply");
+		lApplyButton.buttonSize(BUTTON_SIZE.narrow);
+		lApplyButton.registerClickListener(this, BUTTON_APPLY_CHANGES);
 
-		lGroup.addEntry(lButton1);
-		lGroup.addEntry(lButton2);
+		lGroup.addEntry(lBackButton);
+		lGroup.addEntry(lApplyButton);
 
 		lNavList.menuEntries().add(lGroup);
 
@@ -176,13 +183,13 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 	}
 
 	private void createVideoSection(BaseLayout lLayout) {
-		mFullScreenEntry = new MenuEnumEntryIndexed<>(mScreenManager, this, "Fullscreen");
+		mFullScreenEntry = new MenuEnumEntryIndexed<>(mScreenManager, lLayout, "Fullscreen");
 		mFullScreenEntry.buttonSize(BUTTON_SIZE.wide);
-		mResolutionEntry = new MenuDropDownEntry<>(mScreenManager, this, "Resolution");
+		mResolutionEntry = new MenuDropDownEntry<>(mScreenManager, lLayout, "Resolution");
 		mResolutionEntry.buttonSize(BUTTON_SIZE.wide);
-		mMonitorEntry = new MenuEnumEntryIndexed<>(mScreenManager, this, "Monitor");
-		mAspectRatio = new MenuEnumEntryIndexed<>(mScreenManager, this, "Aspect Ratio");
-		mVSync = new MenuToggleEntry(mScreenManager, this);
+		mMonitorEntry = new MenuEnumEntryIndexed<>(mScreenManager, lLayout, "Monitor");
+		mAspectRatio = new MenuEnumEntryIndexed<>(mScreenManager, lLayout, "Aspect Ratio");
+		mVSync = new MenuToggleEntry(mScreenManager, lLayout);
 
 		// Setup buttons
 		mFullScreenEntry.addItem(mFullScreenEntry.new MenuEnumEntryItem(FULLSCREEN_YES, FULLSCREEN_YES_INDEX));
@@ -226,9 +233,6 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 
 		mChangesPendingWarning.enabled(modifiedVideoConfig.isDifferent(currentVideoConfig));
 		mConfirmChangesLayout.enabled(modifiedVideoConfig.isDifferent(currentVideoConfig));
-
-		float lWindowHeight = pCore.config().display().windowSize().y;
-		mVideoList.forceHeight(lWindowHeight / 2);
 
 	}
 

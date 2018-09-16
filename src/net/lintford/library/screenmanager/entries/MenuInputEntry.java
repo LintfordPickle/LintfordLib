@@ -1,13 +1,14 @@
 package net.lintford.library.screenmanager.entries;
 
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.graphics.fonts.BitmapFont;
+import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.input.IBufferedInputCallback;
 import net.lintford.library.core.input.InputState;
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.Screen;
 import net.lintford.library.screenmanager.ScreenManager;
+import net.lintford.library.screenmanager.layouts.BaseLayout;
 
 public class MenuInputEntry extends MenuEntry implements IBufferedInputCallback {
 
@@ -16,7 +17,7 @@ public class MenuInputEntry extends MenuEntry implements IBufferedInputCallback 
 	// --------------------------------------
 
 	private static final long serialVersionUID = 3017844090126571950L;
-	
+
 	private static final float SPACE_BETWEEN_TEXT = 15;
 	private static final float CARET_FLASH_TIME = 250; // ms
 
@@ -83,8 +84,8 @@ public class MenuInputEntry extends MenuEntry implements IBufferedInputCallback 
 	// Constructor
 	// --------------------------------------
 
-	public MenuInputEntry(ScreenManager pScreenManager, MenuScreen pParentScreen) {
-		super(pScreenManager, pParentScreen, "");
+	public MenuInputEntry(ScreenManager pScreenManager, BaseLayout pParentlayout) {
+		super(pScreenManager, pParentlayout, "");
 
 		mLabel = "Label:";
 		mResetOnDefaultClick = true;
@@ -138,23 +139,25 @@ public class MenuInputEntry extends MenuEntry implements IBufferedInputCallback 
 	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pParentZDepth) {
 		super.draw(pCore, pScreen, pIsSelected, pParentZDepth);
 
-		BitmapFont lFontBitmap = mParentScreen.font().bitmap();
+		MenuScreen lParentScreen = mParentLayout.parentScreen();
+		FontUnit lFont = lParentScreen.font();
 
-		final float lLabelWidth = lFontBitmap.getStringWidth(mLabel);
-		final float lInputTextWidth = lFontBitmap.getStringWidth(mInputField.toString());
-		final float lFontHeight = lFontBitmap.fontHeight();
-		final float lSeparatorHalfWidth = lFontBitmap.getStringWidth(mSeparator) * 0.5f;
+		final float lLabelWidth = lFont.bitmap().getStringWidth(mLabel);
+		final float lFontHeight = lFont.bitmap().fontHeight();
+		final float lInputTextWidth = lFont.bitmap().getStringWidth(mInputField.toString());
+		final float lSeparatorHalfWidth = lFont.bitmap().getStringWidth(mSeparator) * 0.5f;
 
-		mParentScreen.font().begin(pCore.HUD());
-		mParentScreen.font().draw(mLabel, x + w / 2 - 10 - lLabelWidth - lSeparatorHalfWidth, y + h / 2 - lFontHeight * 0.5f, pParentZDepth + .1f, 1f);
-		mParentScreen.font().draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - lFontHeight * 0.5f, pParentZDepth + .1f, 1f);
-		mParentScreen.font().draw(mInputField.toString(), x + w / 2 + lSeparatorHalfWidth + SPACE_BETWEEN_TEXT, y + h / 2 - lFontHeight * 0.5f, pParentZDepth + .1f, 1f);
+		lFont.begin(pCore.HUD());
+		lFont.draw(mLabel, x + w / 2 - 10 - lLabelWidth - lSeparatorHalfWidth, y + h / 2 - lFontHeight * 0.5f, pParentZDepth + .1f, 1f);
+		lFont.draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - lFontHeight * 0.5f, pParentZDepth + .1f, 1f);
+		lFont.draw(mInputField.toString(), x + w / 2 + lSeparatorHalfWidth + SPACE_BETWEEN_TEXT, y + h / 2 - lFontHeight * 0.5f, pParentZDepth + .1f, 1f);
 
 		if (mShowCaret && mHasFocus) {
-			mParentScreen.font().draw("|", x + w / 2 + lSeparatorHalfWidth + SPACE_BETWEEN_TEXT + lInputTextWidth, y + h / 2 - lFontHeight * 0.5f, pParentZDepth + .1f, 1.0f);
+			lFont.draw("|", x + w / 2 + lSeparatorHalfWidth + SPACE_BETWEEN_TEXT + lInputTextWidth, y + h / 2 - lFontHeight * 0.5f, pParentZDepth + .1f, 1.0f);
+
 		}
 
-		mParentScreen.font().end();
+		lFont.end();
 
 	}
 
@@ -174,9 +177,9 @@ public class MenuInputEntry extends MenuEntry implements IBufferedInputCallback 
 		if (mResetOnDefaultClick && mInputField.toString().equals(mDefaultText)) {
 			if (mInputField.length() > 0) {
 				mInputField.delete(0, mInputField.length());
-				
+
 			}
-			
+
 		}
 
 	}

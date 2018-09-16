@@ -7,9 +7,6 @@ import net.lintford.library.core.maths.Vector2f;
 public class SAT {
 
 	public static boolean intersects(Shape pShape0, Shape pShape1) {
-//		if (mIsAABB && pOther.mIsAABB)
-//		 return intersectsAA(pOther);
-
 		Vector2f[] axes0 = pShape0.getAxes();
 		Vector2f[] axes1 = pShape1.getAxes();
 

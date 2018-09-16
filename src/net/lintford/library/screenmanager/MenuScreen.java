@@ -9,9 +9,11 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
+import net.lintford.library.core.graphics.sprites.spritebatch.SpriteBatch;
 import net.lintford.library.renderers.ZLayers;
 import net.lintford.library.screenmanager.entries.EntryInteractions;
 import net.lintford.library.screenmanager.layouts.BaseLayout;
+import net.lintford.library.screenmanager.layouts.BaseLayout.FILL_TYPE;
 
 public abstract class MenuScreen extends Screen implements EntryInteractions {
 
@@ -86,26 +88,24 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	// Variables
 	// --------------------------------------
 
-	protected ORIENTATION mOrientation;
 	protected ALIGNMENT mChildAlignment;
 
 	protected List<BaseLayout> mLayouts;
 	protected String mMenuTitle;
 	protected int mSelectedEntry = 0;
 	protected int mSelectedLayout = 0;
-	protected float mChildPositionOffsetX;
-	protected float mChildPositionOffsetY;
 
-	protected float mLeftMargin;
-	protected float mRightMargin;
-	protected float mTopMargin;
-	protected float mBottomMargin;
+	protected float mPaddingLeft;
+	protected float mPaddingRight;
+	protected float mPaddingTop;
+	protected float mPaddingBottom;
 
 	protected boolean mESCBackEnabled;
 
 	protected ClickAction mClickAction;
 	protected float mAnimationTimer;
 
+	protected SpriteBatch mSpriteBatch;
 	protected FontUnit mMenuFont;
 	protected FontUnit mMenuHeaderFont;
 
@@ -114,6 +114,10 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public SpriteBatch spriteBatch() {
+		return mSpriteBatch;
+	}
 
 	/** Returns a normal sized {@link FontUnit} which can be used to render general text to the screen. */
 	public FontUnit font() {
@@ -141,17 +145,18 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		super(pScreenManager);
 
 		mLayouts = new ArrayList<>();
+		mSpriteBatch = new SpriteBatch();
+		
 		mShowInBackground = false;
 
 		mMenuTitle = pMenuTitle;
 
-		mOrientation = ORIENTATION.vertical;
 		mChildAlignment = ALIGNMENT.center;
 
-		mTopMargin = 170.0f;
-		mBottomMargin = 80f;
-		mLeftMargin = 80f;
-		mRightMargin = 80f;
+		mPaddingTop = 0.0f;
+		mPaddingBottom = 0f;
+		mPaddingLeft = 0f;
+		mPaddingRight = 0f;
 		mContentHeight = 0;
 
 		mClickAction = new ClickAction();
@@ -185,6 +190,8 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		mMenuFont = pResourceManager.fontManager().loadNewFont(MENUSCREEN_FONT_NAME, lFontPathname, MENUSCREEN_FONT_POINT_SIZE, true);
 		mMenuHeaderFont = pResourceManager.fontManager().loadNewFont(MENUSCREEN_HEADER_FONT_NAME, lFontPathname, MENUSCREEN_HEADER_FONT_POINT_SIZE, false);
 
+		mSpriteBatch.loadGLContent(pResourceManager);
+		
 	}
 
 	@Override
@@ -196,6 +203,8 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 			mLayouts.get(i).unloadGLContent();
 		}
 
+		mSpriteBatch.unloadGLContent();
+		
 	}
 
 	@Override
@@ -277,44 +286,79 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	}
 
 	@Override
-	public void updateStructure(LintfordCore pCore) {
-		Rectangle lHUDRect = pCore.HUD().boundingRectangle();
-		if (mOrientation == ORIENTATION.vertical) {
-			float lYPos = lHUDRect.top() + mTopMargin;
+	public void updateStructureDimensions(LintfordCore pCore) {
+		Rectangle lHUDRect = mScreenManager.UIHUDController().HUDRectangle();
 
-			final int lLayoutCount = layouts().size();
-			for (int i = 0; i < lLayoutCount; i++) {
-				// TODO: Ignore floating layouts
-				BaseLayout lLayout = layouts().get(i);
+		// Update the component dimensions, then this layout knows how big it is
+		final int lCount = layouts().size();
 
-				// lLayout.width = lLayout.getEntryWidth();
-				lLayout.h = lLayout.getHeight();
-				lYPos += lLayout.paddingTop();
+		float lTotalHeight = lHUDRect.h;
+		float lStaticSize = 0;
+		int lNumDynElements = 0;
+		float lDynamicSize = 0;
 
-				switch (mChildAlignment) {
-				case left:
-					lLayout.x = lHUDRect.left() + lLayout.paddingLeft() + mChildPositionOffsetX;
-					break;
-				case center:
-					lLayout.x = lHUDRect.left() + lHUDRect.w / 2 - lLayout.w / 2 + mChildPositionOffsetX;
-					break;
-				case right:
-					lLayout.x = lHUDRect.right() - lLayout.w - lLayout.paddingRight() + mChildPositionOffsetX;
-					break;
-				}
+		// Figure out how much vertical space the static layouts need
+		for (int i = 0; i < lCount; i++) {
+			BaseLayout lLayout = mLayouts.get(i);
 
-				lLayout.y = lYPos + mChildPositionOffsetY;
+			if (lLayout.fillType() == FILL_TYPE.STATIC) {
+				if (lLayout.enabled())
+					lStaticSize += lLayout.marginTop() + lLayout.height() + lLayout.marginBottom();
 
-				lYPos += lLayout.h + lLayout.paddingBottom();
+			} else {
+				lNumDynElements++;
+			}
+
+		}
+
+		lDynamicSize = lTotalHeight - lStaticSize;
+		lNumDynElements = Math.max(1, lNumDynElements);
+
+		for (int i = 0; i < lCount; i++) {
+			BaseLayout lLayout = mLayouts.get(i);
+			lLayout.w = lHUDRect.w;
+
+			// Dynamic entries use up all the remaining space
+			// TODO: Add dynamic entry weights
+			if (lLayout.fillType() == FILL_TYPE.DYNAMIC) {
+				lLayout.h = lDynamicSize / lNumDynElements;
+
+			} else {
+				// Static entries take their desired heights.
+				lLayout.h = lLayout.getDesiredHeight();
 
 			}
 
-			mContentHeight = lYPos - lHUDRect.top() - mTopMargin;
+			mLayouts.get(i).updateStructureDimensions();
+		}
+
+	}
+
+	@Override
+	public void updateStructurePositions(LintfordCore pCore) {
+		Rectangle lHUDRect = mScreenManager.UIHUDController().HUDRectangle();
+
+		float lYPos = lHUDRect.top() + mPaddingTop;
+
+		final int lLayoutCount = layouts().size();
+		for (int i = 0; i < lLayoutCount; i++) {
+			BaseLayout lLayout = layouts().get(i);
+			if (!lLayout.enabled())
+				continue;
+
+			lYPos += lLayout.marginTop();
+
+			// lLayout.width = lLayout.getEntryWidth();
+			lLayout.x = lHUDRect.left();
+			lLayout.y = lYPos;
+
+			lYPos += lLayout.h + lLayout.marginBottom();
+
 		}
 
 		final int lCount = layouts().size();
 		for (int i = 0; i < lCount; i++) {
-			mLayouts.get(i).updateStructure();
+			mLayouts.get(i).updateStructurePositions();
 
 		}
 
@@ -323,6 +367,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	@Override
 	public void update(LintfordCore pCore, boolean pOtherScreenHasFocus, boolean pCoveredByOtherScreen) {
 		super.update(pCore, pOtherScreenHasFocus, pCoveredByOtherScreen);
+
 		final double lDeltaTime = pCore.time().elapseGameTimeMilli();
 
 		if (mAnimationTimer > 0) {

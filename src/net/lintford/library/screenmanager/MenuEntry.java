@@ -4,6 +4,7 @@ import net.lintford.library.ConstantsTable;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.ResourceManager;
+import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
@@ -11,6 +12,7 @@ import net.lintford.library.core.input.InputState;
 import net.lintford.library.core.input.InputState.INPUT_TYPES;
 import net.lintford.library.core.maths.Vector2f;
 import net.lintford.library.screenmanager.entries.EntryInteractions;
+import net.lintford.library.screenmanager.layouts.BaseLayout;
 
 public class MenuEntry extends Rectangle {
 
@@ -21,7 +23,10 @@ public class MenuEntry extends Rectangle {
 	private static final long serialVersionUID = -226493862481815669L;
 
 	protected static final float MENUENTRY_DEF_BUTTON_WIDTH = 300;
-	protected static final float MENUENTRY_HEIGHT = 32;
+	protected static final float MENUENTRY_DEF_BUTTON_HEIGHT = 32;
+
+	protected static final float MENUENTRY_MAX_WIDTH = 700;
+
 	protected static final float FOCUS_TIMER = 500f; // milli
 
 	protected static final float Z_STATE_MODIFIER_PASSIVE = 0.005f; // Entry passive
@@ -36,9 +41,9 @@ public class MenuEntry extends Rectangle {
 	// --------------------------------------
 
 	protected ScreenManager mScreenManager;
-	protected MenuScreen mParentScreen;
+	protected BaseLayout mParentLayout;
 	protected boolean mActive; // Not drawn/updated etc.
-	protected boolean mEnabled; // drawn but greyed out
+	protected boolean mEnabled;
 	protected String mText;
 	protected float mScale;
 	private float mScaleCounter;
@@ -66,8 +71,20 @@ public class MenuEntry extends Rectangle {
 	private boolean mIsInitialised, mIsLoaded;
 	public float mZ;
 
-	protected float mHorizontalPadding = 5f;
-	protected float mVerticalPadding = 5f;
+	// This is the padding INSIDE of the component (i.e. applied to child elements).
+	protected float mTopPadding;
+	protected float mBottomPadding;
+	protected float mLeftPadding;
+	protected float mRightPadding;
+
+	// The margin is applied to the outside of this component
+	protected float mTopMargin;
+	protected float mBottomMargin;
+	protected float mLeftMargin;
+	protected float mRightMargin;
+
+	protected float mMaxWidth;
+	protected float mMaxHeight;
 
 	boolean isAnimating;
 	float animationTimeRemaining;
@@ -84,8 +101,8 @@ public class MenuEntry extends Rectangle {
 		mDrawBackground = pNewValue;
 	}
 
-	public MenuScreen parentScreen() {
-		return mParentScreen;
+	public BaseLayout parentLayout() {
+		return mParentLayout;
 	}
 
 	public boolean canHaveFocus() {
@@ -104,12 +121,36 @@ public class MenuEntry extends Rectangle {
 		mCanHoverOver = pNewValue;
 	}
 
-	public float paddingHorizontal() {
-		return mHorizontalPadding;
+	public float paddingLeft() {
+		return mLeftPadding;
 	}
 
-	public float paddingVertical() {
-		return mVerticalPadding;
+	public float paddingRight() {
+		return mRightPadding;
+	}
+
+	public float paddingTop() {
+		return mTopPadding;
+	}
+
+	public float paddingBottom() {
+		return mBottomPadding;
+	}
+
+	public float marginLeft() {
+		return mLeftMargin;
+	}
+
+	public float marginRight() {
+		return mRightMargin;
+	}
+
+	public float marginTop() {
+		return mTopMargin;
+	}
+
+	public float marginBottom() {
+		return mBottomMargin;
 	}
 
 	public void entryID(int pNewValue) {
@@ -126,30 +167,34 @@ public class MenuEntry extends Rectangle {
 
 	public void buttonSize(BUTTON_SIZE pNewSize) {
 		mButtonSize = pNewSize;
-		
+
 		switch (mButtonSize) {
 		case tiny:
-			w = MENUENTRY_DEF_BUTTON_WIDTH * 0.5f;
+			mMaxWidth = MENUENTRY_DEF_BUTTON_WIDTH * 0.5f;
+			mMaxHeight = MENUENTRY_DEF_BUTTON_HEIGHT;
 			break;
 		case narrow:
-			w = MENUENTRY_DEF_BUTTON_WIDTH * 0.75f;
+			mMaxWidth = MENUENTRY_DEF_BUTTON_WIDTH * 0.75f;
+			mMaxHeight = MENUENTRY_DEF_BUTTON_HEIGHT;
 			break;
 		case normal:
-			w = MENUENTRY_DEF_BUTTON_WIDTH;
+			mMaxWidth = MENUENTRY_DEF_BUTTON_WIDTH;
+			mMaxHeight = MENUENTRY_DEF_BUTTON_HEIGHT;
 			break;
 		case wide:
-			w = MENUENTRY_DEF_BUTTON_WIDTH * 2f;
+			mMaxWidth = MENUENTRY_DEF_BUTTON_WIDTH * 2f;
+			mMaxHeight = MENUENTRY_DEF_BUTTON_HEIGHT;
 			break;
 		}
-		
+
 	}
 
-	public float getWidth() {
-		return w;
+	public float maxWidth() {
+		return mMaxWidth;
 	}
 
-	public float getHeight() {
-		return MENUENTRY_HEIGHT;
+	public float maxHeight() {
+		return mMaxHeight;
 	}
 
 	public boolean hoveredOver() {
@@ -200,9 +245,9 @@ public class MenuEntry extends Rectangle {
 	// Constructor
 	// --------------------------------------
 
-	public MenuEntry(ScreenManager pScreenManager, MenuScreen pParentScreen, String pMenuEntryLabel) {
+	public MenuEntry(ScreenManager pScreenManager, BaseLayout pParentLayout, String pMenuEntryLabel) {
 		mScreenManager = pScreenManager;
-		mParentScreen = pParentScreen;
+		mParentLayout = pParentLayout;
 		mText = pMenuEntryLabel;
 
 		mTextureBatch = new TextureBatch();
@@ -215,6 +260,12 @@ public class MenuEntry extends Rectangle {
 		mScaleonHover = false;
 		mHighlightOnHover = true;
 
+		mTopMargin = 3f;
+		mBottomMargin = 3f;
+
+		mMaxWidth = MENUENTRY_DEF_BUTTON_WIDTH;
+		mMaxHeight = MENUENTRY_DEF_BUTTON_HEIGHT;
+
 	}
 
 	// --------------------------------------
@@ -222,22 +273,8 @@ public class MenuEntry extends Rectangle {
 	// --------------------------------------
 
 	public void initialise() {
-		switch (mButtonSize) {
-		case tiny:
-			w = MENUENTRY_DEF_BUTTON_WIDTH * 0.5f;
-			break;
-		case narrow:
-			w = MENUENTRY_DEF_BUTTON_WIDTH * 0.75f;
-			break;
-		case normal:
-			w = MENUENTRY_DEF_BUTTON_WIDTH;
-			break;
-		case wide:
-			w = MENUENTRY_DEF_BUTTON_WIDTH * 2f;
-			break;
-		}
-
-		h = MENUENTRY_HEIGHT;
+		w = MENUENTRY_DEF_BUTTON_WIDTH;
+		h = MENUENTRY_DEF_BUTTON_HEIGHT;
 
 		mIsInitialised = true;
 
@@ -275,7 +312,7 @@ public class MenuEntry extends Rectangle {
 				hasFocus(true);
 
 				if (pCore.input().leftClickOwner() == -1) {
-					mParentScreen.setHoveringOn(this);
+					mParentLayout.parentScreen().setHoveringOn(this);
 
 				}
 			}
@@ -283,7 +320,7 @@ public class MenuEntry extends Rectangle {
 			if (canHaveFocus() && pCore.input().mouseLeftClick()) {
 				pCore.input().tryAquireLeftClickOwnership(hashCode());
 				pCore.input().setLeftMouseClickHandled();
-				mParentScreen.setFocusOn(pCore, this, false);
+				mParentLayout.parentScreen().setFocusOn(pCore, this, false);
 
 				onClick(pCore.input());
 
@@ -299,9 +336,33 @@ public class MenuEntry extends Rectangle {
 		return false;
 	}
 
-	public void updateStructure() {
+	public void updateStructureDimensions() {
+		switch (mButtonSize) {
+		case tiny:
+			w = MENUENTRY_DEF_BUTTON_WIDTH * 0.25f;
+			h = MENUENTRY_DEF_BUTTON_HEIGHT;
+			break;
 
-	}
+		case narrow:
+			w = MENUENTRY_DEF_BUTTON_WIDTH * 0.45f;
+			h = MENUENTRY_DEF_BUTTON_HEIGHT;
+			break;
+
+		default: // narrow
+			w = MENUENTRY_DEF_BUTTON_WIDTH;
+			h = MENUENTRY_DEF_BUTTON_HEIGHT;
+			break;
+
+		case wide:
+			w = MENUENTRY_DEF_BUTTON_WIDTH * 1.5f;
+			h = MENUENTRY_DEF_BUTTON_HEIGHT;
+			break;
+		}
+
+	};
+
+	public void updateStructurePositions() {
+	};
 
 	public void update(LintfordCore pCore, MenuScreen pScreen, boolean pIsSelected) {
 		if (!mActive)
@@ -340,9 +401,10 @@ public class MenuEntry extends Rectangle {
 		mZ = pParentZDepth;
 
 		// Set the tint of the back based on whether the button is enabled or not
-		float lR = mEnabled ? mAnimationTimer <= 0 ? 1f : 0.75f : .35f;
-		float lG = mEnabled ? mAnimationTimer <= 0 ? 1f : 0.75f : .35f;
-		float lB = mEnabled ? 1f : .35f;
+		float lR = mEnabled ? mAnimationTimer <= 0 ? 1f : 0.55f : .35f;
+		float lG = mEnabled ? mAnimationTimer <= 0 ? 1f : 0.55f : .35f;
+		float lB = mEnabled ? mAnimationTimer <= 0 ? 1f : 0.55f : .35f;
+		float lA = mParentLayout.parentScreen().mA;
 
 		float tile_size = 32;
 
@@ -351,22 +413,26 @@ public class MenuEntry extends Rectangle {
 
 		// Draw the button highlight when this element has focus.
 		if (mDrawBackground && mHoveredOver && mHighlightOnHover) {
+			lR *= 0.6f;
+			lG *= 0.6f;
+			lB *= 0.6f;
+
 			mTextureBatch.begin(pCore.HUD());
-			mTextureBatch.draw(lTexture, 0, 64, 32, 32, centerX() - w / 2, centerY() - h / 2, tile_size, h, mZ, lR, lG, lB, mParentScreen.mA);
+			mTextureBatch.draw(lTexture, 0, 64, 32, 32, centerX() - w / 2, centerY() - h / 2, tile_size, h, mZ, lR, lG, lB, lA);
 			switch (mButtonSize) {
 			default:
-				mTextureBatch.draw(lTexture, 32, 64, 224, 32, centerX() - (w / 2) + tile_size, centerY() - h / 2, w - tile_size * 2, h, mZ, lR, lG, lB, mParentScreen.mA);
-				mTextureBatch.draw(lTexture, 256, 64, 32, 32, centerX() + (w / 2) - tile_size, centerY() - h / 2, tile_size, h, mZ, lR, lG, lB, mParentScreen.mA);
+				mTextureBatch.draw(lTexture, 32, 64, 224, 32, centerX() - (w / 2) + tile_size, centerY() - h / 2, w - tile_size * 2, h, mZ, lR, lG, lB, lA);
+				mTextureBatch.draw(lTexture, 256, 64, 32, 32, centerX() + (w / 2) - tile_size, centerY() - h / 2, tile_size, h, mZ, lR, lG, lB, lA);
 			}
 			mTextureBatch.end();
 
 		} else if (mDrawBackground) {
 			mTextureBatch.begin(pCore.HUD());
-			mTextureBatch.draw(lTexture, 0, 32, 32, 32, centerX() - w / 2, centerY() - h / 2, 32, h, mZ, lR, lG, lB, mParentScreen.mA);
+			mTextureBatch.draw(lTexture, 0, 32, 32, 32, centerX() - w / 2, centerY() - h / 2, 32, h, mZ, lR, lG, lB, lA);
 			switch (mButtonSize) {
 			default:
-				mTextureBatch.draw(lTexture, 32, 32, 224, 32, centerX() - (w / 2) + 32, centerY() - h / 2, w - 64, h, mZ, lR, lG, lB, mParentScreen.mA);
-				mTextureBatch.draw(lTexture, 256, 32, 32, 32, centerX() + (w / 2) - 32, centerY() - h / 2, 32, h, mZ, lR, lG, lB, mParentScreen.mA);
+				mTextureBatch.draw(lTexture, 32, 32, 224, 32, centerX() - (w / 2) + 32, centerY() - h / 2, w - 64, h, mZ, lR, lG, lB, lA);
+				mTextureBatch.draw(lTexture, 256, 32, 32, 32, centerX() + (w / 2) - 32, centerY() - h / 2, 32, h, mZ, lR, lG, lB, lA);
 			}
 			mTextureBatch.end();
 		}
@@ -375,12 +441,14 @@ public class MenuEntry extends Rectangle {
 		if (mText != null && mText.length() > 0) {
 			final float FONT_SCALE = 1f;
 
-			float lColMod = (mHoveredOver && mHighlightOnHover) ? 0.7f : 1f;
+			float lColMod = 1f; // no color mod for the text (mHoveredOver && mHighlightOnHover) ? 0.7f : 1f;
 
-			mParentScreen.font().begin(pCore.HUD());
-			mParentScreen.font().draw(mText, centerX() - mParentScreen.font().bitmap().getStringWidth(mText, FONT_SCALE) * 0.5f, centerY() - mParentScreen.font().bitmap().fontHeight() * FONT_SCALE / 2 - 2f, mZ,
-					0.97f * lColMod, .92f * lColMod, .92f * lColMod, mParentScreen.mA, FONT_SCALE);
-			mParentScreen.font().end();
+			FontUnit lMenuFont = mParentLayout.parentScreen().font();
+
+			lMenuFont.begin(pCore.HUD());
+			lMenuFont.draw(mText, centerX() - lMenuFont.bitmap().getStringWidth(mText, FONT_SCALE) * 0.5f, centerY() - lMenuFont.bitmap().fontHeight() * FONT_SCALE / 2 - 2f, mZ, 0.97f * lColMod, .92f * lColMod,
+					.92f * lColMod, lA, FONT_SCALE);
+			lMenuFont.end();
 
 		}
 

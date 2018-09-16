@@ -11,6 +11,7 @@ import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.Screen;
 import net.lintford.library.screenmanager.ScreenManager;
+import net.lintford.library.screenmanager.layouts.BaseLayout;
 
 public class HorizontalEntryGroup extends MenuEntry {
 
@@ -24,22 +25,6 @@ public class HorizontalEntryGroup extends MenuEntry {
 
 	public List<MenuEntry> entries() {
 		return mChildEntries;
-	}
-
-	@Override
-	public float getWidth() {
-		if (mChildEntries == null || mChildEntries.size() == 0)
-			return 0;
-
-		int lCount = mChildEntries.size();
-		float lTotalWidth = 0;
-		for (int i = 0; i < lCount; i++) {
-			lTotalWidth += mChildEntries.get(i).paddingHorizontal();
-			lTotalWidth += mChildEntries.get(i).w;
-			lTotalWidth += mChildEntries.get(i).paddingHorizontal();
-		}
-
-		return lTotalWidth;
 	}
 
 	@Override
@@ -73,8 +58,8 @@ public class HorizontalEntryGroup extends MenuEntry {
 	// Constructor
 	// --------------------------------------
 
-	public HorizontalEntryGroup(ScreenManager pScreenManager, MenuScreen pParentScreen) {
-		super(pScreenManager, pParentScreen, "");
+	public HorizontalEntryGroup(ScreenManager pScreenManager, BaseLayout pParentLayout) {
+		super(pScreenManager, pParentLayout, "");
 
 		mChildEntries = new ArrayList<>();
 
@@ -147,15 +132,21 @@ public class HorizontalEntryGroup extends MenuEntry {
 	}
 
 	@Override
-	public void updateStructure() {
-		super.initialise();
+	public void updateStructureDimensions() {
+		super.updateStructureDimensions();
 
 		updateEntries();
 
 		int lCount = mChildEntries.size();
 		for (int i = 0; i < lCount; i++) {
-			mChildEntries.get(i).updateStructure();
+			mChildEntries.get(i).updateStructureDimensions();
 		}
+	}
+
+	@Override
+	public void updateStructurePositions() {
+		super.updateStructurePositions();
+
 	}
 
 	@Override
@@ -173,8 +164,13 @@ public class HorizontalEntryGroup extends MenuEntry {
 	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pParentZDepth) {
 		if (ConstantsTable.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
 			mTextureBatch.begin(pCore.HUD());
-			final float ALPHA = 0.3f;
-			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, x, y, w, h, pParentZDepth + .1f, 0.5f * mParentScreen.r(), 0.2f * mParentScreen.g(), ALPHA * mParentScreen.b(), mParentScreen.a());
+
+			final float lR = mParentLayout.parentScreen().r();
+			final float lG = mParentLayout.parentScreen().g();
+			final float lB = mParentLayout.parentScreen().b();
+			final float lA = mParentLayout.parentScreen().a();
+
+			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, x, y, w, h, pParentZDepth + .1f, 0.5f * lR, 0.2f * lG, lB, lA);
 			mTextureBatch.end();
 
 		}
@@ -200,26 +196,24 @@ public class HorizontalEntryGroup extends MenuEntry {
 		float lTotalWidth = 0;
 		float lTotalHeight = 0;
 		for (int i = 0; i < lCount; i++) {
-			lTotalWidth += mChildEntries.get(i).paddingHorizontal();
+			lTotalWidth += mChildEntries.get(i).marginLeft();
 			lTotalWidth += mChildEntries.get(i).w;
-			lTotalWidth += mChildEntries.get(i).paddingHorizontal();
+			lTotalWidth += mChildEntries.get(i).marginRight();
 
-			if (mChildEntries.get(i).h + mChildEntries.get(i).paddingVertical() * 2 > lTotalHeight) {
-				lTotalHeight = mChildEntries.get(i).h + mChildEntries.get(i).paddingVertical() * 2;
+			if (mChildEntries.get(i).h + mChildEntries.get(i).marginTop() * 2 > lTotalHeight) {
+				lTotalHeight = mChildEntries.get(i).h + mChildEntries.get(i).marginTop() * 2;
+
 			}
 		}
 
 		final float lHSpace = lTotalWidth / lCount;
 
 		for (int i = 0; i < lCount; i++) {
-
-			// we have to manually take away the half screen width because the entries on
-			// the menu screen are placed in the middle.
-			float lPosX = x + mChildEntries.get(i).paddingHorizontal() + lHSpace * i;
+			float lPosX = x + mChildEntries.get(i).marginLeft() + lHSpace * i;
 			float lPosY = y;
 
 			mChildEntries.get(i).x = lPosX;
-			mChildEntries.get(i).y = lPosY + mChildEntries.get(i).paddingVertical();
+			mChildEntries.get(i).y = lPosY + mChildEntries.get(i).marginTop();
 
 		}
 
