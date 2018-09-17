@@ -198,8 +198,11 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 				if (mEnabled) {
 
 					if (mOpen) {
+						final float luiTextScale = mScreenManager.UIHUDController().uiTextScaleFactor();
+
 						// TODO: play the menu clicked sound
-						final int lConsoleLineHeight = 25;
+						// TODO: This is not quite correct - there is a big error when scaling the ui text.
+						final float lConsoleLineHeight = 25f * luiTextScale;
 						// Something inside the dropdown was select
 						float lRelativeheight = pCore.HUD().getMouseCameraSpace().y - y - mScrollYPosition;
 
@@ -274,7 +277,9 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 	@Override
 	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pComponentDepth) {
 
-		FontUnit lFontUnit = mParentLayout.parentScreen().font();
+		final float luiTextScale = mScreenManager.UIHUDController().uiTextScaleFactor();
+
+		final FontUnit lFontUnit = mParentLayout.parentScreen().font();
 
 		// TITLE BAR
 		mZ = mOpen ? ZLayers.LAYER_SCREENMANAGER + Z_STATE_MODIFIER_ACTIVE : ZLayers.LAYER_SCREENMANAGER + Z_STATE_MODIFIER_PASSIVE;
@@ -287,18 +292,20 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 
 		final String lSeparator = " : ";
 
-		final float lLabelWidth = lFontUnit.bitmap().getStringWidth(mLabel);
-		final float lFontHeight = lFontUnit.bitmap().fontHeight();
+		final float lLabelWidth = lFontUnit.bitmap().getStringWidth(mLabel, luiTextScale);
+		final float lFontHeight = lFontUnit.bitmap().fontHeight() * luiTextScale;
 
-		final float lSeparatorHalfWidth = lFontUnit.bitmap().getStringWidth(lSeparator) * 0.5f;
+		final float lSingleTextHeight = MENUENTRY_DEF_BUTTON_HEIGHT;
+
+		final float lSeparatorHalfWidth = lFontUnit.bitmap().getStringWidth(lSeparator, luiTextScale) * 0.5f;
 		lFontUnit.begin(pCore.HUD());
-		lFontUnit.draw(mLabel, x + w / 2 - 10 - lLabelWidth - lSeparatorHalfWidth, y + lFontHeight / 2f, mZ, lTextR, lTextG, lTextB, lTextA, 1.0f, -1);
-		lFontUnit.draw(lSeparator, x + w / 2 - lSeparatorHalfWidth, y + lFontHeight / 2f, mZ, lTextR, lTextG, lTextB, lTextA, 1.0f, -1);
+		lFontUnit.draw(mLabel, x + w / 2 - 10 - lLabelWidth - lSeparatorHalfWidth, y + lSingleTextHeight / 2f - lFontHeight / 2f, mZ, lTextR, lTextG, lTextB, lTextA, luiTextScale, -1);
+		lFontUnit.draw(lSeparator, x + w / 2 - lSeparatorHalfWidth, y + lSingleTextHeight / 2f - lFontHeight / 2f, mZ, lTextR, lTextG, lTextB, lTextA, luiTextScale, -1);
 
 		if (mItems == null || mItems.size() == 0) {
 			// LOCALIZATION: No entries added to dropdown list
 			final String lNoEntriesText = "No items found";
-			mParentLayout.parentScreen().font().draw(lNoEntriesText, x + w / 2 + lSeparatorHalfWidth + SPACE_BETWEEN_TEXT, y, mZ, lTextR, lTextG, lTextB, lTextA, 1.0f, -1);
+			mParentLayout.parentScreen().font().draw(lNoEntriesText, x + w / 2 + lSeparatorHalfWidth + SPACE_BETWEEN_TEXT, y + h / 2f - lFontHeight / 2f, mZ, lTextR, lTextG, lTextB, lTextA, luiTextScale, -1);
 			mParentLayout.parentScreen().font().end();
 			return;
 		}
@@ -308,7 +315,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 		// Render the selected item in the 'top spot'
 		final String lCurItem = lSelectItem.name;
 		final float lSelectedTextWidth = lFontUnit.bitmap().getStringWidth(lCurItem);
-		lFontUnit.draw(lCurItem, x + (w / 4 * 3) + -lSelectedTextWidth / 2, y + lFontHeight / 2f, mZ, lTextR, lTextG, lTextB, lTextA, 1.0f, -1);
+		lFontUnit.draw(lCurItem, x + (w / 4 * 3) + -lSelectedTextWidth / 2, y + lSingleTextHeight / 2f - lFontHeight / 2f, mZ, lTextR, lTextG, lTextB, lTextA, luiTextScale, -1);
 		lFontUnit.end();
 
 		// CONTENT PANE
@@ -344,7 +351,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 			for (int i = 0; i < mItems.size(); i++) {
 				MenuEnumEntryItem lItem = mItems.get(i);
 				final float lItemTextWidth = lFontUnit.bitmap().getStringWidth(lItem.name);
-				lFontUnit.draw(lItem.name, x + (w / 4 * 3) - lItemTextWidth / 2, lYPos, mZ + 0.1f, lTextR, lTextG, lTextB, lTextA, 1.0f, -1);
+				lFontUnit.draw(lItem.name, x + (w / 4 * 3) - lItemTextWidth / 2, lYPos + lSingleTextHeight / 2 - lFontHeight / 2f, mZ + 0.1f, lTextR, lTextG, lTextB, lTextA, luiTextScale, -1);
 				lYPos += 25;
 
 			}

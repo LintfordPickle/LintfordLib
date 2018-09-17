@@ -337,6 +337,7 @@ public class MenuEntry extends Rectangle {
 	}
 
 	public void updateStructureDimensions() {
+
 		switch (mButtonSize) {
 		case tiny:
 			w = MENUENTRY_DEF_BUTTON_WIDTH * 0.25f;
@@ -439,15 +440,15 @@ public class MenuEntry extends Rectangle {
 
 		// Render the MenuEntry label
 		if (mText != null && mText.length() > 0) {
-			final float FONT_SCALE = 1f;
-
+			final float luiTextScale = mScreenManager.UIHUDController().uiTextScaleFactor();
+			
 			float lColMod = 1f; // no color mod for the text (mHoveredOver && mHighlightOnHover) ? 0.7f : 1f;
 
 			FontUnit lMenuFont = mParentLayout.parentScreen().font();
 
 			lMenuFont.begin(pCore.HUD());
-			lMenuFont.draw(mText, centerX() - lMenuFont.bitmap().getStringWidth(mText, FONT_SCALE) * 0.5f, centerY() - lMenuFont.bitmap().fontHeight() * FONT_SCALE / 2 - 2f, mZ, 0.97f * lColMod, .92f * lColMod,
-					.92f * lColMod, lA, FONT_SCALE);
+			lMenuFont.draw(mText, centerX() - lMenuFont.bitmap().getStringWidth(mText, luiTextScale) * 0.5f, centerY() - lMenuFont.bitmap().fontHeight() * luiTextScale / 2 - 2f, mZ, 0.97f * lColMod, .92f * lColMod,
+					.92f * lColMod, lA, luiTextScale);
 			lMenuFont.end();
 
 		}

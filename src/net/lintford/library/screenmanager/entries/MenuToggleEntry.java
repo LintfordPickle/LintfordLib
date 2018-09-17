@@ -130,12 +130,14 @@ public class MenuToggleEntry extends MenuEntry {
 	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pParentZDepth) {
 		super.draw(pCore, pScreen, pIsSelected, pParentZDepth);
 
-		MenuScreen lParentScreen = mParentLayout.parentScreen();
-		FontUnit lFont = lParentScreen.font();
+		final float luiTextScale = mScreenManager.UIHUDController().uiTextScaleFactor();
+		
+		final MenuScreen lParentScreen = mParentLayout.parentScreen();
+		final FontUnit lFont = lParentScreen.font();
 
-		final float lLabelWidth = lFont.bitmap().getStringWidth(mLabel);
-		final float lTextHeight = lFont.bitmap().getStringHeight(mLabel);
-		final float lSeparatorHalfWidth = lFont.bitmap().getStringWidth(mSeparator) * 0.5f;
+		final float lLabelWidth = lFont.bitmap().getStringWidth(mLabel, luiTextScale);
+		final float lTextHeight = lFont.bitmap().fontHeight() * luiTextScale;
+		final float lSeparatorHalfWidth = lFont.bitmap().getStringWidth(mSeparator, luiTextScale) * 0.5f;
 
 		mZ = pParentZDepth;
 
@@ -153,8 +155,8 @@ public class MenuToggleEntry extends MenuEntry {
 		mTextureBatch.end();
 
 		lFont.begin(pCore.HUD());
-		lFont.draw(mLabel, x + w / 2 - lLabelWidth - SPACE_BETWEEN_TEXT - lSeparatorHalfWidth, y + h / 2 - lTextHeight * 0.5f, mZ, lParentScreen.r(), lParentScreen.g(), lParentScreen.b(), lParentScreen.a(), 1.0f, -1);
-		lFont.draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - lTextHeight * 0.5f, mZ, lParentScreen.r(), lParentScreen.g(), lParentScreen.b(), lParentScreen.a(), 1.0f, -1);
+		lFont.draw(mLabel, x + w / 2 - lLabelWidth - SPACE_BETWEEN_TEXT - lSeparatorHalfWidth, y + h / 2 - lTextHeight * 0.5f, mZ, lParentScreen.r(), lParentScreen.g(), lParentScreen.b(), lParentScreen.a(), luiTextScale, -1);
+		lFont.draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - lTextHeight * 0.5f, mZ, lParentScreen.r(), lParentScreen.g(), lParentScreen.b(), lParentScreen.a(), luiTextScale, -1);
 
 		// Render the items
 		lFont.end();

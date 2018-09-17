@@ -269,6 +269,8 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pComponentDepth) {
 		super.draw(pCore, pScreen, pIsSelected, pComponentDepth);
 
+		final float luiTextScale = mScreenManager.UIHUDController().uiTextScaleFactor();
+
 		mZ = pComponentDepth;
 
 		// Render the two arrows either side of the enumeration options
@@ -279,9 +281,9 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 			final float ARROW_PADDING_X = mLeftButtonRectangle.w - ARROW_BUTTON_SIZE;
 			final float ARROW_PADDING_Y = mLeftButtonRectangle.h - ARROW_BUTTON_SIZE;
 
-			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 160,  0, 32, 32, mLeftButtonRectangle.x + ARROW_PADDING_X, mLeftButtonRectangle.y + ARROW_PADDING_Y, ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, mZ, 1f, 1f, 1f,
+			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 160, 0, 32, 32, mLeftButtonRectangle.x + ARROW_PADDING_X, mLeftButtonRectangle.y + ARROW_PADDING_Y, ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, mZ, 1f, 1f, 1f,
 					1f);
-			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 224,  0, 32, 32, mRightButtonRectangle.x + ARROW_PADDING_X, mRightButtonRectangle.y + ARROW_PADDING_Y, ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, mZ, 1f, 1f, 1f,
+			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 224, 0, 32, 32, mRightButtonRectangle.x + ARROW_PADDING_X, mRightButtonRectangle.y + ARROW_PADDING_Y, ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, mZ, 1f, 1f, 1f,
 					1f);
 
 			mTextureBatch.end();
@@ -289,9 +291,9 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 
 		FontUnit lFontBitmap = mParentLayout.parentScreen().font();
 
-		final float lLabelWidth = lFontBitmap.bitmap().getStringWidth(mLabel);
-		final float TEXT_HEIGHT = lFontBitmap.bitmap().getStringHeight(mLabel);
-		final float lSeparatorHalfWidth = lFontBitmap.bitmap().getStringWidth(mSeparator) * 0.5f;
+		final float lLabelWidth = lFontBitmap.bitmap().getStringWidth(mLabel, luiTextScale);
+		final float lFontHeight = lFontBitmap.bitmap().fontHeight() * luiTextScale;
+		final float lSeparatorHalfWidth = lFontBitmap.bitmap().getStringWidth(mSeparator, luiTextScale) * 0.5f;
 
 		// Change text color depending on enabled or not
 		float lTextR = mEnabled ? mParentLayout.parentScreen().r() : 0.24f;
@@ -299,15 +301,17 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 		float lTextB = mEnabled ? mParentLayout.parentScreen().b() : 0.24f;
 
 		lFontBitmap.begin(pCore.HUD());
-		lFontBitmap.draw(mLabel, x + w / 2 - 10 - lLabelWidth - lSeparatorHalfWidth, y + h / 2 - TEXT_HEIGHT * 0.5f, mZ, lTextR, lTextG, lTextB, mParentLayout.parentScreen().a(), 1.0f, -1);
-		lFontBitmap.draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - TEXT_HEIGHT * 0.5f, mZ, lTextR, lTextG, lTextB, mParentLayout.parentScreen().a(), 1.0f, -1);
+		lFontBitmap.draw(mLabel, x + w / 2 - 10 - lLabelWidth - lSeparatorHalfWidth, y + h / 2 - lFontHeight * 0.5f, mZ, lTextR, lTextG, lTextB, mParentLayout.parentScreen().a(), luiTextScale, -1);
+		lFontBitmap.draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - lFontHeight * 0.5f, mZ, lTextR, lTextG, lTextB, mParentLayout.parentScreen().a(), luiTextScale, -1);
 
 		// Render the items
 		if (mSelectedIndex >= 0 && mSelectedIndex < mItems.size()) {
+			// TODO: For large names, the text clips off the screen
 			String lCurItem = mItems.get(mSelectedIndex).name;
 			final float EntryWidth = lFontBitmap.bitmap().getStringWidth(lCurItem);
 
-			lFontBitmap.draw(lCurItem, x + (w / 4 * 3) - EntryWidth / 2, y + h / 2 - TEXT_HEIGHT * 0.5f, pComponentDepth, lTextR, lTextG, lTextB, mParentLayout.parentScreen().a(), 1.0f, -1);
+			lFontBitmap.draw(lCurItem, x + (w / 4 * 3) - EntryWidth / 2, y + h / 2 - lFontHeight * 0.5f, pComponentDepth, lTextR, lTextG, lTextB, mParentLayout.parentScreen().a(), luiTextScale, -1);
+
 		}
 
 		lFontBitmap.end();

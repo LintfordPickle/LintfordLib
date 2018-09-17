@@ -139,21 +139,24 @@ public class MenuInputEntry extends MenuEntry implements IBufferedInputCallback 
 	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pParentZDepth) {
 		super.draw(pCore, pScreen, pIsSelected, pParentZDepth);
 
-		MenuScreen lParentScreen = mParentLayout.parentScreen();
-		FontUnit lFont = lParentScreen.font();
+		final float luiTextScale = mScreenManager.UIHUDController().uiTextScaleFactor();
 
-		final float lLabelWidth = lFont.bitmap().getStringWidth(mLabel);
-		final float lFontHeight = lFont.bitmap().fontHeight();
-		final float lInputTextWidth = lFont.bitmap().getStringWidth(mInputField.toString());
-		final float lSeparatorHalfWidth = lFont.bitmap().getStringWidth(mSeparator) * 0.5f;
+		final MenuScreen lParentScreen = mParentLayout.parentScreen();
+		final FontUnit lFont = lParentScreen.font();
+
+		final float lLabelWidth = lFont.bitmap().getStringWidth(mLabel, luiTextScale);
+
+		final float lFontHeight = lFont.bitmap().fontHeight() * luiTextScale;
+		final float lInputTextWidth = lFont.bitmap().getStringWidth(mInputField.toString(), luiTextScale);
+		final float lSeparatorHalfWidth = lFont.bitmap().getStringWidth(mSeparator, luiTextScale) * 0.5f;
 
 		lFont.begin(pCore.HUD());
-		lFont.draw(mLabel, x + w / 2 - 10 - lLabelWidth - lSeparatorHalfWidth, y + h / 2 - lFontHeight * 0.5f, pParentZDepth + .1f, 1f);
-		lFont.draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - lFontHeight * 0.5f, pParentZDepth + .1f, 1f);
-		lFont.draw(mInputField.toString(), x + w / 2 + lSeparatorHalfWidth + SPACE_BETWEEN_TEXT, y + h / 2 - lFontHeight * 0.5f, pParentZDepth + .1f, 1f);
+		lFont.draw(mLabel, x + w / 2 - 10 - lLabelWidth - lSeparatorHalfWidth, y + h / 2 - lFontHeight * 0.5f, pParentZDepth + .1f, luiTextScale);
+		lFont.draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - lFontHeight * 0.5f, pParentZDepth + .1f, luiTextScale);
+		lFont.draw(mInputField.toString(), x + w / 2 + lSeparatorHalfWidth + SPACE_BETWEEN_TEXT, y + h / 2 - lFontHeight * 0.5f, pParentZDepth + .1f, luiTextScale);
 
 		if (mShowCaret && mHasFocus) {
-			lFont.draw("|", x + w / 2 + lSeparatorHalfWidth + SPACE_BETWEEN_TEXT + lInputTextWidth, y + h / 2 - lFontHeight * 0.5f, pParentZDepth + .1f, 1.0f);
+			lFont.draw("|", x + w / 2 + lSeparatorHalfWidth + SPACE_BETWEEN_TEXT + lInputTextWidth, y + h / 2 - lFontHeight * 0.5f, pParentZDepth + .1f, luiTextScale);
 
 		}
 

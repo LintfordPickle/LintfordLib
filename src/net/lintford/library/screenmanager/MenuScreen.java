@@ -391,13 +391,15 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	public void draw(LintfordCore pCore) {
 		if (mScreenState != ScreenState.Active && mScreenState != ScreenState.TransitionOn && mScreenState != ScreenState.TransitionOff)
 			return;
+		
+		final float luiTextScale = mScreenManager.UIHUDController().uiTextScaleFactor();
 
 		final float MENUSCREEN_Z_DEPTH = ZLayers.LAYER_SCREENMANAGER;
 
 		Rectangle lHUDRect = pCore.HUD().boundingRectangle();
 
 		mMenuHeaderFont.begin(pCore.HUD());
-		mMenuHeaderFont.draw(mMenuTitle, lHUDRect.left() + TITLE_PADDING_X, lHUDRect.top(), MENUSCREEN_Z_DEPTH, mR, mG, mB, mA, 1f);
+		mMenuHeaderFont.draw(mMenuTitle, lHUDRect.left() + TITLE_PADDING_X, lHUDRect.top(), MENUSCREEN_Z_DEPTH, mR, mG, mB, mA, luiTextScale);
 		mMenuHeaderFont.end();
 
 		// Draw each layout in turn.

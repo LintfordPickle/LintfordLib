@@ -1,9 +1,12 @@
 package net.lintford.library.controllers.display;
 
+import org.lwjgl.glfw.GLFW;
+
 import net.lintford.library.controllers.BaseController;
 import net.lintford.library.controllers.core.ControllerManager;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.geometry.Rectangle;
+import net.lintford.library.core.maths.MathHelper;
 
 public class UIHUDController extends BaseController {
 
@@ -13,8 +16,8 @@ public class UIHUDController extends BaseController {
 
 	public static final String CONTROLLER_NAME = "UIHUDController";
 
-	public static final float UI_TEXT_SCALE_FACTOR_MIN = 0.8f;
-	public static final float UI_TEXT_SCALE_FACTOR_MAX = 1.2f;
+	public static final float UI_SCALE_FACTOR_MIN = 0.75f;
+	public static final float UI_SCALE_FACTOR_MAX = 1.4f;
 
 	// --------------------------------------
 	// Variables
@@ -27,22 +30,12 @@ public class UIHUDController extends BaseController {
 
 	private float mUITransparencyFactorUser;
 	private float mUITransparencyFactorActual;
-	private float mUIScaleFactorUser;
-	private float mUIScaleFactorActual;
 	private float mUITextScaleFactorUser;
 	private float mUITextScaleFactorActual;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
-
-	public float uiScaleFactor() {
-		return mUIScaleFactorActual;
-	}
-
-	public void uiScaleFactor(float pNewValue) {
-		mUIScaleFactorUser = pNewValue;
-	}
 
 	public float uiTransparencyFactor() {
 		return mUITransparencyFactorActual;
@@ -81,7 +74,6 @@ public class UIHUDController extends BaseController {
 		super(pControllerManager, CONTROLLER_NAME, pGroupID);
 
 		mUITextScaleFactorUser = 1.0f;
-		mUIScaleFactorUser = 1.0f;
 		mUITransparencyFactorUser = 1.0f;
 
 		mHUDRectangle = new Rectangle();
@@ -103,6 +95,25 @@ public class UIHUDController extends BaseController {
 	@Override
 	public void unload() {
 
+	}
+
+	@Override
+	public boolean handleInput(LintfordCore pCore) {
+
+		// TEST
+		if (pCore.input().keyDown(GLFW.GLFW_KEY_KP_SUBTRACT)) {
+			mUITextScaleFactorUser -= 0.01f;
+			mUITextScaleFactorUser = MathHelper.clamp(mUITextScaleFactorUser, UI_SCALE_FACTOR_MIN, UI_SCALE_FACTOR_MAX);
+
+		}
+
+		if (pCore.input().keyDown(GLFW.GLFW_KEY_KP_ADD)) {
+			mUITextScaleFactorUser += 0.01f;
+			mUITextScaleFactorUser = MathHelper.clamp(mUITextScaleFactorUser, UI_SCALE_FACTOR_MIN, UI_SCALE_FACTOR_MAX);
+
+		}
+
+		return super.handleInput(pCore);
 	}
 
 	@Override
@@ -133,15 +144,13 @@ public class UIHUDController extends BaseController {
 			mBigUIEnabled = false;
 			lHUDRatio = 0.80f;
 
-			mUITextScaleFactorActual = mUITextScaleFactorUser * 0.8f;
-			mUIScaleFactorActual = mUIScaleFactorUser * 0.7f;
-			mUITransparencyFactorActual = mUITransparencyFactorUser * 0.7f;
+			mUITextScaleFactorActual = mUITextScaleFactorUser * 1f;
+			mUITransparencyFactorActual = mUITransparencyFactorUser * 1f;
 
 		} else {
 			mBigUIEnabled = true;
 
 			mUITextScaleFactorActual = mUITextScaleFactorUser * 1.0f;
-			mUIScaleFactorActual = mUIScaleFactorUser * 1.0f;
 			mUITransparencyFactorActual = mUITransparencyFactorUser * 1.0f;
 
 		}

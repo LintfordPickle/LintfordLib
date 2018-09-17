@@ -23,10 +23,19 @@ public class MenuLabelEntry extends MenuEntry {
 	private float mPadding = 15f;
 	private boolean mShow;
 	private float mR, mG, mB;
+	private boolean mDrawBackground;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public boolean enableBackground() {
+		return mDrawBackground;
+	}
+
+	public void enableBackground(boolean pNewValue) {
+		mDrawBackground = pNewValue;
+	}
 
 	/** Padding is applied when the label is either aligned left or right (not when centered). */
 	public float padding() {
@@ -89,6 +98,7 @@ public class MenuLabelEntry extends MenuEntry {
 	public MenuLabelEntry(ScreenManager pScreenManager, BaseLayout pParentLayout) {
 		super(pScreenManager, pParentLayout, "");
 
+		mDrawBackground = false;
 		mText = "Add your message";
 		mShow = true;
 		mR = 1.0f;
@@ -124,13 +134,20 @@ public class MenuLabelEntry extends MenuEntry {
 		if (!enabled())
 			return;
 
-		final float lUIFontScaleFactor = mScreenManager.UIHUDController().uiTextScaleFactor();
+		final float luiTextScale = mScreenManager.UIHUDController().uiTextScaleFactor();
 
 		final MenuScreen lParentScreen = mParentLayout.parentScreen();
 		final FontUnit lFont = lParentScreen.font();
 
-		final float lLabelWidth = lFont.bitmap().getStringWidth(mText, lUIFontScaleFactor);
-		final float lFontHeight = lFont.bitmap().fontHeight();
+		final float lLabelWidth = lFont.bitmap().getStringWidth(mText, luiTextScale);
+		final float lFontHeight = lFont.bitmap().fontHeight() * luiTextScale;
+
+		if (mDrawBackground) {
+			mTextureBatch.begin(pCore.HUD());
+			final float lAlpha = 0.4f;
+			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, x, y, w, h, mZ, 0.1f, 0.1f, 0.1f, lAlpha);
+			mTextureBatch.end();
+		}
 
 		float lX = x + w / 2 - lLabelWidth / 2; // Center label
 		switch (mAlignment) {
@@ -146,7 +163,7 @@ public class MenuLabelEntry extends MenuEntry {
 		}
 
 		lFont.begin(pCore.HUD());
-		lFont.draw(mText, lX, y + lFontHeight / 2, pParentZDepth + .1f, mR, mG, mB, lParentScreen.a(), lUIFontScaleFactor);
+		lFont.draw(mText, lX, y + h / 2f - lFontHeight / 2f, pParentZDepth + .1f, mR, mG, mB, lParentScreen.a(), luiTextScale);
 		lFont.end();
 
 		if (ConstantsTable.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {

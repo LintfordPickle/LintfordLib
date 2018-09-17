@@ -47,16 +47,16 @@ public class ListLayout extends BaseLayout {
 	public void updateStructurePositions() {
 		super.updateStructurePositions();
 
-		if (mContentArea.h < h)
-			mYScrollPos = 0;
-
 		float lYPos = y + mYScrollPos;
+
+		if (mContentArea.h < h) {
+			mYScrollPos = 0;
+			lYPos += 5f;
+		}
 
 		int lEntryCount = menuEntries().size();
 		for (int i = 0; i < lEntryCount; i++) {
 			MenuEntry lEntry = menuEntries().get(i);
-//			if (!menuEntries().get(i).enabled())
-//				continue;
 
 			switch (mAlignment) {
 			case left:

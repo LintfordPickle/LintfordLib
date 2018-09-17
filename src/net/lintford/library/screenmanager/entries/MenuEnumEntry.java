@@ -238,10 +238,12 @@ public class MenuEnumEntry extends MenuEntry {
 
 		MenuScreen lParentScreen = mParentLayout.parentScreen();
 		FontUnit lFontBitmap = lParentScreen.font();
+		
+		final float luiTextScale = mScreenManager.UIHUDController().uiTextScaleFactor();
 
-		final float lTextWidth = lFontBitmap.bitmap().getStringWidth(mLabel);
-		final float lTextHeight = lFontBitmap.bitmap().getStringHeight(mLabel);
-		final float lSeparatorHalfWidth = lFontBitmap.bitmap().getStringWidth(mSeparator) * 0.5f;
+		final float lTextWidth = lFontBitmap.bitmap().getStringWidth(mLabel, luiTextScale);
+		final float lTextHeight = lFontBitmap.bitmap().getStringHeight(mLabel) * luiTextScale;
+		final float lSeparatorHalfWidth = lFontBitmap.bitmap().getStringWidth(mSeparator, luiTextScale) * 0.5f;
 
 		// TODO(John): we could make this a lot more readable and save on the individual calculations of the width/height of the same strings
 
@@ -253,9 +255,9 @@ public class MenuEnumEntry extends MenuEntry {
 
 		// Render the two arrows either side of the enumeration options
 		if (mButtonsEnabled) {
-			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 160, 0, 32, 32, mLeftButtonRectangle.x + ARROW_PADDING_X, mLeftButtonRectangle.y + ARROW_PADDING_Y, ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, 0f, 1f, 1f, 1f,
+			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 160, 0, 32, 32, mLeftButtonRectangle.x, mLeftButtonRectangle.y + ARROW_PADDING_Y, ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, 0f, 1f, 1f, 1f,
 					1f);
-			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 224, 0, 32, 32, mRightButtonRectangle.x + ARROW_PADDING_X, mRightButtonRectangle.y + ARROW_PADDING_Y, ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, 0f, 1f, 1f, 1f,
+			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 224, 0, 32, 32, mRightButtonRectangle.x, mRightButtonRectangle.y + ARROW_PADDING_Y, ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, 0f, 1f, 1f, 1f,
 					1f);
 
 		}
@@ -268,16 +270,16 @@ public class MenuEnumEntry extends MenuEntry {
 		final float lA = lParentScreen.a();
 
 		lFontBitmap.begin(pCore.HUD());
-		lFontBitmap.draw(mLabel, x + w / 2 - 10 - lTextWidth - lSeparatorHalfWidth, y + h / 2 - lTextHeight * 0.5f, pParentZDepth, lR, lG, lB, lA, 1.0f, -1);
-		lFontBitmap.draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - lTextHeight * 0.5f, pParentZDepth, lR, lG, lB, lA, 1.0f, -1);
+		lFontBitmap.draw(mLabel, x + w / 2 - 10 - lTextWidth - lSeparatorHalfWidth, y + h / 2 - lTextHeight * 0.5f, pParentZDepth, lR, lG, lB, lA, luiTextScale, -1);
+		lFontBitmap.draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - lTextHeight * 0.5f, pParentZDepth, lR, lG, lB, lA, luiTextScale, -1);
 
 		// Render the items
 		if (mItems.size() > 0) {
 			String lCurItem = mItems.get(mSelectedIndex);
 
-			final float EntryWidth = lFontBitmap.bitmap().getStringWidth(lCurItem);
+			final float EntryWidth = lFontBitmap.bitmap().getStringWidth(lCurItem, luiTextScale);
 
-			lFontBitmap.draw(lCurItem, x + (w / 4 * 3) - EntryWidth / 2, y + h / 2 - lTextHeight * 0.5f, pParentZDepth, lR, lG, lB, lA, 1.0f, -1);
+			lFontBitmap.draw(lCurItem, x + (w / 6 * 4.65f) - EntryWidth / 2, y + h / 2 - lTextHeight * 0.5f, pParentZDepth, lR, lG, lB, lA, luiTextScale, -1);
 		}
 		lFontBitmap.end();
 
