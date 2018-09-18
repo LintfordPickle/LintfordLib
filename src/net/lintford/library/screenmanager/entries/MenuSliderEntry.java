@@ -38,6 +38,10 @@ public class MenuSliderEntry extends MenuEntry {
 	private boolean mShowGuideValuesEnabled;
 	private boolean mShowUnit;
 
+	private boolean mTrackingClick;
+	private float mBarPosX;
+	private float mBarWidth;
+
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
@@ -148,10 +152,14 @@ public class MenuSliderEntry extends MenuEntry {
 				if (mEnabled) {
 
 					// TODO: Play menu click sound
+
 					if (mDownButton.intersectsAA(pCore.HUD().getMouseCameraSpace())) {
 						setValue(mValue - mStep);
 					} else if (mUpButton.intersectsAA(pCore.HUD().getMouseCameraSpace())) {
 						setValue(mValue + mStep);
+					} else {
+						mTrackingClick = true;
+
 					}
 
 					mParentLayout.parentScreen().setFocusOn(pCore, this, true);
@@ -171,14 +179,21 @@ public class MenuSliderEntry extends MenuEntry {
 				mToolTipTimer += pCore.time().elapseGameTimeMilli();
 			}
 
-			return true;
-
 		} else {
 			mToolTipTimer = 0;
 
 		}
 
-		return false;
+		if (mTrackingClick && pCore.input().mouseLeftClick()) {
+			mValue = (int) MathHelper.scaleToRange(pCore.HUD().getMouseCameraSpace().x - mBarPosX, 0, mBarWidth - 32 - 16, mLowerBound, mUpperBound);
+			mValue = MathHelper.clampi(mValue, mLowerBound, mUpperBound);
+
+		} else {
+			mTrackingClick = false;
+
+		}
+
+		return mTrackingClick;
 	}
 
 	@Override
@@ -198,6 +213,9 @@ public class MenuSliderEntry extends MenuEntry {
 		mDownButton.y = yPos;
 		mUpButton.x = x + w - 32;
 		mUpButton.y = yPos;
+
+		mBarPosX = x + w / 2 + mDownButton.w + 16;
+		mBarWidth = w / 2 - 48;
 
 	}
 
@@ -231,14 +249,11 @@ public class MenuSliderEntry extends MenuEntry {
 		// Draw the slider bar and caret
 		mTextureBatch.begin(pCore.HUD());
 
-		final float lBarPosX = x + w / 2 + mDownButton.w + 16;
-		final float lBarWidth = w / 2 - 48;
+		final float lCaretPos = MathHelper.scaleToRange(mValue, mLowerBound, mUpperBound, mBarPosX, mBarWidth - 16);
 
-		final float lCaretPos = MathHelper.scaleToRange(mValue, mLowerBound, mUpperBound, lBarPosX, lBarWidth - 16);
-
-		mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 0, 192, 32, 32, lBarPosX, yPos, 32, 32, mZ, 1f, 1f, 1f, 1f);
-		mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 32, 192, 32, 32, lBarPosX + 32, yPos, lBarWidth - 64 - 32, 32, mZ, 1f, 1f, 1f, 1f);
-		mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 64, 192, 32, 32, lBarPosX + lBarWidth - 64, yPos, 32, 32, mZ, 1f, 1f, 1f, 1f);
+		mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 0, 192, 32, 32, mBarPosX, yPos, 32, 32, mZ, 1f, 1f, 1f, 1f);
+		mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 32, 192, 32, 32, mBarPosX + 32, yPos, mBarWidth - 64 - 32, 32, mZ, 1f, 1f, 1f, 1f);
+		mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 64, 192, 32, 32, mBarPosX + mBarWidth - 64, yPos, 32, 32, mZ, 1f, 1f, 1f, 1f);
 
 		// Draw the caret
 		mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 192, 192, 32, 32, lCaretPos, yPos, 32, 32, mZ, 1f, 1f, 1f, 1f);
@@ -260,10 +275,10 @@ public class MenuSliderEntry extends MenuEntry {
 				lValueString += mUnit;
 			}
 			if (mShowGuideValuesEnabled)
-				lFont.draw("" + mLowerBound, lBarPosX - lowerWith / 2 + 16, y + 2, -2f, 1f);
+				lFont.draw("" + mLowerBound, mBarPosX - lowerWith / 2 + 16, y + 2, -2f, 1f);
 			lFont.draw("" + lValueString, centerX() + w / 4 - valueWith / 2, yPos + 2 - 8f, -2f, 1f);
 			if (mShowGuideValuesEnabled)
-				lFont.draw("" + mUpperBound, lBarPosX + lBarWidth - upperWith / 2 - 48, y + 2, -2f, 1f);
+				lFont.draw("" + mUpperBound, mBarPosX + mBarWidth - upperWith / 2 - 48, y + 2, -2f, 1f);
 		}
 
 		lFont.end();
