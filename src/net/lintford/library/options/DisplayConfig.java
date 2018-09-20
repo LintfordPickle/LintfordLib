@@ -252,6 +252,13 @@ public class DisplayConfig extends BaseConfig {
 	// Methods
 	// --------------------------------------
 
+//	public long createWindow(GameInfo pGameInfo) {
+//		loadConfig();
+//		
+//		
+//		
+//	}
+	
 	public long createWindow(GameInfo pGameInfo, boolean pFullScreen, int pWidth, int pHeight, boolean pResizable) {
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "Creating GLFWWindow");
 
@@ -449,8 +456,14 @@ public class DisplayConfig extends BaseConfig {
 
 	}
 
-	public static void loadOptions() {
-
+	@Override
+	public void loadConfig() {
+		super.loadConfig();
+		
+		if(mConfigFile != null) {
+			
+		}
+		
 	}
 
 	public void addResizeListener(IResizeListener pListener) throws IllegalStateException {

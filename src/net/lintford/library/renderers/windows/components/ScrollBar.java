@@ -120,7 +120,7 @@ public class ScrollBar extends Rectangle {
 
 		x = mScrollBarArea.contentDisplayArea().x + mScrollBarArea.contentDisplayArea().w - 20;
 		y = mScrollBarArea.contentDisplayArea().y;
-		w = 20;
+		w = BAR_WIDTH;
 		h = mScrollBarArea.contentDisplayArea().h;
 
 	}

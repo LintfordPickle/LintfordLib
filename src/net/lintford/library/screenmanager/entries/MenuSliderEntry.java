@@ -161,6 +161,10 @@ public class MenuSliderEntry extends MenuEntry {
 						mTrackingClick = true;
 
 					}
+					
+					if (mClickListener != null) {
+						mClickListener.menuEntryChanged(this);
+					}
 
 					mParentLayout.parentScreen().setFocusOn(pCore, this, true);
 					mParentLayout.parentScreen().setHoveringOn(this);
@@ -187,6 +191,10 @@ public class MenuSliderEntry extends MenuEntry {
 		if (mTrackingClick && pCore.input().mouseLeftClick()) {
 			mValue = (int) MathHelper.scaleToRange(pCore.HUD().getMouseCameraSpace().x - mBarPosX, 0, mBarWidth - 32 - 16, mLowerBound, mUpperBound);
 			mValue = MathHelper.clampi(mValue, mLowerBound, mUpperBound);
+
+			if (mClickListener != null) {
+				mClickListener.menuEntryChanged(this);
+			}
 
 		} else {
 			mTrackingClick = false;

@@ -114,6 +114,20 @@ public class MenuImageEntry extends MenuEntry {
 	}
 
 	@Override
+	public void updateStructureDimensions() {
+		super.updateStructureDimensions();
+		
+		h = mTexture != null ? mTexture.getTextureHeight()+20f : MENUENTRY_DEF_BUTTON_HEIGHT;
+		
+	}
+	
+	@Override
+	public void update(LintfordCore pCore, MenuScreen pScreen, boolean pIsSelected) {
+		super.update(pCore, pScreen, pIsSelected);
+		
+	}
+	
+	@Override
 	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pParentZDepth) {
 
 		MenuScreen lParentScreen = mParentLayout.parentScreen();

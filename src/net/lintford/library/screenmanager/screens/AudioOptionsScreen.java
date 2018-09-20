@@ -67,8 +67,13 @@ public class AudioOptionsScreen extends MenuScreen implements EntryInteractions 
 	}
 
 	private void createAudioSection(BaseLayout lLayout) {
+		MenuEntry lSeparator = new MenuEntry(mScreenManager, lLayout, "");
+		lSeparator.enabled(false);
+		lSeparator.drawButtonBackground(false);
+
 		MenuLabelEntry lMusicOptionsTitle = new MenuLabelEntry(mScreenManager, lLayout);
 		lMusicOptionsTitle.label("Music Options");
+		lMusicOptionsTitle.enableBackground(true);
 		lMusicOptionsTitle.alignment(ALIGNMENT.left);
 
 		MenuToggleEntry mMusicEnabledEntry = new MenuToggleEntry(mScreenManager, lLayout);
@@ -84,6 +89,7 @@ public class AudioOptionsScreen extends MenuScreen implements EntryInteractions 
 
 		MenuLabelEntry lSoundOptionsTitle = new MenuLabelEntry(mScreenManager, lLayout);
 		lSoundOptionsTitle.label("Sound Options");
+		lSoundOptionsTitle.enableBackground(true);
 		lSoundOptionsTitle.alignment(ALIGNMENT.left);
 
 		MenuToggleEntry mSoundEnabledEntry = new MenuToggleEntry(mScreenManager, lLayout);
@@ -101,10 +107,12 @@ public class AudioOptionsScreen extends MenuScreen implements EntryInteractions 
 		lLayout.menuEntries().add(lMusicOptionsTitle);
 		lLayout.menuEntries().add(mMusicEnabledEntry);
 		lLayout.menuEntries().add(mMusicVolumnEntry);
+		lLayout.menuEntries().add(lSeparator);
 
 		lLayout.menuEntries().add(lSoundOptionsTitle);
 		lLayout.menuEntries().add(mSoundEnabledEntry);
 		lLayout.menuEntries().add(mSoundVolumnEntry);
+		lLayout.menuEntries().add(lSeparator);
 
 	}
 

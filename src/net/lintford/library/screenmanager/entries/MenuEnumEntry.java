@@ -238,7 +238,7 @@ public class MenuEnumEntry extends MenuEntry {
 
 		MenuScreen lParentScreen = mParentLayout.parentScreen();
 		FontUnit lFontBitmap = lParentScreen.font();
-		
+
 		final float luiTextScale = mScreenManager.UIHUDController().uiTextScaleFactor();
 
 		final float lTextWidth = lFontBitmap.bitmap().getStringWidth(mLabel, luiTextScale);
@@ -250,15 +250,12 @@ public class MenuEnumEntry extends MenuEntry {
 		// Draw the left/right buttons
 		mTextureBatch.begin(pCore.HUD());
 		final float ARROW_BUTTON_SIZE = 32;
-		final float ARROW_PADDING_X = mLeftButtonRectangle.w - ARROW_BUTTON_SIZE;
 		final float ARROW_PADDING_Y = mLeftButtonRectangle.h - ARROW_BUTTON_SIZE;
 
 		// Render the two arrows either side of the enumeration options
 		if (mButtonsEnabled) {
-			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 160, 0, 32, 32, mLeftButtonRectangle.x, mLeftButtonRectangle.y + ARROW_PADDING_Y, ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, 0f, 1f, 1f, 1f,
-					1f);
-			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 224, 0, 32, 32, mRightButtonRectangle.x, mRightButtonRectangle.y + ARROW_PADDING_Y, ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, 0f, 1f, 1f, 1f,
-					1f);
+			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 160, 0, 32, 32, mLeftButtonRectangle.x, mLeftButtonRectangle.y + ARROW_PADDING_Y, ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, 0f, 1f, 1f, 1f, 1f);
+			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 224, 0, 32, 32, mRightButtonRectangle.x, mRightButtonRectangle.y + ARROW_PADDING_Y, ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, 0f, 1f, 1f, 1f, 1f);
 
 		}
 

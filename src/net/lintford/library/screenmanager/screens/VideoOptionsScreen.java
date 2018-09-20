@@ -134,7 +134,7 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 
 		mVideoList = new ListLayout(this);
 		mVideoList.setDrawBackground(true, 0f, 0f, 0f, 0.85f);
-		//mVideoList.setPadding(mVideoList.paddingTop(), mVideoList.paddingLeft(), mVideoList.paddingRight(), 25f);
+		// mVideoList.setPadding(mVideoList.paddingTop(), mVideoList.paddingLeft(), mVideoList.paddingRight(), 25f);
 		mVideoList.fillType(FILL_TYPE.DYNAMIC);
 		// mVideoList.forceHeight(400);
 
@@ -179,6 +179,9 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 		layouts().add(mVideoList);
 		layouts().add(mConfirmChangesLayout);
 		layouts().add(lNavList);
+
+		mChangesPendingWarning.enabled(false);
+		mConfirmChangesLayout.enabled(false);
 
 	}
 
