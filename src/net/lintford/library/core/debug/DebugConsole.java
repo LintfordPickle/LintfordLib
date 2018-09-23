@@ -15,7 +15,7 @@ import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 import net.lintford.library.core.input.IBufferedInputCallback;
 import net.lintford.library.core.maths.Vector3f;
-import net.lintford.library.options.DisplayConfig;
+import net.lintford.library.options.DisplayManager;
 import net.lintford.library.renderers.ZLayers;
 import net.lintford.library.renderers.windows.components.IScrollBarArea;
 import net.lintford.library.renderers.windows.components.ScrollBar;
@@ -133,7 +133,7 @@ public class DebugConsole extends Rectangle implements IBufferedInputCallback, I
 	}
 
 	public float openHeight() {
-		return (float) Math.pow(16, 2);
+		return (float) Math.pow(14, 2);
 
 	}
 
@@ -330,11 +330,11 @@ public class DebugConsole extends Rectangle implements IBufferedInputCallback, I
 		final int lNumberLinesInConsole = mProcessed ? mProcessedMessages.size() : Debug.debugManager().logger().logLines().size();
 		fullContentArea().setCenter(x, y, w - mScrollBar.w, lNumberLinesInConsole * 25);
 
-		DisplayConfig lDisplay = pCore.config().display();
+		DisplayManager lDisplay = pCore.config().display();
 		// Update the bounds of the window view
-		x = -lDisplay.windowSize().x * 0.5f;
-		y = -lDisplay.windowSize().y * 0.5f;
-		w = lDisplay.windowSize().x;
+		x = -lDisplay.windowWidth() * 0.5f;
+		y = -lDisplay.windowHeight() * 0.5f;
+		w = lDisplay.windowWidth();
 		h = openHeight();
 
 		mLowerBound = (int) -((mScrollYPosition) / mConsoleLineHeight) + 1;
@@ -396,7 +396,7 @@ public class DebugConsole extends Rectangle implements IBufferedInputCallback, I
 
 		List<LogMessage> lMessages = mProcessed ? mProcessedMessages : Debug.debugManager().logger().logLines();
 
-		DisplayConfig lDisplay = pCore.config().display();
+		DisplayManager lDisplay = pCore.config().display();
 
 		// output the messages
 		final int MESSAGE_COUNT = lMessages.size();
@@ -414,13 +414,13 @@ public class DebugConsole extends Rectangle implements IBufferedInputCallback, I
 					final float lB = getMessageRGB(MESSAGE.type).z;
 
 					// Draw Timestamp
-					mConsoleFont.draw(MESSAGE.timestamp, x + POSITION_OFFSET_TIME, -lDisplay.windowSize().y * 0.5f - lTextPosition, Z_DEPTH + 0.1f, lR, lG, lB, 1.0f, 1f, -1, 18);
+					mConsoleFont.draw(MESSAGE.timestamp, x + POSITION_OFFSET_TIME, -lDisplay.windowHeight() * 0.5f - lTextPosition, Z_DEPTH + 0.1f, lR, lG, lB, 1.0f, 1f, -1, 18);
 
 					// Draw TAG
-					mConsoleFont.draw(MESSAGE.tag, x + POSITION_OFFSET_TAG, -lDisplay.windowSize().y * 0.5f - lTextPosition, Z_DEPTH + 0.1f, lR, lG, lB, 1.0f, 1f, -1, 18);
+					mConsoleFont.draw(MESSAGE.tag, x + POSITION_OFFSET_TAG, -lDisplay.windowHeight() * 0.5f - lTextPosition, Z_DEPTH + 0.1f, lR, lG, lB, 1.0f, 1f, -1, 18);
 
 					// Draw MESSAGE
-					mConsoleFont.draw(MESSAGE.message, x + POSITION_OFFSET_MESSAGE, -lDisplay.windowSize().y * 0.5f - lTextPosition, Z_DEPTH + 0.1f, lR, lG, lB, 1.0f, 1f, -1, -1);
+					mConsoleFont.draw(MESSAGE.message, x + POSITION_OFFSET_MESSAGE, -lDisplay.windowHeight() * 0.5f - lTextPosition, Z_DEPTH + 0.1f, lR, lG, lB, 1.0f, 1f, -1, -1);
 
 				}
 
@@ -431,10 +431,10 @@ public class DebugConsole extends Rectangle implements IBufferedInputCallback, I
 		// the input line from the user will always be visible at the bottom of the console.
 		if (mInputText != null) {
 			final float INPUT_Y_OFFSET = 0;
-			mConsoleFont.draw(PROMT_CHAR, -lDisplay.windowSize().x * 0.5f + PADDING_LEFT, y + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET, Z_DEPTH + 0.1f, 1f);
-			mConsoleFont.draw(mInputText.toString(), -lDisplay.windowSize().x * 0.5f + PADDING_LEFT + lInputTextXOffset, y + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET, Z_DEPTH + 0.1f, 1f);
+			mConsoleFont.draw(PROMT_CHAR, -lDisplay.windowWidth() * 0.5f + PADDING_LEFT, y + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET, Z_DEPTH + 0.1f, 1f);
+			mConsoleFont.draw(mInputText.toString(), -lDisplay.windowWidth() * 0.5f + PADDING_LEFT + lInputTextXOffset, y + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET, Z_DEPTH + 0.1f, 1f);
 			if (mShowCaret && mHasFocus)
-				mConsoleFont.draw(CARET_CHAR, -lDisplay.windowSize().x * 0.5f + PADDING_LEFT + lInputTextXOffset + mConsoleFont.bitmap().getStringWidth(mInputText.toString()),
+				mConsoleFont.draw(CARET_CHAR, -lDisplay.windowWidth() * 0.5f + PADDING_LEFT + lInputTextXOffset + mConsoleFont.bitmap().getStringWidth(mInputText.toString()),
 						y + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET, Z_DEPTH + 0.1f, 1f);
 		}
 

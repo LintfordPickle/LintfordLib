@@ -1,7 +1,7 @@
 package net.lintford.library.core.graphics.geometry;
 
 import net.lintford.library.core.graphics.ResourceManager;
-import net.lintford.library.options.DisplayConfig;
+import net.lintford.library.options.DisplayManager;
 import net.lintford.library.options.IResizeListener;
 
 public class FullScreenTexturedQuad extends TexturedQuad implements IResizeListener {
@@ -10,7 +10,7 @@ public class FullScreenTexturedQuad extends TexturedQuad implements IResizeListe
 	// Variables
 	// --------------------------------------
 
-	protected DisplayConfig mDisplayConfig;
+	protected DisplayManager mDisplayConfig;
 
 	protected int mWindowWidth;
 	protected int mWindowHeight;
@@ -33,8 +33,8 @@ public class FullScreenTexturedQuad extends TexturedQuad implements IResizeListe
 		mDisplayConfig = pResourceManager.config().display();
 		mDisplayConfig.addResizeListener(this);
 
-		mWindowWidth = mDisplayConfig.windowSize().x;
-		mWindowHeight = mDisplayConfig.windowSize().y;
+		mWindowWidth = mDisplayConfig.windowWidth();
+		mWindowHeight = mDisplayConfig.windowHeight();
 
 		createModelMatrix();
 

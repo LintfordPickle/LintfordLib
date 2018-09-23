@@ -27,7 +27,7 @@ public class TimedConfirmationDialog extends BaseDialog {
 	public static final int BUTTON_TIMED_CONFIRM_YES = 200;
 	public static final int BUTTON_TIMED_CONFIRM_NO = 201;
 
-	public static final int DEFAULT_WAIT_TIME = 15; // Seconds
+	public static final int DEFAULT_WAIT_TIME = 15; // def Seconds
 
 	// --------------------------------------
 	// Variables
@@ -66,9 +66,13 @@ public class TimedConfirmationDialog extends BaseDialog {
 		mConfirmEntry = new MenuEntry(pScreenManager, lListLayout, "Okay");
 		mConfirmEntry.registerClickListener(pParentScreen, BUTTON_TIMED_CONFIRM_YES);
 		mConfirmEntry.buttonSize(BUTTON_SIZE.narrow);
+
 		mCancelEntry = new MenuEntry(pScreenManager, lListLayout, "Cancel");
 		mCancelEntry.registerClickListener(pParentScreen, BUTTON_TIMED_CONFIRM_NO);
 		mCancelEntry.buttonSize(BUTTON_SIZE.narrow);
+
+		lListLayout.menuEntries().add(mCancelEntry);
+		lListLayout.menuEntries().add(mConfirmEntry);
 
 		layouts().add(lListLayout);
 
@@ -106,33 +110,14 @@ public class TimedConfirmationDialog extends BaseDialog {
 
 	@Override
 	public void updateStructurePositions(LintfordCore pCore) {
-		// Need to apply an offset on the y-axis to account for the timer.
-		float lTextHeight = font().bitmap().getStringHeight(mMessageString) + 150;
-
-		// Get the Y Start position of the menu entries
-		float lYPos = -DIALOG_HEIGHT * 0.5f + font().bitmap().getStringHeight(mMessageString) + lTextHeight / 2;
-
 		final int lLayoutCount = layouts().size();
 		for (int i = 0; i < lLayoutCount; i++) {
-			// TODO: Ignore floating layouts
 			BaseLayout lLayout = layouts().get(i);
 
-			lYPos += 0;//lLayout.paddingTop();
-
-			switch (mChildAlignment) {
-			case left:
-				lLayout.x = 0;
-				break;
-			case center:
-				lLayout.x = -lLayout.w / 2;
-				break;
-			case right:
-				lLayout.x = pCore.config().display().windowSize().x - lLayout.w;// - lLayout.paddingRight();
-				break;
-			}
-
-			lLayout.y = lYPos;
-			lYPos += lLayout.h;// + lLayout.paddingBottom();
+			lLayout.x = -DIALOG_WIDTH * 0.5f;
+			lLayout.y = 0;
+			lLayout.w = DIALOG_WIDTH;
+			lLayout.h = DIALOG_HEIGHT;
 
 			layouts().get(i).updateStructurePositions();
 
@@ -209,9 +194,12 @@ public class TimedConfirmationDialog extends BaseDialog {
 	}
 
 	public void start(float pTimeToWait) {
+		
 		resetTime();
+		
 		mTimeToWait = pTimeToWait;
 		mActive = true;
+		
 	}
 
 	public void pause() {

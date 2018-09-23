@@ -67,8 +67,8 @@ public class UIWindowDock extends BaseRenderer {
 
 	@Override
 	public void draw(LintfordCore pCore) {
-		float lLeftEdge = pCore.config().display().windowSize().x;
-		float lTopEdge = pCore.config().display().windowSize().y;
+		float lLeftEdge = pCore.config().display().windowWidth();
+		float lTopEdge = pCore.config().display().windowHeight();
 
 		List<UIWindow> lUIWindows = mRendererManager.windows();
 

@@ -14,7 +14,7 @@ import net.lintford.library.core.graphics.rendertarget.RenderTarget;
 import net.lintford.library.core.graphics.sprites.spritebatch.SpriteBatch;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 import net.lintford.library.core.rendering.RenderState;
-import net.lintford.library.options.DisplayConfig;
+import net.lintford.library.options.DisplayManager;
 import net.lintford.library.options.IResizeListener;
 import net.lintford.library.renderers.windows.UIWindow;
 import net.lintford.library.renderers.windows.UIWindowChangeListener;
@@ -61,7 +61,7 @@ public class RendererManager {
 
 	private SpriteBatch mSpriteBatch;
 	private TextureBatch mTextureBatch;
-	private DisplayConfig mDisplayConfig;
+	private DisplayManager mDisplayConfig;
 
 	// TODO: Make a dedicated RenderTargetManager
 	private List<RenderTarget> mRenderTargets;
@@ -113,7 +113,7 @@ public class RendererManager {
 		return mUITextScale;
 	}
 
-	public DisplayConfig displayConfig() {
+	public DisplayManager displayConfig() {
 		return mDisplayConfig;
 	}
 

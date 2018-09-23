@@ -11,88 +11,240 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/** A class for reading in key / value pairs from an ini file. Taken from: http://stackoverflow.com/questions/190629/what-is-the-easiest-way-to-parse-an-ini-file-in-java */
+import net.lintford.library.core.debug.Debug;
+import net.lintford.library.core.storage.AppStorage;
+
+/**
+ * A class for reading in pKey / pValue pairs from a configuration (*.INI) file.
+ */
 public class IniFile {
+
+	// --------------------------------------
+	// Variables
+	// --------------------------------------
+
+	protected String mConfigFilename;
 
 	private Pattern mSection = Pattern.compile("\\s*\\[([^]]*)\\]\\s*");
 	private Pattern mKeyValue = Pattern.compile("\\s*([^=]*)=(.*)");
+
 	private Map<String, Map<String, String>> mEntries = new HashMap<>();
 
-	public IniFile(String path) throws IOException {
-		load(path);
+	// --------------------------------------
+	// Properties
+	// --------------------------------------
+
+	public boolean isEmpty() {
+		return mEntries.size() == 0;
 	}
 
-	public void load(String path) throws IOException {
-		
+	// --------------------------------------
+	// Methods
+	// --------------------------------------
+
+	public void clearEntries() {
+		if (mEntries == null)
+			return;
+
+		mEntries.clear();
+
+	}
+
+	public IniFile(String pConfigFilename) {
+		mConfigFilename = pConfigFilename;
+
+	}
+
+	public void createNew(String pFilename) throws IOException {
+		mConfigFilename = pFilename;
+		File lFile = new File(pFilename);
+		lFile.createNewFile();
+	}
+
+	public boolean getBoolean(String pSectionName, String pKey, boolean pDefaultValue) {
+		Map<String, String> kv = mEntries.get(pSectionName);
+		if (kv == null) {
+			return pDefaultValue;
+		}
+		return Boolean.getBoolean(kv.get(pKey));
+	}
+
+	public String getString(String pSectionName, String pKey, String pDefaultValue) {
+		Map<String, String> kv = mEntries.get(pSectionName);
+		if (kv == null) {
+			return pDefaultValue;
+		}
+		return kv.get(pKey);
+	}
+
+	public int getInt(String pSectionName, String pKey, int pDefaultValue) {
+		if (mEntries == null || mEntries.size() == 0 || !mEntries.containsKey(pSectionName))
+			return pDefaultValue;
+
+		try {
+			Map<String, String> kv = mEntries.get(pSectionName);
+			if (kv == null) {
+				return pDefaultValue;
+
+			}
+
+			return Integer.parseInt(kv.get(pKey));
+
+		} catch (NumberFormatException e) {
+			return pDefaultValue;
+
+		}
+	}
+
+	public long getLong(String pSectionName, String pKey, long pDefaultValue) {
+		if (mEntries == null || mEntries.size() == 0 || !mEntries.containsKey(pSectionName))
+			return pDefaultValue;
+
+		try {
+			Map<String, String> kv = mEntries.get(pSectionName);
+			if (kv == null) {
+				return pDefaultValue;
+
+			}
+
+			return Long.parseLong(kv.get(pKey));
+
+		} catch (NumberFormatException e) {
+			return pDefaultValue;
+
+		}
+	}
+
+	public float getFloat(String pSectionName, String pKey, float pDefaultValue) {
+		Map<String, String> kv = mEntries.get(pSectionName);
+		if (kv == null) {
+			return pDefaultValue;
+		}
+		return Float.parseFloat(kv.get(pKey));
+	}
+
+	public double getDouble(String pSectionName, String pKey, double pDefaultValue) {
+		Map<String, String> kv = mEntries.get(pSectionName);
+		if (kv == null) {
+			return pDefaultValue;
+		}
+		return Double.parseDouble(kv.get(pKey));
+	}
+
+	public void setValue(String pSectionName, String pName, String pValue) {
+		Map<String, String> pSection = mEntries.get(pSectionName);
+
+		if (pSection == null) {
+			pSection = new HashMap<>();
+			mEntries.put(pSectionName, pSection);
+		}
+
+		pSection.put(pName, pValue);
+	}
+
+	public void setValue(String pSectionName, String pName, int pValue) {
+		setValue(pSectionName, pName, String.valueOf(pValue));
+
+	}
+
+	public void setValue(String pSectionName, String pName, long pValue) {
+		setValue(pSectionName, pName, String.valueOf(pValue));
+
+	}
+
+	public void setValue(String pSectionName, String pName, float pValue) {
+		setValue(pSectionName, pName, String.valueOf(pValue));
+
+	}
+
+	public void setValue(String pSectionName, String pName, double pValue) {
+		setValue(pSectionName, pName, String.valueOf(pValue));
+
+	}
+
+	public void setValue(String pSectionName, String pName, boolean pValue) {
+		setValue(pSectionName, pName, String.valueOf(pValue));
+	}
+
+	public void saveConfig() {
+		if (mConfigFilename == null || mConfigFilename.length() == 0) {
+			Debug.debugManager().logger().e(getClass().getSimpleName(), "Failed to save the configuration file to " + mConfigFilename);
+			return;
+
+		}
+
+		try {
+			saveConfig(mConfigFilename);
+
+		} catch (IOException e) {
+			Debug.debugManager().logger().e(getClass().getSimpleName(), "Failed to save the DisplayConfiguration file to " + mConfigFilename);
+
+		}
+
+	}
+
+	public void saveConfig(String pFilename) throws IOException {
+
+		try (BufferedWriter br = new BufferedWriter(new FileWriter(pFilename))) {
+
+			for (Map.Entry<String, Map<String, String>> sectionEntry : mEntries.entrySet()) {
+				String lSectionName = sectionEntry.getKey();
+				br.write("[" + lSectionName + "]" + AppStorage.LINE_SEPERATOR);
+				for (Map.Entry<String, String> lineEntry : sectionEntry.getValue().entrySet()) {
+					br.write(lineEntry.getKey() + "=" + lineEntry.getValue() + AppStorage.LINE_SEPERATOR);
+
+				}
+
+			}
+
+		}
+
+	}
+
+	public void loadConfig() {
+		if (mConfigFilename == null || mConfigFilename.length() == 0) {
+			Debug.debugManager().logger().w(getClass().getSimpleName(), "No configuration file defined.");
+			return;
+		}
+
+		try {
+			loadConfig(mConfigFilename);
+
+		} catch (IOException e) {
+			Debug.debugManager().logger().e(getClass().getSimpleName(), "Failed to load DisplayConfig from file " + mConfigFilename);
+
+		}
+
+	}
+
+	public void loadConfig(String path) throws IOException {
+
 		File lFile = new File(path);
-		if(!lFile.exists()) {
+		if (!lFile.exists()) {
 			createNew(path);
 			return;
 		}
-		
+
 		try (BufferedReader br = new BufferedReader(new FileReader(lFile))) {
 			String line;
-			String section = null;
+			String pSection = null;
 			while ((line = br.readLine()) != null) {
 				Matcher m = mSection.matcher(line);
 				if (m.matches()) {
-					section = m.group(1).trim();
-				} else if (section != null) {
+					pSection = m.group(1).trim();
+				} else if (pSection != null) {
 					m = mKeyValue.matcher(line);
 					if (m.matches()) {
-						String key = m.group(1).trim();
-						String value = m.group(2).trim();
-						Map<String, String> kv = mEntries.get(section);
+						String pKey = m.group(1).trim();
+						String pValue = m.group(2).trim();
+						Map<String, String> kv = mEntries.get(pSection);
 						if (kv == null) {
-							mEntries.put(section, kv = new HashMap<>());
+							mEntries.put(pSection, kv = new HashMap<>());
 						}
-						kv.put(key, value);
+						kv.put(pKey, pValue);
 					}
 				}
 			}
-		}
-	}
-
-	public void createNew(String path) throws IOException {
-		File lFile = new File(path);
-		lFile.createNewFile();
-	}
-	
-	public String getString(String section, String key, String defaultvalue) {
-		Map<String, String> kv = mEntries.get(section);
-		if (kv == null) {
-			return defaultvalue;
-		}
-		return kv.get(key);
-	}
-
-	public int getInt(String section, String key, int defaultvalue) {
-		Map<String, String> kv = mEntries.get(section);
-		if (kv == null) {
-			return defaultvalue;
-		}
-		return Integer.parseInt(kv.get(key));
-	}
-
-	public float getFloat(String section, String key, float defaultvalue) {
-		Map<String, String> kv = mEntries.get(section);
-		if (kv == null) {
-			return defaultvalue;
-		}
-		return Float.parseFloat(kv.get(key));
-	}
-
-	public double getDouble(String section, String key, double defaultvalue) {
-		Map<String, String> kv = mEntries.get(section);
-		if (kv == null) {
-			return defaultvalue;
-		}
-		return Double.parseDouble(kv.get(key));
-	}
-	
-	public void saveConfig(String path) throws IOException {
-		try (BufferedWriter br = new BufferedWriter(new FileWriter(path))) {
-			// TODO: Still need to write out the config file
 		}
 	}
 

@@ -77,8 +77,8 @@ public class ToastManager {
 
 		}
 
-		float lFinalX = -pCore.config().display().windowSize().x / 2;
-		float lFinalY = pCore.config().display().windowSize().y / 2 - 30;
+		float lFinalX = -pCore.config().display().windowWidth() / 2;
+		float lFinalY = pCore.config().display().windowHeight() / 2 - 30;
 
 		for (int i = 0; i < SIZE_T; i++) {
 			ToastMessage lTM = mToastMessageUpdate.get(i);

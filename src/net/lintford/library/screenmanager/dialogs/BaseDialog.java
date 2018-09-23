@@ -103,7 +103,7 @@ public abstract class BaseDialog extends MenuScreen {
 				lLayout.x = -lLayout.w / 2;
 				break;
 			case right:
-				lLayout.x = pCore.config().display().windowSize().x - lLayout.w;// - lLayout.paddingRight();
+				lLayout.x = pCore.config().display().windowWidth() - lLayout.w;// - lLayout.paddingRight();
 				break;
 			}
 

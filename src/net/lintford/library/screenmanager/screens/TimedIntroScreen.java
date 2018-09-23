@@ -6,7 +6,7 @@ import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
-import net.lintford.library.options.DisplayConfig;
+import net.lintford.library.options.DisplayManager;
 import net.lintford.library.screenmanager.IMenuAction;
 import net.lintford.library.screenmanager.Screen;
 import net.lintford.library.screenmanager.ScreenManager;
@@ -152,11 +152,11 @@ public class TimedIntroScreen extends Screen {
 		float lBottom = mBackgroundTexture.getTextureHeight();
 
 		if (mStretchBackgroundToFit) {
-			DisplayConfig lDisplay = pCore.config().display();
-			lLeft = -lDisplay.windowSize().x / 2;
-			lRight = lDisplay.windowSize().x;
-			lTop = -lDisplay.windowSize().y / 2;
-			lBottom = lDisplay.windowSize().y;
+			DisplayManager lDisplay = pCore.config().display();
+			lLeft = -lDisplay.windowWidth() / 2;
+			lRight = lDisplay.windowWidth();
+			lTop = -lDisplay.windowHeight() / 2;
+			lBottom = lDisplay.windowHeight();
 		}
 
 		mTextureBatch.begin(pCore.HUD());

@@ -22,12 +22,12 @@ public class LintfordMain extends LintfordCore {
 			}
 
 			@Override
-			public int windowWidth() {
+			public int defaultWindowWidth() {
 				return 320;
 			}
 
 			@Override
-			public int windowHeight() {
+			public int defaultWindowHeight() {
 				return 240;
 			}
 

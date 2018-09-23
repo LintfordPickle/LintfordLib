@@ -6,7 +6,7 @@ import net.lintford.library.controllers.BaseController;
 import net.lintford.library.controllers.core.ControllerManager;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.geometry.Rectangle;
-import net.lintford.library.core.maths.MathHelper;
+import net.lintford.library.options.DisplayManager;
 
 public class UIHUDController extends BaseController {
 
@@ -16,21 +16,16 @@ public class UIHUDController extends BaseController {
 
 	public static final String CONTROLLER_NAME = "UIHUDController";
 
-	public static final float UI_SCALE_FACTOR_MIN = 0.75f;
-	public static final float UI_SCALE_FACTOR_MAX = 1.4f;
-
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
-	private boolean mIsInitialised;
-
-	private boolean mBigUIEnabled;
+	private DisplayManager mDisplayManager;
 	private Rectangle mHUDRectangle;
-
-	private float mUITransparencyFactorUser;
+	private boolean mIsInitialised;
+	private boolean mBigUIEnabled;
 	private float mUITransparencyFactorActual;
-	private float mUITextScaleFactorUser;
+	private float mUIScaleFactorActual;
 	private float mUITextScaleFactorActual;
 
 	// --------------------------------------
@@ -41,16 +36,12 @@ public class UIHUDController extends BaseController {
 		return mUITransparencyFactorActual;
 	}
 
-	public void uiTransparencyFactor(float pNewValue) {
-		mUITransparencyFactorUser = pNewValue;
+	public float uiScaleFactor() {
+		return mUIScaleFactorActual;
 	}
 
 	public float uiTextScaleFactor() {
 		return mUITextScaleFactorActual;
-	}
-
-	public void uiTextScaleFactor(float pNewValue) {
-		mUITextScaleFactorUser = pNewValue;
 	}
 
 	public boolean useBigUI() {
@@ -70,11 +61,10 @@ public class UIHUDController extends BaseController {
 	// Constructor
 	// --------------------------------------
 
-	public UIHUDController(ControllerManager pControllerManager, final int pGroupID) {
+	public UIHUDController(DisplayManager pDisplayManager, ControllerManager pControllerManager, final int pGroupID) {
 		super(pControllerManager, CONTROLLER_NAME, pGroupID);
 
-		mUITextScaleFactorUser = 1.0f;
-		mUITransparencyFactorUser = 1.0f;
+		mDisplayManager = pDisplayManager;
 
 		mHUDRectangle = new Rectangle();
 
@@ -102,14 +92,16 @@ public class UIHUDController extends BaseController {
 
 		// TEST
 		if (pCore.input().keyDown(GLFW.GLFW_KEY_KP_SUBTRACT)) {
-			mUITextScaleFactorUser -= 0.01f;
-			mUITextScaleFactorUser = MathHelper.clamp(mUITextScaleFactorUser, UI_SCALE_FACTOR_MIN, UI_SCALE_FACTOR_MAX);
+			float lUITextScale = mDisplayManager.graphicsSettings().UITextScale();
+			lUITextScale -= 0.01f;
+			mDisplayManager.graphicsSettings().setUITextScale(lUITextScale);
 
 		}
 
 		if (pCore.input().keyDown(GLFW.GLFW_KEY_KP_ADD)) {
-			mUITextScaleFactorUser += 0.01f;
-			mUITextScaleFactorUser = MathHelper.clamp(mUITextScaleFactorUser, UI_SCALE_FACTOR_MIN, UI_SCALE_FACTOR_MAX);
+			float lUITextScale = mDisplayManager.graphicsSettings().UITextScale();
+			lUITextScale += 0.01f;
+			mDisplayManager.graphicsSettings().setUITextScale(lUITextScale);
 
 		}
 
@@ -130,8 +122,8 @@ public class UIHUDController extends BaseController {
 
 	private void updateUIScale(LintfordCore pCore) {
 
-		final float lWindowWidth = pCore.config().display().windowSize().x;
-		final float lWindowHeight = pCore.config().display().windowSize().y;
+		final float lWindowWidth = pCore.config().display().windowWidth();
+		final float lWindowHeight = pCore.config().display().windowHeight();
 
 		// Buffer = 64
 		// Left_Panel + Buffer + Hotbar + Buffer + Right_Panel
@@ -144,14 +136,14 @@ public class UIHUDController extends BaseController {
 			mBigUIEnabled = false;
 			lHUDRatio = 0.80f;
 
-			mUITextScaleFactorActual = mUITextScaleFactorUser * 1f;
-			mUITransparencyFactorActual = mUITransparencyFactorUser * 1f;
+			mUITextScaleFactorActual = mDisplayManager.graphicsSettings().UITextScale() * 1f;
+			mUITransparencyFactorActual = mDisplayManager.graphicsSettings().UITransparencyScale() * 1f;
 
 		} else {
 			mBigUIEnabled = true;
 
-			mUITextScaleFactorActual = mUITextScaleFactorUser * 1.0f;
-			mUITransparencyFactorActual = mUITransparencyFactorUser * 1.0f;
+			mUITextScaleFactorActual = mDisplayManager.graphicsSettings().UITextScale() * 1f;
+			mUITransparencyFactorActual = mDisplayManager.graphicsSettings().UITransparencyScale() * 1f;
 
 		}
 

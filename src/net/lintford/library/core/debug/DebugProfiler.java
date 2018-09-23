@@ -134,7 +134,7 @@ public class DebugProfiler extends Rectangle {
 		if (!mIsOpen)
 			return;
 
-		final float lWindowWidth = pCore.config().display().windowSize().x;
+		final float lWindowWidth = pCore.config().display().windowWidth();
 
 		setWidth(lWindowWidth);
 		setHeight(mSimpleHeight);

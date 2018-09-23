@@ -13,6 +13,7 @@ import static org.lwjgl.opengl.GL11.glClearColor;
 
 import org.lwjgl.opengl.GL11;
 
+import net.lintford.library.ConstantsTable;
 import net.lintford.library.GameInfo;
 import net.lintford.library.controllers.camera.CameraController;
 import net.lintford.library.controllers.core.ControllerManager;
@@ -30,11 +31,11 @@ import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.input.InputState;
 import net.lintford.library.core.rendering.RenderState;
 import net.lintford.library.core.time.GameTime;
-import net.lintford.library.options.DisplayConfig;
+import net.lintford.library.options.DisplayManager;
 import net.lintford.library.options.MasterConfig;
 
 /**
- * The LintfordCore tracks the core state of an LWJGL application including a {@link DisplayConfig}, {@link ResourceManager}, {@link GameTime}, {@link Camera}, {@link HUD}, {@link InputState} and {@link RenderState}. It
+ * The LintfordCore tracks the core state of an LWJGL application including a {@link DisplayManager}, {@link ResourceManager}, {@link GameTime}, {@link Camera}, {@link HUD}, {@link InputState} and {@link RenderState}. It
  * also defines the behaviour for creating an OpenGL window.
  */
 public abstract class LintfordCore {
@@ -160,6 +161,8 @@ public abstract class LintfordCore {
 
 		Debug.debugManager(lNewLogLevel);
 
+		registerGameInfoConstants(pGameInfo);
+
 		// FIXME: Move this into the DebugManager
 		DebugMemory.dumpMemoryToLog();
 
@@ -181,8 +184,7 @@ public abstract class LintfordCore {
 	public void createWindow() {
 		// Load the configuration files saved previously by the user (else create new
 		// ones)
-		mMasterConfig = new MasterConfig();
-		mMasterConfig.loadConfigFiles(MasterConfig.configuration.all);
+		mMasterConfig = new MasterConfig(mGameInfo);
 
 		mGameTime = new GameTime();
 		mInputState = new InputState();
@@ -231,7 +233,7 @@ public abstract class LintfordCore {
 	 * Implemented in the sub-class. Sets the default state of the application (note. OpenGL context is not available at this point).
 	 */
 	protected void onInitialiseApp() {
-		new UIHUDController(mControllerManager, CORE_ID);
+		new UIHUDController(mMasterConfig.display(), mControllerManager, CORE_ID);
 
 	}
 
@@ -271,7 +273,7 @@ public abstract class LintfordCore {
 
 		onLoadGLContent();
 
-		DisplayConfig lDisplayConfig = mMasterConfig.display();
+		DisplayManager lDisplayConfig = mMasterConfig.display();
 
 		// Game loop
 		while (!glfwWindowShouldClose(lDisplayConfig.windowID())) {
@@ -304,7 +306,6 @@ public abstract class LintfordCore {
 		Debug.debugManager().handleInput(this);
 		mHUD.handleInput(this);
 
-		// TODO: Problems with Z?
 		mControllerManager.handleInput(this, CORE_ID);
 
 	}
@@ -345,19 +346,8 @@ public abstract class LintfordCore {
 	// Methods
 	// ---------------------------------------------
 
-	public void toggleFullscreen() {
-		DisplayConfig lDisplay = mMasterConfig.display();
-		if (lDisplay == null)
-			return; // has the game been properly started yet?
-
-		lDisplay.toggleFullscreen(800, 600);
-
-	}
-
 	public void initialiseGLFWWindow() {
-		// TODO: Load default/saved window settings (fullscreen, dimensions, position etc.).
-
-		long lWindowID = mMasterConfig.onCreateWindow(mGameInfo, false, mGameInfo.windowWidth(), mGameInfo.windowHeight(), mGameInfo.windowResizeable());
+		long lWindowID = mMasterConfig.onCreateWindow();
 
 		// set key callbacks
 		glfwSetKeyCallback(lWindowID, mInputState.mKeyCallback);
@@ -391,6 +381,12 @@ public abstract class LintfordCore {
 			mCameraController = null;
 
 		}
+
+	}
+
+	private void registerGameInfoConstants(GameInfo pGameInfo) {
+		ConstantsTable.registerValue("APPLICATION_NAME", pGameInfo.applicationName());
+		ConstantsTable.registerValue("WINDOW_TITLE", pGameInfo.windowTitle());
 
 	}
 

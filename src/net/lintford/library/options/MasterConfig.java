@@ -4,6 +4,7 @@ import org.lwjgl.system.MemoryUtil;
 
 import net.lintford.library.GameInfo;
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.storage.AppStorage;
 
 public class MasterConfig {
 
@@ -11,13 +12,11 @@ public class MasterConfig {
 	// Constants
 	// --------------------------------------
 
-	private static final String SOUND_CONFIG_FILENAME = "SoundConfig.ini";
-	private static final String MUSIC_CONFIG_FILENAME = "MusicConfig.ini";
-	private static final String DISPLAY_CONFIG_FILENAME = "DisplayConfig.ini";
-	private static final String GAME_CONFIG_FILENAME = "GameConfig.ini";
+	private static final String VIDEO_CONFIG_FILENAME = "Video.ini";
+	private static final String AUDIO_CONFIG_FILENAME = "Audio.ini";
 
 	public enum configuration {
-		soundConfig, musicConfig, displayConfig, gameConfig, all,
+		audioConfig, videoConfig, all,
 	}
 
 	// --------------------------------------
@@ -25,31 +24,21 @@ public class MasterConfig {
 	// --------------------------------------
 
 	// TODO: InputConfig for key and mouse mapping
-	private static final GameConfig mGameConfig = new GameConfig(GAME_CONFIG_FILENAME);
-	private static final SoundConfig mSoundConfig = new SoundConfig(SOUND_CONFIG_FILENAME);
-	private static final MusicConfig mMusicConfig = new MusicConfig(MUSIC_CONFIG_FILENAME);
-	private static final DisplayConfig DISPLAY_CONFIG = new DisplayConfig(DISPLAY_CONFIG_FILENAME);
+	private DisplayManager mDisplayConfig;
+	private AudioConfig mAudioConfig;
 
-	private GameInfo mGameInfo;
+	private final GameInfo mGameInfo;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
 
-	public GameConfig game() {
-		return mGameConfig;
+	public AudioConfig audio() {
+		return mAudioConfig;
 	}
 
-	public SoundConfig sound() {
-		return mSoundConfig;
-	}
-
-	public MusicConfig music() {
-		return mMusicConfig;
-	}
-
-	public DisplayConfig display() {
-		return DISPLAY_CONFIG;
+	public DisplayManager display() {
+		return mDisplayConfig;
 	}
 
 	public GameInfo gameInfor() {
@@ -60,7 +49,14 @@ public class MasterConfig {
 	// Constructor
 	// --------------------------------------
 
-	public MasterConfig() {
+	public MasterConfig(final GameInfo pGameInfo) {
+		mGameInfo = pGameInfo;
+
+		final String lDisplayConfigFilename = AppStorage.getGameDataDirectory() + VIDEO_CONFIG_FILENAME;
+		mDisplayConfig = new DisplayManager(pGameInfo, lDisplayConfigFilename);
+
+		final String lAudioConfigFilename = AppStorage.getGameDataDirectory() + AUDIO_CONFIG_FILENAME;
+		mAudioConfig = new AudioConfig(pGameInfo, lAudioConfigFilename);
 
 	}
 
@@ -73,7 +69,7 @@ public class MasterConfig {
 	}
 
 	public void update(LintfordCore pCore) {
-		DISPLAY_CONFIG.update(pCore);
+		mDisplayConfig.update(pCore);
 
 	}
 
@@ -81,13 +77,13 @@ public class MasterConfig {
 	// Methods
 	// --------------------------------------
 
-	public long onCreateWindow(GameInfo pGameInfo, boolean pFullscreen, int pWidth, int pHeight, boolean pResizable) {
-		mGameInfo = pGameInfo;
+	public long onCreateWindow() {
 
-		long lWindowID = DISPLAY_CONFIG.createWindow(pGameInfo, pFullscreen, pWidth, pHeight, pResizable);
+		long lWindowID = mDisplayConfig.createWindow(mGameInfo);
 
 		if (lWindowID == MemoryUtil.NULL) {
 			throw new RuntimeException("Failed to get correct GLFWWindow handle");
+
 		}
 
 		return lWindowID;
@@ -96,48 +92,36 @@ public class MasterConfig {
 
 	public void loadConfigFiles(configuration c) {
 		switch (c) {
-		case musicConfig:
-			mMusicConfig.loadConfig();
+		case audioConfig:
+			mAudioConfig.loadConfig();
+
 			break;
-		case soundConfig:
-			mSoundConfig.loadConfig();
+
+		case videoConfig:
+			mDisplayConfig.loadConfig();
+
 			break;
-		case gameConfig:
-			mGameConfig.loadConfig();
-			break;
-		case displayConfig:
-			DISPLAY_CONFIG.loadConfig();
-			break;
+
 		case all:
 		default:
-			loadConfigFiles(configuration.displayConfig);
-			loadConfigFiles(configuration.soundConfig);
-			loadConfigFiles(configuration.musicConfig);
-			loadConfigFiles(configuration.gameConfig);
+			loadConfigFiles(configuration.videoConfig);
+			loadConfigFiles(configuration.audioConfig);
+
 			break;
+
 		}
 	}
 
 	public void saveConfigFiles(configuration c) {
 		switch (c) {
-		case musicConfig:
-			mMusicConfig.saveConfig();
+		case audioConfig:
 			break;
-		case soundConfig:
-			mSoundConfig.saveConfig();
-			break;
-		case gameConfig:
-			mGameConfig.saveConfig();
-			break;
-		case displayConfig:
-			DISPLAY_CONFIG.saveConfig();
+		case videoConfig:
 			break;
 		case all:
 		default:
-			saveConfigFiles(configuration.displayConfig);
-			saveConfigFiles(configuration.soundConfig);
-			saveConfigFiles(configuration.musicConfig);
-			saveConfigFiles(configuration.gameConfig);
+			saveConfigFiles(configuration.videoConfig);
+			saveConfigFiles(configuration.audioConfig);
 			break;
 		}
 	}

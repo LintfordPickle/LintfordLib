@@ -74,7 +74,6 @@ public class DebugFPSController extends BaseController {
 		if (pGameTime.totalGameTime() - mLastFPSTimer > 1000) {
 			mLastFPSTimer += 1000;
 			mFPS = mFPSCounter;
-			System.out.println("DebugFPSCounter.java:77  - FPS: " + mFPS);
 
 			mFPSCounter = 0;
 

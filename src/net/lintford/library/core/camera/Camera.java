@@ -6,7 +6,7 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.maths.Matrix4f;
 import net.lintford.library.core.maths.Vector2f;
-import net.lintford.library.options.DisplayConfig;
+import net.lintford.library.options.DisplayManager;
 
 /**
  * Defines a simple Game Camera which implements the {@link ICamera} interface. The HUD renders objects from -0 (-Z_NEAR) to -10 (-Z_FAR)
@@ -35,7 +35,7 @@ public class Camera implements ICamera {
 	// Variables
 	// --------------------------------------
 
-	protected DisplayConfig mDisplayConfig;
+	protected DisplayManager mDisplayConfig;
 
 	protected Rectangle mBoundingRectangle;
 	protected Vector2f mPosition;
@@ -156,15 +156,15 @@ public class Camera implements ICamera {
 	// Constructor(s)
 	// --------------------------------------
 
-	public Camera(DisplayConfig pDisplayConfig) {
+	public Camera(DisplayManager pDisplayConfig) {
 		mDisplayConfig = pDisplayConfig;
 
 		this.mMinX = 0;
-		this.mMaxX = 0 + pDisplayConfig.windowSize().x;
+		this.mMaxX = 0 + pDisplayConfig.windowWidth();
 		this.mMinY = 0;
-		this.mMaxY = 0 + pDisplayConfig.windowSize().y;
+		this.mMaxY = 0 + pDisplayConfig.windowHeight();
 
-		mBoundingRectangle = new Rectangle(mMinX, mMinY, pDisplayConfig.windowSize().x, pDisplayConfig.windowSize().y);
+		mBoundingRectangle = new Rectangle(mMinX, mMinY, pDisplayConfig.windowWidth(), pDisplayConfig.windowHeight());
 
 		mPosition = new Vector2f();
 		mAcceleration = new Vector2f();
@@ -197,8 +197,8 @@ public class Camera implements ICamera {
 	}
 
 	public void update(LintfordCore pCore) {
-		mWindowWidth = mDisplayConfig.windowSize().x;
-		mWindowHeight = mDisplayConfig.windowSize().y;
+		mWindowWidth = mDisplayConfig.windowWidth();
+		mWindowHeight = mDisplayConfig.windowHeight();
 
 		mPosition.x = mTargetPosition.x + mOffsetPosition.x;
 		mPosition.y = mTargetPosition.y + mOffsetPosition.y;

@@ -4,7 +4,7 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.maths.Matrix4f;
 import net.lintford.library.core.maths.Vector2f;
-import net.lintford.library.options.DisplayConfig;
+import net.lintford.library.options.DisplayManager;
 import net.lintford.library.options.IResizeListener;
 
 /**
@@ -30,7 +30,7 @@ public class HUD implements ICamera, IResizeListener {
 	// Variables
 	// --------------------------------------
 
-	private DisplayConfig mDisplayConfig;
+	private DisplayManager mDisplayConfig;
 
 	private Rectangle mBoundingRectangle;
 
@@ -97,11 +97,11 @@ public class HUD implements ICamera, IResizeListener {
 	// Constructor(s)
 	// --------------------------------------
 
-	public HUD(DisplayConfig pDisplayConfig) {
+	public HUD(DisplayManager pDisplayConfig) {
 		mDisplayConfig = pDisplayConfig;
 
-		mWindowWidth = pDisplayConfig.windowSize().x;
-		mWindowHeight = pDisplayConfig.windowSize().y;
+		mWindowWidth = pDisplayConfig.windowWidth();
+		mWindowHeight = pDisplayConfig.windowHeight();
 
 		mBoundingRectangle = new Rectangle(-mWindowWidth / 2, -mWindowHeight / 2, mWindowWidth, mWindowHeight);
 
@@ -119,19 +119,16 @@ public class HUD implements ICamera, IResizeListener {
 	public void handleInput(LintfordCore pCore) {
 		float lWindowWidth = mWindowWidth;
 		float lWindowHeight = mWindowHeight;
-		
-		mRatioW = ((float) mWindowWidth / (float) mDisplayConfig.windowSize().x);
-		mRatioH = ((float) mWindowHeight / (float) mDisplayConfig.windowSize().y);
+
+		mRatioW = ((float) mWindowWidth / (float) mDisplayConfig.windowWidth());
+		mRatioH = ((float) mWindowHeight / (float) mDisplayConfig.windowHeight());
 
 		if (mDisplayConfig.stretchGameScreen()) {
 //			lWindowWidth = mDisplayConfig.baseGameResolutionWidth();
 //			lWindowHeight = mDisplayConfig.baseGameResolutionHeight();
 //
-//			mRatioW = ((float) lWindowWidth / (float) mDisplayConfig.windowSize().x);
-//			mRatioH = ((float) lWindowHeight / (float) mDisplayConfig.windowSize().y);
-		} else {
-			mRatioW = ((float) mWindowWidth / (float) mDisplayConfig.windowSize().x);
-			mRatioH = ((float) mWindowHeight / (float) mDisplayConfig.windowSize().y);
+//			mRatioW = ((float) lWindowWidth / (float) mDisplayConfig.windowWidth());
+//			mRatioH = ((float) lWindowHeight / (float) mDisplayConfig.windowHeight());
 		}
 
 		mMouseHUDSpace.x = (float) (-lWindowWidth * 0.5f + (pCore.input().mouseWindowCoords().x - 1) * mRatioW);
@@ -146,11 +143,11 @@ public class HUD implements ICamera, IResizeListener {
 		if (mDisplayConfig.stretchGameScreen()) {
 			mWindowWidth = mDisplayConfig.baseGameResolutionWidth();
 			mWindowHeight = mDisplayConfig.baseGameResolutionHeight();
-			
+
 		} else {
-			mWindowWidth = pCore.config().display().windowSize().x;
-			mWindowHeight = pCore.config().display().windowSize().y;
-			
+			mWindowWidth = pCore.config().display().windowWidth();
+			mWindowHeight = pCore.config().display().windowHeight();
+
 		}
 
 		if ((mWindowWidth % 2) == 1) {

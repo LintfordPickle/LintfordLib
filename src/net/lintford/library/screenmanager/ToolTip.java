@@ -58,12 +58,12 @@ public class ToolTip {
 		pY -= 64 - lToolTipTextHeight;
 		
 		// Check for tooltips overlapping the edge of the screen (x axis)
-		if (pX + lToolTipTextWidth + lTextPadding > pCore.config().display().windowSize().x) {
+		if (pX + lToolTipTextWidth + lTextPadding > pCore.config().display().windowWidth()) {
 			pX -= lToolTipTextWidth + 30;
 		}
 
 		// Check for tooltips overlapping the edge of the screen (y axis)
-		if (pY + lToolTipTextHeight + lTextPadding > pCore.config().display().windowSize().y) {
+		if (pY + lToolTipTextHeight + lTextPadding > pCore.config().display().windowHeight()) {
 			pY -= lToolTipTextHeight + 30;
 		}
 

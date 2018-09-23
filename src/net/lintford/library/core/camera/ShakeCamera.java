@@ -3,7 +3,7 @@ package net.lintford.library.core.camera;
 import java.util.Random;
 
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.options.DisplayConfig;
+import net.lintford.library.options.DisplayManager;
 
 public class ShakeCamera extends Camera {
 
@@ -21,7 +21,7 @@ public class ShakeCamera extends Camera {
 	// Constructor
 	// ---------------------------------------------
 
-	public ShakeCamera(DisplayConfig pDisplayConfig) {
+	public ShakeCamera(DisplayManager pDisplayConfig) {
 		super(pDisplayConfig);
 
 	}

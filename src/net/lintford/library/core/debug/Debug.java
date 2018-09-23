@@ -162,8 +162,8 @@ public class Debug {
 	public void update(LintfordCore pCore) {
 
 		// Update the relative positions of the components based on which are currently enabled
-		float lWindowWidth = -pCore.config().display().windowSize().x / 2;
-		float lPosY = -pCore.config().display().windowSize().y / 2;
+		float lWindowWidth = -pCore.config().display().windowWidth() / 2;
+		float lPosY = -pCore.config().display().windowHeight() / 2;
 		if (mDebugConsole.isOpen()) {
 			mDebugConsole.setPosition(lWindowWidth, lPosY);
 			lPosY += mDebugConsole.height();

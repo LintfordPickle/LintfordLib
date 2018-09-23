@@ -1,16 +1,12 @@
 package net.lintford.library.screenmanager.screens;
 
-import static org.lwjgl.glfw.GLFW.GLFW_DECORATED;
-import static org.lwjgl.glfw.GLFW.glfwWindowHint;
-import static org.lwjgl.opengl.GL11.GL_FALSE;
-import static org.lwjgl.system.MemoryUtil.NULL;
-
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWVidMode;
 
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.options.DisplayConfig;
+import net.lintford.library.options.DisplayManager;
+import net.lintford.library.options.VideoSettings;
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuEntry.BUTTON_SIZE;
 import net.lintford.library.screenmanager.MenuScreen;
@@ -25,8 +21,8 @@ import net.lintford.library.screenmanager.entries.MenuEnumEntryIndexed;
 import net.lintford.library.screenmanager.entries.MenuLabelEntry;
 import net.lintford.library.screenmanager.entries.MenuToggleEntry;
 import net.lintford.library.screenmanager.layouts.BaseLayout;
-import net.lintford.library.screenmanager.layouts.ListLayout;
 import net.lintford.library.screenmanager.layouts.BaseLayout.FILL_TYPE;
+import net.lintford.library.screenmanager.layouts.ListLayout;
 
 // TODO: Monitor and Aspect Ratio are only considered in fullscreen mode
 // TODO: Need to add a 15 second cooldown when applying settings for the first time
@@ -45,58 +41,14 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 	public static final int BUTTON_FULLSCREEN = 13;
 	public static final int BUTTON_ASPECTRATIO = 14;
 
-	private static final int ASPECTRATIO_1 = 0; // 16:9
-	private static final int ASPECTRATIO_2 = 1; // 4:3
-
 	private static final String FULLSCREEN_YES = "Yes";
 	private static final String FULLSCREEN_NO = "No";
-	// private static final String FULLSCREEN_NO_MAX = "Window Borderless";
-
-	private static final int FULLSCREEN_YES_INDEX = 0;
-	private static final int FULLSCREEN_NO_INDEX = 1;
-	private static final int FULLSCREEN_NO_MAX_INDEX = 2;
-
-	public class VideoOptionsConfig {
-		public int fullScreenIndex;
-		public int windowWidth;
-		public int windowHeight;
-		public int aspectRatioIndex;
-		public long monitorHandle;
-		public boolean vSyncEnabled;
-
-		public VideoOptionsConfig() {
-
-		}
-
-		public VideoOptionsConfig(VideoOptionsConfig pCopy) {
-			this.copy(pCopy);
-
-		}
-
-		public void copy(VideoOptionsConfig pCopy) {
-			this.fullScreenIndex = pCopy.fullScreenIndex;
-			this.windowWidth = pCopy.windowWidth;
-			this.windowHeight = pCopy.windowHeight;
-			this.aspectRatioIndex = pCopy.aspectRatioIndex;
-			this.monitorHandle = pCopy.monitorHandle;
-			this.vSyncEnabled = pCopy.vSyncEnabled;
-		}
-
-		public boolean isDifferent(VideoOptionsConfig pOther) {
-			if (pOther == null)
-				return true;
-
-			return fullScreenIndex != pOther.fullScreenIndex || windowWidth != pOther.windowWidth || windowHeight != pOther.windowHeight || aspectRatioIndex != pOther.aspectRatioIndex
-					|| monitorHandle != pOther.monitorHandle || vSyncEnabled != pOther.vSyncEnabled;
-
-		}
-	}
 
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
-	private DisplayConfig mDisplayConfig;
+	private DisplayManager mDisplayManager;
 
 	private ConfirmationDialog mConfirmationDialog;
 	private TimedConfirmationDialog m15SecConfirmationDialog;
@@ -104,16 +56,15 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 	private MenuToggleEntry mVSync;
 
 	private MenuEnumEntryIndexed<Integer> mFullScreenEntry;
-	private MenuEnumEntryIndexed<Integer> mAspectRatio;
 	private MenuEnumEntryIndexed<Long> mMonitorEntry;
 	private MenuDropDownEntry<GLFWVidMode> mResolutionEntry;
 
 	// Quality settings
 	private MenuLabelEntry mChangesPendingWarning;
 
-	private VideoOptionsConfig modifiedVideoConfig;
-	private VideoOptionsConfig currentVideoConfig;
-	private VideoOptionsConfig lastVideoConfig; // last known working config, in case we need to revert
+	private VideoSettings modifiedVideoConfig;
+	private VideoSettings currentVideoConfig;
+	private VideoSettings lastVideoConfig; // last known working config, in case we need to revert
 
 	private ListLayout mConfirmChangesLayout;
 	private ListLayout mVideoList;
@@ -128,15 +79,13 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 		mPaddingTop = 0;
 
 		// Get the config options
-		mDisplayConfig = pScreenManager.core().config().display();
+		mDisplayManager = pScreenManager.core().config().display();
 
 		mChildAlignment = ALIGNMENT.center;
 
 		mVideoList = new ListLayout(this);
 		mVideoList.setDrawBackground(true, 0f, 0f, 0f, 0.85f);
-		// mVideoList.setPadding(mVideoList.paddingTop(), mVideoList.paddingLeft(), mVideoList.paddingRight(), 25f);
 		mVideoList.fillType(FILL_TYPE.DYNAMIC);
-		// mVideoList.forceHeight(400);
 
 		mConfirmChangesLayout = new ListLayout(this);
 		mConfirmChangesLayout.fillType(FILL_TYPE.STATIC);
@@ -146,11 +95,11 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 
 		createVideoSection(mVideoList);
 
-		currentVideoConfig = new VideoOptionsConfig();
-		reflectCurrentStateInSettings(currentVideoConfig);
+		currentVideoConfig = mDisplayManager.currentOptionsConfig();
+		lastVideoConfig = new VideoSettings(currentVideoConfig);
+		modifiedVideoConfig = new VideoSettings(currentVideoConfig);
 
-		lastVideoConfig = new VideoOptionsConfig(currentVideoConfig);
-		modifiedVideoConfig = new VideoOptionsConfig(currentVideoConfig);
+		setUIFromVideoSettings(currentVideoConfig);
 
 		mChangesPendingWarning = new MenuLabelEntry(mScreenManager, mConfirmChangesLayout);
 		mChangesPendingWarning.label("Current changes have not yet been applied!");
@@ -186,38 +135,36 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 	}
 
 	private void createVideoSection(BaseLayout lLayout) {
+		MenuLabelEntry lVideoOptionsTitle = new MenuLabelEntry(mScreenManager, lLayout);
+		lVideoOptionsTitle.label("Video Options");
+		lVideoOptionsTitle.enableBackground(true);
+		lVideoOptionsTitle.alignment(ALIGNMENT.left);
+
 		mFullScreenEntry = new MenuEnumEntryIndexed<>(mScreenManager, lLayout, "Fullscreen");
 		mFullScreenEntry.buttonSize(BUTTON_SIZE.wide);
 		mResolutionEntry = new MenuDropDownEntry<>(mScreenManager, lLayout, "Resolution");
 		mResolutionEntry.buttonSize(BUTTON_SIZE.wide);
 		mMonitorEntry = new MenuEnumEntryIndexed<>(mScreenManager, lLayout, "Monitor");
-		mAspectRatio = new MenuEnumEntryIndexed<>(mScreenManager, lLayout, "Aspect Ratio");
 		mVSync = new MenuToggleEntry(mScreenManager, lLayout);
 
 		// Setup buttons
-		mFullScreenEntry.addItem(mFullScreenEntry.new MenuEnumEntryItem(FULLSCREEN_YES, FULLSCREEN_YES_INDEX));
-		mFullScreenEntry.addItem(mFullScreenEntry.new MenuEnumEntryItem(FULLSCREEN_NO, FULLSCREEN_NO_INDEX));
-		// mFullScreenEntry.addItem(mFullScreenEntry.new MenuEnumEntryItem(FULLSCREEN_NO_MAX, FULLSCREEN_NO_MAX_INDEX));
+		mFullScreenEntry.addItem(mFullScreenEntry.new MenuEnumEntryItem(FULLSCREEN_NO, VideoSettings.FULLSCREEN_NO_INDEX));
+		mFullScreenEntry.addItem(mFullScreenEntry.new MenuEnumEntryItem(FULLSCREEN_YES, VideoSettings.FULLSCREEN_YES_INDEX));
 		mFullScreenEntry.setButtonsEnabled(true);
 		mVSync.label("V-Sync");
-
-		mAspectRatio.addItem(mAspectRatio.new MenuEnumEntryItem("16:9", ASPECTRATIO_1));
-		mAspectRatio.addItem(mAspectRatio.new MenuEnumEntryItem("4:3", ASPECTRATIO_2));
-		mAspectRatio.setSelectedEntry(0); // default to 16:9
 
 		// Register listeners with this window
 		mFullScreenEntry.registerClickListener(this, BUTTON_FULLSCREEN);
 		mResolutionEntry.registerClickListener(this, BUTTON_RESOLUTION);
 		mMonitorEntry.registerClickListener(this, BUTTON_MONITOR);
 		mVSync.registerClickListener(this, BUTTON_VSYNC);
-		mAspectRatio.registerClickListener(this, BUTTON_ASPECTRATIO);
 
 		// TODO: Add ToolTips for all menu options
 
 		// Add the menu entries to the window
+		lLayout.menuEntries().add(lVideoOptionsTitle);
 		lLayout.menuEntries().add(mMonitorEntry);
 		lLayout.menuEntries().add(mFullScreenEntry);
-		lLayout.menuEntries().add(mAspectRatio);
 		lLayout.menuEntries().add(mResolutionEntry);
 		lLayout.menuEntries().add(mVSync);
 
@@ -234,8 +181,8 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 	public void update(LintfordCore pCore, boolean pOtherScreenHasFocus, boolean pCoveredByOtherScreen) {
 		super.update(pCore, pOtherScreenHasFocus, pCoveredByOtherScreen);
 
-		mChangesPendingWarning.enabled(modifiedVideoConfig.isDifferent(currentVideoConfig));
-		mConfirmChangesLayout.enabled(modifiedVideoConfig.isDifferent(currentVideoConfig));
+		// mChangesPendingWarning.enabled(modifiedVideoConfig.isDifferent(currentVideoConfig));
+		// mConfirmChangesLayout.enabled(modifiedVideoConfig.isDifferent(currentVideoConfig));
 
 	}
 
@@ -254,6 +201,8 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 			mScreenManager.addScreen(mConfirmationDialog);
 
 		} else {
+			mScreenManager.core().config().display().saveConfig();
+
 			super.exitScreen();
 
 		}
@@ -302,8 +251,9 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 				mScreenManager.removeScreen(m15SecConfirmationDialog);
 
 			currentVideoConfig.copy(modifiedVideoConfig);
+			lastVideoConfig.copy(modifiedVideoConfig);
 
-			// exitScreen();
+			mDisplayManager.saveConfig();
 
 			break;
 
@@ -324,192 +274,72 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 		switch (e.entryID()) {
 		case BUTTON_FULLSCREEN:
 			modifiedVideoConfig.fullScreenIndex = mFullScreenEntry.selectedItem().value;
-			mMonitorEntry.enabled(modifiedVideoConfig.fullScreenIndex == FULLSCREEN_YES_INDEX);
-			break;
 
-		case BUTTON_ASPECTRATIO:
-			modifiedVideoConfig.aspectRatioIndex = mAspectRatio.selectedItem().value;
-			long lWindowSelected = mMonitorEntry.selectedItem().value;
-			if (mAspectRatio.selectedItem().value == ASPECTRATIO_1) {
-				// 16:9
-				fillResolutions(mResolutionEntry, lWindowSelected, 16, 9);
+			// Enable the monitor selection if either fullscreen or fullscreen_borderless is selected.
+
+			// Set the monitor
+			if (modifiedVideoConfig.fullScreenIndex == VideoSettings.FULLSCREEN_YES_INDEX) {
+				mMonitorEntry.enabled(true);
+				modifiedVideoConfig.monitorIndex = mMonitorEntry.selectedItem().value;
 			} else {
-				// 4:3
-				fillResolutions(mResolutionEntry, lWindowSelected, 4, 3);
+				mMonitorEntry.enabled(false);
 			}
-
-			modifiedVideoConfig.windowWidth = mResolutionEntry.selectedItem().value.width();
-			modifiedVideoConfig.windowHeight = mResolutionEntry.selectedItem().value.height();
 
 			break;
 
 		case BUTTON_VSYNC:
 			modifiedVideoConfig.vSyncEnabled = mVSync.isChecked();
+
 			break;
 
 		case BUTTON_MONITOR:
-			modifiedVideoConfig.monitorHandle = mMonitorEntry.selectedItem().value;
+			modifiedVideoConfig.monitorIndex = mMonitorEntry.selectedItem().value;
 
-			long lSelectMonitorHandle = mMonitorEntry.selectedItem().value;
-			if (mAspectRatio.selectedItem().value == ASPECTRATIO_1) {
-				// 16:9
-				fillResolutions(mResolutionEntry, lSelectMonitorHandle, 16, 9);
-
-			} else {
-				// 4:3
-				fillResolutions(mResolutionEntry, lSelectMonitorHandle, 4, 3);
-
-			}
+			setResolutionEntry(modifiedVideoConfig.windowWidth, modifiedVideoConfig.windowHeight, 60);
 			break;
 
 		case BUTTON_RESOLUTION:
 			modifiedVideoConfig.windowWidth = mResolutionEntry.selectedItem().value.width();
 			modifiedVideoConfig.windowHeight = mResolutionEntry.selectedItem().value.height();
+			modifiedVideoConfig.refreshRate = mResolutionEntry.selectedItem().value.refreshRate();
+
 			break;
 
 		}
 	}
 
-	private void reflectCurrentStateInSettings(VideoOptionsConfig pVideoConfig) {
-		long lMonitorHandle = GLFW.glfwGetPrimaryMonitor();
-		boolean lIsFullScreen = mDisplayConfig.fullscreen();
-
-		pVideoConfig.monitorHandle = lMonitorHandle;
-		pVideoConfig.fullScreenIndex = mDisplayConfig.fullscreen() ? FULLSCREEN_YES_INDEX : FULLSCREEN_NO_INDEX;
-		pVideoConfig.vSyncEnabled = mDisplayConfig.vsyncEnabled();
-		pVideoConfig.windowWidth = mDisplayConfig.windowSize().x;
-		pVideoConfig.windowHeight = mDisplayConfig.windowSize().y;
-
-		// Setup the values for the menuEntries on this screen
-		if (lIsFullScreen) {
-			mFullScreenEntry.setSelectedEntry(FULLSCREEN_YES_INDEX);
-			mMonitorEntry.enabled(true);
-
-		} else {
-			mFullScreenEntry.setSelectedEntry(FULLSCREEN_NO_INDEX);
-			mMonitorEntry.enabled(false);
-
-		}
-
-		int lWindowWidth = mDisplayConfig.windowSize().x;
-		int lWindowHeight = mDisplayConfig.windowSize().y;
-
-		if (lWindowWidth > 0 && (float) lWindowHeight / (float) lWindowWidth == 0.75f) {
-			mAspectRatio.setSelectedEntry(ASPECTRATIO_2); // 4:3
-		} else {
-			mAspectRatio.setSelectedEntry(ASPECTRATIO_1); // 16:9
-		}
-		pVideoConfig.aspectRatioIndex = mAspectRatio.selectedItem().value;
-
+	private void setUIFromVideoSettings(VideoSettings pVideoConfig) {
 		mVSync.isChecked(pVideoConfig.vSyncEnabled);
+		mFullScreenEntry.setSelectedEntry(pVideoConfig.fullScreenIndex);
+		mMonitorEntry.enabled(pVideoConfig.fullScreenIndex == VideoSettings.FULLSCREEN_YES_INDEX);
 
+		// mMonitorEntry.setSelectedEntry(pVideoConfig.monitorHandle);
 		setResolutionEntry(pVideoConfig.windowWidth, pVideoConfig.windowHeight, 60);
-
-		// update the modified structure too (currently the same if we just set the UI elements).
-		modifiedVideoConfig = new VideoOptionsConfig(pVideoConfig);
 
 	}
 
 	private void revertSettings() {
-		boolean lFullScreen = lastVideoConfig.fullScreenIndex == FULLSCREEN_YES_INDEX;
-		boolean lVSyncEnabled = lastVideoConfig.vSyncEnabled;
-		long lMonitorHandle = lastVideoConfig.monitorHandle;
-
-		if (lFullScreen) {
-			// Update the initial values
-			int lWidth = lastVideoConfig.windowWidth;
-			int lHeight = lastVideoConfig.windowHeight;
-
-			// Set full screen mode
-			mDisplayConfig.setGLFWMonitor(lMonitorHandle, 0, 0, lWidth, lHeight, lVSyncEnabled);
-
-		} else {
-			// fullscreen borderless or just windowed?
-			boolean lFullBorderless = lastVideoConfig.fullScreenIndex == FULLSCREEN_NO_MAX_INDEX;
-			if (lFullBorderless) {
-				glfwWindowHint(GLFW_DECORATED, GL_FALSE);
-				GLFWVidMode lDesktop = mDisplayConfig.desktopVideoMode();
-				if (lDesktop == null) {
-					lDesktop = GLFW.glfwGetVideoMode(GLFW.glfwGetPrimaryMonitor());
-				}
-
-				// Set a windowd mode, using top-left pos
-				mDisplayConfig.setGLFWMonitor(NULL, 0, 0, lDesktop.width(), lDesktop.height(), lVSyncEnabled);
-
-			} else {
-				glfwWindowHint(GLFW_DECORATED, GL_FALSE);
-				// windowed
-				int lWidth = lastVideoConfig.windowWidth;
-				int lHeight = lastVideoConfig.windowHeight;
-
-				// Set a windowd mode, using top-left pos
-				mDisplayConfig.setGLFWMonitor(NULL, 0, 0, lWidth, lHeight, lVSyncEnabled);
-
-			}
-		}
+		mDisplayManager.setGLFWMonitor(lastVideoConfig);
 
 		currentVideoConfig.copy(lastVideoConfig);
-		modifiedVideoConfig.copy(currentVideoConfig);
+		modifiedVideoConfig.copy(lastVideoConfig);
 
-		reflectCurrentStateInSettings(currentVideoConfig);
+		setUIFromVideoSettings(lastVideoConfig);
 
 	}
 
-	// TODO: I think there is too much DISPLAY logic taking place in here. This is the UI ...
 	private void applyModifiedSettings() {
-		boolean lFullScreen = modifiedVideoConfig.fullScreenIndex == FULLSCREEN_YES_INDEX;
-		boolean lVSyncEnabled = modifiedVideoConfig.vSyncEnabled;
-		long lMonitorHandle = modifiedVideoConfig.monitorHandle;
-
-		if (lFullScreen) {
-			// Update the initial values
-			int lWidth = modifiedVideoConfig.windowWidth;
-			int lHeight = modifiedVideoConfig.windowHeight;
-
-			// Set full screen mode
-			mDisplayConfig.setGLFWMonitor(lMonitorHandle, 0, 0, lWidth, lHeight, lVSyncEnabled);
-
-		} else {
-			// fullscreen borderless or just windowed?
-			boolean lFullBorderless = modifiedVideoConfig.fullScreenIndex == FULLSCREEN_NO_MAX_INDEX;
-			if (lFullBorderless) {
-				glfwWindowHint(GLFW_DECORATED, GL_FALSE);
-				GLFWVidMode lDesktop = mDisplayConfig.desktopVideoMode();
-				if (lDesktop == null) {
-					lDesktop = GLFW.glfwGetVideoMode(GLFW.glfwGetPrimaryMonitor());
-				}
-
-				// Set a windowd mode, using top-left pos
-				mDisplayConfig.setGLFWMonitor(NULL, 0, 0, lDesktop.width(), lDesktop.height(), lVSyncEnabled);
-
-			} else {
-				glfwWindowHint(GLFW_DECORATED, GL_FALSE);
-				// windowed
-				int lWidth = modifiedVideoConfig.windowWidth;
-				int lHeight = modifiedVideoConfig.windowHeight;
-
-				// Set a windowd mode, using top-left pos
-				mDisplayConfig.setGLFWMonitor(NULL, 0, 0, lWidth, lHeight, lVSyncEnabled);
-
-			}
-
-		}
-
-		// TODO: In case anything goes wrong, in 15 seconds, revert to last ..
-		lastVideoConfig.copy(currentVideoConfig);
+		mDisplayManager.setGLFWMonitor(modifiedVideoConfig);
 
 		// Add a timed confirmation dialog to the
 		m15SecConfirmationDialog = new TimedConfirmationDialog(mScreenManager, this, "Confirm changes?");
 
 		m15SecConfirmationDialog.confirmEntry().entryText("Keep Settings");
-		// m15SecConfirmationDialog.confirmEntry().registerClickListener(this, TimedConfirmationDialog.BUTTON_TIMED_CONFIRM_YES);
-
 		m15SecConfirmationDialog.cancelEntry().entryText("Revert");
-		// m15SecConfirmationDialog.cancelEntry().registerClickListener(this, TimedConfirmationDialog.BUTTON_TIMED_CONFIRM_NO);
 
 		m15SecConfirmationDialog.setListener(this);
 
-		m15SecConfirmationDialog.start(10000);
+		m15SecConfirmationDialog.start(60000);
 
 		mScreenManager.addScreen(m15SecConfirmationDialog);
 
@@ -534,23 +364,25 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 	private void fillResolutions(MenuDropDownEntry<GLFWVidMode> pEntry, long pWindowHandle, float w, float h) {
 		pEntry.clearItems();
 
-		float lARResult = w / h;
-
 		GLFWVidMode.Buffer modes = GLFW.glfwGetVideoModes(pWindowHandle);
 		final int COUNT = modes.limit();
 		for (int i = 0; i < COUNT; i++) {
 			GLFWVidMode lVidMode = modes.get();
 
 			// Ignore resolution entries based on low refresh rates
-			if (lVidMode.refreshRate() < 40)
+			if (lVidMode.refreshRate() < DisplayManager.MIN_REFRESH_RATE || lVidMode.refreshRate() > DisplayManager.MAX_REFRESH_RATE)
 				continue;
 
-			String lName = lVidMode.width() + "x" + lVidMode.height(); // + "@" + lVidMode.refreshRate();
+			String lName = lVidMode.width() + "x" + lVidMode.height();
 
-			float lResult = ((float) lVidMode.width() / (float) lVidMode.height());
+			if (!DisplayManager.HARD_REFRESH_RATE)
+				lName += "@" + lVidMode.refreshRate();
 
 			// Only add resolutions which meet our minimum and the selected aspect ratio
-			if (lResult == lARResult && lVidMode.width() > DisplayConfig.WINDOW_MINIMUM_WIDTH && lVidMode.height() > DisplayConfig.WINDOW_MINIMUM_HEIGHT) {
+			final int MIN_WINDOW_RESOLUTION_W = 640;
+			final int MIN_WINDOW_RESOLUTION_H = 480;
+
+			if (lVidMode.width() > MIN_WINDOW_RESOLUTION_W && lVidMode.height() > MIN_WINDOW_RESOLUTION_H) {
 				MenuDropDownEntry<GLFWVidMode>.MenuEnumEntryItem lTest = pEntry.new MenuEnumEntryItem(lName, lVidMode);
 				pEntry.addItem(lTest);
 
