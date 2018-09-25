@@ -67,6 +67,7 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 	protected ScrollBar mScrollBar;
 	protected boolean mScrollBarsEnabled;
 	protected boolean mEnabled;
+	protected boolean mVisible; // ony affects drawing
 
 	// --------------------------------------
 	// Properties
@@ -169,6 +170,14 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 	public void enabled(boolean pEnabled) {
 		mEnabled = pEnabled;
 	}
+	
+	public boolean visible() {
+		return mVisible;
+	}
+
+	public void visible(boolean pEnabled) {
+		mVisible = pEnabled;
+	}
 
 	// --------------------------------------
 	// Constructor
@@ -182,6 +191,7 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 
 		mSpriteBatch = new TextureBatch();
 		mEnabled = true;
+		mVisible = true;
 
 		// Set some defaults
 		mAlignment = ALIGNMENT.center;
@@ -288,7 +298,7 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 	}
 
 	public void draw(LintfordCore pCore, float pComponentDepth) {
-		if (!mEnabled)
+		if (!mEnabled || !mVisible)
 			return;
 
 		if (mDrawBackground) {

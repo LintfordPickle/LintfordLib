@@ -201,6 +201,9 @@ public class ScreenManager {
 
 		}
 
+		if(mToolTip.active)
+			mToolTip.draw(pCore);
+		
 		// Debug.debugManager().drawers().drawRect(pCore.HUD(), mUIHUDController.HUDRectangle());
 
 		mToastManager.draw(pCore);

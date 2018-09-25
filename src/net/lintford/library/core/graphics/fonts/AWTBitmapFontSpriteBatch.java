@@ -69,6 +69,8 @@ public class AWTBitmapFontSpriteBatch extends TextureBatch {
 	public void draw(String pText, float pX, float pY, float pZ, float pR, float pG, float pB, float pA, float pScale, float pWordWrapWidth, int pCapWidth) {
 		if (pText == null)
 			return;
+		
+		final float lSpaceBetweenLines = 3f;
 
 		float lPosX = pX;
 		float lPosY = pY;
@@ -81,14 +83,14 @@ public class AWTBitmapFontSpriteBatch extends TextureBatch {
 
 			if (ch == '\n') {
 				/* Line feed, set x and y to draw at the next line */
-				lPosY += mBitmapFont.fontHeight() * pScale;
+				lPosY += (mBitmapFont.fontHeight() + lSpaceBetweenLines) * pScale;
 				lPosX = pX;
 				lWrapWidth = 0;
 				continue;
 			}
 			if (ch == '\r') {
 				/* Carriage return, set x and y to draw at the next line */			
-				lPosY += mBitmapFont.fontHeight() * pScale;
+				lPosY += (mBitmapFont.fontHeight() + lSpaceBetweenLines) * pScale;
 				lPosX = pX;
 				lWrapWidth = 0;
 				continue;
@@ -111,7 +113,7 @@ public class AWTBitmapFontSpriteBatch extends TextureBatch {
 						}
 
 						if (lWrapWidth >= pWordWrapWidth) {
-							lPosY += mBitmapFont.fontHeight() * pScale;
+							lPosY += (mBitmapFont.fontHeight() + lSpaceBetweenLines) * pScale;
 							lPosX = pX;
 							lWrapWidth = 0;
 						}

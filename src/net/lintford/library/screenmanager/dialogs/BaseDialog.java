@@ -1,7 +1,6 @@
 package net.lintford.library.screenmanager.dialogs;
 
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
@@ -19,17 +18,48 @@ public abstract class BaseDialog extends MenuScreen {
 	public static final int DIALOG_WIDTH = 600;
 	public static final int DIALOG_HEIGHT = 250;
 
+	public static final float TEXT_HORIZONTAL_PADDING = 20;
+
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
 	protected String mMessageString;
 	protected boolean mDrawBackground;
+	protected boolean mDarkenBackground;
 
 	protected TextureBatch mTextureBatch;
 
 	// --------------------------------------
-	// constructor
+	// Properties
+	// --------------------------------------
+
+	public boolean drawBackground() {
+		return mDrawBackground;
+	}
+
+	public void drawBackground(boolean pNewValue) {
+		mDrawBackground = pNewValue;
+	}
+
+	public boolean darkenBackground() {
+		return mDarkenBackground;
+	}
+
+	public void darkenBackground(boolean pNewValue) {
+		mDarkenBackground = pNewValue;
+	}
+
+	public String dialogTitle() {
+		return mMenuTitle;
+	}
+
+	public void dialogTitle(String pNewMenuTitle) {
+		mMenuTitle = pNewMenuTitle;
+	}
+
+	// --------------------------------------
+	// Constructor
 	// --------------------------------------
 
 	public BaseDialog(ScreenManager pScreenManager, MenuScreen pParentScreen, String pDialogMessage) {
@@ -38,6 +68,7 @@ public abstract class BaseDialog extends MenuScreen {
 		mTextureBatch = new TextureBatch();
 
 		mDrawBackground = true;
+		mDarkenBackground = true;
 
 		mMessageString = pDialogMessage;
 
@@ -83,33 +114,14 @@ public abstract class BaseDialog extends MenuScreen {
 
 	@Override
 	public void updateStructurePositions(LintfordCore pCore) {
-		float lTextHeight = font().bitmap().getStringHeight(mMessageString);
-
-		// Get the Y Start position of the menu entries
-		float lYPos = -DIALOG_HEIGHT * 0.5f + font().bitmap().getStringHeight(mMessageString) + lTextHeight / 2;
-
 		final int lLayoutCount = layouts().size();
 		for (int i = 0; i < lLayoutCount; i++) {
-			// TODO: Ignore floating layouts
 			BaseLayout lLayout = layouts().get(i);
 
-			lYPos += 0;//lLayout.paddingTop();
-
-			switch (mChildAlignment) {
-			case left:
-				lLayout.x = 0;//lLayout.paddingLeft();
-				break;
-			case center:
-				lLayout.x = -lLayout.w / 2;
-				break;
-			case right:
-				lLayout.x = pCore.config().display().windowWidth() - lLayout.w;// - lLayout.paddingRight();
-				break;
-			}
-
-			lLayout.y = lYPos;
-			lYPos += lLayout.h;// + lLayout.paddingBottom();
-			lLayout.w = DIALOG_WIDTH - 32;
+			lLayout.x = -DIALOG_WIDTH * 0.5f;
+			lLayout.y = 0;
+			lLayout.w = DIALOG_WIDTH;
+			lLayout.h = DIALOG_HEIGHT;
 
 			layouts().get(i).updateStructurePositions();
 
@@ -130,7 +142,16 @@ public abstract class BaseDialog extends MenuScreen {
 
 		final float ZDEPTH = ZLayers.LAYER_SCREENMANAGER + 0.05f;
 
-		final float TEXT_HORIZONTAL_PADDING = 20;
+		final float lWindowWidth = pCore.HUD().boundingRectangle().w;
+		final float lWindowHeight = pCore.HUD().boundingRectangle().h;
+
+		if (mDarkenBackground) {
+			final float lAlphaAmt = 0.70f;
+			mTextureBatch.begin(pCore.HUD());
+			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, -lWindowWidth * 0.5f, -lWindowHeight * 0.5f, lWindowWidth, lWindowHeight, ZLayers.LAYER_SCREENMANAGER - 0.1f, 0f, 0f, 0f, lAlphaAmt);
+			mTextureBatch.end();
+
+		}
 
 		if (mDrawBackground) {
 			final float a = 1f;
@@ -157,15 +178,20 @@ public abstract class BaseDialog extends MenuScreen {
 
 		}
 
+		final float lHeaderFontHeight = mMenuHeaderFont.bitmap().fontHeight();
+
+		/* Render title and message */
 		font().begin(pCore.HUD());
-		font().draw(mMessageString, -DIALOG_WIDTH * 0.5f + TEXT_HORIZONTAL_PADDING, -DIALOG_HEIGHT * 0.5f + 30, ZDEPTH, 1f, DIALOG_WIDTH);
+		font().draw(mMessageString, -DIALOG_WIDTH * 0.5f + TEXT_HORIZONTAL_PADDING, -DIALOG_HEIGHT * 0.5f + lHeaderFontHeight + 15f, ZDEPTH, 1f, DIALOG_WIDTH - 70f);
 		font().end();
 
-		Rectangle lHUDRect = pCore.HUD().boundingRectangle();
+		// Render the menu title if there is one
+		if (mMenuTitle != null && mMenuTitle.length() > 0) {
+			mMenuHeaderFont.begin(pCore.HUD());
+			mMenuHeaderFont.draw(mMenuTitle, -DIALOG_WIDTH / 2f + TEXT_HORIZONTAL_PADDING, -DIALOG_HEIGHT / 2f + TEXT_HORIZONTAL_PADDING, ZDEPTH, mR, mG, mB, mA, 0.65f);
+			mMenuHeaderFont.end();
 
-		mMenuHeaderFont.begin(pCore.HUD());
-		mMenuHeaderFont.draw(mMenuTitle, lHUDRect.left() + TITLE_PADDING_X, lHUDRect.top(), ZDEPTH, mR, mG, mB, mA, 1f);
-		mMenuHeaderFont.end();
+		}
 
 		// Draw each layout in turn.
 		final int lCount = layouts().size();

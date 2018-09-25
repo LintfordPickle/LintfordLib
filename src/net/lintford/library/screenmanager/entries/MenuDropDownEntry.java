@@ -262,6 +262,11 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 
 		super.update(pCore, pScreen, pIsSelected);
 
+		if (mShowInfoButton) {
+			mInfoButton.set(x, y, 32f, 32f);
+
+		}
+
 		mTopEntry.setCenter(x + w / 2, y, w / 2, MENUENTRY_DEF_BUTTON_WIDTH);
 
 		// w = MENUENTRY_DEF_BUTTON_WIDTH;
@@ -272,6 +277,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 		mWindowRectangle.set(x + w / 2, y + 32, w / 2, h - 50);
 
 		mScrollBar.update(pCore);
+
 	}
 
 	@Override
@@ -377,6 +383,12 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, x, y, w, h, mZ, 1f, 0.2f, 0.2f, ALPHA);
 			mTextureBatch.end();
 
+		}
+
+		if (mShowInfoButton) {
+			mTextureBatch.begin(pCore.HUD());
+			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 544, 0, 32, 32, mInfoButton, mZ, 1f, 1f, 1f, 1f);
+			mTextureBatch.end();
 		}
 
 	}

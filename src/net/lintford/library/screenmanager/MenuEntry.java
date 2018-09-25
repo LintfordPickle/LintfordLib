@@ -60,6 +60,8 @@ public class MenuEntry extends Rectangle {
 	protected boolean mToolTipEnabled;
 	protected float mToolTipTimer;
 	protected String mToolTip;
+	protected boolean mShowInfoButton;
+	protected Rectangle mInfoButton;
 	protected boolean mHasFocus;
 	protected boolean mFocusLocked; // used only for buffered input
 	protected boolean mCanHaveFocus;
@@ -241,6 +243,14 @@ public class MenuEntry extends Rectangle {
 		return mMenuEntryID;
 	}
 
+	public boolean showInfoButton() {
+		return mShowInfoButton;
+	}
+
+	public void showInfoButton(boolean pNewValue) {
+		mShowInfoButton = pNewValue;
+	}
+
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
@@ -259,6 +269,7 @@ public class MenuEntry extends Rectangle {
 		mDrawBackground = true;
 		mScaleonHover = false;
 		mHighlightOnHover = true;
+		mInfoButton = new Rectangle();
 
 		mTopMargin = 3f;
 		mBottomMargin = 3f;
@@ -363,6 +374,11 @@ public class MenuEntry extends Rectangle {
 	};
 
 	public void updateStructurePositions() {
+		if (mShowInfoButton) {
+			mInfoButton.set(x - 32f - 5f, y, 32f, 32f);
+
+		}
+
 	};
 
 	public void update(LintfordCore pCore, MenuScreen pScreen, boolean pIsSelected) {
@@ -391,6 +407,12 @@ public class MenuEntry extends Rectangle {
 
 		else {
 			mScale = 0.75f;
+		}
+
+		if (mToolTipEnabled && mToolTipTimer >= 1000 || mInfoButton.intersectsAA(pCore.HUD().getMouseCameraSpace())) {
+			Vector2f lToolTipPosition = pCore.HUD().getMouseCameraSpace();
+			mScreenManager.toolTip().setToolTipActive(mToolTip, lToolTipPosition.x, lToolTipPosition.y, mZ);
+
 		}
 
 	}
@@ -441,7 +463,7 @@ public class MenuEntry extends Rectangle {
 		// Render the MenuEntry label
 		if (mText != null && mText.length() > 0) {
 			final float luiTextScale = mScreenManager.UIHUDController().uiTextScaleFactor();
-			
+
 			float lColMod = 1f; // no color mod for the text (mHoveredOver && mHighlightOnHover) ? 0.7f : 1f;
 
 			FontUnit lMenuFont = mParentLayout.parentScreen().font();
@@ -453,10 +475,10 @@ public class MenuEntry extends Rectangle {
 
 		}
 
-		if (mToolTipEnabled && mToolTipTimer >= 1000) {
-			Vector2f lToolTipPosition = pCore.HUD().getMouseCameraSpace();
-			mScreenManager.toolTip().draw(pCore, mToolTip, lToolTipPosition.x, lToolTipPosition.y);
-
+		if (mShowInfoButton) {
+			mTextureBatch.begin(pCore.HUD());
+			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 544, 0, 32, 32, mInfoButton, mZ, 1f, 1f, 1f, 1f);
+			mTextureBatch.end();
 		}
 
 		if (ConstantsTable.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {

@@ -251,6 +251,17 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 	}
 
 	@Override
+	public void updateStructurePositions() {
+		super.updateStructurePositions();
+		
+		if (mShowInfoButton) {
+			mInfoButton.set(x, y, 32f, 32f);
+
+		}
+		
+	}
+	
+	@Override
 	public void update(LintfordCore pCore, MenuScreen pScreen, boolean pIsSelected) {
 		super.update(pCore, pScreen, pIsSelected);
 
@@ -315,6 +326,12 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 		}
 
 		lFontBitmap.end();
+		
+		if (mShowInfoButton) {
+			mTextureBatch.begin(pCore.HUD());
+			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 544, 0, 32, 32, mInfoButton, mZ, 1f, 1f, 1f, 1f);
+			mTextureBatch.end();
+		}
 
 	}
 

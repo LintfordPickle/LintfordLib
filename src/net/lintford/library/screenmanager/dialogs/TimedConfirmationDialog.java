@@ -1,14 +1,10 @@
 package net.lintford.library.screenmanager.dialogs;
 
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.geometry.Rectangle;
-import net.lintford.library.core.graphics.textures.TextureManager;
-import net.lintford.library.renderers.ZLayers;
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuEntry.BUTTON_SIZE;
 import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.ScreenManager;
-import net.lintford.library.screenmanager.layouts.BaseLayout;
 import net.lintford.library.screenmanager.layouts.ListLayout;
 import net.lintford.library.screenmanager.screens.VideoOptionsScreen;
 
@@ -65,11 +61,11 @@ public class TimedConfirmationDialog extends BaseDialog {
 
 		mConfirmEntry = new MenuEntry(pScreenManager, lListLayout, "Okay");
 		mConfirmEntry.registerClickListener(pParentScreen, BUTTON_TIMED_CONFIRM_YES);
-		mConfirmEntry.buttonSize(BUTTON_SIZE.narrow);
+		mConfirmEntry.buttonSize(BUTTON_SIZE.normal);
 
 		mCancelEntry = new MenuEntry(pScreenManager, lListLayout, "Cancel");
 		mCancelEntry.registerClickListener(pParentScreen, BUTTON_TIMED_CONFIRM_NO);
-		mCancelEntry.buttonSize(BUTTON_SIZE.narrow);
+		mCancelEntry.buttonSize(BUTTON_SIZE.normal);
 
 		lListLayout.menuEntries().add(mCancelEntry);
 		lListLayout.menuEntries().add(mConfirmEntry);
@@ -103,71 +99,14 @@ public class TimedConfirmationDialog extends BaseDialog {
 	}
 
 	@Override
-	public void updateStructureDimensions(LintfordCore pCore) {
-		super.updateStructureDimensions(pCore);
-
-	}
-
-	@Override
-	public void updateStructurePositions(LintfordCore pCore) {
-		final int lLayoutCount = layouts().size();
-		for (int i = 0; i < lLayoutCount; i++) {
-			BaseLayout lLayout = layouts().get(i);
-
-			lLayout.x = -DIALOG_WIDTH * 0.5f;
-			lLayout.y = 0;
-			lLayout.w = DIALOG_WIDTH;
-			lLayout.h = DIALOG_HEIGHT;
-
-			layouts().get(i).updateStructurePositions();
-
-		}
-
-	}
-
-	@Override
 	public void draw(LintfordCore pCore) {
 		if (mScreenState != ScreenState.Active && mScreenState != ScreenState.TransitionOn && mScreenState != ScreenState.TransitionOff)
 			return;
 
-		// TODO: Put the ZDEPTH somewhere where all Dialogs have access to it
-		final float ZDEPTH = ZLayers.LAYER_SCREENMANAGER + 0.05f;
-
-		final float TEXT_HORIZONTAL_PADDING = 20;
-
-		if (mDrawBackground) {
-			mTextureBatch.begin(pCore.HUD());
-			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 64, 0, 32, 32, -DIALOG_WIDTH * 0.5f, -DIALOG_HEIGHT * 0.5f, DIALOG_WIDTH, DIALOG_HEIGHT, ZDEPTH, mR, mG, mB, mA);
-			mTextureBatch.end();
-		}
-
-		font().begin(pCore.HUD());
-
-		/* Render title and message */
-		font().draw(mMessageString, -DIALOG_WIDTH * 0.5f + TEXT_HORIZONTAL_PADDING, -DIALOG_HEIGHT * 0.5f + 30, ZDEPTH, 1f, DIALOG_WIDTH);
-
-		font().end();
-
-		Rectangle lHUDRect = pCore.HUD().boundingRectangle();
-
-		mMenuHeaderFont.begin(pCore.HUD());
-		mMenuHeaderFont.draw(mMenuTitle, lHUDRect.left() + TITLE_PADDING_X, lHUDRect.top(), ZDEPTH, mR, mG, mB, mA, 1f);
-		mMenuHeaderFont.end();
-
-		// Draw each layout in turn.
-		final int lCount = layouts().size();
-		for (int i = 0; i < lCount; i++) {
-			mLayouts.get(i).draw(pCore, ZDEPTH + (i * 0.001f));
-
-		}
+		super.draw(pCore);
 
 		final String lTimeMessage = "[" + (int) ((mTimeToWait - mTimer) / 1000f) + " Sec(s)]";
-		final float lTimeDialogWidth = DIALOG_WIDTH;
-
-		/* Render title and message */
-		font().begin(pCore.HUD());
-		font().draw(lTimeMessage, -lTimeDialogWidth * 0.5f + TEXT_HORIZONTAL_PADDING, -DIALOG_HEIGHT * 0.5f + 65, ZDEPTH, 1f, lTimeDialogWidth);
-		font().end();
+		mCancelEntry.entryText("Revert " + lTimeMessage);
 
 	}
 
@@ -194,12 +133,12 @@ public class TimedConfirmationDialog extends BaseDialog {
 	}
 
 	public void start(float pTimeToWait) {
-		
+
 		resetTime();
-		
+
 		mTimeToWait = pTimeToWait;
 		mActive = true;
-		
+
 	}
 
 	public void pause() {

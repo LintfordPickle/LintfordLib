@@ -137,6 +137,14 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		return mLayouts;
 	}
 
+	public String menuTitle() {
+		return mMenuTitle;
+	}
+	
+	public void menuTitle(String pNewMenuTitle) {
+		mMenuTitle = pNewMenuTitle;
+	}
+	
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------

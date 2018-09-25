@@ -161,7 +161,7 @@ public class MenuSliderEntry extends MenuEntry {
 						mTrackingClick = true;
 
 					}
-					
+
 					if (mClickListener != null) {
 						mClickListener.menuEntryChanged(this);
 					}
@@ -208,6 +208,17 @@ public class MenuSliderEntry extends MenuEntry {
 	public void updateStructureDimensions() {
 		// TODO: This -50 is because of the scrollbar - this is why I needed to keep the padding :(
 		w = Math.min(mParentLayout.w - 50f, MENUENTRY_MAX_WIDTH);
+
+	}
+
+	@Override
+	public void updateStructurePositions() {
+		super.updateStructurePositions();
+
+		if (mShowInfoButton) {
+			mInfoButton.set(x, y, 32f, 32f);
+
+		}
 
 	}
 
@@ -290,6 +301,12 @@ public class MenuSliderEntry extends MenuEntry {
 		}
 
 		lFont.end();
+
+		if (mShowInfoButton) {
+			mTextureBatch.begin(pCore.HUD());
+			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 544, 0, 32, 32, mInfoButton, mZ, 1f, 1f, 1f, 1f);
+			mTextureBatch.end();
+		}
 
 		if (ConstantsTable.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
 			mTextureBatch.begin(pCore.HUD());

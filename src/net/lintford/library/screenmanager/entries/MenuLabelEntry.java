@@ -145,7 +145,7 @@ public class MenuLabelEntry extends MenuEntry {
 		if (mDrawBackground) {
 			mTextureBatch.begin(pCore.HUD());
 			final float lAlpha = 0.4f;
-			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, x, y, w, h, mZ, 0.1f, 0.1f, 0.1f, lAlpha);
+			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, x, y, w, h, mZ, pParentZDepth + .01f, 0.1f, 0.1f, lAlpha);
 			mTextureBatch.end();
 		}
 
@@ -163,7 +163,7 @@ public class MenuLabelEntry extends MenuEntry {
 		}
 
 		lFont.begin(pCore.HUD());
-		lFont.draw(mText, lX, y + h / 2f - lFontHeight / 2f, pParentZDepth + .1f, mR, mG, mB, lParentScreen.a(), luiTextScale);
+		lFont.draw(mText, lX, y + h / 2f - lFontHeight / 2f, pParentZDepth + .15f, mR, mG, mB, lParentScreen.a(), luiTextScale);
 		lFont.end();
 
 		if (ConstantsTable.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {

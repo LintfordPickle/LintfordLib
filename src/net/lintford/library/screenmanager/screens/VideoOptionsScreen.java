@@ -4,7 +4,6 @@ import org.lwjgl.PointerBuffer;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWVidMode;
 
-import net.lintford.library.core.LintfordCore;
 import net.lintford.library.options.DisplayManager;
 import net.lintford.library.options.VideoSettings;
 import net.lintford.library.screenmanager.MenuEntry;
@@ -41,6 +40,8 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 	public static final int BUTTON_FULLSCREEN = 13;
 	public static final int BUTTON_ASPECTRATIO = 14;
 
+	private static final int CONFIRMATION_TIMER_MILLI = 15000; // ms
+
 	private static final String FULLSCREEN_YES = "Yes";
 	private static final String FULLSCREEN_NO = "No";
 
@@ -53,6 +54,7 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 	private ConfirmationDialog mConfirmationDialog;
 	private TimedConfirmationDialog m15SecConfirmationDialog;
 
+	private MenuEntry mApplyButton;
 	private MenuToggleEntry mVSync;
 
 	private MenuEnumEntryIndexed<Integer> mFullScreenEntry;
@@ -115,12 +117,13 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 		MenuEntry lBackButton = new MenuEntry(pScreenManager, lNavList, "Back");
 		lBackButton.buttonSize(BUTTON_SIZE.narrow);
 		lBackButton.registerClickListener(this, BUTTON_CANCEL_CHANGES);
-		MenuEntry lApplyButton = new MenuEntry(pScreenManager, lNavList, "Apply");
-		lApplyButton.buttonSize(BUTTON_SIZE.narrow);
-		lApplyButton.registerClickListener(this, BUTTON_APPLY_CHANGES);
+		mApplyButton = new MenuEntry(pScreenManager, lNavList, "Apply");
+		mApplyButton.buttonSize(BUTTON_SIZE.narrow);
+		mApplyButton.registerClickListener(this, BUTTON_APPLY_CHANGES);
+		mApplyButton.enabled(false);
 
 		lGroup.addEntry(lBackButton);
-		lGroup.addEntry(lApplyButton);
+		lGroup.addEntry(mApplyButton);
 
 		lNavList.menuEntries().add(lGroup);
 
@@ -129,8 +132,7 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 		layouts().add(mConfirmChangesLayout);
 		layouts().add(lNavList);
 
-		mChangesPendingWarning.enabled(false);
-		mConfirmChangesLayout.enabled(false);
+		mConfirmChangesLayout.visible(false);
 
 	}
 
@@ -156,6 +158,8 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 		// Register listeners with this window
 		mFullScreenEntry.registerClickListener(this, BUTTON_FULLSCREEN);
 		mResolutionEntry.registerClickListener(this, BUTTON_RESOLUTION);
+		mResolutionEntry.setToolTip("In windowed mode, you can drag the window borders to change the size!");
+		mResolutionEntry.showInfoButton(true);
 		mMonitorEntry.registerClickListener(this, BUTTON_MONITOR);
 		mVSync.registerClickListener(this, BUTTON_VSYNC);
 
@@ -163,13 +167,16 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 
 		// Add the menu entries to the window
 		lLayout.menuEntries().add(lVideoOptionsTitle);
-		lLayout.menuEntries().add(mMonitorEntry);
 		lLayout.menuEntries().add(mFullScreenEntry);
+		lLayout.menuEntries().add(mMonitorEntry);
 		lLayout.menuEntries().add(mResolutionEntry);
 		lLayout.menuEntries().add(mVSync);
 
 		fillMonitorEntry(mMonitorEntry);
 		fillResolutions(mResolutionEntry, GLFW.glfwGetPrimaryMonitor(), 16, 9);
+
+		mMonitorEntry.enabled(mDisplayManager.currentOptionsConfig().fullScreenIndex == VideoSettings.FULLSCREEN_YES_INDEX);
+		mResolutionEntry.enabled(mDisplayManager.currentOptionsConfig().fullScreenIndex == VideoSettings.FULLSCREEN_YES_INDEX);
 
 	}
 
@@ -178,20 +185,11 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 	// --------------------------------------
 
 	@Override
-	public void update(LintfordCore pCore, boolean pOtherScreenHasFocus, boolean pCoveredByOtherScreen) {
-		super.update(pCore, pOtherScreenHasFocus, pCoveredByOtherScreen);
-
-		// mChangesPendingWarning.enabled(modifiedVideoConfig.isDifferent(currentVideoConfig));
-		// mConfirmChangesLayout.enabled(modifiedVideoConfig.isDifferent(currentVideoConfig));
-
-	}
-
-	@Override
 	public void exitScreen() {
 		// If the current settings are dirty then show a dialog to ask for confirmation (of losing changes) before leaving
 		if (modifiedVideoConfig.isDifferent(currentVideoConfig)) {
-			mConfirmationDialog = new ConfirmationDialog(mScreenManager, this, "You have some changes which have not\nbeen applied, are you sure you want to\nexit?");
-
+			mConfirmationDialog = new ConfirmationDialog(mScreenManager, this, "You have some changes which have not been applied, are you sure you want to go back?");
+			mConfirmationDialog.dialogTitle("Unsaved Changes");
 			mConfirmationDialog.confirmEntry().entryText("Okay");
 			mConfirmationDialog.confirmEntry().registerClickListener(this, ConfirmationDialog.BUTTON_CONFIRM_YES);
 
@@ -253,6 +251,9 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 			currentVideoConfig.copy(modifiedVideoConfig);
 			lastVideoConfig.copy(modifiedVideoConfig);
 
+			mConfirmChangesLayout.visible(modifiedVideoConfig.isDifferent(currentVideoConfig));
+			mApplyButton.enabled(modifiedVideoConfig.isDifferent(currentVideoConfig));
+
 			mDisplayManager.saveConfig();
 
 			break;
@@ -280,9 +281,11 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 			// Set the monitor
 			if (modifiedVideoConfig.fullScreenIndex == VideoSettings.FULLSCREEN_YES_INDEX) {
 				mMonitorEntry.enabled(true);
+				mResolutionEntry.enabled(true);
 				modifiedVideoConfig.monitorIndex = mMonitorEntry.selectedItem().value;
 			} else {
 				mMonitorEntry.enabled(false);
+				mResolutionEntry.enabled(false);
 			}
 
 			break;
@@ -306,6 +309,10 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 			break;
 
 		}
+
+		mConfirmChangesLayout.visible(modifiedVideoConfig.isDifferent(currentVideoConfig));
+		mApplyButton.enabled(modifiedVideoConfig.isDifferent(currentVideoConfig));
+
 	}
 
 	private void setUIFromVideoSettings(VideoSettings pVideoConfig) {
@@ -326,20 +333,28 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 
 		setUIFromVideoSettings(lastVideoConfig);
 
+		// These should now be set to false ...
+		mConfirmChangesLayout.visible(modifiedVideoConfig.isDifferent(currentVideoConfig));
+		mApplyButton.enabled(modifiedVideoConfig.isDifferent(currentVideoConfig));
+
 	}
 
 	private void applyModifiedSettings() {
+		if (!modifiedVideoConfig.isDifferent(currentVideoConfig))
+			return;
+
 		mDisplayManager.setGLFWMonitor(modifiedVideoConfig);
 
 		// Add a timed confirmation dialog to the
-		m15SecConfirmationDialog = new TimedConfirmationDialog(mScreenManager, this, "Confirm changes?");
+		m15SecConfirmationDialog = new TimedConfirmationDialog(mScreenManager, this, "Your video settings have been changed. Do you want to keep these settings?");
+		m15SecConfirmationDialog.dialogTitle("Confirm changes");
 
 		m15SecConfirmationDialog.confirmEntry().entryText("Keep Settings");
 		m15SecConfirmationDialog.cancelEntry().entryText("Revert");
 
 		m15SecConfirmationDialog.setListener(this);
 
-		m15SecConfirmationDialog.start(60000);
+		m15SecConfirmationDialog.start(CONFIRMATION_TIMER_MILLI);
 
 		mScreenManager.addScreen(m15SecConfirmationDialog);
 
