@@ -28,7 +28,7 @@ public class CameraZoomController extends BaseController {
 	/**
 	 * A coefficient for the speed of the zoom (modifies the mouse scroll wheel speed)
 	 */
-	public static final float ZOOM_ACCELERATE_AMOUNT = 10.0f;
+	public static final float ZOOM_ACCELERATE_AMOUNT = 10000.0f;
 
 	// ---------------------------------------------
 	// Variables
@@ -157,7 +157,7 @@ public class CameraZoomController extends BaseController {
 
 		// apply zoom //
 		mZoomVelocity += mZoomAcceleration;
-		mZoomVelocity *= 0.97f;
+		mZoomVelocity *= ZOOM_VELOCITY_DRAG;
 		lZoomFactor += mZoomVelocity * DELTA_TIME;
 		mZoomAcceleration = 0.0f;
 

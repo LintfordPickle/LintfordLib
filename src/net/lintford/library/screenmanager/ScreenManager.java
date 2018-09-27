@@ -149,7 +149,7 @@ public class ScreenManager {
 
 		boolean lOtherScreenHasFocus = false;
 		boolean lCoveredByOtherScreen = false;
-		
+
 		mScreensToUpdate.clear();
 
 		int lCount = mScreens.size();
@@ -183,7 +183,7 @@ public class ScreenManager {
 			}
 
 		}
-		
+
 		mToastManager.update(pCore);
 
 	}
@@ -201,9 +201,9 @@ public class ScreenManager {
 
 		}
 
-		if(mToolTip.active)
+		if (mToolTip.active)
 			mToolTip.draw(pCore);
-		
+
 		// Debug.debugManager().drawers().drawRect(pCore.HUD(), mUIHUDController.HUDRectangle());
 
 		mToastManager.draw(pCore);

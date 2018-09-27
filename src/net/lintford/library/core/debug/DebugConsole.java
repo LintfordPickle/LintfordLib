@@ -3,9 +3,11 @@ package net.lintford.library.core.debug;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.lwjgl.glfw.GLFW;
 
+import net.lintford.library.ConstantsTable;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.debug.DebugLogger.LogMessage;
 import net.lintford.library.core.geometry.Rectangle;
@@ -45,6 +47,8 @@ public class DebugConsole extends Rectangle implements IBufferedInputCallback, I
 	public static final Vector3f ERR_MESSAGE_RGB = new Vector3f(0.93f, 0f, 0f);
 	public static final Vector3f USER_MESSAGE_RGB = new Vector3f(0.47f, 0.77f, 0.9f);
 	public static final Vector3f SYS_MESSAGE_RGB = new Vector3f(0.83f, 0.27f, 0f);
+
+	final static String CONSTANTS_TABLE_COMMAND_PATTERN = "(?!;)(.+?)=.(.*)";
 
 	public static Vector3f getMessageRGB(final int pMessageType) {
 		switch (pMessageType) {
@@ -596,23 +600,55 @@ public class DebugConsole extends Rectangle implements IBufferedInputCallback, I
 
 		}
 
-		final String INPUT_STRING = mInputText.toString();
+		final String lInputString = mInputText.toString();
 
-		if (INPUT_STRING != null) {
-			Debug.debugManager().logger().u("User", INPUT_STRING);
+		if (lInputString != null) {
+			// First check for ConstantsTable changes
+			if (Pattern.matches(CONSTANTS_TABLE_COMMAND_PATTERN, lInputString)) {
+				String[] lResultArray = lInputString.split("([\\=])");
 
-			boolean lResult = false;
-			final int CONSOLE_COMMANDS = mConsoleCommands.size();
-			for (int i = 0; i < CONSOLE_COMMANDS; i++) {
-				if (INPUT_STRING.equals(mConsoleCommands.get(i).Command)) {
-					lResult = mConsoleCommands.get(i).doCommand();
-					Debug.debugManager().logger().u("", "  completed " + (lResult ? "successfully" : "with errors"));
+				if (lResultArray != null && lResultArray.length == 2) {
+					ConstantsTable.registerValue(lResultArray[0], lResultArray[1]);
+
+					Debug.debugManager().logger().u("Settings Changed", lInputString);
+
+					// Automatically scroll to the bottom when the user enters some text
+					mAutoScroll = true;
+					mDirty = true;
+
+					// empty the current line
+					mInputText.delete(0, mInputText.length());
+
+					return getEnterFinishesInput();
+
+				}
+
+			} else {
+				boolean lResult = false;
+				final int CONSOLE_COMMANDS = mConsoleCommands.size();
+				for (int i = 0; i < CONSOLE_COMMANDS; i++) {
+					if (lInputString.equals(mConsoleCommands.get(i).Command)) {
+						lResult = mConsoleCommands.get(i).doCommand();
+						Debug.debugManager().logger().u("", "  completed " + (lResult ? "successfully" : "with errors"));
+
+						// empty the current line
+						mInputText.delete(0, mInputText.length());
+
+						// Automatically scroll to the bottom when the user enters some text
+						mAutoScroll = true;
+						mDirty = true;
+
+						return getEnterFinishesInput();
+
+					}
 
 				}
 
 			}
 
 		}
+
+		Debug.debugManager().logger().u("User", lInputString);
 
 		// empty the current line
 		mInputText.delete(0, mInputText.length());

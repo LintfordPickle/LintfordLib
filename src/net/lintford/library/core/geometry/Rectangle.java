@@ -335,7 +335,7 @@ public class Rectangle extends Shape {
 
 		mVertices[3].x = lWidth / 2;
 		mVertices[3].y = lHeight / 2;
-
+//		rot = 0;
 		float sin = (float) (Math.sin(rot));
 		float cos = (float) (Math.cos(rot));
 

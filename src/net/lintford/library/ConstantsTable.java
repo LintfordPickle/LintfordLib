@@ -5,9 +5,6 @@ import java.util.Map;
 
 import net.lintford.library.core.debug.Debug;
 
-// TODO: This needs to be read from a settings file (otherwise it isn't game agnostic)
-// TODO: Remove non game-agnostic values
-// TODO: Even consider moving this to the MasterConfig (which is read / saved)
 public class ConstantsTable {
 
 	public static final String APP_NAME = "APPLICATION_NAME";
@@ -77,7 +74,9 @@ public class ConstantsTable {
 
 	public static void registerValue(String pName, String pValue) {
 		Debug.debugManager().logger().i("ConstantsTable", "Registered value: " + pName + " : " + pValue);
-		constTab.put(pName, pValue);
+
+		// Automagically replaces values which already exist
+		constTab.put(pName.toUpperCase(), pValue.toUpperCase());
 
 	}
 

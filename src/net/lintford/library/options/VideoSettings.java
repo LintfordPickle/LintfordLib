@@ -11,7 +11,7 @@ public class VideoSettings {
 	public static final int FULLSCREEN_NO_INDEX = 0;
 	public static final int FULLSCREEN_YES_INDEX = 1;
 	public static final int FULLSCREEN_BORDERLESS_INDEX = 2;
-
+	
 	static final VideoSettings createBasicTemplate() {
 		VideoSettings lBasic = new VideoSettings();
 		lBasic.monitorIndex = NULL;

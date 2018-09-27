@@ -384,7 +384,7 @@ public abstract class LintfordCore {
 
 	}
 
-	private void registerGameInfoConstants(GameInfo pGameInfo) {
+	protected void registerGameInfoConstants(GameInfo pGameInfo) {
 		ConstantsTable.registerValue("APPLICATION_NAME", pGameInfo.applicationName());
 		ConstantsTable.registerValue("WINDOW_TITLE", pGameInfo.windowTitle());
 
