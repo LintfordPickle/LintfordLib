@@ -59,6 +59,9 @@ public class ConstantsTable {
 	}
 
 	public static boolean getBooleanValueDef(String pName, boolean pDef) {
+		if (!Debug.debugManager().debugModeEnabled())
+			return false;
+
 		if (constTab.containsKey(pName)) {
 			try {
 				boolean lValue = Boolean.valueOf(constTab.get(pName));

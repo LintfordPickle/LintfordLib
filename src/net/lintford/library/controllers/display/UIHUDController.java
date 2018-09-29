@@ -16,6 +16,9 @@ public class UIHUDController extends BaseController {
 
 	public static final String CONTROLLER_NAME = "UIHUDController";
 
+	private static final int MIN_HUD_WIDTH = 1024;
+	private static final int MIN_HUD_HEIGHT = 768;
+
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
@@ -27,11 +30,16 @@ public class UIHUDController extends BaseController {
 	private float mUITransparencyFactorActual;
 	private float mUIScaleFactorActual;
 	private float mUITextScaleFactorActual;
+	private float mUIBottomPanelHeight;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
 
+	public float bottomPanelHeight() {
+		return mUIBottomPanelHeight;
+	}
+	
 	public float uiTransparencyFactor() {
 		return mUITransparencyFactorActual;
 	}
@@ -135,12 +143,14 @@ public class UIHUDController extends BaseController {
 		if (lWindowWidth < lMinBigHUDWidth || lWindowHeight < lMinBigHUDHeight) {
 			mBigUIEnabled = false;
 			lHUDRatio = 0.80f;
+			mUIBottomPanelHeight = 50;
 
 			mUITextScaleFactorActual = mDisplayManager.graphicsSettings().UITextScale() * 1f;
 			mUITransparencyFactorActual = mDisplayManager.graphicsSettings().UITransparencyScale() * 1f;
 
 		} else {
 			mBigUIEnabled = true;
+			mUIBottomPanelHeight = 0;
 
 			mUITextScaleFactorActual = mDisplayManager.graphicsSettings().UITextScale() * 1f;
 			mUITransparencyFactorActual = mDisplayManager.graphicsSettings().UITransparencyScale() * 1f;
@@ -149,13 +159,13 @@ public class UIHUDController extends BaseController {
 
 		// Reconstructe the
 
-		final float lHUDWidth = lWindowWidth * lHUDRatio;
-		final float lHUDHeight = lWindowHeight * lHUDRatio;
+		final float lHUDWidth = Math.min(lWindowWidth * lHUDRatio, MIN_HUD_WIDTH);// * lHUDRatio;
+		final float lHUDHeight = Math.min(lWindowHeight * lHUDRatio, MIN_HUD_HEIGHT);// * lHUDRatio;
 
 		final float lWindowHalfWidth = lHUDWidth / 2f;
 		final float lWindowHalfHeight = lHUDHeight / 2f;
 
-		mHUDRectangle.set(-lWindowHalfWidth, -lWindowHalfHeight, lHUDWidth, lHUDHeight);
+		mHUDRectangle.set(-lWindowHalfWidth, -lWindowHalfHeight, lHUDWidth, lHUDHeight - mUIBottomPanelHeight);
 
 	}
 

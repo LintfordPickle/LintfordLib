@@ -118,7 +118,7 @@ public class ScrollBar extends Rectangle {
 		float lScrollThumbSpace = lViewportHeight - mMarkerBarHeight;
 		mMarkerMoveMod = lScrollTrackSpace / lScrollThumbSpace;
 
-		x = mScrollBarArea.contentDisplayArea().x + mScrollBarArea.contentDisplayArea().w - 5;
+		x = mScrollBarArea.contentDisplayArea().x + mScrollBarArea.contentDisplayArea().w - 25;
 		y = mScrollBarArea.contentDisplayArea().y;
 		w = BAR_WIDTH;
 		h = mScrollBarArea.contentDisplayArea().h;

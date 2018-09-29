@@ -269,8 +269,6 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 		if (!isOpen())
 			return;
 
-		mScrollBar.update(pCore);
-
 		// Update the window components
 		final int lComponentCount = mComponents.size();
 		for (int i = 0; i < lComponentCount; i++) {
@@ -337,7 +335,7 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 
 		}
 
-		if (ConstantsTable.getBooleanValueDef("DRAW_UI_COLLIDABLES", false)) {
+		if (ConstantsTable.getBooleanValueDef("DRAW_UI_BOUNDS", false)) {
 			Debug.debugManager().drawers().drawRect(pCore.HUD(), mWindowArea);
 
 		}

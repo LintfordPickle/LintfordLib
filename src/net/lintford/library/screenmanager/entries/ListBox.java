@@ -216,6 +216,7 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 		mContentArea.h = mItems.size() * (64f + LISTBOX_ITEM_VPADDING) + LISTBOX_ITEM_VPADDING;
 
 		mScrollBar.update(pCore);
+//		mScrollBar.x = 0;
 
 	}
 

@@ -13,8 +13,8 @@ public interface GameInfo {
 	public static final int DEF_BASE_GAME_RESOLUTION_W = 800;
 	public static final int DEF_BASE_GAME_RESOLUTION_H = 600;
 	
-	public static final int MIN_BASE_GAME_RESOLUTION_W = 640;
-	public static final int MIN_BASE_GAME_RESOLUTION_H = 480;
+	public static final int MIN_BASE_GAME_RESOLUTION_W = 800;
+	public static final int MIN_BASE_GAME_RESOLUTION_H = 600;
 
 	/* Specifies the debug logging level. Default is off (no logs are generated). */
 	public default DebugLogLevel debugLogLevel() {

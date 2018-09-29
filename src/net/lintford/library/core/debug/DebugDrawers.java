@@ -102,17 +102,13 @@ public class DebugDrawers {
 	}
 
 	public void drawRect(ICamera pCamera, Rectangle pDstRect) {
-		if (!mDebugManager.debugManagerEnabled())
-			return;
-
 		drawRect(pCamera, pDstRect.left(), pDstRect.top(), pDstRect.width(), pDstRect.height());
+
 	}
 
 	public void drawRect(ICamera pCamera, Rectangle pDstRect, float pR, float pG, float pB) {
-		if (!mDebugManager.debugManagerEnabled())
-			return;
-
 		drawRect(pCamera, pDstRect.left(), pDstRect.top(), pDstRect.width(), pDstRect.height(), pR, pG, pB);
+
 	}
 
 	public void drawRect(ICamera pCamera, float pX, float pY, float pW, float pH) {
