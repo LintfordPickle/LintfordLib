@@ -44,7 +44,7 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 	protected List<MenuEntry> mMenuEntries;
 	protected int mSelectedEntry = 0;
 	protected int mNumberEntries;
-	protected TextureBatch mSpriteBatch;
+	protected TextureBatch mTextureBatch;
 
 	protected boolean mDrawBackground;
 	protected float mR, mG, mB, mA = 1;
@@ -170,7 +170,7 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 	public void enabled(boolean pEnabled) {
 		mEnabled = pEnabled;
 	}
-	
+
 	public boolean visible() {
 		return mVisible;
 	}
@@ -189,7 +189,7 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 		mParentScreen = pParentScreen;
 		mMenuEntries = new ArrayList<>();
 
-		mSpriteBatch = new TextureBatch();
+		mTextureBatch = new TextureBatch();
 		mEnabled = true;
 		mVisible = true;
 
@@ -236,7 +236,7 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 			mMenuEntries.get(i).loadGLContent(pResourceManager);
 		}
 
-		mSpriteBatch.loadGLContent(pResourceManager);
+		mTextureBatch.loadGLContent(pResourceManager);
 
 		mIsLoaded = true;
 
@@ -248,7 +248,7 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 			mMenuEntries.get(i).unloadGLContent();
 		}
 
-		mSpriteBatch.unloadGLContent();
+		mTextureBatch.unloadGLContent();
 
 		mIsLoaded = false;
 
@@ -302,26 +302,36 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 			return;
 
 		if (mDrawBackground) {
-			final float TILE_SIZE = 32f;
+			if (h < 64) {
+				mTextureBatch.begin(pCore.HUD());
+				final float lAlpha = 0.8f;
+				mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, x, y, w, h, pComponentDepth, 0.1f, 0.1f, 0.1f, lAlpha);
+				mTextureBatch.end();
 
-			mSpriteBatch.begin(pCore.HUD());
-			mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 448, 64, TILE_SIZE, TILE_SIZE, x, y, TILE_SIZE, TILE_SIZE, pComponentDepth, 1, 1, 1, 0.85f);
-			mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 480, 64, TILE_SIZE, TILE_SIZE, x + TILE_SIZE, y, w - 64, TILE_SIZE, pComponentDepth, 1, 1, 1, 0.85f);
-			mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 512, 64, TILE_SIZE, TILE_SIZE, x + w - 32, y, TILE_SIZE, TILE_SIZE, pComponentDepth, 1, 1, 1, 0.85f);
+			} else {
+				final float TILE_SIZE = 32;
 
-			mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 448, 96, TILE_SIZE, TILE_SIZE, x, y + 32, TILE_SIZE, h - 64, pComponentDepth, 1, 1, 1, 0.85f);
-			mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 480, 96, TILE_SIZE, TILE_SIZE, x + TILE_SIZE, y + 32, w - 64, h - 64, pComponentDepth, 1, 1, 1, 0.85f);
-			mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 512, 96, TILE_SIZE, TILE_SIZE, x + w - 32, y + 32, TILE_SIZE, h - 64, pComponentDepth, 1, 1, 1, 0.85f);
+				mTextureBatch.begin(pCore.HUD());
+				mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 448, 64, 32, 32, x, y, TILE_SIZE, TILE_SIZE, pComponentDepth, mR, mG, mB, mA);
+				mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 480, 64, 32, 32, x + TILE_SIZE, y, w - TILE_SIZE * 2, TILE_SIZE, pComponentDepth, mR, mG, mB, mA);
+				mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 512, 64, 32, 32, x + w - TILE_SIZE, y, TILE_SIZE, TILE_SIZE, pComponentDepth, mR, mG, mB, mA);
 
-			mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 448, 128, TILE_SIZE, TILE_SIZE, x, y + h - 32, TILE_SIZE, TILE_SIZE, pComponentDepth, 1, 1, 1, 0.85f);
-			mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 480, 128, TILE_SIZE, TILE_SIZE, x + TILE_SIZE, y + h - 32, w - 64, TILE_SIZE, pComponentDepth, 1, 1, 1, 0.85f);
-			mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 512, 128, TILE_SIZE, TILE_SIZE, x + w - 32, y + h - 32, TILE_SIZE, TILE_SIZE, pComponentDepth, 1, 1, 1, 0.85f);
-			mSpriteBatch.end();
+				mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 448, 96, 32, 32, x, y + TILE_SIZE, TILE_SIZE, h - TILE_SIZE * 2, pComponentDepth, mR, mG, mB, mA);
+				mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 480, 96, 32, 32, x + TILE_SIZE, y + TILE_SIZE, w - TILE_SIZE * 2, h - 64, pComponentDepth, mR, mG, mB, mA);
+				mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 512, 96, 32, 32, x + w - TILE_SIZE, y + TILE_SIZE, TILE_SIZE, h - TILE_SIZE * 2, pComponentDepth, mR, mG, mB, mA);
+
+				mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 448, 128, 32, 32, x, y + h - TILE_SIZE, TILE_SIZE, TILE_SIZE, pComponentDepth, mR, mG, mB, mA);
+				mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 480, 128, 32, 32, x + TILE_SIZE, y + h - TILE_SIZE, w - TILE_SIZE * 2, TILE_SIZE, pComponentDepth, mR, mG, mB, mA);
+				mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 512, 128, 32, 32, x + w - TILE_SIZE, y + h - TILE_SIZE, TILE_SIZE, TILE_SIZE, pComponentDepth, mR, mG, mB, mA);
+				mTextureBatch.end();
+
+			}
+
 		}
 
 		if (mScrollBarsEnabled) {
 			mContentArea.depthPadding(6f);
-			mContentArea.preDraw(pCore, mSpriteBatch);
+			mContentArea.preDraw(pCore, mTextureBatch);
 
 		}
 
@@ -332,15 +342,15 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 		}
 
 		if (mScrollBarsEnabled) {
-			mScrollBar.draw(pCore, mSpriteBatch, pComponentDepth + .1f);
+			mScrollBar.draw(pCore, mTextureBatch, pComponentDepth + .1f);
 			mContentArea.postDraw(pCore);
 
 		}
 
 		if (ConstantsTable.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
-			mSpriteBatch.begin(pCore.HUD());
-			mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, x, y, w, h, ZLayers.LAYER_DEBUG, 1f, 0.2f, 1f, 0.4f);
-			mSpriteBatch.end();
+			mTextureBatch.begin(pCore.HUD());
+			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, x, y, w, h, ZLayers.LAYER_DEBUG, 1f, 0.2f, 1f, 0.4f);
+			mTextureBatch.end();
 		}
 
 	}
@@ -511,6 +521,7 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 			lResult += lEntry.marginTop();
 			lResult += lEntry.h;
 			lResult += lEntry.marginBottom();
+
 		}
 
 		return lResult;

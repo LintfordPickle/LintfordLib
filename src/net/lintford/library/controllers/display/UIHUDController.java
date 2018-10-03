@@ -1,7 +1,5 @@
 package net.lintford.library.controllers.display;
 
-import org.lwjgl.glfw.GLFW;
-
 import net.lintford.library.controllers.BaseController;
 import net.lintford.library.controllers.core.ControllerManager;
 import net.lintford.library.core.LintfordCore;
@@ -93,27 +91,6 @@ public class UIHUDController extends BaseController {
 	@Override
 	public void unload() {
 
-	}
-
-	@Override
-	public boolean handleInput(LintfordCore pCore) {
-
-		// TEST
-		if (pCore.input().keyDown(GLFW.GLFW_KEY_KP_SUBTRACT)) {
-			float lUITextScale = mDisplayManager.graphicsSettings().UITextScale();
-			lUITextScale -= 0.01f;
-			mDisplayManager.graphicsSettings().setUITextScale(lUITextScale);
-
-		}
-
-		if (pCore.input().keyDown(GLFW.GLFW_KEY_KP_ADD)) {
-			float lUITextScale = mDisplayManager.graphicsSettings().UITextScale();
-			lUITextScale += 0.01f;
-			mDisplayManager.graphicsSettings().setUITextScale(lUITextScale);
-
-		}
-
-		return super.handleInput(pCore);
 	}
 
 	@Override

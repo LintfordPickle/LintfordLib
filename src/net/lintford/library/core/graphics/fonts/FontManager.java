@@ -8,6 +8,7 @@ import net.lintford.library.core.graphics.ResourceManager;
 
 public class FontManager {
 
+	// FIXME: This seems to be redundant - looks just like AWTBitmapFontSpriteBatch with more fluff!
 	public class FontUnit {
 
 		private static final int MIN_POINTSIZE = 6;
@@ -23,6 +24,8 @@ public class FontManager {
 		private int mFontPointSize;
 		private BitmapFont mBitmapFont;
 		private AWTBitmapFontSpriteBatch mFontSpriteBatch;
+		private boolean mDrawShadow;
+		private boolean mTrimText;
 		private boolean mIsLoaded;
 
 		// --------------------------------------
@@ -53,6 +56,22 @@ public class FontManager {
 			return mBitmapFont;
 		}
 
+		public boolean drawShadow() {
+			return mDrawShadow;
+		}
+
+		public void drawShadow(boolean pNewValue) {
+			mDrawShadow = pNewValue;
+		}
+
+		public boolean trimText() {
+			return mTrimText;
+		}
+
+		public void trimText(boolean pNewValue) {
+			mTrimText = pNewValue;
+		}
+
 		// --------------------------------------
 		// Constructor
 		// --------------------------------------
@@ -74,6 +93,8 @@ public class FontManager {
 				mFontPointSize = MAX_POINTSIZE;
 
 			mAntiAlias = pAntiAlias;
+			mDrawShadow = true;
+			mTrimText = true;
 
 		}
 
@@ -100,31 +121,39 @@ public class FontManager {
 
 		public void begin(ICamera pCamera) {
 			mFontSpriteBatch.begin(pCamera);
+
 		}
 
 		public void draw(String pText, float pX, float pY, float pScale) {
-			mFontSpriteBatch.draw(pText, pX, pY, pScale);
+			draw(pText, pX, pY, -0.1f, pScale);
+
 		}
 
 		public void draw(String pText, float pX, float pY, float pZ, float pScale) {
-			mFontSpriteBatch.draw(pText, pX, pY, pZ, pScale, AWTBitmapFontSpriteBatch.NO_WORD_WRAP);
+			draw(pText, pX, pY, pZ, pScale, -1);
+
 		}
 
 		public void draw(String pText, float pX, float pY, float pZ, float pScale, float pWordWrapWidth) {
-			mFontSpriteBatch.draw(pText, pX, pY, pZ, pScale, pWordWrapWidth);
+			draw(pText, pX, pY, pZ, 1f, 1f, 1f, 1f, pScale, pWordWrapWidth);
+
 		}
 
 		public void draw(String pText, float pX, float pY, float pZ, float pR, float pG, float pB, float pA, float pScale) {
-			mFontSpriteBatch.draw(pText, pX, pY, pZ, pR, pG, pB, pA, pScale, -1);
+			draw(pText, pX, pY, pZ, pR, pG, pB, pA, pScale, -1);
 
 		}
 
 		public void draw(String pText, float pX, float pY, float pZ, float pR, float pG, float pB, float pA, float pScale, float pWordWrapWidth) {
-			mFontSpriteBatch.draw(pText, pX, pY, pZ, pR, pG, pB, pA, pScale, pWordWrapWidth);
+			draw(pText, pX, pY, pZ, pR, pG, pB, pA, pScale, pWordWrapWidth, AWTBitmapFontSpriteBatch.NO_WIDTH_CAP);
+
 		}
 
 		public void draw(String pText, float pX, float pY, float pZ, float pR, float pG, float pB, float pA, float pScale, float pWordWrapWidth, int pCapWidth) {
+			mFontSpriteBatch.shadowEnabled(mDrawShadow);
+			mFontSpriteBatch.trimText(mTrimText);
 			mFontSpriteBatch.draw(pText, pX, pY, pZ, pR, pG, pB, pA, pScale, pWordWrapWidth, pCapWidth);
+
 		}
 
 		public void end() {
@@ -185,7 +214,7 @@ public class FontManager {
 	public void loadGLContent(ResourceManager pResourceManager) {
 		for (FontUnit lFont : mFontMap.values()) {
 			lFont.loadGLContent(pResourceManager);
-			
+
 		}
 
 		mResourceManager = pResourceManager;
@@ -196,7 +225,7 @@ public class FontManager {
 	public void unloadGLContent() {
 		for (FontUnit lFont : mFontMap.values()) {
 			lFont.unloadGLContent();
-			
+
 		}
 
 	}
@@ -209,7 +238,7 @@ public class FontManager {
 		return this.loadNewFont(pName, pFontPath, pPointSize, true, false);
 
 	}
-	
+
 	public FontUnit loadNewFont(String pName, String pFontPath, int pPointSize, boolean pReload) {
 		return this.loadNewFont(pName, pFontPath, pPointSize, true, pReload);
 
@@ -218,11 +247,11 @@ public class FontManager {
 	public FontUnit loadNewFont(String pName, String pFontPath, int pPointSize, boolean pAntiAlias, boolean pReload) {
 		// First check if this font already exists:
 		if (mFontMap.containsKey(pName)) {
-			if(!pReload)
+			if (!pReload)
 				return mFontMap.get(pName);
-			
+
 			mFontMap.remove(pName);
-			
+
 		}
 
 		// First check to see if the fontpath is valid and the font exists
@@ -232,10 +261,10 @@ public class FontManager {
 
 		}
 
-		if(pName.equals(SYSTEM_FONT_NAME)) {
+		if (pName.equals(SYSTEM_FONT_NAME)) {
 			mSystemFont = lNewFont;
 		}
-		
+
 		mFontMap.put(pName, lNewFont);
 
 		return lNewFont;

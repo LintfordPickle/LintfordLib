@@ -53,12 +53,20 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 	// Properties
 	// --------------------------------------
 
-	public void setSelectedItem(int i) {
+	public int selectedIndex() {
+		return mSelectedItem;
+	}
+	
+	public void selectedIndex(int i) {
 		mSelectedItem = i;
 	}
 
 	public float getYScrollPosition() {
 		return mYScrollPos;
+	}
+
+	public List<ListBoxItem> items() {
+		return mItems;
 	}
 
 	// --------------------------------------
@@ -311,6 +319,11 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 		}
 
 		return false;
+	}
+
+	public void clearListBox() {
+		mItems.clear();
+
 	}
 
 	// --------------------------------------

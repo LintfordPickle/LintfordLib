@@ -63,7 +63,9 @@ public class MenuInputEntry extends MenuEntry implements IBufferedInputCallback 
 		if (mInputField.length() > 0) {
 			mInputField.delete(0, mInputField.length());
 		}
-		mInputField.append(pNewValue);
+		if(pNewValue != null)
+			mInputField.append(pNewValue);
+
 	}
 
 	public String inputString() {
@@ -105,12 +107,17 @@ public class MenuInputEntry extends MenuEntry implements IBufferedInputCallback 
 
 	@Override
 	public boolean handleInput(LintfordCore pCore) {
+		if (!mEnabled)
+			return false;
+
 		boolean lResult = super.handleInput(pCore);
 
 		if (mHasFocus) {
 			pCore.input().startCapture(this);
+
 		} else {
 			// pCore.input().stopCapture();
+
 		}
 
 		return lResult;
@@ -119,6 +126,11 @@ public class MenuInputEntry extends MenuEntry implements IBufferedInputCallback 
 	@Override
 	public void update(LintfordCore pCore, MenuScreen pScreen, boolean pIsSelected) {
 		super.update(pCore, pScreen, pIsSelected);
+
+		if (!mEnabled) {
+			mHasFocus = false;
+			return;
+		}
 
 		final double lDeltaTime = pCore.time().elapseGameTimeMilli();
 
@@ -150,10 +162,14 @@ public class MenuInputEntry extends MenuEntry implements IBufferedInputCallback 
 		final float lInputTextWidth = lFont.bitmap().getStringWidth(mInputField.toString(), luiTextScale);
 		final float lSeparatorHalfWidth = lFont.bitmap().getStringWidth(mSeparator, luiTextScale) * 0.5f;
 
+		float r = mEnabled ? 1f : 0.6f;
+		float g = mEnabled ? 1f : 0.6f;
+		float b = mEnabled ? 1f : 0.6f;
+
 		lFont.begin(pCore.HUD());
-		lFont.draw(mLabel, x + w / 2 - 10 - lLabelWidth - lSeparatorHalfWidth, y + h / 2 - lFontHeight * 0.5f, pParentZDepth + .1f, luiTextScale);
-		lFont.draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - lFontHeight * 0.5f, pParentZDepth + .1f, luiTextScale);
-		lFont.draw(mInputField.toString(), x + w / 2 + lSeparatorHalfWidth + SPACE_BETWEEN_TEXT, y + h / 2 - lFontHeight * 0.5f, pParentZDepth + .1f, luiTextScale);
+		lFont.draw(mLabel, x + w / 2 - 10 - lLabelWidth - lSeparatorHalfWidth, y + h / 2 - lFontHeight * 0.5f, pParentZDepth + .1f, r, g, b, 1f, luiTextScale, -1);
+		lFont.draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - lFontHeight * 0.5f, pParentZDepth + .1f, r, g, b, 1f, luiTextScale, -1);
+		lFont.draw(mInputField.toString(), x + w / 2 + lSeparatorHalfWidth + SPACE_BETWEEN_TEXT, y + h / 2 - lFontHeight * 0.5f, pParentZDepth + .1f, r, g, b, 1f, luiTextScale, -1);
 
 		if (mShowCaret && mHasFocus) {
 			lFont.draw("|", x + w / 2 + lSeparatorHalfWidth + SPACE_BETWEEN_TEXT + lInputTextWidth, y + h / 2 - lFontHeight * 0.5f, pParentZDepth + .1f, luiTextScale);
@@ -197,8 +213,8 @@ public class MenuInputEntry extends MenuEntry implements IBufferedInputCallback 
 		mHasFocus = false;
 		mShowCaret = false;
 
-		if (mInputField.length() == 0) {
-			setDefaultText("Empty", true);
+		if (mResetOnDefaultClick && mInputField.length() == 0) {
+			setDefaultText(mDefaultText, true);
 		}
 
 		return getEnterFinishesInput();

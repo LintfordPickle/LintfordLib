@@ -143,16 +143,32 @@ public class MenuEntry extends Rectangle {
 		return mLeftMargin;
 	}
 
+	public void marginLeft(float pNewValue) {
+		mLeftMargin = pNewValue;
+	}
+
 	public float marginRight() {
 		return mRightMargin;
+	}
+
+	public void marginRight(float pNewValue) {
+		mRightMargin = pNewValue;
 	}
 
 	public float marginTop() {
 		return mTopMargin;
 	}
 
+	public void marginTop(float pNewValue) {
+		mTopMargin = pNewValue;
+	}
+
 	public float marginBottom() {
 		return mBottomMargin;
+	}
+
+	public void marginBottom(float pNewValue) {
+		mBottomMargin = pNewValue;
 	}
 
 	public void entryID(int pNewValue) {

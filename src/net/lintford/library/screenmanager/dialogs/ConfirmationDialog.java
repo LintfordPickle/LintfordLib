@@ -39,6 +39,16 @@ public class ConfirmationDialog extends BaseDialog {
 	// --------------------------------------==============
 
 	public ConfirmationDialog(ScreenManager pScreenManager, MenuScreen pParentScreen, String pDialogMessage) {
+		this(pScreenManager, pParentScreen, "", pDialogMessage, true);
+
+	}
+
+	public ConfirmationDialog(ScreenManager pScreenManager, MenuScreen pParentScreen, String pTitle, String pDialogMessage) {
+		this(pScreenManager, pParentScreen, pTitle, pDialogMessage, true);
+
+	}
+
+	public ConfirmationDialog(ScreenManager pScreenManager, MenuScreen pParentScreen, String pTitle, String pDialogMessage, boolean pWithCancel) {
 		super(pScreenManager, pParentScreen, pDialogMessage);
 
 		ListLayout lListLayout = new ListLayout(this);
@@ -46,11 +56,18 @@ public class ConfirmationDialog extends BaseDialog {
 		mConfirmEntry = new MenuEntry(pScreenManager, lListLayout, "Okay");
 		mConfirmEntry.registerClickListener(pParentScreen, BUTTON_CONFIRM_YES);
 		mConfirmEntry.buttonSize(BUTTON_SIZE.narrow);
-		mCancelEntry = new MenuEntry(pScreenManager, lListLayout, "Cancel");
-		mCancelEntry.registerClickListener(pParentScreen, BUTTON_CONFIRM_NO);
-		mCancelEntry.buttonSize(BUTTON_SIZE.narrow);
 
-		lListLayout.menuEntries().add(mCancelEntry);
+		if (pWithCancel) {
+			mCancelEntry = new MenuEntry(pScreenManager, lListLayout, "Cancel");
+			mCancelEntry.registerClickListener(pParentScreen, BUTTON_CONFIRM_NO);
+			mCancelEntry.buttonSize(BUTTON_SIZE.narrow);
+
+			lListLayout.menuEntries().add(mCancelEntry);
+
+		}
+		
+		mMenuTitle = pTitle;
+
 		lListLayout.menuEntries().add(mConfirmEntry);
 
 		layouts().add(lListLayout);
@@ -70,7 +87,7 @@ public class ConfirmationDialog extends BaseDialog {
 			break;
 
 		case BUTTON_CONFIRM_NO:
-
+			exitScreen();
 			break;
 
 		default:

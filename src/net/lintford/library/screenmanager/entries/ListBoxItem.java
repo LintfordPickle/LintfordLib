@@ -22,6 +22,14 @@ public abstract class ListBoxItem extends Rectangle {
 	protected int mItemIndex;
 
 	// --------------------------------------
+	// Properties
+	// --------------------------------------
+
+	public int itemIndex() {
+		return mItemIndex;
+	}
+
+	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
@@ -48,7 +56,7 @@ public abstract class ListBoxItem extends Rectangle {
 		final Vector2f lMouseMenuSpace = pCore.HUD().getMouseCameraSpace();
 
 		if (intersectsAA(lMouseMenuSpace) && pCore.input().tryAquireLeftClickOwnership(hashCode())) {
-			mParentListBox.setSelectedItem(mItemIndex);
+			mParentListBox.selectedIndex(mItemIndex);
 			return true;
 
 		}

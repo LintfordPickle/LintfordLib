@@ -86,7 +86,7 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 		mChildAlignment = ALIGNMENT.center;
 
 		mVideoList = new ListLayout(this);
-		mVideoList.setDrawBackground(true, 0f, 0f, 0f, 0.85f);
+		mVideoList.setDrawBackground(true, 1f, 1f, 1f, 0.85f);
 		mVideoList.fillType(FILL_TYPE.DYNAMIC);
 
 		mConfirmChangesLayout = new ListLayout(this);

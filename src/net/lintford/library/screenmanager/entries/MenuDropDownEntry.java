@@ -190,48 +190,53 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 		if (mScrollBar.handleInput(pCore)) {
 
 		} else if (intersectsAA(pCore.HUD().getMouseCameraSpace())) {
+			if (mShowInfoButton && mInfoButton.intersectsAA(pCore.HUD().getMouseCameraSpace())) {
+				mToolTipEnabled = true;
+				mToolTipTimer = 1000;
 
-			//
-			mParentLayout.parentScreen().setHoveringOn(this);
+			} else {
 
-			if (pCore.input().isMouseTimedLeftClickAvailable()) {
-				if (mEnabled) {
+				mParentLayout.parentScreen().setHoveringOn(this);
 
-					if (mOpen) {
-						final float luiTextScale = mScreenManager.UIHUDController().uiTextScaleFactor();
+				if (pCore.input().isMouseTimedLeftClickAvailable()) {
+					if (mEnabled) {
 
-						// TODO: play the menu clicked sound
-						// TODO: This is not quite correct - there is a big error when scaling the ui text.
-						final float lConsoleLineHeight = 25f * luiTextScale;
-						// Something inside the dropdown was select
-						float lRelativeheight = pCore.HUD().getMouseCameraSpace().y - y - mScrollYPosition;
+						if (mOpen) {
+							final float luiTextScale = mScreenManager.UIHUDController().uiTextScaleFactor();
 
-						int lRelativeIndex = (int) (lRelativeheight / lConsoleLineHeight);
-						int lSelectedIndex = lRelativeIndex - 1;
+							// TODO: play the menu clicked sound
+							final float lConsoleLineHeight = 25f * luiTextScale;
+							// Something inside the dropdown was select
+							float lRelativeheight = pCore.HUD().getMouseCameraSpace().y - y - mScrollYPosition;
 
-						if (lSelectedIndex < 0)
-							lSelectedIndex = 0;
-						if (lSelectedIndex >= mItems.size())
-							lSelectedIndex = mItems.size() - 1;
+							int lRelativeIndex = (int) (lRelativeheight / lConsoleLineHeight);
+							int lSelectedIndex = lRelativeIndex - 1;
 
-						mSelectedIndex = lSelectedIndex;
+							if (lSelectedIndex < 0)
+								lSelectedIndex = 0;
+							if (lSelectedIndex >= mItems.size())
+								lSelectedIndex = mItems.size() - 1;
 
-						if (mClickListener != null) {
-							mClickListener.menuEntryChanged(this);
+							mSelectedIndex = lSelectedIndex;
+
+							if (mClickListener != null) {
+								mClickListener.menuEntryChanged(this);
+							}
+
 						}
 
+						mOpen = !mOpen;
+
+						mParentLayout.parentScreen().setFocusOn(pCore, this, true);
+
+						pCore.input().setLeftMouseClickHandled();
+
 					}
-
-					mOpen = !mOpen;
-
-					mParentLayout.parentScreen().setFocusOn(pCore, this, true);
-
-					pCore.input().setLeftMouseClickHandled();
 
 				}
 
 			}
-
+			//
 			// Check if tool tips are enabled.
 			if (mToolTipEnabled) {
 				mToolTipTimer += pCore.time().elapseGameTimeMilli();

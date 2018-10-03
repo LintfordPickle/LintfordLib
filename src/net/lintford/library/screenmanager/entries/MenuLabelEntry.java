@@ -23,11 +23,29 @@ public class MenuLabelEntry extends MenuEntry {
 	private float mPadding = 15f;
 	private boolean mShow;
 	private float mR, mG, mB;
+	private boolean mDrawTextShadow;
+	private boolean mTrimText;
 	private boolean mDrawBackground;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public boolean trimText() {
+		return mTrimText;
+	}
+
+	public void trimText(boolean pNewValue) {
+		mTrimText = pNewValue;
+	}
+
+	public boolean enableTextShadow() {
+		return mDrawTextShadow;
+	}
+
+	public void enableTextShadow(boolean pNewValue) {
+		mDrawTextShadow = pNewValue;
+	}
 
 	public boolean enableBackground() {
 		return mDrawBackground;
@@ -127,6 +145,14 @@ public class MenuLabelEntry extends MenuEntry {
 		// TODO: This -50 is because of the scrollbar - this is why I needed to keep the padding :(
 		w = Math.min(mParentLayout.w - 50f, MENUENTRY_MAX_WIDTH);
 
+		final MenuScreen lParentScreen = mParentLayout.parentScreen();
+		final FontUnit lFont = lParentScreen.font();
+
+		final float luiTextScale = mScreenManager.UIHUDController().uiTextScaleFactor();
+
+		final float lFontHeight = lFont.bitmap().fontHeight() * luiTextScale;
+		h = lFontHeight * luiTextScale;
+
 	}
 
 	@Override
@@ -145,7 +171,7 @@ public class MenuLabelEntry extends MenuEntry {
 		if (mDrawBackground) {
 			mTextureBatch.begin(pCore.HUD());
 			final float lAlpha = 0.4f;
-			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, x, y, w, h, mZ, pParentZDepth + .01f, 0.1f, 0.1f, lAlpha);
+			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, x, y, w, h, mZ, 0.1f, 0.1f, 0.1f, lAlpha);
 			mTextureBatch.end();
 		}
 
@@ -163,6 +189,8 @@ public class MenuLabelEntry extends MenuEntry {
 		}
 
 		lFont.begin(pCore.HUD());
+		lFont.drawShadow(mDrawTextShadow);
+		lFont.trimText(mTrimText);
 		lFont.draw(mText, lX, y + h / 2f - lFontHeight / 2f, pParentZDepth + .15f, mR, mG, mB, lParentScreen.a(), luiTextScale);
 		lFont.end();
 
