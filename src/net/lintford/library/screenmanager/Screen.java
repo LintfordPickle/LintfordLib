@@ -12,19 +12,9 @@ import net.lintford.library.screenmanager.transitions.TransitionFadeOut;
 
 public abstract class Screen {
 
-	// The RENDER_RESOLUTION is mapped in the options to the resolution selected by the player.
-	static enum RENDER_RESOLUTION {
-		UI, // Resolution to render all UI in, e.g. 800x600
-		GAME, // Resolution to render all GAME in, e.g. 1024x768
-	}
-
 	// --------------------------------------
 	// Enums
 	// --------------------------------------
-
-	public enum TRANSITION {
-		On, Off,
-	}
 
 	public enum ScreenState {
 		TransitionOn, Active, TransitionOff, Hidden,
@@ -47,8 +37,10 @@ public abstract class Screen {
 	protected boolean mIsExiting;
 	protected boolean mOtherScreenHasFocus;
 	protected boolean mIsLoaded;
+	protected boolean mSingletonScreen;
 	protected boolean mIsInitialised;
 	protected boolean mIsPopup;
+	protected boolean mAlwaysOnTop;
 	protected boolean mShowMouseCursor;
 	protected float mR, mG, mB, mA;
 	protected boolean mShowInBackground;
@@ -56,6 +48,16 @@ public abstract class Screen {
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	/** Defines if only one instance of this type of object can exist (in the {@link ScreenManager} screen stack) at a time */
+	public boolean singletonScreen() {
+		return mSingletonScreen;
+	}
+
+	/** Some screens are just hotbars, floating on top of the other screens in the {@link ScreenManager} stack. */
+	public boolean alwaysOnTop() {
+		return mAlwaysOnTop;
+	}
 
 	public boolean showInBackground() {
 		return mShowInBackground;
@@ -140,6 +142,8 @@ public abstract class Screen {
 
 		mTransitionOn = new TransitionFadeIn(new TimeSpan(250));
 		mTransitionOff = new TransitionFadeOut(new TimeSpan(250));
+
+		mSingletonScreen = true;
 
 		mIsLoaded = false;
 		mShowMouseCursor = true; // default on

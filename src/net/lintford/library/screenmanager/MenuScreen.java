@@ -174,7 +174,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 	// --------------------------------------
 	// Core-Methods
-	// --------------------------------------<
+	// --------------------------------------
 
 	@Override
 	public void initialise() {

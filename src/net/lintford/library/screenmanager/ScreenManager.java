@@ -134,10 +134,14 @@ public class ScreenManager {
 		if (mScreens == null || mScreens.size() == 0)
 			return;
 
-		// Maybe we are missing out on the 'pOtherScreenHasFocus'
-		Screen lScreen = mScreens.get(mScreens.size() - 1);
-		if (lScreen.screenState() == ScreenState.TransitionOn || lScreen.screenState() == ScreenState.Active) {
-			lScreen.handleInput(pCore, true, true);
+		final int lScreenCount = mScreens.size() - 1;
+		for (int i = lScreenCount; i >= 0; i--) {
+			Screen lScreen = mScreens.get(i);
+
+			if (lScreen.screenState() == ScreenState.TransitionOn || lScreen.screenState() == ScreenState.Active) {
+				lScreen.handleInput(pCore, true, true);
+
+			}
 
 		}
 
@@ -215,6 +219,19 @@ public class ScreenManager {
 	// --------------------------------------
 
 	public void addScreen(Screen pScreen) {
+		if (pScreen.singletonScreen()) {
+			final int lScreenCount = mScreens.size();
+			for (int i = 0; i < lScreenCount; i++) {
+				Screen lScreen = mScreens.get(i);
+				if (lScreen.getClass().getSimpleName().equals(pScreen.getClass().getSimpleName())) {
+					return;
+
+				}
+
+			}
+
+		}
+
 		if (!pScreen.isLoaded()) {
 			pScreen.screenManager(this);
 			pScreen.isExiting(false);
@@ -229,11 +246,20 @@ public class ScreenManager {
 
 		}
 
+		int lInsertIndex = 0;
 		if (mScreens.size() > 0) {
 			mScreens.get(mScreens.size() - 1).onLostFocus();
+
+			lInsertIndex = mScreens.size();
+		}
+		for (int i = mScreens.size() - 1; i > 0; i--) {
+			lInsertIndex = i + 1;
+			if (!mScreens.get(i).alwaysOnTop()) {
+				break;
+			}
 		}
 
-		mScreens.add(pScreen);
+		mScreens.add(lInsertIndex, pScreen);
 
 	}
 
