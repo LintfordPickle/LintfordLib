@@ -8,23 +8,23 @@ import net.lintford.library.screenmanager.layouts.ListLayout;
 
 public class ConfirmationDialog extends BaseDialog {
 
-	// --------------------------------------==============
+	// --------------------------------------
 	// Constants
-	// --------------------------------------==============
+	// --------------------------------------
 
 	public static final int BUTTON_CONFIRM_YES = 100;
 	public static final int BUTTON_CONFIRM_NO = 101;
-
-	// --------------------------------------==============
+	
+	// --------------------------------------
 	// Variables
-	// --------------------------------------==============
+	// --------------------------------------
 
 	private MenuEntry mConfirmEntry;
 	private MenuEntry mCancelEntry;
 
-	// --------------------------------------==============
+	// --------------------------------------
 	// Properties
-	// --------------------------------------==============
+	// --------------------------------------
 
 	public MenuEntry confirmEntry() {
 		return mConfirmEntry;
@@ -34,9 +34,9 @@ public class ConfirmationDialog extends BaseDialog {
 		return mCancelEntry;
 	}
 
-	// --------------------------------------==============
+	// --------------------------------------
 	// Constructors
-	// --------------------------------------==============
+	// --------------------------------------
 
 	public ConfirmationDialog(ScreenManager pScreenManager, MenuScreen pParentScreen, String pDialogMessage) {
 		this(pScreenManager, pParentScreen, "", pDialogMessage, true);
@@ -75,9 +75,9 @@ public class ConfirmationDialog extends BaseDialog {
 		// mEntryOffsetFromTop = 285f;
 	}
 
-	// --------------------------------------==============
+	// --------------------------------------
 	// Methods
-	// --------------------------------------==============
+	// --------------------------------------
 
 	@Override
 	protected void handleOnClick() {

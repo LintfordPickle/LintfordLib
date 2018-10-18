@@ -1,6 +1,8 @@
 package net.lintford.library.core.geometry.spritegraph.renderers;
 
+import net.lintford.library.ConstantsTable;
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.geometry.spritegraph.SpriteGraphInst;
 import net.lintford.library.core.geometry.spritegraph.SpriteGraphNodeInst;
 import net.lintford.library.core.graphics.sprites.spritebatch.SpriteBatch;
@@ -11,8 +13,6 @@ public class SpriteGraphSpiteRenderer extends SpriteBatch {
 	// --------------------------------------
 	// Constants
 	// --------------------------------------
-
-	public static final boolean RENDER_COLLIBABLES = false;
 
 	// --------------------------------------
 	// Variables
@@ -53,6 +53,11 @@ public class SpriteGraphSpiteRenderer extends SpriteBatch {
 			SpriteGraphNodeInst lChildNode = pSpriteGraphNode.childNodes.get(i);
 
 			renderSpriteTreeNode(pCore, pSpriteGraph, lChildNode);
+
+		}
+
+		if (ConstantsTable.getBooleanValueDef("RENDER_SPRITEGRPAPH_COLLIDABLES", true)) {
+			Debug.debugManager().drawers().drawPoly(pCore.gameCamera(), pSpriteGraphNode);
 
 		}
 

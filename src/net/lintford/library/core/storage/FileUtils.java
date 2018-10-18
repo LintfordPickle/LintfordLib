@@ -3,12 +3,15 @@ package net.lintford.library.core.storage;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class FileUtils {
 
@@ -92,7 +95,7 @@ public class FileUtils {
 
 				copyFolder(srcFile, destFile);
 			}
-			
+
 		} else {
 			InputStream in = null;
 			OutputStream out = null;
@@ -109,20 +112,45 @@ public class FileUtils {
 				}
 			} catch (Exception e) {
 				try {
-					if(in != null)
+					if (in != null)
 						in.close();
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				}
 
 				try {
-					if(out != null)
+					if (out != null)
 						out.close();
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				}
 			}
 		}
+	}
+
+	public static void deleteFolder(File pSource) throws IOException {
+		// Make sure that the folders and files being deleting belong to the
+		if (!isChild(pSource.toPath(), AppStorage.getGameDataDirectory())) {
+			throw new RuntimeException("Cannot delete from none GameStorage directory!");
+			
+		}
+
+		if (pSource.isDirectory()) {
+			for (File c : pSource.listFiles())
+				deleteFolder(c);
+
+		}
+
+		if (!pSource.delete())
+			throw new FileNotFoundException("Failed to delete file: " + pSource);
+
+	}
+
+	public static boolean isChild(Path child, String parentText) {
+		Path parent = Paths.get(parentText).toAbsolutePath();
+
+		return child.startsWith(parent);
+
 	}
 
 }

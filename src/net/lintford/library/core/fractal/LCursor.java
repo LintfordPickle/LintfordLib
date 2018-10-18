@@ -15,7 +15,7 @@ public class LCursor {
 	public LCursor() {
 		x = 0;
 		y = 0;
-		curRotation = -90;
+		curRotation = 0;
 		currentNode = null;
 		depth = 0;
 

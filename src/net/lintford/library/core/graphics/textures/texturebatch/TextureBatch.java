@@ -29,7 +29,7 @@ public class TextureBatch {
 	// Constants
 	// --------------------------------------
 
-	protected static final int MAX_SPRITES = 2048;
+	protected static final int MAX_SPRITES = 256;
 
 	protected static final String VERT_FILENAME = "/res/shaders/shader_basic_pct.vert";
 	protected static final String FRAG_FILENAME = "/res/shaders/shader_basic_pct.frag";
@@ -126,6 +126,7 @@ public class TextureBatch {
 		mTempVector = new Vector4f();
 
 		mBuffer = BufferUtils.createFloatBuffer(MAX_SPRITES * NUM_VERTS_PER_SPRITE * stride);
+		
 	}
 
 	// --------------------------------------

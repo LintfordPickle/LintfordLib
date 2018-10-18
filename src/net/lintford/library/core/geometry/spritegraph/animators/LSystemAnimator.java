@@ -21,37 +21,6 @@ public class LSystemAnimator implements ISpriteNodeInstanceAnimator, Serializabl
 		float lY = 0;
 		float lRot = 0;
 
-		if (pParentNode != null) {
-			lRot = pNode.rot;
-
-			float sin = (float) (Math.sin(lRot));
-			float cos = (float) (Math.cos(lRot));
-
-			Anchor lAnchorPoint = null;
-			lAnchorPoint = pParentNode.getAnchorPoint(pNode.name);
-			if (lAnchorPoint != null) {
-				// Anchor point needs to be rotated with the parent node ..
-				float dx = (lAnchorPoint.x * (pNode.flipH() ? -1f : 1f)) * pNode.scaleX();
-				float dy = (lAnchorPoint.y * (pNode.flipV() ? -1f : 1f)) * pNode.scaleY();
-
-				lX += (dx * cos - (dy * 1f) * sin);
-				lY += (dx * sin + (dy * 1f) * cos);
-				lRot += (float) Math.toRadians(lAnchorPoint.rot);
-
-			}
-
-			lX += pParentNode.x + pParentNode.pivotX();
-			lY += pParentNode.y + pParentNode.pivotY();
-			lRot = pNode.rot;
-
-		} else {
-			// This is the root node, so give it the objects position in the world (the child nodes will all take a relative position
-			lX = pNode.x;
-			lY = pNode.y;
-			lRot = pNode.rot;
-
-		}
-
 		SpriteSheetDef lNodeSpriteSheet = pCore.resources().spriteSheetManager().getSpriteSheet(pNode.spriteSheetNameRef);
 		if (lNodeSpriteSheet != null) {
 
@@ -96,7 +65,7 @@ public class LSystemAnimator implements ISpriteNodeInstanceAnimator, Serializabl
 			pNode.pivotX(lCurrentFrame.getPivotPointX());
 			pNode.pivotY(lCurrentFrame.getPivotPointY());
 
-			pNode.setCenter(lX, lY, lCurrentFrame.w, lCurrentFrame.h);
+			pNode.set(lX, lY, lCurrentFrame.w, lCurrentFrame.h);
 
 		}
 
