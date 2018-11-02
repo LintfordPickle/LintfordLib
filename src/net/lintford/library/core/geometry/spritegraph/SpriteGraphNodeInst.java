@@ -117,13 +117,13 @@ public class SpriteGraphNodeInst extends Rectangle implements AnimatedSpriteList
 
 	}
 
-	public SpriteGraphNodeInst(SpriteGraphInst pSpriteGraphInst, SpriteGraphNodeDef pGraphNodeDef) {
-		this(pSpriteGraphInst, pGraphNodeDef, 0);
+	public SpriteGraphNodeInst(SpriteGraphInst pParentSpriteGraphInst, SpriteGraphNodeDef pGraphNodeDef) {
+		this(pParentSpriteGraphInst, pGraphNodeDef, 0);
 	}
 
-	public SpriteGraphNodeInst(SpriteGraphInst pSpriteGraphInst, SpriteGraphNodeDef pGraphNodeDef, float pNodeDepth) {
+	public SpriteGraphNodeInst(SpriteGraphInst pParentSpriteGraphInst, SpriteGraphNodeDef pGraphNodeDef, float pNodeDepth) {
 		this();
-		mParentGraphInst = pSpriteGraphInst;
+		mParentGraphInst = pParentSpriteGraphInst;
 
 		name = pGraphNodeDef.name;
 		type = pGraphNodeDef.type;
@@ -134,7 +134,7 @@ public class SpriteGraphNodeInst extends Rectangle implements AnimatedSpriteList
 		int COUNT_SIZE = pGraphNodeDef.childParts.size();
 		for (int i = 0; i < COUNT_SIZE; i++) {
 			SpriteGraphNodeDef lNodeDef = pGraphNodeDef.childParts.get(i);
-			SpriteGraphNodeInst lNewNodeInst = new SpriteGraphNodeInst(pSpriteGraphInst, lNodeDef, nodeDepth + 1);
+			SpriteGraphNodeInst lNewNodeInst = new SpriteGraphNodeInst(pParentSpriteGraphInst, lNodeDef, nodeDepth + 1);
 
 			childNodes.add(lNewNodeInst);
 
@@ -142,9 +142,9 @@ public class SpriteGraphNodeInst extends Rectangle implements AnimatedSpriteList
 
 	}
 
-	public SpriteGraphNodeInst(SpriteGraphInst pSpriteGraphInst, String pSpriteSheetName, String pName, String pType, float pNodeDepth) {
+	public SpriteGraphNodeInst(SpriteGraphInst pParentSpriteGraphInst, String pSpriteSheetName, String pName, String pType, float pNodeDepth) {
 		this();
-		mParentGraphInst = pSpriteGraphInst;
+		mParentGraphInst = pParentSpriteGraphInst;
 		name = pName;
 		type = pType;
 		nodeDepth = pNodeDepth;
@@ -277,6 +277,7 @@ public class SpriteGraphNodeInst extends Rectangle implements AnimatedSpriteList
 	 */
 	@Override
 	protected void updateVertices() {
+		if(w==0 || h==0) return;
 		final float lWidth = mFlipH ? -w : w;
 		final float lHeight = mFlipV ? -h : h;
 

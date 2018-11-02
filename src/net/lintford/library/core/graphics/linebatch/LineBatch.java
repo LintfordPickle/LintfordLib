@@ -272,7 +272,9 @@ public class LineBatch {
 
 		mShader.bind();
 
-		GL11.glDrawArrays(GL11.GL_LINE_STRIP, 0, mVertexCount);
+		// TODO: Add options to switch between DEBUG GL_LINE_STRIP and GL_LINES
+		// GL11.glDrawArrays(GL11.GL_LINE_STRIP, 0, mVertexCount);
+		GL11.glDrawArrays(GL11.GL_LINES, 0, mVertexCount);
 
 		GL30.glBindVertexArray(0);
 

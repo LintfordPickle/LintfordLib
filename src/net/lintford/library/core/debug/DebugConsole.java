@@ -250,6 +250,7 @@ public class DebugConsole extends Rectangle implements IBufferedInputCallback, I
 				mHasFocus = false;
 
 			}
+			
 		}
 
 		if (mOpen) {
@@ -394,8 +395,6 @@ public class DebugConsole extends Rectangle implements IBufferedInputCallback, I
 		mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 32, 0, 32, 32, x, y, w, h, Z_DEPTH, 0f, 0f, 0f, 0.85f);
 		mSpriteBatch.end();
 
-		// mContentRectangle.preDraw(pRenderState, mSpriteBatch);
-
 		mConsoleFont.begin(pCore.HUD());
 
 		List<LogMessage> lMessages = mProcessed ? mProcessedMessages : Debug.debugManager().logger().logLines();
@@ -442,12 +441,12 @@ public class DebugConsole extends Rectangle implements IBufferedInputCallback, I
 						y + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET, Z_DEPTH + 0.1f, 1f);
 		}
 
-		mTAGFilterText.draw(pCore, mSpriteBatch, mConsoleFont, Z_DEPTH + 0.01f);
-		mMessageFilterText.draw(pCore, mSpriteBatch, mConsoleFont, Z_DEPTH + 0.01f);
+		//mTAGFilterText.draw(pCore, mSpriteBatch, mConsoleFont, Z_DEPTH + 0.01f);
+		//mMessageFilterText.draw(pCore, mSpriteBatch, mConsoleFont, Z_DEPTH + 0.01f);
 
 		mConsoleFont.end();
 
-		mScrollBar.draw(pCore, mSpriteBatch, Z_DEPTH + 0.1f);
+		//mScrollBar.draw(pCore, mSpriteBatch, Z_DEPTH + 0.1f);
 
 	}
 

@@ -1,9 +1,9 @@
 package net.lintford.library.data.cellworld.controllers;
 
+import net.lintford.library.core.LintfordCore.GameTime;
 import net.lintford.library.core.collisions.IEntityCollider;
 import net.lintford.library.core.collisions.IGridCollider;
 import net.lintford.library.core.maths.MathHelper;
-import net.lintford.library.core.time.GameTime;
 import net.lintford.library.data.cellworld.EntityPool;
 import net.lintford.library.data.cellworld.entities.CellEntity;
 import net.lintford.library.data.cellworld.entities.RectangleCollider;

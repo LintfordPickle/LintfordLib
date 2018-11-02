@@ -1,17 +1,14 @@
 package net.lintford.library.core.debug;
 
-import java.util.LinkedList;
-
 import org.lwjgl.glfw.GLFW;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
-import net.lintford.library.core.graphics.linebatch.LineBatch;
 import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
-import net.lintford.library.core.time.TimeSpan;
+import net.lintford.library.options.DisplayManager;
 
 // TODO: DebugProfiler is currently pretty useless and not finished.
 public class DebugProfiler extends Rectangle {
@@ -25,25 +22,19 @@ public class DebugProfiler extends Rectangle {
 	// --------------------------------------
 
 	private final Debug mDebugManager;
+	private double mLastUpdateElapsed;
+	private double mLastDrawElapsed;
 
 	private transient TextureBatch mSpriteBatch;
 	private transient FontUnit mConsoleFont;
-	private LineBatch mLineBatch;
 
 	private boolean mIsOpen;
-	private boolean mIsSimple;
 
-	private long prevTimeDraw;
-	private long prevTimeUp;
+	StringBuilder mStringBuilder;
+
 	private int deltaFrameCount;
 	private int frameCount;
-	private long timer;
-	private float xMarker;
-	private float mSimpleHeight = 25;
-	private float mExtendedHeight = 60;
-	private double deltaDraw;
-	private final int HISTORY_COUNT = 50;
-	private LinkedList<Float> mFPSHistory;
+	private double timer;
 
 	// --------------------------------------
 	// Properties
@@ -51,14 +42,6 @@ public class DebugProfiler extends Rectangle {
 
 	public boolean isOpen() {
 		return mIsOpen;
-	}
-
-	public void isSimple(boolean pNewValue) {
-		mIsSimple = pNewValue;
-	}
-
-	public boolean isSimple() {
-		return mIsSimple;
 	}
 
 	// --------------------------------------
@@ -72,12 +55,9 @@ public class DebugProfiler extends Rectangle {
 			return;
 
 		mSpriteBatch = new TextureBatch();
-		mLineBatch = new LineBatch();
+		mStringBuilder = new StringBuilder();
 
-		prevTimeDraw = System.nanoTime();
-		prevTimeUp = System.nanoTime();
-
-		mFPSHistory = new LinkedList<>();
+		h = 20;
 
 	}
 
@@ -94,7 +74,6 @@ public class DebugProfiler extends Rectangle {
 		mConsoleFont = pResourceManager.fontManager().systemFont();
 
 		mSpriteBatch.loadGLContent(pResourceManager);
-		mLineBatch.loadGLContent(pResourceManager);
 	}
 
 	public void unloadGLContent() {
@@ -104,7 +83,6 @@ public class DebugProfiler extends Rectangle {
 		Debug.debugManager().logger().v(getClass().getSimpleName(), "DebugProfiler unloading GL content");
 
 		mSpriteBatch.unloadGLContent();
-		mLineBatch.unloadGLContent();
 
 	}
 
@@ -113,44 +91,22 @@ public class DebugProfiler extends Rectangle {
 			return;
 
 		if (pCore.input().keyDownTimed(GLFW.GLFW_KEY_F3)) {
-			// three way open/close mech
-			if (!mIsOpen) {
-				mIsOpen = true;
-			} else if (mIsSimple) {
-				mIsSimple = false;
-			} else if (!mIsSimple) {
-				mIsOpen = false;
-				mIsSimple = true;
-			}
+			mIsOpen = !mIsOpen;
 
 		}
 
 	}
 
 	public void update(LintfordCore pCore) {
-		if (!mDebugManager.debugManagerEnabled())
+		if (!mDebugManager.debugManagerEnabled() || !mIsOpen)
 			return;
 
-		if (!mIsOpen)
-			return;
+		DisplayManager lDisplay = pCore.config().display();
+		set(-lDisplay.windowWidth() * 0.5f, lDisplay.windowHeight() * 0.5f - height(), lDisplay.windowWidth(), height());
 
-		final float lWindowWidth = pCore.config().display().windowWidth();
-
-		setWidth(lWindowWidth);
-		setHeight(mSimpleHeight);
-
-	}
-
-	public void draw(LintfordCore pCore) {
-		if (!mDebugManager.debugManagerEnabled())
-			return;
-
-		long lTimeNow = System.nanoTime();
-		deltaDraw = ((lTimeNow - prevTimeDraw) / TimeSpan.NanoToMilli);
-		prevTimeDraw = lTimeNow;
+		mLastUpdateElapsed = pCore.time().elapseGameTimeMilli();
 
 		deltaFrameCount++;
-		deltaDraw--;
 
 		timer += pCore.time().elapseGameTimeMilli();
 		if (timer > 1000) {
@@ -158,74 +114,46 @@ public class DebugProfiler extends Rectangle {
 			deltaFrameCount = 0;
 			timer -= 1000;
 
-			if (!mIsSimple) {
-				mFPSHistory.add((float) frameCount);
-				if (mFPSHistory.size() > HISTORY_COUNT)
-					mFPSHistory.remove();
-
-				xMarker = 0;
-
-			}
-
 		}
+
+	}
+
+	public void draw(LintfordCore pCore) {
+		if (!mDebugManager.debugManagerEnabled() || !isOpen())
+			return;
 
 		if (!mIsOpen)
 			return;
 
-		final float lH = h + (mIsSimple ? 0 : mExtendedHeight);
+		mLastDrawElapsed = pCore.time().elapseGameTimeMilli();
+
+		final float lH = h;
 
 		mSpriteBatch.begin(pCore.HUD());
 		mConsoleFont.begin(pCore.HUD());
-		mLineBatch.begin(pCore.HUD());
 
 		mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 32, 0, 32, 32, x, y, w, lH, Z_DEPTH, 0f, 0f, 0f, 0.85f);
 
-		final String frameTime = String.format(java.util.Locale.US, "%.2f", pCore.time().elapseGameTimeMilli());
+		final String lSpace = " ";
+		final String lDelimiter = "|";
+		String lIsFixed = (pCore.isFixedTimeStep() ? "f" : "v");
+		String lIsRunningSlowly = (pCore.time().isGameRunningSlowly() ? "t" : "f");
+		String lUElapsed = String.format(java.util.Locale.US, "%.2f", mLastUpdateElapsed);
+		String lDElapsed = String.format(java.util.Locale.US, "%.2f", mLastDrawElapsed);
+		String lTotalElapsed = "(" + String.format(java.util.Locale.US, "%.1f", pCore.time().totalGameTimeSeconds()) + "s)";
 
-		mConsoleFont.draw(frameCount + "FPS   " + frameTime + " ms", x + 5, y + 2, -0.1f, 0.9f, 0.21f, 0.12f, 1.0f, 1.0f, -1);
+		if (mStringBuilder.length() > 0)
+			mStringBuilder.delete(0, mStringBuilder.length());
 
-		if (!mIsSimple) {
-			// Draw the outline
-			final float lPadding = 10;
-			final float lX = x;
-			final float lY = y;
-			final float lWidth = 400;
+		mStringBuilder.append(frameCount).append("fps").append(lSpace);
+		mStringBuilder.append(lUElapsed).append("/").append(lDElapsed).append(lSpace);
+		mStringBuilder.append(lTotalElapsed).append(lSpace);
+		mStringBuilder.append(lIsFixed).append(lDelimiter).append(lIsRunningSlowly);
 
-			final float lOR = 0.34f;
-			final float lOG = 0.34f;
-			final float lOB = 0.34f;
-
-			final float lLR = 0.84f;
-			final float lLG = 0.34f;
-			final float lLB = 0.34f;
-
-			mLineBatch.draw(lX + lPadding, lY + mSimpleHeight, x + lPadding, lY + h + mExtendedHeight - lPadding, -0.1f, lOR, lOG, lOB);
-			mLineBatch.draw(lX + lPadding, lY + h + mExtendedHeight - lPadding, x + lPadding + lWidth, lY + h + mExtendedHeight - lPadding, -0.1f, lOR, lOG, lOB);
-			mLineBatch.draw(lX + lPadding + lWidth, lY + mSimpleHeight, lX + lPadding + lWidth, lY + h + mExtendedHeight - lPadding, -0.1f, lOR, lOG, lOB);
-
-			final float stepSizeX = lWidth / HISTORY_COUNT;
-			final float pixelPerMilliSecond = stepSizeX / 1000f;
-			xMarker += pCore.time().elapseGameTimeMilli() * pixelPerMilliSecond;
-
-			if (mFPSHistory.size() > 0) {
-				float lTY = mFPSHistory.get(0);
-				float lOffsetX = (stepSizeX * HISTORY_COUNT + 2) - (mFPSHistory.size() * stepSizeX);
-
-				for (int i = 1; i < mFPSHistory.size(); i++) {
-
-					final float lFloorYPos = lY + h + mExtendedHeight + lPadding;
-
-					mLineBatch.draw(lOffsetX + x + -xMarker + (i - 1) * stepSizeX, lFloorYPos - lTY, lOffsetX + x + -xMarker + i * stepSizeX, lFloorYPos - mFPSHistory.get(i), -0.1f, lLR, lLG, lLB);
-					lTY = mFPSHistory.get(i);
-				}
-
-			}
-
-		}
+		mConsoleFont.draw(mStringBuilder.toString(), x + 5, y + 2, -0.1f, 0.9f, 0.21f, 0.12f, 1.0f, 0.7f, -1);
 
 		mSpriteBatch.end();
 		mConsoleFont.end();
-		mLineBatch.end();
 
 	}
 

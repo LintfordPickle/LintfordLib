@@ -172,7 +172,7 @@ public class FontManager {
 	public static final int SYSTEM_FONT_POINTSIZE_LARGE = 35;
 
 	public static final String SYSTEM_FONT_NAME = "SystemFont18";
-	public static final String SYSTEM_FONT_PATH = "res/fonts/OxygenMono.ttf";
+	public static final String SYSTEM_FONT_PATH = "/res/fonts/OxygenMono-Regular.ttf";
 	public static final int SYSTEM_FONT_SIZE = 18;
 
 	// --------------------------------------

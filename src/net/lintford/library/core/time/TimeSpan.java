@@ -1,5 +1,7 @@
 package net.lintford.library.core.time;
 
+import net.lintford.library.core.LintfordCore.GameTime;
+
 public class TimeSpan {
 
 	// --------------------------------------

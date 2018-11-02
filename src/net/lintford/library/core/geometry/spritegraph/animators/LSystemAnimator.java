@@ -3,7 +3,6 @@ package net.lintford.library.core.geometry.spritegraph.animators;
 import java.io.Serializable;
 
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.geometry.Anchor;
 import net.lintford.library.core.geometry.spritegraph.ISpriteNodeInstanceAnimator;
 import net.lintford.library.core.geometry.spritegraph.SpriteGraphInst;
 import net.lintford.library.core.geometry.spritegraph.SpriteGraphNodeInst;
@@ -19,7 +18,7 @@ public class LSystemAnimator implements ISpriteNodeInstanceAnimator, Serializabl
 		// Update our position, relative to the parent
 		float lX = 0;
 		float lY = 0;
-		float lRot = 0;
+		float lRot = 90;
 
 		SpriteSheetDef lNodeSpriteSheet = pCore.resources().spriteSheetManager().getSpriteSheet(pNode.spriteSheetNameRef);
 		if (lNodeSpriteSheet != null) {

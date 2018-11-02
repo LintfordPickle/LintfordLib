@@ -1,6 +1,6 @@
 package net.lintford.library.data.cellworld.entities;
 
-import net.lintford.library.core.time.GameTime;
+import net.lintford.library.core.LintfordCore.GameTime;
 
 /** A simple entity class for a cell grid based world. */
 public abstract class CellEntity implements CircleCollider {

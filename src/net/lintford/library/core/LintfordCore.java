@@ -30,7 +30,7 @@ import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.input.InputState;
 import net.lintford.library.core.rendering.RenderState;
-import net.lintford.library.core.time.GameTime;
+import net.lintford.library.core.time.TimeSpan;
 import net.lintford.library.options.DisplayManager;
 import net.lintford.library.options.MasterConfig;
 
@@ -39,6 +39,86 @@ import net.lintford.library.options.MasterConfig;
  * also defines the behaviour for creating an OpenGL window.
  */
 public abstract class LintfordCore {
+
+	public class GameTime {
+
+		// --------------------------------------
+		// Variables
+		// --------------------------------------
+
+		long mLastFrame;
+		double mTotalGameTimeMilli;
+		double mElapsedGameTimeMilli;
+		double mAccumulatedElapsedTimeMilli;
+		double targetElapsedTimeMilli = 16.666;
+		double maxElapsedTimeMilli = 500;
+		boolean mIsGameRunningSlowly;
+
+		// --------------------------------------
+		// Properties
+		// --------------------------------------
+
+		/**
+		 * This flags returns true if the game has recently been missing update calls due to the amount of time taken to perform each call.
+		 */
+		public boolean isGameRunningSlowly() {
+			return mIsGameRunningSlowly;
+		}
+
+		/** @return The total game time in seconds. */
+		public double totalGameTimeSeconds() {
+			return mTotalGameTimeMilli / 1000.0f;
+		}
+
+		/** @return The total game time in milliseconds. */
+		public double totalGameTime() {
+			return mTotalGameTimeMilli;
+		}
+
+		/** @return The elapsed game time since the last frame in seconds. */
+		public double elapseGameTimeSeconds() {
+			return mElapsedGameTimeMilli / 1000f;
+		}
+
+		/** @return The elapsed game time since the last frame in milliseconds. */
+		public double elapseGameTimeMilli() {
+			return mElapsedGameTimeMilli;
+		}
+
+		// --------------------------------------
+		// Constructor
+		// --------------------------------------
+
+		public GameTime() {
+			getDelta(); // needs to be called once at least
+
+			maxElapsedTimeMilli = 500; // 500 ms
+
+		}
+
+		// --------------------------------------
+		// Methods
+		// --------------------------------------
+
+		private double getDelta() {
+			long time = System.nanoTime();
+			double lDelta = ((time - mLastFrame) / TimeSpan.NanoToMilli);
+			mLastFrame = time;
+
+			return lDelta;
+
+		}
+
+		public void resetElapsedTime() {
+			mLastFrame = 0;
+			mTotalGameTimeMilli = 0.0f;
+			mElapsedGameTimeMilli = 0.0f;
+			targetElapsedTimeMilli = 0.0f;
+			maxElapsedTimeMilli = 0.0f;
+
+		}
+
+	}
 
 	// ---------------------------------------------
 	// Variables
@@ -63,9 +143,15 @@ public abstract class LintfordCore {
 
 	protected boolean mIsHeadlessMode;
 
+	protected boolean mIsFixedTimeStep;
+
 	// ---------------------------------------------
 	// Properties
 	// ---------------------------------------------
+
+	public boolean isFixedTimeStep() {
+		return mIsFixedTimeStep;
+	}
 
 	/**
 	 * Returns the instance of {@link GameTime} which was created when the LWJGL window was created. GameTime tracks the application time. null is returned if the LWJGL window has not yet been created.
@@ -264,6 +350,8 @@ public abstract class LintfordCore {
 	/** The main game loop. */
 	protected void onRunGameLoop() {
 
+		int lUpdateFrameLag = 0;
+
 		onInitialiseGL();
 
 		onInitialiseApp();
@@ -277,17 +365,81 @@ public abstract class LintfordCore {
 
 		// Game loop
 		while (!glfwWindowShouldClose(lDisplayConfig.windowID())) {
-			mGameTime.update();
+
 			onHandleInput();
-			onUpdate();
+
+			mGameTime.mAccumulatedElapsedTimeMilli += mGameTime.getDelta();
+
+			// Check if for the fixed time step not enough time has passed to do another update
+			if (mIsFixedTimeStep && mGameTime.mAccumulatedElapsedTimeMilli < mGameTime.targetElapsedTimeMilli) {
+				long lSleepTime = (long) (mGameTime.targetElapsedTimeMilli - mGameTime.mAccumulatedElapsedTimeMilli);
+
+				// Sleep
+				try {
+					// System.out.println("Sleeping: " + lSleepTime);
+					Thread.sleep(lSleepTime);
+
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+
+				}
+
+				continue;
+
+			}
+
+			// Do not allow any update to take longer than our maximum allowed.
+			if (mGameTime.mAccumulatedElapsedTimeMilli > mGameTime.maxElapsedTimeMilli)
+				mGameTime.mAccumulatedElapsedTimeMilli = mGameTime.maxElapsedTimeMilli;
+
+			if (mIsFixedTimeStep) {
+				mGameTime.mElapsedGameTimeMilli = mGameTime.targetElapsedTimeMilli;
+				int lStepCount = 0;
+
+				while (mGameTime.mAccumulatedElapsedTimeMilli >= mGameTime.targetElapsedTimeMilli) {
+					mGameTime.mTotalGameTimeMilli += mGameTime.targetElapsedTimeMilli;
+					mGameTime.mAccumulatedElapsedTimeMilli -= mGameTime.targetElapsedTimeMilli;
+					++lStepCount;
+
+					onUpdate();
+
+				}
+
+				// Every update after the first accumulates lag
+				lUpdateFrameLag += Math.max(0, lStepCount - 1);
+
+				if (mGameTime.isGameRunningSlowly()) {
+					if (lUpdateFrameLag == 0) {
+						mGameTime.mIsGameRunningSlowly = false;
+
+					}
+
+				} else if (lUpdateFrameLag >= 5) {
+					// If we lag more than 5 frames, start thinking we are running slowly
+					mGameTime.mIsGameRunningSlowly = true;
+
+				}
+
+				// Draw needs to know the total elapsed time that occured for the fixed length updates.
+				mGameTime.mElapsedGameTimeMilli = mGameTime.targetElapsedTimeMilli * lStepCount;
+
+			} else { // Variable time step
+				// Perform a single variable length update.
+				mGameTime.mElapsedGameTimeMilli = mGameTime.mAccumulatedElapsedTimeMilli;
+				mGameTime.mTotalGameTimeMilli += mGameTime.mAccumulatedElapsedTimeMilli;
+				mGameTime.mAccumulatedElapsedTimeMilli = 0.0; // use all the time
+
+				onUpdate();
+
+			}
 
 			onDraw();
 
 			Debug.debugManager().draw(this);
 
-			glfwSwapBuffers(lDisplayConfig.windowID());
-
 			mInputState.endUpdate();
+
+			glfwSwapBuffers(lDisplayConfig.windowID());
 
 			glfwPollEvents();
 

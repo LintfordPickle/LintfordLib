@@ -140,12 +140,17 @@ public class PolyBatch {
 	}
 
 	public void drawRect(Vector2f[] pVertexArray, float pZ, boolean pClose, float pR, float pG, float pB) {
-		if (!mIsDrawing || pVertexArray == null || pVertexArray.length < 2)
+		drawRect(pVertexArray, pVertexArray.length, pZ, pClose, pR, pG, pB);
+
+	}
+
+	public void drawRect(Vector2f[] pVertexArray, int pAmt, float pZ, boolean pClose, float pR, float pG, float pB) {
+		if (!mIsDrawing || pVertexArray == null || pVertexArray.length < 2 || pAmt < 2)
 			return;
 
 		int lLastIndex = 1;
 
-		final int ARRAY_SIZE = pVertexArray.length;
+		final int ARRAY_SIZE = pAmt; // pVertexArray.length;
 		for (int i = 0; i < ARRAY_SIZE - 1; i++) {
 			if (pVertexArray[i] == null || pVertexArray[i + 1] == null)
 				continue;

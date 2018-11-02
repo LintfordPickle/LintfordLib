@@ -1,9 +1,9 @@
 package net.lintford.library.screenmanager;
 
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.LintfordCore.GameTime;
 import net.lintford.library.core.entity.BaseEntity;
 import net.lintford.library.core.graphics.ResourceManager;
-import net.lintford.library.core.time.GameTime;
 import net.lintford.library.core.time.TimeSpan;
 import net.lintford.library.renderers.RendererManager;
 import net.lintford.library.screenmanager.transitions.BaseTransition;

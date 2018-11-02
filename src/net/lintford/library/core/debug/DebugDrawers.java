@@ -142,11 +142,16 @@ public class DebugDrawers {
 	}
 
 	public void drawPoly(ICamera pCamera, Vector2f[] pVertices, float pR, float pG, float pB, boolean pClose) {
+		drawPoly(pCamera, pVertices, pVertices.length, pR, pG, pB, pClose);
+
+	}
+
+	public void drawPoly(ICamera pCamera, Vector2f[] pVertices, int pAmt, float pR, float pG, float pB, boolean pClose) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
 		mPolyBatch.begin(pCamera);
-		mPolyBatch.drawRect(pVertices, -0.1f, pClose, pR, pG, pB);
+		mPolyBatch.drawRect(pVertices, pAmt, -0.1f, pClose, pR, pG, pB);
 		mPolyBatch.end();
 
 	}

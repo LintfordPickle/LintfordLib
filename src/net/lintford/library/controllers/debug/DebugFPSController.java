@@ -3,7 +3,7 @@ package net.lintford.library.controllers.debug;
 import net.lintford.library.controllers.BaseController;
 import net.lintford.library.controllers.core.ControllerManager;
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.time.GameTime;
+import net.lintford.library.core.LintfordCore.GameTime;
 
 /** If enabled, prints the FPS to the console. */
 public class DebugFPSController extends BaseController {
@@ -71,7 +71,7 @@ public class DebugFPSController extends BaseController {
 		if (!mEnableFPSDisplay)
 			return;
 
-		if (pGameTime.totalGameTime() - mLastFPSTimer > 1000) {
+		if (pGameTime.totalGameTimeSeconds() - mLastFPSTimer > 1000) {
 			mLastFPSTimer += 1000;
 			mFPS = mFPSCounter;
 
