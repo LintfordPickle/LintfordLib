@@ -8,6 +8,8 @@ import net.lintford.library.core.collisions.PhysicsState;
 import net.lintford.library.core.graphics.particles.Particle;
 import net.lintford.library.core.maths.RandomNumbers;
 
+/***/
+@Deprecated
 public class ParticleLevelPhysicsModifier implements IParticleModifier {
 
 	// --------------------------------------
@@ -73,35 +75,35 @@ public class ParticleLevelPhysicsModifier implements IParticleModifier {
 		checkEntityCollisions(pCore, pParticle);
 
 		// X component
-		pParticle.x += pParticle.dx * lDelta;
-		pParticle.dx *= 0.98f; // ConstantsTable.FRICTION_X;
-		if (pParticle.dx < 0 && LevelCollisions.hasLeftCollision(mLevelGridCollider, pParticle, mPhysicsState)) {
-			pParticle.x = mPhysicsState.collisionX + pParticle.radius;
-			pParticle.dx = -pParticle.dx * 0.5f;
-		}
-		if (pParticle.dx > 0 && LevelCollisions.hasRightCollision(mLevelGridCollider, pParticle, mPhysicsState)) {
-			pParticle.x = mPhysicsState.collisionX - pParticle.radius;
-			pParticle.dx = -pParticle.dx * .5f;
-		}
-
-		// Y component
-		pParticle.y += pParticle.dy * lDelta;
-
-		// Ceiling collision
-		if (pParticle.dy < 0 && LevelCollisions.hasCeiling(mLevelGridCollider, pParticle, mPhysicsState)) {
-			pParticle.y = mPhysicsState.collisionY + pParticle.radius;
-			pParticle.dy = -pParticle.dy;
-
-		}
-
-		// floor collision
-		if (pParticle.dy > 0 && LevelCollisions.hasGround(mLevelGridCollider, pParticle, mPhysicsState)) {
-			pParticle.y = mPhysicsState.collisionY - pParticle.radius;
-			pParticle.dy = -Math.abs(pParticle.dy) * PARTICLE_FLOOR_BOUNCE_AMT + RandomNumbers.RANDOM.nextFloat() * 0.4f;
-
-		}
-
-		pParticle.dy *= 0.98f; // ConstantsTable.FRICTION_Y;
+//		pParticle.x += pParticle.dx * lDelta;
+//		pParticle.dx *= 0.98f; // ConstantsTable.FRICTION_X;
+//		if (pParticle.dx < 0 && LevelCollisions.hasLeftCollision(mLevelGridCollider, pParticle, mPhysicsState)) {
+//			pParticle.x = mPhysicsState.collisionX + pParticle.radius;
+//			pParticle.dx = -pParticle.dx * 0.5f;
+//		}
+//		if (pParticle.dx > 0 && LevelCollisions.hasRightCollision(mLevelGridCollider, pParticle, mPhysicsState)) {
+//			pParticle.x = mPhysicsState.collisionX - pParticle.radius;
+//			pParticle.dx = -pParticle.dx * .5f;
+//		}
+//
+//		// Y component
+//		pParticle.y += pParticle.dy * lDelta;
+//
+//		// Ceiling collision
+//		if (pParticle.dy < 0 && LevelCollisions.hasCeiling(mLevelGridCollider, pParticle, mPhysicsState)) {
+//			pParticle.y = mPhysicsState.collisionY + pParticle.radius;
+//			pParticle.dy = -pParticle.dy;
+//
+//		}
+//
+//		// floor collision
+//		if (pParticle.dy > 0 && LevelCollisions.hasGround(mLevelGridCollider, pParticle, mPhysicsState)) {
+//			pParticle.y = mPhysicsState.collisionY - pParticle.radius;
+//			pParticle.dy = -Math.abs(pParticle.dy) * PARTICLE_FLOOR_BOUNCE_AMT + RandomNumbers.RANDOM.nextFloat() * 0.4f;
+//
+//		}
+//
+//		pParticle.dy *= 0.98f; // ConstantsTable.FRICTION_Y;
 
 	}
 

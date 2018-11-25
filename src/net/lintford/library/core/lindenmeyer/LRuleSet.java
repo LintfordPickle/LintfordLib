@@ -1,16 +1,29 @@
-package net.lintford.library.core.fractal;
+package net.lintford.library.core.lindenmeyer;
 
 import net.lintford.library.core.maths.RandomNumbers;
 
 public class LRuleSet {
+
+	// ---------------------------------------------
+	// Variables
+	// ---------------------------------------------
+
 	public String left;
 	public String[] right;
+
+	// ---------------------------------------------
+	// Constructor
+	// ---------------------------------------------
 
 	public LRuleSet(String pLeft, String[] pRight) {
 		left = pLeft;
 		right = pRight;
 
 	}
+
+	// ---------------------------------------------
+	// Methods
+	// ---------------------------------------------
 
 	public String processRule(String pIn) {
 		if (right == null || right.length == 0)

@@ -37,11 +37,6 @@ public class PolyEntity extends WorldEntity {
 
 	}
 
-	@Override
-	public float maxLength() {
-		return Math.max(width, height);
-	}
-	
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
@@ -54,26 +49,5 @@ public class PolyEntity extends WorldEntity {
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
-
-	@Override
-	public boolean intersects(WorldEntity pOther) {
-		// Poly
-		if (pOther instanceof PolyEntity) {
-			// TODO: Poly <-> Poly collision
-		}
-
-		// Rect
-		else if (pOther instanceof RectangleEntity) {
-			// TODO: Poly <-> Rectangle collision
-		}
-
-		// Circle
-		else if (pOther instanceof CircleEntity) {
-			// TODO: Poly <-> Circle collision
-		}
-
-		// no collision
-		return false;
-	}
 
 }

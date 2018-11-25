@@ -25,6 +25,7 @@ public class Particle extends CircleEntity {
 
 	public float rox, roy, rot, rotv;
 
+	public float dx, dy, dr;
 	public float r, g, b, a;
 	public float scale;
 
@@ -72,13 +73,14 @@ public class Particle extends CircleEntity {
 		mLifeTime = pLife;
 		timeSinceStart = 0;
 
-		setPosition(pWorldX, pWorldY);
-		setVelocity(pVelX, pVelY);
 		sx = sy = 1;
 		r = g = b = a = 1;
 
+		x = pWorldX;
+		y = pWorldY;
 		dx = pVelX;
 		dy = pVelY;
+
 	}
 
 	public void reset() {

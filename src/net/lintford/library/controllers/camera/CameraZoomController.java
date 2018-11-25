@@ -173,7 +173,7 @@ public class CameraZoomController extends BaseController {
 		}
 
 		// Apply the new zoom factor to the camera object
-		mCamera.setZoomFactor(lZoomFactor);
+		mCamera.setZoomFactor(1.75f/*lZoomFactor*/);
 	}
 
 }

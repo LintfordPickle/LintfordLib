@@ -2,7 +2,9 @@ package net.lintford.library.core.collisions;
 
 import net.lintford.library.core.maths.Vector2f;
 import net.lintford.library.data.entities.CircleEntity;
+import net.lintford.library.data.entities.PolyEntity;
 import net.lintford.library.data.entities.RectangleEntity;
+import net.lintford.library.data.entities.WorldEntity;
 
 public class CollisionExtensions {
 
@@ -61,5 +63,52 @@ public class CollisionExtensions {
 		return false;
 
 	}
+
+//	public static boolean intersects(RectangleEntity pOther) {
+//		// Poly
+//		if (pOther instanceof PolyEntity) {
+//			// TODO: Rectangle <-> Poly collision
+//		}
+//
+//		// Rect
+//		else if (pOther instanceof RectangleEntity) {
+//			RectangleEntity otherRect = (RectangleEntity) pOther;
+//			if (Math.abs(x - pOther.x) > width / 2 + otherRect.width / 2)
+//				return false;
+//			if (Math.abs(y - pOther.y) > height / 2 + otherRect.height / 2)
+//				return false;
+//			return true;
+//		}
+//
+//		// Circle
+//		else if (pOther instanceof CircleEntity) {
+//			CircleEntity c = (CircleEntity) pOther;
+//			float circleDistX = Math.abs(c.x - this.x);
+//			float circleDistY = Math.abs(c.y - this.y);
+//
+//			if (circleDistX > (this.width / 2 + c.radius)) {
+//				return false;
+//			}
+//			if (circleDistY > (this.height / 2 + c.radius)) {
+//				return false;
+//			}
+//
+//			if (circleDistX <= (this.width / 2)) {
+//				return true;
+//			}
+//			if (circleDistY <= (this.height / 2)) {
+//				return true;
+//			}
+//
+//			float dist_sq = (circleDistX - this.width / 2) * (circleDistX - this.width / 2) + (circleDistY - this.height / 2) * (circleDistX - this.width / 2) * (circleDistX - this.width / 2)
+//					+ (circleDistY - this.height / 2);
+//
+//			return (dist_sq <= (c.radius * c.radius));
+//
+//		}
+//
+//		// no collision
+//		return false;
+//	}
 
 }

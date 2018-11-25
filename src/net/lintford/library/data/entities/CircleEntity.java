@@ -22,11 +22,6 @@ public class CircleEntity extends WorldEntity {
 		return radius;
 	}
 
-	@Override
-	public float maxLength() {
-		return radius;
-	}
-	
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
@@ -40,26 +35,5 @@ public class CircleEntity extends WorldEntity {
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
-
-	@Override
-	public boolean intersects(WorldEntity pOther) {
-		// Poly
-		if (pOther instanceof PolyEntity) {
-			// TODO: Rectangle <-> Poly collision
-		}
-
-		// Rect
-		else if (pOther instanceof RectangleEntity) {
-			// TODO: Rectangle <-> Rectangle collision
-		}
-
-		// Circle
-		else if (pOther instanceof CircleEntity) {
-			// TODO: Rectangle <-> Circle collision
-		}
-
-		// no collision
-		return false;
-	}
 
 }

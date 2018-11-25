@@ -41,11 +41,6 @@ public class RectangleEntity extends WorldEntity {
 		return mBounds;
 	}
 
-	@Override
-	public float maxLength() {
-		return Math.max(width, height);
-	}
-
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
@@ -66,7 +61,6 @@ public class RectangleEntity extends WorldEntity {
 
 		mBounds = new Rectangle();
 		mBounds = new Rectangle(x, y, width, height);
-		mBounds.expand(SKIN_WIDTH * -2f);
 
 		initialize();
 
@@ -94,52 +88,6 @@ public class RectangleEntity extends WorldEntity {
 
 	}
 
-	@Override
-	public boolean intersects(WorldEntity pOther) {
-		// Poly
-		if (pOther instanceof PolyEntity) {
-			// TODO: Rectangle <-> Poly collision
-		}
-
-		// Rect
-		else if (pOther instanceof RectangleEntity) {
-			RectangleEntity otherRect = (RectangleEntity) pOther;
-			if (Math.abs(x - pOther.x) > width / 2 + otherRect.width / 2)
-				return false;
-			if (Math.abs(y - pOther.y) > height / 2 + otherRect.height / 2)
-				return false;
-			return true;
-		}
-
-		// Circle
-		else if (pOther instanceof CircleEntity) {
-			CircleEntity c = (CircleEntity) pOther;
-			float circleDistX = Math.abs(c.x - this.x);
-			float circleDistY = Math.abs(c.y - this.y);
-
-			if (circleDistX > (this.width / 2 + c.radius)) {
-				return false;
-			}
-			if (circleDistY > (this.height / 2 + c.radius)) {
-				return false;
-			}
-
-			if (circleDistX <= (this.width / 2)) {
-				return true;
-			}
-			if (circleDistY <= (this.height / 2)) {
-				return true;
-			}
-
-			float dist_sq = (circleDistX - this.width / 2) * (circleDistX - this.width / 2) + (circleDistY - this.height / 2) * (circleDistX - this.width / 2) * (circleDistX - this.width / 2)
-					+ (circleDistY - this.height / 2);
-
-			return (dist_sq <= (c.radius * c.radius));
-
-		}
-
-		// no collision
-		return false;
-	}
+	
 
 }

@@ -366,8 +366,6 @@ public abstract class LintfordCore {
 		// Game loop
 		while (!glfwWindowShouldClose(lDisplayConfig.windowID())) {
 
-			onHandleInput();
-
 			mGameTime.mAccumulatedElapsedTimeMilli += mGameTime.getDelta();
 
 			// Check if for the fixed time step not enough time has passed to do another update
@@ -387,6 +385,8 @@ public abstract class LintfordCore {
 				continue;
 
 			}
+
+			onHandleInput();
 
 			// Do not allow any update to take longer than our maximum allowed.
 			if (mGameTime.mAccumulatedElapsedTimeMilli > mGameTime.maxElapsedTimeMilli)
@@ -452,22 +452,19 @@ public abstract class LintfordCore {
 	}
 
 	/**
-	 * handle input for auxiliary classes. If extended in sub-classes, ensure to handleInput on auxiliary classes!
 	 */
 	protected void onHandleInput() {
+		mInputState.update(this);
 		Debug.debugManager().handleInput(this);
 		mHUD.handleInput(this);
-
 		mControllerManager.handleInput(this, CORE_ID);
 
 	}
 
 	/**
-	 * update auxiliary classes. If extended in sub-classes, ensure to update the auxiliary classes!
 	 */
 	protected void onUpdate() {
 		mMasterConfig.update(this);
-		mInputState.update(this);
 		mResourceManager.update(this);
 		mHUD.update(this);
 		if (mGameCamera != null)

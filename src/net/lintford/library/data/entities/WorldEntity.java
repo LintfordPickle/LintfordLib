@@ -3,6 +3,9 @@ package net.lintford.library.data.entities;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.data.BaseData;
 
+/**
+ * The {@link WorldEntity} class allows us to order an entity spatially within the world.
+ */
 public abstract class WorldEntity extends BaseData {
 
 	// --------------------------------------
@@ -10,24 +13,12 @@ public abstract class WorldEntity extends BaseData {
 	// --------------------------------------
 
 	private static final long serialVersionUID = 3376631186484307065L;
-	
-	// TODO: Track Physics constants in a dedicated location (i.e. PhysicsConstants.Java)
-	public static final float FRICTION_X = 0.96f;
-	public static final float FRICTION_Y = 0.96f;
-	public static final float EPSILON = 0.001f;
-	public static final float GRAVITY = 0.04f;
 
-	public final static float SKIN_WIDTH = 0.15f;
-	
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
-	public float x, y; // center position
-	public transient float oldX, oldY; // old center positions
-	public float dx, dy; // movement
-	public float dr; 
-	public transient float oldDX, oldDY; // movement
+	public float x, y;
 
 	// --------------------------------------
 	// Properties
@@ -37,19 +28,13 @@ public abstract class WorldEntity extends BaseData {
 		x = pWorldX;
 		y = pWorldY;
 
-		dx = dy = 0;
-
 	}
 
-	/** Returns the max length of this entity (for simple distance culling) */
-	public abstract float maxLength();
-	
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
 	public WorldEntity() {
-		dx = dy = 0f;
 
 	}
 
@@ -57,26 +42,8 @@ public abstract class WorldEntity extends BaseData {
 	// Methods
 	// --------------------------------------
 
-	public void setVelocity(float pVelX, float pVelY) {
-		dx = pVelX;
-		dy = pVelY;
+	public void update(LintfordCore pCore) {
 
 	}
-
-	public void update(LintfordCore pCore)
-	{
-	    oldX = x;
-	    oldY = y;
-	    
-	    oldDX = dx;
-	    oldDY = dy;
-	    
-	}
-	
-	// --------------------------------------
-	// Abstract Methods
-	// --------------------------------------
-
-	public abstract boolean intersects(WorldEntity pOther);
 
 }

@@ -1,12 +1,9 @@
-package net.lintford.library.core.fractal;
+package net.lintford.library.core.lindenmeyer;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.lintford.library.core.geometry.spritegraph.SpriteGraphInst;
-import net.lintford.library.core.geometry.spritegraph.SpriteGraphNodeInst;
-import net.lintford.library.core.geometry.spritegraph.animators.LSystemAnimator;
 import net.lintford.library.core.graphics.ResourceManager;
 
 public class LSystemDefinition implements Serializable {
@@ -20,8 +17,6 @@ public class LSystemDefinition implements Serializable {
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
-
-	public LSystemAnimator mLSystemAnimator = new LSystemAnimator();
 
 	public String axiom;
 	public List<LRuleSet> rules;
@@ -97,22 +92,6 @@ public class LSystemDefinition implements Serializable {
 
 	public float fresnelTerm(float pAngle) {
 		return 1f;
-	}
-
-	public void onGraphCreation(SpriteGraphInst pInst) {
-		pInst.animator(mLSystemAnimator);
-	}
-
-	public void onRootNodeCreation(SpriteGraphNodeInst pNode) {
-
-	}
-
-	public void onNodeCreation(SpriteGraphNodeInst pNode, SpriteGraphNodeInst pParentNode) {
-
-	}
-
-	public void onLeafCreation(SpriteGraphNodeInst pNode, SpriteGraphNodeInst pParentNode) {
-
 	}
 
 }

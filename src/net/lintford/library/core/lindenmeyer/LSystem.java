@@ -1,4 +1,4 @@
-package net.lintford.library.core.fractal;
+package net.lintford.library.core.lindenmeyer;
 
 public class LSystem {
 

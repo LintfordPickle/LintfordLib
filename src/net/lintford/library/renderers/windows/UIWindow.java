@@ -283,6 +283,12 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 		if (!isOpen())
 			return;
 
+		if (mUIHUDGameController == null) {
+			mUIHUDGameController = (UIHUDController) pCore.controllerManager().getControllerByName(UIHUDController.CONTROLLER_NAME, LintfordCore.CORE_ID);
+			if (mUIHUDGameController == null)
+				return;
+		}
+
 		updateWindowPosition(pCore);
 
 		mWindowAlpha = 0.95f;

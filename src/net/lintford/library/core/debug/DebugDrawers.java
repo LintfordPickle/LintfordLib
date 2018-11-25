@@ -8,6 +8,7 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.camera.ICamera;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.ResourceManager;
+import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.geometry.TexturedQuad;
 import net.lintford.library.core.graphics.linebatch.LineBatch;
 import net.lintford.library.core.graphics.polybatch.PolyBatch;
@@ -31,6 +32,8 @@ public class DebugDrawers {
 	// --------------------------------------
 
 	private final Debug mDebugManager;
+
+	private FontUnit mSystemFont;
 
 	private LineBatch mLineBatch;
 	private PolyBatch mPolyBatch;
@@ -70,6 +73,8 @@ public class DebugDrawers {
 	public void loadGLContent(ResourceManager pResourceManager) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
+
+		mSystemFont = pResourceManager.fontManager().loadNewFont("SystemFont", "/res/fonts/OxygenMono-Regular.ttf", 16, true);
 
 		mTextureBatch.loadGLContent(pResourceManager);
 		mBasicShader.loadGLContent(pResourceManager);
@@ -254,6 +259,20 @@ public class DebugDrawers {
 			return;
 
 		mLineBatch.draw(pSX, pSY, pEX, pEY, -0.01f, pR, pG, pB);
+	}
+
+	public void startText(ICamera pCamera) {
+		mSystemFont.begin(pCamera);
+
+	}
+
+	public void drawText(String pText, float pX, float pY) {
+		mSystemFont.draw(pText, pX, pY, -0.01f, 1f, 1f, 1f, 1f, 1f, -1);
+	}
+
+	public void endText() {
+		mSystemFont.end();
+
 	}
 
 	public void endLineRenderer() {

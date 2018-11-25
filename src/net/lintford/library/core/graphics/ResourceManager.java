@@ -16,7 +16,7 @@ import java.util.List;
 import net.lintford.library.ConstantsTable;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.audio.AudioManager;
-import net.lintford.library.core.geometry.spritegraph.SpriteGraphManager;
+import net.lintford.library.core.box2d.PObjectManager;
 import net.lintford.library.core.graphics.fonts.FontManager;
 import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetManager;
 import net.lintford.library.core.graphics.textures.TextureManager;
@@ -44,8 +44,9 @@ public class ResourceManager {
 
 	protected FontManager mFontManager;
 	protected SpriteSheetManager mSpriteSheetManager;
-	protected SpriteGraphManager mSpriteGraphManager;
 	protected AudioManager mAudioManager;
+
+	protected PObjectManager mPObjectManager;
 
 	// SoundManager
 	// MusicManager
@@ -68,16 +69,16 @@ public class ResourceManager {
 		return mSpriteSheetManager;
 	}
 
-	public SpriteGraphManager spriteGraphManager() {
-		return mSpriteGraphManager;
-	}
-
 	public FontManager fontManager() {
 		return mFontManager;
 	}
 
 	public AudioManager audioManager() {
 		return mAudioManager;
+	}
+
+	public PObjectManager pobjectManager() {
+		return mPObjectManager;
 	}
 
 	// --------------------------------------
@@ -91,8 +92,9 @@ public class ResourceManager {
 
 		// Setup the SpritesheetManager
 		mSpriteSheetManager = new SpriteSheetManager();
-		mSpriteGraphManager = new SpriteGraphManager();
 		mAudioManager = new AudioManager();
+
+		mPObjectManager = new PObjectManager();
 
 		// Setup the AnimationManager
 
@@ -120,7 +122,7 @@ public class ResourceManager {
 						dir.register(mSpriteSheetPathWatcher, StandardWatchEventKinds.ENTRY_MODIFY);
 						return FileVisitResult.CONTINUE;
 					}
-					
+
 				});
 
 			} catch (Exception e) {
@@ -133,12 +135,11 @@ public class ResourceManager {
 	// --------------------------------------
 	// Core-Methods
 	// --------------------------------------
-	
+
 	public void loadGLContent() {
 		// Force creation here if not already
 		TextureManager.textureManager();
 		mAudioManager.loadALContent();
-		mSpriteGraphManager.loadGLContent(this);
 		mFontManager.loadGLContent(this);
 
 		// TODO: Need the resource manager to also manage shaders (so they can be recompiled etc).
@@ -172,22 +173,22 @@ public class ResourceManager {
 				lKey.reset();
 			}
 
-			if(mSpriteSheetPathWatcher != null) {
+			if (mSpriteSheetPathWatcher != null) {
 				WatchKey lSpriteFileKey = mSpriteSheetPathWatcher.poll();
 				if (lSpriteFileKey != null) {
-					
+
 					List<WatchEvent<?>> events = lSpriteFileKey.pollEvents();
 					for (WatchEvent<?> event : events) {
 						if (event.kind() == StandardWatchEventKinds.ENTRY_MODIFY) {
 							// Reload the spritesheet in question ...
 							mSpriteSheetManager.reload();
 						}
-						
+
 					}
-					
+
 					lSpriteFileKey.reset();
 				}
-				
+
 			}
 		}
 

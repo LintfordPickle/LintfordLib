@@ -78,10 +78,6 @@ public class DualColumnLayout extends BaseLayout {
 			lYPos += 5f;
 		}
 
-		// Only actually have two columns if the width is adequate
-		float lWidth = 1024;
-		boolean lTwoColumns = lWidth > 512;
-
 		int lEntryCount = menuEntries().size();
 		for (int i = 0; i < lEntryCount; i++) {
 			MenuEntry lEntry = menuEntries().get(i);
