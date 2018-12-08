@@ -29,7 +29,7 @@ public class TextureBatch {
 	// Constants
 	// --------------------------------------
 
-	protected static final int MAX_SPRITES = 256;
+	protected static final int MAX_SPRITES = 2048;
 
 	protected static final String VERT_FILENAME = "/res/shaders/shader_basic_pct.vert";
 	protected static final String FRAG_FILENAME = "/res/shaders/shader_basic_pct.frag";
@@ -126,7 +126,7 @@ public class TextureBatch {
 		mTempVector = new Vector4f();
 
 		mBuffer = BufferUtils.createFloatBuffer(MAX_SPRITES * NUM_VERTS_PER_SPRITE * stride);
-		
+
 	}
 
 	// --------------------------------------
@@ -306,6 +306,7 @@ public class TextureBatch {
 
 		if (mCurNumSprites >= MAX_SPRITES) {
 			flush();
+
 		}
 
 		final float lHalfWPixel = (1f / pTexture.getTextureWidth()) * 0.5f;
@@ -347,8 +348,7 @@ public class TextureBatch {
 
 	}
 
-	public void draw(Texture pTexture, float pSX, float pSY, float pSW, float pSH, float pDX, float pDY, float pDW, float pDH, float pZ, float pRot, float pROX, float pROY, float pScale, float pR, float pG, float pB,
-			float pA) {
+	public void draw(Texture pTexture, float pSX, float pSY, float pSW, float pSH, float pDX, float pDY, float pDW, float pDH, float pZ, float pRot, float pROX, float pROY, float pScale, float pR, float pG, float pB, float pA) {
 		if (!mIsLoaded)
 			return;
 
@@ -372,11 +372,6 @@ public class TextureBatch {
 		float sin = (float) (Math.sin(pRot));
 		float cos = (float) (Math.cos(pRot));
 
-		// TODO: Need to make the scaling more consistent -
-		// We cannot apply the scaling in this function if the geometric offsets have
-		// already been set outside of the function, i.e. POS_X - HALF_WIDTH
-		// because here we would be resizing the dimensions and the offset will not work
-
 		// Translate the sprite to the origin
 		float dx = -pROX;
 		float dy = -pROY;
@@ -385,27 +380,30 @@ public class TextureBatch {
 		pDX += pROX;
 		pDY += pROY;
 
+		float scaX = pDW * 0.5f * pScale;
+		float scaY = pDH * 0.5f * pScale;
+
 		// Vertex 0
-		float x0 = pDX + dx * cos - (dy + pDH) * sin;
-		float y0 = pDY + dx * sin + (dy + pDH) * cos;
+		float x0 = pDX + (dx - scaX) * cos - ((dy - scaY) + (pDH + scaY * 2f)) * sin;
+		float y0 = pDY + (dx - scaX) * sin + ((dy - scaY) + (pDH + scaY * 2f)) * cos;
 		float u0 = pSX / pTexture.getTextureWidth();
 		float v0 = (pSY + pSH) / pTexture.getTextureHeight();
 
 		// Vertex 1
-		float x1 = pDX + dx * cos - dy * sin;
-		float y1 = pDY + dx * sin + dy * cos;
+		float x1 = pDX + (dx - scaX) * cos - (dy - scaY) * sin;
+		float y1 = pDY + (dx - scaX) * sin + (dy - scaY) * cos;
 		float u1 = pSX / pTexture.getTextureWidth();
 		float v1 = pSY / pTexture.getTextureHeight();
 
 		// Vertex 2
-		float x2 = pDX + (dx + pDW) * cos - dy * sin;
-		float y2 = pDY + (dx + pDW) * sin + dy * cos;
+		float x2 = pDX + ((dx - scaX) + (pDW + scaX * 2f)) * cos - (dy - scaY) * sin;
+		float y2 = pDY + ((dx - scaX) + (pDW + scaX * 2f)) * sin + (dy - scaY) * cos;
 		float u2 = (pSX + pSW) / pTexture.getTextureWidth();
 		float v2 = pSY / pTexture.getTextureHeight();
 
 		// Vertex 3
-		float x3 = pDX + (dx + pDW) * cos - (dy + pDH) * sin;
-		float y3 = pDY + (dx + pDW) * sin + (dy + pDH) * cos;
+		float x3 = pDX + ((dx - scaX) + (pDW + scaX * 2f)) * cos - ((dy - scaY) + (pDH + scaY * 2f)) * sin;
+		float y3 = pDY + ((dx - scaX) + (pDW + scaX * 2f)) * sin + ((dy - scaY) + (pDH + scaY * 2f)) * cos;
 		float u3 = (pSX + pSW) / pTexture.getTextureWidth();
 		float v3 = (pSY + pSH) / pTexture.getTextureHeight();
 
@@ -418,6 +416,7 @@ public class TextureBatch {
 		addVertToBuffer(x3, y3, pZ, 1f, pR, pG, pB, pA, u3, v3); // 3
 
 		mCurNumSprites++;
+
 	}
 
 	public void draw(Texture pTexture, float pSX, float pSY, float pSW, float pSH, Circle dstCircle, float pZ, float pR, float pG, float pB, float pA) {
@@ -546,6 +545,7 @@ public class TextureBatch {
 		redraw();
 
 		mBuffer.clear();
+		mCurNumSprites = 0;
 
 		GLDebug.checkGLErrorsException(getClass().getSimpleName());
 
