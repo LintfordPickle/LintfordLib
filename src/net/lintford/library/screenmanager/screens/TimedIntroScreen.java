@@ -46,7 +46,7 @@ public class TimedIntroScreen extends Screen {
 	}
 
 	public void setTextureSrcRectangle(float pX, float pY, float pW, float pH) {
-		mSrcTextureRect.setCenter(pX, pY, pW, pH);
+		mSrcTextureRect.set(pX, pY, pW, pH);
 
 	}
 

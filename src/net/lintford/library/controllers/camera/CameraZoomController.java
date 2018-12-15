@@ -4,6 +4,7 @@ import net.lintford.library.controllers.BaseController;
 import net.lintford.library.controllers.core.ControllerManager;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.camera.Camera;
+import net.lintford.library.core.maths.MathHelper;
 
 /** Controls the zoom factor of a {@link Camera} object. */
 public class CameraZoomController extends BaseController {
@@ -15,15 +16,15 @@ public class CameraZoomController extends BaseController {
 	public static final String CONTROLLER_NAME = "CameraZoomController";
 
 	/** Specifies the minimum amount of camera zoom (zooming out) */
-	public static final float MIN_CAMERA_ZOOM = 0.2f; // 1.5f
+	public static final float MIN_CAMERA_ZOOM = 0.5f; // 1.5f
 
 	/** Specifies the maximum amount of camera zoom (zooming in) */
-	public static final float MAX_CAMERA_ZOOM = 10f; // 2f
+	public static final float MAX_CAMERA_ZOOM = 3f; // 2f
 
 	/**
 	 * Specifies the amount of DRAG to be applied to the zoom factor velocity over time.
 	 */
-	public static final float ZOOM_VELOCITY_DRAG = 0.98f;
+	public static final float ZOOM_VELOCITY_DRAG = 0.967f;
 
 	/**
 	 * A coefficient for the speed of the zoom (modifies the mouse scroll wheel speed)
@@ -137,7 +138,7 @@ public class CameraZoomController extends BaseController {
 
 		// static zoom factor
 		if (mAllowZoom) {
-			mZoomAcceleration += pCore.input().mouseWheelYOffset() * ZOOM_ACCELERATE_AMOUNT * pCore.time().elapseGameTimeSeconds() * mCamera.zoomFactor();
+			mZoomAcceleration += pCore.input().mouseWheelYOffset() * 1f;// * mCamera.zoomFactor();
 		}
 
 		return super.handleInput(pCore);
@@ -157,8 +158,8 @@ public class CameraZoomController extends BaseController {
 
 		// apply zoom //
 		mZoomVelocity += mZoomAcceleration;
-		mZoomVelocity *= ZOOM_VELOCITY_DRAG;
 		lZoomFactor += mZoomVelocity * DELTA_TIME;
+		mZoomVelocity *= 0.85f;
 		mZoomAcceleration = 0.0f;
 
 		// Check bounds
@@ -173,7 +174,8 @@ public class CameraZoomController extends BaseController {
 		}
 
 		// Apply the new zoom factor to the camera object
-		mCamera.setZoomFactor(1.75f/*lZoomFactor*/);
+		mCamera.setZoomFactor(MathHelper.round(lZoomFactor, 2));
+
 	}
 
 }
