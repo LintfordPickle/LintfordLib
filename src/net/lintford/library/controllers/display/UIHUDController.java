@@ -46,6 +46,11 @@ public class UIHUDController extends BaseController {
 		return mUIScaleFactorActual;
 	}
 
+	// TODO: Replace the following function with:
+	/*
+	   final boolean lIsBigUI = mUIHUDGameController.useBigUI();
+	   final float lTextScale = mUIHUDGameController.uiTextScaleFactor() * (lIsBigUI ? GraphicsSettings.BIG_UI_SCALE_FACTOR : GraphicsSettings.SMALL_UI_SCALE_FACTOR);
+	 */
 	public float uiTextScaleFactor() {
 		return mUITextScaleFactorActual;
 	}

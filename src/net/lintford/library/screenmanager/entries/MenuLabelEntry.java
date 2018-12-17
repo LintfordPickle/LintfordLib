@@ -4,6 +4,7 @@ import net.lintford.library.ConstantsTable;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.TextureManager;
+import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.MenuScreen.ALIGNMENT;
@@ -160,6 +161,7 @@ public class MenuLabelEntry extends MenuEntry {
 		if (!enabled())
 			return;
 
+		final float lAlpha = 0.4f;
 		final float luiTextScale = mScreenManager.UIHUDController().uiTextScaleFactor();
 
 		final MenuScreen lParentScreen = mParentLayout.parentScreen();
@@ -168,11 +170,13 @@ public class MenuLabelEntry extends MenuEntry {
 		final float lLabelWidth = lFont.bitmap().getStringWidth(mText, luiTextScale);
 		final float lFontHeight = lFont.bitmap().fontHeight() * luiTextScale;
 
+		final TextureBatch lTextureBatch = lParentScreen.rendererManager().uiTextureBatch();
+
 		if (mDrawBackground) {
-			mTextureBatch.begin(pCore.HUD());
-			final float lAlpha = 0.4f;
-			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, x, y, w, h, mZ, 0.1f, 0.1f, 0.1f, lAlpha);
-			mTextureBatch.end();
+			lTextureBatch.begin(pCore.HUD());
+			lTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, x, y, w, h, mZ, 0.1f, 0.1f, 0.1f, lAlpha);
+			lTextureBatch.end();
+
 		}
 
 		float lX = x + w / 2 - lLabelWidth / 2; // Center label
@@ -195,10 +199,9 @@ public class MenuLabelEntry extends MenuEntry {
 		lFont.end();
 
 		if (ConstantsTable.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
-			mTextureBatch.begin(pCore.HUD());
-			final float lAlpha = 0.3f;
-			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, x, y, w, h, mZ, 1f, 0.2f, 0.2f, lAlpha);
-			mTextureBatch.end();
+			lTextureBatch.begin(pCore.HUD());
+			lTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, x, y, w, h, mZ, 1f, 0.2f, 0.2f, lAlpha);
+			lTextureBatch.end();
 
 		}
 

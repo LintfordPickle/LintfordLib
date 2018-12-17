@@ -16,6 +16,7 @@ public class ScrollBarContentRectangle extends Rectangle {
 	// --------------------------------------
 
 	private transient IScrollBarArea mParentArea;
+	private boolean mPreDrawing;
 
 	private float mDepthPadding = 0f;
 
@@ -51,6 +52,15 @@ public class ScrollBarContentRectangle extends Rectangle {
 	}
 
 	public void preDraw(LintfordCore pCore, TextureBatch pTextureBatch) {
+		preDraw(pCore, pTextureBatch, mParentArea.contentDisplayArea());
+
+	}
+
+	public void preDraw(LintfordCore pCore, TextureBatch pTextureBatch, Rectangle pRectangle) {
+		if (mPreDrawing)
+			return;
+
+		mPreDrawing = true;
 
 		// We need to use a stencil buffer to clip the listbox items (which, when scrolling, could appear out-of-bounds of the listbox).
 		GL11.glEnable(GL11.GL_STENCIL_TEST);
@@ -65,8 +75,8 @@ public class ScrollBarContentRectangle extends Rectangle {
 		// Draw into the stencil buffer to mark the 'active' bits
 		pTextureBatch.begin(pCore.HUD());
 
-		pTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, mParentArea.contentDisplayArea().x + mDepthPadding, mParentArea.contentDisplayArea().y + mDepthPadding, mParentArea.contentDisplayArea().w - mDepthPadding * 2,
-				mParentArea.contentDisplayArea().h - mDepthPadding * 2, -10.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+		pTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, pRectangle.x + mDepthPadding, pRectangle.y + mDepthPadding, pRectangle.w - mDepthPadding * 2, pRectangle.h - mDepthPadding * 2, -10.0f, 0.0f, 0.0f,
+				0.0f, 0.0f);
 
 		pTextureBatch.end();
 
@@ -76,6 +86,10 @@ public class ScrollBarContentRectangle extends Rectangle {
 	}
 
 	public void postDraw(LintfordCore pCore) {
+		if (!mPreDrawing)
+			return;
+		
+		mPreDrawing = false;
 		GL11.glDisable(GL11.GL_STENCIL_TEST);
 	}
 

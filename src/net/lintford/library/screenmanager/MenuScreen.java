@@ -9,7 +9,6 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
-import net.lintford.library.core.graphics.sprites.spritebatch.SpriteBatch;
 import net.lintford.library.renderers.ZLayers;
 import net.lintford.library.screenmanager.entries.EntryInteractions;
 import net.lintford.library.screenmanager.layouts.BaseLayout;
@@ -105,7 +104,6 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	protected ClickAction mClickAction;
 	protected float mAnimationTimer;
 
-	protected SpriteBatch mSpriteBatch;
 	protected FontUnit mMenuFont;
 	protected FontUnit mMenuHeaderFont;
 
@@ -114,10 +112,6 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
-
-	public SpriteBatch spriteBatch() {
-		return mSpriteBatch;
-	}
 
 	/** Returns a normal sized {@link FontUnit} which can be used to render general text to the screen. */
 	public FontUnit font() {
@@ -140,11 +134,11 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	public String menuTitle() {
 		return mMenuTitle;
 	}
-	
+
 	public void menuTitle(String pNewMenuTitle) {
 		mMenuTitle = pNewMenuTitle;
 	}
-	
+
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
@@ -153,8 +147,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		super(pScreenManager);
 
 		mLayouts = new ArrayList<>();
-		mSpriteBatch = new SpriteBatch();
-		
+
 		mShowInBackground = false;
 
 		mMenuTitle = pMenuTitle;
@@ -198,8 +191,6 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		mMenuFont = pResourceManager.fontManager().loadNewFont(MENUSCREEN_FONT_NAME, lFontPathname, MENUSCREEN_FONT_POINT_SIZE, true);
 		mMenuHeaderFont = pResourceManager.fontManager().loadNewFont(MENUSCREEN_HEADER_FONT_NAME, lFontPathname, MENUSCREEN_HEADER_FONT_POINT_SIZE, false);
 
-		mSpriteBatch.loadGLContent(pResourceManager);
-		
 	}
 
 	@Override
@@ -211,8 +202,6 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 			mLayouts.get(i).unloadGLContent();
 		}
 
-		mSpriteBatch.unloadGLContent();
-		
 	}
 
 	@Override
@@ -399,7 +388,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	public void draw(LintfordCore pCore) {
 		if (mScreenState != ScreenState.Active && mScreenState != ScreenState.TransitionOn && mScreenState != ScreenState.TransitionOff)
 			return;
-		
+
 		final float luiTextScale = mScreenManager.UIHUDController().uiTextScaleFactor();
 
 		final float MENUSCREEN_Z_DEPTH = ZLayers.LAYER_SCREENMANAGER;

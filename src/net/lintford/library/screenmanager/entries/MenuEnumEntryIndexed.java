@@ -7,6 +7,7 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.TextureManager;
+import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 import net.lintford.library.core.input.InputState;
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
@@ -253,14 +254,14 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 	@Override
 	public void updateStructurePositions() {
 		super.updateStructurePositions();
-		
+
 		if (mShowInfoButton) {
 			mInfoButton.set(x, y, 32f, 32f);
 
 		}
-		
+
 	}
-	
+
 	@Override
 	public void update(LintfordCore pCore, MenuScreen pScreen, boolean pIsSelected) {
 		super.update(pCore, pScreen, pIsSelected);
@@ -284,20 +285,23 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 
 		mZ = pComponentDepth;
 
+		final TextureBatch lTextureBatch = mParentLayout.parentScreen().rendererManager().uiTextureBatch();
+
 		// Render the two arrows either side of the enumeration options
 		if (mButtonsEnabled) {
 			// Draw the left/right buttons
-			mTextureBatch.begin(pCore.HUD());
+			lTextureBatch.begin(pCore.HUD());
 			final float ARROW_BUTTON_SIZE = 32;
 			final float ARROW_PADDING_X = mLeftButtonRectangle.w - ARROW_BUTTON_SIZE;
 			final float ARROW_PADDING_Y = mLeftButtonRectangle.h - ARROW_BUTTON_SIZE;
 
-			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 160, 0, 32, 32, mLeftButtonRectangle.x + ARROW_PADDING_X, mLeftButtonRectangle.y + ARROW_PADDING_Y, ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, mZ, 1f, 1f, 1f,
+			lTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 160, 0, 32, 32, mLeftButtonRectangle.x + ARROW_PADDING_X, mLeftButtonRectangle.y + ARROW_PADDING_Y, ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, mZ, 1f, 1f, 1f,
 					1f);
-			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 224, 0, 32, 32, mRightButtonRectangle.x + ARROW_PADDING_X, mRightButtonRectangle.y + ARROW_PADDING_Y, ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, mZ, 1f, 1f, 1f,
+			lTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 224, 0, 32, 32, mRightButtonRectangle.x + ARROW_PADDING_X, mRightButtonRectangle.y + ARROW_PADDING_Y, ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, mZ, 1f, 1f, 1f,
 					1f);
 
-			mTextureBatch.end();
+			lTextureBatch.end();
+
 		}
 
 		FontUnit lFontBitmap = mParentLayout.parentScreen().font();
@@ -326,11 +330,11 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 		}
 
 		lFontBitmap.end();
-		
+
 		if (mShowInfoButton) {
-			mTextureBatch.begin(pCore.HUD());
-			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 544, 0, 32, 32, mInfoButton, mZ, 1f, 1f, 1f, 1f);
-			mTextureBatch.end();
+			lTextureBatch.begin(pCore.HUD());
+			lTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 544, 0, 32, 32, mInfoButton, mZ, 1f, 1f, 1f, 1f);
+			lTextureBatch.end();
 		}
 
 	}

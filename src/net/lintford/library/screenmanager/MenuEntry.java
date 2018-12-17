@@ -68,8 +68,6 @@ public class MenuEntry extends Rectangle {
 	protected float mClickTimer;
 	protected BUTTON_SIZE mButtonSize = BUTTON_SIZE.normal;
 
-	protected TextureBatch mTextureBatch;
-
 	private boolean mIsInitialised, mIsLoaded;
 	public float mZ;
 
@@ -276,8 +274,6 @@ public class MenuEntry extends Rectangle {
 		mParentLayout = pParentLayout;
 		mText = pMenuEntryLabel;
 
-		mTextureBatch = new TextureBatch();
-
 		mActive = true;
 		mEnabled = true;
 		mCanHaveFocus = true;
@@ -308,15 +304,11 @@ public class MenuEntry extends Rectangle {
 	}
 
 	public void loadGLContent(ResourceManager pResourceManager) {
-		mTextureBatch.loadGLContent(pResourceManager);
-
 		mIsLoaded = true;
 
 	}
 
 	public void unloadGLContent() {
-		mTextureBatch.unloadGLContent();
-
 		mIsLoaded = false;
 
 	}
@@ -447,6 +439,8 @@ public class MenuEntry extends Rectangle {
 
 		float tile_size = 32;
 
+		final TextureBatch lTextureBatch = mParentLayout.parentScreen().mRendererManager.uiTextureBatch();
+
 		// Scale the width depending on the button size
 		Texture lTexture = TextureManager.TEXTURE_CORE_UI;
 
@@ -456,24 +450,24 @@ public class MenuEntry extends Rectangle {
 			lG *= 0.6f;
 			lB *= 0.6f;
 
-			mTextureBatch.begin(pCore.HUD());
-			mTextureBatch.draw(lTexture, 0, 64, 32, 32, centerX() - w / 2, centerY() - h / 2, tile_size, h, mZ, lR, lG, lB, lA);
+			lTextureBatch.begin(pCore.HUD());
+			lTextureBatch.draw(lTexture, 0, 64, 32, 32, centerX() - w / 2, centerY() - h / 2, tile_size, h, mZ, lR, lG, lB, lA);
 			switch (mButtonSize) {
 			default:
-				mTextureBatch.draw(lTexture, 32, 64, 224, 32, centerX() - (w / 2) + tile_size, centerY() - h / 2, w - tile_size * 2, h, mZ, lR, lG, lB, lA);
-				mTextureBatch.draw(lTexture, 256, 64, 32, 32, centerX() + (w / 2) - tile_size, centerY() - h / 2, tile_size, h, mZ, lR, lG, lB, lA);
+				lTextureBatch.draw(lTexture, 32, 64, 224, 32, centerX() - (w / 2) + tile_size, centerY() - h / 2, w - tile_size * 2, h, mZ, lR, lG, lB, lA);
+				lTextureBatch.draw(lTexture, 256, 64, 32, 32, centerX() + (w / 2) - tile_size, centerY() - h / 2, tile_size, h, mZ, lR, lG, lB, lA);
 			}
-			mTextureBatch.end();
+			lTextureBatch.end();
 
 		} else if (mDrawBackground) {
-			mTextureBatch.begin(pCore.HUD());
-			mTextureBatch.draw(lTexture, 0, 32, 32, 32, centerX() - w / 2, centerY() - h / 2, 32, h, mZ, lR, lG, lB, lA);
+			lTextureBatch.begin(pCore.HUD());
+			lTextureBatch.draw(lTexture, 0, 32, 32, 32, centerX() - w / 2, centerY() - h / 2, 32, h, mZ, lR, lG, lB, lA);
 			switch (mButtonSize) {
 			default:
-				mTextureBatch.draw(lTexture, 32, 32, 224, 32, centerX() - (w / 2) + 32, centerY() - h / 2, w - 64, h, mZ, lR, lG, lB, lA);
-				mTextureBatch.draw(lTexture, 256, 32, 32, 32, centerX() + (w / 2) - 32, centerY() - h / 2, 32, h, mZ, lR, lG, lB, lA);
+				lTextureBatch.draw(lTexture, 32, 32, 224, 32, centerX() - (w / 2) + 32, centerY() - h / 2, w - 64, h, mZ, lR, lG, lB, lA);
+				lTextureBatch.draw(lTexture, 256, 32, 32, 32, centerX() + (w / 2) - 32, centerY() - h / 2, 32, h, mZ, lR, lG, lB, lA);
 			}
-			mTextureBatch.end();
+			lTextureBatch.end();
 		}
 
 		// Render the MenuEntry label
@@ -492,16 +486,17 @@ public class MenuEntry extends Rectangle {
 		}
 
 		if (mShowInfoButton) {
-			mTextureBatch.begin(pCore.HUD());
-			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 544, 0, 32, 32, mInfoButton, mZ, 1f, 1f, 1f, 1f);
-			mTextureBatch.end();
+			lTextureBatch.begin(pCore.HUD());
+			lTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 544, 0, 32, 32, mInfoButton, mZ, 1f, 1f, 1f, 1f);
+			lTextureBatch.end();
+
 		}
 
 		if (ConstantsTable.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
-			mTextureBatch.begin(pCore.HUD());
+			lTextureBatch.begin(pCore.HUD());
 			final float ALPHA = 0.3f;
-			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, x, y, w, h, mZ, 1f, 0.2f, 0.2f, ALPHA);
-			mTextureBatch.end();
+			lTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, x, y, w, h, mZ, 1f, 0.2f, 0.2f, ALPHA);
+			lTextureBatch.end();
 
 		}
 

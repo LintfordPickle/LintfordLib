@@ -3,6 +3,7 @@ package net.lintford.library.screenmanager.entries;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
+import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.MenuScreen.ALIGNMENT;
@@ -116,17 +117,17 @@ public class MenuImageEntry extends MenuEntry {
 	@Override
 	public void updateStructureDimensions() {
 		super.updateStructureDimensions();
-		
-		h = mTexture != null ? mTexture.getTextureHeight()+20f : MENUENTRY_DEF_BUTTON_HEIGHT;
-		
+
+		h = mTexture != null ? mTexture.getTextureHeight() + 20f : MENUENTRY_DEF_BUTTON_HEIGHT;
+
 	}
-	
+
 	@Override
 	public void update(LintfordCore pCore, MenuScreen pScreen, boolean pIsSelected) {
 		super.update(pCore, pScreen, pIsSelected);
-		
+
 	}
-	
+
 	@Override
 	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pParentZDepth) {
 
@@ -166,7 +167,9 @@ public class MenuImageEntry extends MenuEntry {
 
 		}
 
-		mTextureBatch.begin(pCore.HUD());
+		final TextureBatch lTextureBatch = mParentLayout.parentScreen().rendererManager().uiTextureBatch();
+
+		lTextureBatch.begin(pCore.HUD());
 
 		h = 240;
 
@@ -188,11 +191,11 @@ public class MenuImageEntry extends MenuEntry {
 
 			// TODO: Something needs fixing here
 			lX = -width / 2;
-			mTextureBatch.draw(mTexture, 0, 0, width, height, lX + 5, y + lLabelHeightOffset, width, height, pParentZDepth + .1f, 1f, 1f, 1f, 1f);
+			lTextureBatch.draw(mTexture, 0, 0, width, height, lX + 5, y + lLabelHeightOffset, width, height, pParentZDepth + .1f, 1f, 1f, 1f, 1f);
 
 		}
 
-		mTextureBatch.end();
+		lTextureBatch.end();
 
 	}
 

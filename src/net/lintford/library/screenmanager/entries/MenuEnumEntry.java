@@ -7,6 +7,7 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.TextureManager;
+import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 import net.lintford.library.core.input.InputState;
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
@@ -245,21 +246,21 @@ public class MenuEnumEntry extends MenuEntry {
 		final float lTextHeight = lFontBitmap.bitmap().getStringHeight(mLabel) * luiTextScale;
 		final float lSeparatorHalfWidth = lFontBitmap.bitmap().getStringWidth(mSeparator, luiTextScale) * 0.5f;
 
-		// TODO(John): we could make this a lot more readable and save on the individual calculations of the width/height of the same strings
+		final TextureBatch lTextureBatch = mParentLayout.parentScreen().rendererManager().uiTextureBatch();
 
 		// Draw the left/right buttons
-		mTextureBatch.begin(pCore.HUD());
+		lTextureBatch.begin(pCore.HUD());
 		final float ARROW_BUTTON_SIZE = 32;
 		final float ARROW_PADDING_Y = mLeftButtonRectangle.h - ARROW_BUTTON_SIZE;
 
 		// Render the two arrows either side of the enumeration options
 		if (mButtonsEnabled) {
-			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 160, 0, 32, 32, mLeftButtonRectangle.x, mLeftButtonRectangle.y + ARROW_PADDING_Y, ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, 0f, 1f, 1f, 1f, 1f);
-			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 224, 0, 32, 32, mRightButtonRectangle.x, mRightButtonRectangle.y + ARROW_PADDING_Y, ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, 0f, 1f, 1f, 1f, 1f);
+			lTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 160, 0, 32, 32, mLeftButtonRectangle.x, mLeftButtonRectangle.y + ARROW_PADDING_Y, ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, 0f, 1f, 1f, 1f, 1f);
+			lTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 224, 0, 32, 32, mRightButtonRectangle.x, mRightButtonRectangle.y + ARROW_PADDING_Y, ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, 0f, 1f, 1f, 1f, 1f);
 
 		}
 
-		mTextureBatch.end();
+		lTextureBatch.end();
 
 		final float lR = lParentScreen.r();
 		final float lG = lParentScreen.g();
