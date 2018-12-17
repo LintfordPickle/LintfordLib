@@ -79,7 +79,7 @@ public class ConstantsTable {
 		Debug.debugManager().logger().i("ConstantsTable", "Registered value: " + pName + " : " + pValue);
 
 		// Automagically replaces values which already exist
-		constTab.put(pName.toUpperCase(), pValue.toUpperCase());
+		constTab.put(pName.toUpperCase(), pValue);
 
 	}
 

@@ -40,6 +40,10 @@ public class DebugProfiler extends Rectangle {
 	// Properties
 	// --------------------------------------
 
+	public void isOpen(boolean pNewValue) {
+		mIsOpen = pNewValue;
+	}
+
 	public boolean isOpen() {
 		return mIsOpen;
 	}

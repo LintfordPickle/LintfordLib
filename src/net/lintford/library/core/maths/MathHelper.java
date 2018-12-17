@@ -183,4 +183,9 @@ public class MathHelper {
 		return -pChangeInValue / 2 * (Math.cos(Math.PI * pTime / pDuration) - 1) + pStart;
 	};
 
+	public static float round(float value, int precision) {
+		int scale = (int) Math.pow(10, precision);
+		return (float) Math.round(value * scale) / scale;
+	}
+
 }

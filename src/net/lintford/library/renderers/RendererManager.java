@@ -10,6 +10,7 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
+import net.lintford.library.core.graphics.linebatch.LineBatch;
 import net.lintford.library.core.graphics.rendertarget.RenderTarget;
 import net.lintford.library.core.graphics.sprites.spritebatch.SpriteBatch;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
@@ -61,6 +62,7 @@ public class RendererManager {
 
 	private SpriteBatch mSpriteBatch;
 	private TextureBatch mTextureBatch;
+	private LineBatch mLineBatch;
 	private DisplayManager mDisplayConfig;
 
 	// TODO: Make a dedicated RenderTargetManager
@@ -125,6 +127,10 @@ public class RendererManager {
 		return mSpriteBatch;
 	}
 
+	public LineBatch uiLineBatch() {
+		return mLineBatch;
+	}
+
 	public List<UIWindow> windows() {
 		return mWindowRenderers;
 	}
@@ -144,6 +150,7 @@ public class RendererManager {
 
 		mSpriteBatch = new SpriteBatch();
 		mTextureBatch = new TextureBatch();
+		mLineBatch = new LineBatch();
 
 		mListeners = new ArrayList<>();
 
@@ -181,6 +188,7 @@ public class RendererManager {
 
 		mSpriteBatch.loadGLContent(pResourceManager);
 		mTextureBatch.loadGLContent(pResourceManager);
+		mLineBatch.loadGLContent(pResourceManager);
 
 		// TODO: We should add a more concise method for getting fonts which are already loaded...
 		mWindowTitleFont = pResourceManager.fontManager().loadNewFont(WINDOWS_TITLE_FONT_NAME, "res/fonts/OxygenMono-Regular.ttf", 18);
@@ -235,6 +243,7 @@ public class RendererManager {
 
 		mSpriteBatch.unloadGLContent();
 		mTextureBatch.unloadGLContent();
+		mLineBatch.unloadGLContent();
 
 		mIsLoaded = false;
 
@@ -257,7 +266,7 @@ public class RendererManager {
 		final int NUM_RENDERERS = mRenderers.size();
 
 		// Handle the base renderer input
-		for (int i = 0; i < NUM_RENDERERS; i++) {
+		for (int i = NUM_RENDERERS-1; i >= 0; i--) {
 			mRenderers.get(i).handleInput(pCore);
 
 		}

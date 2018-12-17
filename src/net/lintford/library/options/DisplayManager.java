@@ -336,6 +336,13 @@ public class DisplayManager extends IniFile {
 		mDesktopWidth = mDesktopVideoMode.width();
 		mDesktopHeight = mDesktopVideoMode.height();
 
+		// Constraints check (don't allow changes in the INI file)
+		if (!pGameInfo.windowResizeable()) {
+			mDisplaySettings.windowWidth = pGameInfo.baseGameResolutionWidth();
+			mDisplaySettings.windowHeight = pGameInfo.baseGameResolutionHeight();
+
+		}
+
 		validateResolution(pGameInfo);
 
 		if (mDisplaySettings.fullscreen()) {
@@ -590,6 +597,16 @@ public class DisplayManager extends IniFile {
 
 		if (mGameResizeListeners.contains(pListener)) {
 			mGameResizeListeners.remove(pListener);
+		}
+	}
+
+	public void setDisplayMouse(boolean pShowMouse) {
+		if (pShowMouse) {
+			GLFW.glfwSetInputMode(mWindowID, GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_NORMAL);
+
+		} else {
+			GLFW.glfwSetInputMode(mWindowID, GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_HIDDEN);
+
 		}
 	}
 

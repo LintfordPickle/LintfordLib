@@ -194,4 +194,13 @@ public class ParticleSystem {
 		}
 	}
 
+	public void reset() {
+		for (int i = 0; i < mCapacity; i++) {
+			Particle p = mParticles.get(i);
+			p.reset();
+
+		}
+
+	}
+
 }
