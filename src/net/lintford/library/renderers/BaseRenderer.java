@@ -22,21 +22,21 @@ public abstract class BaseRenderer {
 	protected boolean mIsLoaded;
 
 	/**
-	 * A group ID is assigned to all {@link BaseRenderer} instances. It allows the developer to programmatically unload batches of particular parts of the game when required (i.e. unload the game controllers when
-	 * returning to the main menu)
+	 * An entity group ID is assigned to all {@link BaseRenderer} instances. It allows you to programmatically unload batches of particular parts of the game when required (i.e. unload the game controllers when returning
+	 * to the main menu)
 	 */
-	protected int mEntityID;
+	protected int mEntityGroupID;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
 
 	/**
-	 * A group ID is assigned to all {@link BaseRenderer} instances. It allows the developer to programmatically unload batches of particular parts of the game when required (i.e. unload the game controllers when
-	 * returning to the main menu)
+	 * A group ID is assigned to all {@link BaseRenderer} instances. It allows the developer to programmatically unload batches of particular parts of the game when required (i.e. unload the game controllers when returning to the
+	 * main menu)
 	 */
-	public int groupID() {
-		return mEntityID;
+	public int entityGroupID() {
+		return mEntityGroupID;
 	}
 
 	/** Returns the comparative Z depth for this renderer. See RendererZTable for a list of relative values. */
@@ -70,7 +70,7 @@ public abstract class BaseRenderer {
 	// Constructor
 	// --------------------------------------
 
-	public BaseRenderer(final RendererManager pRendererManager, final String pRendererName, final int pGroupID) {
+	public BaseRenderer(final RendererManager pRendererManager, final String pRendererName, final int pEntityGroupID) {
 		if (pRendererName == null || pRendererName.length() == 0)
 			throw new RuntimeException("Controller names cannot be null or empty!");
 
@@ -82,7 +82,7 @@ public abstract class BaseRenderer {
 
 		}
 
-		mEntityID = pGroupID;
+		mEntityGroupID = pEntityGroupID;
 
 		isActive(true);
 

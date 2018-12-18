@@ -24,8 +24,8 @@ public class ControllerManagerController extends BaseController {
 	// Constructor
 	// --------------------------------------
 
-	public ControllerManagerController(ControllerManager pControllerManager, int pGroupID) {
-		super(pControllerManager, CONTROLLER_NAME, pGroupID);
+	public ControllerManagerController(ControllerManager pControllerManager, int pEntityGroupID) {
+		super(pControllerManager, CONTROLLER_NAME, pEntityGroupID);
 		// TODO Auto-generated constructor stub
 	}
 

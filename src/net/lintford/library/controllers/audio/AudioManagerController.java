@@ -33,8 +33,8 @@ public class AudioManagerController extends BaseController {
 	// Constructor
 	// --------------------------------------
 
-	public AudioManagerController(final ControllerManager pControllerManager, final AudioManager pAudioManager, int pGroupID) {
-		super(pControllerManager, CONTORLLER_NAME, pGroupID);
+	public AudioManagerController(final ControllerManager pControllerManager, final AudioManager pAudioManager, int pEntityGroupID) {
+		super(pControllerManager, CONTORLLER_NAME, pEntityGroupID);
 
 		mAudioManager = pAudioManager;
 

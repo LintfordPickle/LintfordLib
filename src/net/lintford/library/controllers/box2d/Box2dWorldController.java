@@ -36,8 +36,8 @@ public class Box2dWorldController extends BaseController {
 	// Constructors
 	// --------------------------------------
 
-	public Box2dWorldController(ControllerManager pControllerManager, World pWorld, int pEntityID) {
-		super(pControllerManager, CONTROLLER_NAME, pEntityID);
+	public Box2dWorldController(ControllerManager pControllerManager, World pWorld, int pEntityGroupID) {
+		super(pControllerManager, CONTROLLER_NAME, pEntityGroupID);
 
 		mWorld = pWorld;
 

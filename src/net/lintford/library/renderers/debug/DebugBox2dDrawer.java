@@ -28,8 +28,8 @@ public class DebugBox2dDrawer extends BaseRenderer {
 	// Constructor
 	// --------------------------------------
 
-	public DebugBox2dDrawer(RendererManager pRendererManager, World pWorld, int pGroupID) {
-		super(pRendererManager, RENDERER_NAME, pGroupID);
+	public DebugBox2dDrawer(RendererManager pRendererManager, World pWorld, int pEntityGroupID) {
+		super(pRendererManager, RENDERER_NAME, pEntityGroupID);
 
 		mJBox2dDebugDrawer = new JBox2dDebugDrawer(pWorld);
 

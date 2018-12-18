@@ -95,7 +95,7 @@ public class ScreenManager {
 			mScreens.get(i).initialise();
 		}
 
-		mUIHUDController = (UIHUDController) mLWJGLCore.controllerManager().getControllerByNameRequired(UIHUDController.CONTROLLER_NAME, LintfordCore.CORE_ID);
+		mUIHUDController = (UIHUDController) mLWJGLCore.controllerManager().getControllerByNameRequired(UIHUDController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
 
 		mIsInitialised = true;
 

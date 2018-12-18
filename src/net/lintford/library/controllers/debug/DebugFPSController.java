@@ -48,8 +48,8 @@ public class DebugFPSController extends BaseController {
 	// Constructor
 	// --------------------------------------
 
-	public DebugFPSController(final ControllerManager pControllerManager, final int pGroupID) {
-		super(pControllerManager, CONTROLLER_NAME, pGroupID);
+	public DebugFPSController(final ControllerManager pControllerManager, final int pEntityGroupID) {
+		super(pControllerManager, CONTROLLER_NAME, pEntityGroupID);
 
 	}
 

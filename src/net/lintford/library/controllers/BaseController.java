@@ -54,7 +54,7 @@ public abstract class BaseController {
 	// Constructor
 	// --------------------------------------
 
-	public BaseController(final ControllerManager pControllerManager, final String pControllerName, final int pGroupID) {
+	public BaseController(final ControllerManager pControllerManager, final String pControllerName, final int pEntityGroupID) {
 		if (pControllerManager != null) {
 			if (pControllerName.length() == 0)
 				throw new RuntimeException("Controller names cannot be null or empty when registering with a ControllerManager");
@@ -62,13 +62,13 @@ public abstract class BaseController {
 			mControllerManager = pControllerManager;
 			mControllerName = pControllerName;
 
-			if (mUniqueController && mControllerManager.controllerExists(pControllerName, pGroupID)) {
+			if (mUniqueController && mControllerManager.controllerExists(pControllerName, pEntityGroupID)) {
 				throw new RuntimeException("Cannot register two controllers with the same name if they are specified to be unique (" + pControllerName + ")");
 			}
 
-			mControllerManager.addController(this, pGroupID);
+			mControllerManager.addController(this, pEntityGroupID);
 
-			mGroupID = pGroupID;
+			mGroupID = pEntityGroupID;
 
 			mIsActive = true;
 

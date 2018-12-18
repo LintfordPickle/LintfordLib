@@ -35,8 +35,8 @@ import net.lintford.library.options.DisplayManager;
 import net.lintford.library.options.MasterConfig;
 
 /**
- * The LintfordCore tracks the core state of an LWJGL application including a {@link DisplayManager}, {@link ResourceManager}, {@link GameTime}, {@link Camera}, {@link HUD}, {@link InputState} and {@link RenderState}. It
- * also defines the behaviour for creating an OpenGL window.
+ * The LintfordCore tracks the core state of an LWJGL application including a {@link DisplayManager}, {@link ResourceManager}, {@link GameTime}, {@link Camera}, {@link HUD}, {@link InputState} and {@link RenderState}. It also
+ * defines the behaviour for creating an OpenGL window.
  */
 public abstract class LintfordCore {
 
@@ -124,7 +124,7 @@ public abstract class LintfordCore {
 	// Variables
 	// ---------------------------------------------
 
-	public static final int CORE_ID = BaseEntity.getEntityNumber();
+	public static final int CORE_ENTITY_GROUP_ID = BaseEntity.getEntityNumber();
 
 	protected GameInfo mGameInfo;
 	protected MasterConfig mMasterConfig;
@@ -161,8 +161,8 @@ public abstract class LintfordCore {
 	}
 
 	/**
-	 * Returns the instance of {@link InputState} which was created when the LWJGL window was created. InputState is updated per-frame and tracks user input from the mouse and keyboard. null is returned if the LWJGL
-	 * window has not yet been created.
+	 * Returns the instance of {@link InputState} which was created when the LWJGL window was created. InputState is updated per-frame and tracks user input from the mouse and keyboard. null is returned if the LWJGL window has not
+	 * yet been created.
 	 */
 	public InputState input() {
 		return mInputState;
@@ -284,7 +284,7 @@ public abstract class LintfordCore {
 
 		mControllerManager = new ControllerManager(this);
 
-		mResourceController = new ResourceController(mControllerManager, mResourceManager, CORE_ID);
+		mResourceController = new ResourceController(mControllerManager, mResourceManager, CORE_ENTITY_GROUP_ID);
 
 		mHUD = new HUD(mMasterConfig.display());
 		mRenderState = new RenderState();
@@ -319,7 +319,7 @@ public abstract class LintfordCore {
 	 * Implemented in the sub-class. Sets the default state of the application (note. OpenGL context is not available at this point).
 	 */
 	protected void onInitialiseApp() {
-		new UIHUDController(mMasterConfig.display(), mControllerManager, CORE_ID);
+		new UIHUDController(mMasterConfig.display(), mControllerManager, CORE_ENTITY_GROUP_ID);
 
 	}
 
@@ -457,7 +457,7 @@ public abstract class LintfordCore {
 		mInputState.update(this);
 		Debug.debugManager().handleInput(this);
 		mHUD.handleInput(this);
-		mControllerManager.handleInput(this, CORE_ID);
+		mControllerManager.handleInput(this, CORE_ENTITY_GROUP_ID);
 
 	}
 
@@ -469,7 +469,7 @@ public abstract class LintfordCore {
 		mHUD.update(this);
 		if (mGameCamera != null)
 			mGameCamera.update(this);
-		mControllerManager.update(this, CORE_ID);
+		mControllerManager.update(this, CORE_ENTITY_GROUP_ID);
 
 		Debug.debugManager().update(this);
 
@@ -518,7 +518,7 @@ public abstract class LintfordCore {
 		if (pCamera == null)
 			mGameCamera = new Camera(mMasterConfig.display());
 
-		mCameraController = new CameraController(mControllerManager, mGameCamera, CORE_ID);
+		mCameraController = new CameraController(mControllerManager, mGameCamera, CORE_ENTITY_GROUP_ID);
 
 	}
 
@@ -526,7 +526,7 @@ public abstract class LintfordCore {
 		mGameCamera = null;
 
 		if (mCameraController != null) {
-			mControllerManager.removeController(mCameraController, CORE_ID);
+			mControllerManager.removeController(mCameraController, CORE_ENTITY_GROUP_ID);
 			mCameraController = null;
 
 		}

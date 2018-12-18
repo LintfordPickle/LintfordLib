@@ -27,8 +27,8 @@ public class RendererManagerRenderer extends UIWindow {
 	// Constructor
 	// --------------------------------------
 
-	public RendererManagerRenderer(final RendererManager pRendererManager, final int pGroupID) {
-		super(pRendererManager, RENDERER_NAME, pGroupID);
+	public RendererManagerRenderer(final RendererManager pRendererManager, final int pEntityGroupID) {
+		super(pRendererManager, RENDERER_NAME, pEntityGroupID);
 	}
 
 	// --------------------------------------
@@ -39,7 +39,7 @@ public class RendererManagerRenderer extends UIWindow {
 	public void initialise(LintfordCore pCore) {
 		super.initialise(pCore);
 
-		mControllerManagerController = (ControllerManagerController) pCore.controllerManager().getControllerByNameRequired(ControllerManagerController.CONTROLLER_NAME, LintfordCore.CORE_ID);
+		mControllerManagerController = (ControllerManagerController) pCore.controllerManager().getControllerByNameRequired(ControllerManagerController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
 
 	}
 

@@ -266,7 +266,7 @@ public class RendererManager {
 		final int NUM_RENDERERS = mRenderers.size();
 
 		// Handle the base renderer input
-		for (int i = NUM_RENDERERS-1; i >= 0; i--) {
+		for (int i = NUM_RENDERERS - 1; i >= 0; i--) {
 			mRenderers.get(i).handleInput(pCore);
 
 		}
@@ -446,7 +446,7 @@ public class RendererManager {
 	}
 
 	/** Unloads all {@link BaseRenderer} instances registered to this {@link RendererManager} which have the given gorup ID assigned to them. */
-	public void removeRendererGroup(final int pGroupID) {
+	public void removeRendererGroup(final int pEntityGroupID) {
 		// Heap assignment
 		final List<UIWindow> WINDOW_UPDATE_LIST = new ArrayList<>();
 		final int WINDOW_COUNT = mWindowRenderers.size();
@@ -456,7 +456,7 @@ public class RendererManager {
 		}
 
 		for (int i = 0; i < WINDOW_COUNT; i++) {
-			if (WINDOW_UPDATE_LIST.get(i).groupID() == pGroupID) {
+			if (WINDOW_UPDATE_LIST.get(i).entityGroupID() == pEntityGroupID) {
 				// Unload this BaseRenderer instance
 				WINDOW_UPDATE_LIST.get(i).unloadGLContent();
 
@@ -475,7 +475,7 @@ public class RendererManager {
 		}
 
 		for (int i = 0; i < RENDERER_COUNT; i++) {
-			if (RENDERER_UPDATE_LIST.get(i).groupID() == pGroupID) {
+			if (RENDERER_UPDATE_LIST.get(i).entityGroupID() == pEntityGroupID) {
 				// Unload this BaseRenderer instance
 				RENDERER_UPDATE_LIST.get(i).unloadGLContent();
 

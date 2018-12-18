@@ -72,8 +72,8 @@ public class UIHUDController extends BaseController {
 	// Constructor
 	// --------------------------------------
 
-	public UIHUDController(DisplayManager pDisplayManager, ControllerManager pControllerManager, final int pGroupID) {
-		super(pControllerManager, CONTROLLER_NAME, pGroupID);
+	public UIHUDController(DisplayManager pDisplayManager, ControllerManager pControllerManager, final int pEntityGroupID) {
+		super(pControllerManager, CONTROLLER_NAME, pEntityGroupID);
 
 		mDisplayManager = pDisplayManager;
 

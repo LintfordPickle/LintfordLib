@@ -39,8 +39,8 @@ public class GameRendererController extends BaseController {
 	// Constructor
 	// --------------------------------------
 
-	public GameRendererController(ControllerManager pControllerManager, RendererManager pRendererManager, final int pGroupID) {
-		super(pControllerManager, CONTROLLER_NAME, pGroupID);
+	public GameRendererController(ControllerManager pControllerManager, RendererManager pRendererManager, final int pEntityGroupID) {
+		super(pControllerManager, CONTROLLER_NAME, pEntityGroupID);
 
 		mRendererManager = pRendererManager;
 

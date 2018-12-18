@@ -107,8 +107,8 @@ public class ControllerManager {
 
 	}
 
-	public BaseController getControllerByType(Class<?> pClass, int pGroupID) {
-		List<BaseController> lControllerList = controllers(pGroupID);
+	public BaseController getControllerByType(Class<?> pClass, int pEntityGroupID) {
+		List<BaseController> lControllerList = controllers(pEntityGroupID);
 		if (lControllerList == null)
 			return null;
 
@@ -125,15 +125,15 @@ public class ControllerManager {
 	}
 
 	/** Returns the controller with the given name. In case no {@link BaseController} instance with the given name is found (i.e. has not been registered) or has not been initialised, an exception will be thrown. */
-	public BaseController getControllerByNameRequired(String pControllerName, int pGroupID) {
-		final BaseController RESULT = getControllerByName(pControllerName, pGroupID);
+	public BaseController getControllerByNameRequired(String pControllerName, int pEntityGroupID) {
+		final BaseController RESULT = getControllerByName(pControllerName, pEntityGroupID);
 
 		// In case this required controller is missing, then throw an exception.
 		// TODO: Don't throw an exception in the future, rather gracefully quit and inform the player.
 		if (RESULT == null) {
 			Debug.debugManager().logger().e(getClass().getSimpleName(), "Required controller not found: " + pControllerName);
 
-			throw new RuntimeException("Required controller not found: " + pControllerName);
+			throw new RuntimeException(String.format("Required controller not found: %s. Check you are using the correct pGroupEntityID", pControllerName));
 
 		}
 
@@ -141,14 +141,14 @@ public class ControllerManager {
 	}
 
 	/** Returns the controller with the given name. If no controller is found, null is returned. */
-	public BaseController getControllerByName(String pControllerName, int pGroupID) {
+	public BaseController getControllerByName(String pControllerName, int pEntityGroupID) {
 		if (pControllerName == null || pControllerName.length() == 0) {
 			Debug.debugManager().logger().w(getClass().getSimpleName(), "Controller requested but no identifier given");
 
 			return null;
 		}
 
-		List<BaseController> lControllerList = controllers(pGroupID);
+		List<BaseController> lControllerList = controllers(pEntityGroupID);
 		if (lControllerList == null)
 			return null;
 
@@ -164,18 +164,18 @@ public class ControllerManager {
 	}
 
 	/** Returns true if a {@link BaseController} has been registered with the given name. */
-	public boolean controllerExists(final String pControllerName, int pGroupID) {
-		return getControllerByName(pControllerName, pGroupID) != null;
+	public boolean controllerExists(final String pControllerName, int pEntityGroupID) {
+		return getControllerByName(pControllerName, pEntityGroupID) != null;
 	}
 
-	public void addController(BaseController pController, int pGroupID) {
+	public void addController(BaseController pController, int pEntityGroupID) {
 		// Only add one controller of each time (and with unique names).
-		if (getControllerByName(pController.controllerName(), pGroupID) == null) {
-			List<BaseController> lControllerList = controllers(pGroupID);
+		if (getControllerByName(pController.controllerName(), pEntityGroupID) == null) {
+			List<BaseController> lControllerList = controllers(pEntityGroupID);
 			if (lControllerList == null) {
 				// In this case, the ControllerList itself doesn't exit, so we need to create one
 				lControllerList = new ArrayList<>();
-				mControllers.put(pGroupID, lControllerList);
+				mControllers.put(pEntityGroupID, lControllerList);
 
 			}
 
@@ -188,8 +188,8 @@ public class ControllerManager {
 
 	}
 
-	public void removeController(BaseController pController, int pGroupID) {
-		List<BaseController> lControllerList = controllers(pGroupID);
+	public void removeController(BaseController pController, int pEntityGroupID) {
+		List<BaseController> lControllerList = controllers(pEntityGroupID);
 		if (lControllerList == null)
 			return;
 
@@ -208,9 +208,9 @@ public class ControllerManager {
 	}
 
 	/** Unloads all {@link BaseController} instances registered to this {@link ControllerManager} which have the given group ID assigned to them. */
-	public void removeControllerGroup(final int pGroupID) {
+	public void removeControllerGroup(final int pEntityGroupID) {
 		// Heap assignment
-		final List<BaseController> lControllerList = mControllers.get(pGroupID);
+		final List<BaseController> lControllerList = mControllers.get(pEntityGroupID);
 		if (lControllerList == null)
 			return;
 
@@ -221,7 +221,7 @@ public class ControllerManager {
 		}
 
 		lControllerList.clear();
-		mControllers.remove(pGroupID);
+		mControllers.remove(pEntityGroupID);
 
 	}
 

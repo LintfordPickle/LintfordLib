@@ -124,8 +124,8 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 	// Constructor
 	// --------------------------------------
 
-	public UIWindow(final RendererManager pRendererManager, final String pRendererName, final int pGroupID) {
-		super(pRendererManager, pRendererName, pGroupID);
+	public UIWindow(final RendererManager pRendererManager, final String pRendererName, final int pEntityGroupID) {
+		super(pRendererManager, pRendererName, pEntityGroupID);
 
 		mComponents = new ArrayList<>();
 
@@ -162,7 +162,7 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 
 	@Override
 	public void initialise(LintfordCore pCore) {
-		mUIHUDGameController = (UIHUDController) pCore.controllerManager().getControllerByName(UIHUDController.CONTROLLER_NAME, LintfordCore.CORE_ID);
+		mUIHUDGameController = (UIHUDController) pCore.controllerManager().getControllerByName(UIHUDController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
 
 	}
 
@@ -284,7 +284,7 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 			return;
 
 		if (mUIHUDGameController == null) {
-			mUIHUDGameController = (UIHUDController) pCore.controllerManager().getControllerByName(UIHUDController.CONTROLLER_NAME, LintfordCore.CORE_ID);
+			mUIHUDGameController = (UIHUDController) pCore.controllerManager().getControllerByName(UIHUDController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
 			if (mUIHUDGameController == null)
 				return;
 		}
