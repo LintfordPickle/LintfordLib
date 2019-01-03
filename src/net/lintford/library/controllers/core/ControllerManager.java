@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.lwjgl.glfw.GLFW;
+
 import net.lintford.library.controllers.BaseController;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.debug.Debug;
@@ -51,7 +53,18 @@ public class ControllerManager {
 		if (lControllerList == null)
 			return false;
 
-		int lCount = lControllerList.size();
+		if (pCore.input().keyDown(GLFW.GLFW_KEY_F4)) {
+			System.out.println("Controller groung count: " + mControllers.size());
+			final int lCount = lControllerList.size();
+			System.out.println("Controller count: " + lCount);
+			for (int i = 0; i < lCount; i++) {
+				System.out.printf("  %d: %s\n", i, lControllerList.get(i).getClass().getSimpleName());
+				
+			}
+
+		}
+
+		final int lCount = lControllerList.size();
 		for (int i = 0; i < lCount; i++) {
 			if (!lControllerList.get(i).isActive())
 				continue;

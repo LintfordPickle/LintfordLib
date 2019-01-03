@@ -109,14 +109,23 @@ public class LineBatch {
 
 		mShader.unloadGLContent();
 
-		if (mVaoId > -1)
+		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
+		
+		if (mVaoId > -1) {
 			GL30.glDeleteVertexArrays(mVaoId);
 
-		if (mVboId > -1)
+		}
+
+		if (mVboId > -1) {
 			GL15.glDeleteBuffers(mVboId);
+
+		}
 
 		mVaoId = -1;
 		mVboId = -1;
+
+		mBuffer.clear();
+		mBuffer = null;
 
 		mIsLoaded = false;
 

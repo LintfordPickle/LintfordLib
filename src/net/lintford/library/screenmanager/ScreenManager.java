@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 import net.lintford.library.controllers.display.UIHUDController;
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.debug.Debug;
+import net.lintford.library.core.debug.GLDebug;
 import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.fonts.FontManager;
 import net.lintford.library.screenmanager.Screen.ScreenState;
@@ -112,6 +114,9 @@ public class ScreenManager {
 		mToolTip.loadGLContent(pResourceManager);
 		mToastManager.loadGLContent(pResourceManager);
 
+		Debug.debugManager().logger().i(getClass().getSimpleName(), "Finished loadingGLContent");
+		GLDebug.checkGLErrorsException(getClass().getSimpleName());
+
 		mIsLoaded = true;
 	}
 
@@ -125,6 +130,9 @@ public class ScreenManager {
 
 		mToolTip.unloadGLContent();
 		mToastManager.unloadGLContent();
+
+		Debug.debugManager().logger().i(getClass().getSimpleName(), "Finished ScreenManager.unloadGLContent");
+		GLDebug.checkGLErrorsException(getClass().getSimpleName());
 
 		mIsLoaded = false;
 
@@ -196,17 +204,22 @@ public class ScreenManager {
 		if (!mIsInitialised || !mIsLoaded)
 			return;
 
+		GLDebug.checkGLErrorsException(getClass().getSimpleName());
+
 		int lCount = mScreens.size();
 		for (int i = 0; i < lCount; i++) {
 			if (mScreens.get(i).screenState() == ScreenState.Hidden && !mScreens.get(i).showInBackground())
 				continue;
+			GLDebug.checkGLErrorsException(getClass().getSimpleName());
 
 			mScreens.get(i).draw(pCore);
 
+			GLDebug.checkGLErrorsException(getClass().getSimpleName());
+
 		}
 
-		if (mToolTip.active)
-			mToolTip.draw(pCore);
+//		if (mToolTip.active)
+//			mToolTip.draw(pCore);
 
 		// Debug.debugManager().drawers().drawRect(pCore.HUD(), mUIHUDController.HUDRectangle());
 
@@ -224,6 +237,7 @@ public class ScreenManager {
 			for (int i = 0; i < lScreenCount; i++) {
 				Screen lScreen = mScreens.get(i);
 				if (lScreen.getClass().getSimpleName().equals(pScreen.getClass().getSimpleName())) {
+					Debug.debugManager().logger().e(this.getClass().getSimpleName(), "Cannot add second SingletonScreen instance: " + pScreen.getClass().getSimpleName());
 					return;
 
 				}
@@ -283,6 +297,9 @@ public class ScreenManager {
 
 		if (mScreensToUpdate.contains(pScreen))
 			mScreensToUpdate.remove(pScreen);
+
+		Debug.debugManager().logger().i(getClass().getSimpleName(), "Finished unloadingGLContent");
+		GLDebug.checkGLErrorsException(getClass().getSimpleName());
 
 	}
 

@@ -72,7 +72,6 @@ public abstract class Shader {
 	}
 
 	public void unloadGLContent() {
-		// TODO: Shader - do I need to somehow delete the shaders as well (I do not store the ID as a class member though)
 		glDeleteProgram(mShaderID);
 
 	}

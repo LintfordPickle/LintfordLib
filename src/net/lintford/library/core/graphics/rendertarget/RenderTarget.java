@@ -35,8 +35,7 @@ public class RenderTarget {
 	/**
 	 * Sets the texture filter mode for mag. and min. (default: GL11.GL_LINEAR).
 	 * 
-	 * @param pParam
-	 *            The GL11 filter mode
+	 * @param pParam The GL11 filter mode
 	 */
 	public void textureFilter(int pParam) {
 		mTextureFilter = pParam;
@@ -158,6 +157,7 @@ public class RenderTarget {
 			GL30.glFramebufferRenderbuffer(GL30.GL_FRAMEBUFFER, GL30.GL_DEPTH_STENCIL_ATTACHMENT, GL30.GL_RENDERBUFFER, mDepthTextureID); //
 		}
 
+		// TODO: This should gracefully disable the functionality without throwing an Exception ..
 		int lCreationStatus = GL30.glCheckFramebufferStatus(GL30.GL_FRAMEBUFFER);
 		if (lCreationStatus != GL30.GL_FRAMEBUFFER_COMPLETE) {
 			switch (lCreationStatus) {
@@ -202,11 +202,13 @@ public class RenderTarget {
 
 		GL15.glDeleteBuffers(mFramebufferID);
 		mFramebufferID = -1;
+		
 		GL11.glDeleteTextures(mColorTextureID);
 		mColorTextureID = -1;
 
 		if (mDepthBufferEnabled) {
 			GL15.glDeleteBuffers(mDepthTextureID);
+			mDepthTextureID = -1;
 		}
 
 		mIsLoaded = false;

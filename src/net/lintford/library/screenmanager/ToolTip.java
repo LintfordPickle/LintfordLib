@@ -40,12 +40,13 @@ public class ToolTip {
 		mSpriteBatch.loadGLContent(pResourceManager);
 
 		final String lFontPathname = mScreenManager.fontPathname();
-		mMenuFont = pResourceManager.fontManager().loadNewFont(TOOLTIP_FONT_NAME, lFontPathname, 16, true);
+		mMenuFont = pResourceManager.fontManager().loadNewFont(TOOLTIP_FONT_NAME, lFontPathname, 16, true, LintfordCore.CORE_ENTITY_GROUP_ID);
 
 	}
 
 	public void unloadGLContent() {
 		mSpriteBatch.unloadGLContent();
+		mMenuFont = null;
 
 	}
 
@@ -57,11 +58,11 @@ public class ToolTip {
 		active = true;
 
 	}
-	
+
 	public void draw(LintfordCore pCore) {
 		// Draw the tool tip on top
 		final float lTextScale = mScreenManager.UIHUDController().uiTextScaleFactor();
-		
+
 		final float lTextPadding = 5f;
 
 		float lToolTipTextWidth = mMenuFont.bitmap().getStringWidth(mToolTipText, lTextScale);

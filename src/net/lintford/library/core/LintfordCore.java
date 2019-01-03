@@ -193,7 +193,6 @@ public abstract class LintfordCore {
 	 */
 	public ICamera gameCamera() {
 		if (mGameCamera == null) {
-			Debug.debugManager().logger().w(getClass().getSimpleName(), "GameCamera not registered with LWJGLCore! Are you trying to access the game camera outside of a GameScreen?");
 			return ICamera.EMPTY;
 
 		}

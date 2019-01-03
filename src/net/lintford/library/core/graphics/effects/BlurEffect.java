@@ -72,6 +72,7 @@ public class BlurEffect {
 	public void unloadGLContent() {
 		mFullScreenQuad.unloadGLContent();
 		mBlurShader.unloadGLContent();
+		
 	}
 
 	public void render(LintfordCore pCore, RenderTarget pTarget) {

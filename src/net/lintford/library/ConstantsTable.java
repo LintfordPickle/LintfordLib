@@ -7,9 +7,17 @@ import net.lintford.library.core.debug.Debug;
 
 public class ConstantsTable {
 
+	// ---------------------------------------------
+	// Constants
+	// ---------------------------------------------
+	
 	public static final String APP_NAME = "APPLICATION_NAME";
 	public static final String DEBUG_APP = "DEBUG_APP";
 
+	// ---------------------------------------------
+	// Methods
+	// ---------------------------------------------
+	
 	public static void setAppConstants(String pAppName) {
 		ConstantsTable.registerValue(APP_NAME, pAppName);
 	}
@@ -59,9 +67,6 @@ public class ConstantsTable {
 	}
 
 	public static boolean getBooleanValueDef(String pName, boolean pDef) {
-		if (!Debug.debugManager().debugModeEnabled())
-			return false;
-
 		if (constTab.containsKey(pName)) {
 			try {
 				boolean lValue = Boolean.valueOf(constTab.get(pName));
@@ -84,7 +89,7 @@ public class ConstantsTable {
 	}
 
 	// --------------------------------------
-	// Physics Constants to be moved
+	// TODO: Physics Constants to be moved
 	// --------------------------------------
 
 	public static final int BLOCK_SIZE_PIXELS = 16;

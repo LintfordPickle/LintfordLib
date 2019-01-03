@@ -62,14 +62,15 @@ public class TexturedQuad {
 	// --------------------------------------
 
 	public void loadGLContent(ResourceManager pResourceManager) {
-		if(mIsLoaded) return;
+		if (mIsLoaded)
+			return;
 
-		if(mVaoId == -1)
+		if (mVaoId == -1)
 			mVaoId = GL30.glGenVertexArrays();
-			
-		if(mVboId == -1)	
+
+		if (mVboId == -1)
 			mVboId = GL15.glGenBuffers();
-		
+
 		setupVerts();
 
 		mIsLoaded = true;
@@ -77,8 +78,9 @@ public class TexturedQuad {
 	}
 
 	public void unloadGLContent() {
-		if(!mIsLoaded) return;
-		
+		if (!mIsLoaded)
+			return;
+
 		cleanup();
 
 		mIsLoaded = false;
@@ -129,13 +131,15 @@ public class TexturedQuad {
 
 	public void cleanup() {
 		if (mVaoId > -1) {
-			GL15.glDeleteBuffers(mVaoId);
+			GL30.glDeleteVertexArrays(mVaoId);
 			mVaoId = -1;
+
 		}
 
 		if (mVboId > -1) {
 			GL15.glDeleteBuffers(mVboId);
 			mVboId = -1;
+
 		}
 
 	}

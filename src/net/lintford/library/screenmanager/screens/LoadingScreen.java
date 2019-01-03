@@ -76,11 +76,13 @@ public class LoadingScreen extends Screen {
 		for (int i = 0; i < lScreenCount; i++) {
 			if (!lScreenList.get(i).isExiting())
 				lScreenList.get(i).exitScreen();
-
+			
 		}
 
 		lScreenList.clear();
 		lScreenList = null;
+
+		System.gc();
 
 		// create and activate the loading screen
 		LoadingScreen lLoadingScreen = new LoadingScreen(pScreenManager, pLoadingIsSlow, pScreensToLoad);
@@ -95,8 +97,8 @@ public class LoadingScreen extends Screen {
 		mTextureBatch = new TextureBatch();
 		mTextureBatch.loadGLContent(pResourceManager);
 
-		mLoadingTexture = TextureManager.textureManager().loadTexture(LOADING_BACKGROUND_TEXTURE_NAME, "/res/textures/core/loadingScreen.png");
-		mLoadingTextTexture = TextureManager.textureManager().loadTexture(LOADING_TEXT_TEXTURE_NAME, "/res/textures/core/loadingScreenText.png");
+		mLoadingTexture = TextureManager.textureManager().loadTexture(LOADING_BACKGROUND_TEXTURE_NAME, "/res/textures/core/loadingscreen.png");
+		mLoadingTextTexture = TextureManager.textureManager().loadTexture(LOADING_TEXT_TEXTURE_NAME, "/res/textures/core/loadingscreentext.png");
 
 	}
 
@@ -186,8 +188,8 @@ public class LoadingScreen extends Screen {
 			mTextureBatch.begin(pCore.HUD());
 			mTextureBatch.draw(mLoadingTexture, 0, 0, textureWidth, textureHeight, -textureWidth / 2, -textureHeight / 2, textureWidth, textureHeight, -0.1f, 1f, 1f, 1f, 1f);
 			if (mDisplayLoadingText)
-				mTextureBatch.draw(mLoadingTextTexture, 0, 0, textTextureWidth, textTextureHeight, textureWidth / 2 - textTextureWidth - 10, textureHeight / 2 - textTextureHeight - 10, textTextureWidth,
-						textTextureHeight, -0.1f, 1f, 1f, 1f, 1f);
+				mTextureBatch.draw(mLoadingTextTexture, 0, 0, textTextureWidth, textTextureHeight, textureWidth / 2 - textTextureWidth - 10, textureHeight / 2 - textTextureHeight - 10, textTextureWidth, textTextureHeight, -0.1f,
+						1f, 1f, 1f, 1f);
 			mTextureBatch.end();
 
 		}

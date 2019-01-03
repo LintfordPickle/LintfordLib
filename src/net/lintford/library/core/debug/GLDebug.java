@@ -38,40 +38,36 @@ public class GLDebug {
 		case GL11.GL_INVALID_ENUM:
 			Debug.debugManager().logger().e(GLDebug.class.getSimpleName(), "GL_INVALID_ENUM");
 			if (pPrintStackTrace) {
-				Thread.dumpStack();
-				throw new RuntimeException("GL_INVALID_ENUM exception occured");
+				throw new RuntimeException("GL_INVALID_ENUM exception occured: " + pCustomTAG);
 
 			}
 			return true;
 		case GL11.GL_INVALID_VALUE:
 			Debug.debugManager().logger().e(GLDebug.class.getSimpleName(), "GL_INVALID_VALUE");
 			if (pPrintStackTrace) {
-				Thread.dumpStack();
-				throw new RuntimeException("GL_INVALID_VALUE exception occured");
+				throw new RuntimeException("GL_INVALID_VALUE exception occured: " + pCustomTAG);
 
 			}
 			return true;
 		case GL11.GL_INVALID_OPERATION:
 			Debug.debugManager().logger().e(GLDebug.class.getSimpleName(), "GL_INVALID_OPERATION");
 			if (pPrintStackTrace) {
-				Thread.dumpStack();
-				throw new RuntimeException("GL_INVALID_OPERATION exception occured");
+				throw new RuntimeException("GL_INVALID_OPERATION exception occured: " + pCustomTAG);
 			}
 
 			return true;
 		case GL11.GL_OUT_OF_MEMORY:
 			Debug.debugManager().logger().e(GLDebug.class.getSimpleName(), "GL_OUT_OF_MEMORY");
 			if (pPrintStackTrace) {
-				Thread.dumpStack();
-				throw new RuntimeException("GL_OUT_OF_MEMORY exception occured");
+				throw new RuntimeException("GL_OUT_OF_MEMORY exception occured: " + pCustomTAG);
 
 			}
 			return true;
 		case GL30.GL_INVALID_FRAMEBUFFER_OPERATION:
 			Debug.debugManager().logger().e(GLDebug.class.getSimpleName(), "GL_INVALID_FRAMEBUFFER_OPERATION");
 			if (pPrintStackTrace) {
-				Thread.dumpStack();
-				throw new RuntimeException("GL_INVALID_FRAMEBUFFER_OPERATION exception occured");
+				throw new RuntimeException("GL_INVALID_FRAMEBUFFER_OPERATION exception occured: " + pCustomTAG);
+
 			}
 			return true;
 		}

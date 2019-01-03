@@ -4,10 +4,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.camera.ICamera;
 import net.lintford.library.core.debug.Debug;
+import net.lintford.library.core.debug.GLDebug;
 import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.linebatch.LineBatch;
@@ -42,6 +45,7 @@ public class RendererManager {
 	// variables
 	// --------------------------------------
 
+	private int mEntityGroupID;
 	private String mScreenOwner;
 	private LintfordCore mCore;
 	private ResourceManager mResourceManager;
@@ -70,6 +74,8 @@ public class RendererManager {
 	private List<RenderTarget> mRenderTargetAutoResize;
 	private RenderTarget mCurrentTarget;
 	private RenderTarget mUIRenderTarget;
+
+	private IResizeListener mResizeListener;
 
 	// --------------------------------------
 	// Properties
@@ -139,9 +145,10 @@ public class RendererManager {
 	// Constructor
 	// --------------------------------------
 
-	public RendererManager(LintfordCore pCore, String pOwnerName) {
+	public RendererManager(LintfordCore pCore, String pOwnerName, int pEntityGroupID) {
 		mScreenOwner = pOwnerName;
 		mCore = pCore;
+		mEntityGroupID = pEntityGroupID;
 
 		mRenderers = new ArrayList<>();
 		mWindowRenderers = new ArrayList<>();
@@ -190,9 +197,8 @@ public class RendererManager {
 		mTextureBatch.loadGLContent(pResourceManager);
 		mLineBatch.loadGLContent(pResourceManager);
 
-		// TODO: We should add a more concise method for getting fonts which are already loaded...
-		mWindowTitleFont = pResourceManager.fontManager().loadNewFont(WINDOWS_TITLE_FONT_NAME, "res/fonts/OxygenMono-Regular.ttf", 18);
-		mWindowTextFont = pResourceManager.fontManager().loadNewFont(WINDOWS_TEXT_FONT_NAME, "res/fonts/OxygenMono-Regular.ttf", 14);
+		mWindowTitleFont = pResourceManager.fontManager().loadNewFont(WINDOWS_TITLE_FONT_NAME, "res/fonts/OxygenMono-Regular.ttf", 18, mEntityGroupID);
+		mWindowTextFont = pResourceManager.fontManager().loadNewFont(WINDOWS_TEXT_FONT_NAME, "res/fonts/OxygenMono-Regular.ttf", 14, mEntityGroupID);
 
 		// Some windows will use this to orientate themselves to the window
 		mDisplayConfig = pResourceManager.config().display();
@@ -202,12 +208,12 @@ public class RendererManager {
 		for (int i = 0; i < RENDERER_COUNT; i++) {
 			if (!mRenderers.get(i).isLoaded() && mIsLoaded) {
 				mRenderers.get(i).loadGLContent(pResourceManager);
+
 			}
 
 		}
 
-		// Register a window resize listener so we can reload the RenderTargets when the window size changes
-		mDisplayConfig.addResizeListener(new IResizeListener() {
+		mResizeListener = new IResizeListener() {
 
 			@Override
 			public void onResize(final int pWidth, final int pHeight) {
@@ -215,7 +221,10 @@ public class RendererManager {
 
 			}
 
-		});
+		};
+
+		// Register a window resize listener so we can reload the RenderTargets when the window size changes
+		mDisplayConfig.addResizeListener(mResizeListener);
 
 		// TODO: make sure to maintain the correct Aspect Ratio with the window
 		final int lBufferWidth = 1280;
@@ -239,18 +248,39 @@ public class RendererManager {
 		for (int i = 0; i < RENDERER_COUNT; i++) {
 			mRenderers.get(i).unloadGLContent();
 
+			GLDebug.checkGLErrorsException(getClass().getSimpleName());
+
 		}
 
 		mSpriteBatch.unloadGLContent();
 		mTextureBatch.unloadGLContent();
 		mLineBatch.unloadGLContent();
 
+		mUIRenderTarget.unloadGLContent();
+
+		mWindowTextFont.unloadGLContent();
+		mWindowTitleFont.unloadGLContent();
+
+		mDisplayConfig.removeResizeListener(mResizeListener);
+		mDisplayConfig = null;
+
+		mResourceManager = null;
 		mIsLoaded = false;
 
 	}
 
 	public boolean handleInput(LintfordCore pCore) {
 		final int NUM_WINDOW_RENDERERS = mWindowRenderers.size();
+
+		if (pCore.input().keyDown(GLFW.GLFW_KEY_F6)) {
+			final int lCount = mWindowRenderers.size();
+			System.out.printf("RenderManager %d count: %d\n", hashCode(), lCount);
+			for (int i = 0; i < lCount; i++) {
+				System.out.printf("  %d: %s\n", i, mWindowRenderers.get(i).getClass().getSimpleName());
+
+			}
+
+		}
 
 		// We handle the input to the UI Windows in the game with priority.
 		for (int i = 0; i < NUM_WINDOW_RENDERERS; i++) {
@@ -311,6 +341,9 @@ public class RendererManager {
 	}
 
 	public void draw(LintfordCore pCore) {
+		if (pCore.gameCamera() == ICamera.EMPTY)
+			return;
+
 		if (RENDER_GAME_RENDERABLES) {
 			final int RENDERER_COUNT = mRenderers.size();
 			for (int i = 0; i < RENDERER_COUNT; i++) {
@@ -423,6 +456,7 @@ public class RendererManager {
 		mWindowRenderers.clear();
 		mRenderers.clear();
 
+		GLDebug.checkGLErrorsException(getClass().getSimpleName());
 	}
 
 	public void addChangeListener(UIWindowChangeListener pListener) {

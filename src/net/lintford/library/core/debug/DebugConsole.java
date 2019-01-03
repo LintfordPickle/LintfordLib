@@ -204,7 +204,7 @@ public class DebugConsole extends Rectangle implements IBufferedInputCallback, I
 
 		Debug.debugManager().logger().v(getClass().getSimpleName(), "DebugConsole loading GL content");
 
-		mConsoleFont = pResourceManager.fontManager().loadNewFont(CONSOLE_FONT_NAME, "/res/fonts/OxygenMono-Regular.ttf", 16);
+		mConsoleFont = pResourceManager.fontManager().loadNewFont(CONSOLE_FONT_NAME, "/res/fonts/OxygenMono-Regular.ttf", 16, LintfordCore.CORE_ENTITY_GROUP_ID);
 		mSpriteBatch.loadGLContent(pResourceManager);
 
 		mIsLoaded = true;
@@ -250,7 +250,7 @@ public class DebugConsole extends Rectangle implements IBufferedInputCallback, I
 				mHasFocus = false;
 
 			}
-			
+
 		}
 
 		if (mOpen) {
@@ -437,16 +437,16 @@ public class DebugConsole extends Rectangle implements IBufferedInputCallback, I
 			mConsoleFont.draw(PROMT_CHAR, -lDisplay.windowWidth() * 0.5f + PADDING_LEFT, y + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET, Z_DEPTH + 0.1f, 1f);
 			mConsoleFont.draw(mInputText.toString(), -lDisplay.windowWidth() * 0.5f + PADDING_LEFT + lInputTextXOffset, y + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET, Z_DEPTH + 0.1f, 1f);
 			if (mShowCaret && mHasFocus)
-				mConsoleFont.draw(CARET_CHAR, -lDisplay.windowWidth() * 0.5f + PADDING_LEFT + lInputTextXOffset + mConsoleFont.bitmap().getStringWidth(mInputText.toString()),
-						y + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET, Z_DEPTH + 0.1f, 1f);
+				mConsoleFont.draw(CARET_CHAR, -lDisplay.windowWidth() * 0.5f + PADDING_LEFT + lInputTextXOffset + mConsoleFont.bitmap().getStringWidth(mInputText.toString()), y + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET,
+						Z_DEPTH + 0.1f, 1f);
 		}
 
-		//mTAGFilterText.draw(pCore, mSpriteBatch, mConsoleFont, Z_DEPTH + 0.01f);
-		//mMessageFilterText.draw(pCore, mSpriteBatch, mConsoleFont, Z_DEPTH + 0.01f);
+		mTAGFilterText.draw(pCore, mSpriteBatch, mConsoleFont, Z_DEPTH + 0.01f);
+		mMessageFilterText.draw(pCore, mSpriteBatch, mConsoleFont, Z_DEPTH + 0.01f);
 
 		mConsoleFont.end();
 
-		//mScrollBar.draw(pCore, mSpriteBatch, Z_DEPTH + 0.1f);
+		// mScrollBar.draw(pCore, mSpriteBatch, Z_DEPTH + 0.1f);
 
 	}
 

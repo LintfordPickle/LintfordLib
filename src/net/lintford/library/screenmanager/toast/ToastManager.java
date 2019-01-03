@@ -57,8 +57,7 @@ public class ToastManager {
 	public void loadGLContent(ResourceManager pResourceManager) {
 		mTextureBatch.loadGLContent(pResourceManager);
 
-		// TODO: Make this customisable from the application side
-		mFontUnit = pResourceManager.fontManager().getFont(TOAST_FONT_NAME);
+		mFontUnit = pResourceManager.fontManager().getFont(TOAST_FONT_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
 
 	}
 

@@ -326,7 +326,7 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 		// Draw the window title
 		FontUnit lTitleFontUnit = mRendererManager.titleFont();
 		lTitleFontUnit.begin(pCore.HUD());
-		lTitleFontUnit.draw(mWindowTitle, lTitleX, lTitleY + 16f - lTitleFontUnit.fontPointSize() * 0.5f, Z_DEPTH, 1f, 1f, 1f, 1f, lTextScale, -1);
+		lTitleFontUnit.draw(mWindowTitle, lTitleX, lTitleY + 16f - lTitleFontUnit.fontPointSize() * 0.5f, Z_DEPTH, 1f, 0f, 0f, 1f, lTextScale);
 		lTitleFontUnit.end();
 
 		if (mFullContentRectangle.h - contentDisplayArea().h > 0) {

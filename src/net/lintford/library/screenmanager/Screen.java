@@ -2,6 +2,7 @@ package net.lintford.library.screenmanager;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.LintfordCore.GameTime;
+import net.lintford.library.core.debug.GLDebug;
 import net.lintford.library.core.entity.BaseEntity;
 import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.time.TimeSpan;
@@ -138,12 +139,13 @@ public abstract class Screen {
 		entityGroupID = BaseEntity.getEntityNumber();
 
 		mScreenManager = pScreenManager;
-		mRendererManager = new RendererManager(pScreenManager.core(), getClass().getSimpleName());
+		mRendererManager = new RendererManager(pScreenManager.core(), getClass().getSimpleName(), entityGroupID);
 
 		mTransitionOn = new TransitionFadeIn(new TimeSpan(250));
 		mTransitionOff = new TransitionFadeOut(new TimeSpan(250));
 
-		mSingletonScreen = true;
+		// By default, screens are not singleton
+		mSingletonScreen = false;
 
 		mIsLoaded = false;
 		mShowMouseCursor = true; // default on
@@ -170,10 +172,18 @@ public abstract class Screen {
 	public void loadGLContent(ResourceManager pResourceManager) {
 		mRendererManager.loadGLContent(pResourceManager);
 
+		mIsLoaded = true;
+
 	}
 
 	public void unloadGLContent() {
 		mRendererManager.unloadGLContent();
+
+		mScreenManager.core().controllerManager().removeControllerGroup(entityGroupID);
+		mScreenManager.resources().fontManager().unloadFontGroup(entityGroupID);
+
+		mIsLoaded = false;
+
 	}
 
 	public void handleInput(LintfordCore pCore, boolean pAcceptMouse, boolean pAcceptKeyboard) {
@@ -282,6 +292,10 @@ public abstract class Screen {
 
 	/** Called when a {@link Screen} is removed from the {@link ScreenManager}. */
 	public void onScreenRemovedFromScreenManager() {
+		
+		GLDebug.checkGLErrorsException(getClass().getSimpleName());
+		
+		mRendererManager.unloadGLContent();
 		mRendererManager.removeAllListeners();
 		mRendererManager.removeAllRenderers();
 		mRendererManager = null;

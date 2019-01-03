@@ -313,22 +313,22 @@ public class TextureBatch {
 		final float lHalfHPixel = (1f / pTexture.getTextureHeight()) * 0.5f;
 
 		// Vertex 0
-		float x0 = pDX;
-		float y0 = pDY;
-		float u0 = pSX / pTexture.getTextureWidth() + lHalfWPixel;
-		float v0 = pSY / (float) pTexture.getTextureHeight() + lHalfHPixel;
-
-		// Vertex 1
-		float x1 = pDX + pDW;
+		float x1 = pDX;
 		float y1 = pDY;
-		float u1 = (pSX + pSW) / pTexture.getTextureWidth() - lHalfWPixel;
+		float u1 = pSX / pTexture.getTextureWidth() + lHalfWPixel;
 		float v1 = pSY / pTexture.getTextureHeight() + lHalfHPixel;
 
+		// Vertex 1
+		float x2 = pDX + pDW;
+		float y2 = pDY;
+		float u2 = (pSX + pSW) / pTexture.getTextureWidth() - lHalfWPixel;
+		float v2 = pSY / pTexture.getTextureHeight() + lHalfHPixel;
+
 		// Vertex 2
-		float x2 = pDX;
-		float y2 = pDY + pDH;
-		float u2 = pSX / pTexture.getTextureWidth() + lHalfWPixel;
-		float v2 = (pSY + pSH) / pTexture.getTextureHeight() - lHalfHPixel;
+		float x0 = pDX;
+		float y0 = pDY + pDH;
+		float u0 = pSX / pTexture.getTextureWidth() + lHalfWPixel;
+		float v0 = (pSY + pSH) / pTexture.getTextureHeight() - lHalfHPixel;
 
 		// Vertex 3
 		float x3 = pDX + pDW;
@@ -336,12 +336,12 @@ public class TextureBatch {
 		float u3 = (pSX + pSW) / pTexture.getTextureWidth() - lHalfWPixel;
 		float v3 = (pSY + pSH) / pTexture.getTextureHeight() - lHalfHPixel;
 
-		// CCW 102203
+		// 102203
 		addVertToBuffer(x1, y1, pZ, 1f, pR, pG, pB, pA, u1, v1); // 1
 		addVertToBuffer(x0, y0, pZ, 1f, pR, pG, pB, pA, u0, v0); // 0
 		addVertToBuffer(x2, y2, pZ, 1f, pR, pG, pB, pA, u2, v2); // 2
-		addVertToBuffer(x1, y1, pZ, 1f, pR, pG, pB, pA, u1, v1); // 1
 		addVertToBuffer(x2, y2, pZ, 1f, pR, pG, pB, pA, u2, v2); // 2
+		addVertToBuffer(x0, y0, pZ, 1f, pR, pG, pB, pA, u0, v0); // 0
 		addVertToBuffer(x3, y3, pZ, 1f, pR, pG, pB, pA, u3, v3); // 3
 
 		mCurNumSprites++;
@@ -515,13 +515,13 @@ public class TextureBatch {
 		if (!mIsDrawing)
 			return;
 
-		mIsDrawing = false;
 		flush();
+		mIsDrawing = false;
 
 	}
 
 	protected void flush() {
-		if (!mIsLoaded)
+		if (!mIsLoaded || !mIsDrawing)
 			return;
 
 		if (mVertexCount == 0)
@@ -542,10 +542,11 @@ public class TextureBatch {
 		GL20.glEnableVertexAttribArray(1);
 		GL20.glEnableVertexAttribArray(2);
 
-		redraw();
+		int_redraw();
 
 		mBuffer.clear();
 		mCurNumSprites = 0;
+		mVertexCount = 0;
 
 		GLDebug.checkGLErrorsException(getClass().getSimpleName());
 
@@ -557,6 +558,11 @@ public class TextureBatch {
 
 		GL30.glBindVertexArray(mVaoId);
 
+		int_redraw();
+
+	}
+
+	private void int_redraw() {
 		if (mCurrentTexID != -1) {
 			GL13.glActiveTexture(GL13.GL_TEXTURE0);
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, mCurrentTexID);
@@ -570,11 +576,9 @@ public class TextureBatch {
 		mCustomShader.bind();
 
 		GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, mVertexCount);
-
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 
 		mCustomShader.unbind();
-
 	}
 
 }

@@ -22,8 +22,8 @@ public abstract class BaseRenderer {
 	protected boolean mIsLoaded;
 
 	/**
-	 * An entity group ID is assigned to all {@link BaseRenderer} instances. It allows you to programmatically unload batches of particular parts of the game when required (i.e. unload the game controllers when returning
-	 * to the main menu)
+	 * An entity group ID is assigned to all {@link BaseRenderer} instances. It allows you to programmatically unload batches of particular parts of the game when required (i.e. unload the game controllers when returning to the
+	 * main menu)
 	 */
 	protected int mEntityGroupID;
 
@@ -101,7 +101,7 @@ public abstract class BaseRenderer {
 	}
 
 	public void unloadGLContent() {
-		Debug.debugManager().logger().i(TAG, "Unloading GL Content (" + getClass().getSimpleName() + ")");
+		Debug.debugManager().logger().i(TAG, "Unloading GL Content: " + getClass().getSimpleName());
 		mIsLoaded = false;
 
 	}

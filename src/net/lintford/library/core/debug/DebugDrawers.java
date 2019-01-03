@@ -74,7 +74,7 @@ public class DebugDrawers {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
-		mSystemFont = pResourceManager.fontManager().loadNewFont("SystemFont", "/res/fonts/OxygenMono-Regular.ttf", 16, true);
+		mSystemFont = pResourceManager.fontManager().loadNewFont("SystemFont", "/res/fonts/OxygenMono-Regular.ttf", 16, true, LintfordCore.CORE_ENTITY_GROUP_ID);
 
 		mTextureBatch.loadGLContent(pResourceManager);
 		mBasicShader.loadGLContent(pResourceManager);
@@ -262,16 +262,19 @@ public class DebugDrawers {
 	}
 
 	public void startText(ICamera pCamera) {
-		mSystemFont.begin(pCamera);
+		if (mDebugManager.debugManagerEnabled())
+			mSystemFont.begin(pCamera);
 
 	}
 
 	public void drawText(String pText, float pX, float pY) {
-		mSystemFont.draw(pText, pX, pY, -0.01f, 1f, 1f, 1f, 1f, 1f, -1);
+		if (mDebugManager.debugManagerEnabled())
+			mSystemFont.draw(pText, pX, pY, -0.01f, 1f, 1f, 1f, 1f, 1f, -1);
 	}
 
 	public void endText() {
-		mSystemFont.end();
+		if (mDebugManager.debugManagerEnabled())
+			mSystemFont.end();
 
 	}
 

@@ -3,6 +3,7 @@ package net.lintford.library.core.graphics.fonts;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.camera.ICamera;
 import net.lintford.library.core.graphics.ResourceManager;
 
@@ -103,7 +104,6 @@ public class FontManager {
 		// --------------------------------------
 
 		public void loadGLContent(ResourceManager pResourceManager) {
-
 			mBitmapFont = new BitmapFont(mFontName, mFontPath, mFontPointSize, mAntiAlias);
 			mBitmapFont.loadGLContent(pResourceManager);
 
@@ -115,6 +115,8 @@ public class FontManager {
 		}
 
 		public void unloadGLContent() {
+			mBitmapFont.unloadGLContent();
+			mFontSpriteBatch.unloadGLContent();
 			mIsLoaded = false;
 
 		}
@@ -180,10 +182,10 @@ public class FontManager {
 	// --------------------------------------
 
 	private FontUnit mSystemFont;
-	private Map<String, FontUnit> mFontMap;
+	private Map<Integer, Map<String, FontUnit>> mFontMap;
 
 	private ResourceManager mResourceManager;
-	private boolean misLoaded;
+	private boolean mIsLoaded;
 
 	// --------------------------------------
 	// Properties
@@ -200,10 +202,12 @@ public class FontManager {
 	public FontManager() {
 		mFontMap = new HashMap<>();
 
-		mSystemFont = new FontUnit(SYSTEM_FONT_NAME, SYSTEM_FONT_PATH, SYSTEM_FONT_SIZE);
-		mFontMap.put(SYSTEM_FONT_NAME, mSystemFont);
+		mFontMap.put(LintfordCore.CORE_ENTITY_GROUP_ID, new HashMap<>());
 
-		misLoaded = false;
+		mSystemFont = new FontUnit(SYSTEM_FONT_NAME, SYSTEM_FONT_PATH, SYSTEM_FONT_SIZE);
+		mFontMap.get(LintfordCore.CORE_ENTITY_GROUP_ID).put(SYSTEM_FONT_NAME, mSystemFont);
+
+		mIsLoaded = false;
 
 	}
 
@@ -212,19 +216,30 @@ public class FontManager {
 	// --------------------------------------
 
 	public void loadGLContent(ResourceManager pResourceManager) {
-		for (FontUnit lFont : mFontMap.values()) {
-			lFont.loadGLContent(pResourceManager);
+		Map<String, FontUnit> coreFonts = mFontMap.get(LintfordCore.CORE_ENTITY_GROUP_ID);
+
+		// Load the GL Contents of the CORE fonts only
+		if (coreFonts != null) {
+			for (FontUnit lFont : coreFonts.values()) {
+				lFont.loadGLContent(pResourceManager);
+
+			}
 
 		}
 
 		mResourceManager = pResourceManager;
-		misLoaded = true;
+		mIsLoaded = true;
 
 	}
 
 	public void unloadGLContent() {
-		for (FontUnit lFont : mFontMap.values()) {
-			lFont.unloadGLContent();
+		Map<String, FontUnit> coreFonts = mFontMap.get(LintfordCore.CORE_ENTITY_GROUP_ID);
+
+		if (coreFonts != null) {
+			for (FontUnit lFont : coreFonts.values()) {
+				lFont.unloadGLContent();
+
+			}
 
 		}
 
@@ -234,49 +249,74 @@ public class FontManager {
 	// Methods
 	// --------------------------------------
 
-	public FontUnit loadNewFont(String pName, String pFontPath, int pPointSize) {
-		return this.loadNewFont(pName, pFontPath, pPointSize, true, false);
+	public FontUnit loadNewFont(String pName, String pFontPath, int pPointSize, int pEntityGroupID) {
+		return this.loadNewFont(pName, pFontPath, pPointSize, true, false, pEntityGroupID);
 
 	}
 
-	public FontUnit loadNewFont(String pName, String pFontPath, int pPointSize, boolean pReload) {
-		return this.loadNewFont(pName, pFontPath, pPointSize, true, pReload);
+	public FontUnit loadNewFont(String pName, String pFontPath, int pPointSize, boolean pReload, int pEntityGroupID) {
+		return this.loadNewFont(pName, pFontPath, pPointSize, true, pReload, pEntityGroupID);
 
 	}
 
-	public FontUnit loadNewFont(String pName, String pFontPath, int pPointSize, boolean pAntiAlias, boolean pReload) {
+	public FontUnit loadNewFont(String pName, String pFontPath, int pPointSize, boolean pAntiAlias, boolean pReload, int pEntityGroupID) {
+		Map<String, FontUnit> coreFonts = null;
+		if (mFontMap.containsKey(pEntityGroupID)) {
+			coreFonts = mFontMap.get(LintfordCore.CORE_ENTITY_GROUP_ID);
+
+		} else {
+			// Create a new FontGroup for this hash
+			coreFonts = new HashMap<>();
+
+		}
+
 		// First check if this font already exists:
-		if (mFontMap.containsKey(pName)) {
+		if (coreFonts.containsKey(pName)) {
 			if (!pReload)
-				return mFontMap.get(pName);
+				return coreFonts.get(pName);
 
-			mFontMap.remove(pName);
+			coreFonts.remove(pName);
 
 		}
 
 		// First check to see if the fontpath is valid and the font exists
 		FontUnit lNewFont = new FontUnit(pName, pFontPath, pPointSize, pAntiAlias);
-		if (misLoaded) {
-			lNewFont.loadGLContent(mResourceManager);
+		lNewFont.loadGLContent(mResourceManager);
 
-		}
-
-		if (pName.equals(SYSTEM_FONT_NAME)) {
+		if (pEntityGroupID == LintfordCore.CORE_ENTITY_GROUP_ID && pName.equals(SYSTEM_FONT_NAME)) {
 			mSystemFont = lNewFont;
+
 		}
 
-		mFontMap.put(pName, lNewFont);
+		coreFonts.put(pName, lNewFont);
 
 		return lNewFont;
 
 	}
 
-	public FontUnit getFont(String pFontName) {
-		if (mFontMap.containsKey(pFontName)) {
-			return mFontMap.get(pFontName);
+	public FontUnit getFont(String pFontName, int pEntityGroupID) {
+		Map<String, FontUnit> lFontGroup = mFontMap.get(pEntityGroupID);
+		if (lFontGroup.containsKey(pFontName)) {
+			return lFontGroup.get(pFontName);
+
 		}
 
 		return mSystemFont;
+
+	}
+
+	public void unloadFontGroup(int pEntityGroupID) {
+		Map<String, FontUnit> lFontGroup = mFontMap.get(pEntityGroupID);
+		if (lFontGroup != null) {
+			for (FontUnit lFont : lFontGroup.values()) {
+				lFont.unloadGLContent();
+
+			}
+
+		}
+
+		lFontGroup = null;
+		mFontMap.remove(pEntityGroupID);
 
 	}
 
