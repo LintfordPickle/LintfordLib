@@ -1,9 +1,6 @@
 package net.lintford.library.core.maths;
 
 import java.io.Serializable;
-import java.nio.FloatBuffer;
-
-import org.lwjgl.BufferUtils;
 
 /** A column-major (down-then across) Matrix4f class */
 public class Matrix4f implements Serializable {
@@ -21,7 +18,6 @@ public class Matrix4f implements Serializable {
 	// --------------------------------------
 
 	private static Vector3f TEMP_VECTOR = new Vector3f();
-	private transient FloatBuffer mMatrixBuffer;
 
 	public float m00, m01, m02, m03;
 	public float m10, m11, m12, m13;
@@ -43,7 +39,6 @@ public class Matrix4f implements Serializable {
 	// --------------------------------------
 
 	public void initialise() {
-		mMatrixBuffer = BufferUtils.createFloatBuffer(16);
 
 	}
 
@@ -217,53 +212,6 @@ public class Matrix4f implements Serializable {
 		m12 = y * z * (1f - c) - x * s;
 		m22 = z * z * (1f - c) + c;
 
-	}
-
-	/** @return The internal FloatBuffer instance containing an updated col-maj matrix data. */
-	public FloatBuffer getBuffer() {
-		mMatrixBuffer.clear();
-
-		// Col Major (Col elements are next to each other in memory)
-		mMatrixBuffer.put(m00).put(m10).put(m20).put(m30);
-		mMatrixBuffer.put(m01).put(m11).put(m21).put(m31);
-		mMatrixBuffer.put(m02).put(m12).put(m22).put(m32);
-		mMatrixBuffer.put(m03).put(m13).put(m23).put(m33);
-
-		mMatrixBuffer.flip();
-		return mMatrixBuffer;
-	}
-
-	/**
-	 * According to opengl.org, a col-maj matrix has translation elements at position 15,16 and 17. (http://www.opengl.org/archives/resources/faq/technical/transformations.htm)
-	 * 
-	 * @return A FloatBuffer containing a col-maj matrix
-	 */
-	public FloatBuffer copyToBuffer(final FloatBuffer pBuffer) {
-		if (pBuffer == null)
-			return null;
-
-		pBuffer.clear();
-
-		pBuffer.put(m00).put(m10).put(m20).put(m30);
-		pBuffer.put(m01).put(m11).put(m21).put(m31);
-		pBuffer.put(m02).put(m12).put(m22).put(m32);
-		pBuffer.put(m03).put(m13).put(m23).put(m33);
-
-		return pBuffer;
-	}
-
-	/** @return A FloatBuffer containing a row-maj matrix */
-	public FloatBuffer getBufferTranspose() {
-		mMatrixBuffer.clear();
-
-		mMatrixBuffer.put(m00).put(m01).put(m02).put(m03);
-		mMatrixBuffer.put(m10).put(m11).put(m12).put(m13);
-		mMatrixBuffer.put(m20).put(m21).put(m22).put(m23);
-		mMatrixBuffer.put(m30).put(m31).put(m32).put(m33);
-
-		mMatrixBuffer.flip();
-
-		return mMatrixBuffer;
 	}
 
 	// --------------------------------------

@@ -2,11 +2,11 @@ package net.lintford.library.core.graphics.polybatch;
 
 import java.nio.FloatBuffer;
 
-import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
+import org.lwjgl.system.MemoryUtil;
 
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.camera.ICamera;
@@ -61,8 +61,6 @@ public class PolyBatch {
 
 		a = r = g = b = 1f;
 
-		mBuffer = BufferUtils.createFloatBuffer(MAX_LINES * NUM_VERTS_PER_LINE * VertexDataStructurePC.stride);
-
 		mModelMatrix = new Matrix4f();
 		mIsLoaded = false;
 	}
@@ -83,6 +81,8 @@ public class PolyBatch {
 		if (mVboId == -1)
 			mVboId = GL15.glGenBuffers();
 
+		mBuffer = MemoryUtil.memAllocFloat(MAX_LINES * NUM_VERTS_PER_LINE * VertexDataStructurePC.stride);
+
 		mIsLoaded = true;
 
 	}
@@ -101,6 +101,8 @@ public class PolyBatch {
 
 		mVaoId = -1;
 		mVboId = -1;
+
+		MemoryUtil.memFree(mBuffer);
 
 		mIsLoaded = false;
 

@@ -2,6 +2,7 @@ package net.lintford.library.core.graphics.shaders;
 
 import org.lwjgl.opengl.GL20;
 
+import net.lintford.library.core.maths.MathUtil;
 import net.lintford.library.core.maths.Matrix4f;
 
 public class ShaderMVP_PT extends Shader {
@@ -74,15 +75,15 @@ public class ShaderMVP_PT extends Shader {
 		super.update();
 
 		if (mProjectionMatrixLocation != -1 && mProjectionMatrix != null) {
-			GL20.glUniformMatrix4fv(mProjectionMatrixLocation, false, mProjectionMatrix.getBuffer());
+			GL20.glUniformMatrix4fv(mProjectionMatrixLocation, false, MathUtil.getMatBufferColMaj(mProjectionMatrix));
 		}
 
 		if (mViewMatrixLocation != -1 && mViewMatrix != null) {
-			GL20.glUniformMatrix4fv(mViewMatrixLocation, false, mViewMatrix.getBuffer());
+			GL20.glUniformMatrix4fv(mViewMatrixLocation, false, MathUtil.getMatBufferColMaj(mViewMatrix));
 		}
 
 		if (mModelMatrixLocation != -1 && mModelMatrix != null) {
-			GL20.glUniformMatrix4fv(mModelMatrixLocation, false, mModelMatrix.getBuffer());
+			GL20.glUniformMatrix4fv(mModelMatrixLocation, false, MathUtil.getMatBufferColMaj(mModelMatrix));
 		}
 
 	}

@@ -2,12 +2,12 @@ package net.lintford.library.core.graphics.textures.texturebatch;
 
 import java.nio.FloatBuffer;
 
-import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
+import org.lwjgl.system.MemoryUtil;
 
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.camera.ICamera;
@@ -126,8 +126,6 @@ public class TextureBatch {
 		mModelMatrix = new Matrix4f();
 		mTempVector = new Vector4f();
 
-		mBuffer = BufferUtils.createFloatBuffer(MAX_SPRITES * NUM_VERTS_PER_SPRITE * stride);
-
 	}
 
 	// --------------------------------------
@@ -147,6 +145,8 @@ public class TextureBatch {
 
 		if (mVboId == -1)
 			mVboId = GL15.glGenBuffers();
+
+		mBuffer = MemoryUtil.memAllocFloat(MAX_SPRITES * NUM_VERTS_PER_SPRITE * stride);
 
 		mIsLoaded = true;
 	}
@@ -168,9 +168,11 @@ public class TextureBatch {
 			mVboId = -1;
 
 		}
-		
+
+		MemoryUtil.memFree(mBuffer);
+
 		mIsLoaded = false;
-		
+
 	}
 
 	// --------------------------------------

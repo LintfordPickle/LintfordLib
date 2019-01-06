@@ -3,11 +3,57 @@ package net.lintford.library.core.graphics.fonts;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.lintford.library.core.EntityGroupManager;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.camera.ICamera;
+import net.lintford.library.core.debug.Debug;
 
-public class FontManager {
+public class FontManager extends EntityGroupManager {
+
+	public class FontGroup {
+
+		// --------------------------------------
+		// Variables
+		// --------------------------------------
+
+		Map<String, FontUnit> mFontMap;
+
+		boolean automaticUnload = true; // False for CORE resources
+		int entityGroupID;
+		String name = "";
+		int referenceCount = 0;
+
+		// --------------------------------------
+		// Properties
+		// --------------------------------------
+
+		public FontUnit getFont(String pFontName, int pEntityGroupID) {
+			if (mFontMap.containsKey(pFontName)) {
+				return mFontMap.get(pFontName);
+
+			}
+
+			return mSystemFont;
+
+		}
+
+		public Map<String, FontUnit> fontMap() {
+			return mFontMap;
+		}
+
+		// --------------------------------------
+		// Constructor
+		// --------------------------------------
+
+		public FontGroup(int pEntityGroupID) {
+			mFontMap = new HashMap<>();
+
+			entityGroupID = pEntityGroupID;
+
+		}
+
+	}
 
 	// FIXME: This seems to be redundant - looks just like AWTBitmapFontSpriteBatch with more fluff!
 	public class FontUnit {
@@ -188,7 +234,7 @@ public class FontManager {
 	// --------------------------------------
 
 	private FontUnit mSystemFont;
-	private Map<Integer, Map<String, FontUnit>> mFontMap;
+	private Map<Integer, FontGroup> mFontGroupMap;
 
 	private ResourceManager mResourceManager;
 
@@ -200,17 +246,29 @@ public class FontManager {
 		return mSystemFont;
 	}
 
+	public int fontGroupCount() {
+		return mFontGroupMap.size();
+	}
+
+	public Map<Integer, FontGroup> fontGroups() {
+		return mFontGroupMap;
+	}
+
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
 	public FontManager() {
-		mFontMap = new HashMap<>();
+		mFontGroupMap = new HashMap<>();
+		FontGroup lCoreFontGroup = new FontGroup(LintfordCore.CORE_ENTITY_GROUP_ID);
 
-		mFontMap.put(LintfordCore.CORE_ENTITY_GROUP_ID, new HashMap<>());
+		lCoreFontGroup.automaticUnload = false;
+		lCoreFontGroup.referenceCount = 1;
+
+		mFontGroupMap.put(LintfordCore.CORE_ENTITY_GROUP_ID, lCoreFontGroup);
 
 		mSystemFont = new FontUnit(SYSTEM_FONT_NAME, SYSTEM_FONT_PATH, SYSTEM_FONT_SIZE, LintfordCore.CORE_ENTITY_GROUP_ID);
-		mFontMap.get(LintfordCore.CORE_ENTITY_GROUP_ID).put(SYSTEM_FONT_NAME, mSystemFont);
+		mFontGroupMap.get(LintfordCore.CORE_ENTITY_GROUP_ID).mFontMap.put(SYSTEM_FONT_NAME, mSystemFont);
 
 	}
 
@@ -219,11 +277,11 @@ public class FontManager {
 	// --------------------------------------
 
 	public void loadGLContent(ResourceManager pResourceManager) {
-		Map<String, FontUnit> coreFonts = mFontMap.get(LintfordCore.CORE_ENTITY_GROUP_ID);
+		FontGroup coreFonts = mFontGroupMap.get(LintfordCore.CORE_ENTITY_GROUP_ID);
 
 		// Load the GL Contents of the CORE fonts only
 		if (coreFonts != null) {
-			for (FontUnit lFont : coreFonts.values()) {
+			for (FontUnit lFont : coreFonts.mFontMap.values()) {
 				lFont.loadGLContent(pResourceManager);
 
 			}
@@ -235,10 +293,10 @@ public class FontManager {
 	}
 
 	public void unloadGLContent() {
-		Map<String, FontUnit> coreFonts = mFontMap.get(LintfordCore.CORE_ENTITY_GROUP_ID);
+		FontGroup coreFonts = mFontGroupMap.get(LintfordCore.CORE_ENTITY_GROUP_ID);
 
 		if (coreFonts != null) {
-			for (FontUnit lFont : coreFonts.values()) {
+			for (FontUnit lFont : coreFonts.mFontMap.values()) {
 				lFont.unloadGLContent();
 
 			}
@@ -262,19 +320,20 @@ public class FontManager {
 	}
 
 	public FontUnit loadNewFont(String pName, String pFontPath, int pPointSize, boolean pAntiAlias, boolean pReload, int pEntityGroupID) {
-		Map<String, FontUnit> lFontGroup = mFontMap.get(pEntityGroupID);
+		FontGroup lFontGroup = mFontGroupMap.get(pEntityGroupID);
+
 		if (lFontGroup == null) {
-			lFontGroup = new HashMap<>();
-			mFontMap.put(pEntityGroupID, lFontGroup);
+			Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Cannot load font %s for EntityGroupID %d: EntityGroupID does not exist!", pName, pEntityGroupID));
+			return null;
 
 		}
 
 		// First check if this font already exists:
-		if (lFontGroup.containsKey(pName)) {
+		if (lFontGroup.mFontMap.containsKey(pName)) {
 			if (!pReload)
-				return lFontGroup.get(pName);
+				return lFontGroup.mFontMap.get(pName);
 
-			lFontGroup.remove(pName);
+			lFontGroup.mFontMap.remove(pName);
 
 		}
 
@@ -287,16 +346,20 @@ public class FontManager {
 
 		}
 
-		lFontGroup.put(pName, lNewFont);
+		lFontGroup.mFontMap.put(pName, lNewFont);
 
 		return lNewFont;
 
 	}
 
 	public FontUnit getFont(String pFontName, int pEntityGroupID) {
-		Map<String, FontUnit> lFontGroup = mFontMap.get(pEntityGroupID);
-		if (lFontGroup.containsKey(pFontName)) {
-			return lFontGroup.get(pFontName);
+		FontGroup lFontGroup = mFontGroupMap.get(pEntityGroupID);
+
+		if (lFontGroup == null)
+			return null;
+
+		if (lFontGroup.mFontMap.containsKey(pFontName)) {
+			return lFontGroup.mFontMap.get(pFontName);
 
 		}
 
@@ -305,9 +368,9 @@ public class FontManager {
 	}
 
 	public void unloadFontGroup(int pEntityGroupID) {
-		Map<String, FontUnit> lFontGroup = mFontMap.get(pEntityGroupID);
+		FontGroup lFontGroup = mFontGroupMap.get(pEntityGroupID);
 		if (lFontGroup != null) {
-			for (FontUnit lFont : lFontGroup.values()) {
+			for (FontUnit lFont : lFontGroup.mFontMap.values()) {
 				lFont.unloadGLContent();
 
 			}
@@ -315,7 +378,54 @@ public class FontManager {
 		}
 
 		lFontGroup = null;
-		mFontMap.remove(pEntityGroupID);
+		mFontGroupMap.remove(pEntityGroupID);
+
+	}
+
+	@Override
+	public int increaseReferenceCounts(int pEntityGroupID) {
+		FontGroup lFontGroup = mFontGroupMap.get(pEntityGroupID);
+
+		if (lFontGroup == null) {
+			lFontGroup = new FontGroup(pEntityGroupID);
+			lFontGroup.referenceCount = 1;
+
+			mFontGroupMap.put(pEntityGroupID, lFontGroup);
+
+		} else {
+			lFontGroup.referenceCount++;
+
+		}
+
+		return lFontGroup.referenceCount;
+
+	}
+
+	@Override
+	public int decreaseReferenceCounts(int pEntityGroupID) {
+		FontGroup lTextureGroup = mFontGroupMap.get(pEntityGroupID);
+
+		// Create a new TextureGroup for this EntityGroupID if one doesn't exist
+		if (lTextureGroup == null) {
+			return 0;
+
+		} else {
+			lTextureGroup.referenceCount--;
+
+		}
+
+		if (lTextureGroup.referenceCount <= 0) {
+			// Unload textures for this entityGroupID
+			// unloadEntityGroup(pEntityGroupID);
+
+			mFontGroupMap.remove(pEntityGroupID);
+			lTextureGroup = null;
+
+			return 0;
+
+		}
+
+		return lTextureGroup.referenceCount;
 
 	}
 

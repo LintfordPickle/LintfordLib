@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import net.lintford.library.core.ResourceManager;
+import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.graphics.sprites.SpriteDefinition;
 import net.lintford.library.core.graphics.sprites.SpriteFrame;
 import net.lintford.library.core.graphics.sprites.SpriteInstance;
@@ -100,17 +101,16 @@ public class SpriteSheetDef {
 	// Constructor
 	// --------------------------------------
 
-	public SpriteSheetDef(int pEntityGroupdID) {
+	public SpriteSheetDef() {
 		frameMap = new HashMap<>();
 		spriteMap = new HashMap<>();
 		spriteInstancePool = new ArrayList<>();
-		mEntityGroupID = pEntityGroupdID;
 
 	}
 
 	/** Creates a new instance of {@link SpriteSheetDef} as assigns it the given name. */
-	public SpriteSheetDef(final String pSpriteSheetName, int pEntityGroupdID) {
-		this(pEntityGroupdID);
+	public SpriteSheetDef(final String pSpriteSheetName) {
+		this();
 		spriteSheetName = pSpriteSheetName;
 
 	}
@@ -119,8 +119,13 @@ public class SpriteSheetDef {
 	// Core-Methods
 	// --------------------------------------
 
-	/** Loads the associated texture. */
 	public void loadGLContent(ResourceManager pResourceManager) {
+		loadGLContent(pResourceManager, mEntityGroupID);
+
+	}
+
+	/** Loads the associated texture. */
+	public void loadGLContent(ResourceManager pResourceManager, int pEntityGroupID) {
 		// All SpriteSheets require a valid texture
 		if (textureName == null || textureName.length() == 0 || textureFilename == null || textureFilename.length() == 0) {
 			System.err.println("SpriteSheet texture name and filename cannot be null!");
@@ -128,12 +133,14 @@ public class SpriteSheetDef {
 
 		}
 
+		mEntityGroupID = pEntityGroupID;
+
 		// If the texture has already been loaded, the TextureManager will return the texture instance so we can store it in this SpriteSheet instance.
 		texture = pResourceManager.textureManager().loadTexture(textureName, textureFilename, mEntityGroupID);
 
 		// Check that the texture was loaded correctly.
 		if (texture == null) {
-			System.err.println("Error while loading texture: " + textureFilename);
+			Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Cannot load SpriteSheetDef '%s' texture %s for EntityGroupID %d.", spriteSheetName, textureName, pEntityGroupID));
 			return;
 
 		}
@@ -233,6 +240,9 @@ public class SpriteSheetDef {
 
 	private SpriteInstance getFreeInstance() {
 		SpriteInstance lReturnInstance = null;
+
+		if (spriteInstancePool == null)
+			spriteInstancePool = new ArrayList<>();
 
 		final int POOL_SIZE = spriteInstancePool.size();
 		for (int i = 0; i < POOL_SIZE; i++) {

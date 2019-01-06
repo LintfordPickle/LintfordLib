@@ -203,11 +203,13 @@ public class ResourceManager {
 
 	public void increaseReferenceCounts(int pEntityGroupID) {
 		mTextureManager.increaseReferenceCounts(pEntityGroupID);
+		mFontManager.increaseReferenceCounts(pEntityGroupID);
 
 	}
 
 	public void decreaseReferenceCounts(int pEntityGroupID) {
 		mTextureManager.decreaseReferenceCounts(pEntityGroupID);
+		mFontManager.decreaseReferenceCounts(pEntityGroupID);
 
 	}
 

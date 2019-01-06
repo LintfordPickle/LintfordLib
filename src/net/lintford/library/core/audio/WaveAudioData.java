@@ -20,6 +20,7 @@ import org.lwjgl.openal.AL10;
 import org.lwjgl.stb.STBVorbis;
 import org.lwjgl.stb.STBVorbisInfo;
 
+// FIXME: Fix memory allocations (https://github.com/LWJGL/lwjgl3-wiki/wiki/1.3.-Memory-FAQ) - do not use BufferUtils (cannot freely free resources)!
 public class WaveAudioData extends AudioData {
 
 	// --------------------------------------
@@ -51,11 +52,11 @@ public class WaveAudioData extends AudioData {
 
 		WaveData waveFile = WaveData.create(pFilename);
 
-		if(waveFile == null){
+		if (waveFile == null) {
 			return false;
-			
+
 		}
-		
+
 		AL10.alBufferData(mBufferID, waveFile.format, waveFile.data, waveFile.samplerate);
 		waveFile.dispose();
 
@@ -95,17 +96,16 @@ public class WaveAudioData extends AudioData {
 	}
 
 	// TODO (John): Move this into a dedicated helper class for resource loading
-	/** Reads the specified resource and returns the raw data as a ByteBuffer.
+	/**
+	 * Reads the specified resource and returns the raw data as a ByteBuffer.
 	 *
-	 * @param resource
-	 *            the resource to read
-	 * @param bufferSize
-	 *            the initial buffer size
+	 * @param resource   the resource to read
+	 * @param bufferSize the initial buffer size
 	 *
 	 * @return the resource data
 	 *
-	 * @throws IOException
-	 *             if an IO error occurs */
+	 * @throws IOException if an IO error occurs
+	 */
 	public static ByteBuffer ioResourceToByteBuffer(String resource, int bufferSize) throws IOException {
 		ByteBuffer buffer;
 

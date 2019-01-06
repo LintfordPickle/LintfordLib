@@ -72,6 +72,7 @@ public abstract class Shader {
 	}
 
 	public void unloadGLContent() {
+		glUseProgram(0);
 		glDeleteProgram(mShaderID);
 
 	}

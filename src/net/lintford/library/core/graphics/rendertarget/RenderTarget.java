@@ -1,10 +1,14 @@
 package net.lintford.library.core.graphics.rendertarget;
 
-import org.lwjgl.BufferUtils;
+import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER;
+
+import java.nio.FloatBuffer;
+
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL30;
+import org.lwjgl.system.MemoryUtil;
 
 public class RenderTarget {
 
@@ -15,18 +19,18 @@ public class RenderTarget {
 	public String targetName;
 	private int mColorTextureID;
 	private int mDepthTextureID;
-	private int mStencilTextureID;
 	private int mFramebufferID;
 	private int mTextureFilter;
 	private int mTextureWrapModeS;
 	private int mTextureWrapModeT;
 	private boolean mDepthBufferEnabled;
-	private boolean mStencilBufferEnabled;
 	private boolean mIsLoaded;
 
 	private int mWidth;
 	private int mHeight;
 	private float mScale;
+
+	private FloatBuffer mTextureBufferData;
 
 	// --------------------------------------
 	// Properties
@@ -122,6 +126,8 @@ public class RenderTarget {
 		mHeight = pHeight;
 		mScale = pScale;
 
+		createFloatBuffer();
+
 		mFramebufferID = GL30.glGenFramebuffers(); // gen container for texture and optional depth buffer
 		mColorTextureID = GL11.glGenTextures(); // gen texture to hold RGB data
 
@@ -132,7 +138,7 @@ public class RenderTarget {
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, mColorTextureID);
 
 		// Create an empty texture
-		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, mWidth, mHeight, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, BufferUtils.createByteBuffer(mWidth * mHeight * 4));
+		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, mWidth, mHeight, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, mTextureBufferData);
 
 		// Set the texture filtering mode
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, mTextureFilter);
@@ -143,12 +149,11 @@ public class RenderTarget {
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL12.GL_CLAMP_TO_EDGE);
 
 		// Configure the frame buffer
-		GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0, GL11.GL_TEXTURE_2D, mColorTextureID, 0);
+		GL30.glFramebufferTexture2D(GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0, GL11.GL_TEXTURE_2D, mColorTextureID, 0);
 
 		GL11.glDrawBuffer(GL30.GL_COLOR_ATTACHMENT0);
 
 		// Depth buffer
-		// TODO: Extend this class to be more flexible with regard to buffer sizes (def. 16-bit depth should be enough)
 		mDepthBufferEnabled = true;
 		if (mDepthBufferEnabled) {
 			mDepthTextureID = GL30.glGenRenderbuffers();
@@ -157,7 +162,6 @@ public class RenderTarget {
 			GL30.glFramebufferRenderbuffer(GL30.GL_FRAMEBUFFER, GL30.GL_DEPTH_STENCIL_ATTACHMENT, GL30.GL_RENDERBUFFER, mDepthTextureID); //
 		}
 
-		// TODO: This should gracefully disable the functionality without throwing an Exception ..
 		int lCreationStatus = GL30.glCheckFramebufferStatus(GL30.GL_FRAMEBUFFER);
 		if (lCreationStatus != GL30.GL_FRAMEBUFFER_COMPLETE) {
 			switch (lCreationStatus) {
@@ -202,7 +206,7 @@ public class RenderTarget {
 
 		GL15.glDeleteBuffers(mFramebufferID);
 		mFramebufferID = -1;
-		
+
 		GL11.glDeleteTextures(mColorTextureID);
 		mColorTextureID = -1;
 
@@ -233,6 +237,8 @@ public class RenderTarget {
 		mWidth = pWidth;
 		mHeight = pHeight;
 
+		createFloatBuffer();
+
 		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, mFramebufferID);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, mColorTextureID);
 
@@ -245,7 +251,7 @@ public class RenderTarget {
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL12.GL_CLAMP_TO_EDGE);
 
 		// Create an empty texture
-		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, mWidth, mHeight, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, BufferUtils.createByteBuffer(mWidth * mHeight * 4));
+		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, mWidth, mHeight, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, mTextureBufferData);
 
 		if (mDepthBufferEnabled) {
 			GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, mDepthTextureID);
@@ -255,6 +261,22 @@ public class RenderTarget {
 
 		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
 
+	}
+
+	private void createFloatBuffer() {
+		final int lNewSize = mWidth * mHeight * 4;
+		if (mTextureBufferData != null) {
+			if (mTextureBufferData.capacity() != lNewSize) {
+				MemoryUtil.memFree(mTextureBufferData);
+				mTextureBufferData = MemoryUtil.memAllocFloat(lNewSize);
+			}
+
+			mTextureBufferData.clear();
+
+		} else {
+			mTextureBufferData = MemoryUtil.memAllocFloat(lNewSize);
+
+		}
 	}
 
 }

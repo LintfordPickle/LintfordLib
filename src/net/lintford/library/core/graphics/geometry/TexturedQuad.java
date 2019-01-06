@@ -2,11 +2,11 @@ package net.lintford.library.core.graphics.geometry;
 
 import java.nio.FloatBuffer;
 
-import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
+import org.lwjgl.system.MemoryUtil;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
@@ -24,6 +24,7 @@ public class TexturedQuad {
 	protected int mVboId = -1;
 	protected boolean mIsLoaded;
 	protected float mZDepth;
+	protected FloatBuffer mBuffer;
 
 	// --------------------------------------
 	// Properties
@@ -71,6 +72,8 @@ public class TexturedQuad {
 		if (mVboId == -1)
 			mVboId = GL15.glGenBuffers();
 
+		mBuffer = MemoryUtil.memAllocFloat(6 * VertexDataStructurePT.stride);
+
 		setupVerts();
 
 		mIsLoaded = true;
@@ -82,6 +85,12 @@ public class TexturedQuad {
 			return;
 
 		cleanup();
+
+		if (mBuffer != null) {
+			MemoryUtil.memFree(mBuffer);
+			mBuffer = null;
+
+		}
 
 		mIsLoaded = false;
 
@@ -104,23 +113,20 @@ public class TexturedQuad {
 		lNewVertex3.xyzw(.5f, .5f, 0f, 1f);
 		lNewVertex3.uv(1, 0);
 
-		// copy vertices to the float buffer
-		FloatBuffer lBuffer = BufferUtils.createFloatBuffer(6 * VertexDataStructurePT.stride);
+		mBuffer.put(lNewVertex0.getElements());
+		mBuffer.put(lNewVertex1.getElements());
+		mBuffer.put(lNewVertex2.getElements());
 
-		lBuffer.put(lNewVertex0.getElements());
-		lBuffer.put(lNewVertex1.getElements());
-		lBuffer.put(lNewVertex2.getElements());
+		mBuffer.put(lNewVertex2.getElements());
+		mBuffer.put(lNewVertex3.getElements());
+		mBuffer.put(lNewVertex0.getElements());
 
-		lBuffer.put(lNewVertex2.getElements());
-		lBuffer.put(lNewVertex3.getElements());
-		lBuffer.put(lNewVertex0.getElements());
-
-		lBuffer.flip();
+		mBuffer.flip();
 
 		GL30.glBindVertexArray(mVaoId);
 
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, mVboId);
-		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, lBuffer, GL15.GL_STATIC_DRAW);
+		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, mBuffer, GL15.GL_STATIC_DRAW);
 
 		GL20.glVertexAttribPointer(0, VertexDataStructurePT.positionElementCount, GL11.GL_FLOAT, false, VertexDataStructurePT.stride, VertexDataStructurePT.positionByteOffset);
 		GL20.glVertexAttribPointer(1, VertexDataStructurePT.textureElementCount, GL11.GL_FLOAT, false, VertexDataStructurePT.stride, VertexDataStructurePT.textureByteOffset);

@@ -9,6 +9,7 @@ import net.lintford.library.controllers.BaseController;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.Debug;
+import net.lintford.library.core.graphics.fonts.FontManager.FontGroup;
 import net.lintford.library.core.graphics.textures.TextureManager.TextureGroup;
 
 public class ResourceController extends BaseController {
@@ -69,6 +70,20 @@ public class ResourceController extends BaseController {
 			while (it.hasNext()) {
 				Entry<Integer, TextureGroup> lEntryPair = it.next();
 				Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("  EntityGroupID (%d) has %d textures loaded", lEntryPair.getKey(), lEntryPair.getValue().textureMap().size()));
+
+			}
+
+		}
+
+		if (pCore.input().keyDownTimed(GLFW.GLFW_KEY_F6)) {
+			Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("Font Manager"));
+			Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("  Entity Group Count: &d", mResourceManager.fontManager().fontGroupCount()));
+
+			Iterator<Entry<Integer, FontGroup>> it = mResourceManager.fontManager().fontGroups().entrySet().iterator();
+
+			while (it.hasNext()) {
+				Entry<Integer, FontGroup> lEntryPair = it.next();
+				Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("  EntityGroupID (%d) has %d fonts loaded", lEntryPair.getKey(), lEntryPair.getValue().fontMap().size()));
 
 			}
 

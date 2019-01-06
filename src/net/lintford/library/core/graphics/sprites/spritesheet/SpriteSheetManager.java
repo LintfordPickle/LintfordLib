@@ -281,7 +281,7 @@ public class SpriteSheetManager {
 
 				lSpriteSheet.fileSizeOnLoad(lSpriteSheetFile.length());
 				lSpriteSheet.spriteSheetFilename = lSpriteSheetFile.getPath();
-				lSpriteSheet.loadGLContent(mResourceManager);
+				lSpriteSheet.loadGLContent(mResourceManager, pEntityGroupID);
 
 				if (lSpriteSheet.spriteMap == null || lSpriteSheet.spriteMap.size() == 0) {
 					Debug.debugManager().logger().e(getClass().getSimpleName(), "Loaded SpriteSheetDefinition which has neither sprites nor frames defined within: " + lSpriteSheetFile.getPath());

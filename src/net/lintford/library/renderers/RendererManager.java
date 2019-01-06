@@ -278,7 +278,7 @@ public class RendererManager {
 	public boolean handleInput(LintfordCore pCore) {
 		final int NUM_WINDOW_RENDERERS = mWindowRenderers.size();
 
-		if (pCore.input().keyDown(GLFW.GLFW_KEY_F6)) {
+		if (pCore.input().keyDown(GLFW.GLFW_KEY_F7)) {
 			final int lCount = mWindowRenderers.size();
 			System.out.printf("RenderManager %d count: %d\n", hashCode(), lCount);
 			for (int i = 0; i < lCount; i++) {

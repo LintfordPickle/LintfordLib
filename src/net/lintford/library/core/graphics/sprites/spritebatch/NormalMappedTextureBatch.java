@@ -4,12 +4,12 @@ import java.nio.FloatBuffer;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
+import org.lwjgl.system.MemoryUtil;
 
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.camera.ICamera;
@@ -34,6 +34,7 @@ public class NormalMappedTextureBatch {
 	private Matrix4f mModelMatrix;
 	private ICamera mCamera;
 	private NormalBatchShader mShader;
+	private FloatBuffer mBuffer;
 
 	private int mVboId = -1;
 	private int mVertexCount = 0;
@@ -69,16 +70,24 @@ public class NormalMappedTextureBatch {
 	// --------------------------------------
 
 	public void loadGLContent(ResourceManager pResourceManager) {
-		if(mVboId == -1)
+		if (mVboId == -1)
 			mVboId = GL15.glGenBuffers();
-		
+
+		mBuffer = MemoryUtil.memAllocFloat(mVertexCount * VertexDataStructurePT.stride);
+
 		mShader.loadGLContent(pResourceManager);
 	}
 
 	public void unloadGLContent() {
-		if(mVboId > -1)
+		if (mVboId > -1)
 			GL15.glDeleteBuffers(mVboId);
-		
+
+		if (mBuffer != null) {
+			MemoryUtil.memFree(mBuffer);
+			mBuffer = null;
+
+		}
+
 		mShader.unloadGLContent();
 	}
 
@@ -163,17 +172,17 @@ public class NormalMappedTextureBatch {
 		if (mVertexCount == 0)
 			return;
 
-		FloatBuffer lBuffer = BufferUtils.createFloatBuffer(mVertexCount * VertexDataStructurePT.stride);
+		mBuffer.clear();
 
-		// TOOD: Better way of getting vertices from a queue to?
 		for (int i = 0; i < mVertexCount; i++) {
-			lBuffer.put(mTempVertQueue.poll().getElements());
+			mBuffer.put(mTempVertQueue.poll().getElements());
+
 		}
 
-		lBuffer.flip();
+		mBuffer.flip();
 
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, mVboId);
-		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, lBuffer, GL15.GL_DYNAMIC_DRAW);
+		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, mBuffer, GL15.GL_DYNAMIC_DRAW);
 
 		GL20.glVertexAttribPointer(0, VertexDataStructurePT.positionElementCount, GL11.GL_FLOAT, false, VertexDataStructurePT.stride, VertexDataStructurePT.positionByteOffset);
 		GL20.glVertexAttribPointer(1, VertexDataStructurePT.textureElementCount, GL11.GL_FLOAT, false, VertexDataStructurePT.stride, VertexDataStructurePT.textureByteOffset);
@@ -210,4 +219,4 @@ public class NormalMappedTextureBatch {
 
 	}
 
-	}
+}
