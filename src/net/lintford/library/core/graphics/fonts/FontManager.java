@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.camera.ICamera;
-import net.lintford.library.core.graphics.ResourceManager;
 
 public class FontManager {
 
@@ -28,10 +28,15 @@ public class FontManager {
 		private boolean mDrawShadow;
 		private boolean mTrimText;
 		private boolean mIsLoaded;
+		private int mEntityGroupID;
 
 		// --------------------------------------
 		// Properties
 		// --------------------------------------
+
+		public int entityGroupID() {
+			return mEntityGroupID;
+		}
 
 		public AWTBitmapFontSpriteBatch spriteBatch() {
 			return mFontSpriteBatch;
@@ -77,12 +82,12 @@ public class FontManager {
 		// Constructor
 		// --------------------------------------
 
-		public FontUnit(String pFontName, String pFontPath, int pPointSize) {
-			this(pFontName, pFontPath, pPointSize, true);
+		public FontUnit(String pFontName, String pFontPath, int pPointSize, int pEntityGroupID) {
+			this(pFontName, pFontPath, pPointSize, true, pEntityGroupID);
 
 		}
 
-		public FontUnit(String pFontName, String pFontPath, int pPointSize, boolean pAntiAlias) {
+		public FontUnit(String pFontName, String pFontPath, int pPointSize, boolean pAntiAlias, int pEntityGroupID) {
 			mFontName = pFontName;
 			mFontPath = pFontPath;
 
@@ -96,6 +101,7 @@ public class FontManager {
 			mAntiAlias = pAntiAlias;
 			mDrawShadow = true;
 			mTrimText = true;
+			mEntityGroupID = pEntityGroupID;
 
 		}
 
@@ -104,7 +110,7 @@ public class FontManager {
 		// --------------------------------------
 
 		public void loadGLContent(ResourceManager pResourceManager) {
-			mBitmapFont = new BitmapFont(mFontName, mFontPath, mFontPointSize, mAntiAlias);
+			mBitmapFont = new BitmapFont(mFontName, mFontPath, mFontPointSize, mAntiAlias, mEntityGroupID);
 			mBitmapFont.loadGLContent(pResourceManager);
 
 			mFontSpriteBatch = new AWTBitmapFontSpriteBatch(mBitmapFont);
@@ -185,7 +191,6 @@ public class FontManager {
 	private Map<Integer, Map<String, FontUnit>> mFontMap;
 
 	private ResourceManager mResourceManager;
-	private boolean mIsLoaded;
 
 	// --------------------------------------
 	// Properties
@@ -204,10 +209,8 @@ public class FontManager {
 
 		mFontMap.put(LintfordCore.CORE_ENTITY_GROUP_ID, new HashMap<>());
 
-		mSystemFont = new FontUnit(SYSTEM_FONT_NAME, SYSTEM_FONT_PATH, SYSTEM_FONT_SIZE);
+		mSystemFont = new FontUnit(SYSTEM_FONT_NAME, SYSTEM_FONT_PATH, SYSTEM_FONT_SIZE, LintfordCore.CORE_ENTITY_GROUP_ID);
 		mFontMap.get(LintfordCore.CORE_ENTITY_GROUP_ID).put(SYSTEM_FONT_NAME, mSystemFont);
-
-		mIsLoaded = false;
 
 	}
 
@@ -228,7 +231,6 @@ public class FontManager {
 		}
 
 		mResourceManager = pResourceManager;
-		mIsLoaded = true;
 
 	}
 
@@ -260,27 +262,24 @@ public class FontManager {
 	}
 
 	public FontUnit loadNewFont(String pName, String pFontPath, int pPointSize, boolean pAntiAlias, boolean pReload, int pEntityGroupID) {
-		Map<String, FontUnit> coreFonts = null;
-		if (mFontMap.containsKey(pEntityGroupID)) {
-			coreFonts = mFontMap.get(LintfordCore.CORE_ENTITY_GROUP_ID);
-
-		} else {
-			// Create a new FontGroup for this hash
-			coreFonts = new HashMap<>();
+		Map<String, FontUnit> lFontGroup = mFontMap.get(pEntityGroupID);
+		if (lFontGroup == null) {
+			lFontGroup = new HashMap<>();
+			mFontMap.put(pEntityGroupID, lFontGroup);
 
 		}
 
 		// First check if this font already exists:
-		if (coreFonts.containsKey(pName)) {
+		if (lFontGroup.containsKey(pName)) {
 			if (!pReload)
-				return coreFonts.get(pName);
+				return lFontGroup.get(pName);
 
-			coreFonts.remove(pName);
+			lFontGroup.remove(pName);
 
 		}
 
 		// First check to see if the fontpath is valid and the font exists
-		FontUnit lNewFont = new FontUnit(pName, pFontPath, pPointSize, pAntiAlias);
+		FontUnit lNewFont = new FontUnit(pName, pFontPath, pPointSize, pAntiAlias, pEntityGroupID);
 		lNewFont.loadGLContent(mResourceManager);
 
 		if (pEntityGroupID == LintfordCore.CORE_ENTITY_GROUP_ID && pName.equals(SYSTEM_FONT_NAME)) {
@@ -288,7 +287,7 @@ public class FontManager {
 
 		}
 
-		coreFonts.put(pName, lNewFont);
+		lFontGroup.put(pName, lNewFont);
 
 		return lNewFont;
 

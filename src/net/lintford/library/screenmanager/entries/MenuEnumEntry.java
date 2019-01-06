@@ -4,9 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
-import net.lintford.library.core.graphics.textures.TextureManager;
+import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 import net.lintford.library.core.input.InputState;
 import net.lintford.library.screenmanager.MenuEntry;
@@ -32,6 +33,7 @@ public class MenuEnumEntry extends MenuEntry {
 	private final String mSeparator = " : ";
 	private List<String> mItems;
 	private int mSelectedIndex;
+	private Texture mUITexture;
 
 	private boolean mButtonsEnabled;
 	private Rectangle mLeftButtonRectangle;
@@ -119,6 +121,22 @@ public class MenuEnumEntry extends MenuEntry {
 	// --------------------------------------
 	// Core Methods
 	// --------------------------------------
+
+	@Override
+	public void loadGLContent(ResourceManager pResourceManager) {
+		super.loadGLContent(pResourceManager);
+
+		mUITexture = pResourceManager.textureManager().textureCore();
+
+	}
+
+	@Override
+	public void unloadGLContent() {
+		super.unloadGLContent();
+
+		mUITexture = null;
+
+	}
 
 	@Override
 	public boolean handleInput(LintfordCore pCore) {
@@ -255,8 +273,8 @@ public class MenuEnumEntry extends MenuEntry {
 
 		// Render the two arrows either side of the enumeration options
 		if (mButtonsEnabled) {
-			lTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 160, 0, 32, 32, mLeftButtonRectangle.x, mLeftButtonRectangle.y + ARROW_PADDING_Y, ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, 0f, 1f, 1f, 1f, 1f);
-			lTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 224, 0, 32, 32, mRightButtonRectangle.x, mRightButtonRectangle.y + ARROW_PADDING_Y, ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, 0f, 1f, 1f, 1f, 1f);
+			lTextureBatch.draw(mUITexture, 160, 0, 32, 32, mLeftButtonRectangle.x, mLeftButtonRectangle.y + ARROW_PADDING_Y, ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, 0f, 1f, 1f, 1f, 1f);
+			lTextureBatch.draw(mUITexture, 224, 0, 32, 32, mRightButtonRectangle.x, mRightButtonRectangle.y + ARROW_PADDING_Y, ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, 0f, 1f, 1f, 1f, 1f);
 
 		}
 

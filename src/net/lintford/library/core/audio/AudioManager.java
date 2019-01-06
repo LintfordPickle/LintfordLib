@@ -31,6 +31,7 @@ import org.lwjgl.openal.ALC;
 import org.lwjgl.openal.ALCCapabilities;
 import org.lwjgl.openal.ALUtil;
 
+import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.Debug;
 
 public class AudioManager {
@@ -95,7 +96,7 @@ public class AudioManager {
 	// Core-Methods
 	// --------------------------------------
 
-	public void loadALContent() {
+	public void loadALContent(ResourceManager pResourceManager) {
 		if (mOpenALInitialized) {
 			Debug.debugManager().logger().i(TAG, "AudioManager already initialized.");
 			return;

@@ -3,10 +3,10 @@ package net.lintford.library.core.debug;
 import org.lwjgl.glfw.GLFW;
 
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.geometry.Rectangle;
-import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
-import net.lintford.library.core.graphics.textures.TextureManager;
+import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 import net.lintford.library.options.DisplayManager;
 
@@ -25,7 +25,9 @@ public class DebugProfiler extends Rectangle {
 	private double mLastUpdateElapsed;
 	private double mLastDrawElapsed;
 
+	// FIXME: Do not create a SpriteBatch instance just for the Profiler!
 	private transient TextureBatch mSpriteBatch;
+	private Texture mCoreUITexture;
 	private transient FontUnit mConsoleFont;
 
 	private boolean mIsOpen;
@@ -78,6 +80,8 @@ public class DebugProfiler extends Rectangle {
 		mConsoleFont = pResourceManager.fontManager().systemFont();
 
 		mSpriteBatch.loadGLContent(pResourceManager);
+		mCoreUITexture = pResourceManager.textureManager().textureCore();
+
 	}
 
 	public void unloadGLContent() {
@@ -136,7 +140,7 @@ public class DebugProfiler extends Rectangle {
 		mSpriteBatch.begin(pCore.HUD());
 		mConsoleFont.begin(pCore.HUD());
 
-		mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 32, 0, 32, 32, x, y, w, lH, Z_DEPTH, 0f, 0f, 0f, 0.85f);
+		mSpriteBatch.draw(mCoreUITexture, 32, 0, 32, 32, x, y, w, lH, Z_DEPTH, 0f, 0f, 0f, 0.85f);
 
 		final String lSpace = " ";
 		final String lDelimiter = "|";

@@ -15,10 +15,9 @@ import java.util.Map;
 
 import org.lwjgl.opengl.GL11;
 
+import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.Debug;
-import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.textures.Texture;
-import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.storage.FileUtils;
 
 // http://forum.lwjgl.org/index.php?topic=5573.0
@@ -50,6 +49,7 @@ public class BitmapFont {
 	private float mPointSize;
 	private boolean mIsLoaded;
 	private boolean mAntiAlias;
+	private int mEntityGroupID;
 
 	private float mFontHeight;
 
@@ -87,13 +87,14 @@ public class BitmapFont {
 	// Constructor
 	// --------------------------------------
 
-	public BitmapFont(String pName, String pFontFileLocation, float pPointSize, boolean pAntiAlias) {
+	public BitmapFont(String pName, String pFontFileLocation, float pPointSize, boolean pAntiAlias, int pEntityGroupID) {
 		mFontName = pName;
 		mAntiAlias = pAntiAlias;
 		mFontFileLocation = pFontFileLocation;
 		mPointSize = pPointSize;
 		mIsLoaded = false;
 		mFontHeight = pPointSize;
+		mEntityGroupID = pEntityGroupID;
 
 	}
 
@@ -191,7 +192,8 @@ public class BitmapFont {
 		final int[] lPixels = new int[imageWidth * imageHeight];
 		lFontImage.getRGB(0, 0, imageWidth, imageHeight, lPixels, 0, imageWidth);
 
-		mFontTexture = TextureManager.textureManager().createFontTexture(mFontName, lFontImage, GL11.GL_LINEAR);
+		// Create a new font texture and add it to our EntityGroup
+		mFontTexture = pResourceManager.textureManager().createFontTexture(mFontName, lFontImage, GL11.GL_LINEAR, mEntityGroupID);
 
 		mIsLoaded = true;
 	}

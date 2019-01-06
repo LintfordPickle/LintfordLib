@@ -1,8 +1,9 @@
 package net.lintford.library.screenmanager.entries;
 
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
-import net.lintford.library.core.graphics.textures.TextureManager;
+import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 import net.lintford.library.core.input.InputState;
 import net.lintford.library.screenmanager.MenuEntry;
@@ -24,6 +25,7 @@ public class MenuToggleEntry extends MenuEntry {
 	// Variables
 	// --------------------------------------
 
+	private Texture mUITexture;
 	private String mLabel;
 
 	private boolean mIsChecked;
@@ -67,6 +69,22 @@ public class MenuToggleEntry extends MenuEntry {
 	// --------------------------------------
 	// Core Methods
 	// --------------------------------------
+
+	@Override
+	public void loadGLContent(ResourceManager pResourceManager) {
+		super.loadGLContent(pResourceManager);
+
+		mUITexture = pResourceManager.textureManager().textureCore();
+
+	}
+
+	@Override
+	public void unloadGLContent() {
+		super.unloadGLContent();
+
+		mUITexture = null;
+
+	}
 
 	@Override
 	public boolean handleInput(LintfordCore pCore) {
@@ -151,15 +169,14 @@ public class MenuToggleEntry extends MenuEntry {
 
 		// Render the check box (either ticked or empty)
 		if (mIsChecked)
-			lTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 288, 128, 32, 32, centerX() + TILE_SIZE / 2, y + h / 2 - TILE_SIZE / 2, TILE_SIZE, TILE_SIZE, mZ, 1f, 1f, 1f, 1f);
+			lTextureBatch.draw(mUITexture, 288, 128, 32, 32, centerX() + TILE_SIZE / 2, y + h / 2 - TILE_SIZE / 2, TILE_SIZE, TILE_SIZE, mZ, 1f, 1f, 1f, 1f);
 		else
-			lTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 288, 160, 32, 32, centerX() + TILE_SIZE / 2, y + h / 2 - TILE_SIZE / 2, TILE_SIZE, TILE_SIZE, mZ, 1f, 1f, 1f, 1f);
+			lTextureBatch.draw(mUITexture, 288, 160, 32, 32, centerX() + TILE_SIZE / 2, y + h / 2 - TILE_SIZE / 2, TILE_SIZE, TILE_SIZE, mZ, 1f, 1f, 1f, 1f);
 
 		lTextureBatch.end();
 
 		lFont.begin(pCore.HUD());
-		lFont.draw(mLabel, x + w / 2 - lLabelWidth - SPACE_BETWEEN_TEXT - lSeparatorHalfWidth, y + h / 2 - lTextHeight * 0.5f, mZ, lParentScreen.r(), lParentScreen.g(), lParentScreen.b(), lParentScreen.a(), luiTextScale,
-				-1);
+		lFont.draw(mLabel, x + w / 2 - lLabelWidth - SPACE_BETWEEN_TEXT - lSeparatorHalfWidth, y + h / 2 - lTextHeight * 0.5f, mZ, lParentScreen.r(), lParentScreen.g(), lParentScreen.b(), lParentScreen.a(), luiTextScale, -1);
 		lFont.draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - lTextHeight * 0.5f, mZ, lParentScreen.r(), lParentScreen.g(), lParentScreen.b(), lParentScreen.a(), luiTextScale, -1);
 
 		// Render the items

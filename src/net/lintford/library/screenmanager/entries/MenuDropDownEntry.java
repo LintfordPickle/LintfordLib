@@ -7,10 +7,10 @@ import org.lwjgl.opengl.GL11;
 
 import net.lintford.library.ConstantsTable;
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.geometry.Rectangle;
-import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
-import net.lintford.library.core.graphics.textures.TextureManager;
+import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 import net.lintford.library.core.input.InputState;
 import net.lintford.library.renderers.ZLayers;
@@ -55,6 +55,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 	private int mSelectedIndex;
 	private List<MenuEnumEntryItem> mItems;
 	private TextureBatch mTextureBatch;
+	private Texture mUITexture;
 
 	private transient boolean mOpen;
 
@@ -171,6 +172,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 		super.loadGLContent(pResourceManager);
 
 		mTextureBatch.loadGLContent(pResourceManager);
+		mUITexture = pResourceManager.textureManager().textureCore();
 
 	}
 
@@ -179,6 +181,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 		super.unloadGLContent();
 
 		mTextureBatch.unloadGLContent();
+		mUITexture = null;
 
 	}
 
@@ -333,7 +336,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 
 		if (mOpen) {
 			mTextureBatch.begin(pCore.HUD());
-			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 96, 0, 32, 32, mWindowRectangle, mZ, 1, 1, 1, 1);
+			mTextureBatch.draw(mUITexture, 96, 0, 32, 32, mWindowRectangle, mZ, 1, 1, 1, 1);
 			mTextureBatch.end();
 
 			lFontUnit.begin(pCore.HUD());
@@ -350,7 +353,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 			GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT); // Clear the stencil buffer
 
 			mTextureBatch.begin(pCore.HUD());
-			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 32, 0, 32, 32, mWindowRectangle, -8f, 1, 1, 1, 0);
+			mTextureBatch.draw(mUITexture, 32, 0, 32, 32, mWindowRectangle, -8f, 1, 1, 1, 0);
 			mTextureBatch.end();
 
 			// Start the stencil buffer test to filter out everything outside of the scroll view
@@ -375,24 +378,24 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 		}
 
 		if (mOpen && mScrollBar.areaNeedsScrolling())
-			mScrollBar.draw(pCore, mTextureBatch, -0.1f);
+			mScrollBar.draw(pCore, mTextureBatch, mUITexture, -0.1f);
 
 		// Draw the down arrow
 		mTextureBatch.begin(pCore.HUD());
-		mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 416, 192, 32, 32, right() - 32 - 8f, top(), 32, 32, mZ, 1f, 1f, 1f, 1f);
+		mTextureBatch.draw(mUITexture, 416, 192, 32, 32, right() - 32 - 8f, top(), 32, 32, mZ, 1f, 1f, 1f, 1f);
 		mTextureBatch.end();
 
 		if (ConstantsTable.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
 			mTextureBatch.begin(pCore.HUD());
 			final float ALPHA = 0.3f;
-			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, x, y, w, h, mZ, 1f, 0.2f, 0.2f, ALPHA);
+			mTextureBatch.draw(mUITexture, 0, 0, 32, 32, x, y, w, h, mZ, 1f, 0.2f, 0.2f, ALPHA);
 			mTextureBatch.end();
 
 		}
 
 		if (mShowInfoButton) {
 			mTextureBatch.begin(pCore.HUD());
-			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 544, 0, 32, 32, mInfoButton, mZ, 1f, 1f, 1f, 1f);
+			mTextureBatch.draw(mUITexture, 544, 0, 32, 32, mInfoButton, mZ, 1f, 1f, 1f, 1f);
 			mTextureBatch.end();
 		}
 

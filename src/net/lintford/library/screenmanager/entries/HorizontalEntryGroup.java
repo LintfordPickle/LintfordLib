@@ -5,9 +5,8 @@ import java.util.List;
 
 import net.lintford.library.ConstantsTable;
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.graphics.ResourceManager;
-import net.lintford.library.core.graphics.textures.TextureManager;
-import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
+import net.lintford.library.core.ResourceManager;
+import net.lintford.library.core.debug.Debug;
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.Screen;
@@ -164,18 +163,11 @@ public class HorizontalEntryGroup extends MenuEntry {
 	@Override
 	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pParentZDepth) {
 		if (ConstantsTable.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
-			final TextureBatch lTextureBatch = mParentLayout.parentScreen().rendererManager().uiTextureBatch();
-			
-			lTextureBatch.begin(pCore.HUD());
-
 			final float lR = mParentLayout.parentScreen().r();
 			final float lG = mParentLayout.parentScreen().g();
 			final float lB = mParentLayout.parentScreen().b();
-			final float lA = mParentLayout.parentScreen().a();
 
-			lTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, x, y, w, h, pParentZDepth + .1f, 0.5f * lR, 0.2f * lG, lB, lA);
-			
-			lTextureBatch.end();
+			Debug.debugManager().drawers().drawRect(pCore.gameCamera(), x, y, w, h, 0.5f * lR, 0.2f * lG, lB);
 
 		}
 

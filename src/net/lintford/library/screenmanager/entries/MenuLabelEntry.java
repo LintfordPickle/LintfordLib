@@ -2,8 +2,9 @@ package net.lintford.library.screenmanager.entries;
 
 import net.lintford.library.ConstantsTable;
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
-import net.lintford.library.core.graphics.textures.TextureManager;
+import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
@@ -20,6 +21,7 @@ public class MenuLabelEntry extends MenuEntry {
 	// Variables
 	// --------------------------------------
 
+	private Texture mUITexture;
 	private ALIGNMENT mAlignment = ALIGNMENT.center;
 	private float mPadding = 15f;
 	private boolean mShow;
@@ -142,6 +144,22 @@ public class MenuLabelEntry extends MenuEntry {
 	}
 
 	@Override
+	public void loadGLContent(ResourceManager pResourceManager) {
+		super.loadGLContent(pResourceManager);
+
+		mUITexture = pResourceManager.textureManager().textureCore();
+
+	}
+
+	@Override
+	public void unloadGLContent() {
+		super.unloadGLContent();
+
+		mUITexture = null;
+
+	}
+
+	@Override
 	public void updateStructureDimensions() {
 		// TODO: This -50 is because of the scrollbar - this is why I needed to keep the padding :(
 		w = Math.min(mParentLayout.w - 50f, MENUENTRY_MAX_WIDTH);
@@ -174,7 +192,7 @@ public class MenuLabelEntry extends MenuEntry {
 
 		if (mDrawBackground) {
 			lTextureBatch.begin(pCore.HUD());
-			lTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, x, y, w, h, mZ, 0.1f, 0.1f, 0.1f, lAlpha);
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, x, y, w, h, mZ, 0.1f, 0.1f, 0.1f, lAlpha);
 			lTextureBatch.end();
 
 		}
@@ -200,15 +218,11 @@ public class MenuLabelEntry extends MenuEntry {
 
 		if (ConstantsTable.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
 			lTextureBatch.begin(pCore.HUD());
-			lTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, x, y, w, h, mZ, 1f, 0.2f, 0.2f, lAlpha);
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, x, y, w, h, mZ, 1f, 0.2f, 0.2f, lAlpha);
 			lTextureBatch.end();
 
 		}
 
 	}
-
-	// --------------------------------------
-	// Methods
-	// --------------------------------------
 
 }

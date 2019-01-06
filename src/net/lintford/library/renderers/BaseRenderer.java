@@ -1,8 +1,8 @@
 package net.lintford.library.renderers;
 
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.Debug;
-import net.lintford.library.core.graphics.ResourceManager;
 
 public abstract class BaseRenderer {
 

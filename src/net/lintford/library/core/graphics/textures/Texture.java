@@ -35,8 +35,8 @@ public class Texture {
 	private long mFileSizeOnLoad;
 
 	/**
-	 * Some textures, like textures generated from system fonts, do not need to be reloaded when checking for changes to textures on the harddisk. Setting this Boolean to false will skip the texture reload requests on
-	 * this texture.
+	 * Some textures, like textures generated from system fonts, do not need to be reloaded when checking for changes to textures on the harddisk. Setting this Boolean to false will skip the texture reload requests on this
+	 * texture.
 	 */
 	private boolean mReloadable;
 
@@ -102,7 +102,7 @@ public class Texture {
 	// package access (textures should be loaded using the texture manager.
 	static Texture loadTextureFromFile(String pName, String pFilename, int pFilter) {
 		if (pFilename == null || pFilename.length() == 0) {
-			return TextureManager.TEXTURE_NOT_FOUND;
+			return null;
 
 		}
 
@@ -132,7 +132,7 @@ public class Texture {
 			Debug.debugManager().logger().e(Texture.class.getSimpleName(), "Error loading texture from file (" + pFilename + ")");
 			Debug.debugManager().logger().printException(Texture.class.getSimpleName(), e);
 
-			return TextureManager.TEXTURE_NOT_FOUND;
+			return null;
 
 		} catch (IOException e) {
 			Debug.debugManager().logger().e(Texture.class.getSimpleName(), "Error loading texture from file (" + pFilename + ")");
@@ -145,7 +145,7 @@ public class Texture {
 
 	static Texture loadTextureFromResource(String pName, String pFilename, int pFilter) {
 		if (pFilename == null || pFilename.length() == 0) {
-			return TextureManager.TEXTURE_NOT_FOUND;
+			return null;
 
 		}
 
@@ -180,7 +180,7 @@ public class Texture {
 			Debug.debugManager().logger().e(Texture.class.getSimpleName(), "Error loading texture from resource (" + pFilename + " )");
 			Debug.debugManager().logger().printException(Texture.class.getSimpleName(), e);
 
-			return TextureManager.TEXTURE_NOT_FOUND;
+			return null;
 
 		} catch (IOException e) {
 			Debug.debugManager().logger().e(Texture.class.getSimpleName(), "Error loading texture from resource (" + pFilename + " )");
@@ -200,8 +200,38 @@ public class Texture {
 		GL11.glGetTexImage(GL11.GL_TEXTURE_2D, 0, GL12.GL_BGRA, GL11.GL_UNSIGNED_BYTE, colorRGB);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 
+		int[] convertedRGB = changeBGRAtoARGB(colorRGB, lWidth, lHeight);
+
 		// needs ARGB
-		TextureManager.textureManager().saveTextureToFile(lWidth, lHeight, changeBGRAtoARGB(colorRGB, lWidth, lHeight), pPathname);
+		saveTextureToFile(lWidth, lHeight, convertedRGB, pPathname);
+
+	}
+
+	public static boolean saveTextureToFile(int pWidth, int pHeight, int[] pData, String pFileLocation) {
+		BufferedImage lImage = new BufferedImage(pWidth, pHeight, BufferedImage.TYPE_INT_ARGB);
+
+		// Convert our ARGB to output ABGR
+		int[] lTextureData = new int[pWidth * pHeight];
+		for (int i = 0; i < pWidth * pHeight; i++) {
+			int a = (pData[i] & 0xff000000) >> 24;
+			int r = (pData[i] & 0xff0000) >> 16;
+			int g = (pData[i] & 0xff00) >> 8;
+			int b = (pData[i] & 0xff);
+
+			lTextureData[i] = a << 24 | b << 16 | g << 8 | r;
+		}
+
+		lImage.setRGB(0, 0, pWidth, pHeight, lTextureData, 0, pWidth);
+
+		File outputfile = new File(pFileLocation);
+		try {
+			ImageIO.write(lImage, "png", outputfile);
+		} catch (IOException e) {
+			// e.printStackTrace();
+			return false;
+		}
+
+		return true;
 
 	}
 
@@ -247,6 +277,8 @@ public class Texture {
 
 		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, pWidth, pHeight, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, lBuffer);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
+
+		lBuffer = null;
 
 		return new Texture(pName, lTexID, mTextureLocation, pWidth, pHeight, pFilter);
 	}

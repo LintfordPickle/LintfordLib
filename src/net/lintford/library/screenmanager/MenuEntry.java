@@ -2,11 +2,10 @@ package net.lintford.library.screenmanager;
 
 import net.lintford.library.ConstantsTable;
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.geometry.Rectangle;
-import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
-import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 import net.lintford.library.core.input.InputState;
 import net.lintford.library.core.input.InputState.INPUT_TYPES;
@@ -41,6 +40,7 @@ public class MenuEntry extends Rectangle {
 	// --------------------------------------
 
 	protected ScreenManager mScreenManager;
+	protected Texture mUITexture;
 	protected BaseLayout mParentLayout;
 	protected boolean mActive; // Not drawn/updated etc.
 	protected boolean mEnabled;
@@ -304,6 +304,8 @@ public class MenuEntry extends Rectangle {
 	}
 
 	public void loadGLContent(ResourceManager pResourceManager) {
+		mUITexture = pResourceManager.textureManager().textureCore();
+
 		mIsLoaded = true;
 
 	}
@@ -441,9 +443,6 @@ public class MenuEntry extends Rectangle {
 
 		final TextureBatch lTextureBatch = mParentLayout.parentScreen().mRendererManager.uiTextureBatch();
 
-		// Scale the width depending on the button size
-		Texture lTexture = TextureManager.TEXTURE_CORE_UI;
-
 		// Draw the button highlight when this element has focus.
 		if (mDrawBackground && mHoveredOver && mHighlightOnHover) {
 			lR *= 0.6f;
@@ -451,21 +450,21 @@ public class MenuEntry extends Rectangle {
 			lB *= 0.6f;
 
 			lTextureBatch.begin(pCore.HUD());
-			lTextureBatch.draw(lTexture, 0, 64, 32, 32, centerX() - w / 2, centerY() - h / 2, tile_size, h, mZ, lR, lG, lB, lA);
+			lTextureBatch.draw(mUITexture, 0, 64, 32, 32, centerX() - w / 2, centerY() - h / 2, tile_size, h, mZ, lR, lG, lB, lA);
 			switch (mButtonSize) {
 			default:
-				lTextureBatch.draw(lTexture, 32, 64, 224, 32, centerX() - (w / 2) + tile_size, centerY() - h / 2, w - tile_size * 2, h, mZ, lR, lG, lB, lA);
-				lTextureBatch.draw(lTexture, 256, 64, 32, 32, centerX() + (w / 2) - tile_size, centerY() - h / 2, tile_size, h, mZ, lR, lG, lB, lA);
+				lTextureBatch.draw(mUITexture, 32, 64, 224, 32, centerX() - (w / 2) + tile_size, centerY() - h / 2, w - tile_size * 2, h, mZ, lR, lG, lB, lA);
+				lTextureBatch.draw(mUITexture, 256, 64, 32, 32, centerX() + (w / 2) - tile_size, centerY() - h / 2, tile_size, h, mZ, lR, lG, lB, lA);
 			}
 			lTextureBatch.end();
 
 		} else if (mDrawBackground) {
 			lTextureBatch.begin(pCore.HUD());
-			lTextureBatch.draw(lTexture, 0, 32, 32, 32, centerX() - w / 2, centerY() - h / 2, 32, h, mZ, lR, lG, lB, lA);
+			lTextureBatch.draw(mUITexture, 0, 32, 32, 32, centerX() - w / 2, centerY() - h / 2, 32, h, mZ, lR, lG, lB, lA);
 			switch (mButtonSize) {
 			default:
-				lTextureBatch.draw(lTexture, 32, 32, 224, 32, centerX() - (w / 2) + 32, centerY() - h / 2, w - 64, h, mZ, lR, lG, lB, lA);
-				lTextureBatch.draw(lTexture, 256, 32, 32, 32, centerX() + (w / 2) - 32, centerY() - h / 2, 32, h, mZ, lR, lG, lB, lA);
+				lTextureBatch.draw(mUITexture, 32, 32, 224, 32, centerX() - (w / 2) + 32, centerY() - h / 2, w - 64, h, mZ, lR, lG, lB, lA);
+				lTextureBatch.draw(mUITexture, 256, 32, 32, 32, centerX() + (w / 2) - 32, centerY() - h / 2, 32, h, mZ, lR, lG, lB, lA);
 			}
 			lTextureBatch.end();
 		}
@@ -479,15 +478,15 @@ public class MenuEntry extends Rectangle {
 			FontUnit lMenuFont = mParentLayout.parentScreen().font();
 
 			lMenuFont.begin(pCore.HUD());
-			lMenuFont.draw(mText, centerX() - lMenuFont.bitmap().getStringWidth(mText, luiTextScale) * 0.5f, centerY() - lMenuFont.bitmap().fontHeight() * luiTextScale / 2 - 2f, mZ, 0.97f * lColMod, .92f * lColMod,
-					.92f * lColMod, lA, luiTextScale);
+			lMenuFont.draw(mText, centerX() - lMenuFont.bitmap().getStringWidth(mText, luiTextScale) * 0.5f, centerY() - lMenuFont.bitmap().fontHeight() * luiTextScale / 2 - 2f, mZ, 0.97f * lColMod, .92f * lColMod, .92f * lColMod,
+					lA, luiTextScale);
 			lMenuFont.end();
 
 		}
 
 		if (mShowInfoButton) {
 			lTextureBatch.begin(pCore.HUD());
-			lTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 544, 0, 32, 32, mInfoButton, mZ, 1f, 1f, 1f, 1f);
+			lTextureBatch.draw(mUITexture, 544, 0, 32, 32, mInfoButton, mZ, 1f, 1f, 1f, 1f);
 			lTextureBatch.end();
 
 		}
@@ -495,7 +494,7 @@ public class MenuEntry extends Rectangle {
 		if (ConstantsTable.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
 			lTextureBatch.begin(pCore.HUD());
 			final float ALPHA = 0.3f;
-			lTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, x, y, w, h, mZ, 1f, 0.2f, 0.2f, ALPHA);
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, x, y, w, h, mZ, 1f, 0.2f, 0.2f, ALPHA);
 			lTextureBatch.end();
 
 		}

@@ -1,8 +1,15 @@
 package net.lintford.library.controllers.core;
 
+import java.util.Iterator;
+import java.util.Map.Entry;
+
+import org.lwjgl.glfw.GLFW;
+
 import net.lintford.library.controllers.BaseController;
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.graphics.ResourceManager;
+import net.lintford.library.core.ResourceManager;
+import net.lintford.library.core.debug.Debug;
+import net.lintford.library.core.graphics.textures.TextureManager.TextureGroup;
 
 public class ResourceController extends BaseController {
 
@@ -52,8 +59,28 @@ public class ResourceController extends BaseController {
 	}
 
 	@Override
-	public void unload() {
-		
+	public boolean handleInput(LintfordCore pCore) {
+		if (pCore.input().keyDownTimed(GLFW.GLFW_KEY_F5)) {
+			Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("Texture Manager"));
+			Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("  Entity Group Count: &d", mResourceManager.textureManager().textureGroupCount()));
+
+			Iterator<Entry<Integer, TextureGroup>> it = mResourceManager.textureManager().textureGroups().entrySet().iterator();
+
+			while (it.hasNext()) {
+				Entry<Integer, TextureGroup> lEntryPair = it.next();
+				Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("  EntityGroupID (%d) has %d textures loaded", lEntryPair.getKey(), lEntryPair.getValue().textureMap().size()));
+
+			}
+
+		}
+
+		return super.handleInput(pCore);
+
 	}
-	
+
+	@Override
+	public void unload() {
+
+	}
+
 }

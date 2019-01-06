@@ -5,16 +5,69 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.imageio.ImageIO;
 
 import org.lwjgl.opengl.GL11;
 
+import net.lintford.library.core.EntityGroupManager;
+import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.graphics.textures.xml.TextureMetaLoader;
 
-public class TextureManager {
+public class TextureManager extends EntityGroupManager {
+
+	public class TextureGroup {
+
+		// --------------------------------------
+		// Variables
+		// --------------------------------------
+
+		Map<String, Texture> mTextureMap;
+
+		boolean automaticUnload = true;
+		int entityGroupID;
+		String name = "";
+		int referenceCount = 0;
+
+		// --------------------------------------
+		// Properties
+		// --------------------------------------
+
+		public Map<String, Texture> textureMap() {
+			return mTextureMap;
+		}
+
+		// --------------------------------------
+		// Constructor
+		// --------------------------------------
+
+		public TextureGroup(int pEntityGroupID) {
+			mTextureMap = new HashMap<>();
+
+			entityGroupID = pEntityGroupID;
+			referenceCount = 0;
+
+		}
+
+		// --------------------------------------
+		// Methods
+		// --------------------------------------
+
+		public Texture getTextureByName(String pTextureName) {
+			if (mTextureMap.containsKey(pTextureName)) {
+				return mTextureMap.get(pTextureName);
+
+			}
+
+			return mTextureNotFound;
+		}
+
+	}
 
 	// --------------------------------------
 	// Constants
@@ -23,57 +76,102 @@ public class TextureManager {
 	/** When enabled, missing textures will be filled with a magenta color. */
 	public static final boolean USE_DEBUG_MISSING_TEXTURES = true;
 
-	public static final String TEXTURE_WHITE_NAME = "WHITE_W";
-	public static final String TEXTURE_BLACK_NAME = "BLACK_T";
-	public static final String TEXTURE_NOT_FOUND_NAME = "NOT_FOUND";
+	public static final String TEXTURE_WHITE_NAME = "TEXTURE_WHITE";
+	public static final String TEXTURE_BLACK_NAME = "TEXTURE_BLACK";
+	public static final String TEXTURE_NOT_FOUND_NAME = "TEXTURE_NOT_FOUND";
 
-	public static final String TEXTURE_CHECKER_BOARD_NAME = "CHECKER";
-	public static final String TEXTURE_CHECKER_BOARD_INDEXED_NAME = "CHECKERI";
-	public static final String TEXTURE_CORE_UI_NAME = "CORE_UI";
-	public static final String TEXTURE_SYSTEM_UI_NAME = "SYS_UI";
-
-	public static final Texture TEXTURE_NOT_FOUND = TextureManager.textureManager().loadTexture(TEXTURE_NOT_FOUND_NAME, new int[] { 0xFFFF00FF, 0xFFFF00FF, 0xFFFF00FF, 0xFFFF00FF }, 2, 2);
-	public static final Texture TEXTURE_WHITE = TextureManager.textureManager().loadTexture(TEXTURE_WHITE_NAME, new int[] { 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF }, 2, 2);
-	public static final Texture TEXTURE_BLACK = TextureManager.textureManager().loadTexture(TEXTURE_BLACK_NAME, new int[] { 0xFF000000, 0xFF000000, 0xFF000000, 0xFF000000 }, 2, 2);
-
-	public static final Texture TEXTURE_CHECKER = TextureManager.textureManager().loadTexture(TEXTURE_CHECKER_BOARD_NAME, "/res/textures/CheckerBoard.png", GL11.GL_NEAREST);
-	public static final Texture TEXTURE_CHECKER_I = TextureManager.textureManager().loadTexture(TEXTURE_CHECKER_BOARD_INDEXED_NAME, "/res/textures/CheckerBoardIndexed.png", GL11.GL_NEAREST);
-
-	/** A static texture which contains 'generic' icons which can be used for core components and debugging. */
-	public static final Texture TEXTURE_CORE_UI = TextureManager.textureManager().loadTexture(TEXTURE_CORE_UI_NAME, "/res/textures/core/system.png", GL11.GL_NEAREST);
-
-	/** The System texture never changes. It just makes sure LintfordCore always has a basic set of geometry to use for rendering. */
-	public static final Texture TEXTURE_SYS_UI = TextureManager.textureManager().loadTexture(TEXTURE_SYSTEM_UI_NAME, "/res/textures/core/system.png", GL11.GL_NEAREST);
+	public static final String TEXTURE_CHECKER_BOARD_NAME = "TEXTURE_CHECKER";
+	public static final String TEXTURE_CHECKER_BOARD_INDEXED_NAME = "TEXTURE_CHECKERI";
+	public static final String TEXTURE_CORE_UI_NAME = "TEXTURE_CORE_UI";
 
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
-	private static TextureManager mTextureManager;
-	private Map<String, Texture> mTextures;
+	private Map<Integer, TextureGroup> mTextureGroups;
+
+	private ResourceManager mResourceManager;
+
+	private Texture mTextureCoreUI;
+	private Texture mTextureNotFound;
+	private Texture mTextureWhite;
+	private Texture mTextureBlack;
+	private Texture mTextureChecker;
+	private Texture mTextureCheckerIndexed;
+
+	private boolean mIsLoaded;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
 
-	/** Returns an instance of the {@link TextureManager}. */
-	public static TextureManager textureManager() {
-		if (mTextureManager == null) {
-			mTextureManager = new TextureManager();
+	public ResourceManager resourceManager() {
+		return mResourceManager;
+	}
 
+	public Map<Integer, TextureGroup> textureGroups() {
+		return mTextureGroups;
+	}
+
+	public TextureGroup textureGroup(int pEntityGroupID) {
+		if (!mTextureGroups.containsKey(pEntityGroupID)) {
+			TextureGroup lNewTextureGroup = new TextureGroup(pEntityGroupID);
+			mTextureGroups.put(pEntityGroupID, lNewTextureGroup);
+
+			return lNewTextureGroup;
 		}
 
-		return mTextureManager;
+		return mTextureGroups.get(pEntityGroupID);
+	}
+
+	public int textureGroupCount() {
+		return mTextureGroups.size();
+	}
+
+	public boolean isLoaded() {
+		return mIsLoaded;
+	}
+
+	public Texture textureCore() {
+		return mTextureCoreUI;
+	}
+
+	public Texture textureNotFound() {
+		return mTextureNotFound;
+	}
+
+	public Texture textureWhite() {
+		return mTextureWhite;
+	}
+
+	public Texture blockTexture() {
+		return mTextureBlack;
+	}
+
+	public Texture checkerTexture() {
+		return mTextureChecker;
+	}
+
+	public Texture checkerIndexedTexture() {
+		return mTextureCheckerIndexed;
 	}
 
 	/** Returns the {@link Texture} with the given name. If no {@link Texture} by the given name is found, a default MAGENTA texture will be returned. */
-	public Texture getTexture(String pName) {
-		if (mTextures.containsKey(pName)) {
-			return mTextures.get(pName);
+	public Texture getTexture(String pName, int pEntityGroupID) {
+		TextureGroup lTextureGroup = mTextureGroups.get(pEntityGroupID);
+
+		if (lTextureGroup == null) {
+			Debug.debugManager().logger().w(getClass().getSimpleName(), String.format("Couldn't getTexture %s: TextureGroup %d doesn't exit", pName, pEntityGroupID));
+			return mTextureNotFound;
+
 		}
 
-		// In case the requested texture is not found, then return a default MAGENTA texture.
-		return TextureManager.TEXTURE_NOT_FOUND;
+		if (lTextureGroup.mTextureMap.containsKey(pName)) {
+			return lTextureGroup.mTextureMap.get(pName);
+
+		}
+
+		return mTextureNotFound;
 
 	}
 
@@ -81,15 +179,38 @@ public class TextureManager {
 	// Constructor
 	// --------------------------------------
 
-	private TextureManager() {
-		mTextures = new HashMap<String, Texture>();
+	public TextureManager() {
+		mTextureGroups = new HashMap<>();
+
+		// Setup the LintfordCore EntityGroupID and load the core textures
+		TextureGroup lCoreTextureGroup = new TextureGroup(LintfordCore.CORE_ENTITY_GROUP_ID);
+		lCoreTextureGroup.automaticUnload = false;
+		lCoreTextureGroup.name = "CORE";
+		lCoreTextureGroup.referenceCount = 1;
+		mTextureGroups.put(LintfordCore.CORE_ENTITY_GROUP_ID, lCoreTextureGroup);
+
+		mTextureCoreUI = loadTexture(TEXTURE_CORE_UI_NAME, "/res/textures/core/system.png", GL11.GL_NEAREST, LintfordCore.CORE_ENTITY_GROUP_ID);
+		mTextureNotFound = loadTexture(TEXTURE_NOT_FOUND_NAME, new int[] { 0xFFFF00FF, 0xFFFF00FF, 0xFFFF00FF, 0xFFFF00FF }, 2, 2, LintfordCore.CORE_ENTITY_GROUP_ID);
+		mTextureChecker = loadTexture(TEXTURE_CHECKER_BOARD_NAME, "/res/textures/CheckerBoard.png", GL11.GL_NEAREST, LintfordCore.CORE_ENTITY_GROUP_ID);
+		mTextureCheckerIndexed = loadTexture(TEXTURE_CHECKER_BOARD_INDEXED_NAME, "/res/textures/CheckerBoardIndexed.png", GL11.GL_NEAREST, LintfordCore.CORE_ENTITY_GROUP_ID);
+		mTextureWhite = loadTexture(TEXTURE_WHITE_NAME, new int[] { 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF }, 2, 2, LintfordCore.CORE_ENTITY_GROUP_ID);
+		mTextureBlack = loadTexture(TEXTURE_BLACK_NAME, new int[] { 0xFF000000, 0xFF000000, 0xFF000000, 0xFF000000 }, 2, 2, LintfordCore.CORE_ENTITY_GROUP_ID);
+
 	}
 
 	// --------------------------------------
 	// Core-Methods
 	// --------------------------------------
 
+	public void loadGLContent(ResourceManager pResourceManager) {
+		mResourceManager = pResourceManager;
+
+		mIsLoaded = true;
+
+	}
+
 	public void unloadGLContent() {
+		mIsLoaded = false;
 
 	}
 
@@ -97,63 +218,124 @@ public class TextureManager {
 	// Methods
 	// --------------------------------------
 
-	public Texture loadTexture(String pName, String pTextureLocation) {
-		return loadTexture(pName, pTextureLocation, GL11.GL_NEAREST);
+	@Override
+	public int increaseReferenceCounts(int pEntityGroupID) {
+		TextureGroup lTextureGroup = mTextureGroups.get(pEntityGroupID);
+
+		// Create a new TextureGroup for this EntityGroupID if one doesn't exist
+		if (lTextureGroup == null) {
+			lTextureGroup = new TextureGroup(pEntityGroupID);
+			lTextureGroup.referenceCount = 1;
+
+			mTextureGroups.put(pEntityGroupID, lTextureGroup);
+
+		} else {
+			lTextureGroup.referenceCount++;
+
+		}
+
+		return lTextureGroup.referenceCount;
+
 	}
 
-	public Texture loadTexture(String pName, String pTextureLocation, int pFilter) {
-		return loadTexture(pName, pTextureLocation, pFilter, false);
+	@Override
+	public int decreaseReferenceCounts(int pEntityGroupID) {
+		TextureGroup lTextureGroup = mTextureGroups.get(pEntityGroupID);
+
+		// Create a new TextureGroup for this EntityGroupID if one doesn't exist
+		if (lTextureGroup == null) {
+			return 0;
+
+		} else {
+			lTextureGroup.referenceCount--;
+
+		}
+
+		if (lTextureGroup.referenceCount <= 0) {
+			// Unload textures for this entityGroupID
+			unloadEntityGroup(pEntityGroupID);
+
+			mTextureGroups.remove(pEntityGroupID);
+			lTextureGroup = null;
+
+			return 0;
+
+		}
+
+		return lTextureGroup.referenceCount;
 
 	}
 
-	public Texture loadTexture(String pName, String pTextureLocation, int pFilter, boolean pReload) {
+	public Texture loadTexture(String pName, String pTextureLocation, int pEntityGroupID) {
+		return loadTexture(pName, pTextureLocation, GL11.GL_NEAREST, pEntityGroupID);
+	}
+
+	public Texture loadTexture(String pName, String pTextureLocation, int pFilter, int pEntityGroupID) {
+		return loadTexture(pName, pTextureLocation, pFilter, false, pEntityGroupID);
+
+	}
+
+	public Texture loadTexture(String pName, String pTextureLocation, int pFilter, boolean pReload, int pEntityGroupID) {
 		if (pTextureLocation == null || pTextureLocation.length() == 0) {
 			return null;
 
 		}
 
-		Texture lTex = null;
+		Texture lTexture = null;
 
-		if (mTextures.containsKey(pName)) {
-			lTex = mTextures.get(pName);
+		// Resolve the texture group
+		TextureGroup lTextureGroup = mTextureGroups.get(pEntityGroupID);
+		if (lTextureGroup == null) {
+			Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Cannot load texture %s for EntityGroupID %d: EntityGroupID does not exist!", pName, pEntityGroupID));
+			return null;
+
+		} else if (lTextureGroup.mTextureMap.containsKey(pName)) {
+			lTexture = lTextureGroup.mTextureMap.get(pName);
 
 			if (!pReload)
-				return lTex;
+				return lTexture;
 
-			unloadTexture(lTex);
+			unloadTexture(lTexture, pEntityGroupID);
 
 		}
 
-		// create new texture
+		// Create new texture
 		if (pTextureLocation.charAt(0) == '/') {
-			lTex = Texture.loadTextureFromResource(pName, pTextureLocation, pFilter);
+			lTexture = Texture.loadTextureFromResource(pName, pTextureLocation, pFilter);
 
 		} else {
-			lTex = Texture.loadTextureFromFile(pName, pTextureLocation, pFilter);
+			lTexture = Texture.loadTextureFromFile(pName, pTextureLocation, pFilter);
 
 		}
 
-		if (lTex != null) {
-			mTextures.put(pName, lTex); // cache
+		if (lTexture != null) {
+			lTextureGroup.mTextureMap.put(pName, lTexture);
 
 		}
 
-		if (lTex == null) {
-			return TextureManager.TEXTURE_NOT_FOUND;
+		if (lTexture == null) {
+			return mTextureNotFound;
 
 		}
 
-		return lTex;
+		return lTexture;
 	}
 
-	public Texture loadTexture(String pName, int[] pColorData, int pWidth, int pHeight) {
-		return loadTexture(pName, pColorData, pWidth, pHeight, GL11.GL_NEAREST);
+	public Texture loadTexture(String pName, int[] pColorData, int pWidth, int pHeight, int pEntityGroupID) {
+		return loadTexture(pName, pColorData, pWidth, pHeight, GL11.GL_NEAREST, pEntityGroupID);
 	}
 
-	public Texture loadTexture(String pName, int[] pColorData, int pWidth, int pHeight, int pFilter) {
+	public Texture loadTexture(String pName, int[] pColorData, int pWidth, int pHeight, int pFilter, int pEntityGroupID) {
 		Texture lResult = null;
-		if (mTextures.containsKey(pName)) {
-			lResult = mTextures.get(pName);
+		TextureGroup lTextureGroup = mTextureGroups.get(pEntityGroupID);
+		if (lTextureGroup == null) {
+			Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Cannot load texture %s for EntityGroupID %d: EntityGroupID does not exist!", (pName + " (RGB Texture)"), pEntityGroupID));
+			return null;
+
+		} else if (lTextureGroup.mTextureMap.containsKey(pName)) {
+			lResult = lTextureGroup.mTextureMap.get(pName);
+			unloadTexture(lResult, pEntityGroupID);
+
 		}
 
 		if (lResult != null) {
@@ -163,9 +345,9 @@ public class TextureManager {
 		} else {
 			Texture lTex = Texture.createTexture(pName, pName, pColorData, pWidth, pHeight, pFilter);
 			if (lTex != null) {
-				// Can't reload from rgb data
+				// Can't reload rgb data on-the-fly
 				lTex.reloadable(false);
-				mTextures.put(pName, lTex); // cache
+				lTextureGroup.mTextureMap.put(pName, lTex);
 
 			}
 
@@ -203,59 +385,107 @@ public class TextureManager {
 
 	}
 
-	public Texture createFontTexture(String pName, BufferedImage pImage) {
-		return createFontTexture(pName, pImage, GL11.GL_NEAREST);
+	public Texture createFontTexture(String pName, BufferedImage pImage, int pEntityGroupID) {
+		return createFontTexture(pName, pImage, GL11.GL_NEAREST, pEntityGroupID);
 	}
 
-	public Texture createFontTexture(String pName, BufferedImage pImage, int pFilter) {
-		if (mTextures.containsKey(pName)) {
-			return mTextures.get(pName);
+	public Texture createFontTexture(String pName, BufferedImage pImage, int pFilter, int pEntityGroupID) {
+		TextureGroup lTextureGroup = mTextureGroups.get(pEntityGroupID);
+		if (lTextureGroup == null) {
+			Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Cannot load texture %s for EntityGroupID %d: EntityGroupID does not exist!", (pName + " (Font)"), pEntityGroupID));
+			return null;
+
+		} else if (lTextureGroup.mTextureMap.containsKey(pName)) {
+			// This texture group already contains a texture with the same name, so return it
+			return lTextureGroup.mTextureMap.get(pName);
+
 		}
 
-		Texture lTex = Texture.createTexture(pName, pName, pImage, pFilter);
-		lTex.reloadable(false);
-		mTextures.put(pName, lTex);
+		Texture lNewTexture = Texture.createTexture(pName, pName, pImage, pFilter);
+		lNewTexture.reloadable(false); // no need to reload font textures (on-the-fly)
 
-		return lTex;
+		lTextureGroup.mTextureMap.put(pName, lNewTexture);
+
+		return lNewTexture;
 	}
 
 	public void reloadTextures() {
 		Debug.debugManager().logger().v(getClass().getSimpleName(), "Reloading all modified files");
 
-		for (Texture lTexture : mTextures.values()) {
-			if (lTexture != null) {
-				lTexture.reload();
+		for (TextureGroup lTextureGroup : mTextureGroups.values()) {
+			for (Texture lTexture : lTextureGroup.mTextureMap.values()) {
+				if (lTexture != null) {
+					lTexture.reload();
+				}
+
 			}
 
 		}
 
 	}
 
-	/** Unloads the speicifed texture, if applicable. */
-	public void unloadTexture(Texture pTexture) {
+	/** Unloads the speicifed texture in the texture group, if applicable. */
+	public void unloadTexture(Texture pTexture, int pEntityGroupID) {
 		if (pTexture == null)
 			return; // already lost reference
 
-		if (mTextures.containsValue(pTexture)) {
+		TextureGroup lTextureGroup = mTextureGroups.get(pEntityGroupID);
+		if (lTextureGroup == null) {
+			return;
 
+		} else if (lTextureGroup.mTextureMap.containsValue(pTexture)) {
 			String lTextureName = pTexture.name();
+
+			Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("unloading texture: %s from texture group %d\n", lTextureName, pEntityGroupID));
+
 			Texture.unloadTexture(pTexture);
 
-			mTextures.remove(lTextureName);
+			lTextureGroup.mTextureMap.remove(lTextureName);
+			pTexture = null;
 
 		}
-
-		Texture.unloadTexture(pTexture);
-		pTexture = null;
 
 		return;
 
 	}
 
+	public void unloadEntityGroup(int pEntityGroupID) {
+		TextureGroup lTextureGroup = mTextureGroups.get(pEntityGroupID);
+
+		if (lTextureGroup == null)
+			return;
+
+		final int lTextureCount = lTextureGroup.mTextureMap.size();
+		Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("Unloading TextureGroup %d (freeing total %d textures)", pEntityGroupID, lTextureCount));
+
+		if (lTextureGroup != null) {
+			// Iterate over all the textures in the group and unload them
+			Iterator<Entry<String, Texture>> it = lTextureGroup.mTextureMap.entrySet().iterator();
+			while (it.hasNext()) {
+				Entry<String, Texture> lNextTexture = it.next();
+				Texture.unloadTexture(lNextTexture.getValue());
+
+				it.remove();
+
+			}
+
+		}
+
+	}
+
 	/** Batch load textures */
-	public void loadTexturesFromMetafile(String pMetaFileLoation) {
+	public void loadTexturesFromMetafile(String pMetaFileLoation, int pEntityGroupID) {
 		final TextureMetaLoader lLoader = new TextureMetaLoader();
 		final ArrayList<TextureMetaItem> lItems = lLoader.loadTextureMetaFile(pMetaFileLoation);
+
+		Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("Loading Textures from meta-file %s with EntityGroupID %d", pMetaFileLoation, pEntityGroupID));
+
+		TextureGroup lTextureGroup = mTextureGroups.get(pEntityGroupID);
+		if (lTextureGroup == null) {
+			Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Cannot load texture %s for EntityGroupID %d: EntityGroupID does not exist!", (pMetaFileLoation + " (META)"), pEntityGroupID));
+			return;
+
+		}
 
 		final int lNumTextures = lItems.size();
 		for (int i = 0; i < lNumTextures; i++) {
@@ -269,11 +499,12 @@ public class TextureManager {
 				break;
 			}
 
-			Texture lTex = loadTexture(lItems.get(i).textureName, lItems.get(i).textureLocation, GL_FILTER_MODE);
+			Texture lNewTexture = loadTexture(lItems.get(i).textureName, lItems.get(i).textureLocation, GL_FILTER_MODE);
 
-			if (lTex != null) {
-				lTex.reloadable(true);
-				mTextures.put(lItems.get(i).textureName, lTex);
+			if (lNewTexture != null) {
+				lNewTexture.reloadable(true);
+
+				lTextureGroup.mTextureMap.put(lItems.get(i).textureName, lNewTexture);
 
 			}
 		}

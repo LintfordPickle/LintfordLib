@@ -8,10 +8,10 @@ import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.camera.ICamera;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.debug.GLDebug;
-import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.linebatch.LineBatch;
 import net.lintford.library.core.graphics.rendertarget.RenderTarget;
@@ -45,10 +45,11 @@ public class RendererManager {
 	// variables
 	// --------------------------------------
 
-	private int mEntityGroupID;
-	private String mScreenOwner;
 	private LintfordCore mCore;
+	private int mEntityGroupID;
 	private ResourceManager mResourceManager;
+
+	private String mScreenOwner;
 	private List<BaseRenderer> mRenderers;
 	private List<UIWindow> mWindowRenderers;
 
@@ -192,13 +193,15 @@ public class RendererManager {
 		Debug.debugManager().logger().i(getClass().getSimpleName(), mScreenOwner + "Loading GL content for all registered renderers");
 
 		mResourceManager = pResourceManager;
+		mResourceManager.increaseReferenceCounts(mEntityGroupID);
 
 		mSpriteBatch.loadGLContent(pResourceManager);
 		mTextureBatch.loadGLContent(pResourceManager);
 		mLineBatch.loadGLContent(pResourceManager);
 
-		mWindowTitleFont = pResourceManager.fontManager().loadNewFont(WINDOWS_TITLE_FONT_NAME, "res/fonts/OxygenMono-Regular.ttf", 18, mEntityGroupID);
-		mWindowTextFont = pResourceManager.fontManager().loadNewFont(WINDOWS_TEXT_FONT_NAME, "res/fonts/OxygenMono-Regular.ttf", 14, mEntityGroupID);
+		String lPath = "res//fonts//OxygenMono-Regular.ttf";
+		mWindowTitleFont = pResourceManager.fontManager().loadNewFont(WINDOWS_TITLE_FONT_NAME, lPath, 18, mEntityGroupID);
+		mWindowTextFont = pResourceManager.fontManager().loadNewFont(WINDOWS_TEXT_FONT_NAME, lPath, 16, mEntityGroupID);
 
 		// Some windows will use this to orientate themselves to the window
 		mDisplayConfig = pResourceManager.config().display();
@@ -233,6 +236,8 @@ public class RendererManager {
 		mUIRenderTarget = createRenderTarget("EmissiveRT", lBufferWidth, lBufferHeight, true);
 		mUIRenderTarget.textureFilter(GL11.GL_NEAREST);
 
+		GLDebug.checkGLErrorsException(getClass().getSimpleName());
+
 		mIsLoaded = true;
 
 	}
@@ -264,6 +269,7 @@ public class RendererManager {
 		mDisplayConfig.removeResizeListener(mResizeListener);
 		mDisplayConfig = null;
 
+		mResourceManager.decreaseReferenceCounts(mEntityGroupID);
 		mResourceManager = null;
 		mIsLoaded = false;
 
@@ -456,7 +462,6 @@ public class RendererManager {
 		mWindowRenderers.clear();
 		mRenderers.clear();
 
-		GLDebug.checkGLErrorsException(getClass().getSimpleName());
 	}
 
 	public void addChangeListener(UIWindowChangeListener pListener) {

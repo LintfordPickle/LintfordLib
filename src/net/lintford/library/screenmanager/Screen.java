@@ -2,9 +2,9 @@ package net.lintford.library.screenmanager;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.LintfordCore.GameTime;
+import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.GLDebug;
 import net.lintford.library.core.entity.BaseEntity;
-import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.time.TimeSpan;
 import net.lintford.library.renderers.RendererManager;
 import net.lintford.library.screenmanager.transitions.BaseTransition;
@@ -28,7 +28,7 @@ public abstract class Screen {
 	// --------------------------------------
 
 	/** Used both as a ControllerGroupID and RendererGroupID */
-	public final int entityGroupID;
+	private int mEntityGroupID;
 
 	protected ScreenManager mScreenManager;
 	protected RendererManager mRendererManager;
@@ -49,6 +49,10 @@ public abstract class Screen {
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public int entityGroupID() {
+		return mEntityGroupID;
+	}
 
 	/** Defines if only one instance of this type of object can exist (in the {@link ScreenManager} screen stack) at a time */
 	public boolean singletonScreen() {
@@ -136,10 +140,10 @@ public abstract class Screen {
 	// --------------------------------------
 
 	public Screen(ScreenManager pScreenManager) {
-		entityGroupID = BaseEntity.getEntityNumber();
+		mEntityGroupID = BaseEntity.getEntityNumber();
 
 		mScreenManager = pScreenManager;
-		mRendererManager = new RendererManager(pScreenManager.core(), getClass().getSimpleName(), entityGroupID);
+		mRendererManager = new RendererManager(pScreenManager.core(), getClass().getSimpleName(), mEntityGroupID);
 
 		mTransitionOn = new TransitionFadeIn(new TimeSpan(250));
 		mTransitionOff = new TransitionFadeOut(new TimeSpan(250));
@@ -179,8 +183,8 @@ public abstract class Screen {
 	public void unloadGLContent() {
 		mRendererManager.unloadGLContent();
 
-		mScreenManager.core().controllerManager().removeControllerGroup(entityGroupID);
-		mScreenManager.resources().fontManager().unloadFontGroup(entityGroupID);
+		mScreenManager.core().controllerManager().removeControllerGroup(mEntityGroupID);
+		mScreenManager.resources().fontManager().unloadFontGroup(mEntityGroupID);
 
 		mIsLoaded = false;
 
@@ -189,7 +193,7 @@ public abstract class Screen {
 	public void handleInput(LintfordCore pCore, boolean pAcceptMouse, boolean pAcceptKeyboard) {
 		mRendererManager.handleInput(pCore);
 
-		mScreenManager.core().controllerManager().handleInput(mScreenManager.core(), entityGroupID);
+		mScreenManager.core().controllerManager().handleInput(mScreenManager.core(), mEntityGroupID);
 
 	}
 
@@ -241,7 +245,7 @@ public abstract class Screen {
 
 			}
 
-			mScreenManager.core().controllerManager().update(mScreenManager.core(), entityGroupID);
+			mScreenManager.core().controllerManager().update(mScreenManager.core(), mEntityGroupID);
 
 		}
 
@@ -292,9 +296,11 @@ public abstract class Screen {
 
 	/** Called when a {@link Screen} is removed from the {@link ScreenManager}. */
 	public void onScreenRemovedFromScreenManager() {
-		
+
 		GLDebug.checkGLErrorsException(getClass().getSimpleName());
-		
+
+		// ResourceManager clear EntityGroupID resources
+
 		mRendererManager.unloadGLContent();
 		mRendererManager.removeAllListeners();
 		mRendererManager.removeAllRenderers();

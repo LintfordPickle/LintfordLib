@@ -1,4 +1,4 @@
-package net.lintford.library.core.graphics;
+package net.lintford.library.core;
 
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
@@ -14,7 +14,6 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.List;
 
 import net.lintford.library.ConstantsTable;
-import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.audio.AudioManager;
 import net.lintford.library.core.box2d.PObjectManager;
 import net.lintford.library.core.graphics.fonts.FontManager;
@@ -42,14 +41,18 @@ public class ResourceManager {
 	protected WatchService mTexturePathWatcher;
 	protected WatchService mSpriteSheetPathWatcher;
 
+	protected TextureManager mTextureManager;
 	protected FontManager mFontManager;
 	protected SpriteSheetManager mSpriteSheetManager;
 	protected AudioManager mAudioManager;
 
 	protected PObjectManager mPObjectManager;
 
+	// TODO: ResouceManagers still to be implemented:
 	// SoundManager
 	// MusicManager
+	// PObject
+	// ShaderManager
 
 	private boolean mIsLoaded;
 
@@ -67,6 +70,10 @@ public class ResourceManager {
 
 	public SpriteSheetManager spriteSheetManager() {
 		return mSpriteSheetManager;
+	}
+
+	public TextureManager textureManager() {
+		return mTextureManager;
 	}
 
 	public FontManager fontManager() {
@@ -90,7 +97,7 @@ public class ResourceManager {
 
 		mFontManager = new FontManager();
 
-		// Setup the SpritesheetManager
+		mTextureManager = new TextureManager();
 		mSpriteSheetManager = new SpriteSheetManager();
 		mAudioManager = new AudioManager();
 
@@ -138,8 +145,9 @@ public class ResourceManager {
 
 	public void loadGLContent() {
 		// Force creation here if not already
-		TextureManager.textureManager();
-		mAudioManager.loadALContent();
+		mTextureManager.loadGLContent(this);
+		mSpriteSheetManager.loadGLContent(this);
+		mAudioManager.loadALContent(this);
 		mFontManager.loadGLContent(this);
 
 		// TODO: Need the resource manager to also manage shaders (so they can be recompiled etc).
@@ -150,8 +158,7 @@ public class ResourceManager {
 	public void unloadContent() {
 		mFontManager.unloadGLContent();
 		mAudioManager.unloadALContent();
-
-		TextureManager.textureManager().unloadGLContent();
+		mTextureManager.unloadGLContent();
 
 		mIsLoaded = false;
 	}
@@ -164,7 +171,7 @@ public class ResourceManager {
 				List<WatchEvent<?>> events = lKey.pollEvents();
 				for (WatchEvent<?> event : events) {
 					if (event.kind() == StandardWatchEventKinds.ENTRY_MODIFY) {
-						TextureManager.textureManager().reloadTextures();
+						mTextureManager.reloadTextures();
 
 					}
 
@@ -191,6 +198,16 @@ public class ResourceManager {
 
 			}
 		}
+
+	}
+
+	public void increaseReferenceCounts(int pEntityGroupID) {
+		mTextureManager.increaseReferenceCounts(pEntityGroupID);
+
+	}
+
+	public void decreaseReferenceCounts(int pEntityGroupID) {
+		mTextureManager.decreaseReferenceCounts(pEntityGroupID);
 
 	}
 

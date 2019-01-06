@@ -9,11 +9,11 @@ import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
+import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.camera.ICamera;
 import net.lintford.library.core.debug.GLDebug;
 import net.lintford.library.core.geometry.Circle;
 import net.lintford.library.core.geometry.Rectangle;
-import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.shaders.ShaderMVP_PT;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.TextureManager;
@@ -78,6 +78,7 @@ public class TextureBatch {
 	protected boolean mIsLoaded;
 	protected boolean mIsDrawing;
 	protected boolean mUseCheckerPattern;
+	protected ResourceManager mResourceManager;
 
 	// --------------------------------------
 	// Properties
@@ -137,6 +138,8 @@ public class TextureBatch {
 		if (mIsLoaded)
 			return;
 
+		mResourceManager = pResourceManager;
+
 		mShader.loadGLContent(pResourceManager);
 
 		if (mVaoId == -1)
@@ -165,8 +168,9 @@ public class TextureBatch {
 			mVboId = -1;
 
 		}
-
+		
 		mIsLoaded = false;
+		
 	}
 
 	// --------------------------------------
@@ -217,7 +221,9 @@ public class TextureBatch {
 		if (pTexture == null) {
 			// Resolve to use a default texture, or the 'MISSING_TEXTURE'
 			if (TextureManager.USE_DEBUG_MISSING_TEXTURES) {
-				pTexture = TextureManager.TEXTURE_NOT_FOUND;
+				pTexture = mResourceManager.textureManager().textureNotFound();
+				if (pTexture == null)
+					return;
 
 			} else {
 				return;
@@ -226,7 +232,7 @@ public class TextureBatch {
 		}
 
 		if (mUseCheckerPattern) {
-			pTexture = TextureManager.TEXTURE_CHECKER_I;
+			pTexture = mResourceManager.textureManager().checkerIndexedTexture();
 
 		}
 
@@ -277,6 +283,8 @@ public class TextureBatch {
 
 	}
 
+	// FIXME: TextureBatch has 3 distinct drawing methods, which all do ultimately the same thing
+
 	public void draw(Texture pTexture, float pSX, float pSY, float pSW, float pSH, float pDX, float pDY, float pDW, float pDH, float pZ, float pR, float pG, float pB, float pA) {
 		if (!mIsDrawing)
 			return;
@@ -284,7 +292,7 @@ public class TextureBatch {
 		if (pTexture == null) {
 			// Resolve to use a default texture, or the 'MISSING_TEXTURE'
 			if (TextureManager.USE_DEBUG_MISSING_TEXTURES) {
-				pTexture = TextureManager.TEXTURE_NOT_FOUND;
+				pTexture = mResourceManager.textureManager().textureNotFound();
 
 			} else {
 				return;
@@ -293,12 +301,17 @@ public class TextureBatch {
 		}
 
 		if (mUseCheckerPattern) {
-			pTexture = TextureManager.TEXTURE_CHECKER_I;
+			pTexture = mResourceManager.textureManager().checkerIndexedTexture();
 
 		}
 
 		if (mCurrentTexID == -1) { // first texture
 			mCurrentTexID = pTexture.getTextureID();
+
+			if (pTexture.getTextureID() <= 0) {
+				throw new RuntimeException("fuck me");
+			}
+
 		} else if (mCurrentTexID != pTexture.getTextureID()) {
 			flush();
 			mCurrentTexID = pTexture.getTextureID();
@@ -429,7 +442,7 @@ public class TextureBatch {
 		if (pTexture == null) {
 			// Resolve to use a default texture, or the 'MISSING_TEXTURE'
 			if (TextureManager.USE_DEBUG_MISSING_TEXTURES) {
-				pTexture = TextureManager.TEXTURE_NOT_FOUND;
+				pTexture = mResourceManager.textureManager().textureNotFound();
 
 			} else {
 				return;
@@ -438,7 +451,7 @@ public class TextureBatch {
 		}
 
 		if (mUseCheckerPattern) {
-			pTexture = TextureManager.TEXTURE_CHECKER_I;
+			pTexture = mResourceManager.textureManager().checkerIndexedTexture();
 
 		}
 

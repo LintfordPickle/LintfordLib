@@ -2,7 +2,7 @@ package net.lintford.library.renderers.windows.components;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
-import net.lintford.library.core.graphics.textures.TextureManager;
+import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 import net.lintford.library.renderers.windows.UIWindow;
 import net.lintford.library.screenmanager.entries.EntryInteractions;
@@ -113,7 +113,7 @@ public class UITextButton extends UIWidget {
 	}
 
 	@Override
-	public void draw(LintfordCore pCore, TextureBatch pTextureBatch, FontUnit pTextFont, float pComponentZDepth) {
+	public void draw(LintfordCore pCore, TextureBatch pTextureBatch, Texture pUITexture, FontUnit pTextFont, float pComponentZDepth) {
 
 		mR = 0.19f;
 		mG = 0.13f;
@@ -125,7 +125,7 @@ public class UITextButton extends UIWidget {
 
 		// Draw the button background
 		pTextureBatch.begin(pCore.HUD());
-		pTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, x, y, 32, 32, pComponentZDepth, lR, lG, lB, 1f);
+		pTextureBatch.draw(pUITexture, 0, 0, 32, 32, x, y, 32, 32, pComponentZDepth, lR, lG, lB, 1f);
 		pTextureBatch.end();
 
 		FontUnit lFontRenderer = mParentWindow.rendererManager().textFont();

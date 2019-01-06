@@ -7,10 +7,10 @@ import java.util.Map;
 
 import org.jbox2d.dynamics.World;
 
+import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.box2d.definition.PObjectDefinition;
 import net.lintford.library.core.box2d.entity.JBox2dEntity;
 import net.lintford.library.core.debug.Debug;
-import net.lintford.library.core.graphics.ResourceManager;
 
 public class PObjectManager {
 

@@ -4,7 +4,7 @@ import org.lwjgl.opengl.GL11;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.geometry.Rectangle;
-import net.lintford.library.core.graphics.textures.TextureManager;
+import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 
 public class ScrollBarContentRectangle extends Rectangle {
@@ -51,12 +51,12 @@ public class ScrollBarContentRectangle extends Rectangle {
 
 	}
 
-	public void preDraw(LintfordCore pCore, TextureBatch pTextureBatch) {
-		preDraw(pCore, pTextureBatch, mParentArea.contentDisplayArea());
+	public void preDraw(LintfordCore pCore, TextureBatch pTextureBatch, Texture pUITexture) {
+		preDraw(pCore, pTextureBatch, pUITexture, mParentArea.contentDisplayArea());
 
 	}
 
-	public void preDraw(LintfordCore pCore, TextureBatch pTextureBatch, Rectangle pRectangle) {
+	public void preDraw(LintfordCore pCore, TextureBatch pTextureBatch, Texture pUITexture, Rectangle pRectangle) {
 		if (mPreDrawing)
 			return;
 
@@ -75,7 +75,7 @@ public class ScrollBarContentRectangle extends Rectangle {
 		// Draw into the stencil buffer to mark the 'active' bits
 		pTextureBatch.begin(pCore.HUD());
 
-		pTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, pRectangle.x + mDepthPadding, pRectangle.y + mDepthPadding, pRectangle.w - mDepthPadding * 2, pRectangle.h - mDepthPadding * 2, -10.0f, 0.0f, 0.0f,
+		pTextureBatch.draw(pUITexture, 0, 0, 32, 32, pRectangle.x + mDepthPadding, pRectangle.y + mDepthPadding, pRectangle.w - mDepthPadding * 2, pRectangle.h - mDepthPadding * 2, -10.0f, 0.0f, 0.0f,
 				0.0f, 0.0f);
 
 		pTextureBatch.end();

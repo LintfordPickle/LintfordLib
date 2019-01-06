@@ -1,6 +1,6 @@
 package net.lintford.library.core.graphics.geometry;
 
-import net.lintford.library.core.graphics.ResourceManager;
+import net.lintford.library.core.ResourceManager;
 import net.lintford.library.options.DisplayManager;
 import net.lintford.library.options.IResizeListener;
 

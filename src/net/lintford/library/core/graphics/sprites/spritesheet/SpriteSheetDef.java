@@ -6,11 +6,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.graphics.sprites.SpriteDefinition;
 import net.lintford.library.core.graphics.sprites.SpriteFrame;
 import net.lintford.library.core.graphics.sprites.SpriteInstance;
 import net.lintford.library.core.graphics.textures.Texture;
-import net.lintford.library.core.graphics.textures.TextureManager;
 
 /** A {@link SpriteSheetDef} contains a collecetion of {@link SpriteFrame}s (which each define a source rectangle) and an associated {@link Texture} instance. */
 public class SpriteSheetDef {
@@ -18,6 +18,8 @@ public class SpriteSheetDef {
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
+
+	private int mEntityGroupID;
 
 	/** The {@link Texture} instance associated with this {@link SpriteSheetDef} */
 	private transient Texture texture;
@@ -73,17 +75,17 @@ public class SpriteSheetDef {
 
 	/** Returns true if this {@link SpriteSheetDef}'s GL resources have been laoded, false otherwise. */
 	public boolean isLoaded() {
-		return this.texture != null;
+		return texture != null;
 	}
 
 	/** Returns the texture loaded for this {@link SpriteSheetDef}. */
 	public Texture texture() {
-		return this.texture;
+		return texture;
 	}
 
 	/** Returns the number of {@link SpriteFrame}s assigned to the {@link SpriteSheetDef}. */
 	public int getSpriteCount() {
-		return this.spriteMap.size();
+		return spriteMap.size();
 	}
 
 	public boolean reloadable() {
@@ -98,17 +100,18 @@ public class SpriteSheetDef {
 	// Constructor
 	// --------------------------------------
 
-	public SpriteSheetDef() {
-		this.frameMap = new HashMap<>();
-		this.spriteMap = new HashMap<>();
-		this.spriteInstancePool = new ArrayList<>();
+	public SpriteSheetDef(int pEntityGroupdID) {
+		frameMap = new HashMap<>();
+		spriteMap = new HashMap<>();
+		spriteInstancePool = new ArrayList<>();
+		mEntityGroupID = pEntityGroupdID;
 
 	}
 
 	/** Creates a new instance of {@link SpriteSheetDef} as assigns it the given name. */
-	public SpriteSheetDef(final String pSpriteSheetName) {
-		this();
-		this.spriteSheetName = pSpriteSheetName;
+	public SpriteSheetDef(final String pSpriteSheetName, int pEntityGroupdID) {
+		this(pEntityGroupdID);
+		spriteSheetName = pSpriteSheetName;
 
 	}
 
@@ -117,31 +120,42 @@ public class SpriteSheetDef {
 	// --------------------------------------
 
 	/** Loads the associated texture. */
-	public void loadGLContent() {
+	public void loadGLContent(ResourceManager pResourceManager) {
 		// All SpriteSheets require a valid texture
-		if (this.textureName == null || this.textureName.length() == 0 || this.textureFilename == null || this.textureFilename.length() == 0) {
+		if (textureName == null || textureName.length() == 0 || textureFilename == null || textureFilename.length() == 0) {
 			System.err.println("SpriteSheet texture name and filename cannot be null!");
 			return;
 
 		}
 
 		// If the texture has already been loaded, the TextureManager will return the texture instance so we can store it in this SpriteSheet instance.
-		this.texture = TextureManager.textureManager().loadTexture(this.textureName, this.textureFilename);
+		texture = pResourceManager.textureManager().loadTexture(textureName, textureFilename, mEntityGroupID);
 
 		// Check that the texture was loaded correctly.
-		if (this.texture == null) {
-			System.err.println("Error while loading texture: " + this.textureFilename);
+		if (texture == null) {
+			System.err.println("Error while loading texture: " + textureFilename);
 			return;
 
 		}
 
-		this.textureWidth = this.texture.getTextureWidth();
-		this.textureHeight = this.texture.getTextureHeight();
+		textureWidth = texture.getTextureWidth();
+		textureHeight = texture.getTextureHeight();
 
-		// If the SpriteSheet definition had animations, then interate them
-		if (this.spriteMap != null) {
+		if (frameMap == null) {
+			frameMap = new HashMap<>();
+		}
+
+		if (spriteInstancePool == null) {
+			spriteInstancePool = new ArrayList<>();
+		}
+
+		if (spriteMap == null) {
+			spriteMap = new HashMap<>();
+
+		} else {
+			// If the SpriteSheet definition had animations, then interate them
 			// Resolve the Sprite references in the Animations
-			for (SpriteDefinition aSprite : this.spriteMap.values()) {
+			for (SpriteDefinition aSprite : spriteMap.values()) {
 				aSprite.loadContent(this);
 
 			}
@@ -149,14 +163,14 @@ public class SpriteSheetDef {
 		}
 
 		// Finally, create a single SpriteDefinition for each SpriteFrame
-		for (Entry<String, SpriteFrame> entry : this.frameMap.entrySet()) {
-			if (this.spriteMap.containsKey(entry.getKey()))
+		for (Entry<String, SpriteFrame> entry : frameMap.entrySet()) {
+			if (spriteMap.containsKey(entry.getKey()))
 				continue;
 
 			SpriteDefinition lNewSprite = new SpriteDefinition();
 			lNewSprite.addFrame(entry.getValue());
 
-			this.spriteMap.put(entry.getKey(), lNewSprite);
+			spriteMap.put(entry.getKey(), lNewSprite);
 
 		}
 
@@ -164,9 +178,9 @@ public class SpriteSheetDef {
 
 	/** unloads the GL Content created by this SpriteSheet. */
 	public void unloadGLContent() {
-		this.texture = null;
-		this.textureWidth = -1;
-		this.textureHeight = -1;
+		texture = null;
+		textureWidth = -1;
+		textureHeight = -1;
 
 	}
 
@@ -176,20 +190,20 @@ public class SpriteSheetDef {
 
 	/** Adds a new sprite definition to this SpriteSheet. */
 	public void addSpriteDefinition(final String pNewName, final SpriteDefinition pNewSprite) {
-		this.spriteMap.put(pNewName, pNewSprite);
+		spriteMap.put(pNewName, pNewSprite);
 
 	}
 
 	public SpriteDefinition getSpriteDefinition(final String pSpriteName) {
-		return this.spriteMap.get(pSpriteName);
+		return spriteMap.get(pSpriteName);
 
 	}
 
 	/** Returns a new {@link SpriteInstance} based on the {@link ISpriteDefinition} of the name provided. Null is returned if the {@link SpriteSheetDef} doesn*t contains a Sprite instance of the given name. */
 	public SpriteInstance getSpriteInstance(final String pSpriteName) {
-		if (this.spriteMap.containsKey(pSpriteName)) {
+		if (spriteMap.containsKey(pSpriteName)) {
 			SpriteInstance lReturnInstance = getFreeInstance();
-			lReturnInstance.init(this.spriteMap.get(pSpriteName));
+			lReturnInstance.init(spriteMap.get(pSpriteName));
 			return lReturnInstance;
 
 		}
@@ -200,7 +214,7 @@ public class SpriteSheetDef {
 	}
 
 	public SpriteFrame getSpriteFrame(final String pFrameName) {
-		return this.frameMap.get(pFrameName);
+		return frameMap.get(pFrameName);
 
 	}
 
@@ -220,9 +234,9 @@ public class SpriteSheetDef {
 	private SpriteInstance getFreeInstance() {
 		SpriteInstance lReturnInstance = null;
 
-		final int POOL_SIZE = this.spriteInstancePool.size();
+		final int POOL_SIZE = spriteInstancePool.size();
 		for (int i = 0; i < POOL_SIZE; i++) {
-			SpriteInstance lSprite = this.spriteInstancePool.get(i);
+			SpriteInstance lSprite = spriteInstancePool.get(i);
 
 			if (lSprite.isFree()) {
 				lReturnInstance = lSprite;
@@ -233,7 +247,7 @@ public class SpriteSheetDef {
 		}
 
 		if (lReturnInstance != null) {
-			this.spriteInstancePool.remove(lReturnInstance);
+			spriteInstancePool.remove(lReturnInstance);
 			return lReturnInstance;
 
 		}
@@ -244,7 +258,7 @@ public class SpriteSheetDef {
 
 	private SpriteInstance extendInstancePool(int pAmt) {
 		for (int i = 0; i < pAmt; i++) {
-			this.spriteInstancePool.add(new SpriteInstance());
+			spriteInstancePool.add(new SpriteInstance());
 
 		}
 

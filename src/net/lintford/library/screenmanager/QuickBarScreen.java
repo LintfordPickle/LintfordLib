@@ -8,7 +8,7 @@ public abstract class QuickBarScreen extends MenuScreen {
 	// Variables
 	// --------------------------------------
 
-	private Screen mParentScreen;
+	protected Screen mParentScreen;
 
 	// --------------------------------------
 	// Constructor

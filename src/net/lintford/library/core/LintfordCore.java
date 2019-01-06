@@ -26,8 +26,6 @@ import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.debug.Debug.DebugLogLevel;
 import net.lintford.library.core.debug.DebugMemory;
 import net.lintford.library.core.entity.BaseEntity;
-import net.lintford.library.core.graphics.ResourceManager;
-import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.input.InputState;
 import net.lintford.library.core.rendering.RenderState;
 import net.lintford.library.core.time.TimeSpan;
@@ -267,8 +265,7 @@ public abstract class LintfordCore {
 	 * Creates a new OpenGL window, instantiates all auxiliary classes and starts the main game loop.
 	 */
 	public void createWindow() {
-		// Load the configuration files saved previously by the user (else create new
-		// ones)
+		// Load the configuration files saved previously by the user (or else create new ones)
 		mMasterConfig = new MasterConfig(mGameInfo);
 
 		mGameTime = new GameTime();
@@ -276,13 +273,9 @@ public abstract class LintfordCore {
 
 		initialiseGLFWWindow();
 
-		mResourceManager = new ResourceManager(mMasterConfig);
-
-		// Load the singleton subsystems
-		TextureManager.textureManager();
-
 		mControllerManager = new ControllerManager(this);
 
+		mResourceManager = new ResourceManager(mMasterConfig);
 		mResourceController = new ResourceController(mControllerManager, mResourceManager, CORE_ENTITY_GROUP_ID);
 
 		mHUD = new HUD(mMasterConfig.display());
@@ -354,9 +347,6 @@ public abstract class LintfordCore {
 		onInitialiseGL();
 
 		onInitialiseApp();
-
-		// Lazy initialisation of texture manager
-		TextureManager.textureManager();
 
 		onLoadGLContent();
 

@@ -55,8 +55,9 @@ public class RGBTexture {
 
 	}
 
+	/** pSaveLocation is the path NOT including the filename */
 	public void saveToDisk(String pSaveLocation) {
-		TextureManager.textureManager().saveTextureToFile(mWidth, mHeight, mColorData, pSaveLocation + System.getProperty("file.separator") + THUMB_FILENAME);
+		Texture.saveTextureToFile(mWidth, mHeight, mColorData, pSaveLocation + System.getProperty("file.separator") + THUMB_FILENAME);
 
 	}
 

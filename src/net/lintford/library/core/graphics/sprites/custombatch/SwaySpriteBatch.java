@@ -60,7 +60,7 @@ public class SwaySpriteBatch extends SpriteBatch {
 		if (pTexture == null) {
 			// Resolve to use a default texture, or the 'MISSING_TEXTURE'
 			if (TextureManager.USE_DEBUG_MISSING_TEXTURES) {
-				pTexture = TextureManager.TEXTURE_NOT_FOUND;
+				pTexture = mResourceManager.textureManager().textureNotFound();
 
 			} else {
 				return;
@@ -69,7 +69,7 @@ public class SwaySpriteBatch extends SpriteBatch {
 		}
 
 		if (mUseCheckerPattern) {
-			pTexture = TextureManager.TEXTURE_CHECKER_I;
+			pTexture = mResourceManager.textureManager().checkerIndexedTexture();
 
 		}
 

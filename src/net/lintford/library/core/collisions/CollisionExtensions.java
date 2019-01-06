@@ -2,9 +2,7 @@ package net.lintford.library.core.collisions;
 
 import net.lintford.library.core.maths.Vector2f;
 import net.lintford.library.data.entities.CircleEntity;
-import net.lintford.library.data.entities.PolyEntity;
 import net.lintford.library.data.entities.RectangleEntity;
-import net.lintford.library.data.entities.WorldEntity;
 
 public class CollisionExtensions {
 

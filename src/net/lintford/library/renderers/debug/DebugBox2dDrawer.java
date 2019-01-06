@@ -4,8 +4,8 @@ import org.jbox2d.dynamics.World;
 import org.lwjgl.glfw.GLFW;
 
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.JBox2dDebugDrawer;
-import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.renderers.BaseRenderer;
 import net.lintford.library.renderers.RendererManager;
 

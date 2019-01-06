@@ -9,10 +9,11 @@ import org.lwjgl.glfw.GLFW;
 
 import net.lintford.library.ConstantsTable;
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.DebugLogger.LogMessage;
 import net.lintford.library.core.geometry.Rectangle;
-import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
+import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 import net.lintford.library.core.input.IBufferedInputCallback;
@@ -119,6 +120,7 @@ public class DebugConsole extends Rectangle implements IBufferedInputCallback, I
 	protected boolean mDirty;
 
 	protected PrintStream mErrPrintStream;
+	private Texture mCoreUITexture;
 
 	// --------------------------------------
 	// Properties
@@ -202,10 +204,10 @@ public class DebugConsole extends Rectangle implements IBufferedInputCallback, I
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
-		Debug.debugManager().logger().v(getClass().getSimpleName(), "DebugConsole loading GL content");
-
 		mConsoleFont = pResourceManager.fontManager().loadNewFont(CONSOLE_FONT_NAME, "/res/fonts/OxygenMono-Regular.ttf", 16, LintfordCore.CORE_ENTITY_GROUP_ID);
 		mSpriteBatch.loadGLContent(pResourceManager);
+
+		mCoreUITexture = pResourceManager.textureManager().textureCore();
 
 		mIsLoaded = true;
 
@@ -390,9 +392,11 @@ public class DebugConsole extends Rectangle implements IBufferedInputCallback, I
 		mTAGFilterText.set(x + POSITION_OFFSET_TAG, y + 5, 200, 25);
 		mMessageFilterText.set(x + POSITION_OFFSET_MESSAGE, y + 5, 200, 25);
 
+		GLDebug.checkGLErrorsException(getClass().getSimpleName());
+		
 		// Draw the console background (with a black border for the text input region)
 		mSpriteBatch.begin(pCore.HUD());
-		mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 32, 0, 32, 32, x, y, w, h, Z_DEPTH, 0f, 0f, 0f, 0.85f);
+		mSpriteBatch.draw(mCoreUITexture, 32, 0, 32, 32, x, y, w, h, Z_DEPTH, 0f, 0f, 0f, 0.85f);
 		mSpriteBatch.end();
 
 		mConsoleFont.begin(pCore.HUD());
@@ -441,8 +445,8 @@ public class DebugConsole extends Rectangle implements IBufferedInputCallback, I
 						Z_DEPTH + 0.1f, 1f);
 		}
 
-		mTAGFilterText.draw(pCore, mSpriteBatch, mConsoleFont, Z_DEPTH + 0.01f);
-		mMessageFilterText.draw(pCore, mSpriteBatch, mConsoleFont, Z_DEPTH + 0.01f);
+		mTAGFilterText.draw(pCore, mSpriteBatch, mCoreUITexture, mConsoleFont, Z_DEPTH + 0.01f);
+		mMessageFilterText.draw(pCore, mSpriteBatch, mCoreUITexture, mConsoleFont, Z_DEPTH + 0.01f);
 
 		mConsoleFont.end();
 

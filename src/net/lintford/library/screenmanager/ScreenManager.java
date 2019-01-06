@@ -4,9 +4,9 @@ import java.util.ArrayList;
 
 import net.lintford.library.controllers.display.UIHUDController;
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.debug.GLDebug;
-import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.fonts.FontManager;
 import net.lintford.library.screenmanager.Screen.ScreenState;
 import net.lintford.library.screenmanager.toast.ToastManager;
@@ -221,8 +221,6 @@ public class ScreenManager {
 //		if (mToolTip.active)
 //			mToolTip.draw(pCore);
 
-		// Debug.debugManager().drawers().drawRect(pCore.HUD(), mUIHUDController.HUDRectangle());
-
 		mToastManager.draw(pCore);
 
 	}
@@ -275,6 +273,8 @@ public class ScreenManager {
 
 		mScreens.add(lInsertIndex, pScreen);
 
+		Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("Added screen ", pScreen.getClass().getSimpleName()));
+
 	}
 
 	public void removeScreen(Screen pScreen) {
@@ -298,8 +298,7 @@ public class ScreenManager {
 		if (mScreensToUpdate.contains(pScreen))
 			mScreensToUpdate.remove(pScreen);
 
-		Debug.debugManager().logger().i(getClass().getSimpleName(), "Finished unloadingGLContent");
-		GLDebug.checkGLErrorsException(getClass().getSimpleName());
+		Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("Removed screen ", pScreen.getClass().getSimpleName()));
 
 	}
 

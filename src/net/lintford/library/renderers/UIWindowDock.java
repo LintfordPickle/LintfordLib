@@ -3,8 +3,9 @@ package net.lintford.library.renderers;
 import java.util.List;
 
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.geometry.Rectangle;
-import net.lintford.library.core.graphics.textures.TextureManager;
+import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 import net.lintford.library.renderers.windows.UIWindow;
 
@@ -21,6 +22,12 @@ public class UIWindowDock extends BaseRenderer {
 	}
 
 	// --------------------------------------
+	// Variables
+	// --------------------------------------
+
+	protected Texture mCoreTexture;
+
+	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
@@ -35,7 +42,14 @@ public class UIWindowDock extends BaseRenderer {
 
 	@Override
 	public void initialise(LintfordCore pCore) {
-		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void loadGLContent(ResourceManager pResourceManager) {
+		super.loadGLContent(pResourceManager);
+
+		mCoreTexture = pResourceManager.textureManager().textureCore();
 
 	}
 
@@ -66,12 +80,12 @@ public class UIWindowDock extends BaseRenderer {
 			{
 
 				// Draw the button background
-				lTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 320, 64, 64, 64, lPosX, lPosY, 64, 64, -0.1f, 1f, 1f, 1f, 1f);
+				lTextureBatch.draw(mCoreTexture, 320, 64, 64, 64, lPosX, lPosY, 64, 64, -0.1f, 1f, 1f, 1f, 1f);
 				if (lWindow.iconSrcRectangle() != null) {
 					Rectangle lSrcRect = lWindow.iconSrcRectangle();
 					float lMargin = 12;
 
-					lTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, lSrcRect.x, lSrcRect.y, lSrcRect.w, lSrcRect.h, lPosX + lMargin, lPosY + lMargin, 64 - lMargin * 2, 64 - lMargin * 2, -0.1f, 1f, 1f, 1f, 1f);
+					lTextureBatch.draw(mCoreTexture, lSrcRect.x, lSrcRect.y, lSrcRect.w, lSrcRect.h, lPosX + lMargin, lPosY + lMargin, 64 - lMargin * 2, 64 - lMargin * 2, -0.1f, 1f, 1f, 1f, 1f);
 
 				}
 

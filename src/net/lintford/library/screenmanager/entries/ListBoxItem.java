@@ -1,6 +1,7 @@
 package net.lintford.library.screenmanager.entries;
 
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 import net.lintford.library.core.maths.Vector2f;
@@ -19,6 +20,7 @@ public abstract class ListBoxItem extends Rectangle {
 	protected ScreenManager mScreenManager;
 	protected ListBox mParentListBox;
 
+	protected int mEntityGroupID;
 	protected int mItemIndex;
 
 	// --------------------------------------
@@ -33,9 +35,11 @@ public abstract class ListBoxItem extends Rectangle {
 	// Constructor
 	// --------------------------------------
 
-	public ListBoxItem(ScreenManager pScreenManager, ListBox pParentListBox, int pIndex) {
+	public ListBoxItem(ScreenManager pScreenManager, ListBox pParentListBox, int pIndex, int pEntityGroupID) {
 		mScreenManager = pScreenManager;
 		mParentListBox = pParentListBox;
+
+		mEntityGroupID = pEntityGroupID;
 
 		mItemIndex = pIndex;
 
@@ -49,6 +53,14 @@ public abstract class ListBoxItem extends Rectangle {
 	// --------------------------------------
 
 	public void initialise() {
+
+	}
+
+	public void loadGLContent(ResourceManager pResourceManager) {
+
+	}
+
+	public void unloadGLContent() {
 
 	}
 

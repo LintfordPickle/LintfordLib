@@ -1,10 +1,9 @@
 package net.lintford.library.screenmanager.screens;
 
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.geometry.Rectangle;
-import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.textures.Texture;
-import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 import net.lintford.library.options.DisplayManager;
 import net.lintford.library.screenmanager.IMenuAction;
@@ -80,7 +79,7 @@ public class TimedIntroScreen extends Screen {
 	public void loadGLContent(ResourceManager pResourceManager) {
 		super.loadGLContent(pResourceManager);
 
-		mBackgroundTexture = TextureManager.textureManager().loadTexture(mImageLocation, mImageLocation);
+		mBackgroundTexture = pResourceManager.textureManager().loadTexture(mImageLocation, mImageLocation, entityGroupID());
 
 		mTextureBatch.loadGLContent(pResourceManager);
 

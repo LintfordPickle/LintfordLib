@@ -6,8 +6,8 @@ import java.util.List;
 import org.lwjgl.glfw.GLFW;
 
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.geometry.Rectangle;
-import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.renderers.ZLayers;
 import net.lintford.library.screenmanager.entries.EntryInteractions;
@@ -188,8 +188,8 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		}
 
 		final String lFontPathname = mScreenManager.fontPathname();
-		mMenuFont = pResourceManager.fontManager().loadNewFont(MENUSCREEN_FONT_NAME, lFontPathname, MENUSCREEN_FONT_POINT_SIZE, true, entityGroupID);
-		mMenuHeaderFont = pResourceManager.fontManager().loadNewFont(MENUSCREEN_HEADER_FONT_NAME, lFontPathname, MENUSCREEN_HEADER_FONT_POINT_SIZE, false, entityGroupID);
+		mMenuFont = pResourceManager.fontManager().loadNewFont(MENUSCREEN_FONT_NAME, lFontPathname, MENUSCREEN_FONT_POINT_SIZE, true, entityGroupID());
+		mMenuHeaderFont = pResourceManager.fontManager().loadNewFont(MENUSCREEN_HEADER_FONT_NAME, lFontPathname, MENUSCREEN_HEADER_FONT_POINT_SIZE, false, entityGroupID());
 
 	}
 
@@ -206,7 +206,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		mMenuFont.unloadGLContent();
 		mMenuHeaderFont.unloadGLContent();
 
-		mScreenManager.core().resources().fontManager().unloadFontGroup(entityGroupID);
+		mScreenManager.core().resources().fontManager().unloadFontGroup(entityGroupID());
 
 	}
 

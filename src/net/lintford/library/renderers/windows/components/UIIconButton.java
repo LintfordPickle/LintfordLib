@@ -117,7 +117,7 @@ public class UIIconButton extends UIWidget {
 	}
 
 	@Override
-	public void draw(LintfordCore pCore, TextureBatch pTextureBatch, FontUnit pTextFont, float pComponentZDepth) {
+	public void draw(LintfordCore pCore, TextureBatch pTextureBatch, Texture pUITexture, FontUnit pTextFont, float pComponentZDepth) {
 
 		mR = 0.19f;
 		mG = 0.13f;
@@ -131,7 +131,7 @@ public class UIIconButton extends UIWidget {
 
 		// Draw the button background
 		lTextureBatch.begin(pCore.HUD());
-		lTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, x, y, w, h, 0f, lR, lG, lB, 1f);
+		lTextureBatch.draw(pUITexture, 0, 0, 32, 32, x, y, w, h, 0f, lR, lG, lB, 1f);
 
 		if (mButtonTexture != null) {
 			lTextureBatch.draw(mButtonTexture, mSourceRectangle.x, mSourceRectangle.y, mSourceRectangle.w, mSourceRectangle.h, x, y, w, h, 0f, lR, lG, lB, 1f);

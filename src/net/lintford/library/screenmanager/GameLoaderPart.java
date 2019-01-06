@@ -1,6 +1,6 @@
 package net.lintford.library.screenmanager;
 
-import net.lintford.library.core.graphics.ResourceManager;
+import net.lintford.library.core.ResourceManager;
 
 public interface GameLoaderPart {
 

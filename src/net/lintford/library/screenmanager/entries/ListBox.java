@@ -6,9 +6,9 @@ import java.util.List;
 import org.lwjgl.opengl.GL11;
 
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.geometry.Rectangle;
-import net.lintford.library.core.graphics.ResourceManager;
-import net.lintford.library.core.graphics.textures.TextureManager;
+import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 import net.lintford.library.core.input.InputState;
 import net.lintford.library.core.maths.Vector2f;
@@ -37,7 +37,7 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 	// --------------------------------------
 
 	protected List<ListBoxItem> mItems;
-	protected TextureBatch mSpriteBatch;
+	protected Texture mUITexture;
 	protected ScrollBar mScrollBar;
 
 	protected ScrollBarContentRectangle mContentArea;
@@ -56,7 +56,7 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 	public int selectedIndex() {
 		return mSelectedItem;
 	}
-	
+
 	public void selectedIndex(int i) {
 		mSelectedItem = i;
 	}
@@ -77,7 +77,6 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 		super(pScreenManager, pParentLayout, pMenuEntryLabel);
 
 		mItems = new ArrayList<>();
-		mSpriteBatch = new TextureBatch();
 
 		mContentArea = new ScrollBarContentRectangle(this);
 
@@ -102,13 +101,13 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 
 	@Override
 	public void loadGLContent(ResourceManager pResourceManager) {
-		mSpriteBatch.loadGLContent(pResourceManager);
+		mUITexture = pResourceManager.textureManager().textureCore();
 
 	}
 
 	@Override
 	public void unloadGLContent() {
-		mSpriteBatch.unloadGLContent();
+		mUITexture = null;
 
 	}
 
@@ -233,19 +232,21 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 
 		final float TILE_SIZE = 32f;
 
-		mSpriteBatch.begin(pCore.HUD());
-		mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 448, 64, TILE_SIZE, TILE_SIZE, x, y, TILE_SIZE, TILE_SIZE, pParentZDepth, 1, 1, 1, 0.85f);
-		mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 480, 64, TILE_SIZE, TILE_SIZE, x + TILE_SIZE, y, w - 64, TILE_SIZE, pParentZDepth, 1, 1, 1, 0.85f);
-		mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 512, 64, TILE_SIZE, TILE_SIZE, x + w - 32, y, TILE_SIZE, TILE_SIZE, pParentZDepth, 1, 1, 1, 0.85f);
+		TextureBatch lTextureBatch = mParentLayout.parentScreen().rendererManager().uiTextureBatch();
 
-		mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 448, 96, TILE_SIZE, TILE_SIZE, x, y + 32, TILE_SIZE, h - 64, pParentZDepth, 1, 1, 1, 0.85f);
-		mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 480, 96, TILE_SIZE, TILE_SIZE, x + TILE_SIZE, y + 32, w - 64, h - 64, pParentZDepth, 1, 1, 1, 0.85f);
-		mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 512, 96, TILE_SIZE, TILE_SIZE, x + w - 32, y + 32, TILE_SIZE, h - 64, pParentZDepth, 1, 1, 1, 0.85f);
+		lTextureBatch.begin(pCore.HUD());
+		lTextureBatch.draw(mUITexture, 448, 64, TILE_SIZE, TILE_SIZE, x, y, TILE_SIZE, TILE_SIZE, pParentZDepth, 1, 1, 1, 0.85f);
+		lTextureBatch.draw(mUITexture, 480, 64, TILE_SIZE, TILE_SIZE, x + TILE_SIZE, y, w - 64, TILE_SIZE, pParentZDepth, 1, 1, 1, 0.85f);
+		lTextureBatch.draw(mUITexture, 512, 64, TILE_SIZE, TILE_SIZE, x + w - 32, y, TILE_SIZE, TILE_SIZE, pParentZDepth, 1, 1, 1, 0.85f);
 
-		mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 448, 128, TILE_SIZE, TILE_SIZE, x, y + h - 32, TILE_SIZE, TILE_SIZE, pParentZDepth, 1, 1, 1, 0.85f);
-		mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 480, 128, TILE_SIZE, TILE_SIZE, x + TILE_SIZE, y + h - 32, w - 64, TILE_SIZE, pParentZDepth, 1, 1, 1, 0.85f);
-		mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 512, 128, TILE_SIZE, TILE_SIZE, x + w - 32, y + h - 32, TILE_SIZE, TILE_SIZE, pParentZDepth, 1, 1, 1, 0.85f);
-		mSpriteBatch.end();
+		lTextureBatch.draw(mUITexture, 448, 96, TILE_SIZE, TILE_SIZE, x, y + 32, TILE_SIZE, h - 64, pParentZDepth, 1, 1, 1, 0.85f);
+		lTextureBatch.draw(mUITexture, 480, 96, TILE_SIZE, TILE_SIZE, x + TILE_SIZE, y + 32, w - 64, h - 64, pParentZDepth, 1, 1, 1, 0.85f);
+		lTextureBatch.draw(mUITexture, 512, 96, TILE_SIZE, TILE_SIZE, x + w - 32, y + 32, TILE_SIZE, h - 64, pParentZDepth, 1, 1, 1, 0.85f);
+
+		lTextureBatch.draw(mUITexture, 448, 128, TILE_SIZE, TILE_SIZE, x, y + h - 32, TILE_SIZE, TILE_SIZE, pParentZDepth, 1, 1, 1, 0.85f);
+		lTextureBatch.draw(mUITexture, 480, 128, TILE_SIZE, TILE_SIZE, x + TILE_SIZE, y + h - 32, w - 64, TILE_SIZE, pParentZDepth, 1, 1, 1, 0.85f);
+		lTextureBatch.draw(mUITexture, 512, 128, TILE_SIZE, TILE_SIZE, x + w - 32, y + h - 32, TILE_SIZE, TILE_SIZE, pParentZDepth, 1, 1, 1, 0.85f);
+		lTextureBatch.end();
 
 		// We need to use a stencil buffer to clip the list box items (which, when scrolling, could appear out-of-bounds of the listbox).
 		GL11.glEnable(GL11.GL_STENCIL_TEST);
@@ -259,19 +260,19 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 
 		final float DEPTH_PADDING = 6f;
 
-		mSpriteBatch.begin(pCore.HUD());
-		mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 32, 0, 32, 32, x + DEPTH_PADDING, y + DEPTH_PADDING, w - DEPTH_PADDING * 2, h - DEPTH_PADDING * 2, pParentZDepth, 1, 1, 1, 0f);
-		mSpriteBatch.end();
+		lTextureBatch.begin(pCore.HUD());
+		lTextureBatch.draw(mUITexture, 32, 0, 32, 32, x + DEPTH_PADDING, y + DEPTH_PADDING, w - DEPTH_PADDING * 2, h - DEPTH_PADDING * 2, pParentZDepth, 1, 1, 1, 0f);
+		lTextureBatch.end();
 
 		// Start the stencil buffer test to filter out everything outside of the scroll view
 		GL11.glStencilFunc(GL11.GL_EQUAL, 1, 0xFF); // Pass test if stencil value is 1
 
 		for (int i = 0; i < mItems.size(); i++) {
-			mItems.get(i).draw(pCore, pScreen, mSpriteBatch, mSelectedItem == mItems.get(i).mItemIndex, pParentZDepth);
+			mItems.get(i).draw(pCore, pScreen, lTextureBatch, mSelectedItem == mItems.get(i).mItemIndex, pParentZDepth);
 		}
 
 		if (mScrollBarsEnabled) {
-			mScrollBar.draw(pCore, mSpriteBatch, pParentZDepth);
+			mScrollBar.draw(pCore, lTextureBatch, mUITexture, pParentZDepth);
 
 		}
 

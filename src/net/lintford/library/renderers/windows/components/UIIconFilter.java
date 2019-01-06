@@ -4,9 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.geometry.Rectangle;
-import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
+import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 
 public class UIIconFilter extends Rectangle {
@@ -114,14 +115,14 @@ public class UIIconFilter extends Rectangle {
 		}
 	}
 
-	public void draw(LintfordCore pCore, TextureBatch pTextureBatch, FontUnit pTextFont, float pComponentZDepth) {
+	public void draw(LintfordCore pCore, TextureBatch pTextureBatch, Texture pUITexture, FontUnit pTextFont, float pComponentZDepth) {
 		pTextureBatch.begin(pCore.HUD());
 
 		int lCount = mIconFilters.size();
 		for (int i = 0; i < lCount; i++) {
 			IconIntFilter lFilter = mIconFilters.get(i);
 
-			lFilter.draw(pCore, pTextureBatch, pTextFont, pComponentZDepth);
+			lFilter.draw(pCore, pTextureBatch, pUITexture, pTextFont, pComponentZDepth);
 		}
 
 		pTextureBatch.end();

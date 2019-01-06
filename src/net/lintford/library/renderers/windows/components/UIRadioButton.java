@@ -2,7 +2,7 @@ package net.lintford.library.renderers.windows.components;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
-import net.lintford.library.core.graphics.textures.TextureManager;
+import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 import net.lintford.library.renderers.windows.UIWindow;
 import net.lintford.library.screenmanager.entries.EntryInteractions;
@@ -124,7 +124,7 @@ public class UIRadioButton extends UIWidget {
 	}
 
 	@Override
-	public void draw(LintfordCore pCore, TextureBatch pTextureBatch, FontUnit pTextFont, float pComponentZDepth) {
+	public void draw(LintfordCore pCore, TextureBatch pTextureBatch, Texture pUITexture, FontUnit pTextFont, float pComponentZDepth) {
 
 		float lR = mIsSelected ? 0.4f : 0.3f;
 		float lG = mIsSelected ? 0.4f : 0.34f;
@@ -132,7 +132,7 @@ public class UIRadioButton extends UIWidget {
 
 		// Draw the button background
 		pTextureBatch.begin(pCore.HUD());
-		pTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, x, y, w, h, pComponentZDepth, lR, lG, lB, 1f);
+		pTextureBatch.draw(pUITexture, 0, 0, 32, 32, x, y, w, h, pComponentZDepth, lR, lG, lB, 1f);
 		pTextureBatch.end();
 
 		FontUnit lFontRenderer = mParentWindow.rendererManager().textFont();

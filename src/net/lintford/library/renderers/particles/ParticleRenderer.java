@@ -3,11 +3,10 @@ package net.lintford.library.renderers.particles;
 import java.util.List;
 
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.graphics.ResourceManager;
+import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.graphics.particles.Particle;
 import net.lintford.library.core.graphics.particles.ParticleSystem;
 import net.lintford.library.core.graphics.textures.Texture;
-import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 
 /**  */
@@ -18,10 +17,11 @@ public class ParticleRenderer {
 	// --------------------------------------
 
 	private ParticleSystem mParticleSystem;
-
+	private ResourceManager mResourceManager;
 	private TextureBatch mTextureBatch;
 	private Texture mTexture;
 
+	private int mEntityGroupID;
 	private boolean mIsLoaded;
 	private boolean mIsParticleLoaded;
 	private boolean mIsAssigned;
@@ -43,7 +43,9 @@ public class ParticleRenderer {
 	// Constructor
 	// --------------------------------------
 
-	public ParticleRenderer() {
+	public ParticleRenderer(int pEntityGroupID) {
+		mEntityGroupID = pEntityGroupID;
+
 		mTextureBatch = new TextureBatch();
 		mIsAssigned = false;
 
@@ -58,6 +60,7 @@ public class ParticleRenderer {
 	}
 
 	public void loadGLContent(ResourceManager pResourceManager) {
+		mResourceManager = pResourceManager;
 		mTextureBatch.loadGLContent(pResourceManager);
 
 		mIsLoaded = true;
@@ -78,7 +81,7 @@ public class ParticleRenderer {
 		final int PARTICLE_COUNT = PARTICLES.size();
 
 		mTextureBatch.begin(pCore.gameCamera());
-		
+
 		for (int i = 0; i < PARTICLE_COUNT; i++) {
 			final Particle PART = PARTICLES.get(i);
 
@@ -111,7 +114,7 @@ public class ParticleRenderer {
 	}
 
 	private void loadParticleContent(final ParticleSystem pParticleSystem) {
-		mTexture = TextureManager.textureManager().loadTexture(pParticleSystem.textureName(), pParticleSystem.textureFilename());
+		mTexture = mResourceManager.textureManager().loadTexture(pParticleSystem.textureName(), pParticleSystem.textureFilename(), mEntityGroupID);
 		mIsParticleLoaded = mTexture != null;
 
 	}

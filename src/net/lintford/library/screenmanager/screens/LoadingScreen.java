@@ -6,9 +6,8 @@ import java.util.List;
 import org.lwjgl.opengl.GL11;
 
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.graphics.ResourceManager;
+import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.graphics.textures.Texture;
-import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 import net.lintford.library.core.time.TimeSpan;
 import net.lintford.library.screenmanager.Screen;
@@ -76,7 +75,7 @@ public class LoadingScreen extends Screen {
 		for (int i = 0; i < lScreenCount; i++) {
 			if (!lScreenList.get(i).isExiting())
 				lScreenList.get(i).exitScreen();
-			
+
 		}
 
 		lScreenList.clear();
@@ -97,8 +96,8 @@ public class LoadingScreen extends Screen {
 		mTextureBatch = new TextureBatch();
 		mTextureBatch.loadGLContent(pResourceManager);
 
-		mLoadingTexture = TextureManager.textureManager().loadTexture(LOADING_BACKGROUND_TEXTURE_NAME, "/res/textures/core/loadingscreen.png");
-		mLoadingTextTexture = TextureManager.textureManager().loadTexture(LOADING_TEXT_TEXTURE_NAME, "/res/textures/core/loadingscreentext.png");
+		mLoadingTexture = pResourceManager.textureManager().loadTexture(LOADING_BACKGROUND_TEXTURE_NAME, "/res/textures/core/loadingscreen.png", LintfordCore.CORE_ENTITY_GROUP_ID);
+		mLoadingTextTexture = pResourceManager.textureManager().loadTexture(LOADING_TEXT_TEXTURE_NAME, "/res/textures/core/loadingscreentext.png", LintfordCore.CORE_ENTITY_GROUP_ID);
 
 	}
 

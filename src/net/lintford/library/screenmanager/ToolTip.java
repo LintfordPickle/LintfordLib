@@ -1,9 +1,9 @@
 package net.lintford.library.screenmanager;
 
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.graphics.ResourceManager;
+import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
-import net.lintford.library.core.graphics.textures.TextureManager;
+import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 
 public class ToolTip {
@@ -16,6 +16,7 @@ public class ToolTip {
 
 	private ScreenManager mScreenManager;
 	private TextureBatch mSpriteBatch;
+	private Texture mUITexture;
 	protected FontUnit mMenuFont;
 
 	private String mToolTipText;
@@ -38,6 +39,8 @@ public class ToolTip {
 
 	public void loadGLContent(ResourceManager pResourceManager) {
 		mSpriteBatch.loadGLContent(pResourceManager);
+
+		mUITexture = pResourceManager.textureManager().textureCore();
 
 		final String lFontPathname = mScreenManager.fontPathname();
 		mMenuFont = pResourceManager.fontManager().loadNewFont(TOOLTIP_FONT_NAME, lFontPathname, 16, true, LintfordCore.CORE_ENTITY_GROUP_ID);
@@ -83,7 +86,7 @@ public class ToolTip {
 
 		// Render the background
 		mSpriteBatch.begin(pCore.HUD());
-		mSpriteBatch.draw(TextureManager.TEXTURE_CORE_UI, 96, 0, 32, 32, x, y, lToolTipTextWidth + lTextPadding * 2f, lToolTipTextHeight + lTextPadding * 2f, z, 1, 1, 1, 1);
+		mSpriteBatch.draw(mUITexture, 96, 0, 32, 32, x, y, lToolTipTextWidth + lTextPadding * 2f, lToolTipTextHeight + lTextPadding * 2f, z, 1, 1, 1, 1);
 		mSpriteBatch.end();
 
 		mMenuFont.begin(pCore.HUD());

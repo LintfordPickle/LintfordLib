@@ -2,10 +2,10 @@ package net.lintford.library.screenmanager.entries;
 
 import net.lintford.library.ConstantsTable;
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.geometry.Rectangle;
-import net.lintford.library.core.graphics.ResourceManager;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
-import net.lintford.library.core.graphics.textures.TextureManager;
+import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 import net.lintford.library.core.input.InputState;
 import net.lintford.library.core.maths.MathHelper;
@@ -25,7 +25,10 @@ public class MenuSliderEntry extends MenuEntry {
 
 	private Rectangle mDownButton;
 	private Rectangle mUpButton;
+
 	private TextureBatch mTextureBatch;
+	private Texture mUITexture;
+
 	private String mLabel;
 	private final String mSeparator = " : ";
 	private String mUnit = "%";
@@ -127,6 +130,7 @@ public class MenuSliderEntry extends MenuEntry {
 		super.loadGLContent(pResourceManager);
 
 		mTextureBatch.loadGLContent(pResourceManager);
+		mUITexture = pResourceManager.textureManager().textureCore();
 
 	}
 
@@ -259,8 +263,8 @@ public class MenuSliderEntry extends MenuEntry {
 			final float ARROW_PADDING_X = mDownButton.w - ARROW_BUTTON_SIZE;
 			final float ARROW_PADDING_Y = mDownButton.h - ARROW_BUTTON_SIZE;
 
-			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 160, 0, 32, 32, mDownButton.x + ARROW_PADDING_X, yPos + ARROW_PADDING_Y, ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, mZ, 1f, 1f, 1f, 1f);
-			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 224, 0, 32, 32, mUpButton.x + ARROW_PADDING_X, yPos + ARROW_PADDING_Y, ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, mZ, 1f, 1f, 1f, 1f);
+			mTextureBatch.draw(mUITexture, 160, 0, 32, 32, mDownButton.x + ARROW_PADDING_X, yPos + ARROW_PADDING_Y, ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, mZ, 1f, 1f, 1f, 1f);
+			mTextureBatch.draw(mUITexture, 224, 0, 32, 32, mUpButton.x + ARROW_PADDING_X, yPos + ARROW_PADDING_Y, ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, mZ, 1f, 1f, 1f, 1f);
 
 			mTextureBatch.end();
 		}
@@ -270,12 +274,12 @@ public class MenuSliderEntry extends MenuEntry {
 
 		final float lCaretPos = MathHelper.scaleToRange(mValue, mLowerBound, mUpperBound, mBarPosX, mBarWidth - 16);
 
-		mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 0, 192, 32, 32, mBarPosX, yPos, 32, 32, mZ, 1f, 1f, 1f, 1f);
-		mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 32, 192, 32, 32, mBarPosX + 32, yPos, mBarWidth - 64 - 32, 32, mZ, 1f, 1f, 1f, 1f);
-		mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 64, 192, 32, 32, mBarPosX + mBarWidth - 64, yPos, 32, 32, mZ, 1f, 1f, 1f, 1f);
+		mTextureBatch.draw(mUITexture, 0, 192, 32, 32, mBarPosX, yPos, 32, 32, mZ, 1f, 1f, 1f, 1f);
+		mTextureBatch.draw(mUITexture, 32, 192, 32, 32, mBarPosX + 32, yPos, mBarWidth - 64 - 32, 32, mZ, 1f, 1f, 1f, 1f);
+		mTextureBatch.draw(mUITexture, 64, 192, 32, 32, mBarPosX + mBarWidth - 64, yPos, 32, 32, mZ, 1f, 1f, 1f, 1f);
 
 		// Draw the caret
-		mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 192, 192, 32, 32, lCaretPos, yPos, 32, 32, mZ, 1f, 1f, 1f, 1f);
+		mTextureBatch.draw(mUITexture, 192, 192, 32, 32, lCaretPos, yPos, 32, 32, mZ, 1f, 1f, 1f, 1f);
 
 		mTextureBatch.end();
 
@@ -304,14 +308,14 @@ public class MenuSliderEntry extends MenuEntry {
 
 		if (mShowInfoButton) {
 			mTextureBatch.begin(pCore.HUD());
-			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 544, 0, 32, 32, mInfoButton, mZ, 1f, 1f, 1f, 1f);
+			mTextureBatch.draw(mUITexture, 544, 0, 32, 32, mInfoButton, mZ, 1f, 1f, 1f, 1f);
 			mTextureBatch.end();
 		}
 
 		if (ConstantsTable.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
 			mTextureBatch.begin(pCore.HUD());
 			final float ALPHA = 0.3f;
-			mTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, x, y, w, h, mZ, 1f, 0.2f, 0.2f, ALPHA);
+			mTextureBatch.draw(mUITexture, 0, 0, 32, 32, x, y, w, h, mZ, 1f, 0.2f, 0.2f, ALPHA);
 			mTextureBatch.end();
 
 		}

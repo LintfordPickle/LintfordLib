@@ -2,7 +2,7 @@ package net.lintford.library.renderers.windows.components;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
-import net.lintford.library.core.graphics.textures.TextureManager;
+import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 import net.lintford.library.core.maths.MathHelper;
 import net.lintford.library.renderers.windows.UIWindow;
@@ -107,7 +107,7 @@ public class UISlider extends UIWidget {
 	}
 
 	@Override
-	public void draw(LintfordCore pCore, TextureBatch pTextureBatch, FontUnit pTextFont, float pComponentZDepth) {
+	public void draw(LintfordCore pCore, TextureBatch pTextureBatch, Texture pUITexture, FontUnit pTextFont, float pComponentZDepth) {
 
 		// Seconds
 		mMinValue = 0;
@@ -118,8 +118,8 @@ public class UISlider extends UIWidget {
 
 		// Draw the button background
 		pTextureBatch.begin(pCore.HUD());
-		pTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, x, y + h / 2 - SLIDER_RAIL_HEIGHT / 2, w, SLIDER_RAIL_HEIGHT, 0f, mR, mG, mB, 1f);
-		pTextureBatch.draw(TextureManager.TEXTURE_CORE_UI, 0, 0, 32, 32, x + mCurrentPosition - SLIDER_WIDTH / 2, y, SLIDER_WIDTH, h, 0f, mB, mG, mR, 1f);
+		pTextureBatch.draw(pUITexture, 0, 0, 32, 32, x, y + h / 2 - SLIDER_RAIL_HEIGHT / 2, w, SLIDER_RAIL_HEIGHT, 0f, mR, mG, mB, 1f);
+		pTextureBatch.draw(pUITexture, 0, 0, 32, 32, x + mCurrentPosition - SLIDER_WIDTH / 2, y, SLIDER_WIDTH, h, 0f, mB, mG, mR, 1f);
 		pTextureBatch.end();
 
 	}
