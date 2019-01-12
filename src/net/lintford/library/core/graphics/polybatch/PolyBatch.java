@@ -51,7 +51,7 @@ public class PolyBatch {
 	// --------------------------------------
 
 	public PolyBatch() {
-		mShader = new ShaderMVP_PT(VERT_FILENAME, FRAG_FILENAME) {
+		mShader = new ShaderMVP_PT(ShaderMVP_PT.SHADER_NAME, VERT_FILENAME, FRAG_FILENAME) {
 			@Override
 			protected void bindAtrributeLocations(int pShaderID) {
 				GL20.glBindAttribLocation(pShaderID, 0, "inPosition");

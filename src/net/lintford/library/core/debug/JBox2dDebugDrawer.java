@@ -1,12 +1,14 @@
 package net.lintford.library.core.debug;
 
 import org.jbox2d.collision.shapes.PolygonShape;
+import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.collision.shapes.ShapeType;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.Fixture;
 import org.jbox2d.dynamics.World;
+import org.lwjgl.opengl.GL11;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.geometry.Rectangle;
@@ -17,9 +19,9 @@ public class JBox2dDebugDrawer {
 	// --------------------------------------
 	// Constants
 	// --------------------------------------
-	
+
 	static final int MAX_VERTS = 10;
-	static Vector2f[] verts;// = new Vector2f[MAX_VERTS];
+	static Vector2f[] verts;
 	static Vec2 vertex = new Vec2();
 
 	static int bodyCount;
@@ -54,7 +56,7 @@ public class JBox2dDebugDrawer {
 			if (pBody.m_type == BodyType.DYNAMIC) {
 				lR = 0.05f;
 				lG = 0.09f;
-				lB = 0.87f;
+				lB = pBody.isAwake() ? 0.87f : 0.04f;
 			} else if (pBody.m_type == BodyType.STATIC) {
 				lR = 0.05f;
 				lG = 1f;
@@ -73,6 +75,20 @@ public class JBox2dDebugDrawer {
 
 	private static class RenderOfCircleFixture {
 		public static void draw(LintfordCore pCore, Body pBody, Fixture pFixture) {
+			Fixture lFixture = pBody.getFixtureList();
+
+			float lBodyX = pBody.getPosition().x * 32f;
+			float lBodyY = pBody.getPosition().y * 32f;
+
+			while (lFixture != null) {
+				Shape lCircleShape = pFixture.getShape();
+				final float lRadius = lCircleShape.getRadius() * 32f;
+
+				Debug.debugManager().drawers().drawCircle(pCore.gameCamera(), lBodyX, lBodyY, lRadius, 7, GL11.GL_LINE_STRIP);
+
+				lFixture = lFixture.getNext();
+
+			}
 
 		}
 
@@ -86,7 +102,7 @@ public class JBox2dDebugDrawer {
 			float lBodyX = pBody.getPosition().x * 32f;
 			float lBodyY = pBody.getPosition().y * 32f;
 
-			Debug.debugManager().drawers().startLineRenderer(pCore.gameCamera());
+			Debug.debugManager().drawers().startLineRenderer(pCore.gameCamera(), GL11.GL_LINES);
 			Debug.debugManager().drawers().drawLine(lBodyX - 10, lBodyY, lBodyX + 10, lBodyY);
 			Debug.debugManager().drawers().drawLine(lBodyX, lBodyY - 10, lBodyX, lBodyY + 10);
 			Debug.debugManager().drawers().endLineRenderer();
@@ -132,9 +148,17 @@ public class JBox2dDebugDrawer {
 
 		Rectangle lHUDrect = pCore.HUD().boundingRectangle();
 
+		final int lLineHeight = -20;
+		int lLinePos = 70;
+		
 		Debug.debugManager().drawers().startText(pCore.HUD());
-		Debug.debugManager().drawers().drawText("# Bodies: " + mWorld.getBodyCount(), lHUDrect.left() + 5, lHUDrect.bottom() - 85);
-		Debug.debugManager().drawers().drawText("# Contacts: " + mWorld.getContactCount(), lHUDrect.left() + 5, lHUDrect.bottom() - 65);
+		Debug.debugManager().drawers().drawText("# Contacts: " + mWorld.getContactCount(), lHUDrect.left() + 5, lHUDrect.bottom() - lLinePos);
+		lLinePos-= lLineHeight;
+		Debug.debugManager().drawers().drawText(String.format("# Fixtures: ??"), lHUDrect.left() + 5, lHUDrect.bottom() - lLinePos);
+		lLinePos-= lLineHeight;
+		Debug.debugManager().drawers().drawText(String.format("# Bodies: %d (??,%d)", mWorld.getBodyCount(), mWorld.getBodyCount()), lHUDrect.left() + 5, lHUDrect.bottom() - lLinePos);
+		lLinePos-= lLineHeight;
+		Debug.debugManager().drawers().drawText(String.format("# Particles: %d", mWorld.getParticleCount()), lHUDrect.left() + 5, lHUDrect.bottom() - lLinePos);
 		Debug.debugManager().drawers().endText();
 
 		Body lBody = mWorld.getBodyList();

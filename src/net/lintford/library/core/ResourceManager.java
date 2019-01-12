@@ -17,6 +17,7 @@ import net.lintford.library.ConstantsTable;
 import net.lintford.library.core.audio.AudioManager;
 import net.lintford.library.core.box2d.PObjectManager;
 import net.lintford.library.core.graphics.fonts.FontManager;
+import net.lintford.library.core.graphics.shaders.ShaderManager;
 import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetManager;
 import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.options.MasterConfig;
@@ -45,14 +46,11 @@ public class ResourceManager {
 	protected FontManager mFontManager;
 	protected SpriteSheetManager mSpriteSheetManager;
 	protected AudioManager mAudioManager;
-
 	protected PObjectManager mPObjectManager;
-
+	// protected ShaderManager mShaderManager;
+	
 	// TODO: ResouceManagers still to be implemented:
-	// SoundManager
-	// MusicManager
-	// PObject
-	// ShaderManager
+	// GeometryManager
 
 	private boolean mIsLoaded;
 

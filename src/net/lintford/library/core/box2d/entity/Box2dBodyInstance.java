@@ -24,6 +24,8 @@ public class Box2dBodyInstance extends BaseData {
 
 	public transient Body mBody;
 
+	public String name;
+	public int uid;
 	public int bodyTypeIndex;
 	public Vec2 position;
 	public float angle;
@@ -50,7 +52,7 @@ public class Box2dBodyInstance extends BaseData {
 	// Constructor
 	// --------------------------------------
 
-	public Box2dBodyInstance(World pWorld) {
+	public Box2dBodyInstance() {
 		position = new Vec2();
 		linearVelocity = new Vec2();
 		massCenter = new Vec2();

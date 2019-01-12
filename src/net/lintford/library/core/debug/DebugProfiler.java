@@ -61,6 +61,7 @@ public class DebugProfiler extends Rectangle {
 			return;
 
 		mSpriteBatch = new TextureBatch();
+
 		mStringBuilder = new StringBuilder();
 
 		h = 20;

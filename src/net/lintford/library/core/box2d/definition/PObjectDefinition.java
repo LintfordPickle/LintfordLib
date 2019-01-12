@@ -103,6 +103,10 @@ public class PObjectDefinition {
 	// Properties
 	// --------------------------------------
 
+	public void name(String pNewName) {
+		mObjectName = pNewName;
+	}
+	
 	public String name() {
 		return mObjectName;
 	}
@@ -270,6 +274,7 @@ public class PObjectDefinition {
 			break;
 		}
 
+		bodyDef.name = bodyValue.optString("name", "");
 		bodyDef.bodyDefinition.position = jsonToVec("position", bodyValue);
 		bodyDef.bodyDefinition.angle = jsonToFloat("angle", bodyValue);
 		bodyDef.bodyDefinition.linearVelocity = jsonToVec("linearVelocity", bodyValue);
@@ -317,6 +322,7 @@ public class PObjectDefinition {
 
 		Box2dFixtureDefinition lBox2dFixtureDefinition = new Box2dFixtureDefinition();
 
+		lBox2dFixtureDefinition.name = fixtureValue.optString("name", "");
 		lBox2dFixtureDefinition.fixtureDef.restitution = jsonToFloat("restitution", fixtureValue);
 		lBox2dFixtureDefinition.fixtureDef.friction = jsonToFloat("friction", fixtureValue);
 		lBox2dFixtureDefinition.fixtureDef.density = jsonToFloat("density", fixtureValue);
@@ -378,6 +384,7 @@ public class PObjectDefinition {
 			Vec2 vertices[] = new Vec2[numVertices];
 			for (int i = 0; i < numVertices; i++)
 				vertices[i] = jsonToVec("vertices", chainValue, i);
+
 			chainShape.createChain(vertices, numVertices);
 			chainShape.m_hasPrevVertex = chainValue.optBoolean("hasPrevVertex", false);
 			chainShape.m_hasNextVertex = chainValue.optBoolean("hasNextVertex", false);
@@ -387,6 +394,8 @@ public class PObjectDefinition {
 				chainShape.m_nextVertex.set(jsonToVec("nextVertex", chainValue));
 
 			lBox2dFixtureDefinition.fixtureDef.shape = chainShape;
+
+			// TODO: Need to implement the Box2dChainInstance
 
 		} else if (null != fixtureValue.optJSONObject("polygon")) {
 			JSONObject polygonValue = fixtureValue.getJSONObject("polygon");

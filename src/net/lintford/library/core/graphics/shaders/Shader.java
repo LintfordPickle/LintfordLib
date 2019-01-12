@@ -33,6 +33,7 @@ public abstract class Shader {
 	// Variables
 	// --------------------------------------
 
+	private String mName;
 	private int mShaderID;
 	private final String mVertPathname;
 	private final String mFragPathname;
@@ -40,6 +41,10 @@ public abstract class Shader {
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public String name() {
+		return mName;
+	}
 
 	public int shaderID() {
 		return mShaderID;
@@ -49,9 +54,11 @@ public abstract class Shader {
 	// Constructor
 	// --------------------------------------
 
-	public Shader(String pVertPath, String pFragPath) {
-		mVertPathname = pVertPath;
-		mFragPathname = pFragPath;
+	public Shader(String pName, String pVertFilename, String pFragFilename) {
+		mName = pName;
+
+		mVertPathname = pVertFilename;
+		mFragPathname = pFragFilename;
 
 	}
 
@@ -74,6 +81,10 @@ public abstract class Shader {
 	public void unloadGLContent() {
 		glUseProgram(0);
 		glDeleteProgram(mShaderID);
+
+	}
+
+	public void reloadShader() {
 
 	}
 

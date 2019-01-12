@@ -1,6 +1,7 @@
 package net.lintford.library.core.box2d.entity;
 
 import org.jbox2d.dynamics.Body;
+import org.jbox2d.dynamics.Filter;
 import org.jbox2d.dynamics.Fixture;
 import org.jbox2d.dynamics.FixtureDef;
 import org.jbox2d.dynamics.World;
@@ -20,6 +21,7 @@ public class Box2dFixtureInstance extends BaseData {
 
 	public ShapeInstance shape;
 
+	public String name;
 	public float density;
 	public float friction;
 	public float restitution;
@@ -71,10 +73,10 @@ public class Box2dFixtureInstance extends BaseData {
 		lFixtureDef.restitution = restitution;
 		lFixtureDef.friction = friction;
 
-//		lFixtureDef.filter = new Filter();
-//		lFixtureDef.filter.categoryBits = lFixtureInstance.categoryBits;
-//		lFixtureDef.filter.groupIndex = lFixtureInstance.groupIndex;
-//		lFixtureDef.filter.maskBits = lFixtureInstance.maskBits;
+		lFixtureDef.filter = new Filter();
+		lFixtureDef.filter.categoryBits = categoryBits;
+		lFixtureDef.filter.maskBits = maskBits;
+		lFixtureDef.filter.groupIndex = groupIndex;
 
 		shape.loadPhysics();
 		lFixtureDef.shape = shape.shape();

@@ -11,6 +11,8 @@ public class ShaderMVP_PT extends Shader {
 	// Constants
 	// --------------------------------------
 
+	public final static String SHADER_NAME = "ShaderMVP_PT";
+
 	public final static String SHADER_UNIFORM_PROJECTION_NAME = "projectionMatrix";
 	public final static String SHADER_UNIFORM_VIEW_NAME = "viewMatrix";
 	public final static String SHADER_UNIFORM_MODEL_NAME = "modelMatrix";
@@ -59,8 +61,8 @@ public class ShaderMVP_PT extends Shader {
 	// Constructor
 	// --------------------------------------
 
-	public ShaderMVP_PT(String pVertPath, String pFragPath) {
-		super(pVertPath, pFragPath);
+	public ShaderMVP_PT(String pName, String pVertPath, String pFragPath) {
+		super(pName, pVertPath, pFragPath);
 
 		mProjectionMatrix = new Matrix4f();
 		mViewMatrix = new Matrix4f();

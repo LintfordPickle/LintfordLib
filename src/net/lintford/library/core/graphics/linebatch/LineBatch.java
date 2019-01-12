@@ -52,7 +52,7 @@ public class LineBatch {
 	public void setLineType(int pGLLineType) {
 		mGLLineType = pGLLineType;
 
-		if (mGLLineType != GL11.GL_LINE_STRIP || mGLLineType != GL11.GL_LINES) {
+		if (mGLLineType != GL11.GL_LINE_STRIP && mGLLineType != GL11.GL_LINES) {
 			mGLLineType = GL11.GL_LINES;
 		}
 
@@ -67,7 +67,7 @@ public class LineBatch {
 	// --------------------------------------
 
 	public LineBatch() {
-		mShader = new ShaderMVP_PT(VERT_FILENAME, FRAG_FILENAME) {
+		mShader = new ShaderMVP_PT("ShaderMVP_PT", VERT_FILENAME, FRAG_FILENAME) {
 			@Override
 			protected void bindAtrributeLocations(int pShaderID) {
 				GL20.glBindAttribLocation(pShaderID, 0, "inPosition");
@@ -282,9 +282,7 @@ public class LineBatch {
 
 		mShader.bind();
 
-		// TODO: Add options to switch between DEBUG GL_LINE_STRIP and GL_LINES
-		// GL11.glDrawArrays(GL11.GL_LINE_STRIP, 0, mVertexCount);
-		GL11.glDrawArrays(GL11.GL_LINES, 0, mVertexCount);
+		GL11.glDrawArrays(mGLLineType, 0, mVertexCount);
 
 		GL30.glBindVertexArray(0);
 

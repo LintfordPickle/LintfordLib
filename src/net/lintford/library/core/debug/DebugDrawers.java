@@ -56,7 +56,7 @@ public class DebugDrawers {
 		mPolyBatch = new PolyBatch();
 		mTexturedQuad = new TexturedQuad();
 
-		mBasicShader = new ShaderMVP_PT(VERT_FILENAME, FRAG_FILENAME) {
+		mBasicShader = new ShaderMVP_PT("BasicShaderPT", VERT_FILENAME, FRAG_FILENAME) {
 			@Override
 			protected void bindAtrributeLocations(int pShaderID) {
 				GL20.glBindAttribLocation(pShaderID, 0, "inPosition");
@@ -162,15 +162,20 @@ public class DebugDrawers {
 	}
 
 	public void drawCircle(ICamera pCamera, float pX, float pY, float pRadius) {
-		drawCircle(pCamera, pX, pY, pRadius, 50);
+		drawCircle(pCamera, pX, pY, pRadius, 32);
 
 	}
 
 	public void drawCircle(ICamera pCamera, float pX, float pY, float pRadius, int pSegCount) {
+		drawCircle(pCamera, pX, pY, pRadius, pSegCount, GL11.GL_LINE_STRIP);
+
+	}
+
+	public void drawCircle(ICamera pCamera, float pX, float pY, float pRadius, int pSegCount, int pGLLineType) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
-		mLineBatch.setLineType(GL11.GL_LINE_STRIP);
+		mLineBatch.setLineType(pGLLineType);
 		mLineBatch.begin(pCamera);
 
 		final int lNumSegments = pSegCount / 2;
@@ -235,10 +240,17 @@ public class DebugDrawers {
 	}
 
 	public void startLineRenderer(ICamera pCamera) {
+		startLineRenderer(pCamera, GL11.GL_LINE_STRIP);
+
+	}
+
+	public void startLineRenderer(ICamera pCamera, int pGLLineType) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
+		mLineBatch.setLineType(pGLLineType);
 		mLineBatch.begin(pCamera);
+
 	}
 
 	public void drawLine(float pSX, float pSY, float pEX, float pEY) {

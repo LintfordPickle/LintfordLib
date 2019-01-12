@@ -2,6 +2,7 @@ package net.lintford.library.core.box2d.entity;
 
 import org.jbox2d.collision.shapes.ChainShape;
 import org.jbox2d.collision.shapes.Shape;
+import org.jbox2d.common.Vec2;
 
 import net.lintford.library.data.BaseData;
 
@@ -15,6 +16,12 @@ public class Box2dChainInstance extends BaseData implements ShapeInstance {
 
 	public transient ChainShape chainShape;
 
+	public boolean hasPrevVertex = false;
+	public boolean hasNextVertex = false;
+
+	public Vec2 vertex0 = new Vec2();
+	public Vec2 vertex1 = new Vec2();
+	
 	// --------------------------------------
 	// Methods
 	// --------------------------------------

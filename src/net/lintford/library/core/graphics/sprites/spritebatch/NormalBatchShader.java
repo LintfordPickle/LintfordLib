@@ -62,7 +62,7 @@ public class NormalBatchShader extends ShaderMVP_PT {
 	// --------------------------------------
 
 	public NormalBatchShader() {
-		super(VERT_FILENAME, FRAG_FILENAME);
+		super("NormalBatchShader", VERT_FILENAME, FRAG_FILENAME);
 
 		mSunPosition = new Vector2f();
 		mScreenDimension = new Vector2f();
@@ -78,7 +78,6 @@ public class NormalBatchShader extends ShaderMVP_PT {
 		GL20.glBindAttribLocation(pShaderID, 0, "inPosition");
 		GL20.glBindAttribLocation(pShaderID, 1, "inTexCoord");
 
-		
 	}
 
 	@Override
@@ -89,7 +88,7 @@ public class NormalBatchShader extends ShaderMVP_PT {
 		mTextureLocationNormal = GL20.glGetUniformLocation(shaderID(), "normalSampler");
 		mSunPositionLocation = GL20.glGetUniformLocation(shaderID(), "sunPosition");
 		mDimensionsLocation = GL20.glGetUniformLocation(shaderID(), "dimensions");
-		
+
 		GL20.glUniform1i(mTextureLocationDiffuse, 0);
 		GL20.glUniform1i(mTextureLocationNormal, 1);
 	}
@@ -101,8 +100,8 @@ public class NormalBatchShader extends ShaderMVP_PT {
 		if (mSunPositionLocation != -1 && mSunPosition != null) {
 			GL20.glUniform2f(mSunPositionLocation, mSunPosition.x, mSunPosition.y);
 		}
-		
-		//  TODO: needs protection
+
+		// TODO: needs protection
 		GL20.glUniform2f(mDimensionsLocation, mScreenDimension.x, mScreenDimension.y);
 
 	}

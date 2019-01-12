@@ -11,7 +11,6 @@ import org.lwjgl.system.MemoryUtil;
 
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.camera.ICamera;
-import net.lintford.library.core.debug.GLDebug;
 import net.lintford.library.core.geometry.Circle;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.shaders.ShaderMVP_PT;
@@ -114,7 +113,7 @@ public class TextureBatch {
 	// --------------------------------------
 
 	public TextureBatch() {
-		mShader = new ShaderMVP_PT(VERT_FILENAME, FRAG_FILENAME) {
+		mShader = new ShaderMVP_PT("TextureBatchShader", VERT_FILENAME, FRAG_FILENAME) {
 			@Override
 			protected void bindAtrributeLocations(int pShaderID) {
 				GL20.glBindAttribLocation(pShaderID, 0, "inPosition");
@@ -563,8 +562,6 @@ public class TextureBatch {
 		mCurNumSprites = 0;
 		mVertexCount = 0;
 
-		GLDebug.checkGLErrorsException(getClass().getSimpleName());
-
 	}
 
 	public void redraw() {
@@ -591,6 +588,7 @@ public class TextureBatch {
 		mCustomShader.bind();
 
 		GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, mVertexCount);
+
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 
 		mCustomShader.unbind();

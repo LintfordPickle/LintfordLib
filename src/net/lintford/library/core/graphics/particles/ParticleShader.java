@@ -6,12 +6,14 @@ import net.lintford.library.core.graphics.shaders.Shader;
 
 public class ParticleShader extends Shader {
 
+	public static final String SHADER_NAME = "ParticleShader";
+	
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
 	public ParticleShader(String vertPath, String fragPath) {
-		super(vertPath, fragPath);
+		super(SHADER_NAME, vertPath, fragPath);
 
 	}
 

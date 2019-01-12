@@ -19,6 +19,8 @@ public class Box2dBodyDefinition {
 	public BodyDef bodyDefinition = new BodyDef();
 	public List<Box2dFixtureDefinition> fixtureList = new ArrayList<>();
 
+	public String name;
+	
 	// Body data is stored directly in the BodyDef instance above.
 	public int bodyTypeIndex;
 

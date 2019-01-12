@@ -459,7 +459,6 @@ public abstract class LintfordCore {
 		if (mGameCamera != null)
 			mGameCamera.update(this);
 		mControllerManager.update(this, CORE_ENTITY_GROUP_ID);
-
 		Debug.debugManager().update(this);
 
 	}

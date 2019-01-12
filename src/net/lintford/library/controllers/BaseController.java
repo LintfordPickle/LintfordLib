@@ -15,7 +15,7 @@ public abstract class BaseController {
 	protected boolean mUniqueController;
 
 	/** A group ID is assigned to all {@link BaseController} instances. It allows the developer to programmatically unload batches of particular parts of the game when required (i.e. unload the game controllers when returning to the main menu) */
-	protected int mGroupID;
+	protected int mEntityGroupID;
 
 	// --------------------------------------
 	// Properties
@@ -23,7 +23,7 @@ public abstract class BaseController {
 
 	/** A group ID is assigned to all {@link BaseController} instances. It allows the developer to programmatically unload batches of particular parts of the game when required (i.e. unload the game controllers when returning to the main menu) */
 	public int groupID() {
-		return mGroupID;
+		return mEntityGroupID;
 	}
 
 	/** If true, only one controller of this type can exist at a time. */
@@ -68,7 +68,7 @@ public abstract class BaseController {
 
 			mControllerManager.addController(this, pEntityGroupID);
 
-			mGroupID = pEntityGroupID;
+			mEntityGroupID = pEntityGroupID;
 
 			mIsActive = true;
 

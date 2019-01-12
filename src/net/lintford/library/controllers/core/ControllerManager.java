@@ -59,7 +59,7 @@ public class ControllerManager {
 			System.out.println("Controller count: " + lCount);
 			for (int i = 0; i < lCount; i++) {
 				System.out.printf("  %d: %s\n", i, lControllerList.get(i).getClass().getSimpleName());
-				
+
 			}
 
 		}

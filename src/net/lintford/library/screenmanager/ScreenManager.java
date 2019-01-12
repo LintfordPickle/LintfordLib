@@ -204,13 +204,10 @@ public class ScreenManager {
 		if (!mIsInitialised || !mIsLoaded)
 			return;
 
-		GLDebug.checkGLErrorsException(getClass().getSimpleName());
-
 		int lCount = mScreens.size();
 		for (int i = 0; i < lCount; i++) {
 			if (mScreens.get(i).screenState() == ScreenState.Hidden && !mScreens.get(i).showInBackground())
 				continue;
-			GLDebug.checkGLErrorsException(getClass().getSimpleName());
 
 			mScreens.get(i).draw(pCore);
 

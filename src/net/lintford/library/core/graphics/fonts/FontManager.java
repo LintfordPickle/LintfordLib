@@ -70,7 +70,7 @@ public class FontManager extends EntityGroupManager {
 		private boolean mAntiAlias;
 		private int mFontPointSize;
 		private BitmapFont mBitmapFont;
-		private AWTBitmapFontSpriteBatch mFontSpriteBatch;
+		public AWTBitmapFontSpriteBatch mFontSpriteBatch;
 		private boolean mDrawShadow;
 		private boolean mTrimText;
 		private boolean mIsLoaded;

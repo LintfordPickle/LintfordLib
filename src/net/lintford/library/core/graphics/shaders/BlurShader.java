@@ -60,7 +60,7 @@ public class BlurShader extends ShaderMVP_PT {
 	// --------------------------------------
 
 	public BlurShader(String pVertPath, String pFragPath) {
-		super(pVertPath, pFragPath);
+		super("BlurShader", pVertPath, pFragPath);
 
 		mDirection = new Vector2f();
 	}
