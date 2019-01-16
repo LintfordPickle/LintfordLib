@@ -1,3 +1,4 @@
+
 package net.lintford.library.data;
 
 import java.io.Serializable;
@@ -47,7 +48,7 @@ public abstract class BaseData implements Serializable {
 
 	}
 
-	/** Called before the save is about to close. Allows sub-classes to arrange their data for serialization. */
+	/** Called before the game is about to close. Allows sub-classes to arrange their data for serialization. */
 	public void beforeSerialization() {
 
 	}

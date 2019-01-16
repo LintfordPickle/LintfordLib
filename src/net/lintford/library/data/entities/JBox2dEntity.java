@@ -21,7 +21,7 @@ public abstract class JBox2dEntity extends WorldEntity {
 	// --------------------------------------
 
 	public JBox2dEntityInstance mJBox2dEntityInstance;
-	public boolean mIsPhysicsLoaded;
+	public transient boolean mIsPhysicsLoaded = false;
 
 	// --------------------------------------
 	// Properties
@@ -57,20 +57,27 @@ public abstract class JBox2dEntity extends WorldEntity {
 		mIsPhysicsLoaded = true;
 	}
 
-	public abstract void savePhysics();
+	public void savePhysics() {
+		if (mJBox2dEntityInstance == null)
+			return;
+
+		mJBox2dEntityInstance.savePhysics();
+
+	}
 
 	public void loadPhysics(World pWorld) {
 		if (mJBox2dEntityInstance == null)
 			return;
 
 		mJBox2dEntityInstance.loadPhysics(pWorld);
+		mIsPhysicsLoaded = true;
 
 	}
 
 	public void update(LintfordCore pCore) {
 		super.update(pCore);
 
-		if (mJBox2dEntityInstance != null) {
+		if (mIsPhysicsLoaded && mJBox2dEntityInstance != null) {
 			Box2dBodyInstance lMainBody = mJBox2dEntityInstance.mainBody();
 
 			// Update the position of this character

@@ -34,7 +34,7 @@ public class JBox2dEntityInstance implements Serializable {
 	protected List<Box2dJointInstance> mJoints = new ArrayList<>();
 
 	protected boolean mIsFree;
-	protected boolean mPhysicsLoaded;
+	protected transient boolean mPhysicsLoaded = false;
 
 	// --------------------------------------
 	// Properties
@@ -305,6 +305,22 @@ public class JBox2dEntityInstance implements Serializable {
 
 		}
 
+	}
+
+	public void setFixtureIsSensor(boolean pIsSensor) {
+		final int lBodyCount = mBodies.size();
+		for (int i = 0; i < lBodyCount; i++) {
+
+			Box2dBodyInstance lBodyInst = mBodies.get(i);
+
+			final int lFixtureCount = lBodyInst.mFixtures.length;
+			for (int j = 0; j < lFixtureCount; j++) {
+				Box2dFixtureInstance lFixInst = lBodyInst.mFixtures[j];
+				lFixInst.isSensor = pIsSensor;
+
+			}
+
+		}
 	}
 
 	// Attempts to set the radius of a fixture shape

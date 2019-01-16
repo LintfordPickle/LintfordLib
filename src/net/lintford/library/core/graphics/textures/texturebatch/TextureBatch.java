@@ -193,7 +193,9 @@ public class TextureBatch {
 		mCurrentTexID = -1;
 		mCamera = pCamera;
 
-		mBuffer.clear();
+		if(mBuffer != null)
+			mBuffer.clear();
+		
 		mVertexCount = 0;
 		mCurNumSprites = 0;
 		mIsDrawing = true;

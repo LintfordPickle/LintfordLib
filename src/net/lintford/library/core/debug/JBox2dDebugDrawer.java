@@ -66,7 +66,14 @@ public class JBox2dDebugDrawer {
 				lG = 0.05f;
 				lB = 0.09f;
 			}
-
+			
+			if(pFixture.isSensor()) {
+				lR = 255f / 255f;
+				lG = 106f / 255f;
+				lB = 0f / 255f;
+				
+			}
+			
 			Debug.debugManager().drawers().drawPoly(pCore.gameCamera(), verts, vSize, lR, lG, lB, true);
 
 		}

@@ -25,10 +25,10 @@ public abstract class BaseDialog extends MenuScreen {
 	// --------------------------------------
 
 	protected String mMessageString;
+	protected MenuScreen mParentScreen;
 	protected boolean mDrawBackground;
 	protected boolean mDarkenBackground;
 
-	protected TextureBatch mTextureBatch;
 	protected Texture mUITexture;
 
 	// --------------------------------------
@@ -66,7 +66,7 @@ public abstract class BaseDialog extends MenuScreen {
 	public BaseDialog(ScreenManager pScreenManager, MenuScreen pParentScreen, String pDialogMessage) {
 		super(pScreenManager, "");
 
-		mTextureBatch = new TextureBatch();
+		mParentScreen = pParentScreen;
 
 		mDrawBackground = true;
 		mDarkenBackground = true;
@@ -90,7 +90,6 @@ public abstract class BaseDialog extends MenuScreen {
 	public void loadGLContent(ResourceManager pResourceManager) {
 		super.loadGLContent(pResourceManager);
 
-		mTextureBatch.loadGLContent(pResourceManager);
 		mUITexture = pResourceManager.textureManager().textureCore();
 
 	}
@@ -99,7 +98,7 @@ public abstract class BaseDialog extends MenuScreen {
 	public void unloadGLContent() {
 		super.unloadGLContent();
 
-		mTextureBatch.unloadGLContent();
+		mUITexture = null;
 
 	}
 
@@ -147,11 +146,14 @@ public abstract class BaseDialog extends MenuScreen {
 		final float lWindowWidth = pCore.HUD().boundingRectangle().w;
 		final float lWindowHeight = pCore.HUD().boundingRectangle().h;
 
+		final TextureBatch lTextureBatch = mParentScreen.rendererManager().uiTextureBatch();
+
 		if (mDarkenBackground) {
+
 			final float lAlphaAmt = 0.70f;
-			mTextureBatch.begin(pCore.HUD());
-			mTextureBatch.draw(mUITexture, 0, 0, 32, 32, -lWindowWidth * 0.5f, -lWindowHeight * 0.5f, lWindowWidth, lWindowHeight, ZLayers.LAYER_SCREENMANAGER - 0.1f, 0f, 0f, 0f, lAlphaAmt);
-			mTextureBatch.end();
+			lTextureBatch.begin(pCore.HUD());
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, -lWindowWidth * 0.5f, -lWindowHeight * 0.5f, lWindowWidth, lWindowHeight, ZLayers.LAYER_SCREENMANAGER - 0.1f, 0f, 0f, 0f, lAlphaAmt);
+			lTextureBatch.end();
 
 		}
 
@@ -164,19 +166,19 @@ public abstract class BaseDialog extends MenuScreen {
 			final float w = DIALOG_WIDTH;
 			final float h = DIALOG_HEIGHT;
 
-			mTextureBatch.begin(pCore.HUD());
-			mTextureBatch.draw(mUITexture, 448, 64, TILE_SIZE, TILE_SIZE, x, y, TILE_SIZE, TILE_SIZE, ZDEPTH, 1, 1, 1, a);
-			mTextureBatch.draw(mUITexture, 480, 64, TILE_SIZE, TILE_SIZE, x + TILE_SIZE, y, w - 64, TILE_SIZE, ZDEPTH, 1, 1, 1, a);
-			mTextureBatch.draw(mUITexture, 512, 64, TILE_SIZE, TILE_SIZE, x + w - 32, y, TILE_SIZE, TILE_SIZE, ZDEPTH, 1, 1, 1, a);
+			lTextureBatch.begin(pCore.HUD());
+			lTextureBatch.draw(mUITexture, 448, 64, TILE_SIZE, TILE_SIZE, x, y, TILE_SIZE, TILE_SIZE, ZDEPTH, 1, 1, 1, a);
+			lTextureBatch.draw(mUITexture, 480, 64, TILE_SIZE, TILE_SIZE, x + TILE_SIZE, y, w - 64, TILE_SIZE, ZDEPTH, 1, 1, 1, a);
+			lTextureBatch.draw(mUITexture, 512, 64, TILE_SIZE, TILE_SIZE, x + w - 32, y, TILE_SIZE, TILE_SIZE, ZDEPTH, 1, 1, 1, a);
 
-			mTextureBatch.draw(mUITexture, 448, 96, TILE_SIZE, TILE_SIZE, x, y + 32, TILE_SIZE, h - 64, ZDEPTH, 1, 1, 1, a);
-			mTextureBatch.draw(mUITexture, 480, 96, TILE_SIZE, TILE_SIZE, x + TILE_SIZE, y + 32, w - 64, h - 64, ZDEPTH, 1, 1, 1, a);
-			mTextureBatch.draw(mUITexture, 512, 96, TILE_SIZE, TILE_SIZE, x + w - 32, y + 32, TILE_SIZE, h - 64, ZDEPTH, 1, 1, 1, a);
+			lTextureBatch.draw(mUITexture, 448, 96, TILE_SIZE, TILE_SIZE, x, y + 32, TILE_SIZE, h - 64, ZDEPTH, 1, 1, 1, a);
+			lTextureBatch.draw(mUITexture, 480, 96, TILE_SIZE, TILE_SIZE, x + TILE_SIZE, y + 32, w - 64, h - 64, ZDEPTH, 1, 1, 1, a);
+			lTextureBatch.draw(mUITexture, 512, 96, TILE_SIZE, TILE_SIZE, x + w - 32, y + 32, TILE_SIZE, h - 64, ZDEPTH, 1, 1, 1, a);
 
-			mTextureBatch.draw(mUITexture, 448, 128, TILE_SIZE, TILE_SIZE, x, y + h - 32, TILE_SIZE, TILE_SIZE, ZDEPTH, 1, 1, 1, a);
-			mTextureBatch.draw(mUITexture, 480, 128, TILE_SIZE, TILE_SIZE, x + TILE_SIZE, y + h - 32, w - 64, TILE_SIZE, ZDEPTH, 1, 1, 1, a);
-			mTextureBatch.draw(mUITexture, 512, 128, TILE_SIZE, TILE_SIZE, x + w - 32, y + h - 32, TILE_SIZE, TILE_SIZE, ZDEPTH, 1, 1, 1, a);
-			mTextureBatch.end();
+			lTextureBatch.draw(mUITexture, 448, 128, TILE_SIZE, TILE_SIZE, x, y + h - 32, TILE_SIZE, TILE_SIZE, ZDEPTH, 1, 1, 1, a);
+			lTextureBatch.draw(mUITexture, 480, 128, TILE_SIZE, TILE_SIZE, x + TILE_SIZE, y + h - 32, w - 64, TILE_SIZE, ZDEPTH, 1, 1, 1, a);
+			lTextureBatch.draw(mUITexture, 512, 128, TILE_SIZE, TILE_SIZE, x + w - 32, y + h - 32, TILE_SIZE, TILE_SIZE, ZDEPTH, 1, 1, 1, a);
+			lTextureBatch.end();
 
 		}
 

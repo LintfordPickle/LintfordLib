@@ -105,7 +105,8 @@ public class Box2dWorldController extends BaseController {
 
 		lPlayerJBox2dEntity.setFixtureDimensions("box", pWidth, pHeight);
 		lPlayerJBox2dEntity.setFixtureCategory(CATEGORY_CHARACTER);
-		lPlayerJBox2dEntity.setFixtureBitMask(CATEGORY_ITEM | CATEGORY_GROUND);
+		lPlayerJBox2dEntity.setFixtureBitMask(CATEGORY_ITEM | CATEGORY_GROUND | CATEGORY_OBJECT);
+		lPlayerJBox2dEntity.setFixtureIsSensor(false);
 
 		return lPlayerJBox2dEntity;
 
@@ -125,7 +126,8 @@ public class Box2dWorldController extends BaseController {
 		lObjectJBox2dEntity.mainBody().bodyTypeIndex = Box2dBodyDefinition.BODY_TYPE_INDEX_STATIC;
 		lObjectJBox2dEntity.setFixtureDimensions("box", pWidth, pHeight);
 		lObjectJBox2dEntity.setFixtureCategory(CATEGORY_OBJECT);
-		lObjectJBox2dEntity.setFixtureBitMask(CATEGORY_ITEM | CATEGORY_GROUND);
+		lObjectJBox2dEntity.setFixtureBitMask(CATEGORY_CHARACTER);
+		lObjectJBox2dEntity.setFixtureIsSensor(true);
 
 		return lObjectJBox2dEntity;
 
@@ -145,7 +147,8 @@ public class Box2dWorldController extends BaseController {
 		// which in this case, means adjusting the raidus
 		lItemJBox2dEntity.setFixtureRadius("circle", 8f);
 		lItemJBox2dEntity.setFixtureCategory(CATEGORY_ITEM);
-		lItemJBox2dEntity.setFixtureBitMask(CATEGORY_CHARACTER | CATEGORY_OBJECT | CATEGORY_GROUND);
+		lItemJBox2dEntity.setFixtureBitMask(CATEGORY_CHARACTER | CATEGORY_GROUND);
+		lItemJBox2dEntity.setFixtureIsSensor(false);
 
 		return lItemJBox2dEntity;
 

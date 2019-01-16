@@ -72,6 +72,7 @@ public class Box2dFixtureInstance extends BaseData {
 		lFixtureDef.density = density;
 		lFixtureDef.restitution = restitution;
 		lFixtureDef.friction = friction;
+		lFixtureDef.isSensor = isSensor;
 
 		lFixtureDef.filter = new Filter();
 		lFixtureDef.filter.categoryBits = categoryBits;
