@@ -33,12 +33,28 @@ public class JBox2dEntityInstance implements Serializable {
 	protected List<Box2dBodyInstance> mBodies = new ArrayList<>();
 	protected List<Box2dJointInstance> mJoints = new ArrayList<>();
 
+	protected Object userDataObject;
+
 	protected boolean mIsFree;
 	protected transient boolean mPhysicsLoaded = false;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+	public Object userDataObject() {
+		return userDataObject;
+
+	}
+
+	public void userDataObject(Object pNewUserDataObject) {
+		userDataObject = pNewUserDataObject;
+
+		if (mPhysicsLoaded) {
+			mainBody().mBody.setUserData(userDataObject);
+
+		}
+
+	}
 
 	public boolean isFree() {
 		return mIsFree;
@@ -102,6 +118,9 @@ public class JBox2dEntityInstance implements Serializable {
 //			lJointInstance.joint = pWorld.createJoint(lJointInstance.jointDef);
 //
 //		}
+
+		if (mainBody().mBody != null)
+			mainBody().mBody.setUserData(userDataObject);
 
 		mPhysicsLoaded = true;
 
@@ -245,8 +264,7 @@ public class JBox2dEntityInstance implements Serializable {
 			Box2dBodyInstance lBodyInst = mBodies.get(i);
 
 			lBodyInst.mBody.setTransform(new Vec2(pX, pY), lBodyInst.mBody.getAngle());
-			lBodyInst.mBody.setLinearVelocity(new Vec2(1, 1));
-
+			
 		}
 
 	}
@@ -273,6 +291,23 @@ public class JBox2dEntityInstance implements Serializable {
 
 	}
 
+	public void setFixtureFriction(float pNewFrictionValue) {
+		final int lBodyCount = mBodies.size();
+		for (int i = 0; i < lBodyCount; i++) {
+
+			Box2dBodyInstance lBodyInst = mBodies.get(i);
+
+			final int lFixtureCount = lBodyInst.mFixtures.length;
+			for (int j = 0; j < lFixtureCount; j++) {
+				Box2dFixtureInstance lFixInst = lBodyInst.mFixtures[j];
+				lFixInst.friction = pNewFrictionValue;
+
+			}
+
+		}
+
+	}
+	
 	public void setFixtureCategory(int pNewCategory) {
 		final int lBodyCount = mBodies.size();
 		for (int i = 0; i < lBodyCount; i++) {

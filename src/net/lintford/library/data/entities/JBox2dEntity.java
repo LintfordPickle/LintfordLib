@@ -21,11 +21,17 @@ public abstract class JBox2dEntity extends WorldEntity {
 	// --------------------------------------
 
 	public JBox2dEntityInstance mJBox2dEntityInstance;
+
 	public transient boolean mIsPhysicsLoaded = false;
+	protected transient Vec2 mVelocity = new Vec2();
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public boolean hasPhysicsEntity() {
+		return mJBox2dEntityInstance != null;
+	}
 
 	public JBox2dEntityInstance box2dEntityInstance() {
 		return mJBox2dEntityInstance;
@@ -101,11 +107,11 @@ public abstract class JBox2dEntity extends WorldEntity {
 			lMainBody.mBody.setTransform(new Vec2(pWorldX * Box2dWorldController.PIXELS_TO_UNITS, pWorldY * Box2dWorldController.PIXELS_TO_UNITS), 0);
 			lMainBody.mBody.setAwake(true);
 
-			// Update the position of this character
-			x = pWorldX;
-			y = pWorldY;
-
 		}
+
+		// Update the position of this character
+		x = pWorldX;
+		y = pWorldY;
 
 	}
 

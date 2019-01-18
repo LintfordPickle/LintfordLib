@@ -105,7 +105,7 @@ public class Box2dWorldController extends BaseController {
 
 		lPlayerJBox2dEntity.setFixtureDimensions("box", pWidth, pHeight);
 		lPlayerJBox2dEntity.setFixtureCategory(CATEGORY_CHARACTER);
-		lPlayerJBox2dEntity.setFixtureBitMask(CATEGORY_ITEM | CATEGORY_GROUND | CATEGORY_OBJECT);
+		lPlayerJBox2dEntity.setFixtureBitMask(/* CATEGORY_ITEM | */ CATEGORY_GROUND | CATEGORY_OBJECT);
 		lPlayerJBox2dEntity.setFixtureIsSensor(false);
 
 		return lPlayerJBox2dEntity;
@@ -145,9 +145,10 @@ public class Box2dWorldController extends BaseController {
 
 		// Before we load the physics, need to adjust the box2d body/fixture to match the shape
 		// which in this case, means adjusting the raidus
-		lItemJBox2dEntity.setFixtureRadius("circle", 8f);
+		lItemJBox2dEntity.setFixtureFriction(0.0f);
+		lItemJBox2dEntity.setFixtureRadius("circle", pRadius);
 		lItemJBox2dEntity.setFixtureCategory(CATEGORY_ITEM);
-		lItemJBox2dEntity.setFixtureBitMask(CATEGORY_CHARACTER | CATEGORY_GROUND);
+		lItemJBox2dEntity.setFixtureBitMask(/*CATEGORY_CHARACTER |*/ CATEGORY_GROUND);
 		lItemJBox2dEntity.setFixtureIsSensor(false);
 
 		return lItemJBox2dEntity;
