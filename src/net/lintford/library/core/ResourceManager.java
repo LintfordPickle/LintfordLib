@@ -17,7 +17,6 @@ import net.lintford.library.ConstantsTable;
 import net.lintford.library.core.audio.AudioManager;
 import net.lintford.library.core.box2d.PObjectManager;
 import net.lintford.library.core.graphics.fonts.FontManager;
-import net.lintford.library.core.graphics.shaders.ShaderManager;
 import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetManager;
 import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.options.MasterConfig;
@@ -48,7 +47,7 @@ public class ResourceManager {
 	protected AudioManager mAudioManager;
 	protected PObjectManager mPObjectManager;
 	// protected ShaderManager mShaderManager;
-	
+
 	// TODO: ResouceManagers still to be implemented:
 	// GeometryManager
 
@@ -147,8 +146,10 @@ public class ResourceManager {
 		mSpriteSheetManager.loadGLContent(this);
 		mAudioManager.loadALContent(this);
 		mFontManager.loadGLContent(this);
+		mPObjectManager.loadGLContent(this);
 
-		// TODO: Need the resource manager to also manage shaders (so they can be recompiled etc).
+		// TODO: ShaderManager
+		// TODO: GeometryManager
 
 		mIsLoaded = true;
 	}
@@ -157,6 +158,7 @@ public class ResourceManager {
 		mFontManager.unloadGLContent();
 		mAudioManager.unloadALContent();
 		mTextureManager.unloadGLContent();
+		mPObjectManager.unloadGLContent();
 
 		mIsLoaded = false;
 	}

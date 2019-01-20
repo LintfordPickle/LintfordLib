@@ -133,21 +133,42 @@ public class Box2dBodyInstance extends BaseData {
 		lBodyDef.bullet = bullet;
 		lBodyDef.active = active;
 
-//		lBodyDef.mass = lBodyDef.mass;
-//		lBodyDef.massCenter.x = lBodyDef.massCenter.x;
-//		lBodyDef.massCenter.y = lBodyDef.massCenter.y;
-//		lBodyDef.massI = lBodyDef.massI;
-
 		mBody = pWorld.createBody(lBodyDef);
 
 		// iterate over the fixtures
 		final int lFixtureCount = mFixtures.length;
-		for (int j = 0; j < lFixtureCount; j++) {
-			Box2dFixtureInstance lFixtureInstance = mFixtures[j];
+		for (int i = 0; i < lFixtureCount; i++) {
+			Box2dFixtureInstance lFixtureInstance = mFixtures[i];
 
 			lFixtureInstance.loadPhysics(pWorld, mBody);
+		
+		}
+		
+		System.out.println("Box2dBodyInstance loaded");
+		
+	}
+
+	public void unloadPhysics() {
+		if (mBody == null)
+			return;
+
+		World lWorld = mBody.getWorld();
+		if (lWorld == null)
+			return;
+
+		// Destroy all fixtures on this body
+		final int lFixtureCount = mFixtures.length;
+		for (int i = 0; i < lFixtureCount; i++) {
+			Box2dFixtureInstance lFixtureInstance = mFixtures[i];
+			if (lFixtureInstance.mFixture != null)
+				mBody.destroyFixture(lFixtureInstance.mFixture);
 
 		}
+
+		lWorld.destroyBody(mBody);
+		
+		System.out.println("Box2dBodyInstance unloaded");
+
 	}
 
 	public void update(LintfordCore pCore) {

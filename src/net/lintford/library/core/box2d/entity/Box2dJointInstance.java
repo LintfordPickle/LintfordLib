@@ -46,6 +46,10 @@ public class Box2dJointInstance extends BaseData {
 	public void loadPhysics() {
 
 	}
+	
+	public void unloadPhysics() {
+
+	}
 
 	public void update(LintfordCore pCore) {
 

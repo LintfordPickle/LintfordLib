@@ -66,6 +66,9 @@ public class JBox2dEntityInstance implements Serializable {
 
 	/** Returns the main {@link Box2dBodyInstance} of this {@link JBox2dEntityInstance} instance. The main body is the body at index 0. */
 	public Box2dBodyInstance mainBody() {
+		if (mBodies == null || mBodies.size() == 0)
+			return null;
+
 		return mBodies.get(0);
 	}
 
@@ -119,8 +122,11 @@ public class JBox2dEntityInstance implements Serializable {
 //
 //		}
 
-		if (mainBody().mBody != null)
-			mainBody().mBody.setUserData(userDataObject);
+		if (mainBody() != null) {
+			if (mainBody().mBody != null)
+				mainBody().mBody.setUserData(userDataObject);
+
+		}
 
 		mPhysicsLoaded = true;
 
@@ -139,10 +145,51 @@ public class JBox2dEntityInstance implements Serializable {
 				}
 
 			}
+
 		}
+
+		final int lJointCount = mJoints.size();
+		for (int i = 0; i < lJointCount; i++) {
+			Box2dJointInstance lJointInstance = mJoints.get(i);
+
+			if (lJointInstance.joint != null) {
+				lJointInstance.savePhysics();
+
+			}
+
+		}
+
 	}
 
 	public void unloadPhysics() {
+		mPhysicsLoaded = false;
+
+		final int lBodyCount = mBodies.size();
+		for (int i = 0; i < lBodyCount; i++) {
+			Box2dBodyInstance lBodyInstance = mBodies.get(i);
+
+			if (lBodyInstance.mBody != null) {
+				lBodyInstance.mBody.setUserData(null);
+				lBodyInstance.unloadPhysics();
+
+			}
+
+		}
+
+		final int lJointCount = mJoints.size();
+		for (int i = 0; i < lJointCount; i++) {
+			Box2dJointInstance lJointInstance = mJoints.get(i);
+
+			if (lJointInstance.joint != null) {
+				lJointInstance.unloadPhysics();
+
+			}
+
+		}
+
+		mBodies.clear();
+		mJoints.clear();
+
 		mPhysicsLoaded = false;
 
 	}
@@ -264,7 +311,7 @@ public class JBox2dEntityInstance implements Serializable {
 			Box2dBodyInstance lBodyInst = mBodies.get(i);
 
 			lBodyInst.mBody.setTransform(new Vec2(pX, pY), lBodyInst.mBody.getAngle());
-			
+
 		}
 
 	}
@@ -307,7 +354,7 @@ public class JBox2dEntityInstance implements Serializable {
 		}
 
 	}
-	
+
 	public void setFixtureCategory(int pNewCategory) {
 		final int lBodyCount = mBodies.size();
 		for (int i = 0; i < lBodyCount; i++) {

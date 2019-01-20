@@ -80,15 +80,28 @@ public abstract class JBox2dEntity extends WorldEntity {
 
 	}
 
+	public void unloadPhysics() {
+		if (mJBox2dEntityInstance != null) {
+			mJBox2dEntityInstance.unloadPhysics();
+			mJBox2dEntityInstance = null;
+
+		}
+
+		mIsPhysicsLoaded = false;
+
+	}
+
 	public void update(LintfordCore pCore) {
 		super.update(pCore);
 
 		if (mIsPhysicsLoaded && mJBox2dEntityInstance != null) {
 			Box2dBodyInstance lMainBody = mJBox2dEntityInstance.mainBody();
+			if (lMainBody != null) {
+				// Update the position of this character
+				x = lMainBody.mBody.getPosition().x * Box2dWorldController.UNITS_TO_PIXELS;
+				y = lMainBody.mBody.getPosition().y * Box2dWorldController.UNITS_TO_PIXELS;
 
-			// Update the position of this character
-			x = lMainBody.mBody.getPosition().x * Box2dWorldController.UNITS_TO_PIXELS;
-			y = lMainBody.mBody.getPosition().y * Box2dWorldController.UNITS_TO_PIXELS;
+			}
 
 		}
 

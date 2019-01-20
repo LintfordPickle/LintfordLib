@@ -55,6 +55,26 @@ public class SpriteBatch extends TextureBatch {
 		draw(lTexture, pSpriteFrame.x, pSpriteFrame.y, pSpriteFrame.w, pSpriteFrame.h, pDX, pDY, pDW, pDH, pZ, pR, pG, pB, pA);
 
 	}
+	
+	public void draw(SpriteSheetDef pSpriteSheet, SpriteFrame pSpriteFrame, float pDX, float pDY, float pDW, float pDH, float pZ, float pRot, float pRotX, float pRotY, float pR, float pG, float pB, float pA) {
+		if (pSpriteSheet == null)
+			return;
+
+		if (!mIsDrawing)
+			return;
+
+		if (pSpriteFrame == null) {
+			return;
+		}
+
+		Texture lTexture = pSpriteSheet.texture();
+
+		if (lTexture == null)
+			return;
+
+		draw(lTexture, pSpriteFrame.x, pSpriteFrame.y, pSpriteFrame.w, pSpriteFrame.h, pDX, pDY, pDW, pDH, pZ, pRot, pRotX, pRotY, 1f, pR, pG, pB, pA);
+
+	}
 
 	public void draw(SpriteSheetDef pSpriteSheet, SpriteInstance pSprite, Rectangle pDstRectangle, float pZ, float pR, float pG, float pB, float pA) {
 		if (pSpriteSheet == null)

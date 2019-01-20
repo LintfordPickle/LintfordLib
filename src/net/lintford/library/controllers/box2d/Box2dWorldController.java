@@ -142,17 +142,26 @@ public class Box2dWorldController extends BaseController {
 
 		JBox2dEntityInstance lItemJBox2dEntity = mResourceController.resourceManager().pobjectManager().getNewInstanceFromPObject(mWorld, "circle");
 		lItemJBox2dEntity.mainBody().bodyTypeIndex = Box2dBodyDefinition.BODY_TYPE_INDEX_DYNAMIC;
+		lItemJBox2dEntity.mainBody().fixedRotation = false;
 
 		// Before we load the physics, need to adjust the box2d body/fixture to match the shape
 		// which in this case, means adjusting the raidus
 		lItemJBox2dEntity.setFixtureFriction(0.0f);
 		lItemJBox2dEntity.setFixtureRadius("circle", pRadius);
 		lItemJBox2dEntity.setFixtureCategory(CATEGORY_ITEM);
-		lItemJBox2dEntity.setFixtureBitMask(/*CATEGORY_CHARACTER |*/ CATEGORY_GROUND);
+		lItemJBox2dEntity.setFixtureBitMask(/* CATEGORY_CHARACTER | */ CATEGORY_GROUND);
 		lItemJBox2dEntity.setFixtureIsSensor(false);
 
 		return lItemJBox2dEntity;
 
+	}
+
+	public void returnBox2dInstance(JBox2dEntityInstance pObjectToRetrun) {
+		if (pObjectToRetrun == null)
+			return;
+
+		
+		
 	}
 
 }

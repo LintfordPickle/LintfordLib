@@ -6,6 +6,8 @@ import org.jbox2d.dynamics.Fixture;
 import org.jbox2d.dynamics.FixtureDef;
 import org.jbox2d.dynamics.World;
 
+import com.sun.scenario.effect.impl.prism.ps.PPSBlend_ADDPeer;
+
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.data.BaseData;
 
@@ -83,6 +85,10 @@ public class Box2dFixtureInstance extends BaseData {
 		lFixtureDef.shape = shape.shape();
 
 		mFixture = pParentBody.createFixture(lFixtureDef);
+
+	}
+	
+	public void unloadPhysics(World pWorld) {
 
 	}
 

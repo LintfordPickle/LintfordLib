@@ -27,11 +27,9 @@ public class PObjectManager {
 	// Variables
 	// --------------------------------------
 
-	private Map<String, PObjectDefinition> mPObjectDefinitions; // these are loaded from PObject files
-
-	protected Map<String, List<JBox2dEntityInstance>> mPObjectPoolMap;
-	private List<JBox2dEntityInstance> mJBox2dEntityInstancePool;
-	private List<JBox2dEntityInstance> mPObjectInstances;
+	protected Map<String, PObjectDefinition> mPObjectDefinitions; // these are loaded from PObject files
+	protected List<JBox2dEntityInstance> mJBox2dEntityInstancePool;
+	protected List<JBox2dEntityInstance> mPObjectInstances;
 
 	// --------------------------------------
 	// Constructor
@@ -39,8 +37,6 @@ public class PObjectManager {
 
 	public PObjectManager() {
 		mPObjectDefinitions = new HashMap<>();
-		mPObjectPoolMap = new HashMap<>();
-
 		mJBox2dEntityInstancePool = new ArrayList<>();
 		mPObjectInstances = new ArrayList<>();
 
@@ -63,10 +59,6 @@ public class PObjectManager {
 			lEntity.unloadPhysics();
 
 		}
-
-	}
-
-	public void loadPObjectsFromMetaFile(String pFilename) {
 
 	}
 
@@ -101,8 +93,6 @@ public class PObjectManager {
 		return null;
 	}
 
-	// Instances
-
 	public JBox2dEntityInstance getNewInstanceFromPObject(World pWorld, String pPObjectDefinitionName) {
 		PObjectDefinition lPObjectDefinition = mPObjectDefinitions.get(pPObjectDefinitionName);
 		if (lPObjectDefinition == null) {
@@ -116,30 +106,23 @@ public class PObjectManager {
 	}
 
 	public JBox2dEntityInstance getNewInstanceFromPObject(World pWorld, PObjectDefinition pPObjectDefinition) {
-		JBox2dEntityInstance lNewEntity = null;//getFreeBox2dBodyInstance();
+		JBox2dEntityInstance lNewEntity = getFreeBox2dEntityInstance();
 
-		// First look for a freed instance in the pool?
-		List<JBox2dEntityInstance> lPoolList = mPObjectPoolMap.get(pPObjectDefinition.name());
-
-		if (lPoolList != null && lPoolList.size() > 0) {
-			lNewEntity = lPoolList.remove(0);
-
-		}
-
-		// If there was no instance to recycle, then get a new instance from the 'generic' pool.
 		if (lNewEntity == null)
-			lNewEntity = getFreeBox2dBodyInstance();
+			return null;
 
 		// if nothing, then load physics from a definition ..
 		lNewEntity.loadPObjectFromDefinition(pPObjectDefinition);
 
-		// Still need to call loadPhysics on this object before it will be instantiated into the world
+		// N.B. Even though we have an instance which mirrors the structure defined
+		// in the PObject, we still need to call loadPhysics on it before it will be
+		// added into the Box2d world!
 
 		return lNewEntity;
 
 	}
 
-	private JBox2dEntityInstance getFreeBox2dBodyInstance() {
+	private JBox2dEntityInstance getFreeBox2dEntityInstance() {
 		final int lPoolSize = mJBox2dEntityInstancePool.size();
 		for (int i = 0; i < lPoolSize; i++) {
 			JBox2dEntityInstance lRetInst = mJBox2dEntityInstancePool.get(i);
@@ -151,6 +134,17 @@ public class PObjectManager {
 		}
 
 		return increasePoolSize(10);
+
+	}
+
+	public void returnBox2dEntityInstance(JBox2dEntityInstance pObject) {
+		if (pObject == null)
+			return;
+
+		pObject.unloadPhysics();
+
+		if (mJBox2dEntityInstancePool.contains(pObject))
+			mJBox2dEntityInstancePool.add(pObject);
 
 	}
 
