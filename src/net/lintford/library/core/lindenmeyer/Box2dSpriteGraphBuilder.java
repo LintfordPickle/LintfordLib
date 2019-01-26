@@ -147,7 +147,8 @@ public class Box2dSpriteGraphBuilder {
 		// pLSystemString = "F[-FF]+F";
 
 		JBox2dEntityInstance lJBox2dEntityInstance = new JBox2dEntityInstance();
-
+		lJBox2dEntityInstance.spriteSheetName = "TreeSpriteSheet";
+		
 		// Now we need to 'draw' the L-System (i.e. create the sprites and the graph)
 		JBox2dLCursor lCursor = new JBox2dLCursor();
 		lCursor.curRotation = 0;
@@ -175,6 +176,7 @@ public class Box2dSpriteGraphBuilder {
 				lFixInst.density = 1f - (float) (1f / i);
 				lFixInst.categoryBits = 0b00110000;
 				lFixInst.maskBits = 0x00;
+				lFixInst.spriteName = "TreeTrunk";
 
 				Box2dPolygonInstance lBox2dPolygonInstance = new Box2dPolygonInstance();
 				lBox2dPolygonInstance.vertexCount = 4;
@@ -186,7 +188,8 @@ public class Box2dSpriteGraphBuilder {
 				float lTop = -lSegmentHeight;
 				float lBottom = 0;
 
-				lBox2dPolygonInstance.vertices = new Vec2[] { new Vec2(+lSegmentWidthT / 2f * Box2dWorldController.PIXELS_TO_UNITS, lTop * Box2dWorldController.PIXELS_TO_UNITS),
+				lBox2dPolygonInstance.vertices = new Vec2[] { 
+						new Vec2(+lSegmentWidthT / 2f * Box2dWorldController.PIXELS_TO_UNITS, lTop * Box2dWorldController.PIXELS_TO_UNITS),
 						new Vec2(+lSegmentWidthB / 2f * Box2dWorldController.PIXELS_TO_UNITS, lBottom * Box2dWorldController.PIXELS_TO_UNITS),
 						new Vec2(-lSegmentWidthB / 2f * Box2dWorldController.PIXELS_TO_UNITS, lBottom * Box2dWorldController.PIXELS_TO_UNITS),
 						new Vec2(-lSegmentWidthT / 2f * Box2dWorldController.PIXELS_TO_UNITS, lTop * Box2dWorldController.PIXELS_TO_UNITS) };
@@ -212,8 +215,8 @@ public class Box2dSpriteGraphBuilder {
 
 					lJoint.referenceAngle = lCursor.curRotation;// (float) Math.toRadians(-45);
 					lJoint.enableLimit = true;
-					lJoint.lowerAngle = 0;// lCursor.curRotation;
-					lJoint.upperAngle = 0;// lCursor.curRotation;
+					lJoint.lowerAngle = 0;
+					lJoint.upperAngle = 0;
 
 					lJoint.enableMotor = false;
 					lJoint.maxMotorTorque = 100;
@@ -229,7 +232,7 @@ public class Box2dSpriteGraphBuilder {
 				float lChanceOfLeafs = lCursor.depth * 10f;
 				if (RandomNumbers.getRandomChance(lChanceOfLeafs)) {
 					int lSides = RandomNumbers.random(0, 3);
-					
+
 					if (lSides == 0 || lSides == 2)
 						createleaf(lJBox2dEntityInstance, lBodyInst, lBodyInst.position.x, lBodyInst.position.y, lChanceOfLeafs, true); // left of nook
 
@@ -283,6 +286,7 @@ public class Box2dSpriteGraphBuilder {
 		lFixInst.density = 0.02f;
 		lFixInst.categoryBits = 0b00110000;
 		lFixInst.maskBits = 0x00;
+		lFixInst.spriteName = "TreeLeaf";
 
 		Box2dPolygonInstance lBox2dPolygonInstance = new Box2dPolygonInstance();
 		lBox2dPolygonInstance.vertexCount = 4;
@@ -315,8 +319,8 @@ public class Box2dSpriteGraphBuilder {
 		float lSign = pLeft ? -1f : 1f;
 		lJoint.referenceAngle = (float) Math.toRadians(90) * lSign;
 		lJoint.enableLimit = true;
-		lJoint.lowerAngle = 0;// lCursor.curRotation;
-		lJoint.upperAngle = 0;// lCursor.curRotation;
+		lJoint.lowerAngle = 0;
+		lJoint.upperAngle = 0;
 
 		lJoint.enableMotor = false;
 		lJoint.maxMotorTorque = 100;

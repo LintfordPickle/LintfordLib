@@ -35,6 +35,7 @@ public class JBox2dEntityInstance implements Serializable {
 	private List<Box2dJointInstance> mJoints = new ArrayList<>();
 
 	protected Object userDataObject;
+	public String spriteSheetName;
 
 	protected boolean mIsFree;
 	protected transient boolean mPhysicsLoaded = false;

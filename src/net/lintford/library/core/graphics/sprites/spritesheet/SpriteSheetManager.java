@@ -135,7 +135,7 @@ public class SpriteSheetManager {
 			lSpriteSheet.fileSizeOnLoad(lFile.length());
 			lSpriteSheet.spriteSheetFilename = lFile.getPath();
 			lSpriteSheet.reloadable(true);
-			lSpriteSheet.loadGLContent(mResourceManager);
+			lSpriteSheet.loadGLContent(mResourceManager, pEntityGroupID);
 
 			Map<String, SpriteSheetDef> lSpriteSheetGroup = mSpriteSheetGroups.get(pEntityGroupID);
 			if (lSpriteSheetGroup == null) {

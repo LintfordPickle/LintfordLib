@@ -83,6 +83,10 @@ public class TextureBatch {
 	// Properties
 	// --------------------------------------
 
+	public boolean useCheckerPattern() {
+		return mUseCheckerPattern;
+	}
+	
 	public void useCheckerPattern(boolean pNewValue) {
 		mUseCheckerPattern = pNewValue;
 	}

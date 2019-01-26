@@ -287,7 +287,8 @@ public class TextureManager extends EntityGroupManager {
 		TextureGroup lTextureGroup = mTextureGroupMap.get(pEntityGroupID);
 		if (lTextureGroup == null) {
 			Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Cannot load texture %s for EntityGroupID %d: EntityGroupID does not exist!", pName, pEntityGroupID));
-			return null;
+			lTextureGroup = new TextureGroup(pEntityGroupID);
+			mTextureGroupMap.put(pEntityGroupID, lTextureGroup);
 
 		} else if (lTextureGroup.mTextureMap.containsKey(pName)) {
 			lTexture = lTextureGroup.mTextureMap.get(pName);

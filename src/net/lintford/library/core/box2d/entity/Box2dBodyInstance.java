@@ -64,9 +64,9 @@ public class Box2dBodyInstance extends BaseData {
 	// --------------------------------------
 
 	public void savePhysics() {
-		if(mBody == null)
-			return; //  nothing to save 
-			
+		if (mBody == null)
+			return; // nothing to save
+
 		// Get the state information so it can be serialized
 		switch (mBody.m_type) {
 		case STATIC:
@@ -135,7 +135,7 @@ public class Box2dBodyInstance extends BaseData {
 		lBodyDef.fixedRotation = fixedRotation;
 		lBodyDef.bullet = bullet;
 		lBodyDef.active = true;
-		
+
 		mBody = pWorld.createBody(lBodyDef);
 
 		// iterate over the fixtures
@@ -144,11 +144,11 @@ public class Box2dBodyInstance extends BaseData {
 			Box2dFixtureInstance lFixtureInstance = mFixtures[i];
 
 			lFixtureInstance.loadPhysics(pWorld, mBody);
-		
+
 		}
-		
+
 		System.out.println("Box2dBodyInstance loaded");
-		
+
 	}
 
 	public void unloadPhysics() {
@@ -169,7 +169,7 @@ public class Box2dBodyInstance extends BaseData {
 		}
 
 		lWorld.destroyBody(mBody);
-		
+
 		System.out.println("Box2dBodyInstance unloaded");
 
 	}

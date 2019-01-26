@@ -33,6 +33,8 @@ public class Box2dFixtureInstance extends BaseData {
 	public int categoryBits;
 	public int groupIndex;
 	public int maskBits;
+	
+	public String spriteName;
 
 	// --------------------------------------
 	// Constructor
