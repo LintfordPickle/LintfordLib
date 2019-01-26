@@ -1,6 +1,5 @@
 package net.lintford.library.controllers.box2d;
 
-import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.World;
 
 import net.lintford.library.controllers.BaseController;
@@ -81,12 +80,14 @@ public class Box2dWorldController extends BaseController {
 	public void update(LintfordCore pCore) {
 		super.update(pCore);
 
+		// TODO: WindController
 		final float lWindMaxForce = 0.5f;
 		mWindAcc = RandomNumbers.getRandomChance(30) ? RandomNumbers.random(-lWindMaxForce, lWindMaxForce) : 0;
 		mWindVel += mWindAcc;
+		mWindVel *= 0.97f;
 		mWindAcc = 0;
 
-		mWorld.setGravity(new Vec2(mWindVel, 9.8f));
+		// mWorld.setGravity(new Vec2(mWindVel, 9.8f));
 
 		if (mWorld != null) {
 			mWorld.step((float) pCore.time().elapseGameTimeSeconds(), 5, 6);

@@ -47,6 +47,14 @@ public class PolyBatch {
 	private boolean mIsLoaded;
 
 	// --------------------------------------
+	// Properties
+	// ------------------------------------
+
+	public boolean isDrawing() {
+		return mIsDrawing;
+	}
+
+	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 

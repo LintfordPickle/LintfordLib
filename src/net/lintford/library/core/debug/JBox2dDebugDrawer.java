@@ -14,10 +14,8 @@ import org.lwjgl.opengl.GL11;
 
 import net.lintford.library.controllers.box2d.Box2dWorldController;
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.box2d.entity.JBox2dEntityInstance;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.maths.Vector2f;
-import net.lintford.library.data.entities.JBox2dEntity;
 
 public class JBox2dDebugDrawer {
 
@@ -80,7 +78,7 @@ public class JBox2dDebugDrawer {
 
 			}
 
-			Debug.debugManager().drawers().drawPolyImmediate(pCore.gameCamera(), verts, vSize, lR, lG, lB, true);
+			Debug.debugManager().drawers().drawPoly(verts, vSize, lR, lG, lB, true);
 
 		}
 
@@ -97,7 +95,7 @@ public class JBox2dDebugDrawer {
 				Shape lCircleShape = pFixture.getShape();
 				final float lRadius = lCircleShape.getRadius() * 32f;
 
-				Debug.debugManager().drawers().drawCircleImmediate(pCore.gameCamera(), lBodyX, lBodyY, lRadius, 7, GL11.GL_LINE_STRIP);
+				Debug.debugManager().drawers().drawCircle(lBodyX, lBodyY, lRadius, 7, GL11.GL_LINE_STRIP);
 
 				lFixture = lFixture.getNext();
 
@@ -152,12 +150,12 @@ public class JBox2dDebugDrawer {
 				GL11.glPointSize(10f);
 				float lAnchorAX = tempVec.x * Box2dWorldController.UNITS_TO_PIXELS;
 				float lAnchorAY = tempVec.y * Box2dWorldController.UNITS_TO_PIXELS;
-				Debug.debugManager().drawers().drawPointImmediate(pCore.gameCamera(), lAnchorAX, lAnchorAY, -0.01f, 1f, 0f, 0f, 1f);
+				Debug.debugManager().drawers().drawPointImmediate(pCore.gameCamera(), lAnchorAX, lAnchorAY, -0.01f, 255f / 255f, 117f / 255f, 104f / 255f, 1f);
 
 				lRevoluteJoint.getAnchorB(tempVec);
 				float lAnchorBX = tempVec.x * Box2dWorldController.UNITS_TO_PIXELS;
 				float lAnchorBY = tempVec.y * Box2dWorldController.UNITS_TO_PIXELS;
-				Debug.debugManager().drawers().drawPointImmediate(pCore.gameCamera(), lAnchorBX, lAnchorBY, -0.01f, 0f, 0f, 1f, 1f);
+				Debug.debugManager().drawers().drawPointImmediate(pCore.gameCamera(), lAnchorBX, lAnchorBY, -0.01f, 255f / 255f, 117f / 255f, 104f / 255f, 1f);
 
 				// Render reference angle
 				float lRefAngle = lRevoluteJoint.getReferenceAngle();
@@ -206,6 +204,7 @@ public class JBox2dDebugDrawer {
 		Debug.debugManager().drawers().drawText(String.format("# Particles: %d", mWorld.getParticleCount()), lHUDrect.left() + 5, lHUDrect.bottom() - lLinePos);
 		Debug.debugManager().drawers().endTextRenderer();
 
+		Debug.debugManager().drawers().beginPolyRenderer(pCore.gameCamera());
 		Body lBody = mWorld.getBodyList();
 		while (lBody != null) {
 
@@ -214,6 +213,7 @@ public class JBox2dDebugDrawer {
 			lBody = lBody.getNext();
 
 		}
+		Debug.debugManager().drawers().endPolyRenderer();
 
 		Joint lJoint = mWorld.getJointList();
 		while (lJoint != null) {

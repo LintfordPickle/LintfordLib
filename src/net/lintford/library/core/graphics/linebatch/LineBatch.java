@@ -252,6 +252,11 @@ public class LineBatch {
 
 	}
 
+	public void forceFlush() {
+		flush();
+		
+	}
+	
 	public void end() {
 		if (!mIsDrawing)
 			return;

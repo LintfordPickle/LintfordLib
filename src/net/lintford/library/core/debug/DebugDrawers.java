@@ -346,17 +346,17 @@ public class DebugDrawers {
 		mLineBatch.draw(pSX, pSY, pEX, pEY, -0.01f, pR, pG, pB);
 	}
 
-	public void drawCircle(ICamera pCamera, float pX, float pY, float pRadius) {
-		drawCircle(pCamera, pX, pY, pRadius, 32);
+	public void drawCircle(float pX, float pY, float pRadius) {
+		drawCircle(pX, pY, pRadius, 32);
 
 	}
 
-	public void drawCircle(ICamera pCamera, float pX, float pY, float pRadius, int pSegCount) {
-		drawCircle(pCamera, pX, pY, pRadius, pSegCount, GL11.GL_LINE_STRIP);
+	public void drawCircle(float pX, float pY, float pRadius, int pSegCount) {
+		drawCircle(pX, pY, pRadius, pSegCount, GL11.GL_LINE_STRIP);
 
 	}
 
-	public void drawCircle(ICamera pCamera, float pX, float pY, float pRadius, int pSegCount, int pGLLineType) {
+	public void drawCircle(float pX, float pY, float pRadius, int pSegCount, int pGLLineType) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
@@ -367,8 +367,7 @@ public class DebugDrawers {
 
 		if (mLineBatch.lineType() != pGLLineType) {
 			Debug.debugManager().logger().w(getClass().getSimpleName(), "Forced flush of LineBatch: different lineType");
-			mLineBatch.end();
-			mLineBatch.begin(pCamera);
+			mLineBatch.forceFlush();
 		}
 
 		mLineBatch.lineType(pGLLineType);
@@ -417,6 +416,80 @@ public class DebugDrawers {
 	public void endTextRenderer() {
 		if (mDebugManager.debugManagerEnabled())
 			mSystemFont.end();
+
+	}
+
+	public void beginPolyRenderer(ICamera pCamera) {
+		if (!mDebugManager.debugManagerEnabled())
+			return;
+
+		mPolyBatch.begin(pCamera);
+
+	}
+
+	public void drawPoly(Rectangle pRect) {
+		if (!mDebugManager.debugManagerEnabled())
+			return;
+
+//		if (!mPolyBatch.isDrawing()) {
+//			Debug.debugManager().logger().w(getClass().getSimpleName(), "Cannot draw poly (cached): the PolyRenderer has not been started (must call beginPolyRenderer() first)");
+//			return;
+//		}
+//
+//		
+//		mImmediatePolyBatch.begin(pCamera);
+//		mImmediatePolyBatch.drawRect(pRect, -0.1f, 1f, 1f, 1f);
+//		mImmediatePolyBatch.end();
+	}
+
+	public void drawPoly(Vector2f[] pVertices, boolean pClose) {
+		if (!mDebugManager.debugManagerEnabled())
+			return;
+
+		if (!mPolyBatch.isDrawing()) {
+			Debug.debugManager().logger().w(getClass().getSimpleName(), "Cannot draw poly (cached): the PolyRenderer has not been started (must call beginPolyRenderer() first)");
+			return;
+		}
+
+		drawPoly(pVertices, 1f, 1f, 1f, pClose);
+
+	}
+
+	public void drawPoly(Vector2f[] pVertices, float pR, float pG, float pB, boolean pClose) {
+		if (!mDebugManager.debugManagerEnabled())
+			return;
+
+		if (!mPolyBatch.isDrawing()) {
+			Debug.debugManager().logger().w(getClass().getSimpleName(), "Cannot draw poly (cached): the PolyRenderer has not been started (must call beginPolyRenderer() first)");
+			return;
+		}
+
+		drawPoly(pVertices, pVertices.length, pR, pG, pB, pClose);
+
+	}
+
+	public void drawPoly(Vector2f[] pVertices, int pAmt, float pR, float pG, float pB, boolean pClose) {
+		if (!mDebugManager.debugManagerEnabled())
+			return;
+
+		if (!mPolyBatch.isDrawing()) {
+			Debug.debugManager().logger().w(getClass().getSimpleName(), "Cannot draw poly (cached): the PolyRenderer has not been started (must call beginPolyRenderer() first)");
+			return;
+		}
+
+		mPolyBatch.drawRect(pVertices, pAmt, -0.1f, pClose, pR, pG, pB);
+
+	}
+
+	public void endPolyRenderer() {
+		if (!mDebugManager.debugManagerEnabled())
+			return;
+
+		if (!mPolyBatch.isDrawing()) {
+			return;
+		}
+
+		mPolyBatch.end();
 
 	}
 
