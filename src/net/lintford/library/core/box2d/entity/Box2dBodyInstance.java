@@ -33,13 +33,13 @@ public class Box2dBodyInstance extends BaseData {
 	public float angularVelocity;
 	public float linearDamping;
 	public float angularDamping;
-	public float gravityScale;
+	public float gravityScale = 1f;
 
-	public boolean allowSleep;
-	public boolean awake;
-	public boolean fixedRotation;
-	public boolean bullet;
-	public boolean active;
+	public boolean allowSleep = true;
+	public boolean awake = true;
+	public boolean fixedRotation = false;
+	public boolean bullet = true;
+	public boolean active = true;
 
 	// Mass data
 	public float mass;
@@ -64,6 +64,9 @@ public class Box2dBodyInstance extends BaseData {
 	// --------------------------------------
 
 	public void savePhysics() {
+		if(mBody == null)
+			return; //  nothing to save 
+			
 		// Get the state information so it can be serialized
 		switch (mBody.m_type) {
 		case STATIC:
@@ -127,12 +130,12 @@ public class Box2dBodyInstance extends BaseData {
 		lBodyDef.angularDamping = angularDamping;
 		lBodyDef.gravityScale = gravityScale;
 
-		lBodyDef.allowSleep = allowSleep;
-		lBodyDef.awake = awake;
+		lBodyDef.allowSleep = false;
+		lBodyDef.awake = true;
 		lBodyDef.fixedRotation = fixedRotation;
 		lBodyDef.bullet = bullet;
-		lBodyDef.active = active;
-
+		lBodyDef.active = true;
+		
 		mBody = pWorld.createBody(lBodyDef);
 
 		// iterate over the fixtures

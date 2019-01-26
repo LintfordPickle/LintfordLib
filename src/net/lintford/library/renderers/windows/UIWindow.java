@@ -344,7 +344,7 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 		}
 
 		if (ConstantsTable.getBooleanValueDef("DRAW_UI_BOUNDS", false)) {
-			Debug.debugManager().drawers().drawRect(pCore.HUD(), mWindowArea);
+			Debug.debugManager().drawers().drawRectImmediate(pCore.HUD(), mWindowArea);
 
 		}
 

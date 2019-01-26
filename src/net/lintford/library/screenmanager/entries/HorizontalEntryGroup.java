@@ -167,7 +167,7 @@ public class HorizontalEntryGroup extends MenuEntry {
 			final float lG = mParentLayout.parentScreen().g();
 			final float lB = mParentLayout.parentScreen().b();
 
-			Debug.debugManager().drawers().drawRect(pCore.gameCamera(), x, y, w, h, 0.5f * lR, 0.2f * lG, lB);
+			Debug.debugManager().drawers().drawRectImmediate(pCore.gameCamera(), x, y, w, h, 0.5f * lR, 0.2f * lG, lB);
 
 		}
 

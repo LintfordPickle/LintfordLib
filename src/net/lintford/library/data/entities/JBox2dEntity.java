@@ -47,7 +47,7 @@ public abstract class JBox2dEntity extends WorldEntity {
 
 	public JBox2dEntity() {
 		mIsPhysicsLoaded = false;
-		mJBox2dEntityInstance = null;
+		
 
 	}
 
@@ -55,12 +55,9 @@ public abstract class JBox2dEntity extends WorldEntity {
 	// Core-Methods
 	// --------------------------------------
 
-	public void setPhysicsObject(World pWorld, JBox2dEntityInstance pJBox2dEntity) {
+	public void setPhysicsObject(JBox2dEntityInstance pJBox2dEntity) {
 		mJBox2dEntityInstance = pJBox2dEntity;
 
-		loadPhysics(pWorld);
-
-		mIsPhysicsLoaded = true;
 	}
 
 	public void savePhysics() {
@@ -76,6 +73,7 @@ public abstract class JBox2dEntity extends WorldEntity {
 			return;
 
 		mJBox2dEntityInstance.loadPhysics(pWorld);
+
 		mIsPhysicsLoaded = true;
 
 	}
@@ -83,7 +81,6 @@ public abstract class JBox2dEntity extends WorldEntity {
 	public void unloadPhysics() {
 		if (mJBox2dEntityInstance != null) {
 			mJBox2dEntityInstance.unloadPhysics();
-			mJBox2dEntityInstance = null;
 
 		}
 

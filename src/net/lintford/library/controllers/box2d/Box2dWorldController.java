@@ -1,5 +1,6 @@
 package net.lintford.library.controllers.box2d;
 
+import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.World;
 
 import net.lintford.library.controllers.BaseController;
@@ -8,8 +9,10 @@ import net.lintford.library.controllers.core.ResourceController;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.box2d.definition.Box2dBodyDefinition;
+import net.lintford.library.core.box2d.definition.PObjectDefinition;
 import net.lintford.library.core.box2d.entity.JBox2dEntityInstance;
 import net.lintford.library.core.debug.Debug;
+import net.lintford.library.core.maths.RandomNumbers;
 
 public class Box2dWorldController extends BaseController {
 
@@ -27,6 +30,7 @@ public class Box2dWorldController extends BaseController {
 	public static final int CATEGORY_ITEM = 0b00000100;
 	public static final int CATEGORY_OBJECT = 0b00001000;
 	public static final int CATEGORY_GROUND = 0b00010000;
+	public static final int CATEGORY_NOTHING = 0b00110000;
 
 	// --------------------------------------
 	// Variables
@@ -34,6 +38,9 @@ public class Box2dWorldController extends BaseController {
 
 	private ResourceController mResourceController;
 	private World mWorld;
+
+	float mWindAcc;
+	float mWindVel;
 
 	// --------------------------------------
 	// Properties
@@ -74,6 +81,13 @@ public class Box2dWorldController extends BaseController {
 	public void update(LintfordCore pCore) {
 		super.update(pCore);
 
+		final float lWindMaxForce = 0.5f;
+		mWindAcc = RandomNumbers.getRandomChance(30) ? RandomNumbers.random(-lWindMaxForce, lWindMaxForce) : 0;
+		mWindVel += mWindAcc;
+		mWindAcc = 0;
+
+		mWorld.setGravity(new Vec2(mWindVel, 9.8f));
+
 		if (mWorld != null) {
 			mWorld.step((float) pCore.time().elapseGameTimeSeconds(), 5, 6);
 
@@ -90,6 +104,12 @@ public class Box2dWorldController extends BaseController {
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
+
+	public JBox2dEntityInstance getCustomBox2dInstance(PObjectDefinition lPObjectDefinition) {
+
+		return null;
+
+	}
 
 	public JBox2dEntityInstance getCharacterBox2dInstance(float pWidth, float pHeight) {
 		if (!isInitialised()) {
@@ -160,8 +180,6 @@ public class Box2dWorldController extends BaseController {
 		if (pObjectToRetrun == null)
 			return;
 
-		
-		
 	}
 
 }

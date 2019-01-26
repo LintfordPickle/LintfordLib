@@ -20,6 +20,18 @@ public class Box2dCircleInstance extends BaseData implements ShapeInstance {
 	public float radius;
 
 	// --------------------------------------
+	// Constructor
+	// --------------------------------------
+
+	public Box2dCircleInstance() {
+		this(0.5f);
+	}
+
+	public Box2dCircleInstance(float pRadius) {
+		radius = pRadius;
+	}
+
+	// --------------------------------------
 	// Methods
 	// --------------------------------------
 
@@ -27,7 +39,7 @@ public class Box2dCircleInstance extends BaseData implements ShapeInstance {
 	public Shape shape() {
 		return circleShape;
 	}
-	
+
 	public void savePhysics() {
 		if (circleShape == null)
 			return;

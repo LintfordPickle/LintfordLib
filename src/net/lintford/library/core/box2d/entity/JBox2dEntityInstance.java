@@ -7,6 +7,7 @@ import java.util.List;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Filter;
 import org.jbox2d.dynamics.World;
+import org.jbox2d.dynamics.joints.RevoluteJointDef;
 
 import net.lintford.library.core.box2d.definition.Box2dBodyDefinition;
 import net.lintford.library.core.box2d.definition.Box2dFixtureDefinition;
@@ -30,8 +31,8 @@ public class JBox2dEntityInstance implements Serializable {
 
 	protected transient PObjectDefinition mPObjectDefinition;
 
-	protected List<Box2dBodyInstance> mBodies = new ArrayList<>();
-	protected List<Box2dJointInstance> mJoints = new ArrayList<>();
+	private List<Box2dBodyInstance> mBodies = new ArrayList<>();
+	private List<Box2dJointInstance> mJoints = new ArrayList<>();
 
 	protected Object userDataObject;
 
@@ -41,6 +42,7 @@ public class JBox2dEntityInstance implements Serializable {
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
 	public Object userDataObject() {
 		return userDataObject;
 
@@ -103,24 +105,32 @@ public class JBox2dEntityInstance implements Serializable {
 		}
 
 		// need two passes for joints because gear joints reference other joints
-//		final int lJointCount = pDefinition.joints().size();
-//		for (int i = 0; i < lJointCount; i++) {
-//			Box2dJointDefinition lJointDefinition = pDefinition.joints().get(i);
-//			Box2dJointInstance lJointInstance = new Box2dJointInstance();
-//
-//			lJointInstance.jointDef = lJointDefinition.jointDef;
-//
-//			// Resolve the body references
-//			// TODO: This might break in instances of the same object because all jointDef instances are referencing the same object in the joint definition.
-//			lJointInstance.jointDef.bodyA = mBodies.get(lJointDefinition.bodyAIndex).mBody;
-//			lJointInstance.jointDef.bodyB = mBodies.get(lJointDefinition.bodyBIndex).mBody;
-//			lJointInstance.jointDef.collideConnected = lJointDefinition.collideConnected;
-//
-//			// DEBUG
-//
-//			lJointInstance.joint = pWorld.createJoint(lJointInstance.jointDef);
-//
-//		}
+		final int lJointCount = mJoints.size();
+		for (int i = 0; i < lJointCount; i++) {
+			Box2dRevoluteInstance lJointInstance = (Box2dRevoluteInstance) mJoints.get(i);
+			RevoluteJointDef lJointDef = new RevoluteJointDef();
+
+			lJointDef.bodyA = getBodyByUID(lJointInstance.bodyAUID).mBody;
+			lJointDef.bodyB = getBodyByUID(lJointInstance.bodyBUID).mBody;
+
+			lJointDef.referenceAngle = lJointInstance.referenceAngle;
+			lJointDef.enableLimit = lJointInstance.enableLimit;
+			lJointDef.lowerAngle = lJointInstance.lowerAngle;
+			lJointDef.upperAngle = lJointInstance.upperAngle;
+
+			lJointDef.enableMotor = lJointInstance.enableMotor;
+			lJointDef.motorSpeed = lJointInstance.motorSpeed;
+			lJointDef.maxMotorTorque = lJointInstance.maxMotorTorque;
+
+			lJointDef.localAnchorA.set(lJointInstance.localAnchorA);
+			lJointDef.localAnchorB.set(lJointInstance.localAnchorB);
+
+			lJointDef.collideConnected = lJointInstance.collidesConnected;
+
+			// DEBUG
+			lJointInstance.joint = pWorld.createJoint(lJointDef);
+
+		}
 
 		if (mainBody() != null) {
 			if (mainBody().mBody != null)
@@ -129,6 +139,18 @@ public class JBox2dEntityInstance implements Serializable {
 		}
 
 		mPhysicsLoaded = true;
+
+	}
+
+	private Box2dBodyInstance getBodyByUID(int pUID) {
+		final int lBodyCount = mBodies.size();
+		for (int i = 0; i < lBodyCount; i++) {
+			if (mBodies.get(i).uid == pUID)
+				return mBodies.get(i);
+
+		}
+
+		return null;
 
 	}
 
@@ -187,8 +209,8 @@ public class JBox2dEntityInstance implements Serializable {
 
 		}
 
-		mBodies.clear();
-		mJoints.clear();
+//		mBodies.clear();
+//		mJoints.clear();
 
 		mPhysicsLoaded = false;
 
@@ -279,15 +301,9 @@ public class JBox2dEntityInstance implements Serializable {
 		final int lJointCount = pDefinition.joints().size();
 		for (int i = 0; i < lJointCount; i++) {
 			Box2dJointDefinition lJointDefinition = pDefinition.joints().get(i);
-			Box2dJointInstance lJointInstance = new Box2dJointInstance();
+			Box2dRevoluteInstance lJointInstance = new Box2dRevoluteInstance();
 
-			lJointInstance.jointDef = lJointDefinition.jointDef;
-
-			// Resolve the body references
-			// TODO: This might break in instances of the same object because all jointDef instances are referencing the same object in the joint definition.
-			lJointInstance.jointDef.bodyA = mBodies.get(lJointDefinition.bodyAIndex).mBody;
-			lJointInstance.jointDef.bodyB = mBodies.get(lJointDefinition.bodyBIndex).mBody;
-			lJointInstance.jointDef.collideConnected = lJointDefinition.collideConnected;
+			// TODO: PObjectDefinition loading using Joints
 
 		}
 
@@ -310,7 +326,10 @@ public class JBox2dEntityInstance implements Serializable {
 		for (int i = 0; i < lBodyCount; i++) {
 			Box2dBodyInstance lBodyInst = mBodies.get(i);
 
-			lBodyInst.mBody.setTransform(new Vec2(pX, pY), lBodyInst.mBody.getAngle());
+			lBodyInst.position.set(pX, pY);
+
+			if (lBodyInst.mBody != null)
+				lBodyInst.mBody.setTransform(new Vec2(pX, pY), lBodyInst.mBody.getAngle());
 
 		}
 

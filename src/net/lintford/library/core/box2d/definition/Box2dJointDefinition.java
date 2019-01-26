@@ -8,10 +8,9 @@ public class Box2dJointDefinition {
 	// Variables
 	// --------------------------------------
 
+	// Joint data is stored directly in the JointDef instance above.
 	public JointDef jointDef;
 	
-	// Joint data is stored directly in the JointDef instance above.
-
 	public int bodyAIndex;
 	public int bodyBIndex;
 

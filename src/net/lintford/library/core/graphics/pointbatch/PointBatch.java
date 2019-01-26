@@ -1,4 +1,4 @@
-package net.lintford.library.core.graphics.linebatch;
+package net.lintford.library.core.graphics.pointbatch;
 
 import java.nio.FloatBuffer;
 
@@ -10,19 +10,18 @@ import org.lwjgl.system.MemoryUtil;
 
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.camera.ICamera;
-import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.shaders.ShaderMVP_PT;
 import net.lintford.library.core.graphics.vertices.VertexDataStructurePC;
 import net.lintford.library.core.maths.Matrix4f;
 
-public class LineBatch {
+public class PointBatch {
 
 	// --------------------------------------
 	// Constants
 	// --------------------------------------
 
-	public static final int MAX_LINES = 2048;
-	public static final int NUM_VERTS_PER_LINE = 2;
+	public static final int MAX_POINTS = 256;
+	public static final int NUM_VERTS_PER_POINT = 1;
 
 	private static final String VERT_FILENAME = "/res/shaders/shader_basic_col.vert";
 	private static final String FRAG_FILENAME = "/res/shaders/shader_basic_col.frag";
@@ -34,7 +33,6 @@ public class LineBatch {
 	private int mVaoId = -1;
 	private int mVboId = -1;
 	private int mVertexCount = 0;
-	public float r, g, b, a;
 
 	private ICamera mCamera;
 	private ShaderMVP_PT mShader;
@@ -42,26 +40,10 @@ public class LineBatch {
 	private FloatBuffer mBuffer;
 	private boolean mIsDrawing;
 	private boolean mIsLoaded;
-	private int mGLLineType;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
-
-	/** Sets the line type to use by OpenGL. Choices are either GL11.GL_LINE_STRIP or GL11.GL_LINES */
-	public void lineType(int pGLLineType) {
-		mGLLineType = pGLLineType;
-
-		if (mGLLineType != GL11.GL_LINE_STRIP && mGLLineType != GL11.GL_LINES) {
-			mGLLineType = GL11.GL_LINES;
-		}
-
-	}
-
-	public int lineType() {
-		return mGLLineType;
-
-	}
 
 	public boolean isDrawing() {
 		return mIsDrawing;
@@ -71,7 +53,7 @@ public class LineBatch {
 	// Constructor
 	// --------------------------------------
 
-	public LineBatch() {
+	public PointBatch() {
 		mShader = new ShaderMVP_PT("ShaderMVP_PT", VERT_FILENAME, FRAG_FILENAME) {
 			@Override
 			protected void bindAtrributeLocations(int pShaderID) {
@@ -79,8 +61,6 @@ public class LineBatch {
 				GL20.glBindAttribLocation(pShaderID, 1, "inColor");
 			}
 		};
-
-		a = r = g = b = 1f;
 
 		mModelMatrix = new Matrix4f();
 		mIsLoaded = false;
@@ -102,7 +82,7 @@ public class LineBatch {
 		if (mVboId == -1)
 			mVboId = GL15.glGenBuffers();
 
-		mBuffer = MemoryUtil.memAllocFloat(MAX_LINES * NUM_VERTS_PER_LINE * VertexDataStructurePC.stride);
+		mBuffer = MemoryUtil.memAllocFloat(MAX_POINTS * NUM_VERTS_PER_POINT * VertexDataStructurePC.stride);
 
 		mIsLoaded = true;
 
@@ -156,84 +136,17 @@ public class LineBatch {
 
 	}
 
-	public void drawRect(Rectangle pRect, float pZ) {
-		if (!mIsDrawing)
-			return;
-
-		drawRect(pRect, 1f, pZ);
-
-	}
-
-	public void drawRect(Rectangle pRect, float pScale, float pZ) {
-		if (!mIsDrawing)
-			return;
-
-		drawRect(pRect, 0f, 0f, pScale, pZ);
-	}
-
-	public void drawRect(Rectangle pRect, float pOX, float pOY, float pScale, float pZ) {
-		if (!mIsDrawing)
-			return;
-
-		final float lModWidth = pRect.width() * pScale;
-		final float lModHeight = pRect.height() * pScale;
-
-		final float lModX = pRect.left() - pOX * pScale;
-		final float lModY = pRect.top() - pOY * pScale;
-
-		draw(lModX, lModY, lModX + lModWidth, lModY, pZ, 1f, 1f, 1f); // top
-		draw(lModX, lModY + lModHeight, lModX + lModWidth, lModY + lModHeight, pZ, 1f, 1f, 1f); // bottom
-		draw(lModX, lModY, lModX, lModY + lModHeight, pZ, 1f, 1f, 1f); // left
-		draw(lModX + lModWidth, lModY, lModX + lModWidth, lModY + lModHeight, pZ, 1f, 1f, 1f); // right
-
-	}
-
-	public void drawRect(float pX, float pY, float pW, float pH, float pZ) {
-		if (!mIsDrawing)
-			return;
-		draw(pX, pY, pX + pW, pY, pZ, r, g, b); // top
-		draw(pX, pY + pH, pX + pW, pY + pH, pZ, r, g, b); // bottom
-
-		draw(pX, pY, pX, pY + pH, pZ, r, g, b); // left
-		draw(pX + pW, pY, pX + pW, pY + pH, pZ, r, g, b); // right
-	}
-
-	public void drawRect(float pX, float pY, float pW, float pH, float pZ, float pR, float pG, float pB) {
-		if (!mIsDrawing)
-			return;
-		draw(pX, pY, pX + pW, pY, pZ, pR, pG, pB); // top
-		draw(pX, pY + pH, pX + pW, pY + pH, pZ, pR, pG, pB); // bottom
-
-		draw(pX, pY, pX, pY + pH, pZ, pR, pG, pB); // left
-		draw(pX + pW, pY, pX + pW, pY + pH, pZ, pR, pG, pB); // right
-	}
-
-	public void draw(float pP1X, float pP1Y, float pP2X, float pP2Y, float pZ, float pR, float pG, float pB) {
+	public void draw(float pP1X, float pP1Y, float pZ, float pR, float pG, float pB, float pA) {
 
 		if (!mIsDrawing)
 			return;
 
-		if (mVertexCount * 2 >= MAX_LINES) {
+		if (mVertexCount >= MAX_POINTS) {
 			flush();
 		}
 
 		// Add both vertices to the buffer
-		draw(pP1X, pP1Y, pZ, pR, pG, pB);
-		draw(pP2X, pP2Y, pZ, pR, pG, pB);
-
-	}
-
-	public void draw(float pP1X, float pP1Y, float pZ, float pR, float pG, float pB) {
-
-		if (!mIsDrawing)
-			return;
-
-		if (mVertexCount * 2 >= MAX_LINES) {
-			flush();
-		}
-
-		// Add both vertices to the buffer
-		addVertToBuffer(pP1X, pP1Y, pZ, 1f, pR, pG, pB, a);
+		addVertToBuffer(pP1X, pP1Y, pZ, 1f, pR, pG, pB, pA);
 
 	}
 
@@ -287,8 +200,7 @@ public class LineBatch {
 
 		mShader.bind();
 
-		GL11.glPointSize(3);
-		GL11.glDrawArrays(mGLLineType, 0, mVertexCount);
+		GL11.glDrawArrays(GL11.GL_POINTS, 0, mVertexCount);
 
 		GL30.glBindVertexArray(0);
 
@@ -297,19 +209,6 @@ public class LineBatch {
 		mBuffer.clear();
 
 		mVertexCount = 0;
-
-	}
-
-	public void changeColorNormalized(float pR, float pG, float pB, float pA) {
-		// if (mCurNumSprites > 0) {
-		// flush();
-		// mCurNumSprites = 0;
-		// }
-
-		r = pR;
-		g = pG;
-		b = pB;
-		a = pA;
 
 	}
 

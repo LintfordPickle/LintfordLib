@@ -59,6 +59,14 @@ import net.lintford.library.core.box2d.entity.Box2dPolygonInstance;
 public class PObjectDefinition {
 
 	// --------------------------------------
+	// Constants
+	// --------------------------------------
+
+	public static final int BODY_TYPE_STATIC = 0;
+	public static final int BODY_TYPE_KINEMATIC = 1;
+	public static final int BODY_TYPE_DYNAMIC = 2;
+
+	// --------------------------------------
 	// Inner Classes
 	// --------------------------------------
 
@@ -106,7 +114,7 @@ public class PObjectDefinition {
 	public void name(String pNewName) {
 		mObjectName = pNewName;
 	}
-	
+
 	public String name() {
 		return mObjectName;
 	}

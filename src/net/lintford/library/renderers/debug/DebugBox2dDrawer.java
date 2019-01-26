@@ -25,6 +25,18 @@ public class DebugBox2dDrawer extends BaseRenderer {
 	private boolean mShowDebugInformation;
 
 	// --------------------------------------
+	// Properties
+	// --------------------------------------
+
+	public void debugDrawEnable(boolean pNewValue) {
+		mShowDebugInformation = pNewValue;
+	}
+
+	public boolean debugDrawEnable() {
+		return mShowDebugInformation;
+	}
+
+	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 

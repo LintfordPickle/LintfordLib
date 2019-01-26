@@ -1,15 +1,15 @@
-package net.lintford.library.core.geometry;
+package net.lintford.library.core.geometry.spritegraph;
 
 import java.io.Serializable;
 
-public class Anchor implements Serializable {
+public class SpriteGraphAnchorDef implements Serializable {
 
 	// --------------------------------------
 	// Constants
 	// --------------------------------------
-
-	public static final Anchor ZERO_ANCHOR = new Anchor();
-
+	
+	public static final SpriteGraphAnchorDef ZERO_ANCHOR = new SpriteGraphAnchorDef();
+	
 	private static final long serialVersionUID = 5862113195698770627L;
 
 	// --------------------------------------
@@ -25,15 +25,8 @@ public class Anchor implements Serializable {
 	// Constructor
 	// --------------------------------------
 
-	public Anchor() {
-
-	}
-
-	public Anchor(String pName, float pX, float pY, float pRot) {
-		name = pName;
-		x = pX;
-		y = pY;
-		rot = pRot;
+	public SpriteGraphAnchorDef() {
+		
 	}
 
 }
