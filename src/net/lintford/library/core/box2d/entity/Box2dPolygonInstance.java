@@ -20,6 +20,14 @@ public class Box2dPolygonInstance extends BaseData implements ShapeInstance {
 	public Vec2[] vertices;
 
 	// --------------------------------------
+	// Constructor
+	// --------------------------------------
+
+	public Box2dPolygonInstance() {
+
+	}
+
+	// --------------------------------------
 	// Methods
 	// --------------------------------------
 

@@ -21,7 +21,15 @@ public class Box2dChainInstance extends BaseData implements ShapeInstance {
 
 	public Vec2 vertex0 = new Vec2();
 	public Vec2 vertex1 = new Vec2();
-	
+
+	// --------------------------------------
+	// Constructor
+	// --------------------------------------
+
+	public Box2dChainInstance() {
+
+	}
+
 	// --------------------------------------
 	// Methods
 	// --------------------------------------

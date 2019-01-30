@@ -178,4 +178,13 @@ public class Box2dBodyInstance extends BaseData {
 
 	}
 
+	// --------------------------------------
+	// Methods
+	// --------------------------------------
+
+	public void setActive(boolean pNewValue) {
+		mBody.setActive(pNewValue);
+
+	}
+
 }

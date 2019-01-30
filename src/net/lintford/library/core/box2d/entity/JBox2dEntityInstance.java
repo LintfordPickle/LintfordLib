@@ -11,7 +11,6 @@ import org.jbox2d.dynamics.joints.RevoluteJointDef;
 
 import net.lintford.library.core.box2d.definition.Box2dBodyDefinition;
 import net.lintford.library.core.box2d.definition.Box2dFixtureDefinition;
-import net.lintford.library.core.box2d.definition.Box2dJointDefinition;
 import net.lintford.library.core.box2d.definition.PObjectDefinition;
 
 /**
@@ -89,6 +88,7 @@ public class JBox2dEntityInstance implements Serializable {
 
 	public JBox2dEntityInstance() {
 		mPhysicsLoaded = false;
+
 	}
 
 	// --------------------------------------
@@ -292,19 +292,7 @@ public class JBox2dEntityInstance implements Serializable {
 				lFilter.groupIndex = lFixtureDef.fixtureDef.filter.groupIndex;
 				lFilter.maskBits = lFixtureDef.fixtureDef.filter.maskBits;
 
-				// TODO : Do something with the lFilter
-
 			}
-
-		}
-
-		// need two passes for joints because gear joints reference other joints
-		final int lJointCount = pDefinition.joints().size();
-		for (int i = 0; i < lJointCount; i++) {
-			Box2dJointDefinition lJointDefinition = pDefinition.joints().get(i);
-			Box2dRevoluteInstance lJointInstance = new Box2dRevoluteInstance();
-
-			// TODO: PObjectDefinition loading using Joints
 
 		}
 
@@ -347,6 +335,24 @@ public class JBox2dEntityInstance implements Serializable {
 
 	}
 
+	public void setActive(boolean pNewValue) {
+		final int lBodyCount = mBodies.size();
+		for (int i = 0; i < lBodyCount; i++) {
+			mBodies.get(i).mBody.setActive(pNewValue);
+
+		}
+
+	}
+
+	public void setGravityScale(float pNewValue) {
+		final int lBodyCount = mBodies.size();
+		for (int i = 0; i < lBodyCount; i++) {
+			mBodies.get(i).mBody.setGravityScale(pNewValue);
+
+		}
+
+	}
+
 	public void applyLinearImpulse(float pX, float pY) {
 		final int lBodyCount = mBodies.size();
 		for (int i = 0; i < lBodyCount; i++) {
@@ -367,7 +373,7 @@ public class JBox2dEntityInstance implements Serializable {
 			final int lFixtureCount = lBodyInst.mFixtures.length;
 			for (int j = 0; j < lFixtureCount; j++) {
 				Box2dFixtureInstance lFixInst = lBodyInst.mFixtures[j];
-				lFixInst.friction = pNewFrictionValue;
+				lFixInst.friction = pNewFrictionValue;			
 
 			}
 

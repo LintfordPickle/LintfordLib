@@ -25,6 +25,14 @@ public class Box2dEdgeInstance extends BaseData implements ShapeInstance {
 	public Vec2 vertex3 = new Vec2();
 
 	// --------------------------------------
+	// Constructor
+	// --------------------------------------
+
+	public Box2dEdgeInstance() {
+
+	}
+
+	// --------------------------------------
 	// Methods
 	// --------------------------------------
 

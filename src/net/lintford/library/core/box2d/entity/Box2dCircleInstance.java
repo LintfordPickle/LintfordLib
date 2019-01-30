@@ -25,10 +25,12 @@ public class Box2dCircleInstance extends BaseData implements ShapeInstance {
 
 	public Box2dCircleInstance() {
 		this(0.5f);
+
 	}
 
 	public Box2dCircleInstance(float pRadius) {
 		radius = pRadius;
+
 	}
 
 	// --------------------------------------

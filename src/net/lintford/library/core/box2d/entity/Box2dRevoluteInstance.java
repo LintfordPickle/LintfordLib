@@ -1,12 +1,6 @@
 package net.lintford.library.core.box2d.entity;
 
-import org.jbox2d.common.Vec2;
-import org.jbox2d.dynamics.joints.Joint;
-import org.jbox2d.dynamics.joints.JointDef;
-import org.jbox2d.dynamics.joints.RevoluteJointDef;
-
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.data.BaseData;
 
 public class Box2dRevoluteInstance extends Box2dJointInstance {
 

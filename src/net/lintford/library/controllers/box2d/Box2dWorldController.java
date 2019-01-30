@@ -1,5 +1,6 @@
 package net.lintford.library.controllers.box2d;
 
+import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.World;
 
 import net.lintford.library.controllers.BaseController;
@@ -81,10 +82,10 @@ public class Box2dWorldController extends BaseController {
 		super.update(pCore);
 
 		// TODO: WindController
-		final float lWindMaxForce = 0.5f;
-		mWindAcc = RandomNumbers.getRandomChance(30) ? RandomNumbers.random(-lWindMaxForce, lWindMaxForce) : 0;
+		final float lWindMaxForce = 0.1f;
+		mWindAcc = RandomNumbers.getRandomChance(10) ? RandomNumbers.random(-lWindMaxForce, lWindMaxForce) : 0;
 		mWindVel += mWindAcc;
-		mWindVel *= 0.97f;
+		mWindVel *= 0.99f;
 		mWindAcc = 0;
 
 		// mWorld.setGravity(new Vec2(mWindVel, 9.8f));
@@ -126,7 +127,7 @@ public class Box2dWorldController extends BaseController {
 
 		lPlayerJBox2dEntity.setFixtureDimensions("box", pWidth, pHeight);
 		lPlayerJBox2dEntity.setFixtureCategory(CATEGORY_CHARACTER);
-		lPlayerJBox2dEntity.setFixtureBitMask(/* CATEGORY_ITEM | */ CATEGORY_GROUND | CATEGORY_OBJECT);
+		lPlayerJBox2dEntity.setFixtureBitMask(CATEGORY_ITEM | CATEGORY_GROUND | CATEGORY_OBJECT);
 		lPlayerJBox2dEntity.setFixtureIsSensor(false);
 
 		return lPlayerJBox2dEntity;
@@ -167,10 +168,10 @@ public class Box2dWorldController extends BaseController {
 
 		// Before we load the physics, need to adjust the box2d body/fixture to match the shape
 		// which in this case, means adjusting the raidus
-		lItemJBox2dEntity.setFixtureFriction(0.0f);
+		lItemJBox2dEntity.setFixtureFriction(1.0f);
 		lItemJBox2dEntity.setFixtureRadius("circle", pRadius);
 		lItemJBox2dEntity.setFixtureCategory(CATEGORY_ITEM);
-		lItemJBox2dEntity.setFixtureBitMask(/* CATEGORY_CHARACTER | */ CATEGORY_GROUND);
+		lItemJBox2dEntity.setFixtureBitMask(CATEGORY_CHARACTER | CATEGORY_GROUND);
 		lItemJBox2dEntity.setFixtureIsSensor(false);
 
 		return lItemJBox2dEntity;

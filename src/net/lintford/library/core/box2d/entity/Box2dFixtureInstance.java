@@ -33,7 +33,7 @@ public class Box2dFixtureInstance extends BaseData {
 	public int categoryBits;
 	public int groupIndex;
 	public int maskBits;
-	
+
 	public String spriteName;
 
 	// --------------------------------------
@@ -42,6 +42,10 @@ public class Box2dFixtureInstance extends BaseData {
 
 	public Box2dFixtureInstance(Box2dBodyInstance pBodyEntity) {
 
+		density = 1f;
+		friction = 0.5f;
+		restitution = 0.5f;
+		
 	}
 
 	// --------------------------------------
@@ -87,7 +91,7 @@ public class Box2dFixtureInstance extends BaseData {
 		mFixture = pParentBody.createFixture(lFixtureDef);
 
 	}
-	
+
 	public void unloadPhysics(World pWorld) {
 
 	}

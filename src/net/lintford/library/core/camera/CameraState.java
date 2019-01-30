@@ -31,7 +31,7 @@ public class CameraState extends BaseData {
 		velocity = new Vector2f();
 		targetPosition = new Vector2f();
 		offsetPosition = new Vector2f();
-		
+
 	}
 
 }

@@ -39,6 +39,7 @@ public class BaseEntity {
 	// Methods
 	// --------------------------------------
 
+	// TODO: Need to return an array of possible items/objects to be dropped
 	public String getDropItemName() {
 		if (outname != null && !outname.isEmpty())
 			return outname;
