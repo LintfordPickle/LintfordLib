@@ -314,6 +314,8 @@ public class JBox2dEntityInstance implements Serializable {
 		final int lBodyCount = mBodies.size();
 		for (int i = 0; i < lBodyCount; i++) {
 			Box2dBodyInstance lBodyInst = mBodies.get(i);
+			if (lBodyInst == null)
+				continue;
 
 			lBodyInst.position.set(pX, pY);
 
@@ -328,8 +330,8 @@ public class JBox2dEntityInstance implements Serializable {
 		final int lBodyCount = mBodies.size();
 		for (int i = 0; i < lBodyCount; i++) {
 			Box2dBodyInstance lBodyInst = mBodies.get(i);
-
-			lBodyInst.mBody.applyForce(new Vec2(pX, pY), lBodyInst.mBody.getWorldCenter());
+			if (lBodyInst != null)
+				lBodyInst.mBody.applyForce(new Vec2(pX, pY), lBodyInst.mBody.getWorldCenter());
 
 		}
 
@@ -338,7 +340,9 @@ public class JBox2dEntityInstance implements Serializable {
 	public void setActive(boolean pNewValue) {
 		final int lBodyCount = mBodies.size();
 		for (int i = 0; i < lBodyCount; i++) {
-			mBodies.get(i).mBody.setActive(pNewValue);
+			Box2dBodyInstance lBodyInst = mBodies.get(i);
+			if (lBodyInst != null)
+				lBodyInst.mBody.setActive(pNewValue);
 
 		}
 
@@ -347,7 +351,9 @@ public class JBox2dEntityInstance implements Serializable {
 	public void setGravityScale(float pNewValue) {
 		final int lBodyCount = mBodies.size();
 		for (int i = 0; i < lBodyCount; i++) {
-			mBodies.get(i).mBody.setGravityScale(pNewValue);
+			Box2dBodyInstance lBodyInst = mBodies.get(i);
+			if (lBodyInst != null)
+				lBodyInst.mBody.setGravityScale(pNewValue);
 
 		}
 
@@ -357,8 +363,8 @@ public class JBox2dEntityInstance implements Serializable {
 		final int lBodyCount = mBodies.size();
 		for (int i = 0; i < lBodyCount; i++) {
 			Box2dBodyInstance lBodyInst = mBodies.get(i);
-
-			lBodyInst.mBody.applyLinearImpulse(new Vec2(pX, pY), lBodyInst.mBody.getWorldCenter(), true);
+			if (lBodyInst != null) // TODO: Garbage
+				lBodyInst.mBody.applyLinearImpulse(new Vec2(pX, pY), lBodyInst.mBody.getWorldCenter(), true);
 
 		}
 
@@ -369,11 +375,16 @@ public class JBox2dEntityInstance implements Serializable {
 		for (int i = 0; i < lBodyCount; i++) {
 
 			Box2dBodyInstance lBodyInst = mBodies.get(i);
+			if (lBodyInst == null)
+				continue;
 
 			final int lFixtureCount = lBodyInst.mFixtures.length;
 			for (int j = 0; j < lFixtureCount; j++) {
 				Box2dFixtureInstance lFixInst = lBodyInst.mFixtures[j];
-				lFixInst.friction = pNewFrictionValue;			
+				if (lFixInst == null)
+					continue;
+
+				lFixInst.friction = pNewFrictionValue;
 
 			}
 
@@ -386,10 +397,15 @@ public class JBox2dEntityInstance implements Serializable {
 		for (int i = 0; i < lBodyCount; i++) {
 
 			Box2dBodyInstance lBodyInst = mBodies.get(i);
+			if (lBodyInst == null)
+				continue;
 
 			final int lFixtureCount = lBodyInst.mFixtures.length;
 			for (int j = 0; j < lFixtureCount; j++) {
 				Box2dFixtureInstance lFixInst = lBodyInst.mFixtures[j];
+				if (lFixInst == null)
+					continue;
+
 				lFixInst.categoryBits = pNewCategory;
 
 			}
@@ -403,10 +419,15 @@ public class JBox2dEntityInstance implements Serializable {
 		for (int i = 0; i < lBodyCount; i++) {
 
 			Box2dBodyInstance lBodyInst = mBodies.get(i);
+			if (lBodyInst == null)
+				continue;
 
 			final int lFixtureCount = lBodyInst.mFixtures.length;
 			for (int j = 0; j < lFixtureCount; j++) {
 				Box2dFixtureInstance lFixInst = lBodyInst.mFixtures[j];
+				if (lFixInst == null)
+					continue;
+
 				lFixInst.maskBits = pNewBitmask;
 
 			}
@@ -420,10 +441,15 @@ public class JBox2dEntityInstance implements Serializable {
 		for (int i = 0; i < lBodyCount; i++) {
 
 			Box2dBodyInstance lBodyInst = mBodies.get(i);
+			if (lBodyInst == null)
+				continue;
 
 			final int lFixtureCount = lBodyInst.mFixtures.length;
 			for (int j = 0; j < lFixtureCount; j++) {
 				Box2dFixtureInstance lFixInst = lBodyInst.mFixtures[j];
+				if (lFixInst == null)
+					continue;
+
 				lFixInst.isSensor = pIsSensor;
 
 			}
@@ -437,6 +463,8 @@ public class JBox2dEntityInstance implements Serializable {
 		for (int i = 0; i < lBodyCount; i++) {
 
 			Box2dBodyInstance lBodyInst = mBodies.get(i);
+			if (lBodyInst == null)
+				continue;
 
 			final int lFixtureCount = lBodyInst.mFixtures.length;
 			for (int j = 0; j < lFixtureCount; j++) {
@@ -461,6 +489,8 @@ public class JBox2dEntityInstance implements Serializable {
 		for (int i = 0; i < lBodyCount; i++) {
 
 			Box2dBodyInstance lBodyInst = mBodies.get(i);
+			if (lBodyInst == null)
+				continue;
 
 			final int lFixtureCount = lBodyInst.mFixtures.length;
 			for (int j = 0; j < lFixtureCount; j++) {
