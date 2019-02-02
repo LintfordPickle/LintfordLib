@@ -175,12 +175,6 @@ public class ScreenManager {
 
 			mScreensToUpdate.remove(mScreensToUpdate.size() - 1);
 
-			// update the screen dimenions (recursive)
-			lScreen.updateStructureDimensions(pCore);
-
-			// update the screen positioning (recursive).
-			lScreen.updateStructurePositions(pCore);
-
 			// Update the screen
 			lScreen.update(pCore, lOtherScreenHasFocus, lCoveredByOtherScreen);
 

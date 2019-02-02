@@ -109,16 +109,6 @@ public class TimedIntroScreen extends Screen {
 	}
 
 	@Override
-	public void updateStructureDimensions(LintfordCore pCore) {
-
-	}
-
-	@Override
-	public void updateStructurePositions(LintfordCore pCore) {
-
-	}
-
-	@Override
 	public void update(LintfordCore pCore, boolean pOtherScreenHasFocus, boolean pCoveredByOtherScreen) {
 		super.update(pCore, pOtherScreenHasFocus, pCoveredByOtherScreen);
 

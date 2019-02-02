@@ -31,6 +31,14 @@ public class MenuEntry extends Rectangle {
 	protected static final float Z_STATE_MODIFIER_PASSIVE = 0.005f; // Entry passive
 	protected static final float Z_STATE_MODIFIER_ACTIVE = 0.006f; // Entry active
 
+	public enum ENTRY_ALIGNMENT {
+		LEFT, RIGHT, TOP, BOTTOM, CENTER,
+	}
+
+	public enum ENTRY_FILL_TYPE {
+		TAKE_WHATS_NEEDED, SHARE, FILL,
+	}
+
 	public enum BUTTON_SIZE {
 		tiny, narrow, normal, wide;
 	}
@@ -38,6 +46,11 @@ public class MenuEntry extends Rectangle {
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
+
+	protected ENTRY_ALIGNMENT mHorizontalAlignment = ENTRY_ALIGNMENT.CENTER;
+	protected ENTRY_ALIGNMENT mVerticalAlignment = ENTRY_ALIGNMENT.CENTER;
+	protected ENTRY_FILL_TYPE mHorizontalFillType = ENTRY_FILL_TYPE.SHARE;
+	protected ENTRY_FILL_TYPE mVerticalFillType = ENTRY_FILL_TYPE.SHARE;
 
 	protected ScreenManager mScreenManager;
 	protected Texture mUITexture;
@@ -52,9 +65,7 @@ public class MenuEntry extends Rectangle {
 	protected boolean mDrawBackground;
 	protected boolean mHighlightOnHover;
 	protected boolean mScaleonHover;
-
 	protected float mAnimationTimer;
-
 	protected boolean mHoveredOver;
 	protected boolean mCanHoverOver;
 	protected boolean mToolTipEnabled;
@@ -86,12 +97,44 @@ public class MenuEntry extends Rectangle {
 	protected float mMaxWidth;
 	protected float mMaxHeight;
 
-	boolean isAnimating;
-	float animationTimeRemaining;
+	protected boolean isAnimating;
+	protected float animationTimeRemaining;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public ENTRY_ALIGNMENT horizontalAlignment() {
+		return mHorizontalAlignment;
+	}
+
+	public void horizontalAlignment(ENTRY_ALIGNMENT pNewValue) {
+		mHorizontalAlignment = pNewValue;
+	}
+
+	public ENTRY_ALIGNMENT verticalAlignment() {
+		return mVerticalAlignment;
+	}
+
+	public void verticalAlignment(ENTRY_ALIGNMENT pNewValue) {
+		mVerticalAlignment = pNewValue;
+	}
+
+	public ENTRY_FILL_TYPE horizontalFillType() {
+		return mHorizontalFillType;
+	}
+
+	public void horizontalFillType(ENTRY_FILL_TYPE pNewValue) {
+		mHorizontalFillType = pNewValue;
+	}
+
+	public ENTRY_FILL_TYPE verticalFillType() {
+		return mVerticalFillType;
+	}
+
+	public void verticalFillType(ENTRY_FILL_TYPE pNewValue) {
+		mVerticalFillType = pNewValue;
+	}
 
 	public boolean drawButtonBackground() {
 		return mDrawBackground;

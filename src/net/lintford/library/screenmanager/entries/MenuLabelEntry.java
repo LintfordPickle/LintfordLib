@@ -8,7 +8,6 @@ import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
-import net.lintford.library.screenmanager.MenuScreen.ALIGNMENT;
 import net.lintford.library.screenmanager.Screen;
 import net.lintford.library.screenmanager.ScreenManager;
 import net.lintford.library.screenmanager.layouts.BaseLayout;
@@ -22,7 +21,7 @@ public class MenuLabelEntry extends MenuEntry {
 	// --------------------------------------
 
 	private Texture mUITexture;
-	private ALIGNMENT mAlignment = ALIGNMENT.center;
+
 	private float mPadding = 15f;
 	private boolean mShow;
 	private float mR, mG, mB;
@@ -66,14 +65,6 @@ public class MenuLabelEntry extends MenuEntry {
 	/** Padding is applied when the label is either aligned left or right (not when centered). */
 	public void padding(float pNewValue) {
 		mPadding = pNewValue;
-	}
-
-	public void alignment(ALIGNMENT center) {
-		mAlignment = center;
-	}
-
-	public ALIGNMENT alignment() {
-		return mAlignment;
 	}
 
 	@Override
@@ -198,11 +189,11 @@ public class MenuLabelEntry extends MenuEntry {
 		}
 
 		float lX = x + w / 2 - lLabelWidth / 2; // Center label
-		switch (mAlignment) {
-		case left:
+		switch (mHorizontalAlignment) {
+		case LEFT:
 			lX = x;
 			break;
-		case right:
+		case RIGHT:
 			lX = x - mPadding - lLabelWidth;
 			break;
 		default:

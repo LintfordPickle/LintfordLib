@@ -19,7 +19,6 @@ import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.Screen;
 import net.lintford.library.screenmanager.ScreenManager;
 import net.lintford.library.screenmanager.layouts.BaseLayout;
-import net.lintford.library.screenmanager.layouts.BaseLayout.FILL_TYPE;
 
 public class ListBox extends MenuEntry implements IScrollBarArea {
 
@@ -191,10 +190,12 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 
 		// Fill the width and height of the parent layout
 		w = mParentLayout.w - marginLeft() - marginRight();
-		if (mParentLayout.fillType() == FILL_TYPE.DYNAMIC)
-			h = mParentLayout.h - marginTop() - marginBottom();
-		else
-			h = Math.min(LISTBOX_HEIGHT, (mItems.size() > 0 ? mItems.size() : 10f) * 70f);
+//		if (mParentLayout.fillType() == FILL_TYPE.DYNAMIC)
+//			h = mParentLayout.h - marginTop() - marginBottom();
+//		else
+//			h = Math.min(LISTBOX_HEIGHT, (mItems.size() > 0 ? mItems.size() : 10f) * 70f);
+
+		h = mParentLayout.h - marginTop() - marginBottom();
 
 	}
 

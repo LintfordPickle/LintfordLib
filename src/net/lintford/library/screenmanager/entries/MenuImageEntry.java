@@ -1,15 +1,15 @@
 package net.lintford.library.screenmanager.entries;
 
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
+import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
-import net.lintford.library.screenmanager.MenuScreen.ALIGNMENT;
 import net.lintford.library.screenmanager.Screen;
 import net.lintford.library.screenmanager.ScreenManager;
 import net.lintford.library.screenmanager.layouts.BaseLayout;
+import net.lintford.library.screenmanager.layouts.BaseLayout.LAYOUT_ALIGNMENT;
 
 public class MenuImageEntry extends MenuEntry {
 
@@ -19,30 +19,39 @@ public class MenuImageEntry extends MenuEntry {
 	// Variables
 	// --------------------------------------
 
-	private ALIGNMENT mAlignment = ALIGNMENT.center;
+	private LAYOUT_ALIGNMENT mAlignment = LAYOUT_ALIGNMENT.center;
 	private boolean mShow;
 	private float mR, mG, mB;
 
+	private float mForceHeight;
+
 	private Texture mTexture;
-	private boolean mShowLabel;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
 
-	public boolean enableLabel() {
-		return mShowLabel;
+	@Override
+	public float height() {
+		if (forceHeight() < 0)
+			return super.height();
+
+		return forceHeight();
 	}
 
-	public void enableLabel(boolean pEnableLabel) {
-		mShowLabel = pEnableLabel;
+	public void forceHeight(float pNewValue) {
+		mForceHeight = pNewValue;
 	}
 
-	public void alignment(ALIGNMENT left) {
+	public float forceHeight() {
+		return mForceHeight;
+	}
+
+	public void alignment(LAYOUT_ALIGNMENT left) {
 		mAlignment = left;
 	}
 
-	public ALIGNMENT alignment() {
+	public LAYOUT_ALIGNMENT alignment() {
 		return mAlignment;
 	}
 
@@ -97,8 +106,6 @@ public class MenuImageEntry extends MenuEntry {
 		mCanHaveFocus = false;
 		mCanHoverOver = false;
 
-		mShowLabel = true;
-
 	}
 
 	// --------------------------------------
@@ -126,72 +133,30 @@ public class MenuImageEntry extends MenuEntry {
 	public void update(LintfordCore pCore, MenuScreen pScreen, boolean pIsSelected) {
 		super.update(pCore, pScreen, pIsSelected);
 
+		if (mTexture != null) {
+			final int lTextureHeight = mTexture.getTextureHeight();
+			h = Math.min(mParentLayout.h - 20, lTextureHeight);
+
+		}
+
 	}
 
 	@Override
 	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pParentZDepth) {
 
-		MenuScreen lParentScreen = mParentLayout.parentScreen();
-		FontUnit lFont = lParentScreen.font();
-
-		final float lTextWidth = lFont.bitmap().getStringWidth(mText);
-		final float lTextHeight = lFont.bitmap().getStringHeight(mText);
-
-		mAlignment = ALIGNMENT.center;
-		float lX = x + w / 2 - lTextWidth / 2;
-		switch (mAlignment) {
-		case left:
-			lX = x + 5;
-			break;
-		case right:
-			lX = x - 5 - lTextWidth;
-			break;
-		default:
-			lX = x + w / 2 - lTextWidth / 2;
-			break;
-		}
-
-		float lLabelHeightOffset = 0;
-
-		final float lA = lParentScreen.a();
-
-		if (mShowLabel) {
-
-			final float FONT_SCALE = 1f;
-
-			lFont.begin(pCore.HUD());
-			lFont.draw(mText, lX, y, pParentZDepth + .1f, mR, mG, mB, lA, FONT_SCALE);
-			lFont.end();
-
-			lLabelHeightOffset += lTextHeight + 10;
-
-		}
-
-		final TextureBatch lTextureBatch = mParentLayout.parentScreen().rendererManager().uiTextureBatch();
+		final MenuScreen lParentScreen = mParentLayout.parentScreen();
+		final TextureBatch lTextureBatch = lParentScreen.rendererManager().uiTextureBatch();
 
 		lTextureBatch.begin(pCore.HUD());
 
-		h = 240;
-
-		switch (mAlignment) {
-		case left:
-			lX = x + 5;
-			break;
-		case right:
-			lX = x - 5 - w;
-			break;
-		default:
-			lX = x + w / 2 - 320 / 2;
-			break;
-		}
-
 		if (mTexture != null) {
-			final int width = mTexture.getTextureWidth();
-			final int height = mTexture.getTextureHeight();
+			final int lTextureWidth = mTexture.getTextureWidth();
+			final int lTextureHeight = mTexture.getTextureHeight();
 
-			// TODO: Something needs fixing here
-			lX = -width / 2;
-			lTextureBatch.draw(mTexture, 0, 0, width, height, lX + 5, y + lLabelHeightOffset, width, height, pParentZDepth + .1f, 1f, 1f, 1f, 1f);
+			float lAspectRatio = (float) lTextureHeight / (float) lTextureWidth;
+			float lModWidth = h / lAspectRatio;
+
+			lTextureBatch.draw(mTexture, 0, 0, lTextureWidth, lTextureHeight, centerX() - lModWidth / 2f, y, lModWidth, h, pParentZDepth + .1f, 1f, 1f, 1f, 1f);
 
 		}
 

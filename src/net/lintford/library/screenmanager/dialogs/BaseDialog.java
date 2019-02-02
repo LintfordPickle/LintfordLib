@@ -108,13 +108,9 @@ public abstract class BaseDialog extends MenuScreen {
 	}
 
 	@Override
-	public void updateStructureDimensions(LintfordCore pCore) {
-		super.updateStructureDimensions(pCore);
+	public void updateLayouts(LintfordCore pCore) {
+		super.updateLayouts(pCore);
 
-	}
-
-	@Override
-	public void updateStructurePositions(LintfordCore pCore) {
 		final int lLayoutCount = layouts().size();
 		for (int i = 0; i < lLayoutCount; i++) {
 			BaseLayout lLayout = layouts().get(i);

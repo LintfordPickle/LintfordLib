@@ -251,16 +251,6 @@ public abstract class Screen {
 
 	}
 
-	/**
-	 * In the updatePreStructure, each component of the Screen is asked to update its dimensions based on its contents.
-	 */
-	public abstract void updateStructureDimensions(LintfordCore pCore);
-
-	/**
-	 * In the updateStructure, each screen positions the child components, taking into consideration the dimensions.
-	 */
-	public abstract void updateStructurePositions(LintfordCore pCore);
-
 	public void draw(LintfordCore pCore) {
 		mRendererManager.draw(pCore);
 

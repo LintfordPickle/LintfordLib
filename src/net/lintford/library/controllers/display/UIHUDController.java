@@ -22,7 +22,12 @@ public class UIHUDController extends BaseController {
 	// --------------------------------------
 
 	private DisplayManager mDisplayManager;
-	private Rectangle mHUDRectangle;
+
+	private Rectangle mGameHUDRectangle;
+	private Rectangle mMenuTitleRectangle;
+	private Rectangle mMenuMainRectangle;
+	private Rectangle mMenuFooterRectangle;
+
 	private boolean mIsInitialised;
 	private boolean mBigUIEnabled;
 	private float mUITransparencyFactorActual;
@@ -37,7 +42,7 @@ public class UIHUDController extends BaseController {
 	public float bottomPanelHeight() {
 		return mUIBottomPanelHeight;
 	}
-	
+
 	public float uiTransparencyFactor() {
 		return mUITransparencyFactorActual;
 	}
@@ -48,8 +53,7 @@ public class UIHUDController extends BaseController {
 
 	// TODO: Replace the following function with:
 	/*
-	   final boolean lIsBigUI = mUIHUDGameController.useBigUI();
-	   final float lTextScale = mUIHUDGameController.uiTextScaleFactor() * (lIsBigUI ? GraphicsSettings.BIG_UI_SCALE_FACTOR : GraphicsSettings.SMALL_UI_SCALE_FACTOR);
+	 * final boolean lIsBigUI = mUIHUDGameController.useBigUI(); final float lTextScale = mUIHUDGameController.uiTextScaleFactor() * (lIsBigUI ? GraphicsSettings.BIG_UI_SCALE_FACTOR : GraphicsSettings.SMALL_UI_SCALE_FACTOR);
 	 */
 	public float uiTextScaleFactor() {
 		return mUITextScaleFactorActual;
@@ -64,8 +68,20 @@ public class UIHUDController extends BaseController {
 		return mIsInitialised;
 	}
 
-	public Rectangle HUDRectangle() {
-		return mHUDRectangle;
+	public Rectangle gameHUDRectangle() {
+		return mGameHUDRectangle;
+	}
+
+	public Rectangle menuTitleRectangle() {
+		return mMenuTitleRectangle;
+	}
+
+	public Rectangle menuMainRectangle() {
+		return mMenuMainRectangle;
+	}
+
+	public Rectangle menuFooterRectangle() {
+		return mMenuFooterRectangle;
 	}
 
 	// --------------------------------------
@@ -77,7 +93,10 @@ public class UIHUDController extends BaseController {
 
 		mDisplayManager = pDisplayManager;
 
-		mHUDRectangle = new Rectangle();
+		mGameHUDRectangle = new Rectangle();
+		mMenuTitleRectangle = new Rectangle();
+		mMenuMainRectangle = new Rectangle();
+		mMenuFooterRectangle = new Rectangle();
 
 	}
 
@@ -111,12 +130,11 @@ public class UIHUDController extends BaseController {
 	// --------------------------------------
 
 	private void updateUIScale(LintfordCore pCore) {
-
 		final float lWindowWidth = pCore.config().display().windowWidth();
 		final float lWindowHeight = pCore.config().display().windowHeight();
 
-		// Buffer = 64
-		// Left_Panel + Buffer + Hotbar + Buffer + Right_Panel
+		// ** GAME HUD BOUNDS ** //
+
 		final float lMinBigHUDWidth = 1280;
 		final float lMinBigHUDHeight = 768;
 
@@ -139,7 +157,7 @@ public class UIHUDController extends BaseController {
 
 		}
 
-		// Reconstructe the
+		// ** MENU HUD BOUNDS ** //
 
 		final float lHUDWidth = Math.min(lWindowWidth * lHUDRatio, MIN_HUD_WIDTH);// * lHUDRatio;
 		final float lHUDHeight = Math.min(lWindowHeight * lHUDRatio, MIN_HUD_HEIGHT);// * lHUDRatio;
@@ -147,7 +165,26 @@ public class UIHUDController extends BaseController {
 		final float lWindowHalfWidth = lHUDWidth / 2f;
 		final float lWindowHalfHeight = lHUDHeight / 2f;
 
-		mHUDRectangle.set(-lWindowHalfWidth, -lWindowHalfHeight, lHUDWidth, lHUDHeight - mUIBottomPanelHeight);
+		mGameHUDRectangle.set(-lWindowHalfWidth, -lWindowHalfHeight, lHUDWidth, lHUDHeight - mUIBottomPanelHeight);
+
+		final float lBorder = 20f;
+		final float lInnerBorder = 1f;
+		final float lModWidth = lWindowWidth - lBorder * 2f;
+		final float lModHeight = lWindowHeight - lBorder * 2f;
+
+		float lRemainingHeight = lModHeight;
+		final float MINIMUM_TITLE_HEGIHT = mBigUIEnabled ? 180 : 100;
+		final float MINIMUM_FOOTER_HEGIHT = mBigUIEnabled ? 150 : 90;
+		final float lTitleHeight = (float)Math.max(MINIMUM_TITLE_HEGIHT, lModHeight * .15f - lInnerBorder);
+		final float lFooterHeight = (float)Math.max(MINIMUM_FOOTER_HEGIHT, lModHeight * .10f - lInnerBorder);
+		lRemainingHeight -= lTitleHeight;
+		lRemainingHeight -= lFooterHeight;
+		
+		final float lMainHeight = lRemainingHeight;
+
+		mMenuTitleRectangle.set( -lModWidth / 2, -lModHeight / 2f,                 lModWidth, lTitleHeight);
+		mMenuMainRectangle.set(  -lModWidth / 2, -lModHeight / 2f + lTitleHeight + lInnerBorder*2f,  lModWidth, lMainHeight);
+		mMenuFooterRectangle.set(-lModWidth / 2,  lModHeight / 2f - lFooterHeight + lInnerBorder, lModWidth, lFooterHeight);
 
 	}
 

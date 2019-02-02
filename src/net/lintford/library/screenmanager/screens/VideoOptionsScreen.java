@@ -8,6 +8,7 @@ import net.lintford.library.options.DisplayManager;
 import net.lintford.library.options.VideoSettings;
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuEntry.BUTTON_SIZE;
+import net.lintford.library.screenmanager.MenuEntry.ENTRY_ALIGNMENT;
 import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.ScreenManager;
 import net.lintford.library.screenmanager.dialogs.ConfirmationDialog;
@@ -20,7 +21,6 @@ import net.lintford.library.screenmanager.entries.MenuEnumEntryIndexed;
 import net.lintford.library.screenmanager.entries.MenuLabelEntry;
 import net.lintford.library.screenmanager.entries.MenuToggleEntry;
 import net.lintford.library.screenmanager.layouts.BaseLayout;
-import net.lintford.library.screenmanager.layouts.BaseLayout.FILL_TYPE;
 import net.lintford.library.screenmanager.layouts.ListLayout;
 
 // TODO: Monitor and Aspect Ratio are only considered in fullscreen mode
@@ -83,17 +83,10 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 		// Get the config options
 		mDisplayManager = pScreenManager.core().config().display();
 
-		mChildAlignment = ALIGNMENT.center;
-
 		mVideoList = new ListLayout(this);
 		mVideoList.setDrawBackground(true, 1f, 1f, 1f, 0.85f);
-		mVideoList.fillType(FILL_TYPE.DYNAMIC);
 
 		mConfirmChangesLayout = new ListLayout(this);
-		mConfirmChangesLayout.fillType(FILL_TYPE.STATIC);
-
-		ListLayout lNavList = new ListLayout(this);
-		lNavList.fillType(FILL_TYPE.STATIC);
 
 		createVideoSection(mVideoList);
 
@@ -112,12 +105,12 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 		mConfirmChangesLayout.setDrawBackground(true, 1f, 1f, 1f, 0.85f);
 
 		/* Screen control buttons */
-		HorizontalEntryGroup lGroup = new HorizontalEntryGroup(pScreenManager, lNavList);
+		HorizontalEntryGroup lGroup = new HorizontalEntryGroup(pScreenManager, footerLayout());
 
-		MenuEntry lBackButton = new MenuEntry(pScreenManager, lNavList, "Back");
+		MenuEntry lBackButton = new MenuEntry(pScreenManager, footerLayout(), "Back");
 		lBackButton.buttonSize(BUTTON_SIZE.narrow);
 		lBackButton.registerClickListener(this, BUTTON_CANCEL_CHANGES);
-		mApplyButton = new MenuEntry(pScreenManager, lNavList, "Apply");
+		mApplyButton = new MenuEntry(pScreenManager, footerLayout(), "Apply");
 		mApplyButton.buttonSize(BUTTON_SIZE.narrow);
 		mApplyButton.registerClickListener(this, BUTTON_APPLY_CHANGES);
 		mApplyButton.enabled(false);
@@ -125,12 +118,11 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 		lGroup.addEntry(lBackButton);
 		lGroup.addEntry(mApplyButton);
 
-		lNavList.menuEntries().add(lGroup);
+		footerLayout().menuEntries().add(lGroup);
 
 		// Add the layouts to the screen
 		layouts().add(mVideoList);
 		layouts().add(mConfirmChangesLayout);
-		layouts().add(lNavList);
 
 		mConfirmChangesLayout.visible(false);
 
@@ -140,7 +132,7 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 		MenuLabelEntry lVideoOptionsTitle = new MenuLabelEntry(mScreenManager, lLayout);
 		lVideoOptionsTitle.label("Video Options");
 		lVideoOptionsTitle.enableBackground(true);
-		lVideoOptionsTitle.alignment(ALIGNMENT.left);
+		lVideoOptionsTitle.horizontalAlignment(ENTRY_ALIGNMENT.LEFT);
 
 		mFullScreenEntry = new MenuEnumEntryIndexed<>(mScreenManager, lLayout, "Fullscreen");
 		mFullScreenEntry.buttonSize(BUTTON_SIZE.wide);

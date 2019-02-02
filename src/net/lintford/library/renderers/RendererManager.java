@@ -7,9 +7,9 @@ import java.util.List;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 
+import net.lintford.library.controllers.display.UIHUDController;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
-import net.lintford.library.core.camera.ICamera;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.debug.GLDebug;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
@@ -48,8 +48,12 @@ public class RendererManager {
 	private LintfordCore mCore;
 	private int mEntityGroupID;
 	private ResourceManager mResourceManager;
+	private DisplayManager mDisplayConfig;
 
-	private String mScreenOwner;
+	private UIHUDController mUIHUDController;
+
+	/** Allows us to track where each RendererManager is created from */
+	private String mOwnerIdentifier;
 	private List<BaseRenderer> mRenderers;
 	private List<UIWindow> mWindowRenderers;
 
@@ -68,7 +72,6 @@ public class RendererManager {
 	private SpriteBatch mSpriteBatch;
 	private TextureBatch mTextureBatch;
 	private LineBatch mLineBatch;
-	private DisplayManager mDisplayConfig;
 
 	// TODO: Make a dedicated RenderTargetManager
 	private List<RenderTarget> mRenderTargets;
@@ -83,7 +86,7 @@ public class RendererManager {
 	// --------------------------------------
 
 	public String ownerName() {
-		return mScreenOwner;
+		return mOwnerIdentifier;
 	}
 
 	public LintfordCore core() {
@@ -142,12 +145,16 @@ public class RendererManager {
 		return mWindowRenderers;
 	}
 
+	public UIHUDController uiHUDController() {
+		return mUIHUDController;
+	}
+
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
 	public RendererManager(LintfordCore pCore, String pOwnerName, int pEntityGroupID) {
-		mScreenOwner = pOwnerName;
+		mOwnerIdentifier = pOwnerName;
 		mCore = pCore;
 		mEntityGroupID = pEntityGroupID;
 
@@ -175,13 +182,15 @@ public class RendererManager {
 	// --------------------------------------
 
 	public void initialise() {
+
+		mUIHUDController = (UIHUDController) mCore.controllerManager().getControllerByNameRequired(UIHUDController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
+
 		final int RENDERER_COUNT = mRenderers.size();
 		for (int i = 0; i < RENDERER_COUNT; i++) {
-			if (!mRenderers.get(i).isLoaded() && mIsLoaded) {
-				mRenderers.get(i).initialise(mCore);
-			}
+			mRenderers.get(i).initialise(mCore);
 
 		}
+
 		mIsInitialised = true;
 
 	}
@@ -190,7 +199,7 @@ public class RendererManager {
 		if (mIsLoaded)
 			return;
 
-		Debug.debugManager().logger().i(getClass().getSimpleName(), mScreenOwner + "Loading GL content for all registered renderers");
+		Debug.debugManager().logger().i(getClass().getSimpleName(), mOwnerIdentifier + "Loading GL content for all registered renderers");
 
 		mResourceManager = pResourceManager;
 		mResourceManager.increaseReferenceCounts(mEntityGroupID);
@@ -246,7 +255,7 @@ public class RendererManager {
 		if (!mIsLoaded)
 			return;
 
-		Debug.debugManager().logger().i(getClass().getSimpleName(), mScreenOwner + "Unloading GL content for all renderers");
+		Debug.debugManager().logger().i(getClass().getSimpleName(), mOwnerIdentifier + "Unloading GL content for all renderers");
 
 		// Unloaded each of the renderers
 		final int RENDERER_COUNT = mRenderers.size();
@@ -347,9 +356,6 @@ public class RendererManager {
 	}
 
 	public void draw(LintfordCore pCore) {
-		if (pCore.gameCamera() == ICamera.EMPTY)
-			return;
-
 		if (RENDER_GAME_RENDERABLES) {
 			final int RENDERER_COUNT = mRenderers.size();
 			for (int i = 0; i < RENDERER_COUNT; i++) {
@@ -357,7 +363,7 @@ public class RendererManager {
 					continue;
 
 				if (!mRenderers.get(i).isLoaded() && mIsLoaded) {
-					Debug.debugManager().logger().w(getClass().getSimpleName(), mScreenOwner + "Reloading content in Update() (BaseRenderer) ");
+					Debug.debugManager().logger().w(getClass().getSimpleName(), mOwnerIdentifier + "Reloading content in Update() (BaseRenderer) ");
 					mRenderers.get(i).loadGLContent(mResourceManager);
 
 				}

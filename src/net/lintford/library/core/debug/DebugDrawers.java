@@ -181,6 +181,7 @@ public class DebugDrawers {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
+		mImmediateLineBatch.lineType(GL11.GL_LINES);
 		mImmediateLineBatch.begin(pCamera);
 		mImmediateLineBatch.drawRect(pX, pY, pW, pH, -.01f, pR, pG, pB);
 		mImmediateLineBatch.end();
@@ -431,15 +432,12 @@ public class DebugDrawers {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
-//		if (!mPolyBatch.isDrawing()) {
-//			Debug.debugManager().logger().w(getClass().getSimpleName(), "Cannot draw poly (cached): the PolyRenderer has not been started (must call beginPolyRenderer() first)");
-//			return;
-//		}
-//
-//		
-//		mImmediatePolyBatch.begin(pCamera);
-//		mImmediatePolyBatch.drawRect(pRect, -0.1f, 1f, 1f, 1f);
-//		mImmediatePolyBatch.end();
+		if (!mPolyBatch.isDrawing()) {
+			Debug.debugManager().logger().w(getClass().getSimpleName(), "Cannot draw poly (cached): the PolyRenderer has not been started (must call beginPolyRenderer() first)");
+			return;
+		}
+
+		drawPoly(pRect.getVertices(), 1f, 1f, 1f, true);
 	}
 
 	public void drawPoly(Vector2f[] pVertices, boolean pClose) {

@@ -16,7 +16,6 @@ import net.lintford.library.renderers.windows.components.ScrollBar;
 import net.lintford.library.renderers.windows.components.ScrollBarContentRectangle;
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
-import net.lintford.library.screenmanager.MenuScreen.ALIGNMENT;
 
 /**
  * The dimensions of the BaseLayout are set by the parent screen.
@@ -27,18 +26,22 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 
 	public static final float USE_HEIGHT_OF_ENTRIES = -1;
 
-	public final static float LAYOUT_WIDTH = 800;
 
-	public enum FILL_TYPE {
-		DYNAMIC, STATIC
-	};
+	public enum LAYOUT_ALIGNMENT {
+		left, center, right
+	}
+
+	public enum LAYOUT_FILL_TYPE {
+		FAIR_SHARE, ONLY_WHATS_NEEDED,
+
+	}
 
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
-	protected FILL_TYPE mFillType = FILL_TYPE.STATIC;
-	protected ALIGNMENT mAlignment;
+	protected LAYOUT_ALIGNMENT mAlignment;
+	protected LAYOUT_FILL_TYPE mFillType = LAYOUT_FILL_TYPE.FAIR_SHARE;
 
 	protected MenuScreen mParentScreen;
 	protected List<MenuEntry> mMenuEntries;
@@ -76,12 +79,17 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 	// Properties
 	// --------------------------------------
 
-	public FILL_TYPE fillType() {
+	public LAYOUT_FILL_TYPE layoutFillType() {
 		return mFillType;
+
 	}
 
-	public void fillType(FILL_TYPE pValue) {
-		mFillType = pValue;
+	public void layoutFillType(LAYOUT_FILL_TYPE pFilltype) {
+		if (pFilltype == null)
+			return;
+
+		mFillType = pFilltype;
+
 	}
 
 	public void minWidth(float pNewValue) {
@@ -143,11 +151,7 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 		mBottomMargin = pNewValue;
 	}
 
-	public ALIGNMENT alignment() {
-		return mAlignment;
-	}
-
-	public void alignment(ALIGNMENT pNewAlignment) {
+	public void alignment(LAYOUT_ALIGNMENT pNewAlignment) {
 		mAlignment = pNewAlignment;
 	}
 
@@ -197,10 +201,7 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 		mVisible = true;
 
 		// Set some defaults
-		mAlignment = ALIGNMENT.center;
-
-		w = LAYOUT_WIDTH;
-		x = -w / 2;
+		mAlignment = LAYOUT_ALIGNMENT.center;
 
 		mTopMargin = 10f;
 		mBottomMargin = 10f;

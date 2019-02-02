@@ -233,9 +233,9 @@ public class MenuEnumEntry extends MenuEntry {
 
 	@Override
 	public void updateStructureDimensions() {
-		// TODO: This -50 is because of the scrollbar - this is why I needed to keep the padding :(
 		w = Math.min(mParentLayout.w - 50f, MENUENTRY_MAX_WIDTH);
-
+		h = MENUENTRY_DEF_BUTTON_HEIGHT;
+		
 	}
 
 	@Override

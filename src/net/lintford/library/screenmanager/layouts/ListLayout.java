@@ -2,7 +2,6 @@ package net.lintford.library.screenmanager.layouts;
 
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
-import net.lintford.library.screenmanager.MenuScreen.ALIGNMENT;
 
 /**
  * The list layout lays out all the menu entries linearly down the layout.
@@ -21,7 +20,7 @@ public class ListLayout extends BaseLayout {
 		super(pParentScreen);
 
 		// Set some defaults
-		mAlignment = ALIGNMENT.center;
+		mAlignment = LAYOUT_ALIGNMENT.center;
 
 	}
 

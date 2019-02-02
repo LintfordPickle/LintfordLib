@@ -2,6 +2,7 @@ package net.lintford.library.screenmanager.screens;
 
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuEntry.BUTTON_SIZE;
+import net.lintford.library.screenmanager.MenuEntry.ENTRY_ALIGNMENT;
 import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.ScreenManager;
 import net.lintford.library.screenmanager.dialogs.ConfirmationDialog;
@@ -12,7 +13,6 @@ import net.lintford.library.screenmanager.entries.MenuSliderEntry;
 import net.lintford.library.screenmanager.entries.MenuToggleEntry;
 import net.lintford.library.screenmanager.layouts.BaseLayout;
 import net.lintford.library.screenmanager.layouts.ListLayout;
-import net.lintford.library.screenmanager.layouts.BaseLayout.FILL_TYPE;
 
 public class AudioOptionsScreen extends MenuScreen implements EntryInteractions {
 
@@ -29,42 +29,41 @@ public class AudioOptionsScreen extends MenuScreen implements EntryInteractions 
 
 	private ConfirmationDialog mConfirmationDialog;
 
-	// --------------------------------------==============
+	// --------------------------------------
 	// Constructor
-	// --------------------------------------==============
+	// --------------------------------------
 
 	public AudioOptionsScreen(ScreenManager pScreenManager) {
 		super(pScreenManager, "Audio Options");
 
 		ListLayout lAudioList = new ListLayout(this);
-		lAudioList.fillType(FILL_TYPE.DYNAMIC);
 		lAudioList.setDrawBackground(true, 0f, 0f, 0f, 0.75f);
-
-		ListLayout lNavList = new ListLayout(this);
-		lNavList.fillType(FILL_TYPE.STATIC);
 
 		createAudioSection(lAudioList);
 
 		/* Screen control buttons */
-		HorizontalEntryGroup lGroup = new HorizontalEntryGroup(pScreenManager, lNavList);
+		HorizontalEntryGroup lGroup = new HorizontalEntryGroup(pScreenManager, footerLayout());
 
-		MenuEntry lButton1 = new MenuEntry(pScreenManager, lNavList, "Back");
+		MenuEntry lButton1 = new MenuEntry(pScreenManager, footerLayout(), "Back");
 		lButton1.buttonSize(BUTTON_SIZE.narrow);
 		lButton1.registerClickListener(this, BUTTON_CANCEL_CHANGES);
-		MenuEntry lButton2 = new MenuEntry(pScreenManager, lNavList, "Apply");
+		MenuEntry lButton2 = new MenuEntry(pScreenManager, footerLayout(), "Apply");
 		lButton2.buttonSize(BUTTON_SIZE.narrow);
 		lButton2.registerClickListener(this, BUTTON_APPLY_CHANGES);
 
 		lGroup.addEntry(lButton1);
 		lGroup.addEntry(lButton2);
 
-		lNavList.menuEntries().add(lGroup);
+		footerLayout().menuEntries().add(lGroup);
 
 		// Add the layouts to the screen
 		layouts().add(lAudioList);
-		layouts().add(lNavList);
 
 	}
+
+	// --------------------------------------
+	// Helper-Methods
+	// --------------------------------------
 
 	private void createAudioSection(BaseLayout lLayout) {
 		MenuEntry lSeparator = new MenuEntry(mScreenManager, lLayout, "");
@@ -74,7 +73,7 @@ public class AudioOptionsScreen extends MenuScreen implements EntryInteractions 
 		MenuLabelEntry lMusicOptionsTitle = new MenuLabelEntry(mScreenManager, lLayout);
 		lMusicOptionsTitle.label("Music Options");
 		lMusicOptionsTitle.enableBackground(true);
-		lMusicOptionsTitle.alignment(ALIGNMENT.left);
+		lMusicOptionsTitle.horizontalAlignment(ENTRY_ALIGNMENT.LEFT);
 
 		MenuToggleEntry mMusicEnabledEntry = new MenuToggleEntry(mScreenManager, lLayout);
 		mMusicEnabledEntry.label("Music Enabled");
@@ -90,7 +89,7 @@ public class AudioOptionsScreen extends MenuScreen implements EntryInteractions 
 		MenuLabelEntry lSoundOptionsTitle = new MenuLabelEntry(mScreenManager, lLayout);
 		lSoundOptionsTitle.label("Sound Options");
 		lSoundOptionsTitle.enableBackground(true);
-		lSoundOptionsTitle.alignment(ALIGNMENT.left);
+		lSoundOptionsTitle.horizontalAlignment(ENTRY_ALIGNMENT.LEFT);
 
 		MenuToggleEntry mSoundEnabledEntry = new MenuToggleEntry(mScreenManager, lLayout);
 		mSoundEnabledEntry.label("SoundFX Enabled");
@@ -116,9 +115,9 @@ public class AudioOptionsScreen extends MenuScreen implements EntryInteractions 
 
 	}
 
-	// --------------------------------------==============
+	// --------------------------------------
 	// Methods
-	// --------------------------------------==============
+	// --------------------------------------
 
 	@Override
 	protected void handleOnClick() {

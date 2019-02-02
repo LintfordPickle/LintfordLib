@@ -144,7 +144,13 @@ public class Box2dSpriteGraphBuilder {
 		// Create a new instance of a SpriteGraph
 		// pLSystemDef.onGraphCreation(lNewInst);
 
-		// pLSystemString = "F[-FF]+F";
+		// F   Forward
+		// -   -45°
+		// +   +45°
+		// [   speichern
+		// ]   laden
+		
+		pLSystemString = "F-F[+F+F+F+F+F+F]-F-F-F-F-F-F";
 
 		JBox2dEntityInstance lJBox2dEntityInstance = new JBox2dEntityInstance();
 		lJBox2dEntityInstance.spriteSheetName = "TreeSpriteSheet";
