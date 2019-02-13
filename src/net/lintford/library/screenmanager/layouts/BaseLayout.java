@@ -26,7 +26,6 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 
 	public static final float USE_HEIGHT_OF_ENTRIES = -1;
 
-
 	public enum LAYOUT_ALIGNMENT {
 		left, center, right
 	}
@@ -364,19 +363,10 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 	// Methods
 	// --------------------------------------
 
-	public void updateStructureDimensions() {
+	public void updateStructure() {
 		final int lCount = mMenuEntries.size();
 		for (int i = 0; i < lCount; i++) {
-			mMenuEntries.get(i).updateStructureDimensions();
-
-		}
-
-	}
-
-	public void updateStructurePositions() {
-		final int lCount = mMenuEntries.size();
-		for (int i = 0; i < lCount; i++) {
-			mMenuEntries.get(i).updateStructurePositions();
+			mMenuEntries.get(i).updateStructure();
 
 		}
 

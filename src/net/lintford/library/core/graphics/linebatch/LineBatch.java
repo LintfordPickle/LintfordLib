@@ -43,10 +43,19 @@ public class LineBatch {
 	private boolean mIsDrawing;
 	private boolean mIsLoaded;
 	private int mGLLineType;
+	private float mGLLineWidth;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public void lineWidth(float pNewWidth) {
+		mGLLineWidth = pNewWidth;
+	}
+
+	public float lineWidth() {
+		return mGLLineWidth;
+	}
 
 	/** Sets the line type to use by OpenGL. Choices are either GL11.GL_LINE_STRIP or GL11.GL_LINES */
 	public void lineType(int pGLLineType) {
@@ -254,9 +263,9 @@ public class LineBatch {
 
 	public void forceFlush() {
 		flush();
-		
+
 	}
-	
+
 	public void end() {
 		if (!mIsDrawing)
 			return;
@@ -292,7 +301,7 @@ public class LineBatch {
 
 		mShader.bind();
 
-		GL11.glPointSize(3);
+		GL11.glLineWidth(mGLLineWidth);
 		GL11.glDrawArrays(mGLLineType, 0, mVertexCount);
 
 		GL30.glBindVertexArray(0);

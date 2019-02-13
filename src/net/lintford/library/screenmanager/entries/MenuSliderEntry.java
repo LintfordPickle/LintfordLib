@@ -209,15 +209,11 @@ public class MenuSliderEntry extends MenuEntry {
 	}
 
 	@Override
-	public void updateStructureDimensions() {
+	public void updateStructure() {
+		super.updateStructure();
+
 		// TODO: This -50 is because of the scrollbar - this is why I needed to keep the padding :(
 		w = Math.min(mParentLayout.w - 50f, MENUENTRY_MAX_WIDTH);
-
-	}
-
-	@Override
-	public void updateStructurePositions() {
-		super.updateStructurePositions();
 
 		if (mShowInfoButton) {
 			mInfoButton.set(x, y, 32f, 32f);

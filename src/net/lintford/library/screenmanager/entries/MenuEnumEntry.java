@@ -232,7 +232,9 @@ public class MenuEnumEntry extends MenuEntry {
 	}
 
 	@Override
-	public void updateStructureDimensions() {
+	public void updateStructure() {
+		super.updateStructure();
+		
 		w = Math.min(mParentLayout.w - 50f, MENUENTRY_MAX_WIDTH);
 		h = MENUENTRY_DEF_BUTTON_HEIGHT;
 		

@@ -43,8 +43,8 @@ public class ListLayout extends BaseLayout {
 	// --------------------------------------
 
 	@Override
-	public void updateStructurePositions() {
-		super.updateStructurePositions();
+	public void updateStructure() {
+		super.updateStructure();
 
 		float lYPos = y + mYScrollPos;
 

@@ -1,7 +1,6 @@
 package net.lintford.library.screenmanager.entries;
 
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 import net.lintford.library.screenmanager.MenuEntry;
@@ -122,8 +121,8 @@ public class MenuImageEntry extends MenuEntry {
 	}
 
 	@Override
-	public void updateStructureDimensions() {
-		super.updateStructureDimensions();
+	public void updateStructure() {
+		super.updateStructure();
 
 		h = mTexture != null ? mTexture.getTextureHeight() + 20f : MENUENTRY_DEF_BUTTON_HEIGHT;
 

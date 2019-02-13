@@ -21,6 +21,7 @@ import net.lintford.library.screenmanager.entries.MenuEnumEntryIndexed;
 import net.lintford.library.screenmanager.entries.MenuLabelEntry;
 import net.lintford.library.screenmanager.entries.MenuToggleEntry;
 import net.lintford.library.screenmanager.layouts.BaseLayout;
+import net.lintford.library.screenmanager.layouts.BaseLayout.LAYOUT_FILL_TYPE;
 import net.lintford.library.screenmanager.layouts.ListLayout;
 
 // TODO: Monitor and Aspect Ratio are only considered in fullscreen mode
@@ -102,6 +103,7 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 		mChangesPendingWarning.enabled(true);
 
 		mConfirmChangesLayout.menuEntries().add(mChangesPendingWarning);
+		mConfirmChangesLayout.layoutFillType(LAYOUT_FILL_TYPE.ONLY_WHATS_NEEDED);
 		mConfirmChangesLayout.setDrawBackground(true, 1f, 1f, 1f, 0.85f);
 
 		/* Screen control buttons */
@@ -128,6 +130,10 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 
 	}
 
+	// --------------------------------------
+	// Helper-Methods
+	// --------------------------------------
+	
 	private void createVideoSection(BaseLayout lLayout) {
 		MenuLabelEntry lVideoOptionsTitle = new MenuLabelEntry(mScreenManager, lLayout);
 		lVideoOptionsTitle.label("Video Options");

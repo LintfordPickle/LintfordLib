@@ -258,7 +258,9 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 	}
 
 	@Override
-	public void updateStructureDimensions() {
+	public void updateStructure() {
+		super.updateStructure();
+
 		w = Math.min(mParentLayout.w - 50f, MENUENTRY_MAX_WIDTH);
 
 	}

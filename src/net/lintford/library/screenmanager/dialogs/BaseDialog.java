@@ -120,7 +120,7 @@ public abstract class BaseDialog extends MenuScreen {
 			lLayout.w = DIALOG_WIDTH;
 			lLayout.h = DIALOG_HEIGHT;
 
-			layouts().get(i).updateStructurePositions();
+			layouts().get(i).updateStructure();
 
 		}
 

@@ -132,21 +132,16 @@ public class HorizontalEntryGroup extends MenuEntry {
 	}
 
 	@Override
-	public void updateStructureDimensions() {
-		super.updateStructureDimensions();
+	public void updateStructure() {
+		super.updateStructure();
 
 		updateEntries();
 
 		int lCount = mChildEntries.size();
 		for (int i = 0; i < lCount; i++) {
-			mChildEntries.get(i).updateStructureDimensions();
+			mChildEntries.get(i).updateStructure();
+			
 		}
-	}
-
-	@Override
-	public void updateStructurePositions() {
-		super.updateStructurePositions();
-
 	}
 
 	@Override

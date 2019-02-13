@@ -4,7 +4,6 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
-import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 import net.lintford.library.renderers.windows.UIWindow;
 import net.lintford.library.screenmanager.entries.EntryInteractions;
@@ -17,7 +16,6 @@ public class UIIconButton extends UIWidget {
 
 	private static final long serialVersionUID = -5431518038383191422L;
 
-	private static final String NO_LABEL_TEXT = "unlabled";
 	private static final int CLICK_TIMER = 250;
 
 	// --------------------------------------
@@ -67,7 +65,6 @@ public class UIIconButton extends UIWidget {
 
 		mClickID = pClickID;
 
-		mButtonLabel = NO_LABEL_TEXT;
 		w = 200;
 		h = 25;
 
@@ -102,7 +99,7 @@ public class UIIconButton extends UIWidget {
 
 		} else {
 			mHoveredOver = false;
-			
+
 		}
 
 		return false;
@@ -118,11 +115,6 @@ public class UIIconButton extends UIWidget {
 
 	@Override
 	public void draw(LintfordCore pCore, TextureBatch pTextureBatch, Texture pUITexture, FontUnit pTextFont, float pComponentZDepth) {
-
-		mR = 0.19f;
-		mG = 0.13f;
-		mB = 0.3f;
-
 		float lR = mHoveredOver ? 0.3f : mR;
 		float lG = mHoveredOver ? 0.34f : mG;
 		float lB = mHoveredOver ? 0.65f : mB;
@@ -138,6 +130,18 @@ public class UIIconButton extends UIWidget {
 		}
 
 		lTextureBatch.end();
+
+		// text
+		if (mButtonLabel != null && mButtonLabel.length() > 0) {
+			FontUnit lFontRenderer = mParentWindow.rendererManager().textFont();
+
+			final float lTextWidth = lFontRenderer.bitmap().getStringWidth(mButtonLabel);
+
+			lFontRenderer.begin(pCore.HUD());
+			lFontRenderer.draw(mButtonLabel, x + w / 2f - lTextWidth / 2f, y + h / 2f - lFontRenderer.bitmap().fontHeight() / 2f, pComponentZDepth, 1f);
+			lFontRenderer.end();
+
+		}
 
 	}
 

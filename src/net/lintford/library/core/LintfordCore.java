@@ -18,7 +18,7 @@ import net.lintford.library.GameInfo;
 import net.lintford.library.controllers.camera.CameraController;
 import net.lintford.library.controllers.core.ControllerManager;
 import net.lintford.library.controllers.core.ResourceController;
-import net.lintford.library.controllers.display.UIHUDController;
+import net.lintford.library.controllers.hud.UIHUDStructureController;
 import net.lintford.library.core.camera.Camera;
 import net.lintford.library.core.camera.HUD;
 import net.lintford.library.core.camera.ICamera;
@@ -311,7 +311,7 @@ public abstract class LintfordCore {
 	 * Implemented in the sub-class. Sets the default state of the application (note. OpenGL context is not available at this point).
 	 */
 	protected void onInitialiseApp() {
-		new UIHUDController(mMasterConfig.display(), mControllerManager, CORE_ENTITY_GROUP_ID);
+		new UIHUDStructureController(mMasterConfig.display(), mControllerManager, CORE_ENTITY_GROUP_ID);
 
 	}
 

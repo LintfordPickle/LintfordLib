@@ -2,7 +2,7 @@ package net.lintford.library.renderers.debug;
 
 import org.lwjgl.glfw.GLFW;
 
-import net.lintford.library.controllers.display.UIHUDController;
+import net.lintford.library.controllers.hud.UIHUDStructureController;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.renderers.BaseRenderer;
@@ -20,7 +20,7 @@ public class DebugHUDDrawer extends BaseRenderer {
 	// Variables
 	// --------------------------------------
 
-	private UIHUDController mUIHUDController;
+	private UIHUDStructureController mUIHUDController;
 	private int mDebugDraw;
 
 	// --------------------------------------
@@ -41,12 +41,12 @@ public class DebugHUDDrawer extends BaseRenderer {
 	}
 
 	// --------------------------------------
-	// Methods
+	// Core-Methods
 	// --------------------------------------
 
 	@Override
 	public void initialise(LintfordCore pCore) {
-		mUIHUDController = (UIHUDController) pCore.controllerManager().getControllerByNameRequired(UIHUDController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
+		mUIHUDController = (UIHUDStructureController) pCore.controllerManager().getControllerByNameRequired(UIHUDStructureController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
 
 	}
 
@@ -67,12 +67,15 @@ public class DebugHUDDrawer extends BaseRenderer {
 			return;
 
 		if (mDebugDraw == 1) { // menu rects
-			Debug.debugManager().drawers().drawRectImmediate(pCore.HUD(), mUIHUDController.menuTitleRectangle());
 			Debug.debugManager().drawers().drawRectImmediate(pCore.HUD(), mUIHUDController.menuMainRectangle());
+			Debug.debugManager().drawers().drawRectImmediate(pCore.HUD(), mUIHUDController.menuTitleRectangle());
 			Debug.debugManager().drawers().drawRectImmediate(pCore.HUD(), mUIHUDController.menuFooterRectangle());
 
 		} else { // Game HUD
-			Debug.debugManager().drawers().drawRectImmediate(pCore.HUD(), mUIHUDController.gameHUDRectangle());
+			Debug.debugManager().drawers().drawRectImmediate(pCore.HUD(), mUIHUDController.gameHUDRectangle(), 1f, 0f, 1f);
+			Debug.debugManager().drawers().drawRectImmediate(pCore.HUD(), mUIHUDController.gameHeaderRectangle(), 0f, 1f, 0f);
+			Debug.debugManager().drawers().drawRectImmediate(pCore.HUD(), mUIHUDController.gameFooterRectangle(), 0f, 1f, 0f);
+
 		}
 
 	}

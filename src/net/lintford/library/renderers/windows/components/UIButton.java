@@ -1,6 +1,7 @@
 package net.lintford.library.renderers.windows.components;
 
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
@@ -112,15 +113,15 @@ public class UIButton extends UIWidget {
 	@Override
 	public void draw(LintfordCore pCore, TextureBatch pTextureBatch, Texture pUITexture, FontUnit pTextFont, float pComponentZDepth) {
 
-		float lR = mHoveredOver ? 1f : 0.9f;
-		float lG = mHoveredOver ? 1f : 0.9f;
-		float lB = mHoveredOver ? 1f : 0.9f;
+		float lR = mHoveredOver ? 0.9f : 0.9f;
+		float lG = mHoveredOver ? 0.5f : 0.9f;
+		float lB = mHoveredOver ? 0.6f : 0.9f;
 
 		// Draw the button background
 		pTextureBatch.begin(pCore.HUD());
-		pTextureBatch.draw(pUITexture, 0, 32, 32, 32, centerX() - w / 2, centerY() - h / 2, 32, h, pComponentZDepth, lR, lG, lB, 1f);
+		//pTextureBatch.draw(pUITexture, 0, 32, 32, 32, centerX() - w / 2, centerY() - h / 2, 32, h, pComponentZDepth, lR, lG, lB, 1f);
 		pTextureBatch.draw(pUITexture, 32, 32, 224, 32, centerX() - (w / 2) + 32, centerY() - h / 2, w - 64, h, pComponentZDepth, lR, lG, lB, 1f);
-		pTextureBatch.draw(pUITexture, 256, 32, 32, 32, centerX() + (w / 2) - 32, centerY() - h / 2, 32, h, pComponentZDepth, lR, lG, lB, 1f);
+		//pTextureBatch.draw(pUITexture, 256, 32, 32, 32, centerX() + (w / 2) - 32, centerY() - h / 2, 32, h, pComponentZDepth, lR, lG, lB, 1f);
 		pTextureBatch.end();
 
 		FontUnit lFontRenderer = mParentWindow.rendererManager().textFont();
@@ -131,6 +132,8 @@ public class UIButton extends UIWidget {
 		lFontRenderer.begin(pCore.HUD());
 		lFontRenderer.draw(lButtonText, x + w / 2f - lTextWidth / 2f, y + h / 2f - lFontRenderer.bitmap().fontHeight() / 2f, pComponentZDepth, 1f);
 		lFontRenderer.end();
+		
+		Debug.debugManager().drawers().drawRectImmediate(pCore.HUD(), this, lR, lG, lB);
 
 	}
 

@@ -309,6 +309,9 @@ public class DebugConsole extends Rectangle implements IBufferedInputCallback, I
 	public void update(LintfordCore pCore) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
+		
+		if (!mIsLoaded || !mOpen)
+			return;
 
 		final float lDeltaTime = (float) pCore.time().elapseGameTimeMilli() / 1000f;
 

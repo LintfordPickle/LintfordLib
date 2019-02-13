@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.lwjgl.glfw.GLFW;
 
-import net.lintford.library.controllers.display.UIHUDController;
+import net.lintford.library.controllers.hud.UIHUDStructureController;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.geometry.Rectangle;
@@ -357,7 +357,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		if (mRendererManager == null)
 			return;
 
-		UIHUDController lHUDController = mRendererManager.uiHUDController();
+		UIHUDStructureController lHUDController = mRendererManager.uiHUDController();
 
 		float lLeftOfPage = lHUDController.menuFooterRectangle().left();
 		float lTopOfPage = lHUDController.menuFooterRectangle().top();
@@ -371,8 +371,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		footerLayout().w = lWidthOfPage;
 		footerLayout().h = lHeightOfPage;
 
-		footerLayout().updateStructurePositions();
-		footerLayout().updateStructureDimensions();
+		footerLayout().updateStructure();
 
 	}
 
@@ -387,7 +386,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 		final float MENUSCREEN_Z_DEPTH = ZLayers.LAYER_SCREENMANAGER;
 
-		UIHUDController lUIHUDController = mRendererManager.uiHUDController();
+		UIHUDStructureController lUIHUDController = mRendererManager.uiHUDController();
 		Rectangle lHUDRect = lUIHUDController.menuTitleRectangle();
 
 		final float lTitleFontHeight = mMenuHeaderFont.bitmap().fontHeight();
@@ -484,7 +483,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		if (pLayoutList == null || pLayoutList.size() == 0)
 			return;
 
-		UIHUDController lHUDController = mRendererManager.uiHUDController();
+		UIHUDStructureController lHUDController = mRendererManager.uiHUDController();
 
 		final int lLeftLayoutCount = pLayoutList.size();
 
@@ -499,7 +498,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		float lHeightOfPage = lHUDController.menuMainRectangle().height();
 
 		float lLayoutNewX = 0;
-		switch(pAlignment) {
+		switch (pAlignment) {
 		case left:
 			lLayoutNewX = lPageLeft;
 			break;
@@ -510,7 +509,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 			lLayoutNewX = 0;
 			break;
 		}
-		
+
 		float lLayoutNewY = lHUDController.menuMainRectangle().top();
 
 		// See how many layouts only take what they need
@@ -552,8 +551,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 				lLayout.h = lLayout.getEntryHeight();
 			}
 
-			lLayout.updateStructurePositions();
-			lLayout.updateStructureDimensions();
+			lLayout.updateStructure();
 
 			lTop += lSizeOfEachFillElement + INNER_PADDING;
 

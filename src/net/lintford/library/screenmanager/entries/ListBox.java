@@ -185,8 +185,8 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 	}
 
 	@Override
-	public void updateStructureDimensions() {
-		super.updateStructureDimensions();
+	public void updateStructure() {
+		super.updateStructure();
 
 		// Fill the width and height of the parent layout
 		w = mParentLayout.w - marginLeft() - marginRight();

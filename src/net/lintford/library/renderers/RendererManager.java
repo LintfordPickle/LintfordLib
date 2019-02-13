@@ -7,7 +7,7 @@ import java.util.List;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 
-import net.lintford.library.controllers.display.UIHUDController;
+import net.lintford.library.controllers.hud.UIHUDStructureController;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.Debug;
@@ -50,7 +50,7 @@ public class RendererManager {
 	private ResourceManager mResourceManager;
 	private DisplayManager mDisplayConfig;
 
-	private UIHUDController mUIHUDController;
+	private UIHUDStructureController mUIHUDController;
 
 	/** Allows us to track where each RendererManager is created from */
 	private String mOwnerIdentifier;
@@ -145,7 +145,7 @@ public class RendererManager {
 		return mWindowRenderers;
 	}
 
-	public UIHUDController uiHUDController() {
+	public UIHUDStructureController uiHUDController() {
 		return mUIHUDController;
 	}
 
@@ -183,7 +183,7 @@ public class RendererManager {
 
 	public void initialise() {
 
-		mUIHUDController = (UIHUDController) mCore.controllerManager().getControllerByNameRequired(UIHUDController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
+		mUIHUDController = (UIHUDStructureController) mCore.controllerManager().getControllerByNameRequired(UIHUDStructureController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
 
 		final int RENDERER_COUNT = mRenderers.size();
 		for (int i = 0; i < RENDERER_COUNT; i++) {

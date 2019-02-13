@@ -26,9 +26,19 @@ public class ScrollBar extends Rectangle {
 	private transient float mMarkerBarHeight;
 	private transient float mMarkerMoveMod;
 
+	private float mWindowRightOffset;
+
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public float windowRightOffset() {
+		return mWindowRightOffset;
+	}
+
+	public void windowRightOffset(float pNewValue) {
+		mWindowRightOffset = pNewValue;
+	}
 
 	public boolean clickAction() {
 		return mClickActive;
@@ -49,6 +59,7 @@ public class ScrollBar extends Rectangle {
 		super(pContentBounds);
 
 		mScrollBarArea = pWindowBounds;
+		mWindowRightOffset = -25;
 
 	}
 
@@ -118,7 +129,7 @@ public class ScrollBar extends Rectangle {
 		float lScrollThumbSpace = lViewportHeight - mMarkerBarHeight;
 		mMarkerMoveMod = lScrollTrackSpace / lScrollThumbSpace;
 
-		x = mScrollBarArea.contentDisplayArea().x + mScrollBarArea.contentDisplayArea().w - 25;
+		x = mScrollBarArea.contentDisplayArea().x + mScrollBarArea.contentDisplayArea().w + mWindowRightOffset;
 		y = mScrollBarArea.contentDisplayArea().y;
 		w = BAR_WIDTH;
 		h = mScrollBarArea.contentDisplayArea().h;

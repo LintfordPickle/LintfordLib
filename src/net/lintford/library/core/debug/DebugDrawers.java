@@ -164,6 +164,7 @@ public class DebugDrawers {
 	}
 
 	public void drawRectImmediate(ICamera pCamera, Rectangle pDstRect) {
+		if(pDstRect == null) return;
 		drawRectImmediate(pCamera, pDstRect.left(), pDstRect.top(), pDstRect.width(), pDstRect.height());
 
 	}
@@ -177,11 +178,22 @@ public class DebugDrawers {
 
 	}
 
+	public void drawRectImmediate(ICamera pCamera, Rectangle pDstRect, float pLineWidth, float pR, float pG, float pB) {
+		drawRectImmediate(pCamera, pDstRect.left(), pDstRect.top(), pDstRect.width(), pDstRect.height(), pLineWidth, pR, pG, pB);
+
+	}
+
 	public void drawRectImmediate(ICamera pCamera, float pX, float pY, float pW, float pH, float pR, float pG, float pB) {
+		drawRectImmediate(pCamera, pX, pY, pW, pH, 1f, pR, pG, pB);
+
+	}
+
+	public void drawRectImmediate(ICamera pCamera, float pX, float pY, float pW, float pH, float pLineWidth, float pR, float pG, float pB) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
 		mImmediateLineBatch.lineType(GL11.GL_LINES);
+		mImmediateLineBatch.lineWidth(pLineWidth);
 		mImmediateLineBatch.begin(pCamera);
 		mImmediateLineBatch.drawRect(pX, pY, pW, pH, -.01f, pR, pG, pB);
 		mImmediateLineBatch.end();

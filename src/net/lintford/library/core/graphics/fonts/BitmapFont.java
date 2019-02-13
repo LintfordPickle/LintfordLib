@@ -24,6 +24,10 @@ import net.lintford.library.core.storage.FileUtils;
 // https://github.com/SilverTiger/lwjgl3-tutorial/wiki/Fonts
 public class BitmapFont {
 
+	// --------------------------------------
+	// Constants
+	// --------------------------------------
+
 	public class Glyph {
 		public final int width;
 		public final int height;
@@ -37,6 +41,9 @@ public class BitmapFont {
 			this.y = y;
 		}
 	}
+
+	public static final int NO_WORD_WRAP = -1;
+	public static final int NO_WIDTH_CAP = -1;
 
 	// --------------------------------------
 	// Variables
@@ -282,23 +289,52 @@ public class BitmapFont {
 	}
 
 	public float getStringHeight(String pText, float pScaleFactor) {
+		return getStringHeight(pText, 1f, -1);
+	}
+
+	public float getStringHeight(String pText, float pScale, float pWordWrapWidth) {
 		if (!mIsLoaded)
 			return 0f;
 
-		float lResult = mFontHeight * pScaleFactor;
+		float lResult = mFontHeight * pScale;
+		float lWrapWidth = 0;
 
 		for (int i = 0; i < pText.length(); i++) {
 			char ch = pText.charAt(i);
 
 			if (ch == '\n') {
 				// Line feed
-				lResult += mFontHeight * pScaleFactor;
+				lResult += mFontHeight * pScale;
 				continue;
 			}
 			if (ch == '\r') {
 				// Carriage return
-				lResult += mFontHeight * pScaleFactor;
+				lResult += mFontHeight * pScale;
 				continue;
+			}
+
+			// word wrapping works on words
+			if (pWordWrapWidth != NO_WORD_WRAP) {
+				if (ch == ' ') {
+					for (int j = i + 1; j < pText.length(); j++) {
+						char ch_m = pText.charAt(j);
+
+						Glyph lCharGlyph = glyphs().get(ch_m);
+
+						if (lCharGlyph == null)
+							continue;
+						lWrapWidth += lCharGlyph.width * pScale;
+
+						if (ch_m == ' ') {
+							break;
+						}
+
+						if (lWrapWidth >= pWordWrapWidth) {
+							lResult += mFontHeight * pScale + 5f;
+							lWrapWidth = 0;
+						}
+					}
+				}
 			}
 
 		}

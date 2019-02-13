@@ -400,7 +400,7 @@ public class MenuEntry extends Rectangle {
 		return false;
 	}
 
-	public void updateStructureDimensions() {
+	public void updateStructure() {
 
 		switch (mButtonSize) {
 		case tiny:
@@ -424,9 +424,6 @@ public class MenuEntry extends Rectangle {
 			break;
 		}
 
-	};
-
-	public void updateStructurePositions() {
 		if (mShowInfoButton) {
 			mInfoButton.set(x - 32f - 5f, y, 32f, 32f);
 
@@ -514,7 +511,7 @@ public class MenuEntry extends Rectangle {
 
 		// Render the MenuEntry label
 		if (mText != null && mText.length() > 0) {
-			final float luiTextScale = mScreenManager.UIHUDController().uiTextScaleFactor();
+			final float luiTextScale = 1.0f;// mScreenManager.UIHUDController().uiTextScaleFactor();
 
 			float lColMod = 1f; // no color mod for the text (mHoveredOver && mHighlightOnHover) ? 0.7f : 1f;
 

@@ -2,7 +2,7 @@ package net.lintford.library.screenmanager;
 
 import java.util.ArrayList;
 
-import net.lintford.library.controllers.display.UIHUDController;
+import net.lintford.library.controllers.hud.UIHUDStructureController;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.Debug;
@@ -27,13 +27,13 @@ public class ScreenManager {
 	private boolean mIsInitialised;
 	private boolean mIsLoaded;
 	private int mScreenCounter;
-	private UIHUDController mUIHUDController;
+	private UIHUDStructureController mUIHUDController;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
 
-	public UIHUDController UIHUDController() {
+	public UIHUDStructureController UIHUDController() {
 		return mUIHUDController;
 	}
 
@@ -97,7 +97,7 @@ public class ScreenManager {
 			mScreens.get(i).initialise();
 		}
 
-		mUIHUDController = (UIHUDController) mLWJGLCore.controllerManager().getControllerByNameRequired(UIHUDController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
+		mUIHUDController = (UIHUDStructureController) mLWJGLCore.controllerManager().getControllerByNameRequired(UIHUDStructureController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
 
 		mIsInitialised = true;
 

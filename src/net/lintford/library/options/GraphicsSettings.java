@@ -22,7 +22,7 @@ public class GraphicsSettings {
 	public static final float BIG_UI_SCALE_FACTOR = 1f;
 
 	/** These is the factor by which to scale UI elements and text by when in the 'small' UI mode (i..e when the window dimensions are quite small). */
-	public static final float SMALL_UI_SCALE_FACTOR = 0.75f;
+	public static final float SMALL_UI_SCALE_FACTOR = 0.8f;
 
 	// --------------------------------------
 	// Variables

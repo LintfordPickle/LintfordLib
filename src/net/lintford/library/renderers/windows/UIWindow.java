@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.lintford.library.ConstantsTable;
-import net.lintford.library.controllers.display.UIHUDController;
+import net.lintford.library.controllers.hud.UIHUDStructureController;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.camera.ICamera;
@@ -15,7 +15,6 @@ import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch9Patch;
-import net.lintford.library.options.GraphicsSettings;
 import net.lintford.library.renderers.BaseRenderer;
 import net.lintford.library.renderers.RendererManager;
 import net.lintford.library.renderers.ZLayers;
@@ -61,7 +60,7 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 
 	// This is the area that the content would take up, if not limited by the window bounds (i.e. the area of the 'content' visualisation).
 	protected ScrollBarContentRectangle mFullContentRectangle;
-	protected UIHUDController mUIHUDGameController;
+	protected UIHUDStructureController mUIHUDGameController;
 
 	protected boolean mUIInputFromUIManager;
 	protected boolean mIsWindowMoveable;
@@ -84,9 +83,18 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 
 	protected boolean mIsDebugWindow;
 
+	protected float mTitleR, mTitleG, mTitleB;
+
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public void setTitleColor(float pR, float pG, float pB) {
+		mTitleR = pR;
+		mTitleG = pG;
+		mTitleB = pB;
+
+	}
 
 	public boolean isDebugWindow() {
 		return mIsDebugWindow;
@@ -141,6 +149,9 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 		mWindowArea.h = 240;
 
 		mWindowAlpha = 1.0f;
+		mTitleR = 1.0f;
+		mTitleG = 1.0f;
+		mTitleB = 1.0f;
 
 		mFullContentRectangle = new ScrollBarContentRectangle(this);
 		mScrollBar = new ScrollBar(this, mFullContentRectangle);
@@ -163,7 +174,7 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 
 	@Override
 	public void initialise(LintfordCore pCore) {
-		mUIHUDGameController = (UIHUDController) pCore.controllerManager().getControllerByName(UIHUDController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
+		mUIHUDGameController = (UIHUDStructureController) pCore.controllerManager().getControllerByName(UIHUDStructureController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
 
 	}
 
@@ -279,6 +290,11 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 
 		}
 
+		if (mFullContentRectangle.h - contentDisplayArea().h > 0) {
+			mScrollBar.update(pCore);
+
+		}
+
 	}
 
 	@Override
@@ -287,7 +303,7 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 			return;
 
 		if (mUIHUDGameController == null) {
-			mUIHUDGameController = (UIHUDController) pCore.controllerManager().getControllerByName(UIHUDController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
+			mUIHUDGameController = (UIHUDStructureController) pCore.controllerManager().getControllerByName(UIHUDStructureController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
 			if (mUIHUDGameController == null)
 				return;
 		}
@@ -297,7 +313,7 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 		mWindowAlpha = 0.95f;
 
 		final boolean lIsBigUI = mUIHUDGameController.useBigUI();
-		final float lTextScale = mUIHUDGameController.uiTextScaleFactor() * (lIsBigUI ? GraphicsSettings.BIG_UI_SCALE_FACTOR : GraphicsSettings.SMALL_UI_SCALE_FACTOR);
+		final float lTextScale = 1f;// mUIHUDGameController.uiTextScaleFactor() * (lIsBigUI ? GraphicsSettings.BIG_UI_SCALE_FACTOR : GraphicsSettings.SMALL_UI_SCALE_FACTOR);
 		final TextureBatch lTextureBatch = mRendererManager.uiTextureBatch();
 		final FontUnit lTextFont = mRendererManager.textFont();
 
@@ -328,7 +344,7 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 		// Draw the window title
 		FontUnit lTitleFontUnit = mRendererManager.titleFont();
 		lTitleFontUnit.begin(pCore.HUD());
-		lTitleFontUnit.draw(mWindowTitle, lTitleX, lTitleY + 16f - lTitleFontUnit.fontPointSize() * 0.5f, Z_DEPTH, 1f, 0f, 0f, 1f, lTextScale);
+		lTitleFontUnit.draw(mWindowTitle, lTitleX, lTitleY + 16f - lTitleFontUnit.fontPointSize() * 0.5f, Z_DEPTH, mTitleR, mTitleG, mTitleB, 1f, lTextScale);
 		lTitleFontUnit.end();
 
 		if (mFullContentRectangle.h - contentDisplayArea().h > 0) {
