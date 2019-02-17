@@ -255,11 +255,11 @@ public class Box2dSpriteGraphBuilder {
 				break;
 
 			case '-':
-				lCursor.curRotation -= RandomNumbers.random(pLSystemDef.minAngle, pLSystemDef.maxAngle);
+				lCursor.curRotation = -RandomNumbers.random(pLSystemDef.minAngle, pLSystemDef.maxAngle);
 				break;
 
 			case '+':
-				lCursor.curRotation += RandomNumbers.random(pLSystemDef.minAngle, pLSystemDef.maxAngle);
+				lCursor.curRotation = RandomNumbers.random(pLSystemDef.minAngle, pLSystemDef.maxAngle);
 				break;
 
 			case '[':
