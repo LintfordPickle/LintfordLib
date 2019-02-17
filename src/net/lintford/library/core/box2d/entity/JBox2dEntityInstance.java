@@ -319,8 +319,28 @@ public class JBox2dEntityInstance implements Serializable {
 
 			lBodyInst.position.set(pX, pY);
 
-			if (lBodyInst.mBody != null)
+			if (lBodyInst.mBody != null) {
 				lBodyInst.mBody.setTransform(new Vec2(pX, pY), lBodyInst.mBody.getAngle());
+
+			}
+
+		}
+
+	}
+
+	public void setLinearVelocity(float pX, float pY) {
+		final int lBodyCount = mBodies.size();
+		for (int i = 0; i < lBodyCount; i++) {
+			Box2dBodyInstance lBodyInst = mBodies.get(i);
+			if (lBodyInst == null)
+				continue;
+
+			lBodyInst.linearVelocity.set(pX, pY);
+
+			if (lBodyInst.mBody != null) {
+				lBodyInst.mBody.setLinearVelocity(new Vec2(pX, pY));
+
+			}
 
 		}
 
@@ -365,6 +385,20 @@ public class JBox2dEntityInstance implements Serializable {
 			Box2dBodyInstance lBodyInst = mBodies.get(i);
 			if (lBodyInst != null) // TODO: Garbage
 				lBodyInst.mBody.applyLinearImpulse(new Vec2(pX, pY), lBodyInst.mBody.getWorldCenter(), true);
+
+		}
+
+	}
+
+	public void setBullet(boolean pNewValue) {
+		final int lBodyCount = mBodies.size();
+		for (int i = 0; i < lBodyCount; i++) {
+
+			Box2dBodyInstance lBodyInst = mBodies.get(i);
+			if (lBodyInst == null || lBodyInst.mBody == null)
+				continue;
+
+			lBodyInst.mBody.setBullet(pNewValue);
 
 		}
 
