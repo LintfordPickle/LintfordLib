@@ -22,11 +22,9 @@ public abstract class JBox2dEntity extends WorldEntity {
 	// --------------------------------------
 
 	public JBox2dEntityInstance mJBox2dEntityInstance;
-	
-	
+
 	public SpriteSheetDef mSpriteSheetDef;
 
-	public transient boolean mIsPhysicsLoaded = false;
 	protected transient Vec2 mVelocity = new Vec2();
 
 	// --------------------------------------
@@ -34,7 +32,7 @@ public abstract class JBox2dEntity extends WorldEntity {
 	// --------------------------------------
 
 	public boolean hasPhysicsEntity() {
-		return mJBox2dEntityInstance != null;
+		return mJBox2dEntityInstance != null && mJBox2dEntityInstance.isPhysicsLoaded();
 	}
 
 	public JBox2dEntityInstance box2dEntityInstance() {
@@ -42,7 +40,7 @@ public abstract class JBox2dEntity extends WorldEntity {
 	}
 
 	public boolean isPhysicsLoaded() {
-		return mIsPhysicsLoaded;
+		return mJBox2dEntityInstance != null;
 	}
 
 	// --------------------------------------
@@ -50,7 +48,6 @@ public abstract class JBox2dEntity extends WorldEntity {
 	// --------------------------------------
 
 	public JBox2dEntity() {
-		mIsPhysicsLoaded = false;
 
 	}
 
@@ -72,29 +69,25 @@ public abstract class JBox2dEntity extends WorldEntity {
 	}
 
 	public void loadPhysics(World pWorld) {
-		if (mJBox2dEntityInstance == null)
+		if (!isPhysicsLoaded())
 			return;
 
 		mJBox2dEntityInstance.loadPhysics(pWorld);
 
-		mIsPhysicsLoaded = true;
-
 	}
 
 	public void unloadPhysics() {
-		if (mJBox2dEntityInstance != null) {
+		if (isPhysicsLoaded()) {
 			mJBox2dEntityInstance.unloadPhysics();
 
 		}
-
-		mIsPhysicsLoaded = false;
 
 	}
 
 	public void update(LintfordCore pCore) {
 		super.update(pCore);
 
-		if (mIsPhysicsLoaded && mJBox2dEntityInstance != null) {
+		if (isPhysicsLoaded()) {
 			Box2dBodyInstance lMainBody = mJBox2dEntityInstance.mainBody();
 			if (lMainBody != null) {
 				// Update the position of this character
