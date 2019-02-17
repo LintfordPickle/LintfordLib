@@ -118,6 +118,7 @@ public class JBox2dDebugDrawer {
 			Debug.debugManager().drawers().drawLine(lBodyX, lBodyY - 10, lBodyX, lBodyY + 10);
 			Debug.debugManager().drawers().endLineRenderer();
 
+			Debug.debugManager().drawers().beginLineRenderer(pCore.gameCamera(), GL11.GL_LINES);
 			while (lFixture != null) {
 				// TODO: update the color depending on the state
 
@@ -132,6 +133,7 @@ public class JBox2dDebugDrawer {
 				lFixture = lFixture.getNext();
 
 			}
+			Debug.debugManager().drawers().endLineRenderer();
 
 		}
 
