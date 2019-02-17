@@ -27,6 +27,8 @@ public class UIIconButton extends UIWidget {
 	private transient String mButtonLabel;
 	private transient float mR, mG, mB;
 	private transient boolean mHoveredOver;
+	private transient boolean mDrawButtonBackground;
+	private transient boolean mDrawButtonText;
 	private transient float mClickTimer;
 
 	private transient Texture mButtonTexture;
@@ -52,6 +54,22 @@ public class UIIconButton extends UIWidget {
 		mClickID = pNewLabel;
 	}
 
+	public void drawButtonBackground(boolean pNewValue) {
+		mDrawButtonBackground = pNewValue;
+	}
+
+	public boolean drawButtonBackground() {
+		return mDrawButtonBackground;
+	}
+
+	public void drawButtonText(boolean pNewValue) {
+		mDrawButtonText = pNewValue;
+	}
+
+	public boolean drawButtonText() {
+		return mDrawButtonText;
+	}
+
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
@@ -71,6 +89,9 @@ public class UIIconButton extends UIWidget {
 		mR = mG = mB = 1f;
 		mSourceRectangle = new Rectangle();
 
+		mDrawButtonBackground = true;
+		mDrawButtonText = true;
+
 	}
 
 	// --------------------------------------
@@ -79,6 +100,9 @@ public class UIIconButton extends UIWidget {
 
 	@Override
 	public boolean handleInput(LintfordCore pCore) {
+		if (!mIsVisible)
+			return false;
+
 		if (intersectsAA(pCore.HUD().getMouseCameraSpace())) {
 			mHoveredOver = true;
 
@@ -107,6 +131,9 @@ public class UIIconButton extends UIWidget {
 
 	@Override
 	public void update(LintfordCore pCore) {
+		if (!mIsVisible)
+			return;
+
 		super.update(pCore);
 
 		mClickTimer += pCore.time().elapseGameTimeMilli();
@@ -115,6 +142,9 @@ public class UIIconButton extends UIWidget {
 
 	@Override
 	public void draw(LintfordCore pCore, TextureBatch pTextureBatch, Texture pUITexture, FontUnit pTextFont, float pComponentZDepth) {
+		if (!mIsVisible)
+			return;
+
 		float lR = mHoveredOver ? 0.3f : mR;
 		float lG = mHoveredOver ? 0.34f : mG;
 		float lB = mHoveredOver ? 0.65f : mB;
@@ -123,16 +153,17 @@ public class UIIconButton extends UIWidget {
 
 		// Draw the button background
 		lTextureBatch.begin(pCore.HUD());
-		lTextureBatch.draw(pUITexture, 0, 0, 32, 32, x, y, w, h, 0f, lR, lG, lB, 1f);
 
-		if (mButtonTexture != null) {
+		if (mDrawButtonBackground)
+			lTextureBatch.draw(pUITexture, 0, 0, 32, 32, x, y, w, h, 0f, lR, lG, lB, 1f);
+
+		if (mButtonTexture != null)
 			lTextureBatch.draw(mButtonTexture, mSourceRectangle.x, mSourceRectangle.y, mSourceRectangle.w, mSourceRectangle.h, x, y, w, h, 0f, lR, lG, lB, 1f);
-		}
 
 		lTextureBatch.end();
 
 		// text
-		if (mButtonLabel != null && mButtonLabel.length() > 0) {
+		if (mDrawButtonText && mButtonLabel != null && mButtonLabel.length() > 0) {
 			FontUnit lFontRenderer = mParentWindow.rendererManager().textFont();
 
 			final float lTextWidth = lFontRenderer.bitmap().getStringWidth(mButtonLabel);
@@ -149,8 +180,10 @@ public class UIIconButton extends UIWidget {
 	// Methods
 	// --------------------------------------
 
-	public void setClickListener(final EntryInteractions pCallbackObject) {
+	public void setClickListener(final EntryInteractions pCallbackObject, int pClickID) {
 		mCallback = pCallbackObject;
+		mClickID = pClickID;
+
 	}
 
 	public void removeClickListener(final EntryInteractions pCallbackObject) {
