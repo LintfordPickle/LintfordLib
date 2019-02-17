@@ -226,13 +226,11 @@ public class LineBatch {
 			flush();
 		}
 
-		// Add both vertices to the buffer
-		draw(pP1X, pP1Y, pZ, pR, pG, pB);
-		draw(pP2X, pP2Y, pZ, pR, pG, pB);
+		draw(pP1X, pP1Y, pP2X, pP2Y, pZ, pR, pG, pB, a);
 
 	}
 
-	public void draw(float pP1X, float pP1Y, float pZ, float pR, float pG, float pB) {
+	public void draw(float pP1X, float pP1Y, float pP2X, float pP2Y, float pZ, float pR, float pG, float pB, float pA) {
 
 		if (!mIsDrawing)
 			return;
@@ -242,7 +240,22 @@ public class LineBatch {
 		}
 
 		// Add both vertices to the buffer
-		addVertToBuffer(pP1X, pP1Y, pZ, 1f, pR, pG, pB, a);
+		draw(pP1X, pP1Y, pZ, pR, pG, pB, pA);
+		draw(pP2X, pP2Y, pZ, pR, pG, pB, pA);
+
+	}
+
+	public void draw(float pP1X, float pP1Y, float pZ, float pR, float pG, float pB, float pA) {
+
+		if (!mIsDrawing)
+			return;
+
+		if (mVertexCount * 2 >= MAX_LINES) {
+			flush();
+		}
+
+		// Add both vertices to the buffer
+		addVertToBuffer(pP1X, pP1Y, pZ, 1f, pR, pG, pB, pA);
 
 	}
 
