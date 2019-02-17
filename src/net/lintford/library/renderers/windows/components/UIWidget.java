@@ -22,6 +22,29 @@ public abstract class UIWidget extends Rectangle {
 
 	protected UIWindow mParentWindow;
 
+	protected boolean mIsEnabled;
+	protected boolean mIsVisible;
+
+	// --------------------------------------
+	// Properties
+	// --------------------------------------
+
+	public boolean isEnabled() {
+		return mIsEnabled;
+	}
+
+	public void isEnabled(boolean pNewValue) {
+		mIsEnabled = pNewValue;
+	}
+
+	public boolean isVisible() {
+		return mIsVisible;
+	}
+
+	public void isVisible(boolean pNewValue) {
+		mIsVisible = pNewValue;
+	}
+
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
@@ -29,12 +52,18 @@ public abstract class UIWidget extends Rectangle {
 	public UIWidget(final UIWindow pParentWindow) {
 		super();
 
+		mIsVisible = true;
+		mIsEnabled = true;
+
 		mParentWindow = pParentWindow;
 
 	}
 
 	public UIWidget(final UIWindow pParentWindow, final Rectangle pBounds) {
 		super(pBounds);
+
+		mIsVisible = true;
+		mIsEnabled = true;
 
 		mParentWindow = pParentWindow;
 
