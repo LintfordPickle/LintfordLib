@@ -164,7 +164,8 @@ public class DebugDrawers {
 	}
 
 	public void drawRectImmediate(ICamera pCamera, Rectangle pDstRect) {
-		if(pDstRect == null) return;
+		if (pDstRect == null)
+			return;
 		drawRectImmediate(pCamera, pDstRect.left(), pDstRect.top(), pDstRect.width(), pDstRect.height());
 
 	}
@@ -254,12 +255,12 @@ public class DebugDrawers {
 			float xx = pX + (float) (pRadius * Math.cos(i));
 			float yy = pY + (float) (pRadius * Math.sin(i));
 
-			mImmediateLineBatch.draw(xx, yy, -0.01f, 1f, 1f, 1f);
+			mImmediateLineBatch.draw(xx, yy, -0.01f, 1f, 1f, 1f, 1f);
 
 		}
 
 		// Add the first vert again
-		mImmediateLineBatch.draw(pX + (float) (pRadius * Math.cos(0)), pY + (float) (pRadius * Math.sin(0)), -0.01f, 1f, 1f, 1f);
+		mImmediateLineBatch.draw(pX + (float) (pRadius * Math.cos(0)), pY + (float) (pRadius * Math.sin(0)), -0.01f, 1f, 1f, 1f, 1f);
 
 		mImmediateLineBatch.end();
 
@@ -391,12 +392,12 @@ public class DebugDrawers {
 			float xx = pX + (float) (pRadius * Math.cos(i));
 			float yy = pY + (float) (pRadius * Math.sin(i));
 
-			mLineBatch.draw(xx, yy, -0.01f, 1f, 1f, 1f);
+			mLineBatch.draw(xx, yy, -0.01f, 1f, 1f, 1f, 1f);
 
 		}
 
 		// Add the first vert again
-		mLineBatch.draw(pX + (float) (pRadius * Math.cos(0)), pY + (float) (pRadius * Math.sin(0)), -0.01f, 1f, 1f, 1f);
+		mLineBatch.draw(pX + (float) (pRadius * Math.cos(0)), pY + (float) (pRadius * Math.sin(0)), -0.01f, 1f, 1f, 1f, 1f);
 
 	}
 
