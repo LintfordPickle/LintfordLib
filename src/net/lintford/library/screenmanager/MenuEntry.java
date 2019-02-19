@@ -570,7 +570,7 @@ public class MenuEntry extends Rectangle {
 		mAnimationTimer = MenuScreen.ANIMATION_TIMER_LENGTH;
 
 		// Play a button click animation, then call the listeners
-		mClickListener.menuEntryOnClick(mMenuEntryID);
+		mClickListener.menuEntryOnClick(pInputState, mMenuEntryID);
 
 	}
 

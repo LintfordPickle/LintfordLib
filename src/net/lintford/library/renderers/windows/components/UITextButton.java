@@ -85,7 +85,7 @@ public class UITextButton extends UIWidget {
 				// Callback to the listener and pass our ID
 				if (mCallback != null && mClickTimer > MINIMUM_CLICK_TIMER) {
 					mClickTimer = 0;
-					mCallback.menuEntryOnClick(mClickID);
+					mCallback.menuEntryOnClick(pCore.input(), mClickID);
 					return true;
 				}
 

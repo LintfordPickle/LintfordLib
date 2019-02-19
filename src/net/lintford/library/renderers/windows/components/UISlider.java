@@ -88,7 +88,7 @@ public class UISlider extends UIWidget {
 
 				if (mCallback != null) {
 					// Notify subscribers that something changes
-					mCallback.menuEntryOnClick(mClickID);
+					mCallback.menuEntryOnClick(pCore.input(), mClickID);
 				}
 
 				return true;

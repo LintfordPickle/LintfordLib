@@ -10,6 +10,7 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
+import net.lintford.library.core.input.InputState;
 import net.lintford.library.renderers.ZLayers;
 import net.lintford.library.screenmanager.entries.EntryInteractions;
 import net.lintford.library.screenmanager.layouts.BaseLayout;
@@ -472,9 +473,10 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	}
 
 	@Override
-	public void menuEntryOnClick(int pEntryID) {
+	public void menuEntryOnClick(InputState pInputState, int pEntryID) {
 		mClickAction.setNewClick(pEntryID);
 		mAnimationTimer = ANIMATION_TIMER_LENGTH * 2f;
+		
 	}
 
 	protected abstract void handleOnClick();

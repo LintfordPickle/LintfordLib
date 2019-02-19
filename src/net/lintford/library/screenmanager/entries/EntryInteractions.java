@@ -1,5 +1,6 @@
 package net.lintford.library.screenmanager.entries;
 
+import net.lintford.library.core.input.InputState;
 import net.lintford.library.screenmanager.MenuEntry;
 
 public interface EntryInteractions {
@@ -8,7 +9,7 @@ public interface EntryInteractions {
 
 	}
 
-	public default void menuEntryOnClick(int pEntryID) {
+	public default void menuEntryOnClick(InputState pInputState, int pEntryID) {
 
 	}
 

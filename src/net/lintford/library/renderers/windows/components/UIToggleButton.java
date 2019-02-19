@@ -99,7 +99,7 @@ public class UIToggleButton extends UIWidget {
 
 				// Callback to the listener and pass our ID
 				if (mCallback != null) {
-					mCallback.menuEntryOnClick(mClickID);
+					mCallback.menuEntryOnClick(pCore.input(), mClickID);
 				}
 
 				return true;

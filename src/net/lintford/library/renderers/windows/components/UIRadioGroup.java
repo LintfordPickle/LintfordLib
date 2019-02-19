@@ -7,6 +7,7 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
+import net.lintford.library.core.input.InputState;
 import net.lintford.library.renderers.windows.UIWindow;
 import net.lintford.library.screenmanager.entries.EntryInteractions;
 
@@ -17,7 +18,7 @@ public class UIRadioGroup extends UIWidget implements EntryInteractions {
 	// --------------------------------------
 
 	private static final long serialVersionUID = -3191987692148151157L;
-	
+
 	private List<UIRadioButton> mButtons;
 	private EntryInteractions mCallback;
 
@@ -115,7 +116,7 @@ public class UIRadioGroup extends UIWidget implements EntryInteractions {
 	}
 
 	@Override
-	public void menuEntryOnClick(int pEntryID) {
+	public void menuEntryOnClick(InputState pInputState, int pEntryID) {
 		final int lButtonCount = mButtons.size();
 		for (int i = 0; i < lButtonCount; i++) {
 			if (mButtons.get(i).buttonListenerID() == pEntryID) {
@@ -133,7 +134,7 @@ public class UIRadioGroup extends UIWidget implements EntryInteractions {
 		}
 
 		if (mCallback != null) {
-			mCallback.menuEntryOnClick(pEntryID);
+			mCallback.menuEntryOnClick(pInputState, pEntryID);
 
 		}
 

@@ -83,7 +83,7 @@ public class UIButton extends UIWidget {
 				// Callback to the listener and pass our ID
 				if (mCallback != null && mClickTimer > MINIMUM_CLICK_TIMER) {
 					mClickTimer = 0;
-					mCallback.menuEntryOnClick(mClickID);
+					mCallback.menuEntryOnClick(pCore.input(), mClickID);
 					return true;
 				}
 
@@ -119,9 +119,9 @@ public class UIButton extends UIWidget {
 
 		// Draw the button background
 		pTextureBatch.begin(pCore.HUD());
-		//pTextureBatch.draw(pUITexture, 0, 32, 32, 32, centerX() - w / 2, centerY() - h / 2, 32, h, pComponentZDepth, lR, lG, lB, 1f);
+		// pTextureBatch.draw(pUITexture, 0, 32, 32, 32, centerX() - w / 2, centerY() - h / 2, 32, h, pComponentZDepth, lR, lG, lB, 1f);
 		pTextureBatch.draw(pUITexture, 32, 32, 224, 32, centerX() - (w / 2) + 32, centerY() - h / 2, w - 64, h, pComponentZDepth, lR, lG, lB, 1f);
-		//pTextureBatch.draw(pUITexture, 256, 32, 32, 32, centerX() + (w / 2) - 32, centerY() - h / 2, 32, h, pComponentZDepth, lR, lG, lB, 1f);
+		// pTextureBatch.draw(pUITexture, 256, 32, 32, 32, centerX() + (w / 2) - 32, centerY() - h / 2, 32, h, pComponentZDepth, lR, lG, lB, 1f);
 		pTextureBatch.end();
 
 		FontUnit lFontRenderer = mParentWindow.rendererManager().textFont();
@@ -132,7 +132,7 @@ public class UIButton extends UIWidget {
 		lFontRenderer.begin(pCore.HUD());
 		lFontRenderer.draw(lButtonText, x + w / 2f - lTextWidth / 2f, y + h / 2f - lFontRenderer.bitmap().fontHeight() / 2f, pComponentZDepth, 1f);
 		lFontRenderer.end();
-		
+
 		Debug.debugManager().drawers().drawRectImmediate(pCore.HUD(), this, lR, lG, lB);
 
 	}

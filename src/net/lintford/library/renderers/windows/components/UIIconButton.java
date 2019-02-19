@@ -110,7 +110,7 @@ public class UIIconButton extends UIWidget {
 				if (pCore.input().tryAquireLeftClickOwnership(hashCode())) {
 					// Callback to the listener and pass our ID
 					if (mCallback != null) {
-						mCallback.menuEntryOnClick(mClickID);
+						mCallback.menuEntryOnClick(pCore.input(), mClickID);
 
 					}
 
