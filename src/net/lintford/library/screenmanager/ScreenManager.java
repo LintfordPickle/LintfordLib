@@ -146,6 +146,8 @@ public class ScreenManager {
 		for (int i = lScreenCount; i >= 0; i--) {
 			Screen lScreen = mScreens.get(i);
 
+			// Only allow keyboard and mouse input if we are on the top screen
+
 			if (lScreen.screenState() == ScreenState.TransitionOn || lScreen.screenState() == ScreenState.Active) {
 				lScreen.handleInput(pCore, true, true);
 

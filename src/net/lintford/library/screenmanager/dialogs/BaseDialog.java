@@ -103,8 +103,8 @@ public abstract class BaseDialog extends MenuScreen {
 	}
 
 	@Override
-	public boolean handleInput(LintfordCore pCore, boolean pAcceptMouse, boolean pAcceptKeyboard) {
-		return super.handleInput(pCore, pAcceptMouse, pAcceptKeyboard);
+	public void handleInput(LintfordCore pCore, boolean pAcceptMouse, boolean pAcceptKeyboard) {
+		super.handleInput(pCore, pAcceptMouse, pAcceptKeyboard);
 
 	}
 

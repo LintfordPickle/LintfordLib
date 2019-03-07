@@ -235,17 +235,17 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	}
 
 	@Override
-	public boolean handleInput(LintfordCore pCore, boolean pAcceptMouse, boolean pAcceptKeyboard) {
+	public void handleInput(LintfordCore pCore, boolean pAcceptMouse, boolean pAcceptKeyboard) {
 		super.handleInput(pCore, pAcceptMouse, pAcceptKeyboard);
 
 		// TODO: Animations should be handled in another object
 		if (mAnimationTimer > 0 || mClickAction.isConsumed())
-			return false; // don't handle input if 'animation' is playing
+			return; // don't handle input if 'animation' is playing
 
 		if (mESCBackEnabled && pCore.input().keyDownTimed(GLFW.GLFW_KEY_ESCAPE)) {
 			if (mScreenState == ScreenState.Active) {
 				exitScreen();
-				return true;
+				return;
 			}
 		}
 
@@ -260,7 +260,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 				BaseLayout lLayout = mLayouts.get(mSelectedLayout);
 
 				if (!lLayout.hasEntry(mSelectedEntry))
-					return false;
+					return;
 
 				// Set focus on the new entry
 				if (lLayout.menuEntries().get(mSelectedEntry).enabled()) {
@@ -282,7 +282,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 				}
 
 				if (!lLayout.hasEntry(mSelectedEntry))
-					return false;
+					return;
 
 				// Set focus on the new entry
 				if (lLayout.menuEntries().get(mSelectedEntry).enabled()) {
@@ -298,7 +298,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 			if (pCore.input().keyDownTimed(GLFW.GLFW_KEY_ENTER)) {
 				BaseLayout lLayout = mLayouts.get(mSelectedLayout);
 				if (!lLayout.hasEntry(mSelectedEntry))
-					return false;
+					return;
 
 				lLayout.menuEntries().get(mSelectedEntry).onClick(pCore.input());
 			}
@@ -313,8 +313,6 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 			BaseLayout lLayout = mLayouts.get(i);
 			lLayout.handleInput(pCore);
 		}
-
-		return false;
 
 	}
 

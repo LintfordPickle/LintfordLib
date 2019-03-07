@@ -94,24 +94,17 @@ public class TimedIntroScreen extends Screen {
 	}
 
 	@Override
-	public boolean handleInput(LintfordCore pCore, boolean pAcceptMouse, boolean pAcceptKeyboard) {
-		if (super.handleInput(pCore, pAcceptMouse, pAcceptKeyboard)) {
-			return true;
-
-		}
+	public void handleInput(LintfordCore pCore, boolean pAcceptMouse, boolean pAcceptKeyboard) {
+		super.handleInput(pCore, pAcceptMouse, pAcceptKeyboard);
 
 		if (!mTimedActionPerformed) {
 			if (pCore.input().isMouseTimedLeftClickAvailable()) {
 				pCore.input().setLeftMouseClickHandled();
 				mUserRequestSkip = true;
 
-				return true;
-
 			}
 
 		}
-
-		return false;
 
 	}
 
