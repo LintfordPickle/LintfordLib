@@ -312,8 +312,6 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 
 		mWindowAlpha = 0.95f;
 
-		final boolean lIsBigUI = mUIHUDGameController.useBigUI();
-		final float lTextScale = 1f;// mUIHUDGameController.uiTextScaleFactor() * (lIsBigUI ? GraphicsSettings.BIG_UI_SCALE_FACTOR : GraphicsSettings.SMALL_UI_SCALE_FACTOR);
 		final TextureBatch lTextureBatch = mRendererManager.uiTextureBatch();
 		final FontUnit lTextFont = mRendererManager.textFont();
 
@@ -344,7 +342,7 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 		// Draw the window title
 		FontUnit lTitleFontUnit = mRendererManager.titleFont();
 		lTitleFontUnit.begin(pCore.HUD());
-		lTitleFontUnit.draw(mWindowTitle, lTitleX, lTitleY + 16f - lTitleFontUnit.fontPointSize() * 0.5f, Z_DEPTH, mTitleR, mTitleG, mTitleB, 1f, lTextScale);
+		lTitleFontUnit.draw(mWindowTitle, lTitleX, lTitleY + 16f - lTitleFontUnit.fontPointSize() * 0.5f, Z_DEPTH, mTitleR, mTitleG, mTitleB, 1f, 1f);
 		lTitleFontUnit.end();
 
 		if (mFullContentRectangle.h - contentDisplayArea().h > 0) {

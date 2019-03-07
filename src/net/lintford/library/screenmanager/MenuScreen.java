@@ -235,17 +235,17 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	}
 
 	@Override
-	public void handleInput(LintfordCore pCore, boolean pAcceptMouse, boolean pAcceptKeyboard) {
+	public boolean handleInput(LintfordCore pCore, boolean pAcceptMouse, boolean pAcceptKeyboard) {
 		super.handleInput(pCore, pAcceptMouse, pAcceptKeyboard);
 
 		// TODO: Animations should be handled in another object
 		if (mAnimationTimer > 0 || mClickAction.isConsumed())
-			return; // don't handle input if 'animation' is playing
+			return false; // don't handle input if 'animation' is playing
 
 		if (mESCBackEnabled && pCore.input().keyDownTimed(GLFW.GLFW_KEY_ESCAPE)) {
 			if (mScreenState == ScreenState.Active) {
 				exitScreen();
-				return;
+				return true;
 			}
 		}
 
@@ -260,7 +260,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 				BaseLayout lLayout = mLayouts.get(mSelectedLayout);
 
 				if (!lLayout.hasEntry(mSelectedEntry))
-					return;
+					return false;
 
 				// Set focus on the new entry
 				if (lLayout.menuEntries().get(mSelectedEntry).enabled()) {
@@ -282,7 +282,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 				}
 
 				if (!lLayout.hasEntry(mSelectedEntry))
-					return;
+					return false;
 
 				// Set focus on the new entry
 				if (lLayout.menuEntries().get(mSelectedEntry).enabled()) {
@@ -298,7 +298,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 			if (pCore.input().keyDownTimed(GLFW.GLFW_KEY_ENTER)) {
 				BaseLayout lLayout = mLayouts.get(mSelectedLayout);
 				if (!lLayout.hasEntry(mSelectedEntry))
-					return;
+					return false;
 
 				lLayout.menuEntries().get(mSelectedEntry).onClick(pCore.input());
 			}
@@ -313,6 +313,8 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 			BaseLayout lLayout = mLayouts.get(i);
 			lLayout.handleInput(pCore);
 		}
+
+		return false;
 
 	}
 
@@ -476,7 +478,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	public void menuEntryOnClick(InputState pInputState, int pEntryID) {
 		mClickAction.setNewClick(pEntryID);
 		mAnimationTimer = ANIMATION_TIMER_LENGTH * 2f;
-		
+
 	}
 
 	protected abstract void handleOnClick();

@@ -143,12 +143,6 @@ public class Box2dSpriteGraphBuilder {
 	public JBox2dEntityInstance createSpriteGraphFromLSystem(String pLSystemString, LSystemDefinition pLSystemDef) {
 		// Create a new instance of a SpriteGraph
 		// pLSystemDef.onGraphCreation(lNewInst);
-
-		// F   Forward
-		// -   -45°
-		// +   +45°
-		// [   speichern
-		// ]   laden
 		
 		pLSystemString = "F-F[+F+F+F+F+F+F]-F-F-F-F-F-F";
 

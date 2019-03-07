@@ -360,6 +360,24 @@ public class DebugDrawers {
 		mLineBatch.draw(pSX, pSY, pEX, pEY, -0.01f, pR, pG, pB);
 	}
 
+	public void drawRect(ICamera pCamera, Rectangle pRect, float pLineWidth, float pR, float pG, float pB) {
+		if (!mDebugManager.debugManagerEnabled())
+			return;
+
+		mLineBatch.lineType(GL11.GL_LINES);
+		mLineBatch.lineWidth(pLineWidth);
+		mLineBatch.drawRect(pRect.x, pRect.y, pRect.w, pRect.h, -.01f, pR, pG, pB);
+	}
+
+	public void drawRect(ICamera pCamera, float pX, float pY, float pW, float pH, float pLineWidth, float pR, float pG, float pB) {
+		if (!mDebugManager.debugManagerEnabled())
+			return;
+
+		mImmediateLineBatch.lineType(GL11.GL_LINES);
+		mImmediateLineBatch.lineWidth(pLineWidth);
+		mLineBatch.drawRect(pX, pY, pW, pH, -.01f, pR, pG, pB);
+	}
+
 	public void drawCircle(float pX, float pY, float pRadius) {
 		drawCircle(pX, pY, pRadius, 32);
 

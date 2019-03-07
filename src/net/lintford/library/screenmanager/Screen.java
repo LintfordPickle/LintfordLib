@@ -190,11 +190,18 @@ public abstract class Screen {
 
 	}
 
-	public void handleInput(LintfordCore pCore, boolean pAcceptMouse, boolean pAcceptKeyboard) {
-		mRendererManager.handleInput(pCore);
+	public boolean handleInput(LintfordCore pCore, boolean pAcceptMouse, boolean pAcceptKeyboard) {
+		boolean lResult = false;
 
-		mScreenManager.core().controllerManager().handleInput(mScreenManager.core(), mEntityGroupID);
+		lResult = mRendererManager.handleInput(pCore);
+		if (lResult)
+			return true;
 
+		lResult = mScreenManager.core().controllerManager().handleInput(mScreenManager.core(), mEntityGroupID);
+		if (lResult)
+			return true;
+
+		return lResult;
 	}
 
 	public void update(LintfordCore pCore, boolean pOtherScreenHasFocus, boolean pCoveredByOtherScreen) {
