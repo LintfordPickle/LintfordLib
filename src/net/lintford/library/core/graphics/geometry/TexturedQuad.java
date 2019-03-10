@@ -10,6 +10,7 @@ import org.lwjgl.system.MemoryUtil;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
+import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.graphics.vertices.VertexDataStructurePT;
 import net.lintford.library.core.maths.Matrix4f;
 
@@ -87,8 +88,8 @@ public class TexturedQuad {
 		cleanup();
 
 		if (mBuffer != null) {
+			mBuffer.clear();
 			MemoryUtil.memFree(mBuffer);
-			mBuffer = null;
 
 		}
 

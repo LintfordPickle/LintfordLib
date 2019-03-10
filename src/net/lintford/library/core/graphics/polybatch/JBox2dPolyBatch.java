@@ -11,6 +11,7 @@ import org.lwjgl.system.MemoryUtil;
 
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.camera.ICamera;
+import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.graphics.shaders.ShaderMVP_PT;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.TextureManager;
@@ -121,8 +122,10 @@ public class JBox2dPolyBatch {
 		if (mVaoId == -1)
 			mVaoId = GL30.glGenVertexArrays();
 
-		if (mVboId == -1)
+		if (mVboId == -1) {
 			mVboId = GL15.glGenBuffers();
+			Debug.debugManager().logger().i(getClass().getSimpleName(), "glGenBuffers: " + mVboId);
+		}
 
 		mBuffer = MemoryUtil.memAllocFloat(MAX_VERTS * stride);
 
@@ -136,16 +139,20 @@ public class JBox2dPolyBatch {
 
 		mShader.unloadGLContent();
 
-		if (mVboId > -1)
+		if (mVboId != -1)
 			GL15.glDeleteBuffers(mVboId);
 
-		if (mVaoId > -1)
+		if (mVaoId != -1)
 			GL30.glDeleteVertexArrays(mVaoId);
 
 		mVaoId = -1;
 		mVboId = -1;
 
-		MemoryUtil.memFree(mBuffer);
+		if (mBuffer != null) {
+			mBuffer.clear();
+			MemoryUtil.memFree(mBuffer);
+
+		}
 
 		mIsLoaded = false;
 

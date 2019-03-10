@@ -108,7 +108,6 @@ public class PointBatch {
 		if (mBuffer != null) {
 			mBuffer.clear();
 			MemoryUtil.memFree(mBuffer);
-			mBuffer = null;
 
 		}
 

@@ -137,7 +137,6 @@ public class LineBatch {
 		if (mBuffer != null) {
 			mBuffer.clear();
 			MemoryUtil.memFree(mBuffer);
-			mBuffer = null;
 
 		}
 

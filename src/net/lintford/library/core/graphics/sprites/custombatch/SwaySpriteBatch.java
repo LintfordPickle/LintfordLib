@@ -43,7 +43,7 @@ public class SwaySpriteBatch extends SpriteBatch {
 	}
 
 	public void drawGrass(Texture pTexture, float pSX, float pSY, float pSW, float pSH, Rectangle pDestRect, float pZ, float pA) {
-		if (!mIsLoaded)
+		if (!isLoaded())
 			return;
 
 		if (!mIsDrawing)

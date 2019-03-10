@@ -69,12 +69,12 @@ public class TextureBatch {
 	protected ShaderMVP_PT mCustomShader;
 	protected Matrix4f mModelMatrix;
 	protected FloatBuffer mBuffer;
-	protected int mVaoId = -1;
-	protected int mVboId = -1;
-	protected int mVertexCount = 0;
+	private int mVaoId = -1;
+	private int mVboId = -1;
+	private int mVertexCount = 0;
 	protected int mCurrentTexID;
 	protected int mCurNumSprites;
-	protected boolean mIsLoaded;
+	private boolean mIsLoaded;
 	protected boolean mIsDrawing;
 	protected boolean mUseCheckerPattern;
 	protected ResourceManager mResourceManager;
@@ -152,6 +152,7 @@ public class TextureBatch {
 		mBuffer = MemoryUtil.memAllocFloat(MAX_SPRITES * NUM_VERTS_PER_SPRITE * stride);
 
 		mIsLoaded = true;
+
 	}
 
 	public void unloadGLContent() {
@@ -172,7 +173,6 @@ public class TextureBatch {
 		if (mBuffer != null) {
 			mBuffer.clear();
 			MemoryUtil.memFree(mBuffer);
-			mBuffer = null;
 
 		}
 

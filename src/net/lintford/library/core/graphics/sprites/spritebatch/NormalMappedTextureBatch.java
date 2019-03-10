@@ -70,7 +70,7 @@ public class NormalMappedTextureBatch {
 	// --------------------------------------
 
 	public void loadGLContent(ResourceManager pResourceManager) {
-		if (mVboId == -1)
+		if (mVboId == -1) 
 			mVboId = GL15.glGenBuffers();
 
 		mBuffer = MemoryUtil.memAllocFloat(mVertexCount * VertexDataStructurePT.stride);
@@ -79,10 +79,9 @@ public class NormalMappedTextureBatch {
 	}
 
 	public void unloadGLContent() {
-		if (mVboId > -1) {
+		if (mVboId > -1)
 			GL15.glDeleteBuffers(mVboId);
-		}
-		
+
 		mVboId = -1;
 
 		if (mBuffer != null) {

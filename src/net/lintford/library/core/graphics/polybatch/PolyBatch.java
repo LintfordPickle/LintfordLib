@@ -10,6 +10,7 @@ import org.lwjgl.system.MemoryUtil;
 
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.camera.ICamera;
+import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.shaders.ShaderMVP_PT;
 import net.lintford.library.core.graphics.vertices.VertexDataStructurePC;
@@ -86,8 +87,10 @@ public class PolyBatch {
 		if (mVaoId == -1)
 			mVaoId = GL30.glGenVertexArrays();
 
-		if (mVboId == -1)
+		if (mVboId == -1) {
 			mVboId = GL15.glGenBuffers();
+			Debug.debugManager().logger().i(getClass().getSimpleName(), "glGenBuffers: " + mVboId);
+		}
 
 		mBuffer = MemoryUtil.memAllocFloat(MAX_LINES * NUM_VERTS_PER_LINE * VertexDataStructurePC.stride);
 
@@ -113,8 +116,7 @@ public class PolyBatch {
 		if (mBuffer != null) {
 			mBuffer.clear();
 			MemoryUtil.memFree(mBuffer);
-			mBuffer = null;
-			
+
 		}
 
 		mIsLoaded = false;

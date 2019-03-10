@@ -6,7 +6,6 @@ import java.nio.FloatBuffer;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
-import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.system.MemoryUtil;
 
@@ -204,14 +203,14 @@ public class RenderTarget {
 		if (!mIsLoaded)
 			return;
 
-		GL15.glDeleteBuffers(mFramebufferID);
+		GL30.glDeleteFramebuffers(mFramebufferID);
 		mFramebufferID = -1;
 
 		GL11.glDeleteTextures(mColorTextureID);
 		mColorTextureID = -1;
 
 		if (mDepthBufferEnabled) {
-			GL15.glDeleteBuffers(mDepthTextureID);
+			GL30.glDeleteFramebuffers(mDepthTextureID);
 			mDepthTextureID = -1;
 		}
 
