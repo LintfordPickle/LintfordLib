@@ -86,7 +86,7 @@ public class TextureBatch {
 	public boolean useCheckerPattern() {
 		return mUseCheckerPattern;
 	}
-	
+
 	public void useCheckerPattern(boolean pNewValue) {
 		mUseCheckerPattern = pNewValue;
 	}
@@ -160,19 +160,21 @@ public class TextureBatch {
 
 		mShader.unloadGLContent();
 
-		if (mVaoId > -1) {
-			GL30.glDeleteVertexArrays(mVaoId);
-			mVaoId = -1;
-
-		}
-
-		if (mVboId > -1) {
+		if (mVboId > -1)
 			GL15.glDeleteBuffers(mVboId);
-			mVboId = -1;
+
+		if (mVaoId > -1)
+			GL30.glDeleteVertexArrays(mVaoId);
+
+		mVboId = -1;
+		mVaoId = -1;
+
+		if (mBuffer != null) {
+			mBuffer.clear();
+			MemoryUtil.memFree(mBuffer);
+			mBuffer = null;
 
 		}
-
-		MemoryUtil.memFree(mBuffer);
 
 		mIsLoaded = false;
 
@@ -197,9 +199,9 @@ public class TextureBatch {
 		mCurrentTexID = -1;
 		mCamera = pCamera;
 
-		if(mBuffer != null)
+		if (mBuffer != null)
 			mBuffer.clear();
-		
+
 		mVertexCount = 0;
 		mCurNumSprites = 0;
 		mIsDrawing = true;

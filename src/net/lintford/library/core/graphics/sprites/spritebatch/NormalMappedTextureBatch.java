@@ -79,10 +79,14 @@ public class NormalMappedTextureBatch {
 	}
 
 	public void unloadGLContent() {
-		if (mVboId > -1)
+		if (mVboId > -1) {
 			GL15.glDeleteBuffers(mVboId);
+		}
+		
+		mVboId = -1;
 
 		if (mBuffer != null) {
+			mBuffer.clear();
 			MemoryUtil.memFree(mBuffer);
 			mBuffer = null;
 

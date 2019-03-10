@@ -96,22 +96,21 @@ public class PointBatch {
 
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
 
-		if (mVaoId > -1) {
-			GL30.glDeleteVertexArrays(mVaoId);
-
-		}
-
-		if (mVboId > -1) {
+		if (mVboId > -1)
 			GL15.glDeleteBuffers(mVboId);
 
-		}
+		if (mVaoId > -1)
+			GL30.glDeleteVertexArrays(mVaoId);
 
 		mVaoId = -1;
 		mVboId = -1;
 
-		MemoryUtil.memFree(mBuffer);
-		mBuffer.clear();
-		mBuffer = null;
+		if (mBuffer != null) {
+			mBuffer.clear();
+			MemoryUtil.memFree(mBuffer);
+			mBuffer = null;
+
+		}
 
 		mIsLoaded = false;
 

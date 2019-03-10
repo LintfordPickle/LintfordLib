@@ -11,6 +11,7 @@ import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 import static org.lwjgl.opengl.GL11.glClearColor;
 
+import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 
 import net.lintford.library.ConstantsTable;
@@ -443,6 +444,11 @@ public abstract class LintfordCore {
 	/**
 	 */
 	protected void onHandleInput() {
+		if (mInputState.keyDownTimed(GLFW.GLFW_KEY_F12)) {
+			mResourceManager.mTextureManager.dumpTextureInformation();
+
+		}
+
 		mInputState.update(this);
 		Debug.debugManager().handleInput(this);
 		mHUD.handleInput(this);

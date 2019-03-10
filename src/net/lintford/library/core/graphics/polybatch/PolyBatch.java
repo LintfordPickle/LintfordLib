@@ -110,7 +110,12 @@ public class PolyBatch {
 		mVaoId = -1;
 		mVboId = -1;
 
-		MemoryUtil.memFree(mBuffer);
+		if (mBuffer != null) {
+			mBuffer.clear();
+			MemoryUtil.memFree(mBuffer);
+			mBuffer = null;
+			
+		}
 
 		mIsLoaded = false;
 

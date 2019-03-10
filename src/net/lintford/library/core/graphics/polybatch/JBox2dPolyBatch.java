@@ -136,11 +136,11 @@ public class JBox2dPolyBatch {
 
 		mShader.unloadGLContent();
 
-		if (mVaoId > -1)
-			GL30.glDeleteVertexArrays(mVaoId);
-
 		if (mVboId > -1)
 			GL15.glDeleteBuffers(mVboId);
+
+		if (mVaoId > -1)
+			GL30.glDeleteVertexArrays(mVaoId);
 
 		mVaoId = -1;
 		mVboId = -1;

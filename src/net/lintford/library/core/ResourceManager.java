@@ -152,6 +152,7 @@ public class ResourceManager {
 		// TODO: GeometryManager
 
 		mIsLoaded = true;
+		
 	}
 
 	public void unloadContent() {
@@ -161,6 +162,7 @@ public class ResourceManager {
 		mPObjectManager.unloadGLContent();
 
 		mIsLoaded = false;
+		
 	}
 
 	public void update(LintfordCore pCore) {

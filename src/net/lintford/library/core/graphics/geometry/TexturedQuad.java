@@ -136,17 +136,14 @@ public class TexturedQuad {
 	}
 
 	public void cleanup() {
-		if (mVaoId > -1) {
-			GL30.glDeleteVertexArrays(mVaoId);
-			mVaoId = -1;
-
-		}
-
-		if (mVboId > -1) {
+		if (mVboId > -1)
 			GL15.glDeleteBuffers(mVboId);
-			mVboId = -1;
 
-		}
+		if (mVaoId > -1)
+			GL30.glDeleteVertexArrays(mVaoId);
+
+		mVaoId = -1;
+		mVboId = -1;
 
 	}
 
