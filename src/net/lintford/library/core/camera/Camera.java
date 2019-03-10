@@ -250,6 +250,7 @@ public class Camera implements ICamera {
 
 	}
 
+	@Override
 	public void applyGameViewport() {
 		GL11.glViewport(0, 0, mWindowWidth, mWindowHeight);
 

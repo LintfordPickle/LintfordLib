@@ -116,6 +116,11 @@ public interface ICamera {
 		public void setCameraState(CameraState pCameraState) {
 
 		}
+		
+		@Override
+		public void applyGameViewport() {
+			
+		}
 
 	};
 
@@ -168,5 +173,7 @@ public interface ICamera {
 	public abstract float getPointWorldSpaceX(float pPointX);
 
 	public abstract float getPointCameraSpaceY(float pPointY);
+
+	public abstract void applyGameViewport();
 
 }

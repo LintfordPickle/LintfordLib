@@ -1,5 +1,7 @@
 package net.lintford.library.core.camera;
 
+import org.lwjgl.opengl.GL11;
+
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.maths.Matrix4f;
@@ -36,8 +38,8 @@ public class HUD implements ICamera, IResizeListener {
 
 	/** The width of the window. */
 	/** The height of the window. */
-	private float mWindowWidth;
-	private float mWindowHeight;
+	private int mWindowWidth;
+	private int mWindowHeight;
 
 	private Matrix4f mProjectionMatrix;
 	private Matrix4f mViewMatrix;
@@ -168,6 +170,8 @@ public class HUD implements ICamera, IResizeListener {
 		mBoundingRectangle.setWidth(mWindowWidth);
 		mBoundingRectangle.setHeight(mWindowHeight);
 
+		applyGameViewport();
+
 	}
 
 	// --------------------------------------
@@ -263,6 +267,11 @@ public class HUD implements ICamera, IResizeListener {
 
 	@Override
 	public void setCameraState(CameraState pCameraState) {
+
+	}
+
+	public void applyGameViewport() {
+		GL11.glViewport(0, 0, mWindowWidth, mWindowHeight);
 
 	}
 
