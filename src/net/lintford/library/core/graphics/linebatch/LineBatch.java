@@ -118,7 +118,7 @@ public class LineBatch {
 	}
 
 	public void unloadGLContent() {
-		if (mIsLoaded)
+		if (!mIsLoaded)
 			return;
 
 		mShader.unloadGLContent();

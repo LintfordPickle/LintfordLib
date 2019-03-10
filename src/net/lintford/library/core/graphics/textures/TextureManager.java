@@ -210,6 +210,28 @@ public class TextureManager extends EntityGroupManager {
 	}
 
 	public void unloadGLContent() {
+		if (!mIsLoaded)
+			return;
+
+		Map<Integer, TextureGroup> map = mTextureGroupMap;
+		for (Map.Entry<Integer, TextureGroup> entry : map.entrySet()) {
+
+			Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("TextureGroup %s (%d)..", entry.getValue().name, entry.getValue().entityGroupID));
+
+			TextureGroup lTextureGroup = entry.getValue();
+
+			Map<String, Texture> lGroupMap = lTextureGroup.textureMap();
+			for (Map.Entry<String, Texture> lTexture : lGroupMap.entrySet()) {
+
+				Texture.unloadTexture(lTexture.getValue());
+
+			}
+			
+			lGroupMap.clear();
+
+		}
+		mTextureGroupMap.clear();
+
 		mIsLoaded = false;
 
 	}

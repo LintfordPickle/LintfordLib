@@ -203,6 +203,13 @@ public class RenderTarget {
 		if (!mIsLoaded)
 			return;
 
+		// Delete float buffer
+		if(mTextureBufferData != null) {
+			mTextureBufferData.clear();
+			MemoryUtil.memFree(mTextureBufferData);
+			
+		}
+		
 		GL30.glDeleteFramebuffers(mFramebufferID);
 		mFramebufferID = -1;
 

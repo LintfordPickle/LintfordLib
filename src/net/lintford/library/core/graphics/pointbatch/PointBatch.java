@@ -89,7 +89,7 @@ public class PointBatch {
 	}
 
 	public void unloadGLContent() {
-		if (mIsLoaded)
+		if (!mIsLoaded)
 			return;
 
 		mShader.unloadGLContent();

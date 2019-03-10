@@ -99,7 +99,7 @@ public class PolyBatch {
 	}
 
 	public void unloadGLContent() {
-		if (mIsLoaded)
+		if (!mIsLoaded)
 			return;
 
 		mShader.unloadGLContent();

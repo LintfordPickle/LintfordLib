@@ -293,13 +293,20 @@ public class FontManager extends EntityGroupManager {
 	}
 
 	public void unloadGLContent() {
-		FontGroup coreFonts = mFontGroupMap.get(LintfordCore.CORE_ENTITY_GROUP_ID);
+		Map<Integer, FontGroup> map = mFontGroupMap;
+		for (Map.Entry<Integer, FontGroup> entry : map.entrySet()) {
 
-		if (coreFonts != null) {
-			for (FontUnit lFont : coreFonts.mFontMap.values()) {
-				lFont.unloadGLContent();
+			Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("TextureGroup %s (%d)..", entry.getValue().name, entry.getValue().entityGroupID));
+
+			FontGroup lFontGroup = entry.getValue();
+
+			Map<String, FontUnit> lGroupMap = lFontGroup.fontMap();
+			for (Map.Entry<String, FontUnit> lFontUnit : lGroupMap.entrySet()) {
+				lFontUnit.getValue().unloadGLContent();
 
 			}
+
+			lGroupMap.clear();
 
 		}
 
