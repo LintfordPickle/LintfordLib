@@ -511,4 +511,24 @@ public class TextureManager extends EntityGroupManager {
 		}
 	}
 
+	public void dumpTextureInformation() {
+
+		Map<Integer, TextureGroup> map = mTextureGroupMap;
+		for (Map.Entry<Integer, TextureGroup> entry : map.entrySet()) {
+
+			Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("TextureGroup %s (%d)..", entry.getValue().name, entry.getValue().entityGroupID));
+
+			TextureGroup lTextureGroup = entry.getValue();
+
+			Map<String, Texture> lGroupMap = lTextureGroup.textureMap();
+			for (Map.Entry<String, Texture> lTexture : lGroupMap.entrySet()) {
+
+				Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("  Texture %s (%d)", lTexture.getValue().name(), lTexture.getValue().getTextureID()));
+
+			}
+
+		}
+
+	}
+
 }
