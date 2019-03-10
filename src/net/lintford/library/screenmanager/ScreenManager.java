@@ -149,7 +149,7 @@ public class ScreenManager {
 			// Only allow keyboard and mouse input if we are on the top screen
 
 			if (lScreen.screenState() == ScreenState.TransitionOn || lScreen.screenState() == ScreenState.Active) {
-				lScreen.handleInput(pCore, true, true);
+				lScreen.handleInput(pCore, true, i == lScreenCount);
 
 			}
 
