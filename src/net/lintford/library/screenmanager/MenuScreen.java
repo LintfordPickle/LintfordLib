@@ -485,6 +485,9 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		if (pLayoutList == null || pLayoutList.size() == 0)
 			return;
 
+		if(mRendererManager == null)
+			return;
+		
 		UIHUDStructureController lHUDController = mRendererManager.uiHUDController();
 
 		final int lLeftLayoutCount = pLayoutList.size();

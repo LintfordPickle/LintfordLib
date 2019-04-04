@@ -15,6 +15,7 @@ import net.lintford.library.core.maths.Vector2f;
 import net.lintford.library.renderers.windows.components.IScrollBarArea;
 import net.lintford.library.renderers.windows.components.ScrollBar;
 import net.lintford.library.renderers.windows.components.ScrollBarContentRectangle;
+import net.lintford.library.screenmanager.IListBoxItemSelected;
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.Screen;
 import net.lintford.library.screenmanager.ScreenManager;
@@ -43,6 +44,7 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 	protected float mYScrollPos;
 	protected float mLastMouseYPos;
 	protected boolean mScrollBarsEnabled;
+	protected IListBoxItemSelected mSelecterListener;
 
 	protected int mSelectedItem = -1;
 
@@ -57,6 +59,12 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 	}
 
 	public void selectedIndex(int i) {
+		if (mSelecterListener != null && (i >= 0 && i < mItems.size())) {
+			ListBoxItem litem = mItems.get(i);
+			mSelecterListener.onListBoxItemSelected(litem, i);
+
+		}
+
 		mSelectedItem = i;
 	}
 
@@ -120,6 +128,11 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 			return false;
 		}
 
+		if (mScrollBar.handleInput(pCore)) {
+			mClickActive = false;
+			return true;
+		}
+		
 		for (int i = 0; i < mItems.size(); i++) {
 			boolean lResult = mItems.get(i).handleInput(pCore);
 			// Was this item clicked on?
@@ -127,14 +140,9 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 				return true;
 			}
 
-			if (pCore.input().mouseLeftClick()) {
+			if (pCore.input().isMouseTimedLeftClickAvailable()) {
 				mSelectedItem = -1;
 			}
-		}
-
-		if (mScrollBar.handleInput(pCore)) {
-			mClickActive = false;
-			return true;
 		}
 
 		if (!pCore.input().mouseLeftClick()) {
@@ -189,12 +197,15 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 		super.updateStructure();
 
 		// Fill the width and height of the parent layout
-		w = mParentLayout.w - marginLeft() - marginRight();
-//		if (mParentLayout.fillType() == FILL_TYPE.DYNAMIC)
-//			h = mParentLayout.h - marginTop() - marginBottom();
-//		else
-//			h = Math.min(LISTBOX_HEIGHT, (mItems.size() > 0 ? mItems.size() : 10f) * 70f);
+		if (mScrollBarsEnabled) {
+			w = mParentLayout.w - marginLeft() - marginRight();
 
+		} else {
+			w = mParentLayout.w - marginLeft() - marginRight();
+
+		}
+
+		// Need to take the margins into consideration when setting the height of this component
 		h = mParentLayout.h - marginTop() - marginBottom();
 
 	}
@@ -211,9 +222,12 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 		for (int i = 0; i < lCount; i++) {
 			ListBoxItem lItem = mItems.get(i);
 
-			lItem.w = 550;
+			// We need an innerpadding for the case when the scrollbar is enabled. In that case
+			// we narrow the size of the WorldListItem.
+			final float lInnerPadding = mScrollBarsEnabled ? 25 : 0;
+			mItems.get(i).w = w - marginLeft() - marginRight() - lInnerPadding;
 
-			mItems.get(i).x = x + w / 2 - lItem.w / 2;
+			mItems.get(i).x = x + marginLeft();
 			mItems.get(i).y = y + 15f + mYScrollPos + mItemYPos;
 
 			mItemYPos += lItem.h + LISTBOX_ITEM_VPADDING;
@@ -235,19 +249,22 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 
 		TextureBatch lTextureBatch = mParentLayout.parentScreen().rendererManager().uiTextureBatch();
 
-		lTextureBatch.begin(pCore.HUD());
-		lTextureBatch.draw(mUITexture, 448, 64, TILE_SIZE, TILE_SIZE, x, y, TILE_SIZE, TILE_SIZE, pParentZDepth, 1, 1, 1, 0.85f);
-		lTextureBatch.draw(mUITexture, 480, 64, TILE_SIZE, TILE_SIZE, x + TILE_SIZE, y, w - 64, TILE_SIZE, pParentZDepth, 1, 1, 1, 0.85f);
-		lTextureBatch.draw(mUITexture, 512, 64, TILE_SIZE, TILE_SIZE, x + w - 32, y, TILE_SIZE, TILE_SIZE, pParentZDepth, 1, 1, 1, 0.85f);
+		if (mDrawBackground) {
+			lTextureBatch.begin(pCore.HUD());
+			lTextureBatch.draw(mUITexture, 448, 64, TILE_SIZE, TILE_SIZE, x, y, TILE_SIZE, TILE_SIZE, pParentZDepth, 1, 1, 1, 0.85f);
+			lTextureBatch.draw(mUITexture, 480, 64, TILE_SIZE, TILE_SIZE, x + TILE_SIZE, y, w - 64, TILE_SIZE, pParentZDepth, 1, 1, 1, 0.85f);
+			lTextureBatch.draw(mUITexture, 512, 64, TILE_SIZE, TILE_SIZE, x + w - 32, y, TILE_SIZE, TILE_SIZE, pParentZDepth, 1, 1, 1, 0.85f);
 
-		lTextureBatch.draw(mUITexture, 448, 96, TILE_SIZE, TILE_SIZE, x, y + 32, TILE_SIZE, h - 64, pParentZDepth, 1, 1, 1, 0.85f);
-		lTextureBatch.draw(mUITexture, 480, 96, TILE_SIZE, TILE_SIZE, x + TILE_SIZE, y + 32, w - 64, h - 64, pParentZDepth, 1, 1, 1, 0.85f);
-		lTextureBatch.draw(mUITexture, 512, 96, TILE_SIZE, TILE_SIZE, x + w - 32, y + 32, TILE_SIZE, h - 64, pParentZDepth, 1, 1, 1, 0.85f);
+			lTextureBatch.draw(mUITexture, 448, 96, TILE_SIZE, TILE_SIZE, x, y + 32, TILE_SIZE, h - 64, pParentZDepth, 1, 1, 1, 0.85f);
+			lTextureBatch.draw(mUITexture, 480, 96, TILE_SIZE, TILE_SIZE, x + TILE_SIZE, y + 32, w - 64, h - 64, pParentZDepth, 1, 1, 1, 0.85f);
+			lTextureBatch.draw(mUITexture, 512, 96, TILE_SIZE, TILE_SIZE, x + w - 32, y + 32, TILE_SIZE, h - 64, pParentZDepth, 1, 1, 1, 0.85f);
 
-		lTextureBatch.draw(mUITexture, 448, 128, TILE_SIZE, TILE_SIZE, x, y + h - 32, TILE_SIZE, TILE_SIZE, pParentZDepth, 1, 1, 1, 0.85f);
-		lTextureBatch.draw(mUITexture, 480, 128, TILE_SIZE, TILE_SIZE, x + TILE_SIZE, y + h - 32, w - 64, TILE_SIZE, pParentZDepth, 1, 1, 1, 0.85f);
-		lTextureBatch.draw(mUITexture, 512, 128, TILE_SIZE, TILE_SIZE, x + w - 32, y + h - 32, TILE_SIZE, TILE_SIZE, pParentZDepth, 1, 1, 1, 0.85f);
-		lTextureBatch.end();
+			lTextureBatch.draw(mUITexture, 448, 128, TILE_SIZE, TILE_SIZE, x, y + h - 32, TILE_SIZE, TILE_SIZE, pParentZDepth, 1, 1, 1, 0.85f);
+			lTextureBatch.draw(mUITexture, 480, 128, TILE_SIZE, TILE_SIZE, x + TILE_SIZE, y + h - 32, w - 64, TILE_SIZE, pParentZDepth, 1, 1, 1, 0.85f);
+			lTextureBatch.draw(mUITexture, 512, 128, TILE_SIZE, TILE_SIZE, x + w - 32, y + h - 32, TILE_SIZE, TILE_SIZE, pParentZDepth, 1, 1, 1, 0.85f);
+			lTextureBatch.end();
+
+		}
 
 		// We need to use a stencil buffer to clip the list box items (which, when scrolling, could appear out-of-bounds of the listbox).
 		GL11.glEnable(GL11.GL_STENCIL_TEST);
@@ -259,10 +276,8 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 		// Make sure we are starting with a fresh stencil buffer
 		GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT); // Clear the stencil buffer
 
-		final float DEPTH_PADDING = 6f;
-
 		lTextureBatch.begin(pCore.HUD());
-		lTextureBatch.draw(mUITexture, 32, 0, 32, 32, x + DEPTH_PADDING, y + DEPTH_PADDING, w - DEPTH_PADDING * 2, h - DEPTH_PADDING * 2, pParentZDepth, 1, 1, 1, 0f);
+		lTextureBatch.draw(mUITexture, 32, 0, 32, 32, x, y + marginTop(), w, h - marginBottom(), pParentZDepth, 1, 1, 1, 0f);
 		lTextureBatch.end();
 
 		// Start the stencil buffer test to filter out everything outside of the scroll view
@@ -325,6 +340,11 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 
 	public void clearListBox() {
 		mItems.clear();
+
+	}
+
+	public void setItemSelectedListener(IListBoxItemSelected pItem) {
+		mSelecterListener = pItem;
 
 	}
 
