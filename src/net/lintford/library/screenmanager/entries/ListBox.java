@@ -132,7 +132,7 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 			mClickActive = false;
 			return true;
 		}
-		
+
 		for (int i = 0; i < mItems.size(); i++) {
 			boolean lResult = mItems.get(i).handleInput(pCore);
 			// Was this item clicked on?
@@ -277,7 +277,7 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 		GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT); // Clear the stencil buffer
 
 		lTextureBatch.begin(pCore.HUD());
-		lTextureBatch.draw(mUITexture, 32, 0, 32, 32, x, y + marginTop(), w, h - marginBottom(), pParentZDepth, 1, 1, 1, 0f);
+		lTextureBatch.draw(mUITexture, 32, 0, 32, 32, x, y + marginTop(), w, h - marginTop() - marginBottom(), pParentZDepth, 1, 1, 1, 0f);
 		lTextureBatch.end();
 
 		// Start the stencil buffer test to filter out everything outside of the scroll view
@@ -377,6 +377,17 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 	@Override
 	public ScrollBarContentRectangle fullContentArea() {
 		return mContentArea;
+	}
+
+	@Override
+	public void onViewportChange(float pWidth, float pHeight) {
+		super.onViewportChange(pWidth, pHeight);
+
+		if (mScrollBar != null) {
+			mScrollBar.resetBarTop();
+
+		}
+
 	}
 
 }

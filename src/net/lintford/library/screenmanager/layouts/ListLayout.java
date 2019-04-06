@@ -72,7 +72,7 @@ public class ListLayout extends BaseLayout {
 			lEntry.y = lYPos;
 
 			lYPos += lEntry.marginTop();
-			lYPos += lEntry.h;
+			lYPos += lEntry.height();
 			lYPos += lEntry.marginBottom();
 
 		}

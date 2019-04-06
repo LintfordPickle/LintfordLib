@@ -1,6 +1,7 @@
 package net.lintford.library.screenmanager.entries;
 
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 import net.lintford.library.screenmanager.MenuEntry;
@@ -14,28 +15,41 @@ public class MenuImageEntry extends MenuEntry {
 
 	private static final long serialVersionUID = 4053035578493366108L;
 
+	private static final float DEFAULT_ASPECT_RATIO = 480f / 640f;
+
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
 	private LAYOUT_ALIGNMENT mAlignment = LAYOUT_ALIGNMENT.center;
-	private boolean mShow;
-	private float mR, mG, mB;
 
 	private float mForceHeight;
+	private float mFittedWidth;
+	private float mFittedHeight;
 
+	private float mDefaultWidth;
+	private boolean mScaleToFitParent;
+
+	private int mMaximumWidth = 640;
+
+	private Texture mUITexture;
 	private Texture mTexture;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
 
+	public void setMaximumImageWidth(int pWidthLimit) {
+		mMaximumWidth = pWidthLimit;
+
+	}
+
 	@Override
 	public float height() {
 		if (forceHeight() < 0)
-			return super.height();
+			return mFittedHeight;
 
-		return forceHeight();
+		return mFittedHeight;
 	}
 
 	public void forceHeight(float pNewValue) {
@@ -68,28 +82,6 @@ public class MenuImageEntry extends MenuEntry {
 		super.hasFocus(pNewValue);
 	}
 
-	public boolean show() {
-		return mShow;
-	}
-
-	public void show(boolean pNewValue) {
-		mShow = pNewValue;
-	}
-
-	public void label(String pNewLabel) {
-		mText = pNewLabel;
-	}
-
-	public String label() {
-		return mText;
-	}
-
-	public void labelColor(float pR, float pG, float pB) {
-		mR = pR;
-		mG = pG;
-		mB = pB;
-	}
-
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
@@ -98,12 +90,14 @@ public class MenuImageEntry extends MenuEntry {
 		super(pScreenManager, pParentLayout, "");
 
 		mText = "Add your message";
-		mShow = true;
-		mR = 1.0f;
-		mG = mB = 0.1f;
 
 		mCanHaveFocus = false;
 		mCanHoverOver = false;
+
+		mScaleToFitParent = true;
+
+		mLeftMargin = 20;
+		mRightMargin = 20;
 
 	}
 
@@ -121,6 +115,22 @@ public class MenuImageEntry extends MenuEntry {
 	}
 
 	@Override
+	public void loadGLContent(ResourceManager pResourceManager) {
+		super.loadGLContent(pResourceManager);
+
+		mUITexture = pResourceManager.textureManager().textureCore();
+
+	}
+
+	@Override
+	public void unloadGLContent() {
+		super.unloadGLContent();
+
+		mUITexture = null;
+
+	}
+
+	@Override
 	public void updateStructure() {
 		super.updateStructure();
 
@@ -131,12 +141,51 @@ public class MenuImageEntry extends MenuEntry {
 	@Override
 	public void update(LintfordCore pCore, MenuScreen pScreen, boolean pIsSelected) {
 		super.update(pCore, pScreen, pIsSelected);
-
 		if (mTexture != null) {
-			final int lTextureHeight = mTexture.getTextureHeight();
-			h = Math.min(mParentLayout.h - 20, lTextureHeight);
+			float lAR = (float) mTexture.getTextureHeight() / (float) mTexture.getTextureWidth();
+
+			float thMaxWidth = mMaxWidth;
+			if (mScaleToFitParent && lAR != 0) {
+				float thMaxHeight = mParentLayout.h - mParentLayout.marginBottom() - mParentLayout.marginTop();
+				thMaxWidth = thMaxHeight / lAR;
+
+			}
+
+			// limited by width
+			mFittedWidth = mTexture.getTextureWidth();
+
+			if (mFittedWidth > thMaxWidth)
+				mFittedWidth = thMaxWidth;
+
+			if (mFittedWidth > mMaximumWidth)
+				mFittedWidth = mMaximumWidth;
+
+			mFittedHeight = mFittedWidth * lAR;
+
+		} else {
+			mDefaultWidth = mParentLayout.w - marginLeft() - marginRight();
+
+			float thMaxWidth = mMaxWidth;
+			if (mScaleToFitParent && DEFAULT_ASPECT_RATIO != 0) {
+				float thMaxHeight = mParentLayout.h - mParentLayout.marginBottom() - mParentLayout.marginTop();
+				thMaxWidth = thMaxHeight / DEFAULT_ASPECT_RATIO;
+
+			}
+
+			mFittedWidth = mDefaultWidth;
+
+			if (mFittedWidth > thMaxWidth)
+				mFittedWidth = thMaxWidth;
+
+			if (mFittedWidth > mMaximumWidth)
+				mFittedWidth = mMaximumWidth;
+
+			mFittedHeight = mFittedWidth * DEFAULT_ASPECT_RATIO;
 
 		}
+
+		x = mParentLayout.x + mParentLayout.width() / 2f - mFittedWidth / 2;
+		h = mFittedHeight;
 
 	}
 
@@ -152,10 +201,13 @@ public class MenuImageEntry extends MenuEntry {
 			final int lTextureWidth = mTexture.getTextureWidth();
 			final int lTextureHeight = mTexture.getTextureHeight();
 
-			float lAspectRatio = (float) lTextureHeight / (float) lTextureWidth;
-			float lModWidth = h / lAspectRatio;
+			lTextureBatch.draw(mTexture, 0, 0, lTextureWidth, lTextureHeight, x, y, mFittedWidth, mFittedHeight, pParentZDepth + .1f, 1f, 1f, 1f, 1f);
 
-			lTextureBatch.draw(mTexture, 0, 0, lTextureWidth, lTextureHeight, centerX() - lModWidth / 2f, y, lModWidth, h, pParentZDepth + .1f, 1f, 1f, 1f, 1f);
+		}
+
+		// If the texture has not yet been loaded / set, and the draw background is enabled, then draw a filler
+		else if (mDrawBackground) {
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, x, y, mFittedWidth, mFittedHeight, pParentZDepth + .1f, 1f, 1f, 1f, 1f);
 
 		}
 

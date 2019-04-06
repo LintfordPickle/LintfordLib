@@ -485,9 +485,9 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		if (pLayoutList == null || pLayoutList.size() == 0)
 			return;
 
-		if(mRendererManager == null)
+		if (mRendererManager == null)
 			return;
-		
+
 		UIHUDStructureController lHUDController = mRendererManager.uiHUDController();
 
 		final int lLeftLayoutCount = pLayoutList.size();
@@ -561,6 +561,18 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 			lTop += lSizeOfEachFillElement + INNER_PADDING;
 
 		}
+	}
+
+	@Override
+	public void onViewportChange(float pWidth, float pHeight) {
+		super.onViewportChange(pWidth, pHeight);
+
+		final int lLayoutCount = mLayouts.size();
+		for (int i = 0; i < lLayoutCount; i++) {
+			mLayouts.get(i).onViewportChange(pWidth, pHeight);
+
+		}
+
 	}
 
 }

@@ -63,7 +63,7 @@ public class MenuInputEntry extends MenuEntry implements IBufferedInputCallback 
 		if (mInputField.length() > 0) {
 			mInputField.delete(0, mInputField.length());
 		}
-		if(pNewValue != null)
+		if (pNewValue != null)
 			mInputField.append(pNewValue);
 
 	}
@@ -149,6 +149,9 @@ public class MenuInputEntry extends MenuEntry implements IBufferedInputCallback 
 
 	@Override
 	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pParentZDepth) {
+		if (!mActive)
+			return;
+
 		super.draw(pCore, pScreen, pIsSelected, pParentZDepth);
 
 		final float luiTextScale = mScreenManager.UIHUDController().uiTextScaleFactor();

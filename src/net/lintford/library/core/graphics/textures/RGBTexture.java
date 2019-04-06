@@ -3,12 +3,6 @@ package net.lintford.library.core.graphics.textures;
 public class RGBTexture {
 
 	// --------------------------------------
-	// Constants
-	// --------------------------------------
-
-	public static final String THUMB_FILENAME = "preview.png";
-
-	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
@@ -56,8 +50,8 @@ public class RGBTexture {
 	}
 
 	/** pSaveLocation is the path NOT including the filename */
-	public void saveToDisk(String pSaveLocation) {
-		Texture.saveTextureToFile(mWidth, mHeight, mColorData, pSaveLocation + System.getProperty("file.separator") + THUMB_FILENAME);
+	public void saveToDisk(String pSaveLocation, String pFilename) {
+		Texture.saveTextureToFile(mWidth, mHeight, mColorData, pSaveLocation + System.getProperty("file.separator") + pFilename);
 
 	}
 

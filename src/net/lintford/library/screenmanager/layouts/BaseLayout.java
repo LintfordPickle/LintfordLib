@@ -296,8 +296,9 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 		mContentArea.w = w;
 		mContentArea.h = getEntryHeight();
 
-		mScrollBar.update(pCore);
 		mScrollBarsEnabled = mContentArea.h - h > 0;
+		if (mScrollBarsEnabled)
+			mScrollBar.update(pCore);
 
 	}
 
@@ -560,6 +561,19 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 	@Override
 	public ScrollBarContentRectangle fullContentArea() {
 		return mContentArea;
+	}
+
+	// --------------------------------------
+	// Events
+	// --------------------------------------
+
+	public void onViewportChange(float pWidth, float pHeight) {
+		final int lLayoutCount = mMenuEntries.size();
+		for (int i = 0; i < lLayoutCount; i++) {
+			mMenuEntries.get(i).onViewportChange(pWidth, pHeight);
+
+		}
+
 	}
 
 }

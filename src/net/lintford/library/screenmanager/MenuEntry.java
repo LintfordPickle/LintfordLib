@@ -328,6 +328,8 @@ public class MenuEntry extends Rectangle {
 
 		mTopMargin = 3f;
 		mBottomMargin = 3f;
+		mLeftMargin = 2f;
+		mRightMargin = 2f;
 
 		mMaxWidth = MENUENTRY_DEF_BUTTON_WIDTH;
 		mMaxHeight = MENUENTRY_DEF_BUTTON_HEIGHT;
@@ -571,6 +573,10 @@ public class MenuEntry extends Rectangle {
 
 		// Play a button click animation, then call the listeners
 		mClickListener.menuEntryOnClick(pInputState, mMenuEntryID);
+
+	}
+
+	public void onViewportChange(float pWidth, float pHeight) {
 
 	}
 

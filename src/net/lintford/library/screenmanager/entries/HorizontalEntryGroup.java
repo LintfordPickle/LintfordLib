@@ -140,7 +140,7 @@ public class HorizontalEntryGroup extends MenuEntry {
 		int lCount = mChildEntries.size();
 		for (int i = 0; i < lCount; i++) {
 			mChildEntries.get(i).updateStructure();
-			
+
 		}
 	}
 

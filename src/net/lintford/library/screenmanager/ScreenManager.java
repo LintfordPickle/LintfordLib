@@ -8,6 +8,7 @@ import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.debug.GLDebug;
 import net.lintford.library.core.graphics.fonts.FontManager;
+import net.lintford.library.options.IResizeListener;
 import net.lintford.library.screenmanager.Screen.ScreenState;
 import net.lintford.library.screenmanager.toast.ToastManager;
 
@@ -28,6 +29,7 @@ public class ScreenManager {
 	private boolean mIsLoaded;
 	private int mScreenCounter;
 	private UIHUDStructureController mUIHUDController;
+	private IResizeListener mResizeListener;
 
 	// --------------------------------------
 	// Properties
@@ -113,6 +115,19 @@ public class ScreenManager {
 
 		mToolTip.loadGLContent(pResourceManager);
 		mToastManager.loadGLContent(pResourceManager);
+
+		// Add a viewport listener so the screenmanager screens can react to changes in window size
+		mResizeListener = new IResizeListener() {
+
+			@Override
+			public void onResize(final int pWidth, final int pHeight) {
+				onViewportChanged(pWidth, pHeight);
+
+			}
+
+		};
+
+		core().config().display().addResizeListener(mResizeListener);
 
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "Finished loadingGLContent");
 		GLDebug.checkGLErrorsException(getClass().getSimpleName());
@@ -303,6 +318,15 @@ public class ScreenManager {
 
 	public void exitGame() {
 		mLWJGLCore.closeApp();
+
+	}
+
+	public void onViewportChanged(float pWidth, float pHeight) {
+		final int lScreenCount = mScreens.size();
+		for (int i = 0; i < lScreenCount; i++) {
+			mScreens.get(i).onViewportChange(pWidth, pHeight);
+
+		}
 
 	}
 

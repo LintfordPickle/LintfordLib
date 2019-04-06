@@ -307,4 +307,9 @@ public abstract class Screen {
 
 	}
 
+	/** Called when the size of the viewport is changed. */
+	public void onViewportChange(float pWidth, float pHeight) {
+
+	}
+
 }
