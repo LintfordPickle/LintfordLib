@@ -2,6 +2,7 @@ package net.lintford.library.screenmanager.entries;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
+import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 import net.lintford.library.screenmanager.MenuEntry;
@@ -35,9 +36,26 @@ public class MenuImageEntry extends MenuEntry {
 	private Texture mUITexture;
 	private Texture mTexture;
 
+	private boolean mShowMissingTextureText;
+	private String mMissingTextureText;
+
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public void setMissingTexturetext(String pText) {
+		if (pText == null || pText.length() == 0) {
+			mMissingTextureText = "";
+			mShowMissingTextureText = false;
+
+			return;
+
+		}
+
+		mMissingTextureText = pText;
+		mShowMissingTextureText = true;
+
+	}
 
 	public void setMaximumImageWidth(int pWidthLimit) {
 		mMaximumWidth = pWidthLimit;
@@ -203,8 +221,16 @@ public class MenuImageEntry extends MenuEntry {
 
 			lTextureBatch.draw(mTexture, 0, 0, lTextureWidth, lTextureHeight, x, y, mFittedWidth, mFittedHeight, pParentZDepth + .1f, 1f, 1f, 1f, 1f);
 
-		}
+		} else if (mShowMissingTextureText) {
+			final FontUnit lFontUnit = lParentScreen.rendererManager().textFont();
 
+			final float lTextWidth = lFontUnit.bitmap().getStringWidth(mMissingTextureText);
+
+			lFontUnit.begin(pCore.HUD());
+			lFontUnit.draw(mMissingTextureText, x + mFittedWidth / 2f - lTextWidth / 2f, y + mFittedHeight / 2, 1f);
+			lFontUnit.end();
+
+		}
 		// If the texture has not yet been loaded / set, and the draw background is enabled, then draw a filler
 		else if (mDrawBackground) {
 			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, x, y, mFittedWidth, mFittedHeight, pParentZDepth + .1f, 1f, 1f, 1f, 1f);

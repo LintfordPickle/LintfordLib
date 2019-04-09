@@ -74,9 +74,16 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 	protected boolean mEnabled;
 	protected boolean mVisible; // ony affects drawing
 
+	protected float mEntryOffsetFromTop;
+
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public void setEntryOffsetY(float pNewOffset) {
+		mEntryOffsetFromTop = pNewOffset;
+
+	}
 
 	public LAYOUT_FILL_TYPE layoutFillType() {
 		return mFillType;

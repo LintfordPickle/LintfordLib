@@ -46,7 +46,7 @@ public class ListLayout extends BaseLayout {
 	public void updateStructure() {
 		super.updateStructure();
 
-		float lYPos = y + mYScrollPos;
+		float lYPos = y + mEntryOffsetFromTop + mYScrollPos;
 
 		if (mContentArea.h < h) {
 			mYScrollPos = 0;
