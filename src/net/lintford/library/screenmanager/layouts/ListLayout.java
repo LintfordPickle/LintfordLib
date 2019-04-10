@@ -1,5 +1,7 @@
 package net.lintford.library.screenmanager.layouts;
 
+import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.input.InputState.INPUT_TYPES;
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
 
@@ -41,6 +43,22 @@ public class ListLayout extends BaseLayout {
 	// --------------------------------------
 	// Core-Methods
 	// --------------------------------------
+
+	@Override
+	public boolean handleInput(LintfordCore pCore) {
+
+		if (intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().lastInputActive() == INPUT_TYPES.Mouse) {
+
+			if (super.handleInput(pCore) || pCore.input().isMouseTimedLeftClickAvailable()) {
+				pCore.input().setLeftMouseClickHandled();
+				return true;
+			}
+
+		}
+
+		return false;
+
+	}
 
 	@Override
 	public void updateStructure() {
