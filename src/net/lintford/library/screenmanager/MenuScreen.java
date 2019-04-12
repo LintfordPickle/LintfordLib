@@ -89,6 +89,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	// Variables
 	// --------------------------------------
 
+	protected List<MenuEntry> mFloatingEntries;
 	protected List<BaseLayout> mLayouts;
 	protected ListLayout mFooterLayout;
 
@@ -136,6 +137,10 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		return mLayouts;
 	}
 
+	protected List<MenuEntry> floatingEntries() {
+		return mFloatingEntries;
+	}
+
 	protected ListLayout footerLayout() {
 		return mFooterLayout;
 	}
@@ -166,6 +171,8 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		mLayouts = new ArrayList<>();
 		mFooterLayout = new ListLayout(this);
 
+		mFloatingEntries = new ArrayList<>();
+
 		mShowInBackground = false;
 
 		mMenuTitle = pMenuTitle;
@@ -194,6 +201,13 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 			mLayouts.get(i).initialise();
 		}
 
+		int lFloatingCount = mFloatingEntries.size();
+		for (int i = 0; i < lFloatingCount; i++) {
+			MenuEntry lFloatingEntry = mFloatingEntries.get(i);
+			lFloatingEntry.initialise();
+
+		}
+
 		footerLayout().initialise();
 
 	}
@@ -211,6 +225,13 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 			mLayouts.get(i).loadGLContent(pResourceManager);
 		}
 
+		int lFloatingCount = mFloatingEntries.size();
+		for (int i = 0; i < lFloatingCount; i++) {
+			MenuEntry lFloatingEntry = mFloatingEntries.get(i);
+			lFloatingEntry.loadGLContent(pResourceManager);
+
+		}
+
 		footerLayout().loadGLContent(pResourceManager);
 
 	}
@@ -222,6 +243,13 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		final int lCount = layouts().size();
 		for (int i = 0; i < lCount; i++) {
 			mLayouts.get(i).unloadGLContent();
+
+		}
+
+		int lFloatingCount = mFloatingEntries.size();
+		for (int i = 0; i < lFloatingCount; i++) {
+			MenuEntry lFloatingEntry = mFloatingEntries.get(i);
+			lFloatingEntry.unloadGLContent();
 
 		}
 
@@ -307,6 +335,13 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 		footerLayout().handleInput(pCore);
 
+		int lFloatingCount = mFloatingEntries.size();
+		for (int i = 0; i < lFloatingCount; i++) {
+			MenuEntry lFloatingEntry = mFloatingEntries.get(i);
+			lFloatingEntry.handleInput(pCore);
+
+		}
+
 		// Process Mouse input
 		int lLayoutCount = mLayouts.size();
 		for (int i = 0; i < lLayoutCount; i++) {
@@ -333,6 +368,13 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 			handleOnClick();
 			mClickAction.setNewClick(-1);
 			return;
+
+		}
+
+		int lFloatingCount = mFloatingEntries.size();
+		for (int i = 0; i < lFloatingCount; i++) {
+			MenuEntry lFloatingEntry = mFloatingEntries.get(i);
+			lFloatingEntry.update(pCore, this, false);
 
 		}
 
@@ -410,6 +452,13 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		}
 
 		footerLayout().draw(pCore, MENUSCREEN_Z_DEPTH + (1 * 0.001f));
+
+		int lFloatingCount = mFloatingEntries.size();
+		for (int i = 0; i < lFloatingCount; i++) {
+			MenuEntry lFloatingEntry = mFloatingEntries.get(i);
+			lFloatingEntry.draw(pCore, this, false, MENUSCREEN_Z_DEPTH + (i * 0.001f));
+
+		}
 
 	}
 
