@@ -7,7 +7,6 @@ import org.lwjgl.glfw.GLFWVidMode;
 import net.lintford.library.options.DisplayManager;
 import net.lintford.library.options.VideoSettings;
 import net.lintford.library.screenmanager.MenuEntry;
-import net.lintford.library.screenmanager.MenuEntry.BUTTON_SIZE;
 import net.lintford.library.screenmanager.MenuEntry.ENTRY_ALIGNMENT;
 import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.ScreenManager;
@@ -110,10 +109,8 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 		HorizontalEntryGroup lGroup = new HorizontalEntryGroup(pScreenManager, footerLayout());
 
 		MenuEntry lBackButton = new MenuEntry(pScreenManager, footerLayout(), "Back");
-		lBackButton.buttonSize(BUTTON_SIZE.narrow);
 		lBackButton.registerClickListener(this, BUTTON_CANCEL_CHANGES);
 		mApplyButton = new MenuEntry(pScreenManager, footerLayout(), "Apply");
-		mApplyButton.buttonSize(BUTTON_SIZE.narrow);
 		mApplyButton.registerClickListener(this, BUTTON_APPLY_CHANGES);
 		mApplyButton.enabled(false);
 
@@ -133,7 +130,7 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 	// --------------------------------------
 	// Helper-Methods
 	// --------------------------------------
-	
+
 	private void createVideoSection(BaseLayout lLayout) {
 		MenuLabelEntry lVideoOptionsTitle = new MenuLabelEntry(mScreenManager, lLayout);
 		lVideoOptionsTitle.label("Video Options");
@@ -141,9 +138,7 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 		lVideoOptionsTitle.horizontalAlignment(ENTRY_ALIGNMENT.LEFT);
 
 		mFullScreenEntry = new MenuEnumEntryIndexed<>(mScreenManager, lLayout, "Fullscreen");
-		mFullScreenEntry.buttonSize(BUTTON_SIZE.wide);
 		mResolutionEntry = new MenuDropDownEntry<>(mScreenManager, lLayout, "Resolution");
-		mResolutionEntry.buttonSize(BUTTON_SIZE.wide);
 		mMonitorEntry = new MenuEnumEntryIndexed<>(mScreenManager, lLayout, "Monitor");
 		mVSync = new MenuToggleEntry(mScreenManager, lLayout);
 

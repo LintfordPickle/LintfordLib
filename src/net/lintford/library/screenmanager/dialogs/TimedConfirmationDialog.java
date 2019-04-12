@@ -2,7 +2,6 @@ package net.lintford.library.screenmanager.dialogs;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.screenmanager.MenuEntry;
-import net.lintford.library.screenmanager.MenuEntry.BUTTON_SIZE;
 import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.ScreenManager;
 import net.lintford.library.screenmanager.layouts.ListLayout;
@@ -61,11 +60,9 @@ public class TimedConfirmationDialog extends BaseDialog {
 
 		mConfirmEntry = new MenuEntry(pScreenManager, lListLayout, "Okay");
 		mConfirmEntry.registerClickListener(pParentScreen, BUTTON_TIMED_CONFIRM_YES);
-		mConfirmEntry.buttonSize(BUTTON_SIZE.normal);
 
 		mCancelEntry = new MenuEntry(pScreenManager, lListLayout, "Cancel");
 		mCancelEntry.registerClickListener(pParentScreen, BUTTON_TIMED_CONFIRM_NO);
-		mCancelEntry.buttonSize(BUTTON_SIZE.normal);
 
 		lListLayout.menuEntries().add(mCancelEntry);
 		lListLayout.menuEntries().add(mConfirmEntry);

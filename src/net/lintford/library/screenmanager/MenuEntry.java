@@ -77,7 +77,6 @@ public class MenuEntry extends Rectangle {
 	protected boolean mFocusLocked; // used only for buffered input
 	protected boolean mCanHaveFocus;
 	protected float mClickTimer;
-	protected BUTTON_SIZE mButtonSize = BUTTON_SIZE.normal;
 
 	private boolean mIsInitialised, mIsLoaded;
 	public float mZ;
@@ -224,30 +223,6 @@ public class MenuEntry extends Rectangle {
 		mText = pNewValue;
 	}
 
-	public void buttonSize(BUTTON_SIZE pNewSize) {
-		mButtonSize = pNewSize;
-
-		switch (mButtonSize) {
-		case tiny:
-			mMaxWidth = MENUENTRY_DEF_BUTTON_WIDTH * 0.5f;
-			mMaxHeight = MENUENTRY_DEF_BUTTON_HEIGHT;
-			break;
-		case narrow:
-			mMaxWidth = MENUENTRY_DEF_BUTTON_WIDTH * 0.75f;
-			mMaxHeight = MENUENTRY_DEF_BUTTON_HEIGHT;
-			break;
-		case normal:
-			mMaxWidth = MENUENTRY_DEF_BUTTON_WIDTH;
-			mMaxHeight = MENUENTRY_DEF_BUTTON_HEIGHT;
-			break;
-		case wide:
-			mMaxWidth = MENUENTRY_DEF_BUTTON_WIDTH * 2f;
-			mMaxHeight = MENUENTRY_DEF_BUTTON_HEIGHT;
-			break;
-		}
-
-	}
-
 	public float maxWidth() {
 		return mMaxWidth;
 	}
@@ -333,6 +308,9 @@ public class MenuEntry extends Rectangle {
 
 		mMaxWidth = MENUENTRY_DEF_BUTTON_WIDTH;
 		mMaxHeight = MENUENTRY_DEF_BUTTON_HEIGHT;
+		
+		w = MENUENTRY_DEF_BUTTON_WIDTH;
+		h = MENUENTRY_DEF_BUTTON_HEIGHT;
 
 	}
 
@@ -403,29 +381,6 @@ public class MenuEntry extends Rectangle {
 	}
 
 	public void updateStructure() {
-
-		switch (mButtonSize) {
-		case tiny:
-			w = MENUENTRY_DEF_BUTTON_WIDTH * 0.25f;
-			h = MENUENTRY_DEF_BUTTON_HEIGHT;
-			break;
-
-		case narrow:
-			w = MENUENTRY_DEF_BUTTON_WIDTH * 0.45f;
-			h = MENUENTRY_DEF_BUTTON_HEIGHT;
-			break;
-
-		default: // narrow
-			w = MENUENTRY_DEF_BUTTON_WIDTH;
-			h = MENUENTRY_DEF_BUTTON_HEIGHT;
-			break;
-
-		case wide:
-			w = MENUENTRY_DEF_BUTTON_WIDTH * 1.5f;
-			h = MENUENTRY_DEF_BUTTON_HEIGHT;
-			break;
-		}
-
 		if (mShowInfoButton) {
 			mInfoButton.set(x - 32f - 5f, y, 32f, 32f);
 
@@ -493,21 +448,15 @@ public class MenuEntry extends Rectangle {
 
 			lTextureBatch.begin(pCore.HUD());
 			lTextureBatch.draw(mUITexture, 0, 64, 32, 32, centerX() - w / 2, centerY() - h / 2, tile_size, h, mZ, lR, lG, lB, lA);
-			switch (mButtonSize) {
-			default:
-				lTextureBatch.draw(mUITexture, 32, 64, 224, 32, centerX() - (w / 2) + tile_size, centerY() - h / 2, w - tile_size * 2, h, mZ, lR, lG, lB, lA);
-				lTextureBatch.draw(mUITexture, 256, 64, 32, 32, centerX() + (w / 2) - tile_size, centerY() - h / 2, tile_size, h, mZ, lR, lG, lB, lA);
-			}
+			lTextureBatch.draw(mUITexture, 32, 64, 32, 32, centerX() - (w / 2) + tile_size, centerY() - h / 2, w - tile_size * 2, h, mZ, lR, lG, lB, lA);
+			lTextureBatch.draw(mUITexture, 64, 64, 32, 32, centerX() + (w / 2) - tile_size, centerY() - h / 2, tile_size, h, mZ, lR, lG, lB, lA);
 			lTextureBatch.end();
 
 		} else if (mDrawBackground) {
 			lTextureBatch.begin(pCore.HUD());
 			lTextureBatch.draw(mUITexture, 0, 32, 32, 32, centerX() - w / 2, centerY() - h / 2, 32, h, mZ, lR, lG, lB, lA);
-			switch (mButtonSize) {
-			default:
-				lTextureBatch.draw(mUITexture, 32, 32, 224, 32, centerX() - (w / 2) + 32, centerY() - h / 2, w - 64, h, mZ, lR, lG, lB, lA);
-				lTextureBatch.draw(mUITexture, 256, 32, 32, 32, centerX() + (w / 2) - 32, centerY() - h / 2, 32, h, mZ, lR, lG, lB, lA);
-			}
+			lTextureBatch.draw(mUITexture, 32, 32, 32, 32, centerX() - (w / 2) + 32, centerY() - h / 2, w - 64, h, mZ, lR, lG, lB, lA);
+			lTextureBatch.draw(mUITexture, 64, 32, 32, 32, centerX() + (w / 2) - 32, centerY() - h / 2, 32, h, mZ, lR, lG, lB, lA);
 			lTextureBatch.end();
 		}
 

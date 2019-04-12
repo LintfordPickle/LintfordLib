@@ -140,7 +140,7 @@ public class ScrollBar extends Rectangle {
 		pTextureBatch.begin(pCore.HUD());
 
 		// Scroll bar background
-		pTextureBatch.draw(pUITexture, 0, 0, 32, 32, x, y, w, h, pZDepth, 0.13f, 1.0f, 0.22f, 0.9f);
+		// pTextureBatch.draw(pUITexture, 0, 0, 32, 32, x, y, w, h, pZDepth, 0.13f, 1.0f, 0.22f, 0.9f);
 
 		// Render the actual scroll bar
 		final float by = mScrollBarArea.contentDisplayArea().y - (mScrollBarArea.currentYPos() / mMarkerMoveMod);
@@ -149,9 +149,9 @@ public class ScrollBar extends Rectangle {
 		pTextureBatch.draw(pUITexture, 0, 0, 32, 32, x + 9, y, 2, h, pZDepth, 1f, 1f, 1f, 1f);
 
 		// Draw the moving bar
-		float lR = mClickActive ? 0.5f : 1f;
-		float lG = mClickActive ? 0.5f : 1f;
-		float lB = mClickActive ? 0.5f : 1f;
+		float lR = mClickActive ? 0.4f : 0.5f;
+		float lG = mClickActive ? 0.4f : 0.5f;
+		float lB = mClickActive ? 0.4f : 0.5f;
 
 		pTextureBatch.draw(pUITexture, 0, 0, 32, 32, x + 5, by, 10, mMarkerBarHeight, pZDepth, lR, lG, lB, 1f);
 

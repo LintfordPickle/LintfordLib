@@ -1,7 +1,6 @@
 package net.lintford.library.screenmanager.screens;
 
 import net.lintford.library.screenmanager.MenuEntry;
-import net.lintford.library.screenmanager.MenuEntry.BUTTON_SIZE;
 import net.lintford.library.screenmanager.MenuEntry.ENTRY_ALIGNMENT;
 import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.ScreenManager;
@@ -44,15 +43,13 @@ public class AudioOptionsScreen extends MenuScreen implements EntryInteractions 
 		/* Screen control buttons */
 		HorizontalEntryGroup lGroup = new HorizontalEntryGroup(pScreenManager, footerLayout());
 
-		MenuEntry lButton1 = new MenuEntry(pScreenManager, footerLayout(), "Back");
-		lButton1.buttonSize(BUTTON_SIZE.narrow);
-		lButton1.registerClickListener(this, BUTTON_CANCEL_CHANGES);
-		MenuEntry lButton2 = new MenuEntry(pScreenManager, footerLayout(), "Apply");
-		lButton2.buttonSize(BUTTON_SIZE.narrow);
-		lButton2.registerClickListener(this, BUTTON_APPLY_CHANGES);
+		MenuEntry lBackButton = new MenuEntry(pScreenManager, footerLayout(), "Back");
+		lBackButton.registerClickListener(this, BUTTON_CANCEL_CHANGES);
+		MenuEntry lApplyButton = new MenuEntry(pScreenManager, footerLayout(), "Apply");
+		lApplyButton.registerClickListener(this, BUTTON_APPLY_CHANGES);
 
-		lGroup.addEntry(lButton1);
-		lGroup.addEntry(lButton2);
+		lGroup.addEntry(lBackButton);
+		lGroup.addEntry(lApplyButton);
 
 		footerLayout().menuEntries().add(lGroup);
 

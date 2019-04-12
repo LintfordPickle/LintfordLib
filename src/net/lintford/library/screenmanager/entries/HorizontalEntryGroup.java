@@ -23,6 +23,10 @@ public class HorizontalEntryGroup extends MenuEntry {
 
 	private List<MenuEntry> mChildEntries;
 
+	// --------------------------------------
+	// Properties
+	// --------------------------------------
+	
 	public List<MenuEntry> entries() {
 		return mChildEntries;
 	}
