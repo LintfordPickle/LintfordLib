@@ -78,6 +78,16 @@ public class DisplayManager extends IniFile {
 	public boolean RENDER_NODE_SHADOWS = false;
 	public boolean RENDER_CELL_LIGHTING = true;
 
+	public static final int ASPECT_RATIO_STANDARD_MON_INDEX = 0; // 4:3
+	public static final int ASPECT_RATIO_STANDARD_TV_INDEX = 1; // 3:2
+	public static final int ASPECT_RATIO_STANDARD_WS_INDEX = 2; // 16:10
+	public static final int ASPECT_RATIO_STANDARD_HD_INDEX = 3; // 16:9
+
+	public static final float ASPECT_RATIO_STANDARD_MON = 1.33f; // 4:3
+	public static final float ASPECT_RATIO_STANDARD_TV = 1.5f; // 3:2
+	public static final float ASPECT_RATIO_STANDARD_WS = 1.6f; // 16:10
+	public static final float ASPECT_RATIO_STANDARD_HD = 1.7f; // 16:9
+
 	// --------------------------------------
 	// Class Variables
 	// --------------------------------------
@@ -498,6 +508,12 @@ public class DisplayManager extends IniFile {
 		if (pWidth == 0 || pHeight == 0)
 			return;
 
+		if (true) { // enforce x2 pixels
+
+		}
+
+		System.out.printf("DisplayManager: Resolution changed: %dx%d\n", pWidth, pHeight);
+
 		mWindowResolutionChanged = true;
 		mWindowWasResized = true;
 
@@ -562,6 +578,10 @@ public class DisplayManager extends IniFile {
 	// Resize Listeners
 	// --------------------------------------
 
+	private void getClosestGameResolution() {
+
+	}
+
 	public void addResizeListener(IResizeListener pListener) throws IllegalStateException {
 		if (mLockedListeners)
 			throw new IllegalStateException("Cannot add window size listeners from within onResize() callback.");
@@ -607,6 +627,20 @@ public class DisplayManager extends IniFile {
 		} else {
 			GLFW.glfwSetInputMode(mWindowID, GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_HIDDEN);
 
+		}
+	}
+
+	/** returns the closest matching Aspect Ratio to the given resolution */
+	public int getClosestAR(float pWidth, float pHeight) {
+		float lAR = pWidth / pHeight;
+		if (lAR < ASPECT_RATIO_STANDARD_MON) {
+			return ASPECT_RATIO_STANDARD_MON_INDEX;
+		} else if (lAR < ASPECT_RATIO_STANDARD_TV) {
+			return ASPECT_RATIO_STANDARD_TV_INDEX;
+		} else if (lAR < ASPECT_RATIO_STANDARD_WS) {
+			return ASPECT_RATIO_STANDARD_WS_INDEX;
+		} else {
+			return ASPECT_RATIO_STANDARD_HD_INDEX;
 		}
 	}
 

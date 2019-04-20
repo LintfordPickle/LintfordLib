@@ -61,6 +61,7 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 	protected float mRightMargin;
 
 	protected float mMinWidth;
+	protected float mMaxWidth = -1; // inactive
 	protected float mMinHeight;
 	protected float mForcedHeight;
 	protected float mForcedEntryHeight;
@@ -79,6 +80,14 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public void maxWidth(float pMaxWidth) {
+		mMaxWidth = pMaxWidth;
+	}
+
+	public float maxWidth() {
+		return mMaxWidth;
+	}
 
 	public void setEntryOffsetY(float pNewOffset) {
 		mEntryOffsetFromTop = pNewOffset;
@@ -222,6 +231,8 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 
 		mContentArea = new ScrollBarContentRectangle(this);
 		mScrollBar = new ScrollBar(this, mContentArea);
+
+		mEntryOffsetFromTop = 10;
 
 	}
 

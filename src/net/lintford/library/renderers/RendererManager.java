@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.lwjgl.glfw.GLFW;
-import org.lwjgl.opengl.GL11;
 
 import net.lintford.library.controllers.hud.UIHUDStructureController;
 import net.lintford.library.core.LintfordCore;
@@ -77,7 +76,6 @@ public class RendererManager {
 	private List<RenderTarget> mRenderTargets;
 	private List<RenderTarget> mRenderTargetAutoResize;
 	private RenderTarget mCurrentTarget;
-	private RenderTarget mUIRenderTarget;
 
 	private IResizeListener mResizeListener;
 
@@ -238,13 +236,6 @@ public class RendererManager {
 		// Register a window resize listener so we can reload the RenderTargets when the window size changes
 		mDisplayConfig.addResizeListener(mResizeListener);
 
-		// TODO: make sure to maintain the correct Aspect Ratio with the window
-		final int lBufferWidth = 1280;
-		final int lBufferHeight = 900;
-
-		mUIRenderTarget = createRenderTarget("EmissiveRT", lBufferWidth, lBufferHeight, true);
-		mUIRenderTarget.textureFilter(GL11.GL_NEAREST);
-
 		GLDebug.checkGLErrorsException(getClass().getSimpleName());
 
 		mIsLoaded = true;
@@ -269,8 +260,6 @@ public class RendererManager {
 		mSpriteBatch.unloadGLContent();
 		mTextureBatch.unloadGLContent();
 		mLineBatch.unloadGLContent();
-
-		mUIRenderTarget.unloadGLContent();
 
 		mWindowTextFont.unloadGLContent();
 		mWindowTitleFont.unloadGLContent();

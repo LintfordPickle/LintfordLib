@@ -143,7 +143,6 @@ public abstract class Screen {
 		mEntityGroupID = BaseEntity.getEntityNumber();
 
 		mScreenManager = pScreenManager;
-		mRendererManager = new RendererManager(pScreenManager.core(), getClass().getSimpleName(), mEntityGroupID);
 
 		mTransitionOn = new TransitionFadeIn(new TimeSpan(250));
 		mTransitionOff = new TransitionFadeOut(new TimeSpan(250));
@@ -167,6 +166,7 @@ public abstract class Screen {
 		mIsExiting = false;
 		mIsLoaded = false;
 
+		mRendererManager = new RendererManager(mScreenManager.core(), getClass().getSimpleName(), mEntityGroupID);
 		mRendererManager.initialise();
 
 		mIsInitialised = true;
@@ -293,7 +293,7 @@ public abstract class Screen {
 		mRendererManager.unloadGLContent();
 		mRendererManager.removeAllListeners();
 		mRendererManager.removeAllRenderers();
-		mRendererManager = null;
+		// mRendererManager = null;
 
 	}
 

@@ -50,7 +50,10 @@ public class ListLayout extends BaseLayout {
 		if (intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().lastInputActive() == INPUT_TYPES.Mouse) {
 
 			if (super.handleInput(pCore) || pCore.input().isMouseTimedLeftClickAvailable()) {
-				pCore.input().setLeftMouseClickHandled();
+				
+				
+				
+				// pCore.input().setLeftMouseClickHandled();
 				return true;
 			}
 

@@ -252,7 +252,10 @@ public class Camera implements ICamera {
 
 	@Override
 	public void applyGameViewport() {
-		GL11.glViewport(0, 0, mWindowWidth, mWindowHeight);
+		int lNearestW = ((mWindowWidth % 2) == 0) ? mWindowWidth : mWindowWidth + 1;
+		int lNearestH = ((mWindowHeight % 2) == 0) ? mWindowHeight : mWindowHeight + 1;
+		
+		GL11.glViewport(0, 0, lNearestW, lNearestH);
 
 	}
 

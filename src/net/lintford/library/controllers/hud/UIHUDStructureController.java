@@ -35,9 +35,20 @@ public class UIHUDStructureController extends BaseController {
 	private float mUIScaleFactorActual;
 	private float mUITextScaleFactorActual;
 
+	private float mWindowPaddingH;
+	private float mWindowPaddingV;
+
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public float windowPaddingH() {
+		return mWindowPaddingH;
+	}
+
+	public float windowPaddingV() {
+		return mWindowPaddingV;
+	}
 
 	public float uiTransparencyFactor() {
 		return mUITransparencyFactorActual;
@@ -204,6 +215,18 @@ public class UIHUDStructureController extends BaseController {
 		mMenuTitleRectangle.set(-lModWidth / 2, -lModHeight / 2f, lModWidth, lTitleHeight);
 		mMenuMainRectangle.set(-lModWidth / 2, -lModHeight / 2f + lTitleHeight + lInnerBorder * 2f, lModWidth, lMainHeight);
 		mMenuFooterRectangle.set(-lModWidth / 2, lModHeight / 2f - lFooterHeight + lInnerBorder, lModWidth, lFooterHeight);
+
+		// ** WINDOW ** //
+
+		if (mBigUIEnabled) {
+			mWindowPaddingH = 40;
+			mWindowPaddingV = 30;
+
+		} else {
+			mWindowPaddingH = 10;
+			mWindowPaddingV = 10;
+
+		}
 
 	}
 

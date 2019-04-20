@@ -432,9 +432,12 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		UIHUDStructureController lUIHUDController = mRendererManager.uiHUDController();
 		Rectangle lHUDRect = lUIHUDController.menuTitleRectangle();
 
+		final float lWindowPaddingH = 0;// lUIHUDController.windowPaddingH();
+		final float lWindowPaddingV = 0;// lUIHUDController.windowPaddingV();
+
 		final float lTitleFontHeight = mMenuHeaderFont.bitmap().fontHeight();
 		mMenuHeaderFont.begin(pCore.HUD());
-		mMenuHeaderFont.draw(mMenuTitle, lHUDRect.left(), lHUDRect.top(), MENUSCREEN_Z_DEPTH, mR, mG, mB, mA, luiTextScale);
+		mMenuHeaderFont.draw(mMenuTitle, lHUDRect.left() + lWindowPaddingH, lHUDRect.top() + lWindowPaddingV, MENUSCREEN_Z_DEPTH, mR, mG, mB, mA, luiTextScale);
 		mMenuHeaderFont.end();
 
 		mMenuFont.begin(pCore.HUD());
@@ -593,10 +596,14 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		for (int i = 0; i < lLeftLayoutCount; i++) {
 			BaseLayout lLayout = pLayoutList.get(i);
 
-			lLayout.x = lLayoutNewX;
-			lLayout.y = lTop;
-
 			lLayout.w = lWidthOfPage;
+			if (lLayout.maxWidth() != -1 && lLayout.w > lLayout.maxWidth()) {
+				lLayout.w = lLayout.maxWidth();
+
+			}
+			
+			lLayout.x = lLayoutNewX + lWidthOfPage / 2 - lLayout.w / 2;
+			lLayout.y = lTop;
 
 			if (lLayout.layoutFillType() == LAYOUT_FILL_TYPE.FAIR_SHARE) {
 				lLayout.h = lSizeOfEachFillElement;

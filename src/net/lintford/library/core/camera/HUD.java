@@ -142,15 +142,8 @@ public class HUD implements ICamera, IResizeListener {
 		if (mWindowWidth == 0 || mWindowHeight == 0)
 			return;
 
-		if (mDisplayConfig.stretchGameScreen()) {
-			mWindowWidth = mDisplayConfig.baseGameResolutionWidth();
-			mWindowHeight = mDisplayConfig.baseGameResolutionHeight();
-
-		} else {
-			mWindowWidth = pCore.config().display().windowWidth();
-			mWindowHeight = pCore.config().display().windowHeight();
-
-		}
+		mWindowWidth = pCore.config().display().windowWidth();
+		mWindowHeight = pCore.config().display().windowHeight();
 
 		if ((mWindowWidth % 2) == 1) {
 			mWindowWidth = mWindowWidth + 1;
