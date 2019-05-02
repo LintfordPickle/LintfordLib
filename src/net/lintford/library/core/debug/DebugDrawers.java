@@ -332,22 +332,23 @@ public class DebugDrawers {
 	}
 
 	public void beginLineRenderer(ICamera pCamera, int pGLLineType) {
+		beginLineRenderer(pCamera, pGLLineType, 1f);
+
+	}
+
+	public void beginLineRenderer(ICamera pCamera, int pGLLineType, float pLineWidth) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
 		mLineBatch.lineType(pGLLineType);
+		mLineBatch.lineWidth(pLineWidth);
 		mLineBatch.begin(pCamera);
 
 	}
 
 	public void drawLine(float pSX, float pSY, float pEX, float pEY) {
-		if (!mDebugManager.debugManagerEnabled())
-			return;
+		drawLine(pSX, pSY, pEX, pEY, 1f, 1f, 1f);
 
-		if (!mLineBatch.isDrawing())
-			return;
-
-		mLineBatch.draw(pSX, pSY, pEX, pEY, -0.01f, 1f, 1f, 1f);
 	}
 
 	public void drawLine(float pSX, float pSY, float pEX, float pEY, float pR, float pG, float pB) {

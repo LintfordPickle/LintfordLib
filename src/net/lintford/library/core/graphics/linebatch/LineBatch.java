@@ -182,17 +182,25 @@ public class LineBatch {
 		if (!mIsDrawing)
 			return;
 
+		drawRect(pRect, pOX, pOY, pScale, pZ, 1f, 1f, 1f);
+
+	}
+
+	// FIXME: There is something wrong with the origin offsets
+	public void drawRect(Rectangle pRect, float pOX, float pOY, float pScale, float pZ, float pR, float pG, float pB) {
+		if (!mIsDrawing)
+			return;
+
 		final float lModWidth = pRect.width() * pScale;
 		final float lModHeight = pRect.height() * pScale;
 
 		final float lModX = pRect.left() - pOX * pScale;
 		final float lModY = pRect.top() - pOY * pScale;
 
-		draw(lModX, lModY, lModX + lModWidth, lModY, pZ, 1f, 1f, 1f); // top
-		draw(lModX, lModY + lModHeight, lModX + lModWidth, lModY + lModHeight, pZ, 1f, 1f, 1f); // bottom
-		draw(lModX, lModY, lModX, lModY + lModHeight, pZ, 1f, 1f, 1f); // left
-		draw(lModX + lModWidth, lModY, lModX + lModWidth, lModY + lModHeight, pZ, 1f, 1f, 1f); // right
-
+		draw(lModX, lModY, lModX + lModWidth, lModY, pZ, pR, pG, pB); // top
+		draw(lModX, lModY + lModHeight, lModX + lModWidth, lModY + lModHeight, pZ, pR, pG, pB); // bottom
+		draw(lModX, lModY, lModX, lModY + lModHeight, pZ, pR, pG, pB); // left
+		draw(lModX + lModWidth, lModY, lModX + lModWidth, lModY + lModHeight, pZ, pR, pG, pB); // right
 	}
 
 	public void drawRect(float pX, float pY, float pW, float pH, float pZ) {

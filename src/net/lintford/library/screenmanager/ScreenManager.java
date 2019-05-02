@@ -7,7 +7,9 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.debug.GLDebug;
+import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.fonts.FontManager;
+import net.lintford.library.core.maths.Vector3f;
 import net.lintford.library.options.IResizeListener;
 import net.lintford.library.screenmanager.Screen.ScreenState;
 import net.lintford.library.screenmanager.toast.ToastManager;
@@ -31,9 +33,28 @@ public class ScreenManager {
 	private UIHUDStructureController mUIHUDController;
 	private IResizeListener mResizeListener;
 
+	private Vector3f mPrimaryColor = ColorConstants.CANDLE;
+	private Vector3f mSecondaryColor = ColorConstants.BLUE;
+
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public Vector3f primaryColor() {
+		return mPrimaryColor;
+	}
+
+	public void primaryColor(Vector3f pNewColor) {
+		mPrimaryColor = pNewColor;
+	}
+
+	public Vector3f secondaryColor() {
+		return mSecondaryColor;
+	}
+
+	public void secondaryColor(Vector3f pNewColor) {
+		mSecondaryColor = pNewColor;
+	}
 
 	public UIHUDStructureController UIHUDController() {
 		return mUIHUDController;

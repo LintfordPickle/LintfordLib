@@ -33,7 +33,7 @@
 	<property name="dist.dir" value="${base.output.dir}/bin" />
 
 	<property name="dist.jar" value="${dist.dir}/" />
-	<property name="dist.lib" value="${dist.dir}/lib/" />
+	<property name="dist.lib" value="${dist.dir}/libs/" />
 	<property name="dist.doc" value="${dist.dir}/docs/" />
 	<property name="dist.res" value="${build.dir}/res/" />
 
@@ -48,7 +48,7 @@
 		<mapper>
 			<chainedmapper>
 				<flattenmapper />
-				<globmapper from="*.jar" to="lib/*.jar" />
+				<globmapper from="*.jar" to="libs/*.jar" />
 			</chainedmapper>
 		</mapper>
 	</pathconvert>

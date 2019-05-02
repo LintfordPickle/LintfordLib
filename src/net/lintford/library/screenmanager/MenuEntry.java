@@ -1,5 +1,7 @@
 package net.lintford.library.screenmanager;
 
+import net.lintford.library.core.graphics.ColorConstants;
+
 import net.lintford.library.ConstantsTable;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
@@ -308,7 +310,7 @@ public class MenuEntry extends Rectangle {
 
 		mMaxWidth = MENUENTRY_DEF_BUTTON_WIDTH;
 		mMaxHeight = MENUENTRY_DEF_BUTTON_HEIGHT;
-		
+
 		w = MENUENTRY_DEF_BUTTON_WIDTH;
 		h = MENUENTRY_DEF_BUTTON_HEIGHT;
 
@@ -431,9 +433,9 @@ public class MenuEntry extends Rectangle {
 		mZ = pParentZDepth;
 
 		// Set the tint of the back based on whether the button is enabled or not
-		float lR = mEnabled ? mAnimationTimer <= 0 ? 1f : 0.55f : .35f;
-		float lG = mEnabled ? mAnimationTimer <= 0 ? 1f : 0.55f : .35f;
-		float lB = mEnabled ? mAnimationTimer <= 0 ? 1f : 0.55f : .35f;
+		float lR = mEnabled ? mAnimationTimer <= 0 ? ColorConstants.GREY_DARK.x : 0.55f : .35f;
+		float lG = mEnabled ? mAnimationTimer <= 0 ? ColorConstants.GREY_DARK.y : 0.55f : .35f;
+		float lB = mEnabled ? mAnimationTimer <= 0 ? ColorConstants.GREY_DARK.z : 0.55f : .35f;
 		float lA = mParentLayout.parentScreen().mA;
 
 		float tile_size = 32;

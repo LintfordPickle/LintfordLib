@@ -255,6 +255,10 @@ public abstract class LintfordCore {
 		Debug.debugManager().logger().i(getClass().getSimpleName(), System.getProperty("java.vendor"));
 		Debug.debugManager().logger().i(getClass().getSimpleName(), System.getProperty("java.vendor.url"));
 		Debug.debugManager().logger().i(getClass().getSimpleName(), System.getProperty("java.version"));
+		Debug.debugManager().logger().i(getClass().getSimpleName(), System.getProperty("java.home"));
+		
+		Debug.debugManager().logger().i(getClass().getSimpleName(), "LWJGL Version: " + org.lwjgl.Version.getVersion());
+		Debug.debugManager().logger().i(getClass().getSimpleName(), "Steamworks Version" + com.codedisaster.steamworks.Version.getVersion());
 
 	}
 

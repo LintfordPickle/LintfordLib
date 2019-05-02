@@ -146,6 +146,8 @@ public abstract class Screen {
 
 		mTransitionOn = new TransitionFadeIn(new TimeSpan(250));
 		mTransitionOff = new TransitionFadeOut(new TimeSpan(250));
+		
+		mRendererManager = new RendererManager(mScreenManager.core(), getClass().getSimpleName(), mEntityGroupID);
 
 		// By default, screens are not singleton
 		mSingletonScreen = false;
@@ -166,7 +168,6 @@ public abstract class Screen {
 		mIsExiting = false;
 		mIsLoaded = false;
 
-		mRendererManager = new RendererManager(mScreenManager.core(), getClass().getSimpleName(), mEntityGroupID);
 		mRendererManager.initialise();
 
 		mIsInitialised = true;
