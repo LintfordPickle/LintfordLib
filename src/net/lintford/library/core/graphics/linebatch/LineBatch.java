@@ -313,16 +313,19 @@ public class LineBatch {
 
 		GL20.glEnableVertexAttribArray(0);
 		GL20.glEnableVertexAttribArray(1);
-
+		
 		mShader.projectionMatrix(mCamera.projection());
 		mShader.viewMatrix(mCamera.view());
 		mShader.modelMatrix(mModelMatrix);
 
 		mShader.bind();
 
+		if(mGLLineWidth < 1)
+			mGLLineWidth = 1;
+		
 		GL11.glLineWidth(mGLLineWidth);
 		GL11.glDrawArrays(mGLLineType, 0, mVertexCount);
-
+		
 		GL30.glBindVertexArray(0);
 
 		mShader.unbind();
