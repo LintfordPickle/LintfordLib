@@ -318,7 +318,7 @@ public class TextureBatch {
 			mCurrentTexID = pTexture.getTextureID();
 
 			if (pTexture.getTextureID() <= 0) {
-				throw new RuntimeException("fuck me");
+				throw new RuntimeException("Invalid textureID while rendering.");
 			}
 
 		} else if (mCurrentTexID != pTexture.getTextureID()) {

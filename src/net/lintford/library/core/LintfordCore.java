@@ -256,7 +256,7 @@ public abstract class LintfordCore {
 		Debug.debugManager().logger().i(getClass().getSimpleName(), System.getProperty("java.vendor.url"));
 		Debug.debugManager().logger().i(getClass().getSimpleName(), System.getProperty("java.version"));
 		Debug.debugManager().logger().i(getClass().getSimpleName(), System.getProperty("java.home"));
-		
+
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "LWJGL Version: " + org.lwjgl.Version.getVersion());
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "Steamworks Version" + com.codedisaster.steamworks.Version.getVersion());
 
@@ -276,7 +276,7 @@ public abstract class LintfordCore {
 		mGameTime = new GameTime();
 		mInputState = new InputState();
 
-		initialiseGLFWWindow();
+		long lWindowID = initialiseGLFWWindow();
 
 		mControllerManager = new ControllerManager(this);
 
@@ -284,11 +284,23 @@ public abstract class LintfordCore {
 		mResourceController = new ResourceController(mControllerManager, mResourceManager, CORE_ENTITY_GROUP_ID);
 
 		mHUD = new HUD(mMasterConfig.display());
+		mHUD.update(this);
 		mRenderState = new RenderState();
+
+		showStartUpLogo(lWindowID);
 
 		onRunGameLoop();
 
 	};
+
+	protected void showStartUpLogo(long pWindowHandle) {
+		// by default just clear the window background to black and swap out the back-buffer
+		glClearColor(0f, 0f, 0f, 1f);
+		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+
+		glfwSwapBuffers(pWindowHandle);
+
+	}
 
 	/**
 	 * Implemented in the sub-classe. Sets the default OpenGL state for the game.
@@ -493,7 +505,7 @@ public abstract class LintfordCore {
 	// Methods
 	// ---------------------------------------------
 
-	public void initialiseGLFWWindow() {
+	public long initialiseGLFWWindow() {
 		long lWindowID = mMasterConfig.onCreateWindow();
 
 		// set key callbacks
@@ -504,6 +516,8 @@ public abstract class LintfordCore {
 		glfwSetScrollCallback(lWindowID, mInputState.mMouseScrollCallback);
 
 		mInputState.resetFlags();
+
+		return lWindowID;
 
 	}
 
