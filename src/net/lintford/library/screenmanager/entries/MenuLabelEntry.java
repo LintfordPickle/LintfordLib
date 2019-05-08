@@ -171,7 +171,6 @@ public class MenuLabelEntry extends MenuEntry {
 	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pParentZDepth) {
 		if (!enabled())
 			return;
-
 		final float lAlpha = 0.4f;
 		final float luiTextScale = mScreenManager.UIHUDController().uiTextScaleFactor();
 

@@ -78,6 +78,12 @@ public class ListLayout extends BaseLayout {
 		int lEntryCount = menuEntries().size();
 		for (int i = 0; i < lEntryCount; i++) {
 			MenuEntry lEntry = menuEntries().get(i);
+//			float lScrollBarWidth = 0;
+//			if (mScrollBarsEnabled)
+//				lScrollBarWidth = mScrollBar.width();
+//
+//			lEntry.w = w - marginLeft() - marginRight() - lScrollBarWidth;
+//			lEntry.w = Math.min(lEntry.w, 300);
 
 			switch (mAlignment) {
 			case left:

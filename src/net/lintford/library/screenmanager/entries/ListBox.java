@@ -223,6 +223,7 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 		int lCount = mItems.size();
 		float mItemYPos = 0;
 
+		float lTotalContentHeight = marginTop() + marginBottom();
 		for (int i = 0; i < lCount; i++) {
 			ListBoxItem lItem = mItems.get(i);
 
@@ -235,11 +236,12 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 			mItems.get(i).y = y + marginTop() + mYScrollPos + mItemYPos;
 
 			mItemYPos += lItem.h + LISTBOX_ITEM_VPADDING;
+			lTotalContentHeight += lItem.h + LISTBOX_ITEM_VPADDING;
 
 		}
 
 		mContentArea.w = w;
-		mContentArea.h = mItems.size() * (64f + LISTBOX_ITEM_VPADDING) + LISTBOX_ITEM_VPADDING;
+		mContentArea.h = lTotalContentHeight;
 
 		mScrollBar.update(pCore);
 
@@ -255,17 +257,17 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 		// Draw the listbox background
 		if (mDrawBackground) {
 			lTextureBatch.begin(pCore.HUD());
-			lTextureBatch.draw(mUITexture, 448, 64, TILE_SIZE, TILE_SIZE, x, y, TILE_SIZE, TILE_SIZE, pParentZDepth, 1, 1, 1, 0.85f);
-			lTextureBatch.draw(mUITexture, 480, 64, TILE_SIZE, TILE_SIZE, x + TILE_SIZE, y, w - 64, TILE_SIZE, pParentZDepth, 1, 1, 1, 0.85f);
-			lTextureBatch.draw(mUITexture, 512, 64, TILE_SIZE, TILE_SIZE, x + w - 32, y, TILE_SIZE, TILE_SIZE, pParentZDepth, 1, 1, 1, 0.85f);
+			lTextureBatch.draw(mUITexture, 928, 0, TILE_SIZE, TILE_SIZE, x, y, TILE_SIZE, TILE_SIZE, pParentZDepth, 1, 1, 1, 0.85f);
+			lTextureBatch.draw(mUITexture, 960, 0, TILE_SIZE, TILE_SIZE, x + TILE_SIZE, y, w - 64, TILE_SIZE, pParentZDepth, 1, 1, 1, 0.85f);
+			lTextureBatch.draw(mUITexture, 992, 0, TILE_SIZE, TILE_SIZE, x + w - 32, y, TILE_SIZE, TILE_SIZE, pParentZDepth, 1, 1, 1, 0.85f);
 
-			lTextureBatch.draw(mUITexture, 448, 96, TILE_SIZE, TILE_SIZE, x, y + 32, TILE_SIZE, h - 64, pParentZDepth, 1, 1, 1, 0.85f);
-			lTextureBatch.draw(mUITexture, 480, 96, TILE_SIZE, TILE_SIZE, x + TILE_SIZE, y + 32, w - 64, h - 64, pParentZDepth, 1, 1, 1, 0.85f);
-			lTextureBatch.draw(mUITexture, 512, 96, TILE_SIZE, TILE_SIZE, x + w - 32, y + 32, TILE_SIZE, h - 64, pParentZDepth, 1, 1, 1, 0.85f);
+			lTextureBatch.draw(mUITexture, 928, 32, TILE_SIZE, TILE_SIZE, x, y + 32, TILE_SIZE, h - 64, pParentZDepth, 1, 1, 1, 0.85f);
+			lTextureBatch.draw(mUITexture, 960, 32, TILE_SIZE, TILE_SIZE, x + TILE_SIZE, y + 32, w - 64, h - 64, pParentZDepth, 1, 1, 1, 0.85f);
+			lTextureBatch.draw(mUITexture, 992, 32, TILE_SIZE, TILE_SIZE, x + w - 32, y + 32, TILE_SIZE, h - 64, pParentZDepth, 1, 1, 1, 0.85f);
 
-			lTextureBatch.draw(mUITexture, 448, 128, TILE_SIZE, TILE_SIZE, x, y + h - 32, TILE_SIZE, TILE_SIZE, pParentZDepth, 1, 1, 1, 0.85f);
-			lTextureBatch.draw(mUITexture, 480, 128, TILE_SIZE, TILE_SIZE, x + TILE_SIZE, y + h - 32, w - 64, TILE_SIZE, pParentZDepth, 1, 1, 1, 0.85f);
-			lTextureBatch.draw(mUITexture, 512, 128, TILE_SIZE, TILE_SIZE, x + w - 32, y + h - 32, TILE_SIZE, TILE_SIZE, pParentZDepth, 1, 1, 1, 0.85f);
+			lTextureBatch.draw(mUITexture, 928, 64, TILE_SIZE, TILE_SIZE, x, y + h - 32, TILE_SIZE, TILE_SIZE, pParentZDepth, 1, 1, 1, 0.85f);
+			lTextureBatch.draw(mUITexture, 960, 64, TILE_SIZE, TILE_SIZE, x + TILE_SIZE, y + h - 32, w - 64, TILE_SIZE, pParentZDepth, 1, 1, 1, 0.85f);
+			lTextureBatch.draw(mUITexture, 992, 64, TILE_SIZE, TILE_SIZE, x + w - 32, y + h - 32, TILE_SIZE, TILE_SIZE, pParentZDepth, 1, 1, 1, 0.85f);
 			lTextureBatch.end();
 
 		}
@@ -298,6 +300,13 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 		}
 
 		GL11.glDisable(GL11.GL_STENCIL_TEST);
+
+		if (ConstantsTable.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
+			lTextureBatch.begin(pCore.HUD());
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, x, y, w, h, mZ, 1f, 0.2f, 0.2f, 0.2f);
+			lTextureBatch.end();
+
+		}
 
 	}
 

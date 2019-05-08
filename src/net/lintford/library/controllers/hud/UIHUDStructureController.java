@@ -163,7 +163,7 @@ public class UIHUDStructureController extends BaseController {
 
 		if (lWindowWidth < lMinBigHUDWidth || lWindowHeight < lMinBigHUDHeight) {
 			mBigUIEnabled = false;
-			lHUDRatio = 0.80f;
+			lHUDRatio = 1.0f;
 
 			mUIScaleFactorActual = mDisplayManager.graphicsSettings().UIScale() * lHUDRatio;
 			mUITextScaleFactorActual = mDisplayManager.graphicsSettings().UITextScale() * lHUDRatio;
