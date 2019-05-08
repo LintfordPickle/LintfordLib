@@ -4,6 +4,7 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.input.InputState.INPUT_TYPES;
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
+import net.lintford.library.screenmanager.entries.ListBox;
 
 /**
  * The list layout lays out all the menu entries linearly down the layout.
@@ -50,9 +51,7 @@ public class ListLayout extends BaseLayout {
 		if (intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().lastInputActive() == INPUT_TYPES.Mouse) {
 
 			if (super.handleInput(pCore) || pCore.input().isMouseTimedLeftClickAvailable()) {
-				
-				
-				
+
 				// pCore.input().setLeftMouseClickHandled();
 				return true;
 			}
@@ -74,6 +73,8 @@ public class ListLayout extends BaseLayout {
 			lYPos += 5f;
 		}
 
+		float lVertHeightTaken = marginTop() + marginBottom() + 2;
+
 		int lEntryCount = menuEntries().size();
 		for (int i = 0; i < lEntryCount; i++) {
 			MenuEntry lEntry = menuEntries().get(i);
@@ -88,6 +89,17 @@ public class ListLayout extends BaseLayout {
 			case right:
 				lEntry.x = x + w - lEntry.w;
 				break;
+			}
+
+			// Listboxes shouldn't cause the listlayout parent cotainers to grow in vertical size.
+			// Instead we need to work how how much space the listbox
+			// FIXME: This isn't quite correct (the -10 is wrong, but it works)
+			if (lEntry instanceof ListBox) {
+				lEntry.h = h - lVertHeightTaken;
+			} else {
+				lVertHeightTaken += lEntry.marginTop();
+				lVertHeightTaken += lEntry.h;
+				lVertHeightTaken += lEntry.marginBottom();
 			}
 
 			lEntry.y = lYPos;

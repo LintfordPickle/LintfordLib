@@ -602,7 +602,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 			}
 			
-			lLayout.x = lLayoutNewX + lWidthOfPage / 2 - lLayout.w / 2;
+			lLayout.x = lLayoutNewX;// + lWidthOfPage / 2 - lLayout.w / 2;
 			lLayout.y = lTop;
 
 			if (lLayout.layoutFillType() == LAYOUT_FILL_TYPE.FAIR_SHARE) {

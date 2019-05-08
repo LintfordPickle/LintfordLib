@@ -436,7 +436,7 @@ public class MenuEntry extends Rectangle {
 		float lR = mEnabled ? mAnimationTimer <= 0 ? ColorConstants.GREY_DARK.x : 0.55f : .35f;
 		float lG = mEnabled ? mAnimationTimer <= 0 ? ColorConstants.GREY_DARK.y : 0.55f : .35f;
 		float lB = mEnabled ? mAnimationTimer <= 0 ? ColorConstants.GREY_DARK.z : 0.55f : .35f;
-		float lA = mParentLayout.parentScreen().mA;
+		float lA = mEnabled ? mParentLayout.parentScreen().mA : 0.60f;
 
 		float tile_size = 32;
 

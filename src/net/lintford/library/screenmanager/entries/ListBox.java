@@ -5,8 +5,10 @@ import java.util.List;
 
 import org.lwjgl.opengl.GL11;
 
+import net.lintford.library.ConstantsTable;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
+import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
@@ -17,6 +19,7 @@ import net.lintford.library.renderers.windows.components.ScrollBar;
 import net.lintford.library.renderers.windows.components.ScrollBarContentRectangle;
 import net.lintford.library.screenmanager.IListBoxItemSelected;
 import net.lintford.library.screenmanager.MenuEntry;
+import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.Screen;
 import net.lintford.library.screenmanager.ScreenManager;
 import net.lintford.library.screenmanager.layouts.BaseLayout;
@@ -210,7 +213,8 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 
 	}
 
-	public void update(LintfordCore pCore) {
+	@Override
+	public void update(LintfordCore pCore, MenuScreen pScreen, boolean pIsSelected) {
 		mScrollBarsEnabled = mContentArea.h - h > 0;
 
 		if (mContentArea.h < h)
@@ -228,7 +232,7 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 			mItems.get(i).w = w - marginLeft() - marginRight() - lInnerPadding;
 
 			mItems.get(i).x = x + marginLeft();
-			mItems.get(i).y = y + 15f + mYScrollPos + mItemYPos;
+			mItems.get(i).y = y + marginTop() + mYScrollPos + mItemYPos;
 
 			mItemYPos += lItem.h + LISTBOX_ITEM_VPADDING;
 
@@ -238,7 +242,6 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 		mContentArea.h = mItems.size() * (64f + LISTBOX_ITEM_VPADDING) + LISTBOX_ITEM_VPADDING;
 
 		mScrollBar.update(pCore);
-//		mScrollBar.x = 0;
 
 	}
 
@@ -249,6 +252,7 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 
 		TextureBatch lTextureBatch = mParentLayout.parentScreen().rendererManager().uiTextureBatch();
 
+		// Draw the listbox background
 		if (mDrawBackground) {
 			lTextureBatch.begin(pCore.HUD());
 			lTextureBatch.draw(mUITexture, 448, 64, TILE_SIZE, TILE_SIZE, x, y, TILE_SIZE, TILE_SIZE, pParentZDepth, 1, 1, 1, 0.85f);
@@ -276,6 +280,7 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 		// Make sure we are starting with a fresh stencil buffer
 		GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT); // Clear the stencil buffer
 
+		// Fill in the renderable parts of the list box (this is needed!)
 		lTextureBatch.begin(pCore.HUD());
 		lTextureBatch.draw(mUITexture, 32, 0, 32, 32, x, y + marginTop(), w, h - marginTop() - marginBottom(), pParentZDepth, 1, 1, 1, 0f);
 		lTextureBatch.end();
