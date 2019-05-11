@@ -52,6 +52,10 @@ public class LintfordMain extends LintfordCore {
 	}
 
 	// ---------------------------------------------
+	// Variables
+	// ---------------------------------------------
+	
+	// ---------------------------------------------
 	// Constructor
 	// ---------------------------------------------
 
@@ -73,6 +77,8 @@ public class LintfordMain extends LintfordCore {
 		glClearColor(0f, 0f, 0f, 1f);
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 
+		mShowLogoTimer = System.currentTimeMillis();
+		
 		TextureBatch lTB = new TextureBatch();
 		lTB.loadGLContent(mResourceManager);
 		lTB.begin(mHUD);

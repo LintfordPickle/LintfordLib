@@ -43,7 +43,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 	// Constants
 	// --------------------------------------
 
-	private static final float OPEN_HEIGHT = 200;
+	private static final float OPEN_HEIGHT = 100;
 	private static final float SPACE_BETWEEN_TEXT = 15;
 
 	// --------------------------------------
@@ -187,58 +187,35 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 
 	@Override
 	public boolean handleInput(LintfordCore pCore) {
-		if (mItems == null || mItems.size() == 0)
+		if (mItems == null || mItems.size() == 0 || !mEnabled)
 			return false;
 
 		if (mScrollBar.handleInput(pCore)) {
 
+			// Check if tool tips are enabled.
+			return true;
+
 		} else if (intersectsAA(pCore.HUD().getMouseCameraSpace())) {
+			// First check to see if the player clicked the info button
 			if (mShowInfoButton && mInfoButton.intersectsAA(pCore.HUD().getMouseCameraSpace())) {
 				mToolTipEnabled = true;
 				mToolTipTimer = 1000;
 
 			} else {
 
-				mParentLayout.parentScreen().setHoveringOn(this);
-
 				if (pCore.input().isMouseTimedLeftClickAvailable()) {
-					if (mEnabled) {
 
-						if (mOpen) {
-							final float luiTextScale = mScreenManager.UIHUDController().uiTextScaleFactor();
+					// Toggle open/close
+					mOpen = !mOpen;
 
-							// TODO: play the menu clicked sound
-							final float lConsoleLineHeight = 25f * luiTextScale;
-							// Something inside the dropdown was select
-							float lRelativeheight = pCore.HUD().getMouseCameraSpace().y - y - mScrollYPosition;
+					mParentLayout.parentScreen().setFocusOn(pCore, this, true);
 
-							int lRelativeIndex = (int) (lRelativeheight / lConsoleLineHeight);
-							int lSelectedIndex = lRelativeIndex - 1;
-
-							if (lSelectedIndex < 0)
-								lSelectedIndex = 0;
-							if (lSelectedIndex >= mItems.size())
-								lSelectedIndex = mItems.size() - 1;
-
-							mSelectedIndex = lSelectedIndex;
-
-							if (mClickListener != null) {
-								mClickListener.menuEntryChanged(this);
-							}
-
-						}
-
-						mOpen = !mOpen;
-
-						mParentLayout.parentScreen().setFocusOn(pCore, this, true);
-
-						pCore.input().setLeftMouseClickHandled();
-
-					}
+					pCore.input().setLeftMouseClickHandled();
 
 				}
 
 			}
+
 			//
 			// Check if tool tips are enabled.
 			if (mToolTipEnabled) {
@@ -247,6 +224,44 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 			}
 
 			return true;
+
+			// Check if the content window was clicked
+		} else if (mWindowRectangle.intersectsAA(pCore.HUD().getMouseCameraSpace())) {
+
+			if (pCore.input().isMouseTimedLeftClickAvailable()) {
+
+				if (mOpen) {
+					final float luiTextScale = mScreenManager.UIHUDController().uiTextScaleFactor();
+
+					// TODO: play the menu clicked sound
+					final float lConsoleLineHeight = 25f * luiTextScale;
+					// Something inside the dropdown was select
+					float lRelativeheight = pCore.HUD().getMouseCameraSpace().y - y - mScrollYPosition;
+
+					int lRelativeIndex = (int) (lRelativeheight / lConsoleLineHeight);
+					int lSelectedIndex = lRelativeIndex - 1;
+
+					if (lSelectedIndex < 0)
+						lSelectedIndex = 0;
+					if (lSelectedIndex >= mItems.size())
+						lSelectedIndex = mItems.size() - 1;
+
+					mSelectedIndex = lSelectedIndex;
+
+					if (mClickListener != null) {
+						mClickListener.menuEntryChanged(this);
+					}
+
+				}
+
+				// close this window
+				mOpen = false;
+
+				mParentLayout.parentScreen().setFocusOn(pCore, this, true);
+
+				pCore.input().setLeftMouseClickHandled();
+
+			}
 
 		} else {
 			mToolTipTimer = 0;
@@ -277,14 +292,16 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 
 		}
 
-		mTopEntry.setCenter(x + w / 2, y, w / 2, MENUENTRY_DEF_BUTTON_WIDTH);
-
-		// w = MENUENTRY_DEF_BUTTON_WIDTH;
-		h = mOpen ? OPEN_HEIGHT : MENUENTRY_DEF_BUTTON_HEIGHT;
+		mTopEntry.setCenter(x + w / 2, y, w / 2, h / 2);
 
 		mContentRectangle.set(x, y + mScrollYPosition, w, mItems.size() * 25);
-		// We need to offset the window rectangle so it doesn't obscure the current selected item
-		mWindowRectangle.set(x + w / 2, y + 32, w / 2, h - 50);
+		if (mOpen) {
+			mWindowRectangle.set(x + w / 2, y + 32, w / 2, OPEN_HEIGHT);
+
+		} else {
+			mWindowRectangle.set(this);
+			mWindowRectangle.expand(1);
+		}
 
 		mScrollBar.update(pCore);
 
@@ -292,7 +309,6 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 
 	@Override
 	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pComponentDepth) {
-
 		final float luiTextScale = mScreenManager.UIHUDController().uiTextScaleFactor();
 
 		final FontUnit lFontUnit = mParentLayout.parentScreen().font();
@@ -311,7 +327,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 		final float lLabelWidth = lFontUnit.bitmap().getStringWidth(mLabel, luiTextScale);
 		final float lFontHeight = lFontUnit.bitmap().fontHeight() * luiTextScale;
 
-		final float lSingleTextHeight = MENUENTRY_DEF_BUTTON_HEIGHT;
+		final float lSingleTextHeight = h;
 
 		final float lSeparatorHalfWidth = lFontUnit.bitmap().getStringWidth(lSeparator, luiTextScale) * 0.5f;
 		lFontUnit.begin(pCore.HUD());

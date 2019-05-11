@@ -6,6 +6,7 @@ import java.util.List;
 import net.lintford.library.ConstantsTable;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
+import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
@@ -16,6 +17,8 @@ import net.lintford.library.renderers.windows.components.ScrollBar;
 import net.lintford.library.renderers.windows.components.ScrollBarContentRectangle;
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
+import net.lintford.library.screenmanager.ScreenManagerConstants.FILLTYPE;
+import net.lintford.library.screenmanager.ScreenManagerConstants.LAYOUT_WIDTH;
 
 /**
  * The dimensions of the BaseLayout are set by the parent screen.
@@ -26,21 +29,12 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 
 	public static final float USE_HEIGHT_OF_ENTRIES = -1;
 
-	public enum LAYOUT_ALIGNMENT {
-		left, center, right
-	}
-
-	public enum LAYOUT_FILL_TYPE {
-		FAIR_SHARE, ONLY_WHATS_NEEDED,
-
-	}
-
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
-	protected LAYOUT_ALIGNMENT mAlignment;
-	protected LAYOUT_FILL_TYPE mFillType = LAYOUT_FILL_TYPE.FAIR_SHARE;
+	protected LAYOUT_WIDTH mLayoutWidth = LAYOUT_WIDTH.THREEQUARTER;
+	protected FILLTYPE mLayoutFillType = FILLTYPE.FILL_CONTAINER;
 
 	protected MenuScreen mParentScreen;
 	protected List<MenuEntry> mMenuEntries;
@@ -94,16 +88,29 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 
 	}
 
-	public LAYOUT_FILL_TYPE layoutFillType() {
-		return mFillType;
+	public FILLTYPE layoutFillType() {
+		return mLayoutFillType;
 
 	}
 
-	public void layoutFillType(LAYOUT_FILL_TYPE pFilltype) {
+	public void layoutFillType(FILLTYPE pFilltype) {
 		if (pFilltype == null)
 			return;
 
-		mFillType = pFilltype;
+		mLayoutFillType = pFilltype;
+
+	}
+
+	public LAYOUT_WIDTH layoutWidth() {
+		return mLayoutWidth;
+
+	}
+
+	public void layoutWidth(LAYOUT_WIDTH pLayoutWidth) {
+		if (pLayoutWidth == null)
+			return;
+
+		mLayoutWidth = pLayoutWidth;
 
 	}
 
@@ -166,10 +173,6 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 		mBottomMargin = pNewValue;
 	}
 
-	public void alignment(LAYOUT_ALIGNMENT pNewAlignment) {
-		mAlignment = pNewAlignment;
-	}
-
 	/** @returns A list of menu entries so derived classes can change the menu contents. */
 	public List<MenuEntry> menuEntries() {
 		return mMenuEntries;
@@ -214,9 +217,6 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 		mTextureBatch = new TextureBatch();
 		mEnabled = true;
 		mVisible = true;
-
-		// Set some defaults
-		mAlignment = LAYOUT_ALIGNMENT.center;
 
 		mTopMargin = 10f;
 		mBottomMargin = 10f;
@@ -333,7 +333,7 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 
 			} else {
 				final float TILE_SIZE = 32;
-
+				
 				mTextureBatch.begin(pCore.HUD());
 				mTextureBatch.draw(mUITexture, 448, 64, 32, 32, x, y, TILE_SIZE, TILE_SIZE, pComponentDepth, mR, mG, mB, mA);
 				mTextureBatch.draw(mUITexture, 480, 64, 32, 32, x + TILE_SIZE, y, w - TILE_SIZE * 2, TILE_SIZE, pComponentDepth, mR, mG, mB, mA);
@@ -347,11 +347,14 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 				mTextureBatch.draw(mUITexture, 480, 128, 32, 32, x + TILE_SIZE, y + h - TILE_SIZE, w - TILE_SIZE * 2, TILE_SIZE, pComponentDepth, mR, mG, mB, mA);
 				mTextureBatch.draw(mUITexture, 512, 128, 32, 32, x + w - TILE_SIZE, y + h - TILE_SIZE, TILE_SIZE, TILE_SIZE, pComponentDepth, mR, mG, mB, mA);
 				mTextureBatch.end();
+				
+				Debug.debugManager().drawers().drawRectImmediate(pCore.HUD(), this);
 
 			}
 
 		}
 
+		
 		if (mScrollBarsEnabled) {
 			mContentArea.depthPadding(6f);
 			mContentArea.preDraw(pCore, mTextureBatch, mUITexture);

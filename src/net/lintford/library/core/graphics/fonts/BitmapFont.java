@@ -289,7 +289,7 @@ public class BitmapFont {
 	}
 
 	public float getStringHeight(String pText, float pScaleFactor) {
-		return getStringHeight(pText, 1f, -1);
+		return getStringHeight(pText, 1f, -1) * pScaleFactor;
 	}
 
 	public float getStringHeight(String pText, float pScale, float pWordWrapWidth) {

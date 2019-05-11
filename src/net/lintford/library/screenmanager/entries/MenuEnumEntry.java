@@ -5,7 +5,6 @@ import java.util.List;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
-import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
@@ -35,6 +34,7 @@ public class MenuEnumEntry extends MenuEntry {
 	private List<String> mItems;
 	private int mSelectedIndex;
 	private Texture mUITexture;
+	private boolean mEnableScaleTextToWidth;
 
 	private boolean mButtonsEnabled;
 	private Rectangle mLeftButtonRectangle;
@@ -43,6 +43,14 @@ public class MenuEnumEntry extends MenuEntry {
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public boolean scaleTextToWidth() {
+		return mEnableScaleTextToWidth;
+	}
+
+	public void scaleTextToWidth(boolean pNewValue) {
+		mEnableScaleTextToWidth = pNewValue;
+	}
 
 	public void setListener(EntryInteractions pListener) {
 		mClickListener = pListener;
@@ -116,6 +124,8 @@ public class MenuEnumEntry extends MenuEntry {
 
 		mHighlightOnHover = false;
 		mDrawBackground = false;
+
+		mEnableScaleTextToWidth = true;
 
 	}
 
@@ -237,7 +247,6 @@ public class MenuEnumEntry extends MenuEntry {
 		super.updateStructure();
 
 		w = Math.min(mParentLayout.w - 50f, MENUENTRY_MAX_WIDTH);
-		h = MENUENTRY_DEF_BUTTON_HEIGHT;
 
 	}
 
@@ -260,11 +269,14 @@ public class MenuEnumEntry extends MenuEntry {
 
 		MenuScreen lParentScreen = mParentLayout.parentScreen();
 		FontUnit lFontBitmap = lParentScreen.font();
-
 		final float luiTextScale = mScreenManager.UIHUDController().uiTextScaleFactor();
-
 		final float lTextWidth = lFontBitmap.bitmap().getStringWidth(mLabel, luiTextScale);
-		final float lTextHeight = lFontBitmap.bitmap().getStringHeight(mLabel) * luiTextScale;
+
+		float lAdjustedScaleW = luiTextScale;
+		if (mEnableScaleTextToWidth && w / 2 < lTextWidth && lTextWidth > 0)
+			lAdjustedScaleW = (w / 2) / lTextWidth;
+
+		final float lTextHeight = lFontBitmap.bitmap().getStringHeight(mLabel, luiTextScale);
 		final float lSeparatorHalfWidth = lFontBitmap.bitmap().getStringWidth(mSeparator, luiTextScale) * 0.5f;
 
 		final TextureBatch lTextureBatch = mParentLayout.parentScreen().rendererManager().uiTextureBatch();
@@ -289,7 +301,7 @@ public class MenuEnumEntry extends MenuEntry {
 		final float lA = lParentScreen.a();
 
 		lFontBitmap.begin(pCore.HUD());
-		lFontBitmap.draw(mLabel, x + w / 2 - 10 - lTextWidth - lSeparatorHalfWidth, y + h / 2 - lTextHeight * 0.5f, pParentZDepth, lR, lG, lB, lA, luiTextScale, -1);
+		lFontBitmap.draw(mLabel, x + w / 2 - 10 - (lTextWidth * lAdjustedScaleW) - lSeparatorHalfWidth, y + h / 2 - lTextHeight * 0.5f, pParentZDepth, lR, lG, lB, lA, lAdjustedScaleW, -1);
 		lFontBitmap.draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - lTextHeight * 0.5f, pParentZDepth, lR, lG, lB, lA, luiTextScale, -1);
 
 		// Render the items

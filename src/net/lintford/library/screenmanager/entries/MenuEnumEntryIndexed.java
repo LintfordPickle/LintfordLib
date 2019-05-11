@@ -38,6 +38,7 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 	private final String mSeparator = " : ";
 	private List<MenuEnumEntryItem> mItems;
 	private int mSelectedIndex;
+	private boolean mEnableScaleTextToWidth;
 
 	private boolean mButtonsEnabled;
 	private Rectangle mLeftButtonRectangle;
@@ -46,6 +47,14 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public boolean scaleTextToWidth() {
+		return mEnableScaleTextToWidth;
+	}
+
+	public void scaleTextToWidth(boolean pNewValue) {
+		mEnableScaleTextToWidth = pNewValue;
+	}
 
 	public List<MenuEnumEntryItem> items() {
 		return mItems;
@@ -140,6 +149,8 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 
 		mHighlightOnHover = false;
 		mDrawBackground = false;
+
+		mEnableScaleTextToWidth = true;
 
 	}
 
@@ -299,6 +310,10 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 		FontUnit lFontBitmap = mParentLayout.parentScreen().font();
 
 		final float lLabelWidth = lFontBitmap.bitmap().getStringWidth(mLabel, luiTextScale);
+		float lAdjustedLabelScaleW = luiTextScale;
+		if (mEnableScaleTextToWidth && w * 0.4f < lLabelWidth && lLabelWidth > 0)
+			lAdjustedLabelScaleW = (w * 0.4f) / lLabelWidth;
+
 		final float lFontHeight = lFontBitmap.bitmap().fontHeight() * luiTextScale;
 		final float lSeparatorHalfWidth = lFontBitmap.bitmap().getStringWidth(mSeparator, luiTextScale) * 0.5f;
 
@@ -308,16 +323,19 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 		float lTextB = mEnabled ? mParentLayout.parentScreen().b() : 0.24f;
 
 		lFontBitmap.begin(pCore.HUD());
-		lFontBitmap.draw(mLabel, x + w / 2 - 10 - lLabelWidth - lSeparatorHalfWidth, y + h / 2 - lFontHeight * 0.5f, mZ, lTextR, lTextG, lTextB, mParentLayout.parentScreen().a(), luiTextScale, -1);
+		lFontBitmap.draw(mLabel, x + w / 2 - 10 - (lLabelWidth * lAdjustedLabelScaleW) - lSeparatorHalfWidth, y + h / 2 - lFontHeight * 0.5f, mZ, lTextR, lTextG, lTextB, mParentLayout.parentScreen().a(), lAdjustedLabelScaleW, -1);
 		lFontBitmap.draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - lFontHeight * 0.5f, mZ, lTextR, lTextG, lTextB, mParentLayout.parentScreen().a(), luiTextScale, -1);
 
 		// Render the items
 		if (mSelectedIndex >= 0 && mSelectedIndex < mItems.size()) {
-			// TODO: For large names, the text clips off the screen
 			String lCurItem = mItems.get(mSelectedIndex).name;
 			final float EntryWidth = lFontBitmap.bitmap().getStringWidth(lCurItem);
+			float lAdjustedEntryScaleW = luiTextScale;
+			if (mEnableScaleTextToWidth && w * 0.35f < EntryWidth && EntryWidth > 0)
+				lAdjustedEntryScaleW = (w * 0.35f) / EntryWidth;
 
-			lFontBitmap.draw(lCurItem, x + (w / 4 * 3) - EntryWidth / 2, y + h / 2 - lFontHeight * 0.5f, pComponentDepth, lTextR, lTextG, lTextB, mParentLayout.parentScreen().a(), luiTextScale, -1);
+			lFontBitmap.draw(lCurItem, x + (w / 4 * 3) - (EntryWidth * lAdjustedEntryScaleW) / 2, y + h / 2 - lFontHeight * 0.5f, pComponentDepth, lTextR, lTextG, lTextB, mParentLayout.parentScreen().a(), lAdjustedEntryScaleW,
+					-1);
 
 		}
 

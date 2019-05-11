@@ -1,9 +1,11 @@
 package net.lintford.library.screenmanager.screens;
 
+import net.lintford.library.core.LintfordCore;
 import net.lintford.library.screenmanager.MenuEntry;
-import net.lintford.library.screenmanager.MenuEntry.ENTRY_ALIGNMENT;
 import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.ScreenManager;
+import net.lintford.library.screenmanager.ScreenManagerConstants.ALIGNMENT;
+import net.lintford.library.screenmanager.ScreenManagerConstants.LAYOUT_WIDTH;
 import net.lintford.library.screenmanager.dialogs.ConfirmationDialog;
 import net.lintford.library.screenmanager.entries.EntryInteractions;
 import net.lintford.library.screenmanager.entries.HorizontalEntryGroup;
@@ -33,10 +35,10 @@ public class AudioOptionsScreen extends MenuScreen implements EntryInteractions 
 	// --------------------------------------
 
 	public AudioOptionsScreen(ScreenManager pScreenManager) {
-		super(pScreenManager, "Audio Options");
+		super(pScreenManager, "AUDIO OPTIONS");
 
 		ListLayout lAudioList = new ListLayout(this);
-		lAudioList.setDrawBackground(true, 0f, 0f, 0f, 0.75f);
+		lAudioList.setDrawBackground(true, 1f, 1f, 1f, 0.85f);
 
 		createAudioSection(lAudioList);
 
@@ -70,7 +72,7 @@ public class AudioOptionsScreen extends MenuScreen implements EntryInteractions 
 		MenuLabelEntry lMusicOptionsTitle = new MenuLabelEntry(mScreenManager, lLayout);
 		lMusicOptionsTitle.label("Music Options");
 		lMusicOptionsTitle.enableBackground(true);
-		lMusicOptionsTitle.horizontalAlignment(ENTRY_ALIGNMENT.LEFT);
+		lMusicOptionsTitle.horizontalAlignment(ALIGNMENT.LEFT);
 
 		MenuToggleEntry mMusicEnabledEntry = new MenuToggleEntry(mScreenManager, lLayout);
 		mMusicEnabledEntry.label("Music Enabled");
@@ -86,7 +88,7 @@ public class AudioOptionsScreen extends MenuScreen implements EntryInteractions 
 		MenuLabelEntry lSoundOptionsTitle = new MenuLabelEntry(mScreenManager, lLayout);
 		lSoundOptionsTitle.label("Sound Options");
 		lSoundOptionsTitle.enableBackground(true);
-		lSoundOptionsTitle.horizontalAlignment(ENTRY_ALIGNMENT.LEFT);
+		lSoundOptionsTitle.horizontalAlignment(ALIGNMENT.LEFT);
 
 		MenuToggleEntry mSoundEnabledEntry = new MenuToggleEntry(mScreenManager, lLayout);
 		mSoundEnabledEntry.label("SoundFX Enabled");
@@ -116,6 +118,28 @@ public class AudioOptionsScreen extends MenuScreen implements EntryInteractions 
 	// Methods
 	// --------------------------------------
 
+	@Override
+	public void updateLayoutSize(LintfordCore pCore) {
+		final int lLayoutCount = layouts().size();
+		for (int i = 0; i < lLayoutCount; i++) {
+
+			if (mScreenManager.UIHUDController().useBigUI()) {
+				layouts().get(i).layoutWidth(LAYOUT_WIDTH.HALF);
+				layouts().get(i).marginLeft(100);
+				layouts().get(i).marginRight(100);
+
+			} else {
+				layouts().get(i).layoutWidth(LAYOUT_WIDTH.FULL);
+				layouts().get(i).marginLeft(50);
+				layouts().get(i).marginRight(50);
+			}
+
+		}
+
+		super.updateLayoutSize(pCore);
+
+	}
+	
 	@Override
 	protected void handleOnClick() {
 		switch (mClickAction.consume()) {

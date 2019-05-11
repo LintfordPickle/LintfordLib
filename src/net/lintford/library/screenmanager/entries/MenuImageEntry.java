@@ -9,8 +9,8 @@ import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.Screen;
 import net.lintford.library.screenmanager.ScreenManager;
+import net.lintford.library.screenmanager.ScreenManagerConstants.LAYOUT_ALIGNMENT;
 import net.lintford.library.screenmanager.layouts.BaseLayout;
-import net.lintford.library.screenmanager.layouts.BaseLayout.LAYOUT_ALIGNMENT;
 
 public class MenuImageEntry extends MenuEntry {
 
@@ -22,7 +22,7 @@ public class MenuImageEntry extends MenuEntry {
 	// Variables
 	// --------------------------------------
 
-	private LAYOUT_ALIGNMENT mAlignment = LAYOUT_ALIGNMENT.center;
+	private LAYOUT_ALIGNMENT mAlignment = LAYOUT_ALIGNMENT.CENTER;
 
 	private float mForceHeight;
 	private float mFittedWidth;
@@ -124,15 +124,6 @@ public class MenuImageEntry extends MenuEntry {
 	// --------------------------------------
 
 	@Override
-	public void initialise() {
-		super.initialise();
-
-		w = MENUENTRY_DEF_BUTTON_WIDTH;
-		h = MENUENTRY_DEF_BUTTON_HEIGHT;
-
-	}
-
-	@Override
 	public void loadGLContent(ResourceManager pResourceManager) {
 		super.loadGLContent(pResourceManager);
 
@@ -152,7 +143,7 @@ public class MenuImageEntry extends MenuEntry {
 	public void updateStructure() {
 		super.updateStructure();
 
-		h = mTexture != null ? mTexture.getTextureHeight() + 20f : MENUENTRY_DEF_BUTTON_HEIGHT;
+		h = mTexture != null ? mTexture.getTextureHeight() + 20f : h;
 
 	}
 

@@ -8,7 +8,6 @@ import org.lwjgl.opengl.GL11;
 import net.lintford.library.ConstantsTable;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
-import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
@@ -22,6 +21,7 @@ import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.Screen;
 import net.lintford.library.screenmanager.ScreenManager;
+import net.lintford.library.screenmanager.ScreenManagerConstants.FILLTYPE;
 import net.lintford.library.screenmanager.layouts.BaseLayout;
 
 public class ListBox extends MenuEntry implements IScrollBarArea {
@@ -79,6 +79,12 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 		return mItems;
 	}
 
+	@Override
+	public float height() {
+		return h;//mContentArea.h;
+
+	}
+
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
@@ -96,6 +102,10 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 		mRightMargin = 10f;
 		mTopMargin = 10f;
 		mBottomMargin = 10f;
+
+		mMaxHeight = 1000;
+
+		mVerticalFillType = FILLTYPE.FILL_CONTAINER;
 
 	}
 
@@ -196,24 +206,6 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 	}
 
 	@Override
-	public void updateStructure() {
-		super.updateStructure();
-
-		// Fill the width and height of the parent layout
-		if (mScrollBarsEnabled) {
-			w = mParentLayout.w - marginLeft() - marginRight();
-
-		} else {
-			w = mParentLayout.w - marginLeft() - marginRight();
-
-		}
-
-		// Need to take the margins into consideration when setting the height of this component
-		h = mParentLayout.h - marginTop() - marginBottom();
-
-	}
-
-	@Override
 	public void update(LintfordCore pCore, MenuScreen pScreen, boolean pIsSelected) {
 		mScrollBarsEnabled = mContentArea.h - h > 0;
 
@@ -240,8 +232,9 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 
 		}
 
-		mContentArea.w = w;
-		mContentArea.h = lTotalContentHeight;
+		// mContentArea.w = w;
+		if (mVerticalFillType == FILLTYPE.FILL_CONTAINER || mVerticalFillType == FILLTYPE.TAKE_WHATS_NEEDED)
+			mContentArea.h = lTotalContentHeight;
 
 		mScrollBar.update(pCore);
 
@@ -256,18 +249,19 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 
 		// Draw the listbox background
 		if (mDrawBackground) {
+			final float lH = h;
 			lTextureBatch.begin(pCore.HUD());
 			lTextureBatch.draw(mUITexture, 928, 0, TILE_SIZE, TILE_SIZE, x, y, TILE_SIZE, TILE_SIZE, pParentZDepth, 1, 1, 1, 0.85f);
 			lTextureBatch.draw(mUITexture, 960, 0, TILE_SIZE, TILE_SIZE, x + TILE_SIZE, y, w - 64, TILE_SIZE, pParentZDepth, 1, 1, 1, 0.85f);
 			lTextureBatch.draw(mUITexture, 992, 0, TILE_SIZE, TILE_SIZE, x + w - 32, y, TILE_SIZE, TILE_SIZE, pParentZDepth, 1, 1, 1, 0.85f);
 
-			lTextureBatch.draw(mUITexture, 928, 32, TILE_SIZE, TILE_SIZE, x, y + 32, TILE_SIZE, h - 64, pParentZDepth, 1, 1, 1, 0.85f);
-			lTextureBatch.draw(mUITexture, 960, 32, TILE_SIZE, TILE_SIZE, x + TILE_SIZE, y + 32, w - 64, h - 64, pParentZDepth, 1, 1, 1, 0.85f);
-			lTextureBatch.draw(mUITexture, 992, 32, TILE_SIZE, TILE_SIZE, x + w - 32, y + 32, TILE_SIZE, h - 64, pParentZDepth, 1, 1, 1, 0.85f);
+			lTextureBatch.draw(mUITexture, 928, 32, TILE_SIZE, TILE_SIZE, x, y + 32, TILE_SIZE, lH - 64, pParentZDepth, 1, 1, 1, 0.85f);
+			lTextureBatch.draw(mUITexture, 960, 32, TILE_SIZE, TILE_SIZE, x + TILE_SIZE, y + 32, w - 64, lH - 64, pParentZDepth, 1, 1, 1, 0.85f);
+			lTextureBatch.draw(mUITexture, 992, 32, TILE_SIZE, TILE_SIZE, x + w - 32, y + 32, TILE_SIZE, lH - 64, pParentZDepth, 1, 1, 1, 0.85f);
 
-			lTextureBatch.draw(mUITexture, 928, 64, TILE_SIZE, TILE_SIZE, x, y + h - 32, TILE_SIZE, TILE_SIZE, pParentZDepth, 1, 1, 1, 0.85f);
-			lTextureBatch.draw(mUITexture, 960, 64, TILE_SIZE, TILE_SIZE, x + TILE_SIZE, y + h - 32, w - 64, TILE_SIZE, pParentZDepth, 1, 1, 1, 0.85f);
-			lTextureBatch.draw(mUITexture, 992, 64, TILE_SIZE, TILE_SIZE, x + w - 32, y + h - 32, TILE_SIZE, TILE_SIZE, pParentZDepth, 1, 1, 1, 0.85f);
+			lTextureBatch.draw(mUITexture, 928, 64, TILE_SIZE, TILE_SIZE, x, y + lH - 32, TILE_SIZE, TILE_SIZE, pParentZDepth, 1, 1, 1, 0.85f);
+			lTextureBatch.draw(mUITexture, 960, 64, TILE_SIZE, TILE_SIZE, x + TILE_SIZE, y + lH - 32, w - 64, TILE_SIZE, pParentZDepth, 1, 1, 1, 0.85f);
+			lTextureBatch.draw(mUITexture, 992, 64, TILE_SIZE, TILE_SIZE, x + w - 32, y + lH - 32, TILE_SIZE, TILE_SIZE, pParentZDepth, 1, 1, 1, 0.85f);
 			lTextureBatch.end();
 
 		}
@@ -277,7 +271,7 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 
 		GL11.glStencilFunc(GL11.GL_ALWAYS, 1, 0xFF); // Set any stencil to 1
 		GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_REPLACE); // What should happen to stencil values
-		GL11.glStencilMask(0xFF); // Write to stencil buffer
+		GL11.glStencilMask(0x0F); // Write to stencil buffer
 
 		// Make sure we are starting with a fresh stencil buffer
 		GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT); // Clear the stencil buffer

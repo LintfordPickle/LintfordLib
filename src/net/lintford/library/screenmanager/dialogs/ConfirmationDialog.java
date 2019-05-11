@@ -69,6 +69,9 @@ public class ConfirmationDialog extends BaseDialog {
 
 		layouts().add(lListLayout);
 
+		// Offset of the buttons (from 0 - center screen)
+		mPaddingTop = 10;
+
 	}
 
 	// --------------------------------------

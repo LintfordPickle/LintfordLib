@@ -10,6 +10,7 @@ import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.Screen;
 import net.lintford.library.screenmanager.ScreenManager;
+import net.lintford.library.screenmanager.ScreenManagerConstants.FILLTYPE;
 import net.lintford.library.screenmanager.layouts.BaseLayout;
 
 public class MenuLabelEntry extends MenuEntry {
@@ -113,26 +114,18 @@ public class MenuLabelEntry extends MenuEntry {
 		mDrawBackground = false;
 		mText = "Add your message";
 		mShow = true;
-		mR = 1.0f;
-		mG = mB = 0.1f;
+		mR = mG = mB = 0.94f;
 
 		mCanHaveFocus = false;
 		mCanHoverOver = false;
+
+		mVerticalFillType = FILLTYPE.TAKE_WHATS_NEEDED;
 
 	}
 
 	// --------------------------------------
 	// Core-Methods
 	// --------------------------------------
-
-	@Override
-	public void initialise() {
-		super.initialise();
-
-		w = MENUENTRY_DEF_BUTTON_WIDTH;
-		h = MENUENTRY_DEF_BUTTON_HEIGHT;
-
-	}
 
 	@Override
 	public void loadGLContent(ResourceManager pResourceManager) {
@@ -171,7 +164,8 @@ public class MenuLabelEntry extends MenuEntry {
 	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pParentZDepth) {
 		if (!enabled())
 			return;
-		final float lAlpha = 0.4f;
+
+		final float lAlpha = 1f;
 		final float luiTextScale = mScreenManager.UIHUDController().uiTextScaleFactor();
 
 		final MenuScreen lParentScreen = mParentLayout.parentScreen();
@@ -184,7 +178,7 @@ public class MenuLabelEntry extends MenuEntry {
 
 		if (mDrawBackground) {
 			lTextureBatch.begin(pCore.HUD());
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, x, y, w, h, mZ, 0.1f, 0.1f, 0.1f, lAlpha);
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, x, y, w, h, pParentZDepth + .15f, 0.1f, 0.1f, 0.1f, lAlpha);
 			lTextureBatch.end();
 
 		}

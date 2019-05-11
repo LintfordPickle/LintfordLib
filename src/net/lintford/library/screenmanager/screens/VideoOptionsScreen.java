@@ -4,12 +4,15 @@ import org.lwjgl.PointerBuffer;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWVidMode;
 
+import net.lintford.library.core.LintfordCore;
 import net.lintford.library.options.DisplayManager;
 import net.lintford.library.options.VideoSettings;
 import net.lintford.library.screenmanager.MenuEntry;
-import net.lintford.library.screenmanager.MenuEntry.ENTRY_ALIGNMENT;
 import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.ScreenManager;
+import net.lintford.library.screenmanager.ScreenManagerConstants.ALIGNMENT;
+import net.lintford.library.screenmanager.ScreenManagerConstants.FILLTYPE;
+import net.lintford.library.screenmanager.ScreenManagerConstants.LAYOUT_WIDTH;
 import net.lintford.library.screenmanager.dialogs.ConfirmationDialog;
 import net.lintford.library.screenmanager.dialogs.TimedConfirmationDialog;
 import net.lintford.library.screenmanager.dialogs.TimedDialogInterface;
@@ -20,7 +23,6 @@ import net.lintford.library.screenmanager.entries.MenuEnumEntryIndexed;
 import net.lintford.library.screenmanager.entries.MenuLabelEntry;
 import net.lintford.library.screenmanager.entries.MenuToggleEntry;
 import net.lintford.library.screenmanager.layouts.BaseLayout;
-import net.lintford.library.screenmanager.layouts.BaseLayout.LAYOUT_FILL_TYPE;
 import net.lintford.library.screenmanager.layouts.ListLayout;
 
 // TODO: Monitor and Aspect Ratio are only considered in fullscreen mode
@@ -76,7 +78,7 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 	// --------------------------------------
 
 	public VideoOptionsScreen(ScreenManager pScreenManager) {
-		super(pScreenManager, "VIDEO SETTINGS");
+		super(pScreenManager, "VIDEO OPTIONS");
 
 		mPaddingTop = 0;
 
@@ -87,6 +89,7 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 		mVideoList.setDrawBackground(true, 1f, 1f, 1f, 0.85f);
 
 		mConfirmChangesLayout = new ListLayout(this);
+		mConfirmChangesLayout.setEntryOffsetY(0);
 
 		createVideoSection(mVideoList);
 
@@ -98,11 +101,11 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 
 		mChangesPendingWarning = new MenuLabelEntry(mScreenManager, mConfirmChangesLayout);
 		mChangesPendingWarning.label("Current changes have not yet been applied!");
-		mChangesPendingWarning.labelColor(0.86f, 0.22f, 0.37f);
+		mChangesPendingWarning.labelColor(1f, 0.12f, 0.17f);
 		mChangesPendingWarning.enabled(true);
 
 		mConfirmChangesLayout.menuEntries().add(mChangesPendingWarning);
-		mConfirmChangesLayout.layoutFillType(LAYOUT_FILL_TYPE.ONLY_WHATS_NEEDED);
+		mConfirmChangesLayout.layoutFillType(FILLTYPE.TAKE_WHATS_NEEDED);
 		mConfirmChangesLayout.setDrawBackground(true, 1f, 1f, 1f, 0.85f);
 
 		/* Screen control buttons */
@@ -135,11 +138,13 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 		MenuLabelEntry lVideoOptionsTitle = new MenuLabelEntry(mScreenManager, lLayout);
 		lVideoOptionsTitle.label("Video Options");
 		lVideoOptionsTitle.enableBackground(true);
-		lVideoOptionsTitle.horizontalAlignment(ENTRY_ALIGNMENT.LEFT);
+		lVideoOptionsTitle.horizontalAlignment(ALIGNMENT.LEFT);
 
 		mFullScreenEntry = new MenuEnumEntryIndexed<>(mScreenManager, lLayout, "Fullscreen");
 		mResolutionEntry = new MenuDropDownEntry<>(mScreenManager, lLayout, "Resolution");
 		mMonitorEntry = new MenuEnumEntryIndexed<>(mScreenManager, lLayout, "Monitor");
+		mMonitorEntry.setButtonsEnabled(true);
+		
 		mVSync = new MenuToggleEntry(mScreenManager, lLayout);
 
 		// Setup buttons
@@ -157,6 +162,9 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 		mVSync.registerClickListener(this, BUTTON_VSYNC);
 
 		// TODO: Add ToolTips for all menu options
+
+		MenuEntry lSeparator = new MenuEntry(mScreenManager, lLayout, "");
+		lSeparator.enabled(false);
 
 		// Add the menu entries to the window
 		lLayout.menuEntries().add(lVideoOptionsTitle);
@@ -176,6 +184,28 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 	// --------------------------------------
 	// Core-Methods
 	// --------------------------------------
+
+	@Override
+	public void updateLayoutSize(LintfordCore pCore) {
+		final int lLayoutCount = layouts().size();
+		for (int i = 0; i < lLayoutCount; i++) {
+
+			if (mScreenManager.UIHUDController().useBigUI()) {
+				layouts().get(i).layoutWidth(LAYOUT_WIDTH.HALF);
+				layouts().get(i).marginLeft(100);
+				layouts().get(i).marginRight(100);
+
+			} else {
+				layouts().get(i).layoutWidth(LAYOUT_WIDTH.FULL);
+				layouts().get(i).marginLeft(50);
+				layouts().get(i).marginRight(50);
+			}
+
+		}
+
+		super.updateLayoutSize(pCore);
+
+	}
 
 	@Override
 	public void exitScreen() {

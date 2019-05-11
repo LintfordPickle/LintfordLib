@@ -31,6 +31,7 @@ public class MenuInputEntry extends MenuEntry implements IBufferedInputCallback 
 	private float mCaretFlashTimer;
 	private boolean mShowCaret;
 	private String mTempString;
+	private boolean mEnableScaleTextToWidth;
 
 	private StringBuilder mInputField;
 	private boolean mResetOnDefaultClick;
@@ -38,6 +39,14 @@ public class MenuInputEntry extends MenuEntry implements IBufferedInputCallback 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public boolean scaleTextToWidth() {
+		return mEnableScaleTextToWidth;
+	}
+
+	public void scaleTextToWidth(boolean pNewValue) {
+		mEnableScaleTextToWidth = pNewValue;
+	}
 
 	@Override
 	public void hasFocus(boolean pNewValue) {
@@ -96,6 +105,8 @@ public class MenuInputEntry extends MenuEntry implements IBufferedInputCallback 
 		mHighlightOnHover = false;
 
 		mCanHoverOver = false;
+
+		mEnableScaleTextToWidth = true;
 
 		mInputField = new StringBuilder();
 
@@ -159,23 +170,33 @@ public class MenuInputEntry extends MenuEntry implements IBufferedInputCallback 
 		final MenuScreen lParentScreen = mParentLayout.parentScreen();
 		final FontUnit lFont = lParentScreen.font();
 
-		final float lLabelWidth = lFont.bitmap().getStringWidth(mLabel, luiTextScale);
+		final float lLabelTextWidth = lFont.bitmap().getStringWidth(mLabel, luiTextScale);
+		float lAdjustedLabelScaleW = luiTextScale;
+		if (mEnableScaleTextToWidth && w * 0.4f < lLabelTextWidth && lLabelTextWidth > 0)
+			lAdjustedLabelScaleW = (w * 0.4f) / lLabelTextWidth;
 
-		final float lFontHeight = lFont.bitmap().fontHeight() * luiTextScale;
-		final float lInputTextWidth = lFont.bitmap().getStringWidth(mInputField.toString(), luiTextScale);
+		final float lLabelTextHeight = lFont.bitmap().fontHeight() * lAdjustedLabelScaleW;
+
 		final float lSeparatorHalfWidth = lFont.bitmap().getStringWidth(mSeparator, luiTextScale) * 0.5f;
+		final float lInputTextWidth = lFont.bitmap().getStringWidth(mInputField.toString(), luiTextScale);
+
+		float lAdjustedLInputScaleW = luiTextScale;
+		if (mEnableScaleTextToWidth && w * 0.4f < lInputTextWidth && lInputTextWidth > 0)
+			lAdjustedLInputScaleW = (w * 0.4f) / lInputTextWidth;
+
+		final float lInputTextHeight = lFont.bitmap().fontHeight() * lAdjustedLInputScaleW;
 
 		float r = mEnabled ? 1f : 0.6f;
 		float g = mEnabled ? 1f : 0.6f;
 		float b = mEnabled ? 1f : 0.6f;
 
 		lFont.begin(pCore.HUD());
-		lFont.draw(mLabel, x + w / 2 - 10 - lLabelWidth - lSeparatorHalfWidth, y + h / 2 - lFontHeight * 0.5f, pParentZDepth + .1f, r, g, b, 1f, luiTextScale, -1);
-		lFont.draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - lFontHeight * 0.5f, pParentZDepth + .1f, r, g, b, 1f, luiTextScale, -1);
-		lFont.draw(mInputField.toString(), x + w / 2 + lSeparatorHalfWidth + SPACE_BETWEEN_TEXT, y + h / 2 - lFontHeight * 0.5f, pParentZDepth + .1f, r, g, b, 1f, luiTextScale, -1);
+		lFont.draw(mLabel, x + w / 2 - 10 - (lLabelTextWidth * lAdjustedLabelScaleW) - lSeparatorHalfWidth, y + h / 2 - lLabelTextHeight * 0.5f, pParentZDepth + .1f, r, g, b, 1f, lAdjustedLabelScaleW, -1);
+		lFont.draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - lLabelTextHeight * 0.5f, pParentZDepth + .1f, r, g, b, 1f, luiTextScale, -1);
+		lFont.draw(mInputField.toString(), x + w / 2 + lSeparatorHalfWidth * lAdjustedLInputScaleW + SPACE_BETWEEN_TEXT, y + h / 2 - lInputTextHeight * 0.5f, pParentZDepth + .1f, r, g, b, 1f, lAdjustedLInputScaleW, -1);
 
 		if (mShowCaret && mHasFocus) {
-			lFont.draw("|", x + w / 2 + lSeparatorHalfWidth + SPACE_BETWEEN_TEXT + lInputTextWidth, y + h / 2 - lFontHeight * 0.5f, pParentZDepth + .1f, luiTextScale);
+			lFont.draw("|", x + w / 2 + lSeparatorHalfWidth + SPACE_BETWEEN_TEXT + lInputTextWidth * lAdjustedLInputScaleW, y + h / 2 - lInputTextHeight * 0.5f, pParentZDepth + .1f, lAdjustedLInputScaleW);
 
 		}
 

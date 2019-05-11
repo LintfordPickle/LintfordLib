@@ -67,7 +67,7 @@ public class ScrollBarContentRectangle extends Rectangle {
 
 		GL11.glStencilFunc(GL11.GL_ALWAYS, 1, 0xFF); // Set any stencil to 1
 		GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_REPLACE); // What should happen to stencil values
-		GL11.glStencilMask(0xFF); // Write to stencil buffer
+		GL11.glStencilMask(0x0F); // Write to stencil buffer
 
 		// Make sure we are starting with a fresh stencil buffer
 		GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT); // Clear the stencil buffer

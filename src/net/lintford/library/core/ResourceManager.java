@@ -16,6 +16,7 @@ import java.util.List;
 import net.lintford.library.ConstantsTable;
 import net.lintford.library.core.audio.AudioManager;
 import net.lintford.library.core.box2d.PObjectManager;
+import net.lintford.library.core.graphics.StencilManager;
 import net.lintford.library.core.graphics.fonts.FontManager;
 import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetManager;
 import net.lintford.library.core.graphics.textures.TextureManager;
@@ -46,6 +47,7 @@ public class ResourceManager {
 	protected SpriteSheetManager mSpriteSheetManager;
 	protected AudioManager mAudioManager;
 	protected PObjectManager mPObjectManager;
+	protected StencilManager mStencilManager;
 	// protected ShaderManager mShaderManager;
 
 	// TODO: ResouceManagers still to be implemented:

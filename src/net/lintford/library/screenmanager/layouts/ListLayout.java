@@ -4,7 +4,7 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.input.InputState.INPUT_TYPES;
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
-import net.lintford.library.screenmanager.entries.ListBox;
+import net.lintford.library.screenmanager.ScreenManagerConstants.FILLTYPE;
 
 /**
  * The list layout lays out all the menu entries linearly down the layout.
@@ -21,9 +21,6 @@ public class ListLayout extends BaseLayout {
 
 	public ListLayout(MenuScreen pParentScreen) {
 		super(pParentScreen);
-
-		// Set some defaults
-		mAlignment = LAYOUT_ALIGNMENT.center;
 
 	}
 
@@ -57,6 +54,17 @@ public class ListLayout extends BaseLayout {
 			}
 
 		}
+		// otherwise, defocus this and all children ??
+		else {
+			final int lEntryCount = menuEntries().size();
+			for (int i = 0; i < lEntryCount; i++) {
+				MenuEntry lEntry = menuEntries().get(i);
+
+				lEntry.hoveredOver(false);
+
+			}
+
+		}
 
 		return false;
 
@@ -68,44 +76,59 @@ public class ListLayout extends BaseLayout {
 
 		float lYPos = y + mEntryOffsetFromTop + mYScrollPos;
 
+		final int lEntryCount = menuEntries().size();
+
+		// If the height of the content is smaller than the height of this layout, disable the scroll bar
 		if (mContentArea.h < h) {
 			mYScrollPos = 0;
 			lYPos += 5f;
 		}
 
-		float lVertHeightTaken = marginTop() + marginBottom() + 2;
+		final float lLayoutHeight = h - marginBottom() - marginTop();
 
-		int lEntryCount = menuEntries().size();
+		// See how many layouts only take what they need
+		int lCountOfSharers = lEntryCount;
+		int lCountOfTakers = 0;
+
+		float lHeightTaken = marginTop() + marginBottom();
+
 		for (int i = 0; i < lEntryCount; i++) {
 			MenuEntry lEntry = menuEntries().get(i);
-//			float lScrollBarWidth = 0;
-//			if (mScrollBarsEnabled)
-//				lScrollBarWidth = mScrollBar.width();
-//
-//			lEntry.w = w - marginLeft() - marginRight() - lScrollBarWidth;
-//			lEntry.w = Math.min(lEntry.w, 300);
+			if (lEntry.verticalFillType() == FILLTYPE.TAKE_WHATS_NEEDED) {
+				lCountOfTakers++;
+				lHeightTaken += lEntry.paddingTop() + lEntry.height() + lEntry.paddingBottom();
 
-			switch (mAlignment) {
-			case left:
-				lEntry.x = x;
-				break;
-			case center:
-				lEntry.x = centerX() - lEntry.w / 2;
-				break;
-			case right:
-				lEntry.x = x + w - lEntry.w;
-				break;
 			}
 
-			// Listboxes shouldn't cause the listlayout parent cotainers to grow in vertical size.
-			// Instead we need to work how how much space the listbox
-			// FIXME: This isn't quite correct (the -10 is wrong, but it works)
-			if (lEntry instanceof ListBox) {
-				lEntry.h = h - lVertHeightTaken;
+		}
+
+		lCountOfSharers -= lCountOfTakers;
+
+		final float INNER_PADDING = 25;
+		float lSizeOfEachFillElement = ((lLayoutHeight - lHeightTaken) / lCountOfSharers) - INNER_PADDING;
+
+		if (lSizeOfEachFillElement < 0)
+			lSizeOfEachFillElement = 10;
+
+		for (int i = 0; i < lEntryCount; i++) {
+			MenuEntry lEntry = menuEntries().get(i);
+			float lScrollBarWidth = 0;
+			if (mScrollBarsEnabled)
+				lScrollBarWidth = mScrollBar.width();
+
+			lEntry.w = w - marginLeft() - marginRight() - lScrollBarWidth;
+			lEntry.x = centerX() - lEntry.w / 2 - lScrollBarWidth / 2;
+
+			// Assign the entry height here
+			if (lEntry.verticalFillType() == FILLTYPE.FILL_CONTAINER) {
+				lEntry.h = lSizeOfEachFillElement; // MathHelper.clamp(lSizeOfEachFillElement, lEntry.minHeight(), lEntry.maxHeight());
+
+			} else if (lEntry.verticalFillType() == FILLTYPE.FILL_CONTAINER) {
+				lEntry.h = lSizeOfEachFillElement; // MathHelper.clamp(lSizeOfEachFillElement, lEntry.minHeight(), lEntry.maxHeight());
+
 			} else {
-				lVertHeightTaken += lEntry.marginTop();
-				lVertHeightTaken += lEntry.h;
-				lVertHeightTaken += lEntry.marginBottom();
+				lEntry.h = 32;// lLayoutHeight - lHeightTaken;
+
 			}
 
 			lEntry.y = lYPos;

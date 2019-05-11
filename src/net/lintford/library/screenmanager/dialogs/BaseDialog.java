@@ -77,7 +77,7 @@ public abstract class BaseDialog extends MenuScreen {
 		mTransitionOff = null;
 		mA = 1f;
 
-		mPaddingTop = 400f;
+		mPaddingTop = 0;
 
 		mIsPopup = true; // don't hide underlying screens
 	}
@@ -109,16 +109,16 @@ public abstract class BaseDialog extends MenuScreen {
 	}
 
 	@Override
-	public void updateLayouts(LintfordCore pCore) {
-		super.updateLayouts(pCore);
+	public void updateLayoutSize(LintfordCore pCore) {
+		super.updateLayoutSize(pCore);
 
 		final int lLayoutCount = layouts().size();
 		for (int i = 0; i < lLayoutCount; i++) {
 			BaseLayout lLayout = layouts().get(i);
-
-			lLayout.x = -DIALOG_WIDTH * 0.5f;
-			lLayout.y = 0;
-			lLayout.w = DIALOG_WIDTH;
+			
+			lLayout.x = -DIALOG_WIDTH * 0.4f;
+			lLayout.y = 0 + mPaddingTop;
+			lLayout.w = DIALOG_WIDTH * 0.8f;
 			lLayout.h = DIALOG_HEIGHT;
 
 			layouts().get(i).updateStructure();

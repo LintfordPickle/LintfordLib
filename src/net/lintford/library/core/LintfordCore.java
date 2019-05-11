@@ -140,6 +140,9 @@ public abstract class LintfordCore {
 	protected HUD mHUD;
 	protected RenderState mRenderState;
 
+	protected final float mShowLogoTime = 3000; // 3 seconds
+	protected long mShowLogoTimer;
+
 	protected boolean mIsHeadlessMode;
 
 	protected boolean mIsFixedTimeStep;
@@ -260,6 +263,8 @@ public abstract class LintfordCore {
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "LWJGL Version: " + org.lwjgl.Version.getVersion());
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "Steamworks Version" + com.codedisaster.steamworks.Version.getVersion());
 
+		mShowLogoTimer = System.currentTimeMillis();
+
 	}
 
 	// ---------------------------------------------
@@ -288,6 +293,21 @@ public abstract class LintfordCore {
 		mRenderState = new RenderState();
 
 		showStartUpLogo(lWindowID);
+
+		onInitialiseGL();
+
+		onInitialiseApp();
+
+		onLoadGLContent();
+
+		// If we get to this point before enough time has elapsed, then continue showing the timer some ...
+		long lDiff = (long) (mShowLogoTime - (System.currentTimeMillis() - mShowLogoTimer));
+		try {
+			Thread.sleep(lDiff);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+
+		}
 
 		onRunGameLoop();
 
@@ -360,12 +380,6 @@ public abstract class LintfordCore {
 	protected void onRunGameLoop() {
 
 		int lUpdateFrameLag = 0;
-
-		onInitialiseGL();
-
-		onInitialiseApp();
-
-		onLoadGLContent();
 
 		DisplayManager lDisplayConfig = mMasterConfig.display();
 
@@ -478,8 +492,10 @@ public abstract class LintfordCore {
 		mMasterConfig.update(this);
 		mResourceManager.update(this);
 		mHUD.update(this);
+		
 		if (mGameCamera != null)
 			mGameCamera.update(this);
+		
 		mControllerManager.update(this, CORE_ENTITY_GROUP_ID);
 		Debug.debugManager().update(this);
 

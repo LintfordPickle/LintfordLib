@@ -1,17 +1,18 @@
 package net.lintford.library.screenmanager;
 
-import net.lintford.library.core.graphics.ColorConstants;
-
 import net.lintford.library.ConstantsTable;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.geometry.Rectangle;
+import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 import net.lintford.library.core.input.InputState;
 import net.lintford.library.core.input.InputState.INPUT_TYPES;
 import net.lintford.library.core.maths.Vector2f;
+import net.lintford.library.screenmanager.ScreenManagerConstants.ALIGNMENT;
+import net.lintford.library.screenmanager.ScreenManagerConstants.FILLTYPE;
 import net.lintford.library.screenmanager.entries.EntryInteractions;
 import net.lintford.library.screenmanager.layouts.BaseLayout;
 
@@ -23,9 +24,6 @@ public class MenuEntry extends Rectangle {
 
 	private static final long serialVersionUID = -226493862481815669L;
 
-	protected static final float MENUENTRY_DEF_BUTTON_WIDTH = 300;
-	protected static final float MENUENTRY_DEF_BUTTON_HEIGHT = 32;
-
 	protected static final float MENUENTRY_MAX_WIDTH = 700;
 
 	protected static final float FOCUS_TIMER = 500f; // milli
@@ -33,26 +31,14 @@ public class MenuEntry extends Rectangle {
 	protected static final float Z_STATE_MODIFIER_PASSIVE = 0.005f; // Entry passive
 	protected static final float Z_STATE_MODIFIER_ACTIVE = 0.006f; // Entry active
 
-	public enum ENTRY_ALIGNMENT {
-		LEFT, RIGHT, TOP, BOTTOM, CENTER,
-	}
-
-	public enum ENTRY_FILL_TYPE {
-		TAKE_WHATS_NEEDED, SHARE, FILL,
-	}
-
-	public enum BUTTON_SIZE {
-		tiny, narrow, normal, wide;
-	}
-
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
-	protected ENTRY_ALIGNMENT mHorizontalAlignment = ENTRY_ALIGNMENT.CENTER;
-	protected ENTRY_ALIGNMENT mVerticalAlignment = ENTRY_ALIGNMENT.CENTER;
-	protected ENTRY_FILL_TYPE mHorizontalFillType = ENTRY_FILL_TYPE.SHARE;
-	protected ENTRY_FILL_TYPE mVerticalFillType = ENTRY_FILL_TYPE.SHARE;
+	protected ALIGNMENT mHorizontalAlignment = ALIGNMENT.CENTER;
+	protected ALIGNMENT mVerticalAlignment = ALIGNMENT.CENTER;
+	protected FILLTYPE mHorizontalFillType = FILLTYPE.TAKE_WHATS_NEEDED;
+	protected FILLTYPE mVerticalFillType = FILLTYPE.TAKE_WHATS_NEEDED;
 
 	protected ScreenManager mScreenManager;
 	protected Texture mUITexture;
@@ -95,6 +81,8 @@ public class MenuEntry extends Rectangle {
 	protected float mLeftMargin;
 	protected float mRightMargin;
 
+	protected float mMinWidth;
+	protected float mMinHeight;
 	protected float mMaxWidth;
 	protected float mMaxHeight;
 
@@ -105,35 +93,35 @@ public class MenuEntry extends Rectangle {
 	// Properties
 	// --------------------------------------
 
-	public ENTRY_ALIGNMENT horizontalAlignment() {
+	public ALIGNMENT horizontalAlignment() {
 		return mHorizontalAlignment;
 	}
 
-	public void horizontalAlignment(ENTRY_ALIGNMENT pNewValue) {
+	public void horizontalAlignment(ALIGNMENT pNewValue) {
 		mHorizontalAlignment = pNewValue;
 	}
 
-	public ENTRY_ALIGNMENT verticalAlignment() {
+	public ALIGNMENT verticalAlignment() {
 		return mVerticalAlignment;
 	}
 
-	public void verticalAlignment(ENTRY_ALIGNMENT pNewValue) {
+	public void verticalAlignment(ALIGNMENT pNewValue) {
 		mVerticalAlignment = pNewValue;
 	}
 
-	public ENTRY_FILL_TYPE horizontalFillType() {
+	public FILLTYPE horizontalFillType() {
 		return mHorizontalFillType;
 	}
 
-	public void horizontalFillType(ENTRY_FILL_TYPE pNewValue) {
+	public void horizontalFillType(FILLTYPE pNewValue) {
 		mHorizontalFillType = pNewValue;
 	}
 
-	public ENTRY_FILL_TYPE verticalFillType() {
+	public FILLTYPE verticalFillType() {
 		return mVerticalFillType;
 	}
 
-	public void verticalFillType(ENTRY_FILL_TYPE pNewValue) {
+	public void verticalFillType(FILLTYPE pNewValue) {
 		mVerticalFillType = pNewValue;
 	}
 
@@ -225,12 +213,36 @@ public class MenuEntry extends Rectangle {
 		mText = pNewValue;
 	}
 
+	public float minWidth() {
+		return mMinWidth;
+	}
+
+	public float minHeight() {
+		return mMinHeight;
+	}
+
+	public void minWidth(float pNewValue) {
+		mMinWidth = pNewValue;
+	}
+
+	public void minHeight(float pNewValue) {
+		mMinHeight = pNewValue;
+	}
+
 	public float maxWidth() {
 		return mMaxWidth;
 	}
 
 	public float maxHeight() {
 		return mMaxHeight;
+	}
+
+	public void maxWidth(float pNewValue) {
+		mMaxWidth = pNewValue;
+	}
+
+	public void maxHeight(float pNewValue) {
+		mMaxHeight = pNewValue;
 	}
 
 	public boolean hoveredOver() {
@@ -308,11 +320,16 @@ public class MenuEntry extends Rectangle {
 		mLeftMargin = 2f;
 		mRightMargin = 2f;
 
-		mMaxWidth = MENUENTRY_DEF_BUTTON_WIDTH;
-		mMaxHeight = MENUENTRY_DEF_BUTTON_HEIGHT;
+		mMinWidth = 200;
+		mMinHeight = 30;
+		mMinWidth = 300;
+		mMaxWidth = 600;
+		mMaxHeight = 32;
 
-		w = MENUENTRY_DEF_BUTTON_WIDTH;
-		h = MENUENTRY_DEF_BUTTON_HEIGHT;
+		w = mMaxWidth;
+		h = mMaxHeight;
+
+		mVerticalFillType = FILLTYPE.TAKE_WHATS_NEEDED;
 
 	}
 
@@ -321,9 +338,6 @@ public class MenuEntry extends Rectangle {
 	// --------------------------------------
 
 	public void initialise() {
-		w = MENUENTRY_DEF_BUTTON_WIDTH;
-		h = MENUENTRY_DEF_BUTTON_HEIGHT;
-
 		mIsInitialised = true;
 
 	}
