@@ -302,11 +302,14 @@ public abstract class LintfordCore {
 
 		// If we get to this point before enough time has elapsed, then continue showing the timer some ...
 		long lDiff = (long) (mShowLogoTime - (System.currentTimeMillis() - mShowLogoTimer));
-		try {
-			Thread.sleep(lDiff);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-
+		if(lDiff > 0) {
+			try {
+				Thread.sleep(lDiff);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+				
+			}
+			
 		}
 
 		onRunGameLoop();

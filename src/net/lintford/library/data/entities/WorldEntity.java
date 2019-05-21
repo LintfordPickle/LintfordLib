@@ -1,6 +1,5 @@
 package net.lintford.library.data.entities;
 
-import net.lintford.library.core.LintfordCore;
 import net.lintford.library.data.BaseData;
 
 /**
@@ -41,9 +40,5 @@ public abstract class WorldEntity extends BaseData {
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
-
-	public void update(LintfordCore pCore) {
-
-	}
 
 }

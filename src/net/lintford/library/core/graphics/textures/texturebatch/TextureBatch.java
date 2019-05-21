@@ -394,48 +394,49 @@ public class TextureBatch {
 		float sin = (float) (Math.sin(pRot));
 		float cos = (float) (Math.cos(pRot));
 
-		// Translate the sprite to the origin
-		float dx = -pROX;
-		float dy = -pROY;
+		float lHalfW = (pDW * pScale) / 2f;
+		float lHalfH = (pDH * pScale) / 2f;
+
+		// define the origin of this sprite
+		// note: the rotation origin is not scaled with the sprite (this should be performed before calling this function)
+		float originX = -pROX;
+		float originY = -pROY;
+
+		// Vertex 0 (bottom left)
+		float x0 = (originX - lHalfW) * cos - (originY + lHalfH) * sin;
+		float y0 = (originX - lHalfW) * sin + (originY + lHalfH) * cos;
+		float u0 = pSX / pTexture.getTextureWidth();
+		float v0 = (pSY + pSH) / pTexture.getTextureHeight();
+
+		// Vertex 1 (top left)
+		float x1 = (originX - lHalfW) * cos - (originY - lHalfH) * sin;
+		float y1 = (originX - lHalfW) * sin + (originY - lHalfH) * cos;
+		float u1 = pSX / pTexture.getTextureWidth();
+		float v1 = pSY / pTexture.getTextureHeight();
+
+		// Vertex 2 (top right)
+		float x2 = (originX + lHalfW) * cos - (originY - lHalfH) * sin;
+		float y2 = (originX + lHalfW) * sin + (originY - lHalfH) * cos;
+		float u2 = (pSX + pSW) / pTexture.getTextureWidth();
+		float v2 = pSY / pTexture.getTextureHeight();
+
+		// Vertex 3 (bottom right)
+		float x3 = (originX + lHalfW) * cos - (originY + lHalfH) * sin;
+		float y3 = (originX + lHalfW) * sin + (originY + lHalfH) * cos;
+		float u3 = (pSX + pSW) / pTexture.getTextureWidth();
+		float v3 = (pSY + pSH) / pTexture.getTextureHeight();
 
 		// Apply the difference back to the global positions
 		pDX += pROX;
 		pDY += pROY;
 
-		float scaX = pDW * 0.5f * pScale;
-		float scaY = pDH * 0.5f * pScale;
-
-		// Vertex 0
-		float x0 = pDX + (dx - scaX) * cos - ((dy - scaY) + (pDH + scaY * 2f)) * sin;
-		float y0 = pDY + (dx - scaX) * sin + ((dy - scaY) + (pDH + scaY * 2f)) * cos;
-		float u0 = pSX / pTexture.getTextureWidth();
-		float v0 = (pSY + pSH) / pTexture.getTextureHeight();
-
-		// Vertex 1
-		float x1 = pDX + (dx - scaX) * cos - (dy - scaY) * sin;
-		float y1 = pDY + (dx - scaX) * sin + (dy - scaY) * cos;
-		float u1 = pSX / pTexture.getTextureWidth();
-		float v1 = pSY / pTexture.getTextureHeight();
-
-		// Vertex 2
-		float x2 = pDX + ((dx - scaX) + (pDW + scaX * 2f)) * cos - (dy - scaY) * sin;
-		float y2 = pDY + ((dx - scaX) + (pDW + scaX * 2f)) * sin + (dy - scaY) * cos;
-		float u2 = (pSX + pSW) / pTexture.getTextureWidth();
-		float v2 = pSY / pTexture.getTextureHeight();
-
-		// Vertex 3
-		float x3 = pDX + ((dx - scaX) + (pDW + scaX * 2f)) * cos - ((dy - scaY) + (pDH + scaY * 2f)) * sin;
-		float y3 = pDY + ((dx - scaX) + (pDW + scaX * 2f)) * sin + ((dy - scaY) + (pDH + scaY * 2f)) * cos;
-		float u3 = (pSX + pSW) / pTexture.getTextureWidth();
-		float v3 = (pSY + pSH) / pTexture.getTextureHeight();
-
 		// CCW 102203
-		addVertToBuffer(x1, y1, pZ, 1f, pR, pG, pB, pA, u1, v1); // 1
-		addVertToBuffer(x0, y0, pZ, 1f, pR, pG, pB, pA, u0, v0); // 0
-		addVertToBuffer(x2, y2, pZ, 1f, pR, pG, pB, pA, u2, v2); // 2
-		addVertToBuffer(x2, y2, pZ, 1f, pR, pG, pB, pA, u2, v2); // 2
-		addVertToBuffer(x0, y0, pZ, 1f, pR, pG, pB, pA, u0, v0); // 0
-		addVertToBuffer(x3, y3, pZ, 1f, pR, pG, pB, pA, u3, v3); // 3
+		addVertToBuffer(pDX + x1, pDY + y1, pZ, 1f, pR, pG, pB, pA, u1, v1); // 1
+		addVertToBuffer(pDX + x0, pDY + y0, pZ, 1f, pR, pG, pB, pA, u0, v0); // 0
+		addVertToBuffer(pDX + x2, pDY + y2, pZ, 1f, pR, pG, pB, pA, u2, v2); // 2
+		addVertToBuffer(pDX + x2, pDY + y2, pZ, 1f, pR, pG, pB, pA, u2, v2); // 2
+		addVertToBuffer(pDX + x0, pDY + y0, pZ, 1f, pR, pG, pB, pA, u0, v0); // 0
+		addVertToBuffer(pDX + x3, pDY + y3, pZ, 1f, pR, pG, pB, pA, u3, v3); // 3
 
 		mCurNumSprites++;
 

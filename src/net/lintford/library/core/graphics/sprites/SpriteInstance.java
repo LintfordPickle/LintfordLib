@@ -105,15 +105,20 @@ public class SpriteInstance extends Rectangle {
 	public void init(SpriteDefinition pSpriteDef) {
 		mSpriteDefinition = pSpriteDef;
 		loopingEnabled = pSpriteDef.loopEnabled();
-		animationEnabled = true; 
+		animationEnabled = true;
 
 	}
 
 	public void update(LintfordCore pCore) {
+		update(pCore, false);
+
+	}
+
+	public void update(LintfordCore pCore, boolean pReverse) {
+		final float lDeltaTime = (float) pCore.time().elapseGameTimeMilli();
+
 		if (mSpriteDefinition.frameDuration() == 0.0)
 			return;
-
-		final float lDeltaTime = (float) pCore.time().elapseGameTimeMilli();
 
 		if (animationEnabled) {
 			timer += lDeltaTime;
@@ -121,22 +126,47 @@ public class SpriteInstance extends Rectangle {
 
 		// update the current frame
 		while (timer > mSpriteDefinition.frameDuration()) {
-			currentFrame++;
+			// Handle this time splice
 			timer -= mSpriteDefinition.frameDuration();
 
-			if (currentFrame >= mSpriteDefinition.frameCount()) {
+			if (!pReverse) {
+				currentFrame++;
 
-				if (loopingEnabled) {
-					currentFrame = 0;
-					if (animatedSpriteListener != null) {
-						animatedSpriteListener.onLooped(this);
+				if (currentFrame >= mSpriteDefinition.frameCount()) {
+
+					if (loopingEnabled) {
+						currentFrame = 0;
+						if (animatedSpriteListener != null) {
+							animatedSpriteListener.onLooped(this);
+						}
+					} else {
+						animationEnabled = false;
+						currentFrame--;
+						if (animatedSpriteListener != null) {
+							animatedSpriteListener.onStopped(this);
+						}
 					}
-				} else {
-					animationEnabled = false;
-					currentFrame--;
-					if (animatedSpriteListener != null) {
-						animatedSpriteListener.onStopped(this);
+
+				}
+
+			} else {
+				currentFrame--;
+
+				if (currentFrame < 0) {
+
+					if (loopingEnabled) {
+						currentFrame = mSpriteDefinition.frameCount() - 1;
+						if (animatedSpriteListener != null) {
+							animatedSpriteListener.onLooped(this);
+						}
+					} else {
+						animationEnabled = false;
+						currentFrame = 0;
+						if (animatedSpriteListener != null) {
+							animatedSpriteListener.onStopped(this);
+						}
 					}
+
 				}
 
 			}

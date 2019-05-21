@@ -31,6 +31,10 @@ public abstract class JBox2dEntity extends WorldEntity {
 	// Properties
 	// --------------------------------------
 
+	public Vec2 velocity() {
+		return mVelocity;
+	}
+
 	public boolean hasPhysicsEntity() {
 		return mJBox2dEntityInstance != null && mJBox2dEntityInstance.isPhysicsLoaded();
 	}
@@ -72,6 +76,8 @@ public abstract class JBox2dEntity extends WorldEntity {
 		if (!isPhysicsLoaded())
 			return;
 
+		mVelocity = new Vec2();
+		
 		mJBox2dEntityInstance.loadPhysics(pWorld);
 
 	}
@@ -84,9 +90,7 @@ public abstract class JBox2dEntity extends WorldEntity {
 
 	}
 
-	public void update(LintfordCore pCore) {
-		super.update(pCore);
-
+	public void updatePhyics(LintfordCore pCore) {
 		if (isPhysicsLoaded()) {
 			Box2dBodyInstance lMainBody = mJBox2dEntityInstance.mainBody();
 			if (lMainBody != null) {

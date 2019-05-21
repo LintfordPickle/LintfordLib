@@ -71,8 +71,6 @@ public class RectangleEntity extends WorldEntity {
 	// --------------------------------------
 
 	public void update(LintfordCore pCore) {
-		super.update(pCore);
-
 		mBounds.rotateAbs(rotation); // + (float) Math.toRadians(90));
 		mBounds.setCenter(x, y, width, height);
 
@@ -87,7 +85,5 @@ public class RectangleEntity extends WorldEntity {
 		height = pHeight;
 
 	}
-
-	
 
 }
