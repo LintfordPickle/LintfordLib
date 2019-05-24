@@ -453,9 +453,15 @@ public class DebugDrawers {
 	}
 
 	public void beginPolyRenderer(ICamera pCamera) {
+		beginPolyRenderer(pCamera, GL11.GL_LINES);
+
+	}
+
+	public void beginPolyRenderer(ICamera pCamera, int pDrawMode) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
+		mPolyBatch.lineMode(pDrawMode);
 		mPolyBatch.begin(pCamera);
 
 	}

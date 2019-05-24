@@ -47,9 +47,20 @@ public class PolyBatch {
 	private boolean mIsDrawing;
 	private boolean mIsLoaded;
 
+	private int mLineMode;
+
 	// --------------------------------------
 	// Properties
 	// ------------------------------------
+
+	/**
+	 * Specifies what kind of primitives to render. Symbolic constants GL_POINTS, GL_LINE_STRIP, GL_LINE_LOOP, GL_LINES, GL_LINE_STRIP_ADJACENCY, GL_LINES_ADJACENCY, GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_TRIANGLES,
+	 * GL_TRIANGLE_STRIP_ADJACENCY, GL_TRIANGLES_ADJACENCY and GL_PATCHES are accepted.
+	 */
+	public void lineMode(int pNewLineType) {
+		mLineMode = pNewLineType;
+
+	}
 
 	public boolean isDrawing() {
 		return mIsDrawing;
@@ -72,6 +83,9 @@ public class PolyBatch {
 
 		mModelMatrix = new Matrix4f();
 		mIsLoaded = false;
+
+		mLineMode = GL11.GL_LINE_STRIP;
+
 	}
 
 	// --------------------------------------
@@ -262,8 +276,7 @@ public class PolyBatch {
 
 		mShader.bind();
 
-		GL11.glDrawArrays(GL11.GL_LINES, 0, mVertexCount);
-//		GL11.glDrawArrays(GL11.GL_TRIANGLE_FAN, 0, mVertexCount);
+		GL11.glDrawArrays(mLineMode, 0, mVertexCount);
 
 		GL30.glBindVertexArray(0);
 
