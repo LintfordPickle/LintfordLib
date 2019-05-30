@@ -254,7 +254,7 @@ public class Camera implements ICamera {
 	public void applyGameViewport() {
 		int lNearestW = ((mWindowWidth % 2) == 0) ? mWindowWidth : mWindowWidth + 1;
 		int lNearestH = ((mWindowHeight % 2) == 0) ? mWindowHeight : mWindowHeight + 1;
-		
+
 		GL11.glViewport(0, 0, lNearestW, lNearestH);
 
 	}
@@ -372,14 +372,14 @@ public class Camera implements ICamera {
 	}
 
 	@Override
-	public float getPointWorldSpaceX(float pPointX) {
+	public float getPointCameraSpaceX(float pPointX) {
 		return pPointX * getZoomFactorOverOne() + this.getMinX();
 
 	}
 
 	@Override
 	public float getPointCameraSpaceY(float pPointY) {
-		return pPointY * getZoomFactorOverOne() + this.getMinX();
+		return pPointY * getZoomFactorOverOne() + this.getMinY();
 
 	}
 
