@@ -53,7 +53,7 @@ public interface ICamera {
 		}
 
 		@Override
-		public float getPointWorldSpaceX(float pPointX) {
+		public float getPointCameraSpaceX(float pPointX) {
 			return 0;
 		}
 
@@ -116,10 +116,10 @@ public interface ICamera {
 		public void setCameraState(CameraState pCameraState) {
 
 		}
-		
+
 		@Override
 		public void applyGameViewport() {
-			
+
 		}
 
 	};
@@ -170,7 +170,7 @@ public interface ICamera {
 
 	public abstract float getMouseWorldSpaceY();
 
-	public abstract float getPointWorldSpaceX(float pPointX);
+	public abstract float getPointCameraSpaceX(float pPointX);
 
 	public abstract float getPointCameraSpaceY(float pPointY);
 

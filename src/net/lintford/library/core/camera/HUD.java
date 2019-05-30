@@ -203,7 +203,7 @@ public class HUD implements ICamera, IResizeListener {
 	}
 
 	@Override
-	public float getPointWorldSpaceX(float pPointX) {
+	public float getPointCameraSpaceX(float pPointX) {
 		return (-mWindowWidth * 0.5f + (pPointX - 1));
 	}
 
