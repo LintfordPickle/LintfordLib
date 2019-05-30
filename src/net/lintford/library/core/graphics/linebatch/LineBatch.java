@@ -61,7 +61,9 @@ public class LineBatch {
 	public void lineType(int pGLLineType) {
 		mGLLineType = pGLLineType;
 
-		if (mGLLineType != GL11.GL_LINE_STRIP && mGLLineType != GL11.GL_LINES) {
+		if (mGLLineType != GL11.GL_LINE_STRIP 
+				&& mGLLineType != GL11.GL_LINES
+				&& mGLLineType != GL11.GL_POINTS) {
 			mGLLineType = GL11.GL_LINES;
 		}
 
