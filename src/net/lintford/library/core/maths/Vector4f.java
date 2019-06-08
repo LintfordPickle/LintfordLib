@@ -1,6 +1,14 @@
 package net.lintford.library.core.maths;
 
-public class Vector4f {
+import java.io.Serializable;
+
+public class Vector4f implements Serializable {
+
+	// --------------------------------------
+	// Constants
+	// --------------------------------------
+
+	private static final long serialVersionUID = 6738480994651702671L;
 
 	// --------------------------------------
 	// Variables
