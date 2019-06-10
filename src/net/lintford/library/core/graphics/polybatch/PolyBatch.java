@@ -169,6 +169,9 @@ public class PolyBatch {
 	}
 
 	public void drawRect(Vector2f[] pVertexArray, float pZ, boolean pClose, float pR, float pG, float pB) {
+		if (pVertexArray == null)
+			return;
+
 		drawRect(pVertexArray, pVertexArray.length, pZ, pClose, pR, pG, pB);
 
 	}
