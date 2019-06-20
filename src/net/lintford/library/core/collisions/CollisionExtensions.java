@@ -62,51 +62,24 @@ public class CollisionExtensions {
 
 	}
 
-//	public static boolean intersects(RectangleEntity pOther) {
-//		// Poly
-//		if (pOther instanceof PolyEntity) {
-//			// TODO: Rectangle <-> Poly collision
-//		}
-//
-//		// Rect
-//		else if (pOther instanceof RectangleEntity) {
-//			RectangleEntity otherRect = (RectangleEntity) pOther;
-//			if (Math.abs(x - pOther.x) > width / 2 + otherRect.width / 2)
-//				return false;
-//			if (Math.abs(y - pOther.y) > height / 2 + otherRect.height / 2)
-//				return false;
-//			return true;
-//		}
-//
-//		// Circle
-//		else if (pOther instanceof CircleEntity) {
-//			CircleEntity c = (CircleEntity) pOther;
-//			float circleDistX = Math.abs(c.x - this.x);
-//			float circleDistY = Math.abs(c.y - this.y);
-//
-//			if (circleDistX > (this.width / 2 + c.radius)) {
-//				return false;
-//			}
-//			if (circleDistY > (this.height / 2 + c.radius)) {
-//				return false;
-//			}
-//
-//			if (circleDistX <= (this.width / 2)) {
-//				return true;
-//			}
-//			if (circleDistY <= (this.height / 2)) {
-//				return true;
-//			}
-//
-//			float dist_sq = (circleDistX - this.width / 2) * (circleDistX - this.width / 2) + (circleDistY - this.height / 2) * (circleDistX - this.width / 2) * (circleDistX - this.width / 2)
-//					+ (circleDistY - this.height / 2);
-//
-//			return (dist_sq <= (c.radius * c.radius));
-//
-//		}
-//
-//		// no collision
-//		return false;
-//	}
+	public static Vector2f intersection(Vector2f a, Vector2f b, Vector2f p, Vector2f q, Vector2f pOutVector) {
+		float A1 = b.y - a.y;
+		float B1 = a.x - b.x;
+		float C1 = A1 * a.x + B1 * a.y;
+
+		float A2 = q.y - p.y;
+		float B2 = p.x - q.x;
+		float C2 = A2 * p.x + B2 * p.y;
+
+		float det = A1 * B2 - A2 * B1;
+		float x = (B2 * C1 - B1 * C2) / det;
+		float y = (A1 * C2 - A2 * C1) / det;
+
+		pOutVector.x = x;
+		pOutVector.y = y;
+
+		return pOutVector;
+
+	}
 
 }
