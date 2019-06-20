@@ -1,5 +1,7 @@
 package net.lintford.library.core.graphics.sprites.custombatch;
 
+import java.util.List;
+
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.sprites.SpriteFrame;
 import net.lintford.library.core.graphics.sprites.SpriteInstance;
@@ -7,6 +9,7 @@ import net.lintford.library.core.graphics.sprites.spritebatch.SpriteBatch;
 import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDef;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.TextureManager;
+import net.lintford.library.core.maths.Vector2f;
 
 public class SwaySpriteBatch extends SpriteBatch {
 
@@ -52,10 +55,12 @@ public class SwaySpriteBatch extends SpriteBatch {
 		if (pDestRect == null)
 			return;
 
-		final float pDX = pDestRect.getVertices()[0].x;
-		final float pDY = pDestRect.getVertices()[0].y;
-		final float pDW = pDestRect.getVertices()[1].x - pDestRect.getVertices()[0].x;
-		final float pDH = pDestRect.getVertices()[2].y - pDestRect.getVertices()[0].y;
+		List<Vector2f> lVertList = pDestRect.getVertices();
+
+		final float pDX = lVertList.get(0).x;
+		final float pDY = lVertList.get(0).y;
+		final float pDW = lVertList.get(1).x - lVertList.get(0).x;
+		final float pDH = lVertList.get(2).y - lVertList.get(0).y;
 
 		if (pTexture == null) {
 			// Resolve to use a default texture, or the 'MISSING_TEXTURE'

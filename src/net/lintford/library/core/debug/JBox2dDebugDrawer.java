@@ -1,5 +1,8 @@
 package net.lintford.library.core.debug;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.collision.shapes.ShapeType;
@@ -24,7 +27,7 @@ public class JBox2dDebugDrawer {
 	// --------------------------------------
 
 	static final int MAX_VERTS = 10;
-	static Vector2f[] verts;
+	static List<Vector2f> verts;
 	static Vec2 vertex = new Vec2();
 	static Vec2 tempVec = new Vec2();
 
@@ -34,9 +37,9 @@ public class JBox2dDebugDrawer {
 		public static void draw(LintfordCore pCore, Body pBody, Fixture pFixture) {
 
 			if (verts == null) {
-				verts = new Vector2f[MAX_VERTS];
+				verts = new ArrayList<Vector2f>(MAX_VERTS);
 				for (int i = 0; i < MAX_VERTS; i++) {
-					verts[i] = new Vector2f();
+					verts.add(new Vector2f());
 				}
 			}
 
@@ -48,8 +51,7 @@ public class JBox2dDebugDrawer {
 
 				Vec2 worldPoint = pBody.getWorldPoint(vertex);
 
-				verts[i].x = worldPoint.x * (32f);
-				verts[i].y = worldPoint.y * (32f);
+				verts.get(i).set(worldPoint.x * (32f), worldPoint.y * (32f));
 
 			}
 

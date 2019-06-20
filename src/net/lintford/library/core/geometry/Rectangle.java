@@ -1,5 +1,8 @@
 package net.lintford.library.core.geometry;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.lintford.library.core.maths.Vector2f;
 
 // SAT Ref: http://www.dyn4j.org/2010/01/sat/
@@ -17,7 +20,7 @@ public class Rectangle extends Shape {
 	// Variables
 	// --------------------------------------
 
-	protected Vector2f[] mVertices;
+	protected List<Vector2f> mVertices;
 	protected boolean mIsAABB; // Blocks rotations
 	public float x;
 	public float y;
@@ -87,8 +90,10 @@ public class Rectangle extends Shape {
 
 	}
 
-	public Vector2f[] getVertices() {
+	public List<Vector2f> getVertices() {
+		// FIXME: Add in a isDirty check here
 		updateVertices();
+
 		return mVertices;
 	}
 
@@ -136,11 +141,11 @@ public class Rectangle extends Shape {
 		w = pWidth;
 		h = pHeight;
 
-		mVertices = new Vector2f[NUM_VERTICES];
-		mVertices[0] = new Vector2f(x, y);
-		mVertices[1] = new Vector2f(x + w, y);
-		mVertices[2] = new Vector2f(x, y + h);
-		mVertices[3] = new Vector2f(x + w, y + h);
+		mVertices = new ArrayList<>(NUM_VERTICES);
+		mVertices.add(new Vector2f(x, y));
+		mVertices.add(new Vector2f(x + w, y));
+		mVertices.add(new Vector2f(x, y + h));
+		mVertices.add(new Vector2f(x + w, y + h));
 
 		sx = 1f;
 		sy = 1f;
@@ -192,19 +197,21 @@ public class Rectangle extends Shape {
 
 		// FIXME: Garbage created
 		// The order of the vertices used here depends on the winding-order
-		axes[0] = new Vector2f((mVertices[0].y - mVertices[1].y), -(mVertices[0].x - mVertices[1].x)).nor();
-		axes[1] = new Vector2f((mVertices[0].y - mVertices[2].y), -(mVertices[0].x - mVertices[2].x)).nor();
+		axes[0] = new Vector2f((mVertices.get(0).y - mVertices.get(1).y), -(mVertices.get(0).x - mVertices.get(1).x)).nor();
+		axes[1] = new Vector2f((mVertices.get(0).y - mVertices.get(2).y), -(mVertices.get(0).x - mVertices.get(2).x)).nor();
 
 		return axes;
 	}
 
 	@Override
 	public Vector2f project(Vector2f pAxis, Vector2f pToFill) {
-		if(pAxis == null) return pToFill;
-		float min = Vector2f.dot(mVertices[0].x, mVertices[0].y, pAxis.x, pAxis.y);
+		if (pAxis == null)
+			return pToFill;
+		float min = Vector2f.dot(mVertices.get(0).x, mVertices.get(0).y, pAxis.x, pAxis.y);
 		float max = min;
-		for (int i = 1; i < mVertices.length; i++) {
-			float p = Vector2f.dot(mVertices[i].x, mVertices[i].y, pAxis.x, pAxis.y);
+		final int lVertCount = mVertices.size();
+		for (int i = 1; i < lVertCount; i++) {
+			float p = Vector2f.dot(mVertices.get(i).x, mVertices.get(i).y, pAxis.x, pAxis.y);
 			if (p < min) {
 				min = p;
 
@@ -324,29 +331,22 @@ public class Rectangle extends Shape {
 		final float lPY = mFlipV ? -py : py;
 
 		// Get local space vertex positions
-		mVertices[0].x = -lWidth / 2;
-		mVertices[0].y = -lHeight / 2;
+		mVertices.get(0).set(-lWidth / 2, -lHeight / 2);
+		mVertices.get(1).set(lWidth / 2, -lHeight / 2);
+		mVertices.get(2).set(-lWidth / 2, lHeight / 2);
+		mVertices.get(3).set(lWidth / 2, lHeight / 2);
 
-		mVertices[1].x = lWidth / 2;
-		mVertices[1].y = -lHeight / 2;
-
-		mVertices[2].x = -lWidth / 2;
-		mVertices[2].y = lHeight / 2;
-
-		mVertices[3].x = lWidth / 2;
-		mVertices[3].y = lHeight / 2;
-//		rot = 0;
+		// rot = 0;
 		float sin = (float) (Math.sin(rot));
 		float cos = (float) (Math.cos(rot));
 
 		// iterate over the vertices, rotating them by the given amt around the origin point of the rectangle.
 		for (int i = 0; i < NUM_VERTICES; i++) {
 			// Scale the vertices out from local center (before applying world translation)
-			float dx = -lPX + mVertices[i].x * sx;
-			float dy = -lPY + mVertices[i].y * sy;
+			float dx = -lPX + mVertices.get(i).x * sx;
+			float dy = -lPY + mVertices.get(i).y * sy;
 
-			mVertices[i].x = centerX() + (dx * cos - (dy * 1f) * sin) * sx;
-			mVertices[i].y = centerY() + (dx * sin + (dy * 1f) * cos) * sy;
+			mVertices.get(i).set(centerX() + (dx * cos - (dy * 1f) * sin) * sx, centerY() + (dx * sin + (dy * 1f) * cos) * sy);
 
 		}
 

@@ -1,6 +1,7 @@
 package net.lintford.library.core.graphics.textures.texturebatch;
 
 import java.nio.FloatBuffer;
+import java.util.List;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
@@ -17,6 +18,7 @@ import net.lintford.library.core.graphics.shaders.ShaderMVP_PT;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.maths.Matrix4f;
+import net.lintford.library.core.maths.Vector2f;
 import net.lintford.library.core.maths.Vector4f;
 
 // TODO: Non of the Batch rendering classes are using indices I notice...
@@ -256,27 +258,29 @@ public class TextureBatch {
 			flush();
 		}
 
+		List<Vector2f> lVertList = pDestRect.getVertices();
+
 		// Vertex 0
-		float x0 = pDestRect.getVertices()[0].x;
-		float y0 = pDestRect.getVertices()[0].y;
+		float x0 = lVertList.get(0).x;
+		float y0 = lVertList.get(0).y;
 		float u0 = pSX / pTexture.getTextureWidth();
 		float v0 = pSY / pTexture.getTextureHeight();
 
 		// Vertex 1
-		float x1 = pDestRect.getVertices()[1].x;
-		float y1 = pDestRect.getVertices()[1].y;
+		float x1 = lVertList.get(1).x;
+		float y1 = lVertList.get(1).y;
 		float u1 = (pSX + pSW) / pTexture.getTextureWidth();
 		float v1 = pSY / pTexture.getTextureHeight();
 
 		// Vertex 2
-		float x2 = pDestRect.getVertices()[2].x;
-		float y2 = pDestRect.getVertices()[2].y;
+		float x2 = lVertList.get(2).x;
+		float y2 = lVertList.get(2).y;
 		float u2 = pSX / pTexture.getTextureWidth();
 		float v2 = (pSY + pSH) / pTexture.getTextureHeight();
 
 		// Vertex 3
-		float x3 = pDestRect.getVertices()[3].x;
-		float y3 = pDestRect.getVertices()[3].y;
+		float x3 = lVertList.get(3).x;
+		float y3 = lVertList.get(3).y;
 		float u3 = (pSX + pSW) / pTexture.getTextureWidth();
 		float v3 = (pSY + pSH) / pTexture.getTextureHeight();
 

@@ -1,6 +1,7 @@
 package net.lintford.library.core.geometry;
 
 import java.io.Serializable;
+import java.util.List;
 
 import net.lintford.library.core.maths.Vector2f;
 
@@ -25,7 +26,7 @@ public abstract class Shape implements Serializable {
 	// Properties
 	// --------------------------------------
 
-	public abstract Vector2f[] getVertices();
+	public abstract List<Vector2f> getVertices();
 
 	/**
 	 * Returns the maximum radius of the shape

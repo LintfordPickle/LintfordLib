@@ -1,5 +1,8 @@
 package net.lintford.library.core.geometry;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.lintford.library.core.maths.Vector2f;
 
 // SAT Ref: http://www.dyn4j.org/2010/01/sat/
@@ -18,7 +21,7 @@ public class Circle extends Shape {
 	// --------------------------------------
 
 	private float x, y;
-	private Vector2f[] mVertices;
+	private List<Vector2f> mVertices;
 
 	private float mRadius;
 
@@ -31,7 +34,7 @@ public class Circle extends Shape {
 		return mRadius;
 	}
 
-	public Vector2f[] getVertices() {
+	public List<Vector2f> getVertices() {
 		return mVertices;
 	}
 
@@ -57,8 +60,8 @@ public class Circle extends Shape {
 		y = pCenterY;
 		mRadius = pRadius;
 
-		mVertices = new Vector2f[NUM_VERTICES];
-		mVertices[0] = new Vector2f(x, y);
+		mVertices = new ArrayList<>(NUM_VERTICES);
+		mVertices.add(new Vector2f(x, y));
 
 	}
 
@@ -76,13 +79,13 @@ public class Circle extends Shape {
 	public Vector2f getNearestVertex(Shape pOtherShape, Vector2f pToFill) {
 		float min = Float.MAX_VALUE;
 
-		final int NUM_VERTICES = pOtherShape.getVertices().length;
+		final int NUM_VERTICES = pOtherShape.getVertices().size();
 		for (int i = 0; i < NUM_VERTICES; i++) {
-			float distTo = Vector2f.distance(x, y, pOtherShape.getVertices()[i].x, pOtherShape.getVertices()[i].y);
+			float distTo = Vector2f.distance(x, y, pOtherShape.getVertices().get(i).x, pOtherShape.getVertices().get(i).y);
 
 			if (distTo < min) {
-				pToFill.x = pOtherShape.getVertices()[i].x - x;
-				pToFill.y = pOtherShape.getVertices()[i].y - y;
+				pToFill.x = pOtherShape.getVertices().get(i).x - x;
+				pToFill.y = pOtherShape.getVertices().get(i).y - y;
 
 				min = distTo;
 			}
@@ -140,7 +143,7 @@ public class Circle extends Shape {
 	public void set(Circle pOtherCicle) {
 		x = pOtherCicle.x;
 		y = pOtherCicle.y;
-		
+
 		mRadius = pOtherCicle.mRadius;
 
 	}

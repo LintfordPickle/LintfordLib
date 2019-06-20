@@ -1,5 +1,7 @@
 package net.lintford.library.core.debug;
 
+import java.util.List;
+
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
@@ -209,7 +211,7 @@ public class DebugDrawers {
 		mImmediatePolyBatch.end();
 	}
 
-	public void drawPolyImmediate(ICamera pCamera, Vector2f[] pVertices, boolean pClose) {
+	public void drawPolyImmediate(ICamera pCamera, List<Vector2f> pVertices, boolean pClose) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
@@ -217,12 +219,12 @@ public class DebugDrawers {
 
 	}
 
-	public void drawPolyImmediate(ICamera pCamera, Vector2f[] pVertices, float pR, float pG, float pB, boolean pClose) {
-		drawPolyImmediate(pCamera, pVertices, pVertices.length, pR, pG, pB, pClose);
+	public void drawPolyImmediate(ICamera pCamera, List<Vector2f> pVertices, float pR, float pG, float pB, boolean pClose) {
+		drawPolyImmediate(pCamera, pVertices, pVertices.size(), pR, pG, pB, pClose);
 
 	}
 
-	public void drawPolyImmediate(ICamera pCamera, Vector2f[] pVertices, int pAmt, float pR, float pG, float pB, boolean pClose) {
+	public void drawPolyImmediate(ICamera pCamera, List<Vector2f> pVertices, int pAmt, float pR, float pG, float pB, boolean pClose) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
@@ -478,7 +480,7 @@ public class DebugDrawers {
 		drawPoly(pRect.getVertices(), 1f, 1f, 1f, true);
 	}
 
-	public void drawPoly(Vector2f[] pVertices, boolean pClose) {
+	public void drawPoly(List<Vector2f> pVertices, boolean pClose) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
@@ -491,7 +493,7 @@ public class DebugDrawers {
 
 	}
 
-	public void drawPoly(Vector2f[] pVertices, float pR, float pG, float pB, boolean pClose) {
+	public void drawPoly(List<Vector2f> pVertices, float pR, float pG, float pB, boolean pClose) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
@@ -500,11 +502,11 @@ public class DebugDrawers {
 			return;
 		}
 
-		drawPoly(pVertices, pVertices.length, pR, pG, pB, pClose);
+		drawPoly(pVertices, pVertices.size(), pR, pG, pB, pClose);
 
 	}
 
-	public void drawPoly(Vector2f[] pVertices, int pAmt, float pR, float pG, float pB, boolean pClose) {
+	public void drawPoly(List<Vector2f> pVertices, int pAmt, float pR, float pG, float pB, boolean pClose) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 

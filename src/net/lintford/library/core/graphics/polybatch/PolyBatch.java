@@ -1,6 +1,7 @@
 package net.lintford.library.core.graphics.polybatch;
 
 import java.nio.FloatBuffer;
+import java.util.List;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
@@ -159,37 +160,37 @@ public class PolyBatch {
 		if (!mIsDrawing || pRect == null)
 			return;
 
-		Vector2f[] verts = pRect.getVertices();
+		List<Vector2f> verts = pRect.getVertices();
 
-		draw(verts[0].x, verts[0].y, verts[1].x, verts[1].y, pZ, pR, pG, pB);
-		draw(verts[0].x, verts[0].y, verts[2].x, verts[2].y, pZ, pR, pG, pB);
-		draw(verts[2].x, verts[2].y, verts[3].x, verts[3].y, pZ, pR, pG, pB);
-		draw(verts[1].x, verts[1].y, verts[3].x, verts[3].y, pZ, pR, pG, pB);
+		draw(verts.get(0).x, verts.get(0).y, verts.get(1).x, verts.get(1).y, pZ, pR, pG, pB);
+		draw(verts.get(0).x, verts.get(0).y, verts.get(2).x, verts.get(2).y, pZ, pR, pG, pB);
+		draw(verts.get(2).x, verts.get(1).y, verts.get(3).x, verts.get(3).y, pZ, pR, pG, pB);
+		draw(verts.get(1).x, verts.get(1).y, verts.get(3).x, verts.get(3).y, pZ, pR, pG, pB);
 
 	}
 
-	public void drawRect(Vector2f[] pVertexArray, float pZ, boolean pClose, float pR, float pG, float pB) {
+	public void drawRect(List<Vector2f> pVertexArray, float pZ, boolean pClose, float pR, float pG, float pB) {
 		if (pVertexArray == null)
 			return;
 
-		drawRect(pVertexArray, pVertexArray.length, pZ, pClose, pR, pG, pB);
+		drawRect(pVertexArray, pVertexArray.size(), pZ, pClose, pR, pG, pB);
 
 	}
 
-	public void drawRect(Vector2f[] pVertexArray, int pAmt, float pZ, boolean pClose, float pR, float pG, float pB) {
-		if (!mIsDrawing || pVertexArray == null || pVertexArray.length < 2 || pAmt < 2)
+	public void drawRect(List<Vector2f> pVertexArray, int pAmt, float pZ, boolean pClose, float pR, float pG, float pB) {
+		if (!mIsDrawing || pVertexArray == null || pVertexArray.size() < 2 || pAmt < 2)
 			return;
 
 		int lLastIndex = 1;
 
 		final int ARRAY_SIZE = pAmt; // pVertexArray.length;
 		for (int i = 0; i < ARRAY_SIZE - 1; i++) {
-			if (pVertexArray[i] == null || pVertexArray[i + 1] == null)
+			if (pVertexArray.get(i) == null || pVertexArray.get(i + 1) == null)
 				continue;
-			float px0 = pVertexArray[i].x;
-			float py0 = pVertexArray[i].y;
-			float px1 = pVertexArray[i + 1].x;
-			float py1 = pVertexArray[i + 1].y;
+			float px0 = pVertexArray.get(i).x;
+			float py0 = pVertexArray.get(i).y;
+			float px1 = pVertexArray.get(i + 1).x;
+			float py1 = pVertexArray.get(i + 1).y;
 
 			lLastIndex++;
 
@@ -197,11 +198,11 @@ public class PolyBatch {
 		}
 
 		if (pClose) {
-			if (pVertexArray[0] != null && pVertexArray[lLastIndex - 1] != null) {
-				float px0 = pVertexArray[0].x;
-				float py0 = pVertexArray[0].y;
-				float px1 = pVertexArray[lLastIndex - 1].x;
-				float py1 = pVertexArray[lLastIndex - 1].y;
+			if (pVertexArray.get(0) != null && pVertexArray.get(lLastIndex - 1) != null) {
+				float px0 = pVertexArray.get(0).x;
+				float py0 = pVertexArray.get(0).y;
+				float px1 = pVertexArray.get(lLastIndex - 1).x;
+				float py1 = pVertexArray.get(lLastIndex - 1).y;
 
 				draw(px0, py0, px1, py1, pZ, pR, pG, pB); // top
 

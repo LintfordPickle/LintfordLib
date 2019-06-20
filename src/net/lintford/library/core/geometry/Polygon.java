@@ -1,6 +1,7 @@
 package net.lintford.library.core.geometry;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import net.lintford.library.core.maths.Vector2f;
@@ -32,12 +33,13 @@ public class Polygon extends Shape {
 	 * Vertices are defined locally around the center point (x,y)
 	 */
 	@Override
-	public Vector2f[] getVertices() {
-		// TODO: Garbage
-		Vector2f[] ll = new Vector2f[mVertices.size()];
-		mVertices.toArray(ll);
+	public List<Vector2f> getVertices() {
+		return mVertices;
 
-		return ll;
+	}
+
+	public List<Vector2f> getCopyOfVertices() {
+		return new ArrayList<>(mVertices);
 	}
 
 	public float centerX() {
@@ -68,23 +70,27 @@ public class Polygon extends Shape {
 	public Polygon(Polygon pOther) {
 		mVertices = new ArrayList<>();
 
-		Vector2f[] lOtherVerts = pOther.getVertices();
-		final int lOtherVertCount = lOtherVerts.length;
+		if (pOther != null) {
+			List<Vector2f> lOtherVerts = pOther.getVertices();
+			final int lOtherVertCount = lOtherVerts.size();
 
-		for (int i = 0; i < lOtherVertCount; i++) {
-			mVertices.add(new Vector2f(lOtherVerts[i]));
+			for (int i = 0; i < lOtherVertCount; i++) {
+				mVertices.add(new Vector2f(lOtherVerts.get(i)));
+
+			}
+
+			Vector2f[] lOtherAxes = pOther.getAxes();
+			final int lOtherAxesCount = lOtherAxes.length;
+			mAxes = new Vector2f[lOtherAxesCount];
+			for (int i = 0; i < lOtherAxesCount; i++) {
+				mAxes[i] = new Vector2f(lOtherAxes[i]);
+			}
+
+			mDirty = pOther.mDirty;
+			x = pOther.x;
+			y = pOther.y;
+
 		}
-
-		Vector2f[] lOtherAxes = pOther.getAxes();
-		final int lOtherAxesCount = lOtherAxes.length;
-		mAxes = new Vector2f[lOtherAxesCount];
-		for (int i = 0; i < lOtherAxesCount; i++) {
-			mAxes[i] = new Vector2f(lOtherAxes[i]);
-		}
-
-		mDirty = pOther.mDirty;
-		x = pOther.x;
-		y = pOther.y;
 
 	}
 
@@ -227,8 +233,6 @@ public class Polygon extends Shape {
 		if (pNewVertices == null)
 			return;
 
-		mVertices.clear();
-
 		final int lLength = pNewVertices.length;
 		for (int i = 0; i < lLength; i++) {
 			mVertices.add(pNewVertices[i]);
@@ -238,29 +242,75 @@ public class Polygon extends Shape {
 
 	}
 
+	/**
+	 * Returns true if the polygon winding order is CCW, otherwise false.
+	 * 
+	 * @Note This requires that t he Y axis is from top-to-bottom (- to +).
+	 * 
+	 * @Reference https://stackoverflow.com/questions/1165647/how-to-determine-if-a-list-of-polygon-points-are-in-clockwise-order
+	 */
+	public boolean isPolygonCCW() {
+		float lSignedArea = 0;
+		float x1, y1, x2, y2 = 0;
+		final int lVertexCount = mVertices.size();
+		for (int i = 0; i < lVertexCount; i++) {
+			// last point
+
+			x1 = mVertices.get(i).x;
+			y1 = mVertices.get(i).y;
+
+			if (i == lVertexCount - 1) { // last point
+				x2 = mVertices.get(0).x;
+				y2 = mVertices.get(0).y;
+			} else {
+				x2 = mVertices.get(i + 1).x;
+				y2 = mVertices.get(i + 1).y;
+			}
+
+			lSignedArea += (x1 * y2 - x2 * y1);
+
+		}
+
+		return lSignedArea > 0;
+
+	}
+
+	public void reverseWinding() {
+		Collections.reverse(mVertices);
+	}
+
 	public void addVertex(Vector2f pNewVertex) {
 		mVertices.add(pNewVertex);
 
 	}
 
-	// Sutherland-Hodgmann Al
-	public static Shape getIntersection(Polygon pClipper, Polygon pSubject, Polygon pResult) {
-		pResult = new Polygon(pSubject);
+	public void clearVertices() {
+		mVertices.clear();
+		mDirty = true;
 
-		int len = pClipper.getVertices().length;
+	}
+
+	// Sutherland-Hodgmann Al
+	public static Shape getIntersection(Polygon pClipper, Polygon pSubject) {
+		if (pClipper == null || pSubject == null)
+			return null;
+
+		Polygon pResult = new Polygon(pSubject);
+
+		int len = pClipper.getVertices().size();
 		for (int i = 0; i < len; i++) {
 
-			int len2 = pResult.getVertices().length;
+			int len2 = pResult.getVertices().size();
 			Polygon lInputPolygon = pResult;
-			pResult = new Polygon();
+			pResult = new Polygon(); // TODO: Garbage
 
-			Vector2f A = pClipper.getVertices()[(i + len - 1) % len];
-			Vector2f B = pClipper.getVertices()[i];
+			Vector2f A = pClipper.getVertices().get((i + len - 1) % len);
+			Vector2f B = pClipper.getVertices().get(i);
 
 			for (int j = 0; j < len2; j++) {
 
-				Vector2f P = lInputPolygon.getVertices()[(j + len2 - 1) % len2];
-				Vector2f Q = lInputPolygon.getVertices()[j];
+				Vector2f P = lInputPolygon.getVertices().get((j + len2 - 1) % len2);
+				Vector2f Q = lInputPolygon.getVertices().get(j);
 
 				if (isInside(A, B, Q)) {
 					if (!isInside(A, B, P))
