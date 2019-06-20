@@ -3,6 +3,7 @@ package net.lintford.library.core.maths;
 /** Defines some oft used math constants */
 public class MathConstants {
 
+	public static final float Epsilon = 0.00001f;
     public static final float E = 2.718282f;
     public static final float Log10E = 0.4342945f;
     public static final float Log2E = 1.442695f;
