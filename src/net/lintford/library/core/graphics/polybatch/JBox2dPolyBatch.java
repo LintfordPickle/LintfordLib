@@ -11,7 +11,6 @@ import org.lwjgl.system.MemoryUtil;
 
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.camera.ICamera;
-import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.graphics.shaders.ShaderMVP_PT;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.TextureManager;
@@ -122,10 +121,8 @@ public class JBox2dPolyBatch {
 		if (mVaoId == -1)
 			mVaoId = GL30.glGenVertexArrays();
 
-		if (mVboId == -1) {
+		if (mVboId == -1)
 			mVboId = GL15.glGenBuffers();
-			Debug.debugManager().logger().i(getClass().getSimpleName(), "glGenBuffers: " + mVboId);
-		}
 
 		mBuffer = MemoryUtil.memAllocFloat(MAX_VERTS * stride);
 
