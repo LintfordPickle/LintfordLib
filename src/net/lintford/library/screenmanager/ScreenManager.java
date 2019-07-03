@@ -302,7 +302,7 @@ public class ScreenManager {
 
 		mScreens.add(lInsertIndex, pScreen);
 
-		Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("Added screen ", pScreen.getClass().getSimpleName()));
+		Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("Added screen '%s'", pScreen.getClass().getSimpleName()));
 
 	}
 
@@ -322,12 +322,13 @@ public class ScreenManager {
 			}
 
 			mScreens.remove(pScreen);
+			
 		}
 
 		if (mScreensToUpdate.contains(pScreen))
 			mScreensToUpdate.remove(pScreen);
 
-		Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("Removed screen ", pScreen.getClass().getSimpleName()));
+		Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("Removed screen '%s'", pScreen.getClass().getSimpleName()));
 
 	}
 
