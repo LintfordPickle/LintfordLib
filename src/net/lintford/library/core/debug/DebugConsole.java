@@ -233,6 +233,45 @@ public class DebugConsole extends Rectangle implements IBufferedInputCallback, I
 			mTAGFilterText.handleInput(pCore);
 			mMessageFilterText.handleInput(pCore);
 
+			if (pCore.input().keyDownTimed(GLFW.GLFW_KEY_DOWN)) {
+				mConsoleLineHeight = (int) (mConsoleFont.bitmap().getStringHeight(" ") + 1);
+				mScrollYPosition -= mConsoleLineHeight;
+				mAutoScroll = false;
+
+				if (mScrollYPosition < mScrollBar.getScrollYBottomPosition())
+					mScrollYPosition = mScrollBar.getScrollYBottomPosition() - mConsoleLineHeight;
+			}
+
+			if (pCore.input().keyDownTimed(GLFW.GLFW_KEY_PAGE_DOWN)) {
+				mConsoleLineHeight = (int) (mConsoleFont.bitmap().getStringHeight(" ") + 1);
+				mScrollYPosition -= mConsoleLineHeight * 10;
+				mAutoScroll = false;
+				
+				if (mScrollYPosition < mScrollBar.getScrollYBottomPosition())
+					mScrollYPosition = mScrollBar.getScrollYBottomPosition() - mConsoleLineHeight;
+
+			}
+
+			if (pCore.input().keyDownTimed(GLFW.GLFW_KEY_UP)) {
+				mConsoleLineHeight = (int) (mConsoleFont.bitmap().getStringHeight(" ") + 1);
+				mScrollYPosition += mConsoleLineHeight;
+				mAutoScroll = false;
+
+				if (mScrollYPosition > 0)
+					mScrollYPosition = 0;
+
+			}
+
+			if (pCore.input().keyDownTimed(GLFW.GLFW_KEY_PAGE_UP)) {
+				mConsoleLineHeight = (int) (mConsoleFont.bitmap().getStringHeight(" ") + 1);
+				mScrollYPosition += mConsoleLineHeight * 10;
+				mAutoScroll = false;
+
+				if (mScrollYPosition > 0)
+					mScrollYPosition = 0;
+				
+			}
+
 		}
 
 		// listen for opening and closing
@@ -309,7 +348,7 @@ public class DebugConsole extends Rectangle implements IBufferedInputCallback, I
 	public void update(LintfordCore pCore) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
-		
+
 		if (!mIsLoaded || !mOpen)
 			return;
 
@@ -396,7 +435,7 @@ public class DebugConsole extends Rectangle implements IBufferedInputCallback, I
 		mMessageFilterText.set(x + POSITION_OFFSET_MESSAGE, y + 5, 200, 25);
 
 		GLDebug.checkGLErrorsException(getClass().getSimpleName());
-		
+
 		// Draw the console background (with a black border for the text input region)
 		mSpriteBatch.begin(pCore.HUD());
 		mSpriteBatch.draw(mCoreUITexture, 32, 0, 32, 32, x, y, w, h, Z_DEPTH, 0f, 0f, 0f, 0.85f);
@@ -453,7 +492,7 @@ public class DebugConsole extends Rectangle implements IBufferedInputCallback, I
 
 		mConsoleFont.end();
 
-		// mScrollBar.draw(pCore, mSpriteBatch, Z_DEPTH + 0.1f);
+		mScrollBar.draw(pCore, mSpriteBatch, mCoreUITexture, Z_DEPTH + 0.1f);
 
 	}
 
