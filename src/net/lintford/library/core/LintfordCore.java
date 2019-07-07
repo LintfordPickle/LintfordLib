@@ -492,6 +492,7 @@ public abstract class LintfordCore {
 	/**
 	 */
 	protected void onUpdate() {
+		Debug.debugManager().preUpdate(this);
 		mMasterConfig.update(this);
 		mResourceManager.update(this);
 		mHUD.update(this);

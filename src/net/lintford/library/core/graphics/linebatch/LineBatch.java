@@ -10,6 +10,8 @@ import org.lwjgl.system.MemoryUtil;
 
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.camera.ICamera;
+import net.lintford.library.core.debug.Debug;
+import net.lintford.library.core.debug.stats.DebugStats;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.shaders.ShaderMVP_PT;
 import net.lintford.library.core.graphics.vertices.VertexDataStructurePC;
@@ -61,9 +63,7 @@ public class LineBatch {
 	public void lineType(int pGLLineType) {
 		mGLLineType = pGLLineType;
 
-		if (mGLLineType != GL11.GL_LINE_STRIP 
-				&& mGLLineType != GL11.GL_LINES
-				&& mGLLineType != GL11.GL_POINTS) {
+		if (mGLLineType != GL11.GL_LINE_STRIP && mGLLineType != GL11.GL_LINES && mGLLineType != GL11.GL_POINTS) {
 			mGLLineType = GL11.GL_LINES;
 		}
 
@@ -324,6 +324,13 @@ public class LineBatch {
 
 		if (mGLLineWidth < 1)
 			mGLLineWidth = 1;
+
+		{
+			
+			Debug.debugManager().stats().incTag(DebugStats.TAG_ID_DRAWCALLS);
+			Debug.debugManager().stats().incTag(DebugStats.TAG_ID_VERTS, mVertexCount);
+
+		}
 
 		GL11.glLineWidth(mGLLineWidth);
 		GL11.glDrawArrays(mGLLineType, 0, mVertexCount);

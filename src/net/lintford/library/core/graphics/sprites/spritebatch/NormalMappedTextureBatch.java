@@ -13,6 +13,8 @@ import org.lwjgl.system.MemoryUtil;
 
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.camera.ICamera;
+import net.lintford.library.core.debug.Debug;
+import net.lintford.library.core.debug.stats.DebugStats;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.vertices.VertexDataStructurePT;
 import net.lintford.library.core.input.InputState;
@@ -211,6 +213,14 @@ public class NormalMappedTextureBatch {
 		GL20.glEnableVertexAttribArray(0);
 		GL20.glEnableVertexAttribArray(1);
 
+		{
+
+			Debug.debugManager().stats().incTag(DebugStats.TAG_ID_DRAWCALLS);
+			Debug.debugManager().stats().incTag(DebugStats.TAG_ID_VERTS, mVertexCount);
+			Debug.debugManager().stats().incTag(DebugStats.TAG_ID_TRIS, mVertexCount / 3);
+
+		}
+		
 		GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, mVertexCount);
 
 		GL20.glDisableVertexAttribArray(0);

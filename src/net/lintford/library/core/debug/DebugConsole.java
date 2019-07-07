@@ -233,6 +233,14 @@ public class DebugConsole extends Rectangle implements IBufferedInputCallback, I
 			mTAGFilterText.handleInput(pCore);
 			mMessageFilterText.handleInput(pCore);
 
+			if (pCore.input().keyDownTimed(GLFW.GLFW_KEY_DELETE)) {
+				mScrollYPosition = 0;
+				mAutoScroll = true;
+
+				Debug.debugManager().logger().clearLogLines();
+				
+			}
+			
 			if (pCore.input().keyDownTimed(GLFW.GLFW_KEY_DOWN)) {
 				mConsoleLineHeight = (int) (mConsoleFont.bitmap().getStringHeight(" ") + 1);
 				mScrollYPosition -= mConsoleLineHeight;

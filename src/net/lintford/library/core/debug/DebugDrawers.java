@@ -268,7 +268,8 @@ public class DebugDrawers {
 
 	}
 
-	public void drawRenderTargetImmediate(LintfordCore pCore, float pDestinationPositionX, float pDestinationPositionY, float pDestinationWidth, float pDestinationHeight, float pDestinationZ, RenderTarget pRenderTarget) {
+	public void drawRenderTargetImmediate(LintfordCore pCore, float pDestinationPositionX, float pDestinationPositionY, float pDestinationWidth, float pDestinationHeight, float pDestinationZ,
+			RenderTarget pRenderTarget) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
@@ -328,6 +329,11 @@ public class DebugDrawers {
 		mTextureBatch.end();
 	}
 
+	public void beginPointRenderer(ICamera pCamera) {
+		mPointBatch.begin(pCamera);
+
+	}
+
 	public void beginLineRenderer(ICamera pCamera) {
 		beginLineRenderer(pCamera, GL11.GL_LINE_STRIP);
 
@@ -345,6 +351,16 @@ public class DebugDrawers {
 		mLineBatch.lineType(pGLLineType);
 		mLineBatch.lineWidth(pLineWidth);
 		mLineBatch.begin(pCamera);
+
+	}
+
+	public void drawPoint(float pX, float pY) {
+		drawPoint(pX, pY, 1f, 1f, 1f, 1f);
+
+	}
+
+	public void drawPoint(float pX, float pY, float pR, float pG, float pB, float pA) {
+		mPointBatch.draw(pX, pY, -0.01f, pR, pG, pB, pA);
 
 	}
 
@@ -451,6 +467,11 @@ public class DebugDrawers {
 	public void endTextRenderer() {
 		if (mDebugManager.debugManagerEnabled())
 			mSystemFont.end();
+
+	}
+
+	public void endPointRenderer() {
+		mPointBatch.end();
 
 	}
 

@@ -111,7 +111,6 @@ public class JBox2dDebugDrawer {
 		public static void draw(LintfordCore pCore, Body pBody) {
 			Fixture lFixture = pBody.getFixtureList();
 
-			// Draw the body here ?
 			float lBodyX = pBody.getPosition().x * 32f;
 			float lBodyY = pBody.getPosition().y * 32f;
 
@@ -147,6 +146,9 @@ public class JBox2dDebugDrawer {
 			if (pJoint == null)
 				return;
 
+			Debug.debugManager().drawers().beginLineRenderer(pCore.gameCamera());
+			Debug.debugManager().drawers().beginPointRenderer(pCore.gameCamera());
+
 			if (pJoint instanceof RevoluteJoint) {
 				RevoluteJoint lRevoluteJoint = (RevoluteJoint) pJoint;
 				lRevoluteJoint.getAnchorA(tempVec);
@@ -154,20 +156,23 @@ public class JBox2dDebugDrawer {
 				GL11.glPointSize(10f);
 				float lAnchorAX = tempVec.x * Box2dWorldController.UNITS_TO_PIXELS;
 				float lAnchorAY = tempVec.y * Box2dWorldController.UNITS_TO_PIXELS;
-				Debug.debugManager().drawers().drawPointImmediate(pCore.gameCamera(), lAnchorAX, lAnchorAY, -0.01f, 255f / 255f, 117f / 255f, 104f / 255f, 1f);
+				Debug.debugManager().drawers().drawPoint(lAnchorAX, lAnchorAY, 255f / 255f, 117f / 255f, 104f / 255f, 1f);
 
 				lRevoluteJoint.getAnchorB(tempVec);
 				float lAnchorBX = tempVec.x * Box2dWorldController.UNITS_TO_PIXELS;
 				float lAnchorBY = tempVec.y * Box2dWorldController.UNITS_TO_PIXELS;
-				Debug.debugManager().drawers().drawPointImmediate(pCore.gameCamera(), lAnchorBX, lAnchorBY, -0.01f, 255f / 255f, 117f / 255f, 104f / 255f, 1f);
+				Debug.debugManager().drawers().drawPoint(lAnchorBX, lAnchorBY, 255f / 255f, 117f / 255f, 104f / 255f, 1f);
 
 				// Render reference angle
 				float lRefAngle = lRevoluteJoint.getReferenceAngle();
 				float lRefPointEndX = (float) Math.cos(lRefAngle) * 30f;
 				float lRefPointEndY = (float) Math.sin(lRefAngle) * 30f;
-				Debug.debugManager().drawers().drawLineImmediate(pCore.gameCamera(), lAnchorBX, lAnchorBY, lAnchorBX + lRefPointEndX, lAnchorBY + lRefPointEndY, -0.01f, 0f, 1f, 0f);
+				Debug.debugManager().drawers().drawLine(lAnchorBX, lAnchorBY, lAnchorBX + lRefPointEndX, lAnchorBY + lRefPointEndY, 0f, 1f, 0f);
 
 			}
+
+			Debug.debugManager().drawers().endPointRenderer();
+			Debug.debugManager().drawers().endLineRenderer();
 
 		}
 

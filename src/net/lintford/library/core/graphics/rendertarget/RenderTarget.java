@@ -9,6 +9,9 @@ import org.lwjgl.opengl.GL12;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.system.MemoryUtil;
 
+import net.lintford.library.core.debug.Debug;
+import net.lintford.library.core.debug.stats.DebugStats;
+
 public class RenderTarget {
 
 	// --------------------------------------
@@ -195,6 +198,8 @@ public class RenderTarget {
 		// unbind
 		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
 
+		Debug.debugManager().stats().incTag(DebugStats.TAG_ID_RENDERTEXTURES);
+		
 		mIsLoaded = true;
 
 	}
@@ -221,6 +226,8 @@ public class RenderTarget {
 			mDepthTextureID = -1;
 		}
 
+		Debug.debugManager().stats().decTag(DebugStats.TAG_ID_RENDERTEXTURES);
+		
 		mIsLoaded = false;
 	}
 

@@ -361,6 +361,7 @@ public class RendererManager {
 				mRenderers.get(i).draw(pCore);
 
 			}
+
 		}
 
 		if (RENDER_UI_WINDOWS) {

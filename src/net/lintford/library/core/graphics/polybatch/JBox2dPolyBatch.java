@@ -11,6 +11,8 @@ import org.lwjgl.system.MemoryUtil;
 
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.camera.ICamera;
+import net.lintford.library.core.debug.Debug;
+import net.lintford.library.core.debug.stats.DebugStats;
 import net.lintford.library.core.graphics.shaders.ShaderMVP_PT;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.TextureManager;
@@ -327,6 +329,23 @@ public class JBox2dPolyBatch {
 		mShader.modelMatrix(mModelMatrix);
 
 		mShader.bind();
+
+		{
+			/* 
+			 	@formatter:off
+			 	+-------------------+---------------------+
+			 	| Mode              | Triangles           |
+			 	+-------------------+---------------------+
+			 	| GL_TRIANGLE_STRIP | (count - 2 - first) |
+			 	+-------------------+---------------------+
+			 	@formatter:on
+		    */
+
+			Debug.debugManager().stats().incTag(DebugStats.TAG_ID_DRAWCALLS);
+			Debug.debugManager().stats().incTag(DebugStats.TAG_ID_VERTS, mVertexCount);
+			Debug.debugManager().stats().incTag(DebugStats.TAG_ID_TRIS, mVertexCount / 3);
+
+		}
 
 		GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, mVertexCount);
 

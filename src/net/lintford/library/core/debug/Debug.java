@@ -3,6 +3,7 @@ package net.lintford.library.core.debug;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.DebugLogger.LogMessage;
+import net.lintford.library.core.debug.stats.DebugStats;
 
 public class Debug {
 
@@ -73,8 +74,8 @@ public class Debug {
 
 	private DebugLogger mDebugLogger;
 	private DebugConsole mDebugConsole;
-	private DebugProfiler mDebugProfiler;
 	private DebugDrawers mDebugDrawers;
+	private DebugStats mDebugStats;
 
 	private boolean mIsGLLoaded;
 
@@ -110,8 +111,8 @@ public class Debug {
 
 	}
 
-	public DebugProfiler profiler() {
-		return mDebugProfiler;
+	public DebugStats stats() {
+		return mDebugStats;
 	}
 
 	// --------------------------------------
@@ -125,7 +126,7 @@ public class Debug {
 		mDebugLogger = new DebugLogger(this);
 		mDebugDrawers = new DebugDrawers(this);
 		mDebugConsole = new DebugConsole(this);
-		mDebugProfiler = new DebugProfiler(this);
+		mDebugStats = new DebugStats(this);
 
 		addDebugConsoleCommands();
 
@@ -140,7 +141,8 @@ public class Debug {
 	public void loadGLContent(final ResourceManager pResourceManager) {
 		mDebugConsole.loadGLContent(pResourceManager);
 		mDebugDrawers.loadGLContent(pResourceManager);
-		mDebugProfiler.loadGLContent(pResourceManager);
+		mDebugStats.loadGLContent(pResourceManager);
+
 		mIsGLLoaded = true;
 
 	}
@@ -148,14 +150,20 @@ public class Debug {
 	public void unloadGLContent() {
 		mDebugConsole.unloadGLContent();
 		mDebugDrawers.unloadGLContent();
-		mDebugProfiler.unloadGLContent();
+		mDebugStats.unloadGLContent();
+
 		mIsGLLoaded = false;
 
 	}
 
 	public void handleInput(LintfordCore pCore) {
 		mDebugConsole.handleInput(pCore);
-		mDebugProfiler.handleInput(pCore);
+		mDebugStats.handleInput(pCore);
+
+	}
+
+	public void preUpdate(LintfordCore pCore) {
+		mDebugStats.preUpdate(pCore);
 
 	}
 
@@ -167,17 +175,11 @@ public class Debug {
 		if (mDebugConsole.isOpen()) {
 			mDebugConsole.setPosition(lWindowWidth, lPosY);
 			lPosY += mDebugConsole.height();
-			
-		}
 
-		if (mDebugProfiler.isOpen()) {
-			mDebugProfiler.setPosition(lWindowWidth, lPosY);
-			lPosY += mDebugProfiler.height();
-			
 		}
 
 		mDebugConsole.update(pCore);
-		mDebugProfiler.update(pCore);
+		mDebugStats.update(pCore);
 
 	}
 
@@ -185,8 +187,8 @@ public class Debug {
 		if (!mIsGLLoaded)
 			return;
 
+		mDebugStats.draw(pCore);
 		mDebugConsole.draw(pCore);
-		mDebugProfiler.draw(pCore);
 
 	}
 

@@ -119,6 +119,11 @@ public class DebugLogger {
 	// Methods
 	// --------------------------------------
 
+	public void clearLogLines() {
+		mLogLines.clear();
+		
+	}
+	
 	private boolean openDebugLogOutputStream() {
 		if (mDebugLogBufferedOutputStream != null)
 			return false;

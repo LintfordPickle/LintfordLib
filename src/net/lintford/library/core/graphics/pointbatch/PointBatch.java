@@ -10,6 +10,8 @@ import org.lwjgl.system.MemoryUtil;
 
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.camera.ICamera;
+import net.lintford.library.core.debug.Debug;
+import net.lintford.library.core.debug.stats.DebugStats;
 import net.lintford.library.core.graphics.shaders.ShaderMVP_PT;
 import net.lintford.library.core.graphics.vertices.VertexDataStructurePC;
 import net.lintford.library.core.maths.Matrix4f;
@@ -198,6 +200,11 @@ public class PointBatch {
 
 		mShader.bind();
 
+		{
+			Debug.debugManager().stats().incTag(DebugStats.TAG_ID_DRAWCALLS);
+			Debug.debugManager().stats().incTag(DebugStats.TAG_ID_VERTS, mVertexCount);
+		}
+		
 		GL11.glDrawArrays(GL11.GL_POINTS, 0, mVertexCount);
 
 		GL30.glBindVertexArray(0);

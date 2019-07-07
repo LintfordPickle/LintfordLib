@@ -51,6 +51,8 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.debug.Debug.DebugLogLevel;
 import net.lintford.library.core.debug.GLDebug;
+import net.lintford.library.core.debug.stats.DebugStatTagString;
+import net.lintford.library.core.debug.stats.DebugStats;
 import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.options.reader.IniFile;
 
@@ -519,7 +521,11 @@ public class DisplayManager extends IniFile {
 
 		mDisplaySettings.windowWidth = pWidth;
 		mDisplaySettings.windowHeight = pHeight;
+		
+		DebugStatTagString lResTag = (DebugStatTagString) Debug.debugManager().stats().getTagByID(DebugStats.TAG_ID_RES);
 
+		lResTag.value = String.format("%dx%d", pWidth, pHeight);
+		
 		GL11.glViewport(0, 0, pWidth, pHeight);
 
 	}

@@ -17,6 +17,7 @@ import net.lintford.library.core.EntityGroupManager;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.Debug;
+import net.lintford.library.core.debug.stats.DebugStats;
 import net.lintford.library.core.graphics.textures.xml.TextureMetaLoader;
 
 public class TextureManager extends EntityGroupManager {
@@ -226,7 +227,7 @@ public class TextureManager extends EntityGroupManager {
 				Texture.unloadTexture(lTexture.getValue());
 
 			}
-			
+
 			lGroupMap.clear();
 
 		}
@@ -340,6 +341,8 @@ public class TextureManager extends EntityGroupManager {
 			return mTextureNotFound;
 
 		}
+
+		Debug.debugManager().stats().incTag(DebugStats.TAG_ID_TEXTURES, 1);
 
 		return lTexture;
 	}

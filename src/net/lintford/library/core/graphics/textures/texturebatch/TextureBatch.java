@@ -12,6 +12,8 @@ import org.lwjgl.system.MemoryUtil;
 
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.camera.ICamera;
+import net.lintford.library.core.debug.Debug;
+import net.lintford.library.core.debug.stats.DebugStats;
 import net.lintford.library.core.geometry.Circle;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.shaders.ShaderMVP_PT;
@@ -155,6 +157,8 @@ public class TextureBatch {
 
 		mIsLoaded = true;
 
+		Debug.debugManager().stats().incTag(DebugStats.TAG_ID_BATCH_OBJECTS);
+
 	}
 
 	public void unloadGLContent() {
@@ -179,6 +183,7 @@ public class TextureBatch {
 		}
 
 		mIsLoaded = false;
+		Debug.debugManager().stats().decTag(DebugStats.TAG_ID_BATCH_OBJECTS);
 
 	}
 
@@ -374,7 +379,8 @@ public class TextureBatch {
 
 	}
 
-	public void draw(Texture pTexture, float pSX, float pSY, float pSW, float pSH, float pDX, float pDY, float pDW, float pDH, float pZ, float pRot, float pROX, float pROY, float pScale, float pR, float pG, float pB, float pA) {
+	public void draw(Texture pTexture, float pSX, float pSY, float pSW, float pSH, float pDX, float pDY, float pDW, float pDH, float pZ, float pRot, float pROX, float pROY, float pScale, float pR, float pG, float pB,
+			float pA) {
 		if (!mIsLoaded)
 			return;
 
@@ -599,6 +605,12 @@ public class TextureBatch {
 		mCustomShader.modelMatrix(mModelMatrix);
 
 		mCustomShader.bind();
+
+		{
+			Debug.debugManager().stats().incTag(DebugStats.TAG_ID_DRAWCALLS);
+			Debug.debugManager().stats().incTag(DebugStats.TAG_ID_VERTS, mVertexCount);
+			Debug.debugManager().stats().incTag(DebugStats.TAG_ID_TRIS, mVertexCount / 3);
+		}
 
 		GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, mVertexCount);
 

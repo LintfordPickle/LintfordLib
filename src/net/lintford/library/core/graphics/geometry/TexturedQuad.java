@@ -11,6 +11,7 @@ import org.lwjgl.system.MemoryUtil;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.Debug;
+import net.lintford.library.core.debug.stats.DebugStats;
 import net.lintford.library.core.graphics.vertices.VertexDataStructurePT;
 import net.lintford.library.core.maths.Matrix4f;
 
@@ -158,6 +159,14 @@ public class TexturedQuad {
 		GL30.glBindVertexArray(mVaoId);
 		GL20.glEnableVertexAttribArray(0);
 		GL20.glEnableVertexAttribArray(1);
+
+		{
+
+			Debug.debugManager().stats().incTag(DebugStats.TAG_ID_DRAWCALLS);
+			Debug.debugManager().stats().incTag(DebugStats.TAG_ID_VERTS, 6);
+			Debug.debugManager().stats().incTag(DebugStats.TAG_ID_TRIS, 2);
+
+		}
 
 		GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, 6);
 

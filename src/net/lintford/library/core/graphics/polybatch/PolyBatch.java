@@ -11,6 +11,8 @@ import org.lwjgl.system.MemoryUtil;
 
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.camera.ICamera;
+import net.lintford.library.core.debug.Debug;
+import net.lintford.library.core.debug.stats.DebugStats;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.shaders.ShaderMVP_PT;
 import net.lintford.library.core.graphics.vertices.VertexDataStructurePC;
@@ -285,6 +287,15 @@ public class PolyBatch {
 		mShader.modelMatrix(mModelMatrix);
 
 		mShader.bind();
+
+		{
+			Debug.debugManager().stats().incTag(DebugStats.TAG_ID_DRAWCALLS);
+			Debug.debugManager().stats().incTag(DebugStats.TAG_ID_VERTS, mVertexCount);
+
+			if (mLineMode == GL11.GL_TRIANGLES || mLineMode == GL11.GL_TRIANGLE_STRIP)
+				Debug.debugManager().stats().incTag(DebugStats.TAG_ID_TRIS, mVertexCount - 2);
+
+		}
 
 		GL11.glDrawArrays(mLineMode, 0, mVertexCount);
 

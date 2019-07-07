@@ -147,8 +147,6 @@ public class Box2dBodyInstance extends BaseData {
 
 		}
 
-		System.out.println("Box2dBodyInstance loaded");
-
 	}
 
 	public void unloadPhysics() {
@@ -169,8 +167,6 @@ public class Box2dBodyInstance extends BaseData {
 		}
 
 		lWorld.destroyBody(mBody);
-
-		System.out.println("Box2dBodyInstance unloaded");
 
 	}
 

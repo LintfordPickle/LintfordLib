@@ -24,11 +24,11 @@ public class PixelFontSpriteBatch extends TextureBatch {
 	// Properties
 	// --------------------------------------
 
-	public void setImageCharacterSequence(String pValue){
+	public void setImageCharacterSequence(String pValue) {
 		CHARACTERS = pValue;
 	}
-	
-	public String getImageCharacterSequence(){
+
+	public String getImageCharacterSequence() {
 		return CHARACTERS;
 	}
 
@@ -38,7 +38,7 @@ public class PixelFontSpriteBatch extends TextureBatch {
 
 	public PixelFontSpriteBatch(Texture pTexture) {
 		super();
-		
+
 		mTexture = pTexture;
 
 	}
@@ -53,6 +53,7 @@ public class PixelFontSpriteBatch extends TextureBatch {
 
 	public void draw(String pText, float pX, float pY, float pScale) {
 		draw(pText, pX, pY, -0.5f, 1f, 1f, 1f, 1f, pScale);
+
 	}
 
 	// TODO(John): Need to do both local scaling and center text scaling.
