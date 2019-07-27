@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.graphics.particles.initialisers.IParticleInitializer;
+import net.lintford.library.core.graphics.particles.initializers.IParticleInitializer;
 import net.lintford.library.core.graphics.particles.modifiers.IParticleModifier;
 
 public class ParticleSystem {
@@ -147,7 +147,7 @@ public class ParticleSystem {
 	}
 
 	/** Applies all the {@link IParticleinitializer}s attached to this system to the given {@link Particle} instance. */
-	public void applyinitializers(Particle pParticle) {
+	public void applyInitializers(Particle pParticle) {
 		if (pParticle == null)
 			return;
 

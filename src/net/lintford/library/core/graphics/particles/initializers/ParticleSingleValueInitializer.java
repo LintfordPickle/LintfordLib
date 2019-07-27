@@ -1,4 +1,4 @@
-package net.lintford.library.core.graphics.particles.initialisers;
+package net.lintford.library.core.graphics.particles.initializers;
 
 import net.lintford.library.core.graphics.particles.Particle;
 import net.lintford.library.core.maths.RandomNumbers;
