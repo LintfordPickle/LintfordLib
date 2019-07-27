@@ -39,8 +39,8 @@ public abstract class CirclePlatformerController {
 	// Properties
 	// -------------------------------------
 
-	/** The {@link CirclePlatformerController} is considered initialised if it holds a valid reference to an {@link EntityPool}. */
-	public boolean isInitialised() {
+	/** The {@link CirclePlatformerController} is considered initialized if it holds a valid reference to an {@link EntityPool}. */
+	public boolean isinitialized() {
 		return mEntityPool != null;
 	}
 
@@ -67,14 +67,14 @@ public abstract class CirclePlatformerController {
 	// Core-Methods
 	// -------------------------------------
 
-	/** Initialises the {@link CirclePlatformerController} with an {@link EntityPool}. All {@link RectangleCollider}s within the {@link EntityPool} will be updated. */
-	public void initialise(EntityPool<CellEntity> pEntitypool) {
+	/** initializes the {@link CirclePlatformerController} with an {@link EntityPool}. All {@link RectangleCollider}s within the {@link EntityPool} will be updated. */
+	public void initialize(EntityPool<CellEntity> pEntitypool) {
 		mEntityPool = pEntitypool;
 
 	}
 
 	public void update(GameTime pGameTime) {
-		if (!isInitialised())
+		if (!isinitialized())
 			return;
 
 		// Iterate through the circle entities in the EntityManager and update them

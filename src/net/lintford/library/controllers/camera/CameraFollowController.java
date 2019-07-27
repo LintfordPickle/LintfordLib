@@ -55,7 +55,7 @@ public class CameraFollowController extends BaseController {
 	}
 
 	@Override
-	public boolean isInitialised() {
+	public boolean isinitialized() {
 		return mGameCamera != null;
 
 	}
@@ -81,12 +81,12 @@ public class CameraFollowController extends BaseController {
 	// ---------------------------------------------
 
 	@Override
-	public void initialise(LintfordCore pCore) {
+	public void initialize(LintfordCore pCore) {
 
 	}
 
-	// FIXME: Duplicate initialise method - rename to something else or clean up design!
-	public void initialise(ICamera pGameCamera, WorldEntity pTrackedEntity) {
+	// FIXME: Duplicate initialize method - rename to something else or clean up design!
+	public void initialize(ICamera pGameCamera, WorldEntity pTrackedEntity) {
 		mGameCamera = pGameCamera;
 		mTrackedEntity = pTrackedEntity;
 

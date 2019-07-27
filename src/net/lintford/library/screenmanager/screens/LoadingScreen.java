@@ -133,8 +133,8 @@ public class LoadingScreen extends Screen {
 			for (int i = 0; i < lCount; i++) {
 				Screen lScreen = mScreensToLoad[i];
 
-				if (lScreen != null && !lScreen.isInitialised()) {
-					lScreen.initialise();
+				if (lScreen != null && !lScreen.isinitialized()) {
+					lScreen.initialize();
 
 				}
 

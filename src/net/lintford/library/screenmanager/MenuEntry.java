@@ -66,7 +66,7 @@ public class MenuEntry extends Rectangle {
 	protected boolean mCanHaveFocus;
 	protected float mClickTimer;
 
-	private boolean mIsInitialised, mIsLoaded;
+	private boolean mIsinitialized, mIsLoaded;
 	public float mZ;
 
 	// This is the padding INSIDE of the component (i.e. applied to child elements).
@@ -337,8 +337,8 @@ public class MenuEntry extends Rectangle {
 	// Core-Methods
 	// --------------------------------------
 
-	public void initialise() {
-		mIsInitialised = true;
+	public void initialize() {
+		mIsinitialized = true;
 
 	}
 
@@ -441,7 +441,7 @@ public class MenuEntry extends Rectangle {
 	}
 
 	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pParentZDepth) {
-		if (!mActive || !mIsInitialised || !mIsLoaded)
+		if (!mActive || !mIsinitialized || !mIsLoaded)
 			return;
 
 		mZ = pParentZDepth;

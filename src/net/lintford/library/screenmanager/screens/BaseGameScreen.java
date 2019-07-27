@@ -24,8 +24,8 @@ public abstract class BaseGameScreen extends Screen {
 	// --------------------------------------
 
 	@Override
-	public void initialise() {
-		super.initialise();
+	public void initialize() {
+		super.initialize();
 
 		mScreenManager.core().setNewGameCamera(null);
 

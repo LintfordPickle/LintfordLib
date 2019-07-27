@@ -14,7 +14,7 @@ public class ParticleLifetimeAlphaFadeInOutModifier implements IParticleModifier
 	// --------------------------------------
 
 	@Override
-	public void initialise(Particle pParticle) {
+	public void initialize(Particle pParticle) {
 
 	}
 

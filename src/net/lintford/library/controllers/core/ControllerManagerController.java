@@ -16,7 +16,7 @@ public class ControllerManagerController extends BaseController {
 	// --------------------------------------
 
 	@Override
-	public boolean isInitialised() {
+	public boolean isinitialized() {
 		return false;
 	}
 
@@ -30,7 +30,7 @@ public class ControllerManagerController extends BaseController {
 	}
 
 	@Override
-	public void initialise(LintfordCore pCore) {
+	public void initialize(LintfordCore pCore) {
 		// TODO Auto-generated method stub
 
 	}

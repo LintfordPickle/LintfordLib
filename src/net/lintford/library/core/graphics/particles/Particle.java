@@ -1,6 +1,6 @@
 package net.lintford.library.core.graphics.particles;
 
-import net.lintford.library.core.graphics.particles.initialisers.IParticleInitialiser;
+import net.lintford.library.core.graphics.particles.initialisers.IParticleInitializer;
 import net.lintford.library.data.entities.CircleEntity;
 
 public class Particle extends CircleEntity {
@@ -97,11 +97,11 @@ public class Particle extends CircleEntity {
 
 	}
 
-	public void applyInitialiser(IParticleInitialiser p) {
+	public void applyinitializer(IParticleInitializer p) {
 		if (p == null)
 			return;
 
-		p.initialise(this);
+		p.initialize(this);
 
 	}
 

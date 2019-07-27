@@ -74,12 +74,12 @@ public class HorizontalEntryGroup extends MenuEntry {
 	// --------------------------------------
 
 	@Override
-	public void initialise() {
-		super.initialise();
+	public void initialize() {
+		super.initialize();
 
 		int lCount = mChildEntries.size();
 		for (int i = 0; i < lCount; i++) {
-			mChildEntries.get(i).initialise();
+			mChildEntries.get(i).initialize();
 		}
 
 		updateEntries();

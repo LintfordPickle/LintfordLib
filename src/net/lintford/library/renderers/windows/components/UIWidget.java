@@ -73,7 +73,7 @@ public abstract class UIWidget extends Rectangle {
 	// Core-Methods
 	// --------------------------------------
 
-	public void initialise() {
+	public void initialize() {
 
 	}
 

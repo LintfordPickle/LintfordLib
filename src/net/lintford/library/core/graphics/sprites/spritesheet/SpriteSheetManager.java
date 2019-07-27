@@ -71,11 +71,11 @@ public class SpriteSheetManager {
 	// Core-Methods
 	// --------------------------------------
 
-	public void initialise() {
+	public void initialize() {
 		// for (Map.Entry<String, SpriteSheetDef> entry : this.spriteSheetMap.entrySet()) {
 		// SpriteSheetDef lSpriteSheet = entry.getValue();
 		//
-		// lSpriteSheet.initialise(this);
+		// lSpriteSheet.initialize(this);
 		//
 		// }
 

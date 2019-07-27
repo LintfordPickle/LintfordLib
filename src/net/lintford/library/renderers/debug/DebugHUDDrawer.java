@@ -45,7 +45,7 @@ public class DebugHUDDrawer extends BaseRenderer {
 	// --------------------------------------
 
 	@Override
-	public void initialise(LintfordCore pCore) {
+	public void initialize(LintfordCore pCore) {
 		mUIHUDController = (UIHUDStructureController) pCore.controllerManager().getControllerByNameRequired(UIHUDStructureController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
 
 	}

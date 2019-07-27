@@ -173,7 +173,7 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 	// --------------------------------------
 
 	@Override
-	public void initialise(LintfordCore pCore) {
+	public void initialize(LintfordCore pCore) {
 		mUIHUDGameController = (UIHUDStructureController) pCore.controllerManager().getControllerByName(UIHUDStructureController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
 
 	}

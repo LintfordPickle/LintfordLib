@@ -90,14 +90,14 @@ public class TimeSpan {
 		mTicks = (long) num * TicksPerMillisecond;
 	}
 
-	/** Reinitialises this TimeSpan Object from the given seconds.
+	/** Reinitializes this TimeSpan Object from the given seconds.
 	 * 
 	 * @param pSeconds */
 	public void fromSeconds(double pSeconds) {
 		interval(pSeconds, MillisPerSecond);
 	}
 
-	/** Reinitialises this TimeSpan Object from the given milliseconds.
+	/** Reinitializes this TimeSpan Object from the given milliseconds.
 	 * 
 	 * @param pMilliseconds */
 	public void fromMilliseconds(int pMilliseconds) {

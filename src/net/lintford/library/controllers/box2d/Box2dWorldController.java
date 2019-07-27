@@ -51,7 +51,7 @@ public class Box2dWorldController extends BaseController {
 	}
 
 	@Override
-	public boolean isInitialised() {
+	public boolean isinitialized() {
 		return mWorld != null;
 
 	}
@@ -72,7 +72,7 @@ public class Box2dWorldController extends BaseController {
 	// --------------------------------------
 
 	@Override
-	public void initialise(LintfordCore pCore) {
+	public void initialize(LintfordCore pCore) {
 		mResourceController = (ResourceController) pCore.controllerManager().getControllerByNameRequired(ResourceController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
 
 	}
@@ -114,8 +114,8 @@ public class Box2dWorldController extends BaseController {
 	}
 
 	public JBox2dEntityInstance getCharacterBox2dInstance(float pWidth, float pHeight) {
-		if (!isInitialised()) {
-			Debug.debugManager().logger().e(getClass().getSimpleName(), "Cannot retreive a new CharacterBox2dEntityInstance - Box2dWorldController is not initialised!");
+		if (!isinitialized()) {
+			Debug.debugManager().logger().e(getClass().getSimpleName(), "Cannot retreive a new CharacterBox2dEntityInstance - Box2dWorldController is not initialized!");
 			return null;
 
 		}
@@ -135,8 +135,8 @@ public class Box2dWorldController extends BaseController {
 	}
 
 	public JBox2dEntityInstance getObjectBox2dInstance(float pWidth, float pHeight) {
-		if (!isInitialised()) {
-			Debug.debugManager().logger().e(getClass().getSimpleName(), "Cannot retreive a new ObjectBox2dEntityInstance - Box2dWorldController is not initialised!");
+		if (!isinitialized()) {
+			Debug.debugManager().logger().e(getClass().getSimpleName(), "Cannot retreive a new ObjectBox2dEntityInstance - Box2dWorldController is not initialized!");
 			return null;
 
 		}
@@ -156,8 +156,8 @@ public class Box2dWorldController extends BaseController {
 	}
 
 	public JBox2dEntityInstance getItemBox2dInstance(float pRadius) {
-		if (!isInitialised()) {
-			Debug.debugManager().logger().e(getClass().getSimpleName(), "Cannot retreive a new ItemBox2dEntityInstance - Box2dWorldController is not initialised!");
+		if (!isinitialized()) {
+			Debug.debugManager().logger().e(getClass().getSimpleName(), "Cannot retreive a new ItemBox2dEntityInstance - Box2dWorldController is not initialized!");
 			return null;
 
 		}

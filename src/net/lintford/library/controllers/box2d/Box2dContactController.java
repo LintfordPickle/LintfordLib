@@ -46,13 +46,13 @@ public abstract class Box2dContactController extends BaseController implements C
 	// --------------------------------------
 
 	@Override
-	public boolean isInitialised() {
+	public boolean isinitialized() {
 		return false;
 
 	}
 
 	@Override
-	public void initialise(LintfordCore pCore) {
+	public void initialize(LintfordCore pCore) {
 
 	}
 

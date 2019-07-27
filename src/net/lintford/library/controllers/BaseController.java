@@ -37,7 +37,7 @@ public abstract class BaseController {
 		return mUniqueController;
 	}
 
-	public abstract boolean isInitialised();
+	public abstract boolean isinitialized();
 
 	public boolean isActive() {
 		return mIsActive;
@@ -86,7 +86,7 @@ public abstract class BaseController {
 	// Core-Methods
 	// --------------------------------------
 
-	public abstract void initialise(LintfordCore pCore);
+	public abstract void initialize(LintfordCore pCore);
 
 	public abstract void unload();
 

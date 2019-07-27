@@ -96,7 +96,7 @@ public class CameraZoomController extends BaseController {
 	}
 
 	@Override
-	public boolean isInitialised() {
+	public boolean isinitialized() {
 		return mCamera != null;
 	}
 
@@ -118,7 +118,7 @@ public class CameraZoomController extends BaseController {
 	// ---------------------------------------------
 
 	@Override
-	public void initialise(LintfordCore pCore) {
+	public void initialize(LintfordCore pCore) {
 
 	}
 

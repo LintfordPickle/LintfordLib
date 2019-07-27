@@ -31,14 +31,14 @@ public class Matrix4f implements Serializable {
 	public Matrix4f() {
 		setIdentity();
 
-		initialise();
+		initialize();
 	}
 
 	// --------------------------------------
 	// Core-Methods
 	// --------------------------------------
 
-	public void initialise() {
+	public void initialize() {
 
 	}
 

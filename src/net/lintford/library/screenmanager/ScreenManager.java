@@ -27,7 +27,7 @@ public class ScreenManager {
 	private ResourceManager mResourceManager;
 	private ToastManager mToastManager;
 	private String mFontPathname;
-	private boolean mIsInitialised;
+	private boolean mIsinitialized;
 	private boolean mIsLoaded;
 	private int mScreenCounter;
 	private UIHUDStructureController mUIHUDController;
@@ -103,7 +103,7 @@ public class ScreenManager {
 
 		mToolTip = new ToolTip(this);
 
-		mIsInitialised = false;
+		mIsinitialized = false;
 		mIsLoaded = false;
 
 	}
@@ -112,17 +112,17 @@ public class ScreenManager {
 	// Core-Methods
 	// --------------------------------------
 
-	public void initialise(String pFontPathname) {
+	public void initialize(String pFontPathname) {
 		mFontPathname = pFontPathname;
 
 		int lCount = mScreens.size();
 		for (int i = 0; i < lCount; i++) {
-			mScreens.get(i).initialise();
+			mScreens.get(i).initialize();
 		}
 
 		mUIHUDController = (UIHUDStructureController) mLWJGLCore.controllerManager().getControllerByNameRequired(UIHUDStructureController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
 
-		mIsInitialised = true;
+		mIsinitialized = true;
 
 	}
 
@@ -194,7 +194,7 @@ public class ScreenManager {
 	}
 
 	public void update(LintfordCore pCore) {
-		if (!mIsInitialised || !mIsLoaded)
+		if (!mIsinitialized || !mIsLoaded)
 			return;
 
 		boolean lOtherScreenHasFocus = false;
@@ -233,7 +233,7 @@ public class ScreenManager {
 	}
 
 	public void draw(LintfordCore pCore) {
-		if (!mIsInitialised || !mIsLoaded)
+		if (!mIsinitialized || !mIsLoaded)
 			return;
 
 		int lCount = mScreens.size();
@@ -277,8 +277,8 @@ public class ScreenManager {
 			pScreen.screenManager(this);
 			pScreen.isExiting(false);
 
-			if (mIsInitialised && !pScreen.isInitialised()) {// screen manager already initialized? then load this screen manually
-				pScreen.initialise();
+			if (mIsinitialized && !pScreen.isinitialized()) {// screen manager already initialized? then load this screen manually
+				pScreen.initialize();
 			}
 
 			if (mIsLoaded) { // screen manager already loaded? then load this screen manually
@@ -308,7 +308,7 @@ public class ScreenManager {
 
 	public void removeScreen(Screen pScreen) {
 
-		if (mIsInitialised) {
+		if (mIsinitialized) {
 			pScreen.unloadGLContent();
 
 		}

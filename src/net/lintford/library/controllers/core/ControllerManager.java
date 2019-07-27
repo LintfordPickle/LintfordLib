@@ -100,7 +100,7 @@ public class ControllerManager {
 	// Methods
 	// --------------------------------------
 
-	public void initialiseControllers(LintfordCore pCore) {
+	public void initializeControllers(LintfordCore pCore) {
 
 		for (Map.Entry<Integer, List<BaseController>> lEntry : mControllers.entrySet()) {
 			List<BaseController> lControllerList = lEntry.getValue();
@@ -110,10 +110,10 @@ public class ControllerManager {
 				if (!lControllerList.get(i).isActive())
 					continue;
 
-				if (lControllerList.get(i).isInitialised())
+				if (lControllerList.get(i).isinitialized())
 					continue;
 
-				lControllerList.get(i).initialise(pCore);
+				lControllerList.get(i).initialize(pCore);
 			}
 
 		}
@@ -137,7 +137,7 @@ public class ControllerManager {
 		return null;
 	}
 
-	/** Returns the controller with the given name. In case no {@link BaseController} instance with the given name is found (i.e. has not been registered) or has not been initialised, an exception will be thrown. */
+	/** Returns the controller with the given name. In case no {@link BaseController} instance with the given name is found (i.e. has not been registered) or has not been initialized, an exception will be thrown. */
 	public BaseController getControllerByNameRequired(String pControllerName, int pEntityGroupID) {
 		final BaseController RESULT = getControllerByName(pControllerName, pEntityGroupID);
 

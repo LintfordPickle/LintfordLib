@@ -76,7 +76,7 @@ public class UIIconFilter extends Rectangle {
 	// Core-Methods
 	// --------------------------------------
 
-	public void initialise() {
+	public void initialize() {
 
 	}
 

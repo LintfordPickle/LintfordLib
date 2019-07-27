@@ -62,8 +62,6 @@ public class RectangleEntity extends WorldEntity {
 		mBounds = new Rectangle();
 		mBounds = new Rectangle(x, y, width, height);
 
-		initialize();
-
 	}
 
 	// --------------------------------------

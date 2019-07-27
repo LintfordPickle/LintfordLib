@@ -17,7 +17,7 @@ public class ParticleDragModifier implements IParticleModifier {
 	// --------------------------------------
 
 	@Override
-	public void initialise(Particle pParticle) {
+	public void initialize(Particle pParticle) {
 		// TODO Auto-generated method stub
 
 	}

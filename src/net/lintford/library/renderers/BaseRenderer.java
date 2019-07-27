@@ -92,7 +92,7 @@ public abstract class BaseRenderer {
 	// Core-Methods
 	// --------------------------------------
 
-	public abstract void initialise(LintfordCore pCore);
+	public abstract void initialize(LintfordCore pCore);
 
 	public void loadGLContent(ResourceManager pResourceManager) {
 		Debug.debugManager().logger().i(TAG, "Loading GL Content (" + getClass().getSimpleName() + ")");

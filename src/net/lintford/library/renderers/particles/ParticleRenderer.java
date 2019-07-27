@@ -55,7 +55,7 @@ public class ParticleRenderer {
 	// Core-Methods
 	// --------------------------------------
 
-	public void initialise() {
+	public void initialize() {
 
 	}
 

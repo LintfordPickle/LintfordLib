@@ -215,7 +215,7 @@ public class DisplayManager extends IniFile {
 	// Core-Methods
 	// --------------------------------------
 
-	private void onInitialiseGL() {
+	private void oninitializeGL() {
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "OpenGL version: " + GL11.glGetString(GL11.GL_VERSION));
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "GLFW Version" + glfwGetVersionString());
 
@@ -442,7 +442,7 @@ public class DisplayManager extends IniFile {
 		});
 
 		// Set our default OpenGL variables
-		onInitialiseGL();
+		oninitializeGL();
 
 		mStretchGameScreen = pGameInfo.stretchGameResolution();
 		mBaseGameResolutionWidth = pGameInfo.baseGameResolutionWidth();

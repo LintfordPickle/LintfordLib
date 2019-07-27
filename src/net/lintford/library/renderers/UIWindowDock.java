@@ -41,7 +41,7 @@ public class UIWindowDock extends BaseRenderer {
 	// --------------------------------------
 
 	@Override
-	public void initialise(LintfordCore pCore) {
+	public void initialize(LintfordCore pCore) {
 
 	}
 

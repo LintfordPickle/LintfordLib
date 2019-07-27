@@ -39,7 +39,7 @@ public abstract class Screen {
 	protected boolean mOtherScreenHasFocus;
 	protected boolean mIsLoaded;
 	protected boolean mSingletonScreen;
-	protected boolean mIsInitialised;
+	protected boolean mIsinitialized;
 	protected boolean mIsPopup;
 	protected boolean mAlwaysOnTop;
 	protected boolean mShowMouseCursor;
@@ -99,8 +99,8 @@ public abstract class Screen {
 		return mIsLoaded;
 	}
 
-	public boolean isInitialised() {
-		return mIsInitialised;
+	public boolean isinitialized() {
+		return mIsinitialized;
 	}
 
 	public boolean isActive() {
@@ -164,13 +164,13 @@ public abstract class Screen {
 	// Core-Methods
 	// --------------------------------------
 
-	public void initialise() {
+	public void initialize() {
 		mIsExiting = false;
 		mIsLoaded = false;
 
-		mRendererManager.initialise();
+		mRendererManager.initialize();
 
-		mIsInitialised = true;
+		mIsinitialized = true;
 
 	}
 

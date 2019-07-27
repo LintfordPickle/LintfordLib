@@ -52,7 +52,7 @@ public abstract class ListBoxItem extends Rectangle {
 	// Core-Methods
 	// --------------------------------------
 
-	public void initialise() {
+	public void initialize() {
 
 	}
 

@@ -2,13 +2,13 @@ package net.lintford.library.core.graphics.particles.initialisers;
 
 import net.lintford.library.core.graphics.particles.Particle;
 
-public class ParticleRandomSizeInitialiser extends ParticleSingleValueInitialiser {
+public class ParticleRandomSizeInitializer extends ParticleSingleValueInitializer {
 
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
-	public ParticleRandomSizeInitialiser(float pMinValue, float pMaxValue) {
+	public ParticleRandomSizeInitializer(float pMinValue, float pMaxValue) {
 		super(pMinValue, pMaxValue);
 
 	}

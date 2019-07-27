@@ -44,7 +44,7 @@ public abstract class BaseData implements Serializable {
 	// --------------------------------------
 
 	/** Called after the save has been loaded. Allows sub-classes to arrange their data after deserialization. */
-	public void initialize() {
+	public void initialize(Object pParent) {
 
 	}
 

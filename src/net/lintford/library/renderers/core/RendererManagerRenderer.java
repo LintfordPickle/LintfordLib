@@ -36,8 +36,8 @@ public class RendererManagerRenderer extends UIWindow {
 	// --------------------------------------
 
 	@Override
-	public void initialise(LintfordCore pCore) {
-		super.initialise(pCore);
+	public void initialize(LintfordCore pCore) {
+		super.initialize(pCore);
 
 		mControllerManagerController = (ControllerManagerController) pCore.controllerManager().getControllerByNameRequired(ControllerManagerController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
 

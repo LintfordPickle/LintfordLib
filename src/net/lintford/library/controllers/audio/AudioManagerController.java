@@ -23,9 +23,9 @@ public class AudioManagerController extends BaseController {
 	// Properties
 	// --------------------------------------
 
-	/** Returns true if this {@link AudioManagerController} has been initialised properly. */
+	/** Returns true if this {@link AudioManagerController} has been initialized properly. */
 	@Override
-	public boolean isInitialised() {
+	public boolean isinitialized() {
 		return mAudioManager != null;
 	}
 
@@ -41,7 +41,7 @@ public class AudioManagerController extends BaseController {
 	}
 
 	@Override
-	public void initialise(LintfordCore pCore) {
+	public void initialize(LintfordCore pCore) {
 
 	}
 

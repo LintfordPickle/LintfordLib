@@ -56,7 +56,7 @@ public class RendererManager {
 	private List<BaseRenderer> mRenderers;
 	private List<UIWindow> mWindowRenderers;
 
-	private boolean mIsInitialised;
+	private boolean mIsinitialized;
 	private boolean mIsLoaded;
 
 	// Stuff from the UI Manager
@@ -95,8 +95,8 @@ public class RendererManager {
 		return mCore.renderState();
 	}
 
-	public boolean isInitialised() {
-		return mIsInitialised;
+	public boolean isinitialized() {
+		return mIsinitialized;
 
 	}
 
@@ -170,7 +170,7 @@ public class RendererManager {
 		// TODO: This should be controlled in the options menu later
 		mUIScale = 1f;
 
-		mIsInitialised = false;
+		mIsinitialized = false;
 		mIsLoaded = false;
 
 	}
@@ -179,17 +179,17 @@ public class RendererManager {
 	// Core-Methods
 	// --------------------------------------
 
-	public void initialise() {
+	public void initialize() {
 
 		mUIHUDController = (UIHUDStructureController) mCore.controllerManager().getControllerByNameRequired(UIHUDStructureController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
 
 		final int RENDERER_COUNT = mRenderers.size();
 		for (int i = 0; i < RENDERER_COUNT; i++) {
-			mRenderers.get(i).initialise(mCore);
+			mRenderers.get(i).initialize(mCore);
 
 		}
 
-		mIsInitialised = true;
+		mIsinitialized = true;
 
 	}
 

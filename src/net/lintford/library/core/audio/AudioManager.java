@@ -147,7 +147,7 @@ public class AudioManager {
 		Debug.debugManager().logger().i(TAG, "ALC_STEREO_SOURCES: " + alcGetInteger(mDevice, ALC_STEREO_SOURCES));
 
 		if (mMaxSourceCount == 0) {
-			Debug.debugManager().logger().e(TAG, "AudioManager not initialised correctly. Unable to assign AudioSources!");
+			Debug.debugManager().logger().e(TAG, "AudioManager not initialized correctly. Unable to assign AudioSources!");
 
 		}
 

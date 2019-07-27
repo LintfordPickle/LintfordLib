@@ -2,14 +2,13 @@ package net.lintford.library.core.graphics.particles.initialisers;
 
 import net.lintford.library.core.graphics.particles.Particle;
 
-public class ParticleRandomRotationInitialiser extends ParticleSingleValueInitialiser {
+public class ParticleTurnToFaceInitializer implements IParticleInitializer {
 
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
-	public ParticleRandomRotationInitialiser(final float pMinValue, final float pMaxValue) {
-		super(pMinValue, pMaxValue);
+	public ParticleTurnToFaceInitializer() {
 
 	}
 
@@ -18,9 +17,8 @@ public class ParticleRandomRotationInitialiser extends ParticleSingleValueInitia
 	// --------------------------------------
 
 	@Override
-	public void onIntialiseParticle(Particle pParticle, float pValue0) {
-		pParticle.rot = pValue0;
-		pParticle.dr = pValue0;
+	public void initialize(Particle pParticle) {
+		pParticle.rot = (float) Math.atan2(pParticle.dx, -pParticle.dy);
 
 	}
 

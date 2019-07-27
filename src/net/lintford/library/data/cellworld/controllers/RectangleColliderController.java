@@ -39,7 +39,7 @@ public class RectangleColliderController {
 	// -------------------------------------
 
 	/** The {@link RectangleColliderController} is considered initialized if it holds a valid reference to an {@link EntityPool}. */
-	public boolean isInitialised() {
+	public boolean isinitialized() {
 		return mEntityManager != null;
 	}
 
@@ -64,14 +64,14 @@ public class RectangleColliderController {
 	// Core-Methods
 	// -------------------------------------
 
-	/** Initialises the {@link RectangleColliderController} with an {@link EntityPool}. All {@link RectangleCollider}s within the {@link EntityPool} will be updated. */
-	public void initialise(EntityPool<CellEntity> pEntityManager) {
+	/** initializes the {@link RectangleColliderController} with an {@link EntityPool}. All {@link RectangleCollider}s within the {@link EntityPool} will be updated. */
+	public void initialize(EntityPool<CellEntity> pEntityManager) {
 		mEntityManager = pEntityManager;
 
 	}
 
 	public void update(GameTime pGameTime) {
-		if (!isInitialised())
+		if (!isinitialized())
 			return;
 
 		// Iterate through the RectangleEntities in the EntityManager and update them

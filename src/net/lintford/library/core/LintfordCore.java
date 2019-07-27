@@ -281,7 +281,7 @@ public abstract class LintfordCore {
 		mGameTime = new GameTime();
 		mInputState = new InputState();
 
-		long lWindowID = initialiseGLFWWindow();
+		long lWindowID = initializeGLFWWindow();
 
 		mControllerManager = new ControllerManager(this);
 
@@ -294,9 +294,9 @@ public abstract class LintfordCore {
 
 		showStartUpLogo(lWindowID);
 
-		onInitialiseGL();
+		oninitializeGL();
 
-		onInitialiseApp();
+		oninitializeApp();
 
 		onLoadGLContent();
 
@@ -328,7 +328,7 @@ public abstract class LintfordCore {
 	/**
 	 * Implemented in the sub-classe. Sets the default OpenGL state for the game.
 	 */
-	protected void onInitialiseGL() {
+	protected void oninitializeGL() {
 		// glClearColor(0f, 0f, 0f, 1.0f);
 		glClearColor(100.0f / 255.0f, 149.0f / 255.0f, 237.0f / 255.0f, 1.0f);
 
@@ -350,7 +350,7 @@ public abstract class LintfordCore {
 	/**
 	 * Implemented in the sub-class. Sets the default state of the application (note. OpenGL context is not available at this point).
 	 */
-	protected void onInitialiseApp() {
+	protected void oninitializeApp() {
 		new UIHUDStructureController(mMasterConfig.display(), mControllerManager, CORE_ENTITY_GROUP_ID);
 
 	}
@@ -525,7 +525,7 @@ public abstract class LintfordCore {
 	// Methods
 	// ---------------------------------------------
 
-	public long initialiseGLFWWindow() {
+	public long initializeGLFWWindow() {
 		long lWindowID = mMasterConfig.onCreateWindow();
 
 		// set key callbacks
@@ -545,7 +545,7 @@ public abstract class LintfordCore {
 		mGameCamera = pCamera;
 
 		if (mMasterConfig == null)
-			throw new RuntimeException("mMasterConfig not initialised. You must call setNewGameCamera from LintfordCore.initialise (or later)!");
+			throw new RuntimeException("mMasterConfig not initialized. You must call setNewGameCamera from LintfordCore.initialize (or later)!");
 
 		if (pCamera == null)
 			mGameCamera = new Camera(mMasterConfig.display());

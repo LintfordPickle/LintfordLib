@@ -114,9 +114,9 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 	// --------------------------------------
 
 	@Override
-	public void initialise() {
+	public void initialize() {
 		// TODO Auto-generated method stub
-		super.initialise();
+		super.initialize();
 	}
 
 	@Override

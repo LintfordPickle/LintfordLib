@@ -28,7 +28,7 @@ public class UIHUDStructureController extends BaseController {
 	private Rectangle mMenuMainRectangle;
 	private Rectangle mMenuFooterRectangle;
 
-	private boolean mIsInitialised;
+	private boolean mIsinitialized;
 	private boolean mBigUIEnabled;
 
 	private float mUITransparencyFactorActual;
@@ -71,8 +71,8 @@ public class UIHUDStructureController extends BaseController {
 	}
 
 	@Override
-	public boolean isInitialised() {
-		return mIsInitialised;
+	public boolean isinitialized() {
+		return mIsinitialized;
 	}
 
 	public Rectangle gameHeaderRectangle() {
@@ -123,10 +123,10 @@ public class UIHUDStructureController extends BaseController {
 	// --------------------------------------
 
 	/** Get the needed references and create the player UI windows (renderers). */
-	public void initialise(LintfordCore pCore) {
+	public void initialize(LintfordCore pCore) {
 		updateHUDAreas(pCore);
 
-		mIsInitialised = true;
+		mIsinitialized = true;
 
 	}
 

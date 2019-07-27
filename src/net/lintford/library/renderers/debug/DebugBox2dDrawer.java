@@ -52,7 +52,7 @@ public class DebugBox2dDrawer extends BaseRenderer {
 	// --------------------------------------
 
 	@Override
-	public void initialise(LintfordCore pCore) {
+	public void initialize(LintfordCore pCore) {
 		// TODO Auto-generated method stub
 
 	}

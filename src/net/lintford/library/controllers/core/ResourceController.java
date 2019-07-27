@@ -35,7 +35,7 @@ public class ResourceController extends BaseController {
 	}
 
 	@Override
-	public boolean isInitialised() {
+	public boolean isinitialized() {
 		return false;
 	}
 
@@ -55,7 +55,7 @@ public class ResourceController extends BaseController {
 	// ---------------------------------------------
 
 	@Override
-	public void initialise(LintfordCore pCore) {
+	public void initialize(LintfordCore pCore) {
 
 	}
 

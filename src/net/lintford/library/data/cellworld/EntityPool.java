@@ -44,7 +44,7 @@ public class EntityPool<T extends CellEntity> implements IEntityCollider {
 	// -------------------------------------
 
 	/** Called once after instantiation. */
-	public void initialise() {
+	public void initialize() {
 
 	}
 

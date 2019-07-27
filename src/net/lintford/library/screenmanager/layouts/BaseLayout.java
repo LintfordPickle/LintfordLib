@@ -240,10 +240,10 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 	// Core-Methods
 	// --------------------------------------
 
-	public void initialise() {
+	public void initialize() {
 		int lCount = mMenuEntries.size();
 		for (int i = 0; i < lCount; i++) {
-			mMenuEntries.get(i).initialise();
+			mMenuEntries.get(i).initialize();
 		}
 
 		// width = getEntryWidth();

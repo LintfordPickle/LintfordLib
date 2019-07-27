@@ -200,22 +200,22 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	// --------------------------------------
 
 	@Override
-	public void initialise() {
-		super.initialise();
+	public void initialize() {
+		super.initialize();
 
 		final int lCount = layouts().size();
 		for (int i = 0; i < lCount; i++) {
-			mLayouts.get(i).initialise();
+			mLayouts.get(i).initialize();
 		}
 
 		int lFloatingCount = mFloatingEntries.size();
 		for (int i = 0; i < lFloatingCount; i++) {
 			MenuEntry lFloatingEntry = mFloatingEntries.get(i);
-			lFloatingEntry.initialise();
+			lFloatingEntry.initialize();
 
 		}
 
-		footerLayout().initialise();
+		footerLayout().initialize();
 
 	}
 
