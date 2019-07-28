@@ -97,7 +97,7 @@ public class Particle extends CircleEntity {
 
 	}
 
-	public void applyinitializer(IParticleInitializer p) {
+	public void applyInitializer(IParticleInitializer p) {
 		if (p == null)
 			return;
 

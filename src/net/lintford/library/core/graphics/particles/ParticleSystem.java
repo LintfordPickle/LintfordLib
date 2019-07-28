@@ -181,7 +181,7 @@ public class ParticleSystem {
 
 	}
 
-	public void addinitializer(IParticleInitializer pinitializer) {
+	public void addInitializer(IParticleInitializer pinitializer) {
 		if (pinitializer == null)
 			return;
 
