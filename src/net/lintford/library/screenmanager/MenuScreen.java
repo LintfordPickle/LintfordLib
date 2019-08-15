@@ -72,7 +72,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	// --------------------------------------
 
 	public static final String MENUSCREEN_FONT_NAME = "MenuScreenFont";
-	public static final int MENUSCREEN_FONT_POINT_SIZE = 16;
+	public static final int MENUSCREEN_FONT_POINT_SIZE = 18;
 	public static final String MENUSCREEN_HEADER_FONT_NAME = "MenuScreenHeaderFont";
 	public static final int MENUSCREEN_HEADER_FONT_POINT_SIZE = 76;
 

@@ -165,7 +165,8 @@ public class MathHelper {
 		float newRange = newMax - newMin;
 
 		float newValue = ((oldValue - oldMin) * newRange / oldRange) + newMin;
-		return newValue;
+
+		return clamp(newValue, newMin, newMax);
 	}
 
 	/** A fade function, taken from Ken Perlin's noise implementation. It eases values towards integrals */

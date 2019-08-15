@@ -333,7 +333,7 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 
 			} else {
 				final float TILE_SIZE = 32;
-				
+
 				mTextureBatch.begin(pCore.HUD());
 				mTextureBatch.draw(mUITexture, 448, 64, 32, 32, x, y, TILE_SIZE, TILE_SIZE, pComponentDepth, mR, mG, mB, mA);
 				mTextureBatch.draw(mUITexture, 480, 64, 32, 32, x + TILE_SIZE, y, w - TILE_SIZE * 2, TILE_SIZE, pComponentDepth, mR, mG, mB, mA);
@@ -347,14 +347,15 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 				mTextureBatch.draw(mUITexture, 480, 128, 32, 32, x + TILE_SIZE, y + h - TILE_SIZE, w - TILE_SIZE * 2, TILE_SIZE, pComponentDepth, mR, mG, mB, mA);
 				mTextureBatch.draw(mUITexture, 512, 128, 32, 32, x + w - TILE_SIZE, y + h - TILE_SIZE, TILE_SIZE, TILE_SIZE, pComponentDepth, mR, mG, mB, mA);
 				mTextureBatch.end();
-				
-				Debug.debugManager().drawers().drawRectImmediate(pCore.HUD(), this);
+
+				if (ConstantsTable.getBooleanValueDef("DEBUG_SHOW_UI_OUTLINES", false)) {
+					Debug.debugManager().drawers().drawRectImmediate(pCore.HUD(), this);
+				}
 
 			}
 
 		}
 
-		
 		if (mScrollBarsEnabled) {
 			mContentArea.depthPadding(6f);
 			mContentArea.preDraw(pCore, mTextureBatch, mUITexture);
