@@ -89,7 +89,7 @@ public class DebugDrawers {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
-		mSystemFont = pResourceManager.fontManager().loadNewFont("SystemFont", "/res/fonts/OxygenMono-Regular.ttf", 16, true, LintfordCore.CORE_ENTITY_GROUP_ID);
+		mSystemFont = pResourceManager.fontManager().loadNewFont("SystemFont", "/res/fonts/Rajdhani-Bold.ttf", 16, true, LintfordCore.CORE_ENTITY_GROUP_ID);
 
 		mTextureBatch.loadGLContent(pResourceManager);
 		mBasicShader.loadGLContent(pResourceManager);

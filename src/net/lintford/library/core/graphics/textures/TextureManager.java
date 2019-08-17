@@ -462,7 +462,7 @@ public class TextureManager extends EntityGroupManager {
 		} else if (lTextureGroup.mTextureMap.containsValue(pTexture)) {
 			String lTextureName = pTexture.name();
 
-			Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("unloading texture: %s from texture group %d\n", lTextureName, pEntityGroupID));
+			Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("unloading texture: %s from texture group %d", lTextureName, pEntityGroupID));
 
 			Texture.unloadTexture(pTexture);
 

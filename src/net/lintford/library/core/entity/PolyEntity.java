@@ -1,4 +1,4 @@
-package net.lintford.library.data.entities;
+package net.lintford.library.core.entity;
 
 public class PolyEntity extends WorldEntity {
 

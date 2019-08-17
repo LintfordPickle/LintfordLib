@@ -206,7 +206,7 @@ public class RendererManager {
 		mTextureBatch.loadGLContent(pResourceManager);
 		mLineBatch.loadGLContent(pResourceManager);
 
-		String lPath = "res//fonts//OxygenMono-Regular.ttf";
+		String lPath = "res//fonts//Rajdhani-Bold.ttf";
 		mWindowTitleFont = pResourceManager.fontManager().loadNewFont(WINDOWS_TITLE_FONT_NAME, lPath, 18, mEntityGroupID);
 		mWindowTextFont = pResourceManager.fontManager().loadNewFont(WINDOWS_TEXT_FONT_NAME, lPath, 16, mEntityGroupID);
 

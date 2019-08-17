@@ -270,6 +270,9 @@ public class MenuEnumEntry extends MenuEntry {
 		MenuScreen lParentScreen = mParentLayout.parentScreen();
 		FontUnit lFontBitmap = lParentScreen.font();
 		final float luiTextScale = mScreenManager.UIHUDController().uiTextScaleFactor();
+		if (lFontBitmap == null)
+			return;
+
 		final float lTextWidth = lFontBitmap.bitmap().getStringWidth(mLabel, luiTextScale);
 
 		float lAdjustedScaleW = luiTextScale;

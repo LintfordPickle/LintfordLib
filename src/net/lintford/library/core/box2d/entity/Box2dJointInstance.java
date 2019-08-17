@@ -4,7 +4,7 @@ import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.joints.Joint;
 
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.data.BaseData;
+import net.lintford.library.core.entity.BaseData;
 
 public abstract class Box2dJointInstance extends BaseData {
 

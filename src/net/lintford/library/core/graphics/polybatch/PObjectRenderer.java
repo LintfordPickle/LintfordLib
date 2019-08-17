@@ -10,11 +10,11 @@ import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.box2d.entity.Box2dBodyInstance;
 import net.lintford.library.core.box2d.entity.Box2dFixtureInstance;
 import net.lintford.library.core.box2d.entity.JBox2dEntityInstance;
+import net.lintford.library.core.entity.JBox2dEntity;
 import net.lintford.library.core.graphics.sprites.SpriteFrame;
 import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDef;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.maths.Vector2f;
-import net.lintford.library.data.entities.JBox2dEntity;
 
 public class PObjectRenderer {
 

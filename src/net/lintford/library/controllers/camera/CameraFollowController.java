@@ -6,8 +6,8 @@ import net.lintford.library.controllers.BaseController;
 import net.lintford.library.controllers.core.ControllerManager;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.camera.ICamera;
+import net.lintford.library.core.entity.WorldEntity;
 import net.lintford.library.core.maths.Vector2f;
-import net.lintford.library.data.entities.WorldEntity;
 
 public class CameraFollowController extends BaseController {
 

@@ -1,6 +1,4 @@
-package net.lintford.library.data.entities;
-
-import net.lintford.library.data.BaseData;
+package net.lintford.library.core.entity;
 
 /**
  * The {@link WorldEntity} class allows us to order an entity spatially within the world.

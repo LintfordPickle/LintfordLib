@@ -8,6 +8,7 @@ import org.lwjgl.glfw.GLFW;
 import net.lintford.library.controllers.hud.UIHUDStructureController;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
+import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.input.InputState;
@@ -224,6 +225,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		super.loadGLContent(pResourceManager);
 
 		final String lFontPathname = mScreenManager.fontPathname();
+		Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("Loading font '%s' for entity group %d", lFontPathname, entityGroupID()));
 		mMenuFont = pResourceManager.fontManager().loadNewFont(MENUSCREEN_FONT_NAME, lFontPathname, MENUSCREEN_FONT_POINT_SIZE, true, entityGroupID());
 		mMenuHeaderFont = pResourceManager.fontManager().loadNewFont(MENUSCREEN_HEADER_FONT_NAME, lFontPathname, MENUSCREEN_HEADER_FONT_POINT_SIZE, false, entityGroupID());
 
@@ -262,8 +264,11 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 		footerLayout().unloadGLContent();
 
-		mMenuFont.unloadGLContent();
-		mMenuHeaderFont.unloadGLContent();
+		if (mMenuFont != null)
+			mMenuFont.unloadGLContent();
+
+		if (mMenuHeaderFont != null)
+			mMenuHeaderFont.unloadGLContent();
 
 		mScreenManager.core().resources().fontManager().unloadFontGroup(entityGroupID());
 
@@ -530,17 +535,23 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		final float lWindowPaddingH = 0;// lUIHUDController.windowPaddingH();
 		final float lWindowPaddingV = 0;// lUIHUDController.windowPaddingV();
 
-		final float lTitleFontHeight = mMenuHeaderFont.bitmap().fontHeight();
-		mMenuHeaderFont.begin(pCore.HUD());
-		mMenuHeaderFont.draw(mMenuTitle, lHUDRect.left() + lWindowPaddingH, lHUDRect.top() + lWindowPaddingV, MENUSCREEN_Z_DEPTH, mR, mG, mB, mA, luiTextScale);
-		mMenuHeaderFont.end();
+		if (mMenuHeaderFont != null) {
+			final float lTitleFontHeight = mMenuHeaderFont.bitmap().fontHeight();
+			mMenuHeaderFont.begin(pCore.HUD());
+			mMenuHeaderFont.draw(mMenuTitle, lHUDRect.left() + lWindowPaddingH, lHUDRect.top() + lWindowPaddingV, MENUSCREEN_Z_DEPTH, mR, mG, mB, mA, luiTextScale);
+			mMenuHeaderFont.end();
 
-		mMenuFont.begin(pCore.HUD());
-		if (mMenuOverTitle != null && mMenuOverTitle.length() > 0)
-			mMenuFont.draw(mMenuOverTitle, lHUDRect.left(), lHUDRect.top(), MENUSCREEN_Z_DEPTH, mR, mG, mB, mA, luiTextScale);
-		if (mMenuSubTitle != null && mMenuSubTitle.length() > 0)
-			mMenuFont.draw(mMenuSubTitle, lHUDRect.left(), lHUDRect.top() + lTitleFontHeight, MENUSCREEN_Z_DEPTH, mR, mG, mB, mA, luiTextScale);
-		mMenuFont.end();
+		}
+
+		if (mMenuFont != null) {
+			final float lTitleFontHeight = mMenuFont.bitmap().fontHeight();
+			mMenuFont.begin(pCore.HUD());
+			if (mMenuOverTitle != null && mMenuOverTitle.length() > 0)
+				mMenuFont.draw(mMenuOverTitle, lHUDRect.left(), lHUDRect.top(), MENUSCREEN_Z_DEPTH, mR, mG, mB, mA, luiTextScale);
+			if (mMenuSubTitle != null && mMenuSubTitle.length() > 0)
+				mMenuFont.draw(mMenuSubTitle, lHUDRect.left(), lHUDRect.top() + lTitleFontHeight, MENUSCREEN_Z_DEPTH, mR, mG, mB, mA, luiTextScale);
+			mMenuFont.end();
+		}
 
 		// Draw each layout in turn.
 		final int lCount = layouts().size();

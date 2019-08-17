@@ -7,7 +7,7 @@ import org.jbox2d.dynamics.FixtureDef;
 import org.jbox2d.dynamics.World;
 
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.data.BaseData;
+import net.lintford.library.core.entity.BaseData;
 
 public class Box2dFixtureInstance extends BaseData {
 

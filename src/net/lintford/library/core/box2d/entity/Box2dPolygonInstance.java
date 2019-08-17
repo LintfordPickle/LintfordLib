@@ -4,7 +4,7 @@ import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.common.Vec2;
 
-import net.lintford.library.data.BaseData;
+import net.lintford.library.core.entity.BaseData;
 
 public class Box2dPolygonInstance extends BaseData implements ShapeInstance {
 

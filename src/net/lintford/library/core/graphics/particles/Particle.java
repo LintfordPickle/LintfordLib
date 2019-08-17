@@ -1,7 +1,7 @@
 package net.lintford.library.core.graphics.particles;
 
+import net.lintford.library.core.entity.CircleEntity;
 import net.lintford.library.core.graphics.particles.initializers.IParticleInitializer;
-import net.lintford.library.data.entities.CircleEntity;
 
 public class Particle extends CircleEntity {
 

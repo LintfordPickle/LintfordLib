@@ -79,6 +79,8 @@ public class DebugLogger {
 
 	private final Debug mDebugManager;
 
+	private boolean mMirrorLogToConsole;
+
 	private List<LogMessage> mLogLinePool;
 	private List<LogMessage> mLogLines;
 
@@ -91,6 +93,14 @@ public class DebugLogger {
 	/** Returns all the messages currently in the log. */
 	public List<LogMessage> logLines() {
 		return mLogLines;
+	}
+
+	public void mirrorLogToConsole(boolean pNewValue) {
+		mMirrorLogToConsole = pNewValue;
+	}
+
+	public boolean mirrorLogToConsole() {
+		return mMirrorLogToConsole;
 	}
 
 	// --------------------------------------
@@ -121,9 +131,9 @@ public class DebugLogger {
 
 	public void clearLogLines() {
 		mLogLines.clear();
-		
+
 	}
-	
+
 	private boolean openDebugLogOutputStream() {
 		if (mDebugLogBufferedOutputStream != null)
 			return false;
@@ -200,6 +210,9 @@ public class DebugLogger {
 
 			mLogLines.add(lLogMessage);
 
+			if(mMirrorLogToConsole)
+				System.out.printf("[%s] %s: %s\n", padRight(lLogMessage.timestamp, 12), padRight(lLogMessage.tag, 25), lLogMessage.message);
+			
 		}
 	}
 

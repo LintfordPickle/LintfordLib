@@ -112,7 +112,8 @@ public class DisplayManager extends IniFile {
 	boolean mWindowResolutionChanged;
 	boolean mWaitForMouseRelease;
 	/**
-	 * We lock the local listeners while traversing the Listeners list after a resolution change is detected. This prevents other developers from changing the size of the list while its being iterated on.
+	 * We lock the local listeners while traversing the Listeners list after a resolution change is detected. This prevents other developers from changing the size of the list while
+	 * its being iterated on.
 	 */
 	private boolean mLockedListeners;
 	private boolean mIsWindowFocused;
@@ -235,6 +236,7 @@ public class DisplayManager extends IniFile {
 				mLockedListeners = true;
 				final int COUNT = mWindowResizeListeners.size();
 
+				Debug.debugManager().logger().log(DebugLogLevel.info, getClass().getSimpleName(), String.format("Resolution changed: %dx%d", mDisplaySettings.windowWidth, mDisplaySettings.windowHeight));
 				Debug.debugManager().logger().log(DebugLogLevel.info, "SYSTEM", "calling window resize listeners.");
 
 				for (int i = 0; i < COUNT; i++) {
@@ -473,8 +475,8 @@ public class DisplayManager extends IniFile {
 	}
 
 	public void setGLFWMonitor(VideoSettings pDesiredSettings) {
-		glfwSetWindowMonitor(mWindowID, pDesiredSettings.fullscreen() ? pDesiredSettings.monitorIndex : NULL, pDesiredSettings.windowPositionX, pDesiredSettings.windowPositionY, pDesiredSettings.windowWidth,
-				pDesiredSettings.windowHeight, pDesiredSettings.refreshRate);
+		glfwSetWindowMonitor(mWindowID, pDesiredSettings.fullscreen() ? pDesiredSettings.monitorIndex : NULL, pDesiredSettings.windowPositionX, pDesiredSettings.windowPositionY, pDesiredSettings.windowWidth, pDesiredSettings.windowHeight,
+				pDesiredSettings.refreshRate);
 
 		// In the case the window is in windowed mode, and the desired size is that of the desktop
 		if (pDesiredSettings.windowWidth == mDesktopWidth && pDesiredSettings.windowHeight == mDesktopHeight) {
@@ -514,24 +516,23 @@ public class DisplayManager extends IniFile {
 
 		}
 
-		System.out.printf("DisplayManager: Resolution changed: %dx%d\n", pWidth, pHeight);
-
 		mWindowResolutionChanged = true;
 		mWindowWasResized = true;
 
 		mDisplaySettings.windowWidth = pWidth;
 		mDisplaySettings.windowHeight = pHeight;
-		
+
 		DebugStatTagString lResTag = (DebugStatTagString) Debug.debugManager().stats().getTagByID(DebugStats.TAG_ID_RES);
 
 		lResTag.value = String.format("%dx%d", pWidth, pHeight);
-		
+
 		GL11.glViewport(0, 0, pWidth, pHeight);
 
 	}
 
 	/**
-	 * This method ensures that the resolution loaded from the INI matches one of the resolutions that the monitor the window is on supports. If not, that the game will resort to the 'default' resolution.
+	 * This method ensures that the resolution loaded from the INI matches one of the resolutions that the monitor the window is on supports. If not, that the game will resort to the
+	 * 'default' resolution.
 	 */
 	private void validateResolution(GameInfo pGameInfo) {
 		if (mDisplaySettings.monitorIndex == 0) {
@@ -575,8 +576,7 @@ public class DisplayManager extends IniFile {
 		mDisplaySettings.windowHeight = pGameInfo.defaultWindowHeight();
 		mDisplaySettings.fullScreenIndex = VideoSettings.FULLSCREEN_NO_INDEX;
 
-		Debug.debugManager().logger().w(getClass().getSimpleName(),
-				"Non-standard resolution found (" + lLookingForWidth + "," + lLookingForHeight + ")! Defaulting back to " + mDisplaySettings.windowWidth + "," + mDisplaySettings.windowHeight);
+		Debug.debugManager().logger().w(getClass().getSimpleName(), "Non-standard resolution found (" + lLookingForWidth + "," + lLookingForHeight + ")! Defaulting back to " + mDisplaySettings.windowWidth + "," + mDisplaySettings.windowHeight);
 
 	}
 

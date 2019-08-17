@@ -4,7 +4,7 @@ import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.common.Vec2;
 
-import net.lintford.library.data.BaseData;
+import net.lintford.library.core.entity.BaseData;
 
 public class Box2dCircleInstance extends BaseData implements ShapeInstance {
 

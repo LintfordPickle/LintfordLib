@@ -170,6 +170,9 @@ public class MenuInputEntry extends MenuEntry implements IBufferedInputCallback 
 		final MenuScreen lParentScreen = mParentLayout.parentScreen();
 		final FontUnit lFont = lParentScreen.font();
 
+		if (lFont == null)
+			return;
+
 		final float lLabelTextWidth = lFont.bitmap().getStringWidth(mLabel, luiTextScale);
 		float lAdjustedLabelScaleW = luiTextScale;
 		if (mEnableScaleTextToWidth && w * 0.4f < lLabelTextWidth && lLabelTextWidth > 0)

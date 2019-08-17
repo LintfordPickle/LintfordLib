@@ -1,5 +1,5 @@
 
-package net.lintford.library.data;
+package net.lintford.library.core.entity;
 
 import java.io.Serializable;
 

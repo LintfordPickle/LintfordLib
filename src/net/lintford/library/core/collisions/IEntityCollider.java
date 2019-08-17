@@ -1,6 +1,6 @@
 package net.lintford.library.core.collisions;
 
-import net.lintford.library.data.entities.WorldEntity;
+import net.lintford.library.core.entity.WorldEntity;
 
 public interface IEntityCollider {
 

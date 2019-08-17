@@ -484,10 +484,12 @@ public class MenuEntry extends Rectangle {
 
 			FontUnit lMenuFont = mParentLayout.parentScreen().font();
 
-			lMenuFont.begin(pCore.HUD());
-			lMenuFont.draw(mText, centerX() - lMenuFont.bitmap().getStringWidth(mText, luiTextScale) * 0.5f, centerY() - lMenuFont.bitmap().fontHeight() * luiTextScale / 2 - 2f, mZ, 0.97f * lColMod, .92f * lColMod, .92f * lColMod,
-					lA, luiTextScale);
-			lMenuFont.end();
+			if(lMenuFont != null) {
+				lMenuFont.begin(pCore.HUD());
+				lMenuFont.draw(mText, centerX() - lMenuFont.bitmap().getStringWidth(mText, luiTextScale) * 0.5f, centerY() - lMenuFont.bitmap().fontHeight() * luiTextScale / 2 - 2f, mZ, 0.97f * lColMod, .92f * lColMod, .92f * lColMod, lA, luiTextScale);
+				lMenuFont.end();
+				
+			}
 
 		}
 

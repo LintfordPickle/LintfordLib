@@ -1,7 +1,7 @@
 package net.lintford.library.core.camera;
 
+import net.lintford.library.core.entity.BaseData;
 import net.lintford.library.core.maths.Vector2f;
-import net.lintford.library.data.BaseData;
 
 public class CameraState extends BaseData {
 
