@@ -1,12 +1,22 @@
 package net.lintford.library.core.entity.definitions;
 
-import net.lintford.library.core.entity.BaseData;
+import net.lintford.library.core.entity.BaseEntity;
 
-public abstract class BaseDefinition extends BaseData {
+public abstract class BaseDefinition extends BaseEntity {
 
-	private static final long serialVersionUID = -1448531772258448590L;
+	// --------------------------------------
+	// Variables
+	// --------------------------------------
 
-	public String mDefinitionName; // Static, unique from data-file.
-	public int mDefinitionID; // Calculated and cached. Re-Calculated in block/mod change detected.
+	public transient int definitionID; // Calculated and cached. Re-Calculated in block/mod change detected.
+
+	// --------------------------------------
+	// Core-Methods
+	// --------------------------------------
+
+	public void initialize(final int pDefinitionID) {
+		definitionID = pDefinitionID;
+
+	}
 
 }

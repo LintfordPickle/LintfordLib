@@ -1,7 +1,6 @@
 package net.lintford.library.core.graphics.sprites;
 
 import java.io.Serializable;
-import java.util.List;
 
 import net.lintford.library.core.geometry.Rectangle;
 

@@ -5,8 +5,9 @@ import java.util.List;
 
 import net.lintford.library.core.entity.BaseData;
 
-public class DefinitionIDLUT extends BaseData {
+public class DefinitionIDLUT<T extends BaseDefinition> extends BaseData {
 
+	// This class is needed because the BaseDefinition is not serializable.
 	public class DefinitionNameID extends BaseData {
 
 		// --------------------------------------
@@ -19,16 +20,16 @@ public class DefinitionIDLUT extends BaseData {
 		// Variables
 		// --------------------------------------
 
-		public String name;
-		public int defid;
+		public String definitionName;
+		public int definitionID;
 
 		// --------------------------------------
 		// Constructor
 		// --------------------------------------
 
 		public DefinitionNameID(String pName, int pDefID) {
-			name = pName;
-			defid = pDefID;
+			definitionName = pName;
+			definitionID = pDefID;
 
 		}
 
@@ -70,14 +71,56 @@ public class DefinitionIDLUT extends BaseData {
 	// Constructor
 	// --------------------------------------
 
-	public DefinitionIDLUT(List<BaseDefinition> pDefinitions) {
+	public DefinitionIDLUT(List<T> pDefinitions) {
 		mMapper = new ArrayList<>();
 
 		final int lDefinitionCount = pDefinitions.size();
 		for (int i = 0; i < lDefinitionCount; i++) {
-			mMapper.add(new DefinitionNameID(pDefinitions.get(i).mDefinitionName, pDefinitions.get(i).mDefinitionID));
+			BaseDefinition lBaseDef = pDefinitions.get(i);
+			mMapper.add(new DefinitionNameID(lBaseDef.name, lBaseDef.definitionID));
 
 		}
+
+	}
+
+	// --------------------------------------
+	// Methods
+	// --------------------------------------
+
+	public boolean compareContents(List<DefinitionNameID> pOtherIDLUT) {
+		final int lMapperSize = mMapper.size();
+		final int lOtherMapperSize = pOtherIDLUT.size();
+
+		if (lMapperSize == 0)
+			return true; // because there is nothing to actually compare
+
+		for (int i = 0; i < lMapperSize; i++) {
+			DefinitionNameID lOriginalDefinition = mMapper.get(i);
+
+			boolean lFound = false;
+
+			// Now, we need to find the same definitionName in the other list and compare the IDs.
+			// If either the name is not found, or the ID is different, then we have a mismatch and can early exit
+			for (int j = 0; j < lOtherMapperSize; j++) {
+				DefinitionNameID lOtherDefinition = pOtherIDLUT.get(i);
+
+				if (lOriginalDefinition.definitionName.equals(lOtherDefinition.definitionName)) {
+					if (lOriginalDefinition.definitionID != lOtherDefinition.definitionID)
+						return false;
+
+				}
+				
+				lFound = true;
+
+			}
+
+			if (!lFound)
+				return false;
+
+		}
+
+		// If we got this far, then all matches
+		return true;
 
 	}
 

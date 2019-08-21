@@ -1,5 +1,10 @@
 package net.lintford.library.core.entity.definitions;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,20 +18,10 @@ public abstract class DefinitionManager<T extends BaseDefinition> extends BaseDa
 
 	private static final long serialVersionUID = -1729184288330735542L;
 
-	private DefinitionIDLUT createNewDefinitionLUT() {
-		return null;
-
-	}
-
-	private void convertInstances() {
-
-	}
-
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
-	protected DefinitionIDLUT mCurrentDefinitionIDLUT;
 	protected List<T> mDefinitions;
 
 	private transient int mDefinitionUIDCounter;
@@ -59,34 +54,6 @@ public abstract class DefinitionManager<T extends BaseDefinition> extends BaseDa
 
 	protected abstract void loadDefinitions(String pMetaFilepath);
 
-	@SuppressWarnings("unchecked")
-	public void initialize(String pMetafilepath) {
-		loadDefinitions(pMetafilepath);
-
-		// First check to see if the mCurrentDefinitionIDLUT is loaded (has it been deserialized?)
-		// because if not, then this is probably the first time we have run the level
-		if (mCurrentDefinitionIDLUT == null) {
-			createNewDefinitionLUT();
-
-		} else {
-			// otherwise compare the two LUTs, and if they differ, then we need to convert to the old definition IDs to the new versions
-			// 1. Create a temp LUT
-			DefinitionIDLUT lTempDefinitionLUT = new DefinitionIDLUT((List<BaseDefinition>) mDefinitions);
-
-			// Compare the previously saved LUT with the new LUT and convert if necessary
-			if (lTempDefinitionLUT.version() != mCurrentDefinitionIDLUT.version()) {
-				convertInstances();
-
-			} else {
-				// no conversion is necessary
-				mCurrentDefinitionIDLUT = lTempDefinitionLUT;
-
-			}
-
-		}
-
-	}
-
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
@@ -94,7 +61,7 @@ public abstract class DefinitionManager<T extends BaseDefinition> extends BaseDa
 	public T getDefinitionByName(String pName) {
 		final int lDefinitionCount = mDefinitions.size();
 		for (int i = 0; i < lDefinitionCount; i++) {
-			if (mDefinitions.get(i).mDefinitionName.equals(pName)) {
+			if (mDefinitions.get(i).name.equals(pName)) {
 				return mDefinitions.get(i);
 			}
 
@@ -107,7 +74,7 @@ public abstract class DefinitionManager<T extends BaseDefinition> extends BaseDa
 	public T getDefinitionByID(int pDefID) {
 		final int lDefinitionCount = mDefinitions.size();
 		for (int i = 0; i < lDefinitionCount; i++) {
-			if (mDefinitions.get(i).mDefinitionID == pDefID) {
+			if (mDefinitions.get(i).definitionID == pDefID) {
 				return mDefinitions.get(i);
 			}
 
@@ -122,6 +89,34 @@ public abstract class DefinitionManager<T extends BaseDefinition> extends BaseDa
 			return mDefinitions.get(pDefIndex);
 
 		return null;
+
+	}
+
+	private String bytesToHex(byte[] hash) {
+		StringBuffer hexString = new StringBuffer();
+		for (int i = 0; i < hash.length; i++) {
+			String hex = Integer.toHexString(0xff & hash[i]);
+			if (hex.length() == 1)
+				hexString.append('0');
+			hexString.append(hex);
+		}
+		return hexString.toString();
+	}
+
+	protected String getSHA(Object obj) throws IOException, NoSuchAlgorithmException {
+		if (obj == null) {
+			return "";
+		}
+
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		ObjectOutputStream oos = new ObjectOutputStream(baos);
+		oos.writeObject(obj);
+		oos.close();
+
+		MessageDigest lMessageDigest = MessageDigest.getInstance("SHA1");
+		lMessageDigest.update(baos.toByteArray());
+
+		return bytesToHex(lMessageDigest.digest()).toString();
 
 	}
 
