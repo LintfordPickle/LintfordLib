@@ -52,6 +52,28 @@ public class DefinitionIDLUT<T extends BaseDefinition> extends BaseData {
 	// Properties
 	// --------------------------------------
 
+	public DefinitionNameID getDefinitionByID(int pID) {
+		final int lMapperSize = mMapper.size();
+		for (int i = 0; i < lMapperSize; i++) {
+			if (mMapper.get(i).definitionID == pID)
+				return mMapper.get(i);
+
+		}
+
+		return null;
+	}
+
+	public DefinitionNameID getDefinitionByName(String pName) {
+		final int lMapperSize = mMapper.size();
+		for (int i = 0; i < lMapperSize; i++) {
+			if (mMapper.get(i).definitionName.equals(pName))
+				return mMapper.get(i);
+
+		}
+
+		return null;
+	}
+	
 	public List<DefinitionNameID> mapper() {
 		return mMapper;
 	}

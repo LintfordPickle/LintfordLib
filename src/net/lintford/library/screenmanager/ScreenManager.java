@@ -92,7 +92,6 @@ public class ScreenManager {
 	public ScreenManager(LintfordCore pCore) {
 		mLWJGLCore = pCore;
 		mScreenCounter = 100;
-		// mGameSettings = new GameSettings();
 
 		mToastManager = new ToastManager();
 		mScreens = new ArrayList<Screen>();
