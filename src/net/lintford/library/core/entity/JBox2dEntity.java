@@ -7,7 +7,6 @@ import net.lintford.library.controllers.box2d.Box2dWorldController;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.box2d.entity.Box2dBodyInstance;
 import net.lintford.library.core.box2d.entity.JBox2dEntityInstance;
-import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDef;
 
 public abstract class JBox2dEntity extends WorldEntity {
 
@@ -22,9 +21,6 @@ public abstract class JBox2dEntity extends WorldEntity {
 	// --------------------------------------
 
 	public JBox2dEntityInstance mJBox2dEntityInstance;
-
-	public SpriteSheetDef mSpriteSheetDef;
-
 	protected transient Vec2 mVelocity = new Vec2();
 
 	// --------------------------------------
@@ -77,7 +73,7 @@ public abstract class JBox2dEntity extends WorldEntity {
 			return;
 
 		mVelocity = new Vec2();
-		
+
 		mJBox2dEntityInstance.loadPhysics(pWorld);
 
 	}
