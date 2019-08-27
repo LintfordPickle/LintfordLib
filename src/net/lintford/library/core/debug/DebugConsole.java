@@ -238,9 +238,9 @@ public class DebugConsole extends Rectangle implements IBufferedInputCallback, I
 				mAutoScroll = true;
 
 				Debug.debugManager().logger().clearLogLines();
-				
+
 			}
-			
+
 			if (pCore.input().keyDownTimed(GLFW.GLFW_KEY_DOWN)) {
 				mConsoleLineHeight = (int) (mConsoleFont.bitmap().getStringHeight(" ") + 1);
 				mScrollYPosition -= mConsoleLineHeight;
@@ -254,7 +254,7 @@ public class DebugConsole extends Rectangle implements IBufferedInputCallback, I
 				mConsoleLineHeight = (int) (mConsoleFont.bitmap().getStringHeight(" ") + 1);
 				mScrollYPosition -= mConsoleLineHeight * 10;
 				mAutoScroll = false;
-				
+
 				if (mScrollYPosition < mScrollBar.getScrollYBottomPosition())
 					mScrollYPosition = mScrollBar.getScrollYBottomPosition() - mConsoleLineHeight;
 
@@ -277,7 +277,7 @@ public class DebugConsole extends Rectangle implements IBufferedInputCallback, I
 
 				if (mScrollYPosition > 0)
 					mScrollYPosition = 0;
-				
+
 			}
 
 		}
@@ -491,8 +491,7 @@ public class DebugConsole extends Rectangle implements IBufferedInputCallback, I
 			mConsoleFont.draw(PROMT_CHAR, -lDisplay.windowWidth() * 0.5f + PADDING_LEFT, y + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET, Z_DEPTH + 0.1f, 1f);
 			mConsoleFont.draw(mInputText.toString(), -lDisplay.windowWidth() * 0.5f + PADDING_LEFT + lInputTextXOffset, y + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET, Z_DEPTH + 0.1f, 1f);
 			if (mShowCaret && mHasFocus)
-				mConsoleFont.draw(CARET_CHAR, -lDisplay.windowWidth() * 0.5f + PADDING_LEFT + lInputTextXOffset + mConsoleFont.bitmap().getStringWidth(mInputText.toString()), y + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET,
-						Z_DEPTH + 0.1f, 1f);
+				mConsoleFont.draw(CARET_CHAR, -lDisplay.windowWidth() * 0.5f + PADDING_LEFT + lInputTextXOffset + mConsoleFont.bitmap().getStringWidth(mInputText.toString()), y + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET, Z_DEPTH + 0.1f, 1f);
 		}
 
 		mTAGFilterText.draw(pCore, mSpriteBatch, mCoreUITexture, mConsoleFont, Z_DEPTH + 0.01f);
