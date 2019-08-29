@@ -1,15 +1,14 @@
 package net.lintford.library.screenmanager;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import net.lintford.library.controllers.hud.UIHUDStructureController;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.debug.GLDebug;
-import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.fonts.FontManager;
-import net.lintford.library.core.maths.Vector3f;
 import net.lintford.library.options.IResizeListener;
 import net.lintford.library.screenmanager.Screen.ScreenState;
 import net.lintford.library.screenmanager.toast.ToastManager;
@@ -21,40 +20,21 @@ public class ScreenManager {
 	// --------------------------------------
 
 	private LintfordCore mLWJGLCore;
-	private ArrayList<Screen> mScreens;
-	private ArrayList<Screen> mScreensToUpdate;
+	private List<Screen> mScreens;
+	private List<Screen> mScreensToUpdate;
 	private ToolTip mToolTip;
 	private ResourceManager mResourceManager;
 	private ToastManager mToastManager;
 	private String mFontPathname;
 	private boolean mIsinitialized;
 	private boolean mIsLoaded;
-	private int mScreenCounter;
+	private int mScreenUIDCounter;
 	private UIHUDStructureController mUIHUDController;
 	private IResizeListener mResizeListener;
-
-	private Vector3f mPrimaryColor = ColorConstants.CANDLE;
-	private Vector3f mSecondaryColor = ColorConstants.BLUE;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
-
-	public Vector3f primaryColor() {
-		return mPrimaryColor;
-	}
-
-	public void primaryColor(Vector3f pNewColor) {
-		mPrimaryColor = pNewColor;
-	}
-
-	public Vector3f secondaryColor() {
-		return mSecondaryColor;
-	}
-
-	public void secondaryColor(Vector3f pNewColor) {
-		mSecondaryColor = pNewColor;
-	}
 
 	public UIHUDStructureController UIHUDController() {
 		return mUIHUDController;
@@ -68,7 +48,7 @@ public class ScreenManager {
 		return mToolTip;
 	}
 
-	public ArrayList<Screen> screens() {
+	public List<Screen> screens() {
 		return mScreens;
 	}
 
@@ -82,7 +62,7 @@ public class ScreenManager {
 
 	/** Returns a new ID for a screen. */
 	public int getNewUUID() {
-		return mScreenCounter++;
+		return mScreenUIDCounter++;
 	}
 
 	// --------------------------------------
@@ -91,11 +71,11 @@ public class ScreenManager {
 
 	public ScreenManager(LintfordCore pCore) {
 		mLWJGLCore = pCore;
-		mScreenCounter = 100;
+		mScreenUIDCounter = 100;
 
 		mToastManager = new ToastManager();
-		mScreens = new ArrayList<Screen>();
-		mScreensToUpdate = new ArrayList<Screen>();
+		mScreens = new ArrayList<>();
+		mScreensToUpdate = new ArrayList<>();
 
 		// This can and probably should be overriden with a game specific font
 		mFontPathname = FontManager.SYSTEM_FONT_PATH;
@@ -321,7 +301,7 @@ public class ScreenManager {
 			}
 
 			mScreens.remove(pScreen);
-			
+
 		}
 
 		if (mScreensToUpdate.contains(pScreen))
