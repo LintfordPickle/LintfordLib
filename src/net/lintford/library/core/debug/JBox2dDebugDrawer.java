@@ -13,6 +13,7 @@ import org.jbox2d.dynamics.Fixture;
 import org.jbox2d.dynamics.World;
 import org.jbox2d.dynamics.joints.Joint;
 import org.jbox2d.dynamics.joints.RevoluteJoint;
+import org.jbox2d.particle.ParticleGroup;
 import org.lwjgl.opengl.GL11;
 
 import net.lintford.library.controllers.box2d.Box2dWorldController;
@@ -178,6 +179,22 @@ public class JBox2dDebugDrawer {
 
 	}
 
+	private static class DebugRenderParticles {
+		public static void draw(LintfordCore pCore, ParticleGroup pParticleSystem) {
+
+			if (pParticleSystem == null)
+				return;
+
+			// TODO: Change this.
+			final float lRadSize = 4.0f;
+
+			Debug.debugManager().drawers().beginPointRenderer(pCore.gameCamera());
+
+			Debug.debugManager().drawers().endPointRenderer();
+
+		}
+	}
+
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
@@ -230,6 +247,17 @@ public class JBox2dDebugDrawer {
 			DebugRenderJoint.draw(pCore, lJoint);
 
 			lJoint = lJoint.getNext();
+
+		}
+
+		ParticleGroup[] lParticleSystems = mWorld.getParticleGroupList();
+		final int lParticleGroupCount = lParticleSystems.length;
+		for (int i = 0; i < lParticleGroupCount; i++) {
+			ParticleGroup lPG = lParticleSystems[i];
+			if (lPG == null)
+				continue;
+
+			// DebugRenderParticles.draw(pCore, lPG);
 
 		}
 

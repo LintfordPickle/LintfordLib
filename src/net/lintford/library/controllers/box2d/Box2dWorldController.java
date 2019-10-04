@@ -1,6 +1,5 @@
 package net.lintford.library.controllers.box2d;
 
-import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.World;
 
 import net.lintford.library.controllers.BaseController;

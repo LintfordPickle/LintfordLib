@@ -1,22 +1,22 @@
 package net.lintford.library.renderers.particles;
 
-import java.util.List;
+import org.jbox2d.common.Vec2;
+import org.jbox2d.particle.ParticleColor;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
-import net.lintford.library.core.graphics.particles.Particle;
-import net.lintford.library.core.graphics.particles.ParticleSystem;
+import net.lintford.library.core.graphics.particles.Box2dParticleSystemWrapper;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 
 /**  */
-public class ParticleRenderer {
+public class Box2dParticleRenderer {
 
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
-	private ParticleSystem mParticleSystem;
+	private Box2dParticleSystemWrapper mParticleSystem;
 	private ResourceManager mResourceManager;
 	private TextureBatch mTextureBatch;
 	private Texture mTexture;
@@ -34,7 +34,7 @@ public class ParticleRenderer {
 		return mIsLoaded;
 	}
 
-	/** Returns true if this {@link ParticleRenderer} has been assigned to a {@link ParticleController}, or false otherwise. */
+	/** Returns true if this {@link Box2dParticleRenderer} has been assigned to a {@link ParticleController}, or false otherwise. */
 	public boolean isAssigned() {
 		return mIsAssigned;
 	}
@@ -43,7 +43,7 @@ public class ParticleRenderer {
 	// Constructor
 	// --------------------------------------
 
-	public ParticleRenderer(int pEntityGroupID) {
+	public Box2dParticleRenderer(int pEntityGroupID) {
 		mEntityGroupID = pEntityGroupID;
 
 		mTextureBatch = new TextureBatch();
@@ -77,18 +77,36 @@ public class ParticleRenderer {
 		if (!mIsLoaded || !mIsParticleLoaded || !mIsAssigned)
 			return;
 
-		final List<Particle> PARTICLES = mParticleSystem.particles();
-		final int PARTICLE_COUNT = PARTICLES.size();
+		// final ParticleColor[] lParticleColors = mParticleSystem.particleColorBuffer();
+		final Vec2[] lParticlePositionBuffer = mParticleSystem.particlePositionBuffer();
 
+		if (lParticlePositionBuffer == null || lParticlePositionBuffer.length == 0)
+			return;
+
+		final int lParticleCount = mParticleSystem.getParticleCount(); // ;
 		mTextureBatch.begin(pCore.gameCamera());
 
-		for (int i = 0; i < PARTICLE_COUNT; i++) {
-			final Particle PART = PARTICLES.get(i);
+		// This is the stuff which needs to be set by the ParticleSystem
+		final float lRadius = 4.0f;
+		final float lSX = 0;
+		final float lSY = 0;
+		final float lSW = 32;
+		final float lSH = 32;
 
-			if (PART.isFree())
+		final float lZ = -0.2f;
+
+		for (int i = 0; i < lParticleCount; i++) {
+			final Vec2 lParticlePosition = lParticlePositionBuffer[i];
+
+			if (lParticlePosition == null)
 				continue;
 
-			mTextureBatch.draw(mTexture, PART.sx, PART.sy, PART.sw, PART.sh, PART.x - PART.radius, PART.y - PART.radius, PART.radius, PART.radius, -0.2f, PART.r, PART.g, PART.b, PART.a);
+			final float lR = 255f;//lParticleColors[i].r;
+			final float lG = 255f;//lParticleColors[i].g;
+			final float lB = 255f;//lParticleColors[i].b;
+			final float lA = 255f;//lParticleColors[i].a;
+
+			mTextureBatch.draw(mTexture, lSX, lSY, lSW, lSH, lParticlePosition.x - lRadius, lParticlePosition.y - lRadius, lRadius, lRadius, lZ, lR, lG, lB, lA);
 
 		}
 
@@ -100,7 +118,7 @@ public class ParticleRenderer {
 	// Methods
 	// --------------------------------------
 
-	public void assignParticleSystem(final ParticleSystem pParticleSystem) {
+	public void assignParticleSystem(final Box2dParticleSystemWrapper pParticleSystem) {
 		mParticleSystem = pParticleSystem;
 		loadParticleContent(pParticleSystem);
 		mIsAssigned = true;
@@ -113,7 +131,7 @@ public class ParticleRenderer {
 
 	}
 
-	private void loadParticleContent(final ParticleSystem pParticleSystem) {
+	private void loadParticleContent(final Box2dParticleSystemWrapper pParticleSystem) {
 		mTexture = mResourceManager.textureManager().loadTexture(pParticleSystem.textureName(), pParticleSystem.textureFilename(), mEntityGroupID);
 		mIsParticleLoaded = mTexture != null;
 

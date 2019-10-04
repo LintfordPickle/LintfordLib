@@ -16,7 +16,7 @@ public class CameraZoomController extends BaseController {
 	public static final String CONTROLLER_NAME = "CameraZoomController";
 
 	/** Specifies the minimum amount of camera zoom (zooming out) */
-	public static final float MIN_CAMERA_ZOOM = 0.5f; // 1.5f
+	public static final float MIN_CAMERA_ZOOM = 0.15f; // 1.5f
 
 	/** Specifies the maximum amount of camera zoom (zooming in) */
 	public static final float MAX_CAMERA_ZOOM = 3f; // 2f
@@ -162,6 +162,8 @@ public class CameraZoomController extends BaseController {
 		mZoomVelocity *= 0.85f;
 		mZoomAcceleration = 0.0f;
 
+		setZoomConstraints(MIN_CAMERA_ZOOM, MAX_CAMERA_ZOOM);
+		
 		// Check bounds
 		if (lZoomFactor < mCameraMinZoom) {
 			lZoomFactor = mCameraMinZoom;
