@@ -251,13 +251,17 @@ public class JBox2dDebugDrawer {
 		}
 
 		ParticleGroup[] lParticleSystems = mWorld.getParticleGroupList();
-		final int lParticleGroupCount = lParticleSystems.length;
-		for (int i = 0; i < lParticleGroupCount; i++) {
-			ParticleGroup lPG = lParticleSystems[i];
-			if (lPG == null)
-				continue;
 
-			// DebugRenderParticles.draw(pCore, lPG);
+		if (lParticleSystems != null) {
+			final int lParticleGroupCount = lParticleSystems.length;
+			for (int i = 0; i < lParticleGroupCount; i++) {
+				ParticleGroup lPG = lParticleSystems[i];
+				if (lPG == null)
+					continue;
+
+				// DebugRenderParticles.draw(pCore, lPG);
+
+			}
 
 		}
 
