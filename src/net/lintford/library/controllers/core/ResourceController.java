@@ -61,9 +61,9 @@ public class ResourceController extends BaseController {
 
 	@Override
 	public boolean handleInput(LintfordCore pCore) {
-		if (pCore.input().keyDownTimed(GLFW.GLFW_KEY_F5)) {
+		if (pCore.input().keyDownTimed(GLFW.GLFW_KEY_F6)) {
 			Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("Texture Manager"));
-			Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("  Entity Group Count: &d", mResourceManager.textureManager().textureGroupCount()));
+			Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("  Entity Group Count: %d", mResourceManager.textureManager().textureGroupCount()));
 
 			Iterator<Entry<Integer, TextureGroup>> it = mResourceManager.textureManager().textureGroups().entrySet().iterator();
 
@@ -73,16 +73,13 @@ public class ResourceController extends BaseController {
 
 			}
 
-		}
-
-		if (pCore.input().keyDownTimed(GLFW.GLFW_KEY_F6)) {
 			Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("Font Manager"));
-			Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("  Entity Group Count: &d", mResourceManager.fontManager().fontGroupCount()));
+			Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("  Entity Group Count: %d", mResourceManager.fontManager().fontGroupCount()));
 
-			Iterator<Entry<Integer, FontGroup>> it = mResourceManager.fontManager().fontGroups().entrySet().iterator();
+			Iterator<Entry<Integer, FontGroup>> itFont = mResourceManager.fontManager().fontGroups().entrySet().iterator();
 
-			while (it.hasNext()) {
-				Entry<Integer, FontGroup> lEntryPair = it.next();
+			while (itFont.hasNext()) {
+				Entry<Integer, FontGroup> lEntryPair = itFont.next();
 				Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("  EntityGroupID (%d) has %d fonts loaded", lEntryPair.getKey(), lEntryPair.getValue().fontMap().size()));
 
 			}

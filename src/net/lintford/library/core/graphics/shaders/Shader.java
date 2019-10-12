@@ -123,24 +123,24 @@ public abstract class Shader {
 		glCompileShader(lVertID);
 		if (glGetShaderi(lVertID, GL_COMPILE_STATUS) == GL_FALSE) {
 			Debug.debugManager().logger().e(getClass().getSimpleName(), "Failed to compile vertex shader!" + mVertPathname);
-			Debug.debugManager().logger().i(getClass().getSimpleName(), glGetShaderInfoLog(lVertID, 2048));
+			Debug.debugManager().logger().e(getClass().getSimpleName(), glGetShaderInfoLog(lVertID, 2048));
 
 			throw new RuntimeException("Failed to compile vertex shader (" + GL_VERTEX_SHADER + ")");
 
 		} else {
-			Debug.debugManager().logger().i(getClass().getSimpleName(), glGetShaderInfoLog(lVertID, 2048));
+			Debug.debugManager().logger().e(getClass().getSimpleName(), glGetShaderInfoLog(lVertID, 2048));
 
 		}
 
 		glCompileShader(lFragID);
 		if (glGetShaderi(lFragID, GL_COMPILE_STATUS) == GL_FALSE) {
 			Debug.debugManager().logger().e(getClass().getSimpleName(), "Failed to compile fragment shader!" + mFragPathname);
-			Debug.debugManager().logger().i(getClass().getSimpleName(), glGetShaderInfoLog(lFragID, 2048));
+			Debug.debugManager().logger().e(getClass().getSimpleName(), glGetShaderInfoLog(lFragID, 2048));
 
 			throw new RuntimeException("Failed to compile fragment shader (" + GL_FRAGMENT_SHADER + ")");
 
 		} else {
-			Debug.debugManager().logger().i(getClass().getSimpleName(), glGetShaderInfoLog(lFragID, 2048));
+			Debug.debugManager().logger().e(getClass().getSimpleName(), glGetShaderInfoLog(lFragID, 2048));
 
 		}
 

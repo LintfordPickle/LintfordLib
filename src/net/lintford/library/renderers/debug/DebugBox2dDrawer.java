@@ -72,7 +72,7 @@ public class DebugBox2dDrawer extends BaseRenderer {
 	@Override
 	public boolean handleInput(LintfordCore pCore) {
 
-		if (pCore.input().keyDownTimed(GLFW.GLFW_KEY_F4)) {
+		if (pCore.input().keyDownTimed(GLFW.GLFW_KEY_F5)) {
 			mShowDebugInformation = !mShowDebugInformation;
 		}
 
