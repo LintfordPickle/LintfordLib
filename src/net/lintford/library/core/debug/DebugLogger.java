@@ -210,9 +210,9 @@ public class DebugLogger {
 
 			mLogLines.add(lLogMessage);
 
-			if(mMirrorLogToConsole)
+			if (mMirrorLogToConsole)
 				System.out.printf("[%s] %s: %s\n", padRight(lLogMessage.timestamp, 12), padRight(lLogMessage.tag, 25), lLogMessage.message);
-			
+
 		}
 	}
 
@@ -271,11 +271,19 @@ public class DebugLogger {
 	}
 
 	public void printException(String pTag, Exception pException) {
+		printException(pTag, pException, true);
+
+	}
+
+	public void printException(String pTag, Exception pException, boolean pIncludeStackTrace) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
 		e(pTag, pException.getMessage());
-		// TODO: Print StackTrace to DebugLogger
+		if (pIncludeStackTrace) {
+			pException.printStackTrace(System.err);
+			
+		}
 
 	}
 

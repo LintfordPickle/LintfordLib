@@ -4,24 +4,24 @@ import java.util.List;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
-import net.lintford.library.core.graphics.particles.Particle;
-import net.lintford.library.core.graphics.particles.ParticleSystem;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
+import net.lintford.library.core.particles.Particle;
+import net.lintford.library.core.particles.particlesystems.ParticleSystemDefinition;
+import net.lintford.library.core.particles.particlesystems.ParticleSystemInstance;
 
-/**  */
 public class ParticleRenderer {
 
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
-	private ParticleSystem mParticleSystem;
+	private ParticleSystemInstance mParticleSystem;
 	private ResourceManager mResourceManager;
 	private TextureBatch mTextureBatch;
 	private Texture mTexture;
-
-	private int mEntityGroupID;
+	private int mParticleRendererId;
+	private int mEntityGroupId;
 	private boolean mIsLoaded;
 	private boolean mIsParticleLoaded;
 	private boolean mIsAssigned;
@@ -29,6 +29,14 @@ public class ParticleRenderer {
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public int particleRendererId() {
+		return mParticleRendererId;
+	}
+
+	public ParticleSystemInstance particleSystemInstance() {
+		return mParticleSystem;
+	}
 
 	public boolean isLoaded() {
 		return mIsLoaded;
@@ -43,9 +51,10 @@ public class ParticleRenderer {
 	// Constructor
 	// --------------------------------------
 
-	public ParticleRenderer(int pEntityGroupID) {
-		mEntityGroupID = pEntityGroupID;
+	public ParticleRenderer(final int pRendererId, int pEntityGroupID) {
+		mEntityGroupId = pEntityGroupID;
 
+		mParticleRendererId = pRendererId;
 		mTextureBatch = new TextureBatch();
 		mIsAssigned = false;
 
@@ -77,18 +86,21 @@ public class ParticleRenderer {
 		if (!mIsLoaded || !mIsParticleLoaded || !mIsAssigned)
 			return;
 
-		final List<Particle> PARTICLES = mParticleSystem.particles();
-		final int PARTICLE_COUNT = PARTICLES.size();
+		final List<Particle> lParticleSystem = mParticleSystem.particles();
+		final int lNumParticles = lParticleSystem.size();
 
 		mTextureBatch.begin(pCore.gameCamera());
 
-		for (int i = 0; i < PARTICLE_COUNT; i++) {
-			final Particle PART = PARTICLES.get(i);
+		for (int i = 0; i < lNumParticles; i++) {
+			final Particle lParticleInst = lParticleSystem.get(i);
 
-			if (PART.isFree())
+			if (lParticleInst.isFree())
 				continue;
 
-			mTextureBatch.draw(mTexture, PART.sx, PART.sy, PART.sw, PART.sh, PART.x - PART.radius, PART.y - PART.radius, PART.radius, PART.radius, -0.2f, PART.r, PART.g, PART.b, PART.a);
+			final float lRadiusScaled = lParticleInst.radius * lParticleInst.scale;
+
+			mTextureBatch.draw(mTexture, lParticleInst.sx, lParticleInst.sy, lParticleInst.sw, lParticleInst.sh, lParticleInst.x - lRadiusScaled, lParticleInst.y - lRadiusScaled, lRadiusScaled * 2, lRadiusScaled * 2, -0.2f, lParticleInst.r, lParticleInst.g,
+					lParticleInst.b, lParticleInst.a);
 
 		}
 
@@ -100,7 +112,7 @@ public class ParticleRenderer {
 	// Methods
 	// --------------------------------------
 
-	public void assignParticleSystem(final ParticleSystem pParticleSystem) {
+	public void assignParticleSystem(final ParticleSystemInstance pParticleSystem) {
 		mParticleSystem = pParticleSystem;
 		loadParticleContent(pParticleSystem);
 		mIsAssigned = true;
@@ -113,8 +125,10 @@ public class ParticleRenderer {
 
 	}
 
-	private void loadParticleContent(final ParticleSystem pParticleSystem) {
-		mTexture = mResourceManager.textureManager().loadTexture(pParticleSystem.textureName(), pParticleSystem.textureFilename(), mEntityGroupID);
+	private void loadParticleContent(final ParticleSystemInstance pParticleSystemInst) {
+		ParticleSystemDefinition lParticleDefinition = pParticleSystemInst.definition();
+
+		mTexture = mResourceManager.textureManager().loadTexture(lParticleDefinition.textureName(), lParticleDefinition.textureFilename(), mEntityGroupId);
 		mIsParticleLoaded = mTexture != null;
 
 	}

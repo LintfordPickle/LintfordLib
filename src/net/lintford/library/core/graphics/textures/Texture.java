@@ -9,6 +9,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.IntBuffer;
 
+import javax.imageio.IIOException;
 import javax.imageio.ImageIO;
 
 import org.lwjgl.opengl.GL11;
@@ -128,17 +129,18 @@ public class Texture {
 
 			return lNewTexture;
 
+		} catch (IIOException e) {
+			Debug.debugManager().logger().e(Texture.class.getSimpleName(), "Error loading texture from file (" + pFilename + ")");
+			return null;
+
 		} catch (FileNotFoundException e) {
 			Debug.debugManager().logger().e(Texture.class.getSimpleName(), "Error loading texture from file (" + pFilename + ")");
-			Debug.debugManager().logger().printException(Texture.class.getSimpleName(), e);
-
 			return null;
 
 		} catch (IOException e) {
 			Debug.debugManager().logger().e(Texture.class.getSimpleName(), "Error loading texture from file (" + pFilename + ")");
-			Debug.debugManager().logger().printException(Texture.class.getSimpleName(), e);
-
 			return null;
+
 		}
 
 	}
