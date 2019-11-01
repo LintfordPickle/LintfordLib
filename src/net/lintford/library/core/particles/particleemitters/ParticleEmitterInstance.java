@@ -17,6 +17,7 @@ public class ParticleEmitterInstance extends WorldEntity implements IPoolObjectI
 	private static final long serialVersionUID = -2817782552539182940L;
 
 	private static final int MAX_NUM_CHILD_EMITTERS = 4;
+	public static final int EMITTER_NOT_ASSIGNED_ID = -1;
 
 	// --------------------------------------
 	// Variables
