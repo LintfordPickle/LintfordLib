@@ -94,7 +94,7 @@ public class ParticleRenderer {
 		for (int i = 0; i < lNumParticles; i++) {
 			final Particle lParticleInst = lParticleSystem.get(i);
 
-			if (lParticleInst.isFree())
+			if (!lParticleInst.isAssigned())
 				continue;
 
 			final float lRadiusScaled = lParticleInst.radius * lParticleInst.scale;

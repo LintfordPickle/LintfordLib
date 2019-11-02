@@ -1,17 +1,16 @@
 package net.lintford.library.core.particles.particlesystems;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gson.GsonBuilder;
 
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.entity.definitions.DefinitionManager;
-import net.lintford.library.core.entity.instances.PooledInstanceManager;
+import net.lintford.library.core.entity.instances.InstanceManager;
 import net.lintford.library.core.particles.ParticleFrameworkData;
 import net.lintford.library.core.particles.particlesystems.deserializer.ParticleSystemDeserializer;
 
-public class ParticleSystemManager extends PooledInstanceManager<ParticleSystemInstance> {
+public class ParticleSystemManager extends InstanceManager<ParticleSystemInstance> {
 
 	// --------------------------------------
 	// Constants
@@ -45,9 +44,7 @@ public class ParticleSystemManager extends PooledInstanceManager<ParticleSystemI
 			gsonBuilder.registerTypeAdapter(ParticleSystemDefinition.class, new ParticleSystemDeserializer());
 			final var lGson = gsonBuilder.create();
 
-			final var lMetaItems = loadMetaFileItemsFromFilepath(pMetaFilepath, lGson);
-
-			loadDefinitionsFromMetaFileItems(lMetaItems, lGson, ParticleSystemDefinition.class);
+			loadDefinitionsFromMetaFileItems(pMetaFilepath, lGson, ParticleSystemDefinition.class);
 
 		}
 
@@ -68,7 +65,6 @@ public class ParticleSystemManager extends PooledInstanceManager<ParticleSystemI
 
 	protected ParticleFrameworkData mParticleFrameworkData;
 	protected ParticleSystemDefinitionManager mParticleSystemDefinitionManager;
-	protected List<ParticleSystemInstance> mParticleSystems;
 
 	// --------------------------------------
 	// Properties
@@ -76,15 +72,15 @@ public class ParticleSystemManager extends PooledInstanceManager<ParticleSystemI
 
 	/** Returns the number of {@link ParticleSystemInstance}s in this {@link GameParticleSystem} instance. */
 	public int getNumParticleSystems() {
-		return mParticleSystems.size();
+		return mInstances.size();
+	}
+
+	public List<ParticleSystemInstance> particleSystems() {
+		return mInstances;
 	}
 
 	public ParticleSystemDefinitionManager definitionManager() {
 		return mParticleSystemDefinitionManager;
-	}
-
-	public List<ParticleSystemInstance> particleSystems() {
-		return mParticleSystems;
 	}
 
 	// --------------------------------------
@@ -103,26 +99,20 @@ public class ParticleSystemManager extends PooledInstanceManager<ParticleSystemI
 	// Core-Methods
 	// --------------------------------------
 
-	@Override
-	public void initialize(Object pParent) {
-		mParticleSystems = new ArrayList<>();
-
-	}
-
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
 
 	/** Returns the {@link ParticleController} whose {@link ParticleSystemInstance}'s name matches the given {@link String}. null is returned if the ParticleController is not found. */
 	public ParticleSystemInstance getParticleSystemByName(final String pParticleSystemName) {
-		final var lNumParticleSystems = mParticleSystems.size();
+		final var lNumParticleSystems = mInstances.size();
 		for (var i = 0; i < lNumParticleSystems; i++) {
-			ParticleSystemInstance lPSInstance = mParticleSystems.get(i);
+			ParticleSystemInstance lPSInstance = mInstances.get(i);
 			if (!lPSInstance.isInitialized())
 				continue;
 
 			if (lPSInstance.definition().name.equals(pParticleSystemName)) {
-				return mParticleSystems.get(i);
+				return mInstances.get(i);
 
 			}
 
@@ -130,10 +120,10 @@ public class ParticleSystemManager extends PooledInstanceManager<ParticleSystemI
 
 		final var lParticleSystemDefinition = mParticleSystemDefinitionManager.getDefinitionByName(pParticleSystemName);
 		if (lParticleSystemDefinition != null) {
-			final var lNewParticleSystem = createPoolObjectInstance();
+			final var lNewParticleSystem = new ParticleSystemInstance();
 			lNewParticleSystem.initialize(getNewInstanceUID(), lParticleSystemDefinition);
 
-			mParticleSystems.add(lNewParticleSystem);
+			mInstances.add(lNewParticleSystem);
 
 			Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("Created new ParticleSystemInstance for ParticleSystemDefinition '%s'", lParticleSystemDefinition.name));
 
@@ -143,12 +133,6 @@ public class ParticleSystemManager extends PooledInstanceManager<ParticleSystemI
 		Debug.debugManager().logger().w(getClass().getSimpleName(), String.format("Couldn't find ParticleSystemDefinition '%s'", pParticleSystemName));
 
 		return null;
-
-	}
-
-	@Override
-	protected ParticleSystemInstance createPoolObjectInstance() {
-		return new ParticleSystemInstance();
 
 	}
 

@@ -8,7 +8,7 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.box2d.entity.Box2dBodyInstance;
 import net.lintford.library.core.box2d.entity.JBox2dEntityInstance;
 
-public abstract class JBox2dEntity extends WorldEntity {
+public class JBox2dEntity extends WorldEntity {
 
 	// --------------------------------------
 	// Constants
@@ -41,6 +41,16 @@ public abstract class JBox2dEntity extends WorldEntity {
 
 	public boolean isPhysicsLoaded() {
 		return mJBox2dEntityInstance != null;
+	}
+
+	@Override
+	public boolean isAssigned() {
+		return false;
+	}
+
+	@Override
+	public int getPoolID() {
+		return 0;
 	}
 
 	// --------------------------------------

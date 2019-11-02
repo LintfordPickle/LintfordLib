@@ -3,10 +3,10 @@ package net.lintford.library.core.entity.instances;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.lintford.library.core.entity.BaseData;
+import net.lintford.library.core.entity.PooledBaseData;
 
 // TODO: Add a short description about the intended use of this class
-public abstract class PooledInstanceManager<T extends IPoolObjectInstance> extends BaseData {
+public abstract class PooledInstanceManager<T extends PooledBaseData> extends InstanceManager<T> {
 
 	// --------------------------------------
 	// Constants
@@ -21,15 +21,11 @@ public abstract class PooledInstanceManager<T extends IPoolObjectInstance> exten
 	// --------------------------------------
 
 	private List<T> mPooledItems;
-	private int mPoolInstanceUIDCounter;
+	
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
-
-	protected int getNewInstanceUID() {
-		return mPoolInstanceUIDCounter++;
-	}
 
 	// --------------------------------------
 	// Constrcutor

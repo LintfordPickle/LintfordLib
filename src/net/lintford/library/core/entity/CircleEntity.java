@@ -1,6 +1,6 @@
 package net.lintford.library.core.entity;
 
-public class CircleEntity extends WorldEntity {
+public abstract class CircleEntity extends WorldEntity {
 
 	// --------------------------------------
 	// Constants

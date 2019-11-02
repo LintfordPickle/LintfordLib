@@ -75,9 +75,8 @@ public class ParticleEmitterManager extends PooledInstanceManager<ParticleEmitte
 		@Override
 		public void loadDefinitionsFromMetaFile(String pMetaFilepath) {
 			final var lGson = new GsonBuilder().create();
-			final var lMetaItems = loadMetaFileItemsFromFilepath(pMetaFilepath, lGson);
 
-			loadDefinitionsFromMetaFileItems(lMetaItems, lGson, ParticleEmitterDefinition.class);
+			loadDefinitionsFromMetaFileItems(pMetaFilepath, lGson, ParticleEmitterDefinition.class);
 
 		}
 

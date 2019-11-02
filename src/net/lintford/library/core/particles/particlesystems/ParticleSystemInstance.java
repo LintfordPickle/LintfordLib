@@ -4,12 +4,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.entity.instances.IPoolObjectInstance;
+import net.lintford.library.core.entity.BaseData;
 import net.lintford.library.core.particles.Particle;
 import net.lintford.library.core.particles.particlesystems.initializers.ParticleInitializerBase;
 import net.lintford.library.core.particles.particlesystems.modifiers.ParticleModifierBase;
 
-public class ParticleSystemInstance implements IPoolObjectInstance {
+public class ParticleSystemInstance extends BaseData {
+
+	// --------------------------------------
+	// Constants
+	// --------------------------------------
+
+	private static final long serialVersionUID = 8190016634061373178L;
 
 	public static final int NO_RENDERER_ASSIGNED = -1;
 
@@ -45,12 +51,10 @@ public class ParticleSystemInstance implements IPoolObjectInstance {
 		return mRendererId;
 	}
 
-	@Override
 	public boolean isAssigned() {
 		return mParticleSystemDefinition != null;
 	}
 
-	@Override
 	public int getPoolID() {
 		return mParticleSystemID;
 	}
@@ -97,7 +101,7 @@ public class ParticleSystemInstance implements IPoolObjectInstance {
 		for (int i = 0; i < mCapacity; i++) {
 			Particle p = mParticles.get(i);
 
-			if (p.isFree())
+			if (!p.isAssigned())
 				continue;
 
 			// Kill the particle if it exceeds its lifetime (unless lifeTime is NO_DO_DESPAWN
@@ -110,7 +114,7 @@ public class ParticleSystemInstance implements IPoolObjectInstance {
 				}
 			}
 
-			if (p.isFree())
+			if (!p.isAssigned())
 				continue;
 
 			for (int j = 0; j < lNumModifiers; j++) {
@@ -164,7 +168,7 @@ public class ParticleSystemInstance implements IPoolObjectInstance {
 	public Particle spawnParticle(float pX, float pY, float pVelX, float pVelY) {
 		for (int i = 0; i < mCapacity; i++) {
 			Particle lSpawnedParticle = mParticles.get(i);
-			if (!lSpawnedParticle.isFree())
+			if (!lSpawnedParticle.isAssigned())
 				continue;
 
 			lSpawnedParticle.spawnParticle(pX, pY, pVelX, pVelY, mParticleSystemDefinition.particleLife);

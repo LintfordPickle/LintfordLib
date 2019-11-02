@@ -3,7 +3,7 @@ package net.lintford.library.core.entity;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.geometry.Rectangle;
 
-public class RectangleEntity extends WorldEntity {
+public abstract class RectangleEntity extends WorldEntity {
 
 	// --------------------------------------
 	// Variables

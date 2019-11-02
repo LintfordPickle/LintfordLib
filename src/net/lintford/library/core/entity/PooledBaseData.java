@@ -1,42 +1,34 @@
+
 package net.lintford.library.core.entity;
 
-/**
- * The {@link WorldEntity} class allows us to order an entity spatially within the world.
- */
-public abstract class WorldEntity extends PooledBaseData {
+import net.lintford.library.core.entity.instances.IPoolObjectInstance;
+
+public abstract class PooledBaseData extends BaseData implements IPoolObjectInstance {
 
 	// --------------------------------------
 	// Constants
 	// --------------------------------------
 
-	private static final long serialVersionUID = 3376631186484307065L;
+	private static final long serialVersionUID = -1444873148544023277L;
 
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
-	public float x, y;
-
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
-
-	public void setPosition(float pWorldX, float pWorldY) {
-		x = pWorldX;
-		y = pWorldY;
-
-	}
 
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
-	public WorldEntity() {
+	public PooledBaseData() {
 
 	}
 
 	// --------------------------------------
-	// Methods
+	// Core-Methods
 	// --------------------------------------
 
 }

@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 
 import net.lintford.library.core.debug.Debug;
@@ -69,44 +70,46 @@ public abstract class DefinitionManager<T extends BaseDefinition> extends BaseDa
 
 	public abstract void loadDefinitionFromFile(String pFilepath);
 
-	protected MetaFileItems loadMetaFileItemsFromFilepath(final String pFilepath, final Gson pGson) {
+	protected MetaFileItems loadMetaFileItemsFromFilepath(final String pFilepath) {
 		if (pFilepath == null || pFilepath.length() == 0) {
 			Debug.debugManager().logger().w(getClass().getSimpleName(), "Couldn't load definitions files from a <null> Metafile!");
 			return null;
 		}
 
-		String lFileContents = null;
-		MetaFileItems lItemsFileLocations = null;
 		try {
-			lFileContents = new String(Files.readAllBytes(Paths.get(pFilepath)));
-			lItemsFileLocations = pGson.fromJson(lFileContents, MetaFileItems.class);
+			final var lGson = new GsonBuilder().create();
+			final var lFileContents = new String(Files.readAllBytes(Paths.get(pFilepath)));
+			final var lItemsFileLocations = lGson.fromJson(lFileContents, MetaFileItems.class);
 
 			if (lItemsFileLocations == null || lItemsFileLocations.itemFileLocations == null || lItemsFileLocations.itemFileLocations.length == 0) {
 				Debug.debugManager().logger().w(getClass().getSimpleName(), "Couldn't load item filepaths from the Metafile!");
 
-				return null;
-
+				lItemsFileLocations.itemCount = lItemsFileLocations.itemFileLocations.length;
+				return lItemsFileLocations;
 			}
 
 		} catch (IOException e) {
 			Debug.debugManager().logger().e(getClass().getSimpleName(), "Error while loading metafile filepaths.");
 			Debug.debugManager().logger().printException(getClass().getSimpleName(), e);
 
-			return null;
-
 		}
 
-		lItemsFileLocations.itemCount = lItemsFileLocations.itemFileLocations.length;
-
-		return lItemsFileLocations;
+		return null;
 
 	}
 
-	protected void loadDefinitionsFromMetaFileItems(MetaFileItems pItemsFileLocations, Gson pGson, Class<T> pClassType) {
-		for (int i = 0; i < pItemsFileLocations.itemCount; i++) {
-			final var lMobDefinitionFilepath = pItemsFileLocations.rootDirectory + pItemsFileLocations.itemFileLocations[i] + ".json";
+	protected void loadDefinitionsFromMetaFileItems(String pMetaFilepath, final Gson pGson, Class<T> pClassType) {
+		final var lMetaItems = loadMetaFileItemsFromFilepath(pMetaFilepath);
+		if (lMetaItems == null || lMetaItems.itemCount == 0) {
+			Debug.debugManager().logger().w(getClass().getSimpleName(), String.format("Cannot load definition types %s, the given MetaFileItems contains no data", pClassType.toString()));
+			return;
 
-			loadDefinitionFromFile(lMobDefinitionFilepath, pGson, pClassType);
+		}
+
+		for (int i = 0; i < lMetaItems.itemCount; i++) {
+			final var lDefinitionFilepath = lMetaItems.rootDirectory + lMetaItems.itemFileLocations[i] + ".json";
+
+			loadDefinitionFromFile(lDefinitionFilepath, pGson, pClassType);
 		}
 	}
 

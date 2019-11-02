@@ -268,8 +268,7 @@ public class DebugDrawers {
 
 	}
 
-	public void drawRenderTargetImmediate(LintfordCore pCore, float pDestinationPositionX, float pDestinationPositionY, float pDestinationWidth, float pDestinationHeight, float pDestinationZ,
-			RenderTarget pRenderTarget) {
+	public void drawRenderTargetImmediate(LintfordCore pCore, float pDestinationPositionX, float pDestinationPositionY, float pDestinationWidth, float pDestinationHeight, float pDestinationZ, RenderTarget pRenderTarget) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
@@ -330,6 +329,9 @@ public class DebugDrawers {
 	}
 
 	public void beginPointRenderer(ICamera pCamera) {
+		if (!mDebugManager.debugManagerEnabled())
+			return;
+
 		mPointBatch.begin(pCamera);
 
 	}
@@ -360,6 +362,9 @@ public class DebugDrawers {
 	}
 
 	public void drawPoint(float pX, float pY, float pR, float pG, float pB, float pA) {
+		if (!mDebugManager.debugManagerEnabled())
+			return;
+
 		mPointBatch.draw(pX, pY, -0.01f, pR, pG, pB, pA);
 
 	}
@@ -471,6 +476,9 @@ public class DebugDrawers {
 	}
 
 	public void endPointRenderer() {
+		if (!mDebugManager.debugManagerEnabled())
+			return;
+		
 		mPointBatch.end();
 
 	}

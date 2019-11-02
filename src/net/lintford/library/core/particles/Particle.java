@@ -38,10 +38,18 @@ public class Particle extends CircleEntity {
 		return mLifeTime;
 	}
 
-	public boolean isFree() {
+	@Override
+	public boolean isAssigned() {
 		return mIsFree;
 	}
+	
 
+	@Override
+	public int getPoolID() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
@@ -104,4 +112,6 @@ public class Particle extends CircleEntity {
 		pInitializer.initialize(this);
 
 	}
+
+	
 }

@@ -3,12 +3,11 @@ package net.lintford.library.core.particles.particleemitters;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.entity.WorldEntity;
-import net.lintford.library.core.entity.instances.IPoolObjectInstance;
 import net.lintford.library.core.maths.RandomNumbers;
 import net.lintford.library.core.particles.ParticleFrameworkData;
 import net.lintford.library.core.particles.particlesystems.ParticleSystemInstance;
 
-public class ParticleEmitterInstance extends WorldEntity implements IPoolObjectInstance {
+public class ParticleEmitterInstance extends WorldEntity {
 
 	// --------------------------------------
 	// Constants

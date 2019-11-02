@@ -1,7 +1,6 @@
 package net.lintford.library.core.box2d.definition;
 
 import org.jbox2d.common.Vec2;
-import org.jbox2d.dynamics.joints.RevoluteJoint;
 import org.jbox2d.dynamics.joints.RevoluteJointDef;
 
 public class Box2dRevoluteJointDef extends Box2dJointDefinition {
