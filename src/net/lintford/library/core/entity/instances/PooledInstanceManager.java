@@ -21,14 +21,14 @@ public abstract class PooledInstanceManager<T extends IPoolObjectInstance> exten
 	// --------------------------------------
 
 	private List<T> mPooledItems;
-	private int mPoolUIDCounter;
+	private int mPoolInstanceUIDCounter;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
 
-	protected int getNewUID() {
-		return mPoolUIDCounter++;
+	protected int getNewInstanceUID() {
+		return mPoolInstanceUIDCounter++;
 	}
 
 	// --------------------------------------

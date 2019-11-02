@@ -1,16 +1,29 @@
 package net.lintford.library.core.entity.definitions;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+
+import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.entity.BaseData;
 
 public abstract class DefinitionManager<T extends BaseDefinition> extends BaseData {
+
+	public static class MetaFileItems {
+		public String rootDirectory;
+		public String[] itemFileLocations;
+		public int itemCount;
+	}
 
 	// --------------------------------------
 	// Constants
@@ -24,7 +37,7 @@ public abstract class DefinitionManager<T extends BaseDefinition> extends BaseDa
 
 	protected List<T> mDefinitions;
 
-	private transient int mDefinitionUIDCounter;
+	protected transient int mDefinitionUIDCounter;
 
 	// --------------------------------------
 	// Properties
@@ -52,7 +65,85 @@ public abstract class DefinitionManager<T extends BaseDefinition> extends BaseDa
 	// Core-Methods
 	// --------------------------------------
 
-	protected abstract void loadDefinitions(String pMetaFilepath);
+	public abstract void loadDefinitionsFromMetaFile(String pMetaFilepath);
+
+	public abstract void loadDefinitionFromFile(String pFilepath);
+
+	protected MetaFileItems loadMetaFileItemsFromFilepath(final String pFilepath, final Gson pGson) {
+		if (pFilepath == null || pFilepath.length() == 0) {
+			Debug.debugManager().logger().w(getClass().getSimpleName(), "Couldn't load definitions files from a <null> Metafile!");
+			return null;
+		}
+
+		String lFileContents = null;
+		MetaFileItems lItemsFileLocations = null;
+		try {
+			lFileContents = new String(Files.readAllBytes(Paths.get(pFilepath)));
+			lItemsFileLocations = pGson.fromJson(lFileContents, MetaFileItems.class);
+
+			if (lItemsFileLocations == null || lItemsFileLocations.itemFileLocations == null || lItemsFileLocations.itemFileLocations.length == 0) {
+				Debug.debugManager().logger().w(getClass().getSimpleName(), "Couldn't load item filepaths from the Metafile!");
+
+				return null;
+
+			}
+
+		} catch (IOException e) {
+			Debug.debugManager().logger().e(getClass().getSimpleName(), "Error while loading metafile filepaths.");
+			Debug.debugManager().logger().printException(getClass().getSimpleName(), e);
+
+			return null;
+
+		}
+
+		lItemsFileLocations.itemCount = lItemsFileLocations.itemFileLocations.length;
+
+		return lItemsFileLocations;
+
+	}
+
+	protected void loadDefinitionsFromMetaFileItems(MetaFileItems pItemsFileLocations, Gson pGson, Class<T> pClassType) {
+		for (int i = 0; i < pItemsFileLocations.itemCount; i++) {
+			final var lMobDefinitionFilepath = pItemsFileLocations.rootDirectory + pItemsFileLocations.itemFileLocations[i] + ".json";
+
+			loadDefinitionFromFile(lMobDefinitionFilepath, pGson, pClassType);
+		}
+	}
+
+	protected void loadDefinitionFromFile(String pFilepath, final Gson pGson, Class<T> pClassType) {
+		final var lDefinitionFile = new File(pFilepath);
+
+		if (!lDefinitionFile.exists()) {
+			Debug.debugManager().logger().w(getClass().getSimpleName(), String.format("Error loading %s from file: %s", pClassType.toString(), pFilepath));
+			return;
+		}
+
+		try {
+			final var lFileContents = new String(Files.readAllBytes(lDefinitionFile.toPath()));
+			final var lNewDefinition = pGson.fromJson(lFileContents, pClassType);
+
+			if (lNewDefinition != null) {
+				lNewDefinition.initialize(getNewDefinitionUID());
+				mDefinitions.add(lNewDefinition);
+
+			} else {
+				Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Failed to parse %s from file: %s", pClassType.toString(), pFilepath));
+
+			}
+
+		} catch (JsonSyntaxException e) {
+			Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Failed to parse Json %s (Syntax): %s", pClassType.toString(), pFilepath));
+			Debug.debugManager().logger().e(getClass().getSimpleName(), e.getMessage());
+
+			return;
+
+		} catch (IOException e) {
+			Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Failed to parse Json %s (IO): %s", pClassType.toString(), pFilepath));
+			Debug.debugManager().logger().e(getClass().getSimpleName(), e.getMessage());
+
+			return;
+		}
+	}
 
 	// --------------------------------------
 	// Methods

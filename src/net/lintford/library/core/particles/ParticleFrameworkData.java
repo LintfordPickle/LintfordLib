@@ -56,13 +56,13 @@ public class ParticleFrameworkData extends BaseData {
 	// Methods
 	// --------------------------------------
 
-	public void loadSystemMetaDefinitionFile(String pFilename) {
-		mParticleSystemManager.loadDefinitionMetaFile(pFilename);
+	public void loadSystemMetaDefinitionFile(String pFilepath) {
+		mParticleSystemManager.definitionManager().loadDefinitionsFromMetaFile(pFilepath);
 
 	}
 
-	public void loadEmitterMetaDefinitionFile(String pFilename) {
-		mParticleEmitterManager.loadDefinitionMetaFile(pFilename);
+	public void loadEmitterMetaDefinitionFile(String pFilepath) {
+		mParticleEmitterManager.definitionManager().loadDefinitionsFromMetaFile(pFilepath);
 
 	}
 

@@ -1,35 +1,19 @@
 package net.lintford.library.core.particles.particleemitters;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonSyntaxException;
 
-import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.entity.definitions.DefinitionManager;
 import net.lintford.library.core.entity.instances.PooledInstanceManager;
 import net.lintford.library.core.particles.ParticleFrameworkData;
-import net.lintford.library.core.particles.particlesystems.ParticleSystemManager;
 
 public class ParticleEmitterManager extends PooledInstanceManager<ParticleEmitterInstance> {
 
 	// --------------------------------------
 	// Inner-Classes
 	// --------------------------------------
-
-	// Definition
-
-	public class EmitterDefinitionMetaData {
-		public String rootDirectory;
-		public String[] emitterFileLocations;
-
-	}
 
 	public class EmitterDefinitionManager extends DefinitionManager<ParticleEmitterDefinition> {
 
@@ -80,7 +64,7 @@ public class ParticleEmitterManager extends PooledInstanceManager<ParticleEmitte
 		// --------------------------------------
 
 		public EmitterDefinitionManager() {
-			loadDefinitions(ParticleEmitterConstants.PARTICLE_EMITTER_META_FILENAME);
+			loadDefinitionsFromMetaFile(ParticleEmitterConstants.PARTICLE_EMITTER_META_FILENAME);
 
 		}
 
@@ -89,93 +73,19 @@ public class ParticleEmitterManager extends PooledInstanceManager<ParticleEmitte
 		// --------------------------------------
 
 		@Override
-		public void initialize(Object pParent) {
-			super.initialize(pParent);
+		public void loadDefinitionsFromMetaFile(String pMetaFilepath) {
+			final var lGson = new GsonBuilder().create();
+			final var lMetaItems = loadMetaFileItemsFromFilepath(pMetaFilepath, lGson);
 
-			if (pParent instanceof ParticleFrameworkData) {
-				ParticleFrameworkData lParticleFrameworkData = (ParticleFrameworkData) pParent;
-				ParticleSystemManager lParticleSystemManager = lParticleFrameworkData.particleSystemManager();
-
-				// FIXME: Restore particle emitters and referenced objects (by their Ids).
-
-			}
+			loadDefinitionsFromMetaFileItems(lMetaItems, lGson, ParticleEmitterDefinition.class);
 
 		}
 
 		@Override
-		protected void loadDefinitions(String pMetaFilepath) {
-			final Gson GSON = new GsonBuilder().create();
+		public void loadDefinitionFromFile(String pFilepath) {
+			final var lGson = new GsonBuilder().create();
 
-			// Load the ItemDefiniion meta data (file locations)
-			String lFileContents = null;
-			EmitterDefinitionMetaData lItemsFileLocations = null;
-			try {
-				lFileContents = new String(Files.readAllBytes(Paths.get(pMetaFilepath)));
-				lItemsFileLocations = GSON.fromJson(lFileContents, EmitterDefinitionMetaData.class);
-
-				if (lItemsFileLocations == null || lItemsFileLocations.emitterFileLocations == null || lItemsFileLocations.emitterFileLocations.length == 0) {
-					Debug.debugManager().logger().w(getClass().getSimpleName(), "Couldn't load ParticleEmitterDefinitions from the particle emitter definition metafile!");
-
-					return;
-
-				}
-
-			} catch (IOException e) {
-				Debug.debugManager().logger().e(getClass().getSimpleName(), "Error while loading particle emitter definition metafile.");
-				Debug.debugManager().logger().printException(getClass().getSimpleName(), e);
-
-				return;
-
-			}
-
-			ParticleEmitterDefinition lEmitterDefinition = null;
-			final int lEmitterDefinitionMetaCount = lItemsFileLocations.emitterFileLocations.length;
-			for (int i = 0; i < lEmitterDefinitionMetaCount; i++) {
-				String lEmitterDefinitionFilepath = lItemsFileLocations.rootDirectory + lItemsFileLocations.emitterFileLocations[i] + ".json";
-				final File lEmitterDefinitionFile = new File(lEmitterDefinitionFilepath);
-
-				if (!lEmitterDefinitionFile.exists()) {
-					Debug.debugManager().logger().w(getClass().getSimpleName(), "Error loading ParticleEmitterDefinition from file " + lEmitterDefinitionFilepath + ". File doesn't exist!");
-
-					continue;
-				}
-
-				try {
-					lFileContents = new String(Files.readAllBytes(lEmitterDefinitionFile.toPath()));
-
-					try {
-						lEmitterDefinition = GSON.fromJson(lFileContents, ParticleEmitterDefinition.class);
-
-					} catch (Exception e) {
-						Debug.debugManager().logger().e(getClass().getSimpleName(), "Failed to parse ParticleEmitterDefinition from file: " + lEmitterDefinitionFilepath);
-
-					}
-
-					if (lEmitterDefinition != null) {
-						lEmitterDefinition.initialize(getNewDefinitionUID());
-						mDefinitions.add(lEmitterDefinition);
-
-					} else {
-						Debug.debugManager().logger().e(getClass().getSimpleName(), "Failed to parse ParticleEmitterDefinition from file: " + lEmitterDefinitionFilepath);
-
-					}
-
-				} catch (JsonSyntaxException e) {
-					Debug.debugManager().logger().e(getClass().getSimpleName(), "Failed to parse JSON ParticleEmitterDefinition (Syntax): " + lEmitterDefinitionFilepath);
-					Debug.debugManager().logger().e(getClass().getSimpleName(), e.getMessage());
-
-					continue;
-
-				} catch (IOException e) {
-					Debug.debugManager().logger().e(getClass().getSimpleName(), "Failed to parse JSON ParticleEmitterDefinition (IO): " + lEmitterDefinitionFilepath);
-					Debug.debugManager().logger().e(getClass().getSimpleName(), e.getMessage());
-
-					continue;
-
-				}
-
-			}
-
+			loadDefinitionFromFile(pFilepath, lGson, ParticleEmitterDefinition.class);
 		}
 
 	}
@@ -233,15 +143,10 @@ public class ParticleEmitterManager extends PooledInstanceManager<ParticleEmitte
 
 		// Resolve all the ParticleSystems within the emitters to the ParticleSystem instances.
 		if (pParent instanceof ParticleFrameworkData) {
-			ParticleFrameworkData lFramework = (ParticleFrameworkData) pParent;
-
+			final var lFramework = (ParticleFrameworkData) pParent;
 			mEmitterDefinitionManager.initialize(lFramework);
 
 		}
-
-	}
-
-	public void loadDefinitionMetaFile(String pMetaFilename) {
 
 	}
 
@@ -252,14 +157,16 @@ public class ParticleEmitterManager extends PooledInstanceManager<ParticleEmitte
 	// returns a new ParticleEmitterInstance attached to the given emitter definition (by name)
 	public ParticleEmitterInstance getNewParticleEmitterInstanceByDefName(String pEmitterDefName) {
 		// Find the specified definition
-		ParticleEmitterDefinition lEmitterDef = definitionManager().getDefinitionByName(pEmitterDefName);
+		final var lEmitterDef = definitionManager().getDefinitionByName(pEmitterDefName);
 
-		if (lEmitterDef == null)
+		if (lEmitterDef == null) {
 			return null;
 
+		}
+
 		// Retrieve or create a new instance
-		ParticleEmitterInstance lNewEmitterInst = getFreePooledItem();
-		lNewEmitterInst.emitterInstanceId(getNewUID());
+		final var lNewEmitterInst = getFreePooledItem();
+		lNewEmitterInst.emitterInstanceId(getNewInstanceUID());
 		lNewEmitterInst.assign(lEmitterDef, mParticleFrameworkData);
 
 		mEmitters.add(lNewEmitterInst);
@@ -270,11 +177,12 @@ public class ParticleEmitterManager extends PooledInstanceManager<ParticleEmitte
 
 	// Returns a ParticleEmitterInstance, if one exists, based on the EmitterID.
 	public ParticleEmitterInstance getParticleEmitterByIndex(int pEmitterIndex) {
-		final int lNumParticleEmitterCount = mEmitters.size();
-		for (int i = 0; i < lNumParticleEmitterCount; i++) {
-			if (mEmitters.get(i).getPoolID() == pEmitterIndex)
+		final var lNumParticleEmitterCount = mEmitters.size();
+		for (var i = 0; i < lNumParticleEmitterCount; i++) {
+			if (mEmitters.get(i).getPoolID() == pEmitterIndex) {
 				return mEmitters.get(i);
 
+			}
 		}
 
 		return null;
@@ -287,10 +195,10 @@ public class ParticleEmitterManager extends PooledInstanceManager<ParticleEmitte
 	}
 
 	public ParticleEmitterInstance getParticleEmitterInstance() {
-		ParticleEmitterInstance lReturnItem = getFreePooledItem();
-		lReturnItem.emitterInstanceId(getNewUID());
+		final var lParticleEmitterInstance = getFreePooledItem();
+		lParticleEmitterInstance.emitterInstanceId(getNewInstanceUID());
 
-		return lReturnItem;
+		return lParticleEmitterInstance;
 
 	}
 
@@ -299,7 +207,6 @@ public class ParticleEmitterManager extends PooledInstanceManager<ParticleEmitte
 			mEmitters.add(pParticleEmitterInstance);
 
 		}
-
 	}
 
 	public void removeCharacter(final ParticleEmitterInstance pParticleEmitterInstance) {

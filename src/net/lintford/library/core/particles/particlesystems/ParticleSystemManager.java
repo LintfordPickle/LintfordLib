@@ -1,15 +1,9 @@
 package net.lintford.library.core.particles.particlesystems;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonSyntaxException;
 
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.entity.definitions.DefinitionManager;
@@ -24,14 +18,6 @@ public class ParticleSystemManager extends PooledInstanceManager<ParticleSystemI
 	// --------------------------------------
 
 	private static final long serialVersionUID = -5013183501163339554L;
-
-	// Definition
-
-	public class ParticleSystemDefinitionMetaData {
-		public String rootDirectory;
-		public String[] particleSystemFileLocations;
-
-	}
 
 	public class ParticleSystemDefinitionManager extends DefinitionManager<ParticleSystemDefinition> {
 
@@ -54,82 +40,24 @@ public class ParticleSystemManager extends PooledInstanceManager<ParticleSystemI
 		// --------------------------------------
 
 		@Override
-		protected void loadDefinitions(String pMetaFilepath) {
-
-			final GsonBuilder gsonBuilder = new GsonBuilder();
+		public void loadDefinitionsFromMetaFile(String pMetaFilepath) {
+			final var gsonBuilder = new GsonBuilder();
 			gsonBuilder.registerTypeAdapter(ParticleSystemDefinition.class, new ParticleSystemDeserializer());
+			final var lGson = gsonBuilder.create();
 
-			final Gson gson = gsonBuilder.create();
+			final var lMetaItems = loadMetaFileItemsFromFilepath(pMetaFilepath, lGson);
 
-			// Load the ItemDefiniion meta data (file locations)
-			String lFileContents = null;
-			ParticleSystemDefinitionMetaData lItemsFileLocations = null;
-			try {
-				lFileContents = new String(Files.readAllBytes(Paths.get(pMetaFilepath)));
-				lItemsFileLocations = gson.fromJson(lFileContents, ParticleSystemDefinitionMetaData.class);
-
-				if (lItemsFileLocations == null || lItemsFileLocations.particleSystemFileLocations == null || lItemsFileLocations.particleSystemFileLocations.length == 0) {
-					Debug.debugManager().logger().w(getClass().getSimpleName(), "Couldn't load ParticleSystems from the ParticleSystems definition metafile!");
-
-					return;
-
-				}
-
-			} catch (IOException e) {
-				Debug.debugManager().logger().e(getClass().getSimpleName(), "Error while loading ParticleSystem definitions metafile.");
-				Debug.debugManager().logger().printException(getClass().getSimpleName(), e);
-
-				return;
-
-			}
-
-			ParticleSystemDefinition lParticleSystemDefinition = null;
-			final int lParticleSystemDefinitionMetaCount = lItemsFileLocations.particleSystemFileLocations.length;
-			for (int i = 0; i < lParticleSystemDefinitionMetaCount; i++) {
-				var lParticleSystemDefinitionFilepath = lItemsFileLocations.rootDirectory + lItemsFileLocations.particleSystemFileLocations[i] + ".json";
-				final var lParticleSystemDefinitionFile = new File(lParticleSystemDefinitionFilepath);
-
-				if (!lParticleSystemDefinitionFile.exists()) {
-					Debug.debugManager().logger().w(getClass().getSimpleName(), "Error loading ParticleSystemDefinition from file " + lParticleSystemDefinitionFilepath + ". File doesn't exist!");
-
-					continue;
-				}
-
-				try {
-					lFileContents = new String(Files.readAllBytes(lParticleSystemDefinitionFile.toPath()));
-
-					lParticleSystemDefinition = gson.fromJson(lFileContents, ParticleSystemDefinition.class);
-
-					if (lParticleSystemDefinition != null) {
-						lParticleSystemDefinition.initialize(getNewDefinitionUID());
-						mDefinitions.add(lParticleSystemDefinition);
-
-					} else {
-						Debug.debugManager().logger().e(getClass().getSimpleName(), "Failed to parse ParticleSystemDefinition from file: " + lParticleSystemDefinitionFilepath);
-
-					}
-
-				} catch (JsonSyntaxException e) {
-					Debug.debugManager().logger().e(getClass().getSimpleName(), "Failed to parse JSON ParticleSystemDefinition (Syntax): " + lParticleSystemDefinitionFilepath);
-					Debug.debugManager().logger().e(getClass().getSimpleName(), e.getMessage());
-
-					continue;
-
-				} catch (IOException e) {
-					Debug.debugManager().logger().e(getClass().getSimpleName(), "Failed to parse JSON ParticleSystemDefinition (IO): " + lParticleSystemDefinitionFilepath);
-					Debug.debugManager().logger().e(getClass().getSimpleName(), e.getMessage());
-
-					continue;
-
-				}
-
-			}
+			loadDefinitionsFromMetaFileItems(lMetaItems, lGson, ParticleSystemDefinition.class);
 
 		}
 
-		public void loadParticleSystemDefinitionsFIle(String pMetaFilepath) {
-			loadDefinitions(pMetaFilepath);
+		@Override
+		public void loadDefinitionFromFile(String pFilepath) {
+			final var gsonBuilder = new GsonBuilder();
+			gsonBuilder.registerTypeAdapter(ParticleSystemDefinition.class, new ParticleSystemDeserializer());
+			final var lGson = gsonBuilder.create();
 
+			loadDefinitionFromFile(pFilepath, lGson, ParticleSystemDefinition.class);
 		}
 
 	}
@@ -149,6 +77,10 @@ public class ParticleSystemManager extends PooledInstanceManager<ParticleSystemI
 	/** Returns the number of {@link ParticleSystemInstance}s in this {@link GameParticleSystem} instance. */
 	public int getNumParticleSystems() {
 		return mParticleSystems.size();
+	}
+
+	public ParticleSystemDefinitionManager definitionManager() {
+		return mParticleSystemDefinitionManager;
 	}
 
 	public List<ParticleSystemInstance> particleSystems() {
@@ -177,27 +109,14 @@ public class ParticleSystemManager extends PooledInstanceManager<ParticleSystemI
 
 	}
 
-	@Override
-	public void beforeSerialization() {
-		super.beforeSerialization();
-
-	}
-
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
 
-	public void loadDefinitionMetaFile(String pMetaFilename) {
-		mParticleSystemDefinitionManager.loadDefinitions(pMetaFilename);
-
-		// FIXME: By this stage, all particle definitions loaded should have an accompanying ParticleSystemInstance!
-
-	}
-
 	/** Returns the {@link ParticleController} whose {@link ParticleSystemInstance}'s name matches the given {@link String}. null is returned if the ParticleController is not found. */
 	public ParticleSystemInstance getParticleSystemByName(final String pParticleSystemName) {
-		final int lNumParticleSystems = mParticleSystems.size();
-		for (int i = 0; i < lNumParticleSystems; i++) {
+		final var lNumParticleSystems = mParticleSystems.size();
+		for (var i = 0; i < lNumParticleSystems; i++) {
 			ParticleSystemInstance lPSInstance = mParticleSystems.get(i);
 			if (!lPSInstance.isInitialized())
 				continue;
@@ -209,16 +128,16 @@ public class ParticleSystemManager extends PooledInstanceManager<ParticleSystemI
 
 		}
 
-		ParticleSystemDefinition pd = mParticleSystemDefinitionManager.getDefinitionByName(pParticleSystemName);
-		if (pd != null) {
-			ParticleSystemInstance ps = createPoolObjectInstance();
-			ps.initialize(getNewUID(), pd);
+		final var lParticleSystemDefinition = mParticleSystemDefinitionManager.getDefinitionByName(pParticleSystemName);
+		if (lParticleSystemDefinition != null) {
+			final var lNewParticleSystem = createPoolObjectInstance();
+			lNewParticleSystem.initialize(getNewInstanceUID(), lParticleSystemDefinition);
 
-			mParticleSystems.add(ps);
+			mParticleSystems.add(lNewParticleSystem);
 
-			Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("Created new ParticleSystemInstance for ParticleSystemDefinition '%s'", pd.name));
+			Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("Created new ParticleSystemInstance for ParticleSystemDefinition '%s'", lParticleSystemDefinition.name));
 
-			return ps;
+			return lNewParticleSystem;
 		}
 
 		Debug.debugManager().logger().w(getClass().getSimpleName(), String.format("Couldn't find ParticleSystemDefinition '%s'", pParticleSystemName));
