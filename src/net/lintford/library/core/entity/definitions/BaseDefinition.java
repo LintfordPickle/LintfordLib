@@ -8,13 +8,13 @@ public abstract class BaseDefinition extends BaseEntity {
 	// Variables
 	// --------------------------------------
 
-	public transient int definitionID;
+	public transient short definitionID;
 
 	// --------------------------------------
 	// Core-Methods
 	// --------------------------------------
 
-	public void initialize(final int pDefinitionID) {
+	public void initialize(final short pDefinitionID) {
 		definitionID = pDefinitionID;
 
 	}

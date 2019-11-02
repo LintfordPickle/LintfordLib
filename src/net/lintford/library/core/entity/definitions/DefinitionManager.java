@@ -37,7 +37,7 @@ public abstract class DefinitionManager<T extends BaseDefinition> extends BaseDa
 
 	protected List<T> mDefinitions;
 
-	protected transient int mDefinitionUIDCounter;
+	protected transient short mDefinitionUIDCounter;
 
 	// --------------------------------------
 	// Properties
@@ -47,7 +47,7 @@ public abstract class DefinitionManager<T extends BaseDefinition> extends BaseDa
 		return mDefinitions;
 	}
 
-	public int getNewDefinitionUID() {
+	public short getNewDefinitionUID() {
 		return mDefinitionUIDCounter++;
 	}
 
