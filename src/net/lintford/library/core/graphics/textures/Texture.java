@@ -29,6 +29,7 @@ public class Texture {
 	private int mTextureWidth;
 	private int mTextureHeight;
 	private int mFilter;
+	private int[] mColorData;
 
 	/**
 	 * In order to detect changes to the texture when trying to reload textures, we will store the file size of the texture each time it is loaded.
@@ -44,6 +45,10 @@ public class Texture {
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public int[] RGBColorData() {
+		return mColorData;
+	}
 
 	public String name() {
 		return mName;
@@ -282,7 +287,9 @@ public class Texture {
 
 		lBuffer = null;
 
-		return new Texture(pName, lTexID, mTextureLocation, pWidth, pHeight, pFilter);
+		final var lNewTexture = new Texture(pName, lTexID, mTextureLocation, pWidth, pHeight, pFilter);
+		lNewTexture.mColorData = pPixels;
+		return lNewTexture;
 	}
 
 	public void reloadTexture(String pFilename) {
@@ -357,6 +364,8 @@ public class Texture {
 		IntBuffer lBuffer = ByteBuffer.allocateDirect(pColorData.length * 4).order(ByteOrder.nativeOrder()).asIntBuffer();
 		lBuffer.put(pColorData);
 		lBuffer.flip();
+		
+		mColorData = pColorData;
 
 		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, pWidth, pHeight, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, lBuffer);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
