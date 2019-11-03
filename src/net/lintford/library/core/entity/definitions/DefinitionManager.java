@@ -84,9 +84,11 @@ public abstract class DefinitionManager<T extends BaseDefinition> extends BaseDa
 			if (lItemsFileLocations == null || lItemsFileLocations.itemFileLocations == null || lItemsFileLocations.itemFileLocations.length == 0) {
 				Debug.debugManager().logger().w(getClass().getSimpleName(), "Couldn't load item filepaths from the Metafile!");
 
-				lItemsFileLocations.itemCount = lItemsFileLocations.itemFileLocations.length;
-				return lItemsFileLocations;
+				return null;
 			}
+
+			lItemsFileLocations.itemCount = lItemsFileLocations.itemFileLocations.length;
+			return lItemsFileLocations;
 
 		} catch (IOException e) {
 			Debug.debugManager().logger().e(getClass().getSimpleName(), "Error while loading metafile filepaths.");
@@ -101,7 +103,7 @@ public abstract class DefinitionManager<T extends BaseDefinition> extends BaseDa
 	protected void loadDefinitionsFromMetaFileItems(String pMetaFilepath, final Gson pGson, Class<T> pClassType) {
 		final var lMetaItems = loadMetaFileItemsFromFilepath(pMetaFilepath);
 		if (lMetaItems == null || lMetaItems.itemCount == 0) {
-			Debug.debugManager().logger().w(getClass().getSimpleName(), String.format("Cannot load definition types %s, the given MetaFileItems contains no data", pClassType.toString()));
+			Debug.debugManager().logger().w(getClass().getSimpleName(), String.format("Cannot load definition types %s, the given MetaFileItems contains no data", pClassType.getSimpleName()));
 			return;
 
 		}
@@ -117,11 +119,13 @@ public abstract class DefinitionManager<T extends BaseDefinition> extends BaseDa
 		final var lDefinitionFile = new File(pFilepath);
 
 		if (!lDefinitionFile.exists()) {
-			Debug.debugManager().logger().w(getClass().getSimpleName(), String.format("Error loading %s from file: %s", pClassType.toString(), pFilepath));
+			Debug.debugManager().logger().w(getClass().getSimpleName(), String.format("Error loading %s from file: %s", pClassType.getSimpleName(), pFilepath));
 			return;
 		}
 
 		try {
+			Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("Loading Definition type %s from file: %s", pClassType.getSimpleName(), pFilepath));
+
 			final var lFileContents = new String(Files.readAllBytes(lDefinitionFile.toPath()));
 			final var lNewDefinition = pGson.fromJson(lFileContents, pClassType);
 
@@ -130,18 +134,23 @@ public abstract class DefinitionManager<T extends BaseDefinition> extends BaseDa
 				mDefinitions.add(lNewDefinition);
 
 			} else {
-				Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Failed to parse %s from file: %s", pClassType.toString(), pFilepath));
+				Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Failed to parse %s from file: %s", pClassType.getSimpleName(), pFilepath));
 
 			}
 
 		} catch (JsonSyntaxException e) {
-			Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Failed to parse Json %s (Syntax): %s", pClassType.toString(), pFilepath));
+			Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Failed to parse Json %s (JsonSyntaxException): %s", pClassType.getSimpleName(), pFilepath));
 			Debug.debugManager().logger().e(getClass().getSimpleName(), e.getMessage());
 
 			return;
 
 		} catch (IOException e) {
-			Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Failed to parse Json %s (IO): %s", pClassType.toString(), pFilepath));
+			Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Failed to parse Json %s (IOException): %s", pClassType.getSimpleName(), pFilepath));
+			Debug.debugManager().logger().e(getClass().getSimpleName(), e.getMessage());
+
+			return;
+		} catch (NumberFormatException e) {
+			Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Failed to parse Json %s (NumberFormatException): %s", pClassType.getSimpleName(), pFilepath));
 			Debug.debugManager().logger().e(getClass().getSimpleName(), e.getMessage());
 
 			return;
