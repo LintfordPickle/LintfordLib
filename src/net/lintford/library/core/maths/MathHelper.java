@@ -189,4 +189,14 @@ public class MathHelper {
 		return (float) Math.round(value * scale) / scale;
 	}
 
+	public static float bellCurve(float normalizedValue) {
+		float lBellCurveModifyAmt = .125f;
+		float v = normalizedValue;
+		v *= 2f + (lBellCurveModifyAmt * 2);
+		v -= 1f + lBellCurveModifyAmt;
+		v = MathHelper.clamp(1.0f - Math.abs(v), 0, 1);
+
+		return v;
+	}
+
 }
