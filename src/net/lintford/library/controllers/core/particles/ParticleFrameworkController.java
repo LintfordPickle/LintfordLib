@@ -69,8 +69,6 @@ public class ParticleFrameworkController extends BaseController {
 		if (!isinitialized())
 			return;
 
-		// This is where we update the particlesystems, emitters...
-
 		final List<ParticleEmitterInstance> lEmitterInstanceList = mParticleFrameworkData.emitterManager().emitterInstances();
 		final List<ParticleSystemInstance> lSystemInstanceList = mParticleFrameworkData.particleSystemManager().particleSystems();
 
@@ -88,7 +86,7 @@ public class ParticleFrameworkController extends BaseController {
 			if (lEmitterInst.parentEntity() != null) {
 				lEmitterInst.x = lEmitterInst.parentEntity().x;
 				lEmitterInst.y = lEmitterInst.parentEntity().y;
-				
+
 			}
 
 			lEmitterInst.update(pCore);

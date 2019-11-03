@@ -168,7 +168,7 @@ public class ParticleSystemInstance extends BaseData {
 	public Particle spawnParticle(float pX, float pY, float pVelX, float pVelY) {
 		for (int i = 0; i < mCapacity; i++) {
 			Particle lSpawnedParticle = mParticles.get(i);
-			if (!lSpawnedParticle.isAssigned())
+			if (lSpawnedParticle.isAssigned())
 				continue;
 
 			lSpawnedParticle.spawnParticle(pX, pY, pVelX, pVelY, mParticleSystemDefinition.particleLife);

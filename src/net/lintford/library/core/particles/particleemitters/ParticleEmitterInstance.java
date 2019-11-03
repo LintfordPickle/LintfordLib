@@ -32,7 +32,6 @@ public class ParticleEmitterInstance extends WorldEntity {
 	protected transient ParticleEmitterDefinition mEmitterDefinition;
 	public float mEmitTimer;
 	public float mEmitAmount;
-	protected boolean mIsActive;
 	public boolean enabled;
 
 	// --------------------------------------

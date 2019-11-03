@@ -40,16 +40,15 @@ public class Particle extends CircleEntity {
 
 	@Override
 	public boolean isAssigned() {
-		return mIsFree;
+		return !mIsFree;
 	}
-	
 
 	@Override
 	public int getPoolID() {
 		// TODO Auto-generated method stub
 		return 0;
 	}
-	
+
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
@@ -113,5 +112,4 @@ public class Particle extends CircleEntity {
 
 	}
 
-	
 }
