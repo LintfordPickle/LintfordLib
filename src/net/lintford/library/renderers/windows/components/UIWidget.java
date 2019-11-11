@@ -6,9 +6,10 @@ import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
+import net.lintford.library.core.input.IProcessMouseInput;
 import net.lintford.library.renderers.windows.UIWindow;
 
-public abstract class UIWidget extends Rectangle {
+public abstract class UIWidget extends Rectangle implements IProcessMouseInput {
 
 	// --------------------------------------
 	// Constants
@@ -24,6 +25,8 @@ public abstract class UIWidget extends Rectangle {
 
 	protected boolean mIsEnabled;
 	protected boolean mIsVisible;
+
+	protected float mMouseTimer;
 
 	// --------------------------------------
 	// Properties
@@ -90,10 +93,24 @@ public abstract class UIWidget extends Rectangle {
 	}
 
 	public void update(LintfordCore pCore) {
+		if (mMouseTimer >= 0) {
+			mMouseTimer -= pCore.time().elapseGameTimeMilli();
+
+		}
 
 	}
 
 	/** Everything for rendering should be provided by the {@link UIWindow} container. */
 	public abstract void draw(LintfordCore pCore, TextureBatch pTextureBatch, Texture pUITexture, FontUnit pTextFont, float pComponentZDepth);
+
+	@Override
+	public boolean isCoolDownElapsed() {
+		return mMouseTimer < 0;
+	}
+
+	@Override
+	public void resetCoolDownTimer() {
+		mMouseTimer = 200;
+	}
 
 }

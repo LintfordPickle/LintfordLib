@@ -1,7 +1,5 @@
 package net.lintford.library.controllers.camera;
 
-import org.lwjgl.glfw.GLFW;
-
 import net.lintford.library.controllers.BaseController;
 import net.lintford.library.controllers.core.ControllerManager;
 import net.lintford.library.core.LintfordCore;
@@ -50,20 +48,6 @@ public class CameraShakeController extends BaseController {
 	// ---------------------------------------------
 	// Core-Methods
 	// ---------------------------------------------
-
-	@Override
-	public boolean handleInput(LintfordCore pCore) {
-		if (mGameCamera == null)
-			return false;
-
-		if (pCore.input().keyDown(GLFW.GLFW_KEY_U)) {
-			mGameCamera.shake(100f, 20f);
-
-		}
-
-		return false;
-
-	}
 
 	@Override
 	public void initialize(LintfordCore pCore) {

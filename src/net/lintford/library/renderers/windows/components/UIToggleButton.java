@@ -92,10 +92,10 @@ public class UIToggleButton extends UIWidget {
 
 	@Override
 	public boolean handleInput(LintfordCore pCore) {
-		if (intersectsAA(pCore.HUD().getMouseCameraSpace())) {
+		if (intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().isMouseOverThisComponent(hashCode())) {
 			mHoveredOver = true;
 
-			if (pCore.input().tryAquireLeftClickOwnership(hashCode())) {
+			if (pCore.input().mouse().tryAcquireMouseLeftClick(hashCode())) {
 
 				// Callback to the listener and pass our ID
 				if (mCallback != null) {

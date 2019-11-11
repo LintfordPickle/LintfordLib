@@ -137,8 +137,9 @@ public class CameraZoomController extends BaseController {
 			return false;
 
 		// static zoom factor
-		if (mAllowZoom) {
-			mZoomAcceleration += pCore.input().mouseWheelYOffset() * 1f;// * mCamera.zoomFactor();
+		if (mAllowZoom && pCore.input().mouse().tryAcquireMouseOverThisComponent(hashCode())) {
+			mZoomAcceleration += pCore.input().mouse().mouseWheelYOffset() * mCamera.zoomFactor();
+
 		}
 
 		return super.handleInput(pCore);
@@ -153,17 +154,17 @@ public class CameraZoomController extends BaseController {
 		if (this.mCamera == null)
 			return;
 
-		final float DELTA_TIME = (float) pCore.time().elapseGameTimeSeconds();
+		final float lDeltaTime = (float) pCore.time().elapseGameTimeSeconds();
 		float lZoomFactor = mCamera.zoomFactor();
 
 		// apply zoom //
 		mZoomVelocity += mZoomAcceleration;
-		lZoomFactor += mZoomVelocity * DELTA_TIME;
+		lZoomFactor += mZoomVelocity * lDeltaTime;
 		mZoomVelocity *= 0.85f;
 		mZoomAcceleration = 0.0f;
 
 		setZoomConstraints(MIN_CAMERA_ZOOM, MAX_CAMERA_ZOOM);
-		
+
 		// Check bounds
 		if (lZoomFactor < mCameraMinZoom) {
 			lZoomFactor = mCameraMinZoom;

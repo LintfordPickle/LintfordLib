@@ -7,7 +7,7 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
-import net.lintford.library.core.input.InputState;
+import net.lintford.library.core.input.InputManager;
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.Screen;
@@ -170,8 +170,9 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 		}
 
 		if (mButtonsEnabled) {
-			if (pCore.input().isMouseTimedLeftClickAvailable()) {
-				if (mLeftButtonRectangle.intersectsAA(pCore.HUD().getMouseCameraSpace())) {
+
+			if (mLeftButtonRectangle.intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().isMouseOverThisComponent(hashCode())) {
+				if (pCore.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
 					mSelectedIndex--;
 					if (mSelectedIndex < 0) {
 						mSelectedIndex = mItems.size() - 1;
@@ -183,13 +184,12 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 						mClickListener.menuEntryChanged(this);
 					}
 
-					pCore.input().setLeftMouseClickHandled();
-
 					return true;
 				}
+			}
 
-				else if (mRightButtonRectangle.intersectsAA(pCore.HUD().getMouseCameraSpace())) {
-
+			else if (mRightButtonRectangle.intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().isMouseOverThisComponent(hashCode())) {
+				if (pCore.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
 					mSelectedIndex++;
 					if (mSelectedIndex >= mItems.size()) {
 						mSelectedIndex = 0;
@@ -201,8 +201,6 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 						mClickListener.menuEntryChanged(this);
 					}
 
-					pCore.input().setLeftMouseClickHandled();
-
 					return true;
 				}
 
@@ -210,8 +208,8 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 
 		}
 
-		if (intersectsAA(pCore.HUD().getMouseCameraSpace())) {
-			if (pCore.input().isMouseTimedLeftClickAvailable()) {
+		if (intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().isMouseOverThisComponent(hashCode())) {
+			if (pCore.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
 				if (mEnabled) {
 
 					mSelectedIndex++;
@@ -222,7 +220,6 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 					// TODO: Play a menu click sound
 
 					mParentLayout.parentScreen().setFocusOn(pCore, this, true);
-					// mParentScreen.setHoveringOn(this);
 
 					if (mClickListener != null) {
 						mClickListener.menuEntryChanged(this);
@@ -230,11 +227,8 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 
 					mIsChecked = !mIsChecked;
 
-					pCore.input().setLeftMouseClickHandled();
-
 				}
 			} else {
-				// mParentScreen.setHoveringOn(this);
 				hasFocus(true);
 			}
 
@@ -334,8 +328,7 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 			if (mEnableScaleTextToWidth && w * 0.35f < EntryWidth && EntryWidth > 0)
 				lAdjustedEntryScaleW = (w * 0.35f) / EntryWidth;
 
-			lFontBitmap.draw(lCurItem, x + (w / 4 * 3) - (EntryWidth * lAdjustedEntryScaleW) / 2, y + h / 2 - lFontHeight * 0.5f, pComponentDepth, lTextR, lTextG, lTextB, mParentLayout.parentScreen().a(), lAdjustedEntryScaleW,
-					-1);
+			lFontBitmap.draw(lCurItem, x + (w / 4 * 3) - (EntryWidth * lAdjustedEntryScaleW) / 2, y + h / 2 - lFontHeight * 0.5f, pComponentDepth, lTextR, lTextG, lTextB, mParentLayout.parentScreen().a(), lAdjustedEntryScaleW, -1);
 
 		}
 
@@ -354,7 +347,7 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 	// --------------------------------------
 
 	@Override
-	public void onClick(InputState pInputState) {
+	public void onClick(InputManager pInputState) {
 		super.onClick(pInputState);
 
 		mHasFocus = !mHasFocus;

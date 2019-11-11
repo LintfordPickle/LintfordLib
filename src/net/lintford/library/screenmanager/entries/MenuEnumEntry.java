@@ -9,7 +9,7 @@ import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
-import net.lintford.library.core.input.InputState;
+import net.lintford.library.core.input.InputManager;
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.Screen;
@@ -158,8 +158,9 @@ public class MenuEnumEntry extends MenuEntry {
 		}
 
 		if (mButtonsEnabled) {
-			if (pCore.input().isMouseTimedLeftClickAvailable()) {
-				if (mLeftButtonRectangle.intersectsAA(pCore.HUD().getMouseCameraSpace())) {
+
+			if (mLeftButtonRectangle.intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().isMouseOverThisComponent(hashCode())) {
+				if (pCore.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
 					mSelectedIndex--;
 					if (mSelectedIndex < 0) {
 						mSelectedIndex = mItems.size() - 1;
@@ -171,12 +172,10 @@ public class MenuEnumEntry extends MenuEntry {
 						mClickListener.menuEntryChanged(this);
 					}
 
-					pCore.input().setLeftMouseClickHandled();
-
 					return true;
 				}
 
-				else if (mRightButtonRectangle.intersectsAA(pCore.HUD().getMouseCameraSpace())) {
+				else if (mRightButtonRectangle.intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().isMouseOverThisComponent(hashCode())) {
 
 					mSelectedIndex++;
 					if (mSelectedIndex >= mItems.size()) {
@@ -189,8 +188,6 @@ public class MenuEnumEntry extends MenuEntry {
 						mClickListener.menuEntryChanged(this);
 					}
 
-					pCore.input().setLeftMouseClickHandled();
-
 					return true;
 				}
 
@@ -198,8 +195,8 @@ public class MenuEnumEntry extends MenuEntry {
 
 		}
 
-		if (intersectsAA(pCore.HUD().getMouseCameraSpace())) {
-			if (pCore.input().isMouseTimedLeftClickAvailable()) {
+		if (intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().isMouseOverThisComponent(hashCode())) {
+			if (pCore.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
 				if (mEnabled) {
 
 					mSelectedIndex++;
@@ -217,8 +214,6 @@ public class MenuEnumEntry extends MenuEntry {
 					}
 
 					mIsChecked = !mIsChecked;
-
-					pCore.input().setLeftMouseClickHandled();
 
 				}
 
@@ -324,7 +319,7 @@ public class MenuEnumEntry extends MenuEntry {
 	// --------------------------------------
 
 	@Override
-	public void onClick(InputState pInputState) {
+	public void onClick(InputManager pInputState) {
 		super.onClick(pInputState);
 
 		mHasFocus = !mHasFocus;

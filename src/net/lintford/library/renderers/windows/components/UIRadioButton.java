@@ -4,10 +4,11 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
+import net.lintford.library.core.input.IProcessMouseInput;
 import net.lintford.library.renderers.windows.UIWindow;
 import net.lintford.library.screenmanager.entries.EntryInteractions;
 
-public class UIRadioButton extends UIWidget {
+public class UIRadioButton extends UIWidget implements IProcessMouseInput {
 
 	// --------------------------------------
 	// Constants
@@ -26,8 +27,7 @@ public class UIRadioButton extends UIWidget {
 	private String mButtonLabel;
 	private boolean mIsSelected;
 	private float mValue;
-	private boolean mIsClicked; // click animation/delay
-	private float mClickTimer;
+	private float mMouseTimer;
 
 	// --------------------------------------
 	// Properties
@@ -95,21 +95,17 @@ public class UIRadioButton extends UIWidget {
 
 	@Override
 	public boolean handleInput(LintfordCore pCore) {
-		if (intersectsAA(pCore.HUD().getMouseCameraSpace()) && !mIsClicked && pCore.input().tryAquireLeftClickOwnership(hashCode())) {
-			mIsClicked = true;
-			final float MINIMUM_CLICK_TIMER = 200;
-			// Callback to the listener and pass our ID
-			if (mCallback != null && mClickTimer > MINIMUM_CLICK_TIMER) {
-				mClickTimer = 0;
-				mCallback.menuEntryOnClick(pCore.input(), mClickID);
+		if (intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().isMouseOverThisComponent(hashCode())) {
+			if (pCore.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
+				// Callback to the listener and pass our ID
+				if (mCallback != null) {
+					mCallback.menuEntryOnClick(pCore.input(), mClickID);
+
+				}
+
 				return true;
 
 			}
-
-		}
-
-		if (!pCore.input().mouseLeftClick()) {
-			mIsClicked = false;
 
 		}
 
@@ -120,7 +116,7 @@ public class UIRadioButton extends UIWidget {
 	public void update(LintfordCore pCore) {
 		super.update(pCore);
 
-		mClickTimer += pCore.time().elapseGameTimeMilli();
+		mMouseTimer += pCore.time().elapseGameTimeMilli();
 	}
 
 	@Override
@@ -141,7 +137,7 @@ public class UIRadioButton extends UIWidget {
 		final float lTextWidth = lFontRenderer.bitmap().getStringWidth(lButtonText);
 
 		lFontRenderer.begin(pCore.HUD());
-		lFontRenderer.draw(lButtonText, x + w / 2f - lTextWidth / 2f, y + h / 2f - lFontRenderer.bitmap().fontHeight() / 4f, pComponentZDepth+0.1f, 1f);
+		lFontRenderer.draw(lButtonText, x + w / 2f - lTextWidth / 2f, y + h / 2f - lFontRenderer.bitmap().fontHeight() / 4f, pComponentZDepth + 0.1f, 1f);
 		lFontRenderer.end();
 
 	}
@@ -156,6 +152,17 @@ public class UIRadioButton extends UIWidget {
 
 	public void removeClickListener(final EntryInteractions pCallbackObject) {
 		mCallback = null;
+	}
+
+	@Override
+	public boolean isCoolDownElapsed() {
+		return mMouseTimer < 0;
+	}
+
+	@Override
+	public void resetCoolDownTimer() {
+		mMouseTimer = 200;
+
 	}
 
 }

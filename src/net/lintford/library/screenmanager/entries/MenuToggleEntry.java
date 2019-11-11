@@ -5,7 +5,7 @@ import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
-import net.lintford.library.core.input.InputState;
+import net.lintford.library.core.input.InputManager;
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.Screen;
@@ -94,8 +94,8 @@ public class MenuToggleEntry extends MenuEntry {
 			mFocusLocked = false; // no lock if not focused
 		}
 
-		if (intersectsAA(pCore.HUD().getMouseCameraSpace())) {
-			if (pCore.input().isMouseTimedLeftClickAvailable()) {
+		if (intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().isMouseOverThisComponent(hashCode())) {
+			if (pCore.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
 				if (mEnabled) {
 
 					// TODO: Play menu click sound
@@ -109,9 +109,8 @@ public class MenuToggleEntry extends MenuEntry {
 
 					}
 
-					pCore.input().setLeftMouseClickHandled();
-
 				}
+
 			} else {
 				hasFocus(true);
 
@@ -191,7 +190,7 @@ public class MenuToggleEntry extends MenuEntry {
 	// --------------------------------------
 
 	@Override
-	public void onClick(InputState pInputState) {
+	public void onClick(InputManager pInputState) {
 		super.onClick(pInputState);
 
 		mHasFocus = !mHasFocus;

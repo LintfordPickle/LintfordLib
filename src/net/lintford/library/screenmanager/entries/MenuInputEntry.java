@@ -3,7 +3,7 @@ package net.lintford.library.screenmanager.entries;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.input.IBufferedInputCallback;
-import net.lintford.library.core.input.InputState;
+import net.lintford.library.core.input.InputManager;
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.Screen;
@@ -124,7 +124,7 @@ public class MenuInputEntry extends MenuEntry implements IBufferedInputCallback 
 		boolean lResult = super.handleInput(pCore);
 
 		if (mHasFocus) {
-			pCore.input().startCapture(this);
+			pCore.input().keyboard().startCapture(this);
 
 		} else {
 			// pCore.input().stopCapture();
@@ -212,7 +212,7 @@ public class MenuInputEntry extends MenuEntry implements IBufferedInputCallback 
 	// --------------------------------------
 
 	@Override
-	public void onClick(InputState pInputState) {
+	public void onClick(InputManager pInputState) {
 		super.onClick(pInputState);
 
 		// Store the current string in case the user cancels the input, in which case, we

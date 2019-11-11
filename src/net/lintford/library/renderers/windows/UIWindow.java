@@ -15,6 +15,7 @@ import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch9Patch;
+import net.lintford.library.core.input.IProcessMouseInput;
 import net.lintford.library.renderers.BaseRenderer;
 import net.lintford.library.renderers.RendererManager;
 import net.lintford.library.renderers.ZLayers;
@@ -23,7 +24,7 @@ import net.lintford.library.renderers.windows.components.ScrollBar;
 import net.lintford.library.renderers.windows.components.ScrollBarContentRectangle;
 import net.lintford.library.renderers.windows.components.UIWidget;
 
-public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowChangeListener {
+public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowChangeListener, IProcessMouseInput {
 
 	// --------------------------------------
 	// Constants
@@ -68,8 +69,12 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 	protected float dx, dy;
 	protected float mWindowAlpha;
 
+	protected float mMouseClickTimer;
+
 	protected ScrollBar mScrollBar;
 	protected float mYScrollVal;
+	protected float mZScrollAcceleration;
+	protected float mZScrollVelocity;
 
 	protected Rectangle mIconSrcRectangle;
 	protected String mIconName;
@@ -216,19 +221,20 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 
 		if (mIsWindowMoving) {
 			// check if user has stopped dragging the window (worst case we skip this frame)
-			if (!pCore.input().mouseLeftClick()) {
+			if (!pCore.input().mouse().isMouseLeftClick(hashCode())) {
 				mIsWindowMoving = false;
 				mMouseDownLastUpdate = false;
+
 				return false;
+
 			}
 
-			// FIXME: Check history
-			mWindowArea.x += (pCore.input().mouseWindowCoords().x - dx);
-			mWindowArea.y += (pCore.input().mouseWindowCoords().y - dy);
+			mWindowArea.x += (pCore.input().mouse().mouseWindowCoords().x - dx);
+			mWindowArea.y += (pCore.input().mouse().mouseWindowCoords().y - dy);
 
 			// update the delta
-			dx = pCore.input().mouseWindowCoords().x;
-			dy = pCore.input().mouseWindowCoords().y;
+			dx = pCore.input().mouse().mouseWindowCoords().x;
+			dy = pCore.input().mouse().mouseWindowCoords().y;
 
 			return true;
 
@@ -238,22 +244,22 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 		if (mIsWindowMoveable && !mIsWindowMoving && mWindowArea.intersectsAA(pCore.HUD().getMouseCameraSpace())) {
 
 			// Only acquire lock when we are ready to move ...
-			if (pCore.input().tryAquireLeftClickOwnership(hashCode())) {
+			if (pCore.input().mouse().tryAcquireMouseLeftClick(hashCode())) {
 				if (!mMouseDownLastUpdate) {
 					mMouseDownLastUpdate = true;
-					dx = pCore.input().mouseWindowCoords().x;
-					dy = pCore.input().mouseWindowCoords().y;
+					dx = pCore.input().mouse().mouseWindowCoords().x;
+					dy = pCore.input().mouse().mouseWindowCoords().y;
 
 				}
 
-				float nx = pCore.input().mouseWindowCoords().x;
-				float ny = pCore.input().mouseWindowCoords().y;
+				float nx = pCore.input().mouse().mouseWindowCoords().x;
+				float ny = pCore.input().mouse().mouseWindowCoords().y;
 
 				final int MINIMUM_TOLERENCE = 3;
 
 				if (Math.abs(nx - dx) > MINIMUM_TOLERENCE || Math.abs(ny - dy) > MINIMUM_TOLERENCE) {
 					// Now we can try to acquire the lock, and if we get it, start dragging the window
-					if (pCore.input().tryAquireLeftClickOwnership(hashCode())) {
+					if (pCore.input().mouse().tryAcquireMouseLeftClick(hashCode())) {
 						mIsWindowMoving = true;
 
 					}
@@ -264,15 +270,16 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 
 		}
 
-		if (!pCore.input().mouseLeftClick()) {
+		if (!pCore.input().mouse().isMouseLeftClick(hashCode())) {
 			mIsWindowMoving = false;
 			mMouseDownLastUpdate = false;
 		}
 
-		// If the mouse was clicked within the window, then we need to process the click anyway
-		if (mWindowArea.intersectsAA(lMouseScreenSpaceX, lMouseScreenSpaceY)) {
-			return pCore.input().tryAquireLeftClickOwnership(hashCode());
+		if (mWindowArea.intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().tryAcquireMouseOverThisComponent(hashCode())) {
+			mZScrollAcceleration += pCore.input().mouse().mouseWheelYOffset() * 250.0f;
 
+			// If the mouse was clicked within the window, then we need to process the click anyway
+			return pCore.input().mouse().tryAcquireMouseLeftClick(hashCode());
 		}
 
 		return false;
@@ -282,6 +289,11 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 	public void update(LintfordCore pCore) {
 		if (!isOpen())
 			return;
+
+		if (mMouseClickTimer >= 0) {
+			mMouseClickTimer -= pCore.time().elapseGameTimeMilli();
+
+		}
 
 		// Update the window components
 		final int lComponentCount = mComponents.size();
@@ -294,6 +306,21 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 			mScrollBar.update(pCore);
 
 		}
+
+		final var lDeltaTime = (float) pCore.time().elapseGameTimeSeconds();
+		var lScrollSpeedFactor = mYScrollVal;
+
+		mZScrollVelocity += mZScrollAcceleration;
+		lScrollSpeedFactor += mZScrollVelocity * lDeltaTime;
+		mZScrollVelocity *= 0.85f;
+		mZScrollAcceleration = 0.0f;
+
+		// Constrain
+		mYScrollVal = lScrollSpeedFactor;
+		if (mYScrollVal > 0)
+			mYScrollVal = 0;
+		if (mYScrollVal < -(mFullContentRectangle.h - mContentDisplayArea.h))
+			mYScrollVal = -(mFullContentRectangle.h - mContentDisplayArea.h);
 
 	}
 
@@ -442,6 +469,22 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 	@Override
 	public void onWindowClosed(UIWindow pUIWindow) {
 		// TODO Auto-generated method stub
+
+	}
+
+	// --------------------------------------
+	// IProcessMouseInput Inherited Methods
+	// --------------------------------------
+
+	@Override
+	public boolean isCoolDownElapsed() {
+		return mMouseClickTimer < 0;
+
+	}
+
+	@Override
+	public void resetCoolDownTimer() {
+		mMouseClickTimer = 200;
 
 	}
 

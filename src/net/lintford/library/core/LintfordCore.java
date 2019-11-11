@@ -11,11 +11,11 @@ import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 import static org.lwjgl.opengl.GL11.glClearColor;
 
-import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 
 import net.lintford.library.ConstantsTable;
 import net.lintford.library.GameInfo;
+import net.lintford.library.controllers.DebugTreeController;
 import net.lintford.library.controllers.camera.CameraController;
 import net.lintford.library.controllers.core.ControllerManager;
 import net.lintford.library.controllers.core.ResourceController;
@@ -27,15 +27,15 @@ import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.debug.Debug.DebugLogLevel;
 import net.lintford.library.core.debug.DebugMemory;
 import net.lintford.library.core.entity.BaseEntity;
-import net.lintford.library.core.input.InputState;
+import net.lintford.library.core.input.InputManager;
 import net.lintford.library.core.rendering.RenderState;
 import net.lintford.library.core.time.TimeSpan;
 import net.lintford.library.options.DisplayManager;
 import net.lintford.library.options.MasterConfig;
 
 /**
- * The LintfordCore tracks the core state of an LWJGL application including a {@link DisplayManager}, {@link ResourceManager}, {@link GameTime}, {@link Camera}, {@link HUD}, {@link InputState} and {@link RenderState}. It also
- * defines the behaviour for creating an OpenGL window.
+ * The LintfordCore tracks the core state of an LWJGL application including a {@link DisplayManager}, {@link ResourceManager}, {@link GameTime}, {@link Camera}, {@link HUD},
+ * {@link InputManager} and {@link RenderState}. It also defines the behaviour for creating an OpenGL window.
  */
 public abstract class LintfordCore {
 
@@ -128,7 +128,7 @@ public abstract class LintfordCore {
 	protected GameInfo mGameInfo;
 	protected MasterConfig mMasterConfig;
 
-	protected InputState mInputState;
+	protected InputManager mInputState;
 	protected GameTime mGameTime;
 
 	protected ControllerManager mControllerManager;
@@ -156,17 +156,18 @@ public abstract class LintfordCore {
 	}
 
 	/**
-	 * Returns the instance of {@link GameTime} which was created when the LWJGL window was created. GameTime tracks the application time. null is returned if the LWJGL window has not yet been created.
+	 * Returns the instance of {@link GameTime} which was created when the LWJGL window was created. GameTime tracks the application time. null is returned if the LWJGL window has not
+	 * yet been created.
 	 */
 	public GameTime time() {
 		return mGameTime;
 	}
 
 	/**
-	 * Returns the instance of {@link InputState} which was created when the LWJGL window was created. InputState is updated per-frame and tracks user input from the mouse and keyboard. null is returned if the LWJGL window has not
-	 * yet been created.
+	 * Returns the instance of {@link InputManager} which was created when the LWJGL window was created. InputState is updated per-frame and tracks user input from the mouse and
+	 * keyboard. null is returned if the LWJGL window has not yet been created.
 	 */
-	public InputState input() {
+	public InputManager input() {
 		return mInputState;
 	}
 
@@ -279,11 +280,15 @@ public abstract class LintfordCore {
 		mMasterConfig = new MasterConfig(mGameInfo);
 
 		mGameTime = new GameTime();
-		mInputState = new InputState();
+		mInputState = new InputManager();
 
 		long lWindowID = initializeGLFWWindow();
 
 		mControllerManager = new ControllerManager(this);
+		if (Debug.debugManager().debugManagerEnabled()) {
+			mControllerManager.addController(new DebugTreeController(mControllerManager, CORE_ENTITY_GROUP_ID), CORE_ENTITY_GROUP_ID);
+
+		}
 
 		mResourceManager = new ResourceManager(mMasterConfig);
 		mResourceController = new ResourceController(mControllerManager, mResourceManager, CORE_ENTITY_GROUP_ID);
@@ -302,14 +307,14 @@ public abstract class LintfordCore {
 
 		// If we get to this point before enough time has elapsed, then continue showing the timer some ...
 		long lDiff = (long) (mShowLogoTime - (System.currentTimeMillis() - mShowLogoTimer));
-		if(lDiff > 0) {
+		if (lDiff > 0) {
 			try {
 				Thread.sleep(lDiff);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
-				
+
 			}
-			
+
 		}
 
 		onRunGameLoop();
@@ -477,11 +482,6 @@ public abstract class LintfordCore {
 	/**
 	 */
 	protected void onHandleInput() {
-		if (mInputState.keyDownTimed(GLFW.GLFW_KEY_F12)) {
-			mResourceManager.mTextureManager.dumpTextureInformation();
-
-		}
-
 		mInputState.update(this);
 		Debug.debugManager().handleInput(this);
 		mHUD.handleInput(this);
@@ -496,10 +496,10 @@ public abstract class LintfordCore {
 		mMasterConfig.update(this);
 		mResourceManager.update(this);
 		mHUD.update(this);
-		
+
 		if (mGameCamera != null)
 			mGameCamera.update(this);
-		
+
 		mControllerManager.update(this, CORE_ENTITY_GROUP_ID);
 		Debug.debugManager().update(this);
 
@@ -529,11 +529,11 @@ public abstract class LintfordCore {
 		long lWindowID = mMasterConfig.onCreateWindow();
 
 		// set key callbacks
-		glfwSetKeyCallback(lWindowID, mInputState.mKeyCallback);
-		glfwSetCharModsCallback(lWindowID, mInputState.mTextCallback);
-		glfwSetMouseButtonCallback(lWindowID, mInputState.mMouseButtonCallback);
-		glfwSetCursorPosCallback(lWindowID, mInputState.mMousePositionCallback);
-		glfwSetScrollCallback(lWindowID, mInputState.mMouseScrollCallback);
+		glfwSetKeyCallback(lWindowID, mInputState.keyboard().mKeyCallback);
+		glfwSetCharModsCallback(lWindowID, mInputState.keyboard().mTextCallback);
+		glfwSetMouseButtonCallback(lWindowID, mInputState.mouse().mMouseButtonCallback);
+		glfwSetCursorPosCallback(lWindowID, mInputState.mouse().mMousePositionCallback);
+		glfwSetScrollCallback(lWindowID, mInputState.mouse().mMouseScrollCallback);
 
 		mInputState.resetFlags();
 

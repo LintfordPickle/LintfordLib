@@ -9,14 +9,15 @@ public abstract class BaseController {
 	// Variables
 	// --------------------------------------
 
+	protected final int mControllerId;
 	protected ControllerManager mControllerManager;
 	protected String mControllerName;
 	protected boolean mIsActive;
 	protected boolean mUniqueController;
 
 	/**
-	 * A group ID is assigned to all {@link BaseController} instances. It allows the developer to programmatically unload batches of particular parts of the game when required (i.e. unload the game controllers when returning to
-	 * the main menu)
+	 * A group ID is assigned to all {@link BaseController} instances. It allows the developer to programmatically unload batches of particular parts of the game when required (i.e.
+	 * unload the game controllers when returning to the main menu)
 	 */
 	protected int mEntityGroupID;
 
@@ -25,8 +26,8 @@ public abstract class BaseController {
 	// --------------------------------------
 
 	/**
-	 * A group ID is assigned to all {@link BaseController} instances. It allows the developer to programmatically unload batches of particular parts of the game when required (i.e. unload the game controllers when returning to
-	 * the main menu)
+	 * A group ID is assigned to all {@link BaseController} instances. It allows the developer to programmatically unload batches of particular parts of the game when required (i.e.
+	 * unload the game controllers when returning to the main menu)
 	 */
 	public int entityGroupID() {
 		return mEntityGroupID;
@@ -56,29 +57,40 @@ public abstract class BaseController {
 		return mControllerManager;
 	}
 
+	/** Returns the unique Id assigned to this BaseController instance. */
+	public int controllerId() {
+		return mControllerId;
+	}
+
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
 	public BaseController(final ControllerManager pControllerManager, final String pControllerName, final int pEntityGroupID) {
-		if (pControllerManager != null) {
-			if (pControllerName.length() == 0)
-				throw new RuntimeException("Controller names cannot be null or empty when registering with a ControllerManager");
-
-			mControllerManager = pControllerManager;
-			mControllerName = pControllerName;
-
-			if (mUniqueController && mControllerManager.controllerExists(pControllerName, pEntityGroupID)) {
-				throw new RuntimeException("Cannot register two controllers with the same name if they are specified to be unique (" + pControllerName + ")");
-			}
-
-			mControllerManager.addController(this, pEntityGroupID);
-
-			mEntityGroupID = pEntityGroupID;
-
-			mIsActive = true;
+		if (pControllerManager == null) {
+			throw new RuntimeException("ControllerManager cannot be null!");
 
 		}
+
+		mControllerManager = pControllerManager;
+		mControllerId = mControllerManager.getNewControllerId();
+		mControllerName = pControllerName;
+
+		if (pControllerName.length() == 0) {
+			throw new RuntimeException("Controller names cannot be null or empty when registering with a ControllerManager");
+
+		}
+
+		if (mUniqueController && mControllerManager.controllerExists(pControllerName, pEntityGroupID)) {
+			throw new RuntimeException("Cannot register two controllers with the same name if they are specified to be unique (" + pControllerName + ")");
+
+		}
+
+		mControllerManager.addController(this, pEntityGroupID);
+
+		mEntityGroupID = pEntityGroupID;
+
+		mIsActive = true;
 
 	}
 

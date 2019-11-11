@@ -17,7 +17,7 @@ import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.debug.stats.DebugStats;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.vertices.VertexDataStructurePT;
-import net.lintford.library.core.input.InputState;
+import net.lintford.library.core.input.InputManager;
 import net.lintford.library.core.maths.Matrix4f;
 import net.lintford.library.core.maths.Vector2f;
 
@@ -115,7 +115,7 @@ public class NormalMappedTextureBatch {
 		clear();
 	}
 
-	public void handleInput(InputState pInputState) {
+	public void handleInput(InputManager pInputState) {
 
 	}
 

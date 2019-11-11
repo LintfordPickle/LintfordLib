@@ -11,7 +11,7 @@ import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
-import net.lintford.library.core.input.InputState;
+import net.lintford.library.core.input.InputManager;
 import net.lintford.library.core.maths.Vector2f;
 import net.lintford.library.renderers.windows.components.IScrollBarArea;
 import net.lintford.library.renderers.windows.components.ScrollBar;
@@ -81,7 +81,7 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 
 	@Override
 	public float height() {
-		return h;//mContentArea.h;
+		return h;// mContentArea.h;
 
 	}
 
@@ -137,7 +137,7 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 
 		// Check if the mouse is clicked outside of this list box
 		// In this case, we shouldn't un-select the current selected entry, otherwise we'd never be able to click a button outside of this list box
-		if (!mScrollBar.clickAction() && pCore.input().mouseLeftClick() && (lMouseHUDCoords.x < x || lMouseHUDCoords.x > x + w || lMouseHUDCoords.y < y || lMouseHUDCoords.y > y + h)) {
+		if (!mScrollBar.clickAction() && pCore.input().mouse().isMouseLeftClick(hashCode()) && (lMouseHUDCoords.x < x || lMouseHUDCoords.x > x + w || lMouseHUDCoords.y < y || lMouseHUDCoords.y > y + h)) {
 			return false;
 		}
 
@@ -146,25 +146,28 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 			return true;
 		}
 
+		// Check each of the items if they havae captured mouse input
 		for (int i = 0; i < mItems.size(); i++) {
 			boolean lResult = mItems.get(i).handleInput(pCore);
-			// Was this item clicked on?
+			// FIXME: Double check - if an item was click
 			if (lResult) {
 				return true;
 			}
 
-			if (pCore.input().isMouseTimedLeftClickAvailable()) {
+			if (pCore.input().mouse().isMouseLeftButtonDown()) {
 				mSelectedItem = -1;
 			}
 		}
 
-		if (!pCore.input().mouseLeftClick()) {
+		/// Scrolling ///
+		
+		if (!pCore.input().mouse().isMouseLeftButtonDown()) {
 			mClickActive = false;
 
 			return false;
 		}
 
-		if (!pCore.input().tryAquireLeftClickOwnership(hashCode())) {
+		if (!pCore.input().mouse().tryAcquireMouseLeftClick(hashCode())) {
 			mClickActive = false;
 			return false;
 
@@ -179,7 +182,7 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 		// Allow us to scroll the listbox by clicking and dragging within its bounds
 		final float lMaxDiff = mContentArea.h - h;
 
-		// Scrolling
+		
 		if (mClickActive) {
 			if (lMaxDiff > 0) {
 				float lDiffY = lMouseHUDCoords.y - mLastMouseYPos;
@@ -321,7 +324,7 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 	}
 
 	@Override
-	public void onClick(InputState pInputState) {
+	public void onClick(InputManager pInputState) {
 
 	}
 

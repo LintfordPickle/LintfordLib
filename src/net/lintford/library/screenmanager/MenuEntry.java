@@ -8,15 +8,14 @@ import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
-import net.lintford.library.core.input.InputState;
-import net.lintford.library.core.input.InputState.INPUT_TYPES;
-import net.lintford.library.core.maths.Vector2f;
+import net.lintford.library.core.input.IProcessMouseInput;
+import net.lintford.library.core.input.InputManager;
 import net.lintford.library.screenmanager.ScreenManagerConstants.ALIGNMENT;
 import net.lintford.library.screenmanager.ScreenManagerConstants.FILLTYPE;
 import net.lintford.library.screenmanager.entries.EntryInteractions;
 import net.lintford.library.screenmanager.layouts.BaseLayout;
 
-public class MenuEntry extends Rectangle {
+public class MenuEntry extends Rectangle implements IProcessMouseInput {
 
 	// --------------------------------------
 	// Constants
@@ -63,7 +62,7 @@ public class MenuEntry extends Rectangle {
 	protected Rectangle mInfoButton;
 	protected boolean mHasFocus;
 	protected boolean mFocusLocked; // used only for buffered input
-	protected boolean mCanHaveFocus;
+	protected boolean mCanHaveFocus; // some menuEntry sub-types aren't focusable (like the labels)
 	protected float mClickTimer;
 
 	private boolean mIsinitialized, mIsLoaded;
@@ -359,32 +358,30 @@ public class MenuEntry extends Rectangle {
 			return false;
 
 		final float deltaTime = (float) pCore.time().elapseGameTimeMilli() / 1000f;
-
-		if (intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().lastInputActive() == INPUT_TYPES.Mouse) {
-			// We should make sure no other component is currently using this leftClick.
-
+		if (intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().isMouseOverThisComponent(hashCode())) {
 			// Check if tool tips are enabled.
 			if (mToolTipEnabled) {
 				mToolTipTimer += deltaTime * 1000f;
+
 			}
 
 			if (canHoverOver()) {
 				hasFocus(true);
 
-				if (pCore.input().leftClickOwner() == -1) {
+				if (pCore.input().mouse().isOwnerNotAssigned())
 					mParentLayout.parentScreen().setHoveringOn(this);
 
-				}
 			}
 
-			if (canHaveFocus() && pCore.input().mouseLeftClick()) {
-				pCore.input().tryAquireLeftClickOwnership(hashCode());
-				pCore.input().setLeftMouseClickHandled();
+			if (canHaveFocus() && pCore.input().mouse().tryAcquireMouseLeftClick(hashCode())) {
 				mParentLayout.parentScreen().setFocusOn(pCore, this, false);
 
 				onClick(pCore.input());
 
 				return true;
+
+			} else {
+				System.out.println("MenuEntry couldn't process click");
 			}
 
 		} else {
@@ -408,32 +405,33 @@ public class MenuEntry extends Rectangle {
 		if (!mActive)
 			return;
 
-		final float deltaTime = (float) pCore.time().elapseGameTimeMilli();
+		final var lDeltaTime = (float) pCore.time().elapseGameTimeMilli();
+
+		if (mClickTimer >= 0) {
+			mClickTimer -= lDeltaTime;
+
+		}
 
 		if (mAnimationTimer > 0) {
-			mAnimationTimer -= deltaTime;
+			mAnimationTimer -= lDeltaTime;
 
 		}
-
-		mClickTimer += deltaTime;
 
 		if (mScaleonHover && mHasFocus && canHaveFocus()) {
-			mScaleCounter += deltaTime;
-			mScale = 0.75f + (float) (Math.cos(mScaleCounter) * 0.05f);
-		}
-
-		else if (mScaleonHover && mHoveredOver) {
-			mScaleCounter += deltaTime;
+			mScaleCounter += lDeltaTime;
 			mScale = 0.75f + (float) (Math.cos(mScaleCounter) * 0.05f);
 
-		}
+		} else if (mScaleonHover && mHoveredOver) {
+			mScaleCounter += lDeltaTime;
+			mScale = 0.75f + (float) (Math.cos(mScaleCounter) * 0.05f);
 
-		else {
+		} else {
 			mScale = 0.75f;
+
 		}
 
 		if (mToolTipEnabled && mToolTipTimer >= 1000 || mInfoButton.intersectsAA(pCore.HUD().getMouseCameraSpace())) {
-			Vector2f lToolTipPosition = pCore.HUD().getMouseCameraSpace();
+			final var lToolTipPosition = pCore.HUD().getMouseCameraSpace();
 			mScreenManager.toolTip().setToolTipActive(mToolTip, lToolTipPosition.x, lToolTipPosition.y, mZ);
 
 		}
@@ -484,11 +482,11 @@ public class MenuEntry extends Rectangle {
 
 			FontUnit lMenuFont = mParentLayout.parentScreen().font();
 
-			if(lMenuFont != null) {
+			if (lMenuFont != null) {
 				lMenuFont.begin(pCore.HUD());
 				lMenuFont.draw(mText, centerX() - lMenuFont.bitmap().getStringWidth(mText, luiTextScale) * 0.5f, centerY() - lMenuFont.bitmap().fontHeight() * luiTextScale / 2 - 2f, mZ, 0.97f * lColMod, .92f * lColMod, .92f * lColMod, lA, luiTextScale);
 				lMenuFont.end();
-				
+
 			}
 
 		}
@@ -529,11 +527,8 @@ public class MenuEntry extends Rectangle {
 		mClickListener = pListener;
 	}
 
-	public void onClick(InputState pInputState) {
+	public void onClick(InputManager pInputState) {
 		if (mClickListener == null || mMenuEntryID == -1)
-			return;
-
-		if (mClickTimer < FOCUS_TIMER)
 			return;
 
 		mAnimationTimer = MenuScreen.ANIMATION_TIMER_LENGTH;
@@ -544,6 +539,17 @@ public class MenuEntry extends Rectangle {
 	}
 
 	public void onViewportChange(float pWidth, float pHeight) {
+
+	}
+
+	@Override
+	public boolean isCoolDownElapsed() {
+		return mClickTimer < 0;
+	}
+
+	@Override
+	public void resetCoolDownTimer() {
+		mClickTimer = 200;
 
 	}
 

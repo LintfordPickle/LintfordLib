@@ -12,7 +12,7 @@ import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
-import net.lintford.library.core.input.InputState;
+import net.lintford.library.core.input.InputManager;
 import net.lintford.library.renderers.ZLayers;
 import net.lintford.library.renderers.windows.components.IScrollBarArea;
 import net.lintford.library.renderers.windows.components.ScrollBar;
@@ -51,19 +51,15 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 	// --------------------------------------
 
 	private String mLabel;
-
 	private int mSelectedIndex;
 	private List<MenuEnumEntryItem> mItems;
 	private TextureBatch mTextureBatch;
 	private Texture mUITexture;
-
 	private transient boolean mOpen;
-
 	private transient ScrollBarContentRectangle mContentRectangle;
 	private transient ScrollBarContentRectangle mWindowRectangle;
 	private transient ScrollBar mScrollBar;
 	private transient float mScrollYPosition;
-
 	private Rectangle mTopEntry;
 	private boolean mAllowDuplicates;
 
@@ -195,22 +191,19 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 			// Check if tool tips are enabled.
 			return true;
 
-		} else if (intersectsAA(pCore.HUD().getMouseCameraSpace())) {
+		} else if (intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().isMouseOverThisComponent(hashCode())) {
 			// First check to see if the player clicked the info button
 			if (mShowInfoButton && mInfoButton.intersectsAA(pCore.HUD().getMouseCameraSpace())) {
 				mToolTipEnabled = true;
 				mToolTipTimer = 1000;
 
 			} else {
-
-				if (pCore.input().isMouseTimedLeftClickAvailable()) {
+				if (pCore.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
 
 					// Toggle open/close
 					mOpen = !mOpen;
 
 					mParentLayout.parentScreen().setFocusOn(pCore, this, true);
-
-					pCore.input().setLeftMouseClickHandled();
 
 				}
 
@@ -226,9 +219,8 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 			return true;
 
 			// Check if the content window was clicked
-		} else if (mWindowRectangle.intersectsAA(pCore.HUD().getMouseCameraSpace())) {
-
-			if (pCore.input().isMouseTimedLeftClickAvailable()) {
+		} else if (mWindowRectangle.intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().isMouseOverThisComponent(hashCode())) {
+			if (pCore.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
 
 				if (mOpen) {
 					final float luiTextScale = mScreenManager.UIHUDController().uiTextScaleFactor();
@@ -258,8 +250,6 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 				mOpen = false;
 
 				mParentLayout.parentScreen().setFocusOn(pCore, this, true);
-
-				pCore.input().setLeftMouseClickHandled();
 
 			}
 
@@ -420,7 +410,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 	}
 
 	@Override
-	public void onClick(InputState pInputState) {
+	public void onClick(InputManager pInputState) {
 		super.onClick(pInputState);
 
 	}

@@ -76,10 +76,10 @@ public class UITextButton extends UIWidget {
 
 	@Override
 	public boolean handleInput(LintfordCore pCore) {
-		if (!mIsClicked && intersectsAA(pCore.HUD().getMouseCameraSpace())) {
+		if (!mIsClicked && intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().isMouseOverThisComponent(hashCode())) {
 			mHoveredOver = true;
 
-			if (pCore.input().tryAquireLeftClickOwnership(hashCode())) {
+			if (pCore.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
 				mIsClicked = true;
 				final float MINIMUM_CLICK_TIMER = 200;
 				// Callback to the listener and pass our ID
@@ -95,7 +95,7 @@ public class UITextButton extends UIWidget {
 			mHoveredOver = false;
 		}
 
-		if (!pCore.input().mouseLeftClick()) {
+		if (!pCore.input().mouse().isMouseLeftButtonDown()) {
 			mIsClicked = false;
 
 		}

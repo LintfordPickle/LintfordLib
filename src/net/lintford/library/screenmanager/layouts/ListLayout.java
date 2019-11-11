@@ -1,7 +1,7 @@
 package net.lintford.library.screenmanager.layouts;
 
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.input.InputState.INPUT_TYPES;
+import net.lintford.library.core.input.IProcessMouseInput;
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.ScreenManagerConstants.FILLTYPE;
@@ -11,9 +11,19 @@ import net.lintford.library.screenmanager.ScreenManagerConstants.FILLTYPE;
  * 
  * @author Lintford Pickle
  */
-public class ListLayout extends BaseLayout {
+public class ListLayout extends BaseLayout implements IProcessMouseInput {
+
+	// --------------------------------------
+	// COnstants
+	// --------------------------------------
 
 	private static final long serialVersionUID = -7568188688210642680L;
+
+	// --------------------------------------
+	// Variables
+	// --------------------------------------
+
+	private float mClickTimer;
 
 	// --------------------------------------
 	// Constructor
@@ -44,12 +54,9 @@ public class ListLayout extends BaseLayout {
 
 	@Override
 	public boolean handleInput(LintfordCore pCore) {
+		if (intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().isMouseOverThisComponent(hashCode())) {
+			if (super.handleInput(pCore) || pCore.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
 
-		if (intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().lastInputActive() == INPUT_TYPES.Mouse) {
-
-			if (super.handleInput(pCore) || pCore.input().isMouseTimedLeftClickAvailable()) {
-
-				// pCore.input().setLeftMouseClickHandled();
 				return true;
 			}
 
@@ -67,6 +74,17 @@ public class ListLayout extends BaseLayout {
 		}
 
 		return false;
+
+	}
+
+	@Override
+	public void update(LintfordCore pCore) {
+		super.update(pCore);
+
+		if (mClickTimer >= 0) {
+			mClickTimer -= pCore.time().elapseGameTimeMilli();
+
+		}
 
 	}
 
@@ -138,6 +156,21 @@ public class ListLayout extends BaseLayout {
 			lYPos += lEntry.marginBottom();
 
 		}
+
+	}
+
+	// --------------------------------------
+	// IProcessMouseInput-Methods
+	// --------------------------------------
+
+	@Override
+	public boolean isCoolDownElapsed() {
+		return mClickTimer < 0;
+	}
+
+	@Override
+	public void resetCoolDownTimer() {
+		mClickTimer = 200;
 
 	}
 

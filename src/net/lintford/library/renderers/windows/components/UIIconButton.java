@@ -107,7 +107,7 @@ public class UIIconButton extends UIWidget {
 			mHoveredOver = true;
 
 			if (mClickTimer > CLICK_TIMER) {
-				if (pCore.input().tryAquireLeftClickOwnership(hashCode())) {
+				if (pCore.input().mouse().tryAcquireMouseLeftClick(hashCode())) {
 					// Callback to the listener and pass our ID
 					if (mCallback != null) {
 						mCallback.menuEntryOnClick(pCore.input(), mClickID);

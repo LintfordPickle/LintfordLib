@@ -4,8 +4,9 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
+import net.lintford.library.core.input.IProcessMouseInput;
 
-public class ScrollBar extends Rectangle {
+public class ScrollBar extends Rectangle implements IProcessMouseInput {
 
 	// --------------------------------------
 	// Constants
@@ -27,6 +28,8 @@ public class ScrollBar extends Rectangle {
 	private transient float mMarkerMoveMod;
 
 	private float mWindowRightOffset;
+
+	private float mMouseTimer;
 
 	// --------------------------------------
 	// Properties
@@ -71,10 +74,17 @@ public class ScrollBar extends Rectangle {
 		final float lMouseScreenSpaceX = pCore.HUD().getMouseWorldSpaceX();
 		final float lMouseScreenSpaceY = pCore.HUD().getMouseWorldSpaceY();
 
-		final float lMaxDiff = mScrollBarArea.fullContentArea().h - mScrollBarArea.contentDisplayArea().h;
+		final var lMouseInWindowCoords = intersectsAA(pCore.input().mouse().mouseWindowCoords());
+		final var lCanAcquireLeftMouse = pCore.input().mouse().isMouseLeftButtonDown();
+
+		// If left mouse isn't pressed and the mouse isn't within the window, then the scrollbar cannot be active
+		if (!lMouseInWindowCoords && !lCanAcquireLeftMouse) {
+			mClickActive = false;
+			return false;
+		}
 
 		// First check that the left mouse button is down
-		if (!pCore.input().mouseLeftClick()) {
+		if (lMouseInWindowCoords && lCanAcquireLeftMouse) {
 			mClickActive = false; // Cannot be active if mouse not clicked
 			return false;
 
@@ -86,7 +96,7 @@ public class ScrollBar extends Rectangle {
 		}
 
 		// and check the mouse click isn't being handled elsewhere
-		if (!pCore.input().tryAquireLeftClickOwnership(hashCode()))
+		if (!pCore.input().mouse().tryAcquireMouseOwnership(hashCode()))
 			return false;
 
 		if (!mClickActive) {
@@ -95,30 +105,34 @@ public class ScrollBar extends Rectangle {
 		}
 
 		// Scrolling
-		if (mClickActive) {
-			if (lMaxDiff > 0) {
-				float lDiffY = lMouseScreenSpaceY - mLastMouseYPos;
-				mScrollBarArea.RelCurrentYPos(-lDiffY * mMarkerMoveMod);
-
-				if (mScrollBarArea.currentYPos() < -lMaxDiff)
-					mScrollBarArea.AbsCurrentYPos(-lMaxDiff);
-				if (mScrollBarArea.currentYPos() > 0)
-					mScrollBarArea.AbsCurrentYPos(0);
-
-				mLastMouseYPos = lMouseScreenSpaceY;
-
-				return true;
-			}
-
-		} else {
-			mClickActive = false;
-
-		}
+		constrainScrollBarPosition(lMouseScreenSpaceY);
 
 		return true;
 	}
 
+	private void constrainScrollBarPosition(float pNewPositionSS) {
+		final float lMouseScreenSpaceY = pNewPositionSS;
+
+		final float lMaxDiff = mScrollBarArea.fullContentArea().h - mScrollBarArea.contentDisplayArea().h;
+
+		if (lMaxDiff > 0) {
+			float lDiffY = lMouseScreenSpaceY - mLastMouseYPos;
+			mScrollBarArea.RelCurrentYPos(-lDiffY * mMarkerMoveMod);
+
+			if (mScrollBarArea.currentYPos() < -lMaxDiff)
+				mScrollBarArea.AbsCurrentYPos(-lMaxDiff);
+			if (mScrollBarArea.currentYPos() > 0)
+				mScrollBarArea.AbsCurrentYPos(0);
+
+			mLastMouseYPos = lMouseScreenSpaceY;
+
+		}
+
+	}
+
 	public void update(LintfordCore pCore) {
+		mMouseTimer -= pCore.time().elapseGameTimeMilli();
+
 		float lViewportHeight = mScrollBarArea.contentDisplayArea().h;
 		float lContentHeight = mScrollBarArea.fullContentArea().h;
 
@@ -183,6 +197,17 @@ public class ScrollBar extends Rectangle {
 
 	public float getScrollYBottomPosition() {
 		return -mScrollBarArea.fullContentArea().h + h;
+	}
+
+	@Override
+	public boolean isCoolDownElapsed() {
+		return mMouseTimer < 0;
+	}
+
+	@Override
+	public void resetCoolDownTimer() {
+		mMouseTimer = 200;
+
 	}
 
 }

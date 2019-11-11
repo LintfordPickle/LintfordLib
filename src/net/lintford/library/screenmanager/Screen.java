@@ -5,13 +5,14 @@ import net.lintford.library.core.LintfordCore.GameTime;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.GLDebug;
 import net.lintford.library.core.entity.BaseEntity;
+import net.lintford.library.core.input.IProcessMouseInput;
 import net.lintford.library.core.time.TimeSpan;
 import net.lintford.library.renderers.RendererManager;
 import net.lintford.library.screenmanager.transitions.BaseTransition;
 import net.lintford.library.screenmanager.transitions.TransitionFadeIn;
 import net.lintford.library.screenmanager.transitions.TransitionFadeOut;
 
-public abstract class Screen {
+public abstract class Screen implements IProcessMouseInput {
 
 	// --------------------------------------
 	// Enums
@@ -45,6 +46,7 @@ public abstract class Screen {
 	protected boolean mShowMouseCursor;
 	protected float mR, mG, mB, mA;
 	protected boolean mShowInBackground;
+	protected float mMouseClickTimer;
 
 	// --------------------------------------
 	// Properties
@@ -146,7 +148,7 @@ public abstract class Screen {
 
 		mTransitionOn = new TransitionFadeIn(new TimeSpan(250));
 		mTransitionOff = new TransitionFadeOut(new TimeSpan(250));
-		
+
 		mRendererManager = new RendererManager(mScreenManager.core(), getClass().getSimpleName(), mEntityGroupID);
 
 		// By default, screens are not singleton
@@ -300,7 +302,7 @@ public abstract class Screen {
 
 	public void onGainedFocus() {
 		// Don't allow keyboard capture across screens
-		mScreenManager.core().input().stopCapture();
+		mScreenManager.core().input().keyboard().stopCapture();
 
 	}
 
@@ -310,6 +312,18 @@ public abstract class Screen {
 
 	/** Called when the size of the viewport is changed. */
 	public void onViewportChange(float pWidth, float pHeight) {
+
+	}
+
+	@Override
+	public boolean isCoolDownElapsed() {
+		return mMouseClickTimer < 0;
+
+	}
+
+	@Override
+	public void resetCoolDownTimer() {
+		mMouseClickTimer = 200;
 
 	}
 

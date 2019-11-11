@@ -106,25 +106,25 @@ public class CameraFollowController extends BaseController {
 			final float speed = CAMERA_MAN_MOVE_SPEED;
 
 			// Just listener for clicks - couldn't be easier !!?!
-			if (pCore.input().keyDown(GLFW.GLFW_KEY_A)) {
+			if (pCore.input().keyboard().isKeyDown(GLFW.GLFW_KEY_A)) {
 				mVelocity.x -= speed;
 				mIsTrackingPlayer = false;
 
 			}
 
-			if (pCore.input().keyDown(GLFW.GLFW_KEY_D)) {
+			if (pCore.input().keyboard().isKeyDown(GLFW.GLFW_KEY_D)) {
 				mVelocity.x += speed;
 				mIsTrackingPlayer = false;
 
 			}
 
-			if (pCore.input().keyDown(GLFW.GLFW_KEY_S)) {
+			if (pCore.input().keyboard().isKeyDown(GLFW.GLFW_KEY_S)) {
 				mVelocity.y += speed;
 				mIsTrackingPlayer = false;
 
 			}
 
-			if (pCore.input().keyDown(GLFW.GLFW_KEY_W)) {
+			if (pCore.input().keyboard().isKeyDown(GLFW.GLFW_KEY_W)) {
 				mVelocity.y -= speed;
 				mIsTrackingPlayer = false;
 

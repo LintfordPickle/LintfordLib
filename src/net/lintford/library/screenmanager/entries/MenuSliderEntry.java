@@ -7,7 +7,7 @@ import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
-import net.lintford.library.core.input.InputState;
+import net.lintford.library.core.input.InputManager;
 import net.lintford.library.core.maths.MathHelper;
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
@@ -151,8 +151,8 @@ public class MenuSliderEntry extends MenuEntry {
 			mFocusLocked = false; // no lock if not focused
 		}
 
-		if (intersectsAA(pCore.HUD().getMouseCameraSpace())) {
-			if (pCore.input().isMouseTimedLeftClickAvailable()) {
+		if (intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().isMouseOverThisComponent(hashCode())) {
+			if (pCore.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
 				if (mEnabled) {
 
 					// TODO: Play menu click sound
@@ -173,9 +173,8 @@ public class MenuSliderEntry extends MenuEntry {
 					mParentLayout.parentScreen().setFocusOn(pCore, this, true);
 					mParentLayout.parentScreen().setHoveringOn(this);
 
-					pCore.input().setLeftMouseClickHandled();
-
 				}
+
 			} else {
 				// mParentScreen.setHoveringOn(this);
 				hasFocus(true);
@@ -192,7 +191,7 @@ public class MenuSliderEntry extends MenuEntry {
 
 		}
 
-		if (mTrackingClick && pCore.input().mouseLeftClick()) {
+		if (mTrackingClick && pCore.input().mouse().tryAcquireMouseLeftClick(hashCode())) {
 			mValue = (int) MathHelper.scaleToRange(pCore.HUD().getMouseCameraSpace().x - mBarPosX, 0, mBarWidth - 32 - 16, mLowerBound, mUpperBound);
 			mValue = MathHelper.clampi(mValue, mLowerBound, mUpperBound);
 
@@ -323,7 +322,7 @@ public class MenuSliderEntry extends MenuEntry {
 	// --------------------------------------
 
 	@Override
-	public void onClick(InputState pInputState) {
+	public void onClick(InputManager pInputState) {
 		super.onClick(pInputState);
 
 		mHasFocus = !mHasFocus;

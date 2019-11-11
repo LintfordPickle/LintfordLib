@@ -7,7 +7,7 @@ import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 import net.lintford.library.core.input.IBufferedInputCallback;
-import net.lintford.library.core.input.InputState;
+import net.lintford.library.core.input.InputManager;
 import net.lintford.library.renderers.windows.UIWindow;
 
 public class UIInputText extends UIWidget implements IBufferedInputCallback {
@@ -115,34 +115,30 @@ public class UIInputText extends UIWidget implements IBufferedInputCallback {
 	// --------------------------------------
 
 	public boolean handleInput(LintfordCore pCore) {
-		if (pCore.input().isMouseTimedLeftClickAvailable()) {
-			if (mCancelRectangle.intersectsAA(pCore.HUD().getMouseCameraSpace())) {
+		if (mCancelRectangle.intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().isMouseOverThisComponent(hashCode())) {
+			if (pCore.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
 				if (mInputField.length() > 0) {
 
 					if (mInputField.length() > 0)
 						mInputField.delete(0, mInputField.length());
 					mStringLength = 0;
 
-					// mInputField.append(mEmptyString);
-
-					pCore.input().stopCapture();
+					pCore.input().keyboard().stopCapture();
 
 					mHasFocus = false;
 					mShowCaret = false;
 
 				}
 
-				pCore.input().setLeftMouseClickHandled();
 			}
 		}
 
-		if (pCore.input().isMouseTimedLeftClickAvailable()) {
-			if (intersectsAA(pCore.HUD().getMouseCameraSpace())) {
+		if (intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().isMouseOverThisComponent(hashCode())) {
+			if (pCore.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
 
 				onClick(pCore.input());
-
-				pCore.input().setLeftMouseClickHandled();
-
+				mHasFocus = true;
+				
 				return true;
 
 			} else if (mHasFocus) {
@@ -159,6 +155,8 @@ public class UIInputText extends UIWidget implements IBufferedInputCallback {
 	}
 
 	public void update(LintfordCore pCore) {
+		super.update(pCore);
+
 		mCaretFlashTimer += pCore.time().elapseGameTimeMilli();
 
 		final int lCANCEL_RECT_SIZE = 24;
@@ -237,11 +235,11 @@ public class UIInputText extends UIWidget implements IBufferedInputCallback {
 	// Methods
 	// --------------------------------------
 
-	public void onClick(InputState pInputState) {
+	public void onClick(InputManager pInputState) {
 		mHasFocus = !mHasFocus;
 
 		if (mHasFocus) {
-			pInputState.startCapture(this);
+			pInputState.keyboard().startCapture(this);
 
 			// Store the current string in case the user cancels the input, in which case, we
 			// can restore the previous entry.
@@ -252,11 +250,11 @@ public class UIInputText extends UIWidget implements IBufferedInputCallback {
 				if (mInputField.length() > 0) {
 					mInputField.delete(0, mInputField.length());
 				}
+				
 			}
 
-		} else {
-
-		}
+		} 
+		
 	}
 
 	@Override

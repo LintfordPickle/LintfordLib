@@ -5,8 +5,9 @@ import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
+import net.lintford.library.core.input.IProcessMouseInput;
 
-public class IconIntFilter {
+public class IconIntFilter implements IProcessMouseInput {
 
 	// --------------------------------------
 	// Variables
@@ -20,6 +21,7 @@ public class IconIntFilter {
 	private String mFilterName;
 	private boolean mHoveredOver;
 	private float r, g, b;
+	private float mMouseTimer;
 
 	// --------------------------------------
 	// Properties
@@ -93,14 +95,10 @@ public class IconIntFilter {
 	// --------------------------------------
 
 	public boolean handleInput(LintfordCore pCore) {
-		if (mUIDstRectangle.intersectsAA(pCore.HUD().getMouseCameraSpace())) {
+		if (mUIDstRectangle.intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().tryAcquireMouseOverThisComponent(hashCode())) {
 			mHoveredOver = true;
-
-			if (pCore.input().isMouseTimedLeftClickAvailable()) {
+			if (pCore.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
 				mUIIconFilter.onFilterClick(this);
-
-				pCore.input().setLeftMouseClickHandled();
-
 				return true;
 
 			}
@@ -150,6 +148,21 @@ public class IconIntFilter {
 			pTextFont.draw(mFilterName, mUIDstRectangle.x + 16 - lTextHalfW, mUIDstRectangle.y - 19, -0.2f, 1f);
 			pTextFont.end();
 		}
+
+	}
+
+	// --------------------------------------
+	// Inherited methods
+	// --------------------------------------
+
+	@Override
+	public boolean isCoolDownElapsed() {
+		return mMouseTimer < 0;
+	}
+
+	@Override
+	public void resetCoolDownTimer() {
+		mMouseTimer = 200;
 
 	}
 

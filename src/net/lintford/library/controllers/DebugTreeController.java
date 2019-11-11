@@ -2,6 +2,7 @@ package net.lintford.library.controllers;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import net.lintford.library.controllers.core.ControllerManager;
 import net.lintford.library.core.LintfordCore;
@@ -18,7 +19,7 @@ public class DebugTreeController extends BaseController {
 	// Variables
 	// --------------------------------------
 
-	public List<DebugTreeComponent> mDebugTreeComponents;
+	protected List<BaseControllerWidget> mDebugTreeComponents;
 
 	// --------------------------------------
 	// Properties
@@ -29,7 +30,7 @@ public class DebugTreeController extends BaseController {
 		return false;
 	}
 
-	public List<DebugTreeComponent> treeComponents() {
+	public List<BaseControllerWidget> treeComponents() {
 		return mDebugTreeComponents;
 	}
 
@@ -40,7 +41,7 @@ public class DebugTreeController extends BaseController {
 	public DebugTreeController(ControllerManager pControllerManager, int pControllerGroup) {
 		super(pControllerManager, CONTROLLER_NAME, pControllerGroup);
 
-		mDebugTreeComponents = new ArrayList<>();
+		mDebugTreeComponents = new ArrayList<BaseControllerWidget>();
 
 	}
 
@@ -61,6 +62,96 @@ public class DebugTreeController extends BaseController {
 
 		}
 
+	}
+
+	@Override
+	public void update(LintfordCore pCore) {
+		super.update(pCore);
+
+		final var lControllers = mControllerManager.allControllers();
+
+		maintainControllerWidgetList(lControllers);
+
+		final var lControllerWidgetCount = mDebugTreeComponents.size();
+		for (int i = 0; i < lControllerWidgetCount; i++) {
+			final var lWidget = mDebugTreeComponents.get(i);
+
+			if (lWidget.baseController == null) {
+				// FIXME: Remove the ControllerWidget from the list, the BaseController attached has been destroyed.
+
+			}
+
+		}
+
+	}
+
+	// makes sure that every controller gets its own rendering widget
+	private void maintainControllerWidgetList(final Map<Integer, List<BaseController>> lControllers) {
+		// Check for updates to the structure of the Controller Manager:
+		// 1.. Check the parent containers
+		int lPositionCounter = 0;
+		for (final var lEntry : lControllers.entrySet()) {
+			final var lControllerManager = lEntry.getValue();
+
+			// ---> Assigned the ControllerManagerId
+			if (!debugTreeContainsControllerId(lEntry.getKey())) {
+				addBaseControllerToDebugTree(lEntry.getKey(), lPositionCounter, 0);
+				lPositionCounter++;
+			}
+
+			// 2.. Check the children containers
+			final var lNumChildControllers = lControllerManager.size();
+			for (var j = 0; j < lNumChildControllers; j++) {
+				final var lBaseController = lControllerManager.get(j);
+
+				if (!debugTreeContainsControllerId(lBaseController.mControllerId)) {
+					// Add this BaseController to the DebugTreeStructure
+					addBaseControllerToDebugTree(lBaseController, lPositionCounter, 1);
+
+				}
+
+				lPositionCounter++;
+
+			}
+
+		}
+	}
+
+	private boolean debugTreeContainsControllerId(int pControllerId) {
+		final int lNumBaseControllerAreas = mDebugTreeComponents.size();
+		for (var i = 0; i < lNumBaseControllerAreas; i++) {
+			if (mDebugTreeComponents.get(i).controllerId == pControllerId)
+				return true;
+		}
+		return false;
+
+	}
+
+	private void addBaseControllerToDebugTree(BaseController pController, int pAtIndex, int pIndentation) {
+		if (pController == null)
+			return;
+
+		final var lNewDebugArea = new BaseControllerWidget();
+		lNewDebugArea.controllerId = pController.controllerId();
+		lNewDebugArea.baseController = pController;
+		lNewDebugArea.displayName = pController.controllerName();
+		lNewDebugArea.isExpanded = false;
+		lNewDebugArea.controllerLevel = pIndentation;
+
+		mDebugTreeComponents.add(lNewDebugArea);
+	}
+
+	private void addBaseControllerToDebugTree(int pControllerId, int pAtIndex, int pIndentation) {
+		final var lNewDebugArea = new BaseControllerWidget();
+		lNewDebugArea.displayName = Integer.toString(pControllerId);
+		lNewDebugArea.controllerId = pControllerId;
+		lNewDebugArea.baseController = null;
+		lNewDebugArea.isExpanded = false;
+		lNewDebugArea.controllerLevel = pIndentation;
+
+		System.out.println("Added BaseController to DebugTree!");
+
+		mDebugTreeComponents.add(lNewDebugArea);
 	}
 
 	// --------------------------------------

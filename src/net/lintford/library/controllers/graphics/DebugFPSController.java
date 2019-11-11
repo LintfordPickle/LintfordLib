@@ -1,4 +1,4 @@
-package net.lintford.library.controllers.debug;
+package net.lintford.library.controllers.graphics;
 
 import net.lintford.library.controllers.BaseController;
 import net.lintford.library.controllers.core.ControllerManager;

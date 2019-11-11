@@ -274,11 +274,10 @@ public class RendererManager {
 	}
 
 	public boolean handleInput(LintfordCore pCore) {
-		final int NUM_WINDOW_RENDERERS = mWindowRenderers.size();
+		final int lNumWindowRenderers = mWindowRenderers.size();
 
-		if (pCore.input().keyDown(GLFW.GLFW_KEY_F7)) {
-			final int lCount = mWindowRenderers.size();
-			System.out.printf("RenderManager %d count: %d\n", hashCode(), lCount);
+		if (pCore.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_F7)) {
+			final var lCount = mWindowRenderers.size();
 			for (int i = 0; i < lCount; i++) {
 				System.out.printf("  %d: %s\n", i, mWindowRenderers.get(i).getClass().getSimpleName());
 
@@ -287,20 +286,19 @@ public class RendererManager {
 		}
 
 		// We handle the input to the UI Windows in the game with priority.
-		for (int i = 0; i < NUM_WINDOW_RENDERERS; i++) {
-			final UIWindow WINDOW = mWindowRenderers.get(i);
-			boolean lResult = WINDOW.handleInput(pCore);
-			if (lResult && WINDOW.exclusiveHandleInput()) {
-				return true;
+		for (int i = 0; i < lNumWindowRenderers; i++) {
+			final var lWindow = mWindowRenderers.get(i);
+			final var lResult = lWindow.handleInput(pCore);
+			if (lResult && lWindow.exclusiveHandleInput()) {
+				// return true;
 
 			}
 
 		}
 
-		final int NUM_RENDERERS = mRenderers.size();
-
 		// Handle the base renderer input
-		for (int i = NUM_RENDERERS - 1; i >= 0; i--) {
+		final int lNumRenderers = mRenderers.size();
+		for (int i = lNumRenderers - 1; i >= 0; i--) {
 			mRenderers.get(i).handleInput(pCore);
 
 		}

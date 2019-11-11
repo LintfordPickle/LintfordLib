@@ -174,11 +174,12 @@ public class DebugStats {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
-		if (pCore.input().keyDownTimed(GLFW.GLFW_KEY_F3)) {
+		if (pCore.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_F3)) {
 			mIsOpen = !mIsOpen;
 
 		}
 
+		
 	}
 
 	public void update(LintfordCore pCore) {
@@ -201,7 +202,7 @@ public class DebugStats {
 			Debug.debugManager().stats().setTagValue(DebugStats.TAG_ID_FPS, frameCount);
 
 		}
-		
+
 		mLastDrawElapsed = pCore.time().elapseGameTimeMilli();
 
 		final String lSpace = " ";
@@ -230,7 +231,9 @@ public class DebugStats {
 
 		Rectangle lHUDRectangle = pCore.HUD().boundingRectangle();
 
-		float lTop = lHUDRectangle.top() + 5f;
+		final var lHeightOffset = Debug.debugManager().console().isOpen() ? 200f : 10f;
+
+		float lTop = lHUDRectangle.top() + lHeightOffset + 5f;
 		float lLeft = lHUDRectangle.right() - 240f - 5f;
 
 		mTextureBatch.draw(mCoreTexture, 0, 0, 32, 32, lLeft, lTop, 240, 500, -0.01f, 0.05f, 0.05f, 0.05f, 0.95f);

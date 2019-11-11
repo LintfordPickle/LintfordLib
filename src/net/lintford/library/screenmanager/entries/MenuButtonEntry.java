@@ -29,9 +29,7 @@ public class MenuButtonEntry extends MenuEntry {
 	private final String mSeparator = " : ";
 	private String mButtonLabel;
 	private boolean mButtonEnabled;
-	private boolean mButtonVisible;
 	private boolean mIsMouseOver;
-
 	private Texture mUITexture;
 
 	// --------------------------------------
@@ -95,7 +93,6 @@ public class MenuButtonEntry extends MenuEntry {
 		mButtonLabel = pButtonLabel;
 
 		mButtonEnabled = true;
-		mButtonVisible = true;
 
 		mHighlightOnHover = false;
 		mDrawBackground = false;
@@ -131,23 +128,20 @@ public class MenuButtonEntry extends MenuEntry {
 		}
 
 		// button input handling
-		if (intersectsAA(pCore.HUD().getMouseCameraSpace())) {
+		if (intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().isMouseOverThisComponent(hashCode())) {
 			mIsMouseOver = true;
-			if (pCore.input().isMouseTimedLeftClickAvailable()) {
+			if (pCore.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
 				if (mEnabled) {
 
 					// TODO: Play a menu click sound
 
 					mParentLayout.parentScreen().setFocusOn(pCore, this, true);
-					// mParentScreen.setHoveringOn(this);
 
 					if (mClickListener != null) {
 						mClickListener.menuEntryChanged(this);
 					}
 
 					mIsChecked = !mIsChecked;
-
-					pCore.input().setLeftMouseClickHandled();
 
 				}
 
@@ -169,6 +163,17 @@ public class MenuButtonEntry extends MenuEntry {
 		}
 
 		return false;
+	}
+
+	@Override
+	public void update(LintfordCore pCore, MenuScreen pScreen, boolean pIsSelected) {
+		super.update(pCore, pScreen, pIsSelected);
+
+		if (mClickTimer >= 0) {
+			mClickTimer -= pCore.time().elapseGameTimeMilli();
+
+		}
+
 	}
 
 	@Override

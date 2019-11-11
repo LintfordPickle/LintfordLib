@@ -98,8 +98,7 @@ public class TimedIntroScreen extends Screen {
 		super.handleInput(pCore, pAcceptMouse, pAcceptKeyboard);
 
 		if (!mTimedActionPerformed) {
-			if (pCore.input().isMouseTimedLeftClickAvailable()) {
-				pCore.input().setLeftMouseClickHandled();
+			if (pCore.input().mouse().tryAcquireMouseLeftClick(hashCode())) {
 				mUserRequestSkip = true;
 
 			}

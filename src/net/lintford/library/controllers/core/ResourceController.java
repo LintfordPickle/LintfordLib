@@ -61,7 +61,7 @@ public class ResourceController extends BaseController {
 
 	@Override
 	public boolean handleInput(LintfordCore pCore) {
-		if (pCore.input().keyDownTimed(GLFW.GLFW_KEY_F6)) {
+		if (pCore.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_F6)) {
 			Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("Texture Manager"));
 			Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("  Entity Group Count: %d", mResourceManager.textureManager().textureGroupCount()));
 

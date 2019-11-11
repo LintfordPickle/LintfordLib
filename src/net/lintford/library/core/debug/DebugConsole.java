@@ -89,6 +89,8 @@ public class DebugConsole extends Rectangle implements IBufferedInputCallback, I
 	private transient ScrollBarContentRectangle mContentRectangle;
 	private transient ScrollBar mScrollBar;
 	private transient float mScrollYPosition;
+	protected float mZScrollAcceleration;
+	protected float mZScrollVelocity;
 
 	private transient boolean mShowCaret;
 	private transient float mCaretTimer;
@@ -230,92 +232,77 @@ public class DebugConsole extends Rectangle implements IBufferedInputCallback, I
 			return;
 
 		if (mOpen) {
-			mTAGFilterText.handleInput(pCore);
-			mMessageFilterText.handleInput(pCore);
+			if (intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().tryAcquireMouseOverThisComponent(hashCode())) {
+				mTAGFilterText.handleInput(pCore);
+				mMessageFilterText.handleInput(pCore);
 
-			if (pCore.input().keyDownTimed(GLFW.GLFW_KEY_DELETE)) {
-				mScrollYPosition = 0;
-				mAutoScroll = true;
-
-				Debug.debugManager().logger().clearLogLines();
-
-			}
-
-			if (pCore.input().keyDownTimed(GLFW.GLFW_KEY_DOWN)) {
-				mConsoleLineHeight = (int) (mConsoleFont.bitmap().getStringHeight(" ") + 1);
-				mScrollYPosition -= mConsoleLineHeight;
-				mAutoScroll = false;
-
-				if (mScrollYPosition < mScrollBar.getScrollYBottomPosition())
-					mScrollYPosition = mScrollBar.getScrollYBottomPosition() - mConsoleLineHeight;
-			}
-
-			if (pCore.input().keyDownTimed(GLFW.GLFW_KEY_PAGE_DOWN)) {
-				mConsoleLineHeight = (int) (mConsoleFont.bitmap().getStringHeight(" ") + 1);
-				mScrollYPosition -= mConsoleLineHeight * 10;
-				mAutoScroll = false;
-
-				if (mScrollYPosition < mScrollBar.getScrollYBottomPosition())
-					mScrollYPosition = mScrollBar.getScrollYBottomPosition() - mConsoleLineHeight;
-
-			}
-
-			if (pCore.input().keyDownTimed(GLFW.GLFW_KEY_UP)) {
-				mConsoleLineHeight = (int) (mConsoleFont.bitmap().getStringHeight(" ") + 1);
-				mScrollYPosition += mConsoleLineHeight;
-				mAutoScroll = false;
-
-				if (mScrollYPosition > 0)
+				if (pCore.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_DELETE)) {
 					mScrollYPosition = 0;
+					mAutoScroll = true;
 
-			}
-
-			if (pCore.input().keyDownTimed(GLFW.GLFW_KEY_PAGE_UP)) {
-				mConsoleLineHeight = (int) (mConsoleFont.bitmap().getStringHeight(" ") + 1);
-				mScrollYPosition += mConsoleLineHeight * 10;
-				mAutoScroll = false;
-
-				if (mScrollYPosition > 0)
-					mScrollYPosition = 0;
-
-			}
-
-		}
-
-		// listen for opening and closing
-		if (pCore.input().keyDownTimed(GLFW.GLFW_KEY_F1)) {
-			mOpen = !mOpen;
-			if (mOpen) {
-				mInputText.delete(0, mInputText.length());
-				// if default to capture on open
-
-				if (AUTO_CAPTURE_ON_OPEN) {
-					mHasFocus = true;
-					pCore.input().startCapture(this);
+					Debug.debugManager().logger().clearLogLines();
 
 				}
 
-			} else {
-				mHasFocus = false;
+				if (pCore.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_DOWN)) {
+					mConsoleLineHeight = (int) (mConsoleFont.bitmap().getStringHeight(" ") + 1);
+					mScrollYPosition -= mConsoleLineHeight;
+					mAutoScroll = false;
+
+					if (mScrollYPosition < mScrollBar.getScrollYBottomPosition())
+						mScrollYPosition = mScrollBar.getScrollYBottomPosition() - mConsoleLineHeight;
+				}
+
+				if (pCore.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_PAGE_DOWN)) {
+					mConsoleLineHeight = (int) (mConsoleFont.bitmap().getStringHeight(" ") + 1);
+					mScrollYPosition -= mConsoleLineHeight * 10;
+					mAutoScroll = false;
+
+					if (mScrollYPosition < mScrollBar.getScrollYBottomPosition())
+						mScrollYPosition = mScrollBar.getScrollYBottomPosition() - mConsoleLineHeight;
+
+				}
+
+				if (pCore.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_UP)) {
+					mConsoleLineHeight = (int) (mConsoleFont.bitmap().getStringHeight(" ") + 1);
+					mScrollYPosition += mConsoleLineHeight;
+					mAutoScroll = false;
+
+					if (mScrollYPosition > 0)
+						mScrollYPosition = 0;
+
+				}
+
+				if (pCore.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_PAGE_UP)) {
+					mConsoleLineHeight = (int) (mConsoleFont.bitmap().getStringHeight(" ") + 1);
+					mScrollYPosition += mConsoleLineHeight * 10;
+					mAutoScroll = false;
+
+					if (mScrollYPosition > 0)
+						mScrollYPosition = 0;
+
+				}
+
+				// capture the mouse wheel too
+				mZScrollAcceleration += pCore.input().mouse().mouseWheelYOffset() * 250.0f;
+				if(mZScrollAcceleration != 0) {
+					mAutoScroll = false;
+				}
 
 			}
 
-		}
-
-		if (mOpen) {
-			if (pCore.input().keyDownTimed(GLFW.GLFW_KEY_ESCAPE)) {
+			if (pCore.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_ESCAPE)) {
 				if (mOpen) {
 					mOpen = false;
 					mInputText.delete(0, mInputText.length());
 					mHasFocus = false;
-					pCore.input().stopCapture();
+					pCore.input().keyboard().stopCapture();
 
 				}
 
 			}
 
 			if (mScrollBar.handleInput(pCore)) {
-
 				if (mScrollBar.isAtBottomPosition()) {
 					mAutoScroll = true;
 
@@ -336,21 +323,39 @@ public class DebugConsole extends Rectangle implements IBufferedInputCallback, I
 
 			}
 
-			else if (mFocusTimer > FOCUS_TIMER && pCore.input().mouseWindowCoords().y < openHeight() && pCore.input().tryAquireLeftClickOwnership(hashCode())) {
+			else if (mFocusTimer > FOCUS_TIMER && pCore.input().mouse().mouseWindowCoords().y < openHeight() && pCore.input().mouse().tryAcquireMouseLeftClick(hashCode()) && pCore.input().mouse().isMouseOverThisComponent(hashCode())) {
 				mHasFocus = !mHasFocus;
-				pCore.input().stopCapture();
+				pCore.input().keyboard().stopCapture();
 				mFocusTimer = 0;
 
-				// If the debug console is open and has 'consumed' this click, don't let other windows use it
-				pCore.input().setLeftMouseClickHandled();
-
 				if (mHasFocus) {
-					pCore.input().startCapture(this);
+					pCore.input().keyboard().startCapture(this);
 				}
 
 			}
 
 		}
+
+		// listen for opening and closing
+		if (pCore.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_F1)) {
+			mOpen = !mOpen;
+			if (mOpen) {
+				mInputText.delete(0, mInputText.length());
+				// if default to capture on open
+
+				if (AUTO_CAPTURE_ON_OPEN) {
+					mHasFocus = true;
+					pCore.input().keyboard().startCapture(this);
+
+				}
+
+			} else {
+				mHasFocus = false;
+
+			}
+
+		}
+
 	}
 
 	public void update(LintfordCore pCore) {
@@ -407,6 +412,22 @@ public class DebugConsole extends Rectangle implements IBufferedInputCallback, I
 		mUpperBound = mLowerBound + MAX_NUM_LINES;
 
 		mContentRectangle.h = (lNumberLinesInConsole + 2) * mConsoleLineHeight;
+
+		var lScrollSpeedFactor = mScrollYPosition;
+
+		mZScrollVelocity += mZScrollAcceleration;
+		lScrollSpeedFactor += mZScrollVelocity * lDeltaTime;
+		mZScrollVelocity *= 0.85f;
+		mZScrollAcceleration = 0.0f;
+
+		// Constrain
+		mScrollYPosition = lScrollSpeedFactor;
+		if (mScrollYPosition > 0)
+			mScrollYPosition = 0;
+		if (mScrollYPosition < -(mContentRectangle.h - this.h)) {
+			mScrollYPosition = -(mContentRectangle.h - this.h);
+			mAutoScroll = true;
+		}
 
 		// mAutoScroll = true;
 		if (mAutoScroll) {

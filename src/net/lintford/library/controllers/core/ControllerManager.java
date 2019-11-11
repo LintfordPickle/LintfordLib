@@ -18,11 +18,16 @@ public class ControllerManager {
 	// --------------------------------------
 
 	private LintfordCore mCore;
+	private int mControllerIdCounter;
 	private Map<Integer, List<BaseController>> mControllers;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public Map<Integer, List<BaseController>> allControllers() {
+		return mControllers;
+	}
 
 	/** Returns a list of controllers currently registered with the {@link ControllerManager}. */
 	public List<BaseController> controllers(int pControllerGroupID) {
@@ -34,12 +39,17 @@ public class ControllerManager {
 		return mCore;
 	}
 
+	public int getNewControllerId() {
+		return mControllerIdCounter++;
+	}
+
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
 	public ControllerManager(LintfordCore pCore) {
 		mCore = pCore;
+		mControllerIdCounter = 0;
 		mControllers = new HashMap<>();
 
 	}
@@ -53,7 +63,7 @@ public class ControllerManager {
 		if (lControllerList == null)
 			return false;
 
-		if (pCore.input().keyDown(GLFW.GLFW_KEY_F4)) {
+		if (pCore.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_F4)) {
 			System.out.println("Controller groung count: " + mControllers.size());
 			final int lCount = lControllerList.size();
 			System.out.println("Controller count: " + lCount);
@@ -137,7 +147,10 @@ public class ControllerManager {
 		return null;
 	}
 
-	/** Returns the controller with the given name. In case no {@link BaseController} instance with the given name is found (i.e. has not been registered) or has not been initialized, an exception will be thrown. */
+	/**
+	 * Returns the controller with the given name. In case no {@link BaseController} instance with the given name is found (i.e. has not been registered) or has not been initialized,
+	 * an exception will be thrown.
+	 */
 	public BaseController getControllerByNameRequired(String pControllerName, int pEntityGroupID) {
 		final BaseController RESULT = getControllerByName(pControllerName, pEntityGroupID);
 

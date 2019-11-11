@@ -133,8 +133,9 @@ public class HUD implements ICamera, IResizeListener {
 //			mRatioH = ((float) lWindowHeight / (float) mDisplayConfig.windowHeight());
 		}
 
-		mMouseHUDSpace.x = (float) (-lWindowWidth * 0.5f + (pCore.input().mouseWindowCoords().x - 1) * mRatioW);
-		mMouseHUDSpace.y = (float) (-lWindowHeight * 0.5f + (pCore.input().mouseWindowCoords().y - 1) * mRatioH);
+		// FIXME: Remove the mMouseHUDSpace away from this class - it doesn't belong here
+		mMouseHUDSpace.x = (float) (-lWindowWidth * 0.5f + (pCore.input().mouse().mouseWindowCoords().x - 1) * mRatioW);
+		mMouseHUDSpace.y = (float) (-lWindowHeight * 0.5f + (pCore.input().mouse().mouseWindowCoords().y - 1) * mRatioH);
 
 	}
 

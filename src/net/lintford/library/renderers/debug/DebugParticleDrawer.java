@@ -71,7 +71,7 @@ public class DebugParticleDrawer extends BaseRenderer {
 
 	@Override
 	public boolean handleInput(LintfordCore pCore) {
-		if (pCore.input().keyDownTimed(GLFW.GLFW_KEY_F11)) {
+		if (pCore.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_F11)) {
 			mShowDebugInformation = !mShowDebugInformation;
 
 		}

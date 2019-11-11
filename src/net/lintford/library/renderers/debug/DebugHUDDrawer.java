@@ -52,7 +52,7 @@ public class DebugHUDDrawer extends BaseRenderer {
 
 	@Override
 	public boolean handleInput(LintfordCore pCore) {
-		if (pCore.input().keyDownTimed(GLFW.GLFW_KEY_F2)) {
+		if (pCore.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_F2)) {
 			mDebugDraw++;
 			if (mDebugDraw > 2)
 				mDebugDraw = 0;

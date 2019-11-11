@@ -191,8 +191,9 @@ public class Camera implements ICamera {
 
 	public void handleInput(LintfordCore pCore) {
 		// Update the MouseCameraSpace instance
-		mMouseWorldSpace.x = pCore.input().mouseWindowCoords().x * getZoomFactorOverOne() + this.getMinX();
-		mMouseWorldSpace.y = pCore.input().mouseWindowCoords().y * getZoomFactorOverOne() + this.getMinY();
+		// FIXME: Move the mMouseWorldSpace away from the camera - it doesn't belong here
+		mMouseWorldSpace.x = pCore.input().mouse().mouseWindowCoords().x * getZoomFactorOverOne() + this.getMinX();
+		mMouseWorldSpace.y = pCore.input().mouse().mouseWindowCoords().y * getZoomFactorOverOne() + this.getMinY();
 
 	}
 

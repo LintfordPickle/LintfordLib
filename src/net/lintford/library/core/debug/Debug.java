@@ -4,6 +4,7 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.DebugLogger.LogMessage;
 import net.lintford.library.core.debug.stats.DebugStats;
+import net.lintford.library.renderers.debug.DebugControllerRenderer;
 
 public class Debug {
 
@@ -76,6 +77,7 @@ public class Debug {
 	private DebugConsole mDebugConsole;
 	private DebugDrawers mDebugDrawers;
 	private DebugStats mDebugStats;
+	private DebugControllerRenderer mDebugController;
 
 	private boolean mIsGLLoaded;
 
@@ -127,6 +129,7 @@ public class Debug {
 		mDebugDrawers = new DebugDrawers(this);
 		mDebugConsole = new DebugConsole(this);
 		mDebugStats = new DebugStats(this);
+		mDebugController = new DebugControllerRenderer(this);
 
 		addDebugConsoleCommands();
 
@@ -142,6 +145,7 @@ public class Debug {
 		mDebugConsole.loadGLContent(pResourceManager);
 		mDebugDrawers.loadGLContent(pResourceManager);
 		mDebugStats.loadGLContent(pResourceManager);
+		mDebugController.loadGLContent(pResourceManager);
 
 		mIsGLLoaded = true;
 
@@ -151,6 +155,7 @@ public class Debug {
 		mDebugConsole.unloadGLContent();
 		mDebugDrawers.unloadGLContent();
 		mDebugStats.unloadGLContent();
+		mDebugController.unloadGLContent();
 
 		mIsGLLoaded = false;
 
@@ -159,6 +164,7 @@ public class Debug {
 	public void handleInput(LintfordCore pCore) {
 		mDebugConsole.handleInput(pCore);
 		mDebugStats.handleInput(pCore);
+		mDebugController.handleInput(pCore);
 
 	}
 
@@ -180,6 +186,7 @@ public class Debug {
 
 		mDebugConsole.update(pCore);
 		mDebugStats.update(pCore);
+		mDebugController.update(pCore);
 
 	}
 
@@ -189,6 +196,7 @@ public class Debug {
 
 		mDebugStats.draw(pCore);
 		mDebugConsole.draw(pCore);
+		mDebugController.draw(pCore);
 
 	}
 

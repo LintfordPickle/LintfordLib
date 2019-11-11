@@ -77,14 +77,17 @@ public class UIButton extends UIWidget {
 		if (!mIsClicked && intersectsAA(pCore.HUD().getMouseCameraSpace())) {
 			mHoveredOver = true;
 
-			if (pCore.input().tryAquireLeftClickOwnership(hashCode())) {
+			if (pCore.input().mouse().tryAcquireMouseLeftClick(hashCode())) {
 				mIsClicked = true;
-				final float MINIMUM_CLICK_TIMER = 200;
+				final var MINIMUM_CLICK_TIMER = 200;
+				
 				// Callback to the listener and pass our ID
 				if (mCallback != null && mClickTimer > MINIMUM_CLICK_TIMER) {
 					mClickTimer = 0;
 					mCallback.menuEntryOnClick(pCore.input(), mClickID);
+					
 					return true;
+					
 				}
 
 			}
@@ -93,7 +96,7 @@ public class UIButton extends UIWidget {
 			mHoveredOver = false;
 		}
 
-		if (!pCore.input().mouseLeftClick()) {
+		if (!pCore.input().mouse().tryAcquireMouseLeftClick(hashCode())) {
 			mIsClicked = false;
 
 		}

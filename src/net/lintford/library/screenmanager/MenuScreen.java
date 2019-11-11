@@ -11,7 +11,7 @@ import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
-import net.lintford.library.core.input.InputState;
+import net.lintford.library.core.input.InputManager;
 import net.lintford.library.renderers.ZLayers;
 import net.lintford.library.screenmanager.ScreenManagerConstants.FILLTYPE;
 import net.lintford.library.screenmanager.ScreenManagerConstants.LAYOUT_ALIGNMENT;
@@ -282,7 +282,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		if (mAnimationTimer > 0 || mClickAction.isConsumed())
 			return; // don't handle input if 'animation' is playing
 
-		if (mESCBackEnabled && pCore.input().keyDownTimed(GLFW.GLFW_KEY_ESCAPE)) {
+		if (mESCBackEnabled && pCore.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_ESCAPE)) {
 			if (mScreenState == ScreenState.Active) {
 				exitScreen();
 				return;
@@ -291,7 +291,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 		if (mLayouts.size() > 0) {
 			// Respond to UP key
-			if (pCore.input().keyDownTimed(GLFW.GLFW_KEY_UP)) {
+			if (pCore.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_UP)) {
 
 				if (mSelectedEntry > 0) {
 					mSelectedEntry--; //
@@ -313,7 +313,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 			}
 
 			// Respond to DOWN key
-			if (pCore.input().keyDownTimed(GLFW.GLFW_KEY_DOWN)) {
+			if (pCore.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_DOWN)) {
 
 				BaseLayout lLayout = mLayouts.get(mSelectedLayout);
 
@@ -335,7 +335,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 			}
 
 			// Process ENTER key press
-			if (pCore.input().keyDownTimed(GLFW.GLFW_KEY_ENTER)) {
+			if (pCore.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_ENTER)) {
 				BaseLayout lLayout = mLayouts.get(mSelectedLayout);
 				if (!lLayout.hasEntry(mSelectedEntry))
 					return;
@@ -357,7 +357,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		// Process Mouse input
 		int lLayoutCount = mLayouts.size();
 		for (int i = 0; i < lLayoutCount; i++) {
-			BaseLayout lLayout = mLayouts.get(i);
+			final var lLayout = mLayouts.get(i);
 			lLayout.handleInput(pCore);
 		}
 
@@ -367,7 +367,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	public void update(LintfordCore pCore, boolean pOtherScreenHasFocus, boolean pCoveredByOtherScreen) {
 		super.update(pCore, pOtherScreenHasFocus, pCoveredByOtherScreen);
 
-		final double lDeltaTime = pCore.time().elapseGameTimeMilli();
+		final var lDeltaTime = pCore.time().elapseGameTimeMilli();
 
 		updateLayoutSize(pCore);
 
@@ -381,14 +381,14 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 		}
 
-		int lFloatingCount = mFloatingEntries.size();
+		final var lFloatingCount = mFloatingEntries.size();
 		for (int i = 0; i < lFloatingCount; i++) {
 			MenuEntry lFloatingEntry = mFloatingEntries.get(i);
 			lFloatingEntry.update(pCore, this, false);
 
 		}
 
-		final int lCount = layouts().size();
+		final var lCount = layouts().size();
 		for (int i = 0; i < lCount; i++) {
 			mLayouts.get(i).update(pCore);
 
@@ -536,7 +536,6 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		final float lWindowPaddingV = 0;// lUIHUDController.windowPaddingV();
 
 		if (mMenuHeaderFont != null) {
-			final float lTitleFontHeight = mMenuHeaderFont.bitmap().fontHeight();
 			mMenuHeaderFont.begin(pCore.HUD());
 			mMenuHeaderFont.draw(mMenuTitle, lHUDRect.left() + lWindowPaddingH, lHUDRect.top() + lWindowPaddingV, MENUSCREEN_Z_DEPTH, mR, mG, mB, mA, luiTextScale);
 			mMenuHeaderFont.end();
@@ -544,7 +543,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		}
 
 		if (mMenuFont != null) {
-			final float lTitleFontHeight = mMenuFont.bitmap().fontHeight();
+			final var lTitleFontHeight = mMenuFont.bitmap().fontHeight();
 			mMenuFont.begin(pCore.HUD());
 			if (mMenuOverTitle != null && mMenuOverTitle.length() > 0)
 				mMenuFont.draw(mMenuOverTitle, lHUDRect.left(), lHUDRect.top(), MENUSCREEN_Z_DEPTH, mR, mG, mB, mA, luiTextScale);
@@ -631,7 +630,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	}
 
 	@Override
-	public void menuEntryOnClick(InputState pInputState, int pEntryID) {
+	public void menuEntryOnClick(InputManager pInputState, int pEntryID) {
 		mClickAction.setNewClick(pEntryID);
 		mAnimationTimer = ANIMATION_TIMER_LENGTH * 2f;
 
