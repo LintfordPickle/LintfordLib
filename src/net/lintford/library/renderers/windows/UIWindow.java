@@ -300,6 +300,11 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 
 		}
 
+		if (mFullContentRectangle.h < mContentDisplayArea.h) {
+			mFullContentRectangle.h = mContentDisplayArea.h;
+
+		}
+
 		if (mFullContentRectangle.h - contentDisplayArea().h > 0) {
 			mScrollBar.update(pCore);
 
