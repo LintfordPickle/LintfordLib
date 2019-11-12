@@ -232,7 +232,7 @@ public class DebugConsole extends Rectangle implements IBufferedInputCallback, I
 			return;
 
 		if (mOpen) {
-			if (intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().tryAcquireMouseOverThisComponent(hashCode())) {
+			if (intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().tryAcquireMouseMiddle(hashCode())) {
 				mTAGFilterText.handleInput(pCore);
 				mMessageFilterText.handleInput(pCore);
 

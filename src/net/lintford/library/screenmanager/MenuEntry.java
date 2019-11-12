@@ -368,8 +368,10 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput {
 			if (canHoverOver()) {
 				hasFocus(true);
 
-				if (pCore.input().mouse().isOwnerNotAssigned())
+				if (pCore.input().mouse().isMiddleOwnerNotAssigned()) {
 					mParentLayout.parentScreen().setHoveringOn(this);
+
+				}
 
 			}
 
@@ -380,8 +382,6 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput {
 
 				return true;
 
-			} else {
-				System.out.println("MenuEntry couldn't process click");
 			}
 
 		} else {

@@ -26,9 +26,7 @@ public class ScrollBar extends Rectangle implements IProcessMouseInput {
 	private transient IScrollBarArea mScrollBarArea;
 	private transient float mMarkerBarHeight;
 	private transient float mMarkerMoveMod;
-
 	private float mWindowRightOffset;
-
 	private float mMouseTimer;
 
 	// --------------------------------------
@@ -71,43 +69,46 @@ public class ScrollBar extends Rectangle implements IProcessMouseInput {
 	// --------------------------------------
 
 	public boolean handleInput(LintfordCore pCore) {
-		final float lMouseScreenSpaceX = pCore.HUD().getMouseWorldSpaceX();
-		final float lMouseScreenSpaceY = pCore.HUD().getMouseWorldSpaceY();
+		final var lMouseInWindowCoords = intersectsAA(pCore.HUD().getMouseCameraSpace());
+		final var lIsLeftMouseButtonDown = lMouseInWindowCoords && pCore.input().mouse().tryAcquireMouseLeftClick(hashCode());
 
-		final var lMouseInWindowCoords = intersectsAA(pCore.input().mouse().mouseWindowCoords());
-		final var lCanAcquireLeftMouse = pCore.input().mouse().isMouseLeftButtonDown();
+		if (lMouseInWindowCoords && pCore.input().mouse().isMouseOverThisComponent(hashCode())) {
 
-		// If left mouse isn't pressed and the mouse isn't within the window, then the scrollbar cannot be active
-		if (!lMouseInWindowCoords && !lCanAcquireLeftMouse) {
-			mClickActive = false;
+		} else {
 			return false;
+
 		}
 
-		// First check that the left mouse button is down
-		if (lMouseInWindowCoords && lCanAcquireLeftMouse) {
-			mClickActive = false; // Cannot be active if mouse not clicked
+		// If left mouse isn't pressed and the mouse isn't within the window, then the scrollbar cannot be active
+		if (!lIsLeftMouseButtonDown) {
+			mClickActive = false;
 			return false;
 
 		}
 
 		// check the mouse is within bounds
-		if (!mClickActive && !intersectsAA(lMouseScreenSpaceX, lMouseScreenSpaceY)) {
+		if (!mClickActive && !lMouseInWindowCoords) {
 			return false;
+
 		}
 
 		// and check the mouse click isn't being handled elsewhere
-		if (!pCore.input().mouse().tryAcquireMouseOwnership(hashCode()))
+		if (!pCore.input().mouse().isMouseOverThisComponent(hashCode())) {
 			return false;
+
+		}
 
 		if (!mClickActive) {
 			mClickActive = true;
-			mLastMouseYPos = lMouseScreenSpaceY;
+			mLastMouseYPos = pCore.HUD().getMouseWorldSpaceY();
+
 		}
 
 		// Scrolling
-		constrainScrollBarPosition(lMouseScreenSpaceY);
+		constrainScrollBarPosition(pCore.HUD().getMouseWorldSpaceY());
 
 		return true;
+
 	}
 
 	private void constrainScrollBarPosition(float pNewPositionSS) {

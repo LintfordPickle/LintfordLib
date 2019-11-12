@@ -201,9 +201,6 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 		if (!isOpen())
 			return false;
 
-		final float lMouseScreenSpaceX = pCore.HUD().getMouseWorldSpaceX();
-		final float lMouseScreenSpaceY = pCore.HUD().getMouseWorldSpaceY();
-
 		// 1. Check if the scroll bar has been used
 		if (mScrollBar.handleInput(pCore)) {
 			return true;
@@ -275,11 +272,12 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 			mMouseDownLastUpdate = false;
 		}
 
-		if (mWindowArea.intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().tryAcquireMouseOverThisComponent(hashCode())) {
+		// This is needed because when the mouse is over a component
+		if (mWindowArea.intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().tryAcquireMouseMiddle((hashCode()))) {
 			mZScrollAcceleration += pCore.input().mouse().mouseWheelYOffset() * 250.0f;
 
 			// If the mouse was clicked within the window, then we need to process the click anyway
-			return pCore.input().mouse().tryAcquireMouseLeftClick(hashCode());
+			// return pCore.input().mouse().tryAcquireMouseLeftClick(hashCode());
 		}
 
 		return false;
