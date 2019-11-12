@@ -41,6 +41,8 @@ public class DebugControllerRenderer extends Rectangle implements IScrollBarArea
 	private transient ScrollBarContentRectangle mContentRectangle;
 	private transient ScrollBar mScrollBar;
 	private transient float mScrollYPosition;
+	protected float mZScrollAcceleration;
+	protected float mZScrollVelocity;
 	private boolean mScrollBarEnabled;
 	private transient int mLowerBound;
 	private transient int mUpperBound;
@@ -128,6 +130,12 @@ public class DebugControllerRenderer extends Rectangle implements IScrollBarArea
 		// *** Control the selection of ControllerWidgets ***
 
 		if (intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().isMouseOverThisComponent(hashCode())) {
+
+			if(pCore.input().mouse().tryAcquireMouseMiddle(hashCode())) {
+				mZScrollAcceleration += pCore.input().mouse().mouseWheelYOffset() * 250.0f;
+				
+			}
+
 			if (pCore.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
 				final float lMouseX = pCore.HUD().getMouseCameraSpace().x;
 				final float lMouseY = pCore.HUD().getMouseCameraSpace().y;
@@ -187,7 +195,7 @@ public class DebugControllerRenderer extends Rectangle implements IScrollBarArea
 	public void update(LintfordCore pCore) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
-		
+
 		mIsOpen = mDebugManager.stats().isOpen();
 
 		if (!mIsOpen)
@@ -255,6 +263,19 @@ public class DebugControllerRenderer extends Rectangle implements IScrollBarArea
 
 			}
 
+			final float lDeltaTime = (float) pCore.time().elapseGameTimeMilli() / 1000f;
+
+			float lScrollSpeedFactor = mScrollYPosition;
+
+			mZScrollVelocity += mZScrollAcceleration;
+			lScrollSpeedFactor += mZScrollVelocity * lDeltaTime;
+			mZScrollVelocity *= 0.85f;
+			mZScrollAcceleration = 0.0f;
+
+			mScrollYPosition = lScrollSpeedFactor;
+
+			// Constrain
+
 			mScrollBarEnabled = h < mContentRectangle.h;
 
 			if (mScrollBarEnabled) {
@@ -282,8 +303,8 @@ public class DebugControllerRenderer extends Rectangle implements IScrollBarArea
 
 		mTextureBatch.begin(pCore.HUD());
 
-		final var lTop = y;// lHUDRectangle.top() + lHeightOffset + 5f;
-		final var lLeft = x;// lHUDRectangle.left() + 5f;
+		final var lTop = y;
+		final var lLeft = x;
 
 		mTextureBatch.draw(mCoreTexture, 0, 0, 32, 32, lLeft, lTop, mOpenWidth, 500, -0.03f, 0.21f, 0.17f, 0.25f, 0.95f);
 		mTextureBatch.end();
@@ -322,7 +343,7 @@ public class DebugControllerRenderer extends Rectangle implements IScrollBarArea
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
-	
+
 	private void getControllerManagerInstance(LintfordCore pCore) {
 		mControllerManager = pCore.controllerManager();
 		mDebugControllerTree = (DebugTreeController) mControllerManager.getControllerByNameRequired(DebugTreeController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
