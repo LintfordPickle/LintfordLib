@@ -42,9 +42,11 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 	protected List<ListBoxItem> mItems;
 	protected Texture mUITexture;
 	protected ScrollBar mScrollBar;
-
+	protected float mZScrollAcceleration;
+	protected float mZScrollVelocity;
 	protected ScrollBarContentRectangle mContentArea;
 	protected float mYScrollPos;
+
 	protected float mLastMouseYPos;
 	protected boolean mScrollBarsEnabled;
 	protected IListBoxItemSelected mSelecterListener;
@@ -137,7 +139,7 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 
 		// Check if the mouse is clicked outside of this list box
 		// In this case, we shouldn't un-select the current selected entry, otherwise we'd never be able to click a button outside of this list box
-		if (!mScrollBar.clickAction() && pCore.input().mouse().isMouseLeftClick(hashCode()) && (lMouseHUDCoords.x < x || lMouseHUDCoords.x > x + w || lMouseHUDCoords.y < y || lMouseHUDCoords.y > y + h)) {
+		if (!mScrollBar.clickAction() && !intersectsAA(lMouseHUDCoords) && pCore.input().mouse().isMouseLeftClick(hashCode())) {
 			return false;
 		}
 
@@ -160,7 +162,12 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 		}
 
 		/// Scrolling ///
-		
+
+		if (intersectsAA(lMouseHUDCoords) && pCore.input().mouse().tryAcquireMouseMiddle(hashCode())) {
+			mZScrollAcceleration += pCore.input().mouse().mouseWheelYOffset() * 250.0f;
+
+		}
+
 		if (!pCore.input().mouse().isMouseLeftButtonDown()) {
 			mClickActive = false;
 
@@ -182,7 +189,8 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 		// Allow us to scroll the listbox by clicking and dragging within its bounds
 		final float lMaxDiff = mContentArea.h - h;
 
-		
+		// if()
+
 		if (mClickActive) {
 			if (lMaxDiff > 0) {
 				float lDiffY = lMouseHUDCoords.y - mLastMouseYPos;
@@ -238,6 +246,22 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 		// mContentArea.w = w;
 		if (mVerticalFillType == FILLTYPE.FILL_CONTAINER || mVerticalFillType == FILLTYPE.TAKE_WHATS_NEEDED)
 			mContentArea.h = lTotalContentHeight;
+
+		final float lDeltaTime = (float) pCore.time().elapseGameTimeMilli() / 1000f;
+		float lScrollSpeedFactor = mYScrollPos;
+
+		mZScrollVelocity += mZScrollAcceleration;
+		lScrollSpeedFactor += mZScrollVelocity * lDeltaTime;
+		mZScrollVelocity *= 0.85f;
+		mZScrollAcceleration = 0.0f;
+		mYScrollPos = lScrollSpeedFactor;
+
+		// Constrain
+		if (mYScrollPos > 0)
+			mYScrollPos = 0;
+		if (mYScrollPos < -(mContentArea.h - this.h)) {
+			mYScrollPos = -(mContentArea.h - this.h);
+		}
 
 		mScrollBar.update(pCore);
 

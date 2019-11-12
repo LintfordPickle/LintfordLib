@@ -67,7 +67,11 @@ public abstract class ListBoxItem extends Rectangle {
 	public boolean handleInput(LintfordCore pCore) {
 		final Vector2f lMouseMenuSpace = pCore.HUD().getMouseCameraSpace();
 
-		if (intersectsAA(lMouseMenuSpace) && pCore.input().mouse().isMouseOverThisComponent(hashCode()) && pCore.input().mouse().tryAcquireMouseLeftClick(hashCode())) {
+		final var intersectsUs = intersectsAA(lMouseMenuSpace);
+		final var areWeFreeToUseMouse = pCore.input().mouse().isMouseOverThisComponent(hashCode());
+		final var canWeAcquireLeftMouse = intersectsUs && pCore.input().mouse().tryAcquireMouseLeftClick(hashCode());
+		
+		if (intersectsUs && areWeFreeToUseMouse && canWeAcquireLeftMouse) {
 			mParentListBox.selectedIndex(mItemIndex);
 
 			return true;
