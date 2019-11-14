@@ -1,10 +1,8 @@
 package net.lintford.library.renderers.debug;
 
 import org.jbox2d.dynamics.World;
-import org.lwjgl.glfw.GLFW;
 
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.JBox2dDebugDrawer;
 import net.lintford.library.renderers.BaseRenderer;
 import net.lintford.library.renderers.RendererManager;
@@ -22,7 +20,6 @@ public class DebugBox2dDrawer extends BaseRenderer {
 	// --------------------------------------
 
 	private JBox2dDebugDrawer mJBox2dDebugDrawer;
-	private boolean mShowDebugInformation;
 
 	// --------------------------------------
 	// Properties
@@ -32,14 +29,6 @@ public class DebugBox2dDrawer extends BaseRenderer {
 	public boolean isInitialized() {
 		return true;
 
-	}
-
-	public void debugDrawEnable(boolean pNewValue) {
-		mShowDebugInformation = pNewValue;
-	}
-
-	public boolean debugDrawEnable() {
-		return mShowDebugInformation;
 	}
 
 	// --------------------------------------
@@ -61,35 +50,12 @@ public class DebugBox2dDrawer extends BaseRenderer {
 
 	@Override
 	public void initialize(LintfordCore pCore) {
-		// TODO Auto-generated method stub
 
-	}
-
-	@Override
-	public void loadGLContent(ResourceManager pResourceManager) {
-		super.loadGLContent(pResourceManager);
-
-	}
-
-	@Override
-	public void unloadGLContent() {
-		super.unloadGLContent();
-
-	}
-
-	@Override
-	public boolean handleInput(LintfordCore pCore) {
-
-		if (pCore.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_F5)) {
-			mShowDebugInformation = !mShowDebugInformation;
-		}
-
-		return super.handleInput(pCore);
 	}
 
 	@Override
 	public void draw(LintfordCore pCore) {
-		if (!mShowDebugInformation)
+		if (!isActive() || !isInitialized())
 			return;
 
 		mJBox2dDebugDrawer.draw(pCore);
