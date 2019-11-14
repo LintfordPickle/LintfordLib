@@ -28,6 +28,16 @@ public class UIWindowDock extends BaseRenderer {
 	protected Texture mCoreTexture;
 
 	// --------------------------------------
+	// Properties
+	// --------------------------------------
+
+	@Override
+	public boolean isInitialized() {
+		return true;
+
+	}
+
+	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 

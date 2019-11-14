@@ -15,10 +15,11 @@ import org.lwjgl.opengl.GL11;
 
 import net.lintford.library.ConstantsTable;
 import net.lintford.library.GameInfo;
-import net.lintford.library.controllers.DebugTreeController;
 import net.lintford.library.controllers.camera.CameraController;
 import net.lintford.library.controllers.core.ControllerManager;
 import net.lintford.library.controllers.core.ResourceController;
+import net.lintford.library.controllers.debug.DebugControllerTreeController;
+import net.lintford.library.controllers.debug.DebugRendererTreeController;
 import net.lintford.library.controllers.hud.UIHUDStructureController;
 import net.lintford.library.core.camera.Camera;
 import net.lintford.library.core.camera.HUD;
@@ -286,8 +287,8 @@ public abstract class LintfordCore {
 
 		mControllerManager = new ControllerManager(this);
 		if (Debug.debugManager().debugManagerEnabled()) {
-			mControllerManager.addController(new DebugTreeController(mControllerManager, CORE_ENTITY_GROUP_ID), CORE_ENTITY_GROUP_ID);
-
+			mControllerManager.addController(new DebugControllerTreeController(mControllerManager, CORE_ENTITY_GROUP_ID), CORE_ENTITY_GROUP_ID);
+			mControllerManager.addController(new DebugRendererTreeController(mControllerManager, CORE_ENTITY_GROUP_ID), CORE_ENTITY_GROUP_ID);
 		}
 
 		mResourceManager = new ResourceManager(mMasterConfig);

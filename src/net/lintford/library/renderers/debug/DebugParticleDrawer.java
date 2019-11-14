@@ -15,7 +15,7 @@ public class DebugParticleDrawer extends BaseRenderer {
 	// Constants
 	// --------------------------------------
 
-	public static final String RENDERER_NAME = "DebugParticleDrawer";
+	public static final String RENDERER_NAME = "DEBUG Particle Outlines";
 
 	// --------------------------------------
 	// Variables
@@ -28,6 +28,12 @@ public class DebugParticleDrawer extends BaseRenderer {
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	@Override
+	public boolean isInitialized() {
+		return true;
+
+	}
 
 	public void debugDrawEnable(boolean pNewValue) {
 		mShowDebugInformation = pNewValue;
@@ -85,13 +91,13 @@ public class DebugParticleDrawer extends BaseRenderer {
 			return;
 
 		Debug.debugManager().drawers().beginTextRenderer(pCore.HUD());
-		
+
 		int lEmitterCount = mParticleFrameworkData.emitterManager().emitterInstances().size();
 		Debug.debugManager().drawers().drawText(String.format("Num Emitters: %d", lEmitterCount), 0, 0);
-		
+
 		int lSystemCount = mParticleFrameworkData.particleSystemManager().getNumParticleSystems();
 		Debug.debugManager().drawers().drawText(String.format("Num Systems: %d", lSystemCount), 0, 25);
-		
+
 		Debug.debugManager().drawers().endTextRenderer();
 
 	}

@@ -1,13 +1,14 @@
-package net.lintford.library.controllers;
+package net.lintford.library.controllers.debug;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import net.lintford.library.controllers.BaseController;
 import net.lintford.library.controllers.core.ControllerManager;
 import net.lintford.library.core.LintfordCore;
 
-public class DebugTreeController extends BaseController {
+public class DebugControllerTreeController extends BaseController {
 
 	// --------------------------------------
 	// Constants
@@ -20,6 +21,7 @@ public class DebugTreeController extends BaseController {
 	// --------------------------------------
 
 	protected List<BaseControllerWidget> mDebugTreeComponents;
+	protected int mCountAtLastUpdate = -1;
 
 	// --------------------------------------
 	// Properties
@@ -38,7 +40,7 @@ public class DebugTreeController extends BaseController {
 	// Constructor
 	// --------------------------------------
 
-	public DebugTreeController(ControllerManager pControllerManager, int pControllerGroup) {
+	public DebugControllerTreeController(ControllerManager pControllerManager, int pControllerGroup) {
 		super(pControllerManager, CONTROLLER_NAME, pControllerGroup);
 
 		mDebugTreeComponents = new ArrayList<BaseControllerWidget>();
@@ -87,6 +89,13 @@ public class DebugTreeController extends BaseController {
 
 	// makes sure that every controller gets its own rendering widget
 	private void maintainControllerWidgetList(final Map<Integer, List<BaseController>> lControllers) {
+
+//		final int lControllerCount = lControllers.size();
+//		if (mCountAtLastUpdate == lControllerCount)
+//			return;
+//
+//		mCountAtLastUpdate = lControllerCount;
+
 		// Check for updates to the structure of the Controller Manager:
 		// 1.. Check the parent containers
 		int lPositionCounter = 0;
@@ -103,9 +112,7 @@ public class DebugTreeController extends BaseController {
 			final var lNumChildControllers = lControllerManager.size();
 			for (var j = 0; j < lNumChildControllers; j++) {
 				final var lBaseController = lControllerManager.get(j);
-
-				if (!debugTreeContainsControllerId(lBaseController.mControllerId)) {
-					// Add this BaseController to the DebugTreeStructure
+				if (!debugTreeContainsControllerId(lBaseController.controllerId())) {
 					addBaseControllerToDebugTree(lBaseController, lPositionCounter, 1);
 
 				}
@@ -148,8 +155,6 @@ public class DebugTreeController extends BaseController {
 		lNewDebugArea.baseController = null;
 		lNewDebugArea.isExpanded = false;
 		lNewDebugArea.controllerLevel = pIndentation;
-
-		System.out.println("Added BaseController to DebugTree!");
 
 		mDebugTreeComponents.add(lNewDebugArea);
 	}

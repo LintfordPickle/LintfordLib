@@ -16,14 +16,15 @@ public abstract class BaseRenderer {
 	// Variables
 	// --------------------------------------
 
+	protected final int mRendererId;
 	protected RendererManager mRendererManager;
 	protected final String mRendererName;
 	protected boolean mIsActive;
 	protected boolean mIsLoaded;
 
 	/**
-	 * An entity group ID is assigned to all {@link BaseRenderer} instances. It allows you to programmatically unload batches of particular parts of the game when required (i.e. unload the game controllers when returning to the
-	 * main menu)
+	 * An entity group ID is assigned to all {@link BaseRenderer} instances. It allows you to programmatically unload batches of particular parts of the game when required (i.e. unload
+	 * the game controllers when returning to the main menu)
 	 */
 	protected int mEntityGroupID;
 
@@ -31,9 +32,14 @@ public abstract class BaseRenderer {
 	// Properties
 	// --------------------------------------
 
+	/** Returns the unique Id assigned to this BaseRenderer instance. */
+	public int rendererId() {
+		return mRendererId;
+	}
+
 	/**
-	 * A group ID is assigned to all {@link BaseRenderer} instances. It allows the developer to programmatically unload batches of particular parts of the game when required (i.e. unload the game controllers when returning to the
-	 * main menu)
+	 * A group ID is assigned to all {@link BaseRenderer} instances. It allows the developer to programmatically unload batches of particular parts of the game when required (i.e.
+	 * unload the game controllers when returning to the main menu)
 	 */
 	public int entityGroupID() {
 		return mEntityGroupID;
@@ -72,7 +78,9 @@ public abstract class BaseRenderer {
 
 	public BaseRenderer(final RendererManager pRendererManager, final String pRendererName, final int pEntityGroupID) {
 		if (pRendererName == null || pRendererName.length() == 0)
-			throw new RuntimeException("Controller names cannot be null or empty!");
+			throw new RuntimeException("Renderer names cannot be null or empty!");
+
+		mRendererId = pRendererManager.getNewRendererId();
 
 		mRendererManager = pRendererManager;
 		mRendererName = pRendererName;
@@ -92,6 +100,8 @@ public abstract class BaseRenderer {
 	// Core-Methods
 	// --------------------------------------
 
+	public abstract boolean isInitialized();
+	
 	public abstract void initialize(LintfordCore pCore);
 
 	public void loadGLContent(ResourceManager pResourceManager) {

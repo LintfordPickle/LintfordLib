@@ -1,6 +1,7 @@
 package net.lintford.library.controllers;
 
 import net.lintford.library.controllers.core.ControllerManager;
+import net.lintford.library.controllers.debug.BaseControllerWidget;
 import net.lintford.library.core.LintfordCore;
 
 public abstract class BaseController {
@@ -9,6 +10,7 @@ public abstract class BaseController {
 	// Variables
 	// --------------------------------------
 
+	protected BaseControllerWidget mBaseControllerWidget;
 	protected final int mControllerId;
 	protected ControllerManager mControllerManager;
 	protected String mControllerName;

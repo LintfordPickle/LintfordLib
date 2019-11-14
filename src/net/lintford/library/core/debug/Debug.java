@@ -4,7 +4,8 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.DebugLogger.LogMessage;
 import net.lintford.library.core.debug.stats.DebugStats;
-import net.lintford.library.renderers.debug.DebugControllerRenderer;
+import net.lintford.library.renderers.debug.DebugControllerTreeRenderer;
+import net.lintford.library.renderers.debug.DebugRendererTreeRenderer;
 
 public class Debug {
 
@@ -77,7 +78,8 @@ public class Debug {
 	private DebugConsole mDebugConsole;
 	private DebugDrawers mDebugDrawers;
 	private DebugStats mDebugStats;
-	private DebugControllerRenderer mDebugController;
+	private DebugRendererTreeRenderer mDebugRendererRenderer;
+	private DebugControllerTreeRenderer mDebugControllerRenderer;
 
 	private boolean mIsGLLoaded;
 
@@ -129,7 +131,8 @@ public class Debug {
 		mDebugDrawers = new DebugDrawers(this);
 		mDebugConsole = new DebugConsole(this);
 		mDebugStats = new DebugStats(this);
-		mDebugController = new DebugControllerRenderer(this);
+		mDebugControllerRenderer = new DebugControllerTreeRenderer(this);
+		mDebugRendererRenderer = new DebugRendererTreeRenderer(this);
 
 		addDebugConsoleCommands();
 
@@ -145,7 +148,8 @@ public class Debug {
 		mDebugConsole.loadGLContent(pResourceManager);
 		mDebugDrawers.loadGLContent(pResourceManager);
 		mDebugStats.loadGLContent(pResourceManager);
-		mDebugController.loadGLContent(pResourceManager);
+		mDebugControllerRenderer.loadGLContent(pResourceManager);
+		mDebugRendererRenderer.loadGLContent(pResourceManager);
 
 		mIsGLLoaded = true;
 
@@ -155,7 +159,8 @@ public class Debug {
 		mDebugConsole.unloadGLContent();
 		mDebugDrawers.unloadGLContent();
 		mDebugStats.unloadGLContent();
-		mDebugController.unloadGLContent();
+		mDebugControllerRenderer.unloadGLContent();
+		mDebugRendererRenderer.unloadGLContent();
 
 		mIsGLLoaded = false;
 
@@ -164,7 +169,8 @@ public class Debug {
 	public void handleInput(LintfordCore pCore) {
 		mDebugConsole.handleInput(pCore);
 		mDebugStats.handleInput(pCore);
-		mDebugController.handleInput(pCore);
+		mDebugControllerRenderer.handleInput(pCore);
+		mDebugRendererRenderer.handleInput(pCore);
 
 	}
 
@@ -186,7 +192,8 @@ public class Debug {
 
 		mDebugConsole.update(pCore);
 		mDebugStats.update(pCore);
-		mDebugController.update(pCore);
+		mDebugRendererRenderer.update(pCore);
+		mDebugControllerRenderer.update(pCore);
 
 	}
 
@@ -196,7 +203,8 @@ public class Debug {
 
 		mDebugStats.draw(pCore);
 		mDebugConsole.draw(pCore);
-		mDebugController.draw(pCore);
+		mDebugControllerRenderer.draw(pCore);
+		mDebugRendererRenderer.draw(pCore);
 
 	}
 

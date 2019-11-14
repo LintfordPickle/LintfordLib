@@ -15,7 +15,7 @@ public class DebugBox2dDrawer extends BaseRenderer {
 	// Constants
 	// --------------------------------------
 
-	public static final String RENDERER_NAME = "DebugBox2dDrawer";
+	public static final String RENDERER_NAME = "DEBUG Box2d Outlines";
 
 	// --------------------------------------
 	// Variables
@@ -27,6 +27,12 @@ public class DebugBox2dDrawer extends BaseRenderer {
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	@Override
+	public boolean isInitialized() {
+		return true;
+
+	}
 
 	public void debugDrawEnable(boolean pNewValue) {
 		mShowDebugInformation = pNewValue;

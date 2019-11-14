@@ -2,8 +2,8 @@ package net.lintford.library.renderers.debug;
 
 import org.lwjgl.glfw.GLFW;
 
-import net.lintford.library.controllers.DebugTreeController;
 import net.lintford.library.controllers.core.ControllerManager;
+import net.lintford.library.controllers.debug.DebugControllerTreeController;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.Debug;
@@ -12,18 +12,19 @@ import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 import net.lintford.library.core.input.IProcessMouseInput;
-import net.lintford.library.options.DisplayManager;
 import net.lintford.library.renderers.windows.components.IScrollBarArea;
 import net.lintford.library.renderers.windows.components.ScrollBar;
 import net.lintford.library.renderers.windows.components.ScrollBarContentRectangle;
 
-public class DebugControllerRenderer extends Rectangle implements IScrollBarArea, IProcessMouseInput {
+public class DebugControllerTreeRenderer extends Rectangle implements IScrollBarArea, IProcessMouseInput {
 
 	// --------------------------------------
 	// Constants
 	// --------------------------------------
 
 	private static final long serialVersionUID = -1937162238791885253L;
+
+	public static final float ENTRY_HEIGHT = 32;
 
 	// --------------------------------------
 	// Variables
@@ -34,7 +35,7 @@ public class DebugControllerRenderer extends Rectangle implements IScrollBarArea
 	private TextureBatch mTextureBatch;
 	private StringBuilder mStringBuilder;
 	private ControllerManager mControllerManager;
-	private DebugTreeController mDebugControllerTree;
+	private DebugControllerTreeController mDebugControllerTree;
 	private transient FontUnit mConsoleFont;
 	private boolean mIsOpen;
 
@@ -46,9 +47,8 @@ public class DebugControllerRenderer extends Rectangle implements IScrollBarArea
 	private boolean mScrollBarEnabled;
 	private transient int mLowerBound;
 	private transient int mUpperBound;
-	private transient int mConsoleLineHeight;
 
-	private float mOpenWidth = 400;
+	private float mOpenWidth = 350;
 	private float mOpenHeight = 500;
 	private float mClickTimer;
 
@@ -72,7 +72,7 @@ public class DebugControllerRenderer extends Rectangle implements IScrollBarArea
 	// Constructor
 	// --------------------------------------
 
-	public DebugControllerRenderer(final Debug pDebugManager) {
+	public DebugControllerTreeRenderer(final Debug pDebugManager) {
 		mDebugManager = pDebugManager;
 		mStringBuilder = new StringBuilder();
 
@@ -128,12 +128,16 @@ public class DebugControllerRenderer extends Rectangle implements IScrollBarArea
 		}
 
 		// *** Control the selection of ControllerWidgets ***
+		if (mScrollBar.handleInput(pCore)) {
+			return;
+
+		}
 
 		if (intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().isMouseOverThisComponent(hashCode())) {
 
-			if(pCore.input().mouse().tryAcquireMouseMiddle(hashCode())) {
+			if (pCore.input().mouse().tryAcquireMouseMiddle(hashCode())) {
 				mZScrollAcceleration += pCore.input().mouse().mouseWheelYOffset() * 250.0f;
-				
+
 			}
 
 			if (pCore.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
@@ -153,6 +157,12 @@ public class DebugControllerRenderer extends Rectangle implements IScrollBarArea
 						}
 
 						lControllerWidget.isExpanded = !lControllerWidget.isExpanded;
+						if (lControllerWidget.baseController != null) {
+							lControllerWidget.baseController.isActive(!lControllerWidget.baseController.isActive());
+
+						}
+
+						// Debug.debugManager().logger().i(getClass().getSimpleName(), "DebugTreeRenderer click on " + lControllerWidget.displayName);
 
 						// Once we have handled, then we can exit the loop
 						break;
@@ -169,8 +179,7 @@ public class DebugControllerRenderer extends Rectangle implements IScrollBarArea
 
 		// *** Control the scroll bar positioning ***
 		if (pCore.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_UP)) {
-			mConsoleLineHeight = (int) (mConsoleFont.bitmap().getStringHeight(" ") + 1);
-			mScrollYPosition += mConsoleLineHeight;
+			mScrollYPosition += ENTRY_HEIGHT;
 
 			if (mScrollYPosition > 0)
 				mScrollYPosition = 0;
@@ -178,16 +187,10 @@ public class DebugControllerRenderer extends Rectangle implements IScrollBarArea
 		}
 
 		if (pCore.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_DOWN)) {
-			mConsoleLineHeight = (int) (mConsoleFont.bitmap().getStringHeight(" ") + 1);
-			mScrollYPosition -= mConsoleLineHeight;
+			mScrollYPosition -= ENTRY_HEIGHT;
 
 			if (mScrollYPosition < mScrollBar.getScrollYBottomPosition())
-				mScrollYPosition = mScrollBar.getScrollYBottomPosition() - mConsoleLineHeight;
-		}
-
-		if (mScrollBar.handleInput(pCore)) {
-			return;
-
+				mScrollYPosition = mScrollBar.getScrollYBottomPosition() - ENTRY_HEIGHT;
 		}
 
 	}
@@ -196,10 +199,17 @@ public class DebugControllerRenderer extends Rectangle implements IScrollBarArea
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
-		mIsOpen = mDebugManager.stats().isOpen();
+		final float lDeltaTime = (float) pCore.time().elapseGameTimeMilli() / 1000f;
+
+		mIsOpen = mDebugManager.console().isOpen();
 
 		if (!mIsOpen)
 			return;
+
+		if (mClickTimer >= 0) {
+			mClickTimer -= pCore.time().elapseGameTimeMilli();
+
+		}
 
 		if (!isInitialized()) {
 			getControllerManagerInstance(pCore);
@@ -210,38 +220,26 @@ public class DebugControllerRenderer extends Rectangle implements IScrollBarArea
 			if (mConsoleFont.bitmap() == null)
 				mConsoleFont = pCore.resources().fontManager().systemFont();
 
-			// Update the window content
-			// 'ConsoleLineHeight' should actually be the 6
 			final var lControllerList = mDebugControllerTree.treeComponents();
 			final var lNumberComponents = lControllerList.size();
+			final var lDisplayManager = pCore.config().display();
 
-			DisplayManager lDisplay = pCore.config().display();
 			// Update the bounds of the window view
-			x = -lDisplay.windowWidth() * 0.5f + 5f;
-			y = -lDisplay.windowHeight() * 0.5f + 5f;
+			x = -lDisplayManager.windowWidth() * 0.5f + 5f;
+			final float lConsoleYOffset = Debug.debugManager().console().isOpen() ? Debug.debugManager().console().openHeight() : 5f;
+			y = -lDisplayManager.windowHeight() * 0.5f + lConsoleYOffset + 5f;
 			w = mOpenWidth;
 			h = mOpenHeight;
 
-			// fit the upper bound around the lower bounds
-			mLowerBound = (int) -((mScrollYPosition) / mConsoleLineHeight);
-//			if (mLowerBound + MAX_NUM_LINES > lNumberComponents) {
-//				mLowerBound = lNumberComponents - MAX_NUM_LINES;
-//				mUpperBound = lNumberComponents;
-//
-//				// but the lower bound can never be lower than 0 (indexed)
-//				if (mLowerBound < 0)
-//					mLowerBound = 0;
-//			} else {
-//				mUpperBound = mLowerBound + MAX_NUM_LINES;
-//
-//			}
+			final int lMaxNumLines = (int) (h / ENTRY_HEIGHT) + 1;
+			mLowerBound = (int) -((mScrollYPosition) / ENTRY_HEIGHT);
+			mUpperBound = mLowerBound + lMaxNumLines;
 
 			{
 
 				// *** UPDATE THE COMPONENT WIDGETS ***
 
 				float lPosY = y + mScrollYPosition;
-				float lTotalControllerHeight = 0;
 
 				final var lComponentTree = mDebugControllerTree.treeComponents();
 				final var lControllerWidgetCount = lComponentTree.size();
@@ -249,21 +247,18 @@ public class DebugControllerRenderer extends Rectangle implements IScrollBarArea
 					final var lControllerWidget = lComponentTree.get(i);
 
 					lControllerWidget.update(pCore);
-					lControllerWidget.w = w;
 					lControllerWidget.x = x;
 					lControllerWidget.y = lPosY;
+					lControllerWidget.w = w;
+					lControllerWidget.h = ENTRY_HEIGHT;
 
 					lPosY += lControllerWidget.h;
-					lTotalControllerHeight += lControllerWidget.h;
 
 				}
 
-				mContentRectangle.h = (int) lTotalControllerHeight;
-				fullContentArea().setCenter(x, y, w - mScrollBar.w, lNumberComponents * 25);
+				fullContentArea().setCenter(x, y, w - mScrollBar.w, lNumberComponents * ENTRY_HEIGHT);
 
 			}
-
-			final float lDeltaTime = (float) pCore.time().elapseGameTimeMilli() / 1000f;
 
 			float lScrollSpeedFactor = mScrollYPosition;
 
@@ -275,6 +270,11 @@ public class DebugControllerRenderer extends Rectangle implements IScrollBarArea
 			mScrollYPosition = lScrollSpeedFactor;
 
 			// Constrain
+			if (mScrollYPosition > 0)
+				mScrollYPosition = 0;
+			if (mScrollYPosition < -(mContentRectangle.h - this.h)) {
+				mScrollYPosition = -(mContentRectangle.h - this.h);
+			}
 
 			mScrollBarEnabled = h < mContentRectangle.h;
 
@@ -309,13 +309,14 @@ public class DebugControllerRenderer extends Rectangle implements IScrollBarArea
 		mTextureBatch.draw(mCoreTexture, 0, 0, 32, 32, lLeft, lTop, mOpenWidth, 500, -0.03f, 0.21f, 0.17f, 0.25f, 0.95f);
 		mTextureBatch.end();
 
+		mTextureBatch.begin(pCore.HUD());
 		mConsoleFont.begin(pCore.HUD());
 
 		// Getting list of ControllerItems to render
 		final var lControllerList = mDebugControllerTree.treeComponents();
 
+		// The lControllerList contains a flat list of all <BaseControllerWidget> which we created for the controllers
 		final var lNumTreeComponents = lControllerList.size();
-		int lPosY = 5;
 		for (int i = mLowerBound; i < mUpperBound; i++) {
 			if (i < 0)
 				continue;
@@ -328,10 +329,22 @@ public class DebugControllerRenderer extends Rectangle implements IScrollBarArea
 			int lPosX = lBaseControllerWidget.controllerLevel * 30;
 
 			mConsoleFont.draw(lControllerName, lBaseControllerWidget.x + lPosX, lBaseControllerWidget.y, -0.02f, 1, 1, 1, 1, 1, -1);
-			lPosY += lBaseControllerWidget.h;
+
+			final float lActiveIconX = lLeft + mOpenWidth - 64;
+			final float lActiveIconY = lBaseControllerWidget.y;
+
+			if (lBaseControllerWidget == null || !lBaseControllerWidget.isControllerActive) {
+				mTextureBatch.draw(mCoreTexture, 288, 96, 32, 32, lActiveIconX, lActiveIconY, 32, 32, -0.01f, 1, 1, 1, 1);
+
+			} else {
+				mTextureBatch.draw(mCoreTexture, 288, 128, 32, 32, lActiveIconX, lActiveIconY, 32, 32, -0.01f, 1, 1, 1, 1);
+
+			}
+
 		}
 
 		mConsoleFont.end();
+		mTextureBatch.end();
 
 		if (mScrollBarEnabled) {
 			mScrollBar.draw(pCore, mTextureBatch, mCoreTexture, -0.02f);
@@ -346,7 +359,7 @@ public class DebugControllerRenderer extends Rectangle implements IScrollBarArea
 
 	private void getControllerManagerInstance(LintfordCore pCore) {
 		mControllerManager = pCore.controllerManager();
-		mDebugControllerTree = (DebugTreeController) mControllerManager.getControllerByNameRequired(DebugTreeController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
+		mDebugControllerTree = (DebugControllerTreeController) mControllerManager.getControllerByNameRequired(DebugControllerTreeController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
 
 	}
 

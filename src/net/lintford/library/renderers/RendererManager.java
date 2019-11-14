@@ -13,6 +13,7 @@ import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.debug.GLDebug;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.linebatch.LineBatch;
+import net.lintford.library.core.graphics.polybatch.PolyBatch;
 import net.lintford.library.core.graphics.rendertarget.RenderTarget;
 import net.lintford.library.core.graphics.sprites.spritebatch.SpriteBatch;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
@@ -71,6 +72,7 @@ public class RendererManager {
 	private SpriteBatch mSpriteBatch;
 	private TextureBatch mTextureBatch;
 	private LineBatch mLineBatch;
+	private PolyBatch mPolyBatch;
 
 	// TODO: Make a dedicated RenderTargetManager
 	private List<RenderTarget> mRenderTargets;
@@ -78,10 +80,15 @@ public class RendererManager {
 	private RenderTarget mCurrentTarget;
 
 	private IResizeListener mResizeListener;
+	private int mRendererIdCounter;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public int getNewRendererId() {
+		return mRendererIdCounter++;
+	}
 
 	public String ownerName() {
 		return mOwnerIdentifier;
@@ -135,8 +142,16 @@ public class RendererManager {
 		return mSpriteBatch;
 	}
 
+	public PolyBatch uiPolyBatch() {
+		return mPolyBatch;
+	}
+
 	public LineBatch uiLineBatch() {
 		return mLineBatch;
+	}
+
+	public List<BaseRenderer> baseRenderers() {
+		return mRenderers;
 	}
 
 	public List<UIWindow> windows() {
@@ -164,6 +179,7 @@ public class RendererManager {
 		mSpriteBatch = new SpriteBatch();
 		mTextureBatch = new TextureBatch();
 		mLineBatch = new LineBatch();
+		mPolyBatch = new PolyBatch();
 
 		mListeners = new ArrayList<>();
 
@@ -180,7 +196,6 @@ public class RendererManager {
 	// --------------------------------------
 
 	public void initialize() {
-
 		mUIHUDController = (UIHUDStructureController) mCore.controllerManager().getControllerByNameRequired(UIHUDStructureController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
 
 		final int RENDERER_COUNT = mRenderers.size();
@@ -205,8 +220,9 @@ public class RendererManager {
 		mSpriteBatch.loadGLContent(pResourceManager);
 		mTextureBatch.loadGLContent(pResourceManager);
 		mLineBatch.loadGLContent(pResourceManager);
-
-		String lPath = "res//fonts//Rajdhani-Bold.ttf";
+		mPolyBatch.loadGLContent(pResourceManager);
+		
+		final String lPath = "res//fonts//Rajdhani-Bold.ttf";
 		mWindowTitleFont = pResourceManager.fontManager().loadNewFont(WINDOWS_TITLE_FONT_NAME, lPath, 18, mEntityGroupID);
 		mWindowTextFont = pResourceManager.fontManager().loadNewFont(WINDOWS_TEXT_FONT_NAME, lPath, 16, mEntityGroupID);
 
@@ -260,6 +276,7 @@ public class RendererManager {
 		mSpriteBatch.unloadGLContent();
 		mTextureBatch.unloadGLContent();
 		mLineBatch.unloadGLContent();
+		mPolyBatch.unloadGLContent();
 
 		mWindowTextFont.unloadGLContent();
 		mWindowTitleFont.unloadGLContent();

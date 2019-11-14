@@ -14,7 +14,7 @@ public class DebugHUDDrawer extends BaseRenderer {
 	// Constants
 	// --------------------------------------
 
-	public static final String RENDERER_NAME = "DebugHUDDrawer";
+	public static final String RENDERER_NAME = "DEBUG HUD Outlines";
 
 	// --------------------------------------
 	// Variables
@@ -27,6 +27,12 @@ public class DebugHUDDrawer extends BaseRenderer {
 	// Properties
 	// --------------------------------------
 
+	@Override
+	public boolean isInitialized() {
+		return true;
+
+	}
+	
 	public int debugDrawEnable() {
 		return mDebugDraw;
 	}
@@ -37,6 +43,8 @@ public class DebugHUDDrawer extends BaseRenderer {
 
 	public DebugHUDDrawer(RendererManager pRendererManager, int pEntityGroupID) {
 		super(pRendererManager, RENDERER_NAME, pEntityGroupID);
+
+		mIsActive = false;
 
 	}
 
@@ -52,6 +60,9 @@ public class DebugHUDDrawer extends BaseRenderer {
 
 	@Override
 	public boolean handleInput(LintfordCore pCore) {
+		if (!isActive())
+			return false;
+
 		if (pCore.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_F2)) {
 			mDebugDraw++;
 			if (mDebugDraw > 2)
@@ -63,20 +74,18 @@ public class DebugHUDDrawer extends BaseRenderer {
 
 	@Override
 	public void draw(LintfordCore pCore) {
-		if (mDebugDraw == 0)
+		if (!isActive() || mDebugDraw == 0)
 			return;
 
-		if (mDebugDraw == 1) { // menu rects
-			Debug.debugManager().drawers().drawRectImmediate(pCore.HUD(), mUIHUDController.menuMainRectangle());
-			Debug.debugManager().drawers().drawRectImmediate(pCore.HUD(), mUIHUDController.menuTitleRectangle());
-			Debug.debugManager().drawers().drawRectImmediate(pCore.HUD(), mUIHUDController.menuFooterRectangle());
+		// menu rects
+		// Debug.debugManager().drawers().drawRectImmediate(pCore.HUD(), mUIHUDController.menuMainRectangle());
+		// Debug.debugManager().drawers().drawRectImmediate(pCore.HUD(), mUIHUDController.menuTitleRectangle());
+		// Debug.debugManager().drawers().drawRectImmediate(pCore.HUD(), mUIHUDController.menuFooterRectangle());
 
-		} else { // Game HUD
-			Debug.debugManager().drawers().drawRectImmediate(pCore.HUD(), mUIHUDController.gameHUDRectangle(), 1f, 0f, 1f);
-			Debug.debugManager().drawers().drawRectImmediate(pCore.HUD(), mUIHUDController.gameHeaderRectangle(), 0f, 1f, 0f);
-			Debug.debugManager().drawers().drawRectImmediate(pCore.HUD(), mUIHUDController.gameFooterRectangle(), 0f, 1f, 0f);
-
-		}
+		// Game HUD
+		Debug.debugManager().drawers().drawRectImmediate(pCore.HUD(), mUIHUDController.gameHUDRectangle(), 1f, 0f, 1f);
+		Debug.debugManager().drawers().drawRectImmediate(pCore.HUD(), mUIHUDController.gameHeaderRectangle(), 0f, 1f, 0f);
+		Debug.debugManager().drawers().drawRectImmediate(pCore.HUD(), mUIHUDController.gameFooterRectangle(), 0f, 1f, 0f);
 
 	}
 

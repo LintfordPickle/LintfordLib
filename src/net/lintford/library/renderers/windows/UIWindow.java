@@ -94,6 +94,12 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 	// Properties
 	// --------------------------------------
 
+	@Override
+	public boolean isInitialized() {
+		return true;
+
+	}
+
 	public void setTitleColor(float pR, float pG, float pB) {
 		mTitleR = pR;
 		mTitleG = pG;
