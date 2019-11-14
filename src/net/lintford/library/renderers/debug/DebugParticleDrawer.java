@@ -52,6 +52,8 @@ public class DebugParticleDrawer extends BaseRenderer {
 
 		mParticleFrameworkData = pParticleFramework;
 
+		isActive(false);
+
 	}
 
 	// --------------------------------------

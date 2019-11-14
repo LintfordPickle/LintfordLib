@@ -24,6 +24,7 @@ public class DebugRendererTreeRenderer extends Rectangle implements IScrollBarAr
 	private static final long serialVersionUID = -1937162238791885253L;
 
 	public static final float ENTRY_HEIGHT = 32;
+	public static final float MAX_PANE_HEIGHT = 600;
 
 	// --------------------------------------
 	// Variables
@@ -32,7 +33,6 @@ public class DebugRendererTreeRenderer extends Rectangle implements IScrollBarAr
 	private Debug mDebugManager;
 	private Texture mCoreTexture;
 	private TextureBatch mTextureBatch;
-	private StringBuilder mStringBuilder;
 	private DebugRendererTreeController mDebugRendererTree;
 	private transient FontUnit mConsoleFont;
 	private boolean mIsOpen;
@@ -72,7 +72,6 @@ public class DebugRendererTreeRenderer extends Rectangle implements IScrollBarAr
 
 	public DebugRendererTreeRenderer(final Debug pDebugManager) {
 		mDebugManager = pDebugManager;
-		mStringBuilder = new StringBuilder();
 
 		if (pDebugManager.debugManagerEnabled()) {
 			mTextureBatch = new TextureBatch();
@@ -219,9 +218,14 @@ public class DebugRendererTreeRenderer extends Rectangle implements IScrollBarAr
 			final var lNumberRenderers = lRendererList.size();
 			final var lDisplayManager = pCore.config().display();
 
+			final var windowHeight = lDisplayManager.windowHeight();
+			final var consoleHeight = Debug.debugManager().console().openHeight();
+			mOpenHeight = windowHeight - consoleHeight - 20f - 75f;
+			mOpenHeight = Math.min(mOpenHeight, MAX_PANE_HEIGHT);
+
 			// Update the bounds of the window view
 			x = lDisplayManager.windowWidth() * 0.5f - mOpenWidth - 5f;
-			final float lConsoleYOffset = Debug.debugManager().console().isOpen() ? Debug.debugManager().console().openHeight() : 5f;
+			final float lConsoleYOffset = Debug.debugManager().console().isOpen() ? consoleHeight : 5f;
 			y = -lDisplayManager.windowHeight() * 0.5f + lConsoleYOffset + 5f;
 			w = mOpenWidth;
 			h = mOpenHeight;
@@ -288,24 +292,31 @@ public class DebugRendererTreeRenderer extends Rectangle implements IScrollBarAr
 		if (!mIsOpen)
 			return;
 
-		// Get the positional informationt from the parent object (inline with console and renderer widget display).
+		// Get the positional information from the parent object (inline with console and renderer widget display).
 
 		mTextureBatch.begin(pCore.HUD());
 
 		final var lTop = y;
 		final var lLeft = x;
 
-		mTextureBatch.draw(mCoreTexture, 0, 0, 32, 32, lLeft, lTop, mOpenWidth, 500, -0.03f, 0.21f, 0.17f, 0.25f, 0.95f);
+		mTextureBatch.draw(mCoreTexture, 0, 0, 32, 32, lLeft, lTop, mOpenWidth, mOpenHeight, -0.03f, 0.21f, 0.17f, 0.25f, 0.95f);
 		mTextureBatch.end();
-
-		mTextureBatch.begin(pCore.HUD());
-		mConsoleFont.begin(pCore.HUD());
 
 		// Getting list of ControllerItems to render
 		final var lControllerList = mDebugRendererTree.treeComponents();
 
 		// The lControllerList contains a flat list of all <BaseControllerWidget> which we created for the controllers
 		final var lNumTreeComponents = lControllerList.size();
+
+		if (lNumTreeComponents == 0)
+			return;
+
+		if (h < mContentRectangle.h)
+			mContentRectangle.preDraw(pCore, mTextureBatch, mCoreTexture);
+
+		mTextureBatch.begin(pCore.HUD());
+		mConsoleFont.begin(pCore.HUD());
+
 		for (int i = mLowerBound; i < mUpperBound; i++) {
 			if (i < 0)
 				continue;
@@ -334,6 +345,9 @@ public class DebugRendererTreeRenderer extends Rectangle implements IScrollBarAr
 
 		mConsoleFont.end();
 		mTextureBatch.end();
+
+		if (h < mContentRectangle.h)
+			mContentRectangle.postDraw(pCore);
 
 		if (mScrollBarEnabled) {
 			mScrollBar.draw(pCore, mTextureBatch, mCoreTexture, -0.02f);

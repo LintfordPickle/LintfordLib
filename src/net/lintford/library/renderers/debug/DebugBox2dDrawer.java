@@ -51,6 +51,8 @@ public class DebugBox2dDrawer extends BaseRenderer {
 
 		mJBox2dDebugDrawer = new JBox2dDebugDrawer(pWorld);
 
+		isActive(false);
+
 	}
 
 	// --------------------------------------
