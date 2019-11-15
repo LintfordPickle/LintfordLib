@@ -226,7 +226,7 @@ public class DebugRendererTreeRenderer extends Rectangle implements IScrollBarAr
 			// Update the bounds of the window view
 			x = lDisplayManager.windowWidth() * 0.5f - mOpenWidth - 5f;
 			final float lConsoleYOffset = Debug.debugManager().console().isOpen() ? consoleHeight : 5f;
-			y = -lDisplayManager.windowHeight() * 0.5f + lConsoleYOffset + 5f;
+			y = -lDisplayManager.windowHeight() * 0.5f + lConsoleYOffset + 5f + 25f;
 			w = mOpenWidth;
 			h = mOpenHeight;
 
@@ -295,12 +295,13 @@ public class DebugRendererTreeRenderer extends Rectangle implements IScrollBarAr
 		// Get the positional information from the parent object (inline with console and renderer widget display).
 
 		mTextureBatch.begin(pCore.HUD());
-
-		final var lTop = y;
-		final var lLeft = x;
-
-		mTextureBatch.draw(mCoreTexture, 0, 0, 32, 32, lLeft, lTop, mOpenWidth, mOpenHeight, -0.03f, 0.21f, 0.17f, 0.25f, 0.95f);
+		mTextureBatch.draw(mCoreTexture, 0, 0, 32, 32, x, y - 25f, mOpenWidth, 25f, -0.03f, 0.16f, 0.10f, 0.19f, 0.95f);
+		mTextureBatch.draw(mCoreTexture, 0, 0, 32, 32, x, y, mOpenWidth, mOpenHeight, -0.03f, 0.21f, 0.17f, 0.25f, 0.95f);
 		mTextureBatch.end();
+
+		mConsoleFont.begin(pCore.HUD());
+		mConsoleFont.draw("Renderers", x, y - 25f, -0.02f, 1, 1, 1, 1, 1, -1);
+		mConsoleFont.end();
 
 		// Getting list of ControllerItems to render
 		final var lControllerList = mDebugRendererTree.treeComponents();
@@ -330,7 +331,7 @@ public class DebugRendererTreeRenderer extends Rectangle implements IScrollBarAr
 
 			mConsoleFont.draw(lRendererName, lBaseRendererWidget.x + lPosX, lBaseRendererWidget.y, -0.02f, 1, 1, 1, 1, 1, -1);
 
-			final float lActiveIconX = lLeft + mOpenWidth - 64;
+			final float lActiveIconX = x + mOpenWidth - 64;
 			final float lActiveIconY = lBaseRendererWidget.y;
 
 			if (lBaseRendererWidget == null || !lBaseRendererWidget.isRendererActive) {

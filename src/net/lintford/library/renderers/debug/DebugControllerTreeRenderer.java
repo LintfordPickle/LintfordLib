@@ -231,7 +231,7 @@ public class DebugControllerTreeRenderer extends Rectangle implements IScrollBar
 			// Update the bounds of the window view
 			x = -lDisplayManager.windowWidth() * 0.5f + 5f;
 			final float lConsoleYOffset = Debug.debugManager().console().isOpen() ? Debug.debugManager().console().openHeight() : 5f;
-			y = -lDisplayManager.windowHeight() * 0.5f + lConsoleYOffset + 5f;
+			y = -lDisplayManager.windowHeight() * 0.5f + lConsoleYOffset + 5f + 25f;
 			w = mOpenWidth;
 			h = mOpenHeight;
 
@@ -240,7 +240,6 @@ public class DebugControllerTreeRenderer extends Rectangle implements IScrollBar
 			mUpperBound = mLowerBound + lMaxNumLines;
 
 			{
-
 				// *** UPDATE THE COMPONENT WIDGETS ***
 
 				float lPosY = y + mScrollYPosition;
@@ -306,12 +305,13 @@ public class DebugControllerTreeRenderer extends Rectangle implements IScrollBar
 		// Get the positional informationt from the parent object (inline with console and renderer widget display).
 
 		mTextureBatch.begin(pCore.HUD());
-
-		final var lTop = y;
-		final var lLeft = x;
-
-		mTextureBatch.draw(mCoreTexture, 0, 0, 32, 32, lLeft, lTop, mOpenWidth, mOpenHeight, -0.03f, 0.21f, 0.17f, 0.25f, 0.95f);
+		mTextureBatch.draw(mCoreTexture, 0, 0, 32, 32, x, y - 25f, mOpenWidth, 25f, -0.03f, 0.16f, 0.10f, 0.19f, 0.95f);
+		mTextureBatch.draw(mCoreTexture, 0, 0, 32, 32, x, y, mOpenWidth, mOpenHeight, -0.03f, 0.21f, 0.17f, 0.25f, 0.95f);
 		mTextureBatch.end();
+
+		mConsoleFont.begin(pCore.HUD());
+		mConsoleFont.draw("Controllers", x, y - 25f, -0.02f, 1, 1, 1, 1, 1, -1);
+		mConsoleFont.end();
 
 		if (h < mContentRectangle.h)
 			mContentRectangle.preDraw(pCore, mTextureBatch, mCoreTexture);
@@ -337,7 +337,7 @@ public class DebugControllerTreeRenderer extends Rectangle implements IScrollBar
 
 			mConsoleFont.draw(lControllerName, lBaseControllerWidget.x + lPosX, lBaseControllerWidget.y, -0.02f, 1, 1, 1, 1, 1, -1);
 
-			final float lActiveIconX = lLeft + mOpenWidth - 64;
+			final float lActiveIconX = x + mOpenWidth - 64;
 			final float lActiveIconY = lBaseControllerWidget.y;
 
 			if (lBaseControllerWidget == null || !lBaseControllerWidget.isControllerActive) {
