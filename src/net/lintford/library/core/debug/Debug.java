@@ -2,7 +2,6 @@ package net.lintford.library.core.debug;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
-import net.lintford.library.core.debug.DebugLogger.LogMessage;
 import net.lintford.library.core.debug.stats.DebugStats;
 import net.lintford.library.renderers.debug.DebugControllerTreeRenderer;
 import net.lintford.library.renderers.debug.DebugRendererTreeRenderer;

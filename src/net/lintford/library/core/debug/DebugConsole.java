@@ -10,7 +10,6 @@ import org.lwjgl.glfw.GLFW;
 import net.lintford.library.ConstantsTable;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
-import net.lintford.library.core.debug.DebugLogger.LogMessage;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
@@ -18,6 +17,7 @@ import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 import net.lintford.library.core.input.IBufferedInputCallback;
 import net.lintford.library.core.maths.Vector3f;
+import net.lintford.library.core.messaging.Message;
 import net.lintford.library.options.DisplayManager;
 import net.lintford.library.renderers.ZLayers;
 import net.lintford.library.renderers.windows.components.IScrollBarArea;
@@ -117,8 +117,8 @@ public class DebugConsole extends Rectangle implements IBufferedInputCallback, I
 	private int mMessageFilterLastSize;
 
 	protected boolean mProcessed; // is filter applied?
-	protected List<LogMessage> mProcessedMessages;
-	protected List<LogMessage> mUpdateMessageList;
+	protected List<Message> mProcessedMessages;
+	protected List<Message> mUpdateMessageList;
 	protected boolean mDirty;
 
 	protected PrintStream mErrPrintStream;
@@ -220,7 +220,7 @@ public class DebugConsole extends Rectangle implements IBufferedInputCallback, I
 			return;
 
 		Debug.debugManager().logger().v(getClass().getSimpleName(), "DebugConsole unloading GL content");
-
+		mConsoleFont = null;
 		mSpriteBatch.unloadGLContent();
 
 		mIsLoaded = false;
@@ -285,7 +285,7 @@ public class DebugConsole extends Rectangle implements IBufferedInputCallback, I
 
 				// capture the mouse wheel too
 				mZScrollAcceleration += pCore.input().mouse().mouseWheelYOffset() * 250.0f;
-				if(mZScrollAcceleration != 0) {
+				if (mZScrollAcceleration != 0) {
 					mAutoScroll = false;
 				}
 
@@ -472,33 +472,33 @@ public class DebugConsole extends Rectangle implements IBufferedInputCallback, I
 
 		mConsoleFont.begin(pCore.HUD());
 
-		List<LogMessage> lMessages = mProcessed ? mProcessedMessages : Debug.debugManager().logger().logLines();
+		final var lMessages = mProcessed ? mProcessedMessages : Debug.debugManager().logger().logLines();
 
-		DisplayManager lDisplay = pCore.config().display();
+		final var lDisplayConfig = pCore.config().display();
 
 		// output the messages
-		final int MESSAGE_COUNT = lMessages.size();
-		if (lMessages != null && MESSAGE_COUNT > 0) {
+		final int lMessageCount = lMessages.size();
+		if (lMessages != null && lMessageCount > 0) {
 			for (int i = mLowerBound; i < mUpperBound; i++) {
-				if (i >= 0 && i < MESSAGE_COUNT) {
-					final LogMessage MESSAGE = lMessages.get(i);
-					if (MESSAGE == null)
+				if (i >= 0 && i < lMessageCount) {
+					final var lMessage = lMessages.get(i);
+					if (lMessage == null)
 						continue;
 
 					lTextPosition -= mConsoleLineHeight;
 
-					final float lR = getMessageRGB(MESSAGE.type).x;
-					final float lG = getMessageRGB(MESSAGE.type).y;
-					final float lB = getMessageRGB(MESSAGE.type).z;
+					final float lR = getMessageRGB(lMessage.type).x;
+					final float lG = getMessageRGB(lMessage.type).y;
+					final float lB = getMessageRGB(lMessage.type).z;
 
 					// Draw Timestamp
-					mConsoleFont.draw(MESSAGE.timestamp, x + POSITION_OFFSET_TIME, -lDisplay.windowHeight() * 0.5f - lTextPosition, Z_DEPTH + 0.1f, lR, lG, lB, 1.0f, 1f, -1, 18);
+					mConsoleFont.draw(lMessage.timestamp, x + POSITION_OFFSET_TIME, -lDisplayConfig.windowHeight() * 0.5f - lTextPosition, Z_DEPTH + 0.1f, lR, lG, lB, 1.0f, 1f, -1, 18);
 
 					// Draw TAG
-					mConsoleFont.draw(MESSAGE.tag, x + POSITION_OFFSET_TAG, -lDisplay.windowHeight() * 0.5f - lTextPosition, Z_DEPTH + 0.1f, lR, lG, lB, 1.0f, 1f, -1, 18);
+					mConsoleFont.draw(lMessage.tag, x + POSITION_OFFSET_TAG, -lDisplayConfig.windowHeight() * 0.5f - lTextPosition, Z_DEPTH + 0.1f, lR, lG, lB, 1.0f, 1f, -1, 18);
 
 					// Draw MESSAGE
-					mConsoleFont.draw(MESSAGE.message, x + POSITION_OFFSET_MESSAGE, -lDisplay.windowHeight() * 0.5f - lTextPosition, Z_DEPTH + 0.1f, lR, lG, lB, 1.0f, 1f, -1, -1);
+					mConsoleFont.draw(lMessage.message, x + POSITION_OFFSET_MESSAGE, -lDisplayConfig.windowHeight() * 0.5f - lTextPosition, Z_DEPTH + 0.1f, lR, lG, lB, 1.0f, 1f, -1, -1);
 
 				}
 
@@ -509,10 +509,10 @@ public class DebugConsole extends Rectangle implements IBufferedInputCallback, I
 		// the input line from the user will always be visible at the bottom of the console.
 		if (mInputText != null) {
 			final float INPUT_Y_OFFSET = 0;
-			mConsoleFont.draw(PROMT_CHAR, -lDisplay.windowWidth() * 0.5f + PADDING_LEFT, y + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET, Z_DEPTH + 0.1f, 1f);
-			mConsoleFont.draw(mInputText.toString(), -lDisplay.windowWidth() * 0.5f + PADDING_LEFT + lInputTextXOffset, y + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET, Z_DEPTH + 0.1f, 1f);
+			mConsoleFont.draw(PROMT_CHAR, -lDisplayConfig.windowWidth() * 0.5f + PADDING_LEFT, y + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET, Z_DEPTH + 0.1f, 1f);
+			mConsoleFont.draw(mInputText.toString(), -lDisplayConfig.windowWidth() * 0.5f + PADDING_LEFT + lInputTextXOffset, y + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET, Z_DEPTH + 0.1f, 1f);
 			if (mShowCaret && mHasFocus)
-				mConsoleFont.draw(CARET_CHAR, -lDisplay.windowWidth() * 0.5f + PADDING_LEFT + lInputTextXOffset + mConsoleFont.bitmap().getStringWidth(mInputText.toString()), y + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET, Z_DEPTH + 0.1f, 1f);
+				mConsoleFont.draw(CARET_CHAR, -lDisplayConfig.windowWidth() * 0.5f + PADDING_LEFT + lInputTextXOffset + mConsoleFont.bitmap().getStringWidth(mInputText.toString()), y + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET, Z_DEPTH + 0.1f, 1f);
 		}
 
 		mTAGFilterText.draw(pCore, mSpriteBatch, mCoreUITexture, mConsoleFont, Z_DEPTH + 0.01f);
@@ -529,7 +529,6 @@ public class DebugConsole extends Rectangle implements IBufferedInputCallback, I
 	// --------------------------------------
 
 	protected void doFilterText() {
-
 		if (mTAGFilterLastSize != mTAGFilterText.inputString().length()) {
 			mDirty = true;
 			mTAGFilterLastSize = mTAGFilterText.inputString().length();
@@ -548,10 +547,9 @@ public class DebugConsole extends Rectangle implements IBufferedInputCallback, I
 			mProcessedMessages.clear();
 			mProcessed = !mTAGFilterText.isEmpty() || !mMessageFilterText.isEmpty();
 
-			List<LogMessage> lLogLines = Debug.debugManager().logger().logLines();
-			// First, assume all LogMessages are accepted
-			final int LOG_LINE_COUNT = lLogLines.size();
-			for (int i = 0; i < LOG_LINE_COUNT; i++) {
+			final var lLogLines = Debug.debugManager().logger().logLines();
+			final var lLogLineCount = lLogLines.size();
+			for (int i = 0; i < lLogLineCount; i++) {
 				mProcessedMessages.add(lLogLines.get(i));
 
 			}

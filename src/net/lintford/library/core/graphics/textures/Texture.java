@@ -24,7 +24,8 @@ public class Texture {
 	// --------------------------------------
 
 	private String mName;
-	private int mTextureID;
+	private int mTextureId;
+	public final int entityId;
 	private String mTextureLocation;
 	private int mTextureWidth;
 	private int mTextureHeight;
@@ -75,7 +76,7 @@ public class Texture {
 	}
 
 	public int getTextureID() {
-		return mTextureID;
+		return mTextureId;
 	}
 
 	public int getTextureWidth() {
@@ -90,9 +91,10 @@ public class Texture {
 	// Constructor
 	// --------------------------------------
 
-	public Texture(String pName, int pTextureID, String pFilename, int pWidth, int pHeight, int pFilter) {
+	private Texture(String pName, int pTextureId, String pFilename, int pWidth, int pHeight, int pFilter) {
 		mName = pName;
-		mTextureID = pTextureID;
+		entityId = getNewTextureEntityId();
+		mTextureId = pTextureId;
 		mTextureLocation = pFilename;
 		mTextureWidth = pWidth;
 		mTextureHeight = pHeight;
@@ -203,7 +205,7 @@ public class Texture {
 		int lHeight = mTextureHeight;
 
 		int[] colorRGB = new int[lWidth * lHeight];
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, mTextureID);
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, mTextureId);
 		GL11.glGetTexImage(GL11.GL_TEXTURE_2D, 0, GL12.GL_BGRA, GL11.GL_UNSIGNED_BYTE, colorRGB);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 
@@ -246,7 +248,7 @@ public class Texture {
 		if (pTexture == null)
 			return;
 
-		GL11.glDeleteTextures(pTexture.mTextureID);
+		GL11.glDeleteTextures(pTexture.mTextureId);
 		pTexture = null;
 
 	}
@@ -290,6 +292,12 @@ public class Texture {
 		final var lNewTexture = new Texture(pName, lTexID, mTextureLocation, pWidth, pHeight, pFilter);
 		lNewTexture.mColorData = pPixels;
 		return lNewTexture;
+	}
+
+	private static int mTextureEntityId = 0;
+
+	public static int getNewTextureEntityId() {
+		return mTextureEntityId++;
 	}
 
 	public void reloadTexture(String pFilename) {
@@ -356,7 +364,7 @@ public class Texture {
 		if (pColorData.length != pWidth * pHeight)
 			return;
 
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, mTextureID);
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, mTextureId);
 
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, mFilter);
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, mFilter);
@@ -364,7 +372,7 @@ public class Texture {
 		IntBuffer lBuffer = ByteBuffer.allocateDirect(pColorData.length * 4).order(ByteOrder.nativeOrder()).asIntBuffer();
 		lBuffer.put(pColorData);
 		lBuffer.flip();
-		
+
 		mColorData = pColorData;
 
 		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, pWidth, pHeight, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, lBuffer);

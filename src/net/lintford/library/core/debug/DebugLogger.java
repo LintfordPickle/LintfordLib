@@ -12,6 +12,7 @@ import java.util.Locale;
 
 import net.lintford.library.ConstantsTable;
 import net.lintford.library.core.debug.Debug.DebugLogLevel;
+import net.lintford.library.core.messaging.Message;
 import net.lintford.library.core.time.DateHelper;
 
 public class DebugLogger {
@@ -27,52 +28,6 @@ public class DebugLogger {
 	public static final String DEBUG_LOG_FILENAME = "debug";
 	public static final String LOG_FILE_EXTENSION = ".log";
 
-	final class LogMessage {
-
-		// --------------------------------------
-		// Variables
-		// --------------------------------------
-
-		boolean isAssigned;
-		String timestamp;
-		String tag;
-		String message;
-		int type;
-
-		// --------------------------------------
-		// Constructor
-		// --------------------------------------
-
-		public LogMessage() {
-			reset();
-
-		}
-
-		// --------------------------------------
-		// Methods
-		// --------------------------------------
-
-		public void reset() {
-			isAssigned = false;
-			tag = "";
-			timestamp = "";
-			message = "";
-
-			type = DebugLogLevel.off.logLevel;
-
-		}
-
-		public void setMessage(String pTag, String pMessage, String pTimestamp, DebugLogLevel pLevel) {
-			isAssigned = true;
-
-			tag = pTag;
-			timestamp = pTimestamp;
-			message = pMessage;
-			type = pLevel.logLevel;
-		}
-
-	}
-
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
@@ -81,8 +36,8 @@ public class DebugLogger {
 
 	private boolean mMirrorLogToConsole;
 
-	private List<LogMessage> mLogLinePool;
-	private List<LogMessage> mLogLines;
+	private List<Message> mLogLinePool;
+	private List<Message> mLogLines;
 
 	BufferedOutputStream mDebugLogBufferedOutputStream;
 
@@ -91,7 +46,7 @@ public class DebugLogger {
 	// --------------------------------------
 
 	/** Returns all the messages currently in the log. */
-	public List<LogMessage> logLines() {
+	public List<Message> logLines() {
 		return mLogLines;
 	}
 
@@ -117,7 +72,7 @@ public class DebugLogger {
 		mLogLinePool = new ArrayList<>(LOG_BUFFER_LINE_COUNT);
 
 		for (int i = 0; i < LOG_BUFFER_LINE_COUNT; i++) {
-			mLogLinePool.add(new LogMessage());
+			mLogLinePool.add(new Message());
 
 		}
 
@@ -185,7 +140,7 @@ public class DebugLogger {
 
 		if (pLogLevel.logLevel >= mDebugManager.getLogLevel().logLevel) {
 
-			LogMessage lLogMessage = null;
+			Message lLogMessage = null;
 			if (mLogLinePool.size() > 0) {
 				// Remove from the pool until empty
 				lLogMessage = mLogLinePool.remove(0);
@@ -201,7 +156,7 @@ public class DebugLogger {
 			}
 
 			String lTimeStamp = new SimpleDateFormat("HH.mm.ss.SSS", Locale.US).format(new Date());
-			lLogMessage.setMessage(pTag, pMessage, lTimeStamp, pLogLevel);
+			lLogMessage.setMessage(pTag, pMessage, lTimeStamp, pLogLevel.logLevel);
 
 			if (DEBUG_LOG_DEBUG_TO_FILE) {
 				writeDebugMessageToFile(lLogMessage.tag, lLogMessage.timestamp, lLogMessage.message);
@@ -282,7 +237,7 @@ public class DebugLogger {
 		e(pTag, pException.getMessage());
 		if (pIncludeStackTrace) {
 			pException.printStackTrace(System.err);
-			
+
 		}
 
 	}
@@ -322,13 +277,13 @@ public class DebugLogger {
 
 		try {
 
-			for (LogMessage m : mLogLines) {
-
-				mDebugLogBufferedOutputStream.write(m.tag.getBytes());
+			final int lMessageCount = mLogLines.size();
+			for (int i = 0; i < lMessageCount; i++) {
+				final var lMessage = mLogLines.get(i);
+				mDebugLogBufferedOutputStream.write(lMessage.tag.getBytes());
 				mDebugLogBufferedOutputStream.write(": ".getBytes());
-				mDebugLogBufferedOutputStream.write(m.message.getBytes());
+				mDebugLogBufferedOutputStream.write(lMessage.message.getBytes());
 				mDebugLogBufferedOutputStream.write("\n".getBytes());
-
 			}
 
 			return true;
@@ -336,6 +291,7 @@ public class DebugLogger {
 		} catch (IOException e) {
 			e.printStackTrace();
 			return false;
+
 		}
 
 	}

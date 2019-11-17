@@ -11,6 +11,15 @@ public abstract class BaseDefinition extends BaseEntity {
 	public transient short definitionID;
 
 	// --------------------------------------
+	// Constructor
+	// --------------------------------------
+
+	public BaseDefinition() {
+		definitionID = -1;
+
+	}
+
+	// --------------------------------------
 	// Core-Methods
 	// --------------------------------------
 

@@ -1,7 +1,5 @@
 package net.lintford.library.renderers.debug;
 
-import org.lwjgl.glfw.GLFW;
-
 import net.lintford.library.controllers.hud.UIHUDStructureController;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.debug.Debug;
@@ -21,7 +19,6 @@ public class DebugHUDDrawer extends BaseRenderer {
 	// --------------------------------------
 
 	private UIHUDStructureController mUIHUDController;
-	private int mDebugDraw;
 
 	// --------------------------------------
 	// Properties
@@ -31,10 +28,6 @@ public class DebugHUDDrawer extends BaseRenderer {
 	public boolean isInitialized() {
 		return true;
 
-	}
-	
-	public int debugDrawEnable() {
-		return mDebugDraw;
 	}
 
 	// --------------------------------------
@@ -59,22 +52,8 @@ public class DebugHUDDrawer extends BaseRenderer {
 	}
 
 	@Override
-	public boolean handleInput(LintfordCore pCore) {
-		if (!isActive())
-			return false;
-
-		if (pCore.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_F2)) {
-			mDebugDraw++;
-			if (mDebugDraw > 2)
-				mDebugDraw = 0;
-		}
-
-		return super.handleInput(pCore);
-	}
-
-	@Override
 	public void draw(LintfordCore pCore) {
-		if (!isActive() || mDebugDraw == 0)
+		if (!isActive())
 			return;
 
 		// menu rects

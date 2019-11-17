@@ -12,23 +12,11 @@ public abstract class PooledBaseData extends BaseData implements IPoolObjectInst
 	private static final long serialVersionUID = -1444873148544023277L;
 
 	// --------------------------------------
-	// Variables
-	// --------------------------------------
-
-	// --------------------------------------
-	// Properties
-	// --------------------------------------
-
-	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
 	public PooledBaseData() {
 
 	}
-
-	// --------------------------------------
-	// Core-Methods
-	// --------------------------------------
 
 }

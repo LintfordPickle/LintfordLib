@@ -39,7 +39,6 @@ public class BaseEntity {
 	// Methods
 	// --------------------------------------
 
-	// TODO: Need to extend this so we can drop multiple item names.
 	public String getDropItemName() {
 		if (outname != null && !outname.isEmpty())
 			return outname;

@@ -182,7 +182,22 @@ public class ControllerManager {
 	}
 
 	public void addController(BaseController pController, int pEntityGroupID) {
-		// Only add one controller of each time (and with unique names).
+		if (!pController.isUniqueController()) {
+
+			List<BaseController> lControllerList = controllers(pEntityGroupID);
+			if (lControllerList == null) {
+				// In this case, the ControllerList itself doesn't exit, so we need to create one
+				lControllerList = new ArrayList<>();
+				mControllers.put(pEntityGroupID, lControllerList);
+
+			}
+
+			lControllerList.add(pController);
+			return;
+
+		}
+
+		// Otherwise, only add one controller of each time.
 		if (getControllerByName(pController.controllerName(), pEntityGroupID) == null) {
 			List<BaseController> lControllerList = controllers(pEntityGroupID);
 			if (lControllerList == null) {
@@ -193,9 +208,6 @@ public class ControllerManager {
 			}
 
 			lControllerList.add(pController);
-
-		} else {
-			// Controller already exists
 
 		}
 
