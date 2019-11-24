@@ -5,7 +5,11 @@ import java.util.List;
 public interface IMessageProvider {
 
 	public List<Message> messages();
-	public void addMesage(String pMessage);
-	public void addMesage(String pTag, String pMessage);
-	
+
+	public void addMesage(Message pMessage);
+
+	public Message getMessageInstance();
+
+	public void returnMessageInstance(Message pReturnInstance);
+
 }

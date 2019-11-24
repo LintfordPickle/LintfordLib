@@ -122,6 +122,16 @@ public interface ICamera {
 
 		}
 
+		@Override
+		public float getWorldPositionXInCameraSpace(float pPointX) {
+			return 0;
+		}
+
+		@Override
+		public float getWorldPositionYInCameraSpace(float pPointY) {
+			return 0;
+		}
+
 	};
 
 	// --------------------------------------
@@ -170,10 +180,16 @@ public interface ICamera {
 
 	public abstract float getMouseWorldSpaceY();
 
+	/** This maps the input X coordinate into the camera space.*/
 	public abstract float getPointCameraSpaceX(float pPointX);
 
+	/** This maps the input Y coordinate into the camera space.*/
 	public abstract float getPointCameraSpaceY(float pPointY);
 
+	public abstract float getWorldPositionXInCameraSpace(float pPointX);
+
+	public abstract float getWorldPositionYInCameraSpace(float pPointY);
+	
 	public abstract void applyGameViewport();
 
 }

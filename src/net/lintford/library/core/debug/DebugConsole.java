@@ -18,7 +18,6 @@ import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 import net.lintford.library.core.input.IBufferedInputCallback;
 import net.lintford.library.core.maths.Vector3f;
 import net.lintford.library.core.messaging.Message;
-import net.lintford.library.options.DisplayManager;
 import net.lintford.library.renderers.ZLayers;
 import net.lintford.library.renderers.windows.components.IScrollBarArea;
 import net.lintford.library.renderers.windows.components.ScrollBar;
@@ -387,12 +386,12 @@ public class DebugConsole extends Rectangle implements IBufferedInputCallback, I
 
 		// Update the window content
 		mConsoleLineHeight = (int) (mConsoleFont.bitmap().getStringHeight(" ") + 1);
-		final int MAX_NUM_LINES = (int) ((openHeight() - mConsoleLineHeight * 2) / mConsoleLineHeight) - 1;
+		final var MAX_NUM_LINES = (int) ((openHeight() - mConsoleLineHeight * 2) / mConsoleLineHeight) - 1;
 
-		final int lNumberLinesInConsole = mProcessed ? mProcessedMessages.size() : Debug.debugManager().logger().logLines().size();
+		final var lNumberLinesInConsole = mProcessed ? mProcessedMessages.size() : Debug.debugManager().logger().logLines().size();
 		fullContentArea().setCenter(x, y, w - mScrollBar.w, lNumberLinesInConsole * 25);
 
-		DisplayManager lDisplay = pCore.config().display();
+		final var lDisplay = pCore.config().display();
 		// Update the bounds of the window view
 		x = -lDisplay.windowWidth() * 0.5f;
 		y = -lDisplay.windowHeight() * 0.5f;

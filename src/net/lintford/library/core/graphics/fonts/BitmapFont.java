@@ -226,7 +226,7 @@ public class BitmapFont {
 		lGraphics.dispose();
 
 		/* Get char charWidth and charHeight */
-		int charWidth = lFontMetrics.charWidth(c);
+		int charWidth = lFontMetrics.charWidth((int)c);
 		int charHeight = lFontMetrics.getHeight();
 
 		/* Check if charWidth is 0 */

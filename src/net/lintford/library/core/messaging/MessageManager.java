@@ -6,9 +6,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.entity.BaseData;
 
-public class MessageConsole extends BaseData implements IMessageProvider {
+public class MessageManager extends BaseData implements IMessageProvider {
 
 	// --------------------------------------
 	// Constants
@@ -38,18 +39,18 @@ public class MessageConsole extends BaseData implements IMessageProvider {
 	// Constructor
 	// --------------------------------------
 
-	public MessageConsole() {
+	public MessageManager() {
 		this(100);
 
 	}
 
-	public MessageConsole(int pCapacity) {
+	public MessageManager(int pCapacity) {
 		mCapacity = pCapacity;
 
 		mMessages = new ArrayList<>(mCapacity);
 		mMessagesPool = new ArrayList<>(mCapacity);
 
-		mMirrorLogToConsole = true;
+		mMirrorLogToConsole = false;
 
 		for (int i = 0; i < mCapacity; i++) {
 			mMessagesPool.add(new Message());
@@ -63,18 +64,42 @@ public class MessageConsole extends BaseData implements IMessageProvider {
 	// --------------------------------------
 
 	@Override
-	public void addMesage(String pMessage) {
-		addMesage(getClass().getSimpleName(), pMessage);
-
-	}
-
-	@Override
-	public void addMesage(String pTag, String pMessage) {
-		if (pTag.equals("") || pMessage.equals("")) {
+	public void addMesage(Message pMessage) {
+		if (pMessage.message.equals("")) {
 			return;
 
 		}
 
+		// TODO: Make this optional: Make sure there are no special characters contained in the string
+		pMessage.message = pMessage.message.replaceAll("[^a-zA-Z0-9\\s+]", "");
+
+		// TODO: Make this optional: Remove new line and caridge return
+		pMessage.message = pMessage.message.replaceAll("(\\r\\n|\\r|\\n)", " ");
+
+		if (!mMessages.contains(pMessage)) {
+			mMessages.add(pMessage);
+
+		}
+
+		if (mMirrorLogToConsole) {
+			System.out.printf("[%s] %s: %s\n", padRight(pMessage.timestamp, 12), padRight(pMessage.tag, 25), pMessage.message);
+
+		}
+
+	}
+
+	public static String timeStamp() {
+		return new SimpleDateFormat("HH.mm.ss.SSS", Locale.US).format(new Date());
+
+	}
+
+	public static String padRight(String s, int n) {
+		return String.format("%1$-" + n + "s", s);
+
+	}
+
+	@Override
+	public Message getMessageInstance() {
 		Message lLogMessage = null;
 		if (mMessagesPool.size() > 0) {
 			// Remove from the pool until empty
@@ -87,22 +112,29 @@ public class MessageConsole extends BaseData implements IMessageProvider {
 		}
 
 		if (lLogMessage == null) {
-			System.err.println("DebugLogger: Unable to write to Debug log");
-			return;
+			Debug.debugManager().logger().e(getClass().getSimpleName(), "Unable to write to Debug log");
+			return null;
+
 		}
 
-		String lTimeStamp = new SimpleDateFormat("HH.mm.ss.SSS", Locale.US).format(new Date());
-		lLogMessage.setMessage(pTag, pMessage, lTimeStamp, 0);
-
-		mMessages.add(lLogMessage);
-
-		if (mMirrorLogToConsole)
-			System.out.printf("[%s] %s: %s\n", padRight(lLogMessage.timestamp, 12), padRight(lLogMessage.tag, 25), lLogMessage.message);
+		return lLogMessage;
 
 	}
 
-	private static String padRight(String s, int n) {
-		return String.format("%1$-" + n + "s", s);
+	@Override
+	public void returnMessageInstance(Message pReturnInstance) {
+		if (pReturnInstance == null)
+			return;
+
+		if (mMessages.contains(pReturnInstance)) {
+			mMessages.remove(pReturnInstance);
+
+		}
+
+		if (!mMessagesPool.contains(pReturnInstance)) {
+			mMessagesPool.add(pReturnInstance);
+
+		}
 
 	}
 

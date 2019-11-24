@@ -384,4 +384,14 @@ public class Camera implements ICamera {
 
 	}
 
+	@Override
+	public float getWorldPositionXInCameraSpace(float pPointX) {
+		return (mPosition.x - pPointX) * getZoomFactor();
+	}
+
+	@Override
+	public float getWorldPositionYInCameraSpace(float pPointY) {
+		return (mPosition.y - pPointY) * getZoomFactor();
+	}
+
 }

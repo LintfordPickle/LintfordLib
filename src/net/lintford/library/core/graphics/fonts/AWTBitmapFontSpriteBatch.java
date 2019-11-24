@@ -80,7 +80,7 @@ public class AWTBitmapFontSpriteBatch extends TextureBatch {
 		if (pText == null)
 			return;
 
-		final float lSpaceBetweenLines = 3f;
+		final float lSpaceBetweenLines = 0f;
 
 		float lPosX = pX;
 		float lPosY = pY;
@@ -106,9 +106,9 @@ public class AWTBitmapFontSpriteBatch extends TextureBatch {
 				continue;
 			}
 
-			// word wrapping works on words
+			// word wrapping works on words, so check the next word to see if it can fit on the line ...
 			if (pWordWrapWidth != NO_WORD_WRAP) {
-				if (ch == ' ') {
+				if ((lPosX == pX) || ch == ' ') {
 					for (int j = i + 1; j < pText.length(); j++) {
 						char ch_m = pText.charAt(j);
 
@@ -123,7 +123,8 @@ public class AWTBitmapFontSpriteBatch extends TextureBatch {
 						}
 
 						if (lWrapWidth >= pWordWrapWidth) {
-							lPosY += (mBitmapFont.fontHeight() + lSpaceBetweenLines) * pScale;
+							float temp = (mBitmapFont.fontHeight() + lSpaceBetweenLines) * pScale;
+							lPosY += temp;
 							lPosX = pX;
 							lWrapWidth = 0;
 						}
@@ -132,15 +133,17 @@ public class AWTBitmapFontSpriteBatch extends TextureBatch {
 			}
 
 			// don't render the first space after a word wrap
-			if (ch == ' ' && mTrimText && lPosX == pX)
+			if (ch == ' ' && mTrimText && lPosX == pX) {
+				// Glyph lCharGlyph = mBitmapFont.glyphs().get(ch);
+				// lPosX += lCharGlyph.width * pScale;
 				continue;
+			}
 
 			Glyph lCharGlyph = mBitmapFont.glyphs().get(ch);
 
 			if (lCharGlyph != null) {
 				if (mDrawShadow)
-					draw(mBitmapFont.fontTexture(), lCharGlyph.x, lCharGlyph.y, lCharGlyph.width, lCharGlyph.height, lPosX - 1f * pScale, lPosY + 1f * pScale, lCharGlyph.width * pScale, lCharGlyph.height * pScale, pZ, 0f, 0f, 0f,
-							pA);
+					draw(mBitmapFont.fontTexture(), lCharGlyph.x, lCharGlyph.y, lCharGlyph.width, lCharGlyph.height, lPosX - 1f * pScale, lPosY + 1f * pScale, lCharGlyph.width * pScale, lCharGlyph.height * pScale, pZ, 0f, 0f, 0f, pA);
 				draw(mBitmapFont.fontTexture(), lCharGlyph.x, lCharGlyph.y, lCharGlyph.width, lCharGlyph.height, lPosX, lPosY, lCharGlyph.width * pScale, lCharGlyph.height * pScale, pZ, pR, pG, pB, pA);
 				lPosX += lCharGlyph.width * pScale;
 

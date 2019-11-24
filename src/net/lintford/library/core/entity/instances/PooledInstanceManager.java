@@ -21,7 +21,6 @@ public abstract class PooledInstanceManager<T extends PooledBaseData> extends In
 	// --------------------------------------
 
 	private List<T> mPooledItems;
-	
 
 	// --------------------------------------
 	// Properties

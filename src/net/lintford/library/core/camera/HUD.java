@@ -210,7 +210,7 @@ public class HUD implements ICamera, IResizeListener {
 
 	@Override
 	public float getPointCameraSpaceY(float pPointY) {
-		return (-mWindowWidth * 0.5f + (pPointY - 1));
+		return (-mWindowHeight * 0.5f + (pPointY - 1));
 	}
 
 	@Override
@@ -267,6 +267,16 @@ public class HUD implements ICamera, IResizeListener {
 	public void applyGameViewport() {
 		GL11.glViewport(0, 0, mWindowWidth, mWindowHeight);
 
+	}
+
+	@Override
+	public float getWorldPositionXInCameraSpace(float pPointX) {
+		return pPointX;
+	}
+
+	@Override
+	public float getWorldPositionYInCameraSpace(float pPointY) {
+		return pPointY;
 	}
 
 }

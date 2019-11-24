@@ -16,6 +16,7 @@ import org.lwjgl.opengl.GL11;
 import net.lintford.library.ConstantsTable;
 import net.lintford.library.GameInfo;
 import net.lintford.library.controllers.camera.CameraController;
+import net.lintford.library.controllers.camera.CameraHUDController;
 import net.lintford.library.controllers.core.ControllerManager;
 import net.lintford.library.controllers.core.ResourceController;
 import net.lintford.library.controllers.debug.DebugControllerTreeController;
@@ -136,6 +137,7 @@ public abstract class LintfordCore {
 	protected ResourceManager mResourceManager;
 	protected ResourceController mResourceController;
 	protected CameraController mCameraController;
+	protected CameraHUDController mCameraHUDController;
 
 	protected Camera mGameCamera;
 	protected HUD mHUD;
@@ -294,8 +296,11 @@ public abstract class LintfordCore {
 		mResourceManager = new ResourceManager(mMasterConfig);
 		mResourceController = new ResourceController(mControllerManager, mResourceManager, CORE_ENTITY_GROUP_ID);
 
+		// Create the HUD camera (always available)
 		mHUD = new HUD(mMasterConfig.display());
 		mHUD.update(this);
+		mCameraHUDController = new CameraHUDController(mControllerManager, mHUD, CORE_ENTITY_GROUP_ID);
+
 		mRenderState = new RenderState();
 
 		showStartUpLogo(lWindowID);

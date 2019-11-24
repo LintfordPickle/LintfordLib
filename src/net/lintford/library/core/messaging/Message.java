@@ -13,6 +13,7 @@ public class Message {
 	public String tag;
 	public String message;
 	public int type;
+	public float lifetime;
 
 	// --------------------------------------
 	// Constructor
@@ -44,6 +45,7 @@ public class Message {
 		timestamp = pTimestamp;
 		message = pMessage;
 		type = pLevelType;
+		lifetime = 0;
 
 	}
 
