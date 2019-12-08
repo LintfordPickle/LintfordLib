@@ -129,7 +129,7 @@ public class CameraFollowController extends BaseController {
 				mIsTrackingPlayer = false;
 
 			}
-			
+
 		}
 
 		return false;
@@ -178,8 +178,8 @@ public class CameraFollowController extends BaseController {
 	// Methods
 	// ---------------------------------------------
 
-	public void zoomIn() {
-		mGameCamera.setZoomFactor(CameraZoomController.MAX_CAMERA_ZOOM);
+	public void zoomIn(float pZoomFactor) {
+		mGameCamera.setZoomFactor(pZoomFactor);
 
 	}
 
