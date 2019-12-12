@@ -41,6 +41,8 @@ public class Box2dWorldController extends BaseController {
 	float mWindAcc;
 	float mWindVel;
 
+	public boolean isPaused;
+
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
@@ -63,6 +65,7 @@ public class Box2dWorldController extends BaseController {
 		super(pControllerManager, CONTROLLER_NAME, pEntityGroupID);
 
 		mWorld = pWorld;
+		isPaused = false;
 
 	}
 
@@ -89,7 +92,7 @@ public class Box2dWorldController extends BaseController {
 
 		// mWorld.setGravity(new Vec2(mWindVel, 9.8f));
 
-		if (mWorld != null) {
+		if (mWorld != null && !isPaused) {
 			mWorld.step((float) pCore.time().elapseGameTimeSeconds(), 5, 6);
 
 		}

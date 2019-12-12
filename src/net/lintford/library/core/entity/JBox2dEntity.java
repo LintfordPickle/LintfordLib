@@ -67,6 +67,14 @@ public class JBox2dEntity extends WorldEntity {
 
 	public void setPhysicsObject(JBox2dEntityInstance pJBox2dEntity) {
 		mJBox2dEntityInstance = pJBox2dEntity;
+		
+		// Any properties previously set on this instance which should be applied to the Box2d world
+		// (Object->Box2D) should be set here. After this point, properties will be set from Box2D->Object
+
+		if (mJBox2dEntityInstance.mainBody() != null) {
+			mJBox2dEntityInstance.mainBody().position.x = x * Box2dWorldController.PIXELS_TO_UNITS;
+			mJBox2dEntityInstance.mainBody().position.y = y * Box2dWorldController.PIXELS_TO_UNITS;
+		}
 
 	}
 

@@ -57,17 +57,6 @@ public abstract class Box2dContactController extends BaseController implements C
 	}
 
 	@Override
-	public void update(LintfordCore pCore) {
-		super.update(pCore);
-
-		if (mWorld != null) {
-			mWorld.step((float) pCore.time().elapseGameTimeSeconds(), 5, 6);
-
-		}
-
-	}
-
-	@Override
 	public void unload() {
 		// TODO Auto-generated method stub
 
