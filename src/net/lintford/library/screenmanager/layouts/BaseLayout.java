@@ -446,9 +446,10 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 				lMenuEntry.hoveredOver(false);
 
 			}
-			
+
 			// Update the focus of entries where the mouse is clicked in other areas (other than any one specific entry).
-			if (pCore.input().mouse().tryAcquireMouseLeftClick(hashCode())) {
+
+			if (pCore.input().mouse().isMouseLeftButtonDown()) {
 				if (lIsMouseOverThisComponent && lMenuEntry.intersectsAA(pCore.HUD().getMouseCameraSpace())) {
 					lMenuEntry.hasFocus(true);
 
