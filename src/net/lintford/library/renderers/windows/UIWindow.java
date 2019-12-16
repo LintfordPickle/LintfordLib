@@ -79,9 +79,12 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 	protected Rectangle mIconSrcRectangle;
 	protected String mIconName;
 
+	protected boolean mCanCaptureMouse;
+	protected boolean mIsMouseOver;
+
 	/** Stores the window area of this renderer window */
 	protected Rectangle mWindowArea;
-	private Texture mCoreTexture;
+	protected Texture mCoreTexture;
 
 	/** If true, this base renderer consumes input and ends the handleInput invocation chain. */
 	protected boolean mExclusiveHandleInput = true;
@@ -277,11 +280,16 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 		}
 
 		// This is needed because when the mouse is over a component
-		if (mWindowArea.intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().tryAcquireMouseMiddle((hashCode()))) {
-			mZScrollAcceleration += pCore.input().mouse().mouseWheelYOffset() * 250.0f;
+		if (mWindowArea.intersectsAA(pCore.HUD().getMouseCameraSpace())) {
+			mIsMouseOver = true;
 
-			// If the mouse was clicked within the window, then we need to process the click anyway
-			// return pCore.input().mouse().tryAcquireMouseLeftClick(hashCode());
+			if (mCanCaptureMouse && pCore.input().mouse().tryAcquireMouseMiddle((hashCode()))) {
+				mZScrollAcceleration += pCore.input().mouse().mouseWheelYOffset() * 250.0f;
+
+			}
+
+		} else {
+			mIsMouseOver = false;
 		}
 
 		return false;
