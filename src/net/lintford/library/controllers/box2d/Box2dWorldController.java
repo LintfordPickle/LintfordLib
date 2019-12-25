@@ -43,6 +43,8 @@ public class Box2dWorldController extends BaseController {
 
 	public boolean isPaused;
 
+	// TODO: Create a Body Pool and pre-allocation (for CollisionNodes)
+
 	// --------------------------------------
 	// Properties
 	// --------------------------------------

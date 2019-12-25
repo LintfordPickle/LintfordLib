@@ -121,14 +121,29 @@ public class JBox2dDebugDrawer {
 			Debug.debugManager().drawers().endLineRenderer();
 
 			Debug.debugManager().drawers().beginLineRenderer(pCore.gameCamera(), GL11.GL_LINES);
+
+			// polygon fixtures
+			while (lFixture != null) {
+				// TODO: update the color depending on the state
+
+				if (lFixture.getShape().getType() == ShapeType.POLYGON) {
+					RenderOfPolyFixture.draw(pCore, pBody, lFixture);
+
+				}
+
+				lFixture = lFixture.getNext();
+
+			}
+			Debug.debugManager().drawers().endLineRenderer();
+
+			Debug.debugManager().drawers().beginLineRenderer(pCore.gameCamera(), GL11.GL_LINE_STRIP);
+			// Circle fixtures
+			lFixture = pBody.getFixtureList();
 			while (lFixture != null) {
 				// TODO: update the color depending on the state
 
 				if (lFixture.getShape().getType() == ShapeType.CIRCLE) {
 					RenderOfCircleFixture.draw(pCore, pBody, lFixture);
-
-				} else {
-					RenderOfPolyFixture.draw(pCore, pBody, lFixture);
 
 				}
 
@@ -218,14 +233,14 @@ public class JBox2dDebugDrawer {
 		Rectangle lHUDrect = pCore.HUD().boundingRectangle();
 
 		final int lLineHeight = -20;
-		int lLinePos = 70;
+		int lLinePos = 110;
 
 		Debug.debugManager().drawers().beginTextRenderer(pCore.HUD());
 		Debug.debugManager().drawers().drawText("# Contacts: " + mWorld.getContactCount(), lHUDrect.left() + 5, lHUDrect.bottom() - lLinePos);
 		lLinePos -= lLineHeight;
 		Debug.debugManager().drawers().drawText(String.format("# Fixtures: ??"), lHUDrect.left() + 5, lHUDrect.bottom() - lLinePos);
 		lLinePos -= lLineHeight;
-		Debug.debugManager().drawers().drawText(String.format("# Bodies: %d (??,%d)", mWorld.getBodyCount(), mWorld.getBodyCount()), lHUDrect.left() + 5, lHUDrect.bottom() - lLinePos);
+		Debug.debugManager().drawers().drawText(String.format("# Bodies: %d", mWorld.getBodyCount()), lHUDrect.left() + 5, lHUDrect.bottom() - lLinePos);
 		lLinePos -= lLineHeight;
 		Debug.debugManager().drawers().drawText(String.format("# Particles: %d", mWorld.getParticleCount()), lHUDrect.left() + 5, lHUDrect.bottom() - lLinePos);
 		Debug.debugManager().drawers().endTextRenderer();
