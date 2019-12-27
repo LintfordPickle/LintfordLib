@@ -17,6 +17,9 @@ public class MessageManager extends BaseData implements IMessageProvider {
 
 	private static final long serialVersionUID = 8246052843503897030L;
 
+	private static SimpleDateFormat TimeStampFormat = new SimpleDateFormat("HH:mm:ss", Locale.US);
+	private static SimpleDateFormat TimeStampFormatWithMilli = new SimpleDateFormat("HH:mm:ss.SSS", Locale.US);
+
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
@@ -89,7 +92,12 @@ public class MessageManager extends BaseData implements IMessageProvider {
 	}
 
 	public static String timeStamp() {
-		return new SimpleDateFormat("HH.mm.ss.SSS", Locale.US).format(new Date());
+		return TimeStampFormat.format(new Date());
+
+	}
+
+	public static String timeStampWithMilli() {
+		return TimeStampFormatWithMilli.format(new Date());
 
 	}
 
