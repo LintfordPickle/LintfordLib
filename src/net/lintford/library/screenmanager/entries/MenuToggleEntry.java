@@ -26,7 +26,6 @@ public class MenuToggleEntry extends MenuEntry {
 	// --------------------------------------
 
 	private Texture mUITexture;
-	private String mLabel;
 
 	private boolean mIsChecked;
 
@@ -37,11 +36,15 @@ public class MenuToggleEntry extends MenuEntry {
 	// --------------------------------------
 
 	public void label(String pNewLabel) {
-		mLabel = pNewLabel;
+		mText = pNewLabel;
 	}
 
 	public String label() {
-		return mLabel;
+		return mText;
+	}
+
+	public void entryText(String pNewValue) {
+		mText = pNewValue;
 	}
 
 	public boolean isChecked() {
@@ -58,8 +61,6 @@ public class MenuToggleEntry extends MenuEntry {
 
 	public MenuToggleEntry(ScreenManager pScreenManager, BaseLayout pParentlayout) {
 		super(pScreenManager, pParentlayout, "");
-
-		mLabel = "Label:";
 
 		mHighlightOnHover = false;
 		mDrawBackground = false;
@@ -148,14 +149,14 @@ public class MenuToggleEntry extends MenuEntry {
 
 	@Override
 	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pParentZDepth) {
-		super.draw(pCore, pScreen, pIsSelected, pParentZDepth);
+		// super.draw(pCore, pScreen, pIsSelected, pParentZDepth);
 
 		final float luiTextScale = mScreenManager.UIHUDController().uiTextScaleFactor();
 
 		final MenuScreen lParentScreen = mParentLayout.parentScreen();
 		final FontUnit lFont = lParentScreen.font();
 
-		final float lLabelWidth = lFont.bitmap().getStringWidth(mLabel, luiTextScale);
+		final float lLabelWidth = lFont.bitmap().getStringWidth(mText, luiTextScale);
 		final float lTextHeight = lFont.bitmap().fontHeight() * luiTextScale;
 		final float lSeparatorHalfWidth = lFont.bitmap().getStringWidth(mSeparator, luiTextScale) * 0.5f;
 
@@ -177,8 +178,16 @@ public class MenuToggleEntry extends MenuEntry {
 		lTextureBatch.end();
 
 		lFont.begin(pCore.HUD());
-		lFont.draw(mLabel, x + w / 2 - lLabelWidth - SPACE_BETWEEN_TEXT - lSeparatorHalfWidth, y + h / 2 - lTextHeight * 0.5f, mZ, lParentScreen.r(), lParentScreen.g(), lParentScreen.b(), lParentScreen.a(), luiTextScale, -1);
+		lFont.draw(mText, x + w / 2 - lLabelWidth - SPACE_BETWEEN_TEXT - lSeparatorHalfWidth, y + h / 2 - lTextHeight * 0.5f, mZ, lParentScreen.r(), lParentScreen.g(), lParentScreen.b(), lParentScreen.a(), luiTextScale, -1);
 		lFont.draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - lTextHeight * 0.5f, mZ, lParentScreen.r(), lParentScreen.g(), lParentScreen.b(), lParentScreen.a(), luiTextScale, -1);
+		
+		if(mIsChecked) {
+			lFont.draw("Enabled", x + w / 2 + lSeparatorHalfWidth + TILE_SIZE * 2, y + h / 2 - lTextHeight * 0.5f, mZ, lParentScreen.r(), lParentScreen.g(), lParentScreen.b(), lParentScreen.a(), luiTextScale, -1);
+			
+		} else {
+			lFont.draw("Disabled", x + w / 2 + lSeparatorHalfWidth + TILE_SIZE * 2, y + h / 2 - lTextHeight * 0.5f, mZ, lParentScreen.r(), lParentScreen.g(), lParentScreen.b(), lParentScreen.a(), luiTextScale, -1);
+			
+		}
 
 		// Render the items
 		lFont.end();
