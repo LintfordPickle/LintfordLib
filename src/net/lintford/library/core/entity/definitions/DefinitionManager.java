@@ -48,6 +48,10 @@ public abstract class DefinitionManager<T extends BaseDefinition> extends BaseDa
 		return mDefinitions;
 	}
 
+	public int definitionCount() {
+		return mDefinitions.size();
+	}
+
 	public short getNewDefinitionUID() {
 		return mDefinitionUIDCounter++;
 	}
