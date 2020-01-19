@@ -358,7 +358,7 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput {
 			return false;
 
 		final float deltaTime = (float) pCore.time().elapseGameTimeMilli() / 1000f;
-		if (intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().isMouseOverThisComponent(hashCode())) {
+		if (intersectsAA(pCore.HUD().getMouseCameraSpace()) /* && pCore.input().mouse().isMouseOverThisComponent(hashCode()) */) {
 			// Check if tool tips are enabled.
 			if (mToolTipEnabled) {
 				mToolTipTimer += deltaTime * 1000f;

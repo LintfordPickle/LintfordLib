@@ -63,8 +63,11 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 	private boolean mIsLoaded;
 
 	protected ScrollBarContentRectangle mContentArea;
-	protected float mYScrollPos;
 	protected ScrollBar mScrollBar;
+	protected float mYScrollPosition;
+	protected float mZScrollAcceleration;
+	protected float mZScrollVelocity;
+
 	protected boolean mScrollBarsEnabled;
 	protected boolean mEnabled;
 	protected boolean mVisible; // ony affects drawing
@@ -288,6 +291,15 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 			}
 		}
 
+		if (intersectsAA(pCore.HUD().getMouseCameraSpace())) {
+			if (true && pCore.input().mouse().tryAcquireMouseMiddle((hashCode()))) {
+				mZScrollAcceleration += pCore.input().mouse().mouseWheelYOffset() * 250.0f;
+
+			}
+
+		} else {
+		}
+
 		updateFocusOfAll(pCore);
 
 		if (mScrollBarsEnabled) {
@@ -312,8 +324,26 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 		mContentArea.h = getEntryHeight();
 
 		mScrollBarsEnabled = mContentArea.h - h > 0;
-		if (mScrollBarsEnabled)
+		if (mScrollBarsEnabled) {
+
+			final float lDeltaTime = (float) pCore.time().elapseGameTimeMilli() / 1000f;
+			float lScrollSpeedFactor = mYScrollPosition;
+
+			mZScrollVelocity += mZScrollAcceleration;
+			lScrollSpeedFactor += mZScrollVelocity * lDeltaTime;
+			mZScrollVelocity *= 0.85f;
+			mZScrollAcceleration = 0.0f;
+			mYScrollPosition = lScrollSpeedFactor;
+
+			// Constrain
+			if (mYScrollPosition > 0)
+				mYScrollPosition = 0;
+			if (mYScrollPosition < -(mContentArea.h - this.h)) {
+				mYScrollPosition = -(mContentArea.h - this.h);
+			}
+
 			mScrollBar.update(pCore);
+		}
 
 	}
 
@@ -559,18 +589,18 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 
 	@Override
 	public float currentYPos() {
-		return mYScrollPos;
+		return mYScrollPosition;
 	}
 
 	@Override
 	public void RelCurrentYPos(float pAmt) {
-		mYScrollPos += pAmt;
+		mYScrollPosition += pAmt;
 
 	}
 
 	@Override
 	public void AbsCurrentYPos(float pValue) {
-		mYScrollPos = pValue;
+		mYScrollPosition = pValue;
 
 	}
 

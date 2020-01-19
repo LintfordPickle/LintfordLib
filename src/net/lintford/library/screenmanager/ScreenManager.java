@@ -157,14 +157,24 @@ public class ScreenManager {
 		if (mScreens == null || mScreens.size() == 0)
 			return;
 
+		boolean lProcessMouse = true;
+		boolean lProcessKeyboard = true;
+
 		final int lScreenCount = mScreens.size() - 1;
 		for (int i = lScreenCount; i >= 0; i--) {
-			Screen lScreen = mScreens.get(i);
+			final var lScreen = mScreens.get(i);
 
 			// Only allow keyboard and mouse input if we are on the top screen
+			lProcessKeyboard = i == lScreenCount;
+			lProcessMouse = i == lScreenCount;
+
+			if (!lProcessMouse) {
+				pCore.input().mouse().tryAcquireMouseMiddle(hashCode());
+
+			}
 
 			if (lScreen.screenState() == ScreenState.TransitionOn || lScreen.screenState() == ScreenState.Active) {
-				lScreen.handleInput(pCore, true, i == lScreenCount);
+				lScreen.handleInput(pCore, lProcessMouse, lProcessKeyboard);
 
 			}
 

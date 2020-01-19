@@ -52,7 +52,7 @@ public abstract class PooledInstanceManager<T extends PooledBaseData> extends In
 	}
 
 	protected void returnPooledItem(T pReturnedItem) {
-		if (mPooledItems.contains(pReturnedItem)) {
+		if (!mPooledItems.contains(pReturnedItem)) {
 			mPooledItems.add(pReturnedItem);
 		}
 

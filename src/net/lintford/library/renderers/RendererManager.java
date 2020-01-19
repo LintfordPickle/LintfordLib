@@ -198,8 +198,8 @@ public class RendererManager {
 	public void initialize() {
 		mUIHUDController = (UIHUDStructureController) mCore.controllerManager().getControllerByNameRequired(UIHUDStructureController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
 
-		final int RENDERER_COUNT = mRenderers.size();
-		for (int i = 0; i < RENDERER_COUNT; i++) {
+		final int lRendererCount = mRenderers.size();
+		for (int i = 0; i < lRendererCount; i++) {
 			mRenderers.get(i).initialize(mCore);
 
 		}

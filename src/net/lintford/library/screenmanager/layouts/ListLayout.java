@@ -92,13 +92,13 @@ public class ListLayout extends BaseLayout implements IProcessMouseInput {
 	public void updateStructure() {
 		super.updateStructure();
 
-		float lYPos = y + mEntryOffsetFromTop + mYScrollPos;
+		float lYPos = y + mEntryOffsetFromTop + mYScrollPosition;
 
 		final int lEntryCount = menuEntries().size();
 
 		// If the height of the content is smaller than the height of this layout, disable the scroll bar
 		if (mContentArea.h < h) {
-			mYScrollPos = 0;
+			mYScrollPosition = 0;
 			lYPos += 5f;
 		}
 

@@ -25,7 +25,7 @@ public class BaseEntity {
 		return mAtomicInteger.incrementAndGet();
 
 	}
-
+	
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------

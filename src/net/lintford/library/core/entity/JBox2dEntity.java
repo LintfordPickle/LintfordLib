@@ -8,7 +8,7 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.box2d.entity.Box2dBodyInstance;
 import net.lintford.library.core.box2d.entity.JBox2dEntityInstance;
 
-public class JBox2dEntity extends WorldEntity {
+public abstract class JBox2dEntity extends WorldEntity {
 
 	// --------------------------------------
 	// Constants
@@ -48,11 +48,6 @@ public class JBox2dEntity extends WorldEntity {
 		return false;
 	}
 
-	@Override
-	public int getPoolID() {
-		return 0;
-	}
-
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
@@ -67,7 +62,7 @@ public class JBox2dEntity extends WorldEntity {
 
 	public void setPhysicsObject(JBox2dEntityInstance pJBox2dEntity) {
 		mJBox2dEntityInstance = pJBox2dEntity;
-		
+
 		// Any properties previously set on this instance which should be applied to the Box2d world
 		// (Object->Box2D) should be set here. After this point, properties will be set from Box2D->Object
 

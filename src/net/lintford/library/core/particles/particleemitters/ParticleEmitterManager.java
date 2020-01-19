@@ -201,15 +201,20 @@ public class ParticleEmitterManager extends PooledInstanceManager<ParticleEmitte
 
 	}
 
-	public void addCharacter(final ParticleEmitterInstance pParticleEmitterInstance) {
+	public void addParticleEmitterInstance(final ParticleEmitterInstance pParticleEmitterInstance) {
 		if (!mEmitters.contains(pParticleEmitterInstance)) {
 			mEmitters.add(pParticleEmitterInstance);
 
 		}
 	}
 
-	public void removeCharacter(final ParticleEmitterInstance pParticleEmitterInstance) {
-		returnPooledItem(pParticleEmitterInstance);
+	public void removeParticleEmitterInstance(final ParticleEmitterInstance pParticleEmitterInstance) {
+		pParticleEmitterInstance.reset();
+
+		if (mEmitters.contains(pParticleEmitterInstance)) {
+			mEmitters.remove(pParticleEmitterInstance);
+
+		}
 
 	}
 
