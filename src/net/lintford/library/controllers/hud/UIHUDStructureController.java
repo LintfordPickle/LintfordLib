@@ -156,15 +156,15 @@ public class UIHUDStructureController extends BaseController {
 
 		// ** GAME HUD BOUNDS ** //
 
-		final float lGameFooterHeight = 64f;
+		final float lGameFooterHeight = 128f;
 		final float lGameHeaderHeight = 64f;
 
 		final var lHUDWidth = 1280;
-		final var lHUDHeight = 1024;
+		final var lHUDHeight = lWindowHeight - lGameFooterHeight - lGameHeaderHeight - 2;
 
-		mGameFooterRectangle.set(-lWindowWidth / 2f, -lWindowHeight / 2, lWindowWidth, lGameFooterHeight);
-		mGameHUDRectangle.set(-lHUDWidth / 2f, -lHUDHeight / 2f, lHUDWidth, lHUDHeight);
-		mGameHeaderRectangle.set(-lWindowWidth / 2f, lWindowHeight / 2 - lGameHeaderHeight, lWindowWidth, lGameHeaderHeight);
+		mGameHeaderRectangle.set(-lWindowWidth / 2f, -lWindowHeight / 2, lWindowWidth, lGameHeaderHeight);
+		mGameHUDRectangle.set(-lHUDWidth / 2f, mGameHeaderRectangle.y + mGameHeaderRectangle.h + 1, lHUDWidth, lHUDHeight);
+		mGameFooterRectangle.set(-lWindowWidth / 2f, lWindowHeight / 2 - lGameFooterHeight, lWindowWidth, lGameFooterHeight);
 
 		// ** MENU HUD BOUNDS ** //
 
