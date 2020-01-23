@@ -29,7 +29,6 @@ public class UIHUDStructureController extends BaseController {
 	private Rectangle mMenuFooterRectangle;
 
 	private boolean mIsinitialized;
-	private boolean mBigUIEnabled;
 
 	private float mUITransparencyFactorActual;
 	private float mUIScaleFactorActual;
@@ -60,14 +59,11 @@ public class UIHUDStructureController extends BaseController {
 
 	// TODO: Replace the following function with:
 	/*
-	 * final boolean lIsBigUI = mUIHUDGameController.useBigUI(); final float lTextScale = mUIHUDGameController.uiTextScaleFactor() * (lIsBigUI ? GraphicsSettings.BIG_UI_SCALE_FACTOR : GraphicsSettings.SMALL_UI_SCALE_FACTOR);
+	 * final boolean lIsBigUI = mUIHUDGameController.useBigUI(); final float lTextScale = mUIHUDGameController.uiTextScaleFactor() * (lIsBigUI ? GraphicsSettings.BIG_UI_SCALE_FACTOR :
+	 * GraphicsSettings.SMALL_UI_SCALE_FACTOR);
 	 */
 	public float uiTextScaleFactor() {
 		return mUITextScaleFactorActual;
-	}
-
-	public boolean useBigUI() {
-		return mBigUIEnabled;
 	}
 
 	@Override
@@ -154,42 +150,17 @@ public class UIHUDStructureController extends BaseController {
 		final float lWindowWidth = pCore.config().display().windowWidth();
 		final float lWindowHeight = pCore.config().display().windowHeight();
 
-		float lWindowPadding = 15f;
-
-		final float lMinBigHUDWidth = 1280;
-		final float lMinBigHUDHeight = 768;
-
-		float lHUDRatio = 1f;
-
-		if (lWindowWidth < lMinBigHUDWidth || lWindowHeight < lMinBigHUDHeight) {
-			mBigUIEnabled = false;
-			lHUDRatio = 1.0f;
-
-			mUIScaleFactorActual = mDisplayManager.graphicsSettings().UIScale() * lHUDRatio;
-			mUITextScaleFactorActual = mDisplayManager.graphicsSettings().UITextScale() * lHUDRatio;
-			mUITransparencyFactorActual = mDisplayManager.graphicsSettings().UITransparencyScale() * lHUDRatio;
-
-		} else {
-			mBigUIEnabled = true;
-
-			mUIScaleFactorActual = mDisplayManager.graphicsSettings().UIScale() * 1f;
-			mUITextScaleFactorActual = mDisplayManager.graphicsSettings().UITextScale() * 1f;
-			mUITransparencyFactorActual = mDisplayManager.graphicsSettings().UITransparencyScale() * 1f;
-
-		}
+		mUIScaleFactorActual = mDisplayManager.graphicsSettings().UIScale() * 1f;
+		mUITextScaleFactorActual = mDisplayManager.graphicsSettings().UITextScale() * 1f;
+		mUITransparencyFactorActual = mDisplayManager.graphicsSettings().UITransparencyScale() * 1f;
 
 		// ** GAME HUD BOUNDS ** //
 
-		final float lGameFooterHeight = mBigUIEnabled ? 64f : 64f;
-		final float lGameHeaderHeight = mBigUIEnabled ? 64f : 64f;
+		final float lGameFooterHeight = 64f;
+		final float lGameHeaderHeight = 64f;
 
-		float lHUDWidth = lWindowWidth - lWindowPadding * 2f;
-		float lHUDHeight = lWindowHeight - lGameFooterHeight * 2f;
-
-		if (mBigUIEnabled) {
-			lHUDWidth = Math.min(lHUDWidth, 1280);
-			lHUDHeight = Math.min(lHUDHeight, 1024);
-		}
+		final var lHUDWidth = 1280;
+		final var lHUDHeight = 1024;
 
 		mGameFooterRectangle.set(-lWindowWidth / 2f, -lWindowHeight / 2, lWindowWidth, lGameFooterHeight);
 		mGameHUDRectangle.set(-lHUDWidth / 2f, -lHUDHeight / 2f, lHUDWidth, lHUDHeight);
@@ -203,10 +174,10 @@ public class UIHUDStructureController extends BaseController {
 		final float lModHeight = lWindowHeight - lBorder * 2f;
 
 		float lRemainingHeight = lModHeight;
-		final float MINIMUM_TITLE_HEGIHT = mBigUIEnabled ? 180 : 100;
-		final float MINIMUM_FOOTER_HEGIHT = mBigUIEnabled ? 150 : 90;
-		final float lTitleHeight = (float) Math.max(MINIMUM_TITLE_HEGIHT, lModHeight * .15f - lInnerBorder);
-		final float lFooterHeight = (float) Math.max(MINIMUM_FOOTER_HEGIHT, lModHeight * .10f - lInnerBorder);
+		final float lMinimumTitleHeight = 0;
+		final float lMinimumFooterHeight = 125;
+		final float lTitleHeight = (float) Math.max(lMinimumTitleHeight, lModHeight * .15f - lInnerBorder);
+		final float lFooterHeight = (float) Math.max(lMinimumFooterHeight, lModHeight * .10f - lInnerBorder);
 		lRemainingHeight -= lTitleHeight;
 		lRemainingHeight -= lFooterHeight;
 
@@ -217,16 +188,8 @@ public class UIHUDStructureController extends BaseController {
 		mMenuFooterRectangle.set(-lModWidth / 2, lModHeight / 2f - lFooterHeight + lInnerBorder, lModWidth, lFooterHeight);
 
 		// ** WINDOW ** //
-
-		if (mBigUIEnabled) {
-			mWindowPaddingH = 40;
-			mWindowPaddingV = 30;
-
-		} else {
-			mWindowPaddingH = 10;
-			mWindowPaddingV = 10;
-
-		}
+		mWindowPaddingH = 40;
+		mWindowPaddingV = 30;
 
 	}
 

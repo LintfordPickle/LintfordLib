@@ -405,6 +405,7 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 			mTextureBatch.begin(pCore.HUD());
 			mTextureBatch.draw(mUITexture, 0, 0, 32, 32, x, y, w, h, ZLayers.LAYER_DEBUG, 1f, 0.2f, 1f, 0.4f);
 			mTextureBatch.end();
+
 		}
 
 	}

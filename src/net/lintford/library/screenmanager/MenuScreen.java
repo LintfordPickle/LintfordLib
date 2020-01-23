@@ -5,11 +5,9 @@ import java.util.List;
 
 import org.lwjgl.glfw.GLFW;
 
-import net.lintford.library.controllers.hud.UIHUDStructureController;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.Debug;
-import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.input.InputManager;
 import net.lintford.library.renderers.ZLayers;
@@ -345,8 +343,6 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 		}
 
-		footerLayout().handleInput(pCore);
-
 		int lFloatingCount = mFloatingEntries.size();
 		for (int i = 0; i < lFloatingCount; i++) {
 			MenuEntry lFloatingEntry = mFloatingEntries.get(i);
@@ -360,6 +356,8 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 			final var lLayout = mLayouts.get(i);
 			lLayout.handleInput(pCore);
 		}
+
+		footerLayout().handleInput(pCore);
 
 	}
 
@@ -406,9 +404,9 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		updateLayout(pCore, layouts(), mLayoutAlignment);
 
 		// *** FOOTER *** //
-		UIHUDStructureController lHUDController = mRendererManager.uiHUDController();
+		final var lHUDController = mRendererManager.uiHUDController();
 
-		float lWidthOfPage = lHUDController.useBigUI() ? lHUDController.menuFooterRectangle().width() * .25f : lHUDController.menuFooterRectangle().width() * 0.75f - INNER_PADDING * 2f;
+		float lWidthOfPage = lHUDController.menuFooterRectangle().width() - INNER_PADDING * 2f;
 		float lHeightOfPage = lHUDController.menuFooterRectangle().height();
 
 		float lLeftOfPage = lHUDController.menuFooterRectangle().centerX() - lWidthOfPage / 2 + INNER_PADDING;
@@ -426,27 +424,27 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		if (mRendererManager == null)
 			return;
 
-		UIHUDStructureController lHUDController = mRendererManager.uiHUDController();
+		final var lUIHUDStructureController = mRendererManager.uiHUDController();
 
 		final int lLeftLayoutCount = pLayoutList.size();
 
-		final float lScreenContentLeft = lHUDController.menuMainRectangle().left();
-		final float lScreenContentWidth = lHUDController.menuMainRectangle().width();
+		final float lScreenContentLeft = lUIHUDStructureController.menuMainRectangle().left();
+		final float lScreenContentWidth = lUIHUDStructureController.menuMainRectangle().width();
 
 		// Set the layout X and W
 		for (int i = 0; i < lLeftLayoutCount; i++) {
-			BaseLayout lLayout = pLayoutList.get(i);
+			final var lBaseLayout = pLayoutList.get(i);
 
 			float lLayoutWidth = lScreenContentWidth - INNER_PADDING * 2f;
-			if (lLayout.layoutWidth() == LAYOUT_WIDTH.THREEQUARTER) {
+			if (lBaseLayout.layoutWidth() == LAYOUT_WIDTH.THREEQUARTER) {
 				lLayoutWidth = lScreenContentWidth / 4f * 3f - INNER_PADDING * 2f;
-			} else if (lLayout.layoutWidth() == LAYOUT_WIDTH.TWOTHIRD) {
+			} else if (lBaseLayout.layoutWidth() == LAYOUT_WIDTH.TWOTHIRD) {
 				lLayoutWidth = lScreenContentWidth / 3f * 2f - INNER_PADDING * 2f;
-			} else if (lLayout.layoutWidth() == LAYOUT_WIDTH.HALF) {
+			} else if (lBaseLayout.layoutWidth() == LAYOUT_WIDTH.HALF) {
 				lLayoutWidth = lScreenContentWidth / 2f - INNER_PADDING * 2f;
-			} else if (lLayout.layoutWidth() == LAYOUT_WIDTH.THIRD) {
+			} else if (lBaseLayout.layoutWidth() == LAYOUT_WIDTH.THIRD) {
 				lLayoutWidth = lScreenContentWidth / 3f - INNER_PADDING * 2f;
-			} else if (lLayout.layoutWidth() == LAYOUT_WIDTH.QUARTER) {
+			} else if (lBaseLayout.layoutWidth() == LAYOUT_WIDTH.QUARTER) {
 				lLayoutWidth = lScreenContentWidth / 4f - INNER_PADDING * 2f;
 			}
 
@@ -463,15 +461,15 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 				break;
 			}
 
-			lLayout.x = lLayoutNewX;
-			lLayout.w = lLayoutWidth;
+			lBaseLayout.x = lLayoutNewX;
+			lBaseLayout.w = lLayoutWidth;
 
 		}
 
-		float lLayoutHeight = lHUDController.menuMainRectangle().height();
+		float lLayoutHeight = lUIHUDStructureController.menuMainRectangle().height();
 
 		// Set the layout Y and H
-		float lLayoutNewY = lHUDController.menuMainRectangle().top();
+		float lLayoutNewY = lUIHUDStructureController.menuMainRectangle().top();
 
 		// See how many layouts only take what they need
 		int lCountOfSharers = lLeftLayoutCount;
@@ -480,11 +478,10 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		int heightTaken = 0;
 
 		for (int i = 0; i < lLeftLayoutCount; i++) {
-			BaseLayout lLayout = pLayoutList.get(i);
-			// FIXME: remove enum
-			if (lLayout.layoutFillType() == FILLTYPE.TAKE_WHATS_NEEDED) {
+			final var lBaseLayout = pLayoutList.get(i);
+			if (lBaseLayout.layoutFillType() == FILLTYPE.TAKE_WHATS_NEEDED) {
 				lCountOfTakers++;
-				heightTaken += lLayout.getEntryHeight();
+				heightTaken += lBaseLayout.getEntryHeight();
 
 			}
 
@@ -529,8 +526,8 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 		final float MENUSCREEN_Z_DEPTH = ZLayers.LAYER_SCREENMANAGER;
 
-		UIHUDStructureController lUIHUDController = mRendererManager.uiHUDController();
-		Rectangle lHUDRect = lUIHUDController.menuTitleRectangle();
+		final var lUIHUDStructureController = mRendererManager.uiHUDController();
+		final var lHUDRect = lUIHUDStructureController.menuTitleRectangle();
 
 		final float lWindowPaddingH = 0;// lUIHUDController.windowPaddingH();
 		final float lWindowPaddingV = 0;// lUIHUDController.windowPaddingV();

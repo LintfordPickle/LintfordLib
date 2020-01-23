@@ -10,7 +10,6 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.textures.Texture;
-import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 import net.lintford.library.core.input.InputManager;
 import net.lintford.library.core.maths.Vector2f;
 import net.lintford.library.renderers.windows.components.IScrollBarArea;
@@ -34,6 +33,9 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 
 	public static int LISTBOX_HEIGHT = 350;
 	public static float LISTBOX_ITEM_VPADDING = 15; // The amound of space vertically between items
+
+	public static final float LISTBOX_MIN_WIDTH = 400;
+	public static final float LISTBOX_MAX_WIDTH = 1024;
 
 	// --------------------------------------
 	// Variables
@@ -105,6 +107,9 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 		mTopMargin = 10f;
 		mBottomMargin = 10f;
 
+		mMinWidth = LISTBOX_MIN_WIDTH;
+		mMaxWidth = LISTBOX_MAX_WIDTH;
+		mMaxHeight = 400;
 		mMaxHeight = 1000;
 
 		mVerticalFillType = FILLTYPE.FILL_CONTAINER;
@@ -269,26 +274,25 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 
 	@Override
 	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pParentZDepth) {
+		final float lTileSize = 32f;
 
-		final float TILE_SIZE = 32f;
-
-		TextureBatch lTextureBatch = mParentLayout.parentScreen().rendererManager().uiTextureBatch();
+		final var lTextureBatch = mParentLayout.parentScreen().rendererManager().uiTextureBatch();
 
 		// Draw the listbox background
 		if (mDrawBackground) {
 			final float lH = h;
 			lTextureBatch.begin(pCore.HUD());
-			lTextureBatch.draw(mUITexture, 928, 0, TILE_SIZE, TILE_SIZE, x, y, TILE_SIZE, TILE_SIZE, pParentZDepth, 1, 1, 1, 0.85f);
-			lTextureBatch.draw(mUITexture, 960, 0, TILE_SIZE, TILE_SIZE, x + TILE_SIZE, y, w - 64, TILE_SIZE, pParentZDepth, 1, 1, 1, 0.85f);
-			lTextureBatch.draw(mUITexture, 992, 0, TILE_SIZE, TILE_SIZE, x + w - 32, y, TILE_SIZE, TILE_SIZE, pParentZDepth, 1, 1, 1, 0.85f);
+			lTextureBatch.draw(mUITexture, 928, 0, lTileSize, lTileSize, x, y, lTileSize, lTileSize, pParentZDepth, 1, 1, 1, 0.85f);
+			lTextureBatch.draw(mUITexture, 960, 0, lTileSize, lTileSize, x + lTileSize, y, w - 64, lTileSize, pParentZDepth, 1, 1, 1, 0.85f);
+			lTextureBatch.draw(mUITexture, 992, 0, lTileSize, lTileSize, x + w - 32, y, lTileSize, lTileSize, pParentZDepth, 1, 1, 1, 0.85f);
 
-			lTextureBatch.draw(mUITexture, 928, 32, TILE_SIZE, TILE_SIZE, x, y + 32, TILE_SIZE, lH - 64, pParentZDepth, 1, 1, 1, 0.85f);
-			lTextureBatch.draw(mUITexture, 960, 32, TILE_SIZE, TILE_SIZE, x + TILE_SIZE, y + 32, w - 64, lH - 64, pParentZDepth, 1, 1, 1, 0.85f);
-			lTextureBatch.draw(mUITexture, 992, 32, TILE_SIZE, TILE_SIZE, x + w - 32, y + 32, TILE_SIZE, lH - 64, pParentZDepth, 1, 1, 1, 0.85f);
+			lTextureBatch.draw(mUITexture, 928, 32, lTileSize, lTileSize, x, y + 32, lTileSize, lH - 64, pParentZDepth, 1, 1, 1, 0.85f);
+			lTextureBatch.draw(mUITexture, 960, 32, lTileSize, lTileSize, x + lTileSize, y + 32, w - 64, lH - 64, pParentZDepth, 1, 1, 1, 0.85f);
+			lTextureBatch.draw(mUITexture, 992, 32, lTileSize, lTileSize, x + w - 32, y + 32, lTileSize, lH - 64, pParentZDepth, 1, 1, 1, 0.85f);
 
-			lTextureBatch.draw(mUITexture, 928, 64, TILE_SIZE, TILE_SIZE, x, y + lH - 32, TILE_SIZE, TILE_SIZE, pParentZDepth, 1, 1, 1, 0.85f);
-			lTextureBatch.draw(mUITexture, 960, 64, TILE_SIZE, TILE_SIZE, x + TILE_SIZE, y + lH - 32, w - 64, TILE_SIZE, pParentZDepth, 1, 1, 1, 0.85f);
-			lTextureBatch.draw(mUITexture, 992, 64, TILE_SIZE, TILE_SIZE, x + w - 32, y + lH - 32, TILE_SIZE, TILE_SIZE, pParentZDepth, 1, 1, 1, 0.85f);
+			lTextureBatch.draw(mUITexture, 928, 64, lTileSize, lTileSize, x, y + lH - 32, lTileSize, lTileSize, pParentZDepth, 1, 1, 1, 0.85f);
+			lTextureBatch.draw(mUITexture, 960, 64, lTileSize, lTileSize, x + lTileSize, y + lH - 32, w - 64, lTileSize, pParentZDepth, 1, 1, 1, 0.85f);
+			lTextureBatch.draw(mUITexture, 992, 64, lTileSize, lTileSize, x + w - 32, y + lH - 32, lTileSize, lTileSize, pParentZDepth, 1, 1, 1, 0.85f);
 			lTextureBatch.end();
 
 		}
@@ -313,6 +317,7 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 
 		for (int i = 0; i < mItems.size(); i++) {
 			mItems.get(i).draw(pCore, pScreen, lTextureBatch, mSelectedItem == mItems.get(i).mItemIndex, pParentZDepth);
+
 		}
 
 		if (mScrollBarsEnabled) {

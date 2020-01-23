@@ -23,7 +23,8 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput {
 
 	private static final long serialVersionUID = -226493862481815669L;
 
-	protected static final float MENUENTRY_MAX_WIDTH = 700;
+	public static final float MENUENTRY_MIN_WIDTH = 100;
+	public static final float MENUENTRY_MAX_WIDTH = 500;
 
 	protected static final float FOCUS_TIMER = 500f; // milli
 
@@ -220,28 +221,12 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput {
 		return mMinHeight;
 	}
 
-	public void minWidth(float pNewValue) {
-		mMinWidth = pNewValue;
-	}
-
-	public void minHeight(float pNewValue) {
-		mMinHeight = pNewValue;
-	}
-
 	public float maxWidth() {
 		return mMaxWidth;
 	}
 
 	public float maxHeight() {
 		return mMaxHeight;
-	}
-
-	public void maxWidth(float pNewValue) {
-		mMaxWidth = pNewValue;
-	}
-
-	public void maxHeight(float pNewValue) {
-		mMaxHeight = pNewValue;
 	}
 
 	public boolean hoveredOver() {
@@ -319,10 +304,10 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput {
 		mLeftMargin = 2f;
 		mRightMargin = 2f;
 
-		mMinWidth = 200;
-		mMinHeight = 30;
-		mMinWidth = 300;
-		mMaxWidth = 600;
+		mMinWidth = MENUENTRY_MIN_WIDTH;
+		mMaxWidth = MENUENTRY_MAX_WIDTH;
+
+		mMinHeight = 24;
 		mMaxHeight = 32;
 
 		w = mMaxWidth;
@@ -484,7 +469,8 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput {
 
 			if (lMenuFont != null) {
 				lMenuFont.begin(pCore.HUD());
-				lMenuFont.draw(mText, centerX() - lMenuFont.bitmap().getStringWidth(mText, luiTextScale) * 0.5f, centerY() - lMenuFont.bitmap().fontHeight() * luiTextScale / 2 - 2f, mZ, 0.97f * lColMod, .92f * lColMod, .92f * lColMod, lA, luiTextScale);
+				lMenuFont.draw(mText, centerX() - lMenuFont.bitmap().getStringWidth(mText, luiTextScale) * 0.5f, centerY() - lMenuFont.bitmap().fontHeight() * luiTextScale / 2 - 2f, mZ, 0.97f * lColMod, .92f * lColMod,
+						.92f * lColMod, lA, luiTextScale);
 				lMenuFont.end();
 
 			}

@@ -2,6 +2,7 @@ package net.lintford.library.screenmanager.layouts;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.input.IProcessMouseInput;
+import net.lintford.library.core.maths.MathHelper;
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.ScreenManagerConstants.FILLTYPE;
@@ -134,7 +135,9 @@ public class ListLayout extends BaseLayout implements IProcessMouseInput {
 			if (mScrollBarsEnabled)
 				lScrollBarWidth = mScrollBar.width();
 
-			lEntry.w = w - marginLeft() - marginRight() - lScrollBarWidth;
+			final var lNewEntryWidth = w - marginLeft() - marginRight() - lScrollBarWidth;
+			lEntry.w = MathHelper.clamp(lNewEntryWidth, lEntry.minWidth(), lEntry.maxWidth());
+
 			lEntry.x = centerX() - lEntry.w / 2 - lScrollBarWidth / 2;
 
 			// Assign the entry height here

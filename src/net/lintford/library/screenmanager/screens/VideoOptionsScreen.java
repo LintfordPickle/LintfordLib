@@ -144,7 +144,7 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 		mResolutionEntry = new MenuDropDownEntry<>(mScreenManager, lLayout, "Resolution");
 		mMonitorEntry = new MenuEnumEntryIndexed<>(mScreenManager, lLayout, "Monitor");
 		mMonitorEntry.setButtonsEnabled(true);
-		
+
 		mVSync = new MenuToggleEntry(mScreenManager, lLayout);
 
 		// Setup buttons
@@ -189,17 +189,9 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 	public void updateLayoutSize(LintfordCore pCore) {
 		final int lLayoutCount = layouts().size();
 		for (int i = 0; i < lLayoutCount; i++) {
-
-			if (mScreenManager.UIHUDController().useBigUI()) {
-				layouts().get(i).layoutWidth(LAYOUT_WIDTH.HALF);
-				layouts().get(i).marginLeft(100);
-				layouts().get(i).marginRight(100);
-
-			} else {
-				layouts().get(i).layoutWidth(LAYOUT_WIDTH.FULL);
-				layouts().get(i).marginLeft(50);
-				layouts().get(i).marginRight(50);
-			}
+			layouts().get(i).layoutWidth(LAYOUT_WIDTH.THREEQUARTER);
+			layouts().get(i).marginLeft(50);
+			layouts().get(i).marginRight(50);
 
 		}
 
