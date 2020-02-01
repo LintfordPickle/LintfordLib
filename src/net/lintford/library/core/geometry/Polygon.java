@@ -21,6 +21,7 @@ public class Polygon extends Shape {
 
 	protected List<Vector2f> mVertices;
 	protected Vector2f[] mAxes;
+	protected final Vector2f mCentroid;
 	protected boolean mDirty;
 	public float x;
 	public float y;
@@ -50,6 +51,10 @@ public class Polygon extends Shape {
 		return y;
 	}
 
+	public Vector2f centroid() {
+		return mCentroid;
+	}
+
 	// --------------------------------------
 	// Constructors
 	// --------------------------------------
@@ -61,6 +66,7 @@ public class Polygon extends Shape {
 
 	public Polygon(float pCenterX, float pCenterY) {
 		mVertices = new ArrayList<>();
+		mCentroid = new Vector2f();
 
 		x = pCenterX;
 		y = pCenterY;
@@ -69,6 +75,7 @@ public class Polygon extends Shape {
 
 	public Polygon(Polygon pOther) {
 		mVertices = new ArrayList<>();
+		mCentroid = new Vector2f();
 
 		if (pOther != null) {
 			List<Vector2f> lOtherVerts = pOther.getVertices();
@@ -86,9 +93,11 @@ public class Polygon extends Shape {
 				mAxes[i] = new Vector2f(lOtherAxes[i]);
 			}
 
-			mDirty = pOther.mDirty;
 			x = pOther.x;
 			y = pOther.y;
+			mCentroid.set(pOther.centroid());
+
+			mDirty = pOther.mDirty;
 
 		}
 
@@ -238,6 +247,7 @@ public class Polygon extends Shape {
 			mVertices.add(pNewVertices[i]);
 		}
 
+		calculateCentroid();
 		mDirty = true;
 
 	}
@@ -282,10 +292,13 @@ public class Polygon extends Shape {
 	public void addVertex(Vector2f pNewVertex) {
 		mVertices.add(pNewVertex);
 
+		calculateCentroid();
+
 	}
 
 	public void clearVertices() {
 		mVertices.clear();
+		calculateCentroid();
 		mDirty = true;
 
 	}
@@ -343,6 +356,27 @@ public class Polygon extends Shape {
 		float y = (A1 * C2 - A2 * C1) / det;
 
 		return new Vector2f(x, y);
+
+	}
+
+	private void calculateCentroid() {
+		if (mVertices.size() == 0) {
+			mCentroid.set(0, 0);
+			return;
+
+		}
+
+		mCentroid.set(0, 0);
+
+		final var lVerticesCount = mVertices.size();
+		for (int i = 0; i < lVerticesCount; i++) {
+			mCentroid.x += mVertices.get(i).x;
+			mCentroid.y += mVertices.get(i).y;
+
+		}
+
+		mCentroid.x /= lVerticesCount;
+		mCentroid.y /= lVerticesCount;
 
 	}
 
