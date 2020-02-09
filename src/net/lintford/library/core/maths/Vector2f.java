@@ -33,10 +33,8 @@ public class Vector2f implements Serializable {
 	/**
 	 * Constructs a vector with the given components
 	 * 
-	 * @param x
-	 *            The x-component
-	 * @param y
-	 *            The y-component
+	 * @param x The x-component
+	 * @param y The y-component
 	 */
 	public Vector2f(float x, float y) {
 		this.x = x;
@@ -46,8 +44,7 @@ public class Vector2f implements Serializable {
 	/**
 	 * Constructs a vector from the given vector
 	 * 
-	 * @param v
-	 *            The vector
+	 * @param v The vector
 	 */
 	public Vector2f(Vector2f v) {
 		set(v);
@@ -78,12 +75,14 @@ public class Vector2f implements Serializable {
 	public static float len(float x1, float y1, float x2, float y2) {
 		return (float) Math.sqrt(x1 * x2 + y1 * y2);
 	}
-	
+
 	public static Vector2f CatmullRom(Vector2f value1, Vector2f value2, Vector2f value3, Vector2f value4, float amount, Vector2f returnVector) {
 		float num = amount * amount;
 		float num2 = amount * num;
-		returnVector.x = 0.5f * ((((2f * value2.x) + ((-value1.x + value3.x) * amount)) + (((((2f * value1.x) - (5f * value2.x)) + (4f * value3.x)) - value4.x) * num)) + ((((-value1.x + (3f * value2.x)) - (3f * value3.x)) + value4.x) * num2));
-		returnVector.y = 0.5f * ((((2f * value2.y) + ((-value1.y + value3.y) * amount)) + (((((2f * value1.y) - (5f * value2.y)) + (4f * value3.y)) - value4.y) * num)) + ((((-value1.y + (3f * value2.y)) - (3f * value3.y)) + value4.y) * num2));
+		returnVector.x = 0.5f * ((((2f * value2.x) + ((-value1.x + value3.x) * amount)) + (((((2f * value1.x) - (5f * value2.x)) + (4f * value3.x)) - value4.x) * num))
+				+ ((((-value1.x + (3f * value2.x)) - (3f * value3.x)) + value4.x) * num2));
+		returnVector.y = 0.5f * ((((2f * value2.y) + ((-value1.y + value3.y) * amount)) + (((((2f * value1.y) - (5f * value2.y)) + (4f * value3.y)) - value4.y) * num))
+				+ ((((-value1.y + (3f * value2.y)) - (3f * value3.y)) + value4.y) * num2));
 		return returnVector;
 	}
 
@@ -123,23 +122,29 @@ public class Vector2f implements Serializable {
 	/**
 	 * Sets this vector from the given vector
 	 * 
-	 * @param v
-	 *            The vector
+	 * @param v The vector
 	 * @return This vector for chaining
 	 */
 	public Vector2f set(Vector2f v) {
+		if (v == null) {
+			x = 0;
+			y = 0;
+			return this;
+
+		}
+
 		x = v.x;
 		y = v.y;
+
 		return this;
+
 	}
 
 	/**
 	 * Sets the components of this vector
 	 * 
-	 * @param x
-	 *            The x-component
-	 * @param y
-	 *            The y-component
+	 * @param x The x-component
+	 * @param y The y-component
 	 * @return This vector for chaining
 	 */
 	public Vector2f set(float x, float y) {
@@ -151,8 +156,7 @@ public class Vector2f implements Serializable {
 	/**
 	 * Substracts the given vector from this vector.
 	 * 
-	 * @param v
-	 *            The vector
+	 * @param v The vector
 	 * @return This vector for chaining
 	 */
 	public Vector2f sub(Vector2f v) {
@@ -166,7 +170,7 @@ public class Vector2f implements Serializable {
 		float y = v0.y - v1.y;
 		return new Vector2f(x, y);
 	}
-	
+
 	/**
 	 * Normalizes this vector
 	 * 
@@ -184,8 +188,7 @@ public class Vector2f implements Serializable {
 	/**
 	 * Adds the given vector to this vector
 	 * 
-	 * @param v
-	 *            The vector
+	 * @param v The vector
 	 * @return This vector for chaining
 	 */
 	public Vector2f add(Vector2f v) {
@@ -193,7 +196,7 @@ public class Vector2f implements Serializable {
 		y += v.y;
 		return this;
 	}
-	
+
 	public static Vector2f add(Vector2f v0, Vector2f v1) {
 		float x = v0.x + v1.x;
 		float y = v0.y + v1.y;
@@ -203,10 +206,8 @@ public class Vector2f implements Serializable {
 	/**
 	 * Adds the given components to this vector
 	 * 
-	 * @param x
-	 *            The x-component
-	 * @param y
-	 *            The y-component
+	 * @param x The x-component
+	 * @param y The y-component
 	 * @return This vector for chaining
 	 */
 	public Vector2f add(float x, float y) {
@@ -218,8 +219,7 @@ public class Vector2f implements Serializable {
 	/**
 	 * Rotates the Vector2 by the given angle, counter-clockwise assuming the y-axis points up.
 	 * 
-	 * @param degrees
-	 *            the angle in degrees
+	 * @param degrees the angle in degrees
 	 */
 	public Vector2f rotate(float degrees) {
 		return rotateRad((float) Math.toRadians(degrees));
@@ -228,8 +228,7 @@ public class Vector2f implements Serializable {
 	/**
 	 * Rotates the Vector2 by the given angle, counter-clockwise assuming the y-axis points up.
 	 * 
-	 * @param radians
-	 *            the angle in radians
+	 * @param radians the angle in radians
 	 */
 	public Vector2f rotateRad(float radians) {
 		float cos = (float) Math.cos(radians);
@@ -258,8 +257,7 @@ public class Vector2f implements Serializable {
 	}
 
 	/**
-	 * @param v
-	 *            The other vector
+	 * @param v The other vector
 	 * @return The dot product between this and the other vector
 	 */
 	public float dot(Vector2f v) {
@@ -273,8 +271,7 @@ public class Vector2f implements Serializable {
 	/**
 	 * Multiplies this vector by a scalar
 	 * 
-	 * @param scalar
-	 *            The scalar
+	 * @param scalar The scalar
 	 * @return This vector for chaining
 	 */
 	public Vector2f mul(float scalar) {
@@ -284,8 +281,7 @@ public class Vector2f implements Serializable {
 	}
 
 	/**
-	 * @param v
-	 *            The other vector
+	 * @param v The other vector
 	 * @return the distance between this and the other vector
 	 */
 	public float dst(Vector2f v) {
@@ -295,10 +291,8 @@ public class Vector2f implements Serializable {
 	}
 
 	/**
-	 * @param x
-	 *            The x-component of the other vector
-	 * @param y
-	 *            The y-component of the other vector
+	 * @param x The x-component of the other vector
+	 * @param y The y-component of the other vector
 	 * @return the distance between this and the other vector
 	 */
 	public float dst(float x, float y) {
@@ -308,8 +302,7 @@ public class Vector2f implements Serializable {
 	}
 
 	/**
-	 * @param v
-	 *            The other vector
+	 * @param v The other vector
 	 * @return the squared distance between this and the other vector
 	 */
 	public float dst2(Vector2f v) {
@@ -323,7 +316,7 @@ public class Vector2f implements Serializable {
 		y *= scalar;
 		return this;
 	}
-	
+
 	public static Vector2f scale(Vector2f v, float scalar) {
 		float x = v.x * scalar;
 		float y = v.y * scalar;
@@ -340,10 +333,8 @@ public class Vector2f implements Serializable {
 	/**
 	 * Substracts the other vector from this vector.
 	 * 
-	 * @param x
-	 *            The x-component of the other vector
-	 * @param y
-	 *            The y-component of the other vector
+	 * @param x The x-component of the other vector
+	 * @param y The y-component of the other vector
 	 * @return This vector for chaining
 	 */
 	public Vector2f sub(float x, float y) {
@@ -360,8 +351,7 @@ public class Vector2f implements Serializable {
 	}
 
 	/**
-	 * @param v
-	 *            the other vector
+	 * @param v the other vector
 	 * @return The cross product between this and the other vector
 	 */
 	public float cross(final Vector2f v) {
