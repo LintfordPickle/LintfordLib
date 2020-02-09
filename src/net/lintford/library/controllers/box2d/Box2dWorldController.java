@@ -6,11 +6,7 @@ import net.lintford.library.controllers.BaseController;
 import net.lintford.library.controllers.core.ControllerManager;
 import net.lintford.library.controllers.core.ResourceController;
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.ResourceManager;
-import net.lintford.library.core.box2d.definition.Box2dBodyDefinition;
-import net.lintford.library.core.box2d.definition.PObjectDefinition;
 import net.lintford.library.core.box2d.entity.JBox2dEntityInstance;
-import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.maths.RandomNumbers;
 
 public class Box2dWorldController extends BaseController {
@@ -35,8 +31,8 @@ public class Box2dWorldController extends BaseController {
 	// Variables
 	// --------------------------------------
 
-	private ResourceController mResourceController;
-	private World mWorld;
+	protected ResourceController mResourceController;
+	protected World mWorld;
 
 	float mWindAcc;
 	float mWindVel;
@@ -110,77 +106,6 @@ public class Box2dWorldController extends BaseController {
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
-
-	public JBox2dEntityInstance getCustomBox2dInstance(PObjectDefinition lPObjectDefinition) {
-
-		return null;
-
-	}
-
-	public JBox2dEntityInstance getCharacterBox2dInstance(float pWidth, float pHeight) {
-		if (!isinitialized()) {
-			Debug.debugManager().logger().e(getClass().getSimpleName(), "Cannot retreive a new CharacterBox2dEntityInstance - Box2dWorldController is not initialized!");
-			return null;
-
-		}
-
-		ResourceManager lResourceManager = mResourceController.resourceManager();
-
-		JBox2dEntityInstance lPlayerJBox2dEntity = lResourceManager.pobjectManager().getNewInstanceFromPObject(mWorld, "box");
-		lPlayerJBox2dEntity.mainBody().bodyTypeIndex = Box2dBodyDefinition.BODY_TYPE_INDEX_DYNAMIC;
-
-		lPlayerJBox2dEntity.setFixtureDimensions("box", pWidth, pHeight);
-		lPlayerJBox2dEntity.setFixtureCategory(CATEGORY_CHARACTER);
-		lPlayerJBox2dEntity.setFixtureBitMask(CATEGORY_ITEM | CATEGORY_GROUND | CATEGORY_OBJECT);
-		lPlayerJBox2dEntity.setFixtureIsSensor(false);
-
-		return lPlayerJBox2dEntity;
-
-	}
-
-	public JBox2dEntityInstance getObjectBox2dInstance(float pWidth, float pHeight) {
-		if (!isinitialized()) {
-			Debug.debugManager().logger().e(getClass().getSimpleName(), "Cannot retreive a new ObjectBox2dEntityInstance - Box2dWorldController is not initialized!");
-			return null;
-
-		}
-
-		ResourceManager lResourceManager = mResourceController.resourceManager();
-
-		JBox2dEntityInstance lObjectJBox2dEntity = lResourceManager.pobjectManager().getNewInstanceFromPObject(mWorld, "box");
-
-		lObjectJBox2dEntity.mainBody().bodyTypeIndex = Box2dBodyDefinition.BODY_TYPE_INDEX_STATIC;
-		lObjectJBox2dEntity.setFixtureDimensions("box", pWidth, pHeight);
-		lObjectJBox2dEntity.setFixtureCategory(CATEGORY_OBJECT);
-		lObjectJBox2dEntity.setFixtureBitMask(CATEGORY_CHARACTER);
-		lObjectJBox2dEntity.setFixtureIsSensor(true);
-
-		return lObjectJBox2dEntity;
-
-	}
-
-	public JBox2dEntityInstance getItemBox2dInstance(float pRadius) {
-		if (!isinitialized()) {
-			Debug.debugManager().logger().e(getClass().getSimpleName(), "Cannot retreive a new ItemBox2dEntityInstance - Box2dWorldController is not initialized!");
-			return null;
-
-		}
-
-		JBox2dEntityInstance lItemJBox2dEntity = mResourceController.resourceManager().pobjectManager().getNewInstanceFromPObject(mWorld, "circle");
-		lItemJBox2dEntity.mainBody().bodyTypeIndex = Box2dBodyDefinition.BODY_TYPE_INDEX_DYNAMIC;
-		lItemJBox2dEntity.mainBody().fixedRotation = false;
-
-		// Before we load the physics, need to adjust the box2d body/fixture to match the shape
-		// which in this case, means adjusting the raidus
-		lItemJBox2dEntity.setFixtureFriction(1.0f);
-		lItemJBox2dEntity.setFixtureRadius("circle", pRadius);
-		lItemJBox2dEntity.setFixtureCategory(CATEGORY_ITEM);
-		lItemJBox2dEntity.setFixtureBitMask(CATEGORY_CHARACTER | CATEGORY_GROUND);
-		lItemJBox2dEntity.setFixtureIsSensor(false);
-
-		return lItemJBox2dEntity;
-
-	}
 
 	public void returnBox2dInstance(JBox2dEntityInstance pObjectToRetrun) {
 		if (pObjectToRetrun == null)

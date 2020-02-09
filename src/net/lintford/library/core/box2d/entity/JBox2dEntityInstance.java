@@ -9,8 +9,6 @@ import org.jbox2d.dynamics.Filter;
 import org.jbox2d.dynamics.World;
 import org.jbox2d.dynamics.joints.RevoluteJointDef;
 
-import net.lintford.library.core.box2d.definition.Box2dBodyDefinition;
-import net.lintford.library.core.box2d.definition.Box2dFixtureDefinition;
 import net.lintford.library.core.box2d.definition.PObjectDefinition;
 
 /**
@@ -185,15 +183,13 @@ public class JBox2dEntityInstance implements Serializable {
 	}
 
 	public void unloadPhysics() {
-		mPhysicsLoaded = false;
-
 		final int lBodyCount = mBodies.size();
 		for (int i = 0; i < lBodyCount; i++) {
-			Box2dBodyInstance lBodyInstance = mBodies.get(i);
+			final var lBox2dBodyInstance = mBodies.get(i);
 
-			if (lBodyInstance.mBody != null) {
-				lBodyInstance.mBody.setUserData(null);
-				lBodyInstance.unloadPhysics();
+			if (lBox2dBodyInstance.mBody != null) {
+				lBox2dBodyInstance.mBody.setUserData(null);
+				lBox2dBodyInstance.unloadPhysics();
 
 			}
 
@@ -201,17 +197,14 @@ public class JBox2dEntityInstance implements Serializable {
 
 		final int lJointCount = mJoints.size();
 		for (int i = 0; i < lJointCount; i++) {
-			Box2dJointInstance lJointInstance = mJoints.get(i);
+			final var lBox2dJointInstance = mJoints.get(i);
 
-			if (lJointInstance.joint != null) {
-				lJointInstance.unloadPhysics();
+			if (lBox2dJointInstance.joint != null) {
+				lBox2dJointInstance.unloadPhysics();
 
 			}
 
 		}
-
-//		mBodies.clear();
-//		mJoints.clear();
 
 		mPhysicsLoaded = false;
 
@@ -231,66 +224,63 @@ public class JBox2dEntityInstance implements Serializable {
 		// Go through and create instances for each body in the definition
 		final int lBodyCount = pDefinition.bodies().size();
 		for (int i = 0; i < lBodyCount; i++) {
-			Box2dBodyDefinition lBodyDef = pDefinition.bodies().get(i);
+			final var lBox2dBodyDefinition = pDefinition.bodies().get(i);
+			final var lBox2dBodyInstance = new Box2dBodyInstance();
 
-			Box2dBodyInstance lBox2dBody = new Box2dBodyInstance();
+			lBox2dBodyInstance.name = lBox2dBodyDefinition.name;
+			lBox2dBodyInstance.bodyTypeIndex = lBox2dBodyDefinition.bodyTypeIndex;
 
-			lBox2dBody.name = lBodyDef.name;
-			lBox2dBody.bodyTypeIndex = lBodyDef.bodyTypeIndex;
+			lBox2dBodyInstance.position.x = lBox2dBodyDefinition.bodyDefinition.position.x;
+			lBox2dBodyInstance.position.y = lBox2dBodyDefinition.bodyDefinition.position.y;
 
-			lBox2dBody.position.x = lBodyDef.bodyDefinition.position.x;
-			lBox2dBody.position.y = lBodyDef.bodyDefinition.position.y;
+			lBox2dBodyInstance.linearVelocity.x = lBox2dBodyDefinition.bodyDefinition.linearVelocity.x;
+			lBox2dBodyInstance.linearVelocity.y = lBox2dBodyDefinition.bodyDefinition.linearVelocity.y;
 
-			lBox2dBody.linearVelocity.x = lBodyDef.bodyDefinition.linearVelocity.x;
-			lBox2dBody.linearVelocity.y = lBodyDef.bodyDefinition.linearVelocity.y;
+			lBox2dBodyInstance.angle = lBox2dBodyDefinition.bodyDefinition.angle;
+			lBox2dBodyInstance.angularVelocity = lBox2dBodyDefinition.bodyDefinition.angularVelocity;
+			lBox2dBodyInstance.linearDamping = lBox2dBodyDefinition.bodyDefinition.linearDamping;
+			lBox2dBodyInstance.angularDamping = lBox2dBodyDefinition.bodyDefinition.angularDamping;
+			lBox2dBodyInstance.gravityScale = lBox2dBodyDefinition.bodyDefinition.gravityScale;
 
-			lBox2dBody.angle = lBodyDef.bodyDefinition.angle;
-			lBox2dBody.angularVelocity = lBodyDef.bodyDefinition.angularVelocity;
-			lBox2dBody.linearDamping = lBodyDef.bodyDefinition.linearDamping;
-			lBox2dBody.angularDamping = lBodyDef.bodyDefinition.angularDamping;
-			lBox2dBody.gravityScale = lBodyDef.bodyDefinition.gravityScale;
+			lBox2dBodyInstance.allowSleep = lBox2dBodyDefinition.bodyDefinition.allowSleep;
+			lBox2dBodyInstance.awake = lBox2dBodyDefinition.bodyDefinition.awake;
+			lBox2dBodyInstance.fixedRotation = lBox2dBodyDefinition.bodyDefinition.fixedRotation;
+			lBox2dBodyInstance.bullet = lBox2dBodyDefinition.bodyDefinition.bullet;
+			lBox2dBodyInstance.active = lBox2dBodyDefinition.bodyDefinition.active;
 
-			lBox2dBody.allowSleep = lBodyDef.bodyDefinition.allowSleep;
-			lBox2dBody.awake = lBodyDef.bodyDefinition.awake;
-			lBox2dBody.fixedRotation = lBodyDef.bodyDefinition.fixedRotation;
-			lBox2dBody.bullet = lBodyDef.bodyDefinition.bullet;
-			lBox2dBody.active = lBodyDef.bodyDefinition.active;
+			lBox2dBodyInstance.mass = lBox2dBodyDefinition.mass;
+			lBox2dBodyInstance.massCenter.x = lBox2dBodyDefinition.massCenter.x;
+			lBox2dBodyInstance.massCenter.y = lBox2dBodyDefinition.massCenter.y;
+			lBox2dBodyInstance.massI = lBox2dBodyDefinition.massI;
 
-			lBox2dBody.mass = lBodyDef.mass;
-			lBox2dBody.massCenter.x = lBodyDef.massCenter.x;
-			lBox2dBody.massCenter.y = lBodyDef.massCenter.y;
-			lBox2dBody.massI = lBodyDef.massI;
-
-			// lBox2dBody.mBody = pWorld.createBody(lBodyDef.bodyDefinition);
-
-			mBodies.add(lBox2dBody);
+			mBodies.add(lBox2dBodyInstance);
 
 			// iterate over the needed fixtures
-			final int lFixtureCount = lBodyDef.fixtureList.size();
+			final int lFixtureCount = lBox2dBodyDefinition.fixtureList.size();
 
-			lBox2dBody.mFixtures = new Box2dFixtureInstance[lFixtureCount];
+			lBox2dBodyInstance.mFixtures = new Box2dFixtureInstance[lFixtureCount];
 
 			for (int j = 0; j < lFixtureCount; j++) {
-				Box2dFixtureDefinition lFixtureDef = lBodyDef.fixtureList.get(j);
-				Box2dFixtureInstance lFixtureInstance = new Box2dFixtureInstance(lBox2dBody);
+				final var lBox2dFixtureDefinition = lBox2dBodyDefinition.fixtureList.get(j);
+				final var lBox2dFixtureInstance = new Box2dFixtureInstance(lBox2dBodyInstance);
 
-				lBox2dBody.mFixtures[j] = lFixtureInstance;
+				lBox2dBodyInstance.mFixtures[j] = lBox2dFixtureInstance;
 
 				// Set the instance values here so that something can be serialized later
 				// lFixtureInstance.mFixture = lBox2dBody.mBody.createFixture(lFixtureDef.fixtureDef);
 
-				lFixtureInstance.name = lFixtureDef.name;
-				lFixtureInstance.density = lFixtureDef.fixtureDef.density;
-				lFixtureInstance.restitution = lFixtureDef.fixtureDef.restitution;
-				lFixtureInstance.friction = lFixtureDef.fixtureDef.friction;
-				lFixtureInstance.isSensor = lFixtureDef.fixtureDef.isSensor;
+				lBox2dFixtureInstance.name = lBox2dFixtureDefinition.name;
+				lBox2dFixtureInstance.density = lBox2dFixtureDefinition.fixtureDef.density;
+				lBox2dFixtureInstance.restitution = lBox2dFixtureDefinition.fixtureDef.restitution;
+				lBox2dFixtureInstance.friction = lBox2dFixtureDefinition.fixtureDef.friction;
+				lBox2dFixtureInstance.isSensor = lBox2dFixtureDefinition.fixtureDef.isSensor;
 
-				lFixtureInstance.shape = lFixtureDef.shape.getCopy();
+				lBox2dFixtureInstance.shape = lBox2dFixtureDefinition.shape.getCopy();
 
 				Filter lFilter = new Filter();
-				lFilter.categoryBits = lFixtureDef.fixtureDef.filter.categoryBits;
-				lFilter.groupIndex = lFixtureDef.fixtureDef.filter.groupIndex;
-				lFilter.maskBits = lFixtureDef.fixtureDef.filter.maskBits;
+				lFilter.categoryBits = lBox2dFixtureDefinition.fixtureDef.filter.categoryBits;
+				lFilter.groupIndex = lBox2dFixtureDefinition.fixtureDef.filter.groupIndex;
+				lFilter.maskBits = lBox2dFixtureDefinition.fixtureDef.filter.maskBits;
 
 			}
 
@@ -404,28 +394,6 @@ public class JBox2dEntityInstance implements Serializable {
 
 	}
 
-	public void setFixtureFriction(float pNewFrictionValue) {
-		final int lBodyCount = mBodies.size();
-		for (int i = 0; i < lBodyCount; i++) {
-
-			Box2dBodyInstance lBodyInst = mBodies.get(i);
-			if (lBodyInst == null)
-				continue;
-
-			final int lFixtureCount = lBodyInst.mFixtures.length;
-			for (int j = 0; j < lFixtureCount; j++) {
-				Box2dFixtureInstance lFixInst = lBodyInst.mFixtures[j];
-				if (lFixInst == null)
-					continue;
-
-				lFixInst.friction = pNewFrictionValue;
-
-			}
-
-		}
-
-	}
-
 	public void setFixtureCategory(int pNewCategory) {
 		final int lBodyCount = mBodies.size();
 		for (int i = 0; i < lBodyCount; i++) {
@@ -485,6 +453,94 @@ public class JBox2dEntityInstance implements Serializable {
 					continue;
 
 				lFixInst.isSensor = pIsSensor;
+
+			}
+
+		}
+	}
+
+	public void setAllFixtureDensity(float pNewDensity) {
+		final int lBodyCount = mBodies.size();
+		for (int i = 0; i < lBodyCount; i++) {
+
+			Box2dBodyInstance lBodyInst = mBodies.get(i);
+			if (lBodyInst == null)
+				continue;
+
+			final int lFixtureCount = lBodyInst.mFixtures.length;
+			for (int j = 0; j < lFixtureCount; j++) {
+				Box2dFixtureInstance lFixInst = lBodyInst.mFixtures[j];
+				if (lFixInst == null)
+					continue;
+
+				lFixInst.density = pNewDensity;
+
+			}
+
+		}
+	}
+
+	public void setAllFixtureProperties(float pNewFriction, float pNewRestitution, float pNewDensity) {
+		final int lBodyCount = mBodies.size();
+		for (int i = 0; i < lBodyCount; i++) {
+
+			final var lBox2dBodyInstance = mBodies.get(i);
+			if (lBox2dBodyInstance == null)
+				continue;
+
+			final int lFixtureCount = lBox2dBodyInstance.mFixtures.length;
+			for (int j = 0; j < lFixtureCount; j++) {
+				final var lBox2dFixtureInstance = lBox2dBodyInstance.mFixtures[j];
+				if (lBox2dFixtureInstance == null)
+					continue;
+
+				lBox2dFixtureInstance.restitution = pNewRestitution;
+				lBox2dFixtureInstance.density = pNewDensity;
+				lBox2dFixtureInstance.friction = pNewFriction;
+
+			}
+
+		}
+
+	}
+
+	public void setAllFixtureFriction(float pNewFrictionValue) {
+		final int lBodyCount = mBodies.size();
+		for (int i = 0; i < lBodyCount; i++) {
+
+			Box2dBodyInstance lBodyInst = mBodies.get(i);
+			if (lBodyInst == null)
+				continue;
+
+			final int lFixtureCount = lBodyInst.mFixtures.length;
+			for (int j = 0; j < lFixtureCount; j++) {
+				Box2dFixtureInstance lFixInst = lBodyInst.mFixtures[j];
+				if (lFixInst == null)
+					continue;
+
+				lFixInst.friction = pNewFrictionValue;
+
+			}
+
+		}
+
+	}
+
+	public void setAllFixtureRestitution(float pNewRestitution) {
+		final int lBodyCount = mBodies.size();
+		for (int i = 0; i < lBodyCount; i++) {
+
+			Box2dBodyInstance lBox2dBodyInstance = mBodies.get(i);
+			if (lBox2dBodyInstance == null)
+				continue;
+
+			final int lFixtureCount = lBox2dBodyInstance.mFixtures.length;
+			for (int j = 0; j < lFixtureCount; j++) {
+				Box2dFixtureInstance lBox2dFixtureInstance = lBox2dBodyInstance.mFixtures[j];
+				if (lBox2dFixtureInstance == null)
+					continue;
+
+				lBox2dFixtureInstance.restitution = pNewRestitution;
 
 			}
 
