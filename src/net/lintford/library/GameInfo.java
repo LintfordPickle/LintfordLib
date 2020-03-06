@@ -5,14 +5,14 @@ import net.lintford.library.core.storage.AppStorage;
 import net.lintford.library.options.DisplayManager;
 
 /**
- * The {@link GameInfo} interface defines the properties of the application, as well as the default settings to use by the {@link DisplayManager} when creating an OpenGL window for the first time (i.e. when no
- * DisplayCOnfig.INI exists).
+ * The {@link GameInfo} interface defines the properties for an application, as well as the default settings to use by the {@link DisplayManager} when creating an OpenGL window for the first time (i.e. when no
+ * DisplayConfig.INI exists).
  */
 public interface GameInfo {
 
 	public static final int DEF_BASE_GAME_RESOLUTION_W = 800;
 	public static final int DEF_BASE_GAME_RESOLUTION_H = 600;
-	
+
 	public static final int MIN_BASE_GAME_RESOLUTION_W = 800;
 	public static final int MIN_BASE_GAME_RESOLUTION_H = 600;
 
@@ -70,7 +70,7 @@ public interface GameInfo {
 	public default int baseGameResolutionHeight() {
 		return DEF_BASE_GAME_RESOLUTION_H;
 	}
-	
+
 	public default int minimumWindowWidth() {
 		return MIN_BASE_GAME_RESOLUTION_W;
 	}

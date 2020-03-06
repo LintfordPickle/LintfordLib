@@ -8,6 +8,10 @@ import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 
 public class ToolTip {
 
+	// --------------------------------------
+	// Constants
+	// --------------------------------------
+
 	public static final String TOOLTIP_FONT_NAME = "ToolTipFont";
 
 	// --------------------------------------
@@ -21,7 +25,6 @@ public class ToolTip {
 
 	private String mToolTipText;
 	private float x, y, z;
-	public boolean active; // TODO: Do properly
 
 	// --------------------------------------
 	// Constructor
@@ -58,12 +61,10 @@ public class ToolTip {
 		x = pX;
 		y = pY;
 		z = pZ;
-		active = true;
 
 	}
 
 	public void draw(LintfordCore pCore) {
-		// Draw the tool tip on top
 		final float lTextScale = mScreenManager.UIHUDController().uiTextScaleFactor();
 
 		final float lTextPadding = 5f;
