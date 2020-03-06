@@ -91,7 +91,7 @@ public class StringListBoxItem extends ListBoxItem {
 
 			// Draw profile information
 			lFont.begin(pCore.HUD());
-			lFont.draw(mTextValue, x, y /* - lFontHeight / 2 */, pParentZDepth + .1f, mR, mG, mB, mA, lScale, -1);
+			lFont.draw(mTextValue, x, y - lFontHeight / 2, pParentZDepth + .1f, mR, mG, mB, mA, lScale, -1);
 			lFont.end();
 
 		}

@@ -1,6 +1,5 @@
 package net.lintford.library.core.particles.particlesystems.modifiers;
 
-import net.lintford.library.ConstantsTable;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.particles.Particle;
 
@@ -14,15 +13,27 @@ public class ParticleDragModifier extends ParticleModifierBase {
 
 	public static final String MODIFIER_NAME = "ParticleDragModifier";
 
-	// FIXME: Need to contralize this physics
-	private final static float DRAG_CONSTANT = 0.75f;
+	public static final float EPSILON = 0.001f;
+
+	// --------------------------------------
+	// Variables
+	// --------------------------------------
+
+	private float mDrag;
 
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
 	public ParticleDragModifier() {
+		this(0.75f);
+
+	}
+
+	public ParticleDragModifier(float pDragValue) {
 		super(MODIFIER_NAME);
+
+		mDrag = 0.75f;
 
 	}
 
@@ -43,10 +54,10 @@ public class ParticleDragModifier extends ParticleModifierBase {
 
 	@Override
 	public void updateParticle(LintfordCore pCore, Particle pParticle) {
-		pParticle.dx *= DRAG_CONSTANT;
-		pParticle.dy *= DRAG_CONSTANT;
+		pParticle.dx *= mDrag;
+		pParticle.dy *= mDrag;
 
-		if (Math.abs(pParticle.dx) < ConstantsTable.EPSILON)
+		if (Math.abs(pParticle.dx) < EPSILON)
 			pParticle.dx = 0;
 		if (Math.abs(pParticle.dy) < 0.001f)
 			pParticle.dy = 0;

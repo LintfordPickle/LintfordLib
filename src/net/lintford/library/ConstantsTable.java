@@ -10,14 +10,14 @@ public class ConstantsTable {
 	// ---------------------------------------------
 	// Constants
 	// ---------------------------------------------
-	
+
 	public static final String APP_NAME = "APPLICATION_NAME";
 	public static final String DEBUG_APP = "DEBUG_APP";
 
 	// ---------------------------------------------
 	// Methods
 	// ---------------------------------------------
-	
+
 	public static void setAppConstants(String pAppName) {
 		ConstantsTable.registerValue(APP_NAME, pAppName);
 	}
@@ -87,19 +87,6 @@ public class ConstantsTable {
 		constTab.put(pName.toUpperCase(), pValue);
 
 	}
-
-	// --------------------------------------
-	// TODO: Physics Constants to be moved
-	// --------------------------------------
-
-	public static final int BLOCK_SIZE_PIXELS = 16;
-
-	public static final float EPSILON = 0.001f;
-	public static final float SKIN_WIDTH = 0.025f;
-	public static final float MOVEMENT_EPSILON = 0.003f;
-	public static final float GRAVITY = 40f;
-	public static final float FRICTION_X = 0.96f;
-	public static final float FRICTION_Y = 0.96f;
 
 	// --------------------------------------
 	// Appplication / Window
