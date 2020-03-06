@@ -26,14 +26,11 @@ public abstract class CircleEntity extends WorldEntity {
 	// Properties
 	// --------------------------------------
 
-	public CircleEntity() {
-		// Set the default to unit circle length
-		radius = 1.0f;
+	public CircleEntity(final int pPoolUid) {
+		super(pPoolUid);
+
+		radius = 0.5f;
 
 	}
-
-	// --------------------------------------
-	// Methods
-	// --------------------------------------
 
 }

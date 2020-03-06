@@ -69,17 +69,13 @@ public class ParticleEmitterInstance extends WorldEntity {
 		return mEmitterDefinitionId;
 	}
 
-	@Override
-	public int getPoolID() {
-		return mEmitterInstanceId;
-
-	}
-
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
-	public ParticleEmitterInstance() {
+	public ParticleEmitterInstance(final int pPoolUid) {
+		super(pPoolUid);
+
 		mChildEmitters = new ParticleEmitterInstance[MAX_NUM_CHILD_EMITTERS];
 		enabled = true;
 	}
@@ -174,7 +170,8 @@ public class ParticleEmitterInstance extends WorldEntity {
 
 			} else {
 				// TODO: Only output a warning if this emitter has no children - ultimately, what is the point?
-				Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("ParticleEmitter '%s' could not resolve ParticleSystem '' to an instance of an object", pEmitterDefinition.name, pEmitterDefinition.particleSystemName));
+				Debug.debugManager().logger().i(getClass().getSimpleName(),
+						String.format("ParticleEmitter '%s' could not resolve ParticleSystem '' to an instance of an object", pEmitterDefinition.name, pEmitterDefinition.particleSystemName));
 
 			}
 

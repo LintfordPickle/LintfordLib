@@ -45,15 +45,17 @@ public abstract class RectangleEntity extends WorldEntity {
 	// Constructor
 	// --------------------------------------
 
-	public RectangleEntity() {
-		this(0, 0, 0, 0);
+	public RectangleEntity(final int pPoolUid) {
+		this(pPoolUid, 0, 0, 0, 0);
 	}
 
-	public RectangleEntity(float pWidth, float pHeight) {
-		this(0, 0, pWidth, pHeight);
+	public RectangleEntity(final int pPoolUid, float pWidth, float pHeight) {
+		this(pPoolUid, 0, 0, pWidth, pHeight);
 	}
 
-	public RectangleEntity(float pX, float pY, float pWidth, float pHeight) {
+	public RectangleEntity(final int pPoolUid, float pX, float pY, float pWidth, float pHeight) {
+		super(pPoolUid);
+
 		x = pX;
 		y = pY;
 		width = pWidth;

@@ -104,6 +104,7 @@ public class ParticleEmitterManager extends PooledInstanceManager<ParticleEmitte
 	protected EmitterDefinitionManager mEmitterDefinitionManager;
 	protected ParticleFrameworkData mParticleFrameworkData;
 	protected transient List<ParticleEmitterInstance> mEmitters;
+	protected int mParticleEmitterInstanceCounter;
 
 	// --------------------------------------
 	// Properties
@@ -178,7 +179,7 @@ public class ParticleEmitterManager extends PooledInstanceManager<ParticleEmitte
 	public ParticleEmitterInstance getParticleEmitterByIndex(int pEmitterIndex) {
 		final var lNumParticleEmitterCount = mEmitters.size();
 		for (var i = 0; i < lNumParticleEmitterCount; i++) {
-			if (mEmitters.get(i).getPoolID() == pEmitterIndex) {
+			if (mEmitters.get(i).poolUid == pEmitterIndex) {
 				return mEmitters.get(i);
 
 			}
@@ -189,7 +190,7 @@ public class ParticleEmitterManager extends PooledInstanceManager<ParticleEmitte
 
 	@Override
 	protected ParticleEmitterInstance createPoolObjectInstance() {
-		return new ParticleEmitterInstance();
+		return new ParticleEmitterInstance(mParticleEmitterInstanceCounter++);
 
 	}
 

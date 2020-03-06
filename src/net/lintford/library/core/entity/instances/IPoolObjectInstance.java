@@ -4,6 +4,4 @@ public interface IPoolObjectInstance {
 
 	public boolean isAssigned();
 
-	public int getPoolID();
-
 }

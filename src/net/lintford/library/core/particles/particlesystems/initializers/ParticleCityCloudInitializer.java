@@ -6,7 +6,7 @@ import net.lintford.library.core.particles.Particle;
 import net.lintford.library.core.particles.particlesystems.modifiers.ParticleModifierBase;
 
 /**
- * This {@link ParticleModifierBase} updates {@link Particle} instances to mimic the behaviour of clouds/mist within a city. Particles with this modifier will only die when they
+ * This {@link ParticleModifierBase} updates {@link Particle} instances to mimic the behavior of clouds/mist within a city. Particles with this modifier will only die when they
  * are not visible.
  */
 public class ParticleCityCloudInitializer extends ParticleInitializerBase {

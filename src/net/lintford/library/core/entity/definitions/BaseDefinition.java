@@ -11,6 +11,18 @@ public abstract class BaseDefinition extends BaseEntity {
 	public transient short definitionID;
 
 	// --------------------------------------
+	// Properties
+	// --------------------------------------
+
+	public String definitionName() {
+		return name;
+	}
+
+	public int definitionUid() {
+		return definitionID;
+	}
+
+	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 

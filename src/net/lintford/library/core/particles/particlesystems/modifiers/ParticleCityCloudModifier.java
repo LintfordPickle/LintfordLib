@@ -7,7 +7,7 @@ import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.particles.Particle;
 
 /**
- * This {@link ParticleModifierBase} updates {@link Particle} instances to mimic the behaviour of clouds/mist within a city. Particles with this modifier will only die when they
+ * This {@link ParticleModifierBase} updates {@link Particle} instances to mimic the behavior of clouds/mist within a city. Particles with this modifier will only die when they
  * are not visible.
  */
 public class ParticleCityCloudModifier extends ParticleModifierBase {

@@ -5,7 +5,6 @@ import org.jbox2d.dynamics.World;
 
 import net.lintford.library.controllers.box2d.Box2dWorldController;
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.box2d.entity.Box2dBodyInstance;
 import net.lintford.library.core.box2d.entity.JBox2dEntityInstance;
 
 public abstract class JBox2dEntity extends WorldEntity {
@@ -21,6 +20,7 @@ public abstract class JBox2dEntity extends WorldEntity {
 	// --------------------------------------
 
 	public JBox2dEntityInstance mJBox2dEntityInstance;
+	protected transient Vec2 mPosition = new Vec2();
 	protected transient Vec2 mVelocity = new Vec2();
 
 	// --------------------------------------
@@ -52,7 +52,8 @@ public abstract class JBox2dEntity extends WorldEntity {
 	// Constructor
 	// --------------------------------------
 
-	public JBox2dEntity() {
+	public JBox2dEntity(final int pPoolUid) {
+		super(pPoolUid);
 
 	}
 
@@ -104,9 +105,7 @@ public abstract class JBox2dEntity extends WorldEntity {
 			return;
 
 		}
-		
-		
-		
+
 	}
 
 	public void updatePhyics(LintfordCore pCore) {
@@ -130,10 +129,10 @@ public abstract class JBox2dEntity extends WorldEntity {
 	@Override
 	public void setPosition(float pWorldX, float pWorldY) {
 		if (mJBox2dEntityInstance != null) {
-			Box2dBodyInstance lMainBody = mJBox2dEntityInstance.mainBody();
+			final var lMainBody = mJBox2dEntityInstance.mainBody();
 
-			// TODO: Remove the garbage
-			lMainBody.mBody.setTransform(new Vec2(pWorldX * Box2dWorldController.PIXELS_TO_UNITS, pWorldY * Box2dWorldController.PIXELS_TO_UNITS), 0);
+			mPosition.set(pWorldX * Box2dWorldController.PIXELS_TO_UNITS, pWorldY * Box2dWorldController.PIXELS_TO_UNITS);
+			lMainBody.mBody.setTransform(mPosition, 0);
 			lMainBody.mBody.setAwake(true);
 
 		}

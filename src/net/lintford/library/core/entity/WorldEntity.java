@@ -31,7 +31,8 @@ public abstract class WorldEntity extends PooledBaseData {
 	// Constructor
 	// --------------------------------------
 
-	public WorldEntity() {
+	public WorldEntity(final int pPoolUid) {
+		super(pPoolUid);
 
 	}
 

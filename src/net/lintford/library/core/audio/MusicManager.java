@@ -10,7 +10,6 @@ public class MusicManager {
 	// --------------------------------------
 
 	private List<AudioData> mMusicTracks;
-	private boolean mIsPlaying;
 	private int mCurrentTrack;
 	
 	// --------------------------------------

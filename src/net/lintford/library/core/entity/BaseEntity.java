@@ -14,6 +14,9 @@ public class BaseEntity {
 	// Variables
 	// --------------------------------------
 
+	// although the name is a fundamental part of the definition, it isn't final becauase many definitions will be
+	// deserialized from file at runtime and their names are not available during object creation.
+
 	public String name;
 	public String outname;
 
@@ -25,14 +28,12 @@ public class BaseEntity {
 		return mAtomicInteger.incrementAndGet();
 
 	}
-	
+
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
 	public BaseEntity() {
-		name = "";
-
 	}
 
 	// --------------------------------------

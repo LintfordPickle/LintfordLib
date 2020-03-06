@@ -43,17 +43,13 @@ public class Particle extends CircleEntity {
 		return !mIsFree;
 	}
 
-	@Override
-	public int getPoolID() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
-	public Particle() {
+	public Particle(final int pPoolUid) {
+		super(pPoolUid);
+
 		reset();
 	}
 

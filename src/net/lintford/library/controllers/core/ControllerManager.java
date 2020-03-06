@@ -135,8 +135,7 @@ public class ControllerManager {
 	}
 
 	/**
-	 * Returns the controller with the given name. In case no {@link BaseController} instance with the given name is found (i.e. has not been registered) or has not been initialized,
-	 * an exception will be thrown.
+	 * Returns the controller with the given name. In case no {@link BaseController} instance with the given name is found (i.e. has not been registered) or has not been initialized, an exception will be thrown.
 	 */
 	public BaseController getControllerByNameRequired(String pControllerName, int pEntityGroupID) {
 		final BaseController RESULT = getControllerByName(pControllerName, pEntityGroupID);
@@ -161,11 +160,11 @@ public class ControllerManager {
 			return null;
 		}
 
-		List<BaseController> lControllerList = controllers(pEntityGroupID);
+		final var lControllerList = controllers(pEntityGroupID);
 		if (lControllerList == null)
 			return null;
 
-		int lCount = lControllerList.size();
+		final var lCount = lControllerList.size();
 		for (int i = 0; i < lCount; i++) {
 			if (lControllerList.get(i).controllerName().equals(pControllerName)) {
 				return lControllerList.get(i);

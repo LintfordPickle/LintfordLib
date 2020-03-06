@@ -225,6 +225,38 @@ public class LineBatch {
 		draw(pX + pW, pY, pX + pW, pY + pH, pZ, pR, pG, pB); // right
 	}
 
+	public void drawArrowDown(float pX, float pY, float pW, float pH, float pZ, float pR, float pG, float pB) {
+		if (!mIsDrawing)
+			return;
+		draw(pX, pY, pX + pW, pY, pZ, pR, pG, pB);
+		draw(pX, pY, pX + pW * 0.5f, pY + pH, pZ, pR, pG, pB);
+		draw(pX + pW, pY, pX + pW * 0.5f, pY + pH, pZ, pR, pG, pB);
+	}
+
+	public void drawArrowUp(float pX, float pY, float pW, float pH, float pZ, float pR, float pG, float pB) {
+		if (!mIsDrawing)
+			return;
+		draw(pX, pY + pH, pX + pW, pY + pH, pZ, pR, pG, pB);
+		draw(pX, pY + pH, pX + pW * 0.5f, pY, pZ, pR, pG, pB);
+		draw(pX + pW, pY + pH, pX + pW * 0.5f, pY, pZ, pR, pG, pB);
+	}
+
+	public void drawArrowLeft(float pX, float pY, float pW, float pH, float pZ, float pR, float pG, float pB) {
+		if (!mIsDrawing)
+			return;
+		draw(pX + pW, pY, pX + pW, pY + pH, pZ, pR, pG, pB);
+		draw(pX, pY + pH * 0.5f, pX + pW, pY, pZ, pR, pG, pB);
+		draw(pX, pY + pH * 0.5f, pX + pW, pY + pH, pZ, pR, pG, pB);
+	}
+
+	public void drawArrowRight(float pX, float pY, float pW, float pH, float pZ, float pR, float pG, float pB) {
+		if (!mIsDrawing)
+			return;
+		draw(pX, pY, pX, pY + pH, pZ, pR, pG, pB);
+		draw(pX + pW, pY + pH * 0.5f, pX, pY, pZ, pR, pG, pB);
+		draw(pX + pW, pY + pH * 0.5f, pX, pY + pH, pZ, pR, pG, pB);
+	}
+
 	public void draw(float pP1X, float pP1Y, float pP2X, float pP2Y, float pZ, float pR, float pG, float pB) {
 
 		if (!mIsDrawing)
@@ -326,7 +358,7 @@ public class LineBatch {
 			mGLLineWidth = 1;
 
 		{
-			
+
 			Debug.debugManager().stats().incTag(DebugStats.TAG_ID_DRAWCALLS);
 			Debug.debugManager().stats().incTag(DebugStats.TAG_ID_VERTS, mVertexCount);
 
@@ -346,11 +378,6 @@ public class LineBatch {
 	}
 
 	public void changeColorNormalized(float pR, float pG, float pB, float pA) {
-		// if (mCurNumSprites > 0) {
-		// flush();
-		// mCurNumSprites = 0;
-		// }
-
 		r = pR;
 		g = pG;
 		b = pB;

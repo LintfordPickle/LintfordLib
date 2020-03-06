@@ -27,6 +27,7 @@ public class ParticleSystemInstance extends BaseData {
 	protected ParticleSystemDefinition mParticleSystemDefinition;
 	private List<Particle> mParticles;
 	private transient int mRendererId;
+	private int mParticleInstanceCounter;
 
 	private int mCapacity;
 
@@ -80,7 +81,7 @@ public class ParticleSystemInstance extends BaseData {
 
 		mParticles = new ArrayList<>();
 		for (int i = 0; i < mCapacity; i++) {
-			mParticles.add(new Particle());
+			mParticles.add(new Particle(mParticleInstanceCounter++));
 
 		}
 
@@ -133,8 +134,7 @@ public class ParticleSystemInstance extends BaseData {
 	}
 
 	/**
-	 * Spawns a new {@link Particle} instance, foregoing the {@link IParticleinitializer}s attached to this {@link ParticleSystemInstance}. Insteadm you can specifiy the individual
-	 * components of the particles.
+	 * Spawns a new {@link Particle} instance, foregoing the {@link IParticleinitializer}s attached to this {@link ParticleSystemInstance}. Insteadm you can specifiy the individual components of the particles.
 	 */
 	public Particle spawnParticle(float pX, float pY, float pVelX, float pVelY, float pSX, float pSY, float pSW, float pSH, float pRadius) {
 		Particle lNewParticle = spawnParticle(pX, pY, pVelX, pVelY);

@@ -38,6 +38,15 @@ public abstract class PolyEntity extends WorldEntity {
 	}
 
 	// --------------------------------------
+	// Constructor
+	// --------------------------------------
+
+	public PolyEntity(final int pPoolUid) {
+		super(pPoolUid);
+
+	}
+
+	// --------------------------------------
 	// Methods
 	// --------------------------------------
 

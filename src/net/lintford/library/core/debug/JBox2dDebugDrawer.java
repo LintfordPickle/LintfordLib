@@ -200,9 +200,6 @@ public class JBox2dDebugDrawer {
 			if (pParticleSystem == null)
 				return;
 
-			// TODO: Change this.
-			final float lRadSize = 4.0f;
-
 			Debug.debugManager().drawers().beginPointRenderer(pCore.gameCamera());
 
 			Debug.debugManager().drawers().endPointRenderer();
@@ -265,7 +262,7 @@ public class JBox2dDebugDrawer {
 
 		}
 
-		ParticleGroup[] lParticleSystems = mWorld.getParticleGroupList();
+		final var lParticleSystems = mWorld.getParticleGroupList();
 
 		if (lParticleSystems != null) {
 			final int lParticleGroupCount = lParticleSystems.length;
@@ -274,7 +271,7 @@ public class JBox2dDebugDrawer {
 				if (lPG == null)
 					continue;
 
-				// DebugRenderParticles.draw(pCore, lPG);
+				DebugRenderParticles.draw(pCore, lPG);
 
 			}
 
