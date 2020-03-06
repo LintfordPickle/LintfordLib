@@ -31,6 +31,9 @@ public class FileUtils {
 	// --------------------------------------
 
 	private static void clearStringBuilder() {
+		if (StringBuilder.length() == 0)
+			return;
+
 		StringBuilder.delete(0, StringBuilder.length() - 1);
 	}
 
