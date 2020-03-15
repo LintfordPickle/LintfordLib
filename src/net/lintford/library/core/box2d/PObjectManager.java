@@ -76,7 +76,6 @@ public class PObjectManager {
 
 		PObjectDefinition lPObjectDefinition = new PObjectDefinition();
 		lPObjectDefinition.loadFromFile(pFilename, new StringBuilder(), null);
-		lPObjectDefinition.name(pObjectName);
 
 		mPObjectDefinitions.put(pObjectName, lPObjectDefinition);
 

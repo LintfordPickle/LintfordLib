@@ -94,7 +94,7 @@ public class PObjectDefinition {
 	// Variables
 	// --------------------------------------
 
-	protected String mObjectName;
+	protected String mPObjectName;
 
 	protected Vector<Box2dBodyDefinition> mBodies;
 	protected Map<Integer, Box2dBodyDefinition> mIndexToBodyMap;
@@ -111,12 +111,8 @@ public class PObjectDefinition {
 	// Properties
 	// --------------------------------------
 
-	public void name(String pNewName) {
-		mObjectName = pNewName;
-	}
-
 	public String name() {
-		return mObjectName;
+		return mPObjectName;
 	}
 
 	public Vector<Box2dBodyDefinition> bodies() {
@@ -214,6 +210,8 @@ public class PObjectDefinition {
 	}
 
 	public void j2b2World(JSONObject worldValue) throws JSONException {
+
+		mPObjectName = worldValue.optString("name", "POBJECT_UNANMED");
 
 		// Read all bodies from file
 		int i = 0;

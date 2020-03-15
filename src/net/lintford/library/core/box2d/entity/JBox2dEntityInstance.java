@@ -609,6 +609,16 @@ public class JBox2dEntityInstance implements Serializable {
 
 					}
 
+					else if (lFixInst.shape != null && lFixInst.shape instanceof Box2dCircleInstance) {
+						Box2dCircleInstance lShape = (Box2dCircleInstance) lFixInst.shape;
+
+						final float lHalfWidth = pNewWidth / 2f;
+
+						// Set the dimensions of this circle
+						lShape.radius = lHalfWidth;
+
+					}
+
 				}
 
 			}
