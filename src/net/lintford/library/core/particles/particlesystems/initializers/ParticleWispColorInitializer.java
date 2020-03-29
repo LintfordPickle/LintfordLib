@@ -29,11 +29,11 @@ public class ParticleWispColorInitializer extends ParticleInitializerBase {
 	public ParticleWispColorInitializer() {
 		super(INITIALIZER_NAME);
 
-		mRMin = 0.9f;
+		mRMin = 0.8f;
 		mRMax = 1f;
-		mGMin = 0.9f;
+		mGMin = 0.8f;
 		mGMax = 1f;
-		mBMin = 0.8f;
+		mBMin = 0.6f;
 		mBMax = 1f;
 
 	}

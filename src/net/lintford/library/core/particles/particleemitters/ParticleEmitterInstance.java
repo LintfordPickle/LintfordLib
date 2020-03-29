@@ -121,15 +121,15 @@ public class ParticleEmitterInstance extends WorldEntity {
 		// Update the child emitters
 		final int lNumInnerInstances = mChildEmitters.length;
 		for (int i = 0; i < lNumInnerInstances; i++) {
-			ParticleEmitterInstance lChildInst = mChildEmitters[i];
+			final var lChildParticleEmitterInstanceInst = mChildEmitters[i];
 
-			if (lChildInst == null)
+			if (lChildParticleEmitterInstanceInst == null)
 				continue;
 
-			lChildInst.x = x;
-			lChildInst.y = y;
+			lChildParticleEmitterInstanceInst.x = x;
+			lChildParticleEmitterInstanceInst.y = y;
 
-			lChildInst.update(pCore);
+			lChildParticleEmitterInstanceInst.update(pCore);
 
 		}
 

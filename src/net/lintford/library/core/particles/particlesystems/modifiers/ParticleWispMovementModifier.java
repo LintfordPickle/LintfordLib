@@ -48,8 +48,8 @@ public class ParticleWispMovementModifier extends ParticleModifierBase {
 
 		pParticle.roy += RandomNumbers.RANDOM.nextFloat() * 10f;
 
-		pParticle.dx += (float) Math.cos(pParticle.roy);
-		pParticle.dy += (float) Math.sin(pParticle.roy);
+		pParticle.dx += (float) Math.cos(pParticle.roy) * 1f;
+		pParticle.dy += (float) Math.sin(pParticle.roy) * 1f;
 
 	}
 
