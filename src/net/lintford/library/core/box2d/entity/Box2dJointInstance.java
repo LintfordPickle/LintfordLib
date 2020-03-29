@@ -4,9 +4,9 @@ import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.joints.Joint;
 
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.entity.BaseData;
+import net.lintford.library.core.entity.BaseInstanceData;
 
-public abstract class Box2dJointInstance extends BaseData {
+public abstract class Box2dJointInstance extends BaseInstanceData {
 
 	// --------------------------------------
 	// Constants

@@ -3,13 +3,15 @@ package net.lintford.library.core.entity;
 
 import java.io.Serializable;
 
-public abstract class BaseData implements Serializable {
+public abstract class BaseInstanceData implements Serializable {
 
 	// --------------------------------------
 	// Constants
 	// --------------------------------------
 
 	private static final long serialVersionUID = 934763865686681475L;
+
+	public static final int NOT_ASSIGNED_UID = -1;
 
 	// --------------------------------------
 	// Variables
@@ -35,7 +37,7 @@ public abstract class BaseData implements Serializable {
 	// Constructor
 	// --------------------------------------
 
-	public BaseData() {
+	public BaseInstanceData() {
 
 	}
 

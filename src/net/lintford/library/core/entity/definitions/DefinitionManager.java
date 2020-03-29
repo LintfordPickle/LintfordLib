@@ -16,9 +16,8 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 
 import net.lintford.library.core.debug.Debug;
-import net.lintford.library.core.entity.BaseData;
 
-public abstract class DefinitionManager<T extends BaseDefinition> extends BaseData {
+public abstract class DefinitionManager<T extends BaseDefinition> {
 
 	public static class MetaFileItems {
 		public String rootDirectory;
@@ -29,8 +28,6 @@ public abstract class DefinitionManager<T extends BaseDefinition> extends BaseDa
 	// --------------------------------------
 	// Constants
 	// --------------------------------------
-
-	private static final long serialVersionUID = -1729184288330735542L;
 
 	// --------------------------------------
 	// Variables

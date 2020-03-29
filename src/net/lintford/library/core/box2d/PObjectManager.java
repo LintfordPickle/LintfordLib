@@ -68,16 +68,11 @@ public class PObjectManager {
 
 	// Definitions
 
-	public PObjectDefinition loadPObjectDefinition(String pObjectName, String pFilename) {
-		if (mPObjectDefinitions.containsKey(pObjectName)) {
-			return mPObjectDefinitions.get(pObjectName);
-
-		}
-
-		PObjectDefinition lPObjectDefinition = new PObjectDefinition();
+	public PObjectDefinition loadPObjectDefinition(String pFilename) {
+		final var lPObjectDefinition = new PObjectDefinition();
 		lPObjectDefinition.loadFromFile(pFilename, new StringBuilder(), null);
 
-		mPObjectDefinitions.put(pObjectName, lPObjectDefinition);
+		mPObjectDefinitions.put(lPObjectDefinition.name(), lPObjectDefinition);
 
 		return lPObjectDefinition;
 

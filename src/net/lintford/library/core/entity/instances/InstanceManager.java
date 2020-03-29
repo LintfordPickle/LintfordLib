@@ -3,9 +3,9 @@ package net.lintford.library.core.entity.instances;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.lintford.library.core.entity.BaseData;
+import net.lintford.library.core.entity.BaseInstanceData;
 
-public class InstanceManager<T extends BaseData> extends BaseData {
+public class InstanceManager<T extends BaseInstanceData> extends BaseInstanceData {
 
 	// --------------------------------------
 	// Constants
@@ -36,10 +36,6 @@ public class InstanceManager<T extends BaseData> extends BaseData {
 		mInstances = new ArrayList<>();
 
 	}
-
-	// --------------------------------------
-	// Core-Methods
-	// --------------------------------------
 
 	// --------------------------------------
 	// Methods

@@ -4,9 +4,9 @@ import org.jbox2d.collision.shapes.ChainShape;
 import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.common.Vec2;
 
-import net.lintford.library.core.entity.BaseData;
+import net.lintford.library.core.entity.BaseInstanceData;
 
-public class Box2dChainInstance extends BaseData implements ShapeInstance {
+public class Box2dChainInstance extends BaseInstanceData implements ShapeInstance {
 
 	private static final long serialVersionUID = -6261742843197325804L;
 

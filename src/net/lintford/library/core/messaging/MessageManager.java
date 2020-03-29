@@ -7,9 +7,9 @@ import java.util.List;
 import java.util.Locale;
 
 import net.lintford.library.core.debug.Debug;
-import net.lintford.library.core.entity.BaseData;
+import net.lintford.library.core.entity.BaseInstanceData;
 
-public class MessageManager extends BaseData implements IMessageProvider {
+public class MessageManager extends BaseInstanceData implements IMessageProvider {
 
 	// --------------------------------------
 	// Constants

@@ -4,9 +4,9 @@ import org.jbox2d.collision.shapes.EdgeShape;
 import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.common.Vec2;
 
-import net.lintford.library.core.entity.BaseData;
+import net.lintford.library.core.entity.BaseInstanceData;
 
-public class Box2dEdgeInstance extends BaseData implements ShapeInstance {
+public class Box2dEdgeInstance extends BaseInstanceData implements ShapeInstance {
 
 	private static final long serialVersionUID = 1364802849512686266L;
 

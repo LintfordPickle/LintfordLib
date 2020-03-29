@@ -3,7 +3,7 @@ package net.lintford.library.core.entity;
 
 import net.lintford.library.core.entity.instances.IPoolObjectInstance;
 
-public abstract class PooledBaseData extends BaseData implements IPoolObjectInstance {
+public abstract class PooledBaseData extends BaseInstanceData implements IPoolObjectInstance {
 
 	// --------------------------------------
 	// Constants

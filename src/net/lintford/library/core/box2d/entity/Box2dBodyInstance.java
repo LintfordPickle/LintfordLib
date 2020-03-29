@@ -8,9 +8,9 @@ import org.jbox2d.dynamics.World;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.box2d.definition.Box2dBodyDefinition;
-import net.lintford.library.core.entity.BaseData;
+import net.lintford.library.core.entity.BaseInstanceData;
 
-public class Box2dBodyInstance extends BaseData {
+public class Box2dBodyInstance extends BaseInstanceData {
 
 	// --------------------------------------
 	// Constants

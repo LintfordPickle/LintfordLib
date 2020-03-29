@@ -135,7 +135,7 @@ public class ParticleEmitterInstance extends WorldEntity {
 
 	}
 
-	public void assign(final int pDefinitionID, ParticleFrameworkData pParticleFramework) {
+	public void assignEmitterDefinitionAndResolveParticleSystem(final int pDefinitionID, ParticleFrameworkData pParticleFramework) {
 		ParticleEmitterDefinition lEmitterDefintion = pParticleFramework.emitterManager().definitionManager().getDefinitionByID(pDefinitionID);
 		if (lEmitterDefintion == null) {
 			Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Failed to assign ParticleEmitter - EmitterDefId '%d' has no definition defined!", pDefinitionID));
@@ -143,11 +143,11 @@ public class ParticleEmitterInstance extends WorldEntity {
 
 		}
 
-		assign(lEmitterDefintion, pParticleFramework);
+		assignEmitterDefinitionAndResolveParticleSystem(lEmitterDefintion, pParticleFramework);
 
 	}
 
-	public void assign(final ParticleEmitterDefinition pEmitterDefinition, ParticleFrameworkData pParticleFramework) {
+	public void assignEmitterDefinitionAndResolveParticleSystem(final ParticleEmitterDefinition pEmitterDefinition, ParticleFrameworkData pParticleFramework) {
 		if (pEmitterDefinition == null) {
 			Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Failed to assign ParticleEmitter - given EmitterDefinition is null!"));
 			return;
@@ -157,23 +157,23 @@ public class ParticleEmitterInstance extends WorldEntity {
 		// Problem here for children of the emitter definition (in which they have the same DefId as their parents). This
 		// would prevent us from correctly deserializing such objects.
 		mEmitterDefinitionId = pEmitterDefinition.definitionID;
-
-		// assign this
 		mEmitterDefinition = pEmitterDefinition;
 
-		{
-			// Get a reference to the particle system attached to this emitter
-			mParticleSystem = pParticleFramework.particleSystemManager().getParticleSystemByName(pEmitterDefinition.particleSystemName);
+		resolveParticleSystems(mEmitterDefinition, pParticleFramework);
 
-			if (mParticleSystem != null) {
-				mParticleSystemId = mParticleSystem.getPoolID();
+	}
 
-			} else {
-				// TODO: Only output a warning if this emitter has no children - ultimately, what is the point?
-				Debug.debugManager().logger().i(getClass().getSimpleName(),
-						String.format("ParticleEmitter '%s' could not resolve ParticleSystem '' to an instance of an object", pEmitterDefinition.name, pEmitterDefinition.particleSystemName));
+	private void resolveParticleSystems(final ParticleEmitterDefinition pEmitterDefinition, ParticleFrameworkData pParticleFramework) {
+		// Get a reference to the particle system attached to this emitter
+		mParticleSystem = pParticleFramework.particleSystemManager().getParticleSystemByName(pEmitterDefinition.particleSystemName);
 
-			}
+		if (mParticleSystem != null) {
+			mParticleSystemId = mParticleSystem.getPoolID();
+
+		} else {
+			// TODO: Only output a warning if this emitter has no children - ultimately, what is the point?
+			Debug.debugManager().logger().i(getClass().getSimpleName(),
+					String.format("ParticleEmitter '%s' could not resolve ParticleSystem '' to an instance of an object", pEmitterDefinition.name, pEmitterDefinition.particleSystemName));
 
 		}
 
@@ -188,12 +188,11 @@ public class ParticleEmitterInstance extends WorldEntity {
 				ParticleEmitterManager lMan = pParticleFramework.emitterManager();
 				ParticleEmitterInstance lInst = lMan.getParticleEmitterInstance();
 				mChildEmitters[i] = lInst;
-				mChildEmitters[i].assign(lChildEmitterDefinition, pParticleFramework);
+				mChildEmitters[i].assignEmitterDefinitionAndResolveParticleSystem(lChildEmitterDefinition, pParticleFramework);
 
 			}
 
 		}
-
 	}
 
 	public void reset() {

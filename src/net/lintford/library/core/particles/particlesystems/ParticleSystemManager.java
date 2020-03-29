@@ -21,12 +21,6 @@ public class ParticleSystemManager extends InstanceManager<ParticleSystemInstanc
 	public class ParticleSystemDefinitionManager extends DefinitionManager<ParticleSystemDefinition> {
 
 		// --------------------------------------
-		// Constants
-		// --------------------------------------
-
-		private static final long serialVersionUID = 2651760892817072383L;
-
-		// --------------------------------------
 		// Constructor
 		// --------------------------------------
 
@@ -96,28 +90,26 @@ public class ParticleSystemManager extends InstanceManager<ParticleSystemInstanc
 	}
 
 	// --------------------------------------
-	// Core-Methods
-	// --------------------------------------
-
-	// --------------------------------------
 	// Methods
 	// --------------------------------------
 
 	/** Returns the {@link ParticleController} whose {@link ParticleSystemInstance}'s name matches the given {@link String}. null is returned if the ParticleController is not found. */
 	public ParticleSystemInstance getParticleSystemByName(final String pParticleSystemName) {
+		// If the named particle system has already been created, then return the instance
 		final var lNumParticleSystems = mInstances.size();
 		for (var i = 0; i < lNumParticleSystems; i++) {
-			ParticleSystemInstance lPSInstance = mInstances.get(i);
-			if (!lPSInstance.isInitialized())
+			final var lParticleSystemInstance = mInstances.get(i);
+			if (!lParticleSystemInstance.isInitialized())
 				continue;
 
-			if (lPSInstance.definition().name.equals(pParticleSystemName)) {
+			if (lParticleSystemInstance.definition().name.equals(pParticleSystemName)) {
 				return mInstances.get(i);
 
 			}
 
 		}
 
+		// Otherwise create a new instance of the particle system.
 		final var lParticleSystemDefinition = mParticleSystemDefinitionManager.getDefinitionByName(pParticleSystemName);
 		if (lParticleSystemDefinition != null) {
 			final var lNewParticleSystem = new ParticleSystemInstance();

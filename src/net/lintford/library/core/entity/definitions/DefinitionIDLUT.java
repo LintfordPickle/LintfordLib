@@ -3,12 +3,12 @@ package net.lintford.library.core.entity.definitions;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.lintford.library.core.entity.BaseData;
+import net.lintford.library.core.entity.BaseInstanceData;
 
-public class DefinitionIDLUT<T extends BaseDefinition> extends BaseData {
+public class DefinitionIDLUT<T extends BaseDefinition> extends BaseInstanceData {
 
 	// This class is needed because the BaseDefinition is not serializable.
-	public class DefinitionNameID extends BaseData {
+	public class DefinitionNameID extends BaseInstanceData {
 
 		// --------------------------------------
 		// Constants

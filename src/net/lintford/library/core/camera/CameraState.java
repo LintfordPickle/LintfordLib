@@ -1,9 +1,9 @@
 package net.lintford.library.core.camera;
 
-import net.lintford.library.core.entity.BaseData;
+import net.lintford.library.core.entity.BaseInstanceData;
 import net.lintford.library.core.maths.Vector2f;
 
-public class CameraState extends BaseData {
+public class CameraState extends BaseInstanceData {
 
 	// --------------------------------------
 	// Constants

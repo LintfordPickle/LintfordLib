@@ -4,9 +4,9 @@ import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.common.Vec2;
 
-import net.lintford.library.core.entity.BaseData;
+import net.lintford.library.core.entity.BaseInstanceData;
 
-public class Box2dPolygonInstance extends BaseData implements ShapeInstance {
+public class Box2dPolygonInstance extends BaseInstanceData implements ShapeInstance {
 
 	private static final long serialVersionUID = -2122600675590005803L;
 

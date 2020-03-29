@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.entity.BaseData;
+import net.lintford.library.core.entity.BaseInstanceData;
 import net.lintford.library.core.particles.Particle;
 import net.lintford.library.core.particles.particlesystems.initializers.ParticleInitializerBase;
 import net.lintford.library.core.particles.particlesystems.modifiers.ParticleModifierBase;
 
-public class ParticleSystemInstance extends BaseData {
+public class ParticleSystemInstance extends BaseInstanceData {
 
 	// --------------------------------------
 	// Constants
@@ -100,7 +100,7 @@ public class ParticleSystemInstance extends BaseData {
 		}
 
 		for (int i = 0; i < mCapacity; i++) {
-			Particle p = mParticles.get(i);
+			final Particle p = mParticles.get(i);
 
 			if (!p.isAssigned())
 				continue;

@@ -1,6 +1,5 @@
 package net.lintford.library.core.particles.particleemitters;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gson.GsonBuilder;
@@ -20,8 +19,6 @@ public class ParticleEmitterManager extends PooledInstanceManager<ParticleEmitte
 		// --------------------------------------
 		// Constants
 		// --------------------------------------
-
-		private static final long serialVersionUID = -689777947903201955L;
 
 		public ParticleEmitterDefinition getDefinitionByName(String pEmitterName) {
 			if (pEmitterName == null || pEmitterName.isEmpty())
@@ -72,6 +69,10 @@ public class ParticleEmitterManager extends PooledInstanceManager<ParticleEmitte
 		// Core-Methods
 		// --------------------------------------
 
+		public void initialize(Object pParent) {
+
+		}
+
 		@Override
 		public void loadDefinitionsFromMetaFile(String pMetaFilepath) {
 			final var lGson = new GsonBuilder().create();
@@ -103,7 +104,6 @@ public class ParticleEmitterManager extends PooledInstanceManager<ParticleEmitte
 
 	protected EmitterDefinitionManager mEmitterDefinitionManager;
 	protected ParticleFrameworkData mParticleFrameworkData;
-	protected transient List<ParticleEmitterInstance> mEmitters;
 	protected int mParticleEmitterInstanceCounter;
 
 	// --------------------------------------
@@ -119,7 +119,7 @@ public class ParticleEmitterManager extends PooledInstanceManager<ParticleEmitte
 	}
 
 	public List<ParticleEmitterInstance> emitterInstances() {
-		return mEmitters;
+		return mInstances;
 	}
 
 	// --------------------------------------
@@ -137,8 +137,6 @@ public class ParticleEmitterManager extends PooledInstanceManager<ParticleEmitte
 
 	@Override
 	public void initialize(Object pParent) {
-		mEmitters = new ArrayList<>();
-
 		mEmitterDefinitionManager = new EmitterDefinitionManager();
 
 		// Resolve all the ParticleSystems within the emitters to the ParticleSystem instances.
@@ -167,9 +165,12 @@ public class ParticleEmitterManager extends PooledInstanceManager<ParticleEmitte
 		// Retrieve or create a new instance
 		final var lNewEmitterInst = getFreePooledItem();
 		lNewEmitterInst.emitterInstanceId(getNewInstanceUID());
-		lNewEmitterInst.assign(lEmitterDef, mParticleFrameworkData);
+		lNewEmitterInst.assignEmitterDefinitionAndResolveParticleSystem(lEmitterDef, mParticleFrameworkData);
 
-		mEmitters.add(lNewEmitterInst);
+		if (!mInstances.contains(lNewEmitterInst)) {
+			mInstances.add(lNewEmitterInst);
+
+		}
 
 		return lNewEmitterInst;
 
@@ -177,10 +178,10 @@ public class ParticleEmitterManager extends PooledInstanceManager<ParticleEmitte
 
 	// Returns a ParticleEmitterInstance, if one exists, based on the EmitterID.
 	public ParticleEmitterInstance getParticleEmitterByIndex(int pEmitterIndex) {
-		final var lNumParticleEmitterCount = mEmitters.size();
+		final var lNumParticleEmitterCount = mInstances.size();
 		for (var i = 0; i < lNumParticleEmitterCount; i++) {
-			if (mEmitters.get(i).poolUid == pEmitterIndex) {
-				return mEmitters.get(i);
+			if (mInstances.get(i).poolUid == pEmitterIndex) {
+				return mInstances.get(i);
 
 			}
 		}
@@ -203,8 +204,8 @@ public class ParticleEmitterManager extends PooledInstanceManager<ParticleEmitte
 	}
 
 	public void addParticleEmitterInstance(final ParticleEmitterInstance pParticleEmitterInstance) {
-		if (!mEmitters.contains(pParticleEmitterInstance)) {
-			mEmitters.add(pParticleEmitterInstance);
+		if (!mInstances.contains(pParticleEmitterInstance)) {
+			mInstances.add(pParticleEmitterInstance);
 
 		}
 	}
@@ -212,8 +213,8 @@ public class ParticleEmitterManager extends PooledInstanceManager<ParticleEmitte
 	public void removeParticleEmitterInstance(final ParticleEmitterInstance pParticleEmitterInstance) {
 		pParticleEmitterInstance.reset();
 
-		if (mEmitters.contains(pParticleEmitterInstance)) {
-			mEmitters.remove(pParticleEmitterInstance);
+		if (mInstances.contains(pParticleEmitterInstance)) {
+			mInstances.remove(pParticleEmitterInstance);
 
 		}
 
