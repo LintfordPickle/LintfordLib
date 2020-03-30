@@ -17,8 +17,9 @@ public class GraphNodeDef {
 	public String type;
 
 	/**
-	 * If this sprite node represents some object (like a steelshirt being worn on the torso), then add the object reference link here. Any object referenced here will be included as default on all {@link GraphNodeDef} instantiated from this
-	 * definition file.
+	 * If this sprite node represents some object (like a steelshirt being worn on the torso), 
+	 * then add the object reference link here. Any object referenced here will be included as default 
+	 * on all {@link GraphNodeDef} instantiated from this definition file.
 	 */
 	public int mObjectReferenceType;
 

@@ -47,7 +47,8 @@ public class SpriteSheetDef {
 	protected List<SpriteInstance> spriteInstancePool;
 
 	/**
-	 * A collection of names for the types of sprite contained within this {@link SpriteSheetDef}. Types could be, for example, "Red", "Green", "00", "01", "02" etc.)
+	 * A collection of names for the types of sprite contained within this {@link SpriteSheetDef}. 
+	 * Types could be, for example, "Red", "Green", "00", "01", "02" etc.)
 	 */
 	protected String[] spriteTypes;
 
