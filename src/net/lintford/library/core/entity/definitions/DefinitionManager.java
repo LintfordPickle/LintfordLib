@@ -158,11 +158,25 @@ public abstract class DefinitionManager<T extends BaseDefinition> {
 		}
 	}
 
+	public void addDefintion(T pNewDefinition) {
+		if (pNewDefinition == null)
+			return;
+
+		if (getDefinitionByName(pNewDefinition.name) != null)
+			return;
+
+		mDefinitions.add(pNewDefinition);
+
+	}
+
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
 
 	public T getDefinitionByName(String pName) {
+		if (pName == null)
+			return null;
+
 		final int lDefinitionCount = mDefinitions.size();
 		for (int i = 0; i < lDefinitionCount; i++) {
 			if (mDefinitions.get(i).name.equals(pName)) {
@@ -178,7 +192,7 @@ public abstract class DefinitionManager<T extends BaseDefinition> {
 	public T getDefinitionByID(int pDefID) {
 		final int lDefinitionCount = mDefinitions.size();
 		for (int i = 0; i < lDefinitionCount; i++) {
-			if (mDefinitions.get(i).definitionID == pDefID) {
+			if (mDefinitions.get(i).definitionUid == pDefID) {
 				return mDefinitions.get(i);
 			}
 

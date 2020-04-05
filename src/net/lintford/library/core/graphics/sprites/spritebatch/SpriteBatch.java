@@ -3,8 +3,7 @@ package net.lintford.library.core.graphics.sprites.spritebatch;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.sprites.SpriteFrame;
 import net.lintford.library.core.graphics.sprites.SpriteInstance;
-import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDef;
-import net.lintford.library.core.graphics.textures.Texture;
+import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 
 // TODO: ---> Add batching based on SpriteSheetDef (or rather, the Texture).
@@ -23,21 +22,21 @@ public class SpriteBatch extends TextureBatch {
 	// Methods
 	// --------------------------------------
 
-	public void draw(SpriteSheetDef pSpriteSheet, SpriteInstance pSprite, float pZ, float pR, float pG, float pB, float pA) {
-		if (pSpriteSheet == null)
+	public void draw(SpriteSheetDefinition pSpriteSheetDefinition, SpriteInstance pSprite, float pZ, float pR, float pG, float pB, float pA) {
+		if (pSpriteSheetDefinition == null)
 			return;
 
-		draw(pSpriteSheet, pSprite, pSprite, pZ, pR, pG, pB, pA);
+		draw(pSpriteSheetDefinition, pSprite, pSprite, pZ, pR, pG, pB, pA);
 
 	}
 
-	public void draw(SpriteSheetDef pSpriteSheet, SpriteFrame pSpriteFrame, Rectangle pDstRectangle, float pZ, float pR, float pG, float pB, float pA) {
-		draw(pSpriteSheet, pSpriteFrame, pDstRectangle.x, pDstRectangle.y, pDstRectangle.w, pDstRectangle.h, pZ, pR, pG, pB, pA);
+	public void draw(SpriteSheetDefinition pSpriteSheetDefinition, SpriteFrame pSpriteFrame, Rectangle pDstRectangle, float pZ, float pR, float pG, float pB, float pA) {
+		draw(pSpriteSheetDefinition, pSpriteFrame, pDstRectangle.x, pDstRectangle.y, pDstRectangle.w, pDstRectangle.h, pZ, pR, pG, pB, pA);
 
 	}
 
-	public void draw(SpriteSheetDef pSpriteSheet, SpriteFrame pSpriteFrame, float pDX, float pDY, float pDW, float pDH, float pZ, float pR, float pG, float pB, float pA) {
-		if (pSpriteSheet == null)
+	public void draw(SpriteSheetDefinition pSpriteSheetDefinition, SpriteFrame pSpriteFrame, float pDX, float pDY, float pDW, float pDH, float pZ, float pR, float pG, float pB, float pA) {
+		if (pSpriteSheetDefinition == null)
 			return;
 
 		if (!mIsDrawing)
@@ -47,7 +46,7 @@ public class SpriteBatch extends TextureBatch {
 			return;
 		}
 
-		Texture lTexture = pSpriteSheet.texture();
+		final var lTexture = pSpriteSheetDefinition.texture();
 
 		if (lTexture == null)
 			return;
@@ -55,29 +54,9 @@ public class SpriteBatch extends TextureBatch {
 		draw(lTexture, pSpriteFrame.x, pSpriteFrame.y, pSpriteFrame.w, pSpriteFrame.h, pDX, pDY, pDW, pDH, pZ, pR, pG, pB, pA);
 
 	}
-	
-	public void draw(SpriteSheetDef pSpriteSheet, SpriteFrame pSpriteFrame, float pDX, float pDY, float pDW, float pDH, float pZ, float pRot, float pRotX, float pRotY, float pR, float pG, float pB, float pA) {
-		if (pSpriteSheet == null)
-			return;
 
-		if (!mIsDrawing)
-			return;
-
-		if (pSpriteFrame == null) {
-			return;
-		}
-
-		Texture lTexture = pSpriteSheet.texture();
-
-		if (lTexture == null)
-			return;
-
-		draw(lTexture, pSpriteFrame.x, pSpriteFrame.y, pSpriteFrame.w, pSpriteFrame.h, pDX, pDY, pDW, pDH, pZ, pRot, pRotX, pRotY, 1f, pR, pG, pB, pA);
-
-	}
-
-	public void draw(SpriteSheetDef pSpriteSheet, SpriteInstance pSprite, Rectangle pDstRectangle, float pZ, float pR, float pG, float pB, float pA) {
-		if (pSpriteSheet == null)
+	public void draw(SpriteSheetDefinition pSpriteSheetDefinition, SpriteInstance pSprite, Rectangle pDstRectangle, float pZ, float pR, float pG, float pB, float pA) {
+		if (pSpriteSheetDefinition == null)
 			return;
 
 		if (pSprite == null) {
@@ -87,10 +66,10 @@ public class SpriteBatch extends TextureBatch {
 		if (!mIsDrawing)
 			return;
 
-		Texture lTexture = pSpriteSheet.texture();
-		SpriteFrame lCurrentFrame = pSprite.getFrame();
+		final var lTexture = pSpriteSheetDefinition.texture();
+		final var lCurrentSpriteFrame = pSprite.currentSpriteFrame();
 
-		draw(lTexture, lCurrentFrame, pDstRectangle, pZ, pR, pG, pB, pA);
+		draw(lTexture, lCurrentSpriteFrame, pDstRectangle, pZ, pR, pG, pB, pA);
 
 	}
 

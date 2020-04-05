@@ -8,7 +8,7 @@ public abstract class BaseDefinition extends BaseEntity {
 	// Variables
 	// --------------------------------------
 
-	public transient short definitionID;
+	public transient short definitionUid;
 
 	// --------------------------------------
 	// Properties
@@ -18,16 +18,12 @@ public abstract class BaseDefinition extends BaseEntity {
 		return name;
 	}
 
-	public int definitionUid() {
-		return definitionID;
-	}
-
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
 	public BaseDefinition() {
-		definitionID = -1;
+		definitionUid = -1;
 
 	}
 
@@ -35,8 +31,8 @@ public abstract class BaseDefinition extends BaseEntity {
 	// Core-Methods
 	// --------------------------------------
 
-	public void initialize(final short pDefinitionID) {
-		definitionID = pDefinitionID;
+	public void initialize(final short pDefinitionUid) {
+		definitionUid = pDefinitionUid;
 
 	}
 

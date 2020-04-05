@@ -16,6 +16,7 @@ import java.util.List;
 import net.lintford.library.ConstantsTable;
 import net.lintford.library.core.audio.AudioManager;
 import net.lintford.library.core.box2d.PObjectManager;
+import net.lintford.library.core.geometry.spritegraph.SpriteGraphRepository;
 import net.lintford.library.core.graphics.fonts.FontManager;
 import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetManager;
 import net.lintford.library.core.graphics.textures.TextureManager;
@@ -46,10 +47,11 @@ public class ResourceManager {
 	protected SpriteSheetManager mSpriteSheetManager;
 	protected AudioManager mAudioManager;
 	protected PObjectManager mPObjectManager;
-	// protected ShaderManager mShaderManager;
+	protected SpriteGraphRepository mSpriteGraphRepository;
 
 	// TODO: ResouceManagers still to be implemented:
 	// GeometryManager
+	// ShaderManager
 
 	private boolean mIsLoaded;
 
@@ -85,6 +87,10 @@ public class ResourceManager {
 		return mPObjectManager;
 	}
 
+	public SpriteGraphRepository spriteGraphRepository() {
+		return mSpriteGraphRepository;
+	}
+
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
@@ -97,7 +103,7 @@ public class ResourceManager {
 		mTextureManager = new TextureManager();
 		mSpriteSheetManager = new SpriteSheetManager();
 		mAudioManager = new AudioManager();
-
+		mSpriteGraphRepository = new SpriteGraphRepository();
 		mPObjectManager = new PObjectManager();
 
 		// Setup the AnimationManager
@@ -141,18 +147,15 @@ public class ResourceManager {
 	// --------------------------------------
 
 	public void loadGLContent() {
-		// Force creation here if not already
 		mTextureManager.loadGLContent(this);
 		mSpriteSheetManager.loadGLContent(this);
 		mAudioManager.loadALContent(this);
 		mFontManager.loadGLContent(this);
 		mPObjectManager.loadGLContent(this);
-
-		// TODO: ShaderManager
-		// TODO: GeometryManager
+		mSpriteGraphRepository.loadGLContent(this);
 
 		mIsLoaded = true;
-		
+
 	}
 
 	public void unloadContent() {
@@ -160,9 +163,10 @@ public class ResourceManager {
 		mAudioManager.unloadALContent();
 		mTextureManager.unloadGLContent();
 		mPObjectManager.unloadGLContent();
+		mSpriteGraphRepository.unloadGLContent();
 
 		mIsLoaded = false;
-		
+
 	}
 
 	public void update(LintfordCore pCore) {

@@ -163,7 +163,7 @@ public class PolyBatch {
 
 		draw(verts.get(0).x, verts.get(0).y, verts.get(1).x, verts.get(1).y, pZ, pR, pG, pB);
 		draw(verts.get(0).x, verts.get(0).y, verts.get(2).x, verts.get(2).y, pZ, pR, pG, pB);
-		draw(verts.get(2).x, verts.get(1).y, verts.get(3).x, verts.get(3).y, pZ, pR, pG, pB);
+		draw(verts.get(2).x, verts.get(2).y, verts.get(3).x, verts.get(3).y, pZ, pR, pG, pB);
 		draw(verts.get(1).x, verts.get(1).y, verts.get(3).x, verts.get(3).y, pZ, pR, pG, pB);
 
 	}

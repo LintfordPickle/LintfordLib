@@ -143,12 +143,12 @@ public class Box2dSpriteGraphBuilder {
 	public JBox2dEntityInstance createSpriteGraphFromLSystem(String pLSystemString, LSystemDefinition pLSystemDef) {
 		// Create a new instance of a SpriteGraph
 		// pLSystemDef.onGraphCreation(lNewInst);
-		
+
 		pLSystemString = "F-F[+F+F+F+F+F+F]-F-F-F-F-F-F";
 
-		JBox2dEntityInstance lJBox2dEntityInstance = new JBox2dEntityInstance();
+		JBox2dEntityInstance lJBox2dEntityInstance = new JBox2dEntityInstance(0);
 		lJBox2dEntityInstance.spriteSheetName = "TreeSpriteSheet";
-		
+
 		// Now we need to 'draw' the L-System (i.e. create the sprites and the graph)
 		JBox2dLCursor lCursor = new JBox2dLCursor();
 		lCursor.curRotation = 0;
@@ -188,8 +188,7 @@ public class Box2dSpriteGraphBuilder {
 				float lTop = -lSegmentHeight;
 				float lBottom = 0;
 
-				lBox2dPolygonInstance.vertices = new Vec2[] { 
-						new Vec2(+lSegmentWidthT / 2f * Box2dWorldController.PIXELS_TO_UNITS, lTop * Box2dWorldController.PIXELS_TO_UNITS),
+				lBox2dPolygonInstance.vertices = new Vec2[] { new Vec2(+lSegmentWidthT / 2f * Box2dWorldController.PIXELS_TO_UNITS, lTop * Box2dWorldController.PIXELS_TO_UNITS),
 						new Vec2(+lSegmentWidthB / 2f * Box2dWorldController.PIXELS_TO_UNITS, lBottom * Box2dWorldController.PIXELS_TO_UNITS),
 						new Vec2(-lSegmentWidthB / 2f * Box2dWorldController.PIXELS_TO_UNITS, lBottom * Box2dWorldController.PIXELS_TO_UNITS),
 						new Vec2(-lSegmentWidthT / 2f * Box2dWorldController.PIXELS_TO_UNITS, lTop * Box2dWorldController.PIXELS_TO_UNITS) };
@@ -295,7 +294,8 @@ public class Box2dSpriteGraphBuilder {
 		float lHeight = 64f;
 
 		lBox2dPolygonInstance.vertices = new Vec2[] { new Vec2(+lWidth / 2f * Box2dWorldController.PIXELS_TO_UNITS, lHeight * Box2dWorldController.PIXELS_TO_UNITS),
-				new Vec2(+lWidth / 2f * Box2dWorldController.PIXELS_TO_UNITS, 0 * Box2dWorldController.PIXELS_TO_UNITS), new Vec2(-lWidth / 2f * Box2dWorldController.PIXELS_TO_UNITS, 0 * Box2dWorldController.PIXELS_TO_UNITS),
+				new Vec2(+lWidth / 2f * Box2dWorldController.PIXELS_TO_UNITS, 0 * Box2dWorldController.PIXELS_TO_UNITS),
+				new Vec2(-lWidth / 2f * Box2dWorldController.PIXELS_TO_UNITS, 0 * Box2dWorldController.PIXELS_TO_UNITS),
 				new Vec2(-lWidth / 2f * Box2dWorldController.PIXELS_TO_UNITS, lHeight * Box2dWorldController.PIXELS_TO_UNITS) };
 
 		lFixInst.shape = lBox2dPolygonInstance;

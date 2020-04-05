@@ -40,7 +40,7 @@ public class ParticleEmitterManager extends PooledInstanceManager<ParticleEmitte
 				return null;
 
 			for (int i = 0; i < lNumEmitters; i++) {
-				if (mDefinitions.get(i).definitionID == pEmitterDefId)
+				if (mDefinitions.get(i).definitionUid == pEmitterDefId)
 					return mDefinitions.get(i);
 			}
 

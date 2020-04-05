@@ -1,6 +1,5 @@
 package net.lintford.library.core.box2d.entity;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,11 +9,12 @@ import org.jbox2d.dynamics.World;
 import org.jbox2d.dynamics.joints.RevoluteJointDef;
 
 import net.lintford.library.core.box2d.definition.PObjectDefinition;
+import net.lintford.library.core.entity.PooledBaseData;
 
 /**
  * The {@link JBox2dEntityInstance} class can be loaded from a PObject file and then serialized and restored with the game. JBox2dEntitys can also be pooled in the PObjectManager.
  */
-public class JBox2dEntityInstance implements Serializable {
+public class JBox2dEntityInstance extends PooledBaseData {
 
 	// --------------------------------------
 	// Constants
@@ -56,7 +56,8 @@ public class JBox2dEntityInstance implements Serializable {
 
 	}
 
-	public boolean isFree() {
+	@Override
+	public boolean isAssigned() {
 		return mIsFree;
 	}
 
@@ -84,7 +85,9 @@ public class JBox2dEntityInstance implements Serializable {
 	// Constructor
 	// --------------------------------------
 
-	public JBox2dEntityInstance() {
+	public JBox2dEntityInstance(final int pPoolUid) {
+		super(pPoolUid);
+
 		mPhysicsLoaded = false;
 
 	}

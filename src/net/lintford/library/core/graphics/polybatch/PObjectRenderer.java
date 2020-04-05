@@ -12,7 +12,7 @@ import net.lintford.library.core.box2d.entity.Box2dFixtureInstance;
 import net.lintford.library.core.box2d.entity.JBox2dEntityInstance;
 import net.lintford.library.core.entity.JBox2dEntity;
 import net.lintford.library.core.graphics.sprites.SpriteFrame;
-import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDef;
+import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.maths.Vector2f;
 
@@ -84,7 +84,7 @@ public class PObjectRenderer {
 		if (lSpriteSheetDefName == null)
 			return;
 
-		SpriteSheetDef lSpriteSheetDef = mResourceManager.spriteSheetManager().getSpriteSheet(lSpriteSheetDefName, mEntityGroupID);
+		SpriteSheetDefinition lSpriteSheetDef = mResourceManager.spriteSheetManager().getSpriteSheet(lSpriteSheetDefName, mEntityGroupID);
 
 		if (lSpriteSheetDef == null)
 			return;

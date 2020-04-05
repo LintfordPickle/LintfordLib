@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.lintford.library.core.ResourceManager;
-import net.lintford.library.core.geometry.spritegraph.instance.SpriteGraphInst;
-import net.lintford.library.core.geometry.spritegraph.instance.SpriteGraphNodeInst;
+import net.lintford.library.core.geometry.spritegraph.instance.SpriteGraphInstance;
+import net.lintford.library.core.geometry.spritegraph.instance.SpriteGraphNodeInstance;
 
 public class LSystemDefinition implements Serializable {
 
@@ -34,7 +34,7 @@ public class LSystemDefinition implements Serializable {
 
 	public float minAngle;
 	public float maxAngle;
-	
+
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
@@ -103,20 +103,20 @@ public class LSystemDefinition implements Serializable {
 	// Callbacks
 	// --------------------------------------
 
-	public void onGraphCreation(SpriteGraphInst pInst) {
+	public void onGraphCreation(SpriteGraphInstance pInst) {
 
 	}
 
-	public void onRootNodeCreation(SpriteGraphNodeInst pInst) {
-
-	}
-	
-	public void onNodeCreation(SpriteGraphNodeInst pInst) {
+	public void onRootNodeCreation(SpriteGraphNodeInstance pInst) {
 
 	}
 
-	public void onLeafNodeCreation(SpriteGraphNodeInst pInst) {
+	public void onNodeCreation(SpriteGraphNodeInstance pInst) {
 
 	}
-	
+
+	public void onLeafNodeCreation(SpriteGraphNodeInstance pInst) {
+
+	}
+
 }

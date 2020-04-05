@@ -140,11 +140,11 @@ public abstract class JBox2dEntity extends WorldEntity {
 		if (mJBox2dEntityInstance != null) {
 			final var lMainBody = mJBox2dEntityInstance.mainBody();
 
-			if(mPosition == null) {
+			if (mPosition == null) {
 				// TODO: This happens often, which means something isn't being initialized properly.
 				mPosition = new Vec2();
 			}
-			
+
 			mPosition.set(pWorldX * Box2dWorldController.PIXELS_TO_UNITS, pWorldY * Box2dWorldController.PIXELS_TO_UNITS);
 			lMainBody.mBody.setTransform(mPosition, 0);
 			lMainBody.mBody.setAwake(true);

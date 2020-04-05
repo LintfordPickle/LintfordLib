@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDef;
+import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 
 /** {@link SpriteDefinition}s are a collection of *one* or more {@link SpriteFrame}s. */
 public class SpriteDefinition implements Serializable {
@@ -79,7 +79,7 @@ public class SpriteDefinition implements Serializable {
 	// Core-Methods
 	// --------------------------------------
 
-	public void loadContent(final SpriteSheetDef pSpriteSheet) {
+	public void loadContent(final SpriteSheetDefinition pSpriteSheet) {
 		if(animationSprites == null) return;
 		final int SPRITE_COUNT = animationSprites.length;
 		for (int i = 0; i < SPRITE_COUNT; i++) {

@@ -14,7 +14,8 @@ public class SpriteAnchor implements Serializable {
 	// Variables
 	// --------------------------------------
 
-	public String name;
+	/** Uniquely identifies this anchor. */
+	public String anchorName;
 	public float x, y, r;
 
 	// --------------------------------------
@@ -25,8 +26,8 @@ public class SpriteAnchor implements Serializable {
 
 	}
 
-	public SpriteAnchor(String pName, float pX, float pY) {
-		name = pName;
+	public SpriteAnchor(String pAnchorName, float pX, float pY) {
+		anchorName = pAnchorName;
 		x = pX;
 		y = pY;
 

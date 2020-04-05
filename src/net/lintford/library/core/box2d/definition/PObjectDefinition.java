@@ -55,8 +55,9 @@ import org.json.JSONObject;
 import net.lintford.library.core.box2d.entity.Box2dCircleInstance;
 import net.lintford.library.core.box2d.entity.Box2dEdgeInstance;
 import net.lintford.library.core.box2d.entity.Box2dPolygonInstance;
+import net.lintford.library.core.entity.definitions.BaseDefinition;
 
-public class PObjectDefinition {
+public class PObjectDefinition extends BaseDefinition {
 
 	// --------------------------------------
 	// Constants
@@ -94,8 +95,6 @@ public class PObjectDefinition {
 	// Variables
 	// --------------------------------------
 
-	protected String mPObjectName;
-
 	protected Vector<Box2dBodyDefinition> mBodies;
 	protected Map<Integer, Box2dBodyDefinition> mIndexToBodyMap;
 	protected Map<Box2dBodyDefinition, Integer> mBodyToIndexMap;
@@ -112,7 +111,7 @@ public class PObjectDefinition {
 	// --------------------------------------
 
 	public String name() {
-		return mPObjectName;
+		return name;
 	}
 
 	public Vector<Box2dBodyDefinition> bodies() {
@@ -211,7 +210,7 @@ public class PObjectDefinition {
 
 	public void j2b2World(JSONObject worldValue) throws JSONException {
 
-		mPObjectName = worldValue.optString("name", "POBJECT_UNANMED");
+		name = worldValue.optString("name", "POBJECT_UNANMED");
 
 		// Read all bodies from file
 		int i = 0;

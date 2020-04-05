@@ -35,7 +35,7 @@ public class SpriteSheetManager {
 	// --------------------------------------
 
 	/** Contains a collection of SpriteSheets which has been loaded by this {@link SpriteSheetManager}. */
-	private Map<Integer, Map<String, SpriteSheetDef>> mSpriteSheetGroups;
+	private Map<Integer, Map<String, SpriteSheetDefinition>> mSpriteSheetGroups;
 
 	private ResourceManager mResourceManager;
 
@@ -43,9 +43,9 @@ public class SpriteSheetManager {
 	// Properties
 	// --------------------------------------
 
-	/** Returns the {@link SpriteSheetDef} to which the specified key string is mapped, or null if no such {@link SpriteSheetDef} exists. */
-	public SpriteSheetDef getSpriteSheet(String pName, int pEntityGroupID) {
-		Map<String, SpriteSheetDef> lSpriteSheetGroup = mSpriteSheetGroups.get(pEntityGroupID);
+	/** Returns the {@link SpriteSheetDefinition} to which the specified key string is mapped, or null if no such {@link SpriteSheetDefinition} exists. */
+	public SpriteSheetDefinition getSpriteSheet(String pName, int pEntityGroupID) {
+		Map<String, SpriteSheetDefinition> lSpriteSheetGroup = mSpriteSheetGroups.get(pEntityGroupID);
 		if (lSpriteSheetGroup != null) {
 			return lSpriteSheetGroup.get(pName);
 
@@ -63,7 +63,7 @@ public class SpriteSheetManager {
 	public SpriteSheetManager() {
 		mSpriteSheetGroups = new HashMap<>();
 
-		mSpriteSheetGroups.put(LintfordCore.CORE_ENTITY_GROUP_ID, new HashMap<String, SpriteSheetDef>());
+		mSpriteSheetGroups.put(LintfordCore.CORE_ENTITY_GROUP_ID, new HashMap<String, SpriteSheetDefinition>());
 
 	}
 
@@ -90,7 +90,7 @@ public class SpriteSheetManager {
 
 	}
 
-	public SpriteSheetDef loadSpriteSheet(String pFilepath, int pEntityGroupID) {
+	public SpriteSheetDefinition loadSpriteSheet(String pFilepath, int pEntityGroupID) {
 		if (pFilepath == null || pFilepath.length() == 0) {
 			Debug.debugManager().logger().v(getClass().getSimpleName(), "Error loading spritesheet. Pathname is null! ");
 			return null;
@@ -106,7 +106,7 @@ public class SpriteSheetManager {
 
 	}
 
-	private SpriteSheetDef loadSpriteSheetFromFile(String pFilepath, int pEntityGroupID) {
+	private SpriteSheetDefinition loadSpriteSheetFromFile(String pFilepath, int pEntityGroupID) {
 		if (pFilepath == null || pFilepath.length() == 0)
 			return null;
 
@@ -122,7 +122,7 @@ public class SpriteSheetManager {
 		try {
 
 			final String lFileContents = new String(Files.readAllBytes(lFile.toPath()));
-			final SpriteSheetDef lSpriteSheet = GSON.fromJson(lFileContents, SpriteSheetDef.class);
+			final SpriteSheetDefinition lSpriteSheet = GSON.fromJson(lFileContents, SpriteSheetDefinition.class);
 
 			// Check the integrity of the loaded spritsheet
 			if (lSpriteSheet == null || lSpriteSheet.getSpriteCount() == 0) {
@@ -137,7 +137,7 @@ public class SpriteSheetManager {
 			lSpriteSheet.reloadable(true);
 			lSpriteSheet.loadGLContent(mResourceManager, pEntityGroupID);
 
-			Map<String, SpriteSheetDef> lSpriteSheetGroup = mSpriteSheetGroups.get(pEntityGroupID);
+			Map<String, SpriteSheetDefinition> lSpriteSheetGroup = mSpriteSheetGroups.get(pEntityGroupID);
 			if (lSpriteSheetGroup == null) {
 				lSpriteSheetGroup = new HashMap<>();
 				mSpriteSheetGroups.put(pEntityGroupID, lSpriteSheetGroup);
@@ -163,7 +163,7 @@ public class SpriteSheetManager {
 		}
 	}
 
-	private SpriteSheetDef loadSpriteSheetFromResource(String pFilepath, int pEntityGroupID) {
+	private SpriteSheetDefinition loadSpriteSheetFromResource(String pFilepath, int pEntityGroupID) {
 		if (pFilepath == null || pFilepath.length() == 0)
 			return null;
 
@@ -182,7 +182,7 @@ public class SpriteSheetManager {
 
 			JsonReader reader = new JsonReader(new InputStreamReader(lInputStream, "UTF-8"));
 
-			final SpriteSheetDef lSpriteSheet = GSON.fromJson(reader, SpriteSheetDef.class);
+			final SpriteSheetDefinition lSpriteSheet = GSON.fromJson(reader, SpriteSheetDefinition.class);
 
 			// Check the integrity of the loaded spritsheet
 			if (lSpriteSheet == null || lSpriteSheet.getSpriteCount() == 0) {
@@ -191,7 +191,7 @@ public class SpriteSheetManager {
 
 			}
 
-			Map<String, SpriteSheetDef> lSpriteSheetGroup = mSpriteSheetGroups.get(pEntityGroupID);
+			Map<String, SpriteSheetDefinition> lSpriteSheetGroup = mSpriteSheetGroups.get(pEntityGroupID);
 			if (lSpriteSheetGroup == null) {
 				lSpriteSheetGroup = new HashMap<>();
 				mSpriteSheetGroups.put(pEntityGroupID, lSpriteSheetGroup);
@@ -251,8 +251,8 @@ public class SpriteSheetManager {
 		}
 
 		// Iterate through the sprite files, and load the individual sprites
-		final int SPRITE_COUNT = lSpriteMetaObject.spriteSheetLocations.length;
-		for (int i = 0; i < SPRITE_COUNT; i++) {
+		final int lSpriteCount = lSpriteMetaObject.spriteSheetLocations.length;
+		for (int i = 0; i < lSpriteCount; i++) {
 			final File lSpriteSheetFile = new File(lSpriteMetaObject.spriteSheetLocations[i]);
 
 			if (!lSpriteSheetFile.exists()) {
@@ -265,7 +265,7 @@ public class SpriteSheetManager {
 			try {
 
 				final String lSpriteSheetFileContents = new String(Files.readAllBytes(lSpriteSheetFile.toPath()));
-				final SpriteSheetDef lSpriteSheet = GSON.fromJson(lSpriteSheetFileContents, SpriteSheetDef.class);
+				final SpriteSheetDefinition lSpriteSheet = GSON.fromJson(lSpriteSheetFileContents, SpriteSheetDefinition.class);
 
 				// Check the integrity of the loaded spritsheet
 				if (lSpriteSheet == null) {
@@ -288,7 +288,7 @@ public class SpriteSheetManager {
 
 				}
 
-				Map<String, SpriteSheetDef> lSpriteSheetGroup = mSpriteSheetGroups.get(pEntityGroupID);
+				Map<String, SpriteSheetDefinition> lSpriteSheetGroup = mSpriteSheetGroups.get(pEntityGroupID);
 				if (lSpriteSheetGroup == null) {
 					lSpriteSheetGroup = new HashMap<>();
 					mSpriteSheetGroups.put(pEntityGroupID, lSpriteSheetGroup);
@@ -318,9 +318,9 @@ public class SpriteSheetManager {
 
 		final Gson GSON = new GsonBuilder().create();
 
-		for (Map<String, SpriteSheetDef> lSpriteSheetGroup : mSpriteSheetGroups.values()) {
-			for (Map.Entry<String, SpriteSheetDef> entry : lSpriteSheetGroup.entrySet()) {
-				SpriteSheetDef lSpriteSheet = entry.getValue();
+		for (Map<String, SpriteSheetDefinition> lSpriteSheetGroup : mSpriteSheetGroups.values()) {
+			for (Map.Entry<String, SpriteSheetDefinition> entry : lSpriteSheetGroup.entrySet()) {
+				SpriteSheetDefinition lSpriteSheet = entry.getValue();
 				if (!lSpriteSheet.reloadable)
 					continue;
 
@@ -332,7 +332,7 @@ public class SpriteSheetManager {
 					try {
 
 						final String lSpriteSheetFileContents = new String(Files.readAllBytes(lSpriteSheetFile.toPath()));
-						final SpriteSheetDef lNewSpriteSheet = GSON.fromJson(lSpriteSheetFileContents, SpriteSheetDef.class);
+						final SpriteSheetDefinition lNewSpriteSheet = GSON.fromJson(lSpriteSheetFileContents, SpriteSheetDefinition.class);
 
 						lNewSpriteSheet.loadGLContent(mResourceManager);
 

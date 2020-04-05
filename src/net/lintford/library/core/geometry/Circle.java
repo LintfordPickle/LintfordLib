@@ -5,7 +5,6 @@ import java.util.List;
 
 import net.lintford.library.core.maths.Vector2f;
 
-// SAT Ref: http://www.dyn4j.org/2010/01/sat/
 public class Circle extends Shape {
 
 	// --------------------------------------
@@ -23,16 +22,9 @@ public class Circle extends Shape {
 	private float x, y;
 	private List<Vector2f> mVertices;
 
-	private float mRadius;
-
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
-
-	@Override
-	public float radius() {
-		return mRadius;
-	}
 
 	public List<Vector2f> getVertices() {
 		return mVertices;
@@ -58,7 +50,7 @@ public class Circle extends Shape {
 	public Circle(float pCenterX, float pCenterY, float pRadius) {
 		x = pCenterX;
 		y = pCenterY;
-		mRadius = pRadius;
+		radius = pRadius;
 
 		mVertices = new ArrayList<>(NUM_VERTICES);
 		mVertices.add(new Vector2f(x, y));
@@ -103,8 +95,8 @@ public class Circle extends Shape {
 
 		float c = Vector2f.dot(x, y, pAxis.x, pAxis.y);
 
-		pToFill.x = c - mRadius;
-		pToFill.y = c + mRadius;
+		pToFill.x = c - radius;
+		pToFill.y = c + radius;
 
 		return pToFill;
 	}
@@ -115,7 +107,7 @@ public class Circle extends Shape {
 	 * @Returs True if everything is zero.
 	 */
 	public boolean isEmpty() {
-		return (this.mRadius == 0);
+		return (this.radius == 0);
 	}
 
 	/**
@@ -125,7 +117,7 @@ public class Circle extends Shape {
 	 * @param cy
 	 */
 	public void setPosition(float pX, float pY) {
-		set(pX, pY, mRadius);
+		set(pX, pY, radius);
 
 	}
 
@@ -136,7 +128,7 @@ public class Circle extends Shape {
 	public void set(float pX, float pY, float pRadius) {
 		x = pX;
 		y = pY;
-		mRadius = pRadius;
+		radius = pRadius;
 
 	}
 
@@ -144,24 +136,24 @@ public class Circle extends Shape {
 		x = pOtherCicle.x;
 		y = pOtherCicle.y;
 
-		mRadius = pOtherCicle.mRadius;
+		radius = pOtherCicle.radius;
 
 	}
 
 	public void expand(float pAmt) {
-		mRadius += pAmt;
+		radius += pAmt;
 
 	}
 
 	@Override
 	public void rotateRel(float pRotAmt) {
-		rot += pRotAmt;
+		rotation += pRotAmt;
 
 	}
 
 	@Override
 	public void rotateAbs(float pRotAmt) {
-		rot = pRotAmt;
+		rotation = pRotAmt;
 
 	}
 

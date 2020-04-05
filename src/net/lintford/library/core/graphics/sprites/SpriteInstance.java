@@ -77,7 +77,7 @@ public class SpriteInstance extends Rectangle {
 	}
 
 	/** returns the frame of an animation from the internal timer (updated via sprite.update()) */
-	public SpriteFrame getFrame() {
+	public SpriteFrame currentSpriteFrame() {
 		if (mSpriteDefinition == null)
 			return null;
 
@@ -106,6 +106,8 @@ public class SpriteInstance extends Rectangle {
 		mSpriteDefinition = pSpriteDef;
 		loopingEnabled = pSpriteDef.loopEnabled();
 		animationEnabled = true;
+
+		updateDimensionsOnCurrentFrame();
 
 	}
 
@@ -173,6 +175,16 @@ public class SpriteInstance extends Rectangle {
 
 		}
 
+		updateDimensionsOnCurrentFrame();
+
+	}
+
+	private void updateDimensionsOnCurrentFrame() {
+		var lCurrentFrame = currentSpriteFrame();
+		if (lCurrentFrame != null) {
+			setWidth(lCurrentFrame.width());
+			setHeight(lCurrentFrame.height());
+		}
 	}
 
 	// --------------------------------------

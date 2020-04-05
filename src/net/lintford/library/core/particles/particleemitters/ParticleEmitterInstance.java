@@ -156,7 +156,7 @@ public class ParticleEmitterInstance extends WorldEntity {
 
 		// Problem here for children of the emitter definition (in which they have the same DefId as their parents). This
 		// would prevent us from correctly deserializing such objects.
-		mEmitterDefinitionId = pEmitterDefinition.definitionID;
+		mEmitterDefinitionId = pEmitterDefinition.definitionUid;
 		mEmitterDefinition = pEmitterDefinition;
 
 		resolveParticleSystems(mEmitterDefinition, pParticleFramework);

@@ -7,8 +7,6 @@ import net.lintford.library.core.geometry.Rectangle;
 /** Defines a single sprite animation frame */
 public class SpriteFrame extends Rectangle implements Serializable {
 
-	public static final SpriteAnchor ZERO_ANCHOR = new SpriteAnchor("ZERO", 0, 0);
-
 	// --------------------------------------
 	// Constants
 	// --------------------------------------
@@ -22,15 +20,15 @@ public class SpriteFrame extends Rectangle implements Serializable {
 	// --------------------------------------
 
 	public float getDefaultRotation() {
-		return rot;
+		return rotation;
 	}
 
 	public float getPivotPointX() {
-		return px;
+		return pivotX;
 	}
 
 	public float getPivotPointY() {
-		return py;
+		return pivotY;
 	}
 
 	// --------------------------------------
@@ -52,19 +50,37 @@ public class SpriteFrame extends Rectangle implements Serializable {
 	// Methods
 	// --------------------------------------
 
-	public SpriteAnchor getAnchor(String pName) {
+	public int anchorCount() {
+		if (anchorPoints == null)
+			return 0;
+
+		return anchorPoints.length;
+	}
+
+	public SpriteAnchor getAnchorByIndex(int pArrayIndex) {
+		if (anchorPoints == null || anchorPoints.length == 0 || pArrayIndex >= anchorPoints.length) {
+			return null;
+
+		}
+
+		return anchorPoints[pArrayIndex];
+
+	}
+
+	public SpriteAnchor getAnchorByName(String pName) {
 		if (anchorPoints == null || anchorPoints.length == 0)
-			return ZERO_ANCHOR;
+			return null;
 
 		final int lAnchorCount = anchorPoints.length;
 		for (int i = 0; i < lAnchorCount; i++) {
 			if (anchorPoints[i] == null)
 				continue;
 
-			if (anchorPoints[i].name.equals(pName))
+			if (anchorPoints[i].anchorName.equals(pName))
 				return anchorPoints[i];
 		}
-		return ZERO_ANCHOR;
+
+		return null;
 
 	}
 }

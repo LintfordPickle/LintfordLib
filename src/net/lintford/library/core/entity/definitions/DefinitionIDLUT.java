@@ -73,7 +73,7 @@ public class DefinitionIDLUT<T extends BaseDefinition> extends BaseInstanceData 
 
 		return null;
 	}
-	
+
 	public List<DefinitionNameID> mapper() {
 		return mMapper;
 	}
@@ -99,7 +99,7 @@ public class DefinitionIDLUT<T extends BaseDefinition> extends BaseInstanceData 
 		final int lDefinitionCount = pDefinitions.size();
 		for (int i = 0; i < lDefinitionCount; i++) {
 			BaseDefinition lBaseDef = pDefinitions.get(i);
-			mMapper.add(new DefinitionNameID(lBaseDef.name, lBaseDef.definitionID));
+			mMapper.add(new DefinitionNameID(lBaseDef.name, lBaseDef.definitionUid));
 
 		}
 
@@ -131,7 +131,7 @@ public class DefinitionIDLUT<T extends BaseDefinition> extends BaseInstanceData 
 						return false;
 
 				}
-				
+
 				lFound = true;
 
 			}

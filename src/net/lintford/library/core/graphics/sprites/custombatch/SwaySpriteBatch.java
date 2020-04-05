@@ -6,7 +6,7 @@ import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.sprites.SpriteFrame;
 import net.lintford.library.core.graphics.sprites.SpriteInstance;
 import net.lintford.library.core.graphics.sprites.spritebatch.SpriteBatch;
-import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDef;
+import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.maths.Vector2f;
@@ -27,7 +27,7 @@ public class SwaySpriteBatch extends SpriteBatch {
 	// Methods
 	// --------------------------------------
 
-	public void draw(SpriteSheetDef pSpriteSheet, SpriteInstance pSprite, Rectangle pDstRectangle, float pZ, float pR, float pG, float pB, float pA) {
+	public void draw(SpriteSheetDefinition pSpriteSheet, SpriteInstance pSprite, Rectangle pDstRectangle, float pZ, float pR, float pG, float pB, float pA) {
 		if (pSpriteSheet == null)
 			return;
 
@@ -39,7 +39,7 @@ public class SwaySpriteBatch extends SpriteBatch {
 			return;
 
 		Texture lTexture = pSpriteSheet.texture();
-		SpriteFrame lCurrentFrame = pSprite.getFrame();
+		SpriteFrame lCurrentFrame = pSprite.currentSpriteFrame();
 
 		drawGrass(lTexture, lCurrentFrame.x, lCurrentFrame.y, lCurrentFrame.w, lCurrentFrame.h, pDstRectangle, pZ, pA);
 

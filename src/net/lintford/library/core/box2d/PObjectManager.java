@@ -1,22 +1,59 @@
 package net.lintford.library.core.box2d;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.jbox2d.dynamics.World;
 
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.box2d.definition.PObjectDefinition;
 import net.lintford.library.core.box2d.entity.JBox2dEntityInstance;
 import net.lintford.library.core.debug.Debug;
+import net.lintford.library.core.entity.definitions.DefinitionManager;
+import net.lintford.library.core.entity.instances.PooledInstanceManager;
 
-public class PObjectManager {
+public class PObjectManager extends PooledInstanceManager<JBox2dEntityInstance> {
+
+	private class PObjectRepository extends DefinitionManager<PObjectDefinition> {
+
+		// --------------------------------------
+		// Constructor
+		// --------------------------------------
+
+		public PObjectRepository() {
+			loadDefinitions();
+
+		}
+
+		// --------------------------------------
+		// Core-Methods
+		// --------------------------------------
+
+		@Override
+		public void loadDefinitionsFromMetaFile(String pMetaFilepath) {
+
+		}
+
+		public void loadDefinitions() {
+			loadDefinitionFromFile("res/pobjects/box.json");
+			loadDefinitionFromFile("res/pobjects/circle.json");
+			loadDefinitionFromFile("res/pobjects/test.json");
+
+		}
+
+		@Override
+		public void loadDefinitionFromFile(String pFilepath) {
+			final var lPObjectDefinition = new PObjectDefinition();
+			lPObjectDefinition.loadFromFile(pFilepath, new StringBuilder(), null);
+
+			addDefintion(lPObjectDefinition);
+
+		}
+
+	}
 
 	// --------------------------------------
 	// Constants
 	// --------------------------------------
+
+	private static final long serialVersionUID = -8661579477274556146L;
 
 	public class PObjectMetaData {
 		public String[] pobjectLocations;
@@ -27,18 +64,14 @@ public class PObjectManager {
 	// Variables
 	// --------------------------------------
 
-	protected Map<String, PObjectDefinition> mPObjectDefinitions; // these are loaded from PObject files
-	protected List<JBox2dEntityInstance> mJBox2dEntityInstancePool;
-	protected List<JBox2dEntityInstance> mPObjectInstances;
+	private PObjectRepository mPObjectRepository;
 
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
 	public PObjectManager() {
-		mPObjectDefinitions = new HashMap<>();
-		mJBox2dEntityInstancePool = new ArrayList<>();
-		mPObjectInstances = new ArrayList<>();
+		mPObjectRepository = new PObjectRepository();
 
 	}
 
@@ -51,14 +84,14 @@ public class PObjectManager {
 	}
 
 	public void unloadGLContent() {
-		final int lPObjectCount = mPObjectInstances.size();
-
-		for (int i = 0; i < lPObjectCount; i++) {
-			JBox2dEntityInstance lEntity = mPObjectInstances.get(i);
-
-			lEntity.unloadPhysics();
-
-		}
+//		final int lPObjectCount = mPObjectInstances.size();
+//
+//		for (int i = 0; i < lPObjectCount; i++) {
+//			JBox2dEntityInstance lEntity = mPObjectInstances.get(i);
+//
+//			lEntity.unloadPhysics();
+//
+//		}
 
 	}
 
@@ -66,29 +99,8 @@ public class PObjectManager {
 	// Methods
 	// --------------------------------------
 
-	// Definitions
-
-	public PObjectDefinition loadPObjectDefinition(String pFilename) {
-		final var lPObjectDefinition = new PObjectDefinition();
-		lPObjectDefinition.loadFromFile(pFilename, new StringBuilder(), null);
-
-		mPObjectDefinitions.put(lPObjectDefinition.name(), lPObjectDefinition);
-
-		return lPObjectDefinition;
-
-	}
-
-	public PObjectDefinition getPObjectDefinition(String pObjectName) {
-		if (mPObjectDefinitions.containsKey(pObjectName)) {
-			return mPObjectDefinitions.get(pObjectName);
-
-		}
-
-		return null;
-	}
-
 	public JBox2dEntityInstance getNewInstanceFromPObject(World pWorld, String pPObjectDefinitionName) {
-		PObjectDefinition lPObjectDefinition = mPObjectDefinitions.get(pPObjectDefinitionName);
+		PObjectDefinition lPObjectDefinition = mPObjectRepository.getDefinitionByName(pPObjectDefinitionName);
 		if (lPObjectDefinition == null) {
 			Debug.debugManager().logger().e(getClass().getSimpleName(), "Couldn't find PObject definition named " + pPObjectDefinitionName);
 			return null;
@@ -100,57 +112,35 @@ public class PObjectManager {
 	}
 
 	public JBox2dEntityInstance getNewInstanceFromPObject(World pWorld, PObjectDefinition pPObjectDefinition) {
-		JBox2dEntityInstance lNewEntity = getFreeBox2dEntityInstance();
+		final var lJBox2dEntityInstance = getFreePooledItem();
 
-		if (lNewEntity == null)
+		if (lJBox2dEntityInstance == null)
 			return null;
 
 		// if nothing, then load physics from a definition ..
-		lNewEntity.loadPObjectFromDefinition(pPObjectDefinition);
+		lJBox2dEntityInstance.loadPObjectFromDefinition(pPObjectDefinition);
 
 		// N.B. Even though we have an instance which mirrors the structure defined
 		// in the PObject, we still need to call loadPhysics on it before it will be
 		// added into the Box2d world!
 
-		return lNewEntity;
+		return lJBox2dEntityInstance;
 
 	}
 
-	private JBox2dEntityInstance getFreeBox2dEntityInstance() {
-		final int lPoolSize = mJBox2dEntityInstancePool.size();
-		for (int i = 0; i < lPoolSize; i++) {
-			JBox2dEntityInstance lRetInst = mJBox2dEntityInstancePool.get(i);
-			if (lRetInst.isFree()) {
-				mJBox2dEntityInstancePool.remove(lRetInst);
-				return lRetInst;
-
-			}
-		}
-
-		return increasePoolSize(10);
-
-	}
-
-	public void returnBox2dEntityInstance(JBox2dEntityInstance pObject) {
-		if (pObject == null)
+	@Override
+	protected void returnPooledItem(JBox2dEntityInstance pReturnedItem) {
+		if (pReturnedItem == null)
 			return;
 
-		pObject.unloadPhysics();
+		pReturnedItem.unloadPhysics();
 
-		if (mJBox2dEntityInstancePool.contains(pObject))
-			mJBox2dEntityInstancePool.add(pObject);
-
+		super.returnPooledItem(pReturnedItem);
 	}
 
-	private JBox2dEntityInstance increasePoolSize(int pAmt) {
-		JBox2dEntityInstance lReturnInst = new JBox2dEntityInstance();
-		mJBox2dEntityInstancePool.add(lReturnInst);
-
-		for (int i = 0; i < pAmt; i++) {
-			mJBox2dEntityInstancePool.add(new JBox2dEntityInstance());
-		}
-
-		return lReturnInst;
+	@Override
+	protected JBox2dEntityInstance createPoolObjectInstance() {
+		return new JBox2dEntityInstance(getNewInstanceUID());
 
 	}
 

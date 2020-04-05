@@ -227,14 +227,14 @@ public class Polygon extends Shape {
 	@Override
 	public void rotateRel(float pRotAmt) {
 		mDirty = true;
-		rot += pRotAmt;
+		rotation += pRotAmt;
 
 	}
 
 	@Override
 	public void rotateAbs(float pRotAmt) {
 		mDirty = true;
-		rot = pRotAmt;
+		rotation = pRotAmt;
 
 	}
 

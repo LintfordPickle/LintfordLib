@@ -26,10 +26,10 @@ public class Rectangle extends Shape {
 	public float y;
 	public float w;
 	public float h;
-	protected float sx;
-	protected float sy;
-	protected boolean mFlipH;
-	protected boolean mFlipV;
+	public float scaleX;
+	public float scaleY;
+	public boolean flipHorizontal;
+	public boolean flipVertical;
 
 	// --------------------------------------
 	// Properties
@@ -68,25 +68,25 @@ public class Rectangle extends Shape {
 	}
 
 	public float scaleX() {
-		return sx;
+		return scaleX;
 	}
 
 	public void scaleX(float pNewValue) {
-		sx = pNewValue;
+		scaleX = pNewValue;
 	}
 
 	public float scaleY() {
-		return sy;
+		return scaleY;
 	}
 
 	public void scaleY(float pNewValue) {
-		sy = pNewValue;
+		scaleY = pNewValue;
 
 	}
 
 	public void setScale(float pX, float pY) {
-		sx = pX;
-		sy = pY;
+		scaleX = pX;
+		scaleY = pY;
 
 	}
 
@@ -95,22 +95,6 @@ public class Rectangle extends Shape {
 		updateVertices();
 
 		return mVertices;
-	}
-
-	public boolean flipH() {
-		return mFlipH;
-	}
-
-	public void flipH(boolean pNewValue) {
-		mFlipH = pNewValue;
-	}
-
-	public boolean flipV() {
-		return mFlipV;
-	}
-
-	public void flipV(boolean pNewValue) {
-		mFlipV = pNewValue;
 	}
 
 	public float centerX() {
@@ -147,8 +131,8 @@ public class Rectangle extends Shape {
 		mVertices.add(new Vector2f(x, y + h));
 		mVertices.add(new Vector2f(x + w, y + h));
 
-		sx = 1f;
-		sy = 1f;
+		scaleX = 1f;
+		scaleY = 1f;
 
 		mIsAABB = true;
 
@@ -312,23 +296,23 @@ public class Rectangle extends Shape {
 
 	@Override
 	public void rotateRel(float pRotAmt) {
-		rot += pRotAmt;
+		rotation += pRotAmt;
 
 	}
 
 	@Override
 	public void rotateAbs(float pRotAmt) {
-		rot = pRotAmt;
+		rotation = pRotAmt;
 
 	}
 
 	protected void updateVertices() {
 
-		final float lWidth = mFlipH ? -w : w;
-		final float lHeight = mFlipV ? -h : h;
+		final float lWidth = flipHorizontal ? -w : w;
+		final float lHeight = flipVertical ? -h : h;
 
-		final float lPX = mFlipH ? -px : px;
-		final float lPY = mFlipV ? -py : py;
+		final float lPX = flipHorizontal ? -pivotX : pivotX;
+		final float lPY = flipVertical ? -pivotY : pivotY;
 
 		// Get local space vertex positions
 		mVertices.get(0).set(-lWidth / 2, -lHeight / 2);
@@ -336,21 +320,20 @@ public class Rectangle extends Shape {
 		mVertices.get(2).set(-lWidth / 2, lHeight / 2);
 		mVertices.get(3).set(lWidth / 2, lHeight / 2);
 
-		// rot = 0;
-		float sin = (float) (Math.sin(rot));
-		float cos = (float) (Math.cos(rot));
+		final var sin = (float) (Math.sin(rotation));
+		final var cos = (float) (Math.cos(rotation));
 
 		// iterate over the vertices, rotating them by the given amt around the origin point of the rectangle.
 		for (int i = 0; i < NUM_VERTICES; i++) {
 			// Scale the vertices out from local center (before applying world translation)
-			float dx = -lPX + mVertices.get(i).x * sx;
-			float dy = -lPY + mVertices.get(i).y * sy;
+			float dx = -lPX + mVertices.get(i).x * scaleX;
+			float dy = -lPY + mVertices.get(i).y * scaleY;
 
-			mVertices.get(i).set(centerX() + (dx * cos - (dy * 1f) * sin) * sx, centerY() + (dx * sin + (dy * 1f) * cos) * sy);
+			mVertices.get(i).set(centerX() + (dx * cos - (dy * 1f) * sin) * scaleX, centerY() + (dx * sin + (dy * 1f) * cos) * scaleY);
 
 		}
 
-		mIsAABB = rot == 0;
+		mIsAABB = rotation == 0;
 
 	}
 
