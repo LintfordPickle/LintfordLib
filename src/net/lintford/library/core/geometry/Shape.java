@@ -33,6 +33,22 @@ public abstract class Shape implements Serializable {
 		pivotY = pY;
 	}
 
+	public float pivotX() {
+		return pivotX;
+	}
+
+	public void pivotX(float pNewPivotX) {
+		pivotX = pNewPivotX;
+	}
+
+	public float pivotY() {
+		return pivotY;
+	}
+
+	public void pivotY(float pNewPivotY) {
+		pivotY = pNewPivotY;
+	}
+
 	public abstract float centerX();
 
 	public abstract float centerY();

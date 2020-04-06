@@ -246,8 +246,8 @@ public class Camera implements ICamera {
 
 		// update the bounding rectangle so we can properly do frustum culling
 		mBoundingRectangle.setCenterPosition(-mPosition.x, -mPosition.y);
-		mBoundingRectangle.setWidth(mScaledWindowWidth);
-		mBoundingRectangle.setHeight(mScaledWindowHeight);
+		mBoundingRectangle.width(mScaledWindowWidth);
+		mBoundingRectangle.height(mScaledWindowHeight);
 
 	}
 

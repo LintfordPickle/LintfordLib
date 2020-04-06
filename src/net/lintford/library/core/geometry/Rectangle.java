@@ -5,7 +5,6 @@ import java.util.List;
 
 import net.lintford.library.core.maths.Vector2f;
 
-// SAT Ref: http://www.dyn4j.org/2010/01/sat/
 public class Rectangle extends Shape {
 
 	// --------------------------------------
@@ -20,8 +19,8 @@ public class Rectangle extends Shape {
 	// Variables
 	// --------------------------------------
 
+	protected boolean mAreVerticesDirty;
 	protected List<Vector2f> mVertices;
-	protected boolean mIsAABB; // Blocks rotations
 	public float x;
 	public float y;
 	public float w;
@@ -34,14 +33,6 @@ public class Rectangle extends Shape {
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
-
-	public boolean isAABB() {
-		return mIsAABB;
-	}
-
-	public void isAABB(boolean pNewValue) {
-		mIsAABB = pNewValue;
-	}
 
 	public float left() {
 		return x;
@@ -63,8 +54,18 @@ public class Rectangle extends Shape {
 		return w;
 	}
 
+	public void width(float pWidth) {
+		w = pWidth;
+
+	}
+
 	public float height() {
 		return h;
+	}
+
+	public void height(float pHeight) {
+		h = pHeight;
+
 	}
 
 	public float scaleX() {
@@ -91,8 +92,10 @@ public class Rectangle extends Shape {
 	}
 
 	public List<Vector2f> getVertices() {
-		// FIXME: Add in a isDirty check here
-		updateVertices();
+		if (mAreVerticesDirty) {
+			updateVertices();
+
+		}
 
 		return mVertices;
 	}
@@ -133,8 +136,6 @@ public class Rectangle extends Shape {
 
 		scaleX = 1f;
 		scaleY = 1f;
-
-		mIsAABB = true;
 
 	}
 
@@ -247,16 +248,6 @@ public class Rectangle extends Shape {
 
 	}
 
-	public void setWidth(float pWidth) {
-		w = pWidth;
-
-	}
-
-	public void setHeight(float pHeight) {
-		h = pHeight;
-
-	}
-
 	public void setDimensions(float pWidth, float pHeight) {
 		w = pWidth;
 		h = pHeight;
@@ -333,7 +324,7 @@ public class Rectangle extends Shape {
 
 		}
 
-		mIsAABB = rotation == 0;
+		mAreVerticesDirty = false;
 
 	}
 

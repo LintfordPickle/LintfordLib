@@ -36,10 +36,14 @@ public class SpriteFrame extends Rectangle implements Serializable {
 	// --------------------------------------
 
 	public SpriteFrame() {
+		scaleX = 1.0f;
+		scaleY = 1.0f;
 
 	}
 
 	public SpriteFrame(float pSrcX, float pSrcY, float pSrcW, float pSrcH) {
+		this();
+
 		x = pSrcX;
 		y = pSrcY;
 		w = pSrcW;

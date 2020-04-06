@@ -161,8 +161,8 @@ public class HUD implements ICamera, IResizeListener {
 
 		// update the bounding rectangle so we can properly do frustum culling
 		mBoundingRectangle.setCenterPosition(0, 0);
-		mBoundingRectangle.setWidth(mWindowWidth);
-		mBoundingRectangle.setHeight(mWindowHeight);
+		mBoundingRectangle.width(mWindowWidth);
+		mBoundingRectangle.height(mWindowHeight);
 
 		applyGameViewport();
 
