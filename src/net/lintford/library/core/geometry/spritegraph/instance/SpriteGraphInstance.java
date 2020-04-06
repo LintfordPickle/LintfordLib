@@ -9,6 +9,8 @@ import net.lintford.library.core.entity.PooledBaseData;
 import net.lintford.library.core.geometry.spritegraph.ISpriteGraphPool;
 import net.lintford.library.core.geometry.spritegraph.SpriteGraphManager;
 import net.lintford.library.core.geometry.spritegraph.definition.SpriteGraphDefinition;
+import net.lintford.library.core.graphics.sprites.SpriteInstance;
+import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 
 /**
  * Represents a geometric instance of a SpriteGraphDef in the world, complete with information about transforms and part types (if for example multiple types are available per part).
@@ -131,6 +133,24 @@ public class SpriteGraphInstance extends PooledBaseData {
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
+
+	public void attachedObjectToNode(String pSpriteGraphNodeName, Object pObjectToAttac, SpriteSheetDefinition pSpriteSheetDefinition, SpriteInstance pSpriteInstance) {
+		final var lSpriteGraphWeaponNode = getNodeByName(pSpriteGraphNodeName);
+		if (lSpriteGraphWeaponNode != null) {
+			lSpriteGraphWeaponNode.attachRenderableObjectToSpriteGraphNode(pObjectToAttac, pSpriteSheetDefinition, pSpriteInstance);
+
+		}
+
+	}
+
+	public void detachObjectFromNode(String pSpriteGraphNodeName) {
+		final var lSpriteGraphWeaponNode = getNodeByName(pSpriteGraphNodeName);
+		if (lSpriteGraphWeaponNode != null) {
+			lSpriteGraphWeaponNode.detachRenderableObjectFromSpriteGraphNode();
+
+		}
+
+	}
 
 	public boolean setNodeAngleToPoint(String pNodeName, float pAngle) {
 		SpriteGraphNodeInstance lNode = rootNode.getNodeNyNodeName(pNodeName);

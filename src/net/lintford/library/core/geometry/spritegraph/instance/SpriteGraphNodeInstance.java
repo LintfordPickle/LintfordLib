@@ -43,7 +43,7 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 	public List<SpriteGraphNodeInstance> childNodes;
 
 	public int nodeDepth;
-	public int zDepth; 
+	public int zDepth;
 
 	public int entityGroupID;
 
@@ -56,7 +56,8 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 	private float mPivotX;
 	private float mPivotY;
 	private float mRotation;
-	
+
+	public Object attachedItemInstance;
 
 	// --------------------------------------
 	// Properties
@@ -207,7 +208,7 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 			lNewNode.init(pFlat, pSpriteGraphPool, pSpriteGraphInst, lSpriteGraphNodeDefinition, pEntityGroupUid, nodeDepth + 1);
 
 			pFlat.add(lNewNode);
-			
+
 			childNodes.add(lNewNode);
 
 		}
@@ -221,32 +222,22 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 	public void update(LintfordCore pCore, SpriteGraphInstance pParentGraph, SpriteGraphNodeInstance pParentGraphNode) {
 		// Updating the sprite attached to us
 		if (spriteInstance != null) {
-			final var lCurrentSpriteFrame = spriteInstance.currentSpriteFrame();
 
 			spriteInstance.flipHorizontal = mParentGraphInst.mFlipHorizontal;
 			spriteInstance.flipVertical = mParentGraphInst.mFlipVertical;
 
+			spriteInstance.update(pCore);
+
 			final var lSpriteWidth = spriteInstance.width();
 			final var lSpriteHeight = spriteInstance.height();
-
-			final var lPivotX = lCurrentSpriteFrame.getPivotPointX();
-			final var lPivotY = lCurrentSpriteFrame.getPivotPointY();
 
 			final var lSpritePositionX = mPositionX - lSpriteWidth / 2f;
 			final var lSpritePositionY = mPositionY - lSpriteHeight / 2f;
 
-			spriteInstance.pivotX = lPivotX;
-			spriteInstance.pivotY = lPivotY;
-			spriteInstance.scaleX = 1f;
-			spriteInstance.scaleY = 1f;
-
-			final float lRotRadians = (float)Math.toRadians(mRotation);
+			final float lRotRadians = (float) Math.toRadians(mRotation);
 			final float lRotationAdapted = spriteInstance.flipHorizontal ? -lRotRadians : lRotRadians;
 			spriteInstance.rotateAbs(lRotationAdapted);
-
-			spriteInstance.set(lSpritePositionX, lSpritePositionY, -lSpriteWidth, lSpriteHeight);
-
-			spriteInstance.update(pCore);
+			spriteInstance.set(lSpritePositionX, lSpritePositionY, lSpriteWidth, lSpriteHeight);
 
 		}
 
@@ -294,6 +285,33 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 	// Methods
 	// --------------------------------------
 
+	public void attachRenderableObjectToSpriteGraphNode(Object pObjectToAttac, SpriteSheetDefinition pSpriteSheetDefinition, SpriteInstance pSpriteInstance) {
+		if (pObjectToAttac == null) {
+			detachRenderableObjectFromSpriteGraphNode();
+			return;
+
+		}
+
+		if (attachedItemInstance != pObjectToAttac) {
+			spriteSheetDefinition = pSpriteSheetDefinition;
+			spriteInstance = pSpriteInstance;
+
+			attachedItemInstance = pObjectToAttac;
+
+		}
+
+	}
+
+	public void detachRenderableObjectFromSpriteGraphNode() {
+		if (spriteInstance != null) {
+			spriteInstance.kill();
+			spriteInstance = null;
+		}
+
+		spriteSheetDefinition = null;
+		attachedItemInstance = null;
+	}
+
 	public void addChild(SpriteGraphNodeInstance pPart) {
 		if (!childNodes.contains(pPart)) {
 			childNodes.add(pPart);
@@ -312,6 +330,17 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 
 		name = null;
 		anchorNodeName = null;
+
+	}
+
+	public void resetSprite() {
+		if (spriteInstance != null) {
+			spriteInstance.kill();
+			spriteInstance = null;
+		}
+
+		spriteSheetName = "";
+		spriteSheetDefinition = null;
 
 	}
 

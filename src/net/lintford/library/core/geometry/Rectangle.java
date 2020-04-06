@@ -55,6 +55,7 @@ public class Rectangle extends Shape {
 	}
 
 	public void width(float pWidth) {
+		mAreVerticesDirty = mAreVerticesDirty || pWidth != w;
 		w = pWidth;
 
 	}
@@ -64,28 +65,32 @@ public class Rectangle extends Shape {
 	}
 
 	public void height(float pHeight) {
+		mAreVerticesDirty = mAreVerticesDirty || pHeight != h;
 		h = pHeight;
 
 	}
-
+	
 	public float scaleX() {
 		return scaleX;
 	}
 
-	public void scaleX(float pNewValue) {
-		scaleX = pNewValue;
+	public void scaleX(float pScaleX) {
+		mAreVerticesDirty = mAreVerticesDirty || pScaleX != scaleX;
+		scaleX = pScaleX;
 	}
 
 	public float scaleY() {
 		return scaleY;
 	}
 
-	public void scaleY(float pNewValue) {
-		scaleY = pNewValue;
+	public void scaleY(float pScaleY) {
+		mAreVerticesDirty = mAreVerticesDirty || pScaleY != scaleY;
+		scaleY = pScaleY;
 
 	}
 
 	public void setScale(float pX, float pY) {
+		mAreVerticesDirty = mAreVerticesDirty || pX != scaleX || pY != scaleY;
 		scaleX = pX;
 		scaleY = pY;
 
@@ -255,6 +260,7 @@ public class Rectangle extends Shape {
 	}
 
 	public void set(Rectangle pRect) {
+		mAreVerticesDirty = mAreVerticesDirty || pRect.x != x || pRect.y != y || pRect.w != w || pRect.h != h;
 		x = pRect.x;
 		y = pRect.y;
 		w = pRect.w;
@@ -263,6 +269,7 @@ public class Rectangle extends Shape {
 	}
 
 	public void set(float pX, float pY, float pWidth, float pHeight) {
+		mAreVerticesDirty = mAreVerticesDirty || pX != x || pY != y || pWidth != w || pHeight != h;
 		x = pX;
 		y = pY;
 		w = pWidth;
@@ -271,6 +278,7 @@ public class Rectangle extends Shape {
 	}
 
 	public void setCenter(float pCenterX, float pCenterY, float pWidth, float pHeight) {
+		mAreVerticesDirty = mAreVerticesDirty || (pCenterX - pWidth / 2) != x || (pCenterY - pHeight / 2) != y || pWidth != w || pHeight != h;
 		x = pCenterX - pWidth / 2;
 		y = pCenterY - pHeight / 2;
 		w = pWidth;
@@ -279,6 +287,7 @@ public class Rectangle extends Shape {
 	}
 
 	public void expand(float pAmt) {
+		mAreVerticesDirty = true;
 		x -= pAmt * 0.5f;
 		y -= pAmt * 0.5f;
 		w += pAmt * 2;
@@ -287,17 +296,21 @@ public class Rectangle extends Shape {
 
 	@Override
 	public void rotateRel(float pRotAmt) {
+		mAreVerticesDirty = true;
 		rotation += pRotAmt;
 
 	}
 
 	@Override
 	public void rotateAbs(float pRotAmt) {
+		mAreVerticesDirty = true;
 		rotation = pRotAmt;
 
 	}
 
 	protected void updateVertices() {
+		if (!mAreVerticesDirty)
+			return;
 
 		final float lWidth = flipHorizontal ? -w : w;
 		final float lHeight = flipVertical ? -h : h;
