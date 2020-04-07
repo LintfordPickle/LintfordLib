@@ -185,11 +185,11 @@ public class SpriteInstance extends Rectangle {
 			scaleX(lCurrentFrame.scaleX()); //
 			scaleY(lCurrentFrame.scaleY()); //
 
-			width(lCurrentFrame.width() * lCurrentFrame.scaleX());
-			height(lCurrentFrame.height() * lCurrentFrame.scaleY());
+			width(lCurrentFrame.width() * scaleX());
+			height(lCurrentFrame.height() * scaleY());
 
-			pivotX(lCurrentFrame.pivotX() * lCurrentFrame.scaleX());
-			pivotY(lCurrentFrame.pivotY() * lCurrentFrame.scaleY());
+			pivotX(lCurrentFrame.pivotX() * scaleX());
+			pivotY(lCurrentFrame.pivotY() * scaleY());
 
 		}
 	}

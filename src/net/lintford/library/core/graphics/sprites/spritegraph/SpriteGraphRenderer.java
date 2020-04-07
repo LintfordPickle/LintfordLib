@@ -63,9 +63,11 @@ public class SpriteGraphRenderer extends SpriteBatch {
 		if (pSpriteGraphNode.spriteSheetDefinition != null && pSpriteGraphNode.spriteInstance != null) {
 			draw(pSpriteGraphNode.spriteSheetDefinition, pSpriteGraphNode.spriteInstance, pSpriteGraphNode.spriteInstance, -0.1f, 1f, 1f, 1f, 1f);
 
-			end();
+			if (RENDER_DEBUG) {
+				end();
+				begin(pCore.gameCamera());
 
-			begin(pCore.gameCamera());
+			}
 
 		}
 
@@ -100,21 +102,11 @@ public class SpriteGraphRenderer extends SpriteBatch {
 		final float lPointSize = 2f;
 		GL11.glPointSize(lPointSize * pCore.gameCamera().getZoomFactor());
 
-		Debug.debugManager().drawers().drawPolyImmediate(pCore.gameCamera(), pSpriteGraphNode.spriteInstance);
-
-		{ // pivot - red
-			final var lFlipHorizontal = pSpriteGraph.mFlipHorizontal;
-			final var lFlipVertical = pSpriteGraph.mFlipVertical;
-
-			final var lPivotX = pSpriteGraph.positionX + (lFlipHorizontal ? -pSpriteGraphNode.pivotX() : pSpriteGraphNode.pivotX());
-			final var lPivotY = pSpriteGraph.positionY + (lFlipVertical ? -pSpriteGraphNode.pivotY() : pSpriteGraphNode.pivotY());
-
-			Debug.debugManager().drawers().drawPointImmediate(pCore.gameCamera(), lPivotX, lPivotY, -0.01f, 1f, 0f, 0f, 1f);
-		}
+		// Debug.debugManager().drawers().drawPolyImmediate(pCore.gameCamera(), pSpriteGraphNode.spriteInstance);
 
 		{ // center - green
-			final var lPositionX = pSpriteGraph.positionX;
-			final var lPositionY = pSpriteGraph.positionY;
+			final var lPositionX = pSpriteGraphNode.positionX();
+			final var lPositionY = pSpriteGraphNode.positionY();
 
 			Debug.debugManager().drawers().drawPointImmediate(pCore.gameCamera(), lPositionX, lPositionY, -0.01f, 0f, 1f, 0f, 1f);
 		}
@@ -129,8 +121,8 @@ public class SpriteGraphRenderer extends SpriteBatch {
 					final var lFlipHorizontal = pSpriteGraph.mFlipHorizontal;
 					final var lFlipVertical = pSpriteGraph.mFlipVertical;
 
-					final float lAnchorWorldX = pSpriteGraph.positionX + (lFlipHorizontal ? -lAnchorPoint.x : lAnchorPoint.x);
-					final float lAnchorWorldY = pSpriteGraph.positionY + (lFlipVertical ? -lAnchorPoint.y : lAnchorPoint.y);
+					final float lAnchorWorldX = pSpriteGraphNode.positionX() + (lFlipHorizontal ? -lAnchorPoint.x : lAnchorPoint.x) * lSpriteFrame.scaleX;
+					final float lAnchorWorldY = pSpriteGraphNode.positionY() + (lFlipVertical ? -lAnchorPoint.y : lAnchorPoint.y) * lSpriteFrame.scaleY;
 
 					Debug.debugManager().drawers().drawPointImmediate(pCore.gameCamera(), lAnchorWorldX, lAnchorWorldY, -0.01f, 1f, 1f, 0f, 1f);
 				}

@@ -21,11 +21,12 @@ public class Box2dWorldController extends BaseController {
 	public static final float PIXELS_TO_UNITS = 1f / UNITS_TO_PIXELS;
 
 	public static final int CATEGORY_CHARACTER = 0b00000001;
-	public static final int CATEGORY_WEAPON = 0b00000010;
-	public static final int CATEGORY_ITEM = 0b00000100;
-	public static final int CATEGORY_OBJECT = 0b00001000;
-	public static final int CATEGORY_GROUND = 0b00010000;
-	public static final int CATEGORY_NOTHING = 0b00110000;
+	public static final int CATEGORY_ENEMY     = 0b00000010;
+	public static final int CATEGORY_WEAPON    = 0b00000100;
+	public static final int CATEGORY_ITEM      = 0b00001000;
+	public static final int CATEGORY_OBJECT    = 0b00010000;
+	public static final int CATEGORY_GROUND    = 0b00100000;
+	public static final int CATEGORY_NOTHING   = 0b01000000;
 
 	// --------------------------------------
 	// Variables
@@ -111,6 +112,8 @@ public class Box2dWorldController extends BaseController {
 		if (pObjectToRetrun == null)
 			return;
 
+		pObjectToRetrun.unloadPhysics();
+		
 	}
 
 }

@@ -3,6 +3,7 @@ package net.lintford.library.core.geometry.spritegraph.instance;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.lintford.library.controllers.box2d.Box2dWorldController;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.entity.PooledBaseData;
 import net.lintford.library.core.geometry.spritegraph.ISpriteGraphPool;
@@ -51,6 +52,8 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 	public float angToPoint;
 	public float staticRotationOffset;
 
+	private boolean mFlippedHorizontal;
+	private boolean mFlippedVertical;
 	private float mPositionX;
 	private float mPositionY;
 	private float mPivotX;
@@ -66,6 +69,26 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 	@Override
 	public boolean isAssigned() {
 		return mParentGraphInst != null;
+	}
+
+	public boolean flippedHorizontal() {
+		return mFlippedHorizontal;
+
+	}
+
+	public void flippedHorizontal(boolean pNewValue) {
+		mFlippedHorizontal = pNewValue;
+
+	}
+
+	public boolean flippedVertical() {
+		return mFlippedVertical;
+
+	}
+
+	public void flippedVertical(boolean pNewValue) {
+		mFlippedVertical = pNewValue;
+
 	}
 
 	public float pivotX() {
@@ -223,21 +246,28 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 		// Updating the sprite attached to us
 		if (spriteInstance != null) {
 
-			spriteInstance.flipHorizontal = mParentGraphInst.mFlipHorizontal;
-			spriteInstance.flipVertical = mParentGraphInst.mFlipVertical;
+			flippedHorizontal(mParentGraphInst.mFlipHorizontal);
+			flippedVertical(mParentGraphInst.mFlipVertical);
+
+			spriteInstance.flipHorizontal = flippedHorizontal();
+			spriteInstance.flipVertical = flippedVertical();
 
 			spriteInstance.update(pCore);
 
 			final var lSpriteWidth = spriteInstance.width();
 			final var lSpriteHeight = spriteInstance.height();
 
-			final var lSpritePositionX = mPositionX - lSpriteWidth / 2f;
-			final var lSpritePositionY = mPositionY - lSpriteHeight / 2f;
+			mPivotX = spriteInstance.pivotX;
+			mPivotY = spriteInstance.pivotY;
 
-			final float lRotRadians = (float) Math.toRadians(mRotation);
-			final float lRotationAdapted = spriteInstance.flipHorizontal ? -lRotRadians : lRotRadians;
+			final float lRotationRadians = mRotation;
+
+			final float lSpriteHalfWidth = lSpriteWidth / 2f;
+			final float lSpriteHalfHeight = lSpriteHeight / 2f;
+
+			final float lRotationAdapted = spriteInstance.flipHorizontal ? -lRotationRadians : lRotationRadians;
 			spriteInstance.rotateAbs(lRotationAdapted);
-			spriteInstance.set(lSpritePositionX, lSpritePositionY, lSpriteWidth, lSpriteHeight);
+			spriteInstance.set(mPositionX - lSpriteHalfWidth, mPositionY - lSpriteHalfHeight, lSpriteWidth, lSpriteHeight);
 
 		}
 
@@ -272,13 +302,34 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 
 		}
 
-		final var lChildPositionX = mPositionX - mPivotX + lAnchorPositionX;
-		final var lChildPositionY = mPositionY - mPivotY + lAnchorPositionY;
+		float lAngleInRadians = flippedHorizontal() ? -mRotation : mRotation;
 
-		pChildGraphNodeInstance.positionX(lChildPositionX);
-		pChildGraphNodeInstance.positionY(lChildPositionY);
-		pChildGraphNodeInstance.rotation(lAnchorRotation);
+		float lNX = rotatePointX(0, 0, lAngleInRadians, lAnchorPositionX, lAnchorPositionY);
+		float lNY = rotatePointY(0, 0, lAngleInRadians, lAnchorPositionX, lAnchorPositionY);
 
+		if (name.contentEquals("NODE_WEAPON")) {
+			System.out.println(String.format("rotated point (%f,%f)\n", lNX, lNY));
+
+		}
+
+		pChildGraphNodeInstance.positionX(mPositionX + lNX);
+		pChildGraphNodeInstance.positionY(mPositionY + lNY);
+		pChildGraphNodeInstance.rotation((float) Math.toRadians(lAnchorRotation));
+
+	}
+
+	float rotatePointX(float cx, float cy, float angle, float pX, float pY) {
+		float cos = (float) Math.cos(angle);
+		float sin = (float) Math.sin(angle);
+
+		return cos * (pX - cx) - sin * (pY - cy) + cx;
+	}
+
+	float rotatePointY(float cx, float cy, float angle, float pX, float pY) {
+		float cos = (float) Math.cos(angle);
+		float sin = (float) Math.sin(angle);
+
+		return sin * (pX - cx) + cos * (pY - cy) + cy;
 	}
 
 	// --------------------------------------
