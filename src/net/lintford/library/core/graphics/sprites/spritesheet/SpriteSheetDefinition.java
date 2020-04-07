@@ -156,19 +156,23 @@ public class SpriteSheetDefinition {
 		} else {
 			// If the SpriteSheet definition had animations, then interate them
 			// Resolve the Sprite references in the Animations
-			for (SpriteDefinition aSprite : spriteMap.values()) {
-				aSprite.loadContent(this);
+			for (Map.Entry<String, SpriteDefinition> entry : spriteMap.entrySet()) {
+				final var lSpriteDefinition = entry.getValue();
+				lSpriteDefinition.name = entry.getKey();
+				lSpriteDefinition.loadContent(this);
 
 			}
 
 		}
 
-		// Finally, create a single SpriteDefinition for each SpriteFrame
+		// Finally, create a single SpriteDefinition for each SpriteFrame, in case there isn't one already
 		for (Entry<String, SpriteFrame> entry : frameMap.entrySet()) {
-			if (spriteMap.containsKey(entry.getKey()))
+			if (spriteMap.containsKey(entry.getKey())) {
 				continue;
+			}
 
 			SpriteDefinition lNewSprite = new SpriteDefinition();
+			lNewSprite.name = entry.getKey();
 			lNewSprite.addFrame(entry.getValue());
 
 			spriteMap.put(entry.getKey(), lNewSprite);

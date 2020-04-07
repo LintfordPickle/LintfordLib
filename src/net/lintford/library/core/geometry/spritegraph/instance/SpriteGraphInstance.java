@@ -6,16 +6,18 @@ import java.util.List;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.entity.PooledBaseData;
+import net.lintford.library.core.geometry.spritegraph.AnimatedSpriteGraphListener;
 import net.lintford.library.core.geometry.spritegraph.ISpriteGraphPool;
 import net.lintford.library.core.geometry.spritegraph.SpriteGraphManager;
 import net.lintford.library.core.geometry.spritegraph.definition.SpriteGraphDefinition;
+import net.lintford.library.core.graphics.sprites.AnimatedSpriteListener;
 import net.lintford.library.core.graphics.sprites.SpriteInstance;
 import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 
 /**
  * Represents a geometric instance of a SpriteGraphDef in the world, complete with information about transforms and part types (if for example multiple types are available per part).
  */
-public class SpriteGraphInstance extends PooledBaseData {
+public class SpriteGraphInstance extends PooledBaseData implements AnimatedSpriteListener {
 
 	public class SpriteGraphNodeInstanceZComparator implements Comparator<SpriteGraphNodeInstance> {
 
@@ -45,6 +47,7 @@ public class SpriteGraphInstance extends PooledBaseData {
 
 	private boolean mOrdered;
 	public transient List<SpriteGraphNodeInstance> mFlatNodes;
+	private AnimatedSpriteGraphListener mAnimatedSpriteGraphListener;
 
 	public float positionX;
 	public float positionY;
@@ -75,6 +78,14 @@ public class SpriteGraphInstance extends PooledBaseData {
 	public boolean isAssigned() {
 		return !(spriteGraphName == null && spriteGraphName.length() == 0);
 
+	}
+
+	public boolean isAnimatedSpriteGraphListenerAssigned() {
+		return mAnimatedSpriteGraphListener != null;
+	}
+
+	public void animatedSpriteGraphListener(AnimatedSpriteGraphListener pAnimatedSpriteGraphListener) {
+		mAnimatedSpriteGraphListener = pAnimatedSpriteGraphListener;
 	}
 
 	// --------------------------------------
@@ -184,6 +195,33 @@ public class SpriteGraphInstance extends PooledBaseData {
 		rootNode.reset();
 		spriteGraphName = null;
 		mOrdered = false;
+
+	}
+
+	@Override
+	public void onStarted(SpriteInstance pSender) {
+		if (mAnimatedSpriteGraphListener != null) {
+			mAnimatedSpriteGraphListener.onSpriteAnimationStarted(this, pSender.spriteDefinition());
+
+		}
+
+	}
+
+	@Override
+	public void onLooped(SpriteInstance pSender) {
+		if (mAnimatedSpriteGraphListener != null) {
+			mAnimatedSpriteGraphListener.onSpriteAnimationLooped(this, pSender.spriteDefinition());
+
+		}
+
+	}
+
+	@Override
+	public void onStopped(SpriteInstance pSender) {
+		if (mAnimatedSpriteGraphListener != null) {
+			mAnimatedSpriteGraphListener.onSpriteAnimationStopped(this, pSender.spriteDefinition());
+
+		}
 
 	}
 

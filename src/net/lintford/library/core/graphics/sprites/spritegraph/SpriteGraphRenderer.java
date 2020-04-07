@@ -60,8 +60,11 @@ public class SpriteGraphRenderer extends SpriteBatch {
 	}
 
 	private void renderSpriteGraphNodeInstance(LintfordCore pCore, SpriteGraphInstance pSpriteGraph, SpriteGraphNodeInstance pSpriteGraphNode) {
-		if (pSpriteGraphNode.spriteSheetDefinition != null && pSpriteGraphNode.spriteInstance != null) {
-			draw(pSpriteGraphNode.spriteSheetDefinition, pSpriteGraphNode.spriteInstance, pSpriteGraphNode.spriteInstance, -0.1f, 1f, 1f, 1f, 1f);
+		final var lSpriteSheetDefinition = pSpriteGraphNode.spriteSheetDefinition;
+		final var lSpriteInstance = pSpriteGraphNode.spriteInstance();
+
+		if (lSpriteSheetDefinition != null && lSpriteInstance != null) {
+			draw(lSpriteSheetDefinition, lSpriteInstance, lSpriteInstance, -0.1f, 1f, 1f, 1f, 1f);
 
 			if (RENDER_DEBUG) {
 				end();
@@ -77,9 +80,11 @@ public class SpriteGraphRenderer extends SpriteBatch {
 	}
 
 	private void renderSpriteTreeNode(LintfordCore pCore, SpriteGraphInstance pSpriteGraph, SpriteGraphNodeInstance pSpriteGraphNode) {
+		final var lSpriteSheetDefinition = pSpriteGraphNode.spriteSheetDefinition;
+		final var lSpriteInstance = pSpriteGraphNode.spriteInstance();
 
-		if (pSpriteGraphNode.spriteSheetDefinition != null && pSpriteGraphNode.spriteInstance != null) {
-			draw(pSpriteGraphNode.spriteSheetDefinition, pSpriteGraphNode.spriteInstance, pSpriteGraphNode.spriteInstance, -0.1f, 1f, 1f, 1f, 1f);
+		if (lSpriteSheetDefinition != null && lSpriteInstance != null) {
+			draw(lSpriteSheetDefinition, lSpriteInstance, lSpriteInstance, -0.1f, 1f, 1f, 1f, 1f);
 
 			end();
 			begin(pCore.gameCamera());
@@ -99,6 +104,8 @@ public class SpriteGraphRenderer extends SpriteBatch {
 	}
 
 	private void renderSpriteTreeNodeDebug(LintfordCore pCore, SpriteGraphInstance pSpriteGraph, SpriteGraphNodeInstance pSpriteGraphNode) {
+		final var lSpriteInstance = pSpriteGraphNode.spriteInstance();
+
 		final float lPointSize = 2f;
 		GL11.glPointSize(lPointSize * pCore.gameCamera().getZoomFactor());
 
@@ -112,8 +119,8 @@ public class SpriteGraphRenderer extends SpriteBatch {
 		}
 
 		{ // anchors - yellow
-			if (pSpriteGraphNode.spriteInstance != null) {
-				final var lSpriteFrame = pSpriteGraphNode.spriteInstance.currentSpriteFrame();
+			if (lSpriteInstance != null) {
+				final var lSpriteFrame = lSpriteInstance.currentSpriteFrame();
 				final int lAnchorCount = lSpriteFrame.anchorCount();
 				for (int i = 0; i < lAnchorCount; i++) {
 					final var lAnchorPoint = lSpriteFrame.getAnchorByIndex(i);

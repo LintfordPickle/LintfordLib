@@ -85,6 +85,10 @@ public class SpriteInstance extends Rectangle {
 
 	}
 
+	public SpriteDefinition spriteDefinition() {
+		return mSpriteDefinition;
+	}
+
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------

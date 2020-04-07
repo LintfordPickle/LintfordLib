@@ -3,12 +3,12 @@ package net.lintford.library.core.geometry.spritegraph.instance;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.lintford.library.controllers.box2d.Box2dWorldController;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.entity.PooledBaseData;
 import net.lintford.library.core.geometry.spritegraph.ISpriteGraphPool;
 import net.lintford.library.core.geometry.spritegraph.definition.SpriteGraphNodeDefinition;
 import net.lintford.library.core.graphics.sprites.SpriteAnchor;
+import net.lintford.library.core.graphics.sprites.SpriteDefinition;
 import net.lintford.library.core.graphics.sprites.SpriteInstance;
 import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 
@@ -31,7 +31,7 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 
 	/** Each SpriteGraphNodeInstance has a specific sheetsheet assigned to it. It is from which this sheet that all the anchor information is taken. */
 	public transient SpriteSheetDefinition spriteSheetDefinition;
-	public transient SpriteInstance spriteInstance;
+	private transient SpriteInstance mSpriteInstance;
 	public String spriteSheetName;
 
 	/** The ID of the {@link SpriteGraphAnchorDef} on the parent. */
@@ -65,6 +65,10 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public SpriteInstance spriteInstance() {
+		return mSpriteInstance;
+	}
 
 	@Override
 	public boolean isAssigned() {
@@ -187,12 +191,12 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 	}
 
 	public SpriteAnchor getAnchorPointByName(String pAnchorName) {
-		if (spriteInstance == null)
+		if (mSpriteInstance == null)
 			return null;
 
 		// The anchor points are all stored in the individual SpriteFrames.
 
-		final var lCurrentSpriteFrame = spriteInstance.currentSpriteFrame();
+		final var lCurrentSpriteFrame = mSpriteInstance.currentSpriteFrame();
 		if (lCurrentSpriteFrame == null)
 			return null;
 
@@ -244,30 +248,30 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 
 	public void update(LintfordCore pCore, SpriteGraphInstance pParentGraph, SpriteGraphNodeInstance pParentGraphNode) {
 		// Updating the sprite attached to us
-		if (spriteInstance != null) {
+		if (mSpriteInstance != null) {
 
 			flippedHorizontal(mParentGraphInst.mFlipHorizontal);
 			flippedVertical(mParentGraphInst.mFlipVertical);
 
-			spriteInstance.flipHorizontal = flippedHorizontal();
-			spriteInstance.flipVertical = flippedVertical();
+			mSpriteInstance.flipHorizontal = flippedHorizontal();
+			mSpriteInstance.flipVertical = flippedVertical();
 
-			spriteInstance.update(pCore);
+			mSpriteInstance.update(pCore);
 
-			final var lSpriteWidth = spriteInstance.width();
-			final var lSpriteHeight = spriteInstance.height();
+			final var lSpriteWidth = mSpriteInstance.width();
+			final var lSpriteHeight = mSpriteInstance.height();
 
-			mPivotX = spriteInstance.pivotX;
-			mPivotY = spriteInstance.pivotY;
+			mPivotX = mSpriteInstance.pivotX;
+			mPivotY = mSpriteInstance.pivotY;
 
 			final float lRotationRadians = mRotation;
 
 			final float lSpriteHalfWidth = lSpriteWidth / 2f;
 			final float lSpriteHalfHeight = lSpriteHeight / 2f;
 
-			final float lRotationAdapted = spriteInstance.flipHorizontal ? -lRotationRadians : lRotationRadians;
-			spriteInstance.rotateAbs(lRotationAdapted);
-			spriteInstance.set(mPositionX - lSpriteHalfWidth, mPositionY - lSpriteHalfHeight, lSpriteWidth, lSpriteHeight);
+			final float lRotationAdapted = mSpriteInstance.flipHorizontal ? -lRotationRadians : lRotationRadians;
+			mSpriteInstance.rotateAbs(lRotationAdapted);
+			mSpriteInstance.set(mPositionX - lSpriteHalfWidth, mPositionY - lSpriteHalfHeight, lSpriteWidth, lSpriteHeight);
 
 		}
 
@@ -287,8 +291,8 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 		float lAnchorPositionY = 0.0f;
 		float lAnchorRotation = 0.0f;
 
-		if (spriteInstance != null) {
-			final var lCurrentSpriteFrame = spriteInstance.currentSpriteFrame();
+		if (mSpriteInstance != null) {
+			final var lCurrentSpriteFrame = mSpriteInstance.currentSpriteFrame();
 			if (lCurrentSpriteFrame != null) {
 				final var lAnchorPoint = lCurrentSpriteFrame.getAnchorByName(pChildGraphNodeInstance.anchorNodeName);
 
@@ -306,11 +310,6 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 
 		float lNX = rotatePointX(0, 0, lAngleInRadians, lAnchorPositionX, lAnchorPositionY);
 		float lNY = rotatePointY(0, 0, lAngleInRadians, lAnchorPositionX, lAnchorPositionY);
-
-		if (name.contentEquals("NODE_WEAPON")) {
-			System.out.println(String.format("rotated point (%f,%f)\n", lNX, lNY));
-
-		}
 
 		pChildGraphNodeInstance.positionX(mPositionX + lNX);
 		pChildGraphNodeInstance.positionY(mPositionY + lNY);
@@ -345,7 +344,7 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 
 		if (attachedItemInstance != pObjectToAttac) {
 			spriteSheetDefinition = pSpriteSheetDefinition;
-			spriteInstance = pSpriteInstance;
+			mSpriteInstance = pSpriteInstance;
 
 			attachedItemInstance = pObjectToAttac;
 
@@ -354,9 +353,9 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 	}
 
 	public void detachRenderableObjectFromSpriteGraphNode() {
-		if (spriteInstance != null) {
-			spriteInstance.kill();
-			spriteInstance = null;
+		if (mSpriteInstance != null) {
+			mSpriteInstance.kill();
+			mSpriteInstance = null;
 		}
 
 		spriteSheetDefinition = null;
@@ -385,9 +384,9 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 	}
 
 	public void resetSprite() {
-		if (spriteInstance != null) {
-			spriteInstance.kill();
-			spriteInstance = null;
+		if (mSpriteInstance != null) {
+			mSpriteInstance.kill();
+			mSpriteInstance = null;
 		}
 
 		spriteSheetName = "";
@@ -412,16 +411,16 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 	}
 
 	public void unassignNewSpriteSheetDefinition() {
-		if (spriteInstance != null) {
+		if (mSpriteInstance != null) {
 			if (spriteSheetDefinition != null) {
-				spriteSheetDefinition.releaseInistance(spriteInstance);
+				spriteSheetDefinition.releaseInistance(mSpriteInstance);
 
 			}
 
 		}
 
 		spriteSheetDefinition = null;
-		spriteInstance = null;
+		mSpriteInstance = null;
 
 	}
 
@@ -431,28 +430,53 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 
 		}
 
-		final var lSpriteDefinition = spriteSheetDefinition.getSpriteDefinition(pSpriteName);
-		if (lSpriteDefinition == null) {
-			return;
-
-		}
-
-		spriteSheetName = spriteSheetDefinition.spriteSheetName;
-		spriteInstance = spriteSheetDefinition.getSpriteInstance(lSpriteDefinition);
-
-		// TODO: Add sprite listeners, so we can act when an animation ends
-
-	}
-
-	public void unassignSprite() {
 		if (spriteSheetDefinition == null) {
 			return;
 
 		}
 
-		spriteSheetDefinition.releaseInistance(spriteInstance);
-		spriteInstance = null;
+		final var lSpriteDefinition = spriteSheetDefinition.getSpriteDefinition(pSpriteName);
+		assignNewSprite(lSpriteDefinition);
 
 	}
+
+	public void assignNewSprite(SpriteDefinition pSpriteDefinition) {
+		if (pSpriteDefinition == null) {
+			return;
+
+		}
+
+		spriteSheetName = spriteSheetDefinition.spriteSheetName;
+		mSpriteInstance = spriteSheetDefinition.getSpriteInstance(pSpriteDefinition);
+
+		// Add sprite listeners, so we can act when an animation ends
+		if (mSpriteInstance != null) {
+			mSpriteInstance.animatedSpriteListender(mParentGraphInst);
+
+		}
+
+	}
+
+	public void unassignSprite() {
+		mParentGraphInst = null;
+
+		if (spriteSheetDefinition != null) {
+			spriteSheetDefinition.releaseInistance(mSpriteInstance);
+			spriteSheetDefinition = null;
+			return;
+
+		}
+
+		if (mSpriteInstance != null) {
+			mSpriteInstance.animatedSpriteListender(null);
+			mSpriteInstance = null;
+
+		}
+
+	}
+
+	// --------------------------------------
+	// Animation Listeners
+	// --------------------------------------
 
 }

@@ -263,7 +263,7 @@ public class TextureBatch {
 			flush();
 		}
 
-		List<Vector2f> lVertList = pDestRect.getVertices();
+		final List<Vector2f> lVertList = pDestRect.getVertices();
 
 		// Vertex 0
 		float x0 = lVertList.get(0).x;
