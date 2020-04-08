@@ -301,7 +301,8 @@ public class Rectangle extends Shape {
 	 * @param cy
 	 */
 	public void setPosition(float pX, float pY) {
-		setCenter(pX, pY, w, h);
+		x = pX;
+		y = pY;
 
 	}
 
