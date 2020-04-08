@@ -98,7 +98,7 @@ public class JBox2dDebugDrawer {
 				Shape lCircleShape = pFixture.getShape();
 				final float lRadius = lCircleShape.getRadius() * 32f;
 
-				Debug.debugManager().drawers().drawCircle(lBodyX, lBodyY, lRadius, 7, GL11.GL_LINE_STRIP);
+				Debug.debugManager().drawers().drawCircle(lBodyX, lBodyY, lRadius, 10, GL11.GL_LINE_STRIP);
 
 				lFixture = lFixture.getNext();
 

@@ -123,7 +123,7 @@ public abstract class JBox2dEntity extends WorldEntity {
 			if (lBox2dBodyInstance != null) {
 				x = lBox2dBodyInstance.mBody.getPosition().x * Box2dWorldController.UNITS_TO_PIXELS;
 				y = lBox2dBodyInstance.mBody.getPosition().y * Box2dWorldController.UNITS_TO_PIXELS;
-
+				r = lBox2dBodyInstance.mBody.getAngle();
 			}
 
 		}

@@ -15,7 +15,7 @@ public abstract class WorldEntity extends PooledBaseData {
 	// Variables
 	// --------------------------------------
 
-	public float x, y;
+	public float x, y, r;
 
 	// --------------------------------------
 	// Properties
@@ -24,6 +24,11 @@ public abstract class WorldEntity extends PooledBaseData {
 	public void setPosition(float pWorldX, float pWorldY) {
 		x = pWorldX;
 		y = pWorldY;
+
+	}
+
+	public void setRotation(float pRotationInRadians) {
+		r = pRotationInRadians;
 
 	}
 
