@@ -155,7 +155,7 @@ public class MenuImageEntry extends MenuEntry {
 
 			float thMaxWidth = mMaxWidth;
 			if (mScaleToFitParent && lAR != 0) {
-				float thMaxHeight = mParentLayout.h - mParentLayout.marginBottom() - mParentLayout.marginTop();
+				float thMaxHeight = mParentLayout.h() - mParentLayout.marginBottom() - mParentLayout.marginTop();
 				thMaxWidth = thMaxHeight / lAR;
 
 			}
@@ -172,11 +172,11 @@ public class MenuImageEntry extends MenuEntry {
 			mFittedHeight = mFittedWidth * lAR;
 
 		} else {
-			mDefaultWidth = mParentLayout.w - marginLeft() - marginRight();
+			mDefaultWidth = mParentLayout.w() - marginLeft() - marginRight();
 
 			float thMaxWidth = mMaxWidth;
 			if (mScaleToFitParent && DEFAULT_ASPECT_RATIO != 0) {
-				float thMaxHeight = mParentLayout.h - mParentLayout.marginBottom() - mParentLayout.marginTop();
+				float thMaxHeight = mParentLayout.h() - mParentLayout.marginBottom() - mParentLayout.marginTop();
 				thMaxWidth = thMaxHeight / DEFAULT_ASPECT_RATIO;
 
 			}
@@ -193,7 +193,7 @@ public class MenuImageEntry extends MenuEntry {
 
 		}
 
-		x = mParentLayout.x + mParentLayout.width() / 2f - mFittedWidth / 2;
+		x = mParentLayout.x() + mParentLayout.width() / 2f - mFittedWidth / 2;
 		h = mFittedHeight;
 
 	}

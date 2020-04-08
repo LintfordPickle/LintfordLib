@@ -128,8 +128,8 @@ public class SpriteGraphRenderer extends SpriteBatch {
 					final var lFlipHorizontal = pSpriteGraph.mFlipHorizontal;
 					final var lFlipVertical = pSpriteGraph.mFlipVertical;
 
-					final float lAnchorWorldX = pSpriteGraphNode.positionX() + (lFlipHorizontal ? -lAnchorPoint.x : lAnchorPoint.x) * lSpriteFrame.scaleX;
-					final float lAnchorWorldY = pSpriteGraphNode.positionY() + (lFlipVertical ? -lAnchorPoint.y : lAnchorPoint.y) * lSpriteFrame.scaleY;
+					final float lAnchorWorldX = pSpriteGraphNode.positionX() + (lFlipHorizontal ? -lAnchorPoint.x : lAnchorPoint.x) * lSpriteFrame.scaleX();
+					final float lAnchorWorldY = pSpriteGraphNode.positionY() + (lFlipVertical ? -lAnchorPoint.y : lAnchorPoint.y) * lSpriteFrame.scaleY();
 
 					Debug.debugManager().drawers().drawPointImmediate(pCore.gameCamera(), lAnchorWorldX, lAnchorWorldY, -0.01f, 1f, 1f, 0f, 1f);
 				}

@@ -98,7 +98,7 @@ public class ListLayout extends BaseLayout implements IProcessMouseInput {
 		final int lEntryCount = menuEntries().size();
 
 		// If the height of the content is smaller than the height of this layout, disable the scroll bar
-		if (mContentArea.h < h) {
+		if (mContentArea.h() < h) {
 			mYScrollPosition = 0;
 			lYPos += 5f;
 		}
@@ -136,23 +136,23 @@ public class ListLayout extends BaseLayout implements IProcessMouseInput {
 				lScrollBarWidth = mScrollBar.width();
 
 			final var lNewEntryWidth = w - marginLeft() - marginRight() - lScrollBarWidth;
-			lEntry.w = MathHelper.clamp(lNewEntryWidth, lEntry.minWidth(), lEntry.maxWidth());
+			lEntry.w(MathHelper.clamp(lNewEntryWidth, lEntry.minWidth(), lEntry.maxWidth()));
 
-			lEntry.x = centerX() - lEntry.w / 2 - lScrollBarWidth / 2;
+			lEntry.x(centerX() - lEntry.w() / 2 - lScrollBarWidth / 2);
 
 			// Assign the entry height here
 			if (lEntry.verticalFillType() == FILLTYPE.FILL_CONTAINER) {
-				lEntry.h = lSizeOfEachFillElement; // MathHelper.clamp(lSizeOfEachFillElement, lEntry.minHeight(), lEntry.maxHeight());
+				lEntry.h(lSizeOfEachFillElement);
 
 			} else if (lEntry.verticalFillType() == FILLTYPE.FILL_CONTAINER) {
-				lEntry.h = lSizeOfEachFillElement; // MathHelper.clamp(lSizeOfEachFillElement, lEntry.minHeight(), lEntry.maxHeight());
+				lEntry.h(lSizeOfEachFillElement);
 
 			} else {
-				lEntry.h = 32;// lLayoutHeight - lHeightTaken;
+				lEntry.h(32);
 
 			}
 
-			lEntry.y = lYPos;
+			lEntry.y(lYPos);
 
 			lYPos += lEntry.marginTop();
 			lYPos += lEntry.height();

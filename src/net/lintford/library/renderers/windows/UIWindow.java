@@ -154,11 +154,7 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 		mIconSrcRectangle = new Rectangle();
 		mContentDisplayArea = new Rectangle();
 
-		// Set some sane defaults
-		mWindowArea.x = 10;
-		mWindowArea.y = 10;
-		mWindowArea.w = 320;
-		mWindowArea.h = 240;
+		mWindowArea.set(10, 10, 320, 240);
 
 		mWindowAlpha = 1.0f;
 		mTitleR = 1.0f;
@@ -168,16 +164,14 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 		mFullContentRectangle = new ScrollBarContentRectangle(this);
 		mScrollBar = new ScrollBar(this, mFullContentRectangle);
 
-		mFullContentRectangle.x = mWindowArea.x;
-		mFullContentRectangle.y = mWindowArea.y + DEFAULT_TITLEBAR_HEIGHT;
-		mFullContentRectangle.w = 0;
-		mFullContentRectangle.h = 0;
+		mFullContentRectangle.set(mWindowArea.x(), mWindowArea.y() + DEFAULT_TITLEBAR_HEIGHT, 0, 0);
 
 		// sane default
 		mWindowTitle = "<unnamed>";
 
 		mIsWindowMoveable = false;
-		mUIInputFromUIManager = true; // UIManager will call HandleInput (as oppose to some other controller)
+		mUIInputFromUIManager = true;
+
 	}
 
 	// --------------------------------------
@@ -193,8 +187,8 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 	public void loadGLContent(ResourceManager pResourceManager) {
 		mCoreTexture = pResourceManager.textureManager().textureCore();
 
-		mContentDisplayArea.y = mWindowArea.y + getTitleBarHeight();
-		mContentDisplayArea.h = mWindowArea.h - +getTitleBarHeight();
+		mContentDisplayArea.y(mWindowArea.y() + getTitleBarHeight());
+		mContentDisplayArea.h(mWindowArea.h() - +getTitleBarHeight());
 
 		mIsLoaded = true;
 
@@ -233,8 +227,8 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 
 			}
 
-			mWindowArea.x += (pCore.input().mouse().mouseWindowCoords().x - dx);
-			mWindowArea.y += (pCore.input().mouse().mouseWindowCoords().y - dy);
+			mWindowArea.x(mWindowArea.x() + (pCore.input().mouse().mouseWindowCoords().x - dx));
+			mWindowArea.y(mWindowArea.y() + (pCore.input().mouse().mouseWindowCoords().y - dy));
 
 			// update the delta
 			dx = pCore.input().mouse().mouseWindowCoords().x;
@@ -312,12 +306,12 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 
 		}
 
-		if (mFullContentRectangle.h < mContentDisplayArea.h) {
-			mFullContentRectangle.h = mContentDisplayArea.h;
+		if (mFullContentRectangle.h() < mContentDisplayArea.h()) {
+			mFullContentRectangle.h(mContentDisplayArea.h());
 
 		}
 
-		if (mFullContentRectangle.h - contentDisplayArea().h > 0) {
+		if (mFullContentRectangle.h() - contentDisplayArea().h() > 0) {
 			mScrollBar.update(pCore);
 
 		}
@@ -334,8 +328,8 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 		mYScrollVal = lScrollSpeedFactor;
 		if (mYScrollVal > 0)
 			mYScrollVal = 0;
-		if (mYScrollVal < -(mFullContentRectangle.h - mContentDisplayArea.h))
-			mYScrollVal = -(mFullContentRectangle.h - mContentDisplayArea.h);
+		if (mYScrollVal < -(mFullContentRectangle.h() - mContentDisplayArea.h()))
+			mYScrollVal = -(mFullContentRectangle.h() - mContentDisplayArea.h());
 
 	}
 
@@ -359,21 +353,21 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 
 		// Draw the window background
 		lTextureBatch.begin(pCore.HUD());
-		TextureBatch9Patch.draw9Patch(lTextureBatch, mCoreTexture, 32, mWindowArea.x, mWindowArea.y + getTitleBarHeight() + 5, mWindowArea.w, mWindowArea.h - getTitleBarHeight() - 5, Z_DEPTH, 1f);
+		TextureBatch9Patch.draw9Patch(lTextureBatch, mCoreTexture, 32, mWindowArea.x(), mWindowArea.y() + getTitleBarHeight() + 5, mWindowArea.w(), mWindowArea.h() - getTitleBarHeight() - 5, Z_DEPTH, 1f);
 		lTextureBatch.end();
 
 		// Draw the title bar
 		lTextureBatch.begin(pCore.HUD());
-		lTextureBatch.draw(mCoreTexture, 448, 0, 32, 32, mWindowArea.x, mWindowArea.y, 32, getTitleBarHeight(), Z_DEPTH, 1f, 1f, 1f, mWindowAlpha);
-		lTextureBatch.draw(mCoreTexture, 480, 0, 32, 32, mWindowArea.x + 32, mWindowArea.y, mWindowArea.w - 64, getTitleBarHeight(), Z_DEPTH, 1f, 1f, 1f, mWindowAlpha);
-		lTextureBatch.draw(mCoreTexture, 512, 0, 32, 32, mWindowArea.x + mWindowArea.w - 32, mWindowArea.y, 32, getTitleBarHeight(), Z_DEPTH, 1f, 1f, 1f, mWindowAlpha);
+		lTextureBatch.draw(mCoreTexture, 448, 0, 32, 32, mWindowArea.x(), mWindowArea.y(), 32, getTitleBarHeight(), Z_DEPTH, 1f, 1f, 1f, mWindowAlpha);
+		lTextureBatch.draw(mCoreTexture, 480, 0, 32, 32, mWindowArea.x() + 32, mWindowArea.y(), mWindowArea.w() - 64, getTitleBarHeight(), Z_DEPTH, 1f, 1f, 1f, mWindowAlpha);
+		lTextureBatch.draw(mCoreTexture, 512, 0, 32, 32, mWindowArea.x() + mWindowArea.w() - 32, mWindowArea.y(), 32, getTitleBarHeight(), Z_DEPTH, 1f, 1f, 1f, mWindowAlpha);
 
-		float lTitleX = mWindowArea.x + WINDOW_CONTENT_PADDING_X;
-		float lTitleY = mWindowArea.y;
+		float lTitleX = mWindowArea.x() + WINDOW_CONTENT_PADDING_X;
+		float lTitleY = mWindowArea.y();
 
 		// Render the icons from the game ui texture
 		if (mIconSrcRectangle != null && !mIconSrcRectangle.isEmpty()) {
-			lTextureBatch.draw(mCoreTexture, mIconSrcRectangle.x, mIconSrcRectangle.y, mIconSrcRectangle.w, mIconSrcRectangle.h, lTitleX, lTitleY, getTitleBarHeight(), getTitleBarHeight(), Z_DEPTH, 1f, 1f, 1f, mWindowAlpha);
+			lTextureBatch.draw(mCoreTexture, mIconSrcRectangle, lTitleX, lTitleY, getTitleBarHeight(), getTitleBarHeight(), Z_DEPTH, 1f, 1f, 1f, mWindowAlpha);
 
 			lTitleX += 32 + WINDOW_CONTENT_PADDING_X;
 
@@ -387,7 +381,7 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 		lTitleFontUnit.draw(mWindowTitle, lTitleX, lTitleY + 16f - lTitleFontUnit.fontPointSize() * 0.5f, Z_DEPTH, mTitleR, mTitleG, mTitleB, 1f, 1f);
 		lTitleFontUnit.end();
 
-		if (mFullContentRectangle.h - contentDisplayArea().h > 0) {
+		if (mFullContentRectangle.h() - contentDisplayArea().h() > 0) {
 			mScrollBar.draw(pCore, lTextureBatch, mCoreTexture, Z_DEPTH);
 
 		}
@@ -418,10 +412,12 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 
 		}
 
-		mWindowArea.x = lHUDBoundingRect.left() + SCREEN_PADDING;
-		mWindowArea.y = lHUDBoundingRect.top() + 50;
-		mWindowArea.w = lHUDBoundingRect.w * 0.5f - WINDOW_PADDING - SCREEN_PADDING;
-		mWindowArea.h = lHUDBoundingRect.h / 2 - WINDOW_PADDING - 50;
+		final var lX = lHUDBoundingRect.left() + SCREEN_PADDING;
+		final var lY = lHUDBoundingRect.top() + 50;
+		final var lW = lHUDBoundingRect.w() * 0.5f - WINDOW_PADDING - SCREEN_PADDING;
+		final var lH = lHUDBoundingRect.h() / 2 - WINDOW_PADDING - 50;
+
+		mWindowArea.set(lX, lY, lW, lH);
 
 	}
 

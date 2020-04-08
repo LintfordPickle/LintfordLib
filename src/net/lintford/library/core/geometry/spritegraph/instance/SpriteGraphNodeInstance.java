@@ -253,8 +253,8 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 			flippedHorizontal(mParentGraphInst.mFlipHorizontal);
 			flippedVertical(mParentGraphInst.mFlipVertical);
 
-			mSpriteInstance.flipHorizontal = flippedHorizontal();
-			mSpriteInstance.flipVertical = flippedVertical();
+			mSpriteInstance.flipHorizontal(flippedHorizontal());
+			mSpriteInstance.flipVertical(flippedVertical());
 
 			mSpriteInstance.update(pCore);
 
@@ -269,7 +269,7 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 			final float lSpriteHalfWidth = lSpriteWidth / 2f;
 			final float lSpriteHalfHeight = lSpriteHeight / 2f;
 
-			final float lRotationAdapted = mSpriteInstance.flipHorizontal ? -lRotationRadians : lRotationRadians;
+			final float lRotationAdapted = mSpriteInstance.flipHorizontal() ? -lRotationRadians : lRotationRadians;
 			mSpriteInstance.rotateAbs(lRotationAdapted);
 			mSpriteInstance.set(mPositionX - lSpriteHalfWidth, mPositionY - lSpriteHalfHeight, lSpriteWidth, lSpriteHeight);
 

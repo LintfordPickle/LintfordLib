@@ -142,25 +142,23 @@ public class UIHorizontalEntryGroup extends UIWidget {
 		float lTotalHeight = 0;
 		for (int i = 0; i < lCount; i++) {
 			lTotalWidth += PADDING;
-			lTotalWidth += mChildEntries.get(i).w;
+			lTotalWidth += mChildEntries.get(i).w();
 			lTotalWidth += PADDING;
 
-			if (mChildEntries.get(i).h + PADDING * 2 > lTotalHeight) {
-				lTotalHeight = mChildEntries.get(i).h + PADDING * 2;
+			if (mChildEntries.get(i).h() + PADDING * 2 > lTotalHeight) {
+				lTotalHeight = mChildEntries.get(i).h() + PADDING * 2;
 			}
 		}
 
 		final float lHSpace = lTotalWidth / lCount;
 
 		for (int i = 0; i < lCount; i++) {
-
 			// we have to manually take away the half screen width because the entries on
 			// the menu screen are placed in the middle.
-			float lPosX = x + PADDING + lHSpace * i;
-			float lPosY = y;
+			final float lPosX = x + PADDING + lHSpace * i;
+			final float lPosY = y + PADDING;
 
-			mChildEntries.get(i).x = lPosX;
-			mChildEntries.get(i).y = lPosY + PADDING;
+			mChildEntries.get(i).setPosition(lPosX, lPosY);
 
 		}
 

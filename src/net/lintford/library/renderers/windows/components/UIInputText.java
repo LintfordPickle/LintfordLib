@@ -138,7 +138,7 @@ public class UIInputText extends UIWidget implements IBufferedInputCallback {
 
 				onClick(pCore.input());
 				mHasFocus = true;
-				
+
 				return true;
 
 			} else if (mHasFocus) {
@@ -159,11 +159,8 @@ public class UIInputText extends UIWidget implements IBufferedInputCallback {
 
 		mCaretFlashTimer += pCore.time().elapseGameTimeMilli();
 
-		final int lCANCEL_RECT_SIZE = 24;
-		mCancelRectangle.x = x + w - lCANCEL_RECT_SIZE - 10;
-		mCancelRectangle.y = y + h / 2 - lCANCEL_RECT_SIZE / 2;
-		mCancelRectangle.w = lCANCEL_RECT_SIZE;
-		mCancelRectangle.h = lCANCEL_RECT_SIZE;
+		final int lCancelRectSize = 24;
+		mCancelRectangle.set(x + w - lCancelRectSize - 10, y + h / 2 - lCancelRectSize / 2, lCancelRectSize, lCancelRectSize);
 
 		if (mHasFocus) {
 			// flash and update the location of the caret
@@ -199,7 +196,7 @@ public class UIInputText extends UIWidget implements IBufferedInputCallback {
 
 		// Draw the cancel button rectangle
 		pTextureBatch.begin(pCore.HUD());
-		pTextureBatch.draw(pUITexture, 288, 64, 32, 32, mCancelRectangle.x, mCancelRectangle.y, mCancelRectangle.w, mCancelRectangle.h, pComponentZDepth, 1f, 1f, 1f, 1);
+		pTextureBatch.draw(pUITexture, 288, 64, 32, 32, mCancelRectangle, pComponentZDepth, 1f, 1f, 1f, 1);
 		pTextureBatch.end();
 
 		final float lInputTextWidth = pTextFont.bitmap().getStringWidth(mInputField.toString());
@@ -250,11 +247,11 @@ public class UIInputText extends UIWidget implements IBufferedInputCallback {
 				if (mInputField.length() > 0) {
 					mInputField.delete(0, mInputField.length());
 				}
-				
+
 			}
 
-		} 
-		
+		}
+
 	}
 
 	@Override

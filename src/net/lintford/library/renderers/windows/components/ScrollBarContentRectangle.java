@@ -75,8 +75,8 @@ public class ScrollBarContentRectangle extends Rectangle {
 		// Draw into the stencil buffer to mark the 'active' bits
 		pTextureBatch.begin(pCore.HUD());
 
-		pTextureBatch.draw(pUITexture, 0, 0, 32, 32, pRectangle.x + mDepthPadding, pRectangle.y + mDepthPadding, pRectangle.w - mDepthPadding * 2, pRectangle.h - mDepthPadding * 2, -10.0f, 0.0f, 0.0f,
-				0.0f, 0.0f);
+		pTextureBatch.draw(pUITexture, 0, 0, 32, 32, pRectangle.x() + mDepthPadding, pRectangle.y() + mDepthPadding, pRectangle.w() - mDepthPadding * 2, pRectangle.h() - mDepthPadding * 2, -10.0f, 0.0f, 0.0f, 0.0f,
+				0.0f);
 
 		pTextureBatch.end();
 
@@ -88,7 +88,7 @@ public class ScrollBarContentRectangle extends Rectangle {
 	public void postDraw(LintfordCore pCore) {
 		if (!mPreDrawing)
 			return;
-		
+
 		mPreDrawing = false;
 		GL11.glDisable(GL11.GL_STENCIL_TEST);
 	}

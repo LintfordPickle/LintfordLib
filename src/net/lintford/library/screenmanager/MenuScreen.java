@@ -461,8 +461,8 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 				break;
 			}
 
-			lBaseLayout.x = lLayoutNewX;
-			lBaseLayout.w = lLayoutWidth;
+			lBaseLayout.x(lLayoutNewX);
+			lBaseLayout.w(lLayoutWidth);
 
 		}
 
@@ -498,15 +498,15 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		for (int i = 0; i < lLeftLayoutCount; i++) {
 			BaseLayout lLayout = pLayoutList.get(i);
 
-			lLayout.y = lTop;
+			lLayout.y(lTop);
 
 			if (lLayout.layoutFillType() == FILLTYPE.TAKE_WHATS_NEEDED) {
-				lLayout.h = lLayout.getEntryHeight() + INNER_PADDING;
+				lLayout.h(lLayout.getEntryHeight() + INNER_PADDING);
 				lLayout.updateStructure();
 				lTop += lLayout.getEntryHeight() + INNER_PADDING;
 
 			} else {
-				lLayout.h = lSizeOfEachFillElement;
+				lLayout.h(lSizeOfEachFillElement);
 				lLayout.updateStructure();
 				lTop += lSizeOfEachFillElement + INNER_PADDING;
 

@@ -144,13 +144,13 @@ public class DebugControllerTreeRenderer extends Rectangle implements IScrollBar
 				final float lMouseY = pCore.HUD().getMouseCameraSpace().y;
 
 				//
-				if (lMouseX > x && lMouseX < x + w - mScrollBar.w) {
+				if (lMouseX > x && lMouseX < x + w - mScrollBar.w()) {
 					final var lComponentTree = mDebugControllerTree.treeComponents();
 					final var lControllerWidgetCount = lComponentTree.size();
 					for (int i = 0; i < lControllerWidgetCount; i++) {
 						final var lControllerWidget = lComponentTree.get(i);
 
-						if (lMouseY > lControllerWidget.y + lControllerWidget.h) {
+						if (lMouseY > lControllerWidget.y() + lControllerWidget.h()) {
 							continue;
 
 						}
@@ -250,16 +250,13 @@ public class DebugControllerTreeRenderer extends Rectangle implements IScrollBar
 					final var lControllerWidget = lComponentTree.get(i);
 
 					lControllerWidget.update(pCore);
-					lControllerWidget.x = x;
-					lControllerWidget.y = lPosY;
-					lControllerWidget.w = w;
-					lControllerWidget.h = ENTRY_HEIGHT;
+					lControllerWidget.set(x, lPosY, w, ENTRY_HEIGHT);
 
-					lPosY += lControllerWidget.h;
+					lPosY += lControllerWidget.h();
 
 				}
 
-				fullContentArea().setCenter(x, y, w - mScrollBar.w, lNumberComponents * ENTRY_HEIGHT);
+				fullContentArea().setCenter(x, y, w - mScrollBar.w(), lNumberComponents * ENTRY_HEIGHT);
 
 			}
 
@@ -275,11 +272,11 @@ public class DebugControllerTreeRenderer extends Rectangle implements IScrollBar
 			// Constrain
 			if (mScrollYPosition > 0)
 				mScrollYPosition = 0;
-			if (mScrollYPosition < -(mContentRectangle.h - this.h)) {
-				mScrollYPosition = -(mContentRectangle.h - this.h);
+			if (mScrollYPosition < -(mContentRectangle.h() - this.h)) {
+				mScrollYPosition = -(mContentRectangle.h() - this.h);
 			}
 
-			mScrollBarEnabled = h < mContentRectangle.h;
+			mScrollBarEnabled = h < mContentRectangle.h();
 
 			if (mScrollBarEnabled) {
 				mScrollBar.update(pCore);
@@ -313,7 +310,7 @@ public class DebugControllerTreeRenderer extends Rectangle implements IScrollBar
 		mConsoleFont.draw("Controllers", x, y - 25f, -0.02f, 1, 1, 1, 1, 1, -1);
 		mConsoleFont.end();
 
-		if (h < mContentRectangle.h)
+		if (h < mContentRectangle.h())
 			mContentRectangle.preDraw(pCore, mTextureBatch, mCoreTexture);
 
 		mTextureBatch.begin(pCore.HUD());
@@ -335,10 +332,10 @@ public class DebugControllerTreeRenderer extends Rectangle implements IScrollBar
 
 			int lPosX = lBaseControllerWidget.controllerLevel * 30;
 
-			mConsoleFont.draw(lControllerName, lBaseControllerWidget.x + lPosX, lBaseControllerWidget.y, -0.02f, 1, 1, 1, 1, 1, -1);
+			mConsoleFont.draw(lControllerName, lBaseControllerWidget.x() + lPosX, lBaseControllerWidget.y(), -0.02f, 1, 1, 1, 1, 1, -1);
 
 			final float lActiveIconX = x + mOpenWidth - 64;
-			final float lActiveIconY = lBaseControllerWidget.y;
+			final float lActiveIconY = lBaseControllerWidget.y();
 
 			if (lBaseControllerWidget == null || !lBaseControllerWidget.isControllerActive) {
 				mTextureBatch.draw(mCoreTexture, 288, 96, 32, 32, lActiveIconX, lActiveIconY, 32, 32, -0.01f, 1, 1, 1, 1);
@@ -353,7 +350,7 @@ public class DebugControllerTreeRenderer extends Rectangle implements IScrollBar
 		mConsoleFont.end();
 		mTextureBatch.end();
 
-		if (h < mContentRectangle.h)
+		if (h < mContentRectangle.h())
 			mContentRectangle.postDraw(pCore);
 
 		if (mScrollBarEnabled) {

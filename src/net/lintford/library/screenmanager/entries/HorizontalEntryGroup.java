@@ -190,8 +190,8 @@ public class HorizontalEntryGroup extends MenuEntry {
 		int lCount = mChildEntries.size();
 		float lTotalHeight = 0;
 		for (int i = 0; i < lCount; i++) {
-			if (mChildEntries.get(i).h + mChildEntries.get(i).marginTop() * 2 > lTotalHeight) {
-				lTotalHeight = mChildEntries.get(i).h + mChildEntries.get(i).marginTop() * 2;
+			if (mChildEntries.get(i).h() + mChildEntries.get(i).marginTop() * 2 > lTotalHeight) {
+				lTotalHeight = mChildEntries.get(i).h() + mChildEntries.get(i).marginTop() * 2;
 
 			}
 
@@ -201,17 +201,14 @@ public class HorizontalEntryGroup extends MenuEntry {
 		final float lHSpace = w / (lCount) - lHPadding;
 
 		for (int i = 0; i < lCount; i++) {
-			float lPosX = x + mChildEntries.get(i).marginLeft() + (lHSpace + lHPadding) * i;
+			final var MenuEntry = mChildEntries.get(i);
+			float lPosX = x + MenuEntry.marginLeft() + (lHSpace + lHPadding) * i;
 			float lPosY = y;
 
-			mChildEntries.get(i).w = lHSpace;
-			mChildEntries.get(i).x = lPosX;
-			mChildEntries.get(i).y = lPosY + mChildEntries.get(i).marginTop();
+			MenuEntry.w(lHSpace);
+			MenuEntry.setPosition(lPosX, lPosY + mChildEntries.get(i).marginTop());
 
 		}
-
-//		w = lTotalWidth;
-//		h = lTotalHeight;
 
 	}
 

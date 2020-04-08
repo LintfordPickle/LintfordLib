@@ -21,18 +21,54 @@ public class Rectangle extends Shape {
 
 	protected boolean mAreVerticesDirty;
 	protected List<Vector2f> mVertices;
-	public float x;
-	public float y;
-	public float w;
-	public float h;
-	public float scaleX;
-	public float scaleY;
-	public boolean flipHorizontal;
-	public boolean flipVertical;
+	protected float x;
+	protected float y;
+	protected float w;
+	protected float h;
+	protected float scaleX;
+	protected float scaleY;
+	protected boolean flipHorizontal;
+	protected boolean flipVertical;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public float x() {
+		return x;
+	}
+
+	public void x(float pX) {
+		mAreVerticesDirty = mAreVerticesDirty || x != pX;
+		x = pX;
+	}
+
+	public float y() {
+		return y;
+	}
+
+	public void y(float pY) {
+		mAreVerticesDirty = mAreVerticesDirty || y != pY;
+		y = pY;
+	}
+
+	public float w() {
+		return w;
+	}
+
+	public void w(float pW) {
+		mAreVerticesDirty = mAreVerticesDirty || w != pW;
+		w = pW;
+	}
+
+	public float h() {
+		return h;
+	}
+
+	public void h(float pH) {
+		mAreVerticesDirty = mAreVerticesDirty || h != pH;
+		h = pH;
+	}
 
 	public float left() {
 		return x;
@@ -69,7 +105,27 @@ public class Rectangle extends Shape {
 		h = pHeight;
 
 	}
-	
+
+	public boolean flipHorizontal() {
+		return flipHorizontal;
+	}
+
+	public void flipHorizontal(boolean pFlipHorizontal) {
+		mAreVerticesDirty = mAreVerticesDirty || pFlipHorizontal != flipHorizontal;
+		flipHorizontal = pFlipHorizontal;
+
+	}
+
+	public boolean flipVertical() {
+		return flipVertical;
+	}
+
+	public void flipVertical(boolean pFlipVertical) {
+		mAreVerticesDirty = mAreVerticesDirty || pFlipVertical != flipVertical;
+		flipVertical = pFlipVertical;
+
+	}
+
 	public float scaleX() {
 		return scaleX;
 	}
@@ -141,6 +197,8 @@ public class Rectangle extends Shape {
 
 		scaleX = 1f;
 		scaleY = 1f;
+
+		mAreVerticesDirty = true;
 
 	}
 

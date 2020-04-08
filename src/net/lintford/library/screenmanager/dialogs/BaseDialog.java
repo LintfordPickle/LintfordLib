@@ -7,7 +7,6 @@ import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 import net.lintford.library.renderers.ZLayers;
 import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.ScreenManager;
-import net.lintford.library.screenmanager.layouts.BaseLayout;
 
 public abstract class BaseDialog extends MenuScreen {
 
@@ -114,14 +113,10 @@ public abstract class BaseDialog extends MenuScreen {
 
 		final int lLayoutCount = layouts().size();
 		for (int i = 0; i < lLayoutCount; i++) {
-			BaseLayout lLayout = layouts().get(i);
-			
-			lLayout.x = -DIALOG_WIDTH * 0.4f;
-			lLayout.y = 0 + mPaddingTop;
-			lLayout.w = DIALOG_WIDTH * 0.8f;
-			lLayout.h = DIALOG_HEIGHT;
+			final var lBaseLayout = layouts().get(i);
 
-			layouts().get(i).updateStructure();
+			lBaseLayout.set(-DIALOG_WIDTH * 0.4f, mPaddingTop, DIALOG_WIDTH * 0.8f, DIALOG_HEIGHT);
+			lBaseLayout.updateStructure();
 
 		}
 
@@ -140,8 +135,8 @@ public abstract class BaseDialog extends MenuScreen {
 
 		final float ZDEPTH = ZLayers.LAYER_SCREENMANAGER + 0.05f;
 
-		final float lWindowWidth = pCore.HUD().boundingRectangle().w;
-		final float lWindowHeight = pCore.HUD().boundingRectangle().h;
+		final float lWindowWidth = pCore.HUD().boundingRectangle().w();
+		final float lWindowHeight = pCore.HUD().boundingRectangle().h();
 
 		final TextureBatch lTextureBatch = mParentScreen.rendererManager().uiTextureBatch();
 

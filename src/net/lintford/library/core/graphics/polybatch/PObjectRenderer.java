@@ -19,16 +19,17 @@ import net.lintford.library.core.maths.Vector2f;
 public class PObjectRenderer {
 
 	// ---------------------------------------------
-	// Constants
-	// ---------------------------------------------
-
-	// ---------------------------------------------
 	// Variables
 	// ---------------------------------------------
 
 	private int mEntityGroupID;
 	private ResourceManager mResourceManager;
 	private JBox2dPolyBatch mTextureBatch;
+
+	static final int MAX_VERTS = 10;
+	static Vector2f[] verts;
+	static Vec2 vertex = new Vec2();
+	static Vec2 tempVec = new Vec2();
 
 	// ---------------------------------------------
 	// Constructor
@@ -62,11 +63,6 @@ public class PObjectRenderer {
 	public void update(LintfordCore pCore) {
 
 	}
-
-	static final int MAX_VERTS = 10;
-	static Vector2f[] verts;
-	static Vec2 vertex = new Vec2();
-	static Vec2 tempVec = new Vec2();
 
 	public void draw(LintfordCore pCore, JBox2dEntity pPObject) {
 
@@ -126,7 +122,7 @@ public class PObjectRenderer {
 
 					}
 
-					mTextureBatch.drawPolygon(lTexture, verts, lFrame.x, lFrame.y, lFrame.w, lFrame.h, -0.01f, 1f, 1f, 1f, 1f);
+					mTextureBatch.drawPolygon(lTexture, verts, lFrame, -0.01f, 1f, 1f, 1f, 1f);
 
 				}
 
@@ -137,9 +133,5 @@ public class PObjectRenderer {
 		mTextureBatch.end();
 
 	}
-
-	// ---------------------------------------------
-	// Methods
-	// ---------------------------------------------
 
 }

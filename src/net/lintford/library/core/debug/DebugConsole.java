@@ -322,7 +322,8 @@ public class DebugConsole extends Rectangle implements IBufferedInputCallback, I
 
 			}
 
-			else if (mFocusTimer > FOCUS_TIMER && pCore.input().mouse().mouseWindowCoords().y < openHeight() && pCore.input().mouse().tryAcquireMouseLeftClick(hashCode()) && pCore.input().mouse().isMouseOverThisComponent(hashCode())) {
+			else if (mFocusTimer > FOCUS_TIMER && pCore.input().mouse().mouseWindowCoords().y < openHeight() && pCore.input().mouse().tryAcquireMouseLeftClick(hashCode())
+					&& pCore.input().mouse().isMouseOverThisComponent(hashCode())) {
 				mHasFocus = !mHasFocus;
 				pCore.input().keyboard().stopCapture();
 				mFocusTimer = 0;
@@ -389,7 +390,7 @@ public class DebugConsole extends Rectangle implements IBufferedInputCallback, I
 		final var MAX_NUM_LINES = (int) ((openHeight() - mConsoleLineHeight * 2) / mConsoleLineHeight) - 1;
 
 		final var lNumberLinesInConsole = mProcessed ? mProcessedMessages.size() : Debug.debugManager().logger().logLines().size();
-		fullContentArea().setCenter(x, y, w - mScrollBar.w, lNumberLinesInConsole * 25);
+		fullContentArea().setCenter(x, y, w - mScrollBar.w(), lNumberLinesInConsole * 25);
 
 		final var lDisplay = pCore.config().display();
 		// Update the bounds of the window view
@@ -410,7 +411,7 @@ public class DebugConsole extends Rectangle implements IBufferedInputCallback, I
 		}
 		mUpperBound = mLowerBound + MAX_NUM_LINES;
 
-		mContentRectangle.h = (lNumberLinesInConsole + 2) * mConsoleLineHeight;
+		mContentRectangle.h((lNumberLinesInConsole + 2) * mConsoleLineHeight);
 
 		var lScrollSpeedFactor = mScrollYPosition;
 
@@ -423,8 +424,8 @@ public class DebugConsole extends Rectangle implements IBufferedInputCallback, I
 		mScrollYPosition = lScrollSpeedFactor;
 		if (mScrollYPosition > 0)
 			mScrollYPosition = 0;
-		if (mScrollYPosition < -(mContentRectangle.h - this.h)) {
-			mScrollYPosition = -(mContentRectangle.h - this.h);
+		if (mScrollYPosition < -(mContentRectangle.h() - this.h)) {
+			mScrollYPosition = -(mContentRectangle.h() - this.h);
 			mAutoScroll = true;
 		}
 
@@ -511,7 +512,8 @@ public class DebugConsole extends Rectangle implements IBufferedInputCallback, I
 			mConsoleFont.draw(PROMT_CHAR, -lDisplayConfig.windowWidth() * 0.5f + PADDING_LEFT, y + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET, Z_DEPTH + 0.1f, 1f);
 			mConsoleFont.draw(mInputText.toString(), -lDisplayConfig.windowWidth() * 0.5f + PADDING_LEFT + lInputTextXOffset, y + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET, Z_DEPTH + 0.1f, 1f);
 			if (mShowCaret && mHasFocus)
-				mConsoleFont.draw(CARET_CHAR, -lDisplayConfig.windowWidth() * 0.5f + PADDING_LEFT + lInputTextXOffset + mConsoleFont.bitmap().getStringWidth(mInputText.toString()), y + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET, Z_DEPTH + 0.1f, 1f);
+				mConsoleFont.draw(CARET_CHAR, -lDisplayConfig.windowWidth() * 0.5f + PADDING_LEFT + lInputTextXOffset + mConsoleFont.bitmap().getStringWidth(mInputText.toString()),
+						y + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET, Z_DEPTH + 0.1f, 1f);
 		}
 
 		mTAGFilterText.draw(pCore, mSpriteBatch, mCoreUITexture, mConsoleFont, Z_DEPTH + 0.01f);

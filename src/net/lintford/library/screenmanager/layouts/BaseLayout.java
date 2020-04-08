@@ -318,12 +318,9 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 
 		}
 
-		mContentArea.x = x;
-		mContentArea.y = y;
-		mContentArea.w = w;
-		mContentArea.h = getEntryHeight();
+		mContentArea.set(x, y, w, getEntryHeight());
 
-		mScrollBarsEnabled = mContentArea.h - h > 0;
+		mScrollBarsEnabled = mContentArea.h() - h > 0;
 		if (mScrollBarsEnabled) {
 
 			final float lDeltaTime = (float) pCore.time().elapseGameTimeMilli() / 1000f;
@@ -338,8 +335,8 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 			// Constrain
 			if (mYScrollPosition > 0)
 				mYScrollPosition = 0;
-			if (mYScrollPosition < -(mContentArea.h - this.h)) {
-				mYScrollPosition = -(mContentArea.h - this.h);
+			if (mYScrollPosition < -(mContentArea.h() - this.h)) {
+				mYScrollPosition = -(mContentArea.h() - this.h);
 			}
 
 			mScrollBar.update(pCore);
@@ -540,7 +537,7 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 		// return the widest entry
 		float lResult = 0;
 		for (int i = 0; i < lEntryCount; i++) {
-			float lTemp = menuEntries().get(i).marginLeft() + menuEntries().get(i).w + menuEntries().get(i).marginRight();
+			float lTemp = menuEntries().get(i).marginLeft() + menuEntries().get(i).w() + menuEntries().get(i).marginRight();
 			if (lTemp > lResult) {
 				lResult = lTemp;
 			}
@@ -567,7 +564,7 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 //				continue;
 
 			lResult += lEntry.marginTop();
-			lResult += lEntry.h;
+			lResult += lEntry.h();
 			lResult += lEntry.marginBottom();
 
 		}

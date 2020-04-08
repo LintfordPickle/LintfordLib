@@ -212,7 +212,7 @@ public class MenuSliderEntry extends MenuEntry {
 		super.updateStructure();
 
 		// TODO: This -50 is because of the scrollbar - this is why I needed to keep the padding :(
-		w = Math.min(mParentLayout.w - 50f, MENUENTRY_MAX_WIDTH);
+		w = Math.min(mParentLayout.w() - 50f, MENUENTRY_MAX_WIDTH);
 
 		if (mShowInfoButton) {
 			mInfoButton.set(x, y, 32f, 32f);
@@ -227,12 +227,10 @@ public class MenuSliderEntry extends MenuEntry {
 
 		final float yPos = mShowGuideValuesEnabled ? y + 32 : y;
 
-		mDownButton.x = x + w / 2 + 16;
-		mDownButton.y = yPos;
-		mUpButton.x = x + w - 32;
-		mUpButton.y = yPos;
+		mDownButton.setPosition(x + w / 2 + 16, yPos);
+		mUpButton.setPosition(x + w - 32, yPos);
 
-		mBarPosX = x + w / 2 + mDownButton.w + 16;
+		mBarPosX = x + w / 2 + mDownButton.w() + 16;
 		mBarWidth = w / 2 - 48;
 
 	}
@@ -255,11 +253,11 @@ public class MenuSliderEntry extends MenuEntry {
 			// Draw the left/right buttons
 			mTextureBatch.begin(pCore.HUD());
 			final float ARROW_BUTTON_SIZE = 32;
-			final float ARROW_PADDING_X = mDownButton.w - ARROW_BUTTON_SIZE;
-			final float ARROW_PADDING_Y = mDownButton.h - ARROW_BUTTON_SIZE;
+			final float ARROW_PADDING_X = mDownButton.w() - ARROW_BUTTON_SIZE;
+			final float ARROW_PADDING_Y = mDownButton.h() - ARROW_BUTTON_SIZE;
 
-			mTextureBatch.draw(mUITexture, 160, 0, 32, 32, mDownButton.x + ARROW_PADDING_X, yPos + ARROW_PADDING_Y, ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, mZ, 1f, 1f, 1f, 1f);
-			mTextureBatch.draw(mUITexture, 224, 0, 32, 32, mUpButton.x + ARROW_PADDING_X, yPos + ARROW_PADDING_Y, ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, mZ, 1f, 1f, 1f, 1f);
+			mTextureBatch.draw(mUITexture, 160, 0, 32, 32, mDownButton.x() + ARROW_PADDING_X, yPos + ARROW_PADDING_Y, ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, mZ, 1f, 1f, 1f, 1f);
+			mTextureBatch.draw(mUITexture, 224, 0, 32, 32, mUpButton.x() + ARROW_PADDING_X, yPos + ARROW_PADDING_Y, ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, mZ, 1f, 1f, 1f, 1f);
 
 			mTextureBatch.end();
 		}

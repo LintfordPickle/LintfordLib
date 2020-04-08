@@ -223,7 +223,14 @@ public class TextureBatch {
 	public void draw(Texture pTexture, Rectangle pSrcRect, Rectangle pDestRect, float pZ, float pR, float pG, float pB, float pA) {
 		if (pSrcRect == null || pDestRect == null)
 			return;
-		draw(pTexture, pSrcRect.x, pSrcRect.y, pSrcRect.w, pSrcRect.h, pDestRect, pZ, pR, pG, pB, pA);
+		draw(pTexture, pSrcRect.x(), pSrcRect.y(), pSrcRect.w(), pSrcRect.h(), pDestRect, pZ, pR, pG, pB, pA);
+
+	}
+
+	public void draw(Texture pTexture, Rectangle pSrcRect, float pDX, float pDY, float pDW, float pDH, float pZ, float pR, float pG, float pB, float pA) {
+		if (pSrcRect == null)
+			return;
+		draw(pTexture, pSrcRect.x(), pSrcRect.y(), pSrcRect.w(), pSrcRect.h(), pDX, pDY, pDW, pDH, pZ, pR, pG, pB, pA);
 
 	}
 

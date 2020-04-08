@@ -130,7 +130,7 @@ public class MenuToggleEntry extends MenuEntry {
 	public void updateStructure() {
 		super.updateStructure();
 
-		w = Math.min(mParentLayout.w - 50f, MENUENTRY_MAX_WIDTH);
+		w = Math.min(mParentLayout.w() - 50f, MENUENTRY_MAX_WIDTH);
 
 	}
 
@@ -178,15 +178,16 @@ public class MenuToggleEntry extends MenuEntry {
 		lTextureBatch.end();
 
 		lFont.begin(pCore.HUD());
-		lFont.draw(mText, x + w / 2 - lLabelWidth - SPACE_BETWEEN_TEXT - lSeparatorHalfWidth, y + h / 2 - lTextHeight * 0.5f, mZ, lParentScreen.r(), lParentScreen.g(), lParentScreen.b(), lParentScreen.a(), luiTextScale, -1);
+		lFont.draw(mText, x + w / 2 - lLabelWidth - SPACE_BETWEEN_TEXT - lSeparatorHalfWidth, y + h / 2 - lTextHeight * 0.5f, mZ, lParentScreen.r(), lParentScreen.g(), lParentScreen.b(), lParentScreen.a(), luiTextScale,
+				-1);
 		lFont.draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - lTextHeight * 0.5f, mZ, lParentScreen.r(), lParentScreen.g(), lParentScreen.b(), lParentScreen.a(), luiTextScale, -1);
-		
-		if(mIsChecked) {
+
+		if (mIsChecked) {
 			lFont.draw("Enabled", x + w / 2 + lSeparatorHalfWidth + TILE_SIZE * 2, y + h / 2 - lTextHeight * 0.5f, mZ, lParentScreen.r(), lParentScreen.g(), lParentScreen.b(), lParentScreen.a(), luiTextScale, -1);
-			
+
 		} else {
 			lFont.draw("Disabled", x + w / 2 + lSeparatorHalfWidth + TILE_SIZE * 2, y + h / 2 - lTextHeight * 0.5f, mZ, lParentScreen.r(), lParentScreen.g(), lParentScreen.b(), lParentScreen.a(), luiTextScale, -1);
-			
+
 		}
 
 		// Render the items

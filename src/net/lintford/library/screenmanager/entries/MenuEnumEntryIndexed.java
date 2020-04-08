@@ -252,7 +252,7 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 	public void updateStructure() {
 		super.updateStructure();
 		// TODO: This -50 is because of the scrollbar - this is why I needed to keep the padding :(
-		w = Math.min(mParentLayout.w - 50f, MENUENTRY_MAX_WIDTH);
+		w = Math.min(mParentLayout.w() - 50f, MENUENTRY_MAX_WIDTH);
 
 		if (mShowInfoButton) {
 			mInfoButton.set(x, y, 32f, 32f);
@@ -267,13 +267,13 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 
 		// Update the button positions to line up with this entry
 		// TODO(John): Need to implement left/right buttons for MenuEnumEntries.
-		mLeftButtonRectangle.x = x + w / 2 + 16;
-		mLeftButtonRectangle.y = y;
-		mLeftButtonRectangle.h = h;
+		mLeftButtonRectangle.x(x + w / 2 + 16);
+		mLeftButtonRectangle.y(y);
+		mLeftButtonRectangle.h(h);
 
-		mRightButtonRectangle.x = x + w - 32;
-		mRightButtonRectangle.y = y;
-		mRightButtonRectangle.h = h;
+		mRightButtonRectangle.x(x + w - 32);
+		mRightButtonRectangle.y(y);
+		mRightButtonRectangle.h(h);
 	}
 
 	@Override
@@ -291,11 +291,11 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 			// Draw the left/right buttons
 			lTextureBatch.begin(pCore.HUD());
 			final float ARROW_BUTTON_SIZE = 32;
-			final float ARROW_PADDING_X = mLeftButtonRectangle.w - ARROW_BUTTON_SIZE;
-			final float ARROW_PADDING_Y = mLeftButtonRectangle.h - ARROW_BUTTON_SIZE;
+			final float ARROW_PADDING_X = mLeftButtonRectangle.w() - ARROW_BUTTON_SIZE;
+			final float ARROW_PADDING_Y = mLeftButtonRectangle.h() - ARROW_BUTTON_SIZE;
 
-			lTextureBatch.draw(mUITexture, 160, 0, 32, 32, mLeftButtonRectangle.x + ARROW_PADDING_X, mLeftButtonRectangle.y + ARROW_PADDING_Y, ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, mZ, 1f, 1f, 1f, 1f);
-			lTextureBatch.draw(mUITexture, 224, 0, 32, 32, mRightButtonRectangle.x + ARROW_PADDING_X, mRightButtonRectangle.y + ARROW_PADDING_Y, ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, mZ, 1f, 1f, 1f, 1f);
+			lTextureBatch.draw(mUITexture, 160, 0, 32, 32, mLeftButtonRectangle.x() + ARROW_PADDING_X, mLeftButtonRectangle.y() + ARROW_PADDING_Y, ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, mZ, 1f, 1f, 1f, 1f);
+			lTextureBatch.draw(mUITexture, 224, 0, 32, 32, mRightButtonRectangle.x() + ARROW_PADDING_X, mRightButtonRectangle.y() + ARROW_PADDING_Y, ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, mZ, 1f, 1f, 1f, 1f);
 
 			lTextureBatch.end();
 
@@ -317,7 +317,8 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 		float lTextB = mEnabled ? mParentLayout.parentScreen().b() : 0.24f;
 
 		lFontBitmap.begin(pCore.HUD());
-		lFontBitmap.draw(mLabel, x + w / 2 - 10 - (lLabelWidth * lAdjustedLabelScaleW) - lSeparatorHalfWidth, y + h / 2 - lFontHeight * 0.5f, mZ, lTextR, lTextG, lTextB, mParentLayout.parentScreen().a(), lAdjustedLabelScaleW, -1);
+		lFontBitmap.draw(mLabel, x + w / 2 - 10 - (lLabelWidth * lAdjustedLabelScaleW) - lSeparatorHalfWidth, y + h / 2 - lFontHeight * 0.5f, mZ, lTextR, lTextG, lTextB, mParentLayout.parentScreen().a(),
+				lAdjustedLabelScaleW, -1);
 		lFontBitmap.draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - lFontHeight * 0.5f, mZ, lTextR, lTextG, lTextB, mParentLayout.parentScreen().a(), luiTextScale, -1);
 
 		// Render the items
@@ -328,7 +329,8 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 			if (mEnableScaleTextToWidth && w * 0.35f < EntryWidth && EntryWidth > 0)
 				lAdjustedEntryScaleW = (w * 0.35f) / EntryWidth;
 
-			lFontBitmap.draw(lCurItem, x + (w / 4 * 3) - (EntryWidth * lAdjustedEntryScaleW) / 2, y + h / 2 - lFontHeight * 0.5f, pComponentDepth, lTextR, lTextG, lTextB, mParentLayout.parentScreen().a(), lAdjustedEntryScaleW, -1);
+			lFontBitmap.draw(lCurItem, x + (w / 4 * 3) - (EntryWidth * lAdjustedEntryScaleW) / 2, y + h / 2 - lFontHeight * 0.5f, pComponentDepth, lTextR, lTextG, lTextB, mParentLayout.parentScreen().a(),
+					lAdjustedEntryScaleW, -1);
 
 		}
 

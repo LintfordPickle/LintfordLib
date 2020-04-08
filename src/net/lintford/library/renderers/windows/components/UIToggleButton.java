@@ -125,7 +125,7 @@ public class UIToggleButton extends UIWidget {
 		pTextureBatch.draw(pUITexture, 0, 0, 32, 32, x, y, w, h, pComponentZDepth, lR, lG, lB, 1f);
 
 		if (mButtonTexture != null) {
-			pTextureBatch.draw(mButtonTexture, mSourceRectangle.x, mSourceRectangle.y, mSourceRectangle.w, mSourceRectangle.h, x, y, w, h, pComponentZDepth, lR, lG, lB, 1f);
+			pTextureBatch.draw(mButtonTexture, mSourceRectangle, x, y, w, h, pComponentZDepth, lR, lG, lB, 1f);
 		}
 
 		pTextureBatch.end();
@@ -146,11 +146,7 @@ public class UIToggleButton extends UIWidget {
 
 	public void setTextureSource(final Texture pTexture, final float pSrcX, final float pSrcY, final float pSrcW, final float pSrcH) {
 		mButtonTexture = pTexture;
-
-		mSourceRectangle.x = pSrcX;
-		mSourceRectangle.y = pSrcY;
-		mSourceRectangle.w = pSrcW;
-		mSourceRectangle.h = pSrcH;
+		mSourceRectangle.set(pSrcX, pSrcY, pSrcW, pSrcH);
 
 	}
 

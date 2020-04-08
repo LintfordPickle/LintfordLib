@@ -241,7 +241,7 @@ public class MenuEnumEntry extends MenuEntry {
 	public void updateStructure() {
 		super.updateStructure();
 
-		w = Math.min(mParentLayout.w - 50f, MENUENTRY_MAX_WIDTH);
+		w = Math.min(mParentLayout.w() - 50f, MENUENTRY_MAX_WIDTH);
 
 	}
 
@@ -250,11 +250,8 @@ public class MenuEnumEntry extends MenuEntry {
 		super.update(pCore, pScreen, pIsSelected);
 
 		// Update the button positions to line up with this entry
-		mLeftButtonRectangle.x = x + w / 2 + 16;
-		mLeftButtonRectangle.y = y;
-
-		mRightButtonRectangle.x = x + w - 32;
-		mRightButtonRectangle.y = y;
+		mLeftButtonRectangle.setPosition(x + w / 2 + 16, y);
+		mRightButtonRectangle.setPosition(x + w - 32, y);
 
 	}
 
@@ -282,12 +279,12 @@ public class MenuEnumEntry extends MenuEntry {
 		// Draw the left/right buttons
 		lTextureBatch.begin(pCore.HUD());
 		final float ARROW_BUTTON_SIZE = 32;
-		final float ARROW_PADDING_Y = mLeftButtonRectangle.h - ARROW_BUTTON_SIZE;
+		final float ARROW_PADDING_Y = mLeftButtonRectangle.h() - ARROW_BUTTON_SIZE;
 
 		// Render the two arrows either side of the enumeration options
 		if (mButtonsEnabled) {
-			lTextureBatch.draw(mUITexture, 160, 0, 32, 32, mLeftButtonRectangle.x, mLeftButtonRectangle.y + ARROW_PADDING_Y, ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, 0f, 1f, 1f, 1f, 1f);
-			lTextureBatch.draw(mUITexture, 224, 0, 32, 32, mRightButtonRectangle.x, mRightButtonRectangle.y + ARROW_PADDING_Y, ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, 0f, 1f, 1f, 1f, 1f);
+			lTextureBatch.draw(mUITexture, 160, 0, 32, 32, mLeftButtonRectangle.x(), mLeftButtonRectangle.y() + ARROW_PADDING_Y, ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, 0f, 1f, 1f, 1f, 1f);
+			lTextureBatch.draw(mUITexture, 224, 0, 32, 32, mRightButtonRectangle.x(), mRightButtonRectangle.y() + ARROW_PADDING_Y, ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, 0f, 1f, 1f, 1f, 1f);
 
 		}
 

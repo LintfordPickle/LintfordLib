@@ -41,7 +41,15 @@ public class SwaySpriteBatch extends SpriteBatch {
 		Texture lTexture = pSpriteSheet.texture();
 		SpriteFrame lCurrentFrame = pSprite.currentSpriteFrame();
 
-		drawGrass(lTexture, lCurrentFrame.x, lCurrentFrame.y, lCurrentFrame.w, lCurrentFrame.h, pDstRectangle, pZ, pA);
+		drawGrass(lTexture, lCurrentFrame, pDstRectangle, pZ, pA);
+
+	}
+
+	public void drawGrass(Texture pTexture, Rectangle pSrcRect, Rectangle pDestRect, float pZ, float pA) {
+		if (pSrcRect == null)
+			return;
+
+		drawGrass(pTexture, pSrcRect.x(), pSrcRect.y(), pSrcRect.w(), pSrcRect.h(), pDestRect, pZ, pA);
 
 	}
 

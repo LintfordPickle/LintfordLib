@@ -158,7 +158,7 @@ public class UIIconButton extends UIWidget {
 			lTextureBatch.draw(pUITexture, 0, 0, 32, 32, x, y, w, h, 0f, lR, lG, lB, 1f);
 
 		if (mButtonTexture != null)
-			lTextureBatch.draw(mButtonTexture, mSourceRectangle.x, mSourceRectangle.y, mSourceRectangle.w, mSourceRectangle.h, x, y, w, h, 0f, lR, lG, lB, 1f);
+			lTextureBatch.draw(mButtonTexture, mSourceRectangle, x, y, w, h, 0f, lR, lG, lB, 1f);
 
 		lTextureBatch.end();
 
@@ -193,10 +193,7 @@ public class UIIconButton extends UIWidget {
 	public void setTextureSource(final Texture pTexture, final float pSrcX, final float pSrcY, final float pSrcW, final float pSrcH) {
 		mButtonTexture = pTexture;
 
-		mSourceRectangle.x = pSrcX;
-		mSourceRectangle.y = pSrcY;
-		mSourceRectangle.w = pSrcW;
-		mSourceRectangle.h = pSrcH;
+		mSourceRectangle.set(pSrcX, pSrcY, pSrcW, pSrcH);
 
 	}
 

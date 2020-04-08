@@ -95,7 +95,7 @@ public class UIWindowDock extends BaseRenderer {
 					Rectangle lSrcRect = lWindow.iconSrcRectangle();
 					float lMargin = 12;
 
-					lTextureBatch.draw(mCoreTexture, lSrcRect.x, lSrcRect.y, lSrcRect.w, lSrcRect.h, lPosX + lMargin, lPosY + lMargin, 64 - lMargin * 2, 64 - lMargin * 2, -0.1f, 1f, 1f, 1f, 1f);
+					lTextureBatch.draw(mCoreTexture, lSrcRect, lPosX + lMargin, lPosY + lMargin, 64 - lMargin * 2, 64 - lMargin * 2, -0.1f, 1f, 1f, 1f, 1f);
 
 				}
 

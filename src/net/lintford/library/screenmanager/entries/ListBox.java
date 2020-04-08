@@ -192,7 +192,7 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 		}
 
 		// Allow us to scroll the listbox by clicking and dragging within its bounds
-		final float lMaxDiff = mContentArea.h - h;
+		final float lMaxDiff = mContentArea.h() - h;
 
 		// if()
 
@@ -223,9 +223,9 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 
 	@Override
 	public void update(LintfordCore pCore, MenuScreen pScreen, boolean pIsSelected) {
-		mScrollBarsEnabled = mContentArea.h - h > 0;
+		mScrollBarsEnabled = mContentArea.h() - h > 0;
 
-		if (mContentArea.h < h)
+		if (mContentArea.h() < h)
 			mYScrollPos = 0;
 
 		int lCount = mItems.size();
@@ -238,19 +238,18 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 			// We need an innerpadding for the case when the scrollbar is enabled. In that case
 			// we narrow the size of the WorldListItem.
 			final float lInnerPadding = mScrollBarsEnabled ? 25 : 0;
-			mItems.get(i).w = w - marginLeft() - marginRight() - lInnerPadding;
+			mItems.get(i).w(w - marginLeft() - marginRight() - lInnerPadding);
 
-			mItems.get(i).x = x + marginLeft();
-			mItems.get(i).y = y + marginTop() + mYScrollPos + mItemYPos;
+			mItems.get(i).setPosition(x + marginLeft(), y + marginTop() + mYScrollPos + mItemYPos);
 
-			mItemYPos += lItem.h + LISTBOX_ITEM_VPADDING;
-			lTotalContentHeight += lItem.h + LISTBOX_ITEM_VPADDING;
+			mItemYPos += lItem.h() + LISTBOX_ITEM_VPADDING;
+			lTotalContentHeight += lItem.h() + LISTBOX_ITEM_VPADDING;
 
 		}
 
 		// mContentArea.w = w;
 		if (mVerticalFillType == FILLTYPE.FILL_CONTAINER || mVerticalFillType == FILLTYPE.TAKE_WHATS_NEEDED)
-			mContentArea.h = lTotalContentHeight;
+			mContentArea.h(lTotalContentHeight);
 
 		final float lDeltaTime = (float) pCore.time().elapseGameTimeMilli() / 1000f;
 		float lScrollSpeedFactor = mYScrollPos;
@@ -264,8 +263,8 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 		// Constrain
 		if (mYScrollPos > 0)
 			mYScrollPos = 0;
-		if (mYScrollPos < -(mContentArea.h - this.h)) {
-			mYScrollPos = -(mContentArea.h - this.h);
+		if (mYScrollPos < -(mContentArea.h() - this.h)) {
+			mYScrollPos = -(mContentArea.h() - this.h);
 		}
 
 		mScrollBar.update(pCore);

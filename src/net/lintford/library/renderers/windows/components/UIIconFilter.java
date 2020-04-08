@@ -110,7 +110,7 @@ public class UIIconFilter extends Rectangle {
 
 			lFilter.setDstRectangle(lPosX, lPosY, 32, 32);
 
-			lPosX += lFilter.uiDstRectangle().w + HORIZONTAL_PADDING;
+			lPosX += lFilter.uiDstRectangle().w() + HORIZONTAL_PADDING;
 
 		}
 	}
@@ -133,14 +133,13 @@ public class UIIconFilter extends Rectangle {
 	// Methods
 	// --------------------------------------
 
-	/** Adds a new FilterIcon to this FilterIconSet.
+	/**
+	 * Adds a new FilterIcon to this FilterIconSet.
 	 * 
-	 * @param pSrcRect
-	 *            The source retangle in the UI_TEXTURE_RESOURCE to use when rendering
-	 * @param pName
-	 *            The name of the filter (e.g. 'All', 'Building Materials' etc.)
-	 * @param pFilterValue
-	 *            The item-value to use when filtering in items. */
+	 * @param pSrcRect     The source retangle in the UI_TEXTURE_RESOURCE to use when rendering
+	 * @param pName        The name of the filter (e.g. 'All', 'Building Materials' etc.)
+	 * @param pFilterValue The item-value to use when filtering in items.
+	 */
 	public void addFilterIcon(IconIntFilter pNewFilterIcon) {
 		mIconFilters.add(pNewFilterIcon);
 

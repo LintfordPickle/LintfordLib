@@ -64,13 +64,13 @@ public class UIRadioGroup extends UIWidget implements EntryInteractions {
 
 		final int lButtonCount = mButtons.size();
 		for (int i = 0; i < lButtonCount; i++) {
-			mButtons.get(i).x = x;
-			mButtons.get(i).y = lYPos;
-			mButtons.get(i).w = 50;
+			final var lButton = mButtons.get(i);
+			lButton.setPosition(x, lYPos);
+			lButton.w(50);
+
+			lButton.update(pCore);
 
 			lYPos += 35;
-
-			mButtons.get(i).update(pCore);
 
 		}
 

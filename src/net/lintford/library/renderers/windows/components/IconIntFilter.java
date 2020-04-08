@@ -66,10 +66,8 @@ public class IconIntFilter implements IProcessMouseInput {
 	}
 
 	public void setDstRectangle(float pX, float pY, float pW, float pH) {
-		mUIDstRectangle.x = pX;
-		mUIDstRectangle.y = pY;
-		mUIDstRectangle.w = pW;
-		mUIDstRectangle.h = pH;
+		mUIDstRectangle.set(pX, pY, pW, pH);
+
 	}
 
 	// --------------------------------------
@@ -119,11 +117,11 @@ public class IconIntFilter implements IProcessMouseInput {
 		// Draw the 'tab' background
 		if (mEnabled) {
 			// Draw a 'open' tab
-			pTextureBatch.draw(pUITexture, 384, 0, 64, 64, mUIDstRectangle.x - 2, mUIDstRectangle.y - 2, mUIDstRectangle.w + 4, mUIDstRectangle.h + 6, -0.5f, lR, lG, lB, 1f);
+			pTextureBatch.draw(pUITexture, 384, 0, 64, 64, mUIDstRectangle.x() - 2, mUIDstRectangle.y() - 2, mUIDstRectangle.w() + 4, mUIDstRectangle.h() + 6, -0.5f, lR, lG, lB, 1f);
 
 		} else {
 			// Draw a 'closed' tab
-			pTextureBatch.draw(pUITexture, 320, 0, 64, 64, mUIDstRectangle.x - 2, mUIDstRectangle.y - 2, mUIDstRectangle.w + 4, mUIDstRectangle.h + 6, -0.5f, lR, lG, lB, 1f);
+			pTextureBatch.draw(pUITexture, 320, 0, 64, 64, mUIDstRectangle.x() - 2, mUIDstRectangle.y() - 2, mUIDstRectangle.w() + 4, mUIDstRectangle.h() + 6, -0.5f, lR, lG, lB, 1f);
 
 		}
 
@@ -132,12 +130,12 @@ public class IconIntFilter implements IProcessMouseInput {
 			final float lTextHeight = pTextFont.bitmap().fontHeight();
 
 			// Draw a background texture behind the texture so it is always legible.
-			pTextureBatch.draw(pUITexture, 64, 0, 32, 32, mUIDstRectangle.x + 16 - lTextHalfW, mUIDstRectangle.y - 19, lTextHalfW * 2 + 4, lTextHeight, -0.2f, 1f, 1f, 1f, 1.0f);
+			pTextureBatch.draw(pUITexture, 64, 0, 32, 32, mUIDstRectangle.x() + 16 - lTextHalfW, mUIDstRectangle.y() - 19, lTextHalfW * 2 + 4, lTextHeight, -0.2f, 1f, 1f, 1f, 1.0f);
 
 		}
 
 		// Draw the background icon
-		pTextureBatch.draw(pUITexture, mUISrcRectangle.x, mUISrcRectangle.y, mUISrcRectangle.w, mUISrcRectangle.h, mUIDstRectangle.x, mUIDstRectangle.y, mUIDstRectangle.w, mUIDstRectangle.h, -0.5f, lR, lG, lB, 1f);
+		pTextureBatch.draw(pUITexture, mUISrcRectangle, mUIDstRectangle, -0.5f, lR, lG, lB, 1f);
 
 		pTextureBatch.end();
 
@@ -145,7 +143,7 @@ public class IconIntFilter implements IProcessMouseInput {
 			final float lTextHalfW = pTextFont.bitmap().getStringWidth(mFilterName) / 2;
 
 			pTextFont.begin(pCore.HUD());
-			pTextFont.draw(mFilterName, mUIDstRectangle.x + 16 - lTextHalfW, mUIDstRectangle.y - 19, -0.2f, 1f);
+			pTextFont.draw(mFilterName, mUIDstRectangle.x() + 16 - lTextHalfW, mUIDstRectangle.y() - 19, -0.2f, 1f);
 			pTextFont.end();
 		}
 
