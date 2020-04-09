@@ -134,7 +134,7 @@ public class JBox2dEntityInstance extends PooledBaseData {
 
 		}
 
-		if (mainBody() != null) {
+		if (userDataObject != null && mainBody() != null) {
 			if (mainBody().mBody != null)
 				mainBody().mBody.setUserData(userDataObject);
 

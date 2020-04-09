@@ -111,6 +111,8 @@ public class SpriteInstance extends Rectangle {
 		loopingEnabled = pSpriteDef.loopEnabled();
 		animationEnabled = true;
 
+		mAreVerticesDirty = true;
+
 		updateDimensionsOnCurrentFrame();
 
 	}
