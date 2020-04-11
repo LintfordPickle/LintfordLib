@@ -205,7 +205,7 @@ public class DebugConsole extends Rectangle implements IBufferedInputCallback, I
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
-		mConsoleFont = pResourceManager.fontManager().getFont(CONSOLE_FONT_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
+		mConsoleFont = pResourceManager.fontManager().getFont(CONSOLE_FONT_NAME);
 		mSpriteBatch.loadGLContent(pResourceManager);
 
 		mCoreUITexture = pResourceManager.textureManager().textureCore();
@@ -219,6 +219,7 @@ public class DebugConsole extends Rectangle implements IBufferedInputCallback, I
 			return;
 
 		Debug.debugManager().logger().v(getClass().getSimpleName(), "DebugConsole unloading GL content");
+
 		mConsoleFont = null;
 		mSpriteBatch.unloadGLContent();
 

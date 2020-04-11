@@ -187,7 +187,6 @@ public abstract class Screen implements IProcessMouseInput {
 		mRendererManager.unloadGLContent();
 
 		mScreenManager.core().controllerManager().removeControllerGroup(mEntityGroupID);
-		mScreenManager.resources().fontManager().unloadFontGroup(mEntityGroupID);
 
 		mIsLoaded = false;
 

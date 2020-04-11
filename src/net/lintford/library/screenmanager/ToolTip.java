@@ -2,17 +2,12 @@ package net.lintford.library.screenmanager;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
+import net.lintford.library.core.graphics.fonts.FontManager;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 
 public class ToolTip {
-
-	// --------------------------------------
-	// Constants
-	// --------------------------------------
-
-	public static final String TOOLTIP_FONT_NAME = "FONT_TOOLTIP";
 
 	// --------------------------------------
 	// Variables
@@ -45,7 +40,7 @@ public class ToolTip {
 
 		mUITexture = pResourceManager.textureManager().textureCore();
 
-		mMenuFont = pResourceManager.fontManager().getFont(TOOLTIP_FONT_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
+		mMenuFont = pResourceManager.fontManager().getFont(FontManager.FONT_FONTNAME_TOOLTIP);
 
 	}
 

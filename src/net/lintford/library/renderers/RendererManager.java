@@ -220,8 +220,8 @@ public class RendererManager {
 		mLineBatch.loadGLContent(pResourceManager);
 		mPolyBatch.loadGLContent(pResourceManager);
 
-		mWindowTitleFont = pResourceManager.fontManager().getFont(FontManager.FONT_FONTNAME_TITLE, mEntityGroupID);
-		mWindowTextFont = pResourceManager.fontManager().getFont(FontManager.FONT_FONTNAME_TEXT, mEntityGroupID);
+		mWindowTitleFont = pResourceManager.fontManager().getFont(FontManager.FONT_FONTNAME_TITLE);
+		mWindowTextFont = pResourceManager.fontManager().getFont(FontManager.FONT_FONTNAME_TEXT);
 
 		// Some windows will use this to orientate themselves to the window
 		mDisplayConfig = pResourceManager.config().display();
@@ -275,8 +275,8 @@ public class RendererManager {
 		mLineBatch.unloadGLContent();
 		mPolyBatch.unloadGLContent();
 
-		mWindowTextFont.unloadGLContent();
-		mWindowTitleFont.unloadGLContent();
+		mWindowTextFont = null;
+		mWindowTitleFont = null;
 
 		mDisplayConfig.removeResizeListener(mResizeListener);
 		mDisplayConfig = null;

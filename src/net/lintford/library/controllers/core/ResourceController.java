@@ -9,7 +9,6 @@ import net.lintford.library.controllers.BaseController;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.Debug;
-import net.lintford.library.core.graphics.fonts.FontManager.FontGroup;
 import net.lintford.library.core.graphics.textures.TextureManager.TextureGroup;
 
 public class ResourceController extends BaseController {
@@ -74,15 +73,10 @@ public class ResourceController extends BaseController {
 			}
 
 			Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("Font Manager"));
-			Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("  Entity Group Count: %d", mResourceManager.fontManager().fontGroupCount()));
 
-			Iterator<Entry<Integer, FontGroup>> itFont = mResourceManager.fontManager().fontGroups().entrySet().iterator();
+			final var lNumberFontsLoaded = mResourceManager.fontManager().fontCount();
 
-			while (itFont.hasNext()) {
-				Entry<Integer, FontGroup> lEntryPair = itFont.next();
-				Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("  EntityGroupID (%d) has %d fonts loaded", lEntryPair.getKey(), lEntryPair.getValue().fontMap().size()));
-
-			}
+			Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("  Application has %d fonts loaded", lNumberFontsLoaded));
 
 		}
 

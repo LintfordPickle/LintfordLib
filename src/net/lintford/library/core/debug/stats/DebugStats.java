@@ -15,23 +15,16 @@ import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 
 public class DebugStats {
 
-	/* 
-	TRI Count
-  	@formatter:off
-  	
- 	+-------------------+---------------------+
- 	| Mode              | Triangles           |
- 	+-------------------+---------------------+
- 	| GL_POINTS         | count - first       |
- 	+-------------------+---------------------+
- 	| GL_TRIANGLES      | (count - first) / 3 |
- 	+-------------------+---------------------+
- 	| GL_TRIANGLE_STRIP | (count - 2 - first) |
- 	+-------------------+---------------------+
- 	| GL_TRIANGLE_FAN   | (count - 2 - first) |
- 	+-------------------+---------------------+
- 	
- 	@formatter:on
+	/*
+	 * TRI Count
+	 * 
+	 * @formatter:off
+	 * 
+	 * +-------------------+---------------------+ | Mode | Triangles | +-------------------+---------------------+ | GL_POINTS | count - first | +-------------------+---------------------+ | GL_TRIANGLES | (count -
+	 * first) / 3 | +-------------------+---------------------+ | GL_TRIANGLE_STRIP | (count - 2 - first) | +-------------------+---------------------+ | GL_TRIANGLE_FAN | (count - 2 - first) |
+	 * +-------------------+---------------------+
+	 * 
+	 * @formatter:on
 	 */
 
 	// --------------------------------------
@@ -155,8 +148,10 @@ public class DebugStats {
 
 		Debug.debugManager().logger().v(getClass().getSimpleName(), "DebugStats unloading GL content");
 
-		mConsoleFont.unloadGLContent();
 		mTextureBatch.unloadGLContent();
+
+		mConsoleFont = null;
+		mCoreTexture = null;
 
 	}
 
@@ -179,7 +174,6 @@ public class DebugStats {
 
 		}
 
-		
 	}
 
 	public void update(LintfordCore pCore) {

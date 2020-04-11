@@ -10,6 +10,7 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.camera.ICamera;
 import net.lintford.library.core.geometry.Rectangle;
+import net.lintford.library.core.graphics.fonts.FontManager;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.geometry.TexturedQuad;
 import net.lintford.library.core.graphics.linebatch.LineBatch;
@@ -89,7 +90,7 @@ public class DebugDrawers {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
-		mSystemFont = pResourceManager.fontManager().loadNewFont("SystemFont", "/res/fonts/Rajdhani-Bold.ttf", 16, true, LintfordCore.CORE_ENTITY_GROUP_ID);
+		mSystemFont = pResourceManager.fontManager().getFont(FontManager.SYSTEM_FONT_NAME);
 
 		mTextureBatch.loadGLContent(pResourceManager);
 		mBasicShader.loadGLContent(pResourceManager);
