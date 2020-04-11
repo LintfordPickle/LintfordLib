@@ -6,25 +6,7 @@ The development of this project takes place predominantly during the Ludum Dare 
 
 # Getting the repository
 You can get the Java-LDLibraryGL project by either by cloning the repository or by adding it as a submodule to an existing git repository.
-If you want to add the Java-LDLibraryGL project to your existing git project, type the following at the git Bash:
 
-```
-git submodule add https://github.com/LintfordPickle/LintfordLib.git
-```
-
-This will register the git repository as a submodule under the directory specified. This command will automatically clone the submodule into the repository. You can check the status of the submodules using:
-
-```
-git status
-```
-
-and you can pull the latest version of the submodule with the following command:
-
-```
-git submodule update
-```
-
-note: a git clone of a repository will not by default pull any submodules. In this case you need to submodule init and then submodule update.
 
 # Library Usage
 Once you have cloned the Java-LDLibraryGL repository, you can import it into your IDE workspace. It should then be added as a project to your game project's classpath. This can be done either using the project properties dialog (e.g. in Eclipse), or by added the following to the .classpath:
@@ -33,7 +15,8 @@ Once you have cloned the Java-LDLibraryGL repository, you can import it into you
 <classpathentry combineaccessrules="false" kind="src" path="<relative_path_to_ldlibrary_folder>"/>
 ```
 
-Once you have done this, you should be able to import the packages from the LDLibrary and access the classes within. To test the setup and get started, you can open a new LWJGL window by adding the following class to your project:
+Once you have done this, you should be able to import the packages from the LDLibrary and access the classes within.
+To test the setup and get started, you can open a new LWJGL window by adding the following class to your project:
 
 ```
 // Import the OpenGL bindings from within the LWJGL framework
@@ -48,17 +31,15 @@ public class GameBase extends LWJGLCore {
 
 /** Main entry point for the game. */
 public static void main(String args[]) {
-	GameInfo lGameInfo = new GameInfo() { };
+	GameInfo lGameInfo = new GameInfo() { 
+		@Override
+		public String windowTitle() {
+			return "New Game";
+		}
+	};
 
-	GameBase lGameBase = new GameBase(lGameInfo);
-	
-	// Create the main application window
-	if( lGameBase.createWindow() ) {
-		// If successful, begin the game loop
-		lGameBase.onRunGameLoop();
-	
-	}
-  
+	final var lGameBase = new GameBase(lGameInfo);
+	lGameBase.createWindow(); 
 }
 ```
 
