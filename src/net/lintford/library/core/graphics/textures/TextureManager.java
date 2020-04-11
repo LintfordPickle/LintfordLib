@@ -145,7 +145,7 @@ public class TextureManager extends EntityGroupManager {
 		return mTextureWhite;
 	}
 
-	public Texture blockTexture() {
+	public Texture textureBlack() {
 		return mTextureBlack;
 	}
 
@@ -317,6 +317,7 @@ public class TextureManager extends EntityGroupManager {
 			if (!pReload)
 				return lTexture;
 
+			Debug.debugManager().logger().i(getClass().getSimpleName(), "Unloading pName, so it can be reloaded");
 			unloadTexture(lTexture, pEntityGroupID);
 
 		}
