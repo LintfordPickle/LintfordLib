@@ -6,9 +6,6 @@ import java.util.List;
 import org.lwjgl.opengl.GL11;
 
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.ResourceManager;
-import net.lintford.library.core.graphics.textures.Texture;
-import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 import net.lintford.library.core.time.TimeSpan;
 import net.lintford.library.screenmanager.Screen;
 import net.lintford.library.screenmanager.ScreenManager;
@@ -21,8 +18,6 @@ public class LoadingScreen extends Screen {
 	// Constants
 	// --------------------------------------
 
-	private static final float BLINK_TIMER = 500;
-
 	public static final String LOADING_BACKGROUND_TEXTURE_NAME = "LoadingScreen";
 	public static final String LOADING_TEXT_TEXTURE_NAME = "LoadingTextScreen";
 
@@ -32,13 +27,7 @@ public class LoadingScreen extends Screen {
 
 	private ScreenManager mScreenManager;
 	private Screen[] mScreensToLoad;
-	private boolean mDisplayLoadingText;
 	private final boolean mLoadingIsSlow;
-	private float mBlinkTimer;
-
-	private TextureBatch mTextureBatch;
-	private Texture mLoadingTexture;
-	private Texture mLoadingTextTexture;
 
 	// --------------------------------------
 	// Constructors
@@ -51,8 +40,6 @@ public class LoadingScreen extends Screen {
 		mScreensToLoad = pScreensToLoad;
 
 		mLoadingIsSlow = pLoadingIsSlow;
-
-		mDisplayLoadingText = true;
 
 		mTransitionOn = new TransitionFadeIn(new TimeSpan(500));
 		mTransitionOff = new TransitionFadeOut(new TimeSpan(500));
@@ -68,7 +55,7 @@ public class LoadingScreen extends Screen {
 	public static void load(ScreenManager pScreenManager, boolean pLoadingIsSlow, Screen... pScreensToLoad) {
 
 		// transitiion off ALL current screens
-		List<Screen> lScreenList = new ArrayList<>();
+		final List<Screen> lScreenList = new ArrayList<>();
 		lScreenList.addAll(pScreenManager.screens());
 
 		int lScreenCount = lScreenList.size();
@@ -79,51 +66,18 @@ public class LoadingScreen extends Screen {
 		}
 
 		lScreenList.clear();
-		lScreenList = null;
 
 		System.gc();
 
 		// create and activate the loading screen
-		LoadingScreen lLoadingScreen = new LoadingScreen(pScreenManager, pLoadingIsSlow, pScreensToLoad);
+		final var lLoadingScreen = new LoadingScreen(pScreenManager, pLoadingIsSlow, pScreensToLoad);
 		pScreenManager.addScreen(lLoadingScreen);
-
-	}
-
-	@Override
-	public void loadGLContent(ResourceManager pResourceManager) {
-		super.loadGLContent(pResourceManager);
-
-		mTextureBatch = new TextureBatch();
-		mTextureBatch.loadGLContent(pResourceManager);
-
-		mLoadingTexture = pResourceManager.textureManager().loadTexture(LOADING_BACKGROUND_TEXTURE_NAME, "/res/textures/core/loadingscreen.png", LintfordCore.CORE_ENTITY_GROUP_ID);
-		mLoadingTextTexture = pResourceManager.textureManager().loadTexture(LOADING_TEXT_TEXTURE_NAME, "/res/textures/core/loadingscreentext.png", LintfordCore.CORE_ENTITY_GROUP_ID);
-
-	}
-
-	@Override
-	public void unloadGLContent() {
-		super.unloadGLContent();
-
-		if (mTextureBatch != null) {
-			mTextureBatch.unloadGLContent();
-
-		}
 
 	}
 
 	@Override
 	public void update(LintfordCore pCore, boolean pOtherScreenHasFocus, boolean pCoveredByOtherScreen) {
 		super.update(pCore, pOtherScreenHasFocus, pCoveredByOtherScreen);
-
-		final double lDeltaTime = pCore.time().elapseGameTimeMilli();
-
-		mBlinkTimer += lDeltaTime;
-
-		if (mBlinkTimer > BLINK_TIMER) {
-			mBlinkTimer = 0;
-			mDisplayLoadingText = !mDisplayLoadingText;
-		}
 
 		// Wait until all the other screens have exited
 		if ((mScreenState == ScreenState.Active) && (mScreenManager.screens().size() == 1)) {
@@ -167,27 +121,25 @@ public class LoadingScreen extends Screen {
 		GL11.glClearColor(0, 0, 0, 1);
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
 
-		final var lFontUnit = mRendererManager.textFont();
+		final var lFontUnit = mRendererManager.titleFont();
 
-		lFontUnit.begin(pCore.HUD());
-		lFontUnit.draw("Loading", 0, 0, -0.1f, 1f, 1f, 1f, 1f, 1f, -1);
-		lFontUnit.end();
+		if (mLoadingIsSlow && lFontUnit != null) {
+			final var lWindowWidth = pCore.config().display().windowWidth();
+			final var lWindowHeight = pCore.config().display().windowHeight();
+			final var lTextPadding = 5.0f;
 
-//		if (mLoadingIsSlow) {
-//			final float textureWidth = mLoadingTexture.getTextureWidth();
-//			final float textureHeight = mLoadingTexture.getTextureHeight();
-//
-//			final float textTextureWidth = mLoadingTextTexture.getTextureWidth();
-//			final float textTextureHeight = mLoadingTextTexture.getTextureHeight();
-//
-//			mTextureBatch.begin(pCore.HUD());
-//			mTextureBatch.draw(mLoadingTexture, 0, 0, textureWidth, textureHeight, -textureWidth / 2, -textureHeight / 2, textureWidth, textureHeight, -0.1f, 1f, 1f, 1f, 1f);
-//			if (mDisplayLoadingText)
-//				mTextureBatch.draw(mLoadingTextTexture, 0, 0, textTextureWidth, textTextureHeight, textureWidth / 2 - textTextureWidth - 10, textureHeight / 2 - textTextureHeight - 10, textTextureWidth,
-//						textTextureHeight, -0.1f, 1f, 1f, 1f, 1f);
-//			mTextureBatch.end();
-//
-//		}
+			final String lLoadingText = "Loading ...";
+			final var lTextWidth = lFontUnit.bitmap().getStringWidth(lLoadingText);
+			final var lTextHeight = lFontUnit.bitmap().getStringHeight(lLoadingText);
+
+			final float lTextPositionX = lWindowWidth * 0.5f - lTextWidth - lTextPadding;
+			final float lTextPositionY = lWindowHeight * 0.5f - lTextHeight - lTextPadding;
+
+			lFontUnit.begin(pCore.HUD());
+			lFontUnit.draw(lLoadingText, lTextPositionX, lTextPositionY, -0.1f, 1f, 1f, 1f, 1f, 1f, -1);
+			lFontUnit.end();
+
+		}
 
 	}
 
