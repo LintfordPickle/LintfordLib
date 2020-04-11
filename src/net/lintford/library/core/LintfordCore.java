@@ -515,6 +515,7 @@ public abstract class LintfordCore {
 		if (mIsHeadlessMode)
 			return;
 
+		glClearColor(100.0f / 255.0f, 149.0f / 255.0f, 237.0f / 255.0f, 1.0f);
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 
 	}
