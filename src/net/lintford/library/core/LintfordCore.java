@@ -36,8 +36,8 @@ import net.lintford.library.options.DisplayManager;
 import net.lintford.library.options.MasterConfig;
 
 /**
- * The LintfordCore tracks the core state of an LWJGL application including a {@link DisplayManager}, {@link ResourceManager}, {@link GameTime}, {@link Camera}, {@link HUD},
- * {@link InputManager} and {@link RenderState}. It also defines the behaviour for creating an OpenGL window.
+ * The LintfordCore tracks the core state of an LWJGL application including a {@link DisplayManager}, {@link ResourceManager}, {@link GameTime}, {@link Camera}, {@link HUD}, {@link InputManager} and {@link RenderState}.
+ * It also defines the behaviour for creating an OpenGL window.
  */
 public abstract class LintfordCore {
 
@@ -159,16 +159,15 @@ public abstract class LintfordCore {
 	}
 
 	/**
-	 * Returns the instance of {@link GameTime} which was created when the LWJGL window was created. GameTime tracks the application time. null is returned if the LWJGL window has not
-	 * yet been created.
+	 * Returns the instance of {@link GameTime} which was created when the LWJGL window was created. GameTime tracks the application time. null is returned if the LWJGL window has not yet been created.
 	 */
 	public GameTime time() {
 		return mGameTime;
 	}
 
 	/**
-	 * Returns the instance of {@link InputManager} which was created when the LWJGL window was created. InputState is updated per-frame and tracks user input from the mouse and
-	 * keyboard. null is returned if the LWJGL window has not yet been created.
+	 * Returns the instance of {@link InputManager} which was created when the LWJGL window was created. InputState is updated per-frame and tracks user input from the mouse and keyboard. null is returned if the LWJGL
+	 * window has not yet been created.
 	 */
 	public InputManager input() {
 		return mInputState;
@@ -307,7 +306,7 @@ public abstract class LintfordCore {
 
 		oninitializeGL();
 
-		oninitializeApp();
+		onInitializeApp();
 
 		onLoadGLContent();
 
@@ -337,7 +336,7 @@ public abstract class LintfordCore {
 	}
 
 	/**
-	 * Implemented in the sub-classe. Sets the default OpenGL state for the game.
+	 * Implemented in sub-classes. Sets the default OpenGL state for the game.
 	 */
 	protected void oninitializeGL() {
 		// glClearColor(0f, 0f, 0f, 1.0f);
@@ -361,7 +360,7 @@ public abstract class LintfordCore {
 	/**
 	 * Implemented in the sub-class. Sets the default state of the application (note. OpenGL context is not available at this point).
 	 */
-	protected void oninitializeApp() {
+	protected void onInitializeApp() {
 		new UIHUDStructureController(mMasterConfig.display(), mControllerManager, CORE_ENTITY_GROUP_ID);
 
 	}

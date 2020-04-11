@@ -1,5 +1,7 @@
 package net.lintford.library.screenmanager.screens;
 
+import org.lwjgl.glfw.GLFW;
+
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.geometry.Rectangle;
@@ -10,7 +12,7 @@ import net.lintford.library.screenmanager.IMenuAction;
 import net.lintford.library.screenmanager.Screen;
 import net.lintford.library.screenmanager.ScreenManager;
 
-public class TimedIntroScreen extends Screen {
+public class PressToContinueIntroScreen extends Screen {
 
 	// --------------------------------------
 	// Variables
@@ -20,11 +22,11 @@ public class TimedIntroScreen extends Screen {
 	private Texture mBackgroundTexture;
 
 	private String mImageLocation;
-	private float mShowImageTime;
-	private float mShowImageTimer;
 
 	private boolean mUserRequestSkip;
-	private boolean mTimedActionPerformed;
+	private boolean mActionPerformed;
+	private float mTimeToCompleteTransition = 500f;
+	private float mTransitionTimer;
 
 	private Rectangle mSrcTextureRect;
 
@@ -53,18 +55,10 @@ public class TimedIntroScreen extends Screen {
 	// Constructor
 	// --------------------------------------
 
-	public TimedIntroScreen(ScreenManager pScreenManager, String pImageLocation) {
-		this(pScreenManager, pImageLocation, 3.0f);
-
-	}
-
-	public TimedIntroScreen(ScreenManager pScreenManager, String pImageLocation, float pTimer) {
+	public PressToContinueIntroScreen(ScreenManager pScreenManager, String pImageLocation) {
 		super(pScreenManager);
 
 		mImageLocation = pImageLocation;
-
-		mShowImageTime = 0;
-		mShowImageTimer = pTimer;
 
 		mTextureBatch = new TextureBatch();
 		mSrcTextureRect = new Rectangle(0, 0, 800, 600);
@@ -97,8 +91,8 @@ public class TimedIntroScreen extends Screen {
 	public void handleInput(LintfordCore pCore, boolean pAcceptMouse, boolean pAcceptKeyboard) {
 		super.handleInput(pCore, pAcceptMouse, pAcceptKeyboard);
 
-		if (!mTimedActionPerformed) {
-			if (pCore.input().mouse().tryAcquireMouseLeftClick(hashCode())) {
+		if (!mActionPerformed) {
+			if (pCore.input().mouse().tryAcquireMouseLeftClick(hashCode()) || pCore.input().keyboard().isKeyDown(GLFW.GLFW_KEY_ESCAPE) || pCore.input().keyboard().isKeyDown(GLFW.GLFW_KEY_SPACE)) {
 				mUserRequestSkip = true;
 
 			}
@@ -111,45 +105,53 @@ public class TimedIntroScreen extends Screen {
 	public void update(LintfordCore pCore, boolean pOtherScreenHasFocus, boolean pCoveredByOtherScreen) {
 		super.update(pCore, pOtherScreenHasFocus, pCoveredByOtherScreen);
 
-		if (!mTimedActionPerformed) {
-			final float deltaTime = (float) pCore.time().elapseGameTimeMilli() / 1000f;
-
-			mShowImageTime += deltaTime;
-
-			if (mShowImageTime >= mShowImageTimer || mUserRequestSkip) {
+		if (!mActionPerformed) {
+			if (mUserRequestSkip) {
 				if (mActionCallback != null) {
 					mActionCallback.TimerFinished(this);
 
 				}
 
-				exitScreen();
-				mTimedActionPerformed = true;
+				mActionPerformed = true;
 
 			}
 
+		} else if (mTransitionTimer < mTimeToCompleteTransition) {
+			mTransitionTimer += pCore.time().elapseGameTimeMilli();
+
+			calculateFlashRGB(pCore, mTransitionTimer, mTimeToCompleteTransition);
+
+		} else {
+			exitScreen();
 		}
 
+	}
+
+	private void calculateFlashRGB(LintfordCore pCore, float pCurrentTimer, float pTotalTime) {
+		float normalizedLifetime = pCurrentTimer / pTotalTime;
+
+		mA = 2 * normalizedLifetime * (1 - normalizedLifetime);
 	}
 
 	@Override
 	public void draw(LintfordCore pCore) {
 		super.draw(pCore);
 
-		float lLeft = -mBackgroundTexture.getTextureWidth() / 2;
-		float lRight = mBackgroundTexture.getTextureWidth();
-		float lTop = -mBackgroundTexture.getTextureHeight() / 2;
-		float lBottom = mBackgroundTexture.getTextureHeight();
+		float lX = -mBackgroundTexture.getTextureWidth() / 2;
+		float lWidth = mBackgroundTexture.getTextureWidth();
+		float lY = -mBackgroundTexture.getTextureHeight() / 2;
+		float lHeight = mBackgroundTexture.getTextureHeight();
 
 		if (mStretchBackgroundToFit) {
 			DisplayManager lDisplay = pCore.config().display();
-			lLeft = -lDisplay.windowWidth() / 2;
-			lRight = lDisplay.windowWidth();
-			lTop = -lDisplay.windowHeight() / 2;
-			lBottom = lDisplay.windowHeight();
+			lX = -lDisplay.windowWidth() / 2;
+			lWidth = lDisplay.windowWidth();
+			lY = -lDisplay.windowHeight() / 2;
+			lHeight = lDisplay.windowHeight();
 		}
 
 		mTextureBatch.begin(pCore.HUD());
-		mTextureBatch.draw(mBackgroundTexture, mSrcTextureRect, lLeft, lTop, lRight, lBottom, -1f, 1f, 1f, 1f, mA);
+		mTextureBatch.draw(mBackgroundTexture, mSrcTextureRect, lX, lY, lWidth, lHeight, -1f, 1f, 1f, 1f, mA);
 		mTextureBatch.end();
 
 	}

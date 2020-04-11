@@ -7,7 +7,6 @@ import org.lwjgl.glfw.GLFW;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
-import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.input.InputManager;
 import net.lintford.library.renderers.ZLayers;
@@ -70,10 +69,8 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	// Constants
 	// --------------------------------------
 
-	public static final String MENUSCREEN_FONT_NAME = "MenuScreenFont";
-	public static final int MENUSCREEN_FONT_POINT_SIZE = 18;
-	public static final String MENUSCREEN_HEADER_FONT_NAME = "MenuScreenHeaderFont";
-	public static final int MENUSCREEN_HEADER_FONT_POINT_SIZE = 76;
+	public static final String MENUSCREEN_FONT_NAME = "FONT_MENUSCREEN_TEXT";
+	public static final String MENUSCREEN_HEADER_FONT_NAME = "FONT_MENUSCREEN_TITLE";
 
 	public static final float ANIMATION_TIMER_LENGTH = 130; // ms
 
@@ -222,10 +219,8 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	public void loadGLContent(ResourceManager pResourceManager) {
 		super.loadGLContent(pResourceManager);
 
-		final String lFontPathname = mScreenManager.fontPathname();
-		Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("Loading font '%s' for entity group %d", lFontPathname, entityGroupID()));
-		mMenuFont = pResourceManager.fontManager().loadNewFont(MENUSCREEN_FONT_NAME, lFontPathname, MENUSCREEN_FONT_POINT_SIZE, true, entityGroupID());
-		mMenuHeaderFont = pResourceManager.fontManager().loadNewFont(MENUSCREEN_HEADER_FONT_NAME, lFontPathname, MENUSCREEN_HEADER_FONT_POINT_SIZE, false, entityGroupID());
+		mMenuFont = pResourceManager.fontManager().getFont(MENUSCREEN_FONT_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
+		mMenuHeaderFont = pResourceManager.fontManager().getFont(MENUSCREEN_HEADER_FONT_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
 
 		final int lCount = layouts().size();
 		for (int i = 0; i < lCount; i++) {

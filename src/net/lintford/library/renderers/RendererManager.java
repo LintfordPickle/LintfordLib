@@ -11,6 +11,7 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.debug.GLDebug;
+import net.lintford.library.core.graphics.fonts.FontManager;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.linebatch.LineBatch;
 import net.lintford.library.core.graphics.polybatch.PolyBatch;
@@ -37,9 +38,6 @@ public class RendererManager {
 
 	public static final int NO_WINDOW_INDEX = -1;
 	public static final int WINDOW_ALREADY_REGISTERED = -2;
-
-	public static final String WINDOWS_TEXT_FONT_NAME = "WindowTextFont";
-	public static final String WINDOWS_TITLE_FONT_NAME = "WindowTitleFont";
 
 	// --------------------------------------
 	// variables
@@ -221,10 +219,9 @@ public class RendererManager {
 		mTextureBatch.loadGLContent(pResourceManager);
 		mLineBatch.loadGLContent(pResourceManager);
 		mPolyBatch.loadGLContent(pResourceManager);
-		
-		final String lPath = "res//fonts//Rajdhani-Bold.ttf";
-		mWindowTitleFont = pResourceManager.fontManager().loadNewFont(WINDOWS_TITLE_FONT_NAME, lPath, 18, mEntityGroupID);
-		mWindowTextFont = pResourceManager.fontManager().loadNewFont(WINDOWS_TEXT_FONT_NAME, lPath, 16, mEntityGroupID);
+
+		mWindowTitleFont = pResourceManager.fontManager().getFont(FontManager.FONT_FONTNAME_TITLE, mEntityGroupID);
+		mWindowTextFont = pResourceManager.fontManager().getFont(FontManager.FONT_FONTNAME_TEXT, mEntityGroupID);
 
 		// Some windows will use this to orientate themselves to the window
 		mDisplayConfig = pResourceManager.config().display();

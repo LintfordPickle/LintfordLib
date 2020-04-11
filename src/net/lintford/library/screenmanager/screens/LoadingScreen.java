@@ -167,21 +167,27 @@ public class LoadingScreen extends Screen {
 		GL11.glClearColor(0, 0, 0, 1);
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
 
-		if (mLoadingIsSlow) {
-			final float textureWidth = mLoadingTexture.getTextureWidth();
-			final float textureHeight = mLoadingTexture.getTextureHeight();
+		final var lFontUnit = mRendererManager.textFont();
 
-			final float textTextureWidth = mLoadingTextTexture.getTextureWidth();
-			final float textTextureHeight = mLoadingTextTexture.getTextureHeight();
+		lFontUnit.begin(pCore.HUD());
+		lFontUnit.draw("Loading", 0, 0, -0.1f, 1f, 1f, 1f, 1f, 1f, -1);
+		lFontUnit.end();
 
-			mTextureBatch.begin(pCore.HUD());
-			mTextureBatch.draw(mLoadingTexture, 0, 0, textureWidth, textureHeight, -textureWidth / 2, -textureHeight / 2, textureWidth, textureHeight, -0.1f, 1f, 1f, 1f, 1f);
-			if (mDisplayLoadingText)
-				mTextureBatch.draw(mLoadingTextTexture, 0, 0, textTextureWidth, textTextureHeight, textureWidth / 2 - textTextureWidth - 10, textureHeight / 2 - textTextureHeight - 10, textTextureWidth, textTextureHeight, -0.1f,
-						1f, 1f, 1f, 1f);
-			mTextureBatch.end();
-
-		}
+//		if (mLoadingIsSlow) {
+//			final float textureWidth = mLoadingTexture.getTextureWidth();
+//			final float textureHeight = mLoadingTexture.getTextureHeight();
+//
+//			final float textTextureWidth = mLoadingTextTexture.getTextureWidth();
+//			final float textTextureHeight = mLoadingTextTexture.getTextureHeight();
+//
+//			mTextureBatch.begin(pCore.HUD());
+//			mTextureBatch.draw(mLoadingTexture, 0, 0, textureWidth, textureHeight, -textureWidth / 2, -textureHeight / 2, textureWidth, textureHeight, -0.1f, 1f, 1f, 1f, 1f);
+//			if (mDisplayLoadingText)
+//				mTextureBatch.draw(mLoadingTextTexture, 0, 0, textTextureWidth, textTextureHeight, textureWidth / 2 - textTextureWidth - 10, textureHeight / 2 - textTextureHeight - 10, textTextureWidth,
+//						textTextureHeight, -0.1f, 1f, 1f, 1f, 1f);
+//			mTextureBatch.end();
+//
+//		}
 
 	}
 

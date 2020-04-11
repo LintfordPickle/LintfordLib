@@ -3,13 +3,28 @@ package net.lintford.library.core.graphics.fonts;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import net.lintford.library.core.EntityGroupManager;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.camera.ICamera;
 import net.lintford.library.core.debug.Debug;
+import net.lintford.library.core.storage.FileUtils;
 
 public class FontManager extends EntityGroupManager {
+
+	public class FontUnitMetaDataDefinition {
+		public int pointsize;
+		public String filepath;
+		public String fontname;
+	}
+
+	public class FontUnitMetaData {
+		public FontUnitMetaDataDefinition[] FontUnitMetaDefinitions;
+
+	}
 
 	public class FontGroup {
 
@@ -221,11 +236,14 @@ public class FontManager extends EntityGroupManager {
 	// Constants
 	// --------------------------------------
 
-	public static final int SYSTEM_FONT_POINTSIZE_SMALL = 12;
-	public static final int SYSTEM_FONT_POINTSIZE_NORMAL = 24;
-	public static final int SYSTEM_FONT_POINTSIZE_LARGE = 35;
+	public static final String META_FILE_LOCATION = "/res/fonts/meta.json";
 
-	public static final String SYSTEM_FONT_NAME = "SystemFont18";
+	public static final String FONT_FONTNAME_TEXT = "FONT_CORE_TEXT";
+	public static final String FONT_FONTNAME_TITLE = "FONT_CORE_TITLE";
+	public static final String FONT_FONTNAME_HEADER = "FONT_CORE_HEADER";
+
+	// TODO: This should be loaded from an embedded bitmap (not from system font files).
+	public static final String SYSTEM_FONT_NAME = "FONT_SYSTEM";
 	public static final String SYSTEM_FONT_PATH = "/res/fonts/Rajdhani-Bold.ttf";
 	public static final int SYSTEM_FONT_SIZE = 18;
 
@@ -250,6 +268,18 @@ public class FontManager extends EntityGroupManager {
 		return mFontGroupMap.size();
 	}
 
+	public FontGroup getFontGroup(int pEntityGroupID) {
+		if (!mFontGroupMap.containsKey(pEntityGroupID)) {
+			final var lNewFontGroup = new FontGroup(pEntityGroupID);
+			mFontGroupMap.put(pEntityGroupID, lNewFontGroup);
+
+			return lNewFontGroup;
+		}
+
+		return mFontGroupMap.get(pEntityGroupID);
+
+	}
+
 	public Map<Integer, FontGroup> fontGroups() {
 		return mFontGroupMap;
 	}
@@ -269,6 +299,8 @@ public class FontManager extends EntityGroupManager {
 
 		mSystemFont = new FontUnit(SYSTEM_FONT_NAME, SYSTEM_FONT_PATH, SYSTEM_FONT_SIZE, LintfordCore.CORE_ENTITY_GROUP_ID);
 		mFontGroupMap.get(LintfordCore.CORE_ENTITY_GROUP_ID).mFontMap.put(SYSTEM_FONT_NAME, mSystemFont);
+
+		loadFontsFromMetafile(META_FILE_LOCATION, LintfordCore.CORE_ENTITY_GROUP_ID);
 
 	}
 
@@ -346,7 +378,10 @@ public class FontManager extends EntityGroupManager {
 
 		// First check to see if the fontpath is valid and the font exists
 		FontUnit lNewFont = new FontUnit(pName, pFontPath, pPointSize, pAntiAlias, pEntityGroupID);
-		lNewFont.loadGLContent(mResourceManager);
+		if (mResourceManager != null) {
+			lNewFont.loadGLContent(mResourceManager);
+
+		}
 
 		if (pEntityGroupID == LintfordCore.CORE_ENTITY_GROUP_ID && pName.equals(SYSTEM_FONT_NAME)) {
 			mSystemFont = lNewFont;
@@ -357,6 +392,54 @@ public class FontManager extends EntityGroupManager {
 
 		return lNewFont;
 
+	}
+
+	public void loadFontsFromMetafile(String pMetaFileLocation, int pEntityGroupID) {
+		Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("Loading Fonts from meta-file %s with EntityGroupID %d", pMetaFileLocation, pEntityGroupID));
+
+		final Gson GSON = new GsonBuilder().create();
+
+		String lMetaFileContentsString = null;
+		FontUnitMetaData lFontMetaObject = null;
+
+		lMetaFileContentsString = FileUtils.loadString(pMetaFileLocation);// new String(Files.readAllBytes(Paths.get(pMetaFileLocation)));
+		lFontMetaObject = GSON.fromJson(lMetaFileContentsString, FontUnitMetaData.class);
+
+		if (lFontMetaObject == null || lFontMetaObject.FontUnitMetaDefinitions == null || lFontMetaObject.FontUnitMetaDefinitions.length == 0) {
+			Debug.debugManager().logger().w(getClass().getSimpleName(), "Couldn't load fonts from font meta file");
+			return;
+
+		}
+
+		final var lFontGroup = getFontGroup(pEntityGroupID);
+		if (lFontGroup == null) {
+			Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Cannot load font %s for EntityGroupID %d: EntityGroupID does not exist!", (pMetaFileLocation + " (META)"), pEntityGroupID));
+			return;
+
+		}
+
+		final int lNumberOfFontUnitDefinitions = lFontMetaObject.FontUnitMetaDefinitions.length;
+		for (int i = 0; i < lNumberOfFontUnitDefinitions; i++) {
+			final var lFontUnitDefinition = lFontMetaObject.FontUnitMetaDefinitions[i];
+			final var lFontName = lFontUnitDefinition.fontname;
+
+			if (!fontExists(lFontName, pEntityGroupID)) {
+				final var lNewFont = loadNewFont(lFontName, lFontUnitDefinition.filepath, lFontUnitDefinition.pointsize, true, false, pEntityGroupID);
+				lFontGroup.mFontMap.put(lFontName, lNewFont);
+
+			}
+
+		}
+
+	}
+
+	private boolean fontExists(String pFontName, int pEntityGroupID) {
+		final var lFontGroup = mFontGroupMap.get(pEntityGroupID);
+
+		if (lFontGroup == null)
+			return false;
+
+		return lFontGroup.mFontMap.containsKey(pFontName);
 	}
 
 	public FontUnit getFont(String pFontName, int pEntityGroupID) {

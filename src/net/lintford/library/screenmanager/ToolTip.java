@@ -12,7 +12,7 @@ public class ToolTip {
 	// Constants
 	// --------------------------------------
 
-	public static final String TOOLTIP_FONT_NAME = "ToolTipFont";
+	public static final String TOOLTIP_FONT_NAME = "FONT_TOOLTIP";
 
 	// --------------------------------------
 	// Variables
@@ -45,8 +45,7 @@ public class ToolTip {
 
 		mUITexture = pResourceManager.textureManager().textureCore();
 
-		final String lFontPathname = mScreenManager.fontPathname();
-		mMenuFont = pResourceManager.fontManager().loadNewFont(TOOLTIP_FONT_NAME, lFontPathname, 16, true, LintfordCore.CORE_ENTITY_GROUP_ID);
+		mMenuFont = pResourceManager.fontManager().getFont(TOOLTIP_FONT_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
 
 	}
 

@@ -38,7 +38,7 @@ public class DebugConsole extends Rectangle implements IBufferedInputCallback, I
 	private static final String CARET_CHAR = "|";
 	private static final float FOCUS_TIMER = 250;
 
-	public static final String CONSOLE_FONT_NAME = "Console Font";
+	public static final String CONSOLE_FONT_NAME = "FONT_CONSOLE_TEXT";
 
 	public static final Vector3f DEFAULT_MESSAGE_RGB = new Vector3f(0.95f, 0.96f, 0.94f);
 	public static final Vector3f VERBOSE_MESSAGE_RGB = new Vector3f(0.44f, 0.44f, 0.40f);
@@ -205,7 +205,7 @@ public class DebugConsole extends Rectangle implements IBufferedInputCallback, I
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
-		mConsoleFont = pResourceManager.fontManager().loadNewFont(CONSOLE_FONT_NAME, "/res/fonts/Rajdhani-Bold.ttf", 16, LintfordCore.CORE_ENTITY_GROUP_ID);
+		mConsoleFont = pResourceManager.fontManager().getFont(CONSOLE_FONT_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
 		mSpriteBatch.loadGLContent(pResourceManager);
 
 		mCoreUITexture = pResourceManager.textureManager().textureCore();

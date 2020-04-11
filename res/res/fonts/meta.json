@@ -1,0 +1,27 @@
+{
+	"FontUnitMetaDefinitions" : [
+	
+		{
+			"fontname":"FONT_CORE_TEXT",
+			"pointsize":"18",
+			"filepath":"/res/fonts/Rajdhani-Bold.ttf"
+		},
+		{
+			"fontname":"FONT_CORE_TITLE",
+			"pointsize":"22",
+			"filepath":"/res/fonts/Rajdhani-Bold.ttf"
+		},
+		{
+			"fontname":"FONT_CORE_HEADER",
+			"pointsize":"76",
+			"filepath":"/res/fonts/Rajdhani-Bold.ttf"
+		},
+
+		{
+			"fontname":"FONT_CONSOLE_TEXT",
+			"pointsize":"16",
+			"filepath":"/res/fonts/Rajdhani-Bold.ttf"
+		}
+		
+	]
+}

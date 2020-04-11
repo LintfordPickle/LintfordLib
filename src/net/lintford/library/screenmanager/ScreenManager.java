@@ -8,7 +8,6 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.debug.GLDebug;
-import net.lintford.library.core.graphics.fonts.FontManager;
 import net.lintford.library.options.IResizeListener;
 import net.lintford.library.screenmanager.Screen.ScreenState;
 import net.lintford.library.screenmanager.toast.ToastManager;
@@ -25,7 +24,6 @@ public class ScreenManager {
 	private ToolTip mToolTip;
 	private ResourceManager mResourceManager;
 	private ToastManager mToastManager;
-	private String mFontPathname;
 	private boolean mIsinitialized;
 	private boolean mIsLoaded;
 	private int mScreenUIDCounter;
@@ -52,10 +50,6 @@ public class ScreenManager {
 		return mScreens;
 	}
 
-	public String fontPathname() {
-		return mFontPathname;
-	}
-
 	public LintfordCore core() {
 		return mLWJGLCore;
 	}
@@ -77,9 +71,6 @@ public class ScreenManager {
 		mScreens = new ArrayList<>();
 		mScreensToUpdate = new ArrayList<>();
 
-		// This can and probably should be overriden with a game specific font
-		mFontPathname = FontManager.SYSTEM_FONT_PATH;
-
 		mToolTip = new ToolTip(this);
 
 		mIsinitialized = false;
@@ -91,10 +82,8 @@ public class ScreenManager {
 	// Core-Methods
 	// --------------------------------------
 
-	public void initialize(String pFontPathname) {
-		mFontPathname = pFontPathname;
-
-		int lCount = mScreens.size();
+	public void initialize() {
+		final int lCount = mScreens.size();
 		for (int i = 0; i < lCount; i++) {
 			mScreens.get(i).initialize();
 		}

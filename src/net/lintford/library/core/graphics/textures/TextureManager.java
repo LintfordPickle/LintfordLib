@@ -448,7 +448,7 @@ public class TextureManager extends EntityGroupManager {
 
 	}
 
-	/** Unloads the speicifed texture in the texture group, if applicable. */
+	/** Unloads the specified texture in the texture group, if applicable. */
 	public void unloadTexture(Texture pTexture, int pEntityGroupID) {
 		if (pTexture == null)
 			return; // already lost reference
