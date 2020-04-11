@@ -18,6 +18,18 @@
 		},
 
 		{
+			"fontname":"FONT_TOAST",
+			"pointsize":"14",
+			"filepath":"/res/fonts/Rajdhani-Bold.ttf"
+		},
+
+		{
+			"fontname":"FONT_TOOLTIP",
+			"pointsize":"12",
+			"filepath":"/res/fonts/Rajdhani-Bold.ttf"
+		},
+
+		{
 			"fontname":"FONT_CONSOLE_TEXT",
 			"pointsize":"16",
 			"filepath":"/res/fonts/Rajdhani-Bold.ttf"
