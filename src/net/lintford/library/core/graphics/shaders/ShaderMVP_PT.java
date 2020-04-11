@@ -74,8 +74,6 @@ public class ShaderMVP_PT extends Shader {
 	// --------------------------------------
 
 	protected void update() {
-		super.update();
-
 		if (mProjectionMatrixLocation != -1 && mProjectionMatrix != null) {
 			GL20.glUniformMatrix4fv(mProjectionMatrixLocation, false, MathUtil.getMatBufferColMaj(mProjectionMatrix));
 		}
