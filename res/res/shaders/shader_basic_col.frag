@@ -1,4 +1,5 @@
 #version 150 core
+precision mediump float;
 
 in vec4 passColor;
 

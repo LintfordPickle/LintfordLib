@@ -230,6 +230,7 @@ public class TextureBatch {
 	public void draw(Texture pTexture, Rectangle pSrcRect, float pDX, float pDY, float pDW, float pDH, float pZ, float pR, float pG, float pB, float pA) {
 		if (pSrcRect == null)
 			return;
+
 		draw(pTexture, pSrcRect.x(), pSrcRect.y(), pSrcRect.w(), pSrcRect.h(), pDX, pDY, pDW, pDH, pZ, pR, pG, pB, pA);
 
 	}
@@ -241,17 +242,9 @@ public class TextureBatch {
 		if (!mIsDrawing)
 			return;
 
-		if (pTexture == null) {
-			// Resolve to use a default texture, or the 'MISSING_TEXTURE'
-			if (TextureManager.USE_DEBUG_MISSING_TEXTURES) {
-				pTexture = mResourceManager.textureManager().textureNotFound();
-				if (pTexture == null)
-					return;
+		if (pTexture == null && TextureManager.USE_DEBUG_MISSING_TEXTURES) {
+			pTexture = mResourceManager.textureManager().textureNotFound();
 
-			} else {
-				return;
-
-			}
 		}
 
 		if (mUseCheckerPattern) {
@@ -259,11 +252,16 @@ public class TextureBatch {
 
 		}
 
-		if (mCurrentTexID == -1) { // first texture
-			mCurrentTexID = pTexture.getTextureID();
-		} else if (mCurrentTexID != pTexture.getTextureID()) {
-			flush();
-			mCurrentTexID = pTexture.getTextureID();
+		if (pTexture != null) {
+			if (mCurrentTexID == -1) {
+				mCurrentTexID = pTexture.getTextureID();
+
+			} else if (mCurrentTexID != pTexture.getTextureID()) {
+				flush();
+				mCurrentTexID = pTexture.getTextureID();
+
+			}
+
 		}
 
 		if (mCurNumSprites >= MAX_SPRITES) {
@@ -308,21 +306,13 @@ public class TextureBatch {
 
 	}
 
-	// FIXME: TextureBatch has 3 distinct drawing methods, which all do ultimately the same thing
-
 	public void draw(Texture pTexture, float pSX, float pSY, float pSW, float pSH, float pDX, float pDY, float pDW, float pDH, float pZ, float pR, float pG, float pB, float pA) {
 		if (!mIsDrawing)
 			return;
 
-		if (pTexture == null) {
-			// Resolve to use a default texture, or the 'MISSING_TEXTURE'
-			if (TextureManager.USE_DEBUG_MISSING_TEXTURES) {
-				pTexture = mResourceManager.textureManager().textureNotFound();
+		if (pTexture == null && TextureManager.USE_DEBUG_MISSING_TEXTURES) {
+			pTexture = mResourceManager.textureManager().textureNotFound();
 
-			} else {
-				return;
-
-			}
 		}
 
 		if (mUseCheckerPattern) {
@@ -330,16 +320,16 @@ public class TextureBatch {
 
 		}
 
-		if (mCurrentTexID == -1) { // first texture
-			mCurrentTexID = pTexture.getTextureID();
+		if (pTexture != null) {
+			if (mCurrentTexID == -1) {
+				mCurrentTexID = pTexture.getTextureID();
 
-			if (pTexture.getTextureID() <= 0) {
-				throw new RuntimeException("Invalid textureID while rendering.");
+			} else if (mCurrentTexID != pTexture.getTextureID()) {
+				flush();
+				mCurrentTexID = pTexture.getTextureID();
+
 			}
 
-		} else if (mCurrentTexID != pTexture.getTextureID()) {
-			flush();
-			mCurrentTexID = pTexture.getTextureID();
 		}
 
 		if (mCurNumSprites >= MAX_SPRITES) {
@@ -347,32 +337,29 @@ public class TextureBatch {
 
 		}
 
-		final float lHalfWPixel = (1f / pTexture.getTextureWidth()) * 0.5f;
-		final float lHalfHPixel = (1f / pTexture.getTextureHeight()) * 0.5f;
-
 		// Vertex 0
 		float x1 = pDX;
 		float y1 = pDY;
-		float u1 = pSX / pTexture.getTextureWidth() + lHalfWPixel;
-		float v1 = pSY / pTexture.getTextureHeight() + lHalfHPixel;
+		float u1 = pSX / pTexture.getTextureWidth();
+		float v1 = pSY / pTexture.getTextureHeight();
 
 		// Vertex 1
 		float x2 = pDX + pDW;
 		float y2 = pDY;
-		float u2 = (pSX + pSW) / pTexture.getTextureWidth() - lHalfWPixel;
-		float v2 = pSY / pTexture.getTextureHeight() + lHalfHPixel;
+		float u2 = (pSX + pSW) / pTexture.getTextureWidth();
+		float v2 = pSY / pTexture.getTextureHeight();
 
 		// Vertex 2
 		float x0 = pDX;
 		float y0 = pDY + pDH;
-		float u0 = pSX / pTexture.getTextureWidth() + lHalfWPixel;
-		float v0 = (pSY + pSH) / pTexture.getTextureHeight() - lHalfHPixel;
+		float u0 = pSX / pTexture.getTextureWidth();
+		float v0 = (pSY + pSH) / pTexture.getTextureHeight();
 
 		// Vertex 3
 		float x3 = pDX + pDW;
 		float y3 = pDY + pDH;
-		float u3 = (pSX + pSW) / pTexture.getTextureWidth() - lHalfWPixel;
-		float v3 = (pSY + pSH) / pTexture.getTextureHeight() - lHalfHPixel;
+		float u3 = (pSX + pSW) / pTexture.getTextureWidth();
+		float v3 = (pSY + pSH) / pTexture.getTextureHeight();
 
 		// 102203
 		addVertToBuffer(x1, y1, pZ, 1f, pR, pG, pB, pA, u1, v1); // 1
@@ -394,14 +381,21 @@ public class TextureBatch {
 		if (!mIsDrawing)
 			return;
 
-		if (pTexture == null)
-			return;
+		if (pTexture == null && TextureManager.USE_DEBUG_MISSING_TEXTURES) {
+			pTexture = mResourceManager.textureManager().textureNotFound();
 
-		if (mCurrentTexID == -1) { // first texture
-			mCurrentTexID = pTexture.getTextureID();
-		} else if (mCurrentTexID != pTexture.getTextureID()) {
-			flush();
-			mCurrentTexID = pTexture.getTextureID();
+		}
+
+		if (pTexture != null) {
+			if (mCurrentTexID == -1) {
+				mCurrentTexID = pTexture.getTextureID();
+
+			} else if (mCurrentTexID != pTexture.getTextureID()) {
+				flush();
+				mCurrentTexID = pTexture.getTextureID();
+
+			}
+
 		}
 
 		if (mCurNumSprites >= MAX_SPRITES) {
@@ -466,15 +460,9 @@ public class TextureBatch {
 		if (!mIsDrawing)
 			return;
 
-		if (pTexture == null) {
-			// Resolve to use a default texture, or the 'MISSING_TEXTURE'
-			if (TextureManager.USE_DEBUG_MISSING_TEXTURES) {
-				pTexture = mResourceManager.textureManager().textureNotFound();
+		if (pTexture == null && TextureManager.USE_DEBUG_MISSING_TEXTURES) {
+			pTexture = mResourceManager.textureManager().textureNotFound();
 
-			} else {
-				return;
-
-			}
 		}
 
 		if (mUseCheckerPattern) {
@@ -482,11 +470,16 @@ public class TextureBatch {
 
 		}
 
-		if (mCurrentTexID == -1) { // first texture
-			mCurrentTexID = pTexture.getTextureID();
-		} else if (mCurrentTexID != pTexture.getTextureID()) {
-			flush();
-			mCurrentTexID = pTexture.getTextureID();
+		if (pTexture != null) {
+			if (mCurrentTexID == -1) {
+				mCurrentTexID = pTexture.getTextureID();
+
+			} else if (mCurrentTexID != pTexture.getTextureID()) {
+				flush();
+				mCurrentTexID = pTexture.getTextureID();
+
+			}
+
 		}
 
 		if (mCurNumSprites >= MAX_SPRITES) {

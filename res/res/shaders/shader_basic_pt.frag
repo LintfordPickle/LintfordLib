@@ -1,5 +1,5 @@
 #version 150 core
-precision highp float;
+precision mediump float;
 
 uniform sampler2D textureSampler;
 

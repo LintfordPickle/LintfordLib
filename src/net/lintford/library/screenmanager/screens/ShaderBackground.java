@@ -6,6 +6,7 @@ import org.lwjgl.opengl.GL20;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.graphics.shaders.ShaderMVP_PT;
+import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.screenmanager.Screen;
 import net.lintford.library.screenmanager.ScreenManager;
 
@@ -60,7 +61,7 @@ public abstract class ShaderBackground extends Screen {
 			}
 
 			if (mResolutionLocationID != -1) {
-				GL20.glUniform2f(mTimeLocationID, mResolutionW, mResolutionH);
+				GL20.glUniform2f(mResolutionLocationID, mResolutionW, mResolutionH);
 			}
 
 		}
@@ -82,6 +83,15 @@ public abstract class ShaderBackground extends Screen {
 
 			mTimeLocationID = GL20.glGetUniformLocation(shaderID(), "fGlobalTime");
 			mResolutionLocationID = GL20.glGetUniformLocation(shaderID(), "v2Resolution");
+
+			// Bind the sampler locations
+			int lSampler0 = GL20.glGetUniformLocation(shaderID(), "textureSampler0");
+			int lSampler1 = GL20.glGetUniformLocation(shaderID(), "textureSampler1");
+			int lSampler2 = GL20.glGetUniformLocation(shaderID(), "textureSampler2");
+
+			GL20.glUniform1i(lSampler0, 0);
+			GL20.glUniform1i(lSampler1, 1);
+			GL20.glUniform1i(lSampler2, 2);
 
 		}
 
@@ -163,7 +173,7 @@ public abstract class ShaderBackground extends Screen {
 		final var lHeight = lHudBoundingRectangle.h();
 
 		lTextureBatch.begin(pCore.HUD(), mBackgroundShader);
-		lTextureBatch.draw(null, 0, 0, 800, 800, lX, lY, lWidth, lHeight, -0.01f, 1, 1, 1, 1);
+		lTextureBatch.draw(null, 0, 0, 1, 1, lX, lY, lWidth, lHeight, -0.01f, 1, 1, 1, 1);
 		lTextureBatch.end();
 
 	}
