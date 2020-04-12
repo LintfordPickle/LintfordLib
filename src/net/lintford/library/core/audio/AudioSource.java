@@ -73,6 +73,12 @@ public class AudioSource {
 
 	}
 
+	public boolean unassign() {
+		mOwnerHash = NO_OWNER;
+		return true;
+
+	}
+
 	/**
 	 * Checks if the current lock held on this {@link AudioSource} matches the given hash value. It the hashes match, the lock is released.
 	 * 

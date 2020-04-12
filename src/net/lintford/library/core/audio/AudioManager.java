@@ -52,6 +52,12 @@ public class AudioManager {
 	// Constants
 	// --------------------------------------
 
+	private AudioListener mAudioListener;
+
+	public AudioListener listener() {
+		return mAudioListener;
+	}
+
 	public class AudioMetaDataDefinition {
 		public String filepath;
 		public String soundname;
@@ -98,6 +104,11 @@ public class AudioManager {
 		return mOpenALInitialized;
 	}
 
+	public AudioData getAudioDataBufferByName(String pName) {
+		return mAudioDataBuffers.get(pName);
+
+	}
+
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
@@ -107,6 +118,8 @@ public class AudioManager {
 
 		mAudioSources = new ArrayList<>();
 		mFaFSourcePool = new ArrayList<>(AUDIO_FAF_SOURCE_POOL_SIZE);
+
+		mAudioListener = new AudioListener();
 
 		mContext = NULL;
 		mDevice = NULL;
@@ -222,6 +235,20 @@ public class AudioManager {
 
 	}
 
+	public void unloadAudioBuffer(String pAudioName) {
+		final var lAudioDataBuffer = mAudioDataBuffers.get(pAudioName);
+
+		if (lAudioDataBuffer == null) {
+			return;
+
+		}
+
+		lAudioDataBuffer.unloadAudioData();
+
+		mAudioDataBuffers.remove(pAudioName);
+
+	}
+
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
@@ -245,10 +272,10 @@ public class AudioManager {
 
 	/** Returns an OpenAL {@link AudioSource} object which can be used to play an OpenAL AudioBuffer. */
 	public AudioSource getAudioSource(final int pOwnerHash) {
-		final int POOL_COUNT = mAudioSources.size();
+		final int lNumberSourcesInPool = mAudioSources.size();
 
 		// First check if there are any audio sources free in the pool
-		for (int i = 0; i < POOL_COUNT; i++) {
+		for (int i = 0; i < lNumberSourcesInPool; i++) {
 			if (mAudioSources.get(i).isFree()) {
 				AudioSource lAudioSource = mAudioSources.get(i);
 				if (lAudioSource.assign(pOwnerHash)) {
@@ -261,7 +288,7 @@ public class AudioManager {
 		}
 
 		// If there is still space left in the pool, then add a new object
-		if (AUDIO_FAF_SOURCE_POOL_SIZE + POOL_COUNT < mMaxSourceCount) {
+		if (AUDIO_FAF_SOURCE_POOL_SIZE + lNumberSourcesInPool < mMaxSourceCount) {
 			AudioSource lNewSource = new AudioSource();
 			lNewSource.assign(pOwnerHash);
 			mAudioSources.add(lNewSource);
@@ -407,6 +434,11 @@ public class AudioManager {
 	// --------------------------------------
 	// Helper Methods
 	// --------------------------------------
+
+	public AudioSource play(String pAudioDataName) {
+		return play(getAudioDataBufferByName(pAudioDataName));
+
+	}
 
 	/** Plays the given {@link AudioData}. */
 	public AudioSource play(AudioData pAudioDataBuffer) {

@@ -14,6 +14,7 @@ import javax.sound.sampled.AudioSystem;
 
 import org.lwjgl.openal.AL10;
 
+import net.lintford.library.core.audio.AudioManager;
 import net.lintford.library.core.debug.Debug;
 
 /* 
@@ -169,8 +170,10 @@ public class WaveData {
 			} else {
 				assert false : "Illegal sample size";
 			}
+			Debug.debugManager().logger().w(AudioManager.class.getSimpleName(), "WAV has stereo sound - this sound will not be played in 3d space");
 		} else {
-			assert false : "Only mono or stereo is supported";
+			Debug.debugManager().logger().e(AudioManager.class.getSimpleName(), "Only mono or stereo sound files are supported.");
+			return null;
 		}
 
 		// read data into buffer
@@ -188,18 +191,15 @@ public class WaveData {
 			buffer = convertAudioBytes(buf, audioformat.getSampleSizeInBits() == 16, audioformat.isBigEndian() ? ByteOrder.BIG_ENDIAN : ByteOrder.LITTLE_ENDIAN);
 		} catch (IOException ioe) {
 			return null;
+		} finally {
+			try {
+				ais.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 
-		// create our result
-		WaveData wavedata = new WaveData(buffer, channels, (int) audioformat.getSampleRate());
-
-		// close stream
-		try {
-			ais.close();
-		} catch (IOException ioe) {
-		}
-
-		return wavedata;
+		return new WaveData(buffer, channels, (int) audioformat.getSampleRate());
 	}
 
 	private static ByteBuffer convertAudioBytes(byte[] audio_bytes, boolean two_bytes_data, ByteOrder order) {
