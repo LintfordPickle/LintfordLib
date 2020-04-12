@@ -25,7 +25,7 @@ public class PressToContinueIntroScreen extends Screen {
 
 	private boolean mUserRequestSkip;
 	private boolean mActionPerformed;
-	private float mTimeToCompleteTransition = 500f;
+	private float mTimeToCompleteTransition = 400f;
 	private float mTransitionTimer;
 
 	private Rectangle mSrcTextureRect;
@@ -107,10 +107,6 @@ public class PressToContinueIntroScreen extends Screen {
 
 		if (!mActionPerformed) {
 			if (mUserRequestSkip) {
-				if (mActionCallback != null) {
-					mActionCallback.TimerFinished(this);
-
-				}
 
 				mActionPerformed = true;
 
@@ -122,6 +118,11 @@ public class PressToContinueIntroScreen extends Screen {
 			calculateFlashRGB(pCore, mTransitionTimer, mTimeToCompleteTransition);
 
 		} else {
+			if (mActionCallback != null) {
+				mActionCallback.TimerFinished(this);
+
+			}
+
 			exitScreen();
 		}
 
@@ -130,8 +131,10 @@ public class PressToContinueIntroScreen extends Screen {
 	private void calculateFlashRGB(LintfordCore pCore, float pCurrentTimer, float pTotalTime) {
 		float normalizedLifetime = pCurrentTimer / pTotalTime;
 
-		mA = 2 * normalizedLifetime * (1 - normalizedLifetime);
+		modAmt = (1 - normalizedLifetime);
 	}
+
+	float modAmt = 0f;
 
 	@Override
 	public void draw(LintfordCore pCore) {
@@ -152,6 +155,7 @@ public class PressToContinueIntroScreen extends Screen {
 
 		mTextureBatch.begin(pCore.HUD());
 		mTextureBatch.draw(mBackgroundTexture, mSrcTextureRect, lX, lY, lWidth, lHeight, -1f, 1f, 1f, 1f, mA);
+		mTextureBatch.draw(pCore.resources().textureManager().textureWhite(), 0, 0, 2, 2, lX, lY, lWidth, lHeight, -1f, 1f, 1f, 1f, modAmt);
 		mTextureBatch.end();
 
 	}

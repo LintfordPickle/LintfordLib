@@ -194,8 +194,8 @@ public class TextureManager extends EntityGroupManager {
 		mTextureNotFound = loadTexture(TEXTURE_NOT_FOUND_NAME, new int[] { 0xFFFF00FF, 0xFFFF00FF, 0xFFFF00FF, 0xFFFF00FF }, 2, 2, LintfordCore.CORE_ENTITY_GROUP_ID);
 		mTextureChecker = loadTexture(TEXTURE_CHECKER_BOARD_NAME, "/res/textures/CheckerBoard.png", GL11.GL_NEAREST, LintfordCore.CORE_ENTITY_GROUP_ID);
 		mTextureCheckerIndexed = loadTexture(TEXTURE_CHECKER_BOARD_INDEXED_NAME, "/res/textures/CheckerBoardIndexed.png", GL11.GL_NEAREST, LintfordCore.CORE_ENTITY_GROUP_ID);
-		mTextureWhite = loadTexture(TEXTURE_WHITE_NAME, new int[] { 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF }, 2, 2, LintfordCore.CORE_ENTITY_GROUP_ID);
-		mTextureBlack = loadTexture(TEXTURE_BLACK_NAME, new int[] { 0xFF000000, 0xFF000000, 0xFF000000, 0xFF000000 }, 2, 2, LintfordCore.CORE_ENTITY_GROUP_ID);
+		mTextureWhite = loadTexture(TEXTURE_WHITE_NAME, new int[] { 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF }, 2, 2, GL11.GL_NEAREST,  LintfordCore.CORE_ENTITY_GROUP_ID);
+		mTextureBlack = loadTexture(TEXTURE_BLACK_NAME, new int[] { 0xFF000000, 0xFF000000, 0xFF000000, 0xFF000000 }, 2, 2, GL11.GL_NEAREST,  LintfordCore.CORE_ENTITY_GROUP_ID);
 
 	}
 
