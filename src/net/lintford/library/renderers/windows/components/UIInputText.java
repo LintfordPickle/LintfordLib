@@ -115,7 +115,7 @@ public class UIInputText extends UIWidget implements IBufferedInputCallback {
 	// --------------------------------------
 
 	public boolean handleInput(LintfordCore pCore) {
-		if (mCancelRectangle.intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().isMouseOverThisComponent(hashCode())) {
+		if (mCancelRectangle.intersectsAA(pCore.HUD().getMouseCameraSpace())) {
 			if (pCore.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
 				if (mInputField.length() > 0) {
 
@@ -133,18 +133,13 @@ public class UIInputText extends UIWidget implements IBufferedInputCallback {
 			}
 		}
 
-		if (intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().isMouseOverThisComponent(hashCode())) {
+		if (intersectsAA(pCore.HUD().getMouseCameraSpace())) {
 			if (pCore.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
 
 				onClick(pCore.input());
 				mHasFocus = true;
 
 				return true;
-
-			} else if (mHasFocus) {
-				mHasFocus = false;
-
-				return false;
 
 			}
 

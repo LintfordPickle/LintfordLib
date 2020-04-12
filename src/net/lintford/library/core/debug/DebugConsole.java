@@ -233,8 +233,8 @@ public class DebugConsole extends Rectangle implements IBufferedInputCallback, I
 
 		if (mOpen) {
 			if (intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().tryAcquireMouseMiddle(hashCode())) {
-				mTAGFilterText.handleInput(pCore);
-				mMessageFilterText.handleInput(pCore);
+				if(mTAGFilterText.handleInput(pCore)) return;
+				if(mMessageFilterText.handleInput(pCore)) return;
 
 				if (pCore.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_DELETE)) {
 					mScrollYPosition = 0;
@@ -315,11 +315,11 @@ public class DebugConsole extends Rectangle implements IBufferedInputCallback, I
 
 			}
 
-			else if (mTAGFilterText.intersectsAA(pCore.HUD().getMouseCameraSpace())) {
+			else if (mTAGFilterText.intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().tryAcquireMouseLeftClick(mTAGFilterText.hashCode())) {
 
 			}
 
-			else if (mMessageFilterText.intersectsAA(pCore.HUD().getMouseCameraSpace())) {
+			else if (mMessageFilterText.intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().tryAcquireMouseLeftClick(mMessageFilterText.hashCode())) {
 
 			}
 
