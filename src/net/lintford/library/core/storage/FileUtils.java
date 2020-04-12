@@ -199,4 +199,15 @@ public class FileUtils {
 
 	}
 
+	public static String getFileExtension(String pFilepath) {
+		final var lFile = new File(pFilepath);
+
+		String name = lFile.getName();
+		int lastIndexOf = name.lastIndexOf(".");
+		if (lastIndexOf == -1) {
+			return ""; // empty extension
+		}
+		return name.substring(lastIndexOf);
+	}
+
 }

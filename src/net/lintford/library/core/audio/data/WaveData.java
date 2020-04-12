@@ -1,10 +1,7 @@
-package net.lintford.library.core.audio;
+package net.lintford.library.core.audio.data;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -18,7 +15,6 @@ import javax.sound.sampled.AudioSystem;
 import org.lwjgl.openal.AL10;
 
 import net.lintford.library.core.debug.Debug;
-import net.lintford.library.core.storage.FileUtils;
 
 /* 
  * Copyright (c) 2002-2008 LWJGL Project
@@ -84,42 +80,6 @@ public class WaveData {
 	/** Disposes the {@link WaveData}. */
 	public void dispose() {
 		data.clear();
-	}
-
-	/**
-	 * Creates a WaveData container from the specified in the classpath
-	 * 
-	 * @param path path to file (relative, and in classpath)
-	 * @return WaveData containing data, or null if a failure occured
-	 */
-	public static WaveData create(String pPathName) {
-
-		if (pPathName.charAt(0) == '/') {
-			return createFromResource(pPathName);
-
-		} else {
-			return createFromFile(pPathName);
-
-		}
-
-	}
-
-	private static WaveData createFromResource(String pPathName) {
-		InputStream lInputStream = FileUtils.class.getResourceAsStream(pPathName);
-		return create(new BufferedInputStream(lInputStream));
-
-	}
-
-	private static WaveData createFromFile(String pPathName) {
-		File lNewFile = new File(pPathName);
-		try {
-			return create(new BufferedInputStream(new FileInputStream(lNewFile)));
-
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-			return null;
-
-		}
 	}
 
 	/**

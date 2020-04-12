@@ -3,6 +3,8 @@ package net.lintford.library.core.audio;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.lintford.library.core.audio.data.AudioData;
+
 public class MusicManager {
 
 	// --------------------------------------

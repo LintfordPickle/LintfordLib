@@ -1,6 +1,9 @@
-package net.lintford.library.core.audio;
+package net.lintford.library.core.audio.data;
 
 import static org.lwjgl.BufferUtils.createByteBuffer;
+import static org.lwjgl.openal.AL10.AL_FORMAT_MONO16;
+import static org.lwjgl.openal.AL10.AL_FORMAT_STEREO16;
+import static org.lwjgl.openal.AL10.alBufferData;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 import java.io.IOException;
@@ -10,57 +13,33 @@ import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
-import java.nio.channels.SeekableByteChannel;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.openal.AL10;
 import org.lwjgl.stb.STBVorbis;
 import org.lwjgl.stb.STBVorbisInfo;
 
-// FIXME: Fix memory allocations (https://github.com/LWJGL/lwjgl3-wiki/wiki/1.3.-Memory-FAQ) - do not use BufferUtils (cannot freely free resources)!
-public class WaveAudioData extends AudioData {
-
-	// --------------------------------------
-	// Constants
-	// --------------------------------------
-
-	// --------------------------------------
-	// Variables
-	// --------------------------------------
-
-	// --------------------------------------
-	// Properties
-	// --------------------------------------
-
-	// --------------------------------------
-	// Constructor
-	// --------------------------------------
+public class OGGAudioData extends AudioData {
 
 	// --------------------------------------
 	// Core-Methods
 	// --------------------------------------
 
 	@Override
-	public boolean loadAudioFromFile(String pFilename) {
+	public boolean loadAudioFromInputStream(InputStream pInputStream) {
 		if (isLoaded())
 			return false;
 
 		mBufferID = AL10.alGenBuffers();
 
-		WaveData waveFile = WaveData.create(pFilename);
+		try (STBVorbisInfo info = STBVorbisInfo.malloc()) {
+			ShortBuffer pcm = readVorbis(pInputStream, 32 * 1024, info);
 
-		if (waveFile == null) {
-			return false;
+			// copy to buffer
+			alBufferData(mBufferID, info.channels() == 1 ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16, pcm, info.sample_rate());
 
+			return true;
 		}
-
-		AL10.alBufferData(mBufferID, waveFile.format, waveFile.data, waveFile.samplerate);
-		waveFile.dispose();
-
-		return true;
 
 	}
 
@@ -68,10 +47,10 @@ public class WaveAudioData extends AudioData {
 	// Methods
 	// --------------------------------------
 
-	static ShortBuffer readVorbis(String resource, int bufferSize, STBVorbisInfo info) {
+	static ShortBuffer readVorbis(InputStream pInputStream, int bufferSize, STBVorbisInfo info) {
 		ByteBuffer vorbis;
 		try {
-			vorbis = ioResourceToByteBuffer(resource, bufferSize);
+			vorbis = ioResourceToByteBuffer(pInputStream, bufferSize);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -106,27 +85,18 @@ public class WaveAudioData extends AudioData {
 	 *
 	 * @throws IOException if an IO error occurs
 	 */
-	public static ByteBuffer ioResourceToByteBuffer(String resource, int bufferSize) throws IOException {
+	public static ByteBuffer ioResourceToByteBuffer(InputStream pInputStream, int bufferSize) throws IOException {
 		ByteBuffer buffer;
 
-		Path path = Paths.get(resource);
-		if (Files.isReadable(path)) {
-			try (SeekableByteChannel fc = Files.newByteChannel(path)) {
-				buffer = BufferUtils.createByteBuffer((int) fc.size() + 1);
-				while (fc.read(buffer) != -1)
-					;
-			}
-		} else {
-			try (InputStream source = AudioManager.class.getClassLoader().getResourceAsStream(resource); ReadableByteChannel rbc = Channels.newChannel(source)) {
-				buffer = createByteBuffer(bufferSize);
+		try (ReadableByteChannel rbc = Channels.newChannel(pInputStream)) {
+			buffer = createByteBuffer(bufferSize);
 
-				while (true) {
-					int bytes = rbc.read(buffer);
-					if (bytes == -1)
-						break;
-					if (buffer.remaining() == 0)
-						buffer = resizeBuffer(buffer, buffer.capacity() * 2);
-				}
+			while (true) {
+				int bytes = rbc.read(buffer);
+				if (bytes == -1)
+					break;
+				if (buffer.remaining() == 0)
+					buffer = resizeBuffer(buffer, buffer.capacity() * 2);
 			}
 		}
 
