@@ -65,6 +65,11 @@ public class WaveData {
 	/** sample rate of data */
 	public final int samplerate;
 
+	/** number of channels in data */
+	public final int channels;
+
+	public final int sizeInBits;
+
 	/**
 	 * Creates a new WaveData
 	 * 
@@ -72,10 +77,12 @@ public class WaveData {
 	 * @param format     format of wave data
 	 * @param samplerate sample rate of data
 	 */
-	private WaveData(ByteBuffer data, int format, int samplerate) {
+	private WaveData(ByteBuffer data, int format, int samplerate, int channels, int sizeInBits) {
 		this.data = data;
 		this.format = format;
 		this.samplerate = samplerate;
+		this.channels = channels;
+		this.sizeInBits = sizeInBits;
 	}
 
 	/** Disposes the {@link WaveData}. */
@@ -199,7 +206,7 @@ public class WaveData {
 			}
 		}
 
-		return new WaveData(buffer, channels, (int) audioformat.getSampleRate());
+		return new WaveData(buffer, channels, (int) audioformat.getSampleRate(), channels, audioformat.getSampleSizeInBits());
 	}
 
 	private static ByteBuffer convertAudioBytes(byte[] audio_bytes, boolean two_bytes_data, ByteOrder order) {

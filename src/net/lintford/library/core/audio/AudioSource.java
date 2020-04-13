@@ -1,6 +1,7 @@
 package net.lintford.library.core.audio;
 
 import org.lwjgl.openal.AL10;
+import org.lwjgl.openal.AL11;
 
 import net.lintford.library.core.debug.Debug;
 
@@ -64,6 +65,7 @@ public class AudioSource {
 
 	/** Applies a lock on this AudioSource and marks it as assigned. */
 	public boolean assign(int pOwnerHash) {
+
 		if (!isFree() || !isValidSource())
 			return false;
 
@@ -124,13 +126,14 @@ public class AudioSource {
 
 	/** Instructs this {@link AudioSource} to being playing the audio buffer specified by the given buffer ID. Also specifies the volumn and the pitch of the sound. */
 	public void play(int pBufferID, float pGain, float pPitch) {
-		setVolume(pGain);
+		setGain(pGain);
 		setPitch(pPitch);
 
 		// associate the buffer with the source
 		AL10.alSourcei(mSourceID, AL10.AL_BUFFER, pBufferID);
 
 		// Play the source with the buffer
+		AL10.alSourcei(mSourceID, AL11.AL_SEC_OFFSET, 0);
 		AL10.alSourcePlay(mSourceID);
 
 	}
@@ -150,8 +153,8 @@ public class AudioSource {
 		AL10.alSourceStop(mSourceID);
 	}
 
-	/** Sets the volume of this {@link AudioSource}. */
-	public void setVolume(float pNewVolume) {
+	/** Sets the gain of this {@link AudioSource}. */
+	public void setGain(float pNewVolume) {
 		AL10.alSourcef(mSourceID, AL10.AL_GAIN, pNewVolume);
 
 	}
@@ -183,6 +186,11 @@ public class AudioSource {
 	/** Returns true if this {@link AudioSource} is currently playing, otherwise returns false. */
 	public boolean isPlaying() {
 		return AL10.alGetSourcei(mSourceID, AL10.AL_SOURCE_STATE) == AL10.AL_PLAYING;
+	}
+
+	public float getCurrentPlaybackTime() {
+		return AL10.alGetSourcef(sourceID(), AL11.AL_SEC_OFFSET);
+
 	}
 
 }

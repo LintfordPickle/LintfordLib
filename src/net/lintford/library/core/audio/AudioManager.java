@@ -43,6 +43,7 @@ import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.audio.data.AudioData;
 import net.lintford.library.core.audio.data.OGGAudioData;
 import net.lintford.library.core.audio.data.WaveAudioData;
+import net.lintford.library.core.audio.music.MusicManager;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.storage.FileUtils;
 
@@ -79,9 +80,16 @@ public class AudioManager {
 	private int mNumberAssignedSources;
 	private boolean mOpenALInitialized;
 
+	private List<AudioFireAndForgetManager> mAudioFireAndForgetManagers = new ArrayList<>();
+	private MusicManager mMusicManager;
+
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public MusicManager musicManager() {
+		return mMusicManager;
+	}
 
 	/** Returns the maxiumum numbers of sources supported by the OpenAL context. */
 	public int maxSources() {
@@ -110,6 +118,8 @@ public class AudioManager {
 		mAudioDataBuffers = new HashMap<>();
 		mAudioSources = new ArrayList<>();
 		mAudioListener = new AudioListener();
+
+		mMusicManager = new MusicManager(this);
 
 		mContext = NULL;
 		mDevice = NULL;
@@ -181,12 +191,16 @@ public class AudioManager {
 
 		mOpenALInitialized = true;
 
+		musicManager().loadALContent(pResourceManager);
+
 		// Once all the OpenAL Capabailities have been discovered, move onto loading the audio data
 		loadAudioFilesFromMetafile(META_FILE_LOCATION);
 
 	}
 
 	public void unloadALContent() {
+		musicManager().unloadALContent();
+
 		// Remove all the sound buffers
 		for (AudioData lAudioData : mAudioDataBuffers.values()) {
 			lAudioData.unloadAudioData();
@@ -314,7 +328,7 @@ public class AudioManager {
 		lAudioMetaObject = GSON.fromJson(lMetaFileContentsString, AudioMetaData.class);
 
 		if (lAudioMetaObject == null || lAudioMetaObject.AudioMetaDefinitions == null || lAudioMetaObject.AudioMetaDefinitions.length == 0) {
-			Debug.debugManager().logger().w(getClass().getSimpleName(), "Couldn't load audio files from font meta file");
+			Debug.debugManager().logger().e(getClass().getSimpleName(), "There was an error reading the audio meta file");
 			return;
 
 		}
@@ -351,7 +365,7 @@ public class AudioManager {
 		}
 
 		final var lSoundName = pSoundName;
-		final var lSoundData = loadAudioFile(pFilepath);
+		final var lSoundData = loadAudioFile(lSoundName, pFilepath);
 
 		if (lSoundData != null) {
 			if (pReload) {
@@ -368,7 +382,7 @@ public class AudioManager {
 
 	}
 
-	private AudioData loadAudioFile(String pFilepath) {
+	private AudioData loadAudioFile(String pName, String pFilepath) {
 		if (pFilepath == null || pFilepath.length() == 0) {
 			return null;
 
@@ -393,12 +407,12 @@ public class AudioManager {
 		switch (lFileExtension) {
 		case ".wav":
 			final var lNewWavData = new WaveAudioData();
-			lNewWavData.loadAudioFromInputStream(lInputStream);
+			lNewWavData.loadAudioFromInputStream(pName, lInputStream);
 			return lNewWavData;
 
 		case ".ogg":
 			final var lNewOggAudioData = new OGGAudioData();
-			lNewOggAudioData.loadAudioFromInputStream(lInputStream);
+			lNewOggAudioData.loadAudioFromInputStream(pName, lInputStream);
 			return lNewOggAudioData;
 
 		default:
@@ -437,8 +451,6 @@ public class AudioManager {
 	// --------------------------------------
 	// Factory Methods
 	// --------------------------------------
-
-	private List<AudioFireAndForgetManager> mAudioFireAndForgetManagers = new ArrayList<>();
 
 	public AudioFireAndForgetManager getFireAndForgetManager(int pNumberSources) {
 		final var lNewFireAndForgetManager = getFreeAudioFireAndForgetManager();

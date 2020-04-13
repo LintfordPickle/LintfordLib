@@ -19,6 +19,9 @@ import org.lwjgl.openal.AL10;
 import org.lwjgl.stb.STBVorbis;
 import org.lwjgl.stb.STBVorbisInfo;
 
+import net.lintford.library.ConstantsTable;
+import net.lintford.library.core.debug.Debug;
+
 public class OGGAudioData extends AudioData {
 
 	// --------------------------------------
@@ -26,10 +29,11 @@ public class OGGAudioData extends AudioData {
 	// --------------------------------------
 
 	@Override
-	public boolean loadAudioFromInputStream(InputStream pInputStream) {
+	public boolean loadAudioFromInputStream(String pName, InputStream pInputStream) {
 		if (isLoaded())
 			return false;
 
+		mName = pName;
 		mBufferID = AL10.alGenBuffers();
 
 		try (STBVorbisInfo info = STBVorbisInfo.malloc()) {
@@ -38,7 +42,28 @@ public class OGGAudioData extends AudioData {
 			// copy to buffer
 			alBufferData(mBufferID, info.channels() == 1 ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16, pcm, info.sample_rate());
 
+			mSize = AL10.alGetBufferi(mBufferID, AL10.AL_SIZE);
+			mBitsPerSample = AL10.alGetBufferi(mBufferID, AL10.AL_BITS);
+			mFrequency = info.sample_rate();
+			mChannels = info.channels();
+
+			final int lLengthInSamples = pcm.capacity();
+			mDurationInSeconds = (float) lLengthInSamples / (float) mFrequency;
+
+			if (ConstantsTable.getBooleanValueDef("DEBUG_AUDIO_ENABLED", false)) {
+				Debug.debugManager().logger().i(getClass().getSimpleName(), " ------ ");
+				Debug.debugManager().logger().i(getClass().getSimpleName(), "AudioEntity Name: " + pName);
+				Debug.debugManager().logger().i(getClass().getSimpleName(), "Size: " + mSize);
+				Debug.debugManager().logger().i(getClass().getSimpleName(), "Frequency: " + mFrequency);
+				Debug.debugManager().logger().i(getClass().getSimpleName(), "Channels: " + mChannels);
+				Debug.debugManager().logger().i(getClass().getSimpleName(), "mBitsPerSample: " + mBitsPerSample);
+				Debug.debugManager().logger().i(getClass().getSimpleName(), "Duration (Seconds): " + mDurationInSeconds);
+				Debug.debugManager().logger().i(getClass().getSimpleName(), " ------ ");
+
+			}
+
 			return true;
+
 		}
 
 	}
@@ -64,9 +89,9 @@ public class OGGAudioData extends AudioData {
 
 		int channels = info.channels();
 
-		int lengthSamples = STBVorbis.stb_vorbis_stream_length_in_samples(decoder);
+		int samples = STBVorbis.stb_vorbis_stream_length_in_samples(decoder);
 
-		ShortBuffer pcm = BufferUtils.createShortBuffer(lengthSamples);
+		ShortBuffer pcm = BufferUtils.createShortBuffer(samples);
 
 		pcm.limit(STBVorbis.stb_vorbis_get_samples_short_interleaved(decoder, channels, pcm) * channels);
 		STBVorbis.stb_vorbis_close(decoder);
@@ -74,7 +99,6 @@ public class OGGAudioData extends AudioData {
 		return pcm;
 	}
 
-	// TODO (John): Move this into a dedicated helper class for resource loading
 	/**
 	 * Reads the specified resource and returns the raw data as a ByteBuffer.
 	 *
@@ -104,7 +128,6 @@ public class OGGAudioData extends AudioData {
 		return buffer;
 	}
 
-	// TODO (John): Move this into a dedicated helper class for resource loading
 	private static ByteBuffer resizeBuffer(ByteBuffer buffer, int newCapacity) {
 		ByteBuffer newBuffer = BufferUtils.createByteBuffer(newCapacity);
 		buffer.flip();

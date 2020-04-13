@@ -15,6 +15,7 @@ import java.util.List;
 
 import net.lintford.library.ConstantsTable;
 import net.lintford.library.core.audio.AudioManager;
+import net.lintford.library.core.audio.music.MusicManager;
 import net.lintford.library.core.box2d.PObjectManager;
 import net.lintford.library.core.geometry.spritegraph.SpriteGraphRepository;
 import net.lintford.library.core.graphics.fonts.FontManager;
@@ -81,6 +82,10 @@ public class ResourceManager {
 
 	public AudioManager audioManager() {
 		return mAudioManager;
+	}
+
+	public MusicManager musicManager() {
+		return mAudioManager.musicManager();
 	}
 
 	public PObjectManager pobjectManager() {
