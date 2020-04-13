@@ -12,20 +12,36 @@ public class AudioListener {
 	private float mPositionY;
 	private float mPositionZ;
 
+	private float mVelocityX;
+	private float mVelocityY;
+	private float mVelocityZ;
+
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
 
-	public float x() {
+	public float positionX() {
 		return mPositionX;
 	}
 
-	public float y() {
+	public float positionY() {
 		return mPositionY;
 	}
 
-	public float z() {
+	public float positionZ() {
 		return mPositionZ;
+	}
+
+	public float velocityX() {
+		return mVelocityX;
+	}
+
+	public float velocityY() {
+		return mVelocityY;
+	}
+
+	public float velocityZ() {
+		return mVelocityZ;
 	}
 
 	// --------------------------------------
@@ -38,5 +54,22 @@ public class AudioListener {
 
 	public void setPosition(float pX, float pY, float pZ) {
 		AL10.alListener3f(AL10.AL_POSITION, pX, pY, pZ);
+
+		mPositionX = pX;
+		mPositionY = pY;
+		mPositionZ = pZ;
 	}
+
+	public void setVelocity(float pX, float pY) {
+		setVelocity(pX, pY, 0f);
+	}
+
+	public void setVelocity(float pX, float pY, float pZ) {
+		AL10.alListener3f(AL10.AL_VELOCITY, pX, pY, pZ);
+
+		mVelocityX = pX;
+		mVelocityY = pY;
+		mVelocityZ = pZ;
+	}
+
 }
