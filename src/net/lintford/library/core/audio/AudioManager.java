@@ -48,16 +48,6 @@ import net.lintford.library.core.storage.FileUtils;
 
 public class AudioManager {
 
-	// --------------------------------------
-	// Constants
-	// --------------------------------------
-
-	private AudioListener mAudioListener;
-
-	public AudioListener listener() {
-		return mAudioListener;
-	}
-
 	public class AudioMetaDataDefinition {
 		public String filepath;
 		public String soundname;
@@ -69,26 +59,24 @@ public class AudioManager {
 
 	}
 
-	public static final String META_FILE_LOCATION = "/res/audio/meta.json";
+	// --------------------------------------
+	// Constants
+	// --------------------------------------
 
-	/** Defines a maximum number of 'fire-and'forget' audio sources created by the AudioManager. */
-	private static final int AUDIO_FAF_SOURCE_POOL_SIZE = 8;
+	public static final String META_FILE_LOCATION = "/res/audio/meta.json";
 
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
-	/** A pool of {@link AudioSource}s, for fire and forget sounds */
-	private List<AudioSource> mFaFSourcePool;
-
 	/** A pool of {@link AudioSource}s created for other objects (and can be reused). */
 	private List<AudioSource> mAudioSources;
-
 	private Map<String, AudioData> mAudioDataBuffers;
-
+	private AudioListener mAudioListener;
 	private long mContext;
 	private long mDevice;
 	private int mMaxSourceCount;
+	private int mNumberAssignedSources;
 	private boolean mOpenALInitialized;
 
 	// --------------------------------------
@@ -110,16 +98,17 @@ public class AudioManager {
 
 	}
 
+	public AudioListener listener() {
+		return mAudioListener;
+	}
+
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
 	public AudioManager() {
 		mAudioDataBuffers = new HashMap<>();
-
 		mAudioSources = new ArrayList<>();
-		mFaFSourcePool = new ArrayList<>(AUDIO_FAF_SOURCE_POOL_SIZE);
-
 		mAudioListener = new AudioListener();
 
 		mContext = NULL;
@@ -187,17 +176,8 @@ public class AudioManager {
 		}
 
 		// Setup some initial listener data
-		setListenerData(0, 0, 0);
-
-		// Pre-allocate some Audio sources which can be used to 'fire-and-forget' some sound effects
-		for (int i = 0; i < AUDIO_FAF_SOURCE_POOL_SIZE; i++) {
-			// Create a new audio source, add it to the pool and assign it to this controller.
-			AudioSource lAudioSource = new AudioSource();
-			lAudioSource.assign(hashCode());
-
-			mFaFSourcePool.add(lAudioSource);
-
-		}
+		mAudioListener.setPosition(0, 0, 0);
+		mAudioListener.setVelocity(0, 0, 0);
 
 		mOpenALInitialized = true;
 
@@ -214,13 +194,6 @@ public class AudioManager {
 		}
 
 		mAudioDataBuffers.clear();
-
-		// Dipose of the Fire-and-Forget AudioSources.
-		for (AudioSource lAudioSource : mFaFSourcePool) {
-			lAudioSource.unassign(hashCode());
-			lAudioSource.dispose();
-
-		}
 
 		// Dispose of the assignable AudioSources.
 		for (AudioSource lAudioSource : mAudioSources) {
@@ -275,10 +248,9 @@ public class AudioManager {
 	public AudioSource getAudioSource(final int pOwnerHash) {
 		final int lNumberSourcesInPool = mAudioSources.size();
 
-		// First check if there are any audio sources free in the pool
 		for (int i = 0; i < lNumberSourcesInPool; i++) {
 			if (mAudioSources.get(i).isFree()) {
-				AudioSource lAudioSource = mAudioSources.get(i);
+				final var lAudioSource = mAudioSources.get(i);
 				if (lAudioSource.assign(pOwnerHash)) {
 					return lAudioSource;
 
@@ -288,17 +260,41 @@ public class AudioManager {
 
 		}
 
-		// If there is still space left in the pool, then add a new object
-		if (AUDIO_FAF_SOURCE_POOL_SIZE + lNumberSourcesInPool < mMaxSourceCount) {
-			AudioSource lNewSource = new AudioSource();
-			lNewSource.assign(pOwnerHash);
-			mAudioSources.add(lNewSource);
+		final AudioSource lNewAudioSource = increaseAudioSourcePool(8);
+		if (lNewAudioSource == null) {
+			return null;
 
-			return lNewSource;
 		}
 
-		// otherwise, return null
-		return null;
+		lNewAudioSource.assign(pOwnerHash);
+		return lNewAudioSource;
+
+	}
+
+	private AudioSource increaseAudioSourcePool(int pAmt) {
+		final int lNumberFreeSourceSpaces = mMaxSourceCount - mNumberAssignedSources;
+		if (lNumberFreeSourceSpaces <= 0) {
+			return null;
+
+		}
+
+		pAmt = Math.min(pAmt, lNumberFreeSourceSpaces);
+
+		for (int i = 0; i < pAmt - 1; i++) {
+			createNewAudioSource();
+
+		}
+
+		return createNewAudioSource();
+
+	}
+
+	private AudioSource createNewAudioSource() {
+		final var lReturnAudioSource = new AudioSource();
+		AL10.alSourcei(lReturnAudioSource.sourceID(), AL10.AL_SOURCE_ABSOLUTE, AL10.AL_TRUE);
+		mAudioSources.add(lReturnAudioSource);
+
+		return lReturnAudioSource;
 
 	}
 
@@ -439,57 +435,42 @@ public class AudioManager {
 	}
 
 	// --------------------------------------
-	// Helper Methods
+	// Factory Methods
 	// --------------------------------------
 
-	public AudioSource play(String pAudioDataName) {
-		return play(getAudioDataBufferByName(pAudioDataName));
+	private List<AudioFireAndForgetManager> mAudioFireAndForgetManagers = new ArrayList<>();
 
+	public AudioFireAndForgetManager getFireAndForgetManager(int pNumberSources) {
+		final var lNewFireAndForgetManager = getFreeAudioFireAndForgetManager();
+		lNewFireAndForgetManager.acquireAudioSources(pNumberSources);
+
+		return lNewFireAndForgetManager;
 	}
 
-	/** Plays the given {@link AudioData}. */
-	public AudioSource play(AudioData pAudioDataBuffer) {
-		if (pAudioDataBuffer == null || !pAudioDataBuffer.isLoaded())
-			return null;
+	public void releaseFireAndForgetManager(AudioFireAndForgetManager pAudioFireAndForgetManager) {
+		if (mAudioFireAndForgetManagers.contains(pAudioFireAndForgetManager)) {
+			mAudioFireAndForgetManagers.remove(pAudioFireAndForgetManager);
 
-		return play(pAudioDataBuffer, 1f, 1f);
-
-	}
-
-	/** Plays the given {@link AudioData} at the specified volume and pitch. */
-	public AudioSource play(AudioData pAudioDataBuffer, float pGain, float pPitch) {
-		if (pAudioDataBuffer == null || !pAudioDataBuffer.isLoaded())
-			return null;
-
-		final var lAudioSource = getFAFAudioSource();
-		if (lAudioSource != null) {
-			lAudioSource.play(pAudioDataBuffer.bufferID(), pGain, pPitch);
-			return lAudioSource;
 		}
-
-		return null;
-
 	}
 
-	/** Returns the first non-playing {@link AudioSource} in the FAF_POOL. Returns null if no {@link AudioSource}s are available. */
-	private AudioSource getFAFAudioSource() {
-		for (int i = 0; i < AUDIO_FAF_SOURCE_POOL_SIZE; i++) {
-			if (!mFaFSourcePool.get(i).isPlaying()) {
-				AudioSource lAudioSource = mFaFSourcePool.get(i);
-				return lAudioSource;
+	private AudioFireAndForgetManager getFreeAudioFireAndForgetManager() {
+		final int lNumberOfmAudioFireAndForgetManagers = mAudioFireAndForgetManagers.size();
 
+		for (int i = 0; i < lNumberOfmAudioFireAndForgetManagers; i++) {
+			if (!mAudioFireAndForgetManagers.get(i).isInUse()) {
+				return mAudioFireAndForgetManagers.get(i);
 			}
-
 		}
 
-		return null; // increasePoolSize(32);
-
+		return createAudioFireAndForgetManager();
 	}
 
-	public void setListenerData(float pX, float pY, float pZ) {
-		AL10.alListener3f(AL10.AL_POSITION, pX, pY, pZ);
-		AL10.alListener3f(AL10.AL_VELOCITY, 0, 0, 0);
+	private AudioFireAndForgetManager createAudioFireAndForgetManager() {
+		final var lNewFireAndForgetManagear = new AudioFireAndForgetManager(this);
+		mAudioFireAndForgetManagers.add(lNewFireAndForgetManagear);
 
+		return lNewFireAndForgetManagear;
 	}
 
 }
