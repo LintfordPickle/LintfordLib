@@ -61,6 +61,7 @@ public class AudioManager {
 	public class AudioMetaDataDefinition {
 		public String filepath;
 		public String soundname;
+		public boolean reload;
 	}
 
 	public class AudioMetaData {
@@ -328,14 +329,15 @@ public class AudioManager {
 
 			final var lSoundName = lAudioDataDefinition.soundname;
 			final var lFilepath = lAudioDataDefinition.filepath;
+			final var lReload = lAudioDataDefinition.reload;
 
-			loadAudioFile(lSoundName, lFilepath);
+			loadAudioFile(lSoundName, lFilepath, lReload);
 
 		}
 
 	}
 
-	public AudioData loadAudioFile(String pSoundName, String pFilepath) {
+	public AudioData loadAudioFile(String pSoundName, String pFilepath, boolean pReload) {
 		if (!mOpenALInitialized) {
 			Debug.debugManager().logger().w(getClass().getSimpleName(), "Cannot load AudioData files until the AudioManager has been loaded");
 			return null;
@@ -347,7 +349,7 @@ public class AudioManager {
 
 		}
 
-		if (mAudioDataBuffers.containsKey(pSoundName)) {
+		if (!pReload && mAudioDataBuffers.containsKey(pSoundName)) {
 			return mAudioDataBuffers.get(pSoundName);
 
 		}
@@ -356,7 +358,12 @@ public class AudioManager {
 		final var lSoundData = loadAudioFile(pFilepath);
 
 		if (lSoundData != null) {
-			Debug.debugManager().logger().i(getClass().getSimpleName(), "Loaded AudioData file '" + pFilepath + "' as " + lSoundName);
+			if (pReload) {
+				Debug.debugManager().logger().i(getClass().getSimpleName(), "Re-Loaded AudioData file '" + pFilepath + "' as " + lSoundName);
+			} else {
+				Debug.debugManager().logger().i(getClass().getSimpleName(), "Loaded AudioData file '" + pFilepath + "' as " + lSoundName);
+			}
+
 			mAudioDataBuffers.put(lSoundName, lSoundData);
 
 		}
