@@ -123,14 +123,6 @@ public class Camera implements ICamera {
 		this.mRotation = newValue;
 	}
 
-	public float zoomFactor() {
-		return mZoomFactor;
-	}
-
-	public void zoomFactor(float newValue) {
-		this.mZoomFactor = newValue;
-	}
-
 	public float scaledWindowWidth() {
 		return mScaledWindowWidth;
 	}
