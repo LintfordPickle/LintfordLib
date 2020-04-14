@@ -6,7 +6,6 @@ import org.lwjgl.opengl.GL20;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.graphics.shaders.ShaderMVP_PT;
-import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.screenmanager.Screen;
 import net.lintford.library.screenmanager.ScreenManager;
 
