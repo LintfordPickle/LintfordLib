@@ -1,5 +1,7 @@
 package net.lintford.library.controllers.music;
 
+import org.lwjgl.glfw.GLFW;
+
 import net.lintford.library.controllers.BaseController;
 import net.lintford.library.controllers.core.ControllerManager;
 import net.lintford.library.core.LintfordCore;
@@ -23,8 +25,6 @@ public class MusicController extends BaseController {
 	private boolean mIsPaused;
 
 	private int mCurrentSongIndex = 0;
-	private float mBank0Gain;
-	private float mBank1Gain;
 	private boolean mBank0Active;
 
 	private float mSwitchSongInTimer;
@@ -67,6 +67,31 @@ public class MusicController extends BaseController {
 
 	@Override
 	public boolean handleInput(LintfordCore pCore) {
+
+		if (pCore.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_F5)) { // play / pause
+			play();
+
+		}
+
+		if (pCore.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_F2)) { // stop
+			stop();
+
+		}
+
+		if (pCore.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_F6)) { // next
+			nextSong();
+
+		}
+
+		if (pCore.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_F7)) { // prev
+			prevSong();
+
+		}
+
+		if (pCore.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_F8)) {
+			pause();
+		}
+
 		return super.handleInput(pCore);
 
 	}
@@ -75,36 +100,31 @@ public class MusicController extends BaseController {
 	public void update(LintfordCore pCore) {
 		super.update(pCore);
 
+		if (!mMusicManager.isMusicEnabled()) {
+			if (mIsPlaying) {
+				mMusicManager.audioSourceBank0().stop();
+				mMusicManager.audioSourceBank1().stop();
+
+				mIsPlaying = false;
+
+			}
+			return;
+		}
+
 		if (!mIsPlaying) {
 			return;
 
 		}
 
-		final float lDelta = (float) pCore.time().elapseGameTimeMilli();
-		final float lFadeSpeed = 1.0f;
+		final float lDelta = (float) pCore.time().elapseGameTimeMilli() / 1000.0f;
 
 		mSwitchSongInTimer -= lDelta;
 
 		if (mSwitchSongInTimer <= 0.0f) {
+			System.out.println("Auto next song called ... ");
 			nextSong();
 
 		}
-
-		if (mBank0Active) {
-			if (mBank0Gain < 1.0f)
-				mBank0Gain += lDelta * lFadeSpeed;
-			if (mBank1Gain > 0.0f)
-				mBank1Gain -= lDelta * lFadeSpeed;
-
-		} else {
-			if (mBank1Gain < 1.0f)
-				mBank1Gain += lDelta * lFadeSpeed;
-			if (mBank0Gain > 0.0f)
-				mBank0Gain -= lDelta * lFadeSpeed;
-		}
-
-		mMusicManager.audioSourceBank0().setGain(mBank0Gain);
-		mMusicManager.audioSourceBank1().setGain(mBank1Gain);
 
 	}
 

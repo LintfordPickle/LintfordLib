@@ -21,6 +21,7 @@ public class MusicManager {
 	// --------------------------------------
 
 	private AudioManager mAudioManager;
+	private boolean mIsMusicEnabled;
 
 	/** The music audio data */
 	private List<AudioData> mAudioDataBuffers;
@@ -31,6 +32,14 @@ public class MusicManager {
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public boolean isMusicEnabled() {
+		return mIsMusicEnabled;
+	}
+
+	public void isMusicEnabled(boolean pNewEnabledValue) {
+		mIsMusicEnabled = pNewEnabledValue;
+	}
 
 	public AudioSource audioSourceBank0() {
 		return mAudioSourceBank0;
@@ -80,6 +89,7 @@ public class MusicManager {
 
 	public MusicManager(AudioManager pAudioManager) {
 		mAudioManager = pAudioManager;
+		mIsMusicEnabled = pAudioManager.audioConfig().masterEnabled();
 
 		mAudioDataBuffers = new ArrayList<>();
 
@@ -90,8 +100,8 @@ public class MusicManager {
 	// --------------------------------------
 
 	public void loadALContent(ResourceManager pResourceManager) {
-		mAudioSourceBank0 = mAudioManager.getAudioSource(hashCode());
-		mAudioSourceBank1 = mAudioManager.getAudioSource(hashCode());
+		mAudioSourceBank0 = mAudioManager.getAudioSource(hashCode(), AudioManager.AUDIO_SOURCE_TYPE_MUSIC);
+		mAudioSourceBank1 = mAudioManager.getAudioSource(hashCode(), AudioManager.AUDIO_SOURCE_TYPE_MUSIC);
 
 	}
 

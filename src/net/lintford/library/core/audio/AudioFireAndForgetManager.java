@@ -103,7 +103,7 @@ public class AudioFireAndForgetManager {
 	public void acquireAudioSources(int pAmt) {
 		int lActualNumberOfSourcesAvailable = mAudioSourcePool.size();
 		for (int i = 0; i < pAmt; i++) {
-			final var lNewAudioSource = mAudioManager.getAudioSource(hashCode());
+			final var lNewAudioSource = mAudioManager.getAudioSource(hashCode(), AudioManager.AUDIO_SOURCE_TYPE_SOUNDFX);
 			if (lNewAudioSource == null) {
 				break;
 			}

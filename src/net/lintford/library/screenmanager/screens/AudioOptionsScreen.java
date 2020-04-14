@@ -1,6 +1,9 @@
 package net.lintford.library.screenmanager.screens;
 
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.ResourceManager;
+import net.lintford.library.core.audio.AudioManager;
+import net.lintford.library.core.maths.MathHelper;
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.ScreenManager;
@@ -24,11 +27,26 @@ public class AudioOptionsScreen extends MenuScreen implements EntryInteractions 
 	public static final int BUTTON_CANCEL_CHANGES = 0;
 	public static final int BUTTON_APPLY_CHANGES = 1;
 
+	public static final int BUTTON_ENABLED_MASTER = 15;
+	public static final int BUTTON_ENABLED_MUSIC = 10;
+	public static final int BUTTON_ENABLED_SOUNDFX = 11;
+	public static final int BUTTON_VOLUME_MASTER = 12;
+	public static final int BUTTON_VOLUME_MUSIC = 13;
+	public static final int BUTTON_VOLUME_SOUNDFX = 14;
+
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
+	private AudioManager mAudioManager;
 	private ConfirmationDialog mConfirmationDialog;
+
+	private MenuToggleEntry mMasterEnabledEntry;
+	private MenuSliderEntry mMasterVolumeEntry;
+	private MenuToggleEntry mMusicEnabledEntry;
+	private MenuSliderEntry mMusicVolumeEntry;
+	private MenuToggleEntry mSoundEnabledEntry;
+	private MenuSliderEntry mSoundVolumnEntry;
 
 	// --------------------------------------
 	// Constructor
@@ -60,51 +78,90 @@ public class AudioOptionsScreen extends MenuScreen implements EntryInteractions 
 
 	}
 
+	@Override
+	public void loadGLContent(ResourceManager pResourceManager) {
+		super.loadGLContent(pResourceManager);
+
+		mAudioManager = pResourceManager.audioManager();
+
+	}
+
 	// --------------------------------------
 	// Helper-Methods
 	// --------------------------------------
 
 	private void createAudioSection(BaseLayout lLayout) {
+		final var lAudioConfig = mScreenManager.core().config().audio();
+
 		MenuEntry lSeparator = new MenuEntry(mScreenManager, lLayout, "");
 		lSeparator.enabled(false);
 		lSeparator.drawButtonBackground(false);
+
+		mMasterEnabledEntry = new MenuToggleEntry(mScreenManager, lLayout);
+		mMasterEnabledEntry.registerClickListener(this, BUTTON_ENABLED_MASTER);
+		mMasterEnabledEntry.label("Audio Enabled");
+		mMasterEnabledEntry.isChecked(lAudioConfig.musicEnabled());
+
+		mMasterVolumeEntry = new MenuSliderEntry(mScreenManager, lLayout);
+		mMasterVolumeEntry.label("Master Volume");
+		mMasterVolumeEntry.registerClickListener(this, BUTTON_VOLUME_MASTER);
+		mMasterVolumeEntry.setBounds(0, 100, 5);
+		final var lDisplayMasterValue = MathHelper.scaleToRange(lAudioConfig.masterVolume(), 0f, 1f, 0f, 100f);
+		mMasterVolumeEntry.setValue((int) lDisplayMasterValue);
+		mMasterVolumeEntry.buttonsEnabled(true);
+		mMasterVolumeEntry.showValue(true);
+		mMasterVolumeEntry.showValueUnit(true);
+		mMasterVolumeEntry.showValueGuides(false);
 
 		MenuLabelEntry lMusicOptionsTitle = new MenuLabelEntry(mScreenManager, lLayout);
 		lMusicOptionsTitle.label("Music Options");
 		lMusicOptionsTitle.enableBackground(true);
 		lMusicOptionsTitle.horizontalAlignment(ALIGNMENT.LEFT);
 
-		MenuToggleEntry mMusicEnabledEntry = new MenuToggleEntry(mScreenManager, lLayout);
+		mMusicEnabledEntry = new MenuToggleEntry(mScreenManager, lLayout);
+		mMusicEnabledEntry.registerClickListener(this, BUTTON_ENABLED_MUSIC);
 		mMusicEnabledEntry.label("Music Enabled");
-		MenuSliderEntry mMusicVolumnEntry = new MenuSliderEntry(mScreenManager, lLayout);
-		mMusicVolumnEntry.label("Music Volume");
-		mMusicVolumnEntry.setBounds(0, 100, 5);
-		mMusicVolumnEntry.setValue(75); // TODO: Music volume should be loaded from the config onLoad.
-		mMusicVolumnEntry.buttonsEnabled(true);
-		mMusicVolumnEntry.showValue(true);
-		mMusicVolumnEntry.showValueUnit(true);
-		mMusicVolumnEntry.showValueGuides(false);
+		mMusicEnabledEntry.isChecked(lAudioConfig.musicEnabled());
+
+		mMusicVolumeEntry = new MenuSliderEntry(mScreenManager, lLayout);
+		mMusicVolumeEntry.label("Music Volume");
+		mMusicVolumeEntry.registerClickListener(this, BUTTON_VOLUME_MUSIC);
+		mMusicVolumeEntry.setBounds(0, 100, 5);
+		final var lDisplayMusicValue = MathHelper.scaleToRange(lAudioConfig.musicVolume(), 0f, 1f, 0f, 100f);
+		mMusicVolumeEntry.setValue((int) lDisplayMusicValue);
+		mMusicVolumeEntry.buttonsEnabled(true);
+		mMusicVolumeEntry.showValue(true);
+		mMusicVolumeEntry.showValueUnit(true);
+		mMusicVolumeEntry.showValueGuides(false);
 
 		MenuLabelEntry lSoundOptionsTitle = new MenuLabelEntry(mScreenManager, lLayout);
 		lSoundOptionsTitle.label("Sound Options");
 		lSoundOptionsTitle.enableBackground(true);
 		lSoundOptionsTitle.horizontalAlignment(ALIGNMENT.LEFT);
 
-		MenuToggleEntry mSoundEnabledEntry = new MenuToggleEntry(mScreenManager, lLayout);
+		mSoundEnabledEntry = new MenuToggleEntry(mScreenManager, lLayout);
 		mSoundEnabledEntry.label("SoundFX Enabled");
+		mSoundEnabledEntry.registerClickListener(this, BUTTON_ENABLED_SOUNDFX);
+		mSoundEnabledEntry.isChecked(lAudioConfig.soundFxEnabled());
 
-		MenuSliderEntry mSoundVolumnEntry = new MenuSliderEntry(mScreenManager, lLayout);
+		mSoundVolumnEntry = new MenuSliderEntry(mScreenManager, lLayout);
 		mSoundVolumnEntry.label("SoundFX Volume");
+		mSoundVolumnEntry.registerClickListener(this, BUTTON_VOLUME_SOUNDFX);
 		mSoundVolumnEntry.setBounds(0, 100, 5);
-		mSoundVolumnEntry.setValue(75); // TODO: Sound volume should be loaded from the config onLoad.
+		final var lDisplaySoundFxValue = MathHelper.scaleToRange(lAudioConfig.soundFxVolume(), 0f, 1f, 0f, 100f);
+		mSoundVolumnEntry.setValue((int) lDisplaySoundFxValue);
 		mSoundVolumnEntry.buttonsEnabled(true);
 		mSoundVolumnEntry.showValue(true);
 		mSoundVolumnEntry.showValueUnit(true);
 		mSoundVolumnEntry.showValueGuides(false);
 
+		lLayout.menuEntries().add(mMasterEnabledEntry);
+		lLayout.menuEntries().add(mMasterVolumeEntry);
+		lLayout.menuEntries().add(lSeparator);
+
 		lLayout.menuEntries().add(lMusicOptionsTitle);
 		lLayout.menuEntries().add(mMusicEnabledEntry);
-		lLayout.menuEntries().add(mMusicVolumnEntry);
+		lLayout.menuEntries().add(mMusicVolumeEntry);
 		lLayout.menuEntries().add(lSeparator);
 
 		lLayout.menuEntries().add(lSoundOptionsTitle);
@@ -140,8 +197,9 @@ public class AudioOptionsScreen extends MenuScreen implements EntryInteractions 
 			break;
 
 		case BUTTON_APPLY_CHANGES:
-			// Temp
+			mAudioManager.audioConfig().saveConfig();
 			exitScreen();
+
 			break;
 
 		case ConfirmationDialog.BUTTON_CONFIRM_YES: // exit without saving
@@ -167,6 +225,41 @@ public class AudioOptionsScreen extends MenuScreen implements EntryInteractions 
 
 	@Override
 	public void menuEntryChanged(MenuEntry e) {
+		switch (e.entryID()) {
+		case BUTTON_ENABLED_MASTER:
+			mAudioManager.audioConfig().masterEnabled(mMasterEnabledEntry.isChecked());
+			mAudioManager.updateSettings();
+			break;
+
+		case BUTTON_ENABLED_MUSIC:
+			mAudioManager.audioConfig().musicEnabled(mMusicEnabledEntry.isChecked());
+			mAudioManager.updateSettings();
+			break;
+
+		case BUTTON_ENABLED_SOUNDFX:
+			mAudioManager.audioConfig().soundFxEnabled(mSoundEnabledEntry.isChecked());
+			mAudioManager.updateSettings();
+			break;
+
+		case BUTTON_VOLUME_MASTER:
+			final var lScaledMasterVolumeRange = MathHelper.scaleToRange(mMasterVolumeEntry.getCurrentValue(), 0f, 100f, 0f, 1f);
+			mAudioManager.audioConfig().masterVolume(lScaledMasterVolumeRange);
+			mAudioManager.updateSettings();
+			break;
+
+		case BUTTON_VOLUME_MUSIC:
+			final var lScaledMusicVolumeRange = MathHelper.scaleToRange(mMusicVolumeEntry.getCurrentValue(), 0f, 100f, 0f, 1f);
+			mAudioManager.audioConfig().musicVolume(lScaledMusicVolumeRange);
+			mAudioManager.updateSettings();
+			break;
+
+		case BUTTON_VOLUME_SOUNDFX:
+			final var lScaledSoundFxVolumeRange = MathHelper.scaleToRange(mSoundVolumnEntry.getCurrentValue(), 0f, 100f, 0f, 1f);
+			mAudioManager.audioConfig().soundFxVolume(lScaledSoundFxVolumeRange);
+			mAudioManager.updateSettings();
+			break;
+
+		}
 
 	}
 

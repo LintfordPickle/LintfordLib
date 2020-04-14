@@ -107,11 +107,9 @@ public class ResourceManager {
 
 		mTextureManager = new TextureManager();
 		mSpriteSheetManager = new SpriteSheetManager();
-		mAudioManager = new AudioManager();
+		mAudioManager = new AudioManager(pConfig.audio());
 		mSpriteGraphRepository = new SpriteGraphRepository();
 		mPObjectManager = new PObjectManager();
-
-		// Setup the AnimationManager
 
 		ConstantsTable.registerValue(DEBUG_LIVE_RESOURCES_RELOAD_NAME, DEBUG_LIVE_RESOURCES_RELOAD_ENABLED);
 

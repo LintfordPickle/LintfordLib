@@ -119,8 +119,10 @@ public class MasterConfig {
 	public void saveConfigFiles(configuration c) {
 		switch (c) {
 		case audioConfig:
+			audio().saveConfig();
 			break;
 		case videoConfig:
+			display().saveConfig();
 			break;
 		case all:
 		default:

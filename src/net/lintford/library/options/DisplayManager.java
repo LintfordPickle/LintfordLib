@@ -274,10 +274,10 @@ public class DisplayManager extends IniFile {
 		} else {
 			// Get the values we need
 			mDisplaySettings.monitorIndex = glfwGetPrimaryMonitor();// getLong("Settings", "MonitorIndex", NULL);
-			mDisplaySettings.windowWidth = getInt("Settings", "WindowWidth", pGameInfo.defaultWindowWidth());
-			mDisplaySettings.windowHeight = getInt("Settings", "WindowHeight", pGameInfo.defaultWindowHeight());
-			mDisplaySettings.fullScreenIndex = getInt("Settings", "WindowFullscreen", VideoSettings.FULLSCREEN_NO_INDEX);
-			mDisplaySettings.vSyncEnabled = getBoolean("Settings", "vSync", true);
+			mDisplaySettings.windowWidth = getInt(SECTION_NAME_SETTINGS, "WindowWidth", pGameInfo.defaultWindowWidth());
+			mDisplaySettings.windowHeight = getInt(SECTION_NAME_SETTINGS, "WindowHeight", pGameInfo.defaultWindowHeight());
+			mDisplaySettings.fullScreenIndex = getInt(SECTION_NAME_SETTINGS, "WindowFullscreen", VideoSettings.FULLSCREEN_NO_INDEX);
+			mDisplaySettings.vSyncEnabled = getBoolean(SECTION_NAME_SETTINGS, "vSync", true);
 			mDisplaySettings.resizable = pGameInfo.windowResizeable(); // not overridable from config file
 
 			mGraphicsSettings.setUIScale((float) getInt(SECTION_NAME_UI, "uiScale", 100) / 100f);

@@ -3,6 +3,7 @@ package net.lintford.library.core.audio;
 import org.lwjgl.openal.AL10;
 import org.lwjgl.openal.AL11;
 
+import net.lintford.library.core.audio.AudioManager.AudioNubble;
 import net.lintford.library.core.debug.Debug;
 
 public class AudioSource {
@@ -19,10 +20,21 @@ public class AudioSource {
 
 	private int mSourceID;
 	private int mOwnerHash;
+	private AudioNubble mAudioNubble;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public int audioSourceType() {
+		if (mAudioNubble == null) {
+			return AudioManager.AUDIO_SOURCE_TYPE_SOUNDFX;
+
+		}
+
+		return mAudioNubble.audioType;
+
+	}
 
 	/** Returns the OpenAL source ID. */
 	public int sourceID() {
@@ -53,9 +65,7 @@ public class AudioSource {
 
 		}
 
-		AL10.alSourcef(mSourceID, AL10.AL_GAIN, 1);
-		AL10.alSourcef(mSourceID, AL10.AL_PITCH, 2);
-		AL10.alSource3f(mSourceID, AL10.AL_POSITION, 0, 0, 0);
+		mOwnerHash = NO_OWNER;
 
 	}
 
@@ -64,11 +74,12 @@ public class AudioSource {
 	// --------------------------------------
 
 	/** Applies a lock on this AudioSource and marks it as assigned. */
-	public boolean assign(int pOwnerHash) {
+	public boolean assign(int pOwnerHash, AudioNubble pAudioNubble) {
 
 		if (!isFree() || !isValidSource())
 			return false;
 
+		mAudioNubble = pAudioNubble;
 		mOwnerHash = pOwnerHash;
 
 		return true;
@@ -76,6 +87,7 @@ public class AudioSource {
 	}
 
 	public boolean unassign() {
+		mAudioNubble = null;
 		mOwnerHash = NO_OWNER;
 		return true;
 
@@ -120,7 +132,7 @@ public class AudioSource {
 
 	/** Instructs this {@link AudioSource} to being playing the audio buffer specified by the given buffer ID. */
 	public void play(int pBufferID) {
-		this.play(pBufferID, 1f, 1f);
+		this.play(pBufferID, mAudioNubble.gain(), 1f);
 
 	}
 
@@ -156,7 +168,10 @@ public class AudioSource {
 	/** Sets the gain of this {@link AudioSource}. */
 	public void setGain(float pNewVolume) {
 		AL10.alSourcef(mSourceID, AL10.AL_GAIN, pNewVolume);
+	}
 
+	public void setMaxGain(float pNewVolume) {
+		AL10.alSourcef(mSourceID, AL10.AL_MAX_GAIN, pNewVolume);
 	}
 
 	/** Sets the pitch of this {@link AudioSource}. */
