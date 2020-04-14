@@ -14,6 +14,12 @@ import net.lintford.library.screenmanager.ScreenManager;
 public class PressToContinueIntroScreen extends Screen {
 
 	// --------------------------------------
+	// Constants
+	// --------------------------------------
+
+	public static final String SOUND_ON_CLICK_NAME = "SOUND_MENU_PRESS_TO_CONTINUE";
+
+	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
@@ -93,6 +99,7 @@ public class PressToContinueIntroScreen extends Screen {
 
 		if (!mActionPerformed) {
 			if (pCore.input().mouse().tryAcquireMouseLeftClick(hashCode()) || pCore.input().keyboard().isKeyDown(GLFW.GLFW_KEY_ESCAPE) || pCore.input().keyboard().isKeyDown(GLFW.GLFW_KEY_SPACE)) {
+				mScreenManager.uiSounds().play("SOUND_MENU_PRESS_TO_CONTINUE");
 				mUserRequestSkip = true;
 
 			}

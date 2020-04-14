@@ -56,6 +56,11 @@ public class AudioFireAndForgetManager {
 	// Methods
 	// --------------------------------------
 
+	public void play(String pAudioDataName) {
+		play(pAudioDataName, 0, 0, 0, 0);
+
+	}
+
 	public void play(String pAudioDataName, float pWorldX, float pWorldY, float pVelX, float pVelY) {
 		final var lAudioDataBuffer = mAudioManager.getAudioDataBufferByName(pAudioDataName);
 		play(lAudioDataBuffer, pWorldX, pWorldY, pVelX, pVelY);

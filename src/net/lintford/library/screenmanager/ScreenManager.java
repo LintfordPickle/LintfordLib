@@ -6,6 +6,7 @@ import java.util.List;
 import net.lintford.library.controllers.hud.UIHUDStructureController;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
+import net.lintford.library.core.audio.AudioFireAndForgetManager;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.debug.GLDebug;
 import net.lintford.library.options.IResizeListener;
@@ -23,6 +24,7 @@ public class ScreenManager {
 	private List<Screen> mScreensToUpdate;
 	private ToolTip mToolTip;
 	private ResourceManager mResourceManager;
+	private AudioFireAndForgetManager mUISoundManager;
 	private ToastManager mToastManager;
 	private boolean mIsinitialized;
 	private boolean mIsLoaded;
@@ -36,6 +38,10 @@ public class ScreenManager {
 
 	public UIHUDStructureController UIHUDController() {
 		return mUIHUDController;
+	}
+
+	public AudioFireAndForgetManager uiSounds() {
+		return mUISoundManager;
 	}
 
 	public ResourceManager resources() {
@@ -101,6 +107,9 @@ public class ScreenManager {
 		for (int i = 0; i < lCount; i++) {
 			mScreens.get(i).loadGLContent(pResourceManager);
 		}
+
+		mUISoundManager = new AudioFireAndForgetManager(pResourceManager.audioManager());
+		mUISoundManager.acquireAudioSources(2);
 
 		mToolTip.loadGLContent(pResourceManager);
 		mToastManager.loadGLContent(pResourceManager);
