@@ -4,6 +4,7 @@ import net.lintford.library.controllers.BaseController;
 import net.lintford.library.controllers.core.ControllerManager;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.camera.Camera;
+import net.lintford.library.core.camera.ICamera;
 import net.lintford.library.core.maths.MathHelper;
 
 /** Controls the zoom factor of a {@link Camera} object. */
@@ -30,7 +31,7 @@ public class CameraZoomController extends BaseController {
 	// ---------------------------------------------
 
 	/** The associated {@link Camera} object this controller should control. */
-	private Camera mCamera;
+	private ICamera mCamera;
 
 	/** tracks the state of the velocity and accelerate over time. */
 	private float mZoomAcceleration;
@@ -54,7 +55,7 @@ public class CameraZoomController extends BaseController {
 	/**
 	 * Sets the {@link Camera} object this controller works with. If null, the controller will skip its update calls.
 	 */
-	public void setCamera(Camera pCamera) {
+	public void setCamera(ICamera pCamera) {
 		this.mCamera = pCamera;
 	}
 
@@ -83,11 +84,11 @@ public class CameraZoomController extends BaseController {
 	}
 
 	public float zoomFactor() {
-		return mCamera.zoomFactor();
+		return mCamera.getZoomFactor();
 	}
 
 	public void zoomFactor(float pNewValue) {
-		mCamera.zoomFactor(pNewValue);
+		mCamera.setZoomFactor(pNewValue);
 	}
 
 	@Override
@@ -100,7 +101,7 @@ public class CameraZoomController extends BaseController {
 	// ---------------------------------------------
 
 	/** Ctor. */
-	public CameraZoomController(ControllerManager pControllerManager, Camera pCamera, int pControllerBaseGroup) {
+	public CameraZoomController(ControllerManager pControllerManager, ICamera pCamera, int pControllerBaseGroup) {
 		super(pControllerManager, CONTROLLER_NAME, pControllerBaseGroup);
 
 		mCamera = pCamera;
@@ -133,7 +134,7 @@ public class CameraZoomController extends BaseController {
 
 		// static zoom factor
 		if (mAllowZoom && pCore.input().mouse().tryAcquireMouseOverThisComponent(hashCode())) {
-			mZoomAcceleration += pCore.input().mouse().mouseWheelYOffset() * mCamera.zoomFactor();
+			mZoomAcceleration += pCore.input().mouse().mouseWheelYOffset() * mCamera.getZoomFactor();
 
 		}
 
@@ -150,7 +151,7 @@ public class CameraZoomController extends BaseController {
 			return;
 
 		final float lDeltaTime = (float) pCore.time().elapseGameTimeSeconds();
-		float lZoomFactor = mCamera.zoomFactor();
+		float lZoomFactor = mCamera.getZoomFactor();
 
 		// apply zoom //
 		mZoomVelocity += mZoomAcceleration;
