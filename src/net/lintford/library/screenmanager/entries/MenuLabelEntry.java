@@ -152,6 +152,8 @@ public class MenuLabelEntry extends MenuEntry {
 
 		final MenuScreen lParentScreen = mParentLayout.parentScreen();
 		final FontUnit lFont = lParentScreen.font();
+		if (lFont == null)
+			return;
 
 		final float luiTextScale = mScreenManager.UIHUDController().uiTextScaleFactor();
 

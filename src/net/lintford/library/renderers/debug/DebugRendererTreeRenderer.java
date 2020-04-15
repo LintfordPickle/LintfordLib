@@ -298,7 +298,7 @@ public class DebugRendererTreeRenderer extends Rectangle implements IScrollBarAr
 		mTextureBatch.end();
 
 		mConsoleFont.begin(pCore.HUD());
-		mConsoleFont.draw("Renderers", x, y - 25f, -0.02f, 1, 1, 1, 1, 1, -1);
+		mConsoleFont.draw("Renderers", x + 5f, y - 25f, -0.02f, 1, 1, 1, 1, 1, -1);
 		mConsoleFont.end();
 
 		// Getting list of ControllerItems to render
@@ -307,8 +307,12 @@ public class DebugRendererTreeRenderer extends Rectangle implements IScrollBarAr
 		// The lControllerList contains a flat list of all <BaseControllerWidget> which we created for the controllers
 		final var lNumTreeComponents = lControllerList.size();
 
-		if (lNumTreeComponents == 0)
+		if (lNumTreeComponents == 0) {
+			mConsoleFont.begin(pCore.HUD());
+			mConsoleFont.draw("No BaseRenderers on Screen", x + 5f, y + 5f, -0.02f, 1, 1, 1, 1, 1, -1);
+			mConsoleFont.end();
 			return;
+		}
 
 		if (h < mContentRectangle.h())
 			mContentRectangle.preDraw(pCore, mTextureBatch, mCoreTexture);

@@ -1,10 +1,7 @@
-package net.lintford.library.core.audio;
+package net.lintford.library.core.audio.data;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -17,8 +14,8 @@ import javax.sound.sampled.AudioSystem;
 
 import org.lwjgl.openal.AL10;
 
+import net.lintford.library.core.audio.AudioManager;
 import net.lintford.library.core.debug.Debug;
-import net.lintford.library.core.storage.FileUtils;
 
 /* 
  * Copyright (c) 2002-2008 LWJGL Project
@@ -68,6 +65,11 @@ public class WaveData {
 	/** sample rate of data */
 	public final int samplerate;
 
+	/** number of channels in data */
+	public final int channels;
+
+	public final int sizeInBits;
+
 	/**
 	 * Creates a new WaveData
 	 * 
@@ -75,51 +77,17 @@ public class WaveData {
 	 * @param format     format of wave data
 	 * @param samplerate sample rate of data
 	 */
-	private WaveData(ByteBuffer data, int format, int samplerate) {
+	private WaveData(ByteBuffer data, int format, int samplerate, int channels, int sizeInBits) {
 		this.data = data;
 		this.format = format;
 		this.samplerate = samplerate;
+		this.channels = channels;
+		this.sizeInBits = sizeInBits;
 	}
 
 	/** Disposes the {@link WaveData}. */
 	public void dispose() {
 		data.clear();
-	}
-
-	/**
-	 * Creates a WaveData container from the specified in the classpath
-	 * 
-	 * @param path path to file (relative, and in classpath)
-	 * @return WaveData containing data, or null if a failure occured
-	 */
-	public static WaveData create(String pPathName) {
-
-		if (pPathName.charAt(0) == '/') {
-			return createFromResource(pPathName);
-
-		} else {
-			return createFromFile(pPathName);
-
-		}
-
-	}
-
-	private static WaveData createFromResource(String pPathName) {
-		InputStream lInputStream = FileUtils.class.getResourceAsStream(pPathName);
-		return create(new BufferedInputStream(lInputStream));
-
-	}
-
-	private static WaveData createFromFile(String pPathName) {
-		File lNewFile = new File(pPathName);
-		try {
-			return create(new BufferedInputStream(new FileInputStream(lNewFile)));
-
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-			return null;
-
-		}
 	}
 
 	/**
@@ -209,8 +177,10 @@ public class WaveData {
 			} else {
 				assert false : "Illegal sample size";
 			}
+			Debug.debugManager().logger().w(AudioManager.class.getSimpleName(), "WAV has stereo sound - this sound will not be played in 3d space");
 		} else {
-			assert false : "Only mono or stereo is supported";
+			Debug.debugManager().logger().e(AudioManager.class.getSimpleName(), "Only mono or stereo sound files are supported.");
+			return null;
 		}
 
 		// read data into buffer
@@ -228,18 +198,15 @@ public class WaveData {
 			buffer = convertAudioBytes(buf, audioformat.getSampleSizeInBits() == 16, audioformat.isBigEndian() ? ByteOrder.BIG_ENDIAN : ByteOrder.LITTLE_ENDIAN);
 		} catch (IOException ioe) {
 			return null;
+		} finally {
+			try {
+				ais.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 
-		// create our result
-		WaveData wavedata = new WaveData(buffer, channels, (int) audioformat.getSampleRate());
-
-		// close stream
-		try {
-			ais.close();
-		} catch (IOException ioe) {
-		}
-
-		return wavedata;
+		return new WaveData(buffer, channels, (int) audioformat.getSampleRate(), channels, audioformat.getSampleSizeInBits());
 	}
 
 	private static ByteBuffer convertAudioBytes(byte[] audio_bytes, boolean two_bytes_data, ByteOrder order) {

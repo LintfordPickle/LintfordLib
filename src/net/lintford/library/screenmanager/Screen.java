@@ -203,6 +203,11 @@ public abstract class Screen implements IProcessMouseInput {
 		if (!mRendererManager.isLoaded())
 			throw new RuntimeException("RendererManager not loaded");
 
+		if (mMouseClickTimer > 0) {
+			mMouseClickTimer -= pCore.time().elapseGameTimeMilli();
+
+		}
+
 		mOtherScreenHasFocus = pOtherScreenHasFocus;
 
 		if (mIsExiting) {
@@ -317,7 +322,7 @@ public abstract class Screen implements IProcessMouseInput {
 
 	@Override
 	public boolean isCoolDownElapsed() {
-		return mMouseClickTimer < 0;
+		return mMouseClickTimer <= 0;
 
 	}
 

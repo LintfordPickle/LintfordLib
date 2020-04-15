@@ -15,6 +15,7 @@ import java.util.List;
 
 import net.lintford.library.ConstantsTable;
 import net.lintford.library.core.audio.AudioManager;
+import net.lintford.library.core.audio.music.MusicManager;
 import net.lintford.library.core.box2d.PObjectManager;
 import net.lintford.library.core.geometry.spritegraph.SpriteGraphRepository;
 import net.lintford.library.core.graphics.fonts.FontManager;
@@ -83,6 +84,10 @@ public class ResourceManager {
 		return mAudioManager;
 	}
 
+	public MusicManager musicManager() {
+		return mAudioManager.musicManager();
+	}
+
 	public PObjectManager pobjectManager() {
 		return mPObjectManager;
 	}
@@ -102,11 +107,9 @@ public class ResourceManager {
 
 		mTextureManager = new TextureManager();
 		mSpriteSheetManager = new SpriteSheetManager();
-		mAudioManager = new AudioManager();
+		mAudioManager = new AudioManager(pConfig.audio());
 		mSpriteGraphRepository = new SpriteGraphRepository();
 		mPObjectManager = new PObjectManager();
-
-		// Setup the AnimationManager
 
 		ConstantsTable.registerValue(DEBUG_LIVE_RESOURCES_RELOAD_NAME, DEBUG_LIVE_RESOURCES_RELOAD_ENABLED);
 

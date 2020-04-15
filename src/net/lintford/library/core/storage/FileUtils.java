@@ -114,7 +114,11 @@ public class FileUtils {
 					StringBuilder.append(NEW_LINE_CHARACTER);
 				}
 			} finally {
-				lReader.close();
+				if (lReader != null) {
+					lReader.close();
+
+				}
+
 			}
 		} catch (IOException e) {
 			System.err.println("Error loading text resource " + pPathName.toString());
@@ -197,6 +201,17 @@ public class FileUtils {
 
 		return child.startsWith(parent);
 
+	}
+
+	public static String getFileExtension(String pFilepath) {
+		final var lFile = new File(pFilepath);
+
+		String name = lFile.getName();
+		int lastIndexOf = name.lastIndexOf(".");
+		if (lastIndexOf == -1) {
+			return ""; // empty extension
+		}
+		return name.substring(lastIndexOf);
 	}
 
 }

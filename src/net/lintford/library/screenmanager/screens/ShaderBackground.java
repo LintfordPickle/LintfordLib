@@ -6,7 +6,6 @@ import org.lwjgl.opengl.GL20;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.graphics.shaders.ShaderMVP_PT;
-import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.screenmanager.Screen;
 import net.lintford.library.screenmanager.ScreenManager;
 
@@ -53,8 +52,9 @@ public abstract class ShaderBackground extends Screen {
 		// Core-Methods
 		// --------------------------------------
 
-		public void update() {
-			super.update();
+		@Override
+		public void updateUniforms() {
+			super.updateUniforms();
 
 			if (mTimeLocationID != -1) {
 				GL20.glUniform1f(mTimeLocationID, mTime);
@@ -177,9 +177,5 @@ public abstract class ShaderBackground extends Screen {
 		lTextureBatch.end();
 
 	}
-
-	// --------------------------------------
-	// Methods
-	// --------------------------------------
 
 }

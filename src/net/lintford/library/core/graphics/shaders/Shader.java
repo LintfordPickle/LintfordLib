@@ -71,6 +71,12 @@ public abstract class Shader {
 		String lVertexSource = FileUtils.loadString(mVertPathname);
 		String lFragmentSource = FileUtils.loadString(mFragPathname);
 
+		if (lVertexSource == null || lFragmentSource == null) {
+			Debug.debugManager().logger().e(getClass().getSimpleName(), "Failed to load shader - no vert/frag filename specified.");
+			return;
+
+		}
+
 		mShaderID = create(lVertexSource, lFragmentSource);
 		glUseProgram(mShaderID);
 
@@ -88,7 +94,7 @@ public abstract class Shader {
 
 	}
 
-	protected void update() {
+	protected void updateUniforms() {
 
 	}
 
@@ -159,7 +165,7 @@ public abstract class Shader {
 	public void bind() {
 		glUseProgram(mShaderID);
 
-		update();
+		updateUniforms();
 	}
 
 	public void unbind() {

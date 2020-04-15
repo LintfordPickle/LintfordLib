@@ -31,6 +31,8 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput {
 	protected static final float Z_STATE_MODIFIER_PASSIVE = 0.005f; // Entry passive
 	protected static final float Z_STATE_MODIFIER_ACTIVE = 0.006f; // Entry active
 
+	public static final String SOUND_ON_CLICK_NAME = "SOUND_MENU_CLICK";
+
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
@@ -516,6 +518,8 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput {
 	public void onClick(InputManager pInputState) {
 		if (mClickListener == null || mMenuEntryID == -1)
 			return;
+
+		mScreenManager.uiSounds().play("SOUND_MENU_CLICK");
 
 		mAnimationTimer = MenuScreen.ANIMATION_TIMER_LENGTH;
 

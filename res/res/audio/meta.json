@@ -1,0 +1,18 @@
+{
+	"AudioMetaDefinitions" : [
+	
+		{
+			"soundname":"SOUND_MENU_CHANGE",
+			"filepath":"/res/audio/soundMenuChange.wav"
+		},
+		{
+			"soundname":"SOUND_MENU_CLICK",
+			"filepath":"/res/audio/soundMenuClick.wav"
+		},
+		{
+			"soundname":"SOUND_MENU_PRESS_TO_CONTINUE",
+			"filepath":"/res/audio/soundMenuWhoosh.wav"
+		}
+		
+	]
+}

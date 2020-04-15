@@ -1,7 +1,9 @@
 package net.lintford.library.core.audio;
 
 import org.lwjgl.openal.AL10;
+import org.lwjgl.openal.AL11;
 
+import net.lintford.library.core.audio.AudioManager.AudioNubble;
 import net.lintford.library.core.debug.Debug;
 
 public class AudioSource {
@@ -18,10 +20,21 @@ public class AudioSource {
 
 	private int mSourceID;
 	private int mOwnerHash;
+	private AudioNubble mAudioNubble;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public int audioSourceType() {
+		if (mAudioNubble == null) {
+			return AudioManager.AUDIO_SOURCE_TYPE_SOUNDFX;
+
+		}
+
+		return mAudioNubble.audioType;
+
+	}
 
 	/** Returns the OpenAL source ID. */
 	public int sourceID() {
@@ -52,9 +65,7 @@ public class AudioSource {
 
 		}
 
-		AL10.alSourcef(mSourceID, AL10.AL_GAIN, 1);
-		AL10.alSourcef(mSourceID, AL10.AL_PITCH, 2);
-		AL10.alSource3f(mSourceID, AL10.AL_POSITION, 0, 0, 0);
+		mOwnerHash = NO_OWNER;
 
 	}
 
@@ -63,12 +74,21 @@ public class AudioSource {
 	// --------------------------------------
 
 	/** Applies a lock on this AudioSource and marks it as assigned. */
-	public boolean assign(int pOwnerHash) {
+	public boolean assign(int pOwnerHash, AudioNubble pAudioNubble) {
+
 		if (!isFree() || !isValidSource())
 			return false;
 
+		mAudioNubble = pAudioNubble;
 		mOwnerHash = pOwnerHash;
 
+		return true;
+
+	}
+
+	public boolean unassign() {
+		mAudioNubble = null;
+		mOwnerHash = NO_OWNER;
 		return true;
 
 	}
@@ -112,19 +132,20 @@ public class AudioSource {
 
 	/** Instructs this {@link AudioSource} to being playing the audio buffer specified by the given buffer ID. */
 	public void play(int pBufferID) {
-		this.play(pBufferID, 1f, 1f);
+		this.play(pBufferID, mAudioNubble.gain(), 1f);
 
 	}
 
 	/** Instructs this {@link AudioSource} to being playing the audio buffer specified by the given buffer ID. Also specifies the volumn and the pitch of the sound. */
 	public void play(int pBufferID, float pGain, float pPitch) {
-		setVolume(pGain);
+		setGain(pGain);
 		setPitch(pPitch);
 
 		// associate the buffer with the source
 		AL10.alSourcei(mSourceID, AL10.AL_BUFFER, pBufferID);
 
 		// Play the source with the buffer
+		AL10.alSourcei(mSourceID, AL11.AL_SEC_OFFSET, 0);
 		AL10.alSourcePlay(mSourceID);
 
 	}
@@ -144,10 +165,13 @@ public class AudioSource {
 		AL10.alSourceStop(mSourceID);
 	}
 
-	/** Sets the volume of this {@link AudioSource}. */
-	public void setVolume(float pNewVolume) {
+	/** Sets the gain of this {@link AudioSource}. */
+	public void setGain(float pNewVolume) {
 		AL10.alSourcef(mSourceID, AL10.AL_GAIN, pNewVolume);
+	}
 
+	public void setMaxGain(float pNewVolume) {
+		AL10.alSourcef(mSourceID, AL10.AL_MAX_GAIN, pNewVolume);
 	}
 
 	/** Sets the pitch of this {@link AudioSource}. */
@@ -177,6 +201,11 @@ public class AudioSource {
 	/** Returns true if this {@link AudioSource} is currently playing, otherwise returns false. */
 	public boolean isPlaying() {
 		return AL10.alGetSourcei(mSourceID, AL10.AL_SOURCE_STATE) == AL10.AL_PLAYING;
+	}
+
+	public float getCurrentPlaybackTime() {
+		return AL10.alGetSourcef(sourceID(), AL11.AL_SEC_OFFSET);
+
 	}
 
 }

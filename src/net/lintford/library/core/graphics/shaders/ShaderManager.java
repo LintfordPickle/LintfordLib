@@ -1,113 +1,80 @@
 package net.lintford.library.core.graphics.shaders;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
 
-import net.lintford.library.core.EntityGroupManager;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.Debug;
 
-public class ShaderManager extends EntityGroupManager {
+public class ShaderManager {
 
-	public class ShaderGroup {
+	// --------------------------------------
+	// Constants
+	// --------------------------------------
 
-		// --------------------------------------
-		// Variables
-		// --------------------------------------
-
-		Map<String, Shader> mShaderMap;
-
-		boolean automaticUnload = true;
-		int entityGroupID;
-		String name = "";
-		int referenceCount = 0;
-
-		// --------------------------------------
-		// Properties
-		// --------------------------------------
-
-		public Map<String, Shader> shaderMap() {
-			return mShaderMap;
-		}
-
-		// --------------------------------------
-		// Constructor
-		// --------------------------------------
-
-		public ShaderGroup(int pEntityGroupID) {
-			mShaderMap = new HashMap<>();
-
-			entityGroupID = pEntityGroupID;
-			referenceCount = 0;
-
-		}
-
-		// --------------------------------------
-		// Methods
-		// --------------------------------------
-
-		public Shader getShaderByName(String pTextureName) {
-			if (mShaderMap.containsKey(pTextureName)) {
-				return mShaderMap.get(pTextureName);
-
-			}
-
-			return null;
-		}
-
-	}
+	public static final String SYSTEM_SHADER_PCT_NAME = "SHADER_SYSTEM_PCT";
+	public static final String SYSTEM_VERT_FILENAME = "/res/shaders/shader_basic_pct.vert";
+	public static final String SYSTEM_FRAG_FILENAME = "/res/shaders/shader_basic_pct.frag";
 
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
 	private ResourceManager mResourceManager;
-	private Map<Integer, ShaderGroup> mShaderGroupMap;
+	private Map<String, Shader> mShaderMap;
 
-	private boolean mIsLoaded;
+	private ShaderSubPixel mSystemShader;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
 
-	public boolean isLoaded() {
-		return mIsLoaded;
+	// --------------------------------------
+	// Constructor
+	// --------------------------------------
+
+	public ShaderManager() {
+		mShaderMap = new HashMap<>();
+
 	}
 
-	public ResourceManager resourceManager() {
-		return mResourceManager;
-	}
+	// --------------------------------------
+	// Core-Methods
+	// --------------------------------------
 
-	public Map<Integer, ShaderGroup> shadersGroups() {
-		return mShaderGroupMap;
-	}
+	public void loadGLContent(ResourceManager pResourceManager) {
+		mResourceManager = pResourceManager;
 
-	public ShaderGroup shaderGroup(int pEntityGroupID) {
-		if (!mShaderGroupMap.containsKey(pEntityGroupID)) {
-			ShaderGroup lNewShaderGroup = new ShaderGroup(pEntityGroupID);
-			mShaderGroupMap.put(pEntityGroupID, lNewShaderGroup);
+		mSystemShader = new ShaderSubPixel(SYSTEM_SHADER_PCT_NAME, SYSTEM_VERT_FILENAME, SYSTEM_FRAG_FILENAME);
+		mSystemShader.loadGLContent(mResourceManager);
 
-			return lNewShaderGroup;
+		for (final var lShader : mShaderMap.values()) {
+			lShader.loadGLContent(pResourceManager);
+
 		}
 
-		return mShaderGroupMap.get(pEntityGroupID);
 	}
 
-	public int shaderGroupCount() {
-		return mShaderGroupMap.size();
+	public void unloadGLContent() {
+		for (final var lShader : mShaderMap.entrySet()) {
+			lShader.getValue().unloadGLContent();
+
+		}
+
+		mShaderMap.clear();
+
 	}
+
+	// --------------------------------------
+	// Methods
+	// --------------------------------------
 
 	public void reloadShaders() {
 		Debug.debugManager().logger().v(getClass().getSimpleName(), "Reloading all modified shader files ... ");
 
-		for (ShaderGroup lShaderGroup : mShaderGroupMap.values()) {
-			for (Shader lShader : lShaderGroup.mShaderMap.values()) {
-				if (lShader != null) {
-					lShader.reloadShader();
-
-				}
+		for (final var lShader : mShaderMap.values()) {
+			if (lShader != null) {
+				lShader.reloadShader();
 
 			}
 
@@ -115,23 +82,18 @@ public class ShaderManager extends EntityGroupManager {
 
 	}
 
-	/** Unloads the speicifed texture in the texture group, if applicable. */
 	public void unloadShader(Shader pShader, int pEntityGroupID) {
 		if (pShader == null)
 			return; // already lost reference
 
-		ShaderGroup lShaderGroup = mShaderGroupMap.get(pEntityGroupID);
-		if (lShaderGroup == null) {
-			return;
-
-		} else if (lShaderGroup.mShaderMap.containsValue(pShader)) {
+		if (mShaderMap.containsValue(pShader)) {
 			String lShaderName = pShader.name();
 
 			Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("unloading texture: %s from texture group %d\n", lShaderName, pEntityGroupID));
 
 			pShader.unloadGLContent();
 
-			lShaderGroup.mShaderMap.remove(lShaderName);
+			mShaderMap.remove(lShaderName);
 			pShader = null;
 
 		}
@@ -140,56 +102,13 @@ public class ShaderManager extends EntityGroupManager {
 
 	}
 
-	public void unloadEntityGroup(int pEntityGroupID) {
-		ShaderGroup lShaderGroup = mShaderGroupMap.get(pEntityGroupID);
-
-		if (lShaderGroup == null)
-			return;
-
-		final int lShaderCount = lShaderGroup.mShaderMap.size();
-		Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("Unloading ShaderGroup %d (freeing total %d shaders)", pEntityGroupID, lShaderCount));
-
-		if (lShaderGroup != null) {
-			// Iterate over all the shader in the group and unload them
-			Iterator<Entry<String, Shader>> it = lShaderGroup.mShaderMap.entrySet().iterator();
-			while (it.hasNext()) {
-				Entry<String, Shader> lNextShader = it.next();
-
-				// Unload the shader
-				lNextShader.getValue().unloadGLContent();
-
-				it.remove();
-
-			}
+	public Shader getShader(String pShaderName) {
+		if (mShaderMap.containsKey(pShaderName)) {
+			return mShaderMap.get(pShaderName);
 
 		}
 
-	}
-
-	@Override
-	public int increaseReferenceCounts(int pEntityGroupID) {
-		ShaderGroup lShaderGroup = mShaderGroupMap.get(pEntityGroupID);
-
-		// Create a new TextureGroup for this EntityGroupID if one doesn't exist
-		if (lShaderGroup == null) {
-			lShaderGroup = new ShaderGroup(pEntityGroupID);
-			lShaderGroup.referenceCount = 1;
-
-			mShaderGroupMap.put(pEntityGroupID, lShaderGroup);
-
-		} else {
-			lShaderGroup.referenceCount++;
-
-		}
-
-		return lShaderGroup.referenceCount;
-
-	}
-
-	@Override
-	public int decreaseReferenceCounts(int pEntityGroupID) {
-		// TODO Auto-generated method stub
-		return 0;
+		return mSystemShader;
 	}
 
 }

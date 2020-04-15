@@ -4,7 +4,6 @@ import org.lwjgl.glfw.GLFW;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
-import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 import net.lintford.library.options.DisplayManager;
@@ -15,20 +14,29 @@ import net.lintford.library.screenmanager.ScreenManager;
 public class PressToContinueIntroScreen extends Screen {
 
 	// --------------------------------------
+	// Constants
+	// --------------------------------------
+
+	public static final String SOUND_ON_CLICK_NAME = "SOUND_MENU_PRESS_TO_CONTINUE";
+
+	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
-	private TextureBatch mTextureBatch;
+	protected TextureBatch mTextureBatch;
 	private Texture mBackgroundTexture;
 
 	private String mImageLocation;
 
-	private boolean mUserRequestSkip;
+	protected boolean mUserRequestSkip;
 	private boolean mActionPerformed;
 	private float mTimeToCompleteTransition = 400f;
 	private float mTransitionTimer;
+	private float mWhiteFlashAlphaAmt = 1f;
 
-	private Rectangle mSrcTextureRect;
+	protected float mBackgroundZDepth;
+	protected float mContentZDepth;
+	protected float mFlashZDepth;
 
 	private IMenuAction mActionCallback;
 
@@ -46,11 +54,6 @@ public class PressToContinueIntroScreen extends Screen {
 		mStretchBackgroundToFit = pNewValue;
 	}
 
-	public void setTextureSrcRectangle(float pX, float pY, float pW, float pH) {
-		mSrcTextureRect.set(pX, pY, pW, pH);
-
-	}
-
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
@@ -61,7 +64,10 @@ public class PressToContinueIntroScreen extends Screen {
 		mImageLocation = pImageLocation;
 
 		mTextureBatch = new TextureBatch();
-		mSrcTextureRect = new Rectangle(0, 0, 800, 600);
+
+		mBackgroundZDepth = -1.0f;
+		mContentZDepth = -0.5f;
+		mFlashZDepth = -0.01f;
 
 	}
 
@@ -93,6 +99,7 @@ public class PressToContinueIntroScreen extends Screen {
 
 		if (!mActionPerformed) {
 			if (pCore.input().mouse().tryAcquireMouseLeftClick(hashCode()) || pCore.input().keyboard().isKeyDown(GLFW.GLFW_KEY_ESCAPE) || pCore.input().keyboard().isKeyDown(GLFW.GLFW_KEY_SPACE)) {
+				mScreenManager.uiSounds().play("SOUND_MENU_PRESS_TO_CONTINUE");
 				mUserRequestSkip = true;
 
 			}
@@ -107,15 +114,18 @@ public class PressToContinueIntroScreen extends Screen {
 
 		if (!mActionPerformed) {
 			if (mUserRequestSkip) {
-
+				mTransitionTimer = 0f;
 				mActionPerformed = true;
 
 			}
 
+			mTransitionTimer += pCore.time().elapseGameTimeMilli();
+			fadeOutFromWhite(pCore, mTransitionTimer, mTimeToCompleteTransition);
+
 		} else if (mTransitionTimer < mTimeToCompleteTransition) {
 			mTransitionTimer += pCore.time().elapseGameTimeMilli();
 
-			calculateFlashRGB(pCore, mTransitionTimer, mTimeToCompleteTransition);
+			fadeOutFromWhite(pCore, mTransitionTimer, mTimeToCompleteTransition);
 
 		} else {
 			if (mActionCallback != null) {
@@ -128,13 +138,11 @@ public class PressToContinueIntroScreen extends Screen {
 
 	}
 
-	private void calculateFlashRGB(LintfordCore pCore, float pCurrentTimer, float pTotalTime) {
+	private void fadeOutFromWhite(LintfordCore pCore, float pCurrentTimer, float pTotalTime) {
 		float normalizedLifetime = pCurrentTimer / pTotalTime;
 
-		modAmt = (1 - normalizedLifetime);
+		mWhiteFlashAlphaAmt = (1 - normalizedLifetime);
 	}
-
-	float modAmt = 0f;
 
 	@Override
 	public void draw(LintfordCore pCore) {
@@ -154,9 +162,18 @@ public class PressToContinueIntroScreen extends Screen {
 		}
 
 		mTextureBatch.begin(pCore.HUD());
-		mTextureBatch.draw(mBackgroundTexture, mSrcTextureRect, lX, lY, lWidth, lHeight, -1f, 1f, 1f, 1f, mA);
-		mTextureBatch.draw(pCore.resources().textureManager().textureWhite(), 0, 0, 2, 2, lX, lY, lWidth, lHeight, -1f, 1f, 1f, 1f, modAmt);
+		mTextureBatch.draw(mBackgroundTexture, 0, 0, mBackgroundTexture.getTextureWidth(), mBackgroundTexture.getTextureHeight(), lX, lY, lWidth, lHeight, mBackgroundZDepth, 1f, 1f, 1f, mA);
 		mTextureBatch.end();
+
+		drawScreenContents(pCore);
+
+		mTextureBatch.begin(pCore.HUD());
+		mTextureBatch.draw(pCore.resources().textureManager().textureWhite(), 0, 0, 2, 2, lX, lY, lWidth, lHeight, mFlashZDepth, 1f, 1f, 1f, mWhiteFlashAlphaAmt);
+		mTextureBatch.end();
+
+	}
+
+	protected void drawScreenContents(LintfordCore pCore) {
 
 	}
 

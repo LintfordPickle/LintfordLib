@@ -5,13 +5,13 @@ import org.lwjgl.opengl.GL20;
 import net.lintford.library.core.maths.MathUtil;
 import net.lintford.library.core.maths.Matrix4f;
 
-public class ShaderMVP_PT extends Shader {
+public class ShaderSubPixel extends Shader {
 
 	// --------------------------------------
 	// Constants
 	// --------------------------------------
 
-	public final static String SHADER_NAME = "ShaderMVP_PT";
+	public final static String SHADER_NAME = "BasicShader";
 
 	public final static String SHADER_UNIFORM_PROJECTION_NAME = "projectionMatrix";
 	public final static String SHADER_UNIFORM_VIEW_NAME = "viewMatrix";
@@ -29,9 +29,43 @@ public class ShaderMVP_PT extends Shader {
 	protected Matrix4f mViewMatrix;
 	protected Matrix4f mModelMatrix;
 
+	private int mTimeLocationID;
+	private int mScreenResolutionLocationID;
+	private int mCameraResolutionLocationID;
+	private int mCameraZoomFactorLocationID;
+
+	private float mTime;
+	private float mScreenResolutionW, mScreenResolutionH;
+	private float mCameraResolutionW, mCameraResolutionH;
+	private float mCameraZoomFactor;
+
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public void time(float pTime) {
+		mTime = pTime;
+	}
+
+	public void screenResolutionWidth(float pWidth) {
+		mScreenResolutionW = pWidth;
+	}
+
+	public void screenResolutionHeight(float pHeight) {
+		mScreenResolutionH = pHeight;
+	}
+
+	public void cameraResolutionWidth(float pWidth) {
+		mCameraResolutionW = pWidth;
+	}
+
+	public void cameraResolutionHeight(float pHeight) {
+		mCameraResolutionH = pHeight;
+	}
+
+	public void cameraZoomFactor(float pZoomFactor) {
+		mCameraZoomFactor = pZoomFactor;
+	}
 
 	public Matrix4f projectionMatrix() {
 		return mProjectionMatrix;
@@ -61,7 +95,7 @@ public class ShaderMVP_PT extends Shader {
 	// Constructor
 	// --------------------------------------
 
-	public ShaderMVP_PT(String pName, String pVertPath, String pFragPath) {
+	public ShaderSubPixel(String pName, String pVertPath, String pFragPath) {
 		super(pName, pVertPath, pFragPath);
 
 		mProjectionMatrix = new Matrix4f();
@@ -87,6 +121,22 @@ public class ShaderMVP_PT extends Shader {
 			GL20.glUniformMatrix4fv(mModelMatrixLocation, false, MathUtil.getMatBufferColMaj(mModelMatrix));
 		}
 
+		if (mTimeLocationID != -1) {
+			GL20.glUniform1f(mTimeLocationID, mTime);
+		}
+
+		if (mScreenResolutionLocationID != -1) {
+			GL20.glUniform2f(mScreenResolutionLocationID, mScreenResolutionW, mScreenResolutionH);
+		}
+
+		if (mCameraResolutionLocationID != -1) {
+			GL20.glUniform2f(mCameraResolutionLocationID, mCameraResolutionW, mCameraResolutionH);
+		}
+
+		if (mCameraZoomFactorLocationID != -1) {
+			GL20.glUniform1f(mCameraZoomFactorLocationID, mCameraZoomFactor);
+		}
+
 	}
 
 	// --------------------------------------
@@ -96,7 +146,9 @@ public class ShaderMVP_PT extends Shader {
 	@Override
 	protected void bindAtrributeLocations(int pShaderID) {
 		GL20.glBindAttribLocation(pShaderID, 0, "inPosition");
-		GL20.glBindAttribLocation(pShaderID, 1, "inTexCoord");
+		GL20.glBindAttribLocation(pShaderID, 1, "inColor");
+		GL20.glBindAttribLocation(pShaderID, 2, "inTexCoord");
+
 	}
 
 	@Override
@@ -106,6 +158,12 @@ public class ShaderMVP_PT extends Shader {
 		mProjectionMatrixLocation = GL20.glGetUniformLocation(shaderID(), SHADER_UNIFORM_PROJECTION_NAME);
 		mViewMatrixLocation = GL20.glGetUniformLocation(shaderID(), SHADER_UNIFORM_VIEW_NAME);
 		mModelMatrixLocation = GL20.glGetUniformLocation(shaderID(), SHADER_UNIFORM_MODEL_NAME);
+
+		mTimeLocationID = GL20.glGetUniformLocation(shaderID(), "fGlobalTime");
+		mScreenResolutionLocationID = GL20.glGetUniformLocation(shaderID(), "v2ScreenResolution");
+		mCameraResolutionLocationID = GL20.glGetUniformLocation(shaderID(), "v2CameraResolution");
+		mCameraZoomFactorLocationID = GL20.glGetUniformLocation(shaderID(), "fCameraZoomFactor");
+
 	}
 
 }

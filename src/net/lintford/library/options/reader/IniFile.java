@@ -66,7 +66,8 @@ public class IniFile {
 		if (kv == null) {
 			return pDefaultValue;
 		}
-		return Boolean.getBoolean(kv.get(pKey));
+
+		return Boolean.parseBoolean(kv.get(pKey));
 	}
 
 	public String getString(String pSectionName, String pKey, String pDefaultValue) {
