@@ -307,6 +307,7 @@ public class Rectangle extends Shape {
 	}
 
 	public void setCenterPosition(float pNewCenterX, float pNewCenterY) {
+		mAreVerticesDirty = mAreVerticesDirty || pNewCenterX != x || pNewCenterY != y;
 		x = pNewCenterX - w / 2;
 		y = pNewCenterY - h / 2;
 
