@@ -29,22 +29,21 @@ public class ShaderSubPixel extends Shader {
 	protected Matrix4f mViewMatrix;
 	protected Matrix4f mModelMatrix;
 
-	private int mTimeLocationID;
 	private int mScreenResolutionLocationID;
 	private int mCameraResolutionLocationID;
-	private int mCameraZoomFactorLocationID;
+	private int mPixelSizeLocationId;
 
-	private float mTime;
 	private float mScreenResolutionW, mScreenResolutionH;
 	private float mCameraResolutionW, mCameraResolutionH;
-	private float mCameraZoomFactor;
+	private float mPixelSize;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
 
-	public void time(float pTime) {
-		mTime = pTime;
+	public void pixelSize(float pNewPixelSize) {
+		mPixelSize = pNewPixelSize;
+
 	}
 
 	public void screenResolutionWidth(float pWidth) {
@@ -61,10 +60,6 @@ public class ShaderSubPixel extends Shader {
 
 	public void cameraResolutionHeight(float pHeight) {
 		mCameraResolutionH = pHeight;
-	}
-
-	public void cameraZoomFactor(float pZoomFactor) {
-		mCameraZoomFactor = pZoomFactor;
 	}
 
 	public Matrix4f projectionMatrix() {
@@ -121,10 +116,6 @@ public class ShaderSubPixel extends Shader {
 			GL20.glUniformMatrix4fv(mModelMatrixLocation, false, MathUtil.getMatBufferColMaj(mModelMatrix));
 		}
 
-		if (mTimeLocationID != -1) {
-			GL20.glUniform1f(mTimeLocationID, mTime);
-		}
-
 		if (mScreenResolutionLocationID != -1) {
 			GL20.glUniform2f(mScreenResolutionLocationID, mScreenResolutionW, mScreenResolutionH);
 		}
@@ -133,8 +124,8 @@ public class ShaderSubPixel extends Shader {
 			GL20.glUniform2f(mCameraResolutionLocationID, mCameraResolutionW, mCameraResolutionH);
 		}
 
-		if (mCameraZoomFactorLocationID != -1) {
-			GL20.glUniform1f(mCameraZoomFactorLocationID, mCameraZoomFactor);
+		if (mPixelSizeLocationId != -1) {
+			GL20.glUniform1f(mPixelSizeLocationId, mPixelSize);
 		}
 
 	}
@@ -155,14 +146,17 @@ public class ShaderSubPixel extends Shader {
 	protected void getUniformLocations() {
 		super.getUniformLocations();
 
+		final var lDiffuseSamplerId = GL20.glGetUniformLocation(shaderID(), "textureSampler");
+
+		GL20.glUniform1i(lDiffuseSamplerId, 0);
+
 		mProjectionMatrixLocation = GL20.glGetUniformLocation(shaderID(), SHADER_UNIFORM_PROJECTION_NAME);
 		mViewMatrixLocation = GL20.glGetUniformLocation(shaderID(), SHADER_UNIFORM_VIEW_NAME);
 		mModelMatrixLocation = GL20.glGetUniformLocation(shaderID(), SHADER_UNIFORM_MODEL_NAME);
 
-		mTimeLocationID = GL20.glGetUniformLocation(shaderID(), "fGlobalTime");
 		mScreenResolutionLocationID = GL20.glGetUniformLocation(shaderID(), "v2ScreenResolution");
 		mCameraResolutionLocationID = GL20.glGetUniformLocation(shaderID(), "v2CameraResolution");
-		mCameraZoomFactorLocationID = GL20.glGetUniformLocation(shaderID(), "fCameraZoomFactor");
+		mPixelSizeLocationId = GL20.glGetUniformLocation(shaderID(), "fPixelSize");
 
 	}
 

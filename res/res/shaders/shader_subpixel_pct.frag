@@ -5,9 +5,7 @@ uniform sampler2D textureSampler;
 
 uniform vec2 v2ScreenResolution;
 uniform vec2 v2CameraResolution;
-uniform float fCameraZoomFactor;
-
-uniform vec2 mid = vec2(.5);
+uniform float fPixelSize = 1.;
 
 in vec2 passTexCoord;
 in vec4 passColor;
@@ -17,7 +15,7 @@ out vec4 outColor;
 void main() {
 	vec2 v2TextureSize = textureSize(textureSampler, 0);
 	
-	vec2 texelsPerPixel = v2CameraResolution / v2ScreenResolution;
+	vec2 texelsPerPixel = v2CameraResolution / v2ScreenResolution / fPixelSize;
 
 	vec2 locationWithinTexel = fract(passTexCoord * v2TextureSize);
 
@@ -25,4 +23,5 @@ void main() {
 	vec2 finalTextureCoords = (floor(passTexCoord * v2TextureSize) + interpolationAmount) / v2TextureSize;
 
 	outColor = texture(textureSampler, finalTextureCoords);
+	
 }

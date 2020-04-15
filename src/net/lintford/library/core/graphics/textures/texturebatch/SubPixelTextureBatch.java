@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
+import org.lwjgl.opengl.GL14;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
@@ -83,9 +84,19 @@ public class SubPixelTextureBatch {
 	protected boolean mUseCheckerPattern;
 	protected ResourceManager mResourceManager;
 
+	private float mPixelSize;
+
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public void pixelSize(float pNewPixelSize) {
+		mPixelSize = pNewPixelSize;
+	}
+
+	public void recompileShader() {
+		mShader.recompile();
+	}
 
 	public boolean useCheckerPattern() {
 		return mUseCheckerPattern;
@@ -186,12 +197,13 @@ public class SubPixelTextureBatch {
 		final var lDesktopWidth = pCore.config().display().desktopWidth();
 		final var lDesktopHeight = pCore.config().display().desktopHeight();
 		mShader.screenResolutionWidth(lDesktopWidth);
-		mShader.screenResolutionWidth(lDesktopHeight);
+		mShader.screenResolutionHeight(lDesktopHeight);
 
-		final var lCamera = pCore.HUD();
+		final var lCamera = pCore.gameCamera();
 		mShader.cameraResolutionWidth(lCamera.getWidth());
 		mShader.cameraResolutionHeight(lCamera.getHeight());
-		mShader.cameraZoomFactor(lCamera.getZoomFactor());
+
+		mShader.pixelSize(mPixelSize);
 
 	}
 
@@ -597,6 +609,10 @@ public class SubPixelTextureBatch {
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, mCurrentTexID);
 
 		}
+
+		GL11.glEnable(GL11.GL_BLEND);
+		GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		GL14.glBlendEquation(GL14.GL_FUNC_ADD);
 
 		mShader.projectionMatrix(mCamera.projection());
 		mShader.viewMatrix(mCamera.view());
