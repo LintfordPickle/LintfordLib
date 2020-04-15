@@ -79,8 +79,8 @@ public class BlurShader extends ShaderMVP_PT {
 	}
 
 	@Override
-	protected void update() {
-		super.update();
+	protected void updateUniforms() {
+		super.updateUniforms();
 
 		if (mResolutionLocation != -1) {
 			GL20.glUniform1f(mResolutionLocation, mResolution);

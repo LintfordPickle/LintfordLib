@@ -52,8 +52,9 @@ public abstract class ShaderBackground extends Screen {
 		// Core-Methods
 		// --------------------------------------
 
-		public void update() {
-			super.update();
+		@Override
+		public void updateUniforms() {
+			super.updateUniforms();
 
 			if (mTimeLocationID != -1) {
 				GL20.glUniform1f(mTimeLocationID, mTime);
@@ -176,9 +177,5 @@ public abstract class ShaderBackground extends Screen {
 		lTextureBatch.end();
 
 	}
-
-	// --------------------------------------
-	// Methods
-	// --------------------------------------
 
 }

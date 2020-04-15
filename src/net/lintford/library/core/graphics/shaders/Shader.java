@@ -165,7 +165,7 @@ public abstract class Shader {
 	public void bind() {
 		glUseProgram(mShaderID);
 
-		update();
+		updateUniforms();
 	}
 
 	public void unbind() {

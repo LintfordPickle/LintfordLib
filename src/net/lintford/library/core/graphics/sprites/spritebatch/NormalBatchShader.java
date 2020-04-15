@@ -94,8 +94,8 @@ public class NormalBatchShader extends ShaderMVP_PT {
 	}
 
 	@Override
-	protected void update() {
-		super.update();
+	protected void updateUniforms() {
+		super.updateUniforms();
 
 		if (mSunPositionLocation != -1 && mSunPosition != null) {
 			GL20.glUniform2f(mSunPositionLocation, mSunPosition.x, mSunPosition.y);

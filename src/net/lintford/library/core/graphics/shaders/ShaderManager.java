@@ -23,7 +23,7 @@ public class ShaderManager {
 	private ResourceManager mResourceManager;
 	private Map<String, Shader> mShaderMap;
 
-	private ShaderMVP_PCT mSystemShader;
+	private ShaderSubPixel mSystemShader;
 
 	// --------------------------------------
 	// Properties
@@ -45,7 +45,7 @@ public class ShaderManager {
 	public void loadGLContent(ResourceManager pResourceManager) {
 		mResourceManager = pResourceManager;
 
-		mSystemShader = new ShaderMVP_PCT(SYSTEM_SHADER_PCT_NAME, SYSTEM_VERT_FILENAME, SYSTEM_FRAG_FILENAME);
+		mSystemShader = new ShaderSubPixel(SYSTEM_SHADER_PCT_NAME, SYSTEM_VERT_FILENAME, SYSTEM_FRAG_FILENAME);
 		mSystemShader.loadGLContent(mResourceManager);
 
 		for (final var lShader : mShaderMap.values()) {
