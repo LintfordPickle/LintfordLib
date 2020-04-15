@@ -12,7 +12,6 @@ import org.lwjgl.system.MemoryUtil;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
-import net.lintford.library.core.camera.HUD;
 import net.lintford.library.core.camera.ICamera;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.debug.stats.DebugStats;
