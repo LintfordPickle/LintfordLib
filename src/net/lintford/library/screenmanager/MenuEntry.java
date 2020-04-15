@@ -24,7 +24,7 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput {
 	private static final long serialVersionUID = -226493862481815669L;
 
 	public static final float MENUENTRY_MIN_WIDTH = 100;
-	public static final float MENUENTRY_MAX_WIDTH = 500;
+	public static final float MENUENTRY_MAX_WIDTH = 800;
 
 	protected static final float FOCUS_TIMER = 500f; // milli
 
@@ -450,14 +450,14 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput {
 			lTextureBatch.begin(pCore.HUD());
 			lTextureBatch.draw(mUITexture, 0, 64, 32, 32, centerX() - w / 2, centerY() - h / 2, tile_size, h, mZ, lR, lG, lB, lA);
 			lTextureBatch.draw(mUITexture, 32, 64, 32, 32, centerX() - (w / 2) + tile_size, centerY() - h / 2, w - tile_size * 2, h, mZ, lR, lG, lB, lA);
-			lTextureBatch.draw(mUITexture, 64, 64, 32, 32, centerX() + (w / 2) - tile_size, centerY() - h / 2, tile_size, h, mZ, lR, lG, lB, lA);
+			lTextureBatch.draw(mUITexture, 256, 64, 32, 32, centerX() + (w / 2) - tile_size, centerY() - h / 2, tile_size, h, mZ, lR, lG, lB, lA);
 			lTextureBatch.end();
 
 		} else if (mDrawBackground) {
 			lTextureBatch.begin(pCore.HUD());
 			lTextureBatch.draw(mUITexture, 0, 32, 32, 32, centerX() - w / 2, centerY() - h / 2, 32, h, mZ, lR, lG, lB, lA);
 			lTextureBatch.draw(mUITexture, 32, 32, 32, 32, centerX() - (w / 2) + 32, centerY() - h / 2, w - 64, h, mZ, lR, lG, lB, lA);
-			lTextureBatch.draw(mUITexture, 64, 32, 32, 32, centerX() + (w / 2) - 32, centerY() - h / 2, 32, h, mZ, lR, lG, lB, lA);
+			lTextureBatch.draw(mUITexture, 256, 32, 32, 32, centerX() + (w / 2) - 32, centerY() - h / 2, 32, h, mZ, lR, lG, lB, lA);
 			lTextureBatch.end();
 		}
 

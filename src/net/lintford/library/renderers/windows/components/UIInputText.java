@@ -155,7 +155,7 @@ public class UIInputText extends UIWidget implements IBufferedInputCallback {
 		mCaretFlashTimer += pCore.time().elapseGameTimeMilli();
 
 		final int lCancelRectSize = 24;
-		mCancelRectangle.set(x + w - lCancelRectSize - 10, y + h / 2 - lCancelRectSize / 2, lCancelRectSize, lCancelRectSize);
+		mCancelRectangle.set(x + w - lCancelRectSize, y + h / 2 - lCancelRectSize / 2, lCancelRectSize, lCancelRectSize);
 
 		if (mHasFocus) {
 			// flash and update the location of the caret
@@ -181,10 +181,10 @@ public class UIInputText extends UIWidget implements IBufferedInputCallback {
 
 		// Renders the background of the input text widget
 		pTextureBatch.begin(pCore.HUD());
-		pTextureBatch.draw(pUITexture, 448, 32, 32, 32, x, y, 32, h, pComponentZDepth, 1f, 1f, 1f, 1);
+		pTextureBatch.draw(pUITexture, 0, 64, 32, 32, x, y, 32, h, pComponentZDepth, 1f, 1f, 1f, 1);
 		if (w > 32) {
-			pTextureBatch.draw(pUITexture, 448 + 32, 32, 32, 32, x + 32, y, w - 64, h, pComponentZDepth, 1f, 1f, 1f, 1);
-			pTextureBatch.draw(pUITexture, 448 + 64, 32, 32, 32, x + w - 32, y, 32, h, pComponentZDepth, 1f, 1f, 1f, 1);
+			pTextureBatch.draw(pUITexture, 32, 64, 32, 32, x + 32, y, w - 64, h, pComponentZDepth, 1f, 1f, 1f, 1);
+			pTextureBatch.draw(pUITexture, 64, 64, 32, 32, x + w - 32, y, 32, h, pComponentZDepth, 1f, 1f, 1f, 1);
 		}
 
 		pTextureBatch.end();

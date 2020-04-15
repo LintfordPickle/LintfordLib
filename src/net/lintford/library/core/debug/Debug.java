@@ -200,8 +200,8 @@ public class Debug {
 		if (!mIsGLLoaded)
 			return;
 
-		mDebugStats.draw(pCore);
 		mDebugConsole.draw(pCore);
+		mDebugStats.draw(pCore);
 		mDebugControllerRenderer.draw(pCore);
 		mDebugRendererRenderer.draw(pCore);
 

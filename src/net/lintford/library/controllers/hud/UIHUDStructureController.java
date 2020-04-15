@@ -171,7 +171,7 @@ public class UIHUDStructureController extends BaseController {
 		final float lBorder = 20f;
 		final float lInnerBorder = 1f;
 		final float lModWidth = lWindowWidth - lBorder * 2f;
-		final float lModHeight = lWindowHeight - lBorder * 2f;
+		final float lModHeight = lWindowHeight - lBorder;
 
 		float lRemainingHeight = lModHeight;
 		final float lMinimumTitleHeight = 0;

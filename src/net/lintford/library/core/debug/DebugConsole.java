@@ -233,8 +233,10 @@ public class DebugConsole extends Rectangle implements IBufferedInputCallback, I
 
 		if (mOpen) {
 			if (intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().tryAcquireMouseMiddle(hashCode())) {
-				if(mTAGFilterText.handleInput(pCore)) return;
-				if(mMessageFilterText.handleInput(pCore)) return;
+				if (mTAGFilterText.handleInput(pCore))
+					return;
+				if (mMessageFilterText.handleInput(pCore))
+					return;
 
 				if (pCore.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_DELETE)) {
 					mScrollYPosition = 0;
@@ -466,8 +468,11 @@ public class DebugConsole extends Rectangle implements IBufferedInputCallback, I
 
 		GLDebug.checkGLErrorsException(getClass().getSimpleName());
 
+		final var lScreenBB = pCore.HUD().boundingRectangle();
+
 		// Draw the console background (with a black border for the text input region)
 		mSpriteBatch.begin(pCore.HUD());
+		mSpriteBatch.draw(mCoreUITexture, 0, 0, 32, 32, lScreenBB.left(), lScreenBB.top(), lScreenBB.width(), lScreenBB.height(), Z_DEPTH, 0f, 0f, 0f, 0.9f);
 		mSpriteBatch.draw(mCoreUITexture, 32, 0, 32, 32, x, y, w, h, Z_DEPTH, 0f, 0f, 0f, 0.85f);
 		mSpriteBatch.end();
 

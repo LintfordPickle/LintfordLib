@@ -7,12 +7,10 @@ import net.lintford.library.core.maths.MathHelper;
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.ScreenManager;
-import net.lintford.library.screenmanager.ScreenManagerConstants.ALIGNMENT;
 import net.lintford.library.screenmanager.ScreenManagerConstants.LAYOUT_WIDTH;
 import net.lintford.library.screenmanager.dialogs.ConfirmationDialog;
 import net.lintford.library.screenmanager.entries.EntryInteractions;
 import net.lintford.library.screenmanager.entries.HorizontalEntryGroup;
-import net.lintford.library.screenmanager.entries.MenuLabelEntry;
 import net.lintford.library.screenmanager.entries.MenuSliderEntry;
 import net.lintford.library.screenmanager.entries.MenuToggleEntry;
 import net.lintford.library.screenmanager.layouts.BaseLayout;
@@ -93,6 +91,8 @@ public class AudioOptionsScreen extends MenuScreen implements EntryInteractions 
 	private void createAudioSection(BaseLayout lLayout) {
 		final var lAudioConfig = mScreenManager.core().config().audio();
 
+		lLayout.setDrawBackground(true, 0.1f, 0.1f, 0.1f, 0.5f);
+		
 		MenuEntry lSeparator = new MenuEntry(mScreenManager, lLayout, "");
 		lSeparator.enabled(false);
 		lSeparator.drawButtonBackground(false);
@@ -113,11 +113,6 @@ public class AudioOptionsScreen extends MenuScreen implements EntryInteractions 
 		mMasterVolumeEntry.showValueUnit(true);
 		mMasterVolumeEntry.showValueGuides(false);
 
-		MenuLabelEntry lMusicOptionsTitle = new MenuLabelEntry(mScreenManager, lLayout);
-		lMusicOptionsTitle.label("Music Options");
-		lMusicOptionsTitle.enableBackground(true);
-		lMusicOptionsTitle.horizontalAlignment(ALIGNMENT.LEFT);
-
 		mMusicEnabledEntry = new MenuToggleEntry(mScreenManager, lLayout);
 		mMusicEnabledEntry.registerClickListener(this, BUTTON_ENABLED_MUSIC);
 		mMusicEnabledEntry.label("Music Enabled");
@@ -133,11 +128,6 @@ public class AudioOptionsScreen extends MenuScreen implements EntryInteractions 
 		mMusicVolumeEntry.showValue(true);
 		mMusicVolumeEntry.showValueUnit(true);
 		mMusicVolumeEntry.showValueGuides(false);
-
-		MenuLabelEntry lSoundOptionsTitle = new MenuLabelEntry(mScreenManager, lLayout);
-		lSoundOptionsTitle.label("Sound Options");
-		lSoundOptionsTitle.enableBackground(true);
-		lSoundOptionsTitle.horizontalAlignment(ALIGNMENT.LEFT);
 
 		mSoundEnabledEntry = new MenuToggleEntry(mScreenManager, lLayout);
 		mSoundEnabledEntry.label("SoundFX Enabled");
@@ -155,19 +145,16 @@ public class AudioOptionsScreen extends MenuScreen implements EntryInteractions 
 		mSoundVolumnEntry.showValueUnit(true);
 		mSoundVolumnEntry.showValueGuides(false);
 
-		lLayout.menuEntries().add(mMasterEnabledEntry);
+		// lLayout.menuEntries().add(mMasterEnabledEntry);
 		lLayout.menuEntries().add(mMasterVolumeEntry);
 		lLayout.menuEntries().add(lSeparator);
 
-		lLayout.menuEntries().add(lMusicOptionsTitle);
 		lLayout.menuEntries().add(mMusicEnabledEntry);
 		lLayout.menuEntries().add(mMusicVolumeEntry);
 		lLayout.menuEntries().add(lSeparator);
 
-		lLayout.menuEntries().add(lSoundOptionsTitle);
 		lLayout.menuEntries().add(mSoundEnabledEntry);
 		lLayout.menuEntries().add(mSoundVolumnEntry);
-		lLayout.menuEntries().add(lSeparator);
 
 	}
 

@@ -226,9 +226,10 @@ public class DebugStats {
 		Rectangle lHUDRectangle = pCore.HUD().boundingRectangle();
 
 		final var lHeightOffset = Debug.debugManager().console().isOpen() ? 200f : 10f;
+		final var lWidthOffset = Debug.debugManager().console().isOpen() ? 360f : 0f;
 
 		float lTop = lHUDRectangle.top() + lHeightOffset + 5f;
-		float lLeft = lHUDRectangle.right() - 240f - 5f;
+		float lLeft = lHUDRectangle.right() - 240f - lWidthOffset - 5f;
 
 		mTextureBatch.draw(mCoreTexture, 0, 0, 32, 32, lLeft, lTop, 240, 500, -0.01f, 0.05f, 0.05f, 0.05f, 0.95f);
 

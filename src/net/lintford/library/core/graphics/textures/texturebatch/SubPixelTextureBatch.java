@@ -90,6 +90,9 @@ public class SubPixelTextureBatch {
 	// Properties
 	// --------------------------------------
 
+	/**
+	 * The pixel size should be set to the scale factor of the geometry (e.g. the scale of the sprite). If the pixel size is set too high, the resulting texture will start to get fuzzy when rendering.
+	 */
 	public void pixelSize(float pNewPixelSize) {
 		mPixelSize = pNewPixelSize;
 	}
