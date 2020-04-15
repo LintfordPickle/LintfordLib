@@ -18,10 +18,16 @@ public abstract class ShaderBackground extends Screen {
 		// --------------------------------------
 
 		private int mTimeLocationID;
-		private int mResolutionLocationID;
+		private int mScreenResolutionLocationID;
+		private int mCameraResolutionLocationID;
+		private int mCameraZoomFactorLocationId;
+		private int mv2MouseWindowCoordsLocationID;
 
 		private float mTime;
-		private float mResolutionW, mResolutionH;
+		private float mScreenResolutionW, mScreenResolutionH;
+		private float mCameraResolutionW, mCameraResolutionH;
+		private float mCameraZoomFactor;
+		private float mMouseWindowCoordsX, mMouseWindowCoordsY;
 
 		// --------------------------------------
 		// Properties
@@ -31,12 +37,32 @@ public abstract class ShaderBackground extends Screen {
 			mTime = pTime;
 		}
 
-		public void resolutionWidth(float pWidth) {
-			mResolutionW = pWidth;
+		public void cameraZoomFactor(float pCameraZoomFactor) {
+			mCameraZoomFactor = pCameraZoomFactor;
 		}
 
-		public void resolutionHeight(float pHeight) {
-			mResolutionH = pHeight;
+		public void screenResolutionWidth(float pWidth) {
+			mScreenResolutionW = pWidth;
+		}
+
+		public void screenResolutionHeight(float pHeight) {
+			mScreenResolutionH = pHeight;
+		}
+
+		public void cameraResolutionWidth(float pWidth) {
+			mCameraResolutionW = pWidth;
+		}
+
+		public void cameraResolutionHeight(float pHeight) {
+			mCameraResolutionH = pHeight;
+		}
+
+		public void mouseWindowPositionX(float pX) {
+			mMouseWindowCoordsX = pX;
+		}
+
+		public void mouseWindowPositionY(float pY) {
+			mMouseWindowCoordsY = pY;
 		}
 
 		// --------------------------------------
@@ -60,8 +86,20 @@ public abstract class ShaderBackground extends Screen {
 				GL20.glUniform1f(mTimeLocationID, mTime);
 			}
 
-			if (mResolutionLocationID != -1) {
-				GL20.glUniform2f(mResolutionLocationID, mResolutionW, mResolutionH);
+			if (mCameraZoomFactorLocationId != -1) {
+				GL20.glUniform1f(mCameraZoomFactorLocationId, mCameraZoomFactor);
+			}
+
+			if (mScreenResolutionLocationID != -1) {
+				GL20.glUniform2f(mScreenResolutionLocationID, mScreenResolutionW, mScreenResolutionH);
+			}
+
+			if (mCameraResolutionLocationID != -1) {
+				GL20.glUniform2f(mCameraResolutionLocationID, mCameraResolutionW, mCameraResolutionH);
+			}
+
+			if (mv2MouseWindowCoordsLocationID != -1) {
+				GL20.glUniform2f(mv2MouseWindowCoordsLocationID, mMouseWindowCoordsX, mMouseWindowCoordsY);
 			}
 
 		}
@@ -82,9 +120,12 @@ public abstract class ShaderBackground extends Screen {
 			super.getUniformLocations();
 
 			mTimeLocationID = GL20.glGetUniformLocation(shaderID(), "fGlobalTime");
-			mResolutionLocationID = GL20.glGetUniformLocation(shaderID(), "v2Resolution");
+			mCameraZoomFactorLocationId = GL20.glGetUniformLocation(shaderID(), "fCameraZoomFactor");
 
-			// Bind the sampler locations
+			mScreenResolutionLocationID = GL20.glGetUniformLocation(shaderID(), "v2ScreenResolution");
+			mCameraResolutionLocationID = GL20.glGetUniformLocation(shaderID(), "v2CameraResolution");
+			mv2MouseWindowCoordsLocationID = GL20.glGetUniformLocation(shaderID(), "v2MouseWindowCoords");
+
 			int lSampler0 = GL20.glGetUniformLocation(shaderID(), "textureSampler0");
 			int lSampler1 = GL20.glGetUniformLocation(shaderID(), "textureSampler1");
 			int lSampler2 = GL20.glGetUniformLocation(shaderID(), "textureSampler2");
@@ -154,8 +195,19 @@ public abstract class ShaderBackground extends Screen {
 
 		mBackgroundShader.time((float) pCore.time().totalGameTimeSeconds());
 
-		mBackgroundShader.resolutionWidth(pCore.config().display().windowWidth());
-		mBackgroundShader.resolutionHeight(pCore.config().display().windowHeight());
+		mBackgroundShader.screenResolutionWidth(pCore.config().display().windowWidth());
+		mBackgroundShader.screenResolutionHeight(pCore.config().display().windowHeight());
+
+		final var lCamera = pCore.HUD();
+		mBackgroundShader.cameraResolutionWidth(lCamera.getWidth());
+		mBackgroundShader.cameraResolutionHeight(lCamera.getHeight());
+		mBackgroundShader.cameraZoomFactor(1f); // Hud
+
+		final var lMouseX = lCamera.getMouseWorldSpaceX();
+		final var lMouseY = lCamera.getMouseWorldSpaceY();
+
+		mBackgroundShader.mouseWindowPositionX(lMouseX);
+		mBackgroundShader.mouseWindowPositionY(lMouseY);
 
 	}
 
