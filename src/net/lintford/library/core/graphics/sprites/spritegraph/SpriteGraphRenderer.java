@@ -34,7 +34,7 @@ public class SpriteGraphRenderer extends SpriteBatch {
 			return;
 
 		// Create a graph of nodes in the correct draw order
-		final var lReorderedList = pSpriteGraphInstance.getZOrderedFlatList();
+		final var lReorderedList = pSpriteGraphInstance.getZOrderedFlatList(SpriteGraphInstance.SpriteGraphNodeInstanceZComparator);
 
 		final int lNumNodes = lReorderedList.size();
 		for (int i = 0; i < lNumNodes; i++) {

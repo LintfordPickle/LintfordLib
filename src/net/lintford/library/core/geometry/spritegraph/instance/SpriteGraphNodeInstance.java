@@ -430,11 +430,6 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 
 		}
 
-		if (spriteSheetDefinition == null) {
-			return;
-
-		}
-
 		final var lSpriteDefinition = spriteSheetDefinition.getSpriteDefinition(pSpriteName);
 		assignNewSprite(lSpriteDefinition);
 

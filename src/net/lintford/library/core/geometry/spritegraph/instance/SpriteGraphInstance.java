@@ -19,7 +19,8 @@ import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDefinit
  */
 public class SpriteGraphInstance extends PooledBaseData implements AnimatedSpriteListener {
 
-	public class SpriteGraphNodeInstanceZComparator implements Comparator<SpriteGraphNodeInstance> {
+	public static final Comparator<SpriteGraphNodeInstance> SpriteGraphNodeInstanceZComparator = new SpriteGraphNodeInstanceZComparator();
+	private static class SpriteGraphNodeInstanceZComparator implements Comparator<SpriteGraphNodeInstance> {
 
 		@Override
 		public int compare(SpriteGraphNodeInstance o1, SpriteGraphNodeInstance o2) {
@@ -35,11 +36,12 @@ public class SpriteGraphInstance extends PooledBaseData implements AnimatedSprit
 
 	private static final long serialVersionUID = -5557875926084955431L;
 
+	
+
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
-	private SpriteGraphNodeInstanceZComparator mSpriteGraphNodeInstanceZComparator = new SpriteGraphNodeInstanceZComparator();
 	public SpriteGraphNodeInstance rootNode;
 	public String spriteGraphName;
 	public boolean mFlipHorizontal;
@@ -65,9 +67,9 @@ public class SpriteGraphInstance extends PooledBaseData implements AnimatedSprit
 	}
 
 	/** Returns a list of all nodes in this graph, ordered by the ascending Z depth. */
-	public List<SpriteGraphNodeInstance> getZOrderedFlatList() {
+	public List<SpriteGraphNodeInstance> getZOrderedFlatList(Comparator<SpriteGraphNodeInstance> pComparator) {
 		if (!mOrdered) {
-			mFlatNodes.sort(mSpriteGraphNodeInstanceZComparator);
+			mFlatNodes.sort(pComparator);
 			mOrdered = true;
 
 		}
