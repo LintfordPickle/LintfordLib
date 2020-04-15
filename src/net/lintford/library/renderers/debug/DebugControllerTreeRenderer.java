@@ -109,7 +109,7 @@ public class DebugControllerTreeRenderer extends Rectangle implements IScrollBar
 		Debug.debugManager().logger().v(getClass().getSimpleName(), "DebugStats unloading GL content");
 
 		mTextureBatch.unloadGLContent();
-		
+
 		mConsoleFont = null;
 		mCoreTexture = null;
 
