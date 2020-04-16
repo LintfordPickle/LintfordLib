@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.lwjgl.glfw.GLFW;
-
 import net.lintford.library.controllers.hud.UIHUDStructureController;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
