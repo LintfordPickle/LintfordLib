@@ -61,8 +61,6 @@ public class MouseManager {
 		public void invoke(long pWindow, double pXPos, double pYPos) {
 			setMousePosition(pXPos, pYPos);
 
-			System.out.println("MouseManager: (" + pXPos + "," + pYPos + ")");
-
 		}
 
 	}
