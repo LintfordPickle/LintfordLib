@@ -210,7 +210,7 @@ public class PObjectDefinition extends BaseDefinition {
 
 	public void j2b2World(JSONObject worldValue) throws JSONException {
 
-		name = worldValue.optString("name", "POBJECT_UNANMED");
+		name = worldValue.optString("name", "POBJECT_UNNAMED");
 
 		// Read all bodies from file
 		int i = 0;
@@ -246,18 +246,18 @@ public class PObjectDefinition extends BaseDefinition {
 
 				}
 			}
-			for (i = 0; i < numJointValues; i++) {
-				JSONObject jointValue = jointValues.getJSONObject(i);
-				if (jointValue.optString("type", "").equals("gear")) {
-					Box2dJointDefinition joint = j2b2Joint(jointValue);
-
-					// TODO: Load custom values
-					// readCustomPropertiesFromJson(joint, jointValue);
-
-					mJoints.add(joint);
-
-				}
-			}
+//			for (i = 0; i < numJointValues; i++) {
+//				JSONObject jointValue = jointValues.getJSONObject(i);
+//				if (jointValue.optString("type", "").equals("gear")) {
+//					Box2dJointDefinition joint = j2b2Joint(jointValue);
+//
+//					// TODO: Load custom values
+//					// readCustomPropertiesFromJson(joint, jointValue);
+//
+//					mJoints.add(joint);
+//
+//				}
+//			}
 		}
 
 	}
@@ -471,6 +471,7 @@ public class PObjectDefinition extends BaseDefinition {
 		FrictionJointDef frictionDef;
 		RopeJointDef ropeDef;
 
+		// TODO: Can we use a switch statement here (with Strings, java 1.8+ ?)
 		String type = jointValue.optString("type", "");
 		if (type.equals("revolute")) {
 			revoluteDef = new RevoluteJointDef();

@@ -1,0 +1,11 @@
+{
+	"PObjectMetaDataDefinition" : [
+	
+		{
+			"pObjectName":"POBJECT_BOX",
+			"filepath":"/res/pobjects/box.json",
+			"reloadable":"true"
+		}
+		
+	]
+}

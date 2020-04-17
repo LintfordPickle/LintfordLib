@@ -97,8 +97,9 @@ public class JBox2dDebugDrawer {
 			while (lFixture != null) {
 				Shape lCircleShape = pFixture.getShape();
 				final float lRadius = lCircleShape.getRadius() * 32f;
+				final float lAngle = pBody.getAngle();
 
-				Debug.debugManager().drawers().drawCircle(lBodyX, lBodyY, lRadius, 10, GL11.GL_LINE_STRIP);
+				Debug.debugManager().drawers().drawCircle(lBodyX, lBodyY, lRadius, lAngle, 10, GL11.GL_LINE_STRIP);
 
 				lFixture = lFixture.getNext();
 
@@ -181,10 +182,16 @@ public class JBox2dDebugDrawer {
 
 				// Render reference angle
 				float lRefAngle = lRevoluteJoint.getReferenceAngle();
-				float lRefPointEndX = (float) Math.cos(lRefAngle) * 30f;
-				float lRefPointEndY = (float) Math.sin(lRefAngle) * 30f;
+				float lRefPointEndX = (float) Math.cos(lRefAngle) * 15f;
+				float lRefPointEndY = (float) Math.sin(lRefAngle) * 15f;
 				Debug.debugManager().drawers().drawLine(lAnchorBX, lAnchorBY, lAnchorBX + lRefPointEndX, lAnchorBY + lRefPointEndY, 0f, 1f, 0f);
 
+				// Render angle
+				float lAngle = lRevoluteJoint.getJointAngle();
+				float lAngleEndX = (float) Math.cos(lAngle) * 10f;
+				float lAngleEndY = (float) Math.sin(lAngle) * 10f;
+				Debug.debugManager().drawers().drawLine(lAnchorBX, lAnchorBY, lAnchorBX + lAngleEndX, lAnchorBY + lAngleEndY, 1f, 1f, 0f);
+				
 			}
 
 			Debug.debugManager().drawers().endPointRenderer();
@@ -230,16 +237,15 @@ public class JBox2dDebugDrawer {
 		Rectangle lHUDrect = pCore.HUD().boundingRectangle();
 
 		final int lLineHeight = -20;
-		int lLinePos = 110;
+		int lLinePos = 100;
 
 		Debug.debugManager().drawers().beginTextRenderer(pCore.HUD());
-		Debug.debugManager().drawers().drawText("# Contacts: " + mWorld.getContactCount(), lHUDrect.left() + 5, lHUDrect.bottom() - lLinePos);
-		lLinePos -= lLineHeight;
-		Debug.debugManager().drawers().drawText(String.format("# Fixtures: ??"), lHUDrect.left() + 5, lHUDrect.bottom() - lLinePos);
-		lLinePos -= lLineHeight;
-		Debug.debugManager().drawers().drawText(String.format("# Bodies: %d", mWorld.getBodyCount()), lHUDrect.left() + 5, lHUDrect.bottom() - lLinePos);
-		lLinePos -= lLineHeight;
-		Debug.debugManager().drawers().drawText(String.format("# Particles: %d", mWorld.getParticleCount()), lHUDrect.left() + 5, lHUDrect.bottom() - lLinePos);
+		Debug.debugManager().drawers().drawText("# Contacts: " + mWorld.getContactCount(), lHUDrect.left() + 5, lHUDrect.bottom() - (lLinePos -= lLineHeight));
+		Debug.debugManager().drawers().drawText(String.format("# Fixtures: ??"), lHUDrect.left() + 5, lHUDrect.bottom() - (lLinePos -= lLineHeight));
+		Debug.debugManager().drawers().drawText(String.format("# Bodies: %d", mWorld.getBodyCount()), lHUDrect.left() + 5, lHUDrect.bottom() - (lLinePos -= lLineHeight));
+		Debug.debugManager().drawers().drawText(String.format("# Bodies: %d", mWorld.getBodyCount()), lHUDrect.left() + 5, lHUDrect.bottom() - (lLinePos -= lLineHeight));
+		Debug.debugManager().drawers().drawText(String.format("# Joints: %d", mWorld.getJointCount()), lHUDrect.left() + 5, lHUDrect.bottom() - (lLinePos -= lLineHeight));
+		Debug.debugManager().drawers().drawText(String.format("# Particles: %d", mWorld.getParticleCount()), lHUDrect.left() + 5, lHUDrect.bottom() - (lLinePos -= lLineHeight));
 		Debug.debugManager().drawers().endTextRenderer();
 
 		Debug.debugManager().drawers().beginPolyRenderer(pCore.gameCamera());

@@ -1,7 +1,9 @@
 package net.lintford.library.core.box2d.entity;
 
 import org.jbox2d.common.Vec2;
+import org.jbox2d.dynamics.World;
 import org.jbox2d.dynamics.joints.Joint;
+import org.jbox2d.dynamics.joints.RevoluteJointDef;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.entity.BaseInstanceData;
@@ -42,7 +44,7 @@ public abstract class Box2dJointInstance extends BaseInstanceData {
 
 	public abstract void savePhysics();
 
-	public abstract void loadPhysics();
+	public abstract void loadPhysics(World pWorld);
 
 	public abstract void unloadPhysics();
 

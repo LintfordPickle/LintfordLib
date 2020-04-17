@@ -11,7 +11,6 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.graphics.textures.Texture;
 
-// TODO: http://forum.lwjgl.org/index.php?topic=5757.0
 public class MouseCursorRenderer extends BaseRenderer {
 
 	// --------------------------------------

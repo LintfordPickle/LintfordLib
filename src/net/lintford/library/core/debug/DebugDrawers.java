@@ -408,11 +408,11 @@ public class DebugDrawers {
 	}
 
 	public void drawCircle(float pX, float pY, float pRadius, int pSegCount) {
-		drawCircle(pX, pY, pRadius, pSegCount, GL11.GL_LINE_STRIP);
+		drawCircle(pX, pY, pRadius, 0.f, pSegCount, GL11.GL_LINE_STRIP);
 
 	}
 
-	public void drawCircle(float pX, float pY, float pRadius, int pSegCount, int pGLLineType) {
+	public void drawCircle(float pX, float pY, float pRadius, float pInitialAngle, int pSegCount, int pGLLineType) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
@@ -429,7 +429,7 @@ public class DebugDrawers {
 		mLineBatch.lineType(pGLLineType);
 
 		final int lNumSegments = pSegCount / 2;
-		for (float i = 0; i < 2 * Math.PI; i += Math.PI / lNumSegments) {
+		for (float i = -pInitialAngle; i < 2 * Math.PI - pInitialAngle; i += Math.PI / lNumSegments) {
 
 			float xx = pX + (float) (pRadius * Math.cos(i));
 			float yy = pY + (float) (pRadius * Math.sin(i));
@@ -439,7 +439,7 @@ public class DebugDrawers {
 		}
 
 		// Add the first vert again
-		mLineBatch.draw(pX + (float) (pRadius * Math.cos(0)), pY + (float) (pRadius * Math.sin(0)), -0.01f, 1f, 1f, 1f, 1f);
+		mLineBatch.draw(pX + (float) (pRadius * Math.cos(-pInitialAngle)), pY + (float) (pRadius * Math.sin(-pInitialAngle)), -0.01f, 1f, 1f, 1f, 1f);
 
 	}
 

@@ -1,5 +1,7 @@
 package net.lintford.library.core.box2d.entity;
 
+import org.jbox2d.dynamics.World;
+
 import net.lintford.library.core.LintfordCore;
 
 public class Box2dRevoluteInstance extends Box2dJointInstance {
@@ -34,7 +36,7 @@ public class Box2dRevoluteInstance extends Box2dJointInstance {
 
 	}
 
-	public void loadPhysics() {
+	public void loadPhysics(World pWorld) {
 
 	}
 

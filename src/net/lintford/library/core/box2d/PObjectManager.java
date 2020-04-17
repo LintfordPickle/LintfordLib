@@ -6,48 +6,9 @@ import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.box2d.definition.PObjectDefinition;
 import net.lintford.library.core.box2d.entity.JBox2dEntityInstance;
 import net.lintford.library.core.debug.Debug;
-import net.lintford.library.core.entity.definitions.DefinitionManager;
 import net.lintford.library.core.entity.instances.PooledInstanceManager;
 
 public class PObjectManager extends PooledInstanceManager<JBox2dEntityInstance> {
-
-	private class PObjectRepository extends DefinitionManager<PObjectDefinition> {
-
-		// --------------------------------------
-		// Constructor
-		// --------------------------------------
-
-		public PObjectRepository() {
-			loadDefinitions();
-
-		}
-
-		// --------------------------------------
-		// Core-Methods
-		// --------------------------------------
-
-		@Override
-		public void loadDefinitionsFromMetaFile(String pMetaFilepath) {
-
-		}
-
-		public void loadDefinitions() {
-			loadDefinitionFromFile("res/pobjects/box.json");
-			loadDefinitionFromFile("res/pobjects/circle.json");
-			loadDefinitionFromFile("res/pobjects/test.json");
-
-		}
-
-		@Override
-		public void loadDefinitionFromFile(String pFilepath) {
-			final var lPObjectDefinition = new PObjectDefinition();
-			lPObjectDefinition.loadFromFile(pFilepath, new StringBuilder(), null);
-
-			addDefintion(lPObjectDefinition);
-
-		}
-
-	}
 
 	// --------------------------------------
 	// Constants
@@ -55,16 +16,21 @@ public class PObjectManager extends PooledInstanceManager<JBox2dEntityInstance> 
 
 	private static final long serialVersionUID = -8661579477274556146L;
 
-	public class PObjectMetaData {
-		public String[] pobjectLocations;
-
-	}
+	public static final String META_FILE_LOCATION = "/res/pobjects/meta.json";
 
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
 	private PObjectRepository mPObjectRepository;
+
+	// --------------------------------------
+	// Properties
+	// --------------------------------------
+
+	public PObjectRepository definitionRepository() {
+		return mPObjectRepository;
+	}
 
 	// --------------------------------------
 	// Constructor
@@ -100,9 +66,9 @@ public class PObjectManager extends PooledInstanceManager<JBox2dEntityInstance> 
 	// --------------------------------------
 
 	public JBox2dEntityInstance getNewInstanceFromPObject(World pWorld, String pPObjectDefinitionName) {
-		PObjectDefinition lPObjectDefinition = mPObjectRepository.getDefinitionByName(pPObjectDefinitionName);
+		final var lPObjectDefinition = mPObjectRepository.getPObjectDefinitionByName(pPObjectDefinitionName);
 		if (lPObjectDefinition == null) {
-			Debug.debugManager().logger().e(getClass().getSimpleName(), "Couldn't find PObject definition named " + pPObjectDefinitionName);
+			Debug.debugManager().logger().e(getClass().getSimpleName(), "Couldn't find PObjectDefinition named " + pPObjectDefinitionName);
 			return null;
 
 		}

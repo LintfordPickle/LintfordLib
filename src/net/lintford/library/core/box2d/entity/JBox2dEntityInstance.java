@@ -22,6 +22,8 @@ public class JBox2dEntityInstance extends PooledBaseData {
 
 	private static final long serialVersionUID = 5280466036279609596L;
 
+	public static final String MAIN_BODY_NAME = "MainBody";
+
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
@@ -33,6 +35,7 @@ public class JBox2dEntityInstance extends PooledBaseData {
 
 	protected Object userDataObject;
 	public String spriteSheetName;
+	protected Box2dBodyInstance mMainBody;
 
 	protected boolean mIsFree;
 	protected transient boolean mPhysicsLoaded = false;
@@ -67,10 +70,7 @@ public class JBox2dEntityInstance extends PooledBaseData {
 
 	/** Returns the main {@link Box2dBodyInstance} of this {@link JBox2dEntityInstance} instance. The main body is the body at index 0. */
 	public Box2dBodyInstance mainBody() {
-		if (mBodies == null || mBodies.size() == 0)
-			return null;
-
-		return mBodies.get(0);
+		return mMainBody;
 	}
 
 	public List<Box2dBodyInstance> bodies() {
@@ -107,13 +107,14 @@ public class JBox2dEntityInstance extends PooledBaseData {
 		}
 
 		// need two passes for joints because gear joints reference other joints
+		// TODO: This will break as soon as I use any joints other than RevoluteJoints !
 		final int lJointCount = mJoints.size();
 		for (int i = 0; i < lJointCount; i++) {
 			Box2dRevoluteInstance lJointInstance = (Box2dRevoluteInstance) mJoints.get(i);
 			RevoluteJointDef lJointDef = new RevoluteJointDef();
 
-			lJointDef.bodyA = getBodyByUID(lJointInstance.bodyAUID).mBody;
-			lJointDef.bodyB = getBodyByUID(lJointInstance.bodyBUID).mBody;
+			lJointDef.bodyA = getBodyByIndex(lJointInstance.bodyAUID).mBody;
+			lJointDef.bodyB = getBodyByIndex(lJointInstance.bodyBUID).mBody;
 
 			lJointDef.referenceAngle = lJointInstance.referenceAngle;
 			lJointDef.enableLimit = lJointInstance.enableLimit;
@@ -134,26 +135,39 @@ public class JBox2dEntityInstance extends PooledBaseData {
 
 		}
 
+		// Resolve the main body
+		mMainBody = getBodyByName(MAIN_BODY_NAME);
+		if (mMainBody == null) {
+			mMainBody = getBodyByIndex(0);
+		}
+
 		if (userDataObject != null && mainBody() != null) {
 			if (mainBody().mBody != null)
 				mainBody().mBody.setUserData(userDataObject);
 
 		}
 
+		// Look for a body named 'MainBody'.
+		// This wll will be the origin body for translations etc.
+
 		mPhysicsLoaded = true;
 
 	}
 
-	private Box2dBodyInstance getBodyByUID(int pUID) {
+	private Box2dBodyInstance getBodyByName(String pBodyName) {
 		final int lBodyCount = mBodies.size();
 		for (int i = 0; i < lBodyCount; i++) {
-			if (mBodies.get(i).uid == pUID)
+			if (mBodies.get(i).name.contentEquals(pBodyName))
 				return mBodies.get(i);
 
 		}
 
 		return null;
 
+	}
+
+	private Box2dBodyInstance getBodyByIndex(int pUID) {
+		return mBodies.get(pUID);
 	}
 
 	public void savePhysics() {
@@ -225,6 +239,12 @@ public class JBox2dEntityInstance extends PooledBaseData {
 			mJoints = new ArrayList<>();
 
 		// Go through and create instances for each body in the definition
+		loadBodiesFromDefinition(mPObjectDefinition);
+		loadJointsFromDefinition(mPObjectDefinition);
+
+	}
+
+	private void loadBodiesFromDefinition(PObjectDefinition pDefinition) {
 		final int lBodyCount = pDefinition.bodies().size();
 		for (int i = 0; i < lBodyCount; i++) {
 			final var lBox2dBodyDefinition = pDefinition.bodies().get(i);
@@ -288,7 +308,40 @@ public class JBox2dEntityInstance extends PooledBaseData {
 			}
 
 		}
+	}
 
+	private void loadJointsFromDefinition(PObjectDefinition pDefinition) {
+		final int lJointCount = pDefinition.joints().size();
+		for (int i = 0; i < lJointCount; i++) {
+			final var lBox2dJointDefinition = pDefinition.joints().get(i);
+
+			if (lBox2dJointDefinition.jointDef instanceof RevoluteJointDef) {
+				final var lBox2dJointInstance = new Box2dRevoluteInstance();
+				final var lJointDefinition = (RevoluteJointDef) lBox2dJointDefinition.jointDef;
+
+				lBox2dJointInstance.bodyAUID = lBox2dJointDefinition.bodyAIndex;
+				lBox2dJointInstance.bodyBUID = lBox2dJointDefinition.bodyBIndex;
+
+				lBox2dJointInstance.localAnchorA.x = lJointDefinition.localAnchorA.x;
+				lBox2dJointInstance.localAnchorA.y = lJointDefinition.localAnchorA.y;
+				lBox2dJointInstance.localAnchorB.x = lJointDefinition.localAnchorB.x;
+				lBox2dJointInstance.localAnchorB.y = lJointDefinition.localAnchorB.y;
+				lBox2dJointInstance.bodyBUID = lBox2dJointDefinition.bodyBIndex;
+				lBox2dJointInstance.referenceAngle = lJointDefinition.referenceAngle;
+
+				lBox2dJointInstance.enableLimit = lJointDefinition.enableLimit;
+				lBox2dJointInstance.lowerAngle = lJointDefinition.lowerAngle;
+				lBox2dJointInstance.upperAngle = lJointDefinition.upperAngle;
+
+				lBox2dJointInstance.enableMotor = lJointDefinition.enableMotor;
+				lBox2dJointInstance.maxMotorTorque = lJointDefinition.maxMotorTorque;
+				lBox2dJointInstance.motorSpeed = lJointDefinition.motorSpeed;
+
+				mJoints.add(lBox2dJointInstance);
+
+			}
+
+		}
 	}
 
 	// --------------------------------------

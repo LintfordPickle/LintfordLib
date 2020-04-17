@@ -30,7 +30,7 @@
 			"linearVelocity" : 0,
 			"massData-I" : 0.1666666716337204,
 			"massData-mass" : 1,
-			"name" : "body0",
+			"name" : "MainBody",
 			"position" : 0,
 			"type" : 2
 		}
