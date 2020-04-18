@@ -456,6 +456,8 @@ public class PObjectDefinition extends BaseDefinition {
 	Box2dJointDefinition j2b2Joint(JSONObject jointValue) throws JSONException {
 		Box2dJointDefinition lBox2dJointDefinition = new Box2dJointDefinition();
 
+		lBox2dJointDefinition.name = jointValue.optString("name", "");
+		
 		int bodyIndexA = jointValue.getInt("bodyA");
 		int bodyIndexB = jointValue.getInt("bodyB");
 		if (bodyIndexA >= mBodies.size() || bodyIndexB >= mBodies.size())
@@ -547,7 +549,6 @@ public class PObjectDefinition extends BaseDefinition {
 
 		if (lBox2dJointDefinition.jointDef != null) {
 			// set features common to all joints
-
 			lBox2dJointDefinition.bodyAIndex = bodyIndexA;
 			lBox2dJointDefinition.bodyBIndex = bodyIndexB;
 

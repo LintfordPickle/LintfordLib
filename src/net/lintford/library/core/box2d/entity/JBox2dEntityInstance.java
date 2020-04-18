@@ -154,7 +154,7 @@ public class JBox2dEntityInstance extends PooledBaseData {
 
 	}
 
-	private Box2dBodyInstance getBodyByName(String pBodyName) {
+	public Box2dBodyInstance getBodyByName(String pBodyName) {
 		final int lBodyCount = mBodies.size();
 		for (int i = 0; i < lBodyCount; i++) {
 			if (mBodies.get(i).name.contentEquals(pBodyName))
@@ -166,8 +166,24 @@ public class JBox2dEntityInstance extends PooledBaseData {
 
 	}
 
-	private Box2dBodyInstance getBodyByIndex(int pUID) {
-		return mBodies.get(pUID);
+	public Box2dBodyInstance getBodyByIndex(int pArrayIndex) {
+		return mBodies.get(pArrayIndex);
+	}
+
+	public Box2dJointInstance getJointByName(String pJointName) {
+		final int lNumJoints = mJoints.size();
+		for (int i = 0; i < lNumJoints; i++) {
+			if (mJoints.get(i).name.contentEquals(pJointName))
+				return mJoints.get(i);
+
+		}
+
+		return null;
+
+	}
+
+	public Box2dJointInstance getJointByIndex(int pArrayIndex) {
+		return mJoints.get(pArrayIndex);
 	}
 
 	public void savePhysics() {
@@ -318,6 +334,8 @@ public class JBox2dEntityInstance extends PooledBaseData {
 			if (lBox2dJointDefinition.jointDef instanceof RevoluteJointDef) {
 				final var lBox2dJointInstance = new Box2dRevoluteInstance();
 				final var lJointDefinition = (RevoluteJointDef) lBox2dJointDefinition.jointDef;
+
+				lBox2dJointInstance.name = lBox2dJointDefinition.name;
 
 				lBox2dJointInstance.bodyAUID = lBox2dJointDefinition.bodyAIndex;
 				lBox2dJointInstance.bodyBUID = lBox2dJointDefinition.bodyBIndex;

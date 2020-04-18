@@ -81,6 +81,8 @@ public class JBox2dDebugDrawer {
 
 			}
 
+			GL11.glLineWidth(2.f);
+
 			Debug.debugManager().drawers().drawPoly(verts, vSize, lR, lG, lB, true);
 
 		}
@@ -191,7 +193,7 @@ public class JBox2dDebugDrawer {
 				float lAngleEndX = (float) Math.cos(lAngle) * 10f;
 				float lAngleEndY = (float) Math.sin(lAngle) * 10f;
 				Debug.debugManager().drawers().drawLine(lAnchorBX, lAnchorBY, lAnchorBX + lAngleEndX, lAnchorBY + lAngleEndY, 1f, 1f, 0f);
-				
+
 			}
 
 			Debug.debugManager().drawers().endPointRenderer();

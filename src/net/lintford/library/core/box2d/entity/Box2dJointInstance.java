@@ -20,6 +20,7 @@ public abstract class Box2dJointInstance extends BaseInstanceData {
 	// Variables
 	// --------------------------------------
 
+	public String name;
 	public transient Joint joint;
 
 	public int bodyAUID;

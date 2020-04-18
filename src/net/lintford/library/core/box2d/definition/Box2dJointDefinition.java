@@ -11,6 +11,7 @@ public class Box2dJointDefinition {
 	// Joint data is stored directly in the JointDef instance above.
 	public JointDef jointDef;
 	
+	public String name;
 	public int bodyAIndex;
 	public int bodyBIndex;
 
