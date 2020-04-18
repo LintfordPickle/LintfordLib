@@ -181,13 +181,13 @@ public class JBox2dDebugDrawer {
 				Debug.debugManager().drawers().drawPoint(lAnchorBX, lAnchorBY, 255f / 255f, 117f / 255f, 104f / 255f, 1f);
 
 				// Render reference angle
-				float lRefAngle = lRevoluteJoint.getReferenceAngle();
+				float lRefAngle = -lRevoluteJoint.getReferenceAngle();
 				float lRefPointEndX = (float) Math.cos(lRefAngle) * 15f;
 				float lRefPointEndY = (float) Math.sin(lRefAngle) * 15f;
 				Debug.debugManager().drawers().drawLine(lAnchorBX, lAnchorBY, lAnchorBX + lRefPointEndX, lAnchorBY + lRefPointEndY, 0f, 1f, 0f);
 
 				// Render angle
-				float lAngle = lRevoluteJoint.getJointAngle();
+				float lAngle = -lRevoluteJoint.getJointAngle();
 				float lAngleEndX = (float) Math.cos(lAngle) * 10f;
 				float lAngleEndY = (float) Math.sin(lAngle) * 10f;
 				Debug.debugManager().drawers().drawLine(lAnchorBX, lAnchorBY, lAnchorBX + lAngleEndX, lAnchorBY + lAngleEndY, 1f, 1f, 0f);

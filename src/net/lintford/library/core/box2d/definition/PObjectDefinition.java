@@ -90,6 +90,7 @@ public class PObjectDefinition extends BaseDefinition {
 	}
 
 	public static final boolean INVERT_Y = true;
+	public static final boolean INVERT_X = !INVERT_Y;
 
 	// --------------------------------------
 	// Variables
@@ -683,11 +684,14 @@ public class PObjectDefinition extends BaseDefinition {
 			JSONArray arrayX = vecValue.getJSONArray("x");
 			JSONArray arrayY = vecValue.getJSONArray("y");
 
-			vec.x = (float) arrayX.getDouble(index);
-			float lTemp = (float) arrayY.getDouble(index);
+			float lTemp = (float) arrayX.getDouble(index);
+			if (INVERT_X)
+				lTemp = -lTemp;
+			vec.x = lTemp; // (float) arrayX.getDouble(index);
+			lTemp = (float) arrayY.getDouble(index);
 			if (INVERT_Y)
 				lTemp = -lTemp;
-			vec.y = (float) arrayY.getDouble(index);
+			vec.y = lTemp; // (float) arrayY.getDouble(index);
 
 		} else {
 			JSONObject vecValue = value.optJSONObject(name);
@@ -696,8 +700,11 @@ public class PObjectDefinition extends BaseDefinition {
 			else if (!vecValue.has("x")) // should be zero vector
 				vec.set(0, 0);
 			else {
-				vec.x = jsonToFloat("x", vecValue);
-				float lTemp = jsonToFloat("y", vecValue);
+				float lTemp = jsonToFloat("x", vecValue);
+				if (INVERT_X)
+					lTemp = -lTemp;
+				vec.x = lTemp;// jsonToFloat("x", vecValue);
+				lTemp = jsonToFloat("y", vecValue);
 				if (INVERT_Y)
 					lTemp = -lTemp;
 				vec.y = lTemp;
