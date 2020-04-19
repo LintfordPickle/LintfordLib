@@ -4,6 +4,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.jbox2d.common.Vec2;
+
+import net.lintford.library.core.maths.MathHelper;
+import net.lintford.library.core.maths.Vector2f;
+
 public class Spline {
 
 	// --------------------------------------
@@ -187,6 +192,25 @@ public class Spline {
 		float num = amount * amount;
 		float num2 = amount * num;
 		return (0.5f * ((((2f * value2) + ((-value1 + value3) * amount)) + (((((2f * value1) - (5f * value2)) + (4f * value3)) - value4) * num)) + ((((-value1 + (3f * value2)) - (3f * value3)) + value4) * num2)));
+	}
+
+	public float getNormalizedPositionAlongSpline(int pFromNode, float pPosX, float pPosY) {
+
+		final var lControlPoint0 = getControlPoint(pFromNode);
+
+		final int lNextNodeId = pFromNode >= numberSplineControlPoints() - 1 ? 0 : pFromNode + 1;
+		final var lControlPoint1 = getControlPoint(lNextNodeId);
+
+		float lVectorBetweenX = lControlPoint1.x - lControlPoint0.x;
+		float lVectorBetweenY = lControlPoint1.y - lControlPoint0.y;
+
+		Vec2 v1 = new Vec2(lVectorBetweenX, lVectorBetweenY);
+		Vec2 v2 = new Vec2(pPosX - lControlPoint0.x, pPosY - lControlPoint0.y);
+
+		float veLength = v1.normalize();
+		float lResult = Vector2f.dot(v1.x, v1.y, v2.x, v2.y) / veLength;
+
+		return MathHelper.clamp(lResult, 0.f, 1.f);
 	}
 
 }
