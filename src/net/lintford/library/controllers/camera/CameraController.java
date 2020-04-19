@@ -4,8 +4,8 @@ import net.lintford.library.controllers.BaseController;
 import net.lintford.library.controllers.core.ControllerManager;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.camera.Camera;
+import net.lintford.library.core.camera.ICamera;
 
-/** Controls the zoom factor of a {@link Camera} object. */
 public class CameraController extends BaseController {
 
 	// ---------------------------------------------
@@ -19,7 +19,7 @@ public class CameraController extends BaseController {
 	// ---------------------------------------------
 
 	/** The associated {@link Camera} object this controller should control. */
-	private Camera mCamera;
+	private ICamera mCamera;
 
 	// ---------------------------------------------
 	// Properties
@@ -30,7 +30,7 @@ public class CameraController extends BaseController {
 		return mCamera != null;
 	}
 
-	public Camera camera() {
+	public ICamera camera() {
 		return mCamera;
 	}
 
@@ -39,7 +39,7 @@ public class CameraController extends BaseController {
 	// ---------------------------------------------
 
 	/** Ctor. */
-	public CameraController(ControllerManager pControllerManager, Camera pCamera, int pControllerBaseGroup) {
+	public CameraController(ControllerManager pControllerManager, ICamera pCamera, int pControllerBaseGroup) {
 		super(pControllerManager, CONTROLLER_NAME, pControllerBaseGroup);
 
 		mCamera = pCamera;
@@ -66,7 +66,6 @@ public class CameraController extends BaseController {
 		if (this.mCamera == null)
 			return false;
 
-		// Apply the new zoom factor to the camera object
 		mCamera.handleInput(pCore);
 
 		return super.handleInput(pCore);
