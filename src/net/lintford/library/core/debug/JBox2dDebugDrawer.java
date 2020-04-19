@@ -3,6 +3,7 @@ package net.lintford.library.core.debug;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jbox2d.collision.shapes.ChainShape;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.collision.shapes.ShapeType;
@@ -89,6 +90,30 @@ public class JBox2dDebugDrawer {
 
 	}
 
+	private static class RenderOfChainFixture {
+		public static void draw(LintfordCore pCore, Body pBody, Fixture pFixture) {
+			if (pFixture.getShape().getType() != ShapeType.CHAIN)
+				return;
+
+			final var lChainShape = (ChainShape) pFixture.getShape();
+
+			GL11.glLineWidth(2.f);
+
+			final int lVertCount = lChainShape.m_count;
+			var lCurVert = lChainShape.m_vertices[0];
+			for (int i = 1; i < lVertCount; i++) {
+				final var lNextVert = lChainShape.m_vertices[i];
+				final var sc = Box2dWorldController.UNITS_TO_PIXELS;
+				Debug.debugManager().drawers().drawLine(lCurVert.x * sc, lCurVert.y * sc, lNextVert.x * sc, lNextVert.y * sc);
+
+				lCurVert = lNextVert;
+				
+			}
+
+		}
+
+	}
+
 	private static class RenderOfCircleFixture {
 		public static void draw(LintfordCore pCore, Body pBody, Fixture pFixture) {
 			Fixture lFixture = pBody.getFixtureList();
@@ -127,10 +152,13 @@ public class JBox2dDebugDrawer {
 
 			// polygon fixtures
 			while (lFixture != null) {
-				// TODO: update the color depending on the state
+				// TODO: update the color depending on the state (active, sleep, static, kinetic)
 
 				if (lFixture.getShape().getType() == ShapeType.POLYGON) {
 					RenderOfPolyFixture.draw(pCore, pBody, lFixture);
+
+				} else if (lFixture.getShape().getType() == ShapeType.CHAIN) {
+					RenderOfChainFixture.draw(pCore, pBody, lFixture);
 
 				}
 
@@ -244,7 +272,6 @@ public class JBox2dDebugDrawer {
 		Debug.debugManager().drawers().beginTextRenderer(pCore.HUD());
 		Debug.debugManager().drawers().drawText("# Contacts: " + mWorld.getContactCount(), lHUDrect.left() + 5, lHUDrect.bottom() - (lLinePos -= lLineHeight));
 		Debug.debugManager().drawers().drawText(String.format("# Fixtures: ??"), lHUDrect.left() + 5, lHUDrect.bottom() - (lLinePos -= lLineHeight));
-		Debug.debugManager().drawers().drawText(String.format("# Bodies: %d", mWorld.getBodyCount()), lHUDrect.left() + 5, lHUDrect.bottom() - (lLinePos -= lLineHeight));
 		Debug.debugManager().drawers().drawText(String.format("# Bodies: %d", mWorld.getBodyCount()), lHUDrect.left() + 5, lHUDrect.bottom() - (lLinePos -= lLineHeight));
 		Debug.debugManager().drawers().drawText(String.format("# Joints: %d", mWorld.getJointCount()), lHUDrect.left() + 5, lHUDrect.bottom() - (lLinePos -= lLineHeight));
 		Debug.debugManager().drawers().drawText(String.format("# Particles: %d", mWorld.getParticleCount()), lHUDrect.left() + 5, lHUDrect.bottom() - (lLinePos -= lLineHeight));
