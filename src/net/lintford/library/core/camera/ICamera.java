@@ -1,5 +1,6 @@
 package net.lintford.library.core.camera;
 
+import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.maths.Matrix4f;
 import net.lintford.library.core.maths.Vector2f;
@@ -132,6 +133,16 @@ public interface ICamera {
 			return 0;
 		}
 
+		@Override
+		public void handleInput(LintfordCore pCore) {
+
+		}
+
+		@Override
+		public void update(LintfordCore pCore) {
+
+		}
+
 	};
 
 	// --------------------------------------
@@ -165,6 +176,14 @@ public interface ICamera {
 	public abstract float getZoomFactorOverOne();
 
 	// --------------------------------------
+	// Core-Methods
+	// --------------------------------------
+
+	public abstract void handleInput(LintfordCore pCore);
+
+	public abstract void update(LintfordCore pCore);
+
+	// --------------------------------------
 	// Methods
 	// --------------------------------------
 
@@ -180,16 +199,16 @@ public interface ICamera {
 
 	public abstract float getMouseWorldSpaceY();
 
-	/** This maps the input X coordinate into the camera space.*/
+	/** This maps the input X coordinate into the camera space. */
 	public abstract float getPointCameraSpaceX(float pPointX);
 
-	/** This maps the input Y coordinate into the camera space.*/
+	/** This maps the input Y coordinate into the camera space. */
 	public abstract float getPointCameraSpaceY(float pPointY);
 
 	public abstract float getWorldPositionXInCameraSpace(float pPointX);
 
 	public abstract float getWorldPositionYInCameraSpace(float pPointY);
-	
+
 	public abstract void applyGameViewport();
 
 }

@@ -118,6 +118,7 @@ public class HUD implements ICamera, IResizeListener {
 	// Core-Methods
 	// --------------------------------------
 
+	@Override
 	public void handleInput(LintfordCore pCore) {
 		float lWindowWidth = mWindowWidth;
 		float lWindowHeight = mWindowHeight;
@@ -139,6 +140,7 @@ public class HUD implements ICamera, IResizeListener {
 
 	}
 
+	@Override
 	public void update(LintfordCore pCore) {
 		if (mWindowWidth == 0 || mWindowHeight == 0)
 			return;
