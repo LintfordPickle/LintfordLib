@@ -1,10 +1,17 @@
 package net.lintford.library.screenmanager.screens;
 
 import net.lintford.library.controllers.core.GameRendererController;
+import net.lintford.library.core.camera.ICamera;
 import net.lintford.library.screenmanager.Screen;
 import net.lintford.library.screenmanager.ScreenManager;
 
 public abstract class BaseGameScreen extends Screen {
+
+	// --------------------------------------
+	// Variables
+	// --------------------------------------
+
+	protected ICamera mGameCamera;
 
 	// --------------------------------------
 	// Constructor
@@ -27,7 +34,7 @@ public abstract class BaseGameScreen extends Screen {
 	public void initialize() {
 		super.initialize();
 
-		mScreenManager.core().setNewGameCamera(null);
+		mGameCamera = mScreenManager.core().setNewGameCamera(mGameCamera);
 
 	}
 

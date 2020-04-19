@@ -139,7 +139,7 @@ public abstract class LintfordCore {
 	protected CameraController mCameraController;
 	protected CameraHUDController mCameraHUDController;
 
-	protected Camera mGameCamera;
+	protected ICamera mGameCamera;
 	protected HUD mHUD;
 	protected RenderState mRenderState;
 
@@ -547,7 +547,7 @@ public abstract class LintfordCore {
 
 	}
 
-	public void setNewGameCamera(Camera pCamera) {
+	public ICamera setNewGameCamera(ICamera pCamera) {
 		mGameCamera = pCamera;
 
 		if (mMasterConfig == null)
@@ -557,7 +557,7 @@ public abstract class LintfordCore {
 			mGameCamera = new Camera(mMasterConfig.display());
 
 		mCameraController = new CameraController(mControllerManager, mGameCamera, CORE_ENTITY_GROUP_ID);
-
+		return mGameCamera;
 	}
 
 	public void removeGameCamera() {
