@@ -301,6 +301,7 @@ public class Rectangle extends Shape {
 	 * @param cy
 	 */
 	public void setPosition(float pX, float pY) {
+		mAreVerticesDirty = mAreVerticesDirty || x != pX || y != pY;
 		x = pX;
 		y = pY;
 
