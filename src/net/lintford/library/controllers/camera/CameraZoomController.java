@@ -99,7 +99,8 @@ public class CameraZoomController extends BaseController {
 		super(pControllerManager, CONTROLLER_NAME, pControllerBaseGroup);
 
 		mCamera = pCamera;
-		this.mCameraMinZoom = mCameraMaxZoom = 1.0f;
+		this.mCameraMinZoom = 0.1f;
+		mCameraMaxZoom = 3.0f;
 
 	}
 
