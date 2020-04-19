@@ -67,7 +67,11 @@ public class Spline {
 	// Methods
 	// --------------------------------------
 
-	public SplinePoint getSplinePoint(float t) {
+	public SplinePoint getControlPoint(int pIndex) {
+		return mPoints.get(pIndex);
+	}
+
+	public SplinePoint getPointOnSpline(float t) {
 		int p0, p1, p2, p3;
 
 		if (!mIsLooped) {
@@ -137,42 +141,20 @@ public class Spline {
 	}
 
 	public float getNormalizedOffset(float pDistance) {
-		// Work out base spline segment
-
 		int i = 0;
 		while (pDistance > mPoints.get(i).length) {
 			pDistance -= mPoints.get(i).length;
 			i++;
 		}
 
-		// The fractional is the offset
 		return (float) i + (pDistance / mPoints.get(i).length);
 
-//		int i = 0;
-//		while (i < mPoints.size() && pDistance > mPoints.get(i).length) {
-//			pDistance -= mPoints.get(i).length;
-//
-//			if (mPoints.get(i).length <= 0)
-//				break;
-//
-//			i++;
-//		}
-//
-//		if (i >= mPoints.size())
-//			return i - 1;
-//
-//		if (mPoints.get(i).length == 0) {
-//			return i;
-//		}
-//
-//		// The fractional part is the offset
-//		return (float) i + (pDistance / mPoints.get(i).length);
 	}
 
 	public void calculateSegmentLength() {
 		mTotalSplineLength = 0;
 		final int lIdOffset = mIsLooped ? 0 : 3;
-		for (int i = 0; i < mPoints.size() - lIdOffset; i++) {
+		for (int i = 0; i < mPoints.size() - lIdOffset - 1; i++) {
 			final float lSegmentLength = calculateSegmentLength(i);
 			mTotalSplineLength += lSegmentLength;
 		}
@@ -185,10 +167,10 @@ public class Spline {
 
 		final SplinePoint lOldPoint = new SplinePoint();
 		final SplinePoint lNewPoint = new SplinePoint();
-		lOldPoint.set(getSplinePoint((float) pNode));
+		lOldPoint.set(getPointOnSpline((float) pNode));
 
 		for (float t = 0; t < 1f; t += lStepSize) {
-			lNewPoint.set(getSplinePoint((float) pNode + t));
+			lNewPoint.set(getPointOnSpline((float) pNode + t));
 
 			lLength += Math.sqrt((lNewPoint.x - lOldPoint.x) * (lNewPoint.x - lOldPoint.x) + (lNewPoint.y - lOldPoint.y) * (lNewPoint.y - lOldPoint.y));
 
