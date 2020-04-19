@@ -1,7 +1,6 @@
 package net.lintford.library.renderers.debug;
 
 import org.jbox2d.dynamics.World;
-import org.lwjgl.opengl.GL11;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.debug.JBox2dDebugDrawer;
