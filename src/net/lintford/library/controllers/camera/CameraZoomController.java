@@ -62,12 +62,6 @@ public class CameraZoomController extends BaseController {
 	public void setZoomConstraints(float pMin, float pMax) {
 		mCameraMinZoom = pMin;
 
-		if (pMin < 0.2f)
-			pMin = 0.2f;
-
-		if (pMax > 10.0f)
-			pMax = 10f;
-
 		if (pMin > pMax)
 			pMin = pMax;
 
