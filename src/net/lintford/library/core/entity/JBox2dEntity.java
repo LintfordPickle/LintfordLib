@@ -1,6 +1,5 @@
 package net.lintford.library.core.entity;
 
-import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.World;
 
 import net.lintford.library.controllers.box2d.Box2dWorldController;
@@ -20,16 +19,10 @@ public abstract class JBox2dEntity extends WorldEntity {
 	// --------------------------------------
 
 	public JBox2dEntityInstance mJBox2dEntityInstance;
-	protected transient Vec2 mPosition; // TODO: this is null after loading level (vel too)
-	protected transient Vec2 mVelocity;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
-
-	public Vec2 velocity() {
-		return mVelocity;
-	}
 
 	public boolean hasPhysicsEntity() {
 		return mJBox2dEntityInstance != null && mJBox2dEntityInstance.isPhysicsLoaded();
@@ -65,22 +58,11 @@ public abstract class JBox2dEntity extends WorldEntity {
 	public void initialize(Object pParent) {
 		super.initialize(pParent);
 
-		mPosition = new Vec2();
-		mVelocity = new Vec2();
-
 	}
 
 	public void setPhysicsObject(JBox2dEntityInstance pJBox2dEntity) {
 		mJBox2dEntityInstance = pJBox2dEntity;
-
-		// Any properties previously set on this instance which should be applied to the Box2d world
-		// (Object->Box2D) should be set here. After this point, properties will be set from Box2D->Object
-
-		if (mJBox2dEntityInstance.mainBody() != null) {
-			mJBox2dEntityInstance.mainBody().position.x = x * Box2dWorldController.PIXELS_TO_UNITS;
-			mJBox2dEntityInstance.mainBody().position.y = y * Box2dWorldController.PIXELS_TO_UNITS;
-		}
-
+		
 	}
 
 	public void savePhysics() {
@@ -94,8 +76,6 @@ public abstract class JBox2dEntity extends WorldEntity {
 	public void loadPhysics(World pWorld) {
 		if (!isPhysicsLoaded())
 			return;
-
-		mVelocity = new Vec2();
 
 		mJBox2dEntityInstance.loadPhysics(pWorld);
 
@@ -133,27 +113,5 @@ public abstract class JBox2dEntity extends WorldEntity {
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
-
-	@Override
-	public void setPosition(float pWorldX, float pWorldY) {
-		if (mJBox2dEntityInstance != null) {
-			final var lMainBody = mJBox2dEntityInstance.mainBody();
-
-			if (mPosition == null) {
-				// TODO: This happens often, which means something isn't being initialized properly.
-				mPosition = new Vec2();
-			}
-
-			mPosition.set(pWorldX * Box2dWorldController.PIXELS_TO_UNITS, pWorldY * Box2dWorldController.PIXELS_TO_UNITS);
-			lMainBody.mBody.setTransform(mPosition, 0);
-			lMainBody.mBody.setAwake(true);
-
-		}
-
-		// Update the position of this character
-		x = pWorldX;
-		y = pWorldY;
-
-	}
 
 }
