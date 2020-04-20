@@ -154,7 +154,7 @@ public abstract class ShaderBackground extends Screen {
 		mBackgroundShader = new BackgroundShader(pVertFilepath, pFragFilepath);
 
 		mShowInBackground = true;
-		mInputInBackground = true;
+		mBlockInputInBackground = true;
 
 	}
 

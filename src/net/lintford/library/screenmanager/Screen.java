@@ -46,7 +46,7 @@ public abstract class Screen implements IProcessMouseInput {
 	protected boolean mShowMouseCursor;
 	protected float mR, mG, mB, mA;
 	protected boolean mShowInBackground;
-	protected boolean mInputInBackground;
+	protected boolean mBlockInputInBackground;
 	protected float mMouseClickTimer;
 
 	// --------------------------------------

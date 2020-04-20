@@ -158,12 +158,14 @@ public class ScreenManager {
 		boolean lProcessMouse = true;
 		boolean lProcessKeyboard = true;
 
+		boolean lInputBlockedByHigherScreen = false;
+
 		final int lScreenCount = mScreens.size() - 1;
 		for (int i = lScreenCount; i >= 0; i--) {
 			final var lScreen = mScreens.get(i);
 
 			// Only allow keyboard and mouse input if we are on the top screen
-			lProcessKeyboard = i == lScreenCount || lScreen.mInputInBackground;
+			lProcessKeyboard = i == lScreenCount || lScreen.mBlockInputInBackground;
 			lProcessMouse = i == lScreenCount;
 
 			if (!lProcessMouse) {
@@ -171,10 +173,12 @@ public class ScreenManager {
 
 			}
 
-			if (lScreen.screenState() == ScreenState.TransitionOn || lScreen.screenState() == ScreenState.Active || lScreen.mShowInBackground) {
+			if (!lInputBlockedByHigherScreen && (lScreen.screenState() == ScreenState.TransitionOn || lScreen.screenState() == ScreenState.Active || lScreen.mShowInBackground)) {
 				lScreen.handleInput(pCore, lProcessMouse, lProcessKeyboard);
 
 			}
+			
+			lInputBlockedByHigherScreen = lInputBlockedByHigherScreen || lScreen.mBlockInputInBackground;
 
 		}
 
