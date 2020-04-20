@@ -40,9 +40,20 @@ public class JBox2dEntityInstance extends PooledBaseData {
 	protected boolean mIsFree;
 	protected transient boolean mPhysicsLoaded = false;
 
+	protected Vec2 mWorldPosition;
+	protected float mWorldRotation;
+
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public void setWorldPosition(float pX, float pY) {
+		mWorldPosition.set(pX, pY);
+	}
+
+	public void setWorldRotation(float pRotation) {
+		mWorldRotation = pRotation;
+	}
 
 	public Object userDataObject() {
 		return userDataObject;
@@ -89,6 +100,7 @@ public class JBox2dEntityInstance extends PooledBaseData {
 		super(pPoolUid);
 
 		mPhysicsLoaded = false;
+		mWorldPosition = new Vec2();
 
 	}
 
@@ -101,6 +113,10 @@ public class JBox2dEntityInstance extends PooledBaseData {
 		final int lBodyCount = mBodies.size();
 		for (int i = 0; i < lBodyCount; i++) {
 			Box2dBodyInstance lBodyInstance = mBodies.get(i);
+
+			lBodyInstance.worldPosition.x = mWorldPosition.x + lBodyInstance.localPosition.x;
+			lBodyInstance.worldPosition.y = mWorldPosition.y + lBodyInstance.localPosition.y;
+			lBodyInstance.worldAngle = mWorldRotation + lBodyInstance.localAngle;
 
 			lBodyInstance.loadPhysics(pWorld);
 
@@ -146,6 +162,8 @@ public class JBox2dEntityInstance extends PooledBaseData {
 				mainBody().mBody.setUserData(userDataObject);
 
 		}
+
+		setTransform(mWorldPosition.x, mWorldPosition.y, mWorldRotation);
 
 		// Look for a body named 'MainBody'.
 		// This wll will be the origin body for translations etc.
@@ -269,13 +287,13 @@ public class JBox2dEntityInstance extends PooledBaseData {
 			lBox2dBodyInstance.name = lBox2dBodyDefinition.name;
 			lBox2dBodyInstance.bodyTypeIndex = lBox2dBodyDefinition.bodyTypeIndex;
 
-			lBox2dBodyInstance.position.x = lBox2dBodyDefinition.bodyDefinition.position.x;
-			lBox2dBodyInstance.position.y = lBox2dBodyDefinition.bodyDefinition.position.y;
+			lBox2dBodyInstance.localPosition.x = lBox2dBodyDefinition.bodyDefinition.position.x;
+			lBox2dBodyInstance.localPosition.y = lBox2dBodyDefinition.bodyDefinition.position.y;
 
 			lBox2dBodyInstance.linearVelocity.x = lBox2dBodyDefinition.bodyDefinition.linearVelocity.x;
 			lBox2dBodyInstance.linearVelocity.y = lBox2dBodyDefinition.bodyDefinition.linearVelocity.y;
 
-			lBox2dBodyInstance.angle = lBox2dBodyDefinition.bodyDefinition.angle;
+			lBox2dBodyInstance.localAngle = lBox2dBodyDefinition.bodyDefinition.angle;
 			lBox2dBodyInstance.angularVelocity = lBox2dBodyDefinition.bodyDefinition.angularVelocity;
 			lBox2dBodyInstance.linearDamping = lBox2dBodyDefinition.bodyDefinition.linearDamping;
 			lBox2dBodyInstance.angularDamping = lBox2dBodyDefinition.bodyDefinition.angularDamping;
@@ -374,14 +392,54 @@ public class JBox2dEntityInstance extends PooledBaseData {
 		mIsFree = true;
 	}
 
+	public void setTransform(float pX, float pY, float pR) {
+		final int lBodyCount = mBodies.size();
+
+		for (int i = 0; i < lBodyCount; i++) {
+			Box2dBodyInstance lBodyInst = mBodies.get(i);
+			if (lBodyInst == null)
+				continue;
+
+			lBodyInst.worldPosition.set(pX, pY);
+
+			if (lBodyInst.mBody != null) {
+				rotatePointAroundPoint(lBodyInst.localPosition.x, lBodyInst.localPosition.y, lBodyInst.localPosition.x, lBodyInst.localPosition.y, pR);
+
+				lBodyInst.mBody.setTransform(new Vec2(pX, pY), pR);
+
+			}
+
+		}
+
+	}
+
+	Vec2 temp = new Vec2();
+
+	private Vec2 rotatePointAroundPoint(float cx, float cy, float px, float py, float angle) {
+
+		float s = (float) Math.sin(angle);
+		float c = (float) Math.cos(angle);
+
+		px -= cx;
+		py -= cy;
+
+		float xnew = px * c - py * s;
+		float ynew = px * s + py * c;
+
+		temp.set(xnew + cx, ynew + cy);
+		return temp;
+	}
+
 	public void setPosition(float pX, float pY) {
+		mWorldPosition.set(pX, pY);
+
 		final int lBodyCount = mBodies.size();
 		for (int i = 0; i < lBodyCount; i++) {
 			Box2dBodyInstance lBodyInst = mBodies.get(i);
 			if (lBodyInst == null)
 				continue;
 
-			lBodyInst.position.set(pX, pY);
+			lBodyInst.worldPosition.set(pX, pY);
 
 			if (lBodyInst.mBody != null) {
 				lBodyInst.mBody.setTransform(new Vec2(pX, pY), lBodyInst.mBody.getAngle());
