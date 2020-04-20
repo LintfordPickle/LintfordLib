@@ -197,11 +197,11 @@ public class Box2dSpriteGraphBuilder {
 
 				lBodyInst.mFixtures = new Box2dFixtureInstance[1];
 				lBodyInst.mFixtures[0] = lFixInst;
-				lBodyInst.angle = 0;// i == 0 ? 0 : lCursor.curRotation;
+				lBodyInst.localAngle = 0;// i == 0 ? 0 : lCursor.curRotation;
 				lBodyInst.gravityScale = 1;
 
-				lBodyInst.position.x = lCursor.x;
-				lBodyInst.position.y = lCursor.y;
+				lBodyInst.localPosition.x = lCursor.x;
+				lBodyInst.localPosition.y = lCursor.y;
 
 				// JOINT TO CONNECT TO TREE
 				if (i > 0) {
@@ -233,10 +233,10 @@ public class Box2dSpriteGraphBuilder {
 					int lSides = RandomNumbers.random(0, 3);
 
 					if (lSides == 0 || lSides == 2)
-						createleaf(lJBox2dEntityInstance, lBodyInst, lBodyInst.position.x, lBodyInst.position.y, lChanceOfLeafs, true); // left of nook
+						createleaf(lJBox2dEntityInstance, lBodyInst, lBodyInst.localPosition.x, lBodyInst.localPosition.y, lChanceOfLeafs, true); // left of nook
 
 					if (lSides == 1 || lSides == 2)
-						createleaf(lJBox2dEntityInstance, lBodyInst, lBodyInst.position.x, lBodyInst.position.y, lChanceOfLeafs, false); // right of nook
+						createleaf(lJBox2dEntityInstance, lBodyInst, lBodyInst.localPosition.x, lBodyInst.localPosition.y, lChanceOfLeafs, false); // right of nook
 
 				}
 
@@ -302,11 +302,11 @@ public class Box2dSpriteGraphBuilder {
 
 		lBodyInst.mFixtures = new Box2dFixtureInstance[1];
 		lBodyInst.mFixtures[0] = lFixInst;
-		lBodyInst.angle = 0;
+		lBodyInst.localAngle = 0;
 		lBodyInst.gravityScale = 1;
 
-		lBodyInst.position.x = pX;
-		lBodyInst.position.y = pY;
+		lBodyInst.localPosition.x = pX;
+		lBodyInst.localPosition.y = pY;
 
 		// JOINT TO CONNECT TO TREE
 		Box2dRevoluteInstance lJoint = new Box2dRevoluteInstance();

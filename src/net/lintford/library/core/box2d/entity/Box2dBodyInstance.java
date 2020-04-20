@@ -27,8 +27,10 @@ public class Box2dBodyInstance extends BaseInstanceData {
 	public String name;
 	public int uid;
 	public int bodyTypeIndex;
-	public Vec2 position;
-	public float angle;
+	public Vec2 worldPosition;
+	public Vec2 localPosition;
+	public float worldAngle;
+	public float localAngle;
 	public Vec2 linearVelocity;
 	public float angularVelocity;
 	public float linearDamping;
@@ -53,7 +55,8 @@ public class Box2dBodyInstance extends BaseInstanceData {
 	// --------------------------------------
 
 	public Box2dBodyInstance() {
-		position = new Vec2();
+		localPosition = new Vec2();
+		worldPosition = new Vec2();
 		linearVelocity = new Vec2();
 		massCenter = new Vec2();
 
@@ -80,10 +83,10 @@ public class Box2dBodyInstance extends BaseInstanceData {
 			break;
 		}
 
-		this.position.set(mBody.getPosition());
+		this.localPosition.set(mBody.getPosition());
 		this.linearVelocity.set(mBody.getLinearVelocity());
 
-		this.angle = mBody.getAngle();
+		this.localAngle = mBody.getAngle();
 		this.angularVelocity = mBody.getAngularVelocity();
 		this.linearDamping = mBody.getLinearDamping();
 		this.angularDamping = mBody.getAngularDamping();
@@ -121,10 +124,10 @@ public class Box2dBodyInstance extends BaseInstanceData {
 			break;
 		}
 
-		lBodyDef.setPosition(position);
-		lBodyDef.setLinearVelocity(linearVelocity);
+		lBodyDef.position.set(worldPosition.x, worldPosition.y);
+		lBodyDef.linearVelocity.set(linearVelocity.x, linearVelocity.y);
 
-		lBodyDef.angle = angle;
+		lBodyDef.angle = worldAngle;
 		lBodyDef.angularVelocity = angularVelocity;
 		lBodyDef.linearDamping = linearDamping;
 		lBodyDef.angularDamping = angularDamping;

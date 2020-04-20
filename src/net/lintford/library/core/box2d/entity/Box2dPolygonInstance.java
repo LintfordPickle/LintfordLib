@@ -47,7 +47,7 @@ public class Box2dPolygonInstance extends BaseInstanceData implements ShapeInsta
 
 	public void loadPhysics() {
 		polygonShape = new PolygonShape();
-
+		
 		polygonShape.set(vertices, vertexCount);
 
 	}
