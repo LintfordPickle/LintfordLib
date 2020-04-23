@@ -353,7 +353,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	public void update(LintfordCore pCore, boolean pOtherScreenHasFocus, boolean pCoveredByOtherScreen) {
 		super.update(pCore, pOtherScreenHasFocus, pCoveredByOtherScreen);
 
-		final var lDeltaTime = pCore.appTime().elapseAppTimeMilli();
+		final var lDeltaTime = pCore.appTime().elapseTimeMilli();
 
 		updateLayoutSize(pCore);
 

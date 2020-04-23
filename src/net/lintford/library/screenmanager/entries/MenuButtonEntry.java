@@ -151,7 +151,7 @@ public class MenuButtonEntry extends MenuEntry {
 
 			// Check if tool tips are enabled.
 			if (mToolTipEnabled) {
-				mToolTipTimer += pCore.appTime().elapseAppTimeMilli();
+				mToolTipTimer += pCore.appTime().elapseTimeMilli();
 			}
 
 			return true;
@@ -170,7 +170,7 @@ public class MenuButtonEntry extends MenuEntry {
 		super.update(pCore, pScreen, pIsSelected);
 
 		if (mClickTimer >= 0) {
-			mClickTimer -= pCore.appTime().elapseAppTimeMilli();
+			mClickTimer -= pCore.appTime().elapseTimeMilli();
 
 		}
 

@@ -116,7 +116,7 @@ public class UIRadioButton extends UIWidget implements IProcessMouseInput {
 	public void update(LintfordCore pCore) {
 		super.update(pCore);
 
-		mMouseTimer += pCore.appTime().elapseAppTimeMilli();
+		mMouseTimer += pCore.appTime().elapseTimeMilli();
 	}
 
 	@Override

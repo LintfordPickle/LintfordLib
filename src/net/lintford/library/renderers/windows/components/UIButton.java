@@ -109,7 +109,7 @@ public class UIButton extends UIWidget {
 	public void update(LintfordCore pCore) {
 		super.update(pCore);
 
-		mClickTimer += pCore.appTime().elapseAppTimeMilli();
+		mClickTimer += pCore.appTime().elapseTimeMilli();
 
 	}
 

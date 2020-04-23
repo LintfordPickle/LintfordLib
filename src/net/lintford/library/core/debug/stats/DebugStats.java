@@ -177,7 +177,7 @@ public class DebugStats {
 	}
 
 	public void update(LintfordCore pCore) {
-		mLastUpdateElapsed = pCore.appTime().elapseAppTimeMilli();
+		mLastUpdateElapsed = pCore.appTime().elapseTimeMilli();
 
 	}
 
@@ -187,7 +187,7 @@ public class DebugStats {
 
 		deltaFrameCount++;
 
-		timer += pCore.appTime().elapseAppTimeMilli();
+		timer += pCore.appTime().elapseTimeMilli();
 		if (timer > 1000) {
 			frameCount = deltaFrameCount;
 			deltaFrameCount = 0;
@@ -197,15 +197,15 @@ public class DebugStats {
 
 		}
 
-		mLastDrawElapsed = pCore.appTime().elapseAppTimeMilli();
+		mLastDrawElapsed = pCore.appTime().elapseTimeMilli();
 
 		final String lSpace = " ";
 		final String lDelimiter = "|";
 		String lIsFixed = (pCore.isFixedTimeStep() ? "f" : "v");
-		String lIsRunningSlowly = (pCore.appTime().isGameRunningSlowly() ? "t" : "f");
+		String lIsRunningSlowly = (pCore.appTime().isRunningSlowly() ? "t" : "f");
 		String lUElapsed = String.format(java.util.Locale.US, "%.2f", mLastUpdateElapsed);
 		String lDElapsed = String.format(java.util.Locale.US, "%.2f", mLastDrawElapsed);
-		String lTotalElapsed = "(" + String.format(java.util.Locale.US, "%.1f", pCore.appTime().totalAppTimeSeconds()) + "s)";
+		String lTotalElapsed = "(" + String.format(java.util.Locale.US, "%.1f", pCore.appTime().totalTimeSeconds()) + "s)";
 
 		if (mStringBuilder.length() > 0)
 			mStringBuilder.delete(0, mStringBuilder.length());

@@ -204,7 +204,7 @@ public abstract class Screen implements IProcessMouseInput {
 			throw new RuntimeException("RendererManager not loaded");
 
 		if (mMouseClickTimer > 0) {
-			mMouseClickTimer -= pCore.appTime().elapseAppTimeMilli();
+			mMouseClickTimer -= pCore.appTime().elapseTimeMilli();
 
 		}
 

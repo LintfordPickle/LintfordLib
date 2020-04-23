@@ -323,7 +323,7 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 		mScrollBarsEnabled = mContentArea.h() - h > 0;
 		if (mScrollBarsEnabled) {
 
-			final float lDeltaTime = (float) pCore.appTime().elapseAppTimeMilli() / 1000f;
+			final float lDeltaTime = (float) pCore.appTime().elapseTimeMilli() / 1000f;
 			float lScrollSpeedFactor = mYScrollPosition;
 
 			mZScrollVelocity += mZScrollAcceleration;

@@ -183,7 +183,7 @@ public class MenuSliderEntry extends MenuEntry {
 
 			// Check if tool tips are enabled.
 			if (mToolTipEnabled) {
-				mToolTipTimer += pCore.appTime().elapseAppTimeMilli();
+				mToolTipTimer += pCore.appTime().elapseTimeMilli();
 			}
 
 		} else {

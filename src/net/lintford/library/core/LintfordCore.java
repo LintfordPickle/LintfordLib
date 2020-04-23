@@ -44,6 +44,52 @@ public abstract class LintfordCore {
 
 	public class GameTime extends CoreTime {
 
+		// --------------------------------------
+		// Variables
+		// --------------------------------------
+
+		protected float timeModifier;
+		protected boolean isTimePaused;
+
+		// --------------------------------------
+		// Properties
+		// --------------------------------------
+
+		public boolean isTimePaused() {
+			return isTimePaused;
+
+		}
+
+		public float timeModifier() {
+			return timeModifier;
+
+		}
+
+		// --------------------------------------
+		// Constructor
+		// --------------------------------------
+
+		public GameTime() {
+			super();
+
+			timeModifier = 1.f;
+
+		}
+
+		// --------------------------------------
+		// Methods
+		// --------------------------------------
+
+		public void setPaused(boolean pNewPausedState) {
+			isTimePaused = pNewPausedState;
+
+		}
+
+		public void setGameTimeModifier(float pNewModifier) {
+			timeModifier = MathHelper.clamp(pNewModifier, 0.0f, 10.0f);
+
+		}
+
 	}
 
 	public class CoreTime {
@@ -52,84 +98,43 @@ public abstract class LintfordCore {
 		// Variables
 		// --------------------------------------
 
-		float gameTimeModifier;
-		double mTotalGameTimeMilli;
-		double mElapsedGameTimeMilli;
-		boolean gameTimePaused;
-
-		long mLastFrame;
-		double mTotalAppTimeMilli;
-		double mElapsedAppTimeMilli;
-		double mAccumulatedElapsedTimeMilli;
-		double targetElapsedTimeMilli = 16.666;
+		protected long lastFrameTime;
+		double totalTimeMilli;
+		double elapsedTimeMilli;
+		double accumulatedElapsedTimeMilli;
+		double targetElapsedTimeMilli = 1 / 60; // 1 60th of a second
 		double maxElapsedTimeMilli = 500;
-		boolean mIsGameRunningSlowly;
+		boolean isRunningSlowly;
 
 		// --------------------------------------
 		// Properties
 		// --------------------------------------
 
-		public void setGameTimePaused(boolean pNewPausedState) {
-			gameTimePaused = pNewPausedState;
-
-		}
-
-		public boolean getGameTimePaused() {
-			return gameTimePaused;
-
-		}
-
-		public void setGameTimeModifier(float pNewModifier) {
-			gameTimeModifier = MathHelper.clamp(pNewModifier, 0.1f, 2.0f);
-
-		}
-
-		public float getGameTimeModifier() {
-			return gameTimeModifier;
-
-		}
-
 		/**
-		 * This flags returns true if the game has recently been missing update calls due to the amount of time taken to perform each call.
+		 * This flags returns true we've been missing update calls due to the amount of time taken to perform each draw call.
 		 */
-		public boolean isGameRunningSlowly() {
-			return mIsGameRunningSlowly;
+		public boolean isRunningSlowly() {
+			return isRunningSlowly;
 		}
 
-		/** @return The total game time in seconds. */
-		public double totalAppTimeSeconds() {
-			return mTotalAppTimeMilli / 1000.0f;
+		/** @return The total time in seconds. */
+		public double totalTimeSeconds() {
+			return totalTimeMilli / 1000.0f;
 		}
 
-		public double totalGameTimeSeconds() {
-			return mTotalGameTimeMilli / 1000.0f;
+		/** @return The total time in milliseconds. */
+		public double totalTimeMilli() {
+			return totalTimeMilli;
 		}
 
-		/** @return The total game time in milliseconds. */
-		public double totalAppTime() {
-			return mTotalAppTimeMilli;
+		/** @return The elapsed time since the last frame in seconds. */
+		public double elapseTimeSeconds() {
+			return elapsedTimeMilli / 1000f;
 		}
 
-		public double totalGameTime() {
-			return mTotalGameTimeMilli;
-		}
-
-		/** @return The elapsed game time since the last frame in seconds. */
-		public double elapseAppTimeSeconds() {
-			return mElapsedAppTimeMilli / 1000f;
-		}
-
-		public double elapseGameTimeSeconds() {
-			return mElapsedGameTimeMilli / 1000f;
-		}
-
-		/** @return The elapsed game time since the last frame in milliseconds. */
-		public double elapseAppTimeMilli() {
-			return mElapsedAppTimeMilli;
-		}
-
-		public double elapseGameTimeMilli() {
-			return mElapsedGameTimeMilli;
+		/** @return The elapsed time since the last frame in milliseconds. */
+		public double elapseTimeMilli() {
+			return elapsedTimeMilli;
 		}
 
 		// --------------------------------------
@@ -141,8 +146,6 @@ public abstract class LintfordCore {
 
 			maxElapsedTimeMilli = 500; // 500 ms
 
-			gameTimeModifier = 1.f;
-
 		}
 
 		// --------------------------------------
@@ -151,22 +154,19 @@ public abstract class LintfordCore {
 
 		private double getDelta() {
 			long time = System.nanoTime();
-			double lDelta = ((time - mLastFrame) / TimeSpan.NanoToMilli);
-			mLastFrame = time;
+			double lDelta = ((time - lastFrameTime) / TimeSpan.NanoToMilli);
+			lastFrameTime = time;
 
 			return lDelta;
 
 		}
 
 		public void resetElapsedTime() {
-			mLastFrame = 0;
-			mTotalAppTimeMilli = 0.0f;
-			mElapsedAppTimeMilli = 0.0f;
+			lastFrameTime = 0;
+			totalTimeMilli = 0.0f;
+			elapsedTimeMilli = 0.0f;
 			targetElapsedTimeMilli = 0.0f;
 			maxElapsedTimeMilli = 0.0f;
-
-			mElapsedGameTimeMilli = 0.0f;
-			mTotalGameTimeMilli = 0.0f;
 
 		}
 
@@ -199,11 +199,10 @@ public abstract class LintfordCore {
 	protected HUD mHUD;
 	protected RenderState mRenderState;
 
-	protected final float mShowLogoTime = 3000; // 3 seconds
+	protected final float mShowLogoTimeInMilli = 3000;
 	protected long mShowLogoTimer;
 
 	protected boolean mIsHeadlessMode;
-
 	protected boolean mIsFixedTimeStep;
 
 	// ---------------------------------------------
@@ -376,7 +375,7 @@ public abstract class LintfordCore {
 		onLoadGLContent();
 
 		// If we get to this point before enough time has elapsed, then continue showing the timer some ...
-		long lDiff = (long) (mShowLogoTime - (System.currentTimeMillis() - mShowLogoTimer));
+		long lDiff = (long) (mShowLogoTimeInMilli - (System.currentTimeMillis() - mShowLogoTimer));
 		if (lDiff > 0) {
 			try {
 				Thread.sleep(lDiff);
@@ -463,16 +462,14 @@ public abstract class LintfordCore {
 
 		// Game loop
 		while (!glfwWindowShouldClose(lDisplayConfig.windowID())) {
+			mAppTime.accumulatedElapsedTimeMilli += mAppTime.getDelta();
 
-			mAppTime.mAccumulatedElapsedTimeMilli += mAppTime.getDelta();
+			// If we are using a fixed time step, then make sure enough time has elapsed since the last frame
+			// before performing another update & draw
+			if (mIsFixedTimeStep && mAppTime.accumulatedElapsedTimeMilli < mAppTime.targetElapsedTimeMilli) {
+				long lSleepTime = (long) (mAppTime.targetElapsedTimeMilli - mAppTime.accumulatedElapsedTimeMilli);
 
-			// Check if for the fixed time step not enough time has passed to do another update
-			if (mIsFixedTimeStep && mAppTime.mAccumulatedElapsedTimeMilli < mAppTime.targetElapsedTimeMilli) {
-				long lSleepTime = (long) (mAppTime.targetElapsedTimeMilli - mAppTime.mAccumulatedElapsedTimeMilli);
-
-				// Sleep
 				try {
-					// System.out.println("Sleeping: " + lSleepTime);
 					Thread.sleep(lSleepTime);
 
 				} catch (InterruptedException e) {
@@ -486,24 +483,22 @@ public abstract class LintfordCore {
 
 			onHandleInput();
 
-			// Do not allow any update to take longer than our maximum allowed.
-			if (mAppTime.mAccumulatedElapsedTimeMilli > mAppTime.maxElapsedTimeMilli)
-				mAppTime.mAccumulatedElapsedTimeMilli = mAppTime.maxElapsedTimeMilli;
+			// Do not allow any update to take longer than our maximum allowed per frame.
+			if (mAppTime.accumulatedElapsedTimeMilli > mAppTime.maxElapsedTimeMilli)
+				mAppTime.accumulatedElapsedTimeMilli = mAppTime.maxElapsedTimeMilli;
 
 			if (mIsFixedTimeStep) {
-				mAppTime.mElapsedAppTimeMilli = mAppTime.targetElapsedTimeMilli;
+				mAppTime.elapsedTimeMilli = mAppTime.targetElapsedTimeMilli;
 				int lStepCount = 0;
 
-				while (mAppTime.mAccumulatedElapsedTimeMilli >= mAppTime.targetElapsedTimeMilli) {
-
-					mAppTime.mTotalAppTimeMilli += mAppTime.targetElapsedTimeMilli;
-
-					if (!mAppTime.gameTimePaused) {
-						mAppTime.mTotalGameTimeMilli += mAppTime.targetElapsedTimeMilli * mAppTime.gameTimeModifier;
+				while (mAppTime.accumulatedElapsedTimeMilli >= mAppTime.targetElapsedTimeMilli) {
+					if (!mGameTime.isTimePaused) {
+						mGameTime.totalTimeMilli += mAppTime.targetElapsedTimeMilli * mGameTime.timeModifier;
 
 					}
 
-					mAppTime.mAccumulatedElapsedTimeMilli -= mAppTime.targetElapsedTimeMilli;
+					mAppTime.totalTimeMilli += mAppTime.targetElapsedTimeMilli;
+					mAppTime.accumulatedElapsedTimeMilli -= mAppTime.targetElapsedTimeMilli;
 					++lStepCount;
 
 					onUpdate();
@@ -513,42 +508,39 @@ public abstract class LintfordCore {
 				// Every update after the first accumulates lag
 				lUpdateFrameLag += Math.max(0, lStepCount - 1);
 
-				if (mAppTime.isGameRunningSlowly()) {
+				if (mAppTime.isRunningSlowly()) {
 					if (lUpdateFrameLag == 0) {
-						mAppTime.mIsGameRunningSlowly = false;
+						mAppTime.isRunningSlowly = false;
 
 					}
 
 				} else if (lUpdateFrameLag >= 5) {
 					// If we lag more than 5 frames, start thinking we are running slowly
-					mAppTime.mIsGameRunningSlowly = true;
+					mAppTime.isRunningSlowly = true;
 
 				}
 
 				// Draw needs to know the total elapsed time that occured for the fixed length updates.
-				mAppTime.mElapsedAppTimeMilli = mAppTime.targetElapsedTimeMilli * lStepCount;
-				if (!mAppTime.gameTimePaused) {
-					mAppTime.mElapsedGameTimeMilli = (mAppTime.targetElapsedTimeMilli * lStepCount) * mAppTime.gameTimeModifier;
-				} else
-					mAppTime.mElapsedGameTimeMilli = .0f;
+				mAppTime.elapsedTimeMilli = mAppTime.targetElapsedTimeMilli * lStepCount;
 
+				if (!mGameTime.isTimePaused) {
+					mGameTime.elapsedTimeMilli = (mAppTime.targetElapsedTimeMilli * lStepCount) * mGameTime.timeModifier;
+				} else
+					mGameTime.elapsedTimeMilli = .0f;
+				
 			} else { // Variable time step
 				// Perform a single variable length update.
-				mAppTime.mElapsedAppTimeMilli = mAppTime.mAccumulatedElapsedTimeMilli;
-				if (!mAppTime.gameTimePaused) {
-					mAppTime.mElapsedGameTimeMilli = mAppTime.mAccumulatedElapsedTimeMilli * mAppTime.gameTimeModifier;
+				if (!mGameTime.isTimePaused) {
+					mGameTime.elapsedTimeMilli = mAppTime.accumulatedElapsedTimeMilli * mGameTime.timeModifier;
 
 				} else
-					mAppTime.mElapsedGameTimeMilli = 0.f;
+					mGameTime.elapsedTimeMilli = 0.f;
 
-				mAppTime.mTotalAppTimeMilli += mAppTime.mAccumulatedElapsedTimeMilli;
+				
+				mAppTime.elapsedTimeMilli = mAppTime.accumulatedElapsedTimeMilli;
+				mAppTime.totalTimeMilli += mAppTime.accumulatedElapsedTimeMilli;
 
-				if (!mAppTime.gameTimePaused) {
-					mAppTime.mTotalGameTimeMilli += mAppTime.targetElapsedTimeMilli * mAppTime.gameTimeModifier;
-
-				}
-
-				mAppTime.mAccumulatedElapsedTimeMilli = 0.0; // use all the time
+				mAppTime.accumulatedElapsedTimeMilli = 0.0; // consume all the time in a variable length step
 
 				onUpdate();
 

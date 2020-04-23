@@ -66,7 +66,7 @@ public class ToastManager {
 
 	public void update(LintfordCore pCore) {
 
-		mAddTimer += pCore.appTime().elapseAppTimeMilli();
+		mAddTimer += pCore.appTime().elapseTimeMilli();
 
 		mToastMessageUpdate.clear();
 		final int SIZE_T = mToastMessages.size();
@@ -81,7 +81,7 @@ public class ToastManager {
 		for (int i = 0; i < SIZE_T; i++) {
 			ToastMessage lTM = mToastMessageUpdate.get(i);
 
-			lTM.liveLeft -= pCore.appTime().elapseAppTimeMilli();
+			lTM.liveLeft -= pCore.appTime().elapseTimeMilli();
 
 			if (lTM.liveLeft < 0) {
 				lTM.reset();
@@ -93,7 +93,7 @@ public class ToastManager {
 			lTM.yy = lFinalY;
 
 			if (lTM.y < lTM.yy)
-				lTM.y += 500f * pCore.appTime().elapseAppTimeMilli() / 1000f;
+				lTM.y += 500f * pCore.appTime().elapseTimeMilli() / 1000f;
 
 			lFinalY -= 25;
 

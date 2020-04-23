@@ -156,7 +156,7 @@ public class CameraFollowController extends BaseController {
 			if (mVelocity.y > CAMERA_MAN_MOVE_SPEED_MAX)
 				mVelocity.y = CAMERA_MAN_MOVE_SPEED_MAX;
 
-			float elapsed = (float) pCore.appTime().elapseAppTimeMilli();
+			float elapsed = (float) pCore.appTime().elapseTimeMilli();
 
 			// Apply
 			float lCurX = mGameCamera.getPosition().x;
