@@ -1,7 +1,7 @@
 package net.lintford.library.screenmanager;
 
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.LintfordCore.GameTime;
+import net.lintford.library.core.LintfordCore.CoreTime;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.GLDebug;
 import net.lintford.library.core.entity.BaseEntity;
@@ -204,7 +204,7 @@ public abstract class Screen implements IProcessMouseInput {
 			throw new RuntimeException("RendererManager not loaded");
 
 		if (mMouseClickTimer > 0) {
-			mMouseClickTimer -= pCore.time().elapseAppTimeMilli();
+			mMouseClickTimer -= pCore.appTime().elapseAppTimeMilli();
 
 		}
 
@@ -213,7 +213,7 @@ public abstract class Screen implements IProcessMouseInput {
 		if (mIsExiting) {
 			mScreenState = ScreenState.TransitionOff;
 
-			if (updateTransition(pCore.time(), mTransitionOff)) {
+			if (updateTransition(pCore.appTime(), mTransitionOff)) {
 				mScreenManager.removeScreen(this);
 
 			}
@@ -223,7 +223,7 @@ public abstract class Screen implements IProcessMouseInput {
 		else if (pCoveredByOtherScreen) {
 
 			// if covered, then transition the screen off before hiding it.
-			if (mScreenState != ScreenState.Hidden && !updateTransition(pCore.time(), mTransitionOff)) {
+			if (mScreenState != ScreenState.Hidden && !updateTransition(pCore.appTime(), mTransitionOff)) {
 				mScreenState = ScreenState.TransitionOff;
 
 			}
@@ -240,7 +240,7 @@ public abstract class Screen implements IProcessMouseInput {
 		else {
 
 			// If not covered, then transition the screen on before activating it.
-			if (mScreenState != ScreenState.Active && !updateTransition(pCore.time(), mTransitionOn)) {
+			if (mScreenState != ScreenState.Active && !updateTransition(pCore.appTime(), mTransitionOn)) {
 				mScreenState = ScreenState.TransitionOn;
 
 			}
@@ -267,7 +267,7 @@ public abstract class Screen implements IProcessMouseInput {
 	// Methods
 	// --------------------------------------
 
-	private boolean updateTransition(GameTime pGameTime, BaseTransition pTransition) {
+	private boolean updateTransition(CoreTime pGameTime, BaseTransition pTransition) {
 
 		if (pTransition == null)
 			return true; // finished, nothing to do

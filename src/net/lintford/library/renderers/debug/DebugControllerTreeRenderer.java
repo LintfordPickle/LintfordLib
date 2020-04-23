@@ -199,7 +199,7 @@ public class DebugControllerTreeRenderer extends Rectangle implements IScrollBar
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
-		final float lDeltaTime = (float) pCore.time().elapseAppTimeMilli() / 1000f;
+		final float lDeltaTime = (float) pCore.appTime().elapseAppTimeMilli() / 1000f;
 
 		mIsOpen = mDebugManager.console().isOpen();
 
@@ -207,7 +207,7 @@ public class DebugControllerTreeRenderer extends Rectangle implements IScrollBar
 			return;
 
 		if (mClickTimer >= 0) {
-			mClickTimer -= pCore.time().elapseAppTimeMilli();
+			mClickTimer -= pCore.appTime().elapseAppTimeMilli();
 
 		}
 

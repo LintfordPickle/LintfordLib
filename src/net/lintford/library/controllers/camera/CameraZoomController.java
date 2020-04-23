@@ -145,7 +145,7 @@ public class CameraZoomController extends BaseController {
 		if (this.mCamera == null)
 			return;
 
-		final float lDeltaTime = (float) pCore.time().elapseAppTimeSeconds();
+		final float lDeltaTime = (float) pCore.appTime().elapseAppTimeSeconds();
 		float lZoomFactor = mCamera.getZoomFactor();
 
 		// apply zoom //

@@ -76,8 +76,8 @@ public class Box2dWorldController extends BaseController {
 	public void update(LintfordCore pCore) {
 		super.update(pCore);
 
-		if (mWorld != null && !pCore.time().getGameTimePaused()) {
-			mWorld.step((1f / 60f) * pCore.time().getGameTimeModifier(), 5, 6);
+		if (mWorld != null && !pCore.appTime().getGameTimePaused()) {
+			mWorld.step((1f / 60f) * pCore.appTime().getGameTimeModifier(), 5, 6);
 
 		}
 

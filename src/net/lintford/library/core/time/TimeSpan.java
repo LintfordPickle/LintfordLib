@@ -1,6 +1,6 @@
 package net.lintford.library.core.time;
 
-import net.lintford.library.core.LintfordCore.GameTime;
+import net.lintford.library.core.LintfordCore.CoreTime;
 
 public class TimeSpan {
 
@@ -69,7 +69,7 @@ public class TimeSpan {
 	// Core-Methods
 	// --------------------------------------
 
-	public void update(GameTime pGameTime) {
+	public void update(CoreTime pGameTime) {
 		// check for overflow
 		mTicks += pGameTime.elapseAppTimeMilli() * TicksPerMillisecond;
 		

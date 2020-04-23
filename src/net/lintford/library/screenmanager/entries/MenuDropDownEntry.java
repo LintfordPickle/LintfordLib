@@ -212,7 +212,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 			//
 			// Check if tool tips are enabled.
 			if (mToolTipEnabled) {
-				mToolTipTimer += pCore.time().elapseAppTimeMilli();
+				mToolTipTimer += pCore.appTime().elapseAppTimeMilli();
 
 			}
 

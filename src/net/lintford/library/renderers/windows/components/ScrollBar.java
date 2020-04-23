@@ -132,7 +132,7 @@ public class ScrollBar extends Rectangle implements IProcessMouseInput {
 	}
 
 	public void update(LintfordCore pCore) {
-		mMouseTimer -= pCore.time().elapseAppTimeMilli();
+		mMouseTimer -= pCore.appTime().elapseAppTimeMilli();
 
 		float lViewportHeight = mScrollBarArea.contentDisplayArea().h();
 		float lContentHeight = mScrollBarArea.fullContentArea().h();

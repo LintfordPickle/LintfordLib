@@ -1,6 +1,6 @@
 package net.lintford.library.screenmanager.transitions;
 
-import net.lintford.library.core.LintfordCore.GameTime;
+import net.lintford.library.core.LintfordCore.CoreTime;
 import net.lintford.library.core.time.TimeSpan;
 import net.lintford.library.screenmanager.Screen;
 
@@ -37,7 +37,7 @@ public abstract class BaseTransition {
 	// Methods
 	// --------------------------------------
 	
-	public void updateTransition(Screen pScreen, GameTime pGameTime){
+	public void updateTransition(Screen pScreen, CoreTime pGameTime){
 		final float deltaTime = (float) pGameTime.elapseAppTimeMilli();
 		mProgress += deltaTime;
 		

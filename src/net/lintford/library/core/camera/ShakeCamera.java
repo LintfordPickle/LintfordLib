@@ -34,7 +34,7 @@ public class ShakeCamera extends Camera {
 	public void update(LintfordCore pCore) {
 		if (mIsShaking) {
 
-			mShakeTimer += pCore.time().elapseAppTimeMilli();
+			mShakeTimer += pCore.appTime().elapseAppTimeMilli();
 
 			if (mShakeTimer > mShakeDur) {
 				mIsShaking = false;

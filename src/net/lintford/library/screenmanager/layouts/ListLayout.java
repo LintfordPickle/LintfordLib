@@ -83,7 +83,7 @@ public class ListLayout extends BaseLayout implements IProcessMouseInput {
 		super.update(pCore);
 
 		if (mClickTimer >= 0) {
-			mClickTimer -= pCore.time().elapseAppTimeMilli();
+			mClickTimer -= pCore.appTime().elapseAppTimeMilli();
 
 		}
 

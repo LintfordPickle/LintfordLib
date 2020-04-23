@@ -234,7 +234,7 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 
 			// Check if tool tips are enabled.
 			if (mToolTipEnabled) {
-				mToolTipTimer += pCore.time().elapseAppTimeMilli();
+				mToolTipTimer += pCore.appTime().elapseAppTimeMilli();
 			}
 
 			return true;

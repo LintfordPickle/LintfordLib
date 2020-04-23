@@ -46,7 +46,7 @@ public class ParticleRotationModifier extends ParticleModifierBase {
 
 	@Override
 	public void updateParticle(LintfordCore pCore, Particle pParticle) {
-		float lDelta = (float) pCore.time().elapseAppTimeMilli();
+		float lDelta = (float) pCore.appTime().elapseAppTimeMilli();
 
 		pParticle.dr += RandomNumbers.random(0, 0.00f);
 

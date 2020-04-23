@@ -114,7 +114,7 @@ public class MusicController extends BaseController {
 
 		}
 
-		final float lGameTimeModifer = pCore.time().getGameTimeModifier();
+		final float lGameTimeModifer = pCore.appTime().getGameTimeModifier();
 
 		// TODO: This doesn't belong in the library ...
 		mMusicManager.audioSourceBank0().setPitch(lGameTimeModifer);

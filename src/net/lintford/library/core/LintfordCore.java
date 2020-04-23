@@ -37,12 +37,16 @@ import net.lintford.library.options.DisplayManager;
 import net.lintford.library.options.MasterConfig;
 
 /**
- * The LintfordCore tracks the core state of an LWJGL application including a {@link DisplayManager}, {@link ResourceManager}, {@link GameTime}, {@link Camera}, {@link HUD}, {@link InputManager} and {@link RenderState}.
+ * The LintfordCore tracks the core state of an LWJGL application including a {@link DisplayManager}, {@link ResourceManager}, {@link CoreTime}, {@link Camera}, {@link HUD}, {@link InputManager} and {@link RenderState}.
  * It also defines the behaviour for creating an OpenGL window.
  */
 public abstract class LintfordCore {
 
-	public class GameTime {
+	public class GameTime extends CoreTime {
+
+	}
+
+	public class CoreTime {
 
 		// --------------------------------------
 		// Variables
@@ -132,7 +136,7 @@ public abstract class LintfordCore {
 		// Constructor
 		// --------------------------------------
 
-		public GameTime() {
+		public CoreTime() {
 			getDelta(); // needs to be called once at least
 
 			maxElapsedTimeMilli = 500; // 500 ms
@@ -169,16 +173,21 @@ public abstract class LintfordCore {
 	}
 
 	// ---------------------------------------------
-	// Variables
+	// Constants
 	// ---------------------------------------------
 
 	public static final int CORE_ENTITY_GROUP_ID = BaseEntity.getEntityNumber();
+
+	// ---------------------------------------------
+	// Variables
+	// ---------------------------------------------
 
 	protected GameInfo mGameInfo;
 	protected MasterConfig mMasterConfig;
 
 	protected InputManager mInputState;
-	protected GameTime mGameTime;
+	protected final CoreTime mAppTime;
+	protected final GameTime mGameTime;
 
 	protected ControllerManager mControllerManager;
 	protected ResourceManager mResourceManager;
@@ -206,9 +215,16 @@ public abstract class LintfordCore {
 	}
 
 	/**
-	 * Returns the instance of {@link GameTime} which was created when the LWJGL window was created. GameTime tracks the application time. null is returned if the LWJGL window has not yet been created.
+	 * Returns the instance of {@link CoreTime} which tracks the time realted to the application.
 	 */
-	public GameTime time() {
+	public CoreTime appTime() {
+		return mAppTime;
+	}
+
+	/**
+	 * Returns the instance of {@link CoreTime} which tracks the time realted to the game. GameTime can be slowed or sped up, which will result n changes in the game simulation.
+	 */
+	public GameTime gameTime() {
 		return mGameTime;
 	}
 
@@ -274,6 +290,9 @@ public abstract class LintfordCore {
 		mGameInfo = pGameInfo;
 		mIsHeadlessMode = pHeadless;
 
+		mAppTime = new CoreTime();
+		mGameTime = new GameTime();
+
 		// initially take the DebugLogLevel defined at compile time
 		DebugLogLevel lNewLogLevel = pGameInfo.debugLogLevel();
 
@@ -328,7 +347,6 @@ public abstract class LintfordCore {
 		// Load the configuration files saved previously by the user (or else create new ones)
 		mMasterConfig = new MasterConfig(mGameInfo);
 
-		mGameTime = new GameTime();
 		mInputState = new InputManager();
 
 		long lWindowID = initializeGLFWWindow();
@@ -446,11 +464,11 @@ public abstract class LintfordCore {
 		// Game loop
 		while (!glfwWindowShouldClose(lDisplayConfig.windowID())) {
 
-			mGameTime.mAccumulatedElapsedTimeMilli += mGameTime.getDelta();
+			mAppTime.mAccumulatedElapsedTimeMilli += mAppTime.getDelta();
 
 			// Check if for the fixed time step not enough time has passed to do another update
-			if (mIsFixedTimeStep && mGameTime.mAccumulatedElapsedTimeMilli < mGameTime.targetElapsedTimeMilli) {
-				long lSleepTime = (long) (mGameTime.targetElapsedTimeMilli - mGameTime.mAccumulatedElapsedTimeMilli);
+			if (mIsFixedTimeStep && mAppTime.mAccumulatedElapsedTimeMilli < mAppTime.targetElapsedTimeMilli) {
+				long lSleepTime = (long) (mAppTime.targetElapsedTimeMilli - mAppTime.mAccumulatedElapsedTimeMilli);
 
 				// Sleep
 				try {
@@ -469,23 +487,23 @@ public abstract class LintfordCore {
 			onHandleInput();
 
 			// Do not allow any update to take longer than our maximum allowed.
-			if (mGameTime.mAccumulatedElapsedTimeMilli > mGameTime.maxElapsedTimeMilli)
-				mGameTime.mAccumulatedElapsedTimeMilli = mGameTime.maxElapsedTimeMilli;
+			if (mAppTime.mAccumulatedElapsedTimeMilli > mAppTime.maxElapsedTimeMilli)
+				mAppTime.mAccumulatedElapsedTimeMilli = mAppTime.maxElapsedTimeMilli;
 
 			if (mIsFixedTimeStep) {
-				mGameTime.mElapsedAppTimeMilli = mGameTime.targetElapsedTimeMilli;
+				mAppTime.mElapsedAppTimeMilli = mAppTime.targetElapsedTimeMilli;
 				int lStepCount = 0;
 
-				while (mGameTime.mAccumulatedElapsedTimeMilli >= mGameTime.targetElapsedTimeMilli) {
+				while (mAppTime.mAccumulatedElapsedTimeMilli >= mAppTime.targetElapsedTimeMilli) {
 
-					mGameTime.mTotalAppTimeMilli += mGameTime.targetElapsedTimeMilli;
+					mAppTime.mTotalAppTimeMilli += mAppTime.targetElapsedTimeMilli;
 
-					if (!mGameTime.gameTimePaused) {
-						mGameTime.mTotalGameTimeMilli += mGameTime.targetElapsedTimeMilli * mGameTime.gameTimeModifier;
+					if (!mAppTime.gameTimePaused) {
+						mAppTime.mTotalGameTimeMilli += mAppTime.targetElapsedTimeMilli * mAppTime.gameTimeModifier;
 
 					}
 
-					mGameTime.mAccumulatedElapsedTimeMilli -= mGameTime.targetElapsedTimeMilli;
+					mAppTime.mAccumulatedElapsedTimeMilli -= mAppTime.targetElapsedTimeMilli;
 					++lStepCount;
 
 					onUpdate();
@@ -495,42 +513,42 @@ public abstract class LintfordCore {
 				// Every update after the first accumulates lag
 				lUpdateFrameLag += Math.max(0, lStepCount - 1);
 
-				if (mGameTime.isGameRunningSlowly()) {
+				if (mAppTime.isGameRunningSlowly()) {
 					if (lUpdateFrameLag == 0) {
-						mGameTime.mIsGameRunningSlowly = false;
+						mAppTime.mIsGameRunningSlowly = false;
 
 					}
 
 				} else if (lUpdateFrameLag >= 5) {
 					// If we lag more than 5 frames, start thinking we are running slowly
-					mGameTime.mIsGameRunningSlowly = true;
+					mAppTime.mIsGameRunningSlowly = true;
 
 				}
 
 				// Draw needs to know the total elapsed time that occured for the fixed length updates.
-				mGameTime.mElapsedAppTimeMilli = mGameTime.targetElapsedTimeMilli * lStepCount;
-				if (!mGameTime.gameTimePaused) {
-					mGameTime.mElapsedGameTimeMilli = (mGameTime.targetElapsedTimeMilli * lStepCount) * mGameTime.gameTimeModifier;
+				mAppTime.mElapsedAppTimeMilli = mAppTime.targetElapsedTimeMilli * lStepCount;
+				if (!mAppTime.gameTimePaused) {
+					mAppTime.mElapsedGameTimeMilli = (mAppTime.targetElapsedTimeMilli * lStepCount) * mAppTime.gameTimeModifier;
 				} else
-					mGameTime.mElapsedGameTimeMilli = .0f;
+					mAppTime.mElapsedGameTimeMilli = .0f;
 
 			} else { // Variable time step
 				// Perform a single variable length update.
-				mGameTime.mElapsedAppTimeMilli = mGameTime.mAccumulatedElapsedTimeMilli;
-				if (!mGameTime.gameTimePaused) {
-					mGameTime.mElapsedGameTimeMilli = mGameTime.mAccumulatedElapsedTimeMilli * mGameTime.gameTimeModifier;
+				mAppTime.mElapsedAppTimeMilli = mAppTime.mAccumulatedElapsedTimeMilli;
+				if (!mAppTime.gameTimePaused) {
+					mAppTime.mElapsedGameTimeMilli = mAppTime.mAccumulatedElapsedTimeMilli * mAppTime.gameTimeModifier;
 
 				} else
-					mGameTime.mElapsedGameTimeMilli = 0.f;
+					mAppTime.mElapsedGameTimeMilli = 0.f;
 
-				mGameTime.mTotalAppTimeMilli += mGameTime.mAccumulatedElapsedTimeMilli;
+				mAppTime.mTotalAppTimeMilli += mAppTime.mAccumulatedElapsedTimeMilli;
 
-				if (!mGameTime.gameTimePaused) {
-					mGameTime.mTotalGameTimeMilli += mGameTime.targetElapsedTimeMilli * mGameTime.gameTimeModifier;
+				if (!mAppTime.gameTimePaused) {
+					mAppTime.mTotalGameTimeMilli += mAppTime.targetElapsedTimeMilli * mAppTime.gameTimeModifier;
 
 				}
 
-				mGameTime.mAccumulatedElapsedTimeMilli = 0.0; // use all the time
+				mAppTime.mAccumulatedElapsedTimeMilli = 0.0; // use all the time
 
 				onUpdate();
 

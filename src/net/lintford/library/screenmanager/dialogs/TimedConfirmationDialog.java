@@ -80,7 +80,7 @@ public class TimedConfirmationDialog extends BaseDialog {
 		super.update(pCore, pOtherScreenHasFocus, pCoveredByOtherScreen);
 
 		if (mActive) {
-			mTimer += pCore.time().elapseAppTimeMilli();
+			mTimer += pCore.appTime().elapseAppTimeMilli();
 
 			if (mTimer >= mTimeToWait) {
 				// Trigger callback

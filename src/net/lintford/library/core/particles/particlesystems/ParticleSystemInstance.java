@@ -107,7 +107,7 @@ public class ParticleSystemInstance extends BaseInstanceData {
 
 			// Kill the particle if it exceeds its lifetime (unless lifeTime is NO_DO_DESPAWN
 			if (p.lifeTime() != Particle.DO_NOT_DESPAWN_LIFETIME) {
-				p.timeSinceStart += pCore.time().elapseAppTimeMilli();
+				p.timeSinceStart += pCore.appTime().elapseAppTimeMilli();
 				if (p.timeSinceStart >= p.lifeTime()) {
 					// kill the particle
 					p.reset();

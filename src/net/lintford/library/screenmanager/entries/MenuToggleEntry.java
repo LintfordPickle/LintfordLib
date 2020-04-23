@@ -138,7 +138,7 @@ public class MenuToggleEntry extends MenuEntry {
 	public void update(LintfordCore pCore, MenuScreen pScreen, boolean pIsSelected) {
 		super.update(pCore, pScreen, pIsSelected);
 
-		final double lDeltaTime = pCore.time().elapseAppTimeMilli() / 1000f;
+		final double lDeltaTime = pCore.appTime().elapseAppTimeMilli() / 1000f;
 
 		// Check if tool tips are enabled.
 		if (mToolTipEnabled) {

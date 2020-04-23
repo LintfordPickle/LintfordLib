@@ -1,6 +1,6 @@
 package net.lintford.library.screenmanager.transitions;
 
-import net.lintford.library.core.LintfordCore.GameTime;
+import net.lintford.library.core.LintfordCore.CoreTime;
 import net.lintford.library.core.maths.MathHelper;
 import net.lintford.library.core.time.TimeSpan;
 import net.lintford.library.screenmanager.Screen;
@@ -21,7 +21,7 @@ public class TransitionFadeOut extends BaseTransition {
 	// --------------------------------------
 
 	@Override
-	public void updateTransition(Screen pScreen, GameTime pGameTime) {
+	public void updateTransition(Screen pScreen, CoreTime pGameTime) {
 		super.updateTransition(pScreen, pGameTime);
 
 		final float ms = (float) mTransitionTime.milliseconds();

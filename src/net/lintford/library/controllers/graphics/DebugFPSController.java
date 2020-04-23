@@ -3,7 +3,7 @@ package net.lintford.library.controllers.graphics;
 import net.lintford.library.controllers.BaseController;
 import net.lintford.library.controllers.core.ControllerManager;
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.LintfordCore.GameTime;
+import net.lintford.library.core.LintfordCore.CoreTime;
 
 /** If enabled, prints the FPS to the console. */
 public class DebugFPSController extends BaseController {
@@ -67,7 +67,7 @@ public class DebugFPSController extends BaseController {
 
 	}
 
-	public void update(GameTime pGameTime) {
+	public void update(CoreTime pGameTime) {
 		if (!mEnableFPSDisplay)
 			return;
 
