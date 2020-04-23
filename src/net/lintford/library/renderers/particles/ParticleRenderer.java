@@ -2,6 +2,8 @@ package net.lintford.library.renderers.particles;
 
 import java.util.List;
 
+import org.lwjgl.opengl.GL11;
+
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.graphics.textures.Texture;
@@ -128,7 +130,7 @@ public class ParticleRenderer {
 	private void loadParticleContent(final ParticleSystemInstance pParticleSystemInst) {
 		ParticleSystemDefinition lParticleDefinition = pParticleSystemInst.definition();
 
-		mTexture = mResourceManager.textureManager().loadTexture(lParticleDefinition.textureName(), lParticleDefinition.textureFilename(), mEntityGroupId);
+		mTexture = mResourceManager.textureManager().loadTexture(lParticleDefinition.textureName(), lParticleDefinition.textureFilename(), GL11.GL_NEAREST, mEntityGroupId);
 		mIsParticleLoaded = mTexture != null;
 
 	}

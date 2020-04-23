@@ -27,8 +27,6 @@ public class MusicController extends BaseController {
 	private int mCurrentSongIndex = 0;
 	private boolean mBank0Active;
 
-	private float mSwitchSongInTimer;
-
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
@@ -116,14 +114,20 @@ public class MusicController extends BaseController {
 
 		}
 
-		final float lDelta = (float) pCore.time().elapseGameTimeMilli() / 1000.0f;
+		final float lGameTimeModifer = pCore.time().getGameTimeModifier();
 
-		mSwitchSongInTimer -= lDelta;
+		// TODO: This doesn't belong in the library ...
+		mMusicManager.audioSourceBank0().setPitch(lGameTimeModifer);
+		mMusicManager.audioSourceBank1().setPitch(lGameTimeModifer);
 
-		if (mSwitchSongInTimer <= 0.0f) {
-			System.out.println("Auto next song called ... ");
-			nextSong();
-
+		if (mBank0Active) {
+			if (!mMusicManager.audioSourceBank0().isPlaying()) {
+				nextSong();
+			}
+		} else {
+			if (!mMusicManager.audioSourceBank1().isPlaying()) {
+				prevSong();
+			}
 		}
 
 	}
@@ -160,9 +164,6 @@ public class MusicController extends BaseController {
 			} else {
 				final var lSongAudioDataBuffer = mMusicManager.getAudioDataByIndex(mCurrentSongIndex);
 				mMusicManager.audioSourceBank0().play(lSongAudioDataBuffer.bufferID());
-
-				mSwitchSongInTimer = lSongAudioDataBuffer.durationInSeconds() * 1000f + 500f;
-
 			}
 			mIsPlaying = true;
 
@@ -173,9 +174,6 @@ public class MusicController extends BaseController {
 			} else {
 				final var lSongAudioDataBuffer = mMusicManager.getAudioDataByIndex(mCurrentSongIndex);
 				mMusicManager.audioSourceBank1().play(lSongAudioDataBuffer.bufferID());
-
-				mSwitchSongInTimer = lSongAudioDataBuffer.durationInSeconds() * 1000f + 500f;
-
 			}
 
 			mIsPlaying = true;

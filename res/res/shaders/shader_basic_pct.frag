@@ -11,5 +11,4 @@ out vec4 outColor;
 void main() {
 	vec4 color = texture(textureSampler, passTexCoord, 0);
 	outColor = passColor * color;
-	
 }

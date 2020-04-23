@@ -23,5 +23,6 @@ void main() {
 	vec2 finalTextureCoords = (floor(passTexCoord * v2TextureSize) + interpolationAmount) / v2TextureSize;
 
 	outColor = texture(textureSampler, finalTextureCoords);
+	outColor *= passColor;
 	
 }

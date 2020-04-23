@@ -634,6 +634,7 @@ public class SubPixelTextureBatch {
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 
 		mShader.unbind();
+
 	}
 
 }

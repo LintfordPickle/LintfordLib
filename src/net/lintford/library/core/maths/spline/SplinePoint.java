@@ -9,6 +9,7 @@ public class SplinePoint {
 	public float x;
 	public float y;
 	public float length = 1f;
+	public float accLength = 1f; // length to this point (from start of spline)
 
 	// --------------------------------------
 	// Constructor

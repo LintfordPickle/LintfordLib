@@ -12,8 +12,8 @@ public class ParticleFrameworkData extends BaseInstanceData {
 
 	private static final long serialVersionUID = -2902482955273095395L;
 
-	public static String PARTICLE_SYSTEM_META_FILE = "res//def//particles//systems//psystems_meta.json";
-	public static String EMITTER_META_FILE = "res//def//particles//emitters//emitters_meta.json";
+	public static String PARTICLE_SYSTEM_META_FILE = "res//defs//particles//systems//psystems_meta.json";
+	public static String EMITTER_META_FILE = "res//defs//particles//emitters//emitters_meta.json";
 
 	// --------------------------------------
 	// Variables

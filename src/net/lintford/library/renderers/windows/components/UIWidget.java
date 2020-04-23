@@ -94,7 +94,7 @@ public abstract class UIWidget extends Rectangle implements IProcessMouseInput {
 
 	public void update(LintfordCore pCore) {
 		if (mMouseTimer >= 0) {
-			mMouseTimer -= pCore.time().elapseGameTimeMilli();
+			mMouseTimer -= pCore.time().elapseAppTimeMilli();
 
 		}
 

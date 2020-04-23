@@ -136,7 +136,7 @@ public class UIIconButton extends UIWidget {
 
 		super.update(pCore);
 
-		mClickTimer += pCore.time().elapseGameTimeMilli();
+		mClickTimer += pCore.time().elapseAppTimeMilli();
 
 	}
 

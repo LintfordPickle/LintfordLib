@@ -152,7 +152,7 @@ public class UIInputText extends UIWidget implements IBufferedInputCallback {
 	public void update(LintfordCore pCore) {
 		super.update(pCore);
 
-		mCaretFlashTimer += pCore.time().elapseGameTimeMilli();
+		mCaretFlashTimer += pCore.time().elapseAppTimeMilli();
 
 		final int lCancelRectSize = 24;
 		mCancelRectangle.set(x + w - lCancelRectSize, y + h / 2 - lCancelRectSize / 2, lCancelRectSize, lCancelRectSize);

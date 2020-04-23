@@ -7,9 +7,11 @@ import net.lintford.library.controllers.core.particles.ParticleFrameworkControll
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.particles.particlesystems.ParticleSystemInstance;
+import net.lintford.library.renderers.BaseRenderer;
+import net.lintford.library.renderers.RendererManager;
 
 // FIXME: improve the performance by storing an ID integer between the controller and the renderers.
-public class ParticleFrameworkRenderer {
+public class ParticleFrameworkRenderer extends BaseRenderer {
 
 	// --------------------------------------
 	// Constants
@@ -36,7 +38,9 @@ public class ParticleFrameworkRenderer {
 	// Constructor
 	// --------------------------------------
 
-	public ParticleFrameworkRenderer(int pEntityGroupID) {
+	public ParticleFrameworkRenderer(RendererManager pRendererManager, int pEntityGroupID) {
+		super(pRendererManager, RENDERER_NAME, pEntityGroupID);
+
 		mParticleRenderers = new ArrayList<>();
 
 		mEntityGroupID = pEntityGroupID;
@@ -44,7 +48,7 @@ public class ParticleFrameworkRenderer {
 		// Fill the pool
 		for (int i = 0; i < RENDERER_POOL_SIZE; i++) {
 			mParticleRenderers.add(new ParticleRenderer(getNewRendererId(), mEntityGroupID));
-			
+
 		}
 
 	}
@@ -53,11 +57,13 @@ public class ParticleFrameworkRenderer {
 	// Core-Methods
 	// --------------------------------------
 
+	@Override
 	public void initialize(LintfordCore pCore) {
 		mParticleSystemController = (ParticleFrameworkController) pCore.controllerManager().getControllerByNameRequired(ParticleFrameworkController.CONTROLLER_NAME, mEntityGroupID);
 
 	}
 
+	@Override
 	public void loadGLContent(ResourceManager pResourceManager) {
 		for (int i = 0; i < RENDERER_POOL_SIZE; i++) {
 			mParticleRenderers.get(i).loadGLContent(pResourceManager);
@@ -66,6 +72,7 @@ public class ParticleFrameworkRenderer {
 
 	}
 
+	@Override
 	public void unloadGLContent() {
 		for (int i = 0; i < RENDERER_POOL_SIZE; i++) {
 			mParticleRenderers.get(i).unloadGLContent();
@@ -74,6 +81,7 @@ public class ParticleFrameworkRenderer {
 
 	}
 
+	@Override
 	public void update(LintfordCore pCore) {
 		// Monitor and update any particlesystems needing renderers.
 		final List<ParticleSystemInstance> lInstances = mParticleSystemController.particleFrameworkData().particleSystemManager().particleSystems();
@@ -90,6 +98,7 @@ public class ParticleFrameworkRenderer {
 
 	}
 
+	@Override
 	public void draw(LintfordCore pCore) {
 		final int lNumParticleRenderers = mParticleRenderers.size();
 		for (int i = 0; i < lNumParticleRenderers; i++) {
@@ -118,8 +127,7 @@ public class ParticleFrameworkRenderer {
 	}
 
 	/**
-	 * Returns an unassigned {@link ParticleRenderer}. null is returned if there are no unassigned particle renderers remaining and the system resources do not allow the pool to be
-	 * expanded.
+	 * Returns an unassigned {@link ParticleRenderer}. null is returned if there are no unassigned particle renderers remaining and the system resources do not allow the pool to be expanded.
 	 */
 	public ParticleRenderer getFreeParticleSystemRenderer() {
 		final int PARTICLE_RENDERER_COUNT = mParticleRenderers.size();
@@ -131,6 +139,12 @@ public class ParticleFrameworkRenderer {
 
 		// TODO: Before returning null, we need to check if it is possible to expand the PARTICLE_SYSTEM_RENDERER pool.
 		return null;
+	}
+
+	@Override
+	public boolean isInitialized() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

@@ -71,7 +71,7 @@ public class DebugFPSController extends BaseController {
 		if (!mEnableFPSDisplay)
 			return;
 
-		if (pGameTime.totalGameTimeSeconds() - mLastFPSTimer > 1000) {
+		if (pGameTime.totalAppTimeSeconds() - mLastFPSTimer > 1000) {
 			mLastFPSTimer += 1000;
 			mFPS = mFPSCounter;
 

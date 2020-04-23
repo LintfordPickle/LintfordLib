@@ -45,7 +45,7 @@ public class ParticlePhysicsModifier extends ParticleModifierBase {
 
 	@Override
 	public void updateParticle(LintfordCore pCore, Particle pParticle) {
-		float lDelta = (float) pCore.time().elapseGameTimeMilli() / 1000f;
+		float lDelta = (float) pCore.time().elapseAppTimeMilli() / 1000f;
 
 		pParticle.x += pParticle.dx * lDelta;
 		pParticle.y += pParticle.dy * lDelta;

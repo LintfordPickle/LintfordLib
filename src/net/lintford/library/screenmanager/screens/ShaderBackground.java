@@ -193,7 +193,7 @@ public abstract class ShaderBackground extends Screen {
 	public void update(LintfordCore pCore, boolean pOtherScreenHasFocus, boolean pCoveredByOtherScreen) {
 		super.update(pCore, pOtherScreenHasFocus, pCoveredByOtherScreen);
 
-		mBackgroundShader.time((float) pCore.time().totalGameTimeSeconds());
+		mBackgroundShader.time((float) pCore.time().totalAppTimeSeconds());
 
 		mBackgroundShader.screenResolutionWidth(pCore.config().display().windowWidth());
 		mBackgroundShader.screenResolutionHeight(pCore.config().display().windowHeight());

@@ -3,6 +3,7 @@ package net.lintford.library.core.particles.particleemitters;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.entity.WorldEntity;
+import net.lintford.library.core.maths.MathHelper;
 import net.lintford.library.core.maths.RandomNumbers;
 import net.lintford.library.core.particles.ParticleFrameworkData;
 import net.lintford.library.core.particles.particlesystems.ParticleSystemInstance;
@@ -33,6 +34,8 @@ public class ParticleEmitterInstance extends WorldEntity {
 	public float mEmitTimer;
 	public float mEmitAmount;
 	public boolean enabled;
+
+	private float mEmitterEmitModifier; // [0,1]
 
 	// --------------------------------------
 	// Properties
@@ -69,6 +72,24 @@ public class ParticleEmitterInstance extends WorldEntity {
 		return mEmitterDefinitionId;
 	}
 
+	public float emitterEmitModifierNormalized() {
+		return mEmitterEmitModifier;
+	}
+
+	public void emitterEmitModifierNormalized(float pNewModifer) {
+		mEmitterEmitModifier = MathHelper.clamp(pNewModifer, 0.f, 1.f);
+
+		final int lNumInnerInstances = mChildEmitters.length;
+		for (int i = 0; i < lNumInnerInstances; i++) {
+			final var lChildParticleEmitterInstanceInst = mChildEmitters[i];
+			if (lChildParticleEmitterInstanceInst != null) {
+				lChildParticleEmitterInstanceInst.emitterEmitModifierNormalized(mEmitterEmitModifier);
+			}
+
+		}
+
+	}
+
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
@@ -78,6 +99,9 @@ public class ParticleEmitterInstance extends WorldEntity {
 
 		mChildEmitters = new ParticleEmitterInstance[MAX_NUM_CHILD_EMITTERS];
 		enabled = true;
+
+		mEmitterEmitModifier = 1.f;
+
 	}
 
 	// --------------------------------------
@@ -101,20 +125,17 @@ public class ParticleEmitterInstance extends WorldEntity {
 		y += mEmitterDefinition.PositionRelOffsetY;
 
 		// Update this emitter
-		mEmitTimer -= pCore.time().elapseGameTimeMilli();
+		mEmitTimer -= pCore.time().elapseGameTimeMilli() * mEmitterEmitModifier;
 
-		if (mEmitTimer < 0) {
-			if (mParticleSystem != null) {
-				final int lAmtToSpawn = RandomNumbers.random(mEmitterDefinition.emitAmountMin, mEmitterDefinition.emitAmountMax);
-				for (int i = 0; i < lAmtToSpawn; i++) {
-					mParticleSystem.spawnParticle(x, y, 0, 0);
-
-				}
-
-				// Set the time to wait until another round of spawns occurs
-				mEmitTimer = RandomNumbers.random(mEmitterDefinition.emitTimeMin, mEmitterDefinition.emitTimeMax);
+		if (mParticleSystem != null && mEmitTimer < 0) {
+			final int lAmtToSpawn = RandomNumbers.random(mEmitterDefinition.emitAmountMin, mEmitterDefinition.emitAmountMax);
+			for (int i = 0; i < lAmtToSpawn; i++) {
+				mParticleSystem.spawnParticle(x, y, 0, 0);
 
 			}
+
+			// Set the time to wait until another round of spawns occurs
+			mEmitTimer = RandomNumbers.random(mEmitterDefinition.emitTimeMin, mEmitterDefinition.emitTimeMax);
 
 		}
 

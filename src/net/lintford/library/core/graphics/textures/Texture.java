@@ -38,8 +38,8 @@ public class Texture {
 	private long mFileSizeOnLoad;
 
 	/**
-	 * Some textures, like textures generated from system fonts, do not need to be reloaded when checking for changes to textures on the harddisk. Setting this Boolean to false will
-	 * skip the texture reload requests on this texture.
+	 * Some textures, like textures generated from system fonts, do not need to be reloaded when checking for changes to textures on the harddisk. Setting this Boolean to false will skip the texture reload requests on
+	 * this texture.
 	 */
 	private boolean mReloadable;
 
@@ -283,10 +283,13 @@ public class Texture {
 		IntBuffer lBuffer = ByteBuffer.allocateDirect(pPixels.length * 4).order(ByteOrder.nativeOrder()).asIntBuffer();
 		lBuffer.put(pPixels);
 		lBuffer.flip();
-		
+
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL12.GL_CLAMP_TO_EDGE);
-		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL12.GL_CLAMP_TO_EDGE);
-		
+		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL12.GL_REPEAT);
+
+		// GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL12.GL_CLAMP_TO_EDGE);
+		// GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL12.GL_CLAMP_TO_EDGE);
+
 		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, pWidth, pHeight, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, lBuffer);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 

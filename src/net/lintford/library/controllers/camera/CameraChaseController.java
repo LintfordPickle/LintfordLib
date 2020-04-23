@@ -167,7 +167,7 @@ public class CameraChaseController extends BaseController {
 	private void updateSpring(LintfordCore pCore) {
 		updatewWorldPositions(pCore);
 
-		float elapsed = (float) pCore.time().elapseGameTimeSeconds();
+		float elapsed = (float) pCore.time().elapseAppTimeSeconds();
 
 		// Calculate spring force
 		float stretchX = mPosition.x - mDesiredPosition.x;

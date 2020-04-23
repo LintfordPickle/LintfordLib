@@ -123,7 +123,7 @@ public class SpriteInstance extends Rectangle {
 	}
 
 	public void update(LintfordCore pCore, boolean pReverse) {
-		final float lDeltaTime = (float) pCore.time().elapseGameTimeMilli();
+		final float lDeltaTime = (float) pCore.time().elapseAppTimeMilli();
 
 		if (mSpriteDefinition.frameDuration() == 0.0)
 			return;

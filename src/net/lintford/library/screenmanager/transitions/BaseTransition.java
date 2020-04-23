@@ -38,7 +38,7 @@ public abstract class BaseTransition {
 	// --------------------------------------
 	
 	public void updateTransition(Screen pScreen, GameTime pGameTime){
-		final float deltaTime = (float) pGameTime.elapseGameTimeMilli();
+		final float deltaTime = (float) pGameTime.elapseAppTimeMilli();
 		mProgress += deltaTime;
 		
 	}

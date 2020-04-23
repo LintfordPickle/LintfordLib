@@ -158,9 +158,11 @@ public class Spline {
 
 	public void calculateSegmentLength() {
 		mTotalSplineLength = 0;
+		
 		final int lIdOffset = mIsLooped ? 0 : 3;
 		for (int i = 0; i < mPoints.size() - lIdOffset - 1; i++) {
 			final float lSegmentLength = calculateSegmentLength(i);
+			mPoints.get(i).accLength = mTotalSplineLength;
 			mTotalSplineLength += lSegmentLength;
 		}
 

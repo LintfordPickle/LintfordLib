@@ -368,7 +368,7 @@ public class DebugConsole extends Rectangle implements IBufferedInputCallback, I
 		if (!mIsLoaded || !mOpen)
 			return;
 
-		final float lDeltaTime = (float) pCore.time().elapseGameTimeMilli() / 1000f;
+		final float lDeltaTime = (float) pCore.time().elapseAppTimeMilli() / 1000f;
 
 		// Update timers
 		mFocusTimer += lDeltaTime * 1000f;
