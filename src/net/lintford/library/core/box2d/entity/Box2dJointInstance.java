@@ -39,6 +39,19 @@ public abstract class Box2dJointInstance extends BaseInstanceData {
 	}
 
 	// --------------------------------------
+	// Core-Methods
+	// --------------------------------------
+
+	@Override
+	public void initialize(Object pParent) {
+		super.initialize(pParent);
+
+		localAnchorA = new Vec2();
+		localAnchorB = new Vec2();
+
+	}
+
+	// --------------------------------------
 	// Method
 	// --------------------------------------
 

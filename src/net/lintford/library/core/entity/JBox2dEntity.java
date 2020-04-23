@@ -58,6 +58,8 @@ public abstract class JBox2dEntity extends WorldEntity {
 	public void initialize(Object pParent) {
 		super.initialize(pParent);
 
+		mJBox2dEntityInstance.initialize(this);
+		
 	}
 
 	public void setPhysicsObject(JBox2dEntityInstance pJBox2dEntity) {

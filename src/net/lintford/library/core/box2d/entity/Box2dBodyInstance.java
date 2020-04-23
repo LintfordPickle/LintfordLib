@@ -66,6 +66,17 @@ public class Box2dBodyInstance extends BaseInstanceData {
 	// Core-Methods
 	// --------------------------------------
 
+	@Override
+	public void initialize(Object pParent) {
+		super.initialize(pParent);
+
+		localPosition = new Vec2();
+		worldPosition = new Vec2();
+		linearVelocity = new Vec2();
+		massCenter = new Vec2();
+
+	}
+
 	public void savePhysics() {
 		if (mBody == null)
 			return; // nothing to save

@@ -108,6 +108,24 @@ public class JBox2dEntityInstance extends PooledBaseData {
 	// Core-Methods
 	// --------------------------------------
 
+	@Override
+	public void initialize(Object pParent) {
+		super.initialize(pParent);
+
+		final int lBodyCount = mBodies.size();
+		for (int i = 0; i < lBodyCount; i++) {
+			mBodies.get(i).initialize(this);
+
+		}
+
+		final int lJointCount = mJoints.size();
+		for (int i = 0; i < lJointCount; i++) {
+			mJoints.get(i).initialize(this);
+
+		}
+
+	}
+
 	public void loadPhysics(World pWorld) {
 		// Go through and create instances for each definition
 		final int lBodyCount = mBodies.size();
@@ -122,15 +140,21 @@ public class JBox2dEntityInstance extends PooledBaseData {
 
 		}
 
-		// need two passes for joints because gear joints reference other joints
-		// TODO: This will break as soon as I use any joints other than RevoluteJoints !
+		// Need two passes for joints because gear joints reference other joints
 		final int lJointCount = mJoints.size();
 		for (int i = 0; i < lJointCount; i++) {
 			Box2dRevoluteInstance lJointInstance = (Box2dRevoluteInstance) mJoints.get(i);
 			RevoluteJointDef lJointDef = new RevoluteJointDef();
 
-			lJointDef.bodyA = getBodyByIndex(lJointInstance.bodyAUID).mBody;
-			lJointDef.bodyB = getBodyByIndex(lJointInstance.bodyBUID).mBody;
+			final var lBodyA = getBodyByIndex(lJointInstance.bodyAUID);
+			if (lBodyA == null)
+				continue;
+			lJointDef.bodyA = lBodyA.mBody;
+
+			final var lBodyB = getBodyByIndex(lJointInstance.bodyBUID);
+			if (lBodyB == null)
+				continue;
+			lJointDef.bodyB = lBodyB.mBody;
 
 			lJointDef.referenceAngle = lJointInstance.referenceAngle;
 			lJointDef.enableLimit = lJointInstance.enableLimit;
@@ -175,7 +199,12 @@ public class JBox2dEntityInstance extends PooledBaseData {
 	public Box2dBodyInstance getBodyByName(String pBodyName) {
 		final int lBodyCount = mBodies.size();
 		for (int i = 0; i < lBodyCount; i++) {
-			if (mBodies.get(i).name.contentEquals(pBodyName))
+			final var lBody = mBodies.get(i);
+			if (lBody == null || lBody.name == null) {
+				continue;
+			}
+
+			if (lBody.name.contentEquals(pBodyName))
 				return mBodies.get(i);
 
 		}
@@ -185,6 +214,10 @@ public class JBox2dEntityInstance extends PooledBaseData {
 	}
 
 	public Box2dBodyInstance getBodyByIndex(int pArrayIndex) {
+		if (pArrayIndex >= mBodies.size()) {
+			return null;
+		}
+
 		return mBodies.get(pArrayIndex);
 	}
 

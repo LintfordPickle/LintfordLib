@@ -134,7 +134,7 @@ public class Box2dSpriteGraphBuilder {
 
 	}
 
-	int uidCounter = 1;
+	int uidCounter = 0;
 
 	// --------------------------------------
 	// Methods
@@ -166,6 +166,7 @@ public class Box2dSpriteGraphBuilder {
 				// BODY
 
 				Box2dBodyInstance lBodyInst = new Box2dBodyInstance();
+				// lBodyInst.name = "Body";
 				lBodyInst.uid = uidCounter++;
 				lBodyInst.bodyTypeIndex = i == 0 ? PObjectDefinition.BODY_TYPE_STATIC : PObjectDefinition.BODY_TYPE_DYNAMIC;
 
@@ -276,6 +277,7 @@ public class Box2dSpriteGraphBuilder {
 
 		Box2dBodyInstance lBodyInst = new Box2dBodyInstance();
 		lBodyInst.uid = uidCounter++;
+		lBodyInst.name = "Leaf";
 		lBodyInst.bodyTypeIndex = PObjectDefinition.BODY_TYPE_DYNAMIC;
 
 		// FIXTURE
