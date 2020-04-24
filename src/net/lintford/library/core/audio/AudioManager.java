@@ -479,6 +479,7 @@ public class AudioManager {
 	private AudioSource createNewAudioSource() {
 		final var lReturnAudioSource = new AudioSource();
 		AL10.alSourcei(lReturnAudioSource.sourceID(), AL10.AL_SOURCE_ABSOLUTE, AL10.AL_TRUE);
+		AL10.alSourcei(lReturnAudioSource.sourceID(), AL10.AL_SOURCE_RELATIVE, AL10.AL_FALSE);
 		AL10.alSourcef(lReturnAudioSource.sourceID(), AL10.AL_GAIN, 1f);
 		AL10.alSourcef(lReturnAudioSource.sourceID(), AL10.AL_MAX_GAIN, 1f);// MathHelper.scaleToRange(mAudioConfig.soundFxVolume(), 0f, 1f, 0f, 100f));
 		AL10.alSourcef(lReturnAudioSource.sourceID(), AL10.AL_PITCH, 1f);
