@@ -312,8 +312,8 @@ public class RendererManager {
 
 	/** Checks to make sure that all active {@link BaseRenderer} instances have been properly loaded, and loads them if not. */
 	public void update(LintfordCore pCore) {
-		final int RENDERER_COUNT = mRenderers.size();
-		for (int i = 0; i < RENDERER_COUNT; i++) {
+		final int lRendererCount = mRenderers.size();
+		for (int i = 0; i < lRendererCount; i++) {
 			if (!mRenderers.get(i).isActive())
 				continue;
 
@@ -328,8 +328,8 @@ public class RendererManager {
 
 		}
 
-		final int WINDOW_RENDERER_COUNT = mWindowRenderers.size();
-		for (int i = 0; i < WINDOW_RENDERER_COUNT; i++) {
+		final int lWindowRendererCount = mWindowRenderers.size();
+		for (int i = 0; i < lWindowRendererCount; i++) {
 			if (!mWindowRenderers.get(i).isActive())
 				continue;
 

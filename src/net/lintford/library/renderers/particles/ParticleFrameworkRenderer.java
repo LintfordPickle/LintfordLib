@@ -70,6 +70,8 @@ public class ParticleFrameworkRenderer extends BaseRenderer {
 
 		}
 
+		mIsLoaded = true;
+
 	}
 
 	@Override
@@ -79,6 +81,8 @@ public class ParticleFrameworkRenderer extends BaseRenderer {
 
 		}
 
+		mIsLoaded = false;
+		
 	}
 
 	@Override
