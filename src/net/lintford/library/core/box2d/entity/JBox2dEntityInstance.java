@@ -434,7 +434,8 @@ public class JBox2dEntityInstance extends PooledBaseData {
 				continue;
 
 			lBodyInst.worldPosition.set(pX, pY);
-
+			lBodyInst.worldAngle = pR;
+			
 			if (lBodyInst.mBody != null) {
 				rotatePointAroundPoint(lBodyInst.localPosition.x, lBodyInst.localPosition.y, lBodyInst.localPosition.x, lBodyInst.localPosition.y, pR);
 

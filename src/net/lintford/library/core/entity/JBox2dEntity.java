@@ -59,12 +59,12 @@ public abstract class JBox2dEntity extends WorldEntity {
 		super.initialize(pParent);
 
 		mJBox2dEntityInstance.initialize(this);
-		
+
 	}
 
 	public void setPhysicsObject(JBox2dEntityInstance pJBox2dEntity) {
 		mJBox2dEntityInstance = pJBox2dEntity;
-		
+
 	}
 
 	public void savePhysics() {
@@ -80,6 +80,23 @@ public abstract class JBox2dEntity extends WorldEntity {
 			return;
 
 		mJBox2dEntityInstance.loadPhysics(pWorld);
+
+		final var lBox2dBodyInstance = mJBox2dEntityInstance.mainBody();
+		if (lBox2dBodyInstance != null) {
+			x = lBox2dBodyInstance.mBody.getPosition().x * Box2dWorldController.UNITS_TO_PIXELS;
+			y = lBox2dBodyInstance.mBody.getPosition().y * Box2dWorldController.UNITS_TO_PIXELS;
+			r = (float) Math.toDegrees(lBox2dBodyInstance.mBody.getAngle());
+
+		}
+
+	}
+
+	public void setTransform(float pX, float pY, float pR) {
+		x = pX;
+		y = pY;
+		r = pR;
+
+		mJBox2dEntityInstance.setTransform(pX, pY, pR);
 
 	}
 
@@ -99,7 +116,7 @@ public abstract class JBox2dEntity extends WorldEntity {
 
 	}
 
-	public void updatePhyics(LintfordCore pCore) {
+	public void updatePhysics(LintfordCore pCore) {
 		if (isPhysicsLoaded()) {
 			final var lBox2dBodyInstance = mJBox2dEntityInstance.mainBody();
 			if (lBox2dBodyInstance != null) {
