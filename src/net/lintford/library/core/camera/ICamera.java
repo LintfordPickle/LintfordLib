@@ -1,6 +1,9 @@
 package net.lintford.library.core.camera;
 
+import org.lwjgl.opengl.GL11;
+
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.maths.Matrix4f;
 import net.lintford.library.core.maths.Vector2f;
@@ -8,10 +11,22 @@ import net.lintford.library.core.maths.Vector2f;
 public interface ICamera {
 
 	public static ICamera EMPTY = new ICamera() {
+
+		// --------------------------------------
+		// Variables
+		// --------------------------------------
+
+		int mWindowWidth = 800;
+		int mWindowHeight = 600;
+
 		Matrix4f mView = new Matrix4f();
 		Matrix4f mProjection = new Matrix4f();
 		Vector2f mPosition = new Vector2f();
 		Rectangle mRectangle = new Rectangle();
+
+		// --------------------------------------
+		// Properties
+		// --------------------------------------
 
 		@Override
 		public Matrix4f view() {
@@ -20,12 +35,12 @@ public interface ICamera {
 
 		@Override
 		public void setZoomFactor(float pNewValue) {
-
+			Debug.debugManager().logger().w(getClass().getSimpleName(), "Cannot set zoom on ICamera.EMPTY");
 		}
 
 		@Override
 		public void setPosition(float pX, float pY) {
-
+			Debug.debugManager().logger().w(getClass().getSimpleName(), "Cannot set position on ICamera.EMPTY");
 		}
 
 		@Override
@@ -35,17 +50,17 @@ public interface ICamera {
 
 		@Override
 		public float getZoomFactorOverOne() {
-			return 0;
+			return 1.f;
 		}
 
 		@Override
 		public float getZoomFactor() {
-			return 0;
+			return 1.f;
 		}
 
 		@Override
 		public float getWidth() {
-			return 0;
+			return 1.f;
 		}
 
 		@Override
@@ -115,12 +130,12 @@ public interface ICamera {
 
 		@Override
 		public void setCameraState(CameraState pCameraState) {
-
+			Debug.debugManager().logger().w(getClass().getSimpleName(), "Cannot set camera state on ICamera.EMPTY");
 		}
 
 		@Override
 		public void applyGameViewport() {
-
+			GL11.glViewport(0, 0, mWindowWidth, mWindowHeight);
 		}
 
 		@Override
@@ -133,6 +148,10 @@ public interface ICamera {
 			return 0;
 		}
 
+		// --------------------------------------
+		// Core-Methods
+		// --------------------------------------
+
 		@Override
 		public void handleInput(LintfordCore pCore) {
 
@@ -140,7 +159,8 @@ public interface ICamera {
 
 		@Override
 		public void update(LintfordCore pCore) {
-
+			applyGameViewport();
+			
 		}
 
 	};
