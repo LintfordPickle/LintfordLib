@@ -37,14 +37,14 @@ public class Camera implements ICamera {
 
 	protected DisplayManager mDisplayConfig;
 
-	protected Rectangle mBoundingRectangle;
-	protected Vector2f mPosition;
-	protected Vector2f mAcceleration;
-	protected Vector2f mVelocity;
-	protected Vector2f mTargetPosition;
-	protected Vector2f mOffsetPosition;
-	protected Matrix4f mProjectionMatrix;
-	protected Matrix4f mViewMatrix;
+	protected final Rectangle mBoundingRectangle;
+	protected final Vector2f mInternalPosition;
+	protected final Vector2f mAcceleration;
+	protected final Vector2f mVelocity;
+	protected final Vector2f mTargetPosition;
+	protected final Vector2f mOffsetPosition;
+	protected final Matrix4f mProjectionMatrix;
+	protected final Matrix4f mViewMatrix;
 	protected float mMinX;
 	protected float mMaxX;
 	protected float mMinY;
@@ -82,7 +82,7 @@ public class Camera implements ICamera {
 
 	@Override
 	public Vector2f getPosition() {
-		return mPosition;
+		return mInternalPosition;
 	}
 
 	@Override
@@ -158,7 +158,7 @@ public class Camera implements ICamera {
 
 		mBoundingRectangle = new Rectangle(mMinX, mMinY, pDisplayConfig.windowWidth(), pDisplayConfig.windowHeight());
 
-		mPosition = new Vector2f();
+		mInternalPosition = new Vector2f();
 		mAcceleration = new Vector2f();
 		mVelocity = new Vector2f();
 
@@ -193,8 +193,8 @@ public class Camera implements ICamera {
 		mWindowWidth = mDisplayConfig.windowWidth();
 		mWindowHeight = mDisplayConfig.windowHeight();
 
-		mPosition.x = mTargetPosition.x + mOffsetPosition.x;
-		mPosition.y = mTargetPosition.y + mOffsetPosition.y;
+		mInternalPosition.x = mTargetPosition.x + mOffsetPosition.x;
+		mInternalPosition.y = mTargetPosition.y + mOffsetPosition.y;
 
 		mAcceleration.x = 0.0f;
 		mAcceleration.y = 0.0f;
@@ -214,7 +214,7 @@ public class Camera implements ICamera {
 	public void createView() {
 		mViewMatrix.setIdentity();
 		mViewMatrix.scale(mZoomFactor, mZoomFactor, 1f);
-		mViewMatrix.translate((int) (mPosition.x * getZoomFactor()), (int) (mPosition.y * getZoomFactor()), 0f);
+		mViewMatrix.translate((int) (mInternalPosition.x * getZoomFactor()), (int) (mInternalPosition.y * getZoomFactor()), 0f);
 
 	}
 
@@ -230,14 +230,14 @@ public class Camera implements ICamera {
 		mScaledWindowHeight = pGameViewportheight * getZoomFactorOverOne();
 
 		// Update the camera position
-		mMinX = -mPosition.x - mScaledWindowWidth / 2.0f;
-		mMinY = -mPosition.y - mScaledWindowHeight / 2.0f;
+		mMinX = -mInternalPosition.x - mScaledWindowWidth / 2.0f;
+		mMinY = -mInternalPosition.y - mScaledWindowHeight / 2.0f;
 
-		mMaxX = -mPosition.x + mScaledWindowWidth / 2.0f;
-		mMaxY = -mPosition.y + mScaledWindowHeight / 2.0f;
+		mMaxX = -mInternalPosition.x + mScaledWindowWidth / 2.0f;
+		mMaxY = -mInternalPosition.y + mScaledWindowHeight / 2.0f;
 
 		// update the bounding rectangle so we can properly do frustum culling
-		mBoundingRectangle.setCenterPosition(-mPosition.x, -mPosition.y);
+		mBoundingRectangle.setCenterPosition(-mInternalPosition.x, -mInternalPosition.y);
 		mBoundingRectangle.width(mScaledWindowWidth);
 		mBoundingRectangle.height(mScaledWindowHeight);
 
@@ -307,11 +307,11 @@ public class Camera implements ICamera {
 	}
 
 	protected float getCenterX() {
-		return mPosition.x + (mScaledWindowWidth * 0.5f);
+		return mInternalPosition.x + (mScaledWindowWidth * 0.5f);
 	}
 
 	protected float getCenterY() {
-		return mPosition.y + (mScaledWindowHeight * 0.5f);
+		return mInternalPosition.y + (mScaledWindowHeight * 0.5f);
 	}
 
 	@Override
@@ -378,12 +378,12 @@ public class Camera implements ICamera {
 
 	@Override
 	public float getWorldPositionXInCameraSpace(float pPointX) {
-		return (mPosition.x - pPointX) * getZoomFactor();
+		return (mInternalPosition.x - pPointX) * getZoomFactor();
 	}
 
 	@Override
 	public float getWorldPositionYInCameraSpace(float pPointY) {
-		return (mPosition.y - pPointY) * getZoomFactor();
+		return (mInternalPosition.y - pPointY) * getZoomFactor();
 	}
 
 }
