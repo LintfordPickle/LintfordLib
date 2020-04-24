@@ -102,7 +102,7 @@ public abstract class LintfordCore {
 		double totalTimeMilli;
 		double elapsedTimeMilli;
 		double accumulatedElapsedTimeMilli;
-		double targetElapsedTimeMilli = 1 / 60; // 1 60th of a second
+		double targetElapsedTimeMilli = 16;
 		double maxElapsedTimeMilli = 500;
 		boolean isRunningSlowly;
 
