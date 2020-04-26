@@ -9,42 +9,45 @@ public abstract class BaseTransition {
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
-	
+
 	protected float mProgress;
 	protected TimeSpan mTransitionTime;
-	
+
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
-	
-	public boolean isFinished(){
+
+	public boolean isFinished() {
 		return mProgress >= mTransitionTime.milliseconds();
 	}
-	
-	public TimeSpan timeSpan(){
+
+	public TimeSpan timeSpan() {
 		return mTransitionTime;
 	}
-	
+
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
-	
-	public BaseTransition(TimeSpan pTransitionTime){
+
+	public BaseTransition(TimeSpan pTransitionTime) {
 		mTransitionTime = pTransitionTime;
 	}
-	
+
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
-	
-	public void updateTransition(Screen pScreen, CoreTime pGameTime){
-		final float deltaTime = (float) pGameTime.elapseTimeMilli();
-		mProgress += deltaTime;
-		
+
+	public void updateTransition(Screen pScreen, CoreTime pGameTime) {
+		if (!isFinished()) {
+			final float deltaTime = (float) pGameTime.elapseTimeMilli();
+			mProgress += deltaTime;
+
+		}
+
 	}
-	
-	public void reset(){
+
+	public void reset() {
 		mProgress = 0;
 	}
-	
+
 }

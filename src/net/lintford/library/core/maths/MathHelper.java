@@ -1,7 +1,7 @@
 package net.lintford.library.core.maths;
 
 public class MathHelper {
-	
+
 	// --------------------------------------
 	// Constants
 	// --------------------------------------

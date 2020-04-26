@@ -18,6 +18,11 @@ public class AudioSource {
 	// Variables
 	// --------------------------------------
 
+	private float mMaxSourceGain;
+	private float mMinSourceGain;
+	private float mSourceGain;
+	private float mSourcePitch;
+
 	private int mSourceID;
 	private int mOwnerHash;
 	private AudioNubble mAudioNubble;
@@ -25,6 +30,30 @@ public class AudioSource {
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public float maxGain() {
+		return mMaxSourceGain;
+	}
+
+	public float minGain() {
+		return mMinSourceGain;
+	}
+
+	public float gain() {
+		return mSourceGain;
+	}
+
+	public void gain(float pNewGainValue) {
+		mSourceGain = pNewGainValue;
+	}
+
+	public float pitch() {
+		return mSourcePitch;
+	}
+
+	public void pitch(float pNewPitchValue) {
+		mSourcePitch = pNewPitchValue;
+	}
 
 	public int audioSourceType() {
 		if (mAudioNubble == null) {
@@ -65,6 +94,8 @@ public class AudioSource {
 
 		}
 
+		mSourceGain = 1.f;
+		mSourcePitch = 1.f;
 		mOwnerHash = NO_OWNER;
 
 	}
@@ -132,7 +163,7 @@ public class AudioSource {
 
 	/** Instructs this {@link AudioSource} to being playing the audio buffer specified by the given buffer ID. */
 	public void play(int pBufferID) {
-		this.play(pBufferID, mAudioNubble.gain(), 1f);
+		this.play(pBufferID, mSourceGain, 1f);
 
 	}
 
@@ -165,18 +196,34 @@ public class AudioSource {
 		AL10.alSourceStop(mSourceID);
 	}
 
-	/** Sets the gain of this {@link AudioSource}. */
-	public void setGain(float pNewVolume) {
-		AL10.alSourcef(mSourceID, AL10.AL_GAIN, pNewVolume);
+	public void updateGain() {
+		if (mOwnerHash == -1)
+			return;
+
+		AL10.alSourcef(mSourceID, AL10.AL_GAIN, mSourceGain * mAudioNubble.nubbleNormalized());
+
 	}
 
-	public void setMaxGain(float pNewVolume) {
-		AL10.alSourcef(mSourceID, AL10.AL_MAX_GAIN, pNewVolume);
+	/** Sets the gain of this {@link AudioSource}. */
+	public void setGain(float pNewGain) {
+		mSourceGain = pNewGain;
+		AL10.alSourcef(mSourceID, AL10.AL_GAIN, pNewGain * mAudioNubble.nubbleNormalized());
+	}
+
+	public void setMaxGain(float pNewMaxGain) {
+		mMaxSourceGain = pNewMaxGain;
+		AL10.alSourcef(mSourceID, AL10.AL_MAX_GAIN, mMaxSourceGain);
+	}
+
+	public void setMinGain(float pNewMinGain) {
+		mMinSourceGain = pNewMinGain;
+		AL10.alSourcef(mSourceID, AL10.AL_MIN_GAIN, mMinSourceGain);
 	}
 
 	/** Sets the pitch of this {@link AudioSource}. */
-	public void setPitch(float pNewPitch) {
-		AL10.alSourcef(mSourceID, AL10.AL_PITCH, pNewPitch);
+	public void setPitch(float pNewPitchValue) {
+		mSourcePitch = pNewPitchValue;
+		AL10.alSourcef(mSourceID, AL10.AL_PITCH, mSourcePitch);
 
 	}
 

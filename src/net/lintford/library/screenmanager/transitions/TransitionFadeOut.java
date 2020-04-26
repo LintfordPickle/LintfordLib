@@ -13,7 +13,7 @@ public class TransitionFadeOut extends BaseTransition {
 
 	public TransitionFadeOut(TimeSpan pTransitionTime) {
 		super(pTransitionTime);
-		// TODO Auto-generated constructor stub
+
 	}
 
 	// --------------------------------------

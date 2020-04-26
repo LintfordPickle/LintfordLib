@@ -53,25 +53,19 @@ public class AudioManager {
 
 	public class AudioNubble {
 		private boolean enabled;
-		private float masterNormalised;
-		private float gain;
+		private float nubbleNormalised;
 		public int audioType;
 
 		public boolean isEnabled() {
 			return enabled;
 		}
 
-		void masterNormalized(float pNewMasterNormalized) {
-			masterNormalised = MathHelper.clamp(pNewMasterNormalized, 0f, 1f);
+		void nubbleNormalized(float pNewNubbleNormalized) {
+			nubbleNormalised = MathHelper.clamp(pNewNubbleNormalized, 0f, 1f);
 		}
 
-		void gain(float pNewGain) {
-			gain = MathHelper.clamp(pNewGain, 0f, 1f);
-		}
-
-		public float gain() {
-			final var lReturnValue = enabled ? gain * masterNormalised : 0.0f;
-			return lReturnValue;
+		float nubbleNormalized() {
+			return nubbleNormalised;
 		}
 
 		public AudioNubble(final int pAudioType) {
@@ -212,7 +206,10 @@ public class AudioManager {
 	// --------------------------------------
 
 	public void updateSettings() {
+		// Read the current values from the audio options menu
 		final var lNormalizedMasterVolume = mAudioConfig.masterVolume();
+		final var lNormalizedSoundMasterVolume = mAudioConfig.soundFxVolume();
+		final var lNormalizedMusicMasterVolume = mAudioConfig.musicVolume();
 
 		mMusicManager.isMusicEnabled(mAudioConfig.masterEnabled());
 		if (!mAudioConfig.masterEnabled()) {
@@ -226,36 +223,56 @@ public class AudioManager {
 
 		{ // SoundFx
 			final var lPreviousSoundFxEnabled = mSoundFxNubble.enabled;
-			final var lPreviousSoundFxVolume = mSoundFxNubble.gain();
+			final var lPreviousSoundFxVolume = mSoundFxNubble.nubbleNormalized();
 
-			mSoundFxNubble.enabled = mAudioConfig.musicEnabled();
-			mSoundFxNubble.gain(mAudioConfig.musicVolume());
-			mSoundFxNubble.masterNormalized(lNormalizedMasterVolume);
+			mSoundFxNubble.enabled = mAudioConfig.soundFxEnabled();
+			if (mSoundFxNubble.enabled) {
+				mSoundFxNubble.nubbleNormalized(lNormalizedMasterVolume * lNormalizedSoundMasterVolume);
 
-			if (!mSoundFxNubble.enabled && lPreviousSoundFxEnabled) {
-				updateKillOfSources(mSoundFxNubble);
 			}
 
-			if (mSoundFxNubble.enabled && lPreviousSoundFxVolume != mSoundFxNubble.gain()) {
+			if (!mSoundFxNubble.enabled && lPreviousSoundFxEnabled) {
+				mSoundFxNubble.nubbleNormalized(0);
+				// updateKillOfSources(mSoundFxNubble);
 				updateVolumeOfAllSources(mSoundFxNubble);
+
+			} else if (!lPreviousSoundFxEnabled && mSoundFxNubble.enabled) {
+				updateVolumeOfAllSources(mSoundFxNubble);
+
+			}
+
+			if (mSoundFxNubble.enabled && lPreviousSoundFxVolume != mSoundFxNubble.nubbleNormalized()) {
+				updateVolumeOfAllSources(mSoundFxNubble);
+
 			}
 		}
 
 		{ // Music
 			final var lPreviousMusicEnabled = mMusicNubble.enabled;
-			final var lPreviousVolume = mMusicNubble.gain();
+			final var lPreviousVolume = mMusicNubble.nubbleNormalized();
 
 			mMusicNubble.enabled = mAudioConfig.musicEnabled();
-			mMusicNubble.gain(mAudioConfig.musicVolume());
-			mMusicNubble.masterNormalized(lNormalizedMasterVolume);
+			if (mMusicNubble.enabled) {
+				mMusicNubble.nubbleNormalized(lNormalizedMasterVolume * lNormalizedMusicMasterVolume);
 
-			if (!mMusicNubble.enabled && lPreviousMusicEnabled) {
-				mMusicManager.isMusicEnabled(false);
-				updateKillOfSources(mMusicNubble);
 			}
 
-			if (mMusicNubble.enabled && lPreviousVolume != mMusicNubble.gain()) {
+			if (!mMusicNubble.enabled && lPreviousMusicEnabled) {
+				// Music turned off
+				mMusicManager.isMusicEnabled(false);
+				// updateKillOfSources(mMusicNubble);
 				updateVolumeOfAllSources(mMusicNubble);
+
+			} else if (mMusicNubble.enabled && !lPreviousMusicEnabled) {
+				// Music turned on
+				mMusicManager.isMusicEnabled(true);
+				updateVolumeOfAllSources(mMusicNubble);
+
+			}
+
+			if (mMusicNubble.enabled && lPreviousVolume != mMusicNubble.nubbleNormalized()) {
+				updateVolumeOfAllSources(mMusicNubble);
+
 			}
 		}
 
@@ -269,6 +286,7 @@ public class AudioManager {
 			final var lAudioSource = mAudioSources.get(i);
 			if (lAudioSource.audioSourceType() == lAudioSourceType) {
 				lAudioSource.stop();
+
 			}
 
 		}
@@ -277,13 +295,13 @@ public class AudioManager {
 
 	private void updateVolumeOfAllSources(AudioNubble pAudioNubble) {
 		final int lAudioSourceType = pAudioNubble.audioType;
-		final var lNewGain = pAudioNubble.gain();
 
 		final int lNumberOfAudioSources = mAudioSources.size();
 		for (int i = 0; i < lNumberOfAudioSources; i++) {
 			final var lAudioSource = mAudioSources.get(i);
 			if (lAudioSource.audioSourceType() == lAudioSourceType) {
-				lAudioSource.setMaxGain(lNewGain);
+				lAudioSource.updateGain();
+
 			}
 
 		}

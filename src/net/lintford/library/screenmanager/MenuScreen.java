@@ -106,8 +106,6 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	protected FontUnit mMenuFont;
 	protected FontUnit mMenuHeaderFont;
 
-	protected float mContentHeight;
-
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
@@ -182,7 +180,6 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		mPaddingBottom = 0f;
 		mPaddingLeft = 0f;
 		mPaddingRight = 0f;
-		mContentHeight = 0;
 
 		mClickAction = new ClickAction();
 		mESCBackEnabled = true;

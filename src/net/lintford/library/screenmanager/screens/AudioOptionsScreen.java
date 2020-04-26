@@ -74,13 +74,39 @@ public class AudioOptionsScreen extends MenuScreen implements EntryInteractions 
 		// Add the layouts to the screen
 		layouts().add(lAudioList);
 
+		mIsPopup = true;
+
 	}
+
+	// --------------------------------------
+	// Core-Methods
+	// --------------------------------------
 
 	@Override
 	public void loadGLContent(ResourceManager pResourceManager) {
 		super.loadGLContent(pResourceManager);
 
 		mAudioManager = pResourceManager.audioManager();
+
+	}
+
+	@Override
+	public void draw(LintfordCore pCore) {
+		final var lHudBoundingBox = pCore.HUD().boundingRectangle();
+		final var lBlackTexture = mScreenManager.core().resources().textureManager().textureBlack();
+
+		final var lTextureBatch = mRendererManager.uiTextureBatch();
+		lTextureBatch.begin(pCore.HUD());
+
+		final float lX = lHudBoundingBox.left();
+		final float lY = lHudBoundingBox.top();
+		final float lWidth = lHudBoundingBox.w();
+		final float lHeight = lHudBoundingBox.h();
+
+		lTextureBatch.draw(lBlackTexture, 0, 0, 0, 0, lX, lY, lWidth, lHeight, -0.01f, 0f, 0f, 0f, 1f);
+		lTextureBatch.end();
+
+		super.draw(pCore);
 
 	}
 
@@ -92,7 +118,7 @@ public class AudioOptionsScreen extends MenuScreen implements EntryInteractions 
 		final var lAudioConfig = mScreenManager.core().config().audio();
 
 		lLayout.setDrawBackground(true, 0.1f, 0.1f, 0.1f, 0.5f);
-		
+
 		MenuEntry lSeparator = new MenuEntry(mScreenManager, lLayout, "");
 		lSeparator.enabled(false);
 		lSeparator.drawButtonBackground(false);
