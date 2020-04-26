@@ -18,7 +18,7 @@
 <!-- LDLibrary Build  -->
 <project name="LDLibrary" basedir="." default="main">
 
-	<property name="build-drive">f:</property>
+	<property name="build-drive">d:</property>
 	<property name="client-main-class">net.lintford.library.LintfordMain</property>
 
 	<!-- Input directories -->
