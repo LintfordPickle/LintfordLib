@@ -288,7 +288,7 @@ public class TextureManager extends EntityGroupManager {
 	}
 
 	public Texture loadTexture(String pName, String pTextureLocation, int pEntityGroupID) {
-		return loadTexture(pName, pTextureLocation, GL11.GL_LINEAR, pEntityGroupID);
+		return loadTexture(pName, pTextureLocation, GL11.GL_NEAREST, pEntityGroupID);
 	}
 
 	public Texture loadTexture(String pName, String pTextureLocation, int pFilter, int pEntityGroupID) {

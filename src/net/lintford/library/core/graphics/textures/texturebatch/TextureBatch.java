@@ -73,6 +73,9 @@ public class TextureBatch {
 	protected ShaderMVP_PT mCustomShader;
 	protected Matrix4f mModelMatrix;
 	protected FloatBuffer mBuffer;
+	private boolean mBlendEnabled;
+	private int mBlendFuncSrcFactor;
+	private int mBlendFuncDstFactor;
 	private int mVaoId = -1;
 	private int mVboId = -1;
 	private int mVertexCount = 0;
@@ -132,6 +135,10 @@ public class TextureBatch {
 
 		mModelMatrix = new Matrix4f();
 		mTempVector = new Vector4f();
+
+		mBlendEnabled = true;
+		mBlendFuncSrcFactor = GL11.GL_SRC_ALPHA;
+		mBlendFuncDstFactor = GL11.GL_ONE_MINUS_SRC_ALPHA;
 
 	}
 
@@ -593,6 +600,16 @@ public class TextureBatch {
 
 	}
 
+	public void setGlBlendEnabled(boolean pBlendEnabled) {
+		mBlendEnabled = true;
+
+	}
+
+	public void setGlBlendFactor(int pSrcFactor, int pDstFactor) {
+		mBlendFuncSrcFactor = pSrcFactor;
+		mBlendFuncDstFactor = pDstFactor;
+	}
+
 	private void int_redraw() {
 		if (mCurrentTexID != -1) {
 			GL13.glActiveTexture(GL13.GL_TEXTURE0);
@@ -600,9 +617,15 @@ public class TextureBatch {
 
 		}
 
-		GL11.glEnable(GL11.GL_BLEND);
-		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-		
+		if (mBlendEnabled) {
+			GL11.glEnable(GL11.GL_BLEND);
+			GL11.glBlendFunc(mBlendFuncSrcFactor, mBlendFuncDstFactor);
+
+		} else {
+			GL11.glDisable(GL11.GL_BLEND);
+
+		}
+
 		mCustomShader.projectionMatrix(mCamera.projection());
 		mCustomShader.viewMatrix(mCamera.view());
 		mCustomShader.modelMatrix(mModelMatrix);
