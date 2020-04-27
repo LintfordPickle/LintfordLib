@@ -77,7 +77,7 @@ public class ScreenManager {
 		mScreens = new ArrayList<>();
 		mScreensToUpdate = new ArrayList<>();
 
-		mToolTip = new ToolTip(this);
+		mToolTip = new ToolTip();
 
 		mIsinitialized = false;
 		mIsLoaded = false;
@@ -177,10 +177,12 @@ public class ScreenManager {
 				lScreen.handleInput(pCore, lProcessMouse, lProcessKeyboard);
 
 			}
-			
+
 			lInputBlockedByHigherScreen = lInputBlockedByHigherScreen || lScreen.mBlockInputInBackground;
 
 		}
+
+		mToolTip.handleInput(pCore);
 
 	}
 
@@ -220,6 +222,7 @@ public class ScreenManager {
 		}
 
 		mToastManager.update(pCore);
+		mToolTip.update(pCore);
 
 	}
 
@@ -238,10 +241,8 @@ public class ScreenManager {
 
 		}
 
-//		if (mToolTip.active)
-//			mToolTip.draw(pCore);
-
 		mToastManager.draw(pCore);
+		mToolTip.draw(pCore);
 
 	}
 

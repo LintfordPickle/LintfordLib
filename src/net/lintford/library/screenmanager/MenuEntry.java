@@ -15,7 +15,7 @@ import net.lintford.library.screenmanager.ScreenManagerConstants.FILLTYPE;
 import net.lintford.library.screenmanager.entries.EntryInteractions;
 import net.lintford.library.screenmanager.layouts.BaseLayout;
 
-public class MenuEntry extends Rectangle implements IProcessMouseInput {
+public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTipProvider {
 
 	// --------------------------------------
 	// Constants
@@ -60,7 +60,7 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput {
 	protected boolean mCanHoverOver;
 	protected boolean mToolTipEnabled;
 	protected float mToolTipTimer;
-	protected String mToolTip;
+	protected String mToolTipText;
 	protected boolean mShowInfoButton;
 	protected Rectangle mInfoButton;
 	protected boolean mHasFocus;
@@ -418,8 +418,7 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput {
 		}
 
 		if (mToolTipEnabled && mToolTipTimer >= 1000 || mInfoButton.intersectsAA(pCore.HUD().getMouseCameraSpace())) {
-			final var lToolTipPosition = pCore.HUD().getMouseCameraSpace();
-			mScreenManager.toolTip().setToolTipActive(mToolTip, lToolTipPosition.x, lToolTipPosition.y, mZ);
+			mScreenManager.toolTip().toolTipProvider(this);
 
 		}
 
@@ -507,7 +506,7 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput {
 		}
 
 		mToolTipEnabled = true;
-		mToolTip = pToolTipText;
+		mToolTipText = pToolTipText;
 	}
 
 	public void registerClickListener(EntryInteractions pListener, int pID) {
@@ -540,6 +539,18 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput {
 	@Override
 	public void resetCoolDownTimer() {
 		mClickTimer = 200;
+
+	}
+
+	@Override
+	public String toolTipText() {
+		return mToolTipText;
+
+	}
+
+	@Override
+	public boolean isMouseOver() {
+		return mHoveredOver;
 
 	}
 

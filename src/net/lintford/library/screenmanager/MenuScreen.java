@@ -340,6 +340,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		for (int i = 0; i < lLayoutCount; i++) {
 			final var lLayout = mLayouts.get(i);
 			lLayout.handleInput(pCore);
+			
 		}
 
 		footerLayout().handleInput(pCore);

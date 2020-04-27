@@ -13,21 +13,32 @@ public class ToolTip {
 	// Variables
 	// --------------------------------------
 
-	private ScreenManager mScreenManager;
-	private TextureBatch mSpriteBatch;
-	private Texture mUITexture;
 	protected FontUnit mMenuFont;
+	private IToolTipProvider mToolTipProvider;
+	private TextureBatch mTextureBatch;
+	private Texture mUiPanelTexture;
+	private float mPositionX;
+	private float mPositionY;
 
-	private String mToolTipText;
-	private float x, y, z;
+	// --------------------------------------
+	// Properties
+	// --------------------------------------
+
+	public void toolTipProvider(IToolTipProvider pToolTipProvider) {
+		mToolTipProvider = pToolTipProvider;
+
+	}
+
+	public boolean isActive() {
+		return mToolTipProvider != null;
+	}
 
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
-	public ToolTip(ScreenManager pScreenManager) {
-		mScreenManager = pScreenManager;
-		mSpriteBatch = new TextureBatch();
+	public ToolTip() {
+		mTextureBatch = new TextureBatch();
 
 	}
 
@@ -36,56 +47,70 @@ public class ToolTip {
 	// --------------------------------------
 
 	public void loadGLContent(ResourceManager pResourceManager) {
-		mSpriteBatch.loadGLContent(pResourceManager);
-
-		mUITexture = pResourceManager.textureManager().textureCore();
-
 		mMenuFont = pResourceManager.fontManager().getFont(FontManager.FONT_FONTNAME_TOOLTIP);
+		mTextureBatch.loadGLContent(pResourceManager);
+		mUiPanelTexture = pResourceManager.textureManager().loadTexture("TEXTURE_UI_PANEL", "/res/textures/core/system.png", LintfordCore.CORE_ENTITY_GROUP_ID);
 
 	}
 
 	public void unloadGLContent() {
-		mSpriteBatch.unloadGLContent();
 		mMenuFont = null;
+		mTextureBatch.unloadGLContent();
+		mUiPanelTexture = null;
 
 	}
 
-	public void setToolTipActive(String pTipText, float pX, float pY, float pZ) {
-		mToolTipText = pTipText;
-		x = pX;
-		y = pY;
-		z = pZ;
+	public void handleInput(LintfordCore pCore) {
+		mPositionX = pCore.HUD().getMouseWorldSpaceX();
+		mPositionY = pCore.HUD().getMouseWorldSpaceY();
 
+	}
+
+	public void update(LintfordCore pCore) {
+		if (mToolTipProvider != null) {
+			if (!mToolTipProvider.isMouseOver()) {
+				mToolTipProvider = null;
+
+			}
+
+		}
 	}
 
 	public void draw(LintfordCore pCore) {
-		final float lTextScale = mScreenManager.UIHUDController().uiTextScaleFactor();
+		if (mToolTipProvider == null)
+			return;
+
+		final float lTextScale = 1.0f;// mScreenManager.UIHUDController().uiTextScaleFactor();
 
 		final float lTextPadding = 5f;
+		final String lToolTipText = mToolTipProvider.toolTipText();
 
-		float lToolTipTextWidth = mMenuFont.bitmap().getStringWidth(mToolTipText, lTextScale);
-		float lToolTipTextHeight = mMenuFont.bitmap().getStringHeight(mToolTipText, lTextScale);
+		float lToolTipTextWidth = mMenuFont.bitmap().getStringWidth(lToolTipText, lTextScale);
+		float lToolTipTextHeight = mMenuFont.bitmap().getStringHeight(lToolTipText, lTextScale);
 
-		x += 15;
-		y -= 64 - lToolTipTextHeight;
+		float lPositionX = mPositionX;
+		float lPositionY = mPositionY;
+
+		lPositionX += 15;
+		lPositionY -= 64 - lToolTipTextHeight;
 
 		// Check for tooltips overlapping the edge of the screen (x axis)
-		if (x + lToolTipTextWidth + lTextPadding > pCore.config().display().windowWidth()) {
-			x -= lToolTipTextWidth + 30;
+		if (lPositionX + lToolTipTextWidth + lTextPadding > pCore.config().display().windowWidth()) {
+			lPositionX -= lToolTipTextWidth + 30;
 		}
 
 		// Check for tooltips overlapping the edge of the screen (y axis)
-		if (y + lToolTipTextHeight + lTextPadding > pCore.config().display().windowHeight()) {
-			y -= lToolTipTextHeight + 30;
+		if (lPositionY + lToolTipTextHeight + lTextPadding > pCore.config().display().windowHeight()) {
+			lPositionY -= lToolTipTextHeight + 30;
 		}
 
 		// Render the background
-		mSpriteBatch.begin(pCore.HUD());
-		mSpriteBatch.draw(mUITexture, 96, 0, 32, 32, x, y, lToolTipTextWidth + lTextPadding * 2f, lToolTipTextHeight + lTextPadding * 2f, z, 1, 1, 1, 1);
-		mSpriteBatch.end();
+		mTextureBatch.begin(pCore.HUD());
+		mTextureBatch.draw(mUiPanelTexture, 0, 0, 32, 32, lPositionX, lPositionY + 4f, lToolTipTextWidth + lTextPadding * 2.f, lToolTipTextHeight + lTextPadding * 2.f, -0.1f, .21f, .11f, .13f, 1.f);
+		mTextureBatch.end();
 
 		mMenuFont.begin(pCore.HUD());
-		mMenuFont.draw(mToolTipText, x + lTextPadding, y + lTextPadding, z, lTextScale);
+		mMenuFont.draw(lToolTipText, lPositionX + lTextPadding, lPositionY + lTextPadding, -0.01f, lTextScale);
 		mMenuFont.end();
 
 	}
