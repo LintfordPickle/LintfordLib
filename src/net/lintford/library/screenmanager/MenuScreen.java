@@ -340,7 +340,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		for (int i = 0; i < lLayoutCount; i++) {
 			final var lLayout = mLayouts.get(i);
 			lLayout.handleInput(pCore);
-			
+
 		}
 
 		footerLayout().handleInput(pCore);
@@ -350,6 +350,9 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	@Override
 	public void update(LintfordCore pCore, boolean pOtherScreenHasFocus, boolean pCoveredByOtherScreen) {
 		super.update(pCore, pOtherScreenHasFocus, pCoveredByOtherScreen);
+
+		if (!mIsinitialized)
+			return;
 
 		final var lDeltaTime = pCore.appTime().elapseTimeMilli();
 
@@ -411,6 +414,8 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 			return;
 
 		final var lUIHUDStructureController = mRendererManager.uiHUDController();
+		if (lUIHUDStructureController == null)
+			return;
 
 		final int lLeftLayoutCount = pLayoutList.size();
 
@@ -504,6 +509,9 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	@Override
 	public void draw(LintfordCore pCore) {
 		if (mScreenState != ScreenState.Active && mScreenState != ScreenState.TransitionOn && mScreenState != ScreenState.TransitionOff)
+			return;
+
+		if (!mIsinitialized)
 			return;
 
 		super.draw(pCore);
