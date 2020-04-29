@@ -148,6 +148,16 @@ public interface ICamera {
 			return 0;
 		}
 
+		@Override
+		public int windowWidth() {
+			return 800;
+		}
+
+		@Override
+		public int windowHeight() {
+			return 600;
+		}
+
 		// --------------------------------------
 		// Core-Methods
 		// --------------------------------------
@@ -160,7 +170,7 @@ public interface ICamera {
 		@Override
 		public void update(LintfordCore pCore) {
 			applyGameViewport();
-			
+
 		}
 
 	};
@@ -194,6 +204,10 @@ public interface ICamera {
 	public abstract void setZoomFactor(float pNewValue);
 
 	public abstract float getZoomFactorOverOne();
+
+	public abstract int windowWidth();
+
+	public abstract int windowHeight();
 
 	// --------------------------------------
 	// Core-Methods

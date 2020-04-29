@@ -82,11 +82,13 @@ public class HUD implements ICamera, IResizeListener {
 		return mWindowHeight;
 	}
 
-	public float windowWidth() {
+	@Override
+	public int windowWidth() {
 		return mWindowWidth;
 	}
 
-	public float windowHeight() {
+	@Override
+	public int windowHeight() {
 		return mWindowHeight;
 	}
 

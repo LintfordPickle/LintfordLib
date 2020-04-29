@@ -7,7 +7,6 @@ import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
-import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 import net.lintford.library.core.input.IProcessMouseInput;
 import net.lintford.library.core.input.InputManager;
 import net.lintford.library.screenmanager.ScreenManagerConstants.ALIGNMENT;
@@ -438,7 +437,7 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 
 		float tile_size = 32;
 
-		final TextureBatch lTextureBatch = mParentLayout.parentScreen().mRendererManager.uiTextureBatch();
+		final var lTextureBatch = mParentLayout.parentScreen().mRendererManager.uiTextureBatch();
 
 		// Draw the button highlight when this element has focus.
 		if (mDrawBackground && mHoveredOver && mHighlightOnHover) {
