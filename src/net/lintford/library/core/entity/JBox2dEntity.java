@@ -18,7 +18,13 @@ public abstract class JBox2dEntity extends WorldEntity {
 	// Variables
 	// --------------------------------------
 
-	public JBox2dEntityInstance mJBox2dEntityInstance;
+	private JBox2dEntityInstance mJBox2dEntityInstance;
+
+	// for WorldEntities with an attached
+
+	public float mWorldPositionX;
+	public float mWorldPositionY;
+	public float mWorldRotation;
 
 	// --------------------------------------
 	// Properties
@@ -32,8 +38,12 @@ public abstract class JBox2dEntity extends WorldEntity {
 		return mJBox2dEntityInstance;
 	}
 
-	public boolean isPhysicsLoaded() {
+	public boolean hasEntityAtached() {
 		return mJBox2dEntityInstance != null;
+	}
+	
+	public boolean isPhysicsLoaded() {
+		return hasEntityAtached() && mJBox2dEntityInstance.isPhysicsLoaded();
 	}
 
 	@Override
@@ -68,7 +78,7 @@ public abstract class JBox2dEntity extends WorldEntity {
 	}
 
 	public void savePhysics() {
-		if (mJBox2dEntityInstance == null)
+		if (!isPhysicsLoaded() || mJBox2dEntityInstance == null)
 			return;
 
 		mJBox2dEntityInstance.savePhysics();
@@ -76,10 +86,12 @@ public abstract class JBox2dEntity extends WorldEntity {
 	}
 
 	public void loadPhysics(World pWorld) {
-		if (!isPhysicsLoaded())
+		if (isPhysicsLoaded())
 			return;
 
 		mJBox2dEntityInstance.loadPhysics(pWorld);
+		mJBox2dEntityInstance.setWorldPosition(mWorldPositionX, mWorldPositionY);
+		mJBox2dEntityInstance.setWorldRotation(mWorldRotation);
 
 		final var lBox2dBodyInstance = mJBox2dEntityInstance.mainBody();
 		if (lBox2dBodyInstance != null) {
@@ -91,10 +103,19 @@ public abstract class JBox2dEntity extends WorldEntity {
 
 	}
 
+	@Override
+	public void setPosition(float pWorldX, float pWorldY) {
+		super.setPosition(pWorldX, pWorldY);
+
+		mWorldPositionX = pWorldX;
+		mWorldPositionY = pWorldY;
+
+	}
+
 	public void setTransform(float pX, float pY, float pR) {
-		x = pX;
-		y = pY;
-		r = pR;
+		mWorldPositionX = pX;
+		mWorldPositionY = pY;
+		mWorldRotation = pR;
 
 		mJBox2dEntityInstance.setTransform(pX, pY, pR);
 

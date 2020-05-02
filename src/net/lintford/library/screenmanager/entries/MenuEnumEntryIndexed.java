@@ -294,8 +294,8 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 			final float ARROW_PADDING_X = mLeftButtonRectangle.w() - ARROW_BUTTON_SIZE;
 			final float ARROW_PADDING_Y = mLeftButtonRectangle.h() - ARROW_BUTTON_SIZE;
 
-			lTextureBatch.draw(mUITexture, 160, 0, 32, 32, mLeftButtonRectangle.x() + ARROW_PADDING_X, mLeftButtonRectangle.y() + ARROW_PADDING_Y, ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, mZ, 1f, 1f, 1f, 1f);
-			lTextureBatch.draw(mUITexture, 224, 0, 32, 32, mRightButtonRectangle.x() + ARROW_PADDING_X, mRightButtonRectangle.y() + ARROW_PADDING_Y, ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, mZ, 1f, 1f, 1f, 1f);
+			lTextureBatch.draw(mUITexture, 0, 224, 32, 32, mLeftButtonRectangle.x() + ARROW_PADDING_X, mLeftButtonRectangle.y() + ARROW_PADDING_Y, ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, mZ, 1f, 1f, 1f, 1f);
+			lTextureBatch.draw(mUITexture, 32, 224, 32, 32, mRightButtonRectangle.x() + ARROW_PADDING_X, mRightButtonRectangle.y() + ARROW_PADDING_Y, ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, mZ, 1f, 1f, 1f, 1f);
 
 			lTextureBatch.end();
 

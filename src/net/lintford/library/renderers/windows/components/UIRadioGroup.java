@@ -148,4 +148,9 @@ public class UIRadioGroup extends UIWidget implements EntryInteractions {
 		mCallback = null;
 	}
 
+	@Override
+	public boolean hasUnconsumedAction() {
+		return false;
+	}
+
 }

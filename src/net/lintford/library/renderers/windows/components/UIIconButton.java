@@ -25,11 +25,11 @@ public class UIIconButton extends UIWidget {
 	private transient EntryInteractions mCallback;
 	private transient int mClickID;
 	private transient String mButtonLabel;
-	private transient float mR, mG, mB;
 	private transient boolean mHoveredOver;
-	private transient boolean mDrawButtonBackground;
 	private transient boolean mDrawButtonText;
 	private transient float mClickTimer;
+	private transient boolean mButtonSolidColorBackground;
+	private float mRed, mGreen, mBlue;
 
 	private transient Texture mButtonTexture;
 	private transient Rectangle mSourceRectangle;
@@ -54,12 +54,18 @@ public class UIIconButton extends UIWidget {
 		mClickID = pNewLabel;
 	}
 
-	public void drawButtonBackground(boolean pNewValue) {
-		mDrawButtonBackground = pNewValue;
+	public void setButtonSolidBackgroundColor(boolean pNewValue) {
+		mButtonSolidColorBackground = pNewValue;
 	}
 
-	public boolean drawButtonBackground() {
-		return mDrawButtonBackground;
+	public void setButtonSolidBackgroundColor(float pRed, float pGreen, float pBlue) {
+		mRed = pRed;
+		mGreen = pGreen;
+		mBlue = pBlue;
+	}
+
+	public boolean setButtonSolidBackgroundColor() {
+		return mButtonSolidColorBackground;
 	}
 
 	public void drawButtonText(boolean pNewValue) {
@@ -86,10 +92,10 @@ public class UIIconButton extends UIWidget {
 		w = 200;
 		h = 25;
 
-		mR = mG = mB = 1f;
+		mRed = mGreen = mBlue = 1f;
 		mSourceRectangle = new Rectangle();
 
-		mDrawButtonBackground = true;
+		mButtonSolidColorBackground = true;
 		mDrawButtonText = true;
 
 	}
@@ -145,22 +151,13 @@ public class UIIconButton extends UIWidget {
 		if (!mIsVisible)
 			return;
 
-		float lR = mHoveredOver ? 0.3f : mR;
-		float lG = mHoveredOver ? 0.34f : mG;
-		float lB = mHoveredOver ? 0.65f : mB;
+		if (mButtonSolidColorBackground) {
+			drawSolidColorBackground(pCore, pUITexture);
 
-		final TextureBatch lTextureBatch = mParentWindow.rendererManager().uiTextureBatch();
+		} else if (mButtonTexture != null) {
+			drawTextureBackground(pCore, mButtonTexture);
 
-		// Draw the button background
-		lTextureBatch.begin(pCore.HUD());
-
-		if (mDrawButtonBackground)
-			lTextureBatch.draw(pUITexture, 0, 0, 32, 32, x, y, w, h, 0f, lR, lG, lB, 1f);
-
-		if (mButtonTexture != null)
-			lTextureBatch.draw(mButtonTexture, mSourceRectangle, x, y, w, h, 0f, lR, lG, lB, 1f);
-
-		lTextureBatch.end();
+		}
 
 		// text
 		if (mDrawButtonText && mButtonLabel != null && mButtonLabel.length() > 0) {
@@ -173,6 +170,30 @@ public class UIIconButton extends UIWidget {
 			lFontRenderer.end();
 
 		}
+
+	}
+
+	private void drawSolidColorBackground(LintfordCore pCore, Texture pTexture) {
+		float lR = mHoveredOver ? 0.3f : mRed;
+		float lG = mHoveredOver ? 0.34f : mGreen;
+		float lB = mHoveredOver ? 0.65f : mBlue;
+
+		final TextureBatch lTextureBatch = mParentWindow.rendererManager().uiTextureBatch();
+		lTextureBatch.begin(pCore.HUD());
+		lTextureBatch.draw(pTexture, 0, 0, 32, 32, x, y, w, h, 0f, lR, lG, lB, 1f);
+		lTextureBatch.end();
+
+	}
+
+	private void drawTextureBackground(LintfordCore pCore, Texture pTexture) {
+		float lR = mHoveredOver ? 0.3f : mRed;
+		float lG = mHoveredOver ? 0.34f : mGreen;
+		float lB = mHoveredOver ? 0.65f : mBlue;
+
+		final TextureBatch lTextureBatch = mParentWindow.rendererManager().uiTextureBatch();
+		lTextureBatch.begin(pCore.HUD());
+		lTextureBatch.draw(pTexture, mSourceRectangle, x, y, w, h, 0f, lR, lG, lB, 1f);
+		lTextureBatch.end();
 
 	}
 
@@ -190,9 +211,15 @@ public class UIIconButton extends UIWidget {
 		mCallback = null;
 	}
 
-	public void setTextureSource(final Texture pTexture, final float pSrcX, final float pSrcY, final float pSrcW, final float pSrcH) {
-		mButtonTexture = pTexture;
+	public void unsetTextureSource() {
+		mButtonTexture = null;
 
+	}
+
+	public void setTextureSource(final Texture pTexture, final float pSrcX, final float pSrcY, final float pSrcW, final float pSrcH) {
+		mButtonSolidColorBackground = false;
+
+		mButtonTexture = pTexture;
 		mSourceRectangle.set(pSrcX, pSrcY, pSrcW, pSrcH);
 
 	}

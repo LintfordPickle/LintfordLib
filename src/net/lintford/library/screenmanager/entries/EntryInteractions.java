@@ -10,6 +10,8 @@ public interface EntryInteractions {
 
 	}
 
+	public boolean hasUnconsumedAction();
+	
 	public default void menuEntryOnClick(InputManager pInputState, int pEntryID) {
 
 	}

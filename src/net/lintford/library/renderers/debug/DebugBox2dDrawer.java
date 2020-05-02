@@ -39,9 +39,8 @@ public class DebugBox2dDrawer extends BaseRenderer {
 		super(pRendererManager, RENDERER_NAME, pEntityGroupID);
 
 		mJBox2dDebugDrawer = new JBox2dDebugDrawer(pWorld);
-
-		isActive(true);
-
+		isActive(false);
+		
 	}
 
 	// --------------------------------------

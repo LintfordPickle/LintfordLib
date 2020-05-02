@@ -448,14 +448,14 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 			lTextureBatch.begin(pCore.HUD());
 			lTextureBatch.draw(mUITexture, 0, 64, 32, 32, centerX() - w / 2, centerY() - h / 2, tile_size, h, mZ, lR, lG, lB, lA);
 			lTextureBatch.draw(mUITexture, 32, 64, 32, 32, centerX() - (w / 2) + tile_size, centerY() - h / 2, w - tile_size * 2, h, mZ, lR, lG, lB, lA);
-			lTextureBatch.draw(mUITexture, 256, 64, 32, 32, centerX() + (w / 2) - tile_size, centerY() - h / 2, tile_size, h, mZ, lR, lG, lB, lA);
+			lTextureBatch.draw(mUITexture, 128, 64, 32, 32, centerX() + (w / 2) - tile_size, centerY() - h / 2, tile_size, h, mZ, lR, lG, lB, lA);
 			lTextureBatch.end();
 
 		} else if (mDrawBackground) {
 			lTextureBatch.begin(pCore.HUD());
 			lTextureBatch.draw(mUITexture, 0, 32, 32, 32, centerX() - w / 2, centerY() - h / 2, 32, h, mZ, lR, lG, lB, lA);
 			lTextureBatch.draw(mUITexture, 32, 32, 32, 32, centerX() - (w / 2) + 32, centerY() - h / 2, w - 64, h, mZ, lR, lG, lB, lA);
-			lTextureBatch.draw(mUITexture, 256, 32, 32, 32, centerX() + (w / 2) - 32, centerY() - h / 2, 32, h, mZ, lR, lG, lB, lA);
+			lTextureBatch.draw(mUITexture, 128, 32, 32, 32, centerX() + (w / 2) - 32, centerY() - h / 2, 32, h, mZ, lR, lG, lB, lA);
 			lTextureBatch.end();
 		}
 
@@ -519,7 +519,10 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 
 		mScreenManager.uiSounds().play("SOUND_MENU_CLICK");
 
-		mAnimationTimer = MenuScreen.ANIMATION_TIMER_LENGTH;
+		if(!mClickListener.hasUnconsumedAction()) {
+			mAnimationTimer = MenuScreen.ANIMATION_TIMER_LENGTH;
+			
+		}
 
 		// Play a button click animation, then call the listeners
 		mClickListener.menuEntryOnClick(pInputState, mMenuEntryID);

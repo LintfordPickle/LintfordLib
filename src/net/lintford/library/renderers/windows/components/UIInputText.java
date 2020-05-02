@@ -4,7 +4,6 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
-import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 import net.lintford.library.core.input.IBufferedInputCallback;
 import net.lintford.library.core.input.InputManager;
@@ -39,19 +38,9 @@ public class UIInputText extends UIWidget implements IBufferedInputCallback {
 	private transient StringBuilder mInputField;
 	private transient boolean mResetOnDefaultClick;
 
-	private String mTextureName;
-
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
-
-	public void textureName(String pTextureName) {
-		mTextureName = pTextureName;
-	}
-
-	public String textureName() {
-		return mTextureName;
-	}
 
 	public String emptyString() {
 		return mEmptyString;
@@ -174,24 +163,19 @@ public class UIInputText extends UIWidget implements IBufferedInputCallback {
 
 	@Override
 	public void draw(LintfordCore pCore, TextureBatch pTextureBatch, Texture pUITexture, FontUnit pTextFont, float pComponentZDepth) {
-		if (mTextureName == null)
-			mTextureName = TextureManager.TEXTURE_CORE_UI_NAME;
-
-		// TextureManager.textureManager().getTexture(mTextureName)
-
 		// Renders the background of the input text widget
 		pTextureBatch.begin(pCore.HUD());
-		pTextureBatch.draw(pUITexture, 0, 64, 32, 32, x, y, 32, h, pComponentZDepth, 1f, 1f, 1f, 1);
+		pTextureBatch.draw(pUITexture, 0, 288, 32, 32, x, y, 32, h, pComponentZDepth, 1f, 1f, 1f, 1);
 		if (w > 32) {
-			pTextureBatch.draw(pUITexture, 32, 64, 32, 32, x + 32, y, w - 64, h, pComponentZDepth, 1f, 1f, 1f, 1);
-			pTextureBatch.draw(pUITexture, 64, 64, 32, 32, x + w - 32, y, 32, h, pComponentZDepth, 1f, 1f, 1f, 1);
+			pTextureBatch.draw(pUITexture, 64, 288, 32, 32, x + 32, y, w - 64, h, pComponentZDepth, 1f, 1f, 1f, 1);
+			pTextureBatch.draw(pUITexture, 128, 288, 32, 32, x + w - 32, y, 32, h, pComponentZDepth, 1f, 1f, 1f, 1);
 		}
 
 		pTextureBatch.end();
 
 		// Draw the cancel button rectangle
 		pTextureBatch.begin(pCore.HUD());
-		pTextureBatch.draw(pUITexture, 288, 64, 32, 32, mCancelRectangle, pComponentZDepth, 1f, 1f, 1f, 1);
+		pTextureBatch.draw(pUITexture, 32, 128, 32, 32, mCancelRectangle, pComponentZDepth, 1f, 1f, 1f, 1);
 		pTextureBatch.end();
 
 		final float lInputTextWidth = pTextFont.bitmap().getStringWidth(mInputField.toString());

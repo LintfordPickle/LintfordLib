@@ -337,10 +337,10 @@ public class DebugRendererTreeRenderer extends Rectangle implements IScrollBarAr
 			final float lActiveIconY = lBaseRendererWidget.y();
 
 			if (lBaseRendererWidget == null || !lBaseRendererWidget.isRendererActive) {
-				mTextureBatch.draw(mCoreTexture, 288, 96, 32, 32, lActiveIconX, lActiveIconY, 32, 32, -0.01f, 1, 1, 1, 1);
+				mTextureBatch.draw(mCoreTexture, 32, 128, 32, 32, lActiveIconX, lActiveIconY, 32, 32, -0.01f, 1, 1, 1, 1);
 
 			} else {
-				mTextureBatch.draw(mCoreTexture, 288, 128, 32, 32, lActiveIconX, lActiveIconY, 32, 32, -0.01f, 1, 1, 1, 1);
+				mTextureBatch.draw(mCoreTexture, 64, 128, 32, 32, lActiveIconX, lActiveIconY, 32, 32, -0.01f, 1, 1, 1, 1);
 
 			}
 

@@ -76,7 +76,7 @@ public class PObjectRenderer {
 			}
 		}
 
-		String lSpriteSheetDefName = pPObject.mJBox2dEntityInstance.spriteSheetName;
+		String lSpriteSheetDefName = pPObject.box2dEntityInstance().spriteSheetName;
 		if (lSpriteSheetDefName == null)
 			return;
 

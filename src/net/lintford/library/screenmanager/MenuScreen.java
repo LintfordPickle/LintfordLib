@@ -259,12 +259,12 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 	@Override
 	public void handleInput(LintfordCore pCore, boolean pAcceptMouse, boolean pAcceptKeyboard) {
-		super.handleInput(pCore, pAcceptMouse, pAcceptKeyboard);
-
 		// TODO: Animations should be handled in another object
 		if (mAnimationTimer > 0 || mClickAction.isConsumed())
 			return; // don't handle input if 'animation' is playing
-
+		
+		super.handleInput(pCore, pAcceptMouse, pAcceptKeyboard);
+		
 		if (mESCBackEnabled && pCore.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_ESCAPE)) {
 			if (mScreenState == ScreenState.Active) {
 				exitScreen();
@@ -641,4 +641,10 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 	}
 
+	@Override
+	public boolean hasUnconsumedAction() {
+		return mClickAction != null && !mClickAction.mConsumed;
+		
+	}
+	
 }

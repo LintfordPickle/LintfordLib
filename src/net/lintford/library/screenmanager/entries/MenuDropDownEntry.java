@@ -344,7 +344,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 
 		if (mOpen) {
 			mTextureBatch.begin(pCore.HUD());
-			mTextureBatch.draw(mUITexture, 96, 0, 32, 32, mWindowRectangle, mZ, 1, 1, 1, 1);
+			mTextureBatch.draw(mUITexture, 0, 0, 32, 32, mWindowRectangle, mZ, 0.f, 0.f, 0.f, 1);
 			mTextureBatch.end();
 
 			lFontUnit.begin(pCore.HUD());
@@ -390,7 +390,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 
 		// Draw the down arrow
 		mTextureBatch.begin(pCore.HUD());
-		mTextureBatch.draw(mUITexture, 416, 192, 32, 32, right() - 32 - 8f, top(), 32, 32, mZ, 1f, 1f, 1f, 1f);
+		mTextureBatch.draw(mUITexture, 96, 224, 32, 32, right() - 32 - 8f, top(), 32, 32, mZ, 1f, 1f, 1f, 1f);
 		mTextureBatch.end();
 
 		if (ConstantsTable.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {

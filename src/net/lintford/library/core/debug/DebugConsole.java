@@ -13,7 +13,6 @@ import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
-import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 import net.lintford.library.core.input.IBufferedInputCallback;
 import net.lintford.library.core.maths.Vector3f;
@@ -182,11 +181,9 @@ public class DebugConsole extends Rectangle implements IBufferedInputCallback, I
 
 			mTAGFilterText = new UIInputText(null);
 			mTAGFilterText.emptyString("Filter");
-			mTAGFilterText.textureName(TextureManager.TEXTURE_CORE_UI_NAME);
 
 			mMessageFilterText = new UIInputText(null);
 			mMessageFilterText.emptyString("Filter");
-			mMessageFilterText.textureName(TextureManager.TEXTURE_CORE_UI_NAME);
 
 			mProcessedMessages = new ArrayList<>();
 			mUpdateMessageList = new ArrayList<>();

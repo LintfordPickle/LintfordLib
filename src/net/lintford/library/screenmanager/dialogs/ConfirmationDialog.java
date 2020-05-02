@@ -82,11 +82,12 @@ public class ConfirmationDialog extends BaseDialog {
 	protected void handleOnClick() {
 		switch (mClickAction.consume()) {
 		case BUTTON_CONFIRM_YES:
-
+			System.out.println("I'm called");
 			break;
 
 		case BUTTON_CONFIRM_NO:
 			exitScreen();
+			System.out.println("I'm called");
 			break;
 
 		default:

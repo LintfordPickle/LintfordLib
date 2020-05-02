@@ -428,6 +428,10 @@ public class JBox2dEntityInstance extends PooledBaseData {
 	public void setTransform(float pX, float pY, float pR) {
 		final int lBodyCount = mBodies.size();
 
+		// TODO: check when not tired
+		// mWorldPosition.x = pX;
+		// mWorldPosition.x = pY;
+
 		for (int i = 0; i < lBodyCount; i++) {
 			Box2dBodyInstance lBodyInst = mBodies.get(i);
 			if (lBodyInst == null)
@@ -435,7 +439,7 @@ public class JBox2dEntityInstance extends PooledBaseData {
 
 			lBodyInst.worldPosition.set(pX, pY);
 			lBodyInst.worldAngle = pR;
-			
+
 			if (lBodyInst.mBody != null) {
 				rotatePointAroundPoint(lBodyInst.localPosition.x, lBodyInst.localPosition.y, lBodyInst.localPosition.x, lBodyInst.localPosition.y, pR);
 

@@ -9,14 +9,13 @@ import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.ScreenManager;
 import net.lintford.library.screenmanager.ScreenManagerConstants.LAYOUT_WIDTH;
 import net.lintford.library.screenmanager.dialogs.ConfirmationDialog;
-import net.lintford.library.screenmanager.entries.EntryInteractions;
 import net.lintford.library.screenmanager.entries.HorizontalEntryGroup;
 import net.lintford.library.screenmanager.entries.MenuSliderEntry;
 import net.lintford.library.screenmanager.entries.MenuToggleEntry;
 import net.lintford.library.screenmanager.layouts.BaseLayout;
 import net.lintford.library.screenmanager.layouts.ListLayout;
 
-public class AudioOptionsScreen extends MenuScreen implements EntryInteractions {
+public class AudioOptionsScreen extends MenuScreen {
 
 	// --------------------------------------
 	// Constants

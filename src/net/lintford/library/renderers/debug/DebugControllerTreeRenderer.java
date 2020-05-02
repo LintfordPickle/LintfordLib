@@ -339,10 +339,10 @@ public class DebugControllerTreeRenderer extends Rectangle implements IScrollBar
 			final float lActiveIconY = lBaseControllerWidget.y();
 
 			if (lBaseControllerWidget == null || !lBaseControllerWidget.isControllerActive) {
-				mTextureBatch.draw(mCoreTexture, 288, 96, 32, 32, lActiveIconX, lActiveIconY, 32, 32, -0.01f, 1, 1, 1, 1);
+				mTextureBatch.draw(mCoreTexture, 64, 128, 32, 32, lActiveIconX, lActiveIconY, 32, 32, -0.01f, 1, 1, 1, 1);
 
 			} else {
-				mTextureBatch.draw(mCoreTexture, 288, 128, 32, 32, lActiveIconX, lActiveIconY, 32, 32, -0.01f, 1, 1, 1, 1);
+				mTextureBatch.draw(mCoreTexture, 32, 128, 32, 32, lActiveIconX, lActiveIconY, 32, 32, -0.01f, 1, 1, 1, 1);
 
 			}
 
