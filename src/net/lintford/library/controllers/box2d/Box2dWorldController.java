@@ -34,11 +34,17 @@ public class Box2dWorldController extends BaseController {
 	protected ResourceController mResourceController;
 	protected World mWorld;
 
-	public boolean isPaused;
+	protected boolean singleStep;
+	protected boolean isPaused;
+	protected int mLogicalStepCounter;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public int logicalStepCounter() {
+		return mLogicalStepCounter;
+	}
 
 	public World world() {
 		return mWorld;
@@ -76,10 +82,31 @@ public class Box2dWorldController extends BaseController {
 	public void update(LintfordCore pCore) {
 		super.update(pCore);
 
-		if (mWorld != null && !pCore.gameTime().isTimePaused()) {
-			mWorld.step((1f / 60f) * pCore.gameTime().timeModifier(), 5, 6);
+		if (singleStep) {
+			stepWorld(pCore);
+
+			singleStep = false;
+			isPaused = true;
+
+			return;
+		}
+
+		if (isPaused) {
+			return;
 
 		}
+
+		if (mWorld != null && !pCore.gameTime().isTimePaused()) {
+			stepWorld(pCore);
+
+		}
+
+	}
+
+	private void stepWorld(LintfordCore pCore) {
+		mLogicalStepCounter++;
+
+		mWorld.step((1f / 60f) * pCore.gameTime().timeModifier(), 5, 6);
 
 	}
 
@@ -99,6 +126,27 @@ public class Box2dWorldController extends BaseController {
 
 		pObjectToRetrun.unloadPhysics();
 
+	}
+
+	public void reset() {
+		mLogicalStepCounter = 0;
+		singleStep = false;
+		isPaused = true;
+	}
+
+	public void pause() {
+		singleStep = false;
+		isPaused = true;
+	}
+
+	public void singleStep() {
+		singleStep = true;
+		isPaused = false;
+	}
+
+	public void play() {
+		singleStep = false;
+		isPaused = false;
 	}
 
 }

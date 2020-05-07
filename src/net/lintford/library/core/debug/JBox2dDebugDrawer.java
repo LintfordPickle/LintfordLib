@@ -107,7 +107,7 @@ public class JBox2dDebugDrawer {
 				Debug.debugManager().drawers().drawLine(lCurVert.x * sc, lCurVert.y * sc, lNextVert.x * sc, lNextVert.y * sc);
 
 				lCurVert = lNextVert;
-				
+
 			}
 
 		}
@@ -146,6 +146,13 @@ public class JBox2dDebugDrawer {
 			Debug.debugManager().drawers().beginLineRenderer(pCore.gameCamera(), GL11.GL_LINES);
 			Debug.debugManager().drawers().drawLine(lBodyX - 10, lBodyY, lBodyX + 10, lBodyY);
 			Debug.debugManager().drawers().drawLine(lBodyX, lBodyY - 10, lBodyX, lBodyY + 10);
+			Debug.debugManager().drawers().endLineRenderer();
+
+			Debug.debugManager().drawers().beginLineRenderer(pCore.gameCamera(), GL11.GL_LINES);
+			float lAngle = pBody.getAngle();
+			float lAngleEndX = (float) Math.cos(lAngle) * 25f;
+			float lAngleEndY = (float) Math.sin(lAngle) * 25f;
+			Debug.debugManager().drawers().drawLine(lBodyX, lBodyY, lBodyX + lAngleEndX, lBodyY + lAngleEndY, 1f, 0f, 1f);
 			Debug.debugManager().drawers().endLineRenderer();
 
 			Debug.debugManager().drawers().beginLineRenderer(pCore.gameCamera(), GL11.GL_LINES);
@@ -193,39 +200,44 @@ public class JBox2dDebugDrawer {
 			if (pJoint == null)
 				return;
 
-			Debug.debugManager().drawers().beginLineRenderer(pCore.gameCamera());
 			Debug.debugManager().drawers().beginPointRenderer(pCore.gameCamera());
 
 			if (pJoint instanceof RevoluteJoint) {
 				RevoluteJoint lRevoluteJoint = (RevoluteJoint) pJoint;
-				lRevoluteJoint.getAnchorA(tempVec);
 
-				GL11.glPointSize(10f);
-				float lAnchorAX = tempVec.x * Box2dWorldController.UNITS_TO_PIXELS;
-				float lAnchorAY = tempVec.y * Box2dWorldController.UNITS_TO_PIXELS;
+				final var lBodyA = lRevoluteJoint.getBodyA();
+				final var lBodyB = lRevoluteJoint.getBodyB();
+
+				final var lAnchorAX = lBodyA.getPosition().x * Box2dWorldController.UNITS_TO_PIXELS;
+				final var lAnchorAY = lBodyA.getPosition().y * Box2dWorldController.UNITS_TO_PIXELS;
+				final var lAnchorBX = lBodyB.getPosition().x * Box2dWorldController.UNITS_TO_PIXELS;
+				final var lAnchorBY = lBodyB.getPosition().y * Box2dWorldController.UNITS_TO_PIXELS;
+
+				GL11.glPointSize(5f);
 				Debug.debugManager().drawers().drawPoint(lAnchorAX, lAnchorAY, 255f / 255f, 117f / 255f, 104f / 255f, 1f);
-
-				lRevoluteJoint.getAnchorB(tempVec);
-				float lAnchorBX = tempVec.x * Box2dWorldController.UNITS_TO_PIXELS;
-				float lAnchorBY = tempVec.y * Box2dWorldController.UNITS_TO_PIXELS;
 				Debug.debugManager().drawers().drawPoint(lAnchorBX, lAnchorBY, 255f / 255f, 117f / 255f, 104f / 255f, 1f);
 
-				// Render reference angle
-				float lRefAngle = -lRevoluteJoint.getReferenceAngle();
-				float lRefPointEndX = (float) Math.cos(lRefAngle) * 15f;
-				float lRefPointEndY = (float) Math.sin(lRefAngle) * 15f;
-				Debug.debugManager().drawers().drawLine(lAnchorBX, lAnchorBY, lAnchorBX + lRefPointEndX, lAnchorBY + lRefPointEndY, 0f, 1f, 0f);
+				Debug.debugManager().drawers().beginLineRenderer(pCore.gameCamera(), GL11.GL_LINES, 1.f);
+				Debug.debugManager().drawers().drawLine(lAnchorAX, lAnchorAY, lAnchorBX, lAnchorBY, 1f, 1f, 1f);
+				Debug.debugManager().drawers().endLineRenderer();
 
-				// Render angle
-				float lAngle = -lRevoluteJoint.getJointAngle();
-				float lAngleEndX = (float) Math.cos(lAngle) * 10f;
-				float lAngleEndY = (float) Math.sin(lAngle) * 10f;
-				Debug.debugManager().drawers().drawLine(lAnchorBX, lAnchorBY, lAnchorBX + lAngleEndX, lAnchorBY + lAngleEndY, 1f, 1f, 0f);
+				Debug.debugManager().drawers().beginLineRenderer(pCore.gameCamera(), GL11.GL_LINES, 2.f);
+				// Render reference angle
+				float lRefAngle = lRevoluteJoint.getReferenceAngle();
+				float lRefPointEndX = (float) Math.cos(lRefAngle) * 25f;
+				float lRefPointEndY = (float) Math.sin(lRefAngle) * 25f;
+				Debug.debugManager().drawers().drawLine(lAnchorAX, lAnchorAY, lAnchorAX + lRefPointEndX, lAnchorAY + lRefPointEndY, 1f, 1f, 0f);
+
+				// Render joint angle
+				float lAngle = lRevoluteJoint.getJointAngle();
+				float lAngleEndX = (float) Math.cos(lAngle) * 35f;
+				float lAngleEndY = (float) Math.sin(lAngle) * 35f;
+				Debug.debugManager().drawers().drawLine(lAnchorAX, lAnchorAY, lAnchorAX + lAngleEndX, lAnchorAY + lAngleEndY, 0.5f, 0.82f, 0.5f);
+				Debug.debugManager().drawers().endLineRenderer();
 
 			}
 
 			Debug.debugManager().drawers().endPointRenderer();
-			Debug.debugManager().drawers().endLineRenderer();
 
 		}
 

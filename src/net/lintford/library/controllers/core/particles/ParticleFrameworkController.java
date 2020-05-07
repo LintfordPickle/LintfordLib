@@ -84,8 +84,8 @@ public class ParticleFrameworkController extends BaseController {
 			// Apply the position of the root emitter directly, so that each emitter instance can apply their own positional offsets
 			// based on the emitter definitions.
 			if (lEmitterInst.parentEntity() != null) {
-				lEmitterInst.x = lEmitterInst.parentEntity().x;
-				lEmitterInst.y = lEmitterInst.parentEntity().y;
+				lEmitterInst.mWorldPositionX = lEmitterInst.parentEntity().mWorldPositionX;
+				lEmitterInst.mWorldPositionY = lEmitterInst.parentEntity().mWorldPositionY;
 
 			}
 

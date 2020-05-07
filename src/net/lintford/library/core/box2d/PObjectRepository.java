@@ -1,3 +1,4 @@
+
 package net.lintford.library.core.box2d;
 
 import java.util.HashMap;
@@ -77,8 +78,8 @@ public class PObjectRepository {
 
 		}
 
-		final int lNumberOfFontUnitDefinitions = lPObjectMetaData.PObjectMetaDefinitions.length;
-		for (int i = 0; i < lNumberOfFontUnitDefinitions; i++) {
+		final int lNumberOfPObjectDefinitions = lPObjectMetaData.PObjectMetaDefinitions.length;
+		for (int i = 0; i < lNumberOfPObjectDefinitions; i++) {
 			final var lPObjectDataDefinition = lPObjectMetaData.PObjectMetaDefinitions[i];
 
 			final var lPObjectName = lPObjectDataDefinition.pObjectName;

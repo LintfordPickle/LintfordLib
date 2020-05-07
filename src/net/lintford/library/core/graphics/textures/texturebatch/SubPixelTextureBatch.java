@@ -386,8 +386,7 @@ public class SubPixelTextureBatch {
 
 	}
 
-	public void draw(Texture pTexture, float pSX, float pSY, float pSW, float pSH, float pDX, float pDY, float pDW, float pDH, float pZ, float pRot, float pROX, float pROY, float pScale, float pR, float pG, float pB,
-			float pA) {
+	public void draw(Texture pTexture, float pSX, float pSY, float pSW, float pSH, float pDX, float pDY, float pDW, float pDH, float pZ, float pRot, float pROX, float pROY, float pScale, float pR, float pG, float pB, float pA) {
 		if (!mIsLoaded)
 			return;
 
@@ -415,8 +414,8 @@ public class SubPixelTextureBatch {
 			flush();
 		}
 
-		float sin = (float) (Math.sin(pRot));
-		float cos = (float) (Math.cos(pRot));
+		float sin = (float) Math.sin(pRot);
+		float cos = (float) Math.cos(pRot);
 
 		float lHalfW = (pDW * pScale) / 2f;
 		float lHalfH = (pDH * pScale) / 2f;

@@ -262,12 +262,9 @@ public class Matrix4f implements Serializable {
 	/**
 	 * Transform a Vector by a matrix and return the result in a destination vector.
 	 * 
-	 * @param left
-	 *            The left matrix
-	 * @param right
-	 *            The right vector
-	 * @param dest
-	 *            The destination vector, or null if a new one is to be created
+	 * @param left  The left matrix
+	 * @param right The right vector
+	 * @param dest  The destination vector, or null if a new one is to be created
 	 * @return the destination vector
 	 */
 	public static Vector4f transform(Matrix4f left, Vector4f right, Vector4f dest) {

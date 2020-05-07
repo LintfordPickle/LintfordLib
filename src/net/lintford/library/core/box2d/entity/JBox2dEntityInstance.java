@@ -8,6 +8,7 @@ import org.jbox2d.dynamics.Filter;
 import org.jbox2d.dynamics.World;
 import org.jbox2d.dynamics.joints.RevoluteJointDef;
 
+import net.lintford.library.controllers.box2d.Box2dWorldController;
 import net.lintford.library.core.box2d.definition.PObjectDefinition;
 import net.lintford.library.core.entity.PooledBaseData;
 
@@ -40,20 +41,9 @@ public class JBox2dEntityInstance extends PooledBaseData {
 	protected boolean mIsFree;
 	protected transient boolean mPhysicsLoaded = false;
 
-	protected Vec2 mWorldPosition;
-	protected float mWorldRotation;
-
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
-
-	public void setWorldPosition(float pX, float pY) {
-		mWorldPosition.set(pX, pY);
-	}
-
-	public void setWorldRotation(float pRotation) {
-		mWorldRotation = pRotation;
-	}
 
 	public Object userDataObject() {
 		return userDataObject;
@@ -100,7 +90,6 @@ public class JBox2dEntityInstance extends PooledBaseData {
 		super(pPoolUid);
 
 		mPhysicsLoaded = false;
-		mWorldPosition = new Vec2();
 
 	}
 
@@ -126,15 +115,16 @@ public class JBox2dEntityInstance extends PooledBaseData {
 
 	}
 
+	/** Loads a reference implementation of the PObject definition */
 	public void loadPhysics(World pWorld) {
 		// Go through and create instances for each definition
 		final int lBodyCount = mBodies.size();
 		for (int i = 0; i < lBodyCount; i++) {
 			Box2dBodyInstance lBodyInstance = mBodies.get(i);
 
-			lBodyInstance.worldPosition.x = mWorldPosition.x + lBodyInstance.localPosition.x;
-			lBodyInstance.worldPosition.y = mWorldPosition.y + lBodyInstance.localPosition.y;
-			lBodyInstance.worldAngle = mWorldRotation + lBodyInstance.localAngle;
+			lBodyInstance.worldPosition.x = lBodyInstance.localPosition.x * Box2dWorldController.UNITS_TO_PIXELS;
+			lBodyInstance.worldPosition.y = lBodyInstance.localPosition.y * Box2dWorldController.UNITS_TO_PIXELS;
+			lBodyInstance.worldAngle = lBodyInstance.localAngle;
 
 			lBodyInstance.loadPhysics(pWorld);
 
@@ -170,7 +160,6 @@ public class JBox2dEntityInstance extends PooledBaseData {
 
 			lJointDef.collideConnected = lJointInstance.collidesConnected;
 
-			// DEBUG
 			lJointInstance.joint = pWorld.createJoint(lJointDef);
 
 		}
@@ -186,11 +175,6 @@ public class JBox2dEntityInstance extends PooledBaseData {
 				mainBody().mBody.setUserData(userDataObject);
 
 		}
-
-		setTransform(mWorldPosition.x, mWorldPosition.y, mWorldRotation);
-
-		// Look for a body named 'MainBody'.
-		// This wll will be the origin body for translations etc.
 
 		mPhysicsLoaded = true;
 
@@ -425,25 +409,22 @@ public class JBox2dEntityInstance extends PooledBaseData {
 		mIsFree = true;
 	}
 
-	public void setTransform(float pX, float pY, float pR) {
+	public void resetEntityInstance() {
 		final int lBodyCount = mBodies.size();
 
-		// TODO: check when not tired
-		// mWorldPosition.x = pX;
-		// mWorldPosition.x = pY;
-
 		for (int i = 0; i < lBodyCount; i++) {
-			Box2dBodyInstance lBodyInst = mBodies.get(i);
-			if (lBodyInst == null)
+			final var lBox2dBodyInstance = mBodies.get(i);
+			if (lBox2dBodyInstance == null)
 				continue;
 
-			lBodyInst.worldPosition.set(pX, pY);
-			lBodyInst.worldAngle = pR;
+			if (lBox2dBodyInstance.mBody != null) {
+				final var lBox2dPosition = lBox2dBodyInstance.mBody.getPosition();
 
-			if (lBodyInst.mBody != null) {
-				rotatePointAroundPoint(lBodyInst.localPosition.x, lBodyInst.localPosition.y, lBodyInst.localPosition.x, lBodyInst.localPosition.y, pR);
+				lBox2dPosition.x = lBox2dBodyInstance.localPosition.x;
+				lBox2dPosition.y = lBox2dBodyInstance.localPosition.y;
+				float lLocalAngle = lBox2dBodyInstance.localAngle;
 
-				lBodyInst.mBody.setTransform(new Vec2(pX, pY), pR);
+				lBox2dBodyInstance.mBody.setTransform(lBox2dPosition, lLocalAngle);
 
 			}
 
@@ -451,36 +432,79 @@ public class JBox2dEntityInstance extends PooledBaseData {
 
 	}
 
-	Vec2 temp = new Vec2();
-
-	private Vec2 rotatePointAroundPoint(float cx, float cy, float px, float py, float angle) {
-
-		float s = (float) Math.sin(angle);
-		float c = (float) Math.cos(angle);
-
-		px -= cx;
-		py -= cy;
-
-		float xnew = px * c - py * s;
-		float ynew = px * s + py * c;
-
-		temp.set(xnew + cx, ynew + cy);
-		return temp;
-	}
-
-	public void setPosition(float pX, float pY) {
-		mWorldPosition.set(pX, pY);
-
+	/**
+	 * Tranforms the PObject as a whole to the desired position with the desired angle. First the the PObject is scaled, then rotations are applied, finally entire object is translated into final position.
+	 * 
+	 * @param pDesiredWorldX            The final absolute world position X.
+	 * @param pDesiredWorldY            The final absolute world position Y.
+	 * @param pDesiredRotationInRadians The rotation angle (in radians) to rotate the PObject.
+	 */
+	public void transformEntityInstance(float pDesiredWorldX, float pDesiredWorldY, float pDesiredRotationInRadians) {
 		final int lBodyCount = mBodies.size();
+
 		for (int i = 0; i < lBodyCount; i++) {
-			Box2dBodyInstance lBodyInst = mBodies.get(i);
-			if (lBodyInst == null)
+			final var lBox2dBodyInstance = mBodies.get(i);
+			if (lBox2dBodyInstance == null)
 				continue;
 
-			lBodyInst.worldPosition.set(pX, pY);
+			if (lBox2dBodyInstance.mBody != null) {
+				final var lBox2dPosition = lBox2dBodyInstance.mBody.getPosition();
 
-			if (lBodyInst.mBody != null) {
-				lBodyInst.mBody.setTransform(new Vec2(pX, pY), lBodyInst.mBody.getAngle());
+				// translate bodies back to origin positions
+				lBox2dPosition.x = lBox2dBodyInstance.localPosition.x;
+				lBox2dPosition.y = lBox2dBodyInstance.localPosition.y;
+
+				// rotate around origin
+				rotationAroundOrigin(lBox2dPosition, pDesiredRotationInRadians);
+
+				// translate out
+				lBox2dPosition.x += pDesiredWorldX * Box2dWorldController.PIXELS_TO_UNITS;
+				lBox2dPosition.y += pDesiredWorldY * Box2dWorldController.PIXELS_TO_UNITS;
+
+				lBox2dBodyInstance.mBody.setTransform(lBox2dPosition, pDesiredRotationInRadians);
+
+			}
+
+		}
+
+	}
+
+	public void rotationAroundOrigin(Vec2 pPosition, float pAngleInRadians) {
+		float sin = (float) (Math.sin(pAngleInRadians));
+		float cos = (float) (Math.cos(pAngleInRadians));
+
+		float lNewX = (pPosition.x) * cos - (pPosition.y) * sin;
+		float lNewY = (pPosition.x) * sin + (pPosition.y) * cos;
+
+		pPosition.x = lNewX;
+		pPosition.y = lNewY;
+
+	}
+
+	public void setPosition(float pDesiredWorldX, float pDesiredWorldY) {
+
+		final int lBodyCount = mBodies.size();
+
+		for (int i = 0; i < lBodyCount; i++) {
+			final var lBox2dBodyInstance = mBodies.get(i);
+			if (lBox2dBodyInstance == null)
+				continue;
+
+			if (lBox2dBodyInstance.mBody != null) {
+				final var lBox2dPosition = lBox2dBodyInstance.mBody.getPosition();
+
+				// translate bodies back to origin positions
+				lBox2dPosition.x = lBox2dBodyInstance.localPosition.x;
+				lBox2dPosition.y = lBox2dBodyInstance.localPosition.y;
+
+				// rotate around origin
+				rotationAroundOrigin(lBox2dPosition, lBox2dBodyInstance.localAngle);
+
+				// translate out
+				lBox2dPosition.x += pDesiredWorldX * Box2dWorldController.PIXELS_TO_UNITS;
+				lBox2dPosition.y += pDesiredWorldY * Box2dWorldController.PIXELS_TO_UNITS;
+
+				lBox2dBodyInstance.mBody.setTransform(lBox2dPosition, lBox2dBodyInstance.localAngle);
 
 			}
 

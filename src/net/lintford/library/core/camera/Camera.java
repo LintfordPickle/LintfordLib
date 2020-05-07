@@ -43,8 +43,10 @@ public class Camera implements ICamera {
 	protected final Vector2f mVelocity;
 	protected final Vector2f mTargetPosition;
 	protected final Vector2f mOffsetPosition;
+	
 	protected final Matrix4f mProjectionMatrix;
 	protected final Matrix4f mViewMatrix;
+	
 	protected float mMinX;
 	protected float mMaxX;
 	protected float mMinY;

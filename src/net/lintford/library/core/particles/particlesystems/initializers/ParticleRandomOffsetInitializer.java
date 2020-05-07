@@ -27,8 +27,8 @@ public class ParticleRandomOffsetInitializer extends ParticleDoubleValueInitiali
 
 	@Override
 	public void onIntialiseParticle(Particle pParticle, float pValue0, float pValue1) {
-		pParticle.x += pValue0;
-		pParticle.y += pValue1;
+		pParticle.mWorldPositionX += pValue0;
+		pParticle.mWorldPositionY += pValue1;
 
 	}
 

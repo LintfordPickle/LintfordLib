@@ -79,8 +79,8 @@ public class Particle extends CircleEntity {
 		sx = sy = 1;
 		r = g = b = a = 1;
 
-		x = pWorldX;
-		y = pWorldY;
+		mWorldPositionX = pWorldX;
+		mWorldPositionY = pWorldY;
 		dx = pVelX;
 		dy = pVelY;
 
@@ -92,8 +92,8 @@ public class Particle extends CircleEntity {
 		timeSinceStart = 0;
 		scale = 1f;
 
-		x = 0;
-		y = 0;
+		mWorldPositionX = 0;
+		mWorldPositionY = 0;
 
 		dx = 0f;
 		dy = 0f;

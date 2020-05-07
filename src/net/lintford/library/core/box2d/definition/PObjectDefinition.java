@@ -67,6 +67,9 @@ public class PObjectDefinition extends BaseDefinition {
 	public static final int BODY_TYPE_KINEMATIC = 1;
 	public static final int BODY_TYPE_DYNAMIC = 2;
 
+	private static final float PI = (float) Math.PI;
+	private static final float TWOPI = (float) Math.PI * 2.f;
+
 	// --------------------------------------
 	// Inner Classes
 	// --------------------------------------
@@ -89,8 +92,8 @@ public class PObjectDefinition extends BaseDefinition {
 
 	}
 
-	public static final boolean INVERT_Y = true;
-	public static final boolean INVERT_X = !INVERT_Y;
+	public static final boolean INVERT_Y = true; // RUBE Editor uses inverted Y-Axis
+	public static final boolean INVERT_X = false;
 
 	// --------------------------------------
 	// Variables
@@ -282,7 +285,7 @@ public class PObjectDefinition extends BaseDefinition {
 
 		bodyDef.name = bodyValue.optString("name", "");
 		bodyDef.bodyDefinition.position = jsonToVec("position", bodyValue);
-		bodyDef.bodyDefinition.angle = jsonToFloat("angle", bodyValue);
+		bodyDef.bodyDefinition.angle = invertAngleXAxis(jsonToFloat("angle", bodyValue));
 		bodyDef.bodyDefinition.linearVelocity = jsonToVec("linearVelocity", bodyValue);
 		bodyDef.bodyDefinition.angularVelocity = jsonToFloat("angularVelocity", bodyValue);
 		bodyDef.bodyDefinition.linearDamping = jsonToFloat("linearDamping", bodyValue, -1, 0);
@@ -457,7 +460,7 @@ public class PObjectDefinition extends BaseDefinition {
 		Box2dJointDefinition lBox2dJointDefinition = new Box2dJointDefinition();
 
 		lBox2dJointDefinition.name = jointValue.optString("name", "");
-		
+
 		int bodyIndexA = jointValue.getInt("bodyA");
 		int bodyIndexB = jointValue.getInt("bodyB");
 		if (bodyIndexA >= mBodies.size() || bodyIndexB >= mBodies.size())
@@ -480,10 +483,10 @@ public class PObjectDefinition extends BaseDefinition {
 			revoluteDef = new RevoluteJointDef();
 			revoluteDef.localAnchorA = jsonToVec("anchorA", jointValue);
 			revoluteDef.localAnchorB = jsonToVec("anchorB", jointValue);
-			revoluteDef.referenceAngle = jsonToFloat("refAngle", jointValue);
+			revoluteDef.referenceAngle = invertAngleXAxis(jsonToFloat("refAngle", jointValue));
 			revoluteDef.enableLimit = jointValue.optBoolean("enableLimit", false);
-			revoluteDef.lowerAngle = jsonToFloat("lowerLimit", jointValue);
-			revoluteDef.upperAngle = jsonToFloat("upperLimit", jointValue);
+			revoluteDef.lowerAngle = invertAngleXAxis(jsonToFloat("lowerLimit", jointValue));
+			revoluteDef.upperAngle = invertAngleXAxis(jsonToFloat("upperLimit", jointValue));
 			revoluteDef.enableMotor = jointValue.optBoolean("enableMotor", false);
 			revoluteDef.motorSpeed = jsonToFloat("motorSpeed", jointValue);
 			revoluteDef.maxMotorTorque = jsonToFloat("maxMotorTorque", jointValue);
@@ -499,9 +502,9 @@ public class PObjectDefinition extends BaseDefinition {
 			else
 				prismaticDef.localAxisA.set(jsonToVec("localAxis1", jointValue));
 
-			prismaticDef.referenceAngle = jsonToFloat("refAngle", jointValue);
+			prismaticDef.referenceAngle = invertAngleXAxis(jsonToFloat("refAngle", jointValue));
 			prismaticDef.enableLimit = jointValue.optBoolean("enableLimit");
-			prismaticDef.lowerTranslation = jsonToFloat("lowerLimit", jointValue);
+			prismaticDef.lowerTranslation = jsonToFloat("lowerLimit", jointValue); // Need to flip this with INVERT_Y?
 			prismaticDef.upperTranslation = jsonToFloat("upperLimit", jointValue);
 			prismaticDef.enableMotor = jointValue.optBoolean("enableMotor");
 			prismaticDef.motorSpeed = jsonToFloat("motorSpeed", jointValue);
@@ -774,6 +777,43 @@ public class PObjectDefinition extends BaseDefinition {
 			}
 		}
 		return null;
+	}
+
+	private static float invertAngleXAxis(float pAngleInRadians) {
+		if (!INVERT_Y)
+			return pAngleInRadians;
+		float angle = normalizeAngle(pAngleInRadians);
+		if (angle == 0)
+			return 0.f;
+		angle = TWOPI - angle;
+
+		return angle;
+
+	}
+
+	private static float invertAngleYAxis(float pAngleInRadians) {
+		if (!INVERT_Y)
+			return pAngleInRadians;
+		float angle = normalizeAngle(pAngleInRadians);
+
+		if (angle < PI) {
+			angle = PI - angle;
+		} else {
+			angle = TWOPI - angle + PI;
+		}
+
+		return angle;
+
+	}
+
+	private static float normalizeAngle(float angle) {
+		if (angle < 0) {
+			int backRevolutions = (int) (-angle / TWOPI);
+			return angle + TWOPI * (backRevolutions + 1);
+		} else {
+			return angle % TWOPI;
+		}
+
 	}
 
 }

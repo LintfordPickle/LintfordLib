@@ -143,7 +143,7 @@ public class CameraFollowController extends BaseController {
 
 		mIsTrackingPlayer = mTrackedEntity != null;
 		if (mIsTrackingPlayer) {
-			mGameCamera.setPosition(-mTrackedEntity.x, -mTrackedEntity.y);
+			mGameCamera.setPosition(-mTrackedEntity.mWorldPositionX, -mTrackedEntity.mWorldPositionY);
 
 		} else {
 			// Cap

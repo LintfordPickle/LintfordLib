@@ -15,20 +15,22 @@ public abstract class WorldEntity extends PooledBaseData {
 	// Variables
 	// --------------------------------------
 
-	public float x, y, r;
+	public float mWorldPositionX;
+	public float mWorldPositionY;
+	public float mRotationRadians;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
 
 	public void setPosition(float pWorldX, float pWorldY) {
-		x = pWorldX;
-		y = pWorldY;
+		mWorldPositionX = pWorldX;
+		mWorldPositionY = pWorldY;
 
 	}
 
 	public void setRotation(float pRotationInRadians) {
-		r = pRotationInRadians;
+		mRotationRadians = pRotationInRadians;
 
 	}
 

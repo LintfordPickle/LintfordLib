@@ -80,8 +80,8 @@ public class CameraChaseController extends BaseController {
 		mPosition = new Vector2f();
 		mLookAhead = new Vector2f();
 
-		mPosition.x = pTrackEntity.x;
-		mPosition.y = pTrackEntity.y;
+		mPosition.x = pTrackEntity.mWorldPositionX;
+		mPosition.y = pTrackEntity.mWorldPositionY;
 
 		//
 		mGameCamera = pCamera;
@@ -190,11 +190,11 @@ public class CameraChaseController extends BaseController {
 	}
 
 	private void updatewWorldPositions(LintfordCore pCore) {
-		mLookAhead.x = mTrackedEntity.x + mVelocity.x;
-		mLookAhead.y = mTrackedEntity.y + mVelocity.y;
+		mLookAhead.x = mTrackedEntity.mWorldPositionX + mVelocity.x;
+		mLookAhead.y = mTrackedEntity.mWorldPositionY + mVelocity.y;
 
-		mDesiredPosition.x = mTrackedEntity.x;
-		mDesiredPosition.y = mTrackedEntity.y;
+		mDesiredPosition.x = mTrackedEntity.mWorldPositionX;
+		mDesiredPosition.y = mTrackedEntity.mWorldPositionY;
 
 	}
 
