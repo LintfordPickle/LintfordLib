@@ -47,8 +47,8 @@ public class ParticlePhysicsModifier extends ParticleModifierBase {
 	public void updateParticle(LintfordCore pCore, Particle pParticle) {
 		float lDelta = (float) pCore.appTime().elapseTimeMilli() / 1000f;
 
-		pParticle.mWorldPositionX += pParticle.dx * lDelta;
-		pParticle.mWorldPositionY += pParticle.dy * lDelta;
+		pParticle.worldPositionX += pParticle.dx * lDelta;
+		pParticle.worldPositionY += pParticle.dy * lDelta;
 		pParticle.rot += Math.toRadians(pParticle.dr * lDelta);
 
 	}

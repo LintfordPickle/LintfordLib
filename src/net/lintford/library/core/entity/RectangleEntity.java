@@ -30,11 +30,11 @@ public abstract class RectangleEntity extends WorldEntity {
 	}
 
 	public float left() {
-		return mWorldPositionX - width / 2;
+		return worldPositionX - width / 2;
 	}
 
 	public float top() {
-		return mWorldPositionY - height / 2;
+		return worldPositionY - height / 2;
 	}
 
 	public Rectangle bounds() {
@@ -56,13 +56,13 @@ public abstract class RectangleEntity extends WorldEntity {
 	public RectangleEntity(final int pPoolUid, float pX, float pY, float pWidth, float pHeight) {
 		super(pPoolUid);
 
-		mWorldPositionX = pX;
-		mWorldPositionY = pY;
+		worldPositionX = pX;
+		worldPositionY = pY;
 		width = pWidth;
 		height = pHeight;
 
 		mBounds = new Rectangle();
-		mBounds = new Rectangle(mWorldPositionX, mWorldPositionY, width, height);
+		mBounds = new Rectangle(worldPositionX, worldPositionY, width, height);
 
 	}
 
@@ -72,7 +72,7 @@ public abstract class RectangleEntity extends WorldEntity {
 
 	public void update(LintfordCore pCore) {
 		mBounds.rotateAbs(rotation); // + (float) Math.toRadians(90));
-		mBounds.setCenter(mWorldPositionX, mWorldPositionY, width, height);
+		mBounds.setCenter(worldPositionX, worldPositionY, width, height);
 
 	}
 

@@ -101,7 +101,7 @@ public class ParticleRenderer {
 
 			final float lRadiusScaled = lParticleInst.radius * lParticleInst.scale;
 
-			mTextureBatch.draw(mTexture, lParticleInst.sx, lParticleInst.sy, lParticleInst.sw, lParticleInst.sh, lParticleInst.mWorldPositionX - lRadiusScaled, lParticleInst.mWorldPositionY - lRadiusScaled, lRadiusScaled * 2, lRadiusScaled * 2, -0.2f, lParticleInst.r, lParticleInst.g,
+			mTextureBatch.draw(mTexture, lParticleInst.sx, lParticleInst.sy, lParticleInst.sw, lParticleInst.sh, lParticleInst.worldPositionX - lRadiusScaled, lParticleInst.worldPositionY - lRadiusScaled, lRadiusScaled * 2, lRadiusScaled * 2, -0.2f, lParticleInst.r, lParticleInst.g,
 					lParticleInst.b, lParticleInst.a);
 
 		}

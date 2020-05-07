@@ -69,7 +69,7 @@ public abstract class JBox2dEntity extends WorldEntity {
 	public void setPhysicsObject(JBox2dEntityInstance pJBox2dEntity) {
 		mJBox2dEntityInstance = pJBox2dEntity;
 
-		transformPObject(mWorldPositionX, mWorldPositionY, mRotationRadians);
+		transformPObject(worldPositionX, worldPositionY, rotationInRadians);
 
 	}
 
@@ -89,7 +89,7 @@ public abstract class JBox2dEntity extends WorldEntity {
 
 		// Initially we should set the new instance (loaded from a reference defintion) to the WorldEntity SRT.
 		if (isPhysicsLoaded()) {
-			transformPObject(mWorldPositionX, mWorldPositionY, mRotationRadians);
+			transformPObject(worldPositionX, worldPositionY, rotationInRadians);
 		}
 
 	}
@@ -99,7 +99,7 @@ public abstract class JBox2dEntity extends WorldEntity {
 		super.setPosition(pWorldX, pWorldY);
 
 		if (hasPhysicsEntity()) {
-			mJBox2dEntityInstance.transformEntityInstance(mWorldPositionX, mWorldPositionY, mRotationRadians);
+			mJBox2dEntityInstance.transformEntityInstance(worldPositionX, worldPositionY, rotationInRadians);
 
 		}
 
@@ -114,9 +114,9 @@ public abstract class JBox2dEntity extends WorldEntity {
 	}
 
 	public void reset() {
-		mWorldPositionX = 0.f;
-		mWorldPositionY = 0.f;
-		mRotationRadians = 0.f;
+		worldPositionX = 0.f;
+		worldPositionY = 0.f;
+		rotationInRadians = 0.f;
 
 		if (hasPhysicsEntity()) {
 			mJBox2dEntityInstance.resetEntityInstance();
@@ -145,9 +145,9 @@ public abstract class JBox2dEntity extends WorldEntity {
 		if (isPhysicsLoaded()) {
 			final var lBox2dBodyInstance = mJBox2dEntityInstance.mainBody();
 			if (lBox2dBodyInstance != null) {
-				mWorldPositionX = lBox2dBodyInstance.mBody.getPosition().x * Box2dWorldController.UNITS_TO_PIXELS;
-				mWorldPositionY = lBox2dBodyInstance.mBody.getPosition().y * Box2dWorldController.UNITS_TO_PIXELS;
-				mRotationRadians = lBox2dBodyInstance.mBody.getAngle();
+				worldPositionX = lBox2dBodyInstance.mBody.getPosition().x * Box2dWorldController.UNITS_TO_PIXELS;
+				worldPositionY = lBox2dBodyInstance.mBody.getPosition().y * Box2dWorldController.UNITS_TO_PIXELS;
+				rotationInRadians = lBox2dBodyInstance.mBody.getAngle();
 
 			}
 

@@ -8,8 +8,8 @@ public class CollisionExtensions {
 
 	/** Checks for an intersection between the given circle entity and rectangle entity. */
 	public static boolean intersects(CircleEntity pCircle, RectangleEntity pRect) {
-		final float circleDistanceX = Math.abs(pCircle.mWorldPositionX - pRect.mWorldPositionX + pRect.w() / 2);
-		final float circleDistanceY = Math.abs(pCircle.mWorldPositionY - pRect.mWorldPositionY + pRect.h() / 2);
+		final float circleDistanceX = Math.abs(pCircle.worldPositionX - pRect.worldPositionX + pRect.w() / 2);
+		final float circleDistanceY = Math.abs(pCircle.worldPositionY - pRect.worldPositionY + pRect.h() / 2);
 
 		final float lRECT_WIDTH_H = pRect.w() / 2;
 		final float lRECT_HEIGHT_H = pRect.h() / 2;
@@ -35,7 +35,7 @@ public class CollisionExtensions {
 
 	/** Checks if a point is within a given circle */
 	public static boolean intersectsCirclePoint(CircleEntity pCircle, Vector2f pPoint) {
-		return intersectsCirclePoint(pCircle.mWorldPositionX, pCircle.mWorldPositionY, pCircle.radius, pPoint.x, pPoint.y);
+		return intersectsCirclePoint(pCircle.worldPositionX, pCircle.worldPositionY, pCircle.radius, pPoint.x, pPoint.y);
 
 	}
 

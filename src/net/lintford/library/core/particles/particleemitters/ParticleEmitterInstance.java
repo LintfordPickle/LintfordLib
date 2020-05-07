@@ -121,8 +121,8 @@ public class ParticleEmitterInstance extends WorldEntity {
 		if (mEmitterDefinition == null)
 			return;
 
-		mWorldPositionX += mEmitterDefinition.PositionRelOffsetX;
-		mWorldPositionY += mEmitterDefinition.PositionRelOffsetY;
+		worldPositionX += mEmitterDefinition.PositionRelOffsetX;
+		worldPositionY += mEmitterDefinition.PositionRelOffsetY;
 
 		// Update this emitter
 		mEmitTimer -= pCore.gameTime().elapseTimeMilli() * mEmitterEmitModifier;
@@ -130,7 +130,7 @@ public class ParticleEmitterInstance extends WorldEntity {
 		if (mParticleSystem != null && mEmitTimer < 0) {
 			final int lAmtToSpawn = RandomNumbers.random(mEmitterDefinition.emitAmountMin, mEmitterDefinition.emitAmountMax);
 			for (int i = 0; i < lAmtToSpawn; i++) {
-				mParticleSystem.spawnParticle(mWorldPositionX, mWorldPositionY, 0, 0);
+				mParticleSystem.spawnParticle(worldPositionX, worldPositionY, 0, 0);
 
 			}
 
@@ -147,8 +147,8 @@ public class ParticleEmitterInstance extends WorldEntity {
 			if (lChildParticleEmitterInstanceInst == null)
 				continue;
 
-			lChildParticleEmitterInstanceInst.mWorldPositionX = mWorldPositionX;
-			lChildParticleEmitterInstanceInst.mWorldPositionY = mWorldPositionY;
+			lChildParticleEmitterInstanceInst.worldPositionX = worldPositionX;
+			lChildParticleEmitterInstanceInst.worldPositionY = worldPositionY;
 
 			lChildParticleEmitterInstanceInst.update(pCore);
 
