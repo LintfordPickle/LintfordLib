@@ -111,6 +111,10 @@ public abstract class JBox2dEntity extends WorldEntity {
 
 		}
 
+		worldPositionX = pWorldPositionX;
+		worldPositionY = pWorldPositionY;
+		rotationInRadians = pRotationInRadians;
+
 	}
 
 	public void reset() {
