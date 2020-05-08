@@ -5,19 +5,23 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.IntBuffer;
 
 import javax.imageio.IIOException;
 import javax.imageio.ImageIO;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
+import org.lwjgl.system.MemoryUtil;
 
 import net.lintford.library.core.debug.Debug;
 
 public class Texture {
+
+	// --------------------------------------
+	// Constants
+	// --------------------------------------
+
+	private static int mTextureEntityId = 0;
 
 	// --------------------------------------
 	// Variables
@@ -29,7 +33,9 @@ public class Texture {
 	private String mTextureLocation;
 	private int mTextureWidth;
 	private int mTextureHeight;
-	private int mFilter;
+	private int mTextureFilterMode;
+	private int mWrapModeS;
+	private int mWrapModeT;
 	private int[] mColorData;
 
 	/**
@@ -98,7 +104,7 @@ public class Texture {
 		mTextureLocation = pFilename;
 		mTextureWidth = pWidth;
 		mTextureHeight = pHeight;
-		mFilter = pFilter;
+		mTextureFilterMode = pFilter;
 		mReloadable = true;
 
 	}
@@ -268,39 +274,41 @@ public class Texture {
 		final int[] lPixels = new int[lWidth * lHeight];
 		pImage.getRGB(0, 0, lWidth, lHeight, lPixels, 0, lWidth);
 
-		return createTexture(pName, pTextureLocation, changeARGBtoABGR(lPixels, lWidth, lHeight), lWidth, lHeight, pFilter);
+		return createTexture(pName, pTextureLocation, changeARGBtoABGR(lPixels, lWidth, lHeight), lWidth, lHeight, pFilter, GL12.GL_REPEAT, GL12.GL_REPEAT);
 	}
 
 	/**
 	 * Creates an OpenGL Texture from RGB data.
 	 */
-	static Texture createTexture(String pName, String mTextureLocation, int[] pPixels, int pWidth, int pHeight, int pFilter) {
+	static Texture createTexture(String pName, String mTextureLocation, int[] pPixels, int pWidth, int pHeight, int pFilter, int pWrapModeS, int pWrapModeT) {
 		final int lTexID = GL11.glGenTextures();
+
+		var lIntBuffer = MemoryUtil.memAllocInt(pPixels.length * 4);
+		lIntBuffer.put(pPixels);
+		lIntBuffer.flip();
+
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, lTexID);
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, pFilter);
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, pFilter);
 
-		IntBuffer lBuffer = ByteBuffer.allocateDirect(pPixels.length * 4).order(ByteOrder.nativeOrder()).asIntBuffer();
-		lBuffer.put(pPixels);
-		lBuffer.flip();
+		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, pWrapModeS);
+		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, pWrapModeT);
 
-		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL12.GL_CLAMP_TO_EDGE);
-		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL12.GL_REPEAT);
-
-		// GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL12.GL_CLAMP_TO_EDGE);
-		// GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL12.GL_CLAMP_TO_EDGE);
-
-		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, pWidth, pHeight, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, lBuffer);
+		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, pWidth, pHeight, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, lIntBuffer);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 
-		lBuffer = null;
+		MemoryUtil.memFree(lIntBuffer);
+		lIntBuffer = null;
 
 		final var lNewTexture = new Texture(pName, lTexID, mTextureLocation, pWidth, pHeight, pFilter);
+
 		lNewTexture.mColorData = pPixels;
+		lNewTexture.mTextureFilterMode = pFilter;
+		lNewTexture.mWrapModeS = pWrapModeS;
+		lNewTexture.mWrapModeT = pWrapModeT;
+
 		return lNewTexture;
 	}
-
-	private static int mTextureEntityId = 0;
 
 	public static int getNewTextureEntityId() {
 		return mTextureEntityId++;
@@ -372,19 +380,29 @@ public class Texture {
 
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, mTextureId);
 
-		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, mFilter);
-		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, mFilter);
+		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, mTextureFilterMode);
+		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, mTextureFilterMode);
 
-		IntBuffer lBuffer = ByteBuffer.allocateDirect(pColorData.length * 4).order(ByteOrder.nativeOrder()).asIntBuffer();
-		lBuffer.put(pColorData);
-		lBuffer.flip();
+		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, mWrapModeS);
+		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, mWrapModeT);
+
+		var lIntBuffer = MemoryUtil.memAllocInt(pColorData.length * 4);
+		lIntBuffer.put(pColorData);
+		lIntBuffer.flip();
 
 		mColorData = pColorData;
 
-		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, pWidth, pHeight, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, lBuffer);
+		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, pWidth, pHeight, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, lIntBuffer);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 
+		MemoryUtil.memFree(lIntBuffer);
+		lIntBuffer = null;
+
 	}
+
+	// --------------------------------------
+	// Helpers
+	// --------------------------------------
 
 	static int[] changeARGBtoABGR(int[] pInput, int pWidth, int pHeight) {
 		int[] lReturnData = new int[pWidth * pHeight];

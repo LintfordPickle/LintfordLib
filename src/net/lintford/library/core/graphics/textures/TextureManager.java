@@ -12,6 +12,7 @@ import java.util.Map.Entry;
 import javax.imageio.ImageIO;
 
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL12;
 
 import net.lintford.library.core.EntityGroupManager;
 import net.lintford.library.core.LintfordCore;
@@ -194,8 +195,8 @@ public class TextureManager extends EntityGroupManager {
 		mTextureNotFound = loadTexture(TEXTURE_NOT_FOUND_NAME, new int[] { 0xFFFF00FF, 0xFFFF00FF, 0xFFFF00FF, 0xFFFF00FF }, 2, 2, LintfordCore.CORE_ENTITY_GROUP_ID);
 		mTextureChecker = loadTexture(TEXTURE_CHECKER_BOARD_NAME, "/res/textures/CheckerBoard.png", GL11.GL_NEAREST, LintfordCore.CORE_ENTITY_GROUP_ID);
 		mTextureCheckerIndexed = loadTexture(TEXTURE_CHECKER_BOARD_INDEXED_NAME, "/res/textures/CheckerBoardIndexed.png", GL11.GL_NEAREST, LintfordCore.CORE_ENTITY_GROUP_ID);
-		mTextureWhite = loadTexture(TEXTURE_WHITE_NAME, new int[] { 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF }, 2, 2, GL11.GL_NEAREST, LintfordCore.CORE_ENTITY_GROUP_ID);
-		mTextureBlack = loadTexture(TEXTURE_BLACK_NAME, new int[] { 0xFF000000, 0xFF000000, 0xFF000000, 0xFF000000 }, 2, 2, GL11.GL_NEAREST, LintfordCore.CORE_ENTITY_GROUP_ID);
+		mTextureWhite = loadTexture(TEXTURE_WHITE_NAME, new int[] { 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF }, 2, 2, GL11.GL_NEAREST, GL12.GL_REPEAT, GL12.GL_REPEAT, LintfordCore.CORE_ENTITY_GROUP_ID);
+		mTextureBlack = loadTexture(TEXTURE_BLACK_NAME, new int[] { 0xFF000000, 0xFF000000, 0xFF000000, 0xFF000000 }, 2, 2, GL11.GL_NEAREST, GL12.GL_REPEAT, GL12.GL_REPEAT, LintfordCore.CORE_ENTITY_GROUP_ID);
 
 	}
 
@@ -297,27 +298,29 @@ public class TextureManager extends EntityGroupManager {
 	}
 
 	public Texture loadTexture(String pName, String pTextureLocation, int pFilter, boolean pReload, int pEntityGroupID) {
+		return loadTexture(pName, pTextureLocation, pFilter, GL12.GL_REPEAT, GL12.GL_REPEAT, pEntityGroupID);
+	}
+
+	public Texture loadTexture(String pName, String pTextureLocation, int pFilter, int pWrapModeS, int pWrapModeT, int pEntityGroupID) {
+		return loadTexture(pName, pTextureLocation, pFilter, pWrapModeS, pWrapModeT, false, pEntityGroupID);
+	}
+
+	public Texture loadTexture(String pName, String pTextureLocation, int pFilter, int pWrapModeS, int pWrapModeT, boolean pReload, int pEntityGroupID) {
 		if (pTextureLocation == null || pTextureLocation.length() == 0) {
 			return null;
 
 		}
 
+		final var lTextureGroup = getTextureGroup(pEntityGroupID);
+
 		Texture lTexture = null;
-
-		// Resolve the texture group
-		TextureGroup lTextureGroup = mTextureGroupMap.get(pEntityGroupID);
-		if (lTextureGroup == null) {
-			Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Cannot load texture %s for EntityGroupID %d: EntityGroupID does not exist!", pName, pEntityGroupID));
-			lTextureGroup = new TextureGroup(pEntityGroupID);
-			mTextureGroupMap.put(pEntityGroupID, lTextureGroup);
-
-		} else if (lTextureGroup.mTextureMap.containsKey(pName)) {
+		if (lTextureGroup.mTextureMap.containsKey(pName)) {
 			lTexture = lTextureGroup.mTextureMap.get(pName);
 
 			if (!pReload)
 				return lTexture;
 
-			Debug.debugManager().logger().i(getClass().getSimpleName(), "Unloading pName, so it can be reloaded");
+			Debug.debugManager().logger().i(getClass().getSimpleName(), "Unloading " + pName + ", so it can be reloaded");
 			unloadTexture(lTexture, pEntityGroupID);
 
 		}
@@ -346,18 +349,26 @@ public class TextureManager extends EntityGroupManager {
 		return lTexture;
 	}
 
-	public Texture loadTexture(String pName, int[] pColorData, int pWidth, int pHeight, int pEntityGroupID) {
-		return loadTexture(pName, pColorData, pWidth, pHeight, GL11.GL_NEAREST, pEntityGroupID);
-	}
-
-	public Texture loadTexture(String pName, int[] pColorData, int pWidth, int pHeight, int pFilter, int pEntityGroupID) {
-		Texture lResult = null;
+	private TextureGroup getTextureGroup(int pEntityGroupID) {
 		TextureGroup lTextureGroup = mTextureGroupMap.get(pEntityGroupID);
 		if (lTextureGroup == null) {
-			Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Cannot load texture %s for EntityGroupID %d: EntityGroupID does not exist!", (pName + " (RGB Texture)"), pEntityGroupID));
-			return null;
+			Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("EntityGroupID does not exist! Creating a new one", pEntityGroupID));
+			lTextureGroup = new TextureGroup(pEntityGroupID);
+			mTextureGroupMap.put(pEntityGroupID, lTextureGroup);
 
-		} else if (lTextureGroup.mTextureMap.containsKey(pName)) {
+		}
+		return lTextureGroup;
+	}
+
+	public Texture loadTexture(String pName, int[] pColorData, int pWidth, int pHeight, int pEntityGroupID) {
+		return loadTexture(pName, pColorData, pWidth, pHeight, GL11.GL_NEAREST, GL12.GL_REPEAT, GL12.GL_REPEAT, pEntityGroupID);
+	}
+
+	public Texture loadTexture(String pName, int[] pColorData, int pWidth, int pHeight, int pFilter, int pWrapSMode, int pWrapTMode, int pEntityGroupID) {
+		Texture lResult = null;
+		TextureGroup lTextureGroup = getTextureGroup(pEntityGroupID);
+
+		if (lTextureGroup.mTextureMap.containsKey(pName)) {
 			lResult = lTextureGroup.mTextureMap.get(pName);
 			unloadTexture(lResult, pEntityGroupID);
 
@@ -368,7 +379,7 @@ public class TextureManager extends EntityGroupManager {
 
 			return lResult;
 		} else {
-			Texture lTex = Texture.createTexture(pName, pName, pColorData, pWidth, pHeight, pFilter);
+			Texture lTex = Texture.createTexture(pName, pName, pColorData, pWidth, pHeight, pFilter, pWrapSMode, pWrapTMode);
 			if (lTex != null) {
 				// Can't reload rgb data on-the-fly
 				lTex.reloadable(false);
