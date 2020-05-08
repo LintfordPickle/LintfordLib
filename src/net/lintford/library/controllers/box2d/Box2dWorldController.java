@@ -7,6 +7,7 @@ import net.lintford.library.controllers.core.ControllerManager;
 import net.lintford.library.controllers.core.ResourceController;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.box2d.entity.JBox2dEntityInstance;
+import net.lintford.library.core.maths.MathHelper;
 
 public class Box2dWorldController extends BaseController {
 
@@ -38,9 +39,30 @@ public class Box2dWorldController extends BaseController {
 	protected boolean isPaused;
 	protected int mLogicalStepCounter;
 
+	protected int mVelocityIterations;
+	protected int mPositionIterations;
+
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public int velocityIterations() {
+		return mVelocityIterations;
+	}
+
+	public void velocityIterations(int pNewVelocityIterationCount) {
+		pNewVelocityIterationCount = MathHelper.clampi(pNewVelocityIterationCount, 1, 50);
+		mVelocityIterations = pNewVelocityIterationCount;
+	}
+	
+	public int positionIterations() {
+		return mPositionIterations;
+	}
+
+	public void positionIterations(int pNewPositionIterationCount) {
+		pNewPositionIterationCount = MathHelper.clampi(pNewPositionIterationCount, 1, 50);
+		mPositionIterations = pNewPositionIterationCount;
+	}
 
 	public int logicalStepCounter() {
 		return mLogicalStepCounter;
@@ -62,6 +84,9 @@ public class Box2dWorldController extends BaseController {
 
 	public Box2dWorldController(ControllerManager pControllerManager, World pWorld, int pEntityGroupID) {
 		super(pControllerManager, CONTROLLER_NAME, pEntityGroupID);
+
+		mVelocityIterations = 8;
+		mPositionIterations = 3;
 
 		mWorld = pWorld;
 		isPaused = false;
@@ -106,7 +131,7 @@ public class Box2dWorldController extends BaseController {
 	private void stepWorld(LintfordCore pCore) {
 		mLogicalStepCounter++;
 
-		mWorld.step((1f / 60f) * pCore.gameTime().timeModifier(), 5, 6);
+		mWorld.step((1f / 60f) * pCore.gameTime().timeModifier(), mVelocityIterations, mPositionIterations);
 
 	}
 
