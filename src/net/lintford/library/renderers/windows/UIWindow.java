@@ -295,7 +295,7 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 			return;
 
 		if (mMouseClickTimer >= 0) {
-			mMouseClickTimer -= pCore.appTime().elapseTimeMilli();
+			mMouseClickTimer -= pCore.appTime().elapsedTimeMilli();
 
 		}
 
@@ -316,7 +316,7 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 
 		}
 
-		final var lDeltaTime = (float) pCore.appTime().elapseTimeSeconds();
+		final var lDeltaTime = (float) pCore.appTime().elapsedTimeSeconds();
 		var lScrollSpeedFactor = mYScrollVal;
 
 		mZScrollVelocity += mZScrollAcceleration;

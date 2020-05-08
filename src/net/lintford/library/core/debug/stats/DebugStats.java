@@ -177,7 +177,7 @@ public class DebugStats {
 	}
 
 	public void update(LintfordCore pCore) {
-		mLastUpdateElapsed = pCore.appTime().elapseTimeMilli();
+		mLastUpdateElapsed = pCore.appTime().elapsedTimeMilli();
 
 	}
 
@@ -187,7 +187,7 @@ public class DebugStats {
 
 		deltaFrameCount++;
 
-		timer += pCore.appTime().elapseTimeMilli();
+		timer += pCore.appTime().elapsedTimeMilli();
 		if (timer > 1000) {
 			frameCount = deltaFrameCount;
 			deltaFrameCount = 0;
@@ -197,7 +197,7 @@ public class DebugStats {
 
 		}
 
-		mLastDrawElapsed = pCore.appTime().elapseTimeMilli();
+		mLastDrawElapsed = pCore.appTime().elapsedTimeMilli();
 
 		final String lSpace = " ";
 		final String lDelimiter = "|";

@@ -343,7 +343,7 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 		if (!mActive || !mEnabled || isAnimating)
 			return false;
 
-		final float deltaTime = (float) pCore.appTime().elapseTimeMilli() / 1000f;
+		final float deltaTime = (float) pCore.appTime().elapsedTimeMilli() / 1000f;
 		if (intersectsAA(pCore.HUD().getMouseCameraSpace()) /* && pCore.input().mouse().isMouseOverThisComponent(hashCode()) */) {
 			// Check if tool tips are enabled.
 			if (mToolTipEnabled) {
@@ -391,7 +391,7 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 		if (!mActive)
 			return;
 
-		final var lDeltaTime = (float) pCore.appTime().elapseTimeMilli();
+		final var lDeltaTime = (float) pCore.appTime().elapsedTimeMilli();
 
 		if (mClickTimer >= 0) {
 			mClickTimer -= lDeltaTime;

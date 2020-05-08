@@ -354,7 +354,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		if (!mIsinitialized)
 			return;
 
-		final var lDeltaTime = pCore.appTime().elapseTimeMilli();
+		final var lDeltaTime = pCore.appTime().elapsedTimeMilli();
 
 		updateLayoutSize(pCore);
 

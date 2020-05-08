@@ -143,7 +143,7 @@ public class MenuInputEntry extends MenuEntry implements IBufferedInputCallback 
 			return;
 		}
 
-		final double lDeltaTime = pCore.appTime().elapseTimeMilli();
+		final double lDeltaTime = pCore.appTime().elapsedTimeMilli();
 
 		mCaretFlashTimer += lDeltaTime;
 

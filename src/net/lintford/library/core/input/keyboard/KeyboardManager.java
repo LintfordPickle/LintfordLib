@@ -193,7 +193,7 @@ public class KeyboardManager {
 	// --------------------------------------
 
 	public void update(LintfordCore pCore) {
-		final double lDeltaTime = pCore.appTime().elapseTimeMilli();
+		final double lDeltaTime = pCore.appTime().elapsedTimeMilli();
 
 		mKeyTimer += lDeltaTime;
 	}

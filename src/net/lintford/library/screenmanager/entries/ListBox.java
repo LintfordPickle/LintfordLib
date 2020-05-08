@@ -251,7 +251,7 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 		if (mVerticalFillType == FILLTYPE.FILL_CONTAINER || mVerticalFillType == FILLTYPE.TAKE_WHATS_NEEDED)
 			mContentArea.h(lTotalContentHeight);
 
-		final float lDeltaTime = (float) pCore.appTime().elapseTimeMilli() / 1000f;
+		final float lDeltaTime = (float) pCore.appTime().elapsedTimeMilli() / 1000f;
 		float lScrollSpeedFactor = mYScrollPos;
 
 		mZScrollVelocity += mZScrollAcceleration;

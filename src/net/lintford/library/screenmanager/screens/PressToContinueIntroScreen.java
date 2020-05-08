@@ -119,11 +119,11 @@ public class PressToContinueIntroScreen extends Screen {
 
 			}
 
-			mTransitionTimer += pCore.appTime().elapseTimeMilli();
+			mTransitionTimer += pCore.appTime().elapsedTimeMilli();
 			fadeOutFromWhite(pCore, mTransitionTimer, mTimeToCompleteTransition);
 
 		} else if (mTransitionTimer < mTimeToCompleteTransition) {
-			mTransitionTimer += pCore.appTime().elapseTimeMilli();
+			mTransitionTimer += pCore.appTime().elapsedTimeMilli();
 
 			fadeOutFromWhite(pCore, mTransitionTimer, mTimeToCompleteTransition);
 

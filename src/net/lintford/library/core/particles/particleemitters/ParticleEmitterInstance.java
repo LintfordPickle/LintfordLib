@@ -125,7 +125,7 @@ public class ParticleEmitterInstance extends WorldEntity {
 		worldPositionY += mEmitterDefinition.PositionRelOffsetY;
 
 		// Update this emitter
-		mEmitTimer -= pCore.gameTime().elapseTimeMilli() * mEmitterEmitModifier;
+		mEmitTimer -= pCore.gameTime().elapsedTimeMilli() * mEmitterEmitModifier;
 
 		if (mParticleSystem != null && mEmitTimer < 0) {
 			final int lAmtToSpawn = RandomNumbers.random(mEmitterDefinition.emitAmountMin, mEmitterDefinition.emitAmountMax);

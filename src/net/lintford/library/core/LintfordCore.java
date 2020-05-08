@@ -128,12 +128,12 @@ public abstract class LintfordCore {
 		}
 
 		/** @return The elapsed time since the last frame in seconds. */
-		public double elapseTimeSeconds() {
+		public double elapsedTimeSeconds() {
 			return elapsedTimeMilli / 1000f;
 		}
 
 		/** @return The elapsed time since the last frame in milliseconds. */
-		public double elapseTimeMilli() {
+		public double elapsedTimeMilli() {
 			return elapsedTimeMilli;
 		}
 

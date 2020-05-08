@@ -44,7 +44,7 @@ public class ParticleGravityModifier extends ParticleModifierBase {
 
 	@Override
 	public void updateParticle(LintfordCore pCore, Particle pParticle) {
-		final float lDeltaTime = (float) pCore.appTime().elapseTimeMilli();
+		final float lDeltaTime = (float) pCore.appTime().elapsedTimeMilli();
 		pParticle.dy += gravity * lDeltaTime;
 
 	}

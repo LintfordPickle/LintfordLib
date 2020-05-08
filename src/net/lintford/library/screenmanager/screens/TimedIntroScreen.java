@@ -112,7 +112,7 @@ public class TimedIntroScreen extends Screen {
 		super.update(pCore, pOtherScreenHasFocus, pCoveredByOtherScreen);
 
 		if (!mTimedActionPerformed) {
-			final float deltaTime = (float) pCore.appTime().elapseTimeMilli() / 1000f;
+			final float deltaTime = (float) pCore.appTime().elapsedTimeMilli() / 1000f;
 
 			mShowImageTime += deltaTime;
 

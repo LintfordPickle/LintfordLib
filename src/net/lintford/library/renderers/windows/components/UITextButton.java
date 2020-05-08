@@ -108,7 +108,7 @@ public class UITextButton extends UIWidget {
 	public void update(LintfordCore pCore) {
 		super.update(pCore);
 
-		mClickTimer += pCore.appTime().elapseTimeMilli();
+		mClickTimer += pCore.appTime().elapsedTimeMilli();
 
 	}
 
