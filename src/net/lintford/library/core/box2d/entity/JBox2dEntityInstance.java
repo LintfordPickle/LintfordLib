@@ -567,7 +567,7 @@ public class JBox2dEntityInstance extends PooledBaseData {
 
 	}
 
-	public void setFixtureCategory(int pNewCategory) {
+	public void setAllFixturesCategory(int pNewCategory) {
 		final int lBodyCount = mBodies.size();
 		for (int i = 0; i < lBodyCount; i++) {
 
@@ -583,13 +583,18 @@ public class JBox2dEntityInstance extends PooledBaseData {
 
 				lFixInst.categoryBits = pNewCategory;
 
+				// If the fixture is already loaded, then set it directly
+				if (lFixInst.mFixture != null) {
+					lFixInst.mFixture.m_filter.categoryBits = pNewCategory;
+				}
+
 			}
 
 		}
 
 	}
 
-	public void setFixtureBitMask(int pNewBitmask) {
+	public void setAllFixturesBitMask(int pNewBitmask) {
 		final int lBodyCount = mBodies.size();
 		for (int i = 0; i < lBodyCount; i++) {
 
@@ -604,6 +609,11 @@ public class JBox2dEntityInstance extends PooledBaseData {
 					continue;
 
 				lFixInst.maskBits = pNewBitmask;
+
+				// If the fixture is already loaded, then set it directly
+				if (lFixInst.mFixture != null) {
+					lFixInst.mFixture.m_filter.maskBits = pNewBitmask;
+				}
 
 			}
 
