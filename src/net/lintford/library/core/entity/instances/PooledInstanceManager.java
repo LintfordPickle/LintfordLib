@@ -23,10 +23,6 @@ public abstract class PooledInstanceManager<T extends PooledBaseData> extends In
 	private List<T> mPooledItems;
 
 	// --------------------------------------
-	// Properties
-	// --------------------------------------
-
-	// --------------------------------------
 	// Constrcutor
 	// --------------------------------------
 
@@ -39,7 +35,7 @@ public abstract class PooledInstanceManager<T extends PooledBaseData> extends In
 	// Methods
 	// --------------------------------------
 
-	protected T getFreePooledItem() {
+	public T getFreePooledItem() {
 		T lInst = null;
 
 		if (mPooledItems.size() > 0)
@@ -51,7 +47,7 @@ public abstract class PooledInstanceManager<T extends PooledBaseData> extends In
 
 	}
 
-	protected void returnPooledItem(T pReturnedItem) {
+	public void returnPooledItem(T pReturnedItem) {
 		if (!mPooledItems.contains(pReturnedItem)) {
 			mPooledItems.add(pReturnedItem);
 		}
