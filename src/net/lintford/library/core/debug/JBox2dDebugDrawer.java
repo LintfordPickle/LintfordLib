@@ -28,7 +28,9 @@ public class JBox2dDebugDrawer {
 	// Constants
 	// --------------------------------------
 
+	static final int NUM_POINTS_IN_CIRCLE = 12;
 	static final int MAX_VERTS = 10;
+
 	static List<Vector2f> verts;
 	static Vec2 vertex = new Vec2();
 	static Vec2 tempVec = new Vec2();
@@ -51,9 +53,12 @@ public class JBox2dDebugDrawer {
 			for (int i = 0; i < vSize; i++) {
 				vertex = fixtureShape.getVertex(i);
 
-				Vec2 worldPoint = pBody.getWorldPoint(vertex);
+				final var lWorldPositionVec2 = pBody.getWorldPoint(vertex);
 
-				verts.get(i).set(worldPoint.x * (32f), worldPoint.y * (32f));
+				final float lWorldPositionX = ConstantsPhysics.toPixels(lWorldPositionVec2.x);
+				final float lWorldPositionY = ConstantsPhysics.toPixels(lWorldPositionVec2.y);
+
+				verts.get(i).set(lWorldPositionX, lWorldPositionY);
 
 			}
 
@@ -118,19 +123,19 @@ public class JBox2dDebugDrawer {
 		public static void draw(LintfordCore pCore, Body pBody, Fixture pFixture) {
 			var lFixture = pBody.getFixtureList();
 
-			final float lBodyX = pBody.getPosition().x * 32f;
-			final float lBodyY = pBody.getPosition().y * 32f;
+			final float lBodyX = ConstantsPhysics.toPixels(pBody.getPosition().x);
+			final float lBodyY = ConstantsPhysics.toPixels(pBody.getPosition().y);
 
 			while (lFixture != null) {
 				if (pFixture.getShape() instanceof CircleShape) {
 					final var lCircleShape = (CircleShape) pFixture.getShape();
-					final float lRadius = lCircleShape.getRadius() * 32f;
+					final float lRadius = ConstantsPhysics.toPixels(lCircleShape.getRadius());
 					final float lAngle = pBody.getAngle();
 
 					final float lWorldX = lBodyX + ConstantsPhysics.toPixels(lCircleShape.m_p.x);
 					final float lWorldY = lBodyY + ConstantsPhysics.toPixels(lCircleShape.m_p.y);
 
-					Debug.debugManager().drawers().drawCircle(lWorldX, lWorldY, lRadius, lAngle, 16, GL11.GL_LINE_STRIP);
+					Debug.debugManager().drawers().drawCircle(lWorldX, lWorldY, lRadius, lAngle, NUM_POINTS_IN_CIRCLE, GL11.GL_LINE_STRIP);
 
 					lFixture = lFixture.getNext();
 
@@ -146,8 +151,8 @@ public class JBox2dDebugDrawer {
 		public static void draw(LintfordCore pCore, Body pBody) {
 			Fixture lFixture = pBody.getFixtureList();
 
-			float lBodyX = pBody.getPosition().x * 32f;
-			float lBodyY = pBody.getPosition().y * 32f;
+			final float lBodyX = ConstantsPhysics.toPixels(pBody.getPosition().x);
+			final float lBodyY = ConstantsPhysics.toPixels(pBody.getPosition().y);
 
 			Debug.debugManager().drawers().beginLineRenderer(pCore.gameCamera(), GL11.GL_LINES);
 			Debug.debugManager().drawers().drawLine(lBodyX - 10, lBodyY, lBodyX + 10, lBodyY);
@@ -156,8 +161,10 @@ public class JBox2dDebugDrawer {
 
 			Debug.debugManager().drawers().beginLineRenderer(pCore.gameCamera(), GL11.GL_LINES);
 			float lAngle = pBody.getAngle();
-			float lAngleEndX = (float) Math.cos(lAngle) * 25f;
-			float lAngleEndY = (float) Math.sin(lAngle) * 25f;
+			final float lLengthOfVector = 25.f;
+			float lAngleEndX = (float) Math.cos(lAngle) * lLengthOfVector;
+			float lAngleEndY = (float) Math.sin(lAngle) * lLengthOfVector;
+
 			Debug.debugManager().drawers().drawLine(lBodyX, lBodyY, lBodyX + lAngleEndX, lBodyY + lAngleEndY, 1f, 0f, 1f);
 			Debug.debugManager().drawers().endLineRenderer();
 
