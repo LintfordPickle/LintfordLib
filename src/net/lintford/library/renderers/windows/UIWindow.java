@@ -3,7 +3,7 @@ package net.lintford.library.renderers.windows;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.lintford.library.ConstantsTable;
+import net.lintford.library.ConstantsApp;
 import net.lintford.library.controllers.hud.UIHUDStructureController;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
@@ -393,7 +393,7 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 
 		}
 
-		if (ConstantsTable.getBooleanValueDef("DRAW_UI_BOUNDS", false)) {
+		if (ConstantsApp.getBooleanValueDef("DRAW_UI_BOUNDS", false)) {
 			Debug.debugManager().drawers().drawRectImmediate(pCore.HUD(), mWindowArea);
 
 		}

@@ -13,7 +13,7 @@ import java.nio.file.WatchService;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.List;
 
-import net.lintford.library.ConstantsTable;
+import net.lintford.library.ConstantsApp;
 import net.lintford.library.core.audio.AudioManager;
 import net.lintford.library.core.audio.music.MusicManager;
 import net.lintford.library.core.box2d.PObjectManager;
@@ -111,11 +111,11 @@ public class ResourceManager {
 		mSpriteGraphRepository = new SpriteGraphRepository();
 		mPObjectManager = new PObjectManager();
 
-		ConstantsTable.registerValue(DEBUG_LIVE_RESOURCES_RELOAD_NAME, DEBUG_LIVE_RESOURCES_RELOAD_ENABLED);
+		ConstantsApp.registerValue(DEBUG_LIVE_RESOURCES_RELOAD_NAME, DEBUG_LIVE_RESOURCES_RELOAD_ENABLED);
 
 		// Setup the Texture Manager*
 		// *textureManager is actually setup as a singletonclass in the LWJGLCore. Here we just add a directory watcher to watch for changes.
-		if (ConstantsTable.getBooleanValueDef(DEBUG_LIVE_RESOURCES_RELOAD_NAME, false)) {
+		if (ConstantsApp.getBooleanValueDef(DEBUG_LIVE_RESOURCES_RELOAD_NAME, false)) {
 			try {
 				Path lTexturesDirectory = Paths.get("res//textures//");
 				mTexturePathWatcher = lTexturesDirectory.getFileSystem().newWatchService();
@@ -173,7 +173,7 @@ public class ResourceManager {
 	}
 
 	public void update(LintfordCore pCore) {
-		if (ConstantsTable.getBooleanValueDef("DEBUG_TEXTURE_RELOAD_WATCHER", true)) {
+		if (ConstantsApp.getBooleanValueDef("DEBUG_TEXTURE_RELOAD_WATCHER", true)) {
 			WatchKey lKey = mTexturePathWatcher.poll();
 			if (lKey != null) {
 

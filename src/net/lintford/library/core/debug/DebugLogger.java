@@ -10,7 +10,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import net.lintford.library.ConstantsTable;
+import net.lintford.library.ConstantsApp;
 import net.lintford.library.core.debug.Debug.DebugLogLevel;
 import net.lintford.library.core.messaging.Message;
 import net.lintford.library.core.time.DateHelper;
@@ -96,7 +96,7 @@ public class DebugLogger {
 		try {
 			// If unique log files names are specified, then append the date and time to the log filename.
 			String LOG_FILENAME = null;
-			if (ConstantsTable.getBooleanValueDef("DEBUG_UNIQUE_LOG_FILES", false)) {
+			if (ConstantsApp.getBooleanValueDef("DEBUG_UNIQUE_LOG_FILES", false)) {
 				String lDateTime = DateHelper.getDateAsStringFileFriendly(new Date());
 				LOG_FILENAME = DEBUG_LOG_FILENAME + "_" + lDateTime + LOG_FILE_EXTENSION;
 

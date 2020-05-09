@@ -2,7 +2,7 @@ package net.lintford.library.core.entity;
 
 import org.jbox2d.dynamics.World;
 
-import net.lintford.library.controllers.box2d.Box2dWorldController;
+import net.lintford.library.ConstantsPhysics;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.box2d.entity.JBox2dEntityInstance;
 
@@ -145,8 +145,8 @@ public abstract class JBox2dEntity extends WorldEntity {
 		if (isPhysicsLoaded()) {
 			final var lBox2dBodyInstance = mJBox2dEntityInstance.mainBody();
 			if (lBox2dBodyInstance != null) {
-				worldPositionX = lBox2dBodyInstance.mBody.getPosition().x * Box2dWorldController.UNITS_TO_PIXELS;
-				worldPositionY = lBox2dBodyInstance.mBody.getPosition().y * Box2dWorldController.UNITS_TO_PIXELS;
+				worldPositionX = ConstantsPhysics.toPixels(lBox2dBodyInstance.mBody.getPosition().x);
+				worldPositionY = ConstantsPhysics.toPixels(lBox2dBodyInstance.mBody.getPosition().y);
 				rotationInRadians = lBox2dBodyInstance.mBody.getAngle();
 
 			}

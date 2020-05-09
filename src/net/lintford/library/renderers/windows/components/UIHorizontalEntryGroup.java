@@ -3,7 +3,7 @@ package net.lintford.library.renderers.windows.components;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.lintford.library.ConstantsTable;
+import net.lintford.library.ConstantsApp;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
@@ -111,7 +111,7 @@ public class UIHorizontalEntryGroup extends UIWidget {
 
 	@Override
 	public void draw(LintfordCore pCore, TextureBatch pTextureBatch, Texture pUITexture, FontUnit pTextFont, float pComponentZDepth) {
-		if (ConstantsTable.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
+		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
 			pTextureBatch.begin(pCore.HUD());
 			pTextureBatch.draw(pUITexture, 0, 0, 32, 32, x, y, w, h, pComponentZDepth + .1f, 1, 1, 1, 1);
 			pTextureBatch.end();

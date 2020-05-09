@@ -4,7 +4,7 @@ import java.io.InputStream;
 
 import org.lwjgl.openal.AL10;
 
-import net.lintford.library.ConstantsTable;
+import net.lintford.library.ConstantsApp;
 import net.lintford.library.core.debug.Debug;
 
 // FIXME: Fix memory allocations (https://github.com/LWJGL/lwjgl3-wiki/wiki/1.3.-Memory-FAQ) - do not use BufferUtils (cannot freely free resources)!
@@ -39,7 +39,7 @@ public class WaveAudioData extends AudioData {
 		final var lLengthInSamples = mSize * 8 / (1f * mBitsPerSample);
 		mDurationInSeconds = (float) lLengthInSamples / (float) mFrequency;
 
-		if (ConstantsTable.getBooleanValueDef("DEBUG_AUDIO_ENABLED", false)) {
+		if (ConstantsApp.getBooleanValueDef("DEBUG_AUDIO_ENABLED", false)) {
 			Debug.debugManager().logger().i(getClass().getSimpleName(), " ------ ");
 			Debug.debugManager().logger().i(getClass().getSimpleName(), "AudioEntity Name: " + pName);
 			Debug.debugManager().logger().i(getClass().getSimpleName(), "Size: " + mSize);

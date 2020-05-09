@@ -10,7 +10,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 
-import net.lintford.library.ConstantsTable;
+import net.lintford.library.ConstantsApp;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.entity.definitions.BaseDefinition;
 
@@ -79,7 +79,7 @@ public class SpriteGraphDefinition extends BaseDefinition {
 
 			}
 
-			if (ConstantsTable.getBooleanValueDef("DEBUG_APP", false)) {
+			if (ConstantsApp.getBooleanValueDef("DEBUG_APP", false)) {
 				Debug.debugManager().logger().v(SpriteGraphDefinition.class.getSimpleName(), "SpriteGraphDef " + pFile.getPath() + " loaded (" + lSpriteGraphDefinition.name + ")");
 
 			}

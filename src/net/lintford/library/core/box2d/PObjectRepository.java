@@ -35,11 +35,16 @@ public class PObjectRepository {
 	// Variables
 	// --------------------------------------
 
+	private short mDefinitionUidCounter;
 	private Map<String, PObjectDefinition> mDefinitions;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public short getDefinitionUidCounter() {
+		return mDefinitionUidCounter++;
+	}
 
 	public PObjectDefinition getPObjectDefinitionByName(String pName) {
 		return mDefinitions.get(pName);
@@ -52,6 +57,8 @@ public class PObjectRepository {
 
 	public PObjectRepository() {
 		mDefinitions = new HashMap<>();
+
+		mDefinitionUidCounter = 0;
 
 		loadSystemDefinitions();
 
@@ -112,6 +119,7 @@ public class PObjectRepository {
 		lPObjectDefinition.loadFromFile(pFilepath, new StringBuilder(), null);
 
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "PObject definition from '" + pFilepath + "' loaded as [" + pPObjectName + "]");
+		lPObjectDefinition.definitionUid = getDefinitionUidCounter();
 
 		mDefinitions.put(pPObjectName, lPObjectDefinition);
 

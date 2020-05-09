@@ -6,7 +6,7 @@ import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.World;
 
-import net.lintford.library.controllers.box2d.Box2dWorldController;
+import net.lintford.library.ConstantsPhysics;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.box2d.definition.Box2dBodyDefinition;
 import net.lintford.library.core.entity.BaseInstanceData;
@@ -136,8 +136,7 @@ public class Box2dBodyInstance extends BaseInstanceData {
 			break;
 		}
 
-		// TODO: Need to convert from world to box2d space
-		lBodyDef.position.set(worldPosition.x * Box2dWorldController.PIXELS_TO_UNITS, worldPosition.y * Box2dWorldController.PIXELS_TO_UNITS);
+		lBodyDef.position.set(ConstantsPhysics.toUnits(worldPosition.x), ConstantsPhysics.toUnits(worldPosition.y));
 		lBodyDef.linearVelocity.set(linearVelocity.x, linearVelocity.y);
 
 		lBodyDef.angle = worldAngle;

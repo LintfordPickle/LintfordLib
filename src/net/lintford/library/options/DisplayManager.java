@@ -45,7 +45,7 @@ import org.lwjgl.glfw.GLFWWindowFocusCallback;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 
-import net.lintford.library.ConstantsTable;
+import net.lintford.library.ConstantsApp;
 import net.lintford.library.GameInfo;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.debug.Debug;
@@ -221,7 +221,7 @@ public class DisplayManager extends IniFile {
 
 		GL11.glClearStencil(0); // Specify the index used when stencil buffer is cleared
 
-		if (ConstantsTable.getBooleanValueDef("DENBUG_APP", false)) {
+		if (ConstantsApp.getBooleanValueDef("DENBUG_APP", false)) {
 			GL11.glClearColor(ColorConstants.BUFFER_CLEAR_DEBUG.x, ColorConstants.BUFFER_CLEAR_DEBUG.y, ColorConstants.BUFFER_CLEAR_DEBUG.z, 1.0f);
 		} else {
 			GL11.glClearColor(ColorConstants.BUFFER_CLEAR_RELEASE.x, ColorConstants.BUFFER_CLEAR_RELEASE.y, ColorConstants.BUFFER_CLEAR_RELEASE.z, 1.0f);

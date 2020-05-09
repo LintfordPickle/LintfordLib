@@ -2,7 +2,7 @@ package net.lintford.library.options;
 
 import org.lwjgl.system.MemoryUtil;
 
-import net.lintford.library.ConstantsTable;
+import net.lintford.library.ConstantsApp;
 import net.lintford.library.GameInfo;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.storage.AppStorage;
@@ -54,7 +54,7 @@ public class MasterConfig {
 		mGameInfo = pGameInfo;
 
 		// Make sure that a game save directory exists for this application...
-		AppStorage.createGameDataDirectory(ConstantsTable.getStringValueDef("APPLICATION_NAME", "LintfordLib"));
+		AppStorage.createGameDataDirectory(ConstantsApp.getStringValueDef("APPLICATION_NAME", "LintfordLib"));
 
 		final String lDisplayConfigFilename = AppStorage.getGameDataDirectory() + VIDEO_CONFIG_FILENAME;
 		mDisplayConfig = new DisplayManager(pGameInfo, lDisplayConfigFilename);

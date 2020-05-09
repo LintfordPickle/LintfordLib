@@ -2,7 +2,7 @@ package net.lintford.library.core.storage;
 
 import java.io.File;
 
-import net.lintford.library.ConstantsTable;
+import net.lintford.library.ConstantsApp;
 import net.lintford.library.core.debug.Debug;
 
 public class AppStorage {
@@ -77,7 +77,7 @@ public class AppStorage {
 	 * Returns a platform dependant folder which can be used for saving application data. Will use the APPLICATION_NAME from the ConstantsTable, if one has been defined.
 	 */
 	public static String getGameDataDirectory() {
-		final String lApplicationName = ConstantsTable.getStringValueDef("APPLICATION_NAME", "LintfordLib");
+		final String lApplicationName = ConstantsApp.getStringValueDef("APPLICATION_NAME", "LintfordLib");
 
 		return getGameDataDirectory(lApplicationName);
 

@@ -13,7 +13,7 @@ import static org.lwjgl.opengl.GL11.glClearColor;
 
 import org.lwjgl.opengl.GL11;
 
-import net.lintford.library.ConstantsTable;
+import net.lintford.library.ConstantsApp;
 import net.lintford.library.GameInfo;
 import net.lintford.library.controllers.camera.CameraController;
 import net.lintford.library.controllers.camera.CameraHUDController;
@@ -652,8 +652,8 @@ public abstract class LintfordCore {
 	}
 
 	protected void registerGameInfoConstants(GameInfo pGameInfo) {
-		ConstantsTable.registerValue("APPLICATION_NAME", pGameInfo.applicationName());
-		ConstantsTable.registerValue("WINDOW_TITLE", pGameInfo.windowTitle());
+		ConstantsApp.registerValue("APPLICATION_NAME", pGameInfo.applicationName());
+		ConstantsApp.registerValue("WINDOW_TITLE", pGameInfo.windowTitle());
 
 	}
 

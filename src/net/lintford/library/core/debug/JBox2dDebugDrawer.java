@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jbox2d.collision.shapes.ChainShape;
+import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.collision.shapes.PolygonShape;
-import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.collision.shapes.ShapeType;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
@@ -17,7 +17,7 @@ import org.jbox2d.dynamics.joints.RevoluteJoint;
 import org.jbox2d.particle.ParticleGroup;
 import org.lwjgl.opengl.GL11;
 
-import net.lintford.library.controllers.box2d.Box2dWorldController;
+import net.lintford.library.ConstantsPhysics;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.maths.Vector2f;
@@ -103,8 +103,8 @@ public class JBox2dDebugDrawer {
 			var lCurVert = lChainShape.m_vertices[0];
 			for (int i = 1; i < lVertCount; i++) {
 				final var lNextVert = lChainShape.m_vertices[i];
-				final var sc = Box2dWorldController.UNITS_TO_PIXELS;
-				Debug.debugManager().drawers().drawLine(lCurVert.x * sc, lCurVert.y * sc, lNextVert.x * sc, lNextVert.y * sc);
+				final var lToPixels = ConstantsPhysics.UnitsToPixels();
+				Debug.debugManager().drawers().drawLine(lCurVert.x * lToPixels, lCurVert.y * lToPixels, lNextVert.x * lToPixels, lNextVert.y * lToPixels);
 
 				lCurVert = lNextVert;
 
@@ -116,19 +116,25 @@ public class JBox2dDebugDrawer {
 
 	private static class RenderOfCircleFixture {
 		public static void draw(LintfordCore pCore, Body pBody, Fixture pFixture) {
-			Fixture lFixture = pBody.getFixtureList();
+			var lFixture = pBody.getFixtureList();
 
-			float lBodyX = pBody.getPosition().x * 32f;
-			float lBodyY = pBody.getPosition().y * 32f;
+			final float lBodyX = pBody.getPosition().x * 32f;
+			final float lBodyY = pBody.getPosition().y * 32f;
 
 			while (lFixture != null) {
-				Shape lCircleShape = pFixture.getShape();
-				final float lRadius = lCircleShape.getRadius() * 32f;
-				final float lAngle = pBody.getAngle();
+				if (pFixture.getShape() instanceof CircleShape) {
+					final var lCircleShape = (CircleShape) pFixture.getShape();
+					final float lRadius = lCircleShape.getRadius() * 32f;
+					final float lAngle = pBody.getAngle();
 
-				Debug.debugManager().drawers().drawCircle(lBodyX, lBodyY, lRadius, lAngle, 10, GL11.GL_LINE_STRIP);
+					final float lWorldX = lBodyX + ConstantsPhysics.toPixels(lCircleShape.m_p.x);
+					final float lWorldY = lBodyY + ConstantsPhysics.toPixels(lCircleShape.m_p.y);
 
-				lFixture = lFixture.getNext();
+					Debug.debugManager().drawers().drawCircle(lWorldX, lWorldY, lRadius, lAngle, 16, GL11.GL_LINE_STRIP);
+
+					lFixture = lFixture.getNext();
+
+				}
 
 			}
 
@@ -208,10 +214,10 @@ public class JBox2dDebugDrawer {
 				final var lBodyA = lRevoluteJoint.getBodyA();
 				final var lBodyB = lRevoluteJoint.getBodyB();
 
-				final var lAnchorAX = lBodyA.getPosition().x * Box2dWorldController.UNITS_TO_PIXELS;
-				final var lAnchorAY = lBodyA.getPosition().y * Box2dWorldController.UNITS_TO_PIXELS;
-				final var lAnchorBX = lBodyB.getPosition().x * Box2dWorldController.UNITS_TO_PIXELS;
-				final var lAnchorBY = lBodyB.getPosition().y * Box2dWorldController.UNITS_TO_PIXELS;
+				final var lAnchorAX = ConstantsPhysics.toPixels(lBodyA.getPosition().x);
+				final var lAnchorAY = ConstantsPhysics.toPixels(lBodyA.getPosition().y);
+				final var lAnchorBX = ConstantsPhysics.toPixels(lBodyB.getPosition().x);
+				final var lAnchorBY = ConstantsPhysics.toPixels(lBodyB.getPosition().y);
 
 				GL11.glPointSize(5f);
 				Debug.debugManager().drawers().drawPoint(lAnchorAX, lAnchorAY, 255f / 255f, 117f / 255f, 104f / 255f, 1f);

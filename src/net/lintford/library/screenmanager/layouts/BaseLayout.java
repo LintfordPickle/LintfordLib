@@ -3,7 +3,7 @@ package net.lintford.library.screenmanager.layouts;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.lintford.library.ConstantsTable;
+import net.lintford.library.ConstantsApp;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.Debug;
@@ -372,7 +372,7 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 				mTextureBatch.draw(mUITexture, 448, 64, 32, 32, x + w - TILE_SIZE, y + h - TILE_SIZE, TILE_SIZE, TILE_SIZE, pComponentDepth, mR, mG, mB, mA);
 				mTextureBatch.end();
 
-				if (ConstantsTable.getBooleanValueDef("DEBUG_SHOW_UI_OUTLINES", false)) {
+				if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_OUTLINES", false)) {
 					Debug.debugManager().drawers().drawRectImmediate(pCore.HUD(), this);
 				}
 
@@ -398,7 +398,7 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 
 		}
 
-		if (ConstantsTable.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
+		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
 			mTextureBatch.begin(pCore.HUD());
 			mTextureBatch.draw(mUITexture, 0, 0, 32, 32, x, y, w, h, ZLayers.LAYER_DEBUG, 1f, 0.2f, 1f, 0.4f);
 			mTextureBatch.end();

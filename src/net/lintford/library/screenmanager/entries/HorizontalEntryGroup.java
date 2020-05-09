@@ -3,7 +3,7 @@ package net.lintford.library.screenmanager.entries;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.lintford.library.ConstantsTable;
+import net.lintford.library.ConstantsApp;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.Debug;
@@ -161,7 +161,7 @@ public class HorizontalEntryGroup extends MenuEntry {
 
 	@Override
 	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pParentZDepth) {
-		if (ConstantsTable.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
+		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
 			final float lR = mParentLayout.parentScreen().r();
 			final float lG = mParentLayout.parentScreen().g();
 			final float lB = mParentLayout.parentScreen().b();

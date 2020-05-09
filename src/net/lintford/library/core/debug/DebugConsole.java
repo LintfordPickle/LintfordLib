@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 
 import org.lwjgl.glfw.GLFW;
 
-import net.lintford.library.ConstantsTable;
+import net.lintford.library.ConstantsApp;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.geometry.Rectangle;
@@ -683,7 +683,7 @@ public class DebugConsole extends Rectangle implements IBufferedInputCallback, I
 				String[] lResultArray = lInputString.split("([\\=])");
 
 				if (lResultArray != null && lResultArray.length == 2) {
-					ConstantsTable.registerValue(lResultArray[0], lResultArray[1]);
+					ConstantsApp.registerValue(lResultArray[0], lResultArray[1]);
 
 					Debug.debugManager().logger().u("Settings Changed", lInputString);
 

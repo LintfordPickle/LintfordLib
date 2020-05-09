@@ -1,6 +1,6 @@
 package net.lintford.library.screenmanager.entries.listboxitems;
 
-import net.lintford.library.ConstantsTable;
+import net.lintford.library.ConstantsApp;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.Debug;
@@ -109,7 +109,7 @@ public class LabelValueListBoxItem extends ListBoxItem {
 
 		}
 
-		if (ConstantsTable.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
+		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
 			Debug.debugManager().drawers().drawRectImmediate(pCore.HUD(), this);
 
 		}

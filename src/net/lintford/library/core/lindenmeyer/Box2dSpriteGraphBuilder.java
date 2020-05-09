@@ -5,7 +5,7 @@ import java.util.Deque;
 
 import org.jbox2d.common.Vec2;
 
-import net.lintford.library.controllers.box2d.Box2dWorldController;
+import net.lintford.library.ConstantsPhysics;
 import net.lintford.library.core.box2d.definition.PObjectDefinition;
 import net.lintford.library.core.box2d.entity.Box2dBodyInstance;
 import net.lintford.library.core.box2d.entity.Box2dFixtureInstance;
@@ -189,10 +189,14 @@ public class Box2dSpriteGraphBuilder {
 				float lTop = -lSegmentHeight;
 				float lBottom = 0;
 
-				lBox2dPolygonInstance.vertices = new Vec2[] { new Vec2(+lSegmentWidthT / 2f * Box2dWorldController.PIXELS_TO_UNITS, lTop * Box2dWorldController.PIXELS_TO_UNITS),
-						new Vec2(+lSegmentWidthB / 2f * Box2dWorldController.PIXELS_TO_UNITS, lBottom * Box2dWorldController.PIXELS_TO_UNITS),
-						new Vec2(-lSegmentWidthB / 2f * Box2dWorldController.PIXELS_TO_UNITS, lBottom * Box2dWorldController.PIXELS_TO_UNITS),
-						new Vec2(-lSegmentWidthT / 2f * Box2dWorldController.PIXELS_TO_UNITS, lTop * Box2dWorldController.PIXELS_TO_UNITS) };
+				final var lToUnits = ConstantsPhysics.PixelsToUnits();
+				
+				lBox2dPolygonInstance.vertices = new Vec2[] { 
+						new Vec2(+lSegmentWidthT / 2f * lToUnits, lTop * lToUnits),
+						new Vec2(+lSegmentWidthB / 2f * lToUnits, lBottom * lToUnits),
+						new Vec2(-lSegmentWidthB / 2f * lToUnits, lBottom * lToUnits),
+						new Vec2(-lSegmentWidthT / 2f * lToUnits, lTop * lToUnits) 
+					};
 
 				lFixInst.shape = lBox2dPolygonInstance;
 
@@ -210,7 +214,7 @@ public class Box2dSpriteGraphBuilder {
 					lJoint.bodyAUID = lCursor.parentBodyInstance.uid;
 					lJoint.bodyBUID = lBodyInst.uid;
 
-					lJoint.localAnchorA.set(0, -lSegmentHeight * Box2dWorldController.PIXELS_TO_UNITS);
+					lJoint.localAnchorA.set(0, -lSegmentHeight * lToUnits);
 					lJoint.localAnchorB.set(0, 0); // joints added to base of new component piece
 
 					lJoint.referenceAngle = lCursor.curRotation;// (float) Math.toRadians(-45);
@@ -241,8 +245,8 @@ public class Box2dSpriteGraphBuilder {
 
 				}
 
-				lCursor.x += (float) Math.cos(lCursor.curRotation + Math.toRadians(-90)) * lSegmentHeight * Box2dWorldController.PIXELS_TO_UNITS;
-				lCursor.y += (float) Math.sin(lCursor.curRotation + Math.toRadians(-90)) * lSegmentHeight * Box2dWorldController.PIXELS_TO_UNITS;
+				lCursor.x += (float) Math.cos(lCursor.curRotation + Math.toRadians(-90)) * lSegmentHeight * lToUnits;
+				lCursor.y += (float) Math.sin(lCursor.curRotation + Math.toRadians(-90)) * lSegmentHeight * lToUnits;
 				lCursor.parentBodyInstance = lBodyInst;
 				lCursor.segmentBaseWidth = lSegmentWidthT;
 				lCursor.depth++;
@@ -274,64 +278,66 @@ public class Box2dSpriteGraphBuilder {
 
 	private void createleaf(JBox2dEntityInstance pInst, Box2dBodyInstance pBody, float pX, float pY, float pChance, boolean pLeft) {
 		// BODY
-
-		Box2dBodyInstance lBodyInst = new Box2dBodyInstance();
-		lBodyInst.uid = uidCounter++;
-		lBodyInst.name = "Leaf";
-		lBodyInst.bodyTypeIndex = PObjectDefinition.BODY_TYPE_DYNAMIC;
+		final var lBox2dBodyInstance = new Box2dBodyInstance();
+		lBox2dBodyInstance.uid = uidCounter++;
+		lBox2dBodyInstance.name = "Leaf";
+		lBox2dBodyInstance.bodyTypeIndex = PObjectDefinition.BODY_TYPE_DYNAMIC;
 
 		// FIXTURE
+		final var lBox2dFixtureInstance = new Box2dFixtureInstance(lBox2dBodyInstance);
 
-		Box2dFixtureInstance lFixInst = new Box2dFixtureInstance(lBodyInst);
+		lBox2dFixtureInstance.density = 0.02f;
+		lBox2dFixtureInstance.categoryBits = 0b00110000;
+		lBox2dFixtureInstance.maskBits = 0x00;
+		lBox2dFixtureInstance.spriteName = "TreeLeaf";
 
-		lFixInst.density = 0.02f;
-		lFixInst.categoryBits = 0b00110000;
-		lFixInst.maskBits = 0x00;
-		lFixInst.spriteName = "TreeLeaf";
-
-		Box2dPolygonInstance lBox2dPolygonInstance = new Box2dPolygonInstance();
+		final var lBox2dPolygonInstance = new Box2dPolygonInstance();
 		lBox2dPolygonInstance.vertexCount = 4;
 
 		float lWidth = 64f;
 		float lHeight = 64f;
+		
+		final var lToUnits = ConstantsPhysics.PixelsToUnits();
 
-		lBox2dPolygonInstance.vertices = new Vec2[] { new Vec2(+lWidth / 2f * Box2dWorldController.PIXELS_TO_UNITS, lHeight * Box2dWorldController.PIXELS_TO_UNITS),
-				new Vec2(+lWidth / 2f * Box2dWorldController.PIXELS_TO_UNITS, 0 * Box2dWorldController.PIXELS_TO_UNITS),
-				new Vec2(-lWidth / 2f * Box2dWorldController.PIXELS_TO_UNITS, 0 * Box2dWorldController.PIXELS_TO_UNITS),
-				new Vec2(-lWidth / 2f * Box2dWorldController.PIXELS_TO_UNITS, lHeight * Box2dWorldController.PIXELS_TO_UNITS) };
+		lBox2dPolygonInstance.vertices = new Vec2[] { 
+				new Vec2(+lWidth / 2f * lToUnits, lHeight * lToUnits),
+				new Vec2(+lWidth / 2f * lToUnits, 0 * lToUnits),
+				new Vec2(-lWidth / 2f * lToUnits, 0 * lToUnits),
+				new Vec2(-lWidth / 2f * lToUnits, lHeight * lToUnits) 
+			};
 
-		lFixInst.shape = lBox2dPolygonInstance;
+		lBox2dFixtureInstance.shape = lBox2dPolygonInstance;
 
-		lBodyInst.mFixtures = new Box2dFixtureInstance[1];
-		lBodyInst.mFixtures[0] = lFixInst;
-		lBodyInst.localAngle = 0;
-		lBodyInst.gravityScale = 1;
+		lBox2dBodyInstance.mFixtures = new Box2dFixtureInstance[1];
+		lBox2dBodyInstance.mFixtures[0] = lBox2dFixtureInstance;
+		lBox2dBodyInstance.localAngle = 0;
+		lBox2dBodyInstance.gravityScale = 1;
 
-		lBodyInst.localPosition.x = pX;
-		lBodyInst.localPosition.y = pY;
+		lBox2dBodyInstance.localPosition.x = pX;
+		lBox2dBodyInstance.localPosition.y = pY;
 
 		// JOINT TO CONNECT TO TREE
-		Box2dRevoluteInstance lJoint = new Box2dRevoluteInstance();
-		lJoint.bodyAUID = pBody.uid;
-		lJoint.bodyBUID = lBodyInst.uid;
+		final var lBox2dRevoluteInstance = new Box2dRevoluteInstance();
+		lBox2dRevoluteInstance.bodyAUID = pBody.uid;
+		lBox2dRevoluteInstance.bodyBUID = lBox2dBodyInstance.uid;
 
-		lJoint.localAnchorA.set(0, 0);
-		lJoint.localAnchorB.set(0, 0); // joints added to base of new component piece
+		lBox2dRevoluteInstance.localAnchorA.set(0, 0);
+		lBox2dRevoluteInstance.localAnchorB.set(0, 0); // joints added to base of new component piece
 
-		float lSign = pLeft ? -1f : 1f;
-		lJoint.referenceAngle = (float) Math.toRadians(90) * lSign;
-		lJoint.enableLimit = true;
-		lJoint.lowerAngle = 0;
-		lJoint.upperAngle = 0;
+		final float lSign = pLeft ? -1f : 1f;
+		lBox2dRevoluteInstance.referenceAngle = (float) Math.toRadians(90) * lSign;
+		lBox2dRevoluteInstance.enableLimit = true;
+		lBox2dRevoluteInstance.lowerAngle = 0;
+		lBox2dRevoluteInstance.upperAngle = 0;
 
-		lJoint.enableMotor = false;
-		lJoint.maxMotorTorque = 100;
-		lJoint.motorSpeed = 0.25f;
+		lBox2dRevoluteInstance.enableMotor = false;
+		lBox2dRevoluteInstance.maxMotorTorque = 100;
+		lBox2dRevoluteInstance.motorSpeed = 0.25f;
 
-		lJoint.collidesConnected = false;
+		lBox2dRevoluteInstance.collidesConnected = false;
 
-		pInst.joints().add(lJoint);
-		pInst.bodies().add(lBodyInst);
+		pInst.joints().add(lBox2dRevoluteInstance);
+		pInst.bodies().add(lBox2dBodyInstance);
 
 	}
 

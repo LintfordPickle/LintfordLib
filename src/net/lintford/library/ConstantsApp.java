@@ -5,7 +5,7 @@ import java.util.Map;
 
 import net.lintford.library.core.debug.Debug;
 
-public class ConstantsTable {
+public class ConstantsApp {
 
 	// ---------------------------------------------
 	// Constants
@@ -19,11 +19,11 @@ public class ConstantsTable {
 	// ---------------------------------------------
 
 	public static void setAppConstants(String pAppName) {
-		ConstantsTable.registerValue(APP_NAME, pAppName);
+		ConstantsApp.registerValue(APP_NAME, pAppName);
 	}
 
 	public static void setDebugConstants() {
-		ConstantsTable.registerValue(DEBUG_APP, "true");
+		ConstantsApp.registerValue(DEBUG_APP, "true");
 
 	}
 

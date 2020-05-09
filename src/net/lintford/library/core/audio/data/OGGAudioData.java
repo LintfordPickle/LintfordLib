@@ -19,7 +19,7 @@ import org.lwjgl.openal.AL10;
 import org.lwjgl.stb.STBVorbis;
 import org.lwjgl.stb.STBVorbisInfo;
 
-import net.lintford.library.ConstantsTable;
+import net.lintford.library.ConstantsApp;
 import net.lintford.library.core.debug.Debug;
 
 public class OGGAudioData extends AudioData {
@@ -50,7 +50,7 @@ public class OGGAudioData extends AudioData {
 			final int lLengthInSamples = pcm.capacity();
 			mDurationInSeconds = (float) lLengthInSamples / (float) mFrequency;
 
-			if (ConstantsTable.getBooleanValueDef("DEBUG_AUDIO_ENABLED", false)) {
+			if (ConstantsApp.getBooleanValueDef("DEBUG_AUDIO_ENABLED", false)) {
 				Debug.debugManager().logger().i(getClass().getSimpleName(), " ------ ");
 				Debug.debugManager().logger().i(getClass().getSimpleName(), "AudioEntity Name: " + pName);
 				Debug.debugManager().logger().i(getClass().getSimpleName(), "Size: " + mSize);
