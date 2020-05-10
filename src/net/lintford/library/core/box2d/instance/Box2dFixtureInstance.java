@@ -45,7 +45,7 @@ public class Box2dFixtureInstance extends BaseInstanceData {
 		density = 1f;
 		friction = 0.5f;
 		restitution = 0.5f;
-		
+
 	}
 
 	// --------------------------------------
@@ -89,6 +89,10 @@ public class Box2dFixtureInstance extends BaseInstanceData {
 		lFixtureDef.shape = shape.shape();
 
 		mFixture = pParentBody.createFixture(lFixtureDef);
+		if(name != null && !name.isEmpty()) {
+			mFixture.setUserData(name);
+			
+		}
 
 	}
 
