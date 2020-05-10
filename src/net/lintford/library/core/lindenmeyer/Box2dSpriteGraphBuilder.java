@@ -7,11 +7,11 @@ import org.jbox2d.common.Vec2;
 
 import net.lintford.library.ConstantsPhysics;
 import net.lintford.library.core.box2d.definition.PObjectDefinition;
-import net.lintford.library.core.box2d.entity.Box2dBodyInstance;
-import net.lintford.library.core.box2d.entity.Box2dFixtureInstance;
-import net.lintford.library.core.box2d.entity.Box2dPolygonInstance;
-import net.lintford.library.core.box2d.entity.Box2dRevoluteInstance;
-import net.lintford.library.core.box2d.entity.JBox2dEntityInstance;
+import net.lintford.library.core.box2d.entities.JBox2dEntityInstance;
+import net.lintford.library.core.box2d.instance.Box2dBodyInstance;
+import net.lintford.library.core.box2d.instance.Box2dFixtureInstance;
+import net.lintford.library.core.box2d.instance.Box2dPolygonInstance;
+import net.lintford.library.core.box2d.instance.Box2dRevoluteInstance;
 import net.lintford.library.core.maths.RandomNumbers;
 
 /** Builds SpriteGraphDefintions based on L-Systems. */
@@ -147,7 +147,7 @@ public class Box2dSpriteGraphBuilder {
 		pLSystemString = "F-F[+F+F+F+F+F+F]-F-F-F-F-F-F";
 
 		JBox2dEntityInstance lJBox2dEntityInstance = new JBox2dEntityInstance(0);
-		lJBox2dEntityInstance.spriteSheetName = "TreeSpriteSheet";
+		// lJBox2dEntityInstance.spriteSheetName = "TreeSpriteSheet";
 
 		// Now we need to 'draw' the L-System (i.e. create the sprites and the graph)
 		JBox2dLCursor lCursor = new JBox2dLCursor();
@@ -190,13 +190,9 @@ public class Box2dSpriteGraphBuilder {
 				float lBottom = 0;
 
 				final var lToUnits = ConstantsPhysics.PixelsToUnits();
-				
-				lBox2dPolygonInstance.vertices = new Vec2[] { 
-						new Vec2(+lSegmentWidthT / 2f * lToUnits, lTop * lToUnits),
-						new Vec2(+lSegmentWidthB / 2f * lToUnits, lBottom * lToUnits),
-						new Vec2(-lSegmentWidthB / 2f * lToUnits, lBottom * lToUnits),
-						new Vec2(-lSegmentWidthT / 2f * lToUnits, lTop * lToUnits) 
-					};
+
+				lBox2dPolygonInstance.vertices = new Vec2[] { new Vec2(+lSegmentWidthT / 2f * lToUnits, lTop * lToUnits), new Vec2(+lSegmentWidthB / 2f * lToUnits, lBottom * lToUnits),
+						new Vec2(-lSegmentWidthB / 2f * lToUnits, lBottom * lToUnits), new Vec2(-lSegmentWidthT / 2f * lToUnits, lTop * lToUnits) };
 
 				lFixInst.shape = lBox2dPolygonInstance;
 
@@ -296,15 +292,11 @@ public class Box2dSpriteGraphBuilder {
 
 		float lWidth = 64f;
 		float lHeight = 64f;
-		
+
 		final var lToUnits = ConstantsPhysics.PixelsToUnits();
 
-		lBox2dPolygonInstance.vertices = new Vec2[] { 
-				new Vec2(+lWidth / 2f * lToUnits, lHeight * lToUnits),
-				new Vec2(+lWidth / 2f * lToUnits, 0 * lToUnits),
-				new Vec2(-lWidth / 2f * lToUnits, 0 * lToUnits),
-				new Vec2(-lWidth / 2f * lToUnits, lHeight * lToUnits) 
-			};
+		lBox2dPolygonInstance.vertices = new Vec2[] { new Vec2(+lWidth / 2f * lToUnits, lHeight * lToUnits), new Vec2(+lWidth / 2f * lToUnits, 0 * lToUnits), new Vec2(-lWidth / 2f * lToUnits, 0 * lToUnits),
+				new Vec2(-lWidth / 2f * lToUnits, lHeight * lToUnits) };
 
 		lBox2dFixtureInstance.shape = lBox2dPolygonInstance;
 

@@ -52,10 +52,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import net.lintford.library.core.box2d.entity.Box2dCircleInstance;
-import net.lintford.library.core.box2d.entity.Box2dEdgeInstance;
-import net.lintford.library.core.box2d.entity.Box2dPolygonInstance;
+import net.lintford.library.core.box2d.instance.Box2dCircleInstance;
+import net.lintford.library.core.box2d.instance.Box2dEdgeInstance;
+import net.lintford.library.core.box2d.instance.Box2dPolygonInstance;
 import net.lintford.library.core.entity.definitions.BaseDefinition;
+import net.lintford.library.core.graphics.textures.Texture;
+import net.lintford.library.core.maths.MathHelper;
 
 public class PObjectDefinition extends BaseDefinition {
 
@@ -66,9 +68,6 @@ public class PObjectDefinition extends BaseDefinition {
 	public static final int BODY_TYPE_STATIC = 0;
 	public static final int BODY_TYPE_KINEMATIC = 1;
 	public static final int BODY_TYPE_DYNAMIC = 2;
-
-	private static final float PI = (float) Math.PI;
-	private static final float TWOPI = (float) Math.PI * 2.f;
 
 	// --------------------------------------
 	// Inner Classes
@@ -126,6 +125,10 @@ public class PObjectDefinition extends BaseDefinition {
 		return mJoints;
 	}
 
+	public boolean isLoaded() {
+		return mBodies.size() > 0;
+	}
+
 	// --------------------------------------
 	// Constructors
 	// --------------------------------------
@@ -160,7 +163,63 @@ public class PObjectDefinition extends BaseDefinition {
 	// Core-Methods
 	// --------------------------------------
 
-	public void loadFromFile(String filename, StringBuilder errorMsg, World existingWorld) {
+	public void loadPObjectDefinitionFromFile(String pFilename, StringBuilder errorMsg, World existingWorld) {
+		if (pFilename.charAt(0) == '/') {
+			loadFromResource(pFilename, errorMsg, existingWorld);
+
+		} else {
+			loadFromFile(pFilename, errorMsg, existingWorld);
+
+		}
+
+	}
+
+	private void loadFromResource(String resourceName, StringBuilder errorMsg, World existingWorld) {
+		clear();
+
+		if (null == resourceName)
+			return;
+
+		BufferedReader br = null;
+		String str = new String();
+		try {
+			InputStream fis;
+			fis = Texture.class.getResourceAsStream(resourceName);
+			br = new BufferedReader(new InputStreamReader(fis, Charset.forName("UTF-8")));
+			String line;
+			while ((line = br.readLine()) != null) {
+				str += line;
+			}
+		} catch (FileNotFoundException e) {
+			errorMsg.append("Could not open file for reading (FileNotFound): " + resourceName);
+			return;
+
+		} catch (IOException e) {
+			errorMsg.append("Error reading file: " + resourceName);
+			return;
+
+		} finally {
+			if (br != null) {
+				try {
+					br.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
+		try {
+			JSONObject worldValue = new JSONObject(str);
+			loadFromFileFromJSONObject(worldValue);
+
+		} catch (JSONException e) {
+			errorMsg.append("\nFailed to parse JSON: " + resourceName);
+			e.printStackTrace();
+
+		}
+	}
+
+	private void loadFromFile(String filename, StringBuilder errorMsg, World existingWorld) {
 		clear();
 
 		if (null == filename)
@@ -177,7 +236,7 @@ public class PObjectDefinition extends BaseDefinition {
 				str += line;
 			}
 		} catch (FileNotFoundException e) {
-			errorMsg.append("Could not open file for reading: " + filename);
+			errorMsg.append("Could not open file for reading (FileNotFound): " + filename);
 			return;
 
 		} catch (IOException e) {
@@ -782,37 +841,8 @@ public class PObjectDefinition extends BaseDefinition {
 	private static float invertAngleXAxis(float pAngleInRadians) {
 		if (!INVERT_Y)
 			return pAngleInRadians;
-		float angle = normalizeAngle(pAngleInRadians);
-		if (angle == 0)
-			return 0.f;
-		angle = TWOPI - angle;
 
-		return angle;
-
-	}
-
-	private static float invertAngleYAxis(float pAngleInRadians) {
-		if (!INVERT_Y)
-			return pAngleInRadians;
-		float angle = normalizeAngle(pAngleInRadians);
-
-		if (angle < PI) {
-			angle = PI - angle;
-		} else {
-			angle = TWOPI - angle + PI;
-		}
-
-		return angle;
-
-	}
-
-	private static float normalizeAngle(float angle) {
-		if (angle < 0) {
-			int backRevolutions = (int) (-angle / TWOPI);
-			return angle + TWOPI * (backRevolutions + 1);
-		} else {
-			return angle % TWOPI;
-		}
+		return MathHelper.invertAngleXAxis(pAngleInRadians);
 
 	}
 

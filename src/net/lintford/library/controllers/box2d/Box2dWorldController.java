@@ -6,7 +6,7 @@ import net.lintford.library.controllers.BaseController;
 import net.lintford.library.controllers.core.ControllerManager;
 import net.lintford.library.controllers.core.ResourceController;
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.box2d.entity.JBox2dEntityInstance;
+import net.lintford.library.core.box2d.entities.JBox2dEntityInstance;
 import net.lintford.library.core.maths.MathHelper;
 
 public class Box2dWorldController extends BaseController {

@@ -1,4 +1,4 @@
-package net.lintford.library.core.box2d.entity;
+package net.lintford.library.core.box2d.instance;
 
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.Filter;

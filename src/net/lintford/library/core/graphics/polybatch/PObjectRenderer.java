@@ -7,9 +7,9 @@ import org.jbox2d.dynamics.Fixture;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
-import net.lintford.library.core.box2d.entity.Box2dBodyInstance;
-import net.lintford.library.core.box2d.entity.Box2dFixtureInstance;
-import net.lintford.library.core.box2d.entity.JBox2dEntityInstance;
+import net.lintford.library.core.box2d.entities.JBox2dEntityInstance;
+import net.lintford.library.core.box2d.instance.Box2dBodyInstance;
+import net.lintford.library.core.box2d.instance.Box2dFixtureInstance;
 import net.lintford.library.core.entity.JBox2dEntity;
 import net.lintford.library.core.graphics.sprites.SpriteFrame;
 import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
@@ -76,7 +76,7 @@ public class PObjectRenderer {
 			}
 		}
 
-		String lSpriteSheetDefName = pPObject.box2dEntityInstance().spriteSheetName;
+		String lSpriteSheetDefName = null; // pPObject.box2dEntityInstance().spriteSheetName;
 		if (lSpriteSheetDefName == null)
 			return;
 

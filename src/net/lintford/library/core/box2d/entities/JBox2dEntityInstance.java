@@ -1,15 +1,23 @@
-package net.lintford.library.core.box2d.entity;
+package net.lintford.library.core.box2d.entities;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.jbox2d.common.Vec2;
+import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.Filter;
 import org.jbox2d.dynamics.World;
 import org.jbox2d.dynamics.joints.RevoluteJointDef;
 
 import net.lintford.library.ConstantsPhysics;
+import net.lintford.library.core.box2d.definition.Box2dBodyDefinition;
 import net.lintford.library.core.box2d.definition.PObjectDefinition;
+import net.lintford.library.core.box2d.instance.Box2dBodyInstance;
+import net.lintford.library.core.box2d.instance.Box2dCircleInstance;
+import net.lintford.library.core.box2d.instance.Box2dFixtureInstance;
+import net.lintford.library.core.box2d.instance.Box2dJointInstance;
+import net.lintford.library.core.box2d.instance.Box2dPolygonInstance;
+import net.lintford.library.core.box2d.instance.Box2dRevoluteInstance;
 import net.lintford.library.core.entity.PooledBaseData;
 
 /**
@@ -31,11 +39,10 @@ public class JBox2dEntityInstance extends PooledBaseData {
 
 	protected transient PObjectDefinition mPObjectDefinition;
 
-	private List<Box2dBodyInstance> mBodies = new ArrayList<>();
-	private List<Box2dJointInstance> mJoints = new ArrayList<>();
+	protected List<Box2dBodyInstance> mBodies = new ArrayList<>();
+	protected List<Box2dJointInstance> mJoints = new ArrayList<>();
 
 	protected Object userDataObject;
-	public String spriteSheetName;
 	protected Box2dBodyInstance mMainBody;
 
 	protected boolean mIsFree;
@@ -553,15 +560,67 @@ public class JBox2dEntityInstance extends PooledBaseData {
 
 	}
 
-	public void setBullet(boolean pNewValue) {
+	public void setBodyType(String pBodyName, int pBodyType) {
+		if (pBodyType != 0 && pBodyType != 1 & pBodyType != 2)
+			return;
+
 		final int lBodyCount = mBodies.size();
 		for (int i = 0; i < lBodyCount; i++) {
 
-			Box2dBodyInstance lBodyInst = mBodies.get(i);
-			if (lBodyInst == null || lBodyInst.mBody == null)
+			final var lBox2dBodyInstance = mBodies.get(i);
+			if (lBox2dBodyInstance == null)
 				continue;
 
-			lBodyInst.mBody.setBullet(pNewValue);
+			lBox2dBodyInstance.bodyTypeIndex = pBodyType;
+
+			if (lBox2dBodyInstance.mBody != null) {
+
+				switch (pBodyType) {
+				case Box2dBodyDefinition.BODY_TYPE_INDEX_STATIC:
+					lBox2dBodyInstance.mBody.m_type = BodyType.STATIC;
+					break;
+
+				case Box2dBodyDefinition.BODY_TYPE_INDEX_KINEMATIC:
+					lBox2dBodyInstance.mBody.m_type = BodyType.KINEMATIC;
+					break;
+
+				case Box2dBodyDefinition.BODY_TYPE_INDEX_DYNAMIC:
+					lBox2dBodyInstance.mBody.m_type = BodyType.DYNAMIC;
+					break;
+
+				}
+
+			}
+
+		}
+
+	}
+
+	public void setAllBodiesIsBullet(boolean pNewValue) {
+		final int lBodyCount = mBodies.size();
+		for (int i = 0; i < lBodyCount; i++) {
+
+			final var lBox2dBodyInstance = mBodies.get(i);
+			if (lBox2dBodyInstance == null)
+				continue;
+
+			lBox2dBodyInstance.setIsBullet(pNewValue);
+
+		}
+
+	}
+
+	public void setBodiesIsBullet(String pBodyName, boolean pNewValue) {
+		final int lBodyCount = mBodies.size();
+		for (int i = 0; i < lBodyCount; i++) {
+			final var lBox2dBodyInstance = mBodies.get(i);
+			if (lBox2dBodyInstance == null)
+				continue;
+
+			if (lBox2dBodyInstance.name.contentEquals(pBodyName)) {
+				lBox2dBodyInstance.setIsBullet(pNewValue);
+
+			}
 
 		}
 
@@ -621,46 +680,171 @@ public class JBox2dEntityInstance extends PooledBaseData {
 
 	}
 
-	public void setFixtureIsSensor(boolean pIsSensor) {
+	public void setFixtureDensity(String pFixtureName, float pNewDensity) {
 		final int lBodyCount = mBodies.size();
 		for (int i = 0; i < lBodyCount; i++) {
-
-			Box2dBodyInstance lBodyInst = mBodies.get(i);
-			if (lBodyInst == null)
+			final var lBox2dBodyInstance = mBodies.get(i);
+			if (lBox2dBodyInstance == null)
 				continue;
 
-			final int lFixtureCount = lBodyInst.mFixtures.length;
+			final int lFixtureCount = lBox2dBodyInstance.mFixtures.length;
 			for (int j = 0; j < lFixtureCount; j++) {
-				Box2dFixtureInstance lFixInst = lBodyInst.mFixtures[j];
-				if (lFixInst == null)
+				final var lBox2dFixtureInstance = lBox2dBodyInstance.mFixtures[j];
+				if (lBox2dFixtureInstance == null)
 					continue;
 
-				lFixInst.isSensor = pIsSensor;
+				if (lBox2dFixtureInstance.name.contentEquals(pFixtureName)) {
+					lBox2dFixtureInstance.density = pNewDensity;
+
+					if (lBox2dFixtureInstance.mFixture != null) {
+						lBox2dFixtureInstance.mFixture.m_density = pNewDensity;
+
+					}
+
+				}
 
 			}
 
 		}
+
 	}
 
 	public void setAllFixtureDensity(float pNewDensity) {
 		final int lBodyCount = mBodies.size();
 		for (int i = 0; i < lBodyCount; i++) {
 
-			Box2dBodyInstance lBodyInst = mBodies.get(i);
-			if (lBodyInst == null)
+			final var lBox2dBodyInstance = mBodies.get(i);
+			if (lBox2dBodyInstance == null)
 				continue;
 
-			final int lFixtureCount = lBodyInst.mFixtures.length;
+			final int lFixtureCount = lBox2dBodyInstance.mFixtures.length;
 			for (int j = 0; j < lFixtureCount; j++) {
-				Box2dFixtureInstance lFixInst = lBodyInst.mFixtures[j];
-				if (lFixInst == null)
+				final var lBox2dFixtureInstance = lBox2dBodyInstance.mFixtures[j];
+				if (lBox2dFixtureInstance == null)
 					continue;
 
-				lFixInst.density = pNewDensity;
+				lBox2dFixtureInstance.density = pNewDensity;
+
+				if (lBox2dFixtureInstance.mFixture != null) {
+					lBox2dFixtureInstance.mFixture.m_density = pNewDensity;
+
+				}
 
 			}
 
 		}
+	}
+
+	public void setFixtureFriction(String pFixtureName, float pNewFrictionValue) {
+		final int lBodyCount = mBodies.size();
+		for (int i = 0; i < lBodyCount; i++) {
+			final var lBox2dBodyInstance = mBodies.get(i);
+			if (lBox2dBodyInstance == null)
+				continue;
+
+			final int lFixtureCount = lBox2dBodyInstance.mFixtures.length;
+			for (int j = 0; j < lFixtureCount; j++) {
+				final var lBox2dFixtureInstance = lBox2dBodyInstance.mFixtures[j];
+				if (lBox2dFixtureInstance == null)
+					continue;
+
+				if (lBox2dFixtureInstance.name.contentEquals(pFixtureName)) {
+					lBox2dFixtureInstance.friction = pNewFrictionValue;
+
+					if (lBox2dFixtureInstance.mFixture != null) {
+						lBox2dFixtureInstance.mFixture.m_friction = pNewFrictionValue;
+
+					}
+
+				}
+
+			}
+
+		}
+
+	}
+
+	public void setAllFixtureFriction(float pNewFrictionValue) {
+		final int lBodyCount = mBodies.size();
+		for (int i = 0; i < lBodyCount; i++) {
+			final var lBox2dBodyInstance = mBodies.get(i);
+			if (lBox2dBodyInstance == null)
+				continue;
+
+			final int lFixtureCount = lBox2dBodyInstance.mFixtures.length;
+			for (int j = 0; j < lFixtureCount; j++) {
+				final var lBox2dFixtureInstance = lBox2dBodyInstance.mFixtures[j];
+				if (lBox2dFixtureInstance == null)
+					continue;
+
+				lBox2dFixtureInstance.friction = pNewFrictionValue;
+
+				if (lBox2dFixtureInstance.mFixture != null) {
+					lBox2dFixtureInstance.mFixture.m_friction = pNewFrictionValue;
+
+				}
+
+			}
+
+		}
+
+	}
+
+	public void setFixtureRestitution(String pFixtureName, float pNewRestitution) {
+		final int lBodyCount = mBodies.size();
+		for (int i = 0; i < lBodyCount; i++) {
+
+			final var lBox2dBodyInstance = mBodies.get(i);
+			if (lBox2dBodyInstance == null)
+				continue;
+
+			final int lFixtureCount = lBox2dBodyInstance.mFixtures.length;
+			for (int j = 0; j < lFixtureCount; j++) {
+				final var lBox2dFixtureInstance = lBox2dBodyInstance.mFixtures[j];
+				if (lBox2dFixtureInstance == null)
+					continue;
+
+				if (lBox2dFixtureInstance.name.contentEquals(pFixtureName)) {
+					lBox2dFixtureInstance.restitution = pNewRestitution;
+
+					if (lBox2dFixtureInstance.mFixture != null) {
+						lBox2dFixtureInstance.mFixture.m_restitution = pNewRestitution;
+
+					}
+
+				}
+
+			}
+
+		}
+
+	}
+
+	public void setAllFixtureRestitution(float pNewRestitution) {
+		final int lBodyCount = mBodies.size();
+		for (int i = 0; i < lBodyCount; i++) {
+
+			final var lBox2dBodyInstance = mBodies.get(i);
+			if (lBox2dBodyInstance == null)
+				continue;
+
+			final int lFixtureCount = lBox2dBodyInstance.mFixtures.length;
+			for (int j = 0; j < lFixtureCount; j++) {
+				final var lBox2dFixtureInstance = lBox2dBodyInstance.mFixtures[j];
+				if (lBox2dFixtureInstance == null)
+					continue;
+
+				lBox2dFixtureInstance.restitution = pNewRestitution;
+
+				if (lBox2dFixtureInstance.mFixture != null) {
+					lBox2dFixtureInstance.mFixture.m_restitution = pNewRestitution;
+
+				}
+
+			}
+
+		}
+
 	}
 
 	public void setAllFixtureProperties(float pNewFriction, float pNewRestitution, float pNewDensity) {
@@ -687,65 +871,24 @@ public class JBox2dEntityInstance extends PooledBaseData {
 
 	}
 
-	public void setAllFixtureFriction(float pNewFrictionValue) {
+	/**
+	 * Sets the radius of the named fixture.
+	 */
+	public void setFixtureRadius(String pFixtureName, float pNewRadius) {
 		final int lBodyCount = mBodies.size();
 		for (int i = 0; i < lBodyCount; i++) {
 
-			Box2dBodyInstance lBodyInst = mBodies.get(i);
-			if (lBodyInst == null)
-				continue;
-
-			final int lFixtureCount = lBodyInst.mFixtures.length;
-			for (int j = 0; j < lFixtureCount; j++) {
-				Box2dFixtureInstance lFixInst = lBodyInst.mFixtures[j];
-				if (lFixInst == null)
-					continue;
-
-				lFixInst.friction = pNewFrictionValue;
-
-			}
-
-		}
-
-	}
-
-	public void setAllFixtureRestitution(float pNewRestitution) {
-		final int lBodyCount = mBodies.size();
-		for (int i = 0; i < lBodyCount; i++) {
-
-			Box2dBodyInstance lBox2dBodyInstance = mBodies.get(i);
+			final var lBox2dBodyInstance = mBodies.get(i);
 			if (lBox2dBodyInstance == null)
 				continue;
 
 			final int lFixtureCount = lBox2dBodyInstance.mFixtures.length;
 			for (int j = 0; j < lFixtureCount; j++) {
-				Box2dFixtureInstance lBox2dFixtureInstance = lBox2dBodyInstance.mFixtures[j];
-				if (lBox2dFixtureInstance == null)
-					continue;
+				final var lBox2dFixtureInstance = lBox2dBodyInstance.mFixtures[j];
 
-				lBox2dFixtureInstance.restitution = pNewRestitution;
-
-			}
-
-		}
-	}
-
-	// Attempts to set the radius of a fixture shape
-	public void setFixtureRadius(String pFixtureName, float pNewRadius) {
-		final int lBodyCount = mBodies.size();
-		for (int i = 0; i < lBodyCount; i++) {
-
-			Box2dBodyInstance lBodyInst = mBodies.get(i);
-			if (lBodyInst == null)
-				continue;
-
-			final int lFixtureCount = lBodyInst.mFixtures.length;
-			for (int j = 0; j < lFixtureCount; j++) {
-				Box2dFixtureInstance lFixInst = lBodyInst.mFixtures[j];
-
-				if (lFixInst != null && lFixInst.name.contentEquals(pFixtureName)) {
-					if (lFixInst.shape != null && lFixInst.shape instanceof Box2dCircleInstance) {
-						((Box2dCircleInstance) lFixInst.shape).radius = pNewRadius;
+				if (lBox2dFixtureInstance != null && lBox2dFixtureInstance.name.contentEquals(pFixtureName)) {
+					if (lBox2dFixtureInstance.shape != null && lBox2dFixtureInstance.shape instanceof Box2dCircleInstance) {
+						((Box2dCircleInstance) lBox2dFixtureInstance.shape).radius = pNewRadius;
 
 					}
 
@@ -757,6 +900,40 @@ public class JBox2dEntityInstance extends PooledBaseData {
 
 	}
 
+	/**
+	 * Sets the named fixture as a sensor or not
+	 */
+	public void setFixtureIsSensor(String pFixtureName, boolean pIsSensor) {
+		final int lBodyCount = mBodies.size();
+		for (int i = 0; i < lBodyCount; i++) {
+
+			final var lBox2dBodyInstance = mBodies.get(i);
+			if (lBox2dBodyInstance == null)
+				continue;
+
+			final int lFixtureCount = lBox2dBodyInstance.mFixtures.length;
+			for (int j = 0; j < lFixtureCount; j++) {
+				final var lBox2dFixtureInstance = lBox2dBodyInstance.mFixtures[j];
+
+				if (lBox2dFixtureInstance != null) {
+					lBox2dFixtureInstance.isSensor = pIsSensor;
+
+					if (lBox2dFixtureInstance.mFixture != null) {
+						lBox2dFixtureInstance.mFixture.m_isSensor = pIsSensor;
+
+					}
+
+				}
+
+			}
+
+		}
+
+	}
+
+	/**
+	 * Sets the width and height of the vertices of the named fixture.
+	 */
 	public void setFixtureDimensions(String pFixtureName, float pNewWidth, float pNewHeight) {
 		final int lBodyCount = mBodies.size();
 		for (int i = 0; i < lBodyCount; i++) {

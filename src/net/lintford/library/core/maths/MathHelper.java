@@ -194,4 +194,46 @@ public class MathHelper {
 		return v;
 	}
 
+	/**
+	 * Inverts the given angle (in radians) over the X axis
+	 * */
+	public static float invertAngleXAxis(float pAngleInRadians) {
+		float angle = normalizeAngle(pAngleInRadians);
+		if (angle == 0)
+			return 0.f;
+		angle = TwoPi - angle;
+
+		return angle;
+
+	}
+
+	/**
+	 * Inverts the given angle (in radians) over the Y axis
+	 * */
+	public static float invertAngleYAxis(float pAngleInRadians) {
+		float angle = normalizeAngle(pAngleInRadians);
+
+		if (angle < Pi) {
+			angle = Pi - angle;
+		} else {
+			angle = TwoPi - angle + Pi;
+		}
+
+		return angle;
+
+	}
+
+	/**
+	 * Brings the angle within [0, TwoPi]
+	 * */
+	public static float normalizeAngle(float angle) {
+		if (angle < 0) {
+			int backRevolutions = (int) (-angle / TwoPi);
+			return angle + TwoPi * (backRevolutions + 1);
+		} else {
+			return angle % TwoPi;
+		}
+
+	}
+
 }

@@ -2,7 +2,7 @@ package net.lintford.library.core.box2d.definition;
 
 import org.jbox2d.dynamics.FixtureDef;
 
-import net.lintford.library.core.box2d.entity.ShapeInstance;
+import net.lintford.library.core.box2d.instance.ShapeInstance;
 
 public class Box2dFixtureDefinition {
 

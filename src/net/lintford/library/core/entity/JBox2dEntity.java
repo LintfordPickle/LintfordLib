@@ -4,7 +4,7 @@ import org.jbox2d.dynamics.World;
 
 import net.lintford.library.ConstantsPhysics;
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.box2d.entity.JBox2dEntityInstance;
+import net.lintford.library.core.box2d.entities.JBox2dEntityInstance;
 
 public abstract class JBox2dEntity extends WorldEntity {
 
@@ -90,6 +90,7 @@ public abstract class JBox2dEntity extends WorldEntity {
 		// Initially we should set the new instance (loaded from a reference defintion) to the WorldEntity SRT.
 		if (isPhysicsLoaded()) {
 			transformPObject(worldPositionX, worldPositionY, rotationInRadians);
+
 		}
 
 	}

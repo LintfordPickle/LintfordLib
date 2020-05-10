@@ -2,9 +2,10 @@ package net.lintford.library.core.box2d;
 
 import org.jbox2d.dynamics.World;
 
+import net.lintford.library.ConstantsPhysics;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.box2d.definition.PObjectDefinition;
-import net.lintford.library.core.box2d.entity.JBox2dEntityInstance;
+import net.lintford.library.core.box2d.entities.JBox2dEntityInstance;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.entity.instances.PooledInstanceManager;
 
@@ -15,8 +16,6 @@ public class PObjectManager extends PooledInstanceManager<JBox2dEntityInstance> 
 	// --------------------------------------
 
 	private static final long serialVersionUID = -8661579477274556146L;
-
-	public static final String META_FILE_LOCATION = "/res/pobjects/meta.json";
 
 	// --------------------------------------
 	// Variables
@@ -50,20 +49,44 @@ public class PObjectManager extends PooledInstanceManager<JBox2dEntityInstance> 
 	}
 
 	public void unloadGLContent() {
-//		final int lPObjectCount = mPObjectInstances.size();
-//
-//		for (int i = 0; i < lPObjectCount; i++) {
-//			JBox2dEntityInstance lEntity = mPObjectInstances.get(i);
-//
-//			lEntity.unloadPhysics();
-//
-//		}
 
 	}
 
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
+
+	public JBox2dEntityInstance getNewInstanceBoxInstance(World pWorld, int pBodyType, float pWorldWidth, float pWorldHeight) {
+		final var lPObjectDefinition = mPObjectRepository.getPObjectDefinitionByName(PObjectRepository.POBJECT_BOX_NAME);
+//		if (lPObjectDefinition == null) {
+//			Debug.debugManager().logger().e(getClass().getSimpleName(), "Couldn't find PObjectDefinition named " + PObjectRepository.POBJECT_BOX_NAME);
+//			return null;
+//
+//		}
+
+		final var lJBox2dInstance = getNewInstanceFromPObject(pWorld, lPObjectDefinition);
+		lJBox2dInstance.setFixtureDimensions(PObjectRepository.MAIN_FIXTURE_NAME, ConstantsPhysics.toUnits(pWorldWidth), ConstantsPhysics.toUnits(pWorldHeight));
+		lJBox2dInstance.setBodyType(PObjectRepository.MAIN_BODY_NAME, pBodyType);
+
+		return lJBox2dInstance;
+
+	}
+
+	public JBox2dEntityInstance getNewInstanceCircleInstance(World pWorld, int pBodyType, float pWorldRadius) {
+		final var lPObjectDefinition = mPObjectRepository.getPObjectDefinitionByName(PObjectRepository.POBJECT_CIRCLE_NAME);
+		if (lPObjectDefinition == null) {
+			Debug.debugManager().logger().e(getClass().getSimpleName(), "Couldn't find PObjectDefinition named " + PObjectRepository.POBJECT_CIRCLE_NAME);
+			return null;
+
+		}
+
+		final var lJBox2dInstance = getNewInstanceFromPObject(pWorld, lPObjectDefinition);
+		lJBox2dInstance.setFixtureRadius(PObjectRepository.MAIN_FIXTURE_NAME, ConstantsPhysics.toUnits(pWorldRadius));
+		lJBox2dInstance.setBodyType(PObjectRepository.MAIN_BODY_NAME, pBodyType);
+
+		return lJBox2dInstance;
+
+	}
 
 	public JBox2dEntityInstance getNewInstanceFromPObject(World pWorld, String pPObjectDefinitionName) {
 		final var lPObjectDefinition = mPObjectRepository.getPObjectDefinitionByName(pPObjectDefinitionName);
@@ -95,7 +118,7 @@ public class PObjectManager extends PooledInstanceManager<JBox2dEntityInstance> 
 	}
 
 	@Override
-	protected void returnPooledItem(JBox2dEntityInstance pReturnedItem) {
+	public void returnPooledItem(JBox2dEntityInstance pReturnedItem) {
 		if (pReturnedItem == null)
 			return;
 

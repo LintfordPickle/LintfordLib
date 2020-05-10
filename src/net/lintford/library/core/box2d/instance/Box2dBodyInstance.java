@@ -1,4 +1,4 @@
-package net.lintford.library.core.box2d.entity;
+package net.lintford.library.core.box2d.instance;
 
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
@@ -194,7 +194,32 @@ public class Box2dBodyInstance extends BaseInstanceData {
 	// --------------------------------------
 
 	public void setActive(boolean pNewValue) {
-		mBody.setActive(pNewValue);
+		active = pNewValue;
+
+		if (mBody != null) {
+			mBody.setActive(pNewValue);
+
+		}
+
+	}
+
+	public void setFixedRotation(boolean pIsFixedRotation) {
+		fixedRotation = pIsFixedRotation;
+
+		if (mBody != null) {
+			mBody.setFixedRotation(pIsFixedRotation);
+
+		}
+
+	}
+
+	public void setIsBullet(boolean pIsBullet) {
+		bullet = pIsBullet;
+
+		if (mBody != null) {
+			mBody.setBullet(pIsBullet);
+
+		}
 
 	}
 

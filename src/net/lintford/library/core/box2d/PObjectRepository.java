@@ -1,4 +1,3 @@
-
 package net.lintford.library.core.box2d;
 
 import java.util.HashMap;
@@ -15,7 +14,7 @@ public class PObjectRepository {
 	public class PObjectMetaDataDefinition {
 		public String filepath;
 		public String pObjectName;
-		public boolean reloadable;
+		public boolean reloadPrevious;
 	}
 
 	public class PObjectMetaData {
@@ -27,9 +26,11 @@ public class PObjectRepository {
 	// Constants
 	// --------------------------------------
 
-	// Default pobjects which are always available
-	public static final String POBJECT_DEFINITION_BOX = "POBJECT_BOX";
-	public static final String POBJECT_DEFINITION_CIRCLE = "POBJECT_CIRCLE";
+	public static final String POBJECT_BOX_NAME = "POBJECT_BOX";
+	public static final String POBJECT_CIRCLE_NAME = "POBJECT_CIRCLE";
+
+	public static final String MAIN_BODY_NAME = "MainBody";
+	public static final String MAIN_FIXTURE_NAME = "MainFixture";
 
 	// --------------------------------------
 	// Variables
@@ -91,37 +92,41 @@ public class PObjectRepository {
 
 			final var lPObjectName = lPObjectDataDefinition.pObjectName;
 			final var lFilepath = lPObjectDataDefinition.filepath;
-			final var lReloadable = lPObjectDataDefinition.reloadable;
+			final var lReloadExisting = lPObjectDataDefinition.reloadPrevious;
 
-			loadDefinitionFromFile(lPObjectName, lFilepath, lReloadable);
+			loadDefinitionFromFile(lPObjectName, lFilepath, lReloadExisting);
 
 		}
+
 	}
 
 	private void loadSystemDefinitions() {
 		// These two PObjects are added from embedded resources to ensure there is always an easy way
 		// to create basic box2d shapes
 
-		loadDefinitionFromFile(POBJECT_DEFINITION_BOX, "res/pobjects/box.json", true);
-		loadDefinitionFromFile(POBJECT_DEFINITION_CIRCLE, "res/pobjects/circle.json", true);
+		loadDefinitionFromFile(POBJECT_BOX_NAME, "/res/pobjects/pobjectBox.json", true);
+		loadDefinitionFromFile(POBJECT_CIRCLE_NAME, "/res/pobjects/pobjectCircle.json", true);
 
 	}
 
-	public void loadDefinitionFromFile(String pPObjectName, String pFilepath, boolean pReload) {
+	public void loadDefinitionFromFile(String pPObjectName, String pFilepath, boolean pReloadExisting) {
 		final var lExistingDefinition = mDefinitions.get(pPObjectName);
-		if (!pReload && lExistingDefinition != null) {
+		if (!pReloadExisting && lExistingDefinition != null) {
 			Debug.debugManager().logger().w(getClass().getSimpleName(), "PObject already exists (NO RELOAD). Skipping load");
 			return;
 
 		}
 
 		final var lPObjectDefinition = new PObjectDefinition();
-		lPObjectDefinition.loadFromFile(pFilepath, new StringBuilder(), null);
+		lPObjectDefinition.loadPObjectDefinitionFromFile(pFilepath, new StringBuilder(), null);
 
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "PObject definition from '" + pFilepath + "' loaded as [" + pPObjectName + "]");
 		lPObjectDefinition.definitionUid = getDefinitionUidCounter();
 
-		mDefinitions.put(pPObjectName, lPObjectDefinition);
+		if (lPObjectDefinition.isLoaded()) {
+			mDefinitions.put(pPObjectName, lPObjectDefinition);
+
+		}
 
 	}
 

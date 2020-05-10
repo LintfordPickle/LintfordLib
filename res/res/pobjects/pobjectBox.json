@@ -1,6 +1,6 @@
 
 {
-	"name":"POBJECT_CIRCLE",
+	"name":"POBJECT_BOX",
 	"allowSleep" : true,
 	"autoClearForces" : true,
 	"body" : 
@@ -14,19 +14,22 @@
 			[
 				
 				{
-					"circle" : 
-					{
-						"center" : 0,
-						"radius" : 0.5
-					},
 					"density" : 2,
-					"friction" : 1,
-					"name" : "POBJECT_CIRCLE"
+					"friction" : 0.3,
+					"name" : "MainFixture",
+					"polygon" : 
+					{
+						"vertices" : 
+						{
+							"x" : [ 1.0, 1.0, 0.0, 0.0 ],
+							"y" : [ 0.0, 1.0, 1.0, 0.0 ]
+						}
+					}
 				}
 			],
 			"linearVelocity" : 0,
-			"massData-I" : 0.09817477315664291,
-			"massData-mass" : 0.7853981852531433,
+			"massData-I" : 0.1666666716337204,
+			"massData-mass" : 1,
 			"name" : "MainBody",
 			"position" : 0,
 			"type" : 2
