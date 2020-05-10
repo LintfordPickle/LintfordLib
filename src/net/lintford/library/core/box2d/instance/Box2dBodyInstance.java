@@ -95,7 +95,7 @@ public class Box2dBodyInstance extends BaseInstanceData {
 			break;
 		}
 
-		this.localPosition.set(mBody.getPosition());
+// 		this.localPosition.set(mBody.getPosition());
 		this.linearVelocity.set(mBody.getLinearVelocity());
 
 		this.localAngle = mBody.getAngle();
