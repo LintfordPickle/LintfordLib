@@ -134,11 +134,14 @@ public class Box2dWorldController extends BaseController {
 	// Methods
 	// --------------------------------------
 
-	public void returnBox2dInstance(JBox2dEntityInstance pObjectToRetrun) {
-		if (pObjectToRetrun == null)
+	public void returnBox2dInstance(JBox2dEntityInstance pObjectToReturn) {
+		if (pObjectToReturn == null)
 			return;
 
-		pObjectToRetrun.unloadPhysics();
+		pObjectToReturn.unloadPhysics();
+		final var lResourceManager = mResourceController.resourceManager();
+		
+		lResourceManager.pobjectManager().returnPooledItem(pObjectToReturn);
 
 	}
 
