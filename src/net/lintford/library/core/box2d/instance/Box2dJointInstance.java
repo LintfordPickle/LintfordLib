@@ -55,11 +55,21 @@ public abstract class Box2dJointInstance extends BaseInstanceData {
 	// Method
 	// --------------------------------------
 
-	public abstract void savePhysics();
+	public void savePhysics() {
+		if (joint == null) {
+			return;
 
-	public abstract void loadPhysics(World pWorld);
+		}
 
-	public abstract void unloadPhysics();
+		collidesConnected = joint.getCollideConnected();
+
+	}
+
+	public void loadPhysics(World pWorld) {
+
+	}
+
+	public abstract void unloadPhysics(World pWorld);
 
 	public abstract void update(LintfordCore pCore);
 

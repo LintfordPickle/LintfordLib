@@ -1,6 +1,7 @@
 package net.lintford.library.core.box2d.instance;
 
 import org.jbox2d.dynamics.World;
+import org.jbox2d.dynamics.joints.RevoluteJoint;
 
 import net.lintford.library.core.LintfordCore;
 
@@ -33,6 +34,22 @@ public class Box2dRevoluteInstance extends Box2dJointInstance {
 	// --------------------------------------
 
 	public void savePhysics() {
+		super.savePhysics();
+
+		if (joint == null) {
+			return;
+
+		}
+
+		RevoluteJoint lRevJoint = (RevoluteJoint) joint;
+
+		referenceAngle = lRevJoint.getReferenceAngle();
+		enableLimit = lRevJoint.isLimitEnabled();
+		lowerAngle = lRevJoint.getLowerLimit();
+		upperAngle = lRevJoint.getUpperLimit();
+		enableMotor = lRevJoint.isMotorEnabled();
+		motorSpeed = lRevJoint.getJointSpeed();
+		maxMotorTorque = lRevJoint.getMaxMotorTorque();
 
 	}
 
@@ -40,8 +57,12 @@ public class Box2dRevoluteInstance extends Box2dJointInstance {
 
 	}
 
-	public void unloadPhysics() {
+	public void unloadPhysics(World pWorld) {
+		if (joint == null)
+			return;
 
+		
+		
 	}
 
 	public void update(LintfordCore pCore) {
