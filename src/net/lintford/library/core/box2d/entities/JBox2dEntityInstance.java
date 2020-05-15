@@ -46,6 +46,7 @@ public class JBox2dEntityInstance extends PooledBaseData {
 	protected Box2dBodyInstance mMainBody;
 
 	protected boolean mIsFree;
+	protected transient World mWorld;
 	protected transient boolean mPhysicsLoaded = false;
 
 	// --------------------------------------
@@ -124,6 +125,10 @@ public class JBox2dEntityInstance extends PooledBaseData {
 
 	/** Loads a reference implementation of the PObject definition */
 	public void loadPhysics(World pWorld) {
+		if (pWorld == null)
+			return;
+		mWorld = pWorld;
+
 		final int lBodyCount = mBodies.size();
 		for (int i = 0; i < lBodyCount; i++) {
 			final var lBox2dBodyInstance = mBodies.get(i);
@@ -256,6 +261,11 @@ public class JBox2dEntityInstance extends PooledBaseData {
 	}
 
 	public void unloadPhysics() {
+		if (!isPhysicsLoaded() || mWorld == null) {
+			return;
+
+		}
+
 		final int lBodyCount = mBodies.size();
 		for (int i = 0; i < lBodyCount; i++) {
 			final var lBox2dBodyInstance = mBodies.get(i);
@@ -273,12 +283,13 @@ public class JBox2dEntityInstance extends PooledBaseData {
 			final var lBox2dJointInstance = mJoints.get(i);
 
 			if (lBox2dJointInstance.joint != null) {
-				lBox2dJointInstance.unloadPhysics();
+				lBox2dJointInstance.unloadPhysics(mWorld);
 
 			}
 
 		}
 
+		mWorld = null;
 		mPhysicsLoaded = false;
 
 	}
