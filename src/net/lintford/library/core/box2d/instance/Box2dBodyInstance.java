@@ -168,20 +168,22 @@ public class Box2dBodyInstance extends BaseInstanceData {
 		if (mBody == null)
 			return;
 
-		World lWorld = mBody.getWorld();
-		if (lWorld == null)
+		final var lBox2dWorld = mBody.m_world;
+		if (lBox2dWorld == null)
 			return;
 
 		// Destroy all fixtures on this body
 		final int lFixtureCount = mFixtures.length;
 		for (int i = 0; i < lFixtureCount; i++) {
-			Box2dFixtureInstance lFixtureInstance = mFixtures[i];
-			if (lFixtureInstance.mFixture != null)
-				mBody.destroyFixture(lFixtureInstance.mFixture);
+			final var lBox2dFixtureInstance = mFixtures[i];
+			if (lBox2dFixtureInstance.mFixture != null)
+				mBody.destroyFixture(lBox2dFixtureInstance.mFixture);
+			lBox2dFixtureInstance.mFixture = null;
 
 		}
 
-		lWorld.destroyBody(mBody);
+		lBox2dWorld.destroyBody(mBody);
+		mBody = null;
 
 	}
 
