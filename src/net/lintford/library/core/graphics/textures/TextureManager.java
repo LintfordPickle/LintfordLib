@@ -3,7 +3,6 @@ package net.lintford.library.core.graphics.textures;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -13,15 +12,31 @@ import javax.imageio.ImageIO;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
+import org.lwjgl.opengl.GL14;
+
+import com.google.gson.GsonBuilder;
 
 import net.lintford.library.core.EntityGroupManager;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.debug.stats.DebugStats;
-import net.lintford.library.core.graphics.textures.xml.TextureMetaLoader;
+import net.lintford.library.core.storage.FileUtils;
 
 public class TextureManager extends EntityGroupManager {
+
+	public class TextureDataDefinition {
+		public String textureName;
+		public String filepath;
+		public int filterIndex;
+		public int wrapSIndex;
+		public int wrapTIndex;
+	}
+
+	public class TextureMetaData {
+		public TextureDataDefinition[] textureDefinitions;
+
+	}
 
 	public class TextureGroup {
 
@@ -510,39 +525,95 @@ public class TextureManager extends EntityGroupManager {
 	}
 
 	/** Batch load textures */
-	public void loadTexturesFromMetafile(String pMetaFileLoation, int pEntityGroupID) {
-		final TextureMetaLoader lLoader = new TextureMetaLoader();
-		final ArrayList<TextureMetaItem> lItems = lLoader.loadTextureMetaFile(pMetaFileLoation);
+	public void loadTexturesFromMetafile(String pMetaFileLocation, int pEntityGroupID) {
 
-		Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("Loading Textures from meta-file %s with EntityGroupID %d", pMetaFileLoation, pEntityGroupID));
+		Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("Loading textures from meta-file %s", pMetaFileLocation));
 
-		TextureGroup lTextureGroup = mTextureGroupMap.get(pEntityGroupID);
-		if (lTextureGroup == null) {
-			Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Cannot load texture %s for EntityGroupID %d: EntityGroupID does not exist!", (pMetaFileLoation + " (META)"), pEntityGroupID));
-			return;
+		final var lGson = new GsonBuilder().create();
+
+		String lMetaFileContentsString = null;
+		TextureMetaData lTextureMetaData = null;
+
+		lMetaFileContentsString = FileUtils.loadString(pMetaFileLocation);
+
+		try {
+			lTextureMetaData = lGson.fromJson(lMetaFileContentsString, TextureMetaData.class);
+
+			if (lTextureMetaData == null || lTextureMetaData.textureDefinitions == null || lTextureMetaData.textureDefinitions.length == 0) {
+				Debug.debugManager().logger().e(getClass().getSimpleName(), "There was an error reading the PObject meta file");
+				return;
+
+			}
+
+			final var lTextureGroup = mTextureGroupMap.get(pEntityGroupID);
+			if (lTextureGroup == null) {
+				Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Cannot load texture %s for EntityGroupID %d: EntityGroupID does not exist!", (pMetaFileLocation + " (META)"), pEntityGroupID));
+				return;
+
+			}
+
+			final int lNumberOfTextureDefinitions = lTextureMetaData.textureDefinitions.length;
+			for (int i = 0; i < lNumberOfTextureDefinitions; i++) {
+				final var lTextureDataDefinition = lTextureMetaData.textureDefinitions[i];
+
+				final var lTextureName = lTextureDataDefinition.textureName;
+				final var lFilepath = lTextureDataDefinition.filepath;
+
+				int lGlFilterMode = mapTextureFilterMode(lTextureDataDefinition.filterIndex);
+				int lGlWrapSFilter = mapWrapMode(lTextureDataDefinition.filterIndex);
+				int lGlWrapTFilter = mapWrapMode(lTextureDataDefinition.filterIndex);
+
+				final var lNewTexture = loadTexture(lTextureName, lFilepath, lGlFilterMode, lGlWrapSFilter, lGlWrapTFilter, true, pEntityGroupID);
+
+				if (lNewTexture != null) {
+					// All textures that we manualy load can be reloaded be re-calling this method
+					lNewTexture.reloadable(true);
+
+					lTextureGroup.mTextureMap.put(lTextureName, lNewTexture);
+
+				}
+
+			}
+			
+		} catch (Exception e) {
+			Debug.debugManager().logger().e(getClass().getSimpleName(), "");
 
 		}
 
-		final int lNumTextures = lItems.size();
-		for (int i = 0; i < lNumTextures; i++) {
-			int GL_FILTER_MODE = GL11.GL_NEAREST;
-			switch (lItems.get(i).filterType) {
-			case 1:
-				GL_FILTER_MODE = GL11.GL_NEAREST;
-				break;
-			default:
-				GL_FILTER_MODE = GL11.GL_LINEAR;
-				break;
-			}
+	}
 
-			Texture lNewTexture = loadTexture(lItems.get(i).textureName, lItems.get(i).textureLocation, GL_FILTER_MODE, pEntityGroupID);
+	/**
+	 * Maps the index from the Texture Meta data file to the GL filter mode.
+	 * 
+	 * 1 = GL_NEAREST 
+	 * 2 = GL_LINEAR
+	 */
+	private int mapTextureFilterMode(int pIndex) {
+		switch (pIndex) {
+		case 1:
+			return GL11.GL_NEAREST;
+		default:
+			return GL11.GL_LINEAR;
+		}
+	}
 
-			if (lNewTexture != null) {
-				lNewTexture.reloadable(true);
-
-				lTextureGroup.mTextureMap.put(lItems.get(i).textureName, lNewTexture);
-
-			}
+	/**
+	 * Maps the index from the Texture Meta data file to the GL Wrap mode.
+	 * 
+	 * 1 = GL_CLAMP_TO_EDGE 
+	 * 2 = GL_MIRRORED_REPEAT 
+	 * 3 = GL_REPEAT
+	 */
+	private int mapWrapMode(int pIndex) {
+		switch (pIndex) {
+		case 1:
+			return GL12.GL_CLAMP_TO_EDGE;
+		case 2:
+			return GL14.GL_MIRRORED_REPEAT;
+		case 3:
+			return GL12.GL_REPEAT;
+		default:
+			return GL12.GL_CLAMP_TO_EDGE;
 		}
 	}
 
