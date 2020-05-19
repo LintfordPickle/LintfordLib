@@ -569,12 +569,14 @@ public class TextureManager extends EntityGroupManager {
 					// All textures that we manualy load can be reloaded be re-calling this method
 					lNewTexture.reloadable(true);
 
+					Debug.debugManager().logger().i(getClass().getSimpleName(), "Loaded texture from Meta '" + lTextureName + "' into EntityGroupID: " + pEntityGroupID);
+
 					lTextureGroup.mTextureMap.put(lTextureName, lNewTexture);
 
 				}
 
 			}
-			
+
 		} catch (Exception e) {
 			Debug.debugManager().logger().e(getClass().getSimpleName(), "");
 
