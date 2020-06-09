@@ -601,7 +601,7 @@ public class TextureBatch {
 	}
 
 	public void setGlBlendEnabled(boolean pBlendEnabled) {
-		mBlendEnabled = true;
+		mBlendEnabled = pBlendEnabled;
 
 	}
 
@@ -623,6 +623,7 @@ public class TextureBatch {
 
 		} else {
 			GL11.glDisable(GL11.GL_BLEND);
+			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
 		}
 
