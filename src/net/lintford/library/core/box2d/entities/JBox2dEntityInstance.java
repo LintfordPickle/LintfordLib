@@ -897,7 +897,7 @@ public class JBox2dEntityInstance extends PooledBaseData {
 			for (int j = 0; j < lFixtureCount; j++) {
 				final var lBox2dFixtureInstance = lBox2dBodyInstance.mFixtures[j];
 
-				if (lBox2dFixtureInstance != null && lBox2dFixtureInstance.name.contentEquals(pFixtureName)) {
+				if (lBox2dFixtureInstance != null && lBox2dFixtureInstance.name != null && lBox2dFixtureInstance.name.contentEquals(pFixtureName)) {
 					if (lBox2dFixtureInstance.shape != null && lBox2dFixtureInstance.shape instanceof Box2dCircleInstance) {
 						((Box2dCircleInstance) lBox2dFixtureInstance.shape).radius = pNewRadius;
 
