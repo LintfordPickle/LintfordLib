@@ -29,7 +29,7 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 	// Constants
 	// --------------------------------------
 
-	protected static final float Z_DEPTH = -1.0f;
+	protected static final float Z_DEPTH = -2.0f;
 
 	// The default sie of the title bar for a window
 	protected static final float DEFAULT_TITLEBAR_HEIGHT = 32;

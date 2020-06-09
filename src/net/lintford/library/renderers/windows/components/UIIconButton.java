@@ -180,7 +180,7 @@ public class UIIconButton extends UIWidget {
 
 		final TextureBatch lTextureBatch = mParentWindow.rendererManager().uiTextureBatch();
 		lTextureBatch.begin(pCore.HUD());
-		lTextureBatch.draw(pTexture, 0, 0, 32, 32, x, y, w, h, 0f, lR, lG, lB, 1f);
+		lTextureBatch.draw(pTexture, 0, 0, 32, 32, x, y, w, h, -1.0f, lR, lG, lB, 1f);
 		lTextureBatch.end();
 
 	}
@@ -190,9 +190,9 @@ public class UIIconButton extends UIWidget {
 		float lG = mHoveredOver ? 0.34f : mGreen;
 		float lB = mHoveredOver ? 0.65f : mBlue;
 
-		final TextureBatch lTextureBatch = mParentWindow.rendererManager().uiTextureBatch();
+		final var lTextureBatch = mParentWindow.rendererManager().uiTextureBatch();
 		lTextureBatch.begin(pCore.HUD());
-		lTextureBatch.draw(pTexture, mSourceRectangle, x, y, w, h, 0f, lR, lG, lB, 1f);
+		lTextureBatch.draw(pTexture, mSourceRectangle, x, y, w, h, -1.0f, lR, lG, lB, 1f);
 		lTextureBatch.end();
 
 	}
