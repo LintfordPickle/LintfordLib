@@ -7,6 +7,7 @@ import net.lintford.library.controllers.core.ControllerManager;
 import net.lintford.library.controllers.core.ResourceController;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.box2d.entities.JBox2dEntityInstance;
+import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.maths.MathHelper;
 
 public class Box2dWorldController extends BaseController {
@@ -134,14 +135,21 @@ public class Box2dWorldController extends BaseController {
 	// Methods
 	// --------------------------------------
 
-	public void returnBox2dInstance(JBox2dEntityInstance pObjectToReturn) {
-		if (pObjectToReturn == null)
+	public void returnBox2dInstance(JBox2dEntityInstance pJBox2dEntityInstanceToReturn) {
+		if (pJBox2dEntityInstanceToReturn == null)
 			return;
 
-		pObjectToReturn.unloadPhysics();
+		if (pJBox2dEntityInstanceToReturn.userDataObject() != null) {
+			Debug.debugManager().logger().w(getClass().getSimpleName(),
+					"JBox2dEntityInstance unloaded without first removing the userdata object. typeof (" + pJBox2dEntityInstanceToReturn.userDataObject().toString() + ")");
+			pJBox2dEntityInstanceToReturn.userDataObject(null);
+
+		}
+
+		pJBox2dEntityInstanceToReturn.unloadPhysics();
 		final var lResourceManager = mResourceController.resourceManager();
-		
-		lResourceManager.pobjectManager().returnPooledItem(pObjectToReturn);
+
+		lResourceManager.pobjectManager().returnPooledItem(pJBox2dEntityInstanceToReturn);
 
 	}
 

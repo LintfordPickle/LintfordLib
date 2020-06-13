@@ -9,6 +9,7 @@ import org.jbox2d.dynamics.World;
 import net.lintford.library.ConstantsPhysics;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.box2d.definition.Box2dBodyDefinition;
+import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.entity.BaseInstanceData;
 
 public class Box2dBodyInstance extends BaseInstanceData {
@@ -95,7 +96,6 @@ public class Box2dBodyInstance extends BaseInstanceData {
 			break;
 		}
 
-// 		this.localPosition.set(mBody.getPosition());
 		this.linearVelocity.set(mBody.getLinearVelocity());
 
 		this.localAngle = mBody.getAngle();
@@ -179,6 +179,12 @@ public class Box2dBodyInstance extends BaseInstanceData {
 			if (lBox2dFixtureInstance.mFixture != null)
 				mBody.destroyFixture(lBox2dFixtureInstance.mFixture);
 			lBox2dFixtureInstance.mFixture = null;
+
+		}
+
+		if (mBody.getUserData() != null) {
+			Debug.debugManager().logger().w(getClass().getSimpleName(), "JBox2dBodyInstance was unloaded without removing the userdata. Typeof (" + mBody.getUserData().toString() + ")");
+			mBody.setUserData(null);
 
 		}
 
