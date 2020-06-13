@@ -42,7 +42,8 @@ public class JBox2dEntityInstance extends PooledBaseData {
 	protected List<Box2dBodyInstance> mBodies = new ArrayList<>();
 	protected List<Box2dJointInstance> mJoints = new ArrayList<>();
 
-	protected Object userDataObject;
+	protected int userDataObjectPoolUid = -1;;
+	protected transient Object userDataObject;
 	protected Box2dBodyInstance mMainBody;
 
 	protected boolean mIsFree;
@@ -58,7 +59,20 @@ public class JBox2dEntityInstance extends PooledBaseData {
 
 	}
 
-	public void userDataObject(Object pNewUserDataObject) {
+	public void userDataObject(PooledBaseData pNewUserDataObject) {
+		if (pNewUserDataObject == null) {
+			userDataObjectPoolUid = -1;
+			userDataObject = null;
+			if (mPhysicsLoaded) {
+				mainBody().mBody.setUserData(null);
+
+			}
+
+			return;
+
+		}
+
+		userDataObjectPoolUid = pNewUserDataObject.poolUid;
 		userDataObject = pNewUserDataObject;
 
 		if (mPhysicsLoaded) {
@@ -272,22 +286,24 @@ public class JBox2dEntityInstance extends PooledBaseData {
 
 			if (lBox2dBodyInstance.mBody != null) {
 				lBox2dBodyInstance.mBody.setUserData(null);
-				lBox2dBodyInstance.unloadPhysics();
 
 			}
 
+			lBox2dBodyInstance.unloadPhysics();
+
 		}
+
+		mBodies.clear();
 
 		final int lJointCount = mJoints.size();
 		for (int i = 0; i < lJointCount; i++) {
 			final var lBox2dJointInstance = mJoints.get(i);
 
-			if (lBox2dJointInstance.joint != null) {
-				lBox2dJointInstance.unloadPhysics(mWorld);
-
-			}
+			lBox2dJointInstance.unloadPhysics(mWorld);
 
 		}
+
+		mJoints.clear();
 
 		mWorld = null;
 		mPhysicsLoaded = false;
@@ -315,6 +331,7 @@ public class JBox2dEntityInstance extends PooledBaseData {
 		final int lBodyCount = pDefinition.bodies().size();
 		for (int i = 0; i < lBodyCount; i++) {
 			final var lBox2dBodyDefinition = pDefinition.bodies().get(i);
+			//TODO: The Box2dBodyInstances and Box2dJointInstances should be taken from a pool (and returned there after use).
 			final var lBox2dBodyInstance = new Box2dBodyInstance();
 
 			lBox2dBodyInstance.name = lBox2dBodyDefinition.name;
