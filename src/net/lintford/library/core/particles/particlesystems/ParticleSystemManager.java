@@ -5,6 +5,7 @@ import java.util.List;
 import com.google.gson.GsonBuilder;
 
 import net.lintford.library.core.debug.Debug;
+import net.lintford.library.core.entity.EntityLocationProvider;
 import net.lintford.library.core.entity.definitions.DefinitionManager;
 import net.lintford.library.core.entity.instances.InstanceManager;
 import net.lintford.library.core.particles.ParticleFrameworkData;
@@ -31,6 +32,13 @@ public class ParticleSystemManager extends InstanceManager<ParticleSystemInstanc
 		// --------------------------------------
 		// Methods
 		// --------------------------------------
+
+		@Override
+		public void loadDefinitionsFromFolderWatcher(EntityLocationProvider pEntityLocationProvider) {
+			final var lGson = new GsonBuilder().create();
+			loadDefinitionsFromFolderWatcherItems(pEntityLocationProvider, lGson, ParticleSystemDefinition.class);
+
+		}
 
 		@Override
 		public void loadDefinitionsFromMetaFile(String pMetaFilepath) {

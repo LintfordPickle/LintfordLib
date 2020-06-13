@@ -9,6 +9,7 @@ import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import com.google.gson.Gson;
@@ -16,6 +17,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 
 import net.lintford.library.core.debug.Debug;
+import net.lintford.library.core.entity.EntityLocationProvider;
 
 public abstract class DefinitionManager<T extends BaseDefinition> {
 
@@ -67,6 +69,8 @@ public abstract class DefinitionManager<T extends BaseDefinition> {
 	// Core-Methods
 	// --------------------------------------
 
+	public abstract void loadDefinitionsFromFolderWatcher(EntityLocationProvider pEntityLocationProvider);
+
 	public abstract void loadDefinitionsFromMetaFile(String pMetaFilepath);
 
 	public abstract void loadDefinitionFromFile(String pFilepath);
@@ -101,6 +105,15 @@ public abstract class DefinitionManager<T extends BaseDefinition> {
 
 	}
 
+	protected void loadDefinitionsFromFolderWatcherItems(EntityLocationProvider pEntityLocationProvider, final Gson pGson, Class<T> pClassType) {
+		final var lFolderFileIterator = pEntityLocationProvider.getFileLocationIterator();
+		for (Iterator<String> lFileIterator = lFolderFileIterator; lFileIterator.hasNext();) {
+			loadDefinitionFromFile(lFileIterator.next(), pGson, pClassType);
+
+		}
+
+	}
+
 	protected void loadDefinitionsFromMetaFileItems(String pMetaFilepath, final Gson pGson, Class<T> pClassType) {
 		final var lMetaItems = loadMetaFileItemsFromFilepath(pMetaFilepath);
 		if (lMetaItems == null || lMetaItems.itemCount == 0) {
@@ -120,7 +133,7 @@ public abstract class DefinitionManager<T extends BaseDefinition> {
 		final var lDefinitionFile = new File(pFilepath);
 
 		if (!lDefinitionFile.exists()) {
-			Debug.debugManager().logger().w(getClass().getSimpleName(), String.format("Error loading %s from file: %s", pClassType.getSimpleName(), pFilepath));
+			Debug.debugManager().logger().w(getClass().getSimpleName(), String.format("Error loading %s from file: %s (file not found)", pClassType.getSimpleName(), pFilepath));
 			return;
 		}
 

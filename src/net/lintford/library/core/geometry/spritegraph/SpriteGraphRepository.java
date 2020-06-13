@@ -13,6 +13,7 @@ import com.google.gson.GsonBuilder;
 import net.lintford.library.core.EntityGroupManager;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.Debug;
+import net.lintford.library.core.entity.EntityLocationProvider;
 import net.lintford.library.core.entity.definitions.DefinitionManager;
 import net.lintford.library.core.geometry.spritegraph.definition.SpriteGraphDefinition;
 
@@ -43,6 +44,12 @@ public class SpriteGraphRepository extends EntityGroupManager {
 		// Methods
 		// --------------------------------------
 
+		@Override
+		public void loadDefinitionsFromFolderWatcher(EntityLocationProvider pEntityLocationProvider) {
+			// TODO Auto-generated method stub
+			
+		}
+		
 		@Override
 		public void loadDefinitionsFromMetaFile(String pMetaFileLocation) {
 			if (pMetaFileLocation == null || pMetaFileLocation.length() == 0) {

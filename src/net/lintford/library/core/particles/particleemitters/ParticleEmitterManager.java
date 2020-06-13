@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.google.gson.GsonBuilder;
 
+import net.lintford.library.core.entity.EntityLocationProvider;
 import net.lintford.library.core.entity.definitions.DefinitionManager;
 import net.lintford.library.core.entity.instances.PooledInstanceManager;
 import net.lintford.library.core.particles.ParticleFrameworkData;
@@ -74,9 +75,15 @@ public class ParticleEmitterManager extends PooledInstanceManager<ParticleEmitte
 		}
 
 		@Override
+		public void loadDefinitionsFromFolderWatcher(EntityLocationProvider pEntityLocationProvider) {
+			final var lGson = new GsonBuilder().create();
+			loadDefinitionsFromFolderWatcherItems(pEntityLocationProvider, lGson, ParticleEmitterDefinition.class);
+
+		}
+
+		@Override
 		public void loadDefinitionsFromMetaFile(String pMetaFilepath) {
 			final var lGson = new GsonBuilder().create();
-
 			loadDefinitionsFromMetaFileItems(pMetaFilepath, lGson, ParticleEmitterDefinition.class);
 
 		}
