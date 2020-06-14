@@ -25,7 +25,8 @@ public class Box2dRevoluteInstance extends Box2dJointInstance {
 	// Constructor
 	// --------------------------------------
 
-	public Box2dRevoluteInstance() {
+	public Box2dRevoluteInstance(int pPoolUid) {
+		super(pPoolUid);
 
 	}
 
@@ -61,12 +62,16 @@ public class Box2dRevoluteInstance extends Box2dJointInstance {
 		if (joint == null)
 			return;
 
-		
-		
 	}
 
 	public void update(LintfordCore pCore) {
 
+	}
+
+	@Override
+	public boolean isAssigned() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

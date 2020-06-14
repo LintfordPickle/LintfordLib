@@ -7,9 +7,9 @@ import org.jbox2d.dynamics.FixtureDef;
 import org.jbox2d.dynamics.World;
 
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.entity.BaseInstanceData;
+import net.lintford.library.core.entity.PooledBaseData;
 
-public class Box2dFixtureInstance extends BaseInstanceData {
+public class Box2dFixtureInstance extends PooledBaseData {
 
 	private static final long serialVersionUID = -584704908299820185L;
 
@@ -37,10 +37,20 @@ public class Box2dFixtureInstance extends BaseInstanceData {
 	public String spriteName;
 
 	// --------------------------------------
+	// Properties
+	// --------------------------------------
+
+	@Override
+	public boolean isAssigned() {
+		return true;
+	}
+
+	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
-	public Box2dFixtureInstance(Box2dBodyInstance pBodyEntity) {
+	public Box2dFixtureInstance(int pPoolUid) {
+		super(pPoolUid);
 
 		density = 1f;
 		friction = 0.5f;
@@ -89,9 +99,9 @@ public class Box2dFixtureInstance extends BaseInstanceData {
 		lFixtureDef.shape = shape.shape();
 
 		mFixture = pParentBody.createFixture(lFixtureDef);
-		if(name != null && !name.isEmpty()) {
+		if (name != null && !name.isEmpty()) {
 			mFixture.setUserData(name);
-			
+
 		}
 
 	}

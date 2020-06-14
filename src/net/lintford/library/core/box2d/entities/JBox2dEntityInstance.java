@@ -15,6 +15,7 @@ import net.lintford.library.core.box2d.definition.PObjectDefinition;
 import net.lintford.library.core.box2d.instance.Box2dBodyInstance;
 import net.lintford.library.core.box2d.instance.Box2dCircleInstance;
 import net.lintford.library.core.box2d.instance.Box2dFixtureInstance;
+import net.lintford.library.core.box2d.instance.Box2dInstanceManager;
 import net.lintford.library.core.box2d.instance.Box2dJointInstance;
 import net.lintford.library.core.box2d.instance.Box2dPolygonInstance;
 import net.lintford.library.core.box2d.instance.Box2dRevoluteInstance;
@@ -204,47 +205,6 @@ public class JBox2dEntityInstance extends PooledBaseData {
 
 	}
 
-	public Box2dBodyInstance getBodyByName(String pBodyName) {
-		final int lBodyCount = mBodies.size();
-		for (int i = 0; i < lBodyCount; i++) {
-			final var lBody = mBodies.get(i);
-			if (lBody == null || lBody.name == null) {
-				continue;
-			}
-
-			if (lBody.name.contentEquals(pBodyName))
-				return mBodies.get(i);
-
-		}
-
-		return null;
-
-	}
-
-	public Box2dBodyInstance getBodyByIndex(int pArrayIndex) {
-		if (pArrayIndex >= mBodies.size()) {
-			return null;
-		}
-
-		return mBodies.get(pArrayIndex);
-	}
-
-	public Box2dJointInstance getJointByName(String pJointName) {
-		final int lNumJoints = mJoints.size();
-		for (int i = 0; i < lNumJoints; i++) {
-			if (mJoints.get(i).name.contentEquals(pJointName))
-				return mJoints.get(i);
-
-		}
-
-		return null;
-
-	}
-
-	public Box2dJointInstance getJointByIndex(int pArrayIndex) {
-		return mJoints.get(pArrayIndex);
-	}
-
 	public void savePhysics() {
 		final int lBodyCount = mBodies.size();
 		for (int i = 0; i < lBodyCount; i++) {
@@ -293,8 +253,6 @@ public class JBox2dEntityInstance extends PooledBaseData {
 
 		}
 
-		mBodies.clear();
-
 		final int lJointCount = mJoints.size();
 		for (int i = 0; i < lJointCount; i++) {
 			final var lBox2dJointInstance = mJoints.get(i);
@@ -303,17 +261,56 @@ public class JBox2dEntityInstance extends PooledBaseData {
 
 		}
 
-		mJoints.clear();
-
 		mWorld = null;
 		mPhysicsLoaded = false;
 
 	}
 
+	public Box2dBodyInstance getBodyByName(String pBodyName) {
+		final int lBodyCount = mBodies.size();
+		for (int i = 0; i < lBodyCount; i++) {
+			final var lBody = mBodies.get(i);
+			if (lBody == null || lBody.name == null) {
+				continue;
+			}
+
+			if (lBody.name.contentEquals(pBodyName))
+				return mBodies.get(i);
+
+		}
+
+		return null;
+
+	}
+
+	public Box2dBodyInstance getBodyByIndex(int pArrayIndex) {
+		if (pArrayIndex >= mBodies.size()) {
+			return null;
+		}
+
+		return mBodies.get(pArrayIndex);
+	}
+
+	public Box2dJointInstance getJointByName(String pJointName) {
+		final int lNumJoints = mJoints.size();
+		for (int i = 0; i < lNumJoints; i++) {
+			if (mJoints.get(i).name.contentEquals(pJointName))
+				return mJoints.get(i);
+
+		}
+
+		return null;
+
+	}
+
+	public Box2dJointInstance getJointByIndex(int pArrayIndex) {
+		return mJoints.get(pArrayIndex);
+	}
+
 	/**
 	 * This loads the LintfordCore representation of a JBox2d PObject into memory, it doesn't create the object in the Box2d world though (this is done later in Box2dBodyInstance.loadPhysics())
 	 */
-	public void loadPObjectFromDefinition(PObjectDefinition pDefinition) {
+	public void loadPObjectFromDefinition(Box2dInstanceManager pBox2dInstanceManager, PObjectDefinition pDefinition) {
 		mPObjectDefinition = pDefinition;
 
 		if (mBodies == null)
@@ -322,17 +319,16 @@ public class JBox2dEntityInstance extends PooledBaseData {
 			mJoints = new ArrayList<>();
 
 		// Go through and create instances for each body in the definition
-		loadBodiesFromDefinition(mPObjectDefinition);
-		loadJointsFromDefinition(mPObjectDefinition);
+		loadBodiesFromDefinition(pBox2dInstanceManager, mPObjectDefinition);
+		loadJointsFromDefinition(pBox2dInstanceManager, mPObjectDefinition);
 
 	}
 
-	private void loadBodiesFromDefinition(PObjectDefinition pDefinition) {
+	private void loadBodiesFromDefinition(Box2dInstanceManager pBox2dInstanceManager, PObjectDefinition pDefinition) {
 		final int lBodyCount = pDefinition.bodies().size();
 		for (int i = 0; i < lBodyCount; i++) {
 			final var lBox2dBodyDefinition = pDefinition.bodies().get(i);
-			//TODO: The Box2dBodyInstances and Box2dJointInstances should be taken from a pool (and returned there after use).
-			final var lBox2dBodyInstance = new Box2dBodyInstance();
+			final var lBox2dBodyInstance = pBox2dInstanceManager.box2dBodyInstanceRepository().getFreePooledItem();
 
 			lBox2dBodyInstance.name = lBox2dBodyDefinition.name;
 			lBox2dBodyInstance.bodyTypeIndex = lBox2dBodyDefinition.bodyTypeIndex;
@@ -369,7 +365,7 @@ public class JBox2dEntityInstance extends PooledBaseData {
 
 			for (int j = 0; j < lFixtureCount; j++) {
 				final var lBox2dFixtureDefinition = lBox2dBodyDefinition.fixtureList.get(j);
-				final var lBox2dFixtureInstance = new Box2dFixtureInstance(lBox2dBodyInstance);
+				final var lBox2dFixtureInstance = pBox2dInstanceManager.box2dFixtureInstanceRepository().getFreePooledItem();
 
 				lBox2dBodyInstance.mFixtures[j] = lBox2dFixtureInstance;
 
@@ -394,13 +390,13 @@ public class JBox2dEntityInstance extends PooledBaseData {
 		}
 	}
 
-	private void loadJointsFromDefinition(PObjectDefinition pDefinition) {
+	private void loadJointsFromDefinition(Box2dInstanceManager pBox2dInstanceManager, PObjectDefinition pDefinition) {
 		final int lJointCount = pDefinition.joints().size();
 		for (int i = 0; i < lJointCount; i++) {
 			final var lBox2dJointDefinition = pDefinition.joints().get(i);
 
 			if (lBox2dJointDefinition.jointDef instanceof RevoluteJointDef) {
-				final var lBox2dJointInstance = new Box2dRevoluteInstance();
+				final var lBox2dJointInstance = pBox2dInstanceManager.box2dJointInstanceRepository().getFreePooledItem();
 				final var lJointDefinition = (RevoluteJointDef) lBox2dJointDefinition.jointDef;
 
 				lBox2dJointInstance.name = lBox2dJointDefinition.name;
@@ -428,6 +424,40 @@ public class JBox2dEntityInstance extends PooledBaseData {
 			}
 
 		}
+	}
+
+	// TODO:
+	/* returns all Box2dBodyInstance and Box2dJointInstances back into the pool */
+	public void returnPooledInstances(Box2dInstanceManager pBox2dInstanceManager) {
+		final int lBodyCount = mBodies.size();
+		for (int i = 0; i < lBodyCount; i++) {
+			final var lBox2dBodyInstance = mBodies.get(i);
+
+			if (lBox2dBodyInstance.mBody != null) {
+				lBox2dBodyInstance.mBody.setUserData(null);
+
+			}
+
+			lBox2dBodyInstance.unloadPhysics();
+			pBox2dInstanceManager.box2dBodyInstanceRepository().returnPooledItem(lBox2dBodyInstance);
+
+		}
+
+		mBodies.clear();
+
+		final int lJointCount = mJoints.size();
+		for (int i = 0; i < lJointCount; i++) {
+			final var lBox2dJointInstance = mJoints.get(i);
+
+			lBox2dJointInstance.unloadPhysics(mWorld);
+
+			if (lBox2dJointInstance instanceof Box2dRevoluteInstance) {
+				pBox2dInstanceManager.box2dJointInstanceRepository().returnPooledItem((Box2dRevoluteInstance) lBox2dJointInstance);
+			}
+
+		}
+
+		mJoints.clear();
 	}
 
 	// --------------------------------------

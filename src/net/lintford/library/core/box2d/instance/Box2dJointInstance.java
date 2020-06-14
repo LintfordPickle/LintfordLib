@@ -6,8 +6,9 @@ import org.jbox2d.dynamics.joints.Joint;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.entity.BaseInstanceData;
+import net.lintford.library.core.entity.PooledBaseData;
 
-public abstract class Box2dJointInstance extends BaseInstanceData {
+public abstract class Box2dJointInstance extends PooledBaseData {
 
 	// --------------------------------------
 	// Constants
@@ -34,7 +35,8 @@ public abstract class Box2dJointInstance extends BaseInstanceData {
 	// Constructor
 	// --------------------------------------
 
-	public Box2dJointInstance() {
+	public Box2dJointInstance(int pPoolUid) {
+		super(pPoolUid);
 
 	}
 

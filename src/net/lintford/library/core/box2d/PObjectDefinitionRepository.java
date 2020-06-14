@@ -9,7 +9,7 @@ import net.lintford.library.core.box2d.definition.PObjectDefinition;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.storage.FileUtils;
 
-public class PObjectRepository {
+public class PObjectDefinitionRepository {
 
 	public class PObjectMetaDataDefinition {
 		public String filepath;
@@ -56,7 +56,7 @@ public class PObjectRepository {
 	// Constructor
 	// --------------------------------------
 
-	public PObjectRepository() {
+	public PObjectDefinitionRepository() {
 		mDefinitions = new HashMap<>();
 
 		mDefinitionUidCounter = 0;

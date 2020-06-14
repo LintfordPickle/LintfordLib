@@ -10,6 +10,7 @@ import net.lintford.library.core.box2d.definition.PObjectDefinition;
 import net.lintford.library.core.box2d.entities.JBox2dEntityInstance;
 import net.lintford.library.core.box2d.instance.Box2dBodyInstance;
 import net.lintford.library.core.box2d.instance.Box2dFixtureInstance;
+import net.lintford.library.core.box2d.instance.Box2dInstanceManager;
 import net.lintford.library.core.box2d.instance.Box2dPolygonInstance;
 import net.lintford.library.core.box2d.instance.Box2dRevoluteInstance;
 import net.lintford.library.core.maths.RandomNumbers;
@@ -140,7 +141,7 @@ public class Box2dSpriteGraphBuilder {
 	// Methods
 	// --------------------------------------
 
-	public JBox2dEntityInstance createSpriteGraphFromLSystem(String pLSystemString, LSystemDefinition pLSystemDef) {
+	public JBox2dEntityInstance createSpriteGraphFromLSystem(Box2dInstanceManager pInstanceManager, String pLSystemString, LSystemDefinition pLSystemDef) {
 		// Create a new instance of a SpriteGraph
 		// pLSystemDef.onGraphCreation(lNewInst);
 
@@ -165,19 +166,29 @@ public class Box2dSpriteGraphBuilder {
 
 				// BODY
 
-				Box2dBodyInstance lBodyInst = new Box2dBodyInstance();
-				// lBodyInst.name = "Body";
-				lBodyInst.uid = uidCounter++;
-				lBodyInst.bodyTypeIndex = i == 0 ? PObjectDefinition.BODY_TYPE_STATIC : PObjectDefinition.BODY_TYPE_DYNAMIC;
+				Box2dBodyInstance lBox2dBodyInstance = null;
+				if (pInstanceManager != null) {
+					lBox2dBodyInstance = pInstanceManager.box2dBodyInstanceRepository().getFreePooledItem();
+				} else {
+					lBox2dBodyInstance = new Box2dBodyInstance(0);
+				}
+
+				lBox2dBodyInstance.uid = uidCounter++;
+				lBox2dBodyInstance.bodyTypeIndex = i == 0 ? PObjectDefinition.BODY_TYPE_STATIC : PObjectDefinition.BODY_TYPE_DYNAMIC;
 
 				// FIXTURE
 
-				Box2dFixtureInstance lFixInst = new Box2dFixtureInstance(lBodyInst);
+				Box2dFixtureInstance lBox2dFixtureInstance = null;
+				if (pInstanceManager != null) {
+					lBox2dFixtureInstance = pInstanceManager.box2dFixtureInstanceRepository().getFreePooledItem();
+				} else {
+					lBox2dFixtureInstance = new Box2dFixtureInstance(0);
+				}
 
-				lFixInst.density = 1f - (float) (1f / i);
-				lFixInst.categoryBits = 0b00110000;
-				lFixInst.maskBits = 0x00;
-				lFixInst.spriteName = "TreeTrunk";
+				lBox2dFixtureInstance.density = 1f - (float) (1f / i);
+				lBox2dFixtureInstance.categoryBits = 0b00110000;
+				lBox2dFixtureInstance.maskBits = 0x00;
+				lBox2dFixtureInstance.spriteName = "TreeTrunk";
 
 				Box2dPolygonInstance lBox2dPolygonInstance = new Box2dPolygonInstance();
 				lBox2dPolygonInstance.vertexCount = 4;
@@ -194,39 +205,45 @@ public class Box2dSpriteGraphBuilder {
 				lBox2dPolygonInstance.vertices = new Vec2[] { new Vec2(+lSegmentWidthT / 2f * lToUnits, lTop * lToUnits), new Vec2(+lSegmentWidthB / 2f * lToUnits, lBottom * lToUnits),
 						new Vec2(-lSegmentWidthB / 2f * lToUnits, lBottom * lToUnits), new Vec2(-lSegmentWidthT / 2f * lToUnits, lTop * lToUnits) };
 
-				lFixInst.shape = lBox2dPolygonInstance;
+				lBox2dFixtureInstance.shape = lBox2dPolygonInstance;
 
-				lBodyInst.mFixtures = new Box2dFixtureInstance[1];
-				lBodyInst.mFixtures[0] = lFixInst;
-				lBodyInst.localAngle = 0;// i == 0 ? 0 : lCursor.curRotation;
-				lBodyInst.gravityScale = 1;
+				lBox2dBodyInstance.mFixtures = new Box2dFixtureInstance[1];
+				lBox2dBodyInstance.mFixtures[0] = lBox2dFixtureInstance;
+				lBox2dBodyInstance.localAngle = 0;// i == 0 ? 0 : lCursor.curRotation;
+				lBox2dBodyInstance.gravityScale = 1;
 
-				lBodyInst.localPosition.x = lCursor.x;
-				lBodyInst.localPosition.y = lCursor.y;
+				lBox2dBodyInstance.localPosition.x = lCursor.x;
+				lBox2dBodyInstance.localPosition.y = lCursor.y;
 
 				// JOINT TO CONNECT TO TREE
 				if (i > 0) {
-					Box2dRevoluteInstance lJoint = new Box2dRevoluteInstance();
-					lJoint.bodyAUID = lCursor.parentBodyInstance.uid;
-					lJoint.bodyBUID = lBodyInst.uid;
+					Box2dRevoluteInstance lBox2dRevoluteInstance = null;
+					if (pInstanceManager != null) {
+						lBox2dRevoluteInstance = pInstanceManager.box2dJointInstanceRepository().getFreePooledItem();
+					} else {
+						lBox2dRevoluteInstance = new Box2dRevoluteInstance(0);
+					}
 
-					lJoint.localAnchorA.set(0, -lSegmentHeight * lToUnits);
-					lJoint.localAnchorB.set(0, 0); // joints added to base of new component piece
+					lBox2dRevoluteInstance.bodyAUID = lCursor.parentBodyInstance.uid;
+					lBox2dRevoluteInstance.bodyBUID = lBox2dBodyInstance.uid;
 
-					lJoint.referenceAngle = lCursor.curRotation;// (float) Math.toRadians(-45);
-					lJoint.enableLimit = true;
-					lJoint.lowerAngle = 0;
-					lJoint.upperAngle = 0;
+					lBox2dRevoluteInstance.localAnchorA.set(0, -lSegmentHeight * lToUnits);
+					lBox2dRevoluteInstance.localAnchorB.set(0, 0); // joints added to base of new component piece
 
-					lJoint.enableMotor = false;
-					lJoint.maxMotorTorque = 100;
-					lJoint.motorSpeed = 0.25f;
+					lBox2dRevoluteInstance.referenceAngle = lCursor.curRotation;// (float) Math.toRadians(-45);
+					lBox2dRevoluteInstance.enableLimit = true;
+					lBox2dRevoluteInstance.lowerAngle = 0;
+					lBox2dRevoluteInstance.upperAngle = 0;
 
-					lJoint.collidesConnected = false;
-					lJBox2dEntityInstance.joints().add(lJoint);
+					lBox2dRevoluteInstance.enableMotor = false;
+					lBox2dRevoluteInstance.maxMotorTorque = 100;
+					lBox2dRevoluteInstance.motorSpeed = 0.25f;
+
+					lBox2dRevoluteInstance.collidesConnected = false;
+					lJBox2dEntityInstance.joints().add(lBox2dRevoluteInstance);
 				}
 
-				lJBox2dEntityInstance.bodies().add(lBodyInst);
+				lJBox2dEntityInstance.bodies().add(lBox2dBodyInstance);
 
 				// Check for creation of leaf
 				float lChanceOfLeafs = lCursor.depth * 10f;
@@ -234,16 +251,16 @@ public class Box2dSpriteGraphBuilder {
 					int lSides = RandomNumbers.random(0, 3);
 
 					if (lSides == 0 || lSides == 2)
-						createleaf(lJBox2dEntityInstance, lBodyInst, lBodyInst.localPosition.x, lBodyInst.localPosition.y, lChanceOfLeafs, true); // left of nook
+						createleaf(pInstanceManager, lJBox2dEntityInstance, lBox2dBodyInstance, lBox2dBodyInstance.localPosition.x, lBox2dBodyInstance.localPosition.y, lChanceOfLeafs, true); // left of nook
 
 					if (lSides == 1 || lSides == 2)
-						createleaf(lJBox2dEntityInstance, lBodyInst, lBodyInst.localPosition.x, lBodyInst.localPosition.y, lChanceOfLeafs, false); // right of nook
+						createleaf(pInstanceManager, lJBox2dEntityInstance, lBox2dBodyInstance, lBox2dBodyInstance.localPosition.x, lBox2dBodyInstance.localPosition.y, lChanceOfLeafs, false); // right of nook
 
 				}
 
 				lCursor.x += (float) Math.cos(lCursor.curRotation + Math.toRadians(-90)) * lSegmentHeight * lToUnits;
 				lCursor.y += (float) Math.sin(lCursor.curRotation + Math.toRadians(-90)) * lSegmentHeight * lToUnits;
-				lCursor.parentBodyInstance = lBodyInst;
+				lCursor.parentBodyInstance = lBox2dBodyInstance;
 				lCursor.segmentBaseWidth = lSegmentWidthT;
 				lCursor.depth++;
 				break;
@@ -272,15 +289,26 @@ public class Box2dSpriteGraphBuilder {
 
 	}
 
-	private void createleaf(JBox2dEntityInstance pInst, Box2dBodyInstance pBody, float pX, float pY, float pChance, boolean pLeft) {
+	private void createleaf(Box2dInstanceManager pInstanceManager, JBox2dEntityInstance pInst, Box2dBodyInstance pBody, float pX, float pY, float pChance, boolean pLeft) {
 		// BODY
-		final var lBox2dBodyInstance = new Box2dBodyInstance();
+		Box2dBodyInstance lBox2dBodyInstance = null;
+		if (pInstanceManager != null) {
+			lBox2dBodyInstance = pInstanceManager.box2dBodyInstanceRepository().getFreePooledItem();
+		} else {
+			lBox2dBodyInstance = new Box2dBodyInstance(0);
+		}
+
 		lBox2dBodyInstance.uid = uidCounter++;
 		lBox2dBodyInstance.name = "Leaf";
 		lBox2dBodyInstance.bodyTypeIndex = PObjectDefinition.BODY_TYPE_DYNAMIC;
 
 		// FIXTURE
-		final var lBox2dFixtureInstance = new Box2dFixtureInstance(lBox2dBodyInstance);
+		Box2dFixtureInstance lBox2dFixtureInstance = null;
+		if (pInstanceManager != null) {
+			lBox2dFixtureInstance = pInstanceManager.box2dFixtureInstanceRepository().getFreePooledItem();
+		} else {
+			lBox2dFixtureInstance = new Box2dFixtureInstance(0);
+		}
 
 		lBox2dFixtureInstance.density = 0.02f;
 		lBox2dFixtureInstance.categoryBits = 0b00110000;
@@ -309,7 +337,13 @@ public class Box2dSpriteGraphBuilder {
 		lBox2dBodyInstance.localPosition.y = pY;
 
 		// JOINT TO CONNECT TO TREE
-		final var lBox2dRevoluteInstance = new Box2dRevoluteInstance();
+		Box2dRevoluteInstance lBox2dRevoluteInstance = null;
+		if (pInstanceManager != null) {
+			lBox2dRevoluteInstance = pInstanceManager.box2dJointInstanceRepository().getFreePooledItem();
+		} else {
+			lBox2dRevoluteInstance = new Box2dRevoluteInstance(0);
+		}
+
 		lBox2dRevoluteInstance.bodyAUID = pBody.uid;
 		lBox2dRevoluteInstance.bodyBUID = lBox2dBodyInstance.uid;
 

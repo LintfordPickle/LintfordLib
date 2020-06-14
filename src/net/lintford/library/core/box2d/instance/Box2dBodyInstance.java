@@ -10,9 +10,9 @@ import net.lintford.library.ConstantsPhysics;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.box2d.definition.Box2dBodyDefinition;
 import net.lintford.library.core.debug.Debug;
-import net.lintford.library.core.entity.BaseInstanceData;
+import net.lintford.library.core.entity.PooledBaseData;
 
-public class Box2dBodyInstance extends BaseInstanceData {
+public class Box2dBodyInstance extends PooledBaseData {
 
 	// --------------------------------------
 	// Constants
@@ -56,7 +56,9 @@ public class Box2dBodyInstance extends BaseInstanceData {
 	// Constructor
 	// --------------------------------------
 
-	public Box2dBodyInstance() {
+	public Box2dBodyInstance(int pPoolUid) {
+		super(pPoolUid);
+
 		localPosition = new Vec2();
 		worldPosition = new Vec2();
 		linearVelocity = new Vec2();
@@ -229,6 +231,12 @@ public class Box2dBodyInstance extends BaseInstanceData {
 
 		}
 
+	}
+
+	@Override
+	public boolean isAssigned() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }
