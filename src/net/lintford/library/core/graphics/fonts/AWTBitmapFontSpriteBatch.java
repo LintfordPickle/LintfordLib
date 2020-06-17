@@ -133,7 +133,7 @@ public class AWTBitmapFontSpriteBatch extends TextureBatch {
 			}
 
 			// don't render the first space after a word wrap
-			if (ch == ' ' && mTrimText && lPosX == pX) {
+			if (ch == ' ' && mTrimText && lPosX == pX && lPosY > pY) {
 				// Glyph lCharGlyph = mBitmapFont.glyphs().get(ch);
 				// lPosX += lCharGlyph.width * pScale;
 				continue;
