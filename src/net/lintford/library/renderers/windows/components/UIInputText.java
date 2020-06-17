@@ -37,10 +37,19 @@ public class UIInputText extends UIWidget implements IBufferedInputCallback {
 	private transient int mStringLength;
 	private transient StringBuilder mInputField;
 	private transient boolean mResetOnDefaultClick;
+	private boolean mMouseClickBreaksInputTextFocus;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public boolean mouseClickBreaksInputTextFocus() {
+		return mMouseClickBreaksInputTextFocus;
+	}
+
+	public void mouseClickBreaksInputTextFocus(boolean pNewValue) {
+		mMouseClickBreaksInputTextFocus = pNewValue;
+	}
 
 	public String emptyString() {
 		return mEmptyString;
@@ -134,6 +143,15 @@ public class UIInputText extends UIWidget implements IBufferedInputCallback {
 
 		}
 
+		// Stop the keyboard capture if the player clicks somewhere else within the game
+		if (mHasFocus && mMouseClickBreaksInputTextFocus && (pCore.input().mouse().isMouseLeftButtonDownTimed(this) || pCore.input().mouse().isMouseRightButtonDownTimed(this))) {
+			pCore.input().keyboard().stopCapture();
+
+			mHasFocus = false;
+			mShowCaret = false;
+
+		}
+
 		return false;
 
 	}
@@ -143,8 +161,9 @@ public class UIInputText extends UIWidget implements IBufferedInputCallback {
 
 		mCaretFlashTimer += pCore.appTime().elapsedTimeMilli();
 
+		final int lHorizontalPadding = 5;
 		final int lCancelRectSize = 24;
-		mCancelRectangle.set(x + w - lCancelRectSize, y + h / 2 - lCancelRectSize / 2, lCancelRectSize, lCancelRectSize);
+		mCancelRectangle.set(x + w - lCancelRectSize - lHorizontalPadding, y + h / 2 - lCancelRectSize / 2, lCancelRectSize, lCancelRectSize);
 
 		if (mHasFocus) {
 			// flash and update the location of the caret
@@ -199,7 +218,7 @@ public class UIInputText extends UIWidget implements IBufferedInputCallback {
 		pTextFont.draw(lText, x + 10, y + h / 2 - lTextHeight / 2, pComponentZDepth, 1f, 1f, 1f, lAlpha, 1f, -1);
 
 		if (mShowCaret && mHasFocus) {
-			pTextFont.draw("|", x + 10 + lInputTextWidth + SPACE_BETWEEN_TEXT * 3, y + h / 2 - lTextHeight / 2, pComponentZDepth, 1f);
+			pTextFont.draw("|", x + 7 + lInputTextWidth + SPACE_BETWEEN_TEXT * 3, y + h / 2 - lTextHeight / 2, pComponentZDepth, 1f);
 
 		}
 
