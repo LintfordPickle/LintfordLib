@@ -15,6 +15,7 @@ import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
 import net.lintford.library.core.input.IBufferedInputCallback;
+import net.lintford.library.core.input.IProcessMouseInput;
 import net.lintford.library.core.maths.Vector3f;
 import net.lintford.library.core.messaging.Message;
 import net.lintford.library.renderers.ZLayers;
@@ -23,7 +24,7 @@ import net.lintford.library.renderers.windows.components.ScrollBar;
 import net.lintford.library.renderers.windows.components.ScrollBarContentRectangle;
 import net.lintford.library.renderers.windows.components.UIInputText;
 
-public class DebugConsole extends Rectangle implements IBufferedInputCallback, IScrollBarArea {
+public class DebugConsole extends Rectangle implements IBufferedInputCallback, IScrollBarArea, IProcessMouseInput {
 
 	// --------------------------------------
 	// Constants
@@ -106,6 +107,7 @@ public class DebugConsole extends Rectangle implements IBufferedInputCallback, I
 	private transient int mUpperBound;
 	private transient int mConsoleLineHeight;
 
+	private float mMouseTimer;
 	private transient boolean mAutoScroll;
 	private boolean mIsLoaded;
 
@@ -181,9 +183,11 @@ public class DebugConsole extends Rectangle implements IBufferedInputCallback, I
 
 			mTAGFilterText = new UIInputText(null);
 			mTAGFilterText.emptyString("Filter");
+			mTAGFilterText.mouseClickBreaksInputTextFocus(true);
 
 			mMessageFilterText = new UIInputText(null);
 			mMessageFilterText.emptyString("Filter");
+			mMessageFilterText.mouseClickBreaksInputTextFocus(true);
 
 			mProcessedMessages = new ArrayList<>();
 			mUpdateMessageList = new ArrayList<>();
@@ -325,6 +329,7 @@ public class DebugConsole extends Rectangle implements IBufferedInputCallback, I
 			else if (mFocusTimer > FOCUS_TIMER && pCore.input().mouse().mouseWindowCoords().y < openHeight() && pCore.input().mouse().tryAcquireMouseLeftClick(hashCode())
 					&& pCore.input().mouse().isMouseOverThisComponent(hashCode())) {
 				mHasFocus = !mHasFocus;
+				resetCoolDownTimer();
 				pCore.input().keyboard().stopCapture();
 				mFocusTimer = 0;
 
@@ -333,6 +338,19 @@ public class DebugConsole extends Rectangle implements IBufferedInputCallback, I
 				}
 
 			}
+
+		} else {
+			if (mHasFocus) {
+				pCore.input().keyboard().stopCapture();
+				mHasFocus = false;
+			}
+		}
+
+		if (mHasFocus && (pCore.input().mouse().isMouseLeftButtonDownTimed(this) || pCore.input().mouse().isMouseRightButtonDownTimed(this))) {
+			pCore.input().keyboard().stopCapture();
+
+			mHasFocus = false;
+			mShowCaret = false;
 
 		}
 
@@ -366,6 +384,11 @@ public class DebugConsole extends Rectangle implements IBufferedInputCallback, I
 			return;
 
 		final float lDeltaTime = (float) pCore.appTime().elapsedTimeMilli() / 1000f;
+
+		if (mMouseTimer >= 0) {
+			mMouseTimer -= pCore.appTime().elapsedTimeMilli();
+
+		}
 
 		// Update timers
 		mFocusTimer += lDeltaTime * 1000f;
@@ -816,6 +839,17 @@ public class DebugConsole extends Rectangle implements IBufferedInputCallback, I
 	@Override
 	public void captureStopped() {
 		mHasFocus = false;
+
+	}
+
+	@Override
+	public boolean isCoolDownElapsed() {
+		return mMouseTimer < 0;
+	}
+
+	@Override
+	public void resetCoolDownTimer() {
+		mMouseTimer = 200;
 
 	}
 
