@@ -108,7 +108,7 @@ public class FontManager {
 				mFontPointSize = MAX_POINTSIZE;
 
 			mAntiAlias = pAntiAlias;
-			mDrawShadow = true;
+			mDrawShadow = false;
 			mTrimText = true;
 
 		}
@@ -123,7 +123,6 @@ public class FontManager {
 
 			mFontSpriteBatch = new AWTBitmapFontSpriteBatch(mBitmapFont);
 			mFontSpriteBatch.loadGLContent(pResourceManager);
-
 			mIsLoaded = true;
 
 		}
