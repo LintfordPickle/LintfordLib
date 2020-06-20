@@ -65,13 +65,13 @@ public class UIBar {
 			return;
 
 		float lBarWidth = MathHelper.scaleToRange(mCurValue, 0, 100, 0, w);
-		lBarWidth = MathHelper.clamp(lBarWidth, 0, w);
+		lBarWidth = MathHelper.clamp(lBarWidth - 2, 0, w);
 
 		final var lCoreTexture = pCore.resources().textureManager().textureCore();
 
 		// Draw outer bar
 		pTextureBatch.draw(lCoreTexture, 0, 0, 32, 32, x, y, w, h, -0.1f, 0f, 0f, 0f, 1.0f);
-		pTextureBatch.draw(lCoreTexture, 0, 0, 32, 32, x + 1, y + 1, lBarWidth - 4, h - 2, -0.1f, r, g, b, a);
+		pTextureBatch.draw(lCoreTexture, 0, 0, 32, 32, x + 1, y + 1, lBarWidth, h - 2, -0.1f, r, g, b, a);
 
 	}
 
