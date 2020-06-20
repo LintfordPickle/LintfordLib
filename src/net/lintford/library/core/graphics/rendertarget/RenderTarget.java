@@ -45,6 +45,15 @@ public class RenderTarget {
 	 */
 	public void textureFilter(int pParam) {
 		mTextureFilter = pParam;
+
+		if (mIsLoaded) {
+			GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, mFramebufferID);
+			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, mTextureFilter);
+			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, mTextureFilter);
+			GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
+
+		}
+
 	}
 
 	public int textureFilter() {
@@ -53,6 +62,14 @@ public class RenderTarget {
 
 	public void textureWrapModeS(int pParam) {
 		mTextureWrapModeS = pParam;
+
+		if (mIsLoaded) {
+			GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, mFramebufferID);
+			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, mTextureWrapModeS);
+			GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
+
+		}
+
 	}
 
 	public int textureWrapModeS() {
@@ -61,6 +78,14 @@ public class RenderTarget {
 
 	public void textureWrapModeT(int pParam) {
 		mTextureWrapModeT = pParam;
+
+		if (mIsLoaded) {
+			GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, mFramebufferID);
+			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, mTextureWrapModeT);
+			GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
+
+		}
+
 	}
 
 	public int textureWrapModeT() {
@@ -124,9 +149,12 @@ public class RenderTarget {
 		if (mIsLoaded)
 			return;
 
-		mWidth = pWidth;
-		mHeight = pHeight;
+		Debug.debugManager().logger().i(getClass().getSimpleName(), "Loading RenderTarget: " + targetName);
+		Debug.debugManager().logger().i(getClass().getSimpleName(), "  GL texture filter mode enum: " + mTextureFilter);
+
 		mScale = pScale;
+		mWidth = (int) (pWidth * mScale);
+		mHeight = (int) (pHeight * mScale);
 
 		createFloatBuffer();
 
@@ -199,7 +227,7 @@ public class RenderTarget {
 		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
 
 		Debug.debugManager().stats().incTag(DebugStats.TAG_ID_RENDERTEXTURES);
-		
+
 		mIsLoaded = true;
 
 	}
@@ -209,12 +237,12 @@ public class RenderTarget {
 			return;
 
 		// Delete float buffer
-		if(mTextureBufferData != null) {
+		if (mTextureBufferData != null) {
 			mTextureBufferData.clear();
 			MemoryUtil.memFree(mTextureBufferData);
-			
+
 		}
-		
+
 		GL30.glDeleteFramebuffers(mFramebufferID);
 		mFramebufferID = -1;
 
@@ -227,7 +255,7 @@ public class RenderTarget {
 		}
 
 		Debug.debugManager().stats().decTag(DebugStats.TAG_ID_RENDERTEXTURES);
-		
+
 		mIsLoaded = false;
 	}
 
@@ -251,6 +279,12 @@ public class RenderTarget {
 		mHeight = pHeight;
 
 		createFloatBuffer();
+
+		Debug.debugManager().logger().i(getClass().getSimpleName(), "Loading RenderTarget: " + targetName);
+		Debug.debugManager().logger().i(getClass().getSimpleName(), "  GL_TEXTURE_MAG_FILTER: " + mTextureFilter);
+		Debug.debugManager().logger().i(getClass().getSimpleName(), "  GL_TEXTURE_MIN_FILTER: " + mTextureFilter);
+		Debug.debugManager().logger().i(getClass().getSimpleName(), "  GL_TEXTURE_WRAP_S: " + GL12.GL_CLAMP_TO_EDGE);
+		Debug.debugManager().logger().i(getClass().getSimpleName(), "  GL_TEXTURE_WRAP_T: " + GL12.GL_CLAMP_TO_EDGE);
 
 		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, mFramebufferID);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, mColorTextureID);

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.lwjgl.opengl.GL11;
+
 import net.lintford.library.controllers.hud.UIHUDStructureController;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
@@ -551,24 +553,31 @@ public class RendererManager {
 	}
 
 	public RenderTarget createRenderTarget(String pName, int pWidth, int pHeight, float pScale, boolean pResizeWithWindow) {
-		// First check to see if the render target exists
-		RenderTarget lResult = getRenderTarget(pName);
+		return createRenderTarget(pName, pWidth, pHeight, 1f, GL11.GL_LINEAR, pResizeWithWindow);
+	}
 
-		if (lResult != null)
-			return lResult;
+	public RenderTarget createRenderTarget(String pName, int pWidth, int pHeight, float pScale, int pFilterMode, boolean pResizeWithWindow) {
+		var lRenderTarget = getRenderTarget(pName);
 
-		lResult = new RenderTarget();
-		lResult.loadGLContent(pWidth, pHeight, pScale);
-		lResult.targetName = pName;
-
-		mRenderTargets.add(lResult);
-
-		if (pResizeWithWindow) {
-			mRenderTargetAutoResize.add(lResult);
+		if (lRenderTarget != null) {
+			Debug.debugManager().logger().i(getClass().getSimpleName(), "RenderTarget with name '" + pName + "' already exists. No new RendreTarget will be created.");
+			return lRenderTarget;
 
 		}
 
-		return lResult;
+		lRenderTarget = new RenderTarget();
+		lRenderTarget.targetName = pName;
+		lRenderTarget.textureFilter(pFilterMode);
+		lRenderTarget.loadGLContent(pWidth, pHeight, pScale);
+
+		mRenderTargets.add(lRenderTarget);
+
+		if (pResizeWithWindow) {
+			mRenderTargetAutoResize.add(lRenderTarget);
+
+		}
+
+		return lRenderTarget;
 
 	}
 
