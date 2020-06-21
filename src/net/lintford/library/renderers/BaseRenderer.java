@@ -20,6 +20,7 @@ public abstract class BaseRenderer {
 	protected RendererManager mRendererManager;
 	protected final String mRendererName;
 	protected boolean mIsActive;
+	protected boolean mIsManagedDraw;
 	protected boolean mIsLoaded;
 
 	/**
@@ -31,6 +32,14 @@ public abstract class BaseRenderer {
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public void isManagedDraw(boolean pNewValue) {
+		mIsManagedDraw = pNewValue;
+	}
+
+	public boolean isManagedDraw() {
+		return mIsManagedDraw;
+	}
 
 	/** Returns the unique Id assigned to this BaseRenderer instance. */
 	public int rendererId() {
@@ -84,6 +93,8 @@ public abstract class BaseRenderer {
 
 		mRendererManager = pRendererManager;
 		mRendererName = pRendererName;
+
+		mIsManagedDraw = true;
 
 		if (pRendererManager != null) {
 			pRendererManager.addRenderer(this);

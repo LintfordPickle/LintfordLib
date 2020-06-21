@@ -351,7 +351,8 @@ public class RendererManager {
 		if (RENDER_GAME_RENDERABLES) {
 			final int RENDERER_COUNT = mRenderers.size();
 			for (int i = 0; i < RENDERER_COUNT; i++) {
-				if (!mRenderers.get(i).isActive())
+				final var lRenderer = mRenderers.get(i);
+				if (!lRenderer.isActive() || !lRenderer.isManagedDraw())
 					continue;
 
 				if (!mRenderers.get(i).isLoaded() && mIsLoaded) {
