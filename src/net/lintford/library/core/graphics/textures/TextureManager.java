@@ -313,7 +313,7 @@ public class TextureManager extends EntityGroupManager {
 	}
 
 	public Texture loadTexture(String pName, String pTextureLocation, int pFilter, boolean pReload, int pEntityGroupID) {
-		return loadTexture(pName, pTextureLocation, pFilter, GL12.GL_REPEAT, GL12.GL_REPEAT, pEntityGroupID);
+		return loadTexture(pName, pTextureLocation, pFilter, GL12.GL_REPEAT, GL12.GL_REPEAT, pReload, pEntityGroupID);
 	}
 
 	public Texture loadTexture(String pName, String pTextureLocation, int pFilter, int pWrapModeS, int pWrapModeT, int pEntityGroupID) {
