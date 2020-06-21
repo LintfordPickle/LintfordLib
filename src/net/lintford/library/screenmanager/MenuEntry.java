@@ -282,6 +282,14 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 		mShowInfoButton = pNewValue;
 	}
 
+	public boolean isInClickedState() {
+		return mAnimationTimer > 0.f;
+	}
+
+	public float clickStateNormalizedTime() {
+		return mAnimationTimer / MenuScreen.ANIMATION_TIMER_LENGTH;
+	}
+
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
@@ -440,27 +448,39 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 		final var lTextureBatch = mParentLayout.parentScreen().mRendererManager.uiTextureBatch();
 
 		// Draw the button highlight when this element has focus.
-		if (mDrawBackground && mHoveredOver && mHighlightOnHover) {
-			lR *= 0.6f;
-			lG *= 0.6f;
-			lB *= 0.6f;
+		if (mDrawBackground) {
+			if (isInClickedState()) {
+				lTextureBatch.begin(pCore.HUD());
+				lTextureBatch.draw(mUITexture, 0, 96, 32, 32, centerX() - w / 2, centerY() - h / 2, 32, h, mZ, lR, lG, lB, lA);
+				lTextureBatch.draw(mUITexture, 32, 96, 32, 32, centerX() - (w / 2) + 32, centerY() - h / 2, w - 64, h, mZ, lR, lG, lB, lA);
+				lTextureBatch.draw(mUITexture, 128, 96, 32, 32, centerX() + (w / 2) - 32, centerY() - h / 2, 32, h, mZ, lR, lG, lB, lA);
+				lTextureBatch.end();
 
-			lTextureBatch.begin(pCore.HUD());
-			lTextureBatch.draw(mUITexture, 0, 64, 32, 32, centerX() - w / 2, centerY() - h / 2, tile_size, h, mZ, lR, lG, lB, lA);
-			lTextureBatch.draw(mUITexture, 32, 64, 32, 32, centerX() - (w / 2) + tile_size, centerY() - h / 2, w - tile_size * 2, h, mZ, lR, lG, lB, lA);
-			lTextureBatch.draw(mUITexture, 128, 64, 32, 32, centerX() + (w / 2) - tile_size, centerY() - h / 2, tile_size, h, mZ, lR, lG, lB, lA);
-			lTextureBatch.end();
+			} else if (mHoveredOver && mHighlightOnHover) {
+				lR *= 0.6f;
+				lG *= 0.6f;
+				lB *= 0.6f;
 
-		} else if (mDrawBackground) {
-			lTextureBatch.begin(pCore.HUD());
-			lTextureBatch.draw(mUITexture, 0, 32, 32, 32, centerX() - w / 2, centerY() - h / 2, 32, h, mZ, lR, lG, lB, lA);
-			lTextureBatch.draw(mUITexture, 32, 32, 32, 32, centerX() - (w / 2) + 32, centerY() - h / 2, w - 64, h, mZ, lR, lG, lB, lA);
-			lTextureBatch.draw(mUITexture, 128, 32, 32, 32, centerX() + (w / 2) - 32, centerY() - h / 2, 32, h, mZ, lR, lG, lB, lA);
-			lTextureBatch.end();
+				lTextureBatch.begin(pCore.HUD());
+				lTextureBatch.draw(mUITexture, 0, 64, 32, 32, centerX() - w / 2, centerY() - h / 2, tile_size, h, mZ, lR, lG, lB, lA);
+				lTextureBatch.draw(mUITexture, 32, 64, 32, 32, centerX() - (w / 2) + tile_size, centerY() - h / 2, w - tile_size * 2, h, mZ, lR, lG, lB, lA);
+				lTextureBatch.draw(mUITexture, 128, 64, 32, 32, centerX() + (w / 2) - tile_size, centerY() - h / 2, tile_size, h, mZ, lR, lG, lB, lA);
+				lTextureBatch.end();
+
+			} else {
+				lTextureBatch.begin(pCore.HUD());
+				lTextureBatch.draw(mUITexture, 0, 32, 32, 32, centerX() - w / 2, centerY() - h / 2, 32, h, mZ, lR, lG, lB, lA);
+				lTextureBatch.draw(mUITexture, 32, 32, 32, 32, centerX() - (w / 2) + 32, centerY() - h / 2, w - 64, h, mZ, lR, lG, lB, lA);
+				lTextureBatch.draw(mUITexture, 128, 32, 32, 32, centerX() + (w / 2) - 32, centerY() - h / 2, 32, h, mZ, lR, lG, lB, lA);
+				lTextureBatch.end();
+
+			}
 		}
 
 		// Render the MenuEntry label
-		if (mText != null && mText.length() > 0) {
+		if (mText != null && mText.length() > 0)
+
+		{
 			final float luiTextScale = 1.0f;// mScreenManager.UIHUDController().uiTextScaleFactor();
 
 			float lColMod = 1f; // no color mod for the text (mHoveredOver && mHighlightOnHover) ? 0.7f : 1f;
@@ -519,11 +539,11 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 
 		mScreenManager.uiSounds().play("SOUND_MENU_CLICK");
 
-		if(!mClickListener.hasUnconsumedAction()) {
+		if (!mClickListener.hasUnconsumedAction()) {
 			mAnimationTimer = MenuScreen.ANIMATION_TIMER_LENGTH;
-			
-		}
 
+		}
+		mAnimationTimer = MenuScreen.ANIMATION_TIMER_LENGTH;
 		// Play a button click animation, then call the listeners
 		mClickListener.menuEntryOnClick(pInputState, mMenuEntryID);
 
