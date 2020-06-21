@@ -204,6 +204,20 @@ public class MenuLabelEntry extends MenuEntry {
 		lFont.draw(mText, lX, y + h / 2f - lFontHeight / 2f, pParentZDepth + .15f, mR, mG, mB, lParentScreen.a(), luiTextScale);
 		lFont.end();
 
+		if (mShowInfoIcon) {
+			lTextureBatch.begin(pCore.HUD());
+			lTextureBatch.draw(mUITexture, 192, 160, 32, 32, mInfoIconDstRectangle, mZ, 1f, 1f, 1f, 1f);
+			lTextureBatch.end();
+
+		}
+
+		if (mShowWarnIcon) {
+			lTextureBatch.begin(pCore.HUD());
+			lTextureBatch.draw(mUITexture, 224, 160, 32, 32, mWarnIconDstRectangle, mZ, 1f, 1f, 1f, 1f);
+			lTextureBatch.end();
+
+		}
+
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
 			lTextureBatch.begin(pCore.HUD());
 			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, x, y, w, h, mZ, 1f, 0.2f, 0.2f, lAlpha);

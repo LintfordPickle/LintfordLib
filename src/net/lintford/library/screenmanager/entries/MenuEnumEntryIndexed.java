@@ -254,8 +254,8 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 		// TODO: This -50 is because of the scrollbar - this is why I needed to keep the padding :(
 		w = Math.min(mParentLayout.w() - 50f, MENUENTRY_MAX_WIDTH);
 
-		if (mShowInfoButton) {
-			mInfoButton.set(x, y, 32f, 32f);
+		if (mShowInfoIcon) {
+			mInfoIconDstRectangle.set(x, y, 32f, 32f);
 
 		}
 
@@ -336,9 +336,9 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 
 		lFontBitmap.end();
 
-		if (mShowInfoButton) {
+		if (mShowInfoIcon) {
 			lTextureBatch.begin(pCore.HUD());
-			lTextureBatch.draw(mUITexture, 544, 0, 32, 32, mInfoButton, mZ, 1f, 1f, 1f, 1f);
+			lTextureBatch.draw(mUITexture, 544, 0, 32, 32, mInfoIconDstRectangle, mZ, 1f, 1f, 1f, 1f);
 			lTextureBatch.end();
 		}
 

@@ -60,8 +60,10 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 	protected boolean mToolTipEnabled;
 	protected float mToolTipTimer;
 	protected String mToolTipText;
-	protected boolean mShowInfoButton;
-	protected Rectangle mInfoButton;
+	protected boolean mShowInfoIcon;
+	protected Rectangle mInfoIconDstRectangle = new Rectangle();
+	protected boolean mShowWarnIcon;
+	protected Rectangle mWarnIconDstRectangle = new Rectangle();
 	protected boolean mHasFocus;
 	protected boolean mFocusLocked; // used only for buffered input
 	protected boolean mCanHaveFocus; // some menuEntry sub-types aren't focusable (like the labels)
@@ -275,11 +277,19 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 	}
 
 	public boolean showInfoButton() {
-		return mShowInfoButton;
+		return mShowInfoIcon;
 	}
 
 	public void showInfoButton(boolean pNewValue) {
-		mShowInfoButton = pNewValue;
+		mShowInfoIcon = pNewValue;
+	}
+
+	public boolean showWarnButton() {
+		return mShowWarnIcon;
+	}
+
+	public void showWarnButton(boolean pNewValue) {
+		mShowWarnIcon = pNewValue;
 	}
 
 	public boolean isInClickedState() {
@@ -306,7 +316,6 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 		mDrawBackground = true;
 		mScaleonHover = false;
 		mHighlightOnHover = true;
-		mInfoButton = new Rectangle();
 
 		mTopMargin = 3f;
 		mBottomMargin = 3f;
@@ -388,8 +397,13 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 	}
 
 	public void updateStructure() {
-		if (mShowInfoButton) {
-			mInfoButton.set(x - 32f - 5f, y, 32f, 32f);
+		if (mShowInfoIcon) {
+			mInfoIconDstRectangle.set(x - 32f - 5f, y, 32f, 32f);
+
+		}
+
+		if (mShowWarnIcon) {
+			mWarnIconDstRectangle.set(x - 32f - 5f, y, 32f, 32f);
 
 		}
 
@@ -424,7 +438,7 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 
 		}
 
-		if (mToolTipEnabled && mToolTipTimer >= 1000 || mInfoButton.intersectsAA(pCore.HUD().getMouseCameraSpace())) {
+		if (mToolTipEnabled && mToolTipTimer >= 1000 || mInfoIconDstRectangle.intersectsAA(pCore.HUD().getMouseCameraSpace())) {
 			mScreenManager.toolTip().toolTipProvider(this);
 
 		}
@@ -497,9 +511,16 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 
 		}
 
-		if (mShowInfoButton) {
+		if (mShowInfoIcon) {
 			lTextureBatch.begin(pCore.HUD());
-			lTextureBatch.draw(mUITexture, 544, 0, 32, 32, mInfoButton, mZ, 1f, 1f, 1f, 1f);
+			lTextureBatch.draw(mUITexture, 192, 160, 32, 32, mInfoIconDstRectangle, mZ, 1f, 1f, 1f, 1f);
+			lTextureBatch.end();
+
+		}
+
+		if (mShowWarnIcon) {
+			lTextureBatch.begin(pCore.HUD());
+			lTextureBatch.draw(mUITexture, 224, 160, 32, 32, mWarnIconDstRectangle, mZ, 1f, 1f, 1f, 1f);
 			lTextureBatch.end();
 
 		}

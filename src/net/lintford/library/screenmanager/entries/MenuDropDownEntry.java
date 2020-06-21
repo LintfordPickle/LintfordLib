@@ -193,7 +193,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 
 		} else if (intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().isMouseOverThisComponent(hashCode())) {
 			// First check to see if the player clicked the info button
-			if (mShowInfoButton && mInfoButton.intersectsAA(pCore.HUD().getMouseCameraSpace())) {
+			if (mShowInfoIcon && mInfoIconDstRectangle.intersectsAA(pCore.HUD().getMouseCameraSpace())) {
 				mToolTipEnabled = true;
 				mToolTipTimer = 1000;
 
@@ -277,8 +277,8 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 
 		super.update(pCore, pScreen, pIsSelected);
 
-		if (mShowInfoButton) {
-			mInfoButton.set(x, y, 32f, 32f);
+		if (mShowInfoIcon) {
+			mInfoIconDstRectangle.set(x, y, 32f, 32f);
 
 		}
 
@@ -401,9 +401,9 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 
 		}
 
-		if (mShowInfoButton) {
+		if (mShowInfoIcon) {
 			mTextureBatch.begin(pCore.HUD());
-			mTextureBatch.draw(mUITexture, 544, 0, 32, 32, mInfoButton, mZ, 1f, 1f, 1f, 1f);
+			mTextureBatch.draw(mUITexture, 544, 0, 32, 32, mInfoIconDstRectangle, mZ, 1f, 1f, 1f, 1f);
 			mTextureBatch.end();
 		}
 
