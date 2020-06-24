@@ -62,7 +62,7 @@ public class CollisionExtensions {
 
 	}
 
-	public static Vector2f intersection(Vector2f a, Vector2f b, Vector2f p, Vector2f q, Vector2f pOutVector) {
+	public static boolean intersection(Vector2f a, Vector2f b, Vector2f p, Vector2f q, Vector2f pOutVector) {
 		float A1 = b.y - a.y;
 		float B1 = a.x - b.x;
 		float C1 = A1 * a.x + B1 * a.y;
@@ -78,7 +78,11 @@ public class CollisionExtensions {
 		pOutVector.x = x;
 		pOutVector.y = y;
 
-		return pOutVector;
+		if (x != x || y != y) {
+			return false;
+		}
+
+		return true;
 
 	}
 
