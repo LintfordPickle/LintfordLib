@@ -17,7 +17,7 @@ import net.lintford.library.core.graphics.linebatch.LineBatch;
 import net.lintford.library.core.graphics.polybatch.PolyBatch;
 import net.lintford.library.core.graphics.rendertarget.RenderTarget;
 import net.lintford.library.core.graphics.sprites.spritebatch.SpriteBatch;
-import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
+import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.core.rendering.RenderState;
 import net.lintford.library.options.DisplayManager;
 import net.lintford.library.options.IResizeListener;
@@ -68,7 +68,7 @@ public class RendererManager {
 	private FontUnit mWindowTextFont;
 
 	private SpriteBatch mSpriteBatch;
-	private TextureBatch mTextureBatch;
+	private TextureBatchPCT mTextureBatch;
 	private LineBatch mLineBatch;
 	private PolyBatch mPolyBatch;
 
@@ -132,7 +132,7 @@ public class RendererManager {
 		return mDisplayConfig;
 	}
 
-	public TextureBatch uiTextureBatch() {
+	public TextureBatchPCT uiTextureBatch() {
 		return mTextureBatch;
 	}
 
@@ -175,7 +175,7 @@ public class RendererManager {
 		mRenderTargetAutoResize = new ArrayList<>();
 
 		mSpriteBatch = new SpriteBatch();
-		mTextureBatch = new TextureBatch();
+		mTextureBatch = new TextureBatchPCT();
 		mLineBatch = new LineBatch();
 		mPolyBatch = new PolyBatch();
 

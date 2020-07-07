@@ -3,7 +3,7 @@ package net.lintford.library.renderers.windows.components;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
-import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
+import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.core.maths.MathHelper;
 import net.lintford.library.renderers.windows.UIWindow;
 import net.lintford.library.screenmanager.entries.EntryInteractions;
@@ -107,7 +107,7 @@ public class UISlider extends UIWidget {
 	}
 
 	@Override
-	public void draw(LintfordCore pCore, TextureBatch pTextureBatch, Texture pUITexture, FontUnit pTextFont, float pComponentZDepth) {
+	public void draw(LintfordCore pCore, TextureBatchPCT pTextureBatch, Texture pUITexture, FontUnit pTextFont, float pComponentZDepth) {
 
 		// Seconds
 		mMinValue = 0;

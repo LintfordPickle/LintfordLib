@@ -5,7 +5,7 @@ import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
-import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
+import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.Screen;
@@ -189,7 +189,7 @@ public class MenuButtonEntry extends MenuEntry {
 		final float lTextHeight = lFontBitmap.bitmap().getStringHeight(mLabel) * luiTextScale;
 		final float lSeparatorHalfWidth = lFontBitmap.bitmap().getStringWidth(mSeparator, luiTextScale) * 0.5f;
 
-		final TextureBatch lTextureBatch = mParentLayout.parentScreen().rendererManager().uiTextureBatch();
+		final TextureBatchPCT lTextureBatch = mParentLayout.parentScreen().rendererManager().uiTextureBatch();
 
 		// Get the button area
 		final float TILE_SIZE = 32;

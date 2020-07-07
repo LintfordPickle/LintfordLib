@@ -11,7 +11,7 @@ import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
-import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
+import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 
 public class DebugStats {
 
@@ -57,7 +57,7 @@ public class DebugStats {
 	private double mLastDrawElapsed;
 
 	private Texture mCoreTexture;
-	private TextureBatch mTextureBatch;
+	private TextureBatchPCT mTextureBatch;
 	private StringBuilder mStringBuilder;
 
 	private int deltaFrameCount;
@@ -93,7 +93,7 @@ public class DebugStats {
 		mTags = new ArrayList<>();
 		mStringBuilder = new StringBuilder();
 
-		mTextureBatch = new TextureBatch();
+		mTextureBatch = new TextureBatchPCT();
 
 		createStandardTags();
 

@@ -10,7 +10,7 @@ import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
-import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
+import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.core.input.IProcessMouseInput;
 import net.lintford.library.renderers.windows.components.IScrollBarArea;
 import net.lintford.library.renderers.windows.components.ScrollBar;
@@ -33,7 +33,7 @@ public class DebugControllerTreeRenderer extends Rectangle implements IScrollBar
 
 	private Debug mDebugManager;
 	private Texture mCoreTexture;
-	private TextureBatch mTextureBatch;
+	private TextureBatchPCT mTextureBatch;
 	private ControllerManager mControllerManager;
 	private DebugControllerTreeController mDebugControllerTree;
 	private transient FontUnit mConsoleFont;
@@ -76,7 +76,7 @@ public class DebugControllerTreeRenderer extends Rectangle implements IScrollBar
 		mDebugManager = pDebugManager;
 
 		if (pDebugManager.debugManagerEnabled()) {
-			mTextureBatch = new TextureBatch();
+			mTextureBatch = new TextureBatchPCT();
 
 			mContentRectangle = new ScrollBarContentRectangle(this);
 			mScrollBar = new ScrollBar(this, mContentRectangle);

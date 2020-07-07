@@ -8,7 +8,7 @@ import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
-import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
+import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.core.input.InputManager;
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
@@ -274,7 +274,7 @@ public class MenuEnumEntry extends MenuEntry {
 		final float lTextHeight = lFontBitmap.bitmap().getStringHeight(mLabel, luiTextScale);
 		final float lSeparatorHalfWidth = lFontBitmap.bitmap().getStringWidth(mSeparator, luiTextScale) * 0.5f;
 
-		final TextureBatch lTextureBatch = mParentLayout.parentScreen().rendererManager().uiTextureBatch();
+		final TextureBatchPCT lTextureBatch = mParentLayout.parentScreen().rendererManager().uiTextureBatch();
 
 		// Draw the left/right buttons
 		lTextureBatch.begin(pCore.HUD());

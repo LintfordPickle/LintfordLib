@@ -7,7 +7,7 @@ import org.lwjgl.opengl.GL11;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.graphics.textures.Texture;
-import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
+import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 
 public class LintfordMain extends LintfordCore {
 
@@ -75,7 +75,7 @@ public class LintfordMain extends LintfordCore {
 
 		mShowLogoTimer = System.currentTimeMillis();
 
-		TextureBatch lTB = new TextureBatch();
+		TextureBatchPCT lTB = new TextureBatchPCT();
 		lTB.loadGLContent(mResourceManager);
 		lTB.begin(mHUD);
 		lTB.draw(lTexture, 0, 0, 256, 256, -128, -128, 256, 256, -0.1f, 1, 1, 1, 1);

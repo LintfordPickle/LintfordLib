@@ -4,7 +4,7 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
-import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
+import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.core.input.IProcessMouseInput;
 
 public class IconIntFilter implements IProcessMouseInput {
@@ -106,7 +106,7 @@ public class IconIntFilter implements IProcessMouseInput {
 		return false;
 	}
 
-	public void draw(LintfordCore pCore, TextureBatch pTextureBatch, Texture pUITexture, FontUnit pTextFont, float pComponentZDepth) {
+	public void draw(LintfordCore pCore, TextureBatchPCT pTextureBatch, Texture pUITexture, FontUnit pTextFont, float pComponentZDepth) {
 
 		float lR = mEnabled ? r : 1f;
 		float lG = mEnabled ? g : 1f;

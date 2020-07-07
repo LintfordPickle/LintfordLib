@@ -3,7 +3,7 @@ package net.lintford.library.screenmanager.dialogs;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.graphics.textures.Texture;
-import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
+import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.renderers.ZLayers;
 import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.ScreenManager;
@@ -138,7 +138,7 @@ public abstract class BaseDialog extends MenuScreen {
 		final float lWindowWidth = pCore.HUD().boundingRectangle().w();
 		final float lWindowHeight = pCore.HUD().boundingRectangle().h();
 
-		final TextureBatch lTextureBatch = mParentScreen.rendererManager().uiTextureBatch();
+		final TextureBatchPCT lTextureBatch = mParentScreen.rendererManager().uiTextureBatch();
 
 		// This is the full screen darken effect
 		if (mDarkenBackground) {

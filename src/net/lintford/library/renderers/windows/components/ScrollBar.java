@@ -3,7 +3,7 @@ package net.lintford.library.renderers.windows.components;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.textures.Texture;
-import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
+import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.core.input.IProcessMouseInput;
 
 public class ScrollBar extends Rectangle implements IProcessMouseInput {
@@ -152,7 +152,7 @@ public class ScrollBar extends Rectangle implements IProcessMouseInput {
 
 	}
 
-	public void draw(LintfordCore pCore, TextureBatch pTextureBatch, Texture pUITexture, float pZDepth) {
+	public void draw(LintfordCore pCore, TextureBatchPCT pTextureBatch, Texture pUITexture, float pZDepth) {
 		pTextureBatch.begin(pCore.HUD());
 
 		// Scroll bar background

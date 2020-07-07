@@ -5,7 +5,7 @@ import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.graphics.fonts.FontManager;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
-import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
+import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 
 public class ToolTip {
 
@@ -15,7 +15,7 @@ public class ToolTip {
 
 	protected FontUnit mMenuFont;
 	private IToolTipProvider mToolTipProvider;
-	private TextureBatch mTextureBatch;
+	private TextureBatchPCT mTextureBatch;
 	private Texture mUiPanelTexture;
 	private float mPositionX;
 	private float mPositionY;
@@ -38,7 +38,7 @@ public class ToolTip {
 	// --------------------------------------
 
 	public ToolTip() {
-		mTextureBatch = new TextureBatch();
+		mTextureBatch = new TextureBatchPCT();
 
 	}
 

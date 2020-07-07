@@ -5,7 +5,7 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
-import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
+import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.screenmanager.Screen;
 import net.lintford.library.screenmanager.ScreenManager;
 import net.lintford.library.screenmanager.entries.ListBox;
@@ -78,7 +78,7 @@ public class StringListBoxItem extends ListBoxItem {
 	}
 
 	@Override
-	public void draw(LintfordCore pCore, Screen pScreen, TextureBatch pSpriteBatch, boolean pIsSelected, float pParentZDepth) {
+	public void draw(LintfordCore pCore, Screen pScreen, TextureBatchPCT pSpriteBatch, boolean pIsSelected, float pParentZDepth) {
 		if (mTextValue != null && mTextValue.length() > 0) {
 
 			float lScale = 1.0f;// mScreenManager.UIHUDController().uiTextScaleFactor();

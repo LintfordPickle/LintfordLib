@@ -6,7 +6,7 @@ import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
-import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
+import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.core.input.InputManager;
 import net.lintford.library.core.maths.MathHelper;
 import net.lintford.library.screenmanager.MenuEntry;
@@ -26,7 +26,7 @@ public class MenuSliderEntry extends MenuEntry {
 	private Rectangle mDownButton;
 	private Rectangle mUpButton;
 
-	private TextureBatch mTextureBatch;
+	private TextureBatchPCT mTextureBatch;
 	private Texture mUITexture;
 
 	private String mLabel;
@@ -117,7 +117,7 @@ public class MenuSliderEntry extends MenuEntry {
 		mDownButton = new Rectangle(0, 0, 32, 32);
 		mUpButton = new Rectangle(0, 0, 32, 32);
 
-		mTextureBatch = new TextureBatch();
+		mTextureBatch = new TextureBatchPCT();
 
 	}
 

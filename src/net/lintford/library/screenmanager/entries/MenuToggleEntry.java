@@ -4,7 +4,7 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
-import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
+import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.core.input.InputManager;
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
@@ -162,7 +162,7 @@ public class MenuToggleEntry extends MenuEntry {
 
 		mZ = pParentZDepth;
 
-		final TextureBatch lTextureBatch = lParentScreen.rendererManager().uiTextureBatch();
+		final TextureBatchPCT lTextureBatch = lParentScreen.rendererManager().uiTextureBatch();
 
 		// Draw the left/right buttons
 		lTextureBatch.begin(pCore.HUD());

@@ -5,7 +5,7 @@ import org.lwjgl.opengl.GL11;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.textures.Texture;
-import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
+import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 
 public class ScrollBarContentRectangle extends Rectangle {
 
@@ -51,12 +51,12 @@ public class ScrollBarContentRectangle extends Rectangle {
 
 	}
 
-	public void preDraw(LintfordCore pCore, TextureBatch pTextureBatch, Texture pUITexture) {
+	public void preDraw(LintfordCore pCore, TextureBatchPCT pTextureBatch, Texture pUITexture) {
 		preDraw(pCore, pTextureBatch, pUITexture, mParentArea.contentDisplayArea());
 
 	}
 
-	public void preDraw(LintfordCore pCore, TextureBatch pTextureBatch, Texture pUITexture, Rectangle pRectangle) {
+	public void preDraw(LintfordCore pCore, TextureBatchPCT pTextureBatch, Texture pUITexture, Rectangle pRectangle) {
 		if (mPreDrawing)
 			return;
 

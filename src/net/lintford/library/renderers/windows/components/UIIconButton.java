@@ -4,7 +4,7 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
-import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
+import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.renderers.windows.UIWindow;
 import net.lintford.library.screenmanager.entries.EntryInteractions;
 
@@ -147,7 +147,7 @@ public class UIIconButton extends UIWidget {
 	}
 
 	@Override
-	public void draw(LintfordCore pCore, TextureBatch pTextureBatch, Texture pUITexture, FontUnit pTextFont, float pComponentZDepth) {
+	public void draw(LintfordCore pCore, TextureBatchPCT pTextureBatch, Texture pUITexture, FontUnit pTextFont, float pComponentZDepth) {
 		if (!mIsVisible)
 			return;
 
@@ -178,7 +178,7 @@ public class UIIconButton extends UIWidget {
 		float lG = mHoveredOver ? 0.34f : mGreen;
 		float lB = mHoveredOver ? 0.65f : mBlue;
 
-		final TextureBatch lTextureBatch = mParentWindow.rendererManager().uiTextureBatch();
+		final TextureBatchPCT lTextureBatch = mParentWindow.rendererManager().uiTextureBatch();
 		lTextureBatch.begin(pCore.HUD());
 		lTextureBatch.draw(pTexture, 0, 0, 32, 32, x, y, w, h, -1.0f, lR, lG, lB, 1f);
 		lTextureBatch.end();

@@ -5,13 +5,13 @@ import org.lwjgl.opengl.GL20;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
-import net.lintford.library.core.graphics.shaders.ShaderMVP_PT;
+import net.lintford.library.core.graphics.shaders.ShaderMVP_PCT;
 import net.lintford.library.screenmanager.Screen;
 import net.lintford.library.screenmanager.ScreenManager;
 
 public abstract class ShaderBackground extends Screen {
 
-	public class BackgroundShader extends ShaderMVP_PT {
+	public class BackgroundShader extends ShaderMVP_PCT {
 
 		// --------------------------------------
 		// Variables

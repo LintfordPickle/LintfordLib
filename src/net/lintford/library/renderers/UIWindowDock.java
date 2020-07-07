@@ -6,7 +6,7 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.textures.Texture;
-import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
+import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.renderers.windows.UIWindow;
 
 public class UIWindowDock extends BaseRenderer {
@@ -79,7 +79,7 @@ public class UIWindowDock extends BaseRenderer {
 		float lPosX = -lLeftEdge / 2;
 		float lPosY = -lTopEdge / 2;
 
-		final TextureBatch lTextureBatch = mRendererManager.uiTextureBatch();
+		final TextureBatchPCT lTextureBatch = mRendererManager.uiTextureBatch();
 		lTextureBatch.begin(pCore.HUD());
 
 		for (int i = 0; i < lUIWindows.size(); i++) {

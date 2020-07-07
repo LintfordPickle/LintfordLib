@@ -4,7 +4,7 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
-import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
+import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.core.input.IBufferedInputCallback;
 import net.lintford.library.core.input.InputManager;
 import net.lintford.library.renderers.windows.UIWindow;
@@ -181,7 +181,7 @@ public class UIInputText extends UIWidget implements IBufferedInputCallback {
 	}
 
 	@Override
-	public void draw(LintfordCore pCore, TextureBatch pTextureBatch, Texture pUITexture, FontUnit pTextFont, float pComponentZDepth) {
+	public void draw(LintfordCore pCore, TextureBatchPCT pTextureBatch, Texture pUITexture, FontUnit pTextFont, float pComponentZDepth) {
 		// Renders the background of the input text widget
 		pTextureBatch.begin(pCore.HUD());
 		pTextureBatch.draw(pUITexture, 0, 288, 32, 32, x, y, 32, h, pComponentZDepth, 1f, 1f, 1f, 1);

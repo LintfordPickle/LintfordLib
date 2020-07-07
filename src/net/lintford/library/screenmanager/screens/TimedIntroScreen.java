@@ -4,7 +4,7 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.textures.Texture;
-import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
+import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.options.DisplayManager;
 import net.lintford.library.screenmanager.IMenuAction;
 import net.lintford.library.screenmanager.Screen;
@@ -16,7 +16,7 @@ public class TimedIntroScreen extends Screen {
 	// Variables
 	// --------------------------------------
 
-	private TextureBatch mTextureBatch;
+	private TextureBatchPCT mTextureBatch;
 	private Texture mBackgroundTexture;
 
 	private String mImageLocation;
@@ -66,7 +66,7 @@ public class TimedIntroScreen extends Screen {
 		mShowImageTime = 0;
 		mShowImageTimer = pTimer;
 
-		mTextureBatch = new TextureBatch();
+		mTextureBatch = new TextureBatchPCT();
 		mSrcTextureRect = new Rectangle(0, 0, 800, 600);
 
 	}

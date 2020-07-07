@@ -5,7 +5,7 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
-import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
+import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.screenmanager.Screen;
 import net.lintford.library.screenmanager.ScreenManager;
 import net.lintford.library.screenmanager.entries.ListBox;
@@ -88,7 +88,7 @@ public class LabelValueListBoxItem extends ListBoxItem {
 	}
 
 	@Override
-	public void draw(LintfordCore pCore, Screen pScreen, TextureBatch pSpriteBatch, boolean pIsSelected, float pParentZDepth) {
+	public void draw(LintfordCore pCore, Screen pScreen, TextureBatchPCT pSpriteBatch, boolean pIsSelected, float pParentZDepth) {
 		if (mLabelValue != null && mLabelValue.length() > 0) {
 
 			if (mTextValue == null)

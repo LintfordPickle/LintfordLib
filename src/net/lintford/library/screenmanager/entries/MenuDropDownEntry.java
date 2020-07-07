@@ -11,7 +11,7 @@ import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
-import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
+import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.core.input.InputManager;
 import net.lintford.library.renderers.ZLayers;
 import net.lintford.library.renderers.windows.components.IScrollBarArea;
@@ -53,7 +53,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 	private String mLabel;
 	private int mSelectedIndex;
 	private List<MenuEnumEntryItem> mItems;
-	private TextureBatch mTextureBatch;
+	private TextureBatchPCT mTextureBatch;
 	private Texture mUITexture;
 	private transient boolean mOpen;
 	private transient ScrollBarContentRectangle mContentRectangle;
@@ -153,7 +153,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 		mScrollBar = new ScrollBar(this, mContentRectangle);
 		mTopEntry = new Rectangle();
 
-		mTextureBatch = new TextureBatch();
+		mTextureBatch = new TextureBatchPCT();
 
 		mSelectedIndex = 0;
 

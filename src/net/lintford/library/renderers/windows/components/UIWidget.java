@@ -5,7 +5,7 @@ import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
-import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
+import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.core.input.IProcessMouseInput;
 import net.lintford.library.renderers.windows.UIWindow;
 
@@ -101,7 +101,7 @@ public abstract class UIWidget extends Rectangle implements IProcessMouseInput {
 	}
 
 	/** Everything for rendering should be provided by the {@link UIWindow} container. */
-	public abstract void draw(LintfordCore pCore, TextureBatch pTextureBatch, Texture pUITexture, FontUnit pTextFont, float pComponentZDepth);
+	public abstract void draw(LintfordCore pCore, TextureBatchPCT pTextureBatch, Texture pUITexture, FontUnit pTextFont, float pComponentZDepth);
 
 	@Override
 	public boolean isCoolDownElapsed() {

@@ -4,7 +4,7 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
-import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
+import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.renderers.windows.UIWindow;
 import net.lintford.library.screenmanager.entries.EntryInteractions;
 
@@ -115,7 +115,7 @@ public class UIToggleButton extends UIWidget {
 	}
 
 	@Override
-	public void draw(LintfordCore pCore, TextureBatch pTextureBatch, Texture pUITexture, FontUnit pTextFont, float pComponentZDepth) {
+	public void draw(LintfordCore pCore, TextureBatchPCT pTextureBatch, Texture pUITexture, FontUnit pTextFont, float pComponentZDepth) {
 		float lR = mIsEnabled ? 0.3f : mHoveredOver ? 0.3f : mR;
 		float lG = mIsEnabled ? 0.13f : mHoveredOver ? 0.34f : mG;
 		float lB = mIsEnabled ? 0.19f : mHoveredOver ? 0.65f : mB;

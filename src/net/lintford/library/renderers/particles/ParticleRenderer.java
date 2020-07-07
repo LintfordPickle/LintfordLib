@@ -7,7 +7,7 @@ import org.lwjgl.opengl.GL11;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.graphics.textures.Texture;
-import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
+import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.core.particles.Particle;
 import net.lintford.library.core.particles.particlesystems.ParticleSystemDefinition;
 import net.lintford.library.core.particles.particlesystems.ParticleSystemInstance;
@@ -20,7 +20,7 @@ public class ParticleRenderer {
 
 	private ParticleSystemInstance mParticleSystem;
 	private ResourceManager mResourceManager;
-	private TextureBatch mTextureBatch;
+	private TextureBatchPCT mTextureBatch;
 	private Texture mTexture;
 	private int mParticleRendererId;
 	private int mEntityGroupId;
@@ -57,7 +57,7 @@ public class ParticleRenderer {
 		mEntityGroupId = pEntityGroupID;
 
 		mParticleRendererId = pRendererId;
-		mTextureBatch = new TextureBatch();
+		mTextureBatch = new TextureBatchPCT();
 		mIsAssigned = false;
 
 	}

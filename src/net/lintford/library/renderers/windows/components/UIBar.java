@@ -2,7 +2,7 @@ package net.lintford.library.renderers.windows.components;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
-import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
+import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.core.maths.MathHelper;
 
 public class UIBar {
@@ -60,7 +60,7 @@ public class UIBar {
 	// Core-Methods
 	// --------------------------------------
 
-	public void draw(LintfordCore pCore, TextureBatch pTextureBatch, FontUnit pTextFont, float pComponentZDepth) {
+	public void draw(LintfordCore pCore, TextureBatchPCT pTextureBatch, FontUnit pTextFont, float pComponentZDepth) {
 		if (pTextureBatch == null || !pTextureBatch.isDrawing())
 			return;
 

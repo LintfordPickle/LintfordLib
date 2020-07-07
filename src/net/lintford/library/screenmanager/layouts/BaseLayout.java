@@ -9,7 +9,7 @@ import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.textures.Texture;
-import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
+import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.core.input.InputManager;
 import net.lintford.library.renderers.ZLayers;
 import net.lintford.library.renderers.windows.components.IScrollBarArea;
@@ -42,7 +42,7 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 	protected int mNumberEntries;
 
 	// FIXME: Don't create a new Texture
-	protected TextureBatch mTextureBatch;
+	protected TextureBatchPCT mTextureBatch;
 	protected Texture mUITexture;
 
 	protected boolean mDrawBackground;
@@ -217,7 +217,7 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 		mParentScreen = pParentScreen;
 		mMenuEntries = new ArrayList<>();
 
-		mTextureBatch = new TextureBatch();
+		mTextureBatch = new TextureBatchPCT();
 		mEnabled = true;
 		mVisible = true;
 

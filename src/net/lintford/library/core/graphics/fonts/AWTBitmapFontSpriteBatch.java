@@ -1,12 +1,12 @@
 package net.lintford.library.core.graphics.fonts;
 
 import net.lintford.library.core.graphics.fonts.BitmapFont.Glyph;
-import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
+import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 
 // TODO: Need to implement the spritebatch like TileSetRendererVBO, i.e. with separate shaders and 
 // TODO: Add option for shadows
 // TODO: Text scaling (global and local) needs implementing (it was removed from the TextureBatch, so the destRect needs to be adapted).
-public class AWTBitmapFontSpriteBatch extends TextureBatch {
+public class AWTBitmapFontSpriteBatch extends TextureBatchPCT {
 
 	public static final int NO_WORD_WRAP = -1;
 	public static final int NO_WIDTH_CAP = -1;

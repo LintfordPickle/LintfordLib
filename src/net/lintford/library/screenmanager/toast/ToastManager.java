@@ -7,7 +7,7 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.graphics.fonts.FontManager;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
-import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
+import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 
 public class ToastManager {
 
@@ -22,7 +22,7 @@ public class ToastManager {
 	// Variables
 	// --------------------------------------
 
-	private TextureBatch mTextureBatch;
+	private TextureBatchPCT mTextureBatch;
 	private FontUnit mFontUnit;
 	private List<ToastMessage> mToastMessages;
 	private List<ToastMessage> mToastMessagePool;
@@ -40,7 +40,7 @@ public class ToastManager {
 		mToastMessagePool = new ArrayList<>();
 		mToastMessageUpdate = new ArrayList<>();
 
-		mTextureBatch = new TextureBatch();
+		mTextureBatch = new TextureBatchPCT();
 
 		mToastCounter = 0;
 		allocateNewMesssages(8);

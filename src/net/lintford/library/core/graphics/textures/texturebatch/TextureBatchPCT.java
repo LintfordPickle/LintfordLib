@@ -16,7 +16,7 @@ import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.debug.stats.DebugStats;
 import net.lintford.library.core.geometry.Circle;
 import net.lintford.library.core.geometry.Rectangle;
-import net.lintford.library.core.graphics.shaders.ShaderMVP_PT;
+import net.lintford.library.core.graphics.shaders.ShaderMVP_PCT;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.maths.Matrix4f;
@@ -26,7 +26,7 @@ import net.lintford.library.core.maths.Vector4f;
 // TODO: Non of the Batch rendering classes are using indices I notice...
 // TODO: The SpriteBatch doesn't actually allow to cache buffers between frames if there is no change (no vertex + transformations).
 // TODO: Add Batch types (call, texture, Z-Order).
-public class TextureBatch {
+public class TextureBatchPCT {
 
 	// --------------------------------------
 	// Constants
@@ -69,8 +69,8 @@ public class TextureBatch {
 
 	protected Vector4f mTempVector;
 	protected ICamera mCamera;
-	protected ShaderMVP_PT mShader;
-	protected ShaderMVP_PT mCustomShader;
+	protected ShaderMVP_PCT mShader;
+	protected ShaderMVP_PCT mCustomShader;
 	protected Matrix4f mModelMatrix;
 	protected FloatBuffer mBuffer;
 	private boolean mBlendEnabled;
@@ -123,8 +123,8 @@ public class TextureBatch {
 	// Constructor
 	// --------------------------------------
 
-	public TextureBatch() {
-		mShader = new ShaderMVP_PT("TextureBatchShader", VERT_FILENAME, FRAG_FILENAME) {
+	public TextureBatchPCT() {
+		mShader = new ShaderMVP_PCT("TextureBatchShader", VERT_FILENAME, FRAG_FILENAME) {
 			@Override
 			protected void bindAtrributeLocations(int pShaderID) {
 				GL20.glBindAttribLocation(pShaderID, 0, "inPosition");
@@ -198,7 +198,7 @@ public class TextureBatch {
 	// Methods
 	// --------------------------------------
 
-	public void begin(ICamera pCamera, ShaderMVP_PT pCustomShader) {
+	public void begin(ICamera pCamera, ShaderMVP_PCT pCustomShader) {
 		if (pCamera == null)
 			return;
 

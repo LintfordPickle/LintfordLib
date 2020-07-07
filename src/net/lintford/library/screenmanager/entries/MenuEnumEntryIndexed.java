@@ -6,7 +6,7 @@ import java.util.List;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
-import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
+import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.core.input.InputManager;
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
@@ -284,7 +284,7 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 
 		mZ = pComponentDepth;
 
-		final TextureBatch lTextureBatch = mParentLayout.parentScreen().rendererManager().uiTextureBatch();
+		final TextureBatchPCT lTextureBatch = mParentLayout.parentScreen().rendererManager().uiTextureBatch();
 
 		// Render the two arrows either side of the enumeration options
 		if (mButtonsEnabled) {

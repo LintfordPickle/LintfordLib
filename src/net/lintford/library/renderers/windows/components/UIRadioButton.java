@@ -3,7 +3,7 @@ package net.lintford.library.renderers.windows.components;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
-import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
+import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.core.input.IProcessMouseInput;
 import net.lintford.library.renderers.windows.UIWindow;
 import net.lintford.library.screenmanager.entries.EntryInteractions;
@@ -120,7 +120,7 @@ public class UIRadioButton extends UIWidget implements IProcessMouseInput {
 	}
 
 	@Override
-	public void draw(LintfordCore pCore, TextureBatch pTextureBatch, Texture pUITexture, FontUnit pTextFont, float pComponentZDepth) {
+	public void draw(LintfordCore pCore, TextureBatchPCT pTextureBatch, Texture pUITexture, FontUnit pTextFont, float pComponentZDepth) {
 
 		float lR = mIsSelected ? 0.4f : 0.3f;
 		float lG = mIsSelected ? 0.4f : 0.34f;

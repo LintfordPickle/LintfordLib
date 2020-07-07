@@ -19,7 +19,7 @@ import net.lintford.library.core.graphics.polybatch.PolyBatch;
 import net.lintford.library.core.graphics.rendertarget.RenderTarget;
 import net.lintford.library.core.graphics.shaders.ShaderMVP_PT;
 import net.lintford.library.core.graphics.textures.Texture;
-import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
+import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.core.maths.Vector2f;
 
 public class DebugDrawers {
@@ -47,7 +47,7 @@ public class DebugDrawers {
 	private LineBatch mLineBatch;
 	private PolyBatch mPolyBatch;
 
-	private TextureBatch mTextureBatch;
+	private TextureBatchPCT mTextureBatch;
 	private TexturedQuad mTexturedQuad;
 	private ShaderMVP_PT mBasicShader;
 
@@ -69,7 +69,7 @@ public class DebugDrawers {
 		mLineBatch = new LineBatch();
 		mPolyBatch = new PolyBatch();
 
-		mTextureBatch = new TextureBatch();
+		mTextureBatch = new TextureBatchPCT();
 		mTexturedQuad = new TexturedQuad();
 
 		mBasicShader = new ShaderMVP_PT("BasicShaderPT", VERT_FILENAME, FRAG_FILENAME) {

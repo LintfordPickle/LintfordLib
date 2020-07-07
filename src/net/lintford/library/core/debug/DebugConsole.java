@@ -13,7 +13,7 @@ import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
-import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
+import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.core.input.IBufferedInputCallback;
 import net.lintford.library.core.input.IProcessMouseInput;
 import net.lintford.library.core.maths.Vector3f;
@@ -93,7 +93,7 @@ public class DebugConsole extends Rectangle implements IBufferedInputCallback, I
 
 	private transient boolean mShowCaret;
 	private transient float mCaretTimer;
-	private transient TextureBatch mSpriteBatch;
+	private transient TextureBatchPCT mSpriteBatch;
 
 	private transient FontUnit mConsoleFont;
 
@@ -173,7 +173,7 @@ public class DebugConsole extends Rectangle implements IBufferedInputCallback, I
 
 			mOpen = false;
 
-			mSpriteBatch = new TextureBatch();
+			mSpriteBatch = new TextureBatchPCT();
 
 			mContentRectangle = new ScrollBarContentRectangle(this);
 			mScrollBar = new ScrollBar(this, mContentRectangle);

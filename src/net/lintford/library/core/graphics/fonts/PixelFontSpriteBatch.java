@@ -1,10 +1,10 @@
 package net.lintford.library.core.graphics.fonts;
 
 import net.lintford.library.core.graphics.textures.Texture;
-import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
+import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 
 // TODO: Need to implement the spritebatch like TileSetRendererVBO, i.e. with separate shaders and 
-public class PixelFontSpriteBatch extends TextureBatch {
+public class PixelFontSpriteBatch extends TextureBatchPCT {
 
 	// --------------------------------------
 	// Constants

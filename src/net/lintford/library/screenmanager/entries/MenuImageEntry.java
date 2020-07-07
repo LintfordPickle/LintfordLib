@@ -4,7 +4,7 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
-import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
+import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.Screen;
@@ -202,7 +202,7 @@ public class MenuImageEntry extends MenuEntry {
 	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pParentZDepth) {
 
 		final MenuScreen lParentScreen = mParentLayout.parentScreen();
-		final TextureBatch lTextureBatch = lParentScreen.rendererManager().uiTextureBatch();
+		final TextureBatchPCT lTextureBatch = lParentScreen.rendererManager().uiTextureBatch();
 
 		lTextureBatch.begin(pCore.HUD());
 

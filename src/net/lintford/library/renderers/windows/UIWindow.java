@@ -12,7 +12,7 @@ import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
-import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
+import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch9Patch;
 import net.lintford.library.core.input.IProcessMouseInput;
 import net.lintford.library.renderers.BaseRenderer;
@@ -348,7 +348,7 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 
 		mWindowAlpha = 0.95f;
 
-		final TextureBatch lTextureBatch = mRendererManager.uiTextureBatch();
+		final TextureBatchPCT lTextureBatch = mRendererManager.uiTextureBatch();
 		final FontUnit lTextFont = mRendererManager.textFont();
 
 		// Draw the window background

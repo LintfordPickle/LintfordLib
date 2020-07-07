@@ -5,7 +5,7 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
-import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
+import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.Screen;
@@ -176,7 +176,7 @@ public class MenuLabelEntry extends MenuEntry {
 		final float lLabelWidth = lFont.bitmap().getStringWidth(mText, luiTextScale);
 		final float lFontHeight = lFont.bitmap().fontHeight() * luiTextScale;
 
-		final TextureBatch lTextureBatch = lParentScreen.rendererManager().uiTextureBatch();
+		final TextureBatchPCT lTextureBatch = lParentScreen.rendererManager().uiTextureBatch();
 
 		if (mDrawBackground) {
 			lTextureBatch.begin(pCore.HUD());

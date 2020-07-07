@@ -5,7 +5,7 @@ import org.lwjgl.glfw.GLFW;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.graphics.textures.Texture;
-import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
+import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.options.DisplayManager;
 import net.lintford.library.screenmanager.IMenuAction;
 import net.lintford.library.screenmanager.Screen;
@@ -23,7 +23,7 @@ public class PressToContinueIntroScreen extends Screen {
 	// Variables
 	// --------------------------------------
 
-	protected TextureBatch mTextureBatch;
+	protected TextureBatchPCT mTextureBatch;
 	private Texture mBackgroundTexture;
 
 	private String mImageLocation;
@@ -63,7 +63,7 @@ public class PressToContinueIntroScreen extends Screen {
 
 		mImageLocation = pImageLocation;
 
-		mTextureBatch = new TextureBatch();
+		mTextureBatch = new TextureBatchPCT();
 
 		mBackgroundZDepth = -1.0f;
 		mContentZDepth = -0.5f;

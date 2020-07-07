@@ -2,7 +2,7 @@ package net.lintford.library.screenmanager.toast;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
-import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch;
+import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 
 public class ToastMessage {
 
@@ -27,7 +27,7 @@ public class ToastMessage {
 	// Core-Methods
 	// --------------------------------------
 
-	public void draw(LintfordCore pCore, FontUnit pFontUnit, TextureBatch pTextureBatch) {
+	public void draw(LintfordCore pCore, FontUnit pFontUnit, TextureBatchPCT pTextureBatch) {
 		pFontUnit.draw(messageText, x, y, -0.1f, 1f, 1f, 1f, 1f, 1f, -1);
 
 	}

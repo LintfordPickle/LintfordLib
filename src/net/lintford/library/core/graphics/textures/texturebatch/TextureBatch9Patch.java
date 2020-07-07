@@ -4,7 +4,7 @@ import net.lintford.library.core.graphics.textures.Texture;
 
 public class TextureBatch9Patch {
 
-	public static void draw9Patch(TextureBatch pTextureBatch, Texture pTexture, float pTileSize, float x, float y, float w, float h, float z, float a) {
+	public static void draw9Patch(TextureBatchPCT pTextureBatch, Texture pTexture, float pTileSize, float x, float y, float w, float h, float z, float a) {
 		pTextureBatch.draw(pTexture, 256, 0, pTileSize, pTileSize, x, y, pTileSize, pTileSize, z, 1, 1, 1, a);
 		pTextureBatch.draw(pTexture, 288, 0, pTileSize, pTileSize, x + pTileSize, y, w - 64, pTileSize, z, 1, 1, 1, a);
 		pTextureBatch.draw(pTexture, 320, 0, pTileSize, pTileSize, x + w - 32, y, pTileSize, pTileSize, z, 1, 1, 1, a);
