@@ -830,7 +830,7 @@ public class DebugConsole extends Rectangle implements IBufferedInputCallback, I
 	public void listConsoleCommands() {
 		final int CONSOLE_COMMAND_COUNT = mConsoleCommands.size();
 		for (int i = 0; i < CONSOLE_COMMAND_COUNT; i++) {
-			Debug.debugManager().logger().i("", mConsoleCommands.get(i).Command + ": " + mConsoleCommands.get(i).Description);
+			Debug.debugManager().logger().i(mConsoleCommands.get(i).Command,  mConsoleCommands.get(i).Description);
 
 		}
 
