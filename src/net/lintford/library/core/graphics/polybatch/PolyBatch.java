@@ -14,12 +14,11 @@ import net.lintford.library.core.camera.ICamera;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.debug.stats.DebugStats;
 import net.lintford.library.core.geometry.Rectangle;
-import net.lintford.library.core.graphics.shaders.ShaderMVP_PT;
+import net.lintford.library.core.graphics.shaders.ShaderMVP_PC;
 import net.lintford.library.core.graphics.vertices.VertexDataStructurePC;
 import net.lintford.library.core.maths.Matrix4f;
 import net.lintford.library.core.maths.Vector2f;
 
-// TODO: Inherit from LineBatch
 public class PolyBatch {
 
 	// --------------------------------------
@@ -29,8 +28,8 @@ public class PolyBatch {
 	public static final int MAX_LINES = 2048;
 	public static final int NUM_VERTS_PER_LINE = 2;
 
-	private static final String VERT_FILENAME = "/res/shaders/shader_basic_col.vert";
-	private static final String FRAG_FILENAME = "/res/shaders/shader_basic_col.frag";
+	private static final String VERT_FILENAME = "/res/shaders/shader_basic_pc.vert";
+	private static final String FRAG_FILENAME = "/res/shaders/shader_basic_pc.frag";
 
 	// --------------------------------------
 	// Variables
@@ -42,7 +41,7 @@ public class PolyBatch {
 	public float r, g, b, a;
 
 	private ICamera mCamera;
-	private ShaderMVP_PT mShader;
+	private ShaderMVP_PC mShader;
 	private Matrix4f mModelMatrix;
 	private FloatBuffer mBuffer;
 	private boolean mIsDrawing;
@@ -72,7 +71,7 @@ public class PolyBatch {
 	// --------------------------------------
 
 	public PolyBatch() {
-		mShader = new ShaderMVP_PT(ShaderMVP_PT.SHADER_NAME, VERT_FILENAME, FRAG_FILENAME) {
+		mShader = new ShaderMVP_PC(ShaderMVP_PC.SHADER_NAME, VERT_FILENAME, FRAG_FILENAME) {
 			@Override
 			protected void bindAtrributeLocations(int pShaderID) {
 				GL20.glBindAttribLocation(pShaderID, 0, "inPosition");

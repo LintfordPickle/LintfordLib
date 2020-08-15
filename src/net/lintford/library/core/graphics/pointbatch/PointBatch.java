@@ -25,8 +25,8 @@ public class PointBatch {
 	public static final int MAX_POINTS = 256;
 	public static final int NUM_VERTS_PER_POINT = 1;
 
-	private static final String VERT_FILENAME = "/res/shaders/shader_basic_col.vert";
-	private static final String FRAG_FILENAME = "/res/shaders/shader_basic_col.frag";
+	private static final String VERT_FILENAME = "/res/shaders/shader_basic_pc.vert";
+	private static final String FRAG_FILENAME = "/res/shaders/shader_basic_pc.frag";
 
 	// --------------------------------------
 	// Variables

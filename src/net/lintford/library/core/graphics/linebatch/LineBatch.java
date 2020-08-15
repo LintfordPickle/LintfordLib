@@ -26,8 +26,8 @@ public class LineBatch {
 	public static final int MAX_LINES = 2048;
 	public static final int NUM_VERTS_PER_LINE = 2;
 
-	private static final String VERT_FILENAME = "/res/shaders/shader_basic_col.vert";
-	private static final String FRAG_FILENAME = "/res/shaders/shader_basic_col.frag";
+	private static final String VERT_FILENAME = "/res/shaders/shader_basic_pc.vert";
+	private static final String FRAG_FILENAME = "/res/shaders/shader_basic_pc.frag";
 
 	// --------------------------------------
 	// Variables
