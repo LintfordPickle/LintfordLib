@@ -107,7 +107,11 @@ public class Box2dFixtureInstance extends PooledBaseData {
 	}
 
 	public void unloadPhysics(World pWorld) {
-
+		if (mFixture != null) {
+			var lParentBody = mFixture.getBody();
+			lParentBody.destroyFixture(mFixture);
+			mFixture = null;
+		}
 	}
 
 	public void update(LintfordCore pCore) {
