@@ -36,6 +36,7 @@ public class JBox2dDebugDrawer {
 	static Vec2 tempVec = new Vec2();
 
 	static int bodyCount;
+	static int fixtureCount;
 
 	private static class RenderOfPolyFixture {
 		public static void draw(LintfordCore pCore, Body pBody, Fixture pFixture) {
@@ -169,31 +170,27 @@ public class JBox2dDebugDrawer {
 			Debug.debugManager().drawers().endLineRenderer();
 
 			Debug.debugManager().drawers().beginLineRenderer(pCore.gameCamera(), GL11.GL_LINES);
+			// Debug.debugManager().drawers().beginLineRenderer(pCore.gameCamera(), GL11.GL_LINE_STRIP); // Circle fixtures
 
 			// polygon fixtures
 			while (lFixture != null) {
+
 				// TODO: update the color depending on the state (active, sleep, static, kinetic)
+				if (lFixture.m_shape == null) {
+					lFixture = lFixture.getNext();
+					continue;
+				}
 
 				if (lFixture.getShape().getType() == ShapeType.POLYGON) {
+					fixtureCount++;
 					RenderOfPolyFixture.draw(pCore, pBody, lFixture);
 
 				} else if (lFixture.getShape().getType() == ShapeType.CHAIN) {
+					fixtureCount++;
 					RenderOfChainFixture.draw(pCore, pBody, lFixture);
 
-				}
-
-				lFixture = lFixture.getNext();
-
-			}
-			Debug.debugManager().drawers().endLineRenderer();
-
-			Debug.debugManager().drawers().beginLineRenderer(pCore.gameCamera(), GL11.GL_LINE_STRIP);
-			// Circle fixtures
-			lFixture = pBody.getFixtureList();
-			while (lFixture != null) {
-				// TODO: update the color depending on the state
-
-				if (lFixture.getShape().getType() == ShapeType.CIRCLE) {
+				} else if (lFixture.getShape().getType() == ShapeType.CIRCLE) {
+					fixtureCount++;
 					RenderOfCircleFixture.draw(pCore, pBody, lFixture);
 
 				}
@@ -289,18 +286,7 @@ public class JBox2dDebugDrawer {
 
 	public void draw(LintfordCore pCore) {
 
-		Rectangle lHUDrect = pCore.HUD().boundingRectangle();
-
-		final int lLineHeight = -20;
-		int lLinePos = 100;
-
-		Debug.debugManager().drawers().beginTextRenderer(pCore.HUD());
-		Debug.debugManager().drawers().drawText("# Contacts: " + mWorld.getContactCount(), lHUDrect.left() + 5, lHUDrect.bottom() - (lLinePos -= lLineHeight));
-		Debug.debugManager().drawers().drawText(String.format("# Fixtures: ??"), lHUDrect.left() + 5, lHUDrect.bottom() - (lLinePos -= lLineHeight));
-		Debug.debugManager().drawers().drawText(String.format("# Bodies: %d", mWorld.getBodyCount()), lHUDrect.left() + 5, lHUDrect.bottom() - (lLinePos -= lLineHeight));
-		Debug.debugManager().drawers().drawText(String.format("# Joints: %d", mWorld.getJointCount()), lHUDrect.left() + 5, lHUDrect.bottom() - (lLinePos -= lLineHeight));
-		Debug.debugManager().drawers().drawText(String.format("# Particles: %d", mWorld.getParticleCount()), lHUDrect.left() + 5, lHUDrect.bottom() - (lLinePos -= lLineHeight));
-		Debug.debugManager().drawers().endTextRenderer();
+		fixtureCount = 0;
 
 		Debug.debugManager().drawers().beginPolyRenderer(pCore.gameCamera());
 		Body lBody = mWorld.getBodyList();
@@ -336,6 +322,19 @@ public class JBox2dDebugDrawer {
 			}
 
 		}
+
+		Rectangle lHUDrect = pCore.HUD().boundingRectangle();
+
+		final int lLineHeight = -20;
+		int lLinePos = 100;
+
+		Debug.debugManager().drawers().beginTextRenderer(pCore.HUD());
+		Debug.debugManager().drawers().drawText("# Contacts: " + mWorld.getContactCount(), lHUDrect.left() + 5, lHUDrect.bottom() - (lLinePos -= lLineHeight));
+		Debug.debugManager().drawers().drawText(String.format("# Fixtures: %d", fixtureCount), lHUDrect.left() + 5, lHUDrect.bottom() - (lLinePos -= lLineHeight));
+		Debug.debugManager().drawers().drawText(String.format("# Bodies: %d", mWorld.getBodyCount()), lHUDrect.left() + 5, lHUDrect.bottom() - (lLinePos -= lLineHeight));
+		Debug.debugManager().drawers().drawText(String.format("# Joints: %d", mWorld.getJointCount()), lHUDrect.left() + 5, lHUDrect.bottom() - (lLinePos -= lLineHeight));
+		Debug.debugManager().drawers().drawText(String.format("# Particles: %d", mWorld.getParticleCount()), lHUDrect.left() + 5, lHUDrect.bottom() - (lLinePos -= lLineHeight));
+		Debug.debugManager().drawers().endTextRenderer();
 
 	}
 
