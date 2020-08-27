@@ -33,6 +33,7 @@ public class JBox2dEntityInstance extends PooledBaseData {
 	private static final long serialVersionUID = 5280466036279609596L;
 
 	public static final String MAIN_BODY_NAME = "MainBody";
+	public static final String MAIN_FIXTURE_NAME = "MainFixture";
 
 	// --------------------------------------
 	// Variables
@@ -997,7 +998,7 @@ public class JBox2dEntityInstance extends PooledBaseData {
 		for (int i = 0; i < lBodyCount; i++) {
 
 			Box2dBodyInstance lBodyInst = mBodies.get(i);
-			if (lBodyInst == null)
+			if (lBodyInst == null || lBodyInst.mBody == null)
 				continue;
 
 			final int lFixtureCount = lBodyInst.mFixtures.length;
@@ -1005,6 +1006,9 @@ public class JBox2dEntityInstance extends PooledBaseData {
 				Box2dFixtureInstance lFixInst = lBodyInst.mFixtures[j];
 
 				if (lFixInst != null && lFixInst.name.contentEquals(pFixtureName)) {
+
+					lFixInst.unloadPhysics(mWorld);
+
 					if (lFixInst.shape != null && lFixInst.shape instanceof Box2dPolygonInstance) {
 						Box2dPolygonInstance lShape = (Box2dPolygonInstance) lFixInst.shape;
 
@@ -1036,6 +1040,8 @@ public class JBox2dEntityInstance extends PooledBaseData {
 						lShape.radius = lHalfWidth;
 
 					}
+
+					lFixInst.loadPhysics(mWorld, lBodyInst.mBody);
 
 				}
 
