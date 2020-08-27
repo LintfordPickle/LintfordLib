@@ -1,3 +1,4 @@
+
 package net.lintford.library.core.debug;
 
 import java.util.List;
@@ -421,12 +422,12 @@ public class DebugDrawers {
 			return;
 		}
 
-		if (mLineBatch.lineType() != pGLLineType) {
-			Debug.debugManager().logger().w(getClass().getSimpleName(), "Forced flush of LineBatch: different lineType");
-			mLineBatch.forceFlush();
-		}
-
-		mLineBatch.lineType(pGLLineType);
+		//		if (mLineBatch.lineType() != pGLLineType) {
+		//			Debug.debugManager().logger().w(getClass().getSimpleName(), "Forced flush of LineBatch: different lineType");
+		//			mLineBatch.forceFlush();
+		//		}
+		//
+		//		mLineBatch.lineType(pGLLineType);
 
 		final int lNumSegments = pSegCount / 2;
 		for (float i = -pInitialAngle; i < 2 * Math.PI - pInitialAngle; i += Math.PI / lNumSegments) {
@@ -457,6 +458,11 @@ public class DebugDrawers {
 	}
 
 	public void drawText(String pText, float pX, float pY) {
+		drawText(pText, pX, pY, 1f);
+
+	}
+
+	public void drawText(String pText, float pX, float pY, float pScale) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
@@ -465,7 +471,7 @@ public class DebugDrawers {
 			return;
 		}
 
-		mSystemFont.draw(pText, pX, pY, -0.01f, 1f, 1f, 1f, 1f, 1f, -1);
+		mSystemFont.draw(pText, pX, pY, -0.01f, 1f, 1f, 1f, 1f, pScale, -1);
 
 	}
 
