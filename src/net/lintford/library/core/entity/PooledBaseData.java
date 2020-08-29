@@ -1,4 +1,3 @@
-
 package net.lintford.library.core.entity;
 
 import net.lintford.library.core.entity.instances.IPoolObjectInstance;
