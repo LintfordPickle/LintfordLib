@@ -225,6 +225,8 @@ public class ParticleEmitterManager extends PooledInstanceManager<ParticleEmitte
 
 		}
 
+		returnPooledItem(pParticleEmitterInstance);
+
 	}
 
 }
