@@ -10,6 +10,7 @@ import org.jbox2d.dynamics.World;
 import org.jbox2d.dynamics.joints.RevoluteJointDef;
 
 import net.lintford.library.ConstantsPhysics;
+import net.lintford.library.core.box2d.BasePhysicsData;
 import net.lintford.library.core.box2d.definition.Box2dBodyDefinition;
 import net.lintford.library.core.box2d.definition.PObjectDefinition;
 import net.lintford.library.core.box2d.instance.Box2dBodyInstance;
@@ -45,7 +46,7 @@ public class JBox2dEntityInstance extends PooledBaseData {
 	protected List<Box2dJointInstance> mJoints = new ArrayList<>();
 
 	protected int userDataObjectPoolUid = -1;;
-	protected transient Object userDataObject;
+	protected BasePhysicsData userDataObject;
 	protected Box2dBodyInstance mMainBody;
 
 	protected boolean mIsFree;
@@ -56,12 +57,16 @@ public class JBox2dEntityInstance extends PooledBaseData {
 	// Properties
 	// --------------------------------------
 
-	public Object userDataObject() {
+	public int userDataObjectPoolUid() {
+		return userDataObjectPoolUid;
+	}
+
+	public BasePhysicsData userDataObject() {
 		return userDataObject;
 
 	}
 
-	public void userDataObject(PooledBaseData pNewUserDataObject) {
+	public void userDataObject(BasePhysicsData pNewUserDataObject) {
 		if (pNewUserDataObject == null) {
 			userDataObjectPoolUid = -1;
 			userDataObject = null;
