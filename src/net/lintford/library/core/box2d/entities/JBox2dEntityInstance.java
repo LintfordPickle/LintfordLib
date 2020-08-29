@@ -45,7 +45,6 @@ public class JBox2dEntityInstance extends PooledBaseData {
 	protected List<Box2dBodyInstance> mBodies = new ArrayList<>();
 	protected List<Box2dJointInstance> mJoints = new ArrayList<>();
 
-	protected int userDataObjectPoolUid = -1;;
 	protected BasePhysicsData userDataObject;
 	protected Box2dBodyInstance mMainBody;
 
@@ -57,10 +56,6 @@ public class JBox2dEntityInstance extends PooledBaseData {
 	// Properties
 	// --------------------------------------
 
-	public int userDataObjectPoolUid() {
-		return userDataObjectPoolUid;
-	}
-
 	public BasePhysicsData userDataObject() {
 		return userDataObject;
 
@@ -68,7 +63,6 @@ public class JBox2dEntityInstance extends PooledBaseData {
 
 	public void userDataObject(BasePhysicsData pNewUserDataObject) {
 		if (pNewUserDataObject == null) {
-			userDataObjectPoolUid = -1;
 			userDataObject = null;
 			if (mPhysicsLoaded) {
 				mainBody().mBody.setUserData(null);
@@ -79,7 +73,6 @@ public class JBox2dEntityInstance extends PooledBaseData {
 
 		}
 
-		userDataObjectPoolUid = pNewUserDataObject.poolUid;
 		userDataObject = pNewUserDataObject;
 
 		if (mPhysicsLoaded) {
