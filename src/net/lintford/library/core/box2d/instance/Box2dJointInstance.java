@@ -26,8 +26,8 @@ public abstract class Box2dJointInstance extends PooledBaseData {
 	public int bodyAUID;
 	public int bodyBUID;
 
-	public Vec2 localAnchorA = new Vec2();
-	public Vec2 localAnchorB = new Vec2();
+	public final Vec2 localAnchorA = new Vec2();
+	public final Vec2 localAnchorB = new Vec2();
 
 	public boolean collidesConnected;
 
@@ -43,15 +43,6 @@ public abstract class Box2dJointInstance extends PooledBaseData {
 	// --------------------------------------
 	// Core-Methods
 	// --------------------------------------
-
-	@Override
-	public void initialize(Object pParent) {
-		super.initialize(pParent);
-
-		localAnchorA = new Vec2();
-		localAnchorB = new Vec2();
-
-	}
 
 	// --------------------------------------
 	// Method

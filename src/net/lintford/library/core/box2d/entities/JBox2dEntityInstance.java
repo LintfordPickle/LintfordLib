@@ -155,6 +155,8 @@ public class JBox2dEntityInstance extends PooledBaseData {
 
 		}
 
+		// TODO: Offset the loading of the physics to within the actual joint classes (the need for creating joints outside of 
+		// teh PObjectManager makes referencing BodyUids incorrect).
 		final int lJointCount = mJoints.size();
 		for (int i = 0; i < lJointCount; i++) {
 			final var lBox2dRevoluteInstance = (Box2dRevoluteInstance) mJoints.get(i);
@@ -433,11 +435,15 @@ public class JBox2dEntityInstance extends PooledBaseData {
 			final var lBox2dBodyInstance = mBodies.get(i);
 
 			if (lBox2dBodyInstance.mBody != null) {
+				// TODO: Just setting the reference to null may result in losing instances (GC collection)
 				lBox2dBodyInstance.mBody.setUserData(null);
 
 			}
 
 			lBox2dBodyInstance.unloadPhysics();
+
+			// Need to iterate the fixtures and return them to the Box2dInstanceManager
+
 			pBox2dInstanceManager.box2dBodyInstanceRepository().returnPooledItem(lBox2dBodyInstance);
 
 		}
@@ -453,6 +459,8 @@ public class JBox2dEntityInstance extends PooledBaseData {
 			if (lBox2dJointInstance instanceof Box2dRevoluteInstance) {
 				pBox2dInstanceManager.box2dJointInstanceRepository().returnPooledItem((Box2dRevoluteInstance) lBox2dJointInstance);
 			}
+
+			// TODO: Need ti handle weld joints as well (and others that come along)
 
 		}
 
