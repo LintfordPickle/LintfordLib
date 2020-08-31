@@ -59,6 +59,7 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 	private float mPivotX;
 	private float mPivotY;
 	private float mRotation;
+	public boolean disableTreeUpdatesRotation;
 
 	public Object attachedItemInstance;
 
@@ -211,6 +212,7 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 	public SpriteGraphNodeInstance(final int pPoolUid) {
 		super(pPoolUid);
 
+		disableTreeUpdatesRotation = false;
 		childNodes = new ArrayList<>();
 
 	}
@@ -313,7 +315,9 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 
 		pChildGraphNodeInstance.positionX(mPositionX + lNX);
 		pChildGraphNodeInstance.positionY(mPositionY + lNY);
-		pChildGraphNodeInstance.rotation((float) Math.toRadians(lAnchorRotation));
+		
+		if(!pChildGraphNodeInstance.disableTreeUpdatesRotation)
+			pChildGraphNodeInstance.rotation((float) Math.toRadians(lAnchorRotation));
 
 	}
 
