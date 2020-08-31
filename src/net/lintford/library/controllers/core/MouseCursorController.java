@@ -1,20 +1,13 @@
 package net.lintford.library.controllers.core;
 
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.nio.ByteBuffer;
+import java.util.HashMap;
+import java.util.Map;
 
-import javax.imageio.ImageIO;
-
-import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFW;
-import org.lwjgl.glfw.GLFWImage;
 
 import net.lintford.library.controllers.BaseController;
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.input.mouse.MouseCursor;
 
 public class MouseCursorController extends BaseController {
 
@@ -24,10 +17,15 @@ public class MouseCursorController extends BaseController {
 
 	public static final String CONTROLLER_NAME = "Custom Cursor Controller";
 
+	public static final String DEFAULT_CURSOR_NAME = "default";
+
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
+	private long mWindowId;
+	private MouseCursor mDefaultCursor;
+	private Map<String, MouseCursor> mCursorMap;
 	private boolean mIsCustomMouseEnabled;
 
 	// --------------------------------------
@@ -51,6 +49,8 @@ public class MouseCursorController extends BaseController {
 	public MouseCursorController(ControllerManager pControllerManager, int pEntityGroupID) {
 		super(pControllerManager, CONTROLLER_NAME, pEntityGroupID);
 
+		mCursorMap = new HashMap<>();
+
 	}
 
 	// --------------------------------------
@@ -59,18 +59,13 @@ public class MouseCursorController extends BaseController {
 
 	@Override
 	public void initialize(LintfordCore pCore) {
-		try {
-			var glfwImage = imageToGLFWImage(ImageIO.read(new File("res//cursors//cursorDefault.png")));
+		mWindowId = pCore.config().display().windowID();
 
-			long windowId = pCore.config().display().windowID();
-			long cursorPointer = GLFW.glfwCreateCursor(glfwImage, 0, 0);
-			GLFW.glfwSetCursor(windowId, cursorPointer);
+		mDefaultCursor = MouseCursor.loadCursorFromResource("default", "/res/cursors/cursorDefault.png", 0, 0);
 
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		mCursorMap.put(DEFAULT_CURSOR_NAME, mDefaultCursor);
+		setCursor(DEFAULT_CURSOR_NAME);
+
 	}
 
 	@Override
@@ -78,39 +73,45 @@ public class MouseCursorController extends BaseController {
 
 	}
 
-	private GLFWImage imageToGLFWImage(BufferedImage image) {
-		if (image.getType() != BufferedImage.TYPE_INT_ARGB_PRE) {
-			final BufferedImage convertedImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB_PRE);
-			final Graphics2D graphics = convertedImage.createGraphics();
-			final int targetWidth = image.getWidth();
-			final int targetHeight = image.getHeight();
-			graphics.drawImage(image, 0, 0, targetWidth, targetHeight, null);
-			graphics.dispose();
-			image = convertedImage;
-		}
-		
-		final ByteBuffer buffer = BufferUtils.createByteBuffer(image.getWidth() * image.getHeight() * 4);
-		for (int i = 0; i < image.getHeight(); i++) {
-			for (int j = 0; j < image.getWidth(); j++) {
-				int col = image.getRGB(j, i);
-				buffer.put((byte) ((col << 8) >> 24));
-				buffer.put((byte) ((col << 16) >> 24));
-				buffer.put((byte) ((col << 24) >> 24));
-				buffer.put((byte) (col >> 24));
-			}
-		}
-		buffer.flip();
-		
-		final GLFWImage result = GLFWImage.create();
-		result.set(image.getWidth(), image.getHeight(), buffer);
-		return result;
-	}
-
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
 
-	public void enableCustomMouse() {
+	public void loadCursorFromFile(String pCursorName, String pFilename, int pHotX, int pHotY) {
+		var lCustomCursor = MouseCursor.loadCursorFromFile(pCursorName, pFilename, pHotX, pHotY);
+
+		if (lCustomCursor.isLoaded()) {
+			mCursorMap.put(pCursorName, lCustomCursor);
+
+		}
+
+	}
+
+	public void loadCursorFromResources(String pCursorName, String pResourceName, int pHotX, int pHotY) {
+		var lCustomCursor = MouseCursor.loadCursorFromResource(pCursorName, pResourceName, pHotX, pHotY);
+
+		if (lCustomCursor.isLoaded()) {
+			mCursorMap.put(pCursorName, lCustomCursor);
+
+		}
+
+	}
+
+	public void setCursor(String pCursorName) {
+		if (pCursorName == null) {
+			GLFW.glfwSetCursor(mWindowId, mDefaultCursor.cursorUid());
+			return;
+
+		}
+
+		var lCustomCursor = mCursorMap.get(pCursorName);
+
+		if (lCustomCursor != null && lCustomCursor.isLoaded()) {
+			GLFW.glfwSetCursor(mWindowId, lCustomCursor.cursorUid());
+		} else {
+			GLFW.glfwSetCursor(mWindowId, mDefaultCursor.cursorUid());
+		}
+
 		mIsCustomMouseEnabled = true;
 
 	}
