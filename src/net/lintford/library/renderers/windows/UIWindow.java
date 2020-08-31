@@ -389,7 +389,7 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 		// Draw the window components
 		final int lComponentCount = mComponents.size();
 		for (int i = 0; i < lComponentCount; i++) {
-			mComponents.get(i).draw(pCore, lTextureBatch, mUiCoreTexture, lTextFont, ZLayers.LAYER_GAME_UI + ((float) i * 0.001f));
+			mComponents.get(i).draw(pCore, lTextureBatch, mHudTexture, lTextFont, ZLayers.LAYER_GAME_UI + ((float) i * 0.001f));
 
 		}
 
