@@ -49,7 +49,7 @@ public class ParticlePhysicsModifier extends ParticleModifierBase {
 
 		pParticle.worldPositionX += pParticle.dx * lDelta;
 		pParticle.worldPositionY += pParticle.dy * lDelta;
-		pParticle.rot += Math.toRadians(pParticle.dr * lDelta);
+		pParticle.rotationInRadians += Math.toRadians(pParticle.dr * lDelta);
 
 	}
 

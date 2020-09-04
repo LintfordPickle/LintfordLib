@@ -30,26 +30,25 @@ public class ParticleWispMovementModifier extends ParticleModifierBase {
 	@Override
 	public void initialize(Particle pParticle) {
 		// Give each Wisp particle a random direction
-		pParticle.roy = (float) (RandomNumbers.RANDOM.nextFloat() * Math.PI * 2f);
+		float lInitialAngle = RandomNumbers.RANDOM.nextFloat() * (float) Math.PI * 2f;
+
+		pParticle.dx += (float) Math.cos(lInitialAngle);
+		pParticle.dy += (float) Math.sin(lInitialAngle);
 
 	}
 
 	@Override
 	public void update(LintfordCore pCore) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void updateParticle(LintfordCore pCore, Particle pParticle) {
+		float lAngle = (float) Math.atan2(pParticle.dy, pParticle.dx);
+		lAngle += RandomNumbers.RANDOM.nextFloat() * 10f;
 
-		// We will use the un-used rox, roy variables of a particle to track the time and
-		// angle of the particle over time.
-
-		pParticle.roy += RandomNumbers.RANDOM.nextFloat() * 10f;
-
-		pParticle.dx += (float) Math.cos(pParticle.roy) * 1f;
-		pParticle.dy += (float) Math.sin(pParticle.roy) * 1f;
+		pParticle.dx += (float) Math.cos(lAngle);
+		pParticle.dy += (float) Math.sin(lAngle);
 
 	}
 

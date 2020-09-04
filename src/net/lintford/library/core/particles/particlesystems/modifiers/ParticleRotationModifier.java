@@ -14,9 +14,6 @@ public class ParticleRotationModifier extends ParticleModifierBase {
 
 	public static final String MODIFIER_NAME = "ParticleRotationModifier";
 
-	/** The factor of the particle vertical velocity to conserve after collisions with the floor */
-	public static final float PARTICLE_FLOOR_BOUNCE_AMT = 0.5f;
-
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
@@ -51,7 +48,7 @@ public class ParticleRotationModifier extends ParticleModifierBase {
 		pParticle.dr += RandomNumbers.random(0, 0.00f);
 
 		// X component
-		pParticle.rot += pParticle.dr * lDelta;
+		pParticle.rotationInRadians += pParticle.dr * lDelta;
 
 		pParticle.dr *= 0.98f; // ConstantsTable.FRICTION_Y;
 

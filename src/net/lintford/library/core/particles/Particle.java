@@ -1,9 +1,9 @@
 package net.lintford.library.core.particles;
 
-import net.lintford.library.core.entity.CircleEntity;
+import net.lintford.library.core.entity.WorldEntity;
 import net.lintford.library.core.particles.particlesystems.initializers.ParticleInitializerBase;
 
-public class Particle extends CircleEntity {
+public class Particle extends WorldEntity {
 
 	// --------------------------------------
 	// Constants
@@ -21,9 +21,12 @@ public class Particle extends CircleEntity {
 	public float timeSinceStart;
 	private float mLifeTime;
 
+	public float width;
+	public float height;
 	public float sx, sy, sw, sh; // The src tex rect
 
-	public float rox, roy, rot, rotv;
+	public float rox;
+	public float roy;
 
 	public float dx, dy, dr;
 	public float r, g, b, a;
@@ -66,8 +69,9 @@ public class Particle extends CircleEntity {
 
 	}
 
-	public void setupDestTexture(float pSize) {
-		radius = pSize;
+	public void setupDestTexture(float pWidth, float pHeight) {
+		width = pWidth;
+		height = pHeight;
 
 	}
 

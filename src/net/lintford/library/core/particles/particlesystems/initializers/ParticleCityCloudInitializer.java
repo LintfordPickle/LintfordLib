@@ -51,7 +51,8 @@ public class ParticleCityCloudInitializer extends ParticleInitializerBase {
 		// Set default texture regions
 		pParticle.sx = pParticle.sy = 0;
 		pParticle.sw = pParticle.sh = SOURCE_DIMENSIONS;
-		pParticle.radius = DEST_DIMENSIONS;
+		pParticle.width = DEST_DIMENSIONS;
+		pParticle.height = DEST_DIMENSIONS;
 		pParticle.rox = pParticle.roy = DEST_DIMENSIONS / 2;
 		pParticle.sx = pParticle.sy = 1;
 

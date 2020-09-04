@@ -128,7 +128,7 @@ public class ParticleSystemDeserializer implements JsonDeserializer<ParticleSyst
 					Debug.debugManager().logger().printException(getClass().getSimpleName(), exceptionJson);
 
 				} catch (ClassNotFoundException exception) {
-					Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Unable to instantiate particle system initializer '%s' for the ParticleSystem '%s'", lModifierName, lNewParticleSystemDefinition.textureName));
+					Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Unable to instantiate particle system modifier '%s' for the ParticleSystem '%s'", lModifierName, lNewParticleSystemDefinition.textureName));
 					Debug.debugManager().logger().printException(getClass().getSimpleName(), exception);
 
 				}

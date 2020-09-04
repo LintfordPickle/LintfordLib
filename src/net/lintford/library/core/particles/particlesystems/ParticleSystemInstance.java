@@ -136,11 +136,11 @@ public class ParticleSystemInstance extends BaseInstanceData {
 	/**
 	 * Spawns a new {@link Particle} instance, foregoing the {@link IParticleinitializer}s attached to this {@link ParticleSystemInstance}. Insteadm you can specifiy the individual components of the particles.
 	 */
-	public Particle spawnParticle(float pX, float pY, float pVelX, float pVelY, float pSX, float pSY, float pSW, float pSH, float pRadius) {
+	public Particle spawnParticle(float pX, float pY, float pVelX, float pVelY, float pSX, float pSY, float pSW, float pSH, float pWidth, float pHeight) {
 		Particle lNewParticle = spawnParticle(pX, pY, pVelX, pVelY);
 		if (lNewParticle != null) {
 			lNewParticle.setupSourceTexture(pSX, pSY, pSW, pSH);
-			lNewParticle.setupDestTexture(pRadius);
+			lNewParticle.setupDestTexture(pWidth, pHeight);
 
 			return lNewParticle;
 		}

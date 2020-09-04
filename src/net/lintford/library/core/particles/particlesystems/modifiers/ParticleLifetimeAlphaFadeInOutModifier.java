@@ -10,6 +10,8 @@ public class ParticleLifetimeAlphaFadeInOutModifier extends ParticleModifierBase
 	// --------------------------------------
 
 	private static final long serialVersionUID = 7071826537585613482L;
+	
+	public float maxAlpha = 1.f;
 
 	public static final String MODIFIER_NAME = "ParticleLifetimeAlphaFadeInOutModifier";
 
@@ -54,7 +56,7 @@ public class ParticleLifetimeAlphaFadeInOutModifier extends ParticleModifierBase
 		// .25
 		// since we want the maximum alpha to be 1, not .25, we'll scale the
 		// entire equation by 4.
-		p.a = 4 * normalizedLifetime * (1 - normalizedLifetime);
+		p.a = 4 * normalizedLifetime * (1 - normalizedLifetime) * maxAlpha;
 
 	}
 
