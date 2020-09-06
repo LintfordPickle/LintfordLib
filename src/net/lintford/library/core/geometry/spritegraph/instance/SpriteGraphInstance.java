@@ -20,6 +20,7 @@ import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDefinit
 public class SpriteGraphInstance extends PooledBaseData implements AnimatedSpriteListener {
 
 	public static final Comparator<SpriteGraphNodeInstance> SpriteGraphNodeInstanceZComparator = new SpriteGraphNodeInstanceZComparator();
+
 	private static class SpriteGraphNodeInstanceZComparator implements Comparator<SpriteGraphNodeInstance> {
 
 		@Override
@@ -36,14 +37,13 @@ public class SpriteGraphInstance extends PooledBaseData implements AnimatedSprit
 
 	private static final long serialVersionUID = -5557875926084955431L;
 
-	
-
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
 	public SpriteGraphNodeInstance rootNode;
 	public String spriteGraphName;
+	public String spriteSheetName;
 	public boolean mFlipHorizontal;
 	public boolean mFlipVertical;
 

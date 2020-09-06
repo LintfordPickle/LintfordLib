@@ -23,7 +23,7 @@ public class LSystemDefinition implements Serializable {
 	public String axiom;
 	public List<LRuleSet> rules;
 
-	public String SpriteSheetName;
+	public String spriteSheetName;
 	public String rootNodeSpriteName;
 	public String branchNodeSpriteName;
 	public String leafNodeSpriteName;
@@ -35,6 +35,8 @@ public class LSystemDefinition implements Serializable {
 	public float minAngle;
 	public float maxAngle;
 
+	public float leafChanceDepthMultiplier;
+
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
@@ -42,6 +44,7 @@ public class LSystemDefinition implements Serializable {
 	public LSystemDefinition() {
 		rules = new ArrayList<>();
 		leafNodeDepth = 4;
+		leafChanceDepthMultiplier = 10.f; // 10% chance increase per node depth
 
 	}
 

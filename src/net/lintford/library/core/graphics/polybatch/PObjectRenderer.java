@@ -5,6 +5,7 @@ import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.Fixture;
 
+import net.lintford.library.ConstantsPhysics;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.box2d.entities.JBox2dEntityInstance;
@@ -65,8 +66,16 @@ public class PObjectRenderer {
 	}
 
 	public void draw(LintfordCore pCore, JBox2dEntity pPObject) {
-
 		if (!pPObject.hasPhysicsEntity())
+			return;
+
+		String lSpriteSheetDefName = pPObject.box2dEntityInstance().spriteSheetName;
+		if (lSpriteSheetDefName == null)
+			return;
+
+		SpriteSheetDefinition lSpriteSheetDef = mResourceManager.spriteSheetManager().getSpriteSheet(lSpriteSheetDefName, mEntityGroupID);
+
+		if (lSpriteSheetDef == null)
 			return;
 
 		if (verts == null) {
@@ -75,15 +84,6 @@ public class PObjectRenderer {
 				verts[i] = new Vector2f();
 			}
 		}
-
-		String lSpriteSheetDefName = null; // pPObject.box2dEntityInstance().spriteSheetName;
-		if (lSpriteSheetDefName == null)
-			return;
-
-		SpriteSheetDefinition lSpriteSheetDef = mResourceManager.spriteSheetManager().getSpriteSheet(lSpriteSheetDefName, mEntityGroupID);
-
-		if (lSpriteSheetDef == null)
-			return;
 
 		mTextureBatch.begin(pCore.gameCamera());
 
@@ -104,21 +104,24 @@ public class PObjectRenderer {
 				String lSpriteFrameName = lFixtureInst.spriteName;
 				SpriteFrame lFrame = lSpriteSheetDef.getSpriteFrame(lSpriteFrameName);
 
+				if (lFrame == null)
+					continue;
+
 				Fixture lFixt = lFixtureInst.mFixture;
 				if (lFixt == null)
 					continue;
 
 				if (lFixt.getShape() instanceof PolygonShape) {
-					PolygonShape fixtureShape = (PolygonShape) lFixt.getShape();
+					final PolygonShape fixtureShape = (PolygonShape) lFixt.getShape();
 					int vSize = Math.min(fixtureShape.getVertexCount(), MAX_VERTS);
 
 					for (int k = 0; k < vSize; k++) {
 						vertex = fixtureShape.getVertex(k);
 
-						Vec2 worldPoint = lBody.getWorldPoint(vertex);
+						final Vec2 worldPoint = lBody.getWorldPoint(vertex);
 
-						verts[k].x = worldPoint.x * (32f);
-						verts[k].y = worldPoint.y * (32f);
+						verts[k].x = ConstantsPhysics.toPixels(worldPoint.x);
+						verts[k].y = ConstantsPhysics.toPixels(worldPoint.y);
 
 					}
 

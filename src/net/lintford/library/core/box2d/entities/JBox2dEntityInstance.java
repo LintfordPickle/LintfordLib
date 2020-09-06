@@ -40,6 +40,8 @@ public class JBox2dEntityInstance extends PooledBaseData {
 	// Variables
 	// --------------------------------------
 
+	public String spriteSheetName;
+
 	protected transient PObjectDefinition mPObjectDefinition;
 
 	protected List<Box2dBodyInstance> mBodies = new ArrayList<>();
