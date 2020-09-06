@@ -210,28 +210,32 @@ public class JBox2dDebugDrawer {
 			if (pJoint == null)
 				return;
 
+			GL11.glPointSize(6f);
 			Debug.debugManager().drawers().beginPointRenderer(pCore.gameCamera());
 
 			if (pJoint instanceof RevoluteJoint) {
 				RevoluteJoint lRevoluteJoint = (RevoluteJoint) pJoint;
 
 				final var lBodyA = lRevoluteJoint.getBodyA();
+				final var lLocalAnchorA = lRevoluteJoint.getLocalAnchorA();
+
 				final var lBodyB = lRevoluteJoint.getBodyB();
+				final var lLocalAnchorB = lRevoluteJoint.getLocalAnchorB();
 
-				final var lAnchorAX = ConstantsPhysics.toPixels(lBodyA.getPosition().x);
-				final var lAnchorAY = ConstantsPhysics.toPixels(lBodyA.getPosition().y);
-				final var lAnchorBX = ConstantsPhysics.toPixels(lBodyB.getPosition().x);
-				final var lAnchorBY = ConstantsPhysics.toPixels(lBodyB.getPosition().y);
+				final var lAnchorAX = ConstantsPhysics.toPixels(lBodyA.getPosition().x + lLocalAnchorA.x);
+				final var lAnchorAY = ConstantsPhysics.toPixels(lBodyA.getPosition().y + lLocalAnchorA.y);
+				final var lAnchorBX = ConstantsPhysics.toPixels(lBodyB.getPosition().x + lLocalAnchorB.x);
+				final var lAnchorBY = ConstantsPhysics.toPixels(lBodyB.getPosition().y + lLocalAnchorB.y);
 
-				GL11.glPointSize(5f);
-				Debug.debugManager().drawers().drawPoint(lAnchorAX, lAnchorAY, 255f / 255f, 117f / 255f, 104f / 255f, 1f);
+				Debug.debugManager().drawers().drawPoint(lAnchorAX, lAnchorAY, 200f / 255f, 217f / 255f, 204f / 255f, 1f);
 				Debug.debugManager().drawers().drawPoint(lAnchorBX, lAnchorBY, 255f / 255f, 117f / 255f, 104f / 255f, 1f);
 
 				Debug.debugManager().drawers().beginLineRenderer(pCore.gameCamera(), GL11.GL_LINES, 1.f);
-				Debug.debugManager().drawers().drawLine(lAnchorAX, lAnchorAY, lAnchorBX, lAnchorBY, 1f, 1f, 1f);
+				Debug.debugManager().drawers().drawLine(lAnchorAX, lAnchorAY, lAnchorBX, lAnchorBY, 1f, 0f, 1f);
 				Debug.debugManager().drawers().endLineRenderer();
 
 				Debug.debugManager().drawers().beginLineRenderer(pCore.gameCamera(), GL11.GL_LINES, 2.f);
+
 				// Render reference angle
 				float lRefAngle = lRevoluteJoint.getReferenceAngle();
 				float lRefPointEndX = (float) Math.cos(lRefAngle) * 25f;
