@@ -1006,7 +1006,7 @@ public class JBox2dEntityInstance extends PooledBaseData {
 		for (int i = 0; i < lBodyCount; i++) {
 
 			Box2dBodyInstance lBodyInst = mBodies.get(i);
-			if (lBodyInst == null || lBodyInst.mBody == null)
+			if (lBodyInst == null)
 				continue;
 
 			final int lFixtureCount = lBodyInst.mFixtures.length;
@@ -1049,7 +1049,8 @@ public class JBox2dEntityInstance extends PooledBaseData {
 
 					}
 
-					lFixInst.loadPhysics(mWorld, lBodyInst.mBody);
+					if (lBodyInst.mBody != null)
+						lFixInst.loadPhysics(mWorld, lBodyInst.mBody);
 
 				}
 
