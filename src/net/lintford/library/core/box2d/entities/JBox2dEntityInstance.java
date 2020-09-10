@@ -47,7 +47,7 @@ public class JBox2dEntityInstance extends PooledBaseData {
 	protected List<Box2dBodyInstance> mBodies = new ArrayList<>();
 	protected List<Box2dJointInstance> mJoints = new ArrayList<>();
 
-	protected BasePhysicsData userDataObject;
+	protected BasePhysicsData mMainBodyUserDataObject;
 	protected Box2dBodyInstance mMainBody;
 
 	protected boolean mIsFree;
@@ -59,13 +59,13 @@ public class JBox2dEntityInstance extends PooledBaseData {
 	// --------------------------------------
 
 	public BasePhysicsData userDataObject() {
-		return userDataObject;
+		return mMainBodyUserDataObject;
 
 	}
 
 	public void userDataObject(BasePhysicsData pNewUserDataObject) {
 		if (pNewUserDataObject == null) {
-			userDataObject = null;
+			mMainBodyUserDataObject = null;
 			if (mPhysicsLoaded) {
 				mainBody().mBody.setUserData(null);
 
@@ -75,10 +75,10 @@ public class JBox2dEntityInstance extends PooledBaseData {
 
 		}
 
-		userDataObject = pNewUserDataObject;
+		mMainBodyUserDataObject = pNewUserDataObject;
 
 		if (mPhysicsLoaded) {
-			mainBody().mBody.setUserData(userDataObject);
+			mainBody().mBody.setUserData(mMainBodyUserDataObject);
 
 		}
 
@@ -198,9 +198,9 @@ public class JBox2dEntityInstance extends PooledBaseData {
 			mMainBody = getBodyByIndex(0);
 		}
 
-		if (userDataObject != null && mainBody() != null) {
+		if (mMainBodyUserDataObject != null && mainBody() != null) {
 			if (mainBody().mBody != null)
-				mainBody().mBody.setUserData(userDataObject);
+				mainBody().mBody.setUserData(mMainBodyUserDataObject);
 
 		}
 

@@ -5,12 +5,10 @@ import net.lintford.library.core.entity.PooledBaseData;
 public abstract class BasePhysicsData extends PooledBaseData {
 
 	// --------------------------------------
-	// Constants
-	// --------------------------------------
-
-	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	private static final long serialVersionUID = -4864741973346623726L;
 
 	@Override
 	public boolean isAssigned() {

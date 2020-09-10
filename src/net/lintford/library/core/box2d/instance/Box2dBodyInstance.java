@@ -8,6 +8,7 @@ import org.jbox2d.dynamics.World;
 
 import net.lintford.library.ConstantsPhysics;
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.box2d.BasePhysicsData;
 import net.lintford.library.core.box2d.definition.Box2dBodyDefinition;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.entity.PooledBaseData;
@@ -25,6 +26,7 @@ public class Box2dBodyInstance extends PooledBaseData {
 	// --------------------------------------
 
 	public transient Body mBody;
+	public BasePhysicsData bodyPhysicsData;
 
 	public String name;
 	public int uid;
@@ -154,6 +156,9 @@ public class Box2dBodyInstance extends PooledBaseData {
 		lBodyDef.active = true;
 
 		mBody = pWorld.createBody(lBodyDef);
+
+		if (bodyPhysicsData != null)
+			mBody.setUserData(bodyPhysicsData);
 
 		// iterate over the fixtures
 		final int lFixtureCount = mFixtures.length;
