@@ -125,7 +125,7 @@ public class PObjectRenderer {
 
 					}
 
-					mTextureBatch.drawPolygon(lTexture, verts, lFrame, -0.01f, 1f, 1f, 1f, 1f);
+					mTextureBatch.drawPolygon(lTexture, verts, lFrame, -0.2f, 1f, 1f, 1f, 1f);
 
 				}
 

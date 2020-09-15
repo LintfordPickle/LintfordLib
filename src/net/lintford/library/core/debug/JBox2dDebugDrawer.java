@@ -217,15 +217,15 @@ public class JBox2dDebugDrawer {
 				RevoluteJoint lRevoluteJoint = (RevoluteJoint) pJoint;
 
 				final var lBodyA = lRevoluteJoint.getBodyA();
-				final var lLocalAnchorA = lRevoluteJoint.getLocalAnchorA();
-
 				final var lBodyB = lRevoluteJoint.getBodyB();
-				final var lLocalAnchorB = lRevoluteJoint.getLocalAnchorB();
 
-				final var lAnchorAX = ConstantsPhysics.toPixels(lBodyA.getPosition().x + lLocalAnchorA.x);
-				final var lAnchorAY = ConstantsPhysics.toPixels(lBodyA.getPosition().y + lLocalAnchorA.y);
-				final var lAnchorBX = ConstantsPhysics.toPixels(lBodyB.getPosition().x + lLocalAnchorB.x);
-				final var lAnchorBY = ConstantsPhysics.toPixels(lBodyB.getPosition().y + lLocalAnchorB.y);
+				final var lLocalAnchorA = lBodyA.getWorldPoint(lRevoluteJoint.getLocalAnchorA());
+				final var lLocalAnchorB = lBodyB.getWorldPoint(lRevoluteJoint.getLocalAnchorB());
+
+				final var lAnchorAX = ConstantsPhysics.toPixels(lLocalAnchorA.x);
+				final var lAnchorAY = ConstantsPhysics.toPixels(lLocalAnchorA.y);
+				final var lAnchorBX = ConstantsPhysics.toPixels(lLocalAnchorB.x);
+				final var lAnchorBY = ConstantsPhysics.toPixels(lLocalAnchorB.y);
 
 				Debug.debugManager().drawers().drawPoint(lAnchorAX, lAnchorAY, 200f / 255f, 217f / 255f, 204f / 255f, 1f);
 				Debug.debugManager().drawers().drawPoint(lAnchorBX, lAnchorBY, 255f / 255f, 117f / 255f, 104f / 255f, 1f);

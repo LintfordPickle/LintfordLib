@@ -22,7 +22,7 @@ public class Box2dBodyInstanceRepository extends PooledInstanceManager<Box2dBody
 	// --------------------------------------
 
 	private int getNewPoolUid() {
-		return mPoolUidCounter;
+		return mPoolUidCounter++;
 	}
 
 	// --------------------------------------

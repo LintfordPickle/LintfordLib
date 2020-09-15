@@ -6,10 +6,10 @@ import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.World;
 
-import net.lintford.library.ConstantsPhysics;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.box2d.BasePhysicsData;
 import net.lintford.library.core.box2d.definition.Box2dBodyDefinition;
+import net.lintford.library.core.box2d.entities.JBox2dEntityInstance;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.entity.PooledBaseData;
 
@@ -29,28 +29,24 @@ public class Box2dBodyInstance extends PooledBaseData {
 	public BasePhysicsData bodyPhysicsData;
 
 	public String name;
-	public int uid;
+	public int entityBodyIndex;
 	public int bodyTypeIndex;
-	public Vec2 worldPosition;
-	public Vec2 localPosition;
-	public float worldAngle;
-	public float localAngle;
-	public Vec2 linearVelocity;
+	public final Vec2 massCenter;
+	public final Vec2 objectPositionInUnits;
+	public final Vec2 linearVelocity;
+	public float objectAngleInRadians;
 	public float angularVelocity;
 	public float linearDamping;
 	public float angularDamping;
 	public float gravityScale = 1f;
+	public float mass;
+	public float massI;
 
 	public boolean allowSleep = true;
 	public boolean awake = true;
 	public boolean fixedRotation = false;
 	public boolean bullet = true;
 	public boolean active = true;
-
-	// Mass data
-	public float mass;
-	public Vec2 massCenter;
-	public float massI;
 
 	public Box2dFixtureInstance[] mFixtures;
 
@@ -61,8 +57,7 @@ public class Box2dBodyInstance extends PooledBaseData {
 	public Box2dBodyInstance(int pPoolUid) {
 		super(pPoolUid);
 
-		localPosition = new Vec2();
-		worldPosition = new Vec2();
+		objectPositionInUnits = new Vec2();
 		linearVelocity = new Vec2();
 		massCenter = new Vec2();
 
@@ -72,18 +67,7 @@ public class Box2dBodyInstance extends PooledBaseData {
 	// Core-Methods
 	// --------------------------------------
 
-	@Override
-	public void initialize(Object pParent) {
-		super.initialize(pParent);
-
-		localPosition = new Vec2();
-		worldPosition = new Vec2();
-		linearVelocity = new Vec2();
-		massCenter = new Vec2();
-
-	}
-
-	public void savePhysics() {
+	public void savePhysics(JBox2dEntityInstance pParentInst) {
 		if (mBody == null)
 			return; // nothing to save
 
@@ -99,10 +83,22 @@ public class Box2dBodyInstance extends PooledBaseData {
 			this.bodyTypeIndex = Box2dBodyDefinition.BODY_TYPE_INDEX_DYNAMIC;
 			break;
 		}
+		
+		float lParentPositionX = 0.f;
+		float lParentPositionY = 0.f;
+		float lParentAngle = 0.f;
+		if (pParentInst != null) {
+			lParentPositionX = pParentInst.entityPosition().x;
+			lParentPositionY = pParentInst.entityPosition().y;
+			lParentAngle = pParentInst.entityAngle();
+
+		}
+
+		this.objectPositionInUnits.x = mBody.getPosition().x - lParentPositionX;
+		this.objectPositionInUnits.y = mBody.getPosition().y - lParentPositionY;
+		this.objectAngleInRadians = mBody.getAngle() - lParentAngle;
 
 		this.linearVelocity.set(mBody.getLinearVelocity());
-
-		this.localAngle = mBody.getAngle();
 		this.angularVelocity = mBody.getAngularVelocity();
 		this.linearDamping = mBody.getLinearDamping();
 		this.angularDamping = mBody.getAngularDamping();
@@ -114,18 +110,18 @@ public class Box2dBodyInstance extends PooledBaseData {
 		this.bullet = mBody.isBullet();
 		this.active = mBody.isActive();
 
-		// iterate over the fixtures
 		final int lFixtureCount = mFixtures.length;
 		for (int j = 0; j < lFixtureCount; j++) {
-			Box2dFixtureInstance lFixtureInstance = mFixtures[j];
+			final var lFixtureInstance = mFixtures[j];
 
-			lFixtureInstance.savePhysics();
+			if (lFixtureInstance != null)
+				lFixtureInstance.savePhysics();
 
 		}
 
 	}
 
-	public void loadPhysics(World pWorld) {
+	public void loadPhysics(World pWorld, JBox2dEntityInstance pParentInst) {
 		BodyDef lBodyDef = new BodyDef();
 
 		switch (bodyTypeIndex) {
@@ -140,10 +136,22 @@ public class Box2dBodyInstance extends PooledBaseData {
 			break;
 		}
 
-		lBodyDef.position.set(ConstantsPhysics.toUnits(worldPosition.x), ConstantsPhysics.toUnits(worldPosition.y));
-		lBodyDef.linearVelocity.set(linearVelocity.x, linearVelocity.y);
+		float lParentPositionX = 0.f;
+		float lParentPositionY = 0.f;
+		float lParentAngle = 0.f;
+		if (pParentInst != null) {
+			lParentPositionX = pParentInst.entityPosition().x;
+			lParentPositionY = pParentInst.entityPosition().y;
+			lParentAngle = pParentInst.entityAngle();
 
-		lBodyDef.angle = worldAngle;
+		}
+
+		lBodyDef.position.x = lParentPositionX + objectPositionInUnits.x;
+		lBodyDef.position.y = lParentPositionY + objectPositionInUnits.y;
+		lBodyDef.angle = lParentAngle + objectAngleInRadians;
+
+		lBodyDef.linearVelocity.x = linearVelocity.x;
+		lBodyDef.linearVelocity.y = linearVelocity.y;
 		lBodyDef.angularVelocity = angularVelocity;
 		lBodyDef.linearDamping = linearDamping;
 		lBodyDef.angularDamping = angularDamping;
@@ -160,12 +168,12 @@ public class Box2dBodyInstance extends PooledBaseData {
 		if (bodyPhysicsData != null)
 			mBody.setUserData(bodyPhysicsData);
 
-		// iterate over the fixtures
 		final int lFixtureCount = mFixtures.length;
 		for (int i = 0; i < lFixtureCount; i++) {
-			Box2dFixtureInstance lFixtureInstance = mFixtures[i];
+			final var lFixtureInstance = mFixtures[i];
 
-			lFixtureInstance.loadPhysics(pWorld, mBody);
+			if (lFixtureInstance != null)
+				lFixtureInstance.loadPhysics(pWorld, mBody);
 
 		}
 

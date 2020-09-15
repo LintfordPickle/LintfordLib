@@ -44,11 +44,13 @@ public class JBox2dEntityInstance extends PooledBaseData {
 
 	protected transient PObjectDefinition mPObjectDefinition;
 
-	protected List<Box2dBodyInstance> mBodies = new ArrayList<>();
-	protected List<Box2dJointInstance> mJoints = new ArrayList<>();
+	protected final List<Box2dBodyInstance> mBodies = new ArrayList<>();
+	protected final List<Box2dJointInstance> mJoints = new ArrayList<>();
 
 	protected BasePhysicsData mMainBodyUserDataObject;
 	protected Box2dBodyInstance mMainBody;
+	protected Vec2 entityPosition = new Vec2();
+	protected float entityAngle;
 
 	protected boolean mIsFree;
 	protected transient World mWorld;
@@ -57,6 +59,14 @@ public class JBox2dEntityInstance extends PooledBaseData {
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public Vec2 entityPosition() {
+		return entityPosition;
+	}
+
+	public float entityAngle() {
+		return entityAngle;
+	}
 
 	public BasePhysicsData userDataObject() {
 		return mMainBodyUserDataObject;
@@ -149,27 +159,21 @@ public class JBox2dEntityInstance extends PooledBaseData {
 		for (int i = 0; i < lBodyCount; i++) {
 			final var lBox2dBodyInstance = mBodies.get(i);
 
-			lBox2dBodyInstance.worldPosition.x = ConstantsPhysics.toPixels(lBox2dBodyInstance.localPosition.x);
-			lBox2dBodyInstance.worldPosition.y = ConstantsPhysics.toPixels(lBox2dBodyInstance.localPosition.y);
-			lBox2dBodyInstance.worldAngle = lBox2dBodyInstance.localAngle;
-
-			lBox2dBodyInstance.loadPhysics(pWorld);
+			lBox2dBodyInstance.loadPhysics(pWorld, this);
 
 		}
 
-		// TODO: Offset the loading of the physics to within the actual joint classes (the need for creating joints outside of 
-		// teh PObjectManager makes referencing BodyUids incorrect).
 		final int lJointCount = mJoints.size();
 		for (int i = 0; i < lJointCount; i++) {
 			final var lBox2dRevoluteInstance = (Box2dRevoluteInstance) mJoints.get(i);
 			final var lRevoluteJointDef = new RevoluteJointDef();
 
-			final var lBodyA = getBodyByIndex(lBox2dRevoluteInstance.bodyAUID);
+			final var lBodyA = getBodyByIndex(lBox2dRevoluteInstance.bodyAUid);
 			if (lBodyA == null)
 				continue;
 			lRevoluteJointDef.bodyA = lBodyA.mBody;
 
-			final var lBodyB = getBodyByIndex(lBox2dRevoluteInstance.bodyBUID);
+			final var lBodyB = getBodyByIndex(lBox2dRevoluteInstance.bodyBUid);
 			if (lBodyB == null)
 				continue;
 			lRevoluteJointDef.bodyB = lBodyB.mBody;
@@ -211,7 +215,7 @@ public class JBox2dEntityInstance extends PooledBaseData {
 	public void savePhysics() {
 		final int lBodyCount = mBodies.size();
 		for (int i = 0; i < lBodyCount; i++) {
-			mBodies.get(i).savePhysics();
+			mBodies.get(i).savePhysics(this);
 
 			if (mBodies.get(i).mFixtures != null) {
 				final int lFixtureCount = mBodies.get(i).mFixtures.length;
@@ -316,12 +320,6 @@ public class JBox2dEntityInstance extends PooledBaseData {
 	public void loadPObjectFromDefinition(Box2dInstanceManager pBox2dInstanceManager, PObjectDefinition pDefinition) {
 		mPObjectDefinition = pDefinition;
 
-		if (mBodies == null)
-			mBodies = new ArrayList<>();
-		if (mJoints == null)
-			mJoints = new ArrayList<>();
-
-		// Go through and create instances for each body in the definition
 		loadBodiesFromDefinition(pBox2dInstanceManager, mPObjectDefinition);
 		loadJointsFromDefinition(pBox2dInstanceManager, mPObjectDefinition);
 
@@ -336,13 +334,13 @@ public class JBox2dEntityInstance extends PooledBaseData {
 			lBox2dBodyInstance.name = lBox2dBodyDefinition.name;
 			lBox2dBodyInstance.bodyTypeIndex = lBox2dBodyDefinition.bodyTypeIndex;
 
-			lBox2dBodyInstance.localPosition.x = lBox2dBodyDefinition.bodyDefinition.position.x;
-			lBox2dBodyInstance.localPosition.y = lBox2dBodyDefinition.bodyDefinition.position.y;
+			lBox2dBodyInstance.objectPositionInUnits.x = lBox2dBodyDefinition.bodyDefinition.position.x;
+			lBox2dBodyInstance.objectPositionInUnits.y = lBox2dBodyDefinition.bodyDefinition.position.y;
 
 			lBox2dBodyInstance.linearVelocity.x = lBox2dBodyDefinition.bodyDefinition.linearVelocity.x;
 			lBox2dBodyInstance.linearVelocity.y = lBox2dBodyDefinition.bodyDefinition.linearVelocity.y;
 
-			lBox2dBodyInstance.localAngle = lBox2dBodyDefinition.bodyDefinition.angle;
+			lBox2dBodyInstance.objectAngleInRadians = lBox2dBodyDefinition.bodyDefinition.angle;
 			lBox2dBodyInstance.angularVelocity = lBox2dBodyDefinition.bodyDefinition.angularVelocity;
 			lBox2dBodyInstance.linearDamping = lBox2dBodyDefinition.bodyDefinition.linearDamping;
 			lBox2dBodyInstance.angularDamping = lBox2dBodyDefinition.bodyDefinition.angularDamping;
@@ -404,14 +402,14 @@ public class JBox2dEntityInstance extends PooledBaseData {
 
 				lBox2dJointInstance.name = lBox2dJointDefinition.name;
 
-				lBox2dJointInstance.bodyAUID = lBox2dJointDefinition.bodyAIndex;
-				lBox2dJointInstance.bodyBUID = lBox2dJointDefinition.bodyBIndex;
+				lBox2dJointInstance.bodyAUid = lBox2dJointDefinition.bodyAIndex;
+				lBox2dJointInstance.bodyBUid = lBox2dJointDefinition.bodyBIndex;
 
 				lBox2dJointInstance.localAnchorA.x = lJointDefinition.localAnchorA.x;
 				lBox2dJointInstance.localAnchorA.y = lJointDefinition.localAnchorA.y;
 				lBox2dJointInstance.localAnchorB.x = lJointDefinition.localAnchorB.x;
 				lBox2dJointInstance.localAnchorB.y = lJointDefinition.localAnchorB.y;
-				lBox2dJointInstance.bodyBUID = lBox2dJointDefinition.bodyBIndex;
+				lBox2dJointInstance.bodyBUid = lBox2dJointDefinition.bodyBIndex;
 				lBox2dJointInstance.referenceAngle = lJointDefinition.referenceAngle;
 
 				lBox2dJointInstance.enableLimit = lJointDefinition.enableLimit;
@@ -492,9 +490,9 @@ public class JBox2dEntityInstance extends PooledBaseData {
 			if (lBox2dBodyInstance.mBody != null) {
 				final var lBox2dPosition = lBox2dBodyInstance.mBody.getPosition();
 
-				lBox2dPosition.x = lBox2dBodyInstance.localPosition.x;
-				lBox2dPosition.y = lBox2dBodyInstance.localPosition.y;
-				float lLocalAngle = lBox2dBodyInstance.localAngle;
+				lBox2dPosition.x = lBox2dBodyInstance.objectPositionInUnits.x;
+				lBox2dPosition.y = lBox2dBodyInstance.objectPositionInUnits.y;
+				float lLocalAngle = lBox2dBodyInstance.objectAngleInRadians;
 
 				lBox2dBodyInstance.mBody.setTransform(lBox2dPosition, lLocalAngle);
 
@@ -507,50 +505,54 @@ public class JBox2dEntityInstance extends PooledBaseData {
 	/**
 	 * Tranforms the PObject as a whole to the desired position with the desired angle. First the the PObject is scaled, then rotations are applied, finally entire object is translated into final position.
 	 * 
-	 * @param pDesiredWorldX            The final absolute world position X.
-	 * @param pDesiredWorldY            The final absolute world position Y.
-	 * @param pDesiredRotationInRadians The rotation angle (in radians) to rotate the PObject.
+	 * @param pWorldXInPixels            The final absolute world position X.
+	 * @param pWorldYInPixels            The final absolute world position Y.
+	 * @param pRotationInRadians The rotation angle (in radians) to rotate the PObject.
 	 */
-	public void transformEntityInstance(float pDesiredWorldX, float pDesiredWorldY, float pDesiredRotationInRadians) {
+	public void transformEntityInstance(float pWorldXInPixels, float pWorldYInPixels, float pRotationInRadians) {
 		final int lBodyCount = mBodies.size();
 		for (int i = 0; i < lBodyCount; i++) {
-			transformBox2dBodyInstance(mBodies.get(i), pDesiredWorldX, pDesiredWorldY, pDesiredRotationInRadians);
+			transformBox2dBodyInstance(mBodies.get(i), pWorldXInPixels, pWorldYInPixels, pRotationInRadians);
 
 		}
 
 	}
 
-	public void transformEntityInstance(float pDesiredWorldX, float pDesiredWorldY) {
+	public void transformEntityInstance(float pWorldXInPixels, float pWorldYInPixels) {
 		final int lBodyCount = mBodies.size();
 		for (int i = 0; i < lBodyCount; i++) {
 			final var lBox2dBodyInstance = mBodies.get(i);
-			transformBox2dBodyInstance(lBox2dBodyInstance, pDesiredWorldX, pDesiredWorldY, lBox2dBodyInstance.localAngle);
+			transformBox2dBodyInstance(lBox2dBodyInstance, pWorldXInPixels, pWorldYInPixels, lBox2dBodyInstance.objectAngleInRadians);
 
 		}
 
 	}
 
-	private void transformBox2dBodyInstance(final Box2dBodyInstance pBox2dBodyInstance, float pDesiredWorldX, float pDesiredWorldY, float pDesiredRotationInRadians) {
+	private void transformBox2dBodyInstance(final Box2dBodyInstance pBox2dBodyInstance, float pDesiredWorldXInPixels, float pDesiredWorldYInPixels, float pDesiredRotationInRadians) {
 		if (pBox2dBodyInstance == null)
 			return;
+
+		entityPosition.x = ConstantsPhysics.toUnits(pDesiredWorldXInPixels);
+		entityPosition.y = ConstantsPhysics.toUnits(pDesiredWorldYInPixels);
 
 		if (pBox2dBodyInstance.mBody != null) {
 			final var lBox2dPosition = pBox2dBodyInstance.mBody.getPosition();
 
-			// translate bodies back to origin positions
-			lBox2dPosition.x = pBox2dBodyInstance.localPosition.x;
-			lBox2dPosition.y = pBox2dBodyInstance.localPosition.y;
+			// translate bodies back to the origin, entity-local position
+			lBox2dPosition.x = pBox2dBodyInstance.objectPositionInUnits.x;
+			lBox2dPosition.y = pBox2dBodyInstance.objectPositionInUnits.y;
 
 			// rotate around origin
 			rotationAroundOrigin(lBox2dPosition, pDesiredRotationInRadians);
 
 			// translate out
-			lBox2dPosition.x += ConstantsPhysics.toUnits(pDesiredWorldX);
-			lBox2dPosition.y += ConstantsPhysics.toUnits(pDesiredWorldY);
+			lBox2dPosition.x += ConstantsPhysics.toUnits(pDesiredWorldXInPixels);
+			lBox2dPosition.y += ConstantsPhysics.toUnits(pDesiredWorldYInPixels);
 
 			pBox2dBodyInstance.mBody.setTransform(lBox2dPosition, pDesiredRotationInRadians);
 
 		}
+
 	}
 
 	public void rotationAroundOrigin(Vec2 pPosition, float pAngleInRadians) {

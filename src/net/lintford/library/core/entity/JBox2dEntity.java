@@ -82,13 +82,17 @@ public abstract class JBox2dEntity extends WorldEntity {
 	}
 
 	public void loadPhysics(World pWorld) {
+		loadPhysics(pWorld, true);
+	}
+
+	public void loadPhysics(World pWorld, boolean pUpdateWorldTranformation) {
 		if (isPhysicsLoaded())
 			return;
 
 		mJBox2dEntityInstance.loadPhysics(pWorld);
 
 		// Initially we should set the new instance (loaded from a reference defintion) to the WorldEntity SRT.
-		if (isPhysicsLoaded()) {
+		if (pUpdateWorldTranformation && isPhysicsLoaded()) {
 			transformPObject(worldPositionX, worldPositionY, rotationInRadians);
 
 		}
