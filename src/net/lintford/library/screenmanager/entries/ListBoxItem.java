@@ -22,6 +22,8 @@ public abstract class ListBoxItem extends Rectangle {
 
 	protected int mEntityGroupID;
 	protected int mItemIndex;
+	protected float mDoubleClickTimer;
+	protected int mDoubleClickLogicalCounter;
 
 	// --------------------------------------
 	// Properties
@@ -70,11 +72,34 @@ public abstract class ListBoxItem extends Rectangle {
 		final var intersectsUs = intersectsAA(lMouseMenuSpace);
 		final var areWeFreeToUseMouse = pCore.input().mouse().isMouseOverThisComponent(hashCode());
 		final var canWeAcquireLeftMouse = intersectsUs && pCore.input().mouse().tryAcquireMouseLeftClick(hashCode());
-		
+
+		if (canWeAcquireLeftMouse && mDoubleClickLogicalCounter == -1) {
+			mDoubleClickLogicalCounter = pCore.input().mouse().mouseLeftButtonLogicalTimer();
+			mDoubleClickTimer = 200; // 200 ms to double click
+		}
+
 		if (intersectsUs && areWeFreeToUseMouse && canWeAcquireLeftMouse) {
 			mParentListBox.selectedIndex(mItemIndex);
 
 			return true;
+
+		}
+
+		if (mDoubleClickLogicalCounter != -1) {
+			mDoubleClickTimer -= pCore.appTime().elapsedTimeMilli();
+
+			if (mDoubleClickTimer < 0) {
+				mDoubleClickLogicalCounter = -1;
+				mDoubleClickTimer = 0.f;
+			}
+
+			else if (mDoubleClickLogicalCounter != pCore.input().mouse().mouseLeftButtonLogicalTimer()) {
+				mDoubleClickLogicalCounter = pCore.input().mouse().mouseLeftButtonLogicalTimer();
+				mParentListBox.itemDoubleClicked(mItemIndex);
+
+				return true;
+
+			}
 
 		}
 

@@ -15,6 +15,7 @@ import net.lintford.library.core.maths.Vector2f;
 import net.lintford.library.renderers.windows.components.IScrollBarArea;
 import net.lintford.library.renderers.windows.components.ScrollBar;
 import net.lintford.library.renderers.windows.components.ScrollBarContentRectangle;
+import net.lintford.library.screenmanager.IListBoxItemDoubleClick;
 import net.lintford.library.screenmanager.IListBoxItemSelected;
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
@@ -52,6 +53,7 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 	protected float mLastMouseYPos;
 	protected boolean mScrollBarsEnabled;
 	protected IListBoxItemSelected mSelecterListener;
+	protected IListBoxItemDoubleClick mItemDoubleClickListener;
 
 	protected int mSelectedItem = -1;
 
@@ -69,6 +71,21 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 		if (mSelecterListener != null && (i >= 0 && i < mItems.size())) {
 			ListBoxItem litem = mItems.get(i);
 			mSelecterListener.onListBoxItemSelected(litem, i);
+
+		}
+
+		mSelectedItem = i;
+	}
+
+	public void itemDoubleClicked(int i) {
+		if (mItemDoubleClickListener != null && (i >= 0 && i < mItems.size())) {
+			final var lItem = mItems.get(i);
+			if (mSelecterListener != null) {
+				mSelecterListener.onListBoxItemSelected(lItem, i);
+
+			}
+
+			mItemDoubleClickListener.onListItemDoubleClicked(lItem);
 
 		}
 
@@ -382,8 +399,13 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 
 	}
 
-	public void setItemSelectedListener(IListBoxItemSelected pItem) {
-		mSelecterListener = pItem;
+	public void setItemSelectedListener(IListBoxItemSelected pListBoxItemSelected) {
+		mSelecterListener = pListBoxItemSelected;
+
+	}
+
+	public void setItemDoubleClickListener(IListBoxItemDoubleClick pListBoxItemDoubleClick) {
+		mItemDoubleClickListener = pListBoxItemDoubleClick;
 
 	}
 
