@@ -33,8 +33,9 @@ public class MenuImageEntry extends MenuEntry {
 
 	private int mMaximumWidth = 640;
 
-	private Texture mUITexture;
-	private Texture mTexture;
+	private Texture mMissingTexture;
+	private float srcX, srcY, srcWidth, srcHeight;
+	private Texture mMainTexture;
 
 	private boolean mShowMissingTextureText;
 	private String mMissingTextureText;
@@ -143,15 +144,15 @@ public class MenuImageEntry extends MenuEntry {
 	public void updateStructure() {
 		super.updateStructure();
 
-		h = mTexture != null ? mTexture.getTextureHeight() + 20f : h;
+		h = mMainTexture != null ? mMainTexture.getTextureHeight() + 20f : h;
 
 	}
 
 	@Override
 	public void update(LintfordCore pCore, MenuScreen pScreen, boolean pIsSelected) {
 		super.update(pCore, pScreen, pIsSelected);
-		if (mTexture != null) {
-			float lAR = (float) mTexture.getTextureHeight() / (float) mTexture.getTextureWidth();
+		if (mMainTexture != null) {
+			float lAR = (float) mMainTexture.getTextureHeight() / (float) mMainTexture.getTextureWidth();
 
 			float thMaxWidth = mMaxWidth;
 			if (mScaleToFitParent && lAR != 0) {
@@ -161,7 +162,7 @@ public class MenuImageEntry extends MenuEntry {
 			}
 
 			// limited by width
-			mFittedWidth = mTexture.getTextureWidth();
+			mFittedWidth = mMainTexture.getTextureWidth();
 
 			if (mFittedWidth > thMaxWidth)
 				mFittedWidth = thMaxWidth;
@@ -206,11 +207,11 @@ public class MenuImageEntry extends MenuEntry {
 
 		lTextureBatch.begin(pCore.HUD());
 
-		if (mTexture != null) {
-			final int lTextureWidth = mTexture.getTextureWidth();
-			final int lTextureHeight = mTexture.getTextureHeight();
+		if (mMainTexture != null) {
+			final int lTextureWidth = mMainTexture.getTextureWidth();
+			final int lTextureHeight = mMainTexture.getTextureHeight();
 
-			lTextureBatch.draw(mTexture, 0, 0, lTextureWidth, lTextureHeight, x, y, mFittedWidth, mFittedHeight, pParentZDepth + .1f, 1f, 1f, 1f, 1f);
+			lTextureBatch.draw(mMainTexture, 0, 0, lTextureWidth, lTextureHeight, x, y, mFittedWidth, mFittedHeight, pParentZDepth + .1f, 1f, 1f, 1f, 1f);
 
 		} else if (mShowMissingTextureText) {
 			final FontUnit lFontUnit = lParentScreen.rendererManager().textFont();
@@ -221,9 +222,10 @@ public class MenuImageEntry extends MenuEntry {
 			lFontUnit.draw(mMissingTextureText, x + mFittedWidth / 2f - lTextWidth / 2f, y + mFittedHeight / 2, 1f);
 			lFontUnit.end();
 
-		}
-		// If the texture has not yet been loaded / set, and the draw background is enabled, then draw a filler
-		else if (mDrawBackground) {
+		} else if (mMissingTexture != null) {
+			lTextureBatch.draw(mMissingTexture, srcX, srcY, srcWidth, srcHeight, x, y, mFittedWidth, mFittedHeight, pParentZDepth + .1f, 1f, 1f, 1f, 1f);
+
+		} else if (mUITexture != null) {
 			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, x, y, mFittedWidth, mFittedHeight, pParentZDepth + .1f, 1f, 1f, 1f, 1f);
 
 		}
@@ -237,7 +239,16 @@ public class MenuImageEntry extends MenuEntry {
 	// --------------------------------------
 
 	public void setTexture(Texture pTexture) {
-		mTexture = pTexture;
+		mMainTexture = pTexture;
+
+	}
+
+	public void setDefaultImage(Texture pBackgroundTexture, int pSrcX, int pSrcY, int pSrcWidth, int pSrcHeight) {
+		mMissingTexture = pBackgroundTexture;
+		srcX = pSrcX;
+		srcY = pSrcY;
+		srcWidth = pSrcWidth;
+		srcHeight = pSrcHeight;
 
 	}
 

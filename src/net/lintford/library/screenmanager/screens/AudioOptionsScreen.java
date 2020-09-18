@@ -7,6 +7,7 @@ import net.lintford.library.core.maths.MathHelper;
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.ScreenManager;
+import net.lintford.library.screenmanager.ScreenManagerConstants.FILLTYPE;
 import net.lintford.library.screenmanager.ScreenManagerConstants.LAYOUT_WIDTH;
 import net.lintford.library.screenmanager.dialogs.ConfirmationDialog;
 import net.lintford.library.screenmanager.entries.HorizontalEntryGroup;
@@ -54,6 +55,7 @@ public class AudioOptionsScreen extends MenuScreen {
 
 		ListLayout lAudioList = new ListLayout(this);
 		lAudioList.setDrawBackground(true, 1f, 1f, 1f, 0.85f);
+		lAudioList.layoutFillType(FILLTYPE.TAKE_WHATS_NEEDED);
 
 		createAudioSection(lAudioList);
 

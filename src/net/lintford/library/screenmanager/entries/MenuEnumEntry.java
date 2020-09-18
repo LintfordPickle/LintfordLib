@@ -157,8 +157,7 @@ public class MenuEnumEntry extends MenuEntry {
 			mFocusLocked = false; // no lock if not focused
 		}
 
-		if (mButtonsEnabled) {
-
+		if (mButtonsEnabled) { // left and right buttons
 			if (mLeftButtonRectangle.intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().isMouseOverThisComponent(hashCode())) {
 				if (pCore.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
 					mSelectedIndex--;
@@ -207,7 +206,6 @@ public class MenuEnumEntry extends MenuEntry {
 					// TODO: Play a menu click sound
 
 					mParentLayout.parentScreen().setFocusOn(pCore, this, true);
-					// mParentScreen.setHoveringOn(this);
 
 					if (mClickListener != null) {
 						mClickListener.menuEntryChanged(this);
