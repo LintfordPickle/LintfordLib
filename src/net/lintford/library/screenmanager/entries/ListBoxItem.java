@@ -85,7 +85,7 @@ public abstract class ListBoxItem extends Rectangle {
 
 		}
 
-		if (mDoubleClickLogicalCounter != -1) {
+		if (intersectsUs && mDoubleClickLogicalCounter != -1) {
 			mDoubleClickTimer -= pCore.appTime().elapsedTimeMilli();
 
 			if (mDoubleClickTimer < 0) {
@@ -101,6 +101,9 @@ public abstract class ListBoxItem extends Rectangle {
 
 			}
 
+		} else {
+			mDoubleClickLogicalCounter = -1;
+			mDoubleClickTimer = 0.f;
 		}
 
 		return false;
