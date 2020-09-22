@@ -35,9 +35,53 @@ public class SpriteInstance extends Rectangle {
 	/** If true, animations are played, otherwise, animation is stopped. */
 	private boolean animationEnabled;
 
+	/** Custom variables attached to the sprite */
+	private float mR, mG, mB, mA;
+	private float mTimeAliveInMs;
+	private float mLifeTime;
+
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public void setLifeTime(float pLifeTime) {
+		mLifeTime = pLifeTime;
+	}
+
+	public boolean getIsAlive() {
+		return mLifeTime > 0.f;
+	}
+
+	public void resetTimeAliveInMs() {
+		mTimeAliveInMs = 0.f;
+	}
+
+	public float getTimeAliveInMs() {
+		return mTimeAliveInMs;
+	}
+
+	public void setRGBA(float pR, float pG, float pB, float pA) {
+		mR = pR;
+		mG = pG;
+		mB = pB;
+		mA = pA;
+	}
+
+	public float r() {
+		return mR;
+	}
+
+	public float g() {
+		return mG;
+	}
+
+	public float b() {
+		return mB;
+	}
+
+	public float a() {
+		return mA;
+	}
 
 	public boolean isFree() {
 		return mSpriteDefinition == null;
@@ -103,6 +147,9 @@ public class SpriteInstance extends Rectangle {
 
 	public void kill() {
 		mSpriteDefinition = null;
+		mR = mG = mB = mA = 1.f;
+		mTimeAliveInMs = 0.f;
+		mLifeTime = 0.f;
 
 	}
 
@@ -110,7 +157,6 @@ public class SpriteInstance extends Rectangle {
 		mSpriteDefinition = pSpriteDef;
 		loopingEnabled = pSpriteDef.loopEnabled();
 		animationEnabled = true;
-
 		mAreVerticesDirty = true;
 
 		updateDimensionsOnCurrentFrame();
@@ -124,6 +170,9 @@ public class SpriteInstance extends Rectangle {
 
 	public void update(LintfordCore pCore, boolean pReverse) {
 		final float lDeltaTime = (float) pCore.appTime().elapsedTimeMilli();
+
+		mLifeTime -= lDeltaTime;
+		mTimeAliveInMs += lDeltaTime;
 
 		if (mSpriteDefinition.frameDuration() == 0.0)
 			return;
