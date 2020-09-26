@@ -8,6 +8,7 @@ import net.lintford.library.controllers.core.ControllerManager;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.renderers.BaseRenderer;
 import net.lintford.library.renderers.RendererManager;
+import net.lintford.library.renderers.windows.UIWindow;
 
 public class DebugRendererTreeController extends BaseController {
 
@@ -65,6 +66,9 @@ public class DebugRendererTreeController extends BaseController {
 			final List<BaseRenderer> lListOfBaseRenderers = mRendererManager.baseRenderers();
 			maintainRendererWidgetList(lListOfBaseRenderers);
 
+			final List<UIWindow> lListOfBaseWindowRenderers = mRendererManager.windows();
+			maintainWindowRendererWidgetList(lListOfBaseWindowRenderers);
+
 		} else {
 			clearRendererWidgetList();
 
@@ -95,8 +99,10 @@ public class DebugRendererTreeController extends BaseController {
 			return;
 
 		final var lBaseRendererList = mRendererManager.baseRenderers();
+		final var lBaseWindowRendererList = mRendererManager.windows();
 
 		maintainRendererWidgetList(lBaseRendererList);
+		maintainWindowRendererWidgetList(lBaseWindowRendererList);
 
 		final var lControllerWidgetCount = mDebugTreeComponents.size();
 		for (int i = 0; i < lControllerWidgetCount; i++) {
@@ -117,18 +123,30 @@ public class DebugRendererTreeController extends BaseController {
 
 	// makes sure that every controller gets its own rendering widget
 	private void maintainRendererWidgetList(final List<BaseRenderer> pRenderers) {
-
-//		final int lControllerCount = lControllers.size();
-//		if (mCountAtLastUpdate == lControllerCount)
-//			return;
-//
-//		mCountAtLastUpdate = lControllerCount;
-
 		int lPositionCounter = 0;
 
 		final var lNumBaseRenderers = pRenderers.size();
 		for (var i = 0; i < lNumBaseRenderers; i++) {
 			final var lRenderer = pRenderers.get(i);
+
+			if (lRenderer == null)
+				continue;
+
+			if (!debugTreeContainsRendererId(lRenderer.rendererId())) {
+				addBaseRendererToDebugTree(lRenderer, lPositionCounter, 0);
+				lPositionCounter++;
+			}
+
+		}
+
+	}
+
+	private void maintainWindowRendererWidgetList(final List<UIWindow> pWindowRenderers) {
+		int lPositionCounter = 0;
+
+		final var lNumBaseRenderers = pWindowRenderers.size();
+		for (var i = 0; i < lNumBaseRenderers; i++) {
+			final var lRenderer = pWindowRenderers.get(i);
 
 			if (lRenderer == null)
 				continue;
