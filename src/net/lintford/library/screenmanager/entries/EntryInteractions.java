@@ -10,8 +10,11 @@ public interface EntryInteractions {
 
 	}
 
-	public boolean hasUnconsumedAction();
-	
+	/** Can be used in conjuction with a ClickAction instance, to handle onclicks outside of the callback event. */
+	public default boolean hasUnconsumedAction() {
+		return false;
+	}
+
 	public default void menuEntryOnClick(InputManager pInputState, int pEntryID) {
 
 	}
