@@ -109,7 +109,6 @@ public class TextureManager extends EntityGroupManager {
 
 	private ResourceManager mResourceManager;
 
-	private Texture mTextureCoreUI;
 	private Texture mTextureNotFound;
 	private Texture mTextureWhite;
 	private Texture mTextureBlack;
@@ -150,7 +149,7 @@ public class TextureManager extends EntityGroupManager {
 	}
 
 	public Texture textureCore() {
-		return mTextureCoreUI;
+		return getTexture(TEXTURE_CORE_UI_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
 	}
 
 	public Texture textureNotFound() {
@@ -206,7 +205,8 @@ public class TextureManager extends EntityGroupManager {
 		lCoreTextureGroup.referenceCount = 1;
 		mTextureGroupMap.put(LintfordCore.CORE_ENTITY_GROUP_ID, lCoreTextureGroup);
 
-		mTextureCoreUI = loadTexture(TEXTURE_CORE_UI_NAME, "/res/textures/core/system.png", GL11.GL_NEAREST, LintfordCore.CORE_ENTITY_GROUP_ID);
+		loadTexture(TEXTURE_CORE_UI_NAME, "/res/textures/core/system.png", GL11.GL_NEAREST, LintfordCore.CORE_ENTITY_GROUP_ID);
+
 		mTextureNotFound = loadTexture(TEXTURE_NOT_FOUND_NAME, new int[] { 0xFFFF00FF, 0xFFFF00FF, 0xFFFF00FF, 0xFFFF00FF }, 2, 2, LintfordCore.CORE_ENTITY_GROUP_ID);
 		mTextureChecker = loadTexture(TEXTURE_CHECKER_BOARD_NAME, "/res/textures/CheckerBoard.png", GL11.GL_NEAREST, LintfordCore.CORE_ENTITY_GROUP_ID);
 		mTextureCheckerIndexed = loadTexture(TEXTURE_CHECKER_BOARD_INDEXED_NAME, "/res/textures/CheckerBoardIndexed.png", GL11.GL_NEAREST, LintfordCore.CORE_ENTITY_GROUP_ID);
