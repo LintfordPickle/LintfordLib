@@ -132,7 +132,7 @@ public abstract class BaseRenderer {
 	}
 
 	public void update(LintfordCore pCore) {
-
+		return;
 	}
 
 	public abstract void draw(LintfordCore pCore);
