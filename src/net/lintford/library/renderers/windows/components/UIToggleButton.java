@@ -1,7 +1,6 @@
 package net.lintford.library.renderers.windows.components;
 
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
@@ -27,22 +26,18 @@ public class UIToggleButton extends UIWidget {
 	private String mButtonLabel;
 	private float mR, mG, mB;
 	private boolean mHoveredOver;
-
-	private Texture mButtonTexture;
-	private Rectangle mSourceRectangle;
-
-	private boolean mIsEnabled;
+	private boolean mIsToggledOn;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
 
-	public boolean isEnabled() {
-		return mIsEnabled;
+	public boolean isToggledOn() {
+		return mIsToggledOn;
 	}
 
-	public void isEnabled(final boolean pNewValue) {
-		mIsEnabled = pNewValue;
+	public void isToggledOn(final boolean pIsToggledOn) {
+		mIsToggledOn = pIsToggledOn;
 	}
 
 	public String buttonLabel() {
@@ -82,8 +77,6 @@ public class UIToggleButton extends UIWidget {
 		mG = 0.34f;
 		mB = 0.65f;
 
-		mSourceRectangle = new Rectangle();
-
 	}
 
 	// --------------------------------------
@@ -95,7 +88,7 @@ public class UIToggleButton extends UIWidget {
 		if (intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().isMouseOverThisComponent(hashCode())) {
 			mHoveredOver = true;
 
-			if (pCore.input().mouse().tryAcquireMouseLeftClick(hashCode())) {
+			if (pCore.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
 
 				// Callback to the listener and pass our ID
 				if (mCallback != null) {
@@ -116,19 +109,31 @@ public class UIToggleButton extends UIWidget {
 
 	@Override
 	public void draw(LintfordCore pCore, TextureBatchPCT pTextureBatch, Texture pUITexture, FontUnit pTextFont, float pComponentZDepth) {
-		float lR = mIsEnabled ? 0.3f : mHoveredOver ? 0.3f : mR;
-		float lG = mIsEnabled ? 0.13f : mHoveredOver ? 0.34f : mG;
-		float lB = mIsEnabled ? 0.19f : mHoveredOver ? 0.65f : mB;
+		float lR = mIsToggledOn ? mR : mR * .3f;
+		float lG = mIsToggledOn ? mG : mG * .3f;
+		float lB = mIsToggledOn ? mB : mB * .3f;
 
-		// Draw the button background
-		pTextureBatch.begin(pCore.HUD());
-		pTextureBatch.draw(pUITexture, 0, 0, 32, 32, x, y, w, h, pComponentZDepth, lR, lG, lB, 1f);
-
-		if (mButtonTexture != null) {
-			pTextureBatch.draw(mButtonTexture, mSourceRectangle, x, y, w, h, pComponentZDepth, lR, lG, lB, 1f);
+		if (mHoveredOver) {
+			lR -= 0.1f;
+			lG -= 0.1f;
+			lB -= 0.1f;
 		}
 
+		pTextureBatch.begin(pCore.HUD());
+		pTextureBatch.draw(pUITexture, 0, 32, 32, 32, x, y, 32, h, pComponentZDepth, lR, lG, lB, 1f);
+		pTextureBatch.draw(pUITexture, 32, 32, 32, 32, x + 32, y, w - 64, h, pComponentZDepth, lR, lG, lB, 1f);
+		pTextureBatch.draw(pUITexture, 128, 32, 32, 32, x + w - 32, y, 32, h, pComponentZDepth, lR, lG, lB, 1f);
 		pTextureBatch.end();
+
+		if (mButtonLabel != null && mButtonLabel.length() > 0) {
+			final float lTextWidth = pTextFont.bitmap().getStringWidth(mButtonLabel);
+			final float lTextHeight = pTextFont.bitmap().getStringHeight(mButtonLabel);
+
+			pTextFont.begin(pCore.HUD());
+			pTextFont.draw(mButtonLabel, x + w / 2.f - lTextWidth / 2.f, y + h / 2f - lTextHeight / 2.f, 1.0f);
+			pTextFont.end();
+
+		}
 
 	}
 
@@ -142,12 +147,6 @@ public class UIToggleButton extends UIWidget {
 
 	public void removeClickListener(final EntryInteractions pCallbackObject) {
 		mCallback = null;
-	}
-
-	public void setTextureSource(final Texture pTexture, final float pSrcX, final float pSrcY, final float pSrcW, final float pSrcH) {
-		mButtonTexture = pTexture;
-		mSourceRectangle.set(pSrcX, pSrcY, pSrcW, pSrcH);
-
 	}
 
 }

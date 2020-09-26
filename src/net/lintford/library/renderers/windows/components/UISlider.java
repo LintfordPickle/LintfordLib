@@ -31,11 +31,17 @@ public class UISlider extends UIWidget {
 	public float mMaxValue;
 
 	private float mCurrentPosition;
-	public float mCurrentValue;
+	private float mCurrentValue;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public void currentValue(float pNewValue) {
+		mCurrentValue = MathHelper.clamp(pNewValue, mMinValue, mMaxValue);
+		mCurrentPosition = MathHelper.scaleToRange(mCurrentValue, mMinValue, mMaxValue, 0, w);
+
+	}
 
 	public float currentValue() {
 		return mCurrentValue;
@@ -80,7 +86,6 @@ public class UISlider extends UIWidget {
 	public boolean handleInput(LintfordCore pCore) {
 		if (intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().isMouseOverThisComponent(hashCode())) {
 			if (pCore.input().mouse().tryAcquireMouseLeftClick(hashCode())) {
-
 				float lWindowX = x;
 				float lMouseX = pCore.HUD().getMouseCameraSpace().x;
 				mCurrentPosition = MathHelper.clamp(lMouseX - lWindowX, 0, w);
@@ -108,19 +113,20 @@ public class UISlider extends UIWidget {
 
 	@Override
 	public void draw(LintfordCore pCore, TextureBatchPCT pTextureBatch, Texture pUITexture, FontUnit pTextFont, float pComponentZDepth) {
-
-		// Seconds
-		mMinValue = 0;
-		mMaxValue = 86400;
-
 		final float SLIDER_RAIL_HEIGHT = 4;
 		final float SLIDER_WIDTH = 10;
 
 		// Draw the button background
 		pTextureBatch.begin(pCore.HUD());
 		pTextureBatch.draw(pUITexture, 0, 0, 32, 32, x, y + h / 2 - SLIDER_RAIL_HEIGHT / 2, w, SLIDER_RAIL_HEIGHT, 0f, mR, mG, mB, 1f);
-		pTextureBatch.draw(pUITexture, 0, 0, 32, 32, x + mCurrentPosition - SLIDER_WIDTH / 2, y, SLIDER_WIDTH, h, 0f, mB, mG, mR, 1f);
+		pTextureBatch.draw(pUITexture, 0, 0, 32, 32, x + mCurrentPosition - SLIDER_WIDTH / 2, y + h / 4, SLIDER_WIDTH, h / 2, 0f, mB, mG, mR, 1f);
 		pTextureBatch.end();
+
+		// Render Slider label
+		pTextFont.begin(pCore.HUD());
+		pTextFont.draw(mSliderLabel, x, y - h / 2, 1.f);
+		pTextFont.draw(String.format("%.2f", mCurrentValue), x + w - 30 - SLIDER_WIDTH / 2, y - h / 2, 1.f);
+		pTextFont.end();
 
 	}
 

@@ -227,8 +227,13 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 
 			}
 
-			mWindowArea.x(mWindowArea.x() + (pCore.input().mouse().mouseWindowCoords().x - dx));
-			mWindowArea.y(mWindowArea.y() + (pCore.input().mouse().mouseWindowCoords().y - dy));
+			float lDifferenceX = (pCore.input().mouse().mouseWindowCoords().x - dx);
+			float lDifferenceY = (pCore.input().mouse().mouseWindowCoords().y - dy);
+
+			mWindowArea.x(mWindowArea.x() + lDifferenceX);
+			mWindowArea.y(mWindowArea.y() + lDifferenceY);
+
+			System.out.println("WindowX : " + lDifferenceX);
 
 			// update the delta
 			dx = pCore.input().mouse().mouseWindowCoords().x;
@@ -294,6 +299,14 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 		if (!isOpen())
 			return;
 
+		if (!mIsWindowMoveable) {
+			updateWindowPosition(pCore);
+
+		} else {
+			keepWindowOnScreen(pCore.HUD());
+
+		}
+
 		if (mMouseClickTimer >= 0) {
 			mMouseClickTimer -= pCore.appTime().elapsedTimeMilli();
 
@@ -344,8 +357,6 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 				return;
 		}
 
-		updateWindowPosition(pCore);
-
 		mWindowAlpha = 0.95f;
 
 		final TextureBatchPCT lTextureBatch = mRendererManager.uiTextureBatch();
@@ -389,7 +400,7 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 		// Draw the window components
 		final int lComponentCount = mComponents.size();
 		for (int i = 0; i < lComponentCount; i++) {
-			mComponents.get(i).draw(pCore, lTextureBatch, mHudTexture, lTextFont, ZLayers.LAYER_GAME_UI + ((float) i * 0.001f));
+			mComponents.get(i).draw(pCore, lTextureBatch, mUiCoreTexture, lTextFont, ZLayers.LAYER_GAME_UI + ((float) i * 0.001f));
 
 		}
 
@@ -422,6 +433,17 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 	}
 
 	public void keepWindowOnScreen(ICamera pHUD) {
+		if (mWindowArea.x() < pHUD.boundingRectangle().left())
+			mWindowArea.x(pHUD.boundingRectangle().left());
+
+		if (mWindowArea.y() < pHUD.boundingRectangle().top())
+			mWindowArea.y(pHUD.boundingRectangle().top());
+
+		if (mWindowArea.x() + mWindowArea.width() > pHUD.boundingRectangle().right())
+			mWindowArea.x(pHUD.boundingRectangle().right() - mWindowArea.width());
+
+		if (mWindowArea.y() + mWindowArea.height() > pHUD.boundingRectangle().bottom())
+			mWindowArea.y(pHUD.boundingRectangle().bottom() - mWindowArea.height());
 
 	}
 
