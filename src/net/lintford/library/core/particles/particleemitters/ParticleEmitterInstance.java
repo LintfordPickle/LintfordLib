@@ -41,6 +41,10 @@ public class ParticleEmitterInstance extends WorldEntity {
 	// Properties
 	// --------------------------------------
 
+	public ParticleSystemInstance particleSystem() {
+		return mParticleSystem;
+	}
+
 	public WorldEntity parentEntity() {
 		return mAttachedToEntity;
 	}
