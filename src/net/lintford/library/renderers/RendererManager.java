@@ -573,6 +573,9 @@ public class RendererManager {
 
 		mRenderTargets.add(lRenderTarget);
 
+		final int lNumRenderTargets = mRenderTargets.size();
+		Debug.debugManager().logger().i(getClass().getSimpleName(), "RenderTarget '" + pName + "' added. Currently have " + lNumRenderTargets + " rendertargets.");
+
 		if (pResizeWithWindow) {
 			mRenderTargetAutoResize.add(lRenderTarget);
 
@@ -582,19 +585,29 @@ public class RendererManager {
 
 	}
 
-	public void releaseRenderTarget(String pName) {
-		RenderTarget lResult = getRenderTarget(pName);
+	public void unloadRenderTarget(RenderTarget pRenderTarget) {
+		if (pRenderTarget == null)
+			return;
 
+		if (mRenderTargetAutoResize.contains(pRenderTarget)) {
+			mRenderTargetAutoResize.remove(pRenderTarget);
+
+		}
+
+		if (mRenderTargets.contains(pRenderTarget)) {
+			mRenderTargets.remove(pRenderTarget);
+
+		}
+
+		pRenderTarget.unbind();
+		pRenderTarget.unloadGLContent();
+
+	}
+
+	public void releaseRenderTargetByName(String pName) {
+		final var lResult = getRenderTarget(pName);
 		if (lResult != null) {
-			if (mRenderTargetAutoResize.contains(lResult)) {
-				mRenderTargetAutoResize.remove(lResult);
-
-			}
-
-			lResult.unbind();
-			lResult.unloadGLContent();
-
-			mRenderTargets.remove(lResult);
+			unloadRenderTarget(lResult);
 
 		}
 	}
