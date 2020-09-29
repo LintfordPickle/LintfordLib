@@ -199,7 +199,7 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 	}
 
 	public boolean handleInput(LintfordCore pCore) {
-		if (!isOpen())
+		if (!isActive() || !isOpen())
 			return false;
 
 		// 1. Check if the scroll bar has been used
