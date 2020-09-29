@@ -14,7 +14,7 @@ import org.jbox2d.dynamics.Fixture;
 import org.jbox2d.dynamics.World;
 import org.jbox2d.dynamics.joints.Joint;
 import org.jbox2d.dynamics.joints.RevoluteJoint;
-import org.jbox2d.particle.ParticleGroup;
+import org.jbox2d.particle.ParticleColor;
 import org.lwjgl.opengl.GL11;
 
 import net.lintford.library.ConstantsPhysics;
@@ -106,10 +106,11 @@ public class JBox2dDebugDrawer {
 			GL11.glLineWidth(2.f);
 
 			final int lVertCount = lChainShape.m_count;
+			final var lToPixels = ConstantsPhysics.UnitsToPixels();
 			var lCurVert = lChainShape.m_vertices[0];
 			for (int i = 1; i < lVertCount; i++) {
 				final var lNextVert = lChainShape.m_vertices[i];
-				final var lToPixels = ConstantsPhysics.UnitsToPixels();
+
 				Debug.debugManager().drawers().drawLine(lCurVert.x * lToPixels, lCurVert.y * lToPixels, lNextVert.x * lToPixels, lNextVert.y * lToPixels);
 
 				lCurVert = lNextVert;
@@ -257,17 +258,22 @@ public class JBox2dDebugDrawer {
 
 	}
 
+	public static float ParticlePointSizeInPixels = 4.f;
+
 	private static class DebugRenderParticles {
-		public static void draw(LintfordCore pCore, ParticleGroup pParticleSystem) {
+		public static void draw(LintfordCore pCore, Vec2[] pPositionBuffer, ParticleColor[] pColorBuffer, float pRadius, final int pCount) {
+			GL11.glPointSize(ParticlePointSizeInPixels);
+			final var lDrawer = Debug.debugManager().drawers();
+			lDrawer.beginPointRenderer(pCore.gameCamera());
+			for (int i = 0; i < pCount; i++) {
+				lDrawer.drawPoint(ConstantsPhysics.toPixels(pPositionBuffer[i].x), ConstantsPhysics.toPixels(pPositionBuffer[i].y), 0.1f, 0.1f, 0.67f, 0.9f);
 
-			if (pParticleSystem == null)
-				return;
+			}
 
-			Debug.debugManager().drawers().beginPointRenderer(pCore.gameCamera());
-
-			Debug.debugManager().drawers().endPointRenderer();
+			lDrawer.endPointRenderer();
 
 		}
+
 	}
 
 	// --------------------------------------
@@ -312,20 +318,11 @@ public class JBox2dDebugDrawer {
 
 		}
 
-		final var lParticleSystems = mWorld.getParticleGroupList();
+		final var lParticleCount = mWorld.getParticleCount();
+		final var lParticleColorBuffer = mWorld.getParticleColorBuffer();
+		final var lParticlePosBuffer = mWorld.getParticlePositionBuffer();
 
-		if (lParticleSystems != null) {
-			final int lParticleGroupCount = lParticleSystems.length;
-			for (int i = 0; i < lParticleGroupCount; i++) {
-				ParticleGroup lPG = lParticleSystems[i];
-				if (lPG == null)
-					continue;
-
-				DebugRenderParticles.draw(pCore, lPG);
-
-			}
-
-		}
+		DebugRenderParticles.draw(pCore, lParticlePosBuffer, lParticleColorBuffer, ConstantsPhysics.toUnits(16.f), lParticleCount);
 
 		Rectangle lHUDrect = pCore.HUD().boundingRectangle();
 
