@@ -124,7 +124,7 @@ public class DefinitionIDLUT<T extends BaseDefinition> extends BaseInstanceData 
 			// Now, we need to find the same definitionName in the other list and compare the IDs.
 			// If either the name is not found, or the ID is different, then we have a mismatch and can early exit
 			for (int j = 0; j < lOtherMapperSize; j++) {
-				DefinitionNameID lOtherDefinition = pOtherIDLUT.get(i);
+				final var lOtherDefinition = pOtherIDLUT.get(j);
 
 				if (lOriginalDefinition.definitionName.equals(lOtherDefinition.definitionName)) {
 					if (lOriginalDefinition.definitionID != lOtherDefinition.definitionID)
