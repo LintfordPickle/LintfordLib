@@ -18,9 +18,28 @@ public class UIBar {
 	private float mMaxValue;
 	private float mCurValue;
 
+	private boolean mIsVertical;
+	private boolean mIsInverted;
+
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public void isInverted(boolean pIsVertical) {
+		mIsInverted = pIsVertical;
+	}
+
+	public boolean isInverted() {
+		return mIsInverted;
+	}
+
+	public void isVertical(boolean pIsVertical) {
+		mIsVertical = pIsVertical;
+	}
+
+	public boolean isVertical() {
+		return mIsVertical;
+	}
 
 	public void setDestRectangle(float pX, float pY, float pW, float pH) {
 		x = pX;
@@ -64,14 +83,38 @@ public class UIBar {
 		if (pTextureBatch == null || !pTextureBatch.isDrawing())
 			return;
 
-		float lBarWidth = MathHelper.scaleToRange(mCurValue, 0, 100, 0, w);
-		lBarWidth = MathHelper.clamp(lBarWidth - 2, 0, w);
+		final float INNER_BORDER_PADDING = 1.f;
 
 		final var lCoreTexture = pCore.resources().textureManager().textureCore();
 
-		// Draw outer bar
+		float lBarWidth = MathHelper.scaleToRange(mCurValue, mMinValue, mMaxValue, 0, mIsVertical ? h : w);
+		lBarWidth = MathHelper.clamp(lBarWidth - INNER_BORDER_PADDING * 2, 0, w);
+
 		pTextureBatch.draw(lCoreTexture, 0, 0, 32, 32, x, y, w, h, -0.1f, 0f, 0f, 0f, 1.0f);
-		pTextureBatch.draw(lCoreTexture, 0, 0, 32, 32, x + 1, y + 1, lBarWidth, h - 2, -0.1f, r, g, b, a);
+
+		if (mIsVertical) {
+			float lWidth = w - INNER_BORDER_PADDING * 2;
+			float lHeight = lBarWidth;
+
+			float xx = x;
+			float yy = !mIsInverted ? y + h - INNER_BORDER_PADDING * 2 - lHeight : y + h - INNER_BORDER_PADDING * 2;
+			float ww = !mIsInverted ? lWidth : lWidth;
+			float hh = !mIsInverted ? lHeight : -lHeight;
+
+			pTextureBatch.draw(lCoreTexture, 0, 0, 32, 32, xx + INNER_BORDER_PADDING, yy + INNER_BORDER_PADDING, ww, hh, -0.1f, r, g, b, a);
+
+		} else {
+			float lWidth = lBarWidth;
+			float lHeight = h - INNER_BORDER_PADDING * 2;
+
+			float xx = !mIsInverted ? x : x + w - INNER_BORDER_PADDING * 2 - lWidth;
+			float yy = y;
+			float ww = !mIsInverted ? lWidth : lWidth;
+			float hh = !mIsInverted ? lHeight : lHeight;
+
+			pTextureBatch.draw(lCoreTexture, 0, 0, 32, 32, xx + INNER_BORDER_PADDING, yy + INNER_BORDER_PADDING, ww, hh, -0.1f, r, g, b, a);
+
+		}
 
 	}
 
