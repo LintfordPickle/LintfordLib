@@ -73,7 +73,12 @@ public class Box2dWorldController extends BaseController {
 	// --------------------------------------
 
 	public Box2dWorldController(ControllerManager pControllerManager, World pWorld, int pEntityGroupID) {
-		super(pControllerManager, CONTROLLER_NAME, pEntityGroupID);
+		this(pControllerManager, CONTROLLER_NAME, pWorld, pEntityGroupID);
+
+	}
+
+	public Box2dWorldController(ControllerManager pControllerManager, String pControllerNamer, World pWorld, int pEntityGroupID) {
+		super(pControllerManager, pControllerNamer, pEntityGroupID);
 
 		mVelocityIterations = 8;
 		mPositionIterations = 3;
