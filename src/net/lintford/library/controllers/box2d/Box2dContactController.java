@@ -19,7 +19,7 @@ public abstract class Box2dContactController extends BaseController implements C
 	// Variables
 	// --------------------------------------
 
-	private World mWorld;
+	protected World mWorld;
 
 	// --------------------------------------
 	// Properties
