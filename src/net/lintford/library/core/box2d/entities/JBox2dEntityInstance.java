@@ -165,6 +165,8 @@ public class JBox2dEntityInstance extends PooledBaseData {
 
 		final int lJointCount = mJoints.size();
 		for (int i = 0; i < lJointCount; i++) {
+			// FIXME: Why is this only considering Revolute Joints ??
+
 			final var lBox2dRevoluteInstance = (Box2dRevoluteInstance) mJoints.get(i);
 			final var lRevoluteJointDef = new RevoluteJointDef();
 
@@ -505,8 +507,8 @@ public class JBox2dEntityInstance extends PooledBaseData {
 	/**
 	 * Tranforms the PObject as a whole to the desired position with the desired angle. First the the PObject is scaled, then rotations are applied, finally entire object is translated into final position.
 	 * 
-	 * @param pWorldXInPixels            The final absolute world position X.
-	 * @param pWorldYInPixels            The final absolute world position Y.
+	 * @param pWorldXInPixels    The final absolute world position X.
+	 * @param pWorldYInPixels    The final absolute world position Y.
 	 * @param pRotationInRadians The rotation angle (in radians) to rotate the PObject.
 	 */
 	public void transformEntityInstance(float pWorldXInPixels, float pWorldYInPixels, float pRotationInRadians) {
@@ -660,6 +662,20 @@ public class JBox2dEntityInstance extends PooledBaseData {
 				}
 
 			}
+
+		}
+
+	}
+
+	public void setAllBodiesAngularDamping(float pNewValue) {
+		final int lBodyCount = mBodies.size();
+		for (int i = 0; i < lBodyCount; i++) {
+
+			final var lBox2dBodyInstance = mBodies.get(i);
+			if (lBox2dBodyInstance == null)
+				continue;
+
+			lBox2dBodyInstance.setAngularDamping(pNewValue);
 
 		}
 
