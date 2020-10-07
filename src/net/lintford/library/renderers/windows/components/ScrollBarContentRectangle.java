@@ -93,6 +93,8 @@ public class ScrollBarContentRectangle extends Rectangle {
 
 		mPreDrawing = false;
 		GL11.glDisable(GL11.GL_STENCIL_TEST);
+		GL11.glDisable(GL11.GL_DEPTH_TEST);
+
 	}
 
 }
