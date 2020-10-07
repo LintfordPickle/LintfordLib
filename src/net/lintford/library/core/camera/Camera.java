@@ -83,6 +83,7 @@ public class Camera implements ICamera {
 
 	public void setIsChaseCamera(boolean pEnabled, float pChaseAmt) {
 		mIsCameraChaseMode = true;
+		mChaseSpeedAmount = pChaseAmt;
 	}
 
 	public boolean getIsChaseMode() {
@@ -211,8 +212,8 @@ public class Camera implements ICamera {
 	public void handleInput(LintfordCore pCore) {
 		// Update the MouseCameraSpace instance
 		// FIXME: Move the mMouseWorldSpace away from the camera - it doesn't belong here
-		mMouseWorldSpace.x = pCore.input().mouse().mouseWindowCoords().x * getZoomFactorOverOne() + this.getMinX();
-		mMouseWorldSpace.y = pCore.input().mouse().mouseWindowCoords().y * getZoomFactorOverOne() + this.getMinY();
+		mMouseWorldSpace.x = pCore.input().mouse().mouseWindowCoords().x * getZoomFactorOverOne() + getMinX();
+		mMouseWorldSpace.y = pCore.input().mouse().mouseWindowCoords().y * getZoomFactorOverOne() + getMinY();
 
 	}
 
@@ -251,7 +252,7 @@ public class Camera implements ICamera {
 	public void createView() {
 		mViewMatrix.setIdentity();
 		mViewMatrix.scale(mZoomFactor, mZoomFactor, 1f);
-		mViewMatrix.translate((int) (mInternalPosition.x * getZoomFactor()), (int) (mInternalPosition.y * getZoomFactor()), 0f);
+		mViewMatrix.translate((int) (-mInternalPosition.x * getZoomFactor()), (int) (-mInternalPosition.y * getZoomFactor()), 0f);
 
 	}
 
@@ -267,11 +268,11 @@ public class Camera implements ICamera {
 		mScaledWindowHeight = pGameViewportheight * getZoomFactorOverOne();
 
 		// Update the camera position
-		mMinX = -mInternalPosition.x - mScaledWindowWidth / 2.0f;
-		mMinY = -mInternalPosition.y - mScaledWindowHeight / 2.0f;
+		mMinX = mInternalPosition.x - mScaledWindowWidth / 2.0f;
+		mMinY = mInternalPosition.y - mScaledWindowHeight / 2.0f;
 
-		mMaxX = -mInternalPosition.x + mScaledWindowWidth / 2.0f;
-		mMaxY = -mInternalPosition.y + mScaledWindowHeight / 2.0f;
+		mMaxX = mInternalPosition.x + mScaledWindowWidth / 2.0f;
+		mMaxY = mInternalPosition.y + mScaledWindowHeight / 2.0f;
 
 		// update the bounding rectangle so we can properly do frustum culling
 		mBoundingRectangle.setCenterPosition(-mInternalPosition.x, -mInternalPosition.y);
