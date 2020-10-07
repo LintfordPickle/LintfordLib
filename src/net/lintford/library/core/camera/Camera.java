@@ -43,10 +43,10 @@ public class Camera implements ICamera {
 	protected final Vector2f mVelocity;
 	protected final Vector2f mTargetPosition;
 	protected final Vector2f mOffsetPosition;
-	
+
 	protected final Matrix4f mProjectionMatrix;
 	protected final Matrix4f mViewMatrix;
-	
+
 	protected float mMinX;
 	protected float mMaxX;
 	protected float mMinY;
@@ -62,11 +62,37 @@ public class Camera implements ICamera {
 	protected float mScaledWindowWidth;
 	protected float mScaledWindowHeight;
 
+	protected boolean mIsCameraChaseMode;
+
+	// A coefficient used to modify how far behind the camera lags from the target position.
+	protected float mChaseSpeedAmount;
+
 	protected Vector2f mMouseWorldSpace;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public void setIsChaseCamera(boolean pEnabled) {
+		if (pEnabled) {
+			setIsChaseCamera(true, 0.05f);
+		} else {
+			setIsChaseCamera(false, 1.f);
+		}
+	}
+
+	public void setIsChaseCamera(boolean pEnabled, float pChaseAmt) {
+		mIsCameraChaseMode = true;
+		mChaseSpeedAmount = pChaseAmt;
+	}
+
+	public boolean getIsChaseMode() {
+		return mIsCameraChaseMode;
+	}
+
+	public float getChaseModeAmount() {
+		return mChaseSpeedAmount;
+	}
 
 	@Override
 	public void setPosition(float pX, float pY) {
@@ -186,8 +212,8 @@ public class Camera implements ICamera {
 	public void handleInput(LintfordCore pCore) {
 		// Update the MouseCameraSpace instance
 		// FIXME: Move the mMouseWorldSpace away from the camera - it doesn't belong here
-		mMouseWorldSpace.x = pCore.input().mouse().mouseWindowCoords().x * getZoomFactorOverOne() + this.getMinX();
-		mMouseWorldSpace.y = pCore.input().mouse().mouseWindowCoords().y * getZoomFactorOverOne() + this.getMinY();
+		mMouseWorldSpace.x = pCore.input().mouse().mouseWindowCoords().x * getZoomFactorOverOne() + getMinX();
+		mMouseWorldSpace.y = pCore.input().mouse().mouseWindowCoords().y * getZoomFactorOverOne() + getMinY();
 
 	}
 
@@ -195,8 +221,18 @@ public class Camera implements ICamera {
 		mWindowWidth = mDisplayConfig.windowWidth();
 		mWindowHeight = mDisplayConfig.windowHeight();
 
-		mInternalPosition.x = mTargetPosition.x + mOffsetPosition.x;
-		mInternalPosition.y = mTargetPosition.y + mOffsetPosition.y;
+		if (mIsCameraChaseMode) {
+			float newX = mTargetPosition.x;
+			float newY = mTargetPosition.y;
+
+			mInternalPosition.x += (newX - mInternalPosition.x) * mChaseSpeedAmount;
+			mInternalPosition.y += (newY - mInternalPosition.y) * mChaseSpeedAmount;
+
+		} else {
+			mInternalPosition.x = mTargetPosition.x + mOffsetPosition.x;
+			mInternalPosition.y = mTargetPosition.y + mOffsetPosition.y;
+
+		}
 
 		mAcceleration.x = 0.0f;
 		mAcceleration.y = 0.0f;
@@ -216,7 +252,7 @@ public class Camera implements ICamera {
 	public void createView() {
 		mViewMatrix.setIdentity();
 		mViewMatrix.scale(mZoomFactor, mZoomFactor, 1f);
-		mViewMatrix.translate((int) (mInternalPosition.x * getZoomFactor()), (int) (mInternalPosition.y * getZoomFactor()), 0f);
+		mViewMatrix.translate((int) (-mInternalPosition.x * getZoomFactor()), (int) (-mInternalPosition.y * getZoomFactor()), 0f);
 
 	}
 
@@ -232,11 +268,11 @@ public class Camera implements ICamera {
 		mScaledWindowHeight = pGameViewportheight * getZoomFactorOverOne();
 
 		// Update the camera position
-		mMinX = -mInternalPosition.x - mScaledWindowWidth / 2.0f;
-		mMinY = -mInternalPosition.y - mScaledWindowHeight / 2.0f;
+		mMinX = mInternalPosition.x - mScaledWindowWidth / 2.0f;
+		mMinY = mInternalPosition.y - mScaledWindowHeight / 2.0f;
 
-		mMaxX = -mInternalPosition.x + mScaledWindowWidth / 2.0f;
-		mMaxY = -mInternalPosition.y + mScaledWindowHeight / 2.0f;
+		mMaxX = mInternalPosition.x + mScaledWindowWidth / 2.0f;
+		mMaxY = mInternalPosition.y + mScaledWindowHeight / 2.0f;
 
 		// update the bounding rectangle so we can properly do frustum culling
 		mBoundingRectangle.setCenterPosition(-mInternalPosition.x, -mInternalPosition.y);

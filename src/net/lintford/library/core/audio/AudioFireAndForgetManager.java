@@ -85,6 +85,7 @@ public class AudioFireAndForgetManager {
 		if (lAudioSource != null) {
 			lAudioSource.setPosition(pWorldX, pWorldY, 0f);
 			lAudioSource.setVelocity(pVelX, pVelY, 0f);
+			lAudioSource.setLooping(false);
 			lAudioSource.play(pAudioDataBuffer.bufferID(), pGain, pPitch);
 
 		}

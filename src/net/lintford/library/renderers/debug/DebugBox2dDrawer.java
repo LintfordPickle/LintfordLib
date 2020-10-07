@@ -26,6 +26,11 @@ public class DebugBox2dDrawer extends BaseRenderer {
 	// --------------------------------------
 
 	@Override
+	public int ZDepth() {
+		return 100;
+	}
+	
+	@Override
 	public boolean isInitialized() {
 		return true;
 

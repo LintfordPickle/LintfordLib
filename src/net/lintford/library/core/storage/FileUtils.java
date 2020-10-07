@@ -84,7 +84,10 @@ public class FileUtils {
 					StringBuilder.append(NEW_LINE_CHARACTER);
 				}
 			} finally {
-				lReader.close();
+				if (lReader != null) {
+					lReader.close();
+
+				}
 			}
 
 		} catch (IOException e) {

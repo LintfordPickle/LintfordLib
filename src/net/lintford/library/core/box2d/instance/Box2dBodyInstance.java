@@ -83,7 +83,7 @@ public class Box2dBodyInstance extends PooledBaseData {
 			this.bodyTypeIndex = Box2dBodyDefinition.BODY_TYPE_INDEX_DYNAMIC;
 			break;
 		}
-		
+
 		float lParentPositionX = 0.f;
 		float lParentPositionY = 0.f;
 		float lParentAngle = 0.f;
@@ -231,6 +231,16 @@ public class Box2dBodyInstance extends PooledBaseData {
 
 		if (mBody != null) {
 			mBody.setFixedRotation(pIsFixedRotation);
+
+		}
+
+	}
+
+	public void setAngularDamping(float pNewValue) {
+		angularDamping = pNewValue;
+
+		if (mBody != null) {
+			mBody.setAngularDamping(pNewValue);
 
 		}
 
