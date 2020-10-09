@@ -366,9 +366,9 @@ public abstract class LintfordCore {
 
 		mRenderState = new RenderState();
 
-		showStartUpLogo(lWindowID);
-
 		oninitializeGL();
+
+		showStartUpLogo(lWindowID);
 
 		onInitializeApp();
 
@@ -392,7 +392,6 @@ public abstract class LintfordCore {
 
 	protected void showStartUpLogo(long pWindowHandle) {
 		// by default just clear the window background to black and swap out the back-buffer
-		glClearColor(0f, 0f, 0f, 1f);
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 
 		glfwSwapBuffers(pWindowHandle);
@@ -527,7 +526,7 @@ public abstract class LintfordCore {
 					mGameTime.elapsedTimeMilli = (mAppTime.targetElapsedTimeMilli * lStepCount) * mGameTime.timeModifier;
 				} else
 					mGameTime.elapsedTimeMilli = .0f;
-				
+
 			} else { // Variable time step
 				// Perform a single variable length update.
 				if (!mGameTime.isTimePaused) {
@@ -536,7 +535,6 @@ public abstract class LintfordCore {
 				} else
 					mGameTime.elapsedTimeMilli = 0.f;
 
-				
 				mAppTime.elapsedTimeMilli = mAppTime.accumulatedElapsedTimeMilli;
 				mAppTime.totalTimeMilli += mAppTime.accumulatedElapsedTimeMilli;
 

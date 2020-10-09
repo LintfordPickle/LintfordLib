@@ -6,7 +6,6 @@ import static org.lwjgl.opengl.GL11.glClearColor;
 import org.lwjgl.opengl.GL11;
 
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 
 public class LintfordMain extends LintfordCore {
@@ -67,19 +66,25 @@ public class LintfordMain extends LintfordCore {
 	protected void showStartUpLogo(long pWindowHandle) {
 		super.showStartUpLogo(pWindowHandle);
 
-		// Show a mini-splash screen
-		Texture lTexture = mResourceManager.textureManager().loadTexture("LOGO", "/res/textures/core/logo.png", LintfordCore.CORE_ENTITY_GROUP_ID);
+		final var lTexture = mResourceManager.textureManager().loadTexture("LOGO", "/res/textures/core/logo.png", LintfordCore.CORE_ENTITY_GROUP_ID);
 
 		glClearColor(0f, 0f, 0f, 1f);
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 
 		mShowLogoTimer = System.currentTimeMillis();
 
-		TextureBatchPCT lTB = new TextureBatchPCT();
-		lTB.loadGLContent(mResourceManager);
-		lTB.begin(mHUD);
-		lTB.draw(lTexture, 0, 0, 256, 256, -128, -128, 256, 256, -0.1f, 1, 1, 1, 1);
-		lTB.end();
+		final var lStretchLogoToFit = false;
+		final var lSrcWidth = lTexture.getTextureWidth();
+		final var lSrcHeight = lTexture.getTextureHeight();
+
+		final var lDstWidth = lStretchLogoToFit ? mHUD.getWidth() : lSrcWidth;
+		final var lDstHeight = lStretchLogoToFit ? mHUD.getHeight() : lSrcHeight;
+
+		final var lTextureBatch = new TextureBatchPCT();
+		lTextureBatch.loadGLContent(mResourceManager);
+		lTextureBatch.begin(mHUD);
+		lTextureBatch.draw(lTexture, 0, 0, lSrcWidth, lSrcHeight, -lDstWidth * .5f, -lDstHeight * .5f, lDstWidth, lDstHeight, -0.1f, 1, 1, 1, 1);
+		lTextureBatch.end();
 
 		glfwSwapBuffers(pWindowHandle);
 
