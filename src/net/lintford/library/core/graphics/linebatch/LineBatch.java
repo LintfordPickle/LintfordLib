@@ -46,10 +46,19 @@ public class LineBatch {
 	private boolean mIsLoaded;
 	private int mGLLineType;
 	private float mGLLineWidth;
+	private boolean mAntiAliasing;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public void lineAntialiasing(boolean pEnableSmoothing) {
+		mAntiAliasing = pEnableSmoothing;
+	}
+
+	public boolean lineAntialiasing() {
+		return mAntiAliasing;
+	}
 
 	public void lineWidth(float pNewWidth) {
 		mGLLineWidth = pNewWidth;
@@ -354,14 +363,17 @@ public class LineBatch {
 
 		mShader.bind();
 
-		if (mGLLineWidth < 1)
-			mGLLineWidth = 1;
-
 		{
 
 			Debug.debugManager().stats().incTag(DebugStats.TAG_ID_DRAWCALLS);
 			Debug.debugManager().stats().incTag(DebugStats.TAG_ID_VERTS, mVertexCount);
 
+		}
+
+		if (mAntiAliasing) {
+			GL11.glEnable(GL11.GL_LINE_SMOOTH);
+		} else {
+			GL11.glDisable(GL11.GL_LINE_SMOOTH);
 		}
 
 		GL11.glLineWidth(mGLLineWidth);
