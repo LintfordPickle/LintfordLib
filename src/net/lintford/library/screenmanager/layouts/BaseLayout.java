@@ -372,7 +372,7 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 				mTextureBatch.draw(mUITexture, 320, 64, 32, 32, x + w - TILE_SIZE, y + h - TILE_SIZE, TILE_SIZE, TILE_SIZE, pComponentDepth, mR, mG, mB, mA);
 				mTextureBatch.end();
 
-				if (true ||ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_OUTLINES", false)) {
+				if (true || ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_OUTLINES", false)) {
 					Debug.debugManager().drawers().drawRectImmediate(pCore.HUD(), this);
 				}
 
@@ -460,7 +460,7 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 
 	/** Updates the focus of all {@link MenuEntry}s in this layout, based on the current {@link InputManager}. */
 	public void updateFocusOfAll(LintfordCore pCore) {
-		final var lIsMouseOverThisComponent = pCore.input().mouse().isMouseOverThisComponent(hashCode());
+		final var lIsMouseOverThisComponent = pCore.input().mouse().tryAcquireMouseOverThisComponent(hashCode());
 
 		final var lCount = menuEntries().size();
 		for (int i = 0; i < lCount; i++) {

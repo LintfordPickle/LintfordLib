@@ -6,6 +6,7 @@ import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.renderers.ZLayers;
 import net.lintford.library.screenmanager.MenuScreen;
+import net.lintford.library.screenmanager.Screen;
 import net.lintford.library.screenmanager.ScreenManager;
 
 public abstract class BaseDialog extends MenuScreen {
@@ -24,7 +25,7 @@ public abstract class BaseDialog extends MenuScreen {
 	// --------------------------------------
 
 	protected String mMessageString;
-	protected MenuScreen mParentScreen;
+	protected Screen mParentScreen;
 	protected boolean mDrawBackground;
 	protected boolean mDarkenBackground;
 
@@ -62,7 +63,7 @@ public abstract class BaseDialog extends MenuScreen {
 	// Constructor
 	// --------------------------------------
 
-	public BaseDialog(ScreenManager pScreenManager, MenuScreen pParentScreen, String pDialogMessage) {
+	public BaseDialog(ScreenManager pScreenManager, Screen pParentScreen, String pDialogMessage) {
 		super(pScreenManager, "");
 
 		mParentScreen = pParentScreen;
@@ -183,6 +184,7 @@ public abstract class BaseDialog extends MenuScreen {
 
 		// Render the menu title if there is one
 		if (mMenuTitle != null && mMenuTitle.length() > 0) {
+			mMenuHeaderFont.drawShadow(true);
 			mMenuHeaderFont.begin(pCore.HUD());
 			mMenuHeaderFont.draw(mMenuTitle, -DIALOG_WIDTH / 2f + TEXT_HORIZONTAL_PADDING, -DIALOG_HEIGHT / 2f + TEXT_HORIZONTAL_PADDING, ZDEPTH, mR, mG, mB, mA, 0.65f);
 			mMenuHeaderFont.end();
