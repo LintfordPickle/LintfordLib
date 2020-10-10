@@ -191,7 +191,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 			// Check if tool tips are enabled.
 			return true;
 
-		} else if (intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().isMouseOverThisComponent(hashCode())) {
+		} else if (intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().tryAcquireMouseOverThisComponent(hashCode())) {
 			// First check to see if the player clicked the info button
 			if (mShowInfoIcon && mInfoIconDstRectangle.intersectsAA(pCore.HUD().getMouseCameraSpace())) {
 				mToolTipEnabled = true;
@@ -219,38 +219,41 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 			return true;
 
 			// Check if the content window was clicked
-		} else if (mWindowRectangle.intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().isMouseOverThisComponent(hashCode())) {
-			if (pCore.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
+		} else if (mWindowRectangle.intersectsAA(pCore.HUD().getMouseCameraSpace())) {
 
-				if (mOpen) {
-					final float luiTextScale = mScreenManager.UIHUDController().uiTextScaleFactor();
+			if (pCore.input().mouse().tryAcquireMouseOverThisComponent(hashCode())) {
+				if (pCore.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
+					if (mOpen) {
+						final float luiTextScale = mScreenManager.UIHUDController().uiTextScaleFactor();
 
-					// TODO: play the menu clicked sound
-					final float lConsoleLineHeight = 25f * luiTextScale;
-					// Something inside the dropdown was select
-					float lRelativeheight = pCore.HUD().getMouseCameraSpace().y - y - mScrollYPosition;
+						// TODO: play the menu clicked sound
+						final float lConsoleLineHeight = 25f * luiTextScale;
+						// Something inside the dropdown was select
+						float lRelativeheight = pCore.HUD().getMouseCameraSpace().y - y - mScrollYPosition;
 
-					int lRelativeIndex = (int) (lRelativeheight / lConsoleLineHeight);
-					int lSelectedIndex = lRelativeIndex - 1;
+						int lRelativeIndex = (int) (lRelativeheight / lConsoleLineHeight);
+						int lSelectedIndex = lRelativeIndex - 1;
 
-					if (lSelectedIndex < 0)
-						lSelectedIndex = 0;
-					if (lSelectedIndex >= mItems.size())
-						lSelectedIndex = mItems.size() - 1;
+						if (lSelectedIndex < 0)
+							lSelectedIndex = 0;
+						if (lSelectedIndex >= mItems.size())
+							lSelectedIndex = mItems.size() - 1;
 
-					mSelectedIndex = lSelectedIndex;
+						mSelectedIndex = lSelectedIndex;
 
-					if (mClickListener != null) {
-						mClickListener.menuEntryChanged(this);
+						if (mClickListener != null) {
+							mClickListener.menuEntryChanged(this);
+						}
+
 					}
 
+					// close this window
+					mOpen = false;
+
+					// mParentLayout.parentScreen().setFocusOn(pCore, this, true);
+					return true;
+
 				}
-
-				// close this window
-				mOpen = false;
-
-				mParentLayout.parentScreen().setFocusOn(pCore, this, true);
-
 			}
 
 		} else {
@@ -381,7 +384,6 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 			lFontUnit.end();
 
 			GL11.glDisable(GL11.GL_STENCIL_TEST);
-			GL11.glEnable(GL11.GL_DEPTH_TEST);
 
 		}
 
