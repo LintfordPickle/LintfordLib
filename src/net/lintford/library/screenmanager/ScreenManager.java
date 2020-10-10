@@ -36,6 +36,10 @@ public class ScreenManager {
 	// Properties
 	// --------------------------------------
 
+	public ToastManager toastManager() {
+		return mToastManager;
+	}
+
 	public UIHUDStructureController UIHUDController() {
 		return mUIHUDController;
 	}
