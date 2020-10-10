@@ -241,7 +241,6 @@ public class MouseManager {
 
 		if (lOwnerNotAssigned || lOwnerIsUs) {
 			mMouseMiddleOwnerHashCode = pHashCode;
-			mouseHoverOverHash(pHashCode);
 
 			return true;
 
