@@ -20,52 +20,6 @@ import net.lintford.library.screenmanager.layouts.ListLayout;
 
 public abstract class MenuScreen extends Screen implements EntryInteractions {
 
-	public class ClickAction {
-
-		// --------------------------------------
-		// Variables
-		// --------------------------------------
-
-		private int mButtonID = -1;
-		private boolean mConsumed = false;
-
-		// --------------------------------------
-		// Properties
-		// --------------------------------------
-
-		public boolean isConsumed() {
-			return mConsumed;
-		}
-
-		// --------------------------------------
-		// Constructor
-		// --------------------------------------
-
-		public ClickAction() {
-			mConsumed = false;
-		}
-
-		public ClickAction(int pButtonID) {
-			mConsumed = false;
-			mButtonID = pButtonID;
-		}
-
-		// --------------------------------------
-		// Methods
-		// --------------------------------------
-
-		public int consume() {
-			mConsumed = true;
-			return mButtonID;
-		}
-
-		public void setNewClick(int pEntryID) {
-			mConsumed = false;
-			mButtonID = pEntryID;
-
-		}
-	}
-
 	// --------------------------------------
 	// Constants
 	// --------------------------------------
@@ -361,9 +315,11 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		if (mAnimationTimer > 0) {
 			mAnimationTimer -= lDeltaTime;
 
-		} else if (mClickAction.mButtonID != -1 && !mClickAction.isConsumed()) { // something was clicked
+		} else if (mClickAction.buttonUid() != -1 && !mClickAction.isConsumed()) { // something was clicked
 			handleOnClick();
-			mClickAction.setNewClick(-1);
+
+			mClickAction.reset();
+
 			return;
 
 		}
@@ -630,6 +586,12 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	protected abstract void handleOnClick();
 
 	@Override
+	public boolean hasUnconsumedAction() {
+		return mClickAction != null && !mClickAction.isConsumed();
+
+	}
+
+	@Override
 	public void onViewportChange(float pWidth, float pHeight) {
 		super.onViewportChange(pWidth, pHeight);
 
@@ -640,11 +602,4 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		}
 
 	}
-
-	@Override
-	public boolean hasUnconsumedAction() {
-		return mClickAction != null && !mClickAction.mConsumed;
-
-	}
-
 }
