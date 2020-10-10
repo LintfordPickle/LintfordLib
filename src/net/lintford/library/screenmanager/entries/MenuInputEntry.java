@@ -68,6 +68,10 @@ public class MenuInputEntry extends MenuEntry implements IBufferedInputCallback 
 		return mLabel;
 	}
 
+	public String entryText() {
+		return inputString();
+	}
+
 	public void inputString(String pNewValue) {
 		if (mInputField.length() > 0) {
 			mInputField.delete(0, mInputField.length());
@@ -163,7 +167,7 @@ public class MenuInputEntry extends MenuEntry implements IBufferedInputCallback 
 		if (!mActive)
 			return;
 
-		super.draw(pCore, pScreen, pIsSelected, pParentZDepth);
+		// super.draw(pCore, pScreen, pIsSelected, pParentZDepth);
 
 		final float luiTextScale = mScreenManager.UIHUDController().uiTextScaleFactor();
 
