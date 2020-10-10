@@ -233,8 +233,6 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 			mWindowArea.x(mWindowArea.x() + lDifferenceX);
 			mWindowArea.y(mWindowArea.y() + lDifferenceY);
 
-			System.out.println("WindowX : " + lDifferenceX);
-
 			// update the delta
 			dx = pCore.input().mouse().mouseWindowCoords().x;
 			dy = pCore.input().mouse().mouseWindowCoords().y;

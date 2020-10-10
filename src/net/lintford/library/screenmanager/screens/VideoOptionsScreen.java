@@ -231,12 +231,10 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 		switch (mClickAction.consume()) {
 
 		case BUTTON_CANCEL_CHANGES:
-			System.out.println("I'm called");
 			exitScreen();
 			break;
 
 		case BUTTON_APPLY_CHANGES:
-			System.out.println("I'm called");
 			applyModifiedSettings();
 
 			// if no changes, then quit out
