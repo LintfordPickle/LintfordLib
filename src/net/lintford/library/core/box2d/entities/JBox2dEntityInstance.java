@@ -7,6 +7,7 @@ import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.Filter;
 import org.jbox2d.dynamics.World;
+import org.jbox2d.dynamics.joints.PrismaticJointDef;
 import org.jbox2d.dynamics.joints.RevoluteJointDef;
 
 import net.lintford.library.ConstantsPhysics;
@@ -19,6 +20,7 @@ import net.lintford.library.core.box2d.instance.Box2dFixtureInstance;
 import net.lintford.library.core.box2d.instance.Box2dInstanceManager;
 import net.lintford.library.core.box2d.instance.Box2dJointInstance;
 import net.lintford.library.core.box2d.instance.Box2dPolygonInstance;
+import net.lintford.library.core.box2d.instance.Box2dPrismaticInstance;
 import net.lintford.library.core.box2d.instance.Box2dRevoluteInstance;
 import net.lintford.library.core.entity.PooledBaseData;
 
@@ -165,36 +167,68 @@ public class JBox2dEntityInstance extends PooledBaseData {
 
 		final int lJointCount = mJoints.size();
 		for (int i = 0; i < lJointCount; i++) {
-			// FIXME: Why is this only considering Revolute Joints ??
+			final var lBox2dJointInstance = (Box2dJointInstance) mJoints.get(i);
+			if (lBox2dJointInstance instanceof Box2dRevoluteInstance) {
+				final var lBox2dRevoluteJointInsance = (Box2dRevoluteInstance) lBox2dJointInstance;
 
-			final var lBox2dRevoluteInstance = (Box2dRevoluteInstance) mJoints.get(i);
-			final var lRevoluteJointDef = new RevoluteJointDef();
+				final var lRevoluteJointDef = new RevoluteJointDef();
 
-			final var lBodyA = getBodyByIndex(lBox2dRevoluteInstance.bodyAUid);
-			if (lBodyA == null)
-				continue;
-			lRevoluteJointDef.bodyA = lBodyA.mBody;
+				final var lBodyA = getBodyByIndex(lBox2dJointInstance.bodyAUid);
+				if (lBodyA == null)
+					continue;
+				lRevoluteJointDef.bodyA = lBodyA.mBody;
 
-			final var lBodyB = getBodyByIndex(lBox2dRevoluteInstance.bodyBUid);
-			if (lBodyB == null)
-				continue;
-			lRevoluteJointDef.bodyB = lBodyB.mBody;
+				final var lBodyB = getBodyByIndex(lBox2dJointInstance.bodyBUid);
+				if (lBodyB == null)
+					continue;
+				lRevoluteJointDef.bodyB = lBodyB.mBody;
 
-			lRevoluteJointDef.referenceAngle = lBox2dRevoluteInstance.referenceAngle;
-			lRevoluteJointDef.enableLimit = lBox2dRevoluteInstance.enableLimit;
-			lRevoluteJointDef.lowerAngle = lBox2dRevoluteInstance.lowerAngle;
-			lRevoluteJointDef.upperAngle = lBox2dRevoluteInstance.upperAngle;
+				lRevoluteJointDef.referenceAngle = lBox2dRevoluteJointInsance.referenceAngle;
+				lRevoluteJointDef.enableLimit = lBox2dRevoluteJointInsance.enableLimit;
+				lRevoluteJointDef.lowerAngle = lBox2dRevoluteJointInsance.lowerAngle;
+				lRevoluteJointDef.upperAngle = lBox2dRevoluteJointInsance.upperAngle;
 
-			lRevoluteJointDef.enableMotor = lBox2dRevoluteInstance.enableMotor;
-			lRevoluteJointDef.motorSpeed = lBox2dRevoluteInstance.motorSpeed;
-			lRevoluteJointDef.maxMotorTorque = lBox2dRevoluteInstance.maxMotorTorque;
+				lRevoluteJointDef.enableMotor = lBox2dRevoluteJointInsance.enableMotor;
+				lRevoluteJointDef.motorSpeed = lBox2dRevoluteJointInsance.motorSpeed;
+				lRevoluteJointDef.maxMotorTorque = lBox2dRevoluteJointInsance.maxMotorTorque;
 
-			lRevoluteJointDef.localAnchorA.set(lBox2dRevoluteInstance.localAnchorA);
-			lRevoluteJointDef.localAnchorB.set(lBox2dRevoluteInstance.localAnchorB);
+				lRevoluteJointDef.localAnchorA.set(lBox2dRevoluteJointInsance.localAnchorA);
+				lRevoluteJointDef.localAnchorB.set(lBox2dRevoluteJointInsance.localAnchorB);
 
-			lRevoluteJointDef.collideConnected = lBox2dRevoluteInstance.collidesConnected;
+				lRevoluteJointDef.collideConnected = lBox2dRevoluteJointInsance.collidesConnected;
 
-			lBox2dRevoluteInstance.joint = pWorld.createJoint(lRevoluteJointDef);
+				lBox2dJointInstance.joint = pWorld.createJoint(lRevoluteJointDef);
+
+			} else if (lBox2dJointInstance instanceof Box2dPrismaticInstance) {
+				final var lBox2dPrismaticJointInsance = (Box2dPrismaticInstance) lBox2dJointInstance;
+				final var lPrismaticJointDef = new PrismaticJointDef();
+
+				final var lBodyA = getBodyByIndex(lBox2dJointInstance.bodyAUid);
+				if (lBodyA == null)
+					continue;
+				lPrismaticJointDef.bodyA = lBodyA.mBody;
+
+				final var lBodyB = getBodyByIndex(lBox2dJointInstance.bodyBUid);
+				if (lBodyB == null)
+					continue;
+				lPrismaticJointDef.bodyB = lBodyB.mBody;
+
+				lPrismaticJointDef.referenceAngle = lBox2dPrismaticJointInsance.referenceAngle;
+				lPrismaticJointDef.enableLimit = lBox2dPrismaticJointInsance.enableLimit;
+				lPrismaticJointDef.lowerTranslation = lBox2dPrismaticJointInsance.lowerAngle;
+				lPrismaticJointDef.upperTranslation = lBox2dPrismaticJointInsance.upperAngle;
+
+				lPrismaticJointDef.enableMotor = lBox2dPrismaticJointInsance.enableMotor;
+				lPrismaticJointDef.motorSpeed = lBox2dPrismaticJointInsance.motorSpeed;
+
+				lPrismaticJointDef.localAnchorA.set(lBox2dPrismaticJointInsance.localAnchorA);
+				lPrismaticJointDef.localAnchorB.set(lBox2dPrismaticJointInsance.localAnchorB);
+
+				lPrismaticJointDef.collideConnected = lBox2dPrismaticJointInsance.collidesConnected;
+
+				lBox2dJointInstance.joint = pWorld.createJoint(lPrismaticJointDef);
+
+			}
 
 		}
 
@@ -420,6 +454,31 @@ public class JBox2dEntityInstance extends PooledBaseData {
 
 				lBox2dJointInstance.enableMotor = lJointDefinition.enableMotor;
 				lBox2dJointInstance.maxMotorTorque = lJointDefinition.maxMotorTorque;
+				lBox2dJointInstance.motorSpeed = lJointDefinition.motorSpeed;
+
+				mJoints.add(lBox2dJointInstance);
+
+			} else if (lBox2dJointDefinition.jointDef instanceof PrismaticJointDef) {
+				final var lBox2dJointInstance = new Box2dPrismaticInstance(0);// pBox2dInstanceManager.box2dJointInstanceRepository().getFreePooledItem();
+				final var lJointDefinition = (PrismaticJointDef) lBox2dJointDefinition.jointDef;
+
+				lBox2dJointInstance.name = lBox2dJointDefinition.name;
+
+				lBox2dJointInstance.bodyAUid = lBox2dJointDefinition.bodyAIndex;
+				lBox2dJointInstance.bodyBUid = lBox2dJointDefinition.bodyBIndex;
+
+				lBox2dJointInstance.localAnchorA.x = lJointDefinition.localAnchorA.x;
+				lBox2dJointInstance.localAnchorA.y = lJointDefinition.localAnchorA.y;
+				lBox2dJointInstance.localAnchorB.x = lJointDefinition.localAnchorB.x;
+				lBox2dJointInstance.localAnchorB.y = lJointDefinition.localAnchorB.y;
+				lBox2dJointInstance.bodyBUid = lBox2dJointDefinition.bodyBIndex;
+				lBox2dJointInstance.referenceAngle = lJointDefinition.referenceAngle;
+
+				lBox2dJointInstance.enableLimit = lJointDefinition.enableLimit;
+				lBox2dJointInstance.lowerAngle = lJointDefinition.lowerTranslation;
+				lBox2dJointInstance.upperAngle = lJointDefinition.upperTranslation;
+
+				lBox2dJointInstance.enableMotor = lJointDefinition.enableMotor;
 				lBox2dJointInstance.motorSpeed = lJointDefinition.motorSpeed;
 
 				mJoints.add(lBox2dJointInstance);
