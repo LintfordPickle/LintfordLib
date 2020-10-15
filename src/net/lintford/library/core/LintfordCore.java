@@ -535,6 +535,11 @@ public abstract class LintfordCore {
 				} else
 					mGameTime.elapsedTimeMilli = 0.f;
 
+				if (!mGameTime.isTimePaused) {
+					mGameTime.totalTimeMilli += mAppTime.targetElapsedTimeMilli * mGameTime.timeModifier;
+
+				}
+				
 				mAppTime.elapsedTimeMilli = mAppTime.accumulatedElapsedTimeMilli;
 				mAppTime.totalTimeMilli += mAppTime.accumulatedElapsedTimeMilli;
 
