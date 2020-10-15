@@ -96,6 +96,17 @@ public class MathHelper {
 		return angle;
 	}
 
+	public static float bezier4CurveTo(float t, float p0, float p1, float p2, float p3) {
+		float c = 3 * (p1 - p0);
+		float b = 3 * (p2 - p1) - c;
+		float a = p3 - p0 - c - b;
+
+		float cube = t * t * t;
+		float square = t * t;
+
+		return (a * cube) + (b * square) + (c * t) + p0;
+	}
+
 	public static float bezier3CurveTo(float t, float p0, float p1, float p2) {
 		float u = 1 - t;
 		float tt = t * t;
@@ -196,7 +207,7 @@ public class MathHelper {
 
 	/**
 	 * Inverts the given angle (in radians) over the X axis
-	 * */
+	 */
 	public static float invertAngleXAxis(float pAngleInRadians) {
 		float angle = normalizeAngle(pAngleInRadians);
 		if (angle == 0)
@@ -209,7 +220,7 @@ public class MathHelper {
 
 	/**
 	 * Inverts the given angle (in radians) over the Y axis
-	 * */
+	 */
 	public static float invertAngleYAxis(float pAngleInRadians) {
 		float angle = normalizeAngle(pAngleInRadians);
 
@@ -225,7 +236,7 @@ public class MathHelper {
 
 	/**
 	 * Brings the angle within [0, TwoPi]
-	 * */
+	 */
 	public static float normalizeAngle(float angle) {
 		if (angle < 0) {
 			int backRevolutions = (int) (-angle / TwoPi);
