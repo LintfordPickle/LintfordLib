@@ -76,6 +76,10 @@ public class MathHelper {
 		return Math.min(value1, value2);
 	}
 
+	public static float mix(float x, float y, float a) {
+		return x * (1.f - a) + y * a;
+	}
+	
 	public static float toDegrees(float radians) {
 		return (radians * 57.29578f);
 	}
@@ -85,13 +89,13 @@ public class MathHelper {
 	}
 
 	public static float wrapAngle(float angle) {
-		angle = (float) Math.IEEEremainder(angle, 6.2831854820251465);
-		if (angle <= -3.141593f) {
-			angle += 6.283185f;
+		angle = (float) Math.IEEEremainder(angle, Math.PI * 2.);
+		if (angle <= -Math.PI) {
+			angle += Math.PI * 2.;
 			return angle;
 		}
-		if (angle > 3.141593f) {
-			angle -= 6.283185f;
+		if (angle > Math.PI) {
+			angle -= Math.PI * 2.;
 		}
 		return angle;
 	}
@@ -244,6 +248,17 @@ public class MathHelper {
 		} else {
 			return angle % TwoPi;
 		}
+
+	}
+
+	public static float turnToFace(float pPosX, float pPosY, float pFaceThisX, float pFaceThisY, float pCurrentAngle, float pTurnSpeed) {
+		final float x = pFaceThisX - pPosX;
+		final float y = pFaceThisY - pPosY;
+
+		final float desiredAngle = (float) Math.atan2(y, x);
+		final float difference = clamp(wrapAngle(desiredAngle - pCurrentAngle), -pTurnSpeed, pTurnSpeed);
+
+		return wrapAngle(pCurrentAngle + difference);
 
 	}
 
