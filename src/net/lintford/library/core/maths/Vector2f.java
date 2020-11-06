@@ -69,11 +69,11 @@ public class Vector2f implements Serializable {
 	}
 
 	public static float len(Vector2f x, Vector2f y) {
-		return (float) Math.sqrt(x.x * y.x + x.y * y.y);
+		return (float) Math.sqrt((y.y - x.y) * (y.y - x.y) + (y.x - x.x) * (y.x - x.x));
 	}
 
 	public static float len(float x1, float y1, float x2, float y2) {
-		return (float) Math.sqrt(x1 * x2 + y1 * y2);
+		return (float) Math.sqrt((y2 - y1) * (y2 - y1) + (x2 - x1) * (x2 - x1));
 	}
 
 	public static Vector2f CatmullRom(Vector2f value1, Vector2f value2, Vector2f value3, Vector2f value4, float amount, Vector2f returnVector) {
