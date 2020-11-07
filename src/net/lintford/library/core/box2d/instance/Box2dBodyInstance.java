@@ -11,9 +11,9 @@ import net.lintford.library.core.box2d.BasePhysicsData;
 import net.lintford.library.core.box2d.definition.Box2dBodyDefinition;
 import net.lintford.library.core.box2d.entities.JBox2dEntityInstance;
 import net.lintford.library.core.debug.Debug;
-import net.lintford.library.core.entity.PooledBaseData;
+import net.lintford.library.core.entity.instances.RetainedPooledBaseData;
 
-public class Box2dBodyInstance extends PooledBaseData {
+public class Box2dBodyInstance extends RetainedPooledBaseData {
 
 	// --------------------------------------
 	// Constants

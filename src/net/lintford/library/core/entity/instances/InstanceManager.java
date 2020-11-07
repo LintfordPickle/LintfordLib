@@ -5,7 +5,7 @@ import java.util.List;
 
 import net.lintford.library.core.entity.BaseInstanceData;
 
-public class InstanceManager<T extends BaseInstanceData> extends BaseInstanceData {
+public abstract class InstanceManager<T extends BaseInstanceData> extends BaseInstanceData {
 
 	// --------------------------------------
 	// Constants
@@ -17,12 +17,16 @@ public class InstanceManager<T extends BaseInstanceData> extends BaseInstanceDat
 	// Variables
 	// --------------------------------------
 
-	protected List<T> mInstances;
+	protected final List<T> mInstances = new ArrayList<>();
 	private int mInstanceUIDCounter;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public int numInstances() {
+		return mInstances.size();
+	}
 
 	public List<T> instances() {
 		return mInstances;
@@ -33,13 +37,16 @@ public class InstanceManager<T extends BaseInstanceData> extends BaseInstanceDat
 	// --------------------------------------
 
 	public InstanceManager() {
-		mInstances = new ArrayList<>();
 
 	}
 
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
+
+	public void clearInstances() {
+		mInstances.clear();
+	}
 
 	protected int getNewInstanceUID() {
 		return mInstanceUIDCounter++;

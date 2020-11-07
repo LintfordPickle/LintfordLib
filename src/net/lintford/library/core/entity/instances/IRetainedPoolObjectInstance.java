@@ -1,6 +1,6 @@
 package net.lintford.library.core.entity.instances;
 
-public interface IPoolObjectInstance {
+public interface IRetainedPoolObjectInstance {
 
 	public boolean isAssigned();
 

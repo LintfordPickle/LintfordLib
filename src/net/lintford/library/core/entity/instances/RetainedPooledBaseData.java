@@ -1,8 +1,8 @@
-package net.lintford.library.core.entity;
+package net.lintford.library.core.entity.instances;
 
-import net.lintford.library.core.entity.instances.IPoolObjectInstance;
+import net.lintford.library.core.entity.BaseInstanceData;
 
-public abstract class PooledBaseData extends BaseInstanceData implements IPoolObjectInstance {
+public abstract class RetainedPooledBaseData extends BaseInstanceData implements IRetainedPoolObjectInstance {
 
 	// --------------------------------------
 	// Constants
@@ -20,7 +20,7 @@ public abstract class PooledBaseData extends BaseInstanceData implements IPoolOb
 	// Constructor
 	// --------------------------------------
 
-	public PooledBaseData(final int pPoolUid) {
+	public RetainedPooledBaseData(final int pPoolUid) {
 		poolUid = pPoolUid;
 
 	}

@@ -8,9 +8,9 @@ import net.lintford.library.core.box2d.definition.PObjectDefinition;
 import net.lintford.library.core.box2d.entities.JBox2dEntityInstance;
 import net.lintford.library.core.box2d.instance.Box2dInstanceManager;
 import net.lintford.library.core.debug.Debug;
-import net.lintford.library.core.entity.instances.PooledInstanceManager;
+import net.lintford.library.core.entity.instances.RetainedPoolInstanceManager;
 
-public class PObjectManager extends PooledInstanceManager<JBox2dEntityInstance> {
+public class PObjectManager extends RetainedPoolInstanceManager<JBox2dEntityInstance> {
 
 	// --------------------------------------
 	// Constants

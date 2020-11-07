@@ -1,8 +1,8 @@
 package net.lintford.library.core.box2d;
 
-import net.lintford.library.core.entity.PooledBaseData;
+import net.lintford.library.core.entity.instances.RetainedPooledBaseData;
 
-public abstract class BasePhysicsData extends PooledBaseData {
+public abstract class BasePhysicsData extends RetainedPooledBaseData {
 
 	// --------------------------------------
 	// Properties

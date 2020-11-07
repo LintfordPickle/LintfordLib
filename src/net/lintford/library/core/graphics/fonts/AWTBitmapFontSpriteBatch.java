@@ -143,8 +143,8 @@ public class AWTBitmapFontSpriteBatch extends TextureBatchPCT {
 
 			if (lCharGlyph != null) {
 				if (mDrawShadow)
-					draw(mBitmapFont.fontTexture(), lCharGlyph.x, lCharGlyph.y, lCharGlyph.width, lCharGlyph.height, (lPosX - 1 - mBitmapFont.fontHeight() * 0.05f), (lPosY + 1 + mBitmapFont.fontHeight() * 0.05f),
-							lCharGlyph.width * pScale, lCharGlyph.height * pScale, pZ, 0f, 0f, 0f, pA);
+					draw(mBitmapFont.fontTexture(), lCharGlyph.x, lCharGlyph.y, lCharGlyph.width, lCharGlyph.height, (lPosX - 2.f * pScale), (lPosY + 2.f * pScale), lCharGlyph.width * pScale, lCharGlyph.height * pScale,
+							pZ, 0f, 0f, 0f, pA);
 				draw(mBitmapFont.fontTexture(), lCharGlyph.x, lCharGlyph.y, lCharGlyph.width, lCharGlyph.height, lPosX, lPosY, lCharGlyph.width * pScale, lCharGlyph.height * pScale, pZ, pR, pG, pB, pA);
 				lPosX += lCharGlyph.width * pScale;
 

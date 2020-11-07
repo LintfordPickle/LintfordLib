@@ -1,9 +1,9 @@
 package net.lintford.library.core.geometry.spritegraph;
 
-import net.lintford.library.core.entity.instances.PooledInstanceManager;
+import net.lintford.library.core.entity.instances.RetainedPoolInstanceManager;
 import net.lintford.library.core.geometry.spritegraph.instance.SpriteGraphNodeInstance;
 
-public class SpriteGraphNodeManager extends PooledInstanceManager<SpriteGraphNodeInstance> implements ISpriteGraphPool {
+public class SpriteGraphNodeManager extends RetainedPoolInstanceManager<SpriteGraphNodeInstance> implements ISpriteGraphPool {
 
 	// --------------------------------------
 	// Constants

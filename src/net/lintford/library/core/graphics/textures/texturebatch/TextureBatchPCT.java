@@ -380,9 +380,16 @@ public class TextureBatchPCT {
 
 	}
 
+	public void drawAroundCenter(Texture pTexture, Rectangle pSrcRect, float pDX, float pDY, float pDW, float pDH, float pZ, float pRot, float pROX, float pROY, float pScale, float pR, float pG, float pB, float pA) {
+		if (pSrcRect == null)
+			return;
+
+		drawAroundCenter(pTexture, pSrcRect.x(), pSrcRect.y(), pSrcRect.w(), pSrcRect.h(), pDX, pDY, pDW, pDH, pZ, pRot, pROX, pROY, pScale, pR, pG, pB, pA);
+
+	}
+
 	/**
-	 * Draws the source rectange from the texture into the destination rectangle on the current buffer.
-	 * note: the origin of the sprite is relative to the center point! 
+	 * Draws the source rectange from the texture into the destination rectangle on the current buffer. note: the origin of the sprite is relative to the center point!
 	 */
 	public void drawAroundCenter(Texture pTexture, float pSX, float pSY, float pSW, float pSH, float pDX, float pDY, float pDW, float pDH, float pZ, float pRot, float pROX, float pROY, float pScale, float pR, float pG,
 			float pB, float pA) {
@@ -449,8 +456,8 @@ public class TextureBatchPCT {
 		float v3 = (pSY + pSH) / pTexture.getTextureHeight();
 
 		// Apply the difference back to the global positions
-		//		pDX += pROX;
-		//		pDY += pROY;
+		// pDX += pROX;
+		// pDY += pROY;
 
 		// CCW 102203
 		addVertToBuffer(pDX + x1, pDY + y1, pZ, 1f, pR, pG, pB, pA, u1, v1); // 1

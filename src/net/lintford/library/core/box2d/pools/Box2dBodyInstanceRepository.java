@@ -1,9 +1,9 @@
 package net.lintford.library.core.box2d.pools;
 
 import net.lintford.library.core.box2d.instance.Box2dBodyInstance;
-import net.lintford.library.core.entity.instances.PooledInstanceManager;
+import net.lintford.library.core.entity.instances.RetainedPoolInstanceManager;
 
-public class Box2dBodyInstanceRepository extends PooledInstanceManager<Box2dBodyInstance> {
+public class Box2dBodyInstanceRepository extends RetainedPoolInstanceManager<Box2dBodyInstance> {
 
 	// --------------------------------------
 	// Constants

@@ -3,10 +3,12 @@ package net.lintford.library.core.entity.instances;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.lintford.library.core.entity.PooledBaseData;
-
-// TODO: Add a short description about the intended use of this class
-public abstract class PooledInstanceManager<T extends PooledBaseData> extends InstanceManager<T> {
+/**
+ * The {@link RetainedPoolInstanceManager} maintains both a pool of objects for re-use as well as a list of active instances. When an instance is drawn from the pool, it is automatically added to the instance list. When
+ * the object is returned, it is removed from the instance list and re-added to the pool.
+ * 
+ */
+public abstract class RetainedPoolInstanceManager<T extends RetainedPooledBaseData> extends InstanceManager<T> {
 
 	// --------------------------------------
 	// Constants
@@ -20,13 +22,13 @@ public abstract class PooledInstanceManager<T extends PooledBaseData> extends In
 	// Variables
 	// --------------------------------------
 
-	private List<T> mPooledItems;
+	private transient final List<T> mPooledItems;
 
 	// --------------------------------------
 	// Constrcutor
 	// --------------------------------------
 
-	public PooledInstanceManager() {
+	public RetainedPoolInstanceManager() {
 		mPooledItems = new ArrayList<>();
 
 	}
@@ -34,6 +36,19 @@ public abstract class PooledInstanceManager<T extends PooledBaseData> extends In
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
+
+	@Override
+	public void clearInstances() {
+		while (mInstances.size() > 0) {
+			final var lItem = mInstances.remove(0);
+			if (!mPooledItems.contains(lItem)) {
+				mPooledItems.add(lItem);
+
+			}
+
+		}
+
+	}
 
 	public T getFreePooledItem() {
 		T lInst = null;
