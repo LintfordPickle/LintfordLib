@@ -2,6 +2,7 @@ package net.lintford.library.core.entity.instances;
 
 /**
  * An instance manager whose instances are maintained in an internal list. Whether or not an item has been assigned or is free is handled internally.
+ * There is no pool of items with this instance manager.
  */
 public abstract class ClosedInstanceManager<T extends ClosedInstanceBaseData> extends InstanceManager<T> {
 

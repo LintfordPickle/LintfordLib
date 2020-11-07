@@ -24,5 +24,9 @@ public abstract class RetainedPooledBaseData extends BaseInstanceData implements
 		poolUid = pPoolUid;
 
 	}
+	
+	public void reset() {
+		
+	}
 
 }

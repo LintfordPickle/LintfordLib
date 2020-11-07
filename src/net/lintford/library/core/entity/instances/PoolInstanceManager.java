@@ -88,6 +88,7 @@ public abstract class PoolInstanceManager<T extends PooledBaseData> extends Inst
 		}
 
 		if (!mPooledItems.contains(pReturnedItem)) {
+			pReturnedItem.reset();
 			mPooledItems.add(pReturnedItem);
 		}
 

@@ -7,7 +7,6 @@ import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.World;
 
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.box2d.BasePhysicsData;
 import net.lintford.library.core.box2d.definition.Box2dBodyDefinition;
 import net.lintford.library.core.box2d.entities.JBox2dEntityInstance;
 import net.lintford.library.core.debug.Debug;
@@ -26,7 +25,7 @@ public class Box2dBodyInstance extends RetainedPooledBaseData {
 	// --------------------------------------
 
 	public transient Body mBody;
-	public BasePhysicsData bodyPhysicsData;
+	public RetainedPooledBaseData bodyPhysicsData;
 
 	public String name;
 	public int entityBodyIndex;

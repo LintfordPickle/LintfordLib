@@ -25,4 +25,12 @@ public abstract class PooledBaseData extends BaseInstanceData {
 
 	}
 
+	// --------------------------------------
+	// Methods
+	// --------------------------------------
+
+	public void reset() {
+
+	}
+
 }
