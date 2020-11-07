@@ -80,7 +80,7 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 	public VideoOptionsScreen(ScreenManager pScreenManager) {
 		super(pScreenManager, "VIDEO OPTIONS");
 
-		mPaddingTop = 0;
+		mPaddingTopNormalized = 0;
 
 		// Get the config options
 		mDisplayManager = pScreenManager.core().config().display();

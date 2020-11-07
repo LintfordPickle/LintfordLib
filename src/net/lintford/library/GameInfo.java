@@ -49,16 +49,6 @@ public interface GameInfo {
 		return 100;
 	}
 
-	/** Returns the startup width of the OpenGL window to be created. */
-	public default int defaultWindowWidth() {
-		return 800;
-	}
-
-	/** Returns the startup height of the OpenGL window to be created. */
-	public default int defaultWindowHeight() {
-		return 600;
-	}
-
 	public default boolean stretchGameResolution() {
 		return false;
 	}

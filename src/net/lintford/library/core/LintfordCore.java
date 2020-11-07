@@ -21,7 +21,7 @@ import net.lintford.library.controllers.core.ControllerManager;
 import net.lintford.library.controllers.core.ResourceController;
 import net.lintford.library.controllers.debug.DebugControllerTreeController;
 import net.lintford.library.controllers.debug.DebugRendererTreeController;
-import net.lintford.library.controllers.hud.UIHUDStructureController;
+import net.lintford.library.controllers.hud.UiStructureController;
 import net.lintford.library.core.camera.Camera;
 import net.lintford.library.core.camera.HUD;
 import net.lintford.library.core.camera.ICamera;
@@ -424,7 +424,7 @@ public abstract class LintfordCore {
 	 * Implemented in the sub-class. Sets the default state of the application (note. OpenGL context is not available at this point).
 	 */
 	protected void onInitializeApp() {
-		new UIHUDStructureController(mMasterConfig.display(), mControllerManager, CORE_ENTITY_GROUP_ID);
+		new UiStructureController(mMasterConfig.display(), mControllerManager, CORE_ENTITY_GROUP_ID);
 
 	}
 
@@ -539,7 +539,7 @@ public abstract class LintfordCore {
 					mGameTime.totalTimeMilli += mAppTime.targetElapsedTimeMilli * mGameTime.timeModifier;
 
 				}
-				
+
 				mAppTime.elapsedTimeMilli = mAppTime.accumulatedElapsedTimeMilli;
 				mAppTime.totalTimeMilli += mAppTime.accumulatedElapsedTimeMilli;
 
@@ -567,7 +567,7 @@ public abstract class LintfordCore {
 
 	}
 
-	/**
+	/** called automatically within the gameloop.
 	 */
 	protected void onHandleInput() {
 		mInputState.update(this);
@@ -577,7 +577,7 @@ public abstract class LintfordCore {
 
 	}
 
-	/**
+	/** called automatically within the gameloop.
 	 */
 	protected void onUpdate() {
 		Debug.debugManager().preUpdate(this);

@@ -3,11 +3,8 @@ package net.lintford.library.screenmanager.entries;
 import net.lintford.library.ConstantsApp;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
-import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
-import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.screenmanager.MenuEntry;
-import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.Screen;
 import net.lintford.library.screenmanager.ScreenManager;
 import net.lintford.library.screenmanager.ScreenManagerConstants.FILLTYPE;
@@ -159,15 +156,15 @@ public class MenuLabelValueEntry extends MenuEntry {
 		// TODO: This -50 is because of the scrollbar - this is why I needed to keep the padding :(
 		w = Math.min(mParentLayout.w() - 50f, MENUENTRY_MAX_WIDTH);
 
-		final MenuScreen lParentScreen = mParentLayout.parentScreen();
-		final FontUnit lFont = lParentScreen.font();
+		final var lParentScreen = mParentLayout.parentScreen();
+		final var lFont = lParentScreen.font();
+
 		if (lFont == null)
 			return;
 
-		final float luiTextScale = mScreenManager.UIHUDController().uiTextScaleFactor();
-
-		final float lFontHeight = lFont.bitmap().fontHeight() * luiTextScale;
-		h = lFontHeight * luiTextScale;
+		final float lUiTextScale = lParentScreen.uiTextScale();
+		final float lFontHeight = lFont.bitmap().fontHeight() * lUiTextScale;
+		h = lFontHeight * lUiTextScale;
 
 	}
 
@@ -176,16 +173,19 @@ public class MenuLabelValueEntry extends MenuEntry {
 		if (!enabled())
 			return;
 
-		final float lAlpha = 1f;
-		final float luiTextScale = mScreenManager.UIHUDController().uiTextScaleFactor();
+		final var lParentScreen = mParentLayout.parentScreen();
+		final var lFont = lParentScreen.font();
 
-		final MenuScreen lParentScreen = mParentLayout.parentScreen();
-		final FontUnit lFont = lParentScreen.font();
+		if (lFont == null)
+			return;
+
+		final float lAlpha = 1f;
+		final float luiTextScale = lParentScreen.uiTextScale();
 
 		final float lLabelWidth = lFont.bitmap().getStringWidth(mText, luiTextScale);
 		final float lFontHeight = lFont.bitmap().fontHeight() * luiTextScale;
 
-		final TextureBatchPCT lTextureBatch = lParentScreen.rendererManager().uiTextureBatch();
+		final var lTextureBatch = lParentScreen.rendererManager().uiTextureBatch();
 
 		if (mDrawBackground) {
 			lTextureBatch.begin(pCore.HUD());

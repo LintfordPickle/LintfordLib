@@ -106,8 +106,8 @@ public class DisplayManager extends IniFile {
 	private long mWindowID;
 	private boolean mStretchGameScreen = false;
 	private boolean mRecompileShaders = false;
-	private int mBaseGameResolutionWidth;
-	private int mBaseGameResolutionHeight;
+	private final int mBaseGameResolutionWidth;
+	private final int mBaseGameResolutionHeight;
 	private boolean mWindowWasResized;
 	boolean mWindowResolutionChanged;
 	boolean mWaitForMouseRelease;
@@ -200,6 +200,9 @@ public class DisplayManager extends IniFile {
 	public DisplayManager(GameInfo pGameInfo, String pConfigFilename) {
 		super(pConfigFilename);
 
+		mBaseGameResolutionWidth = pGameInfo.baseGameResolutionWidth();
+		mBaseGameResolutionHeight = pGameInfo.baseGameResolutionHeight();
+
 		// Make sure we always have a solid base instances with valid values
 		mDisplaySettings = VideoSettings.createBasicTemplate();
 		mGraphicsSettings = GraphicsSettings.createBasicTemplate();
@@ -265,17 +268,20 @@ public class DisplayManager extends IniFile {
 			// create default values from the GameInfo
 			mDisplaySettings.monitorIndex = NULL; // default to primary monitor first time
 			mDisplaySettings.fullScreenIndex = pGameInfo.defaultFullScreen() ? VideoSettings.FULLSCREEN_YES_INDEX : VideoSettings.FULLSCREEN_NO_INDEX;
-			mDisplaySettings.windowWidth = pGameInfo.defaultWindowWidth();
-			mDisplaySettings.windowHeight = pGameInfo.defaultWindowHeight();
+			mDisplaySettings.windowWidth = pGameInfo.baseGameResolutionWidth();
+			mDisplaySettings.windowHeight = pGameInfo.baseGameResolutionHeight();
 			mDisplaySettings.resizable = pGameInfo.windowResizeable();
 
 			saveConfig();
 
 		} else {
 			// Get the values we need
-			mDisplaySettings.monitorIndex = glfwGetPrimaryMonitor();// getLong("Settings", "MonitorIndex", NULL);
-			mDisplaySettings.windowWidth = getInt(SECTION_NAME_SETTINGS, "WindowWidth", pGameInfo.defaultWindowWidth());
-			mDisplaySettings.windowHeight = getInt(SECTION_NAME_SETTINGS, "WindowHeight", pGameInfo.defaultWindowHeight());
+			final var lSavedMonitorIndex = getLong("Settings", "MonitorIndex", glfwGetPrimaryMonitor());
+			// TODO: Verify the monitor index is (still?) valid
+
+			mDisplaySettings.monitorIndex = lSavedMonitorIndex;
+			mDisplaySettings.windowWidth = getInt(SECTION_NAME_SETTINGS, "WindowWidth", pGameInfo.baseGameResolutionWidth());
+			mDisplaySettings.windowHeight = getInt(SECTION_NAME_SETTINGS, "WindowHeight", pGameInfo.baseGameResolutionHeight());
 			mDisplaySettings.fullScreenIndex = getInt(SECTION_NAME_SETTINGS, "WindowFullscreen", VideoSettings.FULLSCREEN_NO_INDEX);
 			mDisplaySettings.vSyncEnabled = getBoolean(SECTION_NAME_SETTINGS, "vSync", true);
 			mDisplaySettings.resizable = pGameInfo.windowResizeable(); // not overridable from config file
@@ -446,8 +452,6 @@ public class DisplayManager extends IniFile {
 		oninitializeGL();
 
 		mStretchGameScreen = pGameInfo.stretchGameResolution();
-		mBaseGameResolutionWidth = pGameInfo.baseGameResolutionWidth();
-		mBaseGameResolutionHeight = pGameInfo.baseGameResolutionHeight();
 
 		// Setup the UI to match the new resolution
 		changeResolution(mDisplaySettings.windowWidth, mDisplaySettings.windowHeight);
@@ -570,8 +574,8 @@ public class DisplayManager extends IniFile {
 
 		}
 
-		mDisplaySettings.windowWidth = pGameInfo.defaultWindowWidth();
-		mDisplaySettings.windowHeight = pGameInfo.defaultWindowHeight();
+		mDisplaySettings.windowWidth = pGameInfo.baseGameResolutionWidth();
+		mDisplaySettings.windowHeight = pGameInfo.baseGameResolutionHeight();
 		mDisplaySettings.fullScreenIndex = VideoSettings.FULLSCREEN_NO_INDEX;
 
 		Debug.debugManager().logger().w(getClass().getSimpleName(),

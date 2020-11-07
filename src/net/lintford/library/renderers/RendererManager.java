@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.lwjgl.opengl.GL11;
 
-import net.lintford.library.controllers.hud.UIHUDStructureController;
+import net.lintford.library.controllers.hud.UiStructureController;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.Debug;
@@ -48,7 +48,7 @@ public class RendererManager {
 	private ResourceManager mResourceManager;
 	private DisplayManager mDisplayConfig;
 
-	private UIHUDStructureController mUIHUDController;
+	private UiStructureController mUiStructureController;
 
 	/** Allows us to track where each RendererManager is created from */
 	private String mOwnerIdentifier;
@@ -60,8 +60,6 @@ public class RendererManager {
 
 	// Stuff from the UI Manager
 	private List<UIWindowChangeListener> mListeners;
-	private float mUIScale;
-	private float mUITextScale;
 
 	// Maybe put these in a kind of RendererResourcePool
 	private FontUnit mWindowTitleFont;
@@ -72,7 +70,6 @@ public class RendererManager {
 	private LineBatch mLineBatch;
 	private PolyBatch mPolyBatch;
 
-	// TODO: Make a dedicated RenderTargetManager
 	private List<RenderTarget> mRenderTargets;
 	private List<RenderTarget> mRenderTargetAutoResize;
 	private RenderTarget mCurrentTarget;
@@ -120,14 +117,6 @@ public class RendererManager {
 		return mWindowTitleFont;
 	}
 
-	public float getUIScale() {
-		return mUIScale;
-	}
-
-	public float getUITextScale() {
-		return mUITextScale;
-	}
-
 	public DisplayManager displayConfig() {
 		return mDisplayConfig;
 	}
@@ -156,8 +145,8 @@ public class RendererManager {
 		return mWindowRenderers;
 	}
 
-	public UIHUDStructureController uiHUDController() {
-		return mUIHUDController;
+	public UiStructureController uiHUDController() {
+		return mUiStructureController;
 	}
 
 	// --------------------------------------
@@ -181,9 +170,6 @@ public class RendererManager {
 
 		mListeners = new ArrayList<>();
 
-		// TODO: This should be controlled in the options menu later
-		mUIScale = 1f;
-
 		mIsinitialized = false;
 		mIsLoaded = false;
 
@@ -194,7 +180,7 @@ public class RendererManager {
 	// --------------------------------------
 
 	public void initialize() {
-		mUIHUDController = (UIHUDStructureController) mCore.controllerManager().getControllerByNameRequired(UIHUDStructureController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
+		mUiStructureController = (UiStructureController) mCore.controllerManager().getControllerByNameRequired(UiStructureController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
 
 		final int lRendererCount = mRenderers.size();
 		for (int i = 0; i < lRendererCount; i++) {

@@ -6,7 +6,6 @@ import java.util.List;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.geometry.Rectangle;
-import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.core.input.InputManager;
@@ -257,20 +256,20 @@ public class MenuEnumEntry extends MenuEntry {
 	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pParentZDepth) {
 		super.draw(pCore, pScreen, pIsSelected, pParentZDepth);
 
-		MenuScreen lParentScreen = mParentLayout.parentScreen();
-		FontUnit lFontBitmap = lParentScreen.font();
-		final float luiTextScale = mScreenManager.UIHUDController().uiTextScaleFactor();
+		final var lParentScreen = mParentLayout.parentScreen();
+		final var lFontBitmap = lParentScreen.font();
 		if (lFontBitmap == null)
 			return;
 
-		final float lTextWidth = lFontBitmap.bitmap().getStringWidth(mLabel, luiTextScale);
+		final float lUiTextScale = lParentScreen.uiTextScale();
+		final float lTextWidth = lFontBitmap.bitmap().getStringWidth(mLabel, lUiTextScale);
 
-		float lAdjustedScaleW = luiTextScale;
+		float lAdjustedScaleW = lUiTextScale;
 		if (mEnableScaleTextToWidth && w / 2 < lTextWidth && lTextWidth > 0)
 			lAdjustedScaleW = (w / 2) / lTextWidth;
 
-		final float lTextHeight = lFontBitmap.bitmap().getStringHeight(mLabel, luiTextScale);
-		final float lSeparatorHalfWidth = lFontBitmap.bitmap().getStringWidth(mSeparator, luiTextScale) * 0.5f;
+		final float lTextHeight = lFontBitmap.bitmap().getStringHeight(mLabel, lUiTextScale);
+		final float lSeparatorHalfWidth = lFontBitmap.bitmap().getStringWidth(mSeparator, lUiTextScale) * 0.5f;
 
 		final TextureBatchPCT lTextureBatch = mParentLayout.parentScreen().rendererManager().uiTextureBatch();
 
@@ -295,15 +294,15 @@ public class MenuEnumEntry extends MenuEntry {
 
 		lFontBitmap.begin(pCore.HUD());
 		lFontBitmap.draw(mLabel, x + w / 2 - 10 - (lTextWidth * lAdjustedScaleW) - lSeparatorHalfWidth, y + h / 2 - lTextHeight * 0.5f, pParentZDepth, lR, lG, lB, lA, lAdjustedScaleW, -1);
-		lFontBitmap.draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - lTextHeight * 0.5f, pParentZDepth, lR, lG, lB, lA, luiTextScale, -1);
+		lFontBitmap.draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - lTextHeight * 0.5f, pParentZDepth, lR, lG, lB, lA, lUiTextScale, -1);
 
 		// Render the items
 		if (mItems.size() > 0) {
 			String lCurItem = mItems.get(mSelectedIndex);
 
-			final float EntryWidth = lFontBitmap.bitmap().getStringWidth(lCurItem, luiTextScale);
+			final float EntryWidth = lFontBitmap.bitmap().getStringWidth(lCurItem, lUiTextScale);
 
-			lFontBitmap.draw(lCurItem, x + (w / 6 * 4.65f) - EntryWidth / 2, y + h / 2 - lTextHeight * 0.5f, pParentZDepth, lR, lG, lB, lA, luiTextScale, -1);
+			lFontBitmap.draw(lCurItem, x + (w / 6 * 4.65f) - EntryWidth / 2, y + h / 2 - lTextHeight * 0.5f, pParentZDepth, lR, lG, lB, lA, lUiTextScale, -1);
 		}
 		lFontBitmap.end();
 

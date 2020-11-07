@@ -27,12 +27,12 @@ public class LintfordMain extends LintfordCore {
 			}
 
 			@Override
-			public int defaultWindowWidth() {
+			public int baseGameResolutionWidth() {
 				return 320;
 			}
 
 			@Override
-			public int defaultWindowHeight() {
+			public int baseGameResolutionHeight() {
 				return 240;
 			}
 

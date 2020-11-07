@@ -3,7 +3,7 @@ package net.lintford.library.screenmanager;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.lintford.library.controllers.hud.UIHUDStructureController;
+import net.lintford.library.controllers.hud.UiStructureController;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.audio.AudioFireAndForgetManager;
@@ -29,7 +29,7 @@ public class ScreenManager {
 	private boolean mIsinitialized;
 	private boolean mIsLoaded;
 	private int mScreenUIDCounter;
-	private UIHUDStructureController mUIHUDController;
+	private UiStructureController mUiStructureController;
 	private IResizeListener mResizeListener;
 
 	// --------------------------------------
@@ -40,8 +40,8 @@ public class ScreenManager {
 		return mToastManager;
 	}
 
-	public UIHUDStructureController UIHUDController() {
-		return mUIHUDController;
+	public UiStructureController UiStructureController() {
+		return mUiStructureController;
 	}
 
 	public AudioFireAndForgetManager uiSounds() {
@@ -98,7 +98,7 @@ public class ScreenManager {
 			mScreens.get(i).initialize();
 		}
 
-		mUIHUDController = (UIHUDStructureController) mLWJGLCore.controllerManager().getControllerByNameRequired(UIHUDStructureController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
+		mUiStructureController = (UiStructureController) mLWJGLCore.controllerManager().getControllerByNameRequired(UiStructureController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
 
 		mIsinitialized = true;
 

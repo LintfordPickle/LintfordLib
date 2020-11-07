@@ -9,7 +9,6 @@ import net.lintford.library.ConstantsApp;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.geometry.Rectangle;
-import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.core.input.InputManager;
@@ -224,10 +223,10 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 			if (pCore.input().mouse().tryAcquireMouseOverThisComponent(hashCode())) {
 				if (pCore.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
 					if (mOpen) {
-						final float luiTextScale = mScreenManager.UIHUDController().uiTextScaleFactor();
+						final float lUiTextScale = mScreenManager.UiStructureController().uiTextScaleFactor();
 
 						// TODO: play the menu clicked sound
-						final float lConsoleLineHeight = 25f * luiTextScale;
+						final float lConsoleLineHeight = 25f * lUiTextScale;
 						// Something inside the dropdown was select
 						float lRelativeheight = pCore.HUD().getMouseCameraSpace().y - y - mScrollYPosition;
 
@@ -302,9 +301,9 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 
 	@Override
 	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pComponentDepth) {
-		final float luiTextScale = mScreenManager.UIHUDController().uiTextScaleFactor();
-
-		final FontUnit lFontUnit = mParentLayout.parentScreen().font();
+		final var lParentScreen = mParentLayout.parentScreen();
+		final float lUiTextScale = lParentScreen.uiTextScale();
+		final var lFontUnit = lParentScreen.font();
 
 		// TITLE BAR
 		mZ = mOpen ? ZLayers.LAYER_SCREENMANAGER + Z_STATE_MODIFIER_ACTIVE : ZLayers.LAYER_SCREENMANAGER + Z_STATE_MODIFIER_PASSIVE;
@@ -317,20 +316,20 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 
 		final String lSeparator = " : ";
 
-		final float lLabelWidth = lFontUnit.bitmap().getStringWidth(mLabel, luiTextScale);
-		final float lFontHeight = lFontUnit.bitmap().fontHeight() * luiTextScale;
+		final float lLabelWidth = lFontUnit.bitmap().getStringWidth(mLabel, lUiTextScale);
+		final float lFontHeight = lFontUnit.bitmap().fontHeight() * lUiTextScale;
 
 		final float lSingleTextHeight = h;
 
-		final float lSeparatorHalfWidth = lFontUnit.bitmap().getStringWidth(lSeparator, luiTextScale) * 0.5f;
+		final float lSeparatorHalfWidth = lFontUnit.bitmap().getStringWidth(lSeparator, lUiTextScale) * 0.5f;
 		lFontUnit.begin(pCore.HUD());
-		lFontUnit.draw(mLabel, x + w / 2 - 10 - lLabelWidth - lSeparatorHalfWidth, y + lSingleTextHeight / 2f - lFontHeight / 2f, mZ, lTextR, lTextG, lTextB, lTextA, luiTextScale, -1);
-		lFontUnit.draw(lSeparator, x + w / 2 - lSeparatorHalfWidth, y + lSingleTextHeight / 2f - lFontHeight / 2f, mZ, lTextR, lTextG, lTextB, lTextA, luiTextScale, -1);
+		lFontUnit.draw(mLabel, x + w / 2 - 10 - lLabelWidth - lSeparatorHalfWidth, y + lSingleTextHeight / 2f - lFontHeight / 2f, mZ, lTextR, lTextG, lTextB, lTextA, lUiTextScale, -1);
+		lFontUnit.draw(lSeparator, x + w / 2 - lSeparatorHalfWidth, y + lSingleTextHeight / 2f - lFontHeight / 2f, mZ, lTextR, lTextG, lTextB, lTextA, lUiTextScale, -1);
 
 		if (mItems == null || mItems.size() == 0) {
 			// LOCALIZATION: No entries added to dropdown list
 			final String lNoEntriesText = "No items found";
-			mParentLayout.parentScreen().font().draw(lNoEntriesText, x + w / 2 + lSeparatorHalfWidth + SPACE_BETWEEN_TEXT, y + h / 2f - lFontHeight / 2f, mZ, lTextR, lTextG, lTextB, lTextA, luiTextScale, -1);
+			mParentLayout.parentScreen().font().draw(lNoEntriesText, x + w / 2 + lSeparatorHalfWidth + SPACE_BETWEEN_TEXT, y + h / 2f - lFontHeight / 2f, mZ, lTextR, lTextG, lTextB, lTextA, lUiTextScale, -1);
 			mParentLayout.parentScreen().font().end();
 			return;
 		}
@@ -340,7 +339,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 		// Render the selected item in the 'top spot'
 		final String lCurItem = lSelectItem.name;
 		final float lSelectedTextWidth = lFontUnit.bitmap().getStringWidth(lCurItem);
-		lFontUnit.draw(lCurItem, x + (w / 4 * 3) + -lSelectedTextWidth / 2, y + lSingleTextHeight / 2f - lFontHeight / 2f, mZ, lTextR, lTextG, lTextB, lTextA, luiTextScale, -1);
+		lFontUnit.draw(lCurItem, x + (w / 4 * 3) + -lSelectedTextWidth / 2, y + lSingleTextHeight / 2f - lFontHeight / 2f, mZ, lTextR, lTextG, lTextB, lTextA, lUiTextScale, -1);
 		lFontUnit.end();
 
 		// CONTENT PANE
@@ -376,7 +375,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 			for (int i = 0; i < mItems.size(); i++) {
 				MenuEnumEntryItem lItem = mItems.get(i);
 				final float lItemTextWidth = lFontUnit.bitmap().getStringWidth(lItem.name);
-				lFontUnit.draw(lItem.name, x + (w / 4 * 3) - lItemTextWidth / 2, lYPos + lSingleTextHeight / 2 - lFontHeight / 2f, mZ + 0.1f, lTextR, lTextG, lTextB, lTextA, luiTextScale, -1);
+				lFontUnit.draw(lItem.name, x + (w / 4 * 3) - lItemTextWidth / 2, lYPos + lSingleTextHeight / 2 - lFontHeight / 2f, mZ + 0.1f, lTextR, lTextG, lTextB, lTextA, lUiTextScale, -1);
 				lYPos += 25;
 
 			}

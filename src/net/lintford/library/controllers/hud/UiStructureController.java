@@ -6,13 +6,13 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.options.DisplayManager;
 
-public class UIHUDStructureController extends BaseController {
+public class UiStructureController extends BaseController {
 
 	// --------------------------------------
 	// Constants
 	// --------------------------------------
 
-	public static final String CONTROLLER_NAME = "UIHUDController";
+	public static final String CONTROLLER_NAME = "Ui Structure Controller";
 
 	// --------------------------------------
 	// Variables
@@ -21,8 +21,8 @@ public class UIHUDStructureController extends BaseController {
 	private DisplayManager mDisplayManager;
 
 	private Rectangle mGameHUDRectangle;
-	private Rectangle mGameFooterRectangle; // hotbar etc.
 	private Rectangle mGameHeaderRectangle;
+	private Rectangle mGameFooterRectangle;
 
 	private Rectangle mMenuTitleRectangle;
 	private Rectangle mMenuMainRectangle;
@@ -30,6 +30,8 @@ public class UIHUDStructureController extends BaseController {
 
 	private boolean mIsinitialized;
 
+	private float mWindowAutoScaleFactorX;
+	private float mWindowAutoScaleFactorY;
 	private float mUITransparencyFactorActual;
 	private float mUIScaleFactorActual;
 	private float mUITextScaleFactorActual;
@@ -41,10 +43,22 @@ public class UIHUDStructureController extends BaseController {
 	// Properties
 	// --------------------------------------
 
+	/** The windowAutoScaleFactorX is the factor between the current window width and the base window width.*/
+	public float windowAutoScaleFactorX() {
+		return mWindowAutoScaleFactorX;
+	}
+
+	/** The windowAutoScaleFactorY is the factor between the current window height and the base window height.*/
+	public float windowAutoScaleFactorY() {
+		return mWindowAutoScaleFactorY;
+	}
+
+	/** Represents the padding space at the edge of the screen (horizontal). */
 	public float windowPaddingH() {
 		return mWindowPaddingH;
 	}
 
+	/** Represents the padding space at the edge of the screen (vertical). */
 	public float windowPaddingV() {
 		return mWindowPaddingV;
 	}
@@ -57,11 +71,6 @@ public class UIHUDStructureController extends BaseController {
 		return mUIScaleFactorActual;
 	}
 
-	// TODO: Replace the following function with:
-	/*
-	 * final boolean lIsBigUI = mUIHUDGameController.useBigUI(); final float lTextScale = mUIHUDGameController.uiTextScaleFactor() * (lIsBigUI ? GraphicsSettings.BIG_UI_SCALE_FACTOR :
-	 * GraphicsSettings.SMALL_UI_SCALE_FACTOR);
-	 */
 	public float uiTextScaleFactor() {
 		return mUITextScaleFactorActual;
 	}
@@ -99,7 +108,7 @@ public class UIHUDStructureController extends BaseController {
 	// Constructor
 	// --------------------------------------
 
-	public UIHUDStructureController(DisplayManager pDisplayManager, ControllerManager pControllerManager, final int pEntityGroupID) {
+	public UiStructureController(DisplayManager pDisplayManager, ControllerManager pControllerManager, final int pEntityGroupID) {
 		super(pControllerManager, CONTROLLER_NAME, pEntityGroupID);
 
 		mDisplayManager = pDisplayManager;
@@ -118,7 +127,6 @@ public class UIHUDStructureController extends BaseController {
 	// Core-Methods
 	// --------------------------------------
 
-	/** Get the needed references and create the player UI windows (renderers). */
 	public void initialize(LintfordCore pCore) {
 		updateHUDAreas(pCore);
 
@@ -134,6 +142,12 @@ public class UIHUDStructureController extends BaseController {
 	@Override
 	public void update(LintfordCore pCore) {
 		super.update(pCore);
+
+		final float lBaseWindowWidth = pCore.config().display().baseGameResolutionWidth();
+		final float lBaseWindowHeight = pCore.config().display().baseGameResolutionHeight();
+
+		mWindowAutoScaleFactorX = pCore.config().display().windowWidth() / lBaseWindowWidth;
+		mWindowAutoScaleFactorY = pCore.config().display().windowHeight() / lBaseWindowHeight;
 
 		updateHUDAreas(pCore);
 
@@ -156,8 +170,8 @@ public class UIHUDStructureController extends BaseController {
 
 		// ** GAME HUD BOUNDS ** //
 
-		final float lGameFooterHeight = 96f;
-		final float lGameHeaderHeight = 64f;
+		final float lGameHeaderHeight = 64f * windowAutoScaleFactorY();
+		final float lGameFooterHeight = 96f * windowAutoScaleFactorY();
 
 		final float lMaxGameHudWidth = 1280.f;
 		final float lMinGameHudWidth = 800.f;

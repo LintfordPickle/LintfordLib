@@ -3,9 +3,7 @@ package net.lintford.library.screenmanager.entries;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.graphics.ColorConstants;
-import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
-import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.Screen;
@@ -180,16 +178,15 @@ public class MenuButtonEntry extends MenuEntry {
 	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pParentZDepth) {
 		super.draw(pCore, pScreen, pIsSelected, pParentZDepth);
 
-		MenuScreen lParentScreen = mParentLayout.parentScreen();
-		FontUnit lFontBitmap = lParentScreen.font();
+		final var lParentScreen = mParentLayout.parentScreen();
+		final var lFontBitmap = lParentScreen.font();
 
-		final float luiTextScale = mScreenManager.UIHUDController().uiTextScaleFactor();
+		final float lUiTextScale = lParentScreen.uiTextScale();
+		final float lTextWidth = lFontBitmap.bitmap().getStringWidth(mLabel, lUiTextScale);
+		final float lTextHeight = lFontBitmap.bitmap().getStringHeight(mLabel) * lUiTextScale;
+		final float lSeparatorHalfWidth = lFontBitmap.bitmap().getStringWidth(mSeparator, lUiTextScale) * 0.5f;
 
-		final float lTextWidth = lFontBitmap.bitmap().getStringWidth(mLabel, luiTextScale);
-		final float lTextHeight = lFontBitmap.bitmap().getStringHeight(mLabel) * luiTextScale;
-		final float lSeparatorHalfWidth = lFontBitmap.bitmap().getStringWidth(mSeparator, luiTextScale) * 0.5f;
-
-		final TextureBatchPCT lTextureBatch = mParentLayout.parentScreen().rendererManager().uiTextureBatch();
+		final var lTextureBatch = mParentLayout.parentScreen().rendererManager().uiTextureBatch();
 
 		// Get the button area
 		final float TILE_SIZE = 32;
@@ -229,9 +226,9 @@ public class MenuButtonEntry extends MenuEntry {
 		final float lButtonTextWidth = lFontBitmap.bitmap().getStringWidth(mButtonLabel);
 
 		lFontBitmap.begin(pCore.HUD());
-		lFontBitmap.draw(mLabel, x + w / 2 - 10 - lTextWidth - lSeparatorHalfWidth, y + h / 2 - lTextHeight * 0.5f, pParentZDepth, lR, lG, lB, lA, luiTextScale, -1);
-		lFontBitmap.draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - lTextHeight * 0.5f, pParentZDepth, lR, lG, lB, lA, luiTextScale, -1);
-		lFontBitmap.draw(mButtonLabel, x + (w / 4) * 3 - lButtonTextWidth / 2, y + h / 2 - lTextHeight * 0.5f, pParentZDepth, lR, lG, lB, lA, luiTextScale, -1);
+		lFontBitmap.draw(mLabel, x + w / 2 - 10 - lTextWidth - lSeparatorHalfWidth, y + h / 2 - lTextHeight * 0.5f, pParentZDepth, lR, lG, lB, lA, lUiTextScale, -1);
+		lFontBitmap.draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - lTextHeight * 0.5f, pParentZDepth, lR, lG, lB, lA, lUiTextScale, -1);
+		lFontBitmap.draw(mButtonLabel, x + (w / 4) * 3 - lButtonTextWidth / 2, y + h / 2 - lTextHeight * 0.5f, pParentZDepth, lR, lG, lB, lA, lUiTextScale, -1);
 		lFontBitmap.end();
 
 	}

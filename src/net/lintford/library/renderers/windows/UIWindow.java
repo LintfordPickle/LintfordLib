@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.lintford.library.ConstantsApp;
-import net.lintford.library.controllers.hud.UIHUDStructureController;
+import net.lintford.library.controllers.hud.UiStructureController;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.camera.ICamera;
@@ -12,8 +12,8 @@ import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
-import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch9Patch;
+import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.core.input.IProcessMouseInput;
 import net.lintford.library.renderers.BaseRenderer;
 import net.lintford.library.renderers.RendererManager;
@@ -60,7 +60,7 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 
 	// This is the area that the content would take up, if not limited by the window bounds (i.e. the area of the 'content' visualisation).
 	protected ScrollBarContentRectangle mFullContentRectangle;
-	protected UIHUDStructureController mUIHUDGameController;
+	protected UiStructureController mUiStructureController;
 
 	protected boolean mUIInputFromUIManager;
 	protected boolean mIsWindowMoveable;
@@ -138,7 +138,7 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 	}
 
 	public float getTitleBarHeight() {
-		return DEFAULT_TITLEBAR_HEIGHT * mRendererManager.getUIScale();
+		return DEFAULT_TITLEBAR_HEIGHT * mUiStructureController.windowAutoScaleFactorY() * mUiStructureController.uiScaleFactor();
 	}
 
 	// --------------------------------------
@@ -180,7 +180,7 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 
 	@Override
 	public void initialize(LintfordCore pCore) {
-		mUIHUDGameController = (UIHUDStructureController) pCore.controllerManager().getControllerByName(UIHUDStructureController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
+		mUiStructureController = (UiStructureController) pCore.controllerManager().getControllerByName(UiStructureController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
 
 	}
 
@@ -349,9 +349,9 @@ public class UIWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 		if (!isOpen())
 			return;
 
-		if (mUIHUDGameController == null) {
-			mUIHUDGameController = (UIHUDStructureController) pCore.controllerManager().getControllerByName(UIHUDStructureController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
-			if (mUIHUDGameController == null)
+		if (mUiStructureController == null) {
+			mUiStructureController = (UiStructureController) pCore.controllerManager().getControllerByName(UiStructureController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
+			if (mUiStructureController == null)
 				return;
 		}
 

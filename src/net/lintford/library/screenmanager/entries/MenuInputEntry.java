@@ -1,7 +1,6 @@
 package net.lintford.library.screenmanager.entries;
 
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.input.IBufferedInputCallback;
 import net.lintford.library.core.input.InputManager;
 import net.lintford.library.screenmanager.MenuEntry;
@@ -169,37 +168,37 @@ public class MenuInputEntry extends MenuEntry implements IBufferedInputCallback 
 
 		// super.draw(pCore, pScreen, pIsSelected, pParentZDepth);
 
-		final float luiTextScale = mScreenManager.UIHUDController().uiTextScaleFactor();
-
-		final MenuScreen lParentScreen = mParentLayout.parentScreen();
-		final FontUnit lFont = lParentScreen.font();
+		final var lParentScreen = mParentLayout.parentScreen();
+		final var lFont = lParentScreen.font();
 
 		if (lFont == null)
 			return;
 
-		final float lLabelTextWidth = lFont.bitmap().getStringWidth(mLabel, luiTextScale);
-		float lAdjustedLabelScaleW = luiTextScale;
+		final float lUiTextScale = lParentScreen.uiTextScale();
+		final float lLabelTextWidth = lFont.bitmap().getStringWidth(mLabel, lUiTextScale);
+
+		float lAdjustedLabelScaleW = lUiTextScale;
 		if (mEnableScaleTextToWidth && w * 0.4f < lLabelTextWidth && lLabelTextWidth > 0)
 			lAdjustedLabelScaleW = (w * 0.4f) / lLabelTextWidth;
 
 		final float lLabelTextHeight = lFont.bitmap().fontHeight() * lAdjustedLabelScaleW;
 
-		final float lSeparatorHalfWidth = lFont.bitmap().getStringWidth(mSeparator, luiTextScale) * 0.5f;
-		final float lInputTextWidth = lFont.bitmap().getStringWidth(mInputField.toString(), luiTextScale);
+		final float lSeparatorHalfWidth = lFont.bitmap().getStringWidth(mSeparator, lUiTextScale) * 0.5f;
+		final float lInputTextWidth = lFont.bitmap().getStringWidth(mInputField.toString(), lUiTextScale);
 
-		float lAdjustedLInputScaleW = luiTextScale;
+		float lAdjustedLInputScaleW = lUiTextScale;
 		if (mEnableScaleTextToWidth && w * 0.4f < lInputTextWidth && lInputTextWidth > 0)
 			lAdjustedLInputScaleW = (w * 0.4f) / lInputTextWidth;
 
 		final float lInputTextHeight = lFont.bitmap().fontHeight() * lAdjustedLInputScaleW;
 
-		float r = mEnabled ? 1f : 0.6f;
-		float g = mEnabled ? 1f : 0.6f;
-		float b = mEnabled ? 1f : 0.6f;
+		final float r = mEnabled ? 1f : 0.6f;
+		final float g = mEnabled ? 1f : 0.6f;
+		final float b = mEnabled ? 1f : 0.6f;
 
 		lFont.begin(pCore.HUD());
 		lFont.draw(mLabel, x + w / 2 - 10 - (lLabelTextWidth * lAdjustedLabelScaleW) - lSeparatorHalfWidth, y + h / 2 - lLabelTextHeight * 0.5f, pParentZDepth + .1f, r, g, b, 1f, lAdjustedLabelScaleW, -1);
-		lFont.draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - lLabelTextHeight * 0.5f, pParentZDepth + .1f, r, g, b, 1f, luiTextScale, -1);
+		lFont.draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - lLabelTextHeight * 0.5f, pParentZDepth + .1f, r, g, b, 1f, lUiTextScale, -1);
 		lFont.draw(mInputField.toString(), x + w / 2 + lSeparatorHalfWidth * lAdjustedLInputScaleW + SPACE_BETWEEN_TEXT, y + h / 2 - lInputTextHeight * 0.5f, pParentZDepth + .1f, r, g, b, 1f, lAdjustedLInputScaleW, -1);
 
 		if (mShowCaret && mHasFocus) {

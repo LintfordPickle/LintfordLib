@@ -2,9 +2,7 @@ package net.lintford.library.screenmanager.entries;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
-import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
-import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.core.input.InputManager;
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
@@ -138,7 +136,7 @@ public class MenuToggleEntry extends MenuEntry {
 	public void update(LintfordCore pCore, MenuScreen pScreen, boolean pIsSelected) {
 		super.update(pCore, pScreen, pIsSelected);
 
-		final double lDeltaTime = pCore.appTime().elapsedTimeMilli() / 1000f;
+		final double lDeltaTime = pCore.appTime().elapsedTimeMilli() / 1000.;
 
 		// Check if tool tips are enabled.
 		if (mToolTipEnabled) {
@@ -151,18 +149,20 @@ public class MenuToggleEntry extends MenuEntry {
 	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pParentZDepth) {
 		// super.draw(pCore, pScreen, pIsSelected, pParentZDepth);
 
-		final float luiTextScale = mScreenManager.UIHUDController().uiTextScaleFactor();
+		final var lParentScreen = mParentLayout.parentScreen();
+		final var lFont = lParentScreen.font();
+		if (lFont == null)
+			return;
 
-		final MenuScreen lParentScreen = mParentLayout.parentScreen();
-		final FontUnit lFont = lParentScreen.font();
+		final float lUiTextScale = lParentScreen.uiTextScale();
 
-		final float lLabelWidth = lFont.bitmap().getStringWidth(mText, luiTextScale);
-		final float lTextHeight = lFont.bitmap().fontHeight() * luiTextScale;
-		final float lSeparatorHalfWidth = lFont.bitmap().getStringWidth(mSeparator, luiTextScale) * 0.5f;
+		final float lLabelWidth = lFont.bitmap().getStringWidth(mText, lUiTextScale);
+		final float lTextHeight = lFont.bitmap().fontHeight() * lUiTextScale;
+		final float lSeparatorHalfWidth = lFont.bitmap().getStringWidth(mSeparator, lUiTextScale) * 0.5f;
 
 		mZ = pParentZDepth;
 
-		final TextureBatchPCT lTextureBatch = lParentScreen.rendererManager().uiTextureBatch();
+		final var lTextureBatch = lParentScreen.rendererManager().uiTextureBatch();
 
 		// Draw the left/right buttons
 		lTextureBatch.begin(pCore.HUD());
@@ -178,15 +178,15 @@ public class MenuToggleEntry extends MenuEntry {
 		lTextureBatch.end();
 
 		lFont.begin(pCore.HUD());
-		lFont.draw(mText, x + w / 2 - lLabelWidth - SPACE_BETWEEN_TEXT - lSeparatorHalfWidth, y + h / 2 - lTextHeight * 0.5f, mZ, lParentScreen.r(), lParentScreen.g(), lParentScreen.b(), lParentScreen.a(), luiTextScale,
+		lFont.draw(mText, x + w / 2 - lLabelWidth - SPACE_BETWEEN_TEXT - lSeparatorHalfWidth, y + h / 2 - lTextHeight * 0.5f, mZ, lParentScreen.r(), lParentScreen.g(), lParentScreen.b(), lParentScreen.a(), lUiTextScale,
 				-1);
-		lFont.draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - lTextHeight * 0.5f, mZ, lParentScreen.r(), lParentScreen.g(), lParentScreen.b(), lParentScreen.a(), luiTextScale, -1);
+		lFont.draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - lTextHeight * 0.5f, mZ, lParentScreen.r(), lParentScreen.g(), lParentScreen.b(), lParentScreen.a(), lUiTextScale, -1);
 
 		if (mIsChecked) {
-			lFont.draw("Enabled", x + w / 2 + lSeparatorHalfWidth + TILE_SIZE * 2, y + h / 2 - lTextHeight * 0.5f, mZ, lParentScreen.r(), lParentScreen.g(), lParentScreen.b(), lParentScreen.a(), luiTextScale, -1);
+			lFont.draw("Enabled", x + w / 2 + lSeparatorHalfWidth + TILE_SIZE * 2, y + h / 2 - lTextHeight * 0.5f, mZ, lParentScreen.r(), lParentScreen.g(), lParentScreen.b(), lParentScreen.a(), lUiTextScale, -1);
 
 		} else {
-			lFont.draw("Disabled", x + w / 2 + lSeparatorHalfWidth + TILE_SIZE * 2, y + h / 2 - lTextHeight * 0.5f, mZ, lParentScreen.r(), lParentScreen.g(), lParentScreen.b(), lParentScreen.a(), luiTextScale, -1);
+			lFont.draw("Disabled", x + w / 2 + lSeparatorHalfWidth + TILE_SIZE * 2, y + h / 2 - lTextHeight * 0.5f, mZ, lParentScreen.r(), lParentScreen.g(), lParentScreen.b(), lParentScreen.a(), lUiTextScale, -1);
 
 		}
 

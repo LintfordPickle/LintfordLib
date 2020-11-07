@@ -372,7 +372,7 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 				mTextureBatch.draw(mUITexture, 320, 64, 32, 32, x + w - TILE_SIZE, y + h - TILE_SIZE, TILE_SIZE, TILE_SIZE, pComponentDepth, mR, mG, mB, mA);
 				mTextureBatch.end();
 
-				if (true || ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_OUTLINES", false)) {
+				if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_OUTLINES", false)) {
 					Debug.debugManager().drawers().drawRectImmediate(pCore.HUD(), this);
 				}
 
@@ -560,8 +560,8 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 
 		for (int i = 0; i < lEntryCount; i++) {
 			MenuEntry lEntry = menuEntries().get(i);
-//			if (!menuEntries().get(i).enabled())
-//				continue;
+			//			if (!menuEntries().get(i).enabled())
+			//				continue;
 
 			lResult += lEntry.marginTop();
 			lResult += lEntry.h();

@@ -77,7 +77,7 @@ public abstract class BaseDialog extends MenuScreen {
 		mTransitionOff = null;
 		mA = 1f;
 
-		mPaddingTop = 0;
+		mPaddingTopNormalized = 0;
 
 		mIsPopup = true; // don't hide underlying screens
 	}
@@ -116,7 +116,7 @@ public abstract class BaseDialog extends MenuScreen {
 		for (int i = 0; i < lLayoutCount; i++) {
 			final var lBaseLayout = layouts().get(i);
 
-			lBaseLayout.set(-DIALOG_WIDTH * 0.4f, mPaddingTop, DIALOG_WIDTH * 0.8f, DIALOG_HEIGHT);
+			lBaseLayout.set(-DIALOG_WIDTH * 0.4f, mPaddingTopNormalized, DIALOG_WIDTH * 0.8f, DIALOG_HEIGHT);
 			lBaseLayout.updateStructure();
 
 		}

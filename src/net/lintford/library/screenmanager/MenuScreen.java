@@ -27,7 +27,6 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	public static final float ANIMATION_TIMER_LENGTH = 130; // ms
 
 	public static final float INNER_PADDING = 20f;
-
 	public static final float TITLE_PADDING_X = 10f;
 
 	// --------------------------------------
@@ -47,10 +46,10 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	protected int mSelectedEntry = 0;
 	protected int mSelectedLayout = 0;
 
-	protected float mPaddingLeft;
-	protected float mPaddingRight;
-	protected float mPaddingTop;
-	protected float mPaddingBottom;
+	protected float mPaddingLeftNormalized;
+	protected float mPaddingRightNormalized;
+	protected float mPaddingTopNormalized;
+	protected float mPaddingBottomNormalized;
 
 	protected boolean mESCBackEnabled;
 
@@ -70,6 +69,10 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 	public void layoutAlignment(LAYOUT_ALIGNMENT pNewValue) {
 		mLayoutAlignment = pNewValue;
+	}
+
+	public float uiTextScale() {
+		return mScreenManager.UiStructureController().uiTextScaleFactor();
 	}
 
 	/** Returns a normal sized {@link FontUnit} which can be used to render general text to the screen. */
@@ -130,10 +133,10 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 		mMenuTitle = pMenuTitle;
 
-		mPaddingTop = 0.0f;
-		mPaddingBottom = 0f;
-		mPaddingLeft = 0f;
-		mPaddingRight = 0f;
+		mPaddingTopNormalized = 0.f;
+		mPaddingBottomNormalized = 0.f;
+		mPaddingLeftNormalized = 0.f;
+		mPaddingRightNormalized = 0.f;
 
 		mClickAction = new ClickAction();
 		mESCBackEnabled = true;
@@ -416,7 +419,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		float lLayoutHeight = lUIHUDStructureController.menuMainRectangle().height();
 
 		// Set the layout Y and H
-		float lLayoutNewY = lUIHUDStructureController.menuMainRectangle().top();
+		float lLayoutNewY = lUIHUDStructureController.menuMainRectangle().top() + mPaddingTopNormalized;
 
 		// See how many layouts only take what they need
 		int lCountOfSharers = lLeftLayoutCount;
@@ -472,19 +475,19 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 		super.draw(pCore);
 
-		final float luiTextScale = mScreenManager.UIHUDController().uiTextScaleFactor();
+		final float lUiTextScale = uiTextScale();
 
-		final float MENUSCREEN_Z_DEPTH = ZLayers.LAYER_SCREENMANAGER;
+		final float lMenuscreenZDepth = ZLayers.LAYER_SCREENMANAGER;
 
 		final var lUIHUDStructureController = mRendererManager.uiHUDController();
 		final var lHUDRect = lUIHUDStructureController.menuTitleRectangle();
 
-		final float lWindowPaddingH = 0;// lUIHUDController.windowPaddingH();
-		final float lWindowPaddingV = 0;// lUIHUDController.windowPaddingV();
+		final float lWindowPaddingH = lUIHUDStructureController.windowPaddingH();
+		final float lWindowPaddingV = lUIHUDStructureController.windowPaddingV();
 
 		if (mMenuHeaderFont != null) {
 			mMenuHeaderFont.begin(pCore.HUD());
-			mMenuHeaderFont.draw(mMenuTitle, lHUDRect.left() + lWindowPaddingH, lHUDRect.top() + lWindowPaddingV, MENUSCREEN_Z_DEPTH, mR, mG, mB, mA, luiTextScale);
+			mMenuHeaderFont.draw(mMenuTitle, lHUDRect.left() + lWindowPaddingH, lHUDRect.top() + lWindowPaddingV, lMenuscreenZDepth, mR, mG, mB, mA, lUiTextScale);
 			mMenuHeaderFont.end();
 
 		}
@@ -493,25 +496,25 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 			final var lTitleFontHeight = mMenuFont.bitmap().fontHeight();
 			mMenuFont.begin(pCore.HUD());
 			if (mMenuOverTitle != null && mMenuOverTitle.length() > 0)
-				mMenuFont.draw(mMenuOverTitle, lHUDRect.left(), lHUDRect.top(), MENUSCREEN_Z_DEPTH, mR, mG, mB, mA, luiTextScale);
+				mMenuFont.draw(mMenuOverTitle, lHUDRect.left(), lHUDRect.top(), lMenuscreenZDepth, mR, mG, mB, mA, lUiTextScale);
 			if (mMenuSubTitle != null && mMenuSubTitle.length() > 0)
-				mMenuFont.draw(mMenuSubTitle, lHUDRect.left(), lHUDRect.top() + lTitleFontHeight, MENUSCREEN_Z_DEPTH, mR, mG, mB, mA, luiTextScale);
+				mMenuFont.draw(mMenuSubTitle, lHUDRect.left(), lHUDRect.top() + lTitleFontHeight, lMenuscreenZDepth, mR, mG, mB, mA, lUiTextScale);
 			mMenuFont.end();
 		}
 
 		// Draw each layout in turn.
 		final int lCount = layouts().size();
 		for (int i = 0; i < lCount; i++) {
-			mLayouts.get(i).draw(pCore, MENUSCREEN_Z_DEPTH + (i * 0.001f));
+			mLayouts.get(i).draw(pCore, lMenuscreenZDepth + (i * 0.001f));
 
 		}
 
-		footerLayout().draw(pCore, MENUSCREEN_Z_DEPTH + (1 * 0.001f));
+		footerLayout().draw(pCore, lMenuscreenZDepth + (1 * 0.001f));
 
-		int lFloatingCount = mFloatingEntries.size();
-		for (int i = 0; i < lFloatingCount; i++) {
-			MenuEntry lFloatingEntry = mFloatingEntries.get(i);
-			lFloatingEntry.draw(pCore, this, false, MENUSCREEN_Z_DEPTH + (i * 0.001f));
+		final int lNumFloatingEntries = mFloatingEntries.size();
+		for (int i = 0; i < lNumFloatingEntries; i++) {
+			final var lFloatingEntry = mFloatingEntries.get(i);
+			lFloatingEntry.draw(pCore, this, false, lMenuscreenZDepth + (i * 0.001f));
 
 		}
 

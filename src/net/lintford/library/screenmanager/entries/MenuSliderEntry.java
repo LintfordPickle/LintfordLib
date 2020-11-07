@@ -4,7 +4,6 @@ import net.lintford.library.ConstantsApp;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.geometry.Rectangle;
-import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.core.input.InputManager;
@@ -238,13 +237,15 @@ public class MenuSliderEntry extends MenuEntry {
 	@Override
 	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pParentZDepth) {
 
-		final float luiTextScale = mScreenManager.UIHUDController().uiTextScaleFactor();
+		final var lParentScreen = mParentLayout.parentScreen();
+		final var lFont = lParentScreen.font();
+		if (lFont == null)
+			return;
 
-		final MenuScreen lParentScreen = mParentLayout.parentScreen();
-		final FontUnit lFont = lParentScreen.font();
+		final float lUiTextScale = lParentScreen.uiTextScale();
 
-		final float lLabelWidth = lFont.bitmap().getStringWidth(mLabel, luiTextScale);
-		final float lSeparatorHalfWidth = lFont.bitmap().getStringWidth(mSeparator, luiTextScale) * 0.5f;
+		final float lLabelWidth = lFont.bitmap().getStringWidth(mLabel, lUiTextScale);
+		final float lSeparatorHalfWidth = lFont.bitmap().getStringWidth(mSeparator, lUiTextScale) * 0.5f;
 		final float lLabelHeight = lFont.bitmap().fontHeight();
 
 		final float yPos = mShowGuideValuesEnabled ? y + h / 2f - lLabelHeight / 2f + 32 : y + h / 2f - lLabelHeight / 2f;
@@ -277,8 +278,8 @@ public class MenuSliderEntry extends MenuEntry {
 
 		// draw the label to the left and the value //
 		lFont.begin(pCore.HUD());
-		lFont.draw(mLabel, x + w / 2 - lLabelWidth - 10 - lSeparatorHalfWidth, y + h / 2f - lLabelHeight / 2f, pParentZDepth, lParentScreen.r(), lParentScreen.g(), lParentScreen.b(), lParentScreen.a(), luiTextScale, -1);
-		lFont.draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2f - lLabelHeight / 2f, pParentZDepth, lParentScreen.r(), lParentScreen.g(), lParentScreen.b(), lParentScreen.a(), luiTextScale, -1);
+		lFont.draw(mLabel, x + w / 2 - lLabelWidth - 10 - lSeparatorHalfWidth, y + h / 2f - lLabelHeight / 2f, pParentZDepth, lParentScreen.r(), lParentScreen.g(), lParentScreen.b(), lParentScreen.a(), lUiTextScale, -1);
+		lFont.draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2f - lLabelHeight / 2f, pParentZDepth, lParentScreen.r(), lParentScreen.g(), lParentScreen.b(), lParentScreen.a(), lUiTextScale, -1);
 
 		if (mShowValueEnabled) {
 			float valueWith = lFont.bitmap().getStringWidth("" + mValue);
