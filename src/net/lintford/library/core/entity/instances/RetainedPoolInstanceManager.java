@@ -22,7 +22,7 @@ public abstract class RetainedPoolInstanceManager<T extends RetainedPooledBaseDa
 	// Variables
 	// --------------------------------------
 
-	private transient final List<T> mPooledItems;
+	private transient List<T> mPooledItems;
 
 	// --------------------------------------
 	// Constrcutor
@@ -52,6 +52,10 @@ public abstract class RetainedPoolInstanceManager<T extends RetainedPooledBaseDa
 
 	public T getFreePooledItem() {
 		T lInst = null;
+
+		if (mPooledItems == null) {
+			mPooledItems = new ArrayList<>();
+		}
 
 		if (mPooledItems.size() > 0)
 			lInst = mPooledItems.remove(0);
