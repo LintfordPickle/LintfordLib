@@ -26,7 +26,8 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 	public static final float ANIMATION_TIMER_LENGTH = 130; // ms
 
-	public static final float INNER_PADDING = 20f;
+	public static final float INNER_PADDING_W = 50f;
+	public static final float INNER_PADDING_H = 5f;
 	public static final float TITLE_PADDING_X = 10f;
 
 	// --------------------------------------
@@ -354,10 +355,12 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		// *** FOOTER *** //
 		final var lHUDController = mRendererManager.uiHUDController();
 
-		float lWidthOfPage = lHUDController.menuFooterRectangle().width() - INNER_PADDING * 2f;
+		final float lInnerPaddingW = INNER_PADDING_W * lHUDController.windowAutoScaleFactorX();
+
+		float lWidthOfPage = lHUDController.menuFooterRectangle().width() - lInnerPaddingW * 2f;
 		float lHeightOfPage = lHUDController.menuFooterRectangle().height();
 
-		float lLeftOfPage = lHUDController.menuFooterRectangle().centerX() - lWidthOfPage / 2 + INNER_PADDING;
+		float lLeftOfPage = lHUDController.menuFooterRectangle().centerX() - lWidthOfPage / 2 + lInnerPaddingW;
 		float lTopOfPage = lHUDController.menuFooterRectangle().top();
 
 		footerLayout().set(lLeftOfPage, lTopOfPage, lWidthOfPage, lHeightOfPage);
@@ -381,33 +384,36 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		final float lScreenContentLeft = lUIHUDStructureController.menuMainRectangle().left();
 		final float lScreenContentWidth = lUIHUDStructureController.menuMainRectangle().width();
 
+		final float lInnerPaddingW = INNER_PADDING_W * lUIHUDStructureController.windowAutoScaleFactorX();
+		final float lInnerPaddingH = INNER_PADDING_H * lUIHUDStructureController.windowAutoScaleFactorX();
+
 		// Set the layout X and W
 		for (int i = 0; i < lLeftLayoutCount; i++) {
 			final var lBaseLayout = pLayoutList.get(i);
 
-			float lLayoutWidth = lScreenContentWidth - INNER_PADDING * 2f;
+			float lLayoutWidth = lScreenContentWidth - lInnerPaddingW * 2f;
 			if (lBaseLayout.layoutWidth() == LAYOUT_WIDTH.THREEQUARTER) {
-				lLayoutWidth = lScreenContentWidth / 4f * 3f - INNER_PADDING * 2f;
+				lLayoutWidth = lScreenContentWidth / 4f * 3f - lInnerPaddingW * 2f;
 			} else if (lBaseLayout.layoutWidth() == LAYOUT_WIDTH.TWOTHIRD) {
-				lLayoutWidth = lScreenContentWidth / 3f * 2f - INNER_PADDING * 2f;
+				lLayoutWidth = lScreenContentWidth / 3f * 2f - lInnerPaddingW * 2f;
 			} else if (lBaseLayout.layoutWidth() == LAYOUT_WIDTH.HALF) {
-				lLayoutWidth = lScreenContentWidth / 2f - INNER_PADDING * 2f;
+				lLayoutWidth = lScreenContentWidth / 2f - lInnerPaddingW * 2f;
 			} else if (lBaseLayout.layoutWidth() == LAYOUT_WIDTH.THIRD) {
-				lLayoutWidth = lScreenContentWidth / 3f - INNER_PADDING * 2f;
+				lLayoutWidth = lScreenContentWidth / 3f - lInnerPaddingW * 2f;
 			} else if (lBaseLayout.layoutWidth() == LAYOUT_WIDTH.QUARTER) {
-				lLayoutWidth = lScreenContentWidth / 4f - INNER_PADDING * 2f;
+				lLayoutWidth = lScreenContentWidth / 4f - lInnerPaddingW * 2f;
 			}
 
 			float lLayoutNewX = 0;
 			switch (pAlignment) {
 			case LEFT:
-				lLayoutNewX = lScreenContentLeft + INNER_PADDING;
+				lLayoutNewX = lScreenContentLeft + lInnerPaddingW;
 				break;
 			case CENTER:
-				lLayoutNewX = 0 - lLayoutWidth / 2f + INNER_PADDING;
+				lLayoutNewX = 0 - lLayoutWidth / 2f + lInnerPaddingW;
 				break;
 			case RIGHT:
-				lLayoutNewX = 0 + INNER_PADDING;
+				lLayoutNewX = 0 + lInnerPaddingW;
 				break;
 			}
 
@@ -439,7 +445,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 		lCountOfSharers -= lCountOfTakers;
 
-		float lSizeOfEachFillElement = ((lLayoutHeight - heightTaken) / lCountOfSharers) - INNER_PADDING * (lCountOfSharers + 1);
+		float lSizeOfEachFillElement = ((lLayoutHeight - heightTaken) / lCountOfSharers) - lInnerPaddingH * (lCountOfSharers + 1);
 
 		if (lSizeOfEachFillElement < 0)
 			lSizeOfEachFillElement = 10;
@@ -451,14 +457,14 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 			lLayout.y(lTop);
 
 			if (lLayout.layoutFillType() == FILLTYPE.TAKE_WHATS_NEEDED) {
-				lLayout.h(lLayout.getEntryHeight() + INNER_PADDING);
+				lLayout.h(lLayout.getEntryHeight() + lInnerPaddingH);
 				lLayout.updateStructure();
-				lTop += lLayout.getEntryHeight() + INNER_PADDING;
+				lTop += lLayout.getEntryHeight() + lInnerPaddingH;
 
 			} else {
 				lLayout.h(lSizeOfEachFillElement);
 				lLayout.updateStructure();
-				lTop += lSizeOfEachFillElement + INNER_PADDING;
+				lTop += lSizeOfEachFillElement + lInnerPaddingH;
 
 			}
 
@@ -475,19 +481,21 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 		super.draw(pCore);
 
-		final float lUiTextScale = uiTextScale();
-
-		final float lMenuscreenZDepth = ZLayers.LAYER_SCREENMANAGER;
+		final float lMenuScreenZDepth = ZLayers.LAYER_SCREENMANAGER;
 
 		final var lUIHUDStructureController = mRendererManager.uiHUDController();
 		final var lHUDRect = lUIHUDStructureController.menuTitleRectangle();
 
-		final float lWindowPaddingH = lUIHUDStructureController.windowPaddingH();
-		final float lWindowPaddingV = lUIHUDStructureController.windowPaddingV();
+		final float lUiTextScale = uiTextScale();
 
-		if (mMenuHeaderFont != null) {
+		if (mMenuTitle != null && mMenuTitle.length() > 0 && mMenuHeaderFont != null) {
+			final var lUiStructureController = mScreenManager.UiStructureController();
+
 			mMenuHeaderFont.begin(pCore.HUD());
-			mMenuHeaderFont.draw(mMenuTitle, lHUDRect.left() + lWindowPaddingH, lHUDRect.top() + lWindowPaddingV, lMenuscreenZDepth, mR, mG, mB, mA, lUiTextScale);
+			final var lHeaderRect = lUiStructureController.menuTitleRectangle();
+			final var lHeaderFontWidth = mMenuHeaderFont.bitmap().getStringWidth(mMenuTitle, lUiTextScale);
+			final var lHeaderFontHeight = mMenuHeaderFont.bitmap().fontHeight();
+			mMenuHeaderFont.draw(mMenuTitle, lHeaderRect.centerX() - TITLE_PADDING_X - lHeaderFontWidth, lHeaderRect.bottom() - lHeaderFontHeight, lMenuScreenZDepth, mR, mG, mB, mA, lUiTextScale);
 			mMenuHeaderFont.end();
 
 		}
@@ -496,25 +504,25 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 			final var lTitleFontHeight = mMenuFont.bitmap().fontHeight();
 			mMenuFont.begin(pCore.HUD());
 			if (mMenuOverTitle != null && mMenuOverTitle.length() > 0)
-				mMenuFont.draw(mMenuOverTitle, lHUDRect.left(), lHUDRect.top(), lMenuscreenZDepth, mR, mG, mB, mA, lUiTextScale);
+				mMenuFont.draw(mMenuOverTitle, lHUDRect.left(), lHUDRect.top(), lMenuScreenZDepth, mR, mG, mB, mA, lUiTextScale);
 			if (mMenuSubTitle != null && mMenuSubTitle.length() > 0)
-				mMenuFont.draw(mMenuSubTitle, lHUDRect.left(), lHUDRect.top() + lTitleFontHeight, lMenuscreenZDepth, mR, mG, mB, mA, lUiTextScale);
+				mMenuFont.draw(mMenuSubTitle, lHUDRect.left(), lHUDRect.top() + lTitleFontHeight, lMenuScreenZDepth, mR, mG, mB, mA, lUiTextScale);
 			mMenuFont.end();
 		}
 
 		// Draw each layout in turn.
 		final int lCount = layouts().size();
 		for (int i = 0; i < lCount; i++) {
-			mLayouts.get(i).draw(pCore, lMenuscreenZDepth + (i * 0.001f));
+			mLayouts.get(i).draw(pCore, lMenuScreenZDepth + (i * 0.001f));
 
 		}
 
-		footerLayout().draw(pCore, lMenuscreenZDepth + (1 * 0.001f));
+		footerLayout().draw(pCore, lMenuScreenZDepth + (1 * 0.001f));
 
 		final int lNumFloatingEntries = mFloatingEntries.size();
 		for (int i = 0; i < lNumFloatingEntries; i++) {
 			final var lFloatingEntry = mFloatingEntries.get(i);
-			lFloatingEntry.draw(pCore, this, false, lMenuscreenZDepth + (i * 0.001f));
+			lFloatingEntry.draw(pCore, this, false, lMenuScreenZDepth + (i * 0.001f));
 
 		}
 

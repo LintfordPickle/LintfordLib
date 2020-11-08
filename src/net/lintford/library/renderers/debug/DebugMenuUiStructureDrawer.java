@@ -6,13 +6,13 @@ import net.lintford.library.core.debug.Debug;
 import net.lintford.library.renderers.BaseRenderer;
 import net.lintford.library.renderers.RendererManager;
 
-public class DebugHudDrawer extends BaseRenderer {
+public class DebugMenuUiStructureDrawer extends BaseRenderer {
 
 	// --------------------------------------
 	// Constants
 	// --------------------------------------
 
-	public static final String RENDERER_NAME = "DEBUG HUD Outlines";
+	public static final String RENDERER_NAME = "DEBUG Menu Ui Outlines";
 
 	// --------------------------------------
 	// Variables
@@ -34,10 +34,10 @@ public class DebugHudDrawer extends BaseRenderer {
 	// Constructor
 	// --------------------------------------
 
-	public DebugHudDrawer(RendererManager pRendererManager, int pEntityGroupID) {
+	public DebugMenuUiStructureDrawer(RendererManager pRendererManager, int pEntityGroupID) {
 		super(pRendererManager, RENDERER_NAME, pEntityGroupID);
 
-		mIsActive = false;
+		mIsActive = true;
 
 	}
 
@@ -61,9 +61,9 @@ public class DebugHudDrawer extends BaseRenderer {
 
 		} else {
 			// Game HUD
-			Debug.debugManager().drawers().drawRectImmediate(pCore.HUD(), mUiStructureController.gameHeaderRectangle(), 0f, 1f, 0f);
-			Debug.debugManager().drawers().drawRectImmediate(pCore.HUD(), mUiStructureController.gameHUDRectangle(), 1f, 0f, 1f);
-			Debug.debugManager().drawers().drawRectImmediate(pCore.HUD(), mUiStructureController.gameFooterRectangle(), 0f, 1f, 0f);
+			Debug.debugManager().drawers().drawRectImmediate(pCore.HUD(), mUiStructureController.menuTitleRectangle(), 0f, 1f, 0f);
+			Debug.debugManager().drawers().drawRectImmediate(pCore.HUD(), mUiStructureController.menuMainRectangle(), 1f, 0f, 1f);
+			Debug.debugManager().drawers().drawRectImmediate(pCore.HUD(), mUiStructureController.menuFooterRectangle(), 0f, 1f, 0f);
 
 		}
 

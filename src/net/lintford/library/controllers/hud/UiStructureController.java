@@ -129,6 +129,7 @@ public class UiStructureController extends BaseController {
 
 	public void initialize(LintfordCore pCore) {
 		updateHUDAreas(pCore);
+		updateWindowUiComponentStructures(pCore);
 
 		mIsinitialized = true;
 
@@ -158,19 +159,53 @@ public class UiStructureController extends BaseController {
 	// --------------------------------------
 
 	private void updateHUDAreas(LintfordCore pCore) {
+		updateGameUiStructure(pCore);
 
-		// ** DIMENSIONS AND SCALES ** //
+		updateMenuUiStructure(pCore);
+
+	}
+
+	private void updateWindowUiComponentStructures(LintfordCore pCore) {
+		mUIScaleFactorActual = mDisplayManager.graphicsSettings().UIScale();
+		mUITextScaleFactorActual = mDisplayManager.graphicsSettings().UITextScale();
+		mUITransparencyFactorActual = mDisplayManager.graphicsSettings().UITransparencyScale();
+
+		mWindowPaddingH = 40;
+		mWindowPaddingV = 30;
+
+	}
+
+	private void updateMenuUiStructure(LintfordCore pCore) {
+		updateWindowUiComponentStructures(pCore); // FIXME: remove from update when finished
 
 		final float lWindowWidth = pCore.config().display().windowWidth();
 		final float lWindowHeight = pCore.config().display().windowHeight();
 
-		mUIScaleFactorActual = mDisplayManager.graphicsSettings().UIScale() * 1f;
-		mUITextScaleFactorActual = mDisplayManager.graphicsSettings().UITextScale() * 1f;
-		mUITransparencyFactorActual = mDisplayManager.graphicsSettings().UITransparencyScale() * 1f;
+		final float lVerticalInnerPadding = 1.f * mWindowAutoScaleFactorY;
+		final float lModWidth = lWindowWidth - mWindowPaddingH * 2.f;
+		final float lModHeight = lWindowHeight - mWindowPaddingV * 2.f;
 
-		// ** GAME HUD BOUNDS ** //
+		float lRemainingHeight = lModHeight;
+		final float lMinimumTitleHeight = 250.f * mWindowAutoScaleFactorY;
+		final float lMinimumFooterHeight = 100 * mWindowAutoScaleFactorY;
+		final float lTitleHeight = (float) Math.max(lMinimumTitleHeight, lModHeight * .15f - lVerticalInnerPadding);
+		final float lFooterHeight = (float) Math.max(lMinimumFooterHeight, lModHeight * .10f - lVerticalInnerPadding);
+		lRemainingHeight -= lTitleHeight;
+		lRemainingHeight -= lFooterHeight;
 
-		final float lGameHeaderHeight = 64f * windowAutoScaleFactorY();
+		final float lMainHeight = lRemainingHeight;
+
+		mMenuTitleRectangle.set(-lModWidth / 2, -lModHeight / 2f, lModWidth, lTitleHeight);
+		mMenuMainRectangle.set(-lModWidth / 2, -lModHeight / 2f + lTitleHeight + lVerticalInnerPadding * 2f, lModWidth, lMainHeight);
+		mMenuFooterRectangle.set(-lModWidth / 2, lModHeight / 2f - lFooterHeight + lVerticalInnerPadding * 4f, lModWidth, lFooterHeight);
+
+	}
+
+	private void updateGameUiStructure(LintfordCore pCore) {
+		final float lWindowWidth = pCore.config().display().windowWidth();
+		final float lWindowHeight = pCore.config().display().windowHeight();
+
+		final float lGameHeaderHeight = 96f * windowAutoScaleFactorY();
 		final float lGameFooterHeight = 96f * windowAutoScaleFactorY();
 
 		final float lMaxGameHudWidth = 1280.f;
@@ -184,32 +219,6 @@ public class UiStructureController extends BaseController {
 		mGameHeaderRectangle.set(-lWindowWidth / 2f, -lWindowHeight / 2, lWindowWidth, lGameHeaderHeight);
 		mGameHUDRectangle.set(-lHUDWidth / 2f, mGameHeaderRectangle.y() + mGameHeaderRectangle.h() + lGameHudVerticalPadding * .5f, lHUDWidth, lHUDHeight);
 		mGameFooterRectangle.set(-lWindowWidth / 2f, lWindowHeight / 2 - lGameFooterHeight, lWindowWidth, lGameFooterHeight);
-
-		// ** MENU HUD BOUNDS ** //
-
-		final float lBorder = 20f;
-		final float lInnerBorder = 1f;
-		final float lModWidth = lWindowWidth - lBorder * 2f;
-		final float lModHeight = lWindowHeight - lBorder;
-
-		float lRemainingHeight = lModHeight;
-		final float lMinimumTitleHeight = 0;
-		final float lMinimumFooterHeight = 125;
-		final float lTitleHeight = (float) Math.max(lMinimumTitleHeight, lModHeight * .15f - lInnerBorder);
-		final float lFooterHeight = (float) Math.max(lMinimumFooterHeight, lModHeight * .10f - lInnerBorder);
-		lRemainingHeight -= lTitleHeight;
-		lRemainingHeight -= lFooterHeight;
-
-		final float lMainHeight = lRemainingHeight;
-
-		mMenuTitleRectangle.set(-lModWidth / 2, -lModHeight / 2f, lModWidth, lTitleHeight);
-		mMenuMainRectangle.set(-lModWidth / 2, -lModHeight / 2f + lTitleHeight + lInnerBorder * 2f, lModWidth, lMainHeight);
-		mMenuFooterRectangle.set(-lModWidth / 2, lModHeight / 2f - lFooterHeight + lInnerBorder, lModWidth, lFooterHeight);
-
-		// ** WINDOW ** //
-		mWindowPaddingH = 40;
-		mWindowPaddingV = 30;
-
 	}
 
 }

@@ -22,6 +22,8 @@ public class AudioOptionsScreen extends MenuScreen {
 	// Constants
 	// --------------------------------------
 
+	private static final String SCREEN_TITLE = "AUDIO OPTIONS";
+
 	public static final int BUTTON_CANCEL_CHANGES = 0;
 	public static final int BUTTON_APPLY_CHANGES = 1;
 
@@ -51,20 +53,20 @@ public class AudioOptionsScreen extends MenuScreen {
 	// --------------------------------------
 
 	public AudioOptionsScreen(ScreenManager pScreenManager) {
-		super(pScreenManager, "AUDIO OPTIONS");
+		super(pScreenManager, SCREEN_TITLE);
 
-		ListLayout lAudioList = new ListLayout(this);
+		final var lAudioList = new ListLayout(this);
 		lAudioList.setDrawBackground(true, 1f, 1f, 1f, 0.85f);
 		lAudioList.layoutFillType(FILLTYPE.TAKE_WHATS_NEEDED);
 
 		createAudioSection(lAudioList);
 
 		/* Screen control buttons */
-		HorizontalEntryGroup lGroup = new HorizontalEntryGroup(pScreenManager, footerLayout());
+		final var lGroup = new HorizontalEntryGroup(pScreenManager, footerLayout());
 
-		MenuEntry lBackButton = new MenuEntry(pScreenManager, footerLayout(), "Back");
+		final var lBackButton = new MenuEntry(pScreenManager, footerLayout(), "Back");
 		lBackButton.registerClickListener(this, BUTTON_CANCEL_CHANGES);
-		MenuEntry lApplyButton = new MenuEntry(pScreenManager, footerLayout(), "Apply");
+		final var lApplyButton = new MenuEntry(pScreenManager, footerLayout(), "Apply");
 		lApplyButton.registerClickListener(this, BUTTON_APPLY_CHANGES);
 
 		lGroup.addEntry(lBackButton);
@@ -74,8 +76,6 @@ public class AudioOptionsScreen extends MenuScreen {
 
 		// Add the layouts to the screen
 		layouts().add(lAudioList);
-
-		mIsPopup = true;
 
 	}
 
@@ -88,26 +88,6 @@ public class AudioOptionsScreen extends MenuScreen {
 		super.loadGLContent(pResourceManager);
 
 		mAudioManager = pResourceManager.audioManager();
-
-	}
-
-	@Override
-	public void draw(LintfordCore pCore) {
-		final var lHudBoundingBox = pCore.HUD().boundingRectangle();
-		final var lBlackTexture = mScreenManager.core().resources().textureManager().textureBlack();
-
-		final var lTextureBatch = mRendererManager.uiTextureBatch();
-		lTextureBatch.begin(pCore.HUD());
-
-		final float lX = lHudBoundingBox.left();
-		final float lY = lHudBoundingBox.top();
-		final float lWidth = lHudBoundingBox.w();
-		final float lHeight = lHudBoundingBox.h();
-
-		lTextureBatch.draw(lBlackTexture, 0, 0, 0, 0, lX, lY, lWidth, lHeight, -0.01f, 0f, 0f, 0f, 1f);
-		lTextureBatch.end();
-
-		super.draw(pCore);
 
 	}
 

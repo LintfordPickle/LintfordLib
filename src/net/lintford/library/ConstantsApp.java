@@ -11,8 +11,8 @@ public class ConstantsApp {
 	// Constants
 	// ---------------------------------------------
 
-	public static final String APP_NAME = "APPLICATION_NAME";
-	public static final String DEBUG_APP = "DEBUG_APP";
+	public static final String APP_NAME = "Excavation";
+	public static final String DEBUG_APP = "Excavation DEBUG";
 
 	// ---------------------------------------------
 	// Methods
