@@ -112,7 +112,7 @@ public class ListLayout extends BaseLayout implements IProcessMouseInput {
 		float lHeightTaken = marginTop() + marginBottom();
 
 		for (int i = 0; i < lEntryCount; i++) {
-			MenuEntry lEntry = menuEntries().get(i);
+			final var lEntry = menuEntries().get(i);
 			if (lEntry.verticalFillType() == FILLTYPE.TAKE_WHATS_NEEDED) {
 				lCountOfTakers++;
 				lHeightTaken += lEntry.paddingTop() + lEntry.height() + lEntry.paddingBottom();

@@ -124,6 +124,9 @@ public class MenuEnumEntry extends MenuEntry {
 		mHighlightOnHover = false;
 		mDrawBackground = false;
 
+		mTopMargin = 10f;
+		mBottomMargin = 10f;
+
 		mEnableScaleTextToWidth = true;
 
 	}
@@ -271,7 +274,7 @@ public class MenuEnumEntry extends MenuEntry {
 		final float lTextHeight = lFontBitmap.bitmap().getStringHeight(mLabel, lUiTextScale);
 		final float lSeparatorHalfWidth = lFontBitmap.bitmap().getStringWidth(mSeparator, lUiTextScale) * 0.5f;
 
-		final TextureBatchPCT lTextureBatch = mParentLayout.parentScreen().rendererManager().uiTextureBatch();
+		final var lTextureBatch = mParentLayout.parentScreen().rendererManager().uiTextureBatch();
 
 		// Draw the left/right buttons
 		lTextureBatch.begin(pCore.HUD());
@@ -298,8 +301,7 @@ public class MenuEnumEntry extends MenuEntry {
 
 		// Render the items
 		if (mItems.size() > 0) {
-			String lCurItem = mItems.get(mSelectedIndex);
-
+			final String lCurItem = mItems.get(mSelectedIndex);
 			final float EntryWidth = lFontBitmap.bitmap().getStringWidth(lCurItem, lUiTextScale);
 
 			lFontBitmap.draw(lCurItem, x + (w / 6 * 4.65f) - EntryWidth / 2, y + h / 2 - lTextHeight * 0.5f, pParentZDepth, lR, lG, lB, lA, lUiTextScale, -1);

@@ -213,11 +213,6 @@ public class MenuSliderEntry extends MenuEntry {
 		// TODO: This -50 is because of the scrollbar - this is why I needed to keep the padding :(
 		w = Math.min(mParentLayout.w() - 50f, MENUENTRY_MAX_WIDTH);
 
-		if (mShowInfoIcon) {
-			mInfoIconDstRectangle.set(x, y, 32f, 32f);
-
-		}
-
 	}
 
 	@Override

@@ -18,6 +18,7 @@ public class InputManager {
 	private MouseManager mMouseManager;
 	private KeyboardManager mKeyboardManager;
 	private GamepadManager mGamepadManager;
+	private EventActionManager mEventActionManager;
 
 	private INPUT_TYPES mLastInputActive = INPUT_TYPES.Keyboard; // we use this because sometimes the user is locked to a text input
 
@@ -27,6 +28,10 @@ public class InputManager {
 
 	public INPUT_TYPES lastInputActive() {
 		return mLastInputActive;
+	}
+
+	public EventActionManager eventActionManager() {
+		return mEventActionManager;
 	}
 
 	public KeyboardManager keyboard() {
@@ -49,6 +54,8 @@ public class InputManager {
 		mMouseManager = new MouseManager();
 		mKeyboardManager = new KeyboardManager();
 		mGamepadManager = new GamepadManager();
+
+		mEventActionManager = new EventActionManager(this);
 
 	}
 

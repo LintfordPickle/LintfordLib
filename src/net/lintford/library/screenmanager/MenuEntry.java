@@ -5,7 +5,6 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.ColorConstants;
-import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.input.IProcessMouseInput;
 import net.lintford.library.core.input.InputManager;
@@ -318,7 +317,7 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 		mHighlightOnHover = true;
 
 		mTopMargin = 3f;
-		mBottomMargin = 3f;
+		mBottomMargin = 6f;
 		mLeftMargin = 2f;
 		mRightMargin = 2f;
 
@@ -360,11 +359,10 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 		if (!mActive || !mEnabled || isAnimating)
 			return false;
 
-		final float deltaTime = (float) pCore.appTime().elapsedTimeMilli() / 1000f;
 		if (intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().isMouseOverThisComponent(hashCode())) {
 			// Check if tool tips are enabled.
 			if (mToolTipEnabled) {
-				mToolTipTimer += deltaTime * 1000f;
+				mToolTipTimer += pCore.appTime().elapsedTimeMilli();
 
 			}
 
@@ -398,12 +396,13 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 
 	public void updateStructure() {
 		if (mShowInfoIcon) {
-			mInfoIconDstRectangle.set(x - 32f - 5f, y, 32f, 32f);
+			// FIXME: Consider scrollbar in offset?
+			mInfoIconDstRectangle.set(x, y, 32f, 32f);
 
 		}
 
 		if (mShowWarnIcon) {
-			mWarnIconDstRectangle.set(x - 32f - 5f, y, 32f, 32f);
+			mWarnIconDstRectangle.set(x, y, 32f, 32f);
 
 		}
 
@@ -438,7 +437,9 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 
 		}
 
-		if (mToolTipEnabled && mToolTipTimer >= 1000 || mInfoIconDstRectangle.intersectsAA(pCore.HUD().getMouseCameraSpace())) {
+		mHoveredOver = this.intersectsAA(pCore.HUD().getMouseCameraSpace());
+
+		if ((mToolTipEnabled && mToolTipTimer >= 1000 && mHoveredOver) || mInfoIconDstRectangle.intersectsAA(pCore.HUD().getMouseCameraSpace())) {
 			mScreenManager.toolTip().toolTipProvider(this);
 
 		}
@@ -492,19 +493,17 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 		}
 
 		// Render the MenuEntry label
-		if (mText != null && mText.length() > 0)
+		if (mText != null && mText.length() > 0) {
+			final float lUiTextScale = mScreenManager.UiStructureController().uiTextScaleFactor();
 
-		{
-			final float luiTextScale = 1.0f;// mScreenManager.UIHUDController().uiTextScaleFactor();
+			final float lColMod = 1f; // no color mod for the text (mHoveredOver && mHighlightOnHover) ? 0.7f : 1f;
 
-			float lColMod = 1f; // no color mod for the text (mHoveredOver && mHighlightOnHover) ? 0.7f : 1f;
-
-			FontUnit lMenuFont = mParentLayout.parentScreen().font();
+			final var lMenuFont = mParentLayout.parentScreen().font();
 
 			if (lMenuFont != null) {
 				lMenuFont.begin(pCore.HUD());
-				lMenuFont.draw(mText, centerX() - lMenuFont.bitmap().getStringWidth(mText, luiTextScale) * 0.5f, centerY() - lMenuFont.bitmap().fontHeight() * luiTextScale / 2 - 2f, mZ, 0.97f * lColMod, .92f * lColMod,
-						.92f * lColMod, lA, luiTextScale);
+				lMenuFont.draw(mText, centerX() - lMenuFont.bitmap().getStringWidth(mText, lUiTextScale) * 0.5f, centerY() - lMenuFont.bitmap().fontHeight() * lUiTextScale / 2 - 2f, mZ, 0.97f * lColMod, .92f * lColMod,
+						.92f * lColMod, lA, lUiTextScale);
 				lMenuFont.end();
 
 			}
