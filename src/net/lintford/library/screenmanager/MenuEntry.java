@@ -49,6 +49,7 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 	protected int mMenuEntryID;
 	protected boolean mDrawBackground;
 	protected boolean mHighlightOnHover;
+	protected boolean mDrawTextShadow;
 	protected boolean mScaleonHover;
 	protected float mAnimationTimer;
 	protected boolean mHoveredOver;
@@ -91,6 +92,14 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public boolean enableTextShadow() {
+		return mDrawTextShadow;
+	}
+
+	public void enableTextShadow(boolean pNewValue) {
+		mDrawTextShadow = pNewValue;
+	}
 
 	public ALIGNMENT horizontalAlignment() {
 		return mHorizontalAlignment;
@@ -328,6 +337,7 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 		mDrawBackground = true;
 		mScaleonHover = false;
 		mHighlightOnHover = true;
+		mDrawTextShadow = true;
 
 		mTopMargin = 3f;
 		mBottomMargin = 6f;
@@ -344,6 +354,7 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 		h = mMaxHeight;
 
 		mVerticalFillType = FILLTYPE.TAKE_WHATS_NEEDED;
+		mHorizontalFillType = FILLTYPE.HALF_PARENT;
 
 	}
 

@@ -135,17 +135,22 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 	// --------------------------------------
 
 	private void createVideoSection(BaseLayout lLayout) {
-		MenuLabelEntry lVideoOptionsTitle = new MenuLabelEntry(mScreenManager, lLayout);
+		final var lVideoOptionsTitle = new MenuLabelEntry(mScreenManager, lLayout);
 		lVideoOptionsTitle.label("Video Options");
-		lVideoOptionsTitle.enableBackground(true);
+		lVideoOptionsTitle.drawButtonBackground(true);
 		lVideoOptionsTitle.horizontalAlignment(ALIGNMENT.LEFT);
+		lVideoOptionsTitle.horizontalFillType(FILLTYPE.THREEQUARTER_PARENT);
 
 		mFullScreenEntry = new MenuEnumEntryIndexed<>(mScreenManager, lLayout, "Fullscreen");
+		mFullScreenEntry.horizontalFillType(FILLTYPE.THREEQUARTER_PARENT);
 		mResolutionEntry = new MenuDropDownEntry<>(mScreenManager, lLayout, "Resolution");
+		mResolutionEntry.horizontalFillType(FILLTYPE.THREEQUARTER_PARENT);
 		mMonitorEntry = new MenuEnumEntryIndexed<>(mScreenManager, lLayout, "Monitor");
 		mMonitorEntry.setButtonsEnabled(true);
+		mMonitorEntry.horizontalFillType(FILLTYPE.THREEQUARTER_PARENT);
 
 		mVSync = new MenuToggleEntry(mScreenManager, lLayout);
+		mVSync.horizontalFillType(FILLTYPE.THREEQUARTER_PARENT);
 
 		// Setup buttons
 		mFullScreenEntry.addItem(mFullScreenEntry.new MenuEnumEntryItem(FULLSCREEN_NO, VideoSettings.FULLSCREEN_NO_INDEX));

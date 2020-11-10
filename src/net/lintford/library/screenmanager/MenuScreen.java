@@ -433,8 +433,11 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		// See how many layouts only take what they need
 		int lCountOfSharers = lLeftLayoutCount;
 		int lCountOfTakers = 0;
-
 		int heightTaken = 0;
+
+		// FIXME: This system needs more work. It results in problems when the size of a 'taker' (FILLTYPE.TAKE_WHATS_NEEDED)
+		// exceeds the size of the area within which it should appear.
+		// The solution is currently to change the type of the layouts
 
 		for (int i = 0; i < lLeftLayoutCount; i++) {
 			final var lBaseLayout = pLayoutList.get(i);
@@ -448,26 +451,28 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 		lCountOfSharers -= lCountOfTakers;
 
-		float lSizeOfEachFillElement = ((lLayoutHeight - heightTaken) / lCountOfSharers) - lInnerPaddingH * (lCountOfSharers + 1);
+		// Split the remainging height between the shares
+		float lSizeOfEachShareElement = 0.f;
+		if (lCountOfSharers > 0) {
+			lSizeOfEachShareElement = ((lLayoutHeight - heightTaken) / lCountOfSharers) - lInnerPaddingH * (lCountOfSharers + 1);
 
-		if (lSizeOfEachFillElement < 0)
-			lSizeOfEachFillElement = 10;
+		}
 
 		float lTop = lLayoutNewY;
 		for (int i = 0; i < lLeftLayoutCount; i++) {
-			BaseLayout lLayout = pLayoutList.get(i);
+			final var lBaseLayout = pLayoutList.get(i);
 
-			lLayout.y(lTop);
+			lBaseLayout.y(lTop);
 
-			if (lLayout.layoutFillType() == FILLTYPE.TAKE_WHATS_NEEDED) {
-				lLayout.h(lLayout.getEntryHeight() + lInnerPaddingH);
-				lLayout.updateStructure();
-				lTop += lLayout.getEntryHeight() + lInnerPaddingH;
+			if (lBaseLayout.layoutFillType() == FILLTYPE.TAKE_WHATS_NEEDED) {
+				lBaseLayout.h(lBaseLayout.getEntryHeight() + lInnerPaddingH);
+				lBaseLayout.updateStructure();
+				lTop += lBaseLayout.getEntryHeight() + lInnerPaddingH;
 
-			} else {
-				lLayout.h(lSizeOfEachFillElement);
-				lLayout.updateStructure();
-				lTop += lSizeOfEachFillElement + lInnerPaddingH;
+			} else { // sharers
+				lBaseLayout.h(lSizeOfEachShareElement);
+				lBaseLayout.updateStructure();
+				lTop += lSizeOfEachShareElement + lInnerPaddingH;
 
 			}
 

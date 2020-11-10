@@ -260,19 +260,19 @@ public class MenuEnumEntry extends MenuEntry {
 		super.draw(pCore, pScreen, pIsSelected, pParentZDepth);
 
 		final var lParentScreen = mParentLayout.parentScreen();
-		final var lFontBitmap = lParentScreen.font();
-		if (lFontBitmap == null)
+		final var lFont = lParentScreen.font();
+		if (lFont == null)
 			return;
 
 		final float lUiTextScale = lParentScreen.uiTextScale();
-		final float lTextWidth = lFontBitmap.bitmap().getStringWidth(mLabel, lUiTextScale);
+		final float lTextWidth = lFont.bitmap().getStringWidth(mLabel, lUiTextScale);
 
 		float lAdjustedScaleW = lUiTextScale;
 		if (mEnableScaleTextToWidth && w / 2 < lTextWidth && lTextWidth > 0)
 			lAdjustedScaleW = (w / 2) / lTextWidth;
 
-		final float lTextHeight = lFontBitmap.bitmap().getStringHeight(mLabel, lUiTextScale);
-		final float lSeparatorHalfWidth = lFontBitmap.bitmap().getStringWidth(mSeparator, lUiTextScale) * 0.5f;
+		final float lTextHeight = lFont.bitmap().getStringHeight(mLabel, lUiTextScale);
+		final float lSeparatorHalfWidth = lFont.bitmap().getStringWidth(mSeparator, lUiTextScale) * 0.5f;
 
 		final var lTextureBatch = mParentLayout.parentScreen().rendererManager().uiTextureBatch();
 
@@ -295,18 +295,19 @@ public class MenuEnumEntry extends MenuEntry {
 		final float lB = lParentScreen.b();
 		final float lA = lParentScreen.a();
 
-		lFontBitmap.begin(pCore.HUD());
-		lFontBitmap.draw(mLabel, x + w / 2 - 10 - (lTextWidth * lAdjustedScaleW) - lSeparatorHalfWidth, y + h / 2 - lTextHeight * 0.5f, pParentZDepth, lR, lG, lB, lA, lAdjustedScaleW, -1);
-		lFontBitmap.draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - lTextHeight * 0.5f, pParentZDepth, lR, lG, lB, lA, lUiTextScale, -1);
+		lFont.begin(pCore.HUD());
+		lFont.drawShadow(mDrawTextShadow);
+		lFont.draw(mLabel, x + w / 2 - 10 - (lTextWidth * lAdjustedScaleW) - lSeparatorHalfWidth, y + h / 2 - lTextHeight * 0.5f, pParentZDepth, lR, lG, lB, lA, lAdjustedScaleW, -1);
+		lFont.draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - lTextHeight * 0.5f, pParentZDepth, lR, lG, lB, lA, lUiTextScale, -1);
 
 		// Render the items
 		if (mItems.size() > 0) {
 			final String lCurItem = mItems.get(mSelectedIndex);
-			final float EntryWidth = lFontBitmap.bitmap().getStringWidth(lCurItem, lUiTextScale);
+			final float EntryWidth = lFont.bitmap().getStringWidth(lCurItem, lUiTextScale);
 
-			lFontBitmap.draw(lCurItem, x + (w / 6 * 4.65f) - EntryWidth / 2, y + h / 2 - lTextHeight * 0.5f, pParentZDepth, lR, lG, lB, lA, lUiTextScale, -1);
+			lFont.draw(lCurItem, x + (w / 6 * 4.65f) - EntryWidth / 2, y + h / 2 - lTextHeight * 0.5f, pParentZDepth, lR, lG, lB, lA, lUiTextScale, -1);
 		}
-		lFontBitmap.end();
+		lFont.end();
 
 	}
 

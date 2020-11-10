@@ -219,10 +219,8 @@ public class MenuSliderEntry extends MenuEntry {
 	public void update(LintfordCore pCore, MenuScreen pScreen, boolean pIsSelected) {
 		super.update(pCore, pScreen, pIsSelected);
 
-		final float yPos = mShowGuideValuesEnabled ? y + 32 : y;
-
-		mDownButton.setPosition(x + w / 2 + 16, yPos);
-		mUpButton.setPosition(x + w - 32, yPos);
+		mDownButton.setPosition(x + w / 2 + 16, y);
+		mUpButton.setPosition(x + w - 32, y);
 
 		mBarPosX = x + w / 2 + mDownButton.w() + 16;
 		mBarWidth = w / 2 - 48;
@@ -243,7 +241,7 @@ public class MenuSliderEntry extends MenuEntry {
 		final float lSeparatorHalfWidth = lFont.bitmap().getStringWidth(mSeparator, lUiTextScale) * 0.5f;
 		final float lLabelHeight = lFont.bitmap().fontHeight();
 
-		final float yPos = mShowGuideValuesEnabled ? y + h / 2f - lLabelHeight / 2f + 32 : y + h / 2f - lLabelHeight / 2f;
+		final float yPos = y + h / 2f - lLabelHeight / 2f;
 
 		if (mButtonsEnabled) {
 			// Draw the left/right buttons
@@ -260,7 +258,7 @@ public class MenuSliderEntry extends MenuEntry {
 		// Draw the slider bar and caret
 		mTextureBatch.begin(pCore.HUD());
 
-		final float lCaretPos = MathHelper.scaleToRange(mValue, mLowerBound, mUpperBound, mBarPosX, mBarWidth + 8f);
+		final float lCaretPos = MathHelper.scaleToRange(mValue, mLowerBound, mUpperBound, mBarPosX, mBarWidth - 32);
 
 		mTextureBatch.draw(mUITexture, 0, 192, 32, 32, mBarPosX, yPos, 32, 32, mZ, 1f, 1f, 1f, 1f);
 		mTextureBatch.draw(mUITexture, 32, 192, 32, 32, mBarPosX + 32, yPos, mBarWidth - 64 - 32, 32, mZ, 1f, 1f, 1f, 1f);
@@ -273,6 +271,7 @@ public class MenuSliderEntry extends MenuEntry {
 
 		// draw the label to the left and the value //
 		lFont.begin(pCore.HUD());
+		lFont.drawShadow(mDrawTextShadow);
 		lFont.draw(mLabel, x + w / 2 - lLabelWidth - 10 - lSeparatorHalfWidth, y + h / 2f - lLabelHeight / 2f, pParentZDepth, lParentScreen.r(), lParentScreen.g(), lParentScreen.b(), lParentScreen.a(), lUiTextScale, -1);
 		lFont.draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2f - lLabelHeight / 2f, pParentZDepth, lParentScreen.r(), lParentScreen.g(), lParentScreen.b(), lParentScreen.a(), lUiTextScale, -1);
 
@@ -285,11 +284,13 @@ public class MenuSliderEntry extends MenuEntry {
 			if (mShowUnit && mUnit != null && lValueString.length() > 0) {
 				lValueString += mUnit;
 			}
+
+			final float lLabelOffset = 0;
 			if (mShowGuideValuesEnabled)
-				lFont.draw("" + mLowerBound, mBarPosX - lowerWith / 2 + 16, y + 2, -2f, 1f);
-			lFont.draw("" + lValueString, centerX() + w / 4 - valueWith / 2, yPos + 2 - 8f, -2f, 1f);
+				lFont.draw("" + mLowerBound, mBarPosX - lowerWith / 2 + 16, y + lLabelOffset, mZ, 1f);
+			lFont.draw("" + lValueString, mBarPosX + mBarWidth / 2.f - valueWith / 2, y + lLabelOffset, mZ, 1f);
 			if (mShowGuideValuesEnabled)
-				lFont.draw("" + mUpperBound, mBarPosX + mBarWidth - upperWith / 2 - 48, y + 2, -2f, 1f);
+				lFont.draw("" + mUpperBound, mBarPosX + mBarWidth - upperWith / 2 - 48, y + lLabelOffset, mZ, 1f);
 		}
 
 		lFont.end();

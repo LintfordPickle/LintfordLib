@@ -108,6 +108,7 @@ public class AudioOptionsScreen extends MenuScreen {
 		mMasterEnabledEntry.registerClickListener(this, BUTTON_ENABLED_MASTER);
 		mMasterEnabledEntry.label("Audio Enabled");
 		mMasterEnabledEntry.isChecked(lAudioConfig.musicEnabled());
+		mMasterEnabledEntry.horizontalFillType(FILLTYPE.FILL_PARENT);
 
 		mMasterVolumeEntry = new MenuSliderEntry(mScreenManager, lLayout);
 		mMasterVolumeEntry.label("Master Volume");
@@ -119,11 +120,13 @@ public class AudioOptionsScreen extends MenuScreen {
 		mMasterVolumeEntry.showValue(true);
 		mMasterVolumeEntry.showValueUnit(true);
 		mMasterVolumeEntry.showValueGuides(false);
+		mMasterVolumeEntry.horizontalFillType(FILLTYPE.FILL_PARENT);
 
 		mMusicEnabledEntry = new MenuToggleEntry(mScreenManager, lLayout);
 		mMusicEnabledEntry.registerClickListener(this, BUTTON_ENABLED_MUSIC);
 		mMusicEnabledEntry.label("Music Enabled");
 		mMusicEnabledEntry.isChecked(lAudioConfig.musicEnabled());
+		mMusicEnabledEntry.horizontalFillType(FILLTYPE.FILL_PARENT);
 
 		mMusicVolumeEntry = new MenuSliderEntry(mScreenManager, lLayout);
 		mMusicVolumeEntry.label("Music Volume");
@@ -135,11 +138,13 @@ public class AudioOptionsScreen extends MenuScreen {
 		mMusicVolumeEntry.showValue(true);
 		mMusicVolumeEntry.showValueUnit(true);
 		mMusicVolumeEntry.showValueGuides(false);
+		mMusicVolumeEntry.horizontalFillType(FILLTYPE.FILL_PARENT);
 
 		mSoundEnabledEntry = new MenuToggleEntry(mScreenManager, lLayout);
 		mSoundEnabledEntry.label("SoundFX Enabled");
 		mSoundEnabledEntry.registerClickListener(this, BUTTON_ENABLED_SOUNDFX);
 		mSoundEnabledEntry.isChecked(lAudioConfig.soundFxEnabled());
+		mSoundEnabledEntry.horizontalFillType(FILLTYPE.FILL_PARENT);
 
 		mSoundVolumnEntry = new MenuSliderEntry(mScreenManager, lLayout);
 		mSoundVolumnEntry.label("SoundFX Volume");
@@ -151,6 +156,7 @@ public class AudioOptionsScreen extends MenuScreen {
 		mSoundVolumnEntry.showValue(true);
 		mSoundVolumnEntry.showValueUnit(true);
 		mSoundVolumnEntry.showValueGuides(false);
+		mSoundVolumnEntry.horizontalFillType(FILLTYPE.FILL_PARENT);
 
 		// lLayout.menuEntries().add(mMasterEnabledEntry);
 		lLayout.menuEntries().add(mMasterVolumeEntry);

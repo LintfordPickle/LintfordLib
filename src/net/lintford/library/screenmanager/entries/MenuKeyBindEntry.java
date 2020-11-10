@@ -23,13 +23,10 @@ public class MenuKeyBindEntry extends MenuEntry implements IKeyInputCallback {
 	private float mPadding = 15f;
 	private boolean mShow;
 	private float mR, mG, mB;
-	private boolean mDrawTextShadow;
 
 	private final EventAction eventAction;
 	private boolean mBindingKey;
 	private float mCaretFlashTimer;
-
-	private boolean mDrawBackground;
 
 	// --------------------------------------
 	// Properties
@@ -37,22 +34,6 @@ public class MenuKeyBindEntry extends MenuEntry implements IKeyInputCallback {
 
 	public EventAction eventAction() {
 		return eventAction;
-	}
-
-	public boolean enableTextShadow() {
-		return mDrawTextShadow;
-	}
-
-	public void enableTextShadow(boolean pNewValue) {
-		mDrawTextShadow = pNewValue;
-	}
-
-	public boolean enableBackground() {
-		return mDrawBackground;
-	}
-
-	public void enableBackground(boolean pNewValue) {
-		mDrawBackground = pNewValue;
 	}
 
 	/** Padding is applied when the label is either aligned left or right (not when centered). */

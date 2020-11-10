@@ -299,39 +299,40 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 
 		}
 
-		final var lFontBitmap = mParentLayout.parentScreen().font();
+		final var lFont = mParentLayout.parentScreen().font();
 
-		final float lLabelWidth = lFontBitmap.bitmap().getStringWidth(mLabel, lUiTextScale);
+		final float lLabelWidth = lFont.bitmap().getStringWidth(mLabel, lUiTextScale);
 		float lAdjustedLabelScaleW = lUiTextScale;
 		if (mEnableScaleTextToWidth && w * 0.4f < lLabelWidth && lLabelWidth > 0)
 			lAdjustedLabelScaleW = (w * 0.4f) / lLabelWidth;
 
-		final float lFontHeight = lFontBitmap.bitmap().fontHeight() * lUiTextScale;
-		final float lSeparatorHalfWidth = lFontBitmap.bitmap().getStringWidth(mSeparator, lUiTextScale) * 0.5f;
+		final float lFontHeight = lFont.bitmap().fontHeight() * lUiTextScale;
+		final float lSeparatorHalfWidth = lFont.bitmap().getStringWidth(mSeparator, lUiTextScale) * 0.5f;
 
 		// Change text color depending on enabled or not
 		final float lTextR = mEnabled ? mParentLayout.parentScreen().r() : 0.24f;
 		final float lTextG = mEnabled ? mParentLayout.parentScreen().g() : 0.24f;
 		final float lTextB = mEnabled ? mParentLayout.parentScreen().b() : 0.24f;
 
-		lFontBitmap.begin(pCore.HUD());
-		lFontBitmap.draw(mLabel, x + w / 2 - 10 - (lLabelWidth * lAdjustedLabelScaleW) - lSeparatorHalfWidth, y + h / 2 - lFontHeight * 0.5f, mZ, lTextR, lTextG, lTextB, lParentScreen.a(), lAdjustedLabelScaleW, -1);
-		lFontBitmap.draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - lFontHeight * 0.5f, mZ, lTextR, lTextG, lTextB, lParentScreen.a(), lUiTextScale, -1);
+		lFont.begin(pCore.HUD());
+		lFont.drawShadow(mDrawTextShadow);
+		lFont.draw(mLabel, x + w / 2 - 10 - (lLabelWidth * lAdjustedLabelScaleW) - lSeparatorHalfWidth, y + h / 2 - lFontHeight * 0.5f, mZ, lTextR, lTextG, lTextB, lParentScreen.a(), lAdjustedLabelScaleW, -1);
+		lFont.draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - lFontHeight * 0.5f, mZ, lTextR, lTextG, lTextB, lParentScreen.a(), lUiTextScale, -1);
 
 		// Render the items
 		if (mSelectedIndex >= 0 && mSelectedIndex < mItems.size()) {
 			String lCurItem = mItems.get(mSelectedIndex).name;
-			final float EntryWidth = lFontBitmap.bitmap().getStringWidth(lCurItem);
+			final float EntryWidth = lFont.bitmap().getStringWidth(lCurItem);
 			float lAdjustedEntryScaleW = lUiTextScale;
 			if (mEnableScaleTextToWidth && w * 0.35f < EntryWidth && EntryWidth > 0)
 				lAdjustedEntryScaleW = (w * 0.35f) / EntryWidth;
 
-			lFontBitmap.draw(lCurItem, x + (w / 4 * 3) - (EntryWidth * lAdjustedEntryScaleW) / 2, y + h / 2 - lFontHeight * 0.5f, pComponentDepth, lTextR, lTextG, lTextB, mParentLayout.parentScreen().a(),
-					lAdjustedEntryScaleW, -1);
+			lFont.draw(lCurItem, x + (w / 4 * 3) - (EntryWidth * lAdjustedEntryScaleW) / 2, y + h / 2 - lFontHeight * 0.5f, pComponentDepth, lTextR, lTextG, lTextB, mParentLayout.parentScreen().a(), lAdjustedEntryScaleW,
+					-1);
 
 		}
 
-		lFontBitmap.end();
+		lFont.end();
 
 		if (mShowInfoIcon) {
 			lTextureBatch.begin(pCore.HUD());

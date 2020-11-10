@@ -24,9 +24,7 @@ public class MenuToggleEntry extends MenuEntry {
 	// --------------------------------------
 
 	private Texture mUITexture;
-
 	private boolean mIsChecked;
-
 	private final String mSeparator = " : ";
 
 	// --------------------------------------
@@ -178,6 +176,7 @@ public class MenuToggleEntry extends MenuEntry {
 		lTextureBatch.end();
 
 		lFont.begin(pCore.HUD());
+		lFont.drawShadow(mDrawTextShadow);
 		lFont.draw(mText, x + w / 2 - lLabelWidth - SPACE_BETWEEN_TEXT - lSeparatorHalfWidth, y + h / 2 - lTextHeight * 0.5f, mZ, lParentScreen.r(), lParentScreen.g(), lParentScreen.b(), lParentScreen.a(), lUiTextScale,
 				-1);
 		lFont.draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - lTextHeight * 0.5f, mZ, lParentScreen.r(), lParentScreen.g(), lParentScreen.b(), lParentScreen.a(), lUiTextScale, -1);

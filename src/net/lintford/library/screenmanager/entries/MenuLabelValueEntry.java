@@ -23,10 +23,8 @@ public class MenuLabelValueEntry extends MenuEntry {
 	private float mPadding = 15f;
 	private boolean mShow;
 	private float mR, mG, mB;
-	private boolean mDrawTextShadow;
 	private boolean mTrimText;
 	private String mValueText;
-	private boolean mDrawBackground;
 
 	// --------------------------------------
 	// Properties
@@ -46,22 +44,6 @@ public class MenuLabelValueEntry extends MenuEntry {
 
 	public void trimText(boolean pNewValue) {
 		mTrimText = pNewValue;
-	}
-
-	public boolean enableTextShadow() {
-		return mDrawTextShadow;
-	}
-
-	public void enableTextShadow(boolean pNewValue) {
-		mDrawTextShadow = pNewValue;
-	}
-
-	public boolean enableBackground() {
-		return mDrawBackground;
-	}
-
-	public void enableBackground(boolean pNewValue) {
-		mDrawBackground = pNewValue;
 	}
 
 	/** Padding is applied when the label is either aligned left or right (not when centered). */

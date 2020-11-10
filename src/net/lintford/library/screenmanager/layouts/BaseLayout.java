@@ -69,6 +69,7 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 	protected float mZScrollVelocity;
 
 	protected boolean mScrollBarsEnabled;
+	protected boolean mScrollBarsEnabled_Internal;
 	protected boolean mEnabled;
 	protected boolean mVisible; // ony affects drawing
 
@@ -77,6 +78,14 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public boolean scrollBarsEnabled() {
+		return mScrollBarsEnabled;
+	}
+
+	public void scrollBarsEnabled(boolean pNewValue) {
+		mScrollBarsEnabled = pNewValue;
+	}
 
 	public void maxWidth(float pMaxWidth) {
 		mMaxWidth = pMaxWidth;
@@ -232,6 +241,8 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 		mForcedEntryHeight = USE_HEIGHT_OF_ENTRIES;
 		mForcedHeight = USE_HEIGHT_OF_ENTRIES;
 
+		mScrollBarsEnabled = true;
+
 		mContentArea = new ScrollBarContentRectangle(this);
 		mScrollBar = new ScrollBar(this, mContentArea);
 
@@ -287,8 +298,9 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 		for (int i = 0; i < lEntryCount; i++) {
 			final var lMenuEntry = menuEntries().get(i);
 			if (lMenuEntry.handleInput(pCore)) {
-				return true;
+				// return true;
 			}
+
 		}
 
 		if (intersectsAA(pCore.HUD().getMouseCameraSpace())) {
@@ -302,7 +314,7 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 
 		updateFocusOfAll(pCore);
 
-		if (mScrollBarsEnabled) {
+		if (mScrollBarsEnabled_Internal) {
 			mScrollBar.handleInput(pCore);
 
 		}
@@ -320,8 +332,8 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 
 		mContentArea.set(x, y, w, getEntryHeight());
 
-		mScrollBarsEnabled = mContentArea.h() - h > 0;
-		if (mScrollBarsEnabled) {
+		mScrollBarsEnabled_Internal = mScrollBarsEnabled && mContentArea.h() - h > 0;
+		if (mScrollBarsEnabled_Internal) {
 
 			final float lDeltaTime = (float) pCore.appTime().elapsedTimeMilli() / 1000f;
 			float lScrollSpeedFactor = mYScrollPosition;
@@ -380,7 +392,7 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 
 		}
 
-		if (mScrollBarsEnabled) {
+		if (mScrollBarsEnabled_Internal) {
 			mContentArea.depthPadding(6f);
 			mContentArea.preDraw(pCore, mTextureBatch, mUITexture);
 
@@ -392,7 +404,7 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 
 		}
 
-		if (mScrollBarsEnabled) {
+		if (mScrollBarsEnabled_Internal) {
 			mScrollBar.draw(pCore, mTextureBatch, mUITexture, pComponentDepth + .1f);
 			mContentArea.postDraw(pCore);
 
@@ -556,20 +568,17 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 			return 0;
 
 		// Return the combined height
-		float lResult = 0;
+		float lResult = marginTop();
 
 		for (int i = 0; i < lEntryCount; i++) {
-			MenuEntry lEntry = menuEntries().get(i);
-			//			if (!menuEntries().get(i).enabled())
-			//				continue;
-
-			lResult += lEntry.marginTop();
-			lResult += lEntry.h();
-			lResult += lEntry.marginBottom();
+			final var lMenuEntry = menuEntries().get(i);
+			lResult += lMenuEntry.marginTop();
+			lResult += lMenuEntry.h();
+			lResult += lMenuEntry.marginBottom();
 
 		}
 
-		return lResult;
+		return lResult + marginBottom();
 
 	}
 

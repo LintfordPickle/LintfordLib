@@ -37,7 +37,7 @@ public class DebugGameUiStructureDrawer extends BaseRenderer {
 	public DebugGameUiStructureDrawer(RendererManager pRendererManager, int pEntityGroupID) {
 		super(pRendererManager, RENDERER_NAME, pEntityGroupID);
 
-		mIsActive = true;
+		mIsActive = false;
 
 	}
 

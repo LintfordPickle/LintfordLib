@@ -132,15 +132,21 @@ public class ListLayout extends BaseLayout implements IProcessMouseInput {
 		for (int i = 0; i < lEntryCount; i++) {
 			final var lMenuEntry = menuEntries().get(i);
 			float lScrollBarWidth = 0;
-			if (mScrollBarsEnabled)
+			if (mScrollBarsEnabled_Internal)
 				lScrollBarWidth = mScrollBar.width();
 
 			final float lNewEntryWidth = w - marginLeft() - marginRight() - lScrollBarWidth;
 
-			if (lMenuEntry.horizontalFillType() == FILLTYPE.MANUAL) {
-
+			if (lMenuEntry.horizontalFillType() == FILLTYPE.FILL_PARENT) {
+				lMenuEntry.w(lNewEntryWidth);
+			} else if (lMenuEntry.horizontalFillType() == FILLTYPE.HALF_PARENT) {
+				lMenuEntry.w(lNewEntryWidth * .5f);
+			} else if (lMenuEntry.horizontalFillType() == FILLTYPE.THREEQUARTER_PARENT) {
+				lMenuEntry.w(lNewEntryWidth * .75f);
+			} else if (lMenuEntry.horizontalFillType() == FILLTYPE.MANUAL) {
+				lMenuEntry.w(MathHelper.clamp(lMenuEntry.w(), lMenuEntry.minWidth(), lMenuEntry.maxWidth()));
 			} else {
-				lMenuEntry.w(MathHelper.clamp(lNewEntryWidth, lMenuEntry.minWidth(), lMenuEntry.maxWidth()));
+				lMenuEntry.w(lNewEntryWidth);
 
 			}
 

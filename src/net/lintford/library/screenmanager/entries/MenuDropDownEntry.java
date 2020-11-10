@@ -303,7 +303,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pComponentDepth) {
 		final var lParentScreen = mParentLayout.parentScreen();
 		final float lUiTextScale = lParentScreen.uiTextScale();
-		final var lFontUnit = lParentScreen.font();
+		final var lFont = lParentScreen.font();
 
 		// TITLE BAR
 		mZ = mOpen ? ZLayers.LAYER_SCREENMANAGER + Z_STATE_MODIFIER_ACTIVE : ZLayers.LAYER_SCREENMANAGER + Z_STATE_MODIFIER_PASSIVE;
@@ -316,15 +316,16 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 
 		final String lSeparator = " : ";
 
-		final float lLabelWidth = lFontUnit.bitmap().getStringWidth(mLabel, lUiTextScale);
-		final float lFontHeight = lFontUnit.bitmap().fontHeight() * lUiTextScale;
+		final float lLabelWidth = lFont.bitmap().getStringWidth(mLabel, lUiTextScale);
+		final float lFontHeight = lFont.bitmap().fontHeight() * lUiTextScale;
 
 		final float lSingleTextHeight = h;
 
-		final float lSeparatorHalfWidth = lFontUnit.bitmap().getStringWidth(lSeparator, lUiTextScale) * 0.5f;
-		lFontUnit.begin(pCore.HUD());
-		lFontUnit.draw(mLabel, x + w / 2 - 10 - lLabelWidth - lSeparatorHalfWidth, y + lSingleTextHeight / 2f - lFontHeight / 2f, mZ, lTextR, lTextG, lTextB, lTextA, lUiTextScale, -1);
-		lFontUnit.draw(lSeparator, x + w / 2 - lSeparatorHalfWidth, y + lSingleTextHeight / 2f - lFontHeight / 2f, mZ, lTextR, lTextG, lTextB, lTextA, lUiTextScale, -1);
+		final float lSeparatorHalfWidth = lFont.bitmap().getStringWidth(lSeparator, lUiTextScale) * 0.5f;
+		lFont.begin(pCore.HUD());
+		lFont.drawShadow(mDrawTextShadow);
+		lFont.draw(mLabel, x + w / 2 - 10 - lLabelWidth - lSeparatorHalfWidth, y + lSingleTextHeight / 2f - lFontHeight / 2f, mZ, lTextR, lTextG, lTextB, lTextA, lUiTextScale, -1);
+		lFont.draw(lSeparator, x + w / 2 - lSeparatorHalfWidth, y + lSingleTextHeight / 2f - lFontHeight / 2f, mZ, lTextR, lTextG, lTextB, lTextA, lUiTextScale, -1);
 
 		if (mItems == null || mItems.size() == 0) {
 			// LOCALIZATION: No entries added to dropdown list
@@ -338,9 +339,9 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 
 		// Render the selected item in the 'top spot'
 		final String lCurItem = lSelectItem.name;
-		final float lSelectedTextWidth = lFontUnit.bitmap().getStringWidth(lCurItem);
-		lFontUnit.draw(lCurItem, x + (w / 4 * 3) + -lSelectedTextWidth / 2, y + lSingleTextHeight / 2f - lFontHeight / 2f, mZ, lTextR, lTextG, lTextB, lTextA, lUiTextScale, -1);
-		lFontUnit.end();
+		final float lSelectedTextWidth = lFont.bitmap().getStringWidth(lCurItem);
+		lFont.draw(lCurItem, x + (w / 4 * 3) + -lSelectedTextWidth / 2, y + lSingleTextHeight / 2f - lFontHeight / 2f, mZ, lTextR, lTextG, lTextB, lTextA, lUiTextScale, -1);
+		lFont.end();
 
 		// CONTENT PANE
 
@@ -349,7 +350,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 			mTextureBatch.draw(mUITexture, 0, 0, 32, 32, mWindowRectangle, mZ, 0.f, 0.f, 0.f, 1);
 			mTextureBatch.end();
 
-			lFontUnit.begin(pCore.HUD());
+			lFont.begin(pCore.HUD());
 
 			// We need to use a stencil buffer to clip the list box items (which, when scrolling, could appear out-of-bounds of the listbox).
 			GL11.glEnable(GL11.GL_STENCIL_TEST);
@@ -374,13 +375,13 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 
 			for (int i = 0; i < mItems.size(); i++) {
 				MenuEnumEntryItem lItem = mItems.get(i);
-				final float lItemTextWidth = lFontUnit.bitmap().getStringWidth(lItem.name);
-				lFontUnit.draw(lItem.name, x + (w / 4 * 3) - lItemTextWidth / 2, lYPos + lSingleTextHeight / 2 - lFontHeight / 2f, mZ + 0.1f, lTextR, lTextG, lTextB, lTextA, lUiTextScale, -1);
+				final float lItemTextWidth = lFont.bitmap().getStringWidth(lItem.name);
+				lFont.draw(lItem.name, x + (w / 4 * 3) - lItemTextWidth / 2, lYPos + lSingleTextHeight / 2 - lFontHeight / 2f, mZ + 0.1f, lTextR, lTextG, lTextB, lTextA, lUiTextScale, -1);
 				lYPos += 25;
 
 			}
 
-			lFontUnit.end();
+			lFont.end();
 
 			GL11.glDisable(GL11.GL_STENCIL_TEST);
 

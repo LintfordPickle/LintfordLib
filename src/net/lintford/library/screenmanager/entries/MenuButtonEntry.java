@@ -179,12 +179,12 @@ public class MenuButtonEntry extends MenuEntry {
 		super.draw(pCore, pScreen, pIsSelected, pParentZDepth);
 
 		final var lParentScreen = mParentLayout.parentScreen();
-		final var lFontBitmap = lParentScreen.font();
+		final var lFont = lParentScreen.font();
 
 		final float lUiTextScale = lParentScreen.uiTextScale();
-		final float lTextWidth = lFontBitmap.bitmap().getStringWidth(mLabel, lUiTextScale);
-		final float lTextHeight = lFontBitmap.bitmap().getStringHeight(mLabel) * lUiTextScale;
-		final float lSeparatorHalfWidth = lFontBitmap.bitmap().getStringWidth(mSeparator, lUiTextScale) * 0.5f;
+		final float lTextWidth = lFont.bitmap().getStringWidth(mLabel, lUiTextScale);
+		final float lTextHeight = lFont.bitmap().getStringHeight(mLabel) * lUiTextScale;
+		final float lSeparatorHalfWidth = lFont.bitmap().getStringWidth(mSeparator, lUiTextScale) * 0.5f;
 
 		final var lTextureBatch = mParentLayout.parentScreen().rendererManager().uiTextureBatch();
 
@@ -223,13 +223,14 @@ public class MenuButtonEntry extends MenuEntry {
 		lB = lParentScreen.b();
 		lA = lParentScreen.a();
 
-		final float lButtonTextWidth = lFontBitmap.bitmap().getStringWidth(mButtonLabel);
+		final float lButtonTextWidth = lFont.bitmap().getStringWidth(mButtonLabel);
 
-		lFontBitmap.begin(pCore.HUD());
-		lFontBitmap.draw(mLabel, x + w / 2 - 10 - lTextWidth - lSeparatorHalfWidth, y + h / 2 - lTextHeight * 0.5f, pParentZDepth, lR, lG, lB, lA, lUiTextScale, -1);
-		lFontBitmap.draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - lTextHeight * 0.5f, pParentZDepth, lR, lG, lB, lA, lUiTextScale, -1);
-		lFontBitmap.draw(mButtonLabel, x + (w / 4) * 3 - lButtonTextWidth / 2, y + h / 2 - lTextHeight * 0.5f, pParentZDepth, lR, lG, lB, lA, lUiTextScale, -1);
-		lFontBitmap.end();
+		lFont.begin(pCore.HUD());
+		lFont.drawShadow(mDrawTextShadow);
+		lFont.draw(mLabel, x + w / 2 - 10 - lTextWidth - lSeparatorHalfWidth, y + h / 2 - lTextHeight * 0.5f, pParentZDepth, lR, lG, lB, lA, lUiTextScale, -1);
+		lFont.draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - lTextHeight * 0.5f, pParentZDepth, lR, lG, lB, lA, lUiTextScale, -1);
+		lFont.draw(mButtonLabel, x + (w / 4) * 3 - lButtonTextWidth / 2, y + h / 2 - lTextHeight * 0.5f, pParentZDepth, lR, lG, lB, lA, lUiTextScale, -1);
+		lFont.end();
 
 	}
 

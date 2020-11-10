@@ -23,9 +23,7 @@ public class MenuLabelEntry extends MenuEntry {
 	private float mPadding = 15f;
 	private boolean mShow;
 	private float mR, mG, mB;
-	private boolean mDrawTextShadow;
 	private boolean mTrimText;
-	private boolean mDrawBackground;
 
 	// --------------------------------------
 	// Properties
@@ -37,22 +35,6 @@ public class MenuLabelEntry extends MenuEntry {
 
 	public void trimText(boolean pNewValue) {
 		mTrimText = pNewValue;
-	}
-
-	public boolean enableTextShadow() {
-		return mDrawTextShadow;
-	}
-
-	public void enableTextShadow(boolean pNewValue) {
-		mDrawTextShadow = pNewValue;
-	}
-
-	public boolean enableBackground() {
-		return mDrawBackground;
-	}
-
-	public void enableBackground(boolean pNewValue) {
-		mDrawBackground = pNewValue;
 	}
 
 	/** Padding is applied when the label is either aligned left or right (not when centered). */
@@ -109,7 +91,7 @@ public class MenuLabelEntry extends MenuEntry {
 		super(pScreenManager, pParentLayout, "");
 
 		mDrawBackground = false;
-		mText = "Add your message";
+		mText = "Unnamed Label";
 		mShow = true;
 		mR = mG = mB = 0.94f;
 
@@ -198,7 +180,7 @@ public class MenuLabelEntry extends MenuEntry {
 		lFont.begin(pCore.HUD());
 		lFont.drawShadow(mDrawTextShadow);
 		lFont.trimText(mTrimText);
-		lFont.draw(mText, lX, y + h / 2f - lFontHeight / 2f, pParentZDepth + .15f, mR, mG, mB, lParentScreen.a(), lUiTextScale);
+		lFont.draw(mText, lX + 5.f, y + h / 2f - lFontHeight / 2f, pParentZDepth + .15f, mR, mG, mB, lParentScreen.a(), lUiTextScale);
 		lFont.end();
 
 		if (mShowInfoIcon) {
