@@ -29,6 +29,7 @@ import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.debug.Debug.DebugLogLevel;
 import net.lintford.library.core.debug.DebugMemory;
 import net.lintford.library.core.entity.BaseEntity;
+import net.lintford.library.core.input.EventActionManager;
 import net.lintford.library.core.input.InputManager;
 import net.lintford.library.core.maths.MathHelper;
 import net.lintford.library.core.rendering.RenderState;
@@ -426,6 +427,13 @@ public abstract class LintfordCore {
 	protected void onInitializeApp() {
 		new UiStructureController(mMasterConfig.display(), mControllerManager, CORE_ENTITY_GROUP_ID);
 
+		onInitializeInputActions(mInputState.eventActionManager());
+
+	}
+
+	/** Allows the registration of game input actions and the respective key bindings. */
+	protected void onInitializeInputActions(EventActionManager pEventActionManager) {
+		pEventActionManager.loadConfig();
 	}
 
 	/**

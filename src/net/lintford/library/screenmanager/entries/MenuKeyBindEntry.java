@@ -4,14 +4,15 @@ import net.lintford.library.ConstantsApp;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.input.EventAction;
-import net.lintford.library.core.input.GLFWKeyMap;
+import net.lintford.library.core.input.IKeyInputCallback;
+import net.lintford.library.core.input.InputHelper;
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.Screen;
 import net.lintford.library.screenmanager.ScreenManager;
 import net.lintford.library.screenmanager.ScreenManagerConstants.FILLTYPE;
 import net.lintford.library.screenmanager.layouts.BaseLayout;
 
-public class MenuKeyBindEntry extends MenuEntry {
+public class MenuKeyBindEntry extends MenuEntry implements IKeyInputCallback {
 
 	private static final long serialVersionUID = -6246272207476797676L;
 
@@ -25,6 +26,8 @@ public class MenuKeyBindEntry extends MenuEntry {
 	private boolean mDrawTextShadow;
 
 	private final EventAction eventAction;
+	private boolean mBindingKey;
+	private float mCaretFlashTimer;
 
 	private boolean mDrawBackground;
 
@@ -145,7 +148,7 @@ public class MenuKeyBindEntry extends MenuEntry {
 		super.updateStructure();
 
 		// TODO: This -50 is because of the scrollbar - this is why I needed to keep the padding :(
-		w = Math.min(mParentLayout.w() - 50f, MENUENTRY_MAX_WIDTH);
+		w = Math.min(mParentLayout.w() - 50f, mMaxWidth);
 
 		final var lParentScreen = mParentLayout.parentScreen();
 		final var lFont = lParentScreen.font();
@@ -157,6 +160,24 @@ public class MenuKeyBindEntry extends MenuEntry {
 		final float lFontHeight = lFont.bitmap().fontHeight() * lUiTextScale;
 		h = lFontHeight * lUiTextScale;
 
+	}
+
+	@Override
+	public boolean handleInput(LintfordCore pCore) {
+		if (!mEnabled)
+			return false;
+
+		if (mHasFocus) {
+			if (!pCore.input().keyboard().isSomeComponentCapturingInputKeys()) {
+				System.out.println("changing key bind for " + eventAction.eventActionUid);
+				pCore.input().keyboard().StartKeyInputCapture(this);
+				mBindingKey = true;
+
+			}
+
+		}
+
+		return super.handleInput(pCore);
 	}
 
 	@Override
@@ -187,13 +208,32 @@ public class MenuKeyBindEntry extends MenuEntry {
 
 		float lX = x + w / 2; // Center label
 
+		mCaretFlashTimer += pCore.appTime().elapsedTimeMilli() * 0.001f;
+
 		lFont.begin(pCore.HUD());
 		lFont.drawShadow(mDrawTextShadow);
 
 		lFont.draw(mText, lX - lLabelWidth - 20.f, y + h / 2f - lFontHeight / 2f, pParentZDepth + .15f, mR, mG, mB, lParentScreen.a(), lUiTextScale);
 		lFont.draw(":", lX - 5.f, y + h / 2f - lFontHeight / 2f, pParentZDepth + .15f, mR, mG, mB, lParentScreen.a(), lUiTextScale);
-		final String lBoundKeyText = GLFWKeyMap.GetGlfwPrintableKeyFromKeyCode(eventAction.defaultBoundKeyCode);
-		lFont.draw(lBoundKeyText, lX + 20.f, y + h / 2f - lFontHeight / 2f, pParentZDepth + .15f, mR, mG, mB, lParentScreen.a(), lUiTextScale);
+
+		if (mBindingKey) {
+			final String lBoundKeyText = "|";
+
+			lTextureBatch.begin(pCore.HUD());
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, x, y, w, h, pParentZDepth + .15f, 0.1f, 0.1f, 0.1f, lAlpha);
+			lTextureBatch.end();
+
+			if (mCaretFlashTimer % 1.f > .5f) {
+
+				lFont.draw(lBoundKeyText, lX + 20.f, y + h / 2f - lFontHeight / 2f, pParentZDepth + .15f, mR, mG, mB, lParentScreen.a(), lUiTextScale);
+			}
+
+		} else {
+			final String lBoundKeyText = InputHelper.GetGlfwPrintableKeyFromKeyCode(eventAction.getBoundKeyCode());
+			lFont.draw(lBoundKeyText, lX + 20.f, y + h / 2f - lFontHeight / 2f, pParentZDepth + .15f, mR, mG, mB, lParentScreen.a(), lUiTextScale);
+
+		}
+
 		lFont.end();
 
 		if (mShowInfoIcon) {
@@ -210,6 +250,20 @@ public class MenuKeyBindEntry extends MenuEntry {
 
 		}
 
+	}
+
+	// --------------------------------------
+	// Inherited-Methods
+	// --------------------------------------
+
+	@Override
+	public void keyInput(int pKey, int pScanCode, int pAction, int pMods) {
+		if (mHasFocus) {
+			System.out.println("key bind invoke " + eventAction.eventActionUid + " called to " + pKey);
+			eventAction.boundKeyCode = pKey;
+			mBindingKey = false;
+			mHasFocus = false;
+		}
 	}
 
 }

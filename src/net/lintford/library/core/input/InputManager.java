@@ -4,12 +4,19 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.input.gamepad.GamepadManager;
 import net.lintford.library.core.input.keyboard.KeyboardManager;
 import net.lintford.library.core.input.mouse.MouseManager;
+import net.lintford.library.core.storage.AppStorage;
 
 public class InputManager {
+
+	// --------------------------------------
+	// Constants
+	// --------------------------------------
 
 	public enum INPUT_TYPES {
 		Mouse, Keyboard,
 	}
+
+	public static final String InputConfigFilename = "input.ini";
 
 	// --------------------------------------
 	// Variables
@@ -55,7 +62,8 @@ public class InputManager {
 		mKeyboardManager = new KeyboardManager();
 		mGamepadManager = new GamepadManager();
 
-		mEventActionManager = new EventActionManager(this);
+		final String lDisplayConfigFilename = AppStorage.getGameDataDirectory() + InputConfigFilename;
+		mEventActionManager = new EventActionManager(this, lDisplayConfigFilename);
 
 	}
 

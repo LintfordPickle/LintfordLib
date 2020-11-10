@@ -5,11 +5,11 @@ import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
-import net.lintford.library.core.input.IBufferedInputCallback;
+import net.lintford.library.core.input.IBufferedTextInputCallback;
 import net.lintford.library.core.input.InputManager;
 import net.lintford.library.renderers.windows.UIWindow;
 
-public class UIInputText extends UIWidget implements IBufferedInputCallback {
+public class UIInputText extends UIWidget implements IBufferedTextInputCallback {
 
 	// --------------------------------------
 	// Constants
@@ -121,7 +121,7 @@ public class UIInputText extends UIWidget implements IBufferedInputCallback {
 						mInputField.delete(0, mInputField.length());
 					mStringLength = 0;
 
-					pCore.input().keyboard().stopCapture();
+					pCore.input().keyboard().stopBufferedTextCapture();
 
 					mHasFocus = false;
 					mShowCaret = false;
@@ -145,7 +145,7 @@ public class UIInputText extends UIWidget implements IBufferedInputCallback {
 
 		// Stop the keyboard capture if the player clicks somewhere else within the game
 		if (mHasFocus && mMouseClickBreaksInputTextFocus && (pCore.input().mouse().isMouseLeftButtonDownTimed(this) || pCore.input().mouse().isMouseRightButtonDownTimed(this))) {
-			pCore.input().keyboard().stopCapture();
+			pCore.input().keyboard().stopBufferedTextCapture();
 
 			mHasFocus = false;
 			mShowCaret = false;
@@ -234,7 +234,7 @@ public class UIInputText extends UIWidget implements IBufferedInputCallback {
 		mHasFocus = !mHasFocus;
 
 		if (mHasFocus) {
-			pInputState.keyboard().startCapture(this);
+			pInputState.keyboard().startBufferedTextCapture(this);
 
 			// Store the current string in case the user cancels the input, in which case, we
 			// can restore the previous entry.
@@ -267,7 +267,7 @@ public class UIInputText extends UIWidget implements IBufferedInputCallback {
 	}
 
 	@Override
-	public void onKeyPressed(char pCh) {
+	public void onKeyPressed(int pCodePoint) {
 		mStringLength = mInputField.length();
 
 	}

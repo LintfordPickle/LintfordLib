@@ -14,7 +14,7 @@ import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
-import net.lintford.library.core.input.IBufferedInputCallback;
+import net.lintford.library.core.input.IBufferedTextInputCallback;
 import net.lintford.library.core.input.IProcessMouseInput;
 import net.lintford.library.core.maths.Vector3f;
 import net.lintford.library.core.messaging.Message;
@@ -24,7 +24,7 @@ import net.lintford.library.renderers.windows.components.ScrollBar;
 import net.lintford.library.renderers.windows.components.ScrollBarContentRectangle;
 import net.lintford.library.renderers.windows.components.UIInputText;
 
-public class DebugConsole extends Rectangle implements IBufferedInputCallback, IScrollBarArea, IProcessMouseInput {
+public class DebugConsole extends Rectangle implements IBufferedTextInputCallback, IScrollBarArea, IProcessMouseInput {
 
 	// --------------------------------------
 	// Constants
@@ -299,7 +299,7 @@ public class DebugConsole extends Rectangle implements IBufferedInputCallback, I
 					mOpen = false;
 					mInputText.delete(0, mInputText.length());
 					mHasFocus = false;
-					pCore.input().keyboard().stopCapture();
+					pCore.input().keyboard().stopBufferedTextCapture();
 
 				}
 
@@ -330,24 +330,24 @@ public class DebugConsole extends Rectangle implements IBufferedInputCallback, I
 					&& pCore.input().mouse().isMouseOverThisComponent(hashCode())) {
 				mHasFocus = !mHasFocus;
 				resetCoolDownTimer();
-				pCore.input().keyboard().stopCapture();
+				pCore.input().keyboard().stopBufferedTextCapture();
 				mFocusTimer = 0;
 
 				if (mHasFocus) {
-					pCore.input().keyboard().startCapture(this);
+					pCore.input().keyboard().startBufferedTextCapture(this);
 				}
 
 			}
 
 		} else {
 			if (mHasFocus) {
-				pCore.input().keyboard().stopCapture();
+				pCore.input().keyboard().stopBufferedTextCapture();
 				mHasFocus = false;
 			}
 		}
 
 		if (mHasFocus && (pCore.input().mouse().isMouseLeftButtonDownTimed(this) || pCore.input().mouse().isMouseRightButtonDownTimed(this))) {
-			pCore.input().keyboard().stopCapture();
+			pCore.input().keyboard().stopBufferedTextCapture();
 
 			mHasFocus = false;
 			mShowCaret = false;
@@ -363,7 +363,7 @@ public class DebugConsole extends Rectangle implements IBufferedInputCallback, I
 
 				if (AUTO_CAPTURE_ON_OPEN) {
 					mHasFocus = true;
-					pCore.input().keyboard().startCapture(this);
+					pCore.input().keyboard().startBufferedTextCapture(this);
 
 				}
 
@@ -802,8 +802,7 @@ public class DebugConsole extends Rectangle implements IBufferedInputCallback, I
 	}
 
 	@Override
-	public void onKeyPressed(char pCh) {
-		// mDirty = true;
+	public void onKeyPressed(int pCodePoint) {
 
 	}
 
@@ -830,7 +829,7 @@ public class DebugConsole extends Rectangle implements IBufferedInputCallback, I
 	public void listConsoleCommands() {
 		final int CONSOLE_COMMAND_COUNT = mConsoleCommands.size();
 		for (int i = 0; i < CONSOLE_COMMAND_COUNT; i++) {
-			Debug.debugManager().logger().i(mConsoleCommands.get(i).Command,  mConsoleCommands.get(i).Description);
+			Debug.debugManager().logger().i(mConsoleCommands.get(i).Command, mConsoleCommands.get(i).Description);
 
 		}
 

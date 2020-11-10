@@ -1,7 +1,7 @@
 package net.lintford.library.screenmanager.entries;
 
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.input.IBufferedInputCallback;
+import net.lintford.library.core.input.IBufferedTextInputCallback;
 import net.lintford.library.core.input.InputManager;
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
@@ -9,7 +9,7 @@ import net.lintford.library.screenmanager.Screen;
 import net.lintford.library.screenmanager.ScreenManager;
 import net.lintford.library.screenmanager.layouts.BaseLayout;
 
-public class MenuInputEntry extends MenuEntry implements IBufferedInputCallback {
+public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallback {
 
 	// --------------------------------------
 	// Constants
@@ -127,7 +127,7 @@ public class MenuInputEntry extends MenuEntry implements IBufferedInputCallback 
 		boolean lResult = super.handleInput(pCore);
 
 		if (mHasFocus) {
-			pCore.input().keyboard().startCapture(this);
+			pCore.input().keyboard().startBufferedTextCapture(this);
 
 		} else {
 			// pCore.input().stopCapture();
@@ -278,7 +278,7 @@ public class MenuInputEntry extends MenuEntry implements IBufferedInputCallback 
 	}
 
 	@Override
-	public void onKeyPressed(char pCh) {
+	public void onKeyPressed(int pCodePoint) {
 
 	}
 

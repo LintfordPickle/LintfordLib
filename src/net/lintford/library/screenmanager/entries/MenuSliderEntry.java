@@ -211,7 +211,7 @@ public class MenuSliderEntry extends MenuEntry {
 		super.updateStructure();
 
 		// TODO: This -50 is because of the scrollbar - this is why I needed to keep the padding :(
-		w = Math.min(mParentLayout.w() - 50f, MENUENTRY_MAX_WIDTH);
+		w = Math.min(mParentLayout.w() - 50f, mMaxWidth);
 
 	}
 

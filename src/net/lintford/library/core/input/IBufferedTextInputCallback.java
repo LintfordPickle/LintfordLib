@@ -1,11 +1,11 @@
 package net.lintford.library.core.input;
 
-public interface IBufferedInputCallback {
+public interface IBufferedTextInputCallback {
 
 	/** @return true to end capture, false to continue with keyboard capture. */
 	public abstract boolean onEscapePressed();
 
-	public abstract void onKeyPressed(char pCh);
+	public abstract void onKeyPressed(int pCodePoint);
 
 	/** @return true to end capture, false to continue with keyboard capture. */
 	public abstract boolean onEnterPressed();
@@ -15,6 +15,11 @@ public interface IBufferedInputCallback {
 	public abstract boolean getEnterFinishesInput();
 
 	public abstract boolean getEscapeFinishesInput();
+
+	/** If true, keyboard capture will end after a single key is input */
+	public default boolean captureSingleKey() {
+		return false;
+	}
 
 	public default void captureStopped() {
 

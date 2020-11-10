@@ -2,9 +2,15 @@ package net.lintford.library.core.input;
 
 import org.lwjgl.glfw.GLFW;
 
-public class GLFWKeyMap {
+//@formatter:off
+public class InputHelper {
 
-	//@formatter:off
+	public static int ConvertCodePointAsciiToUpper(int pCodePoint) {
+		if(pCodePoint < 97 || pCodePoint > 122)
+			return pCodePoint;
+		return pCodePoint -32;
+	}
+	
 	public static String GetGlfwPrintableKeyFromKeyCode(int pKeyCode) {
 		switch (pKeyCode) {
 		case GLFW.GLFW_KEY_A: return "A";
@@ -50,5 +56,6 @@ public class GLFWKeyMap {
 			return "unknown";
 		}
 	}
+	
 	
 }

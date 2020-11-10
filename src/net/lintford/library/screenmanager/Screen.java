@@ -307,7 +307,7 @@ public abstract class Screen implements IProcessMouseInput {
 
 	public void onGainedFocus() {
 		// Don't allow keyboard capture across screens
-		mScreenManager.core().input().keyboard().stopCapture();
+		mScreenManager.core().input().keyboard().stopBufferedTextCapture();
 
 	}
 

@@ -8,7 +8,8 @@ import org.lwjgl.glfw.GLFWKeyCallback;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.debug.Debug;
-import net.lintford.library.core.input.IBufferedInputCallback;
+import net.lintford.library.core.input.IBufferedTextInputCallback;
+import net.lintford.library.core.input.IKeyInputCallback;
 
 public class KeyboardManager {
 
@@ -17,53 +18,50 @@ public class KeyboardManager {
 	// --------------------------------------
 
 	public class KeyCallback extends GLFWKeyCallback {
-
-		private KeyCallback() {
-		}
-
-		// ---------------------------------------------
-		// Methods
-		// ---------------------------------------------
-
 		@Override
 		public void invoke(long pWindow, int pKey, int pScanCode, int pAction, int pMods) {
-			// We need to handle keypressed differently depending on whether or not some UI component is
+			if (mKeyInputCallback != null) {
+				mKeyInputCallback.keyInput(pKey, pScanCode, pAction, pMods);
+				stopKeyInputCapture();
+
+			}
+
+			// We need to handle keypresses differently depending on whether or not some UI component is
 			// using 'buffered' input.
-			if (mCaptureKeyboardInput) {
-				// Buffered input (here we just listen for special keys (backspace, return etc.)
+			if (mBufferedTextInputCallback != null) {
+				// Buffered input (here we just listen for special keys (backspace, return etc.) used to stop the input capture,
+				// but otherwise, we don't register or process the keys
 				if (pAction == GLFW.GLFW_PRESS) {
-					if (mIBufferedInputCallback != null) {
-						if (pKey == GLFW.GLFW_KEY_ENTER) {
-							if (mIBufferedInputCallback.onEnterPressed()) {
-								stopCapture();
-								return;
-							}
-							if (mIBufferedInputCallback.getEnterFinishesInput()) {
-								stopCapture();
-							}
-						} else if (pKey == GLFW.GLFW_KEY_ESCAPE) {
-							if (mIBufferedInputCallback.onEscapePressed()) {
-								stopCapture();
-								return;
-							}
-							if (mIBufferedInputCallback.getEscapeFinishesInput()) {
-								stopCapture();
-							}
+					if (pKey == GLFW.GLFW_KEY_ENTER) {
+						if (mBufferedTextInputCallback.onEnterPressed()) {
+							stopBufferedTextCapture();
+							return;
 						}
-
-						else if (pKey == GLFW.GLFW_KEY_BACKSPACE) {
-							if (mIBufferedInputCallback.getStringBuilder().length() > 0) {
-								mIBufferedInputCallback.getStringBuilder().delete(mIBufferedInputCallback.getStringBuilder().length() - 1, mIBufferedInputCallback.getStringBuilder().length());
-								mIBufferedInputCallback.onKeyPressed((char) pKey);
-							}
+						if (mBufferedTextInputCallback.getEnterFinishesInput()) {
+							stopBufferedTextCapture();
 						}
+					} else if (pKey == GLFW.GLFW_KEY_ESCAPE) {
+						if (mBufferedTextInputCallback.onEscapePressed()) {
+							stopBufferedTextCapture();
+							return;
+						}
+						if (mBufferedTextInputCallback.getEscapeFinishesInput()) {
+							stopBufferedTextCapture();
+						}
+					}
 
-						// Treat some keys as unbuffered
-						else if (pKey == GLFW.GLFW_KEY_LEFT || pKey == GLFW.GLFW_KEY_UP || pKey == GLFW.GLFW_KEY_RIGHT || pKey == GLFW.GLFW_KEY_DOWN) {
-							if (pKey < KEY_LIMIT) {
-								if (pKey != -1)
-									mKeyButtonStates[pKey] = !(pAction == GLFW.GLFW_RELEASE);
-							}
+					else if (pKey == GLFW.GLFW_KEY_BACKSPACE) {
+						if (mBufferedTextInputCallback.getStringBuilder().length() > 0) {
+							mBufferedTextInputCallback.getStringBuilder().delete(mBufferedTextInputCallback.getStringBuilder().length() - 1, mBufferedTextInputCallback.getStringBuilder().length());
+							mBufferedTextInputCallback.onKeyPressed((char) pKey);
+						}
+					}
+
+					// Treat some keys as unbuffered
+					else if (pKey == GLFW.GLFW_KEY_LEFT || pKey == GLFW.GLFW_KEY_UP || pKey == GLFW.GLFW_KEY_RIGHT || pKey == GLFW.GLFW_KEY_DOWN) {
+						if (pKey < KEY_LIMIT) {
+							if (pKey != -1)
+								mKeyButtonStates[pKey] = !(pAction == GLFW.GLFW_RELEASE);
 						}
 					}
 				}
@@ -87,18 +85,20 @@ public class KeyboardManager {
 	}
 
 	public class TextCallback extends GLFWCharModsCallback {
-
-		public TextCallback() {
-		}
-
+		/** Text input in the form of unicode code points, as produced by the OS. This text obeys keyboard layouts and modifier keys. */
 		@Override
 		public void invoke(long window, int codepoint, int mods) {
-			if (mCaptureKeyboardInput) {
-				// Buffered input
-				if (mIBufferedInputCallback != null) {
-					mIBufferedInputCallback.getStringBuilder().append((char) codepoint);
-					mIBufferedInputCallback.onKeyPressed((char) codepoint);
+			if (mBufferedTextInputCallback != null) {
+				if (mBufferedTextInputCallback.captureSingleKey()) {
+					mBufferedTextInputCallback.onKeyPressed(codepoint);
+					stopBufferedTextCapture();
+
+				} else {
+					mBufferedTextInputCallback.getStringBuilder().append((char) codepoint);
+					mBufferedTextInputCallback.onKeyPressed(codepoint);
+
 				}
+
 			}
 		}
 	}
@@ -118,8 +118,9 @@ public class KeyboardManager {
 	public KeyCallback mKeyCallback;
 	public TextCallback mTextCallback;
 	private float mKeyTimer;
-	private boolean mCaptureKeyboardInput;
-	private IBufferedInputCallback mIBufferedInputCallback;
+
+	private IBufferedTextInputCallback mBufferedTextInputCallback;
+	private IKeyInputCallback mKeyInputCallback;
 
 	// --------------------------------------
 	// Properties
@@ -160,22 +161,49 @@ public class KeyboardManager {
 		mKeyTimer = 0;
 	}
 
-	public void startCapture(IBufferedInputCallback pCallbackFunction) {
-		if (mIBufferedInputCallback != null) {
-			mIBufferedInputCallback.captureStopped();
+	public void startBufferedTextCapture(IBufferedTextInputCallback pCallbackFunction) {
+		if (mBufferedTextInputCallback != null) {
+			mBufferedTextInputCallback.captureStopped();
 
 		}
 
-		mIBufferedInputCallback = pCallbackFunction;
-		mCaptureKeyboardInput = true;
+		mBufferedTextInputCallback = pCallbackFunction;
+
 	}
 
-	public void stopCapture() {
-		if (mIBufferedInputCallback != null) {
-			mIBufferedInputCallback.captureStopped();
+	public boolean isSomeComponentCapturingKeyboardText() {
+		return mBufferedTextInputCallback != null;
+	}
+
+	public void stopBufferedTextCapture() {
+		if (mBufferedTextInputCallback != null) {
+			mBufferedTextInputCallback.captureStopped();
 		}
-		mIBufferedInputCallback = null;
-		mCaptureKeyboardInput = false;
+
+		mBufferedTextInputCallback = null;
+
+	}
+
+	public void StartKeyInputCapture(IKeyInputCallback pKeyInputCallback) {
+		if (pKeyInputCallback != null) {
+
+		}
+
+		mKeyInputCallback = pKeyInputCallback;
+
+	}
+
+	public boolean isSomeComponentCapturingInputKeys() {
+		return mKeyInputCallback != null;
+	}
+
+	public void stopKeyInputCapture() {
+		if (mKeyInputCallback != null) {
+
+		}
+
+		mKeyInputCallback = null;
+
 	}
 
 	// --------------------------------------

@@ -21,9 +21,6 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 
 	private static final long serialVersionUID = -226493862481815669L;
 
-	public static final float MENUENTRY_MIN_WIDTH = 100;
-	public static final float MENUENTRY_MAX_WIDTH = 800;
-
 	protected static final float FOCUS_TIMER = 500f; // milli
 
 	protected static final float Z_STATE_MODIFIER_PASSIVE = 0.005f; // Entry passive
@@ -231,6 +228,22 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 		return mMaxHeight;
 	}
 
+	public void minWidth(float pNewValue) {
+		mMinWidth = pNewValue;
+	}
+
+	public void minHeight(float pNewValue) {
+		mMinHeight = pNewValue;
+	}
+
+	public void maxWidth(float pNewValue) {
+		mMaxWidth = pNewValue;
+	}
+
+	public void maxHeight(float pNewValue) {
+		mMaxHeight = pNewValue;
+	}
+
 	public boolean hoveredOver() {
 		return mHoveredOver;
 	}
@@ -321,8 +334,8 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 		mLeftMargin = 2f;
 		mRightMargin = 2f;
 
-		mMinWidth = MENUENTRY_MIN_WIDTH;
-		mMaxWidth = MENUENTRY_MAX_WIDTH;
+		mMinWidth = 32.f;
+		mMaxWidth = 400.f;
 
 		mMinHeight = 24;
 		mMaxHeight = 32;

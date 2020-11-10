@@ -130,33 +130,36 @@ public class ListLayout extends BaseLayout implements IProcessMouseInput {
 			lSizeOfEachFillElement = 10;
 
 		for (int i = 0; i < lEntryCount; i++) {
-			MenuEntry lEntry = menuEntries().get(i);
+			final var lMenuEntry = menuEntries().get(i);
 			float lScrollBarWidth = 0;
 			if (mScrollBarsEnabled)
 				lScrollBarWidth = mScrollBar.width();
 
-			final var lNewEntryWidth = w - marginLeft() - marginRight() - lScrollBarWidth;
-			lEntry.w(MathHelper.clamp(lNewEntryWidth, lEntry.minWidth(), lEntry.maxWidth()));
+			final float lNewEntryWidth = w - marginLeft() - marginRight() - lScrollBarWidth;
 
-			lEntry.x(centerX() - lEntry.w() / 2 - lScrollBarWidth / 2);
-
-			// Assign the entry height here
-			if (lEntry.verticalFillType() == FILLTYPE.FILL_CONTAINER) {
-				lEntry.h(lSizeOfEachFillElement);
-
-			} else if (lEntry.verticalFillType() == FILLTYPE.FILL_CONTAINER) {
-				lEntry.h(lSizeOfEachFillElement);
+			if (lMenuEntry.horizontalFillType() == FILLTYPE.MANUAL) {
 
 			} else {
-				lEntry.h(32);
+				lMenuEntry.w(MathHelper.clamp(lNewEntryWidth, lMenuEntry.minWidth(), lMenuEntry.maxWidth()));
 
 			}
 
-			lEntry.y(lYPos);
+			lMenuEntry.x(centerX() - lMenuEntry.w() / 2 - lScrollBarWidth / 2);
 
-			lYPos += lEntry.marginTop();
-			lYPos += lEntry.height();
-			lYPos += lEntry.marginBottom();
+			// Assign the entry height here
+			if (lMenuEntry.verticalFillType() == FILLTYPE.TAKE_WHATS_NEEDED) {
+				lMenuEntry.h(32);
+
+			} else {
+				lMenuEntry.h(lSizeOfEachFillElement);
+
+			}
+
+			lMenuEntry.y(lYPos);
+
+			lYPos += lMenuEntry.marginTop();
+			lYPos += lMenuEntry.height();
+			lYPos += lMenuEntry.marginBottom();
 
 		}
 

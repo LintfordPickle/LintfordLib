@@ -8,7 +8,7 @@ public class ScreenManagerConstants {
 	}
 
 	public enum FILLTYPE {
-		TAKE_WHATS_NEEDED, FILL_CONTAINER, FILL_CONTENT
+		TAKE_WHATS_NEEDED, FILL_CONTAINER, FILL_CONTENT, MANUAL
 
 	}
 

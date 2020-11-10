@@ -4,8 +4,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.lintford.library.core.debug.Debug;
+import net.lintford.library.options.reader.IniFile;
 
-public class EventActionManager {
+public class EventActionManager extends IniFile {
+
+	// --------------------------------------
+	// Constants
+	// --------------------------------------
 
 	// --------------------------------------
 	// Variables
@@ -26,7 +31,9 @@ public class EventActionManager {
 	// Constructor
 	// --------------------------------------
 
-	public EventActionManager(InputManager pInputManager) {
+	public EventActionManager(InputManager pInputManager, String pConfigFilename) {
+		super(pConfigFilename);
+
 		mInputManager = pInputManager;
 
 	}
@@ -52,6 +59,43 @@ public class EventActionManager {
 			return false;
 
 		return mInputManager.keyboard().isKeyDown(lEventAction.getBoundKeyCode());
+	}
+
+	// --------------------------------------
+	// Ini-File
+	// --------------------------------------
+
+	final String lSectionName = "KEY_BINDING";
+
+	@Override
+	public void saveConfig() {
+
+		clearEntries();
+
+		for (var lKeyBindingEntry : mEventActionMap.entrySet()) {
+			setValue(lSectionName, Integer.toString(lKeyBindingEntry.getKey()), Integer.toString(lKeyBindingEntry.getValue().getBoundKeyCode()));
+
+		}
+
+		super.saveConfig();
+	}
+
+	@Override
+	public void loadConfig() {
+		super.loadConfig();
+
+		// if no file exists, then do nothing
+		if (isEmpty()) {
+
+		} else {
+			for (var lKeyBindingEntry : mEventActionMap.entrySet()) {
+				final var lValue = getInt(lSectionName, Integer.toString(lKeyBindingEntry.getValue().eventActionUid), lKeyBindingEntry.getValue().defaultBoundKeyCode);
+				lKeyBindingEntry.getValue().boundKeyCode = lValue;
+
+			}
+
+		}
+
 	}
 
 }
