@@ -1,5 +1,7 @@
 package net.lintford.library.screenmanager.entries;
 
+import org.lwjgl.glfw.GLFW;
+
 import net.lintford.library.ConstantsApp;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
@@ -13,6 +15,10 @@ import net.lintford.library.screenmanager.ScreenManagerConstants.FILLTYPE;
 import net.lintford.library.screenmanager.layouts.BaseLayout;
 
 public class MenuKeyBindEntry extends MenuEntry implements IKeyInputCallback {
+
+	// --------------------------------------
+	// Constants
+	// --------------------------------------
 
 	private static final long serialVersionUID = -6246272207476797676L;
 
@@ -210,7 +216,7 @@ public class MenuKeyBindEntry extends MenuEntry implements IKeyInputCallback {
 			}
 
 		} else {
-			final String lBoundKeyText = InputHelper.GetGlfwPrintableKeyFromKeyCode(eventAction.getBoundKeyCode());
+			final String lBoundKeyText = InputHelper.getGlfwPrintableKeyFromKeyCode(eventAction.getBoundKeyCode());
 			lFont.draw(lBoundKeyText, lX + 20.f, y + h / 2f - lFontHeight / 2f, pParentZDepth + .15f, mR, mG, mB, lParentScreen.a(), lUiTextScale);
 
 		}
@@ -240,7 +246,7 @@ public class MenuKeyBindEntry extends MenuEntry implements IKeyInputCallback {
 	@Override
 	public void keyInput(int pKey, int pScanCode, int pAction, int pMods) {
 		if (mHasFocus) {
-			System.out.println("key bind invoke " + eventAction.eventActionUid + " called to " + pKey);
+			System.out.println("key bind invoke " + eventAction.eventActionUid + " called to " + GLFW.glfwGetKeyName(GLFW.glfwGetKeyScancode(pKey), pScanCode));
 			eventAction.boundKeyCode = pKey;
 			mBindingKey = false;
 			mHasFocus = false;

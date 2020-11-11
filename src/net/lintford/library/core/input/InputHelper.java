@@ -5,13 +5,36 @@ import org.lwjgl.glfw.GLFW;
 //@formatter:off
 public class InputHelper {
 
-	public static int ConvertCodePointAsciiToUpper(int pCodePoint) {
-		if(pCodePoint < 97 || pCodePoint > 122)
-			return pCodePoint;
-		return pCodePoint -32;
+	/** returns false if a key is on the 'Binding' blacklist. */
+	public static boolean isKeyAllowedAsBinding(int pKey) {
+		switch(pKey) {
+		case GLFW.GLFW_KEY_F1:
+		case GLFW.GLFW_KEY_F2:
+		case GLFW.GLFW_KEY_F3:
+		case GLFW.GLFW_KEY_F4:
+		case GLFW.GLFW_KEY_F5:
+		case GLFW.GLFW_KEY_F6:
+		case GLFW.GLFW_KEY_F7:
+		case GLFW.GLFW_KEY_F8:
+		case GLFW.GLFW_KEY_F9:
+		case GLFW.GLFW_KEY_F10:
+		case GLFW.GLFW_KEY_F11:
+		case GLFW.GLFW_KEY_F12:
+			
+		case GLFW.GLFW_KEY_PRINT_SCREEN:
+		case GLFW.GLFW_KEY_SCROLL_LOCK:
+		case GLFW.GLFW_KEY_PAUSE:
+			
+			return false;
+		default:
+			return true;
+		}
 	}
 	
-	public static String GetGlfwPrintableKeyFromKeyCode(int pKeyCode) {
+	public static String getGlfwPrintableKeyFromKeyCode(int pKeyCode) {
+		final var lPlatformCharacter = GLFW.glfwGetKeyName(pKeyCode, GLFW.glfwGetKeyScancode(pKeyCode));
+		if(lPlatformCharacter != null) return lPlatformCharacter;
+
 		switch (pKeyCode) {
 		case GLFW.GLFW_KEY_A: return "A";
 		case GLFW.GLFW_KEY_B: return "B";
@@ -39,19 +62,35 @@ public class InputHelper {
 		case GLFW.GLFW_KEY_X: return "X";
 		case GLFW.GLFW_KEY_Y: return "Y";
 		case GLFW.GLFW_KEY_Z: return "Z";
-		
+
 		case GLFW.GLFW_KEY_SPACE: return "SPACE";
 		case GLFW.GLFW_KEY_ENTER: return "ENTER";
-		
+
 		case GLFW.GLFW_KEY_LEFT_SHIFT: return "L-SHIFT";
 		case GLFW.GLFW_KEY_RIGHT_SHIFT: return "R-SHIFT";
-		
+
+		case GLFW.GLFW_KEY_LEFT_ALT: return "L-ALT";
+		case GLFW.GLFW_KEY_RIGHT_ALT: return "R-ALT";
+
+		case GLFW.GLFW_KEY_TAB: return "TAB";
+		case GLFW.GLFW_KEY_ESCAPE: return "ESCAPE";
+		case GLFW.GLFW_KEY_BACKSPACE: return "BACKSPACE";
+		case GLFW.GLFW_KEY_HOME: return "HOME";
+		case GLFW.GLFW_KEY_END: return "END";
+		case GLFW.GLFW_KEY_PAGE_UP: return "PAGE UP";
+		case GLFW.GLFW_KEY_PAGE_DOWN: return "PAGE DOWN";
+		case GLFW.GLFW_KEY_INSERT: return "INSERT";
+		case GLFW.GLFW_KEY_DELETE: return "DELETE";
+
+		case GLFW.GLFW_KEY_PERIOD: return ".";
+		case GLFW.GLFW_KEY_COMMA: return ",";
+
 		case GLFW.GLFW_KEY_LEFT_CONTROL: return "L-CONTROL";
 		case GLFW.GLFW_KEY_RIGHT_CONTROL: return "R-CONTROL";
-		
+
 		case GLFW.GLFW_KEY_LEFT_BRACKET: return "[";
 		case GLFW.GLFW_KEY_RIGHT_BRACKET: return "]";
-		
+
 		default:
 			return "unknown";
 		}

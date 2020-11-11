@@ -8,7 +8,6 @@ import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.Screen;
 import net.lintford.library.screenmanager.ScreenManager;
-import net.lintford.library.screenmanager.ScreenManagerConstants.LAYOUT_ALIGNMENT;
 import net.lintford.library.screenmanager.layouts.BaseLayout;
 
 public class MenuImageEntry extends MenuEntry {
@@ -20,8 +19,6 @@ public class MenuImageEntry extends MenuEntry {
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
-
-	private LAYOUT_ALIGNMENT mAlignment = LAYOUT_ALIGNMENT.CENTER;
 
 	private float mForceHeight;
 	private float mFittedWidth;
@@ -76,14 +73,6 @@ public class MenuImageEntry extends MenuEntry {
 
 	public float forceHeight() {
 		return mForceHeight;
-	}
-
-	public void alignment(LAYOUT_ALIGNMENT left) {
-		mAlignment = left;
-	}
-
-	public LAYOUT_ALIGNMENT alignment() {
-		return mAlignment;
 	}
 
 	@Override

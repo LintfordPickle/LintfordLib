@@ -1,5 +1,6 @@
 package net.lintford.library.screenmanager;
 
+// @formatter:off
 public class ScreenManagerConstants {
 
 	public enum ALIGNMENT {
@@ -8,12 +9,12 @@ public class ScreenManagerConstants {
 	}
 
 	public enum FILLTYPE {
-		TAKE_WHATS_NEEDED, FILL_CONTAINER, FILL_CONTENT, THIRD_PARENT, HALF_PARENT, THREEQUARTER_PARENT, FILL_PARENT, MANUAL
-
-	}
-
-	public enum SIZE {
-		TINY, NARROW, NORMAL, WIDE
+		TAKE_WHATS_NEEDED, 
+		FILL_CONTAINER, 
+		THIRD_PARENT, 
+		HALF_PARENT, 
+		THREEQUARTER_PARENT, 
+		TAKE_DESIRED_SIZE
 
 	}
 

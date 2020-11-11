@@ -93,6 +93,7 @@ public class ListLayout extends BaseLayout implements IProcessMouseInput {
 	public void updateStructure() {
 		super.updateStructure();
 
+		final var lUiStructureController = mParentScreen.screenManager().UiStructureController();
 		float lYPos = y + mEntryOffsetFromTop + mYScrollPosition;
 
 		final int lEntryCount = menuEntries().size();
@@ -137,14 +138,14 @@ public class ListLayout extends BaseLayout implements IProcessMouseInput {
 
 			final float lNewEntryWidth = w - marginLeft() - marginRight() - lScrollBarWidth;
 
-			if (lMenuEntry.horizontalFillType() == FILLTYPE.FILL_PARENT) {
+			if (lMenuEntry.horizontalFillType() == FILLTYPE.FILL_CONTAINER) {
 				lMenuEntry.w(lNewEntryWidth);
 			} else if (lMenuEntry.horizontalFillType() == FILLTYPE.HALF_PARENT) {
 				lMenuEntry.w(lNewEntryWidth * .5f);
 			} else if (lMenuEntry.horizontalFillType() == FILLTYPE.THREEQUARTER_PARENT) {
 				lMenuEntry.w(lNewEntryWidth * .75f);
-			} else if (lMenuEntry.horizontalFillType() == FILLTYPE.MANUAL) {
-				lMenuEntry.w(MathHelper.clamp(lMenuEntry.w(), lMenuEntry.minWidth(), lMenuEntry.maxWidth()));
+			} else if (lMenuEntry.horizontalFillType() == FILLTYPE.TAKE_DESIRED_SIZE) {
+				lMenuEntry.w(MathHelper.clamp(lMenuEntry.desiredWidth() * lUiStructureController.windowAutoScaleFactorX(), lMenuEntry.minWidth(), lMenuEntry.maxWidth()));
 			} else {
 				lMenuEntry.w(lNewEntryWidth);
 
@@ -154,7 +155,7 @@ public class ListLayout extends BaseLayout implements IProcessMouseInput {
 
 			// Assign the entry height here
 			if (lMenuEntry.verticalFillType() == FILLTYPE.TAKE_WHATS_NEEDED) {
-				lMenuEntry.h(32);
+				lMenuEntry.h(MathHelper.clamp(lMenuEntry.desiredHeight(), lMenuEntry.minHeight(), lMenuEntry.maxHeight()));
 
 			} else {
 				lMenuEntry.h(lSizeOfEachFillElement);

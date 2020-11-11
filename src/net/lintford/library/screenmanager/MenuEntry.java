@@ -81,6 +81,9 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 	protected float mLeftMargin;
 	protected float mRightMargin;
 
+	protected float mDesiredWidth;
+	protected float mDesiredHeight;
+	
 	protected float mMinWidth;
 	protected float mMinHeight;
 	protected float mMaxWidth;
@@ -321,6 +324,11 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 		return mAnimationTimer / MenuScreen.ANIMATION_TIMER_LENGTH;
 	}
 
+	public float desiredWidth() { return mDesiredWidth; }
+	public void desiredWidth(float pNewValue) { mDesiredWidth = pNewValue; }
+	public float desiredHeight() { return mDesiredHeight; }
+	public void desiredHeight(float pNewValue) { mDesiredHeight = pNewValue; }
+	
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
@@ -345,13 +353,15 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 		mRightMargin = 2f;
 
 		mMinWidth = 32.f;
-		mMaxWidth = 400.f;
+		mMaxWidth = 800.f;
+		mDesiredWidth = 400.f;
 
-		mMinHeight = 24;
-		mMaxHeight = 32;
+		mMinHeight = 32.f;
+		mMaxHeight = 32.f;
+		mDesiredHeight = 32.f;
 
-		w = mMaxWidth;
-		h = mMaxHeight;
+		w = mDesiredWidth;
+		h = mDesiredHeight;
 
 		mVerticalFillType = FILLTYPE.TAKE_WHATS_NEEDED;
 		mHorizontalFillType = FILLTYPE.HALF_PARENT;

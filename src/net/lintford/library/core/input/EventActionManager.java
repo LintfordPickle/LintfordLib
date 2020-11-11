@@ -69,7 +69,6 @@ public class EventActionManager extends IniFile {
 
 	@Override
 	public void saveConfig() {
-
 		clearEntries();
 
 		for (var lKeyBindingEntry : mEventActionMap.entrySet()) {

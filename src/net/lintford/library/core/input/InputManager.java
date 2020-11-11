@@ -16,7 +16,7 @@ public class InputManager {
 		Mouse, Keyboard,
 	}
 
-	public static final String InputConfigFilename = "input.ini";
+	public static final String InputConfigFilename = "keybindings.ini";
 
 	// --------------------------------------
 	// Variables
@@ -27,7 +27,7 @@ public class InputManager {
 	private GamepadManager mGamepadManager;
 	private EventActionManager mEventActionManager;
 
-	private INPUT_TYPES mLastInputActive = INPUT_TYPES.Keyboard; // we use this because sometimes the user is locked to a text input
+	private INPUT_TYPES mLastInputActive = INPUT_TYPES.Keyboard;
 
 	// --------------------------------------
 	// Properties
@@ -62,8 +62,8 @@ public class InputManager {
 		mKeyboardManager = new KeyboardManager();
 		mGamepadManager = new GamepadManager();
 
-		final String lDisplayConfigFilename = AppStorage.getGameDataDirectory() + InputConfigFilename;
-		mEventActionManager = new EventActionManager(this, lDisplayConfigFilename);
+		final String lInputConfigFilename = AppStorage.getGameDataDirectory() + InputConfigFilename;
+		mEventActionManager = new EventActionManager(this, lInputConfigFilename);
 
 	}
 
