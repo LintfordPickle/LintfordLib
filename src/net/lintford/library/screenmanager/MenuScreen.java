@@ -539,7 +539,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 		final var lHeaderRect = lUiStructureController.menuTitleRectangle();
 		final var lHeaderFontWidth = mMenuHeaderFont.bitmap().getStringWidth(mMenuTitle, lUiTextScale);
-		final var lHeaderFontHeight = mMenuHeaderFont.bitmap().fontHeight();
+		final var lHeaderFontHeight = mMenuHeaderFont.bitmap().fontHeight() * lUiTextScale;
 
 		final float lMenuTitlePositionX = lHeaderRect.centerX() - lHeaderFontWidth * .5f;
 		final float lMenuTitlePositionY = lHeaderRect.bottom() - lHeaderFontHeight - TITLE_PADDING_Y * lUiStructureController.windowAutoScaleFactorY();
