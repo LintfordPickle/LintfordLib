@@ -254,7 +254,6 @@ public class MouseManager {
 
 	private void assignLeftClickOwnerToHashCode(int pHashCode) {
 		mMouseLeftClickOwnerHashCode = pHashCode;
-		mouseHoverOverHash(pHashCode);
 	}
 
 	private void assignRightClickOwnerToHashCode(int pHashCode) {
