@@ -83,7 +83,7 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 
 	protected float mDesiredWidth;
 	protected float mDesiredHeight;
-	
+
 	protected float mMinWidth;
 	protected float mMinHeight;
 	protected float mMaxWidth;
@@ -324,11 +324,22 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 		return mAnimationTimer / MenuScreen.ANIMATION_TIMER_LENGTH;
 	}
 
-	public float desiredWidth() { return mDesiredWidth; }
-	public void desiredWidth(float pNewValue) { mDesiredWidth = pNewValue; }
-	public float desiredHeight() { return mDesiredHeight; }
-	public void desiredHeight(float pNewValue) { mDesiredHeight = pNewValue; }
-	
+	public float desiredWidth() {
+		return mDesiredWidth;
+	}
+
+	public void desiredWidth(float pNewValue) {
+		mDesiredWidth = pNewValue;
+	}
+
+	public float desiredHeight() {
+		return mDesiredHeight;
+	}
+
+	public void desiredHeight(float pNewValue) {
+		mDesiredHeight = pNewValue;
+	}
+
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
@@ -410,7 +421,7 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 
 			}
 
-			if (canHaveFocus() && pCore.input().mouse().tryAcquireMouseLeftClick(hashCode())) {
+			if (canHaveFocus() && pCore.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
 				mParentLayout.parentScreen().setFocusOn(pCore, this, false);
 
 				onClick(pCore.input());
@@ -591,14 +602,13 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 		if (mClickListener == null || mMenuEntryID == -1)
 			return;
 
-		mScreenManager.uiSounds().play("SOUND_MENU_CLICK");
-
-		if (!mClickListener.hasUnconsumedAction()) {
-			mAnimationTimer = MenuScreen.ANIMATION_TIMER_LENGTH;
+		if (mClickListener.isActionConsumed()) {
+			return;
 
 		}
+
 		mAnimationTimer = MenuScreen.ANIMATION_TIMER_LENGTH;
-		// Play a button click animation, then call the listeners
+		mScreenManager.uiSounds().play("SOUND_MENU_CLICK");
 		mClickListener.menuEntryOnClick(pInputState, mMenuEntryID);
 
 	}

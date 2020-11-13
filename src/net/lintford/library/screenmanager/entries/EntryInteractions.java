@@ -11,7 +11,7 @@ public interface EntryInteractions {
 	}
 
 	/** Can be used in conjuction with a ClickAction instance, to handle onclicks outside of the callback event. */
-	public default boolean hasUnconsumedAction() {
+	public default boolean isActionConsumed() {
 		return false;
 	}
 

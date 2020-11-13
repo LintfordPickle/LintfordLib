@@ -149,7 +149,7 @@ public class UIRadioGroup extends UIWidget implements EntryInteractions {
 	}
 
 	@Override
-	public boolean hasUnconsumedAction() {
+	public boolean isActionConsumed() {
 		return false;
 	}
 

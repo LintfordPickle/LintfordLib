@@ -13,7 +13,7 @@ public class ClickAction {
 	// --------------------------------------
 
 	private int mButtonUid = BUTTON_UID_UNASSIGNED;
-	private boolean mConsumed = false;
+	private boolean mConsumed;
 
 	// --------------------------------------
 	// Properties
@@ -36,7 +36,7 @@ public class ClickAction {
 	}
 
 	public ClickAction(int pButtonID) {
-		mConsumed = false;
+		this();
 		mButtonUid = pButtonID;
 	}
 

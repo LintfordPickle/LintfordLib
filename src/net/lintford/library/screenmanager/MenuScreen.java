@@ -615,8 +615,8 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	protected abstract void handleOnClick();
 
 	@Override
-	public boolean hasUnconsumedAction() {
-		return mClickAction != null && !mClickAction.isConsumed();
+	public boolean isActionConsumed() {
+		return mClickAction != null && mClickAction.isConsumed();
 
 	}
 

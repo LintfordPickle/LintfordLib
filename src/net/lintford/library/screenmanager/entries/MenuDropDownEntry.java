@@ -7,10 +7,7 @@ import org.lwjgl.opengl.GL11;
 
 import net.lintford.library.ConstantsApp;
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.geometry.Rectangle;
-import net.lintford.library.core.graphics.textures.Texture;
-import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.core.input.InputManager;
 import net.lintford.library.renderers.ZLayers;
 import net.lintford.library.renderers.windows.components.IScrollBarArea;
@@ -52,14 +49,14 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 	private String mLabel;
 	private int mSelectedIndex;
 	private List<MenuEnumEntryItem> mItems;
-	private TextureBatchPCT mTextureBatch;
-	private Texture mUITexture;
 	private transient boolean mOpen;
 	private transient ScrollBarContentRectangle mContentRectangle;
 	private transient ScrollBarContentRectangle mWindowRectangle;
 	private transient ScrollBar mScrollBar;
 	private transient float mScrollYPosition;
-	private Rectangle mTopEntry;
+	private float mZScrollAcceleration;
+	private float mZScrollVelocity;
+
 	private boolean mAllowDuplicates;
 
 	// --------------------------------------
@@ -114,9 +111,12 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 	}
 
 	public void setSelectedEntry(String pName) {
-		final int COUNT = mItems.size();
-		for (int i = 0; i < COUNT; i++) {
-			if (mItems.get(i).name.equals(pName)) {
+		final int lNumDropDownItems = mItems.size();
+		for (int i = 0; i < lNumDropDownItems; i++) {
+			final var lDropDownItem = mItems.get(i);
+			if (lDropDownItem == null)
+				continue;
+			if (lDropDownItem.name.equals(pName)) {
 				mSelectedIndex = i;
 				return;
 			}
@@ -125,8 +125,8 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 	}
 
 	public void setSelectEntry(T pValue) {
-		final int COUNT = mItems.size();
-		for (int i = 0; i < COUNT; i++) {
+		final int lNumDropDownItems = mItems.size();
+		for (int i = 0; i < lNumDropDownItems; i++) {
 			if (mItems.get(i).value.equals(pValue)) {
 				mSelectedIndex = i;
 				return;
@@ -150,9 +150,6 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 		mContentRectangle = new ScrollBarContentRectangle(this);
 		mWindowRectangle = new ScrollBarContentRectangle(this);
 		mScrollBar = new ScrollBar(this, mContentRectangle);
-		mTopEntry = new Rectangle();
-
-		mTextureBatch = new TextureBatchPCT();
 
 		mSelectedIndex = 0;
 
@@ -163,96 +160,71 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 	// --------------------------------------
 
 	@Override
-	public void loadGLContent(ResourceManager pResourceManager) {
-		super.loadGLContent(pResourceManager);
-
-		mTextureBatch.loadGLContent(pResourceManager);
-		mUITexture = pResourceManager.textureManager().textureCore();
-
-	}
-
-	@Override
-	public void unloadGLContent() {
-		super.unloadGLContent();
-
-		mTextureBatch.unloadGLContent();
-		mUITexture = null;
-
-	}
-
-	@Override
 	public boolean handleInput(LintfordCore pCore) {
 		if (mItems == null || mItems.size() == 0 || !mEnabled)
 			return false;
 
 		if (mScrollBar.handleInput(pCore)) {
-
 			// Check if tool tips are enabled.
 			return true;
 
-		} else if (intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().tryAcquireMouseOverThisComponent(hashCode())) {
-			// First check to see if the player clicked the info button
-			if (mShowInfoIcon && mInfoIconDstRectangle.intersectsAA(pCore.HUD().getMouseCameraSpace())) {
-				mToolTipEnabled = true;
-				mToolTipTimer = 1000;
+		}
 
-			} else {
-				if (pCore.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
-
-					// Toggle open/close
-					mOpen = !mOpen;
-
-					mParentLayout.parentScreen().setFocusOn(pCore, this, true);
-
-				}
+		// Handle clicks within the component (including both open and closed states)
+		else if (intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().tryAcquireMouseOverThisComponent(hashCode())) {
+			if (pCore.input().mouse().tryAcquireMouseMiddle((hashCode()))) {
+				mZScrollAcceleration += pCore.input().mouse().mouseWheelYOffset() * 250.0f;
 
 			}
 
-			//
-			// Check if tool tips are enabled.
-			if (mToolTipEnabled) {
-				mToolTipTimer += pCore.appTime().elapsedTimeMilli();
+			if (pCore.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
+				if (mOpen) {
+					final float lUiTextScale = mScreenManager.UiStructureController().uiTextScaleFactor();
 
-			}
+					// TODO: play the menu clicked sound
+					final float lConsoleLineHeight = 25f * lUiTextScale;
+					// Something inside the dropdown was select
+					float lRelativeheight = pCore.HUD().getMouseCameraSpace().y - mWindowRectangle.y() - mScrollYPosition;
 
-			return true;
+					int lRelativeIndex = (int) (lRelativeheight / lConsoleLineHeight);
+					int lSelectedIndex = lRelativeIndex;
 
-			// Check if the content window was clicked
-		} else if (mWindowRectangle.intersectsAA(pCore.HUD().getMouseCameraSpace())) {
+					if (lSelectedIndex < 0)
+						lSelectedIndex = 0;
+					if (lSelectedIndex >= mItems.size())
+						lSelectedIndex = mItems.size() - 1;
 
-			if (pCore.input().mouse().tryAcquireMouseOverThisComponent(hashCode())) {
-				if (pCore.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
-					if (mOpen) {
-						final float lUiTextScale = mScreenManager.UiStructureController().uiTextScaleFactor();
+					mSelectedIndex = lSelectedIndex;
 
-						// TODO: play the menu clicked sound
-						final float lConsoleLineHeight = 25f * lUiTextScale;
-						// Something inside the dropdown was select
-						float lRelativeheight = pCore.HUD().getMouseCameraSpace().y - y - mScrollYPosition;
+					if (mClickListener != null) {
+						mClickListener.menuEntryChanged(this);
+					}
 
-						int lRelativeIndex = (int) (lRelativeheight / lConsoleLineHeight);
-						int lSelectedIndex = lRelativeIndex - 1;
+					mOpen = false;
 
-						if (lSelectedIndex < 0)
-							lSelectedIndex = 0;
-						if (lSelectedIndex >= mItems.size())
-							lSelectedIndex = mItems.size() - 1;
+				} else {
+					// First check to see if the player clicked the info button
+					if (mShowInfoIcon && mInfoIconDstRectangle.intersectsAA(pCore.HUD().getMouseCameraSpace())) {
+						mToolTipEnabled = true;
+						mToolTipTimer = 1000;
 
-						mSelectedIndex = lSelectedIndex;
-
-						if (mClickListener != null) {
-							mClickListener.menuEntryChanged(this);
-						}
+					} else {
+						mOpen = true;
+						mParentLayout.parentScreen().setFocusOn(pCore, this, true);
 
 					}
 
-					// close this window
-					mOpen = false;
+					//
+					// Check if tool tips are enabled.
+					if (mToolTipEnabled) {
+						mToolTipTimer += pCore.appTime().elapsedTimeMilli();
 
-					// mParentLayout.parentScreen().setFocusOn(pCore, this, true);
-					return true;
+					}
 
 				}
+
+				return true;
+
 			}
 
 		} else {
@@ -284,18 +256,32 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 
 		}
 
-		mTopEntry.setCenter(x + w / 2, y, w / 2, h / 2);
-
 		mContentRectangle.set(x, y + mScrollYPosition, w, mItems.size() * 25);
 		if (mOpen) {
 			mWindowRectangle.set(x + w / 2, y + 32, w / 2, OPEN_HEIGHT);
-
+			set(x, y, w, OPEN_HEIGHT + 32.f);
 		} else {
 			mWindowRectangle.set(this);
 			mWindowRectangle.expand(1);
+			//set(x,y,w,h);
 		}
 
 		mScrollBar.update(pCore);
+
+		final var lDeltaTime = (float) pCore.appTime().elapsedTimeSeconds();
+		var lScrollSpeedFactor = mScrollYPosition;
+
+		mZScrollVelocity += mZScrollAcceleration;
+		lScrollSpeedFactor += mZScrollVelocity * lDeltaTime;
+		mZScrollVelocity *= 0.85f;
+		mZScrollAcceleration = 0.0f;
+
+		// Constrain
+		mScrollYPosition = lScrollSpeedFactor;
+		if (mScrollYPosition > 0)
+			mScrollYPosition = 0;
+		if (mScrollYPosition < -(fullContentArea().h() - contentDisplayArea().h()))
+			mScrollYPosition = -(fullContentArea().h() - contentDisplayArea().h());
 
 	}
 
@@ -318,8 +304,9 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 
 		final float lLabelWidth = lFont.bitmap().getStringWidth(mLabel, lUiTextScale);
 		final float lFontHeight = lFont.bitmap().fontHeight() * lUiTextScale;
+		final var lTextureBatch = mParentLayout.parentScreen().rendererManager().uiTextureBatch();
 
-		final float lSingleTextHeight = h;
+		final float lSingleTextHeight = 32f;
 
 		final float lSeparatorHalfWidth = lFont.bitmap().getStringWidth(lSeparator, lUiTextScale) * 0.5f;
 		lFont.begin(pCore.HUD());
@@ -335,10 +322,10 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 			return;
 		}
 
-		MenuEnumEntryItem lSelectItem = mItems.get(mSelectedIndex);
+		final var lSelectedMenuEnumEntryItem = mItems.get(mSelectedIndex);
 
 		// Render the selected item in the 'top spot'
-		final String lCurItem = lSelectItem.name;
+		final String lCurItem = lSelectedMenuEnumEntryItem.name;
 		final float lSelectedTextWidth = lFont.bitmap().getStringWidth(lCurItem);
 		lFont.draw(lCurItem, x + (w / 4 * 3) + -lSelectedTextWidth / 2, y + lSingleTextHeight / 2f - lFontHeight / 2f, mZ, lTextR, lTextG, lTextB, lTextA, lUiTextScale, -1);
 		lFont.end();
@@ -346,9 +333,9 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 		// CONTENT PANE
 
 		if (mOpen) {
-			mTextureBatch.begin(pCore.HUD());
-			mTextureBatch.draw(mUITexture, 0, 0, 32, 32, mWindowRectangle, mZ, 0.f, 0.f, 0.f, 1);
-			mTextureBatch.end();
+			lTextureBatch.begin(pCore.HUD());
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, mWindowRectangle, mZ, 0.f, 0.f, 0.f, 1);
+			lTextureBatch.end();
 
 			lFont.begin(pCore.HUD());
 
@@ -363,20 +350,19 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 			// Make sure we are starting with a fresh stencil buffer
 			GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT); // Clear the stencil buffer
 
-			mTextureBatch.begin(pCore.HUD());
-			mTextureBatch.draw(mUITexture, 32, 0, 32, 32, mWindowRectangle, -8f, 1, 1, 1, 0);
-			mTextureBatch.end();
+			lTextureBatch.begin(pCore.HUD());
+			lTextureBatch.draw(mUITexture, 32, 0, 32, 32, mWindowRectangle, -8f, 1, 1, 1, 0);
+			lTextureBatch.end();
 
 			// Start the stencil buffer test to filter out everything outside of the scroll view
 			GL11.glStencilFunc(GL11.GL_EQUAL, 1, 0xFF); // Pass test if stencil value is 1
 
-			float lYPos = y + mScrollYPosition;
-			lYPos += 32;
+			float lYPos = mWindowRectangle.y() + mScrollYPosition;
 
 			for (int i = 0; i < mItems.size(); i++) {
-				MenuEnumEntryItem lItem = mItems.get(i);
+				final var lItem = mItems.get(i);
 				final float lItemTextWidth = lFont.bitmap().getStringWidth(lItem.name);
-				lFont.draw(lItem.name, x + (w / 4 * 3) - lItemTextWidth / 2, lYPos + lSingleTextHeight / 2 - lFontHeight / 2f, mZ + 0.1f, lTextR, lTextG, lTextB, lTextA, lUiTextScale, -1);
+				lFont.draw(lItem.name, x + (w / 4 * 3) - lItemTextWidth / 2, lYPos, mZ + 0.1f, lTextR, lTextG, lTextB, lTextA, lUiTextScale, -1);
 				lYPos += 25;
 
 			}
@@ -388,25 +374,25 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 		}
 
 		if (mOpen && mScrollBar.areaNeedsScrolling())
-			mScrollBar.draw(pCore, mTextureBatch, mUITexture, -0.1f);
+			mScrollBar.draw(pCore, lTextureBatch, mUITexture, -0.1f);
 
 		// Draw the down arrow
-		mTextureBatch.begin(pCore.HUD());
-		mTextureBatch.draw(mUITexture, 96, 224, 32, 32, right() - 32 - 8f, top(), 32, 32, mZ, 1f, 1f, 1f, 1f);
-		mTextureBatch.end();
+		lTextureBatch.begin(pCore.HUD());
+		lTextureBatch.draw(mUITexture, 96, 224, 32, 32, right() - 32 - 8f, top(), 32, 32, mZ, 1f, 1f, 1f, 1f);
+		lTextureBatch.end();
 
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
-			mTextureBatch.begin(pCore.HUD());
+			lTextureBatch.begin(pCore.HUD());
 			final float ALPHA = 0.3f;
-			mTextureBatch.draw(mUITexture, 0, 0, 32, 32, x, y, w, h, mZ, 1f, 0.2f, 0.2f, ALPHA);
-			mTextureBatch.end();
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, x, y, w, h, mZ, 1f, 0.2f, 0.2f, ALPHA);
+			lTextureBatch.end();
 
 		}
 
 		if (mShowInfoIcon) {
-			mTextureBatch.begin(pCore.HUD());
-			mTextureBatch.draw(mUITexture, 544, 0, 32, 32, mInfoIconDstRectangle, mZ, 1f, 1f, 1f, 1f);
-			mTextureBatch.end();
+			lTextureBatch.begin(pCore.HUD());
+			lTextureBatch.draw(mUITexture, 544, 0, 32, 32, mInfoIconDstRectangle, mZ, 1f, 1f, 1f, 1f);
+			lTextureBatch.end();
 		}
 
 	}
@@ -470,7 +456,6 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 
 	@Override
 	public ScrollBarContentRectangle fullContentArea() {
-		// mContentRectangle.set(x, y, w, mEntries.size() * 25);
 		return mContentRectangle;
 
 	}
