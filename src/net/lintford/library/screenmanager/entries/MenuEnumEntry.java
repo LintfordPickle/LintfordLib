@@ -4,9 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.geometry.Rectangle;
-import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.input.InputManager;
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
@@ -31,7 +29,6 @@ public class MenuEnumEntry extends MenuEntry {
 	private final String mSeparator = " : ";
 	private List<String> mItems;
 	private int mSelectedIndex;
-	private Texture mUITexture;
 	private boolean mEnableScaleTextToWidth;
 
 	private boolean mButtonsEnabled;
@@ -133,22 +130,6 @@ public class MenuEnumEntry extends MenuEntry {
 	// --------------------------------------
 	// Core Methods
 	// --------------------------------------
-
-	@Override
-	public void loadGLContent(ResourceManager pResourceManager) {
-		super.loadGLContent(pResourceManager);
-
-		mUITexture = pResourceManager.textureManager().textureCore();
-
-	}
-
-	@Override
-	public void unloadGLContent() {
-		super.unloadGLContent();
-
-		mUITexture = null;
-
-	}
 
 	@Override
 	public boolean handleInput(LintfordCore pCore) {

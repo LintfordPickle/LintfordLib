@@ -2,8 +2,6 @@ package net.lintford.library.screenmanager.entries;
 
 import net.lintford.library.ConstantsApp;
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.ResourceManager;
-import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.Screen;
 import net.lintford.library.screenmanager.ScreenManager;
@@ -17,8 +15,6 @@ public class MenuLabelEntry extends MenuEntry {
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
-
-	private Texture mUITexture;
 
 	private float mPadding = 15f;
 	private boolean mShow;
@@ -105,22 +101,6 @@ public class MenuLabelEntry extends MenuEntry {
 	// --------------------------------------
 	// Core-Methods
 	// --------------------------------------
-
-	@Override
-	public void loadGLContent(ResourceManager pResourceManager) {
-		super.loadGLContent(pResourceManager);
-
-		mUITexture = pResourceManager.textureManager().textureCore();
-
-	}
-
-	@Override
-	public void unloadGLContent() {
-		super.unloadGLContent();
-
-		mUITexture = null;
-
-	}
 
 	@Override
 	public void updateStructure() {

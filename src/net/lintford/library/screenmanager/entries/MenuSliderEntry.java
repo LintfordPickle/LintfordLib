@@ -2,10 +2,7 @@ package net.lintford.library.screenmanager.entries;
 
 import net.lintford.library.ConstantsApp;
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.geometry.Rectangle;
-import net.lintford.library.core.graphics.textures.Texture;
-import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.core.input.InputManager;
 import net.lintford.library.core.maths.MathHelper;
 import net.lintford.library.screenmanager.MenuEntry;
@@ -24,9 +21,6 @@ public class MenuSliderEntry extends MenuEntry {
 
 	private Rectangle mDownButton;
 	private Rectangle mUpButton;
-
-	private TextureBatchPCT mTextureBatch;
-	private Texture mUITexture;
 
 	private String mLabel;
 	private final String mSeparator = " : ";
@@ -116,8 +110,6 @@ public class MenuSliderEntry extends MenuEntry {
 		mDownButton = new Rectangle(0, 0, 32, 32);
 		mUpButton = new Rectangle(0, 0, 32, 32);
 
-		mTextureBatch = new TextureBatchPCT();
-
 	}
 
 	// --------------------------------------
@@ -125,25 +117,7 @@ public class MenuSliderEntry extends MenuEntry {
 	// --------------------------------------
 
 	@Override
-	public void loadGLContent(ResourceManager pResourceManager) {
-		super.loadGLContent(pResourceManager);
-
-		mTextureBatch.loadGLContent(pResourceManager);
-		mUITexture = pResourceManager.textureManager().textureCore();
-
-	}
-
-	@Override
-	public void unloadGLContent() {
-		super.unloadGLContent();
-
-		mTextureBatch.unloadGLContent();
-
-	}
-
-	@Override
 	public boolean handleInput(LintfordCore pCore) {
-
 		if (mHasFocus) {
 
 		} else {
@@ -229,45 +203,46 @@ public class MenuSliderEntry extends MenuEntry {
 
 	@Override
 	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pParentZDepth) {
-
 		final var lParentScreen = mParentLayout.parentScreen();
 		final var lFont = lParentScreen.font();
 		if (lFont == null)
 			return;
 
+		final var lTextureBatch = mParentLayout.parentScreen().rendererManager().uiTextureBatch();
+
 		final float lUiTextScale = lParentScreen.uiTextScale();
 
 		final float lLabelWidth = lFont.bitmap().getStringWidth(mLabel, lUiTextScale);
 		final float lSeparatorHalfWidth = lFont.bitmap().getStringWidth(mSeparator, lUiTextScale) * 0.5f;
-		final float lLabelHeight = lFont.bitmap().fontHeight();
+		final float lLabelHeight = lFont.bitmap().getStringHeight(mLabel, lUiTextScale);//;
 
-		final float yPos = y + h / 2f - lLabelHeight / 2f;
+		final float yPos = y;// + h / 2f;
 
 		if (mButtonsEnabled) {
 			// Draw the left/right buttons
-			mTextureBatch.begin(pCore.HUD());
+			lTextureBatch.begin(pCore.HUD());
 			final float lArrowButtonSize = 32;
 			final float lArrowButtonPaddingX = mDownButton.w() - lArrowButtonSize;
 
-			mTextureBatch.draw(mUITexture, 0, 224, 32, 32, mDownButton.x() + lArrowButtonPaddingX, yPos, lArrowButtonSize, lArrowButtonSize, mZ, 1f, 1f, 1f, 1f);
-			mTextureBatch.draw(mUITexture, 32, 224, 32, 32, mUpButton.x() + lArrowButtonPaddingX, yPos, lArrowButtonSize, lArrowButtonSize, mZ, 1f, 1f, 1f, 1f);
+			lTextureBatch.draw(mUITexture, 0, 224, 32, 32, mDownButton.x() + lArrowButtonPaddingX, yPos, lArrowButtonSize, lArrowButtonSize, mZ, 1f, 1f, 1f, 1f);
+			lTextureBatch.draw(mUITexture, 32, 224, 32, 32, mUpButton.x() + lArrowButtonPaddingX, yPos, lArrowButtonSize, lArrowButtonSize, mZ, 1f, 1f, 1f, 1f);
 
-			mTextureBatch.end();
+			lTextureBatch.end();
 		}
 
 		// Draw the slider bar and caret
-		mTextureBatch.begin(pCore.HUD());
+		lTextureBatch.begin(pCore.HUD());
 
 		final float lCaretPos = MathHelper.scaleToRange(mValue, mLowerBound, mUpperBound, mBarPosX, mBarWidth - 32);
 
-		mTextureBatch.draw(mUITexture, 0, 192, 32, 32, mBarPosX, yPos, 32, 32, mZ, 1f, 1f, 1f, 1f);
-		mTextureBatch.draw(mUITexture, 32, 192, 32, 32, mBarPosX + 32, yPos, mBarWidth - 64 - 32, 32, mZ, 1f, 1f, 1f, 1f);
-		mTextureBatch.draw(mUITexture, 64, 192, 32, 32, mBarPosX + mBarWidth - 64, yPos, 32, 32, mZ, 1f, 1f, 1f, 1f);
+		lTextureBatch.draw(mUITexture, 0, 192, 32, 32, mBarPosX, yPos, 32, 32, mZ, 1f, 1f, 1f, 1f);
+		lTextureBatch.draw(mUITexture, 32, 192, 32, 32, mBarPosX + 32, yPos, mBarWidth - 64 - 32, 32, mZ, 1f, 1f, 1f, 1f);
+		lTextureBatch.draw(mUITexture, 64, 192, 32, 32, mBarPosX + mBarWidth - 64, yPos, 32, 32, mZ, 1f, 1f, 1f, 1f);
 
 		// Draw the caret
-		mTextureBatch.draw(mUITexture, 192, 192, 32, 32, lCaretPos, yPos, 32, 32, mZ, 1f, 1f, 1f, 1f);
+		lTextureBatch.draw(mUITexture, 192, 192, 32, 32, lCaretPos, yPos, 32, 32, mZ, 1f, 1f, 1f, 1f);
 
-		mTextureBatch.end();
+		lTextureBatch.end();
 
 		// draw the label to the left and the value //
 		lFont.begin(pCore.HUD());
@@ -276,9 +251,7 @@ public class MenuSliderEntry extends MenuEntry {
 		lFont.draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2f - lLabelHeight / 2f, pParentZDepth, lParentScreen.r(), lParentScreen.g(), lParentScreen.b(), lParentScreen.a(), lUiTextScale, -1);
 
 		if (mShowValueEnabled) {
-			float valueWith = lFont.bitmap().getStringWidth("" + mValue);
-			float lowerWith = lFont.bitmap().getStringWidth("" + mLowerBound);
-			float upperWith = lFont.bitmap().getStringWidth("" + mUpperBound);
+			final float lValueStringWidth = lFont.bitmap().getStringWidth(Integer.toString(mValue), lUiTextScale);
 
 			String lValueString = String.valueOf(mValue);
 			if (mShowUnit && mUnit != null && lValueString.length() > 0) {
@@ -286,26 +259,34 @@ public class MenuSliderEntry extends MenuEntry {
 			}
 
 			final float lLabelOffset = 0;
-			if (mShowGuideValuesEnabled)
-				lFont.draw("" + mLowerBound, mBarPosX - lowerWith / 2 + 16, y + lLabelOffset, mZ, 1f);
-			lFont.draw("" + lValueString, mBarPosX + mBarWidth / 2.f - valueWith / 2, y + lLabelOffset, mZ, 1f);
-			if (mShowGuideValuesEnabled)
-				lFont.draw("" + mUpperBound, mBarPosX + mBarWidth - upperWith / 2 - 48, y + lLabelOffset, mZ, 1f);
+			if (mShowGuideValuesEnabled) {
+				final float lLowerBoundStringWidth = lFont.bitmap().getStringWidth(Integer.toString(mLowerBound));
+				lFont.draw(Integer.toString(mLowerBound), mBarPosX - lLowerBoundStringWidth / 2 + 16, y + lLabelOffset, mZ, 1f);
+			}
+
+			final float endPositionX = lCaretPos + 128.f + lValueStringWidth;
+			final float lValueStringPositionX = endPositionX > mBarPosX + mBarWidth ? lCaretPos - 64.f : lCaretPos + 32f;
+			lFont.draw(lValueString, lValueStringPositionX, y + h * .5f - lLabelHeight * .5f, mZ, lUiTextScale);
+
+			if (mShowGuideValuesEnabled) {
+				final float lUpperBoundStringWidth = lFont.bitmap().getStringWidth(Integer.toString(mUpperBound));
+				lFont.draw(Integer.toString(mUpperBound), mBarPosX + mBarWidth - lUpperBoundStringWidth / 2 - 48, y + lLabelOffset, mZ, 1f);
+			}
 		}
 
 		lFont.end();
 
 		if (mShowInfoIcon) {
-			mTextureBatch.begin(pCore.HUD());
-			mTextureBatch.draw(mUITexture, 192, 160, 32, 32, mInfoIconDstRectangle, mZ, 1f, 1f, 1f, 1f);
-			mTextureBatch.end();
+			lTextureBatch.begin(pCore.HUD());
+			lTextureBatch.draw(mUITexture, 192, 160, 32, 32, mInfoIconDstRectangle, mZ, 1f, 1f, 1f, 1f);
+			lTextureBatch.end();
 		}
 
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
-			mTextureBatch.begin(pCore.HUD());
-			final float ALPHA = 0.3f;
-			mTextureBatch.draw(mUITexture, 0, 0, 32, 32, x, y, w, h, mZ, 1f, 0.2f, 0.2f, ALPHA);
-			mTextureBatch.end();
+			lTextureBatch.begin(pCore.HUD());
+			final float lStringAlpha = 0.3f;
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, x, y, w, h, mZ, 1f, 0.2f, 0.2f, lStringAlpha);
+			lTextureBatch.end();
 
 		}
 

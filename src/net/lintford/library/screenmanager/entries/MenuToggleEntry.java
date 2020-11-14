@@ -2,7 +2,6 @@ package net.lintford.library.screenmanager.entries;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
-import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.input.InputManager;
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
@@ -23,7 +22,6 @@ public class MenuToggleEntry extends MenuEntry {
 	// Variables
 	// --------------------------------------
 
-	private Texture mUITexture;
 	private boolean mIsChecked;
 	private final String mSeparator = " : ";
 

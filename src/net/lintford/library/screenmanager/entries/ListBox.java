@@ -7,9 +7,7 @@ import org.lwjgl.opengl.GL11;
 
 import net.lintford.library.ConstantsApp;
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.geometry.Rectangle;
-import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.input.InputManager;
 import net.lintford.library.core.maths.Vector2f;
 import net.lintford.library.renderers.windows.components.IScrollBarArea;
@@ -43,11 +41,10 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 	// --------------------------------------
 
 	protected List<ListBoxItem> mItems;
-	protected Texture mUITexture;
+	protected ScrollBarContentRectangle mContentArea;
 	protected ScrollBar mScrollBar;
 	protected float mZScrollAcceleration;
 	protected float mZScrollVelocity;
-	protected ScrollBarContentRectangle mContentArea;
 	protected float mYScrollPos;
 
 	protected float mLastMouseYPos;
@@ -136,24 +133,6 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 	// --------------------------------------
 	// Core-Methods
 	// --------------------------------------
-
-	@Override
-	public void initialize() {
-		// TODO Auto-generated method stub
-		super.initialize();
-	}
-
-	@Override
-	public void loadGLContent(ResourceManager pResourceManager) {
-		mUITexture = pResourceManager.textureManager().textureCore();
-
-	}
-
-	@Override
-	public void unloadGLContent() {
-		mUITexture = null;
-
-	}
 
 	@Override
 	public boolean handleInput(LintfordCore pCore) {

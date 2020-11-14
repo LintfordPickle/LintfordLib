@@ -1,9 +1,7 @@
 package net.lintford.library.screenmanager.entries;
 
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.graphics.ColorConstants;
-import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.Screen;
@@ -28,7 +26,6 @@ public class MenuButtonEntry extends MenuEntry {
 	private String mButtonLabel;
 	private boolean mButtonEnabled;
 	private boolean mIsMouseOver;
-	private Texture mUITexture;
 
 	// --------------------------------------
 	// Properties
@@ -100,22 +97,6 @@ public class MenuButtonEntry extends MenuEntry {
 	// --------------------------------------
 	// Core Methods
 	// --------------------------------------
-
-	@Override
-	public void loadGLContent(ResourceManager pResourceManager) {
-		super.loadGLContent(pResourceManager);
-
-		mUITexture = pResourceManager.textureManager().textureCore();
-
-	}
-
-	@Override
-	public void unloadGLContent() {
-		super.unloadGLContent();
-
-		mUITexture = null;
-
-	}
 
 	@Override
 	public boolean handleInput(LintfordCore pCore) {

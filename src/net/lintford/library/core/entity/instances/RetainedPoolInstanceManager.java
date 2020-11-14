@@ -67,6 +67,9 @@ public abstract class RetainedPoolInstanceManager<T extends RetainedPooledBaseDa
 	}
 
 	public void returnPooledItem(T pReturnedItem) {
+		if (mPooledItems == null)
+			mPooledItems = new ArrayList<>();
+
 		if (!mPooledItems.contains(pReturnedItem)) {
 			mPooledItems.add(pReturnedItem);
 		}
