@@ -246,11 +246,11 @@ public class MenuSliderEntry extends MenuEntry {
 		if (mButtonsEnabled) {
 			// Draw the left/right buttons
 			mTextureBatch.begin(pCore.HUD());
-			final float ARROW_BUTTON_SIZE = 32;
-			final float ARROW_PADDING_X = mDownButton.w() - ARROW_BUTTON_SIZE;
+			final float lArrowButtonSize = 32;
+			final float lArrowButtonPaddingX = mDownButton.w() - lArrowButtonSize;
 
-			mTextureBatch.draw(mUITexture, 0, 224, 32, 32, mDownButton.x() + ARROW_PADDING_X, yPos - 7, ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, mZ, 1f, 1f, 1f, 1f);
-			mTextureBatch.draw(mUITexture, 32, 224, 32, 32, mUpButton.x() + ARROW_PADDING_X, yPos - 7, ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, mZ, 1f, 1f, 1f, 1f);
+			mTextureBatch.draw(mUITexture, 0, 224, 32, 32, mDownButton.x() + lArrowButtonPaddingX, yPos, lArrowButtonSize, lArrowButtonSize, mZ, 1f, 1f, 1f, 1f);
+			mTextureBatch.draw(mUITexture, 32, 224, 32, 32, mUpButton.x() + lArrowButtonPaddingX, yPos, lArrowButtonSize, lArrowButtonSize, mZ, 1f, 1f, 1f, 1f);
 
 			mTextureBatch.end();
 		}

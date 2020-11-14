@@ -85,6 +85,7 @@ public class AWTBitmapFontSpriteBatch extends TextureBatchPCT {
 		float lPosX = pX;
 		float lPosY = pY;
 		float lWrapWidth = 0;
+		boolean lJustWrapped = false;
 
 		final int lTextLength = pCapWidth == NO_WIDTH_CAP ? pText.length() : Math.min(pCapWidth, pText.length());
 
@@ -127,19 +128,24 @@ public class AWTBitmapFontSpriteBatch extends TextureBatchPCT {
 							lPosY += temp;
 							lPosX = pX;
 							lWrapWidth = 0;
+							lJustWrapped = true;
 						}
 					}
 				}
 			}
 
-			// don't render the first space after a word wrap
 			if (ch == ' ' && mTrimText && lPosX == pX && lPosY > pY) {
-				// Glyph lCharGlyph = mBitmapFont.glyphs().get(ch);
-				// lPosX += lCharGlyph.width * pScale;
+				Glyph lCharGlyph = mBitmapFont.glyphs().get(ch);
+				lPosX += lCharGlyph.width * pScale;
 				continue;
 			}
 
-			Glyph lCharGlyph = mBitmapFont.glyphs().get(ch);
+			if (lJustWrapped && ch == ' ') {
+				lJustWrapped = false;
+				continue;
+			}
+
+			final var lCharGlyph = mBitmapFont.glyphs().get(ch);
 
 			if (lCharGlyph != null) {
 				if (mDrawShadow)

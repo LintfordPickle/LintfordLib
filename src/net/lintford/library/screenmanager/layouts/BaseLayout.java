@@ -472,14 +472,14 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 
 	/** Updates the focus of all {@link MenuEntry}s in this layout, based on the current {@link InputManager}. */
 	public void updateFocusOfAll(LintfordCore pCore) {
-		final var lIsMouseOverThisComponent = pCore.input().mouse().tryAcquireMouseOverThisComponent(hashCode());
-
 		final var lCount = menuEntries().size();
 		for (int i = 0; i < lCount; i++) {
 			final var lMenuEntry = menuEntries().get(i);
+			final boolean lIsTheMouseOverThisComponent = lMenuEntry.intersectsAA(pCore.HUD().getMouseCameraSpace());
+			final boolean lDoesThisComponentOwnTheMouse = pCore.input().mouse().isMouseOverThisComponent(lMenuEntry.hashCode());
 
 			// Update the hovered over status (needed to disable hovering on entries)
-			if (lIsMouseOverThisComponent && lMenuEntry.intersectsAA(pCore.HUD().getMouseCameraSpace())) {
+			if (lDoesThisComponentOwnTheMouse || lIsTheMouseOverThisComponent) {
 				lMenuEntry.hoveredOver(true);
 
 			} else {
@@ -490,7 +490,7 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 			// Update the focus of entries where the mouse is clicked in other areas (other than any one specific entry).
 
 			if (pCore.input().mouse().isMouseLeftButtonDown()) {
-				if (lIsMouseOverThisComponent && lMenuEntry.intersectsAA(pCore.HUD().getMouseCameraSpace())) {
+				if (lDoesThisComponentOwnTheMouse && lIsTheMouseOverThisComponent) {
 					lMenuEntry.hasFocus(true);
 
 				} else {

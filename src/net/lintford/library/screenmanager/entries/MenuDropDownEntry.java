@@ -7,6 +7,7 @@ import org.lwjgl.opengl.GL11;
 
 import net.lintford.library.ConstantsApp;
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.input.InputManager;
 import net.lintford.library.renderers.ZLayers;
@@ -164,8 +165,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 		if (mItems == null || mItems.size() == 0 || !mEnabled)
 			return false;
 
-		if (mScrollBar.handleInput(pCore)) {
-			// Check if tool tips are enabled.
+		if (mOpen && mScrollBar.handleInput(pCore)) {
 			return true;
 
 		}
@@ -381,11 +381,13 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 		lTextureBatch.draw(mUITexture, 96, 224, 32, 32, right() - 32 - 8f, top(), 32, 32, mZ, 1f, 1f, 1f, 1f);
 		lTextureBatch.end();
 
-		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
+		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", true)) {
 			lTextureBatch.begin(pCore.HUD());
 			final float ALPHA = 0.3f;
 			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, x, y, w, h, mZ, 1f, 0.2f, 0.2f, ALPHA);
 			lTextureBatch.end();
+
+			Debug.debugManager().drawers().drawRectImmediate(pCore.HUD(), this, 1.f, 0.f, 0.f);
 
 		}
 
