@@ -290,12 +290,10 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 		if (mButtonsEnabled) {
 			// Draw the left/right buttons
 			lTextureBatch.begin(pCore.HUD());
-			final float ARROW_BUTTON_SIZE = 32;
-			final float ARROW_PADDING_X = mLeftButtonRectangle.w() - ARROW_BUTTON_SIZE;
-			final float ARROW_PADDING_Y = mLeftButtonRectangle.h() - ARROW_BUTTON_SIZE;
+			final float lButtonSize = 32; // Fixme: Store this somewhere more central and accessable
 
-			lTextureBatch.draw(mUITexture, 0, 224, 32, 32, mLeftButtonRectangle.x() + ARROW_PADDING_X, mLeftButtonRectangle.y() + ARROW_PADDING_Y, ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, mZ, 1f, 1f, 1f, lAlpha);
-			lTextureBatch.draw(mUITexture, 32, 224, 32, 32, mRightButtonRectangle.x() + ARROW_PADDING_X, mRightButtonRectangle.y() + ARROW_PADDING_Y, ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, mZ, 1f, 1f, 1f, lAlpha);
+			lTextureBatch.draw(mUITexture, 0, 224, 32, 32, mLeftButtonRectangle.x(), mLeftButtonRectangle.y(), lButtonSize, lButtonSize, mZ, 1f, 1f, 1f, lAlpha);
+			lTextureBatch.draw(mUITexture, 32, 224, 32, 32, mRightButtonRectangle.x(), mRightButtonRectangle.y(), lButtonSize, lButtonSize, mZ, 1f, 1f, 1f, lAlpha);
 
 			lTextureBatch.end();
 

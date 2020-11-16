@@ -216,6 +216,7 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 		// If the current settings are dirty then show a dialog to ask for confirmation (of losing changes) before leaving
 		if (modifiedVideoConfig.isDifferent(currentVideoConfig)) {
 			mConfirmationDialog = new ConfirmationDialog(screenManager, this, "You have some changes which have not been applied, are you sure you want to go back?");
+			mConfirmationDialog.drawWarningIcon(true);
 			mConfirmationDialog.dialogTitle("Unsaved Changes");
 			mConfirmationDialog.confirmEntry().entryText("Okay");
 			mConfirmationDialog.confirmEntry().registerClickListener(this, ConfirmationDialog.BUTTON_CONFIRM_YES);

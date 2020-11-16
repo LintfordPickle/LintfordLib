@@ -120,9 +120,6 @@ public class MenuEnumEntry extends MenuEntry {
 		mHighlightOnHover = false;
 		mDrawBackground = false;
 
-		mTopMargin = 10f;
-		mBottomMargin = 10f;
-
 		mEnableScaleTextToWidth = true;
 
 	}
@@ -243,7 +240,7 @@ public class MenuEnumEntry extends MenuEntry {
 		final var lFont = lParentScreen.font();
 		if (lFont == null)
 			return;
-		
+
 		final float lR = lParentScreen.r();
 		final float lG = lParentScreen.g();
 		final float lB = lParentScreen.b();

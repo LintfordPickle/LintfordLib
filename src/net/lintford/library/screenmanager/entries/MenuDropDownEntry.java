@@ -324,7 +324,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 			lTextureBatch.end();
 
 		}
-		
+
 		if (mItems == null || mItems.size() == 0) {
 			// LOCALIZATION: No entries added to dropdown list
 			final String lNoEntriesText = "No items found";
@@ -389,7 +389,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 
 		// Draw the down arrow
 		lTextureBatch.begin(pCore.HUD());
-		lTextureBatch.draw(mUITexture, 96, 224, 32, 32, right() - 32 - 8f, top(), 32, 32, mZ, 1f, 1f, 1f, 1f);
+		lTextureBatch.draw(mUITexture, 96, 224, 32, 32, right() - 32, top(), 32, 32, mZ, 1f, 1f, 1f, 1f);
 		lTextureBatch.end();
 
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {

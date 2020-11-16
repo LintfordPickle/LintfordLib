@@ -29,11 +29,26 @@ public abstract class BaseDialog extends MenuScreen {
 	protected boolean mDrawBackground;
 	protected boolean mDarkenBackground;
 
+	protected boolean mDrawInfoIcon;
+	protected boolean mDrawWarningIcon;
+
 	protected Texture mUITexture;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public void drawInfoIcon(boolean pNewValue) {
+		if (pNewValue)
+			mDrawWarningIcon = false;
+		mDrawInfoIcon = pNewValue;
+	}
+
+	public void drawWarningIcon(boolean pNewValue) {
+		if (pNewValue)
+			mDrawInfoIcon = false;
+		mDrawWarningIcon = pNewValue;
+	}
 
 	public boolean drawBackground() {
 		return mDrawBackground;
@@ -175,6 +190,24 @@ public abstract class BaseDialog extends MenuScreen {
 
 		}
 
+		if (mDrawInfoIcon) {
+			final float x = -DIALOG_WIDTH / 2;
+			final float y = -DIALOG_HEIGHT / 2;
+
+			lTextureBatch.begin(pCore.HUD());
+			lTextureBatch.draw(mUITexture, 352, 0, 64, 64, x + 15.f, y + 15.f, 64, 64, ZDEPTH, 1, 1, 1, 1.f);
+			lTextureBatch.end();
+		}
+
+		if (mDrawWarningIcon) {
+			final float x = -DIALOG_WIDTH / 2;
+			final float y = -DIALOG_HEIGHT / 2;
+
+			lTextureBatch.begin(pCore.HUD());
+			lTextureBatch.draw(mUITexture, 416, 0, 64, 64, x + 15.f, y + 15.f, 64, 64, ZDEPTH, 1, 1, 1, 1.f);
+			lTextureBatch.end();
+		}
+
 		final float lHeaderFontHeight = mMenuHeaderFont.bitmap().fontHeight();
 
 		/* Render title and message */
@@ -186,7 +219,8 @@ public abstract class BaseDialog extends MenuScreen {
 		if (mMenuTitle != null && mMenuTitle.length() > 0) {
 			mMenuHeaderFont.drawShadow(true);
 			mMenuHeaderFont.begin(pCore.HUD());
-			mMenuHeaderFont.draw(mMenuTitle, -DIALOG_WIDTH / 2f + TEXT_HORIZONTAL_PADDING, -DIALOG_HEIGHT / 2f + TEXT_HORIZONTAL_PADDING, ZDEPTH, mR, mG, mB, mA, 0.65f);
+			final float lHorizontalOffsetX = mDrawInfoIcon || mDrawWarningIcon ? 74.f : 0.f;
+			mMenuHeaderFont.draw(mMenuTitle, -DIALOG_WIDTH / 2f + TEXT_HORIZONTAL_PADDING + lHorizontalOffsetX, -DIALOG_HEIGHT / 2f + TEXT_HORIZONTAL_PADDING, ZDEPTH, mR, mG, mB, mA, 0.65f);
 			mMenuHeaderFont.end();
 
 		}

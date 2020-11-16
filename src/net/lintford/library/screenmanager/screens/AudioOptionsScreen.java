@@ -102,6 +102,7 @@ public class AudioOptionsScreen extends MenuScreen {
 
 		MenuEntry lSeparator = new MenuEntry(screenManager, lLayout, "");
 		lSeparator.enabled(false);
+		lSeparator.active(false);
 		lSeparator.drawButtonBackground(false);
 
 		mMasterEnabledEntry = new MenuToggleEntry(screenManager, lLayout);

@@ -183,6 +183,19 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 		if (mEnableScaleTextToWidth && w * 0.4f < lLabelTextWidth && lLabelTextWidth > 0)
 			lAdjustedLabelScaleW = (w * 0.4f) / lLabelTextWidth;
 
+		if (mHoveredOver) {
+			final float lHoveredColorHighlightR = 204.f / 255.f;
+			final float lHoveredColorHighlightG = 115.f / 255.f;
+			final float lHoveredColorHighlightB = 102.f / 255.f;
+
+			lTextureBatch.begin(pCore.HUD());
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() - w / 2, centerY() - h / 2, 32, h, mZ, lHoveredColorHighlightR, lHoveredColorHighlightG, lHoveredColorHighlightB, 0.26f);
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() - (w / 2) + 32, centerY() - h / 2, w - 64, h, mZ, lHoveredColorHighlightR, lHoveredColorHighlightG, lHoveredColorHighlightB, 0.26f);
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() + (w / 2) - 32, centerY() - h / 2, 32, h, mZ, lHoveredColorHighlightR, lHoveredColorHighlightG, lHoveredColorHighlightB, 0.26f);
+			lTextureBatch.end();
+
+		}
+
 		final float lLabelTextHeight = lFont.bitmap().fontHeight() * lAdjustedLabelScaleW;
 
 		final float lSeparatorHalfWidth = lFont.bitmap().getStringWidth(mSeparator, lUiTextScale) * 0.5f;

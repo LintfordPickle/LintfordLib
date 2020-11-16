@@ -181,7 +181,7 @@ public class MenuToggleEntry extends MenuEntry {
 
 		// Render the check box (either ticked or empty)
 		if (mIsChecked)
-			lTextureBatch.draw(mUITexture, 64, 128, 32, 32, centerX() + TILE_SIZE / 2, y + h / 2 - TILE_SIZE / 2, TILE_SIZE, TILE_SIZE, mZ, 1f, 1f, 1f, lParentScreenAlpha);
+			lTextureBatch.draw(mUITexture, 64, 128, 32, 32, x + w / 2 + 16, y + h / 2 - TILE_SIZE / 2, TILE_SIZE, TILE_SIZE, mZ, 1f, 1f, 1f, lParentScreenAlpha);
 		else
 			lTextureBatch.draw(mUITexture, 32, 128, 32, 32, centerX() + TILE_SIZE / 2, y + h / 2 - TILE_SIZE / 2, TILE_SIZE, TILE_SIZE, mZ, 1f, 1f, 1f, lParentScreenAlpha);
 
