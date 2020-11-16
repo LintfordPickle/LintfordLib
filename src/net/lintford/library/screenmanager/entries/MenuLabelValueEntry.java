@@ -118,7 +118,7 @@ public class MenuLabelValueEntry extends MenuEntry {
 		// TODO: This -50 is because of the scrollbar - this is why I needed to keep the padding :(
 		w = Math.min(mParentLayout.w() - 50f, mMaxWidth);
 
-		final var lParentScreen = mParentLayout.parentScreen();
+		final var lParentScreen = mParentLayout.parentScreen;
 		final var lFont = lParentScreen.font();
 
 		if (lFont == null)
@@ -135,7 +135,7 @@ public class MenuLabelValueEntry extends MenuEntry {
 		if (!enabled())
 			return;
 
-		final var lParentScreen = mParentLayout.parentScreen();
+		final var lParentScreen = mParentLayout.parentScreen;
 		final var lFont = lParentScreen.font();
 
 		if (lFont == null)
@@ -147,7 +147,7 @@ public class MenuLabelValueEntry extends MenuEntry {
 		final float lLabelWidth = lFont.bitmap().getStringWidth(mText, luiTextScale);
 		final float lFontHeight = lFont.bitmap().fontHeight() * luiTextScale;
 
-		final var lTextureBatch = lParentScreen.rendererManager().uiTextureBatch();
+		final var lTextureBatch = lParentScreen.textureBatch();
 
 		if (mDrawBackground) {
 			lTextureBatch.begin(pCore.HUD());

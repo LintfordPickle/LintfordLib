@@ -4,7 +4,6 @@ import net.lintford.library.ConstantsApp;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.Debug;
-import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.screenmanager.Screen;
 import net.lintford.library.screenmanager.ScreenManager;
@@ -94,9 +93,8 @@ public class LabelValueListBoxItem extends ListBoxItem {
 			if (mTextValue == null)
 				mTextValue = "";
 
-			float lScale = 1.0f;// mScreenManager.UIHUDController().uiTextScaleFactor();
-
-			final FontUnit lFont = mParentListBox.parentLayout().parentScreen().font();
+			final float lScale = mScreenManager.UiStructureController().uiTextScaleFactor();
+			final var lFont = mParentListBox.parentLayout().parentScreen.font();
 
 			h = 10;
 			mR = mG = mB = mA = 1;
@@ -104,7 +102,7 @@ public class LabelValueListBoxItem extends ListBoxItem {
 			// Draw profile information
 			lFont.begin(pCore.HUD());
 			lFont.draw(mLabelValue, x, y, pParentZDepth + .1f, mR, mG, mB, mA, lScale, -1);
-			lFont.draw(mTextValue, x + w/2, y, pParentZDepth + .1f, mR, mG, mB, mA, lScale, -1);
+			lFont.draw(mTextValue, x + w / 2, y, pParentZDepth + .1f, mR, mG, mB, mA, lScale, -1);
 			lFont.end();
 
 		}

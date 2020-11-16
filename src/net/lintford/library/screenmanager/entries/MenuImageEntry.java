@@ -2,7 +2,6 @@ package net.lintford.library.screenmanager.entries;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
-import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
@@ -190,8 +189,9 @@ public class MenuImageEntry extends MenuEntry {
 	@Override
 	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pParentZDepth) {
 
-		final var lParentScreen = mParentLayout.parentScreen();
-		final var lTextureBatch = lParentScreen.rendererManager().uiTextureBatch();
+		final var lParentScreen = mParentLayout.parentScreen;
+		final var lRendererManager = lParentScreen.rendererManager;
+		final var lTextureBatch = lParentScreen.textureBatch();
 
 		lTextureBatch.begin(pCore.HUD());
 
@@ -202,7 +202,7 @@ public class MenuImageEntry extends MenuEntry {
 			lTextureBatch.draw(mMainTexture, 0, 0, lTextureWidth, lTextureHeight, x, y, mFittedWidth, mFittedHeight, pParentZDepth + .1f, 1f, 1f, 1f, 1f);
 
 		} else if (mShowMissingTextureText) {
-			final FontUnit lFontUnit = lParentScreen.rendererManager().textFont();
+			final var lFontUnit = lRendererManager.textFont();
 
 			final float lTextWidth = lFontUnit.bitmap().getStringWidth(mMissingTextureText);
 

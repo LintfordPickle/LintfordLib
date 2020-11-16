@@ -8,8 +8,6 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.geometry.Rectangle;
-import net.lintford.library.core.graphics.textures.Texture;
-import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.core.input.InputManager;
 import net.lintford.library.renderers.ZLayers;
 import net.lintford.library.renderers.windows.components.IScrollBarArea;
@@ -17,6 +15,7 @@ import net.lintford.library.renderers.windows.components.ScrollBar;
 import net.lintford.library.renderers.windows.components.ScrollBarContentRectangle;
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
+import net.lintford.library.screenmanager.ScreenManager;
 import net.lintford.library.screenmanager.ScreenManagerConstants.FILLTYPE;
 import net.lintford.library.screenmanager.ScreenManagerConstants.LAYOUT_WIDTH;
 
@@ -36,14 +35,12 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 	protected LAYOUT_WIDTH mLayoutWidth = LAYOUT_WIDTH.THREEQUARTER;
 	protected FILLTYPE mLayoutFillType = FILLTYPE.FILL_CONTAINER;
 
-	protected MenuScreen mParentScreen;
+	public final ScreenManager screenManager;
+	public final MenuScreen parentScreen;
+
 	protected List<MenuEntry> mMenuEntries;
 	protected int mSelectedEntry = 0;
 	protected int mNumberEntries;
-
-	// FIXME: Don't create a new Texture
-	protected TextureBatchPCT mTextureBatch;
-	protected Texture mUITexture;
 
 	protected boolean mDrawBackground;
 	protected float mR, mG, mB, mA = 1;
@@ -53,6 +50,11 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 	protected float mBottomMargin;
 	protected float mLeftMargin;
 	protected float mRightMargin;
+
+	protected float mTopPadding;
+	protected float mBottomPadding;
+	protected float mLeftPadding;
+	protected float mRightPadding;
 
 	protected float mMinWidth;
 	protected float mMaxWidth = -1; // inactive
@@ -136,10 +138,6 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 
 	}
 
-	public MenuScreen parentScreen() {
-		return mParentScreen;
-	}
-
 	public void setDrawBackground(boolean pEnabled, float pR, float pG, float pB, float pA) {
 		mDrawBackground = pEnabled;
 		mR = pR;
@@ -185,6 +183,38 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 		mBottomMargin = pNewValue;
 	}
 
+	public float paddingLeft() {
+		return mLeftPadding;
+	}
+
+	public float paddingRight() {
+		return mRightPadding;
+	}
+
+	public float paddingTop() {
+		return mTopPadding;
+	}
+
+	public float paddingBottom() {
+		return mBottomPadding;
+	}
+
+	public void paddingLeft(float pNewValue) {
+		mLeftPadding = pNewValue;
+	}
+
+	public void paddingRight(float pNewValue) {
+		mRightPadding = pNewValue;
+	}
+
+	public void paddingTop(float pNewValue) {
+		mTopPadding = pNewValue;
+	}
+
+	public void paddingBottom(float pNewValue) {
+		mBottomPadding = pNewValue;
+	}
+
 	/** @returns A list of menu entries so derived classes can change the menu contents. */
 	public List<MenuEntry> menuEntries() {
 		return mMenuEntries;
@@ -223,10 +253,10 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 	public BaseLayout(MenuScreen pParentScreen) {
 		super();
 
-		mParentScreen = pParentScreen;
+		screenManager = pParentScreen.screenManager;
+		parentScreen = pParentScreen;
 		mMenuEntries = new ArrayList<>();
 
-		mTextureBatch = new TextureBatchPCT();
 		mEnabled = true;
 		mVisible = true;
 
@@ -234,6 +264,11 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 		mBottomMargin = 10f;
 		mLeftMargin = 5f;
 		mRightMargin = 5f;
+
+		mTopPadding = 5.f;
+		mBottomPadding = 5.f;
+		mLeftPadding = 1.f;
+		mRightPadding = 1.f;
 
 		mMinWidth = 100f;
 		mMinHeight = 10f;
@@ -271,9 +306,6 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 			mMenuEntries.get(i).loadGLContent(pResourceManager);
 		}
 
-		mTextureBatch.loadGLContent(pResourceManager);
-		mUITexture = pResourceManager.textureManager().textureCore();
-
 		mIsLoaded = true;
 
 	}
@@ -283,8 +315,6 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 		for (int i = 0; i < lCount; i++) {
 			mMenuEntries.get(i).unloadGLContent();
 		}
-
-		mTextureBatch.unloadGLContent();
 
 		mIsLoaded = false;
 
@@ -325,8 +355,8 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 	public void update(LintfordCore pCore) {
 		final int lCount = mMenuEntries.size();
 		for (int i = 0; i < lCount; i++) {
-			boolean lIsSelected = mParentScreen.isActive() && (i == mSelectedEntry);
-			mMenuEntries.get(i).update(pCore, mParentScreen, lIsSelected);
+			boolean lIsSelected = parentScreen.isActive() && (i == mSelectedEntry);
+			mMenuEntries.get(i).update(pCore, parentScreen, lIsSelected);
 
 		}
 
@@ -352,6 +382,7 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 			}
 
 			mScrollBar.update(pCore);
+
 		}
 
 	}
@@ -360,29 +391,32 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 		if (!mEnabled || !mVisible)
 			return;
 
+		final var lTextureBatch = parentScreen.textureBatch();
+		final var lUiTexture = pCore.resources().textureManager().textureCore();
+
 		if (mDrawBackground) {
 			if (h < 64) {
-				mTextureBatch.begin(pCore.HUD());
+				lTextureBatch.begin(pCore.HUD());
 				final float lAlpha = 0.8f;
-				mTextureBatch.draw(mUITexture, 0, 0, 32, 32, x, y, w, h, pComponentDepth, 0.1f, 0.1f, 0.1f, lAlpha);
-				mTextureBatch.end();
+				lTextureBatch.draw(lUiTexture, 0, 0, 32, 32, x, y, w, h, pComponentDepth, 0.1f, 0.1f, 0.1f, lAlpha);
+				lTextureBatch.end();
 
 			} else {
 				final float TILE_SIZE = 32;
 
-				mTextureBatch.begin(pCore.HUD());
-				mTextureBatch.draw(mUITexture, 256, 0, 32, 32, x, y, TILE_SIZE, TILE_SIZE, pComponentDepth, mR, mG, mB, mA);
-				mTextureBatch.draw(mUITexture, 288, 0, 32, 32, x + TILE_SIZE, y, w - TILE_SIZE * 2, TILE_SIZE, pComponentDepth, mR, mG, mB, mA);
-				mTextureBatch.draw(mUITexture, 320, 0, 32, 32, x + w - TILE_SIZE, y, TILE_SIZE, TILE_SIZE, pComponentDepth, mR, mG, mB, mA);
+				lTextureBatch.begin(pCore.HUD());
+				lTextureBatch.draw(lUiTexture, 256, 0, 32, 32, x, y, TILE_SIZE, TILE_SIZE, pComponentDepth, mR, mG, mB, mA);
+				lTextureBatch.draw(lUiTexture, 288, 0, 32, 32, x + TILE_SIZE, y, w - TILE_SIZE * 2, TILE_SIZE, pComponentDepth, mR, mG, mB, mA);
+				lTextureBatch.draw(lUiTexture, 320, 0, 32, 32, x + w - TILE_SIZE, y, TILE_SIZE, TILE_SIZE, pComponentDepth, mR, mG, mB, mA);
 
-				mTextureBatch.draw(mUITexture, 256, 32, 32, 32, x, y + TILE_SIZE, TILE_SIZE, h - TILE_SIZE * 2, pComponentDepth, mR, mG, mB, mA);
-				mTextureBatch.draw(mUITexture, 288, 32, 32, 32, x + TILE_SIZE, y + TILE_SIZE, w - TILE_SIZE * 2, h - 64, pComponentDepth, mR, mG, mB, mA);
-				mTextureBatch.draw(mUITexture, 320, 32, 32, 32, x + w - TILE_SIZE, y + TILE_SIZE, TILE_SIZE, h - TILE_SIZE * 2, pComponentDepth, mR, mG, mB, mA);
+				lTextureBatch.draw(lUiTexture, 256, 32, 32, 32, x, y + TILE_SIZE, TILE_SIZE, h - TILE_SIZE * 2, pComponentDepth, mR, mG, mB, mA);
+				lTextureBatch.draw(lUiTexture, 288, 32, 32, 32, x + TILE_SIZE, y + TILE_SIZE, w - TILE_SIZE * 2, h - 64, pComponentDepth, mR, mG, mB, mA);
+				lTextureBatch.draw(lUiTexture, 320, 32, 32, 32, x + w - TILE_SIZE, y + TILE_SIZE, TILE_SIZE, h - TILE_SIZE * 2, pComponentDepth, mR, mG, mB, mA);
 
-				mTextureBatch.draw(mUITexture, 256, 64, 32, 32, x, y + h - TILE_SIZE, TILE_SIZE, TILE_SIZE, pComponentDepth, mR, mG, mB, mA);
-				mTextureBatch.draw(mUITexture, 288, 64, 32, 32, x + TILE_SIZE, y + h - TILE_SIZE, w - TILE_SIZE * 2, TILE_SIZE, pComponentDepth, mR, mG, mB, mA);
-				mTextureBatch.draw(mUITexture, 320, 64, 32, 32, x + w - TILE_SIZE, y + h - TILE_SIZE, TILE_SIZE, TILE_SIZE, pComponentDepth, mR, mG, mB, mA);
-				mTextureBatch.end();
+				lTextureBatch.draw(lUiTexture, 256, 64, 32, 32, x, y + h - TILE_SIZE, TILE_SIZE, TILE_SIZE, pComponentDepth, mR, mG, mB, mA);
+				lTextureBatch.draw(lUiTexture, 288, 64, 32, 32, x + TILE_SIZE, y + h - TILE_SIZE, w - TILE_SIZE * 2, TILE_SIZE, pComponentDepth, mR, mG, mB, mA);
+				lTextureBatch.draw(lUiTexture, 320, 64, 32, 32, x + w - TILE_SIZE, y + h - TILE_SIZE, TILE_SIZE, TILE_SIZE, pComponentDepth, mR, mG, mB, mA);
+				lTextureBatch.end();
 
 				if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_OUTLINES", false)) {
 					Debug.debugManager().drawers().drawRectImmediate(pCore.HUD(), this);
@@ -394,26 +428,26 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 
 		if (mScrollBarsEnabled_Internal) {
 			mContentArea.depthPadding(6f);
-			mContentArea.preDraw(pCore, mTextureBatch, mUITexture);
+			mContentArea.preDraw(pCore, lTextureBatch, lUiTexture);
 
 		}
 
 		int lCount = menuEntries().size();
 		for (int i = lCount - 1; i >= 0; --i) {
-			menuEntries().get(i).draw(pCore, mParentScreen, mSelectedEntry == i, pComponentDepth + i * .001f);
+			menuEntries().get(i).draw(pCore, parentScreen, mSelectedEntry == i, pComponentDepth + i * .001f);
 
 		}
 
 		if (mScrollBarsEnabled_Internal) {
-			mScrollBar.draw(pCore, mTextureBatch, mUITexture, pComponentDepth + .1f);
+			mScrollBar.draw(pCore, lTextureBatch, lUiTexture, pComponentDepth + .1f);
 			mContentArea.postDraw(pCore);
 
 		}
 
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
-			mTextureBatch.begin(pCore.HUD());
-			mTextureBatch.draw(mUITexture, 0, 0, 32, 32, x, y, w, h, ZLayers.LAYER_DEBUG, 1f, 0.2f, 1f, 0.4f);
-			mTextureBatch.end();
+			lTextureBatch.begin(pCore.HUD());
+			lTextureBatch.draw(lUiTexture, 0, 0, 32, 32, x, y, w, h, ZLayers.LAYER_DEBUG, 1f, 0.2f, 1f, 0.4f);
+			lTextureBatch.end();
 
 		}
 

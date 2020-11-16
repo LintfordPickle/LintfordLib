@@ -147,7 +147,7 @@ public class MenuEnumEntry extends MenuEntry {
 						mSelectedIndex = mItems.size() - 1;
 					}
 
-					mParentLayout.parentScreen().setFocusOn(pCore, this, true);
+					mParentLayout.parentScreen.setFocusOn(pCore, this, true);
 
 					if (mClickListener != null) {
 						mClickListener.menuEntryChanged(this);
@@ -163,7 +163,7 @@ public class MenuEnumEntry extends MenuEntry {
 						mSelectedIndex = 0;
 					}
 
-					mParentLayout.parentScreen().setFocusOn(pCore, this, true);
+					mParentLayout.parentScreen.setFocusOn(pCore, this, true);
 
 					if (mClickListener != null) {
 						mClickListener.menuEntryChanged(this);
@@ -187,7 +187,7 @@ public class MenuEnumEntry extends MenuEntry {
 
 					// TODO: Play a menu click sound
 
-					mParentLayout.parentScreen().setFocusOn(pCore, this, true);
+					mParentLayout.parentScreen.setFocusOn(pCore, this, true);
 
 					if (mClickListener != null) {
 						mClickListener.menuEntryChanged(this);
@@ -239,10 +239,15 @@ public class MenuEnumEntry extends MenuEntry {
 	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pParentZDepth) {
 		super.draw(pCore, pScreen, pIsSelected, pParentZDepth);
 
-		final var lParentScreen = mParentLayout.parentScreen();
+		final var lParentScreen = mParentLayout.parentScreen;
 		final var lFont = lParentScreen.font();
 		if (lFont == null)
 			return;
+		
+		final float lR = lParentScreen.r();
+		final float lG = lParentScreen.g();
+		final float lB = lParentScreen.b();
+		final float lA = lParentScreen.a();
 
 		final float lUiTextScale = lParentScreen.uiTextScale();
 		final float lTextWidth = lFont.bitmap().getStringWidth(mLabel, lUiTextScale);
@@ -254,7 +259,7 @@ public class MenuEnumEntry extends MenuEntry {
 		final float lTextHeight = lFont.bitmap().getStringHeight(mLabel, lUiTextScale);
 		final float lSeparatorHalfWidth = lFont.bitmap().getStringWidth(mSeparator, lUiTextScale) * 0.5f;
 
-		final var lTextureBatch = mParentLayout.parentScreen().rendererManager().uiTextureBatch();
+		final var lTextureBatch = lParentScreen.textureBatch();
 
 		// Draw the left/right buttons
 		lTextureBatch.begin(pCore.HUD());
@@ -263,17 +268,12 @@ public class MenuEnumEntry extends MenuEntry {
 
 		// Render the two arrows either side of the enumeration options
 		if (mButtonsEnabled) {
-			lTextureBatch.draw(mUITexture, 0, 224, 32, 32, mLeftButtonRectangle.x(), mLeftButtonRectangle.y() + ARROW_PADDING_Y, ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, 0f, 1f, 1f, 1f, 1f);
-			lTextureBatch.draw(mUITexture, 32, 224, 32, 32, mRightButtonRectangle.x(), mRightButtonRectangle.y() + ARROW_PADDING_Y, ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, 0f, 1f, 1f, 1f, 1f);
+			lTextureBatch.draw(mUITexture, 0, 224, 32, 32, mLeftButtonRectangle.x(), mLeftButtonRectangle.y() + ARROW_PADDING_Y, ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, 0f, 1f, 1f, 1f, lA);
+			lTextureBatch.draw(mUITexture, 32, 224, 32, 32, mRightButtonRectangle.x(), mRightButtonRectangle.y() + ARROW_PADDING_Y, ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, 0f, 1f, 1f, 1f, lA);
 
 		}
 
 		lTextureBatch.end();
-
-		final float lR = lParentScreen.r();
-		final float lG = lParentScreen.g();
-		final float lB = lParentScreen.b();
-		final float lA = lParentScreen.a();
 
 		lFont.begin(pCore.HUD());
 		lFont.drawShadow(mDrawTextShadow);

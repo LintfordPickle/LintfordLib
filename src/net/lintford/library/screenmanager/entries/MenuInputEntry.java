@@ -1,5 +1,6 @@
 package net.lintford.library.screenmanager.entries;
 
+import net.lintford.library.ConstantsApp;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.input.IBufferedTextInputCallback;
 import net.lintford.library.core.input.InputManager;
@@ -168,8 +169,9 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 
 		// super.draw(pCore, pScreen, pIsSelected, pParentZDepth);
 
-		final var lParentScreen = mParentLayout.parentScreen();
+		final var lParentScreen = mParentLayout.parentScreen;
 		final var lFont = lParentScreen.font();
+		final var lTextureBatch = lParentScreen.textureBatch();
 
 		if (lFont == null)
 			return;
@@ -208,6 +210,28 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 		}
 
 		lFont.end();
+
+		if (mShowInfoIcon) {
+			lTextureBatch.begin(pCore.HUD());
+			lTextureBatch.draw(mUITexture, 192, 160, 32, 32, mInfoIconDstRectangle, mZ, 1f, 1f, 1f, 1f);
+			lTextureBatch.end();
+
+		}
+
+		if (mShowWarnIcon) {
+			lTextureBatch.begin(pCore.HUD());
+			lTextureBatch.draw(mUITexture, 224, 160, 32, 32, mWarnIconDstRectangle, mZ, 1f, 1f, 1f, 1f);
+			lTextureBatch.end();
+
+		}
+
+		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
+			lTextureBatch.begin(pCore.HUD());
+			final float ALPHA = 0.3f;
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, x, y, w, h, mZ, 1f, 0.2f, 0.2f, ALPHA);
+			lTextureBatch.end();
+
+		}
 
 	}
 

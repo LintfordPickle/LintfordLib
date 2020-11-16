@@ -93,8 +93,9 @@ public class ListLayout extends BaseLayout implements IProcessMouseInput {
 	public void updateStructure() {
 		super.updateStructure();
 
-		final var lUiStructureController = mParentScreen.screenManager().UiStructureController();
+		final var lUiStructureController = parentScreen.screenManager.UiStructureController();
 		float lYPos = y + mEntryOffsetFromTop + mYScrollPosition;
+		final float lWindowScaleFactorX = lUiStructureController.windowAutoScaleFactorX();
 
 		final int lEntryCount = menuEntries().size();
 
@@ -124,7 +125,7 @@ public class ListLayout extends BaseLayout implements IProcessMouseInput {
 
 		lCountOfSharers -= lCountOfTakers;
 
-		final float INNER_PADDING = 25;
+		final float INNER_PADDING = 25.f;
 		float lSizeOfEachFillElement = ((lLayoutHeight - lHeightTaken) / lCountOfSharers) - INNER_PADDING;
 
 		if (lSizeOfEachFillElement < 0)
@@ -132,11 +133,14 @@ public class ListLayout extends BaseLayout implements IProcessMouseInput {
 
 		for (int i = 0; i < lEntryCount; i++) {
 			final var lMenuEntry = menuEntries().get(i);
-			float lScrollBarWidth = 0;
+			float lScrollBarWidth = mScrollBar.width();
 			if (mScrollBarsEnabled_Internal)
 				lScrollBarWidth = mScrollBar.width();
 
-			final float lNewEntryWidth = w - marginLeft() - marginRight() - lScrollBarWidth;
+			final float lSpacingLeft = (mLeftPadding + lMenuEntry.marginLeft()) * lWindowScaleFactorX;
+			final float lSpacingRight = (mRightPadding + lMenuEntry.marginRight()) * lWindowScaleFactorX;
+
+			final float lNewEntryWidth = w - lSpacingLeft - lSpacingRight - lScrollBarWidth;
 
 			if (lMenuEntry.horizontalFillType() == FILLTYPE.FILL_CONTAINER) {
 				lMenuEntry.w(lNewEntryWidth);

@@ -209,7 +209,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 
 					} else {
 						mOpen = true;
-						mParentLayout.parentScreen().setFocusOn(pCore, this, true);
+						mParentLayout.parentScreen.setFocusOn(pCore, this, true);
 
 					}
 
@@ -286,24 +286,23 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 
 	@Override
 	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pComponentDepth) {
-		final var lParentScreen = mParentLayout.parentScreen();
+		final var lParentScreen = mParentLayout.parentScreen;
 		final float lUiTextScale = lParentScreen.uiTextScale();
 		final var lFont = lParentScreen.font();
 
-		// TITLE BAR
 		mZ = mOpen ? ZLayers.LAYER_SCREENMANAGER + Z_STATE_MODIFIER_ACTIVE : ZLayers.LAYER_SCREENMANAGER + Z_STATE_MODIFIER_PASSIVE;
 
 		// Render the label
-		float lTextR = mEnabled ? mParentLayout.parentScreen().r() : 0.24f;
-		float lTextG = mEnabled ? mParentLayout.parentScreen().g() : 0.24f;
-		float lTextB = mEnabled ? mParentLayout.parentScreen().b() : 0.24f;
-		float lTextA = mEnabled ? mParentLayout.parentScreen().a() : 1f;
+		float lTextR = mEnabled ? lParentScreen.r() : 0.24f;
+		float lTextG = mEnabled ? lParentScreen.g() : 0.24f;
+		float lTextB = mEnabled ? lParentScreen.b() : 0.24f;
+		float lTextA = mEnabled ? lParentScreen.a() : 1f;
 
 		final String lSeparator = " : ";
 
 		final float lLabelWidth = lFont.bitmap().getStringWidth(mLabel, lUiTextScale);
 		final float lFontHeight = lFont.bitmap().fontHeight() * lUiTextScale;
-		final var lTextureBatch = mParentLayout.parentScreen().rendererManager().uiTextureBatch();
+		final var lTextureBatch = lParentScreen.textureBatch();
 
 		final float lSingleTextHeight = 32f;
 
@@ -313,11 +312,24 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 		lFont.draw(mLabel, x + w / 2 - 10 - lLabelWidth - lSeparatorHalfWidth, y + lSingleTextHeight / 2f - lFontHeight / 2f, mZ, lTextR, lTextG, lTextB, lTextA, lUiTextScale, -1);
 		lFont.draw(lSeparator, x + w / 2 - lSeparatorHalfWidth, y + lSingleTextHeight / 2f - lFontHeight / 2f, mZ, lTextR, lTextG, lTextB, lTextA, lUiTextScale, -1);
 
+		if (mHoveredOver) {
+			final float lHoveredColorHighlightR = 204.f / 255.f;
+			final float lHoveredColorHighlightG = 115.f / 255.f;
+			final float lHoveredColorHighlightB = 102.f / 255.f;
+
+			lTextureBatch.begin(pCore.HUD());
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() - w / 2, centerY() - h / 2, 32, h, mZ, lHoveredColorHighlightR, lHoveredColorHighlightG, lHoveredColorHighlightB, 0.26f);
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() - (w / 2) + 32, centerY() - h / 2, w - 64, h, mZ, lHoveredColorHighlightR, lHoveredColorHighlightG, lHoveredColorHighlightB, 0.26f);
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() + (w / 2) - 32, centerY() - h / 2, 32, h, mZ, lHoveredColorHighlightR, lHoveredColorHighlightG, lHoveredColorHighlightB, 0.26f);
+			lTextureBatch.end();
+
+		}
+		
 		if (mItems == null || mItems.size() == 0) {
 			// LOCALIZATION: No entries added to dropdown list
 			final String lNoEntriesText = "No items found";
-			mParentLayout.parentScreen().font().draw(lNoEntriesText, x + w / 2 + lSeparatorHalfWidth + SPACE_BETWEEN_TEXT, y + h / 2f - lFontHeight / 2f, mZ, lTextR, lTextG, lTextB, lTextA, lUiTextScale, -1);
-			mParentLayout.parentScreen().font().end();
+			lFont.draw(lNoEntriesText, x + w / 2 + lSeparatorHalfWidth + SPACE_BETWEEN_TEXT, y + h / 2f - lFontHeight / 2f, mZ, lTextR, lTextG, lTextB, lTextA, lUiTextScale, -1);
+			lFont.end();
 			return;
 		}
 

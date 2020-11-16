@@ -5,6 +5,7 @@ import net.lintford.library.core.LintfordCore.CoreTime;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.GLDebug;
 import net.lintford.library.core.entity.BaseEntity;
+import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.core.input.IProcessMouseInput;
 import net.lintford.library.core.time.TimeSpan;
 import net.lintford.library.renderers.RendererManager;
@@ -31,8 +32,9 @@ public abstract class Screen implements IProcessMouseInput {
 	/** Used both as a ControllerGroupID and RendererGroupID */
 	private int mEntityGroupID;
 
-	protected ScreenManager mScreenManager;
-	protected RendererManager mRendererManager;
+	public final ScreenManager screenManager;
+	public final RendererManager rendererManager;
+
 	protected BaseTransition mTransitionOn;
 	protected BaseTransition mTransitionOff;
 	protected ScreenState mScreenState;
@@ -53,6 +55,10 @@ public abstract class Screen implements IProcessMouseInput {
 	// Properties
 	// --------------------------------------
 
+	public TextureBatchPCT textureBatch() {
+		return rendererManager.uiTextureBatch();
+	}
+
 	public int entityGroupID() {
 		return mEntityGroupID;
 	}
@@ -62,7 +68,8 @@ public abstract class Screen implements IProcessMouseInput {
 		return mSingletonScreen;
 	}
 
-	/** Some screens are just hotbars, floating on top of the other screens in the {@link ScreenManager} stack. */
+	/** Some screens are just hotbars, floating on top of the other screens in the {@link ScreenManager} stack. 
+	 * Screens which are always on top do not block input to screens below them.*/
 	public boolean alwaysOnTop() {
 		return mAlwaysOnTop;
 	}
@@ -126,18 +133,6 @@ public abstract class Screen implements IProcessMouseInput {
 		return mScreenState;
 	}
 
-	public ScreenManager screenManager() {
-		return mScreenManager;
-	}
-
-	public void screenManager(ScreenManager pScreenManager) {
-		mScreenManager = pScreenManager;
-	}
-
-	public RendererManager rendererManager() {
-		return mRendererManager;
-	}
-
 	// --------------------------------------
 	// Constructors
 	// --------------------------------------
@@ -145,12 +140,12 @@ public abstract class Screen implements IProcessMouseInput {
 	public Screen(ScreenManager pScreenManager) {
 		mEntityGroupID = BaseEntity.getEntityNumber();
 
-		mScreenManager = pScreenManager;
+		screenManager = pScreenManager;
 
 		mTransitionOn = new TransitionFadeIn(new TimeSpan(250));
 		mTransitionOff = new TransitionFadeOut(new TimeSpan(250));
 
-		mRendererManager = new RendererManager(mScreenManager.core(), getClass().getSimpleName(), mEntityGroupID);
+		rendererManager = new RendererManager(screenManager.core(), getClass().getSimpleName(), mEntityGroupID);
 
 		// By default, screens are not singleton
 		mSingletonScreen = false;
@@ -171,36 +166,36 @@ public abstract class Screen implements IProcessMouseInput {
 		mIsExiting = false;
 		mIsLoaded = false;
 
-		mRendererManager.initialize();
+		rendererManager.initialize();
 
 		mIsinitialized = true;
 
 	}
 
 	public void loadGLContent(ResourceManager pResourceManager) {
-		mRendererManager.loadGLContent(pResourceManager);
+		rendererManager.loadGLContent(pResourceManager);
 
 		mIsLoaded = true;
 
 	}
 
 	public void unloadGLContent() {
-		mRendererManager.unloadGLContent();
+		rendererManager.unloadGLContent();
 
-		mScreenManager.core().controllerManager().removeControllerGroup(mEntityGroupID);
+		screenManager.core().controllerManager().removeControllerGroup(mEntityGroupID);
 
 		mIsLoaded = false;
 
 	}
 
 	public void handleInput(LintfordCore pCore, boolean pAcceptMouse, boolean pAcceptKeyboard) {
-		mRendererManager.handleInput(pCore);
-		mScreenManager.core().controllerManager().handleInput(mScreenManager.core(), mEntityGroupID);
+		rendererManager.handleInput(pCore);
+		screenManager.core().controllerManager().handleInput(screenManager.core(), mEntityGroupID);
 
 	}
 
 	public void update(LintfordCore pCore, boolean pOtherScreenHasFocus, boolean pCoveredByOtherScreen) {
-		if (!mRendererManager.isLoaded())
+		if (!rendererManager.isLoaded())
 			throw new RuntimeException("RendererManager not loaded");
 
 		if (mMouseClickTimer > 0) {
@@ -214,7 +209,7 @@ public abstract class Screen implements IProcessMouseInput {
 			mScreenState = ScreenState.TransitionOff;
 
 			if (updateTransition(pCore.appTime(), mTransitionOff)) {
-				mScreenManager.removeScreen(this);
+				screenManager.removeScreen(this);
 
 			}
 
@@ -252,14 +247,14 @@ public abstract class Screen implements IProcessMouseInput {
 
 			}
 
-			mScreenManager.core().controllerManager().update(mScreenManager.core(), mEntityGroupID);
+			screenManager.core().controllerManager().update(screenManager.core(), mEntityGroupID);
 
 		}
 
 	}
 
 	public void draw(LintfordCore pCore) {
-		mRendererManager.draw(pCore);
+		rendererManager.draw(pCore);
 
 	}
 
@@ -283,7 +278,7 @@ public abstract class Screen implements IProcessMouseInput {
 
 	public void exitScreen() {
 		if (mTransitionOff == null || mTransitionOff.timeSpan().equals(TimeSpan.zero())) {
-			mScreenManager.removeScreen(this);
+			screenManager.removeScreen(this);
 
 		} else {
 			mIsExiting = true;
@@ -298,16 +293,16 @@ public abstract class Screen implements IProcessMouseInput {
 
 		// ResourceManager clear EntityGroupID resources
 
-		mRendererManager.unloadGLContent();
-		mRendererManager.removeAllListeners();
-		mRendererManager.removeAllRenderers();
+		rendererManager.unloadGLContent();
+		rendererManager.removeAllListeners();
+		rendererManager.removeAllRenderers();
 		// mRendererManager = null;
 
 	}
 
 	public void onGainedFocus() {
 		// Don't allow keyboard capture across screens
-		mScreenManager.core().input().keyboard().stopBufferedTextCapture();
+		screenManager.core().input().keyboard().stopBufferedTextCapture();
 
 	}
 

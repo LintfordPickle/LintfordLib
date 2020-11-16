@@ -62,6 +62,8 @@ public class ScrollBar extends Rectangle implements IProcessMouseInput {
 		mScrollBarArea = pWindowBounds;
 		mWindowRightOffset = -25;
 
+		set(0, 0, BAR_WIDTH, 0);
+
 	}
 
 	// --------------------------------------

@@ -76,7 +76,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	}
 
 	public float uiTextScale() {
-		return mScreenManager.UiStructureController().uiTextScaleFactor();
+		return screenManager.UiStructureController().uiTextScaleFactor();
 	}
 
 	/** Returns a normal sized {@link FontUnit} which can be used to render general text to the screen. */
@@ -136,6 +136,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		mShowInBackground = false;
 
 		mMenuTitle = pMenuTitle;
+		mBlockInputInBackground = true;
 
 		mPaddingTopNormalized = 0.f;
 		mPaddingBottomNormalized = 0.f;
@@ -350,13 +351,13 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	}
 
 	public void updateLayoutSize(LintfordCore pCore) {
-		if (mRendererManager == null || layouts().size() == 0)
+		if (rendererManager == null || layouts().size() == 0)
 			return;
 
 		updateLayout(pCore, layouts(), mLayoutAlignment);
 
 		// *** FOOTER *** //
-		final var lHUDController = mRendererManager.uiHUDController();
+		final var lHUDController = rendererManager.uiHUDController();
 
 		final float lInnerPaddingW = OUTER_PADDING_W * lHUDController.windowAutoScaleFactorX();
 
@@ -375,10 +376,10 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		if (pLayoutList == null || pLayoutList.size() == 0)
 			return;
 
-		if (mRendererManager == null)
+		if (rendererManager == null)
 			return;
 
-		final var lUIHUDStructureController = mRendererManager.uiHUDController();
+		final var lUIHUDStructureController = rendererManager.uiHUDController();
 		if (lUIHUDStructureController == null)
 			return;
 
@@ -491,7 +492,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 		final float lMenuScreenZDepth = ZLayers.LAYER_SCREENMANAGER;
 
-		final var lUIHUDStructureController = mRendererManager.uiHUDController();
+		final var lUIHUDStructureController = rendererManager.uiHUDController();
 		final var lHUDRect = lUIHUDStructureController.menuTitleRectangle();
 
 		final float lUiTextScale = uiTextScale();
@@ -534,7 +535,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		if (mMenuTitle == null || mMenuTitle.length() == 0 && mMenuHeaderFont == null)
 			return;
 
-		final var lUiStructureController = mScreenManager.UiStructureController();
+		final var lUiStructureController = screenManager.UiStructureController();
 		final float lUiTextScale = lUiStructureController.uiTextScaleFactor();
 
 		final var lHeaderRect = lUiStructureController.menuTitleRectangle();

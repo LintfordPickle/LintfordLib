@@ -215,7 +215,7 @@ public abstract class ShaderBackground extends Screen {
 	public void draw(LintfordCore pCore) {
 		super.draw(pCore);
 
-		final var lTextureBatch = mRendererManager.uiTextureBatch();
+		final var lTextureBatch = textureBatch();
 
 		final var lHudBoundingRectangle = pCore.HUD().boundingRectangle();
 

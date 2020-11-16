@@ -137,7 +137,7 @@ public class MenuKeyBindEntry extends MenuEntry implements IKeyInputCallback {
 		// TODO: This -50 is because of the scrollbar - this is why I needed to keep the padding :(
 		w = Math.min(mParentLayout.w() - 50f, mMaxWidth);
 
-		final var lParentScreen = mParentLayout.parentScreen();
+		final var lParentScreen = mParentLayout.parentScreen;
 		final var lFont = lParentScreen.font();
 		if (lFont == null)
 			return;
@@ -175,7 +175,7 @@ public class MenuKeyBindEntry extends MenuEntry implements IKeyInputCallback {
 		if (eventAction == null)
 			return;
 
-		final var lParentScreen = mParentLayout.parentScreen();
+		final var lParentScreen = mParentLayout.parentScreen;
 		final var lFont = lParentScreen.font();
 
 		final float lAlpha = 1f;
@@ -184,11 +184,22 @@ public class MenuKeyBindEntry extends MenuEntry implements IKeyInputCallback {
 		final float lLabelWidth = lFont.bitmap().getStringWidth(mText, lUiTextScale);
 		final float lFontHeight = lFont.bitmap().fontHeight() * lUiTextScale;
 
-		final var lTextureBatch = lParentScreen.rendererManager().uiTextureBatch();
+		final var lTextureBatch = lParentScreen.textureBatch();
 
 		if (mDrawBackground) {
 			lTextureBatch.begin(pCore.HUD());
 			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, x, y, w, h, pParentZDepth + .15f, 0.1f, 0.1f, 0.1f, lAlpha);
+			lTextureBatch.end();
+
+		} else if (mHoveredOver) {
+			final float lHoveredColorHighlightR = 204.f / 255.f;
+			final float lHoveredColorHighlightG = 115.f / 255.f;
+			final float lHoveredColorHighlightB = 102.f / 255.f;
+
+			lTextureBatch.begin(pCore.HUD());
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() - w / 2, centerY() - h / 2, 32, h, pParentZDepth + .15f, lHoveredColorHighlightR, lHoveredColorHighlightG, lHoveredColorHighlightB, 0.26f);
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() - (w / 2) + 32, centerY() - h / 2, w - 64, h, pParentZDepth + .15f, lHoveredColorHighlightR, lHoveredColorHighlightG, lHoveredColorHighlightB, 0.26f);
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() + (w / 2) - 32, centerY() - h / 2, 32, h, pParentZDepth + .15f, lHoveredColorHighlightR, lHoveredColorHighlightG, lHoveredColorHighlightB, 0.26f);
 			lTextureBatch.end();
 
 		}
@@ -206,8 +217,12 @@ public class MenuKeyBindEntry extends MenuEntry implements IKeyInputCallback {
 		if (mBindingKey) {
 			final String lBoundKeyText = "|";
 
+			final float lBindingColorHighlightR = 204.f / 255.f;
+			final float lBindingColorHighlightG = 115.f / 255.f;
+			final float lBindingColorHighlightB = 102.f / 255.f;
+
 			lTextureBatch.begin(pCore.HUD());
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, x, y, w, h, pParentZDepth + .15f, 0.1f, 0.1f, 0.1f, lAlpha);
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, x, y, w, h, pParentZDepth + .15f, lBindingColorHighlightR, lBindingColorHighlightG, lBindingColorHighlightB, lAlpha);
 			lTextureBatch.end();
 
 			if (mCaretFlashTimer % 1.f > .5f) {

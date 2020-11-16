@@ -94,6 +94,9 @@ public class MenuLabelEntry extends MenuEntry {
 		mCanHaveFocus = false;
 		mCanHoverOver = false;
 
+		mLeftMargin = mRightMargin = 0.f;
+		mLeftPadding = 10.f;
+
 		mVerticalFillType = FILLTYPE.TAKE_WHATS_NEEDED;
 
 	}
@@ -109,7 +112,7 @@ public class MenuLabelEntry extends MenuEntry {
 		// TODO: This -50 is because of the scrollbar - this is why I needed to keep the padding :(
 		w = Math.min(mParentLayout.w() - 50f, mMaxWidth);
 
-		final var lParentScreen = mParentLayout.parentScreen();
+		final var lParentScreen = mParentLayout.parentScreen;
 		final var lFont = lParentScreen.font();
 		if (lFont == null)
 			return;
@@ -126,7 +129,7 @@ public class MenuLabelEntry extends MenuEntry {
 		if (!enabled())
 			return;
 
-		final var lParentScreen = mParentLayout.parentScreen();
+		final var lParentScreen = mParentLayout.parentScreen;
 		final var lFont = lParentScreen.font();
 
 		final float lAlpha = 1f;
@@ -135,7 +138,7 @@ public class MenuLabelEntry extends MenuEntry {
 		final float lLabelWidth = lFont.bitmap().getStringWidth(mText, lUiTextScale);
 		final float lFontHeight = lFont.bitmap().fontHeight() * lUiTextScale;
 
-		final var lTextureBatch = lParentScreen.rendererManager().uiTextureBatch();
+		final var lTextureBatch = lParentScreen.textureBatch();
 
 		if (mDrawBackground) {
 			lTextureBatch.begin(pCore.HUD());
@@ -160,7 +163,7 @@ public class MenuLabelEntry extends MenuEntry {
 		lFont.begin(pCore.HUD());
 		lFont.drawShadow(mDrawTextShadow);
 		lFont.trimText(mTrimText);
-		lFont.draw(mText, lX + 5.f, y + h / 2f - lFontHeight / 2f, pParentZDepth + .15f, mR, mG, mB, lParentScreen.a(), lUiTextScale);
+		lFont.draw(mText, lX + 15.f, y + h / 2f - lFontHeight / 2f, pParentZDepth + .15f, mR, mG, mB, lParentScreen.a(), lUiTextScale);
 		lFont.end();
 
 		if (mShowInfoIcon) {

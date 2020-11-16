@@ -99,7 +99,7 @@ public class PressToContinueIntroScreen extends Screen {
 
 		if (!mActionPerformed) {
 			if (pCore.input().mouse().tryAcquireMouseLeftClick(hashCode()) || pCore.input().keyboard().isKeyDown(GLFW.GLFW_KEY_ESCAPE) || pCore.input().keyboard().isKeyDown(GLFW.GLFW_KEY_SPACE)) {
-				mScreenManager.uiSounds().play("SOUND_MENU_PRESS_TO_CONTINUE");
+				screenManager.uiSounds().play("SOUND_MENU_PRESS_TO_CONTINUE");
 				mUserRequestSkip = true;
 
 			}

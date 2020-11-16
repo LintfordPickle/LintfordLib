@@ -159,26 +159,20 @@ public class ScreenManager {
 		if (mScreens == null || mScreens.size() == 0)
 			return;
 
-		boolean lProcessMouse = true;
-		boolean lProcessKeyboard = true;
-
+		// Top-Most screen processes input
 		boolean lInputBlockedByHigherScreen = false;
 
 		final int lScreenCount = mScreens.size() - 1;
 		for (int i = lScreenCount; i >= 0; i--) {
 			final var lScreen = mScreens.get(i);
 
-			// Only allow keyboard and mouse input if we are on the top screen
-			lProcessKeyboard = i == lScreenCount || lScreen.mBlockInputInBackground;
-			lProcessMouse = i == lScreenCount;
-
-			if (!lProcessMouse) {
+			if (lInputBlockedByHigherScreen) {
 				pCore.input().mouse().tryAcquireMouseMiddle(hashCode());
 
 			}
 
 			if (!lInputBlockedByHigherScreen && (lScreen.screenState() == ScreenState.TransitionOn || lScreen.screenState() == ScreenState.Active || lScreen.mShowInBackground)) {
-				lScreen.handleInput(pCore, lProcessMouse, lProcessKeyboard);
+				lScreen.handleInput(pCore, true, true);
 
 			}
 
@@ -257,10 +251,11 @@ public class ScreenManager {
 	public void addScreen(Screen pScreen) {
 		if (pScreen.singletonScreen()) {
 			final int lScreenCount = mScreens.size();
+			final var pNewScreenSImpleName = pScreen.getClass().getSimpleName();
 			for (int i = 0; i < lScreenCount; i++) {
-				Screen lScreen = mScreens.get(i);
-				if (lScreen.getClass().getSimpleName().equals(pScreen.getClass().getSimpleName())) {
-					Debug.debugManager().logger().e(this.getClass().getSimpleName(), "Cannot add second SingletonScreen instance: " + pScreen.getClass().getSimpleName());
+				final var lScreen = mScreens.get(i);
+				if (lScreen.getClass().getSimpleName().equals(pNewScreenSImpleName)) {
+					Debug.debugManager().logger().e(this.getClass().getSimpleName(), "Cannot add second SingletonScreen instance: " + pNewScreenSImpleName);
 					return;
 
 				}
@@ -270,7 +265,6 @@ public class ScreenManager {
 		}
 
 		if (!pScreen.isLoaded()) {
-			pScreen.screenManager(this);
 			pScreen.isExiting(false);
 
 			if (mIsinitialized && !pScreen.isinitialized()) {// screen manager already initialized? then load this screen manually

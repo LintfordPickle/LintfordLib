@@ -271,7 +271,7 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pParentZDepth) {
 		final float lTileSize = 32f;
 
-		final var lTextureBatch = mParentLayout.parentScreen().rendererManager().uiTextureBatch();
+		final var lTextureBatch = mParentLayout.parentScreen.textureBatch();
 
 		// Draw the listbox background
 		if (mDrawBackground) {

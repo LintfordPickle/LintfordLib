@@ -114,7 +114,7 @@ public class MenuButtonEntry extends MenuEntry {
 
 					// TODO: Play a menu click sound
 
-					mParentLayout.parentScreen().setFocusOn(pCore, this, true);
+					mParentLayout.parentScreen.setFocusOn(pCore, this, true);
 
 					if (mClickListener != null) {
 						mClickListener.menuEntryChanged(this);
@@ -159,7 +159,7 @@ public class MenuButtonEntry extends MenuEntry {
 	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pParentZDepth) {
 		super.draw(pCore, pScreen, pIsSelected, pParentZDepth);
 
-		final var lParentScreen = mParentLayout.parentScreen();
+		final var lParentScreen = mParentLayout.parentScreen;
 		final var lFont = lParentScreen.font();
 
 		final float lUiTextScale = lParentScreen.uiTextScale();
@@ -167,7 +167,7 @@ public class MenuButtonEntry extends MenuEntry {
 		final float lTextHeight = lFont.bitmap().getStringHeight(mLabel) * lUiTextScale;
 		final float lSeparatorHalfWidth = lFont.bitmap().getStringWidth(mSeparator, lUiTextScale) * 0.5f;
 
-		final var lTextureBatch = mParentLayout.parentScreen().rendererManager().uiTextureBatch();
+		final var lTextureBatch = lParentScreen.textureBatch();
 
 		// Get the button area
 		final float TILE_SIZE = 32;

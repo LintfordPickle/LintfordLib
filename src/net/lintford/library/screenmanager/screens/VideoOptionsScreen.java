@@ -99,7 +99,7 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 
 		setUIFromVideoSettings(currentVideoConfig);
 
-		mChangesPendingWarning = new MenuLabelEntry(mScreenManager, mConfirmChangesLayout);
+		mChangesPendingWarning = new MenuLabelEntry(screenManager, mConfirmChangesLayout);
 		mChangesPendingWarning.label("Current changes have not yet been applied!");
 		mChangesPendingWarning.labelColor(1f, 0.12f, 0.17f);
 		mChangesPendingWarning.enabled(true);
@@ -135,27 +135,27 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 	// --------------------------------------
 
 	private void createVideoSection(BaseLayout lLayout) {
-		final var lVideoOptionsTitle = new MenuLabelEntry(mScreenManager, lLayout);
+		final var lVideoOptionsTitle = new MenuLabelEntry(screenManager, lLayout);
 		lVideoOptionsTitle.label("Video Options");
 		lVideoOptionsTitle.drawButtonBackground(true);
 		lVideoOptionsTitle.horizontalAlignment(ALIGNMENT.LEFT);
 		lVideoOptionsTitle.horizontalFillType(FILLTYPE.TAKE_DESIRED_SIZE);
 		lVideoOptionsTitle.desiredWidth(550.f);
 
-		mFullScreenEntry = new MenuEnumEntryIndexed<>(mScreenManager, lLayout, "Fullscreen");
+		mFullScreenEntry = new MenuEnumEntryIndexed<>(screenManager, lLayout, "Fullscreen");
 		mFullScreenEntry.horizontalFillType(FILLTYPE.TAKE_DESIRED_SIZE);
 		mFullScreenEntry.desiredWidth(550.f);
 
-		mResolutionEntry = new MenuDropDownEntry<>(mScreenManager, lLayout, "Resolution");
+		mResolutionEntry = new MenuDropDownEntry<>(screenManager, lLayout, "Resolution");
 		mResolutionEntry.horizontalFillType(FILLTYPE.TAKE_DESIRED_SIZE);
 		mResolutionEntry.desiredWidth(550.f);
 
-		mMonitorEntry = new MenuEnumEntryIndexed<>(mScreenManager, lLayout, "Monitor");
+		mMonitorEntry = new MenuEnumEntryIndexed<>(screenManager, lLayout, "Monitor");
 		mMonitorEntry.setButtonsEnabled(true);
 		mMonitorEntry.horizontalFillType(FILLTYPE.TAKE_DESIRED_SIZE);
 		mMonitorEntry.desiredWidth(550.f);
 
-		mVSync = new MenuToggleEntry(mScreenManager, lLayout);
+		mVSync = new MenuToggleEntry(screenManager, lLayout);
 		mVSync.horizontalFillType(FILLTYPE.TAKE_DESIRED_SIZE);
 		mVSync.desiredWidth(550.f);
 
@@ -175,7 +175,7 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 
 		// TODO: Add ToolTips for all menu options
 
-		MenuEntry lSeparator = new MenuEntry(mScreenManager, lLayout, "");
+		MenuEntry lSeparator = new MenuEntry(screenManager, lLayout, "");
 		lSeparator.enabled(false);
 
 		// Add the menu entries to the window
@@ -215,7 +215,7 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 	public void exitScreen() {
 		// If the current settings are dirty then show a dialog to ask for confirmation (of losing changes) before leaving
 		if (modifiedVideoConfig.isDifferent(currentVideoConfig)) {
-			mConfirmationDialog = new ConfirmationDialog(mScreenManager, this, "You have some changes which have not been applied, are you sure you want to go back?");
+			mConfirmationDialog = new ConfirmationDialog(screenManager, this, "You have some changes which have not been applied, are you sure you want to go back?");
 			mConfirmationDialog.dialogTitle("Unsaved Changes");
 			mConfirmationDialog.confirmEntry().entryText("Okay");
 			mConfirmationDialog.confirmEntry().registerClickListener(this, ConfirmationDialog.BUTTON_CONFIRM_YES);
@@ -223,10 +223,10 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 			mConfirmationDialog.cancelEntry().entryText("Cancel");
 			mConfirmationDialog.cancelEntry().registerClickListener(this, ConfirmationDialog.BUTTON_CONFIRM_NO);
 
-			mScreenManager.addScreen(mConfirmationDialog);
+			screenManager.addScreen(mConfirmationDialog);
 
 		} else {
-			mScreenManager.core().config().display().saveConfig();
+			screenManager.core().config().display().saveConfig();
 
 			super.exitScreen();
 
@@ -258,7 +258,7 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 
 		case ConfirmationDialog.BUTTON_CONFIRM_YES: // exit without saving
 			if (mConfirmationDialog != null)
-				mScreenManager.removeScreen(mConfirmationDialog);
+				screenManager.removeScreen(mConfirmationDialog);
 
 			modifiedVideoConfig.copy(currentVideoConfig);
 
@@ -267,13 +267,13 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 
 		case ConfirmationDialog.BUTTON_CONFIRM_NO: // go back and dont exit yet
 			if (mConfirmationDialog != null)
-				mScreenManager.removeScreen(mConfirmationDialog);
+				screenManager.removeScreen(mConfirmationDialog);
 
 			break;
 
 		case TimedConfirmationDialog.BUTTON_TIMED_CONFIRM_YES: // Revert to the last config
 			if (m15SecConfirmationDialog != null)
-				mScreenManager.removeScreen(m15SecConfirmationDialog);
+				screenManager.removeScreen(m15SecConfirmationDialog);
 
 			currentVideoConfig.copy(modifiedVideoConfig);
 			lastVideoConfig.copy(modifiedVideoConfig);
@@ -287,7 +287,7 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 
 		case TimedConfirmationDialog.BUTTON_TIMED_CONFIRM_NO: // Revert to the last config
 			if (m15SecConfirmationDialog != null)
-				mScreenManager.removeScreen(m15SecConfirmationDialog);
+				screenManager.removeScreen(m15SecConfirmationDialog);
 
 			revertSettings();
 
@@ -373,7 +373,7 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 		mDisplayManager.setGLFWMonitor(modifiedVideoConfig);
 
 		// Add a timed confirmation dialog to the
-		m15SecConfirmationDialog = new TimedConfirmationDialog(mScreenManager, this, "Your video settings have been changed. Do you want to keep these settings?");
+		m15SecConfirmationDialog = new TimedConfirmationDialog(screenManager, this, "Your video settings have been changed. Do you want to keep these settings?");
 		m15SecConfirmationDialog.dialogTitle("Confirm changes");
 
 		m15SecConfirmationDialog.confirmEntry().entryText("Keep Settings");
@@ -383,7 +383,7 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 
 		m15SecConfirmationDialog.start(CONFIRMATION_TIMER_MILLI);
 
-		mScreenManager.addScreen(m15SecConfirmationDialog);
+		screenManager.addScreen(m15SecConfirmationDialog);
 
 	}
 
@@ -464,7 +464,7 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 	@Override
 	public void timeExpired() {
 		if (m15SecConfirmationDialog != null)
-			mScreenManager.removeScreen(m15SecConfirmationDialog);
+			screenManager.removeScreen(m15SecConfirmationDialog);
 
 		revertSettings();
 
@@ -473,7 +473,7 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 	@Override
 	public void confirmation() {
 		if (m15SecConfirmationDialog != null)
-			mScreenManager.removeScreen(m15SecConfirmationDialog);
+			screenManager.removeScreen(m15SecConfirmationDialog);
 
 		currentVideoConfig.copy(modifiedVideoConfig);
 		exitScreen();
@@ -483,7 +483,7 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 	@Override
 	public void decline() {
 		if (m15SecConfirmationDialog != null)
-			mScreenManager.removeScreen(m15SecConfirmationDialog);
+			screenManager.removeScreen(m15SecConfirmationDialog);
 
 		modifiedVideoConfig.copy(lastVideoConfig);
 		applyModifiedSettings();

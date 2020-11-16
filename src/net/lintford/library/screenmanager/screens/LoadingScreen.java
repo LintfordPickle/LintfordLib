@@ -121,7 +121,7 @@ public class LoadingScreen extends Screen {
 		GL11.glClearColor(0, 0, 0, 1);
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
 
-		final var lFontUnit = mRendererManager.titleFont();
+		final var lFontUnit = rendererManager.titleFont();
 
 		if (mLoadingIsSlow && lFontUnit != null) {
 			final var lWindowWidth = pCore.config().display().windowWidth();

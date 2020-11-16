@@ -176,7 +176,7 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 						mSelectedIndex = mItems.size() - 1;
 					}
 
-					mParentLayout.parentScreen().setFocusOn(pCore, this, true);
+					mParentLayout.parentScreen.setFocusOn(pCore, this, true);
 
 					if (mClickListener != null) {
 						mClickListener.menuEntryChanged(this);
@@ -193,7 +193,7 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 						mSelectedIndex = 0;
 					}
 
-					mParentLayout.parentScreen().setFocusOn(pCore, this, true);
+					mParentLayout.parentScreen.setFocusOn(pCore, this, true);
 
 					if (mClickListener != null) {
 						mClickListener.menuEntryChanged(this);
@@ -217,7 +217,7 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 
 					// TODO: Play a menu click sound
 
-					mParentLayout.parentScreen().setFocusOn(pCore, this, true);
+					mParentLayout.parentScreen.setFocusOn(pCore, this, true);
 
 					if (mClickListener != null) {
 						mClickListener.menuEntryChanged(this);
@@ -280,9 +280,11 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 
 		mZ = pComponentDepth;
 
-		final var lParentScreen = mParentLayout.parentScreen();
-		final var lTextureBatch = lParentScreen.rendererManager().uiTextureBatch();
+		final var lParentScreen = mParentLayout.parentScreen;
+		final var lTextureBatch = lParentScreen.textureBatch();
 		final float lUiTextScale = lParentScreen.uiTextScale();
+
+		final float lAlpha = lParentScreen.a();
 
 		// Render the two arrows either side of the enumeration options
 		if (mButtonsEnabled) {
@@ -292,14 +294,14 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 			final float ARROW_PADDING_X = mLeftButtonRectangle.w() - ARROW_BUTTON_SIZE;
 			final float ARROW_PADDING_Y = mLeftButtonRectangle.h() - ARROW_BUTTON_SIZE;
 
-			lTextureBatch.draw(mUITexture, 0, 224, 32, 32, mLeftButtonRectangle.x() + ARROW_PADDING_X, mLeftButtonRectangle.y() + ARROW_PADDING_Y, ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, mZ, 1f, 1f, 1f, 1f);
-			lTextureBatch.draw(mUITexture, 32, 224, 32, 32, mRightButtonRectangle.x() + ARROW_PADDING_X, mRightButtonRectangle.y() + ARROW_PADDING_Y, ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, mZ, 1f, 1f, 1f, 1f);
+			lTextureBatch.draw(mUITexture, 0, 224, 32, 32, mLeftButtonRectangle.x() + ARROW_PADDING_X, mLeftButtonRectangle.y() + ARROW_PADDING_Y, ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, mZ, 1f, 1f, 1f, lAlpha);
+			lTextureBatch.draw(mUITexture, 32, 224, 32, 32, mRightButtonRectangle.x() + ARROW_PADDING_X, mRightButtonRectangle.y() + ARROW_PADDING_Y, ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, mZ, 1f, 1f, 1f, lAlpha);
 
 			lTextureBatch.end();
 
 		}
 
-		final var lFont = mParentLayout.parentScreen().font();
+		final var lFont = lParentScreen.font();
 
 		final float lLabelWidth = lFont.bitmap().getStringWidth(mLabel, lUiTextScale);
 		float lAdjustedLabelScaleW = lUiTextScale;
@@ -310,9 +312,9 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 		final float lSeparatorHalfWidth = lFont.bitmap().getStringWidth(mSeparator, lUiTextScale) * 0.5f;
 
 		// Change text color depending on enabled or not
-		final float lTextR = mEnabled ? mParentLayout.parentScreen().r() : 0.24f;
-		final float lTextG = mEnabled ? mParentLayout.parentScreen().g() : 0.24f;
-		final float lTextB = mEnabled ? mParentLayout.parentScreen().b() : 0.24f;
+		final float lTextR = mEnabled ? lParentScreen.r() : 0.24f;
+		final float lTextG = mEnabled ? lParentScreen.g() : 0.24f;
+		final float lTextB = mEnabled ? lParentScreen.b() : 0.24f;
 
 		lFont.begin(pCore.HUD());
 		lFont.drawShadow(mDrawTextShadow);
@@ -327,8 +329,7 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 			if (mEnableScaleTextToWidth && w * 0.35f < EntryWidth && EntryWidth > 0)
 				lAdjustedEntryScaleW = (w * 0.35f) / EntryWidth;
 
-			lFont.draw(lCurItem, x + (w / 4 * 3) - (EntryWidth * lAdjustedEntryScaleW) / 2, y + h / 2 - lFontHeight * 0.5f, pComponentDepth, lTextR, lTextG, lTextB, mParentLayout.parentScreen().a(), lAdjustedEntryScaleW,
-					-1);
+			lFont.draw(lCurItem, x + (w / 4 * 3) - (EntryWidth * lAdjustedEntryScaleW) / 2, y + h / 2 - lFontHeight * 0.5f, pComponentDepth, lTextR, lTextG, lTextB, lParentScreen.a(), lAdjustedEntryScaleW, -1);
 
 		}
 
@@ -336,7 +337,7 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 
 		if (mShowInfoIcon) {
 			lTextureBatch.begin(pCore.HUD());
-			lTextureBatch.draw(mUITexture, 544, 0, 32, 32, mInfoIconDstRectangle, mZ, 1f, 1f, 1f, 1f);
+			lTextureBatch.draw(mUITexture, 544, 0, 32, 32, mInfoIconDstRectangle, mZ, 1f, 1f, 1f, lAlpha);
 			lTextureBatch.end();
 		}
 

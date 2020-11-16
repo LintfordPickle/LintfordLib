@@ -5,6 +5,22 @@ import net.lintford.library.core.LintfordCore;
 public abstract class QuickBarScreen extends MenuScreen {
 
 	// --------------------------------------
+	// Constants
+	// --------------------------------------
+
+	public static final float lQuickBarHeight = 90f;
+
+	/**
+	 * Space around the content and between the border
+	 * */
+	public static final float lQuickBarPadding = 8.f;
+
+	/**
+	 * Space on the outside of the border and determines proximity to other elements.
+	 * */
+	public static float lQuickBarMargin = 32.f;
+
+	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
@@ -18,6 +34,7 @@ public abstract class QuickBarScreen extends MenuScreen {
 		super(pScreenManager, "");
 
 		mParentScreen = pParentScreen;
+		mBlockInputInBackground = false;
 
 		mIsPopup = true;
 		mAlwaysOnTop = true;

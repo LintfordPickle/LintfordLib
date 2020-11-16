@@ -20,8 +20,6 @@ public class KeyboardManager {
 	public class KeyCallback extends GLFWKeyCallback {
 		@Override
 		public void invoke(long pWindow, int pKey, int pScanCode, int pAction, int pMods) {
-			System.out.println("pKey: " + pKey + "  pScaneCode: " + pScanCode + "  pAction " + pAction + "  pMods: " + pMods);
-			
 			if (mKeyInputCallback != null) {
 				mKeyInputCallback.keyInput(pKey, pScanCode, pAction, pMods);
 				stopKeyInputCapture();

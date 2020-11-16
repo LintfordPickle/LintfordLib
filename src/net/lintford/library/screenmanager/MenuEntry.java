@@ -360,8 +360,8 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 
 		mTopMargin = 3f;
 		mBottomMargin = 6f;
-		mLeftMargin = 2f;
-		mRightMargin = 2f;
+		mLeftMargin = 10f;
+		mRightMargin = 10f;
 
 		mMinWidth = 32.f;
 		mMaxWidth = 800.f;
@@ -415,14 +415,14 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 				hasFocus(true);
 
 				if (pCore.input().mouse().isMiddleOwnerNotAssigned()) {
-					mParentLayout.parentScreen().setHoveringOn(this);
+					mParentLayout.parentScreen.setHoveringOn(this);
 
 				}
 
 			}
 
 			if (canHaveFocus() && pCore.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
-				mParentLayout.parentScreen().setFocusOn(pCore, this, false);
+				mParentLayout.parentScreen.setFocusOn(pCore, this, false);
 
 				onClick(pCore.input());
 
@@ -441,13 +441,12 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 
 	public void updateStructure() {
 		if (mShowInfoIcon) {
-			// FIXME: Consider scrollbar in offset?
-			mInfoIconDstRectangle.set(x, y, 32f, 32f);
+			mInfoIconDstRectangle.set(x + paddingLeft(), y, 32f, 32f);
 
 		}
 
 		if (mShowWarnIcon) {
-			mWarnIconDstRectangle.set(x, y, 32f, 32f);
+			mWarnIconDstRectangle.set(x + paddingLeft(), y, 32f, 32f);
 
 		}
 
@@ -501,11 +500,11 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 		float lR = mEnabled ? mAnimationTimer <= 0 ? ColorConstants.GREY_DARK.x : 0.55f : .35f;
 		float lG = mEnabled ? mAnimationTimer <= 0 ? ColorConstants.GREY_DARK.y : 0.55f : .35f;
 		float lB = mEnabled ? mAnimationTimer <= 0 ? ColorConstants.GREY_DARK.z : 0.55f : .35f;
-		float lA = mEnabled ? mParentLayout.parentScreen().mA : 0.60f;
+		float lA = mEnabled ? mParentLayout.parentScreen.mA : 0.60f;
 
 		float tile_size = 32;
 
-		final var lTextureBatch = mParentLayout.parentScreen().mRendererManager.uiTextureBatch();
+		final var lTextureBatch = mParentLayout.parentScreen.textureBatch();
 
 		// Draw the button highlight when this element has focus.
 		if (mDrawBackground) {
@@ -535,6 +534,19 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 				lTextureBatch.end();
 
 			}
+		} 
+		
+		else if (mHoveredOver) {
+			final float lHoveredColorHighlightR = 204.f / 255.f;
+			final float lHoveredColorHighlightG = 115.f / 255.f;
+			final float lHoveredColorHighlightB = 102.f / 255.f;
+			
+			lTextureBatch.begin(pCore.HUD());
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() - w / 2, centerY() - h / 2, 32, h, mZ, lHoveredColorHighlightR, lHoveredColorHighlightG, lHoveredColorHighlightB, 0.26f);
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() - (w / 2) + 32, centerY() - h / 2, w - 64, h, mZ, lHoveredColorHighlightR, lHoveredColorHighlightG, lHoveredColorHighlightB, 0.26f);
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() + (w / 2) - 32, centerY() - h / 2, 32, h, mZ, lHoveredColorHighlightR, lHoveredColorHighlightG, lHoveredColorHighlightB, 0.26f);
+			lTextureBatch.end();
+
 		}
 
 		// Render the MenuEntry label
@@ -543,7 +555,7 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 
 			final float lColMod = 1f; // no color mod for the text (mHoveredOver && mHighlightOnHover) ? 0.7f : 1f;
 
-			final var lMenuFont = mParentLayout.parentScreen().font();
+			final var lMenuFont = mParentLayout.parentScreen.font();
 
 			if (lMenuFont != null) {
 				lMenuFont.begin(pCore.HUD());

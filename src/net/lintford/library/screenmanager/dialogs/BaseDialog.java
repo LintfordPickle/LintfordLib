@@ -139,7 +139,7 @@ public abstract class BaseDialog extends MenuScreen {
 		final float lWindowWidth = pCore.HUD().boundingRectangle().w();
 		final float lWindowHeight = pCore.HUD().boundingRectangle().h();
 
-		final TextureBatchPCT lTextureBatch = mParentScreen.rendererManager().uiTextureBatch();
+		final TextureBatchPCT lTextureBatch = mParentScreen.textureBatch();
 
 		// This is the full screen darken effect
 		if (mDarkenBackground) {

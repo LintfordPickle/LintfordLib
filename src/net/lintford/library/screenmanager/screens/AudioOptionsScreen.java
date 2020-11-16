@@ -96,21 +96,21 @@ public class AudioOptionsScreen extends MenuScreen {
 	// --------------------------------------
 
 	private void createAudioSection(BaseLayout lLayout) {
-		final var lAudioConfig = mScreenManager.core().config().audio();
+		final var lAudioConfig = screenManager.core().config().audio();
 
 		lLayout.setDrawBackground(true, 0.1f, 0.1f, 0.1f, 0.5f);
 
-		MenuEntry lSeparator = new MenuEntry(mScreenManager, lLayout, "");
+		MenuEntry lSeparator = new MenuEntry(screenManager, lLayout, "");
 		lSeparator.enabled(false);
 		lSeparator.drawButtonBackground(false);
 
-		mMasterEnabledEntry = new MenuToggleEntry(mScreenManager, lLayout);
+		mMasterEnabledEntry = new MenuToggleEntry(screenManager, lLayout);
 		mMasterEnabledEntry.registerClickListener(this, BUTTON_ENABLED_MASTER);
 		mMasterEnabledEntry.label("Audio Enabled");
 		mMasterEnabledEntry.isChecked(lAudioConfig.musicEnabled());
 		mMasterEnabledEntry.horizontalFillType(FILLTYPE.FILL_CONTAINER);
 
-		mMasterVolumeEntry = new MenuSliderEntry(mScreenManager, lLayout);
+		mMasterVolumeEntry = new MenuSliderEntry(screenManager, lLayout);
 		mMasterVolumeEntry.label("Master Volume");
 		mMasterVolumeEntry.registerClickListener(this, BUTTON_VOLUME_MASTER);
 		mMasterVolumeEntry.setBounds(0, 100, 5);
@@ -122,13 +122,13 @@ public class AudioOptionsScreen extends MenuScreen {
 		mMasterVolumeEntry.showValueGuides(false);
 		mMasterVolumeEntry.horizontalFillType(FILLTYPE.FILL_CONTAINER);
 
-		mMusicEnabledEntry = new MenuToggleEntry(mScreenManager, lLayout);
+		mMusicEnabledEntry = new MenuToggleEntry(screenManager, lLayout);
 		mMusicEnabledEntry.registerClickListener(this, BUTTON_ENABLED_MUSIC);
 		mMusicEnabledEntry.label("Music Enabled");
 		mMusicEnabledEntry.isChecked(lAudioConfig.musicEnabled());
 		mMusicEnabledEntry.horizontalFillType(FILLTYPE.FILL_CONTAINER);
 
-		mMusicVolumeEntry = new MenuSliderEntry(mScreenManager, lLayout);
+		mMusicVolumeEntry = new MenuSliderEntry(screenManager, lLayout);
 		mMusicVolumeEntry.label("Music Volume");
 		mMusicVolumeEntry.registerClickListener(this, BUTTON_VOLUME_MUSIC);
 		mMusicVolumeEntry.setBounds(0, 100, 5);
@@ -140,13 +140,13 @@ public class AudioOptionsScreen extends MenuScreen {
 		mMusicVolumeEntry.showValueGuides(false);
 		mMusicVolumeEntry.horizontalFillType(FILLTYPE.FILL_CONTAINER);
 
-		mSoundEnabledEntry = new MenuToggleEntry(mScreenManager, lLayout);
+		mSoundEnabledEntry = new MenuToggleEntry(screenManager, lLayout);
 		mSoundEnabledEntry.label("SoundFX Enabled");
 		mSoundEnabledEntry.registerClickListener(this, BUTTON_ENABLED_SOUNDFX);
 		mSoundEnabledEntry.isChecked(lAudioConfig.soundFxEnabled());
 		mSoundEnabledEntry.horizontalFillType(FILLTYPE.FILL_CONTAINER);
 
-		mSoundVolumnEntry = new MenuSliderEntry(mScreenManager, lLayout);
+		mSoundVolumnEntry = new MenuSliderEntry(screenManager, lLayout);
 		mSoundVolumnEntry.label("SoundFX Volume");
 		mSoundVolumnEntry.registerClickListener(this, BUTTON_VOLUME_SOUNDFX);
 		mSoundVolumnEntry.setBounds(0, 100, 5);
@@ -204,7 +204,7 @@ public class AudioOptionsScreen extends MenuScreen {
 
 		case ConfirmationDialog.BUTTON_CONFIRM_YES: // exit without saving
 			if (mConfirmationDialog != null)
-				mScreenManager.removeScreen(mConfirmationDialog);
+				screenManager.removeScreen(mConfirmationDialog);
 
 			exitScreen();
 
@@ -212,7 +212,7 @@ public class AudioOptionsScreen extends MenuScreen {
 
 		case ConfirmationDialog.BUTTON_CONFIRM_NO: // go back and dont exit yet
 			if (mConfirmationDialog != null)
-				mScreenManager.removeScreen(mConfirmationDialog);
+				screenManager.removeScreen(mConfirmationDialog);
 
 			break;
 

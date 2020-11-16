@@ -143,8 +143,8 @@ public class MenuSliderEntry extends MenuEntry {
 						mClickListener.menuEntryChanged(this);
 					}
 
-					mParentLayout.parentScreen().setFocusOn(pCore, this, true);
-					mParentLayout.parentScreen().setHoveringOn(this);
+					mParentLayout.parentScreen.setFocusOn(pCore, this, true);
+					mParentLayout.parentScreen.setHoveringOn(this);
 
 				}
 
@@ -203,20 +203,33 @@ public class MenuSliderEntry extends MenuEntry {
 
 	@Override
 	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pParentZDepth) {
-		final var lParentScreen = mParentLayout.parentScreen();
+		final var lParentScreen = mParentLayout.parentScreen;
 		final var lFont = lParentScreen.font();
 		if (lFont == null)
 			return;
 
-		final var lTextureBatch = mParentLayout.parentScreen().rendererManager().uiTextureBatch();
-
+		final var lTextureBatch = lParentScreen.textureBatch();
 		final float lUiTextScale = lParentScreen.uiTextScale();
 
 		final float lLabelWidth = lFont.bitmap().getStringWidth(mLabel, lUiTextScale);
 		final float lSeparatorHalfWidth = lFont.bitmap().getStringWidth(mSeparator, lUiTextScale) * 0.5f;
 		final float lLabelHeight = lFont.bitmap().getStringHeight(mLabel, lUiTextScale);//;
 
-		final float yPos = y;// + h / 2f;
+		final float yPos = y;
+		final float lA = lParentScreen.a();
+
+		if (mHoveredOver) {
+			final float lHoveredColorHighlightR = 204.f / 255.f;
+			final float lHoveredColorHighlightG = 115.f / 255.f;
+			final float lHoveredColorHighlightB = 102.f / 255.f;
+
+			lTextureBatch.begin(pCore.HUD());
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() - w / 2, centerY() - h / 2, 32, h, mZ, lHoveredColorHighlightR, lHoveredColorHighlightG, lHoveredColorHighlightB, 0.26f);
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() - (w / 2) + 32, centerY() - h / 2, w - 64, h, mZ, lHoveredColorHighlightR, lHoveredColorHighlightG, lHoveredColorHighlightB, 0.26f);
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() + (w / 2) - 32, centerY() - h / 2, 32, h, mZ, lHoveredColorHighlightR, lHoveredColorHighlightG, lHoveredColorHighlightB, 0.26f);
+			lTextureBatch.end();
+
+		}
 
 		if (mButtonsEnabled) {
 			// Draw the left/right buttons
@@ -224,8 +237,8 @@ public class MenuSliderEntry extends MenuEntry {
 			final float lArrowButtonSize = 32;
 			final float lArrowButtonPaddingX = mDownButton.w() - lArrowButtonSize;
 
-			lTextureBatch.draw(mUITexture, 0, 224, 32, 32, mDownButton.x() + lArrowButtonPaddingX, yPos, lArrowButtonSize, lArrowButtonSize, mZ, 1f, 1f, 1f, 1f);
-			lTextureBatch.draw(mUITexture, 32, 224, 32, 32, mUpButton.x() + lArrowButtonPaddingX, yPos, lArrowButtonSize, lArrowButtonSize, mZ, 1f, 1f, 1f, 1f);
+			lTextureBatch.draw(mUITexture, 0, 224, 32, 32, mDownButton.x() + lArrowButtonPaddingX, yPos, lArrowButtonSize, lArrowButtonSize, mZ, 1f, 1f, 1f, lA);
+			lTextureBatch.draw(mUITexture, 32, 224, 32, 32, mUpButton.x() + lArrowButtonPaddingX, yPos, lArrowButtonSize, lArrowButtonSize, mZ, 1f, 1f, 1f, lA);
 
 			lTextureBatch.end();
 		}
@@ -235,20 +248,20 @@ public class MenuSliderEntry extends MenuEntry {
 
 		final float lCaretPos = MathHelper.scaleToRange(mValue, mLowerBound, mUpperBound, mBarPosX, mBarWidth - 32);
 
-		lTextureBatch.draw(mUITexture, 0, 192, 32, 32, mBarPosX, yPos, 32, 32, mZ, 1f, 1f, 1f, 1f);
-		lTextureBatch.draw(mUITexture, 32, 192, 32, 32, mBarPosX + 32, yPos, mBarWidth - 64 - 32, 32, mZ, 1f, 1f, 1f, 1f);
-		lTextureBatch.draw(mUITexture, 64, 192, 32, 32, mBarPosX + mBarWidth - 64, yPos, 32, 32, mZ, 1f, 1f, 1f, 1f);
+		lTextureBatch.draw(mUITexture, 0, 192, 32, 32, mBarPosX, yPos, 32, 32, mZ, 1f, 1f, 1f, lA);
+		lTextureBatch.draw(mUITexture, 32, 192, 32, 32, mBarPosX + 32, yPos, mBarWidth - 64 - 32, 32, mZ, 1f, 1f, 1f, lA);
+		lTextureBatch.draw(mUITexture, 64, 192, 32, 32, mBarPosX + mBarWidth - 64, yPos, 32, 32, mZ, 1f, 1f, 1f, lA);
 
 		// Draw the caret
-		lTextureBatch.draw(mUITexture, 192, 192, 32, 32, lCaretPos, yPos, 32, 32, mZ, 1f, 1f, 1f, 1f);
+		lTextureBatch.draw(mUITexture, 192, 192, 32, 32, lCaretPos, yPos, 32, 32, mZ, 1f, 1f, 1f, lA);
 
 		lTextureBatch.end();
 
 		// draw the label to the left and the value //
 		lFont.begin(pCore.HUD());
 		lFont.drawShadow(mDrawTextShadow);
-		lFont.draw(mLabel, x + w / 2 - lLabelWidth - 10 - lSeparatorHalfWidth, y + h / 2f - lLabelHeight / 2f, pParentZDepth, lParentScreen.r(), lParentScreen.g(), lParentScreen.b(), lParentScreen.a(), lUiTextScale, -1);
-		lFont.draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2f - lLabelHeight / 2f, pParentZDepth, lParentScreen.r(), lParentScreen.g(), lParentScreen.b(), lParentScreen.a(), lUiTextScale, -1);
+		lFont.draw(mLabel, x + w / 2 - lLabelWidth - 10 - lSeparatorHalfWidth, y + h / 2f - lLabelHeight / 2f, mZ, lParentScreen.r(), lParentScreen.g(), lParentScreen.b(), lParentScreen.a(), lUiTextScale, -1);
+		lFont.draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2f - lLabelHeight / 2f, mZ, lParentScreen.r(), lParentScreen.g(), lParentScreen.b(), lParentScreen.a(), lUiTextScale, -1);
 
 		if (mShowValueEnabled) {
 			final float lValueStringWidth = lFont.bitmap().getStringWidth(Integer.toString(mValue), lUiTextScale);
@@ -265,7 +278,7 @@ public class MenuSliderEntry extends MenuEntry {
 			}
 
 			final float endPositionX = lCaretPos + 128.f + lValueStringWidth;
-			final float lValueStringPositionX = endPositionX > mBarPosX + mBarWidth ? lCaretPos - 64.f : lCaretPos + 32f;
+			final float lValueStringPositionX = endPositionX > mBarPosX + mBarWidth ? lCaretPos - 32.f - 5.f : lCaretPos + 32f;
 			lFont.draw(lValueString, lValueStringPositionX, y + h * .5f - lLabelHeight * .5f, mZ, lUiTextScale);
 
 			if (mShowGuideValuesEnabled) {
@@ -280,6 +293,13 @@ public class MenuSliderEntry extends MenuEntry {
 			lTextureBatch.begin(pCore.HUD());
 			lTextureBatch.draw(mUITexture, 192, 160, 32, 32, mInfoIconDstRectangle, mZ, 1f, 1f, 1f, 1f);
 			lTextureBatch.end();
+		}
+
+		if (mShowWarnIcon) {
+			lTextureBatch.begin(pCore.HUD());
+			lTextureBatch.draw(mUITexture, 224, 160, 32, 32, mWarnIconDstRectangle, mZ, 1f, 1f, 1f, 1f);
+			lTextureBatch.end();
+
 		}
 
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
