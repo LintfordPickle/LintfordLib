@@ -108,11 +108,24 @@ public class MenuLabelValueEntry extends MenuLabelEntry {
 			break;
 		}
 
+		entryColor.a = lParentScreen.a();
+		final var lTextureBatch = lParentScreen.rendererManager.uiTextureBatch();
+
 		lFont.begin(pCore.HUD());
 		lFont.drawShadow(mDrawTextShadow);
 		lFont.trimText(mTrimText);
 		lFont.draw(mValueText, lX + 100.f, y + h / 2f - lFontHeight / 2f, pParentZDepth + .15f, textColor.r, textColor.g, textColor.b, textColor.a, lUiTextScale);
 		lFont.end();
+
+		if (mShowInfoIcon) {
+			drawInfoIcon(pCore, lTextureBatch, mInfoIconDstRectangle, entryColor.a);
+
+		}
+
+		if (mShowWarnIcon) {
+			drawWarningIcon(pCore, lTextureBatch, mWarnIconDstRectangle, entryColor.a);
+
+		}
 
 	}
 

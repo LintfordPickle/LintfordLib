@@ -216,7 +216,11 @@ public class MenuSliderEntry extends MenuEntry {
 		final float lLabelHeight = lFont.bitmap().getStringHeight(mLabel, lUiTextScale);//;
 
 		final float yPos = y;
-		final float lA = lParentScreen.a();
+
+		entryColor.r = 1.f;
+		entryColor.g = 1.f;
+		entryColor.b = 1.f;
+		entryColor.a = lParentScreen.a();
 
 		if (mHoveredOver) {
 			final float lHoveredColorHighlightR = 204.f / 255.f;
@@ -237,8 +241,8 @@ public class MenuSliderEntry extends MenuEntry {
 			final float lArrowButtonSize = 32;
 			final float lArrowButtonPaddingX = mDownButton.w() - lArrowButtonSize;
 
-			lTextureBatch.draw(mUITexture, 0, 224, 32, 32, mDownButton.x() + lArrowButtonPaddingX, yPos, lArrowButtonSize, lArrowButtonSize, mZ, 1f, 1f, 1f, lA);
-			lTextureBatch.draw(mUITexture, 32, 224, 32, 32, mUpButton.x() + lArrowButtonPaddingX, yPos, lArrowButtonSize, lArrowButtonSize, mZ, 1f, 1f, 1f, lA);
+			lTextureBatch.draw(mUITexture, 0, 224, 32, 32, mDownButton.x() + lArrowButtonPaddingX, yPos, lArrowButtonSize, lArrowButtonSize, mZ, entryColor.r, entryColor.g, entryColor.b, entryColor.a);
+			lTextureBatch.draw(mUITexture, 32, 224, 32, 32, mUpButton.x() + lArrowButtonPaddingX, yPos, lArrowButtonSize, lArrowButtonSize, mZ, entryColor.r, entryColor.g, entryColor.b, entryColor.a);
 
 			lTextureBatch.end();
 		}
@@ -248,12 +252,12 @@ public class MenuSliderEntry extends MenuEntry {
 
 		final float lCaretPos = MathHelper.scaleToRange(mValue, mLowerBound, mUpperBound, mBarPosX, mBarWidth - 32);
 
-		lTextureBatch.draw(mUITexture, 0, 192, 32, 32, mBarPosX, yPos, 32, 32, mZ, 1f, 1f, 1f, lA);
-		lTextureBatch.draw(mUITexture, 32, 192, 32, 32, mBarPosX + 32, yPos, mBarWidth - 64 - 32, 32, mZ, 1f, 1f, 1f, lA);
-		lTextureBatch.draw(mUITexture, 64, 192, 32, 32, mBarPosX + mBarWidth - 64, yPos, 32, 32, mZ, 1f, 1f, 1f, lA);
+		lTextureBatch.draw(mUITexture, 0, 192, 32, 32, mBarPosX, yPos, 32, 32, mZ, entryColor.r, entryColor.g, entryColor.b, entryColor.a);
+		lTextureBatch.draw(mUITexture, 32, 192, 32, 32, mBarPosX + 32, yPos, mBarWidth - 64 - 32, 32, mZ, entryColor.r, entryColor.g, entryColor.b, entryColor.a);
+		lTextureBatch.draw(mUITexture, 64, 192, 32, 32, mBarPosX + mBarWidth - 64, yPos, 32, 32, mZ, entryColor.r, entryColor.g, entryColor.b, entryColor.a);
 
 		// Draw the caret
-		lTextureBatch.draw(mUITexture, 192, 192, 32, 32, lCaretPos, yPos, 32, 32, mZ, 1f, 1f, 1f, lA);
+		lTextureBatch.draw(mUITexture, 192, 192, 32, 32, lCaretPos, yPos, 32, 32, mZ, entryColor.r, entryColor.g, entryColor.b, entryColor.a);
 
 		lTextureBatch.end();
 
@@ -290,12 +294,12 @@ public class MenuSliderEntry extends MenuEntry {
 		lFont.end();
 
 		if (mShowInfoIcon) {
-			drawInfoIcon(pCore, lTextureBatch, mInfoIconDstRectangle, lA);
+			drawInfoIcon(pCore, lTextureBatch, mInfoIconDstRectangle, entryColor.a);
 
 		}
 
 		if (mShowWarnIcon) {
-			drawWarningIcon(pCore, lTextureBatch, mWarnIconDstRectangle, lA);
+			drawWarningIcon(pCore, lTextureBatch, mWarnIconDstRectangle, entryColor.a);
 
 		}
 

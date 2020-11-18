@@ -181,15 +181,16 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 		if (mEnableScaleTextToWidth && w * 0.4f < lLabelTextWidth && lLabelTextWidth > 0)
 			lAdjustedLabelScaleW = (w * 0.4f) / lLabelTextWidth;
 
-		if (mHoveredOver) {
-			final float lHoveredColorHighlightR = 204.f / 255.f;
-			final float lHoveredColorHighlightG = 115.f / 255.f;
-			final float lHoveredColorHighlightB = 102.f / 255.f;
+		entryColor.r = mHoveredOver ? (204.f / 255.f) : .1f;
+		entryColor.g = mHoveredOver ? (115.f / 255.f) : .1f;
+		entryColor.b = mHoveredOver ? (102.f / 255.f) : .1f;
+		entryColor.a = mHoveredOver ? lParentScreen.a() : 0.26f;
 
+		if (mHoveredOver) {
 			lTextureBatch.begin(pCore.HUD());
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() - w / 2, centerY() - h / 2, 32, h, mZ, lHoveredColorHighlightR, lHoveredColorHighlightG, lHoveredColorHighlightB, 0.26f);
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() - (w / 2) + 32, centerY() - h / 2, w - 64, h, mZ, lHoveredColorHighlightR, lHoveredColorHighlightG, lHoveredColorHighlightB, 0.26f);
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() + (w / 2) - 32, centerY() - h / 2, 32, h, mZ, lHoveredColorHighlightR, lHoveredColorHighlightG, lHoveredColorHighlightB, 0.26f);
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() - w / 2, centerY() - h / 2, 32, h, mZ, entryColor.r, entryColor.g, entryColor.b, entryColor.a);
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() - (w / 2) + 32, centerY() - h / 2, w - 64, h, mZ, entryColor.r, entryColor.g, entryColor.b, entryColor.a);
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() + (w / 2) - 32, centerY() - h / 2, 32, h, mZ, entryColor.r, entryColor.g, entryColor.b, entryColor.a);
 			lTextureBatch.end();
 
 		}
@@ -211,11 +212,11 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 
 		lFont.begin(pCore.HUD());
 		lFont.drawShadow(mDrawTextShadow);
-		lFont.draw(mLabel, x + w / 2 - 10 - (lLabelTextWidth * lAdjustedLabelScaleW) - lSeparatorHalfWidth, y + h / 2 - lLabelTextHeight * 0.5f, pParentZDepth + .1f, entryColor.r, entryColor.g, entryColor.b, 1f,
-				lAdjustedLabelScaleW, -1);
+		lFont.draw(mLabel, x + w / 2 - 10 - (lLabelTextWidth * lAdjustedLabelScaleW) - lSeparatorHalfWidth, y + h / 2 - lLabelTextHeight * 0.5f, pParentZDepth + .1f, entryColor.r, entryColor.g, entryColor.b,
+				entryColor.a, lAdjustedLabelScaleW, -1);
 		lFont.draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - lLabelTextHeight * 0.5f, pParentZDepth + .1f, entryColor.r, entryColor.g, entryColor.b, 1f, lUiTextScale, -1);
 		lFont.draw(mInputField.toString(), x + w / 2 + lSeparatorHalfWidth * lAdjustedLInputScaleW + SPACE_BETWEEN_TEXT, y + h / 2 - lInputTextHeight * 0.5f, pParentZDepth + .1f, entryColor.r, entryColor.g, entryColor.b,
-				1f, lAdjustedLInputScaleW, -1);
+				entryColor.a, lAdjustedLInputScaleW, -1);
 
 		if (mShowCaret && mHasFocus) {
 			lFont.draw("|", x + w / 2 + lSeparatorHalfWidth + SPACE_BETWEEN_TEXT + lInputTextWidth * lAdjustedLInputScaleW, y + h / 2 - lInputTextHeight * 0.5f, pParentZDepth + .1f, lAdjustedLInputScaleW);
@@ -223,6 +224,11 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 		}
 
 		lFont.end();
+
+		if (!mEnabled) {
+			drawdisabledBlackOverbar(pCore, lTextureBatch, entryColor.a);
+
+		}
 
 		if (mShowInfoIcon) {
 			drawInfoIcon(pCore, lTextureBatch, mInfoIconDstRectangle, 1.f);

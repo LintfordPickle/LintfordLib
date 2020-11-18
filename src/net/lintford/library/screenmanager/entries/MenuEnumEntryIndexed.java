@@ -284,18 +284,19 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 		final var lTextureBatch = lParentScreen.textureBatch();
 		final float lUiTextScale = lParentScreen.uiTextScale();
 
-		entryColor.a = lParentScreen.a();
 		textColor.a = lParentScreen.a();
 
 		entryColor.r = mEnabled ? lParentScreen.r() : 0.24f;
 		entryColor.g = mEnabled ? lParentScreen.g() : 0.24f;
 		entryColor.b = mEnabled ? lParentScreen.b() : 0.24f;
+		entryColor.a = lParentScreen.a();
 
 		// Render the two arrows either side of the enumeration options
 		if (mButtonsEnabled) {
-			// Draw the left/right buttons
 			lTextureBatch.begin(pCore.HUD());
-			final float lButtonSize = 32; // Fixme: Store this somewhere more central and accessable
+
+			// Fixme: Store this somewhere more central and accessable
+			final float lButtonSize = 32;
 
 			lTextureBatch.draw(mUITexture, 0, 224, 32, 32, mLeftButtonRectangle.x(), mLeftButtonRectangle.y(), lButtonSize, lButtonSize, mZ, entryColor.r, entryColor.g, entryColor.b, entryColor.a);
 			lTextureBatch.draw(mUITexture, 32, 224, 32, 32, mRightButtonRectangle.x(), mRightButtonRectangle.y(), lButtonSize, lButtonSize, mZ, entryColor.r, entryColor.g, entryColor.b, entryColor.a);
@@ -316,8 +317,7 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 
 		lFont.begin(pCore.HUD());
 		lFont.drawShadow(mDrawTextShadow);
-		lFont.draw(mLabel, x + w / 2 - 10 - (lLabelWidth * lAdjustedLabelScaleW) - lSeparatorHalfWidth, y + h / 2 - lFontHeight * 0.5f, mZ, textColor.r, textColor.g, textColor.b, textColor.a,
-				lAdjustedLabelScaleW, -1);
+		lFont.draw(mLabel, x + w / 2 - 10 - (lLabelWidth * lAdjustedLabelScaleW) - lSeparatorHalfWidth, y + h / 2 - lFontHeight * 0.5f, mZ, textColor.r, textColor.g, textColor.b, textColor.a, lAdjustedLabelScaleW, -1);
 		lFont.draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - lFontHeight * 0.5f, mZ, textColor.r, textColor.g, textColor.b, textColor.a, lUiTextScale, -1);
 
 		// Render the items
@@ -328,14 +328,21 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 			if (mEnableScaleTextToWidth && w * 0.35f < EntryWidth && EntryWidth > 0)
 				lAdjustedEntryScaleW = (w * 0.35f) / EntryWidth;
 
-			lFont.draw(lCurItem, x + (w / 4 * 3) - (EntryWidth * lAdjustedEntryScaleW) / 2, y + h / 2 - lFontHeight * 0.5f, pComponentDepth, textColor.r, textColor.g, textColor.b, textColor.a,
-					lAdjustedEntryScaleW, -1);
+			lFont.draw(lCurItem, x + (w / 4 * 3) - (EntryWidth * lAdjustedEntryScaleW) / 2, y + h / 2 - lFontHeight * 0.5f, pComponentDepth, textColor.r, textColor.g, textColor.b, textColor.a, lAdjustedEntryScaleW, -1);
 
 		}
 
 		lFont.end();
 
-		drawInfoIcon(pCore, lTextureBatch, mInfoIconDstRectangle, entryColor.a);
+		if (!mEnabled) {
+			drawdisabledBlackOverbar(pCore, lTextureBatch, entryColor.a);
+
+		}
+
+		if (mShowInfoIcon) {
+			drawInfoIcon(pCore, lTextureBatch, mInfoIconDstRectangle, entryColor.a);
+
+		}
 
 	}
 

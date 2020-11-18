@@ -168,7 +168,11 @@ public class MenuKeyBindEntry extends MenuEntry implements IKeyInputCallback {
 		final var lParentScreen = mParentLayout.parentScreen;
 		final var lFont = lParentScreen.font();
 
-		entryColor.a = lParentScreen.a();
+		entryColor.r = mHoveredOver ? (204.f / 255.f) : .1f;
+		entryColor.g = mHoveredOver ? (115.f / 255.f) : .1f;
+		entryColor.b = mHoveredOver ? (102.f / 255.f) : .1f;
+		entryColor.a = mHoveredOver ? lParentScreen.a() : 0.26f;
+
 		textColor.a = lParentScreen.a();
 
 		final float lUiTextScale = lParentScreen.uiTextScale();
@@ -180,23 +184,19 @@ public class MenuKeyBindEntry extends MenuEntry implements IKeyInputCallback {
 
 		if (mDrawBackground) {
 			lTextureBatch.begin(pCore.HUD());
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, x, y, w, h, pParentZDepth + .15f, 0.1f, 0.1f, 0.1f, entryColor.a);
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, x, y, w, h, pParentZDepth + .15f, entryColor.r, entryColor.g, entryColor.b, entryColor.a);
 			lTextureBatch.end();
 
 		} else if (mHoveredOver) {
-			final float lHoveredColorHighlightR = 204.f / 255.f;
-			final float lHoveredColorHighlightG = 115.f / 255.f;
-			final float lHoveredColorHighlightB = 102.f / 255.f;
-
 			lTextureBatch.begin(pCore.HUD());
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() - w / 2, centerY() - h / 2, 32, h, pParentZDepth + .15f, lHoveredColorHighlightR, lHoveredColorHighlightG, lHoveredColorHighlightB, 0.26f);
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() - (w / 2) + 32, centerY() - h / 2, w - 64, h, pParentZDepth + .15f, lHoveredColorHighlightR, lHoveredColorHighlightG, lHoveredColorHighlightB, 0.26f);
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() + (w / 2) - 32, centerY() - h / 2, 32, h, pParentZDepth + .15f, lHoveredColorHighlightR, lHoveredColorHighlightG, lHoveredColorHighlightB, 0.26f);
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() - w / 2, centerY() - h / 2, 32, h, pParentZDepth + .15f, entryColor.r, entryColor.g, entryColor.b, entryColor.a);
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() - (w / 2) + 32, centerY() - h / 2, w - 64, h, pParentZDepth + .15f, entryColor.r, entryColor.g, entryColor.b, entryColor.a);
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() + (w / 2) - 32, centerY() - h / 2, 32, h, pParentZDepth + .15f, entryColor.r, entryColor.g, entryColor.b, entryColor.a);
 			lTextureBatch.end();
 
 		}
 
-		float lX = x + w / 2; // Center label
+		float lX = x + w / 2;
 
 		mCaretFlashTimer += pCore.appTime().elapsedTimeMilli() * 0.001f;
 

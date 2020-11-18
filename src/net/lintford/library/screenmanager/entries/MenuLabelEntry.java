@@ -160,12 +160,12 @@ public class MenuLabelEntry extends MenuEntry {
 		lFont.end();
 
 		if (mShowInfoIcon) {
-			drawInfoIcon(pCore, lTextureBatch, mInfoIconDstRectangle, lParentScreen.a());
+			drawInfoIcon(pCore, lTextureBatch, mInfoIconDstRectangle, entryColor.a);
 
 		}
 
 		if (mShowWarnIcon) {
-			drawWarningIcon(pCore, lTextureBatch, mWarnIconDstRectangle, lParentScreen.a());
+			drawWarningIcon(pCore, lTextureBatch, mWarnIconDstRectangle, entryColor.a);
 
 		}
 

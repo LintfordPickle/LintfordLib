@@ -619,6 +619,13 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 		pTextureBatch.end();
 	}
 
+	public void drawdisabledBlackOverbar(LintfordCore pCore, TextureBatchPCT pTextureBatch, float pScreenAlpha) {
+		pTextureBatch.begin(pCore.HUD());
+		pTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() - (w / 2), centerY() - h / 2, w, h, mZ + .1f, .1f, .1f, .1f, .75f * pScreenAlpha);
+		pTextureBatch.end();
+
+	}
+
 	public void setToolTip(String pToolTipText) {
 		if (pToolTipText == null || pToolTipText.length() == 0) {
 			mToolTipEnabled = false;

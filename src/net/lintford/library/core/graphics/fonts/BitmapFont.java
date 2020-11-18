@@ -294,7 +294,10 @@ public class BitmapFont {
 
 	public float getStringHeight(String pText, float pScale, float pWordWrapWidth) {
 		if (!mIsLoaded)
-			return 0f;
+			return 0.f;
+
+		if (pText == null || pText.length() == 0)
+			return 0.f;
 
 		float lResult = mFontHeight * pScale;
 		float lWrapWidth = 0;

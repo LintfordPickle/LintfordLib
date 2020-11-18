@@ -209,6 +209,21 @@ public class MenuButtonEntry extends MenuEntry {
 		lFont.draw(mButtonLabel, x + (w / 4) * 3 - lButtonTextWidth / 2, y + h / 2 - lTextHeight * 0.5f, pParentZDepth, textColor.r, textColor.g, textColor.b, textColor.a, lUiTextScale, -1);
 		lFont.end();
 
+		if (!mEnabled) {
+			drawdisabledBlackOverbar(pCore, lTextureBatch, entryColor.a);
+
+		}
+
+		if (mShowInfoIcon) {
+			drawInfoIcon(pCore, lTextureBatch, mInfoIconDstRectangle, entryColor.a);
+
+		}
+
+		if (mShowWarnIcon) {
+			drawWarningIcon(pCore, lTextureBatch, mWarnIconDstRectangle, entryColor.a);
+
+		}
+
 	}
 
 }

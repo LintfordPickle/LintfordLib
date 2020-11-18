@@ -265,14 +265,14 @@ public class MenuEnumEntry extends MenuEntry {
 
 		// Draw the left/right buttons
 		lTextureBatch.begin(pCore.HUD());
-		final float ARROW_BUTTON_SIZE = 32;
-		final float ARROW_PADDING_Y = mLeftButtonRectangle.h() - ARROW_BUTTON_SIZE;
+		final float lArrowButtonSize = 32;
+		final float lArrowButtonPaddingY = mLeftButtonRectangle.h() - lArrowButtonSize;
 
 		// Render the two arrows either side of the enumeration options
 		if (mButtonsEnabled) {
-			lTextureBatch.draw(mUITexture, 0, 224, 32, 32, mLeftButtonRectangle.x(), mLeftButtonRectangle.y() + ARROW_PADDING_Y, ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, 0f, entryColor.r, entryColor.g, entryColor.b,
+			lTextureBatch.draw(mUITexture, 0, 224, 32, 32, mLeftButtonRectangle.x(), mLeftButtonRectangle.y() + lArrowButtonPaddingY, lArrowButtonSize, lArrowButtonSize, 0f, entryColor.r, entryColor.g, entryColor.b,
 					entryColor.a);
-			lTextureBatch.draw(mUITexture, 32, 224, 32, 32, mRightButtonRectangle.x(), mRightButtonRectangle.y() + ARROW_PADDING_Y, ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, 0f, entryColor.r, entryColor.g, entryColor.b,
+			lTextureBatch.draw(mUITexture, 32, 224, 32, 32, mRightButtonRectangle.x(), mRightButtonRectangle.y() + lArrowButtonPaddingY, lArrowButtonSize, lArrowButtonSize, 0f, entryColor.r, entryColor.g, entryColor.b,
 					entryColor.a);
 
 		}

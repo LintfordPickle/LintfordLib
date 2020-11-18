@@ -320,10 +320,15 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 		mZ = mOpen ? ZLayers.LAYER_SCREENMANAGER + Z_STATE_MODIFIER_ACTIVE : ZLayers.LAYER_SCREENMANAGER + Z_STATE_MODIFIER_PASSIVE;
 
 		// Render the label
-		float lTextR = mEnabled ? lParentScreen.r() : 0.24f;
-		float lTextG = mEnabled ? lParentScreen.g() : 0.24f;
-		float lTextB = mEnabled ? lParentScreen.b() : 0.24f;
-		float lTextA = lParentScreen.a();
+		entryColor.r = mEnabled ? lParentScreen.r() : 0.24f;
+		entryColor.g = mEnabled ? lParentScreen.g() : 0.24f;
+		entryColor.b = mEnabled ? lParentScreen.b() : 0.24f;
+		entryColor.a = lParentScreen.a();
+
+		textColor.r = .94f;
+		textColor.g = .94f;
+		textColor.b = .94f;
+		textColor.a = lParentScreen.a();
 
 		final String lSeparator = " : ";
 
@@ -334,8 +339,8 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 		final float lSeparatorHalfWidth = lFont.bitmap().getStringWidth(lSeparator, lUiTextScale) * 0.5f;
 		lFont.begin(pCore.HUD());
 		lFont.drawShadow(mDrawTextShadow);
-		lFont.draw(mLabel, x + w / 2 - 10 - lLabelWidth - lSeparatorHalfWidth, y + mItemHeight / 2f - lFontHeight / 2f, mZ, lTextR, lTextG, lTextB, lTextA, lUiTextScale, -1);
-		lFont.draw(lSeparator, x + w / 2 - lSeparatorHalfWidth, y + mItemHeight / 2f - lFontHeight / 2f, mZ, lTextR, lTextG, lTextB, lTextA, lUiTextScale, -1);
+		lFont.draw(mLabel, x + w / 2 - 10 - lLabelWidth - lSeparatorHalfWidth, y + mItemHeight / 2f - lFontHeight / 2f, mZ, textColor.r, textColor.g, textColor.b, textColor.a, lUiTextScale, -1);
+		lFont.draw(lSeparator, x + w / 2 - lSeparatorHalfWidth, y + mItemHeight / 2f - lFontHeight / 2f, mZ, textColor.r, textColor.g, textColor.b, textColor.a, lUiTextScale, -1);
 
 		if (mHoveredOver) {
 			final float lHoveredColorHighlightR = 204.f / 255.f;
@@ -353,7 +358,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 		if (mItems == null || mItems.size() == 0) {
 			// LOCALIZATION: No entries added to dropdown list
 			final String lNoEntriesText = "No items found";
-			lFont.draw(lNoEntriesText, x + w / 2 + lSeparatorHalfWidth + SPACE_BETWEEN_TEXT, y + h / 2f - lFontHeight / 2f, mZ, lTextR, lTextG, lTextB, lTextA, lUiTextScale, -1);
+			lFont.draw(lNoEntriesText, x + w / 2 + lSeparatorHalfWidth + SPACE_BETWEEN_TEXT, y + h / 2f - lFontHeight / 2f, mZ, textColor.r, textColor.g, textColor.b, textColor.a, lUiTextScale, -1);
 			lFont.end();
 			return;
 		}
@@ -363,7 +368,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 		// Render the selected item in the 'top spot'
 		final String lCurItem = lSelectedMenuEnumEntryItem.name;
 		final float lSelectedTextWidth = lFont.bitmap().getStringWidth(lCurItem);
-		lFont.draw(lCurItem, x + (w / 4 * 3) + -lSelectedTextWidth / 2, y + mItemHeight / 2f - lFontHeight / 2f, mZ, lTextR, lTextG, lTextB, lTextA, lUiTextScale, -1);
+		lFont.draw(lCurItem, x + (w / 4 * 3) + -lSelectedTextWidth / 2, y + mItemHeight / 2f - lFontHeight / 2f, mZ, textColor.r, textColor.g, textColor.b, textColor.a, lUiTextScale, -1);
 		lFont.end();
 
 		// CONTENT PANE
@@ -400,19 +405,20 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 				final var lItem = mItems.get(i);
 				final float lItemTextWidth = lFont.bitmap().getStringWidth(lItem.name);
 
+				// Highlight the item were the mouse is over
+				// FIXME: Take the LintfordCore primary color
 				if (i == mHighlightedIndex) {
-					lTextR = 204.f / 255.f;
-					lTextG = 115.f / 255.f;
-					lTextB = 102.f / 255.f;
+					textColor.r = 204.f / 255.f;
+					textColor.g = 115.f / 255.f;
+					textColor.b = 102.f / 255.f;
 
 				} else {
-					lTextR = 1.f;
-					lTextG = 1.f;
-					lTextB = 1.f;
-
+					textColor.r = .94f;
+					textColor.g = .94f;
+					textColor.b = .94f;
 				}
 
-				lFont.draw(lItem.name, x + (w / 4 * 3) - lItemTextWidth / 2, lYPos, mZ + 0.1f, lTextR, lTextG, lTextB, lTextA, lUiTextScale, -1);
+				lFont.draw(lItem.name, x + (w / 4 * 3) - lItemTextWidth / 2, lYPos, mZ + 0.1f, textColor.r, textColor.g, textColor.b, textColor.a, lUiTextScale, -1);
 				lYPos += mItemHeight;
 
 			}
@@ -428,7 +434,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 
 		// Draw the down arrow
 		lTextureBatch.begin(pCore.HUD());
-		lTextureBatch.draw(mUITexture, 96, 224, 32, 32, right() - 32, top(), 32, 32, mZ, 1f, 1f, 1f, 1f);
+		lTextureBatch.draw(mUITexture, 96, 224, 32, 32, right() - 32, top(), 32, 32, mZ, entryColor.r, entryColor.g, entryColor.b, entryColor.a);
 		lTextureBatch.end();
 
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
@@ -439,13 +445,18 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 
 		}
 
+		if(!mEnabled) {
+			drawdisabledBlackOverbar(pCore, lTextureBatch, entryColor.a);
+			
+		}
+
 		if (mShowInfoIcon) {
-			drawInfoIcon(pCore, lTextureBatch, mInfoIconDstRectangle, lTextA);
+			drawInfoIcon(pCore, lTextureBatch, mInfoIconDstRectangle, entryColor.a);
 
 		}
 
 		if (mShowWarnIcon) {
-			drawWarningIcon(pCore, lTextureBatch, mWarnIconDstRectangle, lTextA);
+			drawWarningIcon(pCore, lTextureBatch, mWarnIconDstRectangle, entryColor.a);
 
 		}
 
