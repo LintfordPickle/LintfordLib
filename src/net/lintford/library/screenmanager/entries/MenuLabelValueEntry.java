@@ -1,14 +1,12 @@
 package net.lintford.library.screenmanager.entries;
 
-import net.lintford.library.ConstantsApp;
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.Screen;
 import net.lintford.library.screenmanager.ScreenManager;
 import net.lintford.library.screenmanager.ScreenManagerConstants.FILLTYPE;
 import net.lintford.library.screenmanager.layouts.BaseLayout;
 
-public class MenuLabelValueEntry extends MenuEntry {
+public class MenuLabelValueEntry extends MenuLabelEntry {
 
 	private static final long serialVersionUID = -6246272207476797676L;
 
@@ -16,15 +14,20 @@ public class MenuLabelValueEntry extends MenuEntry {
 	// Variables
 	// --------------------------------------
 
-	private float mPadding = 15f;
-	private boolean mShow;
-	private float mR, mG, mB;
-	private boolean mTrimText;
 	private String mValueText;
+	private boolean mShowLabel;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public boolean showLabel() {
+		return mShowLabel;
+	}
+
+	public void showLabel(boolean pShowLabel) {
+		mShowLabel = pShowLabel;
+	}
 
 	public void valueText(String pValueText) {
 		mValueText = pValueText;
@@ -34,71 +37,16 @@ public class MenuLabelValueEntry extends MenuEntry {
 		return mValueText;
 	}
 
-	public boolean trimText() {
-		return mTrimText;
-	}
-
-	public void trimText(boolean pNewValue) {
-		mTrimText = pNewValue;
-	}
-
-	/** Padding is applied when the label is either aligned left or right (not when centered). */
-	public float padding() {
-		return mPadding;
-	}
-
-	/** Padding is applied when the label is either aligned left or right (not when centered). */
-	public void padding(float pNewValue) {
-		mPadding = pNewValue;
-	}
-
-	@Override
-	public boolean hasFocus() {
-		return super.hasFocus();
-	}
-
-	@Override
-	public void hasFocus(boolean pNewValue) {
-		if (pNewValue) {
-
-		}
-
-		super.hasFocus(pNewValue);
-	}
-
-	public boolean show() {
-		return mShow;
-	}
-
-	public void show(boolean pNewValue) {
-		mShow = pNewValue;
-	}
-
-	public void label(String pNewLabel) {
-		mText = pNewLabel;
-	}
-
-	public String label() {
-		return mText;
-	}
-
-	public void labelColor(float pR, float pG, float pB) {
-		mR = pR;
-		mG = pG;
-		mB = pB;
-	}
-
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
 	public MenuLabelValueEntry(ScreenManager pScreenManager, BaseLayout pParentLayout) {
-		super(pScreenManager, pParentLayout, "");
+		super(pScreenManager, pParentLayout);
 
 		mDrawBackground = false;
 		mText = "Add your message";
-		mShow = true;
-		mR = mG = mB = 0.94f;
+		mShowLabel = true;
 
 		mCanHaveFocus = false;
 		mCanHoverOver = false;
@@ -132,6 +80,7 @@ public class MenuLabelValueEntry extends MenuEntry {
 
 	@Override
 	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pParentZDepth) {
+		super.draw(pCore, pScreen, pIsSelected, pParentZDepth);
 		if (!enabled())
 			return;
 
@@ -141,20 +90,10 @@ public class MenuLabelValueEntry extends MenuEntry {
 		if (lFont == null)
 			return;
 
-		final float lAlpha = 1f;
-		final float luiTextScale = lParentScreen.uiTextScale();
+		final float lUiTextScale = lParentScreen.uiTextScale();
 
-		final float lLabelWidth = lFont.bitmap().getStringWidth(mText, luiTextScale);
-		final float lFontHeight = lFont.bitmap().fontHeight() * luiTextScale;
-
-		final var lTextureBatch = lParentScreen.textureBatch();
-
-		if (mDrawBackground) {
-			lTextureBatch.begin(pCore.HUD());
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, x, y, w, h, pParentZDepth + .15f, 0.1f, 0.1f, 0.1f, lAlpha);
-			lTextureBatch.end();
-
-		}
+		final float lLabelWidth = lFont.bitmap().getStringWidth(mText, lUiTextScale);
+		final float lFontHeight = lFont.bitmap().fontHeight() * lUiTextScale;
 
 		float lX = x + w / 2 - lLabelWidth / 2; // Center label
 		switch (mHorizontalAlignment) {
@@ -172,26 +111,8 @@ public class MenuLabelValueEntry extends MenuEntry {
 		lFont.begin(pCore.HUD());
 		lFont.drawShadow(mDrawTextShadow);
 		lFont.trimText(mTrimText);
-		lFont.draw(mText, lX, y + h / 2f - lFontHeight / 2f, pParentZDepth + .15f, mR, mG, mB, lParentScreen.a(), luiTextScale);
-		lFont.draw(mValueText, lX + 100.f, y + h / 2f - lFontHeight / 2f, pParentZDepth + .15f, mR, mG, mB, lParentScreen.a(), luiTextScale);
+		lFont.draw(mValueText, lX + 100.f, y + h / 2f - lFontHeight / 2f, pParentZDepth + .15f, textColor.r, textColor.g, textColor.b, textColor.a, lUiTextScale);
 		lFont.end();
-
-		if (mShowInfoIcon) {
-			drawInfoIcon(pCore, lTextureBatch, mInfoIconDstRectangle, lParentScreen.a());
-
-		}
-
-		if (mShowWarnIcon) {
-			drawWarningIcon(pCore, lTextureBatch, mWarnIconDstRectangle, lParentScreen.a());
-
-		}
-
-		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
-			lTextureBatch.begin(pCore.HUD());
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, x, y, w, h, mZ, 1f, 0.2f, 0.2f, lAlpha);
-			lTextureBatch.end();
-
-		}
 
 	}
 

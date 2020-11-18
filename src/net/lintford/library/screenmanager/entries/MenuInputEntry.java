@@ -205,15 +205,17 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 
 		final float lInputTextHeight = lFont.bitmap().fontHeight() * lAdjustedLInputScaleW;
 
-		final float r = mEnabled ? 1f : 0.6f;
-		final float g = mEnabled ? 1f : 0.6f;
-		final float b = mEnabled ? 1f : 0.6f;
+		entryColor.r = mEnabled ? 1f : 0.6f;
+		entryColor.g = mEnabled ? 1f : 0.6f;
+		entryColor.b = mEnabled ? 1f : 0.6f;
 
 		lFont.begin(pCore.HUD());
 		lFont.drawShadow(mDrawTextShadow);
-		lFont.draw(mLabel, x + w / 2 - 10 - (lLabelTextWidth * lAdjustedLabelScaleW) - lSeparatorHalfWidth, y + h / 2 - lLabelTextHeight * 0.5f, pParentZDepth + .1f, r, g, b, 1f, lAdjustedLabelScaleW, -1);
-		lFont.draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - lLabelTextHeight * 0.5f, pParentZDepth + .1f, r, g, b, 1f, lUiTextScale, -1);
-		lFont.draw(mInputField.toString(), x + w / 2 + lSeparatorHalfWidth * lAdjustedLInputScaleW + SPACE_BETWEEN_TEXT, y + h / 2 - lInputTextHeight * 0.5f, pParentZDepth + .1f, r, g, b, 1f, lAdjustedLInputScaleW, -1);
+		lFont.draw(mLabel, x + w / 2 - 10 - (lLabelTextWidth * lAdjustedLabelScaleW) - lSeparatorHalfWidth, y + h / 2 - lLabelTextHeight * 0.5f, pParentZDepth + .1f, entryColor.r, entryColor.g, entryColor.b, 1f,
+				lAdjustedLabelScaleW, -1);
+		lFont.draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - lLabelTextHeight * 0.5f, pParentZDepth + .1f, entryColor.r, entryColor.g, entryColor.b, 1f, lUiTextScale, -1);
+		lFont.draw(mInputField.toString(), x + w / 2 + lSeparatorHalfWidth * lAdjustedLInputScaleW + SPACE_BETWEEN_TEXT, y + h / 2 - lInputTextHeight * 0.5f, pParentZDepth + .1f, entryColor.r, entryColor.g, entryColor.b,
+				1f, lAdjustedLInputScaleW, -1);
 
 		if (mShowCaret && mHasFocus) {
 			lFont.draw("|", x + w / 2 + lSeparatorHalfWidth + SPACE_BETWEEN_TEXT + lInputTextWidth * lAdjustedLInputScaleW, y + h / 2 - lInputTextHeight * 0.5f, pParentZDepth + .1f, lAdjustedLInputScaleW);

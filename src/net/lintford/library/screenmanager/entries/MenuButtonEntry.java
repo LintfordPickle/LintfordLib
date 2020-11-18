@@ -182,35 +182,31 @@ public class MenuButtonEntry extends MenuEntry {
 		// Draw the left/right buttons
 		lTextureBatch.begin(pCore.HUD());
 
-		float lR = mEnabled ? mAnimationTimer <= 0 ? ColorConstants.GREY_DARK.x : 0.55f : .35f;
-		float lG = mEnabled ? mAnimationTimer <= 0 ? ColorConstants.GREY_DARK.y : 0.55f : .35f;
-		float lB = mEnabled ? mAnimationTimer <= 0 ? ColorConstants.GREY_DARK.z : 0.55f : .35f;
-		float lA = 1f;
+		entryColor.r = mEnabled ? mAnimationTimer <= 0 ? ColorConstants.GREY_DARK.x : 0.55f : .35f;
+		entryColor.g = mEnabled ? mAnimationTimer <= 0 ? ColorConstants.GREY_DARK.y : 0.55f : .35f;
+		entryColor.b = mEnabled ? mAnimationTimer <= 0 ? ColorConstants.GREY_DARK.z : 0.55f : .35f;
+		entryColor.a = lParentScreen.a();
 
 		if (mIsMouseOver) {
-			lR *= 0.6f;
-			lG *= 0.6f;
-			lB *= 0.6f;
+			entryColor.r *= 0.6f;
+			entryColor.g *= 0.6f;
+			entryColor.b *= 0.6f;
+
 		}
 
-		lTextureBatch.draw(mUITexture, 0, 32, 32, 32, lBX, lBY, TILE_SIZE, lBH, 0f, lR, lG, lB, lA);
-		lTextureBatch.draw(mUITexture, 32, 32, 32, 32, lBX + TILE_SIZE, lBY, lBW - TILE_SIZE * 2, lBH, 0f, lR, lG, lB, lA);
-		lTextureBatch.draw(mUITexture, 64, 32, 32, 32, lBX + lBW - TILE_SIZE, lBY, TILE_SIZE, lBH, 0f, lR, lG, lB, lA);
+		lTextureBatch.draw(mUITexture, 0, 32, 32, 32, lBX, lBY, TILE_SIZE, lBH, 0f, entryColor.r, entryColor.g, entryColor.b, entryColor.a);
+		lTextureBatch.draw(mUITexture, 32, 32, 32, 32, lBX + TILE_SIZE, lBY, lBW - TILE_SIZE * 2, lBH, 0f, entryColor.r, entryColor.g, entryColor.b, entryColor.a);
+		lTextureBatch.draw(mUITexture, 64, 32, 32, 32, lBX + lBW - TILE_SIZE, lBY, TILE_SIZE, lBH, 0f, entryColor.r, entryColor.g, entryColor.b, entryColor.a);
 
 		lTextureBatch.end();
-
-		lR = lParentScreen.r();
-		lG = lParentScreen.g();
-		lB = lParentScreen.b();
-		lA = lParentScreen.a();
 
 		final float lButtonTextWidth = lFont.bitmap().getStringWidth(mButtonLabel);
 
 		lFont.begin(pCore.HUD());
 		lFont.drawShadow(mDrawTextShadow);
-		lFont.draw(mLabel, x + w / 2 - 10 - lTextWidth - lSeparatorHalfWidth, y + h / 2 - lTextHeight * 0.5f, pParentZDepth, lR, lG, lB, lA, lUiTextScale, -1);
-		lFont.draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - lTextHeight * 0.5f, pParentZDepth, lR, lG, lB, lA, lUiTextScale, -1);
-		lFont.draw(mButtonLabel, x + (w / 4) * 3 - lButtonTextWidth / 2, y + h / 2 - lTextHeight * 0.5f, pParentZDepth, lR, lG, lB, lA, lUiTextScale, -1);
+		lFont.draw(mLabel, x + w / 2 - 10 - lTextWidth - lSeparatorHalfWidth, y + h / 2 - lTextHeight * 0.5f, pParentZDepth, textColor.r, textColor.g, textColor.b, textColor.a, lUiTextScale, -1);
+		lFont.draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - lTextHeight * 0.5f, pParentZDepth, textColor.r, textColor.g, textColor.b, textColor.a, lUiTextScale, -1);
+		lFont.draw(mButtonLabel, x + (w / 4) * 3 - lButtonTextWidth / 2, y + h / 2 - lTextHeight * 0.5f, pParentZDepth, textColor.r, textColor.g, textColor.b, textColor.a, lUiTextScale, -1);
 		lFont.end();
 
 	}

@@ -28,7 +28,6 @@ public class MenuKeyBindEntry extends MenuEntry implements IKeyInputCallback {
 
 	private float mPadding = 15f;
 	private boolean mShow;
-	private float mR, mG, mB;
 
 	private final EventAction eventAction;
 	private boolean mBindingKey;
@@ -82,12 +81,6 @@ public class MenuKeyBindEntry extends MenuEntry implements IKeyInputCallback {
 		return mText;
 	}
 
-	public void labelColor(float pR, float pG, float pB) {
-		mR = pR;
-		mG = pG;
-		mB = pB;
-	}
-
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
@@ -99,9 +92,6 @@ public class MenuKeyBindEntry extends MenuEntry implements IKeyInputCallback {
 		mDrawBackground = false;
 		mText = "Add your message";
 		mShow = true;
-		mR = mG = mB = 0.94f;
-
-		// mBottomPadding = 10.f;
 
 		mCanHaveFocus = false;
 		mCanHoverOver = false;
@@ -178,7 +168,9 @@ public class MenuKeyBindEntry extends MenuEntry implements IKeyInputCallback {
 		final var lParentScreen = mParentLayout.parentScreen;
 		final var lFont = lParentScreen.font();
 
-		final float lAlpha = 1f;
+		entryColor.a = lParentScreen.a();
+		textColor.a = lParentScreen.a();
+
 		final float lUiTextScale = lParentScreen.uiTextScale();
 
 		final float lLabelWidth = lFont.bitmap().getStringWidth(mText, lUiTextScale);
@@ -188,7 +180,7 @@ public class MenuKeyBindEntry extends MenuEntry implements IKeyInputCallback {
 
 		if (mDrawBackground) {
 			lTextureBatch.begin(pCore.HUD());
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, x, y, w, h, pParentZDepth + .15f, 0.1f, 0.1f, 0.1f, lAlpha);
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, x, y, w, h, pParentZDepth + .15f, 0.1f, 0.1f, 0.1f, entryColor.a);
 			lTextureBatch.end();
 
 		} else if (mHoveredOver) {
@@ -211,8 +203,8 @@ public class MenuKeyBindEntry extends MenuEntry implements IKeyInputCallback {
 		lFont.begin(pCore.HUD());
 		lFont.drawShadow(mDrawTextShadow);
 
-		lFont.draw(mText, lX - lLabelWidth - 20.f, y + h / 2f - lFontHeight / 2f, pParentZDepth + .15f, mR, mG, mB, lParentScreen.a(), lUiTextScale);
-		lFont.draw(":", lX - 5.f, y + h / 2f - lFontHeight / 2f, pParentZDepth + .15f, mR, mG, mB, lParentScreen.a(), lUiTextScale);
+		lFont.draw(mText, lX - lLabelWidth - 20.f, y + h / 2f - lFontHeight / 2f, pParentZDepth + .15f, textColor.r, textColor.g, textColor.b, textColor.a, lUiTextScale);
+		lFont.draw(":", lX - 5.f, y + h / 2f - lFontHeight / 2f, pParentZDepth + .15f, textColor.r, textColor.g, textColor.b, textColor.a, lUiTextScale);
 
 		if (mBindingKey) {
 			final String lBoundKeyText = "|";
@@ -222,17 +214,16 @@ public class MenuKeyBindEntry extends MenuEntry implements IKeyInputCallback {
 			final float lBindingColorHighlightB = 102.f / 255.f;
 
 			lTextureBatch.begin(pCore.HUD());
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, x, y, w, h, pParentZDepth + .15f, lBindingColorHighlightR, lBindingColorHighlightG, lBindingColorHighlightB, lAlpha);
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, x, y, w, h, pParentZDepth + .15f, lBindingColorHighlightR, lBindingColorHighlightG, lBindingColorHighlightB, entryColor.a);
 			lTextureBatch.end();
 
 			if (mCaretFlashTimer % 1.f > .5f) {
-
-				lFont.draw(lBoundKeyText, lX + 20.f, y + h / 2f - lFontHeight / 2f, pParentZDepth + .15f, mR, mG, mB, lParentScreen.a(), lUiTextScale);
+				lFont.draw(lBoundKeyText, lX + 20.f, y + h / 2f - lFontHeight / 2f, pParentZDepth + .15f, textColor.r, textColor.g, textColor.b, textColor.a, lUiTextScale);
 			}
 
 		} else {
 			final String lBoundKeyText = InputHelper.getGlfwPrintableKeyFromKeyCode(eventAction.getBoundKeyCode());
-			lFont.draw(lBoundKeyText, lX + 20.f, y + h / 2f - lFontHeight / 2f, pParentZDepth + .15f, mR, mG, mB, lParentScreen.a(), lUiTextScale);
+			lFont.draw(lBoundKeyText, lX + 20.f, y + h / 2f - lFontHeight / 2f, pParentZDepth + .15f, textColor.r, textColor.g, textColor.b, textColor.a, lUiTextScale);
 
 		}
 
@@ -250,7 +241,7 @@ public class MenuKeyBindEntry extends MenuEntry implements IKeyInputCallback {
 
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
 			lTextureBatch.begin(pCore.HUD());
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, x, y, w, h, mZ, 1f, 0.2f, 0.2f, lAlpha);
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, x, y, w, h, mZ, 1f, 0.2f, 0.2f, entryColor.a);
 			lTextureBatch.end();
 
 		}

@@ -308,7 +308,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 			mOpen = false;
 
 		}
-		
+
 	}
 
 	@Override
@@ -394,8 +394,6 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 			GL11.glStencilFunc(GL11.GL_EQUAL, 1, 0xFF); // Pass test if stencil value is 1
 
 			float lYPos = mWindowRectangle.y() + mScrollYPosition;
-
-			System.out.println("highlighted index: " + mHighlightedIndex);
 
 			final int lItemCount = mItems.size();
 			for (int i = 0; i < lItemCount; i++) {

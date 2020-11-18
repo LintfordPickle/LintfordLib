@@ -241,10 +241,15 @@ public class MenuEnumEntry extends MenuEntry {
 		if (lFont == null)
 			return;
 
-		final float lR = lParentScreen.r();
-		final float lG = lParentScreen.g();
-		final float lB = lParentScreen.b();
-		final float lA = lParentScreen.a();
+		textColor.r = lParentScreen.r();
+		textColor.g = lParentScreen.g();
+		textColor.b = lParentScreen.b();
+		textColor.a = lParentScreen.a();
+
+		entryColor.r = lParentScreen.r();
+		entryColor.g = lParentScreen.g();
+		entryColor.b = lParentScreen.b();
+		entryColor.a = lParentScreen.a();
 
 		final float lUiTextScale = lParentScreen.uiTextScale();
 		final float lTextWidth = lFont.bitmap().getStringWidth(mLabel, lUiTextScale);
@@ -265,8 +270,10 @@ public class MenuEnumEntry extends MenuEntry {
 
 		// Render the two arrows either side of the enumeration options
 		if (mButtonsEnabled) {
-			lTextureBatch.draw(mUITexture, 0, 224, 32, 32, mLeftButtonRectangle.x(), mLeftButtonRectangle.y() + ARROW_PADDING_Y, ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, 0f, 1f, 1f, 1f, lA);
-			lTextureBatch.draw(mUITexture, 32, 224, 32, 32, mRightButtonRectangle.x(), mRightButtonRectangle.y() + ARROW_PADDING_Y, ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, 0f, 1f, 1f, 1f, lA);
+			lTextureBatch.draw(mUITexture, 0, 224, 32, 32, mLeftButtonRectangle.x(), mLeftButtonRectangle.y() + ARROW_PADDING_Y, ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, 0f, entryColor.r, entryColor.g, entryColor.b,
+					entryColor.a);
+			lTextureBatch.draw(mUITexture, 32, 224, 32, 32, mRightButtonRectangle.x(), mRightButtonRectangle.y() + ARROW_PADDING_Y, ARROW_BUTTON_SIZE, ARROW_BUTTON_SIZE, 0f, entryColor.r, entryColor.g, entryColor.b,
+					entryColor.a);
 
 		}
 
@@ -274,16 +281,16 @@ public class MenuEnumEntry extends MenuEntry {
 
 		lFont.begin(pCore.HUD());
 		lFont.drawShadow(mDrawTextShadow);
-		lFont.draw(mLabel, (x + w / 2 - 10) - (lFont.bitmap().getStringWidth(mLabel, lAdjustedScaleW)) - lSeparatorHalfWidth, y + h / 2 - lFont.bitmap().getStringHeight(mLabel, lAdjustedScaleW) * 0.5f, pParentZDepth, lR,
-				lG, lB, lA, lAdjustedScaleW, -1);
-		lFont.draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - lTextHeight * 0.5f, pParentZDepth, lR, lG, lB, lA, lUiTextScale, -1);
+		lFont.draw(mLabel, (x + w / 2 - 10) - (lFont.bitmap().getStringWidth(mLabel, lAdjustedScaleW)) - lSeparatorHalfWidth, y + h / 2 - lFont.bitmap().getStringHeight(mLabel, lAdjustedScaleW) * 0.5f, pParentZDepth,
+				textColor.r, textColor.g, textColor.b, textColor.a, lAdjustedScaleW, -1);
+		lFont.draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - lTextHeight * 0.5f, pParentZDepth, textColor.r, textColor.g, textColor.b, textColor.a, lUiTextScale, -1);
 
 		// Render the items
 		if (mItems.size() > 0) {
 			final String lCurItem = mItems.get(mSelectedIndex);
 			final float EntryWidth = lFont.bitmap().getStringWidth(lCurItem, lUiTextScale);
 
-			lFont.draw(lCurItem, x + (w / 6 * 4.65f) - EntryWidth / 2, y + h / 2 - lTextHeight * 0.5f, pParentZDepth, lR, lG, lB, lA, lUiTextScale, -1);
+			lFont.draw(lCurItem, x + (w / 6 * 4.65f) - EntryWidth / 2, y + h / 2 - lTextHeight * 0.5f, pParentZDepth, textColor.r, textColor.g, textColor.b, textColor.a, lUiTextScale, -1);
 		}
 		lFont.end();
 

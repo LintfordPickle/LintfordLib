@@ -101,7 +101,7 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 
 		mChangesPendingWarning = new MenuLabelEntry(screenManager, mConfirmChangesLayout);
 		mChangesPendingWarning.label("Current changes have not yet been applied!");
-		mChangesPendingWarning.labelColor(1f, 0.12f, 0.17f);
+		mChangesPendingWarning.textColor.setRGB(1.f, .12f, .17f);
 		mChangesPendingWarning.enabled(true);
 
 		mConfirmChangesLayout.menuEntries().add(mChangesPendingWarning);

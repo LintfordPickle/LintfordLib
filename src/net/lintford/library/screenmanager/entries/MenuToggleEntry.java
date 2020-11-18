@@ -154,12 +154,18 @@ public class MenuToggleEntry extends MenuEntry {
 		final float lTextHeight = lFont.bitmap().fontHeight() * lUiTextScale;
 		final float lSeparatorHalfWidth = lFont.bitmap().getStringWidth(mSeparator, lUiTextScale) * 0.5f;
 
-		mZ = pParentZDepth;
-
 		final var lTextureBatch = lParentScreen.textureBatch();
 
-		final float TILE_SIZE = 32;
-		final float lParentScreenAlpha = lParentScreen.a();
+		final float lTileSize = 32;
+
+		entryColor.a = lParentScreen.a();
+		textColor.a = lParentScreen.a();
+
+		entryColor.r = lParentScreen.r();
+		entryColor.g = lParentScreen.g();
+		entryColor.b = lParentScreen.b();
+
+		mZ = pParentZDepth;
 
 		if (mHoveredOver) {
 			final float lHoveredColorHighlightR = 204.f / 255.f;
@@ -179,23 +185,22 @@ public class MenuToggleEntry extends MenuEntry {
 
 		// Render the check box (either ticked or empty)
 		if (mIsChecked)
-			lTextureBatch.draw(mUITexture, 64, 128, 32, 32, x + w / 2 + 16, y + h / 2 - TILE_SIZE / 2, TILE_SIZE, TILE_SIZE, mZ, 1f, 1f, 1f, lParentScreenAlpha);
+			lTextureBatch.draw(mUITexture, 64, 128, 32, 32, x + w / 2 + 16, y + h / 2 - lTileSize / 2, lTileSize, lTileSize, mZ, entryColor.r, entryColor.g, entryColor.b, entryColor.a);
 		else
-			lTextureBatch.draw(mUITexture, 32, 128, 32, 32, centerX() + TILE_SIZE / 2, y + h / 2 - TILE_SIZE / 2, TILE_SIZE, TILE_SIZE, mZ, 1f, 1f, 1f, lParentScreenAlpha);
+			lTextureBatch.draw(mUITexture, 32, 128, 32, 32, centerX() + lTileSize / 2, y + h / 2 - lTileSize / 2, lTileSize, lTileSize, mZ, entryColor.r, entryColor.g, entryColor.b, entryColor.a);
 
 		lTextureBatch.end();
 
 		lFont.begin(pCore.HUD());
 		lFont.drawShadow(mDrawTextShadow);
-		lFont.draw(mText, x + w / 2 - lLabelWidth - SPACE_BETWEEN_TEXT - lSeparatorHalfWidth, y + h / 2 - lTextHeight * 0.5f, mZ, lParentScreen.r(), lParentScreen.g(), lParentScreen.b(), lParentScreen.a(), lUiTextScale,
-				-1);
-		lFont.draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - lTextHeight * 0.5f, mZ, lParentScreen.r(), lParentScreen.g(), lParentScreen.b(), lParentScreenAlpha, lUiTextScale, -1);
+		lFont.draw(mText, x + w / 2 - lLabelWidth - SPACE_BETWEEN_TEXT - lSeparatorHalfWidth, y + h / 2 - lTextHeight * 0.5f, mZ, textColor.r, textColor.g, textColor.b, textColor.a, lUiTextScale, -1);
+		lFont.draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - lTextHeight * 0.5f, mZ, textColor.r, textColor.g, textColor.b, textColor.a, lUiTextScale, -1);
 
 		if (mIsChecked) {
-			lFont.draw("Enabled", x + w / 2 + lSeparatorHalfWidth + TILE_SIZE * 2, y + h / 2 - lTextHeight * 0.5f, mZ, lParentScreen.r(), lParentScreen.g(), lParentScreen.b(), lParentScreenAlpha, lUiTextScale, -1);
+			lFont.draw("Enabled", x + w / 2 + lSeparatorHalfWidth + lTileSize * 2, y + h / 2 - lTextHeight * 0.5f, mZ, textColor.r, textColor.g, textColor.b, textColor.a, lUiTextScale, -1);
 
 		} else {
-			lFont.draw("Disabled", x + w / 2 + lSeparatorHalfWidth + TILE_SIZE * 2, y + h / 2 - lTextHeight * 0.5f, mZ, lParentScreen.r(), lParentScreen.g(), lParentScreen.b(), lParentScreenAlpha, lUiTextScale, -1);
+			lFont.draw("Disabled", x + w / 2 + lSeparatorHalfWidth + lTileSize * 2, y + h / 2 - lTextHeight * 0.5f, mZ, textColor.r, textColor.g, textColor.b, textColor.a, lUiTextScale, -1);
 
 		}
 
@@ -203,12 +208,12 @@ public class MenuToggleEntry extends MenuEntry {
 		lFont.end();
 
 		if (mShowInfoIcon) {
-			drawInfoIcon(pCore, lTextureBatch, mInfoIconDstRectangle, lParentScreenAlpha);
+			drawInfoIcon(pCore, lTextureBatch, mInfoIconDstRectangle, entryColor.a);
 
 		}
 
 		if (mShowWarnIcon) {
-			drawWarningIcon(pCore, lTextureBatch, mWarnIconDstRectangle, lParentScreenAlpha);
+			drawWarningIcon(pCore, lTextureBatch, mWarnIconDstRectangle, entryColor.a);
 
 		}
 

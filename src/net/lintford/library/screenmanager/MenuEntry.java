@@ -4,6 +4,7 @@ import net.lintford.library.ConstantsApp;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.geometry.Rectangle;
+import net.lintford.library.core.graphics.Color;
 import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
@@ -59,13 +60,15 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 	protected float mToolTipTimer;
 	protected String mToolTipText;
 	protected boolean mShowInfoIcon;
-	protected Rectangle mInfoIconDstRectangle = new Rectangle();
+	protected final Rectangle mInfoIconDstRectangle = new Rectangle();
 	protected boolean mShowWarnIcon;
-	protected Rectangle mWarnIconDstRectangle = new Rectangle();
+	protected final Rectangle mWarnIconDstRectangle = new Rectangle();
 	protected boolean mHasFocus;
 	protected boolean mFocusLocked; // used only for buffered input
 	protected boolean mCanHaveFocus; // some menuEntry sub-types aren't focusable (like the labels)
 	protected float mClickTimer;
+	public final Color entryColor = new Color();
+	public final Color textColor = new Color();
 
 	private boolean mIsinitialized, mIsLoaded;
 	public float mZ;
@@ -375,6 +378,16 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 		w = mDesiredWidth;
 		h = mDesiredHeight;
 
+		entryColor.r = 1.f;
+		entryColor.g = 1.f;
+		entryColor.b = 1.f;
+		entryColor.a = 1.f;
+
+		textColor.r = .94f;
+		textColor.g = .94f;
+		textColor.b = .94f;
+		textColor.a = 1.f;
+
 		mVerticalFillType = FILLTYPE.TAKE_WHATS_NEEDED;
 		mHorizontalFillType = FILLTYPE.HALF_PARENT;
 
@@ -498,10 +511,10 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 		mZ = pParentZDepth;
 
 		// Set the tint of the back based on whether the button is enabled or not
-		float lR = mEnabled ? mAnimationTimer <= 0 ? ColorConstants.GREY_DARK.x : 0.55f : .35f;
-		float lG = mEnabled ? mAnimationTimer <= 0 ? ColorConstants.GREY_DARK.y : 0.55f : .35f;
-		float lB = mEnabled ? mAnimationTimer <= 0 ? ColorConstants.GREY_DARK.z : 0.55f : .35f;
-		float lA = mEnabled ? mParentLayout.parentScreen.mA : 0.60f;
+		entryColor.r = mEnabled ? mAnimationTimer <= 0 ? ColorConstants.GREY_DARK.x : 0.55f : .35f;
+		entryColor.g = mEnabled ? mAnimationTimer <= 0 ? ColorConstants.GREY_DARK.y : 0.55f : .35f;
+		entryColor.b = mEnabled ? mAnimationTimer <= 0 ? ColorConstants.GREY_DARK.z : 0.55f : .35f;
+		entryColor.a = mEnabled ? mParentLayout.parentScreen.mA : 0.60f;
 
 		float tile_size = 32;
 
@@ -511,27 +524,27 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 		if (mDrawBackground) {
 			if (isInClickedState()) {
 				lTextureBatch.begin(pCore.HUD());
-				lTextureBatch.draw(mUITexture, 0, 96, 32, 32, centerX() - w / 2, centerY() - h / 2, 32, h, mZ, lR, lG, lB, lA);
-				lTextureBatch.draw(mUITexture, 32, 96, 32, 32, centerX() - (w / 2) + 32, centerY() - h / 2, w - 64, h, mZ, lR, lG, lB, lA);
-				lTextureBatch.draw(mUITexture, 128, 96, 32, 32, centerX() + (w / 2) - 32, centerY() - h / 2, 32, h, mZ, lR, lG, lB, lA);
+				lTextureBatch.draw(mUITexture, 0, 96, 32, 32, centerX() - w / 2, centerY() - h / 2, 32, h, mZ, entryColor.r, entryColor.g, entryColor.b, entryColor.a);
+				lTextureBatch.draw(mUITexture, 32, 96, 32, 32, centerX() - (w / 2) + 32, centerY() - h / 2, w - 64, h, mZ, entryColor.r, entryColor.g, entryColor.b, entryColor.a);
+				lTextureBatch.draw(mUITexture, 128, 96, 32, 32, centerX() + (w / 2) - 32, centerY() - h / 2, 32, h, mZ, entryColor.r, entryColor.g, entryColor.b, entryColor.a);
 				lTextureBatch.end();
 
 			} else if (mHoveredOver && mHighlightOnHover) {
-				lR *= 0.6f;
-				lG *= 0.6f;
-				lB *= 0.6f;
+				entryColor.r *= 0.6f;
+				entryColor.g *= 0.6f;
+				entryColor.b *= 0.6f;
 
 				lTextureBatch.begin(pCore.HUD());
-				lTextureBatch.draw(mUITexture, 0, 64, 32, 32, centerX() - w / 2, centerY() - h / 2, tile_size, h, mZ, lR, lG, lB, lA);
-				lTextureBatch.draw(mUITexture, 32, 64, 32, 32, centerX() - (w / 2) + tile_size, centerY() - h / 2, w - tile_size * 2, h, mZ, lR, lG, lB, lA);
-				lTextureBatch.draw(mUITexture, 128, 64, 32, 32, centerX() + (w / 2) - tile_size, centerY() - h / 2, tile_size, h, mZ, lR, lG, lB, lA);
+				lTextureBatch.draw(mUITexture, 0, 64, 32, 32, centerX() - w / 2, centerY() - h / 2, tile_size, h, mZ, entryColor.r, entryColor.g, entryColor.b, entryColor.a);
+				lTextureBatch.draw(mUITexture, 32, 64, 32, 32, centerX() - (w / 2) + tile_size, centerY() - h / 2, w - tile_size * 2, h, mZ, entryColor.r, entryColor.g, entryColor.b, entryColor.a);
+				lTextureBatch.draw(mUITexture, 128, 64, 32, 32, centerX() + (w / 2) - tile_size, centerY() - h / 2, tile_size, h, mZ, entryColor.r, entryColor.g, entryColor.b, entryColor.a);
 				lTextureBatch.end();
 
 			} else {
 				lTextureBatch.begin(pCore.HUD());
-				lTextureBatch.draw(mUITexture, 0, 32, 32, 32, centerX() - w / 2, centerY() - h / 2, 32, h, mZ, lR, lG, lB, lA);
-				lTextureBatch.draw(mUITexture, 32, 32, 32, 32, centerX() - (w / 2) + 32, centerY() - h / 2, w - 64, h, mZ, lR, lG, lB, lA);
-				lTextureBatch.draw(mUITexture, 128, 32, 32, 32, centerX() + (w / 2) - 32, centerY() - h / 2, 32, h, mZ, lR, lG, lB, lA);
+				lTextureBatch.draw(mUITexture, 0, 32, 32, 32, centerX() - w / 2, centerY() - h / 2, 32, h, mZ, entryColor.r, entryColor.g, entryColor.b, entryColor.a);
+				lTextureBatch.draw(mUITexture, 32, 32, 32, 32, centerX() - (w / 2) + 32, centerY() - h / 2, w - 64, h, mZ, entryColor.r, entryColor.g, entryColor.b, entryColor.a);
+				lTextureBatch.draw(mUITexture, 128, 32, 32, 32, centerX() + (w / 2) - 32, centerY() - h / 2, 32, h, mZ, entryColor.r, entryColor.g, entryColor.b, entryColor.a);
 				lTextureBatch.end();
 
 			}
@@ -561,7 +574,7 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 			if (lMenuFont != null) {
 				lMenuFont.begin(pCore.HUD());
 				lMenuFont.draw(mText, centerX() - lMenuFont.bitmap().getStringWidth(mText, lUiTextScale) * 0.5f, centerY() - lMenuFont.bitmap().fontHeight() * lUiTextScale / 2 - 2f, mZ, 0.97f * lColMod, .92f * lColMod,
-						.92f * lColMod, lA, lUiTextScale);
+						.92f * lColMod, textColor.a, lUiTextScale);
 				lMenuFont.end();
 
 			}
@@ -569,12 +582,12 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 		}
 
 		if (mShowInfoIcon) {
-			drawInfoIcon(pCore, lTextureBatch, mInfoIconDstRectangle, lA);
+			drawInfoIcon(pCore, lTextureBatch, mInfoIconDstRectangle, entryColor.a);
 
 		}
 
 		if (mShowWarnIcon) {
-			drawWarningIcon(pCore, lTextureBatch, mWarnIconDstRectangle, lA);
+			drawWarningIcon(pCore, lTextureBatch, mWarnIconDstRectangle, entryColor.a);
 
 		}
 
