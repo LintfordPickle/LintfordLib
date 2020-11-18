@@ -167,8 +167,6 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 		if (!mActive)
 			return;
 
-		// super.draw(pCore, pScreen, pIsSelected, pParentZDepth);
-
 		final var lParentScreen = mParentLayout.parentScreen;
 		final var lFont = lParentScreen.font();
 		final var lTextureBatch = lParentScreen.textureBatch();
@@ -225,23 +223,19 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 		lFont.end();
 
 		if (mShowInfoIcon) {
-			lTextureBatch.begin(pCore.HUD());
-			lTextureBatch.draw(mUITexture, 192, 160, 32, 32, mInfoIconDstRectangle, mZ, 1f, 1f, 1f, 1f);
-			lTextureBatch.end();
+			drawInfoIcon(pCore, lTextureBatch, mInfoIconDstRectangle, 1.f);
 
 		}
 
 		if (mShowWarnIcon) {
-			lTextureBatch.begin(pCore.HUD());
-			lTextureBatch.draw(mUITexture, 224, 160, 32, 32, mWarnIconDstRectangle, mZ, 1f, 1f, 1f, 1f);
-			lTextureBatch.end();
+			drawWarningIcon(pCore, lTextureBatch, mWarnIconDstRectangle, 1.f);
 
 		}
 
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
 			lTextureBatch.begin(pCore.HUD());
-			final float ALPHA = 0.3f;
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, x, y, w, h, mZ, 1f, 0.2f, 0.2f, ALPHA);
+			final float lAlphaValue = 0.3f;
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, x, y, w, h, mZ, 1f, 0.2f, 0.2f, lAlphaValue);
 			lTextureBatch.end();
 
 		}

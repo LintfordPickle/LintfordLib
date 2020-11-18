@@ -171,8 +171,11 @@ public class ScreenManager {
 
 			}
 
+			lScreen.acceptMouseInput = !lInputBlockedByHigherScreen;
+			lScreen.acceptKeyboardInput = !lInputBlockedByHigherScreen;
+
 			if (!lInputBlockedByHigherScreen && (lScreen.screenState() == ScreenState.TransitionOn || lScreen.screenState() == ScreenState.Active || lScreen.mShowInBackground)) {
-				lScreen.handleInput(pCore, true, true);
+				lScreen.handleInput(pCore);
 
 			}
 

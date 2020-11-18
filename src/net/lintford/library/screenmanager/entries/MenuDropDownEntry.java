@@ -41,6 +41,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 
 	private static final float OPEN_HEIGHT = 100;
 	private static final float SPACE_BETWEEN_TEXT = 15;
+	private static final float ITEM_HEIGHT = 25.f;
 
 	// --------------------------------------
 	// Variables
@@ -48,6 +49,8 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 
 	private String mLabel;
 	private int mSelectedIndex;
+	private int mHighlightedIndex;
+	private float mItemHeight;
 	private List<MenuEnumEntryItem> mItems;
 	private transient boolean mOpen;
 	private transient ScrollBarContentRectangle mContentRectangle;
@@ -176,12 +179,28 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 
 			}
 
+			if (mOpen) {
+				final float lConsoleLineHeight = mItemHeight;
+				// Something inside the dropdown was select
+				float lRelativeheight = pCore.HUD().getMouseCameraSpace().y - mWindowRectangle.y() - mScrollYPosition;
+
+				int lRelativeIndex = (int) (lRelativeheight / lConsoleLineHeight);
+				int lSelectedIndex = lRelativeIndex;
+
+				if (lSelectedIndex < 0)
+					lSelectedIndex = 0;
+				if (lSelectedIndex >= mItems.size())
+					lSelectedIndex = mItems.size() - 1;
+
+				mHighlightedIndex = lSelectedIndex;
+
+			}
+
 			if (pCore.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
 				if (mOpen) {
-					final float lUiTextScale = mScreenManager.UiStructureController().uiTextScaleFactor();
-
 					// TODO: play the menu clicked sound
-					final float lConsoleLineHeight = 25f * lUiTextScale;
+
+					final float lConsoleLineHeight = mItemHeight;
 					// Something inside the dropdown was select
 					float lRelativeheight = pCore.HUD().getMouseCameraSpace().y - mWindowRectangle.y() - mScrollYPosition;
 
@@ -255,14 +274,17 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 
 		}
 
-		mContentRectangle.set(x, y + mScrollYPosition, w, mItems.size() * 25);
+		final float lUiTextScale = mScreenManager.UiStructureController().uiTextScaleFactor();
+		mItemHeight = ITEM_HEIGHT * lUiTextScale;
+
+		mContentRectangle.set(x, y + mScrollYPosition, w, mItems.size() * mItemHeight);
 		if (mOpen) {
 			mWindowRectangle.set(x + w / 2, y + 32, w / 2, OPEN_HEIGHT);
 			set(x, y, w, OPEN_HEIGHT + 32.f);
 		} else {
 			mWindowRectangle.set(this);
 			mWindowRectangle.expand(1);
-			//set(x,y,w,h);
+
 		}
 
 		mScrollBar.update(pCore);
@@ -282,6 +304,11 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 		if (mScrollYPosition < -(fullContentArea().h() - contentDisplayArea().h()))
 			mScrollYPosition = -(fullContentArea().h() - contentDisplayArea().h());
 
+		if (mOpen && pCore.input().mouse().isMouseLeftButtonDown() && !intersectsAA(pCore.HUD().getMouseCameraSpace())) {
+			mOpen = false;
+
+		}
+		
 	}
 
 	@Override
@@ -296,7 +323,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 		float lTextR = mEnabled ? lParentScreen.r() : 0.24f;
 		float lTextG = mEnabled ? lParentScreen.g() : 0.24f;
 		float lTextB = mEnabled ? lParentScreen.b() : 0.24f;
-		float lTextA = mEnabled ? lParentScreen.a() : 1f;
+		float lTextA = lParentScreen.a();
 
 		final String lSeparator = " : ";
 
@@ -304,13 +331,11 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 		final float lFontHeight = lFont.bitmap().fontHeight() * lUiTextScale;
 		final var lTextureBatch = lParentScreen.textureBatch();
 
-		final float lSingleTextHeight = 32f;
-
 		final float lSeparatorHalfWidth = lFont.bitmap().getStringWidth(lSeparator, lUiTextScale) * 0.5f;
 		lFont.begin(pCore.HUD());
 		lFont.drawShadow(mDrawTextShadow);
-		lFont.draw(mLabel, x + w / 2 - 10 - lLabelWidth - lSeparatorHalfWidth, y + lSingleTextHeight / 2f - lFontHeight / 2f, mZ, lTextR, lTextG, lTextB, lTextA, lUiTextScale, -1);
-		lFont.draw(lSeparator, x + w / 2 - lSeparatorHalfWidth, y + lSingleTextHeight / 2f - lFontHeight / 2f, mZ, lTextR, lTextG, lTextB, lTextA, lUiTextScale, -1);
+		lFont.draw(mLabel, x + w / 2 - 10 - lLabelWidth - lSeparatorHalfWidth, y + mItemHeight / 2f - lFontHeight / 2f, mZ, lTextR, lTextG, lTextB, lTextA, lUiTextScale, -1);
+		lFont.draw(lSeparator, x + w / 2 - lSeparatorHalfWidth, y + mItemHeight / 2f - lFontHeight / 2f, mZ, lTextR, lTextG, lTextB, lTextA, lUiTextScale, -1);
 
 		if (mHoveredOver) {
 			final float lHoveredColorHighlightR = 204.f / 255.f;
@@ -338,7 +363,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 		// Render the selected item in the 'top spot'
 		final String lCurItem = lSelectedMenuEnumEntryItem.name;
 		final float lSelectedTextWidth = lFont.bitmap().getStringWidth(lCurItem);
-		lFont.draw(lCurItem, x + (w / 4 * 3) + -lSelectedTextWidth / 2, y + lSingleTextHeight / 2f - lFontHeight / 2f, mZ, lTextR, lTextG, lTextB, lTextA, lUiTextScale, -1);
+		lFont.draw(lCurItem, x + (w / 4 * 3) + -lSelectedTextWidth / 2, y + mItemHeight / 2f - lFontHeight / 2f, mZ, lTextR, lTextG, lTextB, lTextA, lUiTextScale, -1);
 		lFont.end();
 
 		// CONTENT PANE
@@ -370,11 +395,27 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 
 			float lYPos = mWindowRectangle.y() + mScrollYPosition;
 
-			for (int i = 0; i < mItems.size(); i++) {
+			System.out.println("highlighted index: " + mHighlightedIndex);
+
+			final int lItemCount = mItems.size();
+			for (int i = 0; i < lItemCount; i++) {
 				final var lItem = mItems.get(i);
 				final float lItemTextWidth = lFont.bitmap().getStringWidth(lItem.name);
+
+				if (i == mHighlightedIndex) {
+					lTextR = 204.f / 255.f;
+					lTextG = 115.f / 255.f;
+					lTextB = 102.f / 255.f;
+
+				} else {
+					lTextR = 1.f;
+					lTextG = 1.f;
+					lTextB = 1.f;
+
+				}
+
 				lFont.draw(lItem.name, x + (w / 4 * 3) - lItemTextWidth / 2, lYPos, mZ + 0.1f, lTextR, lTextG, lTextB, lTextA, lUiTextScale, -1);
-				lYPos += 25;
+				lYPos += mItemHeight;
 
 			}
 
@@ -401,16 +442,12 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 		}
 
 		if (mShowInfoIcon) {
-			lTextureBatch.begin(pCore.HUD());
-			lTextureBatch.draw(mUITexture, 192, 160, 32, 32, mInfoIconDstRectangle, mZ, 1f, 1f, 1f, 1f);
-			lTextureBatch.end();
+			drawInfoIcon(pCore, lTextureBatch, mInfoIconDstRectangle, lTextA);
 
 		}
 
 		if (mShowWarnIcon) {
-			lTextureBatch.begin(pCore.HUD());
-			lTextureBatch.draw(mUITexture, 224, 160, 32, 32, mWarnIconDstRectangle, mZ, 1f, 1f, 1f, 1f);
-			lTextureBatch.end();
+			drawWarningIcon(pCore, lTextureBatch, mWarnIconDstRectangle, lTextA);
 
 		}
 

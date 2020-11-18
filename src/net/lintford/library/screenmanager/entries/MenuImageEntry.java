@@ -28,9 +28,9 @@ public class MenuImageEntry extends MenuEntry {
 
 	private int mMaximumWidth = 640;
 
+	private Texture mMainTexture;
 	private Texture mMissingTexture;
 	private float srcX, srcY, srcWidth, srcHeight;
-	private Texture mMainTexture;
 
 	private boolean mShowMissingTextureText;
 	private String mMissingTextureText;
@@ -188,7 +188,6 @@ public class MenuImageEntry extends MenuEntry {
 
 	@Override
 	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pParentZDepth) {
-
 		final var lParentScreen = mParentLayout.parentScreen;
 		final var lRendererManager = lParentScreen.rendererManager;
 		final var lTextureBatch = lParentScreen.textureBatch();
@@ -219,6 +218,16 @@ public class MenuImageEntry extends MenuEntry {
 		}
 
 		lTextureBatch.end();
+
+		if (mShowInfoIcon) {
+			drawInfoIcon(pCore, lTextureBatch, mInfoIconDstRectangle, 1.f);
+
+		}
+
+		if (mShowWarnIcon) {
+			drawWarningIcon(pCore, lTextureBatch, mWarnIconDstRectangle, 1.f);
+
+		}
 
 	}
 

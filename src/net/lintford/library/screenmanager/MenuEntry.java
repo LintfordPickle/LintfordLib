@@ -6,6 +6,7 @@ import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.textures.Texture;
+import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.core.input.IProcessMouseInput;
 import net.lintford.library.core.input.InputManager;
 import net.lintford.library.screenmanager.ScreenManagerConstants.ALIGNMENT;
@@ -481,7 +482,7 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 
 		}
 
-		mHoveredOver = this.intersectsAA(pCore.HUD().getMouseCameraSpace());
+		mHoveredOver = parentLayout().parentScreen.acceptKeyboardInput && this.intersectsAA(pCore.HUD().getMouseCameraSpace());
 
 		if ((mToolTipEnabled && mToolTipTimer >= 1000 && mHoveredOver) || mInfoIconDstRectangle.intersectsAA(pCore.HUD().getMouseCameraSpace())) {
 			mScreenManager.toolTip().toolTipProvider(this);
@@ -568,16 +569,12 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 		}
 
 		if (mShowInfoIcon) {
-			lTextureBatch.begin(pCore.HUD());
-			lTextureBatch.draw(mUITexture, 192, 160, 32, 32, mInfoIconDstRectangle, mZ, 1f, 1f, 1f, 1f);
-			lTextureBatch.end();
+			drawInfoIcon(pCore, lTextureBatch, mInfoIconDstRectangle, lA);
 
 		}
 
 		if (mShowWarnIcon) {
-			lTextureBatch.begin(pCore.HUD());
-			lTextureBatch.draw(mUITexture, 224, 160, 32, 32, mWarnIconDstRectangle, mZ, 1f, 1f, 1f, 1f);
-			lTextureBatch.end();
+			drawWarningIcon(pCore, lTextureBatch, mWarnIconDstRectangle, lA);
 
 		}
 
@@ -594,6 +591,20 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
+
+	public void drawInfoIcon(LintfordCore pCore, TextureBatchPCT pTextureBatch, Rectangle pDestRect, float pScreenAlpha) {
+		pTextureBatch.begin(pCore.HUD());
+		// TODO: Resolve the texture source rectangle from the CORE_ATLAS
+		pTextureBatch.draw(mUITexture, 192, 160, 32, 32, pDestRect, mZ, 1f, 1f, 1f, pScreenAlpha);
+		pTextureBatch.end();
+	}
+
+	public void drawWarningIcon(LintfordCore pCore, TextureBatchPCT pTextureBatch, Rectangle pDestRect, float pScreenAlpha) {
+		pTextureBatch.begin(pCore.HUD());
+		// TODO: Resolve the texture source rectangle from the CORE_ATLAS
+		pTextureBatch.draw(mUITexture, 224, 160, 32, 32, pDestRect, mZ, 1f, 1f, 1f, pScreenAlpha);
+		pTextureBatch.end();
+	}
 
 	public void setToolTip(String pToolTipText) {
 		if (pToolTipText == null || pToolTipText.length() == 0) {

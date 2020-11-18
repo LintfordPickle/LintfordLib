@@ -49,6 +49,8 @@ public abstract class Screen implements IProcessMouseInput {
 	protected float mR, mG, mB, mA;
 	protected boolean mShowInBackground;
 	protected boolean mBlockInputInBackground;
+	public boolean acceptMouseInput;
+	public boolean acceptKeyboardInput;
 	protected float mMouseClickTimer;
 
 	// --------------------------------------
@@ -188,7 +190,7 @@ public abstract class Screen implements IProcessMouseInput {
 
 	}
 
-	public void handleInput(LintfordCore pCore, boolean pAcceptMouse, boolean pAcceptKeyboard) {
+	public void handleInput(LintfordCore pCore) {
 		rendererManager.handleInput(pCore);
 		screenManager.core().controllerManager().handleInput(screenManager.core(), mEntityGroupID);
 

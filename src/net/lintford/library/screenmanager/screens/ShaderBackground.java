@@ -179,8 +179,8 @@ public abstract class ShaderBackground extends Screen {
 	}
 
 	@Override
-	public void handleInput(LintfordCore pCore, boolean pAcceptMouse, boolean pAcceptKeyboard) {
-		super.handleInput(pCore, pAcceptMouse, pAcceptKeyboard);
+	public void handleInput(LintfordCore pCore) {
+		super.handleInput(pCore);
 
 		if (pCore.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_U)) {
 			mBackgroundShader.recompile();

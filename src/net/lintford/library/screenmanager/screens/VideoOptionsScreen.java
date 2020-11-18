@@ -87,9 +87,9 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 
 		mVideoList = new ListLayout(this);
 		mVideoList.setDrawBackground(true, 1f, 1f, 1f, 0.85f);
+		mVideoList.layoutFillType(FILLTYPE.FILL_CONTAINER);
 
 		mConfirmChangesLayout = new ListLayout(this);
-		mConfirmChangesLayout.setEntryOffsetY(0);
 
 		createVideoSection(mVideoList);
 
@@ -109,9 +109,9 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 		mConfirmChangesLayout.setDrawBackground(true, 1f, 1f, 1f, 0.85f);
 
 		/* Screen control buttons */
-		HorizontalEntryGroup lGroup = new HorizontalEntryGroup(pScreenManager, footerLayout());
+		final var lGroup = new HorizontalEntryGroup(pScreenManager, footerLayout());
 
-		MenuEntry lBackButton = new MenuEntry(pScreenManager, footerLayout(), "Back");
+		final var lBackButton = new MenuEntry(pScreenManager, footerLayout(), "Back");
 		lBackButton.registerClickListener(this, BUTTON_CANCEL_CHANGES);
 		mApplyButton = new MenuEntry(pScreenManager, footerLayout(), "Apply");
 		mApplyButton.registerClickListener(this, BUTTON_APPLY_CHANGES);
@@ -139,25 +139,20 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 		lVideoOptionsTitle.label("Video Options");
 		lVideoOptionsTitle.drawButtonBackground(true);
 		lVideoOptionsTitle.horizontalAlignment(ALIGNMENT.LEFT);
-		lVideoOptionsTitle.horizontalFillType(FILLTYPE.TAKE_DESIRED_SIZE);
-		lVideoOptionsTitle.desiredWidth(550.f);
+		lVideoOptionsTitle.horizontalFillType(FILLTYPE.FILL_CONTAINER);
 
 		mFullScreenEntry = new MenuEnumEntryIndexed<>(screenManager, lLayout, "Fullscreen");
-		mFullScreenEntry.horizontalFillType(FILLTYPE.TAKE_DESIRED_SIZE);
-		mFullScreenEntry.desiredWidth(550.f);
+		mFullScreenEntry.horizontalFillType(FILLTYPE.FILL_CONTAINER);
 
 		mResolutionEntry = new MenuDropDownEntry<>(screenManager, lLayout, "Resolution");
-		mResolutionEntry.horizontalFillType(FILLTYPE.TAKE_DESIRED_SIZE);
-		mResolutionEntry.desiredWidth(550.f);
+		mResolutionEntry.horizontalFillType(FILLTYPE.FILL_CONTAINER);
 
 		mMonitorEntry = new MenuEnumEntryIndexed<>(screenManager, lLayout, "Monitor");
 		mMonitorEntry.setButtonsEnabled(true);
-		mMonitorEntry.horizontalFillType(FILLTYPE.TAKE_DESIRED_SIZE);
-		mMonitorEntry.desiredWidth(550.f);
+		mMonitorEntry.horizontalFillType(FILLTYPE.FILL_CONTAINER);
 
 		mVSync = new MenuToggleEntry(screenManager, lLayout);
-		mVSync.horizontalFillType(FILLTYPE.TAKE_DESIRED_SIZE);
-		mVSync.desiredWidth(550.f);
+		mVSync.horizontalFillType(FILLTYPE.FILL_CONTAINER);
 
 		// Setup buttons
 		mFullScreenEntry.addItem(mFullScreenEntry.new MenuEnumEntryItem(FULLSCREEN_NO, VideoSettings.FULLSCREEN_NO_INDEX));
@@ -202,8 +197,8 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 		final int lLayoutCount = layouts().size();
 		for (int i = 0; i < lLayoutCount; i++) {
 			layouts().get(i).layoutWidth(LAYOUT_WIDTH.THREEQUARTER);
-			layouts().get(i).marginLeft(50);
-			layouts().get(i).marginRight(50);
+			layouts().get(i).marginLeft(100);
+			layouts().get(i).marginRight(100);
 
 		}
 

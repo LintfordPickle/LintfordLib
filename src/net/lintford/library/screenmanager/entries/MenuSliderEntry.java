@@ -290,15 +290,12 @@ public class MenuSliderEntry extends MenuEntry {
 		lFont.end();
 
 		if (mShowInfoIcon) {
-			lTextureBatch.begin(pCore.HUD());
-			lTextureBatch.draw(mUITexture, 192, 160, 32, 32, mInfoIconDstRectangle, mZ, 1f, 1f, 1f, 1f);
-			lTextureBatch.end();
+			drawInfoIcon(pCore, lTextureBatch, mInfoIconDstRectangle, lA);
+
 		}
 
 		if (mShowWarnIcon) {
-			lTextureBatch.begin(pCore.HUD());
-			lTextureBatch.draw(mUITexture, 224, 160, 32, 32, mWarnIconDstRectangle, mZ, 1f, 1f, 1f, 1f);
-			lTextureBatch.end();
+			drawWarningIcon(pCore, lTextureBatch, mWarnIconDstRectangle, lA);
 
 		}
 

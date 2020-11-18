@@ -94,8 +94,8 @@ public class PressToContinueIntroScreen extends Screen {
 	}
 
 	@Override
-	public void handleInput(LintfordCore pCore, boolean pAcceptMouse, boolean pAcceptKeyboard) {
-		super.handleInput(pCore, pAcceptMouse, pAcceptKeyboard);
+	public void handleInput(LintfordCore pCore) {
+		super.handleInput(pCore);
 
 		if (!mActionPerformed) {
 			if (pCore.input().mouse().tryAcquireMouseLeftClick(hashCode()) || pCore.input().keyboard().isKeyDown(GLFW.GLFW_KEY_ESCAPE) || pCore.input().keyboard().isKeyDown(GLFW.GLFW_KEY_SPACE)) {

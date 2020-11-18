@@ -10,6 +10,7 @@ import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.graphics.fonts.FontManager;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.input.InputManager;
+import net.lintford.library.core.maths.MathHelper;
 import net.lintford.library.renderers.ZLayers;
 import net.lintford.library.screenmanager.ScreenManagerConstants.FILLTYPE;
 import net.lintford.library.screenmanager.ScreenManagerConstants.LAYOUT_ALIGNMENT;
@@ -220,12 +221,12 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	}
 
 	@Override
-	public void handleInput(LintfordCore pCore, boolean pAcceptMouse, boolean pAcceptKeyboard) {
+	public void handleInput(LintfordCore pCore) {
 		// TODO: Animations should be handled in another object
 		if (mAnimationTimer > 0 || mClickAction.isConsumed())
 			return; // don't handle input if 'animation' is playing
 
-		super.handleInput(pCore, pAcceptMouse, pAcceptKeyboard);
+		super.handleInput(pCore);
 
 		if (mESCBackEnabled && pCore.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_ESCAPE)) {
 			if (mScreenState == ScreenState.Active) {
@@ -397,15 +398,15 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 			float lLayoutWidth = lScreenContentWidth - lInnerPaddingW * 2f;
 			if (lBaseLayout.layoutWidth() == LAYOUT_WIDTH.THREEQUARTER) {
-				lLayoutWidth = lScreenContentWidth / 4f * 3f - lInnerPaddingW * 2f;
+				lLayoutWidth = MathHelper.clamp(lScreenContentWidth / 4f * 3f - lInnerPaddingW * 2f, 0.f, lBaseLayout.maxWidth());
 			} else if (lBaseLayout.layoutWidth() == LAYOUT_WIDTH.TWOTHIRD) {
-				lLayoutWidth = lScreenContentWidth / 3f * 2f - lInnerPaddingW * 2f;
+				lLayoutWidth = MathHelper.clamp(lScreenContentWidth / 3f * 2f - lInnerPaddingW * 2f, 0.f, lBaseLayout.maxWidth());
 			} else if (lBaseLayout.layoutWidth() == LAYOUT_WIDTH.HALF) {
-				lLayoutWidth = lScreenContentWidth / 2f - lInnerPaddingW * 2f;
+				lLayoutWidth = MathHelper.clamp(lScreenContentWidth / 2f - lInnerPaddingW * 2f, 0.f, lBaseLayout.maxWidth());
 			} else if (lBaseLayout.layoutWidth() == LAYOUT_WIDTH.THIRD) {
-				lLayoutWidth = lScreenContentWidth / 3f - lInnerPaddingW * 2f;
+				lLayoutWidth = MathHelper.clamp(lScreenContentWidth / 3f - lInnerPaddingW * 2f, 0.f, lBaseLayout.maxWidth());
 			} else if (lBaseLayout.layoutWidth() == LAYOUT_WIDTH.QUARTER) {
-				lLayoutWidth = lScreenContentWidth / 4f - lInnerPaddingW * 2f;
+				lLayoutWidth = MathHelper.clamp(lScreenContentWidth / 4f - lInnerPaddingW * 2f, 0.f, lBaseLayout.maxWidth());
 			}
 
 			float lLayoutNewX = 0;

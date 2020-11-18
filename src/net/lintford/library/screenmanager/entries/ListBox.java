@@ -277,17 +277,17 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 		if (mDrawBackground) {
 			final float lH = h;
 			lTextureBatch.begin(pCore.HUD());
-			lTextureBatch.draw(mUITexture, 928, 0, lTileSize, lTileSize, x, y, lTileSize, lTileSize, pParentZDepth, 1, 1, 1, 0.85f);
-			lTextureBatch.draw(mUITexture, 960, 0, lTileSize, lTileSize, x + lTileSize, y, w - 64, lTileSize, pParentZDepth, 1, 1, 1, 0.85f);
-			lTextureBatch.draw(mUITexture, 992, 0, lTileSize, lTileSize, x + w - 32, y, lTileSize, lTileSize, pParentZDepth, 1, 1, 1, 0.85f);
-
-			lTextureBatch.draw(mUITexture, 928, 32, lTileSize, lTileSize, x, y + 32, lTileSize, lH - 64, pParentZDepth, 1, 1, 1, 0.85f);
-			lTextureBatch.draw(mUITexture, 960, 32, lTileSize, lTileSize, x + lTileSize, y + 32, w - 64, lH - 64, pParentZDepth, 1, 1, 1, 0.85f);
-			lTextureBatch.draw(mUITexture, 992, 32, lTileSize, lTileSize, x + w - 32, y + 32, lTileSize, lH - 64, pParentZDepth, 1, 1, 1, 0.85f);
-
-			lTextureBatch.draw(mUITexture, 928, 64, lTileSize, lTileSize, x, y + lH - 32, lTileSize, lTileSize, pParentZDepth, 1, 1, 1, 0.85f);
-			lTextureBatch.draw(mUITexture, 960, 64, lTileSize, lTileSize, x + lTileSize, y + lH - 32, w - 64, lTileSize, pParentZDepth, 1, 1, 1, 0.85f);
-			lTextureBatch.draw(mUITexture, 992, 64, lTileSize, lTileSize, x + w - 32, y + lH - 32, lTileSize, lTileSize, pParentZDepth, 1, 1, 1, 0.85f);
+//			lTextureBatch.draw(mUITexture, 928, 0, lTileSize, lTileSize, x, y, lTileSize, lTileSize, pParentZDepth, 1, 1, 1, 0.85f);
+//			lTextureBatch.draw(mUITexture, 960, 0, lTileSize, lTileSize, x + lTileSize, y, w - 64, lTileSize, pParentZDepth, 1, 1, 1, 0.85f);
+//			lTextureBatch.draw(mUITexture, 992, 0, lTileSize, lTileSize, x + w - 32, y, lTileSize, lTileSize, pParentZDepth, 1, 1, 1, 0.85f);
+//
+//			lTextureBatch.draw(mUITexture, 928, 32, lTileSize, lTileSize, x, y + 32, lTileSize, lH - 64, pParentZDepth, 1, 1, 1, 0.85f);
+//			lTextureBatch.draw(mUITexture, 960, 32, lTileSize, lTileSize, x + lTileSize, y + 32, w - 64, lH - 64, pParentZDepth, 1, 1, 1, 0.85f);
+//			lTextureBatch.draw(mUITexture, 992, 32, lTileSize, lTileSize, x + w - 32, y + 32, lTileSize, lH - 64, pParentZDepth, 1, 1, 1, 0.85f);
+//
+//			lTextureBatch.draw(mUITexture, 928, 64, lTileSize, lTileSize, x, y + lH - 32, lTileSize, lTileSize, pParentZDepth, 1, 1, 1, 0.85f);
+//			lTextureBatch.draw(mUITexture, 960, 64, lTileSize, lTileSize, x + lTileSize, y + lH - 32, w - 64, lTileSize, pParentZDepth, 1, 1, 1, 0.85f);
+//			lTextureBatch.draw(mUITexture, 992, 64, lTileSize, lTileSize, x + w - 32, y + lH - 32, lTileSize, lTileSize, pParentZDepth, 1, 1, 1, 0.85f);
 			lTextureBatch.end();
 
 		}

@@ -77,8 +77,8 @@ public class MenuEnumEntry extends MenuEntry {
 	}
 
 	public void setSelectedEntry(String pName) {
-		final int COUNT = mItems.size();
-		for (int i = 0; i < COUNT; i++) {
+		final int lItemCount = mItems.size();
+		for (int i = 0; i < lItemCount; i++) {
 			if (mItems.get(i).equals(pName)) {
 				mSelectedIndex = i;
 				return;

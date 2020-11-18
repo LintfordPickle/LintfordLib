@@ -118,12 +118,6 @@ public abstract class BaseDialog extends MenuScreen {
 	}
 
 	@Override
-	public void handleInput(LintfordCore pCore, boolean pAcceptMouse, boolean pAcceptKeyboard) {
-		super.handleInput(pCore, pAcceptMouse, pAcceptKeyboard);
-
-	}
-
-	@Override
 	public void updateLayoutSize(LintfordCore pCore) {
 		super.updateLayoutSize(pCore);
 

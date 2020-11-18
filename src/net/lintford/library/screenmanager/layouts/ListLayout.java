@@ -33,6 +33,9 @@ public class ListLayout extends BaseLayout implements IProcessMouseInput {
 	public ListLayout(MenuScreen pParentScreen) {
 		super(pParentScreen);
 
+		mMinWidth = 0.f;
+		mMaxWidth = 900.f;
+
 	}
 
 	public ListLayout(MenuScreen pParentScreen, float pX, float pY) {

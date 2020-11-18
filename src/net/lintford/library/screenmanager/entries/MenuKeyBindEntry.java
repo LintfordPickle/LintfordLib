@@ -239,9 +239,12 @@ public class MenuKeyBindEntry extends MenuEntry implements IKeyInputCallback {
 		lFont.end();
 
 		if (mShowInfoIcon) {
-			lTextureBatch.begin(pCore.HUD());
-			lTextureBatch.draw(mUITexture, 192, 160, 32, 32, mInfoIconDstRectangle, mZ, 1f, 1f, 1f, 1f);
-			lTextureBatch.end();
+			drawInfoIcon(pCore, lTextureBatch, mInfoIconDstRectangle, lParentScreen.a());
+
+		}
+
+		if (mShowWarnIcon) {
+			drawWarningIcon(pCore, lTextureBatch, mWarnIconDstRectangle, lParentScreen.a());
 
 		}
 

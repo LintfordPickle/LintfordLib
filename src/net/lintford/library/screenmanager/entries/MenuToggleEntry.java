@@ -143,8 +143,6 @@ public class MenuToggleEntry extends MenuEntry {
 
 	@Override
 	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pParentZDepth) {
-		// super.draw(pCore, pScreen, pIsSelected, pParentZDepth);
-
 		final var lParentScreen = mParentLayout.parentScreen;
 		final var lFont = lParentScreen.font();
 		if (lFont == null)
@@ -203,6 +201,16 @@ public class MenuToggleEntry extends MenuEntry {
 
 		// Render the items
 		lFont.end();
+
+		if (mShowInfoIcon) {
+			drawInfoIcon(pCore, lTextureBatch, mInfoIconDstRectangle, lParentScreenAlpha);
+
+		}
+
+		if (mShowWarnIcon) {
+			drawWarningIcon(pCore, lTextureBatch, mWarnIconDstRectangle, lParentScreenAlpha);
+
+		}
 
 	}
 

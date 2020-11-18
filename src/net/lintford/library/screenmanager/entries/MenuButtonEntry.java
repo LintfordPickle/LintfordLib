@@ -215,8 +215,4 @@ public class MenuButtonEntry extends MenuEntry {
 
 	}
 
-	// --------------------------------------
-	// Methods
-	// --------------------------------------
-
 }
