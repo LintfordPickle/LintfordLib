@@ -265,7 +265,7 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 	}
 
 	public void hoveredOver(boolean pNewValue) {
-		mHoveredOver = pNewValue;
+		mHoveredOver = mCanHoverOver && pNewValue;
 	}
 
 	public boolean hasFocus() {
@@ -419,6 +419,8 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 			return false;
 
 		if (intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().isMouseOverThisComponent(hashCode())) {
+			hoveredOver(parentLayout().parentScreen.acceptMouseInput);
+
 			// Check if tool tips are enabled.
 			if (mToolTipEnabled) {
 				mToolTipTimer += pCore.appTime().elapsedTimeMilli();
@@ -470,6 +472,11 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 		if (!mActive)
 			return;
 
+		if (!intersectsAA(pCore.HUD().getMouseCameraSpace())) {
+			mHoveredOver = false;
+
+		}
+
 		final var lDeltaTime = (float) pCore.appTime().elapsedTimeMilli();
 
 		if (mClickTimer >= 0) {
@@ -494,8 +501,6 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 			mScale = 0.75f;
 
 		}
-
-		mHoveredOver = parentLayout().parentScreen.acceptKeyboardInput && this.intersectsAA(pCore.HUD().getMouseCameraSpace());
 
 		if ((mToolTipEnabled && mToolTipTimer >= 1000 && mHoveredOver) || mInfoIconDstRectangle.intersectsAA(pCore.HUD().getMouseCameraSpace())) {
 			mScreenManager.toolTip().toolTipProvider(this);
@@ -566,15 +571,12 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 		// Render the MenuEntry label
 		if (mText != null && mText.length() > 0) {
 			final float lUiTextScale = mScreenManager.UiStructureController().uiTextScaleFactor();
-
-			final float lColMod = 1f; // no color mod for the text (mHoveredOver && mHighlightOnHover) ? 0.7f : 1f;
-
 			final var lMenuFont = mParentLayout.parentScreen.font();
 
 			if (lMenuFont != null) {
 				lMenuFont.begin(pCore.HUD());
-				lMenuFont.draw(mText, centerX() - lMenuFont.bitmap().getStringWidth(mText, lUiTextScale) * 0.5f, centerY() - lMenuFont.bitmap().fontHeight() * lUiTextScale / 2 - 2f, mZ, 0.97f * lColMod, .92f * lColMod,
-						.92f * lColMod, textColor.a, lUiTextScale);
+				lMenuFont.draw(mText, centerX() - lMenuFont.bitmap().getStringWidth(mText, lUiTextScale) * 0.5f, centerY() - lMenuFont.bitmap().fontHeight() * lUiTextScale / 2 - 2f, mZ, 0.97f, .92f, .92f, textColor.a,
+						lUiTextScale);
 				lMenuFont.end();
 
 			}

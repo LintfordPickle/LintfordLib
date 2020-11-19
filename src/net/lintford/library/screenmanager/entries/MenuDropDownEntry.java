@@ -437,9 +437,9 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 
 		}
 
-		if(!mEnabled) {
+		if (!mEnabled) {
 			drawdisabledBlackOverbar(pCore, lTextureBatch, entryColor.a);
-			
+
 		}
 
 		if (mShowInfoIcon) {

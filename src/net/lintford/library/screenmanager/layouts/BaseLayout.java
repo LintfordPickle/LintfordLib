@@ -513,7 +513,7 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 			final boolean lDoesThisComponentOwnTheMouse = pCore.input().mouse().isMouseOverThisComponent(lMenuEntry.hashCode());
 
 			// Update the hovered over status (needed to disable hovering on entries)
-			if (lDoesThisComponentOwnTheMouse || lIsTheMouseOverThisComponent) {
+			if (lDoesThisComponentOwnTheMouse && lIsTheMouseOverThisComponent) {
 				lMenuEntry.hoveredOver(true);
 
 			} else {
