@@ -121,14 +121,6 @@ public class MenuToggleEntry extends MenuEntry {
 	}
 
 	@Override
-	public void updateStructure() {
-		super.updateStructure();
-
-		w = Math.min(mParentLayout.w() - 50f, mMaxWidth);
-
-	}
-
-	@Override
 	public void update(LintfordCore pCore, MenuScreen pScreen, boolean pIsSelected) {
 		super.update(pCore, pScreen, pIsSelected);
 

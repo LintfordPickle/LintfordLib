@@ -255,14 +255,6 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 	}
 
 	@Override
-	public void updateStructure() {
-		super.updateStructure();
-
-		w = Math.min(mParentLayout.w() - 50f, mMaxWidth);
-
-	}
-
-	@Override
 	public void update(LintfordCore pCore, MenuScreen pScreen, boolean pIsSelected) {
 		if (mItems == null || mItems.size() == 0)
 			return;

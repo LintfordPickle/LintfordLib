@@ -121,25 +121,6 @@ public class MenuKeyBindEntry extends MenuEntry implements IKeyInputCallback {
 	}
 
 	@Override
-	public void updateStructure() {
-		super.updateStructure();
-
-		// TODO: This -50 is because of the scrollbar - this is why I needed to keep the padding :(
-		w = Math.min(mParentLayout.w() - 50f, mMaxWidth);
-
-		final var lParentScreen = mParentLayout.parentScreen;
-		final var lFont = lParentScreen.font();
-		if (lFont == null)
-			return;
-
-		final float lUiTextScale = lParentScreen.uiTextScale();
-
-		final float lFontHeight = lFont.bitmap().fontHeight() * lUiTextScale;
-		h = lFontHeight * lUiTextScale;
-
-	}
-
-	@Override
 	public boolean handleInput(LintfordCore pCore) {
 		if (!mEnabled)
 			return false;

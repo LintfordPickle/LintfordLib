@@ -60,25 +60,6 @@ public class MenuLabelValueEntry extends MenuLabelEntry {
 	// --------------------------------------
 
 	@Override
-	public void updateStructure() {
-		super.updateStructure();
-
-		// TODO: This -50 is because of the scrollbar - this is why I needed to keep the padding :(
-		w = Math.min(mParentLayout.w() - 50f, mMaxWidth);
-
-		final var lParentScreen = mParentLayout.parentScreen;
-		final var lFont = lParentScreen.font();
-
-		if (lFont == null)
-			return;
-
-		final float lUiTextScale = lParentScreen.uiTextScale();
-		final float lFontHeight = lFont.bitmap().fontHeight() * lUiTextScale;
-		h = lFontHeight * lUiTextScale;
-
-	}
-
-	@Override
 	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pParentZDepth) {
 		super.draw(pCore, pScreen, pIsSelected, pParentZDepth);
 		if (!enabled())
