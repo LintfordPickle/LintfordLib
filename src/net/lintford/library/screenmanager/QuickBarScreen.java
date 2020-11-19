@@ -18,7 +18,7 @@ public abstract class QuickBarScreen extends MenuScreen {
 	/**
 	 * Space on the outside of the border and determines proximity to other elements.
 	 * */
-	public static float lQuickBarMargin = 32.f;
+	public static float lQuickBarMargin = 16.f;
 
 	// --------------------------------------
 	// Variables

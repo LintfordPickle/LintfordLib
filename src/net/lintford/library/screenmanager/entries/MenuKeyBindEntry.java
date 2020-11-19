@@ -5,6 +5,7 @@ import org.lwjgl.glfw.GLFW;
 import net.lintford.library.ConstantsApp;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
+import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.input.EventAction;
 import net.lintford.library.core.input.IKeyInputCallback;
 import net.lintford.library.core.input.InputHelper;
@@ -94,7 +95,7 @@ public class MenuKeyBindEntry extends MenuEntry implements IKeyInputCallback {
 		mShow = true;
 
 		mCanHaveFocus = false;
-		mCanHoverOver = false;
+		mCanHoverOver = true;
 
 		mVerticalFillType = FILLTYPE.TAKE_WHATS_NEEDED;
 
@@ -149,9 +150,9 @@ public class MenuKeyBindEntry extends MenuEntry implements IKeyInputCallback {
 		final var lParentScreen = mParentLayout.parentScreen;
 		final var lFont = lParentScreen.font();
 
-		entryColor.r = mHoveredOver ? (204.f / 255.f) : .1f;
-		entryColor.g = mHoveredOver ? (115.f / 255.f) : .1f;
-		entryColor.b = mHoveredOver ? (102.f / 255.f) : .1f;
+		entryColor.r = mHoveredOver ? (ColorConstants.SecondaryColor.r) : .1f;
+		entryColor.g = mHoveredOver ? (ColorConstants.SecondaryColor.g) : .1f;
+		entryColor.b = mHoveredOver ? (ColorConstants.SecondaryColor.b) : .1f;
 		entryColor.a = mHoveredOver ? lParentScreen.a() : 0.26f;
 
 		textColor.a = lParentScreen.a();
@@ -169,10 +170,14 @@ public class MenuKeyBindEntry extends MenuEntry implements IKeyInputCallback {
 			lTextureBatch.end();
 
 		} else if (mHoveredOver) {
+			final float lHoveredColorHighlightR = ColorConstants.PrimaryColor.r;
+			final float lHoveredColorHighlightG = ColorConstants.PrimaryColor.g;
+			final float lHoveredColorHighlightB = ColorConstants.PrimaryColor.b;
+
 			lTextureBatch.begin(pCore.HUD());
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() - w / 2, centerY() - h / 2, 32, h, pParentZDepth + .15f, entryColor.r, entryColor.g, entryColor.b, entryColor.a);
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() - (w / 2) + 32, centerY() - h / 2, w - 64, h, pParentZDepth + .15f, entryColor.r, entryColor.g, entryColor.b, entryColor.a);
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() + (w / 2) - 32, centerY() - h / 2, 32, h, pParentZDepth + .15f, entryColor.r, entryColor.g, entryColor.b, entryColor.a);
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() - w / 2, centerY() - h / 2, 32, h, pParentZDepth + .15f, lHoveredColorHighlightR, lHoveredColorHighlightG, lHoveredColorHighlightB, .25f);
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() - (w / 2) + 32, centerY() - h / 2, w - 64, h, pParentZDepth + .15f, lHoveredColorHighlightR, lHoveredColorHighlightG, lHoveredColorHighlightB, .25f);
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() + (w / 2) - 32, centerY() - h / 2, 32, h, pParentZDepth + .15f, lHoveredColorHighlightR, lHoveredColorHighlightG, lHoveredColorHighlightB, .25f);
 			lTextureBatch.end();
 
 		}
@@ -195,7 +200,7 @@ public class MenuKeyBindEntry extends MenuEntry implements IKeyInputCallback {
 			final float lBindingColorHighlightB = 102.f / 255.f;
 
 			lTextureBatch.begin(pCore.HUD());
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, x, y, w, h, pParentZDepth + .15f, lBindingColorHighlightR, lBindingColorHighlightG, lBindingColorHighlightB, entryColor.a);
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, x, y, w, h, pParentZDepth + .15f, lBindingColorHighlightR, lBindingColorHighlightG, lBindingColorHighlightB, .5f);
 			lTextureBatch.end();
 
 			if (mCaretFlashTimer % 1.f > .5f) {

@@ -3,16 +3,6 @@ package net.lintford.library.core.graphics;
 public class Color {
 
 	// --------------------------------------
-	// Constants
-	// --------------------------------------
-
-	public static final Color White = new Color(1.f, 1.f, 1.f, 1.f);
-	public static final Color Red   = new Color(1.f, 0.f, 0.f, 1.f);
-	public static final Color Green = new Color(0.f, 1.f, 0.f, 1.f);
-	public static final Color Blue  = new Color(0.f, 0.f, 1.f, 1.f);
-	public static final Color Black = new Color(0.f, 0.f, 0.f, 1.f);
-
-	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
@@ -23,10 +13,20 @@ public class Color {
 	// --------------------------------------
 
 	public Color() {
+		this(1.f, 1.f, 1.f);
+
+	}
+
+	public Color(float pRed, float pGreen, float pBlue) {
+		this(pRed, pGreen, pBlue, 1.f);
 
 	}
 
 	public Color(float pRed, float pGreen, float pBlue, float pAlpha) {
+		r = pRed;
+		g = pGreen;
+		b = pBlue;
+		a = pAlpha;
 
 	}
 

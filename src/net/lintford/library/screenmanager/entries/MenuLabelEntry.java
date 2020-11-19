@@ -2,6 +2,7 @@ package net.lintford.library.screenmanager.entries;
 
 import net.lintford.library.ConstantsApp;
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.Screen;
 import net.lintford.library.screenmanager.ScreenManager;
@@ -62,10 +63,6 @@ public class MenuLabelEntry extends MenuEntry {
 		mDrawBackground = false;
 		mText = "Unnamed Label";
 
-		entryColor.r = .34f;
-		entryColor.g = .34f;
-		entryColor.b = .34f;
-
 		mCanHaveFocus = false;
 		mCanHoverOver = false;
 
@@ -90,7 +87,11 @@ public class MenuLabelEntry extends MenuEntry {
 
 		}
 
+		entryColor.r = ColorConstants.TertiaryColor.r;
+		entryColor.g = ColorConstants.TertiaryColor.g;
+		entryColor.b = ColorConstants.TertiaryColor.b;
 		entryColor.a = lParentScreen.a();
+
 		textColor.a = lParentScreen.a();
 
 		final float lUiTextScale = lParentScreen.uiTextScale();

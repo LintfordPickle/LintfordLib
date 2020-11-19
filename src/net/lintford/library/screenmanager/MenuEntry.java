@@ -428,21 +428,20 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 			}
 
 			if (canHoverOver()) {
-				hasFocus(true);
-
 				if (pCore.input().mouse().isMiddleOwnerNotAssigned()) {
 					mParentLayout.parentScreen.setHoveringOn(this);
 
 				}
 
-			}
+				if (pCore.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
+					hasFocus(true);
+					mParentLayout.parentScreen.setFocusOn(pCore, this, false);
 
-			if (canHaveFocus() && pCore.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
-				mParentLayout.parentScreen.setFocusOn(pCore, this, false);
+					onClick(pCore.input());
 
-				onClick(pCore.input());
+					return true;
 
-				return true;
+				}
 
 			}
 
@@ -516,9 +515,9 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 		mZ = pParentZDepth;
 
 		// Set the tint of the back based on whether the button is enabled or not
-		entryColor.r = mEnabled ? mAnimationTimer <= 0 ? ColorConstants.GREY_DARK.x : 0.55f : .35f;
-		entryColor.g = mEnabled ? mAnimationTimer <= 0 ? ColorConstants.GREY_DARK.y : 0.55f : .35f;
-		entryColor.b = mEnabled ? mAnimationTimer <= 0 ? ColorConstants.GREY_DARK.z : 0.55f : .35f;
+		entryColor.r = mEnabled ? (mAnimationTimer <= 0 ? ColorConstants.SecondaryColor.r : ColorConstants.SecondaryColor.r * (mAnimationTimer / 255.f)) : .35f;
+		entryColor.g = mEnabled ? (mAnimationTimer <= 0 ? ColorConstants.SecondaryColor.g : ColorConstants.SecondaryColor.g * (mAnimationTimer / 255.f)) : .35f;
+		entryColor.b = mEnabled ? (mAnimationTimer <= 0 ? ColorConstants.SecondaryColor.b : ColorConstants.SecondaryColor.b * (mAnimationTimer / 255.f)) : .35f;
 		entryColor.a = mEnabled ? mParentLayout.parentScreen.mA : 0.60f;
 
 		float tile_size = 32;
@@ -535,35 +534,37 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 				lTextureBatch.end();
 
 			} else if (mHoveredOver && mHighlightOnHover) {
-				entryColor.r *= 0.6f;
-				entryColor.g *= 0.6f;
-				entryColor.b *= 0.6f;
+				final float lHoveredColorHighlightR = ColorConstants.SecondaryColor.r * .6f;
+				final float lHoveredColorHighlightG = ColorConstants.SecondaryColor.g * .6f;
+				final float lHoveredColorHighlightB = ColorConstants.SecondaryColor.b * .6f;
 
 				lTextureBatch.begin(pCore.HUD());
-				lTextureBatch.draw(mUITexture, 0, 64, 32, 32, centerX() - w / 2, centerY() - h / 2, tile_size, h, mZ, entryColor.r, entryColor.g, entryColor.b, entryColor.a);
-				lTextureBatch.draw(mUITexture, 32, 64, 32, 32, centerX() - (w / 2) + tile_size, centerY() - h / 2, w - tile_size * 2, h, mZ, entryColor.r, entryColor.g, entryColor.b, entryColor.a);
-				lTextureBatch.draw(mUITexture, 128, 64, 32, 32, centerX() + (w / 2) - tile_size, centerY() - h / 2, tile_size, h, mZ, entryColor.r, entryColor.g, entryColor.b, entryColor.a);
+				lTextureBatch.draw(mUITexture, 0, 64, 32, 32, centerX() - w / 2, centerY() - h / 2, tile_size, h, mZ, lHoveredColorHighlightR, lHoveredColorHighlightG, lHoveredColorHighlightB, entryColor.a);
+				lTextureBatch.draw(mUITexture, 32, 64, 32, 32, centerX() - (w / 2) + tile_size, centerY() - h / 2, w - tile_size * 2, h, mZ, lHoveredColorHighlightR, lHoveredColorHighlightG, lHoveredColorHighlightB,
+						entryColor.a);
+				lTextureBatch.draw(mUITexture, 128, 64, 32, 32, centerX() + (w / 2) - tile_size, centerY() - h / 2, tile_size, h, mZ, lHoveredColorHighlightR, lHoveredColorHighlightG, lHoveredColorHighlightB,
+						entryColor.a);
 				lTextureBatch.end();
 
 			} else {
 				lTextureBatch.begin(pCore.HUD());
-				lTextureBatch.draw(mUITexture, 0, 32, 32, 32, centerX() - w / 2, centerY() - h / 2, 32, h, mZ, entryColor.r, entryColor.g, entryColor.b, entryColor.a);
-				lTextureBatch.draw(mUITexture, 32, 32, 32, 32, centerX() - (w / 2) + 32, centerY() - h / 2, w - 64, h, mZ, entryColor.r, entryColor.g, entryColor.b, entryColor.a);
-				lTextureBatch.draw(mUITexture, 128, 32, 32, 32, centerX() + (w / 2) - 32, centerY() - h / 2, 32, h, mZ, entryColor.r, entryColor.g, entryColor.b, entryColor.a);
+				lTextureBatch.draw(mUITexture, 0, 64, 32, 32, centerX() - w / 2, centerY() - h / 2, 32, h, mZ, entryColor.r, entryColor.g, entryColor.b, entryColor.a);
+				lTextureBatch.draw(mUITexture, 32, 64, 32, 32, centerX() - (w / 2) + 32, centerY() - h / 2, w - 64, h, mZ, entryColor.r, entryColor.g, entryColor.b, entryColor.a);
+				lTextureBatch.draw(mUITexture, 128, 64, 32, 32, centerX() + (w / 2) - 32, centerY() - h / 2, 32, h, mZ, entryColor.r, entryColor.g, entryColor.b, entryColor.a);
 				lTextureBatch.end();
 
 			}
 		}
 
 		else if (mHoveredOver) {
-			final float lHoveredColorHighlightR = 204.f / 255.f;
-			final float lHoveredColorHighlightG = 115.f / 255.f;
-			final float lHoveredColorHighlightB = 102.f / 255.f;
+			final float lHoveredColorHighlightR = ColorConstants.PrimaryColor.r;
+			final float lHoveredColorHighlightG = ColorConstants.PrimaryColor.g;
+			final float lHoveredColorHighlightB = ColorConstants.PrimaryColor.b;
 
 			lTextureBatch.begin(pCore.HUD());
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() - w / 2, centerY() - h / 2, 32, h, mZ, lHoveredColorHighlightR, lHoveredColorHighlightG, lHoveredColorHighlightB, 0.26f);
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() - (w / 2) + 32, centerY() - h / 2, w - 64, h, mZ, lHoveredColorHighlightR, lHoveredColorHighlightG, lHoveredColorHighlightB, 0.26f);
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() + (w / 2) - 32, centerY() - h / 2, 32, h, mZ, lHoveredColorHighlightR, lHoveredColorHighlightG, lHoveredColorHighlightB, 0.26f);
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() - w / 2, centerY() - h / 2, 32, h, mZ, lHoveredColorHighlightR, lHoveredColorHighlightG, lHoveredColorHighlightB, 0.25f);
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() - (w / 2) + 32, centerY() - h / 2, w - 64, h, mZ, lHoveredColorHighlightR, lHoveredColorHighlightG, lHoveredColorHighlightB, 0.25f);
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() + (w / 2) - 32, centerY() - h / 2, 32, h, mZ, lHoveredColorHighlightR, lHoveredColorHighlightG, lHoveredColorHighlightB, 0.25f);
 			lTextureBatch.end();
 
 		}

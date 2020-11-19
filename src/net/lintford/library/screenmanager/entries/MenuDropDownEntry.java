@@ -8,6 +8,7 @@ import org.lwjgl.opengl.GL11;
 import net.lintford.library.ConstantsApp;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.geometry.Rectangle;
+import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.input.InputManager;
 import net.lintford.library.renderers.ZLayers;
 import net.lintford.library.renderers.windows.components.IScrollBarArea;
@@ -335,14 +336,14 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 		lFont.draw(lSeparator, x + w / 2 - lSeparatorHalfWidth, y + mItemHeight / 2f - lFontHeight / 2f, mZ, textColor.r, textColor.g, textColor.b, textColor.a, lUiTextScale, -1);
 
 		if (mHoveredOver) {
-			final float lHoveredColorHighlightR = 204.f / 255.f;
-			final float lHoveredColorHighlightG = 115.f / 255.f;
-			final float lHoveredColorHighlightB = 102.f / 255.f;
+			final float lHoveredColorHighlightR = ColorConstants.PrimaryColor.r;
+			final float lHoveredColorHighlightG = ColorConstants.PrimaryColor.g;
+			final float lHoveredColorHighlightB = ColorConstants.PrimaryColor.b;
 
 			lTextureBatch.begin(pCore.HUD());
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() - w / 2, centerY() - h / 2, 32, h, mZ, lHoveredColorHighlightR, lHoveredColorHighlightG, lHoveredColorHighlightB, 0.26f);
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() - (w / 2) + 32, centerY() - h / 2, w - 64, h, mZ, lHoveredColorHighlightR, lHoveredColorHighlightG, lHoveredColorHighlightB, 0.26f);
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() + (w / 2) - 32, centerY() - h / 2, 32, h, mZ, lHoveredColorHighlightR, lHoveredColorHighlightG, lHoveredColorHighlightB, 0.26f);
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() - w / 2, centerY() - h / 2, 32, h, mZ, lHoveredColorHighlightR, lHoveredColorHighlightG, lHoveredColorHighlightB, 0.25f);
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() - (w / 2) + 32, centerY() - h / 2, w - 64, h, mZ, lHoveredColorHighlightR, lHoveredColorHighlightG, lHoveredColorHighlightB, 0.25f);
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() + (w / 2) - 32, centerY() - h / 2, 32, h, mZ, lHoveredColorHighlightR, lHoveredColorHighlightG, lHoveredColorHighlightB, 0.25f);
 			lTextureBatch.end();
 
 		}

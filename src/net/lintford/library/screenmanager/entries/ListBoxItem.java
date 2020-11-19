@@ -3,6 +3,7 @@ package net.lintford.library.screenmanager.entries;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.geometry.Rectangle;
+import net.lintford.library.core.graphics.Color;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.core.maths.Vector2f;
 import net.lintford.library.screenmanager.MenuScreen;
@@ -19,6 +20,9 @@ public abstract class ListBoxItem extends Rectangle {
 
 	protected ScreenManager mScreenManager;
 	protected ListBox mParentListBox;
+
+	protected final Color textColor = new Color();
+	protected final Color entryColor = new Color();
 
 	protected int mEntityGroupID;
 	protected int mItemIndex;

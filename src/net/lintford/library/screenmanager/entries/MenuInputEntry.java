@@ -2,6 +2,7 @@ package net.lintford.library.screenmanager.entries;
 
 import net.lintford.library.ConstantsApp;
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.input.IBufferedTextInputCallback;
 import net.lintford.library.core.input.InputManager;
 import net.lintford.library.screenmanager.MenuEntry;
@@ -107,9 +108,7 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 
 		mDrawBackground = false;
 		mHighlightOnHover = false;
-
-		mCanHoverOver = false;
-
+		mCanHoverOver = true;
 		mEnableScaleTextToWidth = true;
 
 		mInputField = new StringBuilder();
@@ -129,9 +128,6 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 
 		if (mHasFocus) {
 			pCore.input().keyboard().startBufferedTextCapture(this);
-
-		} else {
-			// pCore.input().stopCapture();
 
 		}
 
@@ -171,6 +167,8 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 		final var lFont = lParentScreen.font();
 		final var lTextureBatch = lParentScreen.textureBatch();
 
+		mZ = pParentZDepth;
+
 		if (lFont == null)
 			return;
 
@@ -187,10 +185,14 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 		entryColor.a = mHoveredOver ? lParentScreen.a() : 0.26f;
 
 		if (mHoveredOver) {
+			final float lHoveredColorHighlightR = ColorConstants.PrimaryColor.r;
+			final float lHoveredColorHighlightG = ColorConstants.PrimaryColor.g;
+			final float lHoveredColorHighlightB = ColorConstants.PrimaryColor.b;
+
 			lTextureBatch.begin(pCore.HUD());
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() - w / 2, centerY() - h / 2, 32, h, mZ, entryColor.r, entryColor.g, entryColor.b, entryColor.a);
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() - (w / 2) + 32, centerY() - h / 2, w - 64, h, mZ, entryColor.r, entryColor.g, entryColor.b, entryColor.a);
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() + (w / 2) - 32, centerY() - h / 2, 32, h, mZ, entryColor.r, entryColor.g, entryColor.b, entryColor.a);
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() - w / 2, centerY() - h / 2, 32, h, mZ, lHoveredColorHighlightR, lHoveredColorHighlightG, lHoveredColorHighlightB, 0.25f);
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() - (w / 2) + 32, centerY() - h / 2, w - 64, h, mZ, lHoveredColorHighlightR, lHoveredColorHighlightG, lHoveredColorHighlightB, 0.25f);
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() + (w / 2) - 32, centerY() - h / 2, 32, h, mZ, lHoveredColorHighlightR, lHoveredColorHighlightG, lHoveredColorHighlightB, 0.25f);
 			lTextureBatch.end();
 
 		}
@@ -212,11 +214,11 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 
 		lFont.begin(pCore.HUD());
 		lFont.drawShadow(mDrawTextShadow);
-		lFont.draw(mLabel, x + w / 2 - 10 - (lLabelTextWidth * lAdjustedLabelScaleW) - lSeparatorHalfWidth, y + h / 2 - lLabelTextHeight * 0.5f, pParentZDepth + .1f, entryColor.r, entryColor.g, entryColor.b,
-				entryColor.a, lAdjustedLabelScaleW, -1);
-		lFont.draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - lLabelTextHeight * 0.5f, pParentZDepth + .1f, entryColor.r, entryColor.g, entryColor.b, 1f, lUiTextScale, -1);
-		lFont.draw(mInputField.toString(), x + w / 2 + lSeparatorHalfWidth * lAdjustedLInputScaleW + SPACE_BETWEEN_TEXT, y + h / 2 - lInputTextHeight * 0.5f, pParentZDepth + .1f, entryColor.r, entryColor.g, entryColor.b,
-				entryColor.a, lAdjustedLInputScaleW, -1);
+		lFont.draw(mLabel, x + w / 2 - 10 - (lLabelTextWidth * lAdjustedLabelScaleW) - lSeparatorHalfWidth, y + h / 2 - lLabelTextHeight * 0.5f, pParentZDepth + .1f, textColor.r, textColor.g, textColor.b, textColor.a,
+				lAdjustedLabelScaleW, -1);
+		lFont.draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - lLabelTextHeight * 0.5f, pParentZDepth + .1f, textColor.r, textColor.g, textColor.b, 1f, lUiTextScale, -1);
+		lFont.draw(mInputField.toString(), x + w / 2 + lSeparatorHalfWidth * lAdjustedLInputScaleW + SPACE_BETWEEN_TEXT, y + h / 2 - lInputTextHeight * 0.5f, pParentZDepth + .1f, textColor.r, textColor.g, textColor.b,
+				textColor.a, lAdjustedLInputScaleW, -1);
 
 		if (mShowCaret && mHasFocus) {
 			lFont.draw("|", x + w / 2 + lSeparatorHalfWidth + SPACE_BETWEEN_TEXT + lInputTextWidth * lAdjustedLInputScaleW, y + h / 2 - lInputTextHeight * 0.5f, pParentZDepth + .1f, lAdjustedLInputScaleW);

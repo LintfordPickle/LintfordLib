@@ -225,9 +225,9 @@ public class DisplayManager extends IniFile {
 		GL11.glClearStencil(0); // Specify the index used when stencil buffer is cleared
 
 		if (ConstantsApp.getBooleanValueDef("DENBUG_APP", false)) {
-			GL11.glClearColor(ColorConstants.BUFFER_CLEAR_DEBUG.x, ColorConstants.BUFFER_CLEAR_DEBUG.y, ColorConstants.BUFFER_CLEAR_DEBUG.z, 1.0f);
+			GL11.glClearColor(ColorConstants.BUFFER_CLEAR_DEBUG.r, ColorConstants.BUFFER_CLEAR_DEBUG.g, ColorConstants.BUFFER_CLEAR_DEBUG.b, 1.0f);
 		} else {
-			GL11.glClearColor(ColorConstants.BUFFER_CLEAR_RELEASE.x, ColorConstants.BUFFER_CLEAR_RELEASE.y, ColorConstants.BUFFER_CLEAR_RELEASE.z, 1.0f);
+			GL11.glClearColor(ColorConstants.BUFFER_CLEAR_RELEASE.r, ColorConstants.BUFFER_CLEAR_RELEASE.g, ColorConstants.BUFFER_CLEAR_RELEASE.b, 1.0f);
 		}
 
 	}

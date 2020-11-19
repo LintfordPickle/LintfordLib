@@ -5,6 +5,7 @@ import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWVidMode;
 
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.options.DisplayManager;
 import net.lintford.library.options.VideoSettings;
 import net.lintford.library.screenmanager.MenuEntry;
@@ -86,7 +87,7 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 		mDisplayManager = pScreenManager.core().config().display();
 
 		mVideoList = new ListLayout(this);
-		mVideoList.setDrawBackground(true, 1f, 1f, 1f, 0.85f);
+		mVideoList.setDrawBackground(true, ColorConstants.SecondaryColor.r, ColorConstants.SecondaryColor.g, ColorConstants.SecondaryColor.b, 0.25f);
 		mVideoList.layoutFillType(FILLTYPE.FILL_CONTAINER);
 
 		mConfirmChangesLayout = new ListLayout(this);

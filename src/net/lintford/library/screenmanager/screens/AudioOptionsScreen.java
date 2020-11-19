@@ -3,6 +3,7 @@ package net.lintford.library.screenmanager.screens;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.audio.AudioManager;
+import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.maths.MathHelper;
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
@@ -56,7 +57,7 @@ public class AudioOptionsScreen extends MenuScreen {
 		super(pScreenManager, SCREEN_TITLE);
 
 		final var lAudioList = new ListLayout(this);
-		lAudioList.setDrawBackground(true, 1f, 1f, 1f, 0.85f);
+		lAudioList.setDrawBackground(true, ColorConstants.SecondaryColor.r, ColorConstants.SecondaryColor.g, ColorConstants.SecondaryColor.b, 0.25f);
 		lAudioList.layoutFillType(FILLTYPE.TAKE_WHATS_NEEDED);
 
 		createAudioSection(lAudioList);
@@ -98,9 +99,7 @@ public class AudioOptionsScreen extends MenuScreen {
 	private void createAudioSection(BaseLayout lLayout) {
 		final var lAudioConfig = screenManager.core().config().audio();
 
-		lLayout.setDrawBackground(true, 0.1f, 0.1f, 0.1f, 0.5f);
-
-		MenuEntry lSeparator = new MenuEntry(screenManager, lLayout, "");
+		final var lSeparator = new MenuEntry(screenManager, lLayout, "");
 		lSeparator.enabled(false);
 		lSeparator.active(false);
 		lSeparator.drawButtonBackground(false);
