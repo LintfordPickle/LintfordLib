@@ -170,9 +170,6 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 
 		// TODO: Add ToolTips for all menu options
 
-		MenuEntry lSeparator = new MenuEntry(screenManager, lLayout, "");
-		lSeparator.enabled(false);
-
 		// Add the menu entries to the window
 		lLayout.menuEntries().add(lVideoOptionsTitle);
 		lLayout.menuEntries().add(mFullScreenEntry);

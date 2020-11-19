@@ -16,7 +16,6 @@ public class MenuLabelEntry extends MenuEntry {
 	// Variables
 	// --------------------------------------
 
-	protected float mPadding = 15f;
 	protected boolean mTrimText;
 
 	// --------------------------------------
@@ -29,16 +28,6 @@ public class MenuLabelEntry extends MenuEntry {
 
 	public void trimText(boolean pNewValue) {
 		mTrimText = pNewValue;
-	}
-
-	/** Padding is applied when the label is either aligned left or right (not when centered). */
-	public float padding() {
-		return mPadding;
-	}
-
-	/** Padding is applied when the label is either aligned left or right (not when centered). */
-	public void padding(float pNewValue) {
-		mPadding = pNewValue;
 	}
 
 	@Override
@@ -80,9 +69,6 @@ public class MenuLabelEntry extends MenuEntry {
 		mCanHaveFocus = false;
 		mCanHoverOver = false;
 
-		mLeftMargin = mRightMargin = 0.f;
-		mLeftPadding = 10.f;
-
 		mVerticalFillType = FILLTYPE.TAKE_WHATS_NEEDED;
 
 	}
@@ -90,25 +76,6 @@ public class MenuLabelEntry extends MenuEntry {
 	// --------------------------------------
 	// Core-Methods
 	// --------------------------------------
-
-	@Override
-	public void updateStructure() {
-		super.updateStructure();
-
-		// TODO: This -50 is because of the scrollbar - this is why I needed to keep the padding :(
-		w = Math.min(mParentLayout.w() - 50f, mMaxWidth);
-
-		final var lParentScreen = mParentLayout.parentScreen;
-		final var lFont = lParentScreen.font();
-		if (lFont == null)
-			return;
-
-		final float lUiTextScale = lParentScreen.uiTextScale();
-
-		final float lFontHeight = lFont.bitmap().fontHeight() * lUiTextScale;
-		h = lFontHeight * lUiTextScale;
-
-	}
 
 	@Override
 	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pParentZDepth) {
@@ -146,7 +113,7 @@ public class MenuLabelEntry extends MenuEntry {
 			lX = x;
 			break;
 		case RIGHT:
-			lX = x - mPadding - lLabelWidth;
+			lX = x - mLeftPadding - lLabelWidth;
 			break;
 		default:
 			lX = x + w / 2 - lLabelWidth / 2; // Center label

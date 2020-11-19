@@ -247,19 +247,6 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 	}
 
 	@Override
-	public void updateStructure() {
-		super.updateStructure();
-		// TODO: This -50 is because of the scrollbar - this is why I needed to keep the padding :(
-		w = Math.min(mParentLayout.w() - 50f, mMaxWidth);
-
-		if (mShowInfoIcon) {
-			mInfoIconDstRectangle.set(x, y, 32f, 32f);
-
-		}
-
-	}
-
-	@Override
 	public void update(LintfordCore pCore, MenuScreen pScreen, boolean pIsSelected) {
 		super.update(pCore, pScreen, pIsSelected);
 

@@ -101,7 +101,7 @@ public class MenuLabelValueEntry extends MenuLabelEntry {
 			lX = x;
 			break;
 		case RIGHT:
-			lX = x - mPadding - lLabelWidth;
+			lX = x - mLeftPadding - lLabelWidth;
 			break;
 		default:
 			lX = x + w / 2 - lLabelWidth / 2; // Center label
