@@ -104,10 +104,12 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 		mChangesPendingWarning.label("Current changes have not yet been applied!");
 		mChangesPendingWarning.textColor.setRGB(1.f, .12f, .17f);
 		mChangesPendingWarning.enabled(true);
+		mChangesPendingWarning.showWarnButton(true);
+		mChangesPendingWarning.horizontalFillType(FILLTYPE.FILL_CONTAINER);
 
 		mConfirmChangesLayout.menuEntries().add(mChangesPendingWarning);
 		mConfirmChangesLayout.layoutFillType(FILLTYPE.TAKE_WHATS_NEEDED);
-		mConfirmChangesLayout.setDrawBackground(true, 1f, 1f, 1f, 0.85f);
+		mConfirmChangesLayout.setDrawBackground(true, ColorConstants.SecondaryColor.r, ColorConstants.SecondaryColor.g, ColorConstants.SecondaryColor.b, 0.25f);
 
 		/* Screen control buttons */
 		final var lGroup = new HorizontalEntryGroup(pScreenManager, footerLayout());

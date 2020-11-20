@@ -3,7 +3,7 @@ package net.lintford.library.core.graphics;
 public class ColorConstants {
 
 	public static Color PrimaryColor = new Color(112.f / 255.f, 67.5f / 255.f, 60.f / 255.f, 1.f);
-	public static Color SecondaryColor = new Color(61.f / 255.f, 75.f / 255.f, 112.f / 255.f, 1.f);
+	public static Color SecondaryColor = new Color(71.f / 255.f, 87.f / 255.f, 130.f / 255.f, 1.f);
 	public static Color TertiaryColor = new Color(73.f / 255.f, 112.f / 255.f, 61.f / 255.f, 1.f);
 
 	public static Color TextHeadingColor = new Color(.96f, .96f, .96f);

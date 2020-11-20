@@ -90,7 +90,7 @@ public class MenuLabelEntry extends MenuEntry {
 		entryColor.r = ColorConstants.TertiaryColor.r;
 		entryColor.g = ColorConstants.TertiaryColor.g;
 		entryColor.b = ColorConstants.TertiaryColor.b;
-		entryColor.a = lParentScreen.a();
+		entryColor.a = lParentScreen.a() * .75f;
 
 		textColor.a = lParentScreen.a();
 
