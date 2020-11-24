@@ -54,7 +54,7 @@ public class ParticleLifetimeAlphaFadeOutModifier extends ParticleModifierBase {
 		// .25
 		// since we want the maximum alpha to be 1, not .25, we'll scale the
 		// entire equation by 4.
-		p.a = (1 - normalizedLifetime);
+		p.color.a = (1 - normalizedLifetime);
 
 	}
 

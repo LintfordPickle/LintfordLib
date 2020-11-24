@@ -1,13 +1,10 @@
 package net.lintford.library.renderers;
 
-import java.util.List;
-
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.geometry.Rectangle;
+import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.textures.Texture;
-import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
-import net.lintford.library.renderers.windows.UIWindow;
 
 public class UIWindowDock extends BaseRenderer {
 
@@ -74,28 +71,28 @@ public class UIWindowDock extends BaseRenderer {
 		float lLeftEdge = pCore.config().display().windowWidth();
 		float lTopEdge = pCore.config().display().windowHeight();
 
-		List<UIWindow> lUIWindows = mRendererManager.windows();
+		final var lUiWindows = mRendererManager.windows();
 
 		float lPosX = -lLeftEdge / 2;
 		float lPosY = -lTopEdge / 2;
 
-		final TextureBatchPCT lTextureBatch = mRendererManager.uiTextureBatch();
+		final var lTextureBatch = mRendererManager.uiTextureBatch();
 		lTextureBatch.begin(pCore.HUD());
 
-		for (int i = 0; i < lUIWindows.size(); i++) {
-			UIWindow lWindow = lUIWindows.get(i);
+		for (int i = 0; i < lUiWindows.size(); i++) {
+			final var lWindow = lUiWindows.get(i);
 
 			if (!lWindow.isDebugWindow())
 				continue;
 			{
 
 				// Draw the button background
-				lTextureBatch.draw(mCoreTexture, 320, 64, 64, 64, lPosX, lPosY, 64, 64, -0.1f, 1f, 1f, 1f, 1f);
+				lTextureBatch.draw(mCoreTexture, 320, 64, 64, 64, lPosX, lPosY, 64, 64, -0.1f, ColorConstants.WHITE);
 				if (lWindow.iconSrcRectangle() != null) {
 					Rectangle lSrcRect = lWindow.iconSrcRectangle();
 					float lMargin = 12;
 
-					lTextureBatch.draw(mCoreTexture, lSrcRect, lPosX + lMargin, lPosY + lMargin, 64 - lMargin * 2, 64 - lMargin * 2, -0.1f, 1f, 1f, 1f, 1f);
+					lTextureBatch.draw(mCoreTexture, lSrcRect, lPosX + lMargin, lPosY + lMargin, 64 - lMargin * 2, 64 - lMargin * 2, -0.1f, ColorConstants.WHITE);
 
 				}
 

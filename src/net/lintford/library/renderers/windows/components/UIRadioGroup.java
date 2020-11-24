@@ -8,7 +8,7 @@ import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.core.input.InputManager;
-import net.lintford.library.renderers.windows.UIWindow;
+import net.lintford.library.renderers.windows.UiWindow;
 import net.lintford.library.screenmanager.entries.EntryInteractions;
 
 public class UIRadioGroup extends UIWidget implements EntryInteractions {
@@ -26,7 +26,7 @@ public class UIRadioGroup extends UIWidget implements EntryInteractions {
 	// Constructor
 	// --------------------------------------
 
-	public UIRadioGroup(final UIWindow pUIWindow) {
+	public UIRadioGroup(final UiWindow pUIWindow) {
 		super(pUIWindow);
 
 		mButtons = new ArrayList<>();
@@ -60,7 +60,7 @@ public class UIRadioGroup extends UIWidget implements EntryInteractions {
 
 		updateLayout();
 
-		float lYPos = y + mParentWindow.getTitleBarHeight() + UIWindow.WINDOW_CONTENT_PADDING_Y;
+		float lYPos = y + mParentWindow.getTitleBarHeight();
 
 		final int lButtonCount = mButtons.size();
 		for (int i = 0; i < lButtonCount; i++) {

@@ -5,6 +5,7 @@ import org.lwjgl.opengl.GL20;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
+import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.shaders.ShaderMVP_PCT;
 import net.lintford.library.screenmanager.Screen;
 import net.lintford.library.screenmanager.ScreenManager;
@@ -225,7 +226,7 @@ public abstract class ShaderBackground extends Screen {
 		final var lHeight = lHudBoundingRectangle.h();
 
 		lTextureBatch.begin(pCore.HUD(), mBackgroundShader);
-		lTextureBatch.draw(null, 0, 0, 1, 1, lX, lY, lWidth, lHeight, -0.01f, 1, 1, 1, 1);
+		lTextureBatch.draw(null, 0, 0, 1, 1, lX, lY, lWidth, lHeight, -0.01f, ColorConstants.WHITE);
 		lTextureBatch.end();
 
 	}

@@ -1,11 +1,11 @@
 package net.lintford.library.renderers.windows.components;
 
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.debug.Debug;
+import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
-import net.lintford.library.renderers.windows.UIWindow;
+import net.lintford.library.renderers.windows.UiWindow;
 import net.lintford.library.screenmanager.entries.EntryInteractions;
 
 public class UIButton extends UIWidget {
@@ -53,11 +53,11 @@ public class UIButton extends UIWidget {
 	// Constructor
 	// --------------------------------------
 
-	public UIButton(final UIWindow pParentWindow) {
+	public UIButton(final UiWindow pParentWindow) {
 		this(pParentWindow, 0);
 	}
 
-	public UIButton(final UIWindow pParentWindow, final int pClickID) {
+	public UIButton(final UiWindow pParentWindow, final int pClickID) {
 		super(pParentWindow);
 
 		mClickID = pClickID;
@@ -80,14 +80,14 @@ public class UIButton extends UIWidget {
 			if (pCore.input().mouse().tryAcquireMouseLeftClick(hashCode())) {
 				mIsClicked = true;
 				final var MINIMUM_CLICK_TIMER = 200;
-				
+
 				// Callback to the listener and pass our ID
 				if (mCallback != null && mClickTimer > MINIMUM_CLICK_TIMER) {
 					mClickTimer = 0;
 					mCallback.menuEntryOnClick(pCore.input(), mClickID);
-					
+
 					return true;
-					
+
 				}
 
 			}
@@ -115,19 +115,14 @@ public class UIButton extends UIWidget {
 
 	@Override
 	public void draw(LintfordCore pCore, TextureBatchPCT pTextureBatch, Texture pUITexture, FontUnit pTextFont, float pComponentZDepth) {
+		final float lColorMod = mHoveredOver ? .9f : 1.f;
+		final var lColor = ColorConstants.getColorWithRGBMod(entityColor, lColorMod);
 
-		float lR = mHoveredOver ? 0.9f : 0.9f;
-		float lG = mHoveredOver ? 0.5f : 0.9f;
-		float lB = mHoveredOver ? 0.6f : 0.9f;
-
-		// Draw the button background
 		pTextureBatch.begin(pCore.HUD());
-		// pTextureBatch.draw(pUITexture, 0, 32, 32, 32, centerX() - w / 2, centerY() - h / 2, 32, h, pComponentZDepth, lR, lG, lB, 1f);
-		pTextureBatch.draw(pUITexture, 32, 32, 224, 32, centerX() - (w / 2) + 32, centerY() - h / 2, w - 64, h, pComponentZDepth, lR, lG, lB, 1f);
-		// pTextureBatch.draw(pUITexture, 256, 32, 32, 32, centerX() + (w / 2) - 32, centerY() - h / 2, 32, h, pComponentZDepth, lR, lG, lB, 1f);
+		pTextureBatch.draw(pUITexture, 32, 32, 224, 32, centerX() - (w / 2) + 32, centerY() - h / 2, w - 64, h, pComponentZDepth, lColor);
 		pTextureBatch.end();
 
-		FontUnit lFontRenderer = mParentWindow.rendererManager().textFont();
+		final var lFontRenderer = mParentWindow.rendererManager().textFont();
 
 		final String lButtonText = mButtonLabel != null ? mButtonLabel : NO_LABEL_TEXT;
 		final float lTextWidth = lFontRenderer.bitmap().getStringWidth(lButtonText);
@@ -135,8 +130,6 @@ public class UIButton extends UIWidget {
 		lFontRenderer.begin(pCore.HUD());
 		lFontRenderer.draw(lButtonText, x + w / 2f - lTextWidth / 2f, y + h / 2f - lFontRenderer.bitmap().fontHeight() / 2f, pComponentZDepth, 1f);
 		lFontRenderer.end();
-
-		Debug.debugManager().drawers().drawRectImmediate(pCore.HUD(), this, lR, lG, lB);
 
 	}
 

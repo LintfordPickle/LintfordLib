@@ -79,7 +79,7 @@ public class MathHelper {
 	public static float mix(float x, float y, float a) {
 		return x * (1.f - a) + y * a;
 	}
-	
+
 	public static float toDegrees(float radians) {
 		return (radians * 57.29578f);
 	}
@@ -171,6 +171,9 @@ public class MathHelper {
 	}
 
 	public static float scaleToRange(final float oldValue, final float oldMin, final float oldMax, final float newMin, final float newMax) {
+		if (oldMax == oldMin)
+			return 1.f;
+
 		float oldRange = oldMax - oldMin;
 		float newRange = newMax - newMin;
 

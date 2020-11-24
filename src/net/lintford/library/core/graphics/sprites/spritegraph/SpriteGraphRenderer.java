@@ -6,6 +6,7 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.geometry.spritegraph.instance.SpriteGraphInstance;
 import net.lintford.library.core.geometry.spritegraph.instance.SpriteGraphNodeInstance;
+import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.sprites.spritebatch.SpriteBatch;
 
 public class SpriteGraphRenderer extends SpriteBatch {
@@ -64,7 +65,7 @@ public class SpriteGraphRenderer extends SpriteBatch {
 		final var lSpriteInstance = pSpriteGraphNode.spriteInstance();
 
 		if (lSpriteSheetDefinition != null && lSpriteInstance != null) {
-			draw(lSpriteSheetDefinition, lSpriteInstance, lSpriteInstance, -0.1f, 1f, 1f, 1f, 1f);
+			draw(lSpriteSheetDefinition, lSpriteInstance, lSpriteInstance, -0.1f, ColorConstants.WHITE);
 
 			if (RENDER_DEBUG) {
 				end();
@@ -84,7 +85,7 @@ public class SpriteGraphRenderer extends SpriteBatch {
 		final var lSpriteInstance = pSpriteGraphNode.spriteInstance();
 
 		if (lSpriteSheetDefinition != null && lSpriteInstance != null) {
-			draw(lSpriteSheetDefinition, lSpriteInstance, lSpriteInstance, -0.1f, 1f, 1f, 1f, 1f);
+			draw(lSpriteSheetDefinition, lSpriteInstance, lSpriteInstance, -0.1f, ColorConstants.WHITE);
 
 			end();
 			begin(pCore.gameCamera());

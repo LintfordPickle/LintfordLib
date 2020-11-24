@@ -8,6 +8,7 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.geometry.Rectangle;
+import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
@@ -226,8 +227,7 @@ public class DebugControllerTreeRenderer extends Rectangle implements IScrollBar
 
 			final var windowHeight = lDisplayManager.windowHeight();
 			final var consoleHeight = Debug.debugManager().console().openHeight();
-			mOpenHeight = windowHeight - consoleHeight - 20f - 75f;
-			mOpenHeight = Math.min(mOpenHeight, MAX_PANE_HEIGHT);
+			mOpenHeight = windowHeight - consoleHeight - 35f;
 
 			// Update the bounds of the window view
 			x = -lDisplayManager.windowWidth() * 0.5f + 5f;
@@ -303,12 +303,12 @@ public class DebugControllerTreeRenderer extends Rectangle implements IScrollBar
 		// Get the positional informationt from the parent object (inline with console and renderer widget display).
 
 		mTextureBatch.begin(pCore.HUD());
-		mTextureBatch.draw(mCoreTexture, 0, 0, 32, 32, x, y - 25f, mOpenWidth, 25f, -0.03f, 0.16f, 0.10f, 0.19f, 0.95f);
-		mTextureBatch.draw(mCoreTexture, 0, 0, 32, 32, x, y, mOpenWidth, mOpenHeight, -0.03f, 0.21f, 0.17f, 0.25f, 0.95f);
+		mTextureBatch.draw(mCoreTexture, 0, 0, 32, 32, x, y - 25f, mOpenWidth, 25f, -0.03f, ColorConstants.MenuPanelPrimaryColor);
+		mTextureBatch.draw(mCoreTexture, 0, 0, 32, 32, x, y, mOpenWidth, mOpenHeight, -0.03f, ColorConstants.MenuPanelSecondaryColor);
 		mTextureBatch.end();
 
 		mConsoleFont.begin(pCore.HUD());
-		mConsoleFont.draw("Controllers", x, y - 25f, -0.02f, 1, 1, 1, 1, 1, -1);
+		mConsoleFont.draw("Controllers", x, y - 25f, -0.02f, ColorConstants.WHITE, 1, -1);
 		mConsoleFont.end();
 
 		if (h < mContentRectangle.h())
@@ -333,16 +333,16 @@ public class DebugControllerTreeRenderer extends Rectangle implements IScrollBar
 
 			int lPosX = lBaseControllerWidget.controllerLevel * 30;
 
-			mConsoleFont.draw(lControllerName, lBaseControllerWidget.x() + lPosX, lBaseControllerWidget.y(), -0.02f, 1, 1, 1, 1, 1, -1);
+			mConsoleFont.draw(lControllerName, lBaseControllerWidget.x() + lPosX, lBaseControllerWidget.y(), -0.02f, ColorConstants.TextEntryColor, 1, -1);
 
 			final float lActiveIconX = x + mOpenWidth - 64;
 			final float lActiveIconY = lBaseControllerWidget.y();
 
 			if (lBaseControllerWidget == null || !lBaseControllerWidget.isControllerActive) {
-				mTextureBatch.draw(mCoreTexture, 64, 128, 32, 32, lActiveIconX, lActiveIconY, 32, 32, -0.01f, 1, 1, 1, 1);
+				mTextureBatch.draw(mCoreTexture, 64, 128, 32, 32, lActiveIconX, lActiveIconY, 32, 32, -0.01f, ColorConstants.WHITE);
 
 			} else {
-				mTextureBatch.draw(mCoreTexture, 32, 128, 32, 32, lActiveIconX, lActiveIconY, 32, 32, -0.01f, 1, 1, 1, 1);
+				mTextureBatch.draw(mCoreTexture, 32, 128, 32, 32, lActiveIconX, lActiveIconY, 32, 32, -0.01f, ColorConstants.WHITE);
 
 			}
 

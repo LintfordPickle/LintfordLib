@@ -7,6 +7,7 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.geometry.Rectangle;
+import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
@@ -221,8 +222,7 @@ public class DebugRendererTreeRenderer extends Rectangle implements IScrollBarAr
 
 			final var windowHeight = lDisplayManager.windowHeight();
 			final var consoleHeight = Debug.debugManager().console().openHeight();
-			mOpenHeight = windowHeight - consoleHeight - 20f - 75f;
-			mOpenHeight = Math.min(mOpenHeight, MAX_PANE_HEIGHT);
+			mOpenHeight = windowHeight - consoleHeight - 35f;
 
 			// Update the bounds of the window view
 			x = lDisplayManager.windowWidth() * 0.5f - mOpenWidth - 5f;
@@ -290,15 +290,13 @@ public class DebugRendererTreeRenderer extends Rectangle implements IScrollBarAr
 		if (!mIsOpen)
 			return;
 
-		// Get the positional information from the parent object (inline with console and renderer widget display).
-
 		mTextureBatch.begin(pCore.HUD());
-		mTextureBatch.draw(mCoreTexture, 0, 0, 32, 32, x, y - 25f, mOpenWidth, 25f, -0.03f, 0.16f, 0.10f, 0.19f, 0.95f);
-		mTextureBatch.draw(mCoreTexture, 0, 0, 32, 32, x, y, mOpenWidth, mOpenHeight, -0.03f, 0.21f, 0.17f, 0.25f, 0.95f);
+		mTextureBatch.draw(mCoreTexture, 0, 0, 32, 32, x, y - 25f, mOpenWidth, 25f, -0.03f, ColorConstants.MenuPanelPrimaryColor);
+		mTextureBatch.draw(mCoreTexture, 0, 0, 32, 32, x, y, mOpenWidth, mOpenHeight, -0.03f, ColorConstants.MenuPanelSecondaryColor);
 		mTextureBatch.end();
 
 		mConsoleFont.begin(pCore.HUD());
-		mConsoleFont.draw("Renderers", x + 5f, y - 25f, -0.02f, 1, 1, 1, 1, 1, -1);
+		mConsoleFont.draw("Renderers", x + 5f, y - 25f, -0.02f, ColorConstants.WHITE, 1, -1);
 		mConsoleFont.end();
 
 		// Getting list of ControllerItems to render
@@ -309,7 +307,7 @@ public class DebugRendererTreeRenderer extends Rectangle implements IScrollBarAr
 
 		if (lNumTreeComponents == 0) {
 			mConsoleFont.begin(pCore.HUD());
-			mConsoleFont.draw("No BaseRenderers on Screen", x + 5f, y + 5f, -0.02f, 1, 1, 1, 1, 1, -1);
+			mConsoleFont.draw("No BaseRenderers on Screen", x + 5f, y + 5f, -0.02f, ColorConstants.TextHeadingColor, 1, -1);
 			mConsoleFont.end();
 			return;
 		}
@@ -331,16 +329,16 @@ public class DebugRendererTreeRenderer extends Rectangle implements IScrollBarAr
 
 			float lPosX = 10f + lBaseRendererWidget.rendererLevel * 30f;
 
-			mConsoleFont.draw(lRendererName, lBaseRendererWidget.x() + lPosX, lBaseRendererWidget.y(), -0.02f, 1, 1, 1, 1, 1, -1);
+			mConsoleFont.draw(lRendererName, lBaseRendererWidget.x() + lPosX, lBaseRendererWidget.y(), -0.02f, ColorConstants.TextHeadingColor, 1, -1);
 
 			final float lActiveIconX = x + mOpenWidth - 64;
 			final float lActiveIconY = lBaseRendererWidget.y();
 
 			if (lBaseRendererWidget == null || !lBaseRendererWidget.isRendererActive) {
-				mTextureBatch.draw(mCoreTexture, 32, 128, 32, 32, lActiveIconX, lActiveIconY, 32, 32, -0.01f, 1, 1, 1, 1);
+				mTextureBatch.draw(mCoreTexture, 32, 128, 32, 32, lActiveIconX, lActiveIconY, 32, 32, -0.01f, ColorConstants.WHITE);
 
 			} else {
-				mTextureBatch.draw(mCoreTexture, 64, 128, 32, 32, lActiveIconX, lActiveIconY, 32, 32, -0.01f, 1, 1, 1, 1);
+				mTextureBatch.draw(mCoreTexture, 64, 128, 32, 32, lActiveIconX, lActiveIconY, 32, 32, -0.01f, ColorConstants.WHITE);
 
 			}
 

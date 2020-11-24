@@ -4,6 +4,7 @@ import org.lwjgl.opengl.GL11;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.geometry.Rectangle;
+import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 
@@ -75,10 +76,8 @@ public class ScrollBarContentRectangle extends Rectangle {
 
 		// Draw into the stencil buffer to mark the 'active' bits
 		pTextureBatch.begin(pCore.HUD());
-
-		pTextureBatch.draw(pUITexture, 0, 0, 32, 32, pRectangle.x() + mDepthPadding, pRectangle.y() + mDepthPadding, pRectangle.w() - mDepthPadding * 2, pRectangle.h() - mDepthPadding * 2, -10.0f, 0.0f, 0.0f, 0.0f,
-				0.0f);
-
+		pTextureBatch.draw(pUITexture, 0, 0, 32, 32, pRectangle.x() + mDepthPadding, pRectangle.y() + mDepthPadding, pRectangle.w() - mDepthPadding * 2, pRectangle.h() - mDepthPadding * 2, -10.0f,
+				ColorConstants.getBlackWithAlpha(0.f));
 		pTextureBatch.end();
 
 		// Start the stencil buffer test to filter out everything outside of the scroll view

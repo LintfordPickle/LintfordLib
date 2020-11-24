@@ -1,6 +1,5 @@
 package net.lintford.library.screenmanager.entries;
 
-import net.lintford.library.ConstantsApp;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.screenmanager.MenuEntry;
@@ -65,6 +64,7 @@ public class MenuLabelEntry extends MenuEntry {
 
 		mCanHaveFocus = false;
 		mCanHoverOver = false;
+		entryColor.setFromColor(ColorConstants.getColorWithRGBMod(ColorConstants.TertiaryColor, .5f));
 
 		mVerticalFillType = FILLTYPE.TAKE_WHATS_NEEDED;
 
@@ -87,12 +87,8 @@ public class MenuLabelEntry extends MenuEntry {
 
 		}
 
-		entryColor.r = ColorConstants.TertiaryColor.r;
-		entryColor.g = ColorConstants.TertiaryColor.g;
-		entryColor.b = ColorConstants.TertiaryColor.b;
-		entryColor.a = lParentScreen.a() * .75f;
-
-		textColor.a = lParentScreen.a();
+		entryColor.a = lParentScreen.screenColor.a * .6f;
+		textColor.a = lParentScreen.screenColor.a;
 
 		final float lUiTextScale = lParentScreen.uiTextScale();
 
@@ -103,7 +99,7 @@ public class MenuLabelEntry extends MenuEntry {
 
 		if (mDrawBackground) {
 			lTextureBatch.begin(pCore.HUD());
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, x, y, w, h, pParentZDepth + .15f, entryColor.r, entryColor.g, entryColor.b, entryColor.a);
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, x, y, w, h, pParentZDepth + .15f, entryColor);
 			lTextureBatch.end();
 
 		}
@@ -124,25 +120,20 @@ public class MenuLabelEntry extends MenuEntry {
 		lFont.begin(pCore.HUD());
 		lFont.drawShadow(mDrawTextShadow);
 		lFont.trimText(mTrimText);
-		lFont.draw(mText, lX + 15.f, y + h / 2f - lFontHeight / 2f, pParentZDepth + .15f, textColor.r, textColor.g, textColor.b, textColor.a, lUiTextScale);
+		lFont.draw(mText, lX + 15.f, y + h / 2f - lFontHeight / 2f, pParentZDepth + .15f, textColor, lUiTextScale);
 		lFont.end();
 
 		if (mShowInfoIcon) {
-			drawInfoIcon(pCore, lTextureBatch, mInfoIconDstRectangle, entryColor.a);
+			drawInfoIcon(pCore, lTextureBatch, mInfoIconDstRectangle, lParentScreen.screenColor.a);
 
 		}
 
 		if (mShowWarnIcon) {
-			drawWarningIcon(pCore, lTextureBatch, mWarnIconDstRectangle, entryColor.a);
+			drawWarningIcon(pCore, lTextureBatch, mWarnIconDstRectangle, lParentScreen.screenColor.a);
 
 		}
 
-		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
-			lTextureBatch.begin(pCore.HUD());
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, x, y, w, h, mZ, 1f, 0.2f, 0.2f, entryColor.a);
-			lTextureBatch.end();
-
-		}
+		drawDebugCollidableBounds(pCore, lTextureBatch);
 
 	}
 

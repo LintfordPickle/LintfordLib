@@ -36,10 +36,10 @@ public class ParticleColorInitializer extends ParticleInitializerBase {
 
 	@Override
 	public void initialize(Particle pParticle) {
-		pParticle.r = r;
-		pParticle.g = g;
-		pParticle.b = b;
-		pParticle.a = a;
+		pParticle.color.r = r;
+		pParticle.color.g = g;
+		pParticle.color.b = b;
+		pParticle.color.a = a;
 
 	}
 

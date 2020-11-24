@@ -2,6 +2,7 @@ package net.lintford.library.renderers.windows.components;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.geometry.Rectangle;
+import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.core.input.IProcessMouseInput;
@@ -158,20 +159,19 @@ public class ScrollBar extends Rectangle implements IProcessMouseInput {
 		pTextureBatch.begin(pCore.HUD());
 
 		// Scroll bar background
-		// pTextureBatch.draw(pUITexture, 0, 0, 32, 32, x, y, w, h, pZDepth, 0.13f, 1.0f, 0.22f, 0.9f);
+		final var lColor = ColorConstants.getBlackWithAlpha(.5f);
+		pTextureBatch.draw(pUITexture, 0, 0, 32, 32, x, y, w, h, pZDepth, lColor);
 
 		// Render the actual scroll bar
 		final float by = mScrollBarArea.contentDisplayArea().y() - (mScrollBarArea.currentYPos() / mMarkerMoveMod);
 
 		// Draw the marker bar
-		pTextureBatch.draw(pUITexture, 0, 0, 32, 32, x + 9, y, 2, h, pZDepth, 1f, 1f, 1f, 1f);
+		pTextureBatch.draw(pUITexture, 0, 0, 32, 32, x + 9, y, 2, h, pZDepth, ColorConstants.WHITE);
 
 		// Draw the moving bar
-		float lR = mClickActive ? 0.4f : 0.5f;
-		float lG = mClickActive ? 0.4f : 0.5f;
-		float lB = mClickActive ? 0.4f : 0.5f;
-
-		pTextureBatch.draw(pUITexture, 0, 0, 32, 32, x + 5, by, 10, mMarkerBarHeight, pZDepth, lR, lG, lB, 1f);
+		final float lColorMod = mClickActive ? 0.4f : 0.5f;
+		final var lBarColor = ColorConstants.getColorWithRGBMod(ColorConstants.TertiaryColor.r, ColorConstants.TertiaryColor.g, ColorConstants.TertiaryColor.b, 1.f, lColorMod);
+		pTextureBatch.draw(pUITexture, 0, 0, 32, 32, x + 5, by, 10, mMarkerBarHeight, pZDepth, lBarColor);
 
 		pTextureBatch.end();
 

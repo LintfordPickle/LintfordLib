@@ -8,7 +8,7 @@ import net.lintford.library.controllers.core.ControllerManager;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.renderers.BaseRenderer;
 import net.lintford.library.renderers.RendererManager;
-import net.lintford.library.renderers.windows.UIWindow;
+import net.lintford.library.renderers.windows.UiWindow;
 
 public class DebugRendererTreeController extends BaseController {
 
@@ -66,7 +66,7 @@ public class DebugRendererTreeController extends BaseController {
 			final List<BaseRenderer> lListOfBaseRenderers = mRendererManager.baseRenderers();
 			maintainRendererWidgetList(lListOfBaseRenderers);
 
-			final List<UIWindow> lListOfBaseWindowRenderers = mRendererManager.windows();
+			final List<UiWindow> lListOfBaseWindowRenderers = mRendererManager.windows();
 			maintainWindowRendererWidgetList(lListOfBaseWindowRenderers);
 
 		} else {
@@ -141,7 +141,7 @@ public class DebugRendererTreeController extends BaseController {
 
 	}
 
-	private void maintainWindowRendererWidgetList(final List<UIWindow> pWindowRenderers) {
+	private void maintainWindowRendererWidgetList(final List<UiWindow> pWindowRenderers) {
 		int lPositionCounter = 0;
 
 		final var lNumBaseRenderers = pWindowRenderers.size();

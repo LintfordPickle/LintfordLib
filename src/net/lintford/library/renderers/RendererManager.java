@@ -21,7 +21,7 @@ import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.core.rendering.RenderState;
 import net.lintford.library.options.DisplayManager;
 import net.lintford.library.options.IResizeListener;
-import net.lintford.library.renderers.windows.UIWindow;
+import net.lintford.library.renderers.windows.UiWindow;
 import net.lintford.library.renderers.windows.UIWindowChangeListener;
 
 public class RendererManager {
@@ -53,7 +53,7 @@ public class RendererManager {
 	/** Allows us to track where each RendererManager is created from */
 	private String mOwnerIdentifier;
 	private List<BaseRenderer> mRenderers;
-	private List<UIWindow> mWindowRenderers;
+	private List<UiWindow> mWindowRenderers;
 
 	private boolean mIsinitialized;
 	private boolean mIsLoaded;
@@ -141,11 +141,11 @@ public class RendererManager {
 		return mRenderers;
 	}
 
-	public List<UIWindow> windows() {
+	public List<UiWindow> windows() {
 		return mWindowRenderers;
 	}
 
-	public UiStructureController uiHUDController() {
+	public UiStructureController uiStructureController() {
 		return mUiStructureController;
 	}
 
@@ -405,8 +405,8 @@ public class RendererManager {
 	public void addRenderer(BaseRenderer pRenderer) {
 		// Only renderers with valid names can be added
 		if (getRenderer(pRenderer.rendererName()) == null) {
-			if (pRenderer instanceof UIWindow) {
-				mWindowRenderers.add((UIWindow) pRenderer);
+			if (pRenderer instanceof UiWindow) {
+				mWindowRenderers.add((UiWindow) pRenderer);
 
 				// Re-order the WindowRenderers
 				Collections.sort(mWindowRenderers, new ZLayerComparator());
@@ -473,7 +473,7 @@ public class RendererManager {
 	/** Unloads all {@link BaseRenderer} instances registered to this {@link RendererManager} which have the given gorup ID assigned to them. */
 	public void removeRendererGroup(final int pEntityGroupID) {
 		// Heap assignment
-		final List<UIWindow> WINDOW_UPDATE_LIST = new ArrayList<>();
+		final List<UiWindow> WINDOW_UPDATE_LIST = new ArrayList<>();
 		final int WINDOW_COUNT = mWindowRenderers.size();
 		for (int i = 0; i < WINDOW_COUNT; i++) {
 			WINDOW_UPDATE_LIST.add(mWindowRenderers.get(i));
@@ -624,8 +624,8 @@ public class RendererManager {
 	// UIWindow Methods
 	// --------------------------------------
 
-	public UIWindow openWindow(String pWindowName) {
-		UIWindow lWindow = (UIWindow) getRenderer(pWindowName);
+	public UiWindow openWindow(String pWindowName) {
+		UiWindow lWindow = (UiWindow) getRenderer(pWindowName);
 
 		// Check to see if this window is already open, and if it is, close it
 
@@ -636,7 +636,7 @@ public class RendererManager {
 		return lWindow;
 	}
 
-	public void closeWindow(final UIWindow pUIWindow) {
+	public void closeWindow(final UiWindow pUIWindow) {
 		final int NUM_WINDOW_LISTENERS = mListeners.size();
 		for (int i = 0; i < NUM_WINDOW_LISTENERS; i++) {
 			mListeners.get(i).onWindowClosed(pUIWindow);

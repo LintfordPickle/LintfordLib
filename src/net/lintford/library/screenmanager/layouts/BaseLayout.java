@@ -8,6 +8,8 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.geometry.Rectangle;
+import net.lintford.library.core.graphics.Color;
+import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.input.InputManager;
 import net.lintford.library.renderers.ZLayers;
 import net.lintford.library.renderers.windows.components.IScrollBarArea;
@@ -37,13 +39,13 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 
 	public final ScreenManager screenManager;
 	public final MenuScreen parentScreen;
+	public final Color layoutColor = new Color(ColorConstants.WHITE);
 
 	protected List<MenuEntry> mMenuEntries;
 	protected int mSelectedEntry = 0;
 	protected int mNumberEntries;
 
 	protected boolean mDrawBackground;
-	protected float mR, mG, mB, mA = 1;
 
 	// The margin is applied to the outside of this component
 	protected float mTopMargin;
@@ -138,12 +140,9 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 
 	}
 
-	public void setDrawBackground(boolean pEnabled, float pR, float pG, float pB, float pA) {
+	public void setDrawBackground(boolean pEnabled, Color pColor) {
 		mDrawBackground = pEnabled;
-		mR = pR;
-		mG = pG;
-		mB = pB;
-		mA = pA;
+		layoutColor.setFromColor(pColor);
 
 	}
 
@@ -398,24 +397,25 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 			if (h < 64) {
 				lTextureBatch.begin(pCore.HUD());
 				final float lAlpha = 0.8f;
-				lTextureBatch.draw(lUiTexture, 0, 0, 32, 32, x, y, w, h, pComponentDepth, 0.1f, 0.1f, 0.1f, lAlpha);
+				final var lColor = ColorConstants.getColor(0.1f, 0.1f, 0.1f, lAlpha);
+				lTextureBatch.draw(lUiTexture, 0, 0, 32, 32, x, y, w, h, pComponentDepth, lColor);
 				lTextureBatch.end();
 
 			} else {
 				final float TILE_SIZE = 32;
 
 				lTextureBatch.begin(pCore.HUD());
-				lTextureBatch.draw(lUiTexture, 256, 0, 32, 32, x, y, TILE_SIZE, TILE_SIZE, pComponentDepth, mR, mG, mB, mA);
-				lTextureBatch.draw(lUiTexture, 288, 0, 32, 32, x + TILE_SIZE, y, w - TILE_SIZE * 2, TILE_SIZE, pComponentDepth, mR, mG, mB, mA);
-				lTextureBatch.draw(lUiTexture, 320, 0, 32, 32, x + w - TILE_SIZE, y, TILE_SIZE, TILE_SIZE, pComponentDepth, mR, mG, mB, mA);
+				lTextureBatch.draw(lUiTexture, 256, 0, 32, 32, x, y, TILE_SIZE, TILE_SIZE, pComponentDepth, layoutColor);
+				lTextureBatch.draw(lUiTexture, 288, 0, 32, 32, x + TILE_SIZE, y, w - TILE_SIZE * 2, TILE_SIZE, pComponentDepth, layoutColor);
+				lTextureBatch.draw(lUiTexture, 320, 0, 32, 32, x + w - TILE_SIZE, y, TILE_SIZE, TILE_SIZE, pComponentDepth, layoutColor);
 
-				lTextureBatch.draw(lUiTexture, 256, 32, 32, 32, x, y + TILE_SIZE, TILE_SIZE, h - TILE_SIZE * 2, pComponentDepth, mR, mG, mB, mA);
-				lTextureBatch.draw(lUiTexture, 288, 32, 32, 32, x + TILE_SIZE, y + TILE_SIZE, w - TILE_SIZE * 2, h - 64, pComponentDepth, mR, mG, mB, mA);
-				lTextureBatch.draw(lUiTexture, 320, 32, 32, 32, x + w - TILE_SIZE, y + TILE_SIZE, TILE_SIZE, h - TILE_SIZE * 2, pComponentDepth, mR, mG, mB, mA);
+				lTextureBatch.draw(lUiTexture, 256, 32, 32, 32, x, y + TILE_SIZE, TILE_SIZE, h - TILE_SIZE * 2, pComponentDepth, layoutColor);
+				lTextureBatch.draw(lUiTexture, 288, 32, 32, 32, x + TILE_SIZE, y + TILE_SIZE, w - TILE_SIZE * 2, h - 64, pComponentDepth, layoutColor);
+				lTextureBatch.draw(lUiTexture, 320, 32, 32, 32, x + w - TILE_SIZE, y + TILE_SIZE, TILE_SIZE, h - TILE_SIZE * 2, pComponentDepth, layoutColor);
 
-				lTextureBatch.draw(lUiTexture, 256, 64, 32, 32, x, y + h - TILE_SIZE, TILE_SIZE, TILE_SIZE, pComponentDepth, mR, mG, mB, mA);
-				lTextureBatch.draw(lUiTexture, 288, 64, 32, 32, x + TILE_SIZE, y + h - TILE_SIZE, w - TILE_SIZE * 2, TILE_SIZE, pComponentDepth, mR, mG, mB, mA);
-				lTextureBatch.draw(lUiTexture, 320, 64, 32, 32, x + w - TILE_SIZE, y + h - TILE_SIZE, TILE_SIZE, TILE_SIZE, pComponentDepth, mR, mG, mB, mA);
+				lTextureBatch.draw(lUiTexture, 256, 64, 32, 32, x, y + h - TILE_SIZE, TILE_SIZE, TILE_SIZE, pComponentDepth, layoutColor);
+				lTextureBatch.draw(lUiTexture, 288, 64, 32, 32, x + TILE_SIZE, y + h - TILE_SIZE, w - TILE_SIZE * 2, TILE_SIZE, pComponentDepth, layoutColor);
+				lTextureBatch.draw(lUiTexture, 320, 64, 32, 32, x + w - TILE_SIZE, y + h - TILE_SIZE, TILE_SIZE, TILE_SIZE, pComponentDepth, layoutColor);
 				lTextureBatch.end();
 
 				if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_OUTLINES", false)) {
@@ -446,7 +446,7 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
 			lTextureBatch.begin(pCore.HUD());
-			lTextureBatch.draw(lUiTexture, 0, 0, 32, 32, x, y, w, h, ZLayers.LAYER_DEBUG, 1f, 0.2f, 1f, 0.4f);
+			lTextureBatch.draw(lUiTexture, 0, 0, 32, 32, x, y, w, h, ZLayers.LAYER_DEBUG, ColorConstants.Debug_Transparent_Magenta);
 			lTextureBatch.end();
 
 		}

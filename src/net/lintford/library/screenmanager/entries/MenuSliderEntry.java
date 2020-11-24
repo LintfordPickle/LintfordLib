@@ -1,6 +1,5 @@
 package net.lintford.library.screenmanager.entries;
 
-import net.lintford.library.ConstantsApp;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.ColorConstants;
@@ -209,20 +208,13 @@ public class MenuSliderEntry extends MenuEntry {
 
 		final float yPos = y;
 
-		entryColor.r = 1.f;
-		entryColor.g = 1.f;
-		entryColor.b = 1.f;
-		entryColor.a = lParentScreen.a();
+		entryColor.setFromColor(lParentScreen.screenColor);
 
-		if (mHoveredOver) {
-			final float lHoveredColorHighlightR = ColorConstants.PrimaryColor.r;
-			final float lHoveredColorHighlightG = ColorConstants.PrimaryColor.g;
-			final float lHoveredColorHighlightB = ColorConstants.PrimaryColor.b;
-
+		if (mHoveredOver & mEnabled) {
 			lTextureBatch.begin(pCore.HUD());
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() - w / 2, centerY() - h / 2, 32, h, mZ, lHoveredColorHighlightR, lHoveredColorHighlightG, lHoveredColorHighlightB, 0.26f);
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() - (w / 2) + 32, centerY() - h / 2, w - 64, h, mZ, lHoveredColorHighlightR, lHoveredColorHighlightG, lHoveredColorHighlightB, 0.26f);
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() + (w / 2) - 32, centerY() - h / 2, 32, h, mZ, lHoveredColorHighlightR, lHoveredColorHighlightG, lHoveredColorHighlightB, 0.26f);
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() - w / 2, centerY() - h / 2, 32, h, mZ, ColorConstants.MenuEntryHighlightColor);
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() - (w / 2) + 32, centerY() - h / 2, w - 64, h, mZ, ColorConstants.MenuEntryHighlightColor);
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() + (w / 2) - 32, centerY() - h / 2, 32, h, mZ, ColorConstants.MenuEntryHighlightColor);
 			lTextureBatch.end();
 
 		}
@@ -233,8 +225,8 @@ public class MenuSliderEntry extends MenuEntry {
 			final float lArrowButtonSize = 32;
 			final float lArrowButtonPaddingX = mDownButton.w() - lArrowButtonSize;
 
-			lTextureBatch.draw(mUITexture, 0, 224, 32, 32, mDownButton.x() + lArrowButtonPaddingX, yPos, lArrowButtonSize, lArrowButtonSize, mZ, entryColor.r, entryColor.g, entryColor.b, entryColor.a);
-			lTextureBatch.draw(mUITexture, 32, 224, 32, 32, mUpButton.x() + lArrowButtonPaddingX, yPos, lArrowButtonSize, lArrowButtonSize, mZ, entryColor.r, entryColor.g, entryColor.b, entryColor.a);
+			lTextureBatch.draw(mUITexture, 0, 224, 32, 32, mDownButton.x() + lArrowButtonPaddingX, yPos, lArrowButtonSize, lArrowButtonSize, mZ, entryColor);
+			lTextureBatch.draw(mUITexture, 32, 224, 32, 32, mUpButton.x() + lArrowButtonPaddingX, yPos, lArrowButtonSize, lArrowButtonSize, mZ, entryColor);
 
 			lTextureBatch.end();
 		}
@@ -244,20 +236,20 @@ public class MenuSliderEntry extends MenuEntry {
 
 		final float lCaretPos = MathHelper.scaleToRange(mValue, mLowerBound, mUpperBound, mBarPosX, mBarWidth - 32);
 
-		lTextureBatch.draw(mUITexture, 0, 192, 32, 32, mBarPosX, yPos, 32, 32, mZ, entryColor.r, entryColor.g, entryColor.b, entryColor.a);
-		lTextureBatch.draw(mUITexture, 32, 192, 32, 32, mBarPosX + 32, yPos, mBarWidth - 64 - 32, 32, mZ, entryColor.r, entryColor.g, entryColor.b, entryColor.a);
-		lTextureBatch.draw(mUITexture, 64, 192, 32, 32, mBarPosX + mBarWidth - 64, yPos, 32, 32, mZ, entryColor.r, entryColor.g, entryColor.b, entryColor.a);
+		lTextureBatch.draw(mUITexture, 0, 192, 32, 32, mBarPosX, yPos, 32, 32, mZ, entryColor);
+		lTextureBatch.draw(mUITexture, 32, 192, 32, 32, mBarPosX + 32, yPos, mBarWidth - 64 - 32, 32, mZ, entryColor);
+		lTextureBatch.draw(mUITexture, 64, 192, 32, 32, mBarPosX + mBarWidth - 64, yPos, 32, 32, mZ, entryColor);
 
 		// Draw the caret
-		lTextureBatch.draw(mUITexture, 192, 192, 32, 32, lCaretPos, yPos, 32, 32, mZ, entryColor.r, entryColor.g, entryColor.b, entryColor.a);
+		lTextureBatch.draw(mUITexture, 192, 192, 32, 32, lCaretPos, yPos, 32, 32, mZ, entryColor);
 
 		lTextureBatch.end();
 
 		// draw the label to the left and the value //
 		lFont.begin(pCore.HUD());
 		lFont.drawShadow(mDrawTextShadow);
-		lFont.draw(mLabel, x + w / 2 - lLabelWidth - 10 - lSeparatorHalfWidth, y + h / 2f - lLabelHeight / 2f, mZ, lParentScreen.r(), lParentScreen.g(), lParentScreen.b(), lParentScreen.a(), lUiTextScale, -1);
-		lFont.draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2f - lLabelHeight / 2f, mZ, lParentScreen.r(), lParentScreen.g(), lParentScreen.b(), lParentScreen.a(), lUiTextScale, -1);
+		lFont.draw(mLabel, x + w / 2 - lLabelWidth - 10 - lSeparatorHalfWidth, y + h / 2f - lLabelHeight / 2f, mZ, ColorConstants.TextEntryColor, lUiTextScale, -1);
+		lFont.draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2f - lLabelHeight / 2f, mZ, ColorConstants.TextEntryColor, lUiTextScale, -1);
 
 		if (mShowValueEnabled) {
 			final float lValueStringWidth = lFont.bitmap().getStringWidth(Integer.toString(mValue), lUiTextScale);
@@ -295,13 +287,11 @@ public class MenuSliderEntry extends MenuEntry {
 
 		}
 
-		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
-			lTextureBatch.begin(pCore.HUD());
-			final float lStringAlpha = 0.3f;
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, x, y, w, h, mZ, 1f, 0.2f, 0.2f, lStringAlpha);
-			lTextureBatch.end();
-
+		if (!mEnabled) {
+			drawdisabledBlackOverbar(pCore, lTextureBatch, entryColor.a);
 		}
+
+		drawDebugCollidableBounds(pCore, lTextureBatch);
 
 	}
 

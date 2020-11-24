@@ -2,10 +2,12 @@ package net.lintford.library.renderers.windows.components;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.geometry.Rectangle;
+import net.lintford.library.core.graphics.Color;
+import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
-import net.lintford.library.renderers.windows.UIWindow;
+import net.lintford.library.renderers.windows.UiWindow;
 import net.lintford.library.screenmanager.entries.EntryInteractions;
 
 public class UIIconButton extends UIWidget {
@@ -29,7 +31,6 @@ public class UIIconButton extends UIWidget {
 	private transient boolean mDrawButtonText;
 	private transient float mClickTimer;
 	private transient boolean mButtonSolidColorBackground;
-	private float mRed, mGreen, mBlue;
 
 	private transient Texture mButtonTexture;
 	private transient Rectangle mSourceRectangle;
@@ -54,14 +55,10 @@ public class UIIconButton extends UIWidget {
 		mClickID = pNewLabel;
 	}
 
-	public void setButtonSolidBackgroundColor(boolean pNewValue) {
-		mButtonSolidColorBackground = pNewValue;
-	}
+	public void setButtonSolidBackgroundColor(Color pColor) {
+		mButtonSolidColorBackground = pColor == null;
+		entityColor.setFromColor(pColor);
 
-	public void setButtonSolidBackgroundColor(float pRed, float pGreen, float pBlue) {
-		mRed = pRed;
-		mGreen = pGreen;
-		mBlue = pBlue;
 	}
 
 	public boolean setButtonSolidBackgroundColor() {
@@ -80,11 +77,11 @@ public class UIIconButton extends UIWidget {
 	// Constructor
 	// --------------------------------------
 
-	public UIIconButton(final UIWindow pParentWindow) {
+	public UIIconButton(final UiWindow pParentWindow) {
 		this(pParentWindow, 0);
 	}
 
-	public UIIconButton(final UIWindow pParentWindow, final int pClickID) {
+	public UIIconButton(final UiWindow pParentWindow, final int pClickID) {
 		super(pParentWindow);
 
 		mClickID = pClickID;
@@ -92,7 +89,6 @@ public class UIIconButton extends UIWidget {
 		w = 200;
 		h = 25;
 
-		mRed = mGreen = mBlue = 1f;
 		mSourceRectangle = new Rectangle();
 
 		mButtonSolidColorBackground = true;
@@ -174,25 +170,23 @@ public class UIIconButton extends UIWidget {
 	}
 
 	private void drawSolidColorBackground(LintfordCore pCore, Texture pTexture) {
-		float lR = mHoveredOver ? 0.3f : mRed;
-		float lG = mHoveredOver ? 0.34f : mGreen;
-		float lB = mHoveredOver ? 0.65f : mBlue;
+		final float lColorMod = mHoveredOver ? mHoveredOver ? .9f : 1.f : .3f;
+		final var lColor = ColorConstants.getColorWithRGBMod(entityColor, lColorMod);
 
 		final TextureBatchPCT lTextureBatch = mParentWindow.rendererManager().uiTextureBatch();
 		lTextureBatch.begin(pCore.HUD());
-		lTextureBatch.draw(pTexture, 0, 0, 32, 32, x, y, w, h, -1.0f, lR, lG, lB, 1f);
+		lTextureBatch.draw(pTexture, 0, 0, 32, 32, x, y, w, h, -1.0f, lColor);
 		lTextureBatch.end();
 
 	}
 
 	private void drawTextureBackground(LintfordCore pCore, Texture pTexture) {
-		float lR = mHoveredOver ? 0.3f : mRed;
-		float lG = mHoveredOver ? 0.34f : mGreen;
-		float lB = mHoveredOver ? 0.65f : mBlue;
+		final float lColorMod = mHoveredOver ? .5f : 1.f;
+		final var lColor = ColorConstants.getColorWithRGBMod(entityColor, lColorMod);
 
 		final var lTextureBatch = mParentWindow.rendererManager().uiTextureBatch();
 		lTextureBatch.begin(pCore.HUD());
-		lTextureBatch.draw(pTexture, mSourceRectangle, x, y, w, h, -1.0f, lR, lG, lB, 1f);
+		lTextureBatch.draw(pTexture, mSourceRectangle, x, y, w, h, -1.0f, lColor);
 		lTextureBatch.end();
 
 	}

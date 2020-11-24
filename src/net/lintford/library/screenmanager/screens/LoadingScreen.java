@@ -6,6 +6,7 @@ import java.util.List;
 import org.lwjgl.opengl.GL11;
 
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.time.TimeSpan;
 import net.lintford.library.screenmanager.Screen;
 import net.lintford.library.screenmanager.ScreenManager;
@@ -136,7 +137,7 @@ public class LoadingScreen extends Screen {
 			final float lTextPositionY = lWindowHeight * 0.5f - lTextHeight - lTextPadding;
 
 			lFontUnit.begin(pCore.HUD());
-			lFontUnit.draw(lLoadingText, lTextPositionX, lTextPositionY, -0.1f, 1f, 1f, 1f, 1f, 1f, -1);
+			lFontUnit.draw(lLoadingText, lTextPositionX, lTextPositionY, -0.1f, ColorConstants.WHITE, 1f, -1);
 			lFontUnit.end();
 
 		}

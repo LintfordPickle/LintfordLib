@@ -1,6 +1,8 @@
 package net.lintford.library.renderers.windows.components;
 
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.graphics.Color;
+import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.core.maths.MathHelper;
@@ -12,7 +14,7 @@ public class UIBar {
 	// --------------------------------------
 
 	private float x, y, w, h;
-	private float r, g, b, a;
+	private final Color UiBarColor = new Color(1.f, 1.f, 1.f, 1.f);
 
 	private float mMinValue;
 	private float mMaxValue;
@@ -49,10 +51,8 @@ public class UIBar {
 	}
 
 	public void setColor(float pR, float pG, float pB, float pA) {
-		r = pR;
-		g = pG;
-		b = pB;
-		a = pA;
+		UiBarColor.setRGBA(pR, pG, pB, pA);
+
 	}
 
 	public void setCurrentValue(float pValue) {
@@ -90,7 +90,7 @@ public class UIBar {
 		float lBarWidth = MathHelper.scaleToRange(mCurValue, mMinValue, mMaxValue, 0, mIsVertical ? h : w);
 		lBarWidth = MathHelper.clamp(lBarWidth - INNER_BORDER_PADDING * 2, 0, w);
 
-		pTextureBatch.draw(lCoreTexture, 0, 0, 32, 32, x, y, w, h, -0.1f, 0f, 0f, 0f, 1.0f);
+		pTextureBatch.draw(lCoreTexture, 0, 0, 32, 32, x, y, w, h, -0.1f, ColorConstants.BLACK);
 
 		if (mIsVertical) {
 			float lWidth = w - INNER_BORDER_PADDING * 2;
@@ -101,7 +101,7 @@ public class UIBar {
 			float ww = !mIsInverted ? lWidth : lWidth;
 			float hh = !mIsInverted ? lHeight : -lHeight;
 
-			pTextureBatch.draw(lCoreTexture, 0, 0, 32, 32, xx + INNER_BORDER_PADDING, yy + INNER_BORDER_PADDING, ww, hh, -0.1f, r, g, b, a);
+			pTextureBatch.draw(lCoreTexture, 0, 0, 32, 32, xx + INNER_BORDER_PADDING, yy + INNER_BORDER_PADDING, ww, hh, -0.1f, UiBarColor);
 
 		} else {
 			float lWidth = lBarWidth;
@@ -112,7 +112,7 @@ public class UIBar {
 			float ww = !mIsInverted ? lWidth : lWidth;
 			float hh = !mIsInverted ? lHeight : lHeight;
 
-			pTextureBatch.draw(lCoreTexture, 0, 0, 32, 32, xx + INNER_BORDER_PADDING, yy + INNER_BORDER_PADDING, ww, hh, -0.1f, r, g, b, a);
+			pTextureBatch.draw(lCoreTexture, 0, 0, 32, 32, xx + INNER_BORDER_PADDING, yy + INNER_BORDER_PADDING, ww, hh, -0.1f, UiBarColor);
 
 		}
 

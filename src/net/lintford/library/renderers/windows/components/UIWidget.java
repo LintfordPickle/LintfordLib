@@ -3,11 +3,12 @@ package net.lintford.library.renderers.windows.components;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.geometry.Rectangle;
+import net.lintford.library.core.graphics.Color;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.core.input.IProcessMouseInput;
-import net.lintford.library.renderers.windows.UIWindow;
+import net.lintford.library.renderers.windows.UiWindow;
 
 public abstract class UIWidget extends Rectangle implements IProcessMouseInput {
 
@@ -21,7 +22,8 @@ public abstract class UIWidget extends Rectangle implements IProcessMouseInput {
 	// Variables
 	// --------------------------------------
 
-	protected UIWindow mParentWindow;
+	public Color entityColor = new Color(1.f, 1.f, 1.f, 1.f);
+	protected UiWindow mParentWindow;
 
 	protected boolean mIsEnabled;
 	protected boolean mIsVisible;
@@ -52,7 +54,7 @@ public abstract class UIWidget extends Rectangle implements IProcessMouseInput {
 	// Constructor
 	// --------------------------------------
 
-	public UIWidget(final UIWindow pParentWindow) {
+	public UIWidget(final UiWindow pParentWindow) {
 		super();
 
 		mIsVisible = true;
@@ -62,7 +64,7 @@ public abstract class UIWidget extends Rectangle implements IProcessMouseInput {
 
 	}
 
-	public UIWidget(final UIWindow pParentWindow, final Rectangle pBounds) {
+	public UIWidget(final UiWindow pParentWindow, final Rectangle pBounds) {
 		super(pBounds);
 
 		mIsVisible = true;
@@ -100,7 +102,7 @@ public abstract class UIWidget extends Rectangle implements IProcessMouseInput {
 
 	}
 
-	/** Everything for rendering should be provided by the {@link UIWindow} container. */
+	/** Everything for rendering should be provided by the {@link UiWindow} container. */
 	public abstract void draw(LintfordCore pCore, TextureBatchPCT pTextureBatch, Texture pUITexture, FontUnit pTextFont, float pComponentZDepth);
 
 	@Override

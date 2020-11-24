@@ -5,6 +5,7 @@ import java.util.List;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.geometry.Rectangle;
+import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.input.InputManager;
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
@@ -263,20 +264,14 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 
 	@Override
 	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pComponentDepth) {
-		super.draw(pCore, pScreen, pIsSelected, pComponentDepth);
-
 		mZ = pComponentDepth;
 
 		final var lParentScreen = mParentLayout.parentScreen;
 		final var lTextureBatch = lParentScreen.textureBatch();
 		final float lUiTextScale = lParentScreen.uiTextScale();
 
-		textColor.a = lParentScreen.a();
-
-		entryColor.r = mEnabled ? lParentScreen.r() : 0.24f;
-		entryColor.g = mEnabled ? lParentScreen.g() : 0.24f;
-		entryColor.b = mEnabled ? lParentScreen.b() : 0.24f;
-		entryColor.a = lParentScreen.a();
+		textColor.a = lParentScreen.screenColor.a;
+		entryColor.a = lParentScreen.screenColor.a;
 
 		// Render the two arrows either side of the enumeration options
 		if (mButtonsEnabled) {
@@ -285,8 +280,10 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 			// Fixme: Store this somewhere more central and accessable
 			final float lButtonSize = 32;
 
-			lTextureBatch.draw(mUITexture, 0, 224, 32, 32, mLeftButtonRectangle.x(), mLeftButtonRectangle.y(), lButtonSize, lButtonSize, mZ, entryColor.r, entryColor.g, entryColor.b, entryColor.a);
-			lTextureBatch.draw(mUITexture, 32, 224, 32, 32, mRightButtonRectangle.x(), mRightButtonRectangle.y(), lButtonSize, lButtonSize, mZ, entryColor.r, entryColor.g, entryColor.b, entryColor.a);
+			final var lButtonColor = mEnabled ? ColorConstants.WHITE : ColorConstants.getWhiteWithAlpha(0.5f);
+
+			lTextureBatch.draw(mUITexture, 0, 224, 32, 32, mLeftButtonRectangle.x(), mLeftButtonRectangle.y(), lButtonSize, lButtonSize, mZ, lButtonColor);
+			lTextureBatch.draw(mUITexture, 32, 224, 32, 32, mRightButtonRectangle.x(), mRightButtonRectangle.y(), lButtonSize, lButtonSize, mZ, lButtonColor);
 
 			lTextureBatch.end();
 
@@ -304,8 +301,8 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 
 		lFont.begin(pCore.HUD());
 		lFont.drawShadow(mDrawTextShadow);
-		lFont.draw(mLabel, x + w / 2 - 10 - (lLabelWidth * lAdjustedLabelScaleW) - lSeparatorHalfWidth, y + h / 2 - lFontHeight * 0.5f, mZ, textColor.r, textColor.g, textColor.b, textColor.a, lAdjustedLabelScaleW, -1);
-		lFont.draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - lFontHeight * 0.5f, mZ, textColor.r, textColor.g, textColor.b, textColor.a, lUiTextScale, -1);
+		lFont.draw(mLabel, x + w / 2 - 10 - (lLabelWidth * lAdjustedLabelScaleW) - lSeparatorHalfWidth, y + h / 2 - lFontHeight * 0.5f, mZ, textColor, lAdjustedLabelScaleW, -1);
+		lFont.draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - lFontHeight * 0.5f, mZ, textColor, lUiTextScale, -1);
 
 		// Render the items
 		if (mSelectedIndex >= 0 && mSelectedIndex < mItems.size()) {
@@ -315,21 +312,13 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 			if (mEnableScaleTextToWidth && w * 0.35f < EntryWidth && EntryWidth > 0)
 				lAdjustedEntryScaleW = (w * 0.35f) / EntryWidth;
 
-			lFont.draw(lCurItem, x + (w / 4 * 3) - (EntryWidth * lAdjustedEntryScaleW) / 2, y + h / 2 - lFontHeight * 0.5f, pComponentDepth, textColor.r, textColor.g, textColor.b, textColor.a, lAdjustedEntryScaleW, -1);
+			lFont.draw(lCurItem, x + (w / 4 * 3) - (EntryWidth * lAdjustedEntryScaleW) / 2, y + h / 2 - lFontHeight * 0.5f, pComponentDepth, textColor, lAdjustedEntryScaleW, -1);
 
 		}
 
 		lFont.end();
 
-		if (!mEnabled) {
-			drawdisabledBlackOverbar(pCore, lTextureBatch, entryColor.a);
-
-		}
-
-		if (mShowInfoIcon) {
-			drawInfoIcon(pCore, lTextureBatch, mInfoIconDstRectangle, entryColor.a);
-
-		}
+		super.draw(pCore, pScreen, pIsSelected, pComponentDepth);
 
 	}
 

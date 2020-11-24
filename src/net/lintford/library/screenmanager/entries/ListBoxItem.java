@@ -21,8 +21,8 @@ public abstract class ListBoxItem extends Rectangle {
 	protected ScreenManager mScreenManager;
 	protected ListBox mParentListBox;
 
-	protected final Color textColor = new Color();
-	protected final Color entryColor = new Color();
+	public final Color textColor = new Color();
+	public final Color entryColor = new Color();
 
 	protected int mEntityGroupID;
 	protected int mItemIndex;

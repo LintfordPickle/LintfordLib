@@ -378,15 +378,8 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 		w = mDesiredWidth;
 		h = mDesiredHeight;
 
-		entryColor.r = 1.f;
-		entryColor.g = 1.f;
-		entryColor.b = 1.f;
-		entryColor.a = 1.f;
-
-		textColor.r = .94f;
-		textColor.g = .94f;
-		textColor.b = .94f;
-		textColor.a = 1.f;
+		entryColor.setFromColor(ColorConstants.WHITE);
+		textColor.setFromColor(ColorConstants.TextEntryColor);
 
 		mVerticalFillType = FILLTYPE.TAKE_WHATS_NEEDED;
 		mHorizontalFillType = FILLTYPE.HALF_PARENT;
@@ -514,11 +507,22 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 
 		mZ = pParentZDepth;
 
-		// Set the tint of the back based on whether the button is enabled or not
-		entryColor.r = mEnabled ? (mAnimationTimer <= 0 ? ColorConstants.SecondaryColor.r : ColorConstants.SecondaryColor.r * (mAnimationTimer / 255.f)) : .35f;
-		entryColor.g = mEnabled ? (mAnimationTimer <= 0 ? ColorConstants.SecondaryColor.g : ColorConstants.SecondaryColor.g * (mAnimationTimer / 255.f)) : .35f;
-		entryColor.b = mEnabled ? (mAnimationTimer <= 0 ? ColorConstants.SecondaryColor.b : ColorConstants.SecondaryColor.b * (mAnimationTimer / 255.f)) : .35f;
-		entryColor.a = mEnabled ? mParentLayout.parentScreen.mA : 0.60f;
+		final boolean isAnimationActive = mAnimationTimer > 0.f;
+		if (mEnabled) {
+			if (isAnimationActive) {
+				entryColor.setFromColor(ColorConstants.getColorWithRGBMod(ColorConstants.SecondaryColor, (mAnimationTimer / 255.f)));
+
+			} else {
+				entryColor.setFromColor(ColorConstants.SecondaryColor);
+
+			}
+			entryColor.a = mParentLayout.parentScreen.screenColor.a;
+
+		} else {
+			entryColor.setFromColor(ColorConstants.getColorWithRGBMod(ColorConstants.SecondaryColor, .35f));
+			entryColor.a = .6f;
+
+		}
 
 		float tile_size = 32;
 
@@ -528,43 +532,40 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 		if (mDrawBackground) {
 			if (isInClickedState()) {
 				lTextureBatch.begin(pCore.HUD());
-				lTextureBatch.draw(mUITexture, 0, 96, 32, 32, centerX() - w / 2, centerY() - h / 2, 32, h, mZ, entryColor.r, entryColor.g, entryColor.b, entryColor.a);
-				lTextureBatch.draw(mUITexture, 32, 96, 32, 32, centerX() - (w / 2) + 32, centerY() - h / 2, w - 64, h, mZ, entryColor.r, entryColor.g, entryColor.b, entryColor.a);
-				lTextureBatch.draw(mUITexture, 128, 96, 32, 32, centerX() + (w / 2) - 32, centerY() - h / 2, 32, h, mZ, entryColor.r, entryColor.g, entryColor.b, entryColor.a);
+				lTextureBatch.draw(mUITexture, 0, 96, 32, 32, centerX() - w / 2, centerY() - h / 2, 32, h, mZ, entryColor);
+				lTextureBatch.draw(mUITexture, 32, 96, 32, 32, centerX() - (w / 2) + 32, centerY() - h / 2, w - 64, h, mZ, entryColor);
+				lTextureBatch.draw(mUITexture, 128, 96, 32, 32, centerX() + (w / 2) - 32, centerY() - h / 2, 32, h, mZ, entryColor);
 				lTextureBatch.end();
 
 			} else if (mHoveredOver && mHighlightOnHover) {
-				final float lHoveredColorHighlightR = ColorConstants.SecondaryColor.r * .6f;
-				final float lHoveredColorHighlightG = ColorConstants.SecondaryColor.g * .6f;
-				final float lHoveredColorHighlightB = ColorConstants.SecondaryColor.b * .6f;
+				final float lColorMod = .6f;
+				final var lColor = ColorConstants.getColorWithRGBMod(ColorConstants.SecondaryColor, lColorMod);
 
 				lTextureBatch.begin(pCore.HUD());
-				lTextureBatch.draw(mUITexture, 0, 64, 32, 32, centerX() - w / 2, centerY() - h / 2, tile_size, h, mZ, lHoveredColorHighlightR, lHoveredColorHighlightG, lHoveredColorHighlightB, entryColor.a);
-				lTextureBatch.draw(mUITexture, 32, 64, 32, 32, centerX() - (w / 2) + tile_size, centerY() - h / 2, w - tile_size * 2, h, mZ, lHoveredColorHighlightR, lHoveredColorHighlightG, lHoveredColorHighlightB,
-						entryColor.a);
-				lTextureBatch.draw(mUITexture, 128, 64, 32, 32, centerX() + (w / 2) - tile_size, centerY() - h / 2, tile_size, h, mZ, lHoveredColorHighlightR, lHoveredColorHighlightG, lHoveredColorHighlightB,
-						entryColor.a);
+				lTextureBatch.draw(mUITexture, 0, 64, 32, 32, centerX() - w / 2, centerY() - h / 2, tile_size, h, mZ, lColor);
+				lTextureBatch.draw(mUITexture, 32, 64, 32, 32, centerX() - (w / 2) + tile_size, centerY() - h / 2, w - tile_size * 2, h, mZ, lColor);
+				lTextureBatch.draw(mUITexture, 128, 64, 32, 32, centerX() + (w / 2) - tile_size, centerY() - h / 2, tile_size, h, mZ, lColor);
 				lTextureBatch.end();
 
 			} else {
 				lTextureBatch.begin(pCore.HUD());
-				lTextureBatch.draw(mUITexture, 0, 64, 32, 32, centerX() - w / 2, centerY() - h / 2, 32, h, mZ, entryColor.r, entryColor.g, entryColor.b, entryColor.a);
-				lTextureBatch.draw(mUITexture, 32, 64, 32, 32, centerX() - (w / 2) + 32, centerY() - h / 2, w - 64, h, mZ, entryColor.r, entryColor.g, entryColor.b, entryColor.a);
-				lTextureBatch.draw(mUITexture, 128, 64, 32, 32, centerX() + (w / 2) - 32, centerY() - h / 2, 32, h, mZ, entryColor.r, entryColor.g, entryColor.b, entryColor.a);
+				lTextureBatch.draw(mUITexture, 0, 64, 32, 32, centerX() - w / 2, centerY() - h / 2, 32, h, mZ, entryColor);
+				lTextureBatch.draw(mUITexture, 32, 64, 32, 32, centerX() - (w / 2) + 32, centerY() - h / 2, w - 64, h, mZ, entryColor);
+				lTextureBatch.draw(mUITexture, 128, 64, 32, 32, centerX() + (w / 2) - 32, centerY() - h / 2, 32, h, mZ, entryColor);
 				lTextureBatch.end();
 
 			}
 		}
 
-		else if (mHoveredOver) {
-			final float lHoveredColorHighlightR = ColorConstants.PrimaryColor.r;
-			final float lHoveredColorHighlightG = ColorConstants.PrimaryColor.g;
-			final float lHoveredColorHighlightB = ColorConstants.PrimaryColor.b;
+		else if (mHoveredOver && mEnabled) {
+			final float lColorMod = 1.f;
+			final var lColor = ColorConstants.getColorWithRGBMod(ColorConstants.PrimaryColor, lColorMod);
+			lColor.a = 0.25f;
 
 			lTextureBatch.begin(pCore.HUD());
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() - w / 2, centerY() - h / 2, 32, h, mZ, lHoveredColorHighlightR, lHoveredColorHighlightG, lHoveredColorHighlightB, 0.25f);
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() - (w / 2) + 32, centerY() - h / 2, w - 64, h, mZ, lHoveredColorHighlightR, lHoveredColorHighlightG, lHoveredColorHighlightB, 0.25f);
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() + (w / 2) - 32, centerY() - h / 2, 32, h, mZ, lHoveredColorHighlightR, lHoveredColorHighlightG, lHoveredColorHighlightB, 0.25f);
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() - w / 2, centerY() - h / 2, 32, h, mZ, lColor);
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() - (w / 2) + 32, centerY() - h / 2, w - 64, h, mZ, lColor);
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() + (w / 2) - 32, centerY() - h / 2, 32, h, mZ, lColor);
 			lTextureBatch.end();
 
 		}
@@ -576,8 +577,8 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 
 			if (lMenuFont != null) {
 				lMenuFont.begin(pCore.HUD());
-				lMenuFont.draw(mText, centerX() - lMenuFont.bitmap().getStringWidth(mText, lUiTextScale) * 0.5f, centerY() - lMenuFont.bitmap().fontHeight() * lUiTextScale / 2 - 2f, mZ, 0.97f, .92f, .92f, textColor.a,
-						lUiTextScale);
+				final float lStringWidth = lMenuFont.bitmap().getStringWidth(mText, lUiTextScale);
+				lMenuFont.draw(mText, centerX() - lStringWidth * 0.5f, centerY() - lMenuFont.bitmap().fontHeight() * lUiTextScale / 2 - 2f, mZ, ColorConstants.TextHeadingColor, lUiTextScale);
 				lMenuFont.end();
 
 			}
@@ -594,10 +595,14 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 
 		}
 
+		if (!mEnabled) {
+			drawdisabledBlackOverbar(pCore, lTextureBatch, entryColor.a);
+
+		}
+
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
 			lTextureBatch.begin(pCore.HUD());
-			final float ALPHA = 0.3f;
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, x, y, w, h, mZ, 1f, 0.2f, 0.2f, ALPHA);
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, x, y, w, h, mZ, ColorConstants.Debug_Transparent_Magenta);
 			lTextureBatch.end();
 
 		}
@@ -609,22 +614,37 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 	// --------------------------------------
 
 	public void drawInfoIcon(LintfordCore pCore, TextureBatchPCT pTextureBatch, Rectangle pDestRect, float pScreenAlpha) {
-		pTextureBatch.begin(pCore.HUD());
+		final var lColor = ColorConstants.getColor(1.f, 1.f, 1.f, pScreenAlpha);
+
 		// TODO: Resolve the texture source rectangle from the CORE_ATLAS
-		pTextureBatch.draw(mUITexture, 192, 160, 32, 32, pDestRect, mZ, 1f, 1f, 1f, pScreenAlpha);
+		pTextureBatch.begin(pCore.HUD());
+		pTextureBatch.draw(mUITexture, 192, 160, 32, 32, pDestRect, mZ, lColor);
 		pTextureBatch.end();
 	}
 
 	public void drawWarningIcon(LintfordCore pCore, TextureBatchPCT pTextureBatch, Rectangle pDestRect, float pScreenAlpha) {
-		pTextureBatch.begin(pCore.HUD());
+		final var lColor = ColorConstants.getColor(1.f, 1.f, 1.f, pScreenAlpha);
+
 		// TODO: Resolve the texture source rectangle from the CORE_ATLAS
-		pTextureBatch.draw(mUITexture, 224, 160, 32, 32, pDestRect, mZ, 1f, 1f, 1f, pScreenAlpha);
+		pTextureBatch.begin(pCore.HUD());
+		pTextureBatch.draw(mUITexture, 224, 160, 32, 32, pDestRect, mZ, lColor);
 		pTextureBatch.end();
 	}
 
+	public void drawDebugCollidableBounds(LintfordCore pCore, TextureBatchPCT pTextureBatch) {
+		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
+			pTextureBatch.begin(pCore.HUD());
+			pTextureBatch.draw(mUITexture, 0, 0, 32, 32, x, y, w, h, mZ, ColorConstants.Debug_Transparent_Magenta);
+			pTextureBatch.end();
+
+		}
+	}
+
 	public void drawdisabledBlackOverbar(LintfordCore pCore, TextureBatchPCT pTextureBatch, float pScreenAlpha) {
+		final var lColor = ColorConstants.getColor(.1f, .1f, .1f, .75f * pScreenAlpha);
+
 		pTextureBatch.begin(pCore.HUD());
-		pTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() - (w / 2), centerY() - h / 2, w, h, mZ + .1f, .1f, .1f, .1f, .75f * pScreenAlpha);
+		pTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() - (w / 2), centerY() - h / 2, w, h, mZ, lColor);
 		pTextureBatch.end();
 
 	}

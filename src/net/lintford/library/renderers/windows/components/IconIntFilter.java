@@ -2,6 +2,8 @@ package net.lintford.library.renderers.windows.components;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.geometry.Rectangle;
+import net.lintford.library.core.graphics.Color;
+import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
@@ -20,18 +22,12 @@ public class IconIntFilter implements IProcessMouseInput {
 	private boolean mEnabled;
 	private String mFilterName;
 	private boolean mHoveredOver;
-	private float r, g, b;
 	private float mMouseTimer;
+	public final Color color = new Color();
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
-
-	public void setSelectedColor(float pR, float pG, float pB) {
-		r = pR;
-		g = pG;
-		b = pB;
-	}
 
 	public void resetHovered() {
 		mHoveredOver = false;
@@ -83,9 +79,6 @@ public class IconIntFilter implements IProcessMouseInput {
 		mFilterName = pName;
 		mFilterValue = pFilterValue;
 
-		// Set selected color to white
-		r = g = b = 1f;
-
 	}
 
 	// --------------------------------------
@@ -107,21 +100,19 @@ public class IconIntFilter implements IProcessMouseInput {
 	}
 
 	public void draw(LintfordCore pCore, TextureBatchPCT pTextureBatch, Texture pUITexture, FontUnit pTextFont, float pComponentZDepth) {
-
-		float lR = mEnabled ? r : 1f;
-		float lG = mEnabled ? g : 1f;
-		float lB = mEnabled ? b : 1f;
+		final float lColorMod = mEnabled ? 1.f : .8f;
+		final var lColor = ColorConstants.getColorWithRGBMod(ColorConstants.WHITE, lColorMod);
 
 		pTextureBatch.begin(pCore.HUD());
 
 		// Draw the 'tab' background
 		if (mEnabled) {
 			// Draw a 'open' tab
-			pTextureBatch.draw(pUITexture, 384, 0, 64, 64, mUIDstRectangle.x() - 2, mUIDstRectangle.y() - 2, mUIDstRectangle.w() + 4, mUIDstRectangle.h() + 6, -0.5f, lR, lG, lB, 1f);
+			pTextureBatch.draw(pUITexture, 384, 0, 64, 64, mUIDstRectangle.x() - 2, mUIDstRectangle.y() - 2, mUIDstRectangle.w() + 4, mUIDstRectangle.h() + 6, -0.5f, lColor);
 
 		} else {
 			// Draw a 'closed' tab
-			pTextureBatch.draw(pUITexture, 320, 0, 64, 64, mUIDstRectangle.x() - 2, mUIDstRectangle.y() - 2, mUIDstRectangle.w() + 4, mUIDstRectangle.h() + 6, -0.5f, lR, lG, lB, 1f);
+			pTextureBatch.draw(pUITexture, 320, 0, 64, 64, mUIDstRectangle.x() - 2, mUIDstRectangle.y() - 2, mUIDstRectangle.w() + 4, mUIDstRectangle.h() + 6, -0.5f, lColor);
 
 		}
 
@@ -130,12 +121,12 @@ public class IconIntFilter implements IProcessMouseInput {
 			final float lTextHeight = pTextFont.bitmap().fontHeight();
 
 			// Draw a background texture behind the texture so it is always legible.
-			pTextureBatch.draw(pUITexture, 64, 0, 32, 32, mUIDstRectangle.x() + 16 - lTextHalfW, mUIDstRectangle.y() - 19, lTextHalfW * 2 + 4, lTextHeight, -0.2f, 1f, 1f, 1f, 1.0f);
+			pTextureBatch.draw(pUITexture, 64, 0, 32, 32, mUIDstRectangle.x() + 16 - lTextHalfW, mUIDstRectangle.y() - 19, lTextHalfW * 2 + 4, lTextHeight, -0.2f, ColorConstants.WHITE);
 
 		}
 
 		// Draw the background icon
-		pTextureBatch.draw(pUITexture, mUISrcRectangle, mUIDstRectangle, -0.5f, lR, lG, lB, 1f);
+		pTextureBatch.draw(pUITexture, mUISrcRectangle, mUIDstRectangle, -0.5f, lColor);
 
 		pTextureBatch.end();
 

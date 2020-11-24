@@ -194,13 +194,13 @@ public class MenuImageEntry extends MenuEntry {
 
 		lTextureBatch.begin(pCore.HUD());
 
-		entryColor.a = lParentScreen.a();
+		entryColor.a = lParentScreen.screenColor.a;
 
 		if (mMainTexture != null) {
 			final int lTextureWidth = mMainTexture.getTextureWidth();
 			final int lTextureHeight = mMainTexture.getTextureHeight();
 
-			lTextureBatch.draw(mMainTexture, 0, 0, lTextureWidth, lTextureHeight, x, y, mFittedWidth, mFittedHeight, pParentZDepth + .1f, entryColor.r, entryColor.g, entryColor.b, entryColor.a);
+			lTextureBatch.draw(mMainTexture, 0, 0, lTextureWidth, lTextureHeight, x, y, mFittedWidth, mFittedHeight, pParentZDepth + .1f, entryColor);
 
 		} else if (mShowMissingTextureText) {
 			final var lFontUnit = lRendererManager.textFont();
@@ -212,10 +212,10 @@ public class MenuImageEntry extends MenuEntry {
 			lFontUnit.end();
 
 		} else if (mMissingTexture != null) {
-			lTextureBatch.draw(mMissingTexture, srcX, srcY, srcWidth, srcHeight, x, y, mFittedWidth, mFittedHeight, pParentZDepth + .1f, entryColor.r, entryColor.g, entryColor.b, entryColor.a);
+			lTextureBatch.draw(mMissingTexture, srcX, srcY, srcWidth, srcHeight, x, y, mFittedWidth, mFittedHeight, pParentZDepth + .1f, entryColor);
 
 		} else if (mUITexture != null) {
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, x, y, mFittedWidth, mFittedHeight, pParentZDepth + .1f, entryColor.r, entryColor.g, entryColor.b, entryColor.a);
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, x, y, mFittedWidth, mFittedHeight, pParentZDepth + .1f, entryColor);
 
 		}
 
@@ -230,6 +230,8 @@ public class MenuImageEntry extends MenuEntry {
 			drawWarningIcon(pCore, lTextureBatch, mWarnIconDstRectangle, 1.f);
 
 		}
+
+		drawDebugCollidableBounds(pCore, lTextureBatch);
 
 	}
 

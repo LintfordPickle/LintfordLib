@@ -151,53 +151,43 @@ public class MenuToggleEntry extends MenuEntry {
 
 		final float lTileSize = 32;
 
-		entryColor.a = lParentScreen.a();
-		textColor.a = lParentScreen.a();
-
-		entryColor.r = lParentScreen.r();
-		entryColor.g = lParentScreen.g();
-		entryColor.b = lParentScreen.b();
+		entryColor.setFromColor(lParentScreen.screenColor);
+		textColor.a = entryColor.a;
 
 		mZ = pParentZDepth;
 
 		if (mHoveredOver) {
-			final float lHoveredColorHighlightR = ColorConstants.PrimaryColor.r;
-			final float lHoveredColorHighlightG = ColorConstants.PrimaryColor.g;
-			final float lHoveredColorHighlightB = ColorConstants.PrimaryColor.b;
-
 			lTextureBatch.begin(pCore.HUD());
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() - w / 2, centerY() - h / 2, 32, h, mZ, lHoveredColorHighlightR, lHoveredColorHighlightG, lHoveredColorHighlightB, 0.26f);
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() - (w / 2) + 32, centerY() - h / 2, w - 64, h, mZ, lHoveredColorHighlightR, lHoveredColorHighlightG, lHoveredColorHighlightB, 0.26f);
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() + (w / 2) - 32, centerY() - h / 2, 32, h, mZ, lHoveredColorHighlightR, lHoveredColorHighlightG, lHoveredColorHighlightB, 0.26f);
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() - w / 2, centerY() - h / 2, 32, h, mZ, ColorConstants.MenuEntryHighlightColor);
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() - (w / 2) + 32, centerY() - h / 2, w - 64, h, mZ, ColorConstants.MenuEntryHighlightColor);
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() + (w / 2) - 32, centerY() - h / 2, 32, h, mZ, ColorConstants.MenuEntryHighlightColor);
 			lTextureBatch.end();
 
 		}
 
-		// Draw the left/right buttons
 		lTextureBatch.begin(pCore.HUD());
 
 		// Render the check box (either ticked or empty)
 		if (mIsChecked)
-			lTextureBatch.draw(mUITexture, 64, 128, 32, 32, x + w / 2 + 16, y + h / 2 - lTileSize / 2, lTileSize, lTileSize, mZ, entryColor.r, entryColor.g, entryColor.b, entryColor.a);
+			lTextureBatch.draw(mUITexture, 64, 128, 32, 32, x + w / 2 + 16, y + h / 2 - lTileSize / 2, lTileSize, lTileSize, mZ, entryColor);
 		else
-			lTextureBatch.draw(mUITexture, 32, 128, 32, 32, centerX() + lTileSize / 2, y + h / 2 - lTileSize / 2, lTileSize, lTileSize, mZ, entryColor.r, entryColor.g, entryColor.b, entryColor.a);
+			lTextureBatch.draw(mUITexture, 32, 128, 32, 32, centerX() + lTileSize / 2, y + h / 2 - lTileSize / 2, lTileSize, lTileSize, mZ, entryColor);
 
 		lTextureBatch.end();
 
 		lFont.begin(pCore.HUD());
 		lFont.drawShadow(mDrawTextShadow);
-		lFont.draw(mText, x + w / 2 - lLabelWidth - SPACE_BETWEEN_TEXT - lSeparatorHalfWidth, y + h / 2 - lTextHeight * 0.5f, mZ, textColor.r, textColor.g, textColor.b, textColor.a, lUiTextScale, -1);
-		lFont.draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - lTextHeight * 0.5f, mZ, textColor.r, textColor.g, textColor.b, textColor.a, lUiTextScale, -1);
+		lFont.draw(mText, x + w / 2 - lLabelWidth - SPACE_BETWEEN_TEXT - lSeparatorHalfWidth, y + h / 2 - lTextHeight * 0.5f, mZ, textColor, lUiTextScale, -1);
+		lFont.draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - lTextHeight * 0.5f, mZ, textColor, lUiTextScale, -1);
 
 		if (mIsChecked) {
-			lFont.draw("Enabled", x + w / 2 + lSeparatorHalfWidth + lTileSize * 2, y + h / 2 - lTextHeight * 0.5f, mZ, textColor.r, textColor.g, textColor.b, textColor.a, lUiTextScale, -1);
+			lFont.draw("Enabled", x + w / 2 + lSeparatorHalfWidth + lTileSize * 2, y + h / 2 - lTextHeight * 0.5f, mZ, textColor, lUiTextScale, -1);
 
 		} else {
-			lFont.draw("Disabled", x + w / 2 + lSeparatorHalfWidth + lTileSize * 2, y + h / 2 - lTextHeight * 0.5f, mZ, textColor.r, textColor.g, textColor.b, textColor.a, lUiTextScale, -1);
+			lFont.draw("Disabled", x + w / 2 + lSeparatorHalfWidth + lTileSize * 2, y + h / 2 - lTextHeight * 0.5f, mZ, textColor, lUiTextScale, -1);
 
 		}
 
-		// Render the items
 		lFont.end();
 
 		if (mShowInfoIcon) {
@@ -209,6 +199,8 @@ public class MenuToggleEntry extends MenuEntry {
 			drawWarningIcon(pCore, lTextureBatch, mWarnIconDstRectangle, entryColor.a);
 
 		}
+
+		drawDebugCollidableBounds(pCore, lTextureBatch);
 
 	}
 

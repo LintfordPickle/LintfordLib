@@ -2,12 +2,14 @@ package net.lintford.library.renderers.windows.components;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.geometry.Rectangle;
+import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.core.input.IBufferedTextInputCallback;
+import net.lintford.library.core.input.IUiInputKeyPressCallback;
 import net.lintford.library.core.input.InputManager;
-import net.lintford.library.renderers.windows.UIWindow;
+import net.lintford.library.renderers.windows.UiWindow;
 
 public class UIInputText extends UIWidget implements IBufferedTextInputCallback {
 
@@ -31,6 +33,7 @@ public class UIInputText extends UIWidget implements IBufferedTextInputCallback 
 	private transient String mEmptyString;
 
 	private transient Rectangle mCancelRectangle;
+	private IUiInputKeyPressCallback mIUiInputKeyPressCallback;
 
 	// A little wierd, we store the string length to check if the string has changed since the last frame (since
 	// working with the length (int) doesn't cause a heap allocation as toString() does )
@@ -97,7 +100,7 @@ public class UIInputText extends UIWidget implements IBufferedTextInputCallback 
 	// Constructor
 	// --------------------------------------
 
-	public UIInputText(UIWindow pParentWindow) {
+	public UIInputText(UiWindow pParentWindow) {
 		super(pParentWindow);
 
 		mResetOnDefaultClick = true;
@@ -162,7 +165,7 @@ public class UIInputText extends UIWidget implements IBufferedTextInputCallback 
 		mCaretFlashTimer += pCore.appTime().elapsedTimeMilli();
 
 		final int lHorizontalPadding = 5;
-		final int lCancelRectSize = 24;
+		final int lCancelRectSize = 16;
 		mCancelRectangle.set(x + w - lCancelRectSize - lHorizontalPadding, y + h / 2 - lCancelRectSize / 2, lCancelRectSize, lCancelRectSize);
 
 		if (mHasFocus) {
@@ -184,24 +187,23 @@ public class UIInputText extends UIWidget implements IBufferedTextInputCallback 
 	public void draw(LintfordCore pCore, TextureBatchPCT pTextureBatch, Texture pUITexture, FontUnit pTextFont, float pComponentZDepth) {
 		// Renders the background of the input text widget
 		pTextureBatch.begin(pCore.HUD());
-		pTextureBatch.draw(pUITexture, 0, 288, 32, 32, x, y, 32, h, pComponentZDepth, 1f, 1f, 1f, 1);
+		pTextureBatch.draw(pUITexture, 0, 288, 32, 32, x, y, 32, h, pComponentZDepth, ColorConstants.MenuPanelTertiaryColor);
 		if (w > 32) {
-			pTextureBatch.draw(pUITexture, 64, 288, 32, 32, x + 32, y, w - 64, h, pComponentZDepth, 1f, 1f, 1f, 1);
-			pTextureBatch.draw(pUITexture, 128, 288, 32, 32, x + w - 32, y, 32, h, pComponentZDepth, 1f, 1f, 1f, 1);
+			pTextureBatch.draw(pUITexture, 64, 288, 32, 32, x + 32, y, w - 64, h, pComponentZDepth, ColorConstants.MenuPanelTertiaryColor);
+			pTextureBatch.draw(pUITexture, 128, 288, 32, 32, x + w - 32, y, 32, h, pComponentZDepth, ColorConstants.MenuPanelTertiaryColor);
 		}
 
 		pTextureBatch.end();
 
 		// Draw the cancel button rectangle
 		pTextureBatch.begin(pCore.HUD());
-		pTextureBatch.draw(pUITexture, 32, 128, 32, 32, mCancelRectangle, pComponentZDepth, 1f, 1f, 1f, 1);
+		pTextureBatch.draw(pUITexture, 256, 192, 16, 16, mCancelRectangle, pComponentZDepth, ColorConstants.WHITE);
 		pTextureBatch.end();
 
 		final float lInputTextWidth = pTextFont.bitmap().getStringWidth(mInputField.toString());
 
 		String lText = mInputField.toString();
 		final float lTextHeight = pTextFont.bitmap().fontHeight();
-		float lAlpha = 1f;
 		if (lText.length() == 0 && !mHasFocus) {
 			if (mEmptyString.isEmpty()) {
 				lText = "<search>";
@@ -211,12 +213,10 @@ public class UIInputText extends UIWidget implements IBufferedTextInputCallback 
 
 			}
 
-			lAlpha = 0.5f;
 		}
 
 		pTextFont.begin(pCore.HUD());
-		pTextFont.draw(lText, x + 10, y + h / 2 - lTextHeight / 2, pComponentZDepth, 1f, 1f, 1f, lAlpha, 1f, -1);
-
+		pTextFont.draw(lText, x + 10, y + h / 2 - lTextHeight / 2, pComponentZDepth, ColorConstants.TextEntryColor, 1f, -1);
 		if (mShowCaret && mHasFocus) {
 			pTextFont.draw("|", x + 7 + lInputTextWidth + SPACE_BETWEEN_TEXT * 3, y + h / 2 - lTextHeight / 2, pComponentZDepth, 1f);
 
@@ -229,6 +229,11 @@ public class UIInputText extends UIWidget implements IBufferedTextInputCallback 
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
+
+	public void setKeyUpdateListener(IUiInputKeyPressCallback pKeyUpdateListener) {
+		mIUiInputKeyPressCallback = pKeyUpdateListener;
+
+	}
 
 	public void onClick(InputManager pInputState) {
 		mHasFocus = !mHasFocus;
@@ -269,6 +274,11 @@ public class UIInputText extends UIWidget implements IBufferedTextInputCallback 
 	@Override
 	public void onKeyPressed(int pCodePoint) {
 		mStringLength = mInputField.length();
+
+		if (mIUiInputKeyPressCallback != null) {
+			mIUiInputKeyPressCallback.keyPressUpdate(pCodePoint);
+
+		}
 
 	}
 

@@ -4,6 +4,7 @@ import net.lintford.library.ConstantsApp;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.Debug;
+import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.screenmanager.Screen;
 import net.lintford.library.screenmanager.ScreenManager;
@@ -22,11 +23,6 @@ public class StringListBoxItem extends ListBoxItem {
 	// Variables
 	// --------------------------------------
 
-	private float mR;
-	private float mG;
-	private float mB;
-	private float mA;
-
 	private String mTextValue;
 
 	// --------------------------------------
@@ -39,14 +35,6 @@ public class StringListBoxItem extends ListBoxItem {
 
 	public String textValue() {
 		return mTextValue;
-	}
-
-	public void setTextColor(float pR, float pG, float pB, float pA) {
-		mR = pR;
-		mG = pG;
-		mB = pB;
-		mA = pA;
-
 	}
 
 	// --------------------------------------
@@ -85,11 +73,10 @@ public class StringListBoxItem extends ListBoxItem {
 			final float lFontHeight = lFont.bitmap().getStringHeight(mTextValue, lScale);
 
 			h = 10;
-			mR = mG = mB = mA = 1;
 
 			// Draw profile information
 			lFont.begin(pCore.HUD());
-			lFont.draw(mTextValue, x, y - lFontHeight / 2, pParentZDepth + .1f, mR, mG, mB, mA, lScale, -1);
+			lFont.draw(mTextValue, x, y - lFontHeight / 2, pParentZDepth + .1f, ColorConstants.TextEntryColor, lScale, -1);
 			lFont.end();
 
 		}

@@ -2,8 +2,8 @@ package net.lintford.library.screenmanager.dialogs;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
+import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.textures.Texture;
-import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.renderers.ZLayers;
 import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.Screen;
@@ -90,7 +90,7 @@ public abstract class BaseDialog extends MenuScreen {
 
 		mTransitionOn = null;
 		mTransitionOff = null;
-		mA = 1f;
+		screenColor.a = 1.f;
 
 		mPaddingTopNormalized = 0;
 
@@ -143,43 +143,41 @@ public abstract class BaseDialog extends MenuScreen {
 		if (mScreenState != ScreenState.Active && mScreenState != ScreenState.TransitionOn && mScreenState != ScreenState.TransitionOff)
 			return;
 
-		final float ZDEPTH = ZLayers.LAYER_SCREENMANAGER + 0.05f;
-
+		final float lZDepth = ZLayers.LAYER_SCREENMANAGER + 0.05f;
 		final float lWindowWidth = pCore.HUD().boundingRectangle().w();
 		final float lWindowHeight = pCore.HUD().boundingRectangle().h();
 
-		final TextureBatchPCT lTextureBatch = mParentScreen.textureBatch();
+		final var lTextureBatch = mParentScreen.textureBatch();
 
-		// This is the full screen darken effect
 		if (mDarkenBackground) {
-			final float lAlphaAmt = 0.70f;
+			final var lColor = ColorConstants.getBlackWithAlpha(.6f);
 			lTextureBatch.begin(pCore.HUD());
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, -lWindowWidth * 0.5f, -lWindowHeight * 0.5f, lWindowWidth, lWindowHeight, ZLayers.LAYER_SCREENMANAGER - 0.1f, 0f, 0f, 0f, lAlphaAmt);
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, -lWindowWidth * 0.5f, -lWindowHeight * 0.5f, lWindowWidth, lWindowHeight, ZLayers.LAYER_SCREENMANAGER - 0.1f, lColor);
 			lTextureBatch.end();
 
 		}
 
 		if (mDrawBackground) {
-			final float a = 1f;
-
 			final float TILE_SIZE = 32f;
 			final float x = -DIALOG_WIDTH / 2;
 			final float y = -DIALOG_HEIGHT / 2;
 			final float w = DIALOG_WIDTH;
 			final float h = DIALOG_HEIGHT;
 
+			final var lColor = ColorConstants.getWhiteWithAlpha(1.f);
+
 			lTextureBatch.begin(pCore.HUD());
-			lTextureBatch.draw(mUITexture, 256, 0, TILE_SIZE, TILE_SIZE, x, y, TILE_SIZE, TILE_SIZE, ZDEPTH, 1, 1, 1, a);
-			lTextureBatch.draw(mUITexture, 288, 0, TILE_SIZE, TILE_SIZE, x + TILE_SIZE, y, w - 64, TILE_SIZE, ZDEPTH, 1, 1, 1, a);
-			lTextureBatch.draw(mUITexture, 320, 0, TILE_SIZE, TILE_SIZE, x + w - 32, y, TILE_SIZE, TILE_SIZE, ZDEPTH, 1, 1, 1, a);
+			lTextureBatch.draw(mUITexture, 256, 0, TILE_SIZE, TILE_SIZE, x, y, TILE_SIZE, TILE_SIZE, lZDepth, lColor);
+			lTextureBatch.draw(mUITexture, 288, 0, TILE_SIZE, TILE_SIZE, x + TILE_SIZE, y, w - 64, TILE_SIZE, lZDepth, lColor);
+			lTextureBatch.draw(mUITexture, 320, 0, TILE_SIZE, TILE_SIZE, x + w - 32, y, TILE_SIZE, TILE_SIZE, lZDepth, lColor);
 
-			lTextureBatch.draw(mUITexture, 256, 32, TILE_SIZE, TILE_SIZE, x, y + 32, TILE_SIZE, h - 64, ZDEPTH, 1, 1, 1, a);
-			lTextureBatch.draw(mUITexture, 288, 32, TILE_SIZE, TILE_SIZE, x + TILE_SIZE, y + 32, w - 64, h - 64, ZDEPTH, 1, 1, 1, a);
-			lTextureBatch.draw(mUITexture, 320, 32, TILE_SIZE, TILE_SIZE, x + w - 32, y + 32, TILE_SIZE, h - 64, ZDEPTH, 1, 1, 1, a);
+			lTextureBatch.draw(mUITexture, 256, 32, TILE_SIZE, TILE_SIZE, x, y + 32, TILE_SIZE, h - 64, lZDepth, lColor);
+			lTextureBatch.draw(mUITexture, 288, 32, TILE_SIZE, TILE_SIZE, x + TILE_SIZE, y + 32, w - 64, h - 64, lZDepth, lColor);
+			lTextureBatch.draw(mUITexture, 320, 32, TILE_SIZE, TILE_SIZE, x + w - 32, y + 32, TILE_SIZE, h - 64, lZDepth, lColor);
 
-			lTextureBatch.draw(mUITexture, 256, 64, TILE_SIZE, TILE_SIZE, x, y + h - 32, TILE_SIZE, TILE_SIZE, ZDEPTH, 1, 1, 1, a);
-			lTextureBatch.draw(mUITexture, 288, 64, TILE_SIZE, TILE_SIZE, x + TILE_SIZE, y + h - 32, w - 64, TILE_SIZE, ZDEPTH, 1, 1, 1, a);
-			lTextureBatch.draw(mUITexture, 320, 64, TILE_SIZE, TILE_SIZE, x + w - 32, y + h - 32, TILE_SIZE, TILE_SIZE, ZDEPTH, 1, 1, 1, a);
+			lTextureBatch.draw(mUITexture, 256, 64, TILE_SIZE, TILE_SIZE, x, y + h - 32, TILE_SIZE, TILE_SIZE, lZDepth, lColor);
+			lTextureBatch.draw(mUITexture, 288, 64, TILE_SIZE, TILE_SIZE, x + TILE_SIZE, y + h - 32, w - 64, TILE_SIZE, lZDepth, lColor);
+			lTextureBatch.draw(mUITexture, 320, 64, TILE_SIZE, TILE_SIZE, x + w - 32, y + h - 32, TILE_SIZE, TILE_SIZE, lZDepth, lColor);
 			lTextureBatch.end();
 
 		}
@@ -189,7 +187,7 @@ public abstract class BaseDialog extends MenuScreen {
 			final float y = -DIALOG_HEIGHT / 2;
 
 			lTextureBatch.begin(pCore.HUD());
-			lTextureBatch.draw(mUITexture, 352, 0, 64, 64, x + 15.f, y + 15.f, 64, 64, ZDEPTH, 1, 1, 1, 1.f);
+			lTextureBatch.draw(mUITexture, 352, 0, 64, 64, x + 15.f, y + 15.f, 64, 64, lZDepth, ColorConstants.WHITE);
 			lTextureBatch.end();
 		}
 
@@ -198,7 +196,7 @@ public abstract class BaseDialog extends MenuScreen {
 			final float y = -DIALOG_HEIGHT / 2;
 
 			lTextureBatch.begin(pCore.HUD());
-			lTextureBatch.draw(mUITexture, 416, 0, 64, 64, x + 15.f, y + 15.f, 64, 64, ZDEPTH, 1, 1, 1, 1.f);
+			lTextureBatch.draw(mUITexture, 416, 0, 64, 64, x + 15.f, y + 15.f, 64, 64, lZDepth, ColorConstants.WHITE);
 			lTextureBatch.end();
 		}
 
@@ -206,7 +204,7 @@ public abstract class BaseDialog extends MenuScreen {
 
 		/* Render title and message */
 		font().begin(pCore.HUD());
-		font().draw(mMessageString, -DIALOG_WIDTH * 0.5f + TEXT_HORIZONTAL_PADDING, -DIALOG_HEIGHT * 0.5f + lHeaderFontHeight + 15f, ZDEPTH, 1f, DIALOG_WIDTH - 70f);
+		font().draw(mMessageString, -DIALOG_WIDTH * 0.5f + TEXT_HORIZONTAL_PADDING, -DIALOG_HEIGHT * 0.5f + lHeaderFontHeight + 15f, lZDepth, 1f, DIALOG_WIDTH - 70f);
 		font().end();
 
 		// Render the menu title if there is one
@@ -214,7 +212,8 @@ public abstract class BaseDialog extends MenuScreen {
 			mMenuHeaderFont.drawShadow(true);
 			mMenuHeaderFont.begin(pCore.HUD());
 			final float lHorizontalOffsetX = mDrawInfoIcon || mDrawWarningIcon ? 74.f : 0.f;
-			mMenuHeaderFont.draw(mMenuTitle, -DIALOG_WIDTH / 2f + TEXT_HORIZONTAL_PADDING + lHorizontalOffsetX, -DIALOG_HEIGHT / 2f + TEXT_HORIZONTAL_PADDING, ZDEPTH, mR, mG, mB, mA, 0.65f);
+			final float lScale = 0.65f;
+			mMenuHeaderFont.draw(mMenuTitle, -DIALOG_WIDTH / 2f + TEXT_HORIZONTAL_PADDING + lHorizontalOffsetX, -DIALOG_HEIGHT / 2f + TEXT_HORIZONTAL_PADDING, lZDepth, screenColor, lScale);
 			mMenuHeaderFont.end();
 
 		}
@@ -222,7 +221,7 @@ public abstract class BaseDialog extends MenuScreen {
 		// Draw each layout in turn.
 		final int lCount = layouts().size();
 		for (int i = 0; i < lCount; i++) {
-			mLayouts.get(i).draw(pCore, ZDEPTH + (i * 0.001f));
+			mLayouts.get(i).draw(pCore, lZDepth + (i * 0.001f));
 
 		}
 

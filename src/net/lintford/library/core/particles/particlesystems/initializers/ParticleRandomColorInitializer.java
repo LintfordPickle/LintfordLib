@@ -26,12 +26,11 @@ public class ParticleRandomColorInitializer extends ParticleTripleValueInitializ
 	// --------------------------------------
 
 	@Override
-	public void onIntialiseParticle(Particle pParticle, float pValue0, float pValue1, float pValue2) {
-		pParticle.r = pValue0;
-		pParticle.g = pValue1;
-		pParticle.b = pValue2;
-
-		pParticle.a = 1;
+	public void onIntialiseParticle(Particle pParticle, float pRed, float pGreen, float pBlue) {
+		pParticle.color.r = pRed;
+		pParticle.color.g = pGreen;
+		pParticle.color.b = pBlue;
+		pParticle.color.a = 1.f;
 
 	}
 

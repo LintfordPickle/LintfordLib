@@ -1,10 +1,11 @@
 package net.lintford.library.renderers.windows.components;
 
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
-import net.lintford.library.renderers.windows.UIWindow;
+import net.lintford.library.renderers.windows.UiWindow;
 import net.lintford.library.screenmanager.entries.EntryInteractions;
 
 public class UIToggleButton extends UIWidget {
@@ -24,7 +25,6 @@ public class UIToggleButton extends UIWidget {
 	EntryInteractions mCallback;
 	private int mClickID;
 	private String mButtonLabel;
-	private float mR, mG, mB;
 	private boolean mHoveredOver;
 	private boolean mIsToggledOn;
 
@@ -60,11 +60,11 @@ public class UIToggleButton extends UIWidget {
 	// Constructor
 	// --------------------------------------
 
-	public UIToggleButton(final UIWindow pParentWindow) {
+	public UIToggleButton(final UiWindow pParentWindow) {
 		this(pParentWindow, 0);
 	}
 
-	public UIToggleButton(final UIWindow pParentWindow, final int pClickID) {
+	public UIToggleButton(final UiWindow pParentWindow, final int pClickID) {
 		super(pParentWindow);
 
 		mClickID = pClickID;
@@ -73,9 +73,9 @@ public class UIToggleButton extends UIWidget {
 		w = 200;
 		h = 25;
 
-		mR = 0.3f;
-		mG = 0.34f;
-		mB = 0.65f;
+		entityColor.r = 0.3f;
+		entityColor.g = 0.34f;
+		entityColor.b = 0.65f;
 
 	}
 
@@ -109,20 +109,13 @@ public class UIToggleButton extends UIWidget {
 
 	@Override
 	public void draw(LintfordCore pCore, TextureBatchPCT pTextureBatch, Texture pUITexture, FontUnit pTextFont, float pComponentZDepth) {
-		float lR = mIsToggledOn ? mR : mR * .3f;
-		float lG = mIsToggledOn ? mG : mG * .3f;
-		float lB = mIsToggledOn ? mB : mB * .3f;
-
-		if (mHoveredOver) {
-			lR -= 0.1f;
-			lG -= 0.1f;
-			lB -= 0.1f;
-		}
+		final float lColorMod = mIsToggledOn ? mHoveredOver ? .9f : 1.f : .3f;
+		final var lColor = ColorConstants.getColorWithRGBMod(entityColor, lColorMod);
 
 		pTextureBatch.begin(pCore.HUD());
-		pTextureBatch.draw(pUITexture, 0, 32, 32, 32, x, y, 32, h, pComponentZDepth, lR, lG, lB, 1f);
-		pTextureBatch.draw(pUITexture, 32, 32, 32, 32, x + 32, y, w - 64, h, pComponentZDepth, lR, lG, lB, 1f);
-		pTextureBatch.draw(pUITexture, 128, 32, 32, 32, x + w - 32, y, 32, h, pComponentZDepth, lR, lG, lB, 1f);
+		pTextureBatch.draw(pUITexture, 0, 32, 32, 32, x, y, 32, h, pComponentZDepth, lColor);
+		pTextureBatch.draw(pUITexture, 32, 32, 32, 32, x + 32, y, w - 64, h, pComponentZDepth, lColor);
+		pTextureBatch.draw(pUITexture, 128, 32, 32, 32, x + w - 32, y, 32, h, pComponentZDepth, lColor);
 		pTextureBatch.end();
 
 		if (mButtonLabel != null && mButtonLabel.length() > 0) {

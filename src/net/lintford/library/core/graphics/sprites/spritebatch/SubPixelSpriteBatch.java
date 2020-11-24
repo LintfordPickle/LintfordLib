@@ -1,6 +1,7 @@
 package net.lintford.library.core.graphics.sprites.spritebatch;
 
 import net.lintford.library.core.geometry.Rectangle;
+import net.lintford.library.core.graphics.Color;
 import net.lintford.library.core.graphics.sprites.SpriteFrame;
 import net.lintford.library.core.graphics.sprites.SpriteInstance;
 import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
@@ -22,25 +23,25 @@ public class SubPixelSpriteBatch extends SubPixelTextureBatch {
 	// Methods
 	// --------------------------------------
 
-	public void draw(SpriteSheetDefinition pSpriteSheetDefinition, SpriteInstance pSprite, float pZ, float pR, float pG, float pB, float pA) {
+	public void draw(SpriteSheetDefinition pSpriteSheetDefinition, SpriteInstance pSprite, float pZ, Color pTint) {
 		if (pSpriteSheetDefinition == null)
 			return;
 
-		draw(pSpriteSheetDefinition, pSprite, pSprite, pZ, pR, pG, pB, pA);
+		draw(pSpriteSheetDefinition, pSprite, pSprite, pZ, pTint);
 
 	}
 
-	public void draw(SpriteSheetDefinition pSpriteSheetDefinition, SpriteFrame pSpriteFrame, Rectangle pDstRectangle, float pZ, float pR, float pG, float pB, float pA) {
+	public void draw(SpriteSheetDefinition pSpriteSheetDefinition, SpriteFrame pSpriteFrame, Rectangle pDstRectangle, float pZ, Color pTint) {
 		if (pDstRectangle == null) {
 			return;
 
 		}
 
-		draw(pSpriteSheetDefinition, pSpriteFrame, pDstRectangle.x(), pDstRectangle.y(), pDstRectangle.w(), pDstRectangle.h(), pZ, pR, pG, pB, pA);
+		draw(pSpriteSheetDefinition, pSpriteFrame, pDstRectangle.x(), pDstRectangle.y(), pDstRectangle.w(), pDstRectangle.h(), pZ, pTint);
 
 	}
 
-	public void draw(SpriteSheetDefinition pSpriteSheetDefinition, SpriteFrame pSpriteFrame, float pDX, float pDY, float pDW, float pDH, float pZ, float pR, float pG, float pB, float pA) {
+	public void draw(SpriteSheetDefinition pSpriteSheetDefinition, SpriteFrame pSpriteFrame, float pDX, float pDY, float pDW, float pDH, float pZ, Color pTint) {
 		if (pSpriteSheetDefinition == null)
 			return;
 
@@ -56,11 +57,11 @@ public class SubPixelSpriteBatch extends SubPixelTextureBatch {
 		if (lTexture == null)
 			return;
 
-		draw(lTexture, pSpriteFrame.x(), pSpriteFrame.y(), pSpriteFrame.w(), pSpriteFrame.h(), pDX, pDY, pDW, pDH, pZ, pR, pG, pB, pA);
+		draw(lTexture, pSpriteFrame.x(), pSpriteFrame.y(), pSpriteFrame.w(), pSpriteFrame.h(), pDX, pDY, pDW, pDH, pZ, pTint);
 
 	}
 
-	public void draw(SpriteSheetDefinition pSpriteSheetDefinition, SpriteInstance pSprite, Rectangle pDstRectangle, float pZ, float pR, float pG, float pB, float pA) {
+	public void draw(SpriteSheetDefinition pSpriteSheetDefinition, SpriteInstance pSprite, Rectangle pDstRectangle, float pZ, Color pTint) {
 		if (pSpriteSheetDefinition == null)
 			return;
 
@@ -74,7 +75,7 @@ public class SubPixelSpriteBatch extends SubPixelTextureBatch {
 		final var lTexture = pSpriteSheetDefinition.texture();
 		final var lCurrentSpriteFrame = pSprite.currentSpriteFrame();
 
-		draw(lTexture, lCurrentSpriteFrame, pDstRectangle, pZ, pR, pG, pB, pA);
+		draw(lTexture, lCurrentSpriteFrame, pDstRectangle, pZ, pTint);
 
 	}
 

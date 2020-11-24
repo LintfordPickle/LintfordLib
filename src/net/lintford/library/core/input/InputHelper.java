@@ -32,8 +32,11 @@ public class InputHelper {
 	}
 	
 	public static String getGlfwPrintableKeyFromKeyCode(int pKeyCode) {
-		final var lPlatformCharacter = GLFW.glfwGetKeyName(pKeyCode, GLFW.glfwGetKeyScancode(pKeyCode));
-		if(lPlatformCharacter != null) return lPlatformCharacter;
+		final String lPlatformCharacter = GLFW.glfwGetKeyName(pKeyCode, GLFW.glfwGetKeyScancode(pKeyCode));
+		if(lPlatformCharacter != null) {
+			return lPlatformCharacter;
+
+		}
 
 		switch (pKeyCode) {
 		case GLFW.GLFW_KEY_A: return "A";

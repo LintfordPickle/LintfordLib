@@ -76,9 +76,9 @@ public class ParticleBlockColorInitializer extends ParticleInitializerBase {
 
 	@Override
 	public void initialize(Particle pParticle) {
-		pParticle.r = getRandomValue(mRMin, mRMax);
-		pParticle.g = getRandomValue(mGMin, mGMax);
-		pParticle.b = getRandomValue(mBMin, mBMax);
+		pParticle.color.r = getRandomValue(mRMin, mRMax);
+		pParticle.color.g = getRandomValue(mGMin, mGMax);
+		pParticle.color.b = getRandomValue(mBMin, mBMax);
 
 	}
 

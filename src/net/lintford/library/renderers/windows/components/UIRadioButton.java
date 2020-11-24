@@ -1,11 +1,12 @@
 package net.lintford.library.renderers.windows.components;
 
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.core.input.IProcessMouseInput;
-import net.lintford.library.renderers.windows.UIWindow;
+import net.lintford.library.renderers.windows.UiWindow;
 import net.lintford.library.screenmanager.entries.EntryInteractions;
 
 public class UIRadioButton extends UIWidget implements IProcessMouseInput {
@@ -69,16 +70,16 @@ public class UIRadioButton extends UIWidget implements IProcessMouseInput {
 	// Constructor
 	// --------------------------------------
 
-	public UIRadioButton(final UIWindow pParentWindow) {
+	public UIRadioButton(final UiWindow pParentWindow) {
 		this(pParentWindow, 0);
 	}
 
-	public UIRadioButton(final UIWindow pParentWindow, final int pClickID) {
+	public UIRadioButton(final UiWindow pParentWindow, final int pClickID) {
 		this(pParentWindow, NO_LABEL_TEXT, pClickID);
 
 	}
 
-	public UIRadioButton(final UIWindow pParentWindow, final String pLabel, final int pClickID) {
+	public UIRadioButton(final UiWindow pParentWindow, final String pLabel, final int pClickID) {
 		super(pParentWindow);
 
 		mClickID = pClickID;
@@ -121,17 +122,15 @@ public class UIRadioButton extends UIWidget implements IProcessMouseInput {
 
 	@Override
 	public void draw(LintfordCore pCore, TextureBatchPCT pTextureBatch, Texture pUITexture, FontUnit pTextFont, float pComponentZDepth) {
-
-		float lR = mIsSelected ? 0.4f : 0.3f;
-		float lG = mIsSelected ? 0.4f : 0.34f;
-		float lB = mIsSelected ? 0.4f : 0.65f;
+		final float lColorMod = mIsSelected ? 0.4f : 0.3f;
+		final var lColor = ColorConstants.getColorWithRGBMod(ColorConstants.PrimaryColor, lColorMod);
 
 		// Draw the button background
 		pTextureBatch.begin(pCore.HUD());
-		pTextureBatch.draw(pUITexture, 0, 0, 32, 32, x, y, w, h, pComponentZDepth, lR, lG, lB, 1f);
+		pTextureBatch.draw(pUITexture, 0, 0, 32, 32, x, y, w, h, pComponentZDepth, lColor);
 		pTextureBatch.end();
 
-		FontUnit lFontRenderer = mParentWindow.rendererManager().textFont();
+		final var lFontRenderer = mParentWindow.rendererManager().textFont();
 
 		final String lButtonText = mButtonLabel != null ? mButtonLabel : NO_LABEL_TEXT;
 		final float lTextWidth = lFontRenderer.bitmap().getStringWidth(lButtonText);

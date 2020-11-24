@@ -1,6 +1,5 @@
 package net.lintford.library.screenmanager.entries;
 
-import net.lintford.library.ConstantsApp;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.input.IBufferedTextInputCallback;
@@ -182,17 +181,13 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 		entryColor.r = mHoveredOver ? (204.f / 255.f) : .1f;
 		entryColor.g = mHoveredOver ? (115.f / 255.f) : .1f;
 		entryColor.b = mHoveredOver ? (102.f / 255.f) : .1f;
-		entryColor.a = mHoveredOver ? lParentScreen.a() : 0.26f;
+		entryColor.a = mHoveredOver ? lParentScreen.screenColor.a : 0.26f;
 
 		if (mHoveredOver) {
-			final float lHoveredColorHighlightR = ColorConstants.PrimaryColor.r;
-			final float lHoveredColorHighlightG = ColorConstants.PrimaryColor.g;
-			final float lHoveredColorHighlightB = ColorConstants.PrimaryColor.b;
-
 			lTextureBatch.begin(pCore.HUD());
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() - w / 2, centerY() - h / 2, 32, h, mZ, lHoveredColorHighlightR, lHoveredColorHighlightG, lHoveredColorHighlightB, 0.25f);
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() - (w / 2) + 32, centerY() - h / 2, w - 64, h, mZ, lHoveredColorHighlightR, lHoveredColorHighlightG, lHoveredColorHighlightB, 0.25f);
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() + (w / 2) - 32, centerY() - h / 2, 32, h, mZ, lHoveredColorHighlightR, lHoveredColorHighlightG, lHoveredColorHighlightB, 0.25f);
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() - w / 2, centerY() - h / 2, 32, h, mZ, ColorConstants.MenuEntryHighlightColor);
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() - (w / 2) + 32, centerY() - h / 2, w - 64, h, mZ, ColorConstants.MenuEntryHighlightColor);
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() + (w / 2) - 32, centerY() - h / 2, 32, h, mZ, ColorConstants.MenuEntryHighlightColor);
 			lTextureBatch.end();
 
 		}
@@ -214,11 +209,9 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 
 		lFont.begin(pCore.HUD());
 		lFont.drawShadow(mDrawTextShadow);
-		lFont.draw(mLabel, x + w / 2 - 10 - (lLabelTextWidth * lAdjustedLabelScaleW) - lSeparatorHalfWidth, y + h / 2 - lLabelTextHeight * 0.5f, pParentZDepth + .1f, textColor.r, textColor.g, textColor.b, textColor.a,
-				lAdjustedLabelScaleW, -1);
-		lFont.draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - lLabelTextHeight * 0.5f, pParentZDepth + .1f, textColor.r, textColor.g, textColor.b, 1f, lUiTextScale, -1);
-		lFont.draw(mInputField.toString(), x + w / 2 + lSeparatorHalfWidth * lAdjustedLInputScaleW + SPACE_BETWEEN_TEXT, y + h / 2 - lInputTextHeight * 0.5f, pParentZDepth + .1f, textColor.r, textColor.g, textColor.b,
-				textColor.a, lAdjustedLInputScaleW, -1);
+		lFont.draw(mLabel, x + w / 2 - 10 - (lLabelTextWidth * lAdjustedLabelScaleW) - lSeparatorHalfWidth, y + h / 2 - lLabelTextHeight * 0.5f, pParentZDepth + .1f, textColor, lAdjustedLabelScaleW, -1);
+		lFont.draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - lLabelTextHeight * 0.5f, pParentZDepth + .1f, textColor, lUiTextScale, -1);
+		lFont.draw(mInputField.toString(), x + w / 2 + lSeparatorHalfWidth * lAdjustedLInputScaleW + SPACE_BETWEEN_TEXT, y + h / 2 - lInputTextHeight * 0.5f, pParentZDepth + .1f, textColor, lAdjustedLInputScaleW, -1);
 
 		if (mShowCaret && mHasFocus) {
 			lFont.draw("|", x + w / 2 + lSeparatorHalfWidth + SPACE_BETWEEN_TEXT + lInputTextWidth * lAdjustedLInputScaleW, y + h / 2 - lInputTextHeight * 0.5f, pParentZDepth + .1f, lAdjustedLInputScaleW);
@@ -242,13 +235,7 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 
 		}
 
-		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
-			lTextureBatch.begin(pCore.HUD());
-			final float lAlphaValue = 0.3f;
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, x, y, w, h, mZ, 1f, 0.2f, 0.2f, lAlphaValue);
-			lTextureBatch.end();
-
-		}
+		drawDebugCollidableBounds(pCore, lTextureBatch);
 
 	}
 

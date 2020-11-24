@@ -32,7 +32,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	public static final float INNER_PADDING_W = 10f;
 	public static final float INNER_PADDING_H = 5f;
 	public static final float TITLE_PADDING_X = 10f;
-	public static final float TITLE_PADDING_Y = 5f;
+	public static final float TITLE_PADDING_Y = 20f;
 
 	// --------------------------------------
 	// Variables
@@ -358,7 +358,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		updateLayout(pCore, layouts(), mLayoutAlignment);
 
 		// *** FOOTER *** //
-		final var lHUDController = rendererManager.uiHUDController();
+		final var lHUDController = rendererManager.uiStructureController();
 
 		final float lInnerPaddingW = OUTER_PADDING_W * lHUDController.windowAutoScaleFactorX();
 
@@ -380,7 +380,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		if (rendererManager == null)
 			return;
 
-		final var lUIHUDStructureController = rendererManager.uiHUDController();
+		final var lUIHUDStructureController = rendererManager.uiStructureController();
 		if (lUIHUDStructureController == null)
 			return;
 
@@ -493,22 +493,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 		final float lMenuScreenZDepth = ZLayers.LAYER_SCREENMANAGER;
 
-		final var lUIHUDStructureController = rendererManager.uiHUDController();
-		final var lHUDRect = lUIHUDStructureController.menuTitleRectangle();
-
-		final float lUiTextScale = uiTextScale();
-
 		drawMenuTitle(pCore);
-
-		if (mMenuFont != null) {
-			final var lTitleFontHeight = mMenuFont.bitmap().fontHeight();
-			mMenuFont.begin(pCore.HUD());
-			if (mMenuOverTitle != null && mMenuOverTitle.length() > 0)
-				mMenuFont.draw(mMenuOverTitle, lHUDRect.left(), lHUDRect.top(), lMenuScreenZDepth, mR, mG, mB, mA, lUiTextScale);
-			if (mMenuSubTitle != null && mMenuSubTitle.length() > 0)
-				mMenuFont.draw(mMenuSubTitle, lHUDRect.left(), lHUDRect.top() + lTitleFontHeight, lMenuScreenZDepth, mR, mG, mB, mA, lUiTextScale);
-			mMenuFont.end();
-		}
 
 		// Draw each layout in turn.
 		final int lCount = layouts().size();
@@ -547,8 +532,32 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		final float lMenuTitlePositionY = lHeaderRect.bottom() - lHeaderFontHeight - TITLE_PADDING_Y * lUiStructureController.windowAutoScaleFactorY();
 
 		mMenuHeaderFont.begin(pCore.HUD());
-		mMenuHeaderFont.draw(mMenuTitle, lMenuTitlePositionX, lMenuTitlePositionY, -0.01f, mR, mG, mB, mA, lUiTextScale);
+		mMenuHeaderFont.draw(mMenuTitle, lMenuTitlePositionX, lMenuTitlePositionY, -0.01f, screenColor, lUiTextScale);
 		mMenuHeaderFont.end();
+
+		if (mMenuFont != null) {
+			mMenuFont.begin(pCore.HUD());
+
+			{
+				final float lOverTitleWidth = mMenuFont.bitmap().getStringWidth(mMenuOverTitle, lUiTextScale);
+
+				if (mMenuOverTitle != null && mMenuOverTitle.length() > 0) {
+					mMenuFont.draw(mMenuOverTitle, lHeaderRect.centerX() - lOverTitleWidth * .5f, lMenuTitlePositionY, -0.01f, screenColor, lUiTextScale);
+
+				}
+			}
+
+			{
+				final float lSubTitleWidth = mMenuFont.bitmap().getStringWidth(mMenuSubTitle, lUiTextScale);
+
+				if (mMenuSubTitle != null && mMenuSubTitle.length() > 0) {
+					mMenuFont.draw(mMenuSubTitle, lHeaderRect.centerX() - lSubTitleWidth * .5f, lMenuTitlePositionY + lHeaderFontHeight, -0.01f, screenColor, lUiTextScale);
+
+				}
+			}
+
+			mMenuFont.end();
+		}
 
 	}
 

@@ -9,6 +9,8 @@ import com.google.gson.GsonBuilder;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.camera.ICamera;
 import net.lintford.library.core.debug.Debug;
+import net.lintford.library.core.graphics.Color;
+import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.storage.FileUtils;
 
 public class FontManager {
@@ -150,24 +152,24 @@ public class FontManager {
 		}
 
 		public void draw(String pText, float pX, float pY, float pZ, float pScale, float pWordWrapWidth) {
-			draw(pText, pX, pY, pZ, 1f, 1f, 1f, 1f, pScale, pWordWrapWidth);
+			draw(pText, pX, pY, pZ, ColorConstants.WHITE, pScale, pWordWrapWidth);
 
 		}
 
-		public void draw(String pText, float pX, float pY, float pZ, float pR, float pG, float pB, float pA, float pScale) {
-			draw(pText, pX, pY, pZ, pR, pG, pB, pA, pScale, -1);
+		public void draw(String pText, float pX, float pY, float pZ, Color pTint, float pScale) {
+			draw(pText, pX, pY, pZ, pTint, pScale, -1);
 
 		}
 
-		public void draw(String pText, float pX, float pY, float pZ, float pR, float pG, float pB, float pA, float pScale, float pWordWrapWidth) {
-			draw(pText, pX, pY, pZ, pR, pG, pB, pA, pScale, pWordWrapWidth, AWTBitmapFontSpriteBatch.NO_WIDTH_CAP);
+		public void draw(String pText, float pX, float pY, float pZ, Color pTint, float pScale, float pWordWrapWidth) {
+			draw(pText, pX, pY, pZ, pTint, pScale, pWordWrapWidth, AWTBitmapFontSpriteBatch.NO_WIDTH_CAP);
 
 		}
 
-		public void draw(String pText, float pX, float pY, float pZ, float pR, float pG, float pB, float pA, float pScale, float pWordWrapWidth, int pCapWidth) {
+		public void draw(String pText, float pX, float pY, float pZ, Color pTint, float pScale, float pWordWrapWidth, int pCapWidth) {
 			mFontSpriteBatch.shadowEnabled(mDrawShadow);
 			mFontSpriteBatch.trimText(mTrimText);
-			mFontSpriteBatch.draw(pText, pX, pY, pZ, pR, pG, pB, pA, pScale, pWordWrapWidth, pCapWidth);
+			mFontSpriteBatch.draw(pText, pX, pY, pZ, pTint, pScale, pWordWrapWidth, pCapWidth);
 
 		}
 

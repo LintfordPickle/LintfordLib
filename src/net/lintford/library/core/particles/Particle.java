@@ -1,6 +1,7 @@
 package net.lintford.library.core.particles;
 
 import net.lintford.library.core.entity.WorldEntity;
+import net.lintford.library.core.graphics.Color;
 import net.lintford.library.core.particles.particlesystems.initializers.ParticleInitializerBase;
 
 public class Particle extends WorldEntity {
@@ -29,7 +30,7 @@ public class Particle extends WorldEntity {
 	public float roy;
 
 	public float dx, dy, dr;
-	public float r, g, b, a;
+	public final Color color = new Color();
 	public float scale;
 
 	// --------------------------------------
@@ -81,7 +82,7 @@ public class Particle extends WorldEntity {
 		timeSinceStart = 0;
 
 		sx = sy = 1;
-		r = g = b = a = 1;
+		color.setRGBA(1.f, 1.f, 1.f, 1.f);
 
 		worldPositionX = pWorldX;
 		worldPositionY = pWorldY;

@@ -5,6 +5,8 @@ import net.lintford.library.core.LintfordCore.CoreTime;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.GLDebug;
 import net.lintford.library.core.entity.BaseEntity;
+import net.lintford.library.core.graphics.Color;
+import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.core.input.IProcessMouseInput;
 import net.lintford.library.core.time.TimeSpan;
@@ -34,6 +36,7 @@ public abstract class Screen implements IProcessMouseInput {
 
 	public final ScreenManager screenManager;
 	public final RendererManager rendererManager;
+	public final Color screenColor = new Color(ColorConstants.WHITE);
 
 	protected BaseTransition mTransitionOn;
 	protected BaseTransition mTransitionOff;
@@ -46,7 +49,6 @@ public abstract class Screen implements IProcessMouseInput {
 	protected boolean mIsPopup;
 	protected boolean mAlwaysOnTop;
 	protected boolean mShowMouseCursor;
-	protected float mR, mG, mB, mA;
 	protected boolean mShowInBackground;
 	protected boolean mBlockInputInBackground;
 	public boolean acceptMouseInput;
@@ -78,29 +80,6 @@ public abstract class Screen implements IProcessMouseInput {
 
 	public boolean showInBackground() {
 		return mShowInBackground;
-	}
-
-	public float r() {
-		return mR;
-	}
-
-	public float g() {
-		return mG;
-	}
-
-	public float b() {
-		return mB;
-	}
-
-	public float a() {
-		return mA;
-	}
-
-	public void color(float r, float g, float b, float a) {
-		mR = r;
-		mG = g;
-		mB = b;
-		mA = a;
 	}
 
 	public boolean showMouseCursor() {
@@ -155,8 +134,8 @@ public abstract class Screen implements IProcessMouseInput {
 		mIsLoaded = false;
 		mShowMouseCursor = true; // default on
 
-		mR = mG = mB = 1f;
-		mA = 0f; // because we are fading in and out
+		// Screens start in a 'faded-out' state
+		screenColor.a = 0.f;
 
 	}
 

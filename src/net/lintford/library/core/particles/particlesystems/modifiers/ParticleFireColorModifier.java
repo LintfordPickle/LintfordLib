@@ -71,9 +71,9 @@ public class ParticleFireColorModifier extends ParticleModifierBase {
 		// .25
 		// since we want the maximum alpha to be 1, not .25, we'll scale the
 		// entire equation by 4.
-		pParticle.r = getRandomValue(mRMin, mRMax) * normalizedLifetime * (normalizedLifetime - pParticle.r);
-		pParticle.g = getRandomValue(mGMin, mGMax) * normalizedLifetime * (normalizedLifetime - pParticle.g);
-		pParticle.b = getRandomValue(mBMin, mBMax) * normalizedLifetime * (normalizedLifetime - pParticle.b);
+		pParticle.color.r = getRandomValue(mRMin, mRMax) * normalizedLifetime * (normalizedLifetime - pParticle.color.r);
+		pParticle.color.g = getRandomValue(mGMin, mGMax) * normalizedLifetime * (normalizedLifetime - pParticle.color.g);
+		pParticle.color.b = getRandomValue(mBMin, mBMax) * normalizedLifetime * (normalizedLifetime - pParticle.color.b);
 
 	}
 

@@ -8,7 +8,7 @@ import org.lwjgl.glfw.GLFW;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.Debug;
-import net.lintford.library.core.geometry.Rectangle;
+import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
@@ -104,9 +104,9 @@ public class DebugStats {
 		mTags.add(new DebugStatTagFloat(TAG_ID_FPS, "FPS", 0, false));
 		mTags.add(new DebugStatTagString(TAG_ID_TIMING, "Timing", ""));
 		mTags.add(new DebugStatTagString(TAG_ID_RES, "Resolution", ""));
-//		mTags.add(new DebugStatTagFloat(-1, "Ram Used", 0, false));
-//		mTags.add(new DebugStatTagFloat(-1, "Ram Free", 0, false));
-//		mTags.add(new DebugStatTagFloat(TAG_ID_VRAM, "VRam", 0, false));
+		//		mTags.add(new DebugStatTagFloat(-1, "Ram Used", 0, false));
+		//		mTags.add(new DebugStatTagFloat(-1, "Ram Free", 0, false));
+		//		mTags.add(new DebugStatTagFloat(TAG_ID_VRAM, "VRam", 0, false));
 
 		mTags.add(new DebugStatTagCaption(-1, "Graphics:"));
 		mTags.add(new DebugStatTagInt(TAG_ID_DRAWCALLS, "Draw Calls", 0));
@@ -114,9 +114,9 @@ public class DebugStats {
 		mTags.add(new DebugStatTagInt(TAG_ID_TRIS, "Tris", 0));
 
 		mTags.add(new DebugStatTagInt(TAG_ID_BATCH_OBJECTS, "Batch Objects", 0, false));
-//		mTags.add(new DebugStatTagInt(TAG_ID_VBO, "VBOs", 0, false));
-//		mTags.add(new DebugStatTagInt(TAG_ID_VB_UPLOADS, "VBs", 0));
-//		mTags.add(new DebugStatTagInt(TAG_ID_IB_UPLOADS, "IBs", 0));
+		//		mTags.add(new DebugStatTagInt(TAG_ID_VBO, "VBOs", 0, false));
+		//		mTags.add(new DebugStatTagInt(TAG_ID_VB_UPLOADS, "VBs", 0));
+		//		mTags.add(new DebugStatTagInt(TAG_ID_IB_UPLOADS, "IBs", 0));
 		mTags.add(new DebugStatTagInt(TAG_ID_TEXTURES, "Textures ", 0, false));
 		mTags.add(new DebugStatTagInt(TAG_ID_RENDERTEXTURES, "Render Textures", 0, false));
 
@@ -223,15 +223,14 @@ public class DebugStats {
 		mTextureBatch.begin(pCore.HUD());
 		mConsoleFont.begin(pCore.HUD());
 
-		Rectangle lHUDRectangle = pCore.HUD().boundingRectangle();
-
+		final var lHUDRectangle = pCore.HUD().boundingRectangle();
 		final var lHeightOffset = Debug.debugManager().console().isOpen() ? 200f : 10f;
 		final var lWidthOffset = Debug.debugManager().console().isOpen() ? 360f : 0f;
 
 		float lTop = lHUDRectangle.top() + lHeightOffset + 5f;
 		float lLeft = lHUDRectangle.right() - 240f - lWidthOffset - 5f;
 
-		mTextureBatch.draw(mCoreTexture, 0, 0, 32, 32, lLeft, lTop, 240, 500, -0.01f, 0.05f, 0.05f, 0.05f, 0.95f);
+		mTextureBatch.draw(mCoreTexture, 0, 0, 32, 32, lLeft, lTop, 240, 500, -0.01f, ColorConstants.getColor(.05f, .05f, .05f, .95f));
 
 		float lTagPosY = lTop + 5f;
 		final int lTagCount = mTags.size();

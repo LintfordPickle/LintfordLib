@@ -5,9 +5,9 @@ import java.util.List;
 
 import org.lwjgl.opengl.GL11;
 
-import net.lintford.library.ConstantsApp;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.geometry.Rectangle;
+import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.input.InputManager;
 import net.lintford.library.core.maths.Vector2f;
 import net.lintford.library.renderers.windows.components.IScrollBarArea;
@@ -283,7 +283,8 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 
 		// Fill in the renderable parts of the list box (this is needed!)
 		lTextureBatch.begin(pCore.HUD());
-		lTextureBatch.draw(mUITexture, 32, 0, 32, 32, x, y + marginTop(), w, h - marginTop() - marginBottom(), pParentZDepth, 1, 1, 1, 0f);
+		final var lColor = ColorConstants.getWhiteWithAlpha(0.f);
+		lTextureBatch.draw(mUITexture, 32, 0, 32, 32, x, y + marginTop(), w, h - marginTop() - marginBottom(), pParentZDepth, lColor);
 		lTextureBatch.end();
 
 		// Start the stencil buffer test to filter out everything outside of the scroll view
@@ -301,12 +302,7 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 
 		GL11.glDisable(GL11.GL_STENCIL_TEST);
 
-		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
-			lTextureBatch.begin(pCore.HUD());
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, x, y, w, h, mZ, 1f, 0.2f, 0.2f, 0.2f);
-			lTextureBatch.end();
-
-		}
+		drawDebugCollidableBounds(pCore, lTextureBatch);
 
 	}
 

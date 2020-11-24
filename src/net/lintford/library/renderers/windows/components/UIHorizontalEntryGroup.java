@@ -6,10 +6,11 @@ import java.util.List;
 import net.lintford.library.ConstantsApp;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
+import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
-import net.lintford.library.renderers.windows.UIWindow;
+import net.lintford.library.renderers.windows.UiWindow;
 
 public class UIHorizontalEntryGroup extends UIWidget {
 
@@ -33,7 +34,7 @@ public class UIHorizontalEntryGroup extends UIWidget {
 	// Constructor
 	// --------------------------------------
 
-	public UIHorizontalEntryGroup(final UIWindow pParentWindow) {
+	public UIHorizontalEntryGroup(final UiWindow pParentWindow) {
 		super(pParentWindow);
 
 		mChildEntries = new ArrayList<>();
@@ -113,7 +114,7 @@ public class UIHorizontalEntryGroup extends UIWidget {
 	public void draw(LintfordCore pCore, TextureBatchPCT pTextureBatch, Texture pUITexture, FontUnit pTextFont, float pComponentZDepth) {
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
 			pTextureBatch.begin(pCore.HUD());
-			pTextureBatch.draw(pUITexture, 0, 0, 32, 32, x, y, w, h, pComponentZDepth + .1f, 1, 1, 1, 1);
+			pTextureBatch.draw(pUITexture, 0, 0, 32, 32, x, y, w, h, pComponentZDepth + .1f, ColorConstants.WHITE);
 			pTextureBatch.end();
 
 		}

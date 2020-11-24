@@ -44,10 +44,10 @@ public class ParticleWispColorInitializer extends ParticleInitializerBase {
 
 	@Override
 	public void initialize(Particle pParticle) {
-		pParticle.r = getRandomValue(mRMin, mRMax);
-		pParticle.g = getRandomValue(mGMin, mGMax);
-		pParticle.b = getRandomValue(mBMin, mBMax);
-		pParticle.a = 0.5f + getRandomValue(0, 0.5f);
+		pParticle.color.r = getRandomValue(mRMin, mRMax);
+		pParticle.color.g = getRandomValue(mGMin, mGMax);
+		pParticle.color.b = getRandomValue(mBMin, mBMax);
+		pParticle.color.a = 0.5f + getRandomValue(.0f, .5f);
 
 	}
 

@@ -1,14 +1,15 @@
 package net.lintford.library.renderers.windows.components;
 
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.core.maths.MathHelper;
-import net.lintford.library.renderers.windows.UIWindow;
+import net.lintford.library.renderers.windows.UiWindow;
 import net.lintford.library.screenmanager.entries.EntryInteractions;
 
-public class UISlider extends UIWidget {
+public class UifSlider extends UIWidget {
 
 	// --------------------------------------
 	// Constants
@@ -25,21 +26,41 @@ public class UISlider extends UIWidget {
 	private EntryInteractions mCallback;
 	private int mClickID;
 	private String mSliderLabel;
-	private float mR, mG, mB;
 
-	public float mMinValue;
-	public float mMaxValue;
+	private float mMinValue;
+	private float mMaxValue;
 
-	private float mCurrentPosition;
+	private float mCurrentRelPosition;
 	private float mCurrentValue;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
 
+	public void setMinMax(float pMinValue, float pMaxValue) {
+		if (pMaxValue < pMinValue)
+			pMaxValue = pMinValue;
+		if (pMinValue > pMaxValue)
+			pMinValue = pMaxValue;
+
+		mMinValue = pMinValue;
+		mMaxValue = pMaxValue;
+
+		updateValue(mCurrentRelPosition);
+
+	}
+
+	public float minValue() {
+		return mMinValue;
+	}
+
+	public float maxValue() {
+		return mMaxValue;
+	}
+
 	public void currentValue(float pNewValue) {
 		mCurrentValue = MathHelper.clamp(pNewValue, mMinValue, mMaxValue);
-		mCurrentPosition = MathHelper.scaleToRange(mCurrentValue, mMinValue, mMaxValue, 0, w);
+		mCurrentRelPosition = MathHelper.scaleToRange(mCurrentValue, mMinValue, mMaxValue, 0, w);
 
 	}
 
@@ -59,11 +80,11 @@ public class UISlider extends UIWidget {
 	// Constructor
 	// --------------------------------------
 
-	public UISlider(final UIWindow pParentWindow) {
+	public UifSlider(final UiWindow pParentWindow) {
 		this(pParentWindow, 0);
 	}
 
-	public UISlider(final UIWindow pParentWindow, final int pClickID) {
+	public UifSlider(final UiWindow pParentWindow, final int pClickID) {
 		super(pParentWindow);
 
 		mClickID = pClickID;
@@ -71,10 +92,6 @@ public class UISlider extends UIWidget {
 		mSliderLabel = NO_LABEL_TEXT;
 		w = 200;
 		h = 25;
-
-		mR = 0.19f;
-		mG = 0.13f;
-		mB = 0.3f;
 
 	}
 
@@ -84,12 +101,15 @@ public class UISlider extends UIWidget {
 
 	@Override
 	public boolean handleInput(LintfordCore pCore) {
+		if (!mIsEnabled) {
+			return false;
+
+		}
+
 		if (intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().isMouseOverThisComponent(hashCode())) {
 			if (pCore.input().mouse().tryAcquireMouseLeftClick(hashCode())) {
-				float lWindowX = x;
-				float lMouseX = pCore.HUD().getMouseCameraSpace().x;
-				mCurrentPosition = MathHelper.clamp(lMouseX - lWindowX, 0, w);
-				mCurrentValue = MathHelper.scaleToRange(mCurrentPosition, 0, w, mMinValue, mMaxValue);
+				final float lMouseX = pCore.HUD().getMouseCameraSpace().x;
+				updateValue(MathHelper.clamp(lMouseX - x, 0, w));
 
 				if (mCallback != null) {
 					// Notify subscribers that something changes
@@ -106,20 +126,15 @@ public class UISlider extends UIWidget {
 	}
 
 	@Override
-	public void update(LintfordCore pCore) {
-		super.update(pCore);
-
-	}
-
-	@Override
 	public void draw(LintfordCore pCore, TextureBatchPCT pTextureBatch, Texture pUITexture, FontUnit pTextFont, float pComponentZDepth) {
 		final float SLIDER_RAIL_HEIGHT = 4;
 		final float SLIDER_WIDTH = 10;
 
-		// Draw the button background
 		pTextureBatch.begin(pCore.HUD());
-		pTextureBatch.draw(pUITexture, 0, 0, 32, 32, x, y + h / 2 - SLIDER_RAIL_HEIGHT / 2, w, SLIDER_RAIL_HEIGHT, 0f, mR, mG, mB, 1f);
-		pTextureBatch.draw(pUITexture, 0, 0, 32, 32, x + mCurrentPosition - SLIDER_WIDTH / 2, y + h / 4, SLIDER_WIDTH, h / 2, 0f, mB, mG, mR, 1f);
+		final var lBackgroundColor = mIsEnabled ? ColorConstants.getColorWithRGBMod(ColorConstants.PrimaryColor, 1.f) : ColorConstants.getBlackWithAlpha(.4f);
+		pTextureBatch.draw(pUITexture, 0, 0, 32, 32, x, y + h / 2 - SLIDER_RAIL_HEIGHT / 2, w, SLIDER_RAIL_HEIGHT, 0f, lBackgroundColor);
+		final var lNubbinColor = mIsEnabled ? ColorConstants.getColorWithRGBMod(ColorConstants.TertiaryColor, 1.f) : ColorConstants.getBlackWithAlpha(.4f);
+		pTextureBatch.draw(pUITexture, 0, 0, 32, 32, x + mCurrentRelPosition - SLIDER_WIDTH / 2, y + h / 4, SLIDER_WIDTH, h / 2, 0f, lNubbinColor);
 		pTextureBatch.end();
 
 		// Render Slider label
@@ -133,6 +148,11 @@ public class UISlider extends UIWidget {
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
+
+	private void updateValue(float pRelPositionX) {
+		mCurrentRelPosition = pRelPositionX;
+		mCurrentValue = MathHelper.scaleToRange(mCurrentRelPosition, 0, w, mMinValue, mMaxValue);
+	}
 
 	public void setClickListener(final EntryInteractions pCallbackObject, final int pNewLIstenerID) {
 		mCallback = pCallbackObject;

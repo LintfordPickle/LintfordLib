@@ -46,9 +46,9 @@ public class ParticleFireColorInitializer extends ParticleInitializerBase {
 
 	@Override
 	public void initialize(Particle pParticle) {
-		pParticle.r = getRandomValue(redMin / 255f, redMax / 255f);
-		pParticle.g = getRandomValue(greenMin / 255f, greenMax / 255f);
-		pParticle.b = getRandomValue(blueMin / 255f, blueMax / 255f);
+		pParticle.color.r = getRandomValue(redMin / 255f, redMax / 255f);
+		pParticle.color.g = getRandomValue(greenMin / 255f, greenMax / 255f);
+		pParticle.color.b = getRandomValue(blueMin / 255f, blueMax / 255f);
 
 	}
 

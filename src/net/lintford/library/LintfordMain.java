@@ -6,6 +6,7 @@ import static org.lwjgl.opengl.GL11.glClearColor;
 import org.lwjgl.opengl.GL11;
 
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 
 public class LintfordMain extends LintfordCore {
@@ -83,7 +84,7 @@ public class LintfordMain extends LintfordCore {
 		final var lTextureBatch = new TextureBatchPCT();
 		lTextureBatch.loadGLContent(mResourceManager);
 		lTextureBatch.begin(mHUD);
-		lTextureBatch.draw(lTexture, 0, 0, lSrcWidth, lSrcHeight, -lDstWidth * .5f, -lDstHeight * .5f, lDstWidth, lDstHeight, -0.1f, 1, 1, 1, 1);
+		lTextureBatch.draw(lTexture, 0, 0, lSrcWidth, lSrcHeight, -lDstWidth * .5f, -lDstHeight * .5f, lDstWidth, lDstHeight, -0.1f, ColorConstants.WHITE);
 		lTextureBatch.end();
 
 		glfwSwapBuffers(pWindowHandle);

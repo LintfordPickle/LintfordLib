@@ -2,6 +2,7 @@ package net.lintford.library.core.graphics.sprites;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.geometry.Rectangle;
+import net.lintford.library.core.graphics.Color;
 
 public class SpriteInstance extends Rectangle {
 
@@ -36,7 +37,7 @@ public class SpriteInstance extends Rectangle {
 	private boolean animationEnabled;
 
 	/** Custom variables attached to the sprite */
-	private float mR, mG, mB, mA;
+	public final Color color = new Color(1.f, 1.f, 1.f, 1.f);
 	private float mTimeAliveInMs;
 	private float mLifeTime;
 
@@ -58,29 +59,6 @@ public class SpriteInstance extends Rectangle {
 
 	public float getTimeAliveInMs() {
 		return mTimeAliveInMs;
-	}
-
-	public void setRGBA(float pR, float pG, float pB, float pA) {
-		mR = pR;
-		mG = pG;
-		mB = pB;
-		mA = pA;
-	}
-
-	public float r() {
-		return mR;
-	}
-
-	public float g() {
-		return mG;
-	}
-
-	public float b() {
-		return mB;
-	}
-
-	public float a() {
-		return mA;
 	}
 
 	public boolean isFree() {
@@ -147,7 +125,6 @@ public class SpriteInstance extends Rectangle {
 
 	public void kill() {
 		mSpriteDefinition = null;
-		mR = mG = mB = mA = 1.f;
 		mTimeAliveInMs = 0.f;
 		mLifeTime = 0.f;
 

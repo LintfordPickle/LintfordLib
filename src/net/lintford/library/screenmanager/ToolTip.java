@@ -2,6 +2,7 @@ package net.lintford.library.screenmanager;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
+import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.fonts.FontManager;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
@@ -104,9 +105,11 @@ public class ToolTip {
 			lPositionY -= lToolTipTextHeight + 30;
 		}
 
+		final var lColor = ColorConstants.getColor(.21f, .11f, .13f, 1.f);
+
 		// Render the background
 		mTextureBatch.begin(pCore.HUD());
-		mTextureBatch.draw(mUiPanelTexture, 0, 0, 32, 32, lPositionX, lPositionY + 4f, lToolTipTextWidth + lTextPadding * 2.f, lToolTipTextHeight + lTextPadding * 2.f, -0.1f, .21f, .11f, .13f, 1.f);
+		mTextureBatch.draw(mUiPanelTexture, 0, 0, 32, 32, lPositionX, lPositionY + 4f, lToolTipTextWidth + lTextPadding * 2.f, lToolTipTextHeight + lTextPadding * 2.f, -0.1f, lColor);
 		mTextureBatch.end();
 
 		mMenuFont.begin(pCore.HUD());

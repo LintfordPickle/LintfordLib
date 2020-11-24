@@ -11,6 +11,7 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.camera.ICamera;
 import net.lintford.library.core.geometry.Rectangle;
+import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.fonts.FontManager;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.geometry.TexturedQuad;
@@ -320,7 +321,7 @@ public class DebugDrawers {
 			return;
 		}
 
-		mTextureBatch.draw(pTexture, pSourceX, pSourceY, pSourceWidth, pSourceHeight, pDX, pDY, pDW, pDH, pDZ, 1f, 1f, 1f, 1f);
+		mTextureBatch.draw(pTexture, pSourceX, pSourceY, pSourceWidth, pSourceHeight, pDX, pDY, pDW, pDH, pDZ, ColorConstants.WHITE);
 
 	}
 
@@ -471,7 +472,7 @@ public class DebugDrawers {
 			return;
 		}
 
-		mSystemFont.draw(pText, pX, pY, -0.01f, 1f, 1f, 1f, 1f, pScale, -1);
+		mSystemFont.draw(pText, pX, pY, -0.01f, ColorConstants.WHITE, pScale, -1);
 
 	}
 

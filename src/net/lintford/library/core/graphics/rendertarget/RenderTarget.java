@@ -9,6 +9,7 @@ import org.lwjgl.opengl.GL12;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.system.MemoryUtil;
 
+import net.lintford.library.ConstantsApp;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.debug.stats.DebugStats;
 
@@ -280,11 +281,14 @@ public class RenderTarget {
 
 		createFloatBuffer();
 
-		Debug.debugManager().logger().i(getClass().getSimpleName(), "Loading RenderTarget: " + targetName);
-		Debug.debugManager().logger().i(getClass().getSimpleName(), "  GL_TEXTURE_MAG_FILTER: " + mTextureFilter);
-		Debug.debugManager().logger().i(getClass().getSimpleName(), "  GL_TEXTURE_MIN_FILTER: " + mTextureFilter);
-		Debug.debugManager().logger().i(getClass().getSimpleName(), "  GL_TEXTURE_WRAP_S: " + GL12.GL_CLAMP_TO_EDGE);
-		Debug.debugManager().logger().i(getClass().getSimpleName(), "  GL_TEXTURE_WRAP_T: " + GL12.GL_CLAMP_TO_EDGE);
+		if (ConstantsApp.getBooleanValueDef("DEBUG_RENDER_TARGET_RESIZE", false)) {
+			Debug.debugManager().logger().i(getClass().getSimpleName(), "Loading RenderTarget: " + targetName);
+			Debug.debugManager().logger().i(getClass().getSimpleName(), "  GL_TEXTURE_MAG_FILTER: " + mTextureFilter);
+			Debug.debugManager().logger().i(getClass().getSimpleName(), "  GL_TEXTURE_MIN_FILTER: " + mTextureFilter);
+			Debug.debugManager().logger().i(getClass().getSimpleName(), "  GL_TEXTURE_WRAP_S: " + GL12.GL_CLAMP_TO_EDGE);
+			Debug.debugManager().logger().i(getClass().getSimpleName(), "  GL_TEXTURE_WRAP_T: " + GL12.GL_CLAMP_TO_EDGE);
+
+		}
 
 		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, mFramebufferID);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, mColorTextureID);

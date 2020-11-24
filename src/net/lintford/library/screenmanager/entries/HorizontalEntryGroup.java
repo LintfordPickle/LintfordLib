@@ -162,9 +162,9 @@ public class HorizontalEntryGroup extends MenuEntry {
 	@Override
 	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pParentZDepth) {
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
-			final float lR = mParentLayout.parentScreen.r();
-			final float lG = mParentLayout.parentScreen.g();
-			final float lB = mParentLayout.parentScreen.b();
+			final float lR = mParentLayout.parentScreen.screenColor.r;
+			final float lG = mParentLayout.parentScreen.screenColor.g;
+			final float lB = mParentLayout.parentScreen.screenColor.b;
 
 			Debug.debugManager().drawers().drawRectImmediate(pCore.gameCamera(), x, y, w, h, 0.5f * lR, 0.2f * lG, lB);
 

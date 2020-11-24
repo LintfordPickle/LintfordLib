@@ -1,5 +1,7 @@
 package net.lintford.library.core.graphics.fonts;
 
+import net.lintford.library.core.graphics.Color;
+import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.fonts.BitmapFont.Glyph;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 
@@ -61,22 +63,22 @@ public class AWTBitmapFontSpriteBatch extends TextureBatchPCT {
 	// --------------------------------------
 
 	public void draw(String pText, float pX, float pY, float pScale) {
-		draw(pText, pX, pY, -0.1f, 1f, 1f, 1f, 1f, pScale, NO_WORD_WRAP);
+		draw(pText, pX, pY, -0.1f, ColorConstants.WHITE, pScale, NO_WORD_WRAP);
 	}
 
 	public void draw(String pText, float pX, float pY, float pZ, float pScale, float pWordWrapWidth) {
-		draw(pText, pX, pY, pZ, 1f, 1f, 1f, 1f, pScale, pWordWrapWidth);
+		draw(pText, pX, pY, pZ, ColorConstants.WHITE, pScale, pWordWrapWidth);
 	}
 
-	public void draw(String pText, float pX, float pY, float pZ, float pR, float pG, float pB, float pA, float pScale) {
-		draw(pText, pX, pY, pZ, 1f, 1f, 1f, 1f, pScale, NO_WORD_WRAP);
+	public void draw(String pText, float pX, float pY, float pZ, Color pTint, float pScale) {
+		draw(pText, pX, pY, pZ, pTint, pScale, NO_WORD_WRAP);
 	}
 
-	public void draw(String pText, float pX, float pY, float pZ, float pR, float pG, float pB, float pA, float pScale, float pWordWrapWidth) {
-		draw(pText, pX, pY, pZ, pR, pG, pB, pA, pScale, pWordWrapWidth, NO_WIDTH_CAP);
+	public void draw(String pText, float pX, float pY, float pZ, Color pTint, float pScale, float pWordWrapWidth) {
+		draw(pText, pX, pY, pZ, pTint, pScale, pWordWrapWidth, NO_WIDTH_CAP);
 	}
 
-	public void draw(String pText, float pX, float pY, float pZ, float pR, float pG, float pB, float pA, float pScale, float pWordWrapWidth, int pCapWidth) {
+	public void draw(String pText, float pX, float pY, float pZ, Color pTint, float pScale, float pWordWrapWidth, int pCapWidth) {
 		if (pText == null)
 			return;
 
@@ -150,8 +152,8 @@ public class AWTBitmapFontSpriteBatch extends TextureBatchPCT {
 			if (lCharGlyph != null) {
 				if (mDrawShadow)
 					draw(mBitmapFont.fontTexture(), lCharGlyph.x, lCharGlyph.y, lCharGlyph.width, lCharGlyph.height, (lPosX - 2.f * pScale), (lPosY + 2.f * pScale), lCharGlyph.width * pScale, lCharGlyph.height * pScale,
-							pZ, 0f, 0f, 0f, pA);
-				draw(mBitmapFont.fontTexture(), lCharGlyph.x, lCharGlyph.y, lCharGlyph.width, lCharGlyph.height, lPosX, lPosY, lCharGlyph.width * pScale, lCharGlyph.height * pScale, pZ, pR, pG, pB, pA);
+							pZ, ColorConstants.BLACK);
+				draw(mBitmapFont.fontTexture(), lCharGlyph.x, lCharGlyph.y, lCharGlyph.width, lCharGlyph.height, lPosX, lPosY, lCharGlyph.width * pScale, lCharGlyph.height * pScale, pZ, pTint);
 				lPosX += lCharGlyph.width * pScale;
 
 			} else {
@@ -169,8 +171,8 @@ public class AWTBitmapFontSpriteBatch extends TextureBatchPCT {
 				if (lCharGlyph != null) {
 					if (mDrawShadow)
 						draw(mBitmapFont.fontTexture(), lCharGlyph.x, lCharGlyph.y, lCharGlyph.width, lCharGlyph.height, (lPosX - 1 - mBitmapFont.fontHeight()), lPosY + 2, lCharGlyph.width * pScale,
-								lCharGlyph.height * pScale, pZ, 0f, 0f, 0f, pA);
-					draw(mBitmapFont.fontTexture(), lCharGlyph.x, lCharGlyph.y, lCharGlyph.width, lCharGlyph.height, lPosX, lPosY, lCharGlyph.width * pScale, lCharGlyph.height * pScale, pZ, pR, pG, pB, pA);
+								lCharGlyph.height * pScale, pZ, ColorConstants.BLACK);
+					draw(mBitmapFont.fontTexture(), lCharGlyph.x, lCharGlyph.y, lCharGlyph.width, lCharGlyph.height, lPosX, lPosY, lCharGlyph.width * pScale, lCharGlyph.height * pScale, pZ, pTint);
 					lPosX += lCharGlyph.width * pScale;
 
 				} else {

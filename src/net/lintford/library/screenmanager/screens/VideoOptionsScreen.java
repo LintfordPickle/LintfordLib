@@ -87,7 +87,7 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 		mDisplayManager = pScreenManager.core().config().display();
 
 		mVideoList = new ListLayout(this);
-		mVideoList.setDrawBackground(true, ColorConstants.SecondaryColor.r, ColorConstants.SecondaryColor.g, ColorConstants.SecondaryColor.b, 0.25f);
+		mVideoList.setDrawBackground(true, ColorConstants.MenuPanelSecondaryColor);
 		mVideoList.layoutFillType(FILLTYPE.FILL_CONTAINER);
 
 		mConfirmChangesLayout = new ListLayout(this);
@@ -109,7 +109,7 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 
 		mConfirmChangesLayout.menuEntries().add(mChangesPendingWarning);
 		mConfirmChangesLayout.layoutFillType(FILLTYPE.TAKE_WHATS_NEEDED);
-		mConfirmChangesLayout.setDrawBackground(true, ColorConstants.SecondaryColor.r, ColorConstants.SecondaryColor.g, ColorConstants.SecondaryColor.b, 0.25f);
+		mConfirmChangesLayout.setDrawBackground(true, ColorConstants.MenuPanelSecondaryColor);
 
 		/* Screen control buttons */
 		final var lGroup = new HorizontalEntryGroup(pScreenManager, footerLayout());

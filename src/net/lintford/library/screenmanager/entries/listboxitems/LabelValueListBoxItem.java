@@ -22,11 +22,6 @@ public class LabelValueListBoxItem extends ListBoxItem {
 	// Variables
 	// --------------------------------------
 
-	private float mR;
-	private float mG;
-	private float mB;
-	private float mA;
-
 	private String mLabelValue;
 	private String mTextValue;
 
@@ -48,14 +43,6 @@ public class LabelValueListBoxItem extends ListBoxItem {
 
 	public String textValue() {
 		return mTextValue;
-	}
-
-	public void setTextColor(float pR, float pG, float pB, float pA) {
-		mR = pR;
-		mG = pG;
-		mB = pB;
-		mA = pA;
-
 	}
 
 	// --------------------------------------
@@ -97,12 +84,11 @@ public class LabelValueListBoxItem extends ListBoxItem {
 			final var lFont = mParentListBox.parentLayout().parentScreen.font();
 
 			h = 10;
-			mR = mG = mB = mA = 1;
 
 			// Draw profile information
 			lFont.begin(pCore.HUD());
-			lFont.draw(mLabelValue, x, y, pParentZDepth + .1f, mR, mG, mB, mA, lScale, -1);
-			lFont.draw(mTextValue, x + w / 2, y, pParentZDepth + .1f, mR, mG, mB, mA, lScale, -1);
+			lFont.draw(mLabelValue, x, y, pParentZDepth + .1f, textColor, lScale, -1);
+			lFont.draw(mTextValue, x + w / 2, y, pParentZDepth + .1f, textColor, lScale, -1);
 			lFont.end();
 
 		}

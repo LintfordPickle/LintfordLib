@@ -1,5 +1,7 @@
 package net.lintford.library.core.graphics.fonts;
 
+import net.lintford.library.core.graphics.Color;
+import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 
@@ -52,12 +54,12 @@ public class PixelFontSpriteBatch extends TextureBatchPCT {
 	// --------------------------------------
 
 	public void draw(String pText, float pX, float pY, float pScale) {
-		draw(pText, pX, pY, -0.5f, 1f, 1f, 1f, 1f, pScale);
+		draw(pText, pX, pY, -0.5f, ColorConstants.WHITE, pScale);
 
 	}
 
 	// TODO(John): Need to do both local scaling and center text scaling.
-	public void draw(String pText, float pX, float pY, float pZ, float pR, float pG, float pB, float pA, float pScale) {
+	public void draw(String pText, float pX, float pY, float pZ, Color pTint, float pScale) {
 		float lPosX = pX;
 		float lPosY = pY;
 
@@ -69,7 +71,7 @@ public class PixelFontSpriteBatch extends TextureBatchPCT {
 			float u = xx * mCharImageSize;
 			float v = yy * mCharImageSize;
 
-			draw(mTexture, u, v, mCharImageSize, mCharImageSize, lPosX, lPosY, mCharImageSize, mCharImageSize, pZ, pR, pG, pB, pA);
+			draw(mTexture, u, v, mCharImageSize, mCharImageSize, lPosX, lPosY, mCharImageSize, mCharImageSize, pZ, pTint);
 			lPosX += mCharImageSize * pScale;
 		}
 

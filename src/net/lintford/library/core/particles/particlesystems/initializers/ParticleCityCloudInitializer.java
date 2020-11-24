@@ -42,29 +42,18 @@ public class ParticleCityCloudInitializer extends ParticleInitializerBase {
 	@Override
 	public void initialize(Particle pParticle) {
 		// Set default color and alpha
-		pParticle.r = pParticle.g = pParticle.b = 1;
-		pParticle.a = 1;
+		pParticle.color.setRGBA(1.f, 1.f, 1.f, 1.f);
 
-		final int SOURCE_DIMENSIONS = 256;
-		final int DEST_DIMENSIONS = 512;
+		final int lParticleSourceDimensions = 256;
+		final int lParticleDestinationDimensions = 512;
 
 		// Set default texture regions
 		pParticle.sx = pParticle.sy = 0;
-		pParticle.sw = pParticle.sh = SOURCE_DIMENSIONS;
-		pParticle.width = DEST_DIMENSIONS;
-		pParticle.height = DEST_DIMENSIONS;
-		pParticle.rox = pParticle.roy = DEST_DIMENSIONS / 2;
+		pParticle.sw = pParticle.sh = lParticleSourceDimensions;
+		pParticle.width = lParticleDestinationDimensions;
+		pParticle.height = lParticleDestinationDimensions;
+		pParticle.rox = pParticle.roy = lParticleDestinationDimensions / 2;
 		pParticle.sx = pParticle.sy = 1;
-
-//		// Set default position which should be off-screen and taking into consideration the wind direction (TODO: WeatherManager)
-//		final float MIN_X_POSITION = mGameCamera.getMinX() - mRandom.nextFloat() * DEST_DIMENSIONS * 3;
-//		final float cellX = MIN_X_POSITION + mRandom.nextFloat() * mGameCamera.getWidth() * 2f;
-//
-//		final float MIN_Y_POSITION = mGameCamera.getMinY() - mGameCamera.getHeight() / 2;
-//		final float cellY = MIN_Y_POSITION + mRandom.nextFloat() * mGameCamera.getHeight() * 2f;
-//
-//		pParticle.setPosition(cellX, cellY);
-//		pParticle.rotv = (float) Math.toRadians(mRandom.nextFloat() * 10f - 5f);
 
 	}
 

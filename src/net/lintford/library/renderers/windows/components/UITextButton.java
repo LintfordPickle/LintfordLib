@@ -1,10 +1,11 @@
 package net.lintford.library.renderers.windows.components;
 
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
-import net.lintford.library.renderers.windows.UIWindow;
+import net.lintford.library.renderers.windows.UiWindow;
 import net.lintford.library.screenmanager.entries.EntryInteractions;
 
 public class UITextButton extends UIWidget {
@@ -24,7 +25,6 @@ public class UITextButton extends UIWidget {
 	private EntryInteractions mCallback;
 	private int mClickID;
 	private String mButtonLabel;
-	private float mR, mG, mB;
 	private boolean mHoveredOver;
 	private boolean mIsClicked;
 	private float mClickTimer;
@@ -53,11 +53,11 @@ public class UITextButton extends UIWidget {
 	// Constructor
 	// --------------------------------------
 
-	public UITextButton(final UIWindow pParentWindow) {
+	public UITextButton(final UiWindow pParentWindow) {
 		this(pParentWindow, 0);
 	}
 
-	public UITextButton(final UIWindow pParentWindow, final int pClickID) {
+	public UITextButton(final UiWindow pParentWindow, final int pClickID) {
 		super(pParentWindow);
 
 		mClickID = pClickID;
@@ -65,8 +65,6 @@ public class UITextButton extends UIWidget {
 		mButtonLabel = NO_LABEL_TEXT;
 		w = 200;
 		h = 25;
-
-		mR = mG = mB = 1f;
 
 	}
 
@@ -114,23 +112,17 @@ public class UITextButton extends UIWidget {
 
 	@Override
 	public void draw(LintfordCore pCore, TextureBatchPCT pTextureBatch, Texture pUITexture, FontUnit pTextFont, float pComponentZDepth) {
-
-		mR = 0.19f;
-		mG = 0.13f;
-		mB = 0.3f;
-
-		float lR = mHoveredOver ? 0.3f : mR;
-		float lG = mHoveredOver ? 0.34f : mG;
-		float lB = mHoveredOver ? 0.65f : mB;
+		final float lColorMod = mHoveredOver ? .3f : 1.f;
+		final var lColor = ColorConstants.getColorWithRGBMod(ColorConstants.PrimaryColor, lColorMod);
 
 		// Draw the button background
 		pTextureBatch.begin(pCore.HUD());
-		pTextureBatch.draw(pUITexture, 0, 0, 32, 32, x, y, 32, 32, pComponentZDepth, lR, lG, lB, 1f);
+		pTextureBatch.draw(pUITexture, 0, 0, 32, 32, x, y, 32, 32, pComponentZDepth, lColor);
 		pTextureBatch.end();
 
-		FontUnit lFontRenderer = mParentWindow.rendererManager().textFont();
+		final var lFontRenderer = mParentWindow.rendererManager().textFont();
 
-		final String lButtonText = mButtonLabel != null ? mButtonLabel : NO_LABEL_TEXT;
+		final var lButtonText = mButtonLabel != null ? mButtonLabel : NO_LABEL_TEXT;
 		final float lTextWidth = lFontRenderer.bitmap().getStringWidth(lButtonText);
 
 		lFontRenderer.begin(pCore.HUD());

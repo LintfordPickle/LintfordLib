@@ -11,6 +11,8 @@ import net.lintford.library.ConstantsApp;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.geometry.Rectangle;
+import net.lintford.library.core.graphics.Color;
+import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
@@ -115,6 +117,10 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 	private int mTAGFilterLastSize;
 	private UIInputText mMessageFilterText;
 	private int mMessageFilterLastSize;
+
+	private final Color mConsoleBackgroundColor = new Color(0f, 0f, 0f, 0.9f);
+	private final Color mConsoleInputBackgroundColor = new Color(0f, 0f, 0f, 0.85f);
+	private final Color mConsoleTextColor = new Color();
 
 	protected boolean mProcessed; // is filter applied?
 	protected List<Message> mProcessedMessages;
@@ -492,8 +498,8 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 
 		// Draw the console background (with a black border for the text input region)
 		mSpriteBatch.begin(pCore.HUD());
-		mSpriteBatch.draw(mCoreUITexture, 0, 0, 32, 32, lScreenBB.left(), lScreenBB.top(), lScreenBB.width(), lScreenBB.height(), Z_DEPTH, 0f, 0f, 0f, 0.9f);
-		mSpriteBatch.draw(mCoreUITexture, 32, 0, 32, 32, x, y, w, h, Z_DEPTH, 0f, 0f, 0f, 0.85f);
+		mSpriteBatch.draw(mCoreUITexture, 0, 0, 32, 32, lScreenBB.left(), lScreenBB.top(), lScreenBB.width(), lScreenBB.height(), Z_DEPTH, mConsoleBackgroundColor);
+		mSpriteBatch.draw(mCoreUITexture, 0, 0, 32, 32, x, y, w, h, Z_DEPTH, ColorConstants.MenuPanelPrimaryColor);
 		mSpriteBatch.end();
 
 		mConsoleFont.begin(pCore.HUD());
@@ -516,15 +522,16 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 					final float lR = getMessageRGB(lMessage.type).x;
 					final float lG = getMessageRGB(lMessage.type).y;
 					final float lB = getMessageRGB(lMessage.type).z;
+					mConsoleTextColor.setRGBA(lR, lG, lB, 1.0f);
 
 					// Draw Timestamp
-					mConsoleFont.draw(lMessage.timestamp, x + POSITION_OFFSET_TIME, -lDisplayConfig.windowHeight() * 0.5f - lTextPosition, Z_DEPTH + 0.1f, lR, lG, lB, 1.0f, 1f, -1, 18);
+					mConsoleFont.draw(lMessage.timestamp, x + POSITION_OFFSET_TIME, -lDisplayConfig.windowHeight() * 0.5f - lTextPosition, Z_DEPTH + 0.1f, mConsoleTextColor, 1f, -1, 18);
 
 					// Draw TAG
-					mConsoleFont.draw(lMessage.tag, x + POSITION_OFFSET_TAG, -lDisplayConfig.windowHeight() * 0.5f - lTextPosition, Z_DEPTH + 0.1f, lR, lG, lB, 1.0f, 1f, -1, 18);
+					mConsoleFont.draw(lMessage.tag, x + POSITION_OFFSET_TAG, -lDisplayConfig.windowHeight() * 0.5f - lTextPosition, Z_DEPTH + 0.1f, mConsoleTextColor, 1f, -1, 18);
 
 					// Draw MESSAGE
-					mConsoleFont.draw(lMessage.message, x + POSITION_OFFSET_MESSAGE, -lDisplayConfig.windowHeight() * 0.5f - lTextPosition, Z_DEPTH + 0.1f, lR, lG, lB, 1.0f, 1f, -1, -1);
+					mConsoleFont.draw(lMessage.message, x + POSITION_OFFSET_MESSAGE, -lDisplayConfig.windowHeight() * 0.5f - lTextPosition, Z_DEPTH + 0.1f, mConsoleTextColor, 1f, -1, -1);
 
 				}
 
