@@ -76,7 +76,7 @@ public class ScrollBarContentRectangle extends Rectangle {
 
 		// Draw into the stencil buffer to mark the 'active' bits
 		pTextureBatch.begin(pCore.HUD());
-		pTextureBatch.draw(pUITexture, 0, 0, 32, 32, pRectangle.x() + mDepthPadding, pRectangle.y() + mDepthPadding, pRectangle.w() - mDepthPadding * 2, pRectangle.h() - mDepthPadding * 2, -10.0f,
+		pTextureBatch.draw(pUITexture, 0, 0, 32, 32, pRectangle.x() + mDepthPadding, pRectangle.y() + mDepthPadding, pRectangle.w() - mDepthPadding * 2 - ScrollBar.BAR_WIDTH, pRectangle.h() - mDepthPadding * 2, -10.0f,
 				ColorConstants.getBlackWithAlpha(0.f));
 		pTextureBatch.end();
 
