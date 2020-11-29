@@ -98,7 +98,6 @@ public class UIRadioButton extends UIWidget implements IProcessMouseInput {
 	public boolean handleInput(LintfordCore pCore) {
 		if (intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().isMouseOverThisComponent(hashCode())) {
 			if (pCore.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
-				// Callback to the listener and pass our ID
 				if (mCallback != null) {
 					mCallback.menuEntryOnClick(pCore.input(), mClickID);
 
@@ -117,7 +116,7 @@ public class UIRadioButton extends UIWidget implements IProcessMouseInput {
 	public void update(LintfordCore pCore) {
 		super.update(pCore);
 
-		mMouseTimer += pCore.appTime().elapsedTimeMilli();
+		mMouseTimer -= pCore.appTime().elapsedTimeMilli();
 	}
 
 	@Override
