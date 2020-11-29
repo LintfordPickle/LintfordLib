@@ -147,7 +147,7 @@ public class ScrollBar extends Rectangle implements IProcessMouseInput {
 		float lScrollThumbSpace = lViewportHeight - mMarkerBarHeight;
 		mMarkerMoveMod = lScrollTrackSpace / lScrollThumbSpace;
 
-		final float lX = mScrollBarArea.contentDisplayArea().x() + mScrollBarArea.contentDisplayArea().w() + mWindowRightOffset;
+		final float lX = mScrollBarArea.contentDisplayArea().x() + mScrollBarArea.contentDisplayArea().w() - BAR_WIDTH;
 		final float lY = mScrollBarArea.contentDisplayArea().y();
 		final float lW = BAR_WIDTH;
 		final float lH = mScrollBarArea.contentDisplayArea().h();
@@ -161,6 +161,10 @@ public class ScrollBar extends Rectangle implements IProcessMouseInput {
 		// Scroll bar background
 		final var lColor = ColorConstants.getBlackWithAlpha(.5f);
 		pTextureBatch.draw(pUITexture, 0, 0, 32, 32, x, y, w, h, pZDepth, lColor);
+
+		if (mMarkerMoveMod == 0.f) {
+			return;
+		}
 
 		// Render the actual scroll bar
 		final float by = mScrollBarArea.contentDisplayArea().y() - (mScrollBarArea.currentYPos() / mMarkerMoveMod);

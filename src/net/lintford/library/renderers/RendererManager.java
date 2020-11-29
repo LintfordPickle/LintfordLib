@@ -335,38 +335,39 @@ public class RendererManager {
 
 	public void draw(LintfordCore pCore) {
 		if (RENDER_GAME_RENDERABLES) {
-			final int RENDERER_COUNT = mRenderers.size();
-			for (int i = 0; i < RENDERER_COUNT; i++) {
+			final int lNumBaseRenderers = mRenderers.size();
+			for (int i = 0; i < lNumBaseRenderers; i++) {
 				final var lRenderer = mRenderers.get(i);
 				if (!lRenderer.isActive() || !lRenderer.isManagedDraw())
 					continue;
 
-				if (!mRenderers.get(i).isLoaded() && mIsLoaded) {
+				if (!lRenderer.isLoaded() && mIsLoaded) {
 					Debug.debugManager().logger().w(getClass().getSimpleName(), mOwnerIdentifier + "Reloading content in Update() (BaseRenderer) ");
-					mRenderers.get(i).loadGLContent(mResourceManager);
+					lRenderer.loadGLContent(mResourceManager);
 
 				}
 
 				// Update the renderer
-				mRenderers.get(i).draw(pCore);
+				lRenderer.draw(pCore);
 
 			}
 
 		}
 
 		if (RENDER_UI_WINDOWS) {
-			final int WINDOW_RENDERER_COUNT = mWindowRenderers.size();
-			for (int i = 0; i < WINDOW_RENDERER_COUNT; i++) {
-				if (!mWindowRenderers.get(i).isActive())
+			final int lNumWindowRenderers = mWindowRenderers.size();
+			for (int i = 0; i < lNumWindowRenderers; i++) {
+				final var lWindow = mWindowRenderers.get(i);
+				if (!lWindow.isActive() || !lWindow.isOpen())
 					continue;
 
-				if (!mWindowRenderers.get(i).isLoaded() && mIsLoaded) {
+				if (!lWindow.isLoaded() && mIsLoaded) {
 					Debug.debugManager().logger().w(getClass().getSimpleName(), "Reloading content in Update() (UIWindow) ");
-					mWindowRenderers.get(i).loadGLContent(mResourceManager);
+					lWindow.loadGLContent(mResourceManager);
 				}
 
 				// Update the renderer
-				mWindowRenderers.get(i).draw(pCore);
+				lWindow.draw(pCore);
 
 			}
 		}
