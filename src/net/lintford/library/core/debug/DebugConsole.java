@@ -488,6 +488,7 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 		final float PADDING_LEFT = 5;
 		final float lInputTextXOffset = 14;
 		float lTextPosition = -20;
+		final float lTextHeight = 18f;
 
 		mTAGFilterText.set(x + POSITION_OFFSET_TAG, y + 5, 200, 25);
 		mMessageFilterText.set(x + POSITION_OFFSET_MESSAGE, y + 5, 200, 25);
@@ -498,8 +499,14 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 
 		// Draw the console background (with a black border for the text input region)
 		mSpriteBatch.begin(pCore.HUD());
-		mSpriteBatch.draw(mCoreUITexture, 0, 0, 32, 32, lScreenBB.left(), lScreenBB.top(), lScreenBB.width(), lScreenBB.height(), Z_DEPTH, mConsoleBackgroundColor);
+		mSpriteBatch.draw(mCoreUITexture, 0, 0, 32, 32, lScreenBB.left(), lScreenBB.top(), lScreenBB.width(), lScreenBB.height() - 25, Z_DEPTH, mConsoleBackgroundColor);
 		mSpriteBatch.draw(mCoreUITexture, 0, 0, 32, 32, x, y, w, h, Z_DEPTH, ColorConstants.MenuPanelPrimaryColor);
+		
+		final var lBackgroundInputPanelColor = ColorConstants.getBlackWithAlpha(0.35f);
+		mSpriteBatch.draw(mCoreUITexture, 0, 0, 32, 32, x, y + 50 - lTextHeight, w, 2, Z_DEPTH, lBackgroundInputPanelColor);
+		mSpriteBatch.draw(mCoreUITexture, 0, 0, 32, 32, x + 110, y + 50 - lTextHeight, 2, h - 50, Z_DEPTH, lBackgroundInputPanelColor);
+		mSpriteBatch.draw(mCoreUITexture, 0, 0, 32, 32, x, y + h - lTextHeight, w, lTextHeight, Z_DEPTH, lBackgroundInputPanelColor);
+		
 		mSpriteBatch.end();
 
 		mConsoleFont.begin(pCore.HUD());

@@ -222,7 +222,7 @@ public class DebugRendererTreeRenderer extends Rectangle implements IScrollBarAr
 
 			final var windowHeight = lDisplayManager.windowHeight();
 			final var consoleHeight = Debug.debugManager().console().openHeight();
-			mOpenHeight = windowHeight - consoleHeight - 35f;
+			mOpenHeight = windowHeight - consoleHeight - 60f;
 
 			// Update the bounds of the window view
 			x = lDisplayManager.windowWidth() * 0.5f - mOpenWidth - 5f;
