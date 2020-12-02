@@ -30,6 +30,16 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 
 	public static final String SOUND_ON_CLICK_NAME = "SOUND_MENU_CLICK";
 
+	public static MenuEntry menuSeparator() {
+		final var lNewMenuSeparatorEntry = new MenuEntry(null, null, null);
+		lNewMenuSeparatorEntry.enabled(false);
+		lNewMenuSeparatorEntry.active(false);
+		lNewMenuSeparatorEntry.drawButtonBackground(false);
+
+		return lNewMenuSeparatorEntry;
+
+	}
+
 	// --------------------------------------
 	// Variables
 	// --------------------------------------

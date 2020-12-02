@@ -280,7 +280,7 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 			// Fixme: Store this somewhere more central and accessable
 			final float lButtonSize = 32;
 
-			final var lButtonColor = mEnabled ? ColorConstants.WHITE : ColorConstants.getWhiteWithAlpha(0.5f);
+			final var lButtonColor = ColorConstants.getWhiteWithAlpha((mEnabled ? 1.f : 0.5f) * lParentScreen.screenColor.a);
 
 			lTextureBatch.draw(mUITexture, 0, 224, 32, 32, mLeftButtonRectangle.x(), mLeftButtonRectangle.y(), lButtonSize, lButtonSize, mZ, lButtonColor);
 			lTextureBatch.draw(mUITexture, 32, 224, 32, 32, mRightButtonRectangle.x(), mRightButtonRectangle.y(), lButtonSize, lButtonSize, mZ, lButtonColor);

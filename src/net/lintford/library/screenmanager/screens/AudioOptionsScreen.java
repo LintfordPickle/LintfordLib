@@ -99,11 +99,6 @@ public class AudioOptionsScreen extends MenuScreen {
 	private void createAudioSection(BaseLayout lLayout) {
 		final var lAudioConfig = screenManager.core().config().audio();
 
-		final var lSeparator = new MenuEntry(screenManager, lLayout, "");
-		lSeparator.enabled(false);
-		lSeparator.active(false);
-		lSeparator.drawButtonBackground(false);
-
 		mMasterEnabledEntry = new MenuToggleEntry(screenManager, lLayout);
 		mMasterEnabledEntry.registerClickListener(this, BUTTON_ENABLED_MASTER);
 		mMasterEnabledEntry.label("Audio Enabled");
@@ -160,11 +155,11 @@ public class AudioOptionsScreen extends MenuScreen {
 
 		// lLayout.menuEntries().add(mMasterEnabledEntry);
 		lLayout.menuEntries().add(mMasterVolumeEntry);
-		lLayout.menuEntries().add(lSeparator);
+		lLayout.menuEntries().add(MenuEntry.menuSeparator());
 
 		lLayout.menuEntries().add(mMusicEnabledEntry);
 		lLayout.menuEntries().add(mMusicVolumeEntry);
-		lLayout.menuEntries().add(lSeparator);
+		lLayout.menuEntries().add(MenuEntry.menuSeparator());
 
 		lLayout.menuEntries().add(mSoundEnabledEntry);
 		lLayout.menuEntries().add(mSoundVolumnEntry);
