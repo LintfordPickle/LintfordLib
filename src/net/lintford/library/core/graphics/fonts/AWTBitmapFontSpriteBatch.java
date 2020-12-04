@@ -6,7 +6,6 @@ import net.lintford.library.core.graphics.fonts.BitmapFont.Glyph;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 
 // TODO: Need to implement the spritebatch like TileSetRendererVBO, i.e. with separate shaders and 
-// TODO: Add option for shadows
 // TODO: Text scaling (global and local) needs implementing (it was removed from the TextureBatch, so the destRect needs to be adapted).
 public class AWTBitmapFontSpriteBatch extends TextureBatchPCT {
 
@@ -79,13 +78,23 @@ public class AWTBitmapFontSpriteBatch extends TextureBatchPCT {
 	}
 
 	public void draw(String pText, float pX, float pY, float pZ, Color pTint, float pScale, float pWordWrapWidth, int pCapWidth) {
+		if (shadowEnabled())
+			draw(pText, pX, pY, pZ, pTint, pScale, pWordWrapWidth, pCapWidth, true);
+
+		 draw(pText, pX, pY, pZ, pTint, pScale, pWordWrapWidth, pCapWidth, false);
+		
+	}
+
+	private void draw(String pText, float pX, float pY, float pZ, Color pTint, float pScale, float pWordWrapWidth, int pCapWidth, boolean isShadow) {
 		if (pText == null)
 			return;
 
 		final float lSpaceBetweenLines = 0f;
 
-		float lPosX = pX;
-		float lPosY = pY;
+		final var lTextColor = isShadow ? ColorConstants.getBlackWithAlpha(0.7f) : pTint;
+		float lPosX = pX + -(isShadow ? -2: 0);
+		float lPosY = pY + (isShadow ? 2 : 0);
+		
 		float lWrapWidth = 0;
 		boolean lJustWrapped = false;
 
@@ -137,7 +146,7 @@ public class AWTBitmapFontSpriteBatch extends TextureBatchPCT {
 			}
 
 			if (ch == ' ' && mTrimText && lPosX == pX && lPosY > pY) {
-				Glyph lCharGlyph = mBitmapFont.glyphs().get(ch);
+				final var lCharGlyph = mBitmapFont.glyphs().get(ch);
 				lPosX += lCharGlyph.width * pScale;
 				continue;
 			}
@@ -150,10 +159,7 @@ public class AWTBitmapFontSpriteBatch extends TextureBatchPCT {
 			final var lCharGlyph = mBitmapFont.glyphs().get(ch);
 
 			if (lCharGlyph != null) {
-				if (mDrawShadow)
-					draw(mBitmapFont.fontTexture(), lCharGlyph.x, lCharGlyph.y, lCharGlyph.width, lCharGlyph.height, (lPosX - 2.f * pScale), (lPosY + 2.f * pScale), lCharGlyph.width * pScale, lCharGlyph.height * pScale,
-							pZ, ColorConstants.BLACK);
-				draw(mBitmapFont.fontTexture(), lCharGlyph.x, lCharGlyph.y, lCharGlyph.width, lCharGlyph.height, lPosX, lPosY, lCharGlyph.width * pScale, lCharGlyph.height * pScale, pZ, pTint);
+				draw(mBitmapFont.fontTexture(), lCharGlyph.x, lCharGlyph.y, lCharGlyph.width, lCharGlyph.height, lPosX, lPosY, lCharGlyph.width * pScale, lCharGlyph.height * pScale, pZ, lTextColor);
 				lPosX += lCharGlyph.width * pScale;
 
 			} else {
@@ -169,10 +175,7 @@ public class AWTBitmapFontSpriteBatch extends TextureBatchPCT {
 
 			for (int i = 0; i < 3; i++) {
 				if (lCharGlyph != null) {
-					if (mDrawShadow)
-						draw(mBitmapFont.fontTexture(), lCharGlyph.x, lCharGlyph.y, lCharGlyph.width, lCharGlyph.height, (lPosX - 1 - mBitmapFont.fontHeight()), lPosY + 2, lCharGlyph.width * pScale,
-								lCharGlyph.height * pScale, pZ, ColorConstants.BLACK);
-					draw(mBitmapFont.fontTexture(), lCharGlyph.x, lCharGlyph.y, lCharGlyph.width, lCharGlyph.height, lPosX, lPosY, lCharGlyph.width * pScale, lCharGlyph.height * pScale, pZ, pTint);
+					draw(mBitmapFont.fontTexture(), lCharGlyph.x, lCharGlyph.y, lCharGlyph.width, lCharGlyph.height, lPosX, lPosY, lCharGlyph.width * pScale, lCharGlyph.height * pScale, pZ, lTextColor);
 					lPosX += lCharGlyph.width * pScale;
 
 				} else {
