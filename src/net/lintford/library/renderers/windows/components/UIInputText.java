@@ -218,7 +218,9 @@ public class UIInputText extends UIWidget implements IBufferedTextInputCallback 
 		pTextFont.begin(pCore.HUD());
 		pTextFont.draw(lText, x + 10, y + h / 2 - lTextHeight / 2, pComponentZDepth, ColorConstants.TextEntryColor, 1f, -1);
 		if (mShowCaret && mHasFocus) {
-			pTextFont.draw("|", x + 7 + lInputTextWidth + SPACE_BETWEEN_TEXT * 3, y + h / 2 - lTextHeight / 2, pComponentZDepth, 1f);
+			pTextureBatch.begin(pCore.HUD());
+			pTextureBatch.draw(pUITexture, 0, 0, 32, 32, x + 10 + lInputTextWidth, y + h / 2 - lTextHeight / 2, pTextFont.fontPointSize() / 2.f, pTextFont.fontPointSize(), pComponentZDepth, ColorConstants.WHITE);
+			pTextureBatch.end();
 
 		}
 

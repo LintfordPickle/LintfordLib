@@ -213,8 +213,14 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 		lFont.draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - lLabelTextHeight * 0.5f, pParentZDepth + .1f, textColor, lUiTextScale, -1);
 		lFont.draw(mInputField.toString(), x + w / 2 + lSeparatorHalfWidth * lAdjustedLInputScaleW + SPACE_BETWEEN_TEXT, y + h / 2 - lInputTextHeight * 0.5f, pParentZDepth + .1f, textColor, lAdjustedLInputScaleW, -1);
 
+		final float lTextHeight = lFont.fontPointSize();
+
 		if (mShowCaret && mHasFocus) {
-			lFont.draw("|", x + w / 2 + lSeparatorHalfWidth + SPACE_BETWEEN_TEXT + lInputTextWidth * lAdjustedLInputScaleW, y + h / 2 - lInputTextHeight * 0.5f, pParentZDepth + .1f, lAdjustedLInputScaleW);
+			lTextureBatch.begin(pCore.HUD());
+			final float lCaretPositionX = x + w / 2 + lSeparatorHalfWidth + SPACE_BETWEEN_TEXT + lInputTextWidth * lAdjustedLInputScaleW;
+			final float lCaretPositionY = y + h / 2 - lTextHeight / 2.f;
+			lTextureBatch.draw(mUITexture, 0, 0, lTextHeight / 2.f, lFont.fontPointSize(), lCaretPositionX, lCaretPositionY, lTextHeight / 2.f, lFont.fontPointSize(), mZ, ColorConstants.WHITE);
+			lTextureBatch.end();
 
 		}
 
