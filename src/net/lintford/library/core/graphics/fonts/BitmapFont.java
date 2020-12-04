@@ -13,12 +13,15 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.imageio.ImageIO;
+
 import org.lwjgl.opengl.GL11;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.graphics.textures.Texture;
+import net.lintford.library.core.storage.AppStorage;
 import net.lintford.library.core.storage.FileUtils;
 
 // http://forum.lwjgl.org/index.php?topic=5573.0
@@ -45,6 +48,8 @@ public class BitmapFont {
 
 	public static final int NO_WORD_WRAP = -1;
 	public static final int NO_WIDTH_CAP = -1;
+	
+	public static final boolean SAVE_BITMAP_TEXTURES_ON_CREATION = false;
 
 	// --------------------------------------
 	// Variables
@@ -200,6 +205,16 @@ public class BitmapFont {
 
 		// Create a new font texture and add it to our EntityGroup
 		mFontTexture = pResourceManager.textureManager().createFontTexture(mFontName, lFontImage, GL11.GL_LINEAR, LintfordCore.CORE_ENTITY_GROUP_ID);
+		
+		if(SAVE_BITMAP_TEXTURES_ON_CREATION) {
+			final var lDebugFilename = AppStorage.getGameDataDirectory() + AppStorage.FILE_SEPERATOR + mFontName + mPointSize + ".png";
+
+			try {
+				ImageIO.write(lFontImage, "png", new File(lDebugFilename));
+			} catch (IOException e) {
+			}
+			
+		}
 
 		mIsLoaded = true;
 	}
