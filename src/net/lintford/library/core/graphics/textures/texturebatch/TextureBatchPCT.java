@@ -573,6 +573,8 @@ public class TextureBatchPCT {
 		int_redraw();
 
 		mBuffer.clear();
+
+		// FIXME: This is fundamentally incorrect. Cannot reset ver count here and maintain 'redraw' functionality
 		mCurNumSprites = 0;
 		mVertexCount = 0;
 

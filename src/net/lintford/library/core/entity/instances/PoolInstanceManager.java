@@ -111,4 +111,10 @@ public abstract class PoolInstanceManager<T extends PooledBaseData> extends Inst
 
 	protected abstract T createPoolObjectInstance();
 
+	@Override
+	public void clearInstances() {
+		mPooledItems.addAll(mInstances);
+		mInstances.clear();
+
+	}
 }

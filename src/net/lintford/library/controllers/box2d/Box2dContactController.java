@@ -46,7 +46,7 @@ public abstract class Box2dContactController extends BaseController implements C
 	// --------------------------------------
 
 	@Override
-	public boolean isinitialized() {
+	public boolean isInitialized() {
 		return false;
 
 	}

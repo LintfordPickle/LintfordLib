@@ -86,7 +86,7 @@ public class CameraZoomController extends BaseController {
 	}
 
 	@Override
-	public boolean isinitialized() {
+	public boolean isInitialized() {
 		return mCamera != null;
 	}
 

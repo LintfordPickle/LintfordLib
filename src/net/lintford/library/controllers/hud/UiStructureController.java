@@ -76,7 +76,7 @@ public class UiStructureController extends BaseController {
 	}
 
 	@Override
-	public boolean isinitialized() {
+	public boolean isInitialized() {
 		return mIsinitialized;
 	}
 

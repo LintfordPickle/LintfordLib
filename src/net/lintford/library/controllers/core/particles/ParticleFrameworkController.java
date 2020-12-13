@@ -40,7 +40,7 @@ public class ParticleFrameworkController extends BaseController {
 	// Properties
 	// --------------------------------------
 
-	public boolean isinitialized() {
+	public boolean isInitialized() {
 		return mParticleFrameworkData != null;
 	}
 
@@ -66,7 +66,7 @@ public class ParticleFrameworkController extends BaseController {
 	}
 
 	public void update(LintfordCore pCore) {
-		if (!isinitialized())
+		if (!isInitialized())
 			return;
 
 		final List<ParticleEmitterInstance> lEmitterInstanceList = mParticleFrameworkData.emitterManager().emitterInstances();

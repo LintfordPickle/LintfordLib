@@ -33,7 +33,7 @@ public class MusicController extends BaseController {
 
 	/** Returns true if this {@link MusicController} has been initialized properly. */
 	@Override
-	public boolean isinitialized() {
+	public boolean isInitialized() {
 		return mMusicManager != null;
 	}
 

@@ -571,6 +571,10 @@ public class JBox2dEntityInstance extends RetainedPooledBaseData {
 	 * @param pRotationInRadians The rotation angle (in radians) to rotate the PObject.
 	 */
 	public void transformEntityInstance(float pWorldXInPixels, float pWorldYInPixels, float pRotationInRadians) {
+		
+		entityPosition.x = ConstantsPhysics.toUnits(pWorldXInPixels);
+		entityPosition.y = ConstantsPhysics.toUnits(pWorldYInPixels);
+		
 		final int lBodyCount = mBodies.size();
 		for (int i = 0; i < lBodyCount; i++) {
 			transformBox2dBodyInstance(mBodies.get(i), pWorldXInPixels, pWorldYInPixels, pRotationInRadians);
@@ -580,6 +584,10 @@ public class JBox2dEntityInstance extends RetainedPooledBaseData {
 	}
 
 	public void transformEntityInstance(float pWorldXInPixels, float pWorldYInPixels) {
+		
+		entityPosition.x = ConstantsPhysics.toUnits(pWorldXInPixels);
+		entityPosition.y = ConstantsPhysics.toUnits(pWorldYInPixels);
+		
 		final int lBodyCount = mBodies.size();
 		for (int i = 0; i < lBodyCount; i++) {
 			final var lBox2dBodyInstance = mBodies.get(i);

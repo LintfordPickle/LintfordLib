@@ -28,7 +28,7 @@ public class CameraShakeController extends BaseController {
 	}
 
 	@Override
-	public boolean isinitialized() {
+	public boolean isInitialized() {
 		return mGameCamera != null;
 
 	}

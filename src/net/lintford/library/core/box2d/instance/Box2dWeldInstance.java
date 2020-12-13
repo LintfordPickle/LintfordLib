@@ -10,7 +10,11 @@ import net.lintford.library.core.LintfordCore;
 
 public class Box2dWeldInstance extends Box2dJointInstance {
 
-	private static final long serialVersionUID = -5442409523175676125L;
+	// --------------------------------------
+	// Constants
+	// --------------------------------------
+
+	private static final long serialVersionUID = -536400766749047526L;
 
 	// --------------------------------------
 	// Variables

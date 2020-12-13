@@ -23,7 +23,7 @@ public class LineBatch {
 	// Constants
 	// --------------------------------------
 
-	public static final int MAX_LINES = 2048;
+	public static final int MAX_LINES = 4096;
 	public static final int NUM_VERTS_PER_LINE = 2;
 
 	private static final String VERT_FILENAME = "/res/shaders/shader_basic_pc.vert";

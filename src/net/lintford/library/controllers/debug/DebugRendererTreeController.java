@@ -31,7 +31,7 @@ public class DebugRendererTreeController extends BaseController {
 	// --------------------------------------
 
 	@Override
-	public boolean isinitialized() {
+	public boolean isInitialized() {
 		return mRendererManager != null;
 	}
 
@@ -95,7 +95,7 @@ public class DebugRendererTreeController extends BaseController {
 	public void update(LintfordCore pCore) {
 		super.update(pCore);
 
-		if (!isinitialized())
+		if (!isInitialized())
 			return;
 
 		final var lBaseRendererList = mRendererManager.baseRenderers();

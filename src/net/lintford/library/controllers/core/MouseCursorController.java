@@ -37,7 +37,7 @@ public class MouseCursorController extends BaseController {
 	}
 
 	@Override
-	public boolean isinitialized() {
+	public boolean isInitialized() {
 		// TODO Auto-generated method stub
 		return false;
 	}

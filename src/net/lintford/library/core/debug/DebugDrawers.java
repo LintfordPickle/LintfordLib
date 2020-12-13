@@ -163,6 +163,7 @@ public class DebugDrawers {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
+		mLineBatch.lineType(GL11.GL_LINES);
 		mLineBatch.begin(pCamera);
 		mLineBatch.draw(pSX, pSY, pEX, pEY, -0.01f, pR, pG, pB);
 		mLineBatch.end();

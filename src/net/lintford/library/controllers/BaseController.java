@@ -40,7 +40,7 @@ public abstract class BaseController {
 		return mUniqueController;
 	}
 
-	public abstract boolean isinitialized();
+	public abstract boolean isInitialized();
 
 	public boolean isActive() {
 		return mIsActive;

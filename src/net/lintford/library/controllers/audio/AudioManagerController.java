@@ -25,7 +25,7 @@ public class AudioManagerController extends BaseController {
 
 	/** Returns true if this {@link AudioManagerController} has been initialized properly. */
 	@Override
-	public boolean isinitialized() {
+	public boolean isInitialized() {
 		return mAudioManager != null;
 	}
 

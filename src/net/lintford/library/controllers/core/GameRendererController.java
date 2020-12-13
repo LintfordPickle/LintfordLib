@@ -25,7 +25,7 @@ public class GameRendererController extends BaseController {
 
 	/** Returns true if this Controller has been properly initialized. Otherwise returns false. */
 	@Override
-	public boolean isinitialized() {
+	public boolean isInitialized() {
 		return mRendererManager != null;
 
 	}
@@ -63,7 +63,7 @@ public class GameRendererController extends BaseController {
 
 	@Override
 	public void update(LintfordCore pCore) {
-		if (!isinitialized())
+		if (!isInitialized())
 			return;
 
 		super.update(pCore);

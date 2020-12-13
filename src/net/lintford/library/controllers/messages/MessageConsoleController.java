@@ -29,7 +29,7 @@ public class MessageConsoleController extends BaseController implements IMessage
 	}
 
 	@Override
-	public boolean isinitialized() {
+	public boolean isInitialized() {
 		return mMessagesProvider != null;
 
 	}

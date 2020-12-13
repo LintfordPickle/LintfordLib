@@ -75,8 +75,10 @@ public class SpriteGraphRenderer extends SpriteBatch {
 
 		}
 
-		if (RENDER_DEBUG)
+		if (RENDER_DEBUG) {
 			renderSpriteTreeNodeDebug(pCore, pSpriteGraph, pSpriteGraphNode);
+
+		}
 
 	}
 
@@ -100,7 +102,10 @@ public class SpriteGraphRenderer extends SpriteBatch {
 
 		}
 
-		renderSpriteTreeNodeDebug(pCore, pSpriteGraph, pSpriteGraphNode);
+		if (RENDER_DEBUG) {
+			renderSpriteTreeNodeDebug(pCore, pSpriteGraph, pSpriteGraphNode);
+
+		}
 
 	}
 

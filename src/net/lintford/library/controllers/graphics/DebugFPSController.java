@@ -32,7 +32,7 @@ public class DebugFPSController extends BaseController {
 	}
 
 	@Override
-	public boolean isinitialized() {
+	public boolean isInitialized() {
 		return true;
 	}
 

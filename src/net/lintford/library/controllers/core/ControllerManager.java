@@ -107,7 +107,7 @@ public class ControllerManager {
 				if (!lControllerList.get(i).isActive())
 					continue;
 
-				if (lControllerList.get(i).isinitialized())
+				if (lControllerList.get(i).isInitialized())
 					continue;
 
 				lControllerList.get(i).initialize(pCore);

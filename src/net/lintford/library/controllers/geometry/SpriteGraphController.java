@@ -28,7 +28,7 @@ public class SpriteGraphController extends BaseController {
 	// --------------------------------------
 
 	@Override
-	public boolean isinitialized() {
+	public boolean isInitialized() {
 		return mSpriteGraphManager != null;
 
 	}

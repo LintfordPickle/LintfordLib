@@ -41,8 +41,8 @@ public class CollisionExtensions {
 
 	/** Checks if a point is within a given circle */
 	public static boolean intersectsCirclePoint(float pCircleX, float pCircleY, float pCircleRadius, float pPointX, float pPointY) {
-		float lDist = (float) Math.sqrt((pCircleX - pPointX) * (pCircleX - pPointX) + (pCircleY - pPointY) * (pCircleY - pPointY));
-		if (lDist < pCircleRadius) {
+		final float lDist = (float) (pCircleX - pPointX) * (pCircleX - pPointX) + (pCircleY - pPointY) * (pCircleY - pPointY);
+		if (lDist < pCircleRadius * pCircleRadius) {
 			return true;
 
 		}
