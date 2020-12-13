@@ -19,6 +19,7 @@ import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.shaders.ShaderMVP_PT;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.TextureManager;
+import net.lintford.library.core.graphics.vertices.VertexDataStructurePT;
 import net.lintford.library.core.maths.Matrix4f;
 import net.lintford.library.core.maths.Vector2f;
 import net.lintford.library.core.maths.Vector4f;
@@ -38,27 +39,6 @@ public class TextureBatchPT {
 	protected static final String FRAG_FILENAME = "/res/shaders/shader_basic_pt.frag";
 
 	protected static final int NUM_VERTS_PER_SPRITE = 6;
-
-	// The number of bytes an element has (all elements are floats here)
-	protected static final int elementBytes = 4;
-
-	// Elements per parameter
-	protected static final int positionElementCount = 4;
-	protected static final int textureElementCount = 2;
-
-	// Bytes per parameter
-	protected static final int positionBytesCount = positionElementCount * elementBytes;
-	protected static final int textureBytesCount = textureElementCount * elementBytes;
-
-	// Byte offsets per parameter
-	protected static final int positionByteOffset = 0;
-	protected static final int textureByteOffset = positionByteOffset + positionBytesCount;
-
-	// The amount of elements that a vertex has
-	protected static final int elementCount = positionElementCount + textureElementCount;
-
-	// The size of a vertex in bytes (sizeOf())
-	protected static final int stride = positionBytesCount + textureBytesCount;
 
 	// --------------------------------------
 	// Variables
@@ -150,7 +130,7 @@ public class TextureBatchPT {
 		if (mVboId == -1)
 			mVboId = GL15.glGenBuffers();
 
-		mBuffer = MemoryUtil.memAllocFloat(MAX_SPRITES * NUM_VERTS_PER_SPRITE * stride);
+		mBuffer = MemoryUtil.memAllocFloat(MAX_SPRITES * NUM_VERTS_PER_SPRITE * VertexDataStructurePT.stride);
 
 		mIsLoaded = true;
 
@@ -543,8 +523,8 @@ public class TextureBatchPT {
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, mVboId);
 		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, mBuffer, GL15.GL_STATIC_DRAW);
 
-		GL20.glVertexAttribPointer(0, positionElementCount, GL11.GL_FLOAT, false, stride, positionByteOffset);
-		GL20.glVertexAttribPointer(1, textureElementCount, GL11.GL_FLOAT, false, stride, textureByteOffset);
+		GL20.glVertexAttribPointer(0, VertexDataStructurePT.positionElementCount, GL11.GL_FLOAT, false, VertexDataStructurePT.stride, VertexDataStructurePT.positionByteOffset);
+		GL20.glVertexAttribPointer(1, VertexDataStructurePT.textureElementCount, GL11.GL_FLOAT, false, VertexDataStructurePT.stride, VertexDataStructurePT.textureByteOffset);
 
 		GL20.glEnableVertexAttribArray(0);
 		GL20.glEnableVertexAttribArray(1);

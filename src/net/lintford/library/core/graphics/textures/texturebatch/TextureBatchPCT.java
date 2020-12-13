@@ -20,6 +20,7 @@ import net.lintford.library.core.graphics.Color;
 import net.lintford.library.core.graphics.shaders.ShaderMVP_PCT;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.TextureManager;
+import net.lintford.library.core.graphics.vertices.VertexDataStructurePCT;
 import net.lintford.library.core.maths.Matrix4f;
 import net.lintford.library.core.maths.Vector2f;
 import net.lintford.library.core.maths.Vector4f;
@@ -39,30 +40,6 @@ public class TextureBatchPCT {
 	protected static final String FRAG_FILENAME = "/res/shaders/shader_basic_pct.frag";
 
 	protected static final int NUM_VERTS_PER_SPRITE = 6;
-
-	// The number of bytes an element has (all elements are floats here)
-	protected static final int elementBytes = 4;
-
-	// Elements per parameter
-	protected static final int positionElementCount = 4;
-	protected static final int colorElementCount = 4;
-	protected static final int textureElementCount = 2;
-
-	// Bytes per parameter
-	protected static final int positionBytesCount = positionElementCount * elementBytes;
-	protected static final int colorBytesCount = colorElementCount * elementBytes;
-	protected static final int textureBytesCount = textureElementCount * elementBytes;
-
-	// Byte offsets per parameter
-	protected static final int positionByteOffset = 0;
-	protected static final int colorByteOffset = positionByteOffset + positionBytesCount;
-	protected static final int textureByteOffset = colorByteOffset + colorBytesCount;
-
-	// The amount of elements that a vertex has
-	protected static final int elementCount = positionElementCount + colorElementCount + textureElementCount;
-
-	// The size of a vertex in bytes (sizeOf())
-	protected static final int stride = positionBytesCount + colorBytesCount + textureBytesCount;
 
 	// --------------------------------------
 	// Variables
@@ -161,7 +138,7 @@ public class TextureBatchPCT {
 		if (mVboId == -1)
 			mVboId = GL15.glGenBuffers();
 
-		mBuffer = MemoryUtil.memAllocFloat(MAX_SPRITES * NUM_VERTS_PER_SPRITE * stride);
+		mBuffer = MemoryUtil.memAllocFloat(MAX_SPRITES * NUM_VERTS_PER_SPRITE * VertexDataStructurePCT.stride);
 
 		mIsLoaded = true;
 
@@ -585,9 +562,9 @@ public class TextureBatchPCT {
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, mVboId);
 		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, mBuffer, GL15.GL_STATIC_DRAW);
 
-		GL20.glVertexAttribPointer(0, positionElementCount, GL11.GL_FLOAT, false, stride, positionByteOffset);
-		GL20.glVertexAttribPointer(1, colorElementCount, GL11.GL_FLOAT, false, stride, colorByteOffset);
-		GL20.glVertexAttribPointer(2, textureElementCount, GL11.GL_FLOAT, false, stride, textureByteOffset);
+		GL20.glVertexAttribPointer(0, VertexDataStructurePCT.positionElementCount, GL11.GL_FLOAT, false, VertexDataStructurePCT.stride, VertexDataStructurePCT.positionByteOffset);
+		GL20.glVertexAttribPointer(1, VertexDataStructurePCT.colorElementCount, GL11.GL_FLOAT, false, VertexDataStructurePCT.stride, VertexDataStructurePCT.colorByteOffset);
+		GL20.glVertexAttribPointer(2, VertexDataStructurePCT.textureElementCount, GL11.GL_FLOAT, false, VertexDataStructurePCT.stride, VertexDataStructurePCT.textureByteOffset);
 
 		GL20.glEnableVertexAttribArray(0);
 		GL20.glEnableVertexAttribArray(1);
