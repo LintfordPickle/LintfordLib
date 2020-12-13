@@ -402,4 +402,18 @@ public class Rectangle extends Shape {
 
 	}
 
+	/** Expands the bounds of this rectangle to include the new point */
+	public void updateAABB(float pWorldPositionX, float pWorldPositionY) {
+		if (x > pWorldPositionX)
+			x = pWorldPositionX;
+		if (right() < pWorldPositionX)
+			w = pWorldPositionX - x;
+
+		if (y > pWorldPositionY)
+			y = pWorldPositionY;
+		if (bottom() < pWorldPositionY)
+			h = pWorldPositionY - y;
+
+	}
+
 }
