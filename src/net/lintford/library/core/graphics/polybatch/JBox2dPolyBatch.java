@@ -2,6 +2,8 @@ package net.lintford.library.core.graphics.polybatch;
 
 import java.nio.FloatBuffer;
 
+import org.jbox2d.common.Vec2;
+import org.jbox2d.dynamics.Body;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL15;
@@ -9,6 +11,7 @@ import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.system.MemoryUtil;
 
+import net.lintford.library.ConstantsPhysics;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.camera.ICamera;
 import net.lintford.library.core.debug.Debug;
@@ -18,7 +21,6 @@ import net.lintford.library.core.graphics.shaders.ShaderMVP_PT;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.maths.Matrix4f;
-import net.lintford.library.core.maths.Vector2f;
 
 public class JBox2dPolyBatch {
 
@@ -180,12 +182,12 @@ public class JBox2dPolyBatch {
 
 	}
 
-	public void drawPolygon(Texture pTexture, Vector2f[] pVertexArray, Rectangle pSrcRect, float pZ, float pR, float pG, float pB, float pA) {
-		drawPolygon(pTexture, pVertexArray, pSrcRect.x(), pSrcRect.y(), pSrcRect.w(), pSrcRect.h(), pZ, pR, pG, pB, pA);
+	public void drawPolygon(Texture pTexture, Body pBody, Vec2[] pVertexArray, Rectangle pSrcRect, float pZ, float pR, float pG, float pB, float pA) {
+		drawPolygon(pTexture, pBody, pVertexArray, pSrcRect.x(), pSrcRect.y(), pSrcRect.w(), pSrcRect.h(), pZ, pR, pG, pB, pA);
 
 	}
 
-	public void drawPolygon(Texture pTexture, Vector2f[] pVertexArray, float pSX, float pSY, float pSW, float pSH, float pZ, float pR, float pG, float pB, float pA) {
+	public void drawPolygon(Texture pTexture, Body pBody, Vec2[] pVertexArray, float pSX, float pSY, float pSW, float pSH, float pZ, float pR, float pG, float pB, float pA) {
 		if (!mIsLoaded || !mIsDrawing)
 			return;
 
@@ -219,31 +221,33 @@ public class JBox2dPolyBatch {
 		}
 
 		// Vertex 0
-		float x0 = pVertexArray[0].x;
-		float y0 = pVertexArray[0].y;
+		final var vert0 = pBody.getWorldPoint(pVertexArray[0]);
+		float x0 = vert0.x * ConstantsPhysics.UnitsToPixels();
+		float y0 = vert0.y * ConstantsPhysics.UnitsToPixels();
 		float u0 = (pSX + pSW) / pTexture.getTextureWidth();
 		float v0 = pSY / pTexture.getTextureHeight();
 
 		// Vertex 1
-		float x1 = pVertexArray[1].x;
-		float y1 = pVertexArray[1].y;
+		final var vert1 = pBody.getWorldPoint(pVertexArray[1]);
+		float x1 = vert1.x * ConstantsPhysics.UnitsToPixels();
+		float y1 = vert1.y * ConstantsPhysics.UnitsToPixels();
 		float u1 = (pSX) / pTexture.getTextureWidth();
 		float v1 = (pSY) / pTexture.getTextureHeight();
 
 		// Vertex 2
-		float x2 = pVertexArray[2].x;
-		float y2 = pVertexArray[2].y;
+		final var vert2 = pBody.getWorldPoint(pVertexArray[3]);
+		float x2 = vert2.x * ConstantsPhysics.UnitsToPixels();
+		float y2 = vert2.y * ConstantsPhysics.UnitsToPixels();
 		float u2 = pSX / pTexture.getTextureWidth();
 		float v2 = (pSY + pSH) / pTexture.getTextureHeight();
 
 		// Vertex 3
-		float x3 = pVertexArray[3].x;
-		float y3 = pVertexArray[3].y;
+		final var vert3 = pBody.getWorldPoint(pVertexArray[2]);
+		float x3 = vert3.x * ConstantsPhysics.UnitsToPixels();
+		float y3 = vert3.y * ConstantsPhysics.UnitsToPixels();
 		float u3 = (pSX + pSW) / pTexture.getTextureWidth();
 		float v3 = (pSY + pSH) / pTexture.getTextureHeight();
 
-		// -- CCW 102123
-		// CW 120132
 		addVertToBuffer(x0, y0, pZ, 1f, pR, pG, pB, pA, u0, v0); // 0
 		addVertToBuffer(x2, y2, pZ, 1f, pR, pG, pB, pA, u2, v2); // 2
 		addVertToBuffer(x3, y3, pZ, 1f, pR, pG, pB, pA, u3, v3); // 3
