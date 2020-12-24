@@ -5,7 +5,6 @@ import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.Fixture;
 
-import net.lintford.library.ConstantsPhysics;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.box2d.entities.JBox2dEntityInstance;
@@ -113,19 +112,7 @@ public class PObjectRenderer {
 
 				if (lFixt.getShape() instanceof PolygonShape) {
 					final PolygonShape fixtureShape = (PolygonShape) lFixt.getShape();
-					int vSize = Math.min(fixtureShape.getVertexCount(), MAX_VERTS);
-
-					for (int k = 0; k < vSize; k++) {
-						vertex = fixtureShape.getVertex(k);
-
-						final Vec2 worldPoint = lBody.getWorldPoint(vertex);
-
-						verts[k].x = ConstantsPhysics.toPixels(worldPoint.x);
-						verts[k].y = ConstantsPhysics.toPixels(worldPoint.y);
-
-					}
-
-					mTextureBatch.drawPolygon(lTexture, verts, lFrame, -0.2f, 1f, 1f, 1f, 1f);
+					mTextureBatch.drawPolygon(lTexture, lBody, fixtureShape.getVertices(), lFrame, -0.2f, 1f, 1f, 1f, 1f);
 
 				}
 
