@@ -62,6 +62,10 @@ public abstract class RetainedPoolInstanceManager<T extends RetainedPooledBaseDa
 		else
 			lInst = enlargenInstancePool(DEFAULT_ENLARGEN_POOL_AMOUNT);
 
+		if (!mInstances.contains(lInst)) {
+			mInstances.add(lInst);
+		}
+
 		return lInst;
 
 	}
