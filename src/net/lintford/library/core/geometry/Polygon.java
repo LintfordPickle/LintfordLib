@@ -19,7 +19,7 @@ public class Polygon extends Shape {
 	// Variables
 	// --------------------------------------
 
-	protected List<Vector2f> mVertices;
+	protected final List<Vector2f> mVertices = new ArrayList<>();
 	protected Vector2f[] mAxes;
 	protected final Vector2f mCentroid;
 	protected boolean mDirty;
@@ -65,7 +65,6 @@ public class Polygon extends Shape {
 	}
 
 	public Polygon(float pCenterX, float pCenterY) {
-		mVertices = new ArrayList<>();
 		mCentroid = new Vector2f();
 
 		x = pCenterX;
@@ -74,7 +73,6 @@ public class Polygon extends Shape {
 	}
 
 	public Polygon(Polygon pOther) {
-		mVertices = new ArrayList<>();
 		mCentroid = new Vector2f();
 
 		if (pOther != null) {
