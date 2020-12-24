@@ -389,19 +389,18 @@ public class DebugDrawers {
 		mLineBatch.draw(pSX, pSY, pEX, pEY, -0.01f, pR, pG, pB);
 	}
 
-	public void drawRect(Rectangle pRect, float pLineWidth, float pR, float pG, float pB) {
+	public void drawRect(Rectangle pRect, float pR, float pG, float pB) {
 		if (pRect == null)
 			return;
 
-		drawRect(pRect.left(), pRect.top(), pRect.width(), pRect.height(), pLineWidth, pR, pG, pB);
+		drawRect(pRect.left(), pRect.top(), pRect.width(), pRect.height(), pR, pG, pB);
 	}
 
-	public void drawRect(float pX, float pY, float pW, float pH, float pLineWidth, float pR, float pG, float pB) {
+	public void drawRect(float pX, float pY, float pW, float pH, float pR, float pG, float pB) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
 		mLineBatch.lineType(GL11.GL_LINES);
-		mLineBatch.lineWidth(pLineWidth);
 		mLineBatch.drawRect(pX, pY, pW, pH, -.01f, pR, pG, pB);
 	}
 
