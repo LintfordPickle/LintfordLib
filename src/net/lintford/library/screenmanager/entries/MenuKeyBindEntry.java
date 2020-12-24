@@ -134,7 +134,7 @@ public class MenuKeyBindEntry extends MenuEntry implements IKeyInputCallback {
 
 		if (mHasFocus) {
 			if (!pCore.input().keyboard().isSomeComponentCapturingInputKeys()) {
-				System.out.println("changing key bind for " + eventAction.eventActionUid);
+				Debug.debugManager().logger().i(getClass().getSimpleName(), "Changing key bind for " + eventAction.eventActionUid);
 				pCore.input().keyboard().StartKeyInputCapture(this);
 				mBindingKey = true;
 
