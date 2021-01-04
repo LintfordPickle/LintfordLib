@@ -439,8 +439,8 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 		}
 
 		if (mScrollBarsEnabled_Internal) {
-			mScrollBar.draw(pCore, lTextureBatch, lUiTexture, pComponentDepth + .1f);
 			mContentArea.postDraw(pCore);
+			mScrollBar.draw(pCore, lTextureBatch, lUiTexture, pComponentDepth + .1f);
 
 		}
 
