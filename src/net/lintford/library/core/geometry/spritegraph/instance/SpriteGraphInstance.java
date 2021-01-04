@@ -49,7 +49,7 @@ public class SpriteGraphInstance extends RetainedPooledBaseData implements Anima
 
 	private boolean mOrdered;
 	public transient List<SpriteGraphNodeInstance> mFlatNodes;
-	private AnimatedSpriteGraphListener mAnimatedSpriteGraphListener;
+	private transient AnimatedSpriteGraphListener mAnimatedSpriteGraphListener;
 
 	public float positionX;
 	public float positionY;
