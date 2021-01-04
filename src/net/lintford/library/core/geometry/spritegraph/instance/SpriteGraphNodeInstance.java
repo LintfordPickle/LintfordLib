@@ -62,7 +62,7 @@ public class SpriteGraphNodeInstance extends RetainedPooledBaseData {
 	public boolean disableTreeUpdatesPosition;
 	public boolean disableTreeUpdatesRotation;
 
-	public Object attachedItemInstance;
+	public transient Object attachedItemInstance;
 
 	// --------------------------------------
 	// Properties
