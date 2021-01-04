@@ -147,6 +147,8 @@ public class ListLayout extends BaseLayout implements IProcessMouseInput {
 
 			if (lMenuEntry.horizontalFillType() == FILLTYPE.FILL_CONTAINER) {
 				lMenuEntry.w(lNewEntryWidth);
+			} else if (lMenuEntry.horizontalFillType() == FILLTYPE.QUARTER_PARENT) {
+				lMenuEntry.w(lNewEntryWidth * .25f);
 			} else if (lMenuEntry.horizontalFillType() == FILLTYPE.HALF_PARENT) {
 				lMenuEntry.w(lNewEntryWidth * .5f);
 			} else if (lMenuEntry.horizontalFillType() == FILLTYPE.THREEQUARTER_PARENT) {
