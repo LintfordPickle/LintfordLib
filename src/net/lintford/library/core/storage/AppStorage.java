@@ -69,7 +69,6 @@ public class AppStorage {
 
 		}
 
-		Debug.debugManager().logger().i("Storage", "Creating game data directory at: " + lSaveFolder);
 		return lSaveFolder;
 	}
 
