@@ -55,6 +55,7 @@ import org.json.JSONObject;
 import net.lintford.library.core.box2d.instance.Box2dCircleInstance;
 import net.lintford.library.core.box2d.instance.Box2dEdgeInstance;
 import net.lintford.library.core.box2d.instance.Box2dPolygonInstance;
+import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.entity.definitions.BaseDefinition;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.maths.MathHelper;
@@ -138,13 +139,10 @@ public class PObjectDefinition extends BaseDefinition {
 	}
 
 	public PObjectDefinition(boolean useHumanReadableFloats) {
-
 		if (!useHumanReadableFloats) {
-			// The floatToHex function is not giving the same results
-			// as the original C++ version... not critical so worry about it
-			// later.
-			System.out.println("Non human readable floats are not implemented yet");
+			Debug.debugManager().logger().i(getClass().getSimpleName(), "Non human readable floats are not implemented yet");
 			useHumanReadableFloats = true;
+
 		}
 
 		mIndexToBodyMap = new HashMap<>();
@@ -309,18 +307,18 @@ public class PObjectDefinition extends BaseDefinition {
 
 				}
 			}
-//			for (i = 0; i < numJointValues; i++) {
-//				JSONObject jointValue = jointValues.getJSONObject(i);
-//				if (jointValue.optString("type", "").equals("gear")) {
-//					Box2dJointDefinition joint = j2b2Joint(jointValue);
-//
-//					// TODO: Load custom values
-//					// readCustomPropertiesFromJson(joint, jointValue);
-//
-//					mJoints.add(joint);
-//
-//				}
-//			}
+			//			for (i = 0; i < numJointValues; i++) {
+			//				JSONObject jointValue = jointValues.getJSONObject(i);
+			//				if (jointValue.optString("type", "").equals("gear")) {
+			//					Box2dJointDefinition joint = j2b2Joint(jointValue);
+			//
+			//					// TODO: Load custom values
+			//					// readCustomPropertiesFromJson(joint, jointValue);
+			//
+			//					mJoints.add(joint);
+			//
+			//				}
+			//			}
 		}
 
 	}
@@ -470,11 +468,14 @@ public class PObjectDefinition extends BaseDefinition {
 			Vec2 vertices[] = new Vec2[Settings.maxPolygonVertices];
 			int numVertices = polygonValue.getJSONObject("vertices").getJSONArray("x").length();
 			if (numVertices > Settings.maxPolygonVertices) {
-				System.out.println("Ignoring polygon fixture with too many vertices.");
+				Debug.debugManager().logger().i(getClass().getSimpleName(), "Ignoring polygon fixture with too many vertices.");
+
 			} else if (numVertices < 2) {
-				System.out.println("Ignoring polygon fixture less than two vertices.");
+				Debug.debugManager().logger().i(getClass().getSimpleName(), "Ignoring polygon fixture less than two vertices.");
+
 			} else if (numVertices == 2) {
-				System.out.println("Creating edge shape instead of polygon with two vertices.");
+				Debug.debugManager().logger().i(getClass().getSimpleName(), "Creating edge shape instead of polygon with two vertices.");
+
 				EdgeShape edgeShape = new EdgeShape();
 				edgeShape.m_vertex1.set(jsonToVec("vertices", polygonValue, 0));
 				edgeShape.m_vertex2.set(jsonToVec("vertices", polygonValue, 1));
