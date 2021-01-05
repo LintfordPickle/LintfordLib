@@ -1,5 +1,7 @@
 package net.lintford.library.core.box2d.instance;
 
+import java.io.Serializable;
+
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.Filter;
 import org.jbox2d.dynamics.Fixture;
@@ -35,6 +37,7 @@ public class Box2dFixtureInstance extends RetainedPooledBaseData {
 	public int maskBits;
 
 	public String spriteName;
+	public Serializable userdata;
 
 	// --------------------------------------
 	// Properties
