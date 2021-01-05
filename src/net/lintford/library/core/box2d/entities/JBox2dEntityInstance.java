@@ -9,6 +9,7 @@ import org.jbox2d.dynamics.Filter;
 import org.jbox2d.dynamics.World;
 import org.jbox2d.dynamics.joints.PrismaticJointDef;
 import org.jbox2d.dynamics.joints.RevoluteJointDef;
+import org.jbox2d.dynamics.joints.WeldJointDef;
 
 import net.lintford.library.ConstantsPhysics;
 import net.lintford.library.core.box2d.BasePhysicsData;
@@ -22,6 +23,7 @@ import net.lintford.library.core.box2d.instance.Box2dJointInstance;
 import net.lintford.library.core.box2d.instance.Box2dPolygonInstance;
 import net.lintford.library.core.box2d.instance.Box2dPrismaticInstance;
 import net.lintford.library.core.box2d.instance.Box2dRevoluteInstance;
+import net.lintford.library.core.box2d.instance.Box2dWeldInstance;
 import net.lintford.library.core.entity.instances.RetainedPooledBaseData;
 
 /**
@@ -227,6 +229,22 @@ public class JBox2dEntityInstance extends RetainedPooledBaseData {
 				lPrismaticJointDef.collideConnected = lBox2dPrismaticJointInsance.collidesConnected;
 
 				lBox2dJointInstance.joint = pWorld.createJoint(lPrismaticJointDef);
+
+			} else if (lBox2dJointInstance instanceof Box2dWeldInstance) {
+				final var lBox2dWeldJointInsance = (Box2dWeldInstance) lBox2dJointInstance;
+				final var lWeldJointInstance = new WeldJointDef();
+
+				final var lBodyA = getBodyByIndex(lBox2dJointInstance.bodyAUid);
+				if (lBodyA == null)
+					continue;
+
+				final var lBodyB = getBodyByIndex(lBox2dJointInstance.bodyBUid);
+				if (lBodyB == null)
+					continue;
+
+				lWeldJointInstance.collideConnected = lBox2dWeldJointInsance.collidesConnected;
+
+				lBox2dWeldJointInsance.createWeldJoint(pWorld, lBodyA.mBody, lBodyB.mBody, lBox2dWeldJointInsance.localAnchorA, lBox2dWeldJointInsance.localAnchorB, 0.f);
 
 			}
 
@@ -571,10 +589,10 @@ public class JBox2dEntityInstance extends RetainedPooledBaseData {
 	 * @param pRotationInRadians The rotation angle (in radians) to rotate the PObject.
 	 */
 	public void transformEntityInstance(float pWorldXInPixels, float pWorldYInPixels, float pRotationInRadians) {
-		
+
 		entityPosition.x = ConstantsPhysics.toUnits(pWorldXInPixels);
 		entityPosition.y = ConstantsPhysics.toUnits(pWorldYInPixels);
-		
+
 		final int lBodyCount = mBodies.size();
 		for (int i = 0; i < lBodyCount; i++) {
 			transformBox2dBodyInstance(mBodies.get(i), pWorldXInPixels, pWorldYInPixels, pRotationInRadians);
@@ -584,10 +602,10 @@ public class JBox2dEntityInstance extends RetainedPooledBaseData {
 	}
 
 	public void transformEntityInstance(float pWorldXInPixels, float pWorldYInPixels) {
-		
+
 		entityPosition.x = ConstantsPhysics.toUnits(pWorldXInPixels);
 		entityPosition.y = ConstantsPhysics.toUnits(pWorldYInPixels);
-		
+
 		final int lBodyCount = mBodies.size();
 		for (int i = 0; i < lBodyCount; i++) {
 			final var lBox2dBodyInstance = mBodies.get(i);
