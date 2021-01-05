@@ -5,6 +5,7 @@ import java.util.List;
 
 /**
  * The {@link PoolInstanceManager} maintains an arraylist as well as an instance list of items which can be returned to the pool for later re-use.
+ * Items given out by this pool are NOT tracked. (See {@ RetainedPoolInstanceManager for the alternative).
  */
 public abstract class PoolInstanceManager<T extends PooledBaseData> extends InstanceManager<T> {
 
