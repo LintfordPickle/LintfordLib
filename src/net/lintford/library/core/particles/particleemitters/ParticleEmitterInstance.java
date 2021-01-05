@@ -33,13 +33,34 @@ public class ParticleEmitterInstance extends WorldEntity {
 	protected transient ParticleEmitterDefinition mEmitterDefinition;
 	public float mEmitTimer;
 	public float mEmitAmount;
-	public boolean enabled;
+	private boolean enabled;
 
 	private float mEmitterEmitModifier; // [0,1]
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(boolean pIsEnabled) {
+		if (enabled == pIsEnabled)
+			return;
+
+		enabled = pIsEnabled;
+
+		// This is a cop-out: the actual problem is that the child emitters are processed independantly of the parent emitter
+		final int childEmitterCount = mChildEmitters.length;
+		for (int i = 0; i < childEmitterCount; i++) {
+			if (mChildEmitters[i] == null)
+				continue;
+
+			mChildEmitters[i].enabled = pIsEnabled;
+		}
+
+	}
 
 	public ParticleSystemInstance particleSystem() {
 		return mParticleSystem;
