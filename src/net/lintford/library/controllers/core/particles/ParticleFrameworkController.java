@@ -1,13 +1,9 @@
 package net.lintford.library.controllers.core.particles;
 
-import java.util.List;
-
 import net.lintford.library.controllers.BaseController;
 import net.lintford.library.controllers.core.ControllerManager;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.particles.ParticleFrameworkData;
-import net.lintford.library.core.particles.particleemitters.ParticleEmitterInstance;
-import net.lintford.library.core.particles.particlesystems.ParticleSystemInstance;
 
 public class ParticleFrameworkController extends BaseController {
 
@@ -15,7 +11,7 @@ public class ParticleFrameworkController extends BaseController {
 	// Constants
 	// --------------------------------------
 
-	public static final String CONTROLLER_NAME = "ParticleFrameworkController";
+	public static final String CONTROLLER_NAME = "Particle Framework Controller";
 
 	// --------------------------------------
 	// Variables
@@ -69,37 +65,37 @@ public class ParticleFrameworkController extends BaseController {
 		if (!isInitialized())
 			return;
 
-		final List<ParticleEmitterInstance> lEmitterInstanceList = mParticleFrameworkData.emitterManager().emitterInstances();
-		final List<ParticleSystemInstance> lSystemInstanceList = mParticleFrameworkData.particleSystemManager().particleSystems();
+		final var lEmitterInstanceList = mParticleFrameworkData.emitterManager().emitterInstances();
+		final var lSystemInstanceList = mParticleFrameworkData.particleSystemManager().particleSystems();
 
 		final int lNumParticleEmitters = lEmitterInstanceList.size();
 		for (int i = 0; i < lNumParticleEmitters; i++) {
-			ParticleEmitterInstance lEmitterInst = lEmitterInstanceList.get(i);
-			if (!lEmitterInst.isAssigned())
+			final var lParticleEmitterInstance = lEmitterInstanceList.get(i);
+			if (!lParticleEmitterInstance.isAssigned())
 				continue;
 
-			if (!lEmitterInst.enabled)
+			if (!lParticleEmitterInstance.isEnabled())
 				continue;
 
 			// Apply the position of the root emitter directly, so that each emitter instance can apply their own positional offsets
 			// based on the emitter definitions.
-			if (lEmitterInst.parentEntity() != null) {
-				lEmitterInst.worldPositionX = lEmitterInst.parentEntity().worldPositionX;
-				lEmitterInst.worldPositionY = lEmitterInst.parentEntity().worldPositionY;
+			if (lParticleEmitterInstance.parentEntity() != null) {
+				lParticleEmitterInstance.worldPositionX = lParticleEmitterInstance.parentEntity().worldPositionX;
+				lParticleEmitterInstance.worldPositionY = lParticleEmitterInstance.parentEntity().worldPositionY;
 
 			}
 
-			lEmitterInst.update(pCore);
+			lParticleEmitterInstance.update(pCore);
 
 		}
 
 		final int lNumParticleSystems = lSystemInstanceList.size();
 		for (int i = 0; i < lNumParticleSystems; i++) {
-			ParticleSystemInstance lSystemInst = lSystemInstanceList.get(i);
-			if (!lSystemInst.isAssigned())
+			final var lParticleSystemInstance = lSystemInstanceList.get(i);
+			if (!lParticleSystemInstance.isAssigned())
 				continue;
 
-			lSystemInst.update(pCore);
+			lParticleSystemInstance.update(pCore);
 
 		}
 
