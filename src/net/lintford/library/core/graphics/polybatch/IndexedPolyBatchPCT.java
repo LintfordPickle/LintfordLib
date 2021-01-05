@@ -143,6 +143,9 @@ public class IndexedPolyBatchPCT {
 		if (pCamera == null)
 			return;
 
+		if(!mIsLoaded)
+			return;
+		
 		if (mIsDrawing)
 			return;
 
