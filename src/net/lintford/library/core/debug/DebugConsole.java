@@ -74,13 +74,18 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 
 	}
 
+	public enum CONSOLE_STATE {
+		closed, open, minimal,
+	}
+
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
 	private final Debug mDebugManager;
 
-	private transient boolean mOpen;
+	private transient CONSOLE_STATE mConsoleState = CONSOLE_STATE.closed;
+
 	private transient float mFocusTimer;
 	private transient StringBuilder mInputText;
 
@@ -143,11 +148,18 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 	}
 
 	public boolean isOpen() {
-		return mOpen;
+		return mConsoleState == CONSOLE_STATE.open;
 	}
 
 	public float openHeight() {
 		return (float) Math.pow(14, 2);
+
+	}
+
+	public void setConsoleState(CONSOLE_STATE newState) {
+		if (newState == null)
+			return;
+		mConsoleState = newState;
 
 	}
 
@@ -177,7 +189,7 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 
 			mInputText = new StringBuilder();
 
-			mOpen = false;
+			mConsoleState = CONSOLE_STATE.closed;
 
 			mSpriteBatch = new TextureBatchPCT();
 
@@ -238,7 +250,7 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
-		if (mOpen) {
+		if (mConsoleState == CONSOLE_STATE.open) {
 			if (intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().tryAcquireMouseMiddle(hashCode())) {
 				if (mTAGFilterText.handleInput(pCore))
 					return;
@@ -301,8 +313,9 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 			}
 
 			if (pCore.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_ESCAPE)) {
-				if (mOpen) {
-					mOpen = false;
+				if (mConsoleState == CONSOLE_STATE.open) {
+					mConsoleState = CONSOLE_STATE.closed;
+
 					mInputText.delete(0, mInputText.length());
 					mHasFocus = false;
 					pCore.input().keyboard().stopBufferedTextCapture();
@@ -362,10 +375,11 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 
 		// listen for opening and closing
 		if (pCore.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_F1)) {
-			mOpen = !mOpen;
-			if (mOpen) {
+			switch (mConsoleState) {
+			case closed:
+				mConsoleState = CONSOLE_STATE.minimal;
+
 				mInputText.delete(0, mInputText.length());
-				// if default to capture on open
 
 				if (AUTO_CAPTURE_ON_OPEN) {
 					mHasFocus = true;
@@ -373,9 +387,16 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 
 				}
 
-			} else {
+				break;
+			case minimal:
+				mConsoleState = CONSOLE_STATE.open;
+
 				mHasFocus = false;
 
+				break;
+			default:
+				mConsoleState = CONSOLE_STATE.closed;
+				mHasFocus = false;
 			}
 
 		}
@@ -386,7 +407,12 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
-		if (!mIsLoaded || !mOpen)
+		if (mConsoleState == CONSOLE_STATE.minimal) {
+			mAutoScroll = true;
+
+		}
+
+		if (!mIsLoaded || mConsoleState == CONSOLE_STATE.closed)
 			return;
 
 		final float lDeltaTime = (float) pCore.appTime().elapsedTimeMilli() / 1000f;
@@ -476,7 +502,7 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
-		if (!mIsLoaded || !mOpen)
+		if (!mIsLoaded || mConsoleState == CONSOLE_STATE.closed)
 			return;
 
 		final float Z_DEPTH = ZLayers.LAYER_DEBUG;
@@ -487,7 +513,7 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 
 		final float PADDING_LEFT = 5;
 		final float lInputTextXOffset = 14;
-		float lTextPosition = -20;
+		float lTextPosition = mConsoleState == CONSOLE_STATE.minimal ? 10 : -20;
 		final float lTextHeight = 18f;
 
 		mTAGFilterText.set(x + POSITION_OFFSET_TAG, y + 5, 200, 25);
@@ -497,17 +523,25 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 
 		final var lScreenBB = pCore.HUD().boundingRectangle();
 
-		// Draw the console background (with a black border for the text input region)
-		mSpriteBatch.begin(pCore.HUD());
-		mSpriteBatch.draw(mCoreUITexture, 0, 0, 32, 32, lScreenBB.left(), lScreenBB.top(), lScreenBB.width(), lScreenBB.height() - 25, Z_DEPTH, mConsoleBackgroundColor);
-		mSpriteBatch.draw(mCoreUITexture, 0, 0, 32, 32, x, y, w, h, Z_DEPTH, ColorConstants.MenuPanelPrimaryColor);
-		
-		final var lBackgroundInputPanelColor = ColorConstants.getBlackWithAlpha(0.35f);
-		mSpriteBatch.draw(mCoreUITexture, 0, 0, 32, 32, x, y + 50 - lTextHeight, w, 2, Z_DEPTH, lBackgroundInputPanelColor);
-		mSpriteBatch.draw(mCoreUITexture, 0, 0, 32, 32, x + 110, y + 50 - lTextHeight, 2, h - 50, Z_DEPTH, lBackgroundInputPanelColor);
-		mSpriteBatch.draw(mCoreUITexture, 0, 0, 32, 32, x, y + h - lTextHeight, w, lTextHeight, Z_DEPTH, lBackgroundInputPanelColor);
-		
-		mSpriteBatch.end();
+		if (mConsoleState == CONSOLE_STATE.open) {
+			// Draw the console background (with a black border for the text input region)
+			mSpriteBatch.begin(pCore.HUD());
+			mSpriteBatch.draw(mCoreUITexture, 0, 0, 32, 32, lScreenBB.left(), lScreenBB.top(), lScreenBB.width(), lScreenBB.height() - 25, Z_DEPTH, mConsoleBackgroundColor);
+			mSpriteBatch.draw(mCoreUITexture, 0, 0, 32, 32, x, y, w, h, Z_DEPTH, ColorConstants.MenuPanelPrimaryColor);
+
+			final var lBackgroundInputPanelColor = ColorConstants.getBlackWithAlpha(0.35f);
+			mSpriteBatch.draw(mCoreUITexture, 0, 0, 32, 32, x, y + 50 - lTextHeight, w, 2, Z_DEPTH, lBackgroundInputPanelColor);
+			mSpriteBatch.draw(mCoreUITexture, 0, 0, 32, 32, x + 110, y + 50 - lTextHeight, 2, h - 50, Z_DEPTH, lBackgroundInputPanelColor);
+			mSpriteBatch.draw(mCoreUITexture, 0, 0, 32, 32, x, y + h - lTextHeight, w, lTextHeight, Z_DEPTH, lBackgroundInputPanelColor);
+
+			mSpriteBatch.end();
+
+			mTAGFilterText.draw(pCore, mSpriteBatch, mCoreUITexture, mConsoleFont, Z_DEPTH + 0.01f);
+			mMessageFilterText.draw(pCore, mSpriteBatch, mCoreUITexture, mConsoleFont, Z_DEPTH + 0.01f);
+
+			mScrollBar.draw(pCore, mSpriteBatch, mCoreUITexture, Z_DEPTH + 0.1f);
+
+		}
 
 		mConsoleFont.begin(pCore.HUD());
 
@@ -556,12 +590,7 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 						y + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET, Z_DEPTH + 0.1f, 1f);
 		}
 
-		mTAGFilterText.draw(pCore, mSpriteBatch, mCoreUITexture, mConsoleFont, Z_DEPTH + 0.01f);
-		mMessageFilterText.draw(pCore, mSpriteBatch, mCoreUITexture, mConsoleFont, Z_DEPTH + 0.01f);
-
 		mConsoleFont.end();
-
-		mScrollBar.draw(pCore, mSpriteBatch, mCoreUITexture, Z_DEPTH + 0.1f);
 
 	}
 
@@ -693,7 +722,7 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 	@Override
 	public boolean onEscapePressed() {
 		mHasFocus = false;
-		mOpen = false;
+		mConsoleState = CONSOLE_STATE.closed;
 
 		if (mInputText.length() > 0) {
 			mInputText.delete(0, mInputText.length());

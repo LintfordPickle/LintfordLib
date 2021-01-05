@@ -27,6 +27,7 @@ import net.lintford.library.core.camera.HUD;
 import net.lintford.library.core.camera.ICamera;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.debug.Debug.DebugLogLevel;
+import net.lintford.library.core.debug.DebugConsole.CONSOLE_STATE;
 import net.lintford.library.core.debug.DebugMemory;
 import net.lintford.library.core.entity.BaseEntity;
 import net.lintford.library.core.input.EventActionManager;
@@ -316,6 +317,13 @@ public abstract class LintfordCore {
 		}
 
 		Debug.debugManager(lNewLogLevel);
+		if (lNewLogLevel.logLevel > DebugLogLevel.verbose.logLevel) {
+			Debug.debugManager().console().setConsoleState(CONSOLE_STATE.minimal);
+
+		} else {
+			Debug.debugManager().console().setConsoleState(CONSOLE_STATE.closed);
+
+		}
 
 		registerGameInfoConstants(pGameInfo);
 
