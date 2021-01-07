@@ -456,19 +456,18 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 
 		}
 
-		lTextureBatch.end();
-
 		// Draw the window title
 		final var lTitleFontUnit = mRendererManager.titleFont();
 		lTitleFontUnit.begin(pCore.HUD());
 		lTitleFontUnit.drawShadow(true);
 		lTitleFontUnit.draw(mWindowTitle, lTitleX, lTitleY, Z_DEPTH, ColorConstants.TextHeadingColor, 1.15f);
-		lTitleFontUnit.end();
 
 		if (mFullContentRectangle.h() - contentDisplayArea().h() > 0) {
 			mScrollBar.draw(pCore, lTextureBatch, mUiCoreTexture, Z_DEPTH);
 
 		}
+
+		lTextFont.begin(pCore.HUD());
 
 		// Draw the window components
 		final int lComponentCount = mComponents.size();
@@ -476,6 +475,10 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 			mComponents.get(i).draw(pCore, lTextureBatch, mUiCoreTexture, lTextFont, ZLayers.LAYER_GAME_UI + ((float) i * 0.001f));
 
 		}
+
+		lTextFont.end();
+		lTextureBatch.end();
+		lTitleFontUnit.end();
 
 		if (ConstantsApp.getBooleanValueDef("DRAW_UI_BOUNDS", false)) {
 			Debug.debugManager().drawers().drawRectImmediate(pCore.HUD(), mWindowArea);

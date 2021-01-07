@@ -17,6 +17,9 @@ public abstract class UIWidget extends Rectangle implements IProcessMouseInput {
 	// --------------------------------------
 
 	private static final long serialVersionUID = 8734195273392955490L;
+	
+	protected static final float lHorizontalPadding = 5.0f;
+	protected static final float lVerticalPadding = 5.0f;
 
 	// --------------------------------------
 	// Variables
@@ -55,17 +58,19 @@ public abstract class UIWidget extends Rectangle implements IProcessMouseInput {
 	// --------------------------------------
 
 	public UIWidget(final UiWindow pParentWindow) {
-		super();
-
-		mIsVisible = true;
-		mIsEnabled = true;
-
-		mParentWindow = pParentWindow;
+		this(pParentWindow, 0, 0, 0, 0);
 
 	}
 
 	public UIWidget(final UiWindow pParentWindow, final Rectangle pBounds) {
-		super(pBounds);
+		this(pParentWindow, pBounds.x(), pBounds.y(), pBounds.w(), pBounds.h());
+
+	}
+
+	public UIWidget(final UiWindow pParentWindow, float x, float y, float w, float h) {
+		super(x, y, w, h);
+
+		setDimensions(100.f, 25.f);
 
 		mIsVisible = true;
 		mIsEnabled = true;

@@ -296,7 +296,7 @@ public class DebugRendererTreeRenderer extends Rectangle implements IScrollBarAr
 		mTextureBatch.end();
 
 		mConsoleFont.begin(pCore.HUD());
-		mConsoleFont.draw("Renderers", x + 5f, y - 25f, -0.02f, ColorConstants.WHITE, 1, -1);
+		mConsoleFont.draw("Renderers", x + 5f, y - 25f, -0.01f, ColorConstants.WHITE, 1, -1);
 		mConsoleFont.end();
 
 		// Getting list of ControllerItems to render
@@ -306,17 +306,15 @@ public class DebugRendererTreeRenderer extends Rectangle implements IScrollBarAr
 		final var lNumTreeComponents = lControllerList.size();
 
 		if (lNumTreeComponents == 0) {
-			mConsoleFont.begin(pCore.HUD());
 			mConsoleFont.draw("No BaseRenderers on Screen", x + 5f, y + 5f, -0.02f, ColorConstants.TextHeadingColor, 1, -1);
-			mConsoleFont.end();
 			return;
 		}
 
 		if (h < mContentRectangle.h())
 			mContentRectangle.preDraw(pCore, mTextureBatch, mCoreTexture);
 
-		mTextureBatch.begin(pCore.HUD());
 		mConsoleFont.begin(pCore.HUD());
+		mTextureBatch.begin(pCore.HUD());
 
 		for (int i = mLowerBound; i < mUpperBound; i++) {
 			if (i < 0)
@@ -344,16 +342,20 @@ public class DebugRendererTreeRenderer extends Rectangle implements IScrollBarAr
 
 		}
 
-		mConsoleFont.end();
 		mTextureBatch.end();
+		mConsoleFont.end();
 
 		if (h < mContentRectangle.h())
 			mContentRectangle.postDraw(pCore);
+
+		mTextureBatch.begin(pCore.HUD());
 
 		if (mScrollBarEnabled) {
 			mScrollBar.draw(pCore, mTextureBatch, mCoreTexture, -0.02f);
 
 		}
+
+		mTextureBatch.end();
 
 	}
 

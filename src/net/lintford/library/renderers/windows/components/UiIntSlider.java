@@ -147,18 +147,14 @@ public class UiIntSlider extends UIWidget {
 		final float SLIDER_RAIL_HEIGHT = 4;
 		final float SLIDER_WIDTH = 10;
 
-		pTextureBatch.begin(pCore.HUD());
 		final var lBackgroundColor = mIsEnabled ? ColorConstants.getColorWithRGBMod(ColorConstants.PrimaryColor, 1.f) : ColorConstants.getBlackWithAlpha(.4f);
 		pTextureBatch.draw(pUITexture, 0, 0, 32, 32, x, y + h / 2 - SLIDER_RAIL_HEIGHT / 2, w, SLIDER_RAIL_HEIGHT, 0f, lBackgroundColor);
 		final var lNubbinColor = mIsEnabled ? ColorConstants.getColorWithRGBMod(ColorConstants.TertiaryColor, 1.f) : ColorConstants.getBlackWithAlpha(.4f);
 		pTextureBatch.draw(pUITexture, 0, 0, 32, 32, x + mCurrentRelPosition - SLIDER_WIDTH / 2, y + h / 4, SLIDER_WIDTH, h / 2, 0f, lNubbinColor);
-		pTextureBatch.end();
 
-		pTextFont.begin(pCore.HUD());
 		pTextFont.draw(mSliderLabel, x, y - h / 2, pComponentZDepth, ColorConstants.WHITE, 1.f);
 		final String lQtyLabel = Integer.toString(mCurrentValue) + ((mQtyPostFix != null && mQtyPostFix.length() > 0) ? mQtyPostFix : "");
 		pTextFont.draw(lQtyLabel, x + w - 32f - SLIDER_WIDTH / 2, y - h / 2, 1.f);
-		pTextFont.end();
 
 	}
 

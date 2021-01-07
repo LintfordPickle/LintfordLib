@@ -156,8 +156,6 @@ public class ScrollBar extends Rectangle implements IProcessMouseInput {
 	}
 
 	public void draw(LintfordCore pCore, TextureBatchPCT pTextureBatch, Texture pUITexture, float pZDepth) {
-		pTextureBatch.begin(pCore.HUD());
-
 		// Scroll bar background
 		final var lColor = ColorConstants.getBlackWithAlpha(.5f);
 		pTextureBatch.draw(pUITexture, 0, 0, 32, 32, x, y, w, h, pZDepth, lColor);
@@ -176,8 +174,6 @@ public class ScrollBar extends Rectangle implements IProcessMouseInput {
 		final float lColorMod = mClickActive ? 0.4f : 0.5f;
 		final var lBarColor = ColorConstants.getColorWithRGBMod(ColorConstants.TertiaryColor.r, ColorConstants.TertiaryColor.g, ColorConstants.TertiaryColor.b, 1.f, lColorMod);
 		pTextureBatch.draw(pUITexture, 0, 0, 32, 32, x + 5, by, 10, mMarkerBarHeight, pZDepth, lBarColor);
-
-		pTextureBatch.end();
 
 	}
 

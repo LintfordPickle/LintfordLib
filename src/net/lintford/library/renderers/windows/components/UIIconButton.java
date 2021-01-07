@@ -148,46 +148,36 @@ public class UIIconButton extends UIWidget {
 			return;
 
 		if (mButtonSolidColorBackground) {
-			drawSolidColorBackground(pCore, pUITexture);
+			drawSolidColorBackground(pCore, pTextureBatch, pUITexture);
 
 		} else if (mButtonTexture != null) {
-			drawTextureBackground(pCore, mButtonTexture);
+			drawTextureBackground(pCore, pTextureBatch, mButtonTexture);
 
 		}
 
 		// text
 		if (mDrawButtonText && mButtonLabel != null && mButtonLabel.length() > 0) {
-			FontUnit lFontRenderer = mParentWindow.rendererManager().textFont();
+			final float lTextWidth = pTextFont.bitmap().getStringWidth(mButtonLabel);
 
-			final float lTextWidth = lFontRenderer.bitmap().getStringWidth(mButtonLabel);
-
-			lFontRenderer.begin(pCore.HUD());
-			lFontRenderer.draw(mButtonLabel, x + w / 2f - lTextWidth / 2f, y + h / 2f - lFontRenderer.bitmap().fontHeight() / 2f, pComponentZDepth, 1f);
-			lFontRenderer.end();
+			pTextFont.draw(mButtonLabel, x + w / 2f - lTextWidth / 2f, y + h / 2f - pTextFont.bitmap().fontHeight() / 2f, pComponentZDepth, 1f);
 
 		}
 
 	}
 
-	private void drawSolidColorBackground(LintfordCore pCore, Texture pTexture) {
+	private void drawSolidColorBackground(LintfordCore pCore, TextureBatchPCT pTextureBatch, Texture pTexture) {
 		final float lColorMod = mHoveredOver ? mHoveredOver ? .9f : 1.f : .3f;
 		final var lColor = ColorConstants.getColorWithRGBMod(entityColor, lColorMod);
 
-		final TextureBatchPCT lTextureBatch = mParentWindow.rendererManager().uiTextureBatch();
-		lTextureBatch.begin(pCore.HUD());
-		lTextureBatch.draw(pTexture, 0, 0, 32, 32, x, y, w, h, -1.0f, lColor);
-		lTextureBatch.end();
+		pTextureBatch.draw(pTexture, 0, 0, 32, 32, x, y, w, h, -1.0f, lColor);
 
 	}
 
-	private void drawTextureBackground(LintfordCore pCore, Texture pTexture) {
+	private void drawTextureBackground(LintfordCore pCore, TextureBatchPCT pTextureBatch, Texture pTexture) {
 		final float lColorMod = mHoveredOver ? .5f : 1.f;
 		final var lColor = ColorConstants.getColorWithRGBMod(entityColor, lColorMod);
 
-		final var lTextureBatch = mParentWindow.rendererManager().uiTextureBatch();
-		lTextureBatch.begin(pCore.HUD());
-		lTextureBatch.draw(pTexture, mSourceRectangle, x, y, w, h, -1.0f, lColor);
-		lTextureBatch.end();
+		pTextureBatch.draw(pTexture, mSourceRectangle, x, y, w, h, -1.0f, lColor);
 
 	}
 

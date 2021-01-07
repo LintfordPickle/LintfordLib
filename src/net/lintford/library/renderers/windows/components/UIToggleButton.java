@@ -112,19 +112,15 @@ public class UIToggleButton extends UIWidget {
 		final float lColorMod = mIsToggledOn ? mHoveredOver ? .9f : 1.f : .3f;
 		final var lColor = ColorConstants.getColorWithRGBMod(entityColor, lColorMod);
 
-		pTextureBatch.begin(pCore.HUD());
 		pTextureBatch.draw(pUITexture, 0, 32, 32, 32, x, y, 32, h, pComponentZDepth, lColor);
 		pTextureBatch.draw(pUITexture, 32, 32, 32, 32, x + 32, y, w - 64, h, pComponentZDepth, lColor);
 		pTextureBatch.draw(pUITexture, 128, 32, 32, 32, x + w - 32, y, 32, h, pComponentZDepth, lColor);
-		pTextureBatch.end();
 
 		if (mButtonLabel != null && mButtonLabel.length() > 0) {
 			final float lTextWidth = pTextFont.bitmap().getStringWidth(mButtonLabel);
 			final float lTextHeight = pTextFont.bitmap().getStringHeight(mButtonLabel);
 
-			pTextFont.begin(pCore.HUD());
 			pTextFont.draw(mButtonLabel, x + w / 2.f - lTextWidth / 2.f, y + h / 2f - lTextHeight / 2.f, 1.0f);
-			pTextFont.end();
 
 		}
 

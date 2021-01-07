@@ -118,18 +118,12 @@ public class UIButton extends UIWidget {
 		final float lColorMod = mHoveredOver ? .9f : 1.f;
 		final var lColor = ColorConstants.getColorWithRGBMod(entityColor, lColorMod);
 
-		pTextureBatch.begin(pCore.HUD());
 		pTextureBatch.draw(pUITexture, 32, 32, 224, 32, centerX() - (w / 2) + 32, centerY() - h / 2, w - 64, h, pComponentZDepth, lColor);
-		pTextureBatch.end();
-
-		final var lFontRenderer = mParentWindow.rendererManager().textFont();
 
 		final String lButtonText = mButtonLabel != null ? mButtonLabel : NO_LABEL_TEXT;
-		final float lTextWidth = lFontRenderer.bitmap().getStringWidth(lButtonText);
+		final float lTextWidth = pTextFont.bitmap().getStringWidth(lButtonText);
 
-		lFontRenderer.begin(pCore.HUD());
-		lFontRenderer.draw(lButtonText, x + w / 2f - lTextWidth / 2f, y + h / 2f - lFontRenderer.bitmap().fontHeight() / 2f, pComponentZDepth, 1f);
-		lFontRenderer.end();
+		pTextFont.draw(lButtonText, x + w / 2f - lTextWidth / 2f, y + h / 2f - pTextFont.bitmap().fontHeight() / 2f, pComponentZDepth, 1f);
 
 	}
 

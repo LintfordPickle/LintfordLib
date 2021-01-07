@@ -103,8 +103,6 @@ public class IconIntFilter implements IProcessMouseInput {
 		final float lColorMod = mEnabled ? 1.f : .8f;
 		final var lColor = ColorConstants.getColorWithRGBMod(ColorConstants.WHITE, lColorMod);
 
-		pTextureBatch.begin(pCore.HUD());
-
 		// Draw the 'tab' background
 		if (mEnabled) {
 			// Draw a 'open' tab
@@ -128,14 +126,10 @@ public class IconIntFilter implements IProcessMouseInput {
 		// Draw the background icon
 		pTextureBatch.draw(pUITexture, mUISrcRectangle, mUIDstRectangle, -0.5f, lColor);
 
-		pTextureBatch.end();
-
 		if (mHoveredOver) {
 			final float lTextHalfW = pTextFont.bitmap().getStringWidth(mFilterName) / 2;
 
-			pTextFont.begin(pCore.HUD());
 			pTextFont.draw(mFilterName, mUIDstRectangle.x() + 16 - lTextHalfW, mUIDstRectangle.y() - 19, -0.2f, 1f);
-			pTextFont.end();
 		}
 
 	}

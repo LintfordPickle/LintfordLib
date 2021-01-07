@@ -113,14 +113,12 @@ public class UIHorizontalEntryGroup extends UIWidget {
 	@Override
 	public void draw(LintfordCore pCore, TextureBatchPCT pTextureBatch, Texture pUITexture, FontUnit pTextFont, float pComponentZDepth) {
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
-			pTextureBatch.begin(pCore.HUD());
 			pTextureBatch.draw(pUITexture, 0, 0, 32, 32, x, y, w, h, pComponentZDepth + .1f, ColorConstants.WHITE);
-			pTextureBatch.end();
 
 		}
 
-		int lCount = mChildEntries.size();
-		for (int i = 0; i < lCount; i++) {
+		final int lNumChildEntries = mChildEntries.size();
+		for (int i = 0; i < lNumChildEntries; i++) {
 			mChildEntries.get(i).draw(pCore, pTextureBatch, pUITexture, pTextFont, pComponentZDepth + 0.01f);
 
 		}

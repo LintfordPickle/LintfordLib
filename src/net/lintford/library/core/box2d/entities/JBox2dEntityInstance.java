@@ -1044,7 +1044,7 @@ public class JBox2dEntityInstance extends RetainedPooledBaseData {
 	/**
 	 * Sets the radius of the named fixture.
 	 */
-	public void setFixtureRadius(String pFixtureName, float pNewRadius) {
+	public void setFixtureRadius(String pFixtureName, float pNewRadiusInPixels) {
 		final int lBodyCount = mBodies.size();
 		for (int i = 0; i < lBodyCount; i++) {
 
@@ -1058,7 +1058,12 @@ public class JBox2dEntityInstance extends RetainedPooledBaseData {
 
 				if (lBox2dFixtureInstance != null && lBox2dFixtureInstance.name != null && lBox2dFixtureInstance.name.contentEquals(pFixtureName)) {
 					if (lBox2dFixtureInstance.shape != null && lBox2dFixtureInstance.shape instanceof Box2dCircleInstance) {
-						((Box2dCircleInstance) lBox2dFixtureInstance.shape).radius = pNewRadius;
+						((Box2dCircleInstance) lBox2dFixtureInstance.shape).radius = ConstantsPhysics.toUnits(pNewRadiusInPixels);
+
+						// If the fixture has already been loaded into the Box2dWorld, then set the fixture's radius
+						if (lBox2dFixtureInstance.mFixture != null) {
+							lBox2dFixtureInstance.mFixture.m_shape.m_radius = ConstantsPhysics.toUnits(pNewRadiusInPixels);
+						}
 
 					}
 

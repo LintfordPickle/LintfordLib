@@ -78,11 +78,8 @@ public class AWTBitmapFontSpriteBatch extends TextureBatchPCT {
 	}
 
 	public void draw(String pText, float pX, float pY, float pZ, Color pTint, float pScale, float pWordWrapWidth, int pCapWidth) {
-		if (shadowEnabled())
-			draw(pText, pX, pY, pZ, pTint, pScale, pWordWrapWidth, pCapWidth, true);
+		draw(pText, pX, pY, pZ, pTint, pScale, pWordWrapWidth, pCapWidth, false);
 
-		 draw(pText, pX, pY, pZ, pTint, pScale, pWordWrapWidth, pCapWidth, false);
-		
 	}
 
 	private void draw(String pText, float pX, float pY, float pZ, Color pTint, float pScale, float pWordWrapWidth, int pCapWidth, boolean isShadow) {
@@ -92,9 +89,9 @@ public class AWTBitmapFontSpriteBatch extends TextureBatchPCT {
 		final float lSpaceBetweenLines = 0f;
 
 		final var lTextColor = isShadow ? ColorConstants.getBlackWithAlpha(0.7f) : pTint;
-		float lPosX = pX + -(isShadow ? -2: 0);
+		float lPosX = pX + -(isShadow ? -2 : 0);
 		float lPosY = pY + (isShadow ? 2 : 0);
-		
+
 		float lWrapWidth = 0;
 		boolean lJustWrapped = false;
 
@@ -146,20 +143,22 @@ public class AWTBitmapFontSpriteBatch extends TextureBatchPCT {
 			}
 
 			if (ch == ' ' && mTrimText && lPosX == pX && lPosY > pY) {
-				final var lCharGlyph = mBitmapFont.glyphs().get(ch);
-				lPosX += lCharGlyph.width * pScale;
 				continue;
 			}
 
 			if (lJustWrapped && ch == ' ') {
 				lJustWrapped = false;
-				continue;
+				// continue;
 			}
 
 			final var lCharGlyph = mBitmapFont.glyphs().get(ch);
 
 			if (lCharGlyph != null) {
+				if (shadowEnabled())
+					draw(mBitmapFont.fontTexture(), lCharGlyph.x, lCharGlyph.y, lCharGlyph.width, lCharGlyph.height, lPosX - 1, lPosY + 1, lCharGlyph.width * pScale, lCharGlyph.height * pScale, pZ, ColorConstants.BLACK);
+
 				draw(mBitmapFont.fontTexture(), lCharGlyph.x, lCharGlyph.y, lCharGlyph.width, lCharGlyph.height, lPosX, lPosY, lCharGlyph.width * pScale, lCharGlyph.height * pScale, pZ, lTextColor);
+
 				lPosX += lCharGlyph.width * pScale;
 
 			} else {

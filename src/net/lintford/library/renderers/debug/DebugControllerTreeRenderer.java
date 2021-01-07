@@ -348,8 +348,8 @@ public class DebugControllerTreeRenderer extends Rectangle implements IScrollBar
 
 		}
 
-		mConsoleFont.end();
 		mTextureBatch.end();
+		mConsoleFont.end();
 
 		if (h < mContentRectangle.h())
 			mContentRectangle.postDraw(pCore);

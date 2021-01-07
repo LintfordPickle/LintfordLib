@@ -19,7 +19,6 @@ public class UIInputText extends UIWidget implements IBufferedTextInputCallback 
 
 	private static final long serialVersionUID = 3637330515154931480L;
 
-	private static final float SPACE_BETWEEN_TEXT = 1;
 	private static final float CARET_FLASH_TIME = 250;
 
 	// --------------------------------------
@@ -186,19 +185,14 @@ public class UIInputText extends UIWidget implements IBufferedTextInputCallback 
 	@Override
 	public void draw(LintfordCore pCore, TextureBatchPCT pTextureBatch, Texture pUITexture, FontUnit pTextFont, float pComponentZDepth) {
 		// Renders the background of the input text widget
-		pTextureBatch.begin(pCore.HUD());
 		pTextureBatch.draw(pUITexture, 0, 288, 32, 32, x, y, 32, h, pComponentZDepth, ColorConstants.MenuPanelTertiaryColor);
 		if (w > 32) {
 			pTextureBatch.draw(pUITexture, 64, 288, 32, 32, x + 32, y, w - 64, h, pComponentZDepth, ColorConstants.MenuPanelTertiaryColor);
 			pTextureBatch.draw(pUITexture, 128, 288, 32, 32, x + w - 32, y, 32, h, pComponentZDepth, ColorConstants.MenuPanelTertiaryColor);
 		}
 
-		pTextureBatch.end();
-
 		// Draw the cancel button rectangle
-		pTextureBatch.begin(pCore.HUD());
 		pTextureBatch.draw(pUITexture, 256, 192, 16, 16, mCancelRectangle, pComponentZDepth, ColorConstants.WHITE);
-		pTextureBatch.end();
 
 		final float lInputTextWidth = pTextFont.bitmap().getStringWidth(mInputField.toString());
 
@@ -215,16 +209,11 @@ public class UIInputText extends UIWidget implements IBufferedTextInputCallback 
 
 		}
 
-		pTextFont.begin(pCore.HUD());
 		pTextFont.draw(lText, x + 10, y + h / 2 - lTextHeight / 2, pComponentZDepth, ColorConstants.TextEntryColor, 1f, -1);
 		if (mShowCaret && mHasFocus) {
-			pTextureBatch.begin(pCore.HUD());
 			pTextureBatch.draw(pUITexture, 0, 0, 32, 32, x + 10 + lInputTextWidth, y + h / 2 - lTextHeight / 2, pTextFont.fontPointSize() / 2.f, pTextFont.fontPointSize(), pComponentZDepth, ColorConstants.WHITE);
-			pTextureBatch.end();
 
 		}
-
-		pTextFont.end();
 
 	}
 
