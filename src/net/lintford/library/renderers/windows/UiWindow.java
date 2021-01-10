@@ -255,7 +255,10 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 	}
 
 	public void loadGLContent(ResourceManager pResourceManager) {
+		super.loadGLContent(pResourceManager);
+
 		mUiCoreTexture = pResourceManager.textureManager().textureCore();
+		mHudTexture = pResourceManager.textureManager().getTexture("TEXTURE_HUD", entityGroupID());
 
 		mContentDisplayArea.y(mWindowArea.y() + getTitleBarHeight());
 		mContentDisplayArea.h(mWindowArea.h() - +getTitleBarHeight());
