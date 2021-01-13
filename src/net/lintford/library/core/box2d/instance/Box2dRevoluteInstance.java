@@ -68,10 +68,4 @@ public class Box2dRevoluteInstance extends Box2dJointInstance {
 
 	}
 
-	@Override
-	public boolean isAssigned() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
 }

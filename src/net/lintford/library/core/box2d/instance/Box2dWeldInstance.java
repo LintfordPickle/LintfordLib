@@ -106,9 +106,4 @@ public class Box2dWeldInstance extends Box2dJointInstance {
 
 	}
 
-	@Override
-	public boolean isAssigned() {
-		return mWorld != null;
-	}
-
 }

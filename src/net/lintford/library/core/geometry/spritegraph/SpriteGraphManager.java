@@ -1,11 +1,11 @@
 package net.lintford.library.core.geometry.spritegraph;
 
 import net.lintford.library.core.ResourceManager;
-import net.lintford.library.core.entity.instances.RetainedPoolInstanceManager;
+import net.lintford.library.core.entity.instances.PoolInstanceManager;
 import net.lintford.library.core.geometry.spritegraph.definition.SpriteGraphDefinition;
 import net.lintford.library.core.geometry.spritegraph.instance.SpriteGraphInstance;
 
-public class SpriteGraphManager extends RetainedPoolInstanceManager<SpriteGraphInstance> {
+public class SpriteGraphManager extends PoolInstanceManager<SpriteGraphInstance> {
 
 	// --------------------------------------
 	// Constants

@@ -15,13 +15,27 @@ public abstract class PoolInstanceManager<T extends PooledBaseData> extends Inst
 
 	private static final long serialVersionUID = -2764687870288928563L;
 
-	private static final int DEFAULT_ENLARGEN_POOL_AMOUNT = 8;
-
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
 	private transient List<T> mPooledItems;
+	private int mEnlargePoolStepAmount = 8;
+
+	// --------------------------------------
+	// Properties
+	// --------------------------------------
+
+	public int enlargePoolStepAmount() {
+		return mEnlargePoolStepAmount;
+	}
+
+	public void enlargePoolStepAmount(int pEnlargeAmount) {
+		if (pEnlargeAmount < 0)
+			return;
+
+		mEnlargePoolStepAmount = pEnlargeAmount;
+	}
 
 	public T getInstanceByIndex(final int pItemIndex) {
 		if (pItemIndex < 0 || pItemIndex > instances().size() - 1)
@@ -68,7 +82,7 @@ public abstract class PoolInstanceManager<T extends PooledBaseData> extends Inst
 			mInstances.add(lInst);
 
 		} else {
-			lInst = enlargenInstancePool(DEFAULT_ENLARGEN_POOL_AMOUNT);
+			lInst = enlargenInstancePool(mEnlargePoolStepAmount);
 			mInstances.add(lInst);
 
 		}
@@ -96,9 +110,6 @@ public abstract class PoolInstanceManager<T extends PooledBaseData> extends Inst
 	}
 
 	private T enlargenInstancePool(int pAmt) {
-		if (pAmt <= 0 || pAmt > 1000)
-			pAmt = DEFAULT_ENLARGEN_POOL_AMOUNT;
-
 		for (int i = 0; i < pAmt; i++) {
 			mPooledItems.add(createPoolObjectInstance());
 

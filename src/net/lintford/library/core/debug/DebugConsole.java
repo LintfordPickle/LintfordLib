@@ -559,7 +559,7 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 		final int lMessageCount = lMessages.size();
 		if (lMessages != null && lMessageCount > 0) {
 			for (int i = mLowerBound; i < mUpperBound; i++) {
-				if (i >= 0 && i < lMessageCount) {
+				if (i >= 0 && i < lMessageCount - 1) {
 					final var lMessage = lMessages.get(i);
 					if (lMessage == null)
 						continue;

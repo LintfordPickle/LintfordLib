@@ -2,37 +2,37 @@ package net.lintford.library.core.entity.instances;
 
 import net.lintford.library.core.entity.BaseInstanceData;
 
-public abstract class ClosedInstanceBaseData extends BaseInstanceData {
+public abstract class PreAllocatedInstanceData extends BaseInstanceData {
 
 	// --------------------------------------
 	// Constants
 	// --------------------------------------
 
-	private static final long serialVersionUID = -1444873148544023277L;
+	private static final long serialVersionUID = 6084180705977839941L;
 
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
-	public final int poolUid;
-	boolean internalInUse; // used by the ClosedInstanceManager to track the assigned state of this instance
+	protected boolean mInternalIsAssigned;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
 
-	public boolean isAssigned() {
-		return internalInUse;
+	boolean internalIsAssigned() {
+		return mInternalIsAssigned;
+	}
+
+	void internalIsAssigned(boolean pNewValue) {
+		mInternalIsAssigned = pNewValue;
 	}
 
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
-	public ClosedInstanceBaseData(final int pPoolUid) {
-		poolUid = pPoolUid;
-
-		reset();
+	public PreAllocatedInstanceData() {
 
 	}
 
@@ -40,18 +40,6 @@ public abstract class ClosedInstanceBaseData extends BaseInstanceData {
 	// Methods
 	// --------------------------------------
 
-	public void reset() {
-
-	}
-
-	public void initInstance() {
-		internalInUse = true;
-
-	}
-
-	public void setFree() {
-		reset();
-		internalInUse = false;
-	}
+	public abstract void reset();
 
 }

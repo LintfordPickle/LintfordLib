@@ -5,7 +5,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.entity.instances.RetainedPooledBaseData;
+import net.lintford.library.core.entity.instances.PooledBaseData;
 import net.lintford.library.core.geometry.spritegraph.AnimatedSpriteGraphListener;
 import net.lintford.library.core.geometry.spritegraph.ISpriteGraphPool;
 import net.lintford.library.core.geometry.spritegraph.SpriteGraphManager;
@@ -17,7 +17,7 @@ import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDefinit
 /**
  * Represents a geometric instance of a SpriteGraphDef in the world, complete with information about transforms and part types (if for example multiple types are available per part).
  */
-public class SpriteGraphInstance extends RetainedPooledBaseData implements AnimatedSpriteListener {
+public class SpriteGraphInstance extends PooledBaseData implements AnimatedSpriteListener {
 
 	public static final Comparator<SpriteGraphNodeInstance> SpriteGraphNodeInstanceZComparator = new SpriteGraphNodeInstanceZComparator();
 
@@ -76,7 +76,6 @@ public class SpriteGraphInstance extends RetainedPooledBaseData implements Anima
 		return mFlatNodes;
 	}
 
-	@Override
 	public boolean isAssigned() {
 		return !(spriteGraphName == null && spriteGraphName.length() == 0);
 

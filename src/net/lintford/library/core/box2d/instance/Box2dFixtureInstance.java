@@ -9,9 +9,9 @@ import org.jbox2d.dynamics.FixtureDef;
 import org.jbox2d.dynamics.World;
 
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.entity.instances.RetainedPooledBaseData;
+import net.lintford.library.core.entity.instances.PooledBaseData;
 
-public class Box2dFixtureInstance extends RetainedPooledBaseData {
+public class Box2dFixtureInstance extends PooledBaseData {
 
 	private static final long serialVersionUID = -584704908299820185L;
 
@@ -42,11 +42,6 @@ public class Box2dFixtureInstance extends RetainedPooledBaseData {
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
-
-	@Override
-	public boolean isAssigned() {
-		return true;
-	}
 
 	// --------------------------------------
 	// Constructor

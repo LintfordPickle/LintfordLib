@@ -66,9 +66,4 @@ public class Box2dPrismaticInstance extends Box2dJointInstance {
 
 	}
 
-	@Override
-	public boolean isAssigned() {
-		return false;
-	}
-
 }

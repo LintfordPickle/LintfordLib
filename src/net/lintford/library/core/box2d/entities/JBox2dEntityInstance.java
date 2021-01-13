@@ -24,12 +24,12 @@ import net.lintford.library.core.box2d.instance.Box2dPolygonInstance;
 import net.lintford.library.core.box2d.instance.Box2dPrismaticInstance;
 import net.lintford.library.core.box2d.instance.Box2dRevoluteInstance;
 import net.lintford.library.core.box2d.instance.Box2dWeldInstance;
-import net.lintford.library.core.entity.instances.RetainedPooledBaseData;
+import net.lintford.library.core.entity.instances.PooledBaseData;
 
 /**
  * The {@link JBox2dEntityInstance} class can be loaded from a PObject file and then serialized and restored with the game. JBox2dEntitys can also be pooled in the PObjectManager.
  */
-public class JBox2dEntityInstance extends RetainedPooledBaseData {
+public class JBox2dEntityInstance extends PooledBaseData {
 
 	// --------------------------------------
 	// Constants
@@ -96,11 +96,6 @@ public class JBox2dEntityInstance extends RetainedPooledBaseData {
 
 		}
 
-	}
-
-	@Override
-	public boolean isAssigned() {
-		return mIsFree;
 	}
 
 	public boolean isPhysicsLoaded() {

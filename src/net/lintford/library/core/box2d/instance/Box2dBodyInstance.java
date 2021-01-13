@@ -10,9 +10,9 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.box2d.definition.Box2dBodyDefinition;
 import net.lintford.library.core.box2d.entities.JBox2dEntityInstance;
 import net.lintford.library.core.debug.Debug;
-import net.lintford.library.core.entity.instances.RetainedPooledBaseData;
+import net.lintford.library.core.entity.instances.PooledBaseData;
 
-public class Box2dBodyInstance extends RetainedPooledBaseData {
+public class Box2dBodyInstance extends PooledBaseData {
 
 	// --------------------------------------
 	// Constants
@@ -25,7 +25,7 @@ public class Box2dBodyInstance extends RetainedPooledBaseData {
 	// --------------------------------------
 
 	public transient Body mBody;
-	public RetainedPooledBaseData bodyPhysicsData;
+	public PooledBaseData bodyPhysicsData;
 
 	public String name;
 	public int entityBodyIndex;
@@ -253,12 +253,6 @@ public class Box2dBodyInstance extends RetainedPooledBaseData {
 
 		}
 
-	}
-
-	@Override
-	public boolean isAssigned() {
-		// TODO Auto-generated method stub
-		return false;
 	}
 
 }

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.entity.instances.RetainedPooledBaseData;
+import net.lintford.library.core.entity.instances.PooledBaseData;
 import net.lintford.library.core.geometry.spritegraph.ISpriteGraphPool;
 import net.lintford.library.core.geometry.spritegraph.definition.SpriteGraphNodeDefinition;
 import net.lintford.library.core.graphics.sprites.SpriteAnchor;
@@ -14,7 +14,7 @@ import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDefinit
 
 // ToDo: Attachable Box2d bodies: Some nodes need to interact with the world via the sprite graph nodes
 // ToDo: Attachable SpriteInstance: Each node instance should have its own sprite animation for the current spritesheetdefinition
-public class SpriteGraphNodeInstance extends RetainedPooledBaseData {
+public class SpriteGraphNodeInstance extends PooledBaseData {
 
 	// --------------------------------------
 	// Constants
@@ -70,11 +70,6 @@ public class SpriteGraphNodeInstance extends RetainedPooledBaseData {
 
 	public SpriteInstance spriteInstance() {
 		return mSpriteInstance;
-	}
-
-	@Override
-	public boolean isAssigned() {
-		return mParentGraphInst != null;
 	}
 
 	public boolean flippedHorizontal() {

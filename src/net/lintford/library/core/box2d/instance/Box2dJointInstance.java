@@ -5,9 +5,9 @@ import org.jbox2d.dynamics.World;
 import org.jbox2d.dynamics.joints.Joint;
 
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.entity.instances.RetainedPooledBaseData;
+import net.lintford.library.core.entity.instances.PooledBaseData;
 
-public abstract class Box2dJointInstance extends RetainedPooledBaseData {
+public abstract class Box2dJointInstance extends PooledBaseData {
 
 	// --------------------------------------
 	// Constants

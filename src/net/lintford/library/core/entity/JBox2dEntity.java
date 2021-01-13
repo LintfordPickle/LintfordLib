@@ -40,11 +40,6 @@ public abstract class JBox2dEntity extends WorldEntity {
 		return hasEntityAtached() && mJBox2dEntityInstance.isPhysicsLoaded();
 	}
 
-	@Override
-	public boolean isAssigned() {
-		return false;
-	}
-
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------

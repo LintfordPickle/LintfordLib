@@ -27,7 +27,6 @@ public class ParticleSystemInstance extends BaseInstanceData {
 	protected ParticleSystemDefinition mParticleSystemDefinition;
 	private List<Particle> mParticles;
 	private transient int mRendererId;
-	private int mParticleInstanceCounter;
 
 	private int mCapacity;
 
@@ -81,7 +80,7 @@ public class ParticleSystemInstance extends BaseInstanceData {
 
 		mParticles = new ArrayList<>();
 		for (int i = 0; i < mCapacity; i++) {
-			mParticles.add(new Particle(mParticleInstanceCounter++));
+			mParticles.add(new Particle());
 
 		}
 
@@ -120,8 +119,11 @@ public class ParticleSystemInstance extends BaseInstanceData {
 
 			for (int j = 0; j < lNumModifiers; j++) {
 				lModifers.get(j).updateParticle(pCore, mParticles.get(i));
+
 			}
+
 		}
+
 	}
 
 	// --------------------------------------

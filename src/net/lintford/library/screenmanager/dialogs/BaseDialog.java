@@ -2,6 +2,7 @@ package net.lintford.library.screenmanager.dialogs;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
+import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.renderers.ZLayers;
@@ -10,6 +11,60 @@ import net.lintford.library.screenmanager.Screen;
 import net.lintford.library.screenmanager.ScreenManager;
 
 public abstract class BaseDialog extends MenuScreen {
+
+	public class DialogIcon {
+
+		// --------------------------------------
+		// Variables
+		// --------------------------------------
+
+		public boolean mEnabled;
+		protected Texture mIconTexture;
+		protected final Rectangle mSrcRectangle = new Rectangle();
+
+		// --------------------------------------
+		// Properties
+		// --------------------------------------
+
+		public boolean enabled() {
+			return mEnabled;
+		}
+
+		// --------------------------------------
+		// Constaructor
+		// --------------------------------------
+
+		public DialogIcon() {
+
+		}
+
+		// --------------------------------------
+		// Methods
+		// --------------------------------------
+
+		public void setDialogIcon() {
+			setDialogIcon(null, 0.f, 0.f, 0.f, 0.f);
+		}
+
+		public void setDialogIcon(Texture pTexture) {
+			setDialogIcon(pTexture, 0.f, 0.f, 0.f, 0.f);
+		}
+
+		public void setDialogIcon(Texture pTexture, float pSrcX, float pSrcY, float pSrcW, float pSrcH) {
+			if (pTexture == null) {
+				mIconTexture = null;
+				mEnabled = false;
+				return;
+
+			}
+
+			mEnabled = true;
+			mIconTexture = pTexture;
+			mSrcRectangle.set(pSrcX, pSrcY, pSrcW, pSrcH);
+
+		}
+
+	}
 
 	// --------------------------------------
 	// Constants
@@ -29,8 +84,7 @@ public abstract class BaseDialog extends MenuScreen {
 	protected boolean mDrawBackground;
 	protected boolean mDarkenBackground;
 
-	protected boolean mDrawInfoIcon;
-	protected boolean mDrawWarningIcon;
+	protected final DialogIcon mDialogIcon = new DialogIcon();
 
 	protected Texture mUITexture;
 
@@ -39,15 +93,26 @@ public abstract class BaseDialog extends MenuScreen {
 	// --------------------------------------
 
 	public void drawInfoIcon(boolean pNewValue) {
-		if (pNewValue)
-			mDrawWarningIcon = false;
-		mDrawInfoIcon = pNewValue;
+		if (pNewValue) {
+			mDialogIcon.setDialogIcon(mUITexture, 352, 0, 64, 64);
+			return;
+		}
+
+		mDialogIcon.setDialogIcon();
+
 	}
 
 	public void drawWarningIcon(boolean pNewValue) {
-		if (pNewValue)
-			mDrawInfoIcon = false;
-		mDrawWarningIcon = pNewValue;
+		if (pNewValue) {
+			mDialogIcon.setDialogIcon(mUITexture, 416, 0, 64, 64);
+			return;
+		}
+
+		mDialogIcon.setDialogIcon();
+	}
+
+	public DialogIcon dialogIcon() {
+		return mDialogIcon;
 	}
 
 	public boolean drawBackground() {
@@ -182,21 +247,12 @@ public abstract class BaseDialog extends MenuScreen {
 
 		}
 
-		if (mDrawInfoIcon) {
+		if (mDialogIcon.enabled()) {
 			final float x = -DIALOG_WIDTH / 2;
 			final float y = -DIALOG_HEIGHT / 2;
 
 			lTextureBatch.begin(pCore.HUD());
-			lTextureBatch.draw(mUITexture, 352, 0, 64, 64, x + 15.f, y + 15.f, 64, 64, lZDepth, ColorConstants.WHITE);
-			lTextureBatch.end();
-		}
-
-		if (mDrawWarningIcon) {
-			final float x = -DIALOG_WIDTH / 2;
-			final float y = -DIALOG_HEIGHT / 2;
-
-			lTextureBatch.begin(pCore.HUD());
-			lTextureBatch.draw(mUITexture, 416, 0, 64, 64, x + 15.f, y + 15.f, 64, 64, lZDepth, ColorConstants.WHITE);
+			lTextureBatch.draw(mDialogIcon.mIconTexture, mDialogIcon.mSrcRectangle, x + 15.f, y + 15.f, 64, 64, lZDepth, ColorConstants.WHITE);
 			lTextureBatch.end();
 		}
 
@@ -211,7 +267,7 @@ public abstract class BaseDialog extends MenuScreen {
 		if (mMenuTitle != null && mMenuTitle.length() > 0) {
 			mMenuHeaderFont.drawShadow(true);
 			mMenuHeaderFont.begin(pCore.HUD());
-			final float lHorizontalOffsetX = mDrawInfoIcon || mDrawWarningIcon ? 74.f : 0.f;
+			final float lHorizontalOffsetX = mDialogIcon.enabled() ? 74.f : 0.f;
 			final float lScale = 0.65f;
 			mMenuHeaderFont.draw(mMenuTitle, -DIALOG_WIDTH / 2f + TEXT_HORIZONTAL_PADDING + lHorizontalOffsetX, -DIALOG_HEIGHT / 2f + TEXT_HORIZONTAL_PADDING, lZDepth, screenColor, lScale);
 			mMenuHeaderFont.end();

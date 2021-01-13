@@ -1,11 +1,11 @@
 package net.lintford.library.core.entity;
 
-import net.lintford.library.core.entity.instances.RetainedPooledBaseData;
+import net.lintford.library.core.entity.instances.PooledBaseData;
 
 /**
  * The {@link WorldEntity} class allows us to order an entity spatially within the world.
  */
-public abstract class WorldEntity extends RetainedPooledBaseData {
+public abstract class WorldEntity extends PooledBaseData {
 
 	// --------------------------------------
 	// Constants
@@ -39,9 +39,5 @@ public abstract class WorldEntity extends RetainedPooledBaseData {
 		super(pPoolUid);
 
 	}
-
-	// --------------------------------------
-	// Methods
-	// --------------------------------------
 
 }

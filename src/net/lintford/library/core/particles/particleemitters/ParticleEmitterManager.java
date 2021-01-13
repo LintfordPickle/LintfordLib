@@ -6,10 +6,10 @@ import com.google.gson.GsonBuilder;
 
 import net.lintford.library.core.entity.EntityLocationProvider;
 import net.lintford.library.core.entity.definitions.DefinitionManager;
-import net.lintford.library.core.entity.instances.RetainedPoolInstanceManager;
+import net.lintford.library.core.entity.instances.PoolInstanceManager;
 import net.lintford.library.core.particles.ParticleFrameworkData;
 
-public class ParticleEmitterManager extends RetainedPoolInstanceManager<ParticleEmitterInstance> {
+public class ParticleEmitterManager extends PoolInstanceManager<ParticleEmitterInstance> {
 
 	// --------------------------------------
 	// Inner-Classes

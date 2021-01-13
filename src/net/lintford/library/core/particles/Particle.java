@@ -1,10 +1,10 @@
 package net.lintford.library.core.particles;
 
-import net.lintford.library.core.entity.WorldEntity;
+import net.lintford.library.core.entity.instances.PreAllocatedInstanceData;
 import net.lintford.library.core.graphics.Color;
 import net.lintford.library.core.particles.particlesystems.initializers.ParticleInitializerBase;
 
-public class Particle extends WorldEntity {
+public class Particle extends PreAllocatedInstanceData {
 
 	// --------------------------------------
 	// Constants
@@ -33,28 +33,30 @@ public class Particle extends WorldEntity {
 	public final Color color = new Color();
 	public float scale;
 
+	public float worldPositionX;
+	public float worldPositionY;
+	public float rotationInRadians;
+
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public boolean isAssigned() {
+		return !mIsFree;
+	}
 
 	/** Returns the amount of lifetime this particle was given when spawned */
 	public float lifeTime() {
 		return mLifeTime;
 	}
 
-	@Override
-	public boolean isAssigned() {
-		return !mIsFree;
-	}
-
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
-	public Particle(final int pPoolUid) {
-		super(pPoolUid);
-
+	public Particle() {
 		reset();
+
 	}
 
 	// --------------------------------------

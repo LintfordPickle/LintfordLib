@@ -84,7 +84,6 @@ public class ParticleEmitterInstance extends WorldEntity {
 
 	}
 
-	@Override
 	public boolean isAssigned() {
 		return mParticleSystem != null || (mChildEmitters != null && mChildEmitters.length > 0);
 	}
