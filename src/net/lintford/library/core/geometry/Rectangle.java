@@ -403,16 +403,24 @@ public class Rectangle extends Shape {
 	}
 
 	/** Expands the bounds of this rectangle to include the new point */
-	public void updateAABB(float pWorldPositionX, float pWorldPositionY) {
-		if (x > pWorldPositionX)
-			x = pWorldPositionX;
-		if (right() < pWorldPositionX)
-			w = pWorldPositionX - x;
+	public void updateAABBToEnclosePoint(float pPointX, float pPointY) {
+		if (x > pPointX) {
+			final float lDiffX = x - pPointX;
+			x = pPointX;
+			w += lDiffX;
 
-		if (y > pWorldPositionY)
-			y = pWorldPositionY;
-		if (bottom() < pWorldPositionY)
-			h = pWorldPositionY - y;
+		}
+		if (right() < pPointX)
+			w = pPointX - x;
+
+		if (y > pPointY) {
+			final float lDiffY = y - pPointY;
+			y = pPointY;
+			h += lDiffY;
+
+		}
+		if (bottom() < pPointY)
+			h = pPointY - y;
 
 	}
 
