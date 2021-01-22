@@ -1,6 +1,7 @@
 package net.lintford.library.renderers.windows.components;
 
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.Color;
 import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
@@ -43,11 +44,22 @@ public class UIBar {
 		return mIsVertical;
 	}
 
+	public void setDestRectangle(Rectangle pRect) {
+		setDestRectangle(pRect.x(), pRect.y(), pRect.w(), pRect.h());
+
+	}
+
 	public void setDestRectangle(float pX, float pY, float pW, float pH) {
 		x = pX;
 		y = pY;
 		w = pW;
 		h = pH;
+
+	}
+
+	public void setColor(Color pColor) {
+		setColor(pColor.r, pColor.g, pColor.b, pColor.a);
+
 	}
 
 	public void setColor(float pR, float pG, float pB, float pA) {
@@ -90,7 +102,7 @@ public class UIBar {
 		float lBarWidth = MathHelper.scaleToRange(mCurValue, mMinValue, mMaxValue, 0, mIsVertical ? h : w);
 		lBarWidth = MathHelper.clamp(lBarWidth - INNER_BORDER_PADDING * 2, 0, w);
 
-		pTextureBatch.draw(lCoreTexture, 0, 0, 32, 32, x, y, w, h, -0.1f, ColorConstants.BLACK);
+		pTextureBatch.draw(lCoreTexture, 0, 0, 32, 32, x, y, w, h, pComponentZDepth, ColorConstants.BLACK);
 
 		if (mIsVertical) {
 			float lWidth = w - INNER_BORDER_PADDING * 2;
@@ -101,7 +113,7 @@ public class UIBar {
 			float ww = !mIsInverted ? lWidth : lWidth;
 			float hh = !mIsInverted ? lHeight : -lHeight;
 
-			pTextureBatch.draw(lCoreTexture, 0, 0, 32, 32, xx + INNER_BORDER_PADDING, yy + INNER_BORDER_PADDING, ww, hh, -0.1f, UiBarColor);
+			pTextureBatch.draw(lCoreTexture, 0, 0, 32, 32, xx + INNER_BORDER_PADDING, yy + INNER_BORDER_PADDING, ww, hh, pComponentZDepth, UiBarColor);
 
 		} else {
 			float lWidth = lBarWidth;
@@ -112,7 +124,7 @@ public class UIBar {
 			float ww = !mIsInverted ? lWidth : lWidth;
 			float hh = !mIsInverted ? lHeight : lHeight;
 
-			pTextureBatch.draw(lCoreTexture, 0, 0, 32, 32, xx + INNER_BORDER_PADDING, yy + INNER_BORDER_PADDING, ww, hh, -0.1f, UiBarColor);
+			pTextureBatch.draw(lCoreTexture, 0, 0, 32, 32, xx + INNER_BORDER_PADDING, yy + INNER_BORDER_PADDING, ww, hh, pComponentZDepth, UiBarColor);
 
 		}
 
