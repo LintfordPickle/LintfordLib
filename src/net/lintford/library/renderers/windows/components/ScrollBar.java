@@ -73,41 +73,32 @@ public class ScrollBar extends Rectangle implements IProcessMouseInput {
 
 	public boolean handleInput(LintfordCore pCore) {
 		final var lMouseInWindowCoords = intersectsAA(pCore.HUD().getMouseCameraSpace());
-		final var lIsLeftMouseButtonDown = lMouseInWindowCoords && pCore.input().mouse().tryAcquireMouseLeftClick(hashCode());
+		final var lLeftMouseButtonDown = pCore.input().mouse().isMouseLeftButtonDown();
+		final var lCanAcquireMouse = lMouseInWindowCoords && lLeftMouseButtonDown && pCore.input().mouse().tryAcquireMouseLeftClick(hashCode());
 
-		if (lMouseInWindowCoords && pCore.input().mouse().isMouseOverThisComponent(hashCode())) {
-
-		} else {
+		if (!mClickActive && !lCanAcquireMouse) {
 			return false;
 
 		}
 
-		// If left mouse isn't pressed and the mouse isn't within the window, then the scrollbar cannot be active
-		if (!lIsLeftMouseButtonDown) {
+		if (mClickActive && !lLeftMouseButtonDown) {
 			mClickActive = false;
+
 			return false;
 
 		}
 
-		// check the mouse is within bounds
-		if (!mClickActive && !lMouseInWindowCoords) {
-			return false;
-
-		}
-
-		// and check the mouse click isn't being handled elsewhere
 		if (!pCore.input().mouse().isMouseOverThisComponent(hashCode())) {
 			return false;
 
 		}
 
-		if (!mClickActive) {
+		if (!mClickActive && lCanAcquireMouse) {
 			mClickActive = true;
 			mLastMouseYPos = pCore.HUD().getMouseWorldSpaceY();
 
 		}
 
-		// Scrolling
 		constrainScrollBarPosition(pCore.HUD().getMouseWorldSpaceY());
 
 		return true;
