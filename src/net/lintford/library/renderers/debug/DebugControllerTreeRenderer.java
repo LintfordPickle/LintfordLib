@@ -135,8 +135,7 @@ public class DebugControllerTreeRenderer extends Rectangle implements IScrollBar
 		}
 
 		if (intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().isMouseOverThisComponent(hashCode())) {
-
-			if (pCore.input().mouse().tryAcquireMouseMiddle(hashCode())) {
+			if (pCore.input().mouse().tryAcquireMouseOverThisComponent(hashCode())) {
 				mZScrollAcceleration += pCore.input().mouse().mouseWheelYOffset() * 250.0f;
 
 			}
@@ -355,7 +354,9 @@ public class DebugControllerTreeRenderer extends Rectangle implements IScrollBar
 			mContentRectangle.postDraw(pCore);
 
 		if (mScrollBarEnabled) {
-			mScrollBar.draw(pCore, mTextureBatch, mCoreTexture, -0.02f);
+			mTextureBatch.begin(pCore.HUD());
+			mScrollBar.draw(pCore, mTextureBatch, mCoreTexture, -0.01f);
+			mTextureBatch.end();
 
 		}
 
