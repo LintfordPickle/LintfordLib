@@ -95,14 +95,15 @@ public class UIBar {
 		if (pTextureBatch == null || !pTextureBatch.isDrawing())
 			return;
 
-		final float INNER_BORDER_PADDING = 1.f;
+		final float INNER_BORDER_PADDING = 2.f;
 
 		final var lCoreTexture = pCore.resources().textureManager().textureCore();
 
 		float lBarWidth = MathHelper.scaleToRange(mCurValue, mMinValue, mMaxValue, 0, mIsVertical ? h : w);
 		lBarWidth = MathHelper.clamp(lBarWidth - INNER_BORDER_PADDING * 2, 0, w);
 
-		pTextureBatch.draw(lCoreTexture, 0, 0, 32, 32, x, y, w, h, pComponentZDepth, ColorConstants.BLACK);
+		final var lOutlineColor = ColorConstants.getColor(.1f, .1f, .1f);
+		pTextureBatch.draw(lCoreTexture, 0, 0, 32, 32, x, y, w, h, pComponentZDepth, lOutlineColor);
 
 		if (mIsVertical) {
 			float lWidth = w - INNER_BORDER_PADDING * 2;
