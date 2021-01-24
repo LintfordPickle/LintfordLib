@@ -16,6 +16,7 @@ import net.lintford.library.core.camera.ICamera;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.debug.stats.DebugStats;
 import net.lintford.library.core.geometry.Rectangle;
+import net.lintford.library.core.graphics.Color;
 import net.lintford.library.core.graphics.shaders.ShaderMVP_PCT;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.vertices.VertexDataStructurePCT;
@@ -28,7 +29,7 @@ public class IndexedPolyBatchPCT {
 	// Constants
 	// --------------------------------------
 
-	public static final int MAX_TRIS = 2048;
+	public static final int MAX_TRIS = 4096;
 	public static final int NUM_VERTS_PER_TRI = 3;
 
 	private static final String VERT_FILENAME = "/res/shaders/shader_basic_pct.vert";
@@ -43,7 +44,7 @@ public class IndexedPolyBatchPCT {
 	protected int mVboId = -1;
 	protected int mIndexCount = 0;
 	protected int mVertexCount = 0;
-	public float r, g, b, a;
+	protected final Color mColor = new Color(1.f, 1.f, 1.f, 1.f);
 	protected int mCurrentTexID;
 
 	protected ICamera mCamera;
@@ -58,6 +59,10 @@ public class IndexedPolyBatchPCT {
 	// Properties
 	// ------------------------------------
 
+	public Color color() {
+		return mColor;
+	}
+
 	public boolean isDrawing() {
 		return mIsDrawing;
 	}
@@ -68,8 +73,6 @@ public class IndexedPolyBatchPCT {
 
 	public IndexedPolyBatchPCT() {
 		mShader = new ShaderMVP_PCT(ShaderMVP_PCT.SHADER_NAME, VERT_FILENAME, FRAG_FILENAME);
-
-		a = r = g = b = 1f;
 
 		mModelMatrix = new Matrix4f();
 		mIsLoaded = false;
@@ -143,9 +146,9 @@ public class IndexedPolyBatchPCT {
 		if (pCamera == null)
 			return;
 
-		if(!mIsLoaded)
+		if (!mIsLoaded)
 			return;
-		
+
 		if (mIsDrawing)
 			return;
 
@@ -158,6 +161,11 @@ public class IndexedPolyBatchPCT {
 		mVertexCount = 0;
 
 		mIsDrawing = true;
+
+	}
+
+	public void drawRect(Texture pTexture, Rectangle pSrcRect, List<Vector2f> pVertexArray, float pZ, boolean pClose) {
+		drawRect(pTexture, pSrcRect, pVertexArray, pZ, pClose, mColor.r, mColor.g, mColor.b);
 
 	}
 
@@ -181,10 +189,10 @@ public class IndexedPolyBatchPCT {
 
 		}
 
-		addVertToBuffer(lRectVerts.get(0).x, lRectVerts.get(0).y, pZ, 1f, pR, pG, pB, a, pSrcRect.left(), pSrcRect.top());
-		addVertToBuffer(lRectVerts.get(1).x, lRectVerts.get(1).y, pZ, 1f, pR, pG, pB, a, pSrcRect.right(), pSrcRect.top());
-		addVertToBuffer(lRectVerts.get(2).x, lRectVerts.get(2).y, pZ, 1f, pR, pG, pB, a, pSrcRect.left(), pSrcRect.bottom());
-		addVertToBuffer(lRectVerts.get(3).x, lRectVerts.get(3).y, pZ, 1f, pR, pG, pB, a, pSrcRect.right(), pSrcRect.bottom());
+		addVertToBuffer(lRectVerts.get(0).x, lRectVerts.get(0).y, pZ, 1f, pR, pG, pB, mColor.a, pSrcRect.left(), pSrcRect.top());
+		addVertToBuffer(lRectVerts.get(1).x, lRectVerts.get(1).y, pZ, 1f, pR, pG, pB, mColor.a, pSrcRect.right(), pSrcRect.top());
+		addVertToBuffer(lRectVerts.get(2).x, lRectVerts.get(2).y, pZ, 1f, pR, pG, pB, mColor.a, pSrcRect.left(), pSrcRect.bottom());
+		addVertToBuffer(lRectVerts.get(3).x, lRectVerts.get(3).y, pZ, 1f, pR, pG, pB, mColor.a, pSrcRect.right(), pSrcRect.bottom());
 
 		// Index the triangle
 		mIndexBuffer.put(mVertexCount - 4);
