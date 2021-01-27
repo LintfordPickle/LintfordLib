@@ -275,6 +275,9 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 		if (!isActive() || !isOpen())
 			return false;
 
+		final boolean lMouseOverWindow = mWindowArea.intersectsAA(pCore.HUD().getMouseCameraSpace());
+		final boolean lMouseLeftClick = pCore.input().mouse().isMouseLeftClick(hashCode());
+
 		// 1. Check if the scroll bar has been used
 		if (mScrollBar.handleInput(pCore)) {
 			return true;
@@ -315,7 +318,7 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 		}
 
 		// 2. window captures mouse clicks even if not dragging
-		if (mIsWindowMoveable && !mIsWindowMoving && mWindowArea.intersectsAA(pCore.HUD().getMouseCameraSpace())) {
+		if (mIsWindowMoveable && !mIsWindowMoving && lMouseOverWindow) {
 
 			// Only acquire lock when we are ready to move ...
 			if (pCore.input().mouse().tryAcquireMouseLeftClick(hashCode())) {
@@ -326,8 +329,8 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 
 				}
 
-				float nx = pCore.input().mouse().mouseWindowCoords().x;
-				float ny = pCore.input().mouse().mouseWindowCoords().y;
+				final float nx = pCore.input().mouse().mouseWindowCoords().x;
+				final float ny = pCore.input().mouse().mouseWindowCoords().y;
 
 				final int MINIMUM_TOLERENCE = 3;
 
@@ -344,14 +347,20 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 
 		}
 
-		if (!pCore.input().mouse().isMouseLeftClick(hashCode())) {
+		if (!lMouseLeftClick) {
 			mIsWindowMoving = false;
 			mMouseDownLastUpdate = false;
+
 		}
 
 		// This is needed because when the mouse is over a component
-		if (mWindowArea.intersectsAA(pCore.HUD().getMouseCameraSpace())) {
+		if (lMouseOverWindow) {
 			mIsMouseOver = true;
+
+			// TODO: This isn't working. even though you click on a window, you still get clicks registerd in the game.
+			if (lMouseLeftClick) {
+				pCore.input().mouse().tryAcquireMouseLeftClick(hashCode());
+			}
 
 			if (mCanCaptureMouse && pCore.input().mouse().tryAcquireMouseOverThisComponent(hashCode()) && pCore.input().mouse().tryAcquireMouseMiddle((hashCode()))) {
 				mZScrollAcceleration += pCore.input().mouse().mouseWheelYOffset() * 250.0f;
@@ -360,9 +369,10 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 
 		} else {
 			mIsMouseOver = false;
+
 		}
 
-		return false;
+		return mIsMouseOver;
 
 	}
 
