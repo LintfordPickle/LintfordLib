@@ -250,7 +250,7 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 			return;
 
 		if (mConsoleState == CONSOLE_STATE.open) {
-			if (intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().tryAcquireMouseMiddle(hashCode())) {
+			if (intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().tryAcquireMouseOverThisComponent(hashCode())) {
 				if (mTAGFilterText.handleInput(pCore))
 					return;
 				if (mMessageFilterText.handleInput(pCore))
@@ -505,7 +505,7 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 			return;
 
 		final var lDisplayConfig = pCore.config().display();
-		
+
 		final float Z_DEPTH = ZLayers.LAYER_DEBUG;
 
 		final float POSITION_OFFSET_TIME = 5;
@@ -559,7 +559,7 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 		final int lMessageCount = lMessages.size();
 		if (lMessages != null && lMessageCount > 0) {
 			for (int i = mLowerBound; i < mUpperBound; i++) {
-				if (i >= 0 && i < lMessageCount - 1) {
+				if (i >= 0 && i < lMessageCount) {
 					final var lMessage = lMessages.get(i);
 					if (lMessage == null)
 						continue;
