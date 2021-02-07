@@ -18,6 +18,7 @@ import net.lintford.library.GameInfo;
 import net.lintford.library.controllers.camera.CameraController;
 import net.lintford.library.controllers.camera.CameraHUDController;
 import net.lintford.library.controllers.core.ControllerManager;
+import net.lintford.library.controllers.core.CoreTimeController;
 import net.lintford.library.controllers.core.ResourceController;
 import net.lintford.library.controllers.debug.DebugControllerTreeController;
 import net.lintford.library.controllers.debug.DebugRendererTreeController;
@@ -188,11 +189,12 @@ public abstract class LintfordCore {
 	protected MasterConfig mMasterConfig;
 
 	protected InputManager mInputState;
-	protected final CoreTime mAppTime;
-	protected final GameTime mGameTime;
+	protected final CoreTime mCoreTime = new CoreTime();
+	protected final GameTime mGameTime = new GameTime();
 
 	protected ControllerManager mControllerManager;
 	protected ResourceManager mResourceManager;
+	protected CoreTimeController mCoreTimeController;
 	protected ResourceController mResourceController;
 	protected CameraController mCameraController;
 	protected CameraHUDController mCameraHUDController;
@@ -219,7 +221,7 @@ public abstract class LintfordCore {
 	 * Returns the instance of {@link CoreTime} which tracks the time realted to the application.
 	 */
 	public CoreTime appTime() {
-		return mAppTime;
+		return mCoreTime;
 	}
 
 	/**
@@ -290,9 +292,6 @@ public abstract class LintfordCore {
 	public LintfordCore(GameInfo pGameInfo, String[] pArgs, boolean pHeadless) {
 		mGameInfo = pGameInfo;
 		mIsHeadlessMode = pHeadless;
-
-		mAppTime = new CoreTime();
-		mGameTime = new GameTime();
 
 		// initially take the DebugLogLevel defined at compile time
 		DebugLogLevel lNewLogLevel = pGameInfo.debugLogLevel();
@@ -367,7 +366,8 @@ public abstract class LintfordCore {
 
 		mResourceManager = new ResourceManager(mMasterConfig);
 		mResourceController = new ResourceController(mControllerManager, mResourceManager, CORE_ENTITY_GROUP_ID);
-
+		mCoreTimeController = new CoreTimeController(mControllerManager, mCoreTime, mGameTime, CORE_ENTITY_GROUP_ID);
+		
 		// Create the HUD camera (always available)
 		mHUD = new HUD(mMasterConfig.display());
 		mHUD.update(this);
@@ -477,12 +477,12 @@ public abstract class LintfordCore {
 
 		// Game loop
 		while (!glfwWindowShouldClose(lDisplayConfig.windowID())) {
-			mAppTime.accumulatedElapsedTimeMilli += mAppTime.getDelta();
+			mCoreTime.accumulatedElapsedTimeMilli += mCoreTime.getDelta();
 
 			// If we are using a fixed time step, then make sure enough time has elapsed since the last frame
 			// before performing another update & draw
-			if (mIsFixedTimeStep && mAppTime.accumulatedElapsedTimeMilli < mAppTime.targetElapsedTimeMilli) {
-				long lSleepTime = (long) (mAppTime.targetElapsedTimeMilli - mAppTime.accumulatedElapsedTimeMilli);
+			if (mIsFixedTimeStep && mCoreTime.accumulatedElapsedTimeMilli < mCoreTime.targetElapsedTimeMilli) {
+				long lSleepTime = (long) (mCoreTime.targetElapsedTimeMilli - mCoreTime.accumulatedElapsedTimeMilli);
 
 				try {
 					Thread.sleep(lSleepTime);
@@ -499,21 +499,21 @@ public abstract class LintfordCore {
 			onHandleInput();
 
 			// Do not allow any update to take longer than our maximum allowed per frame.
-			if (mAppTime.accumulatedElapsedTimeMilli > mAppTime.maxElapsedTimeMilli)
-				mAppTime.accumulatedElapsedTimeMilli = mAppTime.maxElapsedTimeMilli;
+			if (mCoreTime.accumulatedElapsedTimeMilli > mCoreTime.maxElapsedTimeMilli)
+				mCoreTime.accumulatedElapsedTimeMilli = mCoreTime.maxElapsedTimeMilli;
 
 			if (mIsFixedTimeStep) {
-				mAppTime.elapsedTimeMilli = mAppTime.targetElapsedTimeMilli;
+				mCoreTime.elapsedTimeMilli = mCoreTime.targetElapsedTimeMilli;
 				int lStepCount = 0;
 
-				while (mAppTime.accumulatedElapsedTimeMilli >= mAppTime.targetElapsedTimeMilli) {
+				while (mCoreTime.accumulatedElapsedTimeMilli >= mCoreTime.targetElapsedTimeMilli) {
 					if (!mGameTime.isTimePaused) {
-						mGameTime.totalTimeMilli += mAppTime.targetElapsedTimeMilli * mGameTime.timeModifier;
+						mGameTime.totalTimeMilli += mCoreTime.targetElapsedTimeMilli * mGameTime.timeModifier;
 
 					}
 
-					mAppTime.totalTimeMilli += mAppTime.targetElapsedTimeMilli;
-					mAppTime.accumulatedElapsedTimeMilli -= mAppTime.targetElapsedTimeMilli;
+					mCoreTime.totalTimeMilli += mCoreTime.targetElapsedTimeMilli;
+					mCoreTime.accumulatedElapsedTimeMilli -= mCoreTime.targetElapsedTimeMilli;
 					++lStepCount;
 
 					onUpdate();
@@ -523,43 +523,43 @@ public abstract class LintfordCore {
 				// Every update after the first accumulates lag
 				lUpdateFrameLag += Math.max(0, lStepCount - 1);
 
-				if (mAppTime.isRunningSlowly()) {
+				if (mCoreTime.isRunningSlowly()) {
 					if (lUpdateFrameLag == 0) {
-						mAppTime.isRunningSlowly = false;
+						mCoreTime.isRunningSlowly = false;
 
 					}
 
 				} else if (lUpdateFrameLag >= 5) {
 					// If we lag more than 5 frames, start thinking we are running slowly
-					mAppTime.isRunningSlowly = true;
+					mCoreTime.isRunningSlowly = true;
 
 				}
 
 				// Draw needs to know the total elapsed time that occured for the fixed length updates.
-				mAppTime.elapsedTimeMilli = mAppTime.targetElapsedTimeMilli * lStepCount;
+				mCoreTime.elapsedTimeMilli = mCoreTime.targetElapsedTimeMilli * lStepCount;
 
 				if (!mGameTime.isTimePaused) {
-					mGameTime.elapsedTimeMilli = (mAppTime.targetElapsedTimeMilli * lStepCount) * mGameTime.timeModifier;
+					mGameTime.elapsedTimeMilli = (mCoreTime.targetElapsedTimeMilli * lStepCount) * mGameTime.timeModifier;
 				} else
 					mGameTime.elapsedTimeMilli = .0f;
 
 			} else { // Variable time step
 				// Perform a single variable length update.
 				if (!mGameTime.isTimePaused) {
-					mGameTime.elapsedTimeMilli = mAppTime.accumulatedElapsedTimeMilli * mGameTime.timeModifier;
+					mGameTime.elapsedTimeMilli = mCoreTime.accumulatedElapsedTimeMilli * mGameTime.timeModifier;
 
 				} else
 					mGameTime.elapsedTimeMilli = 0.f;
 
 				if (!mGameTime.isTimePaused) {
-					mGameTime.totalTimeMilli += mAppTime.targetElapsedTimeMilli * mGameTime.timeModifier;
+					mGameTime.totalTimeMilli += mCoreTime.targetElapsedTimeMilli * mGameTime.timeModifier;
 
 				}
 
-				mAppTime.elapsedTimeMilli = mAppTime.accumulatedElapsedTimeMilli;
-				mAppTime.totalTimeMilli += mAppTime.accumulatedElapsedTimeMilli;
+				mCoreTime.elapsedTimeMilli = mCoreTime.accumulatedElapsedTimeMilli;
+				mCoreTime.totalTimeMilli += mCoreTime.accumulatedElapsedTimeMilli;
 
-				mAppTime.accumulatedElapsedTimeMilli = 0.0; // consume all the time in a variable length step
+				mCoreTime.accumulatedElapsedTimeMilli = 0.0; // consume all the time in a variable length step
 
 				onUpdate();
 
