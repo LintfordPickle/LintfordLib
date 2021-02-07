@@ -667,6 +667,14 @@ public class JBox2dEntityInstance extends PooledBaseData {
 
 	}
 
+	public Vec2 getLinearVelocity() {
+		if (mMainBody == null)
+			return null;
+
+		return mMainBody.linearVelocity;
+
+	}
+
 	public void applyForce(float pX, float pY) {
 		final int lBodyCount = mBodies.size();
 		for (int i = 0; i < lBodyCount; i++) {
