@@ -317,6 +317,7 @@ public class JBox2dEntityInstance extends PooledBaseData {
 
 		}
 
+		mMainBody = null;
 		mWorld = null;
 		mPhysicsLoaded = false;
 

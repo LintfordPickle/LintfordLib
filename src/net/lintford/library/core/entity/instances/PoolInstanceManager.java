@@ -92,6 +92,9 @@ public abstract class PoolInstanceManager<T extends PooledBaseData> extends Inst
 	}
 
 	public void returnPooledItem(T pReturnedItem) {
+		if (pReturnedItem == null)
+			return;
+
 		if (mInstances.contains(pReturnedItem)) {
 			mInstances.remove(pReturnedItem);
 

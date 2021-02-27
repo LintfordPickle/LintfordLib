@@ -86,4 +86,9 @@ public class CollisionExtensions {
 
 	}
 
+	public static boolean checkHasArrived(float pEntityAPositionX, float pEntityAPositionY, float pEntityBPositionX, float pEntityBPositionY, float pMinDist) {
+		return Vector2f.distance(pEntityAPositionX, pEntityAPositionY, pEntityBPositionX, pEntityBPositionY) < pMinDist;
+
+	}
+
 }

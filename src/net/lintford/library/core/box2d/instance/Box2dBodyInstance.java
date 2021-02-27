@@ -93,8 +93,8 @@ public class Box2dBodyInstance extends PooledBaseData {
 
 		}
 
-		this.objectPositionInUnits.x = mBody.getPosition().x - lParentPositionX;
-		this.objectPositionInUnits.y = mBody.getPosition().y - lParentPositionY;
+		// this.objectPositionInUnits.x = mBody.getPosition().x - lParentPositionX;
+		// this.objectPositionInUnits.y = mBody.getPosition().y - lParentPositionY;
 		this.objectAngleInRadians = mBody.getAngle() - lParentAngle;
 
 		this.linearVelocity.set(mBody.getLinearVelocity());

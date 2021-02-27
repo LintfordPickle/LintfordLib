@@ -53,6 +53,7 @@ public class SpriteGraphInstance extends PooledBaseData implements AnimatedSprit
 
 	public float positionX;
 	public float positionY;
+	public float rotationInRadians;
 
 	// --------------------------------------
 	// Properties
@@ -139,6 +140,7 @@ public class SpriteGraphInstance extends PooledBaseData implements AnimatedSprit
 		rootNode.positionY(positionY);
 
 		// Rotation
+		// rootNode.rotation(rotationInRadians);
 
 	}
 
