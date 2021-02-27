@@ -459,14 +459,16 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 		lTextureBatch.draw(mUiCoreTexture, 32, 256, 32, 32, mWindowArea.x() + 32, mWindowArea.y(), mWindowArea.w() - 64, getTitleBarHeight(), Z_DEPTH, lWindowTitleColor);
 		lTextureBatch.draw(mUiCoreTexture, 128, 256, 32, 32, mWindowArea.x() + mWindowArea.w() - 32, mWindowArea.y(), 32, 32.f, Z_DEPTH, lWindowTitleColor);
 
-		float lTitleX = mWindowArea.x() + 1.f;
-		float lTitleY = mWindowArea.y() + 1.f;
+		float lTitleX = mWindowArea.x();
+		float lTitleY = mWindowArea.y();
 
 		// Render the icons from the game ui texture
 		if (mIconSrcRectangle != null && !mIconSrcRectangle.isEmpty() && mHudTexture != null) {
 			lTextureBatch.draw(mHudTexture, mIconSrcRectangle, lTitleX, lTitleY, getTitleBarHeight(), getTitleBarHeight(), Z_DEPTH, lWindowColor);
 			lTitleX += 32 + WINDOW_CONTENT_PADDING_X;
 
+		} else {
+			lTitleX += 8.f; // offset when no icon in title bar
 		}
 
 		// Draw the window title
