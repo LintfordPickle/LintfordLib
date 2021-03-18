@@ -149,9 +149,9 @@ public class SpriteGraphInstance extends PooledBaseData implements AnimatedSprit
 	// --------------------------------------
 
 	public void attachedObjectToNode(String pSpriteGraphNodeName, Object pObjectToAttac, SpriteSheetDefinition pSpriteSheetDefinition, SpriteInstance pSpriteInstance) {
-		final var lSpriteGraphWeaponNode = getNodeByName(pSpriteGraphNodeName);
-		if (lSpriteGraphWeaponNode != null) {
-			lSpriteGraphWeaponNode.attachRenderableObjectToSpriteGraphNode(pObjectToAttac, pSpriteSheetDefinition, pSpriteInstance);
+		final var lSpriteGraphNode = getNodeByName(pSpriteGraphNodeName);
+		if (lSpriteGraphNode != null) {
+			lSpriteGraphNode.attachRenderableObjectToSpriteGraphNode(pObjectToAttac, pSpriteSheetDefinition, pSpriteInstance);
 
 		}
 
