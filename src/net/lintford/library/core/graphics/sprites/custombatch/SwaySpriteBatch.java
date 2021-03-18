@@ -3,6 +3,7 @@ package net.lintford.library.core.graphics.sprites.custombatch;
 import java.util.List;
 
 import net.lintford.library.core.geometry.Rectangle;
+import net.lintford.library.core.graphics.Color;
 import net.lintford.library.core.graphics.sprites.SpriteFrame;
 import net.lintford.library.core.graphics.sprites.SpriteInstance;
 import net.lintford.library.core.graphics.sprites.spritebatch.SpriteBatch;
@@ -27,7 +28,7 @@ public class SwaySpriteBatch extends SpriteBatch {
 	// Methods
 	// --------------------------------------
 
-	public void draw(SpriteSheetDefinition pSpriteSheet, SpriteInstance pSprite, Rectangle pDstRectangle, float pZ, float pR, float pG, float pB, float pA) {
+	public void draw(SpriteSheetDefinition pSpriteSheet, SpriteInstance pSprite, Rectangle pDstRectangle, float pZ, Color pTint) {
 		if (pSpriteSheet == null)
 			return;
 
@@ -41,19 +42,19 @@ public class SwaySpriteBatch extends SpriteBatch {
 		Texture lTexture = pSpriteSheet.texture();
 		SpriteFrame lCurrentFrame = pSprite.currentSpriteFrame();
 
-		drawGrass(lTexture, lCurrentFrame, pDstRectangle, pZ, pA);
+		drawGrass(lTexture, lCurrentFrame, pDstRectangle, pZ, pTint);
 
 	}
 
-	public void drawGrass(Texture pTexture, Rectangle pSrcRect, Rectangle pDestRect, float pZ, float pA) {
+	public void drawGrass(Texture pTexture, Rectangle pSrcRect, Rectangle pDestRect, float pZ, Color pTint) {
 		if (pSrcRect == null)
 			return;
 
-		drawGrass(pTexture, pSrcRect.x(), pSrcRect.y(), pSrcRect.w(), pSrcRect.h(), pDestRect, pZ, pA);
+		drawGrass(pTexture, pSrcRect.x(), pSrcRect.y(), pSrcRect.w(), pSrcRect.h(), pDestRect, pZ, pTint);
 
 	}
 
-	public void drawGrass(Texture pTexture, float pSX, float pSY, float pSW, float pSH, Rectangle pDestRect, float pZ, float pA) {
+	public void drawGrass(Texture pTexture, float pSX, float pSY, float pSW, float pSH, Rectangle pDestRect, float pZ, Color pTint) {
 		if (!isLoaded())
 			return;
 
@@ -128,12 +129,12 @@ public class SwaySpriteBatch extends SpriteBatch {
 		float lTop = !bottom ? 1.0f : 0.0f;
 
 		// CCW 102203
-		addVertToBuffer(x1, y1, pZ, 1f, lTop, 0f, 0f, pA, u1, v1); // 1
-		addVertToBuffer(x0, y0, pZ, 1f, lTop, 0f, 0f, pA, u0, v0); // 0
-		addVertToBuffer(x2, y2, pZ, 1f, lBottom, 0f, 0f, pA, u2, v2); // 2
-		addVertToBuffer(x1, y1, pZ, 1f, lTop, 0f, 0f, pA, u1, v1); // 1
-		addVertToBuffer(x2, y2, pZ, 1f, lBottom, 0f, 0f, pA, u2, v2); // 2
-		addVertToBuffer(x3, y3, pZ, 1f, lBottom, 0f, 0f, pA, u3, v3); // 3
+		addVertToBuffer(x1, y1, pZ, 1f, lTop, 0f, 0f, pTint.a, u1, v1); // 1
+		addVertToBuffer(x0, y0, pZ, 1f, lTop, 0f, 0f, pTint.a, u0, v0); // 0
+		addVertToBuffer(x2, y2, pZ, 1f, lBottom, 0f, 0f, pTint.a, u2, v2); // 2
+		addVertToBuffer(x1, y1, pZ, 1f, lTop, 0f, 0f, pTint.a, u1, v1); // 1
+		addVertToBuffer(x2, y2, pZ, 1f, lBottom, 0f, 0f, pTint.a, u2, v2); // 2
+		addVertToBuffer(x3, y3, pZ, 1f, lBottom, 0f, 0f, pTint.a, u3, v3); // 3
 
 		mCurNumSprites++;
 	}
