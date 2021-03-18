@@ -83,7 +83,6 @@ public class Box2dFixtureInstance extends PooledBaseData {
 	public void loadPhysics(World pWorld, Body pParentBody) {
 		FixtureDef lFixtureDef = new FixtureDef();
 
-		// FIXME: density needs validating before loading
 		lFixtureDef.density = density;
 		lFixtureDef.restitution = restitution;
 		lFixtureDef.friction = friction;
