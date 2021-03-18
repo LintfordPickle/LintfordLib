@@ -6,8 +6,8 @@ public class ConstantsPhysics {
 	// Statics
 	// --------------------------------------
 
-	private static float UNITS_TO_PIXELS = 16f;
-	private static float PIXELS_TO_UNITS = 1f / UNITS_TO_PIXELS;
+	private static float UNITS_TO_PIXELS = 32.f;
+	private static float PIXELS_TO_UNITS = 1.f / UNITS_TO_PIXELS;
 
 	// --------------------------------------
 	// Properties
