@@ -195,6 +195,14 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 
 	public void isOpen(boolean pNewValue) {
 		mIsOpen = pNewValue;
+
+		if (mIsOpen) {
+			onWindowOpened();
+
+		} else {
+			onWindowClosed();
+
+		}
 	}
 
 	public String windowTitle() {
@@ -618,8 +626,12 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 	}
 
 	@Override
-	public void onWindowClosed(UiWindow pUIWindow) {
-		// TODO Auto-generated method stub
+	public void onWindowClosed() {
+
+	}
+
+	@Override
+	public void onWindowOpened() {
 
 	}
 
