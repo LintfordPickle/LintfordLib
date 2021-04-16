@@ -621,28 +621,4 @@ public class RendererManager {
 
 	}
 
-	// --------------------------------------
-	// UIWindow Methods
-	// --------------------------------------
-
-	public UiWindow openWindow(String pWindowName) {
-		UiWindow lWindow = (UiWindow) getRenderer(pWindowName);
-
-		// Check to see if this window is already open, and if it is, close it
-
-		if (lWindow != null) {
-			lWindow.isOpen(true);
-		}
-
-		return lWindow;
-	}
-
-	public void closeWindow(final UiWindow pUIWindow) {
-		final int NUM_WINDOW_LISTENERS = mListeners.size();
-		for (int i = 0; i < NUM_WINDOW_LISTENERS; i++) {
-			mListeners.get(i).onWindowClosed(pUIWindow);
-
-		}
-	}
-
 }
