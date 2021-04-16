@@ -14,8 +14,8 @@ public class SpriteGraphNodeDefinition {
 	public float x, y, r;
 	public int zDepth;
 
-	/** nodes are tied to an anchor */
-	public boolean isPlaceholder;
+	/** Only ISpriteGraphAttachments of the same category can be attached to this node */
+	public int attachmentCategory;
 
 	/** A list of child parts which are anchored on this {@link SpriteGraphNodeDefinition}. */
 	public List<SpriteGraphNodeDefinition> childParts;

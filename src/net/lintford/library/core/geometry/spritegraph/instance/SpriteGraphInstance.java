@@ -9,10 +9,10 @@ import net.lintford.library.core.entity.instances.PooledBaseData;
 import net.lintford.library.core.geometry.spritegraph.AnimatedSpriteGraphListener;
 import net.lintford.library.core.geometry.spritegraph.ISpriteGraphPool;
 import net.lintford.library.core.geometry.spritegraph.SpriteGraphManager;
+import net.lintford.library.core.geometry.spritegraph.attachment.ISpriteGraphNodeAttachment;
 import net.lintford.library.core.geometry.spritegraph.definition.SpriteGraphDefinition;
 import net.lintford.library.core.graphics.sprites.AnimatedSpriteListener;
 import net.lintford.library.core.graphics.sprites.SpriteInstance;
-import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 
 /**
  * Represents a geometric instance of a SpriteGraphDef in the world, complete with information about transforms and part types (if for example multiple types are available per part).
@@ -43,12 +43,15 @@ public class SpriteGraphInstance extends PooledBaseData implements AnimatedSprit
 
 	public SpriteGraphNodeInstance rootNode;
 	public String spriteGraphName;
-	public String spriteSheetName;
+
+	public String mCurrentAction;
+
 	public boolean mFlipHorizontal;
 	public boolean mFlipVertical;
 
 	private boolean mOrdered;
-	public transient List<SpriteGraphNodeInstance> mFlatNodes;
+	private transient List<SpriteGraphNodeInstance> mFlatNodes;
+
 	private transient AnimatedSpriteGraphListener mAnimatedSpriteGraphListener;
 
 	public float positionX;
@@ -59,12 +62,28 @@ public class SpriteGraphInstance extends PooledBaseData implements AnimatedSprit
 	// Properties
 	// --------------------------------------
 
+	public String currentAnimation() {
+		return mCurrentAction;
+	}
+
+	public void currentAnimation(String pCurrentAnimation) {
+		mCurrentAction = pCurrentAnimation;
+	}
+
 	public SpriteGraphNodeInstance getNodeByName(String pNodeName) {
 		return rootNode.getNodeNyNodeName(pNodeName);
 	}
 
+	public SpriteGraphNodeInstance getNodeByAttachmentCategroy(int pAttachmentCategory) {
+		return rootNode.getNodeNyAttachmentCategory(pAttachmentCategory);
+	}
+
 	public SpriteGraphNodeInstance getNodeBySpriteFrameName(String pSpriteFrameName) {
 		return rootNode.getNodeNyNodeSpriteFrameName(pSpriteFrameName);
+	}
+
+	public List<SpriteGraphNodeInstance> flatList() {
+		return mFlatNodes;
 	}
 
 	/** Returns a list of all nodes in this graph, ordered by the ascending Z depth. */
@@ -148,19 +167,23 @@ public class SpriteGraphInstance extends PooledBaseData implements AnimatedSprit
 	// Methods
 	// --------------------------------------
 
-	public void attachedObjectToNode(String pSpriteGraphNodeName, Object pObjectToAttac, SpriteSheetDefinition pSpriteSheetDefinition, SpriteInstance pSpriteInstance) {
-		final var lSpriteGraphNode = getNodeByName(pSpriteGraphNodeName);
+	public void attachItemToNode(ISpriteGraphNodeAttachment pNodeAttachment) {
+		if (pNodeAttachment == null)
+			return;
+
+		final var lAttachmentCategory = pNodeAttachment.attachmentCategory();
+		final var lSpriteGraphNode = getNodeByAttachmentCategroy(lAttachmentCategory);
 		if (lSpriteGraphNode != null) {
-			lSpriteGraphNode.attachRenderableObjectToSpriteGraphNode(pObjectToAttac, pSpriteSheetDefinition, pSpriteInstance);
+			lSpriteGraphNode.attachItemToSpriteGraphNode(pNodeAttachment);
 
 		}
 
 	}
 
-	public void detachObjectFromNode(String pSpriteGraphNodeName) {
-		final var lSpriteGraphWeaponNode = getNodeByName(pSpriteGraphNodeName);
-		if (lSpriteGraphWeaponNode != null) {
-			lSpriteGraphWeaponNode.detachRenderableObjectFromSpriteGraphNode();
+	public void detachItemFromNode(String pSpriteGraphNodeName) {
+		final var lSpriteGraphNodeInstance = getNodeByName(pSpriteGraphNodeName);
+		if (lSpriteGraphNodeInstance != null) {
+			lSpriteGraphNodeInstance.detachItemFromSpriteGraphNode();
 
 		}
 

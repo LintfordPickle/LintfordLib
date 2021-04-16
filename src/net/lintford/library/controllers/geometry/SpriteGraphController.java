@@ -80,7 +80,7 @@ public class SpriteGraphController extends BaseController {
 	// Methods
 	// --------------------------------------
 
-	public SpriteGraphInstance getSpriteGraphInstance(String lSpriteGraphDefinitionName, String lSpriteSheetDefinitionName, int lEntityGroupUid) {
+	public SpriteGraphInstance getSpriteGraphInstance(String lSpriteGraphDefinitionName, int lEntityGroupUid) {
 		final var lResourceManager = mResourceController.resourceManager();
 		final var lSpriteGraphDefinition = lResourceManager.spriteGraphRepository().getSpriteGraphDefinition(lSpriteGraphDefinitionName, mEntityGroupID);
 
@@ -90,17 +90,7 @@ public class SpriteGraphController extends BaseController {
 
 		}
 
-		final var lSpriteGraphInstance = spriteGraphManager().getInstanceOfGraph(lSpriteGraphDefinition, entityGroupID());
-
-		// Assign a SpriteGraphDefinition to the root node, if specified
-		if (lSpriteSheetDefinitionName != null) {
-			final var lSpriteSheetDefintion = lResourceManager.spriteSheetManager().getSpriteSheet(lSpriteSheetDefinitionName, mEntityGroupID);
-			final var lRootNode = lSpriteGraphInstance.rootNode;
-			lRootNode.assignNewSpriteSheetDefinition(lSpriteSheetDefintion);
-
-		}
-
-		return lSpriteGraphInstance;
+		return spriteGraphManager().getInstanceOfGraph(lSpriteGraphDefinition, entityGroupID());
 	}
 
 }

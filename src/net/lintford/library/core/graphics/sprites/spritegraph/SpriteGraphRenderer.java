@@ -19,6 +19,12 @@ public class SpriteGraphRenderer extends SpriteBatch {
 	public static boolean RENDER_DEBUG = false;
 
 	// --------------------------------------
+	// Variables
+	// --------------------------------------
+
+	public int entityGroupUid;
+
+	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
@@ -40,7 +46,11 @@ public class SpriteGraphRenderer extends SpriteBatch {
 		final int lNumNodes = lReorderedList.size();
 		for (int i = 0; i < lNumNodes; i++) {
 			final var lSpriteGraphNodeInstance = lReorderedList.get(i);
-			renderSpriteGraphNodeInstance(pCore, pSpriteGraphInstance, lSpriteGraphNodeInstance);
+
+			if (lSpriteGraphNodeInstance.attachedItemInstance != null) {
+				renderSpriteGraphNodeInstance(pCore, pSpriteGraphInstance, lSpriteGraphNodeInstance);
+
+			}
 
 		}
 
@@ -49,23 +59,52 @@ public class SpriteGraphRenderer extends SpriteBatch {
 
 	}
 
-	public void drawSpriteGraphTree(LintfordCore pCore, SpriteGraphInstance pSpriteGraphInstance) {
-		if (pSpriteGraphInstance == null || !pSpriteGraphInstance.isAssigned())
-			return;
-
-		renderSpriteTreeNode(pCore, pSpriteGraphInstance, pSpriteGraphInstance.rootNode);
-
-		if (RENDER_DEBUG)
-			renderSpriteTreeNode(pCore, pSpriteGraphInstance, pSpriteGraphInstance.rootNode);
-
-	}
-
 	private void renderSpriteGraphNodeInstance(LintfordCore pCore, SpriteGraphInstance pSpriteGraph, SpriteGraphNodeInstance pSpriteGraphNode) {
-		final var lSpriteSheetDefinition = pSpriteGraphNode.spriteSheetDefinition;
-		final var lSpriteInstance = pSpriteGraphNode.spriteInstance();
+		if (pSpriteGraphNode.attachedItemInstance != null) {
+			final var lAttachment = pSpriteGraphNode.attachedItemInstance;
 
-		if (lSpriteSheetDefinition != null && lSpriteInstance != null) {
-			draw(lSpriteSheetDefinition, lSpriteInstance, lSpriteInstance, -0.1f, ColorConstants.WHITE);
+			// Resolve the sprite sheet
+			var lSpriteSheetDefinition = lAttachment.spriteSheetDefinition();
+			if (lSpriteSheetDefinition == null) {
+				final var lResourceManager = pCore.resources();
+				lSpriteSheetDefinition = lResourceManager.spriteSheetManager().getSpriteSheet(lAttachment.spriteGraphSpriteSheetName(), entityGroupUid);
+
+				if (lSpriteSheetDefinition == null) {
+					return;
+
+				}
+
+				lAttachment.spriteSheetDefinition(lSpriteSheetDefinition);
+
+			}
+
+			// Update the sprite animation
+			if (pSpriteGraphNode.currentSpriteActionName == null || !pSpriteGraphNode.currentSpriteActionName.equals(pSpriteGraph.currentAnimation())) {
+				// First try to get the sprite graph animation frame
+				var lFoundSprintInstance = lSpriteSheetDefinition.getSpriteInstance(pSpriteGraph.currentAnimation());
+				if (lFoundSprintInstance != null) {
+					pSpriteGraphNode.mSpriteInstance = lFoundSprintInstance;
+
+				} else {
+					// otherwise, take the default name of the attachment
+					lFoundSprintInstance = lSpriteSheetDefinition.getSpriteInstance(lAttachment.defaultSpriteName());
+					if (lFoundSprintInstance != null) {
+						pSpriteGraphNode.mSpriteInstance = lFoundSprintInstance;
+					}
+
+				}
+
+				pSpriteGraphNode.currentSpriteActionName = pSpriteGraph.currentAnimation();
+
+			}
+
+			// Render the sprite instance
+			if (pSpriteGraphNode.mSpriteInstance != null) {
+				pSpriteGraphNode.update(pCore, pSpriteGraph, pSpriteGraphNode);
+
+				draw(lSpriteSheetDefinition, pSpriteGraphNode.mSpriteInstance, pSpriteGraphNode.mSpriteInstance, -0.1f, ColorConstants.WHITE);
+
+			}
 
 			if (RENDER_DEBUG) {
 				end();
@@ -73,37 +112,10 @@ public class SpriteGraphRenderer extends SpriteBatch {
 
 			}
 
-		}
+			if (RENDER_DEBUG) {
+				renderSpriteTreeNodeDebug(pCore, pSpriteGraph, pSpriteGraphNode);
 
-		if (RENDER_DEBUG) {
-			renderSpriteTreeNodeDebug(pCore, pSpriteGraph, pSpriteGraphNode);
-
-		}
-
-	}
-
-	private void renderSpriteTreeNode(LintfordCore pCore, SpriteGraphInstance pSpriteGraph, SpriteGraphNodeInstance pSpriteGraphNode) {
-		final var lSpriteSheetDefinition = pSpriteGraphNode.spriteSheetDefinition;
-		final var lSpriteInstance = pSpriteGraphNode.spriteInstance();
-
-		if (lSpriteSheetDefinition != null && lSpriteInstance != null) {
-			draw(lSpriteSheetDefinition, lSpriteInstance, lSpriteInstance, -0.1f, ColorConstants.WHITE);
-
-			end();
-			begin(pCore.gameCamera());
-
-		}
-
-		final int lChildNodeList = pSpriteGraphNode.childNodes.size();
-		for (int i = 0; i < lChildNodeList; i++) {
-			final var lSpriteGraphNodeInst = pSpriteGraphNode.childNodes.get(i);
-
-			renderSpriteTreeNode(pCore, pSpriteGraph, lSpriteGraphNodeInst);
-
-		}
-
-		if (RENDER_DEBUG) {
-			renderSpriteTreeNodeDebug(pCore, pSpriteGraph, pSpriteGraphNode);
+			}
 
 		}
 

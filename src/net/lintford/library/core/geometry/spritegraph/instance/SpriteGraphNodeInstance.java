@@ -6,11 +6,10 @@ import java.util.List;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.entity.instances.PooledBaseData;
 import net.lintford.library.core.geometry.spritegraph.ISpriteGraphPool;
+import net.lintford.library.core.geometry.spritegraph.attachment.ISpriteGraphNodeAttachment;
 import net.lintford.library.core.geometry.spritegraph.definition.SpriteGraphNodeDefinition;
 import net.lintford.library.core.graphics.sprites.SpriteAnchor;
-import net.lintford.library.core.graphics.sprites.SpriteDefinition;
 import net.lintford.library.core.graphics.sprites.SpriteInstance;
-import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 
 // ToDo: Attachable Box2d bodies: Some nodes need to interact with the world via the sprite graph nodes
 // ToDo: Attachable SpriteInstance: Each node instance should have its own sprite animation for the current spritesheetdefinition
@@ -29,16 +28,16 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 	public String name;
 	public SpriteGraphInstance mParentGraphInst;
 
-	/** Each SpriteGraphNodeInstance has a specific sheetsheet assigned to it. It is from which this sheet that all the anchor information is taken. */
-	public transient SpriteSheetDefinition spriteSheetDefinition;
-	private transient SpriteInstance mSpriteInstance;
-	public String spriteSheetName;
+	/** Each SpriteGraphNodeInstance can have a specific sheetsheet assigned to it. It is from which this sheet that all the anchor information is taken. */
+	public transient ISpriteGraphNodeAttachment attachedItemInstance;
+	public transient SpriteInstance mSpriteInstance;
 
 	/** The ID of the {@link SpriteGraphAnchorDef} on the parent. */
 	public int parentAnchorID;
 
 	/** The name of the {@link SpriteGraphAnchorDef} on the parent. */
 	public String anchorNodeName;
+	public String currentSpriteActionName;
 
 	/** A list of child parts which are anchored on this {@link SpriteGraphNodeInstance}. */
 	public List<SpriteGraphNodeInstance> childNodes;
@@ -47,6 +46,7 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 	public int zDepth;
 
 	public int entityGroupID;
+	public int attachmentCategory;
 
 	public boolean angToPointEnabled;
 	public float angToPoint;
@@ -61,8 +61,6 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 	private float mRotation;
 	public boolean disableTreeUpdatesPosition;
 	public boolean disableTreeUpdatesRotation;
-
-	public transient Object attachedItemInstance;
 
 	// --------------------------------------
 	// Properties
@@ -167,6 +165,31 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 
 	}
 
+	public SpriteGraphNodeInstance getNodeNyAttachmentCategory(int pNodeCategory) {
+		if (name == null) {
+			return null;
+
+		}
+
+		if (attachmentCategory == pNodeCategory) {
+			return this;
+
+		}
+
+		final int lNumChildNodes = childNodes.size();
+		for (int i = 0; i < lNumChildNodes; i++) {
+			final var lSpriteGraphNodeInstance = childNodes.get(i).getNodeNyAttachmentCategory(pNodeCategory);
+			if (lSpriteGraphNodeInstance != null) {
+				return lSpriteGraphNodeInstance;
+
+			}
+
+		}
+
+		return null;
+
+	}
+
 	public SpriteGraphNodeInstance getNodeNyNodeSpriteFrameName(String pSpriteFrameNodeName) {
 		if (anchorNodeName != null && anchorNodeName.equals(pSpriteFrameNodeName)) {
 			return this;
@@ -225,6 +248,7 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 		nodeDepth = pNodeDepth;
 		entityGroupID = pEntityGroupUid;
 		zDepth = pGraphNodeDef.zDepth;
+		attachmentCategory = pGraphNodeDef.attachmentCategory;
 
 		final int lChildNodeCount = pGraphNodeDef.childParts.size();
 		for (int i = 0; i < lChildNodeCount; i++) {
@@ -339,30 +363,23 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 	// Methods
 	// --------------------------------------
 
-	public void attachRenderableObjectToSpriteGraphNode(Object pObjectToAttac, SpriteSheetDefinition pSpriteSheetDefinition, SpriteInstance pSpriteInstance) {
+	public void attachItemToSpriteGraphNode(ISpriteGraphNodeAttachment pObjectToAttac) {
 		if (pObjectToAttac == null) {
-			detachRenderableObjectFromSpriteGraphNode();
+			detachItemFromSpriteGraphNode();
 			return;
 
 		}
 
-		if (attachedItemInstance != pObjectToAttac) {
-			spriteSheetDefinition = pSpriteSheetDefinition;
-			mSpriteInstance = pSpriteInstance;
-
-			attachedItemInstance = pObjectToAttac;
-
-		}
+		attachedItemInstance = pObjectToAttac;
 
 	}
 
-	public void detachRenderableObjectFromSpriteGraphNode() {
+	public void detachItemFromSpriteGraphNode() {
 		if (mSpriteInstance != null) {
 			mSpriteInstance.kill();
 			mSpriteInstance = null;
 		}
 
-		spriteSheetDefinition = null;
 		attachedItemInstance = null;
 	}
 
@@ -393,84 +410,12 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 			mSpriteInstance = null;
 		}
 
-		spriteSheetName = "";
-		spriteSheetDefinition = null;
+		mSpriteInstance = null;
 
 	}
 
 	public void setAngToPoint(float pNewValue) {
 		angToPoint = pNewValue;
-
-	}
-
-	public void assignNewSpriteSheetDefinition(SpriteSheetDefinition pSpriteSheetDefintion) {
-		if (pSpriteSheetDefintion == null) {
-			unassignNewSpriteSheetDefinition();
-
-			return;
-
-		}
-
-		spriteSheetDefinition = pSpriteSheetDefintion;
-	}
-
-	public void unassignNewSpriteSheetDefinition() {
-		if (mSpriteInstance != null) {
-			if (spriteSheetDefinition != null) {
-				spriteSheetDefinition.releaseInistance(mSpriteInstance);
-
-			}
-
-		}
-
-		spriteSheetDefinition = null;
-		mSpriteInstance = null;
-
-	}
-
-	public void assignNewSprite(String pSpriteName) {
-		if (spriteSheetDefinition == null) {
-			return;
-
-		}
-
-		final var lSpriteDefinition = spriteSheetDefinition.getSpriteDefinition(pSpriteName);
-		assignNewSprite(lSpriteDefinition);
-
-	}
-
-	public void assignNewSprite(SpriteDefinition pSpriteDefinition) {
-		if (pSpriteDefinition == null) {
-			return;
-
-		}
-
-		spriteSheetName = spriteSheetDefinition.spriteSheetName;
-		mSpriteInstance = spriteSheetDefinition.getSpriteInstance(pSpriteDefinition);
-
-		// Add sprite listeners, so we can act when an animation ends
-		if (mSpriteInstance != null) {
-			mSpriteInstance.animatedSpriteListender(mParentGraphInst);
-
-		}
-
-	}
-
-	public void unassignSprite() {
-		mParentGraphInst = null;
-
-		if (spriteSheetDefinition != null) {
-			spriteSheetDefinition.releaseInistance(mSpriteInstance);
-			spriteSheetDefinition = null;
-			return;
-
-		}
-
-		if (mSpriteInstance != null) {
-			mSpriteInstance.animatedSpriteListender(null);
-			mSpriteInstance = null;
-
-		}
 
 	}
 
