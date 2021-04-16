@@ -48,7 +48,7 @@ public class BitmapFont {
 
 	public static final int NO_WORD_WRAP = -1;
 	public static final int NO_WIDTH_CAP = -1;
-	
+
 	public static final boolean SAVE_BITMAP_TEXTURES_ON_CREATION = false;
 
 	// --------------------------------------
@@ -205,15 +205,15 @@ public class BitmapFont {
 
 		// Create a new font texture and add it to our EntityGroup
 		mFontTexture = pResourceManager.textureManager().createFontTexture(mFontName, lFontImage, GL11.GL_LINEAR, LintfordCore.CORE_ENTITY_GROUP_ID);
-		
-		if(SAVE_BITMAP_TEXTURES_ON_CREATION) {
+
+		if (SAVE_BITMAP_TEXTURES_ON_CREATION) {
 			final var lDebugFilename = AppStorage.getGameDataDirectory() + AppStorage.FILE_SEPERATOR + mFontName + mPointSize + ".png";
 
 			try {
 				ImageIO.write(lFontImage, "png", new File(lDebugFilename));
 			} catch (IOException e) {
 			}
-			
+
 		}
 
 		mIsLoaded = true;
@@ -231,8 +231,8 @@ public class BitmapFont {
 
 	private BufferedImage createCharImage(java.awt.Font font, char c, boolean antiAlias) {
 		/* Creating temporary image to extract character size */
-		BufferedImage lImage = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
-		Graphics2D lGraphics = lImage.createGraphics();
+		var lImage = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
+		var lGraphics = lImage.createGraphics();
 		if (antiAlias) {
 			lGraphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		}
@@ -240,16 +240,13 @@ public class BitmapFont {
 		FontMetrics lFontMetrics = lGraphics.getFontMetrics();
 		lGraphics.dispose();
 
-		/* Get char charWidth and charHeight */
 		int charWidth = lFontMetrics.charWidth((int) c);
 		int charHeight = lFontMetrics.getHeight();
 
-		/* Check if charWidth is 0 */
 		if (charWidth == 0) {
 			return null;
 		}
 
-		/* Create image for holding the char */
 		lImage = new BufferedImage(charWidth, charHeight, BufferedImage.TYPE_INT_ARGB);
 		lGraphics = lImage.createGraphics();
 		if (antiAlias) {
