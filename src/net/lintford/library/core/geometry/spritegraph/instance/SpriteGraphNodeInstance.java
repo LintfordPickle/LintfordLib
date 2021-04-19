@@ -364,9 +364,8 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 	// --------------------------------------
 
 	public void attachItemToSpriteGraphNode(ISpriteGraphNodeAttachment pObjectToAttac) {
-		if (pObjectToAttac == null) {
+		if (attachedItemInstance != null) {
 			detachItemFromSpriteGraphNode();
-			return;
 
 		}
 
