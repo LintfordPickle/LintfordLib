@@ -1,4 +1,4 @@
-# Introduction
+# LintfordCore
 A Java game library containing LWJGL natives and a game state management framework.
 
 The development of this project takes place predominantly during the Ludum Dare game jam events. It therefore misses the benefits of code review, comprehensive unit testing or the application of many clean code principles.
