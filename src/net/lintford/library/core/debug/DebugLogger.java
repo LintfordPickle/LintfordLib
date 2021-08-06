@@ -21,7 +21,8 @@ public class DebugLogger {
 	// Constants
 	// --------------------------------------
 
-	public static final boolean LOGGER_ENABLED = true;
+	private static SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("HH.mm.ss.SSS", Locale.US);
+
 	public static boolean DEBUG_LOG_DEBUG_TO_FILE = true;
 	public static final int LOG_BUFFER_LINE_COUNT = 1000;
 
@@ -128,18 +129,7 @@ public class DebugLogger {
 
 		}
 
-		if (!mDebugManager.debugManagerEnabled()) {
-			switch (pLogLevel) {
-			default:
-				System.out.println(padRight(pTag, 15) + ":" + pMessage);
-
-			}
-
-			return;
-		}
-
 		if (pLogLevel.logLevel >= mDebugManager.getLogLevel().logLevel) {
-
 			Message lLogMessage = null;
 			if (mLogLinePool.size() > 0) {
 				// Remove from the pool until empty
@@ -155,7 +145,7 @@ public class DebugLogger {
 				return;
 			}
 
-			String lTimeStamp = new SimpleDateFormat("HH.mm.ss.SSS", Locale.US).format(new Date());
+			var lTimeStamp = SIMPLE_DATE_FORMAT.format(new Date());
 			lLogMessage.setMessage(pTag, pMessage, lTimeStamp, pLogLevel.logLevel);
 
 			if (DEBUG_LOG_DEBUG_TO_FILE) {
