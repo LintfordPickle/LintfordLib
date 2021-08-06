@@ -187,6 +187,7 @@ public class TextureManager extends EntityGroupManager {
 
 		}
 
+		Debug.debugManager().logger().w(getClass().getSimpleName(), String.format("Couldn't getTexture %s: TextureGroup %d doesn't exit", pName, pEntityGroupID));
 		return mTextureNotFound;
 
 	}
@@ -335,7 +336,7 @@ public class TextureManager extends EntityGroupManager {
 			if (!pReload)
 				return lTexture;
 
-			Debug.debugManager().logger().i(getClass().getSimpleName(), "Unloading " + pName + ", so it can be reloaded");
+			Debug.debugManager().logger().v(getClass().getSimpleName(), "Unloading " + pName + ", so it can be reloaded");
 			unloadTexture(lTexture, pEntityGroupID);
 
 		}

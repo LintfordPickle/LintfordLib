@@ -138,7 +138,7 @@ public abstract class DefinitionManager<T extends BaseDefinition> {
 		}
 
 		try {
-			Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("Loading Definition type %s from file: %s", pClassType.getSimpleName(), pFilepath));
+			Debug.debugManager().logger().v(getClass().getSimpleName(), String.format("Loading Definition type %s from file: %s", pClassType.getSimpleName(), pFilepath));
 
 			final var lFileContents = new String(Files.readAllBytes(lDefinitionFile.toPath()));
 			final var lNewDefinition = pGson.fromJson(lFileContents, pClassType);

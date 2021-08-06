@@ -18,4 +18,8 @@ public interface ISpriteGraphNodeAttachment {
 
 	public abstract int relativeZDepth();
 
+	public default int getColorTint() {
+		return 0xFFFFFF;
+	}
+
 }

@@ -12,6 +12,7 @@ import net.lintford.library.core.graphics.sprites.SpriteDefinition;
 import net.lintford.library.core.graphics.sprites.SpriteFrame;
 import net.lintford.library.core.graphics.sprites.SpriteInstance;
 import net.lintford.library.core.graphics.textures.Texture;
+import net.lintford.library.core.graphics.textures.TextureManager;
 
 /** A {@link SpriteSheetDefinition} contains a collecetion of {@link SpriteFrame}s (which each define a source rectangle) and an associated {@link Texture} instance. */
 public class SpriteSheetDefinition {
@@ -25,17 +26,14 @@ public class SpriteSheetDefinition {
 
 	/** The unique name given to this {@link SpriteSheetDefinition}. */
 	public String spriteSheetName;
+	protected boolean reloadable;
+	protected String spriteSheetFilename;
 
 	/** The name of the {@link Texture} associated to this {@link SpriteSheetDefinition} */
 	protected String textureName;
 
 	/** The {@link Texture} instance associated with this {@link SpriteSheetDefinition} */
 	private transient Texture texture;
-
-	/** The filename of the {@link Texture} associated to this {@link SpriteSheetDefinition} */
-	protected String textureFilename;
-	protected boolean reloadable;
-	protected String spriteSheetFilename;
 
 	/**
 	 * In order to detect changes to the SpriteSheet when trying to reload textures, we will store the file size of the texture each time it is loaded.
@@ -120,8 +118,7 @@ public class SpriteSheetDefinition {
 
 	/** Loads the associated texture. */
 	public void loadGLContent(ResourceManager pResourceManager, int pEntityGroupID) {
-		// All SpriteSheets require a valid texture
-		if (textureName == null || textureName.length() == 0 || textureFilename == null || textureFilename.length() == 0) {
+		if (textureName == null || textureName.length() == 0) {
 			System.err.println("SpriteSheet texture name and filename cannot be null!");
 			return;
 
@@ -129,14 +126,12 @@ public class SpriteSheetDefinition {
 
 		mEntityGroupID = pEntityGroupID;
 
-		// If the texture has already been loaded, the TextureManager will return the texture instance so we can store it in this SpriteSheet instance.
-		texture = pResourceManager.textureManager().loadTexture(textureName, textureFilename, mEntityGroupID);
+		var lTextureManager = pResourceManager.textureManager();
+		texture = lTextureManager.getTexture(textureName, mEntityGroupID);
 
-		// Check that the texture was loaded correctly.
-		if (texture == null) {
-			Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Cannot load SpriteSheetDef '%s' texture %s for EntityGroupID %d.", spriteSheetName, textureName, pEntityGroupID));
+		if (texture == null || texture.name().equals(TextureManager.TEXTURE_NOT_FOUND_NAME)) {
+			Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Spritesheet '%s' cannot locate texture %s in EntityGroupID %d.", spriteSheetName, textureName, pEntityGroupID));
 			return;
-
 		}
 
 		textureWidth = texture.getTextureWidth();

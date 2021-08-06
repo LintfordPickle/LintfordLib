@@ -138,7 +138,7 @@ public class Texture {
 			lNewTexture.fileSizeOnLoad(lFileSize);
 			lNewTexture.reloadable(true);
 
-			Debug.debugManager().logger().i(Texture.class.getSimpleName(), "Loaded texture from file: " + pFilename);
+			Debug.debugManager().logger().v(Texture.class.getSimpleName(), "Loaded texture from file: " + pFilename);
 
 			return lNewTexture;
 
@@ -187,7 +187,7 @@ public class Texture {
 			// Don't attempt to reload textures loaded from the embedded resources
 			lNewTexture.reloadable(false);
 
-			Debug.debugManager().logger().i(Texture.class.getSimpleName(), "Loaded texture from resource: " + pFilename);
+			Debug.debugManager().logger().v(Texture.class.getSimpleName(), "Loaded texture from resource: " + pFilename);
 
 			return lNewTexture;
 
