@@ -54,8 +54,11 @@ public class SpriteGraphRenderer extends SpriteBatch {
 
 		}
 
-		if (RENDER_DEBUG)
+		if (RENDER_DEBUG) {
 			renderSpriteTreeNodeDebug(pCore, pSpriteGraphInstance, pSpriteGraphInstance.rootNode);
+			
+			Debug.debugManager().drawers().drawPointImmediate(pCore.gameCamera(), pSpriteGraphInstance.positionX, pSpriteGraphInstance.positionY, -0.01f, 1f, 1f, 1f, 1f);
+		}
 
 	}
 
@@ -98,33 +101,25 @@ public class SpriteGraphRenderer extends SpriteBatch {
 
 			}
 
-			// Render the sprite instance
 			if (pSpriteGraphNode.mSpriteInstance != null) {
 				pSpriteGraphNode.update(pCore, pSpriteGraph, pSpriteGraphNode);
 
-				draw(lSpriteSheetDefinition, pSpriteGraphNode.mSpriteInstance, pSpriteGraphNode.mSpriteInstance, -0.1f, ColorConstants.WHITE);
+				draw(lSpriteSheetDefinition, pSpriteGraphNode.mSpriteInstance, pSpriteGraphNode.mSpriteInstance, -0.1f, ColorConstants.getColor(lAttachment.getColorTint()));
 
 			}
 
 			if (RENDER_DEBUG) {
 				end();
 				begin(pCore.gameCamera());
-
-			}
-
-			if (RENDER_DEBUG) {
 				renderSpriteTreeNodeDebug(pCore, pSpriteGraph, pSpriteGraphNode);
-
 			}
-
 		}
-
 	}
 
 	private void renderSpriteTreeNodeDebug(LintfordCore pCore, SpriteGraphInstance pSpriteGraph, SpriteGraphNodeInstance pSpriteGraphNode) {
 		final var lSpriteInstance = pSpriteGraphNode.spriteInstance();
 
-		final float lPointSize = 2f;
+		final float lPointSize = 1f;
 		GL11.glPointSize(lPointSize * pCore.gameCamera().getZoomFactor());
 
 		// Debug.debugManager().drawers().drawPolyImmediate(pCore.gameCamera(), pSpriteGraphNode.spriteInstance);

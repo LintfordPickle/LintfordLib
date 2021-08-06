@@ -56,8 +56,8 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 	private boolean mFlippedVertical;
 	private float mPositionX;
 	private float mPositionY;
-	private float mPivotX;
-	private float mPivotY;
+	private int mPivotX;
+	private int mPivotY;
 	private float mRotation;
 	public boolean disableTreeUpdatesPosition;
 	public boolean disableTreeUpdatesRotation;
@@ -90,22 +90,22 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 
 	}
 
-	public float pivotX() {
+	public int pivotX() {
 		return mPivotX;
 
 	}
 
-	public void pivotX(float pNewValue) {
+	public void pivotX(int pNewValue) {
 		mPivotX = pNewValue;
 
 	}
 
-	public float pivotY() {
+	public int pivotY() {
 		return mPivotY;
 
 	}
 
-	public void pivotY(float pNewValue) {
+	public void pivotY(int pNewValue) {
 		mPivotY = pNewValue;
 
 	}
@@ -284,13 +284,13 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 			final var lSpriteWidth = mSpriteInstance.width();
 			final var lSpriteHeight = mSpriteInstance.height();
 
-			mPivotX = mSpriteInstance.pivotX;
-			mPivotY = mSpriteInstance.pivotY;
+			mPivotX = mSpriteInstance.flipHorizontal() ? -(int) mSpriteInstance.pivotX - 1 : (int) mSpriteInstance.pivotX;
+			mPivotY = (int) mSpriteInstance.pivotY;
 
 			final float lRotationRadians = mRotation;
 
-			final float lSpriteHalfWidth = lSpriteWidth / 2f;
-			final float lSpriteHalfHeight = lSpriteHeight / 2f;
+			final float lSpriteHalfWidth = (int) (lSpriteWidth / 2f);
+			final float lSpriteHalfHeight = (int) (lSpriteHeight / 2f);
 
 			final float lRotationAdapted = mSpriteInstance.flipHorizontal() ? -lRotationRadians : lRotationRadians;
 			mSpriteInstance.rotateAbs(lRotationAdapted);
@@ -310,8 +310,8 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 	}
 
 	private void updateChildNodeTransform(LintfordCore pCore, SpriteGraphNodeInstance pChildGraphNodeInstance) {
-		float lAnchorPositionX = 0.0f;
-		float lAnchorPositionY = 0.0f;
+		int lAnchorPositionX = 0;
+		int lAnchorPositionY = 0;
 		float lAnchorRotation = 0.0f;
 
 		if (mSpriteInstance != null) {
@@ -335,8 +335,8 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 		float lNY = rotatePointY(0, 0, lAngleInRadians, lAnchorPositionX, lAnchorPositionY);
 
 		if (!pChildGraphNodeInstance.disableTreeUpdatesPosition) {
-			pChildGraphNodeInstance.positionX(mPositionX + lNX);
-			pChildGraphNodeInstance.positionY(mPositionY + lNY);
+			pChildGraphNodeInstance.positionX(mPositionX - mPivotX + lNX);
+			pChildGraphNodeInstance.positionY(mPositionY - mPivotY + lNY);
 
 		}
 
