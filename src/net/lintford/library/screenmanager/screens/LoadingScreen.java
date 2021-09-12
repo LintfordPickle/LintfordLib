@@ -130,14 +130,14 @@ public class LoadingScreen extends Screen {
 			final var lTextPadding = 5.0f;
 
 			final String lLoadingText = "Loading ...";
-			final var lTextWidth = lFontUnit.bitmap().getStringWidth(lLoadingText);
-			final var lTextHeight = lFontUnit.bitmap().getStringHeight(lLoadingText);
+			final var lTextWidth = lFontUnit.getStringWidth(lLoadingText);
+			final var lTextHeight = lFontUnit.getStringHeight(lLoadingText);
 
 			final float lTextPositionX = lWindowWidth * 0.5f - lTextWidth - lTextPadding;
 			final float lTextPositionY = lWindowHeight * 0.5f - lTextHeight - lTextPadding;
 
 			lFontUnit.begin(pCore.HUD());
-			lFontUnit.draw(lLoadingText, lTextPositionX, lTextPositionY, -0.1f, ColorConstants.WHITE, 1f, -1);
+			lFontUnit.drawText(lLoadingText, lTextPositionX, lTextPositionY, -0.1f, ColorConstants.WHITE, 1f, -1);
 			lFontUnit.end();
 
 		}

@@ -3,7 +3,7 @@ package net.lintford.library.renderers.windows.components;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.graphics.Color;
 import net.lintford.library.core.graphics.ColorConstants;
-import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
+import net.lintford.library.core.graphics.fonts.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.core.maths.MathHelper;
@@ -75,7 +75,7 @@ public class UiWidgetBar extends UIWidget {
 		if (pTextureBatch == null)
 			return;
 
-		pTextFont.draw(mLabelString, x + lHorizontalPadding, y + 1, -0.01f, 1.f);
+		pTextFont.drawText(mLabelString, x + lHorizontalPadding, y + 1, -0.01f, ColorConstants.WHITE, 1.f);
 
 		final float lInnerBorderPadding = 1.f;
 

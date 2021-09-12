@@ -172,6 +172,7 @@ public class Texture {
 			// Load the file from the path, ignoring whitespace, tabs and new lines from the path string.
 			InputStream lInputStream = Texture.class.getResourceAsStream(pFilename);
 			if (lInputStream == null) {
+				Debug.debugManager().logger().e("Texture", "Couldn't open InputStream: " + pFilename);
 				throw new FileNotFoundException();
 			}
 

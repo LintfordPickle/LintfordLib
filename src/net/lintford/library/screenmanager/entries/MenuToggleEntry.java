@@ -143,9 +143,9 @@ public class MenuToggleEntry extends MenuEntry {
 
 		final float lUiTextScale = lParentScreen.uiTextScale();
 
-		final float lLabelWidth = lFont.bitmap().getStringWidth(mText, lUiTextScale);
-		final float lTextHeight = lFont.bitmap().fontHeight() * lUiTextScale;
-		final float lSeparatorHalfWidth = lFont.bitmap().getStringWidth(mSeparator, lUiTextScale) * 0.5f;
+		final float lLabelWidth = lFont.getStringWidth(mText, lUiTextScale);
+		final float lTextHeight = lFont.fontHeight() * lUiTextScale;
+		final float lSeparatorHalfWidth = lFont.getStringWidth(mSeparator, lUiTextScale) * 0.5f;
 
 		final var lTextureBatch = lParentScreen.textureBatch();
 
@@ -176,15 +176,14 @@ public class MenuToggleEntry extends MenuEntry {
 		lTextureBatch.end();
 
 		lFont.begin(pCore.HUD());
-		lFont.drawShadow(mDrawTextShadow);
-		lFont.draw(mText, x + w / 2 - lLabelWidth - SPACE_BETWEEN_TEXT - lSeparatorHalfWidth, y + h / 2 - lTextHeight * 0.5f, mZ, textColor, lUiTextScale, -1);
-		lFont.draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - lTextHeight * 0.5f, mZ, textColor, lUiTextScale, -1);
+		lFont.drawText(mText, x + w / 2 - lLabelWidth - SPACE_BETWEEN_TEXT - lSeparatorHalfWidth, y + h / 2 - lTextHeight * 0.5f, mZ, textColor, lUiTextScale, -1);
+		lFont.drawText(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - lTextHeight * 0.5f, mZ, textColor, lUiTextScale, -1);
 
 		if (mIsChecked) {
-			lFont.draw("Enabled", x + w / 2 + lSeparatorHalfWidth + lTileSize * 2, y + h / 2 - lTextHeight * 0.5f, mZ, textColor, lUiTextScale, -1);
+			lFont.drawText("Enabled", x + w / 2 + lSeparatorHalfWidth + lTileSize * 2, y + h / 2 - lTextHeight * 0.5f, mZ, textColor, lUiTextScale, -1);
 
 		} else {
-			lFont.draw("Disabled", x + w / 2 + lSeparatorHalfWidth + lTileSize * 2, y + h / 2 - lTextHeight * 0.5f, mZ, textColor, lUiTextScale, -1);
+			lFont.drawText("Disabled", x + w / 2 + lSeparatorHalfWidth + lTileSize * 2, y + h / 2 - lTextHeight * 0.5f, mZ, textColor, lUiTextScale, -1);
 
 		}
 

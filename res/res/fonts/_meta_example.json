@@ -1,0 +1,15 @@
+{
+	"BitmapFontDataDefinition" : [
+	
+		{
+			"fontname":"FONT_CORE",
+			"pointsize":"16",
+			"filepath":"/res/fonts/fontCore"
+		},
+		{
+			"fontname":"FONT_CONSOLE",
+			"pointsize":"12",
+			"filepath":"/res/fonts/fontConsole"
+		}		
+	]
+}

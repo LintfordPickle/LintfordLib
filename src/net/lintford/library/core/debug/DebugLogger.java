@@ -166,6 +166,8 @@ public class DebugLogger {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
+		if(pMessage == null) return;
+		
 		log(DebugLogLevel.error, pTag, pMessage);
 
 	}

@@ -9,7 +9,8 @@ import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.ColorConstants;
-import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
+import net.lintford.library.core.graphics.fonts.BitmapFontManager;
+import net.lintford.library.core.graphics.fonts.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.core.input.IProcessMouseInput;
@@ -97,7 +98,7 @@ public class DebugControllerTreeRenderer extends Rectangle implements IScrollBar
 		Debug.debugManager().logger().v(getClass().getSimpleName(), "DebugStats loading GL content");
 
 		mCoreTexture = pResourceManager.textureManager().textureCore();
-		mConsoleFont = pResourceManager.fontManager().systemFont();
+		mConsoleFont = pResourceManager.fontManager().getFontUnit(BitmapFontManager.SYSTEM_FONT_CONSOLE_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
 
 		mTextureBatch.loadGLContent(pResourceManager);
 
@@ -217,9 +218,6 @@ public class DebugControllerTreeRenderer extends Rectangle implements IScrollBar
 		}
 
 		{
-			if (mConsoleFont.bitmap() == null)
-				mConsoleFont = pCore.resources().fontManager().systemFont();
-
 			final var lControllerList = mDebugControllerTree.treeComponents();
 			final var lNumberComponents = lControllerList.size();
 			final var lDisplayManager = pCore.config().display();
@@ -299,15 +297,13 @@ public class DebugControllerTreeRenderer extends Rectangle implements IScrollBar
 		if (!mIsOpen)
 			return;
 
-		// Get the positional informationt from the parent object (inline with console and renderer widget display).
-
 		mTextureBatch.begin(pCore.HUD());
 		mTextureBatch.draw(mCoreTexture, 0, 0, 32, 32, x, y - 25f, mOpenWidth, 25f, -0.03f, ColorConstants.MenuPanelPrimaryColor);
 		mTextureBatch.draw(mCoreTexture, 0, 0, 32, 32, x, y, mOpenWidth, mOpenHeight, -0.03f, ColorConstants.MenuPanelSecondaryColor);
 		mTextureBatch.end();
 
 		mConsoleFont.begin(pCore.HUD());
-		mConsoleFont.draw("Controllers", x, y - 25f, -0.02f, ColorConstants.WHITE, 1, -1);
+		mConsoleFont.drawText("Controllers", x, y - 25f, -0.02f, ColorConstants.WHITE, 1, -1);
 		mConsoleFont.end();
 
 		if (h < mContentRectangle.h())
@@ -332,7 +328,7 @@ public class DebugControllerTreeRenderer extends Rectangle implements IScrollBar
 
 			int lPosX = lBaseControllerWidget.controllerLevel * 30;
 
-			mConsoleFont.draw(lControllerName, lBaseControllerWidget.x() + lPosX, lBaseControllerWidget.y(), -0.02f, ColorConstants.TextEntryColor, 1, -1);
+			mConsoleFont.drawText(lControllerName, lBaseControllerWidget.x() + lPosX, lBaseControllerWidget.y(), -0.02f, ColorConstants.TextEntryColor, 1, -1);
 
 			final float lActiveIconX = x + mOpenWidth - 64;
 			final float lActiveIconY = lBaseControllerWidget.y();

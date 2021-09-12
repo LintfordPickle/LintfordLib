@@ -11,7 +11,6 @@ import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.system.MemoryUtil;
 
-import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.camera.ICamera;
 import net.lintford.library.core.debug.Debug;
@@ -85,18 +84,9 @@ public class SubPixelTextureBatch {
 	protected boolean mUseCheckerPattern;
 	protected ResourceManager mResourceManager;
 
-	private float mPixelSize;
-
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
-
-	/**
-	 * The pixel size should be set to the scale factor of the geometry (e.g. the scale of the sprite). If the pixel size is set too high, the resulting texture will start to get fuzzy when rendering.
-	 */
-	public void pixelSize(float pNewPixelSize) {
-		mPixelSize = pNewPixelSize;
-	}
 
 	public void recompileShader() {
 		mShader.recompile();
@@ -193,21 +183,6 @@ public class SubPixelTextureBatch {
 
 		mIsLoaded = false;
 		Debug.debugManager().stats().decTag(DebugStats.TAG_ID_BATCH_OBJECTS);
-
-	}
-
-	public void update(LintfordCore pCore) {
-
-		final var lDesktopWidth = pCore.config().display().desktopWidth();
-		final var lDesktopHeight = pCore.config().display().desktopHeight();
-		mShader.screenResolutionWidth(lDesktopWidth);
-		mShader.screenResolutionHeight(lDesktopHeight);
-
-		final var lCamera = pCore.gameCamera();
-		mShader.cameraResolutionWidth(lCamera.getWidth());
-		mShader.cameraResolutionHeight(lCamera.getHeight());
-
-		mShader.pixelSize(mPixelSize);
 
 	}
 

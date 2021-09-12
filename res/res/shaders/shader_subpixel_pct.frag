@@ -1,28 +1,51 @@
 #version 150 core
-precision mediump float;
+precision highp float;
 
 uniform sampler2D textureSampler;
-
-uniform vec2 v2ScreenResolution;
-uniform vec2 v2CameraResolution;
-uniform float fPixelSize = 1.;
 
 in vec2 passTexCoord;
 in vec4 passColor;
 
 out vec4 outColor;
 
+vec2 uv_nearest(vec2 uv, ivec2 texture_size ) {
+    vec2 pixel = uv * texture_size;
+    pixel = floor(pixel) + .5;
+
+    return pixel / texture_size;
+}
+
+vec2 uv_cstantos( vec2 uv, ivec2 res ) {
+    vec2 pixels = uv * res;
+
+    // Updated to the final article
+    vec2 alpha = 0.7 * fwidth(pixels);
+    vec2 pixels_fract = fract(pixels);
+    vec2 pixels_diff = clamp( .5 / alpha * pixels_fract, 0, .5 ) +
+                       clamp( .5 / alpha * (pixels_fract - 1) + .5, 0, .5 );
+    pixels = floor(pixels) + pixels_diff;
+    return pixels / res;
+}
+
+vec2 uv_klems( vec2 uv, ivec2 texture_size ) {
+    vec2 pixels = uv * texture_size + .5;
+    
+    // tweak fractional value of the texture coordinate
+    vec2 fl = floor(pixels);
+    vec2 fr = fract(pixels);
+    vec2 aa = fwidth(pixels) * .75;
+
+    fr = smoothstep( vec2(0.5) - aa, vec2(.5) + aa, fr);
+    
+    return (fl + fr - .5) / texture_size;
+}
+
 void main() {
-	vec2 v2TextureSize = textureSize(textureSampler, 0);
-	
-	vec2 texelsPerPixel = v2CameraResolution / v2ScreenResolution / fPixelSize;
+    vec2 uv = passTexCoord;
+    ivec2 textureResolution = textureSize(textureSampler, 0);
+    
+    vec2 pixel = uv_cstantos(uv, textureResolution);
+    outColor = texture(textureSampler, pixel);
 
-	vec2 locationWithinTexel = fract(passTexCoord * v2TextureSize);
-
-	vec2 interpolationAmount = clamp(locationWithinTexel / texelsPerPixel, 0., .5) + clamp((locationWithinTexel - 1.) / texelsPerPixel + .5, 0., .5);
-	vec2 finalTextureCoords = (floor(passTexCoord * v2TextureSize) + interpolationAmount) / v2TextureSize;
-
-	outColor = texture(textureSampler, finalTextureCoords);
 	outColor *= passColor;
-	
 }

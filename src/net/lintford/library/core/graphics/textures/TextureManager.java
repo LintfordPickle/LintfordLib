@@ -172,6 +172,26 @@ public class TextureManager extends EntityGroupManager {
 		return mTextureCheckerIndexed;
 	}
 
+	public boolean isTextureLoaded(Texture pTexture) {
+		return (pTexture != null && pTexture.name().equals(TextureManager.TEXTURE_NOT_FOUND_NAME) == false);
+	}
+
+	public Texture getTextureOrLoad(String pName, String pTextureFilepath, int pEntityGroupID) {
+		Texture lRetTexture = getTexture(pName, pEntityGroupID);
+
+		if (isTextureLoaded(lRetTexture)) {
+			return lRetTexture;
+		}
+
+		if (pTextureFilepath == null || pTextureFilepath.length() == 0) {
+			return null;
+		}
+
+		String lTextureName = pName != null ? pName : pTextureFilepath;
+
+		return loadTexture(lTextureName, pTextureFilepath, pEntityGroupID);
+	}
+
 	/** Returns the {@link Texture} with the given name. If no {@link Texture} by the given name is found, a default MAGENTA texture will be returned. */
 	public Texture getTexture(String pName, int pEntityGroupID) {
 		TextureGroup lTextureGroup = mTextureGroupMap.get(pEntityGroupID);
@@ -588,8 +608,7 @@ public class TextureManager extends EntityGroupManager {
 	/**
 	 * Maps the index from the Texture Meta data file to the GL filter mode.
 	 * 
-	 * 1 = GL_NEAREST 
-	 * 2 = GL_LINEAR
+	 * 1 = GL_NEAREST 2 = GL_LINEAR
 	 */
 	private int mapTextureFilterMode(int pIndex) {
 		switch (pIndex) {
@@ -603,9 +622,7 @@ public class TextureManager extends EntityGroupManager {
 	/**
 	 * Maps the index from the Texture Meta data file to the GL Wrap mode.
 	 * 
-	 * 1 = GL_CLAMP_TO_EDGE 
-	 * 2 = GL_MIRRORED_REPEAT 
-	 * 3 = GL_REPEAT
+	 * 1 = GL_CLAMP_TO_EDGE 2 = GL_MIRRORED_REPEAT 3 = GL_REPEAT
 	 */
 	private int mapWrapMode(int pIndex) {
 		switch (pIndex) {

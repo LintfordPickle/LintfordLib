@@ -1,7 +1,7 @@
 package net.lintford.library.core.debug.stats;
 
 import net.lintford.library.core.graphics.ColorConstants;
-import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
+import net.lintford.library.core.graphics.fonts.FontUnit;
 
 public class DebugStatTagString extends DebugStatTag<String> {
 
@@ -47,7 +47,7 @@ public class DebugStatTagString extends DebugStatTag<String> {
 
 	@Override
 	public void draw(FontUnit pFontUnit, float pPosX, float pPosY) {
-		pFontUnit.draw(String.format("%s : %s", label, value), pPosX, pPosY, -0.01f, ColorConstants.getColor(r, g, b), 0.75f, -1);
+		pFontUnit.drawText(String.format("%s : %s", label, value), pPosX, pPosY, -0.01f, ColorConstants.getColor(r, g, b), 1.f, -1);
 
 	}
 

@@ -366,9 +366,6 @@ public class TextureBatchPCT {
 
 	}
 
-	/**
-	 * Draws the source rectange from the texture into the destination rectangle on the current buffer. note: the origin of the sprite is relative to the center point!
-	 */
 	public void drawAroundCenter(Texture pTexture, float pSX, float pSY, float pSW, float pSH, float pDX, float pDY, float pDW, float pDH, float pZ, float pRot, float pROX, float pROY, float pScale, Color pTint) {
 		if (!mIsLoaded)
 			return;

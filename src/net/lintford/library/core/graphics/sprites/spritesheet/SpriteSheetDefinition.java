@@ -14,20 +14,20 @@ import net.lintford.library.core.graphics.sprites.SpriteInstance;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.TextureManager;
 
-/** A {@link SpriteSheetDefinition} contains a collecetion of {@link SpriteFrame}s (which each define a source rectangle) and an associated {@link Texture} instance. */
+/** A {@link SpriteSheetDefinition} contains a collection of {@link SpriteFrame}s (which each define a source rectangle) and an associated {@link Texture} instance. */
 public class SpriteSheetDefinition {
 
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
-	/** Textures referenced within this sheetsheet need to be referenced with the correct entity group Id. */
+	/** Textures referenced within this spritesheet need to be referenced with the correct entity group Id. */
 	private transient int mEntityGroupID;
 
 	/** The unique name given to this {@link SpriteSheetDefinition}. */
 	public String spriteSheetName;
-	protected boolean reloadable;
-	protected String spriteSheetFilename;
+	public boolean reloadable;
+	public String spriteSheetFilename;
 
 	/** The name of the {@link Texture} associated to this {@link SpriteSheetDefinition} */
 	protected String textureName;
@@ -41,8 +41,8 @@ public class SpriteSheetDefinition {
 	private long mFileSizeOnLoad;
 
 	/** A collection of {@link ISprite} instances contained within this {@link SpriteSheetDefinition} */
-	protected Map<String, SpriteFrame> frameMap;
-	protected Map<String, SpriteDefinition> spriteMap;
+	public Map<String, SpriteFrame> frameMap;
+	public Map<String, SpriteDefinition> spriteMap;
 	protected List<SpriteInstance> spriteInstancePool;
 
 	/** The width of the associated texture. */
@@ -51,7 +51,6 @@ public class SpriteSheetDefinition {
 	/** The height of the associated texture. */
 	public transient float textureHeight;
 
-	/** Which nodes should this spritesheet be tied to if asssociated with a SpriteGraphInstance */
 	public String spriteGraphNodeName;
 
 	// --------------------------------------
@@ -149,7 +148,7 @@ public class SpriteSheetDefinition {
 			spriteMap = new HashMap<>();
 
 		} else {
-			// If the SpriteSheet definition had animations, then interate them
+			// If the SpriteSheet definition had animations, then iterate over them
 			// Resolve the Sprite references in the Animations
 			for (Map.Entry<String, SpriteDefinition> entry : spriteMap.entrySet()) {
 				final var lSpriteDefinition = entry.getValue();

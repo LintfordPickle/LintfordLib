@@ -61,7 +61,6 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 	protected int mMenuEntryID;
 	protected boolean mDrawBackground;
 	protected boolean mHighlightOnHover;
-	protected boolean mDrawTextShadow;
 	protected boolean mScaleonHover;
 	protected float mAnimationTimer;
 	protected boolean mHoveredOver;
@@ -109,14 +108,6 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
-
-	public boolean enableTextShadow() {
-		return mDrawTextShadow;
-	}
-
-	public void enableTextShadow(boolean pNewValue) {
-		mDrawTextShadow = pNewValue;
-	}
 
 	public ALIGNMENT horizontalAlignment() {
 		return mHorizontalAlignment;
@@ -370,7 +361,6 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 		mDrawBackground = true;
 		mScaleonHover = false;
 		mHighlightOnHover = true;
-		mDrawTextShadow = true;
 
 		mTopMargin = 3f;
 		mBottomMargin = 6f;
@@ -587,8 +577,8 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 
 			if (lMenuFont != null) {
 				lMenuFont.begin(pCore.HUD());
-				final float lStringWidth = lMenuFont.bitmap().getStringWidth(mText, lUiTextScale);
-				lMenuFont.draw(mText, centerX() - lStringWidth * 0.5f, centerY() - lMenuFont.bitmap().fontHeight() * lUiTextScale / 2 - 2f, mZ, ColorConstants.TextHeadingColor, lUiTextScale);
+				final float lStringWidth = lMenuFont.getStringWidth(mText, lUiTextScale);
+				lMenuFont.drawText(mText, centerX() - lStringWidth * 0.5f, centerY() - lMenuFont.fontHeight() * lUiTextScale / 2 - 2f, mZ, ColorConstants.TextHeadingColor, lUiTextScale);
 				lMenuFont.end();
 
 			}

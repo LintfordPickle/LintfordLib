@@ -1,7 +1,7 @@
 package net.lintford.library.core.debug.stats;
 
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
+import net.lintford.library.core.graphics.fonts.FontUnit;
 
 public abstract class DebugStatTag<T> {
 

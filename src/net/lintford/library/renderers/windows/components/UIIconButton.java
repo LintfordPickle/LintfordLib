@@ -4,7 +4,7 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.Color;
 import net.lintford.library.core.graphics.ColorConstants;
-import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
+import net.lintford.library.core.graphics.fonts.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.renderers.windows.UiWindow;
@@ -157,9 +157,9 @@ public class UIIconButton extends UIWidget {
 
 		// text
 		if (mDrawButtonText && mButtonLabel != null && mButtonLabel.length() > 0) {
-			final float lTextWidth = pTextFont.bitmap().getStringWidth(mButtonLabel);
+			final float lTextWidth = pTextFont.getStringWidth(mButtonLabel);
 
-			pTextFont.draw(mButtonLabel, x + w / 2f - lTextWidth / 2f, y + h / 2f - pTextFont.bitmap().fontHeight() / 2f, pComponentZDepth, 1f);
+			pTextFont.drawText(mButtonLabel, x + w / 2f - lTextWidth / 2f, y + h / 2f - pTextFont.fontHeight() / 2f, pComponentZDepth, ColorConstants.WHITE, 1f);
 
 		}
 

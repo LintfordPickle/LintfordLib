@@ -12,8 +12,8 @@ import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.camera.ICamera;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.ColorConstants;
-import net.lintford.library.core.graphics.fonts.FontManager;
-import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
+import net.lintford.library.core.graphics.fonts.BitmapFontManager;
+import net.lintford.library.core.graphics.fonts.FontUnit;
 import net.lintford.library.core.graphics.geometry.TexturedQuad;
 import net.lintford.library.core.graphics.linebatch.LineBatch;
 import net.lintford.library.core.graphics.pointbatch.PointBatch;
@@ -39,7 +39,7 @@ public class DebugDrawers {
 
 	private final Debug mDebugManager;
 
-	private FontUnit mSystemFont;
+	private FontUnit mSystemFontUnit;
 
 	private PointBatch mImmediatePointBatch;
 	private LineBatch mImmediateLineBatch;
@@ -92,7 +92,7 @@ public class DebugDrawers {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
-		mSystemFont = pResourceManager.fontManager().getFont(FontManager.SYSTEM_FONT_NAME);
+		mSystemFontUnit = pResourceManager.fontManager().getFontUnit(BitmapFontManager.SYSTEM_FONT_CORE_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
 
 		mTextureBatch.loadGLContent(pResourceManager);
 		mBasicShader.loadGLContent(pResourceManager);
@@ -105,7 +105,6 @@ public class DebugDrawers {
 		mPointBatch.loadGLContent(pResourceManager);
 		mLineBatch.loadGLContent(pResourceManager);
 		mPolyBatch.loadGLContent(pResourceManager);
-
 	}
 
 	public void unloadGLContent() {
@@ -423,12 +422,12 @@ public class DebugDrawers {
 			return;
 		}
 
-		//		if (mLineBatch.lineType() != pGLLineType) {
-		//			Debug.debugManager().logger().w(getClass().getSimpleName(), "Forced flush of LineBatch: different lineType");
-		//			mLineBatch.forceFlush();
-		//		}
+		// if (mLineBatch.lineType() != pGLLineType) {
+		// Debug.debugManager().logger().w(getClass().getSimpleName(), "Forced flush of LineBatch: different lineType");
+		// mLineBatch.forceFlush();
+		// }
 		//
-		//		mLineBatch.lineType(pGLLineType);
+		// mLineBatch.lineType(pGLLineType);
 
 		final int lNumSegments = pSegCount / 2;
 		for (float i = -pInitialAngle; i < 2 * Math.PI - pInitialAngle; i += Math.PI / lNumSegments) {
@@ -454,7 +453,7 @@ public class DebugDrawers {
 
 	public void beginTextRenderer(ICamera pCamera) {
 		if (mDebugManager.debugManagerEnabled())
-			mSystemFont.begin(pCamera);
+			mSystemFontUnit.begin(pCamera);
 
 	}
 
@@ -467,19 +466,17 @@ public class DebugDrawers {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
-		if (!mSystemFont.mFontSpriteBatch.isDrawing()) {
+		if (!mSystemFontUnit.isDrawing()) {
 			Debug.debugManager().logger().w(getClass().getSimpleName(), "Cannot draw text (cached): the FontRenderer has not been started (have you called beginTextRenderer())");
 			return;
 		}
 
-		mSystemFont.draw(pText, pX, pY, -0.01f, ColorConstants.WHITE, pScale, -1);
-
+		mSystemFontUnit.drawText(pText, pX, pY, -0.01f, ColorConstants.WHITE, pScale);
 	}
 
 	public void endTextRenderer() {
 		if (mDebugManager.debugManagerEnabled())
-			mSystemFont.end();
-
+			mSystemFontUnit.end();
 	}
 
 	public void endPointRenderer() {

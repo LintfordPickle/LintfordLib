@@ -70,13 +70,13 @@ public class StringListBoxItem extends ListBoxItem {
 
 			final float lScale = mScreenManager.UiStructureController().uiTextScaleFactor();
 			final var lFont = mParentListBox.parentLayout().parentScreen.font();
-			final float lFontHeight = lFont.bitmap().getStringHeight(mTextValue, lScale);
+			final float lFontHeight = lFont.getStringHeight(mTextValue, lScale);
 
 			h = 10;
 
 			// Draw profile information
 			lFont.begin(pCore.HUD());
-			lFont.draw(mTextValue, x, y - lFontHeight / 2, pParentZDepth + .1f, ColorConstants.TextEntryColor, lScale, -1);
+			lFont.drawText(mTextValue, x, y - lFontHeight / 2, pParentZDepth + .1f, ColorConstants.TextEntryColor, lScale, -1);
 			lFont.end();
 
 		}

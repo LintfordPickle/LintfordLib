@@ -3,8 +3,7 @@ package net.lintford.library.screenmanager;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.graphics.ColorConstants;
-import net.lintford.library.core.graphics.fonts.FontManager;
-import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
+import net.lintford.library.core.graphics.fonts.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 
@@ -48,10 +47,9 @@ public class ToolTip {
 	// --------------------------------------
 
 	public void loadGLContent(ResourceManager pResourceManager) {
-		mMenuFont = pResourceManager.fontManager().getFont(FontManager.FONT_FONTNAME_TOOLTIP);
+		mMenuFont = pResourceManager.fontManager().getFontUnit("FONT_TOOLTIP", LintfordCore.CORE_ENTITY_GROUP_ID);
 		mTextureBatch.loadGLContent(pResourceManager);
 		mUiPanelTexture = pResourceManager.textureManager().loadTexture("TEXTURE_UI_PANEL", "/res/textures/core/system.png", LintfordCore.CORE_ENTITY_GROUP_ID);
-
 	}
 
 	public void unloadGLContent() {
@@ -86,8 +84,8 @@ public class ToolTip {
 		final float lTextPadding = 5f;
 		final String lToolTipText = mToolTipProvider.toolTipText();
 
-		float lToolTipTextWidth = mMenuFont.bitmap().getStringWidth(lToolTipText, lTextScale);
-		float lToolTipTextHeight = mMenuFont.bitmap().getStringHeight(lToolTipText, lTextScale);
+		float lToolTipTextWidth = mMenuFont.getStringWidth(lToolTipText, lTextScale);
+		float lToolTipTextHeight = mMenuFont.getStringWidth(lToolTipText, lTextScale);
 
 		float lPositionX = mPositionX;
 		float lPositionY = mPositionY;
@@ -95,12 +93,12 @@ public class ToolTip {
 		lPositionX += 15;
 		lPositionY -= 64 - lToolTipTextHeight;
 
-		// Check for tooltips overlapping the edge of the screen (x axis)
+		// Check for tooltip overlapping the edge of the screen (x axis)
 		if (lPositionX + lToolTipTextWidth + lTextPadding > pCore.config().display().windowWidth()) {
 			lPositionX -= lToolTipTextWidth + 30;
 		}
 
-		// Check for tooltips overlapping the edge of the screen (y axis)
+		// Check for tooltip overlapping the edge of the screen (y axis)
 		if (lPositionY + lToolTipTextHeight + lTextPadding > pCore.config().display().windowHeight()) {
 			lPositionY -= lToolTipTextHeight + 30;
 		}
@@ -113,9 +111,7 @@ public class ToolTip {
 		mTextureBatch.end();
 
 		mMenuFont.begin(pCore.HUD());
-		mMenuFont.draw(lToolTipText, lPositionX + lTextPadding, lPositionY + lTextPadding, -0.01f, lTextScale);
+		mMenuFont.drawText(lToolTipText, lPositionX + lTextPadding, lPositionY + lTextPadding, -0.01f, ColorConstants.WHITE, lTextScale);
 		mMenuFont.end();
-
 	}
-
 }

@@ -4,7 +4,7 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.Color;
 import net.lintford.library.core.graphics.ColorConstants;
-import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
+import net.lintford.library.core.graphics.fonts.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.core.input.IProcessMouseInput;
@@ -115,8 +115,8 @@ public class IconIntFilter implements IProcessMouseInput {
 		}
 
 		if (mHoveredOver) {
-			final float lTextHalfW = pTextFont.bitmap().getStringWidth(mFilterName) / 2;
-			final float lTextHeight = pTextFont.bitmap().fontHeight();
+			final float lTextHalfW = pTextFont.getStringWidth(mFilterName) / 2;
+			final float lTextHeight = pTextFont.fontHeight();
 
 			// Draw a background texture behind the texture so it is always legible.
 			pTextureBatch.draw(pUITexture, 64, 0, 32, 32, mUIDstRectangle.x() + 16 - lTextHalfW, mUIDstRectangle.y() - 19, lTextHalfW * 2 + 4, lTextHeight, -0.2f, ColorConstants.WHITE);
@@ -127,9 +127,9 @@ public class IconIntFilter implements IProcessMouseInput {
 		pTextureBatch.draw(pUITexture, mUISrcRectangle, mUIDstRectangle, -0.5f, lColor);
 
 		if (mHoveredOver) {
-			final float lTextHalfW = pTextFont.bitmap().getStringWidth(mFilterName) / 2;
+			final float lTextHalfW = pTextFont.getStringWidth(mFilterName) / 2;
 
-			pTextFont.draw(mFilterName, mUIDstRectangle.x() + 16 - lTextHalfW, mUIDstRectangle.y() - 19, -0.2f, 1f);
+			pTextFont.drawText(mFilterName, mUIDstRectangle.x() + 16 - lTextHalfW, mUIDstRectangle.y() - 19, -0.2f, ColorConstants.WHITE, 1f);
 		}
 
 	}
