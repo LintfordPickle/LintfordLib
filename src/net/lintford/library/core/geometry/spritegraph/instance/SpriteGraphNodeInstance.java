@@ -10,6 +10,7 @@ import net.lintford.library.core.geometry.spritegraph.attachment.ISpriteGraphNod
 import net.lintford.library.core.geometry.spritegraph.definition.SpriteGraphNodeDefinition;
 import net.lintford.library.core.graphics.sprites.SpriteAnchor;
 import net.lintford.library.core.graphics.sprites.SpriteInstance;
+import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 
 // ToDo: Attachable Box2d bodies: Some nodes need to interact with the world via the sprite graph nodes
 // ToDo: Attachable SpriteInstance: Each node instance should have its own sprite animation for the current spritesheetdefinition
@@ -270,9 +271,9 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 	}
 
 	public void update(LintfordCore pCore, SpriteGraphInstance pParentGraph, SpriteGraphNodeInstance pParentGraphNode) {
-		// Updating the sprite attached to us
-		if (mSpriteInstance != null) {
+		updateSpriteInstance(pCore, pParentGraph, pParentGraphNode);
 
+		if (mSpriteInstance != null) {
 			flippedHorizontal(mParentGraphInst.mFlipHorizontal);
 			flippedVertical(mParentGraphInst.mFlipVertical);
 
@@ -309,6 +310,54 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 
 	}
 
+	private void updateSpriteInstance(LintfordCore pCore, SpriteGraphInstance pSpriteGraph, SpriteGraphNodeInstance pParentSpriteGraphNode) {
+		if (attachedItemInstance == null)
+			return;
+
+		final var lAttachment = attachedItemInstance;
+
+		var lSpriteSheetDefinition = lAttachment.spriteSheetDefinition();
+		if (lSpriteSheetDefinition == null) {
+			lSpriteSheetDefinition = loadNodeSpritesheetDefinition(pCore);
+		}
+
+		if (currentSpriteActionName == null || !currentSpriteActionName.equals(pSpriteGraph.currentAnimation())) {
+			var lFoundSprintInstance = lSpriteSheetDefinition.getSpriteInstance(pSpriteGraph.currentAnimation());
+			if (lFoundSprintInstance != null) {
+				mSpriteInstance = lFoundSprintInstance;
+
+			} else {
+				lFoundSprintInstance = lSpriteSheetDefinition.getSpriteInstance(lAttachment.defaultSpriteName());
+				if (lFoundSprintInstance != null) {
+					mSpriteInstance = lFoundSprintInstance;
+				}
+
+			}
+
+			currentSpriteActionName = pSpriteGraph.currentAnimation();
+
+		}
+	}
+
+	private SpriteSheetDefinition loadNodeSpritesheetDefinition(LintfordCore pCore) {
+		final var lAttachment = attachedItemInstance;
+
+		// Resolve the sprite sheet
+		var lSpriteSheetDefinition = lAttachment.spriteSheetDefinition();
+		if (lSpriteSheetDefinition == null) {
+			final var lResourceManager = pCore.resources();
+			lSpriteSheetDefinition = lResourceManager.spriteSheetManager().getSpriteSheet(lAttachment.spriteGraphSpriteSheetName(), entityGroupID);
+
+			if (lSpriteSheetDefinition == null) {
+				return null;
+			}
+
+			lAttachment.spriteSheetDefinition(lSpriteSheetDefinition);
+		}
+
+		return lSpriteSheetDefinition;
+	}
+
 	private void updateChildNodeTransform(LintfordCore pCore, SpriteGraphNodeInstance pChildGraphNodeInstance) {
 		int lAnchorPositionX = 0;
 		int lAnchorPositionY = 0;
@@ -329,12 +378,12 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 
 		}
 
-		float lAngleInRadians = flippedHorizontal() ? -mRotation : mRotation;
-
-		float lNX = rotatePointX(0, 0, lAngleInRadians, lAnchorPositionX, lAnchorPositionY);
-		float lNY = rotatePointY(0, 0, lAngleInRadians, lAnchorPositionX, lAnchorPositionY);
-
 		if (!pChildGraphNodeInstance.disableTreeUpdatesPosition) {
+			float lAngleInRadians = flippedHorizontal() ? -mRotation : mRotation;
+
+			float lNX = rotatePointX(0, 0, lAngleInRadians, lAnchorPositionX, lAnchorPositionY);
+			float lNY = rotatePointY(0, 0, lAngleInRadians, lAnchorPositionX, lAnchorPositionY);
+
 			pChildGraphNodeInstance.positionX(mPositionX - mPivotX + lNX);
 			pChildGraphNodeInstance.positionY(mPositionY - mPivotY + lNY);
 

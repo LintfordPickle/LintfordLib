@@ -56,7 +56,7 @@ public class SpriteGraphRenderer extends SpriteBatch {
 
 		if (RENDER_DEBUG) {
 			renderSpriteTreeNodeDebug(pCore, pSpriteGraphInstance, pSpriteGraphInstance.rootNode);
-			
+
 			Debug.debugManager().drawers().drawPointImmediate(pCore.gameCamera(), pSpriteGraphInstance.positionX, pSpriteGraphInstance.positionY, -0.01f, 1f, 1f, 1f, 1f);
 		}
 
@@ -65,46 +65,10 @@ public class SpriteGraphRenderer extends SpriteBatch {
 	private void renderSpriteGraphNodeInstance(LintfordCore pCore, SpriteGraphInstance pSpriteGraph, SpriteGraphNodeInstance pSpriteGraphNode) {
 		if (pSpriteGraphNode.attachedItemInstance != null) {
 			final var lAttachment = pSpriteGraphNode.attachedItemInstance;
-
-			// Resolve the sprite sheet
-			var lSpriteSheetDefinition = lAttachment.spriteSheetDefinition();
-			if (lSpriteSheetDefinition == null) {
-				final var lResourceManager = pCore.resources();
-				lSpriteSheetDefinition = lResourceManager.spriteSheetManager().getSpriteSheet(lAttachment.spriteGraphSpriteSheetName(), entityGroupUid);
-
-				if (lSpriteSheetDefinition == null) {
-					return;
-
-				}
-
-				lAttachment.spriteSheetDefinition(lSpriteSheetDefinition);
-
-			}
-
-			// Update the sprite animation
-			if (pSpriteGraphNode.currentSpriteActionName == null || !pSpriteGraphNode.currentSpriteActionName.equals(pSpriteGraph.currentAnimation())) {
-				// First try to get the sprite graph animation frame
-				var lFoundSprintInstance = lSpriteSheetDefinition.getSpriteInstance(pSpriteGraph.currentAnimation());
-				if (lFoundSprintInstance != null) {
-					pSpriteGraphNode.mSpriteInstance = lFoundSprintInstance;
-
-				} else {
-					// otherwise, take the default name of the attachment
-					lFoundSprintInstance = lSpriteSheetDefinition.getSpriteInstance(lAttachment.defaultSpriteName());
-					if (lFoundSprintInstance != null) {
-						pSpriteGraphNode.mSpriteInstance = lFoundSprintInstance;
-					}
-
-				}
-
-				pSpriteGraphNode.currentSpriteActionName = pSpriteGraph.currentAnimation();
-
-			}
-
+			var lSpritesheetDefinition = lAttachment.spriteSheetDefinition();
+					
 			if (pSpriteGraphNode.mSpriteInstance != null) {
-				pSpriteGraphNode.update(pCore, pSpriteGraph, pSpriteGraphNode);
-
-				draw(lSpriteSheetDefinition, pSpriteGraphNode.mSpriteInstance, pSpriteGraphNode.mSpriteInstance, -0.1f, ColorConstants.getColor(lAttachment.getColorTint()));
+				draw(lSpritesheetDefinition, pSpriteGraphNode.mSpriteInstance, pSpriteGraphNode.mSpriteInstance, -0.1f, ColorConstants.getColor(lAttachment.getColorTint()));
 
 			}
 
@@ -121,8 +85,6 @@ public class SpriteGraphRenderer extends SpriteBatch {
 
 		final float lPointSize = 1f;
 		GL11.glPointSize(lPointSize * pCore.gameCamera().getZoomFactor());
-
-		// Debug.debugManager().drawers().drawPolyImmediate(pCore.gameCamera(), pSpriteGraphNode.spriteInstance);
 
 		{ // center - green
 			final var lPositionX = pSpriteGraphNode.positionX();
