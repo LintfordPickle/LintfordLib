@@ -5,8 +5,7 @@ import java.util.List;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
-import net.lintford.library.core.graphics.fonts.FontManager;
-import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
+import net.lintford.library.core.graphics.fonts.FontUnit;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 
 public class ToastManager {
@@ -54,14 +53,13 @@ public class ToastManager {
 	public void loadGLContent(ResourceManager pResourceManager) {
 		mTextureBatch.loadGLContent(pResourceManager);
 
-		mFontUnit = pResourceManager.fontManager().getFont(FontManager.FONT_FONTNAME_TOAST);
-
+		mFontUnit = pResourceManager.fontManager().getFontUnit("FONT_TOAST", LintfordCore.CORE_ENTITY_GROUP_ID);
 	}
 
 	public void unloadGLContent() {
 		mTextureBatch.unloadGLContent();
 		mFontUnit = null;
-		
+
 	}
 
 	public void update(LintfordCore pCore) {

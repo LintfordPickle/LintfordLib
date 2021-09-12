@@ -2,7 +2,7 @@ package net.lintford.library.renderers.windows.components;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.graphics.ColorConstants;
-import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
+import net.lintford.library.core.graphics.fonts.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.renderers.windows.UiWindow;
@@ -121,9 +121,9 @@ public class UITextButton extends UIWidget {
 		final var lFontRenderer = mParentWindow.rendererManager().textFont();
 
 		final var lButtonText = mButtonLabel != null ? mButtonLabel : NO_LABEL_TEXT;
-		final float lTextWidth = lFontRenderer.bitmap().getStringWidth(lButtonText);
+		final float lTextWidth = lFontRenderer.getStringWidth(lButtonText);
 
-		lFontRenderer.draw(lButtonText, x + w / 2f - lTextWidth / 2f, y + h / 2f - lFontRenderer.bitmap().fontHeight() / 4f, pComponentZDepth, 1f);
+		lFontRenderer.drawText(lButtonText, x + w / 2f - lTextWidth / 2f, y + h / 2f - lFontRenderer.fontHeight() / 4f, pComponentZDepth, ColorConstants.WHITE, 1f);
 
 	}
 

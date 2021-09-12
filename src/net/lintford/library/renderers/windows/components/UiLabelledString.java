@@ -2,7 +2,7 @@ package net.lintford.library.renderers.windows.components;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.graphics.ColorConstants;
-import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
+import net.lintford.library.core.graphics.fonts.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.renderers.windows.UiWindow;
@@ -79,12 +79,12 @@ public class UiLabelledString extends UIWidget {
 
 		}
 
-		final float lTextHeight = pTextFont.bitmap().fontHeight();
-		pTextFont.draw(mLabelText, x + lHorizontalPadding, y + h / 2 - lTextHeight / 2, pComponentZDepth, ColorConstants.TextEntryColor, 1f, -1);
+		final float lTextHeight = pTextFont.fontHeight();
+		pTextFont.drawText(mLabelText, x + lHorizontalPadding, y + h / 2 - lTextHeight / 2, pComponentZDepth, ColorConstants.TextEntryColor, 1f, -1);
 
 		if (mValueString != null && mValueString.length() > 0) {
-			final float lValueWidth = pTextFont.bitmap().getStringWidth(mValueString);
-			pTextFont.draw(mValueString, x + w - lValueWidth - lHorizontalPadding, y + h / 2 - lTextHeight / 2, pComponentZDepth, ColorConstants.TextEntryColor, 1f, -1);
+			final float lValueWidth = pTextFont.getStringWidth(mValueString);
+			pTextFont.drawText(mValueString, x + w - lValueWidth - lHorizontalPadding, y + h / 2 - lTextHeight / 2, pComponentZDepth, ColorConstants.TextEntryColor, 1f, -1);
 
 		}
 

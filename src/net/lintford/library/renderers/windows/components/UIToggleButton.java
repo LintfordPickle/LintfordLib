@@ -2,7 +2,7 @@ package net.lintford.library.renderers.windows.components;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.graphics.ColorConstants;
-import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
+import net.lintford.library.core.graphics.fonts.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.renderers.windows.UiWindow;
@@ -117,13 +117,11 @@ public class UIToggleButton extends UIWidget {
 		pTextureBatch.draw(pUITexture, 128, 32, 32, 32, x + w - 32, y, 32, h, pComponentZDepth, lColor);
 
 		if (mButtonLabel != null && mButtonLabel.length() > 0) {
-			final float lTextWidth = pTextFont.bitmap().getStringWidth(mButtonLabel);
-			final float lTextHeight = pTextFont.bitmap().getStringHeight(mButtonLabel);
+			final float lTextWidth = pTextFont.getStringWidth(mButtonLabel);
+			final float lTextHeight = pTextFont.getStringHeight(mButtonLabel);
 
-			pTextFont.draw(mButtonLabel, x + w / 2.f - lTextWidth / 2.f, y + h / 2f - lTextHeight / 2.f, 1.0f);
-
+			pTextFont.drawText(mButtonLabel, x + w / 2.f - lTextWidth / 2.f, y + h / 2f - lTextHeight / 2.f, -0.01f, ColorConstants.WHITE, 1.0f);
 		}
-
 	}
 
 	// --------------------------------------

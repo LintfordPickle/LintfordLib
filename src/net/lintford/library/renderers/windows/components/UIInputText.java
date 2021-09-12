@@ -3,7 +3,7 @@ package net.lintford.library.renderers.windows.components;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.ColorConstants;
-import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
+import net.lintford.library.core.graphics.fonts.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.core.input.IBufferedTextInputCallback;
@@ -194,10 +194,10 @@ public class UIInputText extends UIWidget implements IBufferedTextInputCallback 
 		// Draw the cancel button rectangle
 		pTextureBatch.draw(pUITexture, 256, 192, 16, 16, mCancelRectangle, pComponentZDepth, ColorConstants.WHITE);
 
-		final float lInputTextWidth = pTextFont.bitmap().getStringWidth(mInputField.toString());
+		final float lInputTextWidth = pTextFont.getStringWidth(mInputField.toString());
 
 		String lText = mInputField.toString();
-		final float lTextHeight = pTextFont.bitmap().fontHeight();
+		final float lTextHeight = pTextFont.fontHeight();
 		if (lText.length() == 0 && !mHasFocus) {
 			if (mEmptyString.isEmpty()) {
 				lText = "<search>";
@@ -209,10 +209,9 @@ public class UIInputText extends UIWidget implements IBufferedTextInputCallback 
 
 		}
 
-		pTextFont.draw(lText, x + 10, y + h / 2 - lTextHeight / 2, pComponentZDepth, ColorConstants.TextEntryColor, 1f, -1);
+		pTextFont.drawText(lText, x + 10, y + h / 2 / 2, pComponentZDepth, ColorConstants.TextEntryColor, 1f, -1);
 		if (mShowCaret && mHasFocus) {
-			pTextureBatch.draw(pUITexture, 0, 0, 32, 32, x + 10 + lInputTextWidth, y + h / 2 - lTextHeight / 2, pTextFont.fontPointSize() / 2.f, pTextFont.fontPointSize(), pComponentZDepth, ColorConstants.WHITE);
-
+			pTextureBatch.draw(pUITexture, 0, 0, 32, 32, x + 10 + lInputTextWidth, y + h / 2 - lTextHeight / 2, pTextFont.fontHeight() / 2.f, pTextFont.fontHeight(), pComponentZDepth, ColorConstants.WHITE);
 		}
 
 	}

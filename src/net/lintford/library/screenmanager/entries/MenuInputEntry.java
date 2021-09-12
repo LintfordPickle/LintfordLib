@@ -172,7 +172,7 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 			return;
 
 		final float lUiTextScale = lParentScreen.uiTextScale();
-		final float lLabelTextWidth = lFont.bitmap().getStringWidth(mLabel, lUiTextScale);
+		final float lLabelTextWidth = lFont.getStringWidth(mLabel, lUiTextScale);
 
 		float lAdjustedLabelScaleW = lUiTextScale;
 		if (mEnableScaleTextToWidth && w * 0.4f < lLabelTextWidth && lLabelTextWidth > 0)
@@ -192,34 +192,34 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 
 		}
 
-		final float lLabelTextHeight = lFont.bitmap().fontHeight() * lAdjustedLabelScaleW;
+		final float lLabelTextHeight = lFont.fontHeight() * lAdjustedLabelScaleW;
 
-		final float lSeparatorHalfWidth = lFont.bitmap().getStringWidth(mSeparator, lUiTextScale) * 0.5f;
-		final float lInputTextWidth = lFont.bitmap().getStringWidth(mInputField.toString(), lUiTextScale);
+		final float lSeparatorHalfWidth = lFont.getStringWidth(mSeparator, lUiTextScale) * 0.5f;
+		final float lInputTextWidth = lFont.getStringWidth(mInputField.toString(), lUiTextScale);
 
 		float lAdjustedLInputScaleW = lUiTextScale;
 		if (mEnableScaleTextToWidth && w * 0.4f < lInputTextWidth && lInputTextWidth > 0)
 			lAdjustedLInputScaleW = (w * 0.4f) / lInputTextWidth;
 
-		final float lInputTextHeight = lFont.bitmap().fontHeight() * lAdjustedLInputScaleW;
+		final float lInputTextHeight = lFont.fontHeight() * lAdjustedLInputScaleW;
 
 		entryColor.r = mEnabled ? 1f : 0.6f;
 		entryColor.g = mEnabled ? 1f : 0.6f;
 		entryColor.b = mEnabled ? 1f : 0.6f;
 
 		lFont.begin(pCore.HUD());
-		lFont.drawShadow(mDrawTextShadow);
-		lFont.draw(mLabel, x + w / 2 - 10 - (lLabelTextWidth * lAdjustedLabelScaleW) - lSeparatorHalfWidth, y + h / 2 - lLabelTextHeight * 0.5f, pParentZDepth + .1f, textColor, lAdjustedLabelScaleW, -1);
-		lFont.draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - lLabelTextHeight * 0.5f, pParentZDepth + .1f, textColor, lUiTextScale, -1);
-		lFont.draw(mInputField.toString(), x + w / 2 + lSeparatorHalfWidth * lAdjustedLInputScaleW + SPACE_BETWEEN_TEXT, y + h / 2 - lInputTextHeight * 0.5f, pParentZDepth + .1f, textColor, lAdjustedLInputScaleW, -1);
+		lFont.drawText(mLabel, x + w / 2 - 10 - (lLabelTextWidth * lAdjustedLabelScaleW) - lSeparatorHalfWidth, y + h / 2 - lLabelTextHeight * 0.5f, pParentZDepth + .1f, textColor, lAdjustedLabelScaleW, -1);
+		lFont.drawText(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - lLabelTextHeight * 0.5f, pParentZDepth + .1f, textColor, lUiTextScale, -1);
+		lFont.drawText(mInputField.toString(), x + w / 2 + lSeparatorHalfWidth * lAdjustedLInputScaleW + SPACE_BETWEEN_TEXT, y + h / 2 - lInputTextHeight * 0.5f, pParentZDepth + .1f, textColor, lAdjustedLInputScaleW,
+				-1);
 
-		final float lTextHeight = lFont.fontPointSize();
+		final float lTextHeight = lFont.fontHeight();
 
 		if (mShowCaret && mHasFocus) {
 			lTextureBatch.begin(pCore.HUD());
 			final float lCaretPositionX = x + w / 2 + lSeparatorHalfWidth + SPACE_BETWEEN_TEXT + lInputTextWidth * lAdjustedLInputScaleW;
 			final float lCaretPositionY = y + h / 2 - lTextHeight / 2.f;
-			lTextureBatch.draw(mUITexture, 0, 0, lTextHeight / 2.f, lFont.fontPointSize(), lCaretPositionX, lCaretPositionY, lTextHeight / 2.f, lFont.fontPointSize(), mZ, ColorConstants.WHITE);
+			lTextureBatch.draw(mUITexture, 0, 0, lTextHeight / 2.f, lTextHeight, lCaretPositionX, lCaretPositionY, lTextHeight / 2.f, lTextHeight, mZ, ColorConstants.WHITE);
 			lTextureBatch.end();
 
 		}

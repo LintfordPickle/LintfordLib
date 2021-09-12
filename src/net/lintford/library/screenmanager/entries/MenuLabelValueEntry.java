@@ -73,8 +73,8 @@ public class MenuLabelValueEntry extends MenuLabelEntry {
 
 		final float lUiTextScale = lParentScreen.uiTextScale();
 
-		final float lLabelWidth = lFont.bitmap().getStringWidth(mText, lUiTextScale);
-		final float lFontHeight = lFont.bitmap().fontHeight() * lUiTextScale;
+		final float lLabelWidth = lFont.getStringWidth(mText, lUiTextScale);
+		final float lFontHeight = lFont.fontHeight() * lUiTextScale;
 
 		float lX = x + w / 2 - lLabelWidth / 2; // Center label
 		switch (mHorizontalAlignment) {
@@ -90,9 +90,7 @@ public class MenuLabelValueEntry extends MenuLabelEntry {
 		}
 
 		lFont.begin(pCore.HUD());
-		lFont.drawShadow(mDrawTextShadow);
-		lFont.trimText(mTrimText);
-		lFont.draw(mValueText, lX + 100.f, y + h / 2f - lFontHeight / 2f, pParentZDepth + .15f, textColor, lUiTextScale);
+		lFont.drawText(mValueText, lX + 100.f, y + h / 2f - lFontHeight / 2f, pParentZDepth + .15f, textColor, lUiTextScale);
 		lFont.end();
 
 	}

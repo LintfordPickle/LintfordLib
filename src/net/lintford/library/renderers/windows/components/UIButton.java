@@ -2,7 +2,7 @@ package net.lintford.library.renderers.windows.components;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.graphics.ColorConstants;
-import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
+import net.lintford.library.core.graphics.fonts.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.renderers.windows.UiWindow;
@@ -121,10 +121,9 @@ public class UIButton extends UIWidget {
 		pTextureBatch.draw(pUITexture, 32, 32, 224, 32, centerX() - (w / 2) + 32, centerY() - h / 2, w - 64, h, pComponentZDepth, lColor);
 
 		final String lButtonText = mButtonLabel != null ? mButtonLabel : NO_LABEL_TEXT;
-		final float lTextWidth = pTextFont.bitmap().getStringWidth(lButtonText);
+		final float lTextWidth = pTextFont.getStringWidth(lButtonText);
 
-		pTextFont.draw(lButtonText, x + w / 2f - lTextWidth / 2f, y + h / 2f - pTextFont.bitmap().fontHeight() / 2f, pComponentZDepth, 1f);
-
+		pTextFont.drawText(lButtonText, x + w / 2f - lTextWidth / 2f, y + h / 2f - pTextFont.fontHeight() / 2f, pComponentZDepth, ColorConstants.WHITE, 1f);
 	}
 
 	// --------------------------------------

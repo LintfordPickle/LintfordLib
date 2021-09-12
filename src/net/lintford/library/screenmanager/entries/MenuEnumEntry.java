@@ -235,14 +235,14 @@ public class MenuEnumEntry extends MenuEntry {
 			return;
 
 		final float lUiTextScale = lParentScreen.uiTextScale();
-		final float lTextWidth = lFont.bitmap().getStringWidth(mLabel, lUiTextScale);
+		final float lTextWidth = lFont.getStringWidth(mLabel, lUiTextScale);
 
 		float lAdjustedScaleW = lUiTextScale;
 		if (mEnableScaleTextToWidth && w / 2 < lTextWidth && lTextWidth > 0)
 			lAdjustedScaleW = (w / 2) / lTextWidth;
 
-		final float lTextHeight = lFont.bitmap().getStringHeight(mLabel, lUiTextScale);
-		final float lSeparatorHalfWidth = lFont.bitmap().getStringWidth(mSeparator, lUiTextScale) * 0.5f;
+		final float lTextHeight = lFont.getStringHeight(mLabel, lUiTextScale);
+		final float lSeparatorHalfWidth = lFont.getStringWidth(mSeparator, lUiTextScale) * 0.5f;
 
 		final var lTextureBatch = lParentScreen.textureBatch();
 
@@ -261,17 +261,16 @@ public class MenuEnumEntry extends MenuEntry {
 		lTextureBatch.end();
 
 		lFont.begin(pCore.HUD());
-		lFont.drawShadow(mDrawTextShadow);
-		final float lStringWidth = lFont.bitmap().getStringWidth(mLabel, lAdjustedScaleW);
-		lFont.draw(mLabel, (x + w / 2 - 10) - lStringWidth - lSeparatorHalfWidth, y + h / 2 - lFont.bitmap().getStringHeight(mLabel, lAdjustedScaleW) * 0.5f, pParentZDepth, textColor, lAdjustedScaleW, -1);
-		lFont.draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - lTextHeight * 0.5f, pParentZDepth, textColor, lUiTextScale, -1);
+		final float lStringWidth = lFont.getStringWidth(mLabel, lAdjustedScaleW);
+		lFont.drawText(mLabel, (x + w / 2 - 10) - lStringWidth - lSeparatorHalfWidth, y + h / 2 - lFont.getStringHeight(mLabel, lAdjustedScaleW) * 0.5f, pParentZDepth, textColor, lAdjustedScaleW, -1);
+		lFont.drawText(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - lTextHeight * 0.5f, pParentZDepth, textColor, lUiTextScale, -1);
 
 		// Render the items
 		if (mItems.size() > 0) {
 			final String lCurItem = mItems.get(mSelectedIndex);
-			final float EntryWidth = lFont.bitmap().getStringWidth(lCurItem, lUiTextScale);
+			final float EntryWidth = lFont.getStringWidth(lCurItem, lUiTextScale);
 
-			lFont.draw(lCurItem, x + (w / 6 * 4.65f) - EntryWidth / 2, y + h / 2 - lTextHeight * 0.5f, pParentZDepth, textColor, lUiTextScale, -1);
+			lFont.drawText(lCurItem, x + (w / 6 * 4.65f) - EntryWidth / 2, y + h / 2 - lTextHeight * 0.5f, pParentZDepth, textColor, lUiTextScale, -1);
 		}
 		lFont.end();
 

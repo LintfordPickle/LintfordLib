@@ -2,6 +2,7 @@ package net.lintford.library.screenmanager.entries;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
+import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
@@ -205,10 +206,10 @@ public class MenuImageEntry extends MenuEntry {
 		} else if (mShowMissingTextureText) {
 			final var lFontUnit = lRendererManager.textFont();
 
-			final float lTextWidth = lFontUnit.bitmap().getStringWidth(mMissingTextureText);
+			final float lTextWidth = lFontUnit.getStringWidth(mMissingTextureText);
 
 			lFontUnit.begin(pCore.HUD());
-			lFontUnit.draw(mMissingTextureText, x + mFittedWidth / 2f - lTextWidth / 2f, y + mFittedHeight / 2, 1f);
+			lFontUnit.drawText(mMissingTextureText, x + mFittedWidth / 2f - lTextWidth / 2f, y + mFittedHeight / 2, pParentZDepth + .1f, ColorConstants.WHITE, 1f);
 			lFontUnit.end();
 
 		} else if (mMissingTexture != null) {

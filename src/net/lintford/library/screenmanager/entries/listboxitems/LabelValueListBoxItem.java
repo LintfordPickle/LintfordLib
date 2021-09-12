@@ -87,8 +87,8 @@ public class LabelValueListBoxItem extends ListBoxItem {
 
 			// Draw profile information
 			lFont.begin(pCore.HUD());
-			lFont.draw(mLabelValue, x, y, pParentZDepth + .1f, textColor, lScale, -1);
-			lFont.draw(mTextValue, x + w / 2, y, pParentZDepth + .1f, textColor, lScale, -1);
+			lFont.drawText(mLabelValue, x, y, pParentZDepth + .1f, textColor, lScale, -1);
+			lFont.drawText(mTextValue, x + w / 2, y, pParentZDepth + .1f, textColor, lScale, -1);
 			lFont.end();
 
 		}

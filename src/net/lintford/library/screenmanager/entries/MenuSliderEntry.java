@@ -202,9 +202,9 @@ public class MenuSliderEntry extends MenuEntry {
 		final var lTextureBatch = lParentScreen.textureBatch();
 		final float lUiTextScale = lParentScreen.uiTextScale();
 
-		final float lLabelWidth = lFont.bitmap().getStringWidth(mLabel, lUiTextScale);
-		final float lSeparatorHalfWidth = lFont.bitmap().getStringWidth(mSeparator, lUiTextScale) * 0.5f;
-		final float lLabelHeight = lFont.bitmap().getStringHeight(mLabel, lUiTextScale);//;
+		final float lLabelWidth = lFont.getStringWidth(mLabel, lUiTextScale);
+		final float lSeparatorHalfWidth = lFont.getStringWidth(mSeparator, lUiTextScale) * 0.5f;
+		final float lLabelHeight = lFont.getStringHeight(mLabel, lUiTextScale);// ;
 
 		final float yPos = y;
 
@@ -247,12 +247,11 @@ public class MenuSliderEntry extends MenuEntry {
 
 		// draw the label to the left and the value //
 		lFont.begin(pCore.HUD());
-		lFont.drawShadow(mDrawTextShadow);
-		lFont.draw(mLabel, x + w / 2 - lLabelWidth - 10 - lSeparatorHalfWidth, y + h / 2f - lLabelHeight / 2f, mZ, ColorConstants.TextEntryColor, lUiTextScale, -1);
-		lFont.draw(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2f - lLabelHeight / 2f, mZ, ColorConstants.TextEntryColor, lUiTextScale, -1);
+		lFont.drawText(mLabel, x + w / 2 - lLabelWidth - 10 - lSeparatorHalfWidth, y + h / 2f - lLabelHeight / 2f, mZ, ColorConstants.TextEntryColor, lUiTextScale, -1);
+		lFont.drawText(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2f - lLabelHeight / 2f, mZ, ColorConstants.TextEntryColor, lUiTextScale, -1);
 
 		if (mShowValueEnabled) {
-			final float lValueStringWidth = lFont.bitmap().getStringWidth(Integer.toString(mValue), lUiTextScale);
+			final float lValueStringWidth = lFont.getStringWidth(Integer.toString(mValue), lUiTextScale);
 
 			String lValueString = String.valueOf(mValue);
 			if (mShowUnit && mUnit != null && lValueString.length() > 0) {
@@ -261,17 +260,17 @@ public class MenuSliderEntry extends MenuEntry {
 
 			final float lLabelOffset = 0;
 			if (mShowGuideValuesEnabled) {
-				final float lLowerBoundStringWidth = lFont.bitmap().getStringWidth(Integer.toString(mLowerBound));
-				lFont.draw(Integer.toString(mLowerBound), mBarPosX - lLowerBoundStringWidth / 2 + 16, y + lLabelOffset, mZ, 1f);
+				final float lLowerBoundStringWidth = lFont.getStringWidth(Integer.toString(mLowerBound));
+				lFont.drawText(Integer.toString(mLowerBound), mBarPosX - lLowerBoundStringWidth / 2 + 16, y + lLabelOffset, mZ, ColorConstants.WHITE, 1f);
 			}
 
 			final float endPositionX = lCaretPos + 128.f + lValueStringWidth;
 			final float lValueStringPositionX = endPositionX > mBarPosX + mBarWidth ? lCaretPos - 32.f - 5.f : lCaretPos + 32f;
-			lFont.draw(lValueString, lValueStringPositionX, y + h * .5f - lLabelHeight * .5f, mZ, lUiTextScale);
+			lFont.drawText(lValueString, lValueStringPositionX, y + h * .5f - lLabelHeight * .5f, mZ, ColorConstants.WHITE, lUiTextScale);
 
 			if (mShowGuideValuesEnabled) {
-				final float lUpperBoundStringWidth = lFont.bitmap().getStringWidth(Integer.toString(mUpperBound));
-				lFont.draw(Integer.toString(mUpperBound), mBarPosX + mBarWidth - lUpperBoundStringWidth / 2 - 48, y + lLabelOffset, mZ, 1f);
+				final float lUpperBoundStringWidth = lFont.getStringWidth(Integer.toString(mUpperBound));
+				lFont.drawText(Integer.toString(mUpperBound), mBarPosX + mBarWidth - lUpperBoundStringWidth / 2 - 48, y + lLabelOffset, mZ, ColorConstants.WHITE, 1f);
 			}
 		}
 

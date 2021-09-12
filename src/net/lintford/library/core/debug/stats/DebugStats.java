@@ -9,7 +9,8 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.graphics.ColorConstants;
-import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
+import net.lintford.library.core.graphics.fonts.BitmapFontManager;
+import net.lintford.library.core.graphics.fonts.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 
@@ -104,9 +105,9 @@ public class DebugStats {
 		mTags.add(new DebugStatTagFloat(TAG_ID_FPS, "FPS", 0, false));
 		mTags.add(new DebugStatTagString(TAG_ID_TIMING, "Timing", ""));
 		mTags.add(new DebugStatTagString(TAG_ID_RES, "Resolution", ""));
-		//		mTags.add(new DebugStatTagFloat(-1, "Ram Used", 0, false));
-		//		mTags.add(new DebugStatTagFloat(-1, "Ram Free", 0, false));
-		//		mTags.add(new DebugStatTagFloat(TAG_ID_VRAM, "VRam", 0, false));
+		// mTags.add(new DebugStatTagFloat(-1, "Ram Used", 0, false));
+		// mTags.add(new DebugStatTagFloat(-1, "Ram Free", 0, false));
+		// mTags.add(new DebugStatTagFloat(TAG_ID_VRAM, "VRam", 0, false));
 
 		mTags.add(new DebugStatTagCaption(-1, "Graphics:"));
 		mTags.add(new DebugStatTagInt(TAG_ID_DRAWCALLS, "Draw Calls", 0));
@@ -114,9 +115,9 @@ public class DebugStats {
 		mTags.add(new DebugStatTagInt(TAG_ID_TRIS, "Tris", 0));
 
 		mTags.add(new DebugStatTagInt(TAG_ID_BATCH_OBJECTS, "Batch Objects", 0, false));
-		//		mTags.add(new DebugStatTagInt(TAG_ID_VBO, "VBOs", 0, false));
-		//		mTags.add(new DebugStatTagInt(TAG_ID_VB_UPLOADS, "VBs", 0));
-		//		mTags.add(new DebugStatTagInt(TAG_ID_IB_UPLOADS, "IBs", 0));
+		// mTags.add(new DebugStatTagInt(TAG_ID_VBO, "VBOs", 0, false));
+		// mTags.add(new DebugStatTagInt(TAG_ID_VB_UPLOADS, "VBs", 0));
+		// mTags.add(new DebugStatTagInt(TAG_ID_IB_UPLOADS, "IBs", 0));
 		mTags.add(new DebugStatTagInt(TAG_ID_TEXTURES, "Textures ", 0, false));
 		mTags.add(new DebugStatTagInt(TAG_ID_RENDERTEXTURES, "Render Textures", 0, false));
 
@@ -136,7 +137,7 @@ public class DebugStats {
 		Debug.debugManager().logger().v(getClass().getSimpleName(), "DebugStats loading GL content");
 
 		mCoreTexture = pResourceManager.textureManager().textureCore();
-		mConsoleFont = pResourceManager.fontManager().systemFont();
+		mConsoleFont = pResourceManager.fontManager().getFontUnit(BitmapFontManager.SYSTEM_FONT_CONSOLE_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
 
 		mTextureBatch.loadGLContent(pResourceManager);
 

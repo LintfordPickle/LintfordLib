@@ -2,7 +2,7 @@ package net.lintford.library.renderers.windows.components;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.graphics.ColorConstants;
-import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
+import net.lintford.library.core.graphics.fonts.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.core.maths.MathHelper;
@@ -136,8 +136,8 @@ public class UifSlider extends UIWidget {
 		pTextureBatch.draw(pUITexture, 0, 0, 32, 32, x + mCurrentRelPosition - SLIDER_WIDTH / 2, y + h / 4, SLIDER_WIDTH, h / 2, 0f, lNubbinColor);
 
 		// Render Slider label
-		pTextFont.draw(mSliderLabel, x, y - h / 2, 1.f);
-		pTextFont.draw(String.format("%.2f", mCurrentValue), x + w - 30 - SLIDER_WIDTH / 2, y - h / 2, 1.f);
+		pTextFont.drawText(mSliderLabel, x, y - h / 2, 1.f, ColorConstants.WHITE, 1f);
+		pTextFont.drawText(String.format("%.2f", mCurrentValue), x + w - 30 - SLIDER_WIDTH / 2, y - h / 2, 1.f, ColorConstants.WHITE, 1f);
 
 	}
 

@@ -92,8 +92,8 @@ public class MenuLabelEntry extends MenuEntry {
 
 		final float lUiTextScale = lParentScreen.uiTextScale();
 
-		final float lLabelWidth = lFont.bitmap().getStringWidth(mText, lUiTextScale);
-		final float lFontHeight = lFont.bitmap().fontHeight() * lUiTextScale;
+		final float lLabelWidth = lFont.getStringWidth(mText, lUiTextScale);
+		final float lFontHeight = lFont.fontHeight() * lUiTextScale;
 
 		final var lTextureBatch = lParentScreen.textureBatch();
 
@@ -118,9 +118,7 @@ public class MenuLabelEntry extends MenuEntry {
 		}
 
 		lFont.begin(pCore.HUD());
-		lFont.drawShadow(mDrawTextShadow);
-		lFont.trimText(mTrimText);
-		lFont.draw(mText, lX + 15.f, y + h / 2f - lFontHeight / 2f, pParentZDepth + .15f, textColor, lUiTextScale);
+		lFont.drawText(mText, lX + 15.f, y + h / 2f - lFontHeight / 2f, pParentZDepth + .15f, textColor, lUiTextScale);
 		lFont.end();
 
 		if (mShowInfoIcon) {

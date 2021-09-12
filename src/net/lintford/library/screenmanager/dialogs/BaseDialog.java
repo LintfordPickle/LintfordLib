@@ -244,7 +244,6 @@ public abstract class BaseDialog extends MenuScreen {
 			lTextureBatch.draw(mUITexture, 288, 64, TILE_SIZE, TILE_SIZE, x + TILE_SIZE, y + h - 32, w - 64, TILE_SIZE, lZDepth, lColor);
 			lTextureBatch.draw(mUITexture, 320, 64, TILE_SIZE, TILE_SIZE, x + w - 32, y + h - 32, TILE_SIZE, TILE_SIZE, lZDepth, lColor);
 			lTextureBatch.end();
-
 		}
 
 		if (mDialogIcon.enabled()) {
@@ -256,20 +255,19 @@ public abstract class BaseDialog extends MenuScreen {
 			lTextureBatch.end();
 		}
 
-		final float lHeaderFontHeight = mMenuHeaderFont.bitmap().fontHeight();
+		final float lHeaderFontHeight = mMenuHeaderFont.fontHeight();
 
 		/* Render title and message */
 		font().begin(pCore.HUD());
-		font().draw(mMessageString, -DIALOG_WIDTH * 0.5f + TEXT_HORIZONTAL_PADDING, -DIALOG_HEIGHT * 0.5f + lHeaderFontHeight + 15f, lZDepth, 1f, DIALOG_WIDTH - 70f);
+		font().drawText(mMessageString, -DIALOG_WIDTH * 0.5f + TEXT_HORIZONTAL_PADDING, -DIALOG_HEIGHT * 0.5f + lHeaderFontHeight + 15f, lZDepth, ColorConstants.WHITE, 1f, DIALOG_WIDTH - 70);
 		font().end();
 
 		// Render the menu title if there is one
 		if (mMenuTitle != null && mMenuTitle.length() > 0) {
-			mMenuHeaderFont.drawShadow(true);
 			mMenuHeaderFont.begin(pCore.HUD());
 			final float lHorizontalOffsetX = mDialogIcon.enabled() ? 74.f : 0.f;
 			final float lScale = 0.65f;
-			mMenuHeaderFont.draw(mMenuTitle, -DIALOG_WIDTH / 2f + TEXT_HORIZONTAL_PADDING + lHorizontalOffsetX, -DIALOG_HEIGHT / 2f + TEXT_HORIZONTAL_PADDING, lZDepth, screenColor, lScale);
+			mMenuHeaderFont.drawText(mMenuTitle, -DIALOG_WIDTH / 2f + TEXT_HORIZONTAL_PADDING + lHorizontalOffsetX, -DIALOG_HEIGHT / 2f + TEXT_HORIZONTAL_PADDING, lZDepth, screenColor, lScale);
 			mMenuHeaderFont.end();
 
 		}

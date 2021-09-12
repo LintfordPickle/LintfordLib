@@ -11,8 +11,7 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.debug.GLDebug;
-import net.lintford.library.core.graphics.fonts.FontManager;
-import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
+import net.lintford.library.core.graphics.fonts.FontUnit;
 import net.lintford.library.core.graphics.linebatch.LineBatch;
 import net.lintford.library.core.graphics.polybatch.PolyBatch;
 import net.lintford.library.core.graphics.rendertarget.RenderTarget;
@@ -21,8 +20,8 @@ import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.core.rendering.RenderState;
 import net.lintford.library.options.DisplayManager;
 import net.lintford.library.options.IResizeListener;
-import net.lintford.library.renderers.windows.UiWindow;
 import net.lintford.library.renderers.windows.UIWindowChangeListener;
+import net.lintford.library.renderers.windows.UiWindow;
 
 public class RendererManager {
 
@@ -206,8 +205,9 @@ public class RendererManager {
 		mLineBatch.loadGLContent(pResourceManager);
 		mPolyBatch.loadGLContent(pResourceManager);
 
-		mWindowTitleFont = pResourceManager.fontManager().getFont(FontManager.FONT_FONTNAME_TITLE);
-		mWindowTextFont = pResourceManager.fontManager().getFont(FontManager.FONT_FONTNAME_TEXT);
+		// TODO: SYSTEM Font
+		mWindowTitleFont = pResourceManager.fontManager().getFontUnit("FONT_SYSTEM", mEntityGroupID);
+		mWindowTextFont = pResourceManager.fontManager().getFontUnit("FONT_SYSTEM", mEntityGroupID);
 
 		// Some windows will use this to orientate themselves to the window
 		mDisplayConfig = pResourceManager.config().display();

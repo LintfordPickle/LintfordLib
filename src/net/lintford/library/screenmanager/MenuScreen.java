@@ -7,8 +7,7 @@ import org.lwjgl.glfw.GLFW;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
-import net.lintford.library.core.graphics.fonts.FontManager;
-import net.lintford.library.core.graphics.fonts.FontManager.FontUnit;
+import net.lintford.library.core.graphics.fonts.FontUnit;
 import net.lintford.library.core.input.InputManager;
 import net.lintford.library.core.maths.MathHelper;
 import net.lintford.library.renderers.ZLayers;
@@ -177,8 +176,8 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	public void loadGLContent(ResourceManager pResourceManager) {
 		super.loadGLContent(pResourceManager);
 
-		mMenuFont = pResourceManager.fontManager().getFont(FontManager.FONT_FONTNAME_TEXT);
-		mMenuHeaderFont = pResourceManager.fontManager().getFont(FontManager.FONT_FONTNAME_HEADER);
+		mMenuFont = pResourceManager.fontManager().getFontUnit("FONT_MENU", LintfordCore.CORE_ENTITY_GROUP_ID);
+		mMenuHeaderFont = pResourceManager.fontManager().getFontUnit("FONT_HEADER", LintfordCore.CORE_ENTITY_GROUP_ID);
 
 		final int lCount = layouts().size();
 		for (int i = 0; i < lCount; i++) {
@@ -525,33 +524,33 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		final float lUiTextScale = lUiStructureController.uiTextScaleFactor();
 
 		final var lHeaderRect = lUiStructureController.menuTitleRectangle();
-		final var lHeaderFontWidth = mMenuHeaderFont.bitmap().getStringWidth(mMenuTitle, lUiTextScale);
-		final var lHeaderFontHeight = mMenuHeaderFont.bitmap().fontHeight() * lUiTextScale;
+		final var lHeaderFontWidth = mMenuHeaderFont.getStringWidth(mMenuTitle, lUiTextScale);
+		final var lHeaderFontHeight = mMenuHeaderFont.fontHeight() * lUiTextScale;
 
 		final float lMenuTitlePositionX = lHeaderRect.centerX() - lHeaderFontWidth * .5f;
 		final float lMenuTitlePositionY = lHeaderRect.bottom() - lHeaderFontHeight - TITLE_PADDING_Y * lUiStructureController.windowAutoScaleFactorY();
 
 		mMenuHeaderFont.begin(pCore.HUD());
-		mMenuHeaderFont.draw(mMenuTitle, lMenuTitlePositionX, lMenuTitlePositionY, -0.01f, screenColor, lUiTextScale);
+		mMenuHeaderFont.drawText(mMenuTitle, lMenuTitlePositionX, lMenuTitlePositionY, -0.01f, screenColor, lUiTextScale);
 		mMenuHeaderFont.end();
 
 		if (mMenuFont != null) {
 			mMenuFont.begin(pCore.HUD());
 
 			{
-				final float lOverTitleWidth = mMenuFont.bitmap().getStringWidth(mMenuOverTitle, lUiTextScale);
+				final float lOverTitleWidth = mMenuFont.getStringWidth(mMenuOverTitle, lUiTextScale);
 
 				if (mMenuOverTitle != null && mMenuOverTitle.length() > 0) {
-					mMenuFont.draw(mMenuOverTitle, lHeaderRect.centerX() - lOverTitleWidth * .5f, lMenuTitlePositionY, -0.01f, screenColor, lUiTextScale);
+					mMenuFont.drawText(mMenuOverTitle, lHeaderRect.centerX() - lOverTitleWidth * .5f, lMenuTitlePositionY, -0.01f, screenColor, lUiTextScale);
 
 				}
 			}
 
 			{
-				final float lSubTitleWidth = mMenuFont.bitmap().getStringWidth(mMenuSubTitle, lUiTextScale);
+				final float lSubTitleWidth = mMenuFont.getStringWidth(mMenuSubTitle, lUiTextScale);
 
 				if (mMenuSubTitle != null && mMenuSubTitle.length() > 0) {
-					mMenuFont.draw(mMenuSubTitle, lHeaderRect.centerX() - lSubTitleWidth * .5f, lMenuTitlePositionY + lHeaderFontHeight, -0.01f, screenColor, lUiTextScale);
+					mMenuFont.drawText(mMenuSubTitle, lHeaderRect.centerX() - lSubTitleWidth * .5f, lMenuTitlePositionY + lHeaderFontHeight, -0.01f, screenColor, lUiTextScale);
 
 				}
 			}

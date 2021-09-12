@@ -177,8 +177,8 @@ public class MenuKeyBindEntry extends MenuEntry implements IKeyInputCallback {
 
 		final float lUiTextScale = lParentScreen.uiTextScale();
 
-		final float lLabelWidth = lFont.bitmap().getStringWidth(mText, lUiTextScale);
-		final float lFontHeight = lFont.bitmap().fontHeight() * lUiTextScale;
+		final float lLabelWidth = lFont.getStringWidth(mText, lUiTextScale);
+		final float lFontHeight = lFont.fontHeight() * lUiTextScale;
 
 		final var lTextureBatch = lParentScreen.textureBatch();
 
@@ -201,10 +201,8 @@ public class MenuKeyBindEntry extends MenuEntry implements IKeyInputCallback {
 		mCaretFlashTimer += pCore.appTime().elapsedTimeMilli() * 0.001f;
 
 		lFont.begin(pCore.HUD());
-		lFont.drawShadow(mDrawTextShadow);
-
-		lFont.draw(mText, lX - lLabelWidth - 20.f, y + h / 2f - lFontHeight / 2f, pParentZDepth + .15f, textColor, lUiTextScale);
-		lFont.draw(":", lX - 5.f, y + h / 2f - lFontHeight / 2f, pParentZDepth + .15f, textColor, lUiTextScale);
+		lFont.drawText(mText, lX - lLabelWidth - 20.f, y + h / 2f - lFontHeight / 2f, pParentZDepth + .15f, textColor, lUiTextScale);
+		lFont.drawText(":", lX - 5.f, y + h / 2f - lFontHeight / 2f, pParentZDepth + .15f, textColor, lUiTextScale);
 
 		if (mBindingKey) {
 			final String lBoundKeyText = "|";
@@ -216,11 +214,11 @@ public class MenuKeyBindEntry extends MenuEntry implements IKeyInputCallback {
 			lTextureBatch.end();
 
 			if (mCaretFlashTimer % 1.f > .5f) {
-				lFont.draw(lBoundKeyText, lX + 20.f, y + h / 2f - lFontHeight / 2f, pParentZDepth + .15f, textColor, lUiTextScale);
+				lFont.drawText(lBoundKeyText, lX + 20.f, y + h / 2f - lFontHeight / 2f, pParentZDepth + .15f, textColor, lUiTextScale);
 			}
 
 		} else if (mBoundKeyText != null && mBoundKeyText.length() > 0) {
-			lFont.draw(mBoundKeyText, lX + 20.f, y + h / 2f - lFontHeight / 2f, pParentZDepth + .15f, textColor, lUiTextScale);
+			lFont.drawText(mBoundKeyText, lX + 20.f, y + h / 2f - lFontHeight / 2f, pParentZDepth + .15f, textColor, lUiTextScale);
 
 		}
 
