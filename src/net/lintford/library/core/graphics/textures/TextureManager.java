@@ -176,7 +176,9 @@ public class TextureManager extends EntityGroupManager {
 		return (pTexture != null && pTexture.name().equals(TextureManager.TEXTURE_NOT_FOUND_NAME) == false);
 	}
 
-	public Texture getTextureOrLoad(String pName, String pTextureFilepath, int pEntityGroupID) {
+	
+	
+	public Texture getTextureOrLoad(String pName, String pTextureFilepath, int pTextureFilter, int pEntityGroupID) {
 		Texture lRetTexture = getTexture(pName, pEntityGroupID);
 
 		if (isTextureLoaded(lRetTexture)) {
@@ -189,7 +191,7 @@ public class TextureManager extends EntityGroupManager {
 
 		String lTextureName = pName != null ? pName : pTextureFilepath;
 
-		return loadTexture(lTextureName, pTextureFilepath, pEntityGroupID);
+		return loadTexture(lTextureName, pTextureFilepath, pTextureFilter, pEntityGroupID);
 	}
 
 	/** Returns the {@link Texture} with the given name. If no {@link Texture} by the given name is found, a default MAGENTA texture will be returned. */

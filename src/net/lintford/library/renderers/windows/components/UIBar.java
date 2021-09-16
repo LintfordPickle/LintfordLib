@@ -126,9 +126,7 @@ public class UIBar {
 			float hh = !mIsInverted ? lHeight : lHeight;
 
 			pTextureBatch.draw(lCoreTexture, 0, 0, 32, 32, xx + INNER_BORDER_PADDING, yy + INNER_BORDER_PADDING, ww, hh, pComponentZDepth, UiBarColor);
-
 		}
-
 	}
 
 }

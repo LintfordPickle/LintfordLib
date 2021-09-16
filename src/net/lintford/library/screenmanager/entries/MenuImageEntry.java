@@ -3,7 +3,9 @@ package net.lintford.library.screenmanager.entries;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.graphics.ColorConstants;
+import net.lintford.library.core.graphics.fonts.FontUnit;
 import net.lintford.library.core.graphics.textures.Texture;
+import net.lintford.library.renderers.RendererManager;
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.Screen;
@@ -29,6 +31,7 @@ public class MenuImageEntry extends MenuEntry {
 
 	private int mMaximumWidth = 640;
 
+	private FontUnit mUiFont;
 	private Texture mMainTexture;
 	private Texture mMissingTexture;
 	private float srcX, srcY, srcWidth, srcHeight;
@@ -117,15 +120,15 @@ public class MenuImageEntry extends MenuEntry {
 		super.loadGLContent(pResourceManager);
 
 		mUITexture = pResourceManager.textureManager().textureCore();
-
+		mUiFont = pResourceManager.fontManager().getFontUnit(RendererManager.UI_FONT_TEXT_NAME);
 	}
 
 	@Override
 	public void unloadGLContent() {
 		super.unloadGLContent();
 
+		mUiFont = null;
 		mUITexture = null;
-
 	}
 
 	@Override
@@ -190,7 +193,6 @@ public class MenuImageEntry extends MenuEntry {
 	@Override
 	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pParentZDepth) {
 		final var lParentScreen = mParentLayout.parentScreen;
-		final var lRendererManager = lParentScreen.rendererManager;
 		final var lTextureBatch = lParentScreen.textureBatch();
 
 		lTextureBatch.begin(pCore.HUD());
@@ -204,14 +206,11 @@ public class MenuImageEntry extends MenuEntry {
 			lTextureBatch.draw(mMainTexture, 0, 0, lTextureWidth, lTextureHeight, x, y, mFittedWidth, mFittedHeight, pParentZDepth + .1f, entryColor);
 
 		} else if (mShowMissingTextureText) {
-			final var lFontUnit = lRendererManager.textFont();
+			final float lTextWidth = mUiFont.getStringWidth(mMissingTextureText);
 
-			final float lTextWidth = lFontUnit.getStringWidth(mMissingTextureText);
-
-			lFontUnit.begin(pCore.HUD());
-			lFontUnit.drawText(mMissingTextureText, x + mFittedWidth / 2f - lTextWidth / 2f, y + mFittedHeight / 2, pParentZDepth + .1f, ColorConstants.WHITE, 1f);
-			lFontUnit.end();
-
+			mUiFont.begin(pCore.HUD());
+			mUiFont.drawText(mMissingTextureText, x + mFittedWidth / 2f - lTextWidth / 2f, y + mFittedHeight / 2, pParentZDepth + .1f, ColorConstants.WHITE, 1f);
+			mUiFont.end();
 		} else if (mMissingTexture != null) {
 			lTextureBatch.draw(mMissingTexture, srcX, srcY, srcWidth, srcHeight, x, y, mFittedWidth, mFittedHeight, pParentZDepth + .1f, entryColor);
 

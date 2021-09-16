@@ -7,6 +7,9 @@ import net.lintford.library.core.maths.Matrix4f;
 
 public class ShaderSubPixel extends ShaderMVP_PCT {
 
+	public static final String VERT_FILENAME = "/res/shaders/shader_basic_pct.vert";
+	public static final String FRAG_FILENAME = "/res/shaders/shader_subpixel_pct.frag";
+
 	// --------------------------------------
 	// Constants
 	// --------------------------------------

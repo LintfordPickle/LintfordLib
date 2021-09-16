@@ -176,8 +176,8 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	public void loadGLContent(ResourceManager pResourceManager) {
 		super.loadGLContent(pResourceManager);
 
-		mMenuFont = pResourceManager.fontManager().getFontUnit("FONT_MENU", LintfordCore.CORE_ENTITY_GROUP_ID);
-		mMenuHeaderFont = pResourceManager.fontManager().getFontUnit("FONT_HEADER", LintfordCore.CORE_ENTITY_GROUP_ID);
+		mMenuFont = pResourceManager.fontManager().getFontUnit(ScreenManager.FONT_MENU_ENTRY_NAME);
+		mMenuHeaderFont = pResourceManager.fontManager().getFontUnit(ScreenManager.FONT_MENU_TITLE_NAME);
 
 		final int lCount = layouts().size();
 		for (int i = 0; i < lCount; i++) {

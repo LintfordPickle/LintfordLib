@@ -105,6 +105,7 @@ public class ResourceManager {
 		mConfig = pConfig;
 
 		mFontManager = new BitmapFontManager();
+		mFontManager.initialize(this);
 		mTextureManager = new TextureManager();
 		mSpriteSheetManager = new SpriteSheetManager();
 		mAudioManager = new AudioManager(pConfig.audio());
@@ -122,7 +123,6 @@ public class ResourceManager {
 		mTextureManager.loadGLContent(this);
 		mSpriteSheetManager.loadGLContent(this);
 		mAudioManager.loadALContent(this);
-		mFontManager.loadGLContent(this);
 		mPObjectManager.loadGLContent(this);
 		mSpriteGraphRepository.loadGLContent(this);
 
@@ -130,7 +130,6 @@ public class ResourceManager {
 	}
 
 	public void unloadContent() {
-		mFontManager.unloadGLContent();
 		mAudioManager.unloadALContent();
 		mTextureManager.unloadGLContent();
 		mPObjectManager.unloadGLContent();

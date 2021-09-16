@@ -92,7 +92,7 @@ public class DebugDrawers {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
-		mSystemFontUnit = pResourceManager.fontManager().getFontUnit(BitmapFontManager.SYSTEM_FONT_CORE_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
+		mSystemFontUnit = pResourceManager.fontManager().getFontUnit(BitmapFontManager.SYSTEM_FONT_CORE_TEXT_NAME);
 
 		mTextureBatch.loadGLContent(pResourceManager);
 		mBasicShader.loadGLContent(pResourceManager);

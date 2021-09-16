@@ -368,7 +368,7 @@ public class UiBaseLayoutComponent extends UIWidget implements IScrollBarArea {
 				continue;
 
 			lWidget.x(xPos);
-			lWidget.y(yPos);
+			lWidget.y((int) yPos);
 			lWidget.setPosition(xPos, yPos);
 			lWidget.w(w - lWidthOffset);
 
@@ -408,7 +408,7 @@ public class UiBaseLayoutComponent extends UIWidget implements IScrollBarArea {
 			return;
 
 		final var lTextureBatch = mParentWindow.rendererManager().uiTextureBatch();
-		final var lFontUnit = mParentWindow.rendererManager().textFont();
+		final var lFontUnit = mParentWindow.rendererManager().uiTextFont();
 
 		final var lUiTexture = pCore.resources().textureManager().textureCore();
 		if (mDrawBackground) {

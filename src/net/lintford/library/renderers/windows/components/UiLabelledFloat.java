@@ -80,7 +80,7 @@ public class UiLabelledFloat extends UIWidget {
 		}
 
 		final float lTextHeight = pTextFont.fontHeight();
-		pTextFont.drawText(mLabelText, x + lHorizontalPadding, y + h / 2 - lTextHeight / 2, pComponentZDepth, ColorConstants.TextEntryColor, 1f, -1);
+		pTextFont.drawText(mLabelText, x + lHorizontalPadding, y + h / 2.f - lTextHeight / 2.f, pComponentZDepth, ColorConstants.TextEntryColor, 1f, -1);
 
 		final float lValueWidth = pTextFont.getStringWidth(Float.toString(mValueFloat));
 		pTextFont.drawText(Float.toString(mValueFloat), x + w - lValueWidth - lHorizontalPadding, y + h / 2 - lTextHeight / 2, pComponentZDepth, ColorConstants.TextEntryColor, 1f, -1);

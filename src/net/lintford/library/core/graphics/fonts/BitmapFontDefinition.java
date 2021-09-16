@@ -3,6 +3,8 @@ package net.lintford.library.core.graphics.fonts;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.lwjgl.opengl.GL11;
+
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.graphics.sprites.SpriteFrame;
@@ -25,7 +27,7 @@ class BitmapFontDefinition {
 
 	/** The unique name given to this {@link BitmapFontDefinition}. */
 	public boolean reloadable;
-	public String fontFilename;
+	public boolean useSubPixelRendering;
 
 	/** The name of the {@link Texture} associated to this {@link BitmapFontDefinition} */
 	protected String textureName;
@@ -104,7 +106,7 @@ class BitmapFontDefinition {
 
 	public BitmapFontDefinition() {
 		glyphMap = new HashMap<>();
-
+		useSubPixelRendering = false;
 	}
 
 	// --------------------------------------
@@ -127,10 +129,11 @@ class BitmapFontDefinition {
 		mEntityGroupID = pEntityGroupID;
 
 		final var lTextureManager = pResourceManager.textureManager();
-		texture = lTextureManager.getTextureOrLoad(textureName, textureFilepath, mEntityGroupID);
+		final int lFilteringMode = useSubPixelRendering ? GL11.GL_LINEAR : GL11.GL_NEAREST;
+		texture = lTextureManager.getTextureOrLoad(textureName, textureFilepath, lFilteringMode, mEntityGroupID);
 
 		if (lTextureManager.isTextureLoaded(texture) == false) {
-			Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("'%s' cannot locate texture %s in EntityGroupID %d.", textureName, pEntityGroupID));
+			Debug.debugManager().logger().e(getClass().getSimpleName(), "Cannot locate texture " + textureName);
 		}
 
 		if (fontHeight == 0) {

@@ -120,7 +120,7 @@ public class UIToggleButton extends UIWidget {
 			final float lTextWidth = pTextFont.getStringWidth(mButtonLabel);
 			final float lTextHeight = pTextFont.getStringHeight(mButtonLabel);
 
-			pTextFont.drawText(mButtonLabel, x + w / 2.f - lTextWidth / 2.f, y + h / 2f - lTextHeight / 2.f, -0.01f, ColorConstants.WHITE, 1.0f);
+			pTextFont.drawText(mButtonLabel, x + w / 2.f - lTextWidth / 2.f, y + h / 2f - lTextHeight / 2.f, pComponentZDepth, ColorConstants.WHITE, 1.0f);
 		}
 	}
 

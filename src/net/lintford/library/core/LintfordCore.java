@@ -31,6 +31,7 @@ import net.lintford.library.core.debug.Debug.DebugLogLevel;
 import net.lintford.library.core.debug.DebugConsole.CONSOLE_STATE;
 import net.lintford.library.core.debug.DebugMemory;
 import net.lintford.library.core.entity.BaseEntity;
+import net.lintford.library.core.graphics.fonts.BitmapFontManager;
 import net.lintford.library.core.input.EventActionManager;
 import net.lintford.library.core.input.InputManager;
 import net.lintford.library.core.maths.MathHelper;
@@ -38,6 +39,8 @@ import net.lintford.library.core.rendering.RenderState;
 import net.lintford.library.core.time.TimeSpan;
 import net.lintford.library.options.DisplayManager;
 import net.lintford.library.options.MasterConfig;
+import net.lintford.library.renderers.RendererManager;
+import net.lintford.library.screenmanager.ScreenManager;
 
 /**
  * The LintfordCore tracks the core state of an LWJGL application including a {@link DisplayManager}, {@link ResourceManager}, {@link CoreTime}, {@link Camera}, {@link HUD}, {@link InputManager} and {@link RenderState}.
@@ -367,7 +370,7 @@ public abstract class LintfordCore {
 		mResourceManager = new ResourceManager(mMasterConfig);
 		mResourceController = new ResourceController(mControllerManager, mResourceManager, CORE_ENTITY_GROUP_ID);
 		mCoreTimeController = new CoreTimeController(mControllerManager, mCoreTime, mGameTime, CORE_ENTITY_GROUP_ID);
-		
+
 		// Create the HUD camera (always available)
 		mHUD = new HUD(mMasterConfig.display());
 		mHUD.update(this);
@@ -426,7 +429,6 @@ public abstract class LintfordCore {
 		GL11.glFrontFace(GL11.GL_CCW);
 		GL11.glCullFace(GL11.GL_BACK);
 		GL11.glDisable(GL11.GL_CULL_FACE);
-
 	}
 
 	/**
@@ -436,6 +438,22 @@ public abstract class LintfordCore {
 		new UiStructureController(mMasterConfig.display(), mControllerManager, CORE_ENTITY_GROUP_ID);
 
 		onInitializeInputActions(mInputState.eventActionManager());
+
+		onInitializeBitmapFontSources(mResourceManager.fontManager());
+	}
+
+	private void onLoadBitmapFonts() {
+		final var lFontManager = mResourceManager.fontManager();
+		lFontManager.loadBitmapFontDefinitionsFromMetaData(BitmapFontManager.CoreFonts);
+		lFontManager.loadBitmapFontDefinitionsFromMetaData(ScreenManager.ScreenManagerFonts);
+		lFontManager.loadBitmapFontDefinitionsFromMetaData(RendererManager.RendererManagerFonts);
+	}
+
+	/**
+	 * Provides an opportunity before the bitmapfonts are loaded into memory, to change the default locations that the core/library loads
+	 * fonts from for rendering in the 'standard' Ui components. 
+	 * */
+	protected void onInitializeBitmapFontSources(BitmapFontManager pFontManager) {
 
 	}
 
@@ -450,10 +468,10 @@ public abstract class LintfordCore {
 	protected void onLoadGLContent() {
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "Loading GL content");
 
+		onLoadBitmapFonts();
 		mResourceManager.loadGLContent();
 
 		Debug.debugManager().loadGLContent(mResourceManager);
-
 	}
 
 	/**

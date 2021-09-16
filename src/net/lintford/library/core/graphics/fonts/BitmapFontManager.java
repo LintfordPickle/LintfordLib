@@ -17,6 +17,7 @@ import com.google.gson.stream.JsonReader;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.Debug;
+import net.lintford.library.core.graphics.fonts.FontMetaData.BitmapFontDataDefinition;
 import net.lintford.library.core.storage.FileUtils;
 
 public class BitmapFontManager {
@@ -25,10 +26,7 @@ public class BitmapFontManager {
 	// Inner-Classes
 	// --------------------------------------
 
-	public class BitmapFontDataDefinition {
-		public String fontName;
-		public String filepath;
-	}
+	public static final FontMetaData CoreFonts = new FontMetaData();
 
 	public class BitmapFontMetaData {
 		public BitmapFontDataDefinition[] bitmapFontLocations;
@@ -38,27 +36,31 @@ public class BitmapFontManager {
 	// Variables
 	// --------------------------------------
 
-	public static final String SYSTEM_FONT_CORE_NAME = "FONT_SYSTEM_CORE";
+	public static final String SYSTEM_FONT_CORE_TEXT_NAME = "FONT_SYSTEM_CORE_TEXT";
+	public static final String SYSTEM_FONT_CORE_TITLE_NAME = "FONT_SYSTEM_CORE_TITLE";
 	public static final String SYSTEM_FONT_CONSOLE_NAME = "FONT_SYSTEM_CONSOLE";
 
-	private Map<Integer, Map<String, FontUnit>> mFontUnitGroups;
+	private Map<String, FontUnit> mFontUnits;
 	private ResourceManager mResourceManager;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
 
-	/**
-	 * Returns the {@link FontUnit} which encapsulates a {@link BitmapFontDefinition} (A texture atlas of glyphs) and a {@link BitmapFontRenderer}. All FontUnits are shared, and are unique based on Fontfile and Point
-	 * size.
-	 */
-	public FontUnit getFontUnit(String pBitmapFontName, int pEntityGroupID) {
-		Map<String, FontUnit> lBitmapFontGroup = mFontUnitGroups.get(pEntityGroupID);
-		if (lBitmapFontGroup != null) {
-			return lBitmapFontGroup.get(pBitmapFontName);
+	public FontUnit getFontUnit(String pBitmapFontName) {
+		if (getFontUnitExists(pBitmapFontName) == false) {
+			Debug.debugManager().logger().e(getClass().getSimpleName(), "Failed to retrieve FontUnit: " + pBitmapFontName);
+			return getCoreFont();
 		}
+		return mFontUnits.get(pBitmapFontName);
+	}
 
-		return null;
+	public boolean getFontUnitExists(String pBitmapFontName) {
+		return mFontUnits.containsKey(pBitmapFontName);
+	}
+
+	public FontUnit getCoreFont() {
+		return mFontUnits.get(SYSTEM_FONT_CORE_TEXT_NAME);
 	}
 
 	// --------------------------------------
@@ -67,33 +69,36 @@ public class BitmapFontManager {
 
 	/** Creates a new instance of {@link BitmapFontManager}. */
 	public BitmapFontManager() {
-		mFontUnitGroups = new HashMap<>();
+		mFontUnits = new HashMap<>();
 
-		// Create default FontUnit group for the engine
-		mFontUnitGroups.put(LintfordCore.CORE_ENTITY_GROUP_ID, new HashMap<String, FontUnit>());
+		CoreFonts.AddIfNotExists(SYSTEM_FONT_CORE_TEXT_NAME, "/res/fonts/fontCoreText.json");
+		CoreFonts.AddIfNotExists(SYSTEM_FONT_CORE_TITLE_NAME, "/res/fonts/fontCoreTitle.json");
+		CoreFonts.AddIfNotExists(SYSTEM_FONT_CONSOLE_NAME, "/res/fonts/fontConsole.json");
 	}
 
 	// --------------------------------------
 	// Core-Methods
 	// --------------------------------------
 
-	public void initialize() {
-	}
-
-	public void loadGLContent(ResourceManager pResourceManager) {
+	public void initialize(ResourceManager pResourceManager) {
 		mResourceManager = pResourceManager;
-
-		loadBitmapFontDefinitionFromResource(SYSTEM_FONT_CORE_NAME, "/res/fonts/fontCore.json", LintfordCore.CORE_ENTITY_GROUP_ID);
-		loadBitmapFontDefinitionFromResource(SYSTEM_FONT_CONSOLE_NAME, "/res/fonts/fontConsole.json", LintfordCore.CORE_ENTITY_GROUP_ID);
-	}
-
-	public void unloadGLContent() {
-
 	}
 
 	// --------------------------------------
 
-	public void loadBitmapFontDefinitionFromMeta(final String pMetaFileLocation, int pEntityGroupID) {
+	public void loadBitmapFontDefinitionsFromMetaData(FontMetaData pFontMetaData) {
+		final int lSpriteCount = pFontMetaData.items.size();
+		for (int i = 0; i < lSpriteCount; i++) {
+			var lFontDataDefinition = pFontMetaData.items.get(i);
+
+			if (lFontDataDefinition == null)
+				continue;
+
+			loadBitmapFont(lFontDataDefinition.fontName, lFontDataDefinition.filepath);
+		}
+	}
+
+	public void loadBitmapFontDefinitionFromMetaFile(final String pMetaFileLocation) {
 		if (pMetaFileLocation == null || pMetaFileLocation.length() == 0) {
 			Debug.debugManager().logger().w(getClass().getSimpleName(), "SpriteSheetManager meta file cannot be null or empty when loading SpriteSheets.");
 			return;
@@ -125,14 +130,13 @@ public class BitmapFontManager {
 			if (lFontDataDefinition == null)
 				continue;
 
-			loadBitmapFont(lFontDataDefinition.fontName, lFontDataDefinition.filepath, pEntityGroupID);
+			loadBitmapFont(lFontDataDefinition.fontName, lFontDataDefinition.filepath);
 		}
 	}
 
-	public FontUnit loadBitmapFont(String pFontName, String pFilepath, int pEntityGroupID) {
-		FontUnit lExistingFontUnit = getFontUnit(pFontName, pEntityGroupID);
-		if (lExistingFontUnit != null) {
-			return lExistingFontUnit;
+	public FontUnit loadBitmapFont(String pFontName, String pFilepath) {
+		if (getFontUnitExists(pFontName)) {
+			return getFontUnit(pFontName);
 		}
 
 		if (pFilepath == null || pFilepath.length() == 0) {
@@ -141,14 +145,14 @@ public class BitmapFontManager {
 		}
 
 		if (pFilepath.charAt(0) == '/') {
-			return loadBitmapFontDefinitionFromResource(pFontName, pFilepath, pEntityGroupID);
+			return loadBitmapFontDefinitionFromResource(pFontName, pFilepath);
 
 		} else {
-			return loadBitmapFontDefinitionFromFile(pFontName, pFilepath, pEntityGroupID);
+			return loadBitmapFontDefinitionFromFile(pFontName, pFilepath);
 		}
 	}
 
-	private FontUnit loadBitmapFontDefinitionFromFile(String pFontname, String pFilepath, int pEntityGroupID) {
+	private FontUnit loadBitmapFontDefinitionFromFile(String pFontname, String pFilepath) {
 		if (pFilepath == null || pFilepath.length() == 0)
 			return null;
 
@@ -165,7 +169,7 @@ public class BitmapFontManager {
 			final String lFileContents = new String(Files.readAllBytes(lFile.toPath()));
 			final BitmapFontDefinition lBitmapFontDefinition = GSON.fromJson(lFileContents, BitmapFontDefinition.class);
 
-			return createFontUnit(pFontname, lBitmapFontDefinition, pEntityGroupID);
+			return createFontUnit(pFontname, lBitmapFontDefinition);
 
 		} catch (JsonSyntaxException e) {
 			Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Failed to parse JSON SpriteSheet (Syntax): %s", lFile.getPath()));
@@ -182,7 +186,7 @@ public class BitmapFontManager {
 		}
 	}
 
-	public FontUnit loadBitmapFontDefinitionFromResource(String pFontname, String pFilepath, int pEntityGroupID) {
+	public FontUnit loadBitmapFontDefinitionFromResource(String pFontname, String pFilepath) {
 		if (pFilepath == null || pFilepath.length() == 0)
 			return null;
 
@@ -191,6 +195,11 @@ public class BitmapFontManager {
 		try {
 
 			InputStream lInputStream = FileUtils.class.getResourceAsStream(pFilepath);
+
+			if (lInputStream == null) {
+				Debug.debugManager().logger().e(getClass().getSimpleName(), "Unable to load BitmapFontDefinition '" + pFontname + "'. The resource '" + pFilepath + "' doesn't exist");
+				return null;
+			}
 
 			JsonReader reader = new JsonReader(new InputStreamReader(lInputStream, "UTF-8"));
 
@@ -208,7 +217,7 @@ public class BitmapFontManager {
 
 			}
 
-			return createFontUnit(pFontname, lBitmapFontDefinition, pEntityGroupID);
+			return createFontUnit(pFontname, lBitmapFontDefinition);
 
 		} catch (JsonSyntaxException e) {
 			Debug.debugManager().logger().e(getClass().getSimpleName(), "Failed to parse JSON SpriteSheet (Syntax): " + pFilepath);
@@ -225,18 +234,11 @@ public class BitmapFontManager {
 		}
 	}
 
-	private FontUnit createFontUnit(String pFontname, BitmapFontDefinition pBitmapFontDefintion, int pEntityGroupID) {
-		FontUnit lNewFontUnit = new FontUnit(0, pBitmapFontDefintion, pEntityGroupID);
+	private FontUnit createFontUnit(String pFontname, BitmapFontDefinition pBitmapFontDefintion) {
+		FontUnit lNewFontUnit = new FontUnit(0, pBitmapFontDefintion, LintfordCore.CORE_ENTITY_GROUP_ID);
 		lNewFontUnit.onLoadGlContent(mResourceManager);
 		pBitmapFontDefintion.reloadable(false);
-
-		Map<String, FontUnit> lFontUnitGroup = mFontUnitGroups.get(pEntityGroupID);
-		if (lFontUnitGroup == null) {
-			lFontUnitGroup = new HashMap<>();
-			mFontUnitGroups.put(pEntityGroupID, lFontUnitGroup);
-		}
-
-		lFontUnitGroup.put(pFontname, lNewFontUnit);
+		mFontUnits.put(pFontname, lNewFontUnit);
 
 		return lNewFontUnit;
 	}

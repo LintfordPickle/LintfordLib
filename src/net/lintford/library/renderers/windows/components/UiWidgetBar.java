@@ -75,7 +75,7 @@ public class UiWidgetBar extends UIWidget {
 		if (pTextureBatch == null)
 			return;
 
-		pTextFont.drawText(mLabelString, x + lHorizontalPadding, y + 1, -0.01f, ColorConstants.WHITE, 1.f);
+		pTextFont.drawText(mLabelString, x + lHorizontalPadding, y + 1, pComponentZDepth, ColorConstants.WHITE, 1.f);
 
 		final float lInnerBorderPadding = 1.f;
 

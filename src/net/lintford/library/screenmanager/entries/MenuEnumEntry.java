@@ -262,7 +262,7 @@ public class MenuEnumEntry extends MenuEntry {
 
 		lFont.begin(pCore.HUD());
 		final float lStringWidth = lFont.getStringWidth(mLabel, lAdjustedScaleW);
-		lFont.drawText(mLabel, (x + w / 2 - 10) - lStringWidth - lSeparatorHalfWidth, y + h / 2 - lFont.getStringHeight(mLabel, lAdjustedScaleW) * 0.5f, pParentZDepth, textColor, lAdjustedScaleW, -1);
+		lFont.drawText(mLabel, (x + w / 2 - 10) - lStringWidth - lSeparatorHalfWidth, y + h / 2.f - lFont.getStringHeight(mLabel, lAdjustedScaleW) * 0.5f, pParentZDepth, textColor, lAdjustedScaleW, -1);
 		lFont.drawText(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - lTextHeight * 0.5f, pParentZDepth, textColor, lUiTextScale, -1);
 
 		// Render the items

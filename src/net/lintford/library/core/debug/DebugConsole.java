@@ -223,7 +223,7 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
-		mConsoleFont = pResourceManager.fontManager().getFontUnit(BitmapFontManager.SYSTEM_FONT_CONSOLE_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
+		mConsoleFont = pResourceManager.fontManager().getFontUnit(BitmapFontManager.SYSTEM_FONT_CONSOLE_NAME);
 		mSpriteBatch.loadGLContent(pResourceManager);
 
 		mCoreUITexture = pResourceManager.textureManager().textureCore();

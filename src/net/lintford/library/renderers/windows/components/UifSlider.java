@@ -136,9 +136,9 @@ public class UifSlider extends UIWidget {
 		pTextureBatch.draw(pUITexture, 0, 0, 32, 32, x + mCurrentRelPosition - SLIDER_WIDTH / 2, y + h / 4, SLIDER_WIDTH, h / 2, 0f, lNubbinColor);
 
 		// Render Slider label
-		pTextFont.drawText(mSliderLabel, x, y - h / 2, 1.f, ColorConstants.WHITE, 1f);
-		pTextFont.drawText(String.format("%.2f", mCurrentValue), x + w - 30 - SLIDER_WIDTH / 2, y - h / 2, 1.f, ColorConstants.WHITE, 1f);
-
+		final var lAmtText = String.format("%.2f", mCurrentValue);
+		pTextFont.drawText(mSliderLabel, x, y - h / 2, pComponentZDepth, ColorConstants.WHITE, 1f);
+		pTextFont.drawText(lAmtText, x + w - pTextFont.getStringWidth(lAmtText), y - h / 2, pComponentZDepth, ColorConstants.WHITE, 1f);
 	}
 
 	// --------------------------------------

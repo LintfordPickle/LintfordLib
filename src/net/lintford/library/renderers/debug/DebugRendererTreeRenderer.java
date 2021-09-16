@@ -96,10 +96,9 @@ public class DebugRendererTreeRenderer extends Rectangle implements IScrollBarAr
 		Debug.debugManager().logger().v(getClass().getSimpleName(), "DebugStats loading GL content");
 
 		mCoreTexture = pResourceManager.textureManager().textureCore();
-		mConsoleFont = pResourceManager.fontManager().getFontUnit(BitmapFontManager.SYSTEM_FONT_CONSOLE_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
+		mConsoleFont = pResourceManager.fontManager().getFontUnit(BitmapFontManager.SYSTEM_FONT_CONSOLE_NAME);
 
 		mTextureBatch.loadGLContent(pResourceManager);
-
 	}
 
 	public void unloadGLContent() {

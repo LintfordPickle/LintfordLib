@@ -103,15 +103,11 @@ public class IconIntFilter implements IProcessMouseInput {
 		final float lColorMod = mEnabled ? 1.f : .8f;
 		final var lColor = ColorConstants.getColorWithRGBMod(ColorConstants.WHITE, lColorMod);
 
-		// Draw the 'tab' background
+		// Draw the 'tab' background (open/closed)
 		if (mEnabled) {
-			// Draw a 'open' tab
 			pTextureBatch.draw(pUITexture, 384, 0, 64, 64, mUIDstRectangle.x() - 2, mUIDstRectangle.y() - 2, mUIDstRectangle.w() + 4, mUIDstRectangle.h() + 6, -0.5f, lColor);
-
 		} else {
-			// Draw a 'closed' tab
 			pTextureBatch.draw(pUITexture, 320, 0, 64, 64, mUIDstRectangle.x() - 2, mUIDstRectangle.y() - 2, mUIDstRectangle.w() + 4, mUIDstRectangle.h() + 6, -0.5f, lColor);
-
 		}
 
 		if (mHoveredOver) {
@@ -119,7 +115,7 @@ public class IconIntFilter implements IProcessMouseInput {
 			final float lTextHeight = pTextFont.fontHeight();
 
 			// Draw a background texture behind the texture so it is always legible.
-			pTextureBatch.draw(pUITexture, 64, 0, 32, 32, mUIDstRectangle.x() + 16 - lTextHalfW, mUIDstRectangle.y() - 19, lTextHalfW * 2 + 4, lTextHeight, -0.2f, ColorConstants.WHITE);
+			pTextureBatch.draw(pUITexture, 64, 0, 32, 32, mUIDstRectangle.x() + 16 - lTextHalfW, mUIDstRectangle.y() - 19, lTextHalfW * 2 + 4, lTextHeight, pComponentZDepth, ColorConstants.WHITE);
 
 		}
 
@@ -128,8 +124,7 @@ public class IconIntFilter implements IProcessMouseInput {
 
 		if (mHoveredOver) {
 			final float lTextHalfW = pTextFont.getStringWidth(mFilterName) / 2;
-
-			pTextFont.drawText(mFilterName, mUIDstRectangle.x() + 16 - lTextHalfW, mUIDstRectangle.y() - 19, -0.2f, ColorConstants.WHITE, 1f);
+			pTextFont.drawText(mFilterName, mUIDstRectangle.x() + 16 - lTextHalfW, mUIDstRectangle.y() - 19, pComponentZDepth, ColorConstants.WHITE, 1f);
 		}
 
 	}

@@ -5,14 +5,19 @@ import java.util.List;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
+import net.lintford.library.core.graphics.fonts.FontMetaData;
 import net.lintford.library.core.graphics.fonts.FontUnit;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 
 public class ToastManager {
 
+	public static final FontMetaData FONTS_META = new FontMetaData();
+
 	// --------------------------------------
 	// Constants
 	// --------------------------------------
+
+	public static final String FONT_TOAST_NAME = "FONT_TOAST";
 
 	private static final int MAX_TOASTPOOL_SIZE = 48;
 	private static final int MIN_TIME_BETWEEN_ADD = 250;
@@ -44,6 +49,7 @@ public class ToastManager {
 		mToastCounter = 0;
 		allocateNewMesssages(8);
 
+		FONTS_META.AddIfNotExists(FONT_TOAST_NAME, "/res/fonts/fontCore.json");
 	}
 
 	// --------------------------------------
@@ -52,8 +58,7 @@ public class ToastManager {
 
 	public void loadGLContent(ResourceManager pResourceManager) {
 		mTextureBatch.loadGLContent(pResourceManager);
-
-		mFontUnit = pResourceManager.fontManager().getFontUnit("FONT_TOAST", LintfordCore.CORE_ENTITY_GROUP_ID);
+		mFontUnit = pResourceManager.fontManager().getFontUnit(FONT_TOAST_NAME);
 	}
 
 	public void unloadGLContent() {
@@ -100,7 +105,6 @@ public class ToastManager {
 	}
 
 	public void draw(LintfordCore pCore) {
-
 		mToastMessageUpdate.clear();
 		final int SIZE_T = mToastMessages.size();
 		for (int i = 0; i < SIZE_T; i++) {

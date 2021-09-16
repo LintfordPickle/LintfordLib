@@ -567,7 +567,6 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() - (w / 2) + 32, centerY() - h / 2, w - 64, h, mZ, lColor);
 			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() + (w / 2) - 32, centerY() - h / 2, 32, h, mZ, lColor);
 			lTextureBatch.end();
-
 		}
 
 		// Render the MenuEntry label
@@ -578,33 +577,28 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 			if (lMenuFont != null) {
 				lMenuFont.begin(pCore.HUD());
 				final float lStringWidth = lMenuFont.getStringWidth(mText, lUiTextScale);
-				lMenuFont.drawText(mText, centerX() - lStringWidth * 0.5f, centerY() - lMenuFont.fontHeight() * lUiTextScale / 2 - 2f, mZ, ColorConstants.TextHeadingColor, lUiTextScale);
+				final var lTextColor = mHoveredOver ? ColorConstants.FLAME : ColorConstants.TextHeadingColor;
+				lMenuFont.drawText(mText, centerX() - lStringWidth * 0.5f, centerY() - lMenuFont.fontHeight() * .5f, mZ, lTextColor, lUiTextScale);
 				lMenuFont.end();
-
 			}
-
 		}
 
 		if (mShowInfoIcon) {
 			drawInfoIcon(pCore, lTextureBatch, mInfoIconDstRectangle, entryColor.a);
-
 		}
 
 		if (mShowWarnIcon) {
 			drawWarningIcon(pCore, lTextureBatch, mWarnIconDstRectangle, entryColor.a);
-
 		}
 
 		if (!mEnabled) {
 			drawdisabledBlackOverbar(pCore, lTextureBatch, entryColor.a);
-
 		}
 
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
 			lTextureBatch.begin(pCore.HUD());
 			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, x, y, w, h, mZ, ColorConstants.Debug_Transparent_Magenta);
 			lTextureBatch.end();
-
 		}
 
 	}

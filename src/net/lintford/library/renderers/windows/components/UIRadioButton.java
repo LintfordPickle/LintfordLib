@@ -127,12 +127,10 @@ public class UIRadioButton extends UIWidget implements IProcessMouseInput {
 		// Draw the button background
 		pTextureBatch.draw(pUITexture, 0, 0, 32, 32, x, y, w, h, pComponentZDepth, lColor);
 
-		final var lFontRenderer = mParentWindow.rendererManager().textFont();
-
 		final String lButtonText = mButtonLabel != null ? mButtonLabel : NO_LABEL_TEXT;
-		final float lTextWidth = lFontRenderer.getStringWidth(lButtonText);
+		final float lTextWidth = pTextFont.getStringWidth(lButtonText);
 
-		lFontRenderer.drawText(lButtonText, x + w / 2f - lTextWidth / 2f, y + h / 2f - lFontRenderer.fontHeight() / 4f, pComponentZDepth + 0.1f, ColorConstants.WHITE, 1f);
+		pTextFont.drawText(lButtonText, x + w / 2f - lTextWidth / 2f, y + h / 2f - pTextFont.fontHeight() / 4f, pComponentZDepth + 0.01f, ColorConstants.WHITE, 1f);
 	}
 
 	// --------------------------------------

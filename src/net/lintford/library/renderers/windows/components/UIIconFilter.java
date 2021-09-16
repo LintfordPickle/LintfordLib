@@ -116,14 +116,12 @@ public class UIIconFilter extends Rectangle {
 	}
 
 	public void draw(LintfordCore pCore, TextureBatchPCT pTextureBatch, Texture pUITexture, FontUnit pTextFont, float pComponentZDepth) {
-
 		int lCount = mIconFilters.size();
 		for (int i = 0; i < lCount; i++) {
 			final var lIconIntFilter = mIconFilters.get(i);
 
 			lIconIntFilter.draw(pCore, pTextureBatch, pUITexture, pTextFont, pComponentZDepth);
 		}
-
 	}
 
 	// --------------------------------------

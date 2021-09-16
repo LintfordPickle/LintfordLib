@@ -82,9 +82,7 @@ public class UIRadioGroup extends UIWidget implements EntryInteractions {
 		final int lButtonCount = mButtons.size();
 		for (int i = 0; i < lButtonCount; i++) {
 			mButtons.get(i).draw(pCore, pTextureBatch, pUITexture, pTextFont, pComponentZDepth);
-
 		}
-
 	}
 
 	// --------------------------------------

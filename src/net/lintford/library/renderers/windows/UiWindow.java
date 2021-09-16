@@ -272,11 +272,6 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 		mContentDisplayArea.h(mWindowArea.h() - +getTitleBarHeight());
 
 		mIsLoaded = true;
-
-	}
-
-	public void unloadGLContent() {
-
 	}
 
 	public boolean handleInput(LintfordCore pCore) {
@@ -450,8 +445,9 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 
 		mWindowAlpha = 0.95f;
 
+		final var lTitleFont = mRendererManager.uiTitleFont();
+		final var lTextFont = mRendererManager.uiTextFont();
 		final var lTextureBatch = mRendererManager.uiTextureBatch();
-		final var lTextFont = mRendererManager.textFont();
 		final var lWindowColor = ColorConstants.getWhiteWithAlpha(mWindowAlpha);
 
 		// Draw the window background
@@ -479,10 +475,8 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 			lTitleX += 8.f; // offset when no icon in title bar
 		}
 
-		// Draw the window title
-		final var lTitleFontUnit = mRendererManager.titleFont();
-		lTitleFontUnit.begin(pCore.HUD());
-		lTitleFontUnit.drawText(mWindowTitle, lTitleX, lTitleY, Z_DEPTH, ColorConstants.TextHeadingColor, 1.15f);
+		lTitleFont.begin(pCore.HUD());
+		lTitleFont.drawText(mWindowTitle, lTitleX, lTitleY + getTitleBarHeight() * .5f - lTitleFont.fontHeight() * .5f, Z_DEPTH, ColorConstants.TextHeadingColor, 1f);
 
 		if (mFullContentRectangle.h() - contentDisplayArea().h() > 0) {
 			mScrollBar.draw(pCore, lTextureBatch, mUiCoreTexture, Z_DEPTH);
@@ -499,7 +493,7 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 
 		lTextFont.end();
 		lTextureBatch.end();
-		lTitleFontUnit.end();
+		lTitleFont.end();
 
 		if (ConstantsApp.getBooleanValueDef("DRAW_UI_BOUNDS", false)) {
 			Debug.debugManager().drawers().drawRectImmediate(pCore.HUD(), mWindowArea);

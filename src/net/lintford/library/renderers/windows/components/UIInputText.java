@@ -201,19 +201,15 @@ public class UIInputText extends UIWidget implements IBufferedTextInputCallback 
 		if (lText.length() == 0 && !mHasFocus) {
 			if (mEmptyString.isEmpty()) {
 				lText = "<search>";
-
 			} else {
 				lText = mEmptyString;
-
 			}
-
 		}
 
-		pTextFont.drawText(lText, x + 10, y + h / 2 / 2, pComponentZDepth, ColorConstants.TextEntryColor, 1f, -1);
+		pTextFont.drawText(lText, x + 10, y + h * .5f - lTextHeight * .5f, pComponentZDepth, ColorConstants.TextEntryColor, 1f, -1);
 		if (mShowCaret && mHasFocus) {
-			pTextureBatch.draw(pUITexture, 0, 0, 32, 32, x + 10 + lInputTextWidth, y + h / 2 - lTextHeight / 2, pTextFont.fontHeight() / 2.f, pTextFont.fontHeight(), pComponentZDepth, ColorConstants.WHITE);
+			pTextureBatch.draw(pUITexture, 0, 0, 32, 32, x + 10 + lInputTextWidth, y + h * .5f - lTextHeight * .5f, pTextFont.fontHeight() / 2.f, pTextFont.fontHeight(), pComponentZDepth, ColorConstants.WHITE);
 		}
-
 	}
 
 	// --------------------------------------

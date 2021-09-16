@@ -7,6 +7,7 @@ import org.lwjgl.opengl.GL11;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.graphics.ColorConstants;
+import net.lintford.library.core.graphics.fonts.FontUnit;
 import net.lintford.library.core.time.TimeSpan;
 import net.lintford.library.screenmanager.Screen;
 import net.lintford.library.screenmanager.ScreenManager;
@@ -29,6 +30,7 @@ public class LoadingScreen extends Screen {
 	private ScreenManager mScreenManager;
 	private Screen[] mScreensToLoad;
 	private final boolean mLoadingIsSlow;
+	private FontUnit mFontUnit;
 
 	// --------------------------------------
 	// Constructors
@@ -45,8 +47,9 @@ public class LoadingScreen extends Screen {
 		mTransitionOn = new TransitionFadeIn(new TimeSpan(500));
 		mTransitionOff = new TransitionFadeOut(new TimeSpan(500));
 
-		mIsPopup = true;
+		mFontUnit = pScreenManager.core().resources().fontManager().getCoreFont();
 
+		mIsPopup = true;
 	}
 
 	// --------------------------------------
@@ -54,7 +57,6 @@ public class LoadingScreen extends Screen {
 	// --------------------------------------
 
 	public static void load(ScreenManager pScreenManager, boolean pLoadingIsSlow, Screen... pScreensToLoad) {
-
 		// transitiion off ALL current screens
 		final List<Screen> lScreenList = new ArrayList<>();
 		lScreenList.addAll(pScreenManager.screens());
@@ -122,26 +124,22 @@ public class LoadingScreen extends Screen {
 		GL11.glClearColor(0, 0, 0, 1);
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
 
-		final var lFontUnit = rendererManager.titleFont();
-
-		if (mLoadingIsSlow && lFontUnit != null) {
+		if (mLoadingIsSlow && mFontUnit != null) {
 			final var lWindowWidth = pCore.config().display().windowWidth();
 			final var lWindowHeight = pCore.config().display().windowHeight();
 			final var lTextPadding = 5.0f;
 
 			final String lLoadingText = "Loading ...";
-			final var lTextWidth = lFontUnit.getStringWidth(lLoadingText);
-			final var lTextHeight = lFontUnit.getStringHeight(lLoadingText);
+			final var lTextWidth = mFontUnit.getStringWidth(lLoadingText);
+			final var lTextHeight = mFontUnit.getStringHeight(lLoadingText);
 
 			final float lTextPositionX = lWindowWidth * 0.5f - lTextWidth - lTextPadding;
 			final float lTextPositionY = lWindowHeight * 0.5f - lTextHeight - lTextPadding;
 
-			lFontUnit.begin(pCore.HUD());
-			lFontUnit.drawText(lLoadingText, lTextPositionX, lTextPositionY, -0.1f, ColorConstants.WHITE, 1f, -1);
-			lFontUnit.end();
-
+			mFontUnit.begin(pCore.HUD());
+			mFontUnit.drawText(lLoadingText, lTextPositionX, lTextPositionY, -0.1f, ColorConstants.WHITE, 1f, -1);
+			mFontUnit.end();
 		}
-
 	}
 
 }

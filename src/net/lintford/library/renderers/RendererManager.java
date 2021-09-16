@@ -11,6 +11,7 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.debug.GLDebug;
+import net.lintford.library.core.graphics.fonts.FontMetaData;
 import net.lintford.library.core.graphics.fonts.FontUnit;
 import net.lintford.library.core.graphics.linebatch.LineBatch;
 import net.lintford.library.core.graphics.polybatch.PolyBatch;
@@ -28,6 +29,13 @@ public class RendererManager {
 	// --------------------------------------
 	// Constants
 	// --------------------------------------
+
+	public static final FontMetaData RendererManagerFonts = new FontMetaData();
+
+	public static final String UI_FONT_TEXT_NAME = "UI_FONT_TEXT_NAME";
+	public static final String UI_FONT_TEXT_BOLD_NAME = "UI_FONT_TEXT_BOLD_NAME";
+	public static final String UI_FONT_HEADER_NAME = "UI_FONT_HEADER_NAME";
+	public static final String UI_FONT_TITLE_NAME = "UI_FONT_TITLE_NAME";
 
 	/** This refers to the BaseRenderers responsible for rendering the game components. */
 	public static final boolean RENDER_GAME_RENDERABLES = true;
@@ -54,15 +62,16 @@ public class RendererManager {
 	private List<BaseRenderer> mRenderers;
 	private List<UiWindow> mWindowRenderers;
 
+	protected FontUnit mUiTextFont;
+	protected FontUnit mUiTextBoldFont;
+	protected FontUnit mUiHeaderFont;
+	protected FontUnit mUiTitleFont;
+
 	private boolean mIsinitialized;
 	private boolean mIsLoaded;
 
 	// Stuff from the UI Manager
 	private List<UIWindowChangeListener> mListeners;
-
-	// Maybe put these in a kind of RendererResourcePool
-	private FontUnit mWindowTitleFont;
-	private FontUnit mWindowTextFont;
 
 	private SpriteBatch mSpriteBatch;
 	private TextureBatchPCT mTextureBatch;
@@ -80,6 +89,32 @@ public class RendererManager {
 	// Properties
 	// --------------------------------------
 
+	public FontUnit uiTextFont() {
+		return mUiTextFont;
+	}
+
+	public FontUnit uiTextBoldFont() {
+		return mUiTextBoldFont;
+	}
+
+	public FontUnit uiHeaderFont() {
+		return mUiHeaderFont;
+	}
+
+	public FontUnit uiTitleFont() {
+		return mUiTitleFont;
+	}
+
+	public boolean isinitialized() {
+		return mIsinitialized;
+
+	}
+
+	public boolean isLoaded() {
+		return mIsLoaded;
+
+	}
+
 	public int getNewRendererId() {
 		return mRendererIdCounter++;
 	}
@@ -94,26 +129,6 @@ public class RendererManager {
 
 	public RenderState currentRenderState() {
 		return mCore.renderState();
-	}
-
-	public boolean isinitialized() {
-		return mIsinitialized;
-
-	}
-
-	public boolean isLoaded() {
-		return mIsLoaded;
-
-	}
-
-	/** A shared font for rendering message text into the UI windows */
-	public FontUnit textFont() {
-		return mWindowTextFont;
-	}
-
-	/** A shared font for rendering title text into the UI windows */
-	public FontUnit titleFont() {
-		return mWindowTitleFont;
 	}
 
 	public DisplayManager displayConfig() {
@@ -172,6 +187,10 @@ public class RendererManager {
 		mIsinitialized = false;
 		mIsLoaded = false;
 
+		RendererManagerFonts.AddIfNotExists(UI_FONT_TEXT_NAME, "/res/fonts/fontCoreText.json");
+		RendererManagerFonts.AddIfNotExists(UI_FONT_TEXT_BOLD_NAME, "/res/fonts/fontCoreText.json");
+		RendererManagerFonts.AddIfNotExists(UI_FONT_HEADER_NAME, "/res/fonts/fontCoreText.json");
+		RendererManagerFonts.AddIfNotExists(UI_FONT_TITLE_NAME, "/res/fonts/fontCoreText.json");
 	}
 
 	// --------------------------------------
@@ -200,14 +219,15 @@ public class RendererManager {
 		mResourceManager = pResourceManager;
 		mResourceManager.increaseReferenceCounts(mEntityGroupID);
 
+		mUiTextFont = pResourceManager.fontManager().getFontUnit(UI_FONT_TEXT_NAME);
+		mUiTextBoldFont = pResourceManager.fontManager().getFontUnit(UI_FONT_TEXT_BOLD_NAME);
+		mUiHeaderFont = pResourceManager.fontManager().getFontUnit(UI_FONT_HEADER_NAME);
+		mUiTitleFont = pResourceManager.fontManager().getFontUnit(UI_FONT_TITLE_NAME);
+
 		mSpriteBatch.loadGLContent(pResourceManager);
 		mTextureBatch.loadGLContent(pResourceManager);
 		mLineBatch.loadGLContent(pResourceManager);
 		mPolyBatch.loadGLContent(pResourceManager);
-
-		// TODO: SYSTEM Font
-		mWindowTitleFont = pResourceManager.fontManager().getFontUnit("FONT_SYSTEM", mEntityGroupID);
-		mWindowTextFont = pResourceManager.fontManager().getFontUnit("FONT_SYSTEM", mEntityGroupID);
 
 		// Some windows will use this to orientate themselves to the window
 		mDisplayConfig = pResourceManager.config().display();
@@ -217,9 +237,7 @@ public class RendererManager {
 		for (int i = 0; i < RENDERER_COUNT; i++) {
 			if (!mRenderers.get(i).isLoaded() && mIsLoaded) {
 				mRenderers.get(i).loadGLContent(pResourceManager);
-
 			}
-
 		}
 
 		mResizeListener = new IResizeListener() {
@@ -261,8 +279,10 @@ public class RendererManager {
 		mLineBatch.unloadGLContent();
 		mPolyBatch.unloadGLContent();
 
-		mWindowTextFont = null;
-		mWindowTitleFont = null;
+		mUiTextFont = null;
+		mUiTextBoldFont = null;
+		mUiHeaderFont = null;
+		mUiTitleFont = null;
 
 		mDisplayConfig.removeResizeListener(mResizeListener);
 		mDisplayConfig = null;

@@ -83,7 +83,6 @@ public class ScrollBarContentRectangle extends Rectangle {
 		// Start the stencil buffer test to filter out everything outside of the scroll view
 		GL11.glStencilFunc(GL11.GL_EQUAL, 1, 0xFF); // Pass test if stencil value is 1
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
-
 	}
 
 	public void postDraw(LintfordCore pCore) {
@@ -93,7 +92,5 @@ public class ScrollBarContentRectangle extends Rectangle {
 		mPreDrawing = false;
 		GL11.glDisable(GL11.GL_STENCIL_TEST);
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
-
 	}
-
 }

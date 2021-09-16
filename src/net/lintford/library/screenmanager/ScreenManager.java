@@ -9,11 +9,22 @@ import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.audio.AudioFireAndForgetManager;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.debug.GLDebug;
+import net.lintford.library.core.graphics.fonts.FontMetaData;
 import net.lintford.library.options.IResizeListener;
 import net.lintford.library.screenmanager.Screen.ScreenState;
 import net.lintford.library.screenmanager.toast.ToastManager;
 
 public class ScreenManager {
+
+	public static final FontMetaData ScreenManagerFonts = new FontMetaData();
+
+	// --------------------------------------
+	// Constants
+	// --------------------------------------
+
+	public static final String FONT_MENU_TITLE_NAME = "FONT_TITLE";
+	public static final String FONT_MENU_ENTRY_NAME = "FONT_ENTRY";
+	public static final String FONT_MENU_TOOLTIP_NAME = "FONT_MENU_TOOLTIP_NAME";
 
 	// --------------------------------------
 	// Variables
@@ -64,7 +75,6 @@ public class ScreenManager {
 		return mLWJGLCore;
 	}
 
-	/** Returns a new ID for a screen. */
 	public int getNewUUID() {
 		return mScreenUIDCounter++;
 	}
@@ -86,6 +96,9 @@ public class ScreenManager {
 		mIsinitialized = false;
 		mIsLoaded = false;
 
+		ScreenManagerFonts.AddIfNotExists(FONT_MENU_TITLE_NAME, "/res/fonts/fontCoreText.json");
+		ScreenManagerFonts.AddIfNotExists(FONT_MENU_ENTRY_NAME, "/res/fonts/fontCoreText.json");
+		ScreenManagerFonts.AddIfNotExists(FONT_MENU_TOOLTIP_NAME, "/res/fonts/fontCoreText.json");
 	}
 
 	// --------------------------------------
