@@ -66,8 +66,6 @@ public class FontUnit {
 
 		float lReturnHeight = fontHeight();
 		float lX = 0;
-		float lY = 0;
-		float pX = 0;
 
 		float lWrapWidth = 0;
 		boolean lJustWrapped = false;
@@ -86,7 +84,7 @@ public class FontUnit {
 
 			// Special characters
 			if (ch_c == '\n' || ch_c == '\r') {
-				lX = pX;
+				lX = 0;
 				lReturnHeight += mFontDefinition.getFontHeight() + lLineSpacing;
 				lWrapWidth = 0.f;
 				lWordWidth = 0.f;
@@ -107,7 +105,7 @@ public class FontUnit {
 
 					lWordWidth = glyph_c.width();
 					lBreakCharFitsOnThisLine = lWrapWidth + glyph_c.width() <= pWrapWidth;
-					if ((lX == pX) || BREAK_CHARS.indexOf(ch_c) >= 0) {
+					if ((lX == 0) || BREAK_CHARS.indexOf(ch_c) >= 0) {
 						for (int j = i + 1; j < pText.length(); j++) {
 							char ch_n = pText.charAt(j);
 							var lCharGlyph = mFontDefinition.getGlyphFrame((int) ch_n);
@@ -133,7 +131,7 @@ public class FontUnit {
 				}
 			}
 
-			if (ch_c == ' ' && lX == pX) {
+			if (ch_c == ' ' && lX == 0) {
 				continue;
 			}
 
@@ -147,7 +145,7 @@ public class FontUnit {
 
 			if (lJustWrapped && lBreakCharFitsOnThisLine) {
 				lReturnHeight += lScaledLineHeight;
-				lX = pX;
+				lX = 0;
 			} else {
 				if (!lJustWrapped)
 					lX += glyph_c.width();
