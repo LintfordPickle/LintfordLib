@@ -120,7 +120,7 @@ public class MenuImageEntry extends MenuEntry {
 		super.loadGLContent(pResourceManager);
 
 		mUITexture = pResourceManager.textureManager().textureCore();
-		mUiFont = pResourceManager.fontManager().getFontUnit(RendererManager.UI_FONT_TEXT_NAME);
+		mUiFont = pResourceManager.fontManager().getFontUnit(RendererManager.UI_FONT_TEXT_BOLD_NAME);
 	}
 
 	@Override
@@ -209,14 +209,13 @@ public class MenuImageEntry extends MenuEntry {
 			final float lTextWidth = mUiFont.getStringWidth(mMissingTextureText);
 
 			mUiFont.begin(pCore.HUD());
-			mUiFont.drawText(mMissingTextureText, x + mFittedWidth / 2f - lTextWidth / 2f, y + mFittedHeight / 2, pParentZDepth + .1f, ColorConstants.WHITE, 1f);
+			mUiFont.drawText(mMissingTextureText, x + mFittedWidth / 2f - lTextWidth / 2f, (int) (y + mFittedHeight / 2), pParentZDepth + .1f, ColorConstants.WHITE, 1f);
 			mUiFont.end();
 		} else if (mMissingTexture != null) {
 			lTextureBatch.draw(mMissingTexture, srcX, srcY, srcWidth, srcHeight, x, y, mFittedWidth, mFittedHeight, pParentZDepth + .1f, entryColor);
 
 		} else if (mUITexture != null) {
 			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, x, y, mFittedWidth, mFittedHeight, pParentZDepth + .1f, entryColor);
-
 		}
 
 		lTextureBatch.end();

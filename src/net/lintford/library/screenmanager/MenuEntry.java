@@ -700,4 +700,8 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 
 	}
 
+	@Override
+	public boolean isParentActive() {
+		return mParentLayout != null && mParentLayout.parentScreen != null && mParentLayout.parentScreen.isExiting() == false;
+	}
 }
