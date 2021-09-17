@@ -75,15 +75,9 @@ public class TextureManager extends EntityGroupManager {
 		// Methods
 		// --------------------------------------
 
-		public Texture getTextureByName(String pTextureName) {
-			if (mTextureMap.containsKey(pTextureName)) {
-				return mTextureMap.get(pTextureName);
-
-			}
-
-			return mTextureNotFound;
+		Texture getTextureByName(String pTextureName) {
+			return mTextureMap.get(pTextureName);
 		}
-
 	}
 
 	// --------------------------------------
@@ -176,10 +170,8 @@ public class TextureManager extends EntityGroupManager {
 		return (pTexture != null && pTexture.name().equals(TextureManager.TEXTURE_NOT_FOUND_NAME) == false);
 	}
 
-	
-	
 	public Texture getTextureOrLoad(String pName, String pTextureFilepath, int pTextureFilter, int pEntityGroupID) {
-		Texture lRetTexture = getTexture(pName, pEntityGroupID);
+		Texture lRetTexture = isTextureLoaded(pName, pEntityGroupID);
 
 		if (isTextureLoaded(lRetTexture)) {
 			return lRetTexture;
@@ -192,6 +184,15 @@ public class TextureManager extends EntityGroupManager {
 		String lTextureName = pName != null ? pName : pTextureFilepath;
 
 		return loadTexture(lTextureName, pTextureFilepath, pTextureFilter, pEntityGroupID);
+	}
+
+	// returns the texture if one is found, otherwise null
+	public Texture isTextureLoaded(String pName, int pEntityGroupID) {
+		TextureGroup lTextureGroup = mTextureGroupMap.get(pEntityGroupID);
+		if (lTextureGroup == null) {
+			return null;
+		}
+		return lTextureGroup.getTextureByName(pName);
 	}
 
 	/** Returns the {@link Texture} with the given name. If no {@link Texture} by the given name is found, a default MAGENTA texture will be returned. */

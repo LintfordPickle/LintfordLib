@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.lwjgl.opengl.GL11;
 
+import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.graphics.sprites.SpriteFrame;
@@ -114,14 +115,14 @@ class BitmapFontDefinition {
 	// --------------------------------------
 
 	public void loadGLContent(ResourceManager pResourceManager) {
-		loadGLContent(pResourceManager, mEntityGroupID);
+		loadGLContent(pResourceManager, LintfordCore.CORE_ENTITY_GROUP_ID);
 
 	}
 
 	/** Loads the associated texture. */
 	public void loadGLContent(ResourceManager pResourceManager, int pEntityGroupID) {
 		if (textureName == null || textureName.length() == 0) {
-			System.err.println("SpriteSheet texture name and filename cannot be null!");
+			System.err.println("BitmapFontDefinition texture name and filename cannot be null!");
 			return;
 
 		}

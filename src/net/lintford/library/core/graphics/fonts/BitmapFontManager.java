@@ -14,7 +14,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.stream.JsonReader;
 
-import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.graphics.fonts.FontMetaData.BitmapFontDataDefinition;
@@ -235,7 +234,7 @@ public class BitmapFontManager {
 	}
 
 	private FontUnit createFontUnit(String pFontname, BitmapFontDefinition pBitmapFontDefintion) {
-		FontUnit lNewFontUnit = new FontUnit(0, pBitmapFontDefintion, LintfordCore.CORE_ENTITY_GROUP_ID);
+		FontUnit lNewFontUnit = new FontUnit(0, pBitmapFontDefintion);
 		lNewFontUnit.onLoadGlContent(mResourceManager);
 		pBitmapFontDefintion.reloadable(false);
 		mFontUnits.put(pFontname, lNewFontUnit);

@@ -29,7 +29,6 @@ public class FontUnit {
 	// --------------------------------------
 
 	public final int id;
-	public final int mEntityGroupId;
 	public BitmapFontDefinition mFontDefinition;
 	public SpriteBatch mFontRenderer;
 	public WrapType mWrapType = WrapType.WordWrap;
@@ -181,9 +180,8 @@ public class FontUnit {
 	// Constructor
 	// --------------------------------------
 
-	public FontUnit(int pId, BitmapFontDefinition pBitmapFontDefinition, int pEntityGroupId) {
+	public FontUnit(int pId, BitmapFontDefinition pBitmapFontDefinition) {
 		id = pId;
-		mEntityGroupId = pEntityGroupId;
 		mFontDefinition = pBitmapFontDefinition;
 		mFontRenderer = new SpriteBatch();
 		// TODO: Cache Shaders (and retrieve from here the SubPixelShader instance)
@@ -196,7 +194,7 @@ public class FontUnit {
 
 	public void onLoadGlContent(ResourceManager pResouceManager) {
 		mFontRenderer.loadGLContent(pResouceManager);
-		mFontDefinition.loadGLContent(pResouceManager, mEntityGroupId);
+		mFontDefinition.loadGLContent(pResouceManager);
 		mShaderSubPixel.loadGLContent(pResouceManager);
 	}
 
