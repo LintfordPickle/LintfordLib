@@ -1,5 +1,5 @@
 {
-  "textureName": "TEXTURE_FONT_CORE_TITLE_18",
+  "textureName": "TEXTURE_FONT_CORE_TITLE",
   "textureFilepath": "/res/textures/fonts/textureFontCoreTitle.png",
   "fontHeight": 25,
   "glyphMap": {

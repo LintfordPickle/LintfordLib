@@ -1,7 +1,6 @@
 {
-  "textureName": "TEXTURE_FONT_CORE_TEXT_13",
+  "textureName": "TEXTURE_FONT_CORE_TEXT",
   "textureFilepath": "/res/textures/fonts/textureFontCoreText.png",
-  "fontHeight": 19,
   "glyphMap": {
     "100": {
       "x": 0,
