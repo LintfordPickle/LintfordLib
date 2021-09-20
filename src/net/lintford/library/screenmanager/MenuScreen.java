@@ -93,9 +93,9 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		return mAnimationTimer > 0;
 	}
 
-	protected List<BaseLayout> layouts() {
-		return mLayouts;
-	}
+	//	protected List<BaseLayout> layouts() {
+	//		return mLayouts;
+	//	}
 
 	protected List<MenuEntry> floatingEntries() {
 		return mFloatingEntries;
@@ -133,7 +133,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 		mFloatingEntries = new ArrayList<>();
 
-		mShowInBackground = false;
+		mShowBackgroundScreens = false;
 
 		mMenuTitle = pMenuTitle;
 		mBlockInputInBackground = true;
@@ -145,7 +145,6 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 		mClickAction = new ClickAction();
 		mESCBackEnabled = true;
-
 	}
 
 	// --------------------------------------
@@ -156,7 +155,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	public void initialize() {
 		super.initialize();
 
-		final int lCount = layouts().size();
+		final int lCount = mLayouts.size();
 		for (int i = 0; i < lCount; i++) {
 			mLayouts.get(i).initialize();
 		}
@@ -179,7 +178,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		mMenuFont = pResourceManager.fontManager().getFontUnit(ScreenManager.FONT_MENU_ENTRY_NAME);
 		mMenuHeaderFont = pResourceManager.fontManager().getFontUnit(ScreenManager.FONT_MENU_TITLE_NAME);
 
-		final int lCount = layouts().size();
+		final int lCount = mLayouts.size();
 		for (int i = 0; i < lCount; i++) {
 			mLayouts.get(i).loadGLContent(pResourceManager);
 		}
@@ -199,7 +198,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	public void unloadGLContent() {
 		super.unloadGLContent();
 
-		final int lCount = layouts().size();
+		final int lCount = mLayouts.size();
 		for (int i = 0; i < lCount; i++) {
 			mLayouts.get(i).unloadGLContent();
 
@@ -248,9 +247,9 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 					return;
 
 				// Set focus on the new entry
-				if (lLayout.menuEntries().get(mSelectedEntry).enabled()) {
-					lLayout.updateFocusOffAllBut(pCore, lLayout.menuEntries().get(mSelectedEntry));
-					lLayout.menuEntries().get(mSelectedEntry).hasFocus(true);
+				if (lLayout.getMenuEntryByIndex(mSelectedEntry).enabled()) {
+					lLayout.updateFocusOffAllBut(pCore, lLayout.getMenuEntryByIndex(mSelectedEntry));
+					lLayout.getMenuEntryByIndex(mSelectedEntry).hasFocus(true);
 				}
 
 				// TODO: play sound for menu entry changed
@@ -262,7 +261,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 				BaseLayout lLayout = mLayouts.get(mSelectedLayout);
 
-				if (mSelectedEntry < lLayout.menuEntries().size() - 1) {
+				if (mSelectedEntry < lLayout.getMenuEntryCount() - 1) {
 					mSelectedEntry++; //
 				}
 
@@ -270,9 +269,9 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 					return;
 
 				// Set focus on the new entry
-				if (lLayout.menuEntries().get(mSelectedEntry).enabled()) {
-					lLayout.updateFocusOffAllBut(pCore, lLayout.menuEntries().get(mSelectedEntry));
-					lLayout.menuEntries().get(mSelectedEntry).hasFocus(true);
+				if (lLayout.getMenuEntryByIndex(mSelectedEntry).enabled()) {
+					lLayout.updateFocusOffAllBut(pCore, lLayout.getMenuEntryByIndex(mSelectedEntry));
+					lLayout.getMenuEntryByIndex(mSelectedEntry).hasFocus(true);
 				}
 
 				// TODO: play sound for menu entry changed
@@ -285,9 +284,8 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 				if (!lLayout.hasEntry(mSelectedEntry))
 					return;
 
-				lLayout.menuEntries().get(mSelectedEntry).onClick(pCore.input());
+				lLayout.getMenuEntryByIndex(mSelectedEntry).onClick(pCore.input());
 			}
-
 		}
 
 		int lFloatingCount = mFloatingEntries.size();
@@ -339,7 +337,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 		}
 
-		final var lCount = layouts().size();
+		final var lCount = mLayouts.size();
 		for (int i = 0; i < lCount; i++) {
 			mLayouts.get(i).update(pCore);
 
@@ -347,14 +345,13 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 		footerLayout().updateStructure();
 		footerLayout().update(pCore);
-
 	}
 
 	public void updateLayoutSize(LintfordCore pCore) {
-		if (rendererManager == null || layouts().size() == 0)
+		if (rendererManager == null || mLayouts.size() == 0)
 			return;
 
-		updateLayout(pCore, layouts(), mLayoutAlignment);
+		updateLayout(pCore, mLayouts, mLayoutAlignment);
 
 		// *** FOOTER *** //
 		final var lHUDController = rendererManager.uiStructureController();
@@ -495,7 +492,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		drawMenuTitle(pCore);
 
 		// Draw each layout in turn.
-		final int lCount = layouts().size();
+		final int lCount = mLayouts.size();
 		for (int i = 0; i < lCount; i++) {
 			mLayouts.get(i).draw(pCore, lMenuScreenZDepth + (i * 0.001f));
 
@@ -507,14 +504,34 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		for (int i = 0; i < lNumFloatingEntries; i++) {
 			final var lFloatingEntry = mFloatingEntries.get(i);
 			lFloatingEntry.draw(pCore, this, false, lMenuScreenZDepth + (i * 0.001f));
-
 		}
-
 	}
 
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
+
+	public int getLayoutCount() {
+		return mLayouts.size();
+	}
+
+	public void addLayout(BaseLayout pNewLayout) {
+		mLayouts.add(pNewLayout);
+	}
+
+	public void removeLayout(BaseLayout pLayout) {
+
+	}
+
+	public void clearLayouts() {
+		mLayouts.clear();
+	}
+
+	public BaseLayout getLayoutByIndex(int pLayoutIndex) {
+		if (pLayoutIndex < 0 || pLayoutIndex >= mLayouts.size() - 1)
+			return null;
+		return mLayouts.get(pLayoutIndex);
+	}
 
 	protected void drawMenuTitle(LintfordCore pCore) {
 		if (mMenuTitle == null || mMenuTitle.length() == 0 && mMenuHeaderFont == null)
@@ -598,17 +615,14 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		BaseLayout lLayout = mLayouts.get(mSelectedLayout);
 		pMenuEntry.hoveredOver(true);
 
-		int lCount = lLayout.menuEntries().size();
+		int lCount = lLayout.getMenuEntryCount();
 		for (int i = 0; i < lCount; i++) {
-			if (!lLayout.menuEntries().get(i).equals(pMenuEntry)) {
-				lLayout.menuEntries().get(i).hoveredOver(false);
-
+			if (!lLayout.getMenuEntryByIndex(i).equals(pMenuEntry)) {
+				lLayout.getMenuEntryByIndex(i).hoveredOver(false);
 			} else {
 				mSelectedEntry = i;
-
 			}
 		}
-
 	}
 
 	public void setHoveringOffAll() {

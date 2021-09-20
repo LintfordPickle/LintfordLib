@@ -87,8 +87,7 @@ public class MenuLabelEntry extends MenuEntry {
 
 		}
 
-		entryColor.a = lParentScreen.screenColor.a * .6f;
-		textColor.a = lParentScreen.screenColor.a;
+		final var lScreenOffset = pScreen.screenPositionOffset();
 
 		final float lUiTextScale = lParentScreen.uiTextScale();
 
@@ -99,7 +98,7 @@ public class MenuLabelEntry extends MenuEntry {
 
 		if (mDrawBackground) {
 			lTextureBatch.begin(pCore.HUD());
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, x, y, w, h, pParentZDepth + .15f, entryColor);
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, lScreenOffset.x + x, lScreenOffset.y + y, w, h, pParentZDepth + .15f, entryColor);
 			lTextureBatch.end();
 
 		}
@@ -118,21 +117,17 @@ public class MenuLabelEntry extends MenuEntry {
 		}
 
 		lFont.begin(pCore.HUD());
-		lFont.drawText(mText, lX + 15.f, y + h / 2f - lFontHeight / 2f, pParentZDepth + .15f, textColor, lUiTextScale);
+		lFont.drawText(mText, lScreenOffset.x + lX + 15.f, lScreenOffset.y + y + h / 2f - lFontHeight / 2f, pParentZDepth + .15f, textColor, lUiTextScale);
 		lFont.end();
 
 		if (mShowInfoIcon) {
 			drawInfoIcon(pCore, lTextureBatch, mInfoIconDstRectangle, lParentScreen.screenColor.a);
-
 		}
 
 		if (mShowWarnIcon) {
 			drawWarningIcon(pCore, lTextureBatch, mWarnIconDstRectangle, lParentScreen.screenColor.a);
-
 		}
 
 		drawDebugCollidableBounds(pCore, lTextureBatch);
-
 	}
-
 }

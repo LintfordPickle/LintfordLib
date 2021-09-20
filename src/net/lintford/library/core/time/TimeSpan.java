@@ -5,13 +5,19 @@ import net.lintford.library.core.LintfordCore.CoreTime;
 public class TimeSpan {
 
 	// --------------------------------------
+	// Statics
+	// --------------------------------------
+
+	public static final TimeSpan TIME_SPAN_ZERO = new TimeSpan(0);
+
+	// --------------------------------------
 	// Constants
 	// --------------------------------------
 
 	public static final double NanoToSecond = 1000000000.0;
 	public static final double NanoToMilli = 1000000.0;
 	public static final double NanoToMicro = 1000.0;
-	
+
 	public static final long TicksPerMillisecond = 10000;
 	public static final double MillisecondsPerTick = 0.0001;
 	public static final long TicksPerSecond = 0x989680L;
@@ -72,7 +78,7 @@ public class TimeSpan {
 	public void update(CoreTime pGameTime) {
 		// check for overflow
 		mTicks += pGameTime.elapsedTimeMilli() * TicksPerMillisecond;
-		
+
 	}
 
 	// --------------------------------------

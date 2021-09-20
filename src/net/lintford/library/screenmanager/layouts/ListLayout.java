@@ -3,7 +3,6 @@ package net.lintford.library.screenmanager.layouts;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.input.IProcessMouseInput;
 import net.lintford.library.core.maths.MathHelper;
-import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.ScreenManagerConstants.FILLTYPE;
 
@@ -67,18 +66,15 @@ public class ListLayout extends BaseLayout implements IProcessMouseInput {
 		}
 		// otherwise, defocus this and all children ??
 		else {
-			final int lEntryCount = menuEntries().size();
+			final int lEntryCount = mMenuEntries.size();
 			for (int i = 0; i < lEntryCount; i++) {
-				MenuEntry lEntry = menuEntries().get(i);
+				final var lEntry = mMenuEntries.get(i);
 
 				lEntry.hoveredOver(false);
-
 			}
-
 		}
 
 		return false;
-
 	}
 
 	@Override
@@ -87,9 +83,7 @@ public class ListLayout extends BaseLayout implements IProcessMouseInput {
 
 		if (mClickTimer >= 0) {
 			mClickTimer -= pCore.appTime().elapsedTimeMilli();
-
 		}
-
 	}
 
 	@Override
@@ -100,7 +94,7 @@ public class ListLayout extends BaseLayout implements IProcessMouseInput {
 		float lYPos = y + mEntryOffsetFromTop + mYScrollPosition;
 		final float lWindowScaleFactorX = lUiStructureController.windowAutoScaleFactorX();
 
-		final int lEntryCount = menuEntries().size();
+		final int lEntryCount = mMenuEntries.size();
 
 		// If the height of the content is smaller than the height of this layout, disable the scroll bar
 		if (mContentArea.h() < h) {
@@ -117,7 +111,7 @@ public class ListLayout extends BaseLayout implements IProcessMouseInput {
 		float lHeightTaken = marginTop() + marginBottom();
 
 		for (int i = 0; i < lEntryCount; i++) {
-			final var lEntry = menuEntries().get(i);
+			final var lEntry = mMenuEntries.get(i);
 			if (lEntry.verticalFillType() == FILLTYPE.TAKE_WHATS_NEEDED) {
 				lCountOfTakers++;
 				lHeightTaken += lEntry.paddingTop() + lEntry.height() + lEntry.paddingBottom();
@@ -135,7 +129,7 @@ public class ListLayout extends BaseLayout implements IProcessMouseInput {
 			lSizeOfEachFillElement = 10;
 
 		for (int i = 0; i < lEntryCount; i++) {
-			final var lMenuEntry = menuEntries().get(i);
+			final var lMenuEntry = mMenuEntries.get(i);
 			float lScrollBarWidth = mScrollBar.width();
 			if (mScrollBarsEnabled_Internal)
 				lScrollBarWidth = mScrollBar.width();

@@ -72,6 +72,7 @@ public class MenuLabelValueEntry extends MenuLabelEntry {
 			return;
 
 		final float lUiTextScale = lParentScreen.uiTextScale();
+		final var lScreenOffset = lParentScreen.screenPositionOffset();
 
 		final float lLabelWidth = lFont.getStringWidth(mText, lUiTextScale);
 		final float lFontHeight = lFont.fontHeight() * lUiTextScale;
@@ -90,7 +91,7 @@ public class MenuLabelValueEntry extends MenuLabelEntry {
 		}
 
 		lFont.begin(pCore.HUD());
-		lFont.drawText(mValueText, lX + 100.f, y + h / 2f - lFontHeight / 2f, pParentZDepth + .15f, textColor, lUiTextScale);
+		lFont.drawText(mValueText, lScreenOffset.x + lX + 100.f, lScreenOffset.y + y + h / 2f - lFontHeight / 2f, pParentZDepth + .15f, textColor, lUiTextScale);
 		lFont.end();
 
 	}

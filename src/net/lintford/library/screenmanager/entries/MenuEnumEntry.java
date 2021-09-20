@@ -222,7 +222,6 @@ public class MenuEnumEntry extends MenuEntry {
 		// Update the button positions to line up with this entry
 		mLeftButtonRectangle.setPosition(x + w / 2 + 16, y);
 		mRightButtonRectangle.setPosition(x + w - 32, y);
-
 	}
 
 	@Override
@@ -234,8 +233,10 @@ public class MenuEnumEntry extends MenuEntry {
 		if (lFont == null)
 			return;
 
-		final float lUiTextScale = lParentScreen.uiTextScale();
-		final float lTextWidth = lFont.getStringWidth(mLabel, lUiTextScale);
+		final var lUiTextScale = lParentScreen.uiTextScale();
+		final var lTextWidth = lFont.getStringWidth(mLabel, lUiTextScale);
+		final var lParentScreenAlpha = pScreen.screenColor.a;
+		final var lScreenOffset = pScreen.screenPositionOffset();
 
 		float lAdjustedScaleW = lUiTextScale;
 		if (mEnableScaleTextToWidth && w / 2 < lTextWidth && lTextWidth > 0)
@@ -246,34 +247,32 @@ public class MenuEnumEntry extends MenuEntry {
 
 		final var lTextureBatch = lParentScreen.textureBatch();
 
-		// Draw the left/right buttons
 		lTextureBatch.begin(pCore.HUD());
 		final float lArrowButtonSize = 32;
 		final float lArrowButtonPaddingY = mLeftButtonRectangle.h() - lArrowButtonSize;
-
-		// Render the two arrows either side of the enumeration options
 		if (mButtonsEnabled) {
-			lTextureBatch.draw(mUITexture, 0, 224, 32, 32, mLeftButtonRectangle.x(), mLeftButtonRectangle.y() + lArrowButtonPaddingY, lArrowButtonSize, lArrowButtonSize, 0f, ColorConstants.WHITE);
-			lTextureBatch.draw(mUITexture, 32, 224, 32, 32, mRightButtonRectangle.x(), mRightButtonRectangle.y() + lArrowButtonPaddingY, lArrowButtonSize, lArrowButtonSize, 0f, ColorConstants.WHITE);
-
+			final var lColorWhiteWithAlpha = ColorConstants.getWhiteWithAlpha(lParentScreenAlpha);
+			lTextureBatch.draw(mUITexture, 0, 224, 32, 32, lScreenOffset.x + mLeftButtonRectangle.x(), lScreenOffset.y + mLeftButtonRectangle.y() + lArrowButtonPaddingY, lArrowButtonSize, lArrowButtonSize, 0f,
+					lColorWhiteWithAlpha);
+			lTextureBatch.draw(mUITexture, 32, 224, 32, 32, lScreenOffset.x + mRightButtonRectangle.x(), lScreenOffset.y + mRightButtonRectangle.y() + lArrowButtonPaddingY, lArrowButtonSize, lArrowButtonSize, 0f,
+					lColorWhiteWithAlpha);
 		}
-
 		lTextureBatch.end();
 
 		lFont.begin(pCore.HUD());
 		final float lStringWidth = lFont.getStringWidth(mLabel, lAdjustedScaleW);
-		lFont.drawText(mLabel, (x + w / 2 - 10) - lStringWidth - lSeparatorHalfWidth, y + h / 2.f - lFont.getStringHeight(mLabel, lAdjustedScaleW) * 0.5f, pParentZDepth, textColor, lAdjustedScaleW, -1);
-		lFont.drawText(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - lTextHeight * 0.5f, pParentZDepth, textColor, lUiTextScale, -1);
+		lFont.drawText(mLabel, lScreenOffset.x + (x + w / 2 - 10) - lStringWidth - lSeparatorHalfWidth, lScreenOffset.y + y + h / 2.f - lFont.getStringHeight(mLabel, lAdjustedScaleW) * 0.5f, pParentZDepth, textColor,
+				lAdjustedScaleW, -1);
+		lFont.drawText(mSeparator, lScreenOffset.x + x + w / 2 - lSeparatorHalfWidth, lScreenOffset.y + y + h / 2 - lTextHeight * 0.5f, pParentZDepth, textColor, lUiTextScale, -1);
 
 		// Render the items
 		if (mItems.size() > 0) {
 			final String lCurItem = mItems.get(mSelectedIndex);
 			final float EntryWidth = lFont.getStringWidth(lCurItem, lUiTextScale);
 
-			lFont.drawText(lCurItem, x + (w / 6 * 4.65f) - EntryWidth / 2, y + h / 2 - lTextHeight * 0.5f, pParentZDepth, textColor, lUiTextScale, -1);
+			lFont.drawText(lCurItem, lScreenOffset.x + x + (w / 6 * 4.65f) - EntryWidth / 2, lScreenOffset.y + y + h / 2 - lTextHeight * 0.5f, pParentZDepth, textColor, lUiTextScale, -1);
 		}
 		lFont.end();
-
 	}
 
 	// --------------------------------------

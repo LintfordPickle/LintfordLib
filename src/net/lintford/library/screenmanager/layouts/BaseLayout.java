@@ -75,7 +75,7 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 	protected boolean mScrollBarsEnabled;
 	protected boolean mScrollBarsEnabled_Internal;
 	protected boolean mEnabled;
-	protected boolean mVisible; // ony affects drawing
+	protected boolean mVisible;
 
 	protected float mEntryOffsetFromTop;
 
@@ -215,9 +215,9 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 	}
 
 	/** @returns A list of menu entries so derived classes can change the menu contents. */
-	public List<MenuEntry> menuEntries() {
-		return mMenuEntries;
-	}
+	//	public List<MenuEntry> menuEntries() {
+	//		return mMenuEntries;
+	//	}
 
 	/** Forces the layout to use the height value provided. Use BaseLayout.USE_HEIGHT_OF_ENTRIES value to use the sum of the entry heights. */
 	public void forceHeight(float pNewHeight) {
@@ -320,12 +320,12 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 	}
 
 	public boolean handleInput(LintfordCore pCore) {
-		if (menuEntries() == null || menuEntries().size() == 0)
+		if (mMenuEntries == null || mMenuEntries.size() == 0)
 			return false; // nothing to do
 
-		final var lEntryCount = menuEntries().size();
+		final var lEntryCount = mMenuEntries.size();
 		for (int i = 0; i < lEntryCount; i++) {
-			final var lMenuEntry = menuEntries().get(i);
+			final var lMenuEntry = mMenuEntries.get(i);
 			if (lMenuEntry.handleInput(pCore)) {
 				// return true;
 			}
@@ -359,7 +359,8 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 
 		}
 
-		mContentArea.set(x, y, w, getEntryHeight());
+		final var lScreenOffset = parentScreen.screenPositionOffset();
+		mContentArea.set(lScreenOffset.x + x, lScreenOffset.y + y, w, getEntryHeight());
 
 		mScrollBarsEnabled_Internal = mScrollBarsEnabled && mContentArea.h() - h > 0;
 		if (mScrollBarsEnabled_Internal) {
@@ -381,9 +382,7 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 			}
 
 			mScrollBar.update(pCore);
-
 		}
-
 	}
 
 	public void draw(LintfordCore pCore, float pComponentDepth) {
@@ -393,73 +392,91 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 		final var lTextureBatch = parentScreen.textureBatch();
 		final var lUiTexture = pCore.resources().textureManager().textureCore();
 
+		final var lScreenOffset = parentScreen.screenPositionOffset();
+		final var lParentScreenAlpha = parentScreen.screenColor.a;
+		layoutColor.a = lParentScreenAlpha;
+
 		if (mDrawBackground) {
 			if (h < 64) {
 				lTextureBatch.begin(pCore.HUD());
-				final float lAlpha = 0.8f;
+				final float lAlpha = 0.8f * lParentScreenAlpha;
 				final var lColor = ColorConstants.getColor(0.1f, 0.1f, 0.1f, lAlpha);
-				lTextureBatch.draw(lUiTexture, 0, 0, 32, 32, x, y, w, h, pComponentDepth, lColor);
+				lTextureBatch.draw(lUiTexture, 0, 0, 32, 32, lScreenOffset.x + x, y, w, h, pComponentDepth, lColor);
 				lTextureBatch.end();
 
 			} else {
 				final float TILE_SIZE = 32;
-
 				lTextureBatch.begin(pCore.HUD());
-				lTextureBatch.draw(lUiTexture, 256, 0, 32, 32, x, y, TILE_SIZE, TILE_SIZE, pComponentDepth, layoutColor);
-				lTextureBatch.draw(lUiTexture, 288, 0, 32, 32, x + TILE_SIZE, y, w - TILE_SIZE * 2, TILE_SIZE, pComponentDepth, layoutColor);
-				lTextureBatch.draw(lUiTexture, 320, 0, 32, 32, x + w - TILE_SIZE, y, TILE_SIZE, TILE_SIZE, pComponentDepth, layoutColor);
+				lTextureBatch.draw(lUiTexture, 256, 0, 32, 32, lScreenOffset.x + x, lScreenOffset.y + y, TILE_SIZE, TILE_SIZE, pComponentDepth, layoutColor);
+				lTextureBatch.draw(lUiTexture, 288, 0, 32, 32, lScreenOffset.x + x + TILE_SIZE, lScreenOffset.y + y, w - TILE_SIZE * 2, TILE_SIZE, pComponentDepth, layoutColor);
+				lTextureBatch.draw(lUiTexture, 320, 0, 32, 32, lScreenOffset.x + x + w - TILE_SIZE, lScreenOffset.y + y, TILE_SIZE, TILE_SIZE, pComponentDepth, layoutColor);
 
-				lTextureBatch.draw(lUiTexture, 256, 32, 32, 32, x, y + TILE_SIZE, TILE_SIZE, h - TILE_SIZE * 2, pComponentDepth, layoutColor);
-				lTextureBatch.draw(lUiTexture, 288, 32, 32, 32, x + TILE_SIZE, y + TILE_SIZE, w - TILE_SIZE * 2, h - 64, pComponentDepth, layoutColor);
-				lTextureBatch.draw(lUiTexture, 320, 32, 32, 32, x + w - TILE_SIZE, y + TILE_SIZE, TILE_SIZE, h - TILE_SIZE * 2, pComponentDepth, layoutColor);
+				lTextureBatch.draw(lUiTexture, 256, 32, 32, 32, lScreenOffset.x + x, lScreenOffset.y + y + TILE_SIZE, TILE_SIZE, h - TILE_SIZE * 2, pComponentDepth, layoutColor);
+				lTextureBatch.draw(lUiTexture, 288, 32, 32, 32, lScreenOffset.x + x + TILE_SIZE, lScreenOffset.y + y + TILE_SIZE, w - TILE_SIZE * 2, h - 64, pComponentDepth, layoutColor);
+				lTextureBatch.draw(lUiTexture, 320, 32, 32, 32, lScreenOffset.x + x + w - TILE_SIZE, lScreenOffset.y + y + TILE_SIZE, TILE_SIZE, h - TILE_SIZE * 2, pComponentDepth, layoutColor);
 
-				lTextureBatch.draw(lUiTexture, 256, 64, 32, 32, x, y + h - TILE_SIZE, TILE_SIZE, TILE_SIZE, pComponentDepth, layoutColor);
-				lTextureBatch.draw(lUiTexture, 288, 64, 32, 32, x + TILE_SIZE, y + h - TILE_SIZE, w - TILE_SIZE * 2, TILE_SIZE, pComponentDepth, layoutColor);
-				lTextureBatch.draw(lUiTexture, 320, 64, 32, 32, x + w - TILE_SIZE, y + h - TILE_SIZE, TILE_SIZE, TILE_SIZE, pComponentDepth, layoutColor);
+				lTextureBatch.draw(lUiTexture, 256, 64, 32, 32, lScreenOffset.x + x, lScreenOffset.y + y + h - TILE_SIZE, TILE_SIZE, TILE_SIZE, pComponentDepth, layoutColor);
+				lTextureBatch.draw(lUiTexture, 288, 64, 32, 32, lScreenOffset.x + x + TILE_SIZE, lScreenOffset.y + y + h - TILE_SIZE, w - TILE_SIZE * 2, TILE_SIZE, pComponentDepth, layoutColor);
+				lTextureBatch.draw(lUiTexture, 320, 64, 32, 32, lScreenOffset.x + x + w - TILE_SIZE, lScreenOffset.y + y + h - TILE_SIZE, TILE_SIZE, TILE_SIZE, pComponentDepth, layoutColor);
 				lTextureBatch.end();
 
 				if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_OUTLINES", false)) {
 					Debug.debugManager().drawers().drawRectImmediate(pCore.HUD(), this);
 				}
-
 			}
-
 		}
 
 		if (mScrollBarsEnabled_Internal) {
 			mContentArea.depthPadding(6f);
 			mContentArea.preDraw(pCore, lTextureBatch, lUiTexture);
-
 		}
 
 		// FIXME: This draws all components, regardless whether they are in the visible area or not
-		final int lCount = menuEntries().size();
+		final int lCount = mMenuEntries.size();
 		for (int i = lCount - 1; i >= 0; --i) {
-			menuEntries().get(i).draw(pCore, parentScreen, mSelectedEntry == i, pComponentDepth + i * .001f);
-
+			mMenuEntries.get(i).draw(pCore, parentScreen, mSelectedEntry == i, pComponentDepth + i * .001f);
 		}
 
 		if (mScrollBarsEnabled_Internal) {
 			mContentArea.postDraw(pCore);
 			lTextureBatch.begin(pCore.HUD());
-
+			mScrollBar.scrollBarAlpha(lParentScreenAlpha);
 			mScrollBar.draw(pCore, lTextureBatch, lUiTexture, pComponentDepth + .1f);
 			lTextureBatch.end();
-
 		}
 
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
 			lTextureBatch.begin(pCore.HUD());
 			lTextureBatch.draw(lUiTexture, 0, 0, 32, 32, x, y, w, h, ZLayers.LAYER_DEBUG, ColorConstants.Debug_Transparent_Magenta);
 			lTextureBatch.end();
-
 		}
-
 	}
 
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
+
+	public void clearMenuEntries() {
+		mMenuEntries.clear();
+	}
+
+	public int getMenuEntryCount() {
+		return mMenuEntries.size();
+	}
+
+	public MenuEntry getMenuEntryByIndex(int pMenuEntryIndex) {
+		if (pMenuEntryIndex < 0 || pMenuEntryIndex > mMenuEntries.size() - 1)
+			return null;
+		return mMenuEntries.get(pMenuEntryIndex);
+	}
+
+	public void addMenuEntry(MenuEntry pNewEntry) {
+		mMenuEntries.add(pNewEntry);
+	}
+
+	public void removeMenuEntry(MenuEntry pMenuEntry) {
+		mMenuEntries.remove(pMenuEntry);
+	}
 
 	public void updateStructure() {
 		final int lCount = mMenuEntries.size();
@@ -476,9 +493,9 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 	 * @return true if some element has a focus lock, false otherwise.
 	 */
 	public boolean doesElementHaveFocus() {
-		int lCount = menuEntries().size();
+		final int lCount = mMenuEntries.size();
 		for (int i = 0; i < lCount; i++) {
-			if (menuEntries().get(i).hasFocusLock())
+			if (mMenuEntries.get(i).hasFocusLock())
 				return true;
 		}
 		return false;
@@ -495,14 +512,12 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 		pMenuEntry.onClick(pInputState);
 
 		// and disable focus on the rest
-		int lCount = menuEntries().size();
+		final var lCount = mMenuEntries.size();
 		for (int i = 0; i < lCount; i++) {
-			if (!menuEntries().get(i).equals(pMenuEntry)) {
-				// reset other element focuses
-				menuEntries().get(i).hasFocus(false);
-				menuEntries().get(i).hoveredOver(false);
+			if (!mMenuEntries.get(i).equals(pMenuEntry)) {
+				mMenuEntries.get(i).hasFocus(false);
+				mMenuEntries.get(i).hoveredOver(false);
 			} else {
-				// Remember which element we have just focused on
 				mSelectedEntry = i;
 			}
 		}
@@ -510,19 +525,17 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 
 	/** Updates the focus of all {@link MenuEntry}s in this layout, based on the current {@link InputManager}. */
 	public void updateFocusOfAll(LintfordCore pCore) {
-		final var lCount = menuEntries().size();
+		final var lCount = mMenuEntries.size();
 		for (int i = 0; i < lCount; i++) {
-			final var lMenuEntry = menuEntries().get(i);
+			final var lMenuEntry = mMenuEntries.get(i);
 			final boolean lIsTheMouseOverThisComponent = lMenuEntry.intersectsAA(pCore.HUD().getMouseCameraSpace());
 			final boolean lDoesThisComponentOwnTheMouse = pCore.input().mouse().isMouseOverThisComponent(lMenuEntry.hashCode());
 
 			// Update the hovered over status (needed to disable hovering on entries)
 			if (lDoesThisComponentOwnTheMouse && lIsTheMouseOverThisComponent) {
 				lMenuEntry.hoveredOver(true);
-
 			} else {
 				lMenuEntry.hoveredOver(false);
-
 			}
 
 			// Update the focus of entries where the mouse is clicked in other areas (other than any one specific entry).
@@ -530,23 +543,18 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 			if (pCore.input().mouse().isMouseLeftButtonDown()) {
 				if (lDoesThisComponentOwnTheMouse && lIsTheMouseOverThisComponent) {
 					lMenuEntry.hasFocus(true);
-
 				} else {
 					lMenuEntry.hasFocus(false);
-
 				}
-
 			}
-
 		}
-
 	}
 
 	/** Sets the focus of a specific {@link MenuEntry}, removing focus from all other entries. */
 	public void updateFocusOffAllBut(LintfordCore pCore, MenuEntry pMenuEntry) {
-		int lCount = menuEntries().size();
+		int lCount = mMenuEntries.size();
 		for (int i = 0; i < lCount; i++) {
-			MenuEntry lMenuEntry = menuEntries().get(i);
+			final var lMenuEntry = mMenuEntries.get(i);
 			if (pMenuEntry == lMenuEntry)
 				continue;
 
@@ -558,50 +566,47 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 					lMenuEntry.hasFocus(false);
 
 				}
-
 			}
-
 		}
-
 	}
 
 	public void setHoverOffAll() {
-		int lCount = menuEntries().size();
+		final int lCount = mMenuEntries.size();
 		for (int i = 0; i < lCount; i++) {
-			menuEntries().get(i).hoveredOver(false);
+			mMenuEntries.get(i).hoveredOver(false);
 		}
 	}
 
 	public boolean hasEntry(int pIndex) {
-		if (pIndex < 0 || pIndex >= menuEntries().size())
+		if (pIndex < 0 || pIndex >= mMenuEntries.size())
 			return false;
 
 		return true;
 	}
 
 	public float getEntryWidth() {
-		final int lEntryCount = menuEntries().size();
+		final int lEntryCount = mMenuEntries.size();
 		if (lEntryCount == 0)
 			return 0;
 
 		// return the widest entry
 		float lResult = 0;
 		for (int i = 0; i < lEntryCount; i++) {
-			float lTemp = menuEntries().get(i).marginLeft() + menuEntries().get(i).w() + menuEntries().get(i).marginRight();
+			final var lMenuEntry = mMenuEntries.get(i);
+			float lTemp = lMenuEntry.marginLeft() + lMenuEntry.w() + lMenuEntry.marginRight();
 			if (lTemp > lResult) {
 				lResult = lTemp;
 			}
 		}
 
 		return lResult;
-
 	}
 
 	public float getEntryHeight() {
 		if (mForcedEntryHeight != USE_HEIGHT_OF_ENTRIES && mForcedEntryHeight >= 0)
 			return mForcedEntryHeight;
 
-		final int lEntryCount = menuEntries().size();
+		final int lEntryCount = mMenuEntries.size();
 		if (lEntryCount == 0)
 			return 0;
 
@@ -609,15 +614,13 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 		float lResult = marginTop();
 
 		for (int i = 0; i < lEntryCount; i++) {
-			final var lMenuEntry = menuEntries().get(i);
+			final var lMenuEntry = mMenuEntries.get(i);
 			lResult += lMenuEntry.marginTop();
 			lResult += lMenuEntry.h();
 			lResult += lMenuEntry.marginBottom();
-
 		}
 
 		return lResult + marginBottom();
-
 	}
 
 	public float getDesiredHeight() {
@@ -625,7 +628,6 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 			return mForcedHeight;
 
 		return getEntryHeight();
-
 	}
 
 	// --------------------------------------

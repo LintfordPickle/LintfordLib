@@ -197,41 +197,38 @@ public class MenuImageEntry extends MenuEntry {
 
 		lTextureBatch.begin(pCore.HUD());
 
-		entryColor.a = lParentScreen.screenColor.a;
+		final var lScreenOffset = pScreen.screenPositionOffset();
 
 		if (mMainTexture != null) {
 			final int lTextureWidth = mMainTexture.getTextureWidth();
 			final int lTextureHeight = mMainTexture.getTextureHeight();
 
-			lTextureBatch.draw(mMainTexture, 0, 0, lTextureWidth, lTextureHeight, x, y, mFittedWidth, mFittedHeight, pParentZDepth + .1f, entryColor);
+			lTextureBatch.draw(mMainTexture, 0, 0, lTextureWidth, lTextureHeight, lScreenOffset.x + x, lScreenOffset.y + y, mFittedWidth, mFittedHeight, pParentZDepth + .1f, entryColor);
 
 		} else if (mShowMissingTextureText) {
 			final float lTextWidth = mUiFont.getStringWidth(mMissingTextureText);
 
 			mUiFont.begin(pCore.HUD());
-			mUiFont.drawText(mMissingTextureText, x + mFittedWidth / 2f - lTextWidth / 2f, (int) (y + mFittedHeight / 2), pParentZDepth + .1f, ColorConstants.WHITE, 1f);
+			mUiFont.drawText(mMissingTextureText, lScreenOffset.x + x + mFittedWidth / 2f - lTextWidth / 2f, lScreenOffset.y + (int) (y + mFittedHeight / 2), pParentZDepth + .1f, ColorConstants.WHITE, 1f);
 			mUiFont.end();
 		} else if (mMissingTexture != null) {
-			lTextureBatch.draw(mMissingTexture, srcX, srcY, srcWidth, srcHeight, x, y, mFittedWidth, mFittedHeight, pParentZDepth + .1f, entryColor);
+			lTextureBatch.draw(mMissingTexture, srcX, srcY, srcWidth, srcHeight, lScreenOffset.x + x, lScreenOffset.y + y, mFittedWidth, mFittedHeight, pParentZDepth + .1f, entryColor);
 
 		} else if (mUITexture != null) {
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, x, y, mFittedWidth, mFittedHeight, pParentZDepth + .1f, entryColor);
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, lScreenOffset.x + x, lScreenOffset.y + y, mFittedWidth, mFittedHeight, pParentZDepth + .1f, entryColor);
 		}
 
 		lTextureBatch.end();
 
 		if (mShowInfoIcon) {
 			drawInfoIcon(pCore, lTextureBatch, mInfoIconDstRectangle, 1.f);
-
 		}
 
 		if (mShowWarnIcon) {
 			drawWarningIcon(pCore, lTextureBatch, mWarnIconDstRectangle, 1.f);
-
 		}
 
 		drawDebugCollidableBounds(pCore, lTextureBatch);
-
 	}
 
 	// --------------------------------------

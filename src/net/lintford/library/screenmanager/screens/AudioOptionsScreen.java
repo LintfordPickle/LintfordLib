@@ -73,11 +73,9 @@ public class AudioOptionsScreen extends MenuScreen {
 		lGroup.addEntry(lBackButton);
 		lGroup.addEntry(lApplyButton);
 
-		footerLayout().menuEntries().add(lGroup);
+		footerLayout().addMenuEntry(lGroup);
 
-		// Add the layouts to the screen
-		layouts().add(lAudioList);
-
+		addLayout(lAudioList);
 	}
 
 	// --------------------------------------
@@ -154,16 +152,15 @@ public class AudioOptionsScreen extends MenuScreen {
 		mSoundVolumnEntry.horizontalFillType(FILLTYPE.FILL_CONTAINER);
 
 		// lLayout.menuEntries().add(mMasterEnabledEntry);
-		lLayout.menuEntries().add(mMasterVolumeEntry);
-		lLayout.menuEntries().add(MenuEntry.menuSeparator());
+		lLayout.addMenuEntry(mMasterVolumeEntry);
+		lLayout.addMenuEntry(MenuEntry.menuSeparator());
 
-		lLayout.menuEntries().add(mMusicEnabledEntry);
-		lLayout.menuEntries().add(mMusicVolumeEntry);
-		lLayout.menuEntries().add(MenuEntry.menuSeparator());
+		lLayout.addMenuEntry(mMusicEnabledEntry);
+		lLayout.addMenuEntry(mMusicVolumeEntry);
+		lLayout.addMenuEntry(MenuEntry.menuSeparator());
 
-		lLayout.menuEntries().add(mSoundEnabledEntry);
-		lLayout.menuEntries().add(mSoundVolumnEntry);
-
+		lLayout.addMenuEntry(mSoundEnabledEntry);
+		lLayout.addMenuEntry(mSoundVolumnEntry);
 	}
 
 	// --------------------------------------
@@ -172,16 +169,14 @@ public class AudioOptionsScreen extends MenuScreen {
 
 	@Override
 	public void updateLayoutSize(LintfordCore pCore) {
-		final int lLayoutCount = layouts().size();
+		final int lLayoutCount = mLayouts.size();
 		for (int i = 0; i < lLayoutCount; i++) {
-			layouts().get(i).layoutWidth(LAYOUT_WIDTH.THREEQUARTER);
-			layouts().get(i).marginLeft(50);
-			layouts().get(i).marginRight(50);
-
+			mLayouts.get(i).layoutWidth(LAYOUT_WIDTH.THREEQUARTER);
+			mLayouts.get(i).marginLeft(50);
+			mLayouts.get(i).marginRight(50);
 		}
 
 		super.updateLayoutSize(pCore);
-
 	}
 
 	@Override

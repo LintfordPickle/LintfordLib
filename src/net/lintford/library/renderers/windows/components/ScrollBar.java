@@ -6,6 +6,7 @@ import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.core.input.IProcessMouseInput;
+import net.lintford.library.core.maths.MathHelper;
 
 public class ScrollBar extends Rectangle implements IProcessMouseInput {
 
@@ -29,10 +30,19 @@ public class ScrollBar extends Rectangle implements IProcessMouseInput {
 	private transient float mMarkerMoveMod;
 	private float mWindowRightOffset;
 	private float mMouseTimer;
+	private float mScrollBarAlpha;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public void scrollBarAlpha(float pScrollbarAlpha) {
+		mScrollBarAlpha = (float) MathHelper.clamp(pScrollbarAlpha, 0.f, 1.f);
+	}
+
+	public float scrollBarAlpha() {
+		return mScrollBarAlpha;
+	}
 
 	public float windowRightOffset() {
 		return mWindowRightOffset;
@@ -148,7 +158,7 @@ public class ScrollBar extends Rectangle implements IProcessMouseInput {
 
 	public void draw(LintfordCore pCore, TextureBatchPCT pTextureBatch, Texture pUITexture, float pZDepth) {
 		// Scroll bar background
-		final var lColor = ColorConstants.getBlackWithAlpha(.5f);
+		final var lColor = ColorConstants.getBlackWithAlpha(.5f * mScrollBarAlpha);
 		pTextureBatch.draw(pUITexture, 0, 0, 32, 32, x, y, w, h, pZDepth, lColor);
 
 		if (mMarkerMoveMod == 0.f) {
@@ -159,13 +169,13 @@ public class ScrollBar extends Rectangle implements IProcessMouseInput {
 		final float by = mScrollBarArea.contentDisplayArea().y() - (mScrollBarArea.currentYPos() / mMarkerMoveMod);
 
 		// Draw the marker bar
-		pTextureBatch.draw(pUITexture, 0, 0, 32, 32, x + 9, y, 2, h, pZDepth, ColorConstants.WHITE);
+		var lWhiteColorWithAlpha = ColorConstants.getWhiteWithAlpha(mScrollBarAlpha);
+		pTextureBatch.draw(pUITexture, 0, 0, 32, 32, x + 9, y, 2, h, pZDepth, lWhiteColorWithAlpha);
 
 		// Draw the moving bar
 		final float lColorMod = mClickActive ? 0.4f : 0.5f;
-		final var lBarColor = ColorConstants.getColorWithRGBMod(ColorConstants.TertiaryColor.r, ColorConstants.TertiaryColor.g, ColorConstants.TertiaryColor.b, 1.f, lColorMod);
+		final var lBarColor = ColorConstants.getColorWithRGBMod(ColorConstants.TertiaryColor.r, ColorConstants.TertiaryColor.g, ColorConstants.TertiaryColor.b, mScrollBarAlpha, lColorMod);
 		pTextureBatch.draw(pUITexture, 0, 0, 32, 32, x + 5, by, 10, mMarkerBarHeight, pZDepth, lBarColor);
-
 	}
 
 	public void resetBarTop() {

@@ -31,8 +31,11 @@ public class ScreenManager {
 	// --------------------------------------
 
 	private LintfordCore mLWJGLCore;
+
 	private List<Screen> mScreens;
 	private List<Screen> mScreensToUpdate;
+	private List<Screen> mScreensToAdd;
+
 	private ToolTip mToolTip;
 	private ResourceManager mResourceManager;
 	private AudioFireAndForgetManager mUISoundManager;
@@ -90,6 +93,7 @@ public class ScreenManager {
 		mToastManager = new ToastManager();
 		mScreens = new ArrayList<>();
 		mScreensToUpdate = new ArrayList<>();
+		mScreensToAdd = new ArrayList<>();
 
 		mToolTip = new ToolTip();
 
@@ -106,23 +110,22 @@ public class ScreenManager {
 	// --------------------------------------
 
 	public void initialize() {
-		final int lCount = mScreens.size();
-		for (int i = 0; i < lCount; i++) {
-			mScreens.get(i).initialize();
+		final int lScreensToAddCount = mScreensToAdd.size();
+		for (int i = 0; i < lScreensToAddCount; i++) {
+			mScreensToAdd.get(i).initialize();
 		}
 
 		mUiStructureController = (UiStructureController) mLWJGLCore.controllerManager().getControllerByNameRequired(UiStructureController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
 
 		mIsinitialized = true;
-
 	}
 
 	public void loadGLContent(final ResourceManager pResourceManager) {
 		mResourceManager = pResourceManager;
 
-		int lCount = mScreens.size();
-		for (int i = 0; i < lCount; i++) {
-			mScreens.get(i).loadGLContent(pResourceManager);
+		final int lScreenToAddCount = mScreensToAdd.size();
+		for (int i = 0; i < lScreenToAddCount; i++) {
+			mScreensToAdd.get(i).loadGLContent(pResourceManager);
 		}
 
 		mUISoundManager = new AudioFireAndForgetManager(pResourceManager.audioManager());
@@ -187,7 +190,7 @@ public class ScreenManager {
 			lScreen.acceptMouseInput = !lInputBlockedByHigherScreen;
 			lScreen.acceptKeyboardInput = !lInputBlockedByHigherScreen;
 
-			if (!lInputBlockedByHigherScreen && (lScreen.screenState() == ScreenState.TransitionOn || lScreen.screenState() == ScreenState.Active || lScreen.mShowInBackground)) {
+			if (!lInputBlockedByHigherScreen && (lScreen.screenState() == ScreenState.TransitionOn || lScreen.screenState() == ScreenState.Active || lScreen.mShowBackgroundScreens)) {
 				lScreen.handleInput(pCore);
 
 			}
@@ -200,6 +203,36 @@ public class ScreenManager {
 
 	}
 
+	private void updateScreensToAdd(LintfordCore pCore) {
+		// First update transitions
+		final int lToAddCount = mScreensToAdd.size();
+		if (lToAddCount > 0) {
+			boolean lReadyToAddScreen = false;
+			final var lNextScreenToAdd = mScreensToAdd.get(0);
+			final var lTopScreen = getTopScreen();
+			if (lTopScreen != null) {
+				if (lTopScreen.screenState() == ScreenState.Active) {
+					lTopScreen.onLostFocus();
+					if (lNextScreenToAdd.showBackgroundScreens() == false && lNextScreenToAdd.alwaysOnTop() == false)
+						lTopScreen.transitionOff();
+					else {
+						lReadyToAddScreen = true;
+					}
+				} else if (lTopScreen.screenState() == ScreenState.Hidden || lNextScreenToAdd.showBackgroundScreens()) {
+					lReadyToAddScreen = true;
+				}
+			} else {
+				lReadyToAddScreen = true;
+			}
+
+			if (lReadyToAddScreen) {
+				mScreensToAdd.remove(0);
+				lNextScreenToAdd.transitionOn();
+				mScreens.add(lNextScreenToAdd);
+			}
+		}
+	}
+
 	public void update(LintfordCore pCore) {
 		if (!mIsinitialized || !mIsLoaded)
 			return;
@@ -207,16 +240,23 @@ public class ScreenManager {
 		boolean lOtherScreenHasFocus = false;
 		boolean lCoveredByOtherScreen = false;
 
+		updateScreensToAdd(pCore);
+
 		mScreensToUpdate.clear();
 
-		int lCount = mScreens.size();
+		final int lCount = mScreens.size();
 		for (int i = 0; i < lCount; i++) {
 			mScreensToUpdate.add(mScreens.get(i));
+		}
 
+		final var lTopMostScreen = getTopScreen();
+		if (lTopMostScreen != null) {
+			if (lTopMostScreen.screenState() == ScreenState.Hidden && lTopMostScreen.isExiting() == false)
+				lTopMostScreen.transitionOn();
 		}
 
 		while (mScreensToUpdate.size() > 0) {
-			Screen lScreen = mScreensToUpdate.get(mScreensToUpdate.size() - 1);
+			final var lScreen = mScreensToUpdate.get(mScreensToUpdate.size() - 1);
 
 			mScreensToUpdate.remove(mScreensToUpdate.size() - 1);
 
@@ -228,16 +268,12 @@ public class ScreenManager {
 
 				if (!lScreen.isPopup()) {
 					lCoveredByOtherScreen = true;
-
 				}
-
 			}
-
 		}
 
 		mToastManager.update(pCore);
 		mToolTip.update(pCore);
-
 	}
 
 	public void draw(LintfordCore pCore) {
@@ -246,7 +282,7 @@ public class ScreenManager {
 
 		int lCount = mScreens.size();
 		for (int i = 0; i < lCount; i++) {
-			if (mScreens.get(i).screenState() == ScreenState.Hidden && !mScreens.get(i).showInBackground())
+			if (mScreens.get(i).screenState() == ScreenState.Hidden && !mScreens.get(i).showBackgroundScreens())
 				continue;
 
 			mScreens.get(i).draw(pCore);
@@ -273,47 +309,40 @@ public class ScreenManager {
 				if (lScreen.getClass().getSimpleName().equals(pNewScreenSImpleName)) {
 					Debug.debugManager().logger().e(this.getClass().getSimpleName(), "Cannot add second SingletonScreen instance: " + pNewScreenSImpleName);
 					return;
-
 				}
-
 			}
-
 		}
 
 		if (!pScreen.isLoaded()) {
 			pScreen.isExiting(false);
 
-			if (mIsinitialized && !pScreen.isinitialized()) {// screen manager already initialized? then load this screen manually
+			if (mIsinitialized && !pScreen.isinitialized()) {
 				pScreen.initialize();
 			}
 
-			if (mIsLoaded) { // screen manager already loaded? then load this screen manually
+			if (mIsLoaded) {
 				pScreen.loadGLContent(mResourceManager);
 			}
-
 		}
 
-		int lInsertIndex = 0;
-		if (mScreens.size() > 0) {
-			mScreens.get(mScreens.size() - 1).onLostFocus();
-
-			lInsertIndex = mScreens.size();
-		}
-		for (int i = mScreens.size() - 1; i > 0; i--) {
-			lInsertIndex = i + 1;
-			if (!mScreens.get(i).alwaysOnTop()) {
-				break;
-			}
-		}
-
-		mScreens.add(lInsertIndex, pScreen);
+		mScreensToAdd.add(pScreen);
 
 		Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("Added screen '%s'", pScreen.getClass().getSimpleName()));
+	}
 
+	private Screen getTopScreen() {
+		if (mScreens == null || mScreens.size() == 0)
+			return null;
+		final int lScreenCount = mScreens.size();
+		for (int i = lScreenCount - 1; i >= 0; i--) {
+			if (mScreens.get(i).alwaysOnTop() == false)
+				return mScreens.get(i);
+		}
+
+		return mScreens.get(mScreens.size() - 1);
 	}
 
 	public void removeScreen(Screen pScreen) {
-
 		if (mIsinitialized) {
 			pScreen.unloadGLContent();
 
@@ -339,7 +368,6 @@ public class ScreenManager {
 	}
 
 	public void fadeBackBufferToBlack(float pAlpha) {
-
 		// TODO: Render a full screen black quad ...
 
 	}

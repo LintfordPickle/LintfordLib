@@ -55,13 +55,7 @@ public class Debug {
 
 	/** A convenience class to constrain the value given in a {@link LogMessage}'s log level. */
 	public enum DebugLogLevel {
-		verbose(LOG_LEVEL_VERBOSE), 
-		info(LOG_LEVEL_INFO), 
-		warning(LOG_LEVEL_WARNING), 
-		error(LOG_LEVEL_ERROR), 
-		system(LOG_LEVEL_SYSTEM), 
-		user(LOG_LEVEL_USER), 
-		off(LOG_LEVEL_OFF);
+		verbose(LOG_LEVEL_VERBOSE), info(LOG_LEVEL_INFO), warning(LOG_LEVEL_WARNING), error(LOG_LEVEL_ERROR), system(LOG_LEVEL_SYSTEM), user(LOG_LEVEL_USER), off(LOG_LEVEL_OFF);
 
 		public final int logLevel;
 

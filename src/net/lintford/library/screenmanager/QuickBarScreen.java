@@ -39,7 +39,6 @@ public abstract class QuickBarScreen extends MenuScreen {
 		mIsPopup = true;
 		mAlwaysOnTop = true;
 		mESCBackEnabled = false;
-
 	}
 
 	// --------------------------------------

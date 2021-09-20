@@ -189,7 +189,6 @@ public class MenuSliderEntry extends MenuEntry {
 
 		mBarPosX = x + w / 2 + mDownButton.w() + 16;
 		mBarWidth = w / 2 - 48;
-
 	}
 
 	@Override
@@ -200,23 +199,24 @@ public class MenuSliderEntry extends MenuEntry {
 			return;
 
 		final var lTextureBatch = lParentScreen.textureBatch();
-		final float lUiTextScale = lParentScreen.uiTextScale();
+		final var lUiTextScale = lParentScreen.uiTextScale();
 
-		final float lLabelWidth = lFont.getStringWidth(mLabel, lUiTextScale);
-		final float lSeparatorHalfWidth = lFont.getStringWidth(mSeparator, lUiTextScale) * 0.5f;
-		final float lLabelHeight = lFont.getStringHeight(mLabel, lUiTextScale);// ;
+		final var lLabelWidth = lFont.getStringWidth(mLabel, lUiTextScale);
+		final var lSeparatorHalfWidth = lFont.getStringWidth(mSeparator, lUiTextScale) * 0.5f;
+		final var lLabelHeight = lFont.getStringHeight(mLabel, lUiTextScale);// ;
 
-		final float yPos = y;
+		final var yPos = y;
 
-		entryColor.setFromColor(lParentScreen.screenColor);
+		final var lScreenOffset = pScreen.screenPositionOffset();
+		final var lParentScreenAlpha = pScreen.screenColor.a;
 
 		if (mHoveredOver & mEnabled) {
+			final var lHighlightColor = ColorConstants.getColorWithAlpha(ColorConstants.MenuEntryHighlightColor, lParentScreenAlpha);
 			lTextureBatch.begin(pCore.HUD());
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() - w / 2, centerY() - h / 2, 32, h, mZ, ColorConstants.MenuEntryHighlightColor);
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() - (w / 2) + 32, centerY() - h / 2, w - 64, h, mZ, ColorConstants.MenuEntryHighlightColor);
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() + (w / 2) - 32, centerY() - h / 2, 32, h, mZ, ColorConstants.MenuEntryHighlightColor);
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, lScreenOffset.x + centerX() - w / 2, lScreenOffset.y + centerY() - h / 2, 32, h, mZ, lHighlightColor);
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, lScreenOffset.x + centerX() - (w / 2) + 32, lScreenOffset.y + centerY() - h / 2, w - 64, h, mZ, lHighlightColor);
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, lScreenOffset.x + centerX() + (w / 2) - 32, lScreenOffset.y + centerY() - h / 2, 32, h, mZ, lHighlightColor);
 			lTextureBatch.end();
-
 		}
 
 		if (mButtonsEnabled) {
@@ -225,8 +225,8 @@ public class MenuSliderEntry extends MenuEntry {
 			final float lArrowButtonSize = 32;
 			final float lArrowButtonPaddingX = mDownButton.w() - lArrowButtonSize;
 
-			lTextureBatch.draw(mUITexture, 0, 224, 32, 32, mDownButton.x() + lArrowButtonPaddingX, yPos, lArrowButtonSize, lArrowButtonSize, mZ, entryColor);
-			lTextureBatch.draw(mUITexture, 32, 224, 32, 32, mUpButton.x() + lArrowButtonPaddingX, yPos, lArrowButtonSize, lArrowButtonSize, mZ, entryColor);
+			lTextureBatch.draw(mUITexture, 0, 224, 32, 32, lScreenOffset.x + mDownButton.x() + lArrowButtonPaddingX, lScreenOffset.y + yPos, lArrowButtonSize, lArrowButtonSize, mZ, entryColor);
+			lTextureBatch.draw(mUITexture, 32, 224, 32, 32, lScreenOffset.x + mUpButton.x() + lArrowButtonPaddingX, lScreenOffset.y + yPos, lArrowButtonSize, lArrowButtonSize, mZ, entryColor);
 
 			lTextureBatch.end();
 		}
@@ -235,20 +235,18 @@ public class MenuSliderEntry extends MenuEntry {
 		lTextureBatch.begin(pCore.HUD());
 
 		final float lCaretPos = MathHelper.scaleToRange(mValue, mLowerBound, mUpperBound, mBarPosX, mBarWidth - 32);
-
-		lTextureBatch.draw(mUITexture, 0, 192, 32, 32, mBarPosX, yPos, 32, 32, mZ, entryColor);
-		lTextureBatch.draw(mUITexture, 32, 192, 32, 32, mBarPosX + 32, yPos, mBarWidth - 64 - 32, 32, mZ, entryColor);
-		lTextureBatch.draw(mUITexture, 64, 192, 32, 32, mBarPosX + mBarWidth - 64, yPos, 32, 32, mZ, entryColor);
-
-		// Draw the caret
-		lTextureBatch.draw(mUITexture, 192, 192, 32, 32, lCaretPos, yPos, 32, 32, mZ, entryColor);
-
+		lTextureBatch.draw(mUITexture, 0, 192, 32, 32, lScreenOffset.x + mBarPosX, lScreenOffset.y + yPos, 32, 32, mZ, entryColor);
+		lTextureBatch.draw(mUITexture, 32, 192, 32, 32, lScreenOffset.x + mBarPosX + 32, lScreenOffset.y + yPos, mBarWidth - 64 - 32, 32, mZ, entryColor);
+		lTextureBatch.draw(mUITexture, 64, 192, 32, 32, lScreenOffset.x + mBarPosX + mBarWidth - 64, lScreenOffset.y + yPos, 32, 32, mZ, entryColor);
+		lTextureBatch.draw(mUITexture, 192, 192, 32, 32, lScreenOffset.x + lCaretPos, lScreenOffset.y + yPos, 32, 32, mZ, entryColor);
 		lTextureBatch.end();
+
+		final var lColorWhiteWithAlpha = ColorConstants.getWhiteWithAlpha(lParentScreenAlpha);
 
 		// draw the label to the left and the value //
 		lFont.begin(pCore.HUD());
-		lFont.drawText(mLabel, x + w / 2 - lLabelWidth - 10 - lSeparatorHalfWidth, y + h / 2f - lLabelHeight / 2f, mZ, ColorConstants.TextEntryColor, lUiTextScale, -1);
-		lFont.drawText(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2f - lLabelHeight / 2f, mZ, ColorConstants.TextEntryColor, lUiTextScale, -1);
+		lFont.drawText(mLabel, lScreenOffset.x + x + w / 2 - lLabelWidth - 10 - lSeparatorHalfWidth, lScreenOffset.y + y + h / 2f - lLabelHeight / 2f, mZ, lColorWhiteWithAlpha, lUiTextScale, -1);
+		lFont.drawText(mSeparator, lScreenOffset.x + x + w / 2 - lSeparatorHalfWidth, lScreenOffset.y + y + h / 2f - lLabelHeight / 2f, mZ, lColorWhiteWithAlpha, lUiTextScale, -1);
 
 		if (mShowValueEnabled) {
 			final float lValueStringWidth = lFont.getStringWidth(Integer.toString(mValue), lUiTextScale);
@@ -261,16 +259,16 @@ public class MenuSliderEntry extends MenuEntry {
 			final float lLabelOffset = 0;
 			if (mShowGuideValuesEnabled) {
 				final float lLowerBoundStringWidth = lFont.getStringWidth(Integer.toString(mLowerBound));
-				lFont.drawText(Integer.toString(mLowerBound), mBarPosX - lLowerBoundStringWidth / 2 + 16, y + lLabelOffset, mZ, ColorConstants.WHITE, 1f);
+				lFont.drawText(Integer.toString(mLowerBound), lScreenOffset.x + mBarPosX - lLowerBoundStringWidth / 2 + 16, lScreenOffset.y + y + lLabelOffset, mZ, lColorWhiteWithAlpha, 1f);
 			}
 
 			final float endPositionX = lCaretPos + 128.f + lValueStringWidth;
 			final float lValueStringPositionX = endPositionX > mBarPosX + mBarWidth ? lCaretPos - 32.f - 5.f : lCaretPos + 32f;
-			lFont.drawText(lValueString, lValueStringPositionX, y + h * .5f - lLabelHeight * .5f, mZ, ColorConstants.WHITE, lUiTextScale);
+			lFont.drawText(lValueString, lScreenOffset.x + lValueStringPositionX, lScreenOffset.y + y + h * .5f - lLabelHeight * .5f, mZ, lColorWhiteWithAlpha, lUiTextScale);
 
 			if (mShowGuideValuesEnabled) {
 				final float lUpperBoundStringWidth = lFont.getStringWidth(Integer.toString(mUpperBound));
-				lFont.drawText(Integer.toString(mUpperBound), mBarPosX + mBarWidth - lUpperBoundStringWidth / 2 - 48, y + lLabelOffset, mZ, ColorConstants.WHITE, 1f);
+				lFont.drawText(Integer.toString(mUpperBound), lScreenOffset.x + mBarPosX + mBarWidth - lUpperBoundStringWidth / 2 - 48, lScreenOffset.y + y + lLabelOffset, mZ, lColorWhiteWithAlpha, 1f);
 			}
 		}
 
@@ -278,12 +276,10 @@ public class MenuSliderEntry extends MenuEntry {
 
 		if (mShowInfoIcon) {
 			drawInfoIcon(pCore, lTextureBatch, mInfoIconDstRectangle, entryColor.a);
-
 		}
 
 		if (mShowWarnIcon) {
 			drawWarningIcon(pCore, lTextureBatch, mWarnIconDstRectangle, entryColor.a);
-
 		}
 
 		if (!mEnabled) {
@@ -291,7 +287,6 @@ public class MenuSliderEntry extends MenuEntry {
 		}
 
 		drawDebugCollidableBounds(pCore, lTextureBatch);
-
 	}
 
 	// --------------------------------------

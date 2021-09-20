@@ -152,9 +152,7 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 				mShowCaret = !mShowCaret;
 				mCaretFlashTimer = 0;
 			}
-
 		}
-
 	}
 
 	@Override
@@ -164,6 +162,7 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 
 		final var lParentScreen = mParentLayout.parentScreen;
 		final var lFont = lParentScreen.font();
+		final var lScreenOffset = pScreen.screenPositionOffset();
 		final var lTextureBatch = lParentScreen.textureBatch();
 
 		mZ = pParentZDepth;
@@ -181,19 +180,17 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 		entryColor.r = mHoveredOver ? (204.f / 255.f) : .1f;
 		entryColor.g = mHoveredOver ? (115.f / 255.f) : .1f;
 		entryColor.b = mHoveredOver ? (102.f / 255.f) : .1f;
-		entryColor.a = mHoveredOver ? lParentScreen.screenColor.a : 0.26f;
 
 		if (mHoveredOver) {
 			lTextureBatch.begin(pCore.HUD());
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() - w / 2, centerY() - h / 2, 32, h, mZ, ColorConstants.MenuEntryHighlightColor);
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() - (w / 2) + 32, centerY() - h / 2, w - 64, h, mZ, ColorConstants.MenuEntryHighlightColor);
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() + (w / 2) - 32, centerY() - h / 2, 32, h, mZ, ColorConstants.MenuEntryHighlightColor);
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, lScreenOffset.x + centerX() - w / 2, lScreenOffset.y + centerY() - h / 2, 32, h, mZ, ColorConstants.MenuEntryHighlightColor);
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, lScreenOffset.x + centerX() - (w / 2) + 32, lScreenOffset.y + centerY() - h / 2, w - 64, h, mZ, ColorConstants.MenuEntryHighlightColor);
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, lScreenOffset.x + centerX() + (w / 2) - 32, lScreenOffset.y + centerY() - h / 2, 32, h, mZ, ColorConstants.MenuEntryHighlightColor);
 			lTextureBatch.end();
 
 		}
 
 		final float lLabelTextHeight = lFont.fontHeight() * lAdjustedLabelScaleW;
-
 		final float lSeparatorHalfWidth = lFont.getStringWidth(mSeparator, lUiTextScale) * 0.5f;
 		final float lInputTextWidth = lFont.getStringWidth(mInputField.toString(), lUiTextScale);
 
@@ -206,43 +203,40 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 		entryColor.r = mEnabled ? 1f : 0.6f;
 		entryColor.g = mEnabled ? 1f : 0.6f;
 		entryColor.b = mEnabled ? 1f : 0.6f;
+		textColor.a = lParentScreen.screenColor.a;
 
 		lFont.begin(pCore.HUD());
-		lFont.drawText(mLabel, x + w / 2 - 10 - (lLabelTextWidth * lAdjustedLabelScaleW) - lSeparatorHalfWidth, y + h / 2 - lLabelTextHeight * 0.5f, pParentZDepth + .1f, textColor, lAdjustedLabelScaleW, -1);
-		lFont.drawText(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - lLabelTextHeight * 0.5f, pParentZDepth + .1f, textColor, lUiTextScale, -1);
-		lFont.drawText(mInputField.toString(), x + w / 2 + lSeparatorHalfWidth * lAdjustedLInputScaleW + SPACE_BETWEEN_TEXT, y + h / 2 - lInputTextHeight * 0.5f, pParentZDepth + .1f, textColor, lAdjustedLInputScaleW,
-				-1);
+		lFont.drawText(mLabel, lScreenOffset.x + x + w / 2 - 10 - (lLabelTextWidth * lAdjustedLabelScaleW) - lSeparatorHalfWidth, lScreenOffset.y + y + h / 2 - lLabelTextHeight * 0.5f, pParentZDepth + .1f, textColor,
+				lAdjustedLabelScaleW, -1);
+		lFont.drawText(mSeparator, lScreenOffset.x + x + w / 2 - lSeparatorHalfWidth, lScreenOffset.y + y + h / 2 - lLabelTextHeight * 0.5f, pParentZDepth + .1f, textColor, lUiTextScale, -1);
+		lFont.drawText(mInputField.toString(), lScreenOffset.x + x + w / 2 + lSeparatorHalfWidth * lAdjustedLInputScaleW + SPACE_BETWEEN_TEXT, lScreenOffset.y + y + h / 2 - lInputTextHeight * 0.5f, pParentZDepth + .1f,
+				textColor, lAdjustedLInputScaleW, -1);
 
 		final float lTextHeight = lFont.fontHeight();
 
 		if (mShowCaret && mHasFocus) {
 			lTextureBatch.begin(pCore.HUD());
-			final float lCaretPositionX = x + w / 2 + lSeparatorHalfWidth + SPACE_BETWEEN_TEXT + lInputTextWidth * lAdjustedLInputScaleW;
-			final float lCaretPositionY = y + h / 2 - lTextHeight / 2.f;
+			final float lCaretPositionX = lScreenOffset.x + x + w / 2 + lSeparatorHalfWidth + SPACE_BETWEEN_TEXT + lInputTextWidth * lAdjustedLInputScaleW;
+			final float lCaretPositionY = lScreenOffset.y + y + h / 2 - lTextHeight / 2.f;
 			lTextureBatch.draw(mUITexture, 0, 0, lTextHeight / 2.f, lTextHeight, lCaretPositionX, lCaretPositionY, lTextHeight / 2.f, lTextHeight, mZ, ColorConstants.WHITE);
 			lTextureBatch.end();
-
 		}
 
 		lFont.end();
 
 		if (!mEnabled) {
 			drawdisabledBlackOverbar(pCore, lTextureBatch, entryColor.a);
-
 		}
 
 		if (mShowInfoIcon) {
 			drawInfoIcon(pCore, lTextureBatch, mInfoIconDstRectangle, 1.f);
-
 		}
 
 		if (mShowWarnIcon) {
 			drawWarningIcon(pCore, lTextureBatch, mWarnIconDstRectangle, 1.f);
-
 		}
 
 		drawDebugCollidableBounds(pCore, lTextureBatch);
-
 	}
 
 	// --------------------------------------

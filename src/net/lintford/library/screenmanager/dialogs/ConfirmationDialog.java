@@ -41,12 +41,10 @@ public class ConfirmationDialog extends BaseDialog {
 
 	public ConfirmationDialog(ScreenManager pScreenManager, Screen pParentScreen, String pDialogMessage) {
 		this(pScreenManager, pParentScreen, "", pDialogMessage, true);
-
 	}
 
 	public ConfirmationDialog(ScreenManager pScreenManager, Screen pParentScreen, String pTitle, String pDialogMessage) {
 		this(pScreenManager, pParentScreen, pTitle, pDialogMessage, true);
-
 	}
 
 	public ConfirmationDialog(ScreenManager pScreenManager, Screen pParentScreen, String pTitle, String pDialogMessage, boolean pWithCancel) {
@@ -63,19 +61,18 @@ public class ConfirmationDialog extends BaseDialog {
 			mCancelEntry = new MenuEntry(pScreenManager, mListLayout, "Cancel");
 			mCancelEntry.registerClickListener(this, BUTTON_CONFIRM_NO);
 
-			mListLayout.menuEntries().add(mCancelEntry);
-
+			mListLayout.addMenuEntry(mCancelEntry);
 		}
 
 		mMenuTitle = pTitle;
 
-		mListLayout.menuEntries().add(mConfirmEntry);
+		mListLayout.addMenuEntry(mConfirmEntry);
 
-		layouts().add(mListLayout);
+		addLayout(mListLayout);
 
-		// Offset of the buttons (from 0 - center screen)
 		mPaddingTopNormalized = 10;
-
+		mIsPopup = true;
+		mShowBackgroundScreens = true;
 	}
 
 	// --------------------------------------

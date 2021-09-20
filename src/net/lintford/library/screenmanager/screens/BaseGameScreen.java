@@ -23,7 +23,6 @@ public abstract class BaseGameScreen extends Screen {
 		new GameRendererController(pScreenManager.core().controllerManager(), rendererManager, entityGroupID());
 
 		mSingletonScreen = true;
-
 	}
 
 	// --------------------------------------

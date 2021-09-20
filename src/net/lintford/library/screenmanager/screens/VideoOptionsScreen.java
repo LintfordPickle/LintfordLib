@@ -107,7 +107,7 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 		mChangesPendingWarning.showWarnButton(true);
 		mChangesPendingWarning.horizontalFillType(FILLTYPE.FILL_CONTAINER);
 
-		mConfirmChangesLayout.menuEntries().add(mChangesPendingWarning);
+		mConfirmChangesLayout.addMenuEntry(mChangesPendingWarning);
 		mConfirmChangesLayout.layoutFillType(FILLTYPE.TAKE_WHATS_NEEDED);
 		mConfirmChangesLayout.setDrawBackground(true, ColorConstants.MenuPanelSecondaryColor);
 
@@ -123,14 +123,12 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 		lGroup.addEntry(lBackButton);
 		lGroup.addEntry(mApplyButton);
 
-		footerLayout().menuEntries().add(lGroup);
+		footerLayout().addMenuEntry(lGroup);
 
-		// Add the layouts to the screen
-		layouts().add(mVideoList);
-		layouts().add(mConfirmChangesLayout);
+		addLayout(mVideoList);
+		addLayout(mConfirmChangesLayout);
 
 		mConfirmChangesLayout.visible(false);
-
 	}
 
 	// --------------------------------------
@@ -174,11 +172,11 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 		// TODO: Add ToolTips for all menu options
 
 		// Add the menu entries to the window
-		lLayout.menuEntries().add(lVideoOptionsTitle);
-		lLayout.menuEntries().add(mFullScreenEntry);
-		lLayout.menuEntries().add(mMonitorEntry);
-		lLayout.menuEntries().add(mResolutionEntry);
-		lLayout.menuEntries().add(mVSync);
+		lLayout.addMenuEntry(lVideoOptionsTitle);
+		lLayout.addMenuEntry(mFullScreenEntry);
+		lLayout.addMenuEntry(mMonitorEntry);
+		lLayout.addMenuEntry(mResolutionEntry);
+		lLayout.addMenuEntry(mVSync);
 
 		fillMonitorEntry(mMonitorEntry);
 		fillResolutions(mResolutionEntry, GLFW.glfwGetPrimaryMonitor(), 16, 9);
@@ -194,12 +192,11 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 
 	@Override
 	public void updateLayoutSize(LintfordCore pCore) {
-		final int lLayoutCount = layouts().size();
+		final int lLayoutCount = mLayouts.size();
 		for (int i = 0; i < lLayoutCount; i++) {
-			layouts().get(i).layoutWidth(LAYOUT_WIDTH.THREEQUARTER);
-			layouts().get(i).marginLeft(100);
-			layouts().get(i).marginRight(100);
-
+			mLayouts.get(i).layoutWidth(LAYOUT_WIDTH.THREEQUARTER);
+			mLayouts.get(i).marginLeft(100);
+			mLayouts.get(i).marginRight(100);
 		}
 
 		super.updateLayoutSize(pCore);

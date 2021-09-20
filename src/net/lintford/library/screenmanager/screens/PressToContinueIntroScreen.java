@@ -69,7 +69,6 @@ public class PressToContinueIntroScreen extends Screen {
 		mBackgroundZDepth = -1.0f;
 		mContentZDepth = -0.5f;
 		mFlashZDepth = -0.01f;
-
 	}
 
 	// --------------------------------------

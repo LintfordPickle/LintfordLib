@@ -9,6 +9,7 @@ import net.lintford.library.core.graphics.Color;
 import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.core.input.IProcessMouseInput;
+import net.lintford.library.core.maths.Vector2f;
 import net.lintford.library.core.time.TimeSpan;
 import net.lintford.library.renderers.RendererManager;
 import net.lintford.library.screenmanager.transitions.BaseTransition;
@@ -49,15 +50,20 @@ public abstract class Screen implements IProcessMouseInput {
 	protected boolean mIsPopup;
 	protected boolean mAlwaysOnTop;
 	protected boolean mShowMouseCursor;
-	protected boolean mShowInBackground;
+	protected boolean mShowBackgroundScreens;
 	protected boolean mBlockInputInBackground;
 	public boolean acceptMouseInput;
 	public boolean acceptKeyboardInput;
 	protected float mMouseClickTimer;
+	private final Vector2f mScreenOffset = new Vector2f();
 
 	// --------------------------------------
 	// Properties
-	// --------------------------------------
+	// -------------------------------------
+
+	public Vector2f screenPositionOffset() {
+		return mScreenOffset;
+	}
 
 	public TextureBatchPCT textureBatch() {
 		return rendererManager.uiTextureBatch();
@@ -78,8 +84,9 @@ public abstract class Screen implements IProcessMouseInput {
 		return mAlwaysOnTop;
 	}
 
-	public boolean showInBackground() {
-		return mShowInBackground;
+	/** Should screens in the background be shown or should they be transitioned off? */
+	public boolean showBackgroundScreens() {
+		return mShowBackgroundScreens;
 	}
 
 	public boolean showMouseCursor() {
@@ -110,6 +117,26 @@ public abstract class Screen implements IProcessMouseInput {
 		mIsExiting = pIsExiting;
 	}
 
+	public void setTransitionOn(BaseTransition pNewTransition) {
+		mTransitionOn = pNewTransition;
+	}
+
+	public void setTransitionOff(BaseTransition pNewTransition) {
+		mTransitionOff = pNewTransition;
+	}
+
+	public void transitionOff() {
+		if (mScreenState == ScreenState.Active) {
+			mScreenState = ScreenState.TransitionOff;
+		}
+	}
+
+	public void transitionOn() {
+		if (mScreenState == ScreenState.Hidden) {
+			mScreenState = ScreenState.TransitionOn;
+		}
+	}
+
 	public ScreenState screenState() {
 		return mScreenState;
 	}
@@ -121,22 +148,20 @@ public abstract class Screen implements IProcessMouseInput {
 	public Screen(ScreenManager pScreenManager) {
 		mEntityGroupID = BaseEntity.getEntityNumber();
 
+		mScreenState = ScreenState.Hidden;
 		screenManager = pScreenManager;
 
-		mTransitionOn = new TransitionFadeIn(new TimeSpan(250));
-		mTransitionOff = new TransitionFadeOut(new TimeSpan(250));
+		mTransitionOn = new TransitionFadeIn(new TimeSpan(200));
+		mTransitionOff = new TransitionFadeOut(new TimeSpan(200));
 
 		rendererManager = new RendererManager(screenManager.core(), getClass().getSimpleName(), mEntityGroupID);
 
-		// By default, screens are not singleton
 		mSingletonScreen = false;
 
 		mIsLoaded = false;
 		mShowMouseCursor = true; // default on
 
-		// Screens start in a 'faded-out' state
-		screenColor.a = 0.f;
-
+		screenColor.a = 1.f;
 	}
 
 	// --------------------------------------
@@ -181,7 +206,6 @@ public abstract class Screen implements IProcessMouseInput {
 
 		if (mMouseClickTimer > 0) {
 			mMouseClickTimer -= pCore.appTime().elapsedTimeMilli();
-
 		}
 
 		mOtherScreenHasFocus = pOtherScreenHasFocus;
@@ -191,52 +215,31 @@ public abstract class Screen implements IProcessMouseInput {
 
 			if (updateTransition(pCore.appTime(), mTransitionOff)) {
 				screenManager.removeScreen(this);
-
 			}
-
+			return;
 		}
 
-		else if (pCoveredByOtherScreen) {
-
-			// if covered, then transition the screen off before hiding it.
-			if (mScreenState != ScreenState.Hidden && !updateTransition(pCore.appTime(), mTransitionOff)) {
-				mScreenState = ScreenState.TransitionOff;
-
-			}
-
-			else {
+		if (mScreenState == ScreenState.TransitionOff) {
+			if (mTransitionOff == null || updateTransition(pCore.appTime(), mTransitionOff)) {
 				mScreenState = ScreenState.Hidden;
 				if (mTransitionOff != null)
 					mTransitionOff.reset();
-
 			}
-
-		}
-
-		else {
-
-			// If not covered, then transition the screen on before activating it.
-			if (mScreenState != ScreenState.Active && !updateTransition(pCore.appTime(), mTransitionOn)) {
-				mScreenState = ScreenState.TransitionOn;
-
-			}
-
-			else {
+		} else if (mScreenState == ScreenState.TransitionOn) {
+			if (mTransitionOn == null || updateTransition(pCore.appTime(), mTransitionOn)) {
 				mScreenState = ScreenState.Active;
 				if (mTransitionOn != null)
 					mTransitionOn.reset();
-
 			}
-
-			screenManager.core().controllerManager().update(screenManager.core(), mEntityGroupID);
-
 		}
 
+		if (!pCoveredByOtherScreen) {
+			screenManager.core().controllerManager().update(screenManager.core(), mEntityGroupID);
+		}
 	}
 
 	public void draw(LintfordCore pCore) {
 		rendererManager.draw(pCore);
-
 	}
 
 	// --------------------------------------
@@ -244,7 +247,6 @@ public abstract class Screen implements IProcessMouseInput {
 	// --------------------------------------
 
 	private boolean updateTransition(CoreTime pGameTime, BaseTransition pTransition) {
-
 		if (pTransition == null)
 			return true; // finished, nothing to do
 
@@ -254,16 +256,13 @@ public abstract class Screen implements IProcessMouseInput {
 			return true; // finished
 
 		return false; // not finished
-
 	}
 
 	public void exitScreen() {
 		if (mTransitionOff == null || mTransitionOff.timeSpan().equals(TimeSpan.zero())) {
 			screenManager.removeScreen(this);
-
 		} else {
 			mIsExiting = true;
-
 		}
 	}
 

@@ -151,16 +151,19 @@ public class MenuToggleEntry extends MenuEntry {
 
 		final float lTileSize = 32;
 
+		final var lScreenOffset = pScreen.screenPositionOffset();
+		final var lParentScreenAlpha = pScreen.screenColor.a;
+
 		entryColor.setFromColor(lParentScreen.screenColor);
-		textColor.a = entryColor.a;
+		textColor.a = lParentScreenAlpha;
 
 		mZ = pParentZDepth;
 
 		if (mHoveredOver) {
 			lTextureBatch.begin(pCore.HUD());
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() - w / 2, centerY() - h / 2, 32, h, mZ, ColorConstants.MenuEntryHighlightColor);
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() - (w / 2) + 32, centerY() - h / 2, w - 64, h, mZ, ColorConstants.MenuEntryHighlightColor);
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() + (w / 2) - 32, centerY() - h / 2, 32, h, mZ, ColorConstants.MenuEntryHighlightColor);
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, lScreenOffset.x + centerX() - w / 2, lScreenOffset.y + centerY() - h / 2, 32, h, mZ, ColorConstants.MenuEntryHighlightColor);
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, lScreenOffset.x + centerX() - (w / 2) + 32, lScreenOffset.y + centerY() - h / 2, w - 64, h, mZ, ColorConstants.MenuEntryHighlightColor);
+			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, lScreenOffset.x + centerX() + (w / 2) - 32, lScreenOffset.y + centerY() - h / 2, 32, h, mZ, ColorConstants.MenuEntryHighlightColor);
 			lTextureBatch.end();
 
 		}
@@ -169,38 +172,33 @@ public class MenuToggleEntry extends MenuEntry {
 
 		// Render the check box (either ticked or empty)
 		if (mIsChecked)
-			lTextureBatch.draw(mUITexture, 64, 128, 32, 32, x + w / 2 + 16, y + h / 2 - lTileSize / 2, lTileSize, lTileSize, mZ, entryColor);
+			lTextureBatch.draw(mUITexture, 64, 128, 32, 32, lScreenOffset.x + x + w / 2 + 16, lScreenOffset.y + y + h / 2 - lTileSize / 2, lTileSize, lTileSize, mZ, entryColor);
 		else
-			lTextureBatch.draw(mUITexture, 32, 128, 32, 32, centerX() + lTileSize / 2, y + h / 2 - lTileSize / 2, lTileSize, lTileSize, mZ, entryColor);
+			lTextureBatch.draw(mUITexture, 32, 128, 32, 32, lScreenOffset.x + centerX() + lTileSize / 2, lScreenOffset.y + y + h / 2 - lTileSize / 2, lTileSize, lTileSize, mZ, entryColor);
 
 		lTextureBatch.end();
 
 		lFont.begin(pCore.HUD());
-		lFont.drawText(mText, x + w / 2 - lLabelWidth - SPACE_BETWEEN_TEXT - lSeparatorHalfWidth, y + h / 2 - lTextHeight * 0.5f, mZ, textColor, lUiTextScale, -1);
-		lFont.drawText(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - lTextHeight * 0.5f, mZ, textColor, lUiTextScale, -1);
+		lFont.drawText(mText, lScreenOffset.x + x + w / 2 - lLabelWidth - SPACE_BETWEEN_TEXT - lSeparatorHalfWidth, lScreenOffset.y + y + h / 2 - lTextHeight * 0.5f, mZ, textColor, lUiTextScale, -1);
+		lFont.drawText(mSeparator, lScreenOffset.x + x + w / 2 - lSeparatorHalfWidth, lScreenOffset.y + y + h / 2 - lTextHeight * 0.5f, mZ, textColor, lUiTextScale, -1);
 
 		if (mIsChecked) {
-			lFont.drawText("Enabled", x + w / 2 + lSeparatorHalfWidth + lTileSize * 2, y + h / 2 - lTextHeight * 0.5f, mZ, textColor, lUiTextScale, -1);
-
+			lFont.drawText("Enabled", lScreenOffset.x + x + w / 2 + lSeparatorHalfWidth + lTileSize * 2, lScreenOffset.y + y + h / 2 - lTextHeight * 0.5f, mZ, textColor, lUiTextScale, -1);
 		} else {
-			lFont.drawText("Disabled", x + w / 2 + lSeparatorHalfWidth + lTileSize * 2, y + h / 2 - lTextHeight * 0.5f, mZ, textColor, lUiTextScale, -1);
-
+			lFont.drawText("Disabled", lScreenOffset.x + x + w / 2 + lSeparatorHalfWidth + lTileSize * 2, lScreenOffset.y + y + h / 2 - lTextHeight * 0.5f, mZ, textColor, lUiTextScale, -1);
 		}
 
 		lFont.end();
 
 		if (mShowInfoIcon) {
-			drawInfoIcon(pCore, lTextureBatch, mInfoIconDstRectangle, entryColor.a);
-
+			drawInfoIcon(pCore, lTextureBatch, mInfoIconDstRectangle, lParentScreenAlpha);
 		}
 
 		if (mShowWarnIcon) {
-			drawWarningIcon(pCore, lTextureBatch, mWarnIconDstRectangle, entryColor.a);
-
+			drawWarningIcon(pCore, lTextureBatch, mWarnIconDstRectangle, lParentScreenAlpha);
 		}
 
 		drawDebugCollidableBounds(pCore, lTextureBatch);
-
 	}
 
 	// --------------------------------------

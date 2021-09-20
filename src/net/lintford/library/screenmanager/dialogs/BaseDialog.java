@@ -186,15 +186,13 @@ public abstract class BaseDialog extends MenuScreen {
 	public void updateLayoutSize(LintfordCore pCore) {
 		super.updateLayoutSize(pCore);
 
-		final int lLayoutCount = layouts().size();
+		final int lLayoutCount = mLayouts.size();
 		for (int i = 0; i < lLayoutCount; i++) {
-			final var lBaseLayout = layouts().get(i);
+			final var lBaseLayout = mLayouts.get(i);
 
 			lBaseLayout.set(-DIALOG_WIDTH * 0.4f, mPaddingTopNormalized, DIALOG_WIDTH * 0.8f, DIALOG_HEIGHT);
 			lBaseLayout.updateStructure();
-
 		}
-
 	}
 
 	@Override
@@ -269,16 +267,12 @@ public abstract class BaseDialog extends MenuScreen {
 			final float lScale = 0.65f;
 			mMenuHeaderFont.drawText(mMenuTitle, -DIALOG_WIDTH / 2f + TEXT_HORIZONTAL_PADDING + lHorizontalOffsetX, -DIALOG_HEIGHT / 2f + TEXT_HORIZONTAL_PADDING, lZDepth, screenColor, lScale);
 			mMenuHeaderFont.end();
-
 		}
 
 		// Draw each layout in turn.
-		final int lCount = layouts().size();
+		final int lCount = mLayouts.size();
 		for (int i = 0; i < lCount; i++) {
 			mLayouts.get(i).draw(pCore, lZDepth + (i * 0.001f));
-
 		}
-
 	}
-
 }
