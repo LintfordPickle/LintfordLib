@@ -5,8 +5,9 @@ import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.Color;
 import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.fonts.FontUnit;
-import net.lintford.library.core.graphics.textures.Texture;
-import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
+import net.lintford.library.core.graphics.sprites.spritebatch.SpriteBatch;
+import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
+import net.lintford.library.core.graphics.textures.CoreTextureNames;
 import net.lintford.library.core.input.IProcessMouseInput;
 
 public class IconIntFilter implements IProcessMouseInput {
@@ -17,7 +18,8 @@ public class IconIntFilter implements IProcessMouseInput {
 
 	private UIIconFilter mUIIconFilter;
 	private int mFilterValue;
-	private Rectangle mUISrcRectangle;
+	private transient SpriteSheetDefinition mIconSpritesheetDefinition;
+	private transient int mIconSpriteFrameIndex;
 	private Rectangle mUIDstRectangle;
 	private boolean mEnabled;
 	private String mFilterName;
@@ -35,10 +37,6 @@ public class IconIntFilter implements IProcessMouseInput {
 
 	public String filterName() {
 		return mFilterName;
-	}
-
-	public Rectangle uiSrcRectangle() {
-		return mUISrcRectangle;
 	}
 
 	public Rectangle uiDstRectangle() {
@@ -63,22 +61,21 @@ public class IconIntFilter implements IProcessMouseInput {
 
 	public void setDstRectangle(float pX, float pY, float pW, float pH) {
 		mUIDstRectangle.set(pX, pY, pW, pH);
-
 	}
 
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
-	public IconIntFilter(UIIconFilter pParent, Rectangle pSrcRect, String pName, int pFilterValue) {
+	public IconIntFilter(UIIconFilter pParent, SpriteSheetDefinition pSpritesheet, int pSpriteFrameIndex, String pName, int pFilterValue) {
 		mEnabled = false;
 
 		mUIIconFilter = pParent;
-		mUISrcRectangle = pSrcRect;
+		mIconSpritesheetDefinition = pSpritesheet;
+		mIconSpriteFrameIndex = pSpriteFrameIndex;
 		mUIDstRectangle = new Rectangle();
 		mFilterName = pName;
 		mFilterValue = pFilterValue;
-
 	}
 
 	// --------------------------------------
@@ -91,23 +88,21 @@ public class IconIntFilter implements IProcessMouseInput {
 			if (pCore.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
 				mUIIconFilter.onFilterClick(this);
 				return true;
-
 			}
-
 		}
 
 		return false;
 	}
 
-	public void draw(LintfordCore pCore, TextureBatchPCT pTextureBatch, Texture pUITexture, FontUnit pTextFont, float pComponentZDepth) {
+	public void draw(LintfordCore pCore, SpriteBatch pSpriteBatch, SpriteSheetDefinition pCoreSpritesheet, FontUnit pTextFont, float pComponentZDepth) {
 		final float lColorMod = mEnabled ? 1.f : .8f;
 		final var lColor = ColorConstants.getColorWithRGBMod(ColorConstants.WHITE, lColorMod);
 
 		// Draw the 'tab' background (open/closed)
 		if (mEnabled) {
-			pTextureBatch.draw(pUITexture, 384, 0, 64, 64, mUIDstRectangle.x() - 2, mUIDstRectangle.y() - 2, mUIDstRectangle.w() + 4, mUIDstRectangle.h() + 6, -0.5f, lColor);
+			pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_BLUE, mUIDstRectangle.x() - 2, mUIDstRectangle.y() - 2, mUIDstRectangle.w() + 4, mUIDstRectangle.h() + 6, -0.5f, lColor);
 		} else {
-			pTextureBatch.draw(pUITexture, 320, 0, 64, 64, mUIDstRectangle.x() - 2, mUIDstRectangle.y() - 2, mUIDstRectangle.w() + 4, mUIDstRectangle.h() + 6, -0.5f, lColor);
+			pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_GREEN, mUIDstRectangle.x() - 2, mUIDstRectangle.y() - 2, mUIDstRectangle.w() + 4, mUIDstRectangle.h() + 6, -0.5f, lColor);
 		}
 
 		if (mHoveredOver) {
@@ -115,18 +110,16 @@ public class IconIntFilter implements IProcessMouseInput {
 			final float lTextHeight = pTextFont.fontHeight();
 
 			// Draw a background texture behind the texture so it is always legible.
-			pTextureBatch.draw(pUITexture, 64, 0, 32, 32, mUIDstRectangle.x() + 16 - lTextHalfW, mUIDstRectangle.y() - 19, lTextHalfW * 2 + 4, lTextHeight, pComponentZDepth, ColorConstants.WHITE);
-
+			pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_RED, mUIDstRectangle.x() + 16 - lTextHalfW, mUIDstRectangle.y() - 19, lTextHalfW * 2 + 4, lTextHeight, pComponentZDepth, ColorConstants.WHITE);
 		}
 
 		// Draw the background icon
-		pTextureBatch.draw(pUITexture, mUISrcRectangle, mUIDstRectangle, -0.5f, lColor);
+		pSpriteBatch.draw(mIconSpritesheetDefinition, mIconSpriteFrameIndex, mUIDstRectangle, pComponentZDepth, lColor);
 
 		if (mHoveredOver) {
 			final float lTextHalfW = pTextFont.getStringWidth(mFilterName) / 2;
 			pTextFont.drawText(mFilterName, mUIDstRectangle.x() + 16 - lTextHalfW, mUIDstRectangle.y() - 19, pComponentZDepth, ColorConstants.WHITE, 1f);
 		}
-
 	}
 
 	// --------------------------------------

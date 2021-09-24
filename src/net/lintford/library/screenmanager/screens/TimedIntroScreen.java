@@ -82,7 +82,6 @@ public class TimedIntroScreen extends Screen {
 		mBackgroundTexture = pResourceManager.textureManager().loadTexture(mImageLocation, mImageLocation, entityGroupID());
 
 		mTextureBatch.loadGLContent(pResourceManager);
-
 	}
 
 	@Override
@@ -90,7 +89,6 @@ public class TimedIntroScreen extends Screen {
 		super.unloadGLContent();
 
 		mTextureBatch.unloadGLContent();
-
 	}
 
 	@Override

@@ -571,10 +571,10 @@ public class TextureBatchPCT {
 
 		mBuffer.clear();
 
-		// FIXME: This is fundamentally incorrect. Cannot reset ver count here and maintain 'redraw' functionality
+		// FIXME: This is fundamentally incorrect. Cannot reset vertex count here and maintain 'redraw' functionality - it should be possible to re-draw the buffers 
+		// in subsequent frames without re-calling draw again (assuming nothing has changed in the frame).
 		mCurNumSprites = 0;
 		mVertexCount = 0;
-
 	}
 
 	public void redraw() {

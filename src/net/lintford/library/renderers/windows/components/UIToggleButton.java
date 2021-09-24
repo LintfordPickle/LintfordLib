@@ -3,8 +3,9 @@ package net.lintford.library.renderers.windows.components;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.fonts.FontUnit;
-import net.lintford.library.core.graphics.textures.Texture;
-import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
+import net.lintford.library.core.graphics.sprites.spritebatch.SpriteBatch;
+import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
+import net.lintford.library.core.graphics.textures.CoreTextureNames;
 import net.lintford.library.renderers.windows.UiWindow;
 import net.lintford.library.screenmanager.entries.EntryInteractions;
 
@@ -108,13 +109,13 @@ public class UIToggleButton extends UIWidget {
 	}
 
 	@Override
-	public void draw(LintfordCore pCore, TextureBatchPCT pTextureBatch, Texture pUITexture, FontUnit pTextFont, float pComponentZDepth) {
+	public void draw(LintfordCore pCore, SpriteBatch pSpriteBatch, SpriteSheetDefinition pCoreSpritesheet, FontUnit pTextFont, float pComponentZDepth) {
 		final float lColorMod = mIsToggledOn ? mHoveredOver ? .9f : 1.f : .3f;
 		final var lColor = ColorConstants.getColorWithRGBMod(entityColor, lColorMod);
 
-		pTextureBatch.draw(pUITexture, 0, 32, 32, 32, x, y, 32, h, pComponentZDepth, lColor);
-		pTextureBatch.draw(pUITexture, 32, 32, 32, 32, x + 32, y, w - 64, h, pComponentZDepth, lColor);
-		pTextureBatch.draw(pUITexture, 128, 32, 32, 32, x + w - 32, y, 32, h, pComponentZDepth, lColor);
+		pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_BUTTON_HORIZONTAL_LEFT, x, y, 32, h, pComponentZDepth, lColor);
+		pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_BUTTON_HORIZONTAL_MID, x + 32, y, w - 64, h, pComponentZDepth, lColor);
+		pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_BUTTON_HORIZONTAL_RIGHT, x + w - 32, y, 32, h, pComponentZDepth, lColor);
 
 		if (mButtonLabel != null && mButtonLabel.length() > 0) {
 			final float lTextWidth = pTextFont.getStringWidth(mButtonLabel);

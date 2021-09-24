@@ -11,8 +11,9 @@ import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.fonts.BitmapFontManager;
 import net.lintford.library.core.graphics.fonts.FontUnit;
-import net.lintford.library.core.graphics.textures.Texture;
-import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
+import net.lintford.library.core.graphics.sprites.spritebatch.SpriteBatch;
+import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
+import net.lintford.library.core.graphics.textures.CoreTextureNames;
 import net.lintford.library.core.input.IProcessMouseInput;
 import net.lintford.library.renderers.windows.components.IScrollBarArea;
 import net.lintford.library.renderers.windows.components.ScrollBar;
@@ -34,8 +35,8 @@ public class DebugControllerTreeRenderer extends Rectangle implements IScrollBar
 	// --------------------------------------
 
 	private Debug mDebugManager;
-	private Texture mCoreTexture;
-	private TextureBatchPCT mTextureBatch;
+	private SpriteSheetDefinition mCoreSpritesheet;
+	private SpriteBatch mSpriteBatch;
 	private ControllerManager mControllerManager;
 	private DebugControllerTreeController mDebugControllerTree;
 	private transient FontUnit mConsoleFont;
@@ -78,13 +79,10 @@ public class DebugControllerTreeRenderer extends Rectangle implements IScrollBar
 		mDebugManager = pDebugManager;
 
 		if (pDebugManager.debugManagerEnabled()) {
-			mTextureBatch = new TextureBatchPCT();
-
+			mSpriteBatch = new SpriteBatch();
 			mContentRectangle = new ScrollBarContentRectangle(this);
 			mScrollBar = new ScrollBar(this, mContentRectangle);
-
 		}
-
 	}
 
 	// --------------------------------------
@@ -97,10 +95,10 @@ public class DebugControllerTreeRenderer extends Rectangle implements IScrollBar
 
 		Debug.debugManager().logger().v(getClass().getSimpleName(), "DebugStats loading GL content");
 
-		mCoreTexture = pResourceManager.textureManager().textureCore();
+		mCoreSpritesheet = pResourceManager.spriteSheetManager().coreSpritesheet();
 		mConsoleFont = pResourceManager.fontManager().getFontUnit(BitmapFontManager.SYSTEM_FONT_CONSOLE_NAME);
 
-		mTextureBatch.loadGLContent(pResourceManager);
+		mSpriteBatch.loadGLContent(pResourceManager);
 	}
 
 	public void unloadGLContent() {
@@ -109,11 +107,10 @@ public class DebugControllerTreeRenderer extends Rectangle implements IScrollBar
 
 		Debug.debugManager().logger().v(getClass().getSimpleName(), "DebugStats unloading GL content");
 
-		mTextureBatch.unloadGLContent();
+		mSpriteBatch.unloadGLContent();
 
 		mConsoleFont = null;
-		mCoreTexture = null;
-
+		mCoreSpritesheet = null;
 	}
 
 	public void handleInput(LintfordCore pCore) {
@@ -296,19 +293,19 @@ public class DebugControllerTreeRenderer extends Rectangle implements IScrollBar
 		if (!mIsOpen)
 			return;
 
-		mTextureBatch.begin(pCore.HUD());
-		mTextureBatch.draw(mCoreTexture, 0, 0, 32, 32, x, y - 25f, mOpenWidth, 25f, -0.03f, ColorConstants.MenuPanelPrimaryColor);
-		mTextureBatch.draw(mCoreTexture, 0, 0, 32, 32, x, y, mOpenWidth, mOpenHeight, -0.03f, ColorConstants.MenuPanelSecondaryColor);
-		mTextureBatch.end();
+		mSpriteBatch.begin(pCore.HUD());
+		mSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, x, y - 25f, mOpenWidth, 25f, -0.03f, ColorConstants.MenuPanelPrimaryColor);
+		mSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, x, y, mOpenWidth, mOpenHeight, -0.03f, ColorConstants.MenuPanelSecondaryColor);
+		mSpriteBatch.end();
 
 		mConsoleFont.begin(pCore.HUD());
 		mConsoleFont.drawText("Controllers", x, y - 25f, -0.02f, ColorConstants.WHITE, 1, -1);
 		mConsoleFont.end();
 
 		if (h < mContentRectangle.h())
-			mContentRectangle.preDraw(pCore, mTextureBatch, mCoreTexture);
+			mContentRectangle.preDraw(pCore, mSpriteBatch, mCoreSpritesheet);
 
-		mTextureBatch.begin(pCore.HUD());
+		mSpriteBatch.begin(pCore.HUD());
 		mConsoleFont.begin(pCore.HUD());
 
 		// Getting list of ControllerItems to render
@@ -327,34 +324,32 @@ public class DebugControllerTreeRenderer extends Rectangle implements IScrollBar
 
 			int lPosX = lBaseControllerWidget.controllerLevel * 30;
 
-			mConsoleFont.drawText(lControllerName, lBaseControllerWidget.x() + lPosX, lBaseControllerWidget.y(), -0.02f, ColorConstants.TextEntryColor, 1, -1);
+			mConsoleFont.drawText(lControllerName, lBaseControllerWidget.x() + lPosX, lBaseControllerWidget.y() + lBaseControllerWidget.h() * .5f - mConsoleFont.fontHeight() * .5f, -0.02f, ColorConstants.WHITE, 1, -1);
 
 			final float lActiveIconX = x + mOpenWidth - 64;
 			final float lActiveIconY = lBaseControllerWidget.y();
 
 			if (lBaseControllerWidget == null || !lBaseControllerWidget.isControllerActive) {
-				mTextureBatch.draw(mCoreTexture, 64, 128, 32, 32, lActiveIconX, lActiveIconY, 32, 32, -0.01f, ColorConstants.WHITE);
+				mSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_TICK, lActiveIconX, lActiveIconY, 32, 32, -0.01f, ColorConstants.WHITE);
 
 			} else {
-				mTextureBatch.draw(mCoreTexture, 32, 128, 32, 32, lActiveIconX, lActiveIconY, 32, 32, -0.01f, ColorConstants.WHITE);
+				mSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_CROSS, lActiveIconX, lActiveIconY, 32, 32, -0.01f, ColorConstants.WHITE);
 
 			}
 
 		}
 
-		mTextureBatch.end();
+		mSpriteBatch.end();
 		mConsoleFont.end();
 
 		if (h < mContentRectangle.h())
 			mContentRectangle.postDraw(pCore);
 
 		if (mScrollBarEnabled) {
-			mTextureBatch.begin(pCore.HUD());
-			mScrollBar.draw(pCore, mTextureBatch, mCoreTexture, -0.01f);
-			mTextureBatch.end();
-
+			mSpriteBatch.begin(pCore.HUD());
+			mScrollBar.draw(pCore, mSpriteBatch, mCoreSpritesheet, -0.01f);
+			mSpriteBatch.end();
 		}
-
 	}
 
 	// --------------------------------------

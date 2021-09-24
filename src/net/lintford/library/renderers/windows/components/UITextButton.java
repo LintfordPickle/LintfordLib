@@ -3,8 +3,9 @@ package net.lintford.library.renderers.windows.components;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.fonts.FontUnit;
-import net.lintford.library.core.graphics.textures.Texture;
-import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
+import net.lintford.library.core.graphics.sprites.spritebatch.SpriteBatch;
+import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
+import net.lintford.library.core.graphics.textures.CoreTextureNames;
 import net.lintford.library.renderers.windows.UiWindow;
 import net.lintford.library.screenmanager.entries.EntryInteractions;
 
@@ -111,12 +112,12 @@ public class UITextButton extends UIWidget {
 	}
 
 	@Override
-	public void draw(LintfordCore pCore, TextureBatchPCT pTextureBatch, Texture pUITexture, FontUnit pTextFont, float pComponentZDepth) {
+	public void draw(LintfordCore pCore, SpriteBatch pSpriteBatch, SpriteSheetDefinition pCoreSpritesheet, FontUnit pTextFont, float pComponentZDepth) {
 		final float lColorMod = mHoveredOver ? .3f : 1.f;
 		final var lColor = ColorConstants.getColorWithRGBMod(ColorConstants.PrimaryColor, lColorMod);
 
 		// Draw the button background
-		pTextureBatch.draw(pUITexture, 0, 0, 32, 32, x, y, 32, 32, pComponentZDepth, lColor);
+		pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, x, y, 32, 32, pComponentZDepth, lColor);
 
 		final var lFontRenderer = mParentWindow.rendererManager().uiTextFont();
 
@@ -124,7 +125,6 @@ public class UITextButton extends UIWidget {
 		final float lTextWidth = lFontRenderer.getStringWidth(lButtonText);
 
 		lFontRenderer.drawText(lButtonText, x + w / 2f - lTextWidth / 2f, y + h / 2f - lFontRenderer.fontHeight() / 4f, pComponentZDepth, ColorConstants.WHITE, 1f);
-
 	}
 
 	// --------------------------------------

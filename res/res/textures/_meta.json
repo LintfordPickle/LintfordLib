@@ -1,0 +1,32 @@
+{
+	"textureDefinitions" : [
+		{
+			"textureName":"TEXTURE_CORE",
+			"filepath":"/res/textures/core/textureCore.png",
+			"filterIndex":1,
+			"wrapSIndex":1,
+			"wrapTIndex":1
+		},
+		{
+			"textureName":"TEXTURE_CORE_LOGO",
+			"filepath":"/res/textures/core/textureLogo.png",
+			"filterIndex":1,
+			"wrapSIndex":1,
+			"wrapTIndex":1
+		},
+		{
+			"textureName":"TEXTURE_CHECKER",
+			"filepath":"/res/textures/core/textureCheckerBoard.png",
+			"filterIndex":1,
+			"wrapSIndex":1,
+			"wrapTIndex":1
+		},
+		{
+			"textureName":"TEXTURE_CHECKERI",
+			"filepath":"/res/textures/core/textureCheckerBoardIndexed.png",
+			"filterIndex":1,
+			"wrapSIndex":1,
+			"wrapTIndex":1
+		}
+	]
+}

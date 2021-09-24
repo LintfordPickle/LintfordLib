@@ -124,7 +124,6 @@ public abstract class BaseRenderer {
 	public void unloadGLContent() {
 		Debug.debugManager().logger().i(TAG, "Unloading GL Content: " + getClass().getSimpleName());
 		mIsLoaded = false;
-
 	}
 
 	public boolean handleInput(LintfordCore pCore) {

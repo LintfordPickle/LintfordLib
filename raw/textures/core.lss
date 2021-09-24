@@ -1,0 +1,28 @@
+{
+  "outputDataFilename": "C:\\Users\\JohnH\\Desktop\\spritesheetCore.json",
+  "outputNameDataFilename": "C:\\Users\\JohnH\\Desktop\\CoreTextureNames.java",
+  "outputImageFilename": "C:\\Users\\JohnH\\Desktop\\textureCore.png",
+  "workingDirectory": "D:\\dev\\java\\excavation\\projects\\Java-LDLibraryGL\\raw\\textures\\core",
+  "spriteSheetName": "SPRITESHEET_CORE",
+  "textureName": "TEXTURE_CORE",
+  "exportDataFile": true,
+  "exportTextureFile": true,
+  "exportNamesFile": true,
+  "sortMode": "Area",
+  "borderPadding": 0,
+  "shapeOutlines": false,
+  "crop": false,
+  "trim": false,
+  "allowRotations": false,
+  "spritePadding": 0,
+  "textureWidthMax": 512,
+  "textureWidthActual": 512,
+  "textureHeightMax": 512,
+  "textureHeightActual": 512,
+  "forcePoTTextures": true,
+  "autoSizeTexture": false,
+  "itemFilenames": [
+    "D:\\dev\\java\\excavation\\projects\\Java-LDLibraryGL\\raw\\textures\\core\\*.*"
+  ],
+  "animationItems": {}
+}

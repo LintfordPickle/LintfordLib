@@ -1,12 +1,12 @@
 package net.lintford.library.renderers.windows.components;
 
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.Color;
 import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.fonts.FontUnit;
-import net.lintford.library.core.graphics.textures.Texture;
-import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
+import net.lintford.library.core.graphics.sprites.spritebatch.SpriteBatch;
+import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
+import net.lintford.library.core.graphics.textures.CoreTextureNames;
 import net.lintford.library.renderers.windows.UiWindow;
 import net.lintford.library.screenmanager.entries.EntryInteractions;
 
@@ -32,8 +32,8 @@ public class UIIconButton extends UIWidget {
 	private transient float mClickTimer;
 	private transient boolean mButtonSolidColorBackground;
 
-	private transient Texture mButtonTexture;
-	private transient Rectangle mSourceRectangle;
+	private transient SpriteSheetDefinition mButtonTexture;
+	private transient int mSourceFrameIndex;
 
 	// --------------------------------------
 	// Properties
@@ -56,9 +56,8 @@ public class UIIconButton extends UIWidget {
 	}
 
 	public void setButtonSolidBackgroundColor(Color pColor) {
-		mButtonSolidColorBackground = pColor == null;
+		mButtonSolidColorBackground = pColor != null;
 		entityColor.setFromColor(pColor);
-
 	}
 
 	public boolean setButtonSolidBackgroundColor() {
@@ -89,11 +88,8 @@ public class UIIconButton extends UIWidget {
 		w = 200;
 		h = 25;
 
-		mSourceRectangle = new Rectangle();
-
 		mButtonSolidColorBackground = true;
 		mDrawButtonText = true;
-
 	}
 
 	// --------------------------------------
@@ -143,16 +139,14 @@ public class UIIconButton extends UIWidget {
 	}
 
 	@Override
-	public void draw(LintfordCore pCore, TextureBatchPCT pTextureBatch, Texture pUITexture, FontUnit pTextFont, float pComponentZDepth) {
+	public void draw(LintfordCore pCore, SpriteBatch pSpriteBatch, SpriteSheetDefinition pCoreSpritesheet, FontUnit pTextFont, float pComponentZDepth) {
 		if (!mIsVisible)
 			return;
 
 		if (mButtonSolidColorBackground) {
-			drawSolidColorBackground(pCore, pTextureBatch, pUITexture);
-
+			drawSolidColorBackground(pCore, pSpriteBatch, pCoreSpritesheet);
 		} else if (mButtonTexture != null) {
-			drawTextureBackground(pCore, pTextureBatch, mButtonTexture);
-
+			drawTextureBackground(pCore, pSpriteBatch);
 		}
 
 		// text
@@ -160,25 +154,21 @@ public class UIIconButton extends UIWidget {
 			final float lTextWidth = pTextFont.getStringWidth(mButtonLabel);
 
 			pTextFont.drawText(mButtonLabel, x + w / 2f - lTextWidth / 2f, y + h / 2f - pTextFont.fontHeight() / 2f, pComponentZDepth, ColorConstants.WHITE, 1f);
-
 		}
-
 	}
 
-	private void drawSolidColorBackground(LintfordCore pCore, TextureBatchPCT pTextureBatch, Texture pTexture) {
+	private void drawSolidColorBackground(LintfordCore pCore, SpriteBatch pSpriteBatch, SpriteSheetDefinition pCoreSpritesheet) {
 		final float lColorMod = mHoveredOver ? mHoveredOver ? .9f : 1.f : .3f;
 		final var lColor = ColorConstants.getColorWithRGBMod(entityColor, lColorMod);
 
-		pTextureBatch.draw(pTexture, 0, 0, 32, 32, x, y, w, h, -1.0f, lColor);
-
+		pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, x, y, w, h, -1.0f, lColor);
 	}
 
-	private void drawTextureBackground(LintfordCore pCore, TextureBatchPCT pTextureBatch, Texture pTexture) {
-		final float lColorMod = mHoveredOver ? .5f : 1.f;
+	private void drawTextureBackground(LintfordCore pCore, SpriteBatch pSpriteBatch) {
+		final var lColorMod = mHoveredOver ? .5f : 1.f;
 		final var lColor = ColorConstants.getColorWithRGBMod(entityColor, lColorMod);
 
-		pTextureBatch.draw(pTexture, mSourceRectangle, x, y, w, h, -1.0f, lColor);
-
+		pSpriteBatch.draw(mButtonTexture, mSourceFrameIndex, x, y, w, h, -1.0f, lColor);
 	}
 
 	// --------------------------------------
@@ -195,17 +185,10 @@ public class UIIconButton extends UIWidget {
 		mCallback = null;
 	}
 
-	public void unsetTextureSource() {
-		mButtonTexture = null;
-
-	}
-
-	public void setTextureSource(final Texture pTexture, final float pSrcX, final float pSrcY, final float pSrcW, final float pSrcH) {
+	public void setTextureSource(final SpriteSheetDefinition pSpritesheetDefinition, final int pSpriteFrameIndex) {
 		mButtonSolidColorBackground = false;
 
-		mButtonTexture = pTexture;
-		mSourceRectangle.set(pSrcX, pSrcY, pSrcW, pSrcH);
-
+		mButtonTexture = pSpritesheetDefinition;
+		mSourceFrameIndex = pSpriteFrameIndex;
 	}
-
 }

@@ -7,8 +7,8 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.fonts.FontUnit;
-import net.lintford.library.core.graphics.textures.Texture;
-import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
+import net.lintford.library.core.graphics.sprites.spritebatch.SpriteBatch;
+import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 
 public class UIIconFilter extends Rectangle {
 
@@ -111,22 +111,17 @@ public class UIIconFilter extends Rectangle {
 			lFilter.setDstRectangle(lPosX, lPosY, 32, 32);
 
 			lPosX += lFilter.uiDstRectangle().w() + HORIZONTAL_PADDING;
-
 		}
 	}
 
-	public void draw(LintfordCore pCore, TextureBatchPCT pTextureBatch, Texture pUITexture, FontUnit pTextFont, float pComponentZDepth) {
+	public void draw(LintfordCore pCore, SpriteBatch pSpriteBatch, SpriteSheetDefinition pHudSpritesheet, FontUnit pTextFont, float pComponentZDepth) {
 		int lCount = mIconFilters.size();
 		for (int i = 0; i < lCount; i++) {
 			final var lIconIntFilter = mIconFilters.get(i);
 
-			lIconIntFilter.draw(pCore, pTextureBatch, pUITexture, pTextFont, pComponentZDepth);
+			lIconIntFilter.draw(pCore, pSpriteBatch, pHudSpritesheet, pTextFont, pComponentZDepth);
 		}
 	}
-
-	// --------------------------------------
-	// Methods
-	// --------------------------------------
 
 	// --------------------------------------
 	// Methods
@@ -141,7 +136,6 @@ public class UIIconFilter extends Rectangle {
 	 */
 	public void addFilterIcon(IconIntFilter pNewFilterIcon) {
 		mIconFilters.add(pNewFilterIcon);
-
 	}
 
 	public void onFilterClick(IconIntFilter pObj) {
@@ -161,7 +155,5 @@ public class UIIconFilter extends Rectangle {
 			pObj.filterEnabled(true);
 			mCurrentFilter = pObj.filterValue();
 		}
-
 	}
-
 }

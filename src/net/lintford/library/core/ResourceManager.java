@@ -108,6 +108,7 @@ public class ResourceManager {
 		mFontManager.initialize(this);
 		mTextureManager = new TextureManager();
 		mSpriteSheetManager = new SpriteSheetManager();
+		mSpriteSheetManager.initialize(this);
 		mAudioManager = new AudioManager(pConfig.audio());
 		mSpriteGraphRepository = new SpriteGraphRepository();
 		mPObjectManager = new PObjectManager();

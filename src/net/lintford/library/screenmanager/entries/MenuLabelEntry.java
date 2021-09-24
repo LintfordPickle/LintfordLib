@@ -2,6 +2,7 @@ package net.lintford.library.screenmanager.entries;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.graphics.ColorConstants;
+import net.lintford.library.core.graphics.textures.CoreTextureNames;
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.Screen;
 import net.lintford.library.screenmanager.ScreenManager;
@@ -88,18 +89,15 @@ public class MenuLabelEntry extends MenuEntry {
 		}
 
 		final var lScreenOffset = pScreen.screenPositionOffset();
-
 		final float lUiTextScale = lParentScreen.uiTextScale();
-
 		final float lLabelWidth = lFont.getStringWidth(mText, lUiTextScale);
 		final float lFontHeight = lFont.fontHeight() * lUiTextScale;
-
-		final var lTextureBatch = lParentScreen.textureBatch();
+		final var lSpriteBatch = lParentScreen.spriteBatch();
 
 		if (mDrawBackground) {
-			lTextureBatch.begin(pCore.HUD());
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, lScreenOffset.x + x, lScreenOffset.y + y, w, h, pParentZDepth + .15f, entryColor);
-			lTextureBatch.end();
+			lSpriteBatch.begin(pCore.HUD());
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + x, lScreenOffset.y + y, w, h, pParentZDepth + .15f, entryColor);
+			lSpriteBatch.end();
 
 		}
 
@@ -121,13 +119,13 @@ public class MenuLabelEntry extends MenuEntry {
 		lFont.end();
 
 		if (mShowInfoIcon) {
-			drawInfoIcon(pCore, lTextureBatch, mInfoIconDstRectangle, lParentScreen.screenColor.a);
+			drawInfoIcon(pCore, lSpriteBatch, mInfoIconDstRectangle, lParentScreen.screenColor.a);
 		}
 
 		if (mShowWarnIcon) {
-			drawWarningIcon(pCore, lTextureBatch, mWarnIconDstRectangle, lParentScreen.screenColor.a);
+			drawWarningIcon(pCore, lSpriteBatch, mWarnIconDstRectangle, lParentScreen.screenColor.a);
 		}
 
-		drawDebugCollidableBounds(pCore, lTextureBatch);
+		drawDebugCollidableBounds(pCore, lSpriteBatch);
 	}
 }

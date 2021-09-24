@@ -11,8 +11,9 @@ import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.Color;
 import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.fonts.FontUnit;
-import net.lintford.library.core.graphics.textures.Texture;
-import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
+import net.lintford.library.core.graphics.sprites.spritebatch.SpriteBatch;
+import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
+import net.lintford.library.core.graphics.textures.CoreTextureNames;
 import net.lintford.library.renderers.ZLayers;
 import net.lintford.library.renderers.windows.components.IScrollBarArea;
 import net.lintford.library.renderers.windows.components.ScrollBar;
@@ -403,51 +404,46 @@ public class UiBaseLayoutComponent extends UIWidget implements IScrollBarArea {
 
 	}
 
-	public void draw(LintfordCore pCore, TextureBatchPCT pTextureBatch, Texture pUITexture, FontUnit pTextFont, float pComponentZDepth) {
+	public void draw(LintfordCore pCore, SpriteBatch pSpriteBatch, SpriteSheetDefinition pCoreSpritesheet, FontUnit pTextFont, float pComponentZDepth) {
 		if (!mEnabled || !mVisible)
 			return;
 
-		final var lTextureBatch = mParentWindow.rendererManager().uiTextureBatch();
 		final var lFontUnit = mParentWindow.rendererManager().uiTextFont();
 
-		final var lUiTexture = pCore.resources().textureManager().textureCore();
 		if (mDrawBackground) {
 			if (h < 64) {
-				lTextureBatch.begin(pCore.HUD());
+				pSpriteBatch.begin(pCore.HUD());
 				final float lAlpha = 0.8f;
 				final var lColor = ColorConstants.getColor(0.1f, 0.1f, 0.1f, lAlpha);
-				lTextureBatch.draw(lUiTexture, 0, 0, 32, 32, x, y, w, h, pComponentZDepth, lColor);
-				lTextureBatch.end();
+				pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, x, y, w, h, pComponentZDepth, lColor);
+				pSpriteBatch.end();
 
 			} else {
 				final float TILE_SIZE = 32;
 
-				lTextureBatch.begin(pCore.HUD());
-				lTextureBatch.draw(lUiTexture, 256, 0, 32, 32, x, y, TILE_SIZE, TILE_SIZE, pComponentZDepth, layoutColor);
-				lTextureBatch.draw(lUiTexture, 288, 0, 32, 32, x + TILE_SIZE, y, w - TILE_SIZE * 2, TILE_SIZE, pComponentZDepth, layoutColor);
-				lTextureBatch.draw(lUiTexture, 320, 0, 32, 32, x + w - TILE_SIZE, y, TILE_SIZE, TILE_SIZE, pComponentZDepth, layoutColor);
+				pSpriteBatch.begin(pCore.HUD());
+				pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_TOP_LEFT, x, y, TILE_SIZE, TILE_SIZE, pComponentZDepth, layoutColor);
+				pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_TOP_LEFT, x + TILE_SIZE, y, w - TILE_SIZE * 2, TILE_SIZE, pComponentZDepth, layoutColor);
+				pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_TOP_LEFT, x + w - TILE_SIZE, y, TILE_SIZE, TILE_SIZE, pComponentZDepth, layoutColor);
 
-				lTextureBatch.draw(lUiTexture, 256, 32, 32, 32, x, y + TILE_SIZE, TILE_SIZE, h - TILE_SIZE * 2, pComponentZDepth, layoutColor);
-				lTextureBatch.draw(lUiTexture, 288, 32, 32, 32, x + TILE_SIZE, y + TILE_SIZE, w - TILE_SIZE * 2, h - 64, pComponentZDepth, layoutColor);
-				lTextureBatch.draw(lUiTexture, 320, 32, 32, 32, x + w - TILE_SIZE, y + TILE_SIZE, TILE_SIZE, h - TILE_SIZE * 2, pComponentZDepth, layoutColor);
+				pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_TOP_LEFT, x, y + TILE_SIZE, TILE_SIZE, h - TILE_SIZE * 2, pComponentZDepth, layoutColor);
+				pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_TOP_LEFT, x + TILE_SIZE, y + TILE_SIZE, w - TILE_SIZE * 2, h - 64, pComponentZDepth, layoutColor);
+				pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_TOP_LEFT, x + w - TILE_SIZE, y + TILE_SIZE, TILE_SIZE, h - TILE_SIZE * 2, pComponentZDepth, layoutColor);
 
-				lTextureBatch.draw(lUiTexture, 256, 64, 32, 32, x, y + h - TILE_SIZE, TILE_SIZE, TILE_SIZE, pComponentZDepth, layoutColor);
-				lTextureBatch.draw(lUiTexture, 288, 64, 32, 32, x + TILE_SIZE, y + h - TILE_SIZE, w - TILE_SIZE * 2, TILE_SIZE, pComponentZDepth, layoutColor);
-				lTextureBatch.draw(lUiTexture, 320, 64, 32, 32, x + w - TILE_SIZE, y + h - TILE_SIZE, TILE_SIZE, TILE_SIZE, pComponentZDepth, layoutColor);
-				lTextureBatch.end();
+				pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_TOP_LEFT, x, y + h - TILE_SIZE, TILE_SIZE, TILE_SIZE, pComponentZDepth, layoutColor);
+				pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_TOP_LEFT, x + TILE_SIZE, y + h - TILE_SIZE, w - TILE_SIZE * 2, TILE_SIZE, pComponentZDepth, layoutColor);
+				pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_TOP_LEFT, x + w - TILE_SIZE, y + h - TILE_SIZE, TILE_SIZE, TILE_SIZE, pComponentZDepth, layoutColor);
+				pSpriteBatch.end();
 
 				if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_OUTLINES", false)) {
 					Debug.debugManager().drawers().drawRectImmediate(pCore.HUD(), this);
 				}
-
 			}
-
 		}
 
 		if (mScrollBarsEnabled_Internal) {
 			mContentArea.depthPadding(6f);
-			mContentArea.preDraw(pCore, lTextureBatch, lUiTexture);
-
+			mContentArea.preDraw(pCore, pSpriteBatch, pCoreSpritesheet);
 		}
 
 		final int lCount = widgets().size();
@@ -457,23 +453,21 @@ public class UiBaseLayoutComponent extends UIWidget implements IScrollBarArea {
 			if (!lWidget.isVisible())
 				continue;
 
-			lWidget.draw(pCore, lTextureBatch, lUiTexture, lFontUnit, pComponentZDepth + .1f);
+			lWidget.draw(pCore, pSpriteBatch, pCoreSpritesheet, lFontUnit, pComponentZDepth + .1f);
 
 		}
 
 		if (mScrollBarsEnabled_Internal) {
 			mContentArea.postDraw(pCore);
-			mScrollBar.draw(pCore, lTextureBatch, lUiTexture, pComponentZDepth + .1f);
+			mScrollBar.draw(pCore, pSpriteBatch, pCoreSpritesheet, pComponentZDepth + .1f);
 
 		}
 
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
-			lTextureBatch.begin(pCore.HUD());
-			lTextureBatch.draw(lUiTexture, 0, 0, 32, 32, x, y, w, h, ZLayers.LAYER_DEBUG, ColorConstants.Debug_Transparent_Magenta);
-			lTextureBatch.end();
-
+			pSpriteBatch.begin(pCore.HUD());
+			pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, x, y, w, h, ZLayers.LAYER_DEBUG, ColorConstants.Debug_Transparent_Magenta);
+			pSpriteBatch.end();
 		}
-
 	}
 
 	// --------------------------------------

@@ -5,8 +5,9 @@ import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.fonts.FontUnit;
 import net.lintford.library.core.graphics.fonts.FontUnit.WrapType;
-import net.lintford.library.core.graphics.textures.Texture;
-import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
+import net.lintford.library.core.graphics.sprites.spritebatch.SpriteBatch;
+import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
+import net.lintford.library.core.graphics.textures.CoreTextureNames;
 
 public class ToolTip {
 
@@ -15,9 +16,9 @@ public class ToolTip {
 	// --------------------------------------
 
 	protected FontUnit mMenuFont;
+	protected SpriteBatch mSpriteBatch;
+	protected SpriteSheetDefinition mCoreSpritesheet;
 	private IToolTipProvider mToolTipProvider;
-	private TextureBatchPCT mTextureBatch;
-	private Texture mUiPanelTexture;
 	private float mPositionX;
 	private float mPositionY;
 
@@ -41,8 +42,7 @@ public class ToolTip {
 	// --------------------------------------
 
 	public ToolTip() {
-		mTextureBatch = new TextureBatchPCT();
-
+		mSpriteBatch = new SpriteBatch();
 	}
 
 	// --------------------------------------
@@ -50,16 +50,17 @@ public class ToolTip {
 	// --------------------------------------
 
 	public void loadGLContent(ResourceManager pResourceManager) {
+		mSpriteBatch.loadGLContent(pResourceManager);
+
+		mCoreSpritesheet = pResourceManager.spriteSheetManager().coreSpritesheet();
 		mMenuFont = pResourceManager.fontManager().getFontUnit(ScreenManager.FONT_MENU_TOOLTIP_NAME);
-		mTextureBatch.loadGLContent(pResourceManager);
-		mUiPanelTexture = pResourceManager.textureManager().loadTexture("TEXTURE_UI_PANEL", "/res/textures/core/system.png", LintfordCore.CORE_ENTITY_GROUP_ID);
 	}
 
 	public void unloadGLContent() {
-		mMenuFont = null;
-		mTextureBatch.unloadGLContent();
-		mUiPanelTexture = null;
+		mSpriteBatch.unloadGLContent();
 
+		mCoreSpritesheet = null;
+		mMenuFont = null;
 	}
 
 	public void handleInput(LintfordCore pCore) {
@@ -109,9 +110,9 @@ public class ToolTip {
 		final var lColor = ColorConstants.getColor(.21f, .11f, .13f, 1.f);
 
 		// Render the background
-		mTextureBatch.begin(pCore.HUD());
-		mTextureBatch.draw(mUiPanelTexture, 0, 0, 32, 32, lPositionX - lTextPadding, lPositionY - lTextPadding, TOOLTIP_PANEL_WIDTH + lTextPadding * 2, lToolTipTextHeight + lTextPadding * 2, -0.1f, lColor);
-		mTextureBatch.end();
+		mSpriteBatch.begin(pCore.HUD());
+		mSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lPositionX - lTextPadding, lPositionY - lTextPadding, TOOLTIP_PANEL_WIDTH + lTextPadding * 2, lToolTipTextHeight + lTextPadding * 2, -0.1f, lColor);
+		mSpriteBatch.end();
 
 		mMenuFont.begin(pCore.HUD());
 		mMenuFont.drawText(lToolTipText, lPositionX + lTextPadding, lPositionY, -0.01f, ColorConstants.WHITE, 1.f, 350.f);

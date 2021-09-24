@@ -5,8 +5,9 @@ import org.lwjgl.opengl.GL11;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.ColorConstants;
-import net.lintford.library.core.graphics.textures.Texture;
-import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
+import net.lintford.library.core.graphics.sprites.spritebatch.SpriteBatch;
+import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
+import net.lintford.library.core.graphics.textures.CoreTextureNames;
 
 public class ScrollBarContentRectangle extends Rectangle {
 
@@ -52,12 +53,11 @@ public class ScrollBarContentRectangle extends Rectangle {
 
 	}
 
-	public void preDraw(LintfordCore pCore, TextureBatchPCT pTextureBatch, Texture pUITexture) {
-		preDraw(pCore, pTextureBatch, pUITexture, mParentArea.contentDisplayArea());
-
+	public void preDraw(LintfordCore pCore, SpriteBatch pSpriteBatch, SpriteSheetDefinition pSpritesheetDefinition) {
+		preDraw(pCore, pSpriteBatch, pSpritesheetDefinition, mParentArea.contentDisplayArea());
 	}
 
-	public void preDraw(LintfordCore pCore, TextureBatchPCT pTextureBatch, Texture pUITexture, Rectangle pRectangle) {
+	public void preDraw(LintfordCore pCore, SpriteBatch pSpriteBatch, SpriteSheetDefinition pSpritesheetDefinition, Rectangle pRectangle) {
 		if (mPreDrawing)
 			return;
 
@@ -75,10 +75,10 @@ public class ScrollBarContentRectangle extends Rectangle {
 		GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT); // Clear the stencil buffer
 
 		// Draw into the stencil buffer to mark the 'active' bits
-		pTextureBatch.begin(pCore.HUD());
-		pTextureBatch.draw(pUITexture, 0, 0, 32, 32, pRectangle.x() + mDepthPadding, pRectangle.y() + mDepthPadding, pRectangle.w() - mDepthPadding * 2 - ScrollBar.BAR_WIDTH, pRectangle.h() - mDepthPadding * 2, -10.0f,
+		pSpriteBatch.begin(pCore.HUD());
+		pSpriteBatch.draw(pSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, pRectangle.x() + mDepthPadding, pRectangle.y() + mDepthPadding, pRectangle.w() - mDepthPadding * 2 - ScrollBar.BAR_WIDTH, pRectangle.h() - mDepthPadding * 2, -10.0f,
 				ColorConstants.getBlackWithAlpha(0.f));
-		pTextureBatch.end();
+		pSpriteBatch.end();
 
 		// Start the stencil buffer test to filter out everything outside of the scroll view
 		GL11.glStencilFunc(GL11.GL_EQUAL, 1, 0xFF); // Pass test if stencil value is 1

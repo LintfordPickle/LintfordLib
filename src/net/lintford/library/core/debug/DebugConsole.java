@@ -16,8 +16,9 @@ import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.fonts.BitmapFontManager;
 import net.lintford.library.core.graphics.fonts.FontUnit;
 import net.lintford.library.core.graphics.fonts.FontUnit.WrapType;
-import net.lintford.library.core.graphics.textures.Texture;
-import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
+import net.lintford.library.core.graphics.sprites.spritebatch.SpriteBatch;
+import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
+import net.lintford.library.core.graphics.textures.CoreTextureNames;
 import net.lintford.library.core.input.IBufferedTextInputCallback;
 import net.lintford.library.core.input.IProcessMouseInput;
 import net.lintford.library.core.maths.Vector3f;
@@ -100,7 +101,7 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 
 	private transient boolean mShowCaret;
 	private transient float mCaretTimer;
-	private transient TextureBatchPCT mSpriteBatch;
+	private transient SpriteBatch mSpriteBatch;
 
 	private transient FontUnit mConsoleFont;
 
@@ -132,7 +133,7 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 	protected boolean mDirty;
 
 	protected PrintStream mErrPrintStream;
-	private Texture mCoreUITexture;
+	private SpriteSheetDefinition mCoreSpritesheet;
 
 	// --------------------------------------
 	// Properties
@@ -190,7 +191,7 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 
 			mConsoleState = CONSOLE_STATE.closed;
 
-			mSpriteBatch = new TextureBatchPCT();
+			mSpriteBatch = new SpriteBatch();
 
 			mContentRectangle = new ScrollBarContentRectangle(this);
 			mScrollBar = new ScrollBar(this, mContentRectangle);
@@ -226,10 +227,9 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 		mConsoleFont = pResourceManager.fontManager().getFontUnit(BitmapFontManager.SYSTEM_FONT_CONSOLE_NAME);
 		mSpriteBatch.loadGLContent(pResourceManager);
 
-		mCoreUITexture = pResourceManager.textureManager().textureCore();
+		mCoreSpritesheet = pResourceManager.spriteSheetManager().coreSpritesheet();
 
 		mIsLoaded = true;
-
 	}
 
 	public void unloadGLContent() {
@@ -344,8 +344,7 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 
 			}
 
-			else if (mFocusTimer > FOCUS_TIMER && pCore.input().mouse().mouseWindowCoords().y < openHeight() && pCore.input().mouse().tryAcquireMouseLeftClick(hashCode())
-					&& pCore.input().mouse().isMouseOverThisComponent(hashCode())) {
+			else if (mFocusTimer > FOCUS_TIMER && pCore.input().mouse().mouseWindowCoords().y < openHeight() && pCore.input().mouse().tryAcquireMouseLeftClick(hashCode()) && pCore.input().mouse().isMouseOverThisComponent(hashCode())) {
 				mHasFocus = !mHasFocus;
 				resetCoolDownTimer();
 				pCore.input().keyboard().stopBufferedTextCapture();
@@ -523,30 +522,28 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 		mConsoleFont.begin(pCore.HUD());
 
 		if (mConsoleState == CONSOLE_STATE.open) {
-			// Draw the console background (with a black border for the text input region)
-
-			mSpriteBatch.draw(mCoreUITexture, 0, 0, 32, 32, lScreenBB.left(), lScreenBB.top(), lScreenBB.width(), lScreenBB.height() - 25, Z_DEPTH, mConsoleBackgroundColor);
-			mSpriteBatch.draw(mCoreUITexture, 0, 0, 32, 32, x, y, w, h, Z_DEPTH, ColorConstants.MenuPanelPrimaryColor);
+			mConsoleBackgroundColor.setRGBA(0.f, 0.f, 0.f, .8f);
+			mSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_BLACK, lScreenBB.left(), lScreenBB.top(), lScreenBB.width(), lScreenBB.height(), Z_DEPTH, mConsoleBackgroundColor);
+			mSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, x, y, w, h, Z_DEPTH, ColorConstants.MenuPanelPrimaryColor);
 
 			final var lBackgroundInputPanelColor = ColorConstants.getBlackWithAlpha(0.35f);
-			mSpriteBatch.draw(mCoreUITexture, 0, 0, 32, 32, x, y + 50 - lTextHeight, w, 2, Z_DEPTH, lBackgroundInputPanelColor);
-			mSpriteBatch.draw(mCoreUITexture, 0, 0, 32, 32, x + 120, y + 50 - lTextHeight, 2, h - 50, Z_DEPTH, lBackgroundInputPanelColor);
-			mSpriteBatch.draw(mCoreUITexture, 0, 0, 32, 32, x, y + h - lTextHeight, w, lTextHeight, Z_DEPTH, lBackgroundInputPanelColor);
+			mSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, x, y + 50 - lTextHeight, w, 2, Z_DEPTH, lBackgroundInputPanelColor);
+			mSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, x + 120, y + 50 - lTextHeight, 2, h - 50, Z_DEPTH, lBackgroundInputPanelColor);
+			mSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, x, y + h - lTextHeight, w, lTextHeight, Z_DEPTH, lBackgroundInputPanelColor);
 
-			mScrollBar.draw(pCore, mSpriteBatch, mCoreUITexture, Z_DEPTH + 0.1f);
+			mScrollBar.draw(pCore, mSpriteBatch, mCoreSpritesheet, Z_DEPTH + 0.1f);
 
-			mTAGFilterText.draw(pCore, mSpriteBatch, mCoreUITexture, mConsoleFont, -0.001f);
-			mMessageFilterText.draw(pCore, mSpriteBatch, mCoreUITexture, mConsoleFont, Z_DEPTH + 0.01f);
+			mTAGFilterText.draw(pCore, mSpriteBatch, mCoreSpritesheet, mConsoleFont, -0.001f);
+			mMessageFilterText.draw(pCore, mSpriteBatch, mCoreSpritesheet, mConsoleFont, Z_DEPTH + 0.01f);
 
 			// the input line from the user will always be visible at the bottom of the console.
 			if (mInputText != null) {
 				final float INPUT_Y_OFFSET = 0;
 				mConsoleFont.drawText(PROMT_CHAR, -lDisplayConfig.windowWidth() * 0.5f + PADDING_LEFT, y + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET, Z_DEPTH + 0.1f, ColorConstants.WHITE, 1f);
-				mConsoleFont.drawText(mInputText.toString(), -lDisplayConfig.windowWidth() * 0.5f + PADDING_LEFT + lInputTextXOffset, y + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET, Z_DEPTH + 0.1f,
-						ColorConstants.WHITE, 1f);
+				mConsoleFont.drawText(mInputText.toString(), -lDisplayConfig.windowWidth() * 0.5f + PADDING_LEFT + lInputTextXOffset, y + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET, Z_DEPTH + 0.1f, ColorConstants.WHITE, 1f);
 				if (mShowCaret && mHasFocus)
-					mConsoleFont.drawText(CARET_CHAR, -lDisplayConfig.windowWidth() * 0.5f + PADDING_LEFT + lInputTextXOffset + mConsoleFont.getStringWidth(mInputText.toString()),
-							y + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET, Z_DEPTH + 0.1f, ColorConstants.WHITE, 1f);
+					mConsoleFont.drawText(CARET_CHAR, -lDisplayConfig.windowWidth() * 0.5f + PADDING_LEFT + lInputTextXOffset + mConsoleFont.getStringWidth(mInputText.toString()), y + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET, Z_DEPTH + 0.1f,
+							ColorConstants.WHITE, 1f);
 			}
 
 		}
@@ -557,7 +554,7 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 		final int lMessageCount = lMessages.size();
 		if (lMessages != null && lMessageCount > 0) {
 			for (int i = mLowerBound; i < mUpperBound; i++) {
-				if (i >= 0 && i < lMessageCount) {
+				if (i >= 0 && i < lMessageCount-1) {
 					final var lMessage = lMessages.get(i);
 					if (lMessage == null)
 						continue;
@@ -579,8 +576,8 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 
 					// Draw MESSAGE
 					mConsoleFont.setWrapType(WrapType.LetterCountTrim);
-					final float lCharWidth = mConsoleFont.getStringWidth("W");
-					final float lHorizontalSpace = pCore.HUD().getWidth()  - POSITION_OFFSET_MESSAGE;
+					final float lCharWidth = mConsoleFont.getStringWidth("e");
+					final float lHorizontalSpace = pCore.HUD().getWidth() - POSITION_OFFSET_MESSAGE;
 					mConsoleFont.drawText(lMessage.message, x + POSITION_OFFSET_MESSAGE, -lDisplayConfig.windowHeight() * 0.5f - lTextPosition, Z_DEPTH + 0.1f, mConsoleTextColor, 1f, lHorizontalSpace / lCharWidth - 3);
 				}
 			}

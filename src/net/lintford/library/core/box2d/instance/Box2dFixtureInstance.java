@@ -37,11 +37,8 @@ public class Box2dFixtureInstance extends PooledBaseData {
 	public int maskBits;
 
 	public String spriteName;
+	public transient int spriteIndex = -1;
 	public Serializable userdata;
-
-	// --------------------------------------
-	// Properties
-	// --------------------------------------
 
 	// --------------------------------------
 	// Constructor
@@ -53,7 +50,6 @@ public class Box2dFixtureInstance extends PooledBaseData {
 		density = 1f;
 		friction = 0.5f;
 		restitution = 0.5f;
-
 	}
 
 	// --------------------------------------

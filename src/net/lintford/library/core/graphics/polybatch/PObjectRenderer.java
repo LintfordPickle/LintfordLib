@@ -100,8 +100,12 @@ public class PObjectRenderer {
 			for (int j = 0; j < lFixtureCount; j++) {
 				Box2dFixtureInstance lFixtureInst = lBodyInst.mFixtures[j];
 
-				String lSpriteFrameName = lFixtureInst.spriteName;
-				SpriteFrame lFrame = lSpriteSheetDef.getSpriteFrame(lSpriteFrameName);
+				if (lFixtureInst.spriteIndex == -1) {
+					String lSpriteFrameName = lFixtureInst.spriteName;
+					lFixtureInst.spriteIndex = lSpriteSheetDef.getSpriteFrameIndexByName(lSpriteFrameName);
+				}
+
+				SpriteFrame lFrame = lSpriteSheetDef.getSpriteFrame(lFixtureInst.spriteIndex);
 
 				if (lFrame == null)
 					continue;
@@ -115,9 +119,7 @@ public class PObjectRenderer {
 					mTextureBatch.drawPolygon(lTexture, lBody, fixtureShape.getVertices(), lFrame, -0.2f, 1f, 1f, 1f, 1f);
 
 				}
-
 			}
-
 		}
 
 		mTextureBatch.end();

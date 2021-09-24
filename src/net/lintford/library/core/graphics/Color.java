@@ -27,7 +27,6 @@ public class Color {
 		g = pGreen;
 		b = pBlue;
 		a = pAlpha;
-
 	}
 
 	public Color(final Color pOtherColor) {

@@ -6,6 +6,7 @@ import java.util.List;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.ColorConstants;
+import net.lintford.library.core.graphics.textures.CoreTextureNames;
 import net.lintford.library.core.input.InputManager;
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
@@ -267,7 +268,7 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 		mZ = pComponentDepth;
 
 		final var lParentScreen = mParentLayout.parentScreen;
-		final var lTextureBatch = lParentScreen.textureBatch();
+		final var lTextureBatch = lParentScreen.spriteBatch();
 		final float lUiTextScale = lParentScreen.uiTextScale();
 
 		textColor.a = lParentScreen.screenColor.a;
@@ -282,11 +283,10 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 
 			final var lButtonColor = ColorConstants.getWhiteWithAlpha((mEnabled ? 1.f : 0.5f) * lParentScreen.screenColor.a);
 
-			lTextureBatch.draw(mUITexture, 0, 224, 32, 32, mLeftButtonRectangle.x(), mLeftButtonRectangle.y(), lButtonSize, lButtonSize, mZ, lButtonColor);
-			lTextureBatch.draw(mUITexture, 32, 224, 32, 32, mRightButtonRectangle.x(), mRightButtonRectangle.y(), lButtonSize, lButtonSize, mZ, lButtonColor);
+			lTextureBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_LEFT, mLeftButtonRectangle.x(), mLeftButtonRectangle.y(), lButtonSize, lButtonSize, mZ, lButtonColor);
+			lTextureBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_RIGHT, mRightButtonRectangle.x(), mRightButtonRectangle.y(), lButtonSize, lButtonSize, mZ, lButtonColor);
 
 			lTextureBatch.end();
-
 		}
 
 		final var lFont = lParentScreen.font();

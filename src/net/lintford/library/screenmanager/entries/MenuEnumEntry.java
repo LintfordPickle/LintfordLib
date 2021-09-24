@@ -6,6 +6,7 @@ import java.util.List;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.ColorConstants;
+import net.lintford.library.core.graphics.textures.CoreTextureNames;
 import net.lintford.library.core.input.InputManager;
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
@@ -245,24 +246,23 @@ public class MenuEnumEntry extends MenuEntry {
 		final float lTextHeight = lFont.getStringHeight(mLabel, lUiTextScale);
 		final float lSeparatorHalfWidth = lFont.getStringWidth(mSeparator, lUiTextScale) * 0.5f;
 
-		final var lTextureBatch = lParentScreen.textureBatch();
+		final var lTextureBatch = lParentScreen.spriteBatch();
 
 		lTextureBatch.begin(pCore.HUD());
 		final float lArrowButtonSize = 32;
 		final float lArrowButtonPaddingY = mLeftButtonRectangle.h() - lArrowButtonSize;
 		if (mButtonsEnabled) {
 			final var lColorWhiteWithAlpha = ColorConstants.getWhiteWithAlpha(lParentScreenAlpha);
-			lTextureBatch.draw(mUITexture, 0, 224, 32, 32, lScreenOffset.x + mLeftButtonRectangle.x(), lScreenOffset.y + mLeftButtonRectangle.y() + lArrowButtonPaddingY, lArrowButtonSize, lArrowButtonSize, 0f,
+			lTextureBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_LEFT, lScreenOffset.x + mLeftButtonRectangle.x(), lScreenOffset.y + mLeftButtonRectangle.y() + lArrowButtonPaddingY, lArrowButtonSize, lArrowButtonSize, 0f,
 					lColorWhiteWithAlpha);
-			lTextureBatch.draw(mUITexture, 32, 224, 32, 32, lScreenOffset.x + mRightButtonRectangle.x(), lScreenOffset.y + mRightButtonRectangle.y() + lArrowButtonPaddingY, lArrowButtonSize, lArrowButtonSize, 0f,
+			lTextureBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_RIGHT, lScreenOffset.x + mRightButtonRectangle.x(), lScreenOffset.y + mRightButtonRectangle.y() + lArrowButtonPaddingY, lArrowButtonSize, lArrowButtonSize, 0f,
 					lColorWhiteWithAlpha);
 		}
 		lTextureBatch.end();
 
 		lFont.begin(pCore.HUD());
 		final float lStringWidth = lFont.getStringWidth(mLabel, lAdjustedScaleW);
-		lFont.drawText(mLabel, lScreenOffset.x + (x + w / 2 - 10) - lStringWidth - lSeparatorHalfWidth, lScreenOffset.y + y + h / 2.f - lFont.getStringHeight(mLabel, lAdjustedScaleW) * 0.5f, pParentZDepth, textColor,
-				lAdjustedScaleW, -1);
+		lFont.drawText(mLabel, lScreenOffset.x + (x + w / 2 - 10) - lStringWidth - lSeparatorHalfWidth, lScreenOffset.y + y + h / 2.f - lFont.getStringHeight(mLabel, lAdjustedScaleW) * 0.5f, pParentZDepth, textColor, lAdjustedScaleW, -1);
 		lFont.drawText(mSeparator, lScreenOffset.x + x + w / 2 - lSeparatorHalfWidth, lScreenOffset.y + y + h / 2 - lTextHeight * 0.5f, pParentZDepth, textColor, lUiTextScale, -1);
 
 		// Render the items

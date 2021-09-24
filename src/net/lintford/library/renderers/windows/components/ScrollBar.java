@@ -3,8 +3,9 @@ package net.lintford.library.renderers.windows.components;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.ColorConstants;
-import net.lintford.library.core.graphics.textures.Texture;
-import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
+import net.lintford.library.core.graphics.sprites.spritebatch.SpriteBatch;
+import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
+import net.lintford.library.core.graphics.textures.CoreTextureNames;
 import net.lintford.library.core.input.IProcessMouseInput;
 import net.lintford.library.core.maths.MathHelper;
 
@@ -24,7 +25,6 @@ public class ScrollBar extends Rectangle implements IProcessMouseInput {
 
 	private transient boolean mClickActive;
 	private transient float mLastMouseYPos;
-
 	private transient IScrollBarArea mScrollBarArea;
 	private transient float mMarkerBarHeight;
 	private transient float mMarkerMoveMod;
@@ -88,36 +88,33 @@ public class ScrollBar extends Rectangle implements IProcessMouseInput {
 
 		if (!mClickActive && !lCanAcquireMouse) {
 			return false;
-
 		}
+		
+		if(pCore.HUD().getMouseCameraSpace().x > x + w - 64) 
+			return false;
 
 		if (mClickActive && !lLeftMouseButtonDown) {
 			mClickActive = false;
 
 			return false;
-
 		}
 
 		if (!pCore.input().mouse().isMouseOverThisComponent(hashCode())) {
 			return false;
-
 		}
 
 		if (!mClickActive && lCanAcquireMouse) {
 			mClickActive = true;
 			mLastMouseYPos = pCore.HUD().getMouseWorldSpaceY();
-
 		}
 
 		constrainScrollBarPosition(pCore.HUD().getMouseWorldSpaceY());
 
 		return true;
-
 	}
 
 	private void constrainScrollBarPosition(float pNewPositionSS) {
 		final float lMouseScreenSpaceY = pNewPositionSS;
-
 		final float lMaxDiff = mScrollBarArea.fullContentArea().h() - mScrollBarArea.contentDisplayArea().h();
 
 		if (lMaxDiff > 0) {
@@ -130,9 +127,7 @@ public class ScrollBar extends Rectangle implements IProcessMouseInput {
 				mScrollBarArea.AbsCurrentYPos(0);
 
 			mLastMouseYPos = lMouseScreenSpaceY;
-
 		}
-
 	}
 
 	public void update(LintfordCore pCore) {
@@ -156,10 +151,11 @@ public class ScrollBar extends Rectangle implements IProcessMouseInput {
 
 	}
 
-	public void draw(LintfordCore pCore, TextureBatchPCT pTextureBatch, Texture pUITexture, float pZDepth) {
+	public void draw(LintfordCore pCore, SpriteBatch pSpriteBatch, SpriteSheetDefinition pCoreSpritesheet, float pZDepth) {
 		// Scroll bar background
+		mScrollBarAlpha = 1.0f;
 		final var lColor = ColorConstants.getBlackWithAlpha(.5f * mScrollBarAlpha);
-		pTextureBatch.draw(pUITexture, 0, 0, 32, 32, x, y, w, h, pZDepth, lColor);
+		pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, x, y, w, h, pZDepth, lColor);
 
 		if (mMarkerMoveMod == 0.f) {
 			return;
@@ -170,12 +166,12 @@ public class ScrollBar extends Rectangle implements IProcessMouseInput {
 
 		// Draw the marker bar
 		var lWhiteColorWithAlpha = ColorConstants.getWhiteWithAlpha(mScrollBarAlpha);
-		pTextureBatch.draw(pUITexture, 0, 0, 32, 32, x + 9, y, 2, h, pZDepth, lWhiteColorWithAlpha);
+		pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, x + 9, y, 2, h, pZDepth, lWhiteColorWithAlpha);
 
 		// Draw the moving bar
 		final float lColorMod = mClickActive ? 0.4f : 0.5f;
 		final var lBarColor = ColorConstants.getColorWithRGBMod(ColorConstants.TertiaryColor.r, ColorConstants.TertiaryColor.g, ColorConstants.TertiaryColor.b, mScrollBarAlpha, lColorMod);
-		pTextureBatch.draw(pUITexture, 0, 0, 32, 32, x + 5, by, 10, mMarkerBarHeight, pZDepth, lBarColor);
+		pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, x + 5, by, 10, mMarkerBarHeight, pZDepth, lBarColor);
 	}
 
 	public void resetBarTop() {

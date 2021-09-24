@@ -11,7 +11,8 @@ import net.lintford.library.core.camera.ICamera;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.ColorConstants;
-import net.lintford.library.core.graphics.textures.Texture;
+import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
+import net.lintford.library.core.graphics.textures.CoreTextureNames;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch9Patch;
 import net.lintford.library.core.input.IProcessMouseInput;
 import net.lintford.library.core.maths.MathHelper;
@@ -87,7 +88,7 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 	protected float mWindowPaddingTop;
 	protected float mWindowPaddingBottom;
 
-	protected Rectangle mIconSrcRectangle;
+	protected int mWindowIconSpriteIndex;
 	protected String mIconName;
 
 	protected boolean mCanCaptureMouse;
@@ -95,8 +96,8 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 
 	/** Stores the window area of this renderer window */
 	protected Rectangle mWindowArea;
-	protected Texture mUiCoreTexture;
-	protected Texture mHudTexture;
+	protected SpriteSheetDefinition mCoreSpritesheet;
+	protected SpriteSheetDefinition mHudSpritesheet;
 
 	/** If true, this base renderer consumes input and ends the handleInput invocation chain. */
 	protected boolean mExclusiveHandleInput = true;
@@ -180,8 +181,8 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 		return mIsDebugWindow;
 	}
 
-	public Rectangle iconSrcRectangle() {
-		return mIconSrcRectangle;
+	public int iconSpriteIndex() {
+		return mWindowIconSpriteIndex;
 	}
 
 	public boolean exclusiveHandleInput() {
@@ -226,8 +227,8 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 
 		mComponents = new ArrayList<>();
 
+		mWindowIconSpriteIndex = -1;
 		mWindowArea = new Rectangle();
-		mIconSrcRectangle = new Rectangle();
 		mContentDisplayArea = new Rectangle();
 
 		mWindowArea.set(-160, -120, 320, 240);
@@ -265,8 +266,8 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 	public void loadGLContent(ResourceManager pResourceManager) {
 		super.loadGLContent(pResourceManager);
 
-		mUiCoreTexture = pResourceManager.textureManager().textureCore();
-		mHudTexture = pResourceManager.textureManager().getTexture("TEXTURE_HUD", entityGroupID());
+		mCoreSpritesheet = pResourceManager.spriteSheetManager().coreSpritesheet();
+		mHudSpritesheet = pResourceManager.spriteSheetManager().getSpriteSheet("SPRITESHEET_HUD", entityGroupID());
 
 		mContentDisplayArea.y(mWindowArea.y() + getTitleBarHeight());
 		mContentDisplayArea.h(mWindowArea.h() - +getTitleBarHeight());
@@ -447,30 +448,29 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 
 		final var lTitleFont = mRendererManager.uiTitleFont();
 		final var lTextFont = mRendererManager.uiTextFont();
-		final var lTextureBatch = mRendererManager.uiTextureBatch();
+		final var lSpritebatch = mRendererManager.uiSpriteBatch();
 		final var lWindowColor = ColorConstants.getWhiteWithAlpha(mWindowAlpha);
 
 		// Draw the window background
-		lTextureBatch.begin(pCore.HUD());
-		TextureBatch9Patch.draw9Patch(lTextureBatch, mUiCoreTexture, 32, mWindowArea.x(), mWindowArea.y() + getTitleBarHeight() + 5, mWindowArea.w(), mWindowArea.h() - getTitleBarHeight() - 5, Z_DEPTH, lWindowColor);
-		lTextureBatch.end();
+		lSpritebatch.begin(pCore.HUD());
+		TextureBatch9Patch.draw9Patch(lSpritebatch, mCoreSpritesheet, 32, mWindowArea.x(), mWindowArea.y() + getTitleBarHeight() + 5, mWindowArea.w(), mWindowArea.h() - getTitleBarHeight() - 5, Z_DEPTH, lWindowColor);
+		lSpritebatch.end();
 
 		final var lWindowTitleColor = ColorConstants.getWhiteWithAlpha(0.6f);
 
 		// Draw the title bar
-		lTextureBatch.begin(pCore.HUD());
-		lTextureBatch.draw(mUiCoreTexture, 0, 256, 32, 32, mWindowArea.x(), mWindowArea.y(), 32, getTitleBarHeight(), Z_DEPTH, lWindowTitleColor);
-		lTextureBatch.draw(mUiCoreTexture, 32, 256, 32, 32, mWindowArea.x() + 32, mWindowArea.y(), mWindowArea.w() - 64, getTitleBarHeight(), Z_DEPTH, lWindowTitleColor);
-		lTextureBatch.draw(mUiCoreTexture, 128, 256, 32, 32, mWindowArea.x() + mWindowArea.w() - 32, mWindowArea.y(), 32, 32.f, Z_DEPTH, lWindowTitleColor);
+		lSpritebatch.begin(pCore.HUD());
+		lSpritebatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_TITLE_HORIZONTAL_LEFT, mWindowArea.x(), mWindowArea.y(), 32, getTitleBarHeight(), Z_DEPTH, lWindowTitleColor);
+		lSpritebatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_TITLE_HORIZONTAL_MID, mWindowArea.x() + 32, mWindowArea.y(), mWindowArea.w() - 64, getTitleBarHeight(), Z_DEPTH, lWindowTitleColor);
+		lSpritebatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_TITLE_HORIZONTAL_RIGHT, mWindowArea.x() + mWindowArea.w() - 32, mWindowArea.y(), 32, 32.f, Z_DEPTH, lWindowTitleColor);
 
 		float lTitleX = mWindowArea.x();
 		float lTitleY = mWindowArea.y();
 
 		// Render the icons from the game ui texture
-		if (mIconSrcRectangle != null && !mIconSrcRectangle.isEmpty() && mHudTexture != null) {
-			lTextureBatch.draw(mHudTexture, mIconSrcRectangle, lTitleX, lTitleY, getTitleBarHeight(), getTitleBarHeight(), Z_DEPTH, lWindowColor);
+		if (mWindowIconSpriteIndex != -1) {
+			lSpritebatch.draw(mHudSpritesheet, mWindowIconSpriteIndex, lTitleX + 6f, lTitleY, getTitleBarHeight(), getTitleBarHeight(), Z_DEPTH, ColorConstants.TextHeadingColor);
 			lTitleX += 32 + WINDOW_CONTENT_PADDING_X;
-
 		} else {
 			lTitleX += 8.f; // offset when no icon in title bar
 		}
@@ -479,7 +479,7 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 		lTitleFont.drawText(mWindowTitle, lTitleX, lTitleY + getTitleBarHeight() * .5f - lTitleFont.fontHeight() * .5f, Z_DEPTH, ColorConstants.TextHeadingColor, 1f);
 
 		if (mFullContentRectangle.h() - contentDisplayArea().h() > 0) {
-			mScrollBar.draw(pCore, lTextureBatch, mUiCoreTexture, Z_DEPTH);
+			mScrollBar.draw(pCore, lSpritebatch, mCoreSpritesheet, Z_DEPTH);
 		}
 
 		lTextFont.begin(pCore.HUD());
@@ -487,19 +487,16 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 		// Draw the window components
 		final int lComponentCount = mComponents.size();
 		for (int i = 0; i < lComponentCount; i++) {
-			mComponents.get(i).draw(pCore, lTextureBatch, mUiCoreTexture, lTextFont, ZLayers.LAYER_GAME_UI + ((float) i * 0.001f));
-
+			mComponents.get(i).draw(pCore, lSpritebatch, mCoreSpritesheet, lTextFont, ZLayers.LAYER_GAME_UI + ((float) i * 0.001f));
 		}
 
 		lTextFont.end();
-		lTextureBatch.end();
+		lSpritebatch.end();
 		lTitleFont.end();
 
 		if (ConstantsApp.getBooleanValueDef("DRAW_UI_BOUNDS", false)) {
 			Debug.debugManager().drawers().drawRectImmediate(pCore.HUD(), mWindowArea);
-
 		}
-
 	}
 
 	// --------------------------------------

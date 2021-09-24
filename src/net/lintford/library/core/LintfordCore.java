@@ -386,20 +386,16 @@ public abstract class LintfordCore {
 
 		onLoadGLContent();
 
-		// If we get to this point before enough time has elapsed, then continue showing the timer some ...
 		long lDiff = (long) (mShowLogoTimeInMilli - (System.currentTimeMillis() - mShowLogoTimer));
 		if (lDiff > 0) {
 			try {
 				Thread.sleep(lDiff);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
-
 			}
-
 		}
 
 		onRunGameLoop();
-
 	};
 
 	protected void showStartUpLogo(long pWindowHandle) {
@@ -407,7 +403,6 @@ public abstract class LintfordCore {
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 
 		glfwSwapBuffers(pWindowHandle);
-
 	}
 
 	/**

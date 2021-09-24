@@ -11,8 +11,9 @@ import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.fonts.BitmapFontManager;
 import net.lintford.library.core.graphics.fonts.FontUnit;
-import net.lintford.library.core.graphics.textures.Texture;
-import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
+import net.lintford.library.core.graphics.sprites.spritebatch.SpriteBatch;
+import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
+import net.lintford.library.core.graphics.textures.CoreTextureNames;
 
 public class DebugStats {
 
@@ -57,8 +58,8 @@ public class DebugStats {
 	private double mLastUpdateElapsed;
 	private double mLastDrawElapsed;
 
-	private Texture mCoreTexture;
-	private TextureBatchPCT mTextureBatch;
+	private SpriteSheetDefinition mCoreSpritesheet;
+	private SpriteBatch mSpriteBatch;
 	private StringBuilder mStringBuilder;
 
 	private int deltaFrameCount;
@@ -93,11 +94,9 @@ public class DebugStats {
 
 		mTags = new ArrayList<>();
 		mStringBuilder = new StringBuilder();
-
-		mTextureBatch = new TextureBatchPCT();
+		mSpriteBatch = new SpriteBatch();
 
 		createStandardTags();
-
 	}
 
 	private void createStandardTags() {
@@ -136,11 +135,10 @@ public class DebugStats {
 
 		Debug.debugManager().logger().v(getClass().getSimpleName(), "DebugStats loading GL content");
 
-		mCoreTexture = pResourceManager.textureManager().textureCore();
+		mCoreSpritesheet = pResourceManager.spriteSheetManager().coreSpritesheet();
 		mConsoleFont = pResourceManager.fontManager().getFontUnit(BitmapFontManager.SYSTEM_FONT_CONSOLE_NAME);
 
-		mTextureBatch.loadGLContent(pResourceManager);
-
+		mSpriteBatch.loadGLContent(pResourceManager);
 	}
 
 	public void unloadGLContent() {
@@ -149,10 +147,10 @@ public class DebugStats {
 
 		Debug.debugManager().logger().v(getClass().getSimpleName(), "DebugStats unloading GL content");
 
-		mTextureBatch.unloadGLContent();
+		mSpriteBatch.unloadGLContent();
 
 		mConsoleFont = null;
-		mCoreTexture = null;
+		mCoreSpritesheet = null;
 
 	}
 
@@ -221,7 +219,7 @@ public class DebugStats {
 		if (!mIsOpen)
 			return;
 
-		mTextureBatch.begin(pCore.HUD());
+		mSpriteBatch.begin(pCore.HUD());
 		mConsoleFont.begin(pCore.HUD());
 
 		final var lHUDRectangle = pCore.HUD().boundingRectangle();
@@ -231,7 +229,7 @@ public class DebugStats {
 		float lTop = lHUDRectangle.top() + lHeightOffset + 5f;
 		float lLeft = lHUDRectangle.right() - 240f - lWidthOffset - 5f;
 
-		mTextureBatch.draw(mCoreTexture, 0, 0, 32, 32, lLeft, lTop, 240, 500, -0.01f, ColorConstants.getColor(.05f, .05f, .05f, .95f));
+		mSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lLeft, lTop, 240, 500, -0.01f, ColorConstants.getColor(.05f, .05f, .05f, .95f));
 
 		float lTagPosY = lTop + 5f;
 		final int lTagCount = mTags.size();
@@ -248,7 +246,7 @@ public class DebugStats {
 			lTagPosY += 20f;
 		}
 
-		mTextureBatch.end();
+		mSpriteBatch.end();
 		mConsoleFont.end();
 
 	}

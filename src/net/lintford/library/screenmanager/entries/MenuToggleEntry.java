@@ -1,8 +1,8 @@
 package net.lintford.library.screenmanager.entries;
 
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.graphics.ColorConstants;
+import net.lintford.library.core.graphics.textures.CoreTextureNames;
 import net.lintford.library.core.input.InputManager;
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
@@ -67,18 +67,10 @@ public class MenuToggleEntry extends MenuEntry {
 	// --------------------------------------
 
 	@Override
-	public void loadGLContent(ResourceManager pResourceManager) {
-		super.loadGLContent(pResourceManager);
-
-		mUITexture = pResourceManager.textureManager().textureCore();
-
-	}
-
-	@Override
 	public void unloadGLContent() {
 		super.unloadGLContent();
 
-		mUITexture = null;
+		mCoreSpritesheet = null;
 
 	}
 
@@ -147,7 +139,7 @@ public class MenuToggleEntry extends MenuEntry {
 		final float lTextHeight = lFont.fontHeight() * lUiTextScale;
 		final float lSeparatorHalfWidth = lFont.getStringWidth(mSeparator, lUiTextScale) * 0.5f;
 
-		final var lTextureBatch = lParentScreen.textureBatch();
+		final var lSpriteBatch = lParentScreen.spriteBatch();
 
 		final float lTileSize = 32;
 
@@ -160,23 +152,23 @@ public class MenuToggleEntry extends MenuEntry {
 		mZ = pParentZDepth;
 
 		if (mHoveredOver) {
-			lTextureBatch.begin(pCore.HUD());
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, lScreenOffset.x + centerX() - w / 2, lScreenOffset.y + centerY() - h / 2, 32, h, mZ, ColorConstants.MenuEntryHighlightColor);
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, lScreenOffset.x + centerX() - (w / 2) + 32, lScreenOffset.y + centerY() - h / 2, w - 64, h, mZ, ColorConstants.MenuEntryHighlightColor);
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, lScreenOffset.x + centerX() + (w / 2) - 32, lScreenOffset.y + centerY() - h / 2, 32, h, mZ, ColorConstants.MenuEntryHighlightColor);
-			lTextureBatch.end();
+			lSpriteBatch.begin(pCore.HUD());
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - w / 2, lScreenOffset.y + centerY() - h / 2, 32, h, mZ, ColorConstants.MenuEntryHighlightColor);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - (w / 2) + 32, lScreenOffset.y + centerY() - h / 2, w - 64, h, mZ, ColorConstants.MenuEntryHighlightColor);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() + (w / 2) - 32, lScreenOffset.y + centerY() - h / 2, 32, h, mZ, ColorConstants.MenuEntryHighlightColor);
+			lSpriteBatch.end();
 
 		}
 
-		lTextureBatch.begin(pCore.HUD());
+		lSpriteBatch.begin(pCore.HUD());
 
 		// Render the check box (either ticked or empty)
 		if (mIsChecked)
-			lTextureBatch.draw(mUITexture, 64, 128, 32, 32, lScreenOffset.x + x + w / 2 + 16, lScreenOffset.y + y + h / 2 - lTileSize / 2, lTileSize, lTileSize, mZ, entryColor);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_TICK, lScreenOffset.x + x + w / 2 + 16, lScreenOffset.y + y + h / 2 - lTileSize / 2, lTileSize, lTileSize, mZ, entryColor);
 		else
-			lTextureBatch.draw(mUITexture, 32, 128, 32, 32, lScreenOffset.x + centerX() + lTileSize / 2, lScreenOffset.y + y + h / 2 - lTileSize / 2, lTileSize, lTileSize, mZ, entryColor);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_CROSS, lScreenOffset.x + centerX() + lTileSize / 2, lScreenOffset.y + y + h / 2 - lTileSize / 2, lTileSize, lTileSize, mZ, entryColor);
 
-		lTextureBatch.end();
+		lSpriteBatch.end();
 
 		lFont.begin(pCore.HUD());
 		lFont.drawText(mText, lScreenOffset.x + x + w / 2 - lLabelWidth - SPACE_BETWEEN_TEXT - lSeparatorHalfWidth, lScreenOffset.y + y + h / 2 - lTextHeight * 0.5f, mZ, textColor, lUiTextScale, -1);
@@ -191,14 +183,14 @@ public class MenuToggleEntry extends MenuEntry {
 		lFont.end();
 
 		if (mShowInfoIcon) {
-			drawInfoIcon(pCore, lTextureBatch, mInfoIconDstRectangle, lParentScreenAlpha);
+			drawInfoIcon(pCore, lSpriteBatch, mInfoIconDstRectangle, lParentScreenAlpha);
 		}
 
 		if (mShowWarnIcon) {
-			drawWarningIcon(pCore, lTextureBatch, mWarnIconDstRectangle, lParentScreenAlpha);
+			drawWarningIcon(pCore, lSpriteBatch, mWarnIconDstRectangle, lParentScreenAlpha);
 		}
 
-		drawDebugCollidableBounds(pCore, lTextureBatch);
+		drawDebugCollidableBounds(pCore, lSpriteBatch);
 	}
 
 	// --------------------------------------

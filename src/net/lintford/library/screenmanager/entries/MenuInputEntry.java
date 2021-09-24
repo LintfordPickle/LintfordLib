@@ -2,6 +2,7 @@ package net.lintford.library.screenmanager.entries;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.graphics.ColorConstants;
+import net.lintford.library.core.graphics.textures.CoreTextureNames;
 import net.lintford.library.core.input.IBufferedTextInputCallback;
 import net.lintford.library.core.input.InputManager;
 import net.lintford.library.screenmanager.MenuEntry;
@@ -163,7 +164,7 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 		final var lParentScreen = mParentLayout.parentScreen;
 		final var lFont = lParentScreen.font();
 		final var lScreenOffset = pScreen.screenPositionOffset();
-		final var lTextureBatch = lParentScreen.textureBatch();
+		final var lSpriteBatch = lParentScreen.spriteBatch();
 
 		mZ = pParentZDepth;
 
@@ -182,11 +183,11 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 		entryColor.b = mHoveredOver ? (102.f / 255.f) : .1f;
 
 		if (mHoveredOver) {
-			lTextureBatch.begin(pCore.HUD());
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, lScreenOffset.x + centerX() - w / 2, lScreenOffset.y + centerY() - h / 2, 32, h, mZ, ColorConstants.MenuEntryHighlightColor);
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, lScreenOffset.x + centerX() - (w / 2) + 32, lScreenOffset.y + centerY() - h / 2, w - 64, h, mZ, ColorConstants.MenuEntryHighlightColor);
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, lScreenOffset.x + centerX() + (w / 2) - 32, lScreenOffset.y + centerY() - h / 2, 32, h, mZ, ColorConstants.MenuEntryHighlightColor);
-			lTextureBatch.end();
+			lSpriteBatch.begin(pCore.HUD());
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - w / 2, lScreenOffset.y + centerY() - h / 2, 32, h, mZ, ColorConstants.MenuEntryHighlightColor);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - (w / 2) + 32, lScreenOffset.y + centerY() - h / 2, w - 64, h, mZ, ColorConstants.MenuEntryHighlightColor);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() + (w / 2) - 32, lScreenOffset.y + centerY() - h / 2, 32, h, mZ, ColorConstants.MenuEntryHighlightColor);
+			lSpriteBatch.end();
 
 		}
 
@@ -206,37 +207,35 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 		textColor.a = lParentScreen.screenColor.a;
 
 		lFont.begin(pCore.HUD());
-		lFont.drawText(mLabel, lScreenOffset.x + x + w / 2 - 10 - (lLabelTextWidth * lAdjustedLabelScaleW) - lSeparatorHalfWidth, lScreenOffset.y + y + h / 2 - lLabelTextHeight * 0.5f, pParentZDepth + .1f, textColor,
-				lAdjustedLabelScaleW, -1);
+		lFont.drawText(mLabel, lScreenOffset.x + x + w / 2 - 10 - (lLabelTextWidth * lAdjustedLabelScaleW) - lSeparatorHalfWidth, lScreenOffset.y + y + h / 2 - lLabelTextHeight * 0.5f, pParentZDepth + .1f, textColor, lAdjustedLabelScaleW, -1);
 		lFont.drawText(mSeparator, lScreenOffset.x + x + w / 2 - lSeparatorHalfWidth, lScreenOffset.y + y + h / 2 - lLabelTextHeight * 0.5f, pParentZDepth + .1f, textColor, lUiTextScale, -1);
-		lFont.drawText(mInputField.toString(), lScreenOffset.x + x + w / 2 + lSeparatorHalfWidth * lAdjustedLInputScaleW + SPACE_BETWEEN_TEXT, lScreenOffset.y + y + h / 2 - lInputTextHeight * 0.5f, pParentZDepth + .1f,
-				textColor, lAdjustedLInputScaleW, -1);
+		lFont.drawText(mInputField.toString(), lScreenOffset.x + x + w / 2 + lSeparatorHalfWidth * lAdjustedLInputScaleW + SPACE_BETWEEN_TEXT, lScreenOffset.y + y + h / 2 - lInputTextHeight * 0.5f, pParentZDepth + .1f, textColor, lAdjustedLInputScaleW, -1);
 
 		final float lTextHeight = lFont.fontHeight();
 
 		if (mShowCaret && mHasFocus) {
-			lTextureBatch.begin(pCore.HUD());
+			lSpriteBatch.begin(pCore.HUD());
 			final float lCaretPositionX = lScreenOffset.x + x + w / 2 + lSeparatorHalfWidth + SPACE_BETWEEN_TEXT + lInputTextWidth * lAdjustedLInputScaleW;
 			final float lCaretPositionY = lScreenOffset.y + y + h / 2 - lTextHeight / 2.f;
-			lTextureBatch.draw(mUITexture, 0, 0, lTextHeight / 2.f, lTextHeight, lCaretPositionX, lCaretPositionY, lTextHeight / 2.f, lTextHeight, mZ, ColorConstants.WHITE);
-			lTextureBatch.end();
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lCaretPositionX, lCaretPositionY, lTextHeight / 2.f, lTextHeight, mZ, ColorConstants.WHITE);
+			lSpriteBatch.end();
 		}
 
 		lFont.end();
 
 		if (!mEnabled) {
-			drawdisabledBlackOverbar(pCore, lTextureBatch, entryColor.a);
+			drawdisabledBlackOverbar(pCore, lSpriteBatch, entryColor.a);
 		}
 
 		if (mShowInfoIcon) {
-			drawInfoIcon(pCore, lTextureBatch, mInfoIconDstRectangle, 1.f);
+			drawInfoIcon(pCore, lSpriteBatch, mInfoIconDstRectangle, 1.f);
 		}
 
 		if (mShowWarnIcon) {
-			drawWarningIcon(pCore, lTextureBatch, mWarnIconDstRectangle, 1.f);
+			drawWarningIcon(pCore, lSpriteBatch, mWarnIconDstRectangle, 1.f);
 		}
 
-		drawDebugCollidableBounds(pCore, lTextureBatch);
+		drawDebugCollidableBounds(pCore, lSpriteBatch);
 	}
 
 	// --------------------------------------

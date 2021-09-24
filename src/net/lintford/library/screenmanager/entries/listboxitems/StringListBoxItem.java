@@ -5,7 +5,7 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.graphics.ColorConstants;
-import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
+import net.lintford.library.core.graphics.sprites.spritebatch.SpriteBatch;
 import net.lintford.library.screenmanager.Screen;
 import net.lintford.library.screenmanager.ScreenManager;
 import net.lintford.library.screenmanager.entries.ListBox;
@@ -65,9 +65,8 @@ public class StringListBoxItem extends ListBoxItem {
 	}
 
 	@Override
-	public void draw(LintfordCore pCore, Screen pScreen, TextureBatchPCT pSpriteBatch, boolean pIsSelected, float pParentZDepth) {
+	public void draw(LintfordCore pCore, Screen pScreen, SpriteBatch pSpriteBatch, boolean pIsSelected, float pParentZDepth) {
 		if (mTextValue != null && mTextValue.length() > 0) {
-
 			final float lScale = mScreenManager.UiStructureController().uiTextScaleFactor();
 			final var lFont = mParentListBox.parentLayout().parentScreen.font();
 			final float lFontHeight = lFont.getStringHeight(mTextValue, lScale);
@@ -78,14 +77,10 @@ public class StringListBoxItem extends ListBoxItem {
 			lFont.begin(pCore.HUD());
 			lFont.drawText(mTextValue, x, y - lFontHeight / 2, pParentZDepth + .1f, ColorConstants.TextEntryColor, lScale, -1);
 			lFont.end();
-
 		}
 
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
 			Debug.debugManager().drawers().drawRectImmediate(pCore.HUD(), this);
-
 		}
-
 	}
-
 }

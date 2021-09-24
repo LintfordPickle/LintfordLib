@@ -25,8 +25,8 @@ public class SpriteDefinition implements Serializable {
 	/** If true, the animation loops back to the beginning when finished. */
 	private boolean loopAnimation;
 
-	/** A list of names of Sprites which make up this animation. */
-	private String[] animationSprites;
+	/** A list of indices of the sprites which make up this animation. */
+	private int[] animationSpriteIndices;
 
 	/** A collection of sprites which make up this animation. */
 	private transient List<SpriteFrame> spriteFrames;
@@ -84,21 +84,19 @@ public class SpriteDefinition implements Serializable {
 	// --------------------------------------
 
 	public void loadContent(final SpriteSheetDefinition pSpriteSheet) {
-		if (animationSprites == null)
+		if (animationSpriteIndices == null)
 			return;
 
-		final int lNumSprites = animationSprites.length;
+		final int lNumSprites = animationSpriteIndices.length;
 		for (int i = 0; i < lNumSprites; i++) {
-			final SpriteFrame lSpriteFrame = pSpriteSheet.getSpriteFrame(animationSprites[i]);
+			final SpriteFrame lSpriteFrame = pSpriteSheet.getSpriteFrame(animationSpriteIndices[i]);
 
 			if (lSpriteFrame == null) {
-				Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("SpriteFrame missing in spritesheet: '%s'", animationSprites[i]));
+				Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("SpriteFrame missing in spritesheet: '%s'", animationSpriteIndices[i]));
 				continue;
-
 			}
 
 			spriteFrames.add(lSpriteFrame);
-
 		}
 
 		isLoaded = true;

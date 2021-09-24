@@ -31,6 +31,10 @@ public class SpriteBatch extends TextureBatchPCT {
 
 	}
 
+	public void draw(SpriteSheetDefinition pSpriteSheetDefinition, int pSpriteFrameIndex, Rectangle pDstRectangle, float pZ, Color pTint) {
+		draw(pSpriteSheetDefinition, pSpriteSheetDefinition.getSpriteFrame(pSpriteFrameIndex), pDstRectangle, pZ, pTint);
+	}
+
 	public void draw(SpriteSheetDefinition pSpriteSheetDefinition, SpriteFrame pSpriteFrame, Rectangle pDstRectangle, float pZ, Color pTint) {
 		if (pDstRectangle == null) {
 			return;
@@ -38,7 +42,10 @@ public class SpriteBatch extends TextureBatchPCT {
 		}
 
 		draw(pSpriteSheetDefinition, pSpriteFrame, pDstRectangle.x(), pDstRectangle.y(), pDstRectangle.w(), pDstRectangle.h(), pZ, pTint);
+	}
 
+	public void draw(SpriteSheetDefinition pSpriteSheetDefinition, int pSpriteFrameIndex, float pDX, float pDY, float pDW, float pDH, float pZ, Color pTint) {
+		draw(pSpriteSheetDefinition, pSpriteSheetDefinition.getSpriteFrame(pSpriteFrameIndex), pDX, pDY, pDW, pDH, pZ, pTint);
 	}
 
 	public void draw(SpriteSheetDefinition pSpriteSheetDefinition, SpriteFrame pSpriteFrame, float pDX, float pDY, float pDW, float pDH, float pZ, Color pTint) {
@@ -58,7 +65,6 @@ public class SpriteBatch extends TextureBatchPCT {
 			return;
 
 		draw(lTexture, pSpriteFrame.x(), pSpriteFrame.y(), pSpriteFrame.w(), pSpriteFrame.h(), pDX, pDY, pDW, pDH, pZ, pTint);
-
 	}
 
 	public void draw(SpriteSheetDefinition pSpriteSheetDefinition, SpriteInstance pSprite, Rectangle pDstRectangle, float pZ, Color pTint) {
@@ -76,7 +82,5 @@ public class SpriteBatch extends TextureBatchPCT {
 		final var lCurrentSpriteFrame = pSprite.currentSpriteFrame();
 
 		draw(lTexture, lCurrentSpriteFrame, pDstRectangle, pZ, pTint);
-
 	}
-
 }

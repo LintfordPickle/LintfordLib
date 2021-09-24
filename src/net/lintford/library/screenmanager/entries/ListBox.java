@@ -8,6 +8,7 @@ import org.lwjgl.opengl.GL11;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.ColorConstants;
+import net.lintford.library.core.graphics.textures.CoreTextureNames;
 import net.lintford.library.core.input.InputManager;
 import net.lintford.library.core.maths.Vector2f;
 import net.lintford.library.renderers.windows.components.IScrollBarArea;
@@ -269,7 +270,7 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 
 	@Override
 	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pParentZDepth) {
-		final var lTextureBatch = mParentLayout.parentScreen.textureBatch();
+		final var lSpriteBatch = mParentLayout.parentScreen.spriteBatch();
 
 		// We need to use a stencil buffer to clip the list box items (which, when scrolling, could appear out-of-bounds of the listbox).
 		GL11.glEnable(GL11.GL_STENCIL_TEST);
@@ -282,27 +283,27 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 		GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT); // Clear the stencil buffer
 
 		// Fill in the renderable parts of the list box (this is needed!)
-		lTextureBatch.begin(pCore.HUD());
+		lSpriteBatch.begin(pCore.HUD());
 		final var lColor = ColorConstants.getWhiteWithAlpha(0.f);
-		lTextureBatch.draw(mUITexture, 32, 0, 32, 32, x, y + marginTop(), w, h - marginTop() - marginBottom(), pParentZDepth, lColor);
-		lTextureBatch.end();
+		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_BLACK, x, y + marginTop(), w, h - marginTop() - marginBottom(), pParentZDepth, lColor);
+		lSpriteBatch.end();
 
 		// Start the stencil buffer test to filter out everything outside of the scroll view
 		GL11.glStencilFunc(GL11.GL_EQUAL, 1, 0xFF); // Pass test if stencil value is 1
 
 		for (int i = 0; i < mItems.size(); i++) {
-			mItems.get(i).draw(pCore, pScreen, lTextureBatch, mSelectedItem == mItems.get(i).mItemIndex, pParentZDepth);
+			mItems.get(i).draw(pCore, pScreen, lSpriteBatch, mSelectedItem == mItems.get(i).mItemIndex, pParentZDepth);
 
 		}
 
 		if (mScrollBarsEnabled) {
-			mScrollBar.draw(pCore, lTextureBatch, mUITexture, pParentZDepth);
+			mScrollBar.draw(pCore, lSpriteBatch, mCoreSpritesheet, pParentZDepth);
 
 		}
 
 		GL11.glDisable(GL11.GL_STENCIL_TEST);
 
-		drawDebugCollidableBounds(pCore, lTextureBatch);
+		drawDebugCollidableBounds(pCore, lSpriteBatch);
 
 	}
 

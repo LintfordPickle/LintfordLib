@@ -10,8 +10,9 @@ import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.fonts.BitmapFontManager;
 import net.lintford.library.core.graphics.fonts.FontUnit;
-import net.lintford.library.core.graphics.textures.Texture;
-import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
+import net.lintford.library.core.graphics.sprites.spritebatch.SpriteBatch;
+import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
+import net.lintford.library.core.graphics.textures.CoreTextureNames;
 import net.lintford.library.core.input.IProcessMouseInput;
 import net.lintford.library.renderers.windows.components.IScrollBarArea;
 import net.lintford.library.renderers.windows.components.ScrollBar;
@@ -33,8 +34,8 @@ public class DebugRendererTreeRenderer extends Rectangle implements IScrollBarAr
 	// --------------------------------------
 
 	private Debug mDebugManager;
-	private Texture mCoreTexture;
-	private TextureBatchPCT mTextureBatch;
+	private SpriteSheetDefinition mCoreSpritesheet;
+	private SpriteBatch mSpriteBatch;
 	private DebugRendererTreeController mDebugRendererTree;
 	private transient FontUnit mConsoleFont;
 	private boolean mIsOpen;
@@ -76,13 +77,11 @@ public class DebugRendererTreeRenderer extends Rectangle implements IScrollBarAr
 		mDebugManager = pDebugManager;
 
 		if (pDebugManager.debugManagerEnabled()) {
-			mTextureBatch = new TextureBatchPCT();
+			mSpriteBatch = new SpriteBatch();
 
 			mContentRectangle = new ScrollBarContentRectangle(this);
 			mScrollBar = new ScrollBar(this, mContentRectangle);
-
 		}
-
 	}
 
 	// --------------------------------------
@@ -95,10 +94,10 @@ public class DebugRendererTreeRenderer extends Rectangle implements IScrollBarAr
 
 		Debug.debugManager().logger().v(getClass().getSimpleName(), "DebugStats loading GL content");
 
-		mCoreTexture = pResourceManager.textureManager().textureCore();
+		mCoreSpritesheet = pResourceManager.spriteSheetManager().coreSpritesheet();
 		mConsoleFont = pResourceManager.fontManager().getFontUnit(BitmapFontManager.SYSTEM_FONT_CONSOLE_NAME);
 
-		mTextureBatch.loadGLContent(pResourceManager);
+		mSpriteBatch.loadGLContent(pResourceManager);
 	}
 
 	public void unloadGLContent() {
@@ -107,10 +106,10 @@ public class DebugRendererTreeRenderer extends Rectangle implements IScrollBarAr
 
 		Debug.debugManager().logger().v(getClass().getSimpleName(), "DebugStats unloading GL content");
 
-		mTextureBatch.unloadGLContent();
+		mSpriteBatch.unloadGLContent();
 
 		mConsoleFont = null;
-		mCoreTexture = null;
+		mCoreSpritesheet = null;
 
 	}
 
@@ -287,10 +286,10 @@ public class DebugRendererTreeRenderer extends Rectangle implements IScrollBarAr
 		if (!mIsOpen)
 			return;
 
-		mTextureBatch.begin(pCore.HUD());
-		mTextureBatch.draw(mCoreTexture, 0, 0, 32, 32, x, y - 25f, mOpenWidth, 25f, -0.03f, ColorConstants.MenuPanelPrimaryColor);
-		mTextureBatch.draw(mCoreTexture, 0, 0, 32, 32, x, y, mOpenWidth, mOpenHeight, -0.03f, ColorConstants.MenuPanelSecondaryColor);
-		mTextureBatch.end();
+		mSpriteBatch.begin(pCore.HUD());
+		mSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, x, y - 25f, mOpenWidth, 25f, -0.03f, ColorConstants.MenuPanelPrimaryColor);
+		mSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, x, y, mOpenWidth, mOpenHeight, -0.03f, ColorConstants.MenuPanelSecondaryColor);
+		mSpriteBatch.end();
 
 		mConsoleFont.begin(pCore.HUD());
 		mConsoleFont.drawText("Renderers", x + 5f, y - 25f, -0.01f, ColorConstants.WHITE, 1, -1);
@@ -303,15 +302,15 @@ public class DebugRendererTreeRenderer extends Rectangle implements IScrollBarAr
 		final var lNumTreeComponents = lControllerList.size();
 
 		if (lNumTreeComponents == 0) {
-			mConsoleFont.drawText("No BaseRenderers on Screen", x + 5f, y + 5f, -0.02f, ColorConstants.TextHeadingColor, 1, -1);
+			mConsoleFont.drawText("No BaseRenderers on Screen", x + 5f, y + 5f, -0.02f, ColorConstants.WHITE, 1, -1);
 			return;
 		}
 
 		if (h < mContentRectangle.h())
-			mContentRectangle.preDraw(pCore, mTextureBatch, mCoreTexture);
+			mContentRectangle.preDraw(pCore, mSpriteBatch, mCoreSpritesheet);
 
 		mConsoleFont.begin(pCore.HUD());
-		mTextureBatch.begin(pCore.HUD());
+		mSpriteBatch.begin(pCore.HUD());
 
 		for (int i = mLowerBound; i < mUpperBound; i++) {
 			if (i < 0)
@@ -324,35 +323,32 @@ public class DebugRendererTreeRenderer extends Rectangle implements IScrollBarAr
 
 			float lPosX = 10f + lBaseRendererWidget.rendererLevel * 30f;
 
-			mConsoleFont.drawText(lRendererName, lBaseRendererWidget.x() + lPosX, lBaseRendererWidget.y(), -0.02f, ColorConstants.TextHeadingColor, 1, -1);
+			mConsoleFont.drawText(lRendererName, lBaseRendererWidget.x() + lPosX, lBaseRendererWidget.y() + lBaseRendererWidget.h() * .5f - mConsoleFont.fontHeight() * .5f, -0.02f, ColorConstants.WHITE, 1, -1);
 
 			final float lActiveIconX = x + mOpenWidth - 64;
 			final float lActiveIconY = lBaseRendererWidget.y();
 
 			if (lBaseRendererWidget == null || !lBaseRendererWidget.isRendererActive) {
-				mTextureBatch.draw(mCoreTexture, 32, 128, 32, 32, lActiveIconX, lActiveIconY, 32, 32, -0.01f, ColorConstants.WHITE);
-
+				mSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_CROSS, lActiveIconX, lActiveIconY, 32, 32, -0.01f, ColorConstants.WHITE);
 			} else {
-				mTextureBatch.draw(mCoreTexture, 64, 128, 32, 32, lActiveIconX, lActiveIconY, 32, 32, -0.01f, ColorConstants.WHITE);
-
+				mSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_TICK, lActiveIconX, lActiveIconY, 32, 32, -0.01f, ColorConstants.WHITE);
 			}
-
 		}
 
-		mTextureBatch.end();
+		mSpriteBatch.end();
 		mConsoleFont.end();
 
 		if (h < mContentRectangle.h())
 			mContentRectangle.postDraw(pCore);
 
-		mTextureBatch.begin(pCore.HUD());
+		mSpriteBatch.begin(pCore.HUD());
 
 		if (mScrollBarEnabled) {
-			mScrollBar.draw(pCore, mTextureBatch, mCoreTexture, -0.02f);
+			mScrollBar.draw(pCore, mSpriteBatch, mCoreSpritesheet, -0.02f);
 
 		}
 
-		mTextureBatch.end();
+		mSpriteBatch.end();
 
 	}
 

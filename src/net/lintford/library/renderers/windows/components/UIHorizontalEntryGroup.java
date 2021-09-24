@@ -8,8 +8,9 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.fonts.FontUnit;
-import net.lintford.library.core.graphics.textures.Texture;
-import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
+import net.lintford.library.core.graphics.sprites.spritebatch.SpriteBatch;
+import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
+import net.lintford.library.core.graphics.textures.CoreTextureNames;
 import net.lintford.library.renderers.windows.UiWindow;
 
 public class UIHorizontalEntryGroup extends UIWidget {
@@ -111,15 +112,15 @@ public class UIHorizontalEntryGroup extends UIWidget {
 	}
 
 	@Override
-	public void draw(LintfordCore pCore, TextureBatchPCT pTextureBatch, Texture pUITexture, FontUnit pTextFont, float pComponentZDepth) {
+	public void draw(LintfordCore pCore, SpriteBatch pSpriteBatch, SpriteSheetDefinition pCoreSpritesheet, FontUnit pTextFont, float pComponentZDepth) {
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
-			pTextureBatch.draw(pUITexture, 0, 0, 32, 32, x, y, w, h, pComponentZDepth + .1f, ColorConstants.WHITE);
+			pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, x, y, w, h, pComponentZDepth + .1f, ColorConstants.WHITE);
 
 		}
 
 		final int lNumChildEntries = mChildEntries.size();
 		for (int i = 0; i < lNumChildEntries; i++) {
-			mChildEntries.get(i).draw(pCore, pTextureBatch, pUITexture, pTextFont, pComponentZDepth + 0.01f);
+			mChildEntries.get(i).draw(pCore, pSpriteBatch, pCoreSpritesheet, pTextFont, pComponentZDepth + 0.01f);
 
 		}
 	}

@@ -4,7 +4,7 @@ import net.lintford.library.ConstantsApp;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.Debug;
-import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
+import net.lintford.library.core.graphics.sprites.spritebatch.SpriteBatch;
 import net.lintford.library.screenmanager.Screen;
 import net.lintford.library.screenmanager.ScreenManager;
 import net.lintford.library.screenmanager.entries.ListBox;
@@ -74,7 +74,7 @@ public class LabelValueListBoxItem extends ListBoxItem {
 	}
 
 	@Override
-	public void draw(LintfordCore pCore, Screen pScreen, TextureBatchPCT pSpriteBatch, boolean pIsSelected, float pParentZDepth) {
+	public void draw(LintfordCore pCore, Screen pScreen, SpriteBatch pSpriteBatch, boolean pIsSelected, float pParentZDepth) {
 		if (mLabelValue != null && mLabelValue.length() > 0) {
 
 			if (mTextValue == null)
@@ -90,14 +90,10 @@ public class LabelValueListBoxItem extends ListBoxItem {
 			lFont.drawText(mLabelValue, x, y, pParentZDepth + .1f, textColor, lScale, -1);
 			lFont.drawText(mTextValue, x + w / 2, y, pParentZDepth + .1f, textColor, lScale, -1);
 			lFont.end();
-
 		}
 
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
 			Debug.debugManager().drawers().drawRectImmediate(pCore.HUD(), this);
-
 		}
-
 	}
-
 }

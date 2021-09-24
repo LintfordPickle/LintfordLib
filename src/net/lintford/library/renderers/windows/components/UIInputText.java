@@ -4,8 +4,9 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.fonts.FontUnit;
-import net.lintford.library.core.graphics.textures.Texture;
-import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
+import net.lintford.library.core.graphics.sprites.spritebatch.SpriteBatch;
+import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
+import net.lintford.library.core.graphics.textures.CoreTextureNames;
 import net.lintford.library.core.input.IBufferedTextInputCallback;
 import net.lintford.library.core.input.IUiInputKeyPressCallback;
 import net.lintford.library.core.input.InputManager;
@@ -183,16 +184,16 @@ public class UIInputText extends UIWidget implements IBufferedTextInputCallback 
 	}
 
 	@Override
-	public void draw(LintfordCore pCore, TextureBatchPCT pTextureBatch, Texture pUITexture, FontUnit pTextFont, float pComponentZDepth) {
+	public void draw(LintfordCore pCore, SpriteBatch pSpriteBatch, SpriteSheetDefinition pCoreSpritesheet, FontUnit pTextFont, float pComponentZDepth) {
 		// Renders the background of the input text widget
-		pTextureBatch.draw(pUITexture, 0, 288, 32, 32, x, y, 32, h, pComponentZDepth, ColorConstants.MenuPanelTertiaryColor);
+		pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_LEFT, x, y, 32, h, pComponentZDepth, ColorConstants.MenuPanelPrimaryColor);
 		if (w > 32) {
-			pTextureBatch.draw(pUITexture, 64, 288, 32, 32, x + 32, y, w - 64, h, pComponentZDepth, ColorConstants.MenuPanelTertiaryColor);
-			pTextureBatch.draw(pUITexture, 128, 288, 32, 32, x + w - 32, y, 32, h, pComponentZDepth, ColorConstants.MenuPanelTertiaryColor);
+			pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_MID, x + 32, y, w - 64, h, pComponentZDepth, ColorConstants.MenuPanelPrimaryColor);
+			pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_RIGHT, x + w - 32, y, 32, h, pComponentZDepth, ColorConstants.MenuPanelPrimaryColor);
 		}
 
 		// Draw the cancel button rectangle
-		pTextureBatch.draw(pUITexture, 256, 192, 16, 16, mCancelRectangle, pComponentZDepth, ColorConstants.WHITE);
+		pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_NUBBLE, mCancelRectangle, pComponentZDepth, ColorConstants.WHITE);
 
 		final float lInputTextWidth = pTextFont.getStringWidth(mInputField.toString());
 
@@ -208,7 +209,7 @@ public class UIInputText extends UIWidget implements IBufferedTextInputCallback 
 
 		pTextFont.drawText(lText, x + 10, y + h * .5f - lTextHeight * .5f, pComponentZDepth, ColorConstants.TextEntryColor, 1f, -1);
 		if (mShowCaret && mHasFocus) {
-			pTextureBatch.draw(pUITexture, 0, 0, 32, 32, x + 10 + lInputTextWidth, y + h * .5f - lTextHeight * .5f, pTextFont.fontHeight() / 2.f, pTextFont.fontHeight(), pComponentZDepth, ColorConstants.WHITE);
+			pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, x + 10 + lInputTextWidth, y + h * .5f - lTextHeight * .5f, pTextFont.fontHeight() / 2.f, pTextFont.fontHeight(), pComponentZDepth, ColorConstants.WHITE);
 		}
 	}
 

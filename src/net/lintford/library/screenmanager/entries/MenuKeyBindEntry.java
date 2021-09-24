@@ -4,9 +4,9 @@ import org.lwjgl.glfw.GLFW;
 
 import net.lintford.library.ConstantsApp;
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.graphics.ColorConstants;
+import net.lintford.library.core.graphics.textures.CoreTextureNames;
 import net.lintford.library.core.input.EventAction;
 import net.lintford.library.core.input.IKeyInputCallback;
 import net.lintford.library.core.input.InputHelper;
@@ -112,18 +112,10 @@ public class MenuKeyBindEntry extends MenuEntry implements IKeyInputCallback {
 	// --------------------------------------
 
 	@Override
-	public void loadGLContent(ResourceManager pResourceManager) {
-		super.loadGLContent(pResourceManager);
-
-		mUITexture = pResourceManager.textureManager().textureCore();
-
-	}
-
-	@Override
 	public void unloadGLContent() {
 		super.unloadGLContent();
 
-		mUITexture = null;
+		mCoreSpritesheet = null;
 
 	}
 
@@ -180,20 +172,19 @@ public class MenuKeyBindEntry extends MenuEntry implements IKeyInputCallback {
 		final float lLabelWidth = lFont.getStringWidth(mText, lUiTextScale);
 		final float lFontHeight = lFont.fontHeight() * lUiTextScale;
 
-		final var lTextureBatch = lParentScreen.textureBatch();
+		final var lSpriteBatch = lParentScreen.spriteBatch();
 
 		if (mDrawBackground) {
-			lTextureBatch.begin(pCore.HUD());
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, x, y, w, h, pParentZDepth + .15f, entryColor);
-			lTextureBatch.end();
+			lSpriteBatch.begin(pCore.HUD());
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, x, y, w, h, pParentZDepth + .15f, entryColor);
+			lSpriteBatch.end();
 
 		} else if (mHoveredOver) {
-			lTextureBatch.begin(pCore.HUD());
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() - w / 2, centerY() - h / 2, 32, h, pParentZDepth + .15f, ColorConstants.MenuEntryHighlightColor);
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() - (w / 2) + 32, centerY() - h / 2, w - 64, h, pParentZDepth + .15f, ColorConstants.MenuEntryHighlightColor);
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, centerX() + (w / 2) - 32, centerY() - h / 2, 32, h, pParentZDepth + .15f, ColorConstants.MenuEntryHighlightColor);
-			lTextureBatch.end();
-
+			lSpriteBatch.begin(pCore.HUD());
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, centerX() - w / 2, centerY() - h / 2, 32, h, pParentZDepth + .15f, ColorConstants.MenuEntryHighlightColor);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, centerX() - (w / 2) + 32, centerY() - h / 2, w - 64, h, pParentZDepth + .15f, ColorConstants.MenuEntryHighlightColor);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, centerX() + (w / 2) - 32, centerY() - h / 2, 32, h, pParentZDepth + .15f, ColorConstants.MenuEntryHighlightColor);
+			lSpriteBatch.end();
 		}
 
 		float lX = x + w / 2;
@@ -209,9 +200,9 @@ public class MenuKeyBindEntry extends MenuEntry implements IKeyInputCallback {
 			final float lColorMod = .5f;
 			final var lColor = ColorConstants.getColorWithRGBMod(ColorConstants.PrimaryColor, lColorMod);
 
-			lTextureBatch.begin(pCore.HUD());
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, x, y, w, h, pParentZDepth + .15f, lColor);
-			lTextureBatch.end();
+			lSpriteBatch.begin(pCore.HUD());
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, x, y, w, h, pParentZDepth + .15f, lColor);
+			lSpriteBatch.end();
 
 			if (mCaretFlashTimer % 1.f > .5f) {
 				lFont.drawText(lBoundKeyText, lX + 20.f, y + h / 2f - lFontHeight / 2f, pParentZDepth + .15f, textColor, lUiTextScale);
@@ -219,28 +210,23 @@ public class MenuKeyBindEntry extends MenuEntry implements IKeyInputCallback {
 
 		} else if (mBoundKeyText != null && mBoundKeyText.length() > 0) {
 			lFont.drawText(mBoundKeyText, lX + 20.f, y + h / 2f - lFontHeight / 2f, pParentZDepth + .15f, textColor, lUiTextScale);
-
 		}
 
 		lFont.end();
 
 		if (mShowInfoIcon) {
-			drawInfoIcon(pCore, lTextureBatch, mInfoIconDstRectangle, lParentScreen.screenColor.a);
-
+			drawInfoIcon(pCore, lSpriteBatch, mInfoIconDstRectangle, lParentScreen.screenColor.a);
 		}
 
 		if (mShowWarnIcon) {
-			drawWarningIcon(pCore, lTextureBatch, mWarnIconDstRectangle, lParentScreen.screenColor.a);
-
+			drawWarningIcon(pCore, lSpriteBatch, mWarnIconDstRectangle, lParentScreen.screenColor.a);
 		}
 
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
-			lTextureBatch.begin(pCore.HUD());
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, x, y, w, h, mZ, ColorConstants.Debug_Transparent_Magenta);
-			lTextureBatch.end();
-
+			lSpriteBatch.begin(pCore.HUD());
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, x, y, w, h, mZ, ColorConstants.Debug_Transparent_Magenta);
+			lSpriteBatch.end();
 		}
-
 	}
 
 	// --------------------------------------

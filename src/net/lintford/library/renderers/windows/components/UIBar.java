@@ -5,7 +5,8 @@ import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.Color;
 import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.fonts.FontUnit;
-import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
+import net.lintford.library.core.graphics.sprites.spritebatch.SpriteBatch;
+import net.lintford.library.core.graphics.textures.CoreTextureNames;
 import net.lintford.library.core.maths.MathHelper;
 
 public class UIBar {
@@ -91,19 +92,19 @@ public class UIBar {
 	// Core-Methods
 	// --------------------------------------
 
-	public void draw(LintfordCore pCore, TextureBatchPCT pTextureBatch, FontUnit pTextFont, float pComponentZDepth) {
-		if (pTextureBatch == null || !pTextureBatch.isDrawing())
+	public void draw(LintfordCore pCore, SpriteBatch pSpriteBatch, FontUnit pTextFont, float pComponentZDepth) {
+		if (pSpriteBatch == null || !pSpriteBatch.isDrawing())
 			return;
 
 		final float INNER_BORDER_PADDING = 2.f;
 
-		final var lCoreTexture = pCore.resources().textureManager().textureCore();
+		final var lCoreTexture = pCore.resources().spriteSheetManager().coreSpritesheet();
 
 		float lBarWidth = MathHelper.scaleToRange(mCurValue, mMinValue, mMaxValue, 0, mIsVertical ? h : w);
 		lBarWidth = MathHelper.clamp(lBarWidth - INNER_BORDER_PADDING * 2, 0, w);
 
 		final var lOutlineColor = ColorConstants.getColor(.1f, .1f, .1f);
-		pTextureBatch.draw(lCoreTexture, 0, 0, 32, 32, x, y, w, h, pComponentZDepth, lOutlineColor);
+		pSpriteBatch.draw(lCoreTexture, CoreTextureNames.TEXTURE_WHITE, x, y, w, h, pComponentZDepth, lOutlineColor);
 
 		if (mIsVertical) {
 			float lWidth = w - INNER_BORDER_PADDING * 2;
@@ -114,7 +115,7 @@ public class UIBar {
 			float ww = !mIsInverted ? lWidth : lWidth;
 			float hh = !mIsInverted ? lHeight : -lHeight;
 
-			pTextureBatch.draw(lCoreTexture, 0, 0, 32, 32, xx + INNER_BORDER_PADDING, yy + INNER_BORDER_PADDING, ww, hh, pComponentZDepth, UiBarColor);
+			pSpriteBatch.draw(lCoreTexture, CoreTextureNames.TEXTURE_WHITE, xx + INNER_BORDER_PADDING, yy + INNER_BORDER_PADDING, ww, hh, pComponentZDepth, UiBarColor);
 
 		} else {
 			float lWidth = lBarWidth;
@@ -125,7 +126,7 @@ public class UIBar {
 			float ww = !mIsInverted ? lWidth : lWidth;
 			float hh = !mIsInverted ? lHeight : lHeight;
 
-			pTextureBatch.draw(lCoreTexture, 0, 0, 32, 32, xx + INNER_BORDER_PADDING, yy + INNER_BORDER_PADDING, ww, hh, pComponentZDepth, UiBarColor);
+			pSpriteBatch.draw(lCoreTexture, CoreTextureNames.TEXTURE_WHITE, xx + INNER_BORDER_PADDING, yy + INNER_BORDER_PADDING, ww, hh, pComponentZDepth, UiBarColor);
 		}
 	}
 

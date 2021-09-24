@@ -25,6 +25,10 @@ import net.lintford.library.core.storage.FileUtils;
 
 public class TextureManager extends EntityGroupManager {
 
+	// --------------------------------------
+	// Inner-Classes
+	// --------------------------------------
+
 	public class TextureDataDefinition {
 		public String textureName;
 		public String filepath;
@@ -84,16 +88,14 @@ public class TextureManager extends EntityGroupManager {
 	// Constants
 	// --------------------------------------
 
+	private static final String CORE_META_FILE = "/res/textures/_meta.json";
+
 	/** When enabled, missing textures will be filled with a magenta color. */
 	public static final boolean USE_DEBUG_MISSING_TEXTURES = true;
 
 	public static final String TEXTURE_WHITE_NAME = "TEXTURE_WHITE";
 	public static final String TEXTURE_BLACK_NAME = "TEXTURE_BLACK";
 	public static final String TEXTURE_NOT_FOUND_NAME = "TEXTURE_NOT_FOUND";
-
-	public static final String TEXTURE_CHECKER_BOARD_NAME = "TEXTURE_CHECKER";
-	public static final String TEXTURE_CHECKER_BOARD_INDEXED_NAME = "TEXTURE_CHECKERI";
-	public static final String TEXTURE_CORE_UI_NAME = "TEXTURE_CORE_UI";
 
 	// --------------------------------------
 	// Variables
@@ -140,10 +142,6 @@ public class TextureManager extends EntityGroupManager {
 
 	public boolean isLoaded() {
 		return mIsLoaded;
-	}
-
-	public Texture textureCore() {
-		return getTexture(TEXTURE_CORE_UI_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
 	}
 
 	public Texture textureNotFound() {
@@ -222,21 +220,17 @@ public class TextureManager extends EntityGroupManager {
 	public TextureManager() {
 		mTextureGroupMap = new HashMap<>();
 
-		// Setup the LintfordCore EntityGroupID and load the core textures
 		TextureGroup lCoreTextureGroup = new TextureGroup(LintfordCore.CORE_ENTITY_GROUP_ID);
 		lCoreTextureGroup.automaticUnload = false;
 		lCoreTextureGroup.name = "CORE";
 		lCoreTextureGroup.referenceCount = 1;
 		mTextureGroupMap.put(LintfordCore.CORE_ENTITY_GROUP_ID, lCoreTextureGroup);
 
-		loadTexture(TEXTURE_CORE_UI_NAME, "/res/textures/core/system.png", GL11.GL_NEAREST, LintfordCore.CORE_ENTITY_GROUP_ID);
+		loadTexturesFromMetafile(CORE_META_FILE, LintfordCore.CORE_ENTITY_GROUP_ID);
 
 		mTextureNotFound = loadTexture(TEXTURE_NOT_FOUND_NAME, new int[] { 0xFFFF00FF, 0xFFFF00FF, 0xFFFF00FF, 0xFFFF00FF }, 2, 2, LintfordCore.CORE_ENTITY_GROUP_ID);
-		mTextureChecker = loadTexture(TEXTURE_CHECKER_BOARD_NAME, "/res/textures/CheckerBoard.png", GL11.GL_NEAREST, LintfordCore.CORE_ENTITY_GROUP_ID);
-		mTextureCheckerIndexed = loadTexture(TEXTURE_CHECKER_BOARD_INDEXED_NAME, "/res/textures/CheckerBoardIndexed.png", GL11.GL_NEAREST, LintfordCore.CORE_ENTITY_GROUP_ID);
 		mTextureWhite = loadTexture(TEXTURE_WHITE_NAME, new int[] { 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF }, 2, 2, GL11.GL_NEAREST, GL12.GL_REPEAT, GL12.GL_REPEAT, LintfordCore.CORE_ENTITY_GROUP_ID);
 		mTextureBlack = loadTexture(TEXTURE_BLACK_NAME, new int[] { 0xFF000000, 0xFF000000, 0xFF000000, 0xFF000000 }, 2, 2, GL11.GL_NEAREST, GL12.GL_REPEAT, GL12.GL_REPEAT, LintfordCore.CORE_ENTITY_GROUP_ID);
-
 	}
 
 	// --------------------------------------

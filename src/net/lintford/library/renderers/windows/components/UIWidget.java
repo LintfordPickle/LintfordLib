@@ -5,8 +5,8 @@ import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.Color;
 import net.lintford.library.core.graphics.fonts.FontUnit;
-import net.lintford.library.core.graphics.textures.Texture;
-import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
+import net.lintford.library.core.graphics.sprites.spritebatch.SpriteBatch;
+import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintford.library.core.input.IProcessMouseInput;
 import net.lintford.library.renderers.windows.UiWindow;
 
@@ -17,7 +17,7 @@ public abstract class UIWidget extends Rectangle implements IProcessMouseInput {
 	// --------------------------------------
 
 	private static final long serialVersionUID = 8734195273392955490L;
-	
+
 	protected static final float lHorizontalPadding = 5.0f;
 	protected static final float lVerticalPadding = 5.0f;
 
@@ -107,8 +107,7 @@ public abstract class UIWidget extends Rectangle implements IProcessMouseInput {
 
 	}
 
-	/** Everything for rendering should be provided by the {@link UiWindow} container. */
-	public abstract void draw(LintfordCore pCore, TextureBatchPCT pTextureBatch, Texture pUITexture, FontUnit pTextFont, float pComponentZDepth);
+	public abstract void draw(LintfordCore pCore, SpriteBatch pSpriteBatch, SpriteSheetDefinition pCoreSpritesheet, FontUnit pTextFont, float pComponentZDepth);
 
 	@Override
 	public boolean isCoolDownElapsed() {

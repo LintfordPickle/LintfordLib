@@ -61,6 +61,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	protected float mAnimationTimer;
 
 	protected FontUnit mMenuFont;
+	protected FontUnit mMenuFontBold;
 	protected FontUnit mMenuHeaderFont;
 
 	// --------------------------------------
@@ -82,6 +83,10 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	/** Returns a normal sized {@link FontUnit} which can be used to render general text to the screen. */
 	public FontUnit font() {
 		return mMenuFont;
+	}
+	
+	public FontUnit fontBold() {
+		return mMenuFontBold;
 	}
 
 	/** Returns a medium sized {@link FontUnit} which can be used to render menu sub heading text to the screen. */
@@ -176,6 +181,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		super.loadGLContent(pResourceManager);
 
 		mMenuFont = pResourceManager.fontManager().getFontUnit(ScreenManager.FONT_MENU_ENTRY_NAME);
+		mMenuFontBold = pResourceManager.fontManager().getFontUnit(ScreenManager.FONT_MENU_BOLD_ENTRY_NAME);
 		mMenuHeaderFont = pResourceManager.fontManager().getFontUnit(ScreenManager.FONT_MENU_TITLE_NAME);
 
 		final int lCount = mLayouts.size();
@@ -191,7 +197,6 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		}
 
 		footerLayout().loadGLContent(pResourceManager);
-
 	}
 
 	@Override

@@ -67,7 +67,7 @@ public class LintfordMain extends LintfordCore {
 	protected void showStartUpLogo(long pWindowHandle) {
 		super.showStartUpLogo(pWindowHandle);
 
-		final var lTexture = mResourceManager.textureManager().loadTexture("LOGO", "/res/textures/core/logo.png", LintfordCore.CORE_ENTITY_GROUP_ID);
+		final var lTexture = mResourceManager.textureManager().loadTexture("LOGO", "/res/textures/core/textureLogo.png", LintfordCore.CORE_ENTITY_GROUP_ID);
 
 		glClearColor(0f, 0f, 0f, 1f);
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
@@ -88,7 +88,5 @@ public class LintfordMain extends LintfordCore {
 		lTextureBatch.end();
 
 		glfwSwapBuffers(pWindowHandle);
-
 	};
-
 }

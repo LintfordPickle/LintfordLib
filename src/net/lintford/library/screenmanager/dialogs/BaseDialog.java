@@ -1,9 +1,10 @@
 package net.lintford.library.screenmanager.dialogs;
 
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.ColorConstants;
+import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
+import net.lintford.library.core.graphics.textures.CoreTextureNames;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.renderers.ZLayers;
 import net.lintford.library.screenmanager.MenuScreen;
@@ -84,35 +85,16 @@ public abstract class BaseDialog extends MenuScreen {
 	protected boolean mDrawBackground;
 	protected boolean mDarkenBackground;
 
-	protected final DialogIcon mDialogIcon = new DialogIcon();
-
-	protected Texture mUITexture;
+	protected SpriteSheetDefinition mIconSpritesheet;
+	protected int mIconSpriteFrameIndex;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
 
-	public void drawInfoIcon(boolean pNewValue) {
-		if (pNewValue) {
-			mDialogIcon.setDialogIcon(mUITexture, 352, 0, 64, 64);
-			return;
-		}
-
-		mDialogIcon.setDialogIcon();
-
-	}
-
-	public void drawWarningIcon(boolean pNewValue) {
-		if (pNewValue) {
-			mDialogIcon.setDialogIcon(mUITexture, 416, 0, 64, 64);
-			return;
-		}
-
-		mDialogIcon.setDialogIcon();
-	}
-
-	public DialogIcon dialogIcon() {
-		return mDialogIcon;
+	public void setDialogIcon(SpriteSheetDefinition pSpritesheetDefinition, int pSpriteFrameIndex) {
+		mIconSpritesheet = pSpritesheetDefinition;
+		mIconSpriteFrameIndex = pSpriteFrameIndex;
 	}
 
 	public boolean drawBackground() {
@@ -148,6 +130,7 @@ public abstract class BaseDialog extends MenuScreen {
 
 		mParentScreen = pParentScreen;
 
+		mShowBackgroundScreens = true;
 		mDrawBackground = true;
 		mDarkenBackground = true;
 
@@ -165,22 +148,6 @@ public abstract class BaseDialog extends MenuScreen {
 	// --------------------------------------
 	// Core-Methods
 	// --------------------------------------
-
-	@Override
-	public void loadGLContent(ResourceManager pResourceManager) {
-		super.loadGLContent(pResourceManager);
-
-		mUITexture = pResourceManager.textureManager().textureCore();
-
-	}
-
-	@Override
-	public void unloadGLContent() {
-		super.unloadGLContent();
-
-		mUITexture = null;
-
-	}
 
 	@Override
 	public void updateLayoutSize(LintfordCore pCore) {
@@ -210,14 +177,13 @@ public abstract class BaseDialog extends MenuScreen {
 		final float lWindowWidth = pCore.HUD().boundingRectangle().w();
 		final float lWindowHeight = pCore.HUD().boundingRectangle().h();
 
-		final var lTextureBatch = mParentScreen.textureBatch();
+		final var lSpriteBatch = mParentScreen.spriteBatch();
 
 		if (mDarkenBackground) {
 			final var lColor = ColorConstants.getBlackWithAlpha(.6f);
-			lTextureBatch.begin(pCore.HUD());
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, -lWindowWidth * 0.5f, -lWindowHeight * 0.5f, lWindowWidth, lWindowHeight, ZLayers.LAYER_SCREENMANAGER - 0.1f, lColor);
-			lTextureBatch.end();
-
+			lSpriteBatch.begin(pCore.HUD());
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, -lWindowWidth * 0.5f, -lWindowHeight * 0.5f, lWindowWidth, lWindowHeight, ZLayers.LAYER_SCREENMANAGER - 0.1f, lColor);
+			lSpriteBatch.end();
 		}
 
 		if (mDrawBackground) {
@@ -229,45 +195,48 @@ public abstract class BaseDialog extends MenuScreen {
 
 			final var lColor = ColorConstants.getWhiteWithAlpha(1.f);
 
-			lTextureBatch.begin(pCore.HUD());
-			lTextureBatch.draw(mUITexture, 256, 0, TILE_SIZE, TILE_SIZE, x, y, TILE_SIZE, TILE_SIZE, lZDepth, lColor);
-			lTextureBatch.draw(mUITexture, 288, 0, TILE_SIZE, TILE_SIZE, x + TILE_SIZE, y, w - 64, TILE_SIZE, lZDepth, lColor);
-			lTextureBatch.draw(mUITexture, 320, 0, TILE_SIZE, TILE_SIZE, x + w - 32, y, TILE_SIZE, TILE_SIZE, lZDepth, lColor);
+			lSpriteBatch.begin(pCore.HUD());
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_TOP_LEFT, x, y, TILE_SIZE, TILE_SIZE, lZDepth, lColor);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_TOP_MID, x + TILE_SIZE, y, w - 64, TILE_SIZE, lZDepth, lColor);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_TOP_RIGHT, x + w - 32, y, TILE_SIZE, TILE_SIZE, lZDepth, lColor);
 
-			lTextureBatch.draw(mUITexture, 256, 32, TILE_SIZE, TILE_SIZE, x, y + 32, TILE_SIZE, h - 64, lZDepth, lColor);
-			lTextureBatch.draw(mUITexture, 288, 32, TILE_SIZE, TILE_SIZE, x + TILE_SIZE, y + 32, w - 64, h - 64, lZDepth, lColor);
-			lTextureBatch.draw(mUITexture, 320, 32, TILE_SIZE, TILE_SIZE, x + w - 32, y + 32, TILE_SIZE, h - 64, lZDepth, lColor);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_MID_LEFT, x, y + 32, TILE_SIZE, h - 64, lZDepth, lColor);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_MID_CENTER, x + TILE_SIZE, y + 32, w - 64, h - 64, lZDepth, lColor);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_MID_RIGHT, x + w - 32, y + 32, TILE_SIZE, h - 64, lZDepth, lColor);
 
-			lTextureBatch.draw(mUITexture, 256, 64, TILE_SIZE, TILE_SIZE, x, y + h - 32, TILE_SIZE, TILE_SIZE, lZDepth, lColor);
-			lTextureBatch.draw(mUITexture, 288, 64, TILE_SIZE, TILE_SIZE, x + TILE_SIZE, y + h - 32, w - 64, TILE_SIZE, lZDepth, lColor);
-			lTextureBatch.draw(mUITexture, 320, 64, TILE_SIZE, TILE_SIZE, x + w - 32, y + h - 32, TILE_SIZE, TILE_SIZE, lZDepth, lColor);
-			lTextureBatch.end();
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_BOTTOM_LEFT, x, y + h - 32, TILE_SIZE, TILE_SIZE, lZDepth, lColor);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_BOTTOM_MID, x + TILE_SIZE, y + h - 32, w - 64, TILE_SIZE, lZDepth, lColor);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_BOTTOM_RIGHT, x + w - 32, y + h - 32, TILE_SIZE, TILE_SIZE, lZDepth, lColor);
+			lSpriteBatch.end();
 		}
 
-		if (mDialogIcon.enabled()) {
+		final boolean lDrawIcon = mIconSpriteFrameIndex != -1 && mIconSpritesheet != null;
+		if (lDrawIcon) {
 			final float x = -DIALOG_WIDTH / 2;
 			final float y = -DIALOG_HEIGHT / 2;
 
-			lTextureBatch.begin(pCore.HUD());
-			lTextureBatch.draw(mDialogIcon.mIconTexture, mDialogIcon.mSrcRectangle, x + 15.f, y + 15.f, 64, 64, lZDepth, ColorConstants.WHITE);
-			lTextureBatch.end();
+			final var lSpriteFrame = mIconSpritesheet.getSpriteFrame(mIconSpriteFrameIndex);
+			final float lIconWidth = lSpriteFrame.w();
+			final float lIconHeight = lSpriteFrame.h();
+
+			lSpriteBatch.begin(pCore.HUD());
+			lSpriteBatch.draw(mIconSpritesheet, lSpriteFrame, x + 15.f, y + 15.f, lIconWidth, lIconHeight, lZDepth, ColorConstants.WHITE);
+			lSpriteBatch.end();
 		}
 
 		final float lHeaderFontHeight = mMenuHeaderFont.fontHeight();
 
-		/* Render title and message */
-		font().begin(pCore.HUD());
-		font().drawText(mMessageString, -DIALOG_WIDTH * 0.5f + TEXT_HORIZONTAL_PADDING, -DIALOG_HEIGHT * 0.5f + lHeaderFontHeight + 15f, lZDepth, ColorConstants.WHITE, 1f, DIALOG_WIDTH - 70);
-		font().end();
-
 		// Render the menu title if there is one
 		if (mMenuTitle != null && mMenuTitle.length() > 0) {
-			mMenuHeaderFont.begin(pCore.HUD());
-			final float lHorizontalOffsetX = mDialogIcon.enabled() ? 74.f : 0.f;
-			final float lScale = 0.65f;
-			mMenuHeaderFont.drawText(mMenuTitle, -DIALOG_WIDTH / 2f + TEXT_HORIZONTAL_PADDING + lHorizontalOffsetX, -DIALOG_HEIGHT / 2f + TEXT_HORIZONTAL_PADDING, lZDepth, screenColor, lScale);
-			mMenuHeaderFont.end();
+			mMenuFont.begin(pCore.HUD());
+			final float lHorizontalOffsetX = (lDrawIcon) ? 74.f : 0.f;
+			mMenuFont.drawText(mMenuTitle, -DIALOG_WIDTH / 2f + TEXT_HORIZONTAL_PADDING + lHorizontalOffsetX, -DIALOG_HEIGHT / 2f + TEXT_HORIZONTAL_PADDING, lZDepth, screenColor, 1.f);
+			mMenuFont.end();
 		}
+
+		mMenuFont.begin(pCore.HUD());
+		mMenuFont.drawText(mMessageString, -DIALOG_WIDTH * 0.5f + TEXT_HORIZONTAL_PADDING, -DIALOG_HEIGHT * 0.5f + lHeaderFontHeight + 15f, lZDepth, ColorConstants.WHITE, 1f, DIALOG_WIDTH - 70);
+		mMenuFont.end();
 
 		// Draw each layout in turn.
 		final int lCount = mLayouts.size();

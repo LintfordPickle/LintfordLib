@@ -75,9 +75,9 @@ public class ColorConstants {
 
 	public static Color MenuEntryHighlightColor = new Color(PrimaryColor.r, PrimaryColor.g, PrimaryColor.b, .32f);
 
-	public static Color TextHeadingColor = new Color(.96f, .96f, .96f);
-	public static Color TextSubHeadingColor = new Color(.94f, .94f, .94f);
-	public static Color TextEntryColor = new Color(.96f, .96f, .96f);
+	public static Color TextHeadingColor = new Color(.96f, .96f, .96f, 1.f);
+	public static Color TextSubHeadingColor = new Color(.94f, .94f, .94f, 1.f);
+	public static Color TextEntryColor = new Color(.96f, .96f, .96f, 1.f);
 
 	public static Color Debug_Transparent_Magenta = new Color(1.f, .2f, .2f, .3f);
 

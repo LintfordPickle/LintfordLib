@@ -4,6 +4,8 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.fonts.FontUnit;
+import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
+import net.lintford.library.core.graphics.textures.CoreTextureNames;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.renderers.RendererManager;
 import net.lintford.library.screenmanager.MenuEntry;
@@ -33,8 +35,9 @@ public class MenuImageEntry extends MenuEntry {
 
 	private FontUnit mUiFont;
 	private Texture mMainTexture;
-	private Texture mMissingTexture;
-	private float srcX, srcY, srcWidth, srcHeight;
+
+	private SpriteSheetDefinition mMissingTextureSpritesheet;
+	private int mMissingTextureSpriteFrameIndex;
 
 	private boolean mShowMissingTextureText;
 	private String mMissingTextureText;
@@ -119,7 +122,6 @@ public class MenuImageEntry extends MenuEntry {
 	public void loadGLContent(ResourceManager pResourceManager) {
 		super.loadGLContent(pResourceManager);
 
-		mUITexture = pResourceManager.textureManager().textureCore();
 		mUiFont = pResourceManager.fontManager().getFontUnit(RendererManager.UI_FONT_TEXT_BOLD_NAME);
 	}
 
@@ -128,7 +130,7 @@ public class MenuImageEntry extends MenuEntry {
 		super.unloadGLContent();
 
 		mUiFont = null;
-		mUITexture = null;
+		mCoreSpritesheet = null;
 	}
 
 	@Override
@@ -193,9 +195,9 @@ public class MenuImageEntry extends MenuEntry {
 	@Override
 	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pParentZDepth) {
 		final var lParentScreen = mParentLayout.parentScreen;
-		final var lTextureBatch = lParentScreen.textureBatch();
+		final var lSpriteBatch = lParentScreen.spriteBatch();
 
-		lTextureBatch.begin(pCore.HUD());
+		lSpriteBatch.begin(pCore.HUD());
 
 		final var lScreenOffset = pScreen.screenPositionOffset();
 
@@ -203,32 +205,30 @@ public class MenuImageEntry extends MenuEntry {
 			final int lTextureWidth = mMainTexture.getTextureWidth();
 			final int lTextureHeight = mMainTexture.getTextureHeight();
 
-			lTextureBatch.draw(mMainTexture, 0, 0, lTextureWidth, lTextureHeight, lScreenOffset.x + x, lScreenOffset.y + y, mFittedWidth, mFittedHeight, pParentZDepth + .1f, entryColor);
+			lSpriteBatch.draw(mMainTexture, 0, 0, lTextureWidth, lTextureHeight, lScreenOffset.x + x, lScreenOffset.y + y, mFittedWidth, mFittedHeight, pParentZDepth + .1f, entryColor);
 
 		} else if (mShowMissingTextureText) {
 			final float lTextWidth = mUiFont.getStringWidth(mMissingTextureText);
-
 			mUiFont.begin(pCore.HUD());
 			mUiFont.drawText(mMissingTextureText, lScreenOffset.x + x + mFittedWidth / 2f - lTextWidth / 2f, lScreenOffset.y + (int) (y + mFittedHeight / 2), pParentZDepth + .1f, ColorConstants.WHITE, 1f);
 			mUiFont.end();
-		} else if (mMissingTexture != null) {
-			lTextureBatch.draw(mMissingTexture, srcX, srcY, srcWidth, srcHeight, lScreenOffset.x + x, lScreenOffset.y + y, mFittedWidth, mFittedHeight, pParentZDepth + .1f, entryColor);
-
-		} else if (mUITexture != null) {
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, lScreenOffset.x + x, lScreenOffset.y + y, mFittedWidth, mFittedHeight, pParentZDepth + .1f, entryColor);
+		} else if (mMissingTextureSpritesheet != null) {
+			lSpriteBatch.draw(mMissingTextureSpritesheet, mMissingTextureSpriteFrameIndex, lScreenOffset.x + x, lScreenOffset.y + y, mFittedWidth, mFittedHeight, pParentZDepth + .1f, entryColor);
+		} else if (mCoreSpritesheet != null) {
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + x, lScreenOffset.y + y, mFittedWidth, mFittedHeight, pParentZDepth + .1f, entryColor);
 		}
 
-		lTextureBatch.end();
+		lSpriteBatch.end();
 
 		if (mShowInfoIcon) {
-			drawInfoIcon(pCore, lTextureBatch, mInfoIconDstRectangle, 1.f);
+			drawInfoIcon(pCore, lSpriteBatch, mInfoIconDstRectangle, 1.f);
 		}
 
 		if (mShowWarnIcon) {
-			drawWarningIcon(pCore, lTextureBatch, mWarnIconDstRectangle, 1.f);
+			drawWarningIcon(pCore, lSpriteBatch, mWarnIconDstRectangle, 1.f);
 		}
 
-		drawDebugCollidableBounds(pCore, lTextureBatch);
+		drawDebugCollidableBounds(pCore, lSpriteBatch);
 	}
 
 	// --------------------------------------
@@ -237,16 +237,10 @@ public class MenuImageEntry extends MenuEntry {
 
 	public void setTexture(Texture pTexture) {
 		mMainTexture = pTexture;
-
 	}
 
-	public void setDefaultImage(Texture pBackgroundTexture, int pSrcX, int pSrcY, int pSrcWidth, int pSrcHeight) {
-		mMissingTexture = pBackgroundTexture;
-		srcX = pSrcX;
-		srcY = pSrcY;
-		srcWidth = pSrcWidth;
-		srcHeight = pSrcHeight;
-
+	public void setDefaultImage(SpriteSheetDefinition pSpritesheetDefinition, int pSpriteFrameIndex) {
+		mMissingTextureSpritesheet = pSpritesheetDefinition;
+		mMissingTextureSpriteFrameIndex = pSpriteFrameIndex;
 	}
-
 }

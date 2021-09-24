@@ -6,6 +6,7 @@ import org.lwjgl.glfw.GLFWVidMode;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.graphics.ColorConstants;
+import net.lintford.library.core.graphics.textures.CoreTextureNames;
 import net.lintford.library.options.DisplayManager;
 import net.lintford.library.options.VideoSettings;
 import net.lintford.library.screenmanager.MenuEntry;
@@ -208,7 +209,7 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 		// If the current settings are dirty then show a dialog to ask for confirmation (of losing changes) before leaving
 		if (modifiedVideoConfig.isDifferent(currentVideoConfig)) {
 			mConfirmationDialog = new ConfirmationDialog(screenManager, this, "You have some changes which have not been applied, are you sure you want to go back?");
-			mConfirmationDialog.drawWarningIcon(true);
+			mConfirmationDialog.setDialogIcon(mCoreSpritesheet, CoreTextureNames.TEXTURE_ICON_WARNING);
 			mConfirmationDialog.dialogTitle("Unsaved Changes");
 			mConfirmationDialog.confirmEntry().entryText("Okay");
 			mConfirmationDialog.confirmEntry().registerClickListener(this, ConfirmationDialog.BUTTON_CONFIRM_YES);
@@ -217,14 +218,11 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 			mConfirmationDialog.cancelEntry().registerClickListener(this, ConfirmationDialog.BUTTON_CONFIRM_NO);
 
 			screenManager.addScreen(mConfirmationDialog);
-
 		} else {
 			screenManager.core().config().display().saveConfig();
 
 			super.exitScreen();
-
 		}
-
 	}
 
 	// --------------------------------------

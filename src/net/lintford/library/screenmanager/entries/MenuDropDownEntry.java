@@ -9,6 +9,7 @@ import net.lintford.library.ConstantsApp;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.ColorConstants;
+import net.lintford.library.core.graphics.textures.CoreTextureNames;
 import net.lintford.library.core.input.InputManager;
 import net.lintford.library.renderers.ZLayers;
 import net.lintford.library.renderers.windows.components.IScrollBarArea;
@@ -313,11 +314,11 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 		mZ = mOpen ? ZLayers.LAYER_SCREENMANAGER + Z_STATE_MODIFIER_ACTIVE : ZLayers.LAYER_SCREENMANAGER + Z_STATE_MODIFIER_PASSIVE;
 
 		final var lScreenOffset = pScreen.screenPositionOffset();
-		final String lSeparator = " : ";
+		final var lSeparator = " : ";
 
-		final float lLabelWidth = lFont.getStringWidth(mLabel, lUiTextScale);
-		final float lFontHeight = lFont.fontHeight() * lUiTextScale;
-		final var lTextureBatch = lParentScreen.textureBatch();
+		final var lLabelWidth = lFont.getStringWidth(mLabel, lUiTextScale);
+		final var lFontHeight = lFont.fontHeight() * lUiTextScale;
+		final var lSpriteBatch = lParentScreen.spriteBatch();
 
 		final float lSeparatorHalfWidth = lFont.getStringWidth(lSeparator, lUiTextScale) * 0.5f;
 		lFont.begin(pCore.HUD());
@@ -325,11 +326,11 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 		lFont.drawText(lSeparator, lScreenOffset.x + x + w / 2 - lSeparatorHalfWidth, lScreenOffset.y + y + mItemHeight / 2f - lFontHeight / 2f, mZ, textColor, lUiTextScale, -1);
 
 		if (mHoveredOver && mEnabled) {
-			lTextureBatch.begin(pCore.HUD());
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, lScreenOffset.x + centerX() - w / 2, lScreenOffset.y + centerY() - h / 2, 32, h, mZ, ColorConstants.MenuEntryHighlightColor);
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, lScreenOffset.x + centerX() - (w / 2) + 32, lScreenOffset.y + centerY() - h / 2, w - 64, h, mZ, ColorConstants.MenuEntryHighlightColor);
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, lScreenOffset.x + centerX() + (w / 2) - 32, lScreenOffset.y + centerY() - h / 2, 32, h, mZ, ColorConstants.MenuEntryHighlightColor);
-			lTextureBatch.end();
+			lSpriteBatch.begin(pCore.HUD());
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - w / 2, lScreenOffset.y + centerY() - h / 2, 32, h, mZ, ColorConstants.MenuEntryHighlightColor);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - (w / 2) + 32, lScreenOffset.y + centerY() - h / 2, w - 64, h, mZ, ColorConstants.MenuEntryHighlightColor);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() + (w / 2) - 32, lScreenOffset.y + centerY() - h / 2, 32, h, mZ, ColorConstants.MenuEntryHighlightColor);
+			lSpriteBatch.end();
 		}
 
 		if (mItems == null || mItems.size() == 0) {
@@ -351,9 +352,9 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 		// CONTENT PANE
 
 		if (mOpen) {
-			lTextureBatch.begin(pCore.HUD());
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, mWindowRectangle, mZ, ColorConstants.getBlackWithAlpha(1.f));
-			lTextureBatch.end();
+			lSpriteBatch.begin(pCore.HUD());
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mWindowRectangle, mZ, ColorConstants.getBlackWithAlpha(1.f));
+			lSpriteBatch.end();
 
 			lFont.begin(pCore.HUD());
 
@@ -368,9 +369,9 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 			// Make sure we are starting with a fresh stencil buffer
 			GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT); // Clear the stencil buffer
 
-			lTextureBatch.begin(pCore.HUD());
-			lTextureBatch.draw(mUITexture, 32, 0, 32, 32, mWindowRectangle, -8f, ColorConstants.getBlackWithAlpha(0.f));
-			lTextureBatch.end();
+			lSpriteBatch.begin(pCore.HUD());
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_BLACK, mWindowRectangle, -8f, ColorConstants.getBlackWithAlpha(0.f));
+			lSpriteBatch.end();
 
 			// Start the stencil buffer test to filter out everything outside of the scroll view
 			GL11.glStencilFunc(GL11.GL_EQUAL, 1, 0xFF); // Pass test if stencil value is 1
@@ -382,18 +383,14 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 				final var lItem = mItems.get(i);
 				final float lItemTextWidth = lFont.getStringWidth(lItem.name);
 
-				// Highlight the item were the mouse is over
 				if (i == mHighlightedIndex) {
 					textColor.setFromColor(ColorConstants.PrimaryColor);
-
 				} else {
 					textColor.setFromColor(ColorConstants.TextEntryColor);
-
 				}
 
 				lFont.drawText(lItem.name, lScreenOffset.x + x + (w / 4 * 3) - lItemTextWidth / 2, lScreenOffset.y + lYPos, mZ + 0.1f, textColor, lUiTextScale, -1);
 				lYPos += mItemHeight;
-
 			}
 
 			lFont.end();
@@ -402,30 +399,29 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 		}
 
 		if (mOpen && mScrollBar.areaNeedsScrolling())
-			mScrollBar.draw(pCore, lTextureBatch, mUITexture, -0.1f);
+			mScrollBar.draw(pCore, lSpriteBatch, mCoreSpritesheet, -0.1f);
 
 		// Draw the down arrow
-		lTextureBatch.begin(pCore.HUD());
-		lTextureBatch.draw(mUITexture, 96, 224, 32, 32, lScreenOffset.x + right() - 32, lScreenOffset.y + top(), 32, 32, mZ, entryColor);
-		lTextureBatch.end();
+		lSpriteBatch.begin(pCore.HUD());
+		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_DOWN, lScreenOffset.x + right() - 32, lScreenOffset.y + top(), 32, 32, mZ, entryColor);
+		lSpriteBatch.end();
 
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
-			lTextureBatch.begin(pCore.HUD());
-			lTextureBatch.draw(mUITexture, 0, 0, 32, 32, lScreenOffset.x + x, lScreenOffset.y + y, w, h, mZ, ColorConstants.Debug_Transparent_Magenta);
-			lTextureBatch.end();
-
+			lSpriteBatch.begin(pCore.HUD());
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + x, lScreenOffset.y + y, w, h, mZ, ColorConstants.Debug_Transparent_Magenta);
+			lSpriteBatch.end();
 		}
 
 		if (!mEnabled) {
-			drawdisabledBlackOverbar(pCore, lTextureBatch, entryColor.a);
+			drawdisabledBlackOverbar(pCore, lSpriteBatch, entryColor.a);
 		}
 
 		if (mShowInfoIcon) {
-			drawInfoIcon(pCore, lTextureBatch, mInfoIconDstRectangle, entryColor.a);
+			drawInfoIcon(pCore, lSpriteBatch, mInfoIconDstRectangle, entryColor.a);
 		}
 
 		if (mShowWarnIcon) {
-			drawWarningIcon(pCore, lTextureBatch, mWarnIconDstRectangle, entryColor.a);
+			drawWarningIcon(pCore, lSpriteBatch, mWarnIconDstRectangle, entryColor.a);
 		}
 	}
 

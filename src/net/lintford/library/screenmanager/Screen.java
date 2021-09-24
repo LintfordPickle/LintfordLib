@@ -7,6 +7,8 @@ import net.lintford.library.core.debug.GLDebug;
 import net.lintford.library.core.entity.BaseEntity;
 import net.lintford.library.core.graphics.Color;
 import net.lintford.library.core.graphics.ColorConstants;
+import net.lintford.library.core.graphics.sprites.spritebatch.SpriteBatch;
+import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.core.input.IProcessMouseInput;
 import net.lintford.library.core.maths.Vector2f;
@@ -38,7 +40,7 @@ public abstract class Screen implements IProcessMouseInput {
 	public final ScreenManager screenManager;
 	public final RendererManager rendererManager;
 	public final Color screenColor = new Color(ColorConstants.WHITE);
-
+	protected SpriteSheetDefinition mCoreSpritesheet;
 	protected BaseTransition mTransitionOn;
 	protected BaseTransition mTransitionOff;
 	protected ScreenState mScreenState;
@@ -63,6 +65,10 @@ public abstract class Screen implements IProcessMouseInput {
 
 	public Vector2f screenPositionOffset() {
 		return mScreenOffset;
+	}
+
+	public SpriteBatch spriteBatch() {
+		return rendererManager.uiSpriteBatch();
 	}
 
 	public TextureBatchPCT textureBatch() {
@@ -180,9 +186,8 @@ public abstract class Screen implements IProcessMouseInput {
 
 	public void loadGLContent(ResourceManager pResourceManager) {
 		rendererManager.loadGLContent(pResourceManager);
-
+		mCoreSpritesheet = pResourceManager.spriteSheetManager().coreSpritesheet();
 		mIsLoaded = true;
-
 	}
 
 	public void unloadGLContent() {
@@ -190,8 +195,8 @@ public abstract class Screen implements IProcessMouseInput {
 
 		screenManager.core().controllerManager().removeControllerGroup(mEntityGroupID);
 
+		mCoreSpritesheet = null;
 		mIsLoaded = false;
-
 	}
 
 	public void handleInput(LintfordCore pCore) {
