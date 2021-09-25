@@ -14,7 +14,7 @@
   "crop": false,
   "trim": false,
   "allowRotations": false,
-  "spritePadding": 0,
+  "spritePadding": 1,
   "textureWidthMax": 512,
   "textureWidthActual": 512,
   "textureHeightMax": 512,

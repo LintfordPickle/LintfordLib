@@ -129,15 +129,12 @@ public class MenuToggleEntry extends MenuEntry {
 	@Override
 	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pParentZDepth) {
 		final var lParentScreen = mParentLayout.parentScreen;
-		final var lFont = lParentScreen.font();
-		if (lFont == null)
-			return;
-
+		final var lTextBoldFont = lParentScreen.fontBold();
 		final float lUiTextScale = lParentScreen.uiTextScale();
 
-		final float lLabelWidth = lFont.getStringWidth(mText, lUiTextScale);
-		final float lTextHeight = lFont.fontHeight() * lUiTextScale;
-		final float lSeparatorHalfWidth = lFont.getStringWidth(mSeparator, lUiTextScale) * 0.5f;
+		final float lLabelWidth = lTextBoldFont.getStringWidth(mText, lUiTextScale);
+		final float lTextHeight = lTextBoldFont.fontHeight() * lUiTextScale;
+		final float lSeparatorHalfWidth = lTextBoldFont.getStringWidth(mSeparator, lUiTextScale) * 0.5f;
 
 		final var lSpriteBatch = lParentScreen.spriteBatch();
 
@@ -170,17 +167,17 @@ public class MenuToggleEntry extends MenuEntry {
 
 		lSpriteBatch.end();
 
-		lFont.begin(pCore.HUD());
-		lFont.drawText(mText, lScreenOffset.x + x + w / 2 - lLabelWidth - SPACE_BETWEEN_TEXT - lSeparatorHalfWidth, lScreenOffset.y + y + h / 2 - lTextHeight * 0.5f, mZ, textColor, lUiTextScale, -1);
-		lFont.drawText(mSeparator, lScreenOffset.x + x + w / 2 - lSeparatorHalfWidth, lScreenOffset.y + y + h / 2 - lTextHeight * 0.5f, mZ, textColor, lUiTextScale, -1);
+		lTextBoldFont.begin(pCore.HUD());
+		lTextBoldFont.drawText(mText, lScreenOffset.x + x + w / 2 - lLabelWidth - SPACE_BETWEEN_TEXT - lSeparatorHalfWidth, lScreenOffset.y + y + h / 2 - lTextHeight * 0.5f, mZ, textColor, lUiTextScale, -1);
+		lTextBoldFont.drawText(mSeparator, lScreenOffset.x + x + w / 2 - lSeparatorHalfWidth, lScreenOffset.y + y + h / 2 - lTextHeight * 0.5f, mZ, textColor, lUiTextScale, -1);
 
 		if (mIsChecked) {
-			lFont.drawText("Enabled", lScreenOffset.x + x + w / 2 + lSeparatorHalfWidth + lTileSize * 2, lScreenOffset.y + y + h / 2 - lTextHeight * 0.5f, mZ, textColor, lUiTextScale, -1);
+			lTextBoldFont.drawText("Enabled", lScreenOffset.x + x + w / 2 + lSeparatorHalfWidth + lTileSize * 2, lScreenOffset.y + y + h / 2 - lTextHeight * 0.5f, mZ, textColor, lUiTextScale, -1);
 		} else {
-			lFont.drawText("Disabled", lScreenOffset.x + x + w / 2 + lSeparatorHalfWidth + lTileSize * 2, lScreenOffset.y + y + h / 2 - lTextHeight * 0.5f, mZ, textColor, lUiTextScale, -1);
+			lTextBoldFont.drawText("Disabled", lScreenOffset.x + x + w / 2 + lSeparatorHalfWidth + lTileSize * 2, lScreenOffset.y + y + h / 2 - lTextHeight * 0.5f, mZ, textColor, lUiTextScale, -1);
 		}
 
-		lFont.end();
+		lTextBoldFont.end();
 
 		if (mShowInfoIcon) {
 			drawInfoIcon(pCore, lSpriteBatch, mInfoIconDstRectangle, lParentScreenAlpha);

@@ -84,7 +84,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	public FontUnit font() {
 		return mMenuFont;
 	}
-	
+
 	public FontUnit fontBold() {
 		return mMenuFontBold;
 	}
@@ -496,11 +496,9 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 		drawMenuTitle(pCore);
 
-		// Draw each layout in turn.
 		final int lCount = mLayouts.size();
 		for (int i = 0; i < lCount; i++) {
 			mLayouts.get(i).draw(pCore, lMenuScreenZDepth + (i * 0.001f));
-
 		}
 
 		footerLayout().draw(pCore, lMenuScreenZDepth + (1 * 0.001f));

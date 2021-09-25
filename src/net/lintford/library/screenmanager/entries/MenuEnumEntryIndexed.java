@@ -289,33 +289,33 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 			lTextureBatch.end();
 		}
 
-		final var lFont = lParentScreen.font();
+		final var lTextBoldFont = lParentScreen.fontBold();
 
-		final float lLabelWidth = lFont.getStringWidth(mLabel, lUiTextScale);
+		final float lLabelWidth = lTextBoldFont.getStringWidth(mLabel, lUiTextScale);
 		float lAdjustedLabelScaleW = lUiTextScale;
 		if (mEnableScaleTextToWidth && w * 0.4f < lLabelWidth && lLabelWidth > 0)
 			lAdjustedLabelScaleW = (w * 0.4f) / lLabelWidth;
 
-		final float lFontHeight = lFont.fontHeight() * lUiTextScale;
-		final float lSeparatorHalfWidth = lFont.getStringWidth(mSeparator, lUiTextScale) * 0.5f;
+		final float lFontHeight = lTextBoldFont.fontHeight() * lUiTextScale;
+		final float lSeparatorHalfWidth = lTextBoldFont.getStringWidth(mSeparator, lUiTextScale) * 0.5f;
 
-		lFont.begin(pCore.HUD());
-		lFont.drawText(mLabel, x + w / 2 - 10 - (lLabelWidth * lAdjustedLabelScaleW) - lSeparatorHalfWidth, y + h / 2 - lFontHeight * 0.5f, mZ, textColor, lAdjustedLabelScaleW, -1);
-		lFont.drawText(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - lFontHeight * 0.5f, mZ, textColor, lUiTextScale, -1);
+		lTextBoldFont.begin(pCore.HUD());
+		lTextBoldFont.drawText(mLabel, x + w / 2 - 10 - (lLabelWidth * lAdjustedLabelScaleW) - lSeparatorHalfWidth, y + h / 2 - lFontHeight * 0.5f, mZ, textColor, lAdjustedLabelScaleW, -1);
+		lTextBoldFont.drawText(mSeparator, x + w / 2 - lSeparatorHalfWidth, y + h / 2 - lFontHeight * 0.5f, mZ, textColor, lUiTextScale, -1);
 
 		// Render the items
 		if (mSelectedIndex >= 0 && mSelectedIndex < mItems.size()) {
 			String lCurItem = mItems.get(mSelectedIndex).name;
-			final float EntryWidth = lFont.getStringWidth(lCurItem);
+			final float EntryWidth = lTextBoldFont.getStringWidth(lCurItem);
 			float lAdjustedEntryScaleW = lUiTextScale;
 			if (mEnableScaleTextToWidth && w * 0.35f < EntryWidth && EntryWidth > 0)
 				lAdjustedEntryScaleW = (w * 0.35f) / EntryWidth;
 
-			lFont.drawText(lCurItem, x + (w / 4 * 3) - (EntryWidth * lAdjustedEntryScaleW) / 2, y + h / 2 - lFontHeight * 0.5f, pComponentDepth, textColor, lAdjustedEntryScaleW, -1);
+			lTextBoldFont.drawText(lCurItem, x + (w / 4 * 3) - (EntryWidth * lAdjustedEntryScaleW) / 2, y + h / 2 - lFontHeight * 0.5f, pComponentDepth, textColor, lAdjustedEntryScaleW, -1);
 
 		}
 
-		lFont.end();
+		lTextBoldFont.end();
 
 		super.draw(pCore, pScreen, pIsSelected, pComponentDepth);
 

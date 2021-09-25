@@ -319,7 +319,7 @@ public class FontUnit {
 				lX = pX;
 			}
 
-			mFontRenderer.draw(mFontDefinition.texture(), glyph_c.x(), glyph_c.y(), glyph_c.w(), glyph_c.h(), lX, lY, glyph_c.width() * pScale, glyph_c.height() * pScale, pZ, pTextColor);
+			mFontRenderer.draw(mFontDefinition.texture(), glyph_c.x(), glyph_c.y(), glyph_c.w(), glyph_c.h(), (int)lX, (int)lY, glyph_c.width() * pScale, glyph_c.height() * pScale, pZ, pTextColor);
 
 			if (lJustWrapped && lBreakCharFitsOnThisLine) {
 				lY += lScaledLineHeight;

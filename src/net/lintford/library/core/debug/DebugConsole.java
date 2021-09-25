@@ -436,8 +436,8 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 		doFilterText();
 
 		// Update the window content
-		mConsoleLineHeight = (int) (mConsoleFont.fontHeight() + 1);
-		final var MAX_NUM_LINES = (int) ((openHeight() - mConsoleLineHeight * 2) / mConsoleLineHeight) - 1;
+		mConsoleLineHeight = (int) (mConsoleFont.fontHeight() + 3);
+		final var MAX_NUM_LINES = (int) ((openHeight() - mConsoleLineHeight * 2) / mConsoleLineHeight) - 2;
 
 		final var lNumberLinesInConsole = mProcessed ? mProcessedMessages.size() : Debug.debugManager().logger().logLines().size();
 		fullContentArea().setCenter(x, y, w - mScrollBar.w(), lNumberLinesInConsole * 25);
@@ -505,16 +505,16 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 		final float Z_DEPTH = ZLayers.LAYER_DEBUG;
 
 		final float POSITION_OFFSET_TIME = 5;
-		final float POSITION_OFFSET_TAG = 130;
-		final float POSITION_OFFSET_MESSAGE = 350;
+		final float POSITION_OFFSET_TAG = 170;
+		final float POSITION_OFFSET_MESSAGE = 400;
 
 		final float PADDING_LEFT = 5;
 		final float lInputTextXOffset = 14;
 		float lTextPosition = mConsoleState == CONSOLE_STATE.minimal ? 10 : -20;
-		final float lTextHeight = 18f;
+		final float lTextHeight = 20f;
 
-		mTAGFilterText.set(x + POSITION_OFFSET_TAG, y + 5, 200, 25);
-		mMessageFilterText.set(x + POSITION_OFFSET_MESSAGE, y + 5, 200, 25);
+		mTAGFilterText.set(x + POSITION_OFFSET_TAG, y + 4, 200, 25);
+		mMessageFilterText.set(x + POSITION_OFFSET_MESSAGE, y + 4, 200, 25);
 
 		final var lScreenBB = pCore.HUD().boundingRectangle();
 
@@ -528,7 +528,7 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 
 			final var lBackgroundInputPanelColor = ColorConstants.getBlackWithAlpha(0.35f);
 			mSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, x, y + 50 - lTextHeight, w, 2, Z_DEPTH, lBackgroundInputPanelColor);
-			mSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, x + 120, y + 50 - lTextHeight, 2, h - 50, Z_DEPTH, lBackgroundInputPanelColor);
+			mSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, x + 157, y + 50 - lTextHeight, 2, h - 50, Z_DEPTH, lBackgroundInputPanelColor);
 			mSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, x, y + h - lTextHeight, w, lTextHeight, Z_DEPTH, lBackgroundInputPanelColor);
 
 			mScrollBar.draw(pCore, mSpriteBatch, mCoreSpritesheet, Z_DEPTH + 0.1f);
@@ -554,7 +554,7 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 		final int lMessageCount = lMessages.size();
 		if (lMessages != null && lMessageCount > 0) {
 			for (int i = mLowerBound; i < mUpperBound; i++) {
-				if (i >= 0 && i < lMessageCount-1) {
+				if (i >= 0 && i < lMessageCount) {
 					final var lMessage = lMessages.get(i);
 					if (lMessage == null)
 						continue;

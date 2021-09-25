@@ -162,17 +162,17 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 			return;
 
 		final var lParentScreen = mParentLayout.parentScreen;
-		final var lFont = lParentScreen.font();
+		final var lTextBoldFont = lParentScreen.fontBold();
 		final var lScreenOffset = pScreen.screenPositionOffset();
 		final var lSpriteBatch = lParentScreen.spriteBatch();
 
 		mZ = pParentZDepth;
 
-		if (lFont == null)
+		if (lTextBoldFont == null)
 			return;
 
 		final float lUiTextScale = lParentScreen.uiTextScale();
-		final float lLabelTextWidth = lFont.getStringWidth(mLabel, lUiTextScale);
+		final float lLabelTextWidth = lTextBoldFont.getStringWidth(mLabel, lUiTextScale);
 
 		float lAdjustedLabelScaleW = lUiTextScale;
 		if (mEnableScaleTextToWidth && w * 0.4f < lLabelTextWidth && lLabelTextWidth > 0)
@@ -191,27 +191,27 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 
 		}
 
-		final float lLabelTextHeight = lFont.fontHeight() * lAdjustedLabelScaleW;
-		final float lSeparatorHalfWidth = lFont.getStringWidth(mSeparator, lUiTextScale) * 0.5f;
-		final float lInputTextWidth = lFont.getStringWidth(mInputField.toString(), lUiTextScale);
+		final float lLabelTextHeight = lTextBoldFont.fontHeight() * lAdjustedLabelScaleW;
+		final float lSeparatorHalfWidth = lTextBoldFont.getStringWidth(mSeparator, lUiTextScale) * 0.5f;
+		final float lInputTextWidth = lTextBoldFont.getStringWidth(mInputField.toString(), lUiTextScale);
 
 		float lAdjustedLInputScaleW = lUiTextScale;
 		if (mEnableScaleTextToWidth && w * 0.4f < lInputTextWidth && lInputTextWidth > 0)
 			lAdjustedLInputScaleW = (w * 0.4f) / lInputTextWidth;
 
-		final float lInputTextHeight = lFont.fontHeight() * lAdjustedLInputScaleW;
+		final float lInputTextHeight = lTextBoldFont.fontHeight() * lAdjustedLInputScaleW;
 
 		entryColor.r = mEnabled ? 1f : 0.6f;
 		entryColor.g = mEnabled ? 1f : 0.6f;
 		entryColor.b = mEnabled ? 1f : 0.6f;
 		textColor.a = lParentScreen.screenColor.a;
 
-		lFont.begin(pCore.HUD());
-		lFont.drawText(mLabel, lScreenOffset.x + x + w / 2 - 10 - (lLabelTextWidth * lAdjustedLabelScaleW) - lSeparatorHalfWidth, lScreenOffset.y + y + h / 2 - lLabelTextHeight * 0.5f, pParentZDepth + .1f, textColor, lAdjustedLabelScaleW, -1);
-		lFont.drawText(mSeparator, lScreenOffset.x + x + w / 2 - lSeparatorHalfWidth, lScreenOffset.y + y + h / 2 - lLabelTextHeight * 0.5f, pParentZDepth + .1f, textColor, lUiTextScale, -1);
-		lFont.drawText(mInputField.toString(), lScreenOffset.x + x + w / 2 + lSeparatorHalfWidth * lAdjustedLInputScaleW + SPACE_BETWEEN_TEXT, lScreenOffset.y + y + h / 2 - lInputTextHeight * 0.5f, pParentZDepth + .1f, textColor, lAdjustedLInputScaleW, -1);
+		lTextBoldFont.begin(pCore.HUD());
+		lTextBoldFont.drawText(mLabel, lScreenOffset.x + x + w / 2 - 10 - (lLabelTextWidth * lAdjustedLabelScaleW) - lSeparatorHalfWidth, lScreenOffset.y + y + h / 2 - lLabelTextHeight * 0.5f, pParentZDepth + .1f, textColor, lAdjustedLabelScaleW, -1);
+		lTextBoldFont.drawText(mSeparator, lScreenOffset.x + x + w / 2 - lSeparatorHalfWidth, lScreenOffset.y + y + h / 2 - lLabelTextHeight * 0.5f, pParentZDepth + .1f, textColor, lUiTextScale, -1);
+		lTextBoldFont.drawText(mInputField.toString(), lScreenOffset.x + x + w / 2 + lSeparatorHalfWidth * lAdjustedLInputScaleW + SPACE_BETWEEN_TEXT, lScreenOffset.y + y + h / 2 - lInputTextHeight * 0.5f, pParentZDepth + .1f, textColor, lAdjustedLInputScaleW, -1);
 
-		final float lTextHeight = lFont.fontHeight();
+		final float lTextHeight = lTextBoldFont.fontHeight();
 
 		if (mShowCaret && mHasFocus) {
 			lSpriteBatch.begin(pCore.HUD());
@@ -221,7 +221,7 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 			lSpriteBatch.end();
 		}
 
-		lFont.end();
+		lTextBoldFont.end();
 
 		if (!mEnabled) {
 			drawdisabledBlackOverbar(pCore, lSpriteBatch, entryColor.a);

@@ -66,16 +66,12 @@ public class MenuLabelValueEntry extends MenuLabelEntry {
 			return;
 
 		final var lParentScreen = mParentLayout.parentScreen;
-		final var lFont = lParentScreen.font();
-
-		if (lFont == null)
-			return;
-
-		final float lUiTextScale = lParentScreen.uiTextScale();
+		final var lTextBoldFont = lParentScreen.fontBold();
+		final var lUiTextScale = lParentScreen.uiTextScale();
 		final var lScreenOffset = lParentScreen.screenPositionOffset();
 
-		final float lLabelWidth = lFont.getStringWidth(mText, lUiTextScale);
-		final float lFontHeight = lFont.fontHeight() * lUiTextScale;
+		final float lLabelWidth = lTextBoldFont.getStringWidth(mText, lUiTextScale);
+		final float lFontHeight = lTextBoldFont.fontHeight() * lUiTextScale;
 
 		float lX = x + w / 2 - lLabelWidth / 2; // Center label
 		switch (mHorizontalAlignment) {
@@ -90,10 +86,8 @@ public class MenuLabelValueEntry extends MenuLabelEntry {
 			break;
 		}
 
-		lFont.begin(pCore.HUD());
-		lFont.drawText(mValueText, lScreenOffset.x + lX + 100.f, lScreenOffset.y + y + h / 2f - lFontHeight / 2f, pParentZDepth + .15f, textColor, lUiTextScale);
-		lFont.end();
-
+		lTextBoldFont.begin(pCore.HUD());
+		lTextBoldFont.drawText(mValueText, lScreenOffset.x + lX + 100.f, lScreenOffset.y + y + h / 2f - lFontHeight / 2f, pParentZDepth + .15f, textColor, lUiTextScale);
+		lTextBoldFont.end();
 	}
-
 }

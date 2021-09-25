@@ -81,22 +81,21 @@ public class MenuLabelEntry extends MenuEntry {
 			return;
 
 		final var lParentScreen = mParentLayout.parentScreen;
-		final var lFont = lParentScreen.font();
-
-		if (lFont == null) {
-			return;
-
-		}
-
+		final var lTextBoldFont = lParentScreen.fontBold();
 		final var lScreenOffset = pScreen.screenPositionOffset();
-		final float lUiTextScale = lParentScreen.uiTextScale();
-		final float lLabelWidth = lFont.getStringWidth(mText, lUiTextScale);
-		final float lFontHeight = lFont.fontHeight() * lUiTextScale;
+		final var lUiTextScale = lParentScreen.uiTextScale();
+		final var lLabelWidth = lTextBoldFont.getStringWidth(mText, lUiTextScale);
+		final var lFontHeight = lTextBoldFont.fontHeight() * lUiTextScale;
 		final var lSpriteBatch = lParentScreen.spriteBatch();
 
 		if (mDrawBackground) {
 			lSpriteBatch.begin(pCore.HUD());
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + x, lScreenOffset.y + y, w, h, pParentZDepth + .15f, entryColor);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_LABEL_LEFT,  lScreenOffset.x + x, lScreenOffset.y + y, 32, 32, pParentZDepth + .15f, entryColor);
+			
+			final float lMidLength = w - 64;
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_LABEL_MID,   lScreenOffset.x + x + 32, lScreenOffset.y + y, lMidLength, 32, pParentZDepth + .15f, entryColor);
+			
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_LABEL_RIGHT, lScreenOffset.x + x + lMidLength + 32, lScreenOffset.y + y, 32, 32, pParentZDepth + .15f, entryColor);
 			lSpriteBatch.end();
 
 		}
@@ -114,9 +113,9 @@ public class MenuLabelEntry extends MenuEntry {
 			break;
 		}
 
-		lFont.begin(pCore.HUD());
-		lFont.drawText(mText, lScreenOffset.x + lX + 15.f, lScreenOffset.y + y + h / 2f - lFontHeight / 2f, pParentZDepth + .15f, textColor, lUiTextScale);
-		lFont.end();
+		lTextBoldFont.begin(pCore.HUD());
+		lTextBoldFont.drawText(mText, lScreenOffset.x + lX + 15.f, lScreenOffset.y + y + h / 2f - lFontHeight / 2f, pParentZDepth + .15f, textColor, lUiTextScale);
+		lTextBoldFont.end();
 
 		if (mShowInfoIcon) {
 			drawInfoIcon(pCore, lSpriteBatch, mInfoIconDstRectangle, lParentScreen.screenColor.a);

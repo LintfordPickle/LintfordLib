@@ -28,7 +28,6 @@ import net.lintford.library.core.camera.HUD;
 import net.lintford.library.core.camera.ICamera;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.debug.Debug.DebugLogLevel;
-import net.lintford.library.core.debug.DebugConsole.CONSOLE_STATE;
 import net.lintford.library.core.debug.DebugMemory;
 import net.lintford.library.core.entity.BaseEntity;
 import net.lintford.library.core.graphics.fonts.BitmapFontManager;
@@ -306,30 +305,17 @@ public abstract class LintfordCore {
 					try {
 						String lRightSide = pArgs[i].substring(pArgs[i].lastIndexOf("=") + 1);
 						lNewLogLevel = DebugLogLevel.valueOf(lRightSide);
-
 					} catch (IllegalArgumentException e) {
 						System.err.println("Unable to process the command line argument: " + pArgs[i]);
-
 					}
-
 				}
-
 			}
-
 		}
 
 		Debug.debugManager(lNewLogLevel);
-		if (lNewLogLevel.logLevel > DebugLogLevel.verbose.logLevel) {
-			Debug.debugManager().console().setConsoleState(CONSOLE_STATE.minimal);
-
-		} else {
-			Debug.debugManager().console().setConsoleState(CONSOLE_STATE.closed);
-
-		}
 
 		registerGameInfoConstants(pGameInfo);
 
-		// FIXME: Move this into the DebugManager
 		DebugMemory.dumpMemoryToLog();
 
 		// Print out the working directory
@@ -343,7 +329,6 @@ public abstract class LintfordCore {
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "Steamworks Version" + com.codedisaster.steamworks.Version.getVersion());
 
 		mShowLogoTimer = System.currentTimeMillis();
-
 	}
 
 	// ---------------------------------------------
