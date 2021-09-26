@@ -28,8 +28,8 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 	public static final float OUTER_PADDING_W = 50f;
 	public static final float OUTER_PADDING_H = 5f;
-	public static final float INNER_PADDING_W = 10f;
-	public static final float INNER_PADDING_H = 5f;
+	public static final float INNER_PADDING_W = 5f;
+	public static final float INNER_PADDING_H = 2f;
 	public static final float TITLE_PADDING_X = 10f;
 	public static final float TITLE_PADDING_Y = 20f;
 
@@ -371,7 +371,6 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 		footerLayout().set(lLeftOfPage, lTopOfPage, lWidthOfPage, lHeightOfPage);
 		footerLayout().updateStructure();
-
 	}
 
 	protected void updateLayout(LintfordCore pCore, List<BaseLayout> pLayoutList, LAYOUT_ALIGNMENT pAlignment) {
@@ -425,7 +424,6 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 			lBaseLayout.x(lLayoutNewX);
 			lBaseLayout.w(lLayoutWidth);
-
 		}
 
 		float lLayoutHeight = lUIHUDStructureController.menuMainRectangle().height();
@@ -447,9 +445,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 			if (lBaseLayout.layoutFillType() == FILLTYPE.TAKE_WHATS_NEEDED) {
 				lCountOfTakers++;
 				heightTaken += lBaseLayout.getEntryHeight();
-
 			}
-
 		}
 
 		lCountOfSharers -= lCountOfTakers;
@@ -476,9 +472,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 				lBaseLayout.h(lSizeOfEachShareElement);
 				lBaseLayout.updateStructure();
 				lTop += lSizeOfEachShareElement + lInnerPaddingH;
-
 			}
-
 		}
 	}
 

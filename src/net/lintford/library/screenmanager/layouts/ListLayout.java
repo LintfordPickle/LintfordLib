@@ -80,7 +80,7 @@ public class ListLayout extends BaseLayout implements IProcessMouseInput {
 	@Override
 	public void update(LintfordCore pCore) {
 		super.update(pCore);
-
+		
 		if (mClickTimer >= 0) {
 			mClickTimer -= pCore.appTime().elapsedTimeMilli();
 		}
@@ -115,22 +115,19 @@ public class ListLayout extends BaseLayout implements IProcessMouseInput {
 			if (lEntry.verticalFillType() == FILLTYPE.TAKE_WHATS_NEEDED) {
 				lCountOfTakers++;
 				lHeightTaken += lEntry.paddingTop() + lEntry.height() + lEntry.paddingBottom();
-
 			}
-
 		}
 
 		lCountOfSharers -= lCountOfTakers;
 
-		final float INNER_PADDING = 25.f;
-		float lSizeOfEachFillElement = ((lLayoutHeight - lHeightTaken) / lCountOfSharers) - INNER_PADDING;
+		float lSizeOfEachFillElement = ((lLayoutHeight - lHeightTaken) / lCountOfSharers);
 
 		if (lSizeOfEachFillElement < 0)
 			lSizeOfEachFillElement = 10;
 
 		for (int i = 0; i < lEntryCount; i++) {
 			final var lMenuEntry = mMenuEntries.get(i);
-			float lScrollBarWidth = mScrollBar.width();
+			float lScrollBarWidth = 0.f;
 			if (mScrollBarsEnabled_Internal)
 				lScrollBarWidth = mScrollBar.width();
 

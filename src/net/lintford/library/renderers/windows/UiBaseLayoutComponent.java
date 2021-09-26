@@ -422,17 +422,17 @@ public class UiBaseLayoutComponent extends UIWidget implements IScrollBarArea {
 				final float TILE_SIZE = 32;
 
 				pSpriteBatch.begin(pCore.HUD());
-				pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_TOP_LEFT, x, y, TILE_SIZE, TILE_SIZE, pComponentZDepth, layoutColor);
-				pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_TOP_LEFT, x + TILE_SIZE, y, w - TILE_SIZE * 2, TILE_SIZE, pComponentZDepth, layoutColor);
-				pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_TOP_LEFT, x + w - TILE_SIZE, y, TILE_SIZE, TILE_SIZE, pComponentZDepth, layoutColor);
+				pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT, x, y, TILE_SIZE, TILE_SIZE, pComponentZDepth, layoutColor);
+				pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT, x + TILE_SIZE, y, w - TILE_SIZE * 2, TILE_SIZE, pComponentZDepth, layoutColor);
+				pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT, x + w - TILE_SIZE, y, TILE_SIZE, TILE_SIZE, pComponentZDepth, layoutColor);
 
-				pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_TOP_LEFT, x, y + TILE_SIZE, TILE_SIZE, h - TILE_SIZE * 2, pComponentZDepth, layoutColor);
-				pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_TOP_LEFT, x + TILE_SIZE, y + TILE_SIZE, w - TILE_SIZE * 2, h - 64, pComponentZDepth, layoutColor);
-				pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_TOP_LEFT, x + w - TILE_SIZE, y + TILE_SIZE, TILE_SIZE, h - TILE_SIZE * 2, pComponentZDepth, layoutColor);
+				pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT, x, y + TILE_SIZE, TILE_SIZE, h - TILE_SIZE * 2, pComponentZDepth, layoutColor);
+				pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT, x + TILE_SIZE, y + TILE_SIZE, w - TILE_SIZE * 2, h - 64, pComponentZDepth, layoutColor);
+				pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT, x + w - TILE_SIZE, y + TILE_SIZE, TILE_SIZE, h - TILE_SIZE * 2, pComponentZDepth, layoutColor);
 
-				pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_TOP_LEFT, x, y + h - TILE_SIZE, TILE_SIZE, TILE_SIZE, pComponentZDepth, layoutColor);
-				pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_TOP_LEFT, x + TILE_SIZE, y + h - TILE_SIZE, w - TILE_SIZE * 2, TILE_SIZE, pComponentZDepth, layoutColor);
-				pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_TOP_LEFT, x + w - TILE_SIZE, y + h - TILE_SIZE, TILE_SIZE, TILE_SIZE, pComponentZDepth, layoutColor);
+				pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT, x, y + h - TILE_SIZE, TILE_SIZE, TILE_SIZE, pComponentZDepth, layoutColor);
+				pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT, x + TILE_SIZE, y + h - TILE_SIZE, w - TILE_SIZE * 2, TILE_SIZE, pComponentZDepth, layoutColor);
+				pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT, x + w - TILE_SIZE, y + h - TILE_SIZE, TILE_SIZE, TILE_SIZE, pComponentZDepth, layoutColor);
 				pSpriteBatch.end();
 
 				if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_OUTLINES", false)) {

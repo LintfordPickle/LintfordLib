@@ -230,7 +230,7 @@ public class MenuSliderEntry extends MenuEntry {
 		// Draw the slider bar and caret
 		lSpriteBatch.begin(pCore.HUD());
 
-		final float lCaretPos = MathHelper.scaleToRange(mValue, mLowerBound, mUpperBound, mBarPosX, mBarWidth - 32);
+		final float lCaretPos = MathHelper.scaleToRange(mValue, mLowerBound, mUpperBound, mBarPosX, mBarWidth - 16);
 		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_SLIDER_HORIZONTAL_LEFT, lScreenOffset.x + mBarPosX, lScreenOffset.y + y, 32, 32, mZ, entryColor);
 		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_SLIDER_HORIZONTAL_MID, lScreenOffset.x + mBarPosX + 32, lScreenOffset.y + y, mBarWidth - 64 - 32, 32, mZ, entryColor);
 		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_SLIDER_HORIZONTAL_RIGHT, lScreenOffset.x + mBarPosX + mBarWidth - 64, lScreenOffset.y + y, 32, 32, mZ, entryColor);
@@ -255,16 +255,16 @@ public class MenuSliderEntry extends MenuEntry {
 			final float lLabelOffset = 0;
 			if (mShowGuideValuesEnabled) {
 				final float lLowerBoundStringWidth = lTextBoldFont.getStringWidth(Integer.toString(mLowerBound));
-				lTextBoldFont.drawText(Integer.toString(mLowerBound), lScreenOffset.x + mBarPosX - lLowerBoundStringWidth / 2 + 16, lScreenOffset.y + y + lLabelOffset, mZ, lColorWhiteWithAlpha, 1f);
+				lTextBoldFont.drawText(Integer.toString(mLowerBound), lScreenOffset.x + mBarPosX - lLowerBoundStringWidth / 2 + 16, lScreenOffset.y + y + lLabelOffset + 16, mZ, lColorWhiteWithAlpha, 1f);
 			}
 
 			final float endPositionX = lCaretPos + 128.f + lValueStringWidth;
 			final float lValueStringPositionX = endPositionX > mBarPosX + mBarWidth ? lCaretPos - 32.f - 5.f : lCaretPos + 32f;
-			lTextBoldFont.drawText(lValueString, lScreenOffset.x + lValueStringPositionX, lScreenOffset.y + y + h * .5f - lLabelHeight * .5f, mZ, lColorWhiteWithAlpha, lUiTextScale);
+			lTextBoldFont.drawText(lValueString, lScreenOffset.x + lValueStringPositionX, lScreenOffset.y + y + h * .5f - lLabelHeight * .5f + 16, mZ, lColorWhiteWithAlpha, lUiTextScale);
 
 			if (mShowGuideValuesEnabled) {
 				final float lUpperBoundStringWidth = lTextBoldFont.getStringWidth(Integer.toString(mUpperBound));
-				lTextBoldFont.drawText(Integer.toString(mUpperBound), lScreenOffset.x + mBarPosX + mBarWidth - lUpperBoundStringWidth / 2 - 48, lScreenOffset.y + y + lLabelOffset, mZ, lColorWhiteWithAlpha, 1f);
+				lTextBoldFont.drawText(Integer.toString(mUpperBound), lScreenOffset.x + mBarPosX + mBarWidth - lUpperBoundStringWidth / 2 - 48, lScreenOffset.y + y + lLabelOffset + 16, mZ, lColorWhiteWithAlpha, 1f);
 			}
 		}
 

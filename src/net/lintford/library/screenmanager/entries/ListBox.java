@@ -231,6 +231,7 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 		float lTotalContentHeight = marginTop() + marginBottom();
 		for (int i = 0; i < lCount; i++) {
 			ListBoxItem lItem = mItems.get(i);
+			mItems.get(i).update(pCore, pScreen, pIsSelected);
 
 			// We need an innerpadding for the case when the scrollbar is enabled. In that case
 			// we narrow the size of the WorldListItem.
@@ -241,7 +242,6 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 
 			mItemYPos += lItem.h() + LISTBOX_ITEM_VPADDING;
 			lTotalContentHeight += lItem.h() + LISTBOX_ITEM_VPADDING;
-
 		}
 
 		// mContentArea.w = w;
@@ -291,14 +291,19 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 		// Start the stencil buffer test to filter out everything outside of the scroll view
 		GL11.glStencilFunc(GL11.GL_EQUAL, 1, 0xFF); // Pass test if stencil value is 1
 
+		lSpriteBatch.begin(pCore.HUD());
+		final var lBackgroundColor = ColorConstants.getColor(.15f, .15f, .15f, 0.4f);
+		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, this, pParentZDepth, lBackgroundColor);
+		lSpriteBatch.end();
+
 		for (int i = 0; i < mItems.size(); i++) {
 			mItems.get(i).draw(pCore, pScreen, lSpriteBatch, mSelectedItem == mItems.get(i).mItemIndex, pParentZDepth);
-
 		}
 
 		if (mScrollBarsEnabled) {
+			lSpriteBatch.begin(pCore.HUD());
 			mScrollBar.draw(pCore, lSpriteBatch, mCoreSpritesheet, pParentZDepth);
-
+			lSpriteBatch.end();
 		}
 
 		GL11.glDisable(GL11.GL_STENCIL_TEST);

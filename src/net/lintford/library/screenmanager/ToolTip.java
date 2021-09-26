@@ -2,6 +2,7 @@ package net.lintford.library.screenmanager;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
+import net.lintford.library.core.graphics.Color;
 import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.fonts.FontUnit;
 import net.lintford.library.core.graphics.fonts.FontUnit.WrapType;
@@ -111,11 +112,25 @@ public class ToolTip {
 
 		// Render the background
 		mSpriteBatch.begin(pCore.HUD());
-		mSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lPositionX - lTextPadding, lPositionY - lTextPadding, TOOLTIP_PANEL_WIDTH + lTextPadding * 2, lToolTipTextHeight + lTextPadding * 2, -0.1f, lColor);
+		draw9Patch(mSpriteBatch, mCoreSpritesheet, 32.f, lPositionX - lTextPadding, lPositionY - lTextPadding, TOOLTIP_PANEL_WIDTH + lTextPadding * 2, lToolTipTextHeight + lTextPadding * 3, -0.1f, lColor);
 		mSpriteBatch.end();
 
 		mMenuFont.begin(pCore.HUD());
 		mMenuFont.drawText(lToolTipText, lPositionX + lTextPadding, lPositionY, -0.01f, ColorConstants.WHITE, 1.f, 350.f);
 		mMenuFont.end();
+	}
+	
+	private void draw9Patch(SpriteBatch ppSpriteBatch, SpriteSheetDefinition pSpritesheetDefinition, float pTileSize, float x, float y, float w, float h, float z, Color pTint) {
+		ppSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_LEFT, x, y, pTileSize, pTileSize, z, pTint);
+		ppSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_MID, x + pTileSize, y, w - 64, pTileSize, z, pTint);
+		ppSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_RIGHT, x + w - 32, y, pTileSize, pTileSize, z, pTint);
+
+		ppSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_MID_LEFT, x, y + 32, pTileSize, h - 64, z, pTint);
+		ppSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_MID_CENTER, x + pTileSize, y + 32, w - 64, h - 64, z, pTint);
+		ppSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_MID_RIGHT, x + w - 32, y + 32, pTileSize, h - 64, z, pTint);
+
+		ppSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_LEFT, x, y + h - 32, pTileSize, pTileSize, z, pTint);
+		ppSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_MID, x + pTileSize, y + h - 32, w - 64, pTileSize, z, pTint);
+		ppSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_RIGHT, x + w - 32, y + h - 32, pTileSize, pTileSize, z, pTint);
 	}
 }

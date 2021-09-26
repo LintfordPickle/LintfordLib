@@ -28,6 +28,8 @@ public abstract class ListBoxItem extends Rectangle {
 	protected int mItemIndex;
 	protected float mDoubleClickTimer;
 	protected int mDoubleClickLogicalCounter;
+	protected int mEntryWidth;
+	protected int mEntryHeight;
 
 	// --------------------------------------
 	// Properties
@@ -49,8 +51,8 @@ public abstract class ListBoxItem extends Rectangle {
 
 		mItemIndex = pIndex;
 
-		w = 600;
-		h = 64;
+		mEntryWidth = 600;
+		mEntryHeight = 64;
 	}
 
 	// --------------------------------------
@@ -114,7 +116,8 @@ public abstract class ListBoxItem extends Rectangle {
 	}
 
 	public void update(LintfordCore pCore, MenuScreen pScreen, boolean pIsSelected) {
-
+		w = mEntryWidth;
+		h = mEntryHeight;
 	}
 
 	public abstract void draw(LintfordCore pCore, Screen pScreen, SpriteBatch pSpriteBatch, boolean pIsSelected, float pParentZDepth);

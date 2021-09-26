@@ -527,10 +527,10 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 			boolean use5Steps = w > 32 * 8;
 
 			final float lTileSize = 32;
-			final float lHalfWidth = w * .5f;
-			float lLeft = lScreenOffset.x + centerX() - lHalfWidth;
+			final float lHalfWidth = (int) (w * .5f);
+			int lLeft = (int) (lScreenOffset.x + centerX() - lHalfWidth);
 			final float lInnerWidth = w - 32 * (use5Steps ? 4 : 2);
-
+			entryColor.a = 1.f;
 			if (isInClickedState()) {
 				lSpriteBatch.begin(pCore.HUD());
 				lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_BUTTON_SELECTED_HORIZONTAL_LEFT, lLeft, lScreenOffset.y + centerY() - h / 2, lTileSize, h, mZ, entryColor);
@@ -551,7 +551,7 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 					lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_BUTTON_HOVER_HORIZONTAL_MIDRIGHT, (lLeft -= 32) + lHalfWidth * 2 - 96, lScreenOffset.y + centerY() - h / 2, lTileSize, h, mZ, entryColor);
 				lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_BUTTON_HOVER_HORIZONTAL_RIGHT, (lLeft -= 32) + lHalfWidth * 2 - 32, lScreenOffset.y + centerY() - h / 2, lTileSize, h, mZ, entryColor);
 				lSpriteBatch.end();
-				
+
 			} else {
 				lSpriteBatch.begin(pCore.HUD());
 				lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_BUTTON_HORIZONTAL_LEFT, lLeft, lScreenOffset.y + centerY() - h / 2, lTileSize, h, mZ, entryColor);
@@ -600,9 +600,9 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 			drawWarningIcon(pCore, lSpriteBatch, mWarnIconDstRectangle, entryColor.a);
 		}
 
-		if (!mEnabled) {
-			drawdisabledBlackOverbar(pCore, lSpriteBatch, entryColor.a);
-		}
+		//		if (!mEnabled) {
+		//			drawdisabledBlackOverbar(pCore, lSpriteBatch, entryColor.a);
+		//		}
 
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
 			lSpriteBatch.begin(pCore.HUD());

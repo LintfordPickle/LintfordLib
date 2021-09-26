@@ -41,6 +41,7 @@ public class UIInputText extends UIWidget implements IBufferedTextInputCallback 
 	private transient StringBuilder mInputField;
 	private transient boolean mResetOnDefaultClick;
 	private boolean mMouseClickBreaksInputTextFocus;
+	private boolean mCancelRectHovered;
 
 	// --------------------------------------
 	// Properties
@@ -117,6 +118,7 @@ public class UIInputText extends UIWidget implements IBufferedTextInputCallback 
 
 	public boolean handleInput(LintfordCore pCore) {
 		if (mCancelRectangle.intersectsAA(pCore.HUD().getMouseCameraSpace())) {
+			mCancelRectHovered = true;
 			if (pCore.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
 				if (mInputField.length() > 0) {
 
@@ -130,8 +132,9 @@ public class UIInputText extends UIWidget implements IBufferedTextInputCallback 
 					mShowCaret = false;
 
 				}
-
 			}
+		} else {
+			mCancelRectHovered = false;
 		}
 
 		if (intersectsAA(pCore.HUD().getMouseCameraSpace())) {
@@ -193,7 +196,8 @@ public class UIInputText extends UIWidget implements IBufferedTextInputCallback 
 		}
 
 		// Draw the cancel button rectangle
-		pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_NUBBLE, mCancelRectangle, pComponentZDepth, ColorConstants.WHITE);
+		final var lEraserColor = mCancelRectHovered ? ColorConstants.WHITE : ColorConstants.getWhiteWithAlpha(.5f);
+		pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_ERASER, mCancelRectangle, pComponentZDepth, lEraserColor);
 
 		final float lInputTextWidth = pTextFont.getStringWidth(mInputField.toString());
 
