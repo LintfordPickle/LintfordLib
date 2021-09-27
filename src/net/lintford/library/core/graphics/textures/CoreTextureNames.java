@@ -109,5 +109,7 @@ public class CoreTextureNames {
 	public static final int TEXTURE_BLUE = 105;
 	public static final int TEXTURE_GREEN = 106;
 	public static final int TEXTURE_RED = 107;
-	public static final int TEXTURE_WHITE = 108;
+	public static final int TEXTURE_SCROLLBAR_DOWN = 108;
+	public static final int TEXTURE_SCROLLBAR_UP = 109;
+	public static final int TEXTURE_WHITE = 110;
 }

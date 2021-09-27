@@ -620,7 +620,7 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 		final var lScreenOffset = parentLayout() != null ? parentLayout().parentScreen.screenPositionOffset() : Vector2f.Zero;
 
 		pSpriteBatch.begin(pCore.HUD());
-		pSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_ICON_INFO, lScreenOffset.x + pDestRect.x(), lScreenOffset.y + pDestRect.y(), pDestRect.w(), pDestRect.h(), mZ, lColor);
+		pSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_INFO, lScreenOffset.x + pDestRect.x(), lScreenOffset.y + pDestRect.y(), pDestRect.w(), pDestRect.h(), mZ, lColor);
 		pSpriteBatch.end();
 	}
 
@@ -629,7 +629,7 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 		final var lScreenOffset = parentLayout() != null ? parentLayout().parentScreen.screenPositionOffset() : Vector2f.Zero;
 
 		pSpriteBatch.begin(pCore.HUD());
-		pSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_ICON_WARNING, lScreenOffset.x + pDestRect.x(), lScreenOffset.y + pDestRect.y(), pDestRect.w(), pDestRect.h(), mZ, lColor);
+		pSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_WARNING, lScreenOffset.x + pDestRect.x(), lScreenOffset.y + pDestRect.y(), pDestRect.w(), pDestRect.h(), mZ, lColor);
 		pSpriteBatch.end();
 	}
 

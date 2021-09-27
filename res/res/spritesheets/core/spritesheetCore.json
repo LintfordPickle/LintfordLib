@@ -110,6 +110,8 @@
     "TEXTURE_BLUE",
     "TEXTURE_GREEN",
     "TEXTURE_RED",
+    "TEXTURE_SCROLLBAR_DOWN",
+    "TEXTURE_SCROLLBAR_UP",
     "TEXTURE_WHITE"
   ],
   "frameMapObjectArray": [
@@ -1412,6 +1414,30 @@
     {
       "name": null,
       "x": 181,
+      "y": 33,
+      "w": 16,
+      "h": 16,
+      "pivotX": 0,
+      "pivotY": 0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "anchorPoints": []
+    },
+    {
+      "name": null,
+      "x": 198,
+      "y": 33,
+      "w": 16,
+      "h": 16,
+      "pivotX": 0,
+      "pivotY": 0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "anchorPoints": []
+    },
+    {
+      "name": null,
+      "x": 215,
       "y": 33,
       "w": 16,
       "h": 16,

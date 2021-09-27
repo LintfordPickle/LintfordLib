@@ -17,7 +17,7 @@ public class ScrollBar extends Rectangle implements IProcessMouseInput {
 
 	private static final long serialVersionUID = 1303829783855348106L;
 
-	public static final float BAR_WIDTH = 20;
+	public static final float BAR_WIDTH = 24;
 
 	// --------------------------------------
 	// Variables
@@ -89,8 +89,8 @@ public class ScrollBar extends Rectangle implements IProcessMouseInput {
 		if (!mClickActive && !lCanAcquireMouse) {
 			return false;
 		}
-		
-		if(pCore.HUD().getMouseCameraSpace().x > x + w - 64) 
+
+		if (pCore.HUD().getMouseCameraSpace().x > x + w - 64)
 			return false;
 
 		if (mClickActive && !lLeftMouseButtonDown) {
@@ -140,7 +140,7 @@ public class ScrollBar extends Rectangle implements IProcessMouseInput {
 		mMarkerBarHeight = lViewportHeight * lViewableRatio;
 
 		float lScrollTrackSpace = lContentHeight - lViewportHeight;
-		float lScrollThumbSpace = lViewportHeight - mMarkerBarHeight;
+		float lScrollThumbSpace = lViewportHeight - mMarkerBarHeight - 32;
 		mMarkerMoveMod = lScrollTrackSpace / lScrollThumbSpace;
 
 		final float lX = mScrollBarArea.contentDisplayArea().x() + mScrollBarArea.contentDisplayArea().w() - BAR_WIDTH;
@@ -154,24 +154,24 @@ public class ScrollBar extends Rectangle implements IProcessMouseInput {
 	public void draw(LintfordCore pCore, SpriteBatch pSpriteBatch, SpriteSheetDefinition pCoreSpritesheet, float pZDepth) {
 		// Scroll bar background
 		mScrollBarAlpha = 1.0f;
-		final var lColor = ColorConstants.getBlackWithAlpha(.5f * mScrollBarAlpha);
-		pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, x, y, w, h, pZDepth, lColor);
-
 		if (mMarkerMoveMod == 0.f) {
 			return;
 		}
 
 		// Render the actual scroll bar
-		final float by = mScrollBarArea.contentDisplayArea().y() - (mScrollBarArea.currentYPos() / mMarkerMoveMod);
+		final float by = 16 + mScrollBarArea.contentDisplayArea().y() - (mScrollBarArea.currentYPos() / mMarkerMoveMod);
 
-		// Draw the marker bar
+		// Draw the background bar
 		var lWhiteColorWithAlpha = ColorConstants.getWhiteWithAlpha(mScrollBarAlpha);
-		pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, x + 9, y, 2, h, pZDepth, lWhiteColorWithAlpha);
+		pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, x + 7, y + 16, 2, h - 32, pZDepth, lWhiteColorWithAlpha);
 
 		// Draw the moving bar
 		final float lColorMod = mClickActive ? 0.4f : 0.5f;
-		final var lBarColor = ColorConstants.getColorWithRGBMod(ColorConstants.TertiaryColor.r, ColorConstants.TertiaryColor.g, ColorConstants.TertiaryColor.b, mScrollBarAlpha, lColorMod);
-		pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, x + 5, by, 10, mMarkerBarHeight, pZDepth, lBarColor);
+		final var lBarColor = ColorConstants.getColorWithRGBMod(ColorConstants.TertiaryColor.r * .8f, ColorConstants.TertiaryColor.g * .8f, ColorConstants.TertiaryColor.b * .8f, mScrollBarAlpha, lColorMod);
+		pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, x, by, 16, mMarkerBarHeight, pZDepth, lBarColor);
+		lWhiteColorWithAlpha = ColorConstants.getWhiteWithAlpha(mScrollBarAlpha);
+		pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_SCROLLBAR_UP, x, y + 3, 16, 16, pZDepth, lWhiteColorWithAlpha);
+		pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_SCROLLBAR_DOWN, x, y + h - 16 - 3, 16, 16, pZDepth - 0.01f, lWhiteColorWithAlpha);
 	}
 
 	public void resetBarTop() {
