@@ -250,6 +250,16 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 			return;
 
 		if (mConsoleState == CONSOLE_STATE.open) {
+			if (mScrollBar.handleInput(pCore)) {
+				if (mScrollBar.isAtBottomPosition()) {
+					mAutoScroll = true;
+				} else {
+					mAutoScroll = false;
+				}
+
+				return;
+			}
+			
 			if (intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().tryAcquireMouseOverThisComponent(hashCode())) {
 				if (mTAGFilterText.handleInput(pCore))
 					return;
@@ -323,20 +333,7 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 
 			}
 
-			if (mScrollBar.handleInput(pCore)) {
-				if (mScrollBar.isAtBottomPosition()) {
-					mAutoScroll = true;
-
-				} else {
-					mAutoScroll = false;
-
-				}
-
-				return;
-
-			}
-
-			else if (mTAGFilterText.intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().tryAcquireMouseLeftClick(mTAGFilterText.hashCode())) {
+			if (mTAGFilterText.intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().tryAcquireMouseLeftClick(mTAGFilterText.hashCode())) {
 
 			}
 

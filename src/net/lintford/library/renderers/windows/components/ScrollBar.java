@@ -84,13 +84,14 @@ public class ScrollBar extends Rectangle implements IProcessMouseInput {
 	public boolean handleInput(LintfordCore pCore) {
 		final var lMouseInWindowCoords = intersectsAA(pCore.HUD().getMouseCameraSpace());
 		final var lLeftMouseButtonDown = pCore.input().mouse().isMouseLeftButtonDown();
-		final var lCanAcquireMouse = lMouseInWindowCoords && lLeftMouseButtonDown && pCore.input().mouse().tryAcquireMouseLeftClick(hashCode());
+		final var lDoWeAlreadyHaveTheMouse = pCore.input().mouse().isMouseLeftClickOwnerAssigned(hashCode()) && pCore.input().mouse().isMouseLeftButtonDown();
+		final var lCanAcquireMouse = lDoWeAlreadyHaveTheMouse || lMouseInWindowCoords && lLeftMouseButtonDown && pCore.input().mouse().tryAcquireMouseLeftClick(hashCode());
 
 		if (!mClickActive && !lCanAcquireMouse) {
 			return false;
 		}
 
-		if (pCore.HUD().getMouseCameraSpace().x > x + w - 64)
+		if (pCore.HUD().getMouseCameraSpace().x < x + w - BAR_WIDTH || pCore.HUD().getMouseCameraSpace().x > x + w)
 			return false;
 
 		if (mClickActive && !lLeftMouseButtonDown) {
