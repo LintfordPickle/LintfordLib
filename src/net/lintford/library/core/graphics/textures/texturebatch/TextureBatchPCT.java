@@ -406,26 +406,26 @@ public class TextureBatchPCT {
 		float originY = -pROY;
 
 		// Vertex 0 (bottom left)
-		float x0 = (originX - lHalfW) * cos - (originY + lHalfH) * sin;
-		float y0 = (originX - lHalfW) * sin + (originY + lHalfH) * cos;
+		float x0 = -lHalfW * cos - lHalfH * sin;
+		float y0 = -lHalfW * sin + lHalfH * cos;
 		float u0 = pSX / pTexture.getTextureWidth();
 		float v0 = (pSY + pSH) / pTexture.getTextureHeight();
 
 		// Vertex 1 (top left)
-		float x1 = (originX - lHalfW) * cos - (originY - lHalfH) * sin;
-		float y1 = (originX - lHalfW) * sin + (originY - lHalfH) * cos;
+		float x1 = -lHalfW * cos - -lHalfH * sin;
+		float y1 = -lHalfW * sin + -lHalfH * cos;
 		float u1 = pSX / pTexture.getTextureWidth();
 		float v1 = pSY / pTexture.getTextureHeight();
 
 		// Vertex 2 (top right)
-		float x2 = (originX + lHalfW) * cos - (originY - lHalfH) * sin;
-		float y2 = (originX + lHalfW) * sin + (originY - lHalfH) * cos;
+		float x2 = lHalfW * cos - -lHalfH * sin;
+		float y2 = lHalfW * sin + -lHalfH * cos;
 		float u2 = (pSX + pSW) / pTexture.getTextureWidth();
 		float v2 = pSY / pTexture.getTextureHeight();
 
 		// Vertex 3 (bottom right)
-		float x3 = (originX + lHalfW) * cos - (originY + lHalfH) * sin;
-		float y3 = (originX + lHalfW) * sin + (originY + lHalfH) * cos;
+		float x3 = lHalfW * cos - lHalfH * sin;
+		float y3 = lHalfW * sin + lHalfH * cos;
 		float u3 = (pSX + pSW) / pTexture.getTextureWidth();
 		float v3 = (pSY + pSH) / pTexture.getTextureHeight();
 
@@ -434,12 +434,13 @@ public class TextureBatchPCT {
 		// pDY += pROY;
 
 		// CCW 102203
-		addVertToBuffer(pDX + x1, pDY + y1, pZ, 1f, pTint.r, pTint.g, pTint.b, pTint.a, u1, v1); // 1
-		addVertToBuffer(pDX + x0, pDY + y0, pZ, 1f, pTint.r, pTint.g, pTint.b, pTint.a, u0, v0); // 0
-		addVertToBuffer(pDX + x2, pDY + y2, pZ, 1f, pTint.r, pTint.g, pTint.b, pTint.a, u2, v2); // 2
-		addVertToBuffer(pDX + x2, pDY + y2, pZ, 1f, pTint.r, pTint.g, pTint.b, pTint.a, u2, v2); // 2
-		addVertToBuffer(pDX + x0, pDY + y0, pZ, 1f, pTint.r, pTint.g, pTint.b, pTint.a, u0, v0); // 0
-		addVertToBuffer(pDX + x3, pDY + y3, pZ, 1f, pTint.r, pTint.g, pTint.b, pTint.a, u3, v3); // 3
+		addVertToBuffer(pDX + originX + x1, pDY + originY + y1, pZ, 1f, pTint.r, pTint.g, pTint.b, pTint.a, u1, v1); // 1
+		addVertToBuffer(pDX + originX + x0, pDY + originY + y0, pZ, 1f, pTint.r, pTint.g, pTint.b, pTint.a, u0, v0); // 0
+		addVertToBuffer(pDX + originX + x2, pDY + originY + y2, pZ, 1f, pTint.r, pTint.g, pTint.b, pTint.a, u2, v2); // 2
+
+		addVertToBuffer(pDX + originX + x2, pDY + originY + y2, pZ, 1f, pTint.r, pTint.g, pTint.b, pTint.a, u2, v2); // 2
+		addVertToBuffer(pDX + originX + x0, pDY + originY + y0, pZ, 1f, pTint.r, pTint.g, pTint.b, pTint.a, u0, v0); // 0
+		addVertToBuffer(pDX + originX + x3, pDY + originY + y3, pZ, 1f, pTint.r, pTint.g, pTint.b, pTint.a, u3, v3); // 3
 
 		mCurNumSprites++;
 
@@ -571,7 +572,7 @@ public class TextureBatchPCT {
 
 		mBuffer.clear();
 
-		// FIXME: This is fundamentally incorrect. Cannot reset vertex count here and maintain 'redraw' functionality - it should be possible to re-draw the buffers 
+		// FIXME: This is fundamentally incorrect. Cannot reset vertex count here and maintain 'redraw' functionality - it should be possible to re-draw the buffers
 		// in subsequent frames without re-calling draw again (assuming nothing has changed in the frame).
 		mCurNumSprites = 0;
 		mVertexCount = 0;
