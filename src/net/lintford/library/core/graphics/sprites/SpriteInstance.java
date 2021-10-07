@@ -159,7 +159,8 @@ public class SpriteInstance extends Rectangle {
 		}
 
 		// update the current frame
-		while (timer > mSpriteDefinition.frameDuration()) {
+		final float lFrameDuration = mSpriteDefinition.frameDuration();
+		while (timer > lFrameDuration) {
 			// Handle this time splice
 			timer -= mSpriteDefinition.frameDuration();
 
@@ -178,6 +179,7 @@ public class SpriteInstance extends Rectangle {
 						currentFrame--;
 						if (animatedSpriteListener != null) {
 							animatedSpriteListener.onStopped(this);
+							return;
 						}
 					}
 
@@ -276,7 +278,6 @@ public class SpriteInstance extends Rectangle {
 	public void reset() {
 		loopingEnabled = false;
 		animationEnabled = false;
-
 	}
 
 }
