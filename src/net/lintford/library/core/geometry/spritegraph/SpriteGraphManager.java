@@ -33,17 +33,12 @@ public class SpriteGraphManager extends PoolInstanceManager<SpriteGraphInstance>
 	// --------------------------------------
 
 	public SpriteGraphManager() {
-
+		mSpriteGraphNodeManager = new SpriteGraphNodeManager();
 	}
 
 	// --------------------------------------
 	// Core-Methods
 	// --------------------------------------
-
-	public void initialize(Object pParentObject) {
-		mSpriteGraphNodeManager = new SpriteGraphNodeManager();
-
-	}
 
 	public void loadGLContent(ResourceManager pResourceManager) {
 
