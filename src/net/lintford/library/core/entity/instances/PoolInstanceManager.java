@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The {@link PoolInstanceManager} maintains an arraylist as well as an instance list of items which can be returned to the pool for later re-use.
- * Items given out by this pool are NOT tracked. (See {@ RetainedPoolInstanceManager for the alternative).
+ * The {@link PoolInstanceManager} maintains an arraylist as well as an instance list of items which can be returned to the pool for later re-use. Items given out by this pool are NOT tracked. (See {@
+ * RetainedPoolInstanceManager for the alternative).
  */
 public abstract class PoolInstanceManager<T extends PooledBaseData> extends InstanceManager<T> {
 
@@ -61,8 +61,15 @@ public abstract class PoolInstanceManager<T extends PooledBaseData> extends Inst
 	// --------------------------------------
 
 	public PoolInstanceManager() {
+		this(0);
+	}
+
+	public PoolInstanceManager(int pInitialialCopacity) {
 		mPooledItems = new ArrayList<>();
 
+		for (int i = 0; i < pInitialialCopacity; i++) {
+			mPooledItems.add(createPoolObjectInstance());
+		}
 	}
 
 	// --------------------------------------
