@@ -5,8 +5,7 @@ import java.util.List;
 
 import net.lintford.library.core.entity.BaseInstanceData;
 
-/** All the instances in a pre-allocated instance manager are, as tthe name suggests, pre-allocated during creation and and then tracked by an internal
- * isAssigned flag. */
+/** All the instances in a pre-allocated instance manager are stored in a closed internal list and tracked using an 'isAssigned' flag. */
 public abstract class PreAllocatedInstanceManager<T extends PreAllocatedInstanceData> extends BaseInstanceData {
 
 	// --------------------------------------
@@ -54,11 +53,8 @@ public abstract class PreAllocatedInstanceManager<T extends PreAllocatedInstance
 		for (int i = 0; i < mCapacity; i++) {
 			final var lNewInstance = createNewInstance();
 			lNewInstance.internalIsAssigned(false);
-
 			mInstances.add(lNewInstance);
-
 		}
-
 	}
 
 	public void resetInstances() {
@@ -66,14 +62,11 @@ public abstract class PreAllocatedInstanceManager<T extends PreAllocatedInstance
 			final var lNewInstance = mInstances.get(i);
 			lNewInstance.reset();
 			lNewInstance.internalIsAssigned(false);
-
 		}
-
 	}
 
 	protected int getNewInstanceUID() {
 		return mInstanceUIDCounter++;
-
 	}
 
 	protected abstract T createNewInstance();
