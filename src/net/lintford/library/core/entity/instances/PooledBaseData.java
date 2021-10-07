@@ -29,10 +29,6 @@ public abstract class PooledBaseData extends BaseInstanceData {
 	// Methods
 	// --------------------------------------
 
-	public void initialize(Object pObject) {
-
-	}
-
 	public void reset() {
 
 	}
