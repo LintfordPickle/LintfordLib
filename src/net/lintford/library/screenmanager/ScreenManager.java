@@ -192,13 +192,12 @@ public class ScreenManager {
 			lScreen.acceptMouseInput = !lInputBlockedByHigherScreen;
 			lScreen.acceptKeyboardInput = !lInputBlockedByHigherScreen;
 
-			if (!lInputBlockedByHigherScreen && (lScreen.screenState() == ScreenState.TransitionOn || lScreen.screenState() == ScreenState.Active || lScreen.mShowBackgroundScreens)) {
+			// if (!lInputBlockedByHigherScreen && (lScreen.screenState() == ScreenState.TransitionOn || lScreen.screenState() == ScreenState.Active || lScreen.mShowBackgroundScreens)) {
+			if (!lInputBlockedByHigherScreen && lScreen.screenState() == ScreenState.Active) {
 				lScreen.handleInput(pCore);
-
 			}
 
 			lInputBlockedByHigherScreen = lInputBlockedByHigherScreen || lScreen.mBlockInputInBackground;
-
 		}
 
 		mToolTip.handleInput(pCore);
@@ -262,15 +261,16 @@ public class ScreenManager {
 
 			mScreensToUpdate.remove(mScreensToUpdate.size() - 1);
 
+			if(mScreensToAdd.size() > 0) lCoveredByOtherScreen = true;
+			
 			// Update the screen
 			lScreen.update(pCore, lOtherScreenHasFocus, lCoveredByOtherScreen);
 
 			if (lScreen.screenState() == ScreenState.TransitionOn || lScreen.screenState() == ScreenState.Active) {
 				lOtherScreenHasFocus = true;
-
-				if (!lScreen.isPopup()) {
-					lCoveredByOtherScreen = true;
-				}
+			}
+			if (!lScreen.isPopup()) {
+				lCoveredByOtherScreen = true;
 			}
 		}
 
