@@ -294,6 +294,12 @@ public class Camera implements ICamera {
 	// Methods
 	// --------------------------------------
 
+	public void setCameraOffset(float pOffsetX, float pOffsetY) {
+		mOffsetPosition.x = pOffsetX;
+		mOffsetPosition.y = pOffsetY;
+
+	}
+
 	@Override
 	public CameraState getCameraState() {
 		CameraState pReturnState = new CameraState();
