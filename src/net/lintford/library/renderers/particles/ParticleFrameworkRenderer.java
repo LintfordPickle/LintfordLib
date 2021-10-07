@@ -82,11 +82,14 @@ public class ParticleFrameworkRenderer extends BaseRenderer {
 		}
 
 		mIsLoaded = false;
-		
+
 	}
 
 	@Override
 	public void update(LintfordCore pCore) {
+		if (mParticleSystemController == null)
+			return;
+
 		// Monitor and update any particlesystems needing renderers.
 		final List<ParticleSystemInstance> lInstances = mParticleSystemController.particleFrameworkData().particleSystemManager().particleSystems();
 
