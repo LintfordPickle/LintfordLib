@@ -41,6 +41,10 @@ public class HUD implements ICamera, IResizeListener {
 	private int mWindowWidth;
 	private int mWindowHeight;
 
+	// Scale factor will be applied to both x and y axis.
+	private final Vector2f position = new Vector2f();
+	private float mScaleFactor;
+
 	private Matrix4f mProjectionMatrix;
 	private Matrix4f mViewMatrix;
 
@@ -113,7 +117,7 @@ public class HUD implements ICamera, IResizeListener {
 		mViewMatrix = new Matrix4f();
 
 		mMouseHUDSpace = new Vector2f();
-
+		mScaleFactor = 1.f;
 	}
 
 	// --------------------------------------
@@ -129,11 +133,11 @@ public class HUD implements ICamera, IResizeListener {
 		mRatioH = ((float) mWindowHeight / (float) mDisplayConfig.windowHeight());
 
 		if (mDisplayConfig.stretchGameScreen()) {
-//			lWindowWidth = mDisplayConfig.baseGameResolutionWidth();
-//			lWindowHeight = mDisplayConfig.baseGameResolutionHeight();
-//
-//			mRatioW = ((float) lWindowWidth / (float) mDisplayConfig.windowWidth());
-//			mRatioH = ((float) lWindowHeight / (float) mDisplayConfig.windowHeight());
+			//			lWindowWidth = mDisplayConfig.baseGameResolutionWidth();
+			//			lWindowHeight = mDisplayConfig.baseGameResolutionHeight();
+			//
+			//			mRatioW = ((float) lWindowWidth / (float) mDisplayConfig.windowWidth());
+			//			mRatioH = ((float) lWindowHeight / (float) mDisplayConfig.windowHeight());
 		}
 
 		// FIXME: Remove the mMouseHUDSpace away from this class - it doesn't belong here
@@ -159,7 +163,8 @@ public class HUD implements ICamera, IResizeListener {
 		}
 
 		mViewMatrix.setIdentity(); // points at -Z
-		mViewMatrix.translate(0, 0, 0);
+		mViewMatrix.translate(position.x, position.y, 0);
+		mViewMatrix.scale(mScaleFactor, mScaleFactor, 1.f);
 
 		createOrtho(mWindowWidth, mWindowHeight);
 
@@ -219,22 +224,22 @@ public class HUD implements ICamera, IResizeListener {
 
 	@Override
 	public Vector2f getPosition() {
-		return Vector2f.Zero;
+		return position;
 	}
 
 	@Override
 	public void setPosition(float pX, float pY) {
-
+		position.set(pX, pY);
 	}
 
 	@Override
 	public float getZoomFactor() {
-		return 1f;
+		return mScaleFactor;
 	}
 
 	@Override
 	public void setZoomFactor(float pNewValue) {
-
+		mScaleFactor = pNewValue;
 	}
 
 	@Override

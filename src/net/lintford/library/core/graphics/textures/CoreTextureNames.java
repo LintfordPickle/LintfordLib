@@ -1,6 +1,7 @@
 package net.lintford.library.core.graphics.textures;
 
 public class CoreTextureNames {
+
 	public static final int TEXTURE_ICON_INFO = 0;
 	public static final int TEXTURE_ICON_WARNING = 1;
 	public static final int TEXTURE_CONTROL_BACK_FAST = 2;
@@ -112,4 +113,5 @@ public class CoreTextureNames {
 	public static final int TEXTURE_SCROLLBAR_DOWN = 108;
 	public static final int TEXTURE_SCROLLBAR_UP = 109;
 	public static final int TEXTURE_WHITE = 110;
+
 }

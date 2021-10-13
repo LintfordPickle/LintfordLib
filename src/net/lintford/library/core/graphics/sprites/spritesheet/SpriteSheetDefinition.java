@@ -40,11 +40,10 @@ public class SpriteSheetDefinition {
 	private long mFileSizeOnLoad;
 
 	/** A collection of {@link ISprite} instances contained within this {@link SpriteSheetDefinition} */
-	private String[] frameMapNameArray;
-	private SpriteFrame[] frameMapObjectArray;
+	private SpriteFrame[] spriteFrames;
 
 	// SpriteDefinition
-	public Map<String, SpriteDefinition> spriteMap;
+	public Map<String, SpriteDefinition> animationFramesMap;
 	protected List<SpriteInstance> spriteInstancePool;
 
 	/** The width of the associated texture. */
@@ -79,7 +78,7 @@ public class SpriteSheetDefinition {
 
 	/** Returns the number of {@link SpriteFrame}s assigned to the {@link SpriteSheetDefinition}. */
 	public int getSpriteCount() {
-		return spriteMap.size();
+		return animationFramesMap.size();
 	}
 
 	public boolean reloadable() {
@@ -95,7 +94,7 @@ public class SpriteSheetDefinition {
 	// --------------------------------------
 
 	public SpriteSheetDefinition() {
-		spriteMap = new HashMap<>();
+		animationFramesMap = new HashMap<>();
 		spriteInstancePool = new ArrayList<>();
 	}
 
@@ -135,51 +134,43 @@ public class SpriteSheetDefinition {
 		textureWidth = texture.getTextureWidth();
 		textureHeight = texture.getTextureHeight();
 
-		if (frameMapNameArray == null) {
-			frameMapNameArray = new String[0];
-		}
-
-		if (frameMapObjectArray == null) {
-			frameMapObjectArray = new SpriteFrame[0];
-		}
-
-		if (frameMapNameArray.length != frameMapObjectArray.length) {
-			throw new RuntimeException("Error Loading Assets. Spritesheet '" + textureName + "' corrupt");
+		if (spriteFrames == null) {
+			spriteFrames = new SpriteFrame[0];
 		}
 
 		if (spriteInstancePool == null) {
 			spriteInstancePool = new ArrayList<>();
 		}
 
-		if (spriteMap == null) {
-			spriteMap = new HashMap<>();
+		if (animationFramesMap == null) {
+			animationFramesMap = new HashMap<>();
 
 		} else {
 			// If the SpriteSheet definition had animations, then iterate over them
 			// Resolve the Sprite references in the Animations
-			for (Map.Entry<String, SpriteDefinition> entry : spriteMap.entrySet()) {
+			for (Map.Entry<String, SpriteDefinition> entry : animationFramesMap.entrySet()) {
 				final var lSpriteDefinition = entry.getValue();
 				lSpriteDefinition.name = entry.getKey();
 				lSpriteDefinition.loadContent(this);
 			}
 		}
 
-		// Create a SpriteDefinition for each SpriteFrame (in case there isn't one already)
-		final int lSpriteFrameArrayCount = frameMapObjectArray.length;
+		// Create an AnimationFrames objects for each single SpriteFrame
+		final int lSpriteFrameArrayCount = spriteFrames.length;
 		for (int i = 0; i < lSpriteFrameArrayCount; i++) {
-			final String lSpriteFrameName = frameMapNameArray[i];
+			final String lSpriteFrameName = spriteFrames[i].name();
 
-			if (spriteMap.containsKey(lSpriteFrameName)) {
+			if (animationFramesMap.containsKey(lSpriteFrameName)) {
 				continue;
 			}
 
-			final SpriteFrame lSpriteFrame = frameMapObjectArray[i];
+			final SpriteFrame lSpriteFrame = spriteFrames[i];
 
 			SpriteDefinition lNewSprite = new SpriteDefinition();
 			lNewSprite.name = lSpriteFrameName;
 			lNewSprite.addFrame(lSpriteFrame);
 
-			spriteMap.put(lSpriteFrameName, lNewSprite);
+			animationFramesMap.put(lSpriteFrameName, lNewSprite);
 		}
 	}
 
@@ -196,18 +187,18 @@ public class SpriteSheetDefinition {
 	// --------------------------------------
 
 	public SpriteFrame getSpriteFrame(int pIndex) {
-		if (pIndex < 0 || pIndex >= frameMapObjectArray.length)
+		if (pIndex < 0 || pIndex >= spriteFrames.length)
 			return null;
 
-		return frameMapObjectArray[pIndex];
+		return spriteFrames[pIndex];
 	}
 
 	public int getSpriteFrameIndexByName(String pFrameName) {
 		if (pFrameName == null || pFrameName.length() == 0)
 			return -1;
-		final int lFrameCount = frameMapObjectArray.length;
+		final int lFrameCount = spriteFrames.length;
 		for (int i = 0; i < lFrameCount; i++) {
-			if (frameMapObjectArray[i].equals(pFrameName))
+			if (spriteFrames[i].equals(pFrameName))
 				return i;
 		}
 		return -1;
@@ -215,19 +206,19 @@ public class SpriteSheetDefinition {
 
 	/** Adds a new sprite definition to this SpriteSheet. */
 	public void addSpriteDefinition(final String pNewName, final SpriteDefinition pNewSprite) {
-		spriteMap.put(pNewName, pNewSprite);
+		animationFramesMap.put(pNewName, pNewSprite);
 
 	}
 
 	public SpriteDefinition getSpriteDefinition(final String pSpriteName) {
-		return spriteMap.get(pSpriteName);
+		return animationFramesMap.get(pSpriteName);
 
 	}
 
 	/** Returns a new {@link SpriteInstance} based on the {@link ISpriteDefinition} of the name provided. Null is returned if the {@link SpriteSheetDefinition} doesn*t contains a Sprite instance of the given name. */
 	public SpriteInstance getSpriteInstance(final String pSpriteName) {
-		if (spriteMap.containsKey(pSpriteName)) {
-			return getSpriteInstance(spriteMap.get(pSpriteName));
+		if (animationFramesMap.containsKey(pSpriteName)) {
+			return getSpriteInstance(animationFramesMap.get(pSpriteName));
 		}
 
 		return null;

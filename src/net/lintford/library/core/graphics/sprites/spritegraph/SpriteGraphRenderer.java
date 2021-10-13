@@ -70,7 +70,7 @@ public class SpriteGraphRenderer extends SpriteBatch {
 			var lSpritesheetDefinition = lAttachment.spriteSheetDefinition();
 
 			if (pSpriteGraphNode.mSpriteInstance != null) {
-				draw(lSpritesheetDefinition, pSpriteGraphNode.mSpriteInstance, pSpriteGraphNode.mSpriteInstance, -0.5f, pColor);
+				draw(lSpritesheetDefinition, pSpriteGraphNode.mSpriteInstance, pSpriteGraphNode.mSpriteInstance, -0.1f, pColor);
 			}
 
 			if (RENDER_DEBUG) {

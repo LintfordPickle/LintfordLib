@@ -13,12 +13,17 @@ public class SpriteFrame extends Rectangle implements Serializable {
 
 	private static final long serialVersionUID = 3808825740133201931L;
 
+	private String name;
 	private SpriteAnchor[] anchorPoints;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
 
+	public String name() {
+		return name;
+	}
+	
 	public float getDefaultRotation() {
 		return rotation;
 	}

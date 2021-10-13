@@ -154,7 +154,7 @@ public class SpriteGraphInstance extends PooledBaseData implements AnimatedSprit
 
 	}
 
-	private void updateRootNodeTransform() {
+	public void updateRootNodeTransform() {
 		rootNode.positionX(positionX);
 		rootNode.positionY(positionY);
 
