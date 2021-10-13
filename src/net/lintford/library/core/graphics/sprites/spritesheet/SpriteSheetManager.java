@@ -31,13 +31,18 @@ public class SpriteSheetManager {
 	}
 
 	// --------------------------------------
+	// Constants
+	// --------------------------------------
+
+	public static final String CORE_SPRITESHEET_NAME = "SPRITESHEET_CORE";
+
+	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
 	/** Contains a collection of SpriteSheets which has been loaded by this {@link SpriteSheetManager}. */
 	private Map<Integer, Map<String, SpriteSheetDefinition>> mSpriteSheetGroups;
 
-	private SpriteSheetDefinition mCoreSpritesheet;
 	private ResourceManager mResourceManager;
 
 	// --------------------------------------
@@ -45,7 +50,7 @@ public class SpriteSheetManager {
 	// --------------------------------------
 
 	public SpriteSheetDefinition coreSpritesheet() {
-		return mCoreSpritesheet;
+		return mSpriteSheetGroups.get(LintfordCore.CORE_ENTITY_GROUP_ID).get(CORE_SPRITESHEET_NAME);
 	}
 
 	/** Returns the {@link SpriteSheetDefinition} to which the specified key string is mapped, or null if no such {@link SpriteSheetDefinition} exists. */
@@ -76,7 +81,7 @@ public class SpriteSheetManager {
 
 	public void initialize(ResourceManager pResourceManager) {
 		mResourceManager = pResourceManager;
-		mCoreSpritesheet = loadSpriteSheet("/res/spritesheets/core/spritesheetCore.json", LintfordCore.CORE_ENTITY_GROUP_ID);
+		loadSpriteSheetFromResource("/res/spritesheets/core/spritesheetCore.json", LintfordCore.CORE_ENTITY_GROUP_ID);
 	}
 
 	public void loadGLContent(ResourceManager pResourceManager) {
@@ -126,18 +131,22 @@ public class SpriteSheetManager {
 
 			Debug.debugManager().logger().v(getClass().getSimpleName(), "SpriteSheet " + lFile.getPath() + " loaded (" + lSpriteSheet.spriteSheetName + ")");
 
-			lSpriteSheet.fileSizeOnLoad(lFile.length());
-			lSpriteSheet.spriteSheetFilename = lFile.getPath();
-			lSpriteSheet.reloadable(true);
-			lSpriteSheet.loadGLContent(mResourceManager, pEntityGroupID);
-
 			Map<String, SpriteSheetDefinition> lSpriteSheetGroup = mSpriteSheetGroups.get(pEntityGroupID);
 			if (lSpriteSheetGroup == null) {
 				lSpriteSheetGroup = new HashMap<>();
 				mSpriteSheetGroups.put(pEntityGroupID, lSpriteSheetGroup);
 
 			}
-
+			// If the spritesheet already exists, then we need to update it's texture references (which may, by this point, have already been resolved)
+			if (lSpriteSheetGroup.containsKey(lSpriteSheet.spriteSheetName)) {
+				final var lOldSpritesheet = lSpriteSheetGroup.remove(lSpriteSheet.spriteSheetName);
+				lOldSpritesheet.unloadGLContent();
+			}
+			
+			lSpriteSheet.fileSizeOnLoad(lFile.length());
+			lSpriteSheet.spriteSheetFilename = lFile.getPath();
+			lSpriteSheet.reloadable(true);
+			lSpriteSheet.loadGLContent(mResourceManager, pEntityGroupID);
 			lSpriteSheetGroup.put(lSpriteSheet.spriteSheetName, lSpriteSheet);
 
 			return lSpriteSheet;

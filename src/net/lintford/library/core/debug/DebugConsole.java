@@ -259,7 +259,7 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 
 				return;
 			}
-			
+
 			if (intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().tryAcquireMouseOverThisComponent(hashCode())) {
 				if (mTAGFilterText.handleInput(pCore))
 					return;
@@ -521,7 +521,7 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 		if (mConsoleState == CONSOLE_STATE.open) {
 			mConsoleBackgroundColor.setRGBA(0.f, 0.f, 0.f, .8f);
 			mSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_BLACK, lScreenBB.left(), lScreenBB.top(), lScreenBB.width(), lScreenBB.height(), Z_DEPTH, mConsoleBackgroundColor);
-			mSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, x, y, w, h, Z_DEPTH, ColorConstants.MenuPanelPrimaryColor);
+			mSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_BLACK, x, y, w, h, Z_DEPTH, ColorConstants.MenuPanelPrimaryColor);
 
 			final var lBackgroundInputPanelColor = ColorConstants.getBlackWithAlpha(0.35f);
 			mSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, x, y + 50 - lTextHeight, w, 2, Z_DEPTH, lBackgroundInputPanelColor);

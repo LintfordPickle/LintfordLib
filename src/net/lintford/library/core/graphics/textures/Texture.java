@@ -256,8 +256,11 @@ public class Texture {
 			return;
 
 		GL11.glDeleteTextures(pTexture.mTextureId);
+		pTexture.mTextureId = -1;
+		pTexture.mTextureLocation = null;
+		pTexture.mTextureWidth = 0;
+		pTexture.mTextureHeight = 0;
 		pTexture = null;
-
 	}
 
 	private static String cleanFilename(String pFilename) {
