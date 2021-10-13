@@ -105,6 +105,21 @@ public class SpriteSheetDefinition {
 
 	}
 
+	public void copyFrom(SpriteSheetDefinition pOtherSpritesheet) {
+		// mEntityGroupID = pOtherSpritesheet.mEntityGroupID;
+		spriteSheetName = pOtherSpritesheet.spriteSheetName;
+		reloadable = pOtherSpritesheet.reloadable;
+		spriteSheetFilename = pOtherSpritesheet.spriteSheetFilename;
+		textureName = pOtherSpritesheet.textureName;
+		texture = pOtherSpritesheet.texture;
+		mFileSizeOnLoad = pOtherSpritesheet.fileSizeOnLoad();
+		spriteFrames = pOtherSpritesheet.spriteFrames;
+		animationFramesMap = pOtherSpritesheet.animationFramesMap;
+		textureWidth = pOtherSpritesheet.textureWidth;
+		textureHeight = pOtherSpritesheet.textureHeight;
+		spriteGraphNodeName = pOtherSpritesheet.spriteGraphNodeName;
+	}
+
 	// --------------------------------------
 	// Core-Methods
 	// --------------------------------------

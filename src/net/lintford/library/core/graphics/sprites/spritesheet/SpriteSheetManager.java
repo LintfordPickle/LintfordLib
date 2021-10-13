@@ -139,18 +139,23 @@ public class SpriteSheetManager {
 			}
 			// If the spritesheet already exists, then we need to update it's texture references (which may, by this point, have already been resolved)
 			if (lSpriteSheetGroup.containsKey(lSpriteSheet.spriteSheetName)) {
-				final var lOldSpritesheet = lSpriteSheetGroup.remove(lSpriteSheet.spriteSheetName);
+				final var lOldSpritesheet = lSpriteSheetGroup.get(lSpriteSheet.spriteSheetName);
 				lOldSpritesheet.unloadGLContent();
+				lOldSpritesheet.copyFrom(lSpriteSheet);
+				lOldSpritesheet.loadGLContent(mResourceManager);
+				
+				return lOldSpritesheet;
+			} else {
+				lSpriteSheet.fileSizeOnLoad(lFile.length());
+				lSpriteSheet.spriteSheetFilename = lFile.getPath();
+				lSpriteSheet.reloadable(true);
+				lSpriteSheet.loadGLContent(mResourceManager, pEntityGroupID);
+
+				lSpriteSheetGroup.put(lSpriteSheet.spriteSheetName, lSpriteSheet);
+				
+				return lSpriteSheet;
+				
 			}
-			
-			lSpriteSheet.fileSizeOnLoad(lFile.length());
-			lSpriteSheet.spriteSheetFilename = lFile.getPath();
-			lSpriteSheet.reloadable(true);
-			lSpriteSheet.loadGLContent(mResourceManager, pEntityGroupID);
-			lSpriteSheetGroup.put(lSpriteSheet.spriteSheetName, lSpriteSheet);
-
-			return lSpriteSheet;
-
 		} catch (JsonSyntaxException e) {
 			Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Failed to parse JSON SpriteSheet (Syntax): %s", lFile.getPath()));
 			Debug.debugManager().logger().printException(getClass().getSimpleName(), e);
