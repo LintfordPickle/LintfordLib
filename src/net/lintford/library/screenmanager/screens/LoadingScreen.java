@@ -1,8 +1,5 @@
 package net.lintford.library.screenmanager.screens;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.lwjgl.opengl.GL11;
 
 import net.lintford.library.core.LintfordCore;
@@ -27,16 +24,16 @@ public class LoadingScreen extends Screen {
 	// Variables
 	// --------------------------------------
 
-	private ScreenManager mScreenManager;
-	private Screen[] mScreensToLoad;
-	private final boolean mLoadingIsSlow;
-	private FontUnit mFontUnit;
+	protected ScreenManager mScreenManager;
+	protected Screen[] mScreensToLoad;
+	protected final boolean mLoadingIsSlow;
+	protected FontUnit mFontUnit;
 
 	// --------------------------------------
 	// Constructors
 	// --------------------------------------
 
-	private LoadingScreen(ScreenManager pScreenManager, boolean pLoadingIsSlow, Screen[] pScreensToLoad) {
+	public LoadingScreen(ScreenManager pScreenManager, boolean pLoadingIsSlow, Screen... pScreensToLoad) {
 		super(pScreenManager);
 
 		mScreenManager = pScreenManager;
@@ -45,7 +42,7 @@ public class LoadingScreen extends Screen {
 		mLoadingIsSlow = pLoadingIsSlow;
 
 		mTransitionOn = new TransitionFadeIn(new TimeSpan(500));
-		mTransitionOff = new TransitionFadeOut(new TimeSpan(500));
+		mTransitionOff = new TransitionFadeOut(new TimeSpan(0));
 
 		mFontUnit = pScreenManager.core().resources().fontManager().getCoreFont();
 
@@ -55,28 +52,6 @@ public class LoadingScreen extends Screen {
 	// --------------------------------------
 	// Core-Methods
 	// --------------------------------------
-
-	public static void load(ScreenManager pScreenManager, boolean pLoadingIsSlow, Screen... pScreensToLoad) {
-		// transitiion off ALL current screens
-		final List<Screen> lScreenList = new ArrayList<>();
-		lScreenList.addAll(pScreenManager.screens());
-
-		int lScreenCount = lScreenList.size();
-		for (int i = 0; i < lScreenCount; i++) {
-			if (!lScreenList.get(i).isExiting())
-				lScreenList.get(i).exitScreen();
-
-		}
-
-		lScreenList.clear();
-
-		System.gc();
-
-		// create and activate the loading screen
-		final var lLoadingScreen = new LoadingScreen(pScreenManager, pLoadingIsSlow, pScreensToLoad);
-		pScreenManager.addScreen(lLoadingScreen);
-
-	}
 
 	@Override
 	public void update(LintfordCore pCore, boolean pOtherScreenHasFocus, boolean pCoveredByOtherScreen) {

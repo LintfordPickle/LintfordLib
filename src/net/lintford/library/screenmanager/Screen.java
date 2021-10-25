@@ -152,7 +152,11 @@ public abstract class Screen implements IProcessMouseInput {
 	// --------------------------------------
 
 	public Screen(ScreenManager pScreenManager) {
-		mEntityGroupID = BaseEntity.getEntityNumber();
+		this(pScreenManager, BaseEntity.getEntityNumber());
+	}
+
+	public Screen(ScreenManager pScreenManager, int pEntityGroupId) {
+		mEntityGroupID = pEntityGroupId;
 
 		mScreenState = ScreenState.Hidden;
 		screenManager = pScreenManager;
@@ -160,7 +164,7 @@ public abstract class Screen implements IProcessMouseInput {
 		mTransitionOn = new TransitionFadeIn(new TimeSpan(200));
 		mTransitionOff = new TransitionFadeOut(new TimeSpan(200));
 
-		rendererManager = new RendererManager(screenManager.core(), getClass().getSimpleName(), mEntityGroupID);
+		rendererManager = new RendererManager(screenManager.core(), mEntityGroupID);
 
 		mSingletonScreen = false;
 

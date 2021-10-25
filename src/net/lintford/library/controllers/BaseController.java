@@ -15,6 +15,7 @@ public abstract class BaseController {
 	protected ControllerManager mControllerManager;
 	protected String mControllerName;
 	protected boolean mIsActive;
+	protected boolean mIsInitialize;
 	protected boolean mUniqueController;
 
 	/**
@@ -40,14 +41,16 @@ public abstract class BaseController {
 		return mUniqueController;
 	}
 
-	public abstract boolean isInitialized();
-
 	public boolean isActive() {
 		return mIsActive;
 	}
 
 	public void isActive(boolean pNewValue) {
 		mIsActive = pNewValue;
+	}
+
+	public boolean isInitialized() {
+		return mIsInitialize;
 	}
 
 	public String controllerName() {

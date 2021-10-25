@@ -30,7 +30,6 @@ public class ControllerManager {
 	/** Returns a list of controllers currently registered with the {@link ControllerManager}. */
 	public List<BaseController> controllers(int pControllerGroupID) {
 		return mControllers.get(pControllerGroupID);
-
 	}
 
 	public LintfordCore core() {
@@ -132,6 +131,10 @@ public class ControllerManager {
 		}
 
 		return null;
+	}
+
+	public List<BaseController> getControllerGroupByUid(int pEntityGroupUid) {
+		return controllers(pEntityGroupUid);
 	}
 
 	/**

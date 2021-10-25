@@ -64,7 +64,7 @@ public class Box2dWorldController extends BaseController {
 
 	@Override
 	public boolean isInitialized() {
-		return mWorld != null;
+		return mResourceController != null && mWorld != null;
 
 	}
 
@@ -95,7 +95,6 @@ public class Box2dWorldController extends BaseController {
 	@Override
 	public void initialize(LintfordCore pCore) {
 		mResourceController = (ResourceController) pCore.controllerManager().getControllerByNameRequired(ResourceController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
-
 	}
 
 	@Override
@@ -145,8 +144,7 @@ public class Box2dWorldController extends BaseController {
 			return;
 
 		if (pJBox2dEntityInstanceToReturn.userDataObject() != null) {
-			Debug.debugManager().logger().w(getClass().getSimpleName(),
-					"JBox2dEntityInstance unloaded without first removing the userdata object. typeof (" + pJBox2dEntityInstanceToReturn.userDataObject().toString() + ")");
+			Debug.debugManager().logger().w(getClass().getSimpleName(), "JBox2dEntityInstance unloaded without first removing the userdata object. typeof (" + pJBox2dEntityInstanceToReturn.userDataObject().toString() + ")");
 			pJBox2dEntityInstanceToReturn.userDataObject(null);
 
 		}

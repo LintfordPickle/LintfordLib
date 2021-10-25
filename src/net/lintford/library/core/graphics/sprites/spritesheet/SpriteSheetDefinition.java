@@ -213,7 +213,7 @@ public class SpriteSheetDefinition {
 			return -1;
 		final int lFrameCount = spriteFrames.length;
 		for (int i = 0; i < lFrameCount; i++) {
-			if (spriteFrames[i].equals(pFrameName))
+			if (spriteFrames[i].name().equals(pFrameName))
 				return i;
 		}
 		return -1;

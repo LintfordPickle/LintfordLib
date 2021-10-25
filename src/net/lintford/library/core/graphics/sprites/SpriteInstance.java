@@ -216,11 +216,11 @@ public class SpriteInstance extends Rectangle {
 	private void updateDimensionsOnCurrentFrame() {
 		var lCurrentFrame = currentSpriteFrame();
 		if (lCurrentFrame != null) {
-			scaleX(lCurrentFrame.scaleX()); //
-			scaleY(lCurrentFrame.scaleY()); //
+			scaleX(lCurrentFrame.scaleX());
+			scaleY(lCurrentFrame.scaleY());
 
-			width(lCurrentFrame.width() * scaleX());
-			height(lCurrentFrame.height() * scaleY());
+			width(lCurrentFrame.width());
+			height(lCurrentFrame.height());
 
 			pivotX(lCurrentFrame.pivotX() * scaleX());
 			pivotY(lCurrentFrame.pivotY() * scaleY());

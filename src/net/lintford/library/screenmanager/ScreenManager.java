@@ -261,8 +261,9 @@ public class ScreenManager {
 
 			mScreensToUpdate.remove(mScreensToUpdate.size() - 1);
 
-			if(mScreensToAdd.size() > 0) lCoveredByOtherScreen = true;
-			
+			if (mScreensToAdd.size() > 0)
+				lCoveredByOtherScreen = true;
+
 			// Update the screen
 			lScreen.update(pCore, lOtherScreenHasFocus, lCoveredByOtherScreen);
 
@@ -282,20 +283,26 @@ public class ScreenManager {
 		if (!mIsinitialized || !mIsLoaded)
 			return;
 
-		int lCount = mScreens.size();
+		mScreensToUpdate.clear();
+
+		final int lCount = mScreens.size();
 		for (int i = 0; i < lCount; i++) {
-			if (mScreens.get(i).screenState() == ScreenState.Hidden && !mScreens.get(i).showBackgroundScreens())
+			mScreensToUpdate.add(mScreens.get(i));
+		}
+
+		final var lNumScreens = mScreensToUpdate.size();
+		for (int i = 0; i < lNumScreens; i++) {
+			final var lScreen = mScreensToUpdate.get(i);
+			if (lScreen.screenState() == ScreenState.Hidden && !lScreen.showBackgroundScreens())
 				continue;
 
-			mScreens.get(i).draw(pCore);
-
-			GLDebug.checkGLErrorsException(getClass().getSimpleName());
-
+			lScreen.draw(pCore);
 		}
+
+		GLDebug.checkGLErrorsException(getClass().getSimpleName());
 
 		mToastManager.draw(pCore);
 		mToolTip.draw(pCore);
-
 	}
 
 	// --------------------------------------
@@ -388,4 +395,32 @@ public class ScreenManager {
 
 	}
 
+	public void createLoadingScreen(Screen pLoadingScreen) {
+		exitAllScreens();
+
+		System.gc();
+
+		if (pLoadingScreen.isinitialized() == false) {
+			pLoadingScreen.initialize();
+		}
+
+		if (pLoadingScreen.isLoaded() == false) {
+			pLoadingScreen.loadGLContent(mResourceManager);
+		}
+
+		addScreen(pLoadingScreen);
+	}
+
+	private void exitAllScreens() {
+		final var lScreenList = new ArrayList<Screen>();
+		lScreenList.addAll(screens());
+
+		final var lScreenCount = lScreenList.size();
+		for (int i = 0; i < lScreenCount; i++) {
+			if (!lScreenList.get(i).isExiting())
+				lScreenList.get(i).exitScreen();
+		}
+
+		lScreenList.clear();
+	}
 }

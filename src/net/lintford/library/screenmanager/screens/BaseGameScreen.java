@@ -19,6 +19,10 @@ public abstract class BaseGameScreen extends Screen {
 
 	public BaseGameScreen(ScreenManager pScreenManager) {
 		super(pScreenManager);
+	}
+
+	public BaseGameScreen(ScreenManager pScreenManager, int pEntityGroupId) {
+		super(pScreenManager, pEntityGroupId);
 
 		new GameRendererController(pScreenManager.core().controllerManager(), rendererManager, entityGroupID());
 

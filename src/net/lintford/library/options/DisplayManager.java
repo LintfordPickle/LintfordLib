@@ -18,6 +18,7 @@ import static org.lwjgl.glfw.GLFW.glfwGetWindowAttrib;
 import static org.lwjgl.glfw.GLFW.glfwGetWindowSize;
 import static org.lwjgl.glfw.GLFW.glfwInit;
 import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
+import static org.lwjgl.glfw.GLFW.glfwMaximizeWindow;
 import static org.lwjgl.glfw.GLFW.glfwSetErrorCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetFramebufferSizeCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowFocusCallback;
@@ -27,7 +28,6 @@ import static org.lwjgl.glfw.GLFW.glfwSetWindowSizeLimits;
 import static org.lwjgl.glfw.GLFW.glfwShowWindow;
 import static org.lwjgl.glfw.GLFW.glfwSwapInterval;
 import static org.lwjgl.glfw.GLFW.glfwWindowHint;
-import static org.lwjgl.glfw.GLFW.glfwMaximizeWindow;
 import static org.lwjgl.opengl.GL11.GL_FALSE;
 import static org.lwjgl.opengl.GL11.GL_TRUE;
 import static org.lwjgl.system.MemoryUtil.NULL;
@@ -103,7 +103,8 @@ public class DisplayManager extends IniFile {
 	private int mDesktopWidth;
 	private int mDesktopHeight;
 
-	private long mWindowID;
+	private long mMasterWindowId;
+	private long mOffscreenWindowId;
 	private boolean mStretchGameScreen = false;
 	private boolean mRecompileShaders = false;
 	private final int mBaseGameResolutionWidth;
@@ -142,7 +143,7 @@ public class DisplayManager extends IniFile {
 	}
 
 	public long windowID() {
-		return mWindowID;
+		return mMasterWindowId;
 	}
 
 	public boolean recompileShaders() {
@@ -159,6 +160,10 @@ public class DisplayManager extends IniFile {
 
 	public int windowHeight() {
 		return mDisplaySettings.windowHeight;
+	}
+
+	public boolean isSharedContextCreated() {
+		return mOffscreenWindowId != 0;
 	}
 
 	public boolean windowWasResized() {
@@ -370,56 +375,50 @@ public class DisplayManager extends IniFile {
 				mDisplaySettings.monitorIndex = glfwGetPrimaryMonitor();
 			}
 
-			long lNewWindowID = glfwCreateWindow(mDisplaySettings.windowWidth, mDisplaySettings.windowHeight, pGameInfo.windowTitle(), mDisplaySettings.monitorIndex, mWindowID);
-			glfwDestroyWindow(mWindowID);
+			long lNewWindowID = glfwCreateWindow(mDisplaySettings.windowWidth, mDisplaySettings.windowHeight, pGameInfo.windowTitle(), mDisplaySettings.monitorIndex, mMasterWindowId);
+			glfwDestroyWindow(mMasterWindowId);
 
-			mWindowID = lNewWindowID;
+			mMasterWindowId = lNewWindowID;
 
 		}
 
 		// Create a new windowed window
 		else {
-			mWindowID = NULL;
-			long lMonitorID = NULL; // Monitor NULL means windowed
-			long lNewWindowID = glfwCreateWindow(mDisplaySettings.windowWidth, mDisplaySettings.windowHeight, pGameInfo.windowTitle(), lMonitorID, mWindowID);
-			glfwDestroyWindow(mWindowID);
+			long lMonitorID = NULL; // windowed
+			long lNewWindowID = glfwCreateWindow(mDisplaySettings.windowWidth, mDisplaySettings.windowHeight, pGameInfo.windowTitle(), lMonitorID, mMasterWindowId);
+			glfwDestroyWindow(mMasterWindowId);
 
-			mWindowID = lNewWindowID;
+			mMasterWindowId = lNewWindowID;
 
 			// In the case the window is in windowed mode, and the desired size is that of the desktop
 			if (mDisplaySettings.windowWidth == mDesktopWidth && mDisplaySettings.windowHeight == mDesktopHeight) {
-				glfwMaximizeWindow(mWindowID);
+				glfwMaximizeWindow(mMasterWindowId);
 
 				// Adjust the position of the window based on the window size
 				int[] w = new int[2];
 				int[] h = new int[2];
-				glfwGetWindowSize(mWindowID, w, h);
+				glfwGetWindowSize(mMasterWindowId, w, h);
 				mDisplaySettings.windowWidth = w[0];
 				mDisplaySettings.windowHeight = h[0];
 
 			}
 
-			glfwSetWindowPos(mWindowID, (mDesktopWidth - mDisplaySettings.windowWidth) / 2, (mDesktopHeight - mDisplaySettings.windowHeight) / 2);
+			glfwSetWindowPos(mMasterWindowId, (mDesktopWidth - mDisplaySettings.windowWidth) / 2, (mDesktopHeight - mDisplaySettings.windowHeight) / 2);
 
 		}
 
 		// Set a minimum window
-		glfwSetWindowSizeLimits(mWindowID, pGameInfo.minimumWindowWidth(), pGameInfo.minimumWindowHeight(), GLFW_DONT_CARE, GLFW_DONT_CARE);
+		glfwSetWindowSizeLimits(mMasterWindowId, pGameInfo.minimumWindowWidth(), pGameInfo.minimumWindowHeight(), GLFW_DONT_CARE, GLFW_DONT_CARE);
 
 		// Make the openGL the current context
-		glfwMakeContextCurrent(mWindowID);
+		makeContextCurrent(mMasterWindowId);
 
-		// This line is critical for LWJGL's interoperation with GLFW's
-		// OpenGL context, or any context that is managed externally.
-		// LWJGL detects the context that is current in the current thread,
-		// creates the GLCapabilities instance and makes the OpenGL
-		// bindings available for use.
-		GL.createCapabilities();
+		createGlCompatiblities();
 
 		glfwSwapInterval(mDisplaySettings.vSyncEnabled ? 1 : 0); // cap to 60 (v-sync)
 
-		glfwShowWindow(mWindowID);
-		mIsWindowFocused = glfwGetWindowAttrib(mWindowID, GLFW_VISIBLE) != 0;
+		glfwShowWindow(mMasterWindowId);
+		mIsWindowFocused = glfwGetWindowAttrib(mMasterWindowId, GLFW_VISIBLE) != 0;
 
 		GLDebug.checkGLErrors();
 
@@ -437,8 +436,8 @@ public class DisplayManager extends IniFile {
 
 		}
 
-		glfwSetFramebufferSizeCallback(mWindowID, mFrameBufferSizeCallback);
-		glfwSetWindowFocusCallback(mWindowID, new GLFWWindowFocusCallback() {
+		glfwSetFramebufferSizeCallback(mMasterWindowId, mFrameBufferSizeCallback);
+		glfwSetWindowFocusCallback(mMasterWindowId, new GLFWWindowFocusCallback() {
 
 			@Override
 			public void invoke(long pWindowID, boolean pIsFocused) {
@@ -473,22 +472,58 @@ public class DisplayManager extends IniFile {
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "   Monitor Index:      " + mDisplaySettings.monitorIndex);
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "   Aspect Radio Index: " + mDisplaySettings.aspectRatioIndex);
 
-		return mWindowID;
+		return mMasterWindowId;
 
 	}
 
+	public long createSharedContext() {
+		glfwDefaultWindowHints(); // GL3.2 CORE
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_FALSE);
+		glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
+		glfwWindowHint(GLFW_DECORATED, GL_TRUE);
+		glfwWindowHint(GLFW_RESIZABLE, mDisplaySettings.resizable ? GL_TRUE : GL_FALSE);
+
+		// by specifing the masterwindow id, we create a openGL shared context
+		mOffscreenWindowId = glfwCreateWindow(10, 10, "t", NULL, mMasterWindowId);
+
+		return mOffscreenWindowId;
+	}
+
+	public void makeContextCurrent(long pWindowId) {
+		glfwMakeContextCurrent(pWindowId);
+	}
+
+	/**
+	 *  This line is critical for LWJGL's interoperation with GLFW's
+		OpenGL context, or any context that is managed externally.
+		LWJGL detects the context that is current in the current thread,
+		creates the GLCapabilities instance and makes the OpenGL
+		bindings available for use.
+	 * */
+	public void createGlCompatiblities() {
+		GL.createCapabilities();
+	}
+
+	public void destroySharedContext() {
+		glfwDestroyWindow(mOffscreenWindowId);
+		mOffscreenWindowId = 0;
+	}
+
 	public void setGLFWMonitor(VideoSettings pDesiredSettings) {
-		glfwSetWindowMonitor(mWindowID, pDesiredSettings.fullscreen() ? pDesiredSettings.monitorIndex : NULL, pDesiredSettings.windowPositionX, pDesiredSettings.windowPositionY, pDesiredSettings.windowWidth,
-				pDesiredSettings.windowHeight, pDesiredSettings.refreshRate);
+		glfwSetWindowMonitor(mMasterWindowId, pDesiredSettings.fullscreen() ? pDesiredSettings.monitorIndex : NULL, pDesiredSettings.windowPositionX, pDesiredSettings.windowPositionY, pDesiredSettings.windowWidth, pDesiredSettings.windowHeight,
+				pDesiredSettings.refreshRate);
 
 		// In the case the window is in windowed mode, and the desired size is that of the desktop
 		if (pDesiredSettings.windowWidth == mDesktopWidth && pDesiredSettings.windowHeight == mDesktopHeight) {
-			glfwMaximizeWindow(mWindowID);
+			glfwMaximizeWindow(mMasterWindowId);
 
 			// Adjust the position of the window based on the window size
 			int[] w = new int[2];
 			int[] h = new int[2];
-			glfwGetWindowSize(mWindowID, w, h);
+			glfwGetWindowSize(mMasterWindowId, w, h);
 			pDesiredSettings.windowWidth = w[0];
 			pDesiredSettings.windowHeight = h[0];
 
@@ -496,11 +531,11 @@ public class DisplayManager extends IniFile {
 
 		int[] w = new int[2];
 		int[] h = new int[2];
-		glfwGetWindowSize(mWindowID, w, h);
+		glfwGetWindowSize(mMasterWindowId, w, h);
 		pDesiredSettings.windowWidth = w[0];
 		pDesiredSettings.windowHeight = h[0];
 
-		glfwSetWindowPos(mWindowID, (mDesktopWidth - pDesiredSettings.windowWidth) / 2, (mDesktopHeight - pDesiredSettings.windowHeight) / 2);
+		glfwSetWindowPos(mMasterWindowId, (mDesktopWidth - pDesiredSettings.windowWidth) / 2, (mDesktopHeight - pDesiredSettings.windowHeight) / 2);
 
 		changeResolution(pDesiredSettings.windowWidth, pDesiredSettings.windowHeight);
 		glfwSwapInterval(pDesiredSettings.vSyncEnabled ? 1 : 0);
@@ -578,8 +613,7 @@ public class DisplayManager extends IniFile {
 		mDisplaySettings.windowHeight = pGameInfo.baseGameResolutionHeight();
 		mDisplaySettings.fullScreenIndex = VideoSettings.FULLSCREEN_NO_INDEX;
 
-		Debug.debugManager().logger().w(getClass().getSimpleName(),
-				"Non-standard resolution found (" + lLookingForWidth + "," + lLookingForHeight + ")! Defaulting back to " + mDisplaySettings.windowWidth + "," + mDisplaySettings.windowHeight);
+		Debug.debugManager().logger().w(getClass().getSimpleName(), "Non-standard resolution found (" + lLookingForWidth + "," + lLookingForHeight + ")! Defaulting back to " + mDisplaySettings.windowWidth + "," + mDisplaySettings.windowHeight);
 
 	}
 
@@ -627,10 +661,10 @@ public class DisplayManager extends IniFile {
 
 	public void setDisplayMouse(boolean pShowMouse) {
 		if (pShowMouse) {
-			GLFW.glfwSetInputMode(mWindowID, GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_NORMAL);
+			GLFW.glfwSetInputMode(mMasterWindowId, GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_NORMAL);
 
 		} else {
-			GLFW.glfwSetInputMode(mWindowID, GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_HIDDEN);
+			GLFW.glfwSetInputMode(mMasterWindowId, GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_HIDDEN);
 
 		}
 	}

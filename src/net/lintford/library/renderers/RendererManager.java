@@ -56,9 +56,6 @@ public class RendererManager {
 	private DisplayManager mDisplayConfig;
 
 	private UiStructureController mUiStructureController;
-
-	/** Allows us to track where each RendererManager is created from */
-	private String mOwnerIdentifier;
 	private List<BaseRenderer> mRenderers;
 	private List<UiWindow> mWindowRenderers;
 
@@ -70,7 +67,6 @@ public class RendererManager {
 	private boolean mIsinitialized;
 	private boolean mIsLoaded;
 
-	// Stuff from the UI Manager
 	private List<UIWindowChangeListener> mListeners;
 
 	private SpriteBatch mSpriteBatch;
@@ -119,10 +115,6 @@ public class RendererManager {
 		return mRendererIdCounter++;
 	}
 
-	public String ownerName() {
-		return mOwnerIdentifier;
-	}
-
 	public LintfordCore core() {
 		return mCore;
 	}
@@ -167,8 +159,7 @@ public class RendererManager {
 	// Constructor
 	// --------------------------------------
 
-	public RendererManager(LintfordCore pCore, String pOwnerName, int pEntityGroupID) {
-		mOwnerIdentifier = pOwnerName;
+	public RendererManager(LintfordCore pCore, int pEntityGroupID) {
 		mCore = pCore;
 		mEntityGroupID = pEntityGroupID;
 
@@ -214,7 +205,7 @@ public class RendererManager {
 		if (mIsLoaded)
 			return;
 
-		Debug.debugManager().logger().i(getClass().getSimpleName(), mOwnerIdentifier + "Loading GL content for all registered renderers");
+		Debug.debugManager().logger().i(getClass().getSimpleName(), "Loading GL content for all registered renderers");
 
 		mResourceManager = pResourceManager;
 		mResourceManager.increaseReferenceCounts(mEntityGroupID);
@@ -229,41 +220,35 @@ public class RendererManager {
 		mLineBatch.loadGLContent(pResourceManager);
 		mPolyBatch.loadGLContent(pResourceManager);
 
-		// Some windows will use this to orientate themselves to the window
 		mDisplayConfig = pResourceManager.config().display();
 
-		// Load all of the renderers that have been added so far
-		final int RENDERER_COUNT = mRenderers.size();
-		for (int i = 0; i < RENDERER_COUNT; i++) {
+		final int lRendererCount = mRenderers.size();
+		for (int i = 0; i < lRendererCount; i++) {
 			if (!mRenderers.get(i).isLoaded() && mIsLoaded) {
 				mRenderers.get(i).loadGLContent(pResourceManager);
 			}
 		}
 
-		mResizeListener = new IResizeListener() {
-
-			@Override
-			public void onResize(final int pWidth, final int pHeight) {
-				reloadRenderTargets(pWidth, pHeight);
-
-			}
-
-		};
-
-		// Register a window resize listener so we can reload the RenderTargets when the window size changes
-		mDisplayConfig.addResizeListener(mResizeListener);
+		{ // Register a window resize listener so we can reload the RenderTargets when the window size changes
+			mResizeListener = new IResizeListener() {
+				@Override
+				public void onResize(final int pWidth, final int pHeight) {
+					reloadRenderTargets(pWidth, pHeight);
+				}
+			};
+			mDisplayConfig.addResizeListener(mResizeListener);
+		}
 
 		GLDebug.checkGLErrorsException(getClass().getSimpleName());
 
 		mIsLoaded = true;
-
 	}
 
 	public void unloadGLContent() {
 		if (!mIsLoaded)
 			return;
 
-		Debug.debugManager().logger().i(getClass().getSimpleName(), mOwnerIdentifier + "Unloading GL content for all renderers");
+		Debug.debugManager().logger().i(getClass().getSimpleName(), "Unloading GL content for all renderers");
 
 		// Unloaded each of the renderers
 		final int RENDERER_COUNT = mRenderers.size();
@@ -318,39 +303,34 @@ public class RendererManager {
 
 	}
 
-	/** Checks to make sure that all active {@link BaseRenderer} instances have been properly loaded, and loads them if not. */
 	public void update(LintfordCore pCore) {
 		final int lRendererCount = mRenderers.size();
 		for (int i = 0; i < lRendererCount; i++) {
-			if (!mRenderers.get(i).isActive())
+			final var lRenderer = mRenderers.get(i);
+			if (!lRenderer.isActive())
 				continue;
 
-			if (!mRenderers.get(i).isLoaded() && mIsLoaded) {
-				Debug.debugManager().logger().w(getClass().getSimpleName(), "Reloading content in Update() (BaseRenderer) ");
-				mRenderers.get(i).loadGLContent(mResourceManager);
-
+			if (!lRenderer.isLoaded() && mIsLoaded) {
+				Debug.debugManager().logger().w(getClass().getSimpleName(), lRenderer.getClass().getSimpleName());
+				lRenderer.loadGLContent(mResourceManager);
 			}
 
-			// Update the renderer
-			mRenderers.get(i).update(pCore);
-
+			lRenderer.update(pCore);
 		}
 
 		final int lWindowRendererCount = mWindowRenderers.size();
 		for (int i = 0; i < lWindowRendererCount; i++) {
-			if (!mWindowRenderers.get(i).isActive())
+			final var lWindowRenderer = mWindowRenderers.get(i);
+			if (!lWindowRenderer.isActive())
 				continue;
 
-			if (!mWindowRenderers.get(i).isLoaded() && mIsLoaded) {
-				Debug.debugManager().logger().w(getClass().getSimpleName(), "Reloading content in Update() (UIWindow) ");
-				mWindowRenderers.get(i).loadGLContent(mResourceManager);
+			if (!lWindowRenderer.isLoaded() && mIsLoaded) {
+				Debug.debugManager().logger().w(getClass().getSimpleName(), lWindowRenderer.getClass().getSimpleName());
+				lWindowRenderer.loadGLContent(mResourceManager);
 			}
 
-			// Update the renderer
-			mWindowRenderers.get(i).update(pCore);
-
+			lWindowRenderer.update(pCore);
 		}
-
 	}
 
 	public void draw(LintfordCore pCore) {
@@ -362,16 +342,14 @@ public class RendererManager {
 					continue;
 
 				if (!lRenderer.isLoaded() && mIsLoaded) {
-					Debug.debugManager().logger().w(getClass().getSimpleName(), mOwnerIdentifier + "Reloading content in Update() (BaseRenderer) ");
+					Debug.debugManager().logger().w(getClass().getSimpleName(), "Reloading content in Update() (BaseRenderer) ");
 					lRenderer.loadGLContent(mResourceManager);
 
 				}
 
 				// Update the renderer
 				lRenderer.draw(pCore);
-
 			}
-
 		}
 
 		if (RENDER_UI_WINDOWS) {
@@ -388,10 +366,8 @@ public class RendererManager {
 
 				// Update the renderer
 				lWindow.draw(pCore);
-
 			}
 		}
-
 	}
 
 	// --------------------------------------
@@ -403,64 +379,49 @@ public class RendererManager {
 			return null;
 		}
 
-		// First check for windows
-		final int NUM_WINDOWS = mWindowRenderers.size();
-		for (int i = 0; i < NUM_WINDOWS; i++) {
+		final int lNumWindows = mWindowRenderers.size();
+		for (int i = 0; i < lNumWindows; i++) {
 			if (mWindowRenderers.get(i).rendererName().equals(pRendererName)) {
 				return mWindowRenderers.get(i);
 			}
 		}
 
-		// IF not, check for renderers
-		final int NUM_RENDERERS = mRenderers.size();
-		for (int i = 0; i < NUM_RENDERERS; i++) {
+		final int lNumRenderers = mRenderers.size();
+		for (int i = 0; i < lNumRenderers; i++) {
 			if (mRenderers.get(i).rendererName().equals(pRendererName)) {
 				return mRenderers.get(i);
 			}
 		}
 
 		return null;
-
 	}
 
+	/** Adds a renderer to the manager. This automatically re-orders the renderers to take into consideration their relative z-depths.*/
 	public void addRenderer(BaseRenderer pRenderer) {
-		// Only renderers with valid names can be added
 		if (getRenderer(pRenderer.rendererName()) == null) {
 			if (pRenderer instanceof UiWindow) {
 				mWindowRenderers.add((UiWindow) pRenderer);
-
-				// Re-order the WindowRenderers
 				Collections.sort(mWindowRenderers, new ZLayerComparator());
-
 			}
 
 			else {
 				mRenderers.add(pRenderer);
-
-				// Re-order the BaseRenderers
 				Collections.sort(mRenderers, new ZLayerComparator());
-
 			}
 
 		} else {
-			// Output this as an error so that it is visible in the debuglog for corrective action.
 			Debug.debugManager().logger().e(getClass().getSimpleName(), "Cannot add the same renderer twice! (" + pRenderer.getClass().getSimpleName() + "/" + pRenderer.mRendererName + ")");
-
 		}
-
 	}
 
 	public void removeRenderer(BaseRenderer pRenderer) {
 		if (mWindowRenderers.contains(pRenderer)) {
 			mWindowRenderers.remove(pRenderer);
-
 		}
 
 		if (mRenderers.contains(pRenderer)) {
 			mRenderers.remove(pRenderer);
-
 		}
-
 	}
 
 	public void removeAllRenderers() {
@@ -468,23 +429,18 @@ public class RendererManager {
 
 		mWindowRenderers.clear();
 		mRenderers.clear();
-
 	}
 
 	public void addChangeListener(UIWindowChangeListener pListener) {
 		if (!mListeners.contains(pListener)) {
 			mListeners.add(pListener);
-
 		}
-
 	}
 
 	public void removeListener(UIWindowChangeListener pListener) {
 		if (mListeners.contains(pListener)) {
 			mListeners.remove(pListener);
-
 		}
-
 	}
 
 	public void removeAllListeners() {
@@ -493,45 +449,33 @@ public class RendererManager {
 
 	/** Unloads all {@link BaseRenderer} instances registered to this {@link RendererManager} which have the given gorup ID assigned to them. */
 	public void removeRendererGroup(final int pEntityGroupID) {
-		// Heap assignment
-		final List<UiWindow> WINDOW_UPDATE_LIST = new ArrayList<>();
-		final int WINDOW_COUNT = mWindowRenderers.size();
-		for (int i = 0; i < WINDOW_COUNT; i++) {
-			WINDOW_UPDATE_LIST.add(mWindowRenderers.get(i));
-
+		final var lWindowUpdateList = new ArrayList<UiWindow>();
+		final int lNumWindows = mWindowRenderers.size();
+		for (int i = 0; i < lNumWindows; i++) {
+			lWindowUpdateList.add(mWindowRenderers.get(i));
 		}
 
-		for (int i = 0; i < WINDOW_COUNT; i++) {
-			if (WINDOW_UPDATE_LIST.get(i).entityGroupID() == pEntityGroupID) {
-				// Unload this BaseRenderer instance
-				WINDOW_UPDATE_LIST.get(i).unloadGLContent();
+		for (int i = 0; i < lNumWindows; i++) {
+			if (lWindowUpdateList.get(i).entityGroupID() == pEntityGroupID) {
+				lWindowUpdateList.get(i).unloadGLContent();
 
-				// Remove the BaseRenderer instance from the mWindowRenderers list
-				mWindowRenderers.remove(WINDOW_UPDATE_LIST.get(i));
-
+				mWindowRenderers.remove(lWindowUpdateList.get(i));
 			}
 		}
 
-		// Heap assignment
-		final List<BaseRenderer> RENDERER_UPDATE_LIST = new ArrayList<>();
-		final int RENDERER_COUNT = mRenderers.size();
-		for (int i = 0; i < RENDERER_COUNT; i++) {
-			RENDERER_UPDATE_LIST.add(mRenderers.get(i));
-
+		final var lRendererUpdateList = new ArrayList<BaseRenderer>();
+		final int lRendererCount = mRenderers.size();
+		for (int i = 0; i < lRendererCount; i++) {
+			lRendererUpdateList.add(mRenderers.get(i));
 		}
 
-		for (int i = 0; i < RENDERER_COUNT; i++) {
-			if (RENDERER_UPDATE_LIST.get(i).entityGroupID() == pEntityGroupID) {
-				// Unload this BaseRenderer instance
-				RENDERER_UPDATE_LIST.get(i).unloadGLContent();
+		for (int i = 0; i < lRendererCount; i++) {
+			if (lRendererUpdateList.get(i).entityGroupID() == pEntityGroupID) {
+				lRendererUpdateList.get(i).unloadGLContent();
 
-				// Remove the BaseRenderer instance from the mWindowRenderers list
-				mRenderers.remove(RENDERER_UPDATE_LIST.get(i));
-
+				mRenderers.remove(lRendererUpdateList.get(i));
 			}
-
 		}
-
 	}
 
 	public void setRenderTarget(String pName) {
@@ -547,13 +491,10 @@ public class RendererManager {
 		if (lResult != null) {
 			if (mCurrentTarget != null) {
 				mCurrentTarget.unbind();
-
 			}
-
 		}
 
 		lResult.bind();
-
 	}
 
 	public RenderTarget createRenderTarget(String pName, int pWidth, int pHeight, boolean pResizeWithWindow) {
@@ -570,7 +511,6 @@ public class RendererManager {
 		if (lRenderTarget != null) {
 			Debug.debugManager().logger().i(getClass().getSimpleName(), "RenderTarget with name '" + pName + "' already exists. No new RendreTarget will be created.");
 			return lRenderTarget;
-
 		}
 
 		lRenderTarget = new RenderTarget();
@@ -585,11 +525,9 @@ public class RendererManager {
 
 		if (pResizeWithWindow) {
 			mRenderTargetAutoResize.add(lRenderTarget);
-
 		}
 
 		return lRenderTarget;
-
 	}
 
 	public void unloadRenderTarget(RenderTarget pRenderTarget) {
@@ -598,24 +536,20 @@ public class RendererManager {
 
 		if (mRenderTargetAutoResize.contains(pRenderTarget)) {
 			mRenderTargetAutoResize.remove(pRenderTarget);
-
 		}
 
 		if (mRenderTargets.contains(pRenderTarget)) {
 			mRenderTargets.remove(pRenderTarget);
-
 		}
 
 		pRenderTarget.unbind();
 		pRenderTarget.unloadGLContent();
-
 	}
 
 	public void releaseRenderTargetByName(String pName) {
 		final var lResult = getRenderTarget(pName);
 		if (lResult != null) {
 			unloadRenderTarget(lResult);
-
 		}
 	}
 
@@ -624,9 +558,7 @@ public class RendererManager {
 		for (int i = 0; i < RENDER_TARGET_COUNT; i++) {
 			if (mRenderTargets.get(i).targetName.equals(pName)) {
 				return mRenderTargets.get(i);
-
 			}
-
 		}
 
 		return null;
@@ -636,9 +568,6 @@ public class RendererManager {
 		final int RENDER_TARGET_COUNT = mRenderTargetAutoResize.size();
 		for (int i = 0; i < RENDER_TARGET_COUNT; i++) {
 			mRenderTargetAutoResize.get(i).resize(pWidth, pHeight);
-
 		}
-
 	}
-
 }
