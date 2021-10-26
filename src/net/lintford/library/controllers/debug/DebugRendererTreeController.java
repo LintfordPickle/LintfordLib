@@ -30,11 +30,6 @@ public class DebugRendererTreeController extends BaseController {
 	// Properties
 	// --------------------------------------
 
-	@Override
-	public boolean isInitialized() {
-		return mRendererManager != null;
-	}
-
 	public List<BaseRendererWidget> treeComponents() {
 		return mDebugTreeComponents;
 	}
@@ -73,11 +68,6 @@ public class DebugRendererTreeController extends BaseController {
 			clearRendererWidgetList();
 
 		}
-
-	}
-
-	@Override
-	public void initialize(LintfordCore pCore) {
 
 	}
 

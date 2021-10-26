@@ -55,11 +55,6 @@ public abstract class FafAnimationController extends BaseController {
 		return mSpritesheetName;
 	}
 
-	@Override
-	public boolean isInitialized() {
-		return mSpritesheetName != null;
-	}
-
 	// --------------------------------------
 	// Constructors
 	// --------------------------------------

@@ -25,11 +25,6 @@ public class CameraController extends BaseController {
 	// Properties
 	// ---------------------------------------------
 
-	@Override
-	public boolean isInitialized() {
-		return mCamera != null;
-	}
-
 	public ICamera camera() {
 		return mCamera;
 	}
@@ -49,11 +44,6 @@ public class CameraController extends BaseController {
 	// ---------------------------------------------
 	// Core-Methods
 	// ---------------------------------------------
-
-	@Override
-	public void initialize(LintfordCore pCore) {
-
-	}
 
 	@Override
 	public void unload() {
@@ -84,5 +74,4 @@ public class CameraController extends BaseController {
 		mCamera.update(pCore);
 
 	}
-
 }

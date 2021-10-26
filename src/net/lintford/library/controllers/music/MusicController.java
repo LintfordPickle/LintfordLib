@@ -28,16 +28,6 @@ public class MusicController extends BaseController {
 	private boolean mBank0Active;
 
 	// --------------------------------------
-	// Properties
-	// --------------------------------------
-
-	/** Returns true if this {@link MusicController} has been initialized properly. */
-	@Override
-	public boolean isInitialized() {
-		return mMusicManager != null;
-	}
-
-	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
@@ -51,11 +41,6 @@ public class MusicController extends BaseController {
 	// --------------------------------------
 	// Core-Methods
 	// --------------------------------------
-
-	@Override
-	public void initialize(LintfordCore pCore) {
-
-	}
 
 	@Override
 	public void unload() {
@@ -247,5 +232,4 @@ public class MusicController extends BaseController {
 		int_play();
 
 	}
-
 }

@@ -34,9 +34,6 @@ public abstract class Screen implements IProcessMouseInput {
 	// Variables
 	// --------------------------------------
 
-	/** Used both as a ControllerGroupID and RendererGroupID */
-	private int mEntityGroupID;
-
 	public final ScreenManager screenManager;
 	public final RendererManager rendererManager;
 	public final Color screenColor = new Color(ColorConstants.WHITE);
@@ -76,7 +73,7 @@ public abstract class Screen implements IProcessMouseInput {
 	}
 
 	public int entityGroupID() {
-		return mEntityGroupID;
+		return rendererManager.entityGroupID;
 	}
 
 	/** Defines if only one instance of this type of object can exist (in the {@link ScreenManager} screen stack) at a time */
@@ -152,19 +149,17 @@ public abstract class Screen implements IProcessMouseInput {
 	// --------------------------------------
 
 	public Screen(ScreenManager pScreenManager) {
-		this(pScreenManager, BaseEntity.getEntityNumber());
+		this(pScreenManager, new RendererManager(pScreenManager.core(), BaseEntity.getEntityNumber()));
 	}
 
-	public Screen(ScreenManager pScreenManager, int pEntityGroupId) {
-		mEntityGroupID = pEntityGroupId;
-
+	public Screen(ScreenManager pScreenManager, RendererManager pRendererManager) {
 		mScreenState = ScreenState.Hidden;
 		screenManager = pScreenManager;
 
 		mTransitionOn = new TransitionFadeIn(new TimeSpan(200));
 		mTransitionOff = new TransitionFadeOut(new TimeSpan(200));
 
-		rendererManager = new RendererManager(screenManager.core(), mEntityGroupID);
+		rendererManager = pRendererManager;
 
 		mSingletonScreen = false;
 
@@ -190,14 +185,18 @@ public abstract class Screen implements IProcessMouseInput {
 
 	public void loadGLContent(ResourceManager pResourceManager) {
 		rendererManager.loadGLContent(pResourceManager);
+		rendererManager.increaseGlContentCount();
+
 		mCoreSpritesheet = pResourceManager.spriteSheetManager().coreSpritesheet();
 		mIsLoaded = true;
 	}
 
 	public void unloadGLContent() {
-		rendererManager.unloadGLContent();
+		if (rendererManager.decreaseGlContentCount()) {
+			rendererManager.unloadGLContent();
+		}
 
-		screenManager.core().controllerManager().removeControllerGroup(mEntityGroupID);
+		screenManager.core().controllerManager().removeControllerGroup(entityGroupID());
 
 		mCoreSpritesheet = null;
 		mIsLoaded = false;
@@ -205,7 +204,7 @@ public abstract class Screen implements IProcessMouseInput {
 
 	public void handleInput(LintfordCore pCore) {
 		rendererManager.handleInput(pCore);
-		screenManager.core().controllerManager().handleInput(screenManager.core(), mEntityGroupID);
+		screenManager.core().controllerManager().handleInput(screenManager.core(), entityGroupID());
 
 	}
 
@@ -243,7 +242,7 @@ public abstract class Screen implements IProcessMouseInput {
 		}
 
 		if (!pCoveredByOtherScreen) {
-			screenManager.core().controllerManager().update(screenManager.core(), mEntityGroupID);
+			screenManager.core().controllerManager().update(screenManager.core(), entityGroupID());
 		}
 	}
 

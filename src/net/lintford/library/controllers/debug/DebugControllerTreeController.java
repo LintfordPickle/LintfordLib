@@ -27,11 +27,6 @@ public class DebugControllerTreeController extends BaseController {
 	// Properties
 	// --------------------------------------
 
-	@Override
-	public boolean isInitialized() {
-		return false;
-	}
-
 	public List<BaseControllerWidget> treeComponents() {
 		return mDebugTreeComponents;
 	}
@@ -50,11 +45,6 @@ public class DebugControllerTreeController extends BaseController {
 	// --------------------------------------
 	// Core-Methods
 	// --------------------------------------
-
-	@Override
-	public void initialize(LintfordCore pCore) {
-
-	}
 
 	@Override
 	public void unload() {
@@ -90,11 +80,11 @@ public class DebugControllerTreeController extends BaseController {
 	// makes sure that every controller gets its own rendering widget
 	private void maintainControllerWidgetList(final Map<Integer, List<BaseController>> lControllers) {
 
-//		final int lControllerCount = lControllers.size();
-//		if (mCountAtLastUpdate == lControllerCount)
-//			return;
-//
-//		mCountAtLastUpdate = lControllerCount;
+		//		final int lControllerCount = lControllers.size();
+		//		if (mCountAtLastUpdate == lControllerCount)
+		//			return;
+		//
+		//		mCountAtLastUpdate = lControllerCount;
 
 		// Check for updates to the structure of the Controller Manager:
 		// 1.. Check the parent containers

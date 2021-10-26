@@ -5,7 +5,6 @@ import org.jbox2d.dynamics.World;
 
 import net.lintford.library.controllers.BaseController;
 import net.lintford.library.controllers.core.ControllerManager;
-import net.lintford.library.core.LintfordCore;
 
 public abstract class Box2dContactController extends BaseController implements ContactListener {
 
@@ -46,24 +45,7 @@ public abstract class Box2dContactController extends BaseController implements C
 	// --------------------------------------
 
 	@Override
-	public boolean isInitialized() {
-		return false;
-
-	}
-
-	@Override
-	public void initialize(LintfordCore pCore) {
-
-	}
-
-	@Override
 	public void unload() {
-		// TODO Auto-generated method stub
-
+		mIsInitialized = false;
 	}
-
-	// --------------------------------------
-	// Methods
-	// --------------------------------------
-
 }

@@ -61,12 +61,6 @@ public class CameraChaseController extends BaseController {
 		mAllowManualControl = pNewValue;
 	}
 
-	@Override
-	public boolean isInitialized() {
-		return mGameCamera != null;
-
-	}
-
 	// ---------------------------------------------
 	// Constructor
 	// ---------------------------------------------
@@ -92,18 +86,6 @@ public class CameraChaseController extends BaseController {
 	// ---------------------------------------------
 	// Core-Methods
 	// ---------------------------------------------
-
-	@Override
-	public void initialize(LintfordCore pCore) {
-
-	}
-
-	// FIXME: Duplicate initialize method - rename to something else or clean up design!
-	public void initialize(ICamera pGameCamera, WorldEntity pTrackedEntity) {
-		mGameCamera = pGameCamera;
-		mTrackedEntity = pTrackedEntity;
-
-	}
 
 	@Override
 	public void unload() {

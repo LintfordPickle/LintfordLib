@@ -2,7 +2,6 @@ package net.lintford.library.controllers.messages;
 
 import net.lintford.library.controllers.BaseController;
 import net.lintford.library.controllers.core.ControllerManager;
-import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.messaging.IMessageProvider;
 import net.lintford.library.core.messaging.MessageManager;
 
@@ -28,12 +27,6 @@ public class MessageConsoleController extends BaseController implements IMessage
 		return mMessagesProvider;
 	}
 
-	@Override
-	public boolean isInitialized() {
-		return mMessagesProvider != null;
-
-	}
-
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
@@ -54,10 +47,6 @@ public class MessageConsoleController extends BaseController implements IMessage
 	// --------------------------------------
 
 	@Override
-	public void initialize(LintfordCore pCore) {
-	}
-
-	@Override
 	public void unload() {
 
 	}
@@ -74,5 +63,4 @@ public class MessageConsoleController extends BaseController implements IMessage
 		mMessagesProvider.addMesage(lMessage);
 
 	}
-
 }

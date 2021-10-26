@@ -50,10 +50,15 @@ public class RendererManager {
 	// variables
 	// --------------------------------------
 
+	/** Used both as a ControllerGroupID and RendererGroupID */
+	public final int entityGroupID;
+
 	private LintfordCore mCore;
-	private int mEntityGroupID;
 	private ResourceManager mResourceManager;
 	private DisplayManager mDisplayConfig;
+
+	/** Tracks the number of times a LoadGlContent method is called using this renderManager/entityGroupId*/
+	private int mSharedGlContentCount;
 
 	private UiStructureController mUiStructureController;
 	private List<BaseRenderer> mRenderers;
@@ -84,6 +89,15 @@ public class RendererManager {
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public void increaseGlContentCount() {
+		mSharedGlContentCount++;
+	}
+
+	public boolean decreaseGlContentCount() {
+		mSharedGlContentCount--;
+		return mSharedGlContentCount <= 0;
+	}
 
 	public FontUnit uiTextFont() {
 		return mUiTextFont;
@@ -161,7 +175,7 @@ public class RendererManager {
 
 	public RendererManager(LintfordCore pCore, int pEntityGroupID) {
 		mCore = pCore;
-		mEntityGroupID = pEntityGroupID;
+		entityGroupID = pEntityGroupID;
 
 		mRenderers = new ArrayList<>();
 		mWindowRenderers = new ArrayList<>();
@@ -208,7 +222,7 @@ public class RendererManager {
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "Loading GL content for all registered renderers");
 
 		mResourceManager = pResourceManager;
-		mResourceManager.increaseReferenceCounts(mEntityGroupID);
+		mResourceManager.increaseReferenceCounts(entityGroupID);
 
 		mUiTextFont = pResourceManager.fontManager().getFontUnit(UI_FONT_TEXT_NAME);
 		mUiTextBoldFont = pResourceManager.fontManager().getFontUnit(UI_FONT_TEXT_BOLD_NAME);
@@ -251,12 +265,11 @@ public class RendererManager {
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "Unloading GL content for all renderers");
 
 		// Unloaded each of the renderers
-		final int RENDERER_COUNT = mRenderers.size();
-		for (int i = 0; i < RENDERER_COUNT; i++) {
+		final int lRendererCount = mRenderers.size();
+		for (int i = 0; i < lRendererCount; i++) {
 			mRenderers.get(i).unloadGLContent();
 
 			GLDebug.checkGLErrorsException(getClass().getSimpleName());
-
 		}
 
 		mSpriteBatch.unloadGLContent();
@@ -272,10 +285,9 @@ public class RendererManager {
 		mDisplayConfig.removeResizeListener(mResizeListener);
 		mDisplayConfig = null;
 
-		mResourceManager.decreaseReferenceCounts(mEntityGroupID);
+		mResourceManager.decreaseReferenceCounts(entityGroupID);
 		mResourceManager = null;
 		mIsLoaded = false;
-
 	}
 
 	public boolean handleInput(LintfordCore pCore) {

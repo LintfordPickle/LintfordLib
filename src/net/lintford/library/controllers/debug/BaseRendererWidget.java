@@ -42,5 +42,4 @@ public class BaseRendererWidget extends Rectangle {
 		}
 
 	}
-
 }

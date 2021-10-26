@@ -28,8 +28,6 @@ public class UiStructureController extends BaseController {
 	private Rectangle mMenuMainRectangle;
 	private Rectangle mMenuFooterRectangle;
 
-	private boolean mIsinitialized;
-
 	private float mWindowAutoScaleFactorX;
 	private float mWindowAutoScaleFactorY;
 	private float mUITransparencyFactorActual;
@@ -73,11 +71,6 @@ public class UiStructureController extends BaseController {
 
 	public float uiTextScaleFactor() {
 		return mUITextScaleFactorActual;
-	}
-
-	@Override
-	public boolean isInitialized() {
-		return mIsinitialized;
 	}
 
 	public Rectangle gameHeaderRectangle() {
@@ -128,11 +121,9 @@ public class UiStructureController extends BaseController {
 	// --------------------------------------
 
 	public void initialize(LintfordCore pCore) {
+		super.initialize(pCore);
 		updateHUDAreas(pCore);
 		updateWindowUiComponentStructures(pCore);
-
-		mIsinitialized = true;
-
 	}
 
 	@Override
@@ -220,5 +211,4 @@ public class UiStructureController extends BaseController {
 		mGameHUDRectangle.set(-lHUDWidth / 2f, mGameHeaderRectangle.y() + mGameHeaderRectangle.h() + lGameHudVerticalPadding * .5f, lHUDWidth, lHUDHeight);
 		mGameFooterRectangle.set(-lWindowWidth / 2f, lWindowHeight / 2 - lGameFooterHeight, lWindowWidth, lGameFooterHeight);
 	}
-
 }

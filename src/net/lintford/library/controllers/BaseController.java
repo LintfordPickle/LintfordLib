@@ -15,7 +15,7 @@ public abstract class BaseController {
 	protected ControllerManager mControllerManager;
 	protected String mControllerName;
 	protected boolean mIsActive;
-	protected boolean mIsInitialize;
+	protected boolean mIsInitialized;
 	protected boolean mUniqueController;
 
 	/**
@@ -50,7 +50,7 @@ public abstract class BaseController {
 	}
 
 	public boolean isInitialized() {
-		return mIsInitialize;
+		return mIsInitialized;
 	}
 
 	public String controllerName() {
@@ -103,7 +103,9 @@ public abstract class BaseController {
 	// Core-Methods
 	// --------------------------------------
 
-	public abstract void initialize(LintfordCore pCore);
+	public void initialize(LintfordCore pCore) {
+		mIsInitialized = true;
+	}
 
 	public abstract void unload();
 

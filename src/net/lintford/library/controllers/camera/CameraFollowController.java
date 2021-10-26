@@ -54,12 +54,6 @@ public class CameraFollowController extends BaseController {
 		mAllowManualControl = pNewValue;
 	}
 
-	@Override
-	public boolean isInitialized() {
-		return mGameCamera != null;
-
-	}
-
 	// ---------------------------------------------
 	// Constructor
 	// ---------------------------------------------
@@ -73,24 +67,11 @@ public class CameraFollowController extends BaseController {
 		mGameCamera = pCamera;
 		mTrackedEntity = pTrackEntity;
 		mIsTrackingPlayer = true;
-
 	}
 
 	// ---------------------------------------------
 	// Core-Methods
 	// ---------------------------------------------
-
-	@Override
-	public void initialize(LintfordCore pCore) {
-
-	}
-
-	// FIXME: Duplicate initialize method - rename to something else or clean up design!
-	public void initialize(ICamera pGameCamera, WorldEntity pTrackedEntity) {
-		mGameCamera = pGameCamera;
-		mTrackedEntity = pTrackedEntity;
-
-	}
 
 	@Override
 	public void unload() {
@@ -181,5 +162,4 @@ public class CameraFollowController extends BaseController {
 		mGameCamera.setZoomFactor(pZoomFactor);
 
 	}
-
 }

@@ -3,14 +3,17 @@ package net.lintford.library.screenmanager.screens;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.Debug;
+import net.lintford.library.core.entity.BaseEntity;
 import net.lintford.library.core.time.TimeSpan;
 import net.lintford.library.options.DisplayManager;
+import net.lintford.library.renderers.RendererManager;
 import net.lintford.library.screenmanager.Screen;
 import net.lintford.library.screenmanager.ScreenManager;
 import net.lintford.library.screenmanager.transitions.TransitionFadeIn;
 import net.lintford.library.screenmanager.transitions.TransitionFadeOut;
 
-public abstract class AsyncLoadingScreen extends Screen {
+/** Initializes and loads the GL content for a list of screens in a background thread. */
+public abstract class AsyncScreenLoadingScreen extends Screen {
 
 	public class ScreenManagerScreenLoader extends Thread {
 
@@ -34,13 +37,13 @@ public abstract class AsyncLoadingScreen extends Screen {
 		// --------------------------------------
 
 		public void run() {
-			display.makeContextCurrent(mOffscreenBufferId);
-			display.createGlCompatiblities();
+			mDisplayManager.makeContextCurrent(mOffscreenBufferId);
+			mDisplayManager.createGlCompatiblities();
 
 			// And then continue loading on the main context
-			int lCount = mScreensToLoad.length;
+			int lCount = screensToLoad.length;
 			for (int i = 0; i < lCount; i++) {
-				final var lScreen = mScreensToLoad[i];
+				final var lScreen = screensToLoad[i];
 
 				if (lScreen != null && !lScreen.isinitialized()) {
 					lScreen.initialize();
@@ -68,9 +71,8 @@ public abstract class AsyncLoadingScreen extends Screen {
 	private ScreenManagerScreenLoader mBackgroundThread;
 	private boolean loadingThreadStarted;
 	private ScreenManager mScreenManager;
-	private Screen[] mScreensToLoad;
-	protected final boolean mLoadingIsSlow;
-	private DisplayManager display;
+	protected Screen[] screensToLoad;
+	private final DisplayManager mDisplayManager;
 
 	// --------------------------------------
 	// Properties
@@ -88,19 +90,20 @@ public abstract class AsyncLoadingScreen extends Screen {
 	// Constructors
 	// --------------------------------------
 
-	protected AsyncLoadingScreen(DisplayManager pDisplay, ScreenManager pScreenManager, boolean pLoadingIsSlow, Screen[] pScreensToLoad) {
-		super(pScreenManager);
+	protected AsyncScreenLoadingScreen(ScreenManager pScreenManager) {
+		this(pScreenManager, new RendererManager(pScreenManager.core(), BaseEntity.getEntityNumber()));
+	}
+
+	protected AsyncScreenLoadingScreen(ScreenManager pScreenManager, RendererManager pRendererManager) {
+		super(pScreenManager, pRendererManager);
 
 		mScreenManager = pScreenManager;
-		mScreensToLoad = pScreensToLoad;
-
-		mLoadingIsSlow = pLoadingIsSlow;
+		mDisplayManager = mScreenManager.core().config().display();
 
 		mTransitionOn = new TransitionFadeIn(new TimeSpan(1));
 		mTransitionOff = new TransitionFadeOut(new TimeSpan(1));
 
 		mIsPopup = true;
-		display = pDisplay;
 
 		loadingThreadStarted = false;
 	}
@@ -124,27 +127,25 @@ public abstract class AsyncLoadingScreen extends Screen {
 			if (hasLoadingStarted() == false) {
 				loadingThreadStarted = true;
 
-				long lOffscreenBuffer = display.createSharedContext();
+				final var lOffscreenBuffer = mDisplayManager.createSharedContext();
 				mBackgroundThread = new ScreenManagerScreenLoader(lOffscreenBuffer);
 
-				Debug.debugManager().logger().i("screenmanager", "Starting background thread");
+				Debug.debugManager().logger().i("ScreenManager", "Starting background thread");
 				mBackgroundThread.start();
 
 			} else if (hasLoadingFinished()) {
 				exitScreen();
-				display.destroySharedContext();
+				mDisplayManager.destroySharedContext();
 
 				// Once the background thread has finished,
 				// take the new 'loaded' screens from it and add them to the screen manager
 				// I *think* this avoids us needing to 'synchronized' anything
-				final var lNumScreensToAdd = mScreensToLoad.length;
+				final var lNumScreensToAdd = screensToLoad.length;
 				for (int i = 0; i < lNumScreensToAdd; i++) {
-					if (mScreensToLoad[i] != null) {
-						mScreenManager.addScreen(mScreensToLoad[i]);
-
+					if (screensToLoad[i] != null) {
+						mScreenManager.addScreen(screensToLoad[i]);
 					}
 				}
-
 			}
 		}
 	}

@@ -1,7 +1,6 @@
 package net.lintford.library.controllers.core;
 
 import net.lintford.library.controllers.BaseController;
-import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 
 public class ResourceController extends BaseController {
@@ -26,11 +25,6 @@ public class ResourceController extends BaseController {
 		return mResourceManager;
 	}
 
-	@Override
-	public boolean isInitialized() {
-		return false;
-	}
-
 	// ---------------------------------------------
 	// Constructor
 	// ---------------------------------------------
@@ -39,7 +33,6 @@ public class ResourceController extends BaseController {
 		super(pControllerManager, CONTROLLER_NAME, pControllerGroupID);
 
 		mResourceManager = pResourceManager;
-
 	}
 
 	// ---------------------------------------------
@@ -47,13 +40,7 @@ public class ResourceController extends BaseController {
 	// ---------------------------------------------
 
 	@Override
-	public void initialize(LintfordCore pCore) {
-
-	}
-
-	@Override
 	public void unload() {
 
 	}
-
 }

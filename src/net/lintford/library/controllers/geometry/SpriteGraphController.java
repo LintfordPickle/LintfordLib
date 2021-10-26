@@ -14,7 +14,7 @@ public class SpriteGraphController extends BaseController {
 	// Constants
 	// --------------------------------------
 
-	public static final String CONTROLLER_NAME = "SpriteGraphController";
+	public static final String CONTROLLER_NAME = "Sprite Graph Controller";
 
 	// --------------------------------------
 	// Variables
@@ -26,12 +26,6 @@ public class SpriteGraphController extends BaseController {
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
-
-	@Override
-	public boolean isInitialized() {
-		return mSpriteGraphManager != null;
-
-	}
 
 	public SpriteGraphManager spriteGraphManager() {
 		return mSpriteGraphManager;
@@ -45,7 +39,6 @@ public class SpriteGraphController extends BaseController {
 		super(pControllerManager, CONTROLLER_NAME, pEntityGroupID);
 
 		mSpriteGraphManager = pSpriteGraphManager;
-
 	}
 
 	// --------------------------------------
@@ -54,8 +47,8 @@ public class SpriteGraphController extends BaseController {
 
 	@Override
 	public void initialize(LintfordCore pCore) {
+		super.initialize(pCore);
 		mResourceController = (ResourceController) pCore.controllerManager().getControllerByNameRequired(ResourceController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
-
 	}
 
 	@Override
@@ -92,5 +85,4 @@ public class SpriteGraphController extends BaseController {
 
 		return spriteGraphManager().getInstanceOfGraph(lSpriteGraphDefinition, entityGroupID());
 	}
-
 }

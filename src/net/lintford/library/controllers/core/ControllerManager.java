@@ -97,7 +97,6 @@ public class ControllerManager {
 	// --------------------------------------
 
 	public void initializeControllers(LintfordCore pCore) {
-
 		for (Map.Entry<Integer, List<BaseController>> lEntry : mControllers.entrySet()) {
 			List<BaseController> lControllerList = lEntry.getValue();
 
@@ -111,9 +110,7 @@ public class ControllerManager {
 
 				lControllerList.get(i).initialize(pCore);
 			}
-
 		}
-
 	}
 
 	public BaseController getControllerByType(Class<?> pClass, int pEntityGroupID) {
@@ -251,5 +248,4 @@ public class ControllerManager {
 		mControllers.remove(pEntityGroupID);
 
 	}
-
 }

@@ -43,5 +43,4 @@ public class BaseControllerWidget extends Rectangle {
 		}
 
 	}
-
 }

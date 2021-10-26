@@ -62,12 +62,6 @@ public class Box2dWorldController extends BaseController {
 		return mWorld;
 	}
 
-	@Override
-	public boolean isInitialized() {
-		return mResourceController != null && mWorld != null;
-
-	}
-
 	// --------------------------------------
 	// Constructors
 	// --------------------------------------
@@ -94,6 +88,7 @@ public class Box2dWorldController extends BaseController {
 
 	@Override
 	public void initialize(LintfordCore pCore) {
+		super.initialize(pCore);
 		mResourceController = (ResourceController) pCore.controllerManager().getControllerByNameRequired(ResourceController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
 	}
 

@@ -217,4 +217,14 @@ public class FileUtils {
 		return name.substring(lastIndexOf);
 	}
 
+	public static void deleteFile(File pFile) throws IOException {
+		if (pFile.isDirectory()) {
+			for (final var lFileInDirectory : pFile.listFiles()) {
+				deleteFile(lFileInDirectory);
+			}
+		}
+		if (!pFile.delete()) {
+			throw new FileNotFoundException("Failed to delete file: " + pFile);
+		}
+	}
 }

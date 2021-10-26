@@ -36,12 +36,6 @@ public class MouseCursorController extends BaseController {
 		return mIsCustomMouseEnabled;
 	}
 
-	@Override
-	public boolean isInitialized() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
@@ -59,13 +53,13 @@ public class MouseCursorController extends BaseController {
 
 	@Override
 	public void initialize(LintfordCore pCore) {
+		super.initialize(pCore);
 		mWindowId = pCore.config().display().windowID();
 
 		mDefaultCursor = MouseCursor.loadCursorFromResource("default", "/res/cursors/cursorDefault.png", 0, 0);
 
 		mCursorMap.put(DEFAULT_CURSOR_NAME, mDefaultCursor);
 		setCursor(DEFAULT_CURSOR_NAME);
-
 	}
 
 	@Override
@@ -120,5 +114,4 @@ public class MouseCursorController extends BaseController {
 		mIsCustomMouseEnabled = false;
 
 	}
-
 }

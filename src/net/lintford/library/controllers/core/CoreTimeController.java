@@ -1,7 +1,6 @@
 package net.lintford.library.controllers.core;
 
 import net.lintford.library.controllers.BaseController;
-import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.LintfordCore.CoreTime;
 import net.lintford.library.core.LintfordCore.GameTime;
 
@@ -17,7 +16,6 @@ public class CoreTimeController extends BaseController {
 	// Variables
 	// ---------------------------------------------
 
-	private boolean mIsInitialized;
 	private GameTime mGameTime;
 	private CoreTime mCoreTime;
 
@@ -31,11 +29,6 @@ public class CoreTimeController extends BaseController {
 
 	public CoreTime coreTime() {
 		return mCoreTime;
-	}
-
-	@Override
-	public boolean isInitialized() {
-		return mIsInitialized;
 	}
 
 	// ---------------------------------------------
@@ -57,14 +50,7 @@ public class CoreTimeController extends BaseController {
 	// ---------------------------------------------
 
 	@Override
-	public void initialize(LintfordCore pCore) {
-		mIsInitialized = true;
-
-	}
-
-	@Override
 	public void unload() {
 
 	}
-
 }

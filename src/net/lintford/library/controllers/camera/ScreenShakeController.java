@@ -33,11 +33,6 @@ public class ScreenShakeController extends BaseController {
 	// Properties
 	// ---------------------------------------------
 
-	@Override
-	public boolean isInitialized() {
-		return mGameCamera != null;
-	}
-
 	public void setCamera(Camera pCamera) {
 		mGameCamera = pCamera;
 	}
@@ -53,11 +48,6 @@ public class ScreenShakeController extends BaseController {
 	// ---------------------------------------------
 	// Core-Methods
 	// ---------------------------------------------
-
-	@Override
-	public void initialize(LintfordCore pCore) {
-
-	}
 
 	@Override
 	public void unload() {

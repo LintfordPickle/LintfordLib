@@ -23,13 +23,6 @@ public class GameRendererController extends BaseController {
 	// Properties
 	// --------------------------------------
 
-	/** Returns true if this Controller has been properly initialized. Otherwise returns false. */
-	@Override
-	public boolean isInitialized() {
-		return mRendererManager != null;
-
-	}
-
 	/** Returns the {@link RendererManager} associated with this controller. */
 	public RendererManager rendererManager() {
 		return mRendererManager;
@@ -51,11 +44,6 @@ public class GameRendererController extends BaseController {
 	// --------------------------------------
 
 	@Override
-	public void initialize(LintfordCore pCore) {
-
-	}
-
-	@Override
 	public void unload() {
 		mRendererManager = null;
 
@@ -69,7 +57,5 @@ public class GameRendererController extends BaseController {
 		super.update(pCore);
 
 		mRendererManager.update(pCore);
-
 	}
-
 }

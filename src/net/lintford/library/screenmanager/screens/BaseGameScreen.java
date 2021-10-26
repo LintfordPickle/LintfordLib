@@ -2,6 +2,7 @@ package net.lintford.library.screenmanager.screens;
 
 import net.lintford.library.controllers.core.GameRendererController;
 import net.lintford.library.core.camera.ICamera;
+import net.lintford.library.renderers.RendererManager;
 import net.lintford.library.screenmanager.Screen;
 import net.lintford.library.screenmanager.ScreenManager;
 
@@ -21,8 +22,8 @@ public abstract class BaseGameScreen extends Screen {
 		super(pScreenManager);
 	}
 
-	public BaseGameScreen(ScreenManager pScreenManager, int pEntityGroupId) {
-		super(pScreenManager, pEntityGroupId);
+	public BaseGameScreen(ScreenManager pScreenManager, RendererManager pRendererManager) {
+		super(pScreenManager, pRendererManager);
 
 		new GameRendererController(pScreenManager.core().controllerManager(), rendererManager, entityGroupID());
 

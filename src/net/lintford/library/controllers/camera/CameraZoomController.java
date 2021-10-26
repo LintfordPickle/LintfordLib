@@ -85,11 +85,6 @@ public class CameraZoomController extends BaseController {
 		mCamera.setZoomFactor(pNewValue);
 	}
 
-	@Override
-	public boolean isInitialized() {
-		return mCamera != null;
-	}
-
 	// ---------------------------------------------
 	// Constructor
 	// ---------------------------------------------
@@ -107,11 +102,6 @@ public class CameraZoomController extends BaseController {
 	// ---------------------------------------------
 	// Core-Methods
 	// ---------------------------------------------
-
-	@Override
-	public void initialize(LintfordCore pCore) {
-
-	}
 
 	@Override
 	public void unload() {
@@ -169,5 +159,4 @@ public class CameraZoomController extends BaseController {
 		mCamera.setZoomFactor(MathHelper.round(lZoomFactor, 2));
 
 	}
-
 }

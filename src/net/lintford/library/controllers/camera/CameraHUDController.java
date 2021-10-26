@@ -2,7 +2,6 @@ package net.lintford.library.controllers.camera;
 
 import net.lintford.library.controllers.BaseController;
 import net.lintford.library.controllers.core.ControllerManager;
-import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.camera.Camera;
 import net.lintford.library.core.camera.HUD;
 import net.lintford.library.core.camera.ICamera;
@@ -27,11 +26,6 @@ public class CameraHUDController extends BaseController {
 	// Properties
 	// ---------------------------------------------
 
-	@Override
-	public boolean isInitialized() {
-		return mCamera != null;
-	}
-
 	public ICamera camera() {
 		return mCamera;
 	}
@@ -52,14 +46,8 @@ public class CameraHUDController extends BaseController {
 	// ---------------------------------------------
 
 	@Override
-	public void initialize(LintfordCore pCore) {
-
-	}
-
-	@Override
 	public void unload() {
 		mCamera = null;
 
 	}
-
 }
