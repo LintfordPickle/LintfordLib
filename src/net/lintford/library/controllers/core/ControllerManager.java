@@ -233,6 +233,8 @@ public class ControllerManager {
 
 	/** Unloads all {@link BaseController} instances registered to this {@link ControllerManager} which have the given group ID assigned to them. */
 	public void removeControllerGroup(final int pEntityGroupID) {
+		Debug.debugManager().logger().i(getClass().getSimpleName(), "Removing ControllerGroup id:" + pEntityGroupID);
+
 		// Heap assignment
 		final List<BaseController> lControllerList = mControllers.get(pEntityGroupID);
 		if (lControllerList == null)
