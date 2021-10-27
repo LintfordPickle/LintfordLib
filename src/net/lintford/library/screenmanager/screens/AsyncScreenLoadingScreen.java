@@ -73,6 +73,8 @@ public abstract class AsyncScreenLoadingScreen extends Screen {
 	private ScreenManager mScreenManager;
 	protected Screen[] screensToLoad;
 	private final DisplayManager mDisplayManager;
+	protected boolean mActivateLoadedScreens;
+	private long mOffscreenBufferIndex;
 
 	// --------------------------------------
 	// Properties
@@ -105,6 +107,7 @@ public abstract class AsyncScreenLoadingScreen extends Screen {
 
 		mIsPopup = true;
 
+		mOffscreenBufferIndex = -1;
 		loadingThreadStarted = false;
 	}
 
@@ -127,26 +130,35 @@ public abstract class AsyncScreenLoadingScreen extends Screen {
 			if (hasLoadingStarted() == false) {
 				loadingThreadStarted = true;
 
-				final var lOffscreenBuffer = mDisplayManager.createSharedContext();
-				mBackgroundThread = new ScreenManagerScreenLoader(lOffscreenBuffer);
+				mOffscreenBufferIndex = mDisplayManager.createSharedContext();
+				mBackgroundThread = new ScreenManagerScreenLoader(mOffscreenBufferIndex);
 
 				Debug.debugManager().logger().i("ScreenManager", "Starting background thread");
 				mBackgroundThread.start();
 
-			} else if (hasLoadingFinished()) {
-				exitScreen();
+			} else if (mOffscreenBufferIndex > 0 && hasLoadingFinished()) {
+				mOffscreenBufferIndex = -1;
 				mDisplayManager.destroySharedContext();
 
-				// Once the background thread has finished,
-				// take the new 'loaded' screens from it and add them to the screen manager
-				// I *think* this avoids us needing to 'synchronized' anything
-				final var lNumScreensToAdd = screensToLoad.length;
-				for (int i = 0; i < lNumScreensToAdd; i++) {
-					if (screensToLoad[i] != null) {
-						mScreenManager.addScreen(screensToLoad[i]);
+				onAfterAssetsLoaded();
+
+			} else {
+				if (mActivateLoadedScreens && mIsExiting == false) {
+					exitScreen();
+
+					// Once the background thread has finished,
+					// take the new 'loaded' screens from it and add them to the screen manager
+					// I *think* this avoids us needing to 'synchronized' anything
+					final var lNumScreensToAdd = screensToLoad.length;
+					for (int i = 0; i < lNumScreensToAdd; i++) {
+						if (screensToLoad[i] != null) {
+							mScreenManager.addScreen(screensToLoad[i]);
+						}
 					}
 				}
 			}
 		}
 	}
+
+	protected abstract void onAfterAssetsLoaded();
 }
