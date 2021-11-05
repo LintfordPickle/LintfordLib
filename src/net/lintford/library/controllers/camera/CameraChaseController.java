@@ -148,14 +148,13 @@ public class CameraChaseController extends BaseController {
 	private void updateSpring(LintfordCore pCore) {
 		updatewWorldPositions(pCore);
 
-		float elapsed = (float) pCore.appTime().elapsedTimeSeconds();
+		final float elapsed = (float) pCore.appTime().elapsedTimeSeconds();
 
-		// Calculate spring force
-		float stretchX = mPosition.x - mDesiredPosition.x;
-		float stretchY = mPosition.y - mDesiredPosition.y;
+		final float stretchX = mPosition.x - mDesiredPosition.x;
+		final float stretchY = mPosition.y - mDesiredPosition.y;
 
-		float forceX = -mStiffness * stretchX - mDamping * mVelocity.x;
-		float forceY = -mStiffness * stretchY - mDamping * mVelocity.y;
+		final float forceX = -mStiffness * stretchX - mDamping * mVelocity.x;
+		final float forceY = -mStiffness * stretchY - mDamping * mVelocity.y;
 
 		// Apply acceleration
 		float accelerationX = forceX / mMass;
@@ -164,10 +163,8 @@ public class CameraChaseController extends BaseController {
 		mVelocity.x += accelerationX * elapsed;
 		mVelocity.y += accelerationY * elapsed;
 
-		// Apply velocity
 		mPosition.x += mVelocity.x * elapsed;
 		mPosition.y += mVelocity.y * elapsed;
-
 	}
 
 	private void updatewWorldPositions(LintfordCore pCore) {
@@ -176,7 +173,6 @@ public class CameraChaseController extends BaseController {
 
 		mDesiredPosition.x = mTrackedEntity.worldPositionX;
 		mDesiredPosition.y = mTrackedEntity.worldPositionY;
-
 	}
 
 	// ---------------------------------------------
@@ -187,5 +183,4 @@ public class CameraChaseController extends BaseController {
 		mGameCamera.setZoomFactor(pZoomFactor);
 
 	}
-
 }

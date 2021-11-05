@@ -57,7 +57,7 @@ public class RendererManager {
 	private ResourceManager mResourceManager;
 	private DisplayManager mDisplayConfig;
 
-	/** Tracks the number of times a LoadGlContent method is called using this renderManager/entityGroupId*/
+	/** Tracks the number of times a loadResources method is called using this renderManager/entityGroupId*/
 	private int mSharedGlContentCount;
 
 	private UiStructureController mUiStructureController;
@@ -70,7 +70,7 @@ public class RendererManager {
 	protected FontUnit mUiTitleFont;
 
 	private boolean mIsinitialized;
-	private boolean mIsLoaded;
+	private boolean mResourcesLoaded;
 
 	private List<UIWindowChangeListener> mListeners;
 
@@ -121,7 +121,7 @@ public class RendererManager {
 	}
 
 	public boolean isLoaded() {
-		return mIsLoaded;
+		return mResourcesLoaded;
 
 	}
 
@@ -190,7 +190,7 @@ public class RendererManager {
 		mListeners = new ArrayList<>();
 
 		mIsinitialized = false;
-		mIsLoaded = false;
+		mResourcesLoaded = false;
 
 		RendererManagerFonts.AddIfNotExists(UI_FONT_TEXT_NAME, "/res/fonts/fontCoreText.json");
 		RendererManagerFonts.AddIfNotExists(UI_FONT_TEXT_BOLD_NAME, "/res/fonts/fontCoreText.json");
@@ -208,18 +208,16 @@ public class RendererManager {
 		final int lRendererCount = mRenderers.size();
 		for (int i = 0; i < lRendererCount; i++) {
 			mRenderers.get(i).initialize(mCore);
-
 		}
 
 		mIsinitialized = true;
-
 	}
 
-	public void loadGLContent(ResourceManager pResourceManager) {
-		if (mIsLoaded)
+	public void loadResources(ResourceManager pResourceManager) {
+		if (mResourcesLoaded)
 			return;
 
-		Debug.debugManager().logger().i(getClass().getSimpleName(), "Loading GL content for all registered renderers");
+		Debug.debugManager().logger().i(getClass().getSimpleName(), "Loading Resources for all registered renderers");
 
 		mResourceManager = pResourceManager;
 		mResourceManager.increaseReferenceCounts(entityGroupID);
@@ -229,17 +227,17 @@ public class RendererManager {
 		mUiHeaderFont = pResourceManager.fontManager().getFontUnit(UI_FONT_HEADER_NAME);
 		mUiTitleFont = pResourceManager.fontManager().getFontUnit(UI_FONT_TITLE_NAME);
 
-		mSpriteBatch.loadGLContent(pResourceManager);
-		mTextureBatch.loadGLContent(pResourceManager);
-		mLineBatch.loadGLContent(pResourceManager);
-		mPolyBatch.loadGLContent(pResourceManager);
+		mSpriteBatch.loadResources(pResourceManager);
+		mTextureBatch.loadResources(pResourceManager);
+		mLineBatch.loadResources(pResourceManager);
+		mPolyBatch.loadResources(pResourceManager);
 
 		mDisplayConfig = pResourceManager.config().display();
 
 		final int lRendererCount = mRenderers.size();
 		for (int i = 0; i < lRendererCount; i++) {
-			if (!mRenderers.get(i).isLoaded() && mIsLoaded) {
-				mRenderers.get(i).loadGLContent(pResourceManager);
+			if (!mRenderers.get(i).isLoaded() && mResourcesLoaded) {
+				mRenderers.get(i).loadResources(pResourceManager);
 			}
 		}
 
@@ -255,27 +253,32 @@ public class RendererManager {
 
 		GLDebug.checkGLErrorsException(getClass().getSimpleName());
 
-		mIsLoaded = true;
+		mResourcesLoaded = true;
 	}
 
-	public void unloadGLContent() {
-		if (!mIsLoaded)
+	public void unloadResources() {
+		if (!mResourcesLoaded)
 			return;
 
-		Debug.debugManager().logger().i(getClass().getSimpleName(), "Unloading GL content for all renderers");
+		Debug.debugManager().logger().i(getClass().getSimpleName(), "Unloading Resources for all renderers");
 
 		// Unloaded each of the renderers
 		final int lRendererCount = mRenderers.size();
 		for (int i = 0; i < lRendererCount; i++) {
-			mRenderers.get(i).unloadGLContent();
-
-			GLDebug.checkGLErrorsException(getClass().getSimpleName());
+			mRenderers.get(i).unloadResources();
 		}
 
-		mSpriteBatch.unloadGLContent();
-		mTextureBatch.unloadGLContent();
-		mLineBatch.unloadGLContent();
-		mPolyBatch.unloadGLContent();
+		final int lWindowRendererCount = mWindowRenderers.size();
+		for (int i = 0; i < lWindowRendererCount; i++) {
+			mWindowRenderers.get(i).unloadResources();
+		}
+
+		GLDebug.checkGLErrorsException(getClass().getSimpleName());
+
+		mSpriteBatch.unloadResources();
+		mTextureBatch.unloadResources();
+		mLineBatch.unloadResources();
+		mPolyBatch.unloadResources();
 
 		mUiTextFont = null;
 		mUiTextBoldFont = null;
@@ -287,7 +290,8 @@ public class RendererManager {
 
 		mResourceManager.decreaseReferenceCounts(entityGroupID);
 		mResourceManager = null;
-		mIsLoaded = false;
+
+		mResourcesLoaded = false;
 	}
 
 	public boolean handleInput(LintfordCore pCore) {
@@ -316,18 +320,26 @@ public class RendererManager {
 	}
 
 	public void update(LintfordCore pCore) {
+		GLDebug.checkGLErrorsException();
+
 		final int lRendererCount = mRenderers.size();
 		for (int i = 0; i < lRendererCount; i++) {
 			final var lRenderer = mRenderers.get(i);
 			if (!lRenderer.isActive())
 				continue;
 
-			if (!lRenderer.isLoaded() && mIsLoaded) {
+			GLDebug.checkGLErrorsException();
+
+			if (!lRenderer.isLoaded() && mResourcesLoaded) {
 				Debug.debugManager().logger().w(getClass().getSimpleName(), lRenderer.getClass().getSimpleName());
-				lRenderer.loadGLContent(mResourceManager);
+				lRenderer.loadResources(mResourceManager);
 			}
 
+			GLDebug.checkGLErrorsException();
+
 			lRenderer.update(pCore);
+
+			GLDebug.checkGLErrorsException();
 		}
 
 		final int lWindowRendererCount = mWindowRenderers.size();
@@ -336,9 +348,9 @@ public class RendererManager {
 			if (!lWindowRenderer.isActive())
 				continue;
 
-			if (!lWindowRenderer.isLoaded() && mIsLoaded) {
+			if (!lWindowRenderer.isLoaded() && mResourcesLoaded) {
 				Debug.debugManager().logger().w(getClass().getSimpleName(), lWindowRenderer.getClass().getSimpleName());
-				lWindowRenderer.loadGLContent(mResourceManager);
+				lWindowRenderer.loadResources(mResourceManager);
 			}
 
 			lWindowRenderer.update(pCore);
@@ -346,6 +358,7 @@ public class RendererManager {
 	}
 
 	public void draw(LintfordCore pCore) {
+		GLDebug.checkGLErrorsException();
 		if (RENDER_GAME_RENDERABLES) {
 			final int lNumBaseRenderers = mRenderers.size();
 			for (int i = 0; i < lNumBaseRenderers; i++) {
@@ -353,14 +366,17 @@ public class RendererManager {
 				if (!lRenderer.isActive() || !lRenderer.isManagedDraw())
 					continue;
 
-				if (!lRenderer.isLoaded() && mIsLoaded) {
+				if (!lRenderer.isLoaded() && mResourcesLoaded) {
 					Debug.debugManager().logger().w(getClass().getSimpleName(), "Reloading content in Update() (BaseRenderer) ");
-					lRenderer.loadGLContent(mResourceManager);
+					lRenderer.loadResources(mResourceManager);
 
+					GLDebug.checkGLErrorsException();
 				}
 
 				// Update the renderer
 				lRenderer.draw(pCore);
+
+				GLDebug.checkGLErrorsException();
 			}
 		}
 
@@ -371,13 +387,17 @@ public class RendererManager {
 				if (!lWindow.isActive() || !lWindow.isOpen())
 					continue;
 
-				if (!lWindow.isLoaded() && mIsLoaded) {
+				if (!lWindow.isLoaded() && mResourcesLoaded) {
 					Debug.debugManager().logger().w(getClass().getSimpleName(), "Reloading content in Update() (UIWindow) ");
-					lWindow.loadGLContent(mResourceManager);
+					lWindow.loadResources(mResourceManager);
+
+					GLDebug.checkGLErrorsException();
 				}
 
 				// Update the renderer
 				lWindow.draw(pCore);
+
+				GLDebug.checkGLErrorsException();
 			}
 		}
 	}
@@ -469,7 +489,7 @@ public class RendererManager {
 
 		for (int i = 0; i < lNumWindows; i++) {
 			if (lWindowUpdateList.get(i).entityGroupID() == pEntityGroupID) {
-				lWindowUpdateList.get(i).unloadGLContent();
+				lWindowUpdateList.get(i).unloadResources();
 
 				mWindowRenderers.remove(lWindowUpdateList.get(i));
 			}
@@ -483,7 +503,7 @@ public class RendererManager {
 
 		for (int i = 0; i < lRendererCount; i++) {
 			if (lRendererUpdateList.get(i).entityGroupID() == pEntityGroupID) {
-				lRendererUpdateList.get(i).unloadGLContent();
+				lRendererUpdateList.get(i).unloadResources();
 
 				mRenderers.remove(lRendererUpdateList.get(i));
 			}
@@ -528,7 +548,8 @@ public class RendererManager {
 		lRenderTarget = new RenderTarget();
 		lRenderTarget.targetName = pName;
 		lRenderTarget.textureFilter(pFilterMode);
-		lRenderTarget.loadGLContent(pWidth, pHeight, pScale);
+		lRenderTarget.loadResources(pWidth, pHeight, pScale);
+		lRenderTarget.initialiszeGl(pWidth, pHeight, pScale);
 
 		mRenderTargets.add(lRenderTarget);
 
@@ -555,7 +576,7 @@ public class RendererManager {
 		}
 
 		pRenderTarget.unbind();
-		pRenderTarget.unloadGLContent();
+		pRenderTarget.unloadResources();
 	}
 
 	public void releaseRenderTargetByName(String pName) {

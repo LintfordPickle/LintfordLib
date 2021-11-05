@@ -40,11 +40,11 @@ public class SpriteGraphManager extends PoolInstanceManager<SpriteGraphInstance>
 	// Core-Methods
 	// --------------------------------------
 
-	public void loadGLContent(ResourceManager pResourceManager) {
+	public void loadResources(ResourceManager pResourceManager) {
 
 	}
 
-	public void unloadGLContent() {
+	public void unloadResources() {
 
 	}
 
@@ -74,5 +74,4 @@ public class SpriteGraphManager extends PoolInstanceManager<SpriteGraphInstance>
 		// TODO Implement returnSpriteGraph so SpriteGraphInstances and SpriteGraphNodeInstances can be reused
 
 	}
-
 }

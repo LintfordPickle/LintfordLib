@@ -235,7 +235,7 @@ public class BitmapFontManager {
 
 	private FontUnit createFontUnit(String pFontname, BitmapFontDefinition pBitmapFontDefintion) {
 		FontUnit lNewFontUnit = new FontUnit(0, pBitmapFontDefintion);
-		lNewFontUnit.onLoadGlContent(mResourceManager);
+		lNewFontUnit.loadResources(mResourceManager);
 		pBitmapFontDefintion.reloadable(false);
 		mFontUnits.put(pFontname, lNewFontUnit);
 

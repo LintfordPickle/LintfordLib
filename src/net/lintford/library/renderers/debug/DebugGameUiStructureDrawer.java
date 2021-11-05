@@ -68,5 +68,4 @@ public class DebugGameUiStructureDrawer extends BaseRenderer {
 		}
 
 	}
-
 }

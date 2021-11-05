@@ -46,5 +46,4 @@ public class ToastMessage {
 		messageTitle = "";
 		x = xx = y = yy = 0;
 	}
-
 }

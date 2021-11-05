@@ -27,8 +27,8 @@ public class FullScreenTexturedQuad extends TexturedQuad implements IResizeListe
 	// Core-Methods
 	// --------------------------------------
 
-	public void loadGLContent(ResourceManager pResourceManager) {
-		super.loadGLContent(pResourceManager);
+	public void loadResources(ResourceManager pResourceManager) {
+		super.loadResources(pResourceManager);
 
 		mDisplayConfig = pResourceManager.config().display();
 		mDisplayConfig.addResizeListener(this);
@@ -37,26 +37,23 @@ public class FullScreenTexturedQuad extends TexturedQuad implements IResizeListe
 		mWindowHeight = mDisplayConfig.windowHeight();
 
 		createModelMatrix();
-
 	}
 
-	public void unloadGLContent() {
-		super.unloadGLContent();
+	public void unloadResources() {
+		super.unloadResources();
 
 		mDisplayConfig.removeResizeListener(this);
-
 	}
 
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
-	
+
 	@Override
 	public void createModelMatrix() {
 		mModelMatrix.setIdentity();
 		mModelMatrix.scale(mWindowWidth, mWindowHeight, 1);
 		mModelMatrix.translate(0, 0, mZDepth);
-
 	}
 
 	// --------------------------------------

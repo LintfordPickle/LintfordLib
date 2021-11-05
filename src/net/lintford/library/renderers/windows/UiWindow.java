@@ -263,8 +263,8 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 
 	}
 
-	public void loadGLContent(ResourceManager pResourceManager) {
-		super.loadGLContent(pResourceManager);
+	public void loadResources(ResourceManager pResourceManager) {
+		super.loadResources(pResourceManager);
 
 		mCoreSpritesheet = pResourceManager.spriteSheetManager().coreSpritesheet();
 		mHudSpritesheet = pResourceManager.spriteSheetManager().getSpriteSheet("SPRITESHEET_HUD", entityGroupID());
@@ -272,7 +272,7 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 		mContentDisplayArea.y(mWindowArea.y() + getTitleBarHeight());
 		mContentDisplayArea.h(mWindowArea.h() - +getTitleBarHeight());
 
-		mIsLoaded = true;
+		mResourcesLoaded = true;
 	}
 
 	public boolean handleInput(LintfordCore pCore) {
@@ -361,14 +361,12 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 		if (lMouseOverWindow) {
 			mIsMouseOver = true;
 
-			// TODO: This isn't working. even though you click on a window, you still get clicks registerd in the game.
 			if (lMouseLeftClick) {
 				pCore.input().mouse().tryAcquireMouseLeftClick(hashCode());
 			}
 
 			if (mCanCaptureMouse && pCore.input().mouse().tryAcquireMouseOverThisComponent(hashCode()) && pCore.input().mouse().tryAcquireMouseMiddle((hashCode()))) {
 				mZScrollAcceleration += pCore.input().mouse().mouseWheelYOffset() * 250.0f;
-
 			}
 
 		} else {
@@ -639,5 +637,4 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 		mMouseClickTimer = 200;
 
 	}
-
 }

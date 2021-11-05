@@ -24,5 +24,4 @@ public class EntityGroupRenderer {
 		mEntityGroupID = pEntityGroupID;
 
 	}
-
 }

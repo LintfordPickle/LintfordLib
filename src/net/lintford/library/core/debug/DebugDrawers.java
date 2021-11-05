@@ -88,40 +88,40 @@ public class DebugDrawers {
 	// Core-Methods
 	// --------------------------------------
 
-	public void loadGLContent(ResourceManager pResourceManager) {
+	public void loadResources(ResourceManager pResourceManager) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
 		mSystemFontUnit = pResourceManager.fontManager().getFontUnit(BitmapFontManager.SYSTEM_FONT_CORE_TEXT_NAME);
 
-		mTextureBatch.loadGLContent(pResourceManager);
-		mBasicShader.loadGLContent(pResourceManager);
-		mTexturedQuad.loadGLContent(pResourceManager);
+		mTextureBatch.loadResources(pResourceManager);
+		mBasicShader.loadResources(pResourceManager);
+		mTexturedQuad.loadResources(pResourceManager);
 
-		mImmediatePointBatch.loadGLContent(pResourceManager);
-		mImmediateLineBatch.loadGLContent(pResourceManager);
-		mImmediatePolyBatch.loadGLContent(pResourceManager);
+		mImmediatePointBatch.loadResources(pResourceManager);
+		mImmediateLineBatch.loadResources(pResourceManager);
+		mImmediatePolyBatch.loadResources(pResourceManager);
 
-		mPointBatch.loadGLContent(pResourceManager);
-		mLineBatch.loadGLContent(pResourceManager);
-		mPolyBatch.loadGLContent(pResourceManager);
+		mPointBatch.loadResources(pResourceManager);
+		mLineBatch.loadResources(pResourceManager);
+		mPolyBatch.loadResources(pResourceManager);
 	}
 
-	public void unloadGLContent() {
+	public void unloadResources() {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
-		mTextureBatch.unloadGLContent();
-		mBasicShader.unloadGLContent();
-		mTexturedQuad.unloadGLContent();
+		mTextureBatch.unloadResources();
+		mBasicShader.unloadResources();
+		mTexturedQuad.unloadResources();
 
-		mImmediatePointBatch.unloadGLContent();
-		mImmediateLineBatch.unloadGLContent();
-		mImmediatePolyBatch.unloadGLContent();
+		mImmediatePointBatch.unloadResources();
+		mImmediateLineBatch.unloadResources();
+		mImmediatePolyBatch.unloadResources();
 
-		mPointBatch.unloadGLContent();
-		mLineBatch.unloadGLContent();
-		mPolyBatch.unloadGLContent();
+		mPointBatch.unloadResources();
+		mLineBatch.unloadResources();
+		mPolyBatch.unloadResources();
 	}
 
 	// --------------------------------------

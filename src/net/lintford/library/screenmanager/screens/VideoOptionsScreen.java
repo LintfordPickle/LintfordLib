@@ -170,8 +170,6 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 		mMonitorEntry.registerClickListener(this, BUTTON_MONITOR);
 		mVSync.registerClickListener(this, BUTTON_VSYNC);
 
-		// TODO: Add ToolTips for all menu options
-
 		// Add the menu entries to the window
 		lLayout.addMenuEntry(lVideoOptionsTitle);
 		lLayout.addMenuEntry(mFullScreenEntry);

@@ -22,7 +22,6 @@ import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.graphics.vertices.VertexDataStructurePT;
 import net.lintford.library.core.maths.Matrix4f;
 import net.lintford.library.core.maths.Vector2f;
-import net.lintford.library.core.maths.Vector4f;
 
 // TODO: Non of the Batch rendering classes are using indices I notice...
 // TODO: The SpriteBatch doesn't actually allow to cache buffers between frames if there is no change (no vertex + transformations).
@@ -33,7 +32,7 @@ public class TextureBatchPT {
 	// Constants
 	// --------------------------------------
 
-	protected static final int MAX_SPRITES = 2048;
+	protected static final int MAX_SPRITES = 16384;
 
 	protected static final String VERT_FILENAME = "/res/shaders/shader_basic_pt.vert";
 	protected static final String FRAG_FILENAME = "/res/shaders/shader_basic_pt.frag";
@@ -44,7 +43,6 @@ public class TextureBatchPT {
 	// Variables
 	// --------------------------------------
 
-	protected Vector4f mTempVector;
 	protected ICamera mCamera;
 	protected ShaderMVP_PT mShader;
 	protected ShaderMVP_PT mCustomShader;
@@ -58,7 +56,7 @@ public class TextureBatchPT {
 	private int mVertexCount = 0;
 	protected int mCurrentTexID;
 	protected int mCurNumSprites;
-	private boolean mIsLoaded;
+	private boolean mResourcesLoaded;
 	protected boolean mIsDrawing;
 	protected boolean mUseCheckerPattern;
 	protected ResourceManager mResourceManager;
@@ -80,7 +78,7 @@ public class TextureBatchPT {
 	}
 
 	public boolean isLoaded() {
-		return mIsLoaded;
+		return mResourcesLoaded;
 	}
 
 	public void modelMatrix(Matrix4f pNewMatrix) {
@@ -104,54 +102,53 @@ public class TextureBatchPT {
 		mShader = new ShaderMVP_PT("TextureBatchShaderPT", VERT_FILENAME, FRAG_FILENAME);
 
 		mModelMatrix = new Matrix4f();
-		mTempVector = new Vector4f();
 
 		mBlendEnabled = true;
 		mBlendFuncSrcFactor = GL11.GL_SRC_ALPHA;
 		mBlendFuncDstFactor = GL11.GL_ONE_MINUS_SRC_ALPHA;
-
 	}
 
 	// --------------------------------------
 	// Core-Methods
 	// --------------------------------------
 
-	public void loadGLContent(ResourceManager pResourceManager) {
-		if (mIsLoaded)
+	public void loadResources(ResourceManager pResourceManager) {
+		if (mResourcesLoaded)
 			return;
 
 		mResourceManager = pResourceManager;
 
-		mShader.loadGLContent(pResourceManager);
+		mShader.loadResources(pResourceManager);
 
-		if (mVaoId == -1)
-			mVaoId = GL30.glGenVertexArrays();
-
-		if (mVboId == -1)
+		if (mVboId == -1) {
 			mVboId = GL15.glGenBuffers();
+			Debug.debugManager().logger().v("OpenGL", "TextureBatchPT: VboId = " + mVboId);
+		}
 
 		mBuffer = MemoryUtil.memAllocFloat(MAX_SPRITES * NUM_VERTS_PER_SPRITE * VertexDataStructurePT.stride);
 
-		mIsLoaded = true;
+		mResourcesLoaded = true;
 
 		Debug.debugManager().stats().incTag(DebugStats.TAG_ID_BATCH_OBJECTS);
-
 	}
 
-	public void unloadGLContent() {
-		if (!mIsLoaded)
+	public void unloadResources() {
+		if (!mResourcesLoaded)
 			return;
 
-		mShader.unloadGLContent();
+		mShader.unloadResources();
 
-		if (mVboId > -1)
+		if (mVboId > -1) {
 			GL15.glDeleteBuffers(mVboId);
+			Debug.debugManager().logger().v("OpenGL", "TextureBatchPT: Unloading VboId = " + mVboId);
+			mVboId = -1;
+		}
 
-		if (mVaoId > -1)
+		if (mVaoId > -1) {
 			GL30.glDeleteVertexArrays(mVaoId);
-
-		mVboId = -1;
-		mVaoId = -1;
+			Debug.debugManager().logger().v("OpenGL", "TextureBatchPT: Unloading VaoId = " + mVaoId);
+			mVaoId = -1;
+		}
 
 		if (mBuffer != null) {
 			mBuffer.clear();
@@ -159,14 +156,28 @@ public class TextureBatchPT {
 
 		}
 
-		mIsLoaded = false;
+		mResourcesLoaded = false;
 		Debug.debugManager().stats().decTag(DebugStats.TAG_ID_BATCH_OBJECTS);
-
 	}
 
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
+
+	private void initializeGlContent() {
+		if (mVaoId == -1) {
+			mVaoId = GL30.glGenVertexArrays();
+
+			GL30.glBindVertexArray(mVaoId);
+			GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, mVboId);
+
+			GL20.glVertexAttribPointer(0, VertexDataStructurePT.positionElementCount, GL11.GL_FLOAT, false, VertexDataStructurePT.stride, VertexDataStructurePT.positionByteOffset);
+			GL20.glVertexAttribPointer(1, VertexDataStructurePT.textureElementCount, GL11.GL_FLOAT, false, VertexDataStructurePT.stride, VertexDataStructurePT.textureByteOffset);
+
+			GL20.glEnableVertexAttribArray(0);
+			GL20.glEnableVertexAttribArray(1);
+		}
+	}
 
 	public void begin(ICamera pCamera, ShaderMVP_PT pCustomPTShader) {
 		if (pCamera == null)
@@ -198,7 +209,7 @@ public class TextureBatchPT {
 	}
 
 	public void draw(Texture pTexture, float pSX, float pSY, float pSW, float pSH, Rectangle pDestRect, float pZ) {
-		if (!mIsLoaded)
+		if (!mResourcesLoaded)
 			return;
 
 		if (!mIsDrawing)
@@ -336,7 +347,7 @@ public class TextureBatchPT {
 	}
 
 	public void draw(Texture pTexture, float pSX, float pSY, float pSW, float pSH, float pDX, float pDY, float pDW, float pDH, float pZ, float pRot, float pROX, float pROY, float pScale) {
-		if (!mIsLoaded)
+		if (!mResourcesLoaded)
 			return;
 
 		if (!mIsDrawing)
@@ -415,7 +426,7 @@ public class TextureBatchPT {
 	}
 
 	public void draw(Texture pTexture, float pSX, float pSY, float pSW, float pSH, Circle dstCircle, float pZ) {
-		if (!mIsLoaded)
+		if (!mResourcesLoaded)
 			return;
 
 		if (!mIsDrawing)
@@ -510,7 +521,7 @@ public class TextureBatchPT {
 	}
 
 	protected void flush() {
-		if (!mIsLoaded || !mIsDrawing)
+		if (!mResourcesLoaded || !mIsDrawing)
 			return;
 
 		if (mVertexCount == 0)
@@ -518,33 +529,29 @@ public class TextureBatchPT {
 
 		mBuffer.flip();
 
+		initializeGlContent();
+
 		GL30.glBindVertexArray(mVaoId);
 
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, mVboId);
 		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, mBuffer, GL15.GL_STATIC_DRAW);
-
-		GL20.glVertexAttribPointer(0, VertexDataStructurePT.positionElementCount, GL11.GL_FLOAT, false, VertexDataStructurePT.stride, VertexDataStructurePT.positionByteOffset);
-		GL20.glVertexAttribPointer(1, VertexDataStructurePT.textureElementCount, GL11.GL_FLOAT, false, VertexDataStructurePT.stride, VertexDataStructurePT.textureByteOffset);
-
-		GL20.glEnableVertexAttribArray(0);
-		GL20.glEnableVertexAttribArray(1);
 
 		int_redraw();
 
 		mBuffer.clear();
 		mCurNumSprites = 0;
 		mVertexCount = 0;
-
 	}
 
 	public void redraw() {
 		if (mVertexCount == 0)
 			return;
 
+		initializeGlContent();
+
 		GL30.glBindVertexArray(mVaoId);
 
 		int_redraw();
-
 	}
 
 	public void setGlBlendEnabled(boolean pBlendEnabled) {
@@ -561,7 +568,6 @@ public class TextureBatchPT {
 		if (mCurrentTexID != -1) {
 			GL13.glActiveTexture(GL13.GL_TEXTURE0);
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, mCurrentTexID);
-
 		}
 
 		if (mBlendEnabled) {
@@ -571,7 +577,6 @@ public class TextureBatchPT {
 		} else {
 			GL11.glDisable(GL11.GL_BLEND);
 			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-
 		}
 
 		mCustomShader.projectionMatrix(mCamera.projection());
@@ -589,8 +594,8 @@ public class TextureBatchPT {
 		GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, mVertexCount);
 
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
+		GL30.glBindVertexArray(0);
 
 		mCustomShader.unbind();
 	}
-
 }

@@ -28,7 +28,7 @@ public class JBox2dPolyBatch {
 	// Constants
 	// --------------------------------------
 
-	public static final int MAX_VERTS = 2048;
+	public static final int MAX_VERTS = 16384;
 
 	private static final String VERT_FILENAME = "/res/shaders/shader_basic_pct.vert";
 	private static final String FRAG_FILENAME = "/res/shaders/shader_basic_pct.frag";
@@ -72,7 +72,7 @@ public class JBox2dPolyBatch {
 	private Matrix4f mModelMatrix;
 	private FloatBuffer mBuffer;
 	private boolean mIsDrawing;
-	private boolean mIsLoaded;
+	private boolean mResourcesLoaded;
 	protected boolean mUseCheckerPattern;
 	protected ResourceManager mResourceManager;
 
@@ -108,64 +108,80 @@ public class JBox2dPolyBatch {
 		a = r = g = b = 1f;
 
 		mModelMatrix = new Matrix4f();
-		mIsLoaded = false;
+		mResourcesLoaded = false;
 	}
 
 	// --------------------------------------
 	// Core-Methods
 	// --------------------------------------
 
-	public void loadGLContent(ResourceManager pResourceManager) {
-		if (mIsLoaded)
+	public void loadResources(ResourceManager pResourceManager) {
+		if (mResourcesLoaded)
 			return;
 
 		mResourceManager = pResourceManager;
 
-		mShader.loadGLContent(pResourceManager);
+		mShader.loadResources(pResourceManager);
 
-		if (mVaoId == -1)
-			mVaoId = GL30.glGenVertexArrays();
-
-		if (mVboId == -1)
+		if (mVboId == -1) {
 			mVboId = GL15.glGenBuffers();
+			Debug.debugManager().logger().v("OpenGL", "JBox2dPolyBatch: mVboId = " + mVboId);
+		}
 
 		mBuffer = MemoryUtil.memAllocFloat(MAX_VERTS * stride);
 
-		mIsLoaded = true;
-
+		mResourcesLoaded = true;
 	}
 
-	public void unloadGLContent() {
-		if (mIsLoaded)
+	public void unloadResources() {
+		if (mResourcesLoaded)
 			return;
 
-		mShader.unloadGLContent();
+		mShader.unloadResources();
 
-		if (mVboId != -1)
+		if (mVboId != -1) {
 			GL15.glDeleteBuffers(mVboId);
+			Debug.debugManager().logger().v("OpenGL", "JBox2dPolyBatch: Unloading VboId = " + mVboId);
+			mVboId = -1;
+		}
 
-		if (mVaoId != -1)
+		if (mVaoId != -1) {
 			GL30.glDeleteVertexArrays(mVaoId);
-
-		mVaoId = -1;
-		mVboId = -1;
+			Debug.debugManager().logger().v("OpenGL", "JBox2dPolyBatch: Unloading VaoId = " + mVaoId);
+			mVaoId = -1;
+		}
 
 		if (mBuffer != null) {
 			mBuffer.clear();
 			MemoryUtil.memFree(mBuffer);
-
 		}
 
-		mIsLoaded = false;
-
+		mResourcesLoaded = false;
 	}
 
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
 
+	private void initializeGlContent() {
+		if (mVaoId == -1) {
+			mVaoId = GL30.glGenVertexArrays();
+
+			GL30.glBindVertexArray(mVaoId);
+			GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, mVboId);
+
+			GL20.glEnableVertexAttribArray(0);
+			GL20.glEnableVertexAttribArray(1);
+			GL20.glEnableVertexAttribArray(2);
+
+			GL20.glVertexAttribPointer(0, positionElementCount, GL11.GL_FLOAT, false, stride, positionByteOffset);
+			GL20.glVertexAttribPointer(1, colorElementCount, GL11.GL_FLOAT, false, stride, colorByteOffset);
+			GL20.glVertexAttribPointer(2, textureElementCount, GL11.GL_FLOAT, false, stride, textureByteOffset);
+		}
+	}
+
 	public void begin(ICamera pCamera) {
-		if (!mIsLoaded)
+		if (!mResourcesLoaded)
 			return;
 
 		if (pCamera == null)
@@ -188,7 +204,7 @@ public class JBox2dPolyBatch {
 	}
 
 	public void drawPolygon(Texture pTexture, Body pBody, Vec2[] pVertexArray, float pSX, float pSY, float pSW, float pSH, float pZ, float pR, float pG, float pB, float pA) {
-		if (!mIsLoaded || !mIsDrawing)
+		if (!mResourcesLoaded || !mIsDrawing)
 			return;
 
 		// TODO: Only supports polygons with 4 vertices so far (we don't actually need more for now) ...
@@ -289,7 +305,7 @@ public class JBox2dPolyBatch {
 	}
 
 	private void flush() {
-		if (!mIsLoaded)
+		if (!mResourcesLoaded)
 			return;
 
 		if (mVertexCount == 0)
@@ -297,34 +313,28 @@ public class JBox2dPolyBatch {
 
 		mBuffer.flip();
 
+		initializeGlContent();
+
 		GL30.glBindVertexArray(mVaoId);
 
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, mVboId);
-		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, mBuffer, GL15.GL_STATIC_DRAW);
-
-		GL20.glVertexAttribPointer(0, positionElementCount, GL11.GL_FLOAT, false, stride, positionByteOffset);
-		GL20.glVertexAttribPointer(1, colorElementCount, GL11.GL_FLOAT, false, stride, colorByteOffset);
-		GL20.glVertexAttribPointer(2, textureElementCount, GL11.GL_FLOAT, false, stride, textureByteOffset);
-
-		GL20.glEnableVertexAttribArray(0);
-		GL20.glEnableVertexAttribArray(1);
-		GL20.glEnableVertexAttribArray(2);
+		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, mBuffer, GL15.GL_DYNAMIC_DRAW);
 
 		int_redraw();
 
 		mBuffer.clear();
 		mVertexCount = 0;
-
 	}
 
 	public void redraw() {
 		if (mVertexCount == 0)
 			return;
 
+		initializeGlContent();
+
 		GL30.glBindVertexArray(mVaoId);
 
 		int_redraw();
-
 	}
 
 	private void int_redraw() {
@@ -341,24 +351,16 @@ public class JBox2dPolyBatch {
 		mShader.bind();
 
 		{
-			/*
-			 * @formatter:off +-------------------+---------------------+ | Mode | Triangles | +-------------------+---------------------+ | GL_TRIANGLE_STRIP | (count - 2 - first) |
-			 * +-------------------+---------------------+
-			 * 
-			 * @formatter:on
-			 */
-
 			Debug.debugManager().stats().incTag(DebugStats.TAG_ID_DRAWCALLS);
 			Debug.debugManager().stats().incTag(DebugStats.TAG_ID_VERTS, mVertexCount);
 			Debug.debugManager().stats().incTag(DebugStats.TAG_ID_TRIS, mVertexCount / 3);
-
 		}
 
 		GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, mVertexCount);
 
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 
+		GL30.glBindVertexArray(0);
 		mShader.unbind();
 	}
-
 }

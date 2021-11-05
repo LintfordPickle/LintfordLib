@@ -6,14 +6,13 @@ import org.lwjgl.opengl.GL30;
 public class GLDebug {
 
 	public static boolean checkGLErrorsException() {
-		checkGLErrors("GLDebug");
+		checkGLErrors("GLDebug", true);
 
 		return false;
 	}
 
 	public static boolean checkGLErrorsException(String pCustomTAG) {
-		if (!Debug.debugManager().debugManagerEnabled())
-			checkGLErrors(pCustomTAG, true);
+		checkGLErrors(pCustomTAG, true);
 
 		return false;
 	}
@@ -25,7 +24,6 @@ public class GLDebug {
 
 	public static boolean checkGLErrors(String pCustomTAG) {
 		return checkGLErrors(pCustomTAG, false);
-
 	}
 
 	private static boolean checkGLErrors(String pCustomTAG, boolean pPrintStackTrace) {
@@ -75,5 +73,4 @@ public class GLDebug {
 
 		return false;
 	}
-
 }

@@ -76,20 +76,19 @@ public class PressToContinueIntroScreen extends Screen {
 	// --------------------------------------
 
 	@Override
-	public void loadGLContent(ResourceManager pResourceManager) {
-		super.loadGLContent(pResourceManager);
+	public void loadResources(ResourceManager pResourceManager) {
+		super.loadResources(pResourceManager);
 
 		mBackgroundTexture = pResourceManager.textureManager().loadTexture(mImageLocation, mImageLocation, entityGroupID());
 
-		mTextureBatch.loadGLContent(pResourceManager);
-
+		mTextureBatch.loadResources(pResourceManager);
 	}
 
 	@Override
-	public void unloadGLContent() {
-		super.unloadGLContent();
+	public void unloadResources() {
+		super.unloadResources();
 
-		mTextureBatch.unloadGLContent();
+		mTextureBatch.unloadResources();
 
 	}
 
@@ -187,5 +186,4 @@ public class PressToContinueIntroScreen extends Screen {
 		mActionCallback = pCallback;
 
 	}
-
 }

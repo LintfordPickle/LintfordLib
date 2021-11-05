@@ -80,7 +80,7 @@ public class Debug {
 	private DebugRendererTreeRenderer mDebugRendererRenderer;
 	private DebugControllerTreeRenderer mDebugControllerRenderer;
 
-	private boolean mIsGLLoaded;
+	private boolean mResourcesLoaded;
 
 	// --------------------------------------
 	// Properties
@@ -143,26 +143,24 @@ public class Debug {
 	// Core-Methods
 	// --------------------------------------
 
-	public void loadGLContent(final ResourceManager pResourceManager) {
-		mDebugConsole.loadGLContent(pResourceManager);
-		mDebugDrawers.loadGLContent(pResourceManager);
-		mDebugStats.loadGLContent(pResourceManager);
-		mDebugControllerRenderer.loadGLContent(pResourceManager);
-		mDebugRendererRenderer.loadGLContent(pResourceManager);
+	public void loadResources(final ResourceManager pResourceManager) {
+		mDebugConsole.loadResources(pResourceManager);
+		mDebugDrawers.loadResources(pResourceManager);
+		mDebugStats.loadResources(pResourceManager);
+		mDebugControllerRenderer.loadResources(pResourceManager);
+		mDebugRendererRenderer.loadResources(pResourceManager);
 
-		mIsGLLoaded = true;
-
+		mResourcesLoaded = true;
 	}
 
-	public void unloadGLContent() {
-		mDebugConsole.unloadGLContent();
-		mDebugDrawers.unloadGLContent();
-		mDebugStats.unloadGLContent();
-		mDebugControllerRenderer.unloadGLContent();
-		mDebugRendererRenderer.unloadGLContent();
+	public void unloadResources() {
+		mDebugConsole.unloadResources();
+		mDebugDrawers.unloadResources();
+		mDebugStats.unloadResources();
+		mDebugControllerRenderer.unloadResources();
+		mDebugRendererRenderer.unloadResources();
 
-		mIsGLLoaded = false;
-
+		mResourcesLoaded = false;
 	}
 
 	public void handleInput(LintfordCore pCore) {
@@ -197,7 +195,7 @@ public class Debug {
 	}
 
 	public void draw(LintfordCore pCore) {
-		if (!mIsGLLoaded)
+		if (!mResourcesLoaded)
 			return;
 
 		mDebugConsole.draw(pCore);

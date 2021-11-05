@@ -114,13 +114,12 @@ class BitmapFontDefinition {
 	// Core-Methods
 	// --------------------------------------
 
-	public void loadGLContent(ResourceManager pResourceManager) {
-		loadGLContent(pResourceManager, LintfordCore.CORE_ENTITY_GROUP_ID);
-
+	public void loadResources(ResourceManager pResourceManager) {
+		loadResources(pResourceManager, LintfordCore.CORE_ENTITY_GROUP_ID);
 	}
 
 	/** Loads the associated texture. */
-	public void loadGLContent(ResourceManager pResourceManager, int pEntityGroupID) {
+	public void loadResources(ResourceManager pResourceManager, int pEntityGroupID) {
 		if (textureName == null || textureName.length() == 0) {
 			System.err.println("BitmapFontDefinition texture name and filename cannot be null!");
 			return;
@@ -149,7 +148,7 @@ class BitmapFontDefinition {
 	}
 
 	/** unloads the GL Content created by this SpriteSheet. */
-	public void unloadGLContent() {
+	public void unloadResources() {
 		texture = null;
 	}
 

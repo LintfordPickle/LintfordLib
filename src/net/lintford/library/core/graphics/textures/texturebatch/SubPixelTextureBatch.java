@@ -21,20 +21,18 @@ import net.lintford.library.core.graphics.Color;
 import net.lintford.library.core.graphics.shaders.ShaderSubPixel;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.TextureManager;
+import net.lintford.library.core.graphics.vertices.VertexDataStructurePCT;
 import net.lintford.library.core.maths.Matrix4f;
 import net.lintford.library.core.maths.Vector2f;
 import net.lintford.library.core.maths.Vector4f;
 
-// TODO: Non of the Batch rendering classes are using indices I notice...
-// TODO: The SpriteBatch doesn't actually allow to cache buffers between frames if there is no change (no vertex + transformations).
-// TODO: Add Batch types (call, texture, Z-Order).
 public class SubPixelTextureBatch {
 
 	// --------------------------------------
 	// Constants
 	// --------------------------------------
 
-	protected static final int MAX_SPRITES = 2048;
+	protected static final int MAX_SPRITES = 16384;
 
 	protected static final String VERT_FILENAME = "/res/shaders/shader_basic_pct.vert";
 	protected static final String FRAG_FILENAME = "/res/shaders/shader_subpixel_pct.frag";
@@ -79,7 +77,7 @@ public class SubPixelTextureBatch {
 	private int mVertexCount = 0;
 	protected int mCurrentTexID;
 	protected int mCurNumSprites;
-	private boolean mIsLoaded;
+	private boolean mResourcesLoaded;
 	protected boolean mIsDrawing;
 	protected boolean mUseCheckerPattern;
 	protected ResourceManager mResourceManager;
@@ -105,7 +103,7 @@ public class SubPixelTextureBatch {
 	}
 
 	public boolean isLoaded() {
-		return mIsLoaded;
+		return mResourcesLoaded;
 	}
 
 	public void modelMatrix(Matrix4f pNewMatrix) {
@@ -138,57 +136,73 @@ public class SubPixelTextureBatch {
 	// Core-Methods
 	// --------------------------------------
 
-	public void loadGLContent(ResourceManager pResourceManager) {
-		if (mIsLoaded)
+	public void loadResources(ResourceManager pResourceManager) {
+		if (mResourcesLoaded)
 			return;
 
 		mResourceManager = pResourceManager;
 
-		mShader.loadGLContent(pResourceManager);
+		mShader.loadResources(pResourceManager);
 
-		if (mVaoId == -1)
-			mVaoId = GL30.glGenVertexArrays();
-
-		if (mVboId == -1)
+		if (mVboId == -1) {
 			mVboId = GL15.glGenBuffers();
+			Debug.debugManager().logger().v("OpenGL", "SubPixelTextureBatch: VboId = " + mVboId);
+		}
 
 		mBuffer = MemoryUtil.memAllocFloat(MAX_SPRITES * NUM_VERTS_PER_SPRITE * stride);
 
-		mIsLoaded = true;
+		mResourcesLoaded = true;
 
 		Debug.debugManager().stats().incTag(DebugStats.TAG_ID_BATCH_OBJECTS);
-
 	}
 
-	public void unloadGLContent() {
-		if (!mIsLoaded)
+	public void unloadResources() {
+		if (!mResourcesLoaded)
 			return;
 
-		mShader.unloadGLContent();
+		mShader.unloadResources();
 
-		if (mVboId > -1)
+		if (mVboId > -1) {
 			GL15.glDeleteBuffers(mVboId);
+			Debug.debugManager().logger().v("OpenGL", "SubPixelTextureBatch: Unloading VboId = " + mVboId);
+			mVboId = -1;
+		}
 
-		if (mVaoId > -1)
+		if (mVaoId > -1) {
 			GL30.glDeleteVertexArrays(mVaoId);
-
-		mVboId = -1;
-		mVaoId = -1;
+			Debug.debugManager().logger().v("OpenGL", "SubPixelTextureBatch: Unloading VaoId = " + mVaoId);
+			mVaoId = -1;
+		}
 
 		if (mBuffer != null) {
 			mBuffer.clear();
 			MemoryUtil.memFree(mBuffer);
-
 		}
 
-		mIsLoaded = false;
+		mResourcesLoaded = false;
 		Debug.debugManager().stats().decTag(DebugStats.TAG_ID_BATCH_OBJECTS);
-
 	}
 
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
+
+	private void initializeGlContent() {
+		if (mVaoId == -1) {
+			mVaoId = GL30.glGenVertexArrays();
+
+			GL30.glBindVertexArray(mVaoId);
+			GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, mVboId);
+
+			GL20.glEnableVertexAttribArray(0);
+			GL20.glEnableVertexAttribArray(1);
+			GL20.glEnableVertexAttribArray(2);
+
+			GL20.glVertexAttribPointer(0, VertexDataStructurePCT.positionElementCount, GL11.GL_FLOAT, false, VertexDataStructurePCT.stride, VertexDataStructurePCT.positionByteOffset);
+			GL20.glVertexAttribPointer(1, VertexDataStructurePCT.colorElementCount, GL11.GL_FLOAT, false, VertexDataStructurePCT.stride, VertexDataStructurePCT.colorByteOffset);
+			GL20.glVertexAttribPointer(2, VertexDataStructurePCT.textureElementCount, GL11.GL_FLOAT, false, VertexDataStructurePCT.stride, VertexDataStructurePCT.textureByteOffset);
+		}
+	}
 
 	public void begin(ICamera pCamera) {
 		if (pCamera == null)
@@ -225,7 +239,7 @@ public class SubPixelTextureBatch {
 	}
 
 	public void draw(Texture pTexture, float pSX, float pSY, float pSW, float pSH, Rectangle pDestRect, float pZ, Color pTint) {
-		if (!mIsLoaded)
+		if (!mResourcesLoaded)
 			return;
 
 		if (!mIsDrawing)
@@ -362,9 +376,8 @@ public class SubPixelTextureBatch {
 
 	}
 
-	public void draw(Texture pTexture, float pSX, float pSY, float pSW, float pSH, float pDX, float pDY, float pDW, float pDH, float pZ, float pRot, float pROX, float pROY, float pScale, float pR, float pG, float pB,
-			float pA) {
-		if (!mIsLoaded)
+	public void draw(Texture pTexture, float pSX, float pSY, float pSW, float pSH, float pDX, float pDY, float pDW, float pDH, float pZ, float pRot, float pROX, float pROY, float pScale, float pR, float pG, float pB, float pA) {
+		if (!mResourcesLoaded)
 			return;
 
 		if (!mIsDrawing)
@@ -382,9 +395,7 @@ public class SubPixelTextureBatch {
 			} else if (mCurrentTexID != pTexture.getTextureID()) {
 				flush();
 				mCurrentTexID = pTexture.getTextureID();
-
 			}
-
 		}
 
 		if (mCurNumSprites >= MAX_SPRITES) {
@@ -443,7 +454,7 @@ public class SubPixelTextureBatch {
 	}
 
 	public void draw(Texture pTexture, float pSX, float pSY, float pSW, float pSH, Circle dstCircle, float pZ, Color pTint) {
-		if (!mIsLoaded)
+		if (!mResourcesLoaded)
 			return;
 
 		if (!mIsDrawing)
@@ -543,7 +554,7 @@ public class SubPixelTextureBatch {
 	}
 
 	protected void flush() {
-		if (!mIsLoaded || !mIsDrawing)
+		if (!mResourcesLoaded || !mIsDrawing)
 			return;
 
 		if (mVertexCount == 0)
@@ -551,42 +562,36 @@ public class SubPixelTextureBatch {
 
 		mBuffer.flip();
 
+		initializeGlContent();
+
 		GL30.glBindVertexArray(mVaoId);
 
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, mVboId);
-		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, mBuffer, GL15.GL_STATIC_DRAW);
-
-		GL20.glVertexAttribPointer(0, positionElementCount, GL11.GL_FLOAT, false, stride, positionByteOffset);
-		GL20.glVertexAttribPointer(1, colorElementCount, GL11.GL_FLOAT, false, stride, colorByteOffset);
-		GL20.glVertexAttribPointer(2, textureElementCount, GL11.GL_FLOAT, false, stride, textureByteOffset);
-
-		GL20.glEnableVertexAttribArray(0);
-		GL20.glEnableVertexAttribArray(1);
-		GL20.glEnableVertexAttribArray(2);
+		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, mBuffer, GL15.GL_DYNAMIC_DRAW);
 
 		int_redraw();
 
 		mBuffer.clear();
+
 		mCurNumSprites = 0;
 		mVertexCount = 0;
-
 	}
 
 	public void redraw() {
 		if (mVertexCount == 0)
 			return;
 
+		initializeGlContent();
+
 		GL30.glBindVertexArray(mVaoId);
 
 		int_redraw();
-
 	}
 
 	private void int_redraw() {
 		if (mCurrentTexID != -1) {
 			GL13.glActiveTexture(GL13.GL_TEXTURE0);
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, mCurrentTexID);
-
 		}
 
 		GL11.glEnable(GL11.GL_BLEND);
@@ -609,8 +614,9 @@ public class SubPixelTextureBatch {
 
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 
+		GL30.glBindVertexArray(0);
+
 		mShader.unbind();
 
 	}
-
 }

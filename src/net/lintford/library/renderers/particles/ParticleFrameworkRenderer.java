@@ -18,6 +18,7 @@ public class ParticleFrameworkRenderer extends BaseRenderer {
 	// --------------------------------------
 
 	public static final String RENDERER_NAME = "GameParticleRenderer";
+
 	private static int RENDERER_ID;
 	private static final int RENDERER_POOL_SIZE = 32;
 
@@ -27,11 +28,16 @@ public class ParticleFrameworkRenderer extends BaseRenderer {
 
 	private List<ParticleRenderer> mParticleRenderers;
 	private ParticleFrameworkController mParticleSystemController;
-
 	private int mEntityGroupID;
 
-	public int getNewRendererId() {
-		return RENDERER_ID++;
+	// --------------------------------------
+	// Properties
+	// --------------------------------------
+
+	@Override
+	public boolean isInitialized() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 	// --------------------------------------
@@ -64,25 +70,21 @@ public class ParticleFrameworkRenderer extends BaseRenderer {
 	}
 
 	@Override
-	public void loadGLContent(ResourceManager pResourceManager) {
+	public void loadResources(ResourceManager pResourceManager) {
 		for (int i = 0; i < RENDERER_POOL_SIZE; i++) {
-			mParticleRenderers.get(i).loadGLContent(pResourceManager);
-
+			mParticleRenderers.get(i).loadResources(pResourceManager);
 		}
 
-		mIsLoaded = true;
-
+		mResourcesLoaded = true;
 	}
 
 	@Override
-	public void unloadGLContent() {
+	public void unloadResources() {
 		for (int i = 0; i < RENDERER_POOL_SIZE; i++) {
-			mParticleRenderers.get(i).unloadGLContent();
-
+			mParticleRenderers.get(i).unloadResources();
 		}
 
-		mIsLoaded = false;
-
+		mResourcesLoaded = false;
 	}
 
 	@Override
@@ -98,11 +100,8 @@ public class ParticleFrameworkRenderer extends BaseRenderer {
 
 			for (int i = 0; i < lNumParticleSystems; i++) {
 				maintainParticleSystemRenderer(lInstances.get(i));
-
 			}
-
 		}
-
 	}
 
 	@Override
@@ -111,14 +110,16 @@ public class ParticleFrameworkRenderer extends BaseRenderer {
 		for (int i = 0; i < lNumParticleRenderers; i++) {
 			if (mParticleRenderers.get(i).isAssigned())
 				mParticleRenderers.get(i).draw(pCore);
-
 		}
-
 	}
 
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
+
+	public int getNewRendererId() {
+		return RENDERER_ID++;
+	}
 
 	public void maintainParticleSystemRenderer(ParticleSystemInstance pPSInstance) {
 		if (pPSInstance.rendererId() != ParticleSystemInstance.NO_RENDERER_ASSIGNED)
@@ -147,11 +148,4 @@ public class ParticleFrameworkRenderer extends BaseRenderer {
 		// TODO: Before returning null, we need to check if it is possible to expand the PARTICLE_SYSTEM_RENDERER pool.
 		return null;
 	}
-
-	@Override
-	public boolean isInitialized() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
 }

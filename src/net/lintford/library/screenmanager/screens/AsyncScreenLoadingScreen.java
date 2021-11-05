@@ -18,18 +18,11 @@ public abstract class AsyncScreenLoadingScreen extends Screen {
 	public class ScreenManagerScreenLoader extends Thread {
 
 		// --------------------------------------
-		// Variables
-		// --------------------------------------
-
-		private long mOffscreenBufferId;
-
-		// --------------------------------------
 		// Constructor
 		// --------------------------------------
 
-		public ScreenManagerScreenLoader(long pOffscreenBufferId) {
+		public ScreenManagerScreenLoader() {
 			super("Background Content Loader");
-			mOffscreenBufferId = pOffscreenBufferId;
 		}
 
 		// --------------------------------------
@@ -37,8 +30,7 @@ public abstract class AsyncScreenLoadingScreen extends Screen {
 		// --------------------------------------
 
 		public void run() {
-			mDisplayManager.makeContextCurrent(mOffscreenBufferId);
-			mDisplayManager.createGlCompatiblities();
+			mDisplayManager.makeOffscreenContextCurrentOnThread();
 
 			// And then continue loading on the main context
 			int lCount = screensToLoad.length;
@@ -49,8 +41,8 @@ public abstract class AsyncScreenLoadingScreen extends Screen {
 					lScreen.initialize();
 				}
 
-				if (lScreen != null && !lScreen.isLoaded()) {
-					lScreen.loadGLContent(mScreenManager.resources());
+				if (lScreen != null && !lScreen.isResourcesLoaded()) {
+					lScreen.loadResources(mScreenManager.resources());
 				}
 			}
 
@@ -74,7 +66,6 @@ public abstract class AsyncScreenLoadingScreen extends Screen {
 	protected Screen[] screensToLoad;
 	private final DisplayManager mDisplayManager;
 	protected boolean mActivateLoadedScreens;
-	private long mOffscreenBufferIndex;
 
 	// --------------------------------------
 	// Properties
@@ -107,13 +98,12 @@ public abstract class AsyncScreenLoadingScreen extends Screen {
 
 		mIsPopup = true;
 
-		mOffscreenBufferIndex = -1;
 		loadingThreadStarted = false;
 	}
 
 	@Override
-	public void loadGLContent(ResourceManager pResourceManager) {
-		super.loadGLContent(pResourceManager);
+	public void loadResources(ResourceManager pResourceManager) {
+		super.loadResources(pResourceManager);
 
 		mCoreSpritesheet = pResourceManager.spriteSheetManager().coreSpritesheet();
 	}
@@ -130,16 +120,12 @@ public abstract class AsyncScreenLoadingScreen extends Screen {
 			if (hasLoadingStarted() == false) {
 				loadingThreadStarted = true;
 
-				mOffscreenBufferIndex = mDisplayManager.createSharedContext();
-				mBackgroundThread = new ScreenManagerScreenLoader(mOffscreenBufferIndex);
+				mBackgroundThread = new ScreenManagerScreenLoader();
 
-				Debug.debugManager().logger().i("ScreenManager", "Starting background thread");
+				Debug.debugManager().logger().i(getClass().getSimpleName(), "Starting background thread");
 				mBackgroundThread.start();
 
-			} else if (mOffscreenBufferIndex > 0 && hasLoadingFinished()) {
-				mOffscreenBufferIndex = -1;
-				mDisplayManager.destroySharedContext();
-
+			} else if (!mActivateLoadedScreens && hasLoadingFinished()) {
 				onAfterAssetsLoaded();
 
 			} else {

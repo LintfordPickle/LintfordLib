@@ -83,11 +83,10 @@ public class AudioOptionsScreen extends MenuScreen {
 	// --------------------------------------
 
 	@Override
-	public void loadGLContent(ResourceManager pResourceManager) {
-		super.loadGLContent(pResourceManager);
+	public void loadResources(ResourceManager pResourceManager) {
+		super.loadResources(pResourceManager);
 
 		mAudioManager = pResourceManager.audioManager();
-
 	}
 
 	// --------------------------------------
@@ -252,5 +251,4 @@ public class AudioOptionsScreen extends MenuScreen {
 		}
 
 	}
-
 }

@@ -124,13 +124,12 @@ public class SpriteSheetDefinition {
 	// Core-Methods
 	// --------------------------------------
 
-	public void loadGLContent(ResourceManager pResourceManager) {
-		loadGLContent(pResourceManager, mEntityGroupID);
-
+	public void loadResources(ResourceManager pResourceManager) {
+		loadResources(pResourceManager, mEntityGroupID);
 	}
 
 	/** Loads the associated texture. */
-	public void loadGLContent(ResourceManager pResourceManager, int pEntityGroupID) {
+	public void loadResources(ResourceManager pResourceManager, int pEntityGroupID) {
 		if (textureName == null || textureName.length() == 0) {
 			System.err.println("SpriteSheet texture name and filename cannot be null!");
 			return;
@@ -190,11 +189,10 @@ public class SpriteSheetDefinition {
 	}
 
 	/** unloads the GL Content created by this SpriteSheet. */
-	public void unloadGLContent() {
+	public void unloadResources() {
 		texture = null;
 		textureWidth = -1;
 		textureHeight = -1;
-
 	}
 
 	// --------------------------------------

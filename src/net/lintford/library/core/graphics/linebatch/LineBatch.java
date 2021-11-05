@@ -43,7 +43,7 @@ public class LineBatch {
 	private Matrix4f mModelMatrix;
 	private FloatBuffer mBuffer;
 	private boolean mIsDrawing;
-	private boolean mIsLoaded;
+	private boolean mResourcesLoaded;
 	private int mGLLineType;
 	private float mGLLineWidth;
 	private boolean mAntiAliasing;
@@ -61,6 +61,10 @@ public class LineBatch {
 	}
 
 	public void lineWidth(float pNewWidth) {
+		if (pNewWidth < 1.f)
+			pNewWidth = 1.f;
+		if (pNewWidth > 10.f)
+			pNewWidth = 10.f;
 		mGLLineWidth = pNewWidth;
 	}
 
@@ -102,62 +106,76 @@ public class LineBatch {
 
 		a = r = g = b = 1f;
 
+		mGLLineWidth = 2.f;
 		mModelMatrix = new Matrix4f();
-		mIsLoaded = false;
+		mResourcesLoaded = false;
 	}
 
 	// --------------------------------------
 	// Core-Methods
 	// --------------------------------------
 
-	public void loadGLContent(ResourceManager pResourceManager) {
-		if (mIsLoaded)
+	public void loadResources(ResourceManager pResourceManager) {
+		if (mResourcesLoaded)
 			return;
 
-		mShader.loadGLContent(pResourceManager);
+		mShader.loadResources(pResourceManager);
 
-		if (mVaoId == -1)
-			mVaoId = GL30.glGenVertexArrays();
-
-		if (mVboId == -1)
+		if (mVboId == -1) {
 			mVboId = GL15.glGenBuffers();
+			Debug.debugManager().logger().v("OpenGL", "LineBatch: VboId = " + mVboId);
+		}
 
 		mBuffer = MemoryUtil.memAllocFloat(MAX_LINES * NUM_VERTS_PER_LINE * VertexDataStructurePC.stride);
 
-		mIsLoaded = true;
-
+		mResourcesLoaded = true;
 	}
 
-	public void unloadGLContent() {
-		if (!mIsLoaded)
+	public void unloadResources() {
+		if (!mResourcesLoaded)
 			return;
 
-		mShader.unloadGLContent();
+		mShader.unloadResources();
 
-		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
-
-		if (mVboId > -1)
+		if (mVboId > -1) {
 			GL15.glDeleteBuffers(mVboId);
+			Debug.debugManager().logger().v("OpenGL", "LineBatch: Unloading VboId = " + mVboId);
+			mVboId = -1;
+		}
 
-		if (mVaoId > -1)
+		if (mVaoId > -1) {
 			GL30.glDeleteVertexArrays(mVaoId);
-
-		mVaoId = -1;
-		mVboId = -1;
+			Debug.debugManager().logger().v("OpenGL", "LineBatch: Unloading VaoId = " + mVaoId);
+			mVaoId = -1;
+		}
 
 		if (mBuffer != null) {
 			mBuffer.clear();
 			MemoryUtil.memFree(mBuffer);
-
+			mBuffer = null;
 		}
 
-		mIsLoaded = false;
-
+		mResourcesLoaded = false;
 	}
 
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
+
+	private void initializeGlContent() {
+		if (mVaoId == -1) {
+			mVaoId = GL30.glGenVertexArrays();
+
+			GL30.glBindVertexArray(mVaoId);
+			GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, mVboId);
+
+			GL20.glEnableVertexAttribArray(0);
+			GL20.glEnableVertexAttribArray(1);
+
+			GL20.glVertexAttribPointer(0, VertexDataStructurePC.positionElementCount, GL11.GL_FLOAT, false, VertexDataStructurePC.stride, VertexDataStructurePC.positionByteOffset);
+			GL20.glVertexAttribPointer(1, VertexDataStructurePC.colorElementCount, GL11.GL_FLOAT, false, VertexDataStructurePC.stride, VertexDataStructurePC.colorByteOffset);
+		}
+	}
 
 	public void begin(ICamera pCamera) {
 		if (pCamera == null)
@@ -197,7 +215,6 @@ public class LineBatch {
 
 	}
 
-	// FIXME: There is something wrong with the origin offsets
 	public void drawRect(Rectangle pRect, float pOX, float pOY, float pScale, float pZ, float pR, float pG, float pB) {
 		if (!mIsDrawing)
 			return;
@@ -334,11 +351,10 @@ public class LineBatch {
 
 		mIsDrawing = false;
 		flush();
-
 	}
 
 	private void flush() {
-		if (!mIsLoaded)
+		if (!mResourcesLoaded)
 			return;
 
 		if (mVertexCount == 0)
@@ -346,16 +362,12 @@ public class LineBatch {
 
 		mBuffer.flip();
 
+		initializeGlContent();
+
 		GL30.glBindVertexArray(mVaoId);
 
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, mVboId);
 		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, mBuffer, GL15.GL_DYNAMIC_DRAW);
-
-		GL20.glVertexAttribPointer(0, VertexDataStructurePC.positionElementCount, GL11.GL_FLOAT, false, VertexDataStructurePC.stride, VertexDataStructurePC.positionByteOffset);
-		GL20.glVertexAttribPointer(1, VertexDataStructurePC.colorElementCount, GL11.GL_FLOAT, false, VertexDataStructurePC.stride, VertexDataStructurePC.colorByteOffset);
-
-		GL20.glEnableVertexAttribArray(0);
-		GL20.glEnableVertexAttribArray(1);
 
 		mShader.projectionMatrix(mCamera.projection());
 		mShader.viewMatrix(mCamera.view());
@@ -364,10 +376,8 @@ public class LineBatch {
 		mShader.bind();
 
 		{
-
 			Debug.debugManager().stats().incTag(DebugStats.TAG_ID_DRAWCALLS);
 			Debug.debugManager().stats().incTag(DebugStats.TAG_ID_VERTS, mVertexCount);
-
 		}
 
 		if (mAntiAliasing) {
@@ -378,7 +388,6 @@ public class LineBatch {
 
 		GL11.glLineWidth(mGLLineWidth);
 		GL11.glDrawArrays(mGLLineType, 0, mVertexCount);
-
 		GL30.glBindVertexArray(0);
 
 		mShader.unbind();
@@ -386,7 +395,6 @@ public class LineBatch {
 		mBuffer.clear();
 
 		mVertexCount = 0;
-
 	}
 
 	public void changeColorNormalized(float pR, float pG, float pB, float pA) {
@@ -396,5 +404,4 @@ public class LineBatch {
 		a = pA;
 
 	}
-
 }

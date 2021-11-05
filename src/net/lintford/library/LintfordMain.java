@@ -82,7 +82,7 @@ public class LintfordMain extends LintfordCore {
 		final var lDstHeight = lStretchLogoToFit ? mHUD.getHeight() : lSrcHeight;
 
 		final var lTextureBatch = new TextureBatchPCT();
-		lTextureBatch.loadGLContent(mResourceManager);
+		lTextureBatch.loadResources(mResourceManager);
 		lTextureBatch.begin(mHUD);
 		lTextureBatch.draw(lTexture, 0, 0, lSrcWidth, lSrcHeight, -lDstWidth * .5f, -lDstHeight * .5f, lDstWidth, lDstHeight, -0.1f, ColorConstants.WHITE);
 		lTextureBatch.end();

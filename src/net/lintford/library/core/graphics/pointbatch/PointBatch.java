@@ -22,7 +22,7 @@ public class PointBatch {
 	// Constants
 	// --------------------------------------
 
-	public static final int MAX_POINTS = 256;
+	public static final int MAX_POINTS = 16384;
 	public static final int NUM_VERTS_PER_POINT = 1;
 
 	private static final String VERT_FILENAME = "/res/shaders/shader_basic_pc.vert";
@@ -72,54 +72,66 @@ public class PointBatch {
 	// Core-Methods
 	// --------------------------------------
 
-	public void loadGLContent(ResourceManager pResourceManager) {
+	public void loadResources(ResourceManager pResourceManager) {
 		if (mIsLoaded)
 			return;
 
-		mShader.loadGLContent(pResourceManager);
+		mShader.loadResources(pResourceManager);
 
-		if (mVaoId == -1)
-			mVaoId = GL30.glGenVertexArrays();
-
-		if (mVboId == -1)
+		if (mVboId == -1) {
 			mVboId = GL15.glGenBuffers();
+			Debug.debugManager().logger().v("OpenGL", "PointBatch: VboId = " + mVboId);
+		}
 
 		mBuffer = MemoryUtil.memAllocFloat(MAX_POINTS * NUM_VERTS_PER_POINT * VertexDataStructurePC.stride);
 
 		mIsLoaded = true;
-
 	}
 
-	public void unloadGLContent() {
+	public void unloadResources() {
 		if (!mIsLoaded)
 			return;
 
-		mShader.unloadGLContent();
+		mShader.unloadResources();
 
-		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
-
-		if (mVboId > -1)
-			GL15.glDeleteBuffers(mVboId);
-
-		if (mVaoId > -1)
+		if (mVaoId > -1) {
 			GL30.glDeleteVertexArrays(mVaoId);
+			Debug.debugManager().logger().v("OpenGL", "PointBatch: Unloading VboId = " + mVboId);
+			mVaoId = -1;
+		}
 
-		mVaoId = -1;
-		mVboId = -1;
+		if (mVboId > -1) {
+			GL15.glDeleteBuffers(mVboId);
+			Debug.debugManager().logger().v("OpenGL", "PointBatch: Unloading VboId = " + mVboId);
+			mVboId = -1;
+		}
 
 		if (mBuffer != null) {
 			mBuffer.clear();
 			MemoryUtil.memFree(mBuffer);
-
 		}
 
 		mIsLoaded = false;
-
 	}
 
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
+
+	private void initializeGlContent() {
+		if (mVaoId == -1) {
+			mVaoId = GL30.glGenVertexArrays();
+
+			GL30.glBindVertexArray(mVaoId);
+			GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, mVboId);
+
+			GL20.glEnableVertexAttribArray(0);
+			GL20.glEnableVertexAttribArray(1);
+
+			GL20.glVertexAttribPointer(0, VertexDataStructurePC.positionElementCount, GL11.GL_FLOAT, false, VertexDataStructurePC.stride, VertexDataStructurePC.positionByteOffset);
+			GL20.glVertexAttribPointer(1, VertexDataStructurePC.colorElementCount, GL11.GL_FLOAT, false, VertexDataStructurePC.stride, VertexDataStructurePC.colorByteOffset);
+		}
+	}
 
 	public void begin(ICamera pCamera) {
 		if (pCamera == null)
@@ -183,16 +195,12 @@ public class PointBatch {
 
 		mBuffer.flip();
 
+		initializeGlContent();
+
 		GL30.glBindVertexArray(mVaoId);
 
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, mVboId);
 		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, mBuffer, GL15.GL_DYNAMIC_DRAW);
-
-		GL20.glVertexAttribPointer(0, VertexDataStructurePC.positionElementCount, GL11.GL_FLOAT, false, VertexDataStructurePC.stride, VertexDataStructurePC.positionByteOffset);
-		GL20.glVertexAttribPointer(1, VertexDataStructurePC.colorElementCount, GL11.GL_FLOAT, false, VertexDataStructurePC.stride, VertexDataStructurePC.colorByteOffset);
-
-		GL20.glEnableVertexAttribArray(0);
-		GL20.glEnableVertexAttribArray(1);
 
 		mShader.projectionMatrix(mCamera.projection());
 		mShader.viewMatrix(mCamera.view());
@@ -204,7 +212,7 @@ public class PointBatch {
 			Debug.debugManager().stats().incTag(DebugStats.TAG_ID_DRAWCALLS);
 			Debug.debugManager().stats().incTag(DebugStats.TAG_ID_VERTS, mVertexCount);
 		}
-		
+
 		GL11.glDrawArrays(GL11.GL_POINTS, 0, mVertexCount);
 
 		GL30.glBindVertexArray(0);
@@ -216,5 +224,4 @@ public class PointBatch {
 		mVertexCount = 0;
 
 	}
-
 }

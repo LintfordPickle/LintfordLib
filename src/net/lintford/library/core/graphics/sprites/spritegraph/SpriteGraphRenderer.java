@@ -50,7 +50,7 @@ public class SpriteGraphRenderer extends SpriteBatch {
 
 			if (lSpriteGraphNodeInstance.attachedItemInstance != null) {
 				var lAttachmentColor = pColor;
-				if(pColor == null) {
+				if (pColor == null) {
 					lAttachmentColor = ColorConstants.getColor(lSpriteGraphNodeInstance.attachedItemInstance.getColorTint());
 				}
 				renderSpriteGraphNodeInstance(pCore, pSpriteGraphInstance, lSpriteGraphNodeInstance, pColor == null ? lAttachmentColor : pColor);
@@ -114,5 +114,4 @@ public class SpriteGraphRenderer extends SpriteBatch {
 		}
 
 	}
-
 }

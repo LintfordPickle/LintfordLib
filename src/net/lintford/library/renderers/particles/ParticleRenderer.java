@@ -24,7 +24,7 @@ public class ParticleRenderer {
 	private Texture mTexture;
 	private int mParticleRendererId;
 	private int mEntityGroupId;
-	private boolean mIsLoaded;
+	private boolean mResourcesLoaded;
 	private boolean mIsParticleLoaded;
 	private boolean mIsAssigned;
 
@@ -41,7 +41,7 @@ public class ParticleRenderer {
 	}
 
 	public boolean isLoaded() {
-		return mIsLoaded;
+		return mResourcesLoaded;
 	}
 
 	/** Returns true if this {@link ParticleRenderer} has been assigned to a {@link ParticleController}, or false otherwise. */
@@ -70,22 +70,22 @@ public class ParticleRenderer {
 
 	}
 
-	public void loadGLContent(ResourceManager pResourceManager) {
+	public void loadResources(ResourceManager pResourceManager) {
 		mResourceManager = pResourceManager;
-		mTextureBatch.loadGLContent(pResourceManager);
+		mTextureBatch.loadResources(pResourceManager);
 
-		mIsLoaded = true;
-
+		mResourcesLoaded = true;
 	}
 
-	public void unloadGLContent() {
-		mTextureBatch.unloadGLContent();
-		mIsLoaded = false;
+	public void unloadResources() {
+		mTextureBatch.unloadResources();
+		mResourceManager = null;
 
+		mResourcesLoaded = false;
 	}
 
 	public void draw(LintfordCore pCore) {
-		if (!mIsLoaded || !mIsParticleLoaded || !mIsAssigned)
+		if (!mResourcesLoaded || !mIsParticleLoaded || !mIsAssigned)
 			return;
 
 		final List<Particle> lParticleSystem = mParticleSystem.particles();
@@ -102,8 +102,8 @@ public class ParticleRenderer {
 			final float lWidthScaled = lParticleInst.width * lParticleInst.scale;
 			final float lHeightScaled = lParticleInst.height * lParticleInst.scale;
 
-			mTextureBatch.drawAroundCenter(mTexture, lParticleInst.sx, lParticleInst.sy, lParticleInst.sw, lParticleInst.sh, lParticleInst.worldPositionX, lParticleInst.worldPositionY, lWidthScaled, lHeightScaled, -0.2f,
-					lParticleInst.rotationInRadians, lParticleInst.rox, lParticleInst.roy, lParticleInst.scale, lParticleInst.color);
+			mTextureBatch.drawAroundCenter(mTexture, lParticleInst.sx, lParticleInst.sy, lParticleInst.sw, lParticleInst.sh, lParticleInst.worldPositionX, lParticleInst.worldPositionY, lWidthScaled, lHeightScaled, -0.2f, lParticleInst.rotationInRadians,
+					lParticleInst.rox, lParticleInst.roy, lParticleInst.scale, lParticleInst.color);
 
 		}
 

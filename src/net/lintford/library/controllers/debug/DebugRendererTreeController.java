@@ -23,7 +23,7 @@ public class DebugRendererTreeController extends BaseController {
 	// --------------------------------------
 
 	protected RendererManager mRendererManager;
-	protected List<BaseRendererWidget> mDebugTreeComponents;
+	protected final List<BaseRendererWidget> mDebugTreeComponents;
 	protected int mCountAtLastUpdate = -1;
 
 	// --------------------------------------
@@ -52,6 +52,8 @@ public class DebugRendererTreeController extends BaseController {
 	public void trackRendererManager(RendererManager pRendererManager) {
 		mRendererManager = pRendererManager;
 
+		unload();
+
 		if (mRendererManager != null && mRendererManager.equals(pRendererManager)) {
 			// TODO: Unload current RendererManager ...
 
@@ -66,19 +68,12 @@ public class DebugRendererTreeController extends BaseController {
 
 		} else {
 			clearRendererWidgetList();
-
 		}
-
 	}
 
 	@Override
 	public void unload() {
-		if (mDebugTreeComponents != null) {
-			mDebugTreeComponents.clear();
-			mDebugTreeComponents = null;
-
-		}
-
+		mDebugTreeComponents.clear();
 	}
 
 	@Override
@@ -126,9 +121,7 @@ public class DebugRendererTreeController extends BaseController {
 				addBaseRendererToDebugTree(lRenderer, lPositionCounter, 0);
 				lPositionCounter++;
 			}
-
 		}
-
 	}
 
 	private void maintainWindowRendererWidgetList(final List<UiWindow> pWindowRenderers) {
@@ -145,9 +138,7 @@ public class DebugRendererTreeController extends BaseController {
 				addBaseRendererToDebugTree(lRenderer, lPositionCounter, 0);
 				lPositionCounter++;
 			}
-
 		}
-
 	}
 
 	private void clearRendererWidgetList() {

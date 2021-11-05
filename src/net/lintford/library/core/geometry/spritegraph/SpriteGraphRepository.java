@@ -47,9 +47,9 @@ public class SpriteGraphRepository extends EntityGroupManager {
 		@Override
 		public void loadDefinitionsFromFolderWatcher(EntityLocationProvider pEntityLocationProvider) {
 			// TODO Auto-generated method stub
-			
+
 		}
-		
+
 		@Override
 		public void loadDefinitionsFromMetaFile(String pMetaFileLocation) {
 			if (pMetaFileLocation == null || pMetaFileLocation.length() == 0) {
@@ -198,12 +198,11 @@ public class SpriteGraphRepository extends EntityGroupManager {
 	// Core-Methods
 	// --------------------------------------
 
-	public void loadGLContent(ResourceManager pResourceManager) {
+	public void loadResources(ResourceManager pResourceManager) {
 		mResourceManager = pResourceManager;
-
 	}
 
-	public void unloadGLContent() {
+	public void unloadResources() {
 
 	}
 

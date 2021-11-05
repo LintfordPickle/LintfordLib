@@ -67,8 +67,8 @@ public class MenuToggleEntry extends MenuEntry {
 	// --------------------------------------
 
 	@Override
-	public void unloadGLContent() {
-		super.unloadGLContent();
+	public void unloadResources() {
+		super.unloadResources();
 
 		mCoreSpritesheet = null;
 

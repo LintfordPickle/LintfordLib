@@ -36,33 +36,29 @@ public class ShaderManager {
 	public ShaderManager() {
 		mShaderMap = new HashMap<>();
 
+		mSystemShader = new ShaderSubPixel(SYSTEM_SHADER_PCT_NAME, SYSTEM_VERT_FILENAME, SYSTEM_FRAG_FILENAME);
 	}
 
 	// --------------------------------------
 	// Core-Methods
 	// --------------------------------------
 
-	public void loadGLContent(ResourceManager pResourceManager) {
+	public void loadResources(ResourceManager pResourceManager) {
 		mResourceManager = pResourceManager;
 
-		mSystemShader = new ShaderSubPixel(SYSTEM_SHADER_PCT_NAME, SYSTEM_VERT_FILENAME, SYSTEM_FRAG_FILENAME);
-		mSystemShader.loadGLContent(mResourceManager);
+		mSystemShader.loadResources(mResourceManager);
 
 		for (final var lShader : mShaderMap.values()) {
-			lShader.loadGLContent(pResourceManager);
-
+			lShader.loadResources(pResourceManager);
 		}
-
 	}
 
-	public void unloadGLContent() {
+	public void unloadResources() {
 		for (final var lShader : mShaderMap.entrySet()) {
-			lShader.getValue().unloadGLContent();
-
+			lShader.getValue().unloadResources();
 		}
 
 		mShaderMap.clear();
-
 	}
 
 	// --------------------------------------
@@ -91,7 +87,7 @@ public class ShaderManager {
 
 			Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("unloading texture: %s from texture group %d\n", lShaderName, pEntityGroupID));
 
-			pShader.unloadGLContent();
+			pShader.unloadResources();
 
 			mShaderMap.remove(lShaderName);
 			pShader = null;

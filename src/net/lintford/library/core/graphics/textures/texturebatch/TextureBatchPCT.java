@@ -23,18 +23,14 @@ import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.graphics.vertices.VertexDataStructurePCT;
 import net.lintford.library.core.maths.Matrix4f;
 import net.lintford.library.core.maths.Vector2f;
-import net.lintford.library.core.maths.Vector4f;
 
-// TODO: Non of the Batch rendering classes are using indices I notice...
-// TODO: The SpriteBatch doesn't actually allow to cache buffers between frames if there is no change (no vertex + transformations).
-// TODO: Add Batch types (call, texture, Z-Order).
 public class TextureBatchPCT {
 
 	// --------------------------------------
 	// Constants
 	// --------------------------------------
 
-	protected static final int MAX_SPRITES = 2048;
+	protected static final int MAX_SPRITES = 16384;
 
 	protected static final String VERT_FILENAME = "/res/shaders/shader_basic_pct.vert";
 	protected static final String FRAG_FILENAME = "/res/shaders/shader_basic_pct.frag";
@@ -45,7 +41,6 @@ public class TextureBatchPCT {
 	// Variables
 	// --------------------------------------
 
-	protected Vector4f mTempVector;
 	protected ICamera mCamera;
 	protected ShaderMVP_PCT mShader;
 	protected ShaderMVP_PCT mCustomShader;
@@ -59,7 +54,7 @@ public class TextureBatchPCT {
 	private int mVertexCount = 0;
 	protected int mCurrentTexID;
 	protected int mCurNumSprites;
-	private boolean mIsLoaded;
+	private boolean mResourcesLoaded;
 	protected boolean mIsDrawing;
 	protected boolean mUseCheckerPattern;
 	protected ResourceManager mResourceManager;
@@ -81,7 +76,7 @@ public class TextureBatchPCT {
 	}
 
 	public boolean isLoaded() {
-		return mIsLoaded;
+		return mResourcesLoaded;
 	}
 
 	public void modelMatrix(Matrix4f pNewMatrix) {
@@ -112,69 +107,84 @@ public class TextureBatchPCT {
 		};
 
 		mModelMatrix = new Matrix4f();
-		mTempVector = new Vector4f();
 
 		mBlendEnabled = true;
 		mBlendFuncSrcFactor = GL11.GL_SRC_ALPHA;
 		mBlendFuncDstFactor = GL11.GL_ONE_MINUS_SRC_ALPHA;
-
 	}
 
 	// --------------------------------------
 	// Core-Methods
 	// --------------------------------------
 
-	public void loadGLContent(ResourceManager pResourceManager) {
-		if (mIsLoaded)
+	public void loadResources(ResourceManager pResourceManager) {
+		if (mResourcesLoaded)
 			return;
 
 		mResourceManager = pResourceManager;
 
-		mShader.loadGLContent(pResourceManager);
+		mShader.loadResources(pResourceManager);
 
-		if (mVaoId == -1)
-			mVaoId = GL30.glGenVertexArrays();
-
-		if (mVboId == -1)
+		if (mVboId == -1) {
 			mVboId = GL15.glGenBuffers();
+		}
 
 		mBuffer = MemoryUtil.memAllocFloat(MAX_SPRITES * NUM_VERTS_PER_SPRITE * VertexDataStructurePCT.stride);
 
-		mIsLoaded = true;
+		mResourcesLoaded = true;
 
 		Debug.debugManager().stats().incTag(DebugStats.TAG_ID_BATCH_OBJECTS);
-
 	}
 
-	public void unloadGLContent() {
-		if (!mIsLoaded)
+	public void unloadResources() {
+		if (!mResourcesLoaded)
 			return;
 
-		mShader.unloadGLContent();
+		mShader.unloadResources();
 
-		if (mVboId > -1)
+		if (mVboId > -1) {
 			GL15.glDeleteBuffers(mVboId);
+			Debug.debugManager().logger().v("OpenGL", "TextureBatchPCT: Unloading VboId = " + mVboId + " (" + Thread.currentThread().getName() + ")");
+			mVboId = -1;
+		}
 
-		if (mVaoId > -1)
+		if (mVaoId > -1) {
 			GL30.glDeleteVertexArrays(mVaoId);
-
-		mVboId = -1;
-		mVaoId = -1;
+			Debug.debugManager().logger().v("OpenGL", "TextureBatchPCT: Unloading VaoId = " + mVaoId + " (" + Thread.currentThread().getName() + ")");
+			mVaoId = -1;
+		}
 
 		if (mBuffer != null) {
 			mBuffer.clear();
 			MemoryUtil.memFree(mBuffer);
-
+			mBuffer = null;
 		}
 
-		mIsLoaded = false;
-		Debug.debugManager().stats().decTag(DebugStats.TAG_ID_BATCH_OBJECTS);
+		mResourcesLoaded = false;
 
+		Debug.debugManager().stats().decTag(DebugStats.TAG_ID_BATCH_OBJECTS);
 	}
 
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
+
+	private void initializeGlContent() {
+		if (mVaoId == -1) {
+			mVaoId = GL30.glGenVertexArrays();
+
+			GL30.glBindVertexArray(mVaoId);
+			GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, mVboId);
+
+			GL20.glEnableVertexAttribArray(0);
+			GL20.glEnableVertexAttribArray(1);
+			GL20.glEnableVertexAttribArray(2);
+
+			GL20.glVertexAttribPointer(0, VertexDataStructurePCT.positionElementCount, GL11.GL_FLOAT, false, VertexDataStructurePCT.stride, VertexDataStructurePCT.positionByteOffset);
+			GL20.glVertexAttribPointer(1, VertexDataStructurePCT.colorElementCount, GL11.GL_FLOAT, false, VertexDataStructurePCT.stride, VertexDataStructurePCT.colorByteOffset);
+			GL20.glVertexAttribPointer(2, VertexDataStructurePCT.textureElementCount, GL11.GL_FLOAT, false, VertexDataStructurePCT.stride, VertexDataStructurePCT.textureByteOffset);
+		}
+	}
 
 	public void begin(ICamera pCamera, ShaderMVP_PCT pCustomShader) {
 		if (pCamera == null)
@@ -221,7 +231,7 @@ public class TextureBatchPCT {
 	}
 
 	public void draw(Texture pTexture, float pSX, float pSY, float pSW, float pSH, Rectangle pDestRect, float pZ, Color pTint) {
-		if (!mIsLoaded)
+		if (!mResourcesLoaded)
 			return;
 
 		if (!mIsDrawing)
@@ -367,7 +377,7 @@ public class TextureBatchPCT {
 	}
 
 	public void drawAroundCenter(Texture pTexture, float pSX, float pSY, float pSW, float pSH, float pDX, float pDY, float pDW, float pDH, float pZ, float pRot, float pROX, float pROY, float pScale, Color pTint) {
-		if (!mIsLoaded)
+		if (!mResourcesLoaded)
 			return;
 
 		if (!mIsDrawing)
@@ -447,7 +457,7 @@ public class TextureBatchPCT {
 	}
 
 	public void draw(Texture pTexture, float pSX, float pSY, float pSW, float pSH, Circle dstCircle, float pZ, Color pTint) {
-		if (!mIsLoaded)
+		if (!mResourcesLoaded)
 			return;
 
 		if (!mIsDrawing)
@@ -534,7 +544,6 @@ public class TextureBatchPCT {
 		mBuffer.put(v);
 
 		mVertexCount++;
-
 	}
 
 	public void end() {
@@ -547,7 +556,7 @@ public class TextureBatchPCT {
 	}
 
 	protected void flush() {
-		if (!mIsLoaded || !mIsDrawing)
+		if (!mResourcesLoaded || !mIsDrawing)
 			return;
 
 		if (mVertexCount == 0)
@@ -555,25 +564,17 @@ public class TextureBatchPCT {
 
 		mBuffer.flip();
 
+		initializeGlContent();
+
 		GL30.glBindVertexArray(mVaoId);
 
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, mVboId);
-		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, mBuffer, GL15.GL_STATIC_DRAW);
-
-		GL20.glVertexAttribPointer(0, VertexDataStructurePCT.positionElementCount, GL11.GL_FLOAT, false, VertexDataStructurePCT.stride, VertexDataStructurePCT.positionByteOffset);
-		GL20.glVertexAttribPointer(1, VertexDataStructurePCT.colorElementCount, GL11.GL_FLOAT, false, VertexDataStructurePCT.stride, VertexDataStructurePCT.colorByteOffset);
-		GL20.glVertexAttribPointer(2, VertexDataStructurePCT.textureElementCount, GL11.GL_FLOAT, false, VertexDataStructurePCT.stride, VertexDataStructurePCT.textureByteOffset);
-
-		GL20.glEnableVertexAttribArray(0);
-		GL20.glEnableVertexAttribArray(1);
-		GL20.glEnableVertexAttribArray(2);
+		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, mBuffer, GL15.GL_DYNAMIC_DRAW);
 
 		int_redraw();
 
 		mBuffer.clear();
 
-		// FIXME: This is fundamentally incorrect. Cannot reset vertex count here and maintain 'redraw' functionality - it should be possible to re-draw the buffers
-		// in subsequent frames without re-calling draw again (assuming nothing has changed in the frame).
 		mCurNumSprites = 0;
 		mVertexCount = 0;
 	}
@@ -582,10 +583,11 @@ public class TextureBatchPCT {
 		if (mVertexCount == 0)
 			return;
 
+		initializeGlContent();
+
 		GL30.glBindVertexArray(mVaoId);
 
 		int_redraw();
-
 	}
 
 	public void setGlBlendEnabled(boolean pBlendEnabled) {
@@ -630,8 +632,8 @@ public class TextureBatchPCT {
 		GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, mVertexCount);
 
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
+		GL30.glBindVertexArray(0);
 
 		mCustomShader.unbind();
 	}
-
 }

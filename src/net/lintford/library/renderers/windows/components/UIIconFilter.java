@@ -80,7 +80,7 @@ public class UIIconFilter extends Rectangle {
 
 	}
 
-	public void loadGLContent(ResourceManager pResourceManager) {
+	public void loadResources(ResourceManager pResourceManager) {
 
 	}
 

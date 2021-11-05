@@ -66,14 +66,14 @@ public class DebugParticleDrawer extends BaseRenderer {
 	}
 
 	@Override
-	public void loadGLContent(ResourceManager pResourceManager) {
-		super.loadGLContent(pResourceManager);
+	public void loadResources(ResourceManager pResourceManager) {
+		super.loadResources(pResourceManager);
 
 	}
 
 	@Override
-	public void unloadGLContent() {
-		super.unloadGLContent();
+	public void unloadResources() {
+		super.unloadResources();
 
 	}
 

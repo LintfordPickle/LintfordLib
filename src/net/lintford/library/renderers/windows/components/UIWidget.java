@@ -87,11 +87,11 @@ public abstract class UIWidget extends Rectangle implements IProcessMouseInput {
 
 	}
 
-	public void loadGLContent(final ResourceManager pResourceManager) {
+	public void loadResources(final ResourceManager pResourceManager) {
 
 	}
 
-	public void unloadGLContent() {
+	public void unloadResources() {
 
 	}
 

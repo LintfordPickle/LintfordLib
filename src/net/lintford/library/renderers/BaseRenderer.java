@@ -21,7 +21,7 @@ public abstract class BaseRenderer {
 	protected final String mRendererName;
 	protected boolean mIsActive;
 	protected boolean mIsManagedDraw;
-	protected boolean mIsLoaded;
+	protected boolean mResourcesLoaded;
 
 	/**
 	 * An entity group ID is assigned to all {@link BaseRenderer} instances. It allows you to programmatically unload batches of particular parts of the game when required (i.e. unload the game controllers when returning
@@ -60,7 +60,7 @@ public abstract class BaseRenderer {
 	}
 
 	public boolean isLoaded() {
-		return mIsLoaded;
+		return mResourcesLoaded;
 	}
 
 	public boolean isActive() {
@@ -115,15 +115,15 @@ public abstract class BaseRenderer {
 
 	public abstract void initialize(LintfordCore pCore);
 
-	public void loadGLContent(ResourceManager pResourceManager) {
+	public void loadResources(ResourceManager pResourceManager) {
 		Debug.debugManager().logger().i(TAG, "Loading GL Content (" + getClass().getSimpleName() + ")");
-		mIsLoaded = true;
+		mResourcesLoaded = true;
 
 	}
 
-	public void unloadGLContent() {
+	public void unloadResources() {
 		Debug.debugManager().logger().i(TAG, "Unloading GL Content: " + getClass().getSimpleName());
-		mIsLoaded = false;
+		mResourcesLoaded = false;
 	}
 
 	public boolean handleInput(LintfordCore pCore) {

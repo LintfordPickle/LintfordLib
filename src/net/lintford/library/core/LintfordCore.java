@@ -369,7 +369,7 @@ public abstract class LintfordCore {
 
 		onInitializeApp();
 
-		onLoadGLContent();
+		onLoadResources();
 
 		long lDiff = (long) (mShowLogoTimeInMilli - (System.currentTimeMillis() - mShowLogoTimer));
 		if (lDiff > 0) {
@@ -445,22 +445,22 @@ public abstract class LintfordCore {
 	/**
 	 * Called automatically before entering the main game loop. OpenGL content can be setup.
 	 */
-	protected void onLoadGLContent() {
+	protected void onLoadResources() {
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "Loading GL content");
 
 		onLoadBitmapFonts();
-		mResourceManager.loadGLContent();
+		mResourceManager.loadResources();
 
-		Debug.debugManager().loadGLContent(mResourceManager);
+		Debug.debugManager().loadResources(mResourceManager);
 	}
 
 	/**
 	 * Called automatically after exiting the main game loop. OpenGL resources should be released.
 	 */
-	protected void onUnloadGLContent() {
+	protected void onUnloadResources() {
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "Unloading GL content");
 
-		Debug.debugManager().unloadGLContent();
+		Debug.debugManager().unloadResources();
 
 		mResourceManager.unloadContent();
 
@@ -575,7 +575,9 @@ public abstract class LintfordCore {
 
 		}
 
-		onUnloadGLContent();
+		Debug.debugManager().logger().i(getClass().getSimpleName(), "Closing down");
+
+		onUnloadResources();
 
 		System.exit(0);
 

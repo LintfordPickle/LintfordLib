@@ -75,7 +75,6 @@ public class FafAnimationRenderer extends BaseRenderer implements AnimatedSprite
 			return;
 		}
 
-		// TODO: Add to engine
 		final var lSpriteBatch = rendererManager().uiSpriteBatch();
 		lSpriteBatch.begin(pCore.gameCamera());
 		final int lNumAnimations = animationUpdateList.size();
@@ -100,7 +99,6 @@ public class FafAnimationRenderer extends BaseRenderer implements AnimatedSprite
 
 	@Override
 	public void onStarted(SpriteInstance pSender) {
-		// TODO Auto-generated method stub
 
 	}
 

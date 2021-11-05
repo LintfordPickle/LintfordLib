@@ -33,16 +33,16 @@ public class ScreenManager {
 
 	private LintfordCore mLWJGLCore;
 
-	private List<Screen> mScreens;
-	private List<Screen> mScreensToUpdate;
-	private List<Screen> mScreensToAdd;
+	private final List<Screen> mScreens = new ArrayList<>();
+	private final List<Screen> mScreensToUpdate = new ArrayList<>();
+	private final List<Screen> mScreensToAdd = new ArrayList<>();
 
 	private ToolTip mToolTip;
 	private ResourceManager mResourceManager;
 	private AudioFireAndForgetManager mUISoundManager;
 	private ToastManager mToastManager;
 	private boolean mIsinitialized;
-	private boolean mIsLoaded;
+	private boolean mResourcesLoaded;
 	private int mScreenUIDCounter;
 	private UiStructureController mUiStructureController;
 	private IResizeListener mResizeListener;
@@ -92,14 +92,11 @@ public class ScreenManager {
 		mScreenUIDCounter = 100;
 
 		mToastManager = new ToastManager();
-		mScreens = new ArrayList<>();
-		mScreensToUpdate = new ArrayList<>();
-		mScreensToAdd = new ArrayList<>();
 
 		mToolTip = new ToolTip();
 
 		mIsinitialized = false;
-		mIsLoaded = false;
+		mResourcesLoaded = false;
 
 		ScreenManagerFonts.AddIfNotExists(FONT_MENU_TITLE_NAME, "/res/fonts/fontCoreText.json");
 		ScreenManagerFonts.AddIfNotExists(FONT_MENU_ENTRY_NAME, "/res/fonts/fontCoreText.json");
@@ -122,19 +119,19 @@ public class ScreenManager {
 		mIsinitialized = true;
 	}
 
-	public void loadGLContent(final ResourceManager pResourceManager) {
+	public void loadResources(final ResourceManager pResourceManager) {
 		mResourceManager = pResourceManager;
 
 		final int lScreenToAddCount = mScreensToAdd.size();
 		for (int i = 0; i < lScreenToAddCount; i++) {
-			mScreensToAdd.get(i).loadGLContent(pResourceManager);
+			mScreensToAdd.get(i).loadResources(pResourceManager);
 		}
 
 		mUISoundManager = new AudioFireAndForgetManager(pResourceManager.audioManager());
 		mUISoundManager.acquireAudioSources(2);
 
-		mToolTip.loadGLContent(pResourceManager);
-		mToastManager.loadGLContent(pResourceManager);
+		mToolTip.loadResources(pResourceManager);
+		mToastManager.loadResources(pResourceManager);
 
 		// Add a viewport listener so the screenmanager screens can react to changes in window size
 		mResizeListener = new IResizeListener() {
@@ -152,25 +149,22 @@ public class ScreenManager {
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "Finished loadingGLContent");
 		GLDebug.checkGLErrorsException(getClass().getSimpleName());
 
-		mIsLoaded = true;
+		mResourcesLoaded = true;
 	}
 
-	public void unloadGLContent() {
-		int lCount = mScreens.size();
-		for (int i = 0; i < lCount; i++) {
-
-			mScreens.get(i).unloadGLContent();
-
+	public void unloadResources() {
+		final int lScreenCount = mScreens.size();
+		for (int i = 0; i < lScreenCount; i++) {
+			mScreens.get(i).unloadResources();
 		}
 
-		mToolTip.unloadGLContent();
-		mToastManager.unloadGLContent();
+		mToolTip.unloadResources();
+		mToastManager.unloadResources();
 
-		Debug.debugManager().logger().i(getClass().getSimpleName(), "Finished ScreenManager.unloadGLContent");
+		Debug.debugManager().logger().i(getClass().getSimpleName(), "Finished ScreenManager.UnloadResources");
 		GLDebug.checkGLErrorsException(getClass().getSimpleName());
 
-		mIsLoaded = false;
-
+		mResourcesLoaded = false;
 	}
 
 	public void handleInput(LintfordCore pCore) {
@@ -235,7 +229,7 @@ public class ScreenManager {
 	}
 
 	public void update(LintfordCore pCore) {
-		if (!mIsinitialized || !mIsLoaded)
+		if (!mIsinitialized || !mResourcesLoaded)
 			return;
 
 		boolean lOtherScreenHasFocus = false;
@@ -280,7 +274,7 @@ public class ScreenManager {
 	}
 
 	public void draw(LintfordCore pCore) {
-		if (!mIsinitialized || !mIsLoaded)
+		if (!mIsinitialized || !mResourcesLoaded)
 			return;
 
 		mScreensToUpdate.clear();
@@ -297,9 +291,9 @@ public class ScreenManager {
 				continue;
 
 			lScreen.draw(pCore);
-		}
 
-		GLDebug.checkGLErrorsException(getClass().getSimpleName());
+			GLDebug.checkGLErrorsException(lScreen.getClass().getSimpleName());
+		}
 
 		mToastManager.draw(pCore);
 		mToolTip.draw(pCore);
@@ -322,15 +316,17 @@ public class ScreenManager {
 			}
 		}
 
-		if (!pScreen.isLoaded()) {
+		if (!pScreen.isResourcesLoaded()) {
 			pScreen.isExiting(false);
 
 			if (mIsinitialized && !pScreen.isinitialized()) {
 				pScreen.initialize();
 			}
 
-			if (mIsLoaded) {
-				pScreen.loadGLContent(mResourceManager);
+			if (mResourcesLoaded) {
+				pScreen.loadResources(mResourceManager);
+
+				GLDebug.checkGLErrorsException();
 			}
 		}
 
@@ -353,7 +349,7 @@ public class ScreenManager {
 
 	public void removeScreen(Screen pScreen) {
 		if (mIsinitialized) {
-			pScreen.unloadGLContent();
+			pScreen.unloadResources();
 
 		}
 
@@ -376,11 +372,6 @@ public class ScreenManager {
 
 	}
 
-	public void fadeBackBufferToBlack(float pAlpha) {
-		// TODO: Render a full screen black quad ...
-
-	}
-
 	public void exitGame() {
 		mLWJGLCore.closeApp();
 
@@ -398,14 +389,16 @@ public class ScreenManager {
 	public void createLoadingScreen(Screen pLoadingScreen) {
 		exitAllScreens();
 
+		Debug.debugManager().logger().v(getClass().getSimpleName(), "=== Loading Screen ===");
+
 		System.gc();
 
 		if (pLoadingScreen.isinitialized() == false) {
 			pLoadingScreen.initialize();
 		}
 
-		if (pLoadingScreen.isLoaded() == false) {
-			pLoadingScreen.loadGLContent(mResourceManager);
+		if (pLoadingScreen.isResourcesLoaded() == false) {
+			pLoadingScreen.loadResources(mResourceManager);
 		}
 
 		addScreen(pLoadingScreen);

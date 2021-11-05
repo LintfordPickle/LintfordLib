@@ -25,8 +25,6 @@ public abstract class BaseGameScreen extends Screen {
 	public BaseGameScreen(ScreenManager pScreenManager, RendererManager pRendererManager) {
 		super(pScreenManager, pRendererManager);
 
-		new GameRendererController(pScreenManager.core().controllerManager(), rendererManager, entityGroupID());
-
 		mSingletonScreen = true;
 	}
 
@@ -38,8 +36,9 @@ public abstract class BaseGameScreen extends Screen {
 	public void initialize() {
 		super.initialize();
 
-		mGameCamera = screenManager.core().setNewGameCamera(mGameCamera);
+		new GameRendererController(screenManager.core().controllerManager(), rendererManager, entityGroupID());
 
+		mGameCamera = screenManager.core().setNewGameCamera(mGameCamera);
 	}
 
 	// --------------------------------------
@@ -53,5 +52,4 @@ public abstract class BaseGameScreen extends Screen {
 		screenManager.core().removeGameCamera();
 
 	}
-
 }

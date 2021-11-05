@@ -177,8 +177,8 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	}
 
 	@Override
-	public void loadGLContent(ResourceManager pResourceManager) {
-		super.loadGLContent(pResourceManager);
+	public void loadResources(ResourceManager pResourceManager) {
+		super.loadResources(pResourceManager);
 
 		mMenuFont = pResourceManager.fontManager().getFontUnit(ScreenManager.FONT_MENU_ENTRY_NAME);
 		mMenuFontBold = pResourceManager.fontManager().getFontUnit(ScreenManager.FONT_MENU_BOLD_ENTRY_NAME);
@@ -186,37 +186,37 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 		final int lCount = mLayouts.size();
 		for (int i = 0; i < lCount; i++) {
-			mLayouts.get(i).loadGLContent(pResourceManager);
+			mLayouts.get(i).loadResources(pResourceManager);
 		}
 
 		int lFloatingCount = mFloatingEntries.size();
 		for (int i = 0; i < lFloatingCount; i++) {
 			MenuEntry lFloatingEntry = mFloatingEntries.get(i);
-			lFloatingEntry.loadGLContent(pResourceManager);
+			lFloatingEntry.loadResources(pResourceManager);
 
 		}
 
-		footerLayout().loadGLContent(pResourceManager);
+		footerLayout().loadResources(pResourceManager);
 	}
 
 	@Override
-	public void unloadGLContent() {
-		super.unloadGLContent();
+	public void unloadResources() {
+		super.unloadResources();
 
 		final int lCount = mLayouts.size();
 		for (int i = 0; i < lCount; i++) {
-			mLayouts.get(i).unloadGLContent();
+			mLayouts.get(i).unloadResources();
 
 		}
 
 		int lFloatingCount = mFloatingEntries.size();
 		for (int i = 0; i < lFloatingCount; i++) {
 			MenuEntry lFloatingEntry = mFloatingEntries.get(i);
-			lFloatingEntry.unloadGLContent();
+			lFloatingEntry.unloadResources();
 
 		}
 
-		footerLayout().unloadGLContent();
+		footerLayout().unloadResources();
 
 		mMenuFont = null;
 		mMenuHeaderFont = null;
@@ -225,7 +225,6 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 	@Override
 	public void handleInput(LintfordCore pCore) {
-		// TODO: Animations should be handled in another object
 		if (mAnimationTimer > 0 || mClickAction.isConsumed())
 			return; // don't handle input if 'animation' is playing
 

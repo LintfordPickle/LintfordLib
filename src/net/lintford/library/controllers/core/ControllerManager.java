@@ -213,41 +213,44 @@ public class ControllerManager {
 	}
 
 	public void removeController(BaseController pController, int pEntityGroupID) {
-		List<BaseController> lControllerList = controllers(pEntityGroupID);
+		Debug.debugManager().logger().i(getClass().getSimpleName(), "Removing Controller " + pController.controllerName() + " from id:" + pEntityGroupID);
+
+		final var lControllerList = controllers(pEntityGroupID);
 		if (lControllerList == null)
 			return;
 
 		if (lControllerList.contains(pController)) {
 			lControllerList.remove(pController);
-
 		}
 
-	}
-
-	public void removeAllControllers() {
-		Debug.debugManager().logger().i(getClass().getSimpleName(), "ControllerManager: Removing all controllers");
-
-		mControllers.clear();
-
+		pController.unload();
 	}
 
 	/** Unloads all {@link BaseController} instances registered to this {@link ControllerManager} which have the given group ID assigned to them. */
 	public void removeControllerGroup(final int pEntityGroupID) {
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "Removing ControllerGroup id:" + pEntityGroupID);
 
-		// Heap assignment
-		final List<BaseController> lControllerList = mControllers.get(pEntityGroupID);
+		final var lControllerList = mControllers.get(pEntityGroupID);
 		if (lControllerList == null)
 			return;
 
-		final int CONTROLLER_COUNT = lControllerList.size();
-		for (int i = 0; i < CONTROLLER_COUNT; i++) {
+		final int lControllerCount = lControllerList.size();
+		for (int i = 0; i < lControllerCount; i++) {
 			lControllerList.get(i).unload();
-
 		}
 
 		lControllerList.clear();
 		mControllers.remove(pEntityGroupID);
+	}
 
+	public void removeAllControllers() {
+		Debug.debugManager().logger().i(getClass().getSimpleName(), "ControllerManager: Removing all controllers");
+
+		for (var lControllerEntry : mControllers.entrySet()) {
+			final var lControllerGroupKey = lControllerEntry.getKey();
+			removeControllerGroup(lControllerGroupKey);
+		}
+
+		mControllers.clear();
 	}
 }

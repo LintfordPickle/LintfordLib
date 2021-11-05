@@ -45,15 +45,13 @@ public class PObjectRenderer {
 	// Core-Methods
 	// ---------------------------------------------
 
-	public void loadGLContent(ResourceManager pResourceManager) {
+	public void loadResources(ResourceManager pResourceManager) {
 		mResourceManager = pResourceManager;
-		mTextureBatch.loadGLContent(pResourceManager);
-
+		mTextureBatch.loadResources(pResourceManager);
 	}
 
-	public void unloadGLContent() {
-		mTextureBatch.unloadGLContent();
-
+	public void unloadResources() {
+		mTextureBatch.unloadResources();
 	}
 
 	public void handleInput(LintfordCore pCore) {
@@ -125,5 +123,4 @@ public class PObjectRenderer {
 		mTextureBatch.end();
 
 	}
-
 }

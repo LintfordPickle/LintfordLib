@@ -84,14 +84,6 @@ public class SpriteSheetManager {
 		loadSpriteSheetFromResource("/res/spritesheets/core/spritesheetCore.json", LintfordCore.CORE_ENTITY_GROUP_ID);
 	}
 
-	public void loadGLContent(ResourceManager pResourceManager) {
-
-	}
-
-	public void unloadGLContent() {
-
-	}
-
 	public SpriteSheetDefinition loadSpriteSheet(String pFilepath, int pEntityGroupID) {
 		if (pFilepath == null || pFilepath.length() == 0) {
 			Debug.debugManager().logger().v(getClass().getSimpleName(), "Error loading spritesheet. Pathname is null! ");
@@ -140,21 +132,21 @@ public class SpriteSheetManager {
 			// If the spritesheet already exists, then we need to update it's texture references (which may, by this point, have already been resolved)
 			if (lSpriteSheetGroup.containsKey(lSpriteSheet.spriteSheetName)) {
 				final var lOldSpritesheet = lSpriteSheetGroup.get(lSpriteSheet.spriteSheetName);
-				lOldSpritesheet.unloadGLContent();
+				lOldSpritesheet.unloadResources();
 				lOldSpritesheet.copyFrom(lSpriteSheet);
-				lOldSpritesheet.loadGLContent(mResourceManager);
-				
+				lOldSpritesheet.loadResources(mResourceManager);
+
 				return lOldSpritesheet;
 			} else {
 				lSpriteSheet.fileSizeOnLoad(lFile.length());
 				lSpriteSheet.spriteSheetFilename = lFile.getPath();
 				lSpriteSheet.reloadable(true);
-				lSpriteSheet.loadGLContent(mResourceManager, pEntityGroupID);
+				lSpriteSheet.loadResources(mResourceManager, pEntityGroupID);
 
 				lSpriteSheetGroup.put(lSpriteSheet.spriteSheetName, lSpriteSheet);
-				
+
 				return lSpriteSheet;
-				
+
 			}
 		} catch (JsonSyntaxException e) {
 			Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Failed to parse JSON SpriteSheet (Syntax): %s", lFile.getPath()));
@@ -200,7 +192,7 @@ public class SpriteSheetManager {
 			}
 
 			lSpriteSheet.reloadable(false);
-			lSpriteSheet.loadGLContent(mResourceManager, pEntityGroupID);
+			lSpriteSheet.loadResources(mResourceManager, pEntityGroupID);
 
 			lSpriteSheetGroup.put(lSpriteSheet.spriteSheetName, lSpriteSheet);
 
@@ -282,7 +274,7 @@ public class SpriteSheetManager {
 
 				lSpriteSheet.fileSizeOnLoad(lSpriteSheetFile.length());
 				lSpriteSheet.spriteSheetFilename = lSpriteSheetFile.getPath();
-				lSpriteSheet.loadGLContent(mResourceManager, pEntityGroupID);
+				lSpriteSheet.loadResources(mResourceManager, pEntityGroupID);
 
 				if (lSpriteSheet.animationFramesMap == null || lSpriteSheet.animationFramesMap.size() == 0) {
 					Debug.debugManager().logger().e(getClass().getSimpleName(), "Loaded SpriteSheetDefinition which has neither sprites nor frames defined within: " + lSpriteSheetFile.getPath());
@@ -335,9 +327,9 @@ public class SpriteSheetManager {
 						final String lSpriteSheetFileContents = new String(Files.readAllBytes(lSpriteSheetFile.toPath()));
 						final SpriteSheetDefinition lNewSpriteSheet = GSON.fromJson(lSpriteSheetFileContents, SpriteSheetDefinition.class);
 
-						lNewSpriteSheet.loadGLContent(mResourceManager);
+						lNewSpriteSheet.loadResources(mResourceManager);
 
-						lSpriteSheet.unloadGLContent();
+						lSpriteSheet.unloadResources();
 
 						entry.setValue(lNewSpriteSheet);
 
@@ -361,5 +353,4 @@ public class SpriteSheetManager {
 		}
 
 	}
-
 }

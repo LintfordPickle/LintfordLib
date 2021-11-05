@@ -1,7 +1,6 @@
 package net.lintford.library.screenmanager.entries;
 
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.Color;
 import net.lintford.library.core.graphics.sprites.spritebatch.SpriteBatch;
@@ -60,14 +59,6 @@ public abstract class ListBoxItem extends Rectangle {
 	// --------------------------------------
 
 	public void initialize() {
-
-	}
-
-	public void loadGLContent(ResourceManager pResourceManager) {
-
-	}
-
-	public void unloadGLContent() {
 
 	}
 

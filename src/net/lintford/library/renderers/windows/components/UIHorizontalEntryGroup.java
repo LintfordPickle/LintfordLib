@@ -60,22 +60,22 @@ public class UIHorizontalEntryGroup extends UIWidget {
 	}
 
 	@Override
-	public void loadGLContent(ResourceManager pResourceManager) {
-		super.loadGLContent(pResourceManager);
+	public void loadResources(ResourceManager pResourceManager) {
+		super.loadResources(pResourceManager);
 
 		int lCount = mChildEntries.size();
 		for (int i = 0; i < lCount; i++) {
-			mChildEntries.get(i).loadGLContent(pResourceManager);
+			mChildEntries.get(i).loadResources(pResourceManager);
 		}
 	}
 
 	@Override
-	public void unloadGLContent() {
-		super.unloadGLContent();
+	public void unloadResources() {
+		super.unloadResources();
 
 		int lCount = mChildEntries.size();
 		for (int i = 0; i < lCount; i++) {
-			mChildEntries.get(i).unloadGLContent();
+			mChildEntries.get(i).unloadResources();
 		}
 	}
 

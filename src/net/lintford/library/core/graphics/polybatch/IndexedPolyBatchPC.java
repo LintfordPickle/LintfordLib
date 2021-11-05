@@ -13,7 +13,6 @@ import org.lwjgl.system.MemoryUtil;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.camera.ICamera;
 import net.lintford.library.core.debug.Debug;
-import net.lintford.library.core.debug.GLDebug;
 import net.lintford.library.core.debug.stats.DebugStats;
 import net.lintford.library.core.graphics.shaders.ShaderMVP_PC;
 import net.lintford.library.core.graphics.vertices.VertexDataStructurePC;
@@ -26,7 +25,7 @@ public class IndexedPolyBatchPC {
 	// Constants
 	// --------------------------------------
 
-	public static final int MAX_TRIS = 2048;
+	public static final int MAX_TRIS = 16384;
 	public static final int NUM_VERTS_PER_TRI = 3;
 
 	private static final String VERT_FILENAME = "/res/shaders/shader_basic_pc.vert";
@@ -49,7 +48,7 @@ public class IndexedPolyBatchPC {
 	private FloatBuffer mBuffer;
 	private IntBuffer mIndexBuffer;
 	private boolean mIsDrawing;
-	private boolean mIsLoaded;
+	private boolean mResourcesLoaded;
 
 	// --------------------------------------
 	// Properties
@@ -75,7 +74,7 @@ public class IndexedPolyBatchPC {
 		a = r = g = b = 1f;
 
 		mModelMatrix = new Matrix4f();
-		mIsLoaded = false;
+		mResourcesLoaded = false;
 
 	}
 
@@ -83,64 +82,79 @@ public class IndexedPolyBatchPC {
 	// Core-Methods
 	// --------------------------------------
 
-	public void loadGLContent(ResourceManager pResourceManager) {
-		if (mIsLoaded)
+	public void loadResources(ResourceManager pResourceManager) {
+		if (mResourcesLoaded)
 			return;
 
-		mShader.loadGLContent(pResourceManager);
+		mShader.loadResources(pResourceManager);
 
-		if (mVaoId == -1)
-			mVaoId = GL30.glGenVertexArrays();
-
-		if (mVioId == -1)
+		if (mVioId == -1) {
 			mVioId = GL15.glGenBuffers();
+			Debug.debugManager().logger().v("OpenGL", "IndexedPolyBatchPC: VioId = " + mVioId);
+		}
 
-		if (mVboId == -1)
+		if (mVboId == -1) {
 			mVboId = GL15.glGenBuffers();
+			Debug.debugManager().logger().v("OpenGL", "IndexedPolyBatchPC: VboId = " + mVboId);
+		}
 
 		// TODO: Make sure this is the new / correct way to allocation memory for a buffer
 		// TODO: We are not benefiting from the indexed nature (with regards to reduced vert count)
 		mBuffer = MemoryUtil.memAllocFloat(MAX_TRIS * NUM_VERTS_PER_TRI * VertexDataStructurePC.stride);
 		mIndexBuffer = MemoryUtil.memAllocInt(MAX_TRIS * NUM_VERTS_PER_TRI);
 
-		mIsLoaded = true;
-
+		mResourcesLoaded = true;
 	}
 
-	public void unloadGLContent() {
-		if (!mIsLoaded)
+	public void unloadResources() {
+		if (!mResourcesLoaded)
 			return;
 
-		mShader.unloadGLContent();
+		mShader.unloadResources();
 
-		if (mVaoId > -1)
+		if (mVaoId > -1) {
 			GL30.glDeleteVertexArrays(mVaoId);
+			Debug.debugManager().logger().v("OpenGL", "IndexedPolyBatchPC: Unloading VaoId = " + mVaoId);
+			mVaoId = -1;
+		}
 
-		if (mVboId > -1)
+		if (mVboId > -1) {
 			GL15.glDeleteBuffers(mVboId);
-
-		mVaoId = -1;
-		mVboId = -1;
+			Debug.debugManager().logger().v("OpenGL", "IndexedPolyBatchPC: Unloading VboId = " + mVboId);
+			mVboId = -1;
+		}
 
 		if (mBuffer != null) {
 			mBuffer.clear();
 			MemoryUtil.memFree(mBuffer);
-
 		}
 
 		if (mIndexBuffer != null) {
 			mIndexBuffer.clear();
 			MemoryUtil.memFree(mIndexBuffer);
-
 		}
 
-		mIsLoaded = false;
-
+		mResourcesLoaded = false;
 	}
 
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
+
+	private void initializeGl() {
+		if (mVaoId == -1) {
+			mVaoId = GL30.glGenVertexArrays();
+
+			GL30.glBindVertexArray(mVaoId);
+			GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, mVboId);
+
+			GL20.glEnableVertexAttribArray(0);
+			GL20.glEnableVertexAttribArray(1);
+
+			GL20.glVertexAttribPointer(0, VertexDataStructurePC.positionElementCount, GL11.GL_FLOAT, false, VertexDataStructurePC.stride, VertexDataStructurePC.positionByteOffset);
+			GL20.glVertexAttribPointer(1, VertexDataStructurePC.colorElementCount, GL11.GL_FLOAT, false, VertexDataStructurePC.stride, VertexDataStructurePC.colorByteOffset);
+		}
+	}
 
 	public void begin(ICamera pCamera) {
 		if (pCamera == null)
@@ -207,11 +221,10 @@ public class IndexedPolyBatchPC {
 
 		mIsDrawing = false;
 		flush();
-
 	}
 
 	private void flush() {
-		if (!mIsLoaded)
+		if (!mResourcesLoaded)
 			return;
 
 		if (mIndexCount == 0)
@@ -220,23 +233,15 @@ public class IndexedPolyBatchPC {
 		mBuffer.flip();
 		mIndexBuffer.flip();
 
-		GL30.glBindVertexArray(mVaoId);
+		initializeGl();
 
-		// Bind vertices
+		GL30.glBindVertexArray(mVaoId);
 
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, mVboId);
 		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, mBuffer, GL15.GL_DYNAMIC_DRAW);
 
-		GL20.glVertexAttribPointer(0, VertexDataStructurePC.positionElementCount, GL11.GL_FLOAT, false, VertexDataStructurePC.stride, VertexDataStructurePC.positionByteOffset);
-		GL20.glVertexAttribPointer(1, VertexDataStructurePC.colorElementCount, GL11.GL_FLOAT, false, VertexDataStructurePC.stride, VertexDataStructurePC.colorByteOffset);
-
-		// Bind indices
-
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, mVioId);
 		GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, mIndexBuffer, GL15.GL_DYNAMIC_DRAW);
-
-		GL20.glEnableVertexAttribArray(0);
-		GL20.glEnableVertexAttribArray(1);
 
 		mShader.projectionMatrix(mCamera.projection());
 		mShader.viewMatrix(mCamera.view());
@@ -253,14 +258,11 @@ public class IndexedPolyBatchPC {
 		// glDrawElements for index buffer
 		GL11.glDrawElements(GL11.GL_TRIANGLES, mIndexCount, GL11.GL_UNSIGNED_INT, 0);
 
-		GLDebug.checkGLErrorsException();
-
 		GL30.glBindVertexArray(0);
 
 		mShader.unbind();
 
 		mIndexCount = 0;
-
 	}
 
 	public void changeColorNormalized(float pR, float pG, float pB, float pA) {
@@ -275,5 +277,4 @@ public class IndexedPolyBatchPC {
 		a = pA;
 
 	}
-
 }

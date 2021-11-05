@@ -68,5 +68,4 @@ public class DebugMenuUiStructureDrawer extends BaseRenderer {
 		}
 
 	}
-
 }

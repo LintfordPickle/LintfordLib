@@ -50,15 +50,15 @@ public class ToolTip {
 	// Core-Methods
 	// --------------------------------------
 
-	public void loadGLContent(ResourceManager pResourceManager) {
-		mSpriteBatch.loadGLContent(pResourceManager);
+	public void loadResources(ResourceManager pResourceManager) {
+		mSpriteBatch.loadResources(pResourceManager);
 
 		mCoreSpritesheet = pResourceManager.spriteSheetManager().coreSpritesheet();
 		mMenuFont = pResourceManager.fontManager().getFontUnit(ScreenManager.FONT_MENU_TOOLTIP_NAME);
 	}
 
-	public void unloadGLContent() {
-		mSpriteBatch.unloadGLContent();
+	public void unloadResources() {
+		mSpriteBatch.unloadResources();
 
 		mCoreSpritesheet = null;
 		mMenuFont = null;

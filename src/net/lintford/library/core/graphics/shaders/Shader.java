@@ -69,28 +69,24 @@ public abstract class Shader {
 	// Core-Methods
 	// --------------------------------------
 
-	public void loadGLContent(ResourceManager pResourceManager) {
-
-		String lVertexSource = FileUtils.loadString(mVertPathname);
-		String lFragmentSource = FileUtils.loadString(mFragPathname);
+	public void loadResources(ResourceManager pResourceManager) {
+		final var lVertexSource = FileUtils.loadString(mVertPathname);
+		final var lFragmentSource = FileUtils.loadString(mFragPathname);
 
 		if (lVertexSource == null || lFragmentSource == null) {
 			Debug.debugManager().logger().e(getClass().getSimpleName(), "Failed to load shader - no vert/frag filename specified.");
 			return;
-
 		}
 
 		mShaderID = create(lVertexSource, lFragmentSource);
 		glUseProgram(mShaderID);
 
 		getUniformLocations();
-
 	}
 
-	public void unloadGLContent() {
-		glUseProgram(0);
+	public void unloadResources() {
 		glDeleteProgram(mShaderID);
-
+		mShaderID = -1;
 	}
 
 	public void reloadShader() {
@@ -180,5 +176,4 @@ public abstract class Shader {
 	protected void getUniformLocations() {
 
 	}
-
 }

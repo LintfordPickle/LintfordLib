@@ -63,7 +63,7 @@ public class UiBaseLayoutComponent extends UIWidget implements IScrollBarArea {
 	protected float mForcedHeight;
 	protected float mForcedEntryHeight;
 
-	private boolean mIsLoaded;
+	private boolean mResourcesLoaded;
 
 	protected ScrollBarContentRectangle mContentArea;
 	protected ScrollBar mScrollBar;
@@ -146,7 +146,7 @@ public class UiBaseLayoutComponent extends UIWidget implements IScrollBarArea {
 	}
 
 	public boolean isLoaded() {
-		return mIsLoaded;
+		return mResourcesLoaded;
 	}
 
 	public float marginLeft() {
@@ -296,24 +296,22 @@ public class UiBaseLayoutComponent extends UIWidget implements IScrollBarArea {
 
 	}
 
-	public void loadGLContent(ResourceManager pResourceManager) {
-		int lCount = mUiWidgets.size();
-		for (int i = 0; i < lCount; i++) {
-			mUiWidgets.get(i).loadGLContent(pResourceManager);
+	public void loadResources(ResourceManager pResourceManager) {
+		final int lWidgetCount = mUiWidgets.size();
+		for (int i = 0; i < lWidgetCount; i++) {
+			mUiWidgets.get(i).loadResources(pResourceManager);
 		}
 
-		mIsLoaded = true;
-
+		mResourcesLoaded = true;
 	}
 
-	public void unloadGLContent() {
-		int lCount = mUiWidgets.size();
-		for (int i = 0; i < lCount; i++) {
-			mUiWidgets.get(i).unloadGLContent();
+	public void unloadResources() {
+		final int lWidgetCount = mUiWidgets.size();
+		for (int i = 0; i < lWidgetCount; i++) {
+			mUiWidgets.get(i).unloadResources();
 		}
 
-		mIsLoaded = false;
-
+		mResourcesLoaded = false;
 	}
 
 	public boolean handleInput(LintfordCore pCore) {

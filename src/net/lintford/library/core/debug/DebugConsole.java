@@ -117,7 +117,7 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 
 	private float mMouseTimer;
 	private transient boolean mAutoScroll;
-	private boolean mIsLoaded;
+	private boolean mResourcesLoaded;
 
 	private UIInputText mTAGFilterText;
 	private int mTAGFilterLastSize;
@@ -212,7 +212,7 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 
 		}
 
-		mIsLoaded = false;
+		mResourcesLoaded = false;
 
 	}
 
@@ -220,29 +220,28 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 	// Core-Methods
 	// --------------------------------------
 
-	public void loadGLContent(ResourceManager pResourceManager) {
+	public void loadResources(ResourceManager pResourceManager) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
 		mConsoleFont = pResourceManager.fontManager().getFontUnit(BitmapFontManager.SYSTEM_FONT_CONSOLE_NAME);
-		mSpriteBatch.loadGLContent(pResourceManager);
+		mSpriteBatch.loadResources(pResourceManager);
 
 		mCoreSpritesheet = pResourceManager.spriteSheetManager().coreSpritesheet();
 
-		mIsLoaded = true;
+		mResourcesLoaded = true;
 	}
 
-	public void unloadGLContent() {
+	public void unloadResources() {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
 		Debug.debugManager().logger().v(getClass().getSimpleName(), "DebugConsole unloading GL content");
 
 		mConsoleFont = null;
-		mSpriteBatch.unloadGLContent();
+		mSpriteBatch.unloadResources();
 
-		mIsLoaded = false;
-
+		mResourcesLoaded = false;
 	}
 
 	public void handleInput(LintfordCore pCore) {
@@ -407,7 +406,7 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 
 		}
 
-		if (!mIsLoaded || mConsoleState == CONSOLE_STATE.closed)
+		if (!mResourcesLoaded || mConsoleState == CONSOLE_STATE.closed)
 			return;
 
 		final float lDeltaTime = (float) pCore.appTime().elapsedTimeMilli() / 1000f;
@@ -494,7 +493,7 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
-		if (!mIsLoaded || mConsoleState == CONSOLE_STATE.closed)
+		if (!mResourcesLoaded || mConsoleState == CONSOLE_STATE.closed)
 			return;
 
 		final var lDisplayConfig = pCore.config().display();
@@ -844,29 +843,22 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
-		if (!mConsoleCommands.contains(pConsoleCommand)) {
+		if (mConsoleCommands != null && !mConsoleCommands.contains(pConsoleCommand)) {
 			mConsoleCommands.add(pConsoleCommand);
-
 		}
-
 	}
 
 	public void removeConsoleCommand(ConsoleCommand pConsoleCommand) {
-		if (mConsoleCommands.contains(pConsoleCommand)) {
+		if (mConsoleCommands != null && mConsoleCommands.contains(pConsoleCommand)) {
 			mConsoleCommands.remove(pConsoleCommand);
-
 		}
-
 	}
 
-	/** Writes a list of all console commands and their descriptions to the console. */
 	public void listConsoleCommands() {
-		final int CONSOLE_COMMAND_COUNT = mConsoleCommands.size();
-		for (int i = 0; i < CONSOLE_COMMAND_COUNT; i++) {
+		final int lConsoleCommandCount = mConsoleCommands.size();
+		for (int i = 0; i < lConsoleCommandCount; i++) {
 			Debug.debugManager().logger().i(mConsoleCommands.get(i).Command, mConsoleCommands.get(i).Description);
-
 		}
-
 	}
 
 	@Override

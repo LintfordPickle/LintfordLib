@@ -65,7 +65,7 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 	protected float mForcedHeight;
 	protected float mForcedEntryHeight;
 
-	private boolean mIsLoaded;
+	private boolean mResourcesLoaded;
 
 	protected ScrollBarContentRectangle mContentArea;
 	protected ScrollBar mScrollBar;
@@ -147,7 +147,7 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 	}
 
 	public boolean isLoaded() {
-		return mIsLoaded;
+		return mResourcesLoaded;
 	}
 
 	public float marginLeft() {
@@ -299,24 +299,22 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 
 	}
 
-	public void loadGLContent(ResourceManager pResourceManager) {
+	public void loadResources(ResourceManager pResourceManager) {
 		int lCount = mMenuEntries.size();
 		for (int i = 0; i < lCount; i++) {
-			mMenuEntries.get(i).loadGLContent(pResourceManager);
+			mMenuEntries.get(i).loadResources(pResourceManager);
 		}
 
-		mIsLoaded = true;
-
+		mResourcesLoaded = true;
 	}
 
-	public void unloadGLContent() {
+	public void unloadResources() {
 		int lCount = mMenuEntries.size();
 		for (int i = 0; i < lCount; i++) {
-			mMenuEntries.get(i).unloadGLContent();
+			mMenuEntries.get(i).unloadResources();
 		}
 
-		mIsLoaded = false;
-
+		mResourcesLoaded = false;
 	}
 
 	public boolean handleInput(LintfordCore pCore) {
@@ -676,5 +674,4 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 		}
 
 	}
-
 }

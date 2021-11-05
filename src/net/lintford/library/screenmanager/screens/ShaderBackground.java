@@ -164,19 +164,18 @@ public abstract class ShaderBackground extends Screen {
 	// --------------------------------------
 
 	@Override
-	public void loadGLContent(ResourceManager pResourceManager) {
-		super.loadGLContent(pResourceManager);
+	public void loadResources(ResourceManager pResourceManager) {
+		super.loadResources(pResourceManager);
 
-		mBackgroundShader.loadGLContent(pResourceManager);
+		mBackgroundShader.loadResources(pResourceManager);
 
 	}
 
 	@Override
-	public void unloadGLContent() {
-		super.unloadGLContent();
+	public void unloadResources() {
+		super.unloadResources();
 
-		mBackgroundShader.unloadGLContent();
-
+		mBackgroundShader.unloadResources();
 	}
 
 	@Override
@@ -230,5 +229,4 @@ public abstract class ShaderBackground extends Screen {
 		lTextureBatch.end();
 
 	}
-
 }

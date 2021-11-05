@@ -27,7 +27,7 @@ public class RenderTarget {
 	private int mTextureWrapModeS;
 	private int mTextureWrapModeT;
 	private boolean mDepthBufferEnabled;
-	private boolean mIsLoaded;
+	private boolean mResourcesLoaded;
 
 	private int mWidth;
 	private int mHeight;
@@ -47,7 +47,7 @@ public class RenderTarget {
 	public void textureFilter(int pParam) {
 		mTextureFilter = pParam;
 
-		if (mIsLoaded) {
+		if (mResourcesLoaded) {
 			GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, mFramebufferID);
 			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, mTextureFilter);
 			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, mTextureFilter);
@@ -64,7 +64,7 @@ public class RenderTarget {
 	public void textureWrapModeS(int pParam) {
 		mTextureWrapModeS = pParam;
 
-		if (mIsLoaded) {
+		if (mResourcesLoaded) {
 			GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, mFramebufferID);
 			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, mTextureWrapModeS);
 			GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
@@ -80,7 +80,7 @@ public class RenderTarget {
 	public void textureWrapModeT(int pParam) {
 		mTextureWrapModeT = pParam;
 
-		if (mIsLoaded) {
+		if (mResourcesLoaded) {
 			GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, mFramebufferID);
 			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, mTextureWrapModeT);
 			GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
@@ -118,7 +118,7 @@ public class RenderTarget {
 	}
 
 	public boolean isLoaded() {
-		return mIsLoaded;
+		return mResourcesLoaded;
 	}
 
 	// --------------------------------------
@@ -143,11 +143,15 @@ public class RenderTarget {
 	// Methods
 	// --------------------------------------
 
-	public void loadGLContent(int pWidth, int pHeight, float pScale) {
+	public void loadResources(int pWidth, int pHeight, float pScale) {
+
+	}
+
+	public void initialiszeGl(int pWidth, int pHeight, float pScale) {
 		if (pWidth == 0 || pHeight == 0)
 			return;
 
-		if (mIsLoaded)
+		if (mResourcesLoaded)
 			return;
 
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "Loading RenderTarget: " + targetName);
@@ -219,9 +223,7 @@ public class RenderTarget {
 
 			case GL30.GL_FRAMEBUFFER_UNDEFINED:
 				throw new RuntimeException("GL_FRAMEBUFFER_UNDEFINED    ");
-
 			}
-
 		}
 
 		// unbind
@@ -229,19 +231,17 @@ public class RenderTarget {
 
 		Debug.debugManager().stats().incTag(DebugStats.TAG_ID_RENDERTEXTURES);
 
-		mIsLoaded = true;
-
+		mResourcesLoaded = true;
 	}
 
-	public void unloadGLContent() {
-		if (!mIsLoaded)
+	public void unloadResources() {
+		if (!mResourcesLoaded)
 			return;
 
 		// Delete float buffer
 		if (mTextureBufferData != null) {
 			mTextureBufferData.clear();
 			MemoryUtil.memFree(mTextureBufferData);
-
 		}
 
 		GL30.glDeleteFramebuffers(mFramebufferID);
@@ -257,7 +257,7 @@ public class RenderTarget {
 
 		Debug.debugManager().stats().decTag(DebugStats.TAG_ID_RENDERTEXTURES);
 
-		mIsLoaded = false;
+		mResourcesLoaded = false;
 	}
 
 	public void bind() {
@@ -273,7 +273,7 @@ public class RenderTarget {
 		if (pWidth == 0 || pHeight == 0)
 			return;
 
-		if (!mIsLoaded)
+		if (!mResourcesLoaded)
 			return;
 
 		mWidth = pWidth;

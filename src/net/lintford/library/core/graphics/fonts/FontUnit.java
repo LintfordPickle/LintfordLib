@@ -192,16 +192,16 @@ public class FontUnit {
 	// Methods
 	// --------------------------------------
 
-	public void onLoadGlContent(ResourceManager pResouceManager) {
-		mFontRenderer.loadGLContent(pResouceManager);
-		mFontDefinition.loadGLContent(pResouceManager);
-		mShaderSubPixel.loadGLContent(pResouceManager);
+	public void loadResources(ResourceManager pResouceManager) {
+		mFontRenderer.loadResources(pResouceManager);
+		mFontDefinition.loadResources(pResouceManager);
+		mShaderSubPixel.loadResources(pResouceManager);
 	}
 
-	public void onUnloadGlContent() {
-		mFontRenderer.unloadGLContent();
-		mFontDefinition.unloadGLContent();
-		mShaderSubPixel.unloadGLContent();
+	public void unloadResources() {
+		mFontRenderer.unloadResources();
+		mFontDefinition.unloadResources();
+		mShaderSubPixel.unloadResources();
 	}
 
 	public void begin(ICamera pCamera) {

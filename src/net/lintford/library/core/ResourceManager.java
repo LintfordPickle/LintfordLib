@@ -54,7 +54,7 @@ public class ResourceManager {
 	// GeometryManager
 	// ShaderManager
 
-	private boolean mIsLoaded;
+	private boolean mResourcesLoaded;
 	private boolean mMonitorResourcesForChanges;
 
 	// --------------------------------------
@@ -62,7 +62,7 @@ public class ResourceManager {
 	// --------------------------------------
 
 	public boolean isLoaded() {
-		return mIsLoaded;
+		return mResourcesLoaded;
 	}
 
 	public MasterConfig config() {
@@ -120,23 +120,22 @@ public class ResourceManager {
 	// Core-Methods
 	// --------------------------------------
 
-	public void loadGLContent() {
-		mTextureManager.loadGLContent(this);
-		mSpriteSheetManager.loadGLContent(this);
-		mAudioManager.loadALContent(this);
-		mPObjectManager.loadGLContent(this);
-		mSpriteGraphRepository.loadGLContent(this);
+	public void loadResources() {
+		mTextureManager.loadResources(this);
+		mAudioManager.loadResources(this);
+		mPObjectManager.loadResources(this);
+		mSpriteGraphRepository.loadResources(this);
 
-		mIsLoaded = true;
+		mResourcesLoaded = true;
 	}
 
 	public void unloadContent() {
-		mAudioManager.unloadALContent();
-		mTextureManager.unloadGLContent();
-		mPObjectManager.unloadGLContent();
-		mSpriteGraphRepository.unloadGLContent();
+		mAudioManager.unloadResources();
+		mTextureManager.unloadResources();
+		mPObjectManager.unloadResources();
+		mSpriteGraphRepository.unloadResources();
 
-		mIsLoaded = false;
+		mResourcesLoaded = false;
 	}
 
 	public void update(LintfordCore pCore) {
@@ -224,5 +223,4 @@ public class ResourceManager {
 			}
 		}
 	}
-
 }

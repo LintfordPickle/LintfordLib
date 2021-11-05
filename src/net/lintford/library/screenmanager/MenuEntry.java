@@ -83,7 +83,7 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 	protected boolean mCanHaveFocus; // some menuEntry sub-types aren't focusable (like the labels)
 	protected float mClickTimer;
 
-	private boolean mIsinitialized, mIsLoaded;
+	private boolean mIsinitialized, mResourcesLoaded;
 	public float mZ;
 
 	// This is the padding INSIDE of the component (i.e. applied to child elements).
@@ -398,15 +398,14 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 
 	}
 
-	public void loadGLContent(ResourceManager pResourceManager) {
+	public void loadResources(ResourceManager pResourceManager) {
 		mCoreSpritesheet = pResourceManager.spriteSheetManager().coreSpritesheet();
 
-		mIsLoaded = true;
+		mResourcesLoaded = true;
 	}
 
-	public void unloadGLContent() {
-		mIsLoaded = false;
-
+	public void unloadResources() {
+		mResourcesLoaded = false;
 	}
 
 	public boolean handleInput(LintfordCore pCore) {
@@ -499,7 +498,7 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 	}
 
 	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pParentZDepth) {
-		if (!mActive || !mIsinitialized || !mIsLoaded)
+		if (!mActive || !mIsinitialized || !mResourcesLoaded)
 			return;
 
 		mZ = pParentZDepth;

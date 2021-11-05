@@ -105,6 +105,7 @@ public class DisplayManager extends IniFile {
 
 	private long mMasterWindowId;
 	private long mOffscreenWindowId;
+
 	private boolean mStretchGameScreen = false;
 	private boolean mRecompileShaders = false;
 	private final int mBaseGameResolutionWidth;
@@ -144,6 +145,10 @@ public class DisplayManager extends IniFile {
 
 	public long windowID() {
 		return mMasterWindowId;
+	}
+
+	public long sharedContextId() {
+		return mOffscreenWindowId;
 	}
 
 	public boolean recompileShaders() {
@@ -216,7 +221,6 @@ public class DisplayManager extends IniFile {
 		mGameResizeListeners = new ArrayList<>();
 
 		loadConfig(pGameInfo);
-
 	}
 
 	// --------------------------------------
@@ -234,35 +238,30 @@ public class DisplayManager extends IniFile {
 		} else {
 			GL11.glClearColor(ColorConstants.BUFFER_CLEAR_RELEASE.r, ColorConstants.BUFFER_CLEAR_RELEASE.g, ColorConstants.BUFFER_CLEAR_RELEASE.b, 1.0f);
 		}
-
 	}
 
 	public void update(LintfordCore pCore) {
 		if (mWindowResolutionChanged /* && !pInputState.mouseLeftClick() */) {
 			synchronized (this) {
 				mLockedListeners = true;
-				final int COUNT = mWindowResizeListeners.size();
+				final int lNumWindowResizeListeners = mWindowResizeListeners.size();
 
 				Debug.debugManager().logger().log(DebugLogLevel.info, getClass().getSimpleName(), String.format("Resolution changed: %dx%d", mDisplaySettings.windowWidth, mDisplaySettings.windowHeight));
 				Debug.debugManager().logger().log(DebugLogLevel.info, "SYSTEM", "calling window resize listeners.");
 
-				for (int i = 0; i < COUNT; i++) {
+				for (int i = 0; i < lNumWindowResizeListeners; i++) {
 					if (mWindowResizeListeners.get(i) == null)
 						continue;
 
 					mWindowResizeListeners.get(i).onResize(mDisplaySettings.windowWidth, mDisplaySettings.windowHeight);
-
 				}
 
 				mLockedListeners = false;
 				mWindowResolutionChanged = false;
 
 				saveConfig();
-
 			}
-
 		}
-
 	}
 
 	public void loadConfig(GameInfo pGameInfo) {
@@ -278,7 +277,6 @@ public class DisplayManager extends IniFile {
 			mDisplaySettings.resizable = pGameInfo.windowResizeable();
 
 			saveConfig();
-
 		} else {
 			// Get the values we need
 			final var lSavedMonitorIndex = getLong("Settings", "MonitorIndex", glfwGetPrimaryMonitor());
@@ -296,14 +294,11 @@ public class DisplayManager extends IniFile {
 			mGraphicsSettings.setUITransparencyScale((float) getInt(SECTION_NAME_UI, "uiTransparencyScale", 80) / 100f);
 
 			saveConfig();
-
 		}
-
 	}
 
 	@Override
 	public void saveConfig() {
-
 		clearEntries();
 
 		// Update the entries in the map
@@ -327,7 +322,6 @@ public class DisplayManager extends IniFile {
 
 		// save the entries to file
 		super.saveConfig();
-
 	}
 
 	// --------------------------------------
@@ -455,15 +449,6 @@ public class DisplayManager extends IniFile {
 		// Setup the UI to match the new resolution
 		changeResolution(mDisplaySettings.windowWidth, mDisplaySettings.windowHeight);
 
-		glfwDefaultWindowHints(); // GL3.2 CORE
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
-		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_FALSE);
-		glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
-		glfwWindowHint(GLFW_DECORATED, GL_TRUE);
-		glfwWindowHint(GLFW_RESIZABLE, mDisplaySettings.resizable ? GL_TRUE : GL_FALSE);
-
 		// output debug information
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "   Window Position:   (" + mDisplaySettings.windowPositionX + "," + mDisplaySettings.windowPositionY + ")");
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "   Window Size:       (" + mDisplaySettings.windowWidth + "," + mDisplaySettings.windowHeight + ")");
@@ -472,28 +457,33 @@ public class DisplayManager extends IniFile {
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "   Monitor Index:      " + mDisplaySettings.monitorIndex);
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "   Aspect Radio Index: " + mDisplaySettings.aspectRatioIndex);
 
-		return mMasterWindowId;
+		createSharedContext();
 
+		return mMasterWindowId;
 	}
 
 	public long createSharedContext() {
-		glfwDefaultWindowHints(); // GL3.2 CORE
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
-		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_FALSE);
+		glfwDefaultWindowHints();
 		glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
 		glfwWindowHint(GLFW_DECORATED, GL_TRUE);
-		glfwWindowHint(GLFW_RESIZABLE, mDisplaySettings.resizable ? GL_TRUE : GL_FALSE);
 
 		// by specifing the masterwindow id, we create a openGL shared context
-		mOffscreenWindowId = glfwCreateWindow(10, 10, "t", NULL, mMasterWindowId);
+		mOffscreenWindowId = glfwCreateWindow(1, 1, "Shared Context", NULL, mMasterWindowId);
+
+		Debug.debugManager().logger().i(getClass().getSimpleName(), "Creating shared context (offscreen window: " + mOffscreenWindowId + ")");
 
 		return mOffscreenWindowId;
 	}
 
+	public void makeOffscreenContextCurrentOnThread() {
+		makeContextCurrent(mOffscreenWindowId);
+		createGlCompatiblities();
+	}
+
 	public void makeContextCurrent(long pWindowId) {
 		glfwMakeContextCurrent(pWindowId);
+
+		Debug.debugManager().logger().i(getClass().getSimpleName(), "Context made current on window: " + pWindowId);
 	}
 
 	/**
@@ -510,6 +500,8 @@ public class DisplayManager extends IniFile {
 	public void destroySharedContext() {
 		glfwDestroyWindow(mOffscreenWindowId);
 		mOffscreenWindowId = 0;
+
+		glfwMakeContextCurrent(mMasterWindowId);
 	}
 
 	public void setGLFWMonitor(VideoSettings pDesiredSettings) {

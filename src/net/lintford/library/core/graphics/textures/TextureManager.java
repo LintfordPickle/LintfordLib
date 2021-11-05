@@ -237,14 +237,14 @@ public class TextureManager extends EntityGroupManager {
 	// Core-Methods
 	// --------------------------------------
 
-	public void loadGLContent(ResourceManager pResourceManager) {
+	public void loadResources(ResourceManager pResourceManager) {
 		mResourceManager = pResourceManager;
 
 		mIsLoaded = true;
 
 	}
 
-	public void unloadGLContent() {
+	public void unloadResources() {
 		if (!mIsLoaded)
 			return;
 
@@ -295,15 +295,13 @@ public class TextureManager extends EntityGroupManager {
 
 	@Override
 	public int decreaseReferenceCounts(int pEntityGroupID) {
-		TextureGroup lTextureGroup = mTextureGroupMap.get(pEntityGroupID);
+		final var lTextureGroup = mTextureGroupMap.get(pEntityGroupID);
 
 		// Create a new TextureGroup for this EntityGroupID if one doesn't exist
 		if (lTextureGroup == null) {
 			return 0;
-
 		} else {
 			lTextureGroup.referenceCount--;
-
 		}
 
 		if (lTextureGroup.referenceCount <= 0) {
@@ -311,14 +309,10 @@ public class TextureManager extends EntityGroupManager {
 			unloadEntityGroup(pEntityGroupID);
 
 			mTextureGroupMap.remove(pEntityGroupID);
-			lTextureGroup = null;
-
 			return 0;
-
 		}
 
 		return lTextureGroup.referenceCount;
-
 	}
 
 	public Texture loadTexture(String pName, String pTextureLocation, int pEntityGroupID) {
@@ -519,7 +513,7 @@ public class TextureManager extends EntityGroupManager {
 	}
 
 	public void unloadEntityGroup(int pEntityGroupID) {
-		TextureGroup lTextureGroup = mTextureGroupMap.get(pEntityGroupID);
+		final var lTextureGroup = mTextureGroupMap.get(pEntityGroupID);
 
 		if (lTextureGroup == null)
 			return;
@@ -535,11 +529,8 @@ public class TextureManager extends EntityGroupManager {
 				Texture.unloadTexture(lNextTexture.getValue());
 
 				it.remove();
-
 			}
-
 		}
-
 	}
 
 	/** Batch load textures */

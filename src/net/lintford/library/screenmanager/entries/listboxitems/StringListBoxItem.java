@@ -2,7 +2,6 @@ package net.lintford.library.screenmanager.entries.listboxitems;
 
 import net.lintford.library.ConstantsApp;
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.sprites.spritebatch.SpriteBatch;
@@ -51,18 +50,6 @@ public class StringListBoxItem extends ListBoxItem {
 	// --------------------------------------
 	// Core-Methods
 	// --------------------------------------
-
-	@Override
-	public void loadGLContent(ResourceManager pResourceManager) {
-		super.loadGLContent(pResourceManager);
-
-	}
-
-	@Override
-	public void unloadGLContent() {
-		super.unloadGLContent();
-
-	}
 
 	@Override
 	public void draw(LintfordCore pCore, Screen pScreen, SpriteBatch pSpriteBatch, boolean pIsSelected, float pParentZDepth) {

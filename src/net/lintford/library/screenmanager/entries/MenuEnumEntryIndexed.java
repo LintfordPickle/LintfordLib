@@ -253,7 +253,6 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 		super.update(pCore, pScreen, pIsSelected);
 
 		// Update the button positions to line up with this entry
-		// TODO(John): Need to implement left/right buttons for MenuEnumEntries.
 		mLeftButtonRectangle.x(x + w / 2 + 16);
 		mLeftButtonRectangle.y(y);
 		mLeftButtonRectangle.h(h);

@@ -61,34 +61,27 @@ public class LoadingScreen extends Screen {
 		if ((mScreenState == ScreenState.Active) && (mScreenManager.screens().size() == 1)) {
 
 			// And then continue loading on the main context
-			int lCount = mScreensToLoad.length;
-			for (int i = 0; i < lCount; i++) {
-				Screen lScreen = mScreensToLoad[i];
+			final int lScreenCount = mScreensToLoad.length;
+			for (int i = 0; i < lScreenCount; i++) {
+				final var lScreen = mScreensToLoad[i];
 
 				if (lScreen != null && !lScreen.isinitialized()) {
 					lScreen.initialize();
-
 				}
 
-				if (lScreen != null && !lScreen.isLoaded()) {
-					lScreen.loadGLContent(mScreenManager.resources());
-
+				if (lScreen != null && !lScreen.isResourcesLoaded()) {
+					lScreen.loadResources(mScreenManager.resources());
 				}
-
 			}
 
 			// screens have been loaded on the other thread, so now lets add them to
 			// the screen manager
-			lCount = mScreensToLoad.length;
-			for (int i = 0; i < lCount; i++) {
+			for (int i = 0; i < lScreenCount; i++) {
 				Screen lScreen = mScreensToLoad[i];
 				if (lScreen != null) {
 					mScreenManager.addScreen(lScreen);
-
 				}
-
 			}
-
 			mScreenManager.removeScreen(this);
 		}
 	}
@@ -116,5 +109,4 @@ public class LoadingScreen extends Screen {
 			mFontUnit.end();
 		}
 	}
-
 }

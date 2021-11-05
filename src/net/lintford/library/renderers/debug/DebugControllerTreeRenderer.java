@@ -89,7 +89,7 @@ public class DebugControllerTreeRenderer extends Rectangle implements IScrollBar
 	// Core-Methods
 	// --------------------------------------
 
-	public void loadGLContent(ResourceManager pResourceManager) {
+	public void loadResources(ResourceManager pResourceManager) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
@@ -98,16 +98,16 @@ public class DebugControllerTreeRenderer extends Rectangle implements IScrollBar
 		mCoreSpritesheet = pResourceManager.spriteSheetManager().coreSpritesheet();
 		mConsoleFont = pResourceManager.fontManager().getFontUnit(BitmapFontManager.SYSTEM_FONT_CONSOLE_NAME);
 
-		mSpriteBatch.loadGLContent(pResourceManager);
+		mSpriteBatch.loadResources(pResourceManager);
 	}
 
-	public void unloadGLContent() {
+	public void unloadResources() {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
 		Debug.debugManager().logger().v(getClass().getSimpleName(), "DebugStats unloading GL content");
 
-		mSpriteBatch.unloadGLContent();
+		mSpriteBatch.unloadResources();
 
 		mConsoleFont = null;
 		mCoreSpritesheet = null;

@@ -25,7 +25,7 @@ public class PolyBatch {
 	// Constants
 	// --------------------------------------
 
-	public static final int MAX_LINES = 2048;
+	public static final int MAX_LINES = 16384;
 	public static final int NUM_VERTS_PER_LINE = 2;
 
 	private static final String VERT_FILENAME = "/res/shaders/shader_basic_pc.vert";
@@ -45,8 +45,7 @@ public class PolyBatch {
 	private Matrix4f mModelMatrix;
 	private FloatBuffer mBuffer;
 	private boolean mIsDrawing;
-	private boolean mIsLoaded;
-
+	private boolean mResourcesLoaded;
 	private int mLineMode;
 
 	// --------------------------------------
@@ -82,7 +81,7 @@ public class PolyBatch {
 		a = r = g = b = 1f;
 
 		mModelMatrix = new Matrix4f();
-		mIsLoaded = false;
+		mResourcesLoaded = false;
 
 		mLineMode = GL11.GL_LINE_STRIP;
 
@@ -92,38 +91,39 @@ public class PolyBatch {
 	// Core-Methods
 	// --------------------------------------
 
-	public void loadGLContent(ResourceManager pResourceManager) {
-		if (mIsLoaded)
+	public void loadResources(ResourceManager pResourceManager) {
+		if (mResourcesLoaded)
 			return;
 
-		mShader.loadGLContent(pResourceManager);
+		mShader.loadResources(pResourceManager);
 
-		if (mVaoId == -1)
-			mVaoId = GL30.glGenVertexArrays();
-
-		if (mVboId == -1)
+		if (mVboId == -1) {
 			mVboId = GL15.glGenBuffers();
+			Debug.debugManager().logger().v("OpenGL", "PolyBatch: VboId = " + mVboId);
+		}
 
 		mBuffer = MemoryUtil.memAllocFloat(MAX_LINES * NUM_VERTS_PER_LINE * VertexDataStructurePC.stride);
 
-		mIsLoaded = true;
-
+		mResourcesLoaded = true;
 	}
 
-	public void unloadGLContent() {
-		if (!mIsLoaded)
+	public void unloadResources() {
+		if (!mResourcesLoaded)
 			return;
 
-		mShader.unloadGLContent();
+		mShader.unloadResources();
 
-		if (mVaoId > -1)
+		if (mVaoId > -1) {
 			GL30.glDeleteVertexArrays(mVaoId);
+			Debug.debugManager().logger().v("OpenGL", "PolyBatch: Unloading VaoId = " + mVaoId);
+			mVaoId = -1;
+		}
 
-		if (mVboId > -1)
+		if (mVboId > -1) {
 			GL15.glDeleteBuffers(mVboId);
-
-		mVaoId = -1;
-		mVboId = -1;
+			Debug.debugManager().logger().v("OpenGL", "PolyBatch: Unloading VboId = " + mVboId);
+			mVboId = -1;
+		}
 
 		if (mBuffer != null) {
 			mBuffer.clear();
@@ -131,13 +131,27 @@ public class PolyBatch {
 
 		}
 
-		mIsLoaded = false;
-
+		mResourcesLoaded = false;
 	}
 
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
+
+	private void initializeGlContent() {
+		if (mVaoId == -1) {
+			mVaoId = GL30.glGenVertexArrays();
+
+			GL30.glBindVertexArray(mVaoId);
+			GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, mVboId);
+
+			GL20.glEnableVertexAttribArray(0);
+			GL20.glEnableVertexAttribArray(1);
+
+			GL20.glVertexAttribPointer(0, VertexDataStructurePC.positionElementCount, GL11.GL_FLOAT, false, VertexDataStructurePC.stride, VertexDataStructurePC.positionByteOffset);
+			GL20.glVertexAttribPointer(1, VertexDataStructurePC.colorElementCount, GL11.GL_FLOAT, false, VertexDataStructurePC.stride, VertexDataStructurePC.colorByteOffset);
+		}
+	}
 
 	public void begin(ICamera pCamera) {
 		if (pCamera == null)
@@ -262,7 +276,7 @@ public class PolyBatch {
 	}
 
 	private void flush() {
-		if (!mIsLoaded)
+		if (!mResourcesLoaded)
 			return;
 
 		if (mVertexCount == 0)
@@ -270,16 +284,12 @@ public class PolyBatch {
 
 		mBuffer.flip();
 
+		initializeGlContent();
+
 		GL30.glBindVertexArray(mVaoId);
 
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, mVboId);
 		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, mBuffer, GL15.GL_DYNAMIC_DRAW);
-
-		GL20.glVertexAttribPointer(0, VertexDataStructurePC.positionElementCount, GL11.GL_FLOAT, false, VertexDataStructurePC.stride, VertexDataStructurePC.positionByteOffset);
-		GL20.glVertexAttribPointer(1, VertexDataStructurePC.colorElementCount, GL11.GL_FLOAT, false, VertexDataStructurePC.stride, VertexDataStructurePC.colorByteOffset);
-
-		GL20.glEnableVertexAttribArray(0);
-		GL20.glEnableVertexAttribArray(1);
 
 		mShader.projectionMatrix(mCamera.projection());
 		mShader.viewMatrix(mCamera.view());
@@ -303,9 +313,7 @@ public class PolyBatch {
 		mShader.unbind();
 
 		mBuffer.clear();
-
 		mVertexCount = 0;
-
 	}
 
 	public void changeColorNormalized(float pR, float pG, float pB, float pA) {
@@ -320,5 +328,4 @@ public class PolyBatch {
 		a = pA;
 
 	}
-
 }

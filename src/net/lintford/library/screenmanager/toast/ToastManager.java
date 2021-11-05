@@ -56,15 +56,14 @@ public class ToastManager {
 	// Core-Methods
 	// --------------------------------------
 
-	public void loadGLContent(ResourceManager pResourceManager) {
-		mTextureBatch.loadGLContent(pResourceManager);
+	public void loadResources(ResourceManager pResourceManager) {
+		mTextureBatch.loadResources(pResourceManager);
 		mFontUnit = pResourceManager.fontManager().getFontUnit(FONT_TOAST_NAME);
 	}
 
-	public void unloadGLContent() {
-		mTextureBatch.unloadGLContent();
+	public void unloadResources() {
+		mTextureBatch.unloadResources();
 		mFontUnit = null;
-
 	}
 
 	public void update(LintfordCore pCore) {

@@ -72,16 +72,14 @@ public class BlurEffect {
 	// Core-Methods
 	// --------------------------------------
 
-	public void loadGLContent(ResourceManager pResourceManager) {
-		mFullScreenQuad.loadGLContent(pResourceManager);
-		mBlurShader.loadGLContent(pResourceManager);
-
+	public void loadResources(ResourceManager pResourceManager) {
+		mFullScreenQuad.loadResources(pResourceManager);
+		mBlurShader.loadResources(pResourceManager);
 	}
 
-	public void unloadGLContent() {
-		mFullScreenQuad.unloadGLContent();
-		mBlurShader.unloadGLContent();
-
+	public void unloadResources() {
+		mFullScreenQuad.unloadResources();
+		mBlurShader.unloadResources();
 	}
 
 	public void render(LintfordCore pCore, RenderTarget pTarget) {

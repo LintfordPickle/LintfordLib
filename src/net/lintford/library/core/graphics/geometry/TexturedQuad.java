@@ -24,7 +24,7 @@ public class TexturedQuad {
 	protected Matrix4f mModelMatrix;
 	protected int mVaoId = -1;
 	protected int mVboId = -1;
-	protected boolean mIsLoaded;
+	protected boolean mResourcesLoaded;
 	protected float mZDepth;
 	protected FloatBuffer mBuffer;
 
@@ -64,26 +64,23 @@ public class TexturedQuad {
 	// Core-Methods
 	// --------------------------------------
 
-	public void loadGLContent(ResourceManager pResourceManager) {
-		if (mIsLoaded)
+	public void loadResources(ResourceManager pResourceManager) {
+		if (mResourcesLoaded)
 			return;
 
-		if (mVaoId == -1)
-			mVaoId = GL30.glGenVertexArrays();
-
-		if (mVboId == -1)
+		if (mVboId == -1) {
 			mVboId = GL15.glGenBuffers();
+		}
 
 		mBuffer = MemoryUtil.memAllocFloat(6 * VertexDataStructurePT.stride);
 
 		setupVerts();
 
-		mIsLoaded = true;
-
+		mResourcesLoaded = true;
 	}
 
-	public void unloadGLContent() {
-		if (!mIsLoaded)
+	public void unloadResources() {
+		if (!mResourcesLoaded)
 			return;
 
 		cleanup();
@@ -91,11 +88,10 @@ public class TexturedQuad {
 		if (mBuffer != null) {
 			mBuffer.clear();
 			MemoryUtil.memFree(mBuffer);
-
+			mBuffer = null;
 		}
 
-		mIsLoaded = false;
-
+		mResourcesLoaded = false;
 	}
 
 	public void setupVerts() {
@@ -124,29 +120,20 @@ public class TexturedQuad {
 		mBuffer.put(lNewVertex0.getElements());
 
 		mBuffer.flip();
-
-		GL30.glBindVertexArray(mVaoId);
-
-		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, mVboId);
-		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, mBuffer, GL15.GL_STATIC_DRAW);
-
-		GL20.glVertexAttribPointer(0, VertexDataStructurePT.positionElementCount, GL11.GL_FLOAT, false, VertexDataStructurePT.stride, VertexDataStructurePT.positionByteOffset);
-		GL20.glVertexAttribPointer(1, VertexDataStructurePT.textureElementCount, GL11.GL_FLOAT, false, VertexDataStructurePT.stride, VertexDataStructurePT.textureByteOffset);
-
-		GL30.glBindVertexArray(0);
-
 	}
 
 	public void cleanup() {
-		if (mVboId > -1)
+		if (mVboId > -1) {
 			GL15.glDeleteBuffers(mVboId);
+			Debug.debugManager().logger().v("OpenGL", "TexturedQuad: Unloading VboId = " + mVboId);
+			mVaoId = -1;
+		}
 
-		if (mVaoId > -1)
+		if (mVaoId > -1) {
 			GL30.glDeleteVertexArrays(mVaoId);
-
-		mVaoId = -1;
-		mVboId = -1;
-
+			Debug.debugManager().logger().v("OpenGL", "TexturedQuad: Unloading VaoId = " + mVaoId);
+			mVboId = -1;
+		}
 	}
 
 	// --------------------------------------
@@ -154,32 +141,41 @@ public class TexturedQuad {
 	// --------------------------------------
 
 	public void draw(LintfordCore pCore) {
+		initializeGlContent();
 
-		// Bind to the VAO that has all the information about the quad vertices
 		GL30.glBindVertexArray(mVaoId);
-		GL20.glEnableVertexAttribArray(0);
-		GL20.glEnableVertexAttribArray(1);
 
 		{
-
 			Debug.debugManager().stats().incTag(DebugStats.TAG_ID_DRAWCALLS);
 			Debug.debugManager().stats().incTag(DebugStats.TAG_ID_VERTS, 6);
 			Debug.debugManager().stats().incTag(DebugStats.TAG_ID_TRIS, 2);
-
 		}
 
 		GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, 6);
 
-		// Put everything back to default
-		GL20.glDisableVertexAttribArray(0);
-		GL20.glDisableVertexAttribArray(1);
 		GL30.glBindVertexArray(0);
-
 	}
 
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
+
+	private void initializeGlContent() {
+		if (mVaoId == -1) {
+			mVaoId = GL30.glGenVertexArrays();
+
+			GL30.glBindVertexArray(mVaoId);
+
+			GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, mVboId);
+			GL15.glBufferData(GL15.GL_ARRAY_BUFFER, mBuffer, GL15.GL_STATIC_DRAW);
+
+			GL20.glEnableVertexAttribArray(0);
+			GL20.glEnableVertexAttribArray(1);
+
+			GL20.glVertexAttribPointer(0, VertexDataStructurePT.positionElementCount, GL11.GL_FLOAT, false, VertexDataStructurePT.stride, VertexDataStructurePT.positionByteOffset);
+			GL20.glVertexAttribPointer(1, VertexDataStructurePT.textureElementCount, GL11.GL_FLOAT, false, VertexDataStructurePT.stride, VertexDataStructurePT.textureByteOffset);
+		}
+	}
 
 	public void createModelMatrix() {
 		createModelMatrix(0, 0);

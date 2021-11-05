@@ -308,11 +308,10 @@ public class AudioManager {
 
 	}
 
-	public void loadALContent(ResourceManager pResourceManager) {
+	public void loadResources(ResourceManager pResourceManager) {
 		if (mOpenALInitialized) {
 			Debug.debugManager().logger().i(getClass().getSimpleName(), "AudioManager already initialized.");
 			return;
-
 		}
 
 		mDevice = alcOpenDevice((ByteBuffer) null);
@@ -333,15 +332,11 @@ public class AudioManager {
 			mAudioDevices = ALUtil.getStringList(NULL, ALC_ALL_DEVICES_SPECIFIER);
 			if (mAudioDevices == null) {
 				// checkALCError(NULL);
-
 			} else {
 				for (int i = 0; i < mAudioDevices.size(); i++) {
 					Debug.debugManager().logger().i(getClass().getSimpleName(), i + ": " + mAudioDevices.get(i));
-
 				}
-
 			}
-
 		}
 
 		// Chose which sound device to use
@@ -377,10 +372,9 @@ public class AudioManager {
 
 		// Once all the OpenAL Capabailities have been discovered, move onto loading the audio data
 		loadAudioFilesFromMetafile(META_FILE_LOCATION);
-
 	}
 
-	public void unloadALContent() {
+	public void unloadResources() {
 		musicManager().unloadALContent();
 
 		// Remove all the sound buffers

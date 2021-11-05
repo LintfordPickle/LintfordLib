@@ -51,11 +51,11 @@ public class PObjectManager extends PoolInstanceManager<JBox2dEntityInstance> {
 	// Core-Methods
 	// --------------------------------------
 
-	public void loadGLContent(ResourceManager pResourceManager) {
+	public void loadResources(ResourceManager pResourceManager) {
 
 	}
 
-	public void unloadGLContent() {
+	public void unloadResources() {
 
 	}
 
