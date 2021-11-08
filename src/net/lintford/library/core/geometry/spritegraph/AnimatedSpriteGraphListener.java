@@ -1,6 +1,6 @@
 package net.lintford.library.core.geometry.spritegraph;
 
-import net.lintford.library.core.geometry.spritegraph.instance.SpriteGraphInstance;
+import net.lintford.library.core.geometry.spritegraph.instances.SpriteGraphInstance;
 import net.lintford.library.core.graphics.sprites.SpriteDefinition;
 
 public interface AnimatedSpriteGraphListener {

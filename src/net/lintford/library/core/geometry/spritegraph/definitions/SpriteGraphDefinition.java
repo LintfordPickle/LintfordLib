@@ -1,4 +1,4 @@
-package net.lintford.library.core.geometry.spritegraph.definition;
+package net.lintford.library.core.geometry.spritegraph.definitions;
 
 import java.io.File;
 import java.io.FileWriter;

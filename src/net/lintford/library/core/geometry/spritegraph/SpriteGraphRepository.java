@@ -15,7 +15,7 @@ import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.entity.EntityLocationProvider;
 import net.lintford.library.core.entity.definitions.DefinitionManager;
-import net.lintford.library.core.geometry.spritegraph.definition.SpriteGraphDefinition;
+import net.lintford.library.core.geometry.spritegraph.definitions.SpriteGraphDefinition;
 
 public class SpriteGraphRepository extends EntityGroupManager {
 

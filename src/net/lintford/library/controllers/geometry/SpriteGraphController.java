@@ -6,7 +6,7 @@ import net.lintford.library.controllers.core.ResourceController;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.geometry.spritegraph.SpriteGraphManager;
-import net.lintford.library.core.geometry.spritegraph.instance.SpriteGraphInstance;
+import net.lintford.library.core.geometry.spritegraph.instances.SpriteGraphInstance;
 
 public class SpriteGraphController extends BaseController {
 

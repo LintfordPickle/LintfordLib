@@ -1,4 +1,4 @@
-package net.lintford.library.core.geometry.spritegraph.instance;
+package net.lintford.library.core.geometry.spritegraph.instances;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -9,8 +9,8 @@ import net.lintford.library.core.entity.instances.PooledBaseData;
 import net.lintford.library.core.geometry.spritegraph.AnimatedSpriteGraphListener;
 import net.lintford.library.core.geometry.spritegraph.ISpriteGraphPool;
 import net.lintford.library.core.geometry.spritegraph.SpriteGraphManager;
-import net.lintford.library.core.geometry.spritegraph.attachment.ISpriteGraphNodeAttachment;
-import net.lintford.library.core.geometry.spritegraph.definition.SpriteGraphDefinition;
+import net.lintford.library.core.geometry.spritegraph.definitions.SpriteGraphAttachmentDefinition;
+import net.lintford.library.core.geometry.spritegraph.definitions.SpriteGraphDefinition;
 import net.lintford.library.core.graphics.sprites.AnimatedSpriteListener;
 import net.lintford.library.core.graphics.sprites.SpriteInstance;
 
@@ -40,20 +40,15 @@ public class SpriteGraphInstance extends PooledBaseData implements AnimatedSprit
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
+	private transient List<SpriteGraphNodeInstance> mFlatNodes;
+	private transient AnimatedSpriteGraphListener mAnimatedSpriteGraphListener;
 
 	public SpriteGraphNodeInstance rootNode;
 	public String spriteGraphName;
-
 	public String mCurrentAction;
-
 	public boolean mFlipHorizontal;
 	public boolean mFlipVertical;
-
 	private boolean mOrdered;
-	private transient List<SpriteGraphNodeInstance> mFlatNodes;
-
-	private transient AnimatedSpriteGraphListener mAnimatedSpriteGraphListener;
-
 	public float positionX;
 	public float positionY;
 	public float rotationInRadians;
@@ -167,17 +162,17 @@ public class SpriteGraphInstance extends PooledBaseData implements AnimatedSprit
 	// Methods
 	// --------------------------------------
 
-	public void attachItemToNode(ISpriteGraphNodeAttachment pNodeAttachment) {
-		if (pNodeAttachment == null)
+	public void attachItemToNode(SpriteGraphAttachmentDefinition pAttachmentDefinition) {
+		if (pAttachmentDefinition == null) {
 			return;
-
-		final var lAttachmentCategory = pNodeAttachment.attachmentCategory();
-		final var lSpriteGraphNode = getNodeByAttachmentCategroy(lAttachmentCategory);
-		if (lSpriteGraphNode != null) {
-			lSpriteGraphNode.attachItemToSpriteGraphNode(pNodeAttachment);
-
 		}
 
+		final var lAttachmentCategory = pAttachmentDefinition.attachmentCategory();
+		final var lSpriteGraphNode = getNodeByAttachmentCategroy(lAttachmentCategory);
+
+		if (lSpriteGraphNode != null) {
+			lSpriteGraphNode.attachItemToSpriteGraphNode(pAttachmentDefinition);
+		}
 	}
 
 	public void detachItemFromNode(String pSpriteGraphNodeName) {

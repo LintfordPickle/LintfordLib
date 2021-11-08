@@ -4,8 +4,8 @@ import org.lwjgl.opengl.GL11;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.debug.Debug;
-import net.lintford.library.core.geometry.spritegraph.instance.SpriteGraphInstance;
-import net.lintford.library.core.geometry.spritegraph.instance.SpriteGraphNodeInstance;
+import net.lintford.library.core.geometry.spritegraph.instances.SpriteGraphInstance;
+import net.lintford.library.core.geometry.spritegraph.instances.SpriteGraphNodeInstance;
 import net.lintford.library.core.graphics.Color;
 import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.sprites.spritebatch.SpriteBatch;
@@ -51,7 +51,7 @@ public class SpriteGraphRenderer extends SpriteBatch {
 			if (lSpriteGraphNodeInstance.attachedItemInstance != null) {
 				var lAttachmentColor = pColor;
 				if (pColor == null) {
-					lAttachmentColor = ColorConstants.getColor(lSpriteGraphNodeInstance.attachedItemInstance.getColorTint());
+					lAttachmentColor = ColorConstants.getColor(lSpriteGraphNodeInstance.attachedItemInstance.colorTint());
 				}
 				renderSpriteGraphNodeInstance(pCore, pSpriteGraphInstance, lSpriteGraphNodeInstance, pColor == null ? lAttachmentColor : pColor);
 			}
@@ -67,7 +67,7 @@ public class SpriteGraphRenderer extends SpriteBatch {
 	private void renderSpriteGraphNodeInstance(LintfordCore pCore, SpriteGraphInstance pSpriteGraph, SpriteGraphNodeInstance pSpriteGraphNode, Color pColor) {
 		if (pSpriteGraphNode.attachedItemInstance != null) {
 			final var lAttachment = pSpriteGraphNode.attachedItemInstance;
-			var lSpritesheetDefinition = lAttachment.spriteSheetDefinition();
+			var lSpritesheetDefinition = lAttachment.spritesheetDefinition();
 
 			if (pSpriteGraphNode.mSpriteInstance != null) {
 				draw(lSpritesheetDefinition, pSpriteGraphNode.mSpriteInstance, pSpriteGraphNode.mSpriteInstance, -0.1f, pColor);

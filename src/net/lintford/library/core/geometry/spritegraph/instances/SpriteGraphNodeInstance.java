@@ -1,4 +1,4 @@
-package net.lintford.library.core.geometry.spritegraph.instance;
+package net.lintford.library.core.geometry.spritegraph.instances;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,8 +6,9 @@ import java.util.List;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.entity.instances.PooledBaseData;
 import net.lintford.library.core.geometry.spritegraph.ISpriteGraphPool;
-import net.lintford.library.core.geometry.spritegraph.attachment.ISpriteGraphNodeAttachment;
-import net.lintford.library.core.geometry.spritegraph.definition.SpriteGraphNodeDefinition;
+import net.lintford.library.core.geometry.spritegraph.attachment.SpriteGraphNodeAttachment;
+import net.lintford.library.core.geometry.spritegraph.definitions.ISpriteGraphAttachmentDefinition;
+import net.lintford.library.core.geometry.spritegraph.definitions.SpriteGraphNodeDefinition;
 import net.lintford.library.core.graphics.sprites.SpriteAnchor;
 import net.lintford.library.core.graphics.sprites.SpriteInstance;
 import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
@@ -29,8 +30,7 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 	public String name;
 	public SpriteGraphInstance mParentGraphInst;
 
-	/** Each SpriteGraphNodeInstance can have a specific sheetsheet assigned to it. It is from which this sheet that all the anchor information is taken. */
-	public transient ISpriteGraphNodeAttachment attachedItemInstance;
+	public final SpriteGraphNodeAttachment attachedItemInstance = new SpriteGraphNodeAttachment();
 	public transient SpriteInstance mSpriteInstance;
 
 	/** The ID of the {@link SpriteGraphAnchorDef} on the parent. */
@@ -311,12 +311,12 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 	}
 
 	private void updateSpriteInstance(LintfordCore pCore, SpriteGraphInstance pSpriteGraph, SpriteGraphNodeInstance pParentSpriteGraphNode) {
-		if (attachedItemInstance == null)
+		if (attachedItemInstance.isInitialized() == false)
 			return;
 
 		final var lAttachment = attachedItemInstance;
 
-		var lSpriteSheetDefinition = lAttachment.spriteSheetDefinition();
+		var lSpriteSheetDefinition = lAttachment.spritesheetDefinition();
 		if (lSpriteSheetDefinition == null) {
 			lSpriteSheetDefinition = loadNodeSpritesheetDefinition(pCore);
 		}
@@ -331,7 +331,6 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 				if (lFoundSprintInstance != null) {
 					mSpriteInstance = lFoundSprintInstance;
 				}
-
 			}
 
 			currentSpriteActionName = pSpriteGraph.currentAnimation();
@@ -343,16 +342,16 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 		final var lAttachment = attachedItemInstance;
 
 		// Resolve the sprite sheet
-		var lSpriteSheetDefinition = lAttachment.spriteSheetDefinition();
+		var lSpriteSheetDefinition = lAttachment.spritesheetDefinition();
 		if (lSpriteSheetDefinition == null) {
 			final var lResourceManager = pCore.resources();
-			lSpriteSheetDefinition = lResourceManager.spriteSheetManager().getSpriteSheet(lAttachment.spriteGraphSpriteSheetName(), entityGroupID);
+			lSpriteSheetDefinition = lResourceManager.spriteSheetManager().getSpriteSheet(lAttachment.spritesheetName(), entityGroupID);
 
 			if (lSpriteSheetDefinition == null) {
 				return null;
 			}
 
-			lAttachment.spriteSheetDefinition(lSpriteSheetDefinition);
+			lAttachment.spritesheetDefinition(lSpriteSheetDefinition);
 		}
 
 		return lSpriteSheetDefinition;
@@ -412,14 +411,12 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 	// Methods
 	// --------------------------------------
 
-	public void attachItemToSpriteGraphNode(ISpriteGraphNodeAttachment pObjectToAttac) {
-		if (attachedItemInstance != null) {
+	public void attachItemToSpriteGraphNode(ISpriteGraphAttachmentDefinition pAttachmenetDefinition) {
+		if (attachedItemInstance.isInitialized()) {
 			detachItemFromSpriteGraphNode();
-
 		}
 
-		attachedItemInstance = pObjectToAttac;
-
+		attachedItemInstance.initialize(pAttachmenetDefinition);
 	}
 
 	public void detachItemFromSpriteGraphNode() {
@@ -428,7 +425,7 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 			mSpriteInstance = null;
 		}
 
-		attachedItemInstance = null;
+		attachedItemInstance.unload();
 	}
 
 	public void addChild(SpriteGraphNodeInstance pPart) {

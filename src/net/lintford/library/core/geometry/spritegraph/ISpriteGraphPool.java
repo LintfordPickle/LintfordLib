@@ -1,6 +1,6 @@
 package net.lintford.library.core.geometry.spritegraph;
 
-import net.lintford.library.core.geometry.spritegraph.instance.SpriteGraphNodeInstance;
+import net.lintford.library.core.geometry.spritegraph.instances.SpriteGraphNodeInstance;
 
 public interface ISpriteGraphPool {
 

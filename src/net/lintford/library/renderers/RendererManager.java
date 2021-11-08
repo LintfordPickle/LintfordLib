@@ -273,8 +273,6 @@ public class RendererManager {
 			mWindowRenderers.get(i).unloadResources();
 		}
 
-		GLDebug.checkGLErrorsException(getClass().getSimpleName());
-
 		mSpriteBatch.unloadResources();
 		mTextureBatch.unloadResources();
 		mLineBatch.unloadResources();
