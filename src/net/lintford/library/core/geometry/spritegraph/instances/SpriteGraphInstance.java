@@ -146,7 +146,6 @@ public class SpriteGraphInstance extends PooledBaseData implements AnimatedSprit
 		updateRootNodeTransform();
 
 		rootNode.update(pCore, this, null);
-
 	}
 
 	public void updateRootNodeTransform() {

@@ -13,6 +13,7 @@ public class SpriteGraphNodeDefinition {
 	public String anchorNodeName;
 	public float x, y, r;
 	public int zDepth;
+	public boolean controlsGraphAnimationListener;
 
 	/** Only ISpriteGraphAttachments of the same category can be attached to this node */
 	public int attachmentCategory;
@@ -26,13 +27,12 @@ public class SpriteGraphNodeDefinition {
 
 	public SpriteGraphNodeDefinition() {
 		childParts = new ArrayList<>();
-
+		controlsGraphAnimationListener = false;
 	}
 
 	public SpriteGraphNodeDefinition(String pName) {
 		this();
 		name = pName;
-
 	}
 
 	// --------------------------------------

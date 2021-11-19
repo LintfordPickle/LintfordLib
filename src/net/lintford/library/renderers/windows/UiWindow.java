@@ -451,27 +451,14 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 
 		// Draw the window background
 		lSpritebatch.begin(pCore.HUD());
-		TextureBatch9Patch.draw9Patch(lSpritebatch, mCoreSpritesheet, 32, mWindowArea.x(), mWindowArea.y() + getTitleBarHeight() + 5, mWindowArea.w(), mWindowArea.h() - getTitleBarHeight() - 5, Z_DEPTH, lWindowColor);
+		TextureBatch9Patch.draw9Patch(lSpritebatch, mCoreSpritesheet, 32, mWindowArea.x(), mWindowArea.y(), mWindowArea.w(), mWindowArea.h(), Z_DEPTH, lWindowColor);
 		lSpritebatch.end();
-
-		final var lWindowTitleColor = ColorConstants.getWhiteWithAlpha(1.f);
 
 		// Draw the title bar
 		lSpritebatch.begin(pCore.HUD());
-		lSpritebatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_TITLE_HORIZONTAL_LEFT, mWindowArea.x(), mWindowArea.y(), 32, getTitleBarHeight(), Z_DEPTH, lWindowTitleColor);
-		lSpritebatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_TITLE_HORIZONTAL_MID, mWindowArea.x() + 32, mWindowArea.y(), mWindowArea.w() - 64, getTitleBarHeight(), Z_DEPTH, lWindowTitleColor);
-		lSpritebatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_TITLE_HORIZONTAL_RIGHT, mWindowArea.x() + mWindowArea.w() - 32, mWindowArea.y(), 32, 32.f, Z_DEPTH, lWindowTitleColor);
 
-		float lTitleX = mWindowArea.x();
+		float lTitleX = mWindowArea.x() + WINDOW_CONTENT_PADDING_X;
 		float lTitleY = mWindowArea.y();
-
-		// Render the icons from the game ui texture
-		if (mWindowIconSpriteIndex != -1) {
-			lSpritebatch.draw(mHudSpritesheet, mWindowIconSpriteIndex, lTitleX + 6f, lTitleY, getTitleBarHeight(), getTitleBarHeight(), Z_DEPTH, ColorConstants.TextHeadingColor);
-			lTitleX += 32 + WINDOW_CONTENT_PADDING_X;
-		} else {
-			lTitleX += 8.f; // offset when no icon in title bar
-		}
 
 		lTitleFont.begin(pCore.HUD());
 		lTitleFont.drawText(mWindowTitle, lTitleX, lTitleY + getTitleBarHeight() * .5f - lTitleFont.fontHeight() * .5f, Z_DEPTH, ColorConstants.TextHeadingColor, 1f);
@@ -506,7 +493,6 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 
 		if (lHUDBoundingRect == null) {
 			return;
-
 		}
 
 		final float lWindowScaleFactorX = mUiStructureController.windowAutoScaleFactorX();
@@ -524,7 +510,6 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 		final var lH = lHUDBoundingRect.h() / 2 - lWindowPaddingY - lScreenPaddingY;
 
 		mWindowArea.set(lX, lY, lW, lH);
-
 	}
 
 	public void keepWindowOnScreen(ICamera pHUD) {

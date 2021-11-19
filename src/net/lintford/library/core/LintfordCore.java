@@ -524,13 +524,11 @@ public abstract class LintfordCore {
 				if (mCoreTime.isRunningSlowly()) {
 					if (lUpdateFrameLag == 0) {
 						mCoreTime.isRunningSlowly = false;
-
 					}
 
 				} else if (lUpdateFrameLag >= 5) {
 					// If we lag more than 5 frames, start thinking we are running slowly
 					mCoreTime.isRunningSlowly = true;
-
 				}
 
 				// Draw needs to know the total elapsed time that occured for the fixed length updates.

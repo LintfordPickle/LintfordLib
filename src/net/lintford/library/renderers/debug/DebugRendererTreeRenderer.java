@@ -10,6 +10,7 @@ import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.fonts.BitmapFontManager;
 import net.lintford.library.core.graphics.fonts.FontUnit;
+import net.lintford.library.core.graphics.fonts.FontUnit.WrapType;
 import net.lintford.library.core.graphics.sprites.spritebatch.SpriteBatch;
 import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintford.library.core.graphics.textures.CoreTextureNames;
@@ -49,7 +50,7 @@ public class DebugRendererTreeRenderer extends Rectangle implements IScrollBarAr
 	private transient int mLowerBound;
 	private transient int mUpperBound;
 
-	private float mOpenWidth = 350;
+	private float mOpenWidth = 400;
 	private float mOpenHeight = 500;
 	private float mClickTimer;
 
@@ -309,6 +310,7 @@ public class DebugRendererTreeRenderer extends Rectangle implements IScrollBarAr
 		if (h < mContentRectangle.h())
 			mContentRectangle.preDraw(pCore, mSpriteBatch, mCoreSpritesheet);
 
+		mConsoleFont.setWrapType(WrapType.WordWrapTrim);
 		mConsoleFont.begin(pCore.HUD());
 		mSpriteBatch.begin(pCore.HUD());
 
@@ -323,7 +325,7 @@ public class DebugRendererTreeRenderer extends Rectangle implements IScrollBarAr
 
 			float lPosX = 10f + lBaseRendererWidget.rendererLevel * 30f;
 
-			mConsoleFont.drawText(lRendererName, lBaseRendererWidget.x() + lPosX, lBaseRendererWidget.y() + lBaseRendererWidget.h() * .5f - mConsoleFont.fontHeight() * .5f, -0.02f, ColorConstants.WHITE, 1, -1);
+			mConsoleFont.drawText(lRendererName, lBaseRendererWidget.x() + lPosX, lBaseRendererWidget.y() + lBaseRendererWidget.h() * .5f - mConsoleFont.fontHeight() * .5f, -0.02f, ColorConstants.WHITE, 1, mOpenWidth - 64);
 
 			final float lActiveIconX = x + mOpenWidth - 64;
 			final float lActiveIconY = lBaseRendererWidget.y();

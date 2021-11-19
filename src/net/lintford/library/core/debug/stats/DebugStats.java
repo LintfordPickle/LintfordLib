@@ -41,6 +41,7 @@ public class DebugStats {
 	public static final int TAG_ID_TRIS = 2;
 	public static final int TAG_ID_BATCH_OBJECTS = 3;
 	public static final int TAG_ID_FPS = 4;
+	public static final int TAG_ID_TIMESTEP = 13;
 	public static final int TAG_ID_TIMING = 12;
 	public static final int TAG_ID_TEXTURES = 5;
 	public static final int TAG_ID_RENDERTEXTURES = 6;
@@ -103,6 +104,7 @@ public class DebugStats {
 		mTags.add(new DebugStatTagCaption(-1, "App:"));
 		mTags.add(new DebugStatTagFloat(TAG_ID_FPS, "FPS", 0, false));
 		mTags.add(new DebugStatTagString(TAG_ID_TIMING, "Timing", ""));
+		mTags.add(new DebugStatTagString(TAG_ID_TIMESTEP, "Timestep", ""));
 		mTags.add(new DebugStatTagString(TAG_ID_RES, "Resolution", ""));
 		// mTags.add(new DebugStatTagFloat(-1, "Ram Used", 0, false));
 		// mTags.add(new DebugStatTagFloat(-1, "Ram Free", 0, false));
@@ -193,15 +195,14 @@ public class DebugStats {
 			timer -= 1000;
 
 			Debug.debugManager().stats().setTagValue(DebugStats.TAG_ID_FPS, frameCount);
-
 		}
 
 		mLastDrawElapsed = pCore.appTime().elapsedTimeMilli();
 
 		final String lSpace = " ";
 		final String lDelimiter = "|";
-		String lIsFixed = (pCore.isFixedTimeStep() ? "f" : "v");
-		String lIsRunningSlowly = (pCore.appTime().isRunningSlowly() ? "t" : "f");
+		String lIsFixed = (pCore.isFixedTimeStep() ? "fixed" : "variable");
+		String lIsRunningSlowly = (pCore.appTime().isRunningSlowly() ? "slow" : "");
 		String lUElapsed = String.format(java.util.Locale.US, "%.2f", mLastUpdateElapsed);
 		String lDElapsed = String.format(java.util.Locale.US, "%.2f", mLastDrawElapsed);
 		String lTotalElapsed = "(" + String.format(java.util.Locale.US, "%.1f", pCore.appTime().totalTimeSeconds()) + "s)";
@@ -209,12 +210,17 @@ public class DebugStats {
 		if (mStringBuilder.length() > 0)
 			mStringBuilder.delete(0, mStringBuilder.length());
 
-		mStringBuilder.append(frameCount).append("fps").append(lSpace);
 		mStringBuilder.append(lUElapsed).append("/").append(lDElapsed).append(lSpace);
 		mStringBuilder.append(lTotalElapsed).append(lSpace);
-		mStringBuilder.append(lIsFixed).append(lDelimiter).append(lIsRunningSlowly);
 
 		((DebugStatTagString) getTagByID(TAG_ID_TIMING)).value = mStringBuilder.toString();
+
+		if (mStringBuilder.length() > 0)
+			mStringBuilder.delete(0, mStringBuilder.length());
+
+		mStringBuilder.append(lIsFixed).append(lDelimiter).append(lIsRunningSlowly);
+
+		((DebugStatTagString) getTagByID(TAG_ID_TIMESTEP)).value = mStringBuilder.toString();
 
 		if (!mIsOpen)
 			return;
@@ -226,10 +232,11 @@ public class DebugStats {
 		final var lHeightOffset = Debug.debugManager().console().isOpen() ? 200f : 10f;
 		final var lWidthOffset = Debug.debugManager().console().isOpen() ? 360f : 0f;
 
+		final float lWindowWidth = 350.f;
 		float lTop = lHUDRectangle.top() + lHeightOffset + 5f;
-		float lLeft = lHUDRectangle.right() - 240f - lWidthOffset - 5f;
+		float lLeft = lHUDRectangle.right() - lWindowWidth - lWidthOffset - 5f;
 
-		mSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lLeft, lTop, 240, 500, -0.01f, ColorConstants.getColor(.05f, .05f, .05f, .95f));
+		mSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lLeft, lTop, lWindowWidth, 500, -0.01f, ColorConstants.getColor(.05f, .05f, .05f, .95f));
 
 		float lTagPosY = lTop + 5f;
 		final int lTagCount = mTags.size();

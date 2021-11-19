@@ -51,7 +51,7 @@ public class DebugControllerTreeRenderer extends Rectangle implements IScrollBar
 	private transient int mLowerBound;
 	private transient int mUpperBound;
 
-	private float mOpenWidth = 350;
+	private float mOpenWidth = 400;
 	private float mOpenHeight = 500;
 	private float mClickTimer;
 

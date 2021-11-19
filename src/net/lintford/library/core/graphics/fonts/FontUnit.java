@@ -295,10 +295,8 @@ public class FontUnit {
 						SpriteFrame lDotGlyph = mFontDefinition.getGlyphFrame((int) '.');
 						if (lDotGlyph != null) {
 							for (int j = 0; j < lNumElpsis; j++) {
-								mFontRenderer.draw(mFontDefinition.texture(), lDotGlyph.x(), lDotGlyph.y(), lDotGlyph.w(), lDotGlyph.h(), lX + j * lDotGlyph.width(), lY, glyph_c.width() * pScale,
-										glyph_c.height() * pScale, pZ, pTextColor);
+								mFontRenderer.draw(mFontDefinition.texture(), lDotGlyph.x(), lDotGlyph.y(), lDotGlyph.w(), lDotGlyph.h(), lX + j * lDotGlyph.width(), lY, glyph_c.width() * pScale, glyph_c.height() * pScale, pZ, pTextColor);
 							}
-
 						}
 
 						break;
@@ -319,7 +317,20 @@ public class FontUnit {
 				lX = pX;
 			}
 
-			mFontRenderer.draw(mFontDefinition.texture(), glyph_c.x(), glyph_c.y(), glyph_c.w(), glyph_c.h(), (int)lX, (int)lY, glyph_c.width() * pScale, glyph_c.height() * pScale, pZ, pTextColor);
+			mFontRenderer.draw(mFontDefinition.texture(), glyph_c.x(), glyph_c.y(), glyph_c.w(), glyph_c.h(), (int) lX, (int) lY, glyph_c.width() * pScale, glyph_c.height() * pScale, pZ, pTextColor);
+
+			if (lJustWrapped && mWrapType == WrapType.WordWrapTrim) {
+				final int lNumElpsis = 3;
+
+				SpriteFrame lDotGlyph = mFontDefinition.getGlyphFrame((int) '.');
+				if (lDotGlyph != null) {
+					for (int j = 0; j < lNumElpsis; j++) {
+						mFontRenderer.draw(mFontDefinition.texture(), lDotGlyph.x(), lDotGlyph.y(), lDotGlyph.w(), lDotGlyph.h(), lX + j * lDotGlyph.width(), lY, glyph_c.width() * pScale, glyph_c.height() * pScale, pZ, pTextColor);
+					}
+				}
+
+				return;
+			}
 
 			if (lJustWrapped && lBreakCharFitsOnThisLine) {
 				lY += lScaledLineHeight;

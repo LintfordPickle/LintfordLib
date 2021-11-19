@@ -75,11 +75,8 @@ public class SpriteInstance extends Rectangle {
 		if (animationEnabled) {
 			if (animatedSpriteListener != null) {
 				animatedSpriteListener.onStarted(this);
-
 			}
-
 		}
-
 	}
 
 	public boolean isLoopingEnabled() {

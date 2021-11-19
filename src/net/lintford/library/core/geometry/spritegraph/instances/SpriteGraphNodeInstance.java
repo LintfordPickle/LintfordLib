@@ -39,6 +39,7 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 	/** The name of the {@link SpriteGraphAnchorDef} on the parent. */
 	public String anchorNodeName;
 	public String currentSpriteActionName;
+	public boolean controlsGraphAnimationListener;
 
 	/** A list of child parts which are anchored on this {@link SpriteGraphNodeInstance}. */
 	public List<SpriteGraphNodeInstance> childNodes;
@@ -250,6 +251,7 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 		entityGroupID = pEntityGroupUid;
 		zDepth = pGraphNodeDef.zDepth;
 		attachmentCategory = pGraphNodeDef.attachmentCategory;
+		controlsGraphAnimationListener = pGraphNodeDef.controlsGraphAnimationListener;
 
 		final int lChildNodeCount = pGraphNodeDef.childParts.size();
 		for (int i = 0; i < lChildNodeCount; i++) {
@@ -267,7 +269,7 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 	}
 
 	public void reset(ISpriteGraphPool pSpriteGraphPool) {
-
+		controlsGraphAnimationListener = false;
 	}
 
 	public void update(LintfordCore pCore, SpriteGraphInstance pParentGraph, SpriteGraphNodeInstance pParentGraphNode) {
@@ -305,9 +307,7 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 			updateChildNodeTransform(pCore, lChildSpriteGraphNode);
 
 			childNodes.get(i).update(pCore, pParentGraph, this);
-
 		}
-
 	}
 
 	private void updateSpriteInstance(LintfordCore pCore, SpriteGraphInstance pSpriteGraph, SpriteGraphNodeInstance pParentSpriteGraphNode) {
@@ -333,8 +333,11 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 				}
 			}
 
-			currentSpriteActionName = pSpriteGraph.currentAnimation();
+			if (controlsGraphAnimationListener) {
+				mSpriteInstance.animatedSpriteListender(pSpriteGraph);
+			}
 
+			currentSpriteActionName = pSpriteGraph.currentAnimation();
 		}
 	}
 

@@ -49,6 +49,7 @@ public class IndexedPolyBatchPCT {
 	protected int mCurrentTexID;
 	protected ICamera mCamera;
 	protected ShaderMVP_PCT mShader;
+	private ShaderMVP_PCT mShaderInUse;
 	protected Matrix4f mModelMatrix;
 	protected FloatBuffer mBuffer;
 	protected IntBuffer mIndexBuffer;
@@ -168,6 +169,10 @@ public class IndexedPolyBatchPCT {
 	}
 
 	public void begin(ICamera pCamera) {
+		begin(pCamera, mShader);
+	}
+
+	public void begin(ICamera pCamera, ShaderMVP_PCT pCustomShader) {
 		if (pCamera == null)
 			return;
 
@@ -177,6 +182,7 @@ public class IndexedPolyBatchPCT {
 		if (mIsDrawing)
 			return;
 
+		mShaderInUse = pCustomShader;
 		mCamera = pCamera;
 
 		mBuffer.clear();
@@ -186,7 +192,6 @@ public class IndexedPolyBatchPCT {
 		mVertexCount = 0;
 
 		mIsDrawing = true;
-
 	}
 
 	public void drawRect(Texture pTexture, Rectangle pSrcRect, List<Vector2f> pVertexArray, float pZ, boolean pClose) {
@@ -292,22 +297,29 @@ public class IndexedPolyBatchPCT {
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, mVioId);
 		GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, mIndexBuffer, GL15.GL_DYNAMIC_DRAW);
 
-		mShader.projectionMatrix(mCamera.projection());
-		mShader.viewMatrix(mCamera.view());
-		mShader.modelMatrix(mModelMatrix);
+		GLDebug.checkGLErrorsException();
+		
+		mShaderInUse.projectionMatrix(mCamera.projection());
+		mShaderInUse.viewMatrix(mCamera.view());
+		mShaderInUse.modelMatrix(mModelMatrix);
 
-		mShader.bind();
+		mShaderInUse.bind();
 
 		{
 			Debug.debugManager().stats().incTag(DebugStats.TAG_ID_DRAWCALLS);
 			Debug.debugManager().stats().incTag(DebugStats.TAG_ID_VERTS, mIndexCount * 3);
 		}
 
-		// glDrawElements for index buffer
+		GLDebug.checkGLErrorsException();
+		
 		GL11.glDrawElements(GL11.GL_TRIANGLES, mIndexCount, GL11.GL_UNSIGNED_INT, 0);
 
-		mShader.unbind();
+		GLDebug.checkGLErrorsException();
+		
+		mShaderInUse.unbind();
 		GL30.glBindVertexArray(0);
+		
+		GLDebug.checkGLErrorsException();
 	}
 
 	public void redraw() {
