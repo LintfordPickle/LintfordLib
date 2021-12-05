@@ -30,6 +30,10 @@ public class SpriteGraphNodeAttachment implements ISpriteGraphAttachmentDefiniti
 	// Properties
 	// --------------------------------------
 
+	public boolean isAttachmentInUse() {
+		return attachmentCategory() > 0;
+	}
+
 	public boolean isInitialized() {
 		return mIsInitialized;
 	}

@@ -45,7 +45,7 @@ public class SpriteGraphInstance extends PooledBaseData implements AnimatedSprit
 
 	public SpriteGraphNodeInstance rootNode;
 	public String spriteGraphName;
-	public String mCurrentAction;
+	public String mCurrentlyPlayingAction;
 	public boolean mFlipHorizontal;
 	public boolean mFlipVertical;
 	private boolean mOrdered;
@@ -58,11 +58,11 @@ public class SpriteGraphInstance extends PooledBaseData implements AnimatedSprit
 	// --------------------------------------
 
 	public String currentAnimation() {
-		return mCurrentAction;
+		return mCurrentlyPlayingAction;
 	}
 
 	public void currentAnimation(String pCurrentAnimation) {
-		mCurrentAction = pCurrentAnimation;
+		mCurrentlyPlayingAction = pCurrentAnimation;
 	}
 
 	public SpriteGraphNodeInstance getNodeByName(String pNodeName) {
@@ -218,31 +218,29 @@ public class SpriteGraphInstance extends PooledBaseData implements AnimatedSprit
 
 	}
 
+	// --------------------------------------
+	// Animation Listeners
+	// --------------------------------------
+
 	@Override
 	public void onStarted(SpriteInstance pSender) {
 		if (mAnimatedSpriteGraphListener != null) {
 			mAnimatedSpriteGraphListener.onSpriteAnimationStarted(this, pSender.spriteDefinition());
-
 		}
-
 	}
 
 	@Override
 	public void onLooped(SpriteInstance pSender) {
 		if (mAnimatedSpriteGraphListener != null) {
 			mAnimatedSpriteGraphListener.onSpriteAnimationLooped(this, pSender.spriteDefinition());
-
 		}
-
 	}
 
 	@Override
 	public void onStopped(SpriteInstance pSender) {
 		if (mAnimatedSpriteGraphListener != null) {
 			mAnimatedSpriteGraphListener.onSpriteAnimationStopped(this, pSender.spriteDefinition());
-
 		}
-
 	}
 
 }

@@ -38,7 +38,7 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 
 	/** The name of the {@link SpriteGraphAnchorDef} on the parent. */
 	public String anchorNodeName;
-	public String currentSpriteActionName;
+	public String currentNodeSpriteActionName;
 	public boolean controlsGraphAnimationListener;
 
 	/** A list of child parts which are anchored on this {@link SpriteGraphNodeInstance}. */
@@ -321,11 +321,12 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 			lSpriteSheetDefinition = loadNodeSpritesheetDefinition(pCore);
 		}
 
-		if (currentSpriteActionName == null || !currentSpriteActionName.equals(pSpriteGraph.currentAnimation())) {
-			var lFoundSprintInstance = lSpriteSheetDefinition.getSpriteInstance(pSpriteGraph.currentAnimation());
+		// We match the nodes' actions with the action of the parent sprite graph
+		if (mSpriteInstance == null || currentNodeSpriteActionName == null || !currentNodeSpriteActionName.equals(pSpriteGraph.currentAnimation())) {
+			currentNodeSpriteActionName = pSpriteGraph.currentAnimation();
+			var lFoundSprintInstance = lSpriteSheetDefinition.getSpriteInstance(currentNodeSpriteActionName);
 			if (lFoundSprintInstance != null) {
 				mSpriteInstance = lFoundSprintInstance;
-
 			} else {
 				lFoundSprintInstance = lSpriteSheetDefinition.getSpriteInstance(lAttachment.defaultSpriteName());
 				if (lFoundSprintInstance != null) {
@@ -336,8 +337,6 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 			if (controlsGraphAnimationListener) {
 				mSpriteInstance.animatedSpriteListender(pSpriteGraph);
 			}
-
-			currentSpriteActionName = pSpriteGraph.currentAnimation();
 		}
 	}
 

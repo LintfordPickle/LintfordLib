@@ -49,7 +49,6 @@ import net.lintford.library.ConstantsApp;
 import net.lintford.library.GameInfo;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.debug.Debug;
-import net.lintford.library.core.debug.Debug.DebugLogLevel;
 import net.lintford.library.core.debug.GLDebug;
 import net.lintford.library.core.debug.stats.DebugStatTagString;
 import net.lintford.library.core.debug.stats.DebugStats;
@@ -246,8 +245,8 @@ public class DisplayManager extends IniFile {
 				mLockedListeners = true;
 				final int lNumWindowResizeListeners = mWindowResizeListeners.size();
 
-				Debug.debugManager().logger().log(DebugLogLevel.info, getClass().getSimpleName(), String.format("Resolution changed: %dx%d", mDisplaySettings.windowWidth, mDisplaySettings.windowHeight));
-				Debug.debugManager().logger().log(DebugLogLevel.info, "SYSTEM", "calling window resize listeners.");
+				Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("Resolution changed: %dx%d", mDisplaySettings.windowWidth, mDisplaySettings.windowHeight));
+				Debug.debugManager().logger().i("SYSTEM", "calling window resize listeners.");
 
 				for (int i = 0; i < lNumWindowResizeListeners; i++) {
 					if (mWindowResizeListeners.get(i) == null)

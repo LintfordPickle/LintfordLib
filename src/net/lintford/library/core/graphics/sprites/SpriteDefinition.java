@@ -11,6 +11,7 @@ import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDefinit
 public class SpriteDefinition implements Serializable {
 
 	private static final long serialVersionUID = -2995518836520839609L;
+	private static final int INVALID_FRAME_REFERENCE = -1;
 
 	// --------------------------------------
 	// Variables
@@ -89,6 +90,11 @@ public class SpriteDefinition implements Serializable {
 
 		final int lNumSprites = animationSpriteIndices.length;
 		for (int i = 0; i < lNumSprites; i++) {
+			if (i == INVALID_FRAME_REFERENCE) {
+				Debug.debugManager().logger().e(getClass().getSimpleName(), "Error resolving animation frame in " + name);
+				continue;
+			}
+
 			final SpriteFrame lSpriteFrame = pSpriteSheet.getSpriteFrame(animationSpriteIndices[i]);
 
 			if (lSpriteFrame == null) {

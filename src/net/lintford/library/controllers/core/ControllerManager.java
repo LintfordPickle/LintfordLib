@@ -87,9 +87,7 @@ public class ControllerManager {
 				continue;
 
 			lControllerList.get(i).update(pCore);
-
 		}
-
 	}
 
 	// --------------------------------------

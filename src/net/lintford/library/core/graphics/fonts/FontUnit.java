@@ -239,11 +239,11 @@ public class FontUnit {
 		final int lLineSpacing = BitmapFontDefinition.LINE_SPACING;
 		int lCharacterLength = pText.length();
 		for (int i = 0; i < lCharacterLength; i++) {
-			char ch_c = pText.charAt(i);
-			SpriteFrame glyph_c = mFontDefinition.getGlyphFrame((int) ch_c);
+			char lCh_Current = pText.charAt(i);
+			SpriteFrame glyph_c = mFontDefinition.getGlyphFrame((int) lCh_Current);
 
 			// Special characters
-			if (ch_c == '\n' || ch_c == '\r') {
+			if (lCh_Current == '\n' || lCh_Current == '\r') {
 				lX = pX;
 				lY += mFontDefinition.getFontHeight() + lLineSpacing;
 				lWrapWidth = 0.f;
@@ -252,28 +252,27 @@ public class FontUnit {
 				continue;
 			}
 
-			if (BREAK_CHARS.indexOf(ch_c) >= 0) {
+			if (BREAK_CHARS.indexOf(lCh_Current) >= 0) {
 				lClearedWord = false;
 			}
 
 			if (pWrapWidth != NO_WORD_WRAP) {
 				if (mWrapType == WrapType.WordWrap || mWrapType == WrapType.WordWrapTrim && !lClearedWord) {
-
 					if (mWrapType == WrapType.WordWrapTrim && lJustWrapped) {
 						break;
 					}
 
 					lWordWidth = glyph_c.width() * pScale;
 					lBreakCharFitsOnThisLine = lWrapWidth + glyph_c.width() <= pWrapWidth;
-					if ((lX == pX) || BREAK_CHARS.indexOf(ch_c) >= 0) {
+					if ((lX == pX) || BREAK_CHARS.indexOf(lCh_Current) >= 0) {
 						for (int j = i + 1; j < pText.length(); j++) {
-							char ch_n = pText.charAt(j);
-							var lCharGlyph = mFontDefinition.getGlyphFrame((int) ch_n);
+							char lCh_Next = pText.charAt(j);
+							var lCharGlyph = mFontDefinition.getGlyphFrame((int) lCh_Next);
 
 							if (lCharGlyph == null)
 								continue;
 
-							if (BREAK_CHARS.indexOf(ch_n) >= 0) {
+							if (BREAK_CHARS.indexOf(lCh_Next) >= 0) {
 								lClearedWord = true;
 								lWrapWidth += lWordWidth;
 								break;
@@ -281,7 +280,7 @@ public class FontUnit {
 
 							if (lWrapWidth + lWordWidth + lCharGlyph.width() * pScale > pWrapWidth) {
 								lWrapWidth = 0;
-								lJustWrapped = true;
+								lJustWrapped = lWordWidth + lCharGlyph.width() < pWrapWidth;
 								break;
 							}
 
@@ -304,7 +303,7 @@ public class FontUnit {
 				}
 			}
 
-			if (ch_c == ' ' && lX == pX && lY > pY) {
+			if (lCh_Current == ' ' && lX == pX && lY > pY) {
 				continue;
 			}
 

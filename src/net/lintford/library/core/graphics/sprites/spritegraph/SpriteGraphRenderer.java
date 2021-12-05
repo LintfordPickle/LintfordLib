@@ -47,13 +47,13 @@ public class SpriteGraphRenderer extends SpriteBatch {
 		final int lNumNodes = lReorderedList.size();
 		for (int i = 0; i < lNumNodes; i++) {
 			final var lSpriteGraphNodeInstance = lReorderedList.get(i);
-
-			if (lSpriteGraphNodeInstance.attachedItemInstance != null) {
+			final var lAttachment = lSpriteGraphNodeInstance.attachedItemInstance;
+			if (lAttachment != null && lAttachment.isAttachmentInUse()) {
 				var lAttachmentColor = pColor;
+				lAttachmentColor = ColorConstants.getColor(lSpriteGraphNodeInstance.attachedItemInstance.colorTint());
 				if (pColor == null) {
-					lAttachmentColor = ColorConstants.getColor(lSpriteGraphNodeInstance.attachedItemInstance.colorTint());
 				}
-				renderSpriteGraphNodeInstance(pCore, pSpriteGraphInstance, lSpriteGraphNodeInstance, pColor == null ? lAttachmentColor : pColor);
+				renderSpriteGraphNodeInstance(pCore, pSpriteGraphInstance, lSpriteGraphNodeInstance, lAttachmentColor);
 			}
 		}
 

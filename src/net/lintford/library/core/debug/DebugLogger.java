@@ -23,6 +23,7 @@ public class DebugLogger {
 
 	private static SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("HH.mm.ss.SSS", Locale.US);
 
+	public static boolean DEBUG_LOG_THREAD_NAMES = true;
 	public static boolean DEBUG_LOG_DEBUG_TO_FILE = true;
 	public static final int LOG_BUFFER_LINE_COUNT = 1000;
 
@@ -119,14 +120,12 @@ public class DebugLogger {
 		}
 	}
 
-	public void log(DebugLogLevel pLogLevel, String pTag, String pMessage) {
+	private void log(DebugLogLevel pLogLevel, String pTag, String pMessage) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
-		// Don't 'log' empty messages
 		if (pTag.equals("") || pMessage.equals("")) {
 			return;
-
 		}
 
 		if (pLogLevel.logLevel >= mDebugManager.getLogLevel().logLevel) {
@@ -145,19 +144,22 @@ public class DebugLogger {
 				return;
 			}
 
+			if (DEBUG_LOG_THREAD_NAMES) {
+				final var lThreadName = Thread.currentThread().getName();
+				pMessage = "[" + lThreadName + "] " + pMessage;
+			}
+
 			var lTimeStamp = SIMPLE_DATE_FORMAT.format(new Date());
 			lLogMessage.setMessage(pTag, pMessage, lTimeStamp, pLogLevel.logLevel);
 
 			if (DEBUG_LOG_DEBUG_TO_FILE) {
 				writeDebugMessageToFile(lLogMessage.tag, lLogMessage.timestamp, lLogMessage.message);
-
 			}
 
 			mLogLines.add(lLogMessage);
 
 			if (mMirrorLogToConsole)
 				System.out.printf("[%s] %s: %s\n", padRight(lLogMessage.timestamp, 12), padRight(lLogMessage.tag, 25), lLogMessage.message);
-
 		}
 	}
 
@@ -166,10 +168,12 @@ public class DebugLogger {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
-		if(pMessage == null) return;
-		
-		log(DebugLogLevel.error, pTag, pMessage);
+		if (pMessage == null)
+			return;
 
+		synchronized (this) {
+			log(DebugLogLevel.error, pTag, pMessage);
+		}
 	}
 
 	/** Adds a new WARNING level message to the log. */
@@ -177,8 +181,9 @@ public class DebugLogger {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
-		log(DebugLogLevel.warning, pTag, pMessage);
-
+		synchronized (this) {
+			log(DebugLogLevel.warning, pTag, pMessage);
+		}
 	}
 
 	/** Adds a new INFO level message to the log. */
@@ -186,8 +191,9 @@ public class DebugLogger {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
-		log(DebugLogLevel.info, pTag, pMessage);
-
+		synchronized (this) {
+			log(DebugLogLevel.info, pTag, pMessage);
+		}
 	}
 
 	/** Adds a new VERBOSE level message to the log. */
@@ -196,16 +202,15 @@ public class DebugLogger {
 			return;
 
 		log(DebugLogLevel.verbose, pTag, pMessage);
-
 	}
 
 	/** Adds a new SYSTEM level message to the log. */
 	public void s(String pTag, String pMessage) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
-
-		log(DebugLogLevel.system, pTag, pMessage);
-
+		synchronized (this) {
+			log(DebugLogLevel.system, pTag, pMessage);
+		}
 	}
 
 	/** Adds a new USER level message to the log. */
@@ -213,13 +218,13 @@ public class DebugLogger {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
-		log(DebugLogLevel.user, pTag, pMessage);
-
+		synchronized (this) {
+			log(DebugLogLevel.user, pTag, pMessage);
+		}
 	}
 
 	public void printException(String pTag, Exception pException) {
 		printException(pTag, pException, true);
-
 	}
 
 	public void printException(String pTag, Exception pException, boolean pIncludeStackTrace) {
@@ -229,9 +234,7 @@ public class DebugLogger {
 		e(pTag, pException.getMessage());
 		if (pIncludeStackTrace) {
 			pException.printStackTrace(System.err);
-
 		}
-
 	}
 
 	/** Appends the given message into a file at the given location. */
@@ -243,7 +246,6 @@ public class DebugLogger {
 			return false;
 
 		try {
-
 			mDebugLogBufferedOutputStream.write(pTimestamp.getBytes());
 			mDebugLogBufferedOutputStream.write(": ".getBytes());
 			mDebugLogBufferedOutputStream.write(pTag.getBytes());
@@ -257,9 +259,7 @@ public class DebugLogger {
 			e.printStackTrace();
 
 			return false;
-
 		}
-
 	}
 
 	/** Creates a new log file at the given location, and writes the current contents of the logger. */
@@ -283,9 +283,7 @@ public class DebugLogger {
 		} catch (IOException e) {
 			e.printStackTrace();
 			return false;
-
 		}
-
 	}
 
 	public static String padRight(String s, int n) {

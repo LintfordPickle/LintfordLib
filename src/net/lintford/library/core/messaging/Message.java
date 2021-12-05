@@ -46,7 +46,5 @@ public class Message {
 		message = pMessage;
 		type = pLevelType;
 		lifetime = 0;
-
 	}
-
 }
