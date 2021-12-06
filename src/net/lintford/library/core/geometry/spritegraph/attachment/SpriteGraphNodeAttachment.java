@@ -92,6 +92,7 @@ public class SpriteGraphNodeAttachment implements ISpriteGraphAttachmentDefiniti
 	// Core-Methods
 	// --------------------------------------
 
+	// TODO: Why am I passing an instance of the interface into this case (which also implements the interface)?
 	public void initialize(ISpriteGraphAttachmentDefinition pAttachmentDefinition) {
 		if (pAttachmentDefinition == null) {
 			unload();
@@ -115,7 +116,7 @@ public class SpriteGraphNodeAttachment implements ISpriteGraphAttachmentDefiniti
 		mIsRemovable = true;
 		mAttachmentCategory = -1;
 		mZDepth = 0;
-		mColorTint = 0x0;
+		mColorTint = 0xffffffff;
 
 		mIsInitialized = false;
 	}

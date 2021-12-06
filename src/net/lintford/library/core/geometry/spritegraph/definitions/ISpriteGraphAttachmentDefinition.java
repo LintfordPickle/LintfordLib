@@ -13,6 +13,7 @@ public interface ISpriteGraphAttachmentDefinition {
 	public abstract int relativeZDepth();
 
 	public default int colorTint() {
-		return 0xFFFFFF;
+		return 0xffffffff;
 	}
+
 }

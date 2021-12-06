@@ -6,7 +6,6 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.geometry.spritegraph.instances.SpriteGraphInstance;
 import net.lintford.library.core.geometry.spritegraph.instances.SpriteGraphNodeInstance;
-import net.lintford.library.core.graphics.Color;
 import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.sprites.spritebatch.SpriteBatch;
 
@@ -37,7 +36,7 @@ public class SpriteGraphRenderer extends SpriteBatch {
 	// Methods
 	// --------------------------------------
 
-	public void drawSpriteGraphList(LintfordCore pCore, SpriteGraphInstance pSpriteGraphInstance, Color pColor) {
+	public void drawSpriteGraphList(LintfordCore pCore, SpriteGraphInstance pSpriteGraphInstance) {
 		if (pSpriteGraphInstance == null || !pSpriteGraphInstance.isAssigned())
 			return;
 
@@ -46,31 +45,23 @@ public class SpriteGraphRenderer extends SpriteBatch {
 
 		final int lNumNodes = lReorderedList.size();
 		for (int i = 0; i < lNumNodes; i++) {
-			final var lSpriteGraphNodeInstance = lReorderedList.get(i);
-			final var lAttachment = lSpriteGraphNodeInstance.attachedItemInstance;
-			if (lAttachment != null && lAttachment.isAttachmentInUse()) {
-				var lAttachmentColor = pColor;
-				lAttachmentColor = ColorConstants.getColor(lSpriteGraphNodeInstance.attachedItemInstance.colorTint());
-				if (pColor == null) {
-				}
-				renderSpriteGraphNodeInstance(pCore, pSpriteGraphInstance, lSpriteGraphNodeInstance, lAttachmentColor);
-			}
+			renderSpriteGraphNodeInstance(pCore, pSpriteGraphInstance, lReorderedList.get(i));
 		}
 
 		if (RENDER_DEBUG) {
 			renderSpriteTreeNodeDebug(pCore, pSpriteGraphInstance, pSpriteGraphInstance.rootNode);
-
 			Debug.debugManager().drawers().drawPointImmediate(pCore.gameCamera(), pSpriteGraphInstance.positionX, pSpriteGraphInstance.positionY, -0.01f, 1f, 1f, 1f, 1f);
 		}
 	}
 
-	private void renderSpriteGraphNodeInstance(LintfordCore pCore, SpriteGraphInstance pSpriteGraph, SpriteGraphNodeInstance pSpriteGraphNode, Color pColor) {
+	private void renderSpriteGraphNodeInstance(LintfordCore pCore, SpriteGraphInstance pSpriteGraph, SpriteGraphNodeInstance pSpriteGraphNode) {
 		if (pSpriteGraphNode.attachedItemInstance != null) {
 			final var lAttachment = pSpriteGraphNode.attachedItemInstance;
 			var lSpritesheetDefinition = lAttachment.spritesheetDefinition();
 
 			if (pSpriteGraphNode.mSpriteInstance != null) {
-				draw(lSpritesheetDefinition, pSpriteGraphNode.mSpriteInstance, pSpriteGraphNode.mSpriteInstance, -0.1f, pColor);
+				var lAttachmentColor = ColorConstants.getColor(lAttachment.colorTint());
+				draw(lSpritesheetDefinition, pSpriteGraphNode.mSpriteInstance, pSpriteGraphNode.mSpriteInstance, -0.1f, lAttachmentColor);
 			}
 
 			if (RENDER_DEBUG) {

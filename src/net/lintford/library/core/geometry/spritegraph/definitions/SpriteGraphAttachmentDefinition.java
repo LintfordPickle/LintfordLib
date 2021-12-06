@@ -8,18 +8,20 @@ import net.lintford.library.core.geometry.spritegraph.instances.SpriteGraphNodeI
  * The {@link SpriteGraphAttachmentDefinition} defines attachments which can be added onto an instrances of {@link SpriteGraphInstance}. 
  * More specifically, spritegraph attachments are added onto the {@link SpriteGraphNodeInstance}.
  */
-public abstract class SpriteGraphAttachmentDefinition extends BaseDefinition implements ISpriteGraphAttachmentDefinition {
+public class SpriteGraphAttachmentDefinition extends BaseDefinition implements ISpriteGraphAttachmentDefinition {
 
 	// ---------------------------------------------
 	// Variables
 	// ---------------------------------------------
 
-	protected String mSpritesheetName;
-	protected String mDefaultSpriteName;
-	protected boolean mIsAttachmentRemovable;
-	protected int mRelativeZDepth;
-	protected int mAttachmentCategory;
-	protected int mAttachmentColorTint = 0xFFFFFFFF;
+	protected String spriteGraphSpritesheetName;
+	protected int spriteGraphAttachmentCategory;
+	protected String defaultSpriteName;
+	protected boolean isAttachmentRemovable = true;
+	protected int relativeZDepth;
+	protected int attachmentColorTintR = 255;
+	protected int attachmentColorTintG = 255;
+	protected int attachmentColorTintB = 255;
 
 	// ---------------------------------------------
 	// Properties
@@ -27,39 +29,31 @@ public abstract class SpriteGraphAttachmentDefinition extends BaseDefinition imp
 
 	@Override
 	public int relativeZDepth() {
-		return mRelativeZDepth;
+		return relativeZDepth;
 	}
 
 	@Override
 	public int attachmentCategory() {
-		return mAttachmentCategory;
+		return spriteGraphAttachmentCategory;
 	}
 
 	@Override
 	public String spritesheetName() {
-		return mSpritesheetName;
+		return spriteGraphSpritesheetName;
 	}
 
 	@Override
 	public String defaultSpriteName() {
-		return mDefaultSpriteName;
+		return defaultSpriteName;
 	}
 
 	@Override
 	public boolean isAttachmentRemovable() {
-		return mIsAttachmentRemovable;
+		return isAttachmentRemovable;
 	}
 
 	@Override
 	public int colorTint() {
-		return mAttachmentColorTint;
-	}
-
-	// ---------------------------------------------
-	// Constructor
-	// ---------------------------------------------
-
-	public SpriteGraphAttachmentDefinition(short pDefinitionUid) {
-
+		return (attachmentColorTintR << 16) | (attachmentColorTintG << 8) | attachmentColorTintB;
 	}
 }

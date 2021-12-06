@@ -170,12 +170,10 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 	public SpriteGraphNodeInstance getNodeNyAttachmentCategory(int pNodeCategory) {
 		if (name == null) {
 			return null;
-
 		}
 
 		if (attachmentCategory == pNodeCategory) {
 			return this;
-
 		}
 
 		final int lNumChildNodes = childNodes.size();
@@ -183,13 +181,10 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 			final var lSpriteGraphNodeInstance = childNodes.get(i).getNodeNyAttachmentCategory(pNodeCategory);
 			if (lSpriteGraphNodeInstance != null) {
 				return lSpriteGraphNodeInstance;
-
 			}
-
 		}
 
 		return null;
-
 	}
 
 	public SpriteGraphNodeInstance getNodeNyNodeSpriteFrameName(String pSpriteFrameNodeName) {
@@ -319,6 +314,9 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 		var lSpriteSheetDefinition = lAttachment.spritesheetDefinition();
 		if (lSpriteSheetDefinition == null) {
 			lSpriteSheetDefinition = loadNodeSpritesheetDefinition(pCore);
+			if (lSpriteSheetDefinition == null) {
+				return;
+			}
 		}
 
 		// We match the nodes' actions with the action of the parent sprite graph
@@ -465,9 +463,4 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 		angToPoint = pNewValue;
 
 	}
-
-	// --------------------------------------
-	// Animation Listeners
-	// --------------------------------------
-
 }

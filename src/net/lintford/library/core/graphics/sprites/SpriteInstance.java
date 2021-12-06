@@ -148,6 +148,9 @@ public class SpriteInstance extends Rectangle {
 		mLifeTime -= lDeltaTime;
 		mTimeAliveInMs += lDeltaTime;
 
+		if (mSpriteDefinition.frameCount() < 2)
+			return;
+
 		if (mSpriteDefinition.frameDuration() == 0.0)
 			return;
 
