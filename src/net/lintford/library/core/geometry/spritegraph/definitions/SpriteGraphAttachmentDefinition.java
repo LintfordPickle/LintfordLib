@@ -23,9 +23,16 @@ public class SpriteGraphAttachmentDefinition extends BaseDefinition implements I
 	protected int attachmentColorTintG = 255;
 	protected int attachmentColorTintB = 255;
 
+	protected boolean useDynamicSpritesheetNames;
+
 	// ---------------------------------------------
 	// Properties
 	// ---------------------------------------------
+
+	@Override
+	public boolean useDynamicSpritesheetName() {
+		return useDynamicSpritesheetNames;
+	}
 
 	@Override
 	public int relativeZDepth() {

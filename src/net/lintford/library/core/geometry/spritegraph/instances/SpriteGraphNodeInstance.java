@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.entity.instances.PooledBaseData;
 import net.lintford.library.core.geometry.spritegraph.ISpriteGraphPool;
 import net.lintford.library.core.geometry.spritegraph.attachment.SpriteGraphNodeAttachment;
@@ -11,7 +12,6 @@ import net.lintford.library.core.geometry.spritegraph.definitions.ISpriteGraphAt
 import net.lintford.library.core.geometry.spritegraph.definitions.SpriteGraphNodeDefinition;
 import net.lintford.library.core.graphics.sprites.SpriteAnchor;
 import net.lintford.library.core.graphics.sprites.SpriteInstance;
-import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 
 // ToDo: Attachable Box2d bodies: Some nodes need to interact with the world via the sprite graph nodes
 // ToDo: Attachable SpriteInstance: Each node instance should have its own sprite animation for the current spritesheetdefinition
@@ -311,22 +311,30 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 
 		final var lAttachment = attachedItemInstance;
 
-		var lSpriteSheetDefinition = lAttachment.spritesheetDefinition();
-		if (lSpriteSheetDefinition == null) {
-			lSpriteSheetDefinition = loadNodeSpritesheetDefinition(pCore);
-			if (lSpriteSheetDefinition == null) {
+		if (lAttachment.spritesheetDefinition() == null) {
+			if (lAttachment.resolvedSpritesheetDefinitionName) {
 				return;
 			}
+
+			if (lAttachment.useDynamicNames) {
+				loadNodeSpritesheetDefinitionFromAttachment(pCore, pSpriteGraph, lAttachment);
+			} else {
+				loadNodeSpritesheetDefinitionFromAttachment(pCore, lAttachment);
+			}
+			// this causes us to miss one frame of animation
+			return;
 		}
+
+		final var lSpritesheetDefinition = lAttachment.spritesheetDefinition();
 
 		// We match the nodes' actions with the action of the parent sprite graph
 		if (mSpriteInstance == null || currentNodeSpriteActionName == null || !currentNodeSpriteActionName.equals(pSpriteGraph.currentAnimation())) {
 			currentNodeSpriteActionName = pSpriteGraph.currentAnimation();
-			var lFoundSprintInstance = lSpriteSheetDefinition.getSpriteInstance(currentNodeSpriteActionName);
+			var lFoundSprintInstance = lSpritesheetDefinition.getSpriteInstance(currentNodeSpriteActionName);
 			if (lFoundSprintInstance != null) {
 				mSpriteInstance = lFoundSprintInstance;
 			} else {
-				lFoundSprintInstance = lSpriteSheetDefinition.getSpriteInstance(lAttachment.defaultSpriteName());
+				lFoundSprintInstance = lSpritesheetDefinition.getSpriteInstance(lAttachment.dfaultSpriteName);
 				if (lFoundSprintInstance != null) {
 					mSpriteInstance = lFoundSprintInstance;
 				}
@@ -338,23 +346,39 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 		}
 	}
 
-	private SpriteSheetDefinition loadNodeSpritesheetDefinition(LintfordCore pCore) {
-		final var lAttachment = attachedItemInstance;
+	private void loadNodeSpritesheetDefinitionFromAttachment(LintfordCore pCore, SpriteGraphInstance pSpriteGraph, SpriteGraphNodeAttachment pAttachment) {
+		pAttachment.resolvedSpritesheetDefinitionName = true;
 
-		// Resolve the sprite sheet
-		var lSpriteSheetDefinition = lAttachment.spritesheetDefinition();
+		var lSpriteSheetDefinition = pAttachment.spritesheetDefinition();
 		if (lSpriteSheetDefinition == null) {
+			final var lResolvedSpriteName = "SPRITESHEET_" + pSpriteGraph.mDynamicSpritesheetName + pAttachment.spritesheetDefinitionName;
 			final var lResourceManager = pCore.resources();
-			lSpriteSheetDefinition = lResourceManager.spriteSheetManager().getSpriteSheet(lAttachment.spritesheetName(), entityGroupID);
+			lSpriteSheetDefinition = lResourceManager.spriteSheetManager().getSpriteSheet(lResolvedSpriteName, entityGroupID);
 
 			if (lSpriteSheetDefinition == null) {
-				return null;
+				Debug.debugManager().logger().w(getClass().getSimpleName(), "Couldn't resolve dynamic SpriteGraphNodeSpritesheetDefinition name '" + lResolvedSpriteName + "'");
+				return;
 			}
 
-			lAttachment.spritesheetDefinition(lSpriteSheetDefinition);
+			pAttachment.spritesheetDefinition(lSpriteSheetDefinition);
 		}
+	}
 
-		return lSpriteSheetDefinition;
+	private void loadNodeSpritesheetDefinitionFromAttachment(LintfordCore pCore, SpriteGraphNodeAttachment pAttachment) {
+		pAttachment.resolvedSpritesheetDefinitionName = true;
+
+		var lSpriteSheetDefinition = pAttachment.spritesheetDefinition();
+		if (lSpriteSheetDefinition == null) {
+			final var lResourceManager = pCore.resources();
+			lSpriteSheetDefinition = lResourceManager.spriteSheetManager().getSpriteSheet(pAttachment.spritesheetDefinitionName, entityGroupID);
+
+			if (lSpriteSheetDefinition == null) {
+				Debug.debugManager().logger().w(getClass().getSimpleName(), "Couldn't resolve static SpriteGraphNodeSpritesheetDefinition name '" + pAttachment.spritesheetDefinitionName + "'");
+				return;
+			}
+
+			pAttachment.spritesheetDefinition(lSpriteSheetDefinition);
+		}
 	}
 
 	private void updateChildNodeTransform(LintfordCore pCore, SpriteGraphNodeInstance pChildGraphNodeInstance) {

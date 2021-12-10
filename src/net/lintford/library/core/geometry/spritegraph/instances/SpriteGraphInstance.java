@@ -46,6 +46,7 @@ public class SpriteGraphInstance extends PooledBaseData implements AnimatedSprit
 	public SpriteGraphNodeInstance rootNode;
 	public String spriteGraphName;
 	public String mCurrentlyPlayingAction;
+	public String mDynamicSpritesheetName;
 	public boolean mFlipHorizontal;
 	public boolean mFlipVertical;
 	private boolean mOrdered;

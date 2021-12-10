@@ -16,4 +16,6 @@ public interface ISpriteGraphAttachmentDefinition {
 		return 0xffffffff;
 	}
 
+	public boolean useDynamicSpritesheetName();
+	
 }

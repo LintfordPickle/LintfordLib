@@ -5,7 +5,7 @@ import java.io.Serializable;
 import net.lintford.library.core.geometry.spritegraph.definitions.ISpriteGraphAttachmentDefinition;
 import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 
-public class SpriteGraphNodeAttachment implements ISpriteGraphAttachmentDefinition, Serializable {
+public class SpriteGraphNodeAttachment implements Serializable {
 
 	// --------------------------------------
 	// Constants
@@ -17,50 +17,27 @@ public class SpriteGraphNodeAttachment implements ISpriteGraphAttachmentDefiniti
 	// Variables
 	// --------------------------------------
 
-	private String mDefaultSpriteName;
-	private String mSpritesheetDefinitionName;
-	private transient SpriteSheetDefinition mSpritesheetDefinition;
-	private boolean mIsRemovable;
-	private int mAttachmentCategory;
-	private int mZDepth;
-	private int mColorTint;
 	private boolean mIsInitialized;
+	private transient SpriteSheetDefinition mSpritesheetDefinition;
+	public String dfaultSpriteName;
+	public String spritesheetDefinitionName;
+	public boolean resolvedSpritesheetDefinitionName;
+	public boolean attachmentIsRemovable;
+	public int attachmentCategory;
+	public int zDepth;
+	public int attachmentColorTint;
+	public boolean useDynamicNames;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
 
 	public boolean isAttachmentInUse() {
-		return attachmentCategory() > 0;
+		return attachmentCategory > 0;
 	}
 
 	public boolean isInitialized() {
 		return mIsInitialized;
-	}
-
-	@Override
-	public int attachmentCategory() {
-		return mAttachmentCategory;
-	}
-
-	@Override
-	public String spritesheetName() {
-		return mSpritesheetDefinitionName;
-	}
-
-	@Override
-	public int relativeZDepth() {
-		return mZDepth;
-	}
-
-	@Override
-	public int colorTint() {
-		return mColorTint;
-	}
-
-	@Override
-	public String defaultSpriteName() {
-		return mDefaultSpriteName;
 	}
 
 	public SpriteSheetDefinition spritesheetDefinition() {
@@ -69,11 +46,6 @@ public class SpriteGraphNodeAttachment implements ISpriteGraphAttachmentDefiniti
 
 	public void spritesheetDefinition(SpriteSheetDefinition pSpriteSheetDefinition) {
 		mSpritesheetDefinition = pSpriteSheetDefinition;
-	}
-
-	@Override
-	public boolean isAttachmentRemovable() {
-		return mIsRemovable;
 	}
 
 	public boolean spritesheetResourceLoaded() {
@@ -88,37 +60,42 @@ public class SpriteGraphNodeAttachment implements ISpriteGraphAttachmentDefiniti
 
 	}
 
+	public SpriteGraphNodeAttachment(ISpriteGraphAttachmentDefinition pAttachmentDefinition) {
+		initialize(pAttachmentDefinition);
+	}
+
 	// --------------------------------------
 	// Core-Methods
 	// --------------------------------------
 
-	// TODO: Why am I passing an instance of the interface into this case (which also implements the interface)?
 	public void initialize(ISpriteGraphAttachmentDefinition pAttachmentDefinition) {
 		if (pAttachmentDefinition == null) {
 			unload();
 			return;
 		}
 
-		mSpritesheetDefinitionName = pAttachmentDefinition.spritesheetName();
-		mDefaultSpriteName = pAttachmentDefinition.defaultSpriteName();
-		mIsRemovable = pAttachmentDefinition.isAttachmentRemovable();
-		mAttachmentCategory = pAttachmentDefinition.attachmentCategory();
-		mZDepth = pAttachmentDefinition.relativeZDepth();
-		mColorTint = pAttachmentDefinition.colorTint();
+		spritesheetDefinitionName = pAttachmentDefinition.spritesheetName();
+		dfaultSpriteName = pAttachmentDefinition.defaultSpriteName();
+		attachmentIsRemovable = pAttachmentDefinition.isAttachmentRemovable();
+		attachmentCategory = pAttachmentDefinition.attachmentCategory();
+		zDepth = pAttachmentDefinition.relativeZDepth();
+		attachmentColorTint = pAttachmentDefinition.colorTint();
+		useDynamicNames = pAttachmentDefinition.useDynamicSpritesheetName();
+		resolvedSpritesheetDefinitionName = false;
 
 		mIsInitialized = true;
 	}
 
 	public void unload() {
-		mDefaultSpriteName = null;
-		mSpritesheetDefinitionName = null;
+		dfaultSpriteName = null;
+		spritesheetDefinitionName = null;
 		mSpritesheetDefinition = null;
-		mIsRemovable = true;
-		mAttachmentCategory = -1;
-		mZDepth = 0;
-		mColorTint = 0xffffffff;
+		attachmentIsRemovable = true;
+		attachmentCategory = -1;
+		zDepth = 0;
+		useDynamicNames = false;
+		attachmentColorTint = 0xffffffff;
 
 		mIsInitialized = false;
 	}
-
 }

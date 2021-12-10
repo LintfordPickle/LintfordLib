@@ -60,7 +60,7 @@ public class SpriteGraphRenderer extends SpriteBatch {
 			var lSpritesheetDefinition = lAttachment.spritesheetDefinition();
 
 			if (pSpriteGraphNode.mSpriteInstance != null) {
-				var lAttachmentColor = ColorConstants.getColor(lAttachment.colorTint());
+				var lAttachmentColor = ColorConstants.getColor(lAttachment.attachmentColorTint);
 				draw(lSpritesheetDefinition, pSpriteGraphNode.mSpriteInstance, pSpriteGraphNode.mSpriteInstance, -0.1f, lAttachmentColor);
 			}
 
