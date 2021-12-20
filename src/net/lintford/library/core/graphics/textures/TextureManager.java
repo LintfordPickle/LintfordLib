@@ -554,12 +554,7 @@ public class TextureManager extends EntityGroupManager {
 
 			}
 
-			final var lTextureGroup = mTextureGroupMap.get(pEntityGroupID);
-			if (lTextureGroup == null) {
-				Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Cannot load texture %s for EntityGroupID %d: EntityGroupID does not exist!", (pMetaFileLocation + " (META)"), pEntityGroupID));
-				return;
-
-			}
+			final var lTextureGroup = getTextureGroup(pEntityGroupID);
 
 			final int lNumberOfTextureDefinitions = lTextureMetaData.textureDefinitions.length;
 			for (int i = 0; i < lNumberOfTextureDefinitions; i++) {

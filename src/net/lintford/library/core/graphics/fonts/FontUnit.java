@@ -216,6 +216,9 @@ public class FontUnit {
 	}
 
 	public void drawText(String pText, float pX, float pY, float pZ, float pScale) {
+		if (pText == null)
+			return;
+		
 		drawText(pText, pX, pY, pZ, ColorConstants.WHITE, pScale, -1);
 	}
 
@@ -224,6 +227,9 @@ public class FontUnit {
 	}
 
 	public void drawText(String pText, float pX, float pY, float pZ, Color pTextColor, float pScale, float pWrapWidth) {
+		if (pText == null)
+			return;
+
 		float lX = pX;
 		float lY = pY;
 

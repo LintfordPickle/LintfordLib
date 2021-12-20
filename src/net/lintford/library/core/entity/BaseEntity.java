@@ -8,6 +8,7 @@ public class BaseEntity {
 	// Constants
 	// --------------------------------------
 
+	// Unique (within the process) resourcegroup id
 	private static AtomicInteger mAtomicInteger = new AtomicInteger(Integer.MIN_VALUE);
 
 	// --------------------------------------
