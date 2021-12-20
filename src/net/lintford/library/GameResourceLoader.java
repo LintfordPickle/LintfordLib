@@ -11,7 +11,9 @@ import org.lwjgl.opengl.GL11;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.Debug;
+import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.fonts.FontUnit;
+import net.lintford.library.core.maths.MathHelper;
 import net.lintford.library.core.time.TimeSpan;
 import net.lintford.library.options.DisplayManager;
 
@@ -29,6 +31,10 @@ public abstract class GameResourceLoader extends Thread {
 	protected FontUnit mSystemFont;
 	protected final ReentrantLock reentrantLock = new ReentrantLock();
 	private String mCurrentStatusMessage;
+
+	protected float mTextColorR = 1.f;
+	protected float mTextColorG = 1.f;
+	protected float mTextColorB = 1.f;
 
 	private long mLastFrameTime;
 	private int mPeriodCount = 1;
@@ -61,6 +67,12 @@ public abstract class GameResourceLoader extends Thread {
 
 	public String currentStatusMessage() {
 		return mCurrentStatusMessage;
+	}
+
+	public void setTextColor(float pR, float pG, float pB) {
+		mTextColorR = MathHelper.clamp(pR, 0.f, 1.f);
+		mTextColorG = MathHelper.clamp(pG, 0.f, 1.f);
+		mTextColorB = MathHelper.clamp(pB, 0.f, 1.f);
 	}
 
 	public void currentStatusMessage(String pNewStatusMessage) {
@@ -137,20 +149,7 @@ public abstract class GameResourceLoader extends Thread {
 	private void loadResourcesOnBackgroundThread() {
 		final long lStartTime = System.currentTimeMillis();
 
-		currentStatusMessage("loading textures files");
-		loadGameTextures(mResourceManager);
-
-		currentStatusMessage("loading Audio files");
-		loadGameAudioFiles(mResourceManager);
-
-		currentStatusMessage("loading PObjects files");
-		loadGamePObjectFiles(mResourceManager);
-
-		currentStatusMessage("loading Spritesheets files");
-		loadGameSpritesheetFiles(mResourceManager);
-
-		currentStatusMessage("loading Spritegraphs files");
-		loadGameSpriteGraphs(mResourceManager);
+		resourcesToLoadInBackground();
 
 		final long elapsedMillis = System.currentTimeMillis() - lStartTime;
 
@@ -206,7 +205,8 @@ public abstract class GameResourceLoader extends Thread {
 		}
 
 		mSystemFont.begin(lHud);
-		mSystemFont.drawText(message, lLeft + 5.f, lBottom - mSystemFont.fontHeight() - 5.f, -0.01f, 1.f);
+		final var lTextColor = ColorConstants.getColor(mTextColorR, mTextColorG, mTextColorB);
+		mSystemFont.drawText(message, lLeft + 5.f, lBottom - mSystemFont.fontHeight() - 5.f, -0.01f, lTextColor, 1.f);
 		mSystemFont.end();
 	}
 
@@ -214,19 +214,5 @@ public abstract class GameResourceLoader extends Thread {
 	// Methods
 	// ---------------------------------------------
 
-	protected void loadGameTextures(ResourceManager pResourceManager) {
-	}
-
-	protected void loadGameAudioFiles(ResourceManager pResourceManager) {
-	}
-
-	protected void loadGameSpritesheetFiles(ResourceManager pResourceManager) {
-	}
-
-	protected void loadGameSpriteGraphs(ResourceManager pResourceManager) {
-	}
-
-	protected void loadGamePObjectFiles(ResourceManager pResourceManager) {
-	}
-
+	protected abstract void resourcesToLoadInBackground();
 }
