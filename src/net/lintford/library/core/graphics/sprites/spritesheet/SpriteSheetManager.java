@@ -264,12 +264,6 @@ public class SpriteSheetManager {
 				if (lSpriteSheet == null) {
 					Debug.debugManager().logger().e(getClass().getSimpleName(), "Error loading spritesheet " + lSpriteSheetFile.getPath());
 					continue;
-
-				}
-
-				if (lSpriteSheet.animationFramesMap == null || lSpriteSheet.animationFramesMap.size() == 0) {
-					Debug.debugManager().logger().w(getClass().getSimpleName(), "Loaded SpriteSheetDefinition which has no Sprites defined within: " + lSpriteSheetFile.getPath());
-
 				}
 
 				lSpriteSheet.fileSizeOnLoad(lSpriteSheetFile.length());
@@ -278,7 +272,6 @@ public class SpriteSheetManager {
 
 				if (lSpriteSheet.animationFramesMap == null || lSpriteSheet.animationFramesMap.size() == 0) {
 					Debug.debugManager().logger().e(getClass().getSimpleName(), "Loaded SpriteSheetDefinition which has neither sprites nor frames defined within: " + lSpriteSheetFile.getPath());
-
 				}
 
 				Map<String, SpriteSheetDefinition> lSpriteSheetGroup = mSpriteSheetGroups.get(pEntityGroupID);

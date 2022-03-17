@@ -7,7 +7,6 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.entity.instances.PooledBaseData;
 import net.lintford.library.core.geometry.spritegraph.ISpriteGraphPool;
-import net.lintford.library.core.geometry.spritegraph.attachment.SpriteGraphNodeAttachment;
 import net.lintford.library.core.geometry.spritegraph.definitions.ISpriteGraphAttachmentDefinition;
 import net.lintford.library.core.geometry.spritegraph.definitions.SpriteGraphNodeDefinition;
 import net.lintford.library.core.graphics.sprites.SpriteAnchor;
@@ -30,7 +29,7 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 	public String name;
 	public SpriteGraphInstance mParentGraphInst;
 
-	public final SpriteGraphNodeAttachment attachedItemInstance = new SpriteGraphNodeAttachment();
+	public final SpriteGraphAttachmentInstance attachedItemInstance = new SpriteGraphAttachmentInstance();
 	public transient SpriteInstance mSpriteInstance;
 
 	/** The ID of the {@link SpriteGraphAnchorDef} on the parent. */
@@ -38,6 +37,7 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 
 	/** The name of the {@link SpriteGraphAnchorDef} on the parent. */
 	public String anchorNodeName;
+	public String nextAnimationName;
 	public String currentNodeSpriteActionName;
 	public boolean controlsGraphAnimationListener;
 
@@ -60,13 +60,17 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 	private float mPositionY;
 	private int mPivotX;
 	private int mPivotY;
-	private float mRotation;
+	private float mRotationInRadians;
 	public boolean disableTreeUpdatesPosition;
 	public boolean disableTreeUpdatesRotation;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public void nextAnimationName(String pNextAnimationName) {
+		nextAnimationName = pNextAnimationName;
+	}
 
 	public SpriteInstance spriteInstance() {
 		return mSpriteInstance;
@@ -133,13 +137,11 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 	}
 
 	public float rotation() {
-		return mRotation;
-
+		return mRotationInRadians;
 	}
 
-	public void rotation(float pNewValue) {
-		mRotation = pNewValue;
-
+	public void rotationInRadians(float pNewValue) {
+		mRotationInRadians = pNewValue;
 	}
 
 	public SpriteGraphNodeInstance getNodeNyNodeName(String pNodeName) {
@@ -285,7 +287,7 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 			mPivotX = mSpriteInstance.flipHorizontal() ? -(int) mSpriteInstance.pivotX - 1 : (int) mSpriteInstance.pivotX;
 			mPivotY = (int) mSpriteInstance.pivotY;
 
-			final float lRotationRadians = mRotation;
+			final float lRotationRadians = mRotationInRadians;
 
 			final float lSpriteHalfWidth = (int) (lSpriteWidth / 2f);
 			final float lSpriteHalfHeight = (int) (lSpriteHeight / 2f);
@@ -325,19 +327,49 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 			return;
 		}
 
+		// Update animations
 		final var lSpritesheetDefinition = lAttachment.spritesheetDefinition();
 
-		// We match the nodes' actions with the action of the parent sprite graph
-		if (mSpriteInstance == null || currentNodeSpriteActionName == null || !currentNodeSpriteActionName.equals(pSpriteGraph.currentAnimation())) {
-			currentNodeSpriteActionName = pSpriteGraph.currentAnimation();
-			var lFoundSprintInstance = lSpritesheetDefinition.getSpriteInstance(currentNodeSpriteActionName);
+		if (mSpriteInstance != null) {
+			final var lSpriteDef = mSpriteInstance.spriteDefinition();
+			if (lSpriteDef.minimumViableRuntime() > 0) {
+				if (mSpriteInstance.getTimeAliveInMs() < lSpriteDef.minimumViableRuntime()) {
+					return;
+				}
+			}
+		}
+
+		boolean reqUpdate = false;
+		String tlTempNextAnimFrameName = null;
+		if (currentNodeSpriteActionName == null) {
+			if (nextAnimationName != null) {
+				tlTempNextAnimFrameName = nextAnimationName;
+			} else if (attachedItemInstance.dfaultSpriteName != null) {
+				tlTempNextAnimFrameName = attachedItemInstance.dfaultSpriteName;
+			}
+			reqUpdate = true;
+		} else if (nextAnimationName != null && nextAnimationName.equals(currentNodeSpriteActionName) == false) {
+			tlTempNextAnimFrameName = nextAnimationName;
+			reqUpdate = true;
+		}
+
+		if (reqUpdate && tlTempNextAnimFrameName != null) {
+			var lFoundSprintInstance = lSpritesheetDefinition.getSpriteInstance(tlTempNextAnimFrameName);
 			if (lFoundSprintInstance != null) {
 				mSpriteInstance = lFoundSprintInstance;
+				currentNodeSpriteActionName = nextAnimationName;
 			} else {
 				lFoundSprintInstance = lSpritesheetDefinition.getSpriteInstance(lAttachment.dfaultSpriteName);
 				if (lFoundSprintInstance != null) {
 					mSpriteInstance = lFoundSprintInstance;
+					currentNodeSpriteActionName = lAttachment.dfaultSpriteName;
 				}
+			}
+
+			if (lFoundSprintInstance == null) {
+				// Sometimes it is okay that no animation is found on a graph node
+				nextAnimationName = null;
+				currentNodeSpriteActionName = null;
 			}
 
 			if (controlsGraphAnimationListener) {
@@ -346,7 +378,7 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 		}
 	}
 
-	private void loadNodeSpritesheetDefinitionFromAttachment(LintfordCore pCore, SpriteGraphInstance pSpriteGraph, SpriteGraphNodeAttachment pAttachment) {
+	private void loadNodeSpritesheetDefinitionFromAttachment(LintfordCore pCore, SpriteGraphInstance pSpriteGraph, SpriteGraphAttachmentInstance pAttachment) {
 		pAttachment.resolvedSpritesheetDefinitionName = true;
 
 		var lSpriteSheetDefinition = pAttachment.spritesheetDefinition();
@@ -364,7 +396,7 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 		}
 	}
 
-	private void loadNodeSpritesheetDefinitionFromAttachment(LintfordCore pCore, SpriteGraphNodeAttachment pAttachment) {
+	private void loadNodeSpritesheetDefinitionFromAttachment(LintfordCore pCore, SpriteGraphAttachmentInstance pAttachment) {
 		pAttachment.resolvedSpritesheetDefinitionName = true;
 
 		var lSpriteSheetDefinition = pAttachment.spritesheetDefinition();
@@ -402,10 +434,10 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 		}
 
 		if (!pChildGraphNodeInstance.disableTreeUpdatesPosition) {
-			float lAngleInRadians = flippedHorizontal() ? -mRotation : mRotation;
+			float lAngleInRadians = flippedHorizontal() ? -mRotationInRadians : mRotationInRadians;
 
-			float lNX = rotatePointX(0, 0, lAngleInRadians, lAnchorPositionX, lAnchorPositionY);
-			float lNY = rotatePointY(0, 0, lAngleInRadians, lAnchorPositionX, lAnchorPositionY);
+			float lNX = rotatePointX(pivotX(), pivotY(), lAngleInRadians, lAnchorPositionX, lAnchorPositionY);
+			float lNY = rotatePointY(pivotX(), pivotY(), lAngleInRadians, lAnchorPositionX, lAnchorPositionY);
 
 			pChildGraphNodeInstance.positionX(mPositionX - mPivotX + lNX);
 			pChildGraphNodeInstance.positionY(mPositionY - mPivotY + lNY);
@@ -413,7 +445,7 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 		}
 
 		if (!pChildGraphNodeInstance.disableTreeUpdatesRotation)
-			pChildGraphNodeInstance.rotation((float) Math.toRadians(lAnchorRotation));
+			pChildGraphNodeInstance.rotationInRadians((float) Math.toRadians(lAnchorRotation) + mRotationInRadians);
 
 	}
 
@@ -439,6 +471,9 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 		if (attachedItemInstance.isInitialized()) {
 			detachItemFromSpriteGraphNode();
 		}
+
+		currentNodeSpriteActionName = null;
+		nextAnimationName = null;
 
 		attachedItemInstance.initialize(pAttachmenetDefinition);
 	}

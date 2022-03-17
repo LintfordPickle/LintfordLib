@@ -80,7 +80,6 @@ public class SpriteGraphController extends BaseController {
 		if (lSpriteGraphDefinition == null) {
 			Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Could not resolve mob SpriteGraphDefinition from name '%s'", lSpriteGraphDefinitionName));
 			return null;
-
 		}
 
 		return spriteGraphManager().getInstanceOfGraph(lSpriteGraphDefinition, entityGroupID());

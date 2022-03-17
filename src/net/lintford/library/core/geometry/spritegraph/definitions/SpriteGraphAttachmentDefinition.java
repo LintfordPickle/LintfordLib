@@ -5,7 +5,7 @@ import net.lintford.library.core.geometry.spritegraph.instances.SpriteGraphInsta
 import net.lintford.library.core.geometry.spritegraph.instances.SpriteGraphNodeInstance;
 
 /***
- * The {@link SpriteGraphAttachmentDefinition} defines attachments which can be added onto an instrances of {@link SpriteGraphInstance}. 
+ * The {@link SpriteGraphAttachmentDefinition} defines properties for instantiating {@link SpriteGraphNodeInstance}s, which can be added onto an instrances of {@link SpriteGraphInstance}. 
  * More specifically, spritegraph attachments are added onto the {@link SpriteGraphNodeInstance}.
  */
 public class SpriteGraphAttachmentDefinition extends BaseDefinition implements ISpriteGraphAttachmentDefinition {
@@ -19,9 +19,10 @@ public class SpriteGraphAttachmentDefinition extends BaseDefinition implements I
 	protected String defaultSpriteName;
 	protected boolean isAttachmentRemovable = true;
 	protected int relativeZDepth;
-	protected int attachmentColorTintR = 255;
-	protected int attachmentColorTintG = 255;
-	protected int attachmentColorTintB = 255;
+
+	protected int baseColorTintR = 255;
+	protected int baseColorTintG = 255;
+	protected int baseColorTintB = 255;
 
 	protected boolean useDynamicSpritesheetNames;
 
@@ -30,6 +31,10 @@ public class SpriteGraphAttachmentDefinition extends BaseDefinition implements I
 	// ---------------------------------------------
 
 	@Override
+	public String attachmentName() {
+		return name;
+	}
+
 	public boolean useDynamicSpritesheetName() {
 		return useDynamicSpritesheetNames;
 	}
@@ -61,6 +66,15 @@ public class SpriteGraphAttachmentDefinition extends BaseDefinition implements I
 
 	@Override
 	public int colorTint() {
-		return (attachmentColorTintR << 16) | (attachmentColorTintG << 8) | attachmentColorTintB;
+		return 0xffffffff; // (baseColorTintR << 16) | (baseColorTintG << 8) | baseColorTintB;
 	}
+
+	// ---------------------------------------------
+	// Constructor
+	// ---------------------------------------------
+
+	public SpriteGraphAttachmentDefinition(String pAttachmentDefinitionName) {
+		name = pAttachmentDefinitionName;
+	}
+
 }

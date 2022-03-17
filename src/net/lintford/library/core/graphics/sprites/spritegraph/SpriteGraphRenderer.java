@@ -101,8 +101,6 @@ public class SpriteGraphRenderer extends SpriteBatch {
 					Debug.debugManager().drawers().drawPointImmediate(pCore.gameCamera(), lAnchorWorldX, lAnchorWorldY, -0.01f, 1f, 1f, 0f, 1f);
 				}
 			}
-
 		}
-
 	}
 }

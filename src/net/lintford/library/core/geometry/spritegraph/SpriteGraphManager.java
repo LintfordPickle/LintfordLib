@@ -55,13 +55,11 @@ public class SpriteGraphManager extends PoolInstanceManager<SpriteGraphInstance>
 	public SpriteGraphInstance getInstanceOfGraph(SpriteGraphDefinition pSpriteGraphDefinition, int pEntityGroupUid) {
 		if (pSpriteGraphDefinition == null) {
 			return null;
-
 		}
 
 		final SpriteGraphInstance lSpriteGraphInstance = getFreePooledItem();
 		lSpriteGraphInstance.init(pSpriteGraphDefinition, mSpriteGraphNodeManager, pEntityGroupUid);
 		return lSpriteGraphInstance;
-
 	}
 
 	@Override

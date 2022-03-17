@@ -160,7 +160,7 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 
 	@Override
 	public boolean handleInput(LintfordCore pCore) {
-		if (!mEnabled)
+		if (!mEnabled || !mActive)
 			return false;
 
 		if (mHasFocus) {
@@ -250,6 +250,9 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 
 	@Override
 	public void update(LintfordCore pCore, MenuScreen pScreen, boolean pIsSelected) {
+		if (mActive == false)
+			return;
+
 		super.update(pCore, pScreen, pIsSelected);
 
 		// Update the button positions to line up with this entry
@@ -264,6 +267,9 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 
 	@Override
 	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pComponentDepth) {
+		if (mActive == false)
+			return;
+
 		mZ = pComponentDepth;
 
 		final var lParentScreen = mParentLayout.parentScreen;

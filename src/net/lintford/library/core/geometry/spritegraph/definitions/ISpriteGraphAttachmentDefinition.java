@@ -2,6 +2,8 @@ package net.lintford.library.core.geometry.spritegraph.definitions;
 
 public interface ISpriteGraphAttachmentDefinition {
 
+	public abstract String attachmentName();
+	
 	public abstract String spritesheetName();
 
 	public abstract boolean isAttachmentRemovable();

@@ -112,6 +112,7 @@ public class ListLayout extends BaseLayout implements IProcessMouseInput {
 
 		for (int i = 0; i < lEntryCount; i++) {
 			final var lEntry = mMenuEntries.get(i);
+			if(lEntry.active() == false) continue;
 			if (lEntry.verticalFillType() == FILLTYPE.TAKE_WHATS_NEEDED) {
 				lCountOfTakers++;
 				lHeightTaken += lEntry.paddingTop() + lEntry.height() + lEntry.paddingBottom();
@@ -127,6 +128,7 @@ public class ListLayout extends BaseLayout implements IProcessMouseInput {
 
 		for (int i = 0; i < lEntryCount; i++) {
 			final var lMenuEntry = mMenuEntries.get(i);
+			if(lMenuEntry.active() == false) continue;
 			float lScrollBarWidth = 0.f;
 			if (mScrollBarsEnabled_Internal)
 				lScrollBarWidth = mScrollBar.width();

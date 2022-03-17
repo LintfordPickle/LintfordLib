@@ -26,6 +26,9 @@ public class SpriteDefinition implements Serializable {
 	/** If true, the animation loops back to the beginning when finished. */
 	private boolean loopAnimation;
 
+	/** Specifies a minimum amount of time (in Ms) the animation should have to play out in order to be meaningful */
+	private int minimumViableRuntime;
+
 	/** A list of indices of the sprites which make up this animation. */
 	private int[] animationSpriteIndices;
 
@@ -67,6 +70,10 @@ public class SpriteDefinition implements Serializable {
 
 	public void loopEnabled(boolean pLoopEnabled) {
 		loopAnimation = pLoopEnabled;
+	}
+
+	public int minimumViableRuntime() {
+		return minimumViableRuntime;
 	}
 
 	// --------------------------------------

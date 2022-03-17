@@ -11,8 +11,8 @@ public class ConstantsApp {
 	// Constants
 	// ---------------------------------------------
 
-	public static final String APP_NAME = "_D-283";
-	public static final String DEBUG_APP = "_D-283 DEBUG";
+	public static final String APP_NAME = "_D-284";
+	public static final String DEBUG_APP = "_D-284 DEBUG";
 
 	// ---------------------------------------------
 	// Methods

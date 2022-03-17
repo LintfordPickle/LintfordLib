@@ -1,11 +1,11 @@
-package net.lintford.library.core.geometry.spritegraph.attachment;
+package net.lintford.library.core.geometry.spritegraph.instances;
 
 import java.io.Serializable;
 
 import net.lintford.library.core.geometry.spritegraph.definitions.ISpriteGraphAttachmentDefinition;
 import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 
-public class SpriteGraphNodeAttachment implements Serializable {
+public class SpriteGraphAttachmentInstance implements Serializable {
 
 	// --------------------------------------
 	// Constants
@@ -17,6 +17,7 @@ public class SpriteGraphNodeAttachment implements Serializable {
 	// Variables
 	// --------------------------------------
 
+	private String nodeAttachmentName;
 	private boolean mIsInitialized;
 	private transient SpriteSheetDefinition mSpritesheetDefinition;
 	public String dfaultSpriteName;
@@ -31,6 +32,10 @@ public class SpriteGraphNodeAttachment implements Serializable {
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public String attachedNodeName() {
+		return nodeAttachmentName;
+	}
 
 	public boolean isAttachmentInUse() {
 		return attachmentCategory > 0;
@@ -56,11 +61,11 @@ public class SpriteGraphNodeAttachment implements Serializable {
 	// Constructor
 	// --------------------------------------
 
-	public SpriteGraphNodeAttachment() {
+	public SpriteGraphAttachmentInstance() {
 
 	}
 
-	public SpriteGraphNodeAttachment(ISpriteGraphAttachmentDefinition pAttachmentDefinition) {
+	public SpriteGraphAttachmentInstance(ISpriteGraphAttachmentDefinition pAttachmentDefinition) {
 		initialize(pAttachmentDefinition);
 	}
 
@@ -74,6 +79,7 @@ public class SpriteGraphNodeAttachment implements Serializable {
 			return;
 		}
 
+		nodeAttachmentName = pAttachmentDefinition.attachmentName();
 		spritesheetDefinitionName = pAttachmentDefinition.spritesheetName();
 		dfaultSpriteName = pAttachmentDefinition.defaultSpriteName();
 		attachmentIsRemovable = pAttachmentDefinition.isAttachmentRemovable();
@@ -87,6 +93,7 @@ public class SpriteGraphNodeAttachment implements Serializable {
 	}
 
 	public void unload() {
+		nodeAttachmentName = null;
 		dfaultSpriteName = null;
 		spritesheetDefinitionName = null;
 		mSpritesheetDefinition = null;

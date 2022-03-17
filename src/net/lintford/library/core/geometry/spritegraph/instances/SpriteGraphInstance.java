@@ -9,7 +9,7 @@ import net.lintford.library.core.entity.instances.PooledBaseData;
 import net.lintford.library.core.geometry.spritegraph.AnimatedSpriteGraphListener;
 import net.lintford.library.core.geometry.spritegraph.ISpriteGraphPool;
 import net.lintford.library.core.geometry.spritegraph.SpriteGraphManager;
-import net.lintford.library.core.geometry.spritegraph.definitions.SpriteGraphAttachmentDefinition;
+import net.lintford.library.core.geometry.spritegraph.definitions.ISpriteGraphAttachmentDefinition;
 import net.lintford.library.core.geometry.spritegraph.definitions.SpriteGraphDefinition;
 import net.lintford.library.core.graphics.sprites.AnimatedSpriteListener;
 import net.lintford.library.core.graphics.sprites.SpriteInstance;
@@ -70,7 +70,7 @@ public class SpriteGraphInstance extends PooledBaseData implements AnimatedSprit
 		return rootNode.getNodeNyNodeName(pNodeName);
 	}
 
-	public SpriteGraphNodeInstance getNodeByAttachmentCategroy(int pAttachmentCategory) {
+	public SpriteGraphNodeInstance getNodeByAttachmentCategory(int pAttachmentCategory) {
 		return rootNode.getNodeNyAttachmentCategory(pAttachmentCategory);
 	}
 
@@ -162,13 +162,13 @@ public class SpriteGraphInstance extends PooledBaseData implements AnimatedSprit
 	// Methods
 	// --------------------------------------
 
-	public void attachItemToNode(SpriteGraphAttachmentDefinition pAttachmentDefinition) {
+	public void attachItemToNode(ISpriteGraphAttachmentDefinition pAttachmentDefinition) {
 		if (pAttachmentDefinition == null) {
 			return;
 		}
 
 		final var lAttachmentCategory = pAttachmentDefinition.attachmentCategory();
-		final var lSpriteGraphNode = getNodeByAttachmentCategroy(lAttachmentCategory);
+		final var lSpriteGraphNode = getNodeByAttachmentCategory(lAttachmentCategory);
 
 		if (lSpriteGraphNode != null) {
 			lSpriteGraphNode.attachItemToSpriteGraphNode(pAttachmentDefinition);

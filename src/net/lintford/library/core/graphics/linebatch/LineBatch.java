@@ -308,7 +308,6 @@ public class LineBatch {
 		// Add both vertices to the buffer
 		draw(pP1X, pP1Y, pZ, pR, pG, pB, pA);
 		draw(pP2X, pP2Y, pZ, pR, pG, pB, pA);
-
 	}
 
 	public void draw(float pP1X, float pP1Y, float pZ, float pR, float pG, float pB, float pA) {
@@ -322,7 +321,6 @@ public class LineBatch {
 
 		// Add both vertices to the buffer
 		addVertToBuffer(pP1X, pP1Y, pZ, 1f, pR, pG, pB, pA);
-
 	}
 
 	private void addVertToBuffer(float x, float y, float z, float w, float r, float g, float b, float a) {

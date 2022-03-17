@@ -305,6 +305,11 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 		mActive = pEnabled;
 	}
 
+	@Override
+	public float h() {
+		return !mActive ? 0 : super.h();
+	}
+
 	public int entryID() {
 		return mMenuEntryID;
 	}

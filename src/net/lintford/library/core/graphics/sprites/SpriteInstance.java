@@ -27,9 +27,6 @@ public class SpriteInstance extends Rectangle {
 	/** A timer to track when to change frames */
 	private float timer;
 
-	/** If true, rotation and position values will be eased in/out within the time given. 0 for no easing. */
-	// private float interpolateTime;
-
 	/**  */
 	private boolean loopingEnabled;
 

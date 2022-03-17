@@ -152,11 +152,7 @@ public abstract class JBox2dEntity extends WorldEntity {
 				worldPositionX = ConstantsPhysics.toPixels(lBox2dBodyInstance.mBody.getPosition().x);
 				worldPositionY = ConstantsPhysics.toPixels(lBox2dBodyInstance.mBody.getPosition().y);
 				rotationInRadians = lBox2dBodyInstance.mBody.getAngle();
-
 			}
-
 		}
-
 	}
-
 }

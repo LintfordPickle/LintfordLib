@@ -79,6 +79,8 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 	protected boolean mVisible;
 
 	protected float mEntryOffsetFromTop;
+	protected String mLayoutTitle;
+	protected boolean mShowTitle;
 
 	// --------------------------------------
 	// Properties
@@ -86,6 +88,14 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 
 	public boolean scrollBarsEnabled() {
 		return mScrollBarsEnabled;
+	}
+
+	public void showTitle(boolean pNewShowTitle) {
+		mShowTitle = pNewShowTitle;
+	}
+
+	public void title(String pNewTitle) {
+		mLayoutTitle = pNewTitle;
 	}
 
 	public void scrollBarsEnabled(boolean pNewValue) {
@@ -280,7 +290,7 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 		mContentArea = new ScrollBarContentRectangle(this);
 		mScrollBar = new ScrollBar(this, mContentArea);
 
-		mEntryOffsetFromTop = 10;
+		mEntryOffsetFromTop = 30;
 
 	}
 
@@ -426,6 +436,13 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 					Debug.debugManager().drawers().drawRectImmediate(pCore.HUD(), this);
 				}
 			}
+		}
+
+		if (mShowTitle) {
+			final var lTitleFont = parentScreen.rendererManager.uiTitleFont();
+			lTitleFont.begin(pCore.HUD());
+			lTitleFont.drawText(mLayoutTitle, x + 20.f, y + 2.f, pComponentDepth, 1.0f);
+			lTitleFont.end();
 		}
 
 		if (mScrollBarsEnabled_Internal) {

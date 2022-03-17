@@ -62,6 +62,10 @@ public class FontUnit {
 		if (mWrapType == WrapType.LetterCountTrim || pWrapWidth == NO_WORD_WRAP) {
 			return mFontDefinition.getFontHeight();
 		}
+		
+		if(pText == null) {
+			return mFontDefinition.getFontHeight();
+		}
 
 		float lReturnHeight = fontHeight();
 		float lX = 0;
