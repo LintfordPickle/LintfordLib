@@ -136,13 +136,15 @@ public class CameraChaseController extends BaseController {
 		if (mGameCamera == null)
 			return;
 
+		mStiffness = 30.0f;
+		mDamping = 4.0f;
+		mMass = .5f;
+
 		if (mTrackedEntity != null) {
 			updateSpring(pCore);
 
 			mGameCamera.setPosition(-mPosition.x, -mPosition.y);
-
 		}
-
 	}
 
 	private void updateSpring(LintfordCore pCore) {
