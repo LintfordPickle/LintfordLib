@@ -207,19 +207,16 @@ public class TextureBatchPCT {
 		mVertexCount = 0;
 		mCurNumSprites = 0;
 		mIsDrawing = true;
-
 	}
 
 	public void begin(ICamera pCamera) {
 		begin(pCamera, mShader);
-
 	}
 
 	public void draw(Texture pTexture, Rectangle pSrcRect, Rectangle pDestRect, float pZ, Color pTint) {
 		if (pSrcRect == null || pDestRect == null)
 			return;
 		draw(pTexture, pSrcRect.x(), pSrcRect.y(), pSrcRect.w(), pSrcRect.h(), pDestRect, pZ, pTint);
-
 	}
 
 	public void draw(Texture pTexture, Rectangle pSrcRect, float pDX, float pDY, float pDW, float pDH, float pZ, Color pTint) {
@@ -227,7 +224,6 @@ public class TextureBatchPCT {
 			return;
 
 		draw(pTexture, pSrcRect.x(), pSrcRect.y(), pSrcRect.w(), pSrcRect.h(), pDX, pDY, pDW, pDH, pZ, pTint);
-
 	}
 
 	public void draw(Texture pTexture, float pSX, float pSY, float pSW, float pSH, Rectangle pDestRect, float pZ, Color pTint) {
@@ -244,7 +240,6 @@ public class TextureBatchPCT {
 
 		if (mUseCheckerPattern) {
 			pTexture = mResourceManager.textureManager().checkerIndexedTexture();
-
 		}
 
 		if (pTexture != null) {
@@ -254,9 +249,7 @@ public class TextureBatchPCT {
 			} else if (mCurrentTexID != pTexture.getTextureID()) {
 				flush();
 				mCurrentTexID = pTexture.getTextureID();
-
 			}
-
 		}
 
 		if (mCurNumSprites >= MAX_SPRITES) {
@@ -298,7 +291,6 @@ public class TextureBatchPCT {
 		addVertToBuffer(x3, y3, pZ, 1f, pTint.r, pTint.g, pTint.b, pTint.a, u3, v3); // 3
 
 		mCurNumSprites++;
-
 	}
 
 	public void draw(Texture pTexture, float pSX, float pSY, float pSW, float pSH, float pDX, float pDY, float pDW, float pDH, float pZ, Color pTint) {
@@ -307,12 +299,10 @@ public class TextureBatchPCT {
 
 		if (pTexture == null && TextureManager.USE_DEBUG_MISSING_TEXTURES) {
 			pTexture = mResourceManager.textureManager().textureNotFound();
-
 		}
 
 		if (mUseCheckerPattern) {
 			pTexture = mResourceManager.textureManager().checkerIndexedTexture();
-
 		}
 
 		if (pTexture != null) {
@@ -322,14 +312,11 @@ public class TextureBatchPCT {
 			} else if (mCurrentTexID != pTexture.getTextureID()) {
 				flush();
 				mCurrentTexID = pTexture.getTextureID();
-
 			}
-
 		}
 
 		if (mCurNumSprites >= MAX_SPRITES) {
 			flush();
-
 		}
 
 		// Vertex 0
@@ -365,7 +352,6 @@ public class TextureBatchPCT {
 		addVertToBuffer(x3, y3, pZ, 1f, pTint.r, pTint.g, pTint.b, pTint.a, u3, v3); // 3
 
 		mCurNumSprites++;
-
 	}
 
 	public void drawAroundCenter(Texture pTexture, Rectangle pSrcRect, float pDX, float pDY, float pDW, float pDH, float pZ, float pRot, float pROX, float pROY, float pScale, Color pTint) {
@@ -373,10 +359,10 @@ public class TextureBatchPCT {
 			return;
 
 		drawAroundCenter(pTexture, pSrcRect.x(), pSrcRect.y(), pSrcRect.w(), pSrcRect.h(), pDX, pDY, pDW, pDH, pZ, pRot, pROX, pROY, pScale, pTint);
-
 	}
 
-	public void drawAroundCenter(Texture pTexture, float pSX, float pSY, float pSW, float pSH, float pDX, float pDY, float pDW, float pDH, float pZ, float pRot, float pROX, float pROY, float pScale, Color pTint) {
+	public void drawAroundCenter(Texture pTexture, float pSX, float pSY, float pSW, float pSH, float pDX, float pDY, float pDW, float pDH, float pZ, float pRot, float pROX, float pROY, float pScale,
+			Color pTint) {
 		if (!mResourcesLoaded)
 			return;
 
@@ -397,15 +383,14 @@ public class TextureBatchPCT {
 				mCurrentTexID = pTexture.getTextureID();
 
 			}
-
 		}
 
 		if (mCurNumSprites >= MAX_SPRITES) {
 			flush();
 		}
 
-		float sin = (float) (Math.sin(pRot));
-		float cos = (float) (Math.cos(pRot));
+		float sin = (float) Math.sin(pRot);
+		float cos = (float) Math.cos(pRot);
 
 		float lHalfW = (pDW * pScale) / 2f;
 		float lHalfH = (pDH * pScale) / 2f;
@@ -439,10 +424,6 @@ public class TextureBatchPCT {
 		float u3 = (pSX + pSW) / pTexture.getTextureWidth();
 		float v3 = (pSY + pSH) / pTexture.getTextureHeight();
 
-		// Apply the difference back to the global positions
-		// pDX += pROX;
-		// pDY += pROY;
-
 		// CCW 102203
 		addVertToBuffer(pDX + originX + x1, pDY + originY + y1, pZ, 1f, pTint.r, pTint.g, pTint.b, pTint.a, u1, v1); // 1
 		addVertToBuffer(pDX + originX + x0, pDY + originY + y0, pZ, 1f, pTint.r, pTint.g, pTint.b, pTint.a, u0, v0); // 0
@@ -453,7 +434,6 @@ public class TextureBatchPCT {
 		addVertToBuffer(pDX + originX + x3, pDY + originY + y3, pZ, 1f, pTint.r, pTint.g, pTint.b, pTint.a, u3, v3); // 3
 
 		mCurNumSprites++;
-
 	}
 
 	public void draw(Texture pTexture, float pSX, float pSY, float pSW, float pSH, Circle dstCircle, float pZ, Color pTint) {
@@ -480,9 +460,7 @@ public class TextureBatchPCT {
 			} else if (mCurrentTexID != pTexture.getTextureID()) {
 				flush();
 				mCurrentTexID = pTexture.getTextureID();
-
 			}
-
 		}
 
 		if (mCurNumSprites >= MAX_SPRITES) {
@@ -520,7 +498,6 @@ public class TextureBatchPCT {
 		}
 
 		mCurNumSprites++;
-
 	}
 
 	protected void addVertToBuffer(float x, float y, float z, float w, float r, float g, float b, float a, float u, float v) {
@@ -552,7 +529,6 @@ public class TextureBatchPCT {
 
 		flush();
 		mIsDrawing = false;
-
 	}
 
 	protected void flush() {
@@ -592,7 +568,6 @@ public class TextureBatchPCT {
 
 	public void setGlBlendEnabled(boolean pBlendEnabled) {
 		mBlendEnabled = pBlendEnabled;
-
 	}
 
 	public void setGlBlendFactor(int pSrcFactor, int pDstFactor) {
@@ -604,17 +579,14 @@ public class TextureBatchPCT {
 		if (mCurrentTexID != -1) {
 			GL13.glActiveTexture(GL13.GL_TEXTURE0);
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, mCurrentTexID);
-
 		}
 
 		if (mBlendEnabled) {
 			GL11.glEnable(GL11.GL_BLEND);
 			GL11.glBlendFunc(mBlendFuncSrcFactor, mBlendFuncDstFactor);
-
 		} else {
 			GL11.glDisable(GL11.GL_BLEND);
 			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-
 		}
 
 		mCustomShader.projectionMatrix(mCamera.projection());

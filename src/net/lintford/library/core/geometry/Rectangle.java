@@ -387,14 +387,14 @@ public class Rectangle extends Shape {
 
 		final var sin = (float) (Math.sin(rotation));
 		final var cos = (float) (Math.cos(rotation));
-
+		rotation = 0.f;
 		// iterate over the vertices, rotating them by the given amt around the origin point of the rectangle.
 		for (int i = 0; i < NUM_VERTICES; i++) {
 			// Scale the vertices out from local center (before applying world translation)
 			float dx = -lPX + mVertices.get(i).x * 1.f;
 			float dy = -lPY + mVertices.get(i).y * 1.f;
 
-			mVertices.get(i).set(centerX() + (dx * cos - (dy * 1f) * sin) * scaleX, centerY() + (dx * sin + (dy * 1f) * cos) * scaleY);
+			mVertices.get(i).set(x + (dx * cos - (dy * 1f) * sin) * scaleX, y + (dx * sin + (dy * 1f) * cos) * scaleY);
 
 		}
 

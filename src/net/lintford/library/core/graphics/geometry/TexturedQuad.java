@@ -25,6 +25,8 @@ public class TexturedQuad {
 	protected int mVaoId = -1;
 	protected int mVboId = -1;
 	protected boolean mResourcesLoaded;
+	protected float mWidth;
+	protected float mHeight;
 	protected float mZDepth;
 	protected FloatBuffer mBuffer;
 
@@ -50,6 +52,20 @@ public class TexturedQuad {
 		mModelMatrix = pNewMatrix;
 	}
 
+	public void width(float pNewWidth) {
+		if (pNewWidth < 0) {
+			pNewWidth = 0;
+		}
+		mWidth = pNewWidth;
+	}
+
+	public void height(float pNewHeight) {
+		if (pNewHeight < 0) {
+			pNewHeight = 0;
+		}
+		mHeight = pNewHeight;
+	}
+
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
@@ -58,6 +74,8 @@ public class TexturedQuad {
 		mModelMatrix = new Matrix4f();
 		createModelMatrix();
 
+		mWidth = 320.f;
+		mHeight = 240.f;
 	}
 
 	// --------------------------------------
@@ -186,12 +204,12 @@ public class TexturedQuad {
 	}
 
 	public void createModelMatrix(float pPositionX, float pPositionY, float pPositionZ) {
-		createModelMatrix(pPositionX, pPositionY, 200, 200, pPositionZ);
+		createModelMatrix(pPositionX, pPositionY, mWidth, mHeight, pPositionZ);
 	}
 
 	public void createModelMatrix(float pPositionX, float pPositionY, float pWidth, float pHeight, float pPositionZ) {
 		mModelMatrix.setIdentity();
 		mModelMatrix.scale(pWidth, pHeight, 1f);
-		mModelMatrix.translate(pPositionX, pPositionY, mZDepth);
+		mModelMatrix.translate(pPositionX, pPositionY, pPositionZ);
 	}
 }
