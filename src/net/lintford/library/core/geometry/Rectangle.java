@@ -379,7 +379,6 @@ public class Rectangle extends Shape {
 		final float lPX = flipHorizontal ? -pivotX : pivotX;
 		final float lPY = flipVertical ? -pivotY : pivotY;
 
-		// Get local space vertex positions
 		mVertices.get(0).set(-lWidth / 2, -lHeight / 2);
 		mVertices.get(1).set(lWidth / 2, -lHeight / 2);
 		mVertices.get(2).set(-lWidth / 2, lHeight / 2);
@@ -387,19 +386,15 @@ public class Rectangle extends Shape {
 
 		final var sin = (float) (Math.sin(rotation));
 		final var cos = (float) (Math.cos(rotation));
-		rotation = 0.f;
-		// iterate over the vertices, rotating them by the given amt around the origin point of the rectangle.
+
 		for (int i = 0; i < NUM_VERTICES; i++) {
-			// Scale the vertices out from local center (before applying world translation)
 			float dx = -lPX + mVertices.get(i).x * 1.f;
 			float dy = -lPY + mVertices.get(i).y * 1.f;
 
-			mVertices.get(i).set(x + (dx * cos - (dy * 1f) * sin) * scaleX, y + (dx * sin + (dy * 1f) * cos) * scaleY);
-
+			mVertices.get(i).set(centerX() + (dx * cos - (dy * 1f) * sin) * scaleX, centerY() + (dx * sin + (dy * 1f) * cos) * scaleY);
 		}
 
 		mAreVerticesDirty = false;
-
 	}
 
 	/** Expands the bounds of this rectangle to include the new point */
