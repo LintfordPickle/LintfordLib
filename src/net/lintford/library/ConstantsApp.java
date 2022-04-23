@@ -11,8 +11,8 @@ public class ConstantsApp {
 	// Constants
 	// ---------------------------------------------
 
-	public static final String APP_NAME = "_D-284";
-	public static final String DEBUG_APP = "_D-284 DEBUG";
+	public static final String APP_NAME = "_D284";
+	public static final String DEBUG_APP = "_D284 DEBUG";
 
 	// ---------------------------------------------
 	// Methods
@@ -87,9 +87,5 @@ public class ConstantsApp {
 		constTab.put(pName.toUpperCase(), pValue);
 
 	}
-
-	// --------------------------------------
-	// Appplication / Window
-	// --------------------------------------
 
 }

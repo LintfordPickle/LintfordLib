@@ -5,16 +5,15 @@ import java.util.List;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.debug.Debug;
-import net.lintford.library.core.entity.instances.PooledBaseData;
+import net.lintford.library.core.entity.instances.IndexedPooledBaseData;
 import net.lintford.library.core.geometry.spritegraph.ISpriteGraphPool;
-import net.lintford.library.core.geometry.spritegraph.definitions.ISpriteGraphAttachmentDefinition;
 import net.lintford.library.core.geometry.spritegraph.definitions.SpriteGraphNodeDefinition;
 import net.lintford.library.core.graphics.sprites.SpriteAnchor;
 import net.lintford.library.core.graphics.sprites.SpriteInstance;
 
 // ToDo: Attachable Box2d bodies: Some nodes need to interact with the world via the sprite graph nodes
 // ToDo: Attachable SpriteInstance: Each node instance should have its own sprite animation for the current spritesheetdefinition
-public class SpriteGraphNodeInstance extends PooledBaseData {
+public class SpriteGraphNodeInstance extends IndexedPooledBaseData {
 
 	// --------------------------------------
 	// Constants
@@ -29,7 +28,7 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 	public String name;
 	public SpriteGraphInstance mParentGraphInst;
 
-	public final SpriteGraphAttachmentInstance attachedItemInstance = new SpriteGraphAttachmentInstance();
+	private transient SpriteGraphAttachmentInstance mSpritegraphAttachmentInstance;
 	public transient SpriteInstance mSpriteInstance;
 
 	/** The ID of the {@link SpriteGraphAnchorDef} on the parent. */
@@ -67,6 +66,10 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public SpriteGraphAttachmentInstance spritegraphAttachmentInstance() {
+		return mSpritegraphAttachmentInstance;
+	}
 
 	public void nextAnimationName(String pNextAnimationName) {
 		nextAnimationName = pNextAnimationName;
@@ -308,10 +311,10 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 	}
 
 	private void updateSpriteInstance(LintfordCore pCore, SpriteGraphInstance pSpriteGraph, SpriteGraphNodeInstance pParentSpriteGraphNode) {
-		if (attachedItemInstance.isInitialized() == false)
+		if (mSpritegraphAttachmentInstance == null || mSpritegraphAttachmentInstance.isInitialized() == false)
 			return;
 
-		final var lAttachment = attachedItemInstance;
+		final var lAttachment = mSpritegraphAttachmentInstance;
 
 		if (lAttachment.spritesheetDefinition() == null) {
 			if (lAttachment.resolvedSpritesheetDefinitionName) {
@@ -344,8 +347,8 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 		if (currentNodeSpriteActionName == null) {
 			if (nextAnimationName != null) {
 				tlTempNextAnimFrameName = nextAnimationName;
-			} else if (attachedItemInstance.dfaultSpriteName != null) {
-				tlTempNextAnimFrameName = attachedItemInstance.dfaultSpriteName;
+			} else if (mSpritegraphAttachmentInstance.defaultSpriteName != null) {
+				tlTempNextAnimFrameName = mSpritegraphAttachmentInstance.defaultSpriteName;
 			}
 			reqUpdate = true;
 		} else if (nextAnimationName != null && nextAnimationName.equals(currentNodeSpriteActionName) == false) {
@@ -353,16 +356,25 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 			reqUpdate = true;
 		}
 
+		//      Maybe still need a method of playing animations based on the parent spritegraph (as opposed to a frame-based solution above)
+		//		if (reqUpdate == false && currentNodeSpriteActionName == null && tlTempNextAnimFrameName == null) {
+		//			var lFoundSprintInstance = lSpritesheetDefinition.getSpriteInstance(pSpriteGraph.currentAnimation());
+		//			if (lFoundSprintInstance != null) {
+		//				mSpriteInstance = lFoundSprintInstance;
+		//				currentNodeSpriteActionName = pSpriteGraph.currentAnimation();
+		//			}
+		//		}
+
 		if (reqUpdate && tlTempNextAnimFrameName != null) {
 			var lFoundSprintInstance = lSpritesheetDefinition.getSpriteInstance(tlTempNextAnimFrameName);
 			if (lFoundSprintInstance != null) {
 				mSpriteInstance = lFoundSprintInstance;
 				currentNodeSpriteActionName = nextAnimationName;
 			} else {
-				lFoundSprintInstance = lSpritesheetDefinition.getSpriteInstance(lAttachment.dfaultSpriteName);
+				lFoundSprintInstance = lSpritesheetDefinition.getSpriteInstance(lAttachment.defaultSpriteName);
 				if (lFoundSprintInstance != null) {
 					mSpriteInstance = lFoundSprintInstance;
-					currentNodeSpriteActionName = lAttachment.dfaultSpriteName;
+					currentNodeSpriteActionName = lAttachment.defaultSpriteName;
 				}
 			}
 
@@ -467,15 +479,15 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 	// Methods
 	// --------------------------------------
 
-	public void attachItemToSpriteGraphNode(ISpriteGraphAttachmentDefinition pAttachmenetDefinition) {
-		if (attachedItemInstance.isInitialized()) {
+	public void attachItemToSpriteGraphNode(SpriteGraphAttachmentInstance pAttachmentInstance) {
+		if (mSpritegraphAttachmentInstance != null && mSpritegraphAttachmentInstance.isInitialized()) {
 			detachItemFromSpriteGraphNode();
 		}
 
 		currentNodeSpriteActionName = null;
 		nextAnimationName = null;
 
-		attachedItemInstance.initialize(pAttachmenetDefinition);
+		mSpritegraphAttachmentInstance = pAttachmentInstance;
 	}
 
 	public void detachItemFromSpriteGraphNode() {
@@ -484,7 +496,10 @@ public class SpriteGraphNodeInstance extends PooledBaseData {
 			mSpriteInstance = null;
 		}
 
-		attachedItemInstance.unload();
+		if (mSpritegraphAttachmentInstance != null) {
+			mSpritegraphAttachmentInstance.unload();
+			mSpritegraphAttachmentInstance = null;
+		}
 	}
 
 	public void addChild(SpriteGraphNodeInstance pPart) {

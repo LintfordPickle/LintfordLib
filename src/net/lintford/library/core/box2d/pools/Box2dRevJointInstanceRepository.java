@@ -1,9 +1,9 @@
 package net.lintford.library.core.box2d.pools;
 
 import net.lintford.library.core.box2d.instance.Box2dRevoluteInstance;
-import net.lintford.library.core.entity.instances.PoolInstanceManager;
+import net.lintford.library.core.entity.instances.IndexedPoolInstanceManager;
 
-public class Box2dRevJointInstanceRepository extends PoolInstanceManager<Box2dRevoluteInstance> {
+public class Box2dRevJointInstanceRepository extends IndexedPoolInstanceManager<Box2dRevoluteInstance> {
 
 	// --------------------------------------
 	// Constants

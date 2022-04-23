@@ -26,11 +26,9 @@ public abstract class CircleEntity extends WorldEntity {
 	// Properties
 	// --------------------------------------
 
-	public CircleEntity(final int pPoolUid) {
-		super(pPoolUid);
+	public CircleEntity() {
+		super();
 
 		radius = 0.5f;
-
 	}
-
 }

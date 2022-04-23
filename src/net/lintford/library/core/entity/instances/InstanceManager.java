@@ -5,6 +5,9 @@ import java.util.List;
 
 import net.lintford.library.core.entity.BaseInstanceData;
 
+/**
+ * The {@link InstanceManager} maintains an array of serializable instances which extend {@link BaseInstanceData}. Instances are not otherwise tracked.
+ */
 public abstract class InstanceManager<T extends BaseInstanceData> extends BaseInstanceData {
 
 	// --------------------------------------
@@ -18,7 +21,6 @@ public abstract class InstanceManager<T extends BaseInstanceData> extends BaseIn
 	// --------------------------------------
 
 	protected final List<T> mInstances = new ArrayList<>();
-	private int mInstanceUIDCounter;
 
 	// --------------------------------------
 	// Properties
@@ -30,6 +32,12 @@ public abstract class InstanceManager<T extends BaseInstanceData> extends BaseIn
 
 	public List<T> instances() {
 		return mInstances;
+	}
+
+	public T getInstanceByIndex(int pIndex) {
+		if (pIndex < 0 || pIndex >= mInstances.size())
+			return null;
+		return mInstances.get(pIndex);
 	}
 
 	// --------------------------------------
@@ -47,9 +55,4 @@ public abstract class InstanceManager<T extends BaseInstanceData> extends BaseIn
 	public void clearInstances() {
 		mInstances.clear();
 	}
-
-	protected int getNewInstanceUID() {
-		return mInstanceUIDCounter++;
-	}
-
 }

@@ -24,12 +24,12 @@ import net.lintford.library.core.box2d.instance.Box2dPolygonInstance;
 import net.lintford.library.core.box2d.instance.Box2dPrismaticInstance;
 import net.lintford.library.core.box2d.instance.Box2dRevoluteInstance;
 import net.lintford.library.core.box2d.instance.Box2dWeldInstance;
-import net.lintford.library.core.entity.instances.PooledBaseData;
+import net.lintford.library.core.entity.instances.IndexedPooledBaseData;
 
 /**
  * The {@link JBox2dEntityInstance} class can be loaded from a PObject file and then serialized and restored with the game. JBox2dEntitys can also be pooled in the PObjectManager.
  */
-public class JBox2dEntityInstance extends PooledBaseData {
+public class JBox2dEntityInstance extends IndexedPooledBaseData {
 
 	// --------------------------------------
 	// Constants
@@ -131,18 +131,18 @@ public class JBox2dEntityInstance extends PooledBaseData {
 	// --------------------------------------
 
 	@Override
-	public void initialize(Object pParent) {
-		super.initialize(pParent);
+	public void afterLoaded(Object pParent) {
+		super.afterLoaded(pParent);
 
 		final int lBodyCount = mBodies.size();
 		for (int i = 0; i < lBodyCount; i++) {
-			mBodies.get(i).initialize(this);
+			mBodies.get(i).afterLoaded(this);
 
 		}
 
 		final int lJointCount = mJoints.size();
 		for (int i = 0; i < lJointCount; i++) {
-			mJoints.get(i).initialize(this);
+			mJoints.get(i).afterLoaded(this);
 
 		}
 

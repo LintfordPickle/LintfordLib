@@ -1,10 +1,10 @@
 package net.lintford.library.core.particles;
 
-import net.lintford.library.core.entity.instances.PreAllocatedInstanceData;
+import net.lintford.library.core.entity.BaseInstanceData;
 import net.lintford.library.core.graphics.Color;
 import net.lintford.library.core.particles.particlesystems.initializers.ParticleInitializerBase;
 
-public class Particle extends PreAllocatedInstanceData {
+public class Particle extends BaseInstanceData {
 
 	// --------------------------------------
 	// Constants
@@ -24,7 +24,7 @@ public class Particle extends PreAllocatedInstanceData {
 
 	public float width;
 	public float height;
-	public float sx, sy, sw, sh; // The src tex rect
+	public float sx, sy, sw, sh;
 
 	public float rox;
 	public float roy;

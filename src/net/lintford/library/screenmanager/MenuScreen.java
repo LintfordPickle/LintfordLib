@@ -331,20 +331,17 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 			mClickAction.reset();
 
 			return;
-
 		}
 
 		final var lFloatingCount = mFloatingEntries.size();
 		for (int i = 0; i < lFloatingCount; i++) {
-			MenuEntry lFloatingEntry = mFloatingEntries.get(i);
+			final var lFloatingEntry = mFloatingEntries.get(i);
 			lFloatingEntry.update(pCore, this, false);
-
 		}
 
 		final var lCount = mLayouts.size();
 		for (int i = 0; i < lCount; i++) {
 			mLayouts.get(i).update(pCore);
-
 		}
 
 		footerLayout().updateStructure();

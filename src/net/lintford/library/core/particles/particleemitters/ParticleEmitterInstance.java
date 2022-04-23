@@ -118,14 +118,17 @@ public class ParticleEmitterInstance extends WorldEntity {
 	// Constructor
 	// --------------------------------------
 
-	public ParticleEmitterInstance(final int pPoolUid) {
-		super(pPoolUid);
+	public ParticleEmitterInstance() {
+		this(0);
+	}
+
+	public ParticleEmitterInstance(int pEmitterInstanceId) {
+		super();
 
 		mChildEmitters = new ParticleEmitterInstance[MAX_NUM_CHILD_EMITTERS];
 		enabled = true;
-
+		mEmitterInstanceId = pEmitterInstanceId;
 		mEmitterEmitModifier = 1.f;
-
 	}
 
 	// --------------------------------------
@@ -214,12 +217,6 @@ public class ParticleEmitterInstance extends WorldEntity {
 
 		if (mParticleSystem != null) {
 			mParticleSystemId = mParticleSystem.getPoolID();
-
-		} else {
-			// TODO: Only output a warning if this emitter has no children - ultimately, what is the point?
-			Debug.debugManager().logger().i(getClass().getSimpleName(),
-					String.format("ParticleEmitter '%s' could not resolve ParticleSystem '' to an instance of an object", pEmitterDefinition.name, pEmitterDefinition.particleSystemName));
-
 		}
 
 		// assign the child emitters
@@ -231,12 +228,10 @@ public class ParticleEmitterInstance extends WorldEntity {
 					continue;
 
 				ParticleEmitterManager lMan = pParticleFramework.emitterManager();
-				ParticleEmitterInstance lInst = lMan.getParticleEmitterInstance();
+				ParticleEmitterInstance lInst = lMan.getFreePooledItem();
 				mChildEmitters[i] = lInst;
 				mChildEmitters[i].assignEmitterDefinitionAndResolveParticleSystem(lChildEmitterDefinition, pParticleFramework);
-
 			}
-
 		}
 	}
 

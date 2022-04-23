@@ -14,7 +14,6 @@ public abstract class ClosedInstanceBaseData extends BaseInstanceData {
 	// Variables
 	// --------------------------------------
 
-	public final int poolUid;
 	boolean internalInUse; // used by the ClosedInstanceManager to track the assigned state of this instance
 
 	// --------------------------------------
@@ -29,11 +28,8 @@ public abstract class ClosedInstanceBaseData extends BaseInstanceData {
 	// Constructor
 	// --------------------------------------
 
-	public ClosedInstanceBaseData(final int pPoolUid) {
-		poolUid = pPoolUid;
-
+	public ClosedInstanceBaseData() {
 		reset();
-
 	}
 
 	// --------------------------------------
@@ -46,12 +42,10 @@ public abstract class ClosedInstanceBaseData extends BaseInstanceData {
 
 	public void initInstance() {
 		internalInUse = true;
-
 	}
 
 	public void setFree() {
 		reset();
 		internalInUse = false;
 	}
-
 }

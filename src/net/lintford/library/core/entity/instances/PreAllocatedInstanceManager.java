@@ -5,7 +5,8 @@ import java.util.List;
 
 import net.lintford.library.core.entity.BaseInstanceData;
 
-/** All the instances in a pre-allocated instance manager are stored in a closed internal list and tracked using an 'isAssigned' flag. */
+/** All the instances in a pre-allocated instance manager are stored in a closed internal list and tracked using an 'isAssigned' flag. 
+ * The list of instances will not be increased.*/
 public abstract class PreAllocatedInstanceManager<T extends PreAllocatedInstanceData> extends BaseInstanceData {
 
 	// --------------------------------------
@@ -19,7 +20,6 @@ public abstract class PreAllocatedInstanceManager<T extends PreAllocatedInstance
 	// --------------------------------------
 
 	protected final List<T> mInstances = new ArrayList<>();
-	private int mInstanceUIDCounter;
 	private int mCapacity;
 
 	// --------------------------------------
@@ -42,7 +42,6 @@ public abstract class PreAllocatedInstanceManager<T extends PreAllocatedInstance
 		mCapacity = pCapacity;
 
 		preAllocateInstances();
-
 	}
 
 	// --------------------------------------
@@ -65,10 +64,5 @@ public abstract class PreAllocatedInstanceManager<T extends PreAllocatedInstance
 		}
 	}
 
-	protected int getNewInstanceUID() {
-		return mInstanceUIDCounter++;
-	}
-
 	protected abstract T createNewInstance();
-
 }

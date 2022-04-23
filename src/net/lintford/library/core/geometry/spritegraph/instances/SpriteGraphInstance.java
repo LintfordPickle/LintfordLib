@@ -5,11 +5,10 @@ import java.util.Comparator;
 import java.util.List;
 
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.entity.instances.PooledBaseData;
+import net.lintford.library.core.entity.instances.IndexedPooledBaseData;
 import net.lintford.library.core.geometry.spritegraph.AnimatedSpriteGraphListener;
 import net.lintford.library.core.geometry.spritegraph.ISpriteGraphPool;
 import net.lintford.library.core.geometry.spritegraph.SpriteGraphManager;
-import net.lintford.library.core.geometry.spritegraph.definitions.ISpriteGraphAttachmentDefinition;
 import net.lintford.library.core.geometry.spritegraph.definitions.SpriteGraphDefinition;
 import net.lintford.library.core.graphics.sprites.AnimatedSpriteListener;
 import net.lintford.library.core.graphics.sprites.SpriteInstance;
@@ -17,7 +16,7 @@ import net.lintford.library.core.graphics.sprites.SpriteInstance;
 /**
  * Represents a geometric instance of a SpriteGraphDef in the world, complete with information about transforms and part types (if for example multiple types are available per part).
  */
-public class SpriteGraphInstance extends PooledBaseData implements AnimatedSpriteListener {
+public class SpriteGraphInstance extends IndexedPooledBaseData implements AnimatedSpriteListener {
 
 	public static final Comparator<SpriteGraphNodeInstance> SpriteGraphNodeInstanceZComparator = new SpriteGraphNodeInstanceZComparator();
 
@@ -40,6 +39,7 @@ public class SpriteGraphInstance extends PooledBaseData implements AnimatedSprit
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
+
 	private transient List<SpriteGraphNodeInstance> mFlatNodes;
 	private transient AnimatedSpriteGraphListener mAnimatedSpriteGraphListener;
 
@@ -136,7 +136,6 @@ public class SpriteGraphInstance extends PooledBaseData implements AnimatedSprit
 	public void resetAndReturn(ISpriteGraphPool pSpriteGraphManager) {
 		if (mFlatNodes != null) {
 			mFlatNodes.clear();
-
 		}
 
 		// TODO: Need to properly return the SpriteGraphInstance and all SpriteGraphNodeInstances to the manager.
@@ -162,16 +161,16 @@ public class SpriteGraphInstance extends PooledBaseData implements AnimatedSprit
 	// Methods
 	// --------------------------------------
 
-	public void attachItemToNode(ISpriteGraphAttachmentDefinition pAttachmentDefinition) {
-		if (pAttachmentDefinition == null) {
+	public void attachItemToNode(SpriteGraphAttachmentInstance pSpritegraphAttachmentInstance) {
+		if (pSpritegraphAttachmentInstance == null) {
 			return;
 		}
 
-		final var lAttachmentCategory = pAttachmentDefinition.attachmentCategory();
+		final var lAttachmentCategory = pSpritegraphAttachmentInstance.attachmentCategory;
 		final var lSpriteGraphNode = getNodeByAttachmentCategory(lAttachmentCategory);
 
 		if (lSpriteGraphNode != null) {
-			lSpriteGraphNode.attachItemToSpriteGraphNode(pAttachmentDefinition);
+			lSpriteGraphNode.attachItemToSpriteGraphNode(pSpritegraphAttachmentInstance);
 		}
 	}
 
@@ -217,6 +216,12 @@ public class SpriteGraphInstance extends PooledBaseData implements AnimatedSprit
 		spriteGraphName = null;
 		mOrdered = false;
 
+	}
+
+	public void detachAllAttachments() {
+		mFlatNodes.forEach(nodeInstance -> {
+			nodeInstance.detachItemFromSpriteGraphNode();
+		});
 	}
 
 	// --------------------------------------

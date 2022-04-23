@@ -11,8 +11,6 @@ public abstract class BaseInstanceData implements Serializable {
 
 	private static final long serialVersionUID = 934763865686681475L;
 
-	public static final int NOT_ASSIGNED_UID = -1;
-
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
@@ -25,12 +23,10 @@ public abstract class BaseInstanceData implements Serializable {
 
 	public int lastSaveHash() {
 		return mLastSaveHash;
-
 	}
 
 	public boolean isDirty() {
-		return getSaveHash() != mLastSaveHash;
-
+		return hashCode() != mLastSaveHash;
 	}
 
 	// --------------------------------------
@@ -45,19 +41,13 @@ public abstract class BaseInstanceData implements Serializable {
 	// Core-Methods
 	// --------------------------------------
 
-	/** Called after the save has been loaded. Allows sub-classes to arrange their data after deserialization. */
-	public void initialize(Object pParent) {
-
-	}
-
 	/** Called before the game is about to close. Allows sub-classes to arrange their data for serialization. */
-	public void beforeSerialization() {
+	public void beforeSaving() {
 
 	}
 
-	public int getSaveHash() {
-		return hashCode();
+	/** Called after the object has been loaded. Allows sub-classes to arrange their data after deserialization. */
+	public void afterLoaded(Object pParent) {
 
 	}
-
 }

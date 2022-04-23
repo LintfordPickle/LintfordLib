@@ -2,7 +2,8 @@ package net.lintford.library.core.entity.instances;
 
 /**
  * An instance manager whose instances are maintained in an internal list. Whether or not an item has been assigned or is free is handled internally.
- * There is no pool of items with this instance manager.
+ * There is no pool of {@link ClosedInstanceBaseData} items with this instance manager.
+ * This class differs to {@link PreAllocatedInstanceManager} in that the internal list of {@link ClosedInstanceBaseData} will grow to meet demand.
  */
 public abstract class ClosedInstanceManager<T extends ClosedInstanceBaseData> extends InstanceManager<T> {
 
@@ -32,15 +33,12 @@ public abstract class ClosedInstanceManager<T extends ClosedInstanceBaseData> ex
 			if (!mInstances.get(i).isAssigned()) {
 				mInstances.get(i).initInstance();
 				return mInstances.get(i);
-
 			}
-
 		}
 
 		final var lReturnInstance = enlargenInstancePool(DEFAULT_ENLARGEN_POOL_AMOUNT);
 		lReturnInstance.initInstance();
 		return lReturnInstance;
-
 	}
 
 	public void returnInstanceItem(T pReturnedItem) {

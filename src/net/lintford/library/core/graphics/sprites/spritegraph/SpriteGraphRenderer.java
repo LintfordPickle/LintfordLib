@@ -55,8 +55,8 @@ public class SpriteGraphRenderer extends SpriteBatch {
 	}
 
 	private void renderSpriteGraphNodeInstance(LintfordCore pCore, SpriteGraphInstance pSpriteGraph, SpriteGraphNodeInstance pSpriteGraphNode) {
-		if (pSpriteGraphNode.attachedItemInstance != null) {
-			final var lAttachment = pSpriteGraphNode.attachedItemInstance;
+		if (pSpriteGraphNode.spritegraphAttachmentInstance() != null) {
+			final var lAttachment = pSpriteGraphNode.spritegraphAttachmentInstance();
 			var lSpritesheetDefinition = lAttachment.spritesheetDefinition();
 
 			if (pSpriteGraphNode.mSpriteInstance != null) {

@@ -81,9 +81,7 @@ public class ParticleSystemInstance extends BaseInstanceData {
 		mParticles = new ArrayList<>();
 		for (int i = 0; i < mCapacity; i++) {
 			mParticles.add(new Particle());
-
 		}
-
 	}
 
 	public void update(LintfordCore pCore) {

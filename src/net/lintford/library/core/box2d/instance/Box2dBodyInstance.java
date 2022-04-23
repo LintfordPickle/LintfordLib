@@ -10,9 +10,9 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.box2d.definition.Box2dBodyDefinition;
 import net.lintford.library.core.box2d.entities.JBox2dEntityInstance;
 import net.lintford.library.core.debug.Debug;
-import net.lintford.library.core.entity.instances.PooledBaseData;
+import net.lintford.library.core.entity.instances.IndexedPooledBaseData;
 
-public class Box2dBodyInstance extends PooledBaseData {
+public class Box2dBodyInstance extends IndexedPooledBaseData {
 
 	// --------------------------------------
 	// Constants
@@ -25,7 +25,7 @@ public class Box2dBodyInstance extends PooledBaseData {
 	// --------------------------------------
 
 	public transient Body mBody;
-	public PooledBaseData bodyPhysicsData;
+	public IndexedPooledBaseData bodyPhysicsData;
 
 	public String name;
 	public int entityBodyIndex;

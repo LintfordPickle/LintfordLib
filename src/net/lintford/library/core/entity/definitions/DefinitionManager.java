@@ -146,10 +146,8 @@ public abstract class DefinitionManager<T extends BaseDefinition> {
 			if (lNewDefinition != null) {
 				lNewDefinition.initialize(getNewDefinitionUID());
 				mDefinitions.add(lNewDefinition);
-
 			} else {
 				Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Failed to parse %s from file: %s", pClassType.getSimpleName(), pFilepath));
-
 			}
 
 		} catch (JsonSyntaxException e) {
@@ -157,7 +155,6 @@ public abstract class DefinitionManager<T extends BaseDefinition> {
 			Debug.debugManager().logger().e(getClass().getSimpleName(), e.getMessage());
 
 			return;
-
 		} catch (IOException e) {
 			Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Failed to parse Json %s (IOException): %s", pClassType.getSimpleName(), pFilepath));
 			Debug.debugManager().logger().e(getClass().getSimpleName(), e.getMessage());

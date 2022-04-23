@@ -49,9 +49,9 @@ public class ParticleFrameworkData extends BaseInstanceData {
 	// --------------------------------------
 
 	@Override
-	public void initialize(Object pParent) {
-		mParticleSystemManager.initialize(this);
-		mParticleEmitterManager.initialize(this);
+	public void afterLoaded(Object pParent) {
+		mParticleSystemManager.afterLoaded(this);
+		mParticleEmitterManager.afterLoaded(this);
 
 		loadSystemMetaDefinitionFile(PARTICLE_SYSTEM_META_FILE);
 		loadEmitterMetaDefinitionFile(EMITTER_META_FILE);

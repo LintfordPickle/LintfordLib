@@ -13,9 +13,13 @@ public abstract class WorldEntity extends PooledBaseData {
 
 	private static final long serialVersionUID = 3376631186484307065L;
 
+	public static final int INSTANCE_UID_NOT_ASSIGNED = -1;
+
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
+
+	public transient int worldInstanceUid;
 
 	public float worldPositionX;
 	public float worldPositionY;
@@ -25,19 +29,24 @@ public abstract class WorldEntity extends PooledBaseData {
 	// Properties
 	// --------------------------------------
 
+	public boolean isInitialized() {
+		return worldInstanceUid != INSTANCE_UID_NOT_ASSIGNED;
+	}
+
 	public void setPosition(float pWorldX, float pWorldY) {
 		worldPositionX = pWorldX;
 		worldPositionY = pWorldY;
-
 	}
 
 	// --------------------------------------
-	// Constructor
+	// Methods
 	// --------------------------------------
 
-	public WorldEntity(final int pPoolUid) {
-		super(pPoolUid);
-
+	public void init(int pWorldInstanceUid) {
+		worldInstanceUid = pWorldInstanceUid;
 	}
 
+	public void reset() {
+		worldInstanceUid = INSTANCE_UID_NOT_ASSIGNED;
+	}
 }

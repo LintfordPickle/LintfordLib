@@ -67,6 +67,7 @@ public class ParticleSystemManager extends InstanceManager<ParticleSystemInstanc
 
 	protected ParticleFrameworkData mParticleFrameworkData;
 	protected ParticleSystemDefinitionManager mParticleSystemDefinitionManager;
+	private int ParticleSystemUidCounter;
 
 	// --------------------------------------
 	// Properties
@@ -94,7 +95,7 @@ public class ParticleSystemManager extends InstanceManager<ParticleSystemInstanc
 
 		mParticleFrameworkData = pParticleFrameworkData;
 		mParticleSystemDefinitionManager = new ParticleSystemDefinitionManager();
-
+		ParticleSystemUidCounter = 0;
 	}
 
 	// --------------------------------------
@@ -112,16 +113,14 @@ public class ParticleSystemManager extends InstanceManager<ParticleSystemInstanc
 
 			if (lParticleSystemInstance.definition().name.equals(pParticleSystemName)) {
 				return mInstances.get(i);
-
 			}
-
 		}
 
 		// Otherwise create a new instance of the particle system.
 		final var lParticleSystemDefinition = mParticleSystemDefinitionManager.getDefinitionByName(pParticleSystemName);
 		if (lParticleSystemDefinition != null) {
 			final var lNewParticleSystem = new ParticleSystemInstance();
-			lNewParticleSystem.initialize(getNewInstanceUID(), lParticleSystemDefinition);
+			lNewParticleSystem.initialize(ParticleSystemUidCounter++, lParticleSystemDefinition);
 
 			mInstances.add(lNewParticleSystem);
 

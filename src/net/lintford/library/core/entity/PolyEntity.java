@@ -41,8 +41,8 @@ public abstract class PolyEntity extends WorldEntity {
 	// Constructor
 	// --------------------------------------
 
-	public PolyEntity(final int pPoolUid) {
-		super(pPoolUid);
+	public PolyEntity() {
+		super();
 
 	}
 
@@ -54,9 +54,5 @@ public abstract class PolyEntity extends WorldEntity {
 		width = pWidth;
 		height = pHeight;
 	}
-
-	// --------------------------------------
-	// Methods
-	// --------------------------------------
 
 }

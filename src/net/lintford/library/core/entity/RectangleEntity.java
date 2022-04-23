@@ -45,16 +45,16 @@ public abstract class RectangleEntity extends WorldEntity {
 	// Constructor
 	// --------------------------------------
 
-	public RectangleEntity(final int pPoolUid) {
-		this(pPoolUid, 0, 0, 0, 0);
+	public RectangleEntity() {
+		this(0, 0, 0, 0);
 	}
 
-	public RectangleEntity(final int pPoolUid, float pWidth, float pHeight) {
-		this(pPoolUid, 0, 0, pWidth, pHeight);
+	public RectangleEntity(float pWidth, float pHeight) {
+		this(0, 0, pWidth, pHeight);
 	}
 
-	public RectangleEntity(final int pPoolUid, float pX, float pY, float pWidth, float pHeight) {
-		super(pPoolUid);
+	public RectangleEntity(float pX, float pY, float pWidth, float pHeight) {
+		super();
 
 		worldPositionX = pX;
 		worldPositionY = pY;
@@ -63,7 +63,6 @@ public abstract class RectangleEntity extends WorldEntity {
 
 		mBounds = new Rectangle();
 		mBounds = new Rectangle(worldPositionX, worldPositionY, width, height);
-
 	}
 
 	// --------------------------------------
@@ -73,7 +72,6 @@ public abstract class RectangleEntity extends WorldEntity {
 	public void update(LintfordCore pCore) {
 		mBounds.rotateAbs(rotation); // + (float) Math.toRadians(90));
 		mBounds.setCenter(worldPositionX, worldPositionY, width, height);
-
 	}
 
 	// --------------------------------------
@@ -83,7 +81,6 @@ public abstract class RectangleEntity extends WorldEntity {
 	public void setDimensions(float pWidth, float pHeight) {
 		width = pWidth;
 		height = pHeight;
-
 	}
 
 }

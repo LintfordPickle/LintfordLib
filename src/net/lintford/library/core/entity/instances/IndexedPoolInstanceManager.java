@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The {@link PoolInstanceManager} maintains an non-indexed array of pool items retreived and later returned for  re-use. 
+ * The {@link IndexedPoolInstanceManager} maintains an indexed array of pool items retreived and later returned for  re-use. 
  * Items given out by this pool are NOT tracked.
  */
-public abstract class PoolInstanceManager<T extends PooledBaseData> extends InstanceManager<T> {
+public abstract class IndexedPoolInstanceManager<T extends IndexedPooledBaseData> extends InstanceManager<T> {
 
 	// --------------------------------------
 	// Constants
@@ -21,6 +21,7 @@ public abstract class PoolInstanceManager<T extends PooledBaseData> extends Inst
 
 	private transient List<T> mPooledItems;
 	private int mEnlargePoolStepAmount = 8;
+	private int mInstanceUIDCounter;
 
 	// --------------------------------------
 	// Properties
@@ -45,15 +46,26 @@ public abstract class PoolInstanceManager<T extends PooledBaseData> extends Inst
 
 	}
 
+	public T getInstanceByUid(final int pPoolUid) {
+		final int lNumInstances = numInstances();
+		for (int i = 0; i < lNumInstances; i++) {
+			if (instances().get(i).poolUid == pPoolUid)
+				return instances().get(i);
+		}
+
+		return null;
+
+	}
+
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
-	public PoolInstanceManager() {
+	public IndexedPoolInstanceManager() {
 		this(0);
 	}
 
-	public PoolInstanceManager(int pInitialialCapacity) {
+	public IndexedPoolInstanceManager(int pInitialialCapacity) {
 		mPooledItems = new ArrayList<>();
 
 		for (int i = 0; i < pInitialialCapacity; i++) {
@@ -66,12 +78,20 @@ public abstract class PoolInstanceManager<T extends PooledBaseData> extends Inst
 	// --------------------------------------
 
 	public T getFreePooledItem() {
+		T lInst = null;
+
 		if (mPooledItems == null) {
 			mPooledItems = new ArrayList<>();
 		}
 
-		final T lInst = mPooledItems.size() > 0 ? mPooledItems.remove(0) : enlargenInstancePool(mEnlargePoolStepAmount);
-		mInstances.add(lInst);
+		if (mPooledItems.size() > 0) {
+			lInst = mPooledItems.remove(0);
+			mInstances.add(lInst);
+
+		} else {
+			lInst = enlargenInstancePool(mEnlargePoolStepAmount);
+			mInstances.add(lInst);
+		}
 
 		return lInst;
 	}
@@ -112,4 +132,7 @@ public abstract class PoolInstanceManager<T extends PooledBaseData> extends Inst
 		mInstances.clear();
 	}
 
+	protected int getNewInstanceUID() {
+		return mInstanceUIDCounter++;
+	}
 }

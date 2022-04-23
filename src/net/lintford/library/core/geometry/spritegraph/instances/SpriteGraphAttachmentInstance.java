@@ -17,12 +17,12 @@ public class SpriteGraphAttachmentInstance implements Serializable {
 	// Variables
 	// --------------------------------------
 
-	private String nodeAttachmentName;
+	private String attachmentDefinitionName;
 	private boolean mIsInitialized;
 	private transient SpriteSheetDefinition mSpritesheetDefinition;
-	public String dfaultSpriteName;
+	public String defaultSpriteName;
 	public String spritesheetDefinitionName;
-	public boolean resolvedSpritesheetDefinitionName;
+	public transient boolean resolvedSpritesheetDefinitionName;
 	public boolean attachmentIsRemovable;
 	public int attachmentCategory;
 	public int zDepth;
@@ -34,7 +34,7 @@ public class SpriteGraphAttachmentInstance implements Serializable {
 	// --------------------------------------
 
 	public String attachedNodeName() {
-		return nodeAttachmentName;
+		return attachmentDefinitionName;
 	}
 
 	public boolean isAttachmentInUse() {
@@ -79,9 +79,9 @@ public class SpriteGraphAttachmentInstance implements Serializable {
 			return;
 		}
 
-		nodeAttachmentName = pAttachmentDefinition.attachmentName();
+		attachmentDefinitionName = pAttachmentDefinition.attachmentName();
 		spritesheetDefinitionName = pAttachmentDefinition.spritesheetName();
-		dfaultSpriteName = pAttachmentDefinition.defaultSpriteName();
+		defaultSpriteName = pAttachmentDefinition.defaultSpriteName();
 		attachmentIsRemovable = pAttachmentDefinition.isAttachmentRemovable();
 		attachmentCategory = pAttachmentDefinition.attachmentCategory();
 		zDepth = pAttachmentDefinition.relativeZDepth();
@@ -93,8 +93,8 @@ public class SpriteGraphAttachmentInstance implements Serializable {
 	}
 
 	public void unload() {
-		nodeAttachmentName = null;
-		dfaultSpriteName = null;
+		attachmentDefinitionName = null;
+		defaultSpriteName = null;
 		spritesheetDefinitionName = null;
 		mSpritesheetDefinition = null;
 		attachmentIsRemovable = true;

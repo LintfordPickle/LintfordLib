@@ -102,8 +102,8 @@ public class ParticleEmitterManager extends PoolInstanceManager<ParticleEmitterI
 	// --------------------------------------
 
 	private static final long serialVersionUID = -831550615078707748L;
-
-	public static final int PARTICLE_EMITTER_NO_ID = -1;
+	
+	public static final int PARTICLE_EMIITER_NOT_ASSIGNED = -1;
 
 	// --------------------------------------
 	// Variables
@@ -111,7 +111,6 @@ public class ParticleEmitterManager extends PoolInstanceManager<ParticleEmitterI
 
 	protected EmitterDefinitionManager mEmitterDefinitionManager;
 	protected ParticleFrameworkData mParticleFrameworkData;
-	protected int mParticleEmitterInstanceCounter;
 
 	// --------------------------------------
 	// Properties
@@ -135,7 +134,6 @@ public class ParticleEmitterManager extends PoolInstanceManager<ParticleEmitterI
 
 	public ParticleEmitterManager(ParticleFrameworkData pParticleFrameworkData) {
 		mParticleFrameworkData = pParticleFrameworkData;
-
 	}
 
 	// --------------------------------------
@@ -143,16 +141,14 @@ public class ParticleEmitterManager extends PoolInstanceManager<ParticleEmitterI
 	// --------------------------------------
 
 	@Override
-	public void initialize(Object pParent) {
+	public void afterLoaded(Object pParent) {
 		mEmitterDefinitionManager = new EmitterDefinitionManager();
 
 		// Resolve all the ParticleSystems within the emitters to the ParticleSystem instances.
 		if (pParent instanceof ParticleFrameworkData) {
 			final var lFramework = (ParticleFrameworkData) pParent;
 			mEmitterDefinitionManager.initialize(lFramework);
-
 		}
-
 	}
 
 	// --------------------------------------
@@ -169,45 +165,27 @@ public class ParticleEmitterManager extends PoolInstanceManager<ParticleEmitterI
 
 		}
 
-		// Retrieve or create a new instance
 		final var lNewEmitterInst = getFreePooledItem();
-		lNewEmitterInst.emitterInstanceId(getNewInstanceUID());
 		lNewEmitterInst.assignEmitterDefinitionAndResolveParticleSystem(lEmitterDef, mParticleFrameworkData);
 
 		if (!mInstances.contains(lNewEmitterInst)) {
 			mInstances.add(lNewEmitterInst);
-
 		}
 
 		return lNewEmitterInst;
-
 	}
 
 	// Returns a ParticleEmitterInstance, if one exists, based on the EmitterID.
 	public ParticleEmitterInstance getParticleEmitterByIndex(int pEmitterIndex) {
 		final var lNumParticleEmitterCount = mInstances.size();
 		for (var i = 0; i < lNumParticleEmitterCount; i++) {
-			if (mInstances.get(i).poolUid == pEmitterIndex) {
+			if (mInstances.get(i).emitterInstanceId() == pEmitterIndex) {
 				return mInstances.get(i);
 
 			}
 		}
 
 		return null;
-	}
-
-	@Override
-	protected ParticleEmitterInstance createPoolObjectInstance() {
-		return new ParticleEmitterInstance(mParticleEmitterInstanceCounter++);
-
-	}
-
-	public ParticleEmitterInstance getParticleEmitterInstance() {
-		final var lParticleEmitterInstance = getFreePooledItem();
-		lParticleEmitterInstance.emitterInstanceId(getNewInstanceUID());
-
-		return lParticleEmitterInstance;
-
 	}
 
 	public void addParticleEmitterInstance(final ParticleEmitterInstance pParticleEmitterInstance) {
@@ -226,7 +204,11 @@ public class ParticleEmitterManager extends PoolInstanceManager<ParticleEmitterI
 		}
 
 		returnPooledItem(pParticleEmitterInstance);
+	}
 
+	@Override
+	protected ParticleEmitterInstance createPoolObjectInstance() {
+		return new ParticleEmitterInstance();
 	}
 
 }

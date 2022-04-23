@@ -44,9 +44,8 @@ public abstract class JBox2dEntity extends WorldEntity {
 	// Constructor
 	// --------------------------------------
 
-	public JBox2dEntity(final int pPoolUid) {
-		super(pPoolUid);
-
+	public JBox2dEntity() {
+		super();
 	}
 
 	// --------------------------------------
@@ -54,18 +53,16 @@ public abstract class JBox2dEntity extends WorldEntity {
 	// --------------------------------------
 
 	@Override
-	public void initialize(Object pParent) {
-		super.initialize(pParent);
+	public void afterLoaded(Object pParent) {
+		super.afterLoaded(pParent);
 
-		mJBox2dEntityInstance.initialize(this);
-
+		mJBox2dEntityInstance.afterLoaded(this);
 	}
 
 	public void setPhysicsObject(JBox2dEntityInstance pJBox2dEntity) {
 		mJBox2dEntityInstance = pJBox2dEntity;
 
 		transformPObject(worldPositionX, worldPositionY, rotationInRadians);
-
 	}
 
 	public void savePhysics() {
@@ -73,7 +70,6 @@ public abstract class JBox2dEntity extends WorldEntity {
 			return;
 
 		mJBox2dEntityInstance.savePhysics();
-
 	}
 
 	public void loadPhysics(World pWorld) {
@@ -89,9 +85,7 @@ public abstract class JBox2dEntity extends WorldEntity {
 		// Initially we should set the new instance (loaded from a reference defintion) to the WorldEntity SRT.
 		if (pUpdateWorldTranformation && isPhysicsLoaded()) {
 			transformPObject(worldPositionX, worldPositionY, rotationInRadians);
-
 		}
-
 	}
 
 	@Override
@@ -100,21 +94,17 @@ public abstract class JBox2dEntity extends WorldEntity {
 
 		if (hasPhysicsEntity()) {
 			mJBox2dEntityInstance.transformEntityInstance(worldPositionX, worldPositionY, rotationInRadians);
-
 		}
-
 	}
 
 	public void transformPObject(float pWorldPositionX, float pWorldPositionY, float pRotationInRadians) {
 		if (hasPhysicsEntity()) {
 			mJBox2dEntityInstance.transformEntityInstance(pWorldPositionX, pWorldPositionY, pRotationInRadians);
-
 		}
 
 		worldPositionX = pWorldPositionX;
 		worldPositionY = pWorldPositionY;
 		rotationInRadians = pRotationInRadians;
-
 	}
 
 	public void reset() {
@@ -124,25 +114,19 @@ public abstract class JBox2dEntity extends WorldEntity {
 
 		if (hasPhysicsEntity()) {
 			mJBox2dEntityInstance.resetEntityInstance();
-
 		}
-
 	}
 
 	public void unloadPhysics() {
 		if (isPhysicsLoaded()) {
 			mJBox2dEntityInstance.unloadPhysics();
-
 		}
-
 	}
 
 	public void setNewPhysicsProperties() {
 		if (!hasPhysicsEntity()) {
 			return;
-
 		}
-
 	}
 
 	public void updatePhysics(LintfordCore pCore) {
