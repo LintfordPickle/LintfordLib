@@ -191,11 +191,15 @@ public abstract class GameResourceLoader extends Thread {
 	}
 
 	protected void onDraw(LintfordCore pCore) {
-		final var lHud = pCore.HUD();
-		final var lHudBoundingBox = lHud.boundingRectangle();
-
 		glClearColor(0f, 0f, 0f, 1f);
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+
+		drawMessages(pCore);
+	}
+
+	protected void drawMessages(LintfordCore pCore) {
+		final var lHud = pCore.HUD();
+		final var lHudBoundingBox = lHud.boundingRectangle();
 
 		final var lLeft = lHudBoundingBox.left();
 		final var lBottom = lHudBoundingBox.bottom();
