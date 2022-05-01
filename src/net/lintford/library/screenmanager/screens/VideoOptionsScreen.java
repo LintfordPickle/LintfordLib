@@ -88,6 +88,8 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 		mDisplayManager = pScreenManager.core().config().display();
 
 		mVideoList = new ListLayout(this);
+		mVideoList.cropPaddingTop(9.f);
+		mVideoList.cropPaddingBottom(13.f);
 		mVideoList.setDrawBackground(true, ColorConstants.MenuPanelSecondaryColor);
 		mVideoList.layoutFillType(FILLTYPE.FILL_CONTAINER);
 

@@ -31,6 +31,7 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 
 	private static final long serialVersionUID = 6606453352329315889L;
 
+	// TODO: Replace this with the value from the IListBoxItem instances
 	public static int LISTBOX_HEIGHT = 350;
 	public static float LISTBOX_ITEM_VPADDING = 15; // The amound of space vertically between items
 
@@ -44,12 +45,8 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 	protected List<ListBoxItem> mItems;
 	protected ScrollBarContentRectangle mContentArea;
 	protected ScrollBar mScrollBar;
-	protected float mZScrollAcceleration;
-	protected float mZScrollVelocity;
-	protected float mYScrollPos;
 
 	protected float mLastMouseYPos;
-	protected boolean mScrollBarsEnabled;
 	protected IListBoxItemSelected mSelecterListener;
 	protected IListBoxItemDoubleClick mItemDoubleClickListener;
 
@@ -88,10 +85,6 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 		}
 
 		mSelectedItem = i;
-	}
-
-	public float getYScrollPosition() {
-		return mYScrollPos;
 	}
 
 	public List<ListBoxItem> items() {
@@ -163,13 +156,6 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 			}
 		}
 
-		/// Scrolling ///
-
-		if (intersectsAA(lMouseHUDCoords) && pCore.input().mouse().tryAcquireMouseMiddle(hashCode())) {
-			mZScrollAcceleration += pCore.input().mouse().mouseWheelYOffset() * 250.0f;
-
-		}
-
 		if (!pCore.input().mouse().isMouseLeftButtonDown()) {
 			mClickActive = false;
 
@@ -179,7 +165,6 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 		if (!pCore.input().mouse().tryAcquireMouseLeftClick(hashCode())) {
 			mClickActive = false;
 			return false;
-
 		}
 
 		if (!mClickActive) {
@@ -188,42 +173,12 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 			return true;
 		}
 
-		// Allow us to scroll the listbox by clicking and dragging within its bounds
-		final float lMaxDiff = mContentArea.h() - h;
-
-		// if()
-
-		if (mClickActive) {
-			if (lMaxDiff > 0) {
-				float lDiffY = lMouseHUDCoords.y - mLastMouseYPos;
-				mYScrollPos += lDiffY;
-
-				if (mYScrollPos < -lMaxDiff - LISTBOX_ITEM_VPADDING)
-					mYScrollPos = -lMaxDiff - LISTBOX_ITEM_VPADDING;
-				if (mYScrollPos > 0)
-					mYScrollPos = 0;
-
-				mLastMouseYPos = lMouseHUDCoords.y;
-
-				return true;
-			}
-
-		}
-
-		if (lMaxDiff <= 0) {
-			mYScrollPos = 0;
-		}
-
 		return false;
-
 	}
 
 	@Override
 	public void update(LintfordCore pCore, MenuScreen pScreen, boolean pIsSelected) {
-		mScrollBarsEnabled = mContentArea.h() - h > 0;
-
-		if (mContentArea.h() < h)
-			mYScrollPos = 0;
+		mScrollBar.scrollBarEnabled(mContentArea.h() - h > 0);
 
 		int lCount = mItems.size();
 		float mItemYPos = 0;
@@ -235,10 +190,9 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 
 			// We need an innerpadding for the case when the scrollbar is enabled. In that case
 			// we narrow the size of the WorldListItem.
-			final float lInnerPadding = mScrollBarsEnabled ? 25 : 0;
+			final float lInnerPadding = mScrollBar.scrollBarEnabled() ? 25 : 0;
 			mItems.get(i).w(w - marginLeft() - marginRight() - lInnerPadding);
-
-			mItems.get(i).setPosition(x + marginLeft(), y + marginTop() + mYScrollPos + mItemYPos);
+			mItems.get(i).setPosition(x + marginLeft(), y + marginTop() + mScrollBar.currentYPos() + mItemYPos);
 
 			mItemYPos += lItem.h() + LISTBOX_ITEM_VPADDING;
 			lTotalContentHeight += lItem.h() + LISTBOX_ITEM_VPADDING;
@@ -248,24 +202,7 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 		if (mVerticalFillType == FILLTYPE.FILL_CONTAINER || mVerticalFillType == FILLTYPE.TAKE_WHATS_NEEDED)
 			mContentArea.h(lTotalContentHeight);
 
-		final float lDeltaTime = (float) pCore.appTime().elapsedTimeMilli() / 1000f;
-		float lScrollSpeedFactor = mYScrollPos;
-
-		mZScrollVelocity += mZScrollAcceleration;
-		lScrollSpeedFactor += mZScrollVelocity * lDeltaTime;
-		mZScrollVelocity *= 0.85f;
-		mZScrollAcceleration = 0.0f;
-		mYScrollPos = lScrollSpeedFactor;
-
-		// Constrain
-		if (mYScrollPos > 0)
-			mYScrollPos = 0;
-		if (mYScrollPos < -(mContentArea.h() - this.h)) {
-			mYScrollPos = -(mContentArea.h() - this.h);
-		}
-
 		mScrollBar.update(pCore);
-
 	}
 
 	@Override
@@ -274,7 +211,7 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 
 		final var lScreenOffset = pScreen.screenPositionOffset();
 		final float lTileSize = 32;
-		
+
 		lSpriteBatch.begin(pCore.HUD());
 		final var lBackgroundColor = ColorConstants.getColor(.15f, .15f, .15f, 0.4f);
 		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_LEFT, lScreenOffset.x + x, lScreenOffset.y + y, lTileSize, lTileSize, pParentZDepth, lBackgroundColor);
@@ -289,7 +226,7 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_MID, lScreenOffset.x + x + lTileSize, lScreenOffset.y + y + h - lTileSize, w - lTileSize * 2, lTileSize, pParentZDepth, lBackgroundColor);
 		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_RIGHT, lScreenOffset.x + x + w - lTileSize, lScreenOffset.y + y + h - lTileSize, lTileSize, lTileSize, pParentZDepth, lBackgroundColor);
 		lSpriteBatch.end();
-		
+
 		// We need to use a stencil buffer to clip the list box items (which, when scrolling, could appear out-of-bounds of the listbox).
 		GL11.glEnable(GL11.GL_STENCIL_TEST);
 
@@ -313,7 +250,7 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 			mItems.get(i).draw(pCore, pScreen, lSpriteBatch, mSelectedItem == mItems.get(i).mItemIndex, pParentZDepth);
 		}
 
-		if (mScrollBarsEnabled) {
+		if (mScrollBar.scrollBarEnabled()) {
 			lSpriteBatch.begin(pCore.HUD());
 			mScrollBar.draw(pCore, lSpriteBatch, mCoreSpritesheet, pParentZDepth);
 			lSpriteBatch.end();
@@ -385,23 +322,6 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 	// --------------------------------------
 	// IScrollBarArea Methods
 	// --------------------------------------
-
-	@Override
-	public float currentYPos() {
-		return mYScrollPos;
-	}
-
-	@Override
-	public void RelCurrentYPos(float pAmt) {
-		mYScrollPos += pAmt;
-
-	}
-
-	@Override
-	public void AbsCurrentYPos(float pValue) {
-		mYScrollPos = pValue;
-
-	}
 
 	@Override
 	public Rectangle contentDisplayArea() {

@@ -68,6 +68,7 @@ public class RendererManager {
 	protected FontUnit mUiTextBoldFont;
 	protected FontUnit mUiHeaderFont;
 	protected FontUnit mUiTitleFont;
+	protected float mTitleHeight;
 
 	private boolean mIsinitialized;
 	private boolean mResourcesLoaded;
@@ -103,16 +104,36 @@ public class RendererManager {
 		return mUiTextFont;
 	}
 
+	public float textFontHeight() {
+		if (mUiTextFont == null) return 0.f;
+		return mUiTextFont.fontHeight();
+	}
+
 	public FontUnit uiTextBoldFont() {
 		return mUiTextBoldFont;
+	}
+
+	public float textBoldFontHeight() {
+		if (mUiTextBoldFont == null) return 0.f;
+		return mUiTextBoldFont.fontHeight();
 	}
 
 	public FontUnit uiHeaderFont() {
 		return mUiHeaderFont;
 	}
 
+	public float headerFontHeight() {
+		if (mUiHeaderFont == null) return 0.f;
+		return mUiHeaderFont.fontHeight();
+	}
+
 	public FontUnit uiTitleFont() {
 		return mUiTitleFont;
+	}
+
+	public float titleFontHeight() {
+		if (mUiTitleFont == null) return 0.f;
+		return mUiTitleFont.fontHeight();
 	}
 
 	public boolean isinitialized() {

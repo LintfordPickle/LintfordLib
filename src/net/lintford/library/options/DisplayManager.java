@@ -357,7 +357,6 @@ public class DisplayManager extends IniFile {
 		if (!pGameInfo.windowResizeable()) {
 			mDisplaySettings.windowWidth = pGameInfo.baseGameResolutionWidth();
 			mDisplaySettings.windowHeight = pGameInfo.baseGameResolutionHeight();
-
 		}
 
 		validateResolution(pGameInfo);
@@ -372,7 +371,6 @@ public class DisplayManager extends IniFile {
 			glfwDestroyWindow(mMasterWindowId);
 
 			mMasterWindowId = lNewWindowID;
-
 		}
 
 		// Create a new windowed window
@@ -393,11 +391,9 @@ public class DisplayManager extends IniFile {
 				glfwGetWindowSize(mMasterWindowId, w, h);
 				mDisplaySettings.windowWidth = w[0];
 				mDisplaySettings.windowHeight = h[0];
-
 			}
 
 			glfwSetWindowPos(mMasterWindowId, (mDesktopWidth - mDisplaySettings.windowWidth) / 2, (mDesktopHeight - mDisplaySettings.windowHeight) / 2);
-
 		}
 
 		// Set a minimum window
@@ -418,26 +414,21 @@ public class DisplayManager extends IniFile {
 		// Create only one size callback thing
 		if (mFrameBufferSizeCallback == null) {
 			mFrameBufferSizeCallback = new GLFWFramebufferSizeCallback() {
-
 				@Override
 				public void invoke(long window, int width, int height) {
 					changeResolution(width, height);
 
 				}
-
 			};
-
 		}
 
 		glfwSetFramebufferSizeCallback(mMasterWindowId, mFrameBufferSizeCallback);
 		glfwSetWindowFocusCallback(mMasterWindowId, new GLFWWindowFocusCallback() {
-
 			@Override
 			public void invoke(long pWindowID, boolean pIsFocused) {
 				mIsWindowFocused = pIsFocused;
 
 			}
-
 		});
 
 		// Set our default OpenGL variables

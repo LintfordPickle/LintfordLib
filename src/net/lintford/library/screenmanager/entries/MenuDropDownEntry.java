@@ -58,9 +58,6 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 	private transient ScrollBarContentRectangle mContentRectangle;
 	private transient ScrollBarContentRectangle mWindowRectangle;
 	private transient ScrollBar mScrollBar;
-	private transient float mScrollYPosition;
-	private float mZScrollAcceleration;
-	private float mZScrollVelocity;
 
 	private boolean mAllowDuplicates;
 
@@ -177,14 +174,14 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 		// Handle clicks within the component (including both open and closed states)
 		else if (intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().tryAcquireMouseOverThisComponent(hashCode())) {
 			if (pCore.input().mouse().tryAcquireMouseMiddle((hashCode()))) {
-				mZScrollAcceleration += pCore.input().mouse().mouseWheelYOffset() * 250.0f;
-
+				final float scrollAccelerationAmt = pCore.input().mouse().mouseWheelYOffset() * 250.0f;
+				mScrollBar.scrollRelAcceleration(scrollAccelerationAmt);
 			}
 
 			if (mOpen) {
 				final float lConsoleLineHeight = mItemHeight;
 				// Something inside the dropdown was select
-				float lRelativeheight = pCore.HUD().getMouseCameraSpace().y - mWindowRectangle.y() - mScrollYPosition;
+				float lRelativeheight = pCore.HUD().getMouseCameraSpace().y - mWindowRectangle.y() - mScrollBar.currentYPos();
 
 				int lRelativeIndex = (int) (lRelativeheight / lConsoleLineHeight);
 				int lSelectedIndex = lRelativeIndex;
@@ -203,8 +200,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 					// TODO: play the menu clicked sound
 
 					final float lConsoleLineHeight = mItemHeight;
-					// Something inside the dropdown was select
-					float lRelativeheight = pCore.HUD().getMouseCameraSpace().y - mWindowRectangle.y() - mScrollYPosition;
+					float lRelativeheight = pCore.HUD().getMouseCameraSpace().y - mWindowRectangle.y() - mScrollBar.currentYPos();
 
 					int lRelativeIndex = (int) (lRelativeheight / lConsoleLineHeight);
 					int lSelectedIndex = lRelativeIndex;
@@ -271,7 +267,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 		final float lUiTextScale = mScreenManager.UiStructureController().uiTextScaleFactor();
 		mItemHeight = ITEM_HEIGHT * lUiTextScale;
 
-		mContentRectangle.set(x, y + mScrollYPosition, w, mItems.size() * mItemHeight);
+		mContentRectangle.set(x, y + mScrollBar.currentYPos(), w, mItems.size() * mItemHeight);
 		if (mOpen) {
 			mWindowRectangle.set(x + w / 2, y + 32, w / 2, OPEN_HEIGHT);
 			set(x, y, w, OPEN_HEIGHT + 32.f);
@@ -283,26 +279,9 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 
 		mScrollBar.update(pCore);
 
-		final var lDeltaTime = (float) pCore.appTime().elapsedTimeSeconds();
-		var lScrollSpeedFactor = mScrollYPosition;
-
-		mZScrollVelocity += mZScrollAcceleration;
-		lScrollSpeedFactor += mZScrollVelocity * lDeltaTime;
-		mZScrollVelocity *= 0.85f;
-		mZScrollAcceleration = 0.0f;
-
-		// Constrain
-		mScrollYPosition = lScrollSpeedFactor;
-		if (mScrollYPosition > 0)
-			mScrollYPosition = 0;
-		if (mScrollYPosition < -(fullContentArea().h() - contentDisplayArea().h()))
-			mScrollYPosition = -(fullContentArea().h() - contentDisplayArea().h());
-
 		if (mOpen && pCore.input().mouse().isMouseLeftButtonDown() && !intersectsAA(pCore.HUD().getMouseCameraSpace())) {
 			mOpen = false;
-
 		}
-
 	}
 
 	@Override
@@ -376,7 +355,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 			// Start the stencil buffer test to filter out everything outside of the scroll view
 			GL11.glStencilFunc(GL11.GL_EQUAL, 1, 0xFF); // Pass test if stencil value is 1
 
-			float lYPos = mWindowRectangle.y() + mScrollYPosition;
+			float lYPos = mWindowRectangle.y() + mScrollBar.currentYPos();
 
 			final int lItemCount = mItems.size();
 			for (int i = 0; i < lItemCount; i++) {
@@ -459,23 +438,6 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 	// --------------------------------------
 	// Implemented Methods
 	// --------------------------------------
-
-	@Override
-	public float currentYPos() {
-		return mScrollYPosition;
-	}
-
-	@Override
-	public void RelCurrentYPos(float pAmt) {
-		mScrollYPosition += pAmt;
-
-	}
-
-	@Override
-	public void AbsCurrentYPos(float pValue) {
-		mScrollYPosition = pValue;
-
-	}
 
 	@Override
 	public Rectangle contentDisplayArea() {

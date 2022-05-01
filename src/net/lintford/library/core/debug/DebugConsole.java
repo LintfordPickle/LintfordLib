@@ -95,9 +95,6 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 	// This is the extent of all the lines of the debug console
 	private transient ScrollBarContentRectangle mContentRectangle;
 	private transient ScrollBar mScrollBar;
-	private transient float mScrollYPosition;
-	protected float mZScrollAcceleration;
-	protected float mZScrollVelocity;
 
 	private transient boolean mShowCaret;
 	private transient float mCaretTimer;
@@ -266,7 +263,7 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 					return;
 
 				if (pCore.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_DELETE)) {
-					mScrollYPosition = 0;
+					mScrollBar.AbsCurrentYPos(0);
 					mAutoScroll = true;
 
 					Debug.debugManager().logger().clearLogLines();
@@ -275,49 +272,46 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 
 				if (pCore.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_DOWN)) {
 					mConsoleLineHeight = (int) (mConsoleFont.fontHeight() + 1);
-					mScrollYPosition -= mConsoleLineHeight;
+					mScrollBar.RelCurrentYPos(-mConsoleLineHeight);
 					mAutoScroll = false;
 
-					if (mScrollYPosition < mScrollBar.getScrollYBottomPosition())
-						mScrollYPosition = mScrollBar.getScrollYBottomPosition() - mConsoleLineHeight;
+					if (mScrollBar.currentYPos() < mScrollBar.getScrollYBottomPosition())
+						mScrollBar.AbsCurrentYPos(mScrollBar.getScrollYBottomPosition() - mConsoleLineHeight);
 				}
 
 				if (pCore.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_PAGE_DOWN)) {
 					mConsoleLineHeight = (int) (mConsoleFont.fontHeight() + 1);
-					mScrollYPosition -= mConsoleLineHeight * 10;
+					mScrollBar.RelCurrentYPos(-mConsoleLineHeight * 10);
 					mAutoScroll = false;
 
-					if (mScrollYPosition < mScrollBar.getScrollYBottomPosition())
-						mScrollYPosition = mScrollBar.getScrollYBottomPosition() - mConsoleLineHeight;
-
+					if (mScrollBar.currentYPos() < mScrollBar.getScrollYBottomPosition())
+						mScrollBar.AbsCurrentYPos(mScrollBar.getScrollYBottomPosition() - mConsoleLineHeight);
 				}
 
 				if (pCore.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_UP)) {
 					mConsoleLineHeight = (int) (mConsoleFont.fontHeight() + 1);
-					mScrollYPosition += mConsoleLineHeight;
+					mScrollBar.RelCurrentYPos(mConsoleLineHeight);
 					mAutoScroll = false;
 
-					if (mScrollYPosition > 0)
-						mScrollYPosition = 0;
-
+					if (mScrollBar.currentYPos() > 0)
+						mScrollBar.AbsCurrentYPos(0);
 				}
 
 				if (pCore.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_PAGE_UP)) {
 					mConsoleLineHeight = (int) (mConsoleFont.fontHeight() + 1);
-					mScrollYPosition += mConsoleLineHeight * 10;
+					mScrollBar.RelCurrentYPos(mConsoleLineHeight * 10);
 					mAutoScroll = false;
 
-					if (mScrollYPosition > 0)
-						mScrollYPosition = 0;
-
+					if (mScrollBar.currentYPos() > 0)
+						mScrollBar.AbsCurrentYPos(0);
 				}
 
 				// capture the mouse wheel too
-				mZScrollAcceleration += pCore.input().mouse().mouseWheelYOffset() * 250.0f;
-				if (mZScrollAcceleration != 0) {
+				final float lScrollAccelerationAmt = pCore.input().mouse().mouseWheelYOffset() * 250.0f;
+				mScrollBar.scrollRelAcceleration(lScrollAccelerationAmt);
+				if (mScrollBar.scrollAcceleration() != 0) {
 					mAutoScroll = false;
 				}
-
 			}
 
 			if (pCore.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_ESCAPE)) {
@@ -445,35 +439,19 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 		w = lDisplay.windowWidth();
 		h = openHeight();
 
-		mLowerBound = (int) -((mScrollYPosition) / mConsoleLineHeight) + 1;
+		mLowerBound = (int) -((mScrollBar.currentYPos()) / mConsoleLineHeight) + 1;
 		// Lower bound should not be lower than the last item (occurs when filtering texture and number of lines decreases).
 		if (mProcessed && mLowerBound > mProcessedMessages.size()) {
 			mLowerBound = mProcessedMessages.size() - MAX_NUM_LINES;
 			if (mLowerBound < 0)
 				mLowerBound = 0;
 
-			mScrollYPosition = mScrollBar.getScrollYBottomPosition();
-
+			mScrollBar.AbsCurrentYPos(mScrollBar.getScrollYBottomPosition());
 		}
+
 		mUpperBound = mLowerBound + MAX_NUM_LINES;
 
 		mContentRectangle.h((lNumberLinesInConsole + 2) * mConsoleLineHeight);
-
-		var lScrollSpeedFactor = mScrollYPosition;
-
-		mZScrollVelocity += mZScrollAcceleration;
-		lScrollSpeedFactor += mZScrollVelocity * lDeltaTime;
-		mZScrollVelocity *= 0.85f;
-		mZScrollAcceleration = 0.0f;
-
-		// Constrain
-		mScrollYPosition = lScrollSpeedFactor;
-		if (mScrollYPosition > 0)
-			mScrollYPosition = 0;
-		if (mScrollYPosition < -(mContentRectangle.h() - this.h)) {
-			mScrollYPosition = -(mContentRectangle.h() - this.h);
-			mAutoScroll = true;
-		}
 
 		// mAutoScroll = true;
 		if (mAutoScroll) {
@@ -481,7 +459,7 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 			mUpperBound = lNumLines;
 			mLowerBound = mUpperBound - MAX_NUM_LINES;
 
-			mScrollYPosition = mScrollBar.getScrollYBottomPosition();
+			mScrollBar.AbsCurrentYPos(mScrollBar.getScrollYBottomPosition());
 
 		}
 
@@ -806,22 +784,6 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 	@Override
 	public boolean getEscapeFinishesInput() {
 		return true;
-	}
-
-	@Override
-	public float currentYPos() {
-		return mScrollYPosition;
-	}
-
-	@Override
-	public void RelCurrentYPos(float pAmt) {
-		mScrollYPosition += pAmt;
-	}
-
-	@Override
-	public void AbsCurrentYPos(float pValue) {
-		mScrollYPosition = pValue;
-
 	}
 
 	@Override

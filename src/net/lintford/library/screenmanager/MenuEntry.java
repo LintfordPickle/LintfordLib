@@ -429,7 +429,6 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 			if (canHoverOver()) {
 				if (pCore.input().mouse().isMiddleOwnerNotAssigned()) {
 					mParentLayout.parentScreen.setHoveringOn(this);
-
 				}
 
 				if (pCore.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
@@ -439,9 +438,7 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 					onClick(pCore.input());
 
 					return true;
-
 				}
-
 			}
 
 		} else {

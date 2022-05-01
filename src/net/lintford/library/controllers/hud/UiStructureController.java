@@ -37,9 +37,28 @@ public class UiStructureController extends BaseController {
 	private float mWindowPaddingH;
 	private float mWindowPaddingV;
 
+	private float mMinimumTitleHeight = 100.f;
+	private float mMinimumFooterHeight = 100.f;
+
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public float minimumTitleHeight() {
+		return mMinimumTitleHeight;
+	}
+
+	public void minimumTitleHeight(float pNewMinimumTitleHeight) {
+		mMinimumTitleHeight = pNewMinimumTitleHeight;
+	}
+
+	public float minimumFooterHeight() {
+		return mMinimumFooterHeight;
+	}
+
+	public void minimumFooterHeight(float pMinimumFooterHeight) {
+		mMinimumFooterHeight = pMinimumFooterHeight;
+	}
 
 	/** The windowAutoScaleFactorX is the factor between the current window width and the base window width.*/
 	public float windowAutoScaleFactorX() {
@@ -142,7 +161,6 @@ public class UiStructureController extends BaseController {
 		mWindowAutoScaleFactorY = pCore.config().display().windowHeight() / lBaseWindowHeight;
 
 		updateHUDAreas(pCore);
-
 	}
 
 	// --------------------------------------
@@ -151,9 +169,7 @@ public class UiStructureController extends BaseController {
 
 	private void updateHUDAreas(LintfordCore pCore) {
 		updateGameUiStructure(pCore);
-
 		updateMenuUiStructure(pCore);
-
 	}
 
 	private void updateWindowUiComponentStructures(LintfordCore pCore) {
@@ -177,8 +193,8 @@ public class UiStructureController extends BaseController {
 		final float lModHeight = lWindowHeight - mWindowPaddingV * 2.f;
 
 		float lRemainingHeight = lModHeight;
-		final float lMinimumTitleHeight = 250.f * mWindowAutoScaleFactorY;
-		final float lMinimumFooterHeight = 100 * mWindowAutoScaleFactorY;
+		final float lMinimumTitleHeight = mMinimumTitleHeight * mWindowAutoScaleFactorY;
+		final float lMinimumFooterHeight = mMinimumFooterHeight * mWindowAutoScaleFactorY;
 		final float lTitleHeight = (float) Math.max(lMinimumTitleHeight, lModHeight * .15f - lVerticalInnerPadding);
 		final float lFooterHeight = (float) Math.max(lMinimumFooterHeight, lModHeight * .10f - lVerticalInnerPadding);
 		lRemainingHeight -= lTitleHeight;
@@ -186,10 +202,9 @@ public class UiStructureController extends BaseController {
 
 		final float lMainHeight = lRemainingHeight;
 
-		mMenuTitleRectangle.set(-lModWidth / 2, -lModHeight / 2f, lModWidth, lTitleHeight);
+		mMenuTitleRectangle.set(-lModWidth / 2, -lModHeight / 2, lModWidth, lTitleHeight);
 		mMenuMainRectangle.set(-lModWidth / 2, -lModHeight / 2f + lTitleHeight + lVerticalInnerPadding * 2f, lModWidth, lMainHeight);
 		mMenuFooterRectangle.set(-lModWidth / 2, lModHeight / 2f - lFooterHeight + lVerticalInnerPadding * 4f, lModWidth, lFooterHeight);
-
 	}
 
 	private void updateGameUiStructure(LintfordCore pCore) {

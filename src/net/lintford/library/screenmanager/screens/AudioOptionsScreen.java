@@ -57,6 +57,8 @@ public class AudioOptionsScreen extends MenuScreen {
 		super(pScreenManager, SCREEN_TITLE);
 
 		final var lAudioList = new ListLayout(this);
+		lAudioList.paddingTop(10.f);
+		lAudioList.paddingBottom(10.f);
 		lAudioList.setDrawBackground(true, ColorConstants.MenuPanelSecondaryColor);
 		lAudioList.layoutFillType(FILLTYPE.TAKE_WHATS_NEEDED);
 

@@ -34,7 +34,6 @@ public class ListLayout extends BaseLayout implements IProcessMouseInput {
 
 		mMinWidth = 0.f;
 		mMaxWidth = 900.f;
-
 	}
 
 	public ListLayout(MenuScreen pParentScreen, float pX, float pY) {
@@ -59,11 +58,11 @@ public class ListLayout extends BaseLayout implements IProcessMouseInput {
 	public boolean handleInput(LintfordCore pCore) {
 		if (intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().isMouseOverThisComponent(hashCode())) {
 			if (super.handleInput(pCore) || pCore.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
-
 				return true;
 			}
 
 		}
+
 		// otherwise, defocus this and all children ??
 		else {
 			final int lEntryCount = mMenuEntries.size();
@@ -80,7 +79,7 @@ public class ListLayout extends BaseLayout implements IProcessMouseInput {
 	@Override
 	public void update(LintfordCore pCore) {
 		super.update(pCore);
-		
+
 		if (mClickTimer >= 0) {
 			mClickTimer -= pCore.appTime().elapsedTimeMilli();
 		}
@@ -91,18 +90,20 @@ public class ListLayout extends BaseLayout implements IProcessMouseInput {
 		super.updateStructure();
 
 		final var lUiStructureController = parentScreen.screenManager.UiStructureController();
-		float lYPos = y + mEntryOffsetFromTop + mYScrollPosition;
+		final float lTitleHeight = mShowTitle ? parentScreen.rendererManager.titleFontHeight() : 0.f;
 		final float lWindowScaleFactorX = lUiStructureController.windowAutoScaleFactorX();
+
+		float lYPos = y + mEntryOffsetFromTop + lTitleHeight + mScrollBar.currentYPos() + mCropPaddingTop + paddingTop();
 
 		final int lEntryCount = mMenuEntries.size();
 
+		final float lLayoutHeight = h - marginBottom() - marginTop() - lTitleHeight - mCropPaddingBottom - mCropPaddingTop + paddingTop() + paddingBottom();
+
 		// If the height of the content is smaller than the height of this layout, disable the scroll bar
-		if (mContentArea.h() < h) {
-			mYScrollPosition = 0;
+		if (mContentArea.h() < lLayoutHeight) {
+			mScrollBar.AbsCurrentYPos(0);
 			lYPos += 5f;
 		}
-
-		final float lLayoutHeight = h - marginBottom() - marginTop();
 
 		// See how many layouts only take what they need
 		int lCountOfSharers = lEntryCount;
@@ -112,7 +113,8 @@ public class ListLayout extends BaseLayout implements IProcessMouseInput {
 
 		for (int i = 0; i < lEntryCount; i++) {
 			final var lEntry = mMenuEntries.get(i);
-			if(lEntry.active() == false) continue;
+			if (lEntry.active() == false)
+				continue;
 			if (lEntry.verticalFillType() == FILLTYPE.TAKE_WHATS_NEEDED) {
 				lCountOfTakers++;
 				lHeightTaken += lEntry.paddingTop() + lEntry.height() + lEntry.paddingBottom();
@@ -128,9 +130,10 @@ public class ListLayout extends BaseLayout implements IProcessMouseInput {
 
 		for (int i = 0; i < lEntryCount; i++) {
 			final var lMenuEntry = mMenuEntries.get(i);
-			if(lMenuEntry.active() == false) continue;
+			if (lMenuEntry.active() == false)
+				continue;
 			float lScrollBarWidth = 0.f;
-			if (mScrollBarsEnabled_Internal)
+			if (mScrollBar.scrollBarEnabled())
 				lScrollBarWidth = mScrollBar.width();
 
 			final float lSpacingLeft = (mLeftPadding + lMenuEntry.marginLeft()) * lWindowScaleFactorX;
@@ -150,7 +153,6 @@ public class ListLayout extends BaseLayout implements IProcessMouseInput {
 				lMenuEntry.w(MathHelper.clamp(lMenuEntry.desiredWidth() * lUiStructureController.windowAutoScaleFactorX(), lMenuEntry.minWidth(), lMenuEntry.maxWidth()));
 			} else {
 				lMenuEntry.w(lNewEntryWidth);
-
 			}
 
 			lMenuEntry.x(centerX() - lMenuEntry.w() / 2 - lScrollBarWidth / 2);
@@ -158,10 +160,8 @@ public class ListLayout extends BaseLayout implements IProcessMouseInput {
 			// Assign the entry height here
 			if (lMenuEntry.verticalFillType() == FILLTYPE.TAKE_WHATS_NEEDED) {
 				lMenuEntry.h(MathHelper.clamp(lMenuEntry.desiredHeight(), lMenuEntry.minHeight(), lMenuEntry.maxHeight()));
-
 			} else {
 				lMenuEntry.h(lSizeOfEachFillElement);
-
 			}
 
 			lMenuEntry.y(lYPos);
@@ -169,9 +169,7 @@ public class ListLayout extends BaseLayout implements IProcessMouseInput {
 			lYPos += lMenuEntry.marginTop();
 			lYPos += lMenuEntry.height();
 			lYPos += lMenuEntry.marginBottom();
-
 		}
-
 	}
 
 	// --------------------------------------

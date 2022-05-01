@@ -531,23 +531,6 @@ public class UiBaseLayoutComponent extends UIWidget implements IScrollBarArea {
 	// --------------------------------------
 
 	@Override
-	public float currentYPos() {
-		return mYScrollPosition;
-	}
-
-	@Override
-	public void RelCurrentYPos(float pAmt) {
-		mYScrollPosition += pAmt;
-
-	}
-
-	@Override
-	public void AbsCurrentYPos(float pValue) {
-		mYScrollPosition = pValue;
-
-	}
-
-	@Override
 	public Rectangle contentDisplayArea() {
 		return this;
 	}

@@ -46,6 +46,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	protected String mMenuTitle;
 	protected String mMenuOverTitle;
 	protected String mMenuSubTitle;
+	protected float mTitleFontHeight;
 
 	protected int mSelectedEntry = 0;
 	protected int mSelectedLayout = 0;
@@ -183,6 +184,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		mMenuFont = pResourceManager.fontManager().getFontUnit(ScreenManager.FONT_MENU_ENTRY_NAME);
 		mMenuFontBold = pResourceManager.fontManager().getFontUnit(ScreenManager.FONT_MENU_BOLD_ENTRY_NAME);
 		mMenuHeaderFont = pResourceManager.fontManager().getFontUnit(ScreenManager.FONT_MENU_TITLE_NAME);
+		mTitleFontHeight = rendererManager.uiTitleFont().fontHeight();
 
 		final int lCount = mLayouts.size();
 		for (int i = 0; i < lCount; i++) {

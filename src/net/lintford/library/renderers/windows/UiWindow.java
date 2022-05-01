@@ -550,23 +550,6 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 	// --------------------------------------
 
 	@Override
-	public float currentYPos() {
-		return mYScrollVal;
-	}
-
-	@Override
-	public void RelCurrentYPos(float pAmt) {
-		mYScrollVal += pAmt;
-
-	}
-
-	@Override
-	public void AbsCurrentYPos(float pValue) {
-		mYScrollVal = pValue;
-
-	}
-
-	@Override
 	public Rectangle contentDisplayArea() {
 		return mContentDisplayArea;
 	}

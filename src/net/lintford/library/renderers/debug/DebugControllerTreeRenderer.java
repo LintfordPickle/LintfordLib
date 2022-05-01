@@ -363,21 +363,6 @@ public class DebugControllerTreeRenderer extends Rectangle implements IScrollBar
 	}
 
 	@Override
-	public float currentYPos() {
-		return mScrollYPosition;
-	}
-
-	@Override
-	public void RelCurrentYPos(float pAmt) {
-		mScrollYPosition += pAmt;
-	}
-
-	@Override
-	public void AbsCurrentYPos(float pValue) {
-		mScrollYPosition = pValue;
-	}
-
-	@Override
 	public Rectangle contentDisplayArea() {
 		return this;
 	}
