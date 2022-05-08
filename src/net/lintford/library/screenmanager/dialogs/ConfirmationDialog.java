@@ -69,8 +69,8 @@ public class ConfirmationDialog extends BaseDialog {
 		mListLayout.addMenuEntry(mConfirmEntry);
 
 		addLayout(mListLayout);
+		mPaddingTopNormalized = DIALOG_HEIGHT / 2.f - (mListLayout.getMenuEntryCount() > 1 ? 96.f : 64.f);
 
-		mPaddingTopNormalized = 10;
 		mIsPopup = true;
 		mShowBackgroundScreens = true;
 	}

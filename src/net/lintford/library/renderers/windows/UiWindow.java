@@ -12,7 +12,6 @@ import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
-import net.lintford.library.core.graphics.textures.CoreTextureNames;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatch9Patch;
 import net.lintford.library.core.input.IProcessMouseInput;
 import net.lintford.library.core.maths.MathHelper;
@@ -74,9 +73,6 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 	protected float mMouseClickTimer;
 
 	protected ScrollBar mScrollBar;
-	protected float mYScrollVal;
-	protected float mZScrollAcceleration;
-	protected float mZScrollVelocity;
 
 	protected float mWindowMarginLeft;
 	protected float mWindowMarginRight;
@@ -246,10 +242,10 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 		mIsWindowMoveable = false;
 		mUiInputFromUiManager = true;
 
-		mWindowPaddingTop = 5.f;
-		mWindowPaddingBottom = 5.f;
-		mWindowPaddingLeft = 5.f;
-		mWindowPaddingRight = 5.f;
+		mWindowPaddingTop = 0.f;
+		mWindowPaddingBottom = 0.f;
+		mWindowPaddingLeft = 0.f;
+		mWindowPaddingRight = 0.f;
 
 	}
 
@@ -281,6 +277,13 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 
 		final boolean lMouseOverWindow = mWindowArea.intersectsAA(pCore.HUD().getMouseCameraSpace());
 		final boolean lMouseLeftClick = pCore.input().mouse().isMouseLeftClick(hashCode());
+
+		if (lMouseOverWindow) {
+			if (pCore.input().mouse().tryAcquireMouseMiddle((hashCode()))) {
+				final float scrollAccelerationAmt = pCore.input().mouse().mouseWheelYOffset() * 250.0f;
+				mScrollBar.scrollRelAcceleration(scrollAccelerationAmt);
+			}
+		}
 
 		// 1. Check if the scroll bar has been used
 		if (mScrollBar.handleInput(pCore)) {
@@ -344,11 +347,8 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 						mIsWindowMoving = true;
 
 					}
-
 				}
-
 			}
-
 		}
 
 		if (!lMouseLeftClick) {
@@ -365,9 +365,9 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 				pCore.input().mouse().tryAcquireMouseLeftClick(hashCode());
 			}
 
-			if (mCanCaptureMouse && pCore.input().mouse().tryAcquireMouseOverThisComponent(hashCode()) && pCore.input().mouse().tryAcquireMouseMiddle((hashCode()))) {
-				mZScrollAcceleration += pCore.input().mouse().mouseWheelYOffset() * 250.0f;
-			}
+			//			if (mCanCaptureMouse && pCore.input().mouse().tryAcquireMouseOverThisComponent(hashCode()) && pCore.input().mouse().tryAcquireMouseMiddle((hashCode()))) {
+			//				mZScrollAcceleration += pCore.input().mouse().mouseWheelYOffset() * 250.0f;
+			//			}
 
 		} else {
 			mIsMouseOver = false;
@@ -401,34 +401,13 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 		final int lComponentCount = mComponents.size();
 		for (int i = 0; i < lComponentCount; i++) {
 			mComponents.get(i).update(pCore);
-
 		}
 
 		if (mFullContentRectangle.h() < mContentDisplayArea.h()) {
 			mFullContentRectangle.h(mContentDisplayArea.h());
-
 		}
 
-		if (mFullContentRectangle.h() - contentDisplayArea().h() > 0) {
-			mScrollBar.update(pCore);
-
-		}
-
-		final var lDeltaTime = (float) pCore.appTime().elapsedTimeSeconds();
-		var lScrollSpeedFactor = mYScrollVal;
-
-		mZScrollVelocity += mZScrollAcceleration;
-		lScrollSpeedFactor += mZScrollVelocity * lDeltaTime;
-		mZScrollVelocity *= 0.85f;
-		mZScrollAcceleration = 0.0f;
-
-		// Constrain
-		mYScrollVal = lScrollSpeedFactor;
-		if (mYScrollVal > 0)
-			mYScrollVal = 0;
-		if (mYScrollVal < -(mFullContentRectangle.h() - mContentDisplayArea.h()))
-			mYScrollVal = -(mFullContentRectangle.h() - mContentDisplayArea.h());
-
+		mScrollBar.update(pCore);
 	}
 
 	@Override
@@ -444,7 +423,7 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 
 		mWindowAlpha = 0.95f;
 
-		final var lTitleFont = mRendererManager.uiTitleFont();
+		final var lUiHeaderFont = mRendererManager.uiHeaderFont();
 		final var lTextFont = mRendererManager.uiTextFont();
 		final var lSpritebatch = mRendererManager.uiSpriteBatch();
 		final var lWindowColor = ColorConstants.getWhiteWithAlpha(mWindowAlpha);
@@ -460,8 +439,8 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 		float lTitleX = mWindowArea.x() + WINDOW_CONTENT_PADDING_X;
 		float lTitleY = mWindowArea.y();
 
-		lTitleFont.begin(pCore.HUD());
-		lTitleFont.drawText(mWindowTitle, lTitleX, lTitleY + getTitleBarHeight() * .5f - lTitleFont.fontHeight() * .5f, Z_DEPTH, ColorConstants.TextHeadingColor, 1f);
+		lUiHeaderFont.begin(pCore.HUD());
+		lUiHeaderFont.drawText(mWindowTitle, lTitleX, lTitleY + getTitleBarHeight() * .5f - lUiHeaderFont.fontHeight() * .5f + 3.f, Z_DEPTH, ColorConstants.TextHeadingColor, 1f);
 
 		if (mFullContentRectangle.h() - contentDisplayArea().h() > 0) {
 			mScrollBar.draw(pCore, lSpritebatch, mCoreSpritesheet, Z_DEPTH);
@@ -477,7 +456,7 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 
 		lTextFont.end();
 		lSpritebatch.end();
-		lTitleFont.end();
+		lUiHeaderFont.end();
 
 		if (ConstantsApp.getBooleanValueDef("DRAW_UI_BOUNDS", false)) {
 			Debug.debugManager().drawers().drawRectImmediate(pCore.HUD(), mWindowArea);

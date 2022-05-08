@@ -140,7 +140,7 @@ public abstract class BaseDialog extends MenuScreen {
 		mTransitionOff = null;
 		screenColor.a = 1.f;
 
-		mPaddingTopNormalized = 0;
+		mPaddingTopNormalized = DIALOG_HEIGHT / 2.f - 64.f;
 
 		mIsPopup = true; // don't hide underlying screens
 	}
@@ -156,7 +156,6 @@ public abstract class BaseDialog extends MenuScreen {
 		final int lLayoutCount = mLayouts.size();
 		for (int i = 0; i < lLayoutCount; i++) {
 			final var lBaseLayout = mLayouts.get(i);
-
 			lBaseLayout.set(-DIALOG_WIDTH * 0.4f, mPaddingTopNormalized, DIALOG_WIDTH * 0.8f, DIALOG_HEIGHT);
 			lBaseLayout.updateStructure();
 		}
@@ -186,8 +185,8 @@ public abstract class BaseDialog extends MenuScreen {
 			lSpriteBatch.end();
 		}
 
+		final float TILE_SIZE = 32f;
 		if (mDrawBackground) {
-			final float TILE_SIZE = 32f;
 			final float x = -DIALOG_WIDTH / 2;
 			final float y = -DIALOG_HEIGHT / 2;
 			final float w = DIALOG_WIDTH;
@@ -220,22 +219,18 @@ public abstract class BaseDialog extends MenuScreen {
 			final float lIconHeight = lSpriteFrame.h();
 
 			lSpriteBatch.begin(pCore.HUD());
-			lSpriteBatch.draw(mIconSpritesheet, lSpriteFrame, x + 15.f, y + 15.f, lIconWidth, lIconHeight, lZDepth, ColorConstants.WHITE);
+			lSpriteBatch.draw(mIconSpritesheet, lSpriteFrame, x + 15.f, y + TILE_SIZE + 15.f, lIconWidth, lIconHeight, lZDepth, ColorConstants.WHITE);
 			lSpriteBatch.end();
 		}
 
-		final float lHeaderFontHeight = mMenuHeaderFont.fontHeight();
-
-		// Render the menu title if there is one
 		if (mMenuTitle != null && mMenuTitle.length() > 0) {
 			mMenuFont.begin(pCore.HUD());
-			final float lHorizontalOffsetX = (lDrawIcon) ? 74.f : 0.f;
-			mMenuFont.drawText(mMenuTitle, -DIALOG_WIDTH / 2f + TEXT_HORIZONTAL_PADDING + lHorizontalOffsetX, -DIALOG_HEIGHT / 2f + TEXT_HORIZONTAL_PADDING, lZDepth, screenColor, 1.f);
+			final float lHorizontalOffsetX = (lDrawIcon) ? 5.f : 0.f;
+			mMenuFont.drawText(mMenuTitle, -DIALOG_WIDTH / 2f + TEXT_HORIZONTAL_PADDING + lHorizontalOffsetX, -DIALOG_HEIGHT / 2f + 4.f, lZDepth, screenColor, 1.f);
 			mMenuFont.end();
 		}
-
 		mMenuFont.begin(pCore.HUD());
-		mMenuFont.drawText(mMessageString, -DIALOG_WIDTH * 0.5f + TEXT_HORIZONTAL_PADDING, -DIALOG_HEIGHT * 0.5f + lHeaderFontHeight + 15f, lZDepth, ColorConstants.WHITE, 1f, DIALOG_WIDTH - 70);
+		mMenuFont.drawText(mMessageString, -DIALOG_WIDTH * 0.5f + 15.f * 2.f + 64.f, -DIALOG_HEIGHT * 0.5f + 48f, lZDepth, ColorConstants.WHITE, 1f, DIALOG_WIDTH - 120);
 		mMenuFont.end();
 
 		// Draw each layout in turn.

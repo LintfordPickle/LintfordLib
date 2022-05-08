@@ -38,7 +38,7 @@ public class UiStructureController extends BaseController {
 	private float mWindowPaddingV;
 
 	private float mMinimumTitleHeight = 100.f;
-	private float mMinimumFooterHeight = 100.f;
+	private float mMinimumFooterHeight = 80.f;
 
 	// --------------------------------------
 	// Properties
@@ -211,8 +211,9 @@ public class UiStructureController extends BaseController {
 		final float lWindowWidth = pCore.config().display().windowWidth();
 		final float lWindowHeight = pCore.config().display().windowHeight();
 
-		final float lGameHeaderHeight = 96f * windowAutoScaleFactorY();
-		final float lGameFooterHeight = 96f * windowAutoScaleFactorY();
+		final float lWindowAutoScaleFactorY = windowAutoScaleFactorY();
+		final float lGameHeaderHeight = 40f * windowAutoScaleFactorY();
+		final float lGameFooterHeight = 70f * windowAutoScaleFactorY();
 
 		final float lMaxGameHudWidth = 1280.f;
 		final float lMinGameHudWidth = 800.f;

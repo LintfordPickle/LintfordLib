@@ -32,6 +32,8 @@ public class RendererManager {
 
 	public static final FontMetaData RendererManagerFonts = new FontMetaData();
 
+	public static final String HUD_FONT_TEXT_BOLD_SMALL_NAME = "HUD_FONT_TEXT_BOLD_SMALL_NAME";
+
 	public static final String UI_FONT_TEXT_NAME = "UI_FONT_TEXT_NAME";
 	public static final String UI_FONT_TEXT_BOLD_NAME = "UI_FONT_TEXT_BOLD_NAME";
 	public static final String UI_FONT_HEADER_NAME = "UI_FONT_HEADER_NAME";
@@ -63,6 +65,8 @@ public class RendererManager {
 	private UiStructureController mUiStructureController;
 	private List<BaseRenderer> mRenderers;
 	private List<UiWindow> mWindowRenderers;
+
+	protected FontUnit mHudTextBoldSmallFont;
 
 	protected FontUnit mUiTextFont;
 	protected FontUnit mUiTextBoldFont;
@@ -100,12 +104,17 @@ public class RendererManager {
 		return mSharedGlContentCount <= 0;
 	}
 
+	public FontUnit hudTextBoldSmallFont() {
+		return mHudTextBoldSmallFont;
+	}
+
 	public FontUnit uiTextFont() {
 		return mUiTextFont;
 	}
 
 	public float textFontHeight() {
-		if (mUiTextFont == null) return 0.f;
+		if (mUiTextFont == null)
+			return 0.f;
 		return mUiTextFont.fontHeight();
 	}
 
@@ -114,7 +123,8 @@ public class RendererManager {
 	}
 
 	public float textBoldFontHeight() {
-		if (mUiTextBoldFont == null) return 0.f;
+		if (mUiTextBoldFont == null)
+			return 0.f;
 		return mUiTextBoldFont.fontHeight();
 	}
 
@@ -123,7 +133,8 @@ public class RendererManager {
 	}
 
 	public float headerFontHeight() {
-		if (mUiHeaderFont == null) return 0.f;
+		if (mUiHeaderFont == null)
+			return 0.f;
 		return mUiHeaderFont.fontHeight();
 	}
 
@@ -132,7 +143,8 @@ public class RendererManager {
 	}
 
 	public float titleFontHeight() {
-		if (mUiTitleFont == null) return 0.f;
+		if (mUiTitleFont == null)
+			return 0.f;
 		return mUiTitleFont.fontHeight();
 	}
 
@@ -213,6 +225,8 @@ public class RendererManager {
 		mIsinitialized = false;
 		mResourcesLoaded = false;
 
+		RendererManagerFonts.AddIfNotExists(HUD_FONT_TEXT_BOLD_SMALL_NAME, "/res/fonts/fontCoreText.json");
+
 		RendererManagerFonts.AddIfNotExists(UI_FONT_TEXT_NAME, "/res/fonts/fontCoreText.json");
 		RendererManagerFonts.AddIfNotExists(UI_FONT_TEXT_BOLD_NAME, "/res/fonts/fontCoreText.json");
 		RendererManagerFonts.AddIfNotExists(UI_FONT_HEADER_NAME, "/res/fonts/fontCoreText.json");
@@ -242,6 +256,8 @@ public class RendererManager {
 
 		mResourceManager = pResourceManager;
 		mResourceManager.increaseReferenceCounts(entityGroupID);
+
+		mHudTextBoldSmallFont = pResourceManager.fontManager().getFontUnit(HUD_FONT_TEXT_BOLD_SMALL_NAME);
 
 		mUiTextFont = pResourceManager.fontManager().getFontUnit(UI_FONT_TEXT_NAME);
 		mUiTextBoldFont = pResourceManager.fontManager().getFontUnit(UI_FONT_TEXT_BOLD_NAME);

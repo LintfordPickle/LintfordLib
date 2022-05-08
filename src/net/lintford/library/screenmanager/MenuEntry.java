@@ -35,6 +35,7 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 	public static MenuEntry menuSeparator() {
 		final var lNewMenuSeparatorEntry = new MenuEntry(null, null, null);
 		lNewMenuSeparatorEntry.enabled(false);
+		lNewMenuSeparatorEntry.enabled(false);
 		lNewMenuSeparatorEntry.active(false);
 		lNewMenuSeparatorEntry.drawButtonBackground(false);
 
@@ -60,8 +61,9 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 	protected SpriteSheetDefinition mCoreSpritesheet;
 	protected BaseLayout mParentLayout;
 
-	protected boolean mActive; // Not drawn/updated etc.
-	protected boolean mEnabled;
+	protected boolean mDormant; // Added to list but completly inactive
+	protected boolean mActiveUpdateDraw; // Not drawn/updated etc.
+	protected boolean mEnabled; // drawn/updated but not responsive to input
 	protected String mText;
 	protected float mScale;
 	private float mScaleCounter;
@@ -112,6 +114,14 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public boolean isDormant() {
+		return mDormant;
+	}
+
+	public void isDormant(boolean pIsDormant) {
+		mDormant = pIsDormant;
+	}
 
 	public ALIGNMENT horizontalAlignment() {
 		return mHorizontalAlignment;
@@ -297,17 +307,17 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 		mEnabled = pEnabled;
 	}
 
-	public boolean active() {
-		return mActive;
+	public boolean activeUpdateDraw() {
+		return mActiveUpdateDraw;
 	}
 
 	public void active(boolean pEnabled) {
-		mActive = pEnabled;
+		mActiveUpdateDraw = pEnabled;
 	}
 
 	@Override
 	public float h() {
-		return !mActive ? 0 : super.h();
+		return !mActiveUpdateDraw ? 0 : super.h();
 	}
 
 	public int entryID() {
@@ -363,7 +373,7 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 		mParentLayout = pParentLayout;
 		mText = pMenuEntryLabel;
 
-		mActive = true;
+		mActiveUpdateDraw = true;
 		mEnabled = true;
 		mCanHaveFocus = true;
 		mCanHoverOver = true;
@@ -377,11 +387,11 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 		mRightMargin = 10f;
 
 		mMinWidth = 32.f;
-		mMaxWidth = 800.f;
+		mMaxWidth = 2048.f;
 		mDesiredWidth = 400.f;
 
 		mMinHeight = 32.f;
-		mMaxHeight = 32.f;
+		mMaxHeight = 2048.f;
 		mDesiredHeight = 32.f;
 
 		w = mDesiredWidth;
@@ -414,7 +424,7 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 	}
 
 	public boolean handleInput(LintfordCore pCore) {
-		if (!mActive || !mEnabled || isAnimating)
+		if (mDormant || !mActiveUpdateDraw || !mEnabled || isAnimating)
 			return false;
 
 		if (intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().isMouseOverThisComponent(hashCode())) {
@@ -463,7 +473,7 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 	};
 
 	public void update(LintfordCore pCore, MenuScreen pScreen, boolean pIsSelected) {
-		if (!mActive)
+		if (mDormant && !mActiveUpdateDraw)
 			return;
 
 		final float lParentScreenAlpha = pScreen.screenColor.a;
@@ -500,7 +510,7 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 	}
 
 	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pParentZDepth) {
-		if (!mActive || !mIsinitialized || !mResourcesLoaded)
+		if (mDormant || !mActiveUpdateDraw || !mIsinitialized || !mResourcesLoaded)
 			return;
 
 		mZ = pParentZDepth;

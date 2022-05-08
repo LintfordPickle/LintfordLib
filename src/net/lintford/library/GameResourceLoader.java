@@ -37,7 +37,7 @@ public abstract class GameResourceLoader extends Thread {
 	protected float mTextColorB = 1.f;
 
 	private long mLastFrameTime;
-	private int mPeriodCount = 1;
+	protected int mPeriodCount = 1;
 	protected double frameDelta;
 	private float mPeriodTimer;
 	private float mPeriodFlashTimeMs = 400;

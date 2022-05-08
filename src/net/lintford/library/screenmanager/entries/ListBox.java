@@ -178,9 +178,7 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 
 	@Override
 	public void update(LintfordCore pCore, MenuScreen pScreen, boolean pIsSelected) {
-		mScrollBar.scrollBarEnabled(mContentArea.h() - h > 0);
-
-		int lCount = mItems.size();
+		final int lCount = mItems.size();
 		float mItemYPos = 0;
 
 		float lTotalContentHeight = marginTop() + marginBottom();
@@ -188,9 +186,7 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 			ListBoxItem lItem = mItems.get(i);
 			mItems.get(i).update(pCore, pScreen, pIsSelected);
 
-			// We need an innerpadding for the case when the scrollbar is enabled. In that case
-			// we narrow the size of the WorldListItem.
-			final float lInnerPadding = mScrollBar.scrollBarEnabled() ? 25 : 0;
+			final float lInnerPadding = mScrollBar.scrollBarEnabled() ? mScrollBar.w() : 0;
 			mItems.get(i).w(w - marginLeft() - marginRight() - lInnerPadding);
 			mItems.get(i).setPosition(x + marginLeft(), y + marginTop() + mScrollBar.currentYPos() + mItemYPos);
 
@@ -198,10 +194,10 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 			lTotalContentHeight += lItem.h() + LISTBOX_ITEM_VPADDING;
 		}
 
-		// mContentArea.w = w;
 		if (mVerticalFillType == FILLTYPE.FILL_CONTAINER || mVerticalFillType == FILLTYPE.TAKE_WHATS_NEEDED)
 			mContentArea.h(lTotalContentHeight);
 
+		mScrollBar.scrollBarEnabled(mContentArea.h() - h > 0);
 		mScrollBar.update(pCore);
 	}
 

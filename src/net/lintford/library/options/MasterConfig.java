@@ -5,6 +5,7 @@ import org.lwjgl.system.MemoryUtil;
 import net.lintford.library.ConstantsApp;
 import net.lintford.library.GameInfo;
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.storage.AppStorage;
 
 public class MasterConfig {
@@ -57,9 +58,11 @@ public class MasterConfig {
 		AppStorage.createGameDataDirectory(ConstantsApp.getStringValueDef("APPLICATION_NAME", "LintfordLib"));
 
 		final String lDisplayConfigFilename = AppStorage.getGameDataDirectory() + VIDEO_CONFIG_FILENAME;
+		Debug.debugManager().logger().i(getClass().getSimpleName(), "Loading video settings from '" + lDisplayConfigFilename + "'");
 		mDisplayConfig = new DisplayManager(pGameInfo, lDisplayConfigFilename);
 
 		final String lAudioConfigFilename = AppStorage.getGameDataDirectory() + AUDIO_CONFIG_FILENAME;
+		Debug.debugManager().logger().i(getClass().getSimpleName(), "Loading audio settings from '" + lAudioConfigFilename + "'");
 		mAudioConfig = new AudioConfig(pGameInfo, lAudioConfigFilename);
 
 	}

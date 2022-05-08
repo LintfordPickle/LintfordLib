@@ -160,7 +160,7 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 
 	@Override
 	public boolean handleInput(LintfordCore pCore) {
-		if (!mEnabled || !mActive)
+		if (!mEnabled || !mActiveUpdateDraw)
 			return false;
 
 		if (mHasFocus) {
@@ -250,7 +250,7 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 
 	@Override
 	public void update(LintfordCore pCore, MenuScreen pScreen, boolean pIsSelected) {
-		if (mActive == false)
+		if (mActiveUpdateDraw == false)
 			return;
 
 		super.update(pCore, pScreen, pIsSelected);
@@ -267,7 +267,7 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 
 	@Override
 	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pComponentDepth) {
-		if (mActive == false)
+		if (mActiveUpdateDraw == false)
 			return;
 
 		mZ = pComponentDepth;

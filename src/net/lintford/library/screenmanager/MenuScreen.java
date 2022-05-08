@@ -64,6 +64,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	protected FontUnit mMenuFont;
 	protected FontUnit mMenuFontBold;
 	protected FontUnit mMenuHeaderFont;
+	
 
 	// --------------------------------------
 	// Properties
@@ -174,7 +175,6 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		}
 
 		footerLayout().initialize();
-
 	}
 
 	@Override
@@ -184,7 +184,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		mMenuFont = pResourceManager.fontManager().getFontUnit(ScreenManager.FONT_MENU_ENTRY_NAME);
 		mMenuFontBold = pResourceManager.fontManager().getFontUnit(ScreenManager.FONT_MENU_BOLD_ENTRY_NAME);
 		mMenuHeaderFont = pResourceManager.fontManager().getFontUnit(ScreenManager.FONT_MENU_TITLE_NAME);
-		mTitleFontHeight = rendererManager.uiTitleFont().fontHeight();
+		mTitleFontHeight = rendererManager.headerFontHeight();
 
 		final int lCount = mLayouts.size();
 		for (int i = 0; i < lCount; i++) {
@@ -193,9 +193,8 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 		int lFloatingCount = mFloatingEntries.size();
 		for (int i = 0; i < lFloatingCount; i++) {
-			MenuEntry lFloatingEntry = mFloatingEntries.get(i);
+			final var lFloatingEntry = mFloatingEntries.get(i);
 			lFloatingEntry.loadResources(pResourceManager);
-
 		}
 
 		footerLayout().loadResources(pResourceManager);
@@ -222,7 +221,6 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 		mMenuFont = null;
 		mMenuHeaderFont = null;
-
 	}
 
 	@Override
@@ -310,7 +308,6 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		}
 
 		footerLayout().handleInput(pCore);
-
 	}
 
 	@Override
@@ -384,7 +381,6 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 		final int lLeftLayoutCount = pLayoutList.size();
 
-		final float lScreenContentLeft = lUIHUDStructureController.menuMainRectangle().left();
 		final float lScreenContentWidth = lUIHUDStructureController.menuMainRectangle().width();
 
 		final float lInnerPaddingW = INNER_PADDING_W * lUIHUDStructureController.windowAutoScaleFactorX();
@@ -406,6 +402,8 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 			} else if (lBaseLayout.layoutWidth() == LAYOUT_WIDTH.QUARTER) {
 				lLayoutWidth = MathHelper.clamp(lScreenContentWidth / 4f - lInnerPaddingW * 2f, 0.f, lBaseLayout.maxWidth());
 			}
+
+			final float lScreenContentLeft = lUIHUDStructureController.menuMainRectangle().centerX() - lInnerPaddingW - lLayoutWidth;
 
 			float lLayoutNewX = 0;
 			switch (pAlignment) {
@@ -462,12 +460,22 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 			lBaseLayout.y(lTop);
 
 			if (lBaseLayout.layoutFillType() == FILLTYPE.TAKE_WHATS_NEEDED) {
-				lBaseLayout.h(lBaseLayout.getEntryHeight() + lInnerPaddingH);
+				// Take whats needed, but cannot be larger than available (I guess)
+				float lNewHeight = Math.min(lBaseLayout.getEntryHeight() + lInnerPaddingH, lLayoutHeight);
+				if (lNewHeight > lBaseLayout.maxHeight()) {
+					lNewHeight = lBaseLayout.maxHeight();
+				}
+
+				lBaseLayout.h(lNewHeight);
 				lBaseLayout.updateStructure();
 				lTop += lBaseLayout.getEntryHeight() + lInnerPaddingH;
 
 			} else { // sharers
-				lBaseLayout.h(lSizeOfEachShareElement);
+				float lNewHeight = lSizeOfEachShareElement;
+				if (lBaseLayout.maxHeight() != -1 && lNewHeight > lBaseLayout.maxHeight()) {
+					lNewHeight = lBaseLayout.maxHeight();
+				}
+				lBaseLayout.h(lNewHeight);
 				lBaseLayout.updateStructure();
 				lTop += lSizeOfEachShareElement + lInnerPaddingH;
 			}

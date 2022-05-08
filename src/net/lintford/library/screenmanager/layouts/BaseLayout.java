@@ -31,6 +31,8 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 
 	public static final float USE_HEIGHT_OF_ENTRIES = -1;
 
+	protected static final float TITLE_BAR_HEIGHT = 32.f;
+
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
@@ -63,6 +65,7 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 	protected float mMinWidth;
 	protected float mMaxWidth = -1; // inactive
 	protected float mMinHeight;
+	protected float mMaxHeight = -1; // inactive
 	protected float mForcedHeight;
 	protected float mForcedEntryHeight;
 
@@ -86,6 +89,10 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 	// Properties
 	// --------------------------------------
 
+	public float titleBarSize() {
+		return mShowTitle ? TITLE_BAR_HEIGHT : 0.f;
+	}
+
 	public void showTitle(boolean pNewShowTitle) {
 		mShowTitle = pNewShowTitle;
 	}
@@ -100,6 +107,14 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 
 	public float maxWidth() {
 		return mMaxWidth;
+	}
+
+	public void maxHeight(float pMaxHeight) {
+		mMaxHeight = pMaxHeight;
+	}
+
+	public float maxHeight() {
+		return mMaxHeight;
 	}
 
 	public void setEntryOffsetY(float pNewOffset) {
@@ -241,9 +256,17 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 		mVisible = pEnabled;
 	}
 
+	public float cropPaddingBottom() {
+		return mCropPaddingBottom;
+	}
+
 	/**This is the amount of padding to add to the bottom of the inner-area when cropping during scrolling. The amount should be tied with the graphic CoreSpriteSheet.Panel3x3Bottom*/
 	public void cropPaddingBottom(float pNewCropPaddingTop) {
 		mCropPaddingBottom = pNewCropPaddingTop;
+	}
+
+	public float cropPaddingTop() {
+		return mCropPaddingTop;
 	}
 
 	/**This is the amount of padding to add to the top of the inner-area when cropping during scrolling. 
@@ -360,7 +383,7 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 		final var lScreenOffset = parentScreen.screenPositionOffset();
 		mContentArea.set(lScreenOffset.x + x, lScreenOffset.y + y, w, getEntryHeight());
 
-		final float lTitleHeight = 23.f;
+		final float lTitleHeight = TITLE_BAR_HEIGHT;
 		final float lCropFooterHeight = mCropPaddingBottom;
 		final float lCropHeaderHeight = mShowTitle ? mCropPaddingTop + lTitleHeight : mCropPaddingTop;
 		contentDisplayRectange.set(x, y + lCropHeaderHeight, w, h - lCropHeaderHeight - lCropFooterHeight);
@@ -384,9 +407,11 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 		}
 
 		if (mShowTitle) {
-			final var lTitleFont = parentScreen.rendererManager.uiTitleFont();
+			final var lTitleFont = parentScreen.rendererManager.uiHeaderFont();
+			final var lWhiteColorWithAlpha = ColorConstants.getWhiteWithAlpha(parentScreen.screenColor.a);
+
 			lTitleFont.begin(pCore.HUD());
-			lTitleFont.drawText(mLayoutTitle, x + 20.f, y + 2.f, pComponentDepth, 1.0f);
+			lTitleFont.drawText(mLayoutTitle, x + 20.f, y + 20.f - (lTitleFont.fontHeight() / 2.f), pComponentDepth, lWhiteColorWithAlpha, 1.0f);
 			lTitleFont.end();
 		}
 
@@ -437,9 +462,9 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_MID, (int) (lScreenOffset.x + x + lTileSize), (int) (lScreenOffset.y + y), w - lTileSize * 2 + 1, lTileSize, pComponentDepth, layoutColor);
 				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_RIGHT, (int) (lScreenOffset.x + x + w - lTileSize), (int) (lScreenOffset.y + y), lTileSize, lTileSize, pComponentDepth, layoutColor);
 
-				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_00_MID_LEFT, (int) (lScreenOffset.x + x), (int) (lScreenOffset.y + y + lTileSize), lTileSize, h - lTileSize * 2, pComponentDepth, layoutColor);
-				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_00_MID_CENTER, (int) (lScreenOffset.x + x + lTileSize), (int) (lScreenOffset.y + y + lTileSize), (int) (w - lTileSize * 2) + 1, h - 64, pComponentDepth, layoutColor);
-				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_00_MID_RIGHT, (int) (lScreenOffset.x + x + w - lTileSize), (int) (lScreenOffset.y + y + lTileSize), (int) lTileSize, (int) (h - lTileSize * 2), pComponentDepth,
+				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_00_MID_LEFT, (int) (lScreenOffset.x + x), (int) (lScreenOffset.y + y + lTileSize), lTileSize, h - lTileSize * 2 + 1, pComponentDepth, layoutColor);
+				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_00_MID_CENTER, (int) (lScreenOffset.x + x + lTileSize), (int) (lScreenOffset.y + y + lTileSize), (int) (w - lTileSize * 2) + 1, h - 64 + 1, pComponentDepth, layoutColor);
+				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_00_MID_RIGHT, (int) (lScreenOffset.x + x + w - lTileSize), (int) (lScreenOffset.y + y + lTileSize), (int) lTileSize, (int) (h - lTileSize * 2) + 1, pComponentDepth,
 						layoutColor);
 
 				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_00_BOTTOM_LEFT, (int) (lScreenOffset.x + x), (int) (lScreenOffset.y + y + h - lTileSize), lTileSize, lTileSize, pComponentDepth, layoutColor);
@@ -460,13 +485,14 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_MID, (int) (lScreenOffset.x + x + lTileSize), (int) (lScreenOffset.y + y), w - lTileSize * 2 + 1, lTileSize, pComponentDepth, layoutColor);
 				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_RIGHT, (int) (lScreenOffset.x + x + w - lTileSize), (int) (lScreenOffset.y + y), lTileSize, lTileSize, pComponentDepth, layoutColor);
 
-				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_MID_LEFT, (int) (lScreenOffset.x + x), (int) (lScreenOffset.y + y + lTileSize), lTileSize, h - lTileSize * 2, pComponentDepth, layoutColor);
-				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_MID_CENTER, (int) (lScreenOffset.x + x + lTileSize), (int) (lScreenOffset.y + y + lTileSize), (int) (w - lTileSize * 2) + 1, h - 64, pComponentDepth, layoutColor);
-				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_MID_RIGHT, (int) (lScreenOffset.x + x + w - lTileSize), (int) (lScreenOffset.y + y + lTileSize), (int) lTileSize, (int) (h - lTileSize * 2), pComponentDepth,
+				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_MID_LEFT, (int) (lScreenOffset.x + x), (int) (lScreenOffset.y + y + lTileSize), lTileSize, h - lTileSize * 2 + 1, pComponentDepth, layoutColor);
+				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_MID_CENTER, (int) (lScreenOffset.x + x + lTileSize), (int) (lScreenOffset.y + y + lTileSize), (int) (w - lTileSize * 2) + 1, h - 64 + 1, pComponentDepth, layoutColor);
+				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_MID_RIGHT, (int) (lScreenOffset.x + x + w - lTileSize), (int) (lScreenOffset.y + y + lTileSize), (int) lTileSize, (int) (h - lTileSize * 2) + 1, pComponentDepth,
 						layoutColor);
 
 				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_LEFT, (int) (lScreenOffset.x + x), (int) (lScreenOffset.y + y + h - lTileSize), lTileSize, lTileSize, pComponentDepth, layoutColor);
-				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_MID, (int) (lScreenOffset.x + x + lTileSize), (int) (lScreenOffset.y + y + h - lTileSize), (int) (w - lTileSize * 2) + 1, lTileSize, pComponentDepth, layoutColor);
+				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_MID, (int) (lScreenOffset.x + x + lTileSize), (int) (lScreenOffset.y + y + h - lTileSize), (int) (w - lTileSize * 2) + 1, (int) lTileSize, pComponentDepth,
+						layoutColor);
 				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_RIGHT, (int) (lScreenOffset.x + x + w - lTileSize), (int) (lScreenOffset.y + y + h - lTileSize), lTileSize, lTileSize, pComponentDepth, layoutColor);
 			}
 		}
@@ -637,8 +663,10 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 
 		for (int i = 0; i < lEntryCount; i++) {
 			final var lMenuEntry = mMenuEntries.get(i);
+			if (lMenuEntry.isDormant())
+				continue;
 			lResult += lMenuEntry.marginTop();
-			lResult += lMenuEntry.h();
+			lResult += lMenuEntry.height();
 			lResult += lMenuEntry.marginBottom();
 		}
 

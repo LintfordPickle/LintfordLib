@@ -158,7 +158,7 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 
 	@Override
 	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pParentZDepth) {
-		if (!mActive)
+		if (!mActiveUpdateDraw)
 			return;
 
 		final var lParentScreen = mParentLayout.parentScreen;

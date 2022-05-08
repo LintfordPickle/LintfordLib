@@ -46,10 +46,19 @@ public class ScreenManager {
 	private int mScreenUIDCounter;
 	private UiStructureController mUiStructureController;
 	private IResizeListener mResizeListener;
+	protected float mColumnMaxWidth;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public float columnMaxWidth() {
+		return mColumnMaxWidth;
+	}
+
+	public void columnMaxWidth(float pNewColumnMaxWidth) {
+		mColumnMaxWidth = pNewColumnMaxWidth;
+	}
 
 	public ToastManager toastManager() {
 		return mToastManager;

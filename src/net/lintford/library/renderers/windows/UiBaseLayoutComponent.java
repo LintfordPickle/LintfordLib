@@ -511,7 +511,7 @@ public class UiBaseLayoutComponent extends UIWidget implements IScrollBarArea {
 		for (int i = 0; i < lEntryCount; i++) {
 			final var lMenuEntry = widgets().get(i);
 			lResult += lMenuEntry.h();
-
+			// TODO: Missing entry margins
 		}
 
 		return lResult + marginBottom();

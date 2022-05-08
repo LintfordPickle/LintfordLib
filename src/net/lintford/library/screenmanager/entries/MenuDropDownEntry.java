@@ -65,6 +65,11 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 	// Properties
 	// --------------------------------------
 
+	@Override
+	public float height() {
+		return mOpen ? super.height() + mWindowRectangle.height() : super.height();
+	}
+
 	public boolean allowDuplicates() {
 		return mAllowDuplicates;
 	}
@@ -146,7 +151,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 		mItems = new ArrayList<>();
 		mLabel = pLabel;
 
-		mActive = true;
+		mActiveUpdateDraw = true;
 		mOpen = false;
 
 		mContentRectangle = new ScrollBarContentRectangle(this);

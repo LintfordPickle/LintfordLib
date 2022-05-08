@@ -59,6 +59,8 @@ public class AudioOptionsScreen extends MenuScreen {
 		final var lAudioList = new ListLayout(this);
 		lAudioList.paddingTop(10.f);
 		lAudioList.paddingBottom(10.f);
+		lAudioList.cropPaddingTop(7.f);
+		lAudioList.cropPaddingBottom(13.f);
 		lAudioList.setDrawBackground(true, ColorConstants.MenuPanelSecondaryColor);
 		lAudioList.layoutFillType(FILLTYPE.TAKE_WHATS_NEEDED);
 
@@ -152,7 +154,7 @@ public class AudioOptionsScreen extends MenuScreen {
 		mSoundVolumnEntry.showValueGuides(false);
 		mSoundVolumnEntry.horizontalFillType(FILLTYPE.FILL_CONTAINER);
 
-		// lLayout.menuEntries().add(mMasterEnabledEntry);
+		lLayout.addMenuEntry(mMasterEnabledEntry);
 		lLayout.addMenuEntry(mMasterVolumeEntry);
 		lLayout.addMenuEntry(MenuEntry.menuSeparator());
 

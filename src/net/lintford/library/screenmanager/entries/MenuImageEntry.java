@@ -7,6 +7,7 @@ import net.lintford.library.core.graphics.fonts.FontUnit;
 import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintford.library.core.graphics.textures.CoreTextureNames;
 import net.lintford.library.core.graphics.textures.Texture;
+import net.lintford.library.core.maths.MathHelper;
 import net.lintford.library.renderers.RendererManager;
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
@@ -28,7 +29,6 @@ public class MenuImageEntry extends MenuEntry {
 	private float mFittedWidth;
 	private float mFittedHeight;
 
-	private float mDefaultWidth;
 	private boolean mScaleToFitParent;
 
 	private int mMaximumWidth = 640;
@@ -147,49 +147,45 @@ public class MenuImageEntry extends MenuEntry {
 		if (mMainTexture != null) {
 			float lAR = (float) mMainTexture.getTextureHeight() / (float) mMainTexture.getTextureWidth();
 
-			float thMaxWidth = mMaxWidth;
-			if (mScaleToFitParent && lAR != 0) {
-				float thMaxHeight = mParentLayout.h() - mParentLayout.marginBottom() - mParentLayout.marginTop();
-				thMaxWidth = thMaxHeight / lAR;
+			final float lParentLayoutCropped = mParentLayout.cropPaddingBottom() + mParentLayout.cropPaddingTop();
+			final float lAvailableHeight = mParentLayout.h() - mParentLayout.marginBottom() - mParentLayout.marginTop() - lParentLayoutCropped - mParentLayout.titleBarSize();
 
-			}
-
-			// limited by width
-			mFittedWidth = mMainTexture.getTextureWidth();
-
-			if (mFittedWidth > thMaxWidth)
-				mFittedWidth = thMaxWidth;
-
-			if (mFittedWidth > mMaximumWidth)
-				mFittedWidth = mMaximumWidth;
-
-			mFittedHeight = mFittedWidth * lAR;
-
+			fitWidthToHeight(lAvailableHeight, lAR);
 		} else {
-			mDefaultWidth = mParentLayout.w() - marginLeft() - marginRight();
+			final float lParentLayoutCropped = mParentLayout.cropPaddingBottom() + mParentLayout.cropPaddingTop();
+			final float lAvailableHeight = mParentLayout.h() - mParentLayout.marginBottom() - mParentLayout.marginTop() - lParentLayoutCropped - mParentLayout.titleBarSize();
 
-			float thMaxWidth = mMaxWidth;
-			if (mScaleToFitParent && DEFAULT_ASPECT_RATIO != 0) {
-				float thMaxHeight = mParentLayout.h() - mParentLayout.marginBottom() - mParentLayout.marginTop();
-				thMaxWidth = thMaxHeight / DEFAULT_ASPECT_RATIO;
-
-			}
-
-			mFittedWidth = mDefaultWidth;
-
-			if (mFittedWidth > thMaxWidth)
-				mFittedWidth = thMaxWidth;
-
-			if (mFittedWidth > mMaximumWidth)
-				mFittedWidth = mMaximumWidth;
-
-			mFittedHeight = mFittedWidth * DEFAULT_ASPECT_RATIO;
-
+			fitWidthToHeight(lAvailableHeight, DEFAULT_ASPECT_RATIO);
 		}
 
 		x = mParentLayout.x() + mParentLayout.width() / 2f - mFittedWidth / 2;
 		h = mFittedHeight;
+	}
 
+	// limited by the amount of height available
+	// so fit the width based on the asepct ratio
+	private void fitWidthToHeight(float pImageHeight, float lAspectRatio) {
+		float maxAvailableWidth = mMaxWidth;
+		float thMaxHeight = MathHelper.clamp(pImageHeight, 0.f, mMaxHeight);
+
+		if (mScaleToFitParent && lAspectRatio != 0) {
+			maxAvailableWidth = thMaxHeight / lAspectRatio;
+		}
+
+		if (mMainTexture != null) {
+			mFittedWidth = mMainTexture.getTextureWidth();
+		} else {
+			mFittedWidth = maxAvailableWidth;
+		}
+
+		if (mFittedWidth > maxAvailableWidth)
+			mFittedWidth = maxAvailableWidth;
+
+		if (mFittedWidth > mMaximumWidth)
+			mFittedWidth = mMaximumWidth;
+
+		// Now we have the newly adjusted width - which may have been furthered constrained, so recalc the height too
+		mFittedHeight = mFittedWidth * lAspectRatio;
 	}
 
 	@Override

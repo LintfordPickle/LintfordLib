@@ -103,7 +103,6 @@ public class Rectangle extends Shape {
 	public void height(float pHeight) {
 		mAreVerticesDirty = mAreVerticesDirty || pHeight != h;
 		h = pHeight;
-
 	}
 
 	public boolean flipHorizontal() {

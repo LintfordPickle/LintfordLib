@@ -1,5 +1,6 @@
 package net.lintford.library.renderers.windows.components;
 
+import net.lintford.library.ConstantsApp;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.ColorConstants;
@@ -8,6 +9,7 @@ import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDefinit
 import net.lintford.library.core.graphics.textures.CoreTextureNames;
 import net.lintford.library.core.input.IProcessMouseInput;
 import net.lintford.library.core.maths.MathHelper;
+import net.lintford.library.renderers.ZLayers;
 
 public class ScrollBar extends Rectangle implements IProcessMouseInput {
 
@@ -24,6 +26,7 @@ public class ScrollBar extends Rectangle implements IProcessMouseInput {
 	// Variables
 	// --------------------------------------
 
+	private boolean mIsActive;
 	private transient boolean mClickActive;
 	private transient float mLastMouseYPos;
 	private transient IScrollBarArea mScrollBarArea;
@@ -45,6 +48,14 @@ public class ScrollBar extends Rectangle implements IProcessMouseInput {
 	// Properties
 	// --------------------------------------
 
+	public void isActive(boolean pIsActive) {
+		mIsActive = pIsActive;
+	}
+
+	public boolean isActive() {
+		return mIsActive;
+	}
+
 	public float scrollAcceleration() {
 		return mScrollAcceleration;
 	}
@@ -58,7 +69,7 @@ public class ScrollBar extends Rectangle implements IProcessMouseInput {
 	}
 
 	public boolean scrollBarEnabled() {
-		return mScrollbarEnabled;
+		return mIsActive && mScrollbarEnabled;
 	}
 
 	public void scrollBarEnabled(boolean pNewValue) {
@@ -101,9 +112,9 @@ public class ScrollBar extends Rectangle implements IProcessMouseInput {
 
 		mScrollBarArea = pWindowBounds;
 		mWindowRightOffset = -25;
+		mIsActive = true;
 
 		set(0, 0, BAR_WIDTH, 0);
-
 	}
 
 	// --------------------------------------
@@ -161,6 +172,11 @@ public class ScrollBar extends Rectangle implements IProcessMouseInput {
 	}
 
 	public void update(LintfordCore pCore) {
+		if (mIsActive == false)
+			return;
+
+		mScrollbarEnabled = mScrollBarArea.fullContentArea().h() - mScrollBarArea.contentDisplayArea().h() > 0;
+
 		updateMovement(pCore);
 		updateBar(pCore);
 	}
@@ -193,7 +209,7 @@ public class ScrollBar extends Rectangle implements IProcessMouseInput {
 		float lContentHeight = mScrollBarArea.fullContentArea().h();
 
 		float lViewableRatio = lViewportHeight / lContentHeight;
-		mMarkerBarHeight = (lViewportHeight * lViewableRatio) - ARROW_SIZE * 2;
+		mMarkerBarHeight = ((lViewportHeight - ARROW_SIZE * 2) * (lViewableRatio));
 
 		float lScrollTrackSpace = lContentHeight - lViewportHeight;
 		float lScrollThumbSpace = lViewportHeight - mMarkerBarHeight - ARROW_SIZE * 2;
@@ -207,6 +223,9 @@ public class ScrollBar extends Rectangle implements IProcessMouseInput {
 	}
 
 	public void draw(LintfordCore pCore, SpriteBatch pSpriteBatch, SpriteSheetDefinition pCoreSpritesheet, float pZDepth) {
+		if (mIsActive == false)
+			return;
+
 		// Scroll bar background
 		mScrollBarAlpha = 1.0f;
 		if (mMarkerMoveMod == 0.f) {
@@ -228,6 +247,12 @@ public class ScrollBar extends Rectangle implements IProcessMouseInput {
 		lWhiteColorWithAlpha = ColorConstants.getWhiteWithAlpha(mScrollBarAlpha);
 		pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_SCROLLBAR_UP, x, y + 3, ARROW_SIZE, ARROW_SIZE, pZDepth, lWhiteColorWithAlpha);
 		pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_SCROLLBAR_DOWN, x, y + h - ARROW_SIZE - 3, ARROW_SIZE, ARROW_SIZE, pZDepth - 0.01f, lWhiteColorWithAlpha);
+
+		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
+			pSpriteBatch.begin(pCore.HUD());
+			pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, x, y, w, h, ZLayers.LAYER_DEBUG, ColorConstants.Debug_Transparent_Magenta);
+			pSpriteBatch.end();
+		}
 	}
 
 	public void resetBarTop() {

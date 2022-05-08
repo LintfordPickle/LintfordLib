@@ -13,11 +13,11 @@ public class ConstantsApp {
 
 	public static final String TAG = "ConstantsApp";
 
-	public static final String APP_NAME = "_D284";
+	public static final String APP_NAME = "D284";
 	public static final String DEBUG_APP = "_D284 DEBUG";
 
 	public static final int BASE_RESOLUTION_WIDTH = 800;
-	public static final int BASE_RESOLUTION_HEIGHT = 450;
+	public static final int BASE_RESOLUTION_HEIGHT = 500;
 
 	// ---------------------------------------------
 	// Methods

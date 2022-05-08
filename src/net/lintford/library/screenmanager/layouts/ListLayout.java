@@ -34,6 +34,11 @@ public class ListLayout extends BaseLayout implements IProcessMouseInput {
 
 		mMinWidth = 0.f;
 		mMaxWidth = 900.f;
+
+		// inevitably, there is some portion of the background graphic which 
+		// shouldn't have content rendered over it. that's this
+		mCropPaddingBottom = 20.f;
+		mCropPaddingTop = 10.f;
 	}
 
 	public ListLayout(MenuScreen pParentScreen, float pX, float pY) {
@@ -90,13 +95,12 @@ public class ListLayout extends BaseLayout implements IProcessMouseInput {
 		super.updateStructure();
 
 		final var lUiStructureController = parentScreen.screenManager.UiStructureController();
-		final float lTitleHeight = mShowTitle ? parentScreen.rendererManager.titleFontHeight() : 0.f;
+		final float lTitleHeight = mShowTitle ? parentScreen.rendererManager.headerFontHeight() : 0.f;
 		final float lWindowScaleFactorX = lUiStructureController.windowAutoScaleFactorX();
 
 		float lYPos = y + mEntryOffsetFromTop + lTitleHeight + mScrollBar.currentYPos() + mCropPaddingTop + paddingTop();
 
 		final int lEntryCount = mMenuEntries.size();
-
 		final float lLayoutHeight = h - marginBottom() - marginTop() - lTitleHeight - mCropPaddingBottom - mCropPaddingTop + paddingTop() + paddingBottom();
 
 		// If the height of the content is smaller than the height of this layout, disable the scroll bar
@@ -113,11 +117,11 @@ public class ListLayout extends BaseLayout implements IProcessMouseInput {
 
 		for (int i = 0; i < lEntryCount; i++) {
 			final var lEntry = mMenuEntries.get(i);
-			if (lEntry.active() == false)
+			if (lEntry.isDormant())
 				continue;
 			if (lEntry.verticalFillType() == FILLTYPE.TAKE_WHATS_NEEDED) {
 				lCountOfTakers++;
-				lHeightTaken += lEntry.paddingTop() + lEntry.height() + lEntry.paddingBottom();
+				lHeightTaken += lEntry.marginTop() + lEntry.height() + lEntry.marginBottom();
 			}
 		}
 
@@ -130,7 +134,7 @@ public class ListLayout extends BaseLayout implements IProcessMouseInput {
 
 		for (int i = 0; i < lEntryCount; i++) {
 			final var lMenuEntry = mMenuEntries.get(i);
-			if (lMenuEntry.active() == false)
+			if (lMenuEntry.isDormant())
 				continue;
 			float lScrollBarWidth = 0.f;
 			if (mScrollBar.scrollBarEnabled())
@@ -161,7 +165,7 @@ public class ListLayout extends BaseLayout implements IProcessMouseInput {
 			if (lMenuEntry.verticalFillType() == FILLTYPE.TAKE_WHATS_NEEDED) {
 				lMenuEntry.h(MathHelper.clamp(lMenuEntry.desiredHeight(), lMenuEntry.minHeight(), lMenuEntry.maxHeight()));
 			} else {
-				lMenuEntry.h(lSizeOfEachFillElement);
+				lMenuEntry.h(lSizeOfEachFillElement - lMenuEntry.marginBottom() - lMenuEntry.marginTop());
 			}
 
 			lMenuEntry.y(lYPos);
@@ -169,6 +173,10 @@ public class ListLayout extends BaseLayout implements IProcessMouseInput {
 			lYPos += lMenuEntry.marginTop();
 			lYPos += lMenuEntry.height();
 			lYPos += lMenuEntry.marginBottom();
+		}
+
+		if (mScrollBar.scrollBarEnabled() == false) {
+			mScrollBar.resetBarTop();
 		}
 	}
 
