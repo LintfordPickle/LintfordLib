@@ -37,8 +37,8 @@ public class ListLayout extends BaseLayout implements IProcessMouseInput {
 
 		// inevitably, there is some portion of the background graphic which 
 		// shouldn't have content rendered over it. that's this
-		mCropPaddingBottom = 20.f;
-		mCropPaddingTop = 10.f;
+		mCropPaddingBottom = 0.f;
+		mCropPaddingTop = 0.f;
 	}
 
 	public ListLayout(MenuScreen pParentScreen, float pX, float pY) {
@@ -61,11 +61,11 @@ public class ListLayout extends BaseLayout implements IProcessMouseInput {
 
 	@Override
 	public boolean handleInput(LintfordCore pCore) {
-		if (intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().isMouseOverThisComponent(hashCode())) {
+		final var lIntersectsAA = intersectsAA(pCore.HUD().getMouseCameraSpace());
+		if (lIntersectsAA && pCore.input().mouse().isMouseOverThisComponent(hashCode())) {
 			if (super.handleInput(pCore) || pCore.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
 				return true;
 			}
-
 		}
 
 		// otherwise, defocus this and all children ??
@@ -113,7 +113,7 @@ public class ListLayout extends BaseLayout implements IProcessMouseInput {
 		int lCountOfSharers = lEntryCount;
 		int lCountOfTakers = 0;
 
-		float lHeightTaken = marginTop() + marginBottom();
+		float lHeightTaken = marginBottom() + marginTop() + paddingTop() + paddingBottom();
 
 		for (int i = 0; i < lEntryCount; i++) {
 			final var lEntry = mMenuEntries.get(i);
@@ -127,7 +127,7 @@ public class ListLayout extends BaseLayout implements IProcessMouseInput {
 
 		lCountOfSharers -= lCountOfTakers;
 
-		float lSizeOfEachFillElement = ((lLayoutHeight - lHeightTaken) / lCountOfSharers);
+		float lSizeOfEachFillElement = lCountOfSharers == 0f ? 0f : ((lLayoutHeight - lHeightTaken) / lCountOfSharers);
 
 		if (lSizeOfEachFillElement < 0)
 			lSizeOfEachFillElement = 10;

@@ -64,7 +64,6 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	protected FontUnit mMenuFont;
 	protected FontUnit mMenuFontBold;
 	protected FontUnit mMenuHeaderFont;
-	
 
 	// --------------------------------------
 	// Properties
@@ -262,7 +261,6 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 			// Respond to DOWN key
 			if (pCore.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_DOWN)) {
-
 				BaseLayout lLayout = mLayouts.get(mSelectedLayout);
 
 				if (mSelectedEntry < lLayout.getMenuEntryCount() - 1) {
@@ -422,10 +420,9 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 			lBaseLayout.w(lLayoutWidth);
 		}
 
-		float lLayoutHeight = lUIHUDStructureController.menuMainRectangle().height();
-
 		// Set the layout Y and H
 		float lLayoutNewY = lUIHUDStructureController.menuMainRectangle().top() + mPaddingTopNormalized;
+		float lLayoutHeight = lUIHUDStructureController.menuMainRectangle().height() - mPaddingTopNormalized;
 
 		// See how many layouts only take what they need
 		int lCountOfSharers = lLeftLayoutCount;
@@ -461,8 +458,8 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 			if (lBaseLayout.layoutFillType() == FILLTYPE.TAKE_WHATS_NEEDED) {
 				// Take whats needed, but cannot be larger than available (I guess)
-				float lNewHeight = Math.min(lBaseLayout.getEntryHeight() + lInnerPaddingH, lLayoutHeight);
-				if (lNewHeight > lBaseLayout.maxHeight()) {
+				float lNewHeight = Math.min(lBaseLayout.getEntryHeight() + lInnerPaddingH, lLayoutHeight) + lBaseLayout.cropPaddingTop() + lBaseLayout.cropPaddingBottom();
+				if (lBaseLayout.maxHeight() > 0 && lNewHeight > lBaseLayout.maxHeight()) {
 					lNewHeight = lBaseLayout.maxHeight();
 				}
 

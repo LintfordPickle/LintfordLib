@@ -37,6 +37,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.management.monitor.Monitor;
+
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWFramebufferSizeCallback;
@@ -348,7 +350,10 @@ public class DisplayManager extends IniFile {
 		glfwWindowHint(GLFW_DECORATED, GL_TRUE);
 		glfwWindowHint(GLFW_RESIZABLE, mDisplaySettings.resizable ? GL_TRUE : GL_FALSE);
 
-		// Get the current desktop video mode
+		if (validateSavedMonitor(pGameInfo, mDisplaySettings.monitorIndex) == false) {
+			mDisplaySettings.monitorIndex = GLFW.glfwGetPrimaryMonitor();
+		}
+
 		mDesktopVideoMode = GLFW.glfwGetVideoMode(GLFW.glfwGetPrimaryMonitor());
 		mDesktopWidth = mDesktopVideoMode.width();
 		mDesktopHeight = mDesktopVideoMode.height();
@@ -359,14 +364,9 @@ public class DisplayManager extends IniFile {
 			mDisplaySettings.windowHeight = pGameInfo.baseGameResolutionHeight();
 		}
 
-		validateResolution(pGameInfo);
+		validateFullScreenResolution(pGameInfo);
 
 		if (mDisplaySettings.fullscreen()) {
-			// If the monitor index has not been set, then use the primary
-			if (mDisplaySettings.monitorIndex == 0) {
-				mDisplaySettings.monitorIndex = glfwGetPrimaryMonitor();
-			}
-
 			long lNewWindowID = glfwCreateWindow(mDisplaySettings.windowWidth, mDisplaySettings.windowHeight, pGameInfo.windowTitle(), mDisplaySettings.monitorIndex, mMasterWindowId);
 			glfwDestroyWindow(mMasterWindowId);
 
@@ -522,6 +522,7 @@ public class DisplayManager extends IniFile {
 		changeResolution(pDesiredSettings.windowWidth, pDesiredSettings.windowHeight);
 		glfwSwapInterval(pDesiredSettings.vSyncEnabled ? 1 : 0);
 		mDisplaySettings.copy(pDesiredSettings);
+
 		saveConfig();
 
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "  actual: monitor:" + pDesiredSettings.monitorIndex + " (" + pDesiredSettings.windowWidth + "x" + pDesiredSettings.windowHeight + ")");
@@ -531,10 +532,6 @@ public class DisplayManager extends IniFile {
 	public void changeResolution(int pWidth, int pHeight) {
 		if (pWidth == 0 || pHeight == 0)
 			return;
-
-		if (true) { // enforce x2 pixels
-
-		}
 
 		mWindowResolutionChanged = true;
 		mWindowWasResized = true;
@@ -547,20 +544,24 @@ public class DisplayManager extends IniFile {
 		lResTag.value = String.format("%dx%d", pWidth, pHeight);
 
 		GL11.glViewport(0, 0, pWidth, pHeight);
+	}
 
+	private boolean validateSavedMonitor(GameInfo pGameInfo, long pMonitorId) {
+		if (pMonitorId <= 0) {
+
+			return false;
+		}
+
+		// Don't think you can restore monitors
+
+		return false;
 	}
 
 	/**
 	 * This method ensures that the resolution loaded from the INI matches one of the resolutions that the monitor the window is on supports. If not, that the game will resort to the 'default' resolution.
 	 */
-	private void validateResolution(GameInfo pGameInfo) {
-		if (mDisplaySettings.monitorIndex == 0) {
-			mDisplaySettings.monitorIndex = glfwGetPrimaryMonitor();
-		}
-
-		// If the game is not started in fullscreen mode, then just checked that the window is not larger than the desktop
-		if (!mDisplaySettings.fullscreen()) {
-
+	private void validateFullScreenResolution(GameInfo pGameInfo) {
+		if (mDisplaySettings.fullscreen() == false) {
 			if (mDisplaySettings.windowWidth > mDesktopWidth)
 				mDisplaySettings.windowWidth = mDesktopWidth;
 
@@ -570,15 +571,14 @@ public class DisplayManager extends IniFile {
 			return;
 		}
 
-		// otherwise, make sure that a supported resolution is selected.
-		GLFWVidMode.Buffer modes = GLFW.glfwGetVideoModes(mDisplaySettings.monitorIndex);
+		var lVidModes = GLFW.glfwGetVideoModes(mDisplaySettings.monitorIndex);
 
-		int lLookingForWidth = mDisplaySettings.windowWidth;
-		int lLookingForHeight = mDisplaySettings.windowHeight;
+		final int lLookingForWidth = mDisplaySettings.windowWidth;
+		final int lLookingForHeight = mDisplaySettings.windowHeight;
 
-		final int COUNT = modes.limit();
-		for (int i = 0; i < COUNT; i++) {
-			GLFWVidMode lVidMode = modes.get();
+		final int lNumVidModesFound = lVidModes.limit();
+		for (int i = 0; i < lNumVidModesFound; i++) {
+			final var lVidMode = lVidModes.get();
 
 			// Ignore resolution entries based on low refresh rates
 			if (lVidMode.refreshRate() < 40)
@@ -586,17 +586,19 @@ public class DisplayManager extends IniFile {
 
 			if (lVidMode.width() == lLookingForWidth && lVidMode.height() == lLookingForHeight) {
 				return;
-
 			}
 
 		}
 
+		// If we reach this point, then the saved resolution was not found on the monitor and we should revert back 
+		// to the base resolution of the game (in windowed mode)
 		mDisplaySettings.windowWidth = pGameInfo.baseGameResolutionWidth();
 		mDisplaySettings.windowHeight = pGameInfo.baseGameResolutionHeight();
 		mDisplaySettings.fullScreenIndex = VideoSettings.FULLSCREEN_NO_INDEX;
 
-		Debug.debugManager().logger().w(getClass().getSimpleName(), "Non-standard resolution found (" + lLookingForWidth + "," + lLookingForHeight + ")! Defaulting back to " + mDisplaySettings.windowWidth + "," + mDisplaySettings.windowHeight);
+		// TODO: Display toast to the user than an unsupported resolution was saved
 
+		Debug.debugManager().logger().w(getClass().getSimpleName(), "Non-standard resolution found (" + lLookingForWidth + "," + lLookingForHeight + ")! Defaulting back to " + mDisplaySettings.windowWidth + "," + mDisplaySettings.windowHeight);
 	}
 
 	// --------------------------------------

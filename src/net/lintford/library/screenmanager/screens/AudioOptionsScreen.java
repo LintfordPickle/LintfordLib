@@ -59,10 +59,10 @@ public class AudioOptionsScreen extends MenuScreen {
 		final var lAudioList = new ListLayout(this);
 		lAudioList.paddingTop(10.f);
 		lAudioList.paddingBottom(10.f);
-		lAudioList.cropPaddingTop(7.f);
+		lAudioList.cropPaddingTop(9.f);
 		lAudioList.cropPaddingBottom(13.f);
 		lAudioList.setDrawBackground(true, ColorConstants.MenuPanelSecondaryColor);
-		lAudioList.layoutFillType(FILLTYPE.TAKE_WHATS_NEEDED);
+		lAudioList.layoutFillType(FILLTYPE.FILL_CONTAINER);
 
 		createAudioSection(lAudioList);
 

@@ -211,7 +211,6 @@ public class UiStructureController extends BaseController {
 		final float lWindowWidth = pCore.config().display().windowWidth();
 		final float lWindowHeight = pCore.config().display().windowHeight();
 
-		final float lWindowAutoScaleFactorY = windowAutoScaleFactorY();
 		final float lGameHeaderHeight = 40f * windowAutoScaleFactorY();
 		final float lGameFooterHeight = 70f * windowAutoScaleFactorY();
 

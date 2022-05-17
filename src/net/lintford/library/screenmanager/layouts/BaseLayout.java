@@ -388,7 +388,6 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 		final float lCropHeaderHeight = mShowTitle ? mCropPaddingTop + lTitleHeight : mCropPaddingTop;
 		contentDisplayRectange.set(x, y + lCropHeaderHeight, w, h - lCropHeaderHeight - lCropFooterHeight);
 
-		mScrollBar.scrollBarEnabled(mContentArea.h() - h > 0);
 		mScrollBar.update(pCore);
 	}
 

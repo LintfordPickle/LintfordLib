@@ -15,7 +15,8 @@ public class FontUnit {
 	// Constants
 	// --------------------------------------
 
-	public static final String BREAK_CHARS = " -";
+	public static final String BREAK_CHARS = " ";
+	public static final String WRAP_ON_CHARS = "-";
 
 	public static final int NO_WORD_WRAP = -1;
 	public static final int NO_WIDTH_CAP = -1;
@@ -62,8 +63,8 @@ public class FontUnit {
 		if (mWrapType == WrapType.LetterCountTrim || pWrapWidth == NO_WORD_WRAP) {
 			return mFontDefinition.getFontHeight();
 		}
-		
-		if(pText == null) {
+
+		if (pText == null) {
 			return mFontDefinition.getFontHeight();
 		}
 
@@ -222,7 +223,7 @@ public class FontUnit {
 	public void drawText(String pText, float pX, float pY, float pZ, float pScale) {
 		if (pText == null)
 			return;
-		
+
 		drawText(pText, pX, pY, pZ, ColorConstants.WHITE, pScale, -1);
 	}
 
@@ -288,9 +289,11 @@ public class FontUnit {
 								break;
 							}
 
-							if (lWrapWidth + lWordWidth + lCharGlyph.width() * pScale > pWrapWidth) {
+							float lOverflowSpaceForElipsis = mWrapType == WrapType.WordWrapTrim ? 20.f : 0.f;
+							if (lWrapWidth + lWordWidth + lCharGlyph.width() * pScale + lOverflowSpaceForElipsis > pWrapWidth) {
 								lWrapWidth = 0;
-								lJustWrapped = lWordWidth + lCharGlyph.width() < pWrapWidth;
+								lJustWrapped = true;
+
 								break;
 							}
 
@@ -301,10 +304,10 @@ public class FontUnit {
 					final int lNumElpsis = 3;
 					if (i >= pWrapWidth - lNumElpsis) {
 
-						SpriteFrame lDotGlyph = mFontDefinition.getGlyphFrame((int) '.');
+						final var lDotGlyph = mFontDefinition.getGlyphFrame((int) '.');
 						if (lDotGlyph != null) {
 							for (int j = 0; j < lNumElpsis; j++) {
-								mFontRenderer.draw(mFontDefinition.texture(), lDotGlyph.x(), lDotGlyph.y(), lDotGlyph.w(), lDotGlyph.h(), lX + j * lDotGlyph.width(), lY, glyph_c.width() * pScale, glyph_c.height() * pScale, pZ, pTextColor);
+								mFontRenderer.draw(mFontDefinition.texture(), lDotGlyph.x(), lDotGlyph.y(), lDotGlyph.w(), lDotGlyph.h(), (int) (lX) + j * lDotGlyph.width(), (int) lY, glyph_c.width() * pScale, glyph_c.height() * pScale, pZ, pTextColor);
 							}
 						}
 
@@ -313,43 +316,40 @@ public class FontUnit {
 				}
 			}
 
-			if (lCh_Current == ' ' && lX == pX && lY > pY) {
-				continue;
-			}
-
 			if (glyph_c == null) {
 				continue;
 			}
 
-			if (lJustWrapped && lBreakCharFitsOnThisLine == false) {
-				lY += lScaledLineHeight;
-				lX = pX;
-			}
-
-			mFontRenderer.draw(mFontDefinition.texture(), glyph_c.x(), glyph_c.y(), glyph_c.w(), glyph_c.h(), (int) lX, (int) lY, glyph_c.width() * pScale, glyph_c.height() * pScale, pZ, pTextColor);
-
 			if (lJustWrapped && mWrapType == WrapType.WordWrapTrim) {
 				final int lNumElpsis = 3;
 
-				SpriteFrame lDotGlyph = mFontDefinition.getGlyphFrame((int) '.');
+				final var lDotGlyph = mFontDefinition.getGlyphFrame((int) '.');
 				if (lDotGlyph != null) {
 					for (int j = 0; j < lNumElpsis; j++) {
-						mFontRenderer.draw(mFontDefinition.texture(), lDotGlyph.x(), lDotGlyph.y(), lDotGlyph.w(), lDotGlyph.h(), lX + j * lDotGlyph.width(), lY, glyph_c.width() * pScale, glyph_c.height() * pScale, pZ, pTextColor);
+						mFontRenderer.draw(mFontDefinition.texture(), lDotGlyph.x(), lDotGlyph.y(), lDotGlyph.w(), lDotGlyph.h(), (int) (lX) + j * lDotGlyph.width(), (int) lY, glyph_c.width() * pScale, glyph_c.height() * pScale, pZ, pTextColor);
 					}
 				}
 
 				return;
 			}
 
+			if (lJustWrapped) {
+				lY += lScaledLineHeight;
+				lX = pX;
+			}
+
+			if (lCh_Current == ' ' && lX == pX && lY > pY) {
+				lJustWrapped = false;
+				continue;
+			}
+
+			mFontRenderer.draw(mFontDefinition.texture(), glyph_c.x(), glyph_c.y(), glyph_c.w(), glyph_c.h(), (int) lX, (int) lY, glyph_c.width() * pScale, glyph_c.height() * pScale, pZ, pTextColor);
+
 			if (lJustWrapped && lBreakCharFitsOnThisLine) {
 				lY += lScaledLineHeight;
 				lX = pX;
 			} else {
-				if (!lJustWrapped)
-					lX += glyph_c.width() * pScale;
-				else {
-					lX += glyph_c.width() * pScale;
-				}
+				lX += glyph_c.width() * pScale;
 			}
 
 			lJustWrapped = false;
