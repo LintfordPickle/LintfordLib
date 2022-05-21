@@ -4,6 +4,10 @@ import net.lintford.library.core.geometry.Rectangle;
 
 public interface IScrollBarArea {
 
+	public default int parentScreenHash() {
+		return this.hashCode();
+	}
+
 	/**
 	 * This is the area within which you want to contrain the data to be displayed. 
 	 * @return

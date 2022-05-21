@@ -127,9 +127,8 @@ public class DebugRendererTreeRenderer extends Rectangle implements IScrollBarAr
 		}
 
 		// *** Control the selection of ControllerWidgets ***
-		if (mScrollBar.handleInput(pCore)) {
+		if (mScrollBar.handleInput(pCore, null)) {
 			return;
-
 		}
 
 		if (intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().isMouseOverThisComponent(hashCode())) {
@@ -143,7 +142,6 @@ public class DebugRendererTreeRenderer extends Rectangle implements IScrollBarAr
 				final float lMouseX = pCore.HUD().getMouseCameraSpace().x;
 				final float lMouseY = pCore.HUD().getMouseCameraSpace().y;
 
-				//
 				if (lMouseX > x && lMouseX < x + w - mScrollBar.w()) {
 					final var lComponentTree = mDebugRendererTree.treeComponents();
 					final var lControllerWidgetCount = lComponentTree.size();
@@ -152,19 +150,14 @@ public class DebugRendererTreeRenderer extends Rectangle implements IScrollBarAr
 
 						if (lMouseY > lControllerWidget.y() + lControllerWidget.h()) {
 							continue;
-
 						}
 
 						if (lControllerWidget.baseRenderer != null) {
 							lControllerWidget.baseRenderer.isActive(!lControllerWidget.baseRenderer.isActive());
-
 						}
 
-						// Once we have handled, then we can exit the loop
 						break;
-
 					}
-
 				}
 			}
 
@@ -179,7 +172,6 @@ public class DebugRendererTreeRenderer extends Rectangle implements IScrollBarAr
 
 			if (mScrollYPosition > 0)
 				mScrollYPosition = 0;
-
 		}
 
 		if (pCore.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_DOWN)) {
@@ -188,7 +180,6 @@ public class DebugRendererTreeRenderer extends Rectangle implements IScrollBarAr
 			if (mScrollYPosition < mScrollBar.getScrollYBottomPosition())
 				mScrollYPosition = mScrollBar.getScrollYBottomPosition() - ENTRY_HEIGHT;
 		}
-
 	}
 
 	public void update(LintfordCore pCore) {

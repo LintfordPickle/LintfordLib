@@ -67,7 +67,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 
 	@Override
 	public float height() {
-		return mOpen ? super.height() + mWindowRectangle.height() : super.height();
+		return super.height();// mOpen ? super.height() + mWindowRectangle.height() : super.height();
 	}
 
 	public boolean allowDuplicates() {
@@ -171,18 +171,12 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 		if (mItems == null || mItems.size() == 0 || !mEnabled)
 			return false;
 
-		if (mOpen && mScrollBar.handleInput(pCore)) {
+		if (mOpen && mScrollBar.handleInput(pCore, mScreenManager)) {
 			return true;
-
 		}
 
 		// Handle clicks within the component (including both open and closed states)
-		else if (intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().tryAcquireMouseOverThisComponent(hashCode())) {
-			if (pCore.input().mouse().tryAcquireMouseMiddle((hashCode()))) {
-				final float scrollAccelerationAmt = pCore.input().mouse().mouseWheelYOffset() * 250.0f;
-				mScrollBar.scrollRelAcceleration(scrollAccelerationAmt);
-			}
-
+		else if (mWindowRectangle.intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().tryAcquireMouseOverThisComponent(hashCode())) {
 			if (mOpen) {
 				final float lConsoleLineHeight = mItemHeight;
 				// Something inside the dropdown was select
@@ -274,8 +268,8 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 
 		mContentRectangle.set(x, y + mScrollBar.currentYPos(), w, mItems.size() * mItemHeight);
 		if (mOpen) {
-			mWindowRectangle.set(x + w / 2, y + 32, w / 2, OPEN_HEIGHT);
-			set(x, y, w, OPEN_HEIGHT + 32.f);
+			mWindowRectangle.set(x + w / 2, y, w / 2, OPEN_HEIGHT);
+			set(x, y, w, 32.f);
 		} else {
 			mWindowRectangle.set(this);
 			mWindowRectangle.expand(1);
@@ -335,6 +329,43 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 
 		// CONTENT PANE
 
+		// Draw the down arrow
+		lSpriteBatch.begin(pCore.HUD());
+		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_DOWN, lScreenOffset.x + right() - 32, lScreenOffset.y + top(), 32, 32, mZ, entryColor);
+		lSpriteBatch.end();
+
+		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
+			lSpriteBatch.begin(pCore.HUD());
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + x, lScreenOffset.y + y, w, h, mZ, ColorConstants.Debug_Transparent_Magenta);
+			lSpriteBatch.end();
+		}
+
+		if (!mEnabled) {
+			drawdisabledBlackOverbar(pCore, lSpriteBatch, entryColor.a);
+		}
+
+		if (mShowInfoIcon) {
+			drawInfoIcon(pCore, lSpriteBatch, mInfoIconDstRectangle, entryColor.a);
+		}
+
+		if (mShowWarnIcon) {
+			drawWarningIcon(pCore, lSpriteBatch, mWarnIconDstRectangle, entryColor.a);
+		}
+	}
+
+	@Override
+	public void postStencilDraw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pParentZDepth) {
+		super.postStencilDraw(pCore, pScreen, pIsSelected, pParentZDepth);
+
+		final var lParentScreen = mParentLayout.parentScreen;
+		final float lUiTextScale = lParentScreen.uiTextScale();
+		final var lTextBoldFont = lParentScreen.fontBold();
+
+		mZ = mOpen ? ZLayers.LAYER_SCREENMANAGER + Z_STATE_MODIFIER_ACTIVE : ZLayers.LAYER_SCREENMANAGER + Z_STATE_MODIFIER_PASSIVE;
+
+		final var lScreenOffset = pScreen.screenPositionOffset();
+		final var lSpriteBatch = lParentScreen.spriteBatch();
+
 		if (mOpen) {
 			lSpriteBatch.begin(pCore.HUD());
 			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mWindowRectangle, mZ, ColorConstants.getBlackWithAlpha(1.f));
@@ -384,30 +415,11 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 
 		if (mOpen && mScrollBar.areaNeedsScrolling())
 			mScrollBar.draw(pCore, lSpriteBatch, mCoreSpritesheet, -0.1f);
-
-		// Draw the down arrow
-		lSpriteBatch.begin(pCore.HUD());
-		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_DOWN, lScreenOffset.x + right() - 32, lScreenOffset.y + top(), 32, 32, mZ, entryColor);
-		lSpriteBatch.end();
-
-		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
-			lSpriteBatch.begin(pCore.HUD());
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + x, lScreenOffset.y + y, w, h, mZ, ColorConstants.Debug_Transparent_Magenta);
-			lSpriteBatch.end();
-		}
-
-		if (!mEnabled) {
-			drawdisabledBlackOverbar(pCore, lSpriteBatch, entryColor.a);
-		}
-
-		if (mShowInfoIcon) {
-			drawInfoIcon(pCore, lSpriteBatch, mInfoIconDstRectangle, entryColor.a);
-		}
-
-		if (mShowWarnIcon) {
-			drawWarningIcon(pCore, lSpriteBatch, mWarnIconDstRectangle, entryColor.a);
-		}
 	}
+
+	// --------------------------------------
+	// Methods
+	// --------------------------------------
 
 	@Override
 	public void onClick(InputManager pInputState) {

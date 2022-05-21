@@ -18,13 +18,15 @@ import net.lintford.library.core.graphics.polybatch.PolyBatch;
 import net.lintford.library.core.graphics.rendertarget.RenderTarget;
 import net.lintford.library.core.graphics.sprites.spritebatch.SpriteBatch;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
+import net.lintford.library.core.input.IInputClickedFocusTracker;
 import net.lintford.library.core.rendering.RenderState;
 import net.lintford.library.options.DisplayManager;
 import net.lintford.library.options.IResizeListener;
 import net.lintford.library.renderers.windows.UIWindowChangeListener;
 import net.lintford.library.renderers.windows.UiWindow;
+import net.lintford.library.screenmanager.IInputClickedFocusManager;
 
-public class RendererManager {
+public class RendererManager implements IInputClickedFocusManager {
 
 	// --------------------------------------
 	// Constants
@@ -91,9 +93,19 @@ public class RendererManager {
 	private IResizeListener mResizeListener;
 	private int mRendererIdCounter;
 
+	protected IInputClickedFocusTracker mTrackedInputControl;
+
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public IInputClickedFocusTracker getTrackedClickedFocusControl() {
+		return mTrackedInputControl;
+	}
+
+	public void setTrackedClickedFocusControl(IInputClickedFocusTracker pControlToTrack) {
+		mTrackedInputControl = pControlToTrack;
+	}
 
 	public void increaseGlContentCount() {
 		mSharedGlContentCount++;

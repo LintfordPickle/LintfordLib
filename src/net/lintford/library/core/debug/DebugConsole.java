@@ -28,6 +28,7 @@ import net.lintford.library.renderers.windows.components.IScrollBarArea;
 import net.lintford.library.renderers.windows.components.ScrollBar;
 import net.lintford.library.renderers.windows.components.ScrollBarContentRectangle;
 import net.lintford.library.renderers.windows.components.UIInputText;
+import net.lintford.library.screenmanager.ScreenManager;
 
 public class DebugConsole extends Rectangle implements IBufferedTextInputCallback, IScrollBarArea, IProcessMouseInput {
 
@@ -246,7 +247,7 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 			return;
 
 		if (mConsoleState == CONSOLE_STATE.open) {
-			if (mScrollBar.handleInput(pCore)) {
+			if (mScrollBar.handleInput(pCore, null)) {
 				if (mScrollBar.isAtBottomPosition()) {
 					mAutoScroll = true;
 				} else {

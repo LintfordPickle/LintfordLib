@@ -324,20 +324,16 @@ public class UiBaseLayoutComponent extends UIWidget implements IScrollBarArea {
 			if (lMenuEntry.handleInput(pCore)) {
 				// return true;
 			}
-
 		}
 
 		if (intersectsAA(pCore.HUD().getMouseCameraSpace())) {
 			if (true && pCore.input().mouse().tryAcquireMouseMiddle((hashCode()))) {
 				mZScrollAcceleration += pCore.input().mouse().mouseWheelYOffset() * 250.0f;
-
 			}
-
 		}
 
 		if (mScrollBarsEnabled_Internal) {
-			mScrollBar.handleInput(pCore);
-
+			mScrollBar.handleInput(pCore, mParentWindow.rendererManager());
 		}
 
 		return false;

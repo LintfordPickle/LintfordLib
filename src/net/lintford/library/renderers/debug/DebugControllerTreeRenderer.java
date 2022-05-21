@@ -126,22 +126,19 @@ public class DebugControllerTreeRenderer extends Rectangle implements IScrollBar
 		}
 
 		// *** Control the selection of ControllerWidgets ***
-		if (mScrollBar.handleInput(pCore)) {
+		if (mScrollBar.handleInput(pCore, null)) {
 			return;
-
 		}
 
 		if (intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().isMouseOverThisComponent(hashCode())) {
 			if (pCore.input().mouse().tryAcquireMouseOverThisComponent(hashCode())) {
 				mZScrollAcceleration += pCore.input().mouse().mouseWheelYOffset() * 250.0f;
-
 			}
 
 			if (pCore.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
 				final float lMouseX = pCore.HUD().getMouseCameraSpace().x;
 				final float lMouseY = pCore.HUD().getMouseCameraSpace().y;
 
-				//
 				if (lMouseX > x && lMouseX < x + w - mScrollBar.w()) {
 					final var lComponentTree = mDebugControllerTree.treeComponents();
 					final var lControllerWidgetCount = lComponentTree.size();
@@ -150,28 +147,21 @@ public class DebugControllerTreeRenderer extends Rectangle implements IScrollBar
 
 						if (lMouseY > lControllerWidget.y() + lControllerWidget.h()) {
 							continue;
-
 						}
 
 						lControllerWidget.isExpanded = !lControllerWidget.isExpanded;
 						if (lControllerWidget.baseController != null) {
 							lControllerWidget.baseController.isActive(!lControllerWidget.baseController.isActive());
-
 						}
-
-						// Debug.debugManager().logger().i(getClass().getSimpleName(), "DebugTreeRenderer click on " + lControllerWidget.displayName);
 
 						// Once we have handled, then we can exit the loop
 						break;
-
 					}
-
 				}
 			}
 
 			// If the mouse is over this window, then don't let clicks fal-through.
 			pCore.input().mouse().mouseHoverOverHash(hashCode());
-
 		}
 
 		// *** Control the scroll bar positioning ***
@@ -180,7 +170,6 @@ public class DebugControllerTreeRenderer extends Rectangle implements IScrollBar
 
 			if (mScrollYPosition > 0)
 				mScrollYPosition = 0;
-
 		}
 
 		if (pCore.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_DOWN)) {

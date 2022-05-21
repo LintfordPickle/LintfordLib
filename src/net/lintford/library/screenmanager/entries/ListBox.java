@@ -138,7 +138,7 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 			return false;
 		}
 
-		if (mScrollBar.handleInput(pCore)) {
+		if (mScrollBar.handleInput(pCore, mScreenManager)) {
 			mClickActive = false;
 			return true;
 		}

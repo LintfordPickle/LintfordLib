@@ -5,12 +5,10 @@ import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWVidMode;
 
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.textures.CoreTextureNames;
 import net.lintford.library.options.DisplayManager;
 import net.lintford.library.options.VideoSettings;
-import net.lintford.library.renderers.debug.DebugMenuUiStructureDrawer;
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.ScreenManager;
@@ -186,19 +184,11 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 
 		mMonitorEntry.enabled(mDisplayManager.currentOptionsConfig().fullScreenIndex == VideoSettings.FULLSCREEN_YES_INDEX);
 		mResolutionEntry.enabled(mDisplayManager.currentOptionsConfig().fullScreenIndex == VideoSettings.FULLSCREEN_YES_INDEX);
-
 	}
 
 	// --------------------------------------
 	// Core-Methods
 	// --------------------------------------
-
-	@Override
-	public void loadResources(ResourceManager pResourceManager) {
-		super.loadResources(pResourceManager);
-
-		new DebugMenuUiStructureDrawer(rendererManager, entityGroupID());
-	}
 
 	@Override
 	public void updateLayoutSize(LintfordCore pCore) {

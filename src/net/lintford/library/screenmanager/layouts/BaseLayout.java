@@ -367,7 +367,7 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 		updateFocusOfAll(pCore);
 
 		if (mScrollBar.scrollBarEnabled()) {
-			mScrollBar.handleInput(pCore);
+			mScrollBar.handleInput(pCore, screenManager);
 		}
 
 		return false;
@@ -418,8 +418,8 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 			mContentArea.preDraw(pCore, lSpriteBatch, lSpriteSheetCore);
 		}
 
-		final int lCount = mMenuEntries.size();
-		for (int i = lCount - 1; i >= 0; --i) {
+		final int lMenuEntryCount = mMenuEntries.size();
+		for (int i = lMenuEntryCount - 1; i >= 0; --i) {
 			mMenuEntries.get(i).draw(pCore, parentScreen, mSelectedEntry == i, pComponentDepth + i * .001f);
 		}
 
@@ -429,6 +429,10 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 			mScrollBar.scrollBarAlpha(lParentScreenAlpha);
 			mScrollBar.draw(pCore, lSpriteBatch, lSpriteSheetCore, pComponentDepth + .1f);
 			lSpriteBatch.end();
+		}
+
+		for (int i = lMenuEntryCount - 1; i >= 0; --i) {
+			mMenuEntries.get(i).postStencilDraw(pCore, parentScreen, mSelectedEntry == i, pComponentDepth + i * .001f);
 		}
 
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {

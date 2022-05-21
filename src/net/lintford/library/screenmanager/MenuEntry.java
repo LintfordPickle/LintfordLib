@@ -622,6 +622,10 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 		}
 	}
 
+	public void postStencilDraw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pParentZDepth) {
+
+	}
+
 	// --------------------------------------
 	// Methods
 	// --------------------------------------

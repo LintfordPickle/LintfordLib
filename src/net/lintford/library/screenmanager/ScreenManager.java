@@ -10,11 +10,12 @@ import net.lintford.library.core.audio.AudioFireAndForgetManager;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.debug.GLDebug;
 import net.lintford.library.core.graphics.fonts.FontMetaData;
+import net.lintford.library.core.input.IInputClickedFocusTracker;
 import net.lintford.library.options.IResizeListener;
 import net.lintford.library.screenmanager.Screen.ScreenState;
 import net.lintford.library.screenmanager.toast.ToastManager;
 
-public class ScreenManager {
+public class ScreenManager implements IInputClickedFocusManager {
 
 	public static final FontMetaData ScreenManagerFonts = new FontMetaData();
 
@@ -47,10 +48,19 @@ public class ScreenManager {
 	private UiStructureController mUiStructureController;
 	private IResizeListener mResizeListener;
 	protected float mColumnMaxWidth;
+	protected IInputClickedFocusTracker mTrackedInputControl;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public IInputClickedFocusTracker getTrackedClickedFocusControl() {
+		return mTrackedInputControl;
+	}
+
+	public void setTrackedClickedFocusControl(IInputClickedFocusTracker pControlToTrack) {
+		mTrackedInputControl = pControlToTrack;
+	}
 
 	public float columnMaxWidth() {
 		return mColumnMaxWidth;
@@ -180,7 +190,6 @@ public class ScreenManager {
 		if (mScreens == null || mScreens.size() == 0)
 			return;
 
-		// Top-Most screen processes input
 		boolean lInputBlockedByHigherScreen = false;
 
 		final int lScreenCount = mScreens.size() - 1;
@@ -195,15 +204,26 @@ public class ScreenManager {
 			lScreen.acceptMouseInput = !lInputBlockedByHigherScreen;
 			lScreen.acceptKeyboardInput = !lInputBlockedByHigherScreen;
 
-			// if (!lInputBlockedByHigherScreen && (lScreen.screenState() == ScreenState.TransitionOn || lScreen.screenState() == ScreenState.Active || lScreen.mShowBackgroundScreens)) {
 			if (!lInputBlockedByHigherScreen && lScreen.screenState() == ScreenState.Active) {
 				lScreen.handleInput(pCore);
+
 			}
 
 			lInputBlockedByHigherScreen = lInputBlockedByHigherScreen || lScreen.mBlockInputInBackground;
 		}
 
 		mToolTip.handleInput(pCore);
+
+		if (mTrackedInputControl != null) {
+			if (mTrackedInputControl.inputHandledInCoreFrame() == false) {
+				mTrackedInputControl.handleInput(pCore, this);
+			}
+
+			mTrackedInputControl.resetInputHandledInCoreFrameFlag();
+			if (pCore.input().mouse().isMouseLeftButtonDown() == false) {
+				mTrackedInputControl = null;
+			}
+		}
 
 	}
 

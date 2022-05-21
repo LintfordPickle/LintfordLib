@@ -7,11 +7,13 @@ import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.sprites.spritebatch.SpriteBatch;
 import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintford.library.core.graphics.textures.CoreTextureNames;
+import net.lintford.library.core.input.IInputClickedFocusTracker;
 import net.lintford.library.core.input.IProcessMouseInput;
 import net.lintford.library.core.maths.MathHelper;
 import net.lintford.library.renderers.ZLayers;
+import net.lintford.library.screenmanager.IInputClickedFocusManager;
 
-public class ScrollBar extends Rectangle implements IProcessMouseInput {
+public class ScrollBar extends Rectangle implements IProcessMouseInput, IInputClickedFocusTracker {
 
 	// --------------------------------------
 	// Constants
@@ -44,9 +46,26 @@ public class ScrollBar extends Rectangle implements IProcessMouseInput {
 	private float mHeaderOffset;
 	private float mFooterOffset;
 
+	private boolean mInputHandledInCoreFrame;
+
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	@Override
+	public void resetInputHandledInCoreFrameFlag() {
+		mInputHandledInCoreFrame = false;
+	}
+
+	@Override
+	public boolean inputHandledInCoreFrame() {
+		return mInputHandledInCoreFrame;
+	}
+
+	@Override
+	public int parentScreenHash() {
+		return mScrollBarArea != null ? mScrollBarArea.parentScreenHash() : -1;
+	}
 
 	public void isActive(boolean pIsActive) {
 		mIsActive = pIsActive;
@@ -121,13 +140,18 @@ public class ScrollBar extends Rectangle implements IProcessMouseInput {
 	// Core-Methods
 	// --------------------------------------
 
-	public boolean handleInput(LintfordCore pCore) {
-		final var lMouseInWindowCoords = intersectsAA(pCore.HUD().getMouseCameraSpace());
+	public boolean handleInput(LintfordCore pCore, IInputClickedFocusManager pTrackedControlManager) {
+		mInputHandledInCoreFrame = true;
+
+		final var lMouseInScrollbarRegion = intersectsAA(pCore.HUD().getMouseCameraSpace());
+		final var lMouseInContentRegion = mScrollBarArea.contentDisplayArea().intersectsAA(pCore.HUD().getMouseCameraSpace());
 		final var lLeftMouseButtonDown = pCore.input().mouse().isMouseLeftButtonDown();
 		final var lDoWeAlreadyHaveTheMouse = pCore.input().mouse().isMouseLeftClickOwnerAssigned(hashCode()) && pCore.input().mouse().isMouseLeftButtonDown();
-		final var lCanAcquireMouse = lDoWeAlreadyHaveTheMouse || lMouseInWindowCoords && lLeftMouseButtonDown && pCore.input().mouse().tryAcquireMouseLeftClick(hashCode());
+		final var lCanAcquireMouse = lDoWeAlreadyHaveTheMouse || lMouseInScrollbarRegion && lLeftMouseButtonDown && pCore.input().mouse().tryAcquireMouseLeftClick(hashCode());
 
-		mScrollAcceleration += pCore.input().mouse().mouseWheelYOffset() * 250.0f;
+		if (lMouseInContentRegion && pCore.input().mouse().tryAcquireMouseMiddle(hashCode())) {
+			mScrollAcceleration += pCore.input().mouse().mouseWheelYOffset() * 250.0f;
+		}
 
 		if (!mClickActive && !lCanAcquireMouse) {
 			return false;
@@ -145,6 +169,9 @@ public class ScrollBar extends Rectangle implements IProcessMouseInput {
 
 		if (!mClickActive && lCanAcquireMouse) {
 			mClickActive = true;
+			if (pTrackedControlManager != null) {
+				pTrackedControlManager.setTrackedClickedFocusControl(this);
+			}
 			mLastMouseYPos = pCore.HUD().getMouseWorldSpaceY();
 		}
 

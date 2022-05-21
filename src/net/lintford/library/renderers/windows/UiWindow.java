@@ -242,10 +242,11 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 		mIsWindowMoveable = false;
 		mUiInputFromUiManager = true;
 
-		mWindowPaddingTop = 0.f;
-		mWindowPaddingBottom = 0.f;
-		mWindowPaddingLeft = 0.f;
-		mWindowPaddingRight = 0.f;
+		final float lDefaultPadding = 2.f;
+		mWindowPaddingTop = lDefaultPadding;
+		mWindowPaddingBottom = lDefaultPadding;
+		mWindowPaddingLeft = lDefaultPadding;
+		mWindowPaddingRight = lDefaultPadding;
 
 	}
 
@@ -286,7 +287,7 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 		}
 
 		// 1. Check if the scroll bar has been used
-		if (mScrollBar.handleInput(pCore)) {
+		if (mScrollBar.handleInput(pCore, rendererManager())) {
 			return true;
 		}
 
@@ -295,9 +296,7 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 		for (int i = 0; i < lComponentCount; i++) {
 			if (mComponents.get(i).handleInput(pCore)) {
 				return true;
-
 			}
-
 		}
 
 		if (mIsWindowMoving) {
@@ -307,7 +306,6 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 				mMouseDownLastUpdate = false;
 
 				return false;
-
 			}
 
 			float lDifferenceX = (pCore.input().mouse().mouseWindowCoords().x - dx);
@@ -321,7 +319,6 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 			dy = pCore.input().mouse().mouseWindowCoords().y;
 
 			return true;
-
 		}
 
 		// 2. window captures mouse clicks even if not dragging
@@ -345,7 +342,6 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 					// Now we can try to acquire the lock, and if we get it, start dragging the window
 					if (pCore.input().mouse().tryAcquireMouseLeftClick(hashCode())) {
 						mIsWindowMoving = true;
-
 					}
 				}
 			}
@@ -354,7 +350,6 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 		if (!lMouseLeftClick) {
 			mIsWindowMoving = false;
 			mMouseDownLastUpdate = false;
-
 		}
 
 		// This is needed because when the mouse is over a component
@@ -364,18 +359,11 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 			if (lMouseLeftClick) {
 				pCore.input().mouse().tryAcquireMouseLeftClick(hashCode());
 			}
-
-			//			if (mCanCaptureMouse && pCore.input().mouse().tryAcquireMouseOverThisComponent(hashCode()) && pCore.input().mouse().tryAcquireMouseMiddle((hashCode()))) {
-			//				mZScrollAcceleration += pCore.input().mouse().mouseWheelYOffset() * 250.0f;
-			//			}
-
 		} else {
 			mIsMouseOver = false;
-
 		}
 
 		return mIsMouseOver;
-
 	}
 
 	public void update(LintfordCore pCore) {

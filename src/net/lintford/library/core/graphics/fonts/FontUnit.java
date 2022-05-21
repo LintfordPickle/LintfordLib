@@ -235,8 +235,8 @@ public class FontUnit {
 		if (pText == null)
 			return;
 
-		float lX = pX;
-		float lY = pY;
+		int lX = (int) pX;
+		int lY = (int) pY;
 
 		float lWrapWidth = 0;
 		boolean lJustWrapped = false;
@@ -255,7 +255,7 @@ public class FontUnit {
 
 			// Special characters
 			if (lCh_Current == '\n' || lCh_Current == '\r') {
-				lX = pX;
+				lX = (int) pX;
 				lY += mFontDefinition.getFontHeight() + lLineSpacing;
 				lWrapWidth = 0.f;
 				lWordWidth = 0.f;
@@ -326,7 +326,7 @@ public class FontUnit {
 				final var lDotGlyph = mFontDefinition.getGlyphFrame((int) '.');
 				if (lDotGlyph != null) {
 					for (int j = 0; j < lNumElpsis; j++) {
-						mFontRenderer.draw(mFontDefinition.texture(), lDotGlyph.x(), lDotGlyph.y(), lDotGlyph.w(), lDotGlyph.h(), (int) (lX) + j * lDotGlyph.width(), (int) lY, glyph_c.width() * pScale, glyph_c.height() * pScale, pZ, pTextColor);
+						mFontRenderer.draw(mFontDefinition.texture(), lDotGlyph.x(), lDotGlyph.y(), (int) lDotGlyph.w(), lDotGlyph.h(), (int) (lX) + j * lDotGlyph.width(), (int) lY, glyph_c.width() * pScale, glyph_c.height() * pScale, pZ, pTextColor);
 					}
 				}
 
@@ -335,7 +335,7 @@ public class FontUnit {
 
 			if (lJustWrapped) {
 				lY += lScaledLineHeight;
-				lX = pX;
+				lX = (int) pX;
 			}
 
 			if (lCh_Current == ' ' && lX == pX && lY > pY) {
@@ -343,11 +343,11 @@ public class FontUnit {
 				continue;
 			}
 
-			mFontRenderer.draw(mFontDefinition.texture(), glyph_c.x(), glyph_c.y(), glyph_c.w(), glyph_c.h(), (int) lX, (int) lY, glyph_c.width() * pScale, glyph_c.height() * pScale, pZ, pTextColor);
+			mFontRenderer.draw(mFontDefinition.texture(), glyph_c.x(), glyph_c.y(), (int) glyph_c.w(), glyph_c.h(), (int) lX, (int) lY, glyph_c.width() * pScale, glyph_c.height() * pScale, pZ, pTextColor);
 
 			if (lJustWrapped && lBreakCharFitsOnThisLine) {
 				lY += lScaledLineHeight;
-				lX = pX;
+				lX = (int) pX;
 			} else {
 				lX += glyph_c.width() * pScale;
 			}
