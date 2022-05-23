@@ -21,6 +21,7 @@ public class SpriteGraphAttachmentInstance implements Serializable {
 	private boolean mIsInitialized;
 	private transient SpriteSheetDefinition mSpritesheetDefinition;
 	public String defaultSpriteName;
+	public String defaultAnimationName = "idle";
 	public String spritesheetDefinitionName;
 	public transient boolean resolvedSpritesheetDefinitionName;
 	public boolean attachmentIsRemovable;

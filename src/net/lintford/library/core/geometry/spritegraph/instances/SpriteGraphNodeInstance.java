@@ -347,7 +347,13 @@ public class SpriteGraphNodeInstance extends IndexedPooledBaseData {
 		if (currentNodeSpriteActionName == null) {
 			if (nextAnimationName != null) {
 				tlTempNextAnimFrameName = nextAnimationName;
-			} else if (mSpritegraphAttachmentInstance.defaultSpriteName != null) {
+			}
+
+			else if (mSpritegraphAttachmentInstance.defaultAnimationName != null) {
+				tlTempNextAnimFrameName = mSpritegraphAttachmentInstance.defaultAnimationName;
+			}
+
+			else if (mSpritegraphAttachmentInstance.defaultSpriteName != null) {
 				tlTempNextAnimFrameName = mSpritegraphAttachmentInstance.defaultSpriteName;
 			}
 			reqUpdate = true;
@@ -396,6 +402,8 @@ public class SpriteGraphNodeInstance extends IndexedPooledBaseData {
 		var lSpriteSheetDefinition = pAttachment.spritesheetDefinition();
 		if (lSpriteSheetDefinition == null) {
 			final var lResolvedSpriteName = "SPRITESHEET_" + pSpriteGraph.mDynamicSpritesheetName + pAttachment.spritesheetDefinitionName;
+			Debug.debugManager().logger().i(getClass().getSimpleName(), "Resolving dynamic sprite name to : " + lResolvedSpriteName);
+
 			final var lResourceManager = pCore.resources();
 			lSpriteSheetDefinition = lResourceManager.spriteSheetManager().getSpriteSheet(lResolvedSpriteName, entityGroupID);
 

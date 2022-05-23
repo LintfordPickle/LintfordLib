@@ -75,6 +75,8 @@ public abstract class DefinitionManager<T extends BaseDefinition> {
 
 	public abstract void loadDefinitionFromFile(String pFilepath);
 
+	public void afterDefinitionLoaded(T definition) { }
+
 	protected MetaFileItems loadMetaFileItemsFromFilepath(final String pFilepath) {
 		if (pFilepath == null || pFilepath.length() == 0) {
 			Debug.debugManager().logger().w(getClass().getSimpleName(), "Couldn't load definitions files from a <null> Metafile!");
@@ -119,22 +121,24 @@ public abstract class DefinitionManager<T extends BaseDefinition> {
 		if (lMetaItems == null || lMetaItems.itemCount == 0) {
 			Debug.debugManager().logger().w(getClass().getSimpleName(), String.format("Cannot load definition types %s, the given MetaFileItems contains no data", pClassType.getSimpleName()));
 			return;
-
 		}
 
 		for (int i = 0; i < lMetaItems.itemCount; i++) {
 			final var lDefinitionFilepath = lMetaItems.rootDirectory + lMetaItems.itemFileLocations[i] + ".json";
 
-			loadDefinitionFromFile(lDefinitionFilepath, pGson, pClassType);
+			final var lNewDef = loadDefinitionFromFile(lDefinitionFilepath, pGson, pClassType);
+			if (lNewDef != null) {
+				afterDefinitionLoaded(lNewDef);
+			}
 		}
 	}
 
-	protected void loadDefinitionFromFile(String pFilepath, final Gson pGson, Class<T> pClassType) {
+	protected T loadDefinitionFromFile(String pFilepath, final Gson pGson, Class<T> pClassType) {
 		final var lDefinitionFile = new File(pFilepath);
 
 		if (!lDefinitionFile.exists()) {
 			Debug.debugManager().logger().w(getClass().getSimpleName(), String.format("Error loading %s from file: %s (file not found)", pClassType.getSimpleName(), pFilepath));
-			return;
+			return null;
 		}
 
 		try {
@@ -146,6 +150,8 @@ public abstract class DefinitionManager<T extends BaseDefinition> {
 			if (lNewDefinition != null) {
 				lNewDefinition.initialize(getNewDefinitionUID());
 				mDefinitions.add(lNewDefinition);
+
+				return lNewDefinition;
 			} else {
 				Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Failed to parse %s from file: %s", pClassType.getSimpleName(), pFilepath));
 			}
@@ -153,19 +159,15 @@ public abstract class DefinitionManager<T extends BaseDefinition> {
 		} catch (JsonSyntaxException e) {
 			Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Failed to parse Json %s (JsonSyntaxException): %s", pClassType.getSimpleName(), pFilepath));
 			Debug.debugManager().logger().e(getClass().getSimpleName(), e.getMessage());
-
-			return;
 		} catch (IOException e) {
 			Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Failed to parse Json %s (IOException): %s", pClassType.getSimpleName(), pFilepath));
 			Debug.debugManager().logger().e(getClass().getSimpleName(), e.getMessage());
-
-			return;
 		} catch (NumberFormatException e) {
 			Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Failed to parse Json %s (NumberFormatException): %s", pClassType.getSimpleName(), pFilepath));
 			Debug.debugManager().logger().e(getClass().getSimpleName(), e.getMessage());
-
-			return;
 		}
+
+		return null;
 	}
 
 	public void addDefintion(T pNewDefinition) {

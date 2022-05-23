@@ -1,7 +1,5 @@
 package net.lintford.library.renderers.debug;
 
-import org.lwjgl.glfw.GLFW;
-
 import net.lintford.library.controllers.core.ControllerManager;
 import net.lintford.library.controllers.debug.DebugControllerTreeController;
 import net.lintford.library.core.LintfordCore;
@@ -44,10 +42,6 @@ public class DebugControllerTreeRenderer extends Rectangle implements IScrollBar
 
 	private transient ScrollBarContentRectangle mContentRectangle;
 	private transient ScrollBar mScrollBar;
-	private transient float mScrollYPosition;
-	protected float mZScrollAcceleration;
-	protected float mZScrollVelocity;
-	private boolean mScrollBarEnabled;
 	private transient int mLowerBound;
 	private transient int mUpperBound;
 
@@ -131,10 +125,6 @@ public class DebugControllerTreeRenderer extends Rectangle implements IScrollBar
 		}
 
 		if (intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().isMouseOverThisComponent(hashCode())) {
-			if (pCore.input().mouse().tryAcquireMouseOverThisComponent(hashCode())) {
-				mZScrollAcceleration += pCore.input().mouse().mouseWheelYOffset() * 250.0f;
-			}
-
 			if (pCore.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
 				final float lMouseX = pCore.HUD().getMouseCameraSpace().x;
 				final float lMouseY = pCore.HUD().getMouseCameraSpace().y;
@@ -163,22 +153,6 @@ public class DebugControllerTreeRenderer extends Rectangle implements IScrollBar
 			// If the mouse is over this window, then don't let clicks fal-through.
 			pCore.input().mouse().mouseHoverOverHash(hashCode());
 		}
-
-		// *** Control the scroll bar positioning ***
-		if (pCore.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_UP)) {
-			mScrollYPosition += ENTRY_HEIGHT;
-
-			if (mScrollYPosition > 0)
-				mScrollYPosition = 0;
-		}
-
-		if (pCore.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_DOWN)) {
-			mScrollYPosition -= ENTRY_HEIGHT;
-
-			if (mScrollYPosition < mScrollBar.getScrollYBottomPosition())
-				mScrollYPosition = mScrollBar.getScrollYBottomPosition() - ENTRY_HEIGHT;
-		}
-
 	}
 
 	public void update(LintfordCore pCore) {
@@ -194,7 +168,6 @@ public class DebugControllerTreeRenderer extends Rectangle implements IScrollBar
 
 		if (mClickTimer >= 0) {
 			mClickTimer -= pCore.appTime().elapsedTimeMilli();
-
 		}
 
 		if (!isInitialized()) {
@@ -219,13 +192,13 @@ public class DebugControllerTreeRenderer extends Rectangle implements IScrollBar
 			h = mOpenHeight;
 
 			final int lMaxNumLines = (int) (h / ENTRY_HEIGHT) + 1;
-			mLowerBound = (int) -((mScrollYPosition) / ENTRY_HEIGHT);
+			mLowerBound = (int) -((mScrollBar.currentYPos()) / ENTRY_HEIGHT);
 			mUpperBound = mLowerBound + lMaxNumLines;
 
 			{
 				// *** UPDATE THE COMPONENT WIDGETS ***
 
-				float lPosY = y + mScrollYPosition;
+				float lPosY = y + mScrollBar.currentYPos();
 
 				final var lComponentTree = mDebugControllerTree.treeComponents();
 				final var lControllerWidgetCount = lComponentTree.size();
@@ -243,31 +216,8 @@ public class DebugControllerTreeRenderer extends Rectangle implements IScrollBar
 
 			}
 
-			float lScrollSpeedFactor = mScrollYPosition;
-
-			mZScrollVelocity += mZScrollAcceleration;
-			lScrollSpeedFactor += mZScrollVelocity * lDeltaTime;
-			mZScrollVelocity *= 0.85f;
-			mZScrollAcceleration = 0.0f;
-
-			mScrollYPosition = lScrollSpeedFactor;
-
-			// Constrain
-			if (mScrollYPosition > 0)
-				mScrollYPosition = 0;
-			if (mScrollYPosition < -(mContentRectangle.h() - this.h)) {
-				mScrollYPosition = -(mContentRectangle.h() - this.h);
-			}
-
-			mScrollBarEnabled = h < mContentRectangle.h();
-
-			if (mScrollBarEnabled) {
-				mScrollBar.update(pCore);
-
-			}
-
+			mScrollBar.update(pCore);
 		}
-
 	}
 
 	public void draw(LintfordCore pCore) {
@@ -334,11 +284,9 @@ public class DebugControllerTreeRenderer extends Rectangle implements IScrollBar
 		if (h < mContentRectangle.h())
 			mContentRectangle.postDraw(pCore);
 
-		if (mScrollBarEnabled) {
-			mSpriteBatch.begin(pCore.HUD());
-			mScrollBar.draw(pCore, mSpriteBatch, mCoreSpritesheet, -0.01f);
-			mSpriteBatch.end();
-		}
+		mSpriteBatch.begin(pCore.HUD());
+		mScrollBar.draw(pCore, mSpriteBatch, mCoreSpritesheet, -0.01f);
+		mSpriteBatch.end();
 	}
 
 	// --------------------------------------

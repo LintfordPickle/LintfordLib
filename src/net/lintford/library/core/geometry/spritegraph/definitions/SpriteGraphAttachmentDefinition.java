@@ -66,7 +66,14 @@ public class SpriteGraphAttachmentDefinition extends BaseDefinition implements I
 
 	@Override
 	public int colorTint() {
-		return 0xffffffff; // (baseColorTintR << 16) | (baseColorTintG << 8) | baseColorTintB;
+		return (baseColorTintR << 16) | (baseColorTintG << 8) | baseColorTintB;
+	}
+
+	@Override
+	public void setColorTint(int r, int g, int b) {
+		baseColorTintR = r;
+		baseColorTintG = g;
+		baseColorTintB = b;
 	}
 
 	// ---------------------------------------------

@@ -141,7 +141,6 @@ public class SpriteGraphRepository extends EntityGroupManager {
 				lDefinition.unload();
 			}
 		}
-
 	}
 
 	// --------------------------------------
