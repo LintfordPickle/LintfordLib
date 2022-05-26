@@ -74,7 +74,7 @@ public class MessageManager extends BaseInstanceData implements IMessageProvider
 		}
 
 		// TODO: Make this optional: Make sure there are no special characters contained in the string
-		pMessage.message = pMessage.message.replaceAll("[^a-zA-Z0-9\\s+]", "");
+		// pMessage.message = pMessage.message.replaceAll("[^a-zA-Z0-9\\s+]", "");
 
 		// TODO: Make this optional: Remove new line and caridge return
 		pMessage.message = pMessage.message.replaceAll("(\\r\\n|\\r|\\n)", " ");
