@@ -19,7 +19,7 @@ public class BlurEffect {
 	// --------------------------------------
 
 	private static final String BLUR_EFFECT_VERT_SHADER = "/res/shaders/shader_basic_pt.vert";
-	private static final String BLUR_EFFECT_FRAG_SHADER = "res//shaders//blur.frag";
+	private static final String BLUR_EFFECT_FRAG_SHADER = "/res/shaders/shaderBlur.frag";
 
 	public enum BLUR_DIRECTION {
 		horizontal, vertical,
