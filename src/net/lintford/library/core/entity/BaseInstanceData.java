@@ -46,6 +46,11 @@ public abstract class BaseInstanceData implements Serializable {
 
 	}
 
+	/** Called after the save process has completed */
+	public void afterSaving() {
+
+	}
+
 	/** Called after the object has been loaded. Allows sub-classes to arrange their data after deserialization. */
 	public void afterLoaded(Object pParent) {
 

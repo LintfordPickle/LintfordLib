@@ -271,7 +271,7 @@ public class ScrollBar extends Rectangle implements IProcessMouseInput, IInputCl
 
 		// Draw the moving bar
 		final float lColorMod = mClickActive ? 0.35f : 0.55f;
-		final var lBarColor = ColorConstants.getColorWithRGBMod(ColorConstants.TertiaryColor.r * .8f, ColorConstants.TertiaryColor.g * .8f, ColorConstants.TertiaryColor.b * .8f, mScrollBarAlpha, lColorMod);
+		final var lBarColor = ColorConstants.getColorWithRGBMod(ColorConstants.PrimaryColor.r * .8f, ColorConstants.PrimaryColor.g * .8f, ColorConstants.PrimaryColor.g * .8f, mScrollBarAlpha, lColorMod);
 		pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, x, by, 16, mMarkerBarHeight, pZDepth, lBarColor);
 
 		lWhiteColorWithAlpha = ColorConstants.getWhiteWithAlpha(mScrollBarAlpha);
