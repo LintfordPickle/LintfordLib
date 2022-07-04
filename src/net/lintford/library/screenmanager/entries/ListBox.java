@@ -210,27 +210,25 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 
 		lSpriteBatch.begin(pCore.HUD());
 		final var lBackgroundColor = ColorConstants.getColor(.15f, .15f, .15f, 0.4f);
-		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_LEFT, lScreenOffset.x + x, lScreenOffset.y + y, lTileSize, lTileSize, pParentZDepth, lBackgroundColor);
-		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_MID, lScreenOffset.x + x + lTileSize, lScreenOffset.y + y, w - lTileSize * 2, lTileSize, pParentZDepth, lBackgroundColor);
-		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_RIGHT, lScreenOffset.x + x + w - lTileSize, lScreenOffset.y + y, lTileSize, lTileSize, pParentZDepth, lBackgroundColor);
+		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_LEFT, (int) (lScreenOffset.x + x), (int) (lScreenOffset.y + y), lTileSize, lTileSize, pParentZDepth, lBackgroundColor);
+		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_MID, (int) (lScreenOffset.x + x + lTileSize), (int) (lScreenOffset.y + y), (int)w - lTileSize * 2, lTileSize, pParentZDepth, lBackgroundColor);
+		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_RIGHT, (int) (lScreenOffset.x + x + (int)w - lTileSize), (int) (lScreenOffset.y + y), lTileSize, lTileSize, pParentZDepth, lBackgroundColor);
 
-		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_MID_LEFT, lScreenOffset.x + x, lScreenOffset.y + y + lTileSize, lTileSize, h - lTileSize * 2, pParentZDepth, lBackgroundColor);
-		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_MID_CENTER, lScreenOffset.x + x + lTileSize, lScreenOffset.y + y + lTileSize, w - lTileSize * 2, h - 64, pParentZDepth, lBackgroundColor);
-		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_MID_RIGHT, lScreenOffset.x + x + w - lTileSize, lScreenOffset.y + y + lTileSize, lTileSize, h - lTileSize * 2, pParentZDepth, lBackgroundColor);
+		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_MID_LEFT, (int) (lScreenOffset.x + x), (int) (lScreenOffset.y + y + lTileSize), lTileSize, (int)h - lTileSize * 2, pParentZDepth, lBackgroundColor);
+		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_MID_CENTER, (int) (lScreenOffset.x + x + lTileSize), (int) (lScreenOffset.y + y + lTileSize), (int)w - lTileSize * 2, (int)h - 64, pParentZDepth, lBackgroundColor);
+		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_MID_RIGHT, (int) (lScreenOffset.x + x + (int)w - lTileSize), (int) (lScreenOffset.y + y + lTileSize), lTileSize, (int)h - lTileSize * 2, pParentZDepth, lBackgroundColor);
 
-		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_LEFT, lScreenOffset.x + x, lScreenOffset.y + y + h - lTileSize, lTileSize, lTileSize, pParentZDepth, lBackgroundColor);
-		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_MID, lScreenOffset.x + x + lTileSize, lScreenOffset.y + y + h - lTileSize, w - lTileSize * 2, lTileSize, pParentZDepth, lBackgroundColor);
-		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_RIGHT, lScreenOffset.x + x + w - lTileSize, lScreenOffset.y + y + h - lTileSize, lTileSize, lTileSize, pParentZDepth, lBackgroundColor);
+		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_LEFT, (int) (lScreenOffset.x + x), (int) (lScreenOffset.y + (int)y + (int)h - lTileSize), lTileSize, lTileSize, pParentZDepth, lBackgroundColor);
+		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_MID, (int) (lScreenOffset.x + x + lTileSize), (int) (lScreenOffset.y + y + (int)h - lTileSize), w - lTileSize * 2, lTileSize, pParentZDepth, lBackgroundColor);
+		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_RIGHT, (int) (lScreenOffset.x + x + (int)w - lTileSize), (int) (lScreenOffset.y + (int)y + (int)h - lTileSize), lTileSize, lTileSize, pParentZDepth, lBackgroundColor);
 		lSpriteBatch.end();
 
-		// We need to use a stencil buffer to clip the list box items (which, when scrolling, could appear out-of-bounds of the listbox).
 		GL11.glEnable(GL11.GL_STENCIL_TEST);
 
 		GL11.glStencilFunc(GL11.GL_ALWAYS, 1, 0xFF); // Set any stencil to 1
 		GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_REPLACE); // What should happen to stencil values
 		GL11.glStencilMask(0x0F); // Write to stencil buffer
 
-		// Make sure we are starting with a fresh stencil buffer
 		GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT); // Clear the stencil buffer
 
 		// Fill in the renderable parts of the list box (this is needed!)
@@ -239,7 +237,6 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_BLACK, x, y + 2, w, h - 4, pParentZDepth, lColor);
 		lSpriteBatch.end();
 
-		// Start the stencil buffer test to filter out everything outside of the scroll view
 		GL11.glStencilFunc(GL11.GL_EQUAL, 1, 0xFF); // Pass test if stencil value is 1
 
 		for (int i = 0; i < mItems.size(); i++) {
@@ -255,7 +252,6 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 		GL11.glDisable(GL11.GL_STENCIL_TEST);
 
 		drawDebugCollidableBounds(pCore, lSpriteBatch);
-
 	}
 
 	// --------------------------------------
