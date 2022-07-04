@@ -3,7 +3,6 @@ package net.lintford.library.renderers.windows.components;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.Color;
-import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.fonts.FontUnit;
 import net.lintford.library.core.graphics.sprites.spritebatch.SpriteBatch;
 import net.lintford.library.core.graphics.textures.CoreTextureNames;
@@ -16,7 +15,9 @@ public class UIBar {
 	// --------------------------------------
 
 	private float x, y, w, h;
-	private final Color UiBarColor = new Color(1.f, 1.f, 1.f, 1.f);
+	private final Color UiBarOuterColor = new Color(1.f, 1.f, 1.f, 1.f);
+	private final Color UiBarInnerColor = new Color(1.f, 1.f, 1.f, 1.f);
+	private float mInnerBorderPadding = 1.f;
 
 	private float mMinValue;
 	private float mMaxValue;
@@ -28,6 +29,15 @@ public class UIBar {
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public void innerBorderPadding(float pValue) {
+		if (pValue < 0f)
+			pValue = 0f;
+		if (pValue > h)
+			pValue = h;
+
+		mInnerBorderPadding = pValue;
+	}
 
 	public void isInverted(boolean pIsVertical) {
 		mIsInverted = pIsVertical;
@@ -55,22 +65,26 @@ public class UIBar {
 		y = pY;
 		w = pW;
 		h = pH;
-
 	}
 
-	public void setColor(Color pColor) {
-		setColor(pColor.r, pColor.g, pColor.b, pColor.a);
-
+	public void setOuterColor(Color pColor) {
+		setOuterColor(pColor.r, pColor.g, pColor.b, pColor.a);
 	}
 
-	public void setColor(float pR, float pG, float pB, float pA) {
-		UiBarColor.setRGBA(pR, pG, pB, pA);
+	public void setOuterColor(float pR, float pG, float pB, float pA) {
+		UiBarOuterColor.setRGBA(pR, pG, pB, pA);
+	}
 
+	public void setInnerColor(Color pColor) {
+		setInnerColor(pColor.r, pColor.g, pColor.b, pColor.a);
+	}
+
+	public void setInnerColor(float pR, float pG, float pB, float pA) {
+		UiBarInnerColor.setRGBA(pR, pG, pB, pA);
 	}
 
 	public void setCurrentValue(float pValue) {
 		mCurValue = MathHelper.clamp(pValue, mMinValue, mMaxValue);
-
 	}
 
 	public void setMinMax(float pMinValue, float pMaxValue) {
@@ -96,38 +110,35 @@ public class UIBar {
 		if (pSpriteBatch == null || !pSpriteBatch.isDrawing())
 			return;
 
-		final float INNER_BORDER_PADDING = 2.f;
-
 		final var lCoreTexture = pCore.resources().spriteSheetManager().coreSpritesheet();
 
 		float lBarWidth = MathHelper.scaleToRange(mCurValue, mMinValue, mMaxValue, 0, mIsVertical ? h : w);
-		lBarWidth = MathHelper.clamp(lBarWidth - INNER_BORDER_PADDING * 2, 0, w);
 
-		final var lOutlineColor = ColorConstants.getColor(.1f, .1f, .1f);
-		pSpriteBatch.draw(lCoreTexture, CoreTextureNames.TEXTURE_WHITE, x, y, w, h, pComponentZDepth, lOutlineColor);
+		pSpriteBatch.draw(lCoreTexture, CoreTextureNames.TEXTURE_WHITE, x, y, w, h, pComponentZDepth, UiBarOuterColor);
 
 		if (mIsVertical) {
-			float lWidth = w - INNER_BORDER_PADDING * 2;
+			lBarWidth = MathHelper.clamp(lBarWidth - mInnerBorderPadding * 2, 0, h);
+			float lWidth = w - mInnerBorderPadding * 2;
 			float lHeight = lBarWidth;
 
 			float xx = x;
-			float yy = !mIsInverted ? y + h - INNER_BORDER_PADDING * 2 - lHeight : y + h - INNER_BORDER_PADDING * 2;
+			float yy = !mIsInverted ? y + h - mInnerBorderPadding * 2 - lHeight : y;
 			float ww = !mIsInverted ? lWidth : lWidth;
-			float hh = !mIsInverted ? lHeight : -lHeight;
+			float hh = !mIsInverted ? lHeight : lHeight;
 
-			pSpriteBatch.draw(lCoreTexture, CoreTextureNames.TEXTURE_WHITE, xx + INNER_BORDER_PADDING, yy + INNER_BORDER_PADDING, ww, hh, pComponentZDepth, UiBarColor);
+			pSpriteBatch.draw(lCoreTexture, CoreTextureNames.TEXTURE_WHITE, xx + mInnerBorderPadding, yy + mInnerBorderPadding, ww, hh, pComponentZDepth, UiBarInnerColor);
 
 		} else {
+			lBarWidth = MathHelper.clamp(lBarWidth - mInnerBorderPadding * 2, 0, w);
 			float lWidth = lBarWidth;
-			float lHeight = h - INNER_BORDER_PADDING * 2;
+			float lHeight = h - mInnerBorderPadding * 2;
 
-			float xx = !mIsInverted ? x : x + w - INNER_BORDER_PADDING * 2 - lWidth;
+			float xx = !mIsInverted ? x : x + w - mInnerBorderPadding * 2 - lWidth;
 			float yy = y;
 			float ww = !mIsInverted ? lWidth : lWidth;
 			float hh = !mIsInverted ? lHeight : lHeight;
 
-			pSpriteBatch.draw(lCoreTexture, CoreTextureNames.TEXTURE_WHITE, xx + INNER_BORDER_PADDING, yy + INNER_BORDER_PADDING, ww, hh, pComponentZDepth, UiBarColor);
+			pSpriteBatch.draw(lCoreTexture, CoreTextureNames.TEXTURE_WHITE, xx + mInnerBorderPadding, yy + mInnerBorderPadding, ww, hh, pComponentZDepth, UiBarInnerColor);
 		}
 	}
-
 }
