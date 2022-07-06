@@ -124,11 +124,9 @@ public class TextureBatchPCT {
 		mResourceManager = pResourceManager;
 
 		mShader.loadResources(pResourceManager);
-
 		if (mVboId == -1) {
 			mVboId = GL15.glGenBuffers();
 		}
-
 		mBuffer = MemoryUtil.memAllocFloat(MAX_SPRITES * NUM_VERTS_PER_SPRITE * VertexDataStructurePCT.stride);
 
 		mResourcesLoaded = true;
@@ -141,25 +139,21 @@ public class TextureBatchPCT {
 			return;
 
 		mShader.unloadResources();
-
 		if (mVboId > -1) {
 			GL15.glDeleteBuffers(mVboId);
 			Debug.debugManager().logger().v("OpenGL", "TextureBatchPCT: Unloading VboId = " + mVboId + " (" + Thread.currentThread().getName() + ")");
 			mVboId = -1;
 		}
-
 		if (mVaoId > -1) {
 			GL30.glDeleteVertexArrays(mVaoId);
 			Debug.debugManager().logger().v("OpenGL", "TextureBatchPCT: Unloading VaoId = " + mVaoId + " (" + Thread.currentThread().getName() + ")");
 			mVaoId = -1;
 		}
-
 		if (mBuffer != null) {
 			mBuffer.clear();
 			MemoryUtil.memFree(mBuffer);
 			mBuffer = null;
 		}
-
 		mResourcesLoaded = false;
 
 		Debug.debugManager().stats().decTag(DebugStats.TAG_ID_BATCH_OBJECTS);
@@ -232,16 +226,13 @@ public class TextureBatchPCT {
 
 		if (!mIsDrawing)
 			return;
-
 		if (pTexture == null && TextureManager.USE_DEBUG_MISSING_TEXTURES) {
 			pTexture = mResourceManager.textureManager().textureNotFound();
 
 		}
-
 		if (mUseCheckerPattern) {
 			pTexture = mResourceManager.textureManager().checkerIndexedTexture();
 		}
-
 		if (pTexture != null) {
 			if (mCurrentTexID == -1) {
 				mCurrentTexID = pTexture.getTextureID();
@@ -251,11 +242,9 @@ public class TextureBatchPCT {
 				mCurrentTexID = pTexture.getTextureID();
 			}
 		}
-
 		if (mCurNumSprites >= MAX_SPRITES) {
 			flush();
 		}
-
 		final List<Vector2f> lVertList = pDestRect.getVertices();
 
 		// Vertex 0
@@ -296,15 +285,12 @@ public class TextureBatchPCT {
 	public void draw(Texture pTexture, float pSX, float pSY, float pSW, float pSH, float pDX, float pDY, float pDW, float pDH, float pZ, Color pTint) {
 		if (!mIsDrawing)
 			return;
-
 		if (pTexture == null && TextureManager.USE_DEBUG_MISSING_TEXTURES) {
 			pTexture = mResourceManager.textureManager().textureNotFound();
 		}
-
 		if (mUseCheckerPattern) {
 			pTexture = mResourceManager.textureManager().checkerIndexedTexture();
 		}
-
 		if (pTexture != null) {
 			if (mCurrentTexID == -1) {
 				mCurrentTexID = pTexture.getTextureID();
@@ -314,11 +300,9 @@ public class TextureBatchPCT {
 				mCurrentTexID = pTexture.getTextureID();
 			}
 		}
-
 		if (mCurNumSprites >= MAX_SPRITES) {
 			flush();
 		}
-
 		// Vertex 0
 		float x1 = pDX;
 		float y1 = pDY;
@@ -361,19 +345,16 @@ public class TextureBatchPCT {
 		drawAroundCenter(pTexture, pSrcRect.x(), pSrcRect.y(), pSrcRect.w(), pSrcRect.h(), pDX, pDY, pDW, pDH, pZ, pRot, pROX, pROY, pScale, pTint);
 	}
 
-	public void drawAroundCenter(Texture pTexture, float pSX, float pSY, float pSW, float pSH, float pDX, float pDY, float pDW, float pDH, float pZ, float pRot, float pROX, float pROY, float pScale,
-			Color pTint) {
+	public void drawAroundCenter(Texture pTexture, float pSX, float pSY, float pSW, float pSH, float pDX, float pDY, float pDW, float pDH, float pZ, float pRot, float pROX, float pROY, float pScale, Color pTint) {
 		if (!mResourcesLoaded)
 			return;
 
 		if (!mIsDrawing)
 			return;
-
 		if (pTexture == null && TextureManager.USE_DEBUG_MISSING_TEXTURES) {
 			pTexture = mResourceManager.textureManager().textureNotFound();
 
 		}
-
 		if (pTexture != null) {
 			if (mCurrentTexID == -1) {
 				mCurrentTexID = pTexture.getTextureID();
@@ -384,11 +365,9 @@ public class TextureBatchPCT {
 
 			}
 		}
-
 		if (mCurNumSprites >= MAX_SPRITES) {
 			flush();
 		}
-
 		float sin = (float) Math.sin(pRot);
 		float cos = (float) Math.cos(pRot);
 
@@ -401,37 +380,37 @@ public class TextureBatchPCT {
 		float originY = -pROY;
 
 		// Vertex 0 (bottom left)
-		float x0 = -lHalfW * cos - lHalfH * sin;
-		float y0 = -lHalfW * sin + lHalfH * cos;
+		float x0 = -(lHalfW - originX) * cos - (lHalfH + originY) * sin;
+		float y0 = -(lHalfW - originX) * sin + (lHalfH + originY) * cos;
 		float u0 = pSX / pTexture.getTextureWidth();
 		float v0 = (pSY + pSH) / pTexture.getTextureHeight();
 
 		// Vertex 1 (top left)
-		float x1 = -lHalfW * cos - -lHalfH * sin;
-		float y1 = -lHalfW * sin + -lHalfH * cos;
+		float x1 = -(lHalfW - originX) * cos - (-lHalfH + originY) * sin;
+		float y1 = -(lHalfW - originX) * sin + (-lHalfH + originY) * cos;
 		float u1 = pSX / pTexture.getTextureWidth();
 		float v1 = pSY / pTexture.getTextureHeight();
 
 		// Vertex 2 (top right)
-		float x2 = lHalfW * cos - -lHalfH * sin;
-		float y2 = lHalfW * sin + -lHalfH * cos;
+		float x2 = (lHalfW + originX) * cos - (-lHalfH + originY) * sin;
+		float y2 = (lHalfW + originX) * sin + (-lHalfH + originY) * cos;
 		float u2 = (pSX + pSW) / pTexture.getTextureWidth();
 		float v2 = pSY / pTexture.getTextureHeight();
 
 		// Vertex 3 (bottom right)
-		float x3 = lHalfW * cos - lHalfH * sin;
-		float y3 = lHalfW * sin + lHalfH * cos;
+		float x3 = (lHalfW + originX) * cos - (lHalfH + originY) * sin;
+		float y3 = (lHalfW + originX) * sin + (lHalfH + originY) * cos;
 		float u3 = (pSX + pSW) / pTexture.getTextureWidth();
 		float v3 = (pSY + pSH) / pTexture.getTextureHeight();
 
 		// CCW 102203
-		addVertToBuffer(pDX + originX + x1, pDY + originY + y1, pZ, 1f, pTint.r, pTint.g, pTint.b, pTint.a, u1, v1); // 1
-		addVertToBuffer(pDX + originX + x0, pDY + originY + y0, pZ, 1f, pTint.r, pTint.g, pTint.b, pTint.a, u0, v0); // 0
-		addVertToBuffer(pDX + originX + x2, pDY + originY + y2, pZ, 1f, pTint.r, pTint.g, pTint.b, pTint.a, u2, v2); // 2
+		addVertToBuffer(pDX + x1, pDY + y1, pZ, 1f, pTint.r, pTint.g, pTint.b, pTint.a, u1, v1); // 1
+		addVertToBuffer(pDX + x0, pDY + y0, pZ, 1f, pTint.r, pTint.g, pTint.b, pTint.a, u0, v0); // 0
+		addVertToBuffer(pDX + x2, pDY + y2, pZ, 1f, pTint.r, pTint.g, pTint.b, pTint.a, u2, v2); // 2
 
-		addVertToBuffer(pDX + originX + x2, pDY + originY + y2, pZ, 1f, pTint.r, pTint.g, pTint.b, pTint.a, u2, v2); // 2
-		addVertToBuffer(pDX + originX + x0, pDY + originY + y0, pZ, 1f, pTint.r, pTint.g, pTint.b, pTint.a, u0, v0); // 0
-		addVertToBuffer(pDX + originX + x3, pDY + originY + y3, pZ, 1f, pTint.r, pTint.g, pTint.b, pTint.a, u3, v3); // 3
+		addVertToBuffer(pDX + x2, pDY + y2, pZ, 1f, pTint.r, pTint.g, pTint.b, pTint.a, u2, v2); // 2
+		addVertToBuffer(pDX + x0, pDY + y0, pZ, 1f, pTint.r, pTint.g, pTint.b, pTint.a, u0, v0); // 0
+		addVertToBuffer(pDX + x3, pDY + y3, pZ, 1f, pTint.r, pTint.g, pTint.b, pTint.a, u3, v3); // 3
 
 		mCurNumSprites++;
 	}
@@ -442,17 +421,14 @@ public class TextureBatchPCT {
 
 		if (!mIsDrawing)
 			return;
-
 		if (pTexture == null && TextureManager.USE_DEBUG_MISSING_TEXTURES) {
 			pTexture = mResourceManager.textureManager().textureNotFound();
 
 		}
-
 		if (mUseCheckerPattern) {
 			pTexture = mResourceManager.textureManager().checkerIndexedTexture();
 
 		}
-
 		if (pTexture != null) {
 			if (mCurrentTexID == -1) {
 				mCurrentTexID = pTexture.getTextureID();
@@ -462,11 +438,9 @@ public class TextureBatchPCT {
 				mCurrentTexID = pTexture.getTextureID();
 			}
 		}
-
 		if (mCurNumSprites >= MAX_SPRITES) {
 			flush();
 		}
-
 		final int POINTS = 12;
 
 		float angle = 0;
@@ -496,7 +470,6 @@ public class TextureBatchPCT {
 			addVertToBuffer(x0, y0, pZ, 1f, pTint.r, pTint.g, pTint.b, pTint.a, u0, v0); // 0
 			addVertToBuffer(x2, y2, pZ, 1f, pTint.r, pTint.g, pTint.b, pTint.a, u2, v2); // 2
 		}
-
 		mCurNumSprites++;
 	}
 
@@ -506,7 +479,6 @@ public class TextureBatchPCT {
 			flush();
 
 		}
-
 		mBuffer.put(x);
 		mBuffer.put(y);
 		mBuffer.put(z);
@@ -580,7 +552,6 @@ public class TextureBatchPCT {
 			GL13.glActiveTexture(GL13.GL_TEXTURE0);
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, mCurrentTexID);
 		}
-
 		if (mBlendEnabled) {
 			GL11.glEnable(GL11.GL_BLEND);
 			GL11.glBlendFunc(mBlendFuncSrcFactor, mBlendFuncDstFactor);
@@ -588,19 +559,16 @@ public class TextureBatchPCT {
 			GL11.glDisable(GL11.GL_BLEND);
 			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		}
-
 		mCustomShader.projectionMatrix(mCamera.projection());
 		mCustomShader.viewMatrix(mCamera.view());
 		mCustomShader.modelMatrix(mModelMatrix);
 
 		mCustomShader.bind();
-
 		{
 			Debug.debugManager().stats().incTag(DebugStats.TAG_ID_DRAWCALLS);
 			Debug.debugManager().stats().incTag(DebugStats.TAG_ID_VERTS, mVertexCount);
 			Debug.debugManager().stats().incTag(DebugStats.TAG_ID_TRIS, mVertexCount / 3);
 		}
-
 		GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, mVertexCount);
 
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
