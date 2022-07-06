@@ -102,7 +102,6 @@ public class SpriteSheetDefinition {
 	public SpriteSheetDefinition(final String pSpriteSheetName) {
 		this();
 		spriteSheetName = pSpriteSheetName;
-
 	}
 
 	public void copyFrom(SpriteSheetDefinition pOtherSpritesheet) {
@@ -135,27 +134,21 @@ public class SpriteSheetDefinition {
 			return;
 
 		}
-
 		mEntityGroupID = pEntityGroupID;
 
 		var lTextureManager = pResourceManager.textureManager();
 		texture = lTextureManager.getTexture(textureName, mEntityGroupID);
-
 		if (texture == null || texture.name().equals(TextureManager.TEXTURE_NOT_FOUND_NAME)) {
 			Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Spritesheet '%s' cannot locate texture %s in EntityGroupID %d.", spriteSheetName, textureName, pEntityGroupID));
 		}
-
 		textureWidth = texture.getTextureWidth();
 		textureHeight = texture.getTextureHeight();
-
 		if (spriteFrames == null) {
 			spriteFrames = new SpriteFrame[0];
 		}
-
 		if (spriteInstancePool == null) {
 			spriteInstancePool = new ArrayList<>();
 		}
-
 		if (animationFramesMap == null) {
 			animationFramesMap = new HashMap<>();
 
@@ -168,16 +161,13 @@ public class SpriteSheetDefinition {
 				lSpriteDefinition.loadContent(this);
 			}
 		}
-
 		// Create an AnimationFrames objects for each single SpriteFrame
 		final int lSpriteFrameArrayCount = spriteFrames.length;
 		for (int i = 0; i < lSpriteFrameArrayCount; i++) {
 			final String lSpriteFrameName = spriteFrames[i].name();
-
 			if (animationFramesMap.containsKey(lSpriteFrameName)) {
 				continue;
 			}
-
 			final SpriteFrame lSpriteFrame = spriteFrames[i];
 
 			SpriteDefinition lNewSprite = new SpriteDefinition();
@@ -206,6 +196,14 @@ public class SpriteSheetDefinition {
 		return spriteFrames[pIndex];
 	}
 
+	public SpriteFrame getSpriteFrame(String pSpriteName) {
+		final var lSpriteIndex = getSpriteFrameIndexByName(pSpriteName);
+		if (lSpriteIndex < 0 || lSpriteIndex >= spriteFrames.length)
+			return null;
+
+		return spriteFrames[lSpriteIndex];
+	}
+
 	public int getSpriteFrameIndexByName(String pFrameName) {
 		if (pFrameName == null || pFrameName.length() == 0)
 			return -1;
@@ -220,12 +218,10 @@ public class SpriteSheetDefinition {
 	/** Adds a new sprite definition to this SpriteSheet. */
 	public void addSpriteDefinition(final String pNewName, final SpriteDefinition pNewSprite) {
 		animationFramesMap.put(pNewName, pNewSprite);
-
 	}
 
 	public SpriteDefinition getSpriteDefinition(final String pSpriteName) {
 		return animationFramesMap.get(pSpriteName);
-
 	}
 
 	/** Returns a new {@link SpriteInstance} based on the {@link ISpriteDefinition} of the name provided. Null is returned if the {@link SpriteSheetDefinition} doesn*t contains a Sprite instance of the given name. */
@@ -233,7 +229,6 @@ public class SpriteSheetDefinition {
 		if (animationFramesMap.containsKey(pSpriteName)) {
 			return getSpriteInstance(animationFramesMap.get(pSpriteName));
 		}
-
 		return null;
 	}
 
@@ -243,19 +238,16 @@ public class SpriteSheetDefinition {
 			return null;
 
 		}
-
 		final var lReturnSpriteInstance = getFreeInstance();
 		lReturnSpriteInstance.init(pSpriteDefinition);
 
 		return lReturnSpriteInstance;
-
 	}
 
 	public void releaseInstance(SpriteInstance pInstance) {
 		if (pInstance == null)
 			return;
 		pInstance.kill();
-
 		if (!spriteInstancePool.contains(pInstance)) {
 			spriteInstancePool.add(pInstance);
 		}
@@ -270,23 +262,18 @@ public class SpriteSheetDefinition {
 		final int POOL_SIZE = spriteInstancePool.size();
 		for (int i = 0; i < POOL_SIZE; i++) {
 			SpriteInstance lSprite = spriteInstancePool.get(i);
-
 			if (lSprite.isFree()) {
 				lReturnInstance = lSprite;
 				break;
 
 			}
-
 		}
-
 		if (lReturnInstance != null) {
 			spriteInstancePool.remove(lReturnInstance);
 			return lReturnInstance;
 
 		}
-
 		return extendInstancePool(4);
-
 	}
 
 	private SpriteInstance extendInstancePool(int pAmt) {
@@ -294,9 +281,7 @@ public class SpriteSheetDefinition {
 			spriteInstancePool.add(new SpriteInstance());
 
 		}
-
 		return new SpriteInstance();
-
 	}
 
 }
