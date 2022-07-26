@@ -11,12 +11,14 @@ import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
 import java.util.List;
 
 import net.lintford.library.ConstantsApp;
 import net.lintford.library.core.audio.AudioManager;
 import net.lintford.library.core.audio.music.MusicManager;
 import net.lintford.library.core.box2d.PObjectManager;
+import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.geometry.spritegraph.SpriteGraphRepository;
 import net.lintford.library.core.graphics.fonts.BitmapFontManager;
 import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetManager;
@@ -57,9 +59,15 @@ public class ResourceManager {
 	private boolean mResourcesLoaded;
 	private boolean mMonitorResourcesForChanges;
 
+	private final List<Integer> mProtectedEntityGroupUids = new ArrayList<>();
+
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public boolean isEntityGroupUidProtected(int pEntityGroupUid) {
+		return mProtectedEntityGroupUids.contains(pEntityGroupUid);
+	}
 
 	public boolean isLoaded() {
 		return mResourcesLoaded;
@@ -189,6 +197,20 @@ public class ResourceManager {
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
+
+	public void addProtectedEntityGroupUid(int pProtectedEntityGroupUid) {
+		if (mProtectedEntityGroupUids.contains(pProtectedEntityGroupUid) == false) {
+			Debug.debugManager().logger().i(getClass().getSimpleName(), "Adding EntityGroupUid to protected list: " + pProtectedEntityGroupUid);
+			mProtectedEntityGroupUids.add(pProtectedEntityGroupUid);
+		}
+	}
+
+	public void removeProtectedEntityGroupUid(int pProtectedEntityGroupUid) {
+		if (mProtectedEntityGroupUids.contains(pProtectedEntityGroupUid) == true) {
+			Debug.debugManager().logger().i(getClass().getSimpleName(), "Removing EntityGroupUid to protected list: " + pProtectedEntityGroupUid);
+			mProtectedEntityGroupUids.remove(pProtectedEntityGroupUid);
+		}
+	}
 
 	private void enableFolderWatchersForResourceChanges() {
 		ConstantsApp.registerValue(DEBUG_LIVE_RESOURCES_RELOAD_NAME, DEBUG_LIVE_RESOURCES_RELOAD_ENABLED);

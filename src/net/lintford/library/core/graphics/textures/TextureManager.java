@@ -297,11 +297,17 @@ public class TextureManager extends EntityGroupManager {
 	public int decreaseReferenceCounts(int pEntityGroupID) {
 		final var lTextureGroup = mTextureGroupMap.get(pEntityGroupID);
 
-		// Create a new TextureGroup for this EntityGroupID if one doesn't exist
 		if (lTextureGroup == null) {
 			return 0;
 		} else {
-			lTextureGroup.referenceCount--;
+			if (mResourceManager.isEntityGroupUidProtected(pEntityGroupID)) {
+				Debug.debugManager().logger().i(getClass().getSimpleName(), "Cannot decrease reference count on EntityGroupUid: " + pEntityGroupID + " (protected)");
+				return lTextureGroup.referenceCount;
+			}
+
+			if (lTextureGroup.referenceCount > 0) {
+				lTextureGroup.referenceCount--;
+			}
 		}
 
 		if (lTextureGroup.referenceCount <= 0) {

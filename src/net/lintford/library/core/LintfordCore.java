@@ -353,6 +353,8 @@ public abstract class LintfordCore {
 		}
 
 		mResourceManager = new ResourceManager(mMasterConfig);
+		mResourceManager.addProtectedEntityGroupUid(CORE_ENTITY_GROUP_ID);
+		
 		mResourceController = new ResourceController(mControllerManager, mResourceManager, CORE_ENTITY_GROUP_ID);
 		mCoreTimeController = new CoreTimeController(mControllerManager, mCoreTime, mGameTime, CORE_ENTITY_GROUP_ID);
 
