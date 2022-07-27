@@ -91,10 +91,10 @@ public class ColorConstants {
 	public final static Color GREY_DARK = new Color(100f / 255f, 100f / 255f, 100f / 255f);
 	public final static Color BLACK = new Color(0.f, 0.f, 0.f);
 
-	public final static Color RED = new Color(255f / 255f, 51f / 255f, 51f / 255f);
-	public final static Color GREEN = new Color(51f / 255f, 255f / 255f, 51f / 255f);
-	public final static Color YELLOW = new Color(255f / 255f, 255f / 255f, 255f / 255f);
-	public final static Color BLUE = new Color(51f / 255f, 51f / 255f, 255f / 255f);
+	public final static Color RED = new Color(255f / 255f, 0f / 255f, 0f / 255f);
+	public final static Color GREEN = new Color(0f / 255f, 255f / 255f, 0f / 255f);
+	public final static Color BLUE = new Color(0f / 255f, 0f / 255f, 255f / 255f);
+	public final static Color YELLOW = new Color(255f / 255f, 255f / 255f, 0f / 255f);
 
 	// light sources
 	public final static Color CANDLE = new Color(255f / 255f, 147f / 255f, 41f / 255f);
