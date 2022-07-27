@@ -327,7 +327,6 @@ public class TextureManager extends EntityGroupManager {
 
 	public Texture loadTexture(String pName, String pTextureLocation, int pFilter, int pEntityGroupID) {
 		return loadTexture(pName, pTextureLocation, pFilter, false, pEntityGroupID);
-
 	}
 
 	public Texture loadTexture(String pName, String pTextureLocation, int pFilter, boolean pReload, int pEntityGroupID) {
@@ -393,37 +392,30 @@ public class TextureManager extends EntityGroupManager {
 		return lTextureGroup;
 	}
 
-	public Texture loadTexture(String pName, int[] pColorData, int pWidth, int pHeight, int pEntityGroupID) {
-		return loadTexture(pName, pColorData, pWidth, pHeight, GL11.GL_NEAREST, GL12.GL_REPEAT, GL12.GL_REPEAT, pEntityGroupID);
+	public Texture loadTexture(String pName, int[] pColorDataARGB, int pWidth, int pHeight, int pEntityGroupID) {
+		return loadTexture(pName, pColorDataARGB, pWidth, pHeight, GL11.GL_NEAREST, GL12.GL_REPEAT, GL12.GL_REPEAT, pEntityGroupID);
 	}
 
-	public Texture loadTexture(String pName, int[] pColorData, int pWidth, int pHeight, int pFilter, int pWrapSMode, int pWrapTMode, int pEntityGroupID) {
+	public Texture loadTexture(String pName, int[] pColorDataARGB, int pWidth, int pHeight, int pFilter, int pWrapSMode, int pWrapTMode, int pEntityGroupID) {
 		Texture lResult = null;
 		TextureGroup lTextureGroup = getTextureGroup(pEntityGroupID);
 
 		if (lTextureGroup.mTextureMap.containsKey(pName)) {
 			lResult = lTextureGroup.mTextureMap.get(pName);
-			unloadTexture(lResult, pEntityGroupID);
-
 		}
 
-		if (lResult != null) {
-			lResult.updateGLTextureData(pColorData, pWidth, pHeight);
-
+		if (lResult != null && lResult.getTextureID() != -1) {
+			lResult.updateGLTextureData(pColorDataARGB, pWidth, pHeight);
 			return lResult;
 		} else {
-			Texture lTex = Texture.createTexture(pName, pName, pColorData, pWidth, pHeight, pFilter, pWrapSMode, pWrapTMode);
+			Texture lTex = Texture.createTexture(pName, pName, pColorDataARGB, pWidth, pHeight, pFilter, pWrapSMode, pWrapTMode);
 			if (lTex != null) {
-				// Can't reload rgb data on-the-fly
 				lTex.reloadable(false);
 				lTextureGroup.mTextureMap.put(pName, lTex);
-
 			}
 
 			return lTex;
-
 		}
-
 	}
 
 	public boolean saveTextureToFile(int pWidth, int pHeight, int[] pData, String pFileLocation) {
