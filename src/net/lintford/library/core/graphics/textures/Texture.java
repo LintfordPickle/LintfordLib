@@ -36,7 +36,7 @@ public class Texture {
 	private int mTextureFilterMode;
 	private int mWrapModeS;
 	private int mWrapModeT;
-	private int[] mColorData;
+	private int[] mARGBColorData;
 
 	/**
 	 * In order to detect changes to the texture when trying to reload textures, we will store the file size of the texture each time it is loaded.
@@ -54,7 +54,7 @@ public class Texture {
 	// --------------------------------------
 
 	public int[] RGBColorData() {
-		return mColorData;
+		return mARGBColorData;
 	}
 
 	public String name() {
@@ -274,21 +274,19 @@ public class Texture {
 		final int lWidth = pImage.getWidth();
 		final int lHeight = pImage.getHeight();
 
-		// Get the pixels from the buffered image
-		final int[] lPixels = new int[lWidth * lHeight];
-		pImage.getRGB(0, 0, lWidth, lHeight, lPixels, 0, lWidth);
+		final var lPixelsARGB = pImage.getRGB(0, 0, lWidth, lHeight, null, 0, lWidth);
 
-		return createTexture(pName, pTextureLocation, changeARGBtoABGR(lPixels, lWidth, lHeight), lWidth, lHeight, pFilter, GL12.GL_REPEAT, GL12.GL_REPEAT);
+		return createTexture(pName, pTextureLocation, lPixelsARGB, lWidth, lHeight, pFilter, GL12.GL_REPEAT, GL12.GL_REPEAT);
 	}
 
 	/**
 	 * Creates an OpenGL Texture from RGB data.
 	 */
-	static Texture createTexture(String pName, String mTextureLocation, int[] pPixels, int pWidth, int pHeight, int pFilter, int pWrapModeS, int pWrapModeT) {
+	static Texture createTexture(String pName, String mTextureLocation, int[] pPixelsARGB, int pWidth, int pHeight, int pFilter, int pWrapModeS, int pWrapModeT) {
 		final int lTexID = GL11.glGenTextures();
 
-		var lIntBuffer = MemoryUtil.memAllocInt(pPixels.length * 4);
-		lIntBuffer.put(pPixels);
+		var lIntBuffer = MemoryUtil.memAllocInt(pPixelsARGB.length * 4);
+		lIntBuffer.put(pPixelsARGB);
 		lIntBuffer.flip();
 
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, lTexID);
@@ -298,7 +296,7 @@ public class Texture {
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, pWrapModeS);
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, pWrapModeT);
 
-		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, pWidth, pHeight, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, lIntBuffer);
+		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, pWidth, pHeight, 0, GL12.GL_BGRA, GL11.GL_UNSIGNED_BYTE, lIntBuffer);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 
 		MemoryUtil.memFree(lIntBuffer);
@@ -306,7 +304,7 @@ public class Texture {
 
 		final var lNewTexture = new Texture(pName, lTexID, mTextureLocation, pWidth, pHeight, pFilter);
 
-		lNewTexture.mColorData = pPixels;
+		lNewTexture.mARGBColorData = pPixelsARGB;
 		lNewTexture.mTextureFilterMode = pFilter;
 		lNewTexture.mWrapModeS = pWrapModeS;
 		lNewTexture.mWrapModeT = pWrapModeT;
@@ -378,8 +376,8 @@ public class Texture {
 
 	}
 
-	void updateGLTextureData(int[] pColorData, int pWidth, int pHeight) {
-		if (pColorData.length != pWidth * pHeight)
+	void updateGLTextureData(int[] pPixelsARGB, int pWidth, int pHeight) {
+		if (pPixelsARGB.length == 0 || pPixelsARGB.length != pWidth * pHeight)
 			return;
 
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, mTextureId);
@@ -390,13 +388,15 @@ public class Texture {
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, mWrapModeS);
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, mWrapModeT);
 
-		var lIntBuffer = MemoryUtil.memAllocInt(pColorData.length * 4);
-		lIntBuffer.put(pColorData);
+		var lIntBuffer = MemoryUtil.memAllocInt(pPixelsARGB.length * 4);
+		lIntBuffer.put(pPixelsARGB);
 		lIntBuffer.flip();
 
-		mColorData = pColorData;
+		mARGBColorData = pPixelsARGB;
+		mTextureWidth = pWidth;
+		mTextureHeight = pHeight;
 
-		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, pWidth, pHeight, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, lIntBuffer);
+		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, pWidth, pHeight, 0, GL12.GL_BGRA, GL11.GL_UNSIGNED_BYTE, lIntBuffer);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 
 		MemoryUtil.memFree(lIntBuffer);
@@ -450,12 +450,26 @@ public class Texture {
 		return lReturnData;
 	}
 
-	static int[] changeRGBtoARGB(int[] pInput, int pWidth, int pHeight) {
+	static int[] changeARGBAtoRGBA(int[] pInput, int pWidth, int pHeight) {
 		int[] lReturnData = new int[pWidth * pHeight];
 		for (int i = 0; i < pWidth * pHeight; i++) {
-			int b = (pInput[i] & 0xff000000) >> 24;
+			int a = (pInput[i] & 0xff000000) >> 24;
+			int r = (pInput[i] & 0xff0000) >> 16;
+			int g = (pInput[i] & 0xff00) >> 8;
+			int b = (pInput[i] & 0xff);
+
+			lReturnData[i] = r << 24 | g << 16 | b << 8 | a;
+		}
+
+		return lReturnData;
+	}
+
+	static int[] changeRGBAtoARGB(int[] pInput, int pWidth, int pHeight) {
+		int[] lReturnData = new int[pWidth * pHeight];
+		for (int i = 0; i < pWidth * pHeight; i++) {
+			int r = (pInput[i] & 0xff000000) >> 24;
 			int g = (pInput[i] & 0xff0000) >> 16;
-			int r = (pInput[i] & 0xff00) >> 8;
+			int b = (pInput[i] & 0xff00) >> 8;
 			int a = (pInput[i] & 0xff);
 
 			lReturnData[i] = a << 24 | r << 16 | g << 8 | b;
