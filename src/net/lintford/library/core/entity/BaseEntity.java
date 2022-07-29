@@ -15,11 +15,8 @@ public class BaseEntity {
 	// Variables
 	// --------------------------------------
 
-	// although the name is a fundamental part of the definition, it isn't final becauase many definitions will be
-	// deserialized from file at runtime and their names are not available during object creation.
-
+	/** the name of the definition */
 	public String name;
-	public String outname;
 
 	// --------------------------------------
 	// Properties
@@ -27,7 +24,6 @@ public class BaseEntity {
 
 	public static int getEntityNumber() {
 		return mAtomicInteger.incrementAndGet();
-
 	}
 
 	// --------------------------------------
@@ -35,17 +31,6 @@ public class BaseEntity {
 	// --------------------------------------
 
 	public BaseEntity() {
-	}
-
-	// --------------------------------------
-	// Methods
-	// --------------------------------------
-
-	public String getDropItemName() {
-		if (outname != null && !outname.isEmpty())
-			return outname;
-
-		return name;
 	}
 
 }

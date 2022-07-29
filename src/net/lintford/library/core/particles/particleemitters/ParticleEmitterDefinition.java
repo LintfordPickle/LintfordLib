@@ -8,7 +8,6 @@ public class ParticleEmitterDefinition extends BaseDefinition {
 	// Variables
 	// --------------------------------------
 
-	public String displayName;
 	public ParticleEmitterDefinition[] childEmitters;
 	public String particleSystemName;
 	public float emitTimeMin;

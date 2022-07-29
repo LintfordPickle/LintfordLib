@@ -10,11 +10,28 @@ public abstract class BaseDefinition extends BaseEntity {
 
 	public transient short definitionUid;
 
+	/** used for linking entities */
+	protected String outname;
+
+	/** user friendly name for the front end */
+	protected String displayName;
+
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
 
 	public String definitionName() {
+		return name;
+	}
+
+	public String displayName() {
+		return displayName;
+	}
+
+	public String outname() {
+		if (outname != null && !outname.isEmpty())
+			return outname;
+
 		return name;
 	}
 
