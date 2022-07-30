@@ -111,7 +111,6 @@ public class MenuImageEntry extends MenuEntry {
 
 		mLeftMargin = 20;
 		mRightMargin = 20;
-
 	}
 
 	// --------------------------------------
@@ -137,8 +136,7 @@ public class MenuImageEntry extends MenuEntry {
 	public void updateStructure() {
 		super.updateStructure();
 
-		h = mMainTexture != null ? mMainTexture.getTextureHeight() + 20f : h;
-
+		h = mMainTexture != null ? mMainTexture.getTextureHeight() : h;
 	}
 
 	@Override
@@ -164,12 +162,12 @@ public class MenuImageEntry extends MenuEntry {
 
 	// limited by the amount of height available
 	// so fit the width based on the asepct ratio
-	private void fitWidthToHeight(float pImageHeight, float lAspectRatio) {
+	private void fitWidthToHeight(float pAvailableHeightInParentContainer, float lAspectRatio) {
 		float maxAvailableWidth = mMaxWidth;
-		float thMaxHeight = MathHelper.clamp(pImageHeight, 0.f, mMaxHeight);
+		float thMaxHeight = MathHelper.clamp(pAvailableHeightInParentContainer, 0.f, mMaxHeight);
 
 		if (mScaleToFitParent && lAspectRatio != 0) {
-			maxAvailableWidth = thMaxHeight / lAspectRatio;
+			maxAvailableWidth = (thMaxHeight - marginTop() - marginBottom()) / lAspectRatio;
 		}
 
 		if (mMainTexture != null) {
