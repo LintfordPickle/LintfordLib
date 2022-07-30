@@ -68,12 +68,46 @@ public class MathHelper {
 		return (value1 + ((value2 - value1) * amount));
 	}
 
-	public static float max(float value1, float value2) {
-		return Math.max(value1, value2);
+	public static float max(float a, float b) {
+		return a > b ? a : b;
 	}
 
-	public static float min(float value1, float value2) {
-		return Math.min(value1, value2);
+	public static float min(float a, float b) {
+		return a < b ? a : b;
+	}
+
+	public static final float bias(float b, float t) {
+		return (float) Math.pow(t, Math.log(b) / Math.log(0.5));
+	}
+
+	public static final float pingPong(float t) {
+		t -= (int) (t * 0.5f) * 2;
+		return t < 1 ? t : 2 - t;
+	}
+
+	public static final int floor(float f) {
+		return f >= 0 ? (int) f : (int) f - 1;
+	}
+
+	public static final int round(float f) {
+		return f >= 0 ? (int) (f + 0.5f) : (int) (f - 0.5f);
+	}
+
+	public static final float interpHermite(float t) {
+		return t * t * (3 - 2 * t);
+	}
+
+	public static final float interpQuintic(float t) {
+		return t * t * t * (t * (t * 6 - 15) + 10);
+	}
+
+	public static final float cubicLerp(float a, float b, float c, float d, float t) {
+		float p = (d - c) - (a - b);
+		return t * t * t * p + t * t * ((a - b) - p) + t * (c - a) + b;
+	}
+
+	public static final float abs(float f) {
+		return f < 0 ? -f : f;
 	}
 
 	public static float mix(float x, float y, float a) {
