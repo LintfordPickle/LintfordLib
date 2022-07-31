@@ -14,6 +14,8 @@ public class NoiseBuilderSelect extends NoiseBuilderModuleBase {
 	protected final NoiseBuilderScaler mThreshold = new NoiseBuilderScaler(0);
 	protected final NoiseBuilderScaler mFalloff = new NoiseBuilderScaler(0);
 
+	private boolean mLastSelectLow;
+
 	// --------------------------------------
 	// Constructors
 	// --------------------------------------
@@ -358,6 +360,10 @@ public class NoiseBuilderSelect extends NoiseBuilderModuleBase {
 	// Methods
 	// --------------------------------------
 
+	public boolean lastSelectLow() {
+		return mLastSelectLow;
+	}
+
 	public void setLowSource(NoiseBuilderModuleBase b) {
 		mLow.set(b);
 	}
@@ -406,25 +412,27 @@ public class NoiseBuilderSelect extends NoiseBuilderModuleBase {
 
 		if (falloff > 0.0) {
 			if (control < (threshold - falloff)) {
+				mLastSelectLow = true;
 				return mLow.get(x, y);
 			} else if (control > (threshold + falloff)) {
+				mLastSelectLow = false;
 				return mHigh.get(x, y);
 			} else {
 				float lower = threshold - falloff;
 				float upper = threshold + falloff;
-				float blendAmount = quintic_blend((control - lower) / (upper - lower));
+				float blendAmount = MathHelper.interpQuintic((control - lower) / (upper - lower));
+				mLastSelectLow = blendAmount < .5;
 				return MathHelper.lerp(mLow.get(x, y), mHigh.get(x, y), blendAmount);
 			}
 		} else {
-			if (control < threshold)
+			if (control < threshold) {
+				mLastSelectLow = true;
 				return mLow.get(x, y);
-			else
+			} else {
+				mLastSelectLow = false;
 				return mHigh.get(x, y);
+			}
 		}
-	}
-
-	private final float quintic_blend(float t) {
-		return t * t * t * (t * (t * 6 - 15) + 10);
 	}
 
 	@Override
@@ -435,16 +443,13 @@ public class NoiseBuilderSelect extends NoiseBuilderModuleBase {
 
 		if (falloff > 0.0) {
 			if (control < (threshold - falloff)) {
-				// Lies outside of falloff area below threshold, return first source
 				return mLow.get(x, y, z);
 			} else if (control > (threshold + falloff)) {
-				// Lise outside of falloff area above threshold, return second source
 				return mHigh.get(x, y, z);
 			} else {
-				// Lies within falloff area.
 				float lower = threshold - falloff;
 				float upper = threshold + falloff;
-				float blendAmount = quintic_blend((control - lower) / (upper - lower));
+				float blendAmount = MathHelper.interpQuintic((control - lower) / (upper - lower));
 				return MathHelper.lerp(mLow.get(x, y, z), mHigh.get(x, y, z), blendAmount);
 			}
 		} else {
