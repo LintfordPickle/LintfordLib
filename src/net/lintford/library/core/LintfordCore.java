@@ -354,7 +354,7 @@ public abstract class LintfordCore {
 
 		mResourceManager = new ResourceManager(mMasterConfig);
 		mResourceManager.addProtectedEntityGroupUid(CORE_ENTITY_GROUP_ID);
-		
+
 		mResourceController = new ResourceController(mControllerManager, mResourceManager, CORE_ENTITY_GROUP_ID);
 		mCoreTimeController = new CoreTimeController(mControllerManager, mCoreTime, mGameTime, CORE_ENTITY_GROUP_ID);
 
@@ -614,9 +614,7 @@ public abstract class LintfordCore {
 		if (mIsHeadlessMode)
 			return;
 
-		glClearColor(100.0f / 255.0f, 149.0f / 255.0f, 237.0f / 255.0f, 1.0f);
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-
 	}
 
 	/** When called, sends the glfwWindowShouldClose message to GLFW. */
