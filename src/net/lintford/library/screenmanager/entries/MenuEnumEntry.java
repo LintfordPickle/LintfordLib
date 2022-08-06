@@ -1,6 +1,7 @@
 package net.lintford.library.screenmanager.entries;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import net.lintford.library.core.LintfordCore;
@@ -22,6 +23,48 @@ public class MenuEnumEntry extends MenuEntry {
 
 	private static final long serialVersionUID = 2194989174357016245L;
 
+	public class EnumEntryItem implements Comparable<EnumEntryItem> {
+
+		// --------------------------------------
+		// Variables
+		// --------------------------------------
+
+		private String mName;
+		private int mOrder;
+
+		// --------------------------------------
+		// Properties
+		// --------------------------------------
+
+		public String name() {
+			return mName;
+		}
+
+		public int order() {
+			return mOrder;
+		}
+
+		// --------------------------------------
+		// COnstructor
+		// --------------------------------------
+
+		public EnumEntryItem(String name, int order) {
+			mName = name;
+			mOrder = order;
+		}
+
+		// --------------------------------------
+		// Methods
+		// --------------------------------------
+
+		@Override
+		public int compareTo(EnumEntryItem o) {
+			if (mOrder == o.order())
+				return 0;
+			return mOrder < o.order() ? -1 : 1;
+		}
+	}
+
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
@@ -29,7 +72,7 @@ public class MenuEnumEntry extends MenuEntry {
 	private String mLabel;
 	private boolean mIsChecked;
 	private final String mSeparator = " : ";
-	private List<String> mItems;
+	private List<EnumEntryItem> mItems;
 	private int mSelectedIndex;
 	private boolean mEnableScaleTextToWidth;
 
@@ -66,8 +109,8 @@ public class MenuEnumEntry extends MenuEntry {
 	}
 
 	public String selectedEntryName() {
-		return mItems.get(mSelectedIndex);
-
+		final var lSelectedItem = mItems.get(mSelectedIndex);
+		return lSelectedItem.name();
 	}
 
 	public void setSelectedEntry(int pIndex) {
@@ -251,8 +294,10 @@ public class MenuEnumEntry extends MenuEntry {
 		final float lArrowButtonPaddingY = mLeftButtonRectangle.h() - lArrowButtonSize;
 		if (mButtonsEnabled) {
 			final var lColorWhiteWithAlpha = ColorConstants.getWhiteWithAlpha(lParentScreenAlpha);
-			lTextureBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_LEFT, lScreenOffset.x + mLeftButtonRectangle.x(), lScreenOffset.y + mLeftButtonRectangle.y() + lArrowButtonPaddingY, lArrowButtonSize, lArrowButtonSize, 0f,lColorWhiteWithAlpha);
-			lTextureBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_RIGHT, lScreenOffset.x + mRightButtonRectangle.x(), lScreenOffset.y + mRightButtonRectangle.y() + lArrowButtonPaddingY, lArrowButtonSize, lArrowButtonSize, 0f,lColorWhiteWithAlpha);
+			lTextureBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_LEFT, lScreenOffset.x + mLeftButtonRectangle.x(), lScreenOffset.y + mLeftButtonRectangle.y() + lArrowButtonPaddingY, lArrowButtonSize, lArrowButtonSize, 0f,
+					lColorWhiteWithAlpha);
+			lTextureBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_RIGHT, lScreenOffset.x + mRightButtonRectangle.x(), lScreenOffset.y + mRightButtonRectangle.y() + lArrowButtonPaddingY, lArrowButtonSize, lArrowButtonSize, 0f,
+					lColorWhiteWithAlpha);
 		}
 		lTextureBatch.end();
 
@@ -263,8 +308,8 @@ public class MenuEnumEntry extends MenuEntry {
 
 		// Render the items
 		if (mItems.size() > 0) {
-			final String lCurItem = mItems.get(mSelectedIndex);
-			final float EntryWidth = lTextBoldFont.getStringWidth(lCurItem, lUiTextScale);
+			final var lCurItem = mItems.get(mSelectedIndex).name();
+			final var EntryWidth = lTextBoldFont.getStringWidth(lCurItem, lUiTextScale);
 
 			lTextBoldFont.drawText(lCurItem, lScreenOffset.x + x + (w / 6 * 4.65f) - EntryWidth / 2, lScreenOffset.y + y + h / 2 - lTextHeight * 0.5f, pParentZDepth, textColor, lUiTextScale, -1);
 		}
@@ -289,24 +334,29 @@ public class MenuEnumEntry extends MenuEntry {
 		}
 	}
 
-	public void addItem(String pItem) {
-		if (pItem == null)
+	public void addItem(String itemName) {
+		addItem(itemName, 0);
+	}
+
+	public void addItem(String itemName, int itemOrder) {
+		if (itemName == null)
 			return;
 
-		if (!mItems.contains(pItem)) {
-			mItems.add(pItem);
-		}
+		mItems.add(new EnumEntryItem(itemName, itemOrder));
 	}
 
 	public void addItems(String... pItems) {
 		if (pItems == null)
 			return;
 
+		int pOrder = 0;
 		int pSize = pItems.length;
 		for (int i = 0; i < pSize; i++) {
-			if (!mItems.contains(pItems[i])) {
-				mItems.add(pItems[i]);
-			}
+			mItems.add(new EnumEntryItem(pItems[i], pOrder++));
 		}
+	}
+
+	public void sortItems() {
+		mItems.sort(Comparator.naturalOrder());
 	}
 }

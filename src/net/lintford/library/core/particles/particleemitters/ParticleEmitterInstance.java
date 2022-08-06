@@ -183,8 +183,8 @@ public class ParticleEmitterInstance extends WorldEntity {
 
 	}
 
-	public void assignEmitterDefinitionAndResolveParticleSystem(final int pDefinitionID, ParticleFrameworkData pParticleFramework) {
-		ParticleEmitterDefinition lEmitterDefintion = pParticleFramework.emitterManager().definitionManager().getDefinitionByID(pDefinitionID);
+	public void assignEmitterDefinitionAndResolveParticleSystem(final short pDefinitionID, ParticleFrameworkData pParticleFramework) {
+		ParticleEmitterDefinition lEmitterDefintion = pParticleFramework.emitterManager().definitionManager().getByUid(pDefinitionID);
 		if (lEmitterDefintion == null) {
 			Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Failed to assign ParticleEmitter - EmitterDefId '%d' has no definition defined!", pDefinitionID));
 			return;

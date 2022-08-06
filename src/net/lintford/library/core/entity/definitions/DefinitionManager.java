@@ -8,9 +8,10 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
+import java.util.Map;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -31,20 +32,27 @@ public abstract class DefinitionManager<T extends BaseDefinition> {
 	// Constants
 	// --------------------------------------
 
+	public static final short NO_DEFINITION = -1;
+
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
-	protected List<T> mDefinitions;
+	protected Map<String, T> mDefinitions;
 
-	protected transient short mDefinitionUIDCounter;
+	protected short mDefinitionUIDCounter;
+	protected DefinitionLookUp mDefinitionsLookupTable;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
 
-	public List<T> definitions() {
-		return mDefinitions;
+	public Collection<T> definitions() {
+		return mDefinitions.values();
+	}
+
+	public DefinitionLookUp definitionsLookupTable() {
+		return mDefinitionsLookupTable;
 	}
 
 	public int definitionCount() {
@@ -56,13 +64,39 @@ public abstract class DefinitionManager<T extends BaseDefinition> {
 	}
 
 	// --------------------------------------
+
+	public T getByUid(short definitionUid) {
+		final var lDefName = mDefinitionsLookupTable.getDefinitionNameByUid(definitionUid);
+		return mDefinitions.get(lDefName);
+	}
+
+	public T getByName(String definitionName) {
+		return mDefinitions.get(definitionName);
+	}
+
+	public T getByDisplayName(final String displayName) {
+		final var lDefinitions = mDefinitions.values();
+		for (final var definition : lDefinitions) {
+			if (definition.displayName != null && definition.displayName.equals(displayName)) {
+				return definition;
+			}
+		}
+
+		return null;
+	}
+
+	public short getUidByName(String definitionName) {
+		return mDefinitionsLookupTable.getDefinitionUidByName(definitionName);
+	}
+
+	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
 	public DefinitionManager() {
-		mDefinitions = new ArrayList<>();
+		mDefinitions = new HashMap<>();
+		mDefinitionsLookupTable = new DefinitionLookUp();
 		mDefinitionUIDCounter = 0;
-
 	}
 
 	// --------------------------------------
@@ -75,7 +109,8 @@ public abstract class DefinitionManager<T extends BaseDefinition> {
 
 	public abstract void loadDefinitionFromFile(String pFilepath);
 
-	public void afterDefinitionLoaded(T definition) { }
+	public void afterDefinitionLoaded(T definition) {
+	}
 
 	protected MetaFileItems loadMetaFileItemsFromFilepath(final String pFilepath) {
 		if (pFilepath == null || pFilepath.length() == 0) {
@@ -104,16 +139,13 @@ public abstract class DefinitionManager<T extends BaseDefinition> {
 		}
 
 		return null;
-
 	}
 
 	protected void loadDefinitionsFromFolderWatcherItems(EntityLocationProvider pEntityLocationProvider, final Gson pGson, Class<T> pClassType) {
 		final var lFolderFileIterator = pEntityLocationProvider.getFileLocationIterator();
 		for (Iterator<String> lFileIterator = lFolderFileIterator; lFileIterator.hasNext();) {
 			loadDefinitionFromFile(lFileIterator.next(), pGson, pClassType);
-
 		}
-
 	}
 
 	protected void loadDefinitionsFromMetaFileItems(String pMetaFilepath, final Gson pGson, Class<T> pClassType) {
@@ -148,8 +180,7 @@ public abstract class DefinitionManager<T extends BaseDefinition> {
 			final var lNewDefinition = pGson.fromJson(lFileContents, pClassType);
 
 			if (lNewDefinition != null) {
-				lNewDefinition.initialize(getNewDefinitionUID());
-				mDefinitions.add(lNewDefinition);
+				addDefintion(lNewDefinition);
 
 				return lNewDefinition;
 			} else {
@@ -170,57 +201,25 @@ public abstract class DefinitionManager<T extends BaseDefinition> {
 		return null;
 	}
 
-	public void addDefintion(T pNewDefinition) {
-		if (pNewDefinition == null)
+	public void addDefintion(T newDefinition) {
+		if (newDefinition == null)
 			return;
 
-		if (getDefinitionByName(pNewDefinition.name) != null)
-			return;
+		short lDefinitionUid = 0;
+		if (mDefinitionsLookupTable.containsDefinitionName(newDefinition.name)) {
+			lDefinitionUid = mDefinitionsLookupTable.getDefinitionUidByName(newDefinition.name);
+		} else {
+			lDefinitionUid = getNewDefinitionUID();
+			mDefinitionsLookupTable.addNewDefinition(lDefinitionUid, newDefinition.name);
+		}
 
-		mDefinitions.add(pNewDefinition);
-
+		newDefinition.definitionUid = lDefinitionUid;
+		mDefinitions.put(newDefinition.name, newDefinition);
 	}
 
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
-
-	public T getDefinitionByName(String pName) {
-		if (pName == null)
-			return null;
-
-		final int lDefinitionCount = mDefinitions.size();
-		for (int i = 0; i < lDefinitionCount; i++) {
-			if (mDefinitions.get(i).name.equals(pName)) {
-				return mDefinitions.get(i);
-			}
-
-		}
-
-		return null;
-
-	}
-
-	public T getDefinitionByID(int pDefID) {
-		final int lDefinitionCount = mDefinitions.size();
-		for (int i = 0; i < lDefinitionCount; i++) {
-			if (mDefinitions.get(i).definitionUid == pDefID) {
-				return mDefinitions.get(i);
-			}
-
-		}
-
-		return null;
-
-	}
-
-	public T getDefinitionByIndex(int pDefIndex) {
-		if (pDefIndex >= 0 && pDefIndex < mDefinitions.size())
-			return mDefinitions.get(pDefIndex);
-
-		return null;
-
-	}
 
 	private String bytesToHex(byte[] hash) {
 		StringBuffer hexString = new StringBuffer();
@@ -250,4 +249,13 @@ public abstract class DefinitionManager<T extends BaseDefinition> {
 
 	}
 
+	public void setDefinitionLookupTable(DefinitionLookUp definitionLookup) {
+		mDefinitionsLookupTable = definitionLookup;
+
+		validateDefinitions();
+	}
+
+	private void validateDefinitions() {
+
+	}
 }

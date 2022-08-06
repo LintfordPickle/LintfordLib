@@ -453,10 +453,13 @@ public class NoiseBuilderSelect extends NoiseBuilderModuleBase {
 				return MathHelper.lerp(mLow.get(x, y, z), mHigh.get(x, y, z), blendAmount);
 			}
 		} else {
-			if (control < threshold)
+			if (control < threshold) {
+				mLastSelectLow = true;
 				return mLow.get(x, y, z);
-			else
-				return mHigh.get(x, y, z);
+			}
+
+			mLastSelectLow = false;
+			return mHigh.get(x, y, z);
 		}
 	}
 

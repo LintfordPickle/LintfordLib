@@ -70,7 +70,6 @@ public class Box2dBodyInstance extends IndexedPooledBaseData {
 		if (mBody == null)
 			return; // nothing to save
 
-		// Get the state information so it can be serialized
 		switch (mBody.m_type) {
 		case STATIC:
 			this.bodyTypeIndex = Box2dBodyDefinition.BODY_TYPE_INDEX_STATIC;
@@ -83,18 +82,11 @@ public class Box2dBodyInstance extends IndexedPooledBaseData {
 			break;
 		}
 
-		float lParentPositionX = 0.f;
-		float lParentPositionY = 0.f;
 		float lParentAngle = 0.f;
 		if (pParentInst != null) {
-			lParentPositionX = pParentInst.entityPosition().x;
-			lParentPositionY = pParentInst.entityPosition().y;
 			lParentAngle = pParentInst.entityAngle();
-
 		}
 
-		// this.objectPositionInUnits.x = mBody.getPosition().x - lParentPositionX;
-		// this.objectPositionInUnits.y = mBody.getPosition().y - lParentPositionY;
 		this.objectAngleInRadians = mBody.getAngle() - lParentAngle;
 
 		this.linearVelocity.set(mBody.getLinearVelocity());
@@ -115,9 +107,7 @@ public class Box2dBodyInstance extends IndexedPooledBaseData {
 
 			if (lFixtureInstance != null)
 				lFixtureInstance.savePhysics();
-
 		}
-
 	}
 
 	public void loadPhysics(World pWorld, JBox2dEntityInstance pParentInst) {

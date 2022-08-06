@@ -28,7 +28,6 @@ import net.lintford.library.renderers.windows.components.IScrollBarArea;
 import net.lintford.library.renderers.windows.components.ScrollBar;
 import net.lintford.library.renderers.windows.components.ScrollBarContentRectangle;
 import net.lintford.library.renderers.windows.components.UIInputText;
-import net.lintford.library.screenmanager.ScreenManager;
 
 public class DebugConsole extends Rectangle implements IBufferedTextInputCallback, IScrollBarArea, IProcessMouseInput {
 

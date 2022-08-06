@@ -18,46 +18,6 @@ public class ParticleEmitterManager extends PoolInstanceManager<ParticleEmitterI
 	public class EmitterDefinitionManager extends DefinitionManager<ParticleEmitterDefinition> {
 
 		// --------------------------------------
-		// Constants
-		// --------------------------------------
-
-		public ParticleEmitterDefinition getDefinitionByName(String pEmitterName) {
-			if (pEmitterName == null || pEmitterName.isEmpty())
-				return null;
-
-			final int lNumEmitters = mDefinitions.size();
-			for (int i = 0; i < lNumEmitters; i++) {
-				if (mDefinitions.get(i).name.equals(pEmitterName))
-					return mDefinitions.get(i);
-			}
-
-			return null;
-		}
-
-		public ParticleEmitterDefinition getDefinitionByDefId(int pEmitterDefId) {
-			final int lNumEmitters = mDefinitions.size();
-
-			if (pEmitterDefId < 0 || pEmitterDefId >= lNumEmitters)
-				return null;
-
-			for (int i = 0; i < lNumEmitters; i++) {
-				if (mDefinitions.get(i).definitionUid == pEmitterDefId)
-					return mDefinitions.get(i);
-			}
-
-			return null;
-		}
-
-		public ParticleEmitterDefinition getDefinitionByIndex(int pEmitterIndex) {
-			final int lNumEmitters = mDefinitions.size();
-
-			if (pEmitterIndex < 0 || pEmitterIndex >= lNumEmitters)
-				return null;
-
-			return mDefinitions.get(pEmitterIndex);
-		}
-
-		// --------------------------------------
 		// Constructor
 		// --------------------------------------
 
@@ -102,7 +62,7 @@ public class ParticleEmitterManager extends PoolInstanceManager<ParticleEmitterI
 	// --------------------------------------
 
 	private static final long serialVersionUID = -831550615078707748L;
-	
+
 	public static final int PARTICLE_EMIITER_NOT_ASSIGNED = -1;
 
 	// --------------------------------------
@@ -155,10 +115,8 @@ public class ParticleEmitterManager extends PoolInstanceManager<ParticleEmitterI
 	// Methods
 	// --------------------------------------
 
-	// returns a new ParticleEmitterInstance attached to the given emitter definition (by name)
 	public ParticleEmitterInstance getNewParticleEmitterInstanceByDefName(String pEmitterDefName) {
-		// Find the specified definition
-		final var lEmitterDef = definitionManager().getDefinitionByName(pEmitterDefName);
+		final var lEmitterDef = definitionManager().getByName(pEmitterDefName);
 
 		if (lEmitterDef == null) {
 			return null;
@@ -175,7 +133,6 @@ public class ParticleEmitterManager extends PoolInstanceManager<ParticleEmitterI
 		return lNewEmitterInst;
 	}
 
-	// Returns a ParticleEmitterInstance, if one exists, based on the EmitterID.
 	public ParticleEmitterInstance getParticleEmitterByIndex(int pEmitterIndex) {
 		final var lNumParticleEmitterCount = mInstances.size();
 		for (var i = 0; i < lNumParticleEmitterCount; i++) {

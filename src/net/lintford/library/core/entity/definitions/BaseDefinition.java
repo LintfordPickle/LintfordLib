@@ -41,7 +41,6 @@ public abstract class BaseDefinition extends BaseEntity {
 
 	public BaseDefinition() {
 		definitionUid = -1;
-
 	}
 
 	// --------------------------------------
@@ -50,7 +49,5 @@ public abstract class BaseDefinition extends BaseEntity {
 
 	public void initialize(final short pDefinitionUid) {
 		definitionUid = pDefinitionUid;
-
 	}
-
 }

@@ -116,7 +116,7 @@ public class ParticleSystemManager extends InstanceManager<ParticleSystemInstanc
 		}
 
 		// Otherwise create a new instance of the particle system.
-		final var lParticleSystemDefinition = mParticleSystemDefinitionManager.getDefinitionByName(pParticleSystemName);
+		final var lParticleSystemDefinition = mParticleSystemDefinitionManager.getByName(pParticleSystemName);
 		if (lParticleSystemDefinition != null) {
 			final var lNewParticleSystem = new ParticleSystemInstance();
 			lNewParticleSystem.initialize(ParticleSystemUidCounter++, lParticleSystemDefinition);
@@ -131,7 +131,5 @@ public class ParticleSystemManager extends InstanceManager<ParticleSystemInstanc
 		Debug.debugManager().logger().w(getClass().getSimpleName(), String.format("Couldn't find ParticleSystemDefinition '%s'", pParticleSystemName));
 
 		return null;
-
 	}
-
 }
