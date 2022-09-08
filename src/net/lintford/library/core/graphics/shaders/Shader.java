@@ -146,13 +146,11 @@ public abstract class Shader {
 
 		} else {
 			Debug.debugManager().logger().e(getClass().getSimpleName(), glGetShaderInfoLog(lFragID, 2048));
-
 		}
 
 		glAttachShader(lProgramID, lVertID);
 		glAttachShader(lProgramID, lFragID);
 
-		// glBindAttributeLocation only takes effect AFTER the linking
 		bindAtrributeLocations(lProgramID);
 
 		glLinkProgram(lProgramID);
