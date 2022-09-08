@@ -298,10 +298,9 @@ public class Polygon extends Shape {
 		mVertices.clear();
 		calculateCentroid();
 		mDirty = true;
-
 	}
 
-	// Sutherland-Hodgmann Al
+	// Sutherland-Hodgmann Algorithm
 	public static Shape getIntersection(Polygon pClipper, Polygon pSubject) {
 		if (pClipper == null || pSubject == null)
 			return null;
@@ -310,7 +309,6 @@ public class Polygon extends Shape {
 
 		int len = pClipper.getVertices().size();
 		for (int i = 0; i < len; i++) {
-
 			int len2 = pResult.getVertices().size();
 			Polygon lInputPolygon = pResult;
 			pResult = new Polygon(); // TODO: Garbage
@@ -341,20 +339,19 @@ public class Polygon extends Shape {
 	}
 
 	private static Vector2f intersection(Vector2f a, Vector2f b, Vector2f p, Vector2f q) {
-		float A1 = b.y - a.y;
-		float B1 = a.x - b.x;
-		float C1 = A1 * a.x + B1 * a.y;
+		double A1 = b.y - a.y;
+		double B1 = a.x - b.x;
+		double C1 = A1 * a.x + B1 * a.y;
 
-		float A2 = q.y - p.y;
-		float B2 = p.x - q.x;
-		float C2 = A2 * p.x + B2 * p.y;
+		double A2 = q.y - p.y;
+		double B2 = p.x - q.x;
+		double C2 = A2 * p.x + B2 * p.y;
 
-		float det = A1 * B2 - A2 * B1;
-		float x = (B2 * C1 - B1 * C2) / det;
-		float y = (A1 * C2 - A2 * C1) / det;
+		double det = A1 * B2 - A2 * B1;
+		double x = (B2 * C1 - B1 * C2) / det;
+		double y = (A1 * C2 - A2 * C1) / det;
 
-		return new Vector2f(x, y);
-
+		return new Vector2f((float) x, (float) y);
 	}
 
 	private void calculateCentroid() {
