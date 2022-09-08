@@ -48,7 +48,6 @@ public class SAT {
 					return false;
 				}
 			}
-
 		}
 
 		// loop over the axes1
@@ -66,18 +65,14 @@ public class SAT {
 					return false;
 				}
 			}
-
 		}
 
 		// If we can get here then we know that every axis had overlap on it
 		// so we can guarantee an intersection.
 		return true;
-
 	}
 
 	public static boolean overlaps(Vector2f p1, Vector2f p2) {
 		return !(p1.x > p2.y || p2.x > p1.y);
-
 	}
-
 }
