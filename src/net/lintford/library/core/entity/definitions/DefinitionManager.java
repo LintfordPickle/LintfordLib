@@ -213,7 +213,7 @@ public abstract class DefinitionManager<T extends BaseDefinition> {
 			mDefinitionsLookupTable.addNewDefinition(lDefinitionUid, newDefinition.name);
 		}
 
-		newDefinition.definitionUid = lDefinitionUid;
+		newDefinition.initialize(lDefinitionUid);
 		mDefinitions.put(newDefinition.name, newDefinition);
 	}
 
