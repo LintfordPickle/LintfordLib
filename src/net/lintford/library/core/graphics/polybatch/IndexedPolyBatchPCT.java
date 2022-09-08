@@ -274,20 +274,14 @@ public class IndexedPolyBatchPCT {
 		if (mCurrentTexID != -1) {
 			GL13.glActiveTexture(GL13.GL_TEXTURE0);
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, mCurrentTexID);
-
 		} else {
 			return;
-
 		}
 
 		mBuffer.flip();
 		mIndexBuffer.flip();
 
-		GLDebug.checkGLErrorsException();
-
 		initializeGlContent();
-
-		GLDebug.checkGLErrorsException();
 
 		GL30.glBindVertexArray(mVaoId);
 
@@ -297,8 +291,6 @@ public class IndexedPolyBatchPCT {
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, mVioId);
 		GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, mIndexBuffer, GL15.GL_DYNAMIC_DRAW);
 
-		GLDebug.checkGLErrorsException();
-		
 		mShaderInUse.projectionMatrix(mCamera.projection());
 		mShaderInUse.viewMatrix(mCamera.view());
 		mShaderInUse.modelMatrix(mModelMatrix);
@@ -310,16 +302,10 @@ public class IndexedPolyBatchPCT {
 			Debug.debugManager().stats().incTag(DebugStats.TAG_ID_VERTS, mIndexCount * 3);
 		}
 
-		GLDebug.checkGLErrorsException();
-		
 		GL11.glDrawElements(GL11.GL_TRIANGLES, mIndexCount, GL11.GL_UNSIGNED_INT, 0);
 
-		GLDebug.checkGLErrorsException();
-		
 		mShaderInUse.unbind();
 		GL30.glBindVertexArray(0);
-		
-		GLDebug.checkGLErrorsException();
 	}
 
 	public void redraw() {
