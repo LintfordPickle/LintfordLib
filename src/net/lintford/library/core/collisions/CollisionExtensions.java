@@ -63,26 +63,44 @@ public class CollisionExtensions {
 	}
 
 	public static boolean intersection(Vector2f a, Vector2f b, Vector2f p, Vector2f q, Vector2f pOutVector) {
-		float A1 = b.y - a.y;
-		float B1 = a.x - b.x;
-		float C1 = A1 * a.x + B1 * a.y;
+		final float l0x = b.x - a.x;
+		final float l0y = b.y - a.y;
+		final float l1x = q.x - p.x;
+		final float l1y = q.y - p.y;
 
-		float A2 = q.y - p.y;
-		float B2 = p.x - q.x;
-		float C2 = A2 * p.x + B2 * p.y;
+		float s = (-l0y * (a.x - p.x) + l0x * (a.y - p.y)) / (-l1x * l0y + l0x * l1y);
 
-		float det = A1 * B2 - A2 * B1;
-		float x = (B2 * C1 - B1 * C2) / det;
-		float y = (A1 * C2 - A2 * C1) / det;
+		float t = (l1x * (a.y - p.y) - l1y * (a.x - p.x)) / (-l1x * l0y + l0x * l1y);
 
-		pOutVector.x = x;
-		pOutVector.y = y;
+		if (s >= 0 && s <= 1 && t >= 0 && t <= 1) {
+			pOutVector.x = a.x + (t * l0x);
+			pOutVector.y = a.y + (t * l0y);
 
-		if (x != x || y != y) {
-			return false;
+			return true;
 		}
 
-		return true;
+		return false; // No collision 
+
+		//		float A1 = b.y - a.y;
+		//		float B1 = a.x - b.x;
+		//		float C1 = A1 * a.x + B1 * a.y;
+		//
+		//		float A2 = q.y - p.y;
+		//		float B2 = p.x - q.x;
+		//		float C2 = A2 * p.x + B2 * p.y;
+		//
+		//		float det = A1 * B2 - A2 * B1;
+		//		float x = (B2 * C1 - B1 * C2) / det;
+		//		float y = (A1 * C2 - A2 * C1) / det;
+		//
+		//		pOutVector.x = x;
+		//		pOutVector.y = y;
+		//
+		//		if (x != x || y != y) {
+		//			return false;
+		//		}
+		//
+		//		return true;
 
 	}
 
