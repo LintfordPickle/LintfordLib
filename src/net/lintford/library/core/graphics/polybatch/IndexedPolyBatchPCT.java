@@ -14,7 +14,6 @@ import org.lwjgl.system.MemoryUtil;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.camera.ICamera;
 import net.lintford.library.core.debug.Debug;
-import net.lintford.library.core.debug.GLDebug;
 import net.lintford.library.core.debug.stats.DebugStats;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.Color;
@@ -100,8 +99,6 @@ public class IndexedPolyBatchPCT {
 			Debug.debugManager().logger().v("OpenGL", "IndexedPolyBatchPCT: VboId = " + mVboId);
 		}
 
-		// TODO: Make sure this is the new / correct way to allocation memory for a buffer
-		// TODO: We are not benefiting from the indexed nature (with regards to reduced vert count)
 		mBuffer = MemoryUtil.memAllocFloat(MAX_TRIS * NUM_VERTS_PER_TRI * VertexDataStructurePCT.stride);
 		mIndexBuffer = MemoryUtil.memAllocInt(MAX_TRIS * NUM_VERTS_PER_TRI);
 
@@ -196,7 +193,6 @@ public class IndexedPolyBatchPCT {
 
 	public void drawRect(Texture pTexture, Rectangle pSrcRect, List<Vector2f> pVertexArray, float pZ, boolean pClose) {
 		drawRect(pTexture, pSrcRect, pVertexArray, pZ, pClose, mColor.r, mColor.g, mColor.b);
-
 	}
 
 	public void drawRect(Texture pTexture, Rectangle pSrcRect, List<Vector2f> pVertexArray, float pZ, boolean pClose, float pR, float pG, float pB) {
@@ -214,9 +210,7 @@ public class IndexedPolyBatchPCT {
 			} else if (mCurrentTexID != pTexture.getTextureID()) {
 				flush();
 				mCurrentTexID = pTexture.getTextureID();
-
 			}
-
 		}
 
 		addVertToBuffer(lRectVerts.get(0).x, lRectVerts.get(0).y, pZ, 1f, pR, pG, pB, mColor.a, pSrcRect.left(), pSrcRect.top());
@@ -224,7 +218,7 @@ public class IndexedPolyBatchPCT {
 		addVertToBuffer(lRectVerts.get(2).x, lRectVerts.get(2).y, pZ, 1f, pR, pG, pB, mColor.a, pSrcRect.left(), pSrcRect.bottom());
 		addVertToBuffer(lRectVerts.get(3).x, lRectVerts.get(3).y, pZ, 1f, pR, pG, pB, mColor.a, pSrcRect.right(), pSrcRect.bottom());
 
-		// Index the triangle
+		// Index the triangles
 		mIndexBuffer.put(mVertexCount - 4);
 		mIndexBuffer.put(mVertexCount - 3);
 		mIndexBuffer.put(mVertexCount - 2);
@@ -252,7 +246,6 @@ public class IndexedPolyBatchPCT {
 		mBuffer.put(v);
 
 		mVertexCount++;
-
 	}
 
 	public void end() {
@@ -261,7 +254,6 @@ public class IndexedPolyBatchPCT {
 
 		mIsDrawing = false;
 		flush();
-
 	}
 
 	protected void flush() {

@@ -20,7 +20,6 @@ public class DebugStatTagCaption extends DebugStatTag<String> {
 		super(pID, pLabel);
 
 		autoReset = false;
-
 	}
 
 	// --------------------------------------
@@ -30,7 +29,5 @@ public class DebugStatTagCaption extends DebugStatTag<String> {
 	@Override
 	public void draw(FontUnit pFontUnit, float pPosX, float pPosY) {
 		pFontUnit.drawText(String.format("%s", label), pPosX, pPosY, -0.01f, ColorConstants.getColor(r, g, b), 1.f, -1);
-
 	}
-
 }

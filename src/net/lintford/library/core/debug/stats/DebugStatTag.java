@@ -16,7 +16,6 @@ public abstract class DebugStatTag<T> {
 	public T value;
 	public T defaultValue;
 	public float r, g, b;
-	// public List<DebugStatTag> children;
 
 	// --------------------------------------
 	// Properties

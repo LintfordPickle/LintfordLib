@@ -478,13 +478,12 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 
 		final float Z_DEPTH = ZLayers.LAYER_DEBUG;
 
-		final float POSITION_OFFSET_TIME = 5;
 		final float POSITION_OFFSET_TAG = 170;
 		final float POSITION_OFFSET_MESSAGE = 400;
 
 		final float PADDING_LEFT = 5;
 		final float lInputTextXOffset = 14;
-		float lTextPosition = mConsoleState == CONSOLE_STATE.minimal ? 10 : -20;
+
 		final float lTextHeight = 20f;
 
 		mTAGFilterText.set(x + POSITION_OFFSET_TAG, y + 4, 200, 25);
@@ -522,9 +521,28 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 
 		}
 
-		final var lMessages = mProcessed ? mProcessedMessages : Debug.debugManager().logger().logLines();
+		if (mProcessed == false) {
+			synchronized (Debug.debugManager().logger()) {
+				drawMessages(pCore, Debug.debugManager().logger().logLines());
+			}
+		} else {
+			drawMessages(pCore, mProcessedMessages);
+		}
 
-		// output the messages
+		mSpriteBatch.end();
+		mConsoleFont.end();
+
+	}
+
+	private void drawMessages(LintfordCore pCore, List<Message> lMessages) {
+		float lTextPosition = mConsoleState == CONSOLE_STATE.minimal ? 10 : -20;
+
+		final float POSITION_OFFSET_TIME = 5;
+		final float POSITION_OFFSET_TAG = 170;
+		final float POSITION_OFFSET_MESSAGE = 400;
+
+		final var lDisplayConfig = pCore.config().display();
+
 		final int lMessageCount = lMessages.size();
 		if (lMessages != null && lMessageCount > 0) {
 			for (int i = mLowerBound; i < mUpperBound; i++) {
@@ -542,24 +560,20 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 
 					// Draw Timestamp
 					mConsoleFont.setWrapType(WrapType.LetterCountTrim);
-					mConsoleFont.drawText(lMessage.timestamp, x + POSITION_OFFSET_TIME, -lDisplayConfig.windowHeight() * 0.5f - lTextPosition, Z_DEPTH + 0.1f, mConsoleTextColor, 1f, 18);
+					mConsoleFont.drawText(lMessage.timestamp, x + POSITION_OFFSET_TIME, -lDisplayConfig.windowHeight() * 0.5f - lTextPosition, ZLayers.LAYER_DEBUG + 0.1f, mConsoleTextColor, 1f, 18);
 
 					// Draw TAG
 					mConsoleFont.setWrapType(WrapType.LetterCountTrim);
-					mConsoleFont.drawText(lMessage.tag, x + POSITION_OFFSET_TAG, -lDisplayConfig.windowHeight() * 0.5f - lTextPosition, Z_DEPTH + 0.1f, mConsoleTextColor, 1f, 18);
+					mConsoleFont.drawText(lMessage.tag, x + POSITION_OFFSET_TAG, -lDisplayConfig.windowHeight() * 0.5f - lTextPosition, ZLayers.LAYER_DEBUG + 0.1f, mConsoleTextColor, 1f, 18);
 
 					// Draw MESSAGE
 					mConsoleFont.setWrapType(WrapType.LetterCountTrim);
 					final float lCharWidth = mConsoleFont.getStringWidth("e");
 					final float lHorizontalSpace = pCore.HUD().getWidth() - POSITION_OFFSET_MESSAGE;
-					mConsoleFont.drawText(lMessage.message, x + POSITION_OFFSET_MESSAGE, -lDisplayConfig.windowHeight() * 0.5f - lTextPosition, Z_DEPTH + 0.1f, mConsoleTextColor, 1f, lHorizontalSpace / lCharWidth - 3);
+					mConsoleFont.drawText(lMessage.message, x + POSITION_OFFSET_MESSAGE, -lDisplayConfig.windowHeight() * 0.5f - lTextPosition, ZLayers.LAYER_DEBUG + 0.1f, mConsoleTextColor, 1f, lHorizontalSpace / lCharWidth - 3);
 				}
 			}
 		}
-
-		mSpriteBatch.end();
-		mConsoleFont.end();
-
 	}
 
 	// --------------------------------------
@@ -826,7 +840,6 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 	@Override
 	public void captureStopped() {
 		mHasFocus = false;
-
 	}
 
 	@Override
@@ -836,8 +849,7 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 
 	@Override
 	public void resetCoolDownTimer() {
-		mMouseTimer = 200;
-
+		mMouseTimer = IProcessMouseInput.MOUSE_COOL_TIME_TIME;
 	}
 
 }

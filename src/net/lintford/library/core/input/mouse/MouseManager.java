@@ -241,13 +241,10 @@ public class MouseManager {
 
 		if (lOwnerNotAssigned || lOwnerIsUs) {
 			mMouseMiddleOwnerHashCode = pHashCode;
-
 			return true;
-
 		}
 
 		return false;
-
 	}
 
 	// OWNER

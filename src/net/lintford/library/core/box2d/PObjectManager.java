@@ -44,7 +44,6 @@ public class PObjectManager extends IndexedPoolInstanceManager<JBox2dEntityInsta
 	public PObjectManager() {
 		mPObjectRepository = new PObjectDefinitionRepository();
 		mBox2dInstanceManager = new Box2dInstanceManager();
-
 	}
 
 	// --------------------------------------

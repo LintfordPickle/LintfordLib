@@ -50,6 +50,5 @@ public abstract class BaseGameScreen extends Screen {
 		super.exitScreen();
 
 		screenManager.core().removeGameCamera();
-
 	}
 }

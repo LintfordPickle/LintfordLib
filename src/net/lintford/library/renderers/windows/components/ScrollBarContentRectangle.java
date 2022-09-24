@@ -42,7 +42,6 @@ public class ScrollBarContentRectangle extends Rectangle {
 		super();
 
 		mParentArea = pParentArea;
-
 	}
 
 	// --------------------------------------

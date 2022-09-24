@@ -40,6 +40,13 @@ public class Debug {
 	// Constants
 	// --------------------------------------
 
+	/**
+	 * Debug message used to log an error to the console if a feature was removed for testing
+	 * */
+	public static final void notifyReleaseFeatureDisabled(String message) {
+		debugManager().logger().e("FEATURE DISABLED", message);
+	}
+
 	public static final int LOG_LEVEL_OFF = 0;
 	public static final int LOG_LEVEL_VERBOSE = 1;
 	public static final int LOG_LEVEL_INFO = 2;
