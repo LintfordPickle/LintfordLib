@@ -19,10 +19,8 @@ public abstract class ListBoxItem extends Rectangle {
 
 	protected ScreenManager mScreenManager;
 	protected ListBox mParentListBox;
-
 	public final Color textColor = new Color();
 	public final Color entryColor = new Color();
-
 	protected int mEntityGroupID;
 	protected int mItemIndex;
 	protected float mDoubleClickTimer;
@@ -42,13 +40,13 @@ public abstract class ListBoxItem extends Rectangle {
 	// Constructor
 	// --------------------------------------
 
-	public ListBoxItem(ScreenManager pScreenManager, ListBox pParentListBox, int pIndex, int pEntityGroupID) {
-		mScreenManager = pScreenManager;
-		mParentListBox = pParentListBox;
+	public ListBoxItem(ScreenManager screenManager, ListBox parentListBox, int index, int entityGroupUid) {
+		mScreenManager = screenManager;
+		mParentListBox = parentListBox;
 
-		mEntityGroupID = pEntityGroupID;
+		mEntityGroupID = entityGroupUid;
 
-		mItemIndex = pIndex;
+		mItemIndex = index;
 
 		mEntryWidth = 600;
 		mEntryHeight = 64;
@@ -62,15 +60,15 @@ public abstract class ListBoxItem extends Rectangle {
 
 	}
 
-	public boolean handleInput(LintfordCore pCore) {
-		final Vector2f lMouseMenuSpace = pCore.HUD().getMouseCameraSpace();
+	public boolean handleInput(LintfordCore core) {
+		final Vector2f lMouseMenuSpace = core.HUD().getMouseCameraSpace();
 
 		final var intersectsUs = intersectsAA(lMouseMenuSpace);
-		final var areWeFreeToUseMouse = pCore.input().mouse().isMouseOverThisComponent(hashCode());
-		final var canWeAcquireLeftMouse = intersectsUs && pCore.input().mouse().tryAcquireMouseLeftClick(hashCode());
+		final var areWeFreeToUseMouse = core.input().mouse().isMouseOverThisComponent(hashCode());
+		final var canWeAcquireLeftMouse = intersectsUs && core.input().mouse().tryAcquireMouseLeftClick(hashCode());
 
 		if (canWeAcquireLeftMouse && mDoubleClickLogicalCounter == -1) {
-			mDoubleClickLogicalCounter = pCore.input().mouse().mouseLeftButtonLogicalTimer();
+			mDoubleClickLogicalCounter = core.input().mouse().mouseLeftButtonLogicalTimer();
 			mDoubleClickTimer = 200; // 200 ms to double click
 		}
 
@@ -78,23 +76,19 @@ public abstract class ListBoxItem extends Rectangle {
 			mParentListBox.selectedIndex(mItemIndex);
 
 			return true;
-
 		}
 
 		if (intersectsUs && mDoubleClickLogicalCounter != -1) {
-			mDoubleClickTimer -= pCore.appTime().elapsedTimeMilli();
+			mDoubleClickTimer -= core.appTime().elapsedTimeMilli();
 
 			if (mDoubleClickTimer < 0) {
 				mDoubleClickLogicalCounter = -1;
 				mDoubleClickTimer = 0.f;
-			}
-
-			else if (mDoubleClickLogicalCounter != pCore.input().mouse().mouseLeftButtonLogicalTimer()) {
-				mDoubleClickLogicalCounter = pCore.input().mouse().mouseLeftButtonLogicalTimer();
+			} else if (mDoubleClickLogicalCounter != core.input().mouse().mouseLeftButtonLogicalTimer()) {
+				mDoubleClickLogicalCounter = core.input().mouse().mouseLeftButtonLogicalTimer();
 				mParentListBox.itemDoubleClicked(mItemIndex);
 
 				return true;
-
 			}
 
 		} else {
@@ -103,13 +97,13 @@ public abstract class ListBoxItem extends Rectangle {
 		}
 
 		return false;
-
 	}
 
-	public void update(LintfordCore pCore, MenuScreen pScreen, boolean pIsSelected) {
-		w = mEntryWidth;
-		h = mEntryHeight;
+	public void update(LintfordCore core, MenuScreen screen, boolean isSelected) {
+		mW = mEntryWidth;
+		mH = mEntryHeight;
 	}
 
-	public abstract void draw(LintfordCore pCore, Screen pScreen, SpriteBatch pSpriteBatch, boolean pIsSelected, float pParentZDepth);
+	public abstract void draw(LintfordCore core, Screen screen, SpriteBatch spriteBatch, boolean isSelected, float parentZDepth);
+
 }

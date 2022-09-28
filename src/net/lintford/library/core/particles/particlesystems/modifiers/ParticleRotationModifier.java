@@ -28,12 +28,12 @@ public class ParticleRotationModifier extends ParticleModifierBase {
 	// --------------------------------------
 
 	@Override
-	public void initialize(Particle pParticle) {
+	public void initialize(Particle particle) {
 
 	}
 
 	@Override
-	public void update(LintfordCore pCore) {
+	public void update(LintfordCore core) {
 
 	}
 
@@ -42,16 +42,11 @@ public class ParticleRotationModifier extends ParticleModifierBase {
 	// --------------------------------------
 
 	@Override
-	public void updateParticle(LintfordCore pCore, Particle pParticle) {
-		float lDelta = (float) pCore.appTime().elapsedTimeMilli();
+	public void updateParticle(LintfordCore core, Particle particle) {
+		final var lDelta = (float) core.appTime().elapsedTimeMilli();
 
-		pParticle.dr += RandomNumbers.random(0, 0.00f);
-
-		// X component
-		pParticle.rotationInRadians += pParticle.dr * lDelta;
-
-		pParticle.dr *= 0.98f; // ConstantsTable.FRICTION_Y;
-
+		particle.dr += RandomNumbers.random(0, 0.00f);
+		particle.rotationInRadians += particle.dr * lDelta;
+		particle.dr *= 0.98f;
 	}
-
 }

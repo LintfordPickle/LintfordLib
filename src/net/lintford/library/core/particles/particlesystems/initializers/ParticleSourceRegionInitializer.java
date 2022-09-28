@@ -31,7 +31,6 @@ public class ParticleSourceRegionInitializer extends ParticleInitializerBase {
 
 	public ParticleSourceRegionInitializer() {
 		super(INITIALIZER_NAME);
-
 	}
 
 	// --------------------------------------
@@ -39,9 +38,7 @@ public class ParticleSourceRegionInitializer extends ParticleInitializerBase {
 	// --------------------------------------
 
 	@Override
-	public void initialize(Particle pParticle) {
-		pParticle.setupSourceTexture(srcX, srcY, srcW, srcH);
-
+	public void initialize(Particle particle) {
+		particle.setupSourceTexture(srcX, srcY, srcW, srcH);
 	}
-
 }

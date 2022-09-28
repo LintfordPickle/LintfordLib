@@ -64,8 +64,8 @@ public class UIButton extends UIWidget {
 		mClickID = pClickID;
 
 		mButtonLabel = NO_LABEL_TEXT;
-		w = 200;
-		h = 25;
+		mW = 200;
+		mH = 25;
 
 	}
 
@@ -119,14 +119,14 @@ public class UIButton extends UIWidget {
 		final float lColorMod = mHoveredOver ? .9f : 1.f;
 		final var lColor = ColorConstants.getColorWithRGBMod(entityColor, lColorMod);
 
-		pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_RED, centerX() - (w / 2) + 32, centerY() - h / 2, w - 64, h, pComponentZDepth, lColor);
-		pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_RED, centerX() - (w / 2) + 32, centerY() - h / 2, w - 64, h, pComponentZDepth, lColor);
-		pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_RED, centerX() - (w / 2) + 32, centerY() - h / 2, w - 64, h, pComponentZDepth, lColor);
+		pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_RED, centerX() - (mW / 2) + 32, centerY() - mH / 2, mW - 64, mH, pComponentZDepth, lColor);
+		pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_RED, centerX() - (mW / 2) + 32, centerY() - mH / 2, mW - 64, mH, pComponentZDepth, lColor);
+		pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_RED, centerX() - (mW / 2) + 32, centerY() - mH / 2, mW - 64, mH, pComponentZDepth, lColor);
 
 		final String lButtonText = mButtonLabel != null ? mButtonLabel : NO_LABEL_TEXT;
 		final float lTextWidth = pTextFont.getStringWidth(lButtonText);
 
-		pTextFont.drawText(lButtonText, x + w / 2f - lTextWidth / 2f, y + h / 2f - pTextFont.fontHeight() / 2f, pComponentZDepth, ColorConstants.WHITE, 1f);
+		pTextFont.drawText(lButtonText, mX + mW / 2f - lTextWidth / 2f, mY + mH / 2f - pTextFont.fontHeight() / 2f, pComponentZDepth, ColorConstants.WHITE, 1f);
 	}
 
 	// --------------------------------------

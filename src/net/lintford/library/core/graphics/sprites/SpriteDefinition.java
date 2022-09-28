@@ -4,11 +4,17 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.gson.annotations.SerializedName;
+
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 
 /** {@link SpriteDefinition}s are a collection of *one* or more {@link SpriteFrame}s. */
 public class SpriteDefinition implements Serializable {
+
+	// --------------------------------------
+	// Constants
+	// --------------------------------------
 
 	private static final long serialVersionUID = -2995518836520839609L;
 	private static final int INVALID_FRAME_REFERENCE = -1;
@@ -18,62 +24,76 @@ public class SpriteDefinition implements Serializable {
 	// --------------------------------------
 
 	/* The name of the SpriteDefinition (used for animation listeners) */
-	public String name;
+	@SerializedName(value = "name")
+	private String mName;
 
 	/** The duration of each frame, in milliseconds */
-	private float frameDuration;
+	@SerializedName(value = "frameDuration")
+	private float mFrameDuration;
 
 	/** If true, the animation loops back to the beginning when finished. */
-	private boolean loopAnimation;
+	@SerializedName(value = "loopAnimation")
+	private boolean mLoopAnimation;
 
 	/** Specifies a minimum amount of time (in Ms) the animation should have to play out in order to be meaningful */
-	private int minimumViableRuntime;
+	@SerializedName(value = "minimumViableRuntime")
+	private int mMinimumViableRuntime;
 
 	/** A list of indices of the sprites which make up this animation. */
-	private int[] animationSpriteIndices;
+	@SerializedName(value = "animationSpriteIndices")
+	private int[] mAnimationSpriteIndices;
 
 	/** A collection of sprites which make up this animation. */
-	private transient List<SpriteFrame> spriteFrames;
+	@SerializedName(value = "spriteFrames")
+	private transient List<SpriteFrame> mSpriteFrames;
 
 	/** true if this AnimatedSprite has been loaded, false otherwise. */
-	private boolean isLoaded;
+	private boolean mIsLoaded;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
 
+	public String name() {
+		return mName;
+	}
+
+	public void name(String newName) {
+		mName = newName;
+	}
+
 	/** Returns true if this AnimatedSprite has beene loaded, false otherwise. */
 	public boolean isLoaded() {
-		return this.isLoaded;
+		return this.mIsLoaded;
 	}
 
 	public List<SpriteFrame> frames() {
-		return spriteFrames;
+		return mSpriteFrames;
 	}
 
 	/** Returns the number of frames in this animation. */
 	public int frameCount() {
-		return spriteFrames.size();
+		return mSpriteFrames.size();
 	}
 
 	public float frameDuration() {
-		return frameDuration;
+		return mFrameDuration;
 	}
 
-	public void frameDuration(float pFrameLength) {
-		frameDuration = pFrameLength;
+	public void frameDuration(float frameLength) {
+		mFrameDuration = frameLength;
 	}
 
 	public boolean loopEnabled() {
-		return loopAnimation;
+		return mLoopAnimation;
 	}
 
-	public void loopEnabled(boolean pLoopEnabled) {
-		loopAnimation = pLoopEnabled;
+	public void loopEnabled(boolean loopEnabled) {
+		mLoopAnimation = loopEnabled;
 	}
 
 	public int minimumViableRuntime() {
-		return minimumViableRuntime;
+		return mMinimumViableRuntime;
 	}
 
 	// --------------------------------------
@@ -81,39 +101,37 @@ public class SpriteDefinition implements Serializable {
 	// --------------------------------------
 
 	public SpriteDefinition() {
-		spriteFrames = new ArrayList<>();
-		frameDuration = 100.0f;
-		loopAnimation = true;
-
+		mSpriteFrames = new ArrayList<>();
+		mFrameDuration = 100.0f;
+		mLoopAnimation = true;
 	}
 
 	// --------------------------------------
 	// Core-Methods
 	// --------------------------------------
 
-	public void loadContent(final SpriteSheetDefinition pSpriteSheet) {
-		if (animationSpriteIndices == null)
+	public void loadContent(final SpriteSheetDefinition spriteSheetDefinition) {
+		if (mAnimationSpriteIndices == null)
 			return;
 
-		final int lNumSprites = animationSpriteIndices.length;
+		final int lNumSprites = mAnimationSpriteIndices.length;
 		for (int i = 0; i < lNumSprites; i++) {
 			if (i == INVALID_FRAME_REFERENCE) {
-				Debug.debugManager().logger().e(getClass().getSimpleName(), "Error resolving animation frame in " + name);
+				Debug.debugManager().logger().e(getClass().getSimpleName(), "Error resolving animation frame in " + mName);
 				continue;
 			}
 
-			final SpriteFrame lSpriteFrame = pSpriteSheet.getSpriteFrame(animationSpriteIndices[i]);
+			final var lSpriteFrame = spriteSheetDefinition.getSpriteFrame(mAnimationSpriteIndices[i]);
 
 			if (lSpriteFrame == null) {
-				Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("SpriteFrame missing in spritesheet: '%s'", animationSpriteIndices[i]));
+				Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("SpriteFrame missing in spritesheet: '%s'", mAnimationSpriteIndices[i]));
 				continue;
 			}
 
-			spriteFrames.add(lSpriteFrame);
+			mSpriteFrames.add(lSpriteFrame);
 		}
 
-		isLoaded = true;
-
+		mIsLoaded = true;
 	}
 
 	// --------------------------------------
@@ -121,38 +139,35 @@ public class SpriteDefinition implements Serializable {
 	// --------------------------------------
 
 	/** Adds the given {@link SpriteFrame} instance to this animation collection, at the end of the current animation. */
-	public void addFrame(final SpriteFrame pSprite) {
-		if (!spriteFrames.contains(pSprite)) {
-			spriteFrames.add(pSprite);
+	public void addFrame(final SpriteFrame spriteFrame) {
+		if (!mSpriteFrames.contains(spriteFrame)) {
+			mSpriteFrames.add(spriteFrame);
 		}
 	}
 
-	public void removeFrame(SpriteFrame pSprite) {
-		if (spriteFrames.contains(pSprite)) {
-			spriteFrames.remove(pSprite);
+	public void removeFrame(SpriteFrame spriteFrame) {
+		if (mSpriteFrames.contains(spriteFrame)) {
+			mSpriteFrames.remove(spriteFrame);
 		}
 	}
 
 	/** returns the frame of an animation from the internal timer. */
-	public SpriteFrame getSpriteFrame(int pFrameIndex) {
-		if (spriteFrames == null || spriteFrames.size() == 0)
+	public SpriteFrame getSpriteFrame(int frameIndex) {
+		if (mSpriteFrames == null || mSpriteFrames.size() == 0)
 			return null;
 
-		final int lFrameCount = this.spriteFrames.size();
+		final int lFrameCount = this.mSpriteFrames.size();
 
-		if (pFrameIndex < 0 || pFrameIndex >= lFrameCount)
+		if (frameIndex < 0 || frameIndex >= lFrameCount)
 			return null;
 
-		return spriteFrames.get(pFrameIndex);
-
+		return mSpriteFrames.get(frameIndex);
 	}
 
 	/** returns the frame of an animation from an external timer */
-	public SpriteFrame getAnimationFromTime(float pTime) {
-		int frameNumber = (int) ((pTime / frameDuration));
+	public SpriteFrame getAnimationFromTime(float time) {
+		final int frameNumber = (int) ((time / mFrameDuration));
 
-		return spriteFrames.get(frameNumber % spriteFrames.size());
-
+		return mSpriteFrames.get(frameNumber % mSpriteFrames.size());
 	}
-
 }

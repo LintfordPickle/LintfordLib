@@ -26,21 +26,16 @@ public class PressToContinueIntroScreen extends Screen {
 
 	protected TextureBatchPCT mTextureBatch;
 	private Texture mBackgroundTexture;
-
 	private String mImageLocation;
-
 	protected boolean mUserRequestSkip;
 	private boolean mActionPerformed;
 	private float mTimeToCompleteTransition = 400f;
 	private float mTransitionTimer;
 	private float mWhiteFlashAlphaAmt = 1f;
-
 	protected float mBackgroundZDepth;
 	protected float mContentZDepth;
 	protected float mFlashZDepth;
-
 	private IMenuAction mActionCallback;
-
 	private boolean mStretchBackgroundToFit;
 
 	// --------------------------------------
@@ -51,18 +46,18 @@ public class PressToContinueIntroScreen extends Screen {
 		return mStretchBackgroundToFit;
 	}
 
-	public void stretchBackgroundToFit(boolean pNewValue) {
-		mStretchBackgroundToFit = pNewValue;
+	public void stretchBackgroundToFit(boolean newValue) {
+		mStretchBackgroundToFit = newValue;
 	}
 
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
-	public PressToContinueIntroScreen(ScreenManager pScreenManager, String pImageLocation) {
-		super(pScreenManager);
+	public PressToContinueIntroScreen(ScreenManager screenManager, String imageLocation) {
+		super(screenManager);
 
-		mImageLocation = pImageLocation;
+		mImageLocation = imageLocation;
 
 		mTextureBatch = new TextureBatchPCT();
 
@@ -76,12 +71,12 @@ public class PressToContinueIntroScreen extends Screen {
 	// --------------------------------------
 
 	@Override
-	public void loadResources(ResourceManager pResourceManager) {
-		super.loadResources(pResourceManager);
+	public void loadResources(ResourceManager resourceManager) {
+		super.loadResources(resourceManager);
 
-		mBackgroundTexture = pResourceManager.textureManager().loadTexture(mImageLocation, mImageLocation, entityGroupID());
+		mBackgroundTexture = resourceManager.textureManager().loadTexture(mImageLocation, mImageLocation, entityGroupUid());
 
-		mTextureBatch.loadResources(pResourceManager);
+		mTextureBatch.loadResources(resourceManager);
 	}
 
 	@Override
@@ -89,63 +84,54 @@ public class PressToContinueIntroScreen extends Screen {
 		super.unloadResources();
 
 		mTextureBatch.unloadResources();
-
 	}
 
 	@Override
-	public void handleInput(LintfordCore pCore) {
-		super.handleInput(pCore);
+	public void handleInput(LintfordCore core) {
+		super.handleInput(core);
 
 		if (!mActionPerformed) {
-			if (pCore.input().mouse().tryAcquireMouseLeftClick(hashCode()) || pCore.input().keyboard().isKeyDown(GLFW.GLFW_KEY_ESCAPE) || pCore.input().keyboard().isKeyDown(GLFW.GLFW_KEY_SPACE)) {
-				screenManager.uiSounds().play("SOUND_MENU_PRESS_TO_CONTINUE");
+			if (core.input().mouse().tryAcquireMouseLeftClick(hashCode()) || core.input().keyboard().isKeyDown(GLFW.GLFW_KEY_ESCAPE) || core.input().keyboard().isKeyDown(GLFW.GLFW_KEY_SPACE)) {
+				mScreenManager.uiSounds().play("SOUND_MENU_PRESS_TO_CONTINUE");
 				mUserRequestSkip = true;
-
 			}
-
 		}
-
 	}
 
 	@Override
-	public void update(LintfordCore pCore, boolean pOtherScreenHasFocus, boolean pCoveredByOtherScreen) {
-		super.update(pCore, pOtherScreenHasFocus, pCoveredByOtherScreen);
+	public void update(LintfordCore core, boolean otherScreenHasFocus, boolean coveredByOtherScreen) {
+		super.update(core, otherScreenHasFocus, coveredByOtherScreen);
 
 		if (!mActionPerformed) {
 			if (mUserRequestSkip) {
 				mTransitionTimer = 0f;
 				mActionPerformed = true;
-
 			}
 
-			mTransitionTimer += pCore.appTime().elapsedTimeMilli();
-			fadeOutFromWhite(pCore, mTransitionTimer, mTimeToCompleteTransition);
-
+			mTransitionTimer += core.appTime().elapsedTimeMilli();
+			fadeOutFromWhite(core, mTransitionTimer, mTimeToCompleteTransition);
 		} else if (mTransitionTimer < mTimeToCompleteTransition) {
-			mTransitionTimer += pCore.appTime().elapsedTimeMilli();
+			mTransitionTimer += core.appTime().elapsedTimeMilli();
 
-			fadeOutFromWhite(pCore, mTransitionTimer, mTimeToCompleteTransition);
-
+			fadeOutFromWhite(core, mTransitionTimer, mTimeToCompleteTransition);
 		} else {
 			if (mActionCallback != null) {
 				mActionCallback.TimerFinished(this);
-
 			}
 
 			exitScreen();
 		}
-
 	}
 
-	private void fadeOutFromWhite(LintfordCore pCore, float pCurrentTimer, float pTotalTime) {
-		float normalizedLifetime = pCurrentTimer / pTotalTime;
+	private void fadeOutFromWhite(LintfordCore core, float currentTimer, float totalTime) {
+		float normalizedLifetime = currentTimer / totalTime;
 
 		mWhiteFlashAlphaAmt = (1 - normalizedLifetime);
 	}
 
 	@Override
-	public void draw(LintfordCore pCore) {
-		super.draw(pCore);
+	public void draw(LintfordCore core) {
+		super.draw(core);
 
 		float lX = -mBackgroundTexture.getTextureWidth() / 2;
 		float lWidth = mBackgroundTexture.getTextureWidth();
@@ -153,7 +139,7 @@ public class PressToContinueIntroScreen extends Screen {
 		float lHeight = mBackgroundTexture.getTextureHeight();
 
 		if (mStretchBackgroundToFit) {
-			DisplayManager lDisplay = pCore.config().display();
+			DisplayManager lDisplay = core.config().display();
 			lX = -lDisplay.windowWidth() / 2;
 			lWidth = lDisplay.windowWidth();
 			lY = -lDisplay.windowHeight() / 2;
@@ -162,19 +148,18 @@ public class PressToContinueIntroScreen extends Screen {
 
 		final var lColor = ColorConstants.getWhiteWithAlpha(mWhiteFlashAlphaAmt);
 
-		mTextureBatch.begin(pCore.HUD());
+		mTextureBatch.begin(core.HUD());
 		mTextureBatch.draw(mBackgroundTexture, 0, 0, mBackgroundTexture.getTextureWidth(), mBackgroundTexture.getTextureHeight(), lX, lY, lWidth, lHeight, mBackgroundZDepth, lColor);
 		mTextureBatch.end();
 
-		drawScreenContents(pCore);
+		drawScreenContents(core);
 
-		mTextureBatch.begin(pCore.HUD());
-		mTextureBatch.draw(pCore.resources().textureManager().textureWhite(), 0, 0, 2, 2, lX, lY, lWidth, lHeight, mFlashZDepth, lColor);
+		mTextureBatch.begin(core.HUD());
+		mTextureBatch.draw(core.resources().textureManager().textureWhite(), 0, 0, 2, 2, lX, lY, lWidth, lHeight, mFlashZDepth, lColor);
 		mTextureBatch.end();
-
 	}
 
-	protected void drawScreenContents(LintfordCore pCore) {
+	protected void drawScreenContents(LintfordCore core) {
 
 	}
 
@@ -182,8 +167,7 @@ public class PressToContinueIntroScreen extends Screen {
 	// Methods
 	// --------------------------------------
 
-	public void setTimerFinishedCallback(IMenuAction pCallback) {
-		mActionCallback = pCallback;
-
+	public void setTimerFinishedCallback(IMenuAction callback) {
+		mActionCallback = callback;
 	}
 }

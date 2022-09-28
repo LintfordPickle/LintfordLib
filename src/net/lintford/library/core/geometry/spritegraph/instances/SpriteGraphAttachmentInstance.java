@@ -17,29 +17,101 @@ public class SpriteGraphAttachmentInstance implements Serializable {
 	// Variables
 	// --------------------------------------
 
-	private String attachmentDefinitionName;
+	private String mAttachmentDefinitionName;
 	private boolean mIsInitialized;
 	private transient SpriteSheetDefinition mSpritesheetDefinition;
-	public String defaultSpriteName;
-	public String defaultAnimationName = "idle";
-	public String spritesheetDefinitionName;
-	public transient boolean resolvedSpritesheetDefinitionName;
-	public boolean attachmentIsRemovable;
-	public int attachmentCategory;
-	public int zDepth;
-	public int attachmentColorTint;
-	public boolean useDynamicNames;
+	private String mDefaultSpriteName;
+	private String mDefaultAnimationName = "idle";
+	private String mSpritesheetDefinitionName;
+	private transient boolean mResolvedSpritesheetDefinitionName;
+	private boolean mAttachmentIsRemovable;
+	private int mAttachmentCategory;
+	private int mZDepth;
+	private int mAttachmentColorTint;
+	private boolean mUseDynamicNames;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
 
+	public int zDepth() {
+		return mZDepth;
+	}
+
+	public void zDepth(int zDepth) {
+		mZDepth = zDepth;
+	}
+
+	public boolean attachmentIsRemovable() {
+		return mAttachmentIsRemovable;
+	}
+
+	public void attachmentIsRemovable(boolean attachmentIsRemovable) {
+		mAttachmentIsRemovable = attachmentIsRemovable;
+	}
+
+	public int attachmentColorTint() {
+		return mAttachmentColorTint;
+	}
+
+	public void attachmentColorTint(int attachmentColorTint) {
+		mAttachmentColorTint = attachmentColorTint;
+	}
+
+	public int attachmentCategory() {
+		return mAttachmentCategory;
+	}
+
+	public void attachmentCategory(int attachmentCategory) {
+		mAttachmentCategory = attachmentCategory;
+	}
+
+	public String defaultSpriteName() {
+		return mDefaultSpriteName;
+	}
+
+	public void defaultSpriteName(String defaultSpriteName) {
+		mDefaultSpriteName = defaultSpriteName;
+	}
+
+	public String defaultAnimationName() {
+		return mDefaultAnimationName;
+	}
+
+	public void defaultAnimationName(String defaultAnimationName) {
+		mDefaultAnimationName = defaultAnimationName;
+	}
+
+	public String spritesheetDefinitionName() {
+		return mSpritesheetDefinitionName;
+	}
+
+	public void spritesheetDefinitionName(String spritesheetDefinitionName) {
+		mSpritesheetDefinitionName = spritesheetDefinitionName;
+	}
+
+	public boolean useDynamicNames() {
+		return mUseDynamicNames;
+	}
+
+	public void useDynamicNames(boolean useDynamicNames) {
+		mUseDynamicNames = useDynamicNames;
+	}
+
+	public boolean resolvedSpritesheetDefinitionName() {
+		return mResolvedSpritesheetDefinitionName;
+	}
+
+	public void resolvedSpritesheetDefinitionName(boolean resolvedSpritesheetDefinitionName) {
+		mResolvedSpritesheetDefinitionName = resolvedSpritesheetDefinitionName;
+	}
+
 	public String attachedNodeName() {
-		return attachmentDefinitionName;
+		return mAttachmentDefinitionName;
 	}
 
 	public boolean isAttachmentInUse() {
-		return attachmentCategory > 0;
+		return mAttachmentCategory > 0;
 	}
 
 	public boolean isInitialized() {
@@ -50,8 +122,8 @@ public class SpriteGraphAttachmentInstance implements Serializable {
 		return mSpritesheetDefinition;
 	}
 
-	public void spritesheetDefinition(SpriteSheetDefinition pSpriteSheetDefinition) {
-		mSpritesheetDefinition = pSpriteSheetDefinition;
+	public void spritesheetDefinition(SpriteSheetDefinition spriteSheetDefinition) {
+		mSpritesheetDefinition = spriteSheetDefinition;
 	}
 
 	public boolean spritesheetResourceLoaded() {
@@ -66,43 +138,43 @@ public class SpriteGraphAttachmentInstance implements Serializable {
 
 	}
 
-	public SpriteGraphAttachmentInstance(ISpriteGraphAttachmentDefinition pAttachmentDefinition) {
-		initialize(pAttachmentDefinition);
+	public SpriteGraphAttachmentInstance(ISpriteGraphAttachmentDefinition attachmentDefinition) {
+		initialize(attachmentDefinition);
 	}
 
 	// --------------------------------------
 	// Core-Methods
 	// --------------------------------------
 
-	public void initialize(ISpriteGraphAttachmentDefinition pAttachmentDefinition) {
-		if (pAttachmentDefinition == null) {
+	public void initialize(ISpriteGraphAttachmentDefinition attachmentDefinition) {
+		if (attachmentDefinition == null) {
 			unload();
 			return;
 		}
 
-		attachmentDefinitionName = pAttachmentDefinition.attachmentName();
-		spritesheetDefinitionName = pAttachmentDefinition.spritesheetName();
-		defaultSpriteName = pAttachmentDefinition.defaultSpriteName();
-		attachmentIsRemovable = pAttachmentDefinition.isAttachmentRemovable();
-		attachmentCategory = pAttachmentDefinition.attachmentCategory();
-		zDepth = pAttachmentDefinition.relativeZDepth();
-		attachmentColorTint = pAttachmentDefinition.colorTint();
-		useDynamicNames = pAttachmentDefinition.useDynamicSpritesheetName();
-		resolvedSpritesheetDefinitionName = false;
+		mAttachmentDefinitionName = attachmentDefinition.attachmentName();
+		mSpritesheetDefinitionName = attachmentDefinition.spritesheetName();
+		mDefaultSpriteName = attachmentDefinition.defaultSpriteName();
+		mAttachmentIsRemovable = attachmentDefinition.isAttachmentRemovable();
+		mAttachmentCategory = attachmentDefinition.attachmentCategory();
+		mZDepth = attachmentDefinition.relativeZDepth();
+		mAttachmentColorTint = attachmentDefinition.colorTint();
+		mUseDynamicNames = attachmentDefinition.useDynamicSpritesheetName();
+		mResolvedSpritesheetDefinitionName = false;
 
 		mIsInitialized = true;
 	}
 
 	public void unload() {
-		attachmentDefinitionName = null;
-		defaultSpriteName = null;
-		spritesheetDefinitionName = null;
+		mAttachmentDefinitionName = null;
+		mDefaultSpriteName = null;
+		mSpritesheetDefinitionName = null;
 		mSpritesheetDefinition = null;
-		attachmentIsRemovable = true;
-		attachmentCategory = -1;
-		zDepth = 0;
-		useDynamicNames = false;
-		attachmentColorTint = 0xffffffff;
+		mAttachmentIsRemovable = true;
+		mAttachmentCategory = -1;
+		mZDepth = 0;
+		mUseDynamicNames = false;
+		mAttachmentColorTint = 0xffffffff;
 
 		mIsInitialized = false;
 	}

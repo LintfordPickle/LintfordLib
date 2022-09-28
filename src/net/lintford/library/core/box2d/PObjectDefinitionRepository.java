@@ -19,7 +19,6 @@ public class PObjectDefinitionRepository {
 
 	public class PObjectMetaData {
 		public PObjectMetaDataDefinition[] PObjectMetaDefinitions;
-
 	}
 
 	// --------------------------------------
@@ -47,9 +46,8 @@ public class PObjectDefinitionRepository {
 		return mDefinitionUidCounter++;
 	}
 
-	public PObjectDefinition getPObjectDefinitionByName(String pName) {
-		return mDefinitions.get(pName);
-
+	public PObjectDefinition getPObjectDefinitionByName(String name) {
+		return mDefinitions.get(name);
 	}
 
 	// --------------------------------------
@@ -69,21 +67,20 @@ public class PObjectDefinitionRepository {
 	// Core-Methods
 	// --------------------------------------
 
-	public void loadDefinitionsFromMetaFile(String pMetaFileLocation) {
-		Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("Loading PObjects from meta-file %s", pMetaFileLocation));
+	public void loadDefinitionsFromMetaFile(String metaFileLocation) {
+		Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("Loading PObjects from meta-file %s", metaFileLocation));
 
 		final var lGson = new GsonBuilder().create();
 
 		String lMetaFileContentsString = null;
 		PObjectMetaData lPObjectMetaData = null;
 
-		lMetaFileContentsString = FileUtils.loadString(pMetaFileLocation);
+		lMetaFileContentsString = FileUtils.loadString(metaFileLocation);
 		lPObjectMetaData = lGson.fromJson(lMetaFileContentsString, PObjectMetaData.class);
 
 		if (lPObjectMetaData == null || lPObjectMetaData.PObjectMetaDefinitions == null || lPObjectMetaData.PObjectMetaDefinitions.length == 0) {
 			Debug.debugManager().logger().e(getClass().getSimpleName(), "There was an error reading the PObject meta file");
 			return;
-
 		}
 
 		final int lNumberOfPObjectDefinitions = lPObjectMetaData.PObjectMetaDefinitions.length;
@@ -95,9 +92,7 @@ public class PObjectDefinitionRepository {
 			final var lReloadExisting = lPObjectDataDefinition.reloadPrevious;
 
 			loadDefinitionFromFile(lPObjectName, lFilepath, lReloadExisting);
-
 		}
-
 	}
 
 	private void loadSystemDefinitions() {
@@ -106,28 +101,22 @@ public class PObjectDefinitionRepository {
 
 		loadDefinitionFromFile(POBJECT_BOX_NAME, "/res/pobjects/pobjectBox.json", true);
 		loadDefinitionFromFile(POBJECT_CIRCLE_NAME, "/res/pobjects/pobjectCircle.json", true);
-
 	}
 
-	public void loadDefinitionFromFile(String pPObjectName, String pFilepath, boolean pReloadExisting) {
-		final var lExistingDefinition = mDefinitions.get(pPObjectName);
-		if (!pReloadExisting && lExistingDefinition != null) {
+	public void loadDefinitionFromFile(String pObjectName, String filepath, boolean reloadIfExists) {
+		final var lExistingDefinition = mDefinitions.get(pObjectName);
+		if (!reloadIfExists && lExistingDefinition != null) {
 			Debug.debugManager().logger().w(getClass().getSimpleName(), "PObject already exists (NO RELOAD). Skipping load");
 			return;
-
 		}
 
-		final var lPObjectDefinition = new PObjectDefinition();
-		lPObjectDefinition.loadPObjectDefinitionFromFile(pFilepath, new StringBuilder(), null);
+		final var lPObjectDefinition = new PObjectDefinition(getDefinitionUidCounter());
+		lPObjectDefinition.loadPObjectDefinitionFromFile(filepath, new StringBuilder(), null);
 
-		Debug.debugManager().logger().i(getClass().getSimpleName(), "PObject definition from '" + pFilepath + "' loaded as [" + pPObjectName + "]");
-		lPObjectDefinition.definitionUid = getDefinitionUidCounter();
+		Debug.debugManager().logger().i(getClass().getSimpleName(), "PObject definition from '" + filepath + "' loaded as [" + pObjectName + "]");
 
 		if (lPObjectDefinition.isLoaded()) {
-			mDefinitions.put(pPObjectName, lPObjectDefinition);
-
+			mDefinitions.put(pObjectName, lPObjectDefinition);
 		}
-
 	}
-
 }

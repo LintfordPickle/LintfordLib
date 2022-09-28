@@ -25,12 +25,12 @@ public class MenuLabelValueEntry extends MenuLabelEntry {
 		return mShowLabel;
 	}
 
-	public void showLabel(boolean pShowLabel) {
-		mShowLabel = pShowLabel;
+	public void showLabel(boolean showLabel) {
+		mShowLabel = showLabel;
 	}
 
-	public void valueText(String pValueText) {
-		mValueText = pValueText;
+	public void valueText(String valueText) {
+		mValueText = valueText;
 	}
 
 	public String valueText() {
@@ -41,8 +41,8 @@ public class MenuLabelValueEntry extends MenuLabelEntry {
 	// Constructor
 	// --------------------------------------
 
-	public MenuLabelValueEntry(ScreenManager pScreenManager, BaseLayout pParentLayout) {
-		super(pScreenManager, pParentLayout);
+	public MenuLabelValueEntry(ScreenManager screenManager, BaseLayout parentLayout) {
+		super(screenManager, parentLayout);
 
 		mDrawBackground = false;
 		mText = "Add your message";
@@ -52,7 +52,6 @@ public class MenuLabelValueEntry extends MenuLabelEntry {
 		mCanHoverOver = false;
 
 		mVerticalFillType = FILLTYPE.TAKE_WHATS_NEEDED;
-
 	}
 
 	// --------------------------------------
@@ -60,8 +59,8 @@ public class MenuLabelValueEntry extends MenuLabelEntry {
 	// --------------------------------------
 
 	@Override
-	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pParentZDepth) {
-		super.draw(pCore, pScreen, pIsSelected, pParentZDepth);
+	public void draw(LintfordCore core, Screen screen, boolean isSelected, float parentZDepth) {
+		super.draw(core, screen, isSelected, parentZDepth);
 		if (!enabled())
 			return;
 
@@ -73,21 +72,21 @@ public class MenuLabelValueEntry extends MenuLabelEntry {
 		final float lLabelWidth = lTextBoldFont.getStringWidth(mText, lUiTextScale);
 		final float lFontHeight = lTextBoldFont.fontHeight() * lUiTextScale;
 
-		float lX = x + w / 2 - lLabelWidth / 2; // Center label
+		float lX = mX + mW / 2 - lLabelWidth / 2;
 		switch (mHorizontalAlignment) {
 		case LEFT:
-			lX = x;
+			lX = mX;
 			break;
 		case RIGHT:
-			lX = x - mLeftPadding - lLabelWidth;
+			lX = mX - mLeftPadding - lLabelWidth;
 			break;
 		default:
-			lX = x + w / 2 - lLabelWidth / 2; // Center label
+			lX = mX + mW / 2 - lLabelWidth / 2;
 			break;
 		}
 
-		lTextBoldFont.begin(pCore.HUD());
-		lTextBoldFont.drawText(mValueText, lScreenOffset.x + lX + 100.f, lScreenOffset.y + y + h / 2f - lFontHeight / 2f, pParentZDepth + .15f, textColor, lUiTextScale);
+		lTextBoldFont.begin(core.HUD());
+		lTextBoldFont.drawText(mValueText, lScreenOffset.x + lX + 100.f, lScreenOffset.y + mY + mH / 2f - lFontHeight / 2f, parentZDepth + .15f, textColor, lUiTextScale);
 		lTextBoldFont.end();
 	}
 }

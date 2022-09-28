@@ -57,19 +57,18 @@ public abstract class Shader {
 	// Constructor
 	// --------------------------------------
 
-	public Shader(String pName, String pVertFilename, String pFragFilename) {
-		mName = pName;
+	public Shader(String shaderName, String vertFilename, String fragFilename) {
+		mName = shaderName;
 
-		mVertPathname = pVertFilename;
-		mFragPathname = pFragFilename;
-
+		mVertPathname = vertFilename;
+		mFragPathname = fragFilename;
 	}
 
 	// --------------------------------------
 	// Core-Methods
 	// --------------------------------------
 
-	public void loadResources(ResourceManager pResourceManager) {
+	public void loadResources(ResourceManager resourceManager) {
 		final var lVertexSource = FileUtils.loadString(mVertPathname);
 		final var lFragmentSource = FileUtils.loadString(mFragPathname);
 
@@ -129,21 +128,19 @@ public abstract class Shader {
 		if (glGetShaderi(lVertID, GL_COMPILE_STATUS) == GL_FALSE) {
 			Debug.debugManager().logger().e(DEBUG_TAG_VERT_NAME, "Failed to compile vertex shader!" + mVertPathname);
 			Debug.debugManager().logger().e(DEBUG_TAG_VERT_NAME, glGetShaderInfoLog(lVertID, 2048));
-
+			// TODO: gracefully fallback to some magenta default
 			throw new RuntimeException("Failed to compile vertex shader (" + GL_VERTEX_SHADER + ")");
 
 		} else {
 			Debug.debugManager().logger().e(getClass().getSimpleName(), glGetShaderInfoLog(lVertID, 2048));
-
 		}
 
 		glCompileShader(lFragID);
 		if (glGetShaderi(lFragID, GL_COMPILE_STATUS) == GL_FALSE) {
 			Debug.debugManager().logger().e(DEBUG_TAG_FRAG_NAME, "Failed to compile fragment shader!" + mFragPathname);
 			Debug.debugManager().logger().e(DEBUG_TAG_FRAG_NAME, glGetShaderInfoLog(lFragID, 2048));
-
+			// TODO: gracefully fallback to some magenta default
 			throw new RuntimeException("Failed to compile fragment shader (" + GL_FRAGMENT_SHADER + ")");
-
 		} else {
 			Debug.debugManager().logger().e(getClass().getSimpleName(), glGetShaderInfoLog(lFragID, 2048));
 		}
@@ -169,7 +166,7 @@ public abstract class Shader {
 		glUseProgram(0);
 	}
 
-	protected abstract void bindAtrributeLocations(int pShaderID);
+	protected abstract void bindAtrributeLocations(int shaderID);
 
 	protected void getUniformLocations() {
 

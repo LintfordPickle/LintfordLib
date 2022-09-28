@@ -10,6 +10,10 @@ import java.io.Serializable;
  */
 public class Vector2f implements Serializable {
 
+	// --------------------------------------
+	// Constants
+	// --------------------------------------
+
 	private static final long serialVersionUID = -2295169699757910995L;
 
 	private final static Vector2f tmp = new Vector2f();
@@ -17,11 +21,19 @@ public class Vector2f implements Serializable {
 	public final static Vector2f Zero = new Vector2f();
 	public final static Vector2f One = new Vector2f();
 
+	// --------------------------------------
+	// Variables
+	// --------------------------------------
+
 	/** the x-component of this vector **/
 	public float x;
 
 	/** the y-component of this vector **/
 	public float y;
+
+	// --------------------------------------
+	// Constructors
+	// --------------------------------------
 
 	/**
 	 * Constructs a new vector at (0,0)
@@ -49,6 +61,10 @@ public class Vector2f implements Serializable {
 	public Vector2f(Vector2f v) {
 		set(v);
 	}
+
+	// --------------------------------------
+	// Methods
+	// --------------------------------------
 
 	/**
 	 * @return a copy of this vector
@@ -79,10 +95,8 @@ public class Vector2f implements Serializable {
 	public static Vector2f CatmullRom(Vector2f value1, Vector2f value2, Vector2f value3, Vector2f value4, float amount, Vector2f returnVector) {
 		float num = amount * amount;
 		float num2 = amount * num;
-		returnVector.x = 0.5f * ((((2f * value2.x) + ((-value1.x + value3.x) * amount)) + (((((2f * value1.x) - (5f * value2.x)) + (4f * value3.x)) - value4.x) * num))
-				+ ((((-value1.x + (3f * value2.x)) - (3f * value3.x)) + value4.x) * num2));
-		returnVector.y = 0.5f * ((((2f * value2.y) + ((-value1.y + value3.y) * amount)) + (((((2f * value1.y) - (5f * value2.y)) + (4f * value3.y)) - value4.y) * num))
-				+ ((((-value1.y + (3f * value2.y)) - (3f * value3.y)) + value4.y) * num2));
+		returnVector.x = 0.5f * ((((2f * value2.x) + ((-value1.x + value3.x) * amount)) + (((((2f * value1.x) - (5f * value2.x)) + (4f * value3.x)) - value4.x) * num)) + ((((-value1.x + (3f * value2.x)) - (3f * value3.x)) + value4.x) * num2));
+		returnVector.y = 0.5f * ((((2f * value2.y) + ((-value1.y + value3.y) * amount)) + (((((2f * value1.y) - (5f * value2.y)) + (4f * value3.y)) - value4.y) * num)) + ((((-value1.y + (3f * value2.y)) - (3f * value3.y)) + value4.y) * num2));
 		return returnVector;
 	}
 

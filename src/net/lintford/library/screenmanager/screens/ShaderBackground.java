@@ -83,25 +83,20 @@ public abstract class ShaderBackground extends Screen {
 		public void updateUniforms() {
 			super.updateUniforms();
 
-			if (mTimeLocationID != -1) {
+			if (mTimeLocationID != -1)
 				GL20.glUniform1f(mTimeLocationID, mTime);
-			}
 
-			if (mCameraZoomFactorLocationId != -1) {
+			if (mCameraZoomFactorLocationId != -1)
 				GL20.glUniform1f(mCameraZoomFactorLocationId, mCameraZoomFactor);
-			}
 
-			if (mScreenResolutionLocationID != -1) {
+			if (mScreenResolutionLocationID != -1)
 				GL20.glUniform2f(mScreenResolutionLocationID, mScreenResolutionW, mScreenResolutionH);
-			}
 
-			if (mCameraResolutionLocationID != -1) {
+			if (mCameraResolutionLocationID != -1)
 				GL20.glUniform2f(mCameraResolutionLocationID, mCameraResolutionW, mCameraResolutionH);
-			}
 
-			if (mv2MouseWindowCoordsLocationID != -1) {
+			if (mv2MouseWindowCoordsLocationID != -1)
 				GL20.glUniform2f(mv2MouseWindowCoordsLocationID, mMouseWindowCoordsX, mMouseWindowCoordsY);
-			}
 
 		}
 
@@ -134,9 +129,7 @@ public abstract class ShaderBackground extends Screen {
 			GL20.glUniform1i(lSampler0, 0);
 			GL20.glUniform1i(lSampler1, 1);
 			GL20.glUniform1i(lSampler2, 2);
-
 		}
-
 	}
 
 	// --------------------------------------
@@ -149,14 +142,13 @@ public abstract class ShaderBackground extends Screen {
 	// Constructor
 	// --------------------------------------
 
-	public ShaderBackground(ScreenManager pScreenManager, String pVertFilepath, String pFragFilepath) {
-		super(pScreenManager);
+	public ShaderBackground(ScreenManager screenManager, String vertFilepath, String fragFilepath) {
+		super(screenManager);
 
-		mBackgroundShader = new BackgroundShader(pVertFilepath, pFragFilepath);
+		mBackgroundShader = new BackgroundShader(vertFilepath, fragFilepath);
 
 		mShowBackgroundScreens = true;
 		mBlockInputInBackground = true;
-
 	}
 
 	// --------------------------------------
@@ -164,11 +156,10 @@ public abstract class ShaderBackground extends Screen {
 	// --------------------------------------
 
 	@Override
-	public void loadResources(ResourceManager pResourceManager) {
-		super.loadResources(pResourceManager);
+	public void loadResources(ResourceManager resourceManager) {
+		super.loadResources(resourceManager);
 
-		mBackgroundShader.loadResources(pResourceManager);
-
+		mBackgroundShader.loadResources(resourceManager);
 	}
 
 	@Override
@@ -179,26 +170,24 @@ public abstract class ShaderBackground extends Screen {
 	}
 
 	@Override
-	public void handleInput(LintfordCore pCore) {
-		super.handleInput(pCore);
+	public void handleInput(LintfordCore core) {
+		super.handleInput(core);
 
-		if (pCore.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_U)) {
+		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_U)) {
 			mBackgroundShader.recompile();
-
 		}
-
 	}
 
 	@Override
-	public void update(LintfordCore pCore, boolean pOtherScreenHasFocus, boolean pCoveredByOtherScreen) {
-		super.update(pCore, pOtherScreenHasFocus, pCoveredByOtherScreen);
+	public void update(LintfordCore core, boolean otherScreenHasFocus, boolean coveredByOtherScreen) {
+		super.update(core, otherScreenHasFocus, coveredByOtherScreen);
 
-		mBackgroundShader.time((float) pCore.appTime().totalTimeSeconds());
+		mBackgroundShader.time((float) core.appTime().totalTimeSeconds());
 
-		mBackgroundShader.screenResolutionWidth(pCore.config().display().windowWidth());
-		mBackgroundShader.screenResolutionHeight(pCore.config().display().windowHeight());
+		mBackgroundShader.screenResolutionWidth(core.config().display().windowWidth());
+		mBackgroundShader.screenResolutionHeight(core.config().display().windowHeight());
 
-		final var lCamera = pCore.HUD();
+		final var lCamera = core.HUD();
 		mBackgroundShader.cameraResolutionWidth(lCamera.getWidth());
 		mBackgroundShader.cameraResolutionHeight(lCamera.getHeight());
 		mBackgroundShader.cameraZoomFactor(1f); // Hud
@@ -208,25 +197,23 @@ public abstract class ShaderBackground extends Screen {
 
 		mBackgroundShader.mouseWindowPositionX(lMouseX);
 		mBackgroundShader.mouseWindowPositionY(lMouseY);
-
 	}
 
 	@Override
-	public void draw(LintfordCore pCore) {
-		super.draw(pCore);
+	public void draw(LintfordCore core) {
+		super.draw(core);
 
 		final var lTextureBatch = textureBatch();
 
-		final var lHudBoundingRectangle = pCore.HUD().boundingRectangle();
+		final var lHudBoundingRectangle = core.HUD().boundingRectangle();
 
 		final var lX = lHudBoundingRectangle.left();
 		final var lY = lHudBoundingRectangle.top();
-		final var lWidth = lHudBoundingRectangle.w();
-		final var lHeight = lHudBoundingRectangle.h();
+		final var lWidth = lHudBoundingRectangle.width();
+		final var lHeight = lHudBoundingRectangle.height();
 
-		lTextureBatch.begin(pCore.HUD(), mBackgroundShader);
+		lTextureBatch.begin(core.HUD(), mBackgroundShader);
 		lTextureBatch.draw(null, 0, 0, 1, 1, lX, lY, lWidth, lHeight, -0.01f, ColorConstants.WHITE);
 		lTextureBatch.end();
-
 	}
 }

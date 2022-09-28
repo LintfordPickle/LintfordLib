@@ -10,7 +10,6 @@ public class Box2dRevoluteJointDef extends Box2dJointDefinition {
 	// --------------------------------------
 
 	public RevoluteJointDef revoluteJointDef = new RevoluteJointDef();
-
 	public Vec2 localAnchorA = new Vec2();
 	public Vec2 localAnchorB = new Vec2();
 	public float referenceAngle;

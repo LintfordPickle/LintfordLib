@@ -56,7 +56,6 @@ public class Box2dEdgeInstance extends BaseInstanceData implements ShapeInstance
 
 		if (hasVertex3)
 			vertex3.set(edgeShape.m_vertex3);
-
 	}
 
 	public void loadPhysics() {
@@ -69,12 +68,11 @@ public class Box2dEdgeInstance extends BaseInstanceData implements ShapeInstance
 		edgeShape.m_vertex1.set(vertex1);
 		edgeShape.m_vertex2.set(vertex2);
 		edgeShape.m_vertex3.set(vertex3);
-
 	}
 
 	@Override
 	public ShapeInstance getCopy() {
-		Box2dEdgeInstance lReturn = new Box2dEdgeInstance();
+		final var lReturn = new Box2dEdgeInstance();
 
 		lReturn.hasVertex0 = hasVertex0;
 		lReturn.hasVertex3 = hasVertex3;
@@ -86,5 +84,4 @@ public class Box2dEdgeInstance extends BaseInstanceData implements ShapeInstance
 
 		return lReturn;
 	}
-
 }

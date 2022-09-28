@@ -18,9 +18,7 @@ public class Jb2dJsonImage {
 	int filter; // 0 = nearest, 1 = linear
 	float renderOrder;
 	int colorTint[];
-
 	Vec2 corners[];
-
 	int numPoints;
 	float points[];
 	float uvCoords[];

@@ -34,10 +34,9 @@ public class AudioFireAndForgetManager {
 	// Constructors
 	// --------------------------------------
 
-	public AudioFireAndForgetManager(AudioManager pAudioManager) {
-		mAudioManager = pAudioManager;
+	public AudioFireAndForgetManager(AudioManager audioManager) {
+		mAudioManager = audioManager;
 		mAudioSourcePool = new ArrayList<>();
-
 	}
 
 	// --------------------------------------
@@ -56,40 +55,35 @@ public class AudioFireAndForgetManager {
 	// Methods
 	// --------------------------------------
 
-	public void play(String pAudioDataName) {
-		play(pAudioDataName, 0, 0, 0, 0);
-
+	public void play(String audioDataName) {
+		play(audioDataName, 0, 0, 0, 0);
 	}
 
-	public void play(String pAudioDataName, float pWorldX, float pWorldY, float pVelX, float pVelY) {
-		final var lAudioDataBuffer = mAudioManager.getAudioDataBufferByName(pAudioDataName);
-		play(lAudioDataBuffer, pWorldX, pWorldY, pVelX, pVelY);
-
+	public void play(String audioDataName, float positionX, float positionY, float velocityX, float velocityY) {
+		final var lAudioDataBuffer = mAudioManager.getAudioDataBufferByName(audioDataName);
+		play(lAudioDataBuffer, positionX, positionY, velocityX, velocityY);
 	}
 
 	/** Plays the given {@link AudioData}. */
-	public void play(AudioData pAudioDataBuffer, float pWorldX, float pWorldY, float pVelX, float pVelY) {
-		if (pAudioDataBuffer == null || !pAudioDataBuffer.isLoaded())
+	public void play(AudioData audioDataBuffer, float positionX, float positionY, float velocityX, float velocityY) {
+		if (audioDataBuffer == null || !audioDataBuffer.isLoaded())
 			return;
 
-		play(pAudioDataBuffer, 100f, 1f, pWorldX, pWorldY, pVelX, pVelY);
-
+		play(audioDataBuffer, 100f, 1f, positionX, positionY, velocityX, velocityY);
 	}
 
 	/** Plays the given {@link AudioData} at the specified volume and pitch. */
-	public void play(AudioData pAudioDataBuffer, float pGain, float pPitch, float pWorldX, float pWorldY, float pVelX, float pVelY) {
-		if (pAudioDataBuffer == null || !pAudioDataBuffer.isLoaded())
+	public void play(AudioData audioDataBuffer, float gain, float pitch, float positionX, float positionY, float velocityX, float velocityY) {
+		if (audioDataBuffer == null || !audioDataBuffer.isLoaded())
 			return;
 
 		final var lAudioSource = getFreeAudioSource();
 		if (lAudioSource != null) {
-			lAudioSource.setPosition(pWorldX, pWorldY, 0f);
-			lAudioSource.setVelocity(pVelX, pVelY, 0f);
+			lAudioSource.setPosition(positionX, positionY, 0f);
+			lAudioSource.setVelocity(velocityX, velocityY, 0f);
 			lAudioSource.setLooping(false);
-			lAudioSource.play(pAudioDataBuffer.bufferID(), pGain, pPitch);
-
+			lAudioSource.play(audioDataBuffer.bufferID(), gain, pitch);
 		}
-
 	}
 
 	/** Returns the first non-playing {@link AudioSource} in the AudioSourcePool. Returns null if no {@link AudioSource}s are available. */
@@ -97,18 +91,15 @@ public class AudioFireAndForgetManager {
 		for (int i = 0; i < mNumberOfSources; i++) {
 			if (!mAudioSourcePool.get(i).isPlaying()) {
 				return mAudioSourcePool.get(i);
-
 			}
-
 		}
 
 		return null;
-
 	}
 
-	public void acquireAudioSources(int pAmt) {
+	public void acquireAudioSources(int amountToAcquire) {
 		int lActualNumberOfSourcesAvailable = mAudioSourcePool.size();
-		for (int i = 0; i < pAmt; i++) {
+		for (int i = 0; i < amountToAcquire; i++) {
 			final var lNewAudioSource = mAudioManager.getAudioSource(hashCode(), AudioManager.AUDIO_SOURCE_TYPE_SOUNDFX);
 			if (lNewAudioSource == null) {
 				break;
@@ -116,22 +107,18 @@ public class AudioFireAndForgetManager {
 
 			lActualNumberOfSourcesAvailable++;
 			mAudioSourcePool.add(lNewAudioSource);
-
 		}
 
 		mNumberOfSources = lActualNumberOfSourcesAvailable;
-
 	}
 
 	public void releaseAudioSources() {
 		final int lNumberOfSources = mAudioSourcePool.size();
 		for (int i = 0; i < lNumberOfSources; i++) {
 			mAudioSourcePool.get(i).unassign();
-
 		}
 
 		mAudioSourcePool.clear();
 		mNumberOfSources = 0;
-
 	}
 }

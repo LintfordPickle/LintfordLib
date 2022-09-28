@@ -4,6 +4,6 @@ import net.lintford.library.screenmanager.entries.ListBoxItem;
 
 public interface IListBoxItemSelected {
 
-	public abstract void onListBoxItemSelected(ListBoxItem pItem, int pItemIndex);
+	public abstract void onListBoxItemSelected(ListBoxItem item, int itemIndex);
 
 }

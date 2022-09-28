@@ -47,45 +47,45 @@ public class IconIntFilter implements IProcessMouseInput {
 		return mFilterValue;
 	}
 
-	public void filterEnabled(boolean pNewValue) {
-		mEnabled = pNewValue;
+	public void filterEnabled(boolean newValue) {
+		mEnabled = newValue;
 	}
 
 	public boolean filterEnabled() {
 		return mEnabled;
 	}
 
-	public void isFilterEnabled(boolean pNewValue) {
-		mEnabled = pNewValue;
+	public void isFilterEnabled(boolean newValue) {
+		mEnabled = newValue;
 	}
 
-	public void setDstRectangle(float pX, float pY, float pW, float pH) {
-		mUIDstRectangle.set(pX, pY, pW, pH);
+	public void setDstRectangle(float x, float y, float width, float height) {
+		mUIDstRectangle.set(x, y, width, height);
 	}
 
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
-	public IconIntFilter(UIIconFilter pParent, SpriteSheetDefinition pSpritesheet, int pSpriteFrameIndex, String pName, int pFilterValue) {
+	public IconIntFilter(UIIconFilter parent, SpriteSheetDefinition spritesheet, int spriteFrameIndex, String name, int filterValue) {
 		mEnabled = false;
 
-		mUIIconFilter = pParent;
-		mIconSpritesheetDefinition = pSpritesheet;
-		mIconSpriteFrameIndex = pSpriteFrameIndex;
+		mUIIconFilter = parent;
+		mIconSpritesheetDefinition = spritesheet;
+		mIconSpriteFrameIndex = spriteFrameIndex;
 		mUIDstRectangle = new Rectangle();
-		mFilterName = pName;
-		mFilterValue = pFilterValue;
+		mFilterName = name;
+		mFilterValue = filterValue;
 	}
 
 	// --------------------------------------
 	// Core-Methods
 	// --------------------------------------
 
-	public boolean handleInput(LintfordCore pCore) {
-		if (mUIDstRectangle.intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().tryAcquireMouseOverThisComponent(hashCode())) {
+	public boolean handleInput(LintfordCore core) {
+		if (mUIDstRectangle.intersectsAA(core.HUD().getMouseCameraSpace()) && core.input().mouse().tryAcquireMouseOverThisComponent(hashCode())) {
 			mHoveredOver = true;
-			if (pCore.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
+			if (core.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
 				mUIIconFilter.onFilterClick(this);
 				return true;
 			}
@@ -94,31 +94,28 @@ public class IconIntFilter implements IProcessMouseInput {
 		return false;
 	}
 
-	public void draw(LintfordCore pCore, SpriteBatch pSpriteBatch, SpriteSheetDefinition pCoreSpritesheet, FontUnit pTextFont, float pComponentZDepth) {
-		final float lColorMod = mEnabled ? 1.f : .8f;
+	public void draw(LintfordCore core, SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheet, FontUnit textFont, float componentZDepth) {
+		final var lColorMod = mEnabled ? 1.f : .8f;
 		final var lColor = ColorConstants.getColorWithRGBMod(ColorConstants.WHITE, lColorMod);
 
-		// Draw the 'tab' background (open/closed)
 		if (mEnabled) {
-			pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_BLUE, mUIDstRectangle.x() - 2, mUIDstRectangle.y() - 2, mUIDstRectangle.w() + 4, mUIDstRectangle.h() + 6, -0.5f, lColor);
+			spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_BLUE, mUIDstRectangle.x() - 2, mUIDstRectangle.y() - 2, mUIDstRectangle.width() + 4, mUIDstRectangle.height() + 6, -0.5f, lColor);
 		} else {
-			pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_GREEN, mUIDstRectangle.x() - 2, mUIDstRectangle.y() - 2, mUIDstRectangle.w() + 4, mUIDstRectangle.h() + 6, -0.5f, lColor);
+			spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_GREEN, mUIDstRectangle.x() - 2, mUIDstRectangle.y() - 2, mUIDstRectangle.width() + 4, mUIDstRectangle.height() + 6, -0.5f, lColor);
 		}
 
 		if (mHoveredOver) {
-			final float lTextHalfW = pTextFont.getStringWidth(mFilterName) / 2;
-			final float lTextHeight = pTextFont.fontHeight();
+			final float lTextHalfW = textFont.getStringWidth(mFilterName) / 2;
+			final float lTextHeight = textFont.fontHeight();
 
-			// Draw a background texture behind the texture so it is always legible.
-			pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_RED, mUIDstRectangle.x() + 16 - lTextHalfW, mUIDstRectangle.y() - 19, lTextHalfW * 2 + 4, lTextHeight, pComponentZDepth, ColorConstants.WHITE);
+			spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_RED, mUIDstRectangle.x() + 16 - lTextHalfW, mUIDstRectangle.y() - 19, lTextHalfW * 2 + 4, lTextHeight, componentZDepth, ColorConstants.WHITE);
 		}
 
-		// Draw the background icon
-		pSpriteBatch.draw(mIconSpritesheetDefinition, mIconSpriteFrameIndex, mUIDstRectangle, pComponentZDepth, lColor);
+		spriteBatch.draw(mIconSpritesheetDefinition, mIconSpriteFrameIndex, mUIDstRectangle, componentZDepth, lColor);
 
 		if (mHoveredOver) {
-			final float lTextHalfW = pTextFont.getStringWidth(mFilterName) / 2;
-			pTextFont.drawText(mFilterName, mUIDstRectangle.x() + 16 - lTextHalfW, mUIDstRectangle.y() - 19, pComponentZDepth, ColorConstants.WHITE, 1f);
+			final float lTextHalfW = textFont.getStringWidth(mFilterName) / 2;
+			textFont.drawText(mFilterName, mUIDstRectangle.x() + 16 - lTextHalfW, mUIDstRectangle.y() - 19, componentZDepth, ColorConstants.WHITE, 1f);
 		}
 	}
 
@@ -134,7 +131,5 @@ public class IconIntFilter implements IProcessMouseInput {
 	@Override
 	public void resetCoolDownTimer() {
 		mMouseTimer = 200;
-
 	}
-
 }

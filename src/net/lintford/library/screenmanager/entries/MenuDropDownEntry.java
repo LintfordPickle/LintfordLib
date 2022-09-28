@@ -58,7 +58,6 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 	private transient ScrollBarContentRectangle mContentRectangle;
 	private transient ScrollBarContentRectangle mWindowRectangle;
 	private transient ScrollBar mScrollBar;
-
 	private boolean mAllowDuplicates;
 
 	// --------------------------------------
@@ -74,16 +73,16 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 		return mAllowDuplicates;
 	}
 
-	public void allowDuplicates(boolean pNewValue) {
-		mAllowDuplicates = pNewValue;
+	public void allowDuplicates(boolean newValue) {
+		mAllowDuplicates = newValue;
 	}
 
 	public List<MenuEnumEntryItem> items() {
 		return mItems;
 	}
 
-	public void label(String pNewLabel) {
-		mLabel = pNewLabel;
+	public void label(String newLabel) {
+		mLabel = newLabel;
 	}
 
 	public String label() {
@@ -91,12 +90,11 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 	}
 
 	@Override
-	public void hasFocus(boolean pNewValue) {
-		super.hasFocus(pNewValue);
+	public void hasFocus(boolean newValue) {
+		super.hasFocus(newValue);
 
-		if (!mFocusLocked && !pNewValue)
-			mOpen = pNewValue;
-
+		if (!mFocusLocked && !newValue)
+			mOpen = newValue;
 	}
 
 	public MenuEnumEntryItem selectedItem() {
@@ -107,34 +105,34 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 
 	}
 
-	public void setSelectedEntry(int pIndex) {
-		if (pIndex < 0)
-			pIndex = 0;
-		if (pIndex >= mItems.size())
-			pIndex = mItems.size() - 1;
+	public void setSelectedEntry(int index) {
+		if (index < 0)
+			index = 0;
 
-		mSelectedIndex = pIndex;
+		if (index >= mItems.size())
+			index = mItems.size() - 1;
 
+		mSelectedIndex = index;
 	}
 
-	public void setSelectedEntry(String pName) {
+	public void setSelectedEntry(String name) {
 		final int lNumDropDownItems = mItems.size();
 		for (int i = 0; i < lNumDropDownItems; i++) {
 			final var lDropDownItem = mItems.get(i);
 			if (lDropDownItem == null)
 				continue;
-			if (lDropDownItem.name.equals(pName)) {
+
+			if (lDropDownItem.name.equals(name)) {
 				mSelectedIndex = i;
 				return;
 			}
 		}
-
 	}
 
-	public void setSelectEntry(T pValue) {
+	public void setSelectEntry(T value) {
 		final int lNumDropDownItems = mItems.size();
 		for (int i = 0; i < lNumDropDownItems; i++) {
-			if (mItems.get(i).value.equals(pValue)) {
+			if (mItems.get(i).value.equals(value)) {
 				mSelectedIndex = i;
 				return;
 			}
@@ -145,11 +143,11 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 	// Constructor
 	// --------------------------------------
 
-	public MenuDropDownEntry(ScreenManager pScreenManager, BaseLayout pParentLayout, String pLabel) {
-		super(pScreenManager, pParentLayout, "");
+	public MenuDropDownEntry(ScreenManager screenManager, BaseLayout parentLayout, String label) {
+		super(screenManager, parentLayout, "");
 
 		mItems = new ArrayList<>();
-		mLabel = pLabel;
+		mLabel = label;
 
 		mActiveUpdateDraw = true;
 		mOpen = false;
@@ -159,7 +157,6 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 		mScrollBar = new ScrollBar(this, mContentRectangle);
 
 		mSelectedIndex = 0;
-
 	}
 
 	// --------------------------------------
@@ -167,20 +164,18 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 	// --------------------------------------
 
 	@Override
-	public boolean handleInput(LintfordCore pCore) {
+	public boolean handleInput(LintfordCore core) {
 		if (mItems == null || mItems.size() == 0 || !mEnabled)
 			return false;
 
-		if (mOpen && mScrollBar.handleInput(pCore, mScreenManager)) {
+		if (mOpen && mScrollBar.handleInput(core, mScreenManager))
 			return true;
-		}
 
-		// Handle clicks within the component (including both open and closed states)
-		else if (mWindowRectangle.intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().tryAcquireMouseOverThisComponent(hashCode())) {
+		else if (mWindowRectangle.intersectsAA(core.HUD().getMouseCameraSpace()) && core.input().mouse().tryAcquireMouseOverThisComponent(hashCode())) {
 			if (mOpen) {
 				final float lConsoleLineHeight = mItemHeight;
 				// Something inside the dropdown was select
-				float lRelativeheight = pCore.HUD().getMouseCameraSpace().y - mWindowRectangle.y() - mScrollBar.currentYPos();
+				float lRelativeheight = core.HUD().getMouseCameraSpace().y - mWindowRectangle.y() - mScrollBar.currentYPos();
 
 				int lRelativeIndex = (int) (lRelativeheight / lConsoleLineHeight);
 				int lSelectedIndex = lRelativeIndex;
@@ -191,107 +186,93 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 					lSelectedIndex = mItems.size() - 1;
 
 				mHighlightedIndex = lSelectedIndex;
-
 			}
 
-			if (pCore.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
+			if (core.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
 				if (mOpen) {
 					// TODO: play the menu clicked sound
 
 					final float lConsoleLineHeight = mItemHeight;
-					float lRelativeheight = pCore.HUD().getMouseCameraSpace().y - mWindowRectangle.y() - mScrollBar.currentYPos();
+					float lRelativeheight = core.HUD().getMouseCameraSpace().y - mWindowRectangle.y() - mScrollBar.currentYPos();
 
 					int lRelativeIndex = (int) (lRelativeheight / lConsoleLineHeight);
 					int lSelectedIndex = lRelativeIndex;
 
 					if (lSelectedIndex < 0)
 						lSelectedIndex = 0;
+
 					if (lSelectedIndex >= mItems.size())
 						lSelectedIndex = mItems.size() - 1;
 
 					mSelectedIndex = lSelectedIndex;
 
-					if (mClickListener != null) {
+					if (mClickListener != null)
 						mClickListener.menuEntryChanged(this);
-					}
 
 					mOpen = false;
 
 				} else {
 					// First check to see if the player clicked the info button
-					if (mShowInfoIcon && mInfoIconDstRectangle.intersectsAA(pCore.HUD().getMouseCameraSpace())) {
+					if (mShowInfoIcon && mInfoIconDstRectangle.intersectsAA(core.HUD().getMouseCameraSpace())) {
 						mToolTipEnabled = true;
 						mToolTipTimer = 1000;
-
 					} else {
 						mOpen = true;
-						mParentLayout.parentScreen.setFocusOn(pCore, this, true);
-
+						mParentLayout.parentScreen.setFocusOn(core, this, true);
 					}
 
-					//
-					// Check if tool tips are enabled.
-					if (mToolTipEnabled) {
-						mToolTipTimer += pCore.appTime().elapsedTimeMilli();
-
-					}
+					if (mToolTipEnabled)
+						mToolTipTimer += core.appTime().elapsedTimeMilli();
 
 				}
 
 				return true;
-
 			}
-
 		} else {
 			mToolTipTimer = 0;
-
 		}
 
 		return false;
-
 	}
 
 	@Override
-	public void update(LintfordCore pCore, MenuScreen pScreen, boolean pIsSelected) {
+	public void update(LintfordCore core, MenuScreen screen, boolean isSelected) {
 		if (mItems == null || mItems.size() == 0)
 			return;
 
-		super.update(pCore, pScreen, pIsSelected);
+		super.update(core, screen, isSelected);
 
-		if (mShowInfoIcon) {
-			mInfoIconDstRectangle.set(x, y, 32f, 32f);
-
-		}
+		if (mShowInfoIcon)
+			mInfoIconDstRectangle.set(mX, mY, 32f, 32f);
 
 		final float lUiTextScale = mScreenManager.UiStructureController().uiTextScaleFactor();
 		mItemHeight = ITEM_HEIGHT * lUiTextScale;
 
-		mContentRectangle.set(x, y + mScrollBar.currentYPos(), w, mItems.size() * mItemHeight);
+		mContentRectangle.set(mX, mY + mScrollBar.currentYPos(), mW, mItems.size() * mItemHeight);
 		if (mOpen) {
-			mWindowRectangle.set(x + w / 2, y, w / 2, OPEN_HEIGHT);
-			set(x, y, w, 32.f);
+			mWindowRectangle.set(mX + mW / 2, mY, mW / 2, OPEN_HEIGHT);
+			set(mX, mY, mW, 32.f);
 		} else {
 			mWindowRectangle.set(this);
 			mWindowRectangle.expand(1);
-
 		}
 
-		mScrollBar.update(pCore);
+		mScrollBar.update(core);
 
-		if (mOpen && pCore.input().mouse().isMouseLeftButtonDown() && !intersectsAA(pCore.HUD().getMouseCameraSpace())) {
+		if (mOpen && core.input().mouse().isMouseLeftButtonDown() && !intersectsAA(core.HUD().getMouseCameraSpace())) {
 			mOpen = false;
 		}
 	}
 
 	@Override
-	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pComponentDepth) {
+	public void draw(LintfordCore core, Screen screen, boolean isSelected, float componentDepth) {
 		final var lParentScreen = mParentLayout.parentScreen;
 		final float lUiTextScale = lParentScreen.uiTextScale();
 		final var lTextBoldFont = lParentScreen.fontBold();
 
 		mZ = mOpen ? ZLayers.LAYER_SCREENMANAGER + Z_STATE_MODIFIER_ACTIVE : ZLayers.LAYER_SCREENMANAGER + Z_STATE_MODIFIER_PASSIVE;
 
-		final var lScreenOffset = pScreen.screenPositionOffset();
+		final var lScreenOffset = screen.screenPositionOffset();
 		final var lSeparator = " : ";
 
 		final var lLabelWidth = lTextBoldFont.getStringWidth(mLabel, lUiTextScale);
@@ -299,22 +280,22 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 		final var lSpriteBatch = lParentScreen.spriteBatch();
 
 		final float lSeparatorHalfWidth = lTextBoldFont.getStringWidth(lSeparator, lUiTextScale) * 0.5f;
-		lTextBoldFont.begin(pCore.HUD());
-		lTextBoldFont.drawText(mLabel, lScreenOffset.x + x + w / 2 - 10 - lLabelWidth - lSeparatorHalfWidth, lScreenOffset.y + y + mItemHeight / 2f - lFontHeight / 2f, mZ, textColor, lUiTextScale, -1);
-		lTextBoldFont.drawText(lSeparator, lScreenOffset.x + x + w / 2 - lSeparatorHalfWidth, lScreenOffset.y + y + mItemHeight / 2f - lFontHeight / 2f, mZ, textColor, lUiTextScale, -1);
+		lTextBoldFont.begin(core.HUD());
+		lTextBoldFont.drawText(mLabel, lScreenOffset.x + mX + mW / 2 - 10 - lLabelWidth - lSeparatorHalfWidth, lScreenOffset.y + mY + mItemHeight / 2f - lFontHeight / 2f, mZ, textColor, lUiTextScale, -1);
+		lTextBoldFont.drawText(lSeparator, lScreenOffset.x + mX + mW / 2 - lSeparatorHalfWidth, lScreenOffset.y + mY + mItemHeight / 2f - lFontHeight / 2f, mZ, textColor, lUiTextScale, -1);
 
 		if (mHoveredOver && mEnabled) {
-			lSpriteBatch.begin(pCore.HUD());
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - w / 2, lScreenOffset.y + centerY() - h / 2, 32, h, mZ, ColorConstants.MenuEntryHighlightColor);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - (w / 2) + 32, lScreenOffset.y + centerY() - h / 2, w - 64, h, mZ, ColorConstants.MenuEntryHighlightColor);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() + (w / 2) - 32, lScreenOffset.y + centerY() - h / 2, 32, h, mZ, ColorConstants.MenuEntryHighlightColor);
+			lSpriteBatch.begin(core.HUD());
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - mW / 2, lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ, ColorConstants.MenuEntryHighlightColor);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - (mW / 2) + 32, lScreenOffset.y + centerY() - mH / 2, mW - 64, mH, mZ, ColorConstants.MenuEntryHighlightColor);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() + (mW / 2) - 32, lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ, ColorConstants.MenuEntryHighlightColor);
 			lSpriteBatch.end();
 		}
 
 		if (mItems == null || mItems.size() == 0) {
 			// LOCALIZATION: No entries added to dropdown list
 			final String lNoEntriesText = "No items found";
-			lTextBoldFont.drawText(lNoEntriesText, lScreenOffset.x + x + w / 2 + lSeparatorHalfWidth + SPACE_BETWEEN_TEXT, lScreenOffset.y + y + h / 2f - lFontHeight / 2f, mZ, textColor, lUiTextScale, -1);
+			lTextBoldFont.drawText(lNoEntriesText, lScreenOffset.x + mX + mW / 2 + lSeparatorHalfWidth + SPACE_BETWEEN_TEXT, lScreenOffset.y + mY + mH / 2f - lFontHeight / 2f, mZ, textColor, lUiTextScale, -1);
 			lTextBoldFont.end();
 			return;
 		}
@@ -324,38 +305,36 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 		// Render the selected item in the 'top spot'
 		final String lCurItem = lSelectedMenuEnumEntryItem.name;
 		final float lSelectedTextWidth = lTextBoldFont.getStringWidth(lCurItem);
-		lTextBoldFont.drawText(lCurItem, lScreenOffset.x + x + (w / 4 * 3) + -lSelectedTextWidth / 2, lScreenOffset.y + y + mItemHeight / 2f - lFontHeight / 2f, mZ, textColor, lUiTextScale, -1);
+		lTextBoldFont.drawText(lCurItem, lScreenOffset.x + mX + (mW / 4 * 3) + -lSelectedTextWidth / 2, lScreenOffset.y + mY + mItemHeight / 2f - lFontHeight / 2f, mZ, textColor, lUiTextScale, -1);
 		lTextBoldFont.end();
 
 		// CONTENT PANE
 
 		// Draw the down arrow
-		lSpriteBatch.begin(pCore.HUD());
+		lSpriteBatch.begin(core.HUD());
 		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_DOWN, lScreenOffset.x + right() - 32, lScreenOffset.y + top(), 32, 32, mZ, entryColor);
 		lSpriteBatch.end();
 
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
-			lSpriteBatch.begin(pCore.HUD());
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + x, lScreenOffset.y + y, w, h, mZ, ColorConstants.Debug_Transparent_Magenta);
+			lSpriteBatch.begin(core.HUD());
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + mX, lScreenOffset.y + mY, mW, mH, mZ, ColorConstants.Debug_Transparent_Magenta);
 			lSpriteBatch.end();
 		}
 
-		if (!mEnabled) {
-			drawdisabledBlackOverbar(pCore, lSpriteBatch, entryColor.a);
-		}
+		if (!mEnabled)
+			drawdisabledBlackOverbar(core, lSpriteBatch, entryColor.a);
 
-		if (mShowInfoIcon) {
-			drawInfoIcon(pCore, lSpriteBatch, mInfoIconDstRectangle, entryColor.a);
-		}
+		if (mShowInfoIcon)
+			drawInfoIcon(core, lSpriteBatch, mInfoIconDstRectangle, entryColor.a);
 
-		if (mShowWarnIcon) {
-			drawWarningIcon(pCore, lSpriteBatch, mWarnIconDstRectangle, entryColor.a);
-		}
+		if (mShowWarnIcon)
+			drawWarningIcon(core, lSpriteBatch, mWarnIconDstRectangle, entryColor.a);
+
 	}
 
 	@Override
-	public void postStencilDraw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pParentZDepth) {
-		super.postStencilDraw(pCore, pScreen, pIsSelected, pParentZDepth);
+	public void postStencilDraw(LintfordCore core, Screen screen, boolean isSelected, float parentZDepth) {
+		super.postStencilDraw(core, screen, isSelected, parentZDepth);
 
 		final var lParentScreen = mParentLayout.parentScreen;
 		final float lUiTextScale = lParentScreen.uiTextScale();
@@ -363,15 +342,15 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 
 		mZ = mOpen ? ZLayers.LAYER_SCREENMANAGER + Z_STATE_MODIFIER_ACTIVE : ZLayers.LAYER_SCREENMANAGER + Z_STATE_MODIFIER_PASSIVE;
 
-		final var lScreenOffset = pScreen.screenPositionOffset();
+		final var lScreenOffset = screen.screenPositionOffset();
 		final var lSpriteBatch = lParentScreen.spriteBatch();
 
 		if (mOpen) {
-			lSpriteBatch.begin(pCore.HUD());
+			lSpriteBatch.begin(core.HUD());
 			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mWindowRectangle, mZ, ColorConstants.getBlackWithAlpha(1.f));
 			lSpriteBatch.end();
 
-			lTextBoldFont.begin(pCore.HUD());
+			lTextBoldFont.begin(core.HUD());
 
 			// We need to use a stencil buffer to clip the list box items (which, when scrolling, could appear out-of-bounds of the listbox).
 			GL11.glEnable(GL11.GL_STENCIL_TEST);
@@ -384,7 +363,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 			// Make sure we are starting with a fresh stencil buffer
 			GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT); // Clear the stencil buffer
 
-			lSpriteBatch.begin(pCore.HUD());
+			lSpriteBatch.begin(core.HUD());
 			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_BLACK, mWindowRectangle, -8f, ColorConstants.getBlackWithAlpha(0.f));
 			lSpriteBatch.end();
 
@@ -398,13 +377,12 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 				final var lItem = mItems.get(i);
 				final float lItemTextWidth = lTextBoldFont.getStringWidth(lItem.name);
 
-				if (i == mHighlightedIndex) {
+				if (i == mHighlightedIndex)
 					textColor.setFromColor(ColorConstants.PrimaryColor);
-				} else {
+				else
 					textColor.setFromColor(ColorConstants.TextEntryColor);
-				}
 
-				lTextBoldFont.drawText(lItem.name, lScreenOffset.x + x + (w / 4 * 3) - lItemTextWidth / 2, lScreenOffset.y + lYPos, mZ + 0.1f, textColor, lUiTextScale, -1);
+				lTextBoldFont.drawText(lItem.name, lScreenOffset.x + mX + (mW / 4 * 3) - lItemTextWidth / 2, lScreenOffset.y + lYPos, mZ + 0.1f, textColor, lUiTextScale, -1);
 				lYPos += mItemHeight;
 			}
 
@@ -414,7 +392,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 		}
 
 		if (mOpen && mScrollBar.areaNeedsScrolling())
-			mScrollBar.draw(pCore, lSpriteBatch, mCoreSpritesheet, -0.1f);
+			mScrollBar.draw(core, lSpriteBatch, mCoreSpritesheet, -0.1f);
 	}
 
 	// --------------------------------------
@@ -422,34 +400,27 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 	// --------------------------------------
 
 	@Override
-	public void onClick(InputManager pInputState) {
-		super.onClick(pInputState);
-
+	public void onClick(InputManager inputManager) {
+		super.onClick(inputManager);
 	}
 
-	public void addItem(MenuEnumEntryItem pItem) {
+	public void addItem(MenuEnumEntryItem item) {
 		if (mAllowDuplicates) {
-			mItems.add(pItem);
-
+			mItems.add(item);
 			return;
 		}
 
-		// Proceed in the case that duplicates are not allowed
-		final int COUNT = mItems.size();
-		if (mItems.contains(pItem)) {
+		if (mItems.contains(item))
 			return;
 
-		}
-
-		for (int i = 0; i < COUNT; i++) {
-			if (mItems.get(i).name.equals(pItem.name)) {
+		final int lNumItems = mItems.size();
+		for (int i = 0; i < lNumItems; i++) {
+			if (mItems.get(i).name.equals(item.name)) {
 				return;
 			}
-
 		}
 
-		mItems.add(pItem);
-
+		mItems.add(item);
 	}
 
 	// --------------------------------------
@@ -464,13 +435,10 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 	@Override
 	public ScrollBarContentRectangle fullContentArea() {
 		return mContentRectangle;
-
 	}
 
 	public void clearItems() {
 		mSelectedIndex = 0;
 		mItems.clear();
-
 	}
-
 }

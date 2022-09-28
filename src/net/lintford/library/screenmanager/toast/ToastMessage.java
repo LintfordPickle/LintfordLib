@@ -14,30 +14,29 @@ public class ToastMessage {
 	float liveLeft;
 	String messageText;
 	String messageTitle;
-	float x, y; // current
-	float xx, yy; // final
+	float x, y;
+	float xx, yy;
 
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
 	public ToastMessage() {
+
 	}
 
 	// --------------------------------------
 	// Core-Methods
 	// --------------------------------------
 
-	public void draw(LintfordCore pCore, FontUnit pFontUnit, TextureBatchPCT pTextureBatch) {
-		pFontUnit.drawText(messageText, x, y, -0.1f, ColorConstants.WHITE, 1f, -1);
-
+	public void draw(LintfordCore core, FontUnit fontUnit, TextureBatchPCT textureBatch) {
+		fontUnit.drawText(messageText, x, y, -0.1f, ColorConstants.WHITE, 1f, -1);
 	}
 
-	public void init(String pTitle, String pMessage, float pTimeInMS) {
-		liveLeft = pTimeInMS;
-		messageText = pMessage;
-		messageTitle = pTitle;
-
+	public void init(String title, String message, float timeInMs) {
+		liveLeft = timeInMs;
+		messageText = message;
+		messageTitle = title;
 	}
 
 	public void reset() {

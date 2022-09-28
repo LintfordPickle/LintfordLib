@@ -25,9 +25,8 @@ public class Box2dRevoluteInstance extends Box2dJointInstance {
 	// Constructor
 	// --------------------------------------
 
-	public Box2dRevoluteInstance(int pPoolUid) {
-		super(pPoolUid);
-
+	public Box2dRevoluteInstance(int poolUid) {
+		super(poolUid);
 	}
 
 	// --------------------------------------
@@ -37,12 +36,10 @@ public class Box2dRevoluteInstance extends Box2dJointInstance {
 	public void savePhysics() {
 		super.savePhysics();
 
-		if (joint == null) {
+		if (joint == null)
 			return;
 
-		}
-
-		RevoluteJoint lRevJoint = (RevoluteJoint) joint;
+		final var lRevJoint = (RevoluteJoint) joint;
 
 		referenceAngle = lRevJoint.getReferenceAngle();
 		enableLimit = lRevJoint.isLimitEnabled();
@@ -51,21 +48,17 @@ public class Box2dRevoluteInstance extends Box2dJointInstance {
 		enableMotor = lRevJoint.isMotorEnabled();
 		motorSpeed = lRevJoint.getJointSpeed();
 		maxMotorTorque = lRevJoint.getMaxMotorTorque();
+	}
+
+	public void loadPhysics(World box2dWorld) {
 
 	}
 
-	public void loadPhysics(World pWorld) {
+	public void unloadPhysics(World box2dWorld) {
 
 	}
 
-	public void unloadPhysics(World pWorld) {
-		if (joint == null)
-			return;
+	public void update(LintfordCore core) {
 
 	}
-
-	public void update(LintfordCore pCore) {
-
-	}
-
 }

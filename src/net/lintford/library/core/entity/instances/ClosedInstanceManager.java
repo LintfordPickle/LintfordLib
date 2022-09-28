@@ -41,25 +41,22 @@ public abstract class ClosedInstanceManager<T extends ClosedInstanceBaseData> ex
 		return lReturnInstance;
 	}
 
-	public void returnInstanceItem(T pReturnedItem) {
-		pReturnedItem.setFree();
-
+	public void returnInstanceItem(T returnItem) {
+		returnItem.setFree();
 	}
 
-	private T enlargenInstancePool(int pAmt) {
-		if (pAmt <= 0 || pAmt > 1000)
-			pAmt = DEFAULT_ENLARGEN_POOL_AMOUNT;
+	private T enlargenInstancePool(int enlargeByAmount) {
+		if (enlargeByAmount <= 0 || enlargeByAmount > 1000)
+			enlargeByAmount = DEFAULT_ENLARGEN_POOL_AMOUNT;
 
-		for (int i = 0; i < pAmt; i++) {
+		for (int i = 0; i < enlargeByAmount; i++) {
 			mInstances.add(createPoolObjectInstance());
-
 		}
 
 		final T lNewInstance = createPoolObjectInstance();
 		mInstances.add(lNewInstance);
 
 		return lNewInstance;
-
 	}
 
 	protected abstract T createPoolObjectInstance();
@@ -68,9 +65,6 @@ public abstract class ClosedInstanceManager<T extends ClosedInstanceBaseData> ex
 		final int lNumInstances = mInstances.size();
 		for (int i = 0; i < lNumInstances; i++) {
 			mInstances.get(i).setFree();
-
 		}
-
 	}
-
 }

@@ -6,22 +6,21 @@ public class EntityGroupRenderer {
 	// Variables
 	// --------------------------------------
 
-	protected int mEntityGroupID;
+	protected int mEntityGroupUid;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
 
 	public int entityGroupID() {
-		return mEntityGroupID;
+		return mEntityGroupUid;
 	}
 
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
-	public EntityGroupRenderer(int pEntityGroupID) {
-		mEntityGroupID = pEntityGroupID;
-
+	public EntityGroupRenderer(int entityGroupUid) {
+		mEntityGroupUid = entityGroupUid;
 	}
 }

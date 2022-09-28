@@ -30,12 +30,12 @@ public class ParticlePhysicsModifier extends ParticleModifierBase {
 	// --------------------------------------
 
 	@Override
-	public void initialize(Particle pParticle) {
+	public void initialize(Particle particle) {
 
 	}
 
 	@Override
-	public void update(LintfordCore pCore) {
+	public void update(LintfordCore core) {
 
 	}
 
@@ -44,13 +44,11 @@ public class ParticlePhysicsModifier extends ParticleModifierBase {
 	// --------------------------------------
 
 	@Override
-	public void updateParticle(LintfordCore pCore, Particle pParticle) {
-		float lDelta = (float) pCore.appTime().elapsedTimeMilli() / 1000f;
+	public void updateParticle(LintfordCore core, Particle particle) {
+		final var lDelta = (float) core.appTime().elapsedTimeMilli() / 1000f;
 
-		pParticle.worldPositionX += pParticle.dx * lDelta;
-		pParticle.worldPositionY += pParticle.dy * lDelta;
-		pParticle.rotationInRadians += Math.toRadians(pParticle.dr * lDelta);
-
+		particle.worldPositionX += particle.dx * lDelta;
+		particle.worldPositionY += particle.dy * lDelta;
+		particle.rotationInRadians += Math.toRadians(particle.dr * lDelta);
 	}
-
 }

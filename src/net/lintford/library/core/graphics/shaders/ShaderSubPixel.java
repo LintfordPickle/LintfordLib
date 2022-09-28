@@ -7,12 +7,12 @@ import net.lintford.library.core.maths.Matrix4f;
 
 public class ShaderSubPixel extends ShaderMVP_PCT {
 
-	public static final String VERT_FILENAME = "/res/shaders/shader_basic_pct.vert";
-	public static final String FRAG_FILENAME = "/res/shaders/shader_subpixel_pct.frag";
-
 	// --------------------------------------
 	// Constants
 	// --------------------------------------
+
+	public static final String VERT_FILENAME = "/res/shaders/shader_basic_pct.vert";
+	public static final String FRAG_FILENAME = "/res/shaders/shader_subpixel_pct.frag";
 
 	public final static String SHADER_NAME = "BasicShader";
 
@@ -40,32 +40,32 @@ public class ShaderSubPixel extends ShaderMVP_PCT {
 		return mProjectionMatrix;
 	}
 
-	public void projectionMatrix(Matrix4f pProjMat) {
-		mProjectionMatrix = pProjMat;
+	public void projectionMatrix(Matrix4f projMatrix) {
+		mProjectionMatrix = projMatrix;
 	}
 
 	public Matrix4f viewMatrix() {
 		return mViewMatrix;
 	}
 
-	public void viewMatrix(Matrix4f pViewMat) {
-		mViewMatrix = pViewMat;
+	public void viewMatrix(Matrix4f viewMatrix) {
+		mViewMatrix = viewMatrix;
 	}
 
 	public Matrix4f modelMatrix() {
 		return mModelMatrix;
 	}
 
-	public void modelMatrix(Matrix4f pModelMat) {
-		mModelMatrix = pModelMat;
+	public void modelMatrix(Matrix4f modelMatrix) {
+		mModelMatrix = modelMatrix;
 	}
 
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
-	public ShaderSubPixel(String pName, String pVertPath, String pFragPath) {
-		super(pName, pVertPath, pFragPath);
+	public ShaderSubPixel(String shaderName, String vertPath, String fragPath) {
+		super(shaderName, vertPath, fragPath);
 
 		mProjectionMatrix = new Matrix4f();
 		mViewMatrix = new Matrix4f();
@@ -96,10 +96,10 @@ public class ShaderSubPixel extends ShaderMVP_PCT {
 	// --------------------------------------
 
 	@Override
-	protected void bindAtrributeLocations(int pShaderID) {
-		GL20.glBindAttribLocation(pShaderID, 0, "inPosition");
-		GL20.glBindAttribLocation(pShaderID, 1, "inColor");
-		GL20.glBindAttribLocation(pShaderID, 2, "inTexCoord");
+	protected void bindAtrributeLocations(int shaderID) {
+		GL20.glBindAttribLocation(shaderID, 0, "inPosition");
+		GL20.glBindAttribLocation(shaderID, 1, "inColor");
+		GL20.glBindAttribLocation(shaderID, 2, "inTexCoord");
 	}
 
 	@Override
@@ -114,5 +114,4 @@ public class ShaderSubPixel extends ShaderMVP_PCT {
 		mViewMatrixLocation = GL20.glGetUniformLocation(shaderID(), SHADER_UNIFORM_VIEW_NAME);
 		mModelMatrixLocation = GL20.glGetUniformLocation(shaderID(), SHADER_UNIFORM_MODEL_NAME);
 	}
-
 }

@@ -1,8 +1,11 @@
 package net.lintford.library.core.graphics.sprites;
 
+import com.google.gson.annotations.SerializedName;
+
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.Color;
+import net.lintford.library.core.graphics.ColorConstants;
 
 public class SpriteInstance extends Rectangle {
 
@@ -19,31 +22,38 @@ public class SpriteInstance extends Rectangle {
 	private transient SpriteDefinition mSpriteDefinition;
 
 	/** A listener to allow subscribers to be notified of changes to the state of an {@link AnimatedSprite} */
-	private transient AnimatedSpriteListener animatedSpriteListener;
+	private transient AnimatedSpriteListener mAnimatedSpriteListener;
 
 	/** The current frame of the animation */
-	private int currentFrame;
+	private int mCurrentFrame;
 
 	/** A timer to track when to change frames */
-	private float timer;
+	private float mTimer;
 
 	/**  */
-	private boolean loopingEnabled;
+	@SerializedName(value = "loopingEnabled")
+	private boolean mLoopingEnabled;
 
 	/** If true, animations are played, otherwise, animation is stopped. */
-	private boolean animationEnabled;
+	@SerializedName(value = "animationEnabled")
+	private boolean mAnimationEnabled;
 
 	/** Custom variables attached to the sprite */
-	public final Color color = new Color(1.f, 1.f, 1.f, 1.f);
 	private float mTimeAliveInMs;
 	private float mLifeTime;
+
+	private Color mColor = new Color(ColorConstants.WHITE);
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
 
-	public void setLifeTime(float pLifeTime) {
-		mLifeTime = pLifeTime;
+	public Color color() {
+		return mColor;
+	}
+
+	public void setLifeTime(float lifeTime) {
+		mLifeTime = lifeTime;
 	}
 
 	public boolean getIsAlive() {
@@ -63,33 +73,33 @@ public class SpriteInstance extends Rectangle {
 	}
 
 	public boolean enabled() {
-		return animationEnabled;
+		return mAnimationEnabled;
 	}
 
-	public void enabled(boolean pEnabled) {
-		animationEnabled = pEnabled;
+	public void enabled(boolean enabled) {
+		mAnimationEnabled = enabled;
 
-		if (animationEnabled) {
-			if (animatedSpriteListener != null) {
-				animatedSpriteListener.onStarted(this);
+		if (mAnimationEnabled) {
+			if (mAnimatedSpriteListener != null) {
+				mAnimatedSpriteListener.onStarted(this);
 			}
 		}
 	}
 
 	public boolean isLoopingEnabled() {
-		return loopingEnabled;
+		return mLoopingEnabled;
 	}
 
-	public void isLoopingEnabled(boolean pNewValue) {
-		loopingEnabled = pNewValue;
+	public void isLoopingEnabled(boolean newValue) {
+		mLoopingEnabled = newValue;
 	}
 
 	public AnimatedSpriteListener animatedSpriteListender() {
-		return animatedSpriteListener;
+		return mAnimatedSpriteListener;
 	}
 
-	public void animatedSpriteListender(AnimatedSpriteListener pNewListener) {
-		animatedSpriteListener = pNewListener;
+	public void animatedSpriteListender(AnimatedSpriteListener newListener) {
+		mAnimatedSpriteListener = newListener;
 	}
 
 	/** returns the frame of an animation from the internal timer (updated via sprite.update()) */
@@ -97,8 +107,7 @@ public class SpriteInstance extends Rectangle {
 		if (mSpriteDefinition == null)
 			return null;
 
-		return mSpriteDefinition.getSpriteFrame(currentFrame);
-
+		return mSpriteDefinition.getSpriteFrame(mCurrentFrame);
 	}
 
 	public SpriteDefinition spriteDefinition() {
@@ -121,26 +130,23 @@ public class SpriteInstance extends Rectangle {
 		mSpriteDefinition = null;
 		mTimeAliveInMs = 0.f;
 		mLifeTime = 0.f;
-
 	}
 
-	public void init(SpriteDefinition pSpriteDef) {
-		mSpriteDefinition = pSpriteDef;
-		loopingEnabled = pSpriteDef.loopEnabled();
-		animationEnabled = true;
+	public void init(SpriteDefinition spriteDefinition) {
+		mSpriteDefinition = spriteDefinition;
+		mLoopingEnabled = spriteDefinition.loopEnabled();
+		mAnimationEnabled = true;
 		mAreVerticesDirty = true;
 
 		updateDimensionsOnCurrentFrame();
-
 	}
 
-	public void update(LintfordCore pCore) {
-		update(pCore, false);
-
+	public void update(LintfordCore core) {
+		update(core, false);
 	}
 
-	public void update(LintfordCore pCore, boolean pReverse) {
-		final float lDeltaTime = (float) pCore.appTime().elapsedTimeMilli();
+	public void update(LintfordCore core, boolean reverseAnimation) {
+		final float lDeltaTime = (float) core.appTime().elapsedTimeMilli();
 
 		mLifeTime -= lDeltaTime;
 		mTimeAliveInMs += lDeltaTime;
@@ -151,63 +157,58 @@ public class SpriteInstance extends Rectangle {
 		if (mSpriteDefinition.frameDuration() == 0.0)
 			return;
 
-		if (animationEnabled) {
-			timer += lDeltaTime;
+		if (mAnimationEnabled) {
+			mTimer += lDeltaTime;
 		}
 
 		// update the current frame
 		final float lFrameDuration = mSpriteDefinition.frameDuration();
-		while (timer > lFrameDuration) {
+		while (mTimer > lFrameDuration) {
 			// Handle this time splice
-			timer -= mSpriteDefinition.frameDuration();
+			mTimer -= mSpriteDefinition.frameDuration();
 
-			if (!pReverse) {
-				currentFrame++;
+			if (!reverseAnimation) {
+				mCurrentFrame++;
 
-				if (currentFrame >= mSpriteDefinition.frameCount()) {
+				if (mCurrentFrame >= mSpriteDefinition.frameCount()) {
 
-					if (loopingEnabled) {
-						currentFrame = 0;
-						if (animatedSpriteListener != null) {
-							animatedSpriteListener.onLooped(this);
+					if (mLoopingEnabled) {
+						mCurrentFrame = 0;
+						if (mAnimatedSpriteListener != null) {
+							mAnimatedSpriteListener.onLooped(this);
 						}
 					} else {
-						animationEnabled = false;
-						currentFrame--;
-						if (animatedSpriteListener != null) {
-							animatedSpriteListener.onStopped(this);
+						mAnimationEnabled = false;
+						mCurrentFrame--;
+						if (mAnimatedSpriteListener != null) {
+							mAnimatedSpriteListener.onStopped(this);
 							return;
 						}
 					}
-
 				}
 
 			} else {
-				currentFrame--;
+				mCurrentFrame--;
 
-				if (currentFrame < 0) {
+				if (mCurrentFrame < 0) {
 
-					if (loopingEnabled) {
-						currentFrame = mSpriteDefinition.frameCount() - 1;
-						if (animatedSpriteListener != null) {
-							animatedSpriteListener.onLooped(this);
+					if (mLoopingEnabled) {
+						mCurrentFrame = mSpriteDefinition.frameCount() - 1;
+						if (mAnimatedSpriteListener != null) {
+							mAnimatedSpriteListener.onLooped(this);
 						}
 					} else {
-						animationEnabled = false;
-						currentFrame = 0;
-						if (animatedSpriteListener != null) {
-							animatedSpriteListener.onStopped(this);
+						mAnimationEnabled = false;
+						mCurrentFrame = 0;
+						if (mAnimatedSpriteListener != null) {
+							mAnimatedSpriteListener.onStopped(this);
 						}
 					}
-
 				}
-
 			}
-
 		}
 
 		updateDimensionsOnCurrentFrame();
-
 	}
 
 	private void updateDimensionsOnCurrentFrame() {
@@ -221,7 +222,6 @@ public class SpriteInstance extends Rectangle {
 
 			pivotX(lCurrentFrame.pivotX() * scaleX());
 			pivotY(lCurrentFrame.pivotY() * scaleY());
-
 		}
 	}
 
@@ -230,51 +230,42 @@ public class SpriteInstance extends Rectangle {
 	// --------------------------------------
 
 	/** Sets the animation to the specified frame number. If the given frame number is OoB of the frame set, then the value is clamped. */
-	public void setFrame(int pFrameNumber) {
-		currentFrame = pFrameNumber;
-		timer -= mSpriteDefinition.frameDuration();
+	public void setFrame(int frameNumber) {
+		mCurrentFrame = frameNumber;
+		mTimer -= mSpriteDefinition.frameDuration();
 
-		if (currentFrame < 0)
-			currentFrame = 0;
-
-		if (currentFrame >= mSpriteDefinition.frameCount()) {
-			currentFrame = mSpriteDefinition.frameCount() - 1;
-
+		if (mCurrentFrame < 0)
+			mCurrentFrame = 0;
+		if (mCurrentFrame >= mSpriteDefinition.frameCount()) {
+			mCurrentFrame = mSpriteDefinition.frameCount() - 1;
 		}
-
 	}
 
 	public void prevFrame() {
-		currentFrame--;
-		timer -= mSpriteDefinition.frameDuration();
+		mCurrentFrame--;
+		mTimer -= mSpriteDefinition.frameDuration();
 
-		if (currentFrame < 0) {
-			currentFrame = mSpriteDefinition.frameCount() - 1;
-
+		if (mCurrentFrame < 0) {
+			mCurrentFrame = mSpriteDefinition.frameCount() - 1;
 		}
-
 	}
 
 	public void nextFrame() {
-		currentFrame++;
-		timer -= mSpriteDefinition.frameDuration();
+		mCurrentFrame++;
+		mTimer -= mSpriteDefinition.frameDuration();
 
-		if (currentFrame >= mSpriteDefinition.frameCount()) {
-			currentFrame = 0;
-
+		if (mCurrentFrame >= mSpriteDefinition.frameCount()) {
+			mCurrentFrame = 0;
 		}
-
 	}
 
 	public void playFromBeginning() {
 		setFrame(0);
 		enabled(true);
-
 	}
 
 	public void reset() {
-		loopingEnabled = false;
-		animationEnabled = false;
+		mLoopingEnabled = false;
+		mAnimationEnabled = false;
 	}
-
 }

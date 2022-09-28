@@ -11,9 +11,8 @@ public class TransitionFadeOut extends BaseTransition {
 	// Constructor
 	// --------------------------------------
 
-	public TransitionFadeOut(TimeSpan pTransitionTime) {
-		super(pTransitionTime);
-
+	public TransitionFadeOut(TimeSpan transitionTime) {
+		super(transitionTime);
 	}
 
 	// --------------------------------------
@@ -21,9 +20,9 @@ public class TransitionFadeOut extends BaseTransition {
 	// --------------------------------------
 
 	@Override
-	public void updateTransition(Screen pScreen, CoreTime pGameTime) {
-		super.updateTransition(pScreen, pGameTime);
+	public void updateTransition(Screen screen, CoreTime gameTime) {
+		super.updateTransition(screen, gameTime);
 
-		pScreen.screenColor.a = MathHelper.clamp(1.f - mProgressNormalized, 0.f, 1.f);
+		screen.screenColor.a = MathHelper.clamp(1.f - mProgressNormalized, 0.f, 1.f);
 	}
 }

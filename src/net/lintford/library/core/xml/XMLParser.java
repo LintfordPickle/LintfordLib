@@ -4,34 +4,29 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 public class XMLParser<T> extends DefaultHandler {
-	
-	// ===========================================================
-    // Variables
-    // ===========================================================
-	
-	protected T 					mObjectToParse;
-	protected final StringBuilder 	mStringBuilder = new StringBuilder();
-	
-	// ===========================================================
-    // Properties
-    // ===========================================================
-	
-	/**
-	 * 
-	 * @return The object parsed from the XML file.
-	 */
-	public T parsedObject(){
+
+	// ---------------------------------------------
+	// Variables
+	// ---------------------------------------------
+
+	protected T mObjectToParse;
+	protected final StringBuilder mStringBuilder = new StringBuilder();
+
+	// ---------------------------------------------
+	// Properties
+	// ---------------------------------------------
+
+	public T parsedObject() {
 		return mObjectToParse;
 	}
-	
-	// ===========================================================
-    // Inherited Methods
-    // ===========================================================
-	
+
+	// ---------------------------------------------
+	// Inherited Methods
+	// ---------------------------------------------
+
 	@Override
-	public void characters(char[] ch, int start, int length) throws SAXException
-	{
-		mStringBuilder.append(ch, start, length);
+	public void characters(char[] character, int start, int length) throws SAXException {
+		mStringBuilder.append(character, start, length);
 	}
-	
+
 }

@@ -9,7 +9,7 @@ public class ResourceController extends BaseController {
 	// Constants
 	// ---------------------------------------------
 
-	public static final String CONTROLLER_NAME = "ResourceController";
+	public static final String CONTROLLER_NAME = "Resource Controller";
 
 	// ---------------------------------------------
 	// Variables
@@ -29,10 +29,10 @@ public class ResourceController extends BaseController {
 	// Constructor
 	// ---------------------------------------------
 
-	public ResourceController(final ControllerManager pControllerManager, ResourceManager pResourceManager, int pControllerGroupID) {
-		super(pControllerManager, CONTROLLER_NAME, pControllerGroupID);
+	public ResourceController(final ControllerManager controllerManager, ResourceManager resourceManager, int controllerGroupID) {
+		super(controllerManager, CONTROLLER_NAME, controllerGroupID);
 
-		mResourceManager = pResourceManager;
+		mResourceManager = resourceManager;
 	}
 
 	// ---------------------------------------------

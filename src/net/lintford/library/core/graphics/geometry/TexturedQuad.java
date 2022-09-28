@@ -40,30 +40,30 @@ public class TexturedQuad {
 	}
 
 	/** Sets a new ZDepth value for this {@link TexturedQuad}. */
-	public void zDepth(float pNewValue) {
-		mZDepth = pNewValue;
+	public void zDepth(float zDepth) {
+		mZDepth = zDepth;
 	}
 
 	public Matrix4f modelMatrix() {
 		return mModelMatrix;
 	}
 
-	public void modelMatrix(Matrix4f pNewMatrix) {
-		mModelMatrix = pNewMatrix;
+	public void modelMatrix(Matrix4f modelMatrix) {
+		mModelMatrix = modelMatrix;
 	}
 
-	public void width(float pNewWidth) {
-		if (pNewWidth < 0) {
-			pNewWidth = 0;
+	public void width(float width) {
+		if (width < 0) {
+			width = 0;
 		}
-		mWidth = pNewWidth;
+		mWidth = width;
 	}
 
-	public void height(float pNewHeight) {
-		if (pNewHeight < 0) {
-			pNewHeight = 0;
+	public void height(float height) {
+		if (height < 0) {
+			height = 0;
 		}
-		mHeight = pNewHeight;
+		mHeight = height;
 	}
 
 	// --------------------------------------
@@ -82,7 +82,7 @@ public class TexturedQuad {
 	// Core-Methods
 	// --------------------------------------
 
-	public void loadResources(ResourceManager pResourceManager) {
+	public void loadResources(ResourceManager resourceManager) {
 		if (mResourcesLoaded)
 			return;
 
@@ -158,7 +158,7 @@ public class TexturedQuad {
 	// Core-Methods
 	// --------------------------------------
 
-	public void draw(LintfordCore pCore) {
+	public void draw(LintfordCore core) {
 		initializeGlContent();
 
 		GL30.glBindVertexArray(mVaoId);
@@ -199,17 +199,17 @@ public class TexturedQuad {
 		createModelMatrix(0, 0);
 	}
 
-	public void createModelMatrix(float pPositionX, float pPositionY) {
-		createModelMatrix(pPositionX, pPositionY, mZDepth);
+	public void createModelMatrix(float positionX, float positionY) {
+		createModelMatrix(positionX, positionY, mZDepth);
 	}
 
-	public void createModelMatrix(float pPositionX, float pPositionY, float pPositionZ) {
-		createModelMatrix(pPositionX, pPositionY, mWidth, mHeight, pPositionZ);
+	public void createModelMatrix(float positionX, float positionY, float positionZ) {
+		createModelMatrix(positionX, positionY, positionZ, mWidth, mHeight);
 	}
 
-	public void createModelMatrix(float pPositionX, float pPositionY, float pWidth, float pHeight, float pPositionZ) {
+	public void createModelMatrix(float positionX, float positionY, float positionZ, float width, float height) {
 		mModelMatrix.setIdentity();
-		mModelMatrix.scale(pWidth, pHeight, 1f);
-		mModelMatrix.translate(pPositionX, pPositionY, pPositionZ);
+		mModelMatrix.scale(width, height, 1f);
+		mModelMatrix.translate(positionX, positionY, positionZ);
 	}
 }

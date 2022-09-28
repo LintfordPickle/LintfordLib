@@ -38,7 +38,6 @@ public class PolyBatch {
 	private int mVaoId = -1;
 	private int mVboId = -1;
 	private int mVertexCount = 0;
-	public float r, g, b, a;
 
 	private ICamera mCamera;
 	private ShaderMVP_PC mShader;
@@ -56,9 +55,8 @@ public class PolyBatch {
 	 * Specifies what kind of primitives to render. Symbolic constants GL_POINTS, GL_LINE_STRIP, GL_LINE_LOOP, GL_LINES, GL_LINE_STRIP_ADJACENCY, GL_LINES_ADJACENCY, GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_TRIANGLES,
 	 * GL_TRIANGLE_STRIP_ADJACENCY, GL_TRIANGLES_ADJACENCY and GL_PATCHES are accepted.
 	 */
-	public void lineMode(int pNewLineType) {
-		mLineMode = pNewLineType;
-
+	public void lineMode(int lineType) {
+		mLineMode = lineType;
 	}
 
 	public boolean isDrawing() {
@@ -78,24 +76,21 @@ public class PolyBatch {
 			}
 		};
 
-		a = r = g = b = 1f;
-
 		mModelMatrix = new Matrix4f();
 		mResourcesLoaded = false;
 
 		mLineMode = GL11.GL_LINE_STRIP;
-
 	}
 
 	// --------------------------------------
 	// Core-Methods
 	// --------------------------------------
 
-	public void loadResources(ResourceManager pResourceManager) {
+	public void loadResources(ResourceManager resourceManager) {
 		if (mResourcesLoaded)
 			return;
 
-		mShader.loadResources(pResourceManager);
+		mShader.loadResources(resourceManager);
 
 		if (mVboId == -1) {
 			mVboId = GL15.glGenBuffers();
@@ -153,102 +148,89 @@ public class PolyBatch {
 		}
 	}
 
-	public void begin(ICamera pCamera) {
-		if (pCamera == null)
+	public void begin(ICamera camera) {
+		if (camera == null)
 			return;
 
 		if (mIsDrawing)
 			return;
 
-		mCamera = pCamera;
+		mCamera = camera;
 
 		mBuffer.clear();
 		mVertexCount = 0;
 		mIsDrawing = true;
-
 	}
 
-	public void drawRect(Rectangle pRect, float pZ, float pR, float pG, float pB) {
-		if (!mIsDrawing || pRect == null)
+	public void drawRect(Rectangle rectangle, float zDepth, float red, float green, float blue) {
+		if (!mIsDrawing || rectangle == null)
 			return;
 
-		List<Vector2f> verts = pRect.getVertices();
+		final var verts = rectangle.getVertices();
 
-		draw(verts.get(0).x, verts.get(0).y, verts.get(1).x, verts.get(1).y, pZ, pR, pG, pB);
-		draw(verts.get(0).x, verts.get(0).y, verts.get(2).x, verts.get(2).y, pZ, pR, pG, pB);
-		draw(verts.get(2).x, verts.get(2).y, verts.get(3).x, verts.get(3).y, pZ, pR, pG, pB);
-		draw(verts.get(1).x, verts.get(1).y, verts.get(3).x, verts.get(3).y, pZ, pR, pG, pB);
-
+		draw(verts.get(0).x, verts.get(0).y, verts.get(1).x, verts.get(1).y, zDepth, red, green, blue);
+		draw(verts.get(0).x, verts.get(0).y, verts.get(2).x, verts.get(2).y, zDepth, red, green, blue);
+		draw(verts.get(2).x, verts.get(2).y, verts.get(3).x, verts.get(3).y, zDepth, red, green, blue);
+		draw(verts.get(1).x, verts.get(1).y, verts.get(3).x, verts.get(3).y, zDepth, red, green, blue);
 	}
 
-	public void drawRect(List<Vector2f> pVertexArray, float pZ, boolean pClose, float pR, float pG, float pB) {
-		if (pVertexArray == null)
+	public void drawRect(List<Vector2f> vertexArray, float zDepth, boolean closePolygon, float red, float green, float blue) {
+		if (vertexArray == null)
 			return;
 
-		drawRect(pVertexArray, pVertexArray.size(), pZ, pClose, pR, pG, pB);
-
+		drawRect(vertexArray, vertexArray.size(), zDepth, closePolygon, red, green, blue);
 	}
 
-	public void drawRect(List<Vector2f> pVertexArray, int pAmt, float pZ, boolean pClose, float pR, float pG, float pB) {
-		if (!mIsDrawing || pVertexArray == null || pVertexArray.size() < 2 || pAmt < 2)
+	public void drawRect(List<Vector2f> vertexArray, final int numberVerts, float zDepth, boolean closePolygon, float red, float green, float blue) {
+		if (!mIsDrawing || vertexArray == null || vertexArray.size() < 2 || numberVerts < 2)
 			return;
 
 		int lLastIndex = 1;
 
-		final int ARRAY_SIZE = pAmt; // pVertexArray.length;
-		for (int i = 0; i < ARRAY_SIZE - 1; i++) {
-			if (pVertexArray.get(i) == null || pVertexArray.get(i + 1) == null)
+		for (int i = 0; i < numberVerts - 1; i++) {
+			if (vertexArray.get(i) == null || vertexArray.get(i + 1) == null)
 				continue;
-			float px0 = pVertexArray.get(i).x;
-			float py0 = pVertexArray.get(i).y;
-			float px1 = pVertexArray.get(i + 1).x;
-			float py1 = pVertexArray.get(i + 1).y;
+			float px0 = vertexArray.get(i).x;
+			float py0 = vertexArray.get(i).y;
+			float px1 = vertexArray.get(i + 1).x;
+			float py1 = vertexArray.get(i + 1).y;
 
 			lLastIndex++;
 
-			draw(px0, py0, px1, py1, pZ, pR, pG, pB); // top
+			draw(px0, py0, px1, py1, zDepth, red, green, blue);
 		}
 
-		if (pClose) {
-			if (pVertexArray.get(0) != null && pVertexArray.get(lLastIndex - 1) != null) {
-				float px0 = pVertexArray.get(0).x;
-				float py0 = pVertexArray.get(0).y;
-				float px1 = pVertexArray.get(lLastIndex - 1).x;
-				float py1 = pVertexArray.get(lLastIndex - 1).y;
+		if (closePolygon) {
+			if (vertexArray.get(0) != null && vertexArray.get(lLastIndex - 1) != null) {
+				float px0 = vertexArray.get(0).x;
+				float py0 = vertexArray.get(0).y;
+				float px1 = vertexArray.get(lLastIndex - 1).x;
+				float py1 = vertexArray.get(lLastIndex - 1).y;
 
-				draw(px0, py0, px1, py1, pZ, pR, pG, pB); // top
-
+				draw(px0, py0, px1, py1, zDepth, red, green, blue);
 			}
-
 		}
-
 	}
 
-	public void draw(float pP1X, float pP1Y, float pZ, float pR, float pG, float pB) {
+	public void draw(float point1X, float point1Y, float zDepth, float red, float green, float blue) {
 		if (!mIsDrawing)
 			return;
 
-		if (mVertexCount / 2 >= MAX_LINES) {
+		if (mVertexCount / 2 >= MAX_LINES)
 			flush();
-		}
 
-		// Add both vertices to the buffer
-		addVertToBuffer(pP1X, pP1Y, pZ, 1f, pR, pG, pB, a);
-
+		addVertToBuffer(point1X, point1Y, zDepth, 1f, red, green, blue, 1.f);
 	}
 
-	public void draw(float pP1X, float pP1Y, float pP2X, float pP2Y, float pZ, float pR, float pG, float pB) {
+	public void draw(float point1X, float point1Y, float point2X, float point2Y, float zDepth, float red, float green, float blue) {
 		if (!mIsDrawing)
 			return;
 
-		if (mVertexCount / 2 >= MAX_LINES) {
+		if (mVertexCount / 2 >= MAX_LINES)
 			flush();
-		}
 
-		// Add both vertices to the buffer
-		addVertToBuffer(pP1X, pP1Y, pZ, 1f, pR, pG, pB, a);
-		addVertToBuffer(pP2X, pP2Y, pZ, 1f, pR, pG, pB, a);
-
+		addVertToBuffer(point1X, point1Y, zDepth, 1f, red, green, blue, 1.f);
+		addVertToBuffer(point2X, point2Y, zDepth, 1f, red, green, blue, 1.f);
 	}
 
 	private void addVertToBuffer(float x, float y, float z, float w, float r, float g, float b, float a) {
@@ -263,7 +245,6 @@ public class PolyBatch {
 		mBuffer.put(a);
 
 		mVertexCount++;
-
 	}
 
 	public void end() {
@@ -272,7 +253,6 @@ public class PolyBatch {
 
 		mIsDrawing = false;
 		flush();
-
 	}
 
 	private void flush() {
@@ -303,7 +283,6 @@ public class PolyBatch {
 
 			if (mLineMode == GL11.GL_TRIANGLES || mLineMode == GL11.GL_TRIANGLE_STRIP)
 				Debug.debugManager().stats().incTag(DebugStats.TAG_ID_TRIS, mVertexCount - 2);
-
 		}
 
 		GL11.glDrawArrays(mLineMode, 0, mVertexCount);
@@ -314,18 +293,5 @@ public class PolyBatch {
 
 		mBuffer.clear();
 		mVertexCount = 0;
-	}
-
-	public void changeColorNormalized(float pR, float pG, float pB, float pA) {
-		// if (mCurNumSprites > 0) {
-		// flush();
-		// mCurNumSprites = 0;
-		// }
-
-		r = pR;
-		g = pG;
-		b = pB;
-		a = pA;
-
 	}
 }

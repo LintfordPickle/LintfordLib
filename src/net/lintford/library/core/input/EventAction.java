@@ -16,38 +16,44 @@ public class EventAction implements Serializable {
 	// Variables
 	// --------------------------------------
 
-	public final int defaultBoundKeyCode;
-	public final int eventActionUid;
-	public int boundKeyCode;
+	private final int mDefaultBoundKeyCode;
+	private final int mEventActionUid;
+	private int mBoundKeyCode;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
 
+	public int defaultBoundKeyCode() {
+		return mDefaultBoundKeyCode;
+	}
+
+	public int eventActionUid() {
+		return mEventActionUid;
+	}
+
+	public void boundKeyCode(int newKeyCode) {
+		mBoundKeyCode = newKeyCode;
+	}
+
 	public int getBoundKeyCode() {
-		return boundKeyCode > UNASSIGNED_KEY_CODE ? boundKeyCode : defaultBoundKeyCode;
+		return mBoundKeyCode > UNASSIGNED_KEY_CODE ? mBoundKeyCode : mDefaultBoundKeyCode;
 	}
 
 	// --------------------------------------
 	// Constructors
 	// --------------------------------------
 
-	public EventAction(int pEventActionUid, int pDefaultBoundKeyCode) {
-		eventActionUid = pEventActionUid;
-		defaultBoundKeyCode = pDefaultBoundKeyCode;
-		boundKeyCode = UNASSIGNED_KEY_CODE;
+	public EventAction(int eventActionUid, int defaultBoundKeyCode) {
+		mEventActionUid = eventActionUid;
+		mDefaultBoundKeyCode = defaultBoundKeyCode;
+		mBoundKeyCode = UNASSIGNED_KEY_CODE;
 
 	}
 
-	public EventAction(int pEventActionUid, int pDefaultBoundKeyCode, int pInitialBoundKeyCode) {
-		this(pEventActionUid, pDefaultBoundKeyCode);
+	public EventAction(int eventActionUid, int defaultBoundKeyCode, int initialBoundKeyCode) {
+		this(eventActionUid, defaultBoundKeyCode);
 
-		boundKeyCode = pInitialBoundKeyCode;
-
+		mBoundKeyCode = initialBoundKeyCode;
 	}
-
-	// --------------------------------------
-	// Methods
-	// --------------------------------------
-
 }

@@ -28,16 +28,16 @@ public class LabelValueListBoxItem extends ListBoxItem {
 	// Properties
 	// --------------------------------------
 
-	public void labelValue(String pNewValue) {
-		mLabelValue = pNewValue;
+	public void labelValue(String label) {
+		mLabelValue = label;
 	}
 
 	public String labelValue() {
 		return mLabelValue;
 	}
 
-	public void textValue(String pNewValue) {
-		mTextValue = pNewValue;
+	public void textValue(String text) {
+		mTextValue = text;
 	}
 
 	public String textValue() {
@@ -48,12 +48,11 @@ public class LabelValueListBoxItem extends ListBoxItem {
 	// Constructor
 	// --------------------------------------
 
-	public LabelValueListBoxItem(ScreenManager pScreenManager, ListBox pParentListBox, int pIndex, String pLabel, String pValue, int pEntityGroupID) {
-		super(pScreenManager, pParentListBox, pIndex, pEntityGroupID);
+	public LabelValueListBoxItem(ScreenManager screenManager, ListBox parentListBox, int index, String label, String value, int entityGroupUid) {
+		super(screenManager, parentListBox, index, entityGroupUid);
 
-		mLabelValue = pLabel;
-		mTextValue = pValue;
-
+		mLabelValue = label;
+		mTextValue = value;
 	}
 
 	// --------------------------------------
@@ -61,7 +60,7 @@ public class LabelValueListBoxItem extends ListBoxItem {
 	// --------------------------------------
 
 	@Override
-	public void draw(LintfordCore pCore, Screen pScreen, SpriteBatch pSpriteBatch, boolean pIsSelected, float pParentZDepth) {
+	public void draw(LintfordCore core, Screen screen, SpriteBatch spriteBatch, boolean isSelected, float parentZDepth) {
 		if (mLabelValue != null && mLabelValue.length() > 0) {
 
 			if (mTextValue == null)
@@ -70,17 +69,16 @@ public class LabelValueListBoxItem extends ListBoxItem {
 			final float lScale = mScreenManager.UiStructureController().uiTextScaleFactor();
 			final var lFont = mParentListBox.parentLayout().parentScreen.font();
 
-			h = 10;
+			mH = 10;
 
-			// Draw profile information
-			lFont.begin(pCore.HUD());
-			lFont.drawText(mLabelValue, x, y, pParentZDepth + .1f, textColor, lScale, -1);
-			lFont.drawText(mTextValue, x + w / 2, y, pParentZDepth + .1f, textColor, lScale, -1);
+			lFont.begin(core.HUD());
+			lFont.drawText(mLabelValue, mX, mY, parentZDepth + .1f, textColor, lScale, -1);
+			lFont.drawText(mTextValue, mX + mW / 2, mY, parentZDepth + .1f, textColor, lScale, -1);
 			lFont.end();
 		}
 
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
-			Debug.debugManager().drawers().drawRectImmediate(pCore.HUD(), this);
+			Debug.debugManager().drawers().drawRectImmediate(core.HUD(), this);
 		}
 	}
 }

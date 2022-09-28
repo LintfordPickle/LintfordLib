@@ -22,8 +22,8 @@ public abstract class IndexedPooledBaseData extends BaseInstanceData {
 	// Constructor
 	// --------------------------------------
 
-	public IndexedPooledBaseData(final int pPoolUid) {
-		poolUid = pPoolUid;
+	public IndexedPooledBaseData(final int instancePoolUid) {
+		poolUid = instancePoolUid;
 	}
 
 	// --------------------------------------

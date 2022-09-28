@@ -7,22 +7,22 @@ public class ColorConstants {
 	// --------------------------------------
 
 	/**
-	 * The TempColor object is used to provide a temporary data storage instance for passing colors to LintfordCore objects.
+	 * The TempColor object is used to redovide a temporary data storage instance for passing colors to LintfordCore objects.
 	 */
 	private static final Color TempColor = new Color();
 
-	public static Color getWhiteWithAlpha(float pAlpha) {
-		TempColor.setRGBA(1.f, 1.f, 1.f, pAlpha);
+	public static Color getWhiteWithAlpha(float alphalpha) {
+		TempColor.setRGBA(1.f, 1.f, 1.f, alphalpha);
 		return TempColor;
 	}
 
-	public static Color getBlackWithAlpha(float pAlpha) {
-		TempColor.setRGBA(0.f, 0.f, 0.f, pAlpha);
+	public static Color getBlackWithAlpha(float alphalpha) {
+		TempColor.setRGBA(0.f, 0.f, 0.f, alphalpha);
 		return TempColor;
 	}
 
-	public static Color getColorWithAlpha(Color pColor, float pAlpha) {
-		TempColor.setRGBA(pColor.r, pColor.g, pColor.b, pAlpha);
+	public static Color getColorWithAlpha(Color pColor, float alphalpha) {
+		TempColor.setRGBA(pColor.r, pColor.g, pColor.b, alphalpha);
 		return TempColor;
 	}
 
@@ -31,33 +31,33 @@ public class ColorConstants {
 		return TempColor;
 	}
 
-	public static Color getColor(float pR, float pG, float pB) {
-		TempColor.setRGBA(pR, pG, pB, 1.f);
+	public static Color getColor(float red, float green, float blue) {
+		TempColor.setRGBA(red, green, blue, 1.f);
 		return TempColor;
 	}
 
-	public static Color getColor(float pR, float pG, float pB, float pA) {
-		TempColor.setRGBA(pR, pG, pB, pA);
+	public static Color getColor(float red, float green, float blue, float alpha) {
+		TempColor.setRGBA(red, green, blue, alpha);
 		return TempColor;
 	}
 
-	public static Color getColorWithRGBMod(float pR, float pG, float pB, float pA, float pColorMod) {
-		TempColor.setRGBA(pR * pColorMod, pG * pColorMod, pB * pColorMod, pA);
+	public static Color getColorWithRGBMod(float red, float green, float blue, float alpha, float colorMod) {
+		TempColor.setRGBA(red * colorMod, green * colorMod, blue * colorMod, alpha);
 		return TempColor;
 	}
 
-	public static Color getColorWithRGBAMod(float pR, float pG, float pB, float pA, float pColorMod) {
-		TempColor.setRGBA(pR * pColorMod, pG * pColorMod, pB * pColorMod, pA * pColorMod);
+	public static Color getColorWithRGBAMod(float red, float green, float blue, float alpha, float colorMod) {
+		TempColor.setRGBA(red * colorMod, green * colorMod, blue * colorMod, alpha * colorMod);
 		return TempColor;
 	}
 
-	public static Color getColorWithRGBMod(Color pColor, float pColorMod) {
-		TempColor.setRGBA(pColor.r * pColorMod, pColor.g * pColorMod, pColor.b * pColorMod, pColor.a);
+	public static Color getColorWithRGBMod(Color color, float colorMod) {
+		TempColor.setRGBA(color.r * colorMod, color.g * colorMod, color.b * colorMod, color.a);
 		return TempColor;
 	}
 
-	public static Color getColorWithRGBAMod(Color pColor, float pColorMod) {
-		TempColor.setRGBA(pColor.r * pColorMod, pColor.g * pColorMod, pColor.b * pColorMod, pColor.a * pColorMod);
+	public static Color getColorWithRGBAMod(Color color, float colorMod) {
+		TempColor.setRGBA(color.r * colorMod, color.g * colorMod, color.b * colorMod, color.a * colorMod);
 		return TempColor;
 	}
 

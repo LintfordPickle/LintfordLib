@@ -23,38 +23,34 @@ public class ParticleEmitterManager extends PoolInstanceManager<ParticleEmitterI
 
 		public EmitterDefinitionManager() {
 			loadDefinitionsFromMetaFile(ParticleEmitterConstants.PARTICLE_EMITTER_META_FILENAME);
-
 		}
 
 		// --------------------------------------
 		// Core-Methods
 		// --------------------------------------
 
-		public void initialize(Object pParent) {
+		public void initialize(Object parent) {
 
 		}
 
 		@Override
-		public void loadDefinitionsFromFolderWatcher(EntityLocationProvider pEntityLocationProvider) {
+		public void loadDefinitionsFromFolderWatcher(EntityLocationProvider entityLocationProvider) {
 			final var lGson = new GsonBuilder().create();
-			loadDefinitionsFromFolderWatcherItems(pEntityLocationProvider, lGson, ParticleEmitterDefinition.class);
-
+			loadDefinitionsFromFolderWatcherItems(entityLocationProvider, lGson, ParticleEmitterDefinition.class);
 		}
 
 		@Override
-		public void loadDefinitionsFromMetaFile(String pMetaFilepath) {
+		public void loadDefinitionsFromMetaFile(String metaFilepath) {
 			final var lGson = new GsonBuilder().create();
-			loadDefinitionsFromMetaFileItems(pMetaFilepath, lGson, ParticleEmitterDefinition.class);
-
+			loadDefinitionsFromMetaFileItems(metaFilepath, lGson, ParticleEmitterDefinition.class);
 		}
 
 		@Override
-		public void loadDefinitionFromFile(String pFilepath) {
+		public void loadDefinitionFromFile(String filepath) {
 			final var lGson = new GsonBuilder().create();
 
-			loadDefinitionFromFile(pFilepath, lGson, ParticleEmitterDefinition.class);
+			loadDefinitionFromFile(filepath, lGson, ParticleEmitterDefinition.class);
 		}
-
 	}
 
 	// --------------------------------------
@@ -92,8 +88,8 @@ public class ParticleEmitterManager extends PoolInstanceManager<ParticleEmitterI
 	// Constructor
 	// --------------------------------------
 
-	public ParticleEmitterManager(ParticleFrameworkData pParticleFrameworkData) {
-		mParticleFrameworkData = pParticleFrameworkData;
+	public ParticleEmitterManager(ParticleFrameworkData particleFrameworkData) {
+		mParticleFrameworkData = particleFrameworkData;
 	}
 
 	// --------------------------------------
@@ -101,12 +97,12 @@ public class ParticleEmitterManager extends PoolInstanceManager<ParticleEmitterI
 	// --------------------------------------
 
 	@Override
-	public void afterLoaded(Object pParent) {
+	public void afterLoaded(Object parent) {
 		mEmitterDefinitionManager = new EmitterDefinitionManager();
 
 		// Resolve all the ParticleSystems within the emitters to the ParticleSystem instances.
-		if (pParent instanceof ParticleFrameworkData) {
-			final var lFramework = (ParticleFrameworkData) pParent;
+		if (parent instanceof ParticleFrameworkData) {
+			final var lFramework = (ParticleFrameworkData) parent;
 			mEmitterDefinitionManager.initialize(lFramework);
 		}
 	}
@@ -115,12 +111,11 @@ public class ParticleEmitterManager extends PoolInstanceManager<ParticleEmitterI
 	// Methods
 	// --------------------------------------
 
-	public ParticleEmitterInstance getNewParticleEmitterInstanceByDefName(String pEmitterDefName) {
-		final var lEmitterDef = definitionManager().getByName(pEmitterDefName);
+	public ParticleEmitterInstance getNewParticleEmitterInstanceByDefName(String emitterDefName) {
+		final var lEmitterDef = definitionManager().getByName(emitterDefName);
 
 		if (lEmitterDef == null) {
 			return null;
-
 		}
 
 		final var lNewEmitterInst = getFreePooledItem();
@@ -133,39 +128,35 @@ public class ParticleEmitterManager extends PoolInstanceManager<ParticleEmitterI
 		return lNewEmitterInst;
 	}
 
-	public ParticleEmitterInstance getParticleEmitterByIndex(int pEmitterIndex) {
+	public ParticleEmitterInstance getParticleEmitterByIndex(int emitterIndex) {
 		final var lNumParticleEmitterCount = mInstances.size();
 		for (var i = 0; i < lNumParticleEmitterCount; i++) {
-			if (mInstances.get(i).emitterInstanceId() == pEmitterIndex) {
+			if (mInstances.get(i).emitterInstanceId() == emitterIndex) {
 				return mInstances.get(i);
-
 			}
 		}
 
 		return null;
 	}
 
-	public void addParticleEmitterInstance(final ParticleEmitterInstance pParticleEmitterInstance) {
-		if (!mInstances.contains(pParticleEmitterInstance)) {
-			mInstances.add(pParticleEmitterInstance);
-
+	public void addParticleEmitterInstance(final ParticleEmitterInstance particleEmitterInstance) {
+		if (!mInstances.contains(particleEmitterInstance)) {
+			mInstances.add(particleEmitterInstance);
 		}
 	}
 
-	public void removeParticleEmitterInstance(final ParticleEmitterInstance pParticleEmitterInstance) {
-		pParticleEmitterInstance.reset();
+	public void removeParticleEmitterInstance(final ParticleEmitterInstance particleEmitterInstance) {
+		particleEmitterInstance.reset();
 
-		if (mInstances.contains(pParticleEmitterInstance)) {
-			mInstances.remove(pParticleEmitterInstance);
-
+		if (mInstances.contains(particleEmitterInstance)) {
+			mInstances.remove(particleEmitterInstance);
 		}
 
-		returnPooledItem(pParticleEmitterInstance);
+		returnPooledItem(particleEmitterInstance);
 	}
 
 	@Override
 	protected ParticleEmitterInstance createPoolObjectInstance() {
 		return new ParticleEmitterInstance();
 	}
-
 }

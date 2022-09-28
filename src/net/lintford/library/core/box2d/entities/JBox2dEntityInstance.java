@@ -47,15 +47,12 @@ public class JBox2dEntityInstance extends IndexedPooledBaseData {
 	public String spriteSheetName;
 
 	protected transient PObjectDefinition mPObjectDefinition;
-
 	protected final List<Box2dBodyInstance> mBodies = new ArrayList<>();
 	protected final List<Box2dJointInstance> mJoints = new ArrayList<>();
-
 	protected BasePhysicsData mMainBodyUserDataObject;
 	protected Box2dBodyInstance mMainBody;
 	protected Vec2 entityPosition = new Vec2();
 	protected float entityAngle;
-
 	protected boolean mIsFree;
 	protected transient World mWorld;
 	protected transient boolean mPhysicsLoaded = false;
@@ -74,28 +71,23 @@ public class JBox2dEntityInstance extends IndexedPooledBaseData {
 
 	public BasePhysicsData userDataObject() {
 		return mMainBodyUserDataObject;
-
 	}
 
-	public void userDataObject(BasePhysicsData pNewUserDataObject) {
-		if (pNewUserDataObject == null) {
+	public void userDataObject(BasePhysicsData newUserDataObject) {
+		if (newUserDataObject == null) {
 			mMainBodyUserDataObject = null;
 			if (mPhysicsLoaded) {
 				mainBody().mBody.setUserData(null);
-
 			}
 
 			return;
-
 		}
 
-		mMainBodyUserDataObject = pNewUserDataObject;
+		mMainBodyUserDataObject = newUserDataObject;
 
 		if (mPhysicsLoaded) {
 			mainBody().mBody.setUserData(mMainBodyUserDataObject);
-
 		}
-
 	}
 
 	public boolean isPhysicsLoaded() {
@@ -119,11 +111,10 @@ public class JBox2dEntityInstance extends IndexedPooledBaseData {
 	// Constructor
 	// --------------------------------------
 
-	public JBox2dEntityInstance(final int pPoolUid) {
-		super(pPoolUid);
+	public JBox2dEntityInstance(final int poolUid) {
+		super(poolUid);
 
 		mPhysicsLoaded = false;
-
 	}
 
 	// --------------------------------------
@@ -131,35 +122,31 @@ public class JBox2dEntityInstance extends IndexedPooledBaseData {
 	// --------------------------------------
 
 	@Override
-	public void afterLoaded(Object pParent) {
-		super.afterLoaded(pParent);
+	public void afterLoaded(Object parent) {
+		super.afterLoaded(parent);
 
 		final int lBodyCount = mBodies.size();
 		for (int i = 0; i < lBodyCount; i++) {
 			mBodies.get(i).afterLoaded(this);
-
 		}
 
 		final int lJointCount = mJoints.size();
 		for (int i = 0; i < lJointCount; i++) {
 			mJoints.get(i).afterLoaded(this);
-
 		}
-
 	}
 
 	/** Loads a reference implementation of the PObject definition */
-	public void loadPhysics(World pWorld) {
-		if (pWorld == null)
+	public void loadPhysics(World box2dWorld) {
+		if (box2dWorld == null)
 			return;
-		mWorld = pWorld;
+		mWorld = box2dWorld;
 
 		final int lBodyCount = mBodies.size();
 		for (int i = 0; i < lBodyCount; i++) {
 			final var lBox2dBodyInstance = mBodies.get(i);
 
-			lBox2dBodyInstance.loadPhysics(pWorld, this);
-
+			lBox2dBodyInstance.loadPhysics(box2dWorld, this);
 		}
 
 		final int lJointCount = mJoints.size();
@@ -194,7 +181,7 @@ public class JBox2dEntityInstance extends IndexedPooledBaseData {
 
 				lRevoluteJointDef.collideConnected = lBox2dRevoluteJointInsance.collidesConnected;
 
-				lBox2dJointInstance.joint = pWorld.createJoint(lRevoluteJointDef);
+				lBox2dJointInstance.joint = box2dWorld.createJoint(lRevoluteJointDef);
 
 			} else if (lBox2dJointInstance instanceof Box2dPrismaticInstance) {
 				final var lBox2dPrismaticJointInsance = (Box2dPrismaticInstance) lBox2dJointInstance;
@@ -223,7 +210,7 @@ public class JBox2dEntityInstance extends IndexedPooledBaseData {
 
 				lPrismaticJointDef.collideConnected = lBox2dPrismaticJointInsance.collidesConnected;
 
-				lBox2dJointInstance.joint = pWorld.createJoint(lPrismaticJointDef);
+				lBox2dJointInstance.joint = box2dWorld.createJoint(lPrismaticJointDef);
 
 			} else if (lBox2dJointInstance instanceof Box2dWeldInstance) {
 				final var lBox2dWeldJointInsance = (Box2dWeldInstance) lBox2dJointInstance;
@@ -239,7 +226,7 @@ public class JBox2dEntityInstance extends IndexedPooledBaseData {
 
 				lWeldJointInstance.collideConnected = lBox2dWeldJointInsance.collidesConnected;
 
-				lBox2dWeldJointInsance.createWeldJoint(pWorld, lBodyA.mBody, lBodyB.mBody, lBox2dWeldJointInsance.localAnchorA, lBox2dWeldJointInsance.localAnchorB, 0.f);
+				lBox2dWeldJointInsance.createWeldJoint(box2dWorld, lBodyA.mBody, lBodyB.mBody, lBox2dWeldJointInsance.localAnchorA, lBox2dWeldJointInsance.localAnchorB, 0.f);
 
 			}
 
@@ -270,11 +257,8 @@ public class JBox2dEntityInstance extends IndexedPooledBaseData {
 				final int lFixtureCount = mBodies.get(i).mFixtures.length;
 				for (int j = 0; j < lFixtureCount; j++) {
 					mBodies.get(i).mFixtures[j].savePhysics();
-
 				}
-
 			}
-
 		}
 
 		final int lJointCount = mJoints.size();
@@ -283,17 +267,13 @@ public class JBox2dEntityInstance extends IndexedPooledBaseData {
 
 			if (lJointInstance.joint != null) {
 				lJointInstance.savePhysics();
-
 			}
-
 		}
-
 	}
 
 	public void unloadPhysics() {
 		if (!isPhysicsLoaded() || mWorld == null) {
 			return;
-
 		}
 
 		final int lBodyCount = mBodies.size();
@@ -302,11 +282,9 @@ public class JBox2dEntityInstance extends IndexedPooledBaseData {
 
 			if (lBox2dBodyInstance.mBody != null) {
 				lBox2dBodyInstance.mBody.setUserData(null);
-
 			}
 
 			lBox2dBodyInstance.unloadPhysics();
-
 		}
 
 		final int lJointCount = mJoints.size();
@@ -314,16 +292,14 @@ public class JBox2dEntityInstance extends IndexedPooledBaseData {
 			final var lBox2dJointInstance = mJoints.get(i);
 
 			lBox2dJointInstance.unloadPhysics(mWorld);
-
 		}
 
 		mMainBody = null;
 		mWorld = null;
 		mPhysicsLoaded = false;
-
 	}
 
-	public Box2dBodyInstance getBodyByName(String pBodyName) {
+	public Box2dBodyInstance getBodyByName(String bodyName) {
 		final int lBodyCount = mBodies.size();
 		for (int i = 0; i < lBodyCount; i++) {
 			final var lBody = mBodies.get(i);
@@ -331,27 +307,25 @@ public class JBox2dEntityInstance extends IndexedPooledBaseData {
 				continue;
 			}
 
-			if (lBody.name.contentEquals(pBodyName))
+			if (lBody.name.contentEquals(bodyName))
 				return mBodies.get(i);
-
 		}
 
 		return null;
-
 	}
 
-	public Box2dBodyInstance getBodyByIndex(int pArrayIndex) {
-		if (pArrayIndex >= mBodies.size()) {
+	public Box2dBodyInstance getBodyByIndex(int arrayIndex) {
+		if (arrayIndex >= mBodies.size()) {
 			return null;
 		}
 
-		return mBodies.get(pArrayIndex);
+		return mBodies.get(arrayIndex);
 	}
 
-	public Box2dJointInstance getJointByName(String pJointName) {
+	public Box2dJointInstance getJointByName(String jointName) {
 		final int lNumJoints = mJoints.size();
 		for (int i = 0; i < lNumJoints; i++) {
-			if (mJoints.get(i).name.contentEquals(pJointName))
+			if (mJoints.get(i).name.contentEquals(jointName))
 				return mJoints.get(i);
 
 		}
@@ -360,26 +334,25 @@ public class JBox2dEntityInstance extends IndexedPooledBaseData {
 
 	}
 
-	public Box2dJointInstance getJointByIndex(int pArrayIndex) {
-		return mJoints.get(pArrayIndex);
+	public Box2dJointInstance getJointByIndex(int arrayIndex) {
+		return mJoints.get(arrayIndex);
 	}
 
 	/**
 	 * This loads the LintfordCore representation of a JBox2d PObject into memory, it doesn't create the object in the Box2d world though (this is done later in Box2dBodyInstance.loadPhysics())
 	 */
-	public void loadPObjectFromDefinition(Box2dInstanceManager pBox2dInstanceManager, PObjectDefinition pDefinition) {
-		mPObjectDefinition = pDefinition;
+	public void loadPObjectFromDefinition(Box2dInstanceManager box2dInstanceManager, PObjectDefinition definition) {
+		mPObjectDefinition = definition;
 
-		loadBodiesFromDefinition(pBox2dInstanceManager, mPObjectDefinition);
-		loadJointsFromDefinition(pBox2dInstanceManager, mPObjectDefinition);
-
+		loadBodiesFromDefinition(box2dInstanceManager, mPObjectDefinition);
+		loadJointsFromDefinition(box2dInstanceManager, mPObjectDefinition);
 	}
 
-	private void loadBodiesFromDefinition(Box2dInstanceManager pBox2dInstanceManager, PObjectDefinition pDefinition) {
-		final int lBodyCount = pDefinition.bodies().size();
+	private void loadBodiesFromDefinition(Box2dInstanceManager box2dInstanceManager, PObjectDefinition definition) {
+		final int lBodyCount = definition.bodies().size();
 		for (int i = 0; i < lBodyCount; i++) {
-			final var lBox2dBodyDefinition = pDefinition.bodies().get(i);
-			final var lBox2dBodyInstance = pBox2dInstanceManager.box2dBodyInstanceRepository().getFreePooledItem();
+			final var lBox2dBodyDefinition = definition.bodies().get(i);
+			final var lBox2dBodyInstance = box2dInstanceManager.box2dBodyInstanceRepository().getFreePooledItem();
 
 			lBox2dBodyInstance.name = lBox2dBodyDefinition.name;
 			lBox2dBodyInstance.bodyTypeIndex = lBox2dBodyDefinition.bodyTypeIndex;
@@ -416,7 +389,7 @@ public class JBox2dEntityInstance extends IndexedPooledBaseData {
 
 			for (int j = 0; j < lFixtureCount; j++) {
 				final var lBox2dFixtureDefinition = lBox2dBodyDefinition.fixtureList.get(j);
-				final var lBox2dFixtureInstance = pBox2dInstanceManager.box2dFixtureInstanceRepository().getFreePooledItem();
+				final var lBox2dFixtureInstance = box2dInstanceManager.box2dFixtureInstanceRepository().getFreePooledItem();
 
 				lBox2dBodyInstance.mFixtures[j] = lBox2dFixtureInstance;
 
@@ -435,19 +408,17 @@ public class JBox2dEntityInstance extends IndexedPooledBaseData {
 				lFilter.categoryBits = lBox2dFixtureDefinition.fixtureDef.filter.categoryBits;
 				lFilter.groupIndex = lBox2dFixtureDefinition.fixtureDef.filter.groupIndex;
 				lFilter.maskBits = lBox2dFixtureDefinition.fixtureDef.filter.maskBits;
-
 			}
-
 		}
 	}
 
-	private void loadJointsFromDefinition(Box2dInstanceManager pBox2dInstanceManager, PObjectDefinition pDefinition) {
-		final int lJointCount = pDefinition.joints().size();
+	private void loadJointsFromDefinition(Box2dInstanceManager box2dInstanceManager, PObjectDefinition definition) {
+		final int lJointCount = definition.joints().size();
 		for (int i = 0; i < lJointCount; i++) {
-			final var lBox2dJointDefinition = pDefinition.joints().get(i);
+			final var lBox2dJointDefinition = definition.joints().get(i);
 
 			if (lBox2dJointDefinition.jointDef instanceof RevoluteJointDef) {
-				final var lBox2dJointInstance = pBox2dInstanceManager.box2dJointInstanceRepository().getFreePooledItem();
+				final var lBox2dJointInstance = box2dInstanceManager.box2dJointInstanceRepository().getFreePooledItem();
 				final var lJointDefinition = (RevoluteJointDef) lBox2dJointDefinition.jointDef;
 
 				lBox2dJointInstance.name = lBox2dJointDefinition.name;
@@ -504,23 +475,18 @@ public class JBox2dEntityInstance extends IndexedPooledBaseData {
 
 	// TODO:
 	/* returns all Box2dBodyInstance and Box2dJointInstances back into the pool */
-	public void returnPooledInstances(Box2dInstanceManager pBox2dInstanceManager) {
+	public void returnPooledInstances(Box2dInstanceManager box2dInstanceManager) {
 		final int lBodyCount = mBodies.size();
 		for (int i = 0; i < lBodyCount; i++) {
 			final var lBox2dBodyInstance = mBodies.get(i);
 
 			if (lBox2dBodyInstance.mBody != null) {
-				// TODO: Just setting the reference to null may result in losing instances (GC collection)
 				lBox2dBodyInstance.mBody.setUserData(null);
-
 			}
 
 			lBox2dBodyInstance.unloadPhysics();
 
-			// Need to iterate the fixtures and return them to the Box2dInstanceManager
-
-			pBox2dInstanceManager.box2dBodyInstanceRepository().returnPooledItem(lBox2dBodyInstance);
-
+			box2dInstanceManager.box2dBodyInstanceRepository().returnPooledItem(lBox2dBodyInstance);
 		}
 
 		mBodies.clear();
@@ -532,11 +498,8 @@ public class JBox2dEntityInstance extends IndexedPooledBaseData {
 			lBox2dJointInstance.unloadPhysics(mWorld);
 
 			if (lBox2dJointInstance instanceof Box2dRevoluteInstance) {
-				pBox2dInstanceManager.box2dJointInstanceRepository().returnPooledItem((Box2dRevoluteInstance) lBox2dJointInstance);
+				box2dInstanceManager.box2dJointInstanceRepository().returnPooledItem((Box2dRevoluteInstance) lBox2dJointInstance);
 			}
-
-			// TODO: Need ti handle weld joints as well (and others that come along)
-
 		}
 
 		mJoints.clear();
@@ -570,102 +533,86 @@ public class JBox2dEntityInstance extends IndexedPooledBaseData {
 				float lLocalAngle = lBox2dBodyInstance.objectAngleInRadians;
 
 				lBox2dBodyInstance.mBody.setTransform(lBox2dPosition, lLocalAngle);
-
 			}
-
 		}
-
 	}
 
 	/**
 	 * Tranforms the PObject as a whole to the desired position with the desired angle. First the the PObject is scaled, then rotations are applied, finally entire object is translated into final position.
 	 * 
-	 * @param pWorldXInPixels    The final absolute world position X.
-	 * @param pWorldYInPixels    The final absolute world position Y.
-	 * @param pRotationInRadians The rotation angle (in radians) to rotate the PObject.
+	 * @param worldXInPixels    The final absolute world position X.
+	 * @param worldYInPixels    The final absolute world position Y.
+	 * @param rotationInRadians The rotation angle (in radians) to rotate the PObject.
 	 */
-	public void transformEntityInstance(float pWorldXInPixels, float pWorldYInPixels, float pRotationInRadians) {
+	public void transformEntityInstance(float worldXInPixels, float worldYInPixels, float rotationInRadians) {
 
-		entityPosition.x = ConstantsPhysics.toUnits(pWorldXInPixels);
-		entityPosition.y = ConstantsPhysics.toUnits(pWorldYInPixels);
+		entityPosition.x = ConstantsPhysics.toUnits(worldXInPixels);
+		entityPosition.y = ConstantsPhysics.toUnits(worldYInPixels);
 
 		final int lBodyCount = mBodies.size();
 		for (int i = 0; i < lBodyCount; i++) {
-			transformBox2dBodyInstance(mBodies.get(i), pWorldXInPixels, pWorldYInPixels, pRotationInRadians);
-
+			transformBox2dBodyInstance(mBodies.get(i), worldXInPixels, worldYInPixels, rotationInRadians);
 		}
-
 	}
 
-	public void transformEntityInstance(float pWorldXInPixels, float pWorldYInPixels) {
+	public void transformEntityInstance(float worldXInPixels, float worldYInPixels) {
 
-		entityPosition.x = ConstantsPhysics.toUnits(pWorldXInPixels);
-		entityPosition.y = ConstantsPhysics.toUnits(pWorldYInPixels);
+		entityPosition.x = ConstantsPhysics.toUnits(worldXInPixels);
+		entityPosition.y = ConstantsPhysics.toUnits(worldYInPixels);
 
 		final int lBodyCount = mBodies.size();
 		for (int i = 0; i < lBodyCount; i++) {
 			final var lBox2dBodyInstance = mBodies.get(i);
-			transformBox2dBodyInstance(lBox2dBodyInstance, pWorldXInPixels, pWorldYInPixels, lBox2dBodyInstance.objectAngleInRadians);
-
+			transformBox2dBodyInstance(lBox2dBodyInstance, worldXInPixels, worldYInPixels, lBox2dBodyInstance.objectAngleInRadians);
 		}
-
 	}
 
-	private void transformBox2dBodyInstance(final Box2dBodyInstance pBox2dBodyInstance, float pDesiredWorldXInPixels, float pDesiredWorldYInPixels, float pDesiredRotationInRadians) {
-		if (pBox2dBodyInstance == null)
+	private void transformBox2dBodyInstance(final Box2dBodyInstance box2dBodyInstance, float desiredWorldXInPixels, float desiredWorldYInPixels, float desiredRotationInRadians) {
+		if (box2dBodyInstance == null)
 			return;
 
-		entityPosition.x = ConstantsPhysics.toUnits(pDesiredWorldXInPixels);
-		entityPosition.y = ConstantsPhysics.toUnits(pDesiredWorldYInPixels);
+		entityPosition.x = ConstantsPhysics.toUnits(desiredWorldXInPixels);
+		entityPosition.y = ConstantsPhysics.toUnits(desiredWorldYInPixels);
 
-		if (pBox2dBodyInstance.mBody != null) {
-			final var lBox2dPosition = pBox2dBodyInstance.mBody.getPosition();
+		if (box2dBodyInstance.mBody != null) {
+			final var lBox2dPosition = box2dBodyInstance.mBody.getPosition();
 
-			// translate bodies back to the origin, entity-local position
-			lBox2dPosition.x = pBox2dBodyInstance.objectPositionInUnits.x;
-			lBox2dPosition.y = pBox2dBodyInstance.objectPositionInUnits.y;
+			lBox2dPosition.x = box2dBodyInstance.objectPositionInUnits.x;
+			lBox2dPosition.y = box2dBodyInstance.objectPositionInUnits.y;
 
-			// rotate around origin
-			rotationAroundOrigin(lBox2dPosition, pDesiredRotationInRadians);
+			rotationAroundOrigin(lBox2dPosition, desiredRotationInRadians);
 
-			// translate out
-			lBox2dPosition.x += ConstantsPhysics.toUnits(pDesiredWorldXInPixels);
-			lBox2dPosition.y += ConstantsPhysics.toUnits(pDesiredWorldYInPixels);
+			lBox2dPosition.x += ConstantsPhysics.toUnits(desiredWorldXInPixels);
+			lBox2dPosition.y += ConstantsPhysics.toUnits(desiredWorldYInPixels);
 
-			pBox2dBodyInstance.mBody.setTransform(lBox2dPosition, pDesiredRotationInRadians);
-
+			box2dBodyInstance.mBody.setTransform(lBox2dPosition, desiredRotationInRadians);
 		}
-
 	}
 
-	public void rotationAroundOrigin(Vec2 pPosition, float pAngleInRadians) {
-		float sin = (float) (Math.sin(pAngleInRadians));
-		float cos = (float) (Math.cos(pAngleInRadians));
+	public void rotationAroundOrigin(Vec2 position, float angleInRadians) {
+		float sin = (float) (Math.sin(angleInRadians));
+		float cos = (float) (Math.cos(angleInRadians));
 
-		float lNewX = (pPosition.x) * cos - (pPosition.y) * sin;
-		float lNewY = (pPosition.x) * sin + (pPosition.y) * cos;
+		float lNewX = (position.x) * cos - (position.y) * sin;
+		float lNewY = (position.x) * sin + (position.y) * cos;
 
-		pPosition.x = lNewX;
-		pPosition.y = lNewY;
-
+		position.x = lNewX;
+		position.y = lNewY;
 	}
 
-	public void setLinearVelocity(float pX, float pY) {
+	public void setLinearVelocity(float velocityX, float velocityY) {
 		final int lBodyCount = mBodies.size();
 		for (int i = 0; i < lBodyCount; i++) {
 			Box2dBodyInstance lBodyInst = mBodies.get(i);
 			if (lBodyInst == null)
 				continue;
 
-			lBodyInst.linearVelocity.set(pX, pY);
+			lBodyInst.linearVelocity.set(velocityX, velocityY);
 
 			if (lBodyInst.mBody != null) {
-				lBodyInst.mBody.setLinearVelocity(new Vec2(pX, pY));
-
+				lBodyInst.mBody.setLinearVelocity(new Vec2(velocityX, velocityY));
 			}
-
 		}
-
 	}
 
 	public Vec2 getLinearVelocity() {
@@ -673,55 +620,46 @@ public class JBox2dEntityInstance extends IndexedPooledBaseData {
 			return null;
 
 		return mMainBody.linearVelocity;
-
 	}
 
-	public void applyForce(float pX, float pY) {
+	public void applyForce(float forceX, float forceY) {
 		final int lBodyCount = mBodies.size();
 		for (int i = 0; i < lBodyCount; i++) {
 			Box2dBodyInstance lBodyInst = mBodies.get(i);
 			if (lBodyInst != null)
-				lBodyInst.mBody.applyForce(new Vec2(pX, pY), lBodyInst.mBody.getWorldCenter());
-
+				lBodyInst.mBody.applyForce(new Vec2(forceX, forceY), lBodyInst.mBody.getWorldCenter());
 		}
-
 	}
 
-	public void setActive(boolean pNewValue) {
+	public void setActive(boolean isActive) {
 		final int lBodyCount = mBodies.size();
 		for (int i = 0; i < lBodyCount; i++) {
 			Box2dBodyInstance lBodyInst = mBodies.get(i);
 			if (lBodyInst != null)
-				lBodyInst.mBody.setActive(pNewValue);
-
+				lBodyInst.mBody.setActive(isActive);
 		}
-
 	}
 
-	public void setGravityScale(float pNewValue) {
+	public void setGravityScale(float gravityScale) {
 		final int lBodyCount = mBodies.size();
 		for (int i = 0; i < lBodyCount; i++) {
 			Box2dBodyInstance lBodyInst = mBodies.get(i);
 			if (lBodyInst != null)
-				lBodyInst.mBody.setGravityScale(pNewValue);
-
+				lBodyInst.mBody.setGravityScale(gravityScale);
 		}
-
 	}
 
-	public void applyLinearImpulse(float pX, float pY) {
+	public void applyLinearImpulse(float xAxis, float pyAxis) {
 		final int lBodyCount = mBodies.size();
 		for (int i = 0; i < lBodyCount; i++) {
 			Box2dBodyInstance lBodyInst = mBodies.get(i);
 			if (lBodyInst != null) // TODO: Garbage
-				lBodyInst.mBody.applyLinearImpulse(new Vec2(pX, pY), lBodyInst.mBody.getWorldCenter(), true);
-
+				lBodyInst.mBody.applyLinearImpulse(new Vec2(xAxis, pyAxis), lBodyInst.mBody.getWorldCenter(), true);
 		}
-
 	}
 
-	public void setBodyType(String pBodyName, int pBodyType) {
-		if (pBodyType != 0 && pBodyType != 1 & pBodyType != 2)
+	public void setBodyType(String bodyName, int bodyType) {
+		if (bodyType != 0 && bodyType != 1 & bodyType != 2)
 			return;
 
 		final int lBodyCount = mBodies.size();
@@ -731,11 +669,10 @@ public class JBox2dEntityInstance extends IndexedPooledBaseData {
 			if (lBox2dBodyInstance == null)
 				continue;
 
-			lBox2dBodyInstance.bodyTypeIndex = pBodyType;
+			lBox2dBodyInstance.bodyTypeIndex = bodyType;
 
 			if (lBox2dBodyInstance.mBody != null) {
-
-				switch (pBodyType) {
+				switch (bodyType) {
 				case Box2dBodyDefinition.BODY_TYPE_INDEX_STATIC:
 					lBox2dBodyInstance.mBody.m_type = BodyType.STATIC;
 					break;
@@ -747,16 +684,12 @@ public class JBox2dEntityInstance extends IndexedPooledBaseData {
 				case Box2dBodyDefinition.BODY_TYPE_INDEX_DYNAMIC:
 					lBox2dBodyInstance.mBody.m_type = BodyType.DYNAMIC;
 					break;
-
 				}
-
 			}
-
 		}
-
 	}
 
-	public void setAllBodiesAngularDamping(float pNewValue) {
+	public void setAllBodiesAngularDamping(float angularDamping) {
 		final int lBodyCount = mBodies.size();
 		for (int i = 0; i < lBodyCount; i++) {
 
@@ -764,13 +697,11 @@ public class JBox2dEntityInstance extends IndexedPooledBaseData {
 			if (lBox2dBodyInstance == null)
 				continue;
 
-			lBox2dBodyInstance.setAngularDamping(pNewValue);
-
+			lBox2dBodyInstance.setAngularDamping(angularDamping);
 		}
-
 	}
 
-	public void setAllBodiesIsBullet(boolean pNewValue) {
+	public void setAllBodiesIsBullet(boolean isBullet) {
 		final int lBodyCount = mBodies.size();
 		for (int i = 0; i < lBodyCount; i++) {
 
@@ -778,29 +709,24 @@ public class JBox2dEntityInstance extends IndexedPooledBaseData {
 			if (lBox2dBodyInstance == null)
 				continue;
 
-			lBox2dBodyInstance.setIsBullet(pNewValue);
-
+			lBox2dBodyInstance.setIsBullet(isBullet);
 		}
-
 	}
 
-	public void setBodiesIsBullet(String pBodyName, boolean pNewValue) {
+	public void setBodiesIsBullet(String bodyName, boolean isBullet) {
 		final int lBodyCount = mBodies.size();
 		for (int i = 0; i < lBodyCount; i++) {
 			final var lBox2dBodyInstance = mBodies.get(i);
 			if (lBox2dBodyInstance == null)
 				continue;
 
-			if (lBox2dBodyInstance.name.contentEquals(pBodyName)) {
-				lBox2dBodyInstance.setIsBullet(pNewValue);
-
+			if (lBox2dBodyInstance.name.contentEquals(bodyName)) {
+				lBox2dBodyInstance.setIsBullet(isBullet);
 			}
-
 		}
-
 	}
 
-	public void setAllFixturesCategory(int pNewCategory) {
+	public void setAllFixturesCategory(int newCategory) {
 		final int lBodyCount = mBodies.size();
 		for (int i = 0; i < lBodyCount; i++) {
 
@@ -814,20 +740,16 @@ public class JBox2dEntityInstance extends IndexedPooledBaseData {
 				if (lFixInst == null)
 					continue;
 
-				lFixInst.categoryBits = pNewCategory;
+				lFixInst.categoryBits = newCategory;
 
-				// If the fixture is already loaded, then set it directly
 				if (lFixInst.mFixture != null) {
-					lFixInst.mFixture.m_filter.categoryBits = pNewCategory;
+					lFixInst.mFixture.m_filter.categoryBits = newCategory;
 				}
-
 			}
-
 		}
-
 	}
 
-	public void setAllFixturesBitMask(int pNewBitmask) {
+	public void setAllFixturesBitMask(int newBitmask) {
 		final int lBodyCount = mBodies.size();
 		for (int i = 0; i < lBodyCount; i++) {
 
@@ -841,20 +763,16 @@ public class JBox2dEntityInstance extends IndexedPooledBaseData {
 				if (lFixInst == null)
 					continue;
 
-				lFixInst.maskBits = pNewBitmask;
+				lFixInst.maskBits = newBitmask;
 
-				// If the fixture is already loaded, then set it directly
 				if (lFixInst.mFixture != null) {
-					lFixInst.mFixture.m_filter.maskBits = pNewBitmask;
+					lFixInst.mFixture.m_filter.maskBits = newBitmask;
 				}
-
 			}
-
 		}
-
 	}
 
-	public void setFixtureDensity(String pFixtureName, float pNewDensity) {
+	public void setFixtureDensity(String fixtureName, float density) {
 		final int lBodyCount = mBodies.size();
 		for (int i = 0; i < lBodyCount; i++) {
 			final var lBox2dBodyInstance = mBodies.get(i);
@@ -867,23 +785,18 @@ public class JBox2dEntityInstance extends IndexedPooledBaseData {
 				if (lBox2dFixtureInstance == null)
 					continue;
 
-				if (lBox2dFixtureInstance.name.contentEquals(pFixtureName)) {
-					lBox2dFixtureInstance.density = pNewDensity;
+				if (lBox2dFixtureInstance.name.contentEquals(fixtureName)) {
+					lBox2dFixtureInstance.density = density;
 
 					if (lBox2dFixtureInstance.mFixture != null) {
-						lBox2dFixtureInstance.mFixture.m_density = pNewDensity;
-
+						lBox2dFixtureInstance.mFixture.m_density = density;
 					}
-
 				}
-
 			}
-
 		}
-
 	}
 
-	public void setAllFixtureDensity(float pNewDensity) {
+	public void setAllFixtureDensity(float density) {
 		final int lBodyCount = mBodies.size();
 		for (int i = 0; i < lBodyCount; i++) {
 
@@ -897,19 +810,16 @@ public class JBox2dEntityInstance extends IndexedPooledBaseData {
 				if (lBox2dFixtureInstance == null)
 					continue;
 
-				lBox2dFixtureInstance.density = pNewDensity;
+				lBox2dFixtureInstance.density = density;
 
 				if (lBox2dFixtureInstance.mFixture != null) {
-					lBox2dFixtureInstance.mFixture.m_density = pNewDensity;
-
+					lBox2dFixtureInstance.mFixture.m_density = density;
 				}
-
 			}
-
 		}
 	}
 
-	public void setFixtureFriction(String pFixtureName, float pNewFrictionValue) {
+	public void setFixtureFriction(String fixtureName, float friction) {
 		final int lBodyCount = mBodies.size();
 		for (int i = 0; i < lBodyCount; i++) {
 			final var lBox2dBodyInstance = mBodies.get(i);
@@ -922,23 +832,18 @@ public class JBox2dEntityInstance extends IndexedPooledBaseData {
 				if (lBox2dFixtureInstance == null)
 					continue;
 
-				if (lBox2dFixtureInstance.name.contentEquals(pFixtureName)) {
-					lBox2dFixtureInstance.friction = pNewFrictionValue;
+				if (lBox2dFixtureInstance.name.contentEquals(fixtureName)) {
+					lBox2dFixtureInstance.friction = friction;
 
 					if (lBox2dFixtureInstance.mFixture != null) {
-						lBox2dFixtureInstance.mFixture.m_friction = pNewFrictionValue;
-
+						lBox2dFixtureInstance.mFixture.m_friction = friction;
 					}
-
 				}
-
 			}
-
 		}
-
 	}
 
-	public void setAllFixtureFriction(float pNewFrictionValue) {
+	public void setAllFixtureFriction(float friction) {
 		final int lBodyCount = mBodies.size();
 		for (int i = 0; i < lBodyCount; i++) {
 			final var lBox2dBodyInstance = mBodies.get(i);
@@ -951,20 +856,16 @@ public class JBox2dEntityInstance extends IndexedPooledBaseData {
 				if (lBox2dFixtureInstance == null)
 					continue;
 
-				lBox2dFixtureInstance.friction = pNewFrictionValue;
+				lBox2dFixtureInstance.friction = friction;
 
 				if (lBox2dFixtureInstance.mFixture != null) {
-					lBox2dFixtureInstance.mFixture.m_friction = pNewFrictionValue;
-
+					lBox2dFixtureInstance.mFixture.m_friction = friction;
 				}
-
 			}
-
 		}
-
 	}
 
-	public void setFixtureRestitution(String pFixtureName, float pNewRestitution) {
+	public void setFixtureRestitution(String fixtureName, float restitution) {
 		final int lBodyCount = mBodies.size();
 		for (int i = 0; i < lBodyCount; i++) {
 
@@ -978,23 +879,18 @@ public class JBox2dEntityInstance extends IndexedPooledBaseData {
 				if (lBox2dFixtureInstance == null)
 					continue;
 
-				if (lBox2dFixtureInstance.name.contentEquals(pFixtureName)) {
-					lBox2dFixtureInstance.restitution = pNewRestitution;
+				if (lBox2dFixtureInstance.name.contentEquals(fixtureName)) {
+					lBox2dFixtureInstance.restitution = restitution;
 
 					if (lBox2dFixtureInstance.mFixture != null) {
-						lBox2dFixtureInstance.mFixture.m_restitution = pNewRestitution;
-
+						lBox2dFixtureInstance.mFixture.m_restitution = restitution;
 					}
-
 				}
-
 			}
-
 		}
-
 	}
 
-	public void setAllFixtureRestitution(float pNewRestitution) {
+	public void setAllFixtureRestitution(float restitution) {
 		final int lBodyCount = mBodies.size();
 		for (int i = 0; i < lBodyCount; i++) {
 
@@ -1008,20 +904,16 @@ public class JBox2dEntityInstance extends IndexedPooledBaseData {
 				if (lBox2dFixtureInstance == null)
 					continue;
 
-				lBox2dFixtureInstance.restitution = pNewRestitution;
+				lBox2dFixtureInstance.restitution = restitution;
 
 				if (lBox2dFixtureInstance.mFixture != null) {
-					lBox2dFixtureInstance.mFixture.m_restitution = pNewRestitution;
-
+					lBox2dFixtureInstance.mFixture.m_restitution = restitution;
 				}
-
 			}
-
 		}
-
 	}
 
-	public void setAllFixtureProperties(float pNewFriction, float pNewRestitution, float pNewDensity) {
+	public void setAllFixtureProperties(float friction, float restitution, float density) {
 		final int lBodyCount = mBodies.size();
 		for (int i = 0; i < lBodyCount; i++) {
 
@@ -1035,20 +927,17 @@ public class JBox2dEntityInstance extends IndexedPooledBaseData {
 				if (lBox2dFixtureInstance == null)
 					continue;
 
-				lBox2dFixtureInstance.restitution = pNewRestitution;
-				lBox2dFixtureInstance.density = pNewDensity;
-				lBox2dFixtureInstance.friction = pNewFriction;
-
+				lBox2dFixtureInstance.restitution = restitution;
+				lBox2dFixtureInstance.density = density;
+				lBox2dFixtureInstance.friction = friction;
 			}
-
 		}
-
 	}
 
 	/**
 	 * Sets the radius of the named fixture.
 	 */
-	public void setFixtureRadius(String pFixtureName, float pNewRadiusInPixels) {
+	public void setFixtureRadius(String fixtureName, float newRadiusInPixels) {
 		final int lBodyCount = mBodies.size();
 		for (int i = 0; i < lBodyCount; i++) {
 
@@ -1060,29 +949,24 @@ public class JBox2dEntityInstance extends IndexedPooledBaseData {
 			for (int j = 0; j < lFixtureCount; j++) {
 				final var lBox2dFixtureInstance = lBox2dBodyInstance.mFixtures[j];
 
-				if (lBox2dFixtureInstance != null && lBox2dFixtureInstance.name != null && lBox2dFixtureInstance.name.contentEquals(pFixtureName)) {
+				if (lBox2dFixtureInstance != null && lBox2dFixtureInstance.name != null && lBox2dFixtureInstance.name.contentEquals(fixtureName)) {
 					if (lBox2dFixtureInstance.shape != null && lBox2dFixtureInstance.shape instanceof Box2dCircleInstance) {
-						((Box2dCircleInstance) lBox2dFixtureInstance.shape).radius = ConstantsPhysics.toUnits(pNewRadiusInPixels);
+						((Box2dCircleInstance) lBox2dFixtureInstance.shape).radius = ConstantsPhysics.toUnits(newRadiusInPixels);
 
 						// If the fixture has already been loaded into the Box2dWorld, then set the fixture's radius
 						if (lBox2dFixtureInstance.mFixture != null) {
-							lBox2dFixtureInstance.mFixture.m_shape.m_radius = ConstantsPhysics.toUnits(pNewRadiusInPixels);
+							lBox2dFixtureInstance.mFixture.m_shape.m_radius = ConstantsPhysics.toUnits(newRadiusInPixels);
 						}
-
 					}
-
 				}
-
 			}
-
 		}
-
 	}
 
 	/**
 	 * Sets the named fixture as a sensor or not
 	 */
-	public void setFixtureIsSensor(String pFixtureName, boolean pIsSensor) {
+	public void setFixtureIsSensor(String fixtureName, boolean isSensor) {
 		final int lBodyCount = mBodies.size();
 		for (int i = 0; i < lBodyCount; i++) {
 
@@ -1095,25 +979,20 @@ public class JBox2dEntityInstance extends IndexedPooledBaseData {
 				final var lBox2dFixtureInstance = lBox2dBodyInstance.mFixtures[j];
 
 				if (lBox2dFixtureInstance != null) {
-					lBox2dFixtureInstance.isSensor = pIsSensor;
+					lBox2dFixtureInstance.isSensor = isSensor;
 
 					if (lBox2dFixtureInstance.mFixture != null) {
-						lBox2dFixtureInstance.mFixture.m_isSensor = pIsSensor;
-
+						lBox2dFixtureInstance.mFixture.m_isSensor = isSensor;
 					}
-
 				}
-
 			}
-
 		}
-
 	}
 
 	/**
 	 * Sets the width and height of the vertices of the named fixture.
 	 */
-	public void setFixtureDimensions(String pFixtureName, float pNewWidth, float pNewHeight) {
+	public void setFixtureDimensions(String fixtureName, float newWidth, float newHeight) {
 		final int lBodyCount = mBodies.size();
 		for (int i = 0; i < lBodyCount; i++) {
 
@@ -1125,15 +1004,15 @@ public class JBox2dEntityInstance extends IndexedPooledBaseData {
 			for (int j = 0; j < lFixtureCount; j++) {
 				Box2dFixtureInstance lFixInst = lBodyInst.mFixtures[j];
 
-				if (lFixInst != null && lFixInst.name.contentEquals(pFixtureName)) {
+				if (lFixInst != null && lFixInst.name.contentEquals(fixtureName)) {
 
 					lFixInst.unloadPhysics(mWorld);
 
 					if (lFixInst.shape != null && lFixInst.shape instanceof Box2dPolygonInstance) {
 						Box2dPolygonInstance lShape = (Box2dPolygonInstance) lFixInst.shape;
 
-						final float lHalfWidth = pNewWidth / 2f;
-						final float lHalfHeight = pNewHeight / 2f;
+						final float lHalfWidth = newWidth / 2f;
+						final float lHalfHeight = newHeight / 2f;
 
 						// Set the dimensions of this polygon
 						lShape.vertexCount = 4;
@@ -1148,28 +1027,19 @@ public class JBox2dEntityInstance extends IndexedPooledBaseData {
 
 						lShape.vertices[3].x = -lHalfWidth;
 						lShape.vertices[3].y = -lHalfHeight;
-
 					}
 
 					else if (lFixInst.shape != null && lFixInst.shape instanceof Box2dCircleInstance) {
 						Box2dCircleInstance lShape = (Box2dCircleInstance) lFixInst.shape;
-
-						final float lHalfWidth = pNewWidth / 2f;
-
-						// Set the dimensions of this circle
+						final float lHalfWidth = newWidth / 2f;
 						lShape.radius = lHalfWidth;
-
 					}
 
 					if (lBodyInst.mBody != null)
 						lFixInst.loadPhysics(mWorld, lBodyInst.mBody);
-
 				}
-
 			}
-
 		}
-
 	}
 
 }

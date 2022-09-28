@@ -6,7 +6,7 @@ import net.lintford.library.screenmanager.MenuEntry;
 public interface EntryInteractions {
 
 	/** called when the state of the {@link MenuEntry} is changed. n.b. you can get the MenuEntry Uid using e.entryId() */
-	public default void menuEntryChanged(MenuEntry e) {
+	public default void menuEntryChanged(MenuEntry menuEntry) {
 
 	}
 
@@ -15,7 +15,7 @@ public interface EntryInteractions {
 		return false;
 	}
 
-	public default void menuEntryOnClick(InputManager pInputState, int pEntryID) {
+	public default void menuEntryOnClick(InputManager inputManager, int entryUid) {
 
 	}
 

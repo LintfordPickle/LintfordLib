@@ -12,8 +12,6 @@ public class Box2dFixtureDefinition {
 
 	public String name;
 	public FixtureDef fixtureDef = new FixtureDef();
-
-	// Fixture data is stored directly in the FixtureDef instance above (including the shape)
 	public ShapeInstance shape;
 
 	// --------------------------------------
@@ -23,5 +21,4 @@ public class Box2dFixtureDefinition {
 	public Box2dFixtureDefinition() {
 
 	}
-
 }

@@ -14,25 +14,24 @@ public abstract class FafAnimationController extends BaseController {
 	// --------------------------------------
 
 	public class FafAnimationInstance {
-		public FafAnimationInstance(String pAnimationName, float pWorldX, float pWorldY) {
-			worldX = pWorldX;
-			worldY = pWorldY;
-			animName = pAnimationName;
+
+		public FafAnimationInstance(String animationName, float worldPositionX, float worldPositionY) {
+			worldX = worldPositionX;
+			worldY = worldPositionY;
+			animName = animationName;
 		}
 
 		public String animName;
 		public float worldX;
 		public float worldY;
-
 	}
 
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
-	protected String mSpritesheetName;
-	protected SpriteSheetDefinition mSpritesheetDefintion;
-
+	private String mSpritesheetName;
+	private SpriteSheetDefinition mSpritesheetDefintion;
 	private final List<SpriteInstance> mFafAnimationInstances = new ArrayList<>();
 
 	// --------------------------------------
@@ -47,8 +46,8 @@ public abstract class FafAnimationController extends BaseController {
 		return mSpritesheetDefintion;
 	}
 
-	public void spritesheetDefinition(SpriteSheetDefinition pNewSpritesheetDefinition) {
-		mSpritesheetDefintion = pNewSpritesheetDefinition;
+	public void spritesheetDefinition(SpriteSheetDefinition spritesheetDefinition) {
+		mSpritesheetDefintion = spritesheetDefinition;
 	}
 
 	public String spritesheetName() {
@@ -59,8 +58,8 @@ public abstract class FafAnimationController extends BaseController {
 	// Constructors
 	// --------------------------------------
 
-	public FafAnimationController(ControllerManager pControllerManager, String pAnimationControllerName, int pEntityGroupUid) {
-		super(pControllerManager, pAnimationControllerName, pEntityGroupUid);
+	public FafAnimationController(ControllerManager controllerManager, String animationControllerName, int entityGroupUid) {
+		super(controllerManager, animationControllerName, entityGroupUid);
 	}
 
 	// --------------------------------------
@@ -76,6 +75,7 @@ public abstract class FafAnimationController extends BaseController {
 		for (int i = 0; i < lNumAnimations; i++) {
 			mSpritesheetDefintion.releaseInstance(mFafAnimationInstances.get(i));
 		}
+
 		mFafAnimationInstances.clear();
 		mSpritesheetDefintion = null;
 	}
@@ -84,15 +84,14 @@ public abstract class FafAnimationController extends BaseController {
 	// Methods
 	// --------------------------------------
 
-	protected void playFafAnimation(String pAnimationName, float pWorldX, float pWorldY) {
+	protected void playFafAnimation(String animationName, float worldPositionX, float worldPositionY) {
 		if (mSpritesheetDefintion == null)
 			return;
 
-		final var lNewAnimation = mSpritesheetDefintion.getSpriteInstance(pAnimationName);
+		final var lNewAnimation = mSpritesheetDefintion.getSpriteInstance(animationName);
 		lNewAnimation.setFrame(0);
-		lNewAnimation.x(pWorldX);
-		lNewAnimation.y(pWorldY);
+		lNewAnimation.x(worldPositionX);
+		lNewAnimation.y(worldPositionY);
 		mFafAnimationInstances.add(lNewAnimation);
-
 	}
 }

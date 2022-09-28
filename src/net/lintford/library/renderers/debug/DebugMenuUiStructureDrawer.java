@@ -27,18 +27,16 @@ public class DebugMenuUiStructureDrawer extends BaseRenderer {
 	@Override
 	public boolean isInitialized() {
 		return true;
-
 	}
 
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
-	public DebugMenuUiStructureDrawer(RendererManager pRendererManager, int pEntityGroupID) {
-		super(pRendererManager, RENDERER_NAME, pEntityGroupID);
+	public DebugMenuUiStructureDrawer(RendererManager rendererManager, int entityGroupUid) {
+		super(rendererManager, RENDERER_NAME, entityGroupUid);
 
 		mIsActive = true;
-
 	}
 
 	// --------------------------------------
@@ -46,26 +44,22 @@ public class DebugMenuUiStructureDrawer extends BaseRenderer {
 	// --------------------------------------
 
 	@Override
-	public void initialize(LintfordCore pCore) {
-		mUiStructureController = (UiStructureController) pCore.controllerManager().getControllerByNameRequired(UiStructureController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
-
+	public void initialize(LintfordCore core) {
+		mUiStructureController = (UiStructureController) core.controllerManager().getControllerByNameRequired(UiStructureController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
 	}
 
 	@Override
-	public void draw(LintfordCore pCore) {
+	public void draw(LintfordCore core) {
 		if (!isActive())
 			return;
 
 		if (mUiStructureController == null) {
-			mUiStructureController = (UiStructureController) pCore.controllerManager().getControllerByNameRequired(UiStructureController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
+			mUiStructureController = (UiStructureController) core.controllerManager().getControllerByNameRequired(UiStructureController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
 
 		} else {
-			// Game HUD
-			Debug.debugManager().drawers().drawRectImmediate(pCore.HUD(), mUiStructureController.menuTitleRectangle(), 0f, 1f, 0f);
-			Debug.debugManager().drawers().drawRectImmediate(pCore.HUD(), mUiStructureController.menuMainRectangle(), 1f, 0f, 1f);
-			Debug.debugManager().drawers().drawRectImmediate(pCore.HUD(), mUiStructureController.menuFooterRectangle(), 0f, 1f, 0f);
-
+			Debug.debugManager().drawers().drawRectImmediate(core.HUD(), mUiStructureController.menuTitleRectangle(), 0f, 1f, 0f);
+			Debug.debugManager().drawers().drawRectImmediate(core.HUD(), mUiStructureController.menuMainRectangle(), 1f, 0f, 1f);
+			Debug.debugManager().drawers().drawRectImmediate(core.HUD(), mUiStructureController.menuFooterRectangle(), 0f, 1f, 0f);
 		}
-
 	}
 }

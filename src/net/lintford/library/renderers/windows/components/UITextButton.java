@@ -24,7 +24,7 @@ public class UITextButton extends UIWidget {
 	// --------------------------------------
 
 	private EntryInteractions mCallback;
-	private int mClickID;
+	private int mEntryUid;
 	private String mButtonLabel;
 	private boolean mHoveredOver;
 	private boolean mIsClicked;
@@ -38,35 +38,34 @@ public class UITextButton extends UIWidget {
 		return mButtonLabel;
 	}
 
-	public void buttonLabel(final String pNewLabel) {
-		mButtonLabel = pNewLabel;
+	public void buttonLabel(final String newLabel) {
+		mButtonLabel = newLabel;
 	}
 
-	public int buttonListenerID() {
-		return mClickID;
+	public int buttonListenerUid() {
+		return mEntryUid;
 	}
 
-	public void buttonListenerID(final int pNewLabel) {
-		mClickID = pNewLabel;
+	public void buttonListenerUid(final int entryUid) {
+		mEntryUid = entryUid;
 	}
 
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
-	public UITextButton(final UiWindow pParentWindow) {
-		this(pParentWindow, 0);
+	public UITextButton(final UiWindow parentWindow) {
+		this(parentWindow, 0);
 	}
 
-	public UITextButton(final UiWindow pParentWindow, final int pClickID) {
-		super(pParentWindow);
+	public UITextButton(final UiWindow parentWindow, final int entryUid) {
+		super(parentWindow);
 
-		mClickID = pClickID;
+		mEntryUid = entryUid;
 
 		mButtonLabel = NO_LABEL_TEXT;
-		w = 200;
-		h = 25;
-
+		mW = 200;
+		mH = 25;
 	}
 
 	// --------------------------------------
@@ -74,68 +73,64 @@ public class UITextButton extends UIWidget {
 	// --------------------------------------
 
 	@Override
-	public boolean handleInput(LintfordCore pCore) {
-		if (!mIsClicked && intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().isMouseOverThisComponent(hashCode())) {
+	public boolean handleInput(LintfordCore core) {
+		if (!mIsClicked && intersectsAA(core.HUD().getMouseCameraSpace()) && core.input().mouse().isMouseOverThisComponent(hashCode())) {
 			mHoveredOver = true;
 
-			if (pCore.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
+			if (core.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
 				mIsClicked = true;
 				final float MINIMUM_CLICK_TIMER = 200;
 				// Callback to the listener and pass our ID
 				if (mCallback != null && mClickTimer > MINIMUM_CLICK_TIMER) {
 					mClickTimer = 0;
-					mCallback.menuEntryOnClick(pCore.input(), mClickID);
+					mCallback.menuEntryOnClick(core.input(), mEntryUid);
 					return true;
 				}
-
 			}
 
 		} else {
 			mHoveredOver = false;
 		}
 
-		if (!pCore.input().mouse().isMouseLeftButtonDown()) {
+		if (!core.input().mouse().isMouseLeftButtonDown()) {
 			mIsClicked = false;
-
 		}
 
 		return false;
-
 	}
 
 	@Override
-	public void update(LintfordCore pCore) {
-		super.update(pCore);
+	public void update(LintfordCore core) {
+		super.update(core);
 
-		mClickTimer += pCore.appTime().elapsedTimeMilli();
-
+		mClickTimer += core.appTime().elapsedTimeMilli();
 	}
 
 	@Override
-	public void draw(LintfordCore pCore, SpriteBatch pSpriteBatch, SpriteSheetDefinition pCoreSpritesheet, FontUnit pTextFont, float pComponentZDepth) {
+	public void draw(LintfordCore core, SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheet, FontUnit textFont, float componentZDepth) {
 		final float lColorMod = mHoveredOver ? .3f : 1.f;
 		final var lColor = ColorConstants.getColorWithRGBMod(ColorConstants.PrimaryColor, lColorMod);
 
 		// Draw the button background
-		pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, x, y, 32, 32, pComponentZDepth, lColor);
+		spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX, mY, 32, 32, componentZDepth, lColor);
 
 		final var lFontRenderer = mParentWindow.rendererManager().uiTextFont();
 
 		final var lButtonText = mButtonLabel != null ? mButtonLabel : NO_LABEL_TEXT;
 		final float lTextWidth = lFontRenderer.getStringWidth(lButtonText);
 
-		lFontRenderer.drawText(lButtonText, x + w / 2f - lTextWidth / 2f, y + h / 2f - lFontRenderer.fontHeight() / 4f, pComponentZDepth, ColorConstants.WHITE, 1f);
+		lFontRenderer.drawText(lButtonText, mX + mW / 2f - lTextWidth / 2f, mY + mH / 2f - lFontRenderer.fontHeight() / 4f, componentZDepth, ColorConstants.WHITE, 1f);
 	}
 
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
 
-	public void setClickListener(final EntryInteractions pCallbackObject) {
-		mCallback = pCallbackObject;
+	public void setClickListener(final EntryInteractions callbackObject) {
+		mCallback = callbackObject;
 	}
 
-	public void removeClickListener(final EntryInteractions pCallbackObject) {
+	public void removeClickListener(final EntryInteractions callbackObject) {
 		mCallback = null;
 	}
 

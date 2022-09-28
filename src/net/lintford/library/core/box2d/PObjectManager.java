@@ -50,7 +50,7 @@ public class PObjectManager extends IndexedPoolInstanceManager<JBox2dEntityInsta
 	// Core-Methods
 	// --------------------------------------
 
-	public void loadResources(ResourceManager pResourceManager) {
+	public void loadResources(ResourceManager resourceManager) {
 
 	}
 
@@ -62,81 +62,62 @@ public class PObjectManager extends IndexedPoolInstanceManager<JBox2dEntityInsta
 	// Methods
 	// --------------------------------------
 
-	public JBox2dEntityInstance getNewInstanceBoxInstance(World pWorld, int pBodyType, float pWorldWidth, float pWorldHeight) {
+	public JBox2dEntityInstance getNewInstanceBoxInstance(World box2dWorld, int bodyType, float worldWidth, float worldHeight) {
 		final var lPObjectDefinition = mPObjectRepository.getPObjectDefinitionByName(PObjectDefinitionRepository.POBJECT_BOX_NAME);
-		//		if (lPObjectDefinition == null) {
-		//			Debug.debugManager().logger().e(getClass().getSimpleName(), "Couldn't find PObjectDefinition named " + PObjectRepository.POBJECT_BOX_NAME);
-		//			return null;
-		//
-		//		}
+		final var lJBox2dInstance = getNewInstanceFromPObject(box2dWorld, lPObjectDefinition);
 
-		final var lJBox2dInstance = getNewInstanceFromPObject(pWorld, lPObjectDefinition);
-		lJBox2dInstance.setFixtureDimensions(PObjectDefinitionRepository.MAIN_FIXTURE_NAME, ConstantsPhysics.toUnits(pWorldWidth), ConstantsPhysics.toUnits(pWorldHeight));
-		lJBox2dInstance.setBodyType(PObjectDefinitionRepository.MAIN_BODY_NAME, pBodyType);
+		lJBox2dInstance.setFixtureDimensions(PObjectDefinitionRepository.MAIN_FIXTURE_NAME, ConstantsPhysics.toUnits(worldWidth), ConstantsPhysics.toUnits(worldHeight));
+		lJBox2dInstance.setBodyType(PObjectDefinitionRepository.MAIN_BODY_NAME, bodyType);
 
 		return lJBox2dInstance;
-
 	}
 
-	public JBox2dEntityInstance getNewInstanceCircleInstance(World pWorld, int pBodyType, float pWorldRadius) {
+	public JBox2dEntityInstance getNewInstanceCircleInstance(World box2dWorld, int bodyType, float worldRadius) {
 		final var lPObjectDefinition = mPObjectRepository.getPObjectDefinitionByName(PObjectDefinitionRepository.POBJECT_CIRCLE_NAME);
 		if (lPObjectDefinition == null) {
 			Debug.debugManager().logger().e(getClass().getSimpleName(), "Couldn't find PObjectDefinition named " + PObjectDefinitionRepository.POBJECT_CIRCLE_NAME);
 			return null;
-
 		}
 
-		final var lJBox2dInstance = getNewInstanceFromPObject(pWorld, lPObjectDefinition);
-		lJBox2dInstance.setFixtureRadius(PObjectDefinitionRepository.MAIN_FIXTURE_NAME, ConstantsPhysics.toUnits(pWorldRadius));
-		lJBox2dInstance.setBodyType(PObjectDefinitionRepository.MAIN_BODY_NAME, pBodyType);
+		final var lJBox2dInstance = getNewInstanceFromPObject(box2dWorld, lPObjectDefinition);
+		lJBox2dInstance.setFixtureRadius(PObjectDefinitionRepository.MAIN_FIXTURE_NAME, ConstantsPhysics.toUnits(worldRadius));
+		lJBox2dInstance.setBodyType(PObjectDefinitionRepository.MAIN_BODY_NAME, bodyType);
 
 		return lJBox2dInstance;
-
 	}
 
-	public JBox2dEntityInstance getNewInstanceFromPObject(World pWorld, String pPObjectDefinitionName) {
-		final var lPObjectDefinition = mPObjectRepository.getPObjectDefinitionByName(pPObjectDefinitionName);
+	public JBox2dEntityInstance getNewInstanceFromPObject(World box2dWorld, String pObjectDefinitionName) {
+		final var lPObjectDefinition = mPObjectRepository.getPObjectDefinitionByName(pObjectDefinitionName);
 		if (lPObjectDefinition == null) {
-			Debug.debugManager().logger().e(getClass().getSimpleName(), "Couldn't find PObjectDefinition named " + pPObjectDefinitionName);
+			Debug.debugManager().logger().e(getClass().getSimpleName(), "Couldn't find PObjectDefinition named " + pObjectDefinitionName);
 			return null;
-
 		}
 
-		return getNewInstanceFromPObject(pWorld, lPObjectDefinition);
-
+		return getNewInstanceFromPObject(box2dWorld, lPObjectDefinition);
 	}
 
-	public JBox2dEntityInstance getNewInstanceFromPObject(World pWorld, PObjectDefinition pPObjectDefinition) {
+	public JBox2dEntityInstance getNewInstanceFromPObject(World box2dWorld, PObjectDefinition pObjectDefinition) {
 		final var lJBox2dEntityInstance = getFreePooledItem();
-
 		if (lJBox2dEntityInstance == null)
 			return null;
 
-		// if nothing, then load physics from a definition ..
-		lJBox2dEntityInstance.loadPObjectFromDefinition(mBox2dInstanceManager, pPObjectDefinition);
-
-		// N.B. Even though we have an instance which mirrors the structure defined
-		// in the PObject, we still need to call loadPhysics on it before it will be
-		// added into the Box2d world!
+		lJBox2dEntityInstance.loadPObjectFromDefinition(mBox2dInstanceManager, pObjectDefinition);
 
 		return lJBox2dEntityInstance;
-
 	}
 
 	@Override
-	public void returnPooledItem(JBox2dEntityInstance pReturnedItem) {
-		if (pReturnedItem == null)
+	public void returnPooledItem(JBox2dEntityInstance returnItem) {
+		if (returnItem == null)
 			return;
 
-		pReturnedItem.returnPooledInstances(mBox2dInstanceManager);
+		returnItem.returnPooledInstances(mBox2dInstanceManager);
 
-		super.returnPooledItem(pReturnedItem);
+		super.returnPooledItem(returnItem);
 	}
 
 	@Override
 	protected JBox2dEntityInstance createPoolObjectInstance() {
 		return new JBox2dEntityInstance(getNewInstanceUID());
-
 	}
-
 }

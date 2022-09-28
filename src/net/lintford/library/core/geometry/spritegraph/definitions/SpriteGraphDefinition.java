@@ -3,12 +3,11 @@ package net.lintford.library.core.geometry.spritegraph.definitions;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Writer;
 import java.nio.file.Files;
 
-import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
+import com.google.gson.annotations.SerializedName;
 
 import net.lintford.library.ConstantsApp;
 import net.lintford.library.core.debug.Debug;
@@ -20,15 +19,26 @@ public class SpriteGraphDefinition extends BaseDefinition {
 	// Variables
 	// --------------------------------------
 
-	public String filename;
-	public SpriteGraphNodeDefinition rootNode;
+	@SerializedName(value = "filename")
+	private String mFilename;
+
+	@SerializedName(value = "rootNode")
+	private SpriteGraphNodeDefinition mRootNode;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
 
+	public String filename() {
+		return mFilename;
+	}
+
+	public void filename(String filename) {
+		mFilename = filename;
+	}
+
 	public SpriteGraphNodeDefinition rootNode() {
-		return rootNode;
+		return mRootNode;
 	}
 
 	// --------------------------------------
@@ -43,82 +53,66 @@ public class SpriteGraphDefinition extends BaseDefinition {
 	// Methods
 	// --------------------------------------
 
-	public static SpriteGraphDefinition load(String pFilepath) {
-		if (pFilepath == null || pFilepath.length() == 0)
+	public static SpriteGraphDefinition load(String filepath) {
+		if (filepath == null || filepath.length() == 0)
 			return null;
 
-		File lFile = new File(pFilepath);
+		final var lFile = new File(filepath);
 		if (!lFile.exists()) {
-			Debug.debugManager().logger().w(SpriteGraphDefinition.class.getSimpleName(), "Error: SpriteGraphDef file " + pFilepath + " doesn't exist!");
+			Debug.debugManager().logger().w(SpriteGraphDefinition.class.getSimpleName(), "Error: SpriteGraphDef file " + filepath + " doesn't exist!");
 			return null;
-
 		}
 
 		return load(lFile);
-
 	}
 
-	public static SpriteGraphDefinition load(File pFile) {
-		if (!pFile.exists()) {
+	public static SpriteGraphDefinition load(File file) {
+		if (!file.exists()) {
 			Debug.debugManager().logger().w(SpriteGraphDefinition.class.getSimpleName(), "Error: SpriteGraphDef file. File doesn't exist!");
 			return null;
-
 		}
 
-		final var GSON = new GsonBuilder().create();
+		final var lGson = new GsonBuilder().create();
 
 		try {
-
-			final String lFileContents = new String(Files.readAllBytes(pFile.toPath()));
-			final var lSpriteGraphDefinition = GSON.fromJson(lFileContents, SpriteGraphDefinition.class);
+			final var lFileContents = new String(Files.readAllBytes(file.toPath()));
+			final var lSpriteGraphDefinition = lGson.fromJson(lFileContents, SpriteGraphDefinition.class);
 
 			// Check the integrity of the loaded spritsheet
 			if (lSpriteGraphDefinition == null || lSpriteGraphDefinition.rootNode() == null) {
-				Debug.debugManager().logger().e(SpriteGraphDefinition.class.getSimpleName(), String.format("Error loading SpriteGraphDef '%s'", pFile.getPath()));
+				Debug.debugManager().logger().e(SpriteGraphDefinition.class.getSimpleName(), String.format("Error loading SpriteGraphDef '%s' from json", file.getPath()));
 				return null;
-
 			}
 
 			if (ConstantsApp.getBooleanValueDef("DEBUG_APP", false)) {
-				Debug.debugManager().logger().v(SpriteGraphDefinition.class.getSimpleName(), "SpriteGraphDef " + pFile.getPath() + " loaded (" + lSpriteGraphDefinition.name + ")");
-
+				Debug.debugManager().logger().v(SpriteGraphDefinition.class.getSimpleName(), "SpriteGraphDef " + file.getPath() + " loaded (" + lSpriteGraphDefinition.name + ")");
 			}
 
 			return lSpriteGraphDefinition;
-
 		} catch (JsonSyntaxException e) {
-			Debug.debugManager().logger().e(SpriteGraphDefinition.class.getSimpleName(), "Failed to parse JSON SpriteGraphDef (Syntax): " + pFile.getPath());
+			Debug.debugManager().logger().e(SpriteGraphDefinition.class.getSimpleName(), "Failed to parse JSON SpriteGraphDef (Syntax): " + file.getPath());
 			Debug.debugManager().logger().printException(SpriteGraphDefinition.class.getSimpleName(), e);
-			return null;
-
 		} catch (IllegalArgumentException e) {
-			Debug.debugManager().logger().e(SpriteGraphDefinition.class.getSimpleName(), "Failed to parse JSON SpriteGraphDef (IO): " + pFile.getPath());
+			Debug.debugManager().logger().e(SpriteGraphDefinition.class.getSimpleName(), "Failed to parse JSON SpriteGraphDef (IO): " + file.getPath());
 			Debug.debugManager().logger().printException(SpriteGraphDefinition.class.getSimpleName(), e);
-			return null;
-
 		} catch (IOException e) {
-			Debug.debugManager().logger().e(SpriteGraphDefinition.class.getSimpleName(), "Failed to parse JSON SpriteGraphDef (IO): " + pFile.getPath());
+			Debug.debugManager().logger().e(SpriteGraphDefinition.class.getSimpleName(), "Failed to parse JSON SpriteGraphDef (IO): " + file.getPath());
 			Debug.debugManager().logger().printException(SpriteGraphDefinition.class.getSimpleName(), e);
-			return null;
-
 		}
 
+		return null;
 	}
 
-	public static void save(SpriteGraphDefinition pSpriteGraph, String pPath) {
-		try (Writer writer = new FileWriter(pPath)) {
-			Gson gson = new GsonBuilder().create();
-			gson.toJson(pSpriteGraph, writer);
-
+	public static void save(SpriteGraphDefinition spriteGraphDefinition, String filePath) {
+		try (final var lFileWriter = new FileWriter(filePath)) {
+			final var lGson = new GsonBuilder().create();
+			lGson.toJson(spriteGraphDefinition, lFileWriter);
 		} catch (IOException e) {
 			e.printStackTrace();
-
 		}
-
 	}
 
 	public void unload() {
-		rootNode = null;
+		mRootNode = null;
 	}
-
 }

@@ -27,8 +27,8 @@ public class MenuLabelEntry extends MenuEntry {
 		return mTrimText;
 	}
 
-	public void trimText(boolean pNewValue) {
-		mTrimText = pNewValue;
+	public void trimText(boolean newValue) {
+		mTrimText = newValue;
 	}
 
 	@Override
@@ -36,17 +36,8 @@ public class MenuLabelEntry extends MenuEntry {
 		return super.hasFocus();
 	}
 
-	@Override
-	public void hasFocus(boolean pNewValue) {
-		if (pNewValue) {
-
-		}
-
-		super.hasFocus(pNewValue);
-	}
-
-	public void label(String pNewLabel) {
-		mText = pNewLabel;
+	public void label(String newLabel) {
+		mText = newLabel;
 	}
 
 	public String label() {
@@ -57,8 +48,8 @@ public class MenuLabelEntry extends MenuEntry {
 	// Constructor
 	// --------------------------------------
 
-	public MenuLabelEntry(ScreenManager pScreenManager, BaseLayout pParentLayout) {
-		super(pScreenManager, pParentLayout, "");
+	public MenuLabelEntry(ScreenManager screenManager, BaseLayout parentLayout) {
+		super(screenManager, parentLayout, "");
 
 		mDrawBackground = false;
 		mText = "Unnamed Label";
@@ -68,7 +59,6 @@ public class MenuLabelEntry extends MenuEntry {
 		entryColor.setFromColor(ColorConstants.getColorWithRGBMod(ColorConstants.TertiaryColor, .5f));
 
 		mVerticalFillType = FILLTYPE.TAKE_WHATS_NEEDED;
-
 	}
 
 	// --------------------------------------
@@ -76,55 +66,52 @@ public class MenuLabelEntry extends MenuEntry {
 	// --------------------------------------
 
 	@Override
-	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pParentZDepth) {
+	public void draw(LintfordCore core, Screen screen, boolean isSelected, float parentZDepth) {
 		if (!enabled())
 			return;
 
 		final var lParentScreen = mParentLayout.parentScreen;
 		final var lTextBoldFont = lParentScreen.fontBold();
-		final var lScreenOffset = pScreen.screenPositionOffset();
+		final var lScreenOffset = screen.screenPositionOffset();
 		final var lUiTextScale = lParentScreen.uiTextScale();
 		final var lLabelWidth = lTextBoldFont.getStringWidth(mText, lUiTextScale);
 		final var lFontHeight = lTextBoldFont.fontHeight() * lUiTextScale;
 		final var lSpriteBatch = lParentScreen.spriteBatch();
 
 		if (mDrawBackground) {
-			lSpriteBatch.begin(pCore.HUD());
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_LABEL_LEFT,  lScreenOffset.x + x, lScreenOffset.y + y, 32, 32, pParentZDepth + .15f, entryColor);
-			
-			final float lMidLength = w - 64;
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_LABEL_MID,   lScreenOffset.x + x + 32, lScreenOffset.y + y, lMidLength, 32, pParentZDepth + .15f, entryColor);
-			
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_LABEL_RIGHT, lScreenOffset.x + x + lMidLength + 32, lScreenOffset.y + y, 32, 32, pParentZDepth + .15f, entryColor);
-			lSpriteBatch.end();
+			lSpriteBatch.begin(core.HUD());
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_LABEL_LEFT, lScreenOffset.x + mX, lScreenOffset.y + mY, 32, 32, parentZDepth + .15f, entryColor);
 
+			final float lMidLength = mW - 64;
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_LABEL_MID, lScreenOffset.x + mX + 32, lScreenOffset.y + mY, lMidLength, 32, parentZDepth + .15f, entryColor);
+
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_LABEL_RIGHT, lScreenOffset.x + mX + lMidLength + 32, lScreenOffset.y + mY, 32, 32, parentZDepth + .15f, entryColor);
+			lSpriteBatch.end();
 		}
 
-		float lX = x + w / 2 - lLabelWidth / 2; // Center label
+		float lX = mX + mW / 2 - lLabelWidth / 2; // Center label
 		switch (mHorizontalAlignment) {
 		case LEFT:
-			lX = x;
+			lX = mX;
 			break;
 		case RIGHT:
-			lX = x - mLeftPadding - lLabelWidth;
+			lX = mX - mLeftPadding - lLabelWidth;
 			break;
 		default:
-			lX = x + w / 2 - lLabelWidth / 2; // Center label
+			lX = mX + mW / 2 - lLabelWidth / 2; // Center label
 			break;
 		}
 
-		lTextBoldFont.begin(pCore.HUD());
-		lTextBoldFont.drawText(mText, lScreenOffset.x + lX + 15.f, lScreenOffset.y + y + h / 2f - lFontHeight / 2f, pParentZDepth + .15f, textColor, lUiTextScale);
+		lTextBoldFont.begin(core.HUD());
+		lTextBoldFont.drawText(mText, lScreenOffset.x + lX + 15.f, lScreenOffset.y + mY + mH / 2f - lFontHeight / 2f, parentZDepth + .15f, textColor, lUiTextScale);
 		lTextBoldFont.end();
 
-		if (mShowInfoIcon) {
-			drawInfoIcon(pCore, lSpriteBatch, mInfoIconDstRectangle, lParentScreen.screenColor.a);
-		}
+		if (mShowInfoIcon)
+			drawInfoIcon(core, lSpriteBatch, mInfoIconDstRectangle, lParentScreen.screenColor.a);
 
-		if (mShowWarnIcon) {
-			drawWarningIcon(pCore, lSpriteBatch, mWarnIconDstRectangle, lParentScreen.screenColor.a);
-		}
+		if (mShowWarnIcon)
+			drawWarningIcon(core, lSpriteBatch, mWarnIconDstRectangle, lParentScreen.screenColor.a);
 
-		drawDebugCollidableBounds(pCore, lSpriteBatch);
+		drawDebugCollidableBounds(core, lSpriteBatch);
 	}
 }

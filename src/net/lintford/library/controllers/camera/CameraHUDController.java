@@ -34,11 +34,10 @@ public class CameraHUDController extends BaseController {
 	// Constructor
 	// ---------------------------------------------
 
-	public CameraHUDController(ControllerManager pControllerManager, HUD pHUD, int pControllerBaseGroup) {
-		super(pControllerManager, CONTROLLER_NAME, pControllerBaseGroup);
+	public CameraHUDController(ControllerManager controllerManager, HUD hud, int controllerBaseGroup) {
+		super(controllerManager, CONTROLLER_NAME, controllerBaseGroup);
 
-		mCamera = pHUD;
-
+		mCamera = hud;
 	}
 
 	// ---------------------------------------------
@@ -48,6 +47,5 @@ public class CameraHUDController extends BaseController {
 	@Override
 	public void unload() {
 		mCamera = null;
-
 	}
 }

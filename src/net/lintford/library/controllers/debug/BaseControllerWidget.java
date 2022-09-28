@@ -32,15 +32,12 @@ public class BaseControllerWidget extends Rectangle {
 
 	}
 
-	public void handleInput(LintfordCore pCore) {
+	public void handleInput(LintfordCore core) {
 
 	}
 
-	public void update(LintfordCore pCore) {
-		if (baseController != null) {
+	public void update(LintfordCore core) {
+		if (baseController != null)
 			isControllerActive = baseController.isActive();
-
-		}
-
 	}
 }

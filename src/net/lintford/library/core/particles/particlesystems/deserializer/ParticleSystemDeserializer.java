@@ -3,7 +3,6 @@ package net.lintford.library.core.particles.particlesystems.deserializer;
 import java.lang.reflect.Type;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
@@ -41,44 +40,43 @@ public class ParticleSystemDeserializer implements JsonDeserializer<ParticleSyst
 	// --------------------------------------
 
 	@Override
-	public ParticleSystemDefinition deserialize(JsonElement pElement, Type arg1, JsonDeserializationContext arg2) throws JsonParseException {
-		final Gson gson = new Gson();
-		final ParticleSystemDefinition lNewParticleSystemDefinition = new ParticleSystemDefinition();
+	public ParticleSystemDefinition deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext deserializationContext) throws JsonParseException {
+		final var lGson = new Gson();
+		final var lNewParticleSystemDefinition = new ParticleSystemDefinition();
 
 		// get the variables of the new particle system
-		JsonPrimitive lTempPrimitive = pElement.getAsJsonObject().getAsJsonPrimitive(PARTICLE_SYSTEM_MAX_PARTICLE_COUNT);
+		JsonPrimitive lTempPrimitive = jsonElement.getAsJsonObject().getAsJsonPrimitive(PARTICLE_SYSTEM_MAX_PARTICLE_COUNT);
 		if (lTempPrimitive != null && !lTempPrimitive.isJsonNull()) {
 			lNewParticleSystemDefinition.maxParticleCount = lTempPrimitive.getAsInt();
 		}
 
-		lTempPrimitive = pElement.getAsJsonObject().getAsJsonPrimitive(PARTICLE_SYSTEM_NAME);
+		lTempPrimitive = jsonElement.getAsJsonObject().getAsJsonPrimitive(PARTICLE_SYSTEM_NAME);
 		if (lTempPrimitive != null && !lTempPrimitive.isJsonNull()) {
 			lNewParticleSystemDefinition.name = lTempPrimitive.getAsString();
 		}
 
-		lTempPrimitive = pElement.getAsJsonObject().getAsJsonPrimitive(PARTICLE_SYSTEM_TEXTURE_NAME);
+		lTempPrimitive = jsonElement.getAsJsonObject().getAsJsonPrimitive(PARTICLE_SYSTEM_TEXTURE_NAME);
 		if (lTempPrimitive != null && !lTempPrimitive.isJsonNull()) {
 			lNewParticleSystemDefinition.textureName = lTempPrimitive.getAsString();
 		}
 
-		lTempPrimitive = pElement.getAsJsonObject().getAsJsonPrimitive(PARTICLE_SYSTEM_TEXTURE_FILENAME);
+		lTempPrimitive = jsonElement.getAsJsonObject().getAsJsonPrimitive(PARTICLE_SYSTEM_TEXTURE_FILENAME);
 		if (lTempPrimitive != null && !lTempPrimitive.isJsonNull()) {
 			lNewParticleSystemDefinition.textureFilename = lTempPrimitive.getAsString();
 		}
 
-		lTempPrimitive = pElement.getAsJsonObject().getAsJsonPrimitive(PARTICLE_SYSTEM_TEXTURE_FILTER);
+		lTempPrimitive = jsonElement.getAsJsonObject().getAsJsonPrimitive(PARTICLE_SYSTEM_TEXTURE_FILTER);
 		if (lTempPrimitive != null && !lTempPrimitive.isJsonNull()) {
 			lNewParticleSystemDefinition.textureFilterMode = lTempPrimitive.getAsInt();
 		}
 
-		lTempPrimitive = pElement.getAsJsonObject().getAsJsonPrimitive(PARTICLE_SYSTEM_PARTICLE_LIFE);
+		lTempPrimitive = jsonElement.getAsJsonObject().getAsJsonPrimitive(PARTICLE_SYSTEM_PARTICLE_LIFE);
 		if (lTempPrimitive != null && !lTempPrimitive.isJsonNull()) {
 			lNewParticleSystemDefinition.particleLife = lTempPrimitive.getAsFloat();
 		}
 
-		// Get the initializers
-		JsonArray lInitializerArray = pElement.getAsJsonObject().getAsJsonArray(PARTICLE_SYSTEM_INITIALIZER_LIST);
-
+		// Initializers
+		final var lInitializerArray = jsonElement.getAsJsonObject().getAsJsonArray(PARTICLE_SYSTEM_INITIALIZER_LIST);
 		if (lInitializerArray != null) {
 			final int lNumInitializers = lInitializerArray.size();
 			for (int i = 0; i < lNumInitializers; i++) {
@@ -91,30 +89,26 @@ public class ParticleSystemDeserializer implements JsonDeserializer<ParticleSyst
 
 				var lInitializerName = lTempInitializerPrimitive.getAsString();
 				try {
-					lInitializerInst = (ParticleInitializerBase) gson.fromJson(lInitializerArray.get(i), Class.forName(INITIALIZER_PACKAGE_LOCATION + lInitializerName));
+					lInitializerInst = (ParticleInitializerBase) lGson.fromJson(lInitializerArray.get(i), Class.forName(INITIALIZER_PACKAGE_LOCATION + lInitializerName));
 				} catch (JsonSyntaxException exceptionJson) {
 					Debug.debugManager().logger().printException(getClass().getSimpleName(), exceptionJson);
-
 				} catch (ClassNotFoundException exception) {
 					Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Unable to instantiate particle system initializer '%s' for the ParticleSystem '%s'", lInitializerName, lNewParticleSystemDefinition.textureName));
 					Debug.debugManager().logger().printException(getClass().getSimpleName(), exception);
-
 				}
 
 				if (lInitializerInst != null) {
 					lNewParticleSystemDefinition.initializers.add(lInitializerInst);
 				}
-
 			}
-
 		}
 
-		// Get the modifiers
-		JsonArray lModifierArray = pElement.getAsJsonObject().getAsJsonArray(PARTICLE_SYSTEM_MODIFIER_LIST);
+		// Modifiers
+		final var lModifierArray = jsonElement.getAsJsonObject().getAsJsonArray(PARTICLE_SYSTEM_MODIFIER_LIST);
 		if (lModifierArray != null) {
 			final int lNumModifiers = lModifierArray.size();
 			for (int i = 0; i < lNumModifiers; i++) {
-				JsonPrimitive lTempModifierPrimitive = lModifierArray.get(i).getAsJsonObject().getAsJsonPrimitive(PARTICLE_SYSTEM_CLASS_NAME);
+				final var lTempModifierPrimitive = lModifierArray.get(i).getAsJsonObject().getAsJsonPrimitive(PARTICLE_SYSTEM_CLASS_NAME);
 
 				if (lTempModifierPrimitive == null || !lTempModifierPrimitive.isString())
 					continue;
@@ -123,26 +117,20 @@ public class ParticleSystemDeserializer implements JsonDeserializer<ParticleSyst
 
 				var lModifierName = lTempModifierPrimitive.getAsString();
 				try {
-					lModifierInst = (ParticleModifierBase) gson.fromJson(lModifierArray.get(i), Class.forName(MODIFIER_PACKAGE_LOCATION + lModifierName));
+					lModifierInst = (ParticleModifierBase) lGson.fromJson(lModifierArray.get(i), Class.forName(MODIFIER_PACKAGE_LOCATION + lModifierName));
 				} catch (JsonSyntaxException exceptionJson) {
 					Debug.debugManager().logger().printException(getClass().getSimpleName(), exceptionJson);
-
 				} catch (ClassNotFoundException exception) {
 					Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Unable to instantiate particle system modifier '%s' for the ParticleSystem '%s'", lModifierName, lNewParticleSystemDefinition.textureName));
 					Debug.debugManager().logger().printException(getClass().getSimpleName(), exception);
-
 				}
 
 				if (lModifierInst != null) {
 					lNewParticleSystemDefinition.modifiers.add(lModifierInst);
-
 				}
-
 			}
-
 		}
 
 		return lNewParticleSystemDefinition;
 	}
-
 }

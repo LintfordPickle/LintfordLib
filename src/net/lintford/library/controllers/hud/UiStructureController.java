@@ -19,24 +19,19 @@ public class UiStructureController extends BaseController {
 	// --------------------------------------
 
 	private DisplayManager mDisplayManager;
-
 	private Rectangle mGameHUDRectangle;
 	private Rectangle mGameHeaderRectangle;
 	private Rectangle mGameFooterRectangle;
-
 	private Rectangle mMenuTitleRectangle;
 	private Rectangle mMenuMainRectangle;
 	private Rectangle mMenuFooterRectangle;
-
 	private float mWindowAutoScaleFactorX;
 	private float mWindowAutoScaleFactorY;
 	private float mUITransparencyFactorActual;
 	private float mUIScaleFactorActual;
 	private float mUITextScaleFactorActual;
-
 	private float mWindowPaddingH;
 	private float mWindowPaddingV;
-
 	private float mMinimumTitleHeight = 100.f;
 	private float mMinimumFooterHeight = 80.f;
 
@@ -48,16 +43,16 @@ public class UiStructureController extends BaseController {
 		return mMinimumTitleHeight;
 	}
 
-	public void minimumTitleHeight(float pNewMinimumTitleHeight) {
-		mMinimumTitleHeight = pNewMinimumTitleHeight;
+	public void minimumTitleHeight(float minimumTitleHeight) {
+		mMinimumTitleHeight = minimumTitleHeight;
 	}
 
 	public float minimumFooterHeight() {
 		return mMinimumFooterHeight;
 	}
 
-	public void minimumFooterHeight(float pMinimumFooterHeight) {
-		mMinimumFooterHeight = pMinimumFooterHeight;
+	public void minimumFooterHeight(float minimumFooterHeight) {
+		mMinimumFooterHeight = minimumFooterHeight;
 	}
 
 	/** The windowAutoScaleFactorX is the factor between the current window width and the base window width.*/
@@ -120,10 +115,10 @@ public class UiStructureController extends BaseController {
 	// Constructor
 	// --------------------------------------
 
-	public UiStructureController(DisplayManager pDisplayManager, ControllerManager pControllerManager, final int pEntityGroupID) {
-		super(pControllerManager, CONTROLLER_NAME, pEntityGroupID);
+	public UiStructureController(DisplayManager displayManager, ControllerManager controllerManager, final int entityGroupUid) {
+		super(controllerManager, CONTROLLER_NAME, entityGroupUid);
 
-		mDisplayManager = pDisplayManager;
+		mDisplayManager = displayManager;
 
 		mGameHeaderRectangle = new Rectangle();
 		mGameHUDRectangle = new Rectangle();
@@ -132,17 +127,16 @@ public class UiStructureController extends BaseController {
 		mMenuTitleRectangle = new Rectangle();
 		mMenuMainRectangle = new Rectangle();
 		mMenuFooterRectangle = new Rectangle();
-
 	}
 
 	// --------------------------------------
 	// Core-Methods
 	// --------------------------------------
 
-	public void initialize(LintfordCore pCore) {
-		super.initialize(pCore);
-		updateHUDAreas(pCore);
-		updateWindowUiComponentStructures(pCore);
+	public void initialize(LintfordCore core) {
+		super.initialize(core);
+		updateHUDAreas(core);
+		updateWindowUiComponentStructures(core);
 	}
 
 	@Override
@@ -151,42 +145,41 @@ public class UiStructureController extends BaseController {
 	}
 
 	@Override
-	public void update(LintfordCore pCore) {
-		super.update(pCore);
+	public void update(LintfordCore core) {
+		super.update(core);
 
-		final float lBaseWindowWidth = pCore.config().display().baseGameResolutionWidth();
-		final float lBaseWindowHeight = pCore.config().display().baseGameResolutionHeight();
+		final float lBaseWindowWidth = core.config().display().baseGameResolutionWidth();
+		final float lBaseWindowHeight = core.config().display().baseGameResolutionHeight();
 
-		mWindowAutoScaleFactorX = pCore.config().display().windowWidth() / lBaseWindowWidth;
-		mWindowAutoScaleFactorY = pCore.config().display().windowHeight() / lBaseWindowHeight;
+		mWindowAutoScaleFactorX = core.config().display().windowWidth() / lBaseWindowWidth;
+		mWindowAutoScaleFactorY = core.config().display().windowHeight() / lBaseWindowHeight;
 
-		updateHUDAreas(pCore);
+		updateHUDAreas(core);
 	}
 
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
 
-	private void updateHUDAreas(LintfordCore pCore) {
-		updateGameUiStructure(pCore);
-		updateMenuUiStructure(pCore);
+	private void updateHUDAreas(LintfordCore core) {
+		updateGameUiStructure(core);
+		updateMenuUiStructure(core);
 	}
 
-	private void updateWindowUiComponentStructures(LintfordCore pCore) {
+	private void updateWindowUiComponentStructures(LintfordCore core) {
 		mUIScaleFactorActual = mDisplayManager.graphicsSettings().UIScale();
 		mUITextScaleFactorActual = mDisplayManager.graphicsSettings().UITextScale();
 		mUITransparencyFactorActual = mDisplayManager.graphicsSettings().UITransparencyScale();
 
 		mWindowPaddingH = 40;
 		mWindowPaddingV = 30;
-
 	}
 
-	private void updateMenuUiStructure(LintfordCore pCore) {
-		updateWindowUiComponentStructures(pCore); // FIXME: remove from update when finished
+	private void updateMenuUiStructure(LintfordCore core) {
+		updateWindowUiComponentStructures(core); // FIXME: remove from update when finished
 
-		final float lWindowWidth = pCore.config().display().windowWidth();
-		final float lWindowHeight = pCore.config().display().windowHeight();
+		final float lWindowWidth = core.config().display().windowWidth();
+		final float lWindowHeight = core.config().display().windowHeight();
 
 		final float lVerticalInnerPadding = 1.f * mWindowAutoScaleFactorY;
 		final float lModWidth = lWindowWidth - mWindowPaddingH * 2.f;
@@ -207,9 +200,9 @@ public class UiStructureController extends BaseController {
 		mMenuFooterRectangle.set(-lModWidth / 2, lModHeight / 2f - lFooterHeight + lVerticalInnerPadding * 4f, lModWidth, lFooterHeight);
 	}
 
-	private void updateGameUiStructure(LintfordCore pCore) {
-		final float lWindowWidth = pCore.config().display().windowWidth();
-		final float lWindowHeight = pCore.config().display().windowHeight();
+	private void updateGameUiStructure(LintfordCore core) {
+		final float lWindowWidth = core.config().display().windowWidth();
+		final float lWindowHeight = core.config().display().windowHeight();
 
 		final float lGameHeaderHeight = 40f * windowAutoScaleFactorY();
 		final float lGameFooterHeight = 70f * windowAutoScaleFactorY();
@@ -223,7 +216,7 @@ public class UiStructureController extends BaseController {
 		final var lHUDHeight = lWindowHeight - lGameFooterHeight - lGameHeaderHeight - lGameHudVerticalPadding;
 
 		mGameHeaderRectangle.set(-lWindowWidth / 2f, -lWindowHeight / 2, lWindowWidth, lGameHeaderHeight);
-		mGameHUDRectangle.set(-lHUDWidth / 2f, mGameHeaderRectangle.y() + mGameHeaderRectangle.h() + lGameHudVerticalPadding * .5f, lHUDWidth, lHUDHeight);
+		mGameHUDRectangle.set(-lHUDWidth / 2f, mGameHeaderRectangle.y() + mGameHeaderRectangle.height() + lGameHudVerticalPadding * .5f, lHUDWidth, lHUDHeight);
 		mGameFooterRectangle.set(-lWindowWidth / 2f, lWindowHeight / 2 - lGameFooterHeight, lWindowWidth, lGameFooterHeight);
 	}
 }

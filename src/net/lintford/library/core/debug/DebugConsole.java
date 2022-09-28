@@ -84,53 +84,38 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 	// --------------------------------------
 
 	private final Debug mDebugManager;
-
 	private transient CONSOLE_STATE mConsoleState = CONSOLE_STATE.closed;
-
 	private transient float mFocusTimer;
 	private transient StringBuilder mInputText;
-
 	private transient List<ConsoleCommand> mConsoleCommands;
-
-	// This is the extent of all the lines of the debug console
 	private transient ScrollBarContentRectangle mContentRectangle;
 	private transient ScrollBar mScrollBar;
-
 	private transient boolean mShowCaret;
 	private transient float mCaretTimer;
 	private transient SpriteBatch mSpriteBatch;
-
 	private transient FontUnit mConsoleFont;
-
 	public transient float mFPSDraw;
 	public transient float mFPSUpdate;
 	private transient boolean mHasFocus;
-
-	// Because we always need to display a range of text (e.g. lines 23-43), we
-	// track that range in the following variables
 	private transient int mLowerBound;
 	private transient int mUpperBound;
 	private transient int mConsoleLineHeight;
-
 	private float mMouseTimer;
 	private transient boolean mAutoScroll;
 	private boolean mResourcesLoaded;
-
 	private UIInputText mTAGFilterText;
 	private int mTAGFilterLastSize;
 	private UIInputText mMessageFilterText;
 	private int mMessageFilterLastSize;
-
 	private final Color mConsoleBackgroundColor = new Color(0f, 0f, 0f, 0.9f);
 	private final Color mConsoleTextColor = new Color();
-
-	protected boolean mProcessed; // is filter applied?
+	protected boolean mFilterProcessed;
 	protected List<Message> mProcessedMessages;
 	protected List<Message> mUpdateMessageList;
 	protected boolean mDirty;
-
 	protected PrintStream mErrPrintStream;
-	private SpriteSheetDefinition mCoreSpritesheet;
+	protected SpriteSheetDefinition mCoreSpritesheet;
+	private transient Rectangle mAutoScrollIconRectangle;
 
 	// --------------------------------------
 	// Properties
@@ -164,20 +149,18 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 	// Constructor
 	// --------------------------------------
 
-	DebugConsole(final Debug pDebugManager) {
-		mDebugManager = pDebugManager;
+	DebugConsole(final Debug debugManager) {
+		mDebugManager = debugManager;
 
-		if (pDebugManager.debugManagerEnabled()) {
-
+		if (debugManager.debugManagerEnabled()) {
 			// Intercept the system out and copy any strings into our debug console so we can see it in the game.
 			mErrPrintStream = new PrintStream(System.out) {
-				public void print(String s) {
-					if (!s.isEmpty()) {
-						super.print(s);
-						updateConsole(s);
+				public void print(String stringToPrint) {
+					if (!stringToPrint.isEmpty()) {
+						super.print(stringToPrint);
+						updateConsole(stringToPrint);
 					}
 				};
-
 			};
 
 			// TODO: There is something not quite right here. LWJGL error out is not being redirected/captured by our console logger.
@@ -207,24 +190,24 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 			mProcessedMessages = new ArrayList<>();
 			mUpdateMessageList = new ArrayList<>();
 
+			mAutoScrollIconRectangle = new Rectangle();
 		}
 
 		mResourcesLoaded = false;
-
 	}
 
 	// --------------------------------------
 	// Core-Methods
 	// --------------------------------------
 
-	public void loadResources(ResourceManager pResourceManager) {
+	public void loadResources(ResourceManager resourceManager) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
-		mConsoleFont = pResourceManager.fontManager().getFontUnit(BitmapFontManager.SYSTEM_FONT_CONSOLE_NAME);
-		mSpriteBatch.loadResources(pResourceManager);
+		mConsoleFont = resourceManager.fontManager().getFontUnit(BitmapFontManager.SYSTEM_FONT_CONSOLE_NAME);
+		mSpriteBatch.loadResources(resourceManager);
 
-		mCoreSpritesheet = pResourceManager.spriteSheetManager().coreSpritesheet();
+		mCoreSpritesheet = resourceManager.spriteSheetManager().coreSpritesheet();
 
 		mResourcesLoaded = true;
 	}
@@ -241,12 +224,12 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 		mResourcesLoaded = false;
 	}
 
-	public void handleInput(LintfordCore pCore) {
+	public void handleInput(LintfordCore core) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
 		if (mConsoleState == CONSOLE_STATE.open) {
-			if (mScrollBar.handleInput(pCore, null)) {
+			if (mScrollBar.handleInput(core, null)) {
 				if (mScrollBar.isAtBottomPosition()) {
 					mAutoScroll = true;
 				} else {
@@ -256,21 +239,20 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 				return;
 			}
 
-			if (intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().tryAcquireMouseOverThisComponent(hashCode())) {
-				if (mTAGFilterText.handleInput(pCore))
+			if (intersectsAA(core.HUD().getMouseCameraSpace()) && core.input().mouse().tryAcquireMouseOverThisComponent(hashCode())) {
+				if (mTAGFilterText.handleInput(core))
 					return;
-				if (mMessageFilterText.handleInput(pCore))
+				if (mMessageFilterText.handleInput(core))
 					return;
 
-				if (pCore.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_DELETE)) {
+				if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_DELETE)) {
 					mScrollBar.AbsCurrentYPos(0);
 					mAutoScroll = true;
 
 					Debug.debugManager().logger().clearLogLines();
-
 				}
 
-				if (pCore.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_DOWN)) {
+				if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_DOWN)) {
 					mConsoleLineHeight = (int) (mConsoleFont.fontHeight() + 1);
 					mScrollBar.RelCurrentYPos(-mConsoleLineHeight);
 					mAutoScroll = false;
@@ -279,7 +261,7 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 						mScrollBar.AbsCurrentYPos(mScrollBar.getScrollYBottomPosition() - mConsoleLineHeight);
 				}
 
-				if (pCore.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_PAGE_DOWN)) {
+				if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_PAGE_DOWN)) {
 					mConsoleLineHeight = (int) (mConsoleFont.fontHeight() + 1);
 					mScrollBar.RelCurrentYPos(-mConsoleLineHeight * 10);
 					mAutoScroll = false;
@@ -288,7 +270,7 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 						mScrollBar.AbsCurrentYPos(mScrollBar.getScrollYBottomPosition() - mConsoleLineHeight);
 				}
 
-				if (pCore.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_UP)) {
+				if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_UP)) {
 					mConsoleLineHeight = (int) (mConsoleFont.fontHeight() + 1);
 					mScrollBar.RelCurrentYPos(mConsoleLineHeight);
 					mAutoScroll = false;
@@ -297,7 +279,7 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 						mScrollBar.AbsCurrentYPos(0);
 				}
 
-				if (pCore.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_PAGE_UP)) {
+				if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_PAGE_UP)) {
 					mConsoleLineHeight = (int) (mConsoleFont.fontHeight() + 1);
 					mScrollBar.RelCurrentYPos(mConsoleLineHeight * 10);
 					mAutoScroll = false;
@@ -307,62 +289,58 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 				}
 
 				// capture the mouse wheel too
-				final float lScrollAccelerationAmt = pCore.input().mouse().mouseWheelYOffset() * 250.0f;
+				final float lScrollAccelerationAmt = core.input().mouse().mouseWheelYOffset() * 250.0f;
 				mScrollBar.scrollRelAcceleration(lScrollAccelerationAmt);
 				if (mScrollBar.scrollAcceleration() != 0) {
-					mAutoScroll = false;
+					if (mScrollBar.isAtBottomPosition()) {
+						mAutoScroll = true;
+					} else {
+						mAutoScroll = false;
+					}
 				}
 			}
 
-			if (pCore.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_ESCAPE)) {
+			if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_ESCAPE)) {
 				if (mConsoleState == CONSOLE_STATE.open) {
 					mConsoleState = CONSOLE_STATE.closed;
 
 					mInputText.delete(0, mInputText.length());
 					mHasFocus = false;
-					pCore.input().keyboard().stopBufferedTextCapture();
-
+					core.input().keyboard().stopBufferedTextCapture();
 				}
-
 			}
 
-			if (mTAGFilterText.intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().tryAcquireMouseLeftClick(mTAGFilterText.hashCode())) {
+			if (mTAGFilterText.intersectsAA(core.HUD().getMouseCameraSpace()) && core.input().mouse().tryAcquireMouseLeftClick(mTAGFilterText.hashCode())) {
 
-			}
+			} else if (mMessageFilterText.intersectsAA(core.HUD().getMouseCameraSpace()) && core.input().mouse().tryAcquireMouseLeftClick(mMessageFilterText.hashCode())) {
 
-			else if (mMessageFilterText.intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().tryAcquireMouseLeftClick(mMessageFilterText.hashCode())) {
-
-			}
-
-			else if (mFocusTimer > FOCUS_TIMER && pCore.input().mouse().mouseWindowCoords().y < openHeight() && pCore.input().mouse().tryAcquireMouseLeftClick(hashCode()) && pCore.input().mouse().isMouseOverThisComponent(hashCode())) {
+			} else if (mFocusTimer > FOCUS_TIMER && core.input().mouse().mouseWindowCoords().y < openHeight() && core.input().mouse().tryAcquireMouseLeftClick(hashCode()) && core.input().mouse().isMouseOverThisComponent(hashCode())) {
 				mHasFocus = !mHasFocus;
 				resetCoolDownTimer();
-				pCore.input().keyboard().stopBufferedTextCapture();
+				core.input().keyboard().stopBufferedTextCapture();
 				mFocusTimer = 0;
 
-				if (mHasFocus) {
-					pCore.input().keyboard().startBufferedTextCapture(this);
-				}
+				if (mHasFocus)
+					core.input().keyboard().startBufferedTextCapture(this);
 
 			}
 
 		} else {
 			if (mHasFocus) {
-				pCore.input().keyboard().stopBufferedTextCapture();
+				core.input().keyboard().stopBufferedTextCapture();
 				mHasFocus = false;
 			}
 		}
 
-		if (mHasFocus && (pCore.input().mouse().isMouseLeftButtonDownTimed(this) || pCore.input().mouse().isMouseRightButtonDownTimed(this))) {
-			pCore.input().keyboard().stopBufferedTextCapture();
+		if (mHasFocus && (core.input().mouse().isMouseLeftButtonDownTimed(this) || core.input().mouse().isMouseRightButtonDownTimed(this))) {
+			core.input().keyboard().stopBufferedTextCapture();
 
 			mHasFocus = false;
 			mShowCaret = false;
-
 		}
 
 		// listen for opening and closing
-		if (pCore.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_F1)) {
+		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_F1)) {
 			switch (mConsoleState) {
 			case closed:
 				mConsoleState = CONSOLE_STATE.minimal;
@@ -371,8 +349,7 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 
 				if (AUTO_CAPTURE_ON_OPEN) {
 					mHasFocus = true;
-					pCore.input().keyboard().startBufferedTextCapture(this);
-
+					core.input().keyboard().startBufferedTextCapture(this);
 				}
 
 				break;
@@ -386,31 +363,24 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 				mConsoleState = CONSOLE_STATE.closed;
 				mHasFocus = false;
 			}
-
 		}
-
 	}
 
-	public void update(LintfordCore pCore) {
+	public void update(LintfordCore core) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
-		if (mConsoleState == CONSOLE_STATE.minimal) {
+		if (mConsoleState == CONSOLE_STATE.minimal)
 			mAutoScroll = true;
-
-		}
 
 		if (!mResourcesLoaded || mConsoleState == CONSOLE_STATE.closed)
 			return;
 
-		final float lDeltaTime = (float) pCore.appTime().elapsedTimeMilli() / 1000f;
+		final float lDeltaTime = (float) core.appTime().elapsedTimeMilli() / 1000f;
 
-		if (mMouseTimer >= 0) {
-			mMouseTimer -= pCore.appTime().elapsedTimeMilli();
+		if (mMouseTimer >= 0)
+			mMouseTimer -= core.appTime().elapsedTimeMilli();
 
-		}
-
-		// Update timers
 		mFocusTimer += lDeltaTime * 1000f;
 		mCaretTimer += lDeltaTime * 1000f;
 
@@ -419,9 +389,8 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 			mShowCaret = !mShowCaret;
 		}
 
-		// Update text filters
-		mTAGFilterText.update(pCore);
-		mMessageFilterText.update(pCore);
+		mTAGFilterText.update(core);
+		mMessageFilterText.update(core);
 
 		doFilterText();
 
@@ -429,19 +398,19 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 		mConsoleLineHeight = (int) (mConsoleFont.fontHeight() + 3);
 		final var MAX_NUM_LINES = (int) ((openHeight() - mConsoleLineHeight * 2) / mConsoleLineHeight) - 2;
 
-		final var lNumberLinesInConsole = mProcessed ? mProcessedMessages.size() : Debug.debugManager().logger().logLines().size();
-		fullContentArea().setCenter(x, y, w - mScrollBar.w(), lNumberLinesInConsole * 25);
+		final var lNumberLinesInConsole = mFilterProcessed ? mProcessedMessages.size() : Debug.debugManager().logger().logLines().size();
+		fullContentArea().setCenter(mX, mY, mW - mScrollBar.width(), lNumberLinesInConsole * 25);
 
-		final var lDisplay = pCore.config().display();
+		final var lDisplay = core.config().display();
 		// Update the bounds of the window view
-		x = -lDisplay.windowWidth() * 0.5f;
-		y = -lDisplay.windowHeight() * 0.5f;
-		w = lDisplay.windowWidth();
-		h = openHeight();
+		mX = -lDisplay.windowWidth() * 0.5f;
+		mY = -lDisplay.windowHeight() * 0.5f;
+		mW = lDisplay.windowWidth();
+		mH = openHeight();
 
 		mLowerBound = (int) -((mScrollBar.currentYPos()) / mConsoleLineHeight) + 1;
 		// Lower bound should not be lower than the last item (occurs when filtering texture and number of lines decreases).
-		if (mProcessed && mLowerBound > mProcessedMessages.size()) {
+		if (mFilterProcessed && mLowerBound > mProcessedMessages.size()) {
 			mLowerBound = mProcessedMessages.size() - MAX_NUM_LINES;
 			if (mLowerBound < 0)
 				mLowerBound = 0;
@@ -451,30 +420,33 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 
 		mUpperBound = mLowerBound + MAX_NUM_LINES;
 
-		mContentRectangle.h((lNumberLinesInConsole + 2) * mConsoleLineHeight);
+		mContentRectangle.height((lNumberLinesInConsole + 2) * mConsoleLineHeight);
 
 		// mAutoScroll = true;
 		if (mAutoScroll) {
-			int lNumLines = mProcessed ? mProcessedMessages.size() : Debug.debugManager().logger().logLines().size();
+			int lNumLines = mFilterProcessed ? mProcessedMessages.size() : Debug.debugManager().logger().logLines().size();
 			mUpperBound = lNumLines;
 			mLowerBound = mUpperBound - MAX_NUM_LINES;
 
 			mScrollBar.AbsCurrentYPos(mScrollBar.getScrollYBottomPosition());
-
 		}
 
-		mScrollBar.update(pCore);
+		mScrollBar.update(core);
 
+		var lConsoleVisible = mConsoleState == CONSOLE_STATE.open;
+
+		final int lIconSize = 32;
+		mAutoScrollIconRectangle.set(right() - lIconSize - 5.f + (lConsoleVisible && mScrollBar.isActive() ? -30.f : 0.f), bottom() - lIconSize - 5.f, lIconSize, lIconSize);
 	}
 
-	public void draw(LintfordCore pCore) {
+	public void draw(LintfordCore core) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
 		if (!mResourcesLoaded || mConsoleState == CONSOLE_STATE.closed)
 			return;
 
-		final var lDisplayConfig = pCore.config().display();
+		final var lDisplayConfig = core.config().display();
 
 		final float Z_DEPTH = ZLayers.LAYER_DEBUG;
 
@@ -486,91 +458,97 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 
 		final float lTextHeight = 20f;
 
-		mTAGFilterText.set(x + POSITION_OFFSET_TAG, y + 4, 200, 25);
-		mMessageFilterText.set(x + POSITION_OFFSET_MESSAGE, y + 4, 200, 25);
+		mTAGFilterText.set(mX + POSITION_OFFSET_TAG, mY + 4, 200, 25);
+		mMessageFilterText.set(mX + POSITION_OFFSET_MESSAGE, mY + 4, 200, 25);
 
-		final var lScreenBB = pCore.HUD().boundingRectangle();
+		final var lScreenBB = core.HUD().boundingRectangle();
 
-		mSpriteBatch.begin(pCore.HUD());
-		mConsoleFont.begin(pCore.HUD());
+		mSpriteBatch.begin(core.HUD());
+		mConsoleFont.begin(core.HUD());
 
 		if (mConsoleState == CONSOLE_STATE.open) {
 			mConsoleBackgroundColor.setRGBA(0.f, 0.f, 0.f, .8f);
 			mSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_BLACK, lScreenBB.left(), lScreenBB.top(), lScreenBB.width(), lScreenBB.height(), Z_DEPTH, mConsoleBackgroundColor);
-			mSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_BLACK, x, y, w, h, Z_DEPTH, ColorConstants.MenuPanelPrimaryColor);
+			mSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_BLACK, mX, mY, mW, mH, Z_DEPTH, ColorConstants.MenuPanelPrimaryColor);
 
 			final var lBackgroundInputPanelColor = ColorConstants.getBlackWithAlpha(0.35f);
-			mSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, x, y + 50 - lTextHeight, w, 2, Z_DEPTH, lBackgroundInputPanelColor);
-			mSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, x + 157, y + 50 - lTextHeight, 2, h - 50, Z_DEPTH, lBackgroundInputPanelColor);
-			mSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, x, y + h - lTextHeight, w, lTextHeight, Z_DEPTH, lBackgroundInputPanelColor);
+			mSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX, mY + 50 - lTextHeight, mW, 2, Z_DEPTH, lBackgroundInputPanelColor);
+			mSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX + 157, mY + 50 - lTextHeight, 2, mH - 50, Z_DEPTH, lBackgroundInputPanelColor);
+			mSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX, mY + mH - lTextHeight, mW, lTextHeight, Z_DEPTH, lBackgroundInputPanelColor);
 
-			mScrollBar.draw(pCore, mSpriteBatch, mCoreSpritesheet, Z_DEPTH + 0.1f);
+			mScrollBar.draw(core, mSpriteBatch, mCoreSpritesheet, Z_DEPTH + 0.1f);
 
-			mTAGFilterText.draw(pCore, mSpriteBatch, mCoreSpritesheet, mConsoleFont, -0.001f);
-			mMessageFilterText.draw(pCore, mSpriteBatch, mCoreSpritesheet, mConsoleFont, Z_DEPTH + 0.01f);
+			mTAGFilterText.draw(core, mSpriteBatch, mCoreSpritesheet, mConsoleFont, -0.001f);
+			mMessageFilterText.draw(core, mSpriteBatch, mCoreSpritesheet, mConsoleFont, Z_DEPTH + 0.01f);
 
 			// the input line from the user will always be visible at the bottom of the console.
 			if (mInputText != null) {
 				final float INPUT_Y_OFFSET = 0;
-				mConsoleFont.drawText(PROMT_CHAR, -lDisplayConfig.windowWidth() * 0.5f + PADDING_LEFT, y + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET, Z_DEPTH + 0.1f, ColorConstants.WHITE, 1f);
-				mConsoleFont.drawText(mInputText.toString(), -lDisplayConfig.windowWidth() * 0.5f + PADDING_LEFT + lInputTextXOffset, y + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET, Z_DEPTH + 0.1f, ColorConstants.WHITE, 1f);
+				mConsoleFont.drawText(PROMT_CHAR, -lDisplayConfig.windowWidth() * 0.5f + PADDING_LEFT, mY + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET, Z_DEPTH + 0.1f, ColorConstants.WHITE, 1f);
+				mConsoleFont.drawText(mInputText.toString(), -lDisplayConfig.windowWidth() * 0.5f + PADDING_LEFT + lInputTextXOffset, mY + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET, Z_DEPTH + 0.1f, ColorConstants.WHITE, 1f);
 				if (mShowCaret && mHasFocus)
-					mConsoleFont.drawText(CARET_CHAR, -lDisplayConfig.windowWidth() * 0.5f + PADDING_LEFT + lInputTextXOffset + mConsoleFont.getStringWidth(mInputText.toString()), y + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET, Z_DEPTH + 0.1f,
+					mConsoleFont.drawText(CARET_CHAR, -lDisplayConfig.windowWidth() * 0.5f + PADDING_LEFT + lInputTextXOffset + mConsoleFont.getStringWidth(mInputText.toString()), mY + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET, Z_DEPTH + 0.1f,
 							ColorConstants.WHITE, 1f);
 			}
-
 		}
 
-		if (mProcessed == false) {
+		var lAutoScrollIconColor = ColorConstants.WHITE;
+		if (mAutoScroll == false) {
+			lAutoScrollIconColor = ColorConstants.getWhiteWithAlpha(.1f);
+		}
+
+		mSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_AUTOSCROLL, mAutoScrollIconRectangle, Z_DEPTH, lAutoScrollIconColor);
+
+		if (mFilterProcessed == false) {
 			synchronized (Debug.debugManager().logger()) {
-				drawMessages(pCore, Debug.debugManager().logger().logLines());
+				drawMessages(core, Debug.debugManager().logger().logLines());
 			}
 		} else {
-			drawMessages(pCore, mProcessedMessages);
+			drawMessages(core, mProcessedMessages);
 		}
 
 		mSpriteBatch.end();
 		mConsoleFont.end();
-
 	}
 
-	private void drawMessages(LintfordCore pCore, List<Message> lMessages) {
+	private void drawMessages(LintfordCore core, List<Message> messages) {
 		float lTextPosition = mConsoleState == CONSOLE_STATE.minimal ? 10 : -20;
 
 		final float POSITION_OFFSET_TIME = 5;
 		final float POSITION_OFFSET_TAG = 170;
 		final float POSITION_OFFSET_MESSAGE = 400;
 
-		final var lDisplayConfig = pCore.config().display();
+		final var lDisplayConfig = core.config().display();
 
-		final int lMessageCount = lMessages.size();
-		if (lMessages != null && lMessageCount > 0) {
+		final int lMessageCount = messages.size();
+		if (messages != null && lMessageCount > 0) {
 			for (int i = mLowerBound; i < mUpperBound; i++) {
 				if (i >= 0 && i < lMessageCount) {
-					final var lMessage = lMessages.get(i);
+					final var lMessage = messages.get(i);
 					if (lMessage == null)
 						continue;
 
 					lTextPosition -= mConsoleLineHeight;
 
-					final float lR = getMessageRGB(lMessage.type).x;
-					final float lG = getMessageRGB(lMessage.type).y;
-					final float lB = getMessageRGB(lMessage.type).z;
+					final var lColorRgb = getMessageRGB(lMessage.type());
+					final float lR = lColorRgb.x;
+					final float lG = lColorRgb.y;
+					final float lB = lColorRgb.z;
 					mConsoleTextColor.setRGBA(lR, lG, lB, 1.0f);
 
 					// Draw Timestamp
 					mConsoleFont.setWrapType(WrapType.LetterCountTrim);
-					mConsoleFont.drawText(lMessage.timestamp, x + POSITION_OFFSET_TIME, -lDisplayConfig.windowHeight() * 0.5f - lTextPosition, ZLayers.LAYER_DEBUG + 0.1f, mConsoleTextColor, 1f, 18);
+					mConsoleFont.drawText(lMessage.timestamp(), mX + POSITION_OFFSET_TIME, -lDisplayConfig.windowHeight() * 0.5f - lTextPosition, ZLayers.LAYER_DEBUG + 0.1f, mConsoleTextColor, 1f, 18);
 
 					// Draw TAG
 					mConsoleFont.setWrapType(WrapType.LetterCountTrim);
-					mConsoleFont.drawText(lMessage.tag, x + POSITION_OFFSET_TAG, -lDisplayConfig.windowHeight() * 0.5f - lTextPosition, ZLayers.LAYER_DEBUG + 0.1f, mConsoleTextColor, 1f, 18);
+					mConsoleFont.drawText(lMessage.tag(), mX + POSITION_OFFSET_TAG, -lDisplayConfig.windowHeight() * 0.5f - lTextPosition, ZLayers.LAYER_DEBUG + 0.1f, mConsoleTextColor, 1f, 18);
 
 					// Draw MESSAGE
 					mConsoleFont.setWrapType(WrapType.LetterCountTrim);
 					final float lCharWidth = mConsoleFont.getStringWidth("e");
-					final float lHorizontalSpace = pCore.HUD().getWidth() - POSITION_OFFSET_MESSAGE;
-					mConsoleFont.drawText(lMessage.message, x + POSITION_OFFSET_MESSAGE, -lDisplayConfig.windowHeight() * 0.5f - lTextPosition, ZLayers.LAYER_DEBUG + 0.1f, mConsoleTextColor, 1f, lHorizontalSpace / lCharWidth - 3);
+					final float lHorizontalSpace = core.HUD().getWidth() - POSITION_OFFSET_MESSAGE;
+					mConsoleFont.drawText(lMessage.message(), mX + POSITION_OFFSET_MESSAGE, -lDisplayConfig.windowHeight() * 0.5f - lTextPosition, ZLayers.LAYER_DEBUG + 0.1f, mConsoleTextColor, 1f, lHorizontalSpace / lCharWidth - 3);
 				}
 			}
 		}
@@ -593,108 +571,90 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 
 		if (mDirty) {
 			mAutoScroll = true;
-			mProcessed = false;
+			mFilterProcessed = false;
 			mScrollBar.resetBarTop();
 
 			mProcessedMessages.clear();
-			mProcessed = !mTAGFilterText.isEmpty() || !mMessageFilterText.isEmpty();
+			mFilterProcessed = !mTAGFilterText.isEmpty() || !mMessageFilterText.isEmpty();
 
 			final var lLogLines = Debug.debugManager().logger().logLines();
 			final var lLogLineCount = lLogLines.size();
 			for (int i = 0; i < lLogLineCount; i++) {
 				mProcessedMessages.add(lLogLines.get(i));
-
 			}
 
-			if (mProcessed) {
+			if (mFilterProcessed) {
 				if (!mTAGFilterText.isEmpty()) {
 					mUpdateMessageList.clear();
 
-					// First copy the whole LogMessages to the linkedlist, unfettered
-					final int FILTER_LOG_COUNT = mProcessedMessages.size();
-					for (int i = 0; i < FILTER_LOG_COUNT; i++) {
+					final int lFilteredLogCount = mProcessedMessages.size();
+					for (int i = 0; i < lFilteredLogCount; i++) {
 						mUpdateMessageList.add(mProcessedMessages.get(i));
-
 					}
 
 					mProcessedMessages.clear();
 					final String lFilterText = mTAGFilterText.inputString().toString().toUpperCase();
 					final int lUpdateMessageCount = mUpdateMessageList.size();
 					for (int i = 0; i < lUpdateMessageCount; i++) {
-						String lStringA = mUpdateMessageList.get(i).tag.toString().toUpperCase();
-						String lStringB = lFilterText;
+						final var lStringA = mUpdateMessageList.get(i).tag().toString().toUpperCase();
+						final var lStringB = lFilterText;
 						if (lStringA.contains(lStringB)) {
 							mProcessedMessages.add(mUpdateMessageList.get(i));
-
 						}
-
 					}
-
 				}
 
 				if (!mMessageFilterText.isEmpty()) {
 					mUpdateMessageList.clear();
 
 					// First copy the whole LogMessages to the linkedlist, unfettered
-					final int FILTER_LOG_COUNT = mProcessedMessages.size();
-					for (int i = 0; i < FILTER_LOG_COUNT; i++) {
+					final int lFilteredLogCount = mProcessedMessages.size();
+					for (int i = 0; i < lFilteredLogCount; i++) {
 						mUpdateMessageList.add(mProcessedMessages.get(i));
-
 					}
 
 					mProcessedMessages.clear();
 					final String lFilterText = mMessageFilterText.inputString().toString().toUpperCase();
 					final int lUpdateMessageCount = mUpdateMessageList.size();
 					for (int i = 0; i < lUpdateMessageCount; i++) {
-						String lStringA = mUpdateMessageList.get(i).message.toString().toUpperCase();
+						String lStringA = mUpdateMessageList.get(i).message().toString().toUpperCase();
 						String lStringB = lFilterText;
 						if (lStringA.contains(lStringB)) {
 							mProcessedMessages.add(mUpdateMessageList.get(i));
-
 						}
-
 					}
-
 				}
-
 			}
 
 			mDirty = false;
-
 		}
-
 	}
 
 	/**
 	 * Used to pass the console output stream to the debugconsole (character-by-character).
 	 * 
-	 * @param pNewChar
+	 * @param newChar
 	 */
-	protected void updateConsole(final char pNewChar) {
+	protected void updateConsole(final char newChar) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
-		if (pNewChar == '\n' || pNewChar == '\r') {
-			// Add this string to the log
+		if (newChar == '\n' || newChar == '\r') {
 			Debug.debugManager().logger().u("User", mInputText.toString());
 
 			if (mInputText.length() > 0) {
 				mInputText.delete(0, mInputText.length());
 			}
-
 		} else {
-
-			mInputText.append(pNewChar);
-
+			mInputText.append(newChar);
 		}
 	}
 
-	protected void updateConsole(String pS) {
+	protected void updateConsole(String message) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
-		Debug.debugManager().logger().v("Console", pS);
-
+		Debug.debugManager().logger().v("Console", message);
 	}
 
 	// --------------------------------------
@@ -711,22 +671,18 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 		}
 
 		return true;
-
 	}
 
 	@Override
 	public boolean onEnterPressed() {
-
 		if (mInputText.length() == 0) {
 			mHasFocus = false;
 			return true; // finish keyboard capture
-
 		}
 
 		final String lInputString = mInputText.toString();
 
 		if (lInputString != null) {
-			// First check for ConstantsTable changes
 			if (Pattern.matches(CONSTANTS_TABLE_COMMAND_PATTERN, lInputString)) {
 				String[] lResultArray = lInputString.split("([\\=])");
 
@@ -735,17 +691,13 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 
 					Debug.debugManager().logger().u("Settings Changed", lInputString);
 
-					// Automatically scroll to the bottom when the user enters some text
 					mAutoScroll = true;
 					mDirty = true;
 
-					// empty the current line
 					mInputText.delete(0, mInputText.length());
 
 					return getEnterFinishesInput();
-
 				}
-
 			} else {
 				boolean lResult = false;
 				final int CONSOLE_COMMANDS = mConsoleCommands.size();
@@ -754,34 +706,25 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 						lResult = mConsoleCommands.get(i).doCommand();
 						Debug.debugManager().logger().u("", "  completed " + (lResult ? "successfully" : "with errors"));
 
-						// empty the current line
 						mInputText.delete(0, mInputText.length());
 
-						// Automatically scroll to the bottom when the user enters some text
 						mAutoScroll = true;
 						mDirty = true;
 
 						return getEnterFinishesInput();
-
 					}
-
 				}
-
 			}
-
 		}
 
 		Debug.debugManager().logger().u("User", lInputString);
 
-		// empty the current line
 		mInputText.delete(0, mInputText.length());
 
-		// Automatically scroll to the bottom when the user enters some text
 		mAutoScroll = true;
 		mDirty = true;
 
 		return getEnterFinishesInput();
-
 	}
 
 	@Override
@@ -792,7 +735,6 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 	@Override
 	public boolean getEnterFinishesInput() {
 		return false;
-
 	}
 
 	@Override
@@ -811,22 +753,22 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 	}
 
 	@Override
-	public void onKeyPressed(int pCodePoint) {
+	public void onKeyPressed(int codePoint) {
 
 	}
 
-	public void addConsoleCommand(ConsoleCommand pConsoleCommand) {
+	public void addConsoleCommand(ConsoleCommand consoleCommand) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
-		if (mConsoleCommands != null && !mConsoleCommands.contains(pConsoleCommand)) {
-			mConsoleCommands.add(pConsoleCommand);
+		if (mConsoleCommands != null && !mConsoleCommands.contains(consoleCommand)) {
+			mConsoleCommands.add(consoleCommand);
 		}
 	}
 
-	public void removeConsoleCommand(ConsoleCommand pConsoleCommand) {
-		if (mConsoleCommands != null && mConsoleCommands.contains(pConsoleCommand)) {
-			mConsoleCommands.remove(pConsoleCommand);
+	public void removeConsoleCommand(ConsoleCommand consoleCommand) {
+		if (mConsoleCommands != null && mConsoleCommands.contains(consoleCommand)) {
+			mConsoleCommands.remove(consoleCommand);
 		}
 	}
 
@@ -851,5 +793,4 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 	public void resetCoolDownTimer() {
 		mMouseTimer = IProcessMouseInput.MOUSE_COOL_TIME_TIME;
 	}
-
 }

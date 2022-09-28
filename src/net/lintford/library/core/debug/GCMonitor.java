@@ -47,8 +47,7 @@ public class GCMonitor {
 							gctype = "Old Gen GC";
 						}
 
-						Debug.debugManager().logger().v(getClass().getSimpleName(),
-								gctype + ": - " + info.getGcInfo().getId() + " " + info.getGcName() + " (from " + info.getGcCause() + ") " + duration + " microseconds;");
+						Debug.debugManager().logger().v(getClass().getSimpleName(), gctype + ": - " + info.getGcInfo().getId() + " " + info.getGcName() + " (from " + info.getGcCause() + ") " + duration + " microseconds;");
 
 						// Get the information about each memory space, and pretty print it
 						Map<String, MemoryUsage> membefore = info.getGcInfo().getMemoryUsageBeforeGc();
@@ -63,8 +62,8 @@ public class GCMonitor {
 							long beforepercent = ((before.getUsed() * 1000L) / before.getCommitted());
 							long percent = ((memUsed * 1000L) / before.getCommitted()); // >100% when it gets expanded
 
-							Debug.debugManager().logger().v(getClass().getSimpleName(), name + (memCommitted == memMax ? "(fully expanded)" : "(still expandable)") + "used: " + (beforepercent / 10) + "."
-									+ (beforepercent % 10) + "%->" + (percent / 10) + "." + (percent % 10) + "%(" + ((memUsed / 1048576) + 1) + "MB) / ");
+							Debug.debugManager().logger().v(getClass().getSimpleName(), name + (memCommitted == memMax ? "(fully expanded)" : "(still expandable)") + "used: " + (beforepercent / 10) + "." + (beforepercent % 10) + "%->" + (percent / 10) + "."
+									+ (percent % 10) + "%(" + ((memUsed / 1048576) + 1) + "MB) / ");
 
 						}
 
@@ -72,16 +71,11 @@ public class GCMonitor {
 						long percent = totalGcDuration * 1000L / info.getGcInfo().getEndTime();
 
 						Debug.debugManager().logger().v(getClass().getSimpleName(), "GC cumulated overhead " + (percent / 10) + "." + (percent % 10) + "%");
-
 					}
-
 				}
-
 			};
 
-			// Add the listener
 			emitter.addNotificationListener(listener, null, null);
 		}
 	}
-
 }

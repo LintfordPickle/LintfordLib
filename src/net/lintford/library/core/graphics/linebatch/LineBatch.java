@@ -36,7 +36,7 @@ public class LineBatch {
 	private int mVaoId = -1;
 	private int mVboId = -1;
 	private int mVertexCount = 0;
-	public float r, g, b, a;
+	private float mR, mG, mB, mA;
 
 	private ICamera mCamera;
 	private ShaderMVP_PT mShader;
@@ -52,20 +52,36 @@ public class LineBatch {
 	// Properties
 	// --------------------------------------
 
-	public void lineAntialiasing(boolean pEnableSmoothing) {
-		mAntiAliasing = pEnableSmoothing;
+	public void red(float red) {
+		mR = red;
+	}
+
+	public void green(float green) {
+		mG = green;
+	}
+
+	public void blue(float blue) {
+		mB = blue;
+	}
+
+	public void alpha(float alpha) {
+		mA = alpha;
+	}
+
+	public void lineAntialiasing(boolean enableSmoothing) {
+		mAntiAliasing = enableSmoothing;
 	}
 
 	public boolean lineAntialiasing() {
 		return mAntiAliasing;
 	}
 
-	public void lineWidth(float pNewWidth) {
-		if (pNewWidth < 1.f)
-			pNewWidth = 1.f;
-		if (pNewWidth > 10.f)
-			pNewWidth = 10.f;
-		mGLLineWidth = pNewWidth;
+	public void lineWidth(float newWidth) {
+		if (newWidth < 1.f)
+			newWidth = 1.f;
+		if (newWidth > 10.f)
+			newWidth = 10.f;
+		mGLLineWidth = newWidth;
 	}
 
 	public float lineWidth() {
@@ -73,18 +89,16 @@ public class LineBatch {
 	}
 
 	/** Sets the line type to use by OpenGL. Choices are either GL11.GL_LINE_STRIP or GL11.GL_LINES */
-	public void lineType(int pGLLineType) {
-		mGLLineType = pGLLineType;
+	public void lineType(int lineType) {
+		mGLLineType = lineType;
 
 		if (mGLLineType != GL11.GL_LINE_STRIP && mGLLineType != GL11.GL_LINES && mGLLineType != GL11.GL_POINTS) {
 			mGLLineType = GL11.GL_LINES;
 		}
-
 	}
 
 	public int lineType() {
 		return mGLLineType;
-
 	}
 
 	public boolean isDrawing() {
@@ -104,7 +118,7 @@ public class LineBatch {
 			}
 		};
 
-		a = r = g = b = 1f;
+		mA = mR = mG = mB = 1f;
 
 		mGLLineWidth = 2.f;
 		mModelMatrix = new Matrix4f();
@@ -115,11 +129,11 @@ public class LineBatch {
 	// Core-Methods
 	// --------------------------------------
 
-	public void loadResources(ResourceManager pResourceManager) {
+	public void loadResources(ResourceManager resourceManager) {
 		if (mResourcesLoaded)
 			return;
 
-		mShader.loadResources(pResourceManager);
+		mShader.loadResources(resourceManager);
 
 		if (mVboId == -1) {
 			mVboId = GL15.glGenBuffers();
@@ -177,150 +191,146 @@ public class LineBatch {
 		}
 	}
 
-	public void begin(ICamera pCamera) {
-		if (pCamera == null)
+	public void begin(ICamera camera) {
+		if (camera == null)
 			return;
 
 		if (mIsDrawing)
 			return;
 
-		mCamera = pCamera;
+		mCamera = camera;
 
 		mBuffer.clear();
 		mVertexCount = 0;
 		mIsDrawing = true;
-
 	}
 
-	public void drawRect(Rectangle pRect, float pZ) {
+	public void drawRect(Rectangle rectangle, float zDepth) {
 		if (!mIsDrawing)
 			return;
 
-		drawRect(pRect, 1f, pZ);
-
+		drawRect(rectangle, 1f, zDepth);
 	}
 
-	public void drawRect(Rectangle pRect, float pScale, float pZ) {
+	public void drawRect(Rectangle rectangle, float scale, float zDepth) {
 		if (!mIsDrawing)
 			return;
 
-		drawRect(pRect, 0f, 0f, pScale, pZ);
+		drawRect(rectangle, 0f, 0f, scale, zDepth);
 	}
 
-	public void drawRect(Rectangle pRect, float pOX, float pOY, float pScale, float pZ) {
+	public void drawRect(Rectangle rectangle, float originX, float originY, float scale, float zDepth) {
 		if (!mIsDrawing)
 			return;
 
-		drawRect(pRect, pOX, pOY, pScale, pZ, 1f, 1f, 1f);
-
+		drawRect(rectangle, originX, originY, scale, zDepth, 1f, 1f, 1f);
 	}
 
-	public void drawRect(Rectangle pRect, float pOX, float pOY, float pScale, float pZ, float pR, float pG, float pB) {
+	public void drawRect(Rectangle rectangle, float originX, float originY, float scale, float zDepth, float red, float green, float blue) {
 		if (!mIsDrawing)
 			return;
 
-		final float lModWidth = pRect.width() * pScale;
-		final float lModHeight = pRect.height() * pScale;
+		final float lModWidth = rectangle.width() * scale;
+		final float lModHeight = rectangle.height() * scale;
 
-		final float lModX = pRect.left() - pOX * pScale;
-		final float lModY = pRect.top() - pOY * pScale;
+		final float lModX = rectangle.left() - originX * scale;
+		final float lModY = rectangle.top() - originY * scale;
 
-		draw(lModX, lModY, lModX + lModWidth, lModY, pZ, pR, pG, pB); // top
-		draw(lModX, lModY + lModHeight, lModX + lModWidth, lModY + lModHeight, pZ, pR, pG, pB); // bottom
-		draw(lModX, lModY, lModX, lModY + lModHeight, pZ, pR, pG, pB); // left
-		draw(lModX + lModWidth, lModY, lModX + lModWidth, lModY + lModHeight, pZ, pR, pG, pB); // right
+		draw(lModX, lModY, lModX + lModWidth, lModY, zDepth, red, green, blue); // top
+		draw(lModX, lModY + lModHeight, lModX + lModWidth, lModY + lModHeight, zDepth, red, green, blue); // bottom
+		draw(lModX, lModY, lModX, lModY + lModHeight, zDepth, red, green, blue); // left
+		draw(lModX + lModWidth, lModY, lModX + lModWidth, lModY + lModHeight, zDepth, red, green, blue); // right
 	}
 
-	public void drawRect(float pX, float pY, float pW, float pH, float pZ) {
-		if (!mIsDrawing)
-			return;
-		draw(pX, pY, pX + pW, pY, pZ, r, g, b); // top
-		draw(pX, pY + pH, pX + pW, pY + pH, pZ, r, g, b); // bottom
-
-		draw(pX, pY, pX, pY + pH, pZ, r, g, b); // left
-		draw(pX + pW, pY, pX + pW, pY + pH, pZ, r, g, b); // right
-	}
-
-	public void drawRect(float pX, float pY, float pW, float pH, float pZ, float pR, float pG, float pB) {
-		if (!mIsDrawing)
-			return;
-		draw(pX, pY, pX + pW, pY, pZ, pR, pG, pB); // top
-		draw(pX, pY + pH, pX + pW, pY + pH, pZ, pR, pG, pB); // bottom
-
-		draw(pX, pY, pX, pY + pH, pZ, pR, pG, pB); // left
-		draw(pX + pW, pY, pX + pW, pY + pH, pZ, pR, pG, pB); // right
-	}
-
-	public void drawArrowDown(float pX, float pY, float pW, float pH, float pZ, float pR, float pG, float pB) {
-		if (!mIsDrawing)
-			return;
-		draw(pX, pY, pX + pW, pY, pZ, pR, pG, pB);
-		draw(pX, pY, pX + pW * 0.5f, pY + pH, pZ, pR, pG, pB);
-		draw(pX + pW, pY, pX + pW * 0.5f, pY + pH, pZ, pR, pG, pB);
-	}
-
-	public void drawArrowUp(float pX, float pY, float pW, float pH, float pZ, float pR, float pG, float pB) {
-		if (!mIsDrawing)
-			return;
-		draw(pX, pY + pH, pX + pW, pY + pH, pZ, pR, pG, pB);
-		draw(pX, pY + pH, pX + pW * 0.5f, pY, pZ, pR, pG, pB);
-		draw(pX + pW, pY + pH, pX + pW * 0.5f, pY, pZ, pR, pG, pB);
-	}
-
-	public void drawArrowLeft(float pX, float pY, float pW, float pH, float pZ, float pR, float pG, float pB) {
-		if (!mIsDrawing)
-			return;
-		draw(pX + pW, pY, pX + pW, pY + pH, pZ, pR, pG, pB);
-		draw(pX, pY + pH * 0.5f, pX + pW, pY, pZ, pR, pG, pB);
-		draw(pX, pY + pH * 0.5f, pX + pW, pY + pH, pZ, pR, pG, pB);
-	}
-
-	public void drawArrowRight(float pX, float pY, float pW, float pH, float pZ, float pR, float pG, float pB) {
-		if (!mIsDrawing)
-			return;
-		draw(pX, pY, pX, pY + pH, pZ, pR, pG, pB);
-		draw(pX + pW, pY + pH * 0.5f, pX, pY, pZ, pR, pG, pB);
-		draw(pX + pW, pY + pH * 0.5f, pX, pY + pH, pZ, pR, pG, pB);
-	}
-
-	public void draw(float pP1X, float pP1Y, float pP2X, float pP2Y, float pZ, float pR, float pG, float pB) {
-
+	public void drawRect(float positionX, float positionY, float width, float height, float zDepth) {
 		if (!mIsDrawing)
 			return;
 
-		if (mVertexCount * 2 >= MAX_LINES) {
+		draw(positionX, positionY, positionX + width, positionY, zDepth, mR, mG, mB); // top
+		draw(positionX, positionY + height, positionX + width, positionY + height, zDepth, mR, mG, mB); // bottom
+
+		draw(positionX, positionY, positionX, positionY + height, zDepth, mR, mG, mB); // left
+		draw(positionX + width, positionY, positionX + width, positionY + height, zDepth, mR, mG, mB); // right
+	}
+
+	public void drawRect(float positionX, float positionY, float width, float height, float zDepth, float red, float green, float blue) {
+		if (!mIsDrawing)
+			return;
+
+		draw(positionX, positionY, positionX + width, positionY, zDepth, red, green, blue); // top
+		draw(positionX, positionY + height, positionX + width, positionY + height, zDepth, red, green, blue); // bottom
+
+		draw(positionX, positionY, positionX, positionY + height, zDepth, red, green, blue); // left
+		draw(positionX + width, positionY, positionX + width, positionY + height, zDepth, red, green, blue); // right
+	}
+
+	public void drawArrowDown(float positionX, float positionY, float width, float height, float zDepth, float red, float green, float blue) {
+		if (!mIsDrawing)
+			return;
+
+		draw(positionX, positionY, positionX + width, positionY, zDepth, red, green, blue);
+		draw(positionX, positionY, positionX + width * 0.5f, positionY + height, zDepth, red, green, blue);
+		draw(positionX + width, positionY, positionX + width * 0.5f, positionY + height, zDepth, red, green, blue);
+	}
+
+	public void drawArrowUp(float positionX, float positionY, float width, float height, float zDepth, float red, float green, float blue) {
+		if (!mIsDrawing)
+			return;
+
+		draw(positionX, positionY + height, positionX + width, positionY + height, zDepth, red, green, blue);
+		draw(positionX, positionY + height, positionX + width * 0.5f, positionY, zDepth, red, green, blue);
+		draw(positionX + width, positionY + height, positionX + width * 0.5f, positionY, zDepth, red, green, blue);
+	}
+
+	public void drawArrowLeft(float positionX, float positionY, float width, float height, float zDepth, float red, float green, float blue) {
+		if (!mIsDrawing)
+			return;
+
+		draw(positionX + width, positionY, positionX + width, positionY + height, zDepth, red, green, blue);
+		draw(positionX, positionY + height * 0.5f, positionX + width, positionY, zDepth, red, green, blue);
+		draw(positionX, positionY + height * 0.5f, positionX + width, positionY + height, zDepth, red, green, blue);
+	}
+
+	public void drawArrowRight(float positionX, float positionY, float width, float height, float zDepth, float red, float green, float blue) {
+		if (!mIsDrawing)
+			return;
+
+		draw(positionX, positionY, positionX, positionY + height, zDepth, red, green, blue);
+		draw(positionX + width, positionY + height * 0.5f, positionX, positionY, zDepth, red, green, blue);
+		draw(positionX + width, positionY + height * 0.5f, positionX, positionY + height, zDepth, red, green, blue);
+	}
+
+	public void draw(float point0X, float point0Y, float point1X, float point1Y, float zDepth, float red, float green, float blue) {
+
+		if (!mIsDrawing)
+			return;
+
+		if (mVertexCount * 2 >= MAX_LINES)
 			flush();
-		}
 
-		draw(pP1X, pP1Y, pP2X, pP2Y, pZ, pR, pG, pB, a);
-
+		draw(point0X, point0Y, point1X, point1Y, zDepth, red, green, blue, mA);
 	}
 
-	public void draw(float pP1X, float pP1Y, float pP2X, float pP2Y, float pZ, float pR, float pG, float pB, float pA) {
+	public void draw(float point0X, float point0Y, float point1X, float point1Y, float zDepth, float red, float green, float blue, float alpha) {
 
 		if (!mIsDrawing)
 			return;
 
-		if (mVertexCount * 2 >= MAX_LINES) {
+		if (mVertexCount * 2 >= MAX_LINES)
 			flush();
-		}
 
-		// Add both vertices to the buffer
-		draw(pP1X, pP1Y, pZ, pR, pG, pB, pA);
-		draw(pP2X, pP2Y, pZ, pR, pG, pB, pA);
+		draw(point0X, point0Y, zDepth, red, green, blue, alpha);
+		draw(point1X, point1Y, zDepth, red, green, blue, alpha);
 	}
 
-	public void draw(float pP1X, float pP1Y, float pZ, float pR, float pG, float pB, float pA) {
-
+	public void draw(float point0X, float point0Y, float zDepth, float red, float green, float blue, float alpha) {
 		if (!mIsDrawing)
 			return;
 
-		if (mVertexCount * 2 >= MAX_LINES) {
+		if (mVertexCount * 2 >= MAX_LINES)
 			flush();
-		}
 
-		// Add both vertices to the buffer
-		addVertToBuffer(pP1X, pP1Y, pZ, 1f, pR, pG, pB, pA);
+		addVertToBuffer(point0X, point0Y, zDepth, 1f, red, green, blue, alpha);
 	}
 
 	private void addVertToBuffer(float x, float y, float z, float w, float r, float g, float b, float a) {
@@ -335,12 +345,10 @@ public class LineBatch {
 		mBuffer.put(a);
 
 		mVertexCount++;
-
 	}
 
 	public void forceFlush() {
 		flush();
-
 	}
 
 	public void end() {
@@ -395,11 +403,10 @@ public class LineBatch {
 		mVertexCount = 0;
 	}
 
-	public void changeColorNormalized(float pR, float pG, float pB, float pA) {
-		r = pR;
-		g = pG;
-		b = pB;
-		a = pA;
-
+	public void changeColorNormalized(float red, float green, float blue, float alpha) {
+		mR = red;
+		mG = green;
+		mB = blue;
+		mA = alpha;
 	}
 }

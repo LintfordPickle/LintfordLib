@@ -52,8 +52,8 @@ public class DebugRendererTreeRenderer extends Rectangle implements IScrollBarAr
 	// Properties
 	// --------------------------------------
 
-	public void isOpen(boolean pNewValue) {
-		mIsOpen = pNewValue;
+	public void isOpen(boolean isOpen) {
+		mIsOpen = isOpen;
 	}
 
 	public boolean isOpen() {
@@ -68,10 +68,10 @@ public class DebugRendererTreeRenderer extends Rectangle implements IScrollBarAr
 	// Constructor
 	// --------------------------------------
 
-	public DebugRendererTreeRenderer(final Debug pDebugManager) {
-		mDebugManager = pDebugManager;
+	public DebugRendererTreeRenderer(final Debug debugManager) {
+		mDebugManager = debugManager;
 
-		if (pDebugManager.debugManagerEnabled()) {
+		if (debugManager.debugManagerEnabled()) {
 			mSpriteBatch = new SpriteBatch();
 
 			mContentRectangle = new ScrollBarContentRectangle(this);
@@ -83,16 +83,16 @@ public class DebugRendererTreeRenderer extends Rectangle implements IScrollBarAr
 	// Core-Methods
 	// --------------------------------------
 
-	public void loadResources(ResourceManager pResourceManager) {
+	public void loadResources(ResourceManager resourceManager) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
 		Debug.debugManager().logger().v(getClass().getSimpleName(), "DebugStats loading GL content");
 
-		mCoreSpritesheet = pResourceManager.spriteSheetManager().coreSpritesheet();
-		mConsoleFont = pResourceManager.fontManager().getFontUnit(BitmapFontManager.SYSTEM_FONT_CONSOLE_NAME);
+		mCoreSpritesheet = resourceManager.spriteSheetManager().coreSpritesheet();
+		mConsoleFont = resourceManager.fontManager().getFontUnit(BitmapFontManager.SYSTEM_FONT_CONSOLE_NAME);
 
-		mSpriteBatch.loadResources(pResourceManager);
+		mSpriteBatch.loadResources(resourceManager);
 	}
 
 	public void unloadResources() {
@@ -108,7 +108,7 @@ public class DebugRendererTreeRenderer extends Rectangle implements IScrollBarAr
 
 	}
 
-	public void handleInput(LintfordCore pCore) {
+	public void handleInput(LintfordCore core) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
@@ -116,27 +116,27 @@ public class DebugRendererTreeRenderer extends Rectangle implements IScrollBarAr
 			return;
 
 		if (!isInitialized()) {
-			getRendererManagerInstance(pCore);
+			getRendererManagerInstance(core);
 			return;
 		}
 
 		// *** Control the selection of ControllerWidgets ***
-		if (mScrollBar.handleInput(pCore, null)) {
+		if (mScrollBar.handleInput(core, null)) {
 			return;
 		}
 
-		if (intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().isMouseOverThisComponent(hashCode())) {
-			if (pCore.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
-				final float lMouseX = pCore.HUD().getMouseCameraSpace().x;
-				final float lMouseY = pCore.HUD().getMouseCameraSpace().y;
+		if (intersectsAA(core.HUD().getMouseCameraSpace()) && core.input().mouse().isMouseOverThisComponent(hashCode())) {
+			if (core.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
+				final float lMouseX = core.HUD().getMouseCameraSpace().x;
+				final float lMouseY = core.HUD().getMouseCameraSpace().y;
 
-				if (lMouseX > x && lMouseX < x + w - mScrollBar.w()) {
+				if (lMouseX > mX && lMouseX < mX + mW - mScrollBar.width()) {
 					final var lComponentTree = mDebugRendererTree.treeComponents();
 					final var lControllerWidgetCount = lComponentTree.size();
 					for (int i = 0; i < lControllerWidgetCount; i++) {
 						final var lControllerWidget = lComponentTree.get(i);
 
-						if (lMouseY > lControllerWidget.y() + lControllerWidget.h()) {
+						if (lMouseY > lControllerWidget.y() + lControllerWidget.height()) {
 							continue;
 						}
 
@@ -149,12 +149,11 @@ public class DebugRendererTreeRenderer extends Rectangle implements IScrollBarAr
 				}
 			}
 
-			// If the mouse is over this window, then don't let clicks fal-through.
-			pCore.input().mouse().mouseHoverOverHash(hashCode());
+			core.input().mouse().mouseHoverOverHash(hashCode());
 		}
 	}
 
-	public void update(LintfordCore pCore) {
+	public void update(LintfordCore core) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
@@ -164,74 +163,74 @@ public class DebugRendererTreeRenderer extends Rectangle implements IScrollBarAr
 			return;
 
 		if (mClickTimer >= 0) {
-			mClickTimer -= pCore.appTime().elapsedTimeMilli();
+			mClickTimer -= core.appTime().elapsedTimeMilli();
 
 		}
 
 		if (!isInitialized()) {
-			getRendererManagerInstance(pCore);
+			getRendererManagerInstance(core);
 			return;
 		}
 
 		{
 			final var lRendererList = mDebugRendererTree.treeComponents();
 			final var lNumberRenderers = lRendererList.size();
-			final var lDisplayManager = pCore.config().display();
+			final var lDisplayManager = core.config().display();
 
 			final var windowHeight = lDisplayManager.windowHeight();
 			final var consoleHeight = Debug.debugManager().console().openHeight();
 			mOpenHeight = windowHeight - consoleHeight - 60f;
 
 			// Update the bounds of the window view
-			x = lDisplayManager.windowWidth() * 0.5f - mOpenWidth - 5f;
+			mX = lDisplayManager.windowWidth() * 0.5f - mOpenWidth - 5f;
 			final float lConsoleYOffset = Debug.debugManager().console().isOpen() ? consoleHeight : 5f;
-			y = -lDisplayManager.windowHeight() * 0.5f + lConsoleYOffset + 5f + 25f;
-			w = mOpenWidth;
-			h = mOpenHeight;
+			mY = -lDisplayManager.windowHeight() * 0.5f + lConsoleYOffset + 5f + 25f;
+			mW = mOpenWidth;
+			mH = mOpenHeight;
 
 			// *** UPDATE THE COMPONENT WIDGETS ***
 
-			float lPosY = y + mScrollBar.currentYPos();
+			float lPosY = mY + mScrollBar.currentYPos();
 
 			for (int i = 0; i < lNumberRenderers; i++) {
 				final var lControllerWidget = lRendererList.get(i);
 
-				lControllerWidget.update(pCore);
-				lControllerWidget.set(x, lPosY, w, ENTRY_HEIGHT);
+				lControllerWidget.update(core);
+				lControllerWidget.set(mX, lPosY, mW, ENTRY_HEIGHT);
 
-				lPosY += lControllerWidget.h();
+				lPosY += lControllerWidget.height();
 
 			}
 
-			final int lMaxNumLines = (int) (h / ENTRY_HEIGHT) + 1;
+			final int lMaxNumLines = (int) (mH / ENTRY_HEIGHT) + 1;
 			mLowerBound = (int) -((mScrollBar.currentYPos()) / ENTRY_HEIGHT);
 			mUpperBound = mLowerBound + lMaxNumLines;
 
-			fullContentArea().setCenter(x, y, w - mScrollBar.w(), lNumberRenderers * ENTRY_HEIGHT);
+			fullContentArea().setCenter(mX, mY, mW - mScrollBar.width(), lNumberRenderers * ENTRY_HEIGHT);
 
-			mScrollBar.update(pCore);
+			mScrollBar.update(core);
 		}
 	}
 
-	public void draw(LintfordCore pCore) {
+	public void draw(LintfordCore core) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
 		if (!isInitialized()) {
-			getRendererManagerInstance(pCore);
+			getRendererManagerInstance(core);
 			return;
 		}
 
 		if (!mIsOpen)
 			return;
 
-		mSpriteBatch.begin(pCore.HUD());
-		mSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, x, y - 25f, mOpenWidth, 25f, -0.03f, ColorConstants.MenuPanelPrimaryColor);
-		mSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, x, y, mOpenWidth, mOpenHeight, -0.03f, ColorConstants.MenuPanelSecondaryColor);
+		mSpriteBatch.begin(core.HUD());
+		mSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX, mY - 25f, mOpenWidth, 25f, -0.03f, ColorConstants.MenuPanelPrimaryColor);
+		mSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX, mY, mOpenWidth, mOpenHeight, -0.03f, ColorConstants.MenuPanelSecondaryColor);
 		mSpriteBatch.end();
 
-		mConsoleFont.begin(pCore.HUD());
-		mConsoleFont.drawText("Renderers", x + 5f, y - 25f, -0.01f, ColorConstants.WHITE, 1, -1);
+		mConsoleFont.begin(core.HUD());
+		mConsoleFont.drawText("Renderers", mX + 5f, mY - 25f, -0.01f, ColorConstants.WHITE, 1, -1);
 		mConsoleFont.end();
 
 		// Getting list of ControllerItems to render
@@ -241,16 +240,16 @@ public class DebugRendererTreeRenderer extends Rectangle implements IScrollBarAr
 		final var lNumTreeComponents = lControllerList.size();
 
 		if (lNumTreeComponents == 0) {
-			mConsoleFont.drawText("No BaseRenderers on Screen", x + 5f, y + 5f, -0.02f, ColorConstants.WHITE, 1, -1);
+			mConsoleFont.drawText("No BaseRenderers on Screen", mX + 5f, mY + 5f, -0.02f, ColorConstants.WHITE, 1, -1);
 			return;
 		}
 
-		if (h < mContentRectangle.h())
-			mContentRectangle.preDraw(pCore, mSpriteBatch, mCoreSpritesheet);
+		if (mH < mContentRectangle.height())
+			mContentRectangle.preDraw(core, mSpriteBatch, mCoreSpritesheet);
 
 		mConsoleFont.setWrapType(WrapType.WordWrapTrim);
-		mConsoleFont.begin(pCore.HUD());
-		mSpriteBatch.begin(pCore.HUD());
+		mConsoleFont.begin(core.HUD());
+		mSpriteBatch.begin(core.HUD());
 
 		for (int i = mLowerBound; i < mUpperBound; i++) {
 			if (i < 0)
@@ -263,9 +262,9 @@ public class DebugRendererTreeRenderer extends Rectangle implements IScrollBarAr
 
 			float lPosX = 10f + lBaseRendererWidget.rendererLevel * 30f;
 
-			mConsoleFont.drawText(lRendererName, lBaseRendererWidget.x() + lPosX, lBaseRendererWidget.y() + lBaseRendererWidget.h() * .5f - mConsoleFont.fontHeight() * .5f, -0.02f, ColorConstants.WHITE, 1, mOpenWidth - 64);
+			mConsoleFont.drawText(lRendererName, lBaseRendererWidget.x() + lPosX, lBaseRendererWidget.y() + lBaseRendererWidget.height() * .5f - mConsoleFont.fontHeight() * .5f, -0.02f, ColorConstants.WHITE, 1, mOpenWidth - 64);
 
-			final float lActiveIconX = x + mOpenWidth - 64;
+			final float lActiveIconX = mX + mOpenWidth - 64;
 			final float lActiveIconY = lBaseRendererWidget.y();
 
 			if (lBaseRendererWidget == null || !lBaseRendererWidget.isRendererActive) {
@@ -278,11 +277,11 @@ public class DebugRendererTreeRenderer extends Rectangle implements IScrollBarAr
 		mSpriteBatch.end();
 		mConsoleFont.end();
 
-		if (h < mContentRectangle.h())
-			mContentRectangle.postDraw(pCore);
+		if (mH < mContentRectangle.height())
+			mContentRectangle.postDraw(core);
 
-		mSpriteBatch.begin(pCore.HUD());
-		mScrollBar.draw(pCore, mSpriteBatch, mCoreSpritesheet, -0.02f);
+		mSpriteBatch.begin(core.HUD());
+		mScrollBar.draw(core, mSpriteBatch, mCoreSpritesheet, -0.02f);
 		mSpriteBatch.end();
 	}
 
@@ -290,9 +289,8 @@ public class DebugRendererTreeRenderer extends Rectangle implements IScrollBarAr
 	// Methods
 	// --------------------------------------
 
-	private void getRendererManagerInstance(LintfordCore pCore) {
-		mDebugRendererTree = (DebugRendererTreeController) pCore.controllerManager().getControllerByName(DebugRendererTreeController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
-
+	private void getRendererManagerInstance(LintfordCore core) {
+		mDebugRendererTree = (DebugRendererTreeController) core.controllerManager().getControllerByName(DebugRendererTreeController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
 	}
 
 	@Override
@@ -313,6 +311,5 @@ public class DebugRendererTreeRenderer extends Rectangle implements IScrollBarAr
 	@Override
 	public void resetCoolDownTimer() {
 		mClickTimer = 200;
-
 	}
 }

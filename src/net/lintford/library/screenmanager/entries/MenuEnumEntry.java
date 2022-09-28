@@ -75,7 +75,6 @@ public class MenuEnumEntry extends MenuEntry {
 	private List<EnumEntryItem> mItems;
 	private int mSelectedIndex;
 	private boolean mEnableScaleTextToWidth;
-
 	private boolean mButtonsEnabled;
 	private Rectangle mLeftButtonRectangle;
 	private Rectangle mRightButtonRectangle;
@@ -88,16 +87,16 @@ public class MenuEnumEntry extends MenuEntry {
 		return mEnableScaleTextToWidth;
 	}
 
-	public void scaleTextToWidth(boolean pNewValue) {
-		mEnableScaleTextToWidth = pNewValue;
+	public void scaleTextToWidth(boolean newValue) {
+		mEnableScaleTextToWidth = newValue;
 	}
 
-	public void setListener(EntryInteractions pListener) {
-		mClickListener = pListener;
+	public void setListener(EntryInteractions listener) {
+		mClickListener = listener;
 	}
 
-	public void setButtonsEnabled(boolean pNewValue) {
-		mButtonsEnabled = pNewValue;
+	public void setButtonsEnabled(boolean newValue) {
+		mButtonsEnabled = newValue;
 	}
 
 	public boolean buttonsEnabled() {
@@ -113,27 +112,28 @@ public class MenuEnumEntry extends MenuEntry {
 		return lSelectedItem.name();
 	}
 
-	public void setSelectedEntry(int pIndex) {
-		if (pIndex < 0)
-			pIndex = 0;
-		if (pIndex >= mItems.size())
-			pIndex = mItems.size() - 1;
-		mSelectedIndex = pIndex;
+	public void setSelectedEntry(int index) {
+		if (index < 0)
+			index = 0;
+
+		if (index >= mItems.size())
+			index = mItems.size() - 1;
+
+		mSelectedIndex = index;
 	}
 
-	public void setSelectedEntry(String pName) {
+	public void setSelectedEntry(String name) {
 		final int lItemCount = mItems.size();
 		for (int i = 0; i < lItemCount; i++) {
-			if (mItems.get(i).equals(pName)) {
+			if (mItems.get(i).name().equals(name)) {
 				mSelectedIndex = i;
 				return;
 			}
 		}
-
 	}
 
-	public void label(String pNewLabel) {
-		mLabel = pNewLabel;
+	public void label(String newLabel) {
+		mLabel = newLabel;
 	}
 
 	public String label() {
@@ -144,18 +144,18 @@ public class MenuEnumEntry extends MenuEntry {
 		return mIsChecked;
 	}
 
-	public void isChecked(boolean pNewValue) {
-		mIsChecked = pNewValue;
+	public void isChecked(boolean newValue) {
+		mIsChecked = newValue;
 	}
 
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
-	public MenuEnumEntry(ScreenManager pScreenManager, BaseLayout pParentLayout, String pLabel) {
-		super(pScreenManager, pParentLayout, "");
+	public MenuEnumEntry(ScreenManager screenManager, BaseLayout parentLayout, String label) {
+		super(screenManager, parentLayout, "");
 
-		mLabel = pLabel;
+		mLabel = label;
 		mItems = new ArrayList<>();
 		mSelectedIndex = 0;
 
@@ -166,7 +166,6 @@ public class MenuEnumEntry extends MenuEntry {
 		mDrawBackground = false;
 
 		mEnableScaleTextToWidth = true;
-
 	}
 
 	// --------------------------------------
@@ -174,7 +173,7 @@ public class MenuEnumEntry extends MenuEntry {
 	// --------------------------------------
 
 	@Override
-	public boolean handleInput(LintfordCore pCore) {
+	public boolean handleInput(LintfordCore core) {
 		if (mHasFocus) {
 
 		} else {
@@ -182,71 +181,60 @@ public class MenuEnumEntry extends MenuEntry {
 		}
 
 		if (mButtonsEnabled) { // left and right buttons
-			if (mLeftButtonRectangle.intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().isMouseOverThisComponent(hashCode())) {
-				if (pCore.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
+			if (mLeftButtonRectangle.intersectsAA(core.HUD().getMouseCameraSpace()) && core.input().mouse().isMouseOverThisComponent(hashCode())) {
+				if (core.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
 					mSelectedIndex--;
-					if (mSelectedIndex < 0) {
+					if (mSelectedIndex < 0)
 						mSelectedIndex = mItems.size() - 1;
-					}
 
-					mParentLayout.parentScreen.setFocusOn(pCore, this, true);
+					mParentLayout.parentScreen.setFocusOn(core, this, true);
 
-					if (mClickListener != null) {
+					if (mClickListener != null)
 						mClickListener.menuEntryChanged(this);
-					}
 
 					return true;
 				}
 
-				else if (mRightButtonRectangle.intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().isMouseOverThisComponent(hashCode())) {
+				else if (mRightButtonRectangle.intersectsAA(core.HUD().getMouseCameraSpace()) && core.input().mouse().isMouseOverThisComponent(hashCode())) {
 
 					mSelectedIndex++;
-					if (mSelectedIndex >= mItems.size()) {
+					if (mSelectedIndex >= mItems.size())
 						mSelectedIndex = 0;
-					}
 
-					mParentLayout.parentScreen.setFocusOn(pCore, this, true);
+					mParentLayout.parentScreen.setFocusOn(core, this, true);
 
-					if (mClickListener != null) {
+					if (mClickListener != null)
 						mClickListener.menuEntryChanged(this);
-					}
 
 					return true;
 				}
-
 			}
-
 		}
 
-		if (intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().isMouseOverThisComponent(hashCode())) {
-			if (pCore.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
+		if (intersectsAA(core.HUD().getMouseCameraSpace()) && core.input().mouse().isMouseOverThisComponent(hashCode())) {
+			if (core.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
 				if (mEnabled) {
 
 					mSelectedIndex++;
-					if (mSelectedIndex >= mItems.size()) {
+					if (mSelectedIndex >= mItems.size())
 						mSelectedIndex = 0;
-					}
 
 					// TODO: Play a menu click sound
 
-					mParentLayout.parentScreen.setFocusOn(pCore, this, true);
+					mParentLayout.parentScreen.setFocusOn(core, this, true);
 
-					if (mClickListener != null) {
+					if (mClickListener != null)
 						mClickListener.menuEntryChanged(this);
-					}
 
 					mIsChecked = !mIsChecked;
-
 				}
-
 			} else {
 				hasFocus(true);
-
 			}
 
 			// Check if tool tips are enabled.
 			if (mToolTipEnabled) {
-				mToolTipTimer += pCore.appTime().elapsedTimeMilli();
+				mToolTipTimer += core.appTime().elapsedTimeMilli();
 			}
 
 			return true;
@@ -260,38 +248,38 @@ public class MenuEnumEntry extends MenuEntry {
 	}
 
 	@Override
-	public void update(LintfordCore pCore, MenuScreen pScreen, boolean pIsSelected) {
-		super.update(pCore, pScreen, pIsSelected);
+	public void update(LintfordCore core, MenuScreen screen, boolean isSelected) {
+		super.update(core, screen, isSelected);
 
 		// Update the button positions to line up with this entry
-		mLeftButtonRectangle.setPosition(x + w / 2 + 16, y);
-		mRightButtonRectangle.setPosition(x + w - 32, y);
+		mLeftButtonRectangle.setPosition(mX + mW / 2 + 16, mY);
+		mRightButtonRectangle.setPosition(mX + mW - 32, mY);
 	}
 
 	@Override
-	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pParentZDepth) {
-		super.draw(pCore, pScreen, pIsSelected, pParentZDepth);
+	public void draw(LintfordCore core, Screen screen, boolean isSelected, float parentZDepth) {
+		super.draw(core, screen, isSelected, parentZDepth);
 
 		final var lParentScreen = mParentLayout.parentScreen;
 		final var lTextBoldFont = lParentScreen.fontBold();
 
 		final var lUiTextScale = lParentScreen.uiTextScale();
 		final var lTextWidth = lTextBoldFont.getStringWidth(mLabel, lUiTextScale);
-		final var lParentScreenAlpha = pScreen.screenColor.a;
-		final var lScreenOffset = pScreen.screenPositionOffset();
+		final var lParentScreenAlpha = screen.screenColor.a;
+		final var lScreenOffset = screen.screenPositionOffset();
 
 		float lAdjustedScaleW = lUiTextScale;
-		if (mEnableScaleTextToWidth && w / 2 < lTextWidth && lTextWidth > 0)
-			lAdjustedScaleW = (w / 2) / lTextWidth;
+		if (mEnableScaleTextToWidth && mW / 2 < lTextWidth && lTextWidth > 0)
+			lAdjustedScaleW = (mW / 2) / lTextWidth;
 
 		final float lTextHeight = lTextBoldFont.getStringHeight(mLabel, lUiTextScale);
 		final float lSeparatorHalfWidth = lTextBoldFont.getStringWidth(mSeparator, lUiTextScale) * 0.5f;
 
 		final var lTextureBatch = lParentScreen.spriteBatch();
 
-		lTextureBatch.begin(pCore.HUD());
+		lTextureBatch.begin(core.HUD());
 		final float lArrowButtonSize = 32;
-		final float lArrowButtonPaddingY = mLeftButtonRectangle.h() - lArrowButtonSize;
+		final float lArrowButtonPaddingY = mLeftButtonRectangle.height() - lArrowButtonSize;
 		if (mButtonsEnabled) {
 			final var lColorWhiteWithAlpha = ColorConstants.getWhiteWithAlpha(lParentScreenAlpha);
 			lTextureBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_LEFT, lScreenOffset.x + mLeftButtonRectangle.x(), lScreenOffset.y + mLeftButtonRectangle.y() + lArrowButtonPaddingY, lArrowButtonSize, lArrowButtonSize, 0f,
@@ -299,20 +287,21 @@ public class MenuEnumEntry extends MenuEntry {
 			lTextureBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_RIGHT, lScreenOffset.x + mRightButtonRectangle.x(), lScreenOffset.y + mRightButtonRectangle.y() + lArrowButtonPaddingY, lArrowButtonSize, lArrowButtonSize, 0f,
 					lColorWhiteWithAlpha);
 		}
+
 		lTextureBatch.end();
 
-		lTextBoldFont.begin(pCore.HUD());
+		lTextBoldFont.begin(core.HUD());
 		final float lStringWidth = lTextBoldFont.getStringWidth(mLabel, lAdjustedScaleW);
-		lTextBoldFont.drawText(mLabel, lScreenOffset.x + (x + w / 2 - 10) - lStringWidth - lSeparatorHalfWidth, lScreenOffset.y + y + h / 2.f - lTextBoldFont.getStringHeight(mLabel, lAdjustedScaleW) * 0.5f, pParentZDepth, textColor, lAdjustedScaleW, -1);
-		lTextBoldFont.drawText(mSeparator, lScreenOffset.x + x + w / 2 - lSeparatorHalfWidth, lScreenOffset.y + y + h / 2 - lTextHeight * 0.5f, pParentZDepth, textColor, lUiTextScale, -1);
+		lTextBoldFont.drawText(mLabel, lScreenOffset.x + (mX + mW / 2 - 10) - lStringWidth - lSeparatorHalfWidth, lScreenOffset.y + mY + mH / 2.f - lTextBoldFont.getStringHeight(mLabel, lAdjustedScaleW) * 0.5f, parentZDepth, textColor, lAdjustedScaleW, -1);
+		lTextBoldFont.drawText(mSeparator, lScreenOffset.x + mX + mW / 2 - lSeparatorHalfWidth, lScreenOffset.y + mY + mH / 2 - lTextHeight * 0.5f, parentZDepth, textColor, lUiTextScale, -1);
 
-		// Render the items
 		if (mItems.size() > 0) {
 			final var lCurItem = mItems.get(mSelectedIndex).name();
 			final var EntryWidth = lTextBoldFont.getStringWidth(lCurItem, lUiTextScale);
 
-			lTextBoldFont.drawText(lCurItem, lScreenOffset.x + x + (w / 6 * 4.65f) - EntryWidth / 2, lScreenOffset.y + y + h / 2 - lTextHeight * 0.5f, pParentZDepth, textColor, lUiTextScale, -1);
+			lTextBoldFont.drawText(lCurItem, lScreenOffset.x + mX + (mW / 6 * 4.65f) - EntryWidth / 2, lScreenOffset.y + mY + mH / 2 - lTextHeight * 0.5f, parentZDepth, textColor, lUiTextScale, -1);
 		}
+
 		lTextBoldFont.end();
 	}
 
@@ -321,17 +310,15 @@ public class MenuEnumEntry extends MenuEntry {
 	// --------------------------------------
 
 	@Override
-	public void onClick(InputManager pInputState) {
-		super.onClick(pInputState);
+	public void onClick(InputManager inputManager) {
+		super.onClick(inputManager);
 
 		mHasFocus = !mHasFocus;
-		if (mHasFocus) {
+		if (mHasFocus)
 			mFocusLocked = true;
+		else
+			mFocusLocked = false;
 
-		} else {
-			mFocusLocked = false; // no lock if not focused
-
-		}
 	}
 
 	public void addItem(String itemName) {
@@ -345,14 +332,14 @@ public class MenuEnumEntry extends MenuEntry {
 		mItems.add(new EnumEntryItem(itemName, itemOrder));
 	}
 
-	public void addItems(String... pItems) {
-		if (pItems == null)
+	public void addItems(String... items) {
+		if (items == null)
 			return;
 
 		int pOrder = 0;
-		int pSize = pItems.length;
+		int pSize = items.length;
 		for (int i = 0; i < pSize; i++) {
-			mItems.add(new EnumEntryItem(pItems[i], pOrder++));
+			mItems.add(new EnumEntryItem(items[i], pOrder++));
 		}
 	}
 

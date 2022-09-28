@@ -35,10 +35,10 @@ public class SpriteGraphController extends BaseController {
 	// Constructor
 	// --------------------------------------
 
-	public SpriteGraphController(ControllerManager pControllerManager, SpriteGraphManager pSpriteGraphManager, int pEntityGroupID) {
-		super(pControllerManager, CONTROLLER_NAME, pEntityGroupID);
+	public SpriteGraphController(ControllerManager controllerManager, SpriteGraphManager spriteGraphManager, int entityGroupUid) {
+		super(controllerManager, CONTROLLER_NAME, entityGroupUid);
 
-		mSpriteGraphManager = pSpriteGraphManager;
+		mSpriteGraphManager = spriteGraphManager;
 	}
 
 	// --------------------------------------
@@ -46,9 +46,10 @@ public class SpriteGraphController extends BaseController {
 	// --------------------------------------
 
 	@Override
-	public void initialize(LintfordCore pCore) {
-		super.initialize(pCore);
-		mResourceController = (ResourceController) pCore.controllerManager().getControllerByNameRequired(ResourceController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
+	public void initialize(LintfordCore core) {
+		super.initialize(core);
+
+		mResourceController = (ResourceController) core.controllerManager().getControllerByNameRequired(ResourceController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
 	}
 
 	@Override
@@ -56,7 +57,7 @@ public class SpriteGraphController extends BaseController {
 
 	}
 
-	public void update(LintfordCore pCore) {
+	public void update(LintfordCore core) {
 		final var lSpriteGraphList = mSpriteGraphManager.instances();
 		final var lSpriteGraphCount = lSpriteGraphList.size();
 
@@ -64,21 +65,19 @@ public class SpriteGraphController extends BaseController {
 			final var lSpriteGraph = lSpriteGraphList.get(i);
 			if (lSpriteGraph == null)
 				continue;
-
 		}
-
 	}
 
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
 
-	public SpriteGraphInstance getSpriteGraphInstance(String lSpriteGraphDefinitionName, int lEntityGroupUid) {
+	public SpriteGraphInstance getSpriteGraphInstance(String spriteGraphDefinitionName, int entityGroupUid) {
 		final var lResourceManager = mResourceController.resourceManager();
-		final var lSpriteGraphDefinition = lResourceManager.spriteGraphRepository().getSpriteGraphDefinition(lSpriteGraphDefinitionName, mEntityGroupID);
+		final var lSpriteGraphDefinition = lResourceManager.spriteGraphRepository().getSpriteGraphDefinition(spriteGraphDefinitionName, mEntityGroupUid);
 
 		if (lSpriteGraphDefinition == null) {
-			Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Could not resolve mob SpriteGraphDefinition from name '%s'", lSpriteGraphDefinitionName));
+			Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Could not resolve mob SpriteGraphDefinition from name '%s'", spriteGraphDefinitionName));
 			return null;
 		}
 

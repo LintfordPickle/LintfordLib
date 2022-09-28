@@ -52,31 +52,28 @@ public class FileUtils {
 		}
 
 		return StringBuilder.toString();
-
 	}
 
-	public static String loadString(String pPathName) {
-		if (pPathName == null || pPathName.length() == 0) {
+	public static String loadString(String resourcepath) {
+		if (resourcepath == null || resourcepath.length() == 0) {
 			return null;
-
 		}
 
-		if (pPathName.charAt(0) == '/') {
-			return loadStringFromResource(pPathName);
+		if (resourcepath.charAt(0) == '/') {
+			return loadStringFromResource(resourcepath);
 		} else {
-			return loadStringFromFile(pPathName);
+			return loadStringFromFile(resourcepath);
 		}
-
 	}
 
-	/** Loads a binary file as a string, from a file. */
-	public static String loadStringFromFile(String pPathName) {
+	/** Loads a binary file from disk and return its contents as a string. */
+	public static String loadStringFromFile(String filepath) {
 		clearStringBuilder();
 
 		try {
 			BufferedReader lReader = null;
 			try {
-				lReader = new BufferedReader(new FileReader(pPathName));
+				lReader = new BufferedReader(new FileReader(filepath));
 				var lBuffer = "";
 
 				while ((lBuffer = lReader.readLine()) != null) {
@@ -86,29 +83,25 @@ public class FileUtils {
 			} finally {
 				if (lReader != null) {
 					lReader.close();
-
 				}
 			}
 
 		} catch (IOException e) {
-			Debug.debugManager().logger().e(FileUtils.class.getSimpleName(), String.format("Error loading file %s", pPathName.toString()));
+			Debug.debugManager().logger().e(FileUtils.class.getSimpleName(), "Error loading text resource " + String.format("Error loading file %s", filepath.toString()));
 			Debug.debugManager().logger().e(FileUtils.class.getSimpleName(), e.getMessage());
-			e.printStackTrace();
-
 		}
 
 		return StringBuilder.toString();
 	}
 
-	/** Loads a binary file as a string, from a resource in the jar file. */
-	public static String loadStringFromResource(String pPathName) {
+	/** Loads a binary file from within the jar and returns its contents as a string. */
+	public static String loadStringFromResource(String resourceLocation) {
 		clearStringBuilder();
 
 		try {
-			InputStream lInputStream = FileUtils.class.getResourceAsStream(pPathName);
+			InputStream lInputStream = FileUtils.class.getResourceAsStream(resourceLocation);
 			BufferedReader lReader = null;
 			try {
-
 				lReader = new BufferedReader(new InputStreamReader(lInputStream));
 				var lBuffer = "";
 
@@ -119,32 +112,28 @@ public class FileUtils {
 			} finally {
 				if (lReader != null) {
 					lReader.close();
-
 				}
-
 			}
 		} catch (IOException e) {
-			System.err.println("Error loading text resource " + pPathName.toString());
-			System.err.println(e.getMessage());
-			e.printStackTrace();
-
+			Debug.debugManager().logger().e(FileUtils.class.getSimpleName(), "Error loading text resource " + resourceLocation.toString());
+			Debug.debugManager().logger().e(FileUtils.class.getSimpleName(), e.getMessage());
 		}
 
 		return StringBuilder.toString();
 	}
 
 	/** Copies the source folder, and all its contents, to the destination folder. The destination folder is created if it doesn't already exist. */
-	public static void copyFolder(File source, File destination) {
-		if (source.isDirectory()) {
-			if (!destination.exists()) {
-				destination.mkdirs();
+	public static void copyFolder(File sourceFolder, File destinationFolder) {
+		if (sourceFolder.isDirectory()) {
+			if (!destinationFolder.exists()) {
+				destinationFolder.mkdirs();
 			}
 
-			final String files[] = source.list();
+			final String files[] = sourceFolder.list();
 
 			for (String file : files) {
-				final var srcFile = new File(source, file);
-				final var destFile = new File(destination, file);
+				final var srcFile = new File(sourceFolder, file);
+				final var destFile = new File(destinationFolder, file);
 
 				copyFolder(srcFile, destFile);
 			}
@@ -154,8 +143,8 @@ public class FileUtils {
 			OutputStream out = null;
 
 			try {
-				in = new FileInputStream(source);
-				out = new FileOutputStream(destination);
+				in = new FileInputStream(sourceFolder);
+				out = new FileOutputStream(destinationFolder);
 
 				byte[] buffer = new byte[1024];
 
@@ -181,50 +170,46 @@ public class FileUtils {
 		}
 	}
 
-	public static void deleteFolder(File pSource) throws IOException {
-		// Make sure that the folders and files being deleting belong to the
-		if (!isChild(pSource.toPath(), AppStorage.getGameDataDirectory())) {
+	public static void deleteFolder(File fileToDelete) throws IOException {
+		// Make sure that the folders and files being deleting belongs within the app storage folder
+		if (!isChild(fileToDelete.toPath(), AppStorage.getGameDataDirectory())) {
 			throw new RuntimeException("Cannot delete from none GameStorage directory!");
-
 		}
 
-		if (pSource.isDirectory()) {
-			for (File c : pSource.listFiles())
-				deleteFolder(c);
-
+		if (fileToDelete.isDirectory()) {
+			for (File lFile : fileToDelete.listFiles())
+				deleteFolder(lFile);
 		}
 
-		if (!pSource.delete())
-			throw new FileNotFoundException("Failed to delete file: " + pSource);
-
+		if (!fileToDelete.delete())
+			throw new FileNotFoundException("Failed to delete file: " + fileToDelete);
 	}
 
 	public static boolean isChild(Path child, String parentText) {
 		Path parent = Paths.get(parentText).toAbsolutePath();
 
 		return child.startsWith(parent);
-
 	}
 
-	public static String getFileExtension(String pFilepath) {
-		final var lFile = new File(pFilepath);
+	public static String getFileExtension(String filepath) {
+		final var lFile = new File(filepath);
 
-		String name = lFile.getName();
-		int lastIndexOf = name.lastIndexOf(".");
+		final var lFilename = lFile.getName();
+		int lastIndexOf = lFilename.lastIndexOf(".");
 		if (lastIndexOf == -1) {
-			return ""; // empty extension
+			return "";
 		}
-		return name.substring(lastIndexOf);
+		return lFilename.substring(lastIndexOf);
 	}
 
-	public static void deleteFile(File pFile) throws IOException {
-		if (pFile.isDirectory()) {
-			for (final var lFileInDirectory : pFile.listFiles()) {
+	public static void deleteFile(File file) throws IOException {
+		if (file.isDirectory()) {
+			for (final var lFileInDirectory : file.listFiles()) {
 				deleteFile(lFileInDirectory);
 			}
 		}
-		if (!pFile.delete()) {
-			throw new FileNotFoundException("Failed to delete file: " + pFile);
+		if (!file.delete()) {
+			throw new FileNotFoundException("Failed to delete file: " + file);
 		}
 	}
 }

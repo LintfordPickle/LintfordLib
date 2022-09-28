@@ -6,14 +6,6 @@ public class MathHelper {
 	// Constants
 	// --------------------------------------
 
-	public static final float E = 2.718282f;
-	public static final float Log10E = 0.4342945f;
-	public static final float Log2E = 1.442695f;
-	public static final float Pi = 3.141593f;
-	public static final float PiOver2 = 1.570796f;
-	public static final float PiOver4 = 0.7853982f;
-	public static final float TwoPi = 6.283185f;
-
 	public static final float RadiansPos90 = (float) Math.toRadians(90);
 	public static final float RadiansMinus90 = (float) Math.toRadians(-90);
 
@@ -217,62 +209,60 @@ public class MathHelper {
 	}
 
 	/** A fade function, taken from Ken Perlin's noise implementation. It eases values towards integrals */
-	public static double fade(double t) {
-		return t * t * t * (t * (t * 6 - 15) + 10);
+	public static double fade(double value) {
+		return value * value * value * (value * (value * 6 - 15) + 10);
 	}
 
 	// simple linear tweening - no easing, no acceleration
-	public static double linearInOut(float pTime, float pStart, float pChangeInValue, float pDuration) {
-		return pChangeInValue * pTime / pDuration + pStart;
+	public static double linearInOut(float time, float start, float changeInValue, float duration) {
+		return changeInValue * time / duration + start;
 	};
 
 	// sinusoidal easing in/out - accelerating until halfway, then decelerating
-	public static double sinusoidalInOut(float pTime, float pStart, float pChangeInValue, float pDuration) {
-		return -pChangeInValue / 2 * (Math.cos(Math.PI * pTime / pDuration) - 1) + pStart;
+	public static double sinusoidalInOut(float time, float start, float changeInValue, float duration) {
+		return -changeInValue / 2 * (Math.cos(Math.PI * time / duration) - 1) + start;
 	};
 
 	public static float round(float value, int precision) {
-		int scale = (int) Math.pow(10, precision);
-		return (float) Math.round(value * scale) / scale;
+		final var lScale = (int) Math.pow(10, precision);
+		return (float) Math.round(value * lScale) / lScale;
 	}
 
 	public static float bellCurve(float normalizedValue) {
 		float lBellCurveModifyAmt = .125f;
-		float v = normalizedValue;
-		v *= 2f + (lBellCurveModifyAmt * 2);
-		v -= 1f + lBellCurveModifyAmt;
-		v = MathHelper.clamp(1.0f - Math.abs(v), 0, 1);
+		float lValue = normalizedValue;
+		lValue *= 2f + (lBellCurveModifyAmt * 2);
+		lValue -= 1f + lBellCurveModifyAmt;
+		lValue = MathHelper.clamp(1.0f - Math.abs(lValue), 0, 1);
 
-		return v;
+		return lValue;
 	}
 
 	/**
 	 * Inverts the given angle (in radians) over the X axis
 	 */
-	public static float invertAngleXAxis(float pAngleInRadians) {
-		float angle = normalizeAngle(pAngleInRadians);
-		if (angle == 0)
+	public static float invertAngleXAxis(float angleInRadians) {
+		float lAngle = normalizeAngle(angleInRadians);
+		if (lAngle == 0)
 			return 0.f;
-		angle = TwoPi - angle;
+		lAngle = MathConstants.TwoPi - lAngle;
 
-		return angle;
-
+		return lAngle;
 	}
 
 	/**
 	 * Inverts the given angle (in radians) over the Y axis
 	 */
-	public static float invertAngleYAxis(float pAngleInRadians) {
-		float angle = normalizeAngle(pAngleInRadians);
+	public static float invertAngleYAxis(float angleInRadians) {
+		float lAngle = normalizeAngle(angleInRadians);
 
-		if (angle < Pi) {
-			angle = Pi - angle;
+		if (lAngle < MathConstants.Pi) {
+			lAngle = MathConstants.Pi - lAngle;
 		} else {
-			angle = TwoPi - angle + Pi;
+			lAngle = MathConstants.TwoPi - lAngle + MathConstants.Pi;
 		}
 
-		return angle;
-
+		return lAngle;
 	}
 
 	/**
@@ -280,23 +270,20 @@ public class MathHelper {
 	 */
 	public static float normalizeAngle(float angle) {
 		if (angle < 0) {
-			int backRevolutions = (int) (-angle / TwoPi);
-			return angle + TwoPi * (backRevolutions + 1);
+			final var lBackRevolutions = (int) (-angle / MathConstants.TwoPi);
+			return angle + MathConstants.TwoPi * (lBackRevolutions + 1);
 		} else {
-			return angle % TwoPi;
+			return angle % MathConstants.TwoPi;
 		}
-
 	}
 
-	public static float turnToFace(float pPosX, float pPosY, float pFaceThisX, float pFaceThisY, float pCurrentAngle, float pTurnSpeed) {
-		final float x = pFaceThisX - pPosX;
-		final float y = pFaceThisY - pPosY;
+	public static float turnToFace(float positionX, float positionY, float faceThisX, float faceThisY, float currentAngle, float turnSpeed) {
+		final var lWorldX = faceThisX - positionX;
+		final var lWorldY = faceThisY - positionY;
 
-		final float desiredAngle = (float) Math.atan2(y, x);
-		final float difference = clamp(wrapAngle(desiredAngle - pCurrentAngle), -pTurnSpeed, pTurnSpeed);
+		final var lDesiredAngle = (float) Math.atan2(lWorldY, lWorldX);
+		final var lDifference = clamp(wrapAngle(lDesiredAngle - currentAngle), -turnSpeed, turnSpeed);
 
-		return wrapAngle(pCurrentAngle + difference);
-
+		return wrapAngle(currentAngle + lDifference);
 	}
-
 }

@@ -17,15 +17,14 @@ public abstract class ParticleModifierBase implements Serializable {
 	// Variables
 	// --------------------------------------
 
-	protected String className;
+	protected String mModifierName;
 
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
-	public ParticleModifierBase(final String pName) {
-		className = pName;
-
+	public ParticleModifierBase(final String modifierName) {
+		mModifierName = modifierName;
 	}
 
 	// --------------------------------------
@@ -33,12 +32,12 @@ public abstract class ParticleModifierBase implements Serializable {
 	// --------------------------------------
 
 	/** A method to initialize the state of a {@link Particle} on creation */
-	public abstract void initialize(Particle pParticle);
+	public abstract void initialize(Particle particle);
 
 	/** A method to update the state of the modifier itself */
-	public abstract void update(LintfordCore pCore);
+	public abstract void update(LintfordCore core);
 
 	/** A method to update the state of a {@link Particle} instance. */
-	public abstract void updateParticle(LintfordCore pCore, Particle pParticle);
+	public abstract void updateParticle(LintfordCore core, Particle particle);
 
 }

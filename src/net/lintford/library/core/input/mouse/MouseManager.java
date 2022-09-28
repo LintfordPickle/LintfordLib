@@ -19,7 +19,12 @@ public class MouseManager {
 
 	public class MouseButtonCallback extends GLFWMouseButtonCallback {
 
+		// --------------------------------------
+		// Constructor
+		// --------------------------------------
+
 		private MouseButtonCallback() {
+
 		}
 
 		// ---------------------------------------------
@@ -27,27 +32,27 @@ public class MouseManager {
 		// ---------------------------------------------
 
 		@Override
-		public void invoke(long pWindow, int pButton, int pAction, int pMods) {
-			if (pButton < 0 || pButton >= mMouseButtonStates.length)
+		public void invoke(long windowUid, int button, int action, int mods) {
+			if (button < 0 || button >= mMouseButtonStates.length)
 				return; // OOB
 
-			if (pAction == GLFW.GLFW_PRESS) {
-				if (pButton == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
+			if (action == GLFW.GLFW_PRESS) {
+				if (button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
 					mLogicalLeftClickTimer++;
-
-				} else if (pButton == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
+				} else if (button == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
 					mLogicalRightClickTimer++;
-
 				}
-
 			}
 
-			mMouseButtonStates[pButton] = !(pAction == GLFW.GLFW_RELEASE);
+			mMouseButtonStates[button] = !(action == GLFW.GLFW_RELEASE);
 		}
-
 	}
 
 	public class MousePositionCallback extends GLFWCursorPosCallback {
+
+		// --------------------------------------
+		// Constructor
+		// --------------------------------------
 
 		private MousePositionCallback() {
 
@@ -58,25 +63,30 @@ public class MouseManager {
 		// ---------------------------------------------
 
 		@Override
-		public void invoke(long pWindow, double pXPos, double pYPos) {
-			setMousePosition(pXPos, pYPos);
-
+		public void invoke(long windowUid, double positionX, double positionY) {
+			setMousePosition(positionX, positionY);
 		}
-
 	}
 
 	public class MouseScrollCallback extends GLFWScrollCallback {
 
+		// --------------------------------------
+		// Constructor
+		// --------------------------------------
+
 		private MouseScrollCallback() {
+
 		}
+
+		// --------------------------------------
+		// Methods
+		// --------------------------------------
 
 		@Override
-		public void invoke(long pWindow, double pXOffset, double pYOffset) {
-			mMouseWheelXOffset = (float) pXOffset;
-			mMouseWheelYOffset = (float) pYOffset;
-
+		public void invoke(long windowUid, double offsetX, double offsetY) {
+			mMouseWheelXOffset = (float) offsetX;
+			mMouseWheelYOffset = (float) offsetY;
 		}
-
 	}
 
 	// --------------------------------------
@@ -105,7 +115,6 @@ public class MouseManager {
 	private int mMouseHoverOwnerHashCode; // stores the top-most window registered as being hovered-over
 
 	/** This is filled by a LWJGL callback with the mouse position */
-	// FIXME: This doesn't belong here - it is display-centeric (maybe the controller)
 	private Vector2f mMouseWindowCoords;
 
 	private int mLogicalLeftClickTimer;
@@ -135,112 +144,103 @@ public class MouseManager {
 		return mMouseButtonStates[GLFW.GLFW_MOUSE_BUTTON_RIGHT];
 	}
 
-	public boolean isMouseLeftButtonDownTimed(IProcessMouseInput pObject) {
-		if (isMouseLeftButtonDown() && pObject.isCoolDownElapsed()) {
-			pObject.resetCoolDownTimer();
+	public boolean isMouseLeftButtonDownTimed(IProcessMouseInput mouseProcessor) {
+		if (isMouseLeftButtonDown() && mouseProcessor.isCoolDownElapsed()) {
+			mouseProcessor.resetCoolDownTimer();
 			return true;
 		}
 
 		return false;
 	}
 
-	public boolean isMouseRightButtonDownTimed(IProcessMouseInput pObject) {
-		if (isMouseRightButtonDown() && pObject.isCoolDownElapsed()) {
-			pObject.resetCoolDownTimer();
+	public boolean isMouseRightButtonDownTimed(IProcessMouseInput mouseProcessor) {
+		if (isMouseRightButtonDown() && mouseProcessor.isCoolDownElapsed()) {
+			mouseProcessor.resetCoolDownTimer();
 			return true;
 		}
 
 		return false;
 	}
 
-	public boolean isMouseLeftClick(int pHashCode) {
-		if (isMouseLeftClickOwnerAssignedToUsOrNotAssigned(pHashCode)) {
+	public boolean isMouseLeftClick(int hashCode) {
+		if (isMouseLeftClickOwnerAssignedToUsOrNotAssigned(hashCode)) {
 			return mMouseButtonStates[GLFW.GLFW_MOUSE_BUTTON_LEFT];
-
 		}
 
 		return false;
-
 	}
 
-	public boolean isMouseRightClick(int pHashCode) {
-		if (isMouseRightClickOwnerAssignedToUsOrNotAssigned(pHashCode)) {
+	public boolean isMouseRightClick(int hashCode) {
+		if (isMouseRightClickOwnerAssignedToUsOrNotAssigned(hashCode)) {
 			return mMouseButtonStates[GLFW.GLFW_MOUSE_BUTTON_RIGHT];
-
 		}
 
 		return false;
-
 	}
 
-	public boolean tryAcquireMouseLeftClick(int pHashCode) {
-		if (isMouseLeftClickOwnerAssignedToUsOrNotAssigned(pHashCode)) {
+	public boolean tryAcquireMouseLeftClick(int hashCode) {
+		if (isMouseLeftClickOwnerAssignedToUsOrNotAssigned(hashCode)) {
 			if (mMouseButtonStates[GLFW.GLFW_MOUSE_BUTTON_LEFT]) {
 				mLeftMouseClickHandled = true;
-				assignLeftClickOwnerToHashCode(pHashCode);
+				assignLeftClickOwnerToHashCode(hashCode);
 				return true;
 
 			}
-
 		}
 
 		return false;
 
 	}
 
-	public boolean tryAcquireMouseRightClick(int pHashCode) {
-		if (isMouseRightClickOwnerAssignedToUsOrNotAssigned(pHashCode)) {
+	public boolean tryAcquireMouseRightClick(int hashCode) {
+		if (isMouseRightClickOwnerAssignedToUsOrNotAssigned(hashCode)) {
 			if (mMouseButtonStates[GLFW.GLFW_MOUSE_BUTTON_RIGHT]) {
 				mRightMouseClickHandled = true;
-				assignRightClickOwnerToHashCode(pHashCode);
+				assignRightClickOwnerToHashCode(hashCode);
 				return true;
 
 			}
-
 		}
 
 		return false;
 
 	}
 
-	public boolean tryAcquireMouseLeftClickTimed(int pHashCode, IProcessMouseInput pObject) {
-		if (isMouseLeftClickOwnerAssignedToUsOrNotAssigned(pHashCode)) {
-			if (!mLeftMouseClickHandled && isMouseLeftButtonDown() && pObject.isCoolDownElapsed()) {
-
+	public boolean tryAcquireMouseLeftClickTimed(int hashCode, IProcessMouseInput mouseProcessor) {
+		if (isMouseLeftClickOwnerAssignedToUsOrNotAssigned(hashCode)) {
+			if (!mLeftMouseClickHandled && isMouseLeftButtonDown() && mouseProcessor.isCoolDownElapsed()) {
 				mLeftMouseClickHandled = true;
-				assignLeftClickOwnerToHashCode(pHashCode);
-				pObject.resetCoolDownTimer();
+				assignLeftClickOwnerToHashCode(hashCode);
+				mouseProcessor.resetCoolDownTimer();
 
 				return true;
 			}
-
 		}
 
 		return false;
 	}
 
-	public boolean tryAcquireMouseRightClickTimed(int pHashCode, IProcessMouseInput pObject) {
-		if (isMouseRightClickOwnerAssignedToUsOrNotAssigned(pHashCode)) {
-			if (!mRightMouseClickHandled && isMouseRightButtonDown() && pObject.isCoolDownElapsed()) {
+	public boolean tryAcquireMouseRightClickTimed(int hashCode, IProcessMouseInput mouseProcessor) {
+		if (isMouseRightClickOwnerAssignedToUsOrNotAssigned(hashCode)) {
+			if (!mRightMouseClickHandled && isMouseRightButtonDown() && mouseProcessor.isCoolDownElapsed()) {
 
 				mRightMouseClickHandled = true;
-				assignRightClickOwnerToHashCode(pHashCode);
-				pObject.resetCoolDownTimer();
+				assignRightClickOwnerToHashCode(hashCode);
+				mouseProcessor.resetCoolDownTimer();
 
 				return true;
 			}
-
 		}
 
 		return false;
 	}
 
-	public boolean tryAcquireMouseMiddle(int pHashCode) {
+	public boolean tryAcquireMouseMiddle(int hashCode) {
 		final var lOwnerNotAssigned = mMouseMiddleOwnerHashCode == MOUSE_NO_OWNER;
-		final var lOwnerIsUs = mMouseMiddleOwnerHashCode == pHashCode;
+		final var lOwnerIsUs = mMouseMiddleOwnerHashCode == hashCode;
 
 		if (lOwnerNotAssigned || lOwnerIsUs) {
-			mMouseMiddleOwnerHashCode = pHashCode;
+			mMouseMiddleOwnerHashCode = hashCode;
 			return true;
 		}
 
@@ -249,29 +249,29 @@ public class MouseManager {
 
 	// OWNER
 
-	private void assignLeftClickOwnerToHashCode(int pHashCode) {
-		mMouseLeftClickOwnerHashCode = pHashCode;
+	private void assignLeftClickOwnerToHashCode(int hashCode) {
+		mMouseLeftClickOwnerHashCode = hashCode;
 	}
 
-	private void assignRightClickOwnerToHashCode(int pHashCode) {
-		mMouseLeftClickOwnerHashCode = pHashCode;
-		mouseHoverOverHash(pHashCode);
+	private void assignRightClickOwnerToHashCode(int hashCode) {
+		mMouseLeftClickOwnerHashCode = hashCode;
+		mouseHoverOverHash(hashCode);
 	}
 
-	public boolean isMouseLeftClickOwnerAssignedToUsOrNotAssigned(int pHashCode) {
-		return isLeftClickOwnerNotAssigned() || isMouseLeftClickOwnerAssigned(pHashCode);
+	public boolean isMouseLeftClickOwnerAssignedToUsOrNotAssigned(int hashCode) {
+		return isLeftClickOwnerNotAssigned() || isMouseLeftClickOwnerAssigned(hashCode);
 	}
 
-	public boolean isMouseRightClickOwnerAssignedToUsOrNotAssigned(int pHashCode) {
-		return isRightClickOwnerNotAssigned() || isMouseRightClickOwnerAssigned(pHashCode);
+	public boolean isMouseRightClickOwnerAssignedToUsOrNotAssigned(int hashCode) {
+		return isRightClickOwnerNotAssigned() || isMouseRightClickOwnerAssigned(hashCode);
 	}
 
-	public boolean isMouseLeftClickOwnerAssigned(int pHashCode) {
-		return mMouseLeftClickOwnerHashCode == pHashCode;
+	public boolean isMouseLeftClickOwnerAssigned(int hashCode) {
+		return mMouseLeftClickOwnerHashCode == hashCode;
 	}
 
-	public boolean isMouseRightClickOwnerAssigned(int pHashCode) {
-		return mMouseRightClickOwnerHashCode == pHashCode;
+	public boolean isMouseRightClickOwnerAssigned(int hashCode) {
+		return mMouseRightClickOwnerHashCode == hashCode;
 	}
 
 	public boolean isLeftClickOwnerNotAssigned() {
@@ -286,27 +286,24 @@ public class MouseManager {
 		return mMouseMiddleOwnerHashCode == MOUSE_NO_OWNER;
 	}
 
-	public void tryMouseLeftClickReleaseLockOwnership(int pHash) {
-		if (mMouseLeftClickOwnerHashCode == pHash) {
+	public void tryMouseLeftClickReleaseLockOwnership(int hashCode) {
+		if (mMouseLeftClickOwnerHashCode == hashCode) {
 			mMouseLeftClickOwnerHashCode = -1;
-
 		}
 
 	}
 
-	public void tryMouseRightClickReleaseLockOwnership(int pHash) {
-		if (mMouseRightClickOwnerHashCode == pHash) {
+	public void tryMouseRightClickReleaseLockOwnership(int hashCode) {
+		if (mMouseRightClickOwnerHashCode == hashCode) {
 			mMouseRightClickOwnerHashCode = -1;
-
 		}
-
 	}
 
 	/// HOVER
 
-	public boolean tryAcquireMouseOverThisComponent(int pHashCode) {
-		if ((mMouseHoverOwnerHashCode == pHashCode) || mMouseHoverOwnerHashCode == MOUSE_NO_OWNER) {
-			mMouseHoverOwnerHashCode = pHashCode;
+	public boolean tryAcquireMouseOverThisComponent(int hashCode) {
+		if ((mMouseHoverOwnerHashCode == hashCode) || mMouseHoverOwnerHashCode == MOUSE_NO_OWNER) {
+			mMouseHoverOwnerHashCode = hashCode;
 			return true;
 		}
 
@@ -314,8 +311,8 @@ public class MouseManager {
 
 	}
 
-	public boolean isMouseOverThisComponent(int pHashCode) {
-		return (mMouseHoverOwnerHashCode == pHashCode) || !isMouseOverAComponent();
+	public boolean isMouseOverThisComponent(int hashCode) {
+		return (mMouseHoverOwnerHashCode == hashCode) || !isMouseOverAComponent();
 	}
 
 	public boolean isMouseOverAComponent() {
@@ -326,8 +323,8 @@ public class MouseManager {
 		return mMouseHoverOwnerHashCode;
 	}
 
-	public void mouseHoverOverHash(int pHashOfOwner) {
-		mMouseHoverOwnerHashCode = pHashOfOwner;
+	public void mouseHoverOverHash(int hashOfOwner) {
+		mMouseHoverOwnerHashCode = hashOfOwner;
 	}
 
 	///
@@ -344,9 +341,9 @@ public class MouseManager {
 		return mMouseWheelYOffset;
 	}
 
-	void setMousePosition(double pXPos, double pYPos) {
-		mMouseWindowCoords.x = (float) pXPos;
-		mMouseWindowCoords.y = (float) pYPos;
+	void setMousePosition(double positionX, double positionY) {
+		mMouseWindowCoords.x = (float) positionX;
+		mMouseWindowCoords.y = (float) positionY;
 	}
 
 	// --------------------------------------
@@ -359,17 +356,15 @@ public class MouseManager {
 		mMousePositionCallback = new MousePositionCallback();
 		mMouseScrollCallback = new MouseScrollCallback();
 		mMouseWindowCoords = new Vector2f();
-
 	}
 
 	// --------------------------------------
 	// Core-Methods
 	// --------------------------------------
 
-	public void update(LintfordCore pCore) {
+	public void update(LintfordCore core) {
 		if (!isMouseLeftButtonDown()) {
 			mLeftMouseClickHandled = false;
-
 		}
 
 		if (!isMouseRightButtonDown()) {
@@ -378,7 +373,6 @@ public class MouseManager {
 
 		if (!mLeftMouseClickHandled) {
 			mMouseLeftClickOwnerHashCode = MOUSE_NO_OWNER;
-
 		}
 
 		if (!mRightMouseClickHandled) {
@@ -386,14 +380,12 @@ public class MouseManager {
 		}
 
 		mMouseMiddleOwnerHashCode = MOUSE_NO_OWNER;
-
 	}
 
 	public void endUpdate() {
 		mMouseWheelXOffset = 0;
 		mMouseWheelYOffset = 0;
 		mMouseHoverOwnerHashCode = MOUSE_NO_OWNER;
-
 	}
 
 	public void resetFlags() {
@@ -402,5 +394,4 @@ public class MouseManager {
 
 		Arrays.fill(mMouseButtonStates, false);
 	}
-
 }

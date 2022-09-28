@@ -35,10 +35,10 @@ public class RGBTexture {
 	// Methods
 	// --------------------------------------
 
-	public void setData(int pWidth, int pHeight, int[] pColorData) {
-		mWidth = pWidth;
-		mHeight = pHeight;
-		mColorData = pColorData;
+	public void setData(int width, int height, int[] colorData) {
+		mWidth = width;
+		mHeight = height;
+		mColorData = colorData;
 	}
 
 	public void reset() {
@@ -46,13 +46,10 @@ public class RGBTexture {
 		mHeight = 0;
 		mColorData = null;
 		mIsLoaded = false;
-
 	}
 
 	/** pSaveLocation is the path NOT including the filename */
-	public void saveToDisk(String pSaveLocation, String pFilename) {
-		Texture.saveTextureToFile(mWidth, mHeight, mColorData, pSaveLocation + System.getProperty("file.separator") + pFilename);
-
+	public void saveToDisk(String saveLocation, String filename) {
+		Texture.saveTextureToFile(mWidth, mHeight, mColorData, saveLocation + System.getProperty("file.separator") + filename);
 	}
-
 }

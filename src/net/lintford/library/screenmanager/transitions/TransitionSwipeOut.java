@@ -26,9 +26,9 @@ public class TransitionSwipeOut extends BaseTransition {
 	// Constructor
 	// --------------------------------------
 
-	public TransitionSwipeOut(TimeSpan pTransitionTime, SwipeOutDirection pSwipeOutDirection) {
-		super(pTransitionTime);
-		mSwipeDirection = pSwipeOutDirection == SwipeOutDirection.Left ? 1.f : -1.f;
+	public TransitionSwipeOut(TimeSpan transitionTime, SwipeOutDirection swipeOutDirection) {
+		super(transitionTime);
+		mSwipeDirection = swipeOutDirection == SwipeOutDirection.Left ? 1.f : -1.f;
 	}
 
 	// --------------------------------------
@@ -36,10 +36,10 @@ public class TransitionSwipeOut extends BaseTransition {
 	// --------------------------------------
 
 	@Override
-	public void updateTransition(Screen pScreen, CoreTime pGameTime) {
-		super.updateTransition(pScreen, pGameTime);
+	public void updateTransition(Screen screen, CoreTime gameTime) {
+		super.updateTransition(screen, gameTime);
 
-		final var lScreenOffset = pScreen.screenPositionOffset();
+		final var lScreenOffset = screen.screenPositionOffset();
 		final float lScreenOffsetY = lScreenOffset.y;
 		lScreenOffset.set(0.f - mProgressNormalized * mSwipeDirection * SWIPE_SPEED, lScreenOffsetY);
 	}

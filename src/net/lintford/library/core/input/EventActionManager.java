@@ -23,38 +23,36 @@ public class EventActionManager extends IniFile {
 	// Properties
 	// --------------------------------------
 
-	public EventAction getEventActionByUid(int pEventActionUid) {
-		return mEventActionMap.get(pEventActionUid);
+	public EventAction getEventActionByUid(int eventActionUid) {
+		return mEventActionMap.get(eventActionUid);
 	}
 
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
-	public EventActionManager(InputManager pInputManager, String pConfigFilename) {
-		super(pConfigFilename);
+	public EventActionManager(InputManager inputManager, String configFilename) {
+		super(configFilename);
 
-		mInputManager = pInputManager;
-
+		mInputManager = inputManager;
 	}
 
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
 
-	public void registerNewEventAction(int pEventActionUid, int pDefaultKeyCode) {
-		if (mEventActionMap.get(pEventActionUid) != null)
+	public void registerNewEventAction(int eventActionUid, int defaultKeyCode) {
+		if (mEventActionMap.get(eventActionUid) != null)
 			return; // already taken
 
-		final var lNewEventAction = new EventAction(pEventActionUid, pDefaultKeyCode);
-		mEventActionMap.put(pEventActionUid, lNewEventAction);
+		final var lNewEventAction = new EventAction(eventActionUid, defaultKeyCode);
+		mEventActionMap.put(eventActionUid, lNewEventAction);
 
-		Debug.debugManager().logger().i(getClass().getSimpleName(), "Registered new event action " + pEventActionUid + " to key code [" + pDefaultKeyCode + "]");
-
+		Debug.debugManager().logger().i(getClass().getSimpleName(), "Registered new event action " + eventActionUid + " to key code [" + defaultKeyCode + "]");
 	}
 
-	public boolean getCurrentControlActionState(int pEventActionUid) {
-		final var lEventAction = mEventActionMap.get(pEventActionUid);
+	public boolean getCurrentControlActionState(int eventActionUid) {
+		final var lEventAction = mEventActionMap.get(eventActionUid);
 		if (lEventAction == null)
 			return false;
 
@@ -88,13 +86,9 @@ public class EventActionManager extends IniFile {
 
 		} else {
 			for (var lKeyBindingEntry : mEventActionMap.entrySet()) {
-				final var lValue = getInt(lSectionName, Integer.toString(lKeyBindingEntry.getValue().eventActionUid), lKeyBindingEntry.getValue().defaultBoundKeyCode);
-				lKeyBindingEntry.getValue().boundKeyCode = lValue;
-
+				final var lValue = getInt(lSectionName, Integer.toString(lKeyBindingEntry.getValue().eventActionUid()), lKeyBindingEntry.getValue().defaultBoundKeyCode());
+				lKeyBindingEntry.getValue().boundKeyCode(lValue);
 			}
-
 		}
-
 	}
-
 }

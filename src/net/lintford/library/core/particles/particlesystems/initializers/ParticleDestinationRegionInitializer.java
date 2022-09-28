@@ -34,9 +34,7 @@ public class ParticleDestinationRegionInitializer extends ParticleInitializerBas
 	// --------------------------------------
 
 	@Override
-	public void initialize(Particle pParticle) {
-		pParticle.setupDestTexture(width, height);
-
+	public void initialize(Particle particle) {
+		particle.setupDestTexture(width, height);
 	}
-
 }

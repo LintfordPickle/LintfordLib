@@ -15,8 +15,8 @@ public class Ray {
 	// Variables
 	// --------------------------------------
 
-	protected Vector2f mPosition;
-	protected Vector2f mDirection;
+	protected final Vector2f mPosition = new Vector2f();
+	protected final Vector2f mDirection = new Vector2f();
 
 	// --------------------------------------
 	// Properties
@@ -26,26 +26,26 @@ public class Ray {
 		return mPosition;
 	}
 
-	public void position(Vector2f pPosition) {
-		mPosition = pPosition;
+	public void position(Vector2f position) {
+		mPosition.set(position);
 	}
 
-	public void position(float pX, float pY) {
-		mPosition.x = pX;
-		mPosition.y = pY;
+	public void position(float x, float y) {
+		mPosition.x = x;
+		mPosition.y = y;
 	}
 
 	public Vector2f direction() {
 		return mDirection;
 	}
 
-	public void direction(Vector2f pDirection) {
-		mDirection = pDirection;
+	public void direction(Vector2f direction) {
+		mDirection.set(direction);
 	}
 
-	public void direction(float pX, float pY) {
-		mDirection.x = pX;
-		mDirection.y = pY;
+	public void direction(float x, float y) {
+		mDirection.x = x;
+		mDirection.y = y;
 	}
 
 	// --------------------------------------
@@ -53,52 +53,45 @@ public class Ray {
 	// --------------------------------------
 
 	public Ray() {
-		mPosition = new Vector2f();
-		mDirection = new Vector2f();
 	}
 
-	public Ray(Vector2f pPosition, Vector2f pDirection) {
+	public Ray(Vector2f position, Vector2f direction) {
 		this();
-		mPosition.x = pPosition.x;
-		mPosition.y = pPosition.y;
-
-		mDirection.x = pDirection.x;
-		mDirection.y = pDirection.y;
+		mPosition.set(position);
+		mDirection.set(direction);
 	}
 
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
 
-	public static float intersects(Rectangle pRect, Ray pRay) {
-
+	public static float intersects(Rectangle rectangle, Ray ray) {
 		float lMinValue = NO_INTERSECTION;
 		float lMaxValue = NO_INTERSECTION;
 
-		if (Math.abs(pRay.direction().x) < EPSILON) {
-			if (pRay.position().x < pRect.left() || pRay.position().x > pRect.right()) {
+		if (Math.abs(ray.direction().x) < EPSILON) {
+			if (ray.position().x < rectangle.left() || ray.position().x > rectangle.right()) {
 				return NO_INTERSECTION;
 			}
 		}
 
 		else {
-			lMinValue = (pRect.left() - pRay.position().x) / pRay.direction().x;
-			lMaxValue = (pRect.right() - pRay.position().x) / pRay.direction().x;
+			lMinValue = (rectangle.left() - ray.position().x) / ray.direction().x;
+			lMaxValue = (rectangle.right() - ray.position().x) / ray.direction().x;
 			if (lMinValue > lMaxValue) {
 				float tempX = lMinValue;
 				lMinValue = lMaxValue;
 				lMaxValue = tempX;
 			}
-
 		}
 
-		if (Math.abs(pRay.direction().y) < EPSILON) {
-			if (pRay.position().y < pRect.top() || pRay.position().y > pRect.bottom()) {
+		if (Math.abs(ray.direction().y) < EPSILON) {
+			if (ray.position().y < rectangle.top() || ray.position().y > rectangle.bottom()) {
 				return NO_INTERSECTION;
 			}
 		} else {
-			float lMinValueY = (pRect.top() - pRay.position().y) / pRay.direction().y;
-			float lMaxValueY = (pRect.bottom() - pRay.position().y) / pRay.direction().y;
+			float lMinValueY = (rectangle.top() - ray.position().y) / ray.direction().y;
+			float lMaxValueY = (rectangle.bottom() - ray.position().y) / ray.direction().y;
 			if (lMinValueY > lMaxValueY) {
 				float tempY = lMinValueY;
 				lMinValueY = lMaxValueY;
@@ -126,7 +119,5 @@ public class Ray {
 			return NO_INTERSECTION;
 
 		return lMinValue;
-
 	}
-
 }

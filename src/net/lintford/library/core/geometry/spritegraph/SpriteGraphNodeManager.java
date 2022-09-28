@@ -40,19 +40,15 @@ public class SpriteGraphNodeManager extends IndexedPoolInstanceManager<SpriteGra
 	@Override
 	public SpriteGraphNodeInstance getSpriteGraphNodeInstance() {
 		return getFreePooledItem();
-
 	}
 
 	@Override
-	public void returnSpriteGraphNodeInstance(SpriteGraphNodeInstance pSpriteGraphNodeInstance) {
-		returnPooledItem(pSpriteGraphNodeInstance);
-
+	public void returnSpriteGraphNodeInstance(SpriteGraphNodeInstance spriteGraphNodeInstance) {
+		returnPooledItem(spriteGraphNodeInstance);
 	}
 
 	@Override
 	protected SpriteGraphNodeInstance createPoolObjectInstance() {
 		return new SpriteGraphNodeInstance(getNewPoolUid());
-
 	}
-
 }

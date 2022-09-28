@@ -9,74 +9,73 @@ public abstract class DebugStatTag<T> {
 	// Variables
 	// --------------------------------------
 
-	public boolean autoReset;
-	public String label;
-	public String postFix;
-	public final int id;
-	public T value;
-	public T defaultValue;
-	public float r, g, b;
+	protected boolean mAtoReset;
+	protected String mLabel;
+	protected String mPostFix;
+	protected final int mUid;
+	protected T mValue;
+	protected T mDefaultValue;
+	protected float mRed;
+	protected float mGreen;
+	protected float mBlue;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
 
-	public void setLabel(String pNewLabel) {
-		label = pNewLabel;
-
+	public void setColor(float red, float green, float blue) {
+		mRed = red;
+		mGreen = green;
+		mBlue = blue;
 	}
 
-	public void setValue(T pNewValue) {
-		value = pNewValue;
-
+	public void setLabel(String newLabel) {
+		mLabel = newLabel;
 	}
 
-	public void setDefaultValue(T pNewValue) {
-		defaultValue = pNewValue;
+	public void setValue(T newValue) {
+		mValue = newValue;
+	}
+
+	public void setDefaultValue(T newValue) {
+		mDefaultValue = newValue;
 	}
 
 	public void reset() {
-		if (autoReset)
-			value = defaultValue;
-
+		mValue = mDefaultValue;
 	}
 
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
-	public DebugStatTag(String pLabel) {
-		this(DebugStats.getNewStatTagCounter(), pLabel);
+	public DebugStatTag(String label) {
+		this(DebugStats.getNewStatTagCounter(), label);
 
 	}
 
-	DebugStatTag(final int pID, String pLabel) {
-		id = pID;
-		label = pLabel;
-		autoReset = true;
-		r = g = b = 1f;
-
-		// children = new ArrayList<>();
-
+	DebugStatTag(final int uid, String label) {
+		mUid = uid;
+		mLabel = label;
+		mAtoReset = true;
+		mRed = mGreen = mBlue = 1.f;
 	}
 
 	// --------------------------------------
 	// Core-Methods
 	// --------------------------------------
 
-	public boolean handleInput(LintfordCore pCore) {
+	public boolean handleInput(LintfordCore core) {
 		return false;
-
 	}
 
-	public abstract void draw(FontUnit pFontUnit, float pPosX, float pPosY);
+	public abstract void draw(FontUnit fontUnit, float positionX, float positionY);
 
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
 
-	public void addChild(DebugStatTag<?> pChildTag) {
+	public void addChild(DebugStatTag<?> childTag) {
 
 	}
-
 }

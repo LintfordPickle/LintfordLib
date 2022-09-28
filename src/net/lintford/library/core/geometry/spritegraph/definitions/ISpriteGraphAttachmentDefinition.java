@@ -18,7 +18,7 @@ public interface ISpriteGraphAttachmentDefinition {
 		return 0xffffffff;
 	}
 
-	public default void setColorTint(int r, int g, int b) {
+	public default void setColorTint(int red, int green, int blue) {
 	}
 
 	public boolean useDynamicSpritesheetName();

@@ -32,11 +32,10 @@ public class DebugParticleDrawer extends BaseRenderer {
 	@Override
 	public boolean isInitialized() {
 		return true;
-
 	}
 
-	public void debugDrawEnable(boolean pNewValue) {
-		mShowDebugInformation = pNewValue;
+	public void debugDrawEnable(boolean newValue) {
+		mShowDebugInformation = newValue;
 	}
 
 	public boolean debugDrawEnable() {
@@ -47,13 +46,12 @@ public class DebugParticleDrawer extends BaseRenderer {
 	// Constructor
 	// --------------------------------------
 
-	public DebugParticleDrawer(RendererManager pRendererManager, ParticleFrameworkData pParticleFramework, int pEntityGroupID) {
-		super(pRendererManager, RENDERER_NAME, pEntityGroupID);
+	public DebugParticleDrawer(RendererManager rendererManager, ParticleFrameworkData particleFramework, int entityGroupID) {
+		super(rendererManager, RENDERER_NAME, entityGroupID);
 
-		mParticleFrameworkData = pParticleFramework;
+		mParticleFrameworkData = particleFramework;
 
 		isActive(false);
-
 	}
 
 	// --------------------------------------
@@ -61,38 +59,35 @@ public class DebugParticleDrawer extends BaseRenderer {
 	// --------------------------------------
 
 	@Override
-	public void initialize(LintfordCore pCore) {
+	public void initialize(LintfordCore core) {
 
 	}
 
 	@Override
-	public void loadResources(ResourceManager pResourceManager) {
-		super.loadResources(pResourceManager);
-
+	public void loadResources(ResourceManager resourceManager) {
+		super.loadResources(resourceManager);
 	}
 
 	@Override
 	public void unloadResources() {
 		super.unloadResources();
-
 	}
 
 	@Override
-	public boolean handleInput(LintfordCore pCore) {
-		if (pCore.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_F11)) {
+	public boolean handleInput(LintfordCore core) {
+		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_F11)) {
 			mShowDebugInformation = !mShowDebugInformation;
-
 		}
 
-		return super.handleInput(pCore);
+		return super.handleInput(core);
 	}
 
 	@Override
-	public void draw(LintfordCore pCore) {
+	public void draw(LintfordCore core) {
 		if (!mShowDebugInformation)
 			return;
 
-		Debug.debugManager().drawers().beginTextRenderer(pCore.HUD());
+		Debug.debugManager().drawers().beginTextRenderer(core.HUD());
 
 		int lEmitterCount = mParticleFrameworkData.emitterManager().emitterInstances().size();
 		Debug.debugManager().drawers().drawText(String.format("Num Emitters: %d", lEmitterCount), 0, 0);
@@ -101,7 +96,5 @@ public class DebugParticleDrawer extends BaseRenderer {
 		Debug.debugManager().drawers().drawText(String.format("Num Systems: %d", lSystemCount), 0, 25);
 
 		Debug.debugManager().drawers().endTextRenderer();
-
 	}
-
 }

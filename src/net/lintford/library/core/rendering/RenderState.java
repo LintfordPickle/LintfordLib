@@ -8,10 +8,6 @@ package net.lintford.library.core.rendering;
 public class RenderState {
 
 	// --------------------------------------
-	// Constants
-	// --------------------------------------
-
-	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
@@ -31,8 +27,8 @@ public class RenderState {
 	/**
 	 * Sets an integer which can be used to identify a rendering pass (i.e. 1 = diffuse) on the application side.
 	 */
-	public void renderPass(int pNewPassID) {
-		mRenderPass = pNewPassID;
+	public void renderPass(int passUid) {
+		mRenderPass = passUid;
 	}
 
 	// --------------------------------------

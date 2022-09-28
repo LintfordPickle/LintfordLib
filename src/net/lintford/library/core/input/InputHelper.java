@@ -6,8 +6,8 @@ import org.lwjgl.glfw.GLFW;
 public class InputHelper {
 
 	/** returns false if a key is on the 'Binding' blacklist. */
-	public static boolean isKeyAllowedAsBinding(int pKey) {
-		switch(pKey) {
+	public static boolean isKeyAllowedAsBinding(int key) {
+		switch(key) {
 		case GLFW.GLFW_KEY_F1:
 		case GLFW.GLFW_KEY_F2:
 		case GLFW.GLFW_KEY_F3:
@@ -20,25 +20,23 @@ public class InputHelper {
 		case GLFW.GLFW_KEY_F10:
 		case GLFW.GLFW_KEY_F11:
 		case GLFW.GLFW_KEY_F12:
-			
+
 		case GLFW.GLFW_KEY_PRINT_SCREEN:
 		case GLFW.GLFW_KEY_SCROLL_LOCK:
 		case GLFW.GLFW_KEY_PAUSE:
-			
 			return false;
 		default:
 			return true;
 		}
 	}
 	
-	public static String getGlfwPrintableKeyFromKeyCode(int pKeyCode) {
-		final String lPlatformCharacter = GLFW.glfwGetKeyName(pKeyCode, GLFW.glfwGetKeyScancode(pKeyCode));
+	public static String getGlfwPrintableKeyFromKeyCode(int keyCode) {
+		final String lPlatformCharacter = GLFW.glfwGetKeyName(keyCode, GLFW.glfwGetKeyScancode(keyCode));
 		if(lPlatformCharacter != null) {
 			return lPlatformCharacter;
-
 		}
 
-		switch (pKeyCode) {
+		switch (keyCode) {
 		case GLFW.GLFW_KEY_A: return "A";
 		case GLFW.GLFW_KEY_B: return "B";
 		case GLFW.GLFW_KEY_C: return "C";
@@ -98,6 +96,4 @@ public class InputHelper {
 			return "unknown";
 		}
 	}
-	
-	
 }

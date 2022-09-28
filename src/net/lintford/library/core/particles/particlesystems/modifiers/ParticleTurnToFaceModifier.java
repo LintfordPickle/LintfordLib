@@ -27,19 +27,17 @@ public class ParticleTurnToFaceModifier extends ParticleModifierBase {
 	// --------------------------------------
 
 	@Override
-	public void initialize(Particle pParticle) {
+	public void initialize(Particle particle) {
 
 	}
 
 	@Override
-	public void update(LintfordCore pCore) {
+	public void update(LintfordCore core) {
 
 	}
 
 	@Override
-	public void updateParticle(LintfordCore pCore, Particle pParticle) {
-		pParticle.rotationInRadians = (float) Math.atan2(pParticle.dx, -pParticle.dy) + (float)Math.toRadians(90.f);
-
+	public void updateParticle(LintfordCore core, Particle particle) {
+		particle.rotationInRadians = (float) Math.atan2(particle.dx, -particle.dy) + (float) Math.toRadians(90.f);
 	}
-
 }

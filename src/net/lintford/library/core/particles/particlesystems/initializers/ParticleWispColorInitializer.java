@@ -35,7 +35,6 @@ public class ParticleWispColorInitializer extends ParticleInitializerBase {
 		mGMax = 1f;
 		mBMin = 0.6f;
 		mBMax = 1f;
-
 	}
 
 	// --------------------------------------
@@ -43,23 +42,18 @@ public class ParticleWispColorInitializer extends ParticleInitializerBase {
 	// --------------------------------------
 
 	@Override
-	public void initialize(Particle pParticle) {
-		pParticle.color.r = getRandomValue(mRMin, mRMax);
-		pParticle.color.g = getRandomValue(mGMin, mGMax);
-		pParticle.color.b = getRandomValue(mBMin, mBMax);
-		pParticle.color.a = 0.5f + getRandomValue(.0f, .5f);
-
+	public void initialize(Particle particle) {
+		particle.color.r = getRandomValue(mRMin, mRMax);
+		particle.color.g = getRandomValue(mGMin, mGMax);
+		particle.color.b = getRandomValue(mBMin, mBMax);
+		particle.color.a = 0.5f + getRandomValue(.0f, .5f);
 	}
 
-	protected float getRandomValue(final float pMin, final float pMax) {
-		if (pMin == pMax) {
-			return pMax;
-
+	protected float getRandomValue(final float minValue, final float maxValue) {
+		if (minValue == maxValue) {
+			return maxValue;
 		} else {
-			return RandomNumbers.random(pMin, pMax);
-
+			return RandomNumbers.random(minValue, maxValue);
 		}
-
 	}
-
 }

@@ -13,28 +13,27 @@ public abstract class RectangleEntity extends WorldEntity {
 
 	protected Rectangle mBounds;
 
-	public float rotation;
-	public float width;
-	public float height;
+	protected float mWidth;
+	protected float mHeight;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
 
 	public float w() {
-		return width;
+		return mWidth;
 	}
 
 	public float h() {
-		return height;
+		return mHeight;
 	}
 
 	public float left() {
-		return worldPositionX - width / 2;
+		return mWorldPositionX - mWidth / 2;
 	}
 
 	public float top() {
-		return worldPositionY - height / 2;
+		return mWorldPositionY - mHeight / 2;
 	}
 
 	public Rectangle bounds() {
@@ -49,20 +48,20 @@ public abstract class RectangleEntity extends WorldEntity {
 		this(0, 0, 0, 0);
 	}
 
-	public RectangleEntity(float pWidth, float pHeight) {
-		this(0, 0, pWidth, pHeight);
+	public RectangleEntity(float width, float height) {
+		this(0, 0, width, height);
 	}
 
-	public RectangleEntity(float pX, float pY, float pWidth, float pHeight) {
+	public RectangleEntity(float x, float y, float width, float height) {
 		super();
 
-		worldPositionX = pX;
-		worldPositionY = pY;
-		width = pWidth;
-		height = pHeight;
+		mWorldPositionX = x;
+		mWorldPositionY = y;
+		mWidth = width;
+		mHeight = height;
 
 		mBounds = new Rectangle();
-		mBounds = new Rectangle(worldPositionX, worldPositionY, width, height);
+		mBounds = new Rectangle(mWorldPositionX, mWorldPositionY, mWidth, mHeight);
 	}
 
 	// --------------------------------------
@@ -70,17 +69,16 @@ public abstract class RectangleEntity extends WorldEntity {
 	// --------------------------------------
 
 	public void update(LintfordCore pCore) {
-		mBounds.rotateAbs(rotation); // + (float) Math.toRadians(90));
-		mBounds.setCenter(worldPositionX, worldPositionY, width, height);
+		mBounds.rotateAbs(mRotationInRadians);
+		mBounds.setCenter(mWorldPositionX, mWorldPositionY, mWidth, mHeight);
 	}
 
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
 
-	public void setDimensions(float pWidth, float pHeight) {
-		width = pWidth;
-		height = pHeight;
+	public void setDimensions(float width, float height) {
+		mWidth = width;
+		mHeight = height;
 	}
-
 }

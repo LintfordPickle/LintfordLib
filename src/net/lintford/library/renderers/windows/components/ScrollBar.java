@@ -116,8 +116,8 @@ public class ScrollBar extends Rectangle implements IProcessMouseInput, IInputCl
 	}
 
 	public boolean areaNeedsScrolling() {
-		float lViewportHeight = mScrollBarArea.contentDisplayArea().h();
-		float lContentHeight = Math.max(mScrollBarArea.contentDisplayArea().h(), mScrollBarArea.fullContentArea().h());
+		float lViewportHeight = mScrollBarArea.contentDisplayArea().height();
+		float lContentHeight = Math.max(mScrollBarArea.contentDisplayArea().height(), mScrollBarArea.fullContentArea().height());
 
 		return lContentHeight > lViewportHeight;
 	}
@@ -183,7 +183,7 @@ public class ScrollBar extends Rectangle implements IProcessMouseInput, IInputCl
 
 	private void constrainScrollBarPosition(float pNewPositionSS) {
 		final float lMouseScreenSpaceY = pNewPositionSS;
-		final float lMaxDiff = mScrollBarArea.fullContentArea().h() - mScrollBarArea.contentDisplayArea().h();
+		final float lMaxDiff = mScrollBarArea.fullContentArea().height() - mScrollBarArea.contentDisplayArea().height();
 
 		if (lMaxDiff > 0) {
 			float lDiffY = lMouseScreenSpaceY - mLastMouseYPos;
@@ -202,7 +202,7 @@ public class ScrollBar extends Rectangle implements IProcessMouseInput, IInputCl
 		if (mIsActive == false)
 			return;
 
-		mScrollbarEnabled = mScrollBarArea.fullContentArea().h() - mScrollBarArea.contentDisplayArea().h() > 0;
+		mScrollbarEnabled = mScrollBarArea.fullContentArea().height() - mScrollBarArea.contentDisplayArea().height() > 0;
 
 		updateMovement(pCore);
 		updateBar(pCore);
@@ -223,8 +223,8 @@ public class ScrollBar extends Rectangle implements IProcessMouseInput, IInputCl
 			// Constrain
 			if (mScrollPosition > 0)
 				mScrollPosition = 0;
-			if (mScrollPosition < -(lContent.h() - this.h + mHeaderOffset + mFooterOffset)) {
-				mScrollPosition = -(lContent.h() - this.h + mHeaderOffset + mFooterOffset);
+			if (mScrollPosition < -(lContent.height() - this.mH + mHeaderOffset + mFooterOffset)) {
+				mScrollPosition = -(lContent.height() - this.mH + mHeaderOffset + mFooterOffset);
 			}
 		}
 	}
@@ -232,8 +232,8 @@ public class ScrollBar extends Rectangle implements IProcessMouseInput, IInputCl
 	private void updateBar(LintfordCore pCore) {
 		mMouseTimer -= pCore.appTime().elapsedTimeMilli();
 
-		float lViewportHeight = mScrollBarArea.contentDisplayArea().h();
-		float lContentHeight = mScrollBarArea.fullContentArea().h();
+		float lViewportHeight = mScrollBarArea.contentDisplayArea().height();
+		float lContentHeight = mScrollBarArea.fullContentArea().height();
 
 		float lViewableRatio = lViewportHeight / lContentHeight;
 		mMarkerBarHeight = ((lViewportHeight - ARROW_SIZE * 2) * (lViewableRatio));
@@ -242,10 +242,10 @@ public class ScrollBar extends Rectangle implements IProcessMouseInput, IInputCl
 		float lScrollThumbSpace = lViewportHeight - mMarkerBarHeight - ARROW_SIZE * 2;
 		mMarkerMoveMod = lScrollTrackSpace / lScrollThumbSpace;
 
-		final float lX = mScrollBarArea.contentDisplayArea().x() + mScrollBarArea.contentDisplayArea().w() - BAR_WIDTH;
+		final float lX = mScrollBarArea.contentDisplayArea().x() + mScrollBarArea.contentDisplayArea().width() - BAR_WIDTH;
 		final float lY = mScrollBarArea.contentDisplayArea().y();
 		final float lW = BAR_WIDTH;
-		final float lH = mScrollBarArea.contentDisplayArea().h();
+		final float lH = mScrollBarArea.contentDisplayArea().height();
 		set(lX, lY, lW, lH);
 	}
 
@@ -263,24 +263,24 @@ public class ScrollBar extends Rectangle implements IProcessMouseInput, IInputCl
 		final float by = ARROW_SIZE + mScrollBarArea.contentDisplayArea().y() - (mScrollPosition / mMarkerMoveMod);
 
 		final var lBackgroundColor = ColorConstants.getColorWithRGBMod(ColorConstants.TertiaryColor.r * .8f, ColorConstants.TertiaryColor.g * .8f, ColorConstants.TertiaryColor.b * .8f, .6f, .6f);
-		pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, x, y + ARROW_SIZE, 16, h - ARROW_SIZE * 2, pZDepth, lBackgroundColor);
+		pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX, mY + ARROW_SIZE, 16, mH - ARROW_SIZE * 2, pZDepth, lBackgroundColor);
 
 		// Draw the background bar
 		var lWhiteColorWithAlpha = ColorConstants.getWhiteWithAlpha(mScrollBarAlpha);
-		pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, x + 7, y + 16, 2, h - 32, pZDepth, lWhiteColorWithAlpha);
+		pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX + 7, mY + 16, 2, mH - 32, pZDepth, lWhiteColorWithAlpha);
 
 		// Draw the moving bar
 		final float lColorMod = mClickActive ? 0.35f : 0.55f;
 		final var lBarColor = ColorConstants.getColorWithRGBMod(ColorConstants.PrimaryColor.r * .8f, ColorConstants.PrimaryColor.g * .8f, ColorConstants.PrimaryColor.g * .8f, mScrollBarAlpha, lColorMod);
-		pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, x, by, 16, mMarkerBarHeight, pZDepth, lBarColor);
+		pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX, by, 16, mMarkerBarHeight, pZDepth, lBarColor);
 
 		lWhiteColorWithAlpha = ColorConstants.getWhiteWithAlpha(mScrollBarAlpha);
-		pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_SCROLLBAR_UP, x, y + 3, ARROW_SIZE, ARROW_SIZE, pZDepth, lWhiteColorWithAlpha);
-		pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_SCROLLBAR_DOWN, x, y + h - ARROW_SIZE - 3, ARROW_SIZE, ARROW_SIZE, pZDepth - 0.01f, lWhiteColorWithAlpha);
+		pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_SCROLLBAR_UP, mX, mY + 3, ARROW_SIZE, ARROW_SIZE, pZDepth, lWhiteColorWithAlpha);
+		pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_SCROLLBAR_DOWN, mX, mY + mH - ARROW_SIZE - 3, ARROW_SIZE, ARROW_SIZE, pZDepth - 0.01f, lWhiteColorWithAlpha);
 
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
 			pSpriteBatch.begin(pCore.HUD());
-			pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, x, y, w, h, ZLayers.LAYER_DEBUG, ColorConstants.Debug_Transparent_Magenta);
+			pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX, mY, mW, mH, ZLayers.LAYER_DEBUG, ColorConstants.Debug_Transparent_Magenta);
 			pSpriteBatch.end();
 		}
 	}
@@ -304,7 +304,7 @@ public class ScrollBar extends Rectangle implements IProcessMouseInput, IInputCl
 	}
 
 	public float getScrollYBottomPosition() {
-		return -mScrollBarArea.fullContentArea().h() + h;
+		return -mScrollBarArea.fullContentArea().height() + mH;
 	}
 
 	@Override

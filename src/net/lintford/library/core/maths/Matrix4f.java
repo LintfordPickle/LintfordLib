@@ -149,21 +149,20 @@ public class Matrix4f implements Serializable {
 		return dest;
 	}
 
-	public void createOrtho(float pLeft, float pRight, float pBottom, float pTop, float pNear, float pFar) {
-		m00 = 2f / (pRight - pLeft);
-		m11 = 2f / (pTop - pBottom);
-		m22 = -(2f / (pFar - pNear));
+	public void createOrtho(float left, float right, float bottom, float top, float near, float far) {
+		m00 = 2f / (right - left);
+		m11 = 2f / (top - bottom);
+		m22 = -(2f / (far - near));
 
-		m03 = -(pRight + pLeft) / (pRight - pLeft);
-		m13 = -(pTop + pBottom) / (pTop - pBottom);
-		m23 = -(pFar + pNear) / (pFar - pNear);
+		m03 = -(right + left) / (right - left);
+		m13 = -(top + bottom) / (top - bottom);
+		m23 = -(far + near) / (far - near);
 
 		m33 = 1f;
-
 	}
 
-	public void translate(Vector3f pPosition) {
-		translate(pPosition.x, pPosition.y, pPosition.z);
+	public void translate(Vector3f position) {
+		translate(position.x, position.y, position.z);
 	}
 
 	public void translate(float pX, float pY, float pZ) {
@@ -173,8 +172,8 @@ public class Matrix4f implements Serializable {
 
 	}
 
-	public void scale(Vector3f mScale) {
-		scale(mScale.x, mScale.y, mScale.z);
+	public void scale(Vector3f scale) {
+		scale(scale.x, scale.y, scale.z);
 	}
 
 	public void scale(float x, float y, float z) {
@@ -183,8 +182,8 @@ public class Matrix4f implements Serializable {
 		m22 = z;
 	}
 
-	public void rotate(float pAngle, Vector3f pRotationAxis) {
-		rotate(pAngle, pRotationAxis.x, pRotationAxis.y, pRotationAxis.z);
+	public void rotate(float angle, Vector3f rotationAxis) {
+		rotate(angle, rotationAxis.x, rotationAxis.y, rotationAxis.z);
 	}
 
 	/** Rotates the matrice around the given axes by the specified number of degrees */
@@ -284,23 +283,21 @@ public class Matrix4f implements Serializable {
 		return dest;
 	}
 
-	public void copy(Matrix4f pCopyFrom) {
+	public void copy(Matrix4f copyFromMatrix) {
+		m00 = copyFromMatrix.m00;
+		m01 = copyFromMatrix.m01;
+		m02 = copyFromMatrix.m02;
 
-		m00 = pCopyFrom.m00;
-		m01 = pCopyFrom.m01;
-		m02 = pCopyFrom.m02;
+		m10 = copyFromMatrix.m10;
+		m11 = copyFromMatrix.m11;
+		m12 = copyFromMatrix.m12;
 
-		m10 = pCopyFrom.m10;
-		m11 = pCopyFrom.m11;
-		m12 = pCopyFrom.m12;
+		m20 = copyFromMatrix.m20;
+		m21 = copyFromMatrix.m21;
+		m22 = copyFromMatrix.m22;
 
-		m20 = pCopyFrom.m20;
-		m21 = pCopyFrom.m21;
-		m22 = pCopyFrom.m22;
-
-		m30 = pCopyFrom.m30;
-		m31 = pCopyFrom.m31;
-		m32 = pCopyFrom.m32;
-
+		m30 = copyFromMatrix.m30;
+		m31 = copyFromMatrix.m31;
+		m32 = copyFromMatrix.m32;
 	}
 }

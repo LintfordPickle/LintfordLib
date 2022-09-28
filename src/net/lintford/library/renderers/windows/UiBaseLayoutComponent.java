@@ -86,34 +86,31 @@ public class UiBaseLayoutComponent extends UIWidget implements IScrollBarArea {
 		return mScrollBarsEnabled;
 	}
 
-	public void scrollBarsEnabled(boolean pNewValue) {
-		mScrollBarsEnabled = pNewValue;
+	public void scrollBarsEnabled(boolean newValue) {
+		mScrollBarsEnabled = newValue;
 	}
 
-	public void maxWidth(float pMaxWidth) {
-		mMaxWidth = pMaxWidth;
+	public void maxWidth(float newValue) {
+		mMaxWidth = newValue;
 	}
 
 	public float maxWidth() {
 		return mMaxWidth;
 	}
 
-	public void setEntryOffsetY(float pNewOffset) {
-		mEntryOffsetFromTop = pNewOffset;
-
+	public void setEntryOffsetY(float newValue) {
+		mEntryOffsetFromTop = newValue;
 	}
 
 	public FILLTYPE layoutFillType() {
 		return mLayoutFillType;
-
 	}
 
-	public void layoutFillType(FILLTYPE pFilltype) {
-		if (pFilltype == null)
+	public void layoutFillType(FILLTYPE filltype) {
+		if (filltype == null)
 			return;
 
-		mLayoutFillType = pFilltype;
-
+		mLayoutFillType = filltype;
 	}
 
 	public LAYOUT_WIDTH layoutWidth() {
@@ -121,28 +118,24 @@ public class UiBaseLayoutComponent extends UIWidget implements IScrollBarArea {
 
 	}
 
-	public void layoutWidth(LAYOUT_WIDTH pLayoutWidth) {
-		if (pLayoutWidth == null)
+	public void layoutWidth(LAYOUT_WIDTH playoutWidth) {
+		if (playoutWidth == null)
 			return;
 
-		mLayoutWidth = pLayoutWidth;
-
+		mLayoutWidth = playoutWidth;
 	}
 
-	public void minWidth(float pNewValue) {
-		mMinWidth = pNewValue;
-
+	public void minWidth(float newValue) {
+		mMinWidth = newValue;
 	}
 
-	public void minHeight(float pNewValue) {
-		mMinHeight = pNewValue;
-
+	public void minHeight(float newValue) {
+		mMinHeight = newValue;
 	}
 
-	public void setDrawBackground(boolean pEnabled, Color pColor) {
-		mDrawBackground = pEnabled;
-		layoutColor.setFromColor(pColor);
-
+	public void setDrawBackground(boolean enabled, Color color) {
+		mDrawBackground = enabled;
+		layoutColor.setFromColor(color);
 	}
 
 	public boolean isLoaded() {
@@ -248,8 +241,8 @@ public class UiBaseLayoutComponent extends UIWidget implements IScrollBarArea {
 	// Constructor
 	// --------------------------------------
 
-	public UiBaseLayoutComponent(UiWindow pParentWindow) {
-		super(pParentWindow);
+	public UiBaseLayoutComponent(UiWindow parentWindow) {
+		super(parentWindow);
 
 		mUiWidgets = new ArrayList<>();
 
@@ -278,7 +271,6 @@ public class UiBaseLayoutComponent extends UIWidget implements IScrollBarArea {
 		mScrollBar = new ScrollBar(this, mContentArea);
 
 		mEntryOffsetFromTop = 10;
-
 	}
 
 	// --------------------------------------
@@ -292,14 +284,14 @@ public class UiBaseLayoutComponent extends UIWidget implements IScrollBarArea {
 		}
 
 		// width = getEntryWidth();
-		h = getDesiredHeight();
+		mH = getDesiredHeight();
 
 	}
 
-	public void loadResources(ResourceManager pResourceManager) {
+	public void loadResources(ResourceManager resourceManager) {
 		final int lWidgetCount = mUiWidgets.size();
 		for (int i = 0; i < lWidgetCount; i++) {
-			mUiWidgets.get(i).loadResources(pResourceManager);
+			mUiWidgets.get(i).loadResources(resourceManager);
 		}
 
 		mResourcesLoaded = true;
@@ -314,36 +306,35 @@ public class UiBaseLayoutComponent extends UIWidget implements IScrollBarArea {
 		mResourcesLoaded = false;
 	}
 
-	public boolean handleInput(LintfordCore pCore) {
+	public boolean handleInput(LintfordCore core) {
 		if (widgets() == null || widgets().size() == 0)
 			return false; // nothing to do
 
 		final var lEntryCount = widgets().size();
 		for (int i = 0; i < lEntryCount; i++) {
 			final var lMenuEntry = widgets().get(i);
-			if (lMenuEntry.handleInput(pCore)) {
+			if (lMenuEntry.handleInput(core)) {
 				// return true;
 			}
 		}
 
-		if (intersectsAA(pCore.HUD().getMouseCameraSpace())) {
-			if (true && pCore.input().mouse().tryAcquireMouseMiddle((hashCode()))) {
-				mZScrollAcceleration += pCore.input().mouse().mouseWheelYOffset() * 250.0f;
+		if (intersectsAA(core.HUD().getMouseCameraSpace())) {
+			if (true && core.input().mouse().tryAcquireMouseMiddle((hashCode()))) {
+				mZScrollAcceleration += core.input().mouse().mouseWheelYOffset() * 250.0f;
 			}
 		}
 
 		if (mScrollBarsEnabled_Internal) {
-			mScrollBar.handleInput(pCore, mParentWindow.rendererManager());
+			mScrollBar.handleInput(core, mParentWindow.rendererManager());
 		}
 
 		return false;
 	}
 
-	public void update(LintfordCore pCore) {
+	public void update(LintfordCore core) {
 		final int lCount = mUiWidgets.size();
 		for (int i = 0; i < lCount; i++) {
-			mUiWidgets.get(i).update(pCore);
-
+			mUiWidgets.get(i).update(core);
 		}
 
 		if (!mScrollBarsEnabled_Internal)
@@ -352,8 +343,8 @@ public class UiBaseLayoutComponent extends UIWidget implements IScrollBarArea {
 		final float lPaddingHorizontal = 5.f;
 		final float lWidthOffset = mScrollBarsEnabled_Internal ? 25.f : lPaddingHorizontal;
 
-		float xPos = x + lPaddingHorizontal;
-		float yPos = y + mYScrollPosition;
+		float xPos = mX + lPaddingHorizontal;
+		float yPos = mY + mYScrollPosition;
 
 		// Order the child widgets (that's what the bseLayout is for)
 		for (int i = 0; i < lCount; i++) {
@@ -365,18 +356,16 @@ public class UiBaseLayoutComponent extends UIWidget implements IScrollBarArea {
 			lWidget.x(xPos);
 			lWidget.y((int) yPos);
 			lWidget.setPosition(xPos, yPos);
-			lWidget.w(w - lWidthOffset);
+			lWidget.width(mW - lWidthOffset);
 
-			yPos += lWidget.h();
-
+			yPos += lWidget.height();
 		}
 
-		mContentArea.set(x, y, w, getEntryHeight());
+		mContentArea.set(mX, mY, mW, getEntryHeight());
 
-		mScrollBarsEnabled_Internal = mScrollBarsEnabled && mContentArea.h() - h > 0;
+		mScrollBarsEnabled_Internal = mScrollBarsEnabled && mContentArea.height() - mH > 0;
 		if (mScrollBarsEnabled_Internal) {
-
-			final float lDeltaTime = (float) pCore.appTime().elapsedTimeMilli() / 1000f;
+			final float lDeltaTime = (float) core.appTime().elapsedTimeMilli() / 1000f;
 			float lScrollSpeedFactor = mYScrollPosition;
 
 			mZScrollVelocity += mZScrollAcceleration;
@@ -388,56 +377,53 @@ public class UiBaseLayoutComponent extends UIWidget implements IScrollBarArea {
 			// Constrain
 			if (mYScrollPosition > 0)
 				mYScrollPosition = 0;
-			if (mYScrollPosition < -(mContentArea.h() - this.h)) {
-				mYScrollPosition = -(mContentArea.h() - this.h);
+			if (mYScrollPosition < -(mContentArea.height() - this.mH)) {
+				mYScrollPosition = -(mContentArea.height() - this.mH);
 			}
 
-			mScrollBar.update(pCore);
-
+			mScrollBar.update(core);
 		}
-
 	}
 
-	public void draw(LintfordCore pCore, SpriteBatch pSpriteBatch, SpriteSheetDefinition pCoreSpritesheet, FontUnit pTextFont, float pComponentZDepth) {
+	public void draw(LintfordCore core, SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheet, FontUnit textFont, float componentZDepth) {
 		if (!mEnabled || !mVisible)
 			return;
 
 		final var lFontUnit = mParentWindow.rendererManager().uiTextFont();
 
 		if (mDrawBackground) {
-			if (h < 64) {
-				pSpriteBatch.begin(pCore.HUD());
+			if (mH < 64) {
+				spriteBatch.begin(core.HUD());
 				final float lAlpha = 0.8f;
 				final var lColor = ColorConstants.getColor(0.1f, 0.1f, 0.1f, lAlpha);
-				pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, x, y, w, h, pComponentZDepth, lColor);
-				pSpriteBatch.end();
-
+				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX, mY, mW, mH, componentZDepth, lColor);
+				spriteBatch.end();
 			} else {
 				final float TILE_SIZE = 32;
 
-				pSpriteBatch.begin(pCore.HUD());
-				pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT, x, y, TILE_SIZE, TILE_SIZE, pComponentZDepth, layoutColor);
-				pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT, x + TILE_SIZE, y, w - TILE_SIZE * 2, TILE_SIZE, pComponentZDepth, layoutColor);
-				pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT, x + w - TILE_SIZE, y, TILE_SIZE, TILE_SIZE, pComponentZDepth, layoutColor);
+				spriteBatch.begin(core.HUD());
+				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT, mX, mY, TILE_SIZE, TILE_SIZE, componentZDepth, layoutColor);
+				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT, mX + TILE_SIZE, mY, mW - TILE_SIZE * 2, TILE_SIZE, componentZDepth, layoutColor);
+				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT, mX + mW - TILE_SIZE, mY, TILE_SIZE, TILE_SIZE, componentZDepth, layoutColor);
 
-				pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT, x, y + TILE_SIZE, TILE_SIZE, h - TILE_SIZE * 2, pComponentZDepth, layoutColor);
-				pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT, x + TILE_SIZE, y + TILE_SIZE, w - TILE_SIZE * 2, h - 64, pComponentZDepth, layoutColor);
-				pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT, x + w - TILE_SIZE, y + TILE_SIZE, TILE_SIZE, h - TILE_SIZE * 2, pComponentZDepth, layoutColor);
+				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT, mX, mY + TILE_SIZE, TILE_SIZE, mH - TILE_SIZE * 2, componentZDepth, layoutColor);
+				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT, mX + TILE_SIZE, mY + TILE_SIZE, mW - TILE_SIZE * 2, mH - 64, componentZDepth, layoutColor);
+				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT, mX + mW - TILE_SIZE, mY + TILE_SIZE, TILE_SIZE, mH - TILE_SIZE * 2, componentZDepth, layoutColor);
 
-				pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT, x, y + h - TILE_SIZE, TILE_SIZE, TILE_SIZE, pComponentZDepth, layoutColor);
-				pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT, x + TILE_SIZE, y + h - TILE_SIZE, w - TILE_SIZE * 2, TILE_SIZE, pComponentZDepth, layoutColor);
-				pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT, x + w - TILE_SIZE, y + h - TILE_SIZE, TILE_SIZE, TILE_SIZE, pComponentZDepth, layoutColor);
-				pSpriteBatch.end();
+				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT, mX, mY + mH - TILE_SIZE, TILE_SIZE, TILE_SIZE, componentZDepth, layoutColor);
+				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT, mX + TILE_SIZE, mY + mH - TILE_SIZE, mW - TILE_SIZE * 2, TILE_SIZE, componentZDepth, layoutColor);
+				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT, mX + mW - TILE_SIZE, mY + mH - TILE_SIZE, TILE_SIZE, TILE_SIZE, componentZDepth, layoutColor);
+				spriteBatch.end();
 
 				if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_OUTLINES", false)) {
-					Debug.debugManager().drawers().drawRectImmediate(pCore.HUD(), this);
+					Debug.debugManager().drawers().drawRectImmediate(core.HUD(), this);
 				}
 			}
 		}
 
 		if (mScrollBarsEnabled_Internal) {
 			mContentArea.depthPadding(6f);
-			mContentArea.preDraw(pCore, pSpriteBatch, pCoreSpritesheet);
+			mContentArea.preDraw(core, spriteBatch, coreSpritesheet);
 		}
 
 		final int lCount = widgets().size();
@@ -447,20 +433,18 @@ public class UiBaseLayoutComponent extends UIWidget implements IScrollBarArea {
 			if (!lWidget.isVisible())
 				continue;
 
-			lWidget.draw(pCore, pSpriteBatch, pCoreSpritesheet, lFontUnit, pComponentZDepth + .1f);
-
+			lWidget.draw(core, spriteBatch, coreSpritesheet, lFontUnit, componentZDepth + .1f);
 		}
 
 		if (mScrollBarsEnabled_Internal) {
-			mContentArea.postDraw(pCore);
-			mScrollBar.draw(pCore, pSpriteBatch, pCoreSpritesheet, pComponentZDepth + .1f);
-
+			mContentArea.postDraw(core);
+			mScrollBar.draw(core, spriteBatch, coreSpritesheet, componentZDepth + .1f);
 		}
 
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
-			pSpriteBatch.begin(pCore.HUD());
-			pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, x, y, w, h, ZLayers.LAYER_DEBUG, ColorConstants.Debug_Transparent_Magenta);
-			pSpriteBatch.end();
+			spriteBatch.begin(core.HUD());
+			spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX, mY, mW, mH, ZLayers.LAYER_DEBUG, ColorConstants.Debug_Transparent_Magenta);
+			spriteBatch.end();
 		}
 	}
 
@@ -468,8 +452,8 @@ public class UiBaseLayoutComponent extends UIWidget implements IScrollBarArea {
 	// Methods
 	// --------------------------------------
 
-	public boolean hasEntry(int pIndex) {
-		if (pIndex < 0 || pIndex >= widgets().size())
+	public boolean hasEntry(int index) {
+		if (index < 0 || index >= widgets().size())
 			return false;
 
 		return true;
@@ -483,14 +467,13 @@ public class UiBaseLayoutComponent extends UIWidget implements IScrollBarArea {
 		// return the widest entry
 		float lResult = 0;
 		for (int i = 0; i < lEntryCount; i++) {
-			float lTemp = widgets().get(i).w();
+			float lTemp = widgets().get(i).width();
 			if (lTemp > lResult) {
 				lResult = lTemp;
 			}
 		}
 
 		return lResult;
-
 	}
 
 	public float getEntryHeight() {
@@ -506,12 +489,11 @@ public class UiBaseLayoutComponent extends UIWidget implements IScrollBarArea {
 
 		for (int i = 0; i < lEntryCount; i++) {
 			final var lMenuEntry = widgets().get(i);
-			lResult += lMenuEntry.h();
+			lResult += lMenuEntry.height();
 			// TODO: Missing entry margins
 		}
 
 		return lResult + marginBottom();
-
 	}
 
 	public float getDesiredHeight() {
@@ -519,7 +501,6 @@ public class UiBaseLayoutComponent extends UIWidget implements IScrollBarArea {
 			return mForcedHeight;
 
 		return getEntryHeight();
-
 	}
 
 	// --------------------------------------
@@ -535,5 +516,4 @@ public class UiBaseLayoutComponent extends UIWidget implements IScrollBarArea {
 	public ScrollBarContentRectangle fullContentArea() {
 		return mContentArea;
 	}
-
 }

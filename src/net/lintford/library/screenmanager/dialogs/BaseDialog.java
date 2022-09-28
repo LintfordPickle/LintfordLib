@@ -47,8 +47,8 @@ public abstract class BaseDialog extends MenuScreen {
 			setDialogIcon(null, 0.f, 0.f, 0.f, 0.f);
 		}
 
-		public void setDialogIcon(Texture pTexture) {
-			setDialogIcon(pTexture, 0.f, 0.f, 0.f, 0.f);
+		public void setDialogIcon(Texture texture) {
+			setDialogIcon(texture, 0.f, 0.f, 0.f, 0.f);
 		}
 
 		public void setDialogIcon(Texture pTexture, float pSrcX, float pSrcY, float pSrcW, float pSrcH) {
@@ -62,9 +62,7 @@ public abstract class BaseDialog extends MenuScreen {
 			mEnabled = true;
 			mIconTexture = pTexture;
 			mSrcRectangle.set(pSrcX, pSrcY, pSrcW, pSrcH);
-
 		}
-
 	}
 
 	// --------------------------------------
@@ -84,7 +82,6 @@ public abstract class BaseDialog extends MenuScreen {
 	protected Screen mParentScreen;
 	protected boolean mDrawBackground;
 	protected boolean mDarkenBackground;
-
 	protected SpriteSheetDefinition mIconSpritesheet;
 	protected int mIconSpriteFrameIndex;
 
@@ -92,49 +89,49 @@ public abstract class BaseDialog extends MenuScreen {
 	// Properties
 	// --------------------------------------
 
-	public void setDialogIcon(SpriteSheetDefinition pSpritesheetDefinition, int pSpriteFrameIndex) {
-		mIconSpritesheet = pSpritesheetDefinition;
-		mIconSpriteFrameIndex = pSpriteFrameIndex;
+	public void setDialogIcon(SpriteSheetDefinition spritesheetDefinition, int spriteFrameIndex) {
+		mIconSpritesheet = spritesheetDefinition;
+		mIconSpriteFrameIndex = spriteFrameIndex;
 	}
 
 	public boolean drawBackground() {
 		return mDrawBackground;
 	}
 
-	public void drawBackground(boolean pNewValue) {
-		mDrawBackground = pNewValue;
+	public void drawBackground(boolean drawBackground) {
+		mDrawBackground = drawBackground;
 	}
 
 	public boolean darkenBackground() {
 		return mDarkenBackground;
 	}
 
-	public void darkenBackground(boolean pNewValue) {
-		mDarkenBackground = pNewValue;
+	public void darkenBackground(boolean darkenBackground) {
+		mDarkenBackground = darkenBackground;
 	}
 
 	public String dialogTitle() {
 		return mMenuTitle;
 	}
 
-	public void dialogTitle(String pNewMenuTitle) {
-		mMenuTitle = pNewMenuTitle;
+	public void dialogTitle(String dialogTitle) {
+		mMenuTitle = dialogTitle;
 	}
 
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
-	public BaseDialog(ScreenManager pScreenManager, Screen pParentScreen, String pDialogMessage) {
-		super(pScreenManager, "");
+	public BaseDialog(ScreenManager screenManager, Screen parentScreen, String dialogMessage) {
+		super(screenManager, "");
 
-		mParentScreen = pParentScreen;
+		mParentScreen = parentScreen;
 
 		mShowBackgroundScreens = true;
 		mDrawBackground = true;
 		mDarkenBackground = true;
 
-		mMessageString = pDialogMessage;
+		mMessageString = dialogMessage;
 
 		mTransitionOn = null;
 		mTransitionOff = null;
@@ -142,7 +139,7 @@ public abstract class BaseDialog extends MenuScreen {
 
 		mPaddingTopNormalized = DIALOG_HEIGHT / 2.f - 64.f;
 
-		mIsPopup = true; // don't hide underlying screens
+		mIsPopup = true;
 	}
 
 	// --------------------------------------
@@ -150,8 +147,8 @@ public abstract class BaseDialog extends MenuScreen {
 	// --------------------------------------
 
 	@Override
-	public void updateLayoutSize(LintfordCore pCore) {
-		super.updateLayoutSize(pCore);
+	public void updateLayoutSize(LintfordCore core) {
+		super.updateLayoutSize(core);
 
 		final int lLayoutCount = mLayouts.size();
 		for (int i = 0; i < lLayoutCount; i++) {
@@ -162,25 +159,24 @@ public abstract class BaseDialog extends MenuScreen {
 	}
 
 	@Override
-	public void update(LintfordCore pCore, boolean pOtherScreenHasFocus, boolean pCoveredByOtherScreen) {
-		super.update(pCore, pOtherScreenHasFocus, pCoveredByOtherScreen);
-
+	public void update(LintfordCore core, boolean otherScreenHasFocus, boolean coveredByOtherScreen) {
+		super.update(core, otherScreenHasFocus, coveredByOtherScreen);
 	}
 
 	@Override
-	public void draw(LintfordCore pCore) {
+	public void draw(LintfordCore core) {
 		if (mScreenState != ScreenState.Active && mScreenState != ScreenState.TransitionOn && mScreenState != ScreenState.TransitionOff)
 			return;
 
 		final float lZDepth = ZLayers.LAYER_SCREENMANAGER + 0.05f;
-		final float lWindowWidth = pCore.HUD().boundingRectangle().w();
-		final float lWindowHeight = pCore.HUD().boundingRectangle().h();
+		final float lWindowWidth = core.HUD().boundingRectangle().width();
+		final float lWindowHeight = core.HUD().boundingRectangle().height();
 
 		final var lSpriteBatch = mParentScreen.spriteBatch();
 
 		if (mDarkenBackground) {
 			final var lColor = ColorConstants.getBlackWithAlpha(.6f);
-			lSpriteBatch.begin(pCore.HUD());
+			lSpriteBatch.begin(core.HUD());
 			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, -lWindowWidth * 0.5f, -lWindowHeight * 0.5f, lWindowWidth, lWindowHeight, ZLayers.LAYER_SCREENMANAGER - 0.1f, lColor);
 			lSpriteBatch.end();
 		}
@@ -194,7 +190,7 @@ public abstract class BaseDialog extends MenuScreen {
 
 			final var lColor = ColorConstants.getWhiteWithAlpha(1.f);
 
-			lSpriteBatch.begin(pCore.HUD());
+			lSpriteBatch.begin(core.HUD());
 			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT, x, y, TILE_SIZE, TILE_SIZE, lZDepth, lColor);
 			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_MID, x + TILE_SIZE, y, w - 64, TILE_SIZE, lZDepth, lColor);
 			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_RIGHT, x + w - 32, y, TILE_SIZE, TILE_SIZE, lZDepth, lColor);
@@ -215,28 +211,28 @@ public abstract class BaseDialog extends MenuScreen {
 			final float y = -DIALOG_HEIGHT / 2;
 
 			final var lSpriteFrame = mIconSpritesheet.getSpriteFrame(mIconSpriteFrameIndex);
-			final float lIconWidth = lSpriteFrame.w();
-			final float lIconHeight = lSpriteFrame.h();
+			final float lIconWidth = lSpriteFrame.width();
+			final float lIconHeight = lSpriteFrame.height();
 
-			lSpriteBatch.begin(pCore.HUD());
+			lSpriteBatch.begin(core.HUD());
 			lSpriteBatch.draw(mIconSpritesheet, lSpriteFrame, x + 15.f, y + TILE_SIZE + 15.f, lIconWidth, lIconHeight, lZDepth, ColorConstants.WHITE);
 			lSpriteBatch.end();
 		}
 
 		if (mMenuTitle != null && mMenuTitle.length() > 0) {
-			mMenuFont.begin(pCore.HUD());
+			mMenuFont.begin(core.HUD());
 			final float lHorizontalOffsetX = (lDrawIcon) ? 5.f : 0.f;
 			mMenuFont.drawText(mMenuTitle, -DIALOG_WIDTH / 2f + TEXT_HORIZONTAL_PADDING + lHorizontalOffsetX, -DIALOG_HEIGHT / 2f + 4.f, lZDepth, screenColor, 1.f);
 			mMenuFont.end();
 		}
-		mMenuFont.begin(pCore.HUD());
+		mMenuFont.begin(core.HUD());
 		mMenuFont.drawText(mMessageString, -DIALOG_WIDTH * 0.5f + 15.f * 2.f + 64.f, -DIALOG_HEIGHT * 0.5f + 48f, lZDepth, ColorConstants.WHITE, 1f, DIALOG_WIDTH - 120);
 		mMenuFont.end();
 
 		// Draw each layout in turn.
 		final int lCount = mLayouts.size();
 		for (int i = 0; i < lCount; i++) {
-			mLayouts.get(i).draw(pCore, lZDepth + (i * 0.001f));
+			mLayouts.get(i).draw(core, lZDepth + (i * 0.001f));
 		}
 	}
 }

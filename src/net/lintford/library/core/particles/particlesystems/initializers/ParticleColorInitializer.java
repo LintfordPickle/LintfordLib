@@ -27,7 +27,6 @@ public class ParticleColorInitializer extends ParticleInitializerBase {
 
 	public ParticleColorInitializer() {
 		super(INITIALIZER_NAME);
-
 	}
 
 	// --------------------------------------
@@ -35,12 +34,10 @@ public class ParticleColorInitializer extends ParticleInitializerBase {
 	// --------------------------------------
 
 	@Override
-	public void initialize(Particle pParticle) {
-		pParticle.color.r = r;
-		pParticle.color.g = g;
-		pParticle.color.b = b;
-		pParticle.color.a = a;
-
+	public void initialize(Particle particle) {
+		particle.color.r = r;
+		particle.color.g = g;
+		particle.color.b = b;
+		particle.color.a = a;
 	}
-
 }

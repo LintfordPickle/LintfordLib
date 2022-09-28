@@ -34,23 +34,23 @@ public class ParticleLifetimeScaleFadeInOutModifier extends ParticleModifierBase
 	// --------------------------------------
 
 	@Override
-	public void initialize(Particle pParticle) {
+	public void initialize(Particle particle) {
 
 	}
 
 	@Override
-	public void update(LintfordCore pCore) {
+	public void update(LintfordCore core) {
 
 	}
 
 	@Override
-	public void updateParticle(LintfordCore pCore, Particle p) {
+	public void updateParticle(LintfordCore core, Particle particle) {
 		// normalized lifetime is a value from 0 to 1 and represents how far
 		// a particle is through its life. 0 means it just started, .5 is half
 		// way through, and 1.0 means it's just about to be finished.
 		// this value will be used to calculate alpha and scale, to avoid
 		// having particles suddenly appear or disappear.
-		float normalizedLifetime = p.timeSinceStart / p.lifeTime();
+		float normalizedLifetime = particle.timeSinceStart / particle.lifeTime();
 
 		// we want particles to fade in and fade out, so we'll calculate alpha
 		// to be (normalizedLifetime) * (1-normalizedLifetime). this way, when
@@ -61,8 +61,6 @@ public class ParticleLifetimeScaleFadeInOutModifier extends ParticleModifierBase
 		// .25
 		// since we want the maximum alpha to be 1, not .25, we'll scale the
 		// entire equation by 4.
-		p.scale = 4f * normalizedLifetime * (1 - normalizedLifetime);
-
+		particle.scale = 4f * normalizedLifetime * (1 - normalizedLifetime);
 	}
-
 }

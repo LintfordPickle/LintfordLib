@@ -9,17 +9,16 @@ public class DebugStatTagCaption extends DebugStatTag<String> {
 	// Constructor
 	// --------------------------------------
 
-	public DebugStatTagCaption(String pLabel) {
-		super(pLabel);
+	public DebugStatTagCaption(String label) {
+		super(label);
 
-		autoReset = false;
-
+		mAtoReset = false;
 	}
 
-	DebugStatTagCaption(final int pID, String pLabel) {
-		super(pID, pLabel);
+	DebugStatTagCaption(final int uid, String label) {
+		super(uid, label);
 
-		autoReset = false;
+		mAtoReset = false;
 	}
 
 	// --------------------------------------
@@ -27,7 +26,7 @@ public class DebugStatTagCaption extends DebugStatTag<String> {
 	// --------------------------------------
 
 	@Override
-	public void draw(FontUnit pFontUnit, float pPosX, float pPosY) {
-		pFontUnit.drawText(String.format("%s", label), pPosX, pPosY, -0.01f, ColorConstants.getColor(r, g, b), 1.f, -1);
+	public void draw(FontUnit fontUnit, float positionX, float positionY) {
+		fontUnit.drawText(String.format("%s", mLabel), positionX, positionY, -0.01f, ColorConstants.getColor(mRed, mGreen, mBlue), 1.f, -1);
 	}
 }

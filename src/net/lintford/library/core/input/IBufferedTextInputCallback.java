@@ -5,7 +5,7 @@ public interface IBufferedTextInputCallback {
 	/** @return true to end capture, false to continue with keyboard capture. */
 	public abstract boolean onEscapePressed();
 
-	public abstract void onKeyPressed(int pCodePoint);
+	public abstract void onKeyPressed(int codePoint);
 
 	/** @return true to end capture, false to continue with keyboard capture. */
 	public abstract boolean onEnterPressed();
@@ -24,5 +24,4 @@ public interface IBufferedTextInputCallback {
 	public default void captureStopped() {
 
 	}
-
 }

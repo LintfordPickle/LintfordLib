@@ -25,12 +25,10 @@ public class Box2dCircleInstance extends BaseInstanceData implements ShapeInstan
 
 	public Box2dCircleInstance() {
 		this(0.5f);
-
 	}
 
-	public Box2dCircleInstance(float pRadius) {
-		radius = pRadius;
-
+	public Box2dCircleInstance(float newRadius) {
+		radius = newRadius;
 	}
 
 	// --------------------------------------
@@ -48,7 +46,6 @@ public class Box2dCircleInstance extends BaseInstanceData implements ShapeInstan
 
 		radius = circleShape.m_radius;
 		center.set(circleShape.m_p);
-
 	}
 
 	public void loadPhysics() {
@@ -56,7 +53,6 @@ public class Box2dCircleInstance extends BaseInstanceData implements ShapeInstan
 
 		circleShape.m_p.set(center);
 		circleShape.m_radius = radius;
-
 	}
 
 	@Override
@@ -68,5 +64,4 @@ public class Box2dCircleInstance extends BaseInstanceData implements ShapeInstan
 
 		return lReturn;
 	}
-
 }

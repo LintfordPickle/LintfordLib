@@ -24,7 +24,7 @@ public class UIToggleButton extends UIWidget {
 	// --------------------------------------
 
 	EntryInteractions mCallback;
-	private int mClickID;
+	private int mEntryUid;
 	private String mButtonLabel;
 	private boolean mHoveredOver;
 	private boolean mIsToggledOn;
@@ -37,47 +37,46 @@ public class UIToggleButton extends UIWidget {
 		return mIsToggledOn;
 	}
 
-	public void isToggledOn(final boolean pIsToggledOn) {
-		mIsToggledOn = pIsToggledOn;
+	public void isToggledOn(final boolean isToggledOn) {
+		mIsToggledOn = isToggledOn;
 	}
 
 	public String buttonLabel() {
 		return mButtonLabel;
 	}
 
-	public void buttonLabel(final String pNewLabel) {
-		mButtonLabel = pNewLabel;
+	public void buttonLabel(final String newLabel) {
+		mButtonLabel = newLabel;
 	}
 
 	public int buttonListenerID() {
-		return mClickID;
+		return mEntryUid;
 	}
 
-	public void buttonListenerID(final int pNewLabel) {
-		mClickID = pNewLabel;
+	public void buttonListenerID(final int newEntryUid) {
+		mEntryUid = newEntryUid;
 	}
 
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
-	public UIToggleButton(final UiWindow pParentWindow) {
-		this(pParentWindow, 0);
+	public UIToggleButton(final UiWindow parentWindow) {
+		this(parentWindow, 0);
 	}
 
-	public UIToggleButton(final UiWindow pParentWindow, final int pClickID) {
-		super(pParentWindow);
+	public UIToggleButton(final UiWindow parentWindow, final int entryUid) {
+		super(parentWindow);
 
-		mClickID = pClickID;
+		mEntryUid = entryUid;
 
 		mButtonLabel = NO_LABEL_TEXT;
-		w = 200;
-		h = 25;
+		mW = 200;
+		mH = 25;
 
 		entityColor.r = 0.3f;
 		entityColor.g = 0.34f;
 		entityColor.b = 0.65f;
-
 	}
 
 	// --------------------------------------
@@ -85,43 +84,40 @@ public class UIToggleButton extends UIWidget {
 	// --------------------------------------
 
 	@Override
-	public boolean handleInput(LintfordCore pCore) {
-		if (intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().isMouseOverThisComponent(hashCode())) {
+	public boolean handleInput(LintfordCore core) {
+		if (intersectsAA(core.HUD().getMouseCameraSpace()) && core.input().mouse().isMouseOverThisComponent(hashCode())) {
 			mHoveredOver = true;
 
-			if (pCore.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
-
+			if (core.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
 				// Callback to the listener and pass our ID
 				if (mCallback != null) {
-					mCallback.menuEntryOnClick(pCore.input(), mClickID);
+					mCallback.menuEntryOnClick(core.input(), mEntryUid);
 				}
 
 				return true;
-
 			}
 
 		} else {
 			mHoveredOver = false;
-
 		}
 
 		return false;
 	}
 
 	@Override
-	public void draw(LintfordCore pCore, SpriteBatch pSpriteBatch, SpriteSheetDefinition pCoreSpritesheet, FontUnit pTextFont, float pComponentZDepth) {
+	public void draw(LintfordCore core, SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheet, FontUnit textFont, float componentZDepth) {
 		final float lColorMod = mIsToggledOn ? mHoveredOver ? .9f : 1.f : .3f;
 		final var lColor = ColorConstants.getColorWithRGBMod(entityColor, lColorMod);
 
-		pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_BUTTON_HORIZONTAL_LEFT, x, y, 32, h, pComponentZDepth, lColor);
-		pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_BUTTON_HORIZONTAL_MID, x + 32, y, w - 64, h, pComponentZDepth, lColor);
-		pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_BUTTON_HORIZONTAL_RIGHT, x + w - 32, y, 32, h, pComponentZDepth, lColor);
+		spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_MENU_BUTTON_HORIZONTAL_LEFT, mX, mY, 32, mH, componentZDepth, lColor);
+		spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_MENU_BUTTON_HORIZONTAL_MID, mX + 32, mY, mW - 64, mH, componentZDepth, lColor);
+		spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_MENU_BUTTON_HORIZONTAL_RIGHT, mX + mW - 32, mY, 32, mH, componentZDepth, lColor);
 
 		if (mButtonLabel != null && mButtonLabel.length() > 0) {
-			final float lTextWidth = pTextFont.getStringWidth(mButtonLabel);
-			final float lTextHeight = pTextFont.getStringHeight(mButtonLabel);
+			final float lTextWidth = textFont.getStringWidth(mButtonLabel);
+			final float lTextHeight = textFont.getStringHeight(mButtonLabel);
 
-			pTextFont.drawText(mButtonLabel, x + w / 2.f - lTextWidth / 2.f, y + h / 2f - lTextHeight / 2.f, pComponentZDepth, ColorConstants.WHITE, 1.0f);
+			textFont.drawText(mButtonLabel, mX + mW / 2.f - lTextWidth / 2.f, mY + mH / 2f - lTextHeight / 2.f, componentZDepth, ColorConstants.WHITE, 1.0f);
 		}
 	}
 
@@ -129,12 +125,11 @@ public class UIToggleButton extends UIWidget {
 	// Methods
 	// --------------------------------------
 
-	public void setClickListener(final EntryInteractions pCallbackObject) {
-		mCallback = pCallbackObject;
+	public void setClickListener(final EntryInteractions callbackObject) {
+		mCallback = callbackObject;
 	}
 
-	public void removeClickListener(final EntryInteractions pCallbackObject) {
+	public void removeClickListener(final EntryInteractions callbackObject) {
 		mCallback = null;
 	}
-
 }

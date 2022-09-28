@@ -7,7 +7,7 @@ import net.lintford.library.core.graphics.sprites.SpriteInstance;
 import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintford.library.core.graphics.textures.texturebatch.SubPixelTextureBatch;
 
-// TODO: ---> Add batching based on SpriteSheetDef (or rather, the Texture).
+// TODO: Add batching based on texture calls
 public class SubPixelSpriteBatch extends SubPixelTextureBatch {
 
 	// --------------------------------------
@@ -16,67 +16,57 @@ public class SubPixelSpriteBatch extends SubPixelTextureBatch {
 
 	public SubPixelSpriteBatch() {
 		super();
-
 	}
 
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
 
-	public void draw(SpriteSheetDefinition pSpriteSheetDefinition, SpriteInstance pSprite, float pZ, Color pTint) {
-		if (pSpriteSheetDefinition == null)
+	public void draw(SpriteSheetDefinition spriteSheetDefinition, SpriteInstance spriteInstance, float zDepth, Color colorTint) {
+		if (spriteSheetDefinition == null)
 			return;
 
-		draw(pSpriteSheetDefinition, pSprite, pSprite, pZ, pTint);
-
+		draw(spriteSheetDefinition, spriteInstance, spriteInstance, zDepth, colorTint);
 	}
 
-	public void draw(SpriteSheetDefinition pSpriteSheetDefinition, SpriteFrame pSpriteFrame, Rectangle pDstRectangle, float pZ, Color pTint) {
-		if (pDstRectangle == null) {
+	public void draw(SpriteSheetDefinition spriteSheetDefinition, SpriteFrame spriteFrame, Rectangle destRectangle, float zDepth, Color colorTint) {
+		if (destRectangle == null)
 			return;
 
-		}
-
-		draw(pSpriteSheetDefinition, pSpriteFrame, pDstRectangle.x(), pDstRectangle.y(), pDstRectangle.w(), pDstRectangle.h(), pZ, pTint);
-
+		draw(spriteSheetDefinition, spriteFrame, destRectangle.x(), destRectangle.y(), destRectangle.width(), destRectangle.height(), zDepth, colorTint);
 	}
 
-	public void draw(SpriteSheetDefinition pSpriteSheetDefinition, SpriteFrame pSpriteFrame, float pDX, float pDY, float pDW, float pDH, float pZ, Color pTint) {
-		if (pSpriteSheetDefinition == null)
+	public void draw(SpriteSheetDefinition spriteSheetDefinition, SpriteFrame spriteFrame, float destX, float destY, float destWidth, float destHeight, float zDepth, Color colorTint) {
+		if (spriteSheetDefinition == null)
 			return;
 
 		if (!mIsDrawing)
 			return;
 
-		if (pSpriteFrame == null) {
+		if (spriteFrame == null)
 			return;
-		}
 
-		final var lTexture = pSpriteSheetDefinition.texture();
+		final var lTexture = spriteSheetDefinition.texture();
 
 		if (lTexture == null)
 			return;
 
-		draw(lTexture, pSpriteFrame.x(), pSpriteFrame.y(), pSpriteFrame.w(), pSpriteFrame.h(), pDX, pDY, pDW, pDH, pZ, pTint);
-
+		draw(lTexture, spriteFrame.x(), spriteFrame.y(), spriteFrame.width(), spriteFrame.height(), destX, destY, destWidth, destHeight, zDepth, colorTint);
 	}
 
-	public void draw(SpriteSheetDefinition pSpriteSheetDefinition, SpriteInstance pSprite, Rectangle pDstRectangle, float pZ, Color pTint) {
-		if (pSpriteSheetDefinition == null)
+	public void draw(SpriteSheetDefinition spriteSheetDefinition, SpriteInstance spriteInstance, Rectangle destRectangle, float zDepth, Color colorTint) {
+		if (spriteSheetDefinition == null)
 			return;
 
-		if (pSprite == null) {
+		if (spriteInstance == null)
 			return;
-		}
 
 		if (!mIsDrawing)
 			return;
 
-		final var lTexture = pSpriteSheetDefinition.texture();
-		final var lCurrentSpriteFrame = pSprite.currentSpriteFrame();
+		final var lTexture = spriteSheetDefinition.texture();
+		final var lCurrentSpriteFrame = spriteInstance.currentSpriteFrame();
 
-		draw(lTexture, lCurrentSpriteFrame, pDstRectangle, pZ, pTint);
-
+		draw(lTexture, lCurrentSpriteFrame, destRectangle, zDepth, colorTint);
 	}
-
 }

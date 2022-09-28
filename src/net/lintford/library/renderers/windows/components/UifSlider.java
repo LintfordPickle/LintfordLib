@@ -25,7 +25,7 @@ public class UifSlider extends UIWidget {
 	// --------------------------------------
 
 	private EntryInteractions mCallback;
-	private int mClickID;
+	private int mEntryUid;
 	private String mSliderLabel;
 
 	private float mMinValue;
@@ -38,17 +38,16 @@ public class UifSlider extends UIWidget {
 	// Properties
 	// --------------------------------------
 
-	public void setMinMax(float pMinValue, float pMaxValue) {
-		if (pMaxValue < pMinValue)
-			pMaxValue = pMinValue;
-		if (pMinValue > pMaxValue)
-			pMinValue = pMaxValue;
+	public void setMinMax(float minValue, float maxValue) {
+		if (maxValue < minValue)
+			maxValue = minValue;
+		if (minValue > maxValue)
+			minValue = maxValue;
 
-		mMinValue = pMinValue;
-		mMaxValue = pMaxValue;
+		mMinValue = minValue;
+		mMaxValue = maxValue;
 
 		updateValue(mCurrentRelPosition);
-
 	}
 
 	public float minValue() {
@@ -59,10 +58,9 @@ public class UifSlider extends UIWidget {
 		return mMaxValue;
 	}
 
-	public void currentValue(float pNewValue) {
-		mCurrentValue = MathHelper.clamp(pNewValue, mMinValue, mMaxValue);
-		mCurrentRelPosition = MathHelper.scaleToRange(mCurrentValue, mMinValue, mMaxValue, 0, w);
-
+	public void currentValue(float newValue) {
+		mCurrentValue = MathHelper.clamp(newValue, mMinValue, mMaxValue);
+		mCurrentRelPosition = MathHelper.scaleToRange(mCurrentValue, mMinValue, mMaxValue, 0, mW);
 	}
 
 	public float currentValue() {
@@ -73,27 +71,26 @@ public class UifSlider extends UIWidget {
 		return mSliderLabel;
 	}
 
-	public void buttonLabel(final String pNewLabel) {
-		mSliderLabel = pNewLabel;
+	public void buttonLabel(final String newLabel) {
+		mSliderLabel = newLabel;
 	}
 
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
-	public UifSlider(final UiWindow pParentWindow) {
-		this(pParentWindow, 0);
+	public UifSlider(final UiWindow parentWindow) {
+		this(parentWindow, 0);
 	}
 
-	public UifSlider(final UiWindow pParentWindow, final int pClickID) {
-		super(pParentWindow);
+	public UifSlider(final UiWindow parentWindow, final int entryUid) {
+		super(parentWindow);
 
-		mClickID = pClickID;
+		mEntryUid = entryUid;
 
 		mSliderLabel = NO_LABEL_TEXT;
-		w = 200;
-		h = 25;
-
+		mW = 200;
+		mH = 25;
 	}
 
 	// --------------------------------------
@@ -101,64 +98,58 @@ public class UifSlider extends UIWidget {
 	// --------------------------------------
 
 	@Override
-	public boolean handleInput(LintfordCore pCore) {
+	public boolean handleInput(LintfordCore core) {
 		if (!mIsEnabled) {
 			return false;
-
 		}
 
-		if (intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().isMouseOverThisComponent(hashCode())) {
-			if (pCore.input().mouse().tryAcquireMouseLeftClick(hashCode())) {
-				final float lMouseX = pCore.HUD().getMouseCameraSpace().x;
-				updateValue(MathHelper.clamp(lMouseX - x, 0, w));
+		if (intersectsAA(core.HUD().getMouseCameraSpace()) && core.input().mouse().isMouseOverThisComponent(hashCode())) {
+			if (core.input().mouse().tryAcquireMouseLeftClick(hashCode())) {
+				final float lMouseX = core.HUD().getMouseCameraSpace().x;
+				updateValue(MathHelper.clamp(lMouseX - mX, 0, mW));
 
 				if (mCallback != null) {
-					// Notify subscribers that something changes
-					mCallback.menuEntryOnClick(pCore.input(), mClickID);
+					mCallback.menuEntryOnClick(core.input(), mEntryUid);
 				}
 
 				return true;
-
 			}
-
 		}
 
 		return false;
 	}
 
 	@Override
-	public void draw(LintfordCore pCore, SpriteBatch pSpriteBatch, SpriteSheetDefinition pCoreSpritesheet, FontUnit pTextFont, float pComponentZDepth) {
+	public void draw(LintfordCore core, SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheetDefinition, FontUnit textFont, float componentZDepth) {
 		final float lRailHeight = 4;
 		final float lSliderWidth = 10;
 
 		final var lBackgroundColor = mIsEnabled ? ColorConstants.getColorWithRGBMod(ColorConstants.PrimaryColor, 1.f) : ColorConstants.getBlackWithAlpha(.4f);
-		pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, x, y + h / 2 - lRailHeight / 2, w, lRailHeight, 0f, lBackgroundColor);
+		spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, mX, mY + mH / 2 - lRailHeight / 2, mW, lRailHeight, 0f, lBackgroundColor);
 		final var lNubbinColor = mIsEnabled ? ColorConstants.getColorWithRGBMod(ColorConstants.TertiaryColor, 1.f) : ColorConstants.getBlackWithAlpha(.4f);
-		pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, x + mCurrentRelPosition - lSliderWidth / 2, y + h / 4, lSliderWidth, h / 2, 0f, lNubbinColor);
+		spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, mX + mCurrentRelPosition - lSliderWidth / 2, mY + mH / 4, lSliderWidth, mH / 2, 0f, lNubbinColor);
 
 		// Render Slider label
 		final var lAmtText = String.format("%.2f", mCurrentValue);
-		pTextFont.drawText(mSliderLabel, x, y - h / 2, pComponentZDepth, ColorConstants.WHITE, 1f);
-		pTextFont.drawText(lAmtText, x + w - pTextFont.getStringWidth(lAmtText), y - h / 2, pComponentZDepth, ColorConstants.WHITE, 1f);
+		textFont.drawText(mSliderLabel, mX, mY - mH / 2, componentZDepth, ColorConstants.WHITE, 1f);
+		textFont.drawText(lAmtText, mX + mW - textFont.getStringWidth(lAmtText), mY - mH / 2, componentZDepth, ColorConstants.WHITE, 1f);
 	}
 
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
 
-	private void updateValue(float pRelPositionX) {
-		mCurrentRelPosition = pRelPositionX;
-		mCurrentValue = MathHelper.scaleToRange(mCurrentRelPosition, 0, w, mMinValue, mMaxValue);
+	private void updateValue(float relPositionX) {
+		mCurrentRelPosition = relPositionX;
+		mCurrentValue = MathHelper.scaleToRange(mCurrentRelPosition, 0, mW, mMinValue, mMaxValue);
 	}
 
-	public void setClickListener(final EntryInteractions pCallbackObject, final int pNewLIstenerID) {
-		mCallback = pCallbackObject;
-		mClickID = pNewLIstenerID;
-
+	public void setClickListener(final EntryInteractions callbackObject, final int entryUid) {
+		mCallback = callbackObject;
+		mEntryUid = entryUid;
 	}
 
-	public void removeClickListener(final EntryInteractions pCallbackObject) {
+	public void removeClickListener(final EntryInteractions callbackObject) {
 		mCallback = null;
 	}
-
 }

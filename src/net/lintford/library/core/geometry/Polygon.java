@@ -64,19 +64,18 @@ public class Polygon extends Shape {
 
 	}
 
-	public Polygon(float pCenterX, float pCenterY) {
+	public Polygon(float centerX, float centerY) {
 		mCentroid = new Vector2f();
 
-		x = pCenterX;
-		y = pCenterY;
-
+		x = centerX;
+		y = centerY;
 	}
 
-	public Polygon(Polygon pOther) {
+	public Polygon(Polygon otherPolygon) {
 		mCentroid = new Vector2f();
 
-		if (pOther != null) {
-			List<Vector2f> lOtherVerts = pOther.getVertices();
+		if (otherPolygon != null) {
+			List<Vector2f> lOtherVerts = otherPolygon.getVertices();
 			final int lOtherVertCount = lOtherVerts.size();
 
 			for (int i = 0; i < lOtherVertCount; i++) {
@@ -84,21 +83,19 @@ public class Polygon extends Shape {
 
 			}
 
-			Vector2f[] lOtherAxes = pOther.getAxes();
+			final var lOtherAxes = otherPolygon.getAxes();
 			final int lOtherAxesCount = lOtherAxes.length;
 			mAxes = new Vector2f[lOtherAxesCount];
 			for (int i = 0; i < lOtherAxesCount; i++) {
 				mAxes[i] = new Vector2f(lOtherAxes[i]);
 			}
 
-			x = pOther.x;
-			y = pOther.y;
-			mCentroid.set(pOther.centroid());
+			x = otherPolygon.x;
+			y = otherPolygon.y;
+			mCentroid.set(otherPolygon.centroid());
 
-			mDirty = pOther.mDirty;
-
+			mDirty = otherPolygon.mDirty;
 		}
-
 	}
 
 	// --------------------------------------
@@ -111,11 +108,12 @@ public class Polygon extends Shape {
 	 * @param otherRect
 	 * @Returns True if this rectangle instance entirely contains the given rectangle. False otherwise.
 	 */
-	public boolean intersects(Polygon pOtherPoly) {
+	public boolean intersects(Polygon otherPolygon) {
+		// TODO: Not implemented
 		return false;
 	}
 
-	public boolean intersects(Rectangle pOtherRect) {
+	public boolean intersects(Rectangle otherRectangle) {
 		return false;
 	}
 
@@ -125,8 +123,8 @@ public class Polygon extends Shape {
 	 * @param otherRect
 	 * @Returns True if this rectangle instance entirely contains the given point. False otherwise.
 	 */
-	public boolean intersects(Vector2f pOtherPoint) {
-		return intersects(pOtherPoint.x, pOtherPoint.y);
+	public boolean intersects(Vector2f otherPoint) {
+		return intersects(otherPoint.x, otherPoint.y);
 	}
 
 	/**
@@ -135,7 +133,8 @@ public class Polygon extends Shape {
 	 * @param otherRect
 	 * @Returns True if this rectangle instance entirely contains the given point. False otherwise.
 	 */
-	public boolean intersects(float pX, float pY) {
+	public boolean intersects(float pointX, float pointY) {
+		// TODO: Not implemented
 		return false;
 	}
 
@@ -171,40 +170,35 @@ public class Polygon extends Shape {
 	}
 
 	@Override
-	public Vector2f project(Vector2f pAxis, Vector2f pToFill) {
-		if (pAxis == null)
-			return pToFill;
+	public Vector2f project(Vector2f axis, Vector2f toFill) {
+		if (axis == null)
+			return toFill;
 
-		float min = Vector2f.dot(mVertices.get(0).x, mVertices.get(0).y, pAxis.x, pAxis.y);
+		float min = Vector2f.dot(mVertices.get(0).x, mVertices.get(0).y, axis.x, axis.y);
 		float max = min;
 		for (int i = 1; i < mVertices.size(); i++) {
 			if (mVertices.get(i) == null)
 				continue;
 
-			float p = Vector2f.dot(mVertices.get(i).x, mVertices.get(i).y, pAxis.x, pAxis.y);
+			float p = Vector2f.dot(mVertices.get(i).x, mVertices.get(i).y, axis.x, axis.y);
 			if (p < min) {
 				min = p;
-
 			} else if (p > max) {
 				max = p;
-
 			}
-
 		}
 
-		if (pToFill == null)
-			pToFill = new Vector2f();
+		if (toFill == null)
+			toFill = new Vector2f();
 
-		pToFill.x = min;
-		pToFill.y = max;
+		toFill.x = min;
+		toFill.y = max;
 
-		return pToFill;
-
+		return toFill;
 	}
 
-	public boolean overlaps(Vector2f p1, Vector2f p2) {
-		return !(p1.x > p2.y || p2.x > p1.y);
-
+	public boolean overlaps(Vector2f point1, Vector2f point2) {
+		return !(point1.x > point2.y || point2.x > point1.y);
 	}
 
 	/**
@@ -216,38 +210,34 @@ public class Polygon extends Shape {
 		return mVertices == null || mVertices.size() == 0;
 	}
 
-	public void setCenterPosition(float pNewCenterX, float pNewCenterY) {
-		x = pNewCenterX;
-		y = pNewCenterY;
-
+	public void setCenterPosition(float newCenterX, float newCenterY) {
+		x = newCenterX;
+		y = newCenterY;
 	}
 
 	@Override
-	public void rotateRel(float pRotAmt) {
+	public void rotateRel(float relativeRotationAmount) {
 		mDirty = true;
-		rotation += pRotAmt;
-
+		mRotation += relativeRotationAmount;
 	}
 
 	@Override
-	public void rotateAbs(float pRotAmt) {
+	public void rotateAbs(float absoluteRotationAmount) {
 		mDirty = true;
-		rotation = pRotAmt;
-
+		mRotation = absoluteRotationAmount;
 	}
 
-	public void addVertices(Vector2f... pNewVertices) {
-		if (pNewVertices == null)
+	public void addVertices(Vector2f... vertices) {
+		if (vertices == null)
 			return;
 
-		final int lLength = pNewVertices.length;
+		final int lLength = vertices.length;
 		for (int i = 0; i < lLength; i++) {
-			mVertices.add(pNewVertices[i]);
+			mVertices.add(vertices[i]);
 		}
 
 		calculateCentroid();
 		mDirty = true;
-
 	}
 
 	/**
@@ -262,8 +252,6 @@ public class Polygon extends Shape {
 		float x1, y1, x2, y2 = 0;
 		final int lVertexCount = mVertices.size();
 		for (int i = 0; i < lVertexCount; i++) {
-			// last point
-
 			x1 = mVertices.get(i).x;
 			y1 = mVertices.get(i).y;
 
@@ -276,22 +264,19 @@ public class Polygon extends Shape {
 			}
 
 			lSignedArea += (x1 * y2 - x2 * y1);
-
 		}
 
 		return lSignedArea > 0;
-
 	}
 
 	public void reverseWinding() {
 		Collections.reverse(mVertices);
 	}
 
-	public void addVertex(Vector2f pNewVertex) {
-		mVertices.add(pNewVertex);
+	public void addVertex(Vector2f newVertex) {
+		mVertices.add(newVertex);
 
 		calculateCentroid();
-
 	}
 
 	public void clearVertices() {
@@ -301,20 +286,20 @@ public class Polygon extends Shape {
 	}
 
 	// Sutherland-Hodgmann Algorithm
-	public static Shape getIntersection(Polygon pClipper, Polygon pSubject) {
-		if (pClipper == null || pSubject == null)
+	public static Shape getIntersection(Polygon clipper, Polygon subject) {
+		if (clipper == null || subject == null)
 			return null;
 
-		Polygon pResult = new Polygon(pSubject);
+		Polygon pResult = new Polygon(subject);
 
-		int len = pClipper.getVertices().size();
+		int len = clipper.getVertices().size();
 		for (int i = 0; i < len; i++) {
 			int len2 = pResult.getVertices().size();
 			Polygon lInputPolygon = pResult;
 			pResult = new Polygon(); // TODO: Garbage
 
-			Vector2f A = pClipper.getVertices().get((i + len - 1) % len);
-			Vector2f B = pClipper.getVertices().get(i);
+			Vector2f A = clipper.getVertices().get((i + len - 1) % len);
+			Vector2f B = clipper.getVertices().get(i);
 
 			for (int j = 0; j < len2; j++) {
 
@@ -338,6 +323,7 @@ public class Polygon extends Shape {
 
 	}
 
+	// TODO: Move to collision extensions
 	private static Vector2f intersection(Vector2f a, Vector2f b, Vector2f p, Vector2f q) {
 		double A1 = b.y - a.y;
 		double B1 = a.x - b.x;

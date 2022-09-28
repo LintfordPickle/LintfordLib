@@ -29,23 +29,21 @@ public class DebugBox2dDrawer extends BaseRenderer {
 	public int ZDepth() {
 		return 100;
 	}
-	
+
 	@Override
 	public boolean isInitialized() {
 		return true;
-
 	}
 
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
-	public DebugBox2dDrawer(RendererManager pRendererManager, World pWorld, int pEntityGroupID) {
-		super(pRendererManager, RENDERER_NAME, pEntityGroupID);
+	public DebugBox2dDrawer(RendererManager rendererManager, World box2dWorld, int entityGroupUid) {
+		super(rendererManager, RENDERER_NAME, entityGroupUid);
 
-		mJBox2dDebugDrawer = new JBox2dDebugDrawer(pWorld);
+		mJBox2dDebugDrawer = new JBox2dDebugDrawer(box2dWorld);
 		mIsActive = false;
-
 	}
 
 	// --------------------------------------
@@ -53,17 +51,15 @@ public class DebugBox2dDrawer extends BaseRenderer {
 	// --------------------------------------
 
 	@Override
-	public void initialize(LintfordCore pCore) {
+	public void initialize(LintfordCore core) {
 
 	}
 
 	@Override
-	public void draw(LintfordCore pCore) {
+	public void draw(LintfordCore core) {
 		if (!isActive() || !isInitialized())
 			return;
 
-		mJBox2dDebugDrawer.draw(pCore);
-
+		mJBox2dDebugDrawer.draw(core);
 	}
-
 }

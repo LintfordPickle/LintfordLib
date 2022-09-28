@@ -93,32 +93,32 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 		return mShowTitle ? TITLE_BAR_HEIGHT : 0.f;
 	}
 
-	public void showTitle(boolean pNewShowTitle) {
-		mShowTitle = pNewShowTitle;
+	public void showTitle(boolean newShowTitle) {
+		mShowTitle = newShowTitle;
 	}
 
-	public void title(String pNewTitle) {
-		mLayoutTitle = pNewTitle;
+	public void title(String newTitle) {
+		mLayoutTitle = newTitle;
 	}
 
-	public void maxWidth(float pMaxWidth) {
-		mMaxWidth = pMaxWidth;
+	public void maxWidth(float maxWidth) {
+		mMaxWidth = maxWidth;
 	}
 
 	public float maxWidth() {
 		return mMaxWidth;
 	}
 
-	public void maxHeight(float pMaxHeight) {
-		mMaxHeight = pMaxHeight;
+	public void maxHeight(float maxHeight) {
+		mMaxHeight = maxHeight;
 	}
 
 	public float maxHeight() {
 		return mMaxHeight;
 	}
 
-	public void setEntryOffsetY(float pNewOffset) {
-		mEntryOffsetFromTop = pNewOffset;
+	public void setEntryOffsetY(float newOffset) {
+		mEntryOffsetFromTop = newOffset;
 	}
 
 	public FILLTYPE layoutFillType() {
@@ -126,12 +126,11 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 
 	}
 
-	public void layoutFillType(FILLTYPE pFilltype) {
-		if (pFilltype == null)
+	public void layoutFillType(FILLTYPE filltype) {
+		if (filltype == null)
 			return;
 
-		mLayoutFillType = pFilltype;
-
+		mLayoutFillType = filltype;
 	}
 
 	public LAYOUT_WIDTH layoutWidth() {
@@ -139,27 +138,24 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 
 	}
 
-	public void layoutWidth(LAYOUT_WIDTH pLayoutWidth) {
-		if (pLayoutWidth == null)
+	public void layoutWidth(LAYOUT_WIDTH layoutWidth) {
+		if (layoutWidth == null)
 			return;
 
-		mLayoutWidth = pLayoutWidth;
-
+		mLayoutWidth = layoutWidth;
 	}
 
-	public void minWidth(float pNewValue) {
-		mMinWidth = pNewValue;
-
+	public void minWidth(float newValue) {
+		mMinWidth = newValue;
 	}
 
-	public void minHeight(float pNewValue) {
-		mMinHeight = pNewValue;
-
+	public void minHeight(float newValue) {
+		mMinHeight = newValue;
 	}
 
-	public void setDrawBackground(boolean pEnabled, Color pColor) {
-		mDrawBackground = pEnabled;
-		layoutColor.setFromColor(pColor);
+	public void setDrawBackground(boolean enabled, Color color) {
+		mDrawBackground = enabled;
+		layoutColor.setFromColor(color);
 	}
 
 	public boolean isLoaded() {
@@ -182,20 +178,20 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 		return mBottomMargin;
 	}
 
-	public void marginLeft(float pNewValue) {
-		mLeftMargin = pNewValue;
+	public void marginLeft(float newValue) {
+		mLeftMargin = newValue;
 	}
 
-	public void marginRight(float pNewValue) {
-		mRightMargin = pNewValue;
+	public void marginRight(float newValue) {
+		mRightMargin = newValue;
 	}
 
-	public void marginTop(float pNewValue) {
-		mTopMargin = pNewValue;
+	public void marginTop(float newValue) {
+		mTopMargin = newValue;
 	}
 
-	public void marginBottom(float pNewValue) {
-		mBottomMargin = pNewValue;
+	public void marginBottom(float newValue) {
+		mBottomMargin = newValue;
 	}
 
 	public float paddingLeft() {
@@ -214,46 +210,46 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 		return mBottomPadding;
 	}
 
-	public void paddingLeft(float pNewValue) {
-		mLeftPadding = pNewValue;
+	public void paddingLeft(float newValue) {
+		mLeftPadding = newValue;
 	}
 
-	public void paddingRight(float pNewValue) {
-		mRightPadding = pNewValue;
+	public void paddingRight(float newValue) {
+		mRightPadding = newValue;
 	}
 
-	public void paddingTop(float pNewValue) {
-		mTopPadding = pNewValue;
+	public void paddingTop(float newValue) {
+		mTopPadding = newValue;
 	}
 
-	public void paddingBottom(float pNewValue) {
-		mBottomPadding = pNewValue;
+	public void paddingBottom(float newValue) {
+		mBottomPadding = newValue;
 	}
 
 	/** Forces the layout to use the height value provided. Use BaseLayout.USE_HEIGHT_OF_ENTRIES value to use the sum of the entry heights. */
-	public void forceHeight(float pNewHeight) {
-		mForcedHeight = pNewHeight;
+	public void forceHeight(float newValue) {
+		mForcedHeight = newValue;
 	}
 
 	/** Forces the layout to use the height value provided for the total height of all the content. Use BaseLayout.USE_HEIGHT_OF_ENTRIES value to use the sum of the entry heights. */
-	public void forceEntryHeight(float pNewHeight) {
-		mForcedEntryHeight = pNewHeight;
+	public void forceEntryHeight(float newValue) {
+		mForcedEntryHeight = newValue;
 	}
 
 	public boolean enabled() {
 		return mEnabled;
 	}
 
-	public void enabled(boolean pEnabled) {
-		mEnabled = pEnabled;
+	public void enabled(boolean enabled) {
+		mEnabled = enabled;
 	}
 
 	public boolean visible() {
 		return mVisible;
 	}
 
-	public void visible(boolean pEnabled) {
-		mVisible = pEnabled;
+	public void visible(boolean enabled) {
+		mVisible = enabled;
 	}
 
 	public float cropPaddingBottom() {
@@ -261,8 +257,8 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 	}
 
 	/**This is the amount of padding to add to the bottom of the inner-area when cropping during scrolling. The amount should be tied with the graphic CoreSpriteSheet.Panel3x3Bottom*/
-	public void cropPaddingBottom(float pNewCropPaddingTop) {
-		mCropPaddingBottom = pNewCropPaddingTop;
+	public void cropPaddingBottom(float newCropPaddingTop) {
+		mCropPaddingBottom = newCropPaddingTop;
 	}
 
 	public float cropPaddingTop() {
@@ -272,8 +268,8 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 	/**This is the amount of padding to add to the top of the inner-area when cropping during scrolling. 
 	 * The amount should be tied with the graphic CoreSpriteSheet.Panel3x3Top.
 	 * n.b. If the ShowTitleBar is enabled, then the cropping amount should likely be reduced to take this (additional offset) into account*/
-	public void cropPaddingTop(float pNewCropPaddingTop) {
-		mCropPaddingTop = pNewCropPaddingTop;
+	public void cropPaddingTop(float newCropPaddingTop) {
+		mCropPaddingTop = newCropPaddingTop;
 	}
 
 	// --------------------------------------
@@ -283,7 +279,7 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 	public BaseLayout(MenuScreen pParentScreen) {
 		super();
 
-		screenManager = pParentScreen.screenManager;
+		screenManager = pParentScreen.screenManager();
 		parentScreen = pParentScreen;
 		mMenuEntries = new ArrayList<>();
 
@@ -323,14 +319,14 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 		}
 
 		// width = getEntryWidth();
-		h = getDesiredHeight();
+		mH = getDesiredHeight();
 
 	}
 
-	public void loadResources(ResourceManager pResourceManager) {
+	public void loadResources(ResourceManager resourceManager) {
 		int lCount = mMenuEntries.size();
 		for (int i = 0; i < lCount; i++) {
-			mMenuEntries.get(i).loadResources(pResourceManager);
+			mMenuEntries.get(i).loadResources(resourceManager);
 		}
 
 		mResourcesLoaded = true;
@@ -345,164 +341,164 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 		mResourcesLoaded = false;
 	}
 
-	public boolean handleInput(LintfordCore pCore) {
+	public boolean handleInput(LintfordCore core) {
 		if (mMenuEntries == null || mMenuEntries.size() == 0)
 			return false; // nothing to do
 
 		final var lEntryCount = mMenuEntries.size();
 		for (int i = 0; i < lEntryCount; i++) {
 			final var lMenuEntry = mMenuEntries.get(i);
-			if (lMenuEntry.handleInput(pCore)) {
+			if (lMenuEntry.handleInput(core)) {
 				// return true;
 			}
 		}
 
-		if (intersectsAA(pCore.HUD().getMouseCameraSpace())) {
-			if (true && pCore.input().mouse().tryAcquireMouseMiddle((hashCode()))) {
-				final float scrollAccelerationAmt = pCore.input().mouse().mouseWheelYOffset() * 250.0f;
+		if (intersectsAA(core.HUD().getMouseCameraSpace())) {
+			if (true && core.input().mouse().tryAcquireMouseMiddle((hashCode()))) {
+				final float scrollAccelerationAmt = core.input().mouse().mouseWheelYOffset() * 250.0f;
 				mScrollBar.scrollRelAcceleration(scrollAccelerationAmt);
 			}
 		}
 
-		updateFocusOfAll(pCore);
+		updateFocusOfAll(core);
 
 		if (mScrollBar.scrollBarEnabled()) {
-			mScrollBar.handleInput(pCore, screenManager);
+			mScrollBar.handleInput(core, screenManager);
 		}
 
 		return false;
 	}
 
-	public void update(LintfordCore pCore) {
+	public void update(LintfordCore core) {
 		final int lCount = mMenuEntries.size();
 		for (int i = 0; i < lCount; i++) {
 			boolean lIsSelected = parentScreen.isActive() && (i == mSelectedEntry);
-			mMenuEntries.get(i).update(pCore, parentScreen, lIsSelected);
+			mMenuEntries.get(i).update(core, parentScreen, lIsSelected);
 		}
 
 		final var lScreenOffset = parentScreen.screenPositionOffset();
-		mContentArea.set(lScreenOffset.x + x, lScreenOffset.y + y, w, getEntryHeight());
+		mContentArea.set(lScreenOffset.x + mX, lScreenOffset.y + mY, mW, getEntryHeight());
 
 		final float lTitleHeight = TITLE_BAR_HEIGHT;
 		final float lCropFooterHeight = mCropPaddingBottom;
 		final float lCropHeaderHeight = mShowTitle ? mCropPaddingTop + lTitleHeight : mCropPaddingTop;
-		contentDisplayRectange.set(x, y + lCropHeaderHeight, w, h - lCropHeaderHeight - lCropFooterHeight);
+		contentDisplayRectange.set(mX, mY + lCropHeaderHeight, mW, mH - lCropHeaderHeight - lCropFooterHeight);
 
-		mScrollBar.update(pCore);
+		mScrollBar.update(core);
 	}
 
-	public void draw(LintfordCore pCore, float pComponentDepth) {
+	public void draw(LintfordCore core, float componentDepth) {
 		if (!mEnabled || !mVisible)
 			return;
 
 		final var lSpriteBatch = parentScreen.spriteBatch();
-		final var lSpriteSheetCore = pCore.resources().spriteSheetManager().coreSpritesheet();
+		final var lSpriteSheetCore = core.resources().spriteSheetManager().coreSpritesheet();
 		final var lParentScreenAlpha = parentScreen.screenColor.a;
 
 		layoutColor.a = lParentScreenAlpha;
 
-		if (mDrawBackground) {
-			drawBackground(pCore, mShowTitle, pComponentDepth);
-		}
+		if (mDrawBackground)
+			drawBackground(core, mShowTitle, componentDepth);
 
 		if (mShowTitle) {
-			final var lTitleFont = parentScreen.rendererManager.uiHeaderFont();
+			final var lTitleFont = parentScreen.rendererManager().uiHeaderFont();
 			final var lWhiteColorWithAlpha = ColorConstants.getWhiteWithAlpha(parentScreen.screenColor.a);
 
-			lTitleFont.begin(pCore.HUD());
-			lTitleFont.drawText(mLayoutTitle, x + 20.f, y + 20.f - (lTitleFont.fontHeight() / 2.f), pComponentDepth, lWhiteColorWithAlpha, 1.0f);
+			lTitleFont.begin(core.HUD());
+			lTitleFont.drawText(mLayoutTitle, mX + 20.f, mY + 20.f - (lTitleFont.fontHeight() / 2.f), componentDepth, lWhiteColorWithAlpha, 1.0f);
 			lTitleFont.end();
 		}
 
 		if (mScrollBar.scrollBarEnabled()) {
-			mContentArea.preDraw(pCore, lSpriteBatch, lSpriteSheetCore);
+			mContentArea.preDraw(core, lSpriteBatch, lSpriteSheetCore);
 		}
 
 		final int lMenuEntryCount = mMenuEntries.size();
 		for (int i = lMenuEntryCount - 1; i >= 0; --i) {
-			mMenuEntries.get(i).draw(pCore, parentScreen, mSelectedEntry == i, pComponentDepth + i * .001f);
+			mMenuEntries.get(i).draw(core, parentScreen, mSelectedEntry == i, componentDepth + i * .001f);
 		}
 
 		if (mScrollBar.scrollBarEnabled()) {
-			mContentArea.postDraw(pCore);
-			lSpriteBatch.begin(pCore.HUD());
+			mContentArea.postDraw(core);
+			lSpriteBatch.begin(core.HUD());
 			mScrollBar.scrollBarAlpha(lParentScreenAlpha);
-			mScrollBar.draw(pCore, lSpriteBatch, lSpriteSheetCore, pComponentDepth + .1f);
+			mScrollBar.draw(core, lSpriteBatch, lSpriteSheetCore, componentDepth + .1f);
 			lSpriteBatch.end();
 		}
 
 		for (int i = lMenuEntryCount - 1; i >= 0; --i) {
-			mMenuEntries.get(i).postStencilDraw(pCore, parentScreen, mSelectedEntry == i, pComponentDepth + i * .001f);
+			mMenuEntries.get(i).postStencilDraw(core, parentScreen, mSelectedEntry == i, componentDepth + i * .001f);
 		}
 
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
-			lSpriteBatch.begin(pCore.HUD());
-			lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_WHITE, x, y, w, h, ZLayers.LAYER_DEBUG, ColorConstants.Debug_Transparent_Magenta);
+			lSpriteBatch.begin(core.HUD());
+			lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_WHITE, mX, mY, mW, mH, ZLayers.LAYER_DEBUG, ColorConstants.Debug_Transparent_Magenta);
 			lSpriteBatch.end();
 		}
 	}
 
 	// TODO: Move this into a 'CorePanelRenderer'
-	private void drawBackground(LintfordCore pCore, boolean pWithTitlebar, float pComponentDepth) {
+	private void drawBackground(LintfordCore core, boolean withTitlebar, float componentDepth) {
 		final var lSpriteBatch = parentScreen.spriteBatch();
-		final var lSpriteSheetCore = pCore.resources().spriteSheetManager().coreSpritesheet();
+		final var lSpriteSheetCore = core.resources().spriteSheetManager().coreSpritesheet();
 
 		final var lScreenOffset = parentScreen.screenPositionOffset();
 		final float lTileSize = 32;
 
-		lSpriteBatch.begin(pCore.HUD());
-		if (pWithTitlebar) {
-			if (h < 64) {
-				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT, (int) (lScreenOffset.x + x), (int) (lScreenOffset.y + y), lTileSize, lTileSize, pComponentDepth, layoutColor);
-				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_MID, (int) (lScreenOffset.x + x + lTileSize), (int) (lScreenOffset.y + y), w - lTileSize * 2, lTileSize, pComponentDepth, layoutColor);
-				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_RIGHT, (int) (lScreenOffset.x + x + w - lTileSize), (int) (lScreenOffset.y + y), lTileSize, lTileSize, pComponentDepth, layoutColor);
+		lSpriteBatch.begin(core.HUD());
+		if (withTitlebar) {
+			if (mH < 64) {
+				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT, (int) (lScreenOffset.x + mX), (int) (lScreenOffset.y + mY), lTileSize, lTileSize, componentDepth, layoutColor);
+				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_MID, (int) (lScreenOffset.x + mX + lTileSize), (int) (lScreenOffset.y + mY), mW - lTileSize * 2, lTileSize, componentDepth, layoutColor);
+				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_RIGHT, (int) (lScreenOffset.x + mX + mW - lTileSize), (int) (lScreenOffset.y + mY), lTileSize, lTileSize, componentDepth, layoutColor);
 
-				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_00_BOTTOM_LEFT, (int) (lScreenOffset.x + x), (int) (lScreenOffset.y + y + h - lTileSize), lTileSize, lTileSize, pComponentDepth, layoutColor);
-				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_00_BOTTOM_MID, (int) (lScreenOffset.x + x + lTileSize), (int) (lScreenOffset.y + y + h - lTileSize), w - lTileSize * 2, lTileSize, pComponentDepth, layoutColor);
-				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_00_BOTTOM_RIGHT, (int) (lScreenOffset.x + x + w - lTileSize), (int) (lScreenOffset.y + y + h - lTileSize), lTileSize, lTileSize, pComponentDepth, layoutColor);
+				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_00_BOTTOM_LEFT, (int) (lScreenOffset.x + mX), (int) (lScreenOffset.y + mY + mH - lTileSize), lTileSize, lTileSize, componentDepth, layoutColor);
+				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_00_BOTTOM_MID, (int) (lScreenOffset.x + mX + lTileSize), (int) (lScreenOffset.y + mY + mH - lTileSize), mW - lTileSize * 2, lTileSize, componentDepth, layoutColor);
+				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_00_BOTTOM_RIGHT, (int) (lScreenOffset.x + mX + mW - lTileSize), (int) (lScreenOffset.y + mY + mH - lTileSize), lTileSize, lTileSize, componentDepth, layoutColor);
 			} else {
-				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT, (int) (lScreenOffset.x + x), (int) (lScreenOffset.y + y), lTileSize, lTileSize, pComponentDepth, layoutColor);
-				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_MID, (int) (lScreenOffset.x + x + lTileSize), (int) (lScreenOffset.y + y), w - lTileSize * 2 + 1, lTileSize, pComponentDepth, layoutColor);
-				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_RIGHT, (int) (lScreenOffset.x + x + w - lTileSize), (int) (lScreenOffset.y + y), lTileSize, lTileSize, pComponentDepth, layoutColor);
+				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT, (int) (lScreenOffset.x + mX), (int) (lScreenOffset.y + mY), lTileSize, lTileSize, componentDepth, layoutColor);
+				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_MID, (int) (lScreenOffset.x + mX + lTileSize), (int) (lScreenOffset.y + mY), mW - lTileSize * 2 + 1, lTileSize, componentDepth, layoutColor);
+				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_RIGHT, (int) (lScreenOffset.x + mX + mW - lTileSize), (int) (lScreenOffset.y + mY), lTileSize, lTileSize, componentDepth, layoutColor);
 
-				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_00_MID_LEFT, (int) (lScreenOffset.x + x), (int) (lScreenOffset.y + y + lTileSize), lTileSize, h - lTileSize * 2 + 1, pComponentDepth, layoutColor);
-				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_00_MID_CENTER, (int) (lScreenOffset.x + x + lTileSize), (int) (lScreenOffset.y + y + lTileSize), (int) (w - lTileSize * 2) + 1, h - 64 + 1, pComponentDepth, layoutColor);
-				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_00_MID_RIGHT, (int) (lScreenOffset.x + x + w - lTileSize), (int) (lScreenOffset.y + y + lTileSize), (int) lTileSize, (int) (h - lTileSize * 2) + 1, pComponentDepth,
+				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_00_MID_LEFT, (int) (lScreenOffset.x + mX), (int) (lScreenOffset.y + mY + lTileSize), lTileSize, mH - lTileSize * 2 + 1, componentDepth, layoutColor);
+				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_00_MID_CENTER, (int) (lScreenOffset.x + mX + lTileSize), (int) (lScreenOffset.y + mY + lTileSize), (int) (mW - lTileSize * 2) + 1, mH - 64 + 1, componentDepth, layoutColor);
+				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_00_MID_RIGHT, (int) (lScreenOffset.x + mX + mW - lTileSize), (int) (lScreenOffset.y + mY + lTileSize), (int) lTileSize, (int) (mH - lTileSize * 2) + 1, componentDepth,
 						layoutColor);
 
-				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_00_BOTTOM_LEFT, (int) (lScreenOffset.x + x), (int) (lScreenOffset.y + y + h - lTileSize), lTileSize, lTileSize, pComponentDepth, layoutColor);
-				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_00_BOTTOM_MID, (int) (lScreenOffset.x + x + lTileSize), (int) (lScreenOffset.y + y + h - lTileSize), (int) (w - lTileSize * 2) + 1, lTileSize, pComponentDepth, layoutColor);
-				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_00_BOTTOM_RIGHT, (int) (lScreenOffset.x + x + w - lTileSize), (int) (lScreenOffset.y + y + h - lTileSize), lTileSize, lTileSize, pComponentDepth, layoutColor);
+				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_00_BOTTOM_LEFT, (int) (lScreenOffset.x + mX), (int) (lScreenOffset.y + mY + mH - lTileSize), lTileSize, lTileSize, componentDepth, layoutColor);
+				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_00_BOTTOM_MID, (int) (lScreenOffset.x + mX + lTileSize), (int) (lScreenOffset.y + mY + mH - lTileSize), (int) (mW - lTileSize * 2) + 1, lTileSize, componentDepth,
+						layoutColor);
+				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_00_BOTTOM_RIGHT, (int) (lScreenOffset.x + mX + mW - lTileSize), (int) (lScreenOffset.y + mY + mH - lTileSize), lTileSize, lTileSize, componentDepth, layoutColor);
 			}
 		} else {
-			if (h < 64) {
-				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_LEFT, (int) (lScreenOffset.x + x), (int) (lScreenOffset.y + y), lTileSize, lTileSize, pComponentDepth, layoutColor);
-				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_MID, (int) (lScreenOffset.x + x + lTileSize), (int) (lScreenOffset.y + y), w - lTileSize * 2, lTileSize, pComponentDepth, layoutColor);
-				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_RIGHT, (int) (lScreenOffset.x + x + w - lTileSize), (int) (lScreenOffset.y + y), lTileSize, lTileSize, pComponentDepth, layoutColor);
+			if (mH < 64) {
+				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_LEFT, (int) (lScreenOffset.x + mX), (int) (lScreenOffset.y + mY), lTileSize, lTileSize, componentDepth, layoutColor);
+				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_MID, (int) (lScreenOffset.x + mX + lTileSize), (int) (lScreenOffset.y + mY), mW - lTileSize * 2, lTileSize, componentDepth, layoutColor);
+				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_RIGHT, (int) (lScreenOffset.x + mX + mW - lTileSize), (int) (lScreenOffset.y + mY), lTileSize, lTileSize, componentDepth, layoutColor);
 
-				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_LEFT, (int) (lScreenOffset.x + x), (int) (lScreenOffset.y + y + h - lTileSize), lTileSize, lTileSize, pComponentDepth, layoutColor);
-				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_MID, (int) (lScreenOffset.x + x + lTileSize), (int) (lScreenOffset.y + y + h - lTileSize), w - lTileSize * 2, lTileSize, pComponentDepth, layoutColor);
-				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_RIGHT, (int) (lScreenOffset.x + x + w - lTileSize), (int) (lScreenOffset.y + y + h - lTileSize), lTileSize, lTileSize, pComponentDepth, layoutColor);
+				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_LEFT, (int) (lScreenOffset.x + mX), (int) (lScreenOffset.y + mY + mH - lTileSize), lTileSize, lTileSize, componentDepth, layoutColor);
+				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_MID, (int) (lScreenOffset.x + mX + lTileSize), (int) (lScreenOffset.y + mY + mH - lTileSize), mW - lTileSize * 2, lTileSize, componentDepth, layoutColor);
+				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_RIGHT, (int) (lScreenOffset.x + mX + mW - lTileSize), (int) (lScreenOffset.y + mY + mH - lTileSize), lTileSize, lTileSize, componentDepth, layoutColor);
 			} else {
-				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_LEFT, (int) (lScreenOffset.x + x), (int) (lScreenOffset.y + y), lTileSize, lTileSize, pComponentDepth, layoutColor);
-				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_MID, (int) (lScreenOffset.x + x + lTileSize), (int) (lScreenOffset.y + y), w - lTileSize * 2 + 1, lTileSize, pComponentDepth, layoutColor);
-				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_RIGHT, (int) (lScreenOffset.x + x + w - lTileSize), (int) (lScreenOffset.y + y), lTileSize, lTileSize, pComponentDepth, layoutColor);
+				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_LEFT, (int) (lScreenOffset.x + mX), (int) (lScreenOffset.y + mY), lTileSize, lTileSize, componentDepth, layoutColor);
+				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_MID, (int) (lScreenOffset.x + mX + lTileSize), (int) (lScreenOffset.y + mY), mW - lTileSize * 2 + 1, lTileSize, componentDepth, layoutColor);
+				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_RIGHT, (int) (lScreenOffset.x + mX + mW - lTileSize), (int) (lScreenOffset.y + mY), lTileSize, lTileSize, componentDepth, layoutColor);
 
-				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_MID_LEFT, (int) (lScreenOffset.x + x), (int) (lScreenOffset.y + y + lTileSize), lTileSize, h - lTileSize * 2 + 1, pComponentDepth, layoutColor);
-				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_MID_CENTER, (int) (lScreenOffset.x + x + lTileSize), (int) (lScreenOffset.y + y + lTileSize), (int) (w - lTileSize * 2) + 1, h - 64 + 1, pComponentDepth, layoutColor);
-				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_MID_RIGHT, (int) (lScreenOffset.x + x + w - lTileSize), (int) (lScreenOffset.y + y + lTileSize), (int) lTileSize, (int) (h - lTileSize * 2) + 1, pComponentDepth,
+				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_MID_LEFT, (int) (lScreenOffset.x + mX), (int) (lScreenOffset.y + mY + lTileSize), lTileSize, mH - lTileSize * 2 + 1, componentDepth, layoutColor);
+				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_MID_CENTER, (int) (lScreenOffset.x + mX + lTileSize), (int) (lScreenOffset.y + mY + lTileSize), (int) (mW - lTileSize * 2) + 1, mH - 64 + 1, componentDepth, layoutColor);
+				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_MID_RIGHT, (int) (lScreenOffset.x + mX + mW - lTileSize), (int) (lScreenOffset.y + mY + lTileSize), (int) lTileSize, (int) (mH - lTileSize * 2) + 1, componentDepth,
 						layoutColor);
 
-				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_LEFT, (int) (lScreenOffset.x + x), (int) (lScreenOffset.y + y + h - lTileSize), lTileSize, lTileSize, pComponentDepth, layoutColor);
-				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_MID, (int) (lScreenOffset.x + x + lTileSize), (int) (lScreenOffset.y + y + h - lTileSize), (int) (w - lTileSize * 2) + 1, (int) lTileSize, pComponentDepth,
+				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_LEFT, (int) (lScreenOffset.x + mX), (int) (lScreenOffset.y + mY + mH - lTileSize), lTileSize, lTileSize, componentDepth, layoutColor);
+				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_MID, (int) (lScreenOffset.x + mX + lTileSize), (int) (lScreenOffset.y + mY + mH - lTileSize), (int) (mW - lTileSize * 2) + 1, (int) lTileSize, componentDepth,
 						layoutColor);
-				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_RIGHT, (int) (lScreenOffset.x + x + w - lTileSize), (int) (lScreenOffset.y + y + h - lTileSize), lTileSize, lTileSize, pComponentDepth, layoutColor);
+				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_RIGHT, (int) (lScreenOffset.x + mX + mW - lTileSize), (int) (lScreenOffset.y + mY + mH - lTileSize), lTileSize, lTileSize, componentDepth, layoutColor);
 			}
 		}
 		lSpriteBatch.end();
 
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_OUTLINES", false)) {
-			Debug.debugManager().drawers().drawRectImmediate(pCore.HUD(), this);
+			Debug.debugManager().drawers().drawRectImmediate(core.HUD(), this);
 		}
 	}
 
@@ -518,18 +514,18 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 		return mMenuEntries.size();
 	}
 
-	public MenuEntry getMenuEntryByIndex(int pMenuEntryIndex) {
-		if (pMenuEntryIndex < 0 || pMenuEntryIndex > mMenuEntries.size() - 1)
+	public MenuEntry getMenuEntryByIndex(int menuEntryIndex) {
+		if (menuEntryIndex < 0 || menuEntryIndex > mMenuEntries.size() - 1)
 			return null;
-		return mMenuEntries.get(pMenuEntryIndex);
+		return mMenuEntries.get(menuEntryIndex);
 	}
 
-	public void addMenuEntry(MenuEntry pNewEntry) {
-		mMenuEntries.add(pNewEntry);
+	public void addMenuEntry(MenuEntry entryToAdd) {
+		mMenuEntries.add(entryToAdd);
 	}
 
-	public void removeMenuEntry(MenuEntry pMenuEntry) {
-		mMenuEntries.remove(pMenuEntry);
+	public void removeMenuEntry(MenuEntry entryToRemove) {
+		mMenuEntries.remove(entryToRemove);
 	}
 
 	public void updateStructure() {
@@ -553,20 +549,20 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 		return false;
 	}
 
-	public void setFocusOn(InputManager pInputState, MenuEntry pMenuEntry, boolean pForce) {
+	public void setFocusOn(InputManager inputState, MenuEntry menuEntry, boolean force) {
 
 		// If another entry has locked the focus
 		// (i.e. another input entry), then don't change focus
-		if (doesElementHaveFocus() && !pForce)
+		if (doesElementHaveFocus() && !force)
 			return;
 
 		// Set focus to this entry
-		pMenuEntry.onClick(pInputState);
+		menuEntry.onClick(inputState);
 
 		// and disable focus on the rest
 		final var lCount = mMenuEntries.size();
 		for (int i = 0; i < lCount; i++) {
-			if (!mMenuEntries.get(i).equals(pMenuEntry)) {
+			if (!mMenuEntries.get(i).equals(menuEntry)) {
 				mMenuEntries.get(i).hasFocus(false);
 				mMenuEntries.get(i).hoveredOver(false);
 			} else {
@@ -576,12 +572,12 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 	}
 
 	/** Updates the focus of all {@link MenuEntry}s in this layout, based on the current {@link InputManager}. */
-	public void updateFocusOfAll(LintfordCore pCore) {
+	public void updateFocusOfAll(LintfordCore core) {
 		final var lCount = mMenuEntries.size();
 		for (int i = 0; i < lCount; i++) {
 			final var lMenuEntry = mMenuEntries.get(i);
-			final boolean lIsTheMouseOverThisComponent = lMenuEntry.intersectsAA(pCore.HUD().getMouseCameraSpace());
-			final boolean lDoesThisComponentOwnTheMouse = pCore.input().mouse().isMouseOverThisComponent(lMenuEntry.hashCode());
+			final boolean lIsTheMouseOverThisComponent = lMenuEntry.intersectsAA(core.HUD().getMouseCameraSpace());
+			final boolean lDoesThisComponentOwnTheMouse = core.input().mouse().isMouseOverThisComponent(lMenuEntry.hashCode());
 
 			// Update the hovered over status (needed to disable hovering on entries)
 			if (lDoesThisComponentOwnTheMouse && lIsTheMouseOverThisComponent) {
@@ -591,8 +587,7 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 			}
 
 			// Update the focus of entries where the mouse is clicked in other areas (other than any one specific entry).
-
-			if (pCore.input().mouse().isMouseLeftButtonDown()) {
+			if (core.input().mouse().isMouseLeftButtonDown()) {
 				if (lDoesThisComponentOwnTheMouse && lIsTheMouseOverThisComponent) {
 					lMenuEntry.hasFocus(true);
 				} else {
@@ -603,15 +598,15 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 	}
 
 	/** Sets the focus of a specific {@link MenuEntry}, removing focus from all other entries. */
-	public void updateFocusOffAllBut(LintfordCore pCore, MenuEntry pMenuEntry) {
+	public void updateFocusOffAllBut(LintfordCore core, MenuEntry menuEntry) {
 		int lCount = mMenuEntries.size();
 		for (int i = 0; i < lCount; i++) {
 			final var lMenuEntry = mMenuEntries.get(i);
-			if (pMenuEntry == lMenuEntry)
+			if (menuEntry == lMenuEntry)
 				continue;
 
-			if (pCore.input().mouse().tryAcquireMouseLeftClick(hashCode())) {
-				if (lMenuEntry.intersectsAA(pCore.HUD().getMouseCameraSpace())) {
+			if (core.input().mouse().tryAcquireMouseLeftClick(hashCode())) {
+				if (lMenuEntry.intersectsAA(core.HUD().getMouseCameraSpace())) {
 					lMenuEntry.hasFocus(true);
 
 				} else {
@@ -629,8 +624,8 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 		}
 	}
 
-	public boolean hasEntry(int pIndex) {
-		if (pIndex < 0 || pIndex >= mMenuEntries.size())
+	public boolean hasEntry(int menuIndex) {
+		if (menuIndex < 0 || menuIndex >= mMenuEntries.size())
 			return false;
 
 		return true;
@@ -645,7 +640,7 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 		float lResult = 0;
 		for (int i = 0; i < lEntryCount; i++) {
 			final var lMenuEntry = mMenuEntries.get(i);
-			float lTemp = lMenuEntry.marginLeft() + lMenuEntry.w() + lMenuEntry.marginRight();
+			float lTemp = lMenuEntry.marginLeft() + lMenuEntry.width() + lMenuEntry.marginRight();
 			if (lTemp > lResult) {
 				lResult = lTemp;
 			}
@@ -701,12 +696,10 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 	// Events
 	// --------------------------------------
 
-	public void onViewportChange(float pWidth, float pHeight) {
+	public void onViewportChange(float width, float height) {
 		final int lLayoutCount = mMenuEntries.size();
 		for (int i = 0; i < lLayoutCount; i++) {
-			mMenuEntries.get(i).onViewportChange(pWidth, pHeight);
-
+			mMenuEntries.get(i).onViewportChange(width, height);
 		}
-
 	}
 }

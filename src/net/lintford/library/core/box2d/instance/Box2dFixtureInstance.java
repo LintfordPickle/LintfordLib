@@ -20,22 +20,16 @@ public class Box2dFixtureInstance extends IndexedPooledBaseData {
 	// --------------------------------------
 
 	public transient Fixture mFixture;
-
 	public ShapeInstance shape;
-
 	public String name;
 	public float density;
 	public float friction;
 	public float restitution;
 	public boolean isSensor;
-
 	public String fixtureType;
-
-	// Filter
 	public int categoryBits;
 	public int groupIndex;
 	public int maskBits;
-
 	public String spriteName;
 	public transient int spriteIndex = -1;
 	public Serializable userdata;
@@ -44,8 +38,8 @@ public class Box2dFixtureInstance extends IndexedPooledBaseData {
 	// Constructor
 	// --------------------------------------
 
-	public Box2dFixtureInstance(int pPoolUid) {
-		super(pPoolUid);
+	public Box2dFixtureInstance(int poolUid) {
+		super(poolUid);
 
 		density = 1f;
 		friction = 0.5f;
@@ -76,8 +70,8 @@ public class Box2dFixtureInstance extends IndexedPooledBaseData {
 
 	}
 
-	public void loadPhysics(World pWorld, Body pParentBody) {
-		FixtureDef lFixtureDef = new FixtureDef();
+	public void loadPhysics(World box2dWorld, Body parentBody) {
+		final var lFixtureDef = new FixtureDef();
 
 		lFixtureDef.density = density;
 		lFixtureDef.restitution = restitution;
@@ -92,15 +86,13 @@ public class Box2dFixtureInstance extends IndexedPooledBaseData {
 		shape.loadPhysics();
 		lFixtureDef.shape = shape.shape();
 
-		mFixture = pParentBody.createFixture(lFixtureDef);
+		mFixture = parentBody.createFixture(lFixtureDef);
 		if (name != null && !name.isEmpty()) {
 			mFixture.setUserData(name);
-
 		}
-
 	}
 
-	public void unloadPhysics(World pWorld) {
+	public void unloadPhysics(World box2dWorld) {
 		if (mFixture != null) {
 			var lParentBody = mFixture.getBody();
 			lParentBody.destroyFixture(mFixture);
@@ -108,7 +100,7 @@ public class Box2dFixtureInstance extends IndexedPooledBaseData {
 		}
 	}
 
-	public void update(LintfordCore pCore) {
+	public void update(LintfordCore core) {
 
 	}
 

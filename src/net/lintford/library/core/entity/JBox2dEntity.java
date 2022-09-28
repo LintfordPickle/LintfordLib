@@ -62,7 +62,7 @@ public abstract class JBox2dEntity extends WorldEntity {
 	public void setPhysicsObject(JBox2dEntityInstance pJBox2dEntity) {
 		mJBox2dEntityInstance = pJBox2dEntity;
 
-		transformPObject(worldPositionX, worldPositionY, rotationInRadians);
+		transformPObject(mWorldPositionX, mWorldPositionY, mRotationInRadians);
 	}
 
 	public void savePhysics() {
@@ -84,7 +84,7 @@ public abstract class JBox2dEntity extends WorldEntity {
 
 		// Initially we should set the new instance (loaded from a reference defintion) to the WorldEntity SRT.
 		if (pUpdateWorldTranformation && isPhysicsLoaded()) {
-			transformPObject(worldPositionX, worldPositionY, rotationInRadians);
+			transformPObject(mWorldPositionX, mWorldPositionY, mRotationInRadians);
 		}
 	}
 
@@ -93,7 +93,7 @@ public abstract class JBox2dEntity extends WorldEntity {
 		super.setPosition(pWorldX, pWorldY);
 
 		if (hasPhysicsEntity()) {
-			mJBox2dEntityInstance.transformEntityInstance(worldPositionX, worldPositionY, rotationInRadians);
+			mJBox2dEntityInstance.transformEntityInstance(mWorldPositionX, mWorldPositionY, mRotationInRadians);
 		}
 	}
 
@@ -102,15 +102,15 @@ public abstract class JBox2dEntity extends WorldEntity {
 			mJBox2dEntityInstance.transformEntityInstance(pWorldPositionX, pWorldPositionY, pRotationInRadians);
 		}
 
-		worldPositionX = pWorldPositionX;
-		worldPositionY = pWorldPositionY;
-		rotationInRadians = pRotationInRadians;
+		mWorldPositionX = pWorldPositionX;
+		mWorldPositionY = pWorldPositionY;
+		mRotationInRadians = pRotationInRadians;
 	}
 
 	public void reset() {
-		worldPositionX = 0.f;
-		worldPositionY = 0.f;
-		rotationInRadians = 0.f;
+		mWorldPositionX = 0.f;
+		mWorldPositionY = 0.f;
+		mRotationInRadians = 0.f;
 
 		if (hasPhysicsEntity()) {
 			mJBox2dEntityInstance.resetEntityInstance();
@@ -133,9 +133,9 @@ public abstract class JBox2dEntity extends WorldEntity {
 		if (isPhysicsLoaded()) {
 			final var lBox2dBodyInstance = mJBox2dEntityInstance.mainBody();
 			if (lBox2dBodyInstance != null) {
-				worldPositionX = ConstantsPhysics.toPixels(lBox2dBodyInstance.mBody.getPosition().x);
-				worldPositionY = ConstantsPhysics.toPixels(lBox2dBodyInstance.mBody.getPosition().y);
-				rotationInRadians = lBox2dBodyInstance.mBody.getAngle();
+				mWorldPositionX = ConstantsPhysics.toPixels(lBox2dBodyInstance.mBody.getPosition().x);
+				mWorldPositionY = ConstantsPhysics.toPixels(lBox2dBodyInstance.mBody.getPosition().y);
+				mRotationInRadians = lBox2dBodyInstance.mBody.getAngle();
 			}
 		}
 	}

@@ -6,6 +6,6 @@ public interface ISpriteGraphPool {
 
 	public abstract SpriteGraphNodeInstance getSpriteGraphNodeInstance();
 
-	public abstract void returnSpriteGraphNodeInstance(SpriteGraphNodeInstance pSpriteGraphNodeInstance);
+	public abstract void returnSpriteGraphNodeInstance(SpriteGraphNodeInstance spriteGraphNodeInstance);
 
 }

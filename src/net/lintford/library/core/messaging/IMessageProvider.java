@@ -6,10 +6,10 @@ public interface IMessageProvider {
 
 	public List<Message> messages();
 
-	public void addMesage(Message pMessage);
+	public void addMesage(Message message);
 
 	public Message getMessageInstance();
 
-	public void returnMessageInstance(Message pReturnInstance);
+	public void returnMessageInstance(Message returnInstance);
 
 }

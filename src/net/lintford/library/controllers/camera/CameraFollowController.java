@@ -42,30 +42,28 @@ public class CameraFollowController extends BaseController {
 		return mIsTrackingPlayer;
 	}
 
-	public void trackPlayer(boolean pNewValue) {
-		mIsTrackingPlayer = pNewValue;
+	public void trackPlayer(boolean trackPlayer) {
+		mIsTrackingPlayer = trackPlayer;
 	}
 
 	public boolean allowManualControl() {
 		return mAllowManualControl;
 	}
 
-	public void allowManualControl(boolean pNewValue) {
-		mAllowManualControl = pNewValue;
+	public void allowManualControl(boolean allowManualControl) {
+		mAllowManualControl = allowManualControl;
 	}
 
 	// ---------------------------------------------
 	// Constructor
 	// ---------------------------------------------
 
-	public CameraFollowController(ControllerManager pControllerManager, ICamera pCamera, WorldEntity pTrackEntity, int pControllerGroup) {
-		super(pControllerManager, CONTROLLER_NAME, pControllerGroup);
+	public CameraFollowController(ControllerManager controllerManager, ICamera camera, WorldEntity entityToTrack, int controllerGroup) {
+		super(controllerManager, CONTROLLER_NAME, controllerGroup);
 
 		mVelocity = new Vector2f();
-
-		//
-		mGameCamera = pCamera;
-		mTrackedEntity = pTrackEntity;
+		mGameCamera = camera;
+		mTrackedEntity = entityToTrack;
 		mIsTrackingPlayer = true;
 	}
 
@@ -79,54 +77,47 @@ public class CameraFollowController extends BaseController {
 	}
 
 	@Override
-	public boolean handleInput(LintfordCore pCore) {
+	public boolean handleInput(LintfordCore core) {
 		if (mGameCamera == null)
 			return false;
 
 		if (mAllowManualControl) {
 			final float speed = CAMERA_MAN_MOVE_SPEED;
 
-			if (pCore.input().keyboard().isKeyDown(GLFW.GLFW_KEY_A)) {
+			if (core.input().keyboard().isKeyDown(GLFW.GLFW_KEY_A)) {
 				mVelocity.x -= speed;
 				mIsTrackingPlayer = false;
-
 			}
 
-			if (pCore.input().keyboard().isKeyDown(GLFW.GLFW_KEY_D)) {
+			if (core.input().keyboard().isKeyDown(GLFW.GLFW_KEY_D)) {
 				mVelocity.x += speed;
 				mIsTrackingPlayer = false;
-
 			}
 
-			if (pCore.input().keyboard().isKeyDown(GLFW.GLFW_KEY_S)) {
+			if (core.input().keyboard().isKeyDown(GLFW.GLFW_KEY_S)) {
 				mVelocity.y += speed;
 				mIsTrackingPlayer = false;
-
 			}
 
-			if (pCore.input().keyboard().isKeyDown(GLFW.GLFW_KEY_W)) {
+			if (core.input().keyboard().isKeyDown(GLFW.GLFW_KEY_W)) {
 				mVelocity.y -= speed;
 				mIsTrackingPlayer = false;
-
 			}
-
 		}
 
 		return false;
-
 	}
 
 	@Override
-	public void update(LintfordCore pCore) {
+	public void update(LintfordCore core) {
 		if (mGameCamera == null)
 			return;
 
 		mIsTrackingPlayer = mTrackedEntity != null;
 		if (mIsTrackingPlayer) {
-			mGameCamera.setPosition(-mTrackedEntity.worldPositionX, -mTrackedEntity.worldPositionY);
+			mGameCamera.setPosition(-mTrackedEntity.worldPositionX(), -mTrackedEntity.worldPositionY());
 
 		} else {
-			// Cap
 			if (mVelocity.x < -CAMERA_MAN_MOVE_SPEED_MAX)
 				mVelocity.x = -CAMERA_MAN_MOVE_SPEED_MAX;
 			if (mVelocity.x > CAMERA_MAN_MOVE_SPEED_MAX)
@@ -136,30 +127,24 @@ public class CameraFollowController extends BaseController {
 			if (mVelocity.y > CAMERA_MAN_MOVE_SPEED_MAX)
 				mVelocity.y = CAMERA_MAN_MOVE_SPEED_MAX;
 
-			float elapsed = (float) pCore.appTime().elapsedTimeMilli();
+			float elapsed = (float) core.appTime().elapsedTimeMilli();
 
-			// Apply
 			float lCurX = mGameCamera.getPosition().x;
 			float lCurY = mGameCamera.getPosition().y;
 
 			mGameCamera.setPosition(lCurX + mVelocity.x * elapsed, lCurY + mVelocity.y * elapsed);
-
 		}
 
-		// DRAG
 		mVelocity.x *= 0.917f;
 		mVelocity.y *= 0.917f;
-
-		// There are minimums for the camera
-
 	}
 
 	// ---------------------------------------------
 	// Methods
 	// ---------------------------------------------
 
-	public void zoomIn(float pZoomFactor) {
-		mGameCamera.setZoomFactor(pZoomFactor);
+	public void zoomFactor(float zoomFactor) {
+		mGameCamera.setZoomFactor(zoomFactor);
 
 	}
 }

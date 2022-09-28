@@ -12,29 +12,27 @@ public abstract class PolyEntity extends WorldEntity {
 	// Variables
 	// --------------------------------------
 
-	public float[] vertices;
-	public float width;
-	public float height;
-	public float rotOriginX, rotOriginY;
-	public float rotation;
-	public float scale;
+	protected float[] mVertices;
+	protected float mWidth;
+	protected float mHeight;
+	protected float mRotOriginX, mRotOriginY;
+	protected float mScale;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
 
 	public float w() {
-		return width;
+		return mWidth;
 	}
 
 	public float h() {
-		return height;
+		return mHeight;
 	}
 
-	public void setVertices(float[] pVertices) {
-		scale = 1;
-		vertices = pVertices;
-
+	public void setVertices(float[] vertices) {
+		mScale = 1;
+		mVertices = vertices;
 	}
 
 	// --------------------------------------
@@ -43,16 +41,14 @@ public abstract class PolyEntity extends WorldEntity {
 
 	public PolyEntity() {
 		super();
-
 	}
 
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
 
-	public void setDimensions(float pWidth, float pHeight) {
-		width = pWidth;
-		height = pHeight;
+	public void setDimensions(float width, float height) {
+		mWidth = width;
+		mHeight = height;
 	}
-
 }

@@ -16,7 +16,7 @@ public abstract class ParticleInitializerBase implements Serializable {
 	// Variables
 	// --------------------------------------
 
-	protected String className;
+	protected String mInitializerName;
 
 	// --------------------------------------
 	// Constructor
@@ -26,9 +26,8 @@ public abstract class ParticleInitializerBase implements Serializable {
 
 	}
 
-	public ParticleInitializerBase(final String pName) {
-		className = pName;
-
+	public ParticleInitializerBase(final String initializerName) {
+		mInitializerName = initializerName;
 	}
 
 	// --------------------------------------
@@ -36,6 +35,6 @@ public abstract class ParticleInitializerBase implements Serializable {
 	// --------------------------------------
 
 	/** Initializes the particle instances. */
-	public abstract void initialize(Particle pParticle);
+	public abstract void initialize(Particle particle);
 
 }

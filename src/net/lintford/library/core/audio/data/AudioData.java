@@ -19,7 +19,6 @@ public abstract class AudioData {
 
 	protected String mName;
 	protected int mBufferID;
-
 	protected float mDurationInSeconds;
 	protected int mSize;
 	protected int mFrequency;
@@ -36,7 +35,6 @@ public abstract class AudioData {
 
 	public boolean isLoaded() {
 		return mBufferID != DATA_NOT_LOADED;
-
 	}
 
 	public int bufferID() {
@@ -59,7 +57,7 @@ public abstract class AudioData {
 	// Core-Methods
 	// --------------------------------------
 
-	public abstract boolean loadAudioFromInputStream(final String pAudioName, final InputStream pInputStream);
+	public abstract boolean loadAudioFromInputStream(final String audioName, final InputStream inputStream);
 
 	/** Unloads the OpenAL data stored in the buffer associated with this object. */
 	public void unloadAudioData() {
@@ -70,7 +68,5 @@ public abstract class AudioData {
 
 		this.mBufferID = AudioData.DATA_NOT_LOADED;
 		this.mName = "";
-
 	}
-
 }

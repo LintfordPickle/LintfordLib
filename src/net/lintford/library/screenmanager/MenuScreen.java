@@ -40,27 +40,20 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	protected List<MenuEntry> mFloatingEntries;
 	protected List<BaseLayout> mLayouts;
 	protected ListLayout mFooterLayout;
-
 	protected LAYOUT_ALIGNMENT mLayoutAlignment = LAYOUT_ALIGNMENT.CENTER;
-
 	protected String mMenuTitle;
 	protected String mMenuOverTitle;
 	protected String mMenuSubTitle;
 	protected float mTitleFontHeight;
-
 	protected int mSelectedEntry = 0;
 	protected int mSelectedLayout = 0;
-
 	protected float mPaddingLeftNormalized;
 	protected float mPaddingRightNormalized;
 	protected float mPaddingTopNormalized;
 	protected float mPaddingBottomNormalized;
-
 	protected boolean mESCBackEnabled;
-
 	protected ClickAction mClickAction;
 	protected float mAnimationTimer;
-
 	protected FontUnit mMenuFont;
 	protected FontUnit mMenuFontBold;
 	protected FontUnit mMenuHeaderFont;
@@ -73,15 +66,14 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		return mLayoutAlignment;
 	}
 
-	public void layoutAlignment(LAYOUT_ALIGNMENT pNewValue) {
-		mLayoutAlignment = pNewValue;
+	public void layoutAlignment(LAYOUT_ALIGNMENT layoutAlignment) {
+		mLayoutAlignment = layoutAlignment;
 	}
 
 	public float uiTextScale() {
-		return screenManager.UiStructureController().uiTextScaleFactor();
+		return mScreenManager.UiStructureController().uiTextScaleFactor();
 	}
 
-	/** Returns a normal sized {@link FontUnit} which can be used to render general text to the screen. */
 	public FontUnit font() {
 		return mMenuFont;
 	}
@@ -90,7 +82,6 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		return mMenuFontBold;
 	}
 
-	/** Returns a medium sized {@link FontUnit} which can be used to render menu sub heading text to the screen. */
 	public FontUnit fontHeader() {
 		return mMenuHeaderFont;
 	}
@@ -98,10 +89,6 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	public boolean isAnimating() {
 		return mAnimationTimer > 0;
 	}
-
-	//	protected List<BaseLayout> layouts() {
-	//		return mLayouts;
-	//	}
 
 	protected List<MenuEntry> floatingEntries() {
 		return mFloatingEntries;
@@ -115,24 +102,24 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		return mMenuTitle;
 	}
 
-	public void menuTitle(String pNewMenuTitle) {
-		mMenuTitle = pNewMenuTitle;
+	public void menuTitle(String title) {
+		mMenuTitle = title;
 	}
 
 	public String menuSubTitle() {
 		return mMenuSubTitle;
 	}
 
-	public void menuOverTitle(String pNewMenuTitle) {
-		mMenuOverTitle = pNewMenuTitle;
+	public void menuOverTitle(String overTitle) {
+		mMenuOverTitle = overTitle;
 	}
 
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
-	public MenuScreen(ScreenManager pScreenManager, String pMenuTitle) {
-		super(pScreenManager);
+	public MenuScreen(ScreenManager screenManager, String menuTitle) {
+		super(screenManager);
 
 		mLayouts = new ArrayList<>();
 		mFooterLayout = new ListLayout(this);
@@ -141,7 +128,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 		mShowBackgroundScreens = false;
 
-		mMenuTitle = pMenuTitle;
+		mMenuTitle = menuTitle;
 		mBlockInputInBackground = true;
 
 		mPaddingTopNormalized = 0.f;
@@ -168,35 +155,34 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 		int lFloatingCount = mFloatingEntries.size();
 		for (int i = 0; i < lFloatingCount; i++) {
-			MenuEntry lFloatingEntry = mFloatingEntries.get(i);
+			final var lFloatingEntry = mFloatingEntries.get(i);
 			lFloatingEntry.initialize();
-
 		}
 
 		footerLayout().initialize();
 	}
 
 	@Override
-	public void loadResources(ResourceManager pResourceManager) {
-		super.loadResources(pResourceManager);
+	public void loadResources(ResourceManager resourceManager) {
+		super.loadResources(resourceManager);
 
-		mMenuFont = pResourceManager.fontManager().getFontUnit(ScreenManager.FONT_MENU_ENTRY_NAME);
-		mMenuFontBold = pResourceManager.fontManager().getFontUnit(ScreenManager.FONT_MENU_BOLD_ENTRY_NAME);
-		mMenuHeaderFont = pResourceManager.fontManager().getFontUnit(ScreenManager.FONT_MENU_TITLE_NAME);
-		mTitleFontHeight = rendererManager.headerFontHeight();
+		mMenuFont = resourceManager.fontManager().getFontUnit(ScreenManager.FONT_MENU_ENTRY_NAME);
+		mMenuFontBold = resourceManager.fontManager().getFontUnit(ScreenManager.FONT_MENU_BOLD_ENTRY_NAME);
+		mMenuHeaderFont = resourceManager.fontManager().getFontUnit(ScreenManager.FONT_MENU_TITLE_NAME);
+		mTitleFontHeight = mRendererManager.headerFontHeight();
 
 		final int lCount = mLayouts.size();
 		for (int i = 0; i < lCount; i++) {
-			mLayouts.get(i).loadResources(pResourceManager);
+			mLayouts.get(i).loadResources(resourceManager);
 		}
 
 		int lFloatingCount = mFloatingEntries.size();
 		for (int i = 0; i < lFloatingCount; i++) {
 			final var lFloatingEntry = mFloatingEntries.get(i);
-			lFloatingEntry.loadResources(pResourceManager);
+			lFloatingEntry.loadResources(resourceManager);
 		}
 
-		footerLayout().loadResources(pResourceManager);
+		footerLayout().loadResources(resourceManager);
 	}
 
 	@Override
@@ -206,14 +192,12 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		final int lCount = mLayouts.size();
 		for (int i = 0; i < lCount; i++) {
 			mLayouts.get(i).unloadResources();
-
 		}
 
 		int lFloatingCount = mFloatingEntries.size();
 		for (int i = 0; i < lFloatingCount; i++) {
-			MenuEntry lFloatingEntry = mFloatingEntries.get(i);
+			final var lFloatingEntry = mFloatingEntries.get(i);
 			lFloatingEntry.unloadResources();
-
 		}
 
 		footerLayout().unloadResources();
@@ -223,13 +207,13 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	}
 
 	@Override
-	public void handleInput(LintfordCore pCore) {
+	public void handleInput(LintfordCore core) {
 		if (mAnimationTimer > 0 || mClickAction.isConsumed())
 			return; // don't handle input if 'animation' is playing
 
-		super.handleInput(pCore);
+		super.handleInput(core);
 
-		if (mESCBackEnabled && pCore.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_ESCAPE)) {
+		if (mESCBackEnabled && core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_ESCAPE)) {
 			if (mScreenState == ScreenState.Active) {
 				exitScreen();
 				return;
@@ -238,20 +222,20 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 		if (mLayouts.size() > 0) {
 			// Respond to UP key
-			if (pCore.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_UP)) {
+			if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_UP)) {
 
 				if (mSelectedEntry > 0) {
 					mSelectedEntry--; //
 				}
 
-				BaseLayout lLayout = mLayouts.get(mSelectedLayout);
+				final var lLayout = mLayouts.get(mSelectedLayout);
 
 				if (!lLayout.hasEntry(mSelectedEntry))
 					return;
 
 				// Set focus on the new entry
 				if (lLayout.getMenuEntryByIndex(mSelectedEntry).enabled()) {
-					lLayout.updateFocusOffAllBut(pCore, lLayout.getMenuEntryByIndex(mSelectedEntry));
+					lLayout.updateFocusOffAllBut(core, lLayout.getMenuEntryByIndex(mSelectedEntry));
 					lLayout.getMenuEntryByIndex(mSelectedEntry).hasFocus(true);
 				}
 
@@ -260,8 +244,8 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 			}
 
 			// Respond to DOWN key
-			if (pCore.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_DOWN)) {
-				BaseLayout lLayout = mLayouts.get(mSelectedLayout);
+			if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_DOWN)) {
+				final var lLayout = mLayouts.get(mSelectedLayout);
 
 				if (mSelectedEntry < lLayout.getMenuEntryCount() - 1) {
 					mSelectedEntry++; //
@@ -272,7 +256,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 				// Set focus on the new entry
 				if (lLayout.getMenuEntryByIndex(mSelectedEntry).enabled()) {
-					lLayout.updateFocusOffAllBut(pCore, lLayout.getMenuEntryByIndex(mSelectedEntry));
+					lLayout.updateFocusOffAllBut(core, lLayout.getMenuEntryByIndex(mSelectedEntry));
 					lLayout.getMenuEntryByIndex(mSelectedEntry).hasFocus(true);
 				}
 
@@ -281,48 +265,46 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 			}
 
 			// Process ENTER key press
-			if (pCore.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_ENTER)) {
-				BaseLayout lLayout = mLayouts.get(mSelectedLayout);
+			if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_ENTER)) {
+				final var lLayout = mLayouts.get(mSelectedLayout);
 				if (!lLayout.hasEntry(mSelectedEntry))
 					return;
 
-				lLayout.getMenuEntryByIndex(mSelectedEntry).onClick(pCore.input());
+				lLayout.getMenuEntryByIndex(mSelectedEntry).onClick(core.input());
 			}
 		}
 
 		int lFloatingCount = mFloatingEntries.size();
 		for (int i = 0; i < lFloatingCount; i++) {
-			MenuEntry lFloatingEntry = mFloatingEntries.get(i);
-			lFloatingEntry.handleInput(pCore);
-
+			final var lFloatingEntry = mFloatingEntries.get(i);
+			lFloatingEntry.handleInput(core);
 		}
 
 		// Process Mouse input
 		int lLayoutCount = mLayouts.size();
 		for (int i = 0; i < lLayoutCount; i++) {
 			final var lLayout = mLayouts.get(i);
-			lLayout.handleInput(pCore);
-
+			lLayout.handleInput(core);
 		}
 
-		footerLayout().handleInput(pCore);
+		footerLayout().handleInput(core);
 	}
 
 	@Override
-	public void update(LintfordCore pCore, boolean pOtherScreenHasFocus, boolean pCoveredByOtherScreen) {
-		super.update(pCore, pOtherScreenHasFocus, pCoveredByOtherScreen);
+	public void update(LintfordCore core, boolean otherScreenHasFocus, boolean coveredByOtherScreen) {
+		super.update(core, otherScreenHasFocus, coveredByOtherScreen);
 
 		if (!mIsinitialized)
 			return;
 
-		final var lDeltaTime = pCore.appTime().elapsedTimeMilli();
+		final var lDeltaTime = core.appTime().elapsedTimeMilli();
 
-		updateLayoutSize(pCore);
+		updateLayoutSize(core);
 
 		if (mAnimationTimer > 0) {
 			mAnimationTimer -= lDeltaTime;
 
-		} else if (mClickAction.buttonUid() != -1 && !mClickAction.isConsumed()) { // something was clicked
+		} else if (mClickAction.entryUid() != -1 && !mClickAction.isConsumed()) { // something was clicked
 			handleOnClick();
 
 			mClickAction.reset();
@@ -333,26 +315,26 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		final var lFloatingCount = mFloatingEntries.size();
 		for (int i = 0; i < lFloatingCount; i++) {
 			final var lFloatingEntry = mFloatingEntries.get(i);
-			lFloatingEntry.update(pCore, this, false);
+			lFloatingEntry.update(core, this, false);
 		}
 
 		final var lCount = mLayouts.size();
 		for (int i = 0; i < lCount; i++) {
-			mLayouts.get(i).update(pCore);
+			mLayouts.get(i).update(core);
 		}
 
 		footerLayout().updateStructure();
-		footerLayout().update(pCore);
+		footerLayout().update(core);
 	}
 
-	public void updateLayoutSize(LintfordCore pCore) {
-		if (rendererManager == null || mLayouts.size() == 0)
+	public void updateLayoutSize(LintfordCore core) {
+		if (mRendererManager == null || mLayouts.size() == 0)
 			return;
 
-		updateLayout(pCore, mLayouts, mLayoutAlignment);
+		updateLayout(core, mLayouts, mLayoutAlignment);
 
 		// *** FOOTER *** //
-		final var lHUDController = rendererManager.uiStructureController();
+		final var lHUDController = mRendererManager.uiStructureController();
 
 		final float lInnerPaddingW = OUTER_PADDING_W * lHUDController.windowAutoScaleFactorX();
 
@@ -366,27 +348,26 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		footerLayout().updateStructure();
 	}
 
-	protected void updateLayout(LintfordCore pCore, List<BaseLayout> pLayoutList, LAYOUT_ALIGNMENT pAlignment) {
-		if (pLayoutList == null || pLayoutList.size() == 0)
+	protected void updateLayout(LintfordCore core, List<BaseLayout> layoutList, LAYOUT_ALIGNMENT alignment) {
+		if (layoutList == null || layoutList.size() == 0)
 			return;
 
-		if (rendererManager == null)
+		if (mRendererManager == null)
 			return;
 
-		final var lUIHUDStructureController = rendererManager.uiStructureController();
+		final var lUIHUDStructureController = mRendererManager.uiStructureController();
 		if (lUIHUDStructureController == null)
 			return;
 
-		final int lLeftLayoutCount = pLayoutList.size();
+		final int lLeftLayoutCount = layoutList.size();
 
 		final float lScreenContentWidth = lUIHUDStructureController.menuMainRectangle().width();
 
 		final float lInnerPaddingW = INNER_PADDING_W * lUIHUDStructureController.windowAutoScaleFactorX();
 		final float lInnerPaddingH = INNER_PADDING_H * lUIHUDStructureController.windowAutoScaleFactorY();
 
-		// Set the layout X and W
 		for (int i = 0; i < lLeftLayoutCount; i++) {
-			final var lBaseLayout = pLayoutList.get(i);
+			final var lBaseLayout = layoutList.get(i);
 
 			float lLayoutWidth = lScreenContentWidth - lInnerPaddingW * 2f;
 			if (lBaseLayout.layoutWidth() == LAYOUT_WIDTH.THREEQUARTER) {
@@ -404,7 +385,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 			final float lScreenContentLeft = lUIHUDStructureController.menuMainRectangle().centerX() - lInnerPaddingW - lLayoutWidth;
 
 			float lLayoutNewX = 0;
-			switch (pAlignment) {
+			switch (alignment) {
 			case LEFT:
 				lLayoutNewX = lScreenContentLeft + lInnerPaddingW;
 				break;
@@ -417,7 +398,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 			}
 
 			lBaseLayout.x(lLayoutNewX);
-			lBaseLayout.w(lLayoutWidth);
+			lBaseLayout.width(lLayoutWidth);
 		}
 
 		// Set the layout Y and H
@@ -429,12 +410,8 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		int lCountOfTakers = 0;
 		int heightTaken = 0;
 
-		// FIXME: This system needs more work. It results in problems when the size of a 'taker' (FILLTYPE.TAKE_WHATS_NEEDED)
-		// exceeds the size of the area within which it should appear.
-		// The solution is currently to change the type of the layouts
-
 		for (int i = 0; i < lLeftLayoutCount; i++) {
-			final var lBaseLayout = pLayoutList.get(i);
+			final var lBaseLayout = layoutList.get(i);
 			if (lBaseLayout.layoutFillType() == FILLTYPE.TAKE_WHATS_NEEDED) {
 				lCountOfTakers++;
 				heightTaken += lBaseLayout.getEntryHeight();
@@ -447,12 +424,11 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		float lSizeOfEachShareElement = 0.f;
 		if (lCountOfSharers > 0) {
 			lSizeOfEachShareElement = ((lLayoutHeight - heightTaken) / lCountOfSharers) - lInnerPaddingH * (lCountOfSharers + 1);
-
 		}
 
 		float lTop = lLayoutNewY;
 		for (int i = 0; i < lLeftLayoutCount; i++) {
-			final var lBaseLayout = pLayoutList.get(i);
+			final var lBaseLayout = layoutList.get(i);
 
 			lBaseLayout.y(lTop);
 
@@ -463,7 +439,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 					lNewHeight = lBaseLayout.maxHeight();
 				}
 
-				lBaseLayout.h(lNewHeight);
+				lBaseLayout.height(lNewHeight);
 				lBaseLayout.updateStructure();
 				lTop += lBaseLayout.getEntryHeight() + lInnerPaddingH;
 
@@ -472,7 +448,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 				if (lBaseLayout.maxHeight() != -1 && lNewHeight > lBaseLayout.maxHeight()) {
 					lNewHeight = lBaseLayout.maxHeight();
 				}
-				lBaseLayout.h(lNewHeight);
+				lBaseLayout.height(lNewHeight);
 				lBaseLayout.updateStructure();
 				lTop += lSizeOfEachShareElement + lInnerPaddingH;
 			}
@@ -480,30 +456,30 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	}
 
 	@Override
-	public void draw(LintfordCore pCore) {
+	public void draw(LintfordCore core) {
 		if (mScreenState != ScreenState.Active && mScreenState != ScreenState.TransitionOn && mScreenState != ScreenState.TransitionOff)
 			return;
 
 		if (!mIsinitialized)
 			return;
 
-		super.draw(pCore);
+		super.draw(core);
 
 		final float lMenuScreenZDepth = ZLayers.LAYER_SCREENMANAGER;
 
-		drawMenuTitle(pCore);
+		drawMenuTitle(core);
 
 		final int lCount = mLayouts.size();
 		for (int i = 0; i < lCount; i++) {
-			mLayouts.get(i).draw(pCore, lMenuScreenZDepth + (i * 0.001f));
+			mLayouts.get(i).draw(core, lMenuScreenZDepth + (i * 0.001f));
 		}
 
-		footerLayout().draw(pCore, lMenuScreenZDepth + (1 * 0.001f));
+		footerLayout().draw(core, lMenuScreenZDepth + (1 * 0.001f));
 
 		final int lNumFloatingEntries = mFloatingEntries.size();
 		for (int i = 0; i < lNumFloatingEntries; i++) {
 			final var lFloatingEntry = mFloatingEntries.get(i);
-			lFloatingEntry.draw(pCore, this, false, lMenuScreenZDepth + (i * 0.001f));
+			lFloatingEntry.draw(core, this, false, lMenuScreenZDepth + (i * 0.001f));
 		}
 	}
 
@@ -515,11 +491,11 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		return mLayouts.size();
 	}
 
-	public void addLayout(BaseLayout pNewLayout) {
-		mLayouts.add(pNewLayout);
+	public void addLayout(BaseLayout layoutToAdd) {
+		mLayouts.add(layoutToAdd);
 	}
 
-	public void removeLayout(BaseLayout pLayout) {
+	public void removeLayout(BaseLayout layoutToRemove) {
 
 	}
 
@@ -527,17 +503,17 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		mLayouts.clear();
 	}
 
-	public BaseLayout getLayoutByIndex(int pLayoutIndex) {
-		if (pLayoutIndex < 0 || pLayoutIndex >= mLayouts.size() - 1)
+	public BaseLayout getLayoutByIndex(int layoutIndex) {
+		if (layoutIndex < 0 || layoutIndex >= mLayouts.size() - 1)
 			return null;
-		return mLayouts.get(pLayoutIndex);
+		return mLayouts.get(layoutIndex);
 	}
 
-	protected void drawMenuTitle(LintfordCore pCore) {
+	protected void drawMenuTitle(LintfordCore core) {
 		if (mMenuTitle == null || mMenuTitle.length() == 0 && mMenuHeaderFont == null)
 			return;
 
-		final var lUiStructureController = screenManager.UiStructureController();
+		final var lUiStructureController = mScreenManager.UiStructureController();
 		final float lUiTextScale = lUiStructureController.uiTextScaleFactor();
 
 		final var lHeaderRect = lUiStructureController.menuTitleRectangle();
@@ -547,34 +523,25 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		final float lMenuTitlePositionX = lHeaderRect.centerX() - lHeaderFontWidth * .5f;
 		final float lMenuTitlePositionY = lHeaderRect.bottom() - lHeaderFontHeight - TITLE_PADDING_Y * lUiStructureController.windowAutoScaleFactorY();
 
-		mMenuHeaderFont.begin(pCore.HUD());
+		mMenuHeaderFont.begin(core.HUD());
 		mMenuHeaderFont.drawText(mMenuTitle, lMenuTitlePositionX, lMenuTitlePositionY, -0.01f, screenColor, lUiTextScale);
 		mMenuHeaderFont.end();
 
 		if (mMenuFont != null) {
-			mMenuFont.begin(pCore.HUD());
+			mMenuFont.begin(core.HUD());
 
-			{
-				final float lOverTitleWidth = mMenuFont.getStringWidth(mMenuOverTitle, lUiTextScale);
-
-				if (mMenuOverTitle != null && mMenuOverTitle.length() > 0) {
-					mMenuFont.drawText(mMenuOverTitle, lHeaderRect.centerX() - lOverTitleWidth * .5f, lMenuTitlePositionY, -0.01f, screenColor, lUiTextScale);
-
-				}
+			final float lOverTitleWidth = mMenuFont.getStringWidth(mMenuOverTitle, lUiTextScale);
+			if (mMenuOverTitle != null && mMenuOverTitle.length() > 0) {
+				mMenuFont.drawText(mMenuOverTitle, lHeaderRect.centerX() - lOverTitleWidth * .5f, lMenuTitlePositionY, -0.01f, screenColor, lUiTextScale);
 			}
 
-			{
-				final float lSubTitleWidth = mMenuFont.getStringWidth(mMenuSubTitle, lUiTextScale);
-
-				if (mMenuSubTitle != null && mMenuSubTitle.length() > 0) {
-					mMenuFont.drawText(mMenuSubTitle, lHeaderRect.centerX() - lSubTitleWidth * .5f, lMenuTitlePositionY + lHeaderFontHeight, -0.01f, screenColor, lUiTextScale);
-
-				}
+			final float lSubTitleWidth = mMenuFont.getStringWidth(mMenuSubTitle, lUiTextScale);
+			if (mMenuSubTitle != null && mMenuSubTitle.length() > 0) {
+				mMenuFont.drawText(mMenuSubTitle, lHeaderRect.centerX() - lSubTitleWidth * .5f, lMenuTitlePositionY + lHeaderFontHeight, -0.01f, screenColor, lUiTextScale);
 			}
 
 			mMenuFont.end();
 		}
-
 	}
 
 	protected void onCancel() {
@@ -593,31 +560,30 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	}
 
 	/** Sets the focus to a specific {@link MenuEntry}, clearing the focus from all other entries. */
-	public void setFocusOn(LintfordCore pCore, MenuEntry pMenuEntry, boolean pForce) {
+	public void setFocusOn(LintfordCore core, MenuEntry menuEntry, boolean forceFocus) {
 		if (mLayouts.size() == 0)
 			return; // nothing to do
 
 		BaseLayout lLayout = mLayouts.get(mSelectedLayout);
-		lLayout.updateFocusOffAllBut(pCore, pMenuEntry);
+		lLayout.updateFocusOffAllBut(core, menuEntry);
 
-		pMenuEntry.hasFocus(true);
+		menuEntry.hasFocus(true);
 
 	}
 
-	public void setHoveringOn(MenuEntry pMenuEntry) {
+	public void setHoveringOn(MenuEntry menuEntry) {
 		if (mLayouts.size() == 0)
 			return; // nothing to do
 
-		// Make sure nothing else has focus?
 		if (hasElementFocus())
 			return;
 
-		BaseLayout lLayout = mLayouts.get(mSelectedLayout);
-		pMenuEntry.hoveredOver(true);
+		final var lLayout = mLayouts.get(mSelectedLayout);
+		menuEntry.hoveredOver(true);
 
 		int lCount = lLayout.getMenuEntryCount();
 		for (int i = 0; i < lCount; i++) {
-			if (!lLayout.getMenuEntryByIndex(i).equals(pMenuEntry)) {
+			if (!lLayout.getMenuEntryByIndex(i).equals(menuEntry)) {
 				lLayout.getMenuEntryByIndex(i).hoveredOver(false);
 			} else {
 				mSelectedEntry = i;
@@ -630,10 +596,9 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	}
 
 	@Override
-	public void menuEntryOnClick(InputManager pInputState, int pEntryID) {
-		mClickAction.setNewClick(pEntryID);
+	public void menuEntryOnClick(InputManager inputState, int entryUid) {
+		mClickAction.setNewClick(entryUid);
 		mAnimationTimer = ANIMATION_TIMER_LENGTH * 2f;
-
 	}
 
 	protected abstract void handleOnClick();
@@ -641,18 +606,15 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	@Override
 	public boolean isActionConsumed() {
 		return mClickAction != null && mClickAction.isConsumed();
-
 	}
 
 	@Override
-	public void onViewportChange(float pWidth, float pHeight) {
-		super.onViewportChange(pWidth, pHeight);
+	public void onViewportChange(float width, float height) {
+		super.onViewportChange(width, height);
 
 		final int lLayoutCount = mLayouts.size();
 		for (int i = 0; i < lLayoutCount; i++) {
-			mLayouts.get(i).onViewportChange(pWidth, pHeight);
-
+			mLayouts.get(i).onViewportChange(width, height);
 		}
-
 	}
 }

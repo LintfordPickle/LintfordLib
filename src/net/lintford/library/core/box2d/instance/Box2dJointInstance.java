@@ -34,9 +34,8 @@ public abstract class Box2dJointInstance extends IndexedPooledBaseData {
 	// Constructor
 	// --------------------------------------
 
-	public Box2dJointInstance(int pPoolUid) {
-		super(pPoolUid);
-
+	public Box2dJointInstance(int poolUid) {
+		super(poolUid);
 	}
 
 	// --------------------------------------
@@ -53,12 +52,12 @@ public abstract class Box2dJointInstance extends IndexedPooledBaseData {
 
 	}
 
-	public void loadPhysics(World pWorld) {
+	public void loadPhysics(World box2dWorld) {
 
 	}
 
-	public abstract void unloadPhysics(World pWorld);
+	public abstract void unloadPhysics(World box2dWorld);
 
-	public abstract void update(LintfordCore pCore);
+	public abstract void update(LintfordCore core);
 
 }

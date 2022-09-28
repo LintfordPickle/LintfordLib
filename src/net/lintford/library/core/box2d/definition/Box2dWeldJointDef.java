@@ -10,7 +10,6 @@ public class Box2dWeldJointDef extends Box2dJointDefinition {
 	// --------------------------------------
 
 	public WeldJointDef weldJointDef = new WeldJointDef();
-
 	public final Vec2 localAnchorA = new Vec2();
 	public final Vec2 localAnchorB = new Vec2();
 	public float referenceAngle;

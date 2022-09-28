@@ -11,33 +11,6 @@ public class TimeSpan {
 	public static final TimeSpan TIME_SPAN_ZERO = new TimeSpan(0);
 
 	// --------------------------------------
-	// Constants
-	// --------------------------------------
-
-	public static final double NanoToSecond = 1000000000.0;
-	public static final double NanoToMilli = 1000000.0;
-	public static final double NanoToMicro = 1000.0;
-
-	public static final long TicksPerMillisecond = 10000;
-	public static final double MillisecondsPerTick = 0.0001;
-	public static final long TicksPerSecond = 0x989680L;
-	public static final double SecondsPerTick = 1E-07;
-	public static final long TicksPerMinute = 0x23c34600L;
-	public static final double MinutesPerTick = 1.6666666666666667E-09;
-	public static final long TicksPerHour = 0x861c46800L;
-	public static final double HoursPerTick = 2.7777777777777777E-11;
-	public static final long TicksPerDay = 0xc92a69c000L;
-	public static final double DaysPerTick = 1.1574074074074074E-12;
-	public static final int MillisPerSecond = 0x3e8;
-	public static final int MillisPerMinute = 0xea60;
-	public static final int MillisPerHour = 0x36ee80;
-	public static final int MillisPerDay = 0x5265c00;
-	public static final long MaxSeconds = 0xd6bf94d5e5L;
-	public static final long MinSeconds = -922337203685L;
-	public static final long MaxMilliSeconds = 0x346dc5d638865L;
-	public static final long MinMilliSeconds = -922337203685477L;
-
-	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
@@ -52,78 +25,75 @@ public class TimeSpan {
 	}
 
 	public double milliseconds() {
-		return mTicks * MillisecondsPerTick;
+		return mTicks * TimeConstants.MillisecondsPerTick;
 	}
 
 	public double seconds() {
-		return mTicks * SecondsPerTick;
+		return mTicks * TimeConstants.SecondsPerTick;
 	}
 
 	public double minutes() {
-		return mTicks * MinutesPerTick;
+		return mTicks * TimeConstants.MinutesPerTick;
 	}
 
 	// --------------------------------------
 	// Constructors
 	// --------------------------------------
 
-	public TimeSpan(float pMilliseconds) {
-		mTicks = (long) (pMilliseconds * TicksPerMillisecond);
+	public TimeSpan(float milliseconds) {
+		mTicks = (long) (milliseconds * TimeConstants.TicksPerMillisecond);
 	}
 
 	// --------------------------------------
 	// Core-Methods
 	// --------------------------------------
 
-	public void update(CoreTime pGameTime) {
-		// check for overflow
-		mTicks += pGameTime.elapsedTimeMilli() * TicksPerMillisecond;
-
+	public void update(CoreTime gameTime) {
+		mTicks += gameTime.elapsedTimeMilli() * TimeConstants.TicksPerMillisecond;
 	}
 
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
 
-	private void interval(double pValue, int pScale) {
-
-		if (Double.isNaN(pValue)) {
-			throw new IllegalArgumentException("TimeSpan NaN!");
+	private void interval(double value, int scale) {
+		if (Double.isNaN(value)) {
+			throw new IllegalArgumentException("TimeSpan must be a valid number!");
 		}
 
-		double num = pValue * pScale;
+		double num = value * scale;
 
-		mTicks = (long) num * TicksPerMillisecond;
+		mTicks = (long) num * TimeConstants.TicksPerMillisecond;
 	}
 
 	/** Reinitializes this TimeSpan Object from the given seconds.
 	 * 
-	 * @param pSeconds */
-	public void fromSeconds(double pSeconds) {
-		interval(pSeconds, MillisPerSecond);
+	 * @param seconds */
+	public void fromSeconds(double seconds) {
+		interval(seconds, TimeConstants.MillisPerSecond);
 	}
 
 	/** Reinitializes this TimeSpan Object from the given milliseconds.
 	 * 
-	 * @param pMilliseconds */
-	public void fromMilliseconds(int pMilliseconds) {
-		interval(pMilliseconds, 1);
+	 * @param milliseconds */
+	public void fromMilliseconds(int milliseconds) {
+		interval(milliseconds, 1);
 	}
 
-	public boolean greaterThan(double pSeconds) {
-		return pSeconds > mTicks * SecondsPerTick;
+	public boolean greaterThan(double seconds) {
+		return seconds > mTicks * TimeConstants.SecondsPerTick;
 	}
 
-	public boolean equals(TimeSpan pTimeSpan) {
-		return pTimeSpan.ticks() == mTicks;
+	public boolean equals(TimeSpan timeSpan) {
+		return timeSpan.ticks() == mTicks;
 	}
 
-	public boolean equals(float pMilliseconds) {
-		return pMilliseconds * TicksPerMillisecond == mTicks;
+	public boolean equals(float milliseconds) {
+		return milliseconds * TimeConstants.TicksPerMillisecond == mTicks;
 	}
 
-	public boolean equals(long pTicks) {
-		return pTicks == mTicks;
+	public boolean equals(long ticks) {
+		return ticks == mTicks;
 	}
 
 	public static TimeSpan zero() {

@@ -19,7 +19,8 @@ public class Circle extends Shape {
 	// Variables
 	// --------------------------------------
 
-	private float x, y;
+	private float mX;
+	private float mY;
 	private List<Vector2f> mVertices;
 
 	// --------------------------------------
@@ -31,11 +32,11 @@ public class Circle extends Shape {
 	}
 
 	public float centerX() {
-		return x;
+		return mX;
 	}
 
 	public float centerY() {
-		return y;
+		return mY;
 	}
 
 	// --------------------------------------
@@ -47,14 +48,13 @@ public class Circle extends Shape {
 
 	}
 
-	public Circle(float pCenterX, float pCenterY, float pRadius) {
-		x = pCenterX;
-		y = pCenterY;
-		radius = pRadius;
+	public Circle(float centerX, float centerY, float radius) {
+		mX = centerX;
+		mY = centerY;
+		mRadius = radius;
 
 		mVertices = new ArrayList<>(NUM_VERTICES);
-		mVertices.add(new Vector2f(x, y));
-
+		mVertices.add(new Vector2f(mX, mY));
 	}
 
 	// --------------------------------------
@@ -63,42 +63,38 @@ public class Circle extends Shape {
 
 	@Override
 	public Vector2f[] getAxes() {
-		// Circle has infinate axis
-		return null;
-
+		return null; // Circle has infinate axis
 	}
 
-	public Vector2f getNearestVertex(Shape pOtherShape, Vector2f pToFill) {
+	public Vector2f getNearestVertex(Shape otherShape, Vector2f toFill) {
 		float min = Float.MAX_VALUE;
 
-		final int NUM_VERTICES = pOtherShape.getVertices().size();
+		final int NUM_VERTICES = otherShape.getVertices().size();
 		for (int i = 0; i < NUM_VERTICES; i++) {
-			float distTo = Vector2f.distance(x, y, pOtherShape.getVertices().get(i).x, pOtherShape.getVertices().get(i).y);
+			float distTo = Vector2f.distance(mX, mY, otherShape.getVertices().get(i).x, otherShape.getVertices().get(i).y);
 
 			if (distTo < min) {
-				pToFill.x = pOtherShape.getVertices().get(i).x - x;
-				pToFill.y = pOtherShape.getVertices().get(i).y - y;
+				toFill.x = otherShape.getVertices().get(i).x - mX;
+				toFill.y = otherShape.getVertices().get(i).y - mY;
 
 				min = distTo;
 			}
-
 		}
 
-		pToFill.nor();
+		toFill.nor();
 
-		return pToFill;
-
+		return toFill;
 	}
 
 	@Override
-	public Vector2f project(Vector2f pAxis, Vector2f pToFill) {
+	public Vector2f project(Vector2f axis, Vector2f toFill) {
 
-		float c = Vector2f.dot(x, y, pAxis.x, pAxis.y);
+		float c = Vector2f.dot(mX, mY, axis.x, axis.y);
 
-		pToFill.x = c - radius;
-		pToFill.y = c + radius;
+		toFill.x = c - mRadius;
+		toFill.y = c + mRadius;
 
-		return pToFill;
+		return toFill;
 	}
 
 	/**
@@ -107,7 +103,7 @@ public class Circle extends Shape {
 	 * @Returs True if everything is zero.
 	 */
 	public boolean isEmpty() {
-		return (this.radius == 0);
+		return (this.mRadius == 0);
 	}
 
 	/**
@@ -116,45 +112,38 @@ public class Circle extends Shape {
 	 * @param cx
 	 * @param cy
 	 */
-	public void setPosition(float pX, float pY) {
-		set(pX, pY, radius);
-
+	public void setPosition(float positionX, float positionY) {
+		set(positionX, positionY, mRadius);
 	}
 
-	public void setRadius(float pRadius) {
-		set(x, y, pRadius);
+	public void setRadius(float radius) {
+		set(mX, mY, radius);
 	}
 
-	public void set(float pX, float pY, float pRadius) {
-		x = pX;
-		y = pY;
-		radius = pRadius;
-
+	public void set(float x, float y, float radius) {
+		mX = x;
+		mY = y;
+		mRadius = radius;
 	}
 
-	public void set(Circle pOtherCicle) {
-		x = pOtherCicle.x;
-		y = pOtherCicle.y;
+	public void set(Circle otherCicle) {
+		mX = otherCicle.mX;
+		mY = otherCicle.mY;
 
-		radius = pOtherCicle.radius;
-
+		mRadius = otherCicle.mRadius;
 	}
 
-	public void expand(float pAmt) {
-		radius += pAmt;
-
+	public void expand(float expandByAmount) {
+		mRadius += expandByAmount;
 	}
 
 	@Override
-	public void rotateRel(float pRotAmt) {
-		rotation += pRotAmt;
-
+	public void rotateRel(float relativeRotationAmount) {
+		mRotation += relativeRotationAmount;
 	}
 
 	@Override
-	public void rotateAbs(float pRotAmt) {
-		rotation = pRotAmt;
-
+	public void rotateAbs(float absolutionRotationAmount) {
+		mRotation = absolutionRotationAmount;
 	}
-
 }

@@ -48,28 +48,28 @@ public class AudioListener {
 	// Helper Methods
 	// --------------------------------------
 
-	public void setPosition(float pX, float pY) {
-		setPosition(pX, pY, 0f);
+	public void setPosition(float positionX, float positionY) {
+		setPosition(positionX, positionY, 0f);
 	}
 
-	public void setPosition(float pX, float pY, float pZ) {
-		AL10.alListener3f(AL10.AL_POSITION, pX, pY, pZ);
+	public void setPosition(float positionX, float positionY, float positionZ) {
+		AL10.alListener3f(AL10.AL_POSITION, positionX, positionY, positionZ);
 
-		mPositionX = pX;
-		mPositionY = pY;
-		mPositionZ = pZ;
+		mPositionX = positionX;
+		mPositionY = positionY;
+		mPositionZ = positionZ;
 	}
 
-	public void setVelocity(float pX, float pY) {
-		setVelocity(pX, pY, 0f);
+	public void setVelocity(float velocityX, float velocityY) {
+		setVelocity(velocityX, velocityY, 0f);
 	}
 
-	public void setVelocity(float pX, float pY, float pZ) {
-		AL10.alListener3f(AL10.AL_VELOCITY, pX, pY, pZ);
+	public void setVelocity(float velocityX, float velocityY, float velocityZ) {
+		AL10.alListener3f(AL10.AL_VELOCITY, velocityX, velocityY, velocityZ);
 
-		mVelocityX = pX;
-		mVelocityY = pY;
-		mVelocityZ = pZ;
+		mVelocityX = velocityX;
+		mVelocityY = velocityY;
+		mVelocityZ = velocityZ;
 	}
 
 }

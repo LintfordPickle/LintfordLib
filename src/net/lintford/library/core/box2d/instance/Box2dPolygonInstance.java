@@ -42,29 +42,23 @@ public class Box2dPolygonInstance extends BaseInstanceData implements ShapeInsta
 
 		vertexCount = polygonShape.getVertexCount();
 		vertices = polygonShape.getVertices();
-
 	}
 
 	public void loadPhysics() {
 		polygonShape = new PolygonShape();
-
 		polygonShape.set(vertices, vertexCount);
-
 	}
 
 	@Override
 	public ShapeInstance getCopy() {
-		Box2dPolygonInstance lReturn = new Box2dPolygonInstance();
-
+		final var lReturn = new Box2dPolygonInstance();
 		lReturn.vertexCount = vertexCount;
 
 		lReturn.vertices = new Vec2[vertexCount];
 		for (int i = 0; i < vertexCount; i++) {
 			lReturn.vertices[i] = new Vec2(vertices[i]);
-
 		}
 
 		return lReturn;
 	}
-
 }

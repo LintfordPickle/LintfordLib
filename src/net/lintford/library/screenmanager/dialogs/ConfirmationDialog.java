@@ -39,32 +39,32 @@ public class ConfirmationDialog extends BaseDialog {
 	// Constructors
 	// --------------------------------------
 
-	public ConfirmationDialog(ScreenManager pScreenManager, Screen pParentScreen, String pDialogMessage) {
-		this(pScreenManager, pParentScreen, "", pDialogMessage, true);
+	public ConfirmationDialog(ScreenManager screenManager, Screen parentScreen, String dialogMessage) {
+		this(screenManager, parentScreen, "", dialogMessage, true);
 	}
 
-	public ConfirmationDialog(ScreenManager pScreenManager, Screen pParentScreen, String pTitle, String pDialogMessage) {
-		this(pScreenManager, pParentScreen, pTitle, pDialogMessage, true);
+	public ConfirmationDialog(ScreenManager screenManager, Screen parentScreen, String title, String dialogMessage) {
+		this(screenManager, parentScreen, title, dialogMessage, true);
 	}
 
-	public ConfirmationDialog(ScreenManager pScreenManager, Screen pParentScreen, String pTitle, String pDialogMessage, boolean pWithCancel) {
-		super(pScreenManager, pParentScreen, pDialogMessage);
+	public ConfirmationDialog(ScreenManager screenManager, Screen parentScreen, String title, String dialogMessage, boolean withCancelButton) {
+		super(screenManager, parentScreen, dialogMessage);
 
 		mListLayout = new ListLayout(this);
 
 		createMenuEntries(mListLayout);
 
-		mConfirmEntry = new MenuEntry(pScreenManager, mListLayout, "Okay");
+		mConfirmEntry = new MenuEntry(screenManager, mListLayout, "Okay");
 		mConfirmEntry.registerClickListener(this, BUTTON_CONFIRM_YES);
 
-		if (pWithCancel) {
-			mCancelEntry = new MenuEntry(pScreenManager, mListLayout, "Cancel");
+		if (withCancelButton) {
+			mCancelEntry = new MenuEntry(screenManager, mListLayout, "Cancel");
 			mCancelEntry.registerClickListener(this, BUTTON_CONFIRM_NO);
 
 			mListLayout.addMenuEntry(mCancelEntry);
 		}
 
-		mMenuTitle = pTitle;
+		mMenuTitle = title;
 
 		mListLayout.addMenuEntry(mConfirmEntry);
 
@@ -79,7 +79,7 @@ public class ConfirmationDialog extends BaseDialog {
 	// Methods
 	// --------------------------------------
 
-	protected void createMenuEntries(BaseLayout pLayout) {
+	protected void createMenuEntries(BaseLayout layout) {
 
 	}
 
@@ -97,5 +97,4 @@ public class ConfirmationDialog extends BaseDialog {
 			break;
 		}
 	}
-
 }

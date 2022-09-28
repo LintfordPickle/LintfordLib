@@ -14,34 +14,31 @@ public class AppStorage {
 	public static final String FILE_SEPERATOR = System.getProperty("file.separator");
 	public static final String LINE_SEPERATOR = System.getProperty("line.separator");
 
-	public static boolean useLocalDirectory = true;
+	/** USe working directory for app storage (System.getProperty("user.dir"))*/
+	// https://docs.oracle.com/javase/tutorial/essential/environment/sysprop.html
+	public static boolean UseLocalDirectory = true;
 
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
 
-	public static String createGameDataDirectory(String pApplicationName) {
+	public static String createGameDataDirectory(String applicationName) {
 		String lSaveFolder = null;
-		String os = System.getProperty("os.name").toLowerCase();
 
-		if (useLocalDirectory) {
+		if (UseLocalDirectory) {
 			lSaveFolder = System.getProperty("user.dir") + FILE_SEPERATOR + "config" + FILE_SEPERATOR;
-
 		} else {
-			if (os.startsWith("win")) {
-				lSaveFolder = System.getenv("AppData") + FILE_SEPERATOR + pApplicationName + FILE_SEPERATOR;
-
-			} else if (os.startsWith("linux") || os.startsWith("mac") || os.startsWith("darwin")) {
-				lSaveFolder = System.getProperty("user.home") + FILE_SEPERATOR + "." + pApplicationName + FILE_SEPERATOR;
-
+			final var lOSName = System.getProperty("os.name").toLowerCase();
+			if (lOSName.startsWith("win")) {
+				lSaveFolder = System.getenv("AppData") + FILE_SEPERATOR + applicationName + FILE_SEPERATOR;
+			} else if (lOSName.startsWith("linux") || lOSName.startsWith("mac") || lOSName.startsWith("darwin")) {
+				lSaveFolder = System.getProperty("user.home") + FILE_SEPERATOR + "." + applicationName + FILE_SEPERATOR;
 			}
-
 		}
 
-		File directory = new File(String.valueOf(lSaveFolder));
-		if (!directory.exists()) {
-			directory.mkdir();
-
+		final var lDirectory = new File(String.valueOf(lSaveFolder));
+		if (!lDirectory.exists()) {
+			lDirectory.mkdir();
 		}
 
 		Debug.debugManager().logger().i("Storage", "Creating game data directory at: " + lSaveFolder);
@@ -51,22 +48,18 @@ public class AppStorage {
 	/**
 	 * Returns a platform dependant folder which can be used for saving application data. The data folder will be created as Roaming\pApplicationName
 	 */
-	public static String getGameDataDirectory(String pApplicationName) {
+	public static String getGameDataDirectory(String applicationName) {
 		String lSaveFolder = null;
-		String os = System.getProperty("os.name").toLowerCase();
 
-		if (useLocalDirectory) {
+		if (UseLocalDirectory) {
 			lSaveFolder = System.getProperty("user.dir") + FILE_SEPERATOR + "config" + FILE_SEPERATOR;
-
 		} else {
-			if (os.startsWith("win")) {
-				lSaveFolder = System.getenv("AppData") + FILE_SEPERATOR + pApplicationName + FILE_SEPERATOR;
-
-			} else if (os.startsWith("linux") || os.startsWith("mac") || os.startsWith("darwin")) {
-				lSaveFolder = System.getProperty("user.home") + FILE_SEPERATOR + "." + pApplicationName + FILE_SEPERATOR;
-
+			final var lOSName = System.getProperty("os.name").toLowerCase();
+			if (lOSName.startsWith("win")) {
+				lSaveFolder = System.getenv("AppData") + FILE_SEPERATOR + applicationName + FILE_SEPERATOR;
+			} else if (lOSName.startsWith("linux") || lOSName.startsWith("mac") || lOSName.startsWith("darwin")) {
+				lSaveFolder = System.getProperty("user.home") + FILE_SEPERATOR + "." + applicationName + FILE_SEPERATOR;
 			}
-
 		}
 
 		return lSaveFolder;
@@ -76,10 +69,7 @@ public class AppStorage {
 	 * Returns a platform dependant folder which can be used for saving application data. Will use the APPLICATION_NAME from the ConstantsTable, if one has been defined.
 	 */
 	public static String getGameDataDirectory() {
-		final String lApplicationName = ConstantsApp.getStringValueDef("APPLICATION_NAME", "LintfordLib");
-
+		final String lApplicationName = ConstantsApp.getStringValueDef(ConstantsApp.CONSTANT_APP_NAME_TAG, "LintfordLib");
 		return getGameDataDirectory(lApplicationName);
-
 	}
-
 }

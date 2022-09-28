@@ -55,7 +55,7 @@ public class RendererManager implements IInputClickedFocusManager {
 	// --------------------------------------
 
 	/** Used both as a ControllerGroupID and RendererGroupID */
-	public final int entityGroupID;
+	protected final int mEntityGroupUid;
 
 	private LintfordCore mCore;
 	private ResourceManager mResourceManager;
@@ -99,12 +99,16 @@ public class RendererManager implements IInputClickedFocusManager {
 	// Properties
 	// --------------------------------------
 
+	public int entityGroupUid() {
+		return mEntityGroupUid;
+	}
+
 	public IInputClickedFocusTracker getTrackedClickedFocusControl() {
 		return mTrackedInputControl;
 	}
 
-	public void setTrackedClickedFocusControl(IInputClickedFocusTracker pControlToTrack) {
-		mTrackedInputControl = pControlToTrack;
+	public void setTrackedClickedFocusControl(IInputClickedFocusTracker controlToTrack) {
+		mTrackedInputControl = controlToTrack;
 	}
 
 	public void increaseGlContentCount() {
@@ -162,12 +166,10 @@ public class RendererManager implements IInputClickedFocusManager {
 
 	public boolean isinitialized() {
 		return mIsinitialized;
-
 	}
 
 	public boolean isLoaded() {
 		return mResourcesLoaded;
-
 	}
 
 	public int getNewRendererId() {
@@ -218,9 +220,9 @@ public class RendererManager implements IInputClickedFocusManager {
 	// Constructor
 	// --------------------------------------
 
-	public RendererManager(LintfordCore pCore, int pEntityGroupID) {
-		mCore = pCore;
-		entityGroupID = pEntityGroupID;
+	public RendererManager(LintfordCore core, int entityGroupUid) {
+		mCore = core;
+		mEntityGroupUid = entityGroupUid;
 
 		mRenderers = new ArrayList<>();
 		mWindowRenderers = new ArrayList<>();
@@ -260,33 +262,33 @@ public class RendererManager implements IInputClickedFocusManager {
 		mIsinitialized = true;
 	}
 
-	public void loadResources(ResourceManager pResourceManager) {
+	public void loadResources(ResourceManager resourceManager) {
 		if (mResourcesLoaded)
 			return;
 
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "Loading Resources for all registered renderers");
 
-		mResourceManager = pResourceManager;
-		mResourceManager.increaseReferenceCounts(entityGroupID);
+		mResourceManager = resourceManager;
+		mResourceManager.increaseReferenceCounts(mEntityGroupUid);
 
-		mHudTextBoldSmallFont = pResourceManager.fontManager().getFontUnit(HUD_FONT_TEXT_BOLD_SMALL_NAME);
+		mHudTextBoldSmallFont = resourceManager.fontManager().getFontUnit(HUD_FONT_TEXT_BOLD_SMALL_NAME);
 
-		mUiTextFont = pResourceManager.fontManager().getFontUnit(UI_FONT_TEXT_NAME);
-		mUiTextBoldFont = pResourceManager.fontManager().getFontUnit(UI_FONT_TEXT_BOLD_NAME);
-		mUiHeaderFont = pResourceManager.fontManager().getFontUnit(UI_FONT_HEADER_NAME);
-		mUiTitleFont = pResourceManager.fontManager().getFontUnit(UI_FONT_TITLE_NAME);
+		mUiTextFont = resourceManager.fontManager().getFontUnit(UI_FONT_TEXT_NAME);
+		mUiTextBoldFont = resourceManager.fontManager().getFontUnit(UI_FONT_TEXT_BOLD_NAME);
+		mUiHeaderFont = resourceManager.fontManager().getFontUnit(UI_FONT_HEADER_NAME);
+		mUiTitleFont = resourceManager.fontManager().getFontUnit(UI_FONT_TITLE_NAME);
 
-		mSpriteBatch.loadResources(pResourceManager);
-		mTextureBatch.loadResources(pResourceManager);
-		mLineBatch.loadResources(pResourceManager);
-		mPolyBatch.loadResources(pResourceManager);
+		mSpriteBatch.loadResources(resourceManager);
+		mTextureBatch.loadResources(resourceManager);
+		mLineBatch.loadResources(resourceManager);
+		mPolyBatch.loadResources(resourceManager);
 
-		mDisplayConfig = pResourceManager.config().display();
+		mDisplayConfig = resourceManager.config().display();
 
 		final int lRendererCount = mRenderers.size();
 		for (int i = 0; i < lRendererCount; i++) {
 			if (!mRenderers.get(i).isLoaded() && mResourcesLoaded) {
-				mRenderers.get(i).loadResources(pResourceManager);
+				mRenderers.get(i).loadResources(resourceManager);
 			}
 		}
 
@@ -335,58 +337,46 @@ public class RendererManager implements IInputClickedFocusManager {
 		mDisplayConfig.removeResizeListener(mResizeListener);
 		mDisplayConfig = null;
 
-		mResourceManager.decreaseReferenceCounts(entityGroupID);
+		mResourceManager.decreaseReferenceCounts(mEntityGroupUid);
 		mResourceManager = null;
 
 		mResourcesLoaded = false;
 	}
 
-	public boolean handleInput(LintfordCore pCore) {
+	public boolean handleInput(LintfordCore core) {
 		final int lNumWindowRenderers = mWindowRenderers.size();
 
 		// We handle the input to the UI Windows in the game with priority.
 		for (int i = 0; i < lNumWindowRenderers; i++) {
 			final var lWindow = mWindowRenderers.get(i);
-			final var lResult = lWindow.handleInput(pCore);
+			final var lResult = lWindow.handleInput(core);
 			if (lResult && lWindow.exclusiveHandleInput()) {
 				// return true;
-
 			}
-
 		}
 
 		// Handle the base renderer input
 		final int lNumRenderers = mRenderers.size();
 		for (int i = lNumRenderers - 1; i >= 0; i--) {
-			mRenderers.get(i).handleInput(pCore);
-
+			mRenderers.get(i).handleInput(core);
 		}
 
 		return false;
-
 	}
 
-	public void update(LintfordCore pCore) {
-		GLDebug.checkGLErrorsException();
-
+	public void update(LintfordCore core) {
 		final int lRendererCount = mRenderers.size();
 		for (int i = 0; i < lRendererCount; i++) {
 			final var lRenderer = mRenderers.get(i);
 			if (!lRenderer.isActive())
 				continue;
 
-			GLDebug.checkGLErrorsException();
-
 			if (!lRenderer.isLoaded() && mResourcesLoaded) {
 				Debug.debugManager().logger().w(getClass().getSimpleName(), lRenderer.getClass().getSimpleName());
 				lRenderer.loadResources(mResourceManager);
 			}
 
-			GLDebug.checkGLErrorsException();
-
-			lRenderer.update(pCore);
-
-			GLDebug.checkGLErrorsException();
+			lRenderer.update(core);
 		}
 
 		final int lWindowRendererCount = mWindowRenderers.size();
@@ -400,12 +390,11 @@ public class RendererManager implements IInputClickedFocusManager {
 				lWindowRenderer.loadResources(mResourceManager);
 			}
 
-			lWindowRenderer.update(pCore);
+			lWindowRenderer.update(core);
 		}
 	}
 
-	public void draw(LintfordCore pCore) {
-		GLDebug.checkGLErrorsException();
+	public void draw(LintfordCore core) {
 		if (RENDER_GAME_RENDERABLES) {
 			final int lNumBaseRenderers = mRenderers.size();
 			for (int i = 0; i < lNumBaseRenderers; i++) {
@@ -416,14 +405,10 @@ public class RendererManager implements IInputClickedFocusManager {
 				if (!lRenderer.isLoaded() && mResourcesLoaded) {
 					Debug.debugManager().logger().w(getClass().getSimpleName(), "Reloading content in Update() (BaseRenderer) ");
 					lRenderer.loadResources(mResourceManager);
-
-					GLDebug.checkGLErrorsException();
 				}
 
 				// Update the renderer
-				lRenderer.draw(pCore);
-
-				GLDebug.checkGLErrorsException();
+				lRenderer.draw(core);
 			}
 		}
 
@@ -437,14 +422,10 @@ public class RendererManager implements IInputClickedFocusManager {
 				if (!lWindow.isLoaded() && mResourcesLoaded) {
 					Debug.debugManager().logger().w(getClass().getSimpleName(), "Reloading content in Update() (UIWindow) ");
 					lWindow.loadResources(mResourceManager);
-
-					GLDebug.checkGLErrorsException();
 				}
 
 				// Update the renderer
-				lWindow.draw(pCore);
-
-				GLDebug.checkGLErrorsException();
+				lWindow.draw(core);
 			}
 		}
 	}
@@ -453,21 +434,21 @@ public class RendererManager implements IInputClickedFocusManager {
 	// Methods
 	// --------------------------------------
 
-	public BaseRenderer getRenderer(String pRendererName) {
-		if (pRendererName == null || pRendererName.length() == 0) {
+	public BaseRenderer getRenderer(String rendererName) {
+		if (rendererName == null || rendererName.length() == 0) {
 			return null;
 		}
 
 		final int lNumWindows = mWindowRenderers.size();
 		for (int i = 0; i < lNumWindows; i++) {
-			if (mWindowRenderers.get(i).rendererName().equals(pRendererName)) {
+			if (mWindowRenderers.get(i).rendererName().equals(rendererName)) {
 				return mWindowRenderers.get(i);
 			}
 		}
 
 		final int lNumRenderers = mRenderers.size();
 		for (int i = 0; i < lNumRenderers; i++) {
-			if (mRenderers.get(i).rendererName().equals(pRendererName)) {
+			if (mRenderers.get(i).rendererName().equals(rendererName)) {
 				return mRenderers.get(i);
 			}
 		}
@@ -476,30 +457,30 @@ public class RendererManager implements IInputClickedFocusManager {
 	}
 
 	/** Adds a renderer to the manager. This automatically re-orders the renderers to take into consideration their relative z-depths.*/
-	public void addRenderer(BaseRenderer pRenderer) {
-		if (getRenderer(pRenderer.rendererName()) == null) {
-			if (pRenderer instanceof UiWindow) {
-				mWindowRenderers.add((UiWindow) pRenderer);
+	public void addRenderer(BaseRenderer renderer) {
+		if (getRenderer(renderer.rendererName()) == null) {
+			if (renderer instanceof UiWindow) {
+				mWindowRenderers.add((UiWindow) renderer);
 				Collections.sort(mWindowRenderers, new ZLayerComparator());
 			}
 
 			else {
-				mRenderers.add(pRenderer);
+				mRenderers.add(renderer);
 				Collections.sort(mRenderers, new ZLayerComparator());
 			}
 
 		} else {
-			Debug.debugManager().logger().e(getClass().getSimpleName(), "Cannot add the same renderer twice! (" + pRenderer.getClass().getSimpleName() + "/" + pRenderer.mRendererName + ")");
+			Debug.debugManager().logger().e(getClass().getSimpleName(), "Cannot add the same renderer twice! (" + renderer.getClass().getSimpleName() + "/" + renderer.mRendererName + ")");
 		}
 	}
 
-	public void removeRenderer(BaseRenderer pRenderer) {
-		if (mWindowRenderers.contains(pRenderer)) {
-			mWindowRenderers.remove(pRenderer);
+	public void removeRenderer(BaseRenderer renderer) {
+		if (mWindowRenderers.contains(renderer)) {
+			mWindowRenderers.remove(renderer);
 		}
 
-		if (mRenderers.contains(pRenderer)) {
-			mRenderers.remove(pRenderer);
+		if (mRenderers.contains(renderer)) {
+			mRenderers.remove(renderer);
 		}
 	}
 
@@ -510,15 +491,15 @@ public class RendererManager implements IInputClickedFocusManager {
 		mRenderers.clear();
 	}
 
-	public void addChangeListener(UIWindowChangeListener pListener) {
-		if (!mListeners.contains(pListener)) {
-			mListeners.add(pListener);
+	public void addChangeListener(UIWindowChangeListener listener) {
+		if (!mListeners.contains(listener)) {
+			mListeners.add(listener);
 		}
 	}
 
-	public void removeListener(UIWindowChangeListener pListener) {
-		if (mListeners.contains(pListener)) {
-			mListeners.remove(pListener);
+	public void removeListener(UIWindowChangeListener listener) {
+		if (mListeners.contains(listener)) {
+			mListeners.remove(listener);
 		}
 	}
 
@@ -527,7 +508,7 @@ public class RendererManager implements IInputClickedFocusManager {
 	}
 
 	/** Unloads all {@link BaseRenderer} instances registered to this {@link RendererManager} which have the given gorup ID assigned to them. */
-	public void removeRendererGroup(final int pEntityGroupID) {
+	public void removeRendererGroup(final int entityGroupID) {
 		final var lWindowUpdateList = new ArrayList<UiWindow>();
 		final int lNumWindows = mWindowRenderers.size();
 		for (int i = 0; i < lNumWindows; i++) {
@@ -535,7 +516,7 @@ public class RendererManager implements IInputClickedFocusManager {
 		}
 
 		for (int i = 0; i < lNumWindows; i++) {
-			if (lWindowUpdateList.get(i).entityGroupID() == pEntityGroupID) {
+			if (lWindowUpdateList.get(i).entityGroupID() == entityGroupID) {
 				lWindowUpdateList.get(i).unloadResources();
 
 				mWindowRenderers.remove(lWindowUpdateList.get(i));
@@ -549,7 +530,7 @@ public class RendererManager implements IInputClickedFocusManager {
 		}
 
 		for (int i = 0; i < lRendererCount; i++) {
-			if (lRendererUpdateList.get(i).entityGroupID() == pEntityGroupID) {
+			if (lRendererUpdateList.get(i).entityGroupID() == entityGroupID) {
 				lRendererUpdateList.get(i).unloadResources();
 
 				mRenderers.remove(lRendererUpdateList.get(i));
@@ -557,16 +538,15 @@ public class RendererManager implements IInputClickedFocusManager {
 		}
 	}
 
-	public void setRenderTarget(String pName) {
-		if (pName == null) {
+	public void setRenderTarget(String name) {
+		if (name == null) {
 			if (mCurrentTarget != null) {
 				mCurrentTarget.unbind();
 				return;
 			}
 		}
 
-		RenderTarget lResult = getRenderTarget(pName);
-
+		final var lResult = getRenderTarget(name);
 		if (lResult != null) {
 			if (mCurrentTarget != null) {
 				mCurrentTarget.unbind();
@@ -576,78 +556,76 @@ public class RendererManager implements IInputClickedFocusManager {
 		lResult.bind();
 	}
 
-	public RenderTarget createRenderTarget(String pName, int pWidth, int pHeight, boolean pResizeWithWindow) {
-		return createRenderTarget(pName, pWidth, pHeight, 1f, pResizeWithWindow);
+	public RenderTarget createRenderTarget(String name, int width, int height, boolean resizeWithWindow) {
+		return createRenderTarget(name, width, height, 1f, resizeWithWindow);
 	}
 
-	public RenderTarget createRenderTarget(String pName, int pWidth, int pHeight, float pScale, boolean pResizeWithWindow) {
-		return createRenderTarget(pName, pWidth, pHeight, 1f, GL11.GL_LINEAR, pResizeWithWindow);
+	public RenderTarget createRenderTarget(String name, int width, int height, float scale, boolean resizeWithWindow) {
+		return createRenderTarget(name, width, height, 1f, GL11.GL_LINEAR, resizeWithWindow);
 	}
 
-	public RenderTarget createRenderTarget(String pName, int pWidth, int pHeight, float pScale, int pFilterMode, boolean pResizeWithWindow) {
-		var lRenderTarget = getRenderTarget(pName);
+	public RenderTarget createRenderTarget(String name, int width, int height, float scale, int filterMode, boolean resizeWithWindow) {
+		var lRenderTarget = getRenderTarget(name);
 
 		if (lRenderTarget != null) {
-			Debug.debugManager().logger().i(getClass().getSimpleName(), "RenderTarget with name '" + pName + "' already exists. No new RendreTarget will be created.");
+			Debug.debugManager().logger().i(getClass().getSimpleName(), "RenderTarget with name '" + name + "' already exists. No new RendreTarget will be created.");
 			return lRenderTarget;
 		}
 
-		lRenderTarget = new RenderTarget();
-		lRenderTarget.targetName = pName;
-		lRenderTarget.textureFilter(pFilterMode);
-		lRenderTarget.loadResources(pWidth, pHeight, pScale);
-		lRenderTarget.initialiszeGl(pWidth, pHeight, pScale);
+		lRenderTarget = new RenderTarget(name);
+		lRenderTarget.textureFilter(filterMode);
+		lRenderTarget.loadResources(width, height, scale);
+		lRenderTarget.initialiszeGl(width, height, scale);
 
 		mRenderTargets.add(lRenderTarget);
 
 		final int lNumRenderTargets = mRenderTargets.size();
-		Debug.debugManager().logger().i(getClass().getSimpleName(), "RenderTarget '" + pName + "' added. Currently have " + lNumRenderTargets + " rendertargets.");
+		Debug.debugManager().logger().i(getClass().getSimpleName(), "RenderTarget '" + name + "' added. Currently have " + lNumRenderTargets + " rendertargets.");
 
-		if (pResizeWithWindow) {
+		if (resizeWithWindow) {
 			mRenderTargetAutoResize.add(lRenderTarget);
 		}
 
 		return lRenderTarget;
 	}
 
-	public void unloadRenderTarget(RenderTarget pRenderTarget) {
-		if (pRenderTarget == null)
+	public void unloadRenderTarget(RenderTarget renderTarget) {
+		if (renderTarget == null)
 			return;
 
-		if (mRenderTargetAutoResize.contains(pRenderTarget)) {
-			mRenderTargetAutoResize.remove(pRenderTarget);
+		if (mRenderTargetAutoResize.contains(renderTarget)) {
+			mRenderTargetAutoResize.remove(renderTarget);
 		}
 
-		if (mRenderTargets.contains(pRenderTarget)) {
-			mRenderTargets.remove(pRenderTarget);
+		if (mRenderTargets.contains(renderTarget)) {
+			mRenderTargets.remove(renderTarget);
 		}
 
-		pRenderTarget.unbind();
-		pRenderTarget.unloadResources();
+		renderTarget.unbind();
+		renderTarget.unloadResources();
 	}
 
-	public void releaseRenderTargetByName(String pName) {
-		final var lResult = getRenderTarget(pName);
+	public void releaseRenderTargetByName(String name) {
+		final var lResult = getRenderTarget(name);
 		if (lResult != null) {
 			unloadRenderTarget(lResult);
 		}
 	}
 
-	public RenderTarget getRenderTarget(String pName) {
-		final int RENDER_TARGET_COUNT = mRenderTargets.size();
-		for (int i = 0; i < RENDER_TARGET_COUNT; i++) {
-			if (mRenderTargets.get(i).targetName.equals(pName)) {
+	public RenderTarget getRenderTarget(String name) {
+		final int lRenderTargetCount = mRenderTargets.size();
+		for (int i = 0; i < lRenderTargetCount; i++) {
+			if (mRenderTargets.get(i).targetName().equals(name))
 				return mRenderTargets.get(i);
-			}
 		}
 
 		return null;
 	}
 
-	public void reloadRenderTargets(final int pWidth, final int pHeight) {
-		final int RENDER_TARGET_COUNT = mRenderTargetAutoResize.size();
-		for (int i = 0; i < RENDER_TARGET_COUNT; i++) {
-			mRenderTargetAutoResize.get(i).resize(pWidth, pHeight);
+	public void reloadRenderTargets(final int width, final int height) {
+		final int lRenderTargetCount = mRenderTargetAutoResize.size();
+		for (int i = 0; i < lRenderTargetCount; i++) {
+			mRenderTargetAutoResize.get(i).resize(width, height);
 		}
 	}
 }

@@ -18,7 +18,6 @@ public class ParticleRandomOffsetInitializer extends ParticleDoubleValueInitiali
 
 	public ParticleRandomOffsetInitializer() {
 		super(INITIALIZER_NAME);
-
 	}
 
 	// --------------------------------------
@@ -26,10 +25,8 @@ public class ParticleRandomOffsetInitializer extends ParticleDoubleValueInitiali
 	// --------------------------------------
 
 	@Override
-	public void onIntialiseParticle(Particle pParticle, float pValue0, float pValue1) {
-		pParticle.worldPositionX += pValue0;
-		pParticle.worldPositionY += pValue1;
-
+	public void onIntialiseParticle(Particle particle, float worldOffsetX, float worldOffsetY) {
+		particle.worldPositionX += worldOffsetX;
+		particle.worldPositionY += worldOffsetY;
 	}
-
 }

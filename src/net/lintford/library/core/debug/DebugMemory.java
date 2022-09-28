@@ -30,19 +30,18 @@ public class DebugMemory {
 		if (!Debug.debugManager().debugModeEnabled())
 			return;
 
-		final DebugLogger LOGGER = Debug.debugManager().logger();
+		final var lDebugLogger = Debug.debugManager().logger();
 
 		// Returns the maximum amount of memory that the JVM will attempt to use (VM argument -Xmx512M)
-		LOGGER.i(DebugMemory.class.getSimpleName(), "Maximum memory: " + getMaxMemoryInMiB());
+		lDebugLogger.i(DebugMemory.class.getSimpleName(), "Maximum memory: " + getMaxMemoryInMiB());
 
 		// Returns the total amount of memory in the JVM (influenced with VM argument -Xms256M)
-		LOGGER.i(DebugMemory.class.getSimpleName(), "Total memory: " + getTotalMemoryInMiB());
+		lDebugLogger.i(DebugMemory.class.getSimpleName(), "Total memory: " + getTotalMemoryInMiB());
 
 		// Returns the amount of free memory in the JVM
-		LOGGER.i(DebugMemory.class.getSimpleName(), "Free memory: " + getFreeMemoryInMiB());
+		lDebugLogger.i(DebugMemory.class.getSimpleName(), "Free memory: " + getFreeMemoryInMiB());
 
-		LOGGER.i(DebugMemory.class.getSimpleName(), "Used memory: " + getUsedMemoryInMiB());
-
+		lDebugLogger.i(DebugMemory.class.getSimpleName(), "Used memory: " + getUsedMemoryInMiB());
 	}
 
 	// --------------------------------------

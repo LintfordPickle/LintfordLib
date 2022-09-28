@@ -56,7 +56,7 @@ public class UIBar {
 	}
 
 	public void setDestRectangle(Rectangle pRect) {
-		setDestRectangle(pRect.x(), pRect.y(), pRect.w(), pRect.h());
+		setDestRectangle(pRect.x(), pRect.y(), pRect.width(), pRect.height());
 
 	}
 

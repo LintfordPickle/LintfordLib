@@ -24,9 +24,8 @@ public class Box2dPrismaticInstance extends Box2dJointInstance {
 	// Constructor
 	// --------------------------------------
 
-	public Box2dPrismaticInstance(int pPoolUid) {
-		super(pPoolUid);
-
+	public Box2dPrismaticInstance(int poolUid) {
+		super(poolUid);
 	}
 
 	// --------------------------------------
@@ -36,12 +35,10 @@ public class Box2dPrismaticInstance extends Box2dJointInstance {
 	public void savePhysics() {
 		super.savePhysics();
 
-		if (joint == null) {
+		if (joint == null)
 			return;
 
-		}
-
-		PrismaticJoint lPrisJoint = (PrismaticJoint) joint;
+		final var lPrisJoint = (PrismaticJoint) joint;
 
 		referenceAngle = lPrisJoint.getReferenceAngle();
 		enableLimit = lPrisJoint.isLimitEnabled();
@@ -49,21 +46,17 @@ public class Box2dPrismaticInstance extends Box2dJointInstance {
 		upperAngle = lPrisJoint.getUpperLimit();
 		enableMotor = lPrisJoint.isMotorEnabled();
 		motorSpeed = lPrisJoint.getJointSpeed();
+	}
+
+	public void loadPhysics(World box2dWorld) {
 
 	}
 
-	public void loadPhysics(World pWorld) {
+	public void unloadPhysics(World box2dWorld) {
 
 	}
 
-	public void unloadPhysics(World pWorld) {
-		if (joint == null)
-			return;
+	public void update(LintfordCore core) {
 
 	}
-
-	public void update(LintfordCore pCore) {
-
-	}
-
 }

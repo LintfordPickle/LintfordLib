@@ -38,8 +38,8 @@ public abstract class PreAllocatedInstanceManager<T extends PreAllocatedInstance
 	// Constructor
 	// --------------------------------------
 
-	public PreAllocatedInstanceManager(int pCapacity) {
-		mCapacity = pCapacity;
+	public PreAllocatedInstanceManager(int capacity) {
+		mCapacity = capacity;
 
 		preAllocateInstances();
 	}

@@ -55,34 +55,31 @@ public class CameraZoomController extends BaseController {
 	/**
 	 * Sets the {@link Camera} object this controller works with. If null, the controller will skip its update calls.
 	 */
-	public void setCamera(ICamera pCamera) {
-		this.mCamera = pCamera;
+	public void setCamera(ICamera camera) {
+		this.mCamera = camera;
 	}
 
-	public void setZoomConstraints(float pMin, float pMax) {
-		mCameraMinZoom = pMin;
+	public void setZoomConstraints(float minZoomAmount, float maxZoomAmount) {
+		mCameraMinZoom = minZoomAmount;
 
-		if (pMin > pMax)
-			pMin = pMax;
+		if (minZoomAmount > maxZoomAmount)
+			minZoomAmount = maxZoomAmount;
 
-		if (pMin > pMax) {
-			// Just crazy talk
-			pMin = pMax = mCameraMaxZoom = 1f;
+		if (minZoomAmount > maxZoomAmount) {
+			minZoomAmount = maxZoomAmount = mCameraMaxZoom = 1f;
 
 		} else {
-			mCameraMinZoom = pMin;
-			mCameraMaxZoom = pMax;
-
+			mCameraMinZoom = minZoomAmount;
+			mCameraMaxZoom = maxZoomAmount;
 		}
-
 	}
 
 	public float zoomFactor() {
 		return mCamera.getZoomFactor();
 	}
 
-	public void zoomFactor(float pNewValue) {
-		mCamera.setZoomFactor(pNewValue);
+	public void zoomFactor(float zoomFactor) {
+		mCamera.setZoomFactor(zoomFactor);
 	}
 
 	// ---------------------------------------------
@@ -90,13 +87,12 @@ public class CameraZoomController extends BaseController {
 	// ---------------------------------------------
 
 	/** Ctor. */
-	public CameraZoomController(ControllerManager pControllerManager, ICamera pCamera, int pControllerBaseGroup) {
-		super(pControllerManager, CONTROLLER_NAME, pControllerBaseGroup);
+	public CameraZoomController(ControllerManager controllerManager, ICamera camera, int controllerBaseGroup) {
+		super(controllerManager, CONTROLLER_NAME, controllerBaseGroup);
 
-		mCamera = pCamera;
-		this.mCameraMinZoom = 0.1f;
+		mCamera = camera;
+		mCameraMinZoom = 0.1f;
 		mCameraMaxZoom = 3.0f;
-
 	}
 
 	// ---------------------------------------------
@@ -113,38 +109,32 @@ public class CameraZoomController extends BaseController {
 	 * Listens to mouse scroll wheel input and updates the zoom of the associated {@link Camera} if available.
 	 */
 	@Override
-	public boolean handleInput(LintfordCore pCore) {
+	public boolean handleInput(LintfordCore core) {
 		if (mCamera == null)
 			return false;
 
-		// static zoom factor
-		if (mAllowZoom && pCore.input().mouse().tryAcquireMouseOverThisComponent(hashCode())) {
-			mZoomAcceleration += pCore.input().mouse().mouseWheelYOffset() * mCamera.getZoomFactor();
+		if (mAllowZoom && core.input().mouse().tryAcquireMouseOverThisComponent(hashCode()))
+			mZoomAcceleration += core.input().mouse().mouseWheelYOffset() * mCamera.getZoomFactor();
 
-		}
-
-		return super.handleInput(pCore);
-
+		return super.handleInput(core);
 	}
 
 	/**
 	 * Controls the zoom factor of the associated {@link Camera} object, if present and applicable.
 	 */
 	@Override
-	public void update(LintfordCore pCore) {
+	public void update(LintfordCore core) {
 		if (this.mCamera == null)
 			return;
 
-		final float lDeltaTime = (float) pCore.appTime().elapsedTimeSeconds();
+		final var lDeltaTime = (float) core.appTime().elapsedTimeSeconds();
 		float lZoomFactor = mCamera.getZoomFactor();
 
-		// apply zoom //
 		mZoomVelocity += mZoomAcceleration;
 		lZoomFactor += mZoomVelocity * lDeltaTime;
 		mZoomVelocity *= 0.85f;
 		mZoomAcceleration = 0.0f;
 
-		// Check bounds
 		if (lZoomFactor < mCameraMinZoom) {
 			lZoomFactor = mCameraMinZoom;
 			mZoomVelocity = 0;
@@ -155,8 +145,6 @@ public class CameraZoomController extends BaseController {
 			mZoomVelocity = 0;
 		}
 
-		// Apply the new zoom factor to the camera object
 		mCamera.setZoomFactor(MathHelper.round(lZoomFactor, 2));
-
 	}
 }

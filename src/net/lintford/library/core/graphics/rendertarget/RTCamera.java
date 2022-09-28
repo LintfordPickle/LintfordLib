@@ -56,9 +56,9 @@ public class RTCamera implements ICamera {
 	// --------------------------------------
 
 	@Override
-	public void setPosition(float pX, float pY) {
-		mTargetPosition.x = pX;
-		mTargetPosition.y = pY;
+	public void setPosition(float targetX, float targetY) {
+		mTargetPosition.x = targetX;
+		mTargetPosition.y = targetY;
 	}
 
 	public float getScaledCenterX() {
@@ -137,16 +137,16 @@ public class RTCamera implements ICamera {
 	// Constructor(s)
 	// --------------------------------------
 
-	public RTCamera(int pWidth, int pHeight) {
-		mWindowWidth = pWidth;
-		mWindowHeight = pHeight;
+	public RTCamera(int windowWidth, int windowHeight) {
+		mWindowWidth = windowWidth;
+		mWindowHeight = windowHeight;
 
 		this.mMinX = 0;
-		this.mMaxX = 0 + pWidth;
+		this.mMaxX = 0 + windowWidth;
 		this.mMinY = 0;
-		this.mMaxY = 0 + pHeight;
+		this.mMaxY = 0 + windowHeight;
 
-		mBoundingRectangle = new Rectangle(mMinX, mMinY, pWidth, pHeight);
+		mBoundingRectangle = new Rectangle(mMinX, mMinY, windowWidth, windowHeight);
 
 		mInternalPosition = new Vector2f();
 		mAcceleration = new Vector2f();
@@ -164,22 +164,18 @@ public class RTCamera implements ICamera {
 		createView();
 		createOrtho(mBoundingRectangle.width(), mBoundingRectangle.height());
 		updateZoomBounds(mBoundingRectangle.width(), mBoundingRectangle.height());
-
 	}
 
 	// --------------------------------------
 	// Core-Methods
 	// --------------------------------------
 
-	public void handleInput(LintfordCore pCore) {
-		// Update the MouseCameraSpace instance
-		// FIXME: Move the mMouseWorldSpace away from the camera - it doesn't belong here
-		mMouseWorldSpace.x = pCore.input().mouse().mouseWindowCoords().x * getZoomFactorOverOne() + getMinX();
-		mMouseWorldSpace.y = pCore.input().mouse().mouseWindowCoords().y * getZoomFactorOverOne() + getMinY();
-
+	public void handleInput(LintfordCore core) {
+		mMouseWorldSpace.x = core.input().mouse().mouseWindowCoords().x * getZoomFactorOverOne() + getMinX();
+		mMouseWorldSpace.y = core.input().mouse().mouseWindowCoords().y * getZoomFactorOverOne() + getMinY();
 	}
 
-	public void update(LintfordCore pCore) {
+	public void update(LintfordCore core) {
 		mInternalPosition.x = mTargetPosition.x + mOffsetPosition.x;
 		mInternalPosition.y = mTargetPosition.y + mOffsetPosition.y;
 
@@ -200,24 +196,21 @@ public class RTCamera implements ICamera {
 		mViewMatrix.translate((int) (-mInternalPosition.x * getZoomFactor()), (int) (-mInternalPosition.y * getZoomFactor()), 0f);
 	}
 
-	private void createOrtho(final float pGameViewportWidth, final float pGameViewportheight) {
+	private void createOrtho(final float gameViewportWidth, final float gameViewportheight) {
 		mProjectionMatrix.setIdentity();
-		mProjectionMatrix.createOrtho(-pGameViewportWidth * 0.5f, pGameViewportWidth * 0.5f, pGameViewportheight * 0.5f, -pGameViewportheight * 0.5f, Z_NEAR, Z_FAR);
+		mProjectionMatrix.createOrtho(-gameViewportWidth * 0.5f, gameViewportWidth * 0.5f, gameViewportheight * 0.5f, -gameViewportheight * 0.5f, Z_NEAR, Z_FAR);
 	}
 
-	private void updateZoomBounds(final float pGameViewportWidth, final float pGameViewportheight) {
-		// Update the scaled camera position, width and height.
-		mScaledWindowWidth = pGameViewportWidth * getZoomFactorOverOne();
-		mScaledWindowHeight = pGameViewportheight * getZoomFactorOverOne();
+	private void updateZoomBounds(final float gameViewportWidth, final float gameViewportheight) {
+		mScaledWindowWidth = gameViewportWidth * getZoomFactorOverOne();
+		mScaledWindowHeight = gameViewportheight * getZoomFactorOverOne();
 
-		// Update the camera position
 		mMinX = mInternalPosition.x - mScaledWindowWidth / 2.0f;
 		mMinY = mInternalPosition.y - mScaledWindowHeight / 2.0f;
 
 		mMaxX = mInternalPosition.x + mScaledWindowWidth / 2.0f;
 		mMaxY = mInternalPosition.y + mScaledWindowHeight / 2.0f;
 
-		// update the bounding rectangle so we can properly do frustum culling
 		mBoundingRectangle.setCenterPosition(mInternalPosition.x, mInternalPosition.y);
 		mBoundingRectangle.width(mScaledWindowWidth);
 		mBoundingRectangle.height(mScaledWindowHeight);
@@ -235,9 +228,9 @@ public class RTCamera implements ICamera {
 	// Methods
 	// --------------------------------------
 
-	public void setCameraOffset(float pOffsetX, float pOffsetY) {
-		mOffsetPosition.x = pOffsetX;
-		mOffsetPosition.y = pOffsetY;
+	public void setCameraOffset(float offsetX, float offsetY) {
+		mOffsetPosition.x = offsetX;
+		mOffsetPosition.y = offsetY;
 	}
 
 	@Override
@@ -263,28 +256,28 @@ public class RTCamera implements ICamera {
 	}
 
 	@Override
-	public void setCameraState(CameraState pCameraState) {
-		if (pCameraState == null)
+	public void setCameraState(CameraState cameraState) {
+		if (cameraState == null)
 			return;
 
-		mAcceleration.x = pCameraState.acceleration.x;
-		mAcceleration.y = pCameraState.acceleration.y;
+		mAcceleration.x = cameraState.acceleration.x;
+		mAcceleration.y = cameraState.acceleration.y;
 
-		mVelocity.x = pCameraState.velocity.x;
-		mVelocity.y = pCameraState.velocity.y;
+		mVelocity.x = cameraState.velocity.x;
+		mVelocity.y = cameraState.velocity.y;
 
-		mTargetPosition.x = pCameraState.targetPosition.x;
-		mTargetPosition.y = pCameraState.targetPosition.y;
+		mTargetPosition.x = cameraState.targetPosition.x;
+		mTargetPosition.y = cameraState.targetPosition.y;
 
-		mOffsetPosition.x = pCameraState.offsetPosition.x;
-		mOffsetPosition.y = pCameraState.offsetPosition.y;
+		mOffsetPosition.x = cameraState.offsetPosition.x;
+		mOffsetPosition.y = cameraState.offsetPosition.y;
 
-		mZoomFactor = pCameraState.zoomFactor;
-		mRotation = pCameraState.rotation;
+		mZoomFactor = cameraState.zoomFactor;
+		mRotation = cameraState.rotation;
 	}
 
-	public void changePerspectiveMatrix(float pW, float pH) {
-		createOrtho(pW, pH);
+	public void changePerspectiveMatrix(float newWidth, float newHeight) {
+		createOrtho(newWidth, newHeight);
 	}
 
 	protected float getCenterX() {
@@ -301,8 +294,8 @@ public class RTCamera implements ICamera {
 	}
 
 	@Override
-	public void setZoomFactor(float pNewValue) {
-		mZoomFactor = pNewValue;
+	public void setZoomFactor(float newValue) {
+		mZoomFactor = newValue;
 
 		createView();
 		updateZoomBounds(mWindowWidth, mWindowHeight);
@@ -314,6 +307,7 @@ public class RTCamera implements ICamera {
 	}
 
 	public void resetState() {
+
 	}
 
 	@Override
@@ -334,7 +328,6 @@ public class RTCamera implements ICamera {
 	@Override
 	public float getMouseWorldSpaceY() {
 		return mMouseWorldSpace.y;
-
 	}
 
 	@Override
@@ -343,22 +336,22 @@ public class RTCamera implements ICamera {
 	}
 
 	@Override
-	public float getPointCameraSpaceX(float pPointX) {
-		return pPointX * getZoomFactorOverOne() + this.getMinX();
+	public float getPointCameraSpaceX(float pointX) {
+		return pointX * getZoomFactorOverOne() + this.getMinX();
 	}
 
 	@Override
-	public float getPointCameraSpaceY(float pPointY) {
-		return pPointY * getZoomFactorOverOne() + this.getMinY();
+	public float getPointCameraSpaceY(float pointY) {
+		return pointY * getZoomFactorOverOne() + this.getMinY();
 	}
 
 	@Override
-	public float getWorldPositionXInCameraSpace(float pPointX) {
-		return (mInternalPosition.x - pPointX) * getZoomFactor();
+	public float getWorldPositionXInCameraSpace(float pointX) {
+		return (mInternalPosition.x - pointX) * getZoomFactor();
 	}
 
 	@Override
-	public float getWorldPositionYInCameraSpace(float pPointY) {
-		return (mInternalPosition.y - pPointY) * getZoomFactor();
+	public float getWorldPositionYInCameraSpace(float pointY) {
+		return (mInternalPosition.y - pointY) * getZoomFactor();
 	}
 }

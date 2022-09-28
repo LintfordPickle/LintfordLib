@@ -2,14 +2,12 @@ package net.lintford.library.core.graphics.fonts;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.stream.JsonReader;
@@ -46,16 +44,16 @@ public class BitmapFontManager {
 	// Properties
 	// --------------------------------------
 
-	public FontUnit getFontUnit(String pBitmapFontName) {
-		if (getFontUnitExists(pBitmapFontName) == false) {
-			Debug.debugManager().logger().e(getClass().getSimpleName(), "Failed to retrieve FontUnit: " + pBitmapFontName);
+	public FontUnit getFontUnit(String bitmapFontName) {
+		if (getFontUnitExists(bitmapFontName) == false) {
+			Debug.debugManager().logger().e(getClass().getSimpleName(), "Failed to retrieve FontUnit: " + bitmapFontName);
 			return getCoreFont();
 		}
-		return mFontUnits.get(pBitmapFontName);
+		return mFontUnits.get(bitmapFontName);
 	}
 
-	public boolean getFontUnitExists(String pBitmapFontName) {
-		return mFontUnits.containsKey(pBitmapFontName);
+	public boolean getFontUnitExists(String bitmapFontName) {
+		return mFontUnits.containsKey(bitmapFontName);
 	}
 
 	public FontUnit getCoreFont() {
@@ -79,16 +77,16 @@ public class BitmapFontManager {
 	// Core-Methods
 	// --------------------------------------
 
-	public void initialize(ResourceManager pResourceManager) {
-		mResourceManager = pResourceManager;
+	public void initialize(ResourceManager resourceManager) {
+		mResourceManager = resourceManager;
 	}
 
 	// --------------------------------------
 
-	public void loadBitmapFontDefinitionsFromMetaData(FontMetaData pFontMetaData) {
-		final int lSpriteCount = pFontMetaData.items.size();
+	public void loadBitmapFontDefinitionsFromMetaData(FontMetaData fontMetaData) {
+		final int lSpriteCount = fontMetaData.items.size();
 		for (int i = 0; i < lSpriteCount; i++) {
-			var lFontDataDefinition = pFontMetaData.items.get(i);
+			var lFontDataDefinition = fontMetaData.items.get(i);
 
 			if (lFontDataDefinition == null)
 				continue;
@@ -97,26 +95,23 @@ public class BitmapFontManager {
 		}
 	}
 
-	public void loadBitmapFontDefinitionFromMetaFile(final String pMetaFileLocation) {
-		if (pMetaFileLocation == null || pMetaFileLocation.length() == 0) {
+	public void loadBitmapFontDefinitionFromMetaFile(final String metaFileLocation) {
+		if (metaFileLocation == null || metaFileLocation.length() == 0) {
 			Debug.debugManager().logger().w(getClass().getSimpleName(), "SpriteSheetManager meta file cannot be null or empty when loading SpriteSheets.");
 			return;
-
 		}
 
-		final Gson GSON = new GsonBuilder().create();
+		final var lGson = new GsonBuilder().create();
 
 		String lMetaFileContentsString = null;
 		BitmapFontMetaData lSpriteMetaObject = null;
 		try {
-			lMetaFileContentsString = new String(Files.readAllBytes(Paths.get(pMetaFileLocation)));
-			lSpriteMetaObject = GSON.fromJson(lMetaFileContentsString, BitmapFontMetaData.class);
+			lMetaFileContentsString = new String(Files.readAllBytes(Paths.get(metaFileLocation)));
+			lSpriteMetaObject = lGson.fromJson(lMetaFileContentsString, BitmapFontMetaData.class);
 
 			if (lSpriteMetaObject == null || lSpriteMetaObject.bitmapFontLocations == null || lSpriteMetaObject.bitmapFontLocations.length == 0) {
 				Debug.debugManager().logger().w(getClass().getSimpleName(), "Couldn't load bitmap font definitions from meta file");
-
 				return;
-
 			}
 		} catch (IOException ex) {
 			ex.printStackTrace();
@@ -124,7 +119,7 @@ public class BitmapFontManager {
 
 		final int lSpriteCount = lSpriteMetaObject.bitmapFontLocations.length;
 		for (int i = 0; i < lSpriteCount; i++) {
-			BitmapFontDataDefinition lFontDataDefinition = lSpriteMetaObject.bitmapFontLocations[i];
+			final var lFontDataDefinition = lSpriteMetaObject.bitmapFontLocations[i];
 
 			if (lFontDataDefinition == null)
 				continue;
@@ -133,99 +128,90 @@ public class BitmapFontManager {
 		}
 	}
 
-	public FontUnit loadBitmapFont(String pFontName, String pFilepath) {
-		if (getFontUnitExists(pFontName)) {
-			return getFontUnit(pFontName);
+	public FontUnit loadBitmapFont(String fontName, String filepath) {
+		if (getFontUnitExists(fontName)) {
+			return getFontUnit(fontName);
 		}
 
-		if (pFilepath == null || pFilepath.length() == 0) {
+		if (filepath == null || filepath.length() == 0) {
 			Debug.debugManager().logger().v(getClass().getSimpleName(), "Error loading bitmap font definition. Pathname is null! ");
 			return null;
 		}
 
-		if (pFilepath.charAt(0) == '/') {
-			return loadBitmapFontDefinitionFromResource(pFontName, pFilepath);
-
+		if (filepath.charAt(0) == '/') {
+			return loadBitmapFontDefinitionFromResource(fontName, filepath);
 		} else {
-			return loadBitmapFontDefinitionFromFile(pFontName, pFilepath);
+			return loadBitmapFontDefinitionFromFile(fontName, filepath);
 		}
 	}
 
-	private FontUnit loadBitmapFontDefinitionFromFile(String pFontname, String pFilepath) {
-		if (pFilepath == null || pFilepath.length() == 0)
+	private FontUnit loadBitmapFontDefinitionFromFile(String fontname, String filepath) {
+		if (filepath == null || filepath.length() == 0)
 			return null;
 
-		File lFile = new File(pFilepath);
+		final var lFile = new File(filepath);
 		if (!lFile.exists()) {
-			Debug.debugManager().logger().w(getClass().getSimpleName(), "Error: Spritesheet file " + pFilepath + " doesn't exist!");
+			Debug.debugManager().logger().w(getClass().getSimpleName(), "Error: Spritesheet file " + filepath + " doesn't exist!");
 			return null;
-
 		}
 
-		final Gson GSON = new GsonBuilder().create();
+		final var lGson = new GsonBuilder().create();
 
 		try {
 			final String lFileContents = new String(Files.readAllBytes(lFile.toPath()));
-			final BitmapFontDefinition lBitmapFontDefinition = GSON.fromJson(lFileContents, BitmapFontDefinition.class);
+			final BitmapFontDefinition lBitmapFontDefinition = lGson.fromJson(lFileContents, BitmapFontDefinition.class);
 
-			return createFontUnit(pFontname, lBitmapFontDefinition);
-
+			return createFontUnit(fontname, lBitmapFontDefinition);
 		} catch (JsonSyntaxException e) {
 			Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Failed to parse JSON SpriteSheet (Syntax): %s", lFile.getPath()));
 			Debug.debugManager().logger().printException(getClass().getSimpleName(), e);
-
-			return null;
-
 		} catch (IOException e) {
 			Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Failed to parse JSON SpriteSheet (IO): %s", lFile.getPath()));
 			Debug.debugManager().logger().printException(getClass().getSimpleName(), e);
-
-			return null;
-
 		}
+
+		return null;
 	}
 
-	public FontUnit loadBitmapFontDefinitionFromResource(String pFontname, String pFilepath) {
-		if (pFilepath == null || pFilepath.length() == 0)
+	public FontUnit loadBitmapFontDefinitionFromResource(String fontname, String filepath) {
+		if (filepath == null || filepath.length() == 0)
 			return null;
 
-		final Gson GSON = new GsonBuilder().create();
+		final var lGson = new GsonBuilder().create();
 
 		try {
-
-			InputStream lInputStream = FileUtils.class.getResourceAsStream(pFilepath);
+			final var lInputStream = FileUtils.class.getResourceAsStream(filepath);
 
 			if (lInputStream == null) {
-				Debug.debugManager().logger().e(getClass().getSimpleName(), "Unable to load BitmapFontDefinition '" + pFontname + "'. The resource '" + pFilepath + "' doesn't exist");
+				Debug.debugManager().logger().e(getClass().getSimpleName(), "Unable to load BitmapFontDefinition '" + fontname + "'. The resource '" + filepath + "' doesn't exist");
 				return null;
 			}
 
-			JsonReader reader = new JsonReader(new InputStreamReader(lInputStream, "UTF-8"));
+			final var lJSonReader = new JsonReader(new InputStreamReader(lInputStream, "UTF-8"));
 
 			BitmapFontDefinition lBitmapFontDefinition = null;
 			try {
-				lBitmapFontDefinition = GSON.fromJson(reader, BitmapFontDefinition.class);
+				lBitmapFontDefinition = lGson.fromJson(lJSonReader, BitmapFontDefinition.class);
 			} catch (JsonSyntaxException ex) {
 				Debug.debugManager().logger().e(getClass().getSimpleName(), "Error deserializing BitmapFont (JsonSyntaxException) " + ex.getMessage());
 				return null;
 			}
 
 			if (lBitmapFontDefinition == null) {
-				Debug.debugManager().logger().w(getClass().getSimpleName(), "Error loading spritesheet " + pFilepath);
+				Debug.debugManager().logger().w(getClass().getSimpleName(), "Error loading spritesheet " + filepath);
 				return null;
-
 			}
 
-			return createFontUnit(pFontname, lBitmapFontDefinition);
+			return createFontUnit(fontname, lBitmapFontDefinition);
 
 		} catch (JsonSyntaxException e) {
-			Debug.debugManager().logger().e(getClass().getSimpleName(), "Failed to parse JSON SpriteSheet (Syntax): " + pFilepath);
+			Debug.debugManager().logger().e(getClass().getSimpleName(), "Failed to parse JSON SpriteSheet (Syntax): " + filepath);
 			Debug.debugManager().logger().printException(getClass().getSimpleName(), e);
 
 			return null;
 
 		} catch (IOException e) {
-			Debug.debugManager().logger().e(getClass().getSimpleName(), "Failed to parse JSON SpriteSheet (IO): " + pFilepath);
+			Debug.debugManager().logger().e(getClass().getSimpleName(), "Failed to parse JSON SpriteSheet (IO): " + filepath);
 			Debug.debugManager().logger().printException(getClass().getSimpleName(), e);
 
 			return null;
@@ -233,11 +219,11 @@ public class BitmapFontManager {
 		}
 	}
 
-	private FontUnit createFontUnit(String pFontname, BitmapFontDefinition pBitmapFontDefintion) {
-		FontUnit lNewFontUnit = new FontUnit(0, pBitmapFontDefintion);
+	private FontUnit createFontUnit(String fontname, BitmapFontDefinition bitmapFontDefintion) {
+		final var lNewFontUnit = new FontUnit(bitmapFontDefintion);
 		lNewFontUnit.loadResources(mResourceManager);
-		pBitmapFontDefintion.reloadable(false);
-		mFontUnits.put(pFontname, lNewFontUnit);
+		bitmapFontDefintion.reloadable(false);
+		mFontUnits.put(fontname, lNewFontUnit);
 
 		return lNewFontUnit;
 	}

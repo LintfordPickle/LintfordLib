@@ -32,18 +32,16 @@ public abstract class AsyncScreenLoadingScreen extends Screen {
 		public void run() {
 			mDisplayManager.makeOffscreenContextCurrentOnThread();
 
-			// And then continue loading on the main context
-			int lCount = screensToLoad.length;
-			for (int i = 0; i < lCount; i++) {
+			final int lScreenCount = screensToLoad.length;
+			for (int i = 0; i < lScreenCount; i++) {
 				final var lScreen = screensToLoad[i];
 
-				if (lScreen != null && !lScreen.isinitialized()) {
+				if (lScreen != null && !lScreen.isinitialized())
 					lScreen.initialize();
-				}
 
-				if (lScreen != null && !lScreen.isResourcesLoaded()) {
+				if (lScreen != null && !lScreen.isResourcesLoaded())
 					lScreen.loadResources(mScreenManager.resources());
-				}
+
 			}
 
 			Debug.debugManager().logger().i("ScreenManager", "Finished loading GL Content on the background thread");
@@ -62,7 +60,6 @@ public abstract class AsyncScreenLoadingScreen extends Screen {
 
 	private ScreenManagerScreenLoader mBackgroundThread;
 	private boolean loadingThreadStarted;
-	private ScreenManager mScreenManager;
 	protected Screen[] screensToLoad;
 	private final DisplayManager mDisplayManager;
 	protected boolean mActivateLoadedScreens;
@@ -83,14 +80,13 @@ public abstract class AsyncScreenLoadingScreen extends Screen {
 	// Constructors
 	// --------------------------------------
 
-	protected AsyncScreenLoadingScreen(ScreenManager pScreenManager) {
-		this(pScreenManager, new RendererManager(pScreenManager.core(), BaseEntity.getEntityNumber()));
+	protected AsyncScreenLoadingScreen(ScreenManager screenManager) {
+		this(screenManager, new RendererManager(screenManager.core(), BaseEntity.getEntityNumber()));
 	}
 
-	protected AsyncScreenLoadingScreen(ScreenManager pScreenManager, RendererManager pRendererManager) {
-		super(pScreenManager, pRendererManager);
+	protected AsyncScreenLoadingScreen(ScreenManager screenManager, RendererManager rendererManager) {
+		super(screenManager, rendererManager);
 
-		mScreenManager = pScreenManager;
 		mDisplayManager = mScreenManager.core().config().display();
 
 		mTransitionOn = new TransitionFadeIn(new TimeSpan(1));
@@ -102,10 +98,10 @@ public abstract class AsyncScreenLoadingScreen extends Screen {
 	}
 
 	@Override
-	public void loadResources(ResourceManager pResourceManager) {
-		super.loadResources(pResourceManager);
+	public void loadResources(ResourceManager resourceManager) {
+		super.loadResources(resourceManager);
 
-		mCoreSpritesheet = pResourceManager.spriteSheetManager().coreSpritesheet();
+		mCoreSpritesheet = resourceManager.spriteSheetManager().coreSpritesheet();
 	}
 
 	// --------------------------------------
@@ -113,8 +109,8 @@ public abstract class AsyncScreenLoadingScreen extends Screen {
 	// --------------------------------------
 
 	@Override
-	public void update(LintfordCore pCore, boolean pOtherScreenHasFocus, boolean pCoveredByOtherScreen) {
-		super.update(pCore, pOtherScreenHasFocus, pCoveredByOtherScreen);
+	public void update(LintfordCore core, boolean otherScreenHasFocus, boolean coveredByOtherScreen) {
+		super.update(core, otherScreenHasFocus, coveredByOtherScreen);
 
 		if ((mScreenState == ScreenState.Active) && (mScreenManager.screens().size() == 1)) {
 			if (hasLoadingStarted() == false) {
@@ -132,9 +128,6 @@ public abstract class AsyncScreenLoadingScreen extends Screen {
 				if (mActivateLoadedScreens && mIsExiting == false) {
 					exitScreen();
 
-					// Once the background thread has finished,
-					// take the new 'loaded' screens from it and add them to the screen manager
-					// I *think* this avoids us needing to 'synchronized' anything
 					final var lNumScreensToAdd = screensToLoad.length;
 					for (int i = 0; i < lNumScreensToAdd; i++) {
 						if (screensToLoad[i] != null) {

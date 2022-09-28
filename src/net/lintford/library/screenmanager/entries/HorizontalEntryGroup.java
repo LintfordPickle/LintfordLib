@@ -166,7 +166,7 @@ public class HorizontalEntryGroup extends MenuEntry {
 			final float lG = mParentLayout.parentScreen.screenColor.g;
 			final float lB = mParentLayout.parentScreen.screenColor.b;
 
-			Debug.debugManager().drawers().drawRectImmediate(pCore.gameCamera(), x, y, w, h, 0.5f * lR, 0.2f * lG, lB);
+			Debug.debugManager().drawers().drawRectImmediate(pCore.gameCamera(), mX, mY, mW, mH, 0.5f * lR, 0.2f * lG, lB);
 
 		}
 
@@ -190,22 +190,22 @@ public class HorizontalEntryGroup extends MenuEntry {
 		int lCount = mChildEntries.size();
 		float lTotalHeight = 0;
 		for (int i = 0; i < lCount; i++) {
-			if (mChildEntries.get(i).h() + mChildEntries.get(i).marginTop() * 2 > lTotalHeight) {
-				lTotalHeight = mChildEntries.get(i).h() + mChildEntries.get(i).marginTop() * 2;
+			if (mChildEntries.get(i).height() + mChildEntries.get(i).marginTop() * 2 > lTotalHeight) {
+				lTotalHeight = mChildEntries.get(i).height() + mChildEntries.get(i).marginTop() * 2;
 
 			}
 
 		}
 
 		final float lHPadding = 10;
-		final float lHSpace = w / (lCount) - lHPadding;
+		final float lHSpace = mW / (lCount) - lHPadding;
 
 		for (int i = 0; i < lCount; i++) {
 			final var MenuEntry = mChildEntries.get(i);
-			float lPosX = x + MenuEntry.marginLeft() + (lHSpace + lHPadding) * i;
-			float lPosY = y;
+			float lPosX = mX + MenuEntry.marginLeft() + (lHSpace + lHPadding) * i;
+			float lPosY = mY;
 
-			MenuEntry.w(lHSpace);
+			MenuEntry.width(lHSpace);
 			MenuEntry.setPosition(lPosX, lPosY + mChildEntries.get(i).marginTop());
 
 		}

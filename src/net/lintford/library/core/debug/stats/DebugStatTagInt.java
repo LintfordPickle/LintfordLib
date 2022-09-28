@@ -9,34 +9,30 @@ public class DebugStatTagInt extends DebugStatTag<Integer> {
 	// Constructor
 	// --------------------------------------
 
-	public DebugStatTagInt(String pLabel, int pDefValue) {
-		super(pLabel);
+	public DebugStatTagInt(String label, int defaultValue) {
+		super(label);
 
-		value = pDefValue;
-		defaultValue = pDefValue;
-
+		mValue = defaultValue;
+		mDefaultValue = defaultValue;
 	}
 
-	public DebugStatTagInt(String pLabel, int pDefValue, boolean pAutoReset) {
-		this(pLabel, pDefValue);
+	public DebugStatTagInt(String label, int defaultValue, boolean autoReset) {
+		this(label, defaultValue);
 
-		autoReset = pAutoReset;
-
+		mAtoReset = autoReset;
 	}
 
-	DebugStatTagInt(final int pID, String pLabel, int pDefValue) {
-		super(pID, pLabel);
+	DebugStatTagInt(final int uid, String label, int defaultValue) {
+		super(uid, label);
 
-		value = pDefValue;
-		defaultValue = pDefValue;
-
+		mValue = defaultValue;
+		mDefaultValue = defaultValue;
 	}
 
-	DebugStatTagInt(final int pID, String pLabel, int pDefValue, boolean pAutoReset) {
-		this(pID, pLabel, pDefValue);
+	DebugStatTagInt(final int pID, String label, int defaultValue, boolean autoReset) {
+		this(pID, label, defaultValue);
 
-		autoReset = pAutoReset;
-
+		mAtoReset = autoReset;
 	}
 
 	// --------------------------------------
@@ -44,9 +40,7 @@ public class DebugStatTagInt extends DebugStatTag<Integer> {
 	// --------------------------------------
 
 	@Override
-	public void draw(FontUnit pFontUnit, float pPosX, float pPosY) {
-		pFontUnit.drawText(String.format("%s : %d", label, value), pPosX, pPosY, -0.01f, ColorConstants.getColor(r, g, b), 1.f, -1);
-
+	public void draw(FontUnit fontUnit, float positionX, float positionY) {
+		fontUnit.drawText(String.format("%s : %d", mLabel, mValue), positionX, positionY, -0.01f, ColorConstants.getColor(mRed, mGreen, mBlue), 1.f, -1);
 	}
-
 }

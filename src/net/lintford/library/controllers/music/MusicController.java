@@ -13,17 +13,15 @@ public class MusicController extends BaseController {
 	// Constants
 	// --------------------------------------
 
-	public static final String CONTROLLER_NAME = "MusicController";
+	public static final String CONTROLLER_NAME = "Music Controller";
 
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
 	private MusicManager mMusicManager;
-
 	private boolean mIsPlaying;
 	private boolean mIsPaused;
-
 	private int mCurrentSongIndex = 0;
 	private boolean mBank0Active;
 
@@ -31,11 +29,10 @@ public class MusicController extends BaseController {
 	// Constructor
 	// --------------------------------------
 
-	public MusicController(final ControllerManager pControllerManager, final MusicManager pMusicManager, int pEntityGroupID) {
-		super(pControllerManager, CONTROLLER_NAME, pEntityGroupID);
+	public MusicController(final ControllerManager cControllerManager, final MusicManager musicManager, int entityGroupUid) {
+		super(cControllerManager, CONTROLLER_NAME, entityGroupUid);
 
-		mMusicManager = pMusicManager;
-
+		mMusicManager = musicManager;
 	}
 
 	// --------------------------------------
@@ -49,39 +46,28 @@ public class MusicController extends BaseController {
 	}
 
 	@Override
-	public boolean handleInput(LintfordCore pCore) {
-
-		if (pCore.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_F5)) { // play / pause
+	public boolean handleInput(LintfordCore core) {
+		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_F5))
 			play();
 
-		}
-
-		if (pCore.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_F2)) { // stop
+		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_F2))
 			stop();
 
-		}
-
-		if (pCore.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_F6)) { // next
+		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_F6))
 			nextSong();
 
-		}
-
-		if (pCore.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_F7)) { // prev
+		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_F7))
 			prevSong();
 
-		}
-
-		if (pCore.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_F8)) {
+		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_F8))
 			pause();
-		}
 
-		return super.handleInput(pCore);
-
+		return super.handleInput(core);
 	}
 
 	@Override
-	public void update(LintfordCore pCore) {
-		super.update(pCore);
+	public void update(LintfordCore core) {
+		super.update(core);
 
 		if (!mMusicManager.isMusicEnabled()) {
 			if (mIsPlaying) {
@@ -89,19 +75,14 @@ public class MusicController extends BaseController {
 				mMusicManager.audioSourceBank1().stop();
 
 				mIsPlaying = false;
-
 			}
 			return;
 		}
 
-		if (!mIsPlaying) {
+		if (!mIsPlaying)
 			return;
 
-		}
-
-		final float lGameTimeModifer = pCore.gameTime().timeModifier();
-
-		// TODO: This doesn't belong in the library ...
+		final float lGameTimeModifer = core.gameTime().timeModifier();
 		mMusicManager.audioSourceBank0().setPitch(lGameTimeModifer);
 		mMusicManager.audioSourceBank1().setPitch(lGameTimeModifer);
 
@@ -109,12 +90,12 @@ public class MusicController extends BaseController {
 			if (!mMusicManager.audioSourceBank0().isPlaying()) {
 				nextSong();
 			}
+
 		} else {
 			if (!mMusicManager.audioSourceBank1().isPlaying()) {
 				prevSong();
 			}
 		}
-
 	}
 
 	// --------------------------------------
@@ -122,30 +103,22 @@ public class MusicController extends BaseController {
 	// --------------------------------------
 
 	public void play() {
-		if (mIsPlaying) {
+		if (mIsPlaying)
 			return;
 
-		}
-
 		int_play();
-
 	}
 
 	private void int_play() {
-		if (mMusicManager.getNumberSondsLoaded() == 0) {
+		if (mMusicManager.getNumberSondsLoaded() == 0)
 			return;
 
-		}
-
-		if (!mIsPaused) {
+		if (!mIsPaused)
 			mBank0Active = !mBank0Active;
-
-		}
 
 		if (mBank0Active) {
 			if (mIsPaused) {
 				mMusicManager.audioSourceBank0().continuePlaying();
-
 			} else {
 				final var lSongAudioDataBuffer = mMusicManager.getAudioDataByIndex(mCurrentSongIndex);
 				mMusicManager.audioSourceBank0().play(lSongAudioDataBuffer.bufferID());
@@ -155,81 +128,63 @@ public class MusicController extends BaseController {
 		} else {
 			if (mIsPaused) {
 				mMusicManager.audioSourceBank1().continuePlaying();
-
 			} else {
 				final var lSongAudioDataBuffer = mMusicManager.getAudioDataByIndex(mCurrentSongIndex);
 				mMusicManager.audioSourceBank1().play(lSongAudioDataBuffer.bufferID());
 			}
 
 			mIsPlaying = true;
-
 		}
-
 	}
 
 	public void stop() {
 		mIsPaused = false;
 
-		if (!mIsPlaying) {
+		if (!mIsPlaying)
 			return;
-
-		}
 
 		mIsPlaying = false;
 
-		if (mBank0Active) {
+		if (mBank0Active)
 			mMusicManager.audioSourceBank0().stop();
-
-		} else {
+		else
 			mMusicManager.audioSourceBank1().stop();
-
-		}
 	}
 
 	public void pause() {
-		if (!mIsPlaying) {
+		if (!mIsPlaying)
 			return;
-
-		}
 
 		mIsPlaying = false;
 		mIsPaused = true;
 
-		if (mBank0Active) {
+		if (mBank0Active)
 			mMusicManager.audioSourceBank0().pause();
-
-		} else {
+		else
 			mMusicManager.audioSourceBank1().pause();
-
-		}
-
 	}
 
 	public void nextSong() {
 		final int lNumberSongs = mMusicManager.getNumberSondsLoaded();
 
-		if (mCurrentSongIndex >= lNumberSongs - 1) {
+		if (mCurrentSongIndex >= lNumberSongs - 1)
 			mCurrentSongIndex = 0;
-		} else {
+		else
 			mCurrentSongIndex++;
-		}
 
 		stop();
 		int_play();
-
 	}
 
 	public void prevSong() {
 		final int lNumberSongs = mMusicManager.getNumberSondsLoaded();
 
-		if (mCurrentSongIndex <= 0) {
+		if (mCurrentSongIndex <= 0)
 			mCurrentSongIndex = lNumberSongs - 1;
-		} else {
+		else
 			mCurrentSongIndex--;
-		}
 
 		stop();
 		int_play();
-
 	}
 }

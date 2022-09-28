@@ -10,6 +10,11 @@ public abstract class BaseController {
 	// Variables
 	// --------------------------------------
 
+	/**
+	 * A group ID is assigned to all {@link BaseController} instances. It allows the developer to programmatically unload batches of particular parts of the game when required (i.e.
+	 * unload the game controllers when returning to the main menu)
+	 */
+	protected int mEntityGroupUid;
 	protected BaseControllerWidget mBaseControllerWidget;
 	protected final int mControllerId;
 	protected ControllerManager mControllerManager;
@@ -17,12 +22,6 @@ public abstract class BaseController {
 	protected boolean mIsActive;
 	protected boolean mIsInitialized;
 	protected boolean mUniqueController;
-
-	/**
-	 * A group ID is assigned to all {@link BaseController} instances. It allows the developer to programmatically unload batches of particular parts of the game when required (i.e.
-	 * unload the game controllers when returning to the main menu)
-	 */
-	protected int mEntityGroupID;
 
 	// --------------------------------------
 	// Properties
@@ -33,7 +32,7 @@ public abstract class BaseController {
 	 * unload the game controllers when returning to the main menu)
 	 */
 	public int entityGroupID() {
-		return mEntityGroupID;
+		return mEntityGroupUid;
 	}
 
 	/** If true, only one controller of this type can exist at a time. */
@@ -45,8 +44,8 @@ public abstract class BaseController {
 		return mIsActive;
 	}
 
-	public void isActive(boolean pNewValue) {
-		mIsActive = pNewValue;
+	public void isActive(boolean isActive) {
+		mIsActive = isActive;
 	}
 
 	public boolean isInitialized() {
@@ -54,7 +53,6 @@ public abstract class BaseController {
 	}
 
 	public String controllerName() {
-
 		return mControllerName;
 	}
 
@@ -71,51 +69,42 @@ public abstract class BaseController {
 	// Constructor
 	// --------------------------------------
 
-	public BaseController(final ControllerManager pControllerManager, final String pControllerName, final int pEntityGroupID) {
-		if (pControllerManager == null) {
+	public BaseController(final ControllerManager controllerManager, final String controllerName, final int entityGroupUid) {
+		if (controllerManager == null)
 			throw new RuntimeException("ControllerManager cannot be null!");
 
-		}
-
-		mControllerManager = pControllerManager;
-		mControllerId = mControllerManager.getNewControllerId();
-		mControllerName = pControllerName;
-
-		if (pControllerName.length() == 0) {
+		if (controllerName.length() == 0)
 			throw new RuntimeException("Controller names cannot be null or empty when registering with a ControllerManager");
 
-		}
+		if (mUniqueController && mControllerManager.controllerExists(controllerName, entityGroupUid))
+			throw new RuntimeException("Cannot register two controllers with the same name if they are specified to be unique (" + controllerName + ")");
 
-		if (mUniqueController && mControllerManager.controllerExists(pControllerName, pEntityGroupID)) {
-			throw new RuntimeException("Cannot register two controllers with the same name if they are specified to be unique (" + pControllerName + ")");
+		mControllerManager = controllerManager;
+		mControllerId = mControllerManager.getNewControllerId();
+		mControllerName = controllerName;
 
-		}
+		mControllerManager.addController(this, entityGroupUid);
 
-		mControllerManager.addController(this, pEntityGroupID);
-
-		mEntityGroupID = pEntityGroupID;
+		mEntityGroupUid = entityGroupUid;
 
 		mIsActive = true;
-
 	}
 
 	// --------------------------------------
 	// Core-Methods
 	// --------------------------------------
 
-	public void initialize(LintfordCore pCore) {
+	public void initialize(LintfordCore core) {
 		mIsInitialized = true;
 	}
 
 	public abstract void unload();
 
-	public boolean handleInput(LintfordCore pCore) {
+	public boolean handleInput(LintfordCore core) {
 		return false;
-
 	}
 
-	public void update(LintfordCore pCore) {
+	public void update(LintfordCore core) {
 
 	}
-
 }

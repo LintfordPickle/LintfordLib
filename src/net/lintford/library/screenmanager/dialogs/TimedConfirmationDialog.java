@@ -35,7 +35,7 @@ public class TimedConfirmationDialog extends BaseDialog {
 	private float mTimer;
 	private boolean mActive;
 
-	private TimedDialogInterface mCallbackListener;
+	private ITimedDialog mCallbackListener;
 
 	// --------------------------------------
 	// Properties
@@ -53,16 +53,16 @@ public class TimedConfirmationDialog extends BaseDialog {
 	// Constructors
 	// --------------------------------------
 
-	public TimedConfirmationDialog(ScreenManager pScreenManager, MenuScreen pParentScreen, String pDialogMessage) {
-		super(pScreenManager, pParentScreen, pDialogMessage);
+	public TimedConfirmationDialog(ScreenManager screenManager, MenuScreen parentScreen, String dialogMessage) {
+		super(screenManager, parentScreen, dialogMessage);
 
-		ListLayout lListLayout = new ListLayout(this);
+		final var lListLayout = new ListLayout(this);
 
-		mConfirmEntry = new MenuEntry(pScreenManager, lListLayout, "Okay");
-		mConfirmEntry.registerClickListener(pParentScreen, BUTTON_TIMED_CONFIRM_YES);
+		mConfirmEntry = new MenuEntry(screenManager, lListLayout, "Okay");
+		mConfirmEntry.registerClickListener(parentScreen, BUTTON_TIMED_CONFIRM_YES);
 
-		mCancelEntry = new MenuEntry(pScreenManager, lListLayout, "Cancel");
-		mCancelEntry.registerClickListener(pParentScreen, BUTTON_TIMED_CONFIRM_NO);
+		mCancelEntry = new MenuEntry(screenManager, lListLayout, "Cancel");
+		mCancelEntry.registerClickListener(parentScreen, BUTTON_TIMED_CONFIRM_NO);
 
 		lListLayout.addMenuEntry(mCancelEntry);
 		lListLayout.addMenuEntry(mConfirmEntry);
@@ -75,44 +75,38 @@ public class TimedConfirmationDialog extends BaseDialog {
 	// --------------------------------------
 
 	@Override
-	public void update(LintfordCore pCore, boolean pOtherScreenHasFocus, boolean pCoveredByOtherScreen) {
-		super.update(pCore, pOtherScreenHasFocus, pCoveredByOtherScreen);
+	public void update(LintfordCore core, boolean otherScreenHasFocus, boolean coveredByOtherScreen) {
+		super.update(core, otherScreenHasFocus, coveredByOtherScreen);
 
 		if (mActive) {
-			mTimer += pCore.appTime().elapsedTimeMilli();
+			mTimer += core.appTime().elapsedTimeMilli();
 
 			if (mTimer >= mTimeToWait) {
-				// Trigger callback
-				if (mCallbackListener != null) {
+				if (mCallbackListener != null)
 					mCallbackListener.timeExpired();
-
-				}
 
 				stop();
 			}
-
 		}
 	}
 
 	@Override
-	public void draw(LintfordCore pCore) {
+	public void draw(LintfordCore core) {
 		if (mScreenState != ScreenState.Active && mScreenState != ScreenState.TransitionOn && mScreenState != ScreenState.TransitionOff)
 			return;
 
-		super.draw(pCore);
+		super.draw(core);
 
-		final String lTimeMessage = "[" + (int) ((mTimeToWait - mTimer) / 1000f) + " Sec(s)]";
+		final var lTimeMessage = "[" + (int) ((mTimeToWait - mTimer) / 1000f) + " Sec(s)]";
 		mCancelEntry.entryText("Revert " + lTimeMessage);
-
 	}
 
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
 
-	public void setListener(TimedDialogInterface pListener) {
-		mCallbackListener = pListener;
-
+	public void setListener(ITimedDialog listener) {
+		mCallbackListener = listener;
 	}
 
 	public void resetTime() {
@@ -128,13 +122,11 @@ public class TimedConfirmationDialog extends BaseDialog {
 		start(DEFAULT_WAIT_TIME);
 	}
 
-	public void start(float pTimeToWait) {
-
+	public void start(float timeToWait) {
 		resetTime();
 
-		mTimeToWait = pTimeToWait;
+		mTimeToWait = timeToWait;
 		mActive = true;
-
 	}
 
 	public void pause() {
@@ -148,7 +140,6 @@ public class TimedConfirmationDialog extends BaseDialog {
 			if (mCallbackListener != null) {
 
 				mCallbackListener.confirmation();
-
 			}
 
 			stop();
@@ -169,5 +160,4 @@ public class TimedConfirmationDialog extends BaseDialog {
 			break;
 		}
 	}
-
 }

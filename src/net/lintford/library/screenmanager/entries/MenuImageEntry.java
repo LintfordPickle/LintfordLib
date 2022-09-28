@@ -28,17 +28,12 @@ public class MenuImageEntry extends MenuEntry {
 	private float mForceHeight;
 	private float mFittedWidth;
 	private float mFittedHeight;
-
 	private boolean mScaleToFitParent;
-
 	private int mMaximumWidth = 640;
-
 	private FontUnit mUiFont;
 	private Texture mMainTexture;
-
 	private SpriteSheetDefinition mMissingTextureSpritesheet;
 	private int mMissingTextureSpriteFrameIndex;
-
 	private boolean mShowMissingTextureText;
 	private String mMissingTextureText;
 
@@ -46,23 +41,20 @@ public class MenuImageEntry extends MenuEntry {
 	// Properties
 	// --------------------------------------
 
-	public void setMissingTexturetext(String pText) {
-		if (pText == null || pText.length() == 0) {
+	public void setMissingTexturetext(String missingTextureText) {
+		if (missingTextureText == null || missingTextureText.length() == 0) {
 			mMissingTextureText = "";
 			mShowMissingTextureText = false;
 
 			return;
-
 		}
 
-		mMissingTextureText = pText;
+		mMissingTextureText = missingTextureText;
 		mShowMissingTextureText = true;
-
 	}
 
-	public void setMaximumImageWidth(int pWidthLimit) {
-		mMaximumWidth = pWidthLimit;
-
+	public void setMaximumImageWidth(int widthLimit) {
+		mMaximumWidth = widthLimit;
 	}
 
 	@Override
@@ -73,34 +65,20 @@ public class MenuImageEntry extends MenuEntry {
 		return mFittedHeight;
 	}
 
-	public void forceHeight(float pNewValue) {
-		mForceHeight = pNewValue;
+	public void forceHeight(float forceHeight) {
+		mForceHeight = forceHeight;
 	}
 
 	public float forceHeight() {
 		return mForceHeight;
 	}
 
-	@Override
-	public boolean hasFocus() {
-		return super.hasFocus();
-	}
-
-	@Override
-	public void hasFocus(boolean pNewValue) {
-		if (pNewValue) {
-
-		}
-
-		super.hasFocus(pNewValue);
-	}
-
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
-	public MenuImageEntry(ScreenManager pScreenManager, BaseLayout pParentLayout) {
-		super(pScreenManager, pParentLayout, "");
+	public MenuImageEntry(ScreenManager screenManager, BaseLayout parentLayout) {
+		super(screenManager, parentLayout, "");
 
 		mText = "Add your message";
 
@@ -118,10 +96,10 @@ public class MenuImageEntry extends MenuEntry {
 	// --------------------------------------
 
 	@Override
-	public void loadResources(ResourceManager pResourceManager) {
-		super.loadResources(pResourceManager);
+	public void loadResources(ResourceManager resourceManager) {
+		super.loadResources(resourceManager);
 
-		mUiFont = pResourceManager.fontManager().getFontUnit(RendererManager.UI_FONT_TEXT_BOLD_NAME);
+		mUiFont = resourceManager.fontManager().getFontUnit(RendererManager.UI_FONT_TEXT_BOLD_NAME);
 	}
 
 	@Override
@@ -136,45 +114,43 @@ public class MenuImageEntry extends MenuEntry {
 	public void updateStructure() {
 		super.updateStructure();
 
-		h = mMainTexture != null ? mMainTexture.getTextureHeight() : h;
+		mH = mMainTexture != null ? mMainTexture.getTextureHeight() : mH;
 	}
 
 	@Override
-	public void update(LintfordCore pCore, MenuScreen pScreen, boolean pIsSelected) {
-		super.update(pCore, pScreen, pIsSelected);
+	public void update(LintfordCore core, MenuScreen screen, boolean isSelected) {
+		super.update(core, screen, isSelected);
 		if (mMainTexture != null) {
 			float lAR = (float) mMainTexture.getTextureHeight() / (float) mMainTexture.getTextureWidth();
 
 			final float lParentLayoutCropped = mParentLayout.cropPaddingBottom() + mParentLayout.cropPaddingTop();
-			final float lAvailableHeight = mParentLayout.h() - mParentLayout.marginBottom() - mParentLayout.marginTop() - lParentLayoutCropped - mParentLayout.titleBarSize();
+			final float lAvailableHeight = mParentLayout.height() - mParentLayout.marginBottom() - mParentLayout.marginTop() - lParentLayoutCropped - mParentLayout.titleBarSize();
 
 			fitWidthToHeight(lAvailableHeight, lAR);
 		} else {
 			final float lParentLayoutCropped = mParentLayout.cropPaddingBottom() + mParentLayout.cropPaddingTop();
-			final float lAvailableHeight = mParentLayout.h() - mParentLayout.marginBottom() - mParentLayout.marginTop() - lParentLayoutCropped - mParentLayout.titleBarSize();
+			final float lAvailableHeight = mParentLayout.height() - mParentLayout.marginBottom() - mParentLayout.marginTop() - lParentLayoutCropped - mParentLayout.titleBarSize();
 
 			fitWidthToHeight(lAvailableHeight, DEFAULT_ASPECT_RATIO);
 		}
 
-		x = mParentLayout.x() + mParentLayout.width() / 2f - mFittedWidth / 2;
-		h = mFittedHeight;
+		mX = mParentLayout.x() + mParentLayout.width() / 2f - mFittedWidth / 2;
+		mH = mFittedHeight;
 	}
 
 	// limited by the amount of height available
 	// so fit the width based on the asepct ratio
-	private void fitWidthToHeight(float pAvailableHeightInParentContainer, float lAspectRatio) {
+	private void fitWidthToHeight(float availableHeightInParentContainer, float aspectRatio) {
 		float maxAvailableWidth = mMaxWidth;
-		float thMaxHeight = MathHelper.clamp(pAvailableHeightInParentContainer, 0.f, mMaxHeight);
+		float thMaxHeight = MathHelper.clamp(availableHeightInParentContainer, 0.f, mMaxHeight);
 
-		if (mScaleToFitParent && lAspectRatio != 0) {
-			maxAvailableWidth = (thMaxHeight - marginTop() - marginBottom()) / lAspectRatio;
-		}
+		if (mScaleToFitParent && aspectRatio != 0)
+			maxAvailableWidth = (thMaxHeight - marginTop() - marginBottom()) / aspectRatio;
 
-		if (mMainTexture != null) {
+		if (mMainTexture != null)
 			mFittedWidth = mMainTexture.getTextureWidth();
-		} else {
+		else
 			mFittedWidth = maxAvailableWidth;
-		}
 
 		if (mFittedWidth > maxAvailableWidth)
 			mFittedWidth = maxAvailableWidth;
@@ -182,59 +158,56 @@ public class MenuImageEntry extends MenuEntry {
 		if (mFittedWidth > mMaximumWidth)
 			mFittedWidth = mMaximumWidth;
 
-		// Now we have the newly adjusted width - which may have been furthered constrained, so recalc the height too
-		mFittedHeight = mFittedWidth * lAspectRatio;
+		mFittedHeight = mFittedWidth * aspectRatio;
 	}
 
 	@Override
-	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pParentZDepth) {
+	public void draw(LintfordCore core, Screen screen, boolean isSelected, float parentZDepth) {
 		final var lParentScreen = mParentLayout.parentScreen;
 		final var lSpriteBatch = lParentScreen.spriteBatch();
 
-		lSpriteBatch.begin(pCore.HUD());
+		lSpriteBatch.begin(core.HUD());
 
-		final var lScreenOffset = pScreen.screenPositionOffset();
+		final var lScreenOffset = screen.screenPositionOffset();
 
 		if (mMainTexture != null) {
 			final int lTextureWidth = mMainTexture.getTextureWidth();
 			final int lTextureHeight = mMainTexture.getTextureHeight();
 
-			lSpriteBatch.draw(mMainTexture, 0, 0, lTextureWidth, lTextureHeight, lScreenOffset.x + x, lScreenOffset.y + y, mFittedWidth, mFittedHeight, pParentZDepth + .1f, entryColor);
+			lSpriteBatch.draw(mMainTexture, 0, 0, lTextureWidth, lTextureHeight, lScreenOffset.x + mX, lScreenOffset.y + mY, mFittedWidth, mFittedHeight, parentZDepth + .1f, entryColor);
 
 		} else if (mShowMissingTextureText) {
 			final float lTextWidth = mUiFont.getStringWidth(mMissingTextureText);
-			mUiFont.begin(pCore.HUD());
-			mUiFont.drawText(mMissingTextureText, lScreenOffset.x + x + mFittedWidth / 2f - lTextWidth / 2f, lScreenOffset.y + (int) (y + mFittedHeight / 2), pParentZDepth + .1f, ColorConstants.WHITE, 1f);
+			mUiFont.begin(core.HUD());
+			mUiFont.drawText(mMissingTextureText, lScreenOffset.x + mX + mFittedWidth / 2f - lTextWidth / 2f, lScreenOffset.y + (int) (mY + mFittedHeight / 2), parentZDepth + .1f, ColorConstants.WHITE, 1f);
 			mUiFont.end();
 		} else if (mMissingTextureSpritesheet != null) {
-			lSpriteBatch.draw(mMissingTextureSpritesheet, mMissingTextureSpriteFrameIndex, lScreenOffset.x + x, lScreenOffset.y + y, mFittedWidth, mFittedHeight, pParentZDepth + .1f, entryColor);
+			lSpriteBatch.draw(mMissingTextureSpritesheet, mMissingTextureSpriteFrameIndex, lScreenOffset.x + mX, lScreenOffset.y + mY, mFittedWidth, mFittedHeight, parentZDepth + .1f, entryColor);
 		} else if (mCoreSpritesheet != null) {
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + x, lScreenOffset.y + y, mFittedWidth, mFittedHeight, pParentZDepth + .1f, entryColor);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + mX, lScreenOffset.y + mY, mFittedWidth, mFittedHeight, parentZDepth + .1f, entryColor);
 		}
 
 		lSpriteBatch.end();
 
-		if (mShowInfoIcon) {
-			drawInfoIcon(pCore, lSpriteBatch, mInfoIconDstRectangle, 1.f);
-		}
+		if (mShowInfoIcon)
+			drawInfoIcon(core, lSpriteBatch, mInfoIconDstRectangle, 1.f);
 
-		if (mShowWarnIcon) {
-			drawWarningIcon(pCore, lSpriteBatch, mWarnIconDstRectangle, 1.f);
-		}
+		if (mShowWarnIcon)
+			drawWarningIcon(core, lSpriteBatch, mWarnIconDstRectangle, 1.f);
 
-		drawDebugCollidableBounds(pCore, lSpriteBatch);
+		drawDebugCollidableBounds(core, lSpriteBatch);
 	}
 
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
 
-	public void setTexture(Texture pTexture) {
-		mMainTexture = pTexture;
+	public void setTexture(Texture texture) {
+		mMainTexture = texture;
 	}
 
-	public void setDefaultImage(SpriteSheetDefinition pSpritesheetDefinition, int pSpriteFrameIndex) {
-		mMissingTextureSpritesheet = pSpritesheetDefinition;
-		mMissingTextureSpriteFrameIndex = pSpriteFrameIndex;
+	public void setDefaultImage(SpriteSheetDefinition spritesheetDefinition, int apriteFrameIndex) {
+		mMissingTextureSpritesheet = spritesheetDefinition;
+		mMissingTextureSpriteFrameIndex = apriteFrameIndex;
 	}
 }

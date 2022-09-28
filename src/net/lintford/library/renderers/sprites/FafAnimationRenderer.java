@@ -34,10 +34,10 @@ public class FafAnimationRenderer extends BaseRenderer implements AnimatedSprite
 	// Constructor
 	// --------------------------------------
 
-	public FafAnimationRenderer(RendererManager pRendererManager, String pRendererName, FafAnimationController pAnimationController, int pEntityGroupID) {
-		super(pRendererManager, pRendererName, pEntityGroupID);
+	public FafAnimationRenderer(RendererManager rendererManager, String rendererName, FafAnimationController animationController, int entityGroupUid) {
+		super(rendererManager, rendererName, entityGroupUid);
 
-		mFafAnimationController = pAnimationController;
+		mFafAnimationController = animationController;
 	}
 
 	// --------------------------------------
@@ -45,14 +45,14 @@ public class FafAnimationRenderer extends BaseRenderer implements AnimatedSprite
 	// --------------------------------------
 
 	@Override
-	public void initialize(LintfordCore pCore) {
+	public void initialize(LintfordCore core) {
 		// The Fire-and-Forget animation controller to sync with is passed in the constructor
 
 	}
 
 	@Override
-	public void update(LintfordCore pCore) {
-		super.update(pCore);
+	public void update(LintfordCore core) {
+		super.update(core);
 
 		animationUpdateList.clear();
 		animationUpdateList.addAll(mFafAnimationController.animations());
@@ -60,12 +60,12 @@ public class FafAnimationRenderer extends BaseRenderer implements AnimatedSprite
 		for (int i = 0; i < lNumAnimations; i++) {
 			final var lAnimInstance = animationUpdateList.get(i);
 			lAnimInstance.animatedSpriteListender(this);
-			lAnimInstance.update(pCore);
+			lAnimInstance.update(core);
 		}
 	}
 
 	@Override
-	public void draw(LintfordCore pCore) {
+	public void draw(LintfordCore core) {
 		if (!isInitialized())
 			return;
 
@@ -76,7 +76,7 @@ public class FafAnimationRenderer extends BaseRenderer implements AnimatedSprite
 		}
 
 		final var lSpriteBatch = rendererManager().uiSpriteBatch();
-		lSpriteBatch.begin(pCore.gameCamera());
+		lSpriteBatch.begin(core.gameCamera());
 		final int lNumAnimations = animationUpdateList.size();
 		for (int i = 0; i < lNumAnimations; i++) {
 
@@ -98,20 +98,20 @@ public class FafAnimationRenderer extends BaseRenderer implements AnimatedSprite
 	// --------------------------------------
 
 	@Override
-	public void onStarted(SpriteInstance pSender) {
+	public void onStarted(SpriteInstance spriteInstance) {
 
 	}
 
 	@Override
-	public void onLooped(SpriteInstance pSender) {
+	public void onLooped(SpriteInstance spriteInstance) {
 
 	}
 
 	@Override
-	public void onStopped(SpriteInstance pSender) {
-		mFafAnimationController.animations().remove(pSender);
+	public void onStopped(SpriteInstance spriteInstance) {
+		mFafAnimationController.animations().remove(spriteInstance);
 		if (mFafAnimationController.spritesheetDefintion() != null) {
-			mFafAnimationController.spritesheetDefintion().releaseInstance(pSender);
+			mFafAnimationController.spritesheetDefintion().releaseInstance(spriteInstance);
 		}
 	}
 }

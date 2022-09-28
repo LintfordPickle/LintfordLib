@@ -14,7 +14,7 @@ import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.fonts.FontUnit;
 import net.lintford.library.core.maths.MathHelper;
-import net.lintford.library.core.time.TimeSpan;
+import net.lintford.library.core.time.TimeConstants;
 import net.lintford.library.options.DisplayManager;
 
 public abstract class GameResourceLoader extends Thread {
@@ -48,19 +48,19 @@ public abstract class GameResourceLoader extends Thread {
 	// Properties
 	// --------------------------------------
 
-	public void setMinimumTimeToShowLogosMs(float pNewMinimumTime) {
-		minimumTimeToShowLogos = pNewMinimumTime;
+	public void setMinimumTimeToShowLogosMs(float newMinimumTime) {
+		minimumTimeToShowLogos = newMinimumTime;
 	}
 
-	public void setPeriodFlash(float pNewPeriodFlashTimeMs, int pNumPeriods) {
-		mPeriodFlashTimeMs = pNewPeriodFlashTimeMs;
-		mPeriodFlashCount = pNumPeriods;
+	public void setPeriodFlash(float newPeriodFlashTimeMs, int numPeriods) {
+		mPeriodFlashTimeMs = newPeriodFlashTimeMs;
+		mPeriodFlashCount = numPeriods;
 	}
 
 	protected double getDelta() {
-		long time = System.nanoTime();
-		double lDelta = ((time - mLastFrameTime) / TimeSpan.NanoToMilli);
-		mLastFrameTime = time;
+		final var lSystemTime = System.nanoTime();
+		final var lDelta = ((lSystemTime - mLastFrameTime) / TimeConstants.NanoToMilli);
+		mLastFrameTime = lSystemTime;
 
 		return lDelta;
 	}
@@ -69,19 +69,19 @@ public abstract class GameResourceLoader extends Thread {
 		return mCurrentStatusMessage;
 	}
 
-	public void setTextColor(float pR, float pG, float pB) {
-		mTextColorR = MathHelper.clamp(pR, 0.f, 1.f);
-		mTextColorG = MathHelper.clamp(pG, 0.f, 1.f);
-		mTextColorB = MathHelper.clamp(pB, 0.f, 1.f);
+	public void setTextColor(float r, float g, float b) {
+		mTextColorR = MathHelper.clamp(r, 0.f, 1.f);
+		mTextColorG = MathHelper.clamp(g, 0.f, 1.f);
+		mTextColorB = MathHelper.clamp(b, 0.f, 1.f);
 	}
 
-	public void currentStatusMessage(String pNewStatusMessage) {
+	public void currentStatusMessage(String newStatusMessage) {
 		// Not sure the lock is even needed here - one thread writes to the variable and the other
 		// reads from it - but the contents of the string are prett much irrelevant.
 		final var lResult = reentrantLock.tryLock();
 		if (lResult) {
 			try {
-				mCurrentStatusMessage = pNewStatusMessage;
+				mCurrentStatusMessage = newStatusMessage;
 			} finally {
 				reentrantLock.unlock();
 			}
@@ -100,11 +100,11 @@ public abstract class GameResourceLoader extends Thread {
 	// Constructor
 	// ---------------------------------------------
 
-	public GameResourceLoader(ResourceManager pResourceManager, DisplayManager pDisplayManager) {
-		mResourceManager = pResourceManager;
-		mDisplayManager = pDisplayManager;
+	public GameResourceLoader(ResourceManager resourceManager, DisplayManager displayManager) {
+		mResourceManager = resourceManager;
+		mDisplayManager = displayManager;
 		loadingThreadStarted = false;
-		windowId = pDisplayManager.windowID();
+		windowId = displayManager.windowID();
 		setName("Background Resource Loader Thread");
 	}
 
@@ -112,9 +112,9 @@ public abstract class GameResourceLoader extends Thread {
 	// Core-Methods
 	// ---------------------------------------------
 
-	public void loadResourcesInBackground(LintfordCore pCore) {
+	public void loadResourcesInBackground(LintfordCore core) {
 		start();
-		runLoadingScreenUntilFinish(pCore);
+		runLoadingScreenUntilFinish(core);
 		unloadResources();
 	}
 
@@ -135,11 +135,11 @@ public abstract class GameResourceLoader extends Thread {
 		loadResourcesOnBackgroundThread();
 	}
 
-	public void runLoadingScreenUntilFinish(LintfordCore pCore) {
+	public void runLoadingScreenUntilFinish(LintfordCore core) {
 		while (loadingThreadStarted && hasLoadingFinished() == false) {
-			onUpdate(pCore);
+			onUpdate(core);
 
-			onDraw(pCore);
+			onDraw(core);
 
 			glfwSwapBuffers(windowId);
 			glfwPollEvents();
@@ -170,15 +170,15 @@ public abstract class GameResourceLoader extends Thread {
 	// Core-Methods
 	// ---------------------------------------------
 
-	public void loadResources(ResourceManager pResourceManager) {
-		mSystemFont = pResourceManager.fontManager().getCoreFont();
+	public void loadResources(ResourceManager resourceManager) {
+		mSystemFont = resourceManager.fontManager().getCoreFont();
 	}
 
 	public void unloadResources() {
 		mSystemFont = null;
 	}
 
-	protected void onUpdate(LintfordCore pCore) {
+	protected void onUpdate(LintfordCore core) {
 		frameDelta = getDelta();
 		mPeriodTimer += frameDelta;
 		if (mPeriodTimer > mPeriodFlashTimeMs) {
@@ -190,15 +190,15 @@ public abstract class GameResourceLoader extends Thread {
 		}
 	}
 
-	protected void onDraw(LintfordCore pCore) {
+	protected void onDraw(LintfordCore core) {
 		glClearColor(0f, 0f, 0f, 1f);
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 
-		drawMessages(pCore);
+		drawMessages(core);
 	}
 
-	protected void drawMessages(LintfordCore pCore) {
-		final var lHud = pCore.HUD();
+	protected void drawMessages(LintfordCore core) {
+		final var lHud = core.HUD();
 		final var lHudBoundingBox = lHud.boundingRectangle();
 
 		final var lLeft = lHudBoundingBox.left();

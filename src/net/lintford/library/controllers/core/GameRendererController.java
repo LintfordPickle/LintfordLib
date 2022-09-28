@@ -11,7 +11,7 @@ public class GameRendererController extends BaseController {
 	// Constants
 	// --------------------------------------
 
-	public static final String CONTROLLER_NAME = "GameRendererController";
+	public static final String CONTROLLER_NAME = "Game Renderer Controller";
 
 	// --------------------------------------
 	// Variables
@@ -32,11 +32,10 @@ public class GameRendererController extends BaseController {
 	// Constructor
 	// --------------------------------------
 
-	public GameRendererController(ControllerManager pControllerManager, RendererManager pRendererManager, final int pEntityGroupID) {
-		super(pControllerManager, CONTROLLER_NAME, pEntityGroupID);
+	public GameRendererController(ControllerManager controllerManager, RendererManager rendererManager, final int entityGroupUid) {
+		super(controllerManager, CONTROLLER_NAME, entityGroupUid);
 
-		mRendererManager = pRendererManager;
-
+		mRendererManager = rendererManager;
 	}
 
 	// --------------------------------------
@@ -46,16 +45,15 @@ public class GameRendererController extends BaseController {
 	@Override
 	public void unload() {
 		mRendererManager = null;
-
 	}
 
 	@Override
-	public void update(LintfordCore pCore) {
+	public void update(LintfordCore core) {
 		if (!isInitialized())
 			return;
 
-		super.update(pCore);
+		super.update(core);
 
-		mRendererManager.update(pCore);
+		mRendererManager.update(core);
 	}
 }

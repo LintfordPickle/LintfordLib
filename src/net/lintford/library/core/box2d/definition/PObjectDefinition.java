@@ -75,7 +75,6 @@ public class PObjectDefinition extends BaseDefinition {
 	// --------------------------------------
 
 	public class Jb2dJsonCustomProperties {
-
 		Map<String, Integer> m_customPropertyMap_int;
 		Map<String, Double> m_customPropertyMap_float;
 		Map<String, String> m_customPropertyMap_string;
@@ -89,7 +88,6 @@ public class PObjectDefinition extends BaseDefinition {
 			m_customPropertyMap_vec2 = new HashMap<String, Vec2>();
 			m_customPropertyMap_bool = new HashMap<String, Boolean>();
 		}
-
 	}
 
 	public static final boolean INVERT_Y = true; // RUBE Editor uses inverted Y-Axis
@@ -135,15 +133,11 @@ public class PObjectDefinition extends BaseDefinition {
 	// --------------------------------------
 
 	public PObjectDefinition() {
-		this(true);
+		this(INVALID_DEFINITION_UID);
 	}
 
-	public PObjectDefinition(boolean useHumanReadableFloats) {
-		if (!useHumanReadableFloats) {
-			Debug.debugManager().logger().i(getClass().getSimpleName(), "Non human readable floats are not implemented yet");
-			useHumanReadableFloats = true;
-
-		}
+	public PObjectDefinition(short definitinoUid) {
+		super(definitinoUid);
 
 		mIndexToBodyMap = new HashMap<>();
 		mBodyToIndexMap = new HashMap<>();
@@ -154,22 +148,18 @@ public class PObjectDefinition extends BaseDefinition {
 		mBodyToNameMap = new HashMap<>();
 		mFixtureToNameMap = new HashMap<>();
 		mJointToNameMap = new HashMap<>();
-
 	}
 
 	// --------------------------------------
 	// Core-Methods
 	// --------------------------------------
 
-	public void loadPObjectDefinitionFromFile(String pFilename, StringBuilder errorMsg, World existingWorld) {
-		if (pFilename.charAt(0) == '/') {
-			loadFromResource(pFilename, errorMsg, existingWorld);
-
+	public void loadPObjectDefinitionFromFile(String filename, StringBuilder errorMsg, World existingWorld) {
+		if (filename.charAt(0) == '/') {
+			loadFromResource(filename, errorMsg, existingWorld);
 		} else {
-			loadFromFile(pFilename, errorMsg, existingWorld);
-
+			loadFromFile(filename, errorMsg, existingWorld);
 		}
-
 	}
 
 	private void loadFromResource(String resourceName, StringBuilder errorMsg, World existingWorld) {
@@ -213,7 +203,6 @@ public class PObjectDefinition extends BaseDefinition {
 		} catch (JSONException e) {
 			errorMsg.append("\nFailed to parse JSON: " + resourceName);
 			e.printStackTrace();
-
 		}
 	}
 
@@ -254,11 +243,9 @@ public class PObjectDefinition extends BaseDefinition {
 		try {
 			JSONObject worldValue = new JSONObject(str);
 			loadFromFileFromJSONObject(worldValue);
-
 		} catch (JSONException e) {
 			errorMsg.append("\nFailed to parse JSON: " + filename);
 			e.printStackTrace();
-
 		}
 	}
 
@@ -266,7 +253,6 @@ public class PObjectDefinition extends BaseDefinition {
 		clear();
 
 		j2b2World(worldValue);
-
 	}
 
 	public void j2b2World(JSONObject worldValue) throws JSONException {
@@ -287,7 +273,6 @@ public class PObjectDefinition extends BaseDefinition {
 
 				mBodies.add(body);
 				mIndexToBodyMap.put(i, body);
-
 			}
 		}
 
@@ -304,23 +289,9 @@ public class PObjectDefinition extends BaseDefinition {
 					// readCustomPropertiesFromJson(joint, jointValue);
 
 					mJoints.add(joint);
-
 				}
 			}
-			//			for (i = 0; i < numJointValues; i++) {
-			//				JSONObject jointValue = jointValues.getJSONObject(i);
-			//				if (jointValue.optString("type", "").equals("gear")) {
-			//					Box2dJointDefinition joint = j2b2Joint(jointValue);
-			//
-			//					// TODO: Load custom values
-			//					// readCustomPropertiesFromJson(joint, jointValue);
-			//
-			//					mJoints.add(joint);
-			//
-			//				}
-			//			}
 		}
-
 	}
 
 	public Box2dBodyDefinition j2b2Body(JSONObject bodyValue) throws JSONException {
@@ -382,7 +353,7 @@ public class PObjectDefinition extends BaseDefinition {
 		return bodyDef;
 	}
 
-	Box2dFixtureDefinition j2b2Fixture(Box2dBodyDefinition pBox2dBodyDefinition, JSONObject fixtureValue) throws JSONException {
+	Box2dFixtureDefinition j2b2Fixture(Box2dBodyDefinition box2dBodyDefinition, JSONObject fixtureValue) throws JSONException {
 		if (null == fixtureValue)
 			return null;
 
@@ -488,7 +459,6 @@ public class PObjectDefinition extends BaseDefinition {
 				lEdgeInstance.vertex2.set(edgeShape.m_vertex2);
 
 				lBox2dFixtureDefinition.shape = lEdgeInstance;
-
 			} else {
 				PolygonShape polygonShape = new PolygonShape();
 				for (int i = 0; i < numVertices; i++)
@@ -501,19 +471,15 @@ public class PObjectDefinition extends BaseDefinition {
 				lPolygonInstance.vertexCount = polygonShape.getVertexCount();
 				lPolygonInstance.loadPhysics();
 				lBox2dFixtureDefinition.shape = lPolygonInstance;
-
 			}
-
 		}
 
 		String fixtureName = fixtureValue.optString("name", "");
 		if (!fixtureName.equals("")) {
 			setFixtureName(lBox2dFixtureDefinition, fixtureName);
-
 		}
 
 		return lBox2dFixtureDefinition;
-
 	}
 
 	Box2dJointDefinition j2b2Joint(JSONObject jointValue) throws JSONException {
@@ -688,7 +654,6 @@ public class PObjectDefinition extends BaseDefinition {
 		mBodyToNameMap.clear();
 		mFixtureToNameMap.clear();
 		mJointToNameMap.clear();
-
 	}
 
 	float jsonToFloat(String name, JSONObject value) {
@@ -787,7 +752,6 @@ public class PObjectDefinition extends BaseDefinition {
 		}
 
 		return keys.toArray(new Box2dBodyDefinition[0]);
-
 	}
 
 	public Box2dFixtureDefinition[] getFixturesByName(String name) {
@@ -809,7 +773,6 @@ public class PObjectDefinition extends BaseDefinition {
 		}
 
 		return keys.toArray(new Box2dJointDefinition[0]);
-
 	}
 
 	public Box2dBodyDefinition getBodyByName(String name) {
@@ -839,12 +802,10 @@ public class PObjectDefinition extends BaseDefinition {
 		return null;
 	}
 
-	private static float invertAngleXAxis(float pAngleInRadians) {
+	private static float invertAngleXAxis(float angleInRadians) {
 		if (!INVERT_Y)
-			return pAngleInRadians;
+			return angleInRadians;
 
-		return MathHelper.invertAngleXAxis(pAngleInRadians);
-
+		return MathHelper.invertAngleXAxis(angleInRadians);
 	}
-
 }

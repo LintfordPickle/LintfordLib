@@ -11,7 +11,7 @@ public interface IInputClickedFocusTracker {
 	/** Returns the hashcode of the control's parent screen */
 	int parentScreenHash();
 
-	boolean handleInput(LintfordCore pCore, IInputClickedFocusManager pTrackedControlManager);
+	boolean handleInput(LintfordCore core, IInputClickedFocusManager trackedControlManager);
 
 	void resetInputHandledInCoreFrameFlag();
 }

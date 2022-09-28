@@ -31,30 +31,28 @@ public abstract class IndexedPoolInstanceManager<T extends IndexedPooledBaseData
 		return mEnlargePoolStepAmount;
 	}
 
-	public void enlargePoolStepAmount(int pEnlargeAmount) {
-		if (pEnlargeAmount < 0)
+	public void enlargePoolStepAmount(int enlargeStepAmount) {
+		if (enlargeStepAmount < 0)
 			return;
 
-		mEnlargePoolStepAmount = pEnlargeAmount;
+		mEnlargePoolStepAmount = enlargeStepAmount;
 	}
 
-	public T getInstanceByIndex(final int pItemIndex) {
-		if (pItemIndex < 0 || pItemIndex > instances().size() - 1)
+	public T getInstanceByIndex(final int itemIndex) {
+		if (itemIndex < 0 || itemIndex > instances().size() - 1)
 			return null;
 
-		return instances().get(pItemIndex);
-
+		return instances().get(itemIndex);
 	}
 
-	public T getInstanceByUid(final int pPoolUid) {
+	public T getInstanceByUid(final int poolUid) {
 		final int lNumInstances = numInstances();
 		for (int i = 0; i < lNumInstances; i++) {
-			if (instances().get(i).poolUid == pPoolUid)
+			if (instances().get(i).poolUid == poolUid)
 				return instances().get(i);
 		}
 
 		return null;
-
 	}
 
 	// --------------------------------------
@@ -65,10 +63,10 @@ public abstract class IndexedPoolInstanceManager<T extends IndexedPooledBaseData
 		this(0);
 	}
 
-	public IndexedPoolInstanceManager(int pInitialialCapacity) {
+	public IndexedPoolInstanceManager(int initialCapacity) {
 		mPooledItems = new ArrayList<>();
 
-		for (int i = 0; i < pInitialialCapacity; i++) {
+		for (int i = 0; i < initialCapacity; i++) {
 			mPooledItems.add(createPoolObjectInstance());
 		}
 	}
@@ -96,26 +94,26 @@ public abstract class IndexedPoolInstanceManager<T extends IndexedPooledBaseData
 		return lInst;
 	}
 
-	public void returnPooledItem(T pReturnedItem) {
-		if (pReturnedItem == null)
+	public void returnPooledItem(T returnedItem) {
+		if (returnedItem == null)
 			return;
 
-		if (mInstances.contains(pReturnedItem)) {
-			mInstances.remove(pReturnedItem);
+		if (mInstances.contains(returnedItem)) {
+			mInstances.remove(returnedItem);
 		}
 
 		if (mPooledItems == null) {
 			mPooledItems = new ArrayList<>();
 		}
 
-		if (!mPooledItems.contains(pReturnedItem)) {
-			pReturnedItem.reset();
-			mPooledItems.add(pReturnedItem);
+		if (!mPooledItems.contains(returnedItem)) {
+			returnedItem.reset();
+			mPooledItems.add(returnedItem);
 		}
 	}
 
-	private T enlargenInstancePool(int pAmt) {
-		for (int i = 0; i < pAmt; i++) {
+	private T enlargenInstancePool(int enlargeByAmount) {
+		for (int i = 0; i < enlargeByAmount; i++) {
 			mPooledItems.add(createPoolObjectInstance());
 		}
 

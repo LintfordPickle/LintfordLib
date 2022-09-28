@@ -22,43 +22,34 @@ public abstract class ParticleTripleValueInitializer extends ParticleInitializer
 	// Constructor
 	// --------------------------------------
 
-	public ParticleTripleValueInitializer(final String pDefinitionName) {
-		super(pDefinitionName);
-
+	public ParticleTripleValueInitializer(final String definitionName) {
+		super(definitionName);
 	}
 
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
 
-	public abstract void onIntialiseParticle(final Particle pParticle, final float pValue0, final float pValue1, final float pValue2);
+	public abstract void onIntialiseParticle(final Particle particle, final float value0, final float value1, final float value2);
 
 	@Override
-	public void initialize(Particle pParticle) {
-		onIntialiseParticle(pParticle, getRandomValue(), getRandomValue(), getRandomValue());
-
+	public void initialize(Particle particle) {
+		onIntialiseParticle(particle, getRandomValue(), getRandomValue(), getRandomValue());
 	}
 
 	protected float getRandomValue() {
 		if (minValue == maxValue) {
 			return maxValue;
-
 		} else {
 			return RandomNumbers.random(minValue, maxValue);
-
 		}
-
 	}
 
-	protected float getRandomValue(final float pMin, final float pMax) {
-		if (pMin == pMax) {
-			return pMax;
-
+	protected float getRandomValue(final float minValue, final float maxValue) {
+		if (minValue == maxValue) {
+			return maxValue;
 		} else {
-			return RandomNumbers.random(pMin, pMax);
-
+			return RandomNumbers.random(minValue, maxValue);
 		}
-
 	}
-
 }

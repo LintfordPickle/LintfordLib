@@ -37,17 +37,17 @@ public abstract class BaseTransition {
 	// Constructor
 	// --------------------------------------
 
-	public BaseTransition(TimeSpan pTransitionTime) {
-		mTransitionTime = pTransitionTime;
+	public BaseTransition(TimeSpan transitionTime) {
+		mTransitionTime = transitionTime;
 	}
 
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
 
-	public void updateTransition(Screen pScreen, CoreTime pGameTime) {
+	public void updateTransition(Screen screen, CoreTime gameTime) {
 		if (!isFinished()) {
-			final var deltaTime = (float) pGameTime.elapsedTimeMilli();
+			final var deltaTime = (float) gameTime.elapsedTimeMilli();
 			mProgress += deltaTime;
 
 			final float ms = (float) mTransitionTime.milliseconds();

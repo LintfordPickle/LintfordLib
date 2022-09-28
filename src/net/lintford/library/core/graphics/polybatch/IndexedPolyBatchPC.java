@@ -40,7 +40,6 @@ public class IndexedPolyBatchPC {
 	private int mVboId = -1;
 	private int mIndexCount = 0;
 	private int mVertexCount = 0;
-	public float r, g, b, a;
 
 	private ICamera mCamera;
 	private ShaderMVP_PC mShader;
@@ -71,35 +70,30 @@ public class IndexedPolyBatchPC {
 			}
 		};
 
-		a = r = g = b = 1f;
-
 		mModelMatrix = new Matrix4f();
 		mResourcesLoaded = false;
-
 	}
 
 	// --------------------------------------1
 	// Core-Methods
 	// --------------------------------------
 
-	public void loadResources(ResourceManager pResourceManager) {
+	public void loadResources(ResourceManager resourceManager) {
 		if (mResourcesLoaded)
 			return;
 
-		mShader.loadResources(pResourceManager);
+		mShader.loadResources(resourceManager);
 
 		if (mVioId == -1) {
 			mVioId = GL15.glGenBuffers();
-			Debug.debugManager().logger().v("OpenGL", "IndexedPolyBatchPC: VioId = " + mVioId);
 		}
 
 		if (mVboId == -1) {
 			mVboId = GL15.glGenBuffers();
-			Debug.debugManager().logger().v("OpenGL", "IndexedPolyBatchPC: VboId = " + mVboId);
 		}
 
 		// TODO: Make sure this is the new / correct way to allocation memory for a buffer
-		// TODO: We are not benefiting from the indexed nature (with regards to reduced vert count)
+		// TODO: We are not benefiting here from the index buffer (with regards to reducing the vertex count)
 		mBuffer = MemoryUtil.memAllocFloat(MAX_TRIS * NUM_VERTS_PER_TRI * VertexDataStructurePC.stride);
 		mIndexBuffer = MemoryUtil.memAllocInt(MAX_TRIS * NUM_VERTS_PER_TRI);
 
@@ -156,14 +150,14 @@ public class IndexedPolyBatchPC {
 		}
 	}
 
-	public void begin(ICamera pCamera) {
-		if (pCamera == null)
+	public void begin(ICamera camera) {
+		if (camera == null)
 			return;
 
 		if (mIsDrawing)
 			return;
 
-		mCamera = pCamera;
+		mCamera = camera;
 
 		mBuffer.clear();
 		mIndexBuffer.clear();
@@ -171,20 +165,18 @@ public class IndexedPolyBatchPC {
 		mIndexCount = 0;
 		mVertexCount = 0;
 		mIsDrawing = true;
-
 	}
 
-	public void drawRect(List<Vector2f> pVertexArray, float pZ, boolean pClose, float pR, float pG, float pB) {
-		if (pVertexArray == null)
+	public void drawRect(List<Vector2f> vertexArray, float zDepth, boolean closePolygon, float red, float green, float blue) {
+		if (vertexArray == null)
 			return;
 
-		final var lRectVerts = pVertexArray;
+		final var lRectVerts = vertexArray;
 		if (lRectVerts.size() < 4)
 			return;
 
 		for (int i = 0; i < 4; i++) {
-			addVertToBuffer(lRectVerts.get(i).x, lRectVerts.get(i).y, pZ, 1f, pR, pG, pB, a);
-
+			addVertToBuffer(lRectVerts.get(i).x, lRectVerts.get(i).y, zDepth, 1f, red, green, blue, 1.f);
 		}
 
 		// Index the triangle
@@ -197,7 +189,6 @@ public class IndexedPolyBatchPC {
 		mIndexBuffer.put(mVertexCount - 2);
 
 		mIndexCount += 6;
-
 	}
 
 	private void addVertToBuffer(float x, float y, float z, float w, float r, float g, float b, float a) {
@@ -212,7 +203,6 @@ public class IndexedPolyBatchPC {
 		mBuffer.put(a);
 
 		mVertexCount++;
-
 	}
 
 	public void end() {
@@ -252,10 +242,8 @@ public class IndexedPolyBatchPC {
 		{
 			Debug.debugManager().stats().incTag(DebugStats.TAG_ID_DRAWCALLS);
 			Debug.debugManager().stats().incTag(DebugStats.TAG_ID_VERTS, mIndexCount * 3);
-
 		}
 
-		// glDrawElements for index buffer
 		GL11.glDrawElements(GL11.GL_TRIANGLES, mIndexCount, GL11.GL_UNSIGNED_INT, 0);
 
 		GL30.glBindVertexArray(0);
@@ -265,16 +253,4 @@ public class IndexedPolyBatchPC {
 		mIndexCount = 0;
 	}
 
-	public void changeColorNormalized(float pR, float pG, float pB, float pA) {
-		// if (mCurNumSprites > 0) {
-		// flush();
-		// mCurNumSprites = 0;
-		// }
-
-		r = pR;
-		g = pG;
-		b = pB;
-		a = pA;
-
-	}
 }

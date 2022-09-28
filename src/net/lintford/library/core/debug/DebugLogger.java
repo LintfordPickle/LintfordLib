@@ -35,13 +35,10 @@ public class DebugLogger {
 	// --------------------------------------
 
 	private final Debug mDebugManager;
-
 	private boolean mMirrorLogToConsole;
-
 	private List<Message> mLogLinePool;
 	private List<Message> mLogLines;
-
-	BufferedOutputStream mDebugLogBufferedOutputStream;
+	private BufferedOutputStream mDebugLogBufferedOutputStream;
 
 	// --------------------------------------
 	// Properties
@@ -52,8 +49,8 @@ public class DebugLogger {
 		return mLogLines;
 	}
 
-	public void mirrorLogToConsole(boolean pNewValue) {
-		mMirrorLogToConsole = pNewValue;
+	public void mirrorLogToConsole(boolean mirrorLogToConsole) {
+		mMirrorLogToConsole = mirrorLogToConsole;
 	}
 
 	public boolean mirrorLogToConsole() {
@@ -64,8 +61,8 @@ public class DebugLogger {
 	// Constructor
 	// --------------------------------------
 
-	DebugLogger(final Debug pDebugManager) {
-		mDebugManager = pDebugManager;
+	DebugLogger(final Debug debugManager) {
+		mDebugManager = debugManager;
 
 		if (!mDebugManager.debugManagerEnabled())
 			return;
@@ -75,11 +72,9 @@ public class DebugLogger {
 
 		for (int i = 0; i < LOG_BUFFER_LINE_COUNT; i++) {
 			mLogLinePool.add(new Message());
-
 		}
 
 		openDebugLogOutputStream();
-
 	}
 
 	// --------------------------------------
@@ -88,7 +83,6 @@ public class DebugLogger {
 
 	public void clearLogLines() {
 		mLogLines.clear();
-
 	}
 
 	private boolean openDebugLogOutputStream() {
@@ -97,38 +91,35 @@ public class DebugLogger {
 
 		try {
 			// If unique log files names are specified, then append the date and time to the log filename.
-			String LOG_FILENAME = null;
+			String lLogFilename = null;
 			if (ConstantsApp.getBooleanValueDef("DEBUG_UNIQUE_LOG_FILES", false)) {
-				String lDateTime = DateHelper.getDateAsStringFileFriendly(new Date());
-				LOG_FILENAME = DEBUG_LOG_FILENAME + "_" + lDateTime + LOG_FILE_EXTENSION;
-
+				final var lDateTime = DateHelper.getDateAsStringFileFriendly(new Date());
+				lLogFilename = DEBUG_LOG_FILENAME + "_" + lDateTime + LOG_FILE_EXTENSION;
 			} else {
-				LOG_FILENAME = DEBUG_LOG_FILENAME + LOG_FILE_EXTENSION;
-
+				lLogFilename = DEBUG_LOG_FILENAME + LOG_FILE_EXTENSION;
 			}
 
-			i(getClass().getSimpleName(), "Creating new debug log file: " + LOG_FILENAME);
+			i(getClass().getSimpleName(), "Creating new debug log file: " + lLogFilename);
 
 			// Create new files for the log (this is only applicable if the file currently exists, which is only applicable if DEBUG_UNIQUE_LOG_FILES is false).
-			mDebugLogBufferedOutputStream = new BufferedOutputStream(new FileOutputStream(LOG_FILENAME, false), 24);
+			mDebugLogBufferedOutputStream = new BufferedOutputStream(new FileOutputStream(lLogFilename, false), 24);
 			return true;
 
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 			return false;
-
 		}
 	}
 
-	private void log(DebugLogLevel pLogLevel, String pTag, String pMessage) {
+	private void log(DebugLogLevel logLevel, String tag, String message) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
-		if (pTag.equals("") || pMessage.equals("")) {
+		if (tag.equals("") || message.equals("")) {
 			return;
 		}
 
-		if (pLogLevel.logLevel >= mDebugManager.getLogLevel().logLevel) {
+		if (logLevel.logLevel >= mDebugManager.getLogLevel().logLevel) {
 			Message lLogMessage = null;
 			if (mLogLinePool.size() > 0) {
 				// Remove from the pool until empty
@@ -146,99 +137,99 @@ public class DebugLogger {
 
 			if (DEBUG_LOG_THREAD_NAMES) {
 				final var lThreadName = Thread.currentThread().getName();
-				pMessage = "[" + lThreadName + "] " + pMessage;
+				message = "[" + lThreadName + "] " + message;
 			}
 
 			var lTimeStamp = SIMPLE_DATE_FORMAT.format(new Date());
-			lLogMessage.setMessage(pTag, pMessage, lTimeStamp, pLogLevel.logLevel);
+			lLogMessage.setMessage(tag, message, lTimeStamp, logLevel.logLevel);
 
 			if (DEBUG_LOG_DEBUG_TO_FILE) {
-				writeDebugMessageToFile(lLogMessage.tag, lLogMessage.timestamp, lLogMessage.message);
+				writeDebugMessageToFile(lLogMessage.tag(), lLogMessage.timestamp(), lLogMessage.message());
 			}
 
 			mLogLines.add(lLogMessage);
 
 			if (mMirrorLogToConsole)
-				System.out.printf("[%s] %s: %s\n", padRight(lLogMessage.timestamp, 12), padRight(lLogMessage.tag, 25), lLogMessage.message);
+				System.out.printf("[%s] %s: %s\n", padRight(lLogMessage.timestamp(), 12), padRight(lLogMessage.tag(), 25), lLogMessage.message());
 		}
 	}
 
 	/** Adds a new EROR level message to the log. */
-	public void e(String pTag, String pMessage) {
+	public void e(String tag, String message) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
-		if (pMessage == null)
+		if (message == null)
 			return;
 
 		synchronized (this) {
-			log(DebugLogLevel.error, pTag, pMessage);
+			log(DebugLogLevel.error, tag, message);
 		}
 	}
 
 	/** Adds a new WARNING level message to the log. */
-	public void w(String pTag, String pMessage) {
+	public void w(String tag, String message) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
 		synchronized (this) {
-			log(DebugLogLevel.warning, pTag, pMessage);
+			log(DebugLogLevel.warning, tag, message);
 		}
 	}
 
 	/** Adds a new INFO level message to the log. */
-	public void i(String pTag, String pMessage) {
+	public void i(String tag, String message) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
 		synchronized (this) {
-			log(DebugLogLevel.info, pTag, pMessage);
+			log(DebugLogLevel.info, tag, message);
 		}
 	}
 
 	/** Adds a new VERBOSE level message to the log. */
-	public void v(String pTag, String pMessage) {
+	public void v(String tag, String message) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
-		log(DebugLogLevel.verbose, pTag, pMessage);
+		log(DebugLogLevel.verbose, tag, message);
 	}
 
 	/** Adds a new SYSTEM level message to the log. */
-	public void s(String pTag, String pMessage) {
+	public void s(String tag, String message) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 		synchronized (this) {
-			log(DebugLogLevel.system, pTag, pMessage);
+			log(DebugLogLevel.system, tag, message);
 		}
 	}
 
 	/** Adds a new USER level message to the log. */
-	public void u(String pTag, String pMessage) {
+	public void u(String tag, String message) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
 		synchronized (this) {
-			log(DebugLogLevel.user, pTag, pMessage);
+			log(DebugLogLevel.user, tag, message);
 		}
 	}
 
-	public void printException(String pTag, Exception pException) {
-		printException(pTag, pException, true);
+	public void printException(String tag, Exception exception) {
+		printException(tag, exception, true);
 	}
 
-	public void printException(String pTag, Exception pException, boolean pIncludeStackTrace) {
+	public void printException(String tag, Exception exception, boolean includeStackTrace) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
-		e(pTag, pException.getMessage());
-		if (pIncludeStackTrace) {
-			pException.printStackTrace(System.err);
+		e(tag, exception.getMessage());
+		if (includeStackTrace) {
+			exception.printStackTrace(System.err);
 		}
 	}
 
 	/** Appends the given message into a file at the given location. */
-	public boolean writeDebugMessageToFile(String pTag, String pTimestamp, String pMessage) {
+	public boolean writeDebugMessageToFile(String tag, String timestamp, String message) {
 		if (!mDebugManager.debugManagerEnabled())
 			return false;
 
@@ -246,11 +237,11 @@ public class DebugLogger {
 			return false;
 
 		try {
-			mDebugLogBufferedOutputStream.write(pTimestamp.getBytes());
+			mDebugLogBufferedOutputStream.write(timestamp.getBytes());
 			mDebugLogBufferedOutputStream.write(": ".getBytes());
-			mDebugLogBufferedOutputStream.write(pTag.getBytes());
+			mDebugLogBufferedOutputStream.write(tag.getBytes());
 			mDebugLogBufferedOutputStream.write(": ".getBytes());
-			mDebugLogBufferedOutputStream.write(pMessage.getBytes());
+			mDebugLogBufferedOutputStream.write(message.getBytes());
 			mDebugLogBufferedOutputStream.write("\n".getBytes());
 
 			return true;
@@ -268,13 +259,12 @@ public class DebugLogger {
 			return false;
 
 		try {
-
 			final int lMessageCount = mLogLines.size();
 			for (int i = 0; i < lMessageCount; i++) {
 				final var lMessage = mLogLines.get(i);
-				mDebugLogBufferedOutputStream.write(lMessage.tag.getBytes());
+				mDebugLogBufferedOutputStream.write(lMessage.tag().getBytes());
 				mDebugLogBufferedOutputStream.write(": ".getBytes());
-				mDebugLogBufferedOutputStream.write(lMessage.message.getBytes());
+				mDebugLogBufferedOutputStream.write(lMessage.message().getBytes());
 				mDebugLogBufferedOutputStream.write("\n".getBytes());
 			}
 
@@ -286,8 +276,8 @@ public class DebugLogger {
 		}
 	}
 
-	public static String padRight(String s, int n) {
-		return String.format("%1$-" + n + "s", s);
+	public static String padRight(String string, int amount) {
+		return String.format("%1$-" + amount + "s", string);
 	}
 
 }

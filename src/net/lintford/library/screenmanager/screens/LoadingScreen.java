@@ -33,18 +33,18 @@ public class LoadingScreen extends Screen {
 	// Constructors
 	// --------------------------------------
 
-	public LoadingScreen(ScreenManager pScreenManager, boolean pLoadingIsSlow, Screen... pScreensToLoad) {
-		super(pScreenManager);
+	public LoadingScreen(ScreenManager screenManager, boolean loadingIsSlow, Screen... screensToLoad) {
+		super(screenManager);
 
-		mScreenManager = pScreenManager;
-		mScreensToLoad = pScreensToLoad;
+		mScreenManager = screenManager;
+		mScreensToLoad = screensToLoad;
 
-		mLoadingIsSlow = pLoadingIsSlow;
+		mLoadingIsSlow = loadingIsSlow;
 
 		mTransitionOn = new TransitionFadeIn(new TimeSpan(500));
 		mTransitionOff = new TransitionFadeOut(new TimeSpan(0));
 
-		mFontUnit = pScreenManager.core().resources().fontManager().getCoreFont();
+		mFontUnit = screenManager.core().resources().fontManager().getCoreFont();
 
 		mIsPopup = true;
 	}
@@ -54,47 +54,43 @@ public class LoadingScreen extends Screen {
 	// --------------------------------------
 
 	@Override
-	public void update(LintfordCore pCore, boolean pOtherScreenHasFocus, boolean pCoveredByOtherScreen) {
-		super.update(pCore, pOtherScreenHasFocus, pCoveredByOtherScreen);
+	public void update(LintfordCore core, boolean otherScreenHasFocus, boolean coveredByOtherScreen) {
+		super.update(core, otherScreenHasFocus, coveredByOtherScreen);
 
 		// Wait until all the other screens have exited
 		if ((mScreenState == ScreenState.Active) && (mScreenManager.screens().size() == 1)) {
-
-			// And then continue loading on the main context
 			final int lScreenCount = mScreensToLoad.length;
 			for (int i = 0; i < lScreenCount; i++) {
 				final var lScreen = mScreensToLoad[i];
 
-				if (lScreen != null && !lScreen.isinitialized()) {
+				if (lScreen != null && !lScreen.isinitialized())
 					lScreen.initialize();
-				}
 
-				if (lScreen != null && !lScreen.isResourcesLoaded()) {
+				if (lScreen != null && !lScreen.isResourcesLoaded())
 					lScreen.loadResources(mScreenManager.resources());
-				}
+
 			}
 
-			// screens have been loaded on the other thread, so now lets add them to
-			// the screen manager
 			for (int i = 0; i < lScreenCount; i++) {
-				Screen lScreen = mScreensToLoad[i];
+				final var lScreen = mScreensToLoad[i];
 				if (lScreen != null) {
 					mScreenManager.addScreen(lScreen);
 				}
 			}
+
 			mScreenManager.removeScreen(this);
 		}
 	}
 
 	@Override
-	public void draw(LintfordCore pCore) {
+	public void draw(LintfordCore core) {
 
 		GL11.glClearColor(0, 0, 0, 1);
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
 
 		if (mLoadingIsSlow && mFontUnit != null) {
-			final var lWindowWidth = pCore.config().display().windowWidth();
-			final var lWindowHeight = pCore.config().display().windowHeight();
+			final var lWindowWidth = core.config().display().windowWidth();
+			final var lWindowHeight = core.config().display().windowHeight();
 			final var lTextPadding = 5.0f;
 
 			final String lLoadingText = "Loading ...";
@@ -104,7 +100,7 @@ public class LoadingScreen extends Screen {
 			final float lTextPositionX = lWindowWidth * 0.5f - lTextWidth - lTextPadding;
 			final float lTextPositionY = lWindowHeight * 0.5f - lTextHeight - lTextPadding;
 
-			mFontUnit.begin(pCore.HUD());
+			mFontUnit.begin(core.HUD());
 			mFontUnit.drawText(lLoadingText, lTextPositionX, lTextPositionY, -0.1f, ColorConstants.WHITE, 1f, -1);
 			mFontUnit.end();
 		}

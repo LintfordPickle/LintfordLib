@@ -23,7 +23,7 @@ public class ParticleSystemInstance extends BaseInstanceData {
 	// Variables
 	// --------------------------------------
 
-	protected int mParticleSystemID;
+	protected int mParticleSystemUid;
 	protected ParticleSystemDefinition mParticleSystemDefinition;
 	private List<Particle> mParticles;
 	private transient int mRendererId;
@@ -56,7 +56,7 @@ public class ParticleSystemInstance extends BaseInstanceData {
 	}
 
 	public int getPoolID() {
-		return mParticleSystemID;
+		return mParticleSystemUid;
 	}
 
 	// --------------------------------------
@@ -71,9 +71,9 @@ public class ParticleSystemInstance extends BaseInstanceData {
 	// Core-Methods
 	// --------------------------------------
 
-	public void initialize(final int pInstId, final ParticleSystemDefinition pParticleSystemDefinition) {
-		mParticleSystemDefinition = pParticleSystemDefinition;
-		mParticleSystemID = pInstId;
+	public void initialize(final int particleSystemUid, final ParticleSystemDefinition particleSystemDefinition) {
+		mParticleSystemDefinition = particleSystemDefinition;
+		mParticleSystemUid = particleSystemUid;
 		mCapacity = mParticleSystemDefinition.maxParticleCount();
 
 		mRendererId = NO_RENDERER_ASSIGNED;
@@ -84,94 +84,71 @@ public class ParticleSystemInstance extends BaseInstanceData {
 		}
 	}
 
-	public void update(LintfordCore pCore) {
+	public void update(LintfordCore core) {
 		if (!isInitialized())
 			return;
 
-		// Update the modifiers independently of the particles
-		List<ParticleModifierBase> lModifers = mParticleSystemDefinition.modifiers();
-		final int lNumModifiers = lModifers.size();
+		final var lParticleModifers = mParticleSystemDefinition.modifiers();
+		final int lNumModifiers = lParticleModifers.size();
 		for (int j = 0; j < lNumModifiers; j++) {
-			lModifers.get(j).update(pCore);
-
+			lParticleModifers.get(j).update(core);
 		}
 
 		for (int i = 0; i < mCapacity; i++) {
-			final Particle p = mParticles.get(i);
+			final var particle = mParticles.get(i);
 
-			if (!p.isAssigned())
+			if (!particle.isAssigned())
 				continue;
 
 			// Kill the particle if it exceeds its lifetime (unless lifeTime is NO_DO_DESPAWN
-			if (p.lifeTime() != Particle.DO_NOT_DESPAWN_LIFETIME) {
-				p.timeSinceStart += pCore.appTime().elapsedTimeMilli();
-				if (p.timeSinceStart >= p.lifeTime()) {
-					// kill the particle
-					p.reset();
-
+			if (particle.lifeTime() != Particle.DO_NOT_DESPAWN_LIFETIME) {
+				particle.timeSinceStart += core.appTime().elapsedTimeMilli();
+				if (particle.timeSinceStart >= particle.lifeTime()) {
+					particle.reset();
+					continue;
 				}
 			}
 
-			if (!p.isAssigned())
+			if (!particle.isAssigned())
 				continue;
 
 			for (int j = 0; j < lNumModifiers; j++) {
-				lModifers.get(j).updateParticle(pCore, mParticles.get(i));
-
+				lParticleModifers.get(j).updateParticle(core, mParticles.get(i));
 			}
-
 		}
-
 	}
 
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
 
-	public void assignedRendererId(final int pRendererId) {
-		mRendererId = pRendererId;
-
+	public void assignedRendererId(final int rendererId) {
+		mRendererId = rendererId;
 	}
 
 	/**
 	 * Spawns a new {@link Particle} instance, foregoing the {@link IParticleinitializer}s attached to this {@link ParticleSystemInstance}. Insteadm you can specifiy the individual components of the particles.
 	 */
-	public Particle spawnParticle(float pX, float pY, float pVelX, float pVelY, float pSX, float pSY, float pSW, float pSH, float pWidth, float pHeight) {
-		Particle lNewParticle = spawnParticle(pX, pY, pVelX, pVelY);
+	public Particle spawnParticle(float worldX, float worldY, float velocityX, float velocityY, float sourceX, float sourceY, float sourceW, float sourceH, float destWidth, float destHeight) {
+		final var lNewParticle = spawnParticle(worldX, worldY, velocityX, velocityY);
 		if (lNewParticle != null) {
-			lNewParticle.setupSourceTexture(pSX, pSY, pSW, pSH);
-			lNewParticle.setupDestTexture(pWidth, pHeight);
+			lNewParticle.setupSourceTexture(sourceX, sourceY, sourceW, sourceH);
+			lNewParticle.setupDestTexture(destWidth, destHeight);
 
 			return lNewParticle;
 		}
 
-		// No particle created.
 		return null;
-
-	}
-
-	/** Applies all the {@link IParticleinitializer}s attached to this system to the given {@link Particle} instance. */
-	public void applyInitializers(Particle pParticle) {
-		if (pParticle == null)
-			return;
-
-		List<ParticleInitializerBase> lInitializers = mParticleSystemDefinition.initializers();
-		final int lNumInitializers = lInitializers.size();
-		for (int j = 0; j < lNumInitializers; j++) {
-			lInitializers.get(j).initialize(pParticle);
-
-		}
-
 	}
 
 	/** Spawns a new {@link Particle} and applys the {@link IParticleinitializer} attached to this {@link ParticleSystemInstance}. */
-	public Particle spawnParticle(float pX, float pY, float pVelX, float pVelY) {
+	public Particle spawnParticle(float worldX, float worldY, float velocityX, float velocityY) {
 		for (int i = 0; i < mCapacity; i++) {
-			Particle lSpawnedParticle = mParticles.get(i);
+			final var lSpawnedParticle = mParticles.get(i);
 			if (lSpawnedParticle.isAssigned())
 				continue;
 
-			lSpawnedParticle.spawnParticle(pX, pY, pVelX, pVelY, mParticleSystemDefinition.particleLife);
+			lSpawnedParticle.spawnParticle(worldX, worldY, velocityX, velocityY, mParticleSystemDefinition.particleLife);
 
 			applyInitializers(lSpawnedParticle);
 
@@ -179,36 +156,41 @@ public class ParticleSystemInstance extends BaseInstanceData {
 		}
 
 		return null;
-
 	}
 
-	public void addInitializer(ParticleInitializerBase pInitializer) {
-		if (pInitializer == null)
+	/** Applies all the {@link IParticleinitializer}s attached to this system to the given {@link Particle} instance. */
+	public void applyInitializers(Particle particle) {
+		if (particle == null)
 			return;
 
-		if (!mParticleSystemDefinition.initializers().contains(pInitializer)) {
-			mParticleSystemDefinition.initializers().add(pInitializer);
-
+		final var lInitializers = mParticleSystemDefinition.initializers();
+		final int lNumInitializers = lInitializers.size();
+		for (int i = 0; i < lNumInitializers; i++) {
+			lInitializers.get(i).initialize(particle);
 		}
-
 	}
 
-	public void addModifier(ParticleModifierBase pModifier) {
-		if (pModifier == null)
+	public void addInitializer(ParticleInitializerBase particleInitializerBase) {
+		if (particleInitializerBase == null)
 			return;
 
-		if (!mParticleSystemDefinition.modifiers().contains(pModifier)) {
-			mParticleSystemDefinition.modifiers().add(pModifier);
+		if (!mParticleSystemDefinition.initializers().contains(particleInitializerBase)) {
+			mParticleSystemDefinition.initializers().add(particleInitializerBase);
+		}
+	}
+
+	public void addModifier(ParticleModifierBase particleModifierBase) {
+		if (particleModifierBase == null)
+			return;
+
+		if (!mParticleSystemDefinition.modifiers().contains(particleModifierBase)) {
+			mParticleSystemDefinition.modifiers().add(particleModifierBase);
 		}
 	}
 
 	public void reset() {
 		for (int i = 0; i < mCapacity; i++) {
-			Particle p = mParticles.get(i);
-			p.reset();
-
+			mParticles.get(i).reset();
 		}
-
 	}
-
 }

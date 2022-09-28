@@ -53,13 +53,12 @@ public class ParticleRenderer {
 	// Constructor
 	// --------------------------------------
 
-	public ParticleRenderer(final int pRendererId, int pEntityGroupID) {
-		mEntityGroupId = pEntityGroupID;
+	public ParticleRenderer(final int rendererUid, int entityGroupUid) {
+		mEntityGroupId = entityGroupUid;
 
-		mParticleRendererId = pRendererId;
+		mParticleRendererId = rendererUid;
 		mTextureBatch = new TextureBatchPCT();
 		mIsAssigned = false;
-
 	}
 
 	// --------------------------------------
@@ -70,9 +69,9 @@ public class ParticleRenderer {
 
 	}
 
-	public void loadResources(ResourceManager pResourceManager) {
-		mResourceManager = pResourceManager;
-		mTextureBatch.loadResources(pResourceManager);
+	public void loadResources(ResourceManager resourceManager) {
+		mResourceManager = resourceManager;
+		mTextureBatch.loadResources(resourceManager);
 
 		mResourcesLoaded = true;
 	}
@@ -84,14 +83,14 @@ public class ParticleRenderer {
 		mResourcesLoaded = false;
 	}
 
-	public void draw(LintfordCore pCore) {
+	public void draw(LintfordCore core) {
 		if (!mResourcesLoaded || !mIsParticleLoaded || !mIsAssigned)
 			return;
 
 		final List<Particle> lParticleSystem = mParticleSystem.particles();
 		final int lNumParticles = lParticleSystem.size();
 
-		mTextureBatch.begin(pCore.gameCamera());
+		mTextureBatch.begin(core.gameCamera());
 
 		for (int i = 0; i < lNumParticles; i++) {
 			final Particle lParticleInst = lParticleSystem.get(i);
@@ -104,36 +103,30 @@ public class ParticleRenderer {
 
 			mTextureBatch.drawAroundCenter(mTexture, lParticleInst.sx, lParticleInst.sy, lParticleInst.sw, lParticleInst.sh, lParticleInst.worldPositionX, lParticleInst.worldPositionY, lWidthScaled, lHeightScaled, -0.2f, lParticleInst.rotationInRadians,
 					lParticleInst.rox, lParticleInst.roy, lParticleInst.scale, lParticleInst.color);
-
 		}
 
 		mTextureBatch.end();
-
 	}
 
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
 
-	public void assignParticleSystem(final ParticleSystemInstance pParticleSystem) {
-		mParticleSystem = pParticleSystem;
-		loadParticleContent(pParticleSystem);
+	public void assignParticleSystem(final ParticleSystemInstance particleSystem) {
+		mParticleSystem = particleSystem;
+		loadParticleContent(particleSystem);
 		mIsAssigned = true;
-
 	}
 
 	public void unassignedParticleSystem() {
 		mIsAssigned = false;
 		mIsParticleLoaded = false;
-
 	}
 
-	private void loadParticleContent(final ParticleSystemInstance pParticleSystemInst) {
-		ParticleSystemDefinition lParticleDefinition = pParticleSystemInst.definition();
+	private void loadParticleContent(final ParticleSystemInstance particleSystemInst) {
+		ParticleSystemDefinition lParticleDefinition = particleSystemInst.definition();
 
 		mTexture = mResourceManager.textureManager().loadTexture(lParticleDefinition.textureName(), lParticleDefinition.textureFilename(), GL11.GL_NEAREST, mEntityGroupId);
 		mIsParticleLoaded = mTexture != null;
-
 	}
-
 }

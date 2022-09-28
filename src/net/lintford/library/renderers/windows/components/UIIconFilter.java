@@ -42,10 +42,10 @@ public class UIIconFilter extends Rectangle {
 	}
 
 	/** Returns the IconIntFilter with the specified filter value if found. Null returned otherwise */
-	public IconIntFilter getFilterByValue(int pIndex) {
+	public IconIntFilter getFilterByValue(int iconFilterIndex) {
 		int lCount = mIconFilters.size();
 		for (int i = 0; i < lCount; i++) {
-			if (mIconFilters.get(i).filterValue() == pIndex)
+			if (mIconFilters.get(i).filterValue() == iconFilterIndex)
 				return mIconFilters.get(i);
 		}
 
@@ -53,10 +53,10 @@ public class UIIconFilter extends Rectangle {
 	}
 
 	/** Returns the IconIntFilter with the specified name if found. Null returned otherwise */
-	public IconIntFilter getFilterByName(String pName) {
+	public IconIntFilter getFilterByName(String iconFilterName) {
 		int lCount = mIconFilters.size();
 		for (int i = 0; i < lCount; i++) {
-			if (mIconFilters.get(i).filterName().equals(pName))
+			if (mIconFilters.get(i).filterName().equals(iconFilterName))
 				return mIconFilters.get(i);
 		}
 
@@ -80,18 +80,18 @@ public class UIIconFilter extends Rectangle {
 
 	}
 
-	public void loadResources(ResourceManager pResourceManager) {
+	public void loadResources(ResourceManager resourceManager) {
 
 	}
 
-	public boolean handleInput(LintfordCore pCore) {
-		int lCount = mIconFilters.size();
-		for (int i = 0; i < lCount; i++) {
+	public boolean handleInput(LintfordCore core) {
+		final int lIconFilterCount = mIconFilters.size();
+		for (int i = 0; i < lIconFilterCount; i++) {
 			mIconFilters.get(i).resetHovered();
 		}
 
-		for (int i = 0; i < lCount; i++) {
-			if (mIconFilters.get(i).handleInput(pCore)) {
+		for (int i = 0; i < lIconFilterCount; i++) {
+			if (mIconFilters.get(i).handleInput(core)) {
 				return true;
 			}
 		}
@@ -99,10 +99,9 @@ public class UIIconFilter extends Rectangle {
 		return false;
 	}
 
-	public void update(LintfordCore pCore) {
-
-		float lPosX = x;
-		float lPosY = y;
+	public void update(LintfordCore core) {
+		float lPosX = mX;
+		float lPosY = mY;
 
 		int lCount = mIconFilters.size();
 		for (int i = 0; i < lCount; i++) {
@@ -110,16 +109,16 @@ public class UIIconFilter extends Rectangle {
 
 			lFilter.setDstRectangle(lPosX, lPosY, 32, 32);
 
-			lPosX += lFilter.uiDstRectangle().w() + HORIZONTAL_PADDING;
+			lPosX += lFilter.uiDstRectangle().width() + HORIZONTAL_PADDING;
 		}
 	}
 
-	public void draw(LintfordCore pCore, SpriteBatch pSpriteBatch, SpriteSheetDefinition pHudSpritesheet, FontUnit pTextFont, float pComponentZDepth) {
-		int lCount = mIconFilters.size();
-		for (int i = 0; i < lCount; i++) {
+	public void draw(LintfordCore core, SpriteBatch spriteBatch, SpriteSheetDefinition hudSpritesheetDefinition, FontUnit textFont, float componentZDepth) {
+		final int lItemFilterCount = mIconFilters.size();
+		for (int i = 0; i < lItemFilterCount; i++) {
 			final var lIconIntFilter = mIconFilters.get(i);
 
-			lIconIntFilter.draw(pCore, pSpriteBatch, pHudSpritesheet, pTextFont, pComponentZDepth);
+			lIconIntFilter.draw(core, spriteBatch, hudSpritesheetDefinition, textFont, componentZDepth);
 		}
 	}
 
@@ -134,26 +133,24 @@ public class UIIconFilter extends Rectangle {
 	 * @param pName        The name of the filter (e.g. 'All', 'Building Materials' etc.)
 	 * @param pFilterValue The item-value to use when filtering in items.
 	 */
-	public void addFilterIcon(IconIntFilter pNewFilterIcon) {
-		mIconFilters.add(pNewFilterIcon);
+	public void addFilterIcon(IconIntFilter newFilterIcon) {
+		mIconFilters.add(newFilterIcon);
 	}
 
-	public void onFilterClick(IconIntFilter pObj) {
-		boolean lWasEnabled = pObj.filterEnabled();
+	public void onFilterClick(IconIntFilter iconFilterClicked) {
+		boolean lWasEnabled = iconFilterClicked.filterEnabled();
 
-		// disable all other filter icons
-		int lCount = mIconFilters.size();
-		for (int i = 0; i < lCount; i++) {
+		final int lIconFilterCount = mIconFilters.size();
+		for (int i = 0; i < lIconFilterCount; i++) {
 			mIconFilters.get(i).filterEnabled(false);
 		}
 
-		// We we just have one that is enabled
 		if (lWasEnabled) {
-			pObj.filterEnabled(false);
+			iconFilterClicked.filterEnabled(false);
 			mCurrentFilter = NO_FILTER_VALUE;
 		} else {
-			pObj.filterEnabled(true);
-			mCurrentFilter = pObj.filterValue();
+			iconFilterClicked.filterEnabled(true);
+			mCurrentFilter = iconFilterClicked.filterValue();
 		}
 	}
 }

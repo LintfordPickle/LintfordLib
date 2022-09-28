@@ -65,8 +65,8 @@ public class ResourceManager {
 	// Properties
 	// --------------------------------------
 
-	public boolean isEntityGroupUidProtected(int pEntityGroupUid) {
-		return mProtectedEntityGroupUids.contains(pEntityGroupUid);
+	public boolean isEntityGroupUidProtected(int entityGroupUid) {
+		return mProtectedEntityGroupUids.contains(entityGroupUid);
 	}
 
 	public boolean isLoaded() {
@@ -109,15 +109,15 @@ public class ResourceManager {
 	// Constructor
 	// --------------------------------------
 
-	public ResourceManager(MasterConfig pConfig) {
-		mConfig = pConfig;
+	public ResourceManager(MasterConfig config) {
+		mConfig = config;
 
 		mFontManager = new BitmapFontManager();
 		mFontManager.initialize(this);
 		mTextureManager = new TextureManager();
 		mSpriteSheetManager = new SpriteSheetManager();
 		mSpriteSheetManager.initialize(this);
-		mAudioManager = new AudioManager(pConfig.audio());
+		mAudioManager = new AudioManager(config.audio());
 		mSpriteGraphRepository = new SpriteGraphRepository();
 		mPObjectManager = new PObjectManager();
 
@@ -146,7 +146,7 @@ public class ResourceManager {
 		mResourcesLoaded = false;
 	}
 
-	public void update(LintfordCore pCore) {
+	public void update(LintfordCore core) {
 		if (mMonitorResourcesForChanges) {
 			WatchKey lKey = mTexturePathWatcher.poll();
 			if (lKey != null) {
@@ -155,9 +155,7 @@ public class ResourceManager {
 				for (WatchEvent<?> event : events) {
 					if (event.kind() == StandardWatchEventKinds.ENTRY_MODIFY) {
 						mTextureManager.reloadTextures();
-
 					}
-
 				}
 
 				lKey.reset();
@@ -173,42 +171,37 @@ public class ResourceManager {
 							// Reload the spritesheet in question ...
 							mSpriteSheetManager.reload();
 						}
-
 					}
 
 					lSpriteFileKey.reset();
 				}
-
 			}
 		}
-
 	}
 
-	public void increaseReferenceCounts(int pEntityGroupID) {
-		mTextureManager.increaseReferenceCounts(pEntityGroupID);
-
+	public void increaseReferenceCounts(int entityGrouUid) {
+		mTextureManager.increaseReferenceCounts(entityGrouUid);
 	}
 
-	public void decreaseReferenceCounts(int pEntityGroupID) {
-		mTextureManager.decreaseReferenceCounts(pEntityGroupID);
-
+	public void decreaseReferenceCounts(int entityGroupUid) {
+		mTextureManager.decreaseReferenceCounts(entityGroupUid);
 	}
 
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
 
-	public void addProtectedEntityGroupUid(int pProtectedEntityGroupUid) {
-		if (mProtectedEntityGroupUids.contains(pProtectedEntityGroupUid) == false) {
-			Debug.debugManager().logger().i(getClass().getSimpleName(), "Adding EntityGroupUid to protected list: " + pProtectedEntityGroupUid);
-			mProtectedEntityGroupUids.add(pProtectedEntityGroupUid);
+	public void addProtectedEntityGroupUid(int protectedEntityGroupUid) {
+		if (mProtectedEntityGroupUids.contains(protectedEntityGroupUid) == false) {
+			Debug.debugManager().logger().i(getClass().getSimpleName(), "Adding EntityGroupUid to protected list: " + protectedEntityGroupUid);
+			mProtectedEntityGroupUids.add(protectedEntityGroupUid);
 		}
 	}
 
-	public void removeProtectedEntityGroupUid(int pProtectedEntityGroupUid) {
-		if (mProtectedEntityGroupUids.contains(pProtectedEntityGroupUid) == true) {
-			Debug.debugManager().logger().i(getClass().getSimpleName(), "Removing EntityGroupUid to protected list: " + pProtectedEntityGroupUid);
-			mProtectedEntityGroupUids.remove(pProtectedEntityGroupUid);
+	public void removeProtectedEntityGroupUid(int protectedEntityGroupUid) {
+		if (mProtectedEntityGroupUids.contains(protectedEntityGroupUid) == true) {
+			Debug.debugManager().logger().i(getClass().getSimpleName(), "Removing EntityGroupUid to protected list: " + protectedEntityGroupUid);
+			mProtectedEntityGroupUids.remove(protectedEntityGroupUid);
 		}
 	}
 

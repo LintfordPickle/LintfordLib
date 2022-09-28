@@ -28,8 +28,8 @@ public class StringListBoxItem extends ListBoxItem {
 	// Properties
 	// --------------------------------------
 
-	public void textValue(String pNewValue) {
-		mTextValue = pNewValue;
+	public void textValue(String text) {
+		mTextValue = text;
 	}
 
 	public String textValue() {
@@ -40,11 +40,10 @@ public class StringListBoxItem extends ListBoxItem {
 	// Constructor
 	// --------------------------------------
 
-	public StringListBoxItem(ScreenManager pScreenManager, ListBox pParentListBox, int pIndex, String pValue, int pEntityGroupID) {
-		super(pScreenManager, pParentListBox, pIndex, pEntityGroupID);
+	public StringListBoxItem(ScreenManager pScreenManager, ListBox parentListBox, int index, String value, int entityGroupUid) {
+		super(pScreenManager, parentListBox, index, entityGroupUid);
 
-		mTextValue = pValue;
-
+		mTextValue = value;
 	}
 
 	// --------------------------------------
@@ -52,22 +51,21 @@ public class StringListBoxItem extends ListBoxItem {
 	// --------------------------------------
 
 	@Override
-	public void draw(LintfordCore pCore, Screen pScreen, SpriteBatch pSpriteBatch, boolean pIsSelected, float pParentZDepth) {
+	public void draw(LintfordCore core, Screen screen, SpriteBatch spriteBatch, boolean isSelected, float parentZDepth) {
 		if (mTextValue != null && mTextValue.length() > 0) {
 			final float lScale = mScreenManager.UiStructureController().uiTextScaleFactor();
 			final var lFont = mParentListBox.parentLayout().parentScreen.font();
 			final float lFontHeight = lFont.getStringHeight(mTextValue, lScale);
 
-			h = 10;
+			mH = 10;
 
-			// Draw profile information
-			lFont.begin(pCore.HUD());
-			lFont.drawText(mTextValue, x, y - lFontHeight / 2, pParentZDepth + .1f, ColorConstants.TextEntryColor, lScale, -1);
+			lFont.begin(core.HUD());
+			lFont.drawText(mTextValue, mX, mY - lFontHeight / 2, parentZDepth + .1f, ColorConstants.TextEntryColor, lScale, -1);
 			lFont.end();
 		}
 
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
-			Debug.debugManager().drawers().drawRectImmediate(pCore.HUD(), this);
+			Debug.debugManager().drawers().drawRectImmediate(core.HUD(), this);
 		}
 	}
 }

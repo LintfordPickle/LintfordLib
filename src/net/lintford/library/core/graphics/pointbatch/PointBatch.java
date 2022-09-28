@@ -72,11 +72,11 @@ public class PointBatch {
 	// Core-Methods
 	// --------------------------------------
 
-	public void loadResources(ResourceManager pResourceManager) {
+	public void loadResources(ResourceManager resourceManager) {
 		if (mIsLoaded)
 			return;
 
-		mShader.loadResources(pResourceManager);
+		mShader.loadResources(resourceManager);
 
 		if (mVboId == -1) {
 			mVboId = GL15.glGenBuffers();
@@ -145,21 +145,16 @@ public class PointBatch {
 		mBuffer.clear();
 		mVertexCount = 0;
 		mIsDrawing = true;
-
 	}
 
-	public void draw(float pP1X, float pP1Y, float pZ, float pR, float pG, float pB, float pA) {
-
+	public void draw(float point1X, float point1Y, float zDepth, float red, float green, float blue, float alpha) {
 		if (!mIsDrawing)
 			return;
 
-		if (mVertexCount >= MAX_POINTS) {
+		if (mVertexCount >= MAX_POINTS)
 			flush();
-		}
 
-		// Add both vertices to the buffer
-		addVertToBuffer(pP1X, pP1Y, pZ, 1f, pR, pG, pB, pA);
-
+		addVertToBuffer(point1X, point1Y, zDepth, 1f, red, green, blue, alpha);
 	}
 
 	private void addVertToBuffer(float x, float y, float z, float w, float r, float g, float b, float a) {
@@ -174,7 +169,6 @@ public class PointBatch {
 		mBuffer.put(a);
 
 		mVertexCount++;
-
 	}
 
 	public void end() {
@@ -183,7 +177,6 @@ public class PointBatch {
 
 		mIsDrawing = false;
 		flush();
-
 	}
 
 	private void flush() {
@@ -222,6 +215,5 @@ public class PointBatch {
 		mBuffer.clear();
 
 		mVertexCount = 0;
-
 	}
 }

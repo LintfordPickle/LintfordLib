@@ -37,32 +37,32 @@ public class ShaderMVP_PT extends Shader {
 		return mProjectionMatrix;
 	}
 
-	public void projectionMatrix(Matrix4f pProjMat) {
-		mProjectionMatrix = pProjMat;
+	public void projectionMatrix(Matrix4f projMatrix) {
+		mProjectionMatrix = projMatrix;
 	}
 
 	public Matrix4f viewMatrix() {
 		return mViewMatrix;
 	}
 
-	public void viewMatrix(Matrix4f pViewMat) {
-		mViewMatrix = pViewMat;
+	public void viewMatrix(Matrix4f viewMatrix) {
+		mViewMatrix = viewMatrix;
 	}
 
 	public Matrix4f modelMatrix() {
 		return mModelMatrix;
 	}
 
-	public void modelMatrix(Matrix4f pModelMat) {
-		mModelMatrix = pModelMat;
+	public void modelMatrix(Matrix4f modelMatrix) {
+		mModelMatrix = modelMatrix;
 	}
 
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
-	public ShaderMVP_PT(String pName, String pVertPath, String pFragPath) {
-		super(pName, pVertPath, pFragPath);
+	public ShaderMVP_PT(String shaderName, String vertPath, String fragPath) {
+		super(shaderName, vertPath, fragPath);
 
 		mProjectionMatrix = new Matrix4f();
 		mViewMatrix = new Matrix4f();
@@ -94,9 +94,9 @@ public class ShaderMVP_PT extends Shader {
 	// --------------------------------------
 
 	@Override
-	protected void bindAtrributeLocations(int pShaderID) {
-		GL20.glBindAttribLocation(pShaderID, 0, "inPosition");
-		GL20.glBindAttribLocation(pShaderID, 1, "inTexCoord");
+	protected void bindAtrributeLocations(int shaderId) {
+		GL20.glBindAttribLocation(shaderId, 0, "inPosition");
+		GL20.glBindAttribLocation(shaderId, 1, "inTexCoord");
 	}
 
 	@Override

@@ -11,7 +11,7 @@ public class MessageConsoleController extends BaseController implements IMessage
 	// Constants
 	// --------------------------------------
 
-	public static final String CONTROLLER_NAME = "MessageConsoleController";
+	public static final String CONTROLLER_NAME = "Message Console Controller";
 
 	// --------------------------------------
 	// Variables
@@ -31,15 +31,14 @@ public class MessageConsoleController extends BaseController implements IMessage
 	// Constructor
 	// --------------------------------------
 
-	public MessageConsoleController(ControllerManager pControllerManager, String pControllerName, IMessageProvider pIMessageProvider, int pEntityGroupID) {
-		super(pControllerManager, pControllerName, pEntityGroupID);
+	public MessageConsoleController(ControllerManager controllerManager, String controllerName, IMessageProvider iMessageProvider, int entityGroupUid) {
+		super(controllerManager, controllerName, entityGroupUid);
 
-		mMessagesProvider = pIMessageProvider;
+		mMessagesProvider = iMessageProvider;
 	}
 
-	public MessageConsoleController(ControllerManager pControllerManager, IMessageProvider pIMessageProvider, int pEntityGroupID) {
-		this(pControllerManager, CONTROLLER_NAME, pIMessageProvider, pEntityGroupID);
-
+	public MessageConsoleController(ControllerManager controllerManager, IMessageProvider iMessageProvider, int entityGroupUid) {
+		this(controllerManager, CONTROLLER_NAME, iMessageProvider, entityGroupUid);
 	}
 
 	// --------------------------------------
@@ -52,15 +51,14 @@ public class MessageConsoleController extends BaseController implements IMessage
 	}
 
 	@Override
-	public void addMessage(String pTag, String pMessage) {
-		addMessage(pTag, pMessage, -1);
+	public void addMessage(String tag, String message) {
+		addMessage(tag, message, -1);
 	}
 
 	@Override
-	public void addMessage(String pTag, String pMessage, final int pCharacterWrapAmount) {
+	public void addMessage(String tag, String message, final int characterWrapAmount) {
 		final var lMessage = mMessagesProvider.getMessageInstance();
-		lMessage.setMessage(pTag, pMessage, MessageManager.timeStamp(), 0);
+		lMessage.setMessage(tag, message, MessageManager.timeStamp(), 0);
 		mMessagesProvider.addMesage(lMessage);
-
 	}
 }

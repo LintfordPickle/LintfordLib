@@ -41,8 +41,8 @@ public class BlurEffect {
 		return mRadius;
 	}
 
-	public void radius(float pNewRadius) {
-		mRadius = pNewRadius;
+	public void radius(float newRadius) {
+		mRadius = newRadius;
 	}
 
 	public Shader shader() {
@@ -72,9 +72,9 @@ public class BlurEffect {
 	// Core-Methods
 	// --------------------------------------
 
-	public void loadResources(ResourceManager pResourceManager) {
-		mFullScreenQuad.loadResources(pResourceManager);
-		mBlurShader.loadResources(pResourceManager);
+	public void loadResources(ResourceManager resourceManager) {
+		mFullScreenQuad.loadResources(resourceManager);
+		mBlurShader.loadResources(resourceManager);
 	}
 
 	public void unloadResources() {
@@ -82,28 +82,27 @@ public class BlurEffect {
 		mBlurShader.unloadResources();
 	}
 
-	public void render(LintfordCore pCore, RenderTarget pTarget) {
+	public void render(LintfordCore core, RenderTarget renderTarget) {
 		GL13.glActiveTexture(GL13.GL_TEXTURE0);
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, pTarget.colorTextureID());
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, renderTarget.colorTextureID());
 
-		pTarget.bind();
+		renderTarget.bind();
 
-		render(pCore, pTarget, BLUR_DIRECTION.horizontal);
-		render(pCore, pTarget, BLUR_DIRECTION.vertical);
+		render(core, renderTarget, BLUR_DIRECTION.horizontal);
+		render(core, renderTarget, BLUR_DIRECTION.vertical);
 
-		pTarget.unbind();
-
+		renderTarget.unbind();
 	}
 
-	private void render(LintfordCore pCore, RenderTarget pTarget, BLUR_DIRECTION pDir) {
-		final int lWindowWidth = pCore.config().display().windowWidth() / 2;
+	private void render(LintfordCore core, RenderTarget renderTarget, BLUR_DIRECTION blurDirecetion) {
+		final int lWindowWidth = core.config().display().windowWidth() / 2;
 
 		mBlurShader.resolution(lWindowWidth);
 		mBlurShader.radius(mRadius);
-		mBlurShader.direction().x = pDir == BLUR_DIRECTION.horizontal ? 1f : 0f;
-		mBlurShader.direction().y = pDir == BLUR_DIRECTION.horizontal ? 0f : 1f;
+		mBlurShader.direction().x = blurDirecetion == BLUR_DIRECTION.horizontal ? 1f : 0f;
+		mBlurShader.direction().y = blurDirecetion == BLUR_DIRECTION.horizontal ? 0f : 1f;
 
-		mBlurShader.projectionMatrix(pCore.gameCamera().projection());
+		mBlurShader.projectionMatrix(core.gameCamera().projection());
 		mBlurShader.viewMatrix(Matrix4f.IDENTITY);
 
 		mFullScreenQuad.zDepth(-1f);
@@ -111,9 +110,7 @@ public class BlurEffect {
 		mBlurShader.modelMatrix(mFullScreenQuad.modelMatrix());
 
 		mBlurShader.bind();
-		mFullScreenQuad.draw(pCore);
+		mFullScreenQuad.draw(core);
 		mBlurShader.unbind();
-
 	}
-
 }

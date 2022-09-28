@@ -17,16 +17,16 @@ public abstract class ConsoleCommand {
 
 	/** Registers a new command with the {@link DebugConsole}.
 	 * 
-	 * @param pOwner
+	 * @param owner
 	 *            is the owning class of this command (usually where the doCommand is implemented).
-	 * @param pCommandString
+	 * @param commandString
 	 *            is the command string as it should be typed into the console
-	 * @param pDescription
+	 * @param description
 	 *            is a user-friendly description of the command */
-	public ConsoleCommand(final String pOwner, final String pCommandString, final String pDescription) {
-		Owner = pOwner;
-		Command = pCommandString;
-		Description = pDescription;
+	public ConsoleCommand(final String owner, final String commandString, final String description) {
+		Owner = owner;
+		Command = commandString;
+		Description = description;
 
 		isActive = true;
 	}

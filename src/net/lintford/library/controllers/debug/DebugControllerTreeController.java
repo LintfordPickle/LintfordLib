@@ -35,11 +35,10 @@ public class DebugControllerTreeController extends BaseController {
 	// Constructor
 	// --------------------------------------
 
-	public DebugControllerTreeController(ControllerManager pControllerManager, int pControllerGroup) {
-		super(pControllerManager, CONTROLLER_NAME, pControllerGroup);
+	public DebugControllerTreeController(ControllerManager controllerManager, int controllerGroup) {
+		super(controllerManager, CONTROLLER_NAME, controllerGroup);
 
 		mDebugTreeComponents = new ArrayList<BaseControllerWidget>();
-
 	}
 
 	// --------------------------------------
@@ -57,8 +56,8 @@ public class DebugControllerTreeController extends BaseController {
 	}
 
 	@Override
-	public void update(LintfordCore pCore) {
-		super.update(pCore);
+	public void update(LintfordCore core) {
+		super.update(core);
 
 		final var lControllers = mControllerManager.allControllers();
 
@@ -70,81 +69,63 @@ public class DebugControllerTreeController extends BaseController {
 
 			if (lWidget.baseController == null) {
 				// FIXME: Remove the ControllerWidget from the list, the BaseController attached has been destroyed.
-
 			}
-
 		}
-
 	}
 
 	// makes sure that every controller gets its own rendering widget
-	private void maintainControllerWidgetList(final Map<Integer, List<BaseController>> lControllers) {
-
-		//		final int lControllerCount = lControllers.size();
-		//		if (mCountAtLastUpdate == lControllerCount)
-		//			return;
-		//
-		//		mCountAtLastUpdate = lControllerCount;
-
-		// Check for updates to the structure of the Controller Manager:
-		// 1.. Check the parent containers
+	private void maintainControllerWidgetList(final Map<Integer, List<BaseController>> controllers) {
 		int lPositionCounter = 0;
-		for (final var lEntry : lControllers.entrySet()) {
+		for (final var lEntry : controllers.entrySet()) {
 			final var lControllerManager = lEntry.getValue();
 
-			// ---> Assigned the ControllerManagerId
 			if (!debugTreeContainsControllerId(lEntry.getKey())) {
 				addBaseControllerToDebugTree(lEntry.getKey(), lPositionCounter, 0);
 				lPositionCounter++;
 			}
 
-			// 2.. Check the children containers
 			final var lNumChildControllers = lControllerManager.size();
 			for (var j = 0; j < lNumChildControllers; j++) {
 				final var lBaseController = lControllerManager.get(j);
-				if (!debugTreeContainsControllerId(lBaseController.controllerId())) {
+				if (!debugTreeContainsControllerId(lBaseController.controllerId()))
 					addBaseControllerToDebugTree(lBaseController, lPositionCounter, 1);
 
-				}
-
 				lPositionCounter++;
-
 			}
-
 		}
 	}
 
-	private boolean debugTreeContainsControllerId(int pControllerId) {
+	private boolean debugTreeContainsControllerId(int controllerId) {
 		final int lNumBaseControllerAreas = mDebugTreeComponents.size();
 		for (var i = 0; i < lNumBaseControllerAreas; i++) {
-			if (mDebugTreeComponents.get(i).controllerId == pControllerId)
+			if (mDebugTreeComponents.get(i).controllerId == controllerId)
 				return true;
 		}
-		return false;
 
+		return false;
 	}
 
-	private void addBaseControllerToDebugTree(BaseController pController, int pAtIndex, int pIndentation) {
-		if (pController == null)
+	private void addBaseControllerToDebugTree(BaseController controller, int atIndex, int indentation) {
+		if (controller == null)
 			return;
 
 		final var lNewDebugArea = new BaseControllerWidget();
-		lNewDebugArea.controllerId = pController.controllerId();
-		lNewDebugArea.baseController = pController;
-		lNewDebugArea.displayName = pController.controllerName();
+		lNewDebugArea.controllerId = controller.controllerId();
+		lNewDebugArea.baseController = controller;
+		lNewDebugArea.displayName = controller.controllerName();
 		lNewDebugArea.isExpanded = false;
-		lNewDebugArea.controllerLevel = pIndentation;
+		lNewDebugArea.controllerLevel = indentation;
 
 		mDebugTreeComponents.add(lNewDebugArea);
 	}
 
-	private void addBaseControllerToDebugTree(int pControllerId, int pAtIndex, int pIndentation) {
+	private void addBaseControllerToDebugTree(int controllerId, int atIndex, int indentation) {
 		final var lNewDebugArea = new BaseControllerWidget();
-		lNewDebugArea.displayName = Integer.toString(pControllerId);
-		lNewDebugArea.controllerId = pControllerId;
+		lNewDebugArea.displayName = Integer.toString(controllerId);
+		lNewDebugArea.controllerId = controllerId;
 		lNewDebugArea.baseController = null;
 		lNewDebugArea.isExpanded = false;
-		lNewDebugArea.controllerLevel = pIndentation;
+		lNewDebugArea.controllerLevel = indentation;
 
 		mDebugTreeComponents.add(lNewDebugArea);
 	}
@@ -156,5 +137,4 @@ public class DebugControllerTreeController extends BaseController {
 	public void addDebugComponent() {
 
 	}
-
 }

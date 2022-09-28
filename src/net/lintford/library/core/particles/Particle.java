@@ -20,7 +20,7 @@ public class Particle extends BaseInstanceData {
 
 	private boolean mIsFree;
 	public float timeSinceStart;
-	private float mLifeTime;
+	private float mLifeTimeInMs;
 
 	public float width;
 	public float height;
@@ -47,7 +47,7 @@ public class Particle extends BaseInstanceData {
 
 	/** Returns the amount of lifetime this particle was given when spawned */
 	public float lifeTime() {
-		return mLifeTime;
+		return mLifeTimeInMs;
 	}
 
 	// --------------------------------------
@@ -56,7 +56,6 @@ public class Particle extends BaseInstanceData {
 
 	public Particle() {
 		reset();
-
 	}
 
 	// --------------------------------------
@@ -64,38 +63,35 @@ public class Particle extends BaseInstanceData {
 	// --------------------------------------
 
 	/** Setups the source texture area this particle will draw from, and the width/height of the particle. */
-	public void setupSourceTexture(float pSX, float pSY, float pSW, float pSH) {
-		sx = pSX;
-		sy = pSY;
-		sw = pSW;
-		sh = pSH;
-
+	public void setupSourceTexture(float sourceX, float sourceY, float sourceW, float sourceH) {
+		sx = sourceX;
+		sy = sourceY;
+		sw = sourceW;
+		sh = sourceH;
 	}
 
-	public void setupDestTexture(float pWidth, float pHeight) {
-		width = pWidth;
-		height = pHeight;
-
+	public void setupDestTexture(float destinationWidth, float destinationHeight) {
+		width = destinationWidth;
+		height = destinationHeight;
 	}
 
-	public void spawnParticle(float pWorldX, float pWorldY, float pVelX, float pVelY, float pLife) {
+	public void spawnParticle(float worldX, float worldY, float velocityX, float velocityY, float lifetimeInMs) {
 		mIsFree = false;
-		mLifeTime = pLife;
+		mLifeTimeInMs = lifetimeInMs;
 		timeSinceStart = 0;
 
 		sx = sy = 1;
 		color.setRGBA(1.f, 1.f, 1.f, 1.f);
 
-		worldPositionX = pWorldX;
-		worldPositionY = pWorldY;
-		dx = pVelX;
-		dy = pVelY;
-
+		worldPositionX = worldX;
+		worldPositionY = worldY;
+		dx = velocityX;
+		dy = velocityY;
 	}
 
 	public void reset() {
 		mIsFree = true;
-		mLifeTime = 0;
+		mLifeTimeInMs = 0;
 		timeSinceStart = 0;
 		scale = 1f;
 
@@ -104,15 +100,12 @@ public class Particle extends BaseInstanceData {
 
 		dx = 0f;
 		dy = 0f;
-
 	}
 
-	public void applyInitializer(ParticleInitializerBase pInitializer) {
-		if (pInitializer == null)
+	public void applyInitializer(ParticleInitializerBase particleInitializerBase) {
+		if (particleInitializerBase == null)
 			return;
 
-		pInitializer.initialize(this);
-
+		particleInitializerBase.initialize(this);
 	}
-
 }

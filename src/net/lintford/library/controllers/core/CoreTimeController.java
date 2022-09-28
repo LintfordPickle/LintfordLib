@@ -35,14 +35,13 @@ public class CoreTimeController extends BaseController {
 	// Constructor
 	// ---------------------------------------------
 
-	public CoreTimeController(final ControllerManager pControllerManager, CoreTime pCoreTime, GameTime pGameTime, int pControllerGroupID) {
-		super(pControllerManager, CONTROLLER_NAME, pControllerGroupID);
+	public CoreTimeController(final ControllerManager controllerManager, CoreTime coreTime, GameTime gameTime, int controllerGroupId) {
+		super(controllerManager, CONTROLLER_NAME, controllerGroupId);
 
-		mCoreTime = pCoreTime;
-		mGameTime = pGameTime;
+		mCoreTime = coreTime;
+		mGameTime = gameTime;
 
 		mIsInitialized = false;
-
 	}
 
 	// ---------------------------------------------

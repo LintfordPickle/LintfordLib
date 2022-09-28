@@ -40,7 +40,7 @@ public class SpriteGraphManager extends IndexedPoolInstanceManager<SpriteGraphIn
 	// Core-Methods
 	// --------------------------------------
 
-	public void loadResources(ResourceManager pResourceManager) {
+	public void loadResources(ResourceManager sesourceManager) {
 
 	}
 
@@ -52,24 +52,22 @@ public class SpriteGraphManager extends IndexedPoolInstanceManager<SpriteGraphIn
 	// Methods
 	// --------------------------------------
 
-	public SpriteGraphInstance getInstanceOfGraph(SpriteGraphDefinition pSpriteGraphDefinition, int pEntityGroupUid) {
-		if (pSpriteGraphDefinition == null) {
+	public SpriteGraphInstance getInstanceOfGraph(SpriteGraphDefinition spriteGraphDefinition, int entityGroupUid) {
+		if (spriteGraphDefinition == null) {
 			return null;
 		}
 
-		final SpriteGraphInstance lSpriteGraphInstance = getFreePooledItem();
-		lSpriteGraphInstance.init(pSpriteGraphDefinition, mSpriteGraphNodeManager, pEntityGroupUid);
+		final var lSpriteGraphInstance = getFreePooledItem();
+		lSpriteGraphInstance.init(spriteGraphDefinition, mSpriteGraphNodeManager, entityGroupUid);
 		return lSpriteGraphInstance;
 	}
 
 	@Override
 	protected SpriteGraphInstance createPoolObjectInstance() {
 		return new SpriteGraphInstance(getNewPoolInstanceUid());
-
 	}
 
-	public void returnSpriteGraph(SpriteGraphInstance lSpriteGraphInstance) {
+	public void returnSpriteGraph(SpriteGraphInstance spriteGraphInstance) {
 		// TODO Implement returnSpriteGraph so SpriteGraphInstances and SpriteGraphNodeInstances can be reused
-
 	}
 }

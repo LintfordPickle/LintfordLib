@@ -39,56 +39,54 @@ public class UIRadioButton extends UIWidget implements IProcessMouseInput {
 		return mIsSelected;
 	}
 
-	public void isSelected(final boolean pNewValue) {
-		mIsSelected = pNewValue;
+	public void isSelected(final boolean isSelected) {
+		mIsSelected = isSelected;
 	}
 
 	public float value() {
 		return mValue;
 	}
 
-	public void value(final float pNewValue) {
-		mValue = pNewValue;
+	public void value(final float newValue) {
+		mValue = newValue;
 	}
 
 	public String buttonLabel() {
 		return mButtonLabel;
 	}
 
-	public void buttonLabel(final String pNewLabel) {
-		mButtonLabel = pNewLabel;
+	public void buttonLabel(final String newButtonLabel) {
+		mButtonLabel = newButtonLabel;
 	}
 
 	public int buttonListenerID() {
 		return mClickID;
 	}
 
-	public void buttonListenerID(final int pNewID) {
-		mClickID = pNewID;
+	public void buttonListenerID(final int entryUid) {
+		mClickID = entryUid;
 	}
 
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
-	public UIRadioButton(final UiWindow pParentWindow) {
-		this(pParentWindow, 0);
+	public UIRadioButton(final UiWindow parentWindow) {
+		this(parentWindow, 0);
 	}
 
-	public UIRadioButton(final UiWindow pParentWindow, final int pClickID) {
-		this(pParentWindow, NO_LABEL_TEXT, pClickID);
-
+	public UIRadioButton(final UiWindow parentWindow, final int entryUid) {
+		this(parentWindow, NO_LABEL_TEXT, entryUid);
 	}
 
-	public UIRadioButton(final UiWindow pParentWindow, final String pLabel, final int pClickID) {
-		super(pParentWindow);
+	public UIRadioButton(final UiWindow parentWindow, final String label, final int entryUid) {
+		super(parentWindow);
 
-		mClickID = pClickID;
+		mClickID = entryUid;
 
-		mButtonLabel = pLabel;
-		w = 200;
-		h = 25;
-
+		mButtonLabel = label;
+		mW = 200;
+		mH = 25;
 	}
 
 	// --------------------------------------
@@ -96,53 +94,49 @@ public class UIRadioButton extends UIWidget implements IProcessMouseInput {
 	// --------------------------------------
 
 	@Override
-	public boolean handleInput(LintfordCore pCore) {
-		if (intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().isMouseOverThisComponent(hashCode())) {
-			if (pCore.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
+	public boolean handleInput(LintfordCore core) {
+		if (intersectsAA(core.HUD().getMouseCameraSpace()) && core.input().mouse().isMouseOverThisComponent(hashCode())) {
+			if (core.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
 				if (mCallback != null) {
-					mCallback.menuEntryOnClick(pCore.input(), mClickID);
-
+					mCallback.menuEntryOnClick(core.input(), mClickID);
 				}
 
 				return true;
-
 			}
-
 		}
 
 		return false;
 	}
 
 	@Override
-	public void update(LintfordCore pCore) {
-		super.update(pCore);
+	public void update(LintfordCore core) {
+		super.update(core);
 
-		mMouseTimer -= pCore.appTime().elapsedTimeMilli();
+		mMouseTimer -= core.appTime().elapsedTimeMilli();
 	}
 
 	@Override
-	public void draw(LintfordCore pCore, SpriteBatch pSpriteBatch, SpriteSheetDefinition pCoreSpritesheet, FontUnit pTextFont, float pComponentZDepth) {
-		final float lColorMod = mIsSelected ? 0.4f : 0.3f;
+	public void draw(LintfordCore core, SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheet, FontUnit textFont, float componentZDepth) {
+		final var lColorMod = mIsSelected ? 0.4f : 0.3f;
 		final var lColor = ColorConstants.getColorWithRGBMod(ColorConstants.PrimaryColor, lColorMod);
 
-		// Draw the button background
-		pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, x, y, w, h, pComponentZDepth, lColor);
+		spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX, mY, mW, mH, componentZDepth, lColor);
 
-		final String lButtonText = mButtonLabel != null ? mButtonLabel : NO_LABEL_TEXT;
-		final float lTextWidth = pTextFont.getStringWidth(lButtonText);
+		final var lButtonText = mButtonLabel != null ? mButtonLabel : NO_LABEL_TEXT;
+		final var lTextWidth = textFont.getStringWidth(lButtonText);
 
-		pTextFont.drawText(lButtonText, x + w / 2f - lTextWidth / 2f, y + h / 2f - pTextFont.fontHeight() / 4f, pComponentZDepth + 0.01f, ColorConstants.WHITE, 1f);
+		textFont.drawText(lButtonText, mX + mW / 2f - lTextWidth / 2f, mY + mH / 2f - textFont.fontHeight() / 4f, componentZDepth + 0.01f, ColorConstants.WHITE, 1f);
 	}
 
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
 
-	public void setClickListener(final EntryInteractions pCallbackObject) {
-		mCallback = pCallbackObject;
+	public void setClickListener(final EntryInteractions callbackObject) {
+		mCallback = callbackObject;
 	}
 
-	public void removeClickListener(final EntryInteractions pCallbackObject) {
+	public void removeClickListener(final EntryInteractions callbackObject) {
 		mCallback = null;
 	}
 
@@ -154,7 +148,5 @@ public class UIRadioButton extends UIWidget implements IProcessMouseInput {
 	@Override
 	public void resetCoolDownTimer() {
 		mMouseTimer = 200;
-
 	}
-
 }

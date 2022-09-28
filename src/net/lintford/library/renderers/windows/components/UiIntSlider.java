@@ -25,7 +25,7 @@ public class UiIntSlider extends UIWidget {
 	// --------------------------------------
 
 	private EntryInteractions mCallback;
-	private int mClickID;
+	private int mEntryUid;
 	private String mSliderLabel;
 	private String mQtyPostFix;
 
@@ -39,21 +39,20 @@ public class UiIntSlider extends UIWidget {
 	// Properties
 	// --------------------------------------
 
-	public void amountValuePostFix(String pNewPostFix) {
-		mQtyPostFix = pNewPostFix;
+	public void labelPostfix(String newLabelPostfix) {
+		mQtyPostFix = newLabelPostfix;
 	}
 
-	public void setMinMax(int pMinValue, int pMaxValue) {
-		if (pMaxValue < pMinValue)
-			pMaxValue = pMinValue;
-		if (pMinValue > pMaxValue)
-			pMinValue = pMaxValue;
+	public void setMinMax(int minValue, int maxValue) {
+		if (maxValue < minValue)
+			maxValue = minValue;
+		if (minValue > maxValue)
+			minValue = maxValue;
 
-		mMinValue = pMinValue;
-		mMaxValue = pMaxValue;
+		mMinValue = minValue;
+		mMaxValue = maxValue;
 
 		updateValue(mCurrentRelPosition);
-
 	}
 
 	public int minValue() {
@@ -64,10 +63,9 @@ public class UiIntSlider extends UIWidget {
 		return mMaxValue;
 	}
 
-	public void currentValue(int pNewValue) {
-		mCurrentValue = MathHelper.clampi(pNewValue, mMinValue, mMaxValue);
-		mCurrentRelPosition = (int) MathHelper.scaleToRange(mCurrentValue, mMinValue, mMaxValue, 0, w);
-
+	public void currentValue(int newValue) {
+		mCurrentValue = MathHelper.clampi(newValue, mMinValue, mMaxValue);
+		mCurrentRelPosition = (int) MathHelper.scaleToRange(mCurrentValue, mMinValue, mMaxValue, 0, mW);
 	}
 
 	public int currentValue() {
@@ -78,98 +76,89 @@ public class UiIntSlider extends UIWidget {
 		return mSliderLabel;
 	}
 
-	public void buttonLabel(final String pNewLabel) {
-		mSliderLabel = pNewLabel;
+	public void buttonLabel(final String newLabel) {
+		mSliderLabel = newLabel;
 	}
 
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
-	public UiIntSlider(final UiWindow pParentWindow) {
-		this(pParentWindow, 0);
+	public UiIntSlider(final UiWindow parentWindow) {
+		this(parentWindow, 0);
 	}
 
-	public UiIntSlider(final UiWindow pParentWindow, final int pClickID) {
-		super(pParentWindow);
+	public UiIntSlider(final UiWindow parentWindow, final int entryUid) {
+		super(parentWindow);
 
-		mClickID = pClickID;
+		mEntryUid = entryUid;
 
 		mSliderLabel = NO_LABEL_TEXT;
-		w = 200;
-		h = 25;
-
+		mW = 200;
+		mH = 25;
 	}
 
 	// --------------------------------------
 	// Core-Methods
 	// --------------------------------------
 
-	private void updateValue(float pRelPositionX) {
-		mCurrentRelPosition = pRelPositionX;
-		mCurrentValue = (int) MathHelper.scaleToRange(mCurrentRelPosition, 0, w, mMinValue, mMaxValue);
+	private void updateValue(float relPositionX) {
+		mCurrentRelPosition = relPositionX;
+		mCurrentValue = (int) MathHelper.scaleToRange(mCurrentRelPosition, 0, mW, mMinValue, mMaxValue);
 
 		if (mMinValue == mMaxValue) {
 			mCurrentValue = mMinValue;
 			mCurrentRelPosition = 0;
-
 		}
-
 	}
 
 	@Override
-	public boolean handleInput(LintfordCore pCore) {
+	public boolean handleInput(LintfordCore core) {
 		if (!mIsEnabled) {
 			return false;
-
 		}
 
-		if (intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().isMouseOverThisComponent(hashCode())) {
-			if (pCore.input().mouse().tryAcquireMouseLeftClick(hashCode())) {
-				final float lMouseX = pCore.HUD().getMouseCameraSpace().x;
-				updateValue(MathHelper.clamp(lMouseX - x, 0, w));
+		if (intersectsAA(core.HUD().getMouseCameraSpace()) && core.input().mouse().isMouseOverThisComponent(hashCode())) {
+			if (core.input().mouse().tryAcquireMouseLeftClick(hashCode())) {
+				final float lMouseX = core.HUD().getMouseCameraSpace().x;
+				updateValue(MathHelper.clamp(lMouseX - mX, 0, mW));
 
 				if (mCallback != null) {
-					// Notify subscribers that something changes
-					mCallback.menuEntryOnClick(pCore.input(), mClickID);
+					mCallback.menuEntryOnClick(core.input(), mEntryUid);
 				}
-
 				return true;
-
 			}
-
 		}
 
 		return false;
 	}
 
 	@Override
-	public void draw(LintfordCore pCore, SpriteBatch pSpriteBatch, SpriteSheetDefinition pCoreSpritesheet, FontUnit pTextFont, float pComponentZDepth) {
+	public void draw(LintfordCore core, SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheetDefinition, FontUnit textFont, float componentZDepth) {
 		final float SLIDER_RAIL_HEIGHT = 4;
 		final float SLIDER_WIDTH = 10;
 
 		final var lBackgroundColor = mIsEnabled ? ColorConstants.getColorWithRGBMod(ColorConstants.PrimaryColor, 1.f) : ColorConstants.getBlackWithAlpha(.4f);
-		pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, x, y + h / 2 - SLIDER_RAIL_HEIGHT / 2, w, SLIDER_RAIL_HEIGHT, 0f, lBackgroundColor);
+		spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, mX, mY + mH / 2 - SLIDER_RAIL_HEIGHT / 2, mW, SLIDER_RAIL_HEIGHT, 0f, lBackgroundColor);
 		final var lNubbinColor = mIsEnabled ? ColorConstants.getColorWithRGBMod(ColorConstants.TertiaryColor, 1.f) : ColorConstants.getBlackWithAlpha(.4f);
-		pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, x + mCurrentRelPosition - SLIDER_WIDTH / 2, y + h / 4, SLIDER_WIDTH, h / 2, 0f, lNubbinColor);
+		spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, mX + mCurrentRelPosition - SLIDER_WIDTH / 2, mY + mH / 4, SLIDER_WIDTH, mH / 2, 0f, lNubbinColor);
 
-		pTextFont.drawText(mSliderLabel, x, y - pTextFont.fontHeight(), pComponentZDepth, ColorConstants.WHITE, 1.f);
+		textFont.drawText(mSliderLabel, mX, mY - textFont.fontHeight(), componentZDepth, ColorConstants.WHITE, 1.f);
 		final String lQtyLabel = Integer.toString(mCurrentValue) + ((mQtyPostFix != null && mQtyPostFix.length() > 0) ? mQtyPostFix : "");
-		final float lQuantyTextWidth = pTextFont.getStringWidth(lQtyLabel);
-		pTextFont.drawText(lQtyLabel, x + w - lQuantyTextWidth, y - pTextFont.fontHeight(), pComponentZDepth, ColorConstants.WHITE, 1.f);
+		final float lQuantyTextWidth = textFont.getStringWidth(lQtyLabel);
+		textFont.drawText(lQtyLabel, mX + mW - lQuantyTextWidth, mY - textFont.fontHeight(), componentZDepth, ColorConstants.WHITE, 1.f);
 	}
 
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
 
-	public void setClickListener(final EntryInteractions pCallbackObject, final int pNewLIstenerID) {
-		mCallback = pCallbackObject;
-		mClickID = pNewLIstenerID;
-
+	public void setClickListener(final EntryInteractions callbackObject, final int entryUid) {
+		mCallback = callbackObject;
+		mEntryUid = entryUid;
 	}
 
-	public void removeClickListener(final EntryInteractions pCallbackObject) {
+	public void removeClickListener(final EntryInteractions callbackObject) {
 		mCallback = null;
 	}
 

@@ -3,12 +3,20 @@ package net.lintford.library.core.maths;
 /** Encapsulates a 2D vector with integer components. */
 public final class Vector2i {
 
+	// --------------------------------------
+	// Variables
+	// --------------------------------------
+	
 	/** the x-component of this vector **/
 	public int x;
 
 	/** the y-component of this vector **/
 	public int y;
 
+	// --------------------------------------
+	// Constructors
+	// --------------------------------------
+	
 	public Vector2i() {
 		x = y = 0;
 	}

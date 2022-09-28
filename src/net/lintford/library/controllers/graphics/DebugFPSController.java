@@ -11,7 +11,7 @@ public class DebugFPSController extends BaseController {
 	// Constants
 	// --------------------------------------
 
-	public static final String CONTROLLER_NAME = "DebugFPSController";
+	public static final String CONTROLLER_NAME = "Debug FPS Controller";
 
 	// --------------------------------------
 	// Variables
@@ -34,17 +34,16 @@ public class DebugFPSController extends BaseController {
 		return mEnableFPSDisplay;
 	}
 
-	public void enableFPSDisplay(boolean pNewValue) {
-		mEnableFPSDisplay = pNewValue;
+	public void enableFPSDisplay(boolean isEnabled) {
+		mEnableFPSDisplay = isEnabled;
 	}
 
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
-	public DebugFPSController(final ControllerManager pControllerManager, final int pEntityGroupID) {
-		super(pControllerManager, CONTROLLER_NAME, pEntityGroupID);
-
+	public DebugFPSController(final ControllerManager controllerManager, final int entityGroupUid) {
+		super(controllerManager, CONTROLLER_NAME, entityGroupUid);
 	}
 
 	// --------------------------------------
@@ -56,19 +55,17 @@ public class DebugFPSController extends BaseController {
 
 	}
 
-	public void update(CoreTime pGameTime) {
+	public void update(CoreTime coreTime) {
 		if (!mEnableFPSDisplay)
 			return;
 
-		if (pGameTime.totalTimeSeconds() - mLastFPSTimer > 1000) {
+		if (coreTime.totalTimeSeconds() - mLastFPSTimer > 1000) {
 			mLastFPSTimer += 1000;
 			mFPS = mFPSCounter;
 
 			mFPSCounter = 0;
-
 		}
 
 		mFPSCounter++;
-
 	}
 }

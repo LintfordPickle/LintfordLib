@@ -18,13 +18,13 @@ public class CameraController extends BaseController {
 	// Variables
 	// ---------------------------------------------
 
-	/** The associated {@link Camera} object this controller should control. */
 	private ICamera mCamera;
 
 	// ---------------------------------------------
 	// Properties
 	// ---------------------------------------------
 
+	/** The associated {@link ICamera} object this controller controls. */
 	public ICamera camera() {
 		return mCamera;
 	}
@@ -33,12 +33,10 @@ public class CameraController extends BaseController {
 	// Constructor
 	// ---------------------------------------------
 
-	/** Ctor. */
-	public CameraController(ControllerManager pControllerManager, ICamera pCamera, int pControllerBaseGroup) {
-		super(pControllerManager, CONTROLLER_NAME, pControllerBaseGroup);
+	public CameraController(ControllerManager controllerManager, ICamera camera, int controllerBaseGroup) {
+		super(controllerManager, CONTROLLER_NAME, controllerBaseGroup);
 
-		mCamera = pCamera;
-
+		mCamera = camera;
 	}
 
 	// ---------------------------------------------
@@ -48,30 +46,26 @@ public class CameraController extends BaseController {
 	@Override
 	public void unload() {
 		mCamera = null;
-
 	}
 
 	@Override
-	public boolean handleInput(LintfordCore pCore) {
+	public boolean handleInput(LintfordCore core) {
 		if (this.mCamera == null)
 			return false;
 
-		mCamera.handleInput(pCore);
+		mCamera.handleInput(core);
 
-		return super.handleInput(pCore);
-
+		return super.handleInput(core);
 	}
 
 	/**
 	 * Controls the zoom factor of the associated {@link Camera} object, if present and applicable.
 	 */
 	@Override
-	public void update(LintfordCore pCore) {
+	public void update(LintfordCore core) {
 		if (this.mCamera == null)
 			return;
 
-		// Apply the new zoom factor to the camera object
-		mCamera.update(pCore);
-
+		mCamera.update(core);
 	}
 }

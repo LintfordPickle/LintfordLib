@@ -49,38 +49,36 @@ public class CameraChaseController extends BaseController {
 		return mIsTrackingPlayer;
 	}
 
-	public void trackPlayer(boolean pNewValue) {
-		mIsTrackingPlayer = pNewValue;
+	public void trackPlayer(boolean enableTrackPlayer) {
+		mIsTrackingPlayer = enableTrackPlayer;
 	}
 
 	public boolean allowManualControl() {
 		return mAllowManualControl;
 	}
 
-	public void allowManualControl(boolean pNewValue) {
-		mAllowManualControl = pNewValue;
+	public void allowManualControl(boolean allowManualControl) {
+		mAllowManualControl = allowManualControl;
 	}
 
 	// ---------------------------------------------
 	// Constructor
 	// ---------------------------------------------
 
-	public CameraChaseController(ControllerManager pControllerManager, ICamera pCamera, WorldEntity pTrackEntity, int pControllerGroup) {
-		super(pControllerManager, CONTROLLER_NAME, pControllerGroup);
+	public CameraChaseController(ControllerManager controllerManager, ICamera camera, WorldEntity trackEntity, int controllerGroup) {
+		super(controllerManager, CONTROLLER_NAME, controllerGroup);
 
 		mVelocity = new Vector2f();
 		mDesiredPosition = new Vector2f();
 		mPosition = new Vector2f();
 		mLookAhead = new Vector2f();
 
-		mPosition.x = pTrackEntity.worldPositionX;
-		mPosition.y = pTrackEntity.worldPositionY;
+		mPosition.x = trackEntity.worldPositionX();
+		mPosition.y = trackEntity.worldPositionY();
 
-		//
-		mGameCamera = pCamera;
-		mTrackedEntity = pTrackEntity;
+		mGameCamera = camera;
+		mTrackedEntity = trackEntity;
 		mIsTrackingPlayer = true;
-
 	}
 
 	// ---------------------------------------------
@@ -93,7 +91,7 @@ public class CameraChaseController extends BaseController {
 	}
 
 	@Override
-	public boolean handleInput(LintfordCore pCore) {
+	public boolean handleInput(LintfordCore core) {
 		if (mGameCamera == null)
 			return false;
 
@@ -101,38 +99,32 @@ public class CameraChaseController extends BaseController {
 			final float speed = CAMERA_MAN_MOVE_SPEED;
 
 			// Just listener for clicks - couldn't be easier !!?!
-			if (pCore.input().keyboard().isKeyDown(GLFW.GLFW_KEY_A)) {
+			if (core.input().keyboard().isKeyDown(GLFW.GLFW_KEY_A)) {
 				mVelocity.x -= speed;
 				mIsTrackingPlayer = false;
-
 			}
 
-			if (pCore.input().keyboard().isKeyDown(GLFW.GLFW_KEY_D)) {
+			if (core.input().keyboard().isKeyDown(GLFW.GLFW_KEY_D)) {
 				mVelocity.x += speed;
 				mIsTrackingPlayer = false;
-
 			}
 
-			if (pCore.input().keyboard().isKeyDown(GLFW.GLFW_KEY_S)) {
+			if (core.input().keyboard().isKeyDown(GLFW.GLFW_KEY_S)) {
 				mVelocity.y += speed;
 				mIsTrackingPlayer = false;
-
 			}
 
-			if (pCore.input().keyboard().isKeyDown(GLFW.GLFW_KEY_W)) {
+			if (core.input().keyboard().isKeyDown(GLFW.GLFW_KEY_W)) {
 				mVelocity.y -= speed;
 				mIsTrackingPlayer = false;
-
 			}
-
 		}
 
 		return false;
-
 	}
 
 	@Override
-	public void update(LintfordCore pCore) {
+	public void update(LintfordCore core) {
 		if (mGameCamera == null)
 			return;
 
@@ -141,16 +133,16 @@ public class CameraChaseController extends BaseController {
 		mMass = .5f;
 
 		if (mTrackedEntity != null) {
-			updateSpring(pCore);
+			updateSpring(core);
 
 			mGameCamera.setPosition(-mPosition.x, -mPosition.y);
 		}
 	}
 
-	private void updateSpring(LintfordCore pCore) {
-		updatewWorldPositions(pCore);
+	private void updateSpring(LintfordCore core) {
+		updatewWorldPositions(core);
 
-		final float elapsed = (float) pCore.appTime().elapsedTimeSeconds();
+		final float elapsed = (float) core.appTime().elapsedTimeSeconds();
 
 		final float stretchX = mPosition.x - mDesiredPosition.x;
 		final float stretchY = mPosition.y - mDesiredPosition.y;
@@ -169,20 +161,19 @@ public class CameraChaseController extends BaseController {
 		mPosition.y += mVelocity.y * elapsed;
 	}
 
-	private void updatewWorldPositions(LintfordCore pCore) {
-		mLookAhead.x = mTrackedEntity.worldPositionX + mVelocity.x;
-		mLookAhead.y = mTrackedEntity.worldPositionY + mVelocity.y;
+	private void updatewWorldPositions(LintfordCore core) {
+		mLookAhead.x = mTrackedEntity.worldPositionX() + mVelocity.x;
+		mLookAhead.y = mTrackedEntity.worldPositionY() + mVelocity.y;
 
-		mDesiredPosition.x = mTrackedEntity.worldPositionX;
-		mDesiredPosition.y = mTrackedEntity.worldPositionY;
+		mDesiredPosition.x = mTrackedEntity.worldPositionX();
+		mDesiredPosition.y = mTrackedEntity.worldPositionY();
 	}
 
 	// ---------------------------------------------
 	// Methods
 	// ---------------------------------------------
 
-	public void zoomIn(float pZoomFactor) {
-		mGameCamera.setZoomFactor(pZoomFactor);
-
+	public void zoomIn(float zoomFactor) {
+		mGameCamera.setZoomFactor(zoomFactor);
 	}
 }

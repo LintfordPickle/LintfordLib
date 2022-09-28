@@ -15,7 +15,7 @@ public class LintfordMain extends LintfordCore {
 	// Entry-Point
 	// ---------------------------------------------
 
-	public static void main(String[] pArgs) {
+	public static void main(String[] args) {
 		GameInfo lGameInfo = new GameInfo() {
 			@Override
 			public String applicationName() {
@@ -44,28 +44,24 @@ public class LintfordMain extends LintfordCore {
 
 		};
 
-		// ExcavationClient def constructor will automatically create a window and load the previous
-		// settings (if they exist).
-		LintfordMain lClient = new LintfordMain(lGameInfo, pArgs);
+		var lClient = new LintfordMain(lGameInfo, args);
 		lClient.createWindow();
-
 	}
 
 	// ---------------------------------------------
 	// Constructor
 	// ---------------------------------------------
 
-	public LintfordMain(GameInfo pGameInfo, String[] pArgs) {
-		super(pGameInfo, pArgs);
-
+	public LintfordMain(GameInfo gameInfo, String[] args) {
+		super(gameInfo, args);
 	}
 
 	// ---------------------------------------------
 	// Methods
 	// ---------------------------------------------
 
-	protected void showStartUpLogo(long pWindowHandle) {
-		super.showStartUpLogo(pWindowHandle);
+	protected void showStartUpLogo(long windowHandle) {
+		super.showStartUpLogo(windowHandle);
 
 		final var lTexture = mResourceManager.textureManager().loadTexture("LOGO", "/res/textures/core/textureLogo.png", LintfordCore.CORE_ENTITY_GROUP_ID);
 
@@ -87,6 +83,6 @@ public class LintfordMain extends LintfordCore {
 		lTextureBatch.draw(lTexture, 0, 0, lSrcWidth, lSrcHeight, -lDstWidth * .5f, -lDstHeight * .5f, lDstWidth, lDstHeight, -0.1f, ColorConstants.WHITE);
 		lTextureBatch.end();
 
-		glfwSwapBuffers(pWindowHandle);
+		glfwSwapBuffers(windowHandle);
 	};
 }

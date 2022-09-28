@@ -11,9 +11,8 @@ public class TransitionFadeIn extends BaseTransition {
 	// Constructor
 	// --------------------------------------
 
-	public TransitionFadeIn(TimeSpan pTransitionTime) {
-		super(pTransitionTime);
-
+	public TransitionFadeIn(TimeSpan transitionTime) {
+		super(transitionTime);
 	}
 
 	// --------------------------------------
@@ -21,10 +20,10 @@ public class TransitionFadeIn extends BaseTransition {
 	// --------------------------------------
 
 	@Override
-	public void updateTransition(Screen pScreen, CoreTime pGameTime) {
-		super.updateTransition(pScreen, pGameTime);
+	public void updateTransition(Screen screen, CoreTime gameTime) {
+		super.updateTransition(screen, gameTime);
 
 		float alpha = MathHelper.clamp(mProgressNormalized, 0.f, 1.f);
-		pScreen.screenColor.a = Math.min(1.f, Math.max(0.f, alpha));
+		screen.screenColor.a = Math.min(1.f, Math.max(0.f, alpha));
 	}
 }

@@ -36,7 +36,6 @@ public class Spline {
 
 	public List<SplinePoint> points() {
 		return mPoints;
-
 	}
 
 	public boolean isLooped() {
@@ -56,24 +55,22 @@ public class Spline {
 		this(null);
 	}
 
-	public Spline(SplinePoint[] pPoints) {
-		if (pPoints == null) {
+	public Spline(SplinePoint[] points) {
+		if (points == null) {
 			mPoints = new ArrayList<>();
 		} else {
-			mPoints = Arrays.asList(pPoints);
-
+			mPoints = Arrays.asList(points);
 		}
 
 		calculateSegmentLength();
-
 	}
 
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
 
-	public SplinePoint getControlPoint(int pIndex) {
-		return mPoints.get(pIndex);
+	public SplinePoint getControlPoint(int index) {
+		return mPoints.get(index);
 	}
 
 	public SplinePoint getPointOnSpline(float t) {
@@ -145,49 +142,45 @@ public class Spline {
 		return mReturnSplineGradient;
 	}
 
-	public float getNormalizedOffset(float pDistance) {
+	public float getNormalizedOffset(float distance) {
 		int i = 0;
-		while (pDistance > mPoints.get(i).length) {
-			pDistance -= mPoints.get(i).length;
+		while (distance > mPoints.get(i).length) {
+			distance -= mPoints.get(i).length;
 			i++;
 		}
 
-		return (float) i + (pDistance / mPoints.get(i).length);
-
+		return (float) i + (distance / mPoints.get(i).length);
 	}
 
 	public void calculateSegmentLength() {
 		mTotalSplineLength = 0;
-		
+
 		final int lIdOffset = mIsLooped ? 0 : 3;
 		for (int i = 0; i < mPoints.size() - lIdOffset - 1; i++) {
 			final float lSegmentLength = calculateSegmentLength(i);
 			mPoints.get(i).accLength = mTotalSplineLength;
 			mTotalSplineLength += lSegmentLength;
 		}
-
 	}
 
-	public float calculateSegmentLength(int pNode) {
+	public float calculateSegmentLength(int node) {
 		float lLength = 0f;
 		float lStepSize = 0.005f;
 
 		final SplinePoint lOldPoint = new SplinePoint();
 		final SplinePoint lNewPoint = new SplinePoint();
-		lOldPoint.set(getPointOnSpline((float) pNode));
+		lOldPoint.set(getPointOnSpline((float) node));
 
 		for (float t = 0; t < 1f; t += lStepSize) {
-			lNewPoint.set(getPointOnSpline((float) pNode + t));
+			lNewPoint.set(getPointOnSpline((float) node + t));
 
 			lLength += Math.sqrt((lNewPoint.x - lOldPoint.x) * (lNewPoint.x - lOldPoint.x) + (lNewPoint.y - lOldPoint.y) * (lNewPoint.y - lOldPoint.y));
 
 			lOldPoint.set(lNewPoint);
-
 		}
-		mPoints.get(pNode).length = lLength;
+		mPoints.get(node).length = lLength;
 
 		return lLength;
-
 	}
 
 	public static float catmullRom(float value1, float value2, float value3, float value4, float amount) {
@@ -196,23 +189,21 @@ public class Spline {
 		return (0.5f * ((((2f * value2) + ((-value1 + value3) * amount)) + (((((2f * value1) - (5f * value2)) + (4f * value3)) - value4) * num)) + ((((-value1 + (3f * value2)) - (3f * value3)) + value4) * num2)));
 	}
 
-	public float getNormalizedPositionAlongSpline(int pFromNode, float pPosX, float pPosY) {
+	public float getNormalizedPositionAlongSpline(int fromNode, float positionX, float positionY) {
+		final var lControlPoint0 = getControlPoint(fromNode);
 
-		final var lControlPoint0 = getControlPoint(pFromNode);
-
-		final int lNextNodeId = pFromNode >= numberSplineControlPoints() - 1 ? 0 : pFromNode + 1;
+		final int lNextNodeId = fromNode >= numberSplineControlPoints() - 1 ? 0 : fromNode + 1;
 		final var lControlPoint1 = getControlPoint(lNextNodeId);
 
 		float lVectorBetweenX = lControlPoint1.x - lControlPoint0.x;
 		float lVectorBetweenY = lControlPoint1.y - lControlPoint0.y;
 
 		Vec2 v1 = new Vec2(lVectorBetweenX, lVectorBetweenY);
-		Vec2 v2 = new Vec2(pPosX - lControlPoint0.x, pPosY - lControlPoint0.y);
+		Vec2 v2 = new Vec2(positionX - lControlPoint0.x, positionY - lControlPoint0.y);
 
 		float veLength = v1.normalize();
 		float lResult = Vector2f.dot(v1.x, v1.y, v2.x, v2.y) / veLength;
 
 		return MathHelper.clamp(lResult, 0.f, 1.f);
 	}
-
 }

@@ -22,67 +22,74 @@ public class SpriteGraphRenderer extends SpriteBatch {
 	// Variables
 	// --------------------------------------
 
-	public int entityGroupUid;
+	private int mEntityGroupUid;
+
+	// --------------------------------------
+	// Properties
+	// --------------------------------------
+
+	public int entityGroupUId() {
+		return mEntityGroupUid;
+	}
 
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
-	public SpriteGraphRenderer() {
-
+	public SpriteGraphRenderer(int entityGroupUid) {
+		mEntityGroupUid = entityGroupUid;
 	}
 
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
 
-	public void drawSpriteGraphList(LintfordCore pCore, SpriteGraphInstance pSpriteGraphInstance) {
-		if (pSpriteGraphInstance == null || !pSpriteGraphInstance.isAssigned())
+	public void drawSpriteGraphList(LintfordCore core, SpriteGraphInstance spriteGraphInstance) {
+		if (spriteGraphInstance == null || !spriteGraphInstance.isAssigned())
 			return;
 
-		// Create a graph of nodes in the correct draw order
-		final var lReorderedList = pSpriteGraphInstance.getZOrderedFlatList(SpriteGraphInstance.SpriteGraphNodeInstanceZComparator);
+		final var lReorderedList = spriteGraphInstance.getZOrderedFlatList(SpriteGraphInstance.SpriteGraphNodeInstanceZComparator);
 
 		final int lNumNodes = lReorderedList.size();
 		for (int i = 0; i < lNumNodes; i++) {
-			renderSpriteGraphNodeInstance(pCore, pSpriteGraphInstance, lReorderedList.get(i));
+			renderSpriteGraphNodeInstance(core, spriteGraphInstance, lReorderedList.get(i));
 		}
 
 		if (RENDER_DEBUG) {
-			renderSpriteTreeNodeDebug(pCore, pSpriteGraphInstance, pSpriteGraphInstance.rootNode);
-			Debug.debugManager().drawers().drawPointImmediate(pCore.gameCamera(), pSpriteGraphInstance.positionX, pSpriteGraphInstance.positionY, -0.01f, 1f, 1f, 1f, 1f);
+			renderSpriteTreeNodeDebug(core, spriteGraphInstance, spriteGraphInstance.rootNode());
+			Debug.debugManager().drawers().drawPointImmediate(core.gameCamera(), spriteGraphInstance.positionX(), spriteGraphInstance.positionY(), -0.01f, 1f, 1f, 1f, 1f);
 		}
 	}
 
-	private void renderSpriteGraphNodeInstance(LintfordCore pCore, SpriteGraphInstance pSpriteGraph, SpriteGraphNodeInstance pSpriteGraphNode) {
-		if (pSpriteGraphNode.spritegraphAttachmentInstance() != null) {
-			final var lAttachment = pSpriteGraphNode.spritegraphAttachmentInstance();
+	private void renderSpriteGraphNodeInstance(LintfordCore core, SpriteGraphInstance spriteGraph, SpriteGraphNodeInstance spriteGraphNode) {
+		if (spriteGraphNode.spritegraphAttachmentInstance() != null) {
+			final var lAttachment = spriteGraphNode.spritegraphAttachmentInstance();
 			var lSpritesheetDefinition = lAttachment.spritesheetDefinition();
 
-			if (pSpriteGraphNode.mSpriteInstance != null) {
-				var lAttachmentColor = ColorConstants.getColor(lAttachment.attachmentColorTint);
-				draw(lSpritesheetDefinition, pSpriteGraphNode.mSpriteInstance, pSpriteGraphNode.mSpriteInstance, -0.1f, lAttachmentColor);
+			if (spriteGraphNode.spriteInstance() != null) {
+				var lAttachmentColor = ColorConstants.getColor(lAttachment.attachmentColorTint());
+				draw(lSpritesheetDefinition, spriteGraphNode.spriteInstance(), spriteGraphNode.spriteInstance(), -0.1f, lAttachmentColor);
 			}
 
 			if (RENDER_DEBUG) {
 				end();
-				begin(pCore.gameCamera());
-				renderSpriteTreeNodeDebug(pCore, pSpriteGraph, pSpriteGraphNode);
+				begin(core.gameCamera());
+				renderSpriteTreeNodeDebug(core, spriteGraph, spriteGraphNode);
 			}
 		}
 	}
 
-	private void renderSpriteTreeNodeDebug(LintfordCore pCore, SpriteGraphInstance pSpriteGraph, SpriteGraphNodeInstance pSpriteGraphNode) {
-		final var lSpriteInstance = pSpriteGraphNode.spriteInstance();
+	private void renderSpriteTreeNodeDebug(LintfordCore core, SpriteGraphInstance spriteGraph, SpriteGraphNodeInstance spriteGraphNode) {
+		final var lSpriteInstance = spriteGraphNode.spriteInstance();
 
 		final float lPointSize = 1f;
-		GL11.glPointSize(lPointSize * pCore.gameCamera().getZoomFactor());
+		GL11.glPointSize(lPointSize * core.gameCamera().getZoomFactor());
 
 		{ // center - green
-			final var lPositionX = pSpriteGraphNode.positionX();
-			final var lPositionY = pSpriteGraphNode.positionY();
+			final var lPositionX = spriteGraphNode.positionX();
+			final var lPositionY = spriteGraphNode.positionY();
 
-			Debug.debugManager().drawers().drawPointImmediate(pCore.gameCamera(), lPositionX, lPositionY, -0.01f, 0f, 1f, 0f, 1f);
+			Debug.debugManager().drawers().drawPointImmediate(core.gameCamera(), lPositionX, lPositionY, -0.01f, 0f, 1f, 0f, 1f);
 		}
 
 		{ // anchors - yellow
@@ -92,13 +99,13 @@ public class SpriteGraphRenderer extends SpriteBatch {
 				for (int i = 0; i < lAnchorCount; i++) {
 					final var lAnchorPoint = lSpriteFrame.getAnchorByIndex(i);
 
-					final var lFlipHorizontal = pSpriteGraph.mFlipHorizontal;
-					final var lFlipVertical = pSpriteGraph.mFlipVertical;
+					final var lFlipHorizontal = spriteGraph.flipHorizontal();
+					final var lFlipVertical = spriteGraph.flipVerticle();
 
-					final float lAnchorWorldX = pSpriteGraphNode.positionX() + (lFlipHorizontal ? -lAnchorPoint.x : lAnchorPoint.x) * lSpriteFrame.scaleX();
-					final float lAnchorWorldY = pSpriteGraphNode.positionY() + (lFlipVertical ? -lAnchorPoint.y : lAnchorPoint.y) * lSpriteFrame.scaleY();
+					final var lAnchorWorldX = spriteGraphNode.positionX() + (lFlipHorizontal ? -lAnchorPoint.localX() : lAnchorPoint.localX()) * lSpriteFrame.scaleX();
+					final var lAnchorWorldY = spriteGraphNode.positionY() + (lFlipVertical ? -lAnchorPoint.localY() : lAnchorPoint.localY()) * lSpriteFrame.scaleY();
 
-					Debug.debugManager().drawers().drawPointImmediate(pCore.gameCamera(), lAnchorWorldX, lAnchorWorldY, -0.01f, 1f, 1f, 0f, 1f);
+					Debug.debugManager().drawers().drawPointImmediate(core.gameCamera(), lAnchorWorldX, lAnchorWorldY, -0.01f, 1f, 1f, 0f, 1f);
 				}
 			}
 		}

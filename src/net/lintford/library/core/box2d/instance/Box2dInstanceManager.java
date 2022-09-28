@@ -47,7 +47,5 @@ public class Box2dInstanceManager {
 		mBox2dJointInstanceRepository = new Box2dRevJointInstanceRepository();
 		mBox2dFixtureInstanceRepository = new Box2dFixtureInstanceRepository();
 		mBox2dWeldInstanceRepository = new Box2dWeldJointInstanceRepository();
-
 	}
-
 }

@@ -8,12 +8,56 @@ public class Message {
 	// Variables
 	// --------------------------------------
 
-	public boolean isAssigned;
-	public String timestamp;
-	public String tag;
-	public String message;
-	public int type;
-	public float lifetime;
+	protected boolean mIsAssigned;
+	protected String mTimestamp;
+	protected String mTag;
+	protected String mMessage;
+	protected int mType;
+	protected float mLifetime;
+
+	// --------------------------------------
+	// Properties
+	// --------------------------------------
+
+	public boolean isAssigned() {
+		return mIsAssigned;
+	}
+
+	public String timestamp() {
+		return mTimestamp;
+	}
+
+	public String tag() {
+		return mTag;
+	}
+
+	public void tag(String newTag) {
+		mTag = newTag;
+	}
+
+	public String message() {
+		return mMessage;
+	}
+
+	public void message(String newMessage) {
+		mMessage = newMessage;
+	}
+
+	public int type() {
+		return mType;
+	}
+
+	public float lifetime() {
+		return mLifetime;
+	}
+
+	public void lifetime(float lifeTime) {
+		mLifetime = lifeTime;
+	}
+
+	public void reduceLifetime(float amountToReduceBy) {
+		mLifetime -= amountToReduceBy;
+	}
 
 	// --------------------------------------
 	// Constructor
@@ -21,7 +65,6 @@ public class Message {
 
 	public Message() {
 		reset();
-
 	}
 
 	// --------------------------------------
@@ -29,22 +72,21 @@ public class Message {
 	// --------------------------------------
 
 	public void reset() {
-		isAssigned = false;
-		tag = "";
-		timestamp = "";
-		message = "";
+		mIsAssigned = false;
+		mTag = "";
+		mTimestamp = "";
+		mMessage = "";
 
-		type = DebugLogLevel.off.logLevel;
-
+		mType = DebugLogLevel.off.logLevel;
 	}
 
-	public void setMessage(String pTag, String pMessage, String pTimestamp, int pLevelType) {
-		isAssigned = true;
+	public void setMessage(String tag, String message, String timestamp, int messageType) {
+		mIsAssigned = true;
 
-		tag = pTag;
-		timestamp = pTimestamp;
-		message = pMessage;
-		type = pLevelType;
-		lifetime = 0;
+		mTag = tag;
+		mTimestamp = timestamp;
+		mMessage = message;
+		mType = messageType;
+		mLifetime = 0;
 	}
 }

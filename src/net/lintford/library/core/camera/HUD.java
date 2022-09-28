@@ -33,21 +33,13 @@ public class HUD implements ICamera, IResizeListener {
 	// --------------------------------------
 
 	private DisplayManager mDisplayConfig;
-
 	private Rectangle mBoundingRectangle;
-
-	/** The width of the window. */
-	/** The height of the window. */
 	private int mWindowWidth;
 	private int mWindowHeight;
-
-	// Scale factor will be applied to both x and y axis.
 	private final Vector2f position = new Vector2f();
 	private float mScaleFactor;
-
 	private Matrix4f mProjectionMatrix;
 	private Matrix4f mViewMatrix;
-
 	private Vector2f mMouseHUDSpace;
 	private float mRatioW;
 	private float mRatioH;
@@ -105,11 +97,11 @@ public class HUD implements ICamera, IResizeListener {
 	// Constructor(s)
 	// --------------------------------------
 
-	public HUD(DisplayManager pDisplayConfig) {
-		mDisplayConfig = pDisplayConfig;
+	public HUD(DisplayManager displayConfig) {
+		mDisplayConfig = displayConfig;
 
-		mWindowWidth = pDisplayConfig.windowWidth();
-		mWindowHeight = pDisplayConfig.windowHeight();
+		mWindowWidth = displayConfig.windowWidth();
+		mWindowHeight = displayConfig.windowHeight();
 
 		mBoundingRectangle = new Rectangle(-mWindowWidth / 2, -mWindowHeight / 2, mWindowWidth, mWindowHeight);
 
@@ -125,7 +117,7 @@ public class HUD implements ICamera, IResizeListener {
 	// --------------------------------------
 
 	@Override
-	public void handleInput(LintfordCore pCore) {
+	public void handleInput(LintfordCore core) {
 		float lWindowWidth = mWindowWidth;
 		float lWindowHeight = mWindowHeight;
 
@@ -141,26 +133,23 @@ public class HUD implements ICamera, IResizeListener {
 		}
 
 		// FIXME: Remove the mMouseHUDSpace away from this class - it doesn't belong here
-		mMouseHUDSpace.x = (float) (-lWindowWidth * 0.5f + (pCore.input().mouse().mouseWindowCoords().x - 1) * mRatioW);
-		mMouseHUDSpace.y = (float) (-lWindowHeight * 0.5f + (pCore.input().mouse().mouseWindowCoords().y - 1) * mRatioH);
-
+		mMouseHUDSpace.x = (float) (-lWindowWidth * 0.5f + (core.input().mouse().mouseWindowCoords().x - 1) * mRatioW);
+		mMouseHUDSpace.y = (float) (-lWindowHeight * 0.5f + (core.input().mouse().mouseWindowCoords().y - 1) * mRatioH);
 	}
 
 	@Override
-	public void update(LintfordCore pCore) {
+	public void update(LintfordCore core) {
 		if (mWindowWidth == 0 || mWindowHeight == 0)
 			return;
 
-		mWindowWidth = pCore.config().display().windowWidth();
-		mWindowHeight = pCore.config().display().windowHeight();
+		mWindowWidth = core.config().display().windowWidth();
+		mWindowHeight = core.config().display().windowHeight();
 
-		if ((mWindowWidth % 2) == 1) {
+		if ((mWindowWidth % 2) == 1)
 			mWindowWidth = mWindowWidth + 1;
-		}
 
-		if ((mWindowHeight % 2) == 1) {
+		if ((mWindowHeight % 2) == 1)
 			mWindowHeight = mWindowHeight + 1;
-		}
 
 		mViewMatrix.setIdentity(); // points at -Z
 		mViewMatrix.translate(position.x, position.y, 0);
@@ -174,17 +163,15 @@ public class HUD implements ICamera, IResizeListener {
 		mBoundingRectangle.height(mWindowHeight);
 
 		applyGameViewport();
-
 	}
 
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
 
-	private void createOrtho(final float pGameViewportWidth, final float pGameViewportheight) {
+	private void createOrtho(final float gameViewportWidth, final float gameViewportheight) {
 		mProjectionMatrix.setIdentity();
-		mProjectionMatrix.createOrtho(-pGameViewportWidth * 0.5f, pGameViewportWidth * 0.5f, pGameViewportheight * 0.5f, -pGameViewportheight * 0.5f, Z_NEAR, Z_FAR);
-
+		mProjectionMatrix.createOrtho(-gameViewportWidth * 0.5f, gameViewportWidth * 0.5f, gameViewportheight * 0.5f, -gameViewportheight * 0.5f, Z_NEAR, Z_FAR);
 	}
 
 	@Override
@@ -213,13 +200,13 @@ public class HUD implements ICamera, IResizeListener {
 	}
 
 	@Override
-	public float getPointCameraSpaceX(float pPointX) {
-		return (-mWindowWidth * 0.5f + (pPointX - 1));
+	public float getPointCameraSpaceX(float pointX) {
+		return (-mWindowWidth * 0.5f + (pointX - 1));
 	}
 
 	@Override
-	public float getPointCameraSpaceY(float pPointY) {
-		return (-mWindowHeight * 0.5f + (pPointY - 1));
+	public float getPointCameraSpaceY(float pointY) {
+		return (-mWindowHeight * 0.5f + (pointY - 1));
 	}
 
 	@Override
@@ -228,8 +215,8 @@ public class HUD implements ICamera, IResizeListener {
 	}
 
 	@Override
-	public void setPosition(float pX, float pY) {
-		position.set(pX, pY);
+	public void setPosition(float positionX, float positionY) {
+		position.set(positionX, positionY);
 	}
 
 	@Override
@@ -238,8 +225,8 @@ public class HUD implements ICamera, IResizeListener {
 	}
 
 	@Override
-	public void setZoomFactor(float pNewValue) {
-		mScaleFactor = pNewValue;
+	public void setZoomFactor(float zoomFactor) {
+		mScaleFactor = zoomFactor;
 	}
 
 	@Override
@@ -248,28 +235,25 @@ public class HUD implements ICamera, IResizeListener {
 	}
 
 	@Override
-	public void onResize(int pWidth, int pHeight) {
-		mWindowWidth = pWidth;
+	public void onResize(int width, int height) {
+		mWindowWidth = width;
 
 		// Force the window height to be an even number (because it messes up some pixel
 		// rendering)
-		if ((pHeight % 2) == 1) {
-			pHeight = pHeight + 1;
-
+		if ((height % 2) == 1) {
+			height = height + 1;
 		}
 
-		mWindowHeight = pHeight;
-
+		mWindowHeight = height;
 	}
 
 	@Override
 	public CameraState getCameraState() {
 		return null;
-
 	}
 
 	@Override
-	public void setCameraState(CameraState pCameraState) {
+	public void setCameraState(CameraState cameraState) {
 
 	}
 
@@ -279,13 +263,12 @@ public class HUD implements ICamera, IResizeListener {
 	}
 
 	@Override
-	public float getWorldPositionXInCameraSpace(float pPointX) {
-		return pPointX;
+	public float getWorldPositionXInCameraSpace(float pointX) {
+		return pointX;
 	}
 
 	@Override
-	public float getWorldPositionYInCameraSpace(float pPointY) {
-		return pPointY;
+	public float getWorldPositionYInCameraSpace(float pointY) {
+		return pointY;
 	}
-
 }

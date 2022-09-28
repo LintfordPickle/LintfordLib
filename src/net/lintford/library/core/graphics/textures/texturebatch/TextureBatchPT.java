@@ -434,35 +434,30 @@ public class TextureBatchPT {
 
 		if (pTexture == null && TextureManager.USE_DEBUG_MISSING_TEXTURES) {
 			pTexture = mResourceManager.textureManager().textureNotFound();
-
 		}
 
 		if (mUseCheckerPattern) {
 			pTexture = mResourceManager.textureManager().checkerIndexedTexture();
-
 		}
 
 		if (pTexture != null) {
 			if (mCurrentTexID == -1) {
 				mCurrentTexID = pTexture.getTextureID();
-
 			} else if (mCurrentTexID != pTexture.getTextureID()) {
 				flush();
 				mCurrentTexID = pTexture.getTextureID();
-
 			}
-
 		}
 
 		if (mCurNumSprites >= MAX_SPRITES) {
 			flush();
 		}
 
-		final int POINTS = 12;
+		final int lNumPointsInCircle = 12;
 
 		float angle = 0;
-		float intervalSize = (float) (Math.PI * 2 / POINTS);
-		for (int i = 0; i < POINTS; i++) {
+		float intervalSize = (float) (Math.PI * 2 / lNumPointsInCircle);
+		for (int i = 0; i < lNumPointsInCircle; i++) {
 			// Vertex 0
 			float x0 = dstCircle.centerX();
 			float y0 = dstCircle.centerY();
@@ -470,16 +465,16 @@ public class TextureBatchPT {
 			float v0 = 0.5f;
 
 			// Vertex 1
-			float x1 = dstCircle.centerX() + (float) Math.cos(angle + dstCircle.rotation) * dstCircle.radius;
-			float y1 = dstCircle.centerY() + (float) Math.sin(angle + dstCircle.rotation) * dstCircle.radius;
+			float x1 = dstCircle.centerX() + (float) Math.cos(angle + dstCircle.rotation()) * dstCircle.radius();
+			float y1 = dstCircle.centerY() + (float) Math.sin(angle + dstCircle.rotation()) * dstCircle.radius();
 			float u1 = 0.5f + ((float) Math.cos(angle) * 0.5f);
 			float v1 = 0.5f + ((float) Math.sin(angle) * 0.5f);
 
 			angle += intervalSize;
 
 			// Vertex 2
-			float x2 = dstCircle.centerX() + (float) Math.cos(angle + dstCircle.rotation) * dstCircle.radius;
-			float y2 = dstCircle.centerY() + (float) Math.sin(angle + dstCircle.rotation) * dstCircle.radius;
+			float x2 = dstCircle.centerX() + (float) Math.cos(angle + dstCircle.rotation()) * dstCircle.radius();
+			float y2 = dstCircle.centerY() + (float) Math.sin(angle + dstCircle.rotation()) * dstCircle.radius();
 			float u2 = 0.5f + ((float) Math.cos(angle) * 0.5f);
 			float v2 = 0.5f + ((float) Math.sin(angle) * 0.5f);
 
@@ -489,7 +484,6 @@ public class TextureBatchPT {
 		}
 
 		mCurNumSprites++;
-
 	}
 
 	protected void addVertToBuffer(float x, float y, float z, float w, float u, float v) {

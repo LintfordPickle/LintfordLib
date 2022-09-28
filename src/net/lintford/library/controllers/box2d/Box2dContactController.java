@@ -12,7 +12,7 @@ public abstract class Box2dContactController extends BaseController implements C
 	// Constants
 	// --------------------------------------
 
-	public static final String CONTROLLER_NAME = "Box2dContactController";
+	public static final String CONTROLLER_NAME = "Box2d Contact Controller";
 
 	// --------------------------------------
 	// Variables
@@ -32,12 +32,11 @@ public abstract class Box2dContactController extends BaseController implements C
 	// Constructors
 	// --------------------------------------
 
-	public Box2dContactController(ControllerManager pControllerManager, String pControllerName, World pWorld, int pEntityID) {
-		super(pControllerManager, pControllerName, pEntityID);
+	public Box2dContactController(ControllerManager controllerManager, String controllerName, World box2dWorld, int entityUid) {
+		super(controllerManager, controllerName, entityUid);
 
-		mWorld = pWorld;
+		mWorld = box2dWorld;
 		mWorld.setContactListener(this);
-
 	}
 
 	// --------------------------------------

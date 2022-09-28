@@ -8,6 +8,7 @@ import net.lintford.library.core.particles.particlesystems.initializers.Particle
 import net.lintford.library.core.particles.particlesystems.modifiers.ParticleModifierBase;
 
 public class ParticleSystemDefinition extends BaseDefinition {
+
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
@@ -56,11 +57,5 @@ public class ParticleSystemDefinition extends BaseDefinition {
 	public ParticleSystemDefinition() {
 		initializers = new ArrayList<>();
 		modifiers = new ArrayList<>();
-
 	}
-
-	// --------------------------------------
-	// Core-Methods
-	// --------------------------------------
-
 }

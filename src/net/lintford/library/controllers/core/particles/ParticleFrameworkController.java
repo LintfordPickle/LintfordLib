@@ -44,12 +44,11 @@ public class ParticleFrameworkController extends BaseController {
 	// Constructor
 	// --------------------------------------
 
-	public ParticleFrameworkController(final ControllerManager pControllerManager, final ParticleFrameworkData pParticleFrameworkData, final int pEntityGroupID) {
-		super(pControllerManager, CONTROLLER_NAME, pEntityGroupID);
+	public ParticleFrameworkController(final ControllerManager controllerManager, final ParticleFrameworkData particleFrameworkData, final int entityGroupUid) {
+		super(controllerManager, CONTROLLER_NAME, entityGroupUid);
 
-		mParticleFrameworkData = pParticleFrameworkData;
+		mParticleFrameworkData = particleFrameworkData;
 		mIsAssigned = false;
-
 	}
 
 	// --------------------------------------
@@ -57,11 +56,11 @@ public class ParticleFrameworkController extends BaseController {
 	// --------------------------------------
 
 	@Override
-	public void initialize(LintfordCore pCore) {
+	public void initialize(LintfordCore core) {
 
 	}
 
-	public void update(LintfordCore pCore) {
+	public void update(LintfordCore core) {
 		if (!isInitialized())
 			return;
 
@@ -77,16 +76,12 @@ public class ParticleFrameworkController extends BaseController {
 			if (!lParticleEmitterInstance.isEnabled())
 				continue;
 
-			// Apply the position of the root emitter directly, so that each emitter instance can apply their own positional offsets
-			// based on the emitter definitions.
 			if (lParticleEmitterInstance.parentEntity() != null) {
-				lParticleEmitterInstance.worldPositionX = lParticleEmitterInstance.parentEntity().worldPositionX;
-				lParticleEmitterInstance.worldPositionY = lParticleEmitterInstance.parentEntity().worldPositionY;
-
+				lParticleEmitterInstance.worldPositionX(lParticleEmitterInstance.parentEntity().worldPositionX());
+				lParticleEmitterInstance.worldPositionY(lParticleEmitterInstance.parentEntity().worldPositionY());
 			}
 
-			lParticleEmitterInstance.update(pCore);
-
+			lParticleEmitterInstance.update(core);
 		}
 
 		final int lNumParticleSystems = lSystemInstanceList.size();
@@ -95,10 +90,8 @@ public class ParticleFrameworkController extends BaseController {
 			if (!lParticleSystemInstance.isAssigned())
 				continue;
 
-			lParticleSystemInstance.update(pCore);
-
+			lParticleSystemInstance.update(core);
 		}
-
 	}
 
 	// --------------------------------------
@@ -109,5 +102,4 @@ public class ParticleFrameworkController extends BaseController {
 	public void unload() {
 
 	}
-
 }

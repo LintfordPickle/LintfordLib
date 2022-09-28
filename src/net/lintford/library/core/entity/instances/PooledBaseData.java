@@ -11,10 +11,6 @@ public abstract class PooledBaseData extends BaseInstanceData {
 	private static final long serialVersionUID = -1444873148544023277L;
 
 	// --------------------------------------
-	// Variables
-	// --------------------------------------
-
-	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
@@ -29,5 +25,4 @@ public abstract class PooledBaseData extends BaseInstanceData {
 	public void reset() {
 
 	}
-
 }

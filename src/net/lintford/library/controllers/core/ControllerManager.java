@@ -28,8 +28,8 @@ public class ControllerManager {
 	}
 
 	/** Returns a list of controllers currently registered with the {@link ControllerManager}. */
-	public List<BaseController> controllers(int pControllerGroupID) {
-		return mControllers.get(pControllerGroupID);
+	public List<BaseController> controllers(int controllerGroupId) {
+		return mControllers.get(controllerGroupId);
 	}
 
 	public LintfordCore core() {
@@ -44,49 +44,44 @@ public class ControllerManager {
 	// Constructor
 	// --------------------------------------
 
-	public ControllerManager(LintfordCore pCore) {
-		mCore = pCore;
+	public ControllerManager(LintfordCore core) {
+		mCore = core;
 		mControllerIdCounter = 0;
 		mControllers = new HashMap<>();
-
 	}
 
 	// --------------------------------------
 	// Core-Methods
 	// --------------------------------------
 
-	public boolean handleInput(LintfordCore pCore, int pControllerGroup) {
-		List<BaseController> lControllerList = controllers(pControllerGroup);
+	public boolean handleInput(LintfordCore core, int controllerGroup) {
+		final var lControllerList = controllers(controllerGroup);
 		if (lControllerList == null)
 			return false;
 
-		final int lCount = lControllerList.size();
+		final var lCount = lControllerList.size();
 		for (int i = 0; i < lCount; i++) {
 			if (!lControllerList.get(i).isActive())
 				continue;
 
-			if (lControllerList.get(i).handleInput(pCore)) {
+			if (lControllerList.get(i).handleInput(core))
 				return true;
-
-			}
-
 		}
 
 		return false;
-
 	}
 
-	public void update(LintfordCore pCore, int pControllerGroup) {
-		List<BaseController> lControllerList = controllers(pControllerGroup);
+	public void update(LintfordCore core, int controllerGroup) {
+		final var lControllerList = controllers(controllerGroup);
 		if (lControllerList == null)
 			return;
 
-		int lCount = lControllerList.size();
+		final var lCount = lControllerList.size();
 		for (int i = 0; i < lCount; i++) {
 			if (!lControllerList.get(i).isActive())
 				continue;
 
-			lControllerList.get(i).update(pCore);
+			lControllerList.get(i).update(core);
 		}
 	}
 
@@ -94,11 +89,10 @@ public class ControllerManager {
 	// Methods
 	// --------------------------------------
 
-	public void initializeControllers(LintfordCore pCore) {
-		for (Map.Entry<Integer, List<BaseController>> lEntry : mControllers.entrySet()) {
-			List<BaseController> lControllerList = lEntry.getValue();
-
-			int lCount = lControllerList.size();
+	public void initializeControllers(LintfordCore core) {
+		for (final var lEntry : mControllers.entrySet()) {
+			final var lControllerList = lEntry.getValue();
+			final var lCount = lControllerList.size();
 			for (int i = 0; i < lCount; i++) {
 				if (!lControllerList.get(i).isActive())
 					continue;
@@ -106,139 +100,121 @@ public class ControllerManager {
 				if (lControllerList.get(i).isInitialized())
 					continue;
 
-				lControllerList.get(i).initialize(pCore);
+				lControllerList.get(i).initialize(core);
 			}
 		}
 	}
 
-	public BaseController getControllerByType(Class<?> pClass, int pEntityGroupID) {
-		List<BaseController> lControllerList = controllers(pEntityGroupID);
-		if (lControllerList == null)
-			return null;
-
-		int lCount = lControllerList.size();
-		for (int i = 0; i < lCount; i++) {
-			if (lControllerList.get(i).getClass().equals(pClass)) {
-				return lControllerList.get(i);
-
-			}
-
-		}
-
-		return null;
-	}
-
-	public List<BaseController> getControllerGroupByUid(int pEntityGroupUid) {
-		return controllers(pEntityGroupUid);
-	}
-
-	/**
-	 * Returns the controller with the given name. In case no {@link BaseController} instance with the given name is found (i.e. has not been registered) or has not been initialized, an exception will be thrown.
-	 */
-	public BaseController getControllerByNameRequired(String pControllerName, int pEntityGroupID) {
-		final BaseController RESULT = getControllerByName(pControllerName, pEntityGroupID);
-
-		// In case this required controller is missing, then throw an exception.
-		// TODO: Don't throw an exception in the future, rather gracefully quit and inform the player.
-		if (RESULT == null) {
-			Debug.debugManager().logger().e(getClass().getSimpleName(), "Required controller not found: " + pControllerName);
-
-			throw new RuntimeException(String.format("Required controller not found: %s. Check you are using the correct pGroupEntityID", pControllerName));
-
-		}
-
-		return RESULT;
-	}
-
-	/** Returns the controller with the given name. If no controller is found, null is returned. */
-	public BaseController getControllerByName(String pControllerName, int pEntityGroupID) {
-		if (pControllerName == null || pControllerName.length() == 0) {
-			Debug.debugManager().logger().w(getClass().getSimpleName(), "Controller requested but no identifier given");
-
-			return null;
-		}
-
-		final var lControllerList = controllers(pEntityGroupID);
+	public BaseController getControllerByType(Class<?> controllerClass, int entityGroupUid) {
+		final var lControllerList = controllers(entityGroupUid);
 		if (lControllerList == null)
 			return null;
 
 		final var lCount = lControllerList.size();
 		for (int i = 0; i < lCount; i++) {
-			if (lControllerList.get(i).controllerName().equals(pControllerName)) {
+			if (lControllerList.get(i).getClass().equals(controllerClass)) {
 				return lControllerList.get(i);
 			}
 		}
 
 		return null;
+	}
 
+	public List<BaseController> getControllerGroupByUid(int entityGroupUid) {
+		return controllers(entityGroupUid);
+	}
+
+	/**
+	 * Returns the controller with the given name. In case no {@link BaseController} instance with the given name is found (i.e. has not been registered) or has not been initialized, an exception will be thrown.
+	 */
+	public BaseController getControllerByNameRequired(String controllerName, int entityGroupUid) {
+		final var lController = getControllerByName(controllerName, entityGroupUid);
+
+		if (lController == null) {
+			Debug.debugManager().logger().e(getClass().getSimpleName(), "Required controller not found: " + controllerName);
+			throw new RuntimeException(String.format("Required controller not found: %s. Check you are using the correct pGroupEntityID", controllerName));
+		}
+
+		return lController;
+	}
+
+	/** Returns the controller with the given name. If no controller is found, null is returned. */
+	public BaseController getControllerByName(String controllerName, int entityGroupUid) {
+		if (controllerName == null || controllerName.length() == 0) {
+			Debug.debugManager().logger().w(getClass().getSimpleName(), "Controller requested but no identifier given");
+			return null;
+		}
+
+		final var lControllerList = controllers(entityGroupUid);
+		if (lControllerList == null)
+			return null;
+
+		final var lCount = lControllerList.size();
+		for (int i = 0; i < lCount; i++) {
+			if (lControllerList.get(i).controllerName().equals(controllerName)) {
+				return lControllerList.get(i);
+			}
+		}
+
+		return null;
 	}
 
 	/** Returns true if a {@link BaseController} has been registered with the given name. */
-	public boolean controllerExists(final String pControllerName, int pEntityGroupID) {
-		return getControllerByName(pControllerName, pEntityGroupID) != null;
+	public boolean controllerExists(final String controllerName, int entityGroupUid) {
+		return getControllerByName(controllerName, entityGroupUid) != null;
 	}
 
-	public void addController(BaseController pController, int pEntityGroupID) {
-		if (!pController.isUniqueController()) {
-
-			List<BaseController> lControllerList = controllers(pEntityGroupID);
+	public void addController(BaseController controller, int entityGroupUid) {
+		if (!controller.isUniqueController()) {
+			var lControllerList = controllers(entityGroupUid);
 			if (lControllerList == null) {
-				// In this case, the ControllerList itself doesn't exit, so we need to create one
 				lControllerList = new ArrayList<>();
-				mControllers.put(pEntityGroupID, lControllerList);
-
+				mControllers.put(entityGroupUid, lControllerList);
 			}
 
-			lControllerList.add(pController);
+			lControllerList.add(controller);
 			return;
-
 		}
 
-		// Otherwise, only add one controller of each time.
-		if (getControllerByName(pController.controllerName(), pEntityGroupID) == null) {
-			List<BaseController> lControllerList = controllers(pEntityGroupID);
+		if (getControllerByName(controller.controllerName(), entityGroupUid) == null) {
+			List<BaseController> lControllerList = controllers(entityGroupUid);
 			if (lControllerList == null) {
-				// In this case, the ControllerList itself doesn't exit, so we need to create one
 				lControllerList = new ArrayList<>();
-				mControllers.put(pEntityGroupID, lControllerList);
-
+				mControllers.put(entityGroupUid, lControllerList);
 			}
 
-			lControllerList.add(pController);
-
+			lControllerList.add(controller);
 		}
-
 	}
 
-	public void removeController(BaseController pController, int pEntityGroupID) {
-		Debug.debugManager().logger().i(getClass().getSimpleName(), "Removing Controller " + pController.controllerName() + " from id:" + pEntityGroupID);
+	public void removeController(BaseController controller, int entityGroupUid) {
+		Debug.debugManager().logger().i(getClass().getSimpleName(), "Removing Controller " + controller.controllerName() + " from id:" + entityGroupUid);
 
-		final var lControllerList = controllers(pEntityGroupID);
+		final var lControllerList = controllers(entityGroupUid);
 		if (lControllerList == null)
 			return;
 
-		if (lControllerList.contains(pController)) {
-			lControllerList.remove(pController);
-		}
+		if (lControllerList.contains(controller))
+			lControllerList.remove(controller);
 
-		pController.unload();
+		controller.unload();
 	}
 
 	/** Unloads all {@link BaseController} instances registered to this {@link ControllerManager} which have the given group ID assigned to them. */
-	public void removeControllerGroup(final int pEntityGroupID) {
-		Debug.debugManager().logger().i(getClass().getSimpleName(), "Removing ControllerGroup id:" + pEntityGroupID);
+	public void removeControllerGroup(final int entityGroupUid) {
+		Debug.debugManager().logger().i(getClass().getSimpleName(), "Removing ControllerGroup id:" + entityGroupUid);
 
-		final var lControllerList = mControllers.get(pEntityGroupID);
+		final var lControllerList = mControllers.get(entityGroupUid);
 		if (lControllerList == null)
 			return;
 
-		final int lControllerCount = lControllerList.size();
+		final var lControllerCount = lControllerList.size();
 		for (int i = 0; i < lControllerCount; i++) {
 			lControllerList.get(i).unload();
 		}
 
 		lControllerList.clear();
-		mControllers.remove(pEntityGroupID);
+		mControllers.remove(entityGroupUid);
 	}
 
 	public void removeAllControllers() {

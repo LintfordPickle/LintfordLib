@@ -9,6 +9,10 @@ public class Color {
 	public float r, g, b, a;
 
 	// --------------------------------------
+	// Properties
+	// --------------------------------------
+
+	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
@@ -17,32 +21,31 @@ public class Color {
 
 	}
 
-	public Color(float pRed, float pGreen, float pBlue) {
-		this(pRed, pGreen, pBlue, 1.f);
+	public Color(float red, float green, float blue) {
+		this(red, green, blue, 1.f);
 
 	}
 
-	public Color(float pRed, float pGreen, float pBlue, float pAlpha) {
-		r = pRed;
-		g = pGreen;
-		b = pBlue;
-		a = pAlpha;
+	public Color(float red, float green, float blue, float alpha) {
+		r = red;
+		g = green;
+		b = blue;
+		a = alpha;
 	}
 
-	public Color(final Color pOtherColor) {
-		r = pOtherColor.r;
-		g = pOtherColor.g;
-		b = pOtherColor.b;
-		a = pOtherColor.a;
-
+	public Color(final Color otherColor) {
+		r = otherColor.r;
+		g = otherColor.g;
+		b = otherColor.b;
+		a = otherColor.a;
 	}
 
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
 
-	public void setFromColor(final Color pOtherColor) {
-		if (pOtherColor == null) {
+	public void setFromColor(final Color otherColor) {
+		if (otherColor == null) {
 			r = 1.f;
 			g = 1.f;
 			b = 1.f;
@@ -50,41 +53,35 @@ public class Color {
 			return;
 		}
 
-		r = pOtherColor.r;
-		g = pOtherColor.g;
-		b = pOtherColor.b;
-		a = pOtherColor.a;
-
+		r = otherColor.r;
+		g = otherColor.g;
+		b = otherColor.b;
+		a = otherColor.a;
 	}
 
-	public void setRGB(float pRed, float pGreen, float pBlue) {
-		r = pRed;
-		g = pGreen;
-		b = pBlue;
-
+	public void setRGB(float red, float green, float blue) {
+		r = red;
+		g = green;
+		b = blue;
 	}
 
-	public void setRGBA(float pRed, float pGreen, float pBlue, float pAlpha) {
-		r = pRed;
-		g = pGreen;
-		b = pBlue;
-		a = pAlpha;
-
+	public void setRGBA(float red, float green, float blue, float alpha) {
+		r = red;
+		g = green;
+		b = blue;
+		a = alpha;
 	}
 
-	public void setRGBA(float pNewValue) {
-		r = pNewValue;
-		g = pNewValue;
-		b = pNewValue;
-		a = pNewValue;
-
+	public void setRGBA(float newComponentValues) {
+		r = newComponentValues;
+		g = newComponentValues;
+		b = newComponentValues;
+		a = newComponentValues;
 	}
 
-	public void setRGB(float pNewValue) {
-		r = pNewValue;
-		g = pNewValue;
-		b = pNewValue;
-
+	public void setRGB(float newComponentValues) {
+		r = newComponentValues;
+		g = newComponentValues;
+		b = newComponentValues;
 	}
-
 }

@@ -30,7 +30,6 @@ public class UIRadioGroup extends UIWidget implements EntryInteractions {
 		super(pUIWindow);
 
 		mButtons = new ArrayList<>();
-
 	}
 
 	// --------------------------------------
@@ -38,50 +37,45 @@ public class UIRadioGroup extends UIWidget implements EntryInteractions {
 	// --------------------------------------
 
 	@Override
-	public boolean handleInput(LintfordCore pCore) {
-		if (intersectsAA(pCore.HUD().getMouseCameraSpace())) {
+	public boolean handleInput(LintfordCore core) {
+		if (intersectsAA(core.HUD().getMouseCameraSpace())) {
 			final int lButtonCount = mButtons.size();
 			for (int i = 0; i < lButtonCount; i++) {
-				if (mButtons.get(i).handleInput(pCore)) {
+				if (mButtons.get(i).handleInput(core)) {
 
 					return true;
 				}
-
 			}
-
 		}
 
 		return false;
 	}
 
 	@Override
-	public void update(LintfordCore pCore) {
-		super.update(pCore);
+	public void update(LintfordCore core) {
+		super.update(core);
 
 		updateLayout();
 
-		float lYPos = y + mParentWindow.getTitleBarHeight();
+		float lYPos = mY + mParentWindow.getTitleBarHeight();
 
 		final int lButtonCount = mButtons.size();
 		for (int i = 0; i < lButtonCount; i++) {
 			final var lButton = mButtons.get(i);
-			lButton.setPosition(x, lYPos);
-			lButton.w(50);
+			lButton.setPosition(mX, lYPos);
+			lButton.width(50);
 
-			lButton.update(pCore);
+			lButton.update(core);
 
 			lYPos += 35;
-
 		}
-
 	}
 
 	@Override
-	public void draw(LintfordCore pCore, SpriteBatch pSpriteBatch, SpriteSheetDefinition pCoreSpritesheet, FontUnit pTextFont, float pComponentZDepth) {
-
+	public void draw(LintfordCore core, SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheet, FontUnit textFont, float componentZDepth) {
 		final int lButtonCount = mButtons.size();
 		for (int i = 0; i < lButtonCount; i++) {
-			mButtons.get(i).draw(pCore, pSpriteBatch, pCoreSpritesheet, pTextFont, pComponentZDepth);
+			mButtons.get(i).draw(core, spriteBatch, coreSpritesheet, textFont, componentZDepth);
 		}
 	}
 
@@ -89,24 +83,18 @@ public class UIRadioGroup extends UIWidget implements EntryInteractions {
 	// Methods
 	// --------------------------------------
 
-	public void addButton(final UIRadioButton pButton) {
-		if (!mButtons.contains(pButton)) {
-			pButton.setClickListener(this);
-
-			mButtons.add(pButton);
-
+	public void addButton(final UIRadioButton button) {
+		if (!mButtons.contains(button)) {
+			button.setClickListener(this);
+			mButtons.add(button);
 		}
-
 	}
 
-	public void removeButton(final UIRadioButton pButton) {
-		if (mButtons.contains(pButton)) {
-			pButton.removeClickListener(this);
-
-			mButtons.remove(pButton);
-
+	public void removeButton(final UIRadioButton button) {
+		if (mButtons.contains(button)) {
+			button.removeClickListener(this);
+			mButtons.remove(button);
 		}
-
 	}
 
 	public void updateLayout() {
@@ -114,35 +102,26 @@ public class UIRadioGroup extends UIWidget implements EntryInteractions {
 	}
 
 	@Override
-	public void menuEntryOnClick(InputManager pInputState, int pEntryID) {
+	public void menuEntryOnClick(InputManager inputState, int entryUid) {
 		final int lButtonCount = mButtons.size();
 		for (int i = 0; i < lButtonCount; i++) {
-			if (mButtons.get(i).buttonListenerID() == pEntryID) {
-				// Was clicked
+			if (mButtons.get(i).buttonListenerID() == entryUid) {
 				mButtons.get(i).isSelected(true);
-
-			}
-
-			else {
-				// was not clicked
+			} else {
 				mButtons.get(i).isSelected(false);
-
 			}
-
 		}
 
 		if (mCallback != null) {
-			mCallback.menuEntryOnClick(pInputState, pEntryID);
-
+			mCallback.menuEntryOnClick(inputState, entryUid);
 		}
-
 	}
 
-	public void setClickListener(final EntryInteractions pCallbackObject) {
-		mCallback = pCallbackObject;
+	public void setClickListener(final EntryInteractions callbackObject) {
+		mCallback = callbackObject;
 	}
 
-	public void removeClickListener(final EntryInteractions pCallbackObject) {
+	public void removeClickListener(final EntryInteractions callbackObject) {
 		mCallback = null;
 	}
 

@@ -27,16 +27,16 @@ public class UiLabelledInt extends UIWidget {
 	// Properties
 	// --------------------------------------
 
-	public void labelText(String pLabelText) {
-		mLabelText = pLabelText;
+	public void labelText(String labelText) {
+		mLabelText = labelText;
 	}
 
 	public String labelText() {
 		return mLabelText;
 	}
 
-	public void value(int pValueInt) {
-		mValueInt = pValueInt;
+	public void value(int newValue) {
+		mValueInt = newValue;
 	}
 
 	public int value() {
@@ -47,16 +47,14 @@ public class UiLabelledInt extends UIWidget {
 	// Constructor
 	// --------------------------------------
 
-	public UiLabelledInt(UiWindow pParentWindow) {
-		this(pParentWindow, "Label not set");
-
+	public UiLabelledInt(UiWindow parentWindow) {
+		this(parentWindow, "Label not set");
 	}
 
-	public UiLabelledInt(UiWindow pParentWindow, String pLabelText) {
-		super(pParentWindow);
+	public UiLabelledInt(UiWindow parentWindow, String labelText) {
+		super(parentWindow);
 
-		mLabelText = pLabelText;
-
+		mLabelText = labelText;
 	}
 
 	// --------------------------------------
@@ -64,25 +62,25 @@ public class UiLabelledInt extends UIWidget {
 	// --------------------------------------
 
 	@Override
-	public void draw(LintfordCore pCore, SpriteBatch pSpriteBatch, SpriteSheetDefinition pCoreSpritesheet, FontUnit pTextFont, float pComponentZDepth) {
-		final float lMouseX = pCore.HUD().getMouseWorldSpaceX();
-		final float lMouseY = pCore.HUD().getMouseWorldSpaceY();
+	public void draw(LintfordCore core, SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheetDefinition, FontUnit textFont, float componentZDepth) {
+		final float lMouseX = core.HUD().getMouseWorldSpaceX();
+		final float lMouseY = core.HUD().getMouseWorldSpaceY();
 
 		boolean lIsMouseHovering = intersectsAA(lMouseX, lMouseY);
 
 		if (lIsMouseHovering) {
 			// Renders the background of the input text widget
-			pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_LEFT, x, y, 32, h, pComponentZDepth, ColorConstants.MenuPanelPrimaryColor);
-			if (w > 32) {
-				pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_MID, x + 32, y, w - 64, h, pComponentZDepth, ColorConstants.MenuPanelPrimaryColor);
-				pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_RIGHT, x + w - 32, y, 32, h, pComponentZDepth, ColorConstants.MenuPanelPrimaryColor);
+			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_LEFT, mX, mY, 32, mH, componentZDepth, ColorConstants.MenuPanelPrimaryColor);
+			if (mW > 32) {
+				spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_MID, mX + 32, mY, mW - 64, mH, componentZDepth, ColorConstants.MenuPanelPrimaryColor);
+				spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_RIGHT, mX + mW - 32, mY, 32, mH, componentZDepth, ColorConstants.MenuPanelPrimaryColor);
 			}
 		}
 
-		final float lTextHeight = pTextFont.fontHeight();
-		pTextFont.drawText(mLabelText, x + lHorizontalPadding, y + h / 2 - lTextHeight / 2, pComponentZDepth, ColorConstants.TextEntryColor, 1f, -1);
+		final float lTextHeight = textFont.fontHeight();
+		textFont.drawText(mLabelText, mX + lHorizontalPadding, mY + mH / 2 - lTextHeight / 2, componentZDepth, ColorConstants.TextEntryColor, 1f, -1);
 
-		final float lValueWidth = pTextFont.getStringWidth(Integer.toString(mValueInt));
-		pTextFont.drawText(Integer.toString(mValueInt), x + w - lValueWidth - lHorizontalPadding, y + h / 2 - lTextHeight / 2, pComponentZDepth, ColorConstants.TextEntryColor, 1f, -1);
+		final float lValueWidth = textFont.getStringWidth(Integer.toString(mValueInt));
+		textFont.drawText(Integer.toString(mValueInt), mX + mW - lValueWidth - lHorizontalPadding, mY + mH / 2 - lTextHeight / 2, componentZDepth, ColorConstants.TextEntryColor, 1f, -1);
 	}
 }

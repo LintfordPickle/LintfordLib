@@ -27,28 +27,22 @@ public class ParticleLifetimeModifier extends ParticleModifierBase {
 	// --------------------------------------
 
 	@Override
-	public void initialize(Particle pParticle) {
-		// TODO Auto-generated method stub
+	public void initialize(Particle particle) {
 
 	}
 
 	@Override
-	public void update(LintfordCore pCore) {
+	public void update(LintfordCore core) {
 
 	}
 
 	@Override
-	public void updateParticle(LintfordCore pCore, Particle pParticle) {
+	public void updateParticle(LintfordCore core, Particle particle) {
+		final var lDeltaTime = (float) core.appTime().elapsedTimeMilli();
 
-		final float lDeltaTime = (float) pCore.appTime().elapsedTimeMilli();
-
-		pParticle.timeSinceStart += lDeltaTime;
-		if (pParticle.timeSinceStart >= pParticle.lifeTime()) {
-			// kill the particle
-			pParticle.reset();
-
+		particle.timeSinceStart += lDeltaTime;
+		if (particle.timeSinceStart >= particle.lifeTime()) {
+			particle.reset();
 		}
-
 	}
-
 }

@@ -45,21 +45,19 @@ public class ParticleEmitterInstance extends WorldEntity {
 		return enabled;
 	}
 
-	public void setEnabled(boolean pIsEnabled) {
-		if (enabled == pIsEnabled)
+	public void setEnabled(boolean isEnabled) {
+		if (enabled == isEnabled)
 			return;
 
-		enabled = pIsEnabled;
+		enabled = isEnabled;
 
-		// This is a cop-out: the actual problem is that the child emitters are processed independantly of the parent emitter
 		final int childEmitterCount = mChildEmitters.length;
 		for (int i = 0; i < childEmitterCount; i++) {
 			if (mChildEmitters[i] == null)
 				continue;
 
-			mChildEmitters[i].enabled = pIsEnabled;
+			mChildEmitters[i].enabled = isEnabled;
 		}
-
 	}
 
 	public ParticleSystemInstance particleSystem() {
@@ -70,18 +68,16 @@ public class ParticleEmitterInstance extends WorldEntity {
 		return mAttachedToEntity;
 	}
 
-	public void parentEntity(WorldEntity pNewValue) {
-		mAttachedToEntity = pNewValue;
+	public void parentEntity(WorldEntity newValue) {
+		mAttachedToEntity = newValue;
 	}
 
-	public void emitterInstanceId(final int pEmitterId) {
-		mEmitterInstanceId = pEmitterId;
-
+	public void emitterInstanceId(final int emitterUid) {
+		mEmitterInstanceId = emitterUid;
 	}
 
 	public int emitterInstanceId() {
 		return mEmitterInstanceId;
-
 	}
 
 	public boolean isAssigned() {
@@ -100,8 +96,8 @@ public class ParticleEmitterInstance extends WorldEntity {
 		return mEmitterEmitModifier;
 	}
 
-	public void emitterEmitModifierNormalized(float pNewModifer) {
-		mEmitterEmitModifier = MathHelper.clamp(pNewModifer, 0.f, 1.f);
+	public void emitterEmitModifierNormalized(float newModifer) {
+		mEmitterEmitModifier = MathHelper.clamp(newModifer, 0.f, 1.f);
 
 		final int lNumInnerInstances = mChildEmitters.length;
 		for (int i = 0; i < lNumInnerInstances; i++) {
@@ -109,9 +105,7 @@ public class ParticleEmitterInstance extends WorldEntity {
 			if (lChildParticleEmitterInstanceInst != null) {
 				lChildParticleEmitterInstanceInst.emitterEmitModifierNormalized(mEmitterEmitModifier);
 			}
-
 		}
-
 	}
 
 	// --------------------------------------
@@ -122,12 +116,12 @@ public class ParticleEmitterInstance extends WorldEntity {
 		this(0);
 	}
 
-	public ParticleEmitterInstance(int pEmitterInstanceId) {
+	public ParticleEmitterInstance(int emitterInstanceUid) {
 		super();
 
 		mChildEmitters = new ParticleEmitterInstance[MAX_NUM_CHILD_EMITTERS];
 		enabled = true;
-		mEmitterInstanceId = pEmitterInstanceId;
+		mEmitterInstanceId = emitterInstanceUid;
 		mEmitterEmitModifier = 1.f;
 	}
 
@@ -136,37 +130,30 @@ public class ParticleEmitterInstance extends WorldEntity {
 	// --------------------------------------
 
 	public void initialise() {
-		// FIXME: Re-resolve object instances and references to other objects
 
 	}
 
-	public void update(LintfordCore pCore) {
+	public void update(LintfordCore core) {
 		if (!enabled)
 			return;
 
-		// By this stage, the emitter should have just been updated with the absolute position of the parent entity to which it is attached.
 		if (mEmitterDefinition == null)
 			return;
 
-		worldPositionX += mEmitterDefinition.PositionRelOffsetX;
-		worldPositionY += mEmitterDefinition.PositionRelOffsetY;
+		mWorldPositionX += mEmitterDefinition.positionRelOffsetX();
+		mWorldPositionY += mEmitterDefinition.positionRelOffsetY();
 
-		// Update this emitter
-		mEmitTimer -= pCore.gameTime().elapsedTimeMilli() * mEmitterEmitModifier;
+		mEmitTimer -= core.gameTime().elapsedTimeMilli() * mEmitterEmitModifier;
 
 		if (mParticleSystem != null && mEmitTimer < 0) {
-			final int lAmtToSpawn = RandomNumbers.random(mEmitterDefinition.emitAmountMin, mEmitterDefinition.emitAmountMax);
+			final int lAmtToSpawn = RandomNumbers.random(mEmitterDefinition.emitAmountMin(), mEmitterDefinition.emitAmountMax());
 			for (int i = 0; i < lAmtToSpawn; i++) {
-				mParticleSystem.spawnParticle(worldPositionX, worldPositionY, 0, 0);
-
+				mParticleSystem.spawnParticle(mWorldPositionX, mWorldPositionY, 0, 0);
 			}
 
-			// Set the time to wait until another round of spawns occurs
-			mEmitTimer = RandomNumbers.random(mEmitterDefinition.emitTimeMin, mEmitterDefinition.emitTimeMax);
-
+			mEmitTimer = RandomNumbers.random(mEmitterDefinition.emitTimeMin(), mEmitterDefinition.emitTimeMax());
 		}
 
-		// Update the child emitters
 		final int lNumInnerInstances = mChildEmitters.length;
 		for (int i = 0; i < lNumInnerInstances; i++) {
 			final var lChildParticleEmitterInstanceInst = mChildEmitters[i];
@@ -174,63 +161,54 @@ public class ParticleEmitterInstance extends WorldEntity {
 			if (lChildParticleEmitterInstanceInst == null)
 				continue;
 
-			lChildParticleEmitterInstanceInst.worldPositionX = worldPositionX;
-			lChildParticleEmitterInstanceInst.worldPositionY = worldPositionY;
+			lChildParticleEmitterInstanceInst.worldPositionX(mWorldPositionX);
+			lChildParticleEmitterInstanceInst.worldPositionY(mWorldPositionY);
 
-			lChildParticleEmitterInstanceInst.update(pCore);
-
+			lChildParticleEmitterInstanceInst.update(core);
 		}
-
 	}
 
-	public void assignEmitterDefinitionAndResolveParticleSystem(final short pDefinitionID, ParticleFrameworkData pParticleFramework) {
-		ParticleEmitterDefinition lEmitterDefintion = pParticleFramework.emitterManager().definitionManager().getByUid(pDefinitionID);
+	public void assignEmitterDefinitionAndResolveParticleSystem(final short definitionUid, ParticleFrameworkData particleFramework) {
+		final var lEmitterDefintion = particleFramework.emitterManager().definitionManager().getByUid(definitionUid);
 		if (lEmitterDefintion == null) {
-			Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Failed to assign ParticleEmitter - EmitterDefId '%d' has no definition defined!", pDefinitionID));
+			Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Failed to assign ParticleEmitter - EmitterDefId '%d' has no definition defined!", definitionUid));
 			return;
-
 		}
 
-		assignEmitterDefinitionAndResolveParticleSystem(lEmitterDefintion, pParticleFramework);
-
+		assignEmitterDefinitionAndResolveParticleSystem(lEmitterDefintion, particleFramework);
 	}
 
-	public void assignEmitterDefinitionAndResolveParticleSystem(final ParticleEmitterDefinition pEmitterDefinition, ParticleFrameworkData pParticleFramework) {
-		if (pEmitterDefinition == null) {
+	public void assignEmitterDefinitionAndResolveParticleSystem(final ParticleEmitterDefinition emitterDefinition, ParticleFrameworkData particleFramework) {
+		if (emitterDefinition == null) {
 			Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Failed to assign ParticleEmitter - given EmitterDefinition is null!"));
 			return;
-
 		}
 
-		// Problem here for children of the emitter definition (in which they have the same DefId as their parents). This
-		// would prevent us from correctly deserializing such objects.
-		mEmitterDefinitionId = pEmitterDefinition.definitionUid;
-		mEmitterDefinition = pEmitterDefinition;
+		mEmitterDefinitionId = emitterDefinition.definitionUid();
+		mEmitterDefinition = emitterDefinition;
 
-		resolveParticleSystems(mEmitterDefinition, pParticleFramework);
-
+		resolveParticleSystems(mEmitterDefinition, particleFramework);
 	}
 
-	private void resolveParticleSystems(final ParticleEmitterDefinition pEmitterDefinition, ParticleFrameworkData pParticleFramework) {
-		// Get a reference to the particle system attached to this emitter
-		mParticleSystem = pParticleFramework.particleSystemManager().getParticleSystemByName(pEmitterDefinition.particleSystemName);
+	private void resolveParticleSystems(final ParticleEmitterDefinition emitterDefinition, ParticleFrameworkData particleFramework) {
+		mParticleSystem = particleFramework.particleSystemManager().getParticleSystemByName(emitterDefinition.particleSystemName());
 
 		if (mParticleSystem != null) {
 			mParticleSystemId = mParticleSystem.getPoolID();
 		}
 
-		// assign the child emitters
-		if (pEmitterDefinition.childEmitters != null) {
-			final int lNumChildEmitters = Math.min(MAX_NUM_CHILD_EMITTERS, pEmitterDefinition.childEmitters.length);
+		if (emitterDefinition.childEmitters() != null) {
+			final var lDefinitionChildEmitters = emitterDefinition.childEmitters();
+			final int lNumChildEmitters = Math.min(MAX_NUM_CHILD_EMITTERS, lDefinitionChildEmitters.length);
 			for (int i = 0; i < lNumChildEmitters; i++) {
-				ParticleEmitterDefinition lChildEmitterDefinition = pEmitterDefinition.childEmitters[i];
+				final var lChildEmitterDefinition = lDefinitionChildEmitters[i];
 				if (lChildEmitterDefinition == null)
 					continue;
 
-				ParticleEmitterManager lMan = pParticleFramework.emitterManager();
-				ParticleEmitterInstance lInst = lMan.getFreePooledItem();
-				mChildEmitters[i] = lInst;
-				mChildEmitters[i].assignEmitterDefinitionAndResolveParticleSystem(lChildEmitterDefinition, pParticleFramework);
+				final var lEmitterManager = particleFramework.emitterManager();
+				final var lEmitterInstance = lEmitterManager.getFreePooledItem();
+				mChildEmitters[i] = lEmitterInstance;
+				mChildEmitters[i].assignEmitterDefinitionAndResolveParticleSystem(lChildEmitterDefinition, particleFramework);
 			}
 		}
 	}
@@ -243,7 +221,7 @@ public class ParticleEmitterInstance extends WorldEntity {
 
 		final int lNumChildEmitters = Math.min(MAX_NUM_CHILD_EMITTERS, mChildEmitters.length);
 		for (int i = 0; i < lNumChildEmitters; i++) {
-			ParticleEmitterInstance lChildInst = mChildEmitters[i];
+			final var lChildInst = mChildEmitters[i];
 
 			if (lChildInst == null)
 				continue;
@@ -252,9 +230,6 @@ public class ParticleEmitterInstance extends WorldEntity {
 			lChildInst.reset();
 
 			mChildEmitters[i] = null;
-
 		}
-
 	}
-
 }

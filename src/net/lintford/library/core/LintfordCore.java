@@ -3,6 +3,7 @@ package net.lintford.library.core;
 import static org.lwjgl.glfw.GLFW.glfwPollEvents;
 import static org.lwjgl.glfw.GLFW.glfwSetCharModsCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetCursorPosCallback;
+import static org.lwjgl.glfw.GLFW.glfwSetJoystickCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetKeyCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetMouseButtonCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetScrollCallback;
@@ -35,7 +36,7 @@ import net.lintford.library.core.input.EventActionManager;
 import net.lintford.library.core.input.InputManager;
 import net.lintford.library.core.maths.MathHelper;
 import net.lintford.library.core.rendering.RenderState;
-import net.lintford.library.core.time.TimeSpan;
+import net.lintford.library.core.time.TimeConstants;
 import net.lintford.library.options.DisplayManager;
 import net.lintford.library.options.MasterConfig;
 import net.lintford.library.renderers.RendererManager;
@@ -62,12 +63,10 @@ public abstract class LintfordCore {
 
 		public boolean isTimePaused() {
 			return isTimePaused;
-
 		}
 
 		public float timeModifier() {
 			return timeModifier;
-
 		}
 
 		// --------------------------------------
@@ -76,25 +75,20 @@ public abstract class LintfordCore {
 
 		public GameTime() {
 			super();
-
 			timeModifier = 1.f;
-
 		}
 
 		// --------------------------------------
 		// Methods
 		// --------------------------------------
 
-		public void setPaused(boolean pNewPausedState) {
-			isTimePaused = pNewPausedState;
-
+		public void setPaused(boolean newPausedState) {
+			isTimePaused = newPausedState;
 		}
 
-		public void setGameTimeModifier(float pNewModifier) {
-			timeModifier = MathHelper.clamp(pNewModifier, 0.0f, 10.0f);
-
+		public void setGameTimeModifier(float newModifier) {
+			timeModifier = MathHelper.clamp(newModifier, 0.0f, 10.0f);
 		}
-
 	}
 
 	public class CoreTime {
@@ -147,10 +141,8 @@ public abstract class LintfordCore {
 		// --------------------------------------
 
 		public CoreTime() {
-			getDelta(); // needs to be called once at least
-
-			maxElapsedTimeMilli = 500; // 500 ms
-
+			getDelta();
+			maxElapsedTimeMilli = 500;
 		}
 
 		// --------------------------------------
@@ -158,12 +150,11 @@ public abstract class LintfordCore {
 		// --------------------------------------
 
 		private double getDelta() {
-			long time = System.nanoTime();
-			double lDelta = ((time - lastFrameTime) / TimeSpan.NanoToMilli);
-			lastFrameTime = time;
+			final var lSystemTime = System.nanoTime();
+			final var lDelta = ((lSystemTime - lastFrameTime) / TimeConstants.NanoToMilli);
+			lastFrameTime = lSystemTime;
 
 			return lDelta;
-
 		}
 
 		public void resetElapsedTime() {
@@ -172,9 +163,7 @@ public abstract class LintfordCore {
 			elapsedTimeMilli = 0.0f;
 			targetElapsedTimeMilli = 0.0f;
 			maxElapsedTimeMilli = 0.0f;
-
 		}
-
 	}
 
 	// ---------------------------------------------
@@ -189,25 +178,20 @@ public abstract class LintfordCore {
 
 	protected GameInfo mGameInfo;
 	protected MasterConfig mMasterConfig;
-
 	protected InputManager mInputState;
 	protected final CoreTime mCoreTime = new CoreTime();
 	protected final GameTime mGameTime = new GameTime();
-
 	protected ControllerManager mControllerManager;
 	protected ResourceManager mResourceManager;
 	protected CoreTimeController mCoreTimeController;
 	protected ResourceController mResourceController;
 	protected CameraController mCameraController;
 	protected CameraHUDController mCameraHUDController;
-
 	protected ICamera mGameCamera;
 	protected HUD mHUD;
 	protected RenderState mRenderState;
-
 	protected final float mShowLogoTimeInMilli = 3000;
 	protected long mShowLogoTimer;
-
 	protected boolean mIsHeadlessMode;
 	protected boolean mIsFixedTimeStep;
 
@@ -281,32 +265,29 @@ public abstract class LintfordCore {
 	// Constructor
 	// ---------------------------------------------
 
-	public LintfordCore(GameInfo pGameInfo) {
-		this(pGameInfo, null);
-
+	public LintfordCore(GameInfo gameInfo) {
+		this(gameInfo, null);
 	}
 
-	public LintfordCore(GameInfo pGameInfo, String[] pArgs) {
-		this(pGameInfo, pArgs, false);
-
+	public LintfordCore(GameInfo gameInfo, String[] args) {
+		this(gameInfo, args, false);
 	}
 
-	public LintfordCore(GameInfo pGameInfo, String[] pArgs, boolean pHeadless) {
-		mGameInfo = pGameInfo;
-		mIsHeadlessMode = pHeadless;
+	public LintfordCore(GameInfo gameInfo, String[] args, boolean isHeadlessMode) {
+		mGameInfo = gameInfo;
+		mIsHeadlessMode = isHeadlessMode;
 
-		// initially take the DebugLogLevel defined at compile time
-		DebugLogLevel lNewLogLevel = pGameInfo.debugLogLevel();
+		DebugLogLevel lNewLogLevel = gameInfo.debugLogLevel();
 
-		if (pArgs != null) {
-			final int lArgsCount = pArgs.length;
+		if (args != null) {
+			final int lArgsCount = args.length;
 			for (int i = 0; i < lArgsCount; i++) {
-				if (pArgs[i].contains("debug")) {
+				if (args[i].contains("debug")) {
 					try {
-						String lRightSide = pArgs[i].substring(pArgs[i].lastIndexOf("=") + 1);
+						String lRightSide = args[i].substring(args[i].lastIndexOf("=") + 1);
 						lNewLogLevel = DebugLogLevel.valueOf(lRightSide);
 					} catch (IllegalArgumentException e) {
-						System.err.println("Unable to process the command line argument: " + pArgs[i]);
+						System.err.println("Unable to process the command line argument: " + args[i]);
 					}
 				}
 			}
@@ -314,8 +295,14 @@ public abstract class LintfordCore {
 
 		Debug.debugManager(lNewLogLevel);
 
-		registerGameInfoConstants(pGameInfo);
+		registerGameInfoConstants(gameInfo);
 
+		printSystemInformationToConsole();
+
+		mShowLogoTimer = System.currentTimeMillis();
+	}
+
+	private void printSystemInformationToConsole() {
 		DebugMemory.dumpMemoryToLog();
 
 		// Print out the working directory
@@ -327,8 +314,6 @@ public abstract class LintfordCore {
 
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "LWJGL Version: " + org.lwjgl.Version.getVersion());
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "Steamworks Version" + com.codedisaster.steamworks.Version.getVersion());
-
-		mShowLogoTimer = System.currentTimeMillis();
 	}
 
 	// ---------------------------------------------
@@ -385,21 +370,20 @@ public abstract class LintfordCore {
 		onRunGameLoop();
 	};
 
-	protected void showStartUpLogo(long pWindowHandle) {
+	protected void showStartUpLogo(long windowHandle) {
 		// by default just clear the window background to black and swap out the back-buffer
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 
-		glfwSwapBuffers(pWindowHandle);
+		glfwSwapBuffers(windowHandle);
 	}
 
 	/**
 	 * Implemented in sub-classes. Sets the default OpenGL state for the game.
 	 */
 	protected void oninitializeGL() {
-		// glClearColor(0f, 0f, 0f, 1.0f);
 		glClearColor(100.0f / 255.0f, 149.0f / 255.0f, 237.0f / 255.0f, 1.0f);
 
-		// Enable depth testing
+		// Enable alpha blending
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
@@ -435,13 +419,13 @@ public abstract class LintfordCore {
 	 * Provides an opportunity before the bitmapfonts are loaded into memory, to change the default locations that the core/library loads
 	 * fonts from for rendering in the 'standard' Ui components. 
 	 * */
-	protected void onInitializeBitmapFontSources(BitmapFontManager pFontManager) {
+	protected void onInitializeBitmapFontSources(BitmapFontManager fontManager) {
 
 	}
 
 	/** Allows the registration of game input actions and the respective key bindings. */
-	protected void onInitializeInputActions(EventActionManager pEventActionManager) {
-		pEventActionManager.loadConfig();
+	protected void onInitializeInputActions(EventActionManager eventActionManager) {
+		eventActionManager.loadConfig();
 	}
 
 	/**
@@ -461,44 +445,40 @@ public abstract class LintfordCore {
 	 */
 	protected void onUnloadResources() {
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "Unloading GL content");
-
 		Debug.debugManager().unloadResources();
 
 		mResourceManager.unloadContent();
-
 	}
 
 	/** The main game loop. */
 	protected void onRunGameLoop() {
-
 		int lUpdateFrameLag = 0;
 
-		DisplayManager lDisplayConfig = mMasterConfig.display();
+		final var lDisplayConfig = mMasterConfig.display();
 
-		// Game loop
 		while (!glfwWindowShouldClose(lDisplayConfig.windowID())) {
+			lUpdateFrameLag = 0;
 			mCoreTime.accumulatedElapsedTimeMilli += mCoreTime.getDelta();
 
+			onHandleInput();
+			
 			// If we are using a fixed time step, then make sure enough time has elapsed since the last frame
 			// before performing another update & draw
 			if (mIsFixedTimeStep && mCoreTime.accumulatedElapsedTimeMilli < mCoreTime.targetElapsedTimeMilli) {
 				long lSleepTime = (long) (mCoreTime.targetElapsedTimeMilli - mCoreTime.accumulatedElapsedTimeMilli);
-
+				if(lSleepTime == 0) continue;
+				
 				try {
+					Debug.debugManager().logger().i("MAIN_LOOP", "Sleep: " + lSleepTime);
 					Thread.sleep(lSleepTime);
-
 				} catch (InterruptedException e) {
 					e.printStackTrace();
-
 				}
 
 				continue;
-
 			}
 
-			onHandleInput();
-
-			// Do not allow any update to take longer than our maximum allowed per frame.
+			// we don't want to report elapsed time of greater than max elapsed time (which affects frame delta calculations)
 			if (mCoreTime.accumulatedElapsedTimeMilli > mCoreTime.maxElapsedTimeMilli)
 				mCoreTime.accumulatedElapsedTimeMilli = mCoreTime.maxElapsedTimeMilli;
 
@@ -507,26 +487,25 @@ public abstract class LintfordCore {
 				int lStepCount = 0;
 
 				while (mCoreTime.accumulatedElapsedTimeMilli >= mCoreTime.targetElapsedTimeMilli) {
-					if (!mGameTime.isTimePaused) {
+					if (!mGameTime.isTimePaused)
 						mGameTime.totalTimeMilli += mCoreTime.targetElapsedTimeMilli * mGameTime.timeModifier;
-
-					}
 
 					mCoreTime.totalTimeMilli += mCoreTime.targetElapsedTimeMilli;
 					mCoreTime.accumulatedElapsedTimeMilli -= mCoreTime.targetElapsedTimeMilli;
-					++lStepCount;
 
 					onUpdate();
 
+					lStepCount++;
 				}
+
+				Debug.debugManager().logger().i("MAIN_LOOP", "Step Count: " + lStepCount);
 
 				// Every update after the first accumulates lag
 				lUpdateFrameLag += Math.max(0, lStepCount - 1);
 
 				if (mCoreTime.isRunningSlowly()) {
-					if (lUpdateFrameLag == 0) {
+					if (lUpdateFrameLag == 0)
 						mCoreTime.isRunningSlowly = false;
-					}
 
 				} else if (lUpdateFrameLag >= 5) {
 					// If we lag more than 5 frames, start thinking we are running slowly
@@ -541,18 +520,17 @@ public abstract class LintfordCore {
 				} else
 					mGameTime.elapsedTimeMilli = .0f;
 
-			} else { // Variable time step
-				// Perform a single variable length update.
-				if (!mGameTime.isTimePaused) {
-					mGameTime.elapsedTimeMilli = mCoreTime.accumulatedElapsedTimeMilli * mGameTime.timeModifier;
+			} else {
+				// Variable time step
 
-				} else
+				// Perform a single variable length update.
+				if (!mGameTime.isTimePaused)
+					mGameTime.elapsedTimeMilli = mCoreTime.accumulatedElapsedTimeMilli * mGameTime.timeModifier;
+				else
 					mGameTime.elapsedTimeMilli = 0.f;
 
-				if (!mGameTime.isTimePaused) {
+				if (!mGameTime.isTimePaused)
 					mGameTime.totalTimeMilli += mCoreTime.targetElapsedTimeMilli * mGameTime.timeModifier;
-
-				}
 
 				mCoreTime.elapsedTimeMilli = mCoreTime.accumulatedElapsedTimeMilli;
 				mCoreTime.totalTimeMilli += mCoreTime.accumulatedElapsedTimeMilli;
@@ -560,7 +538,6 @@ public abstract class LintfordCore {
 				mCoreTime.accumulatedElapsedTimeMilli = 0.0; // consume all the time in a variable length step
 
 				onUpdate();
-
 			}
 
 			onDraw();
@@ -572,7 +549,6 @@ public abstract class LintfordCore {
 			glfwSwapBuffers(lDisplayConfig.windowID());
 
 			glfwPollEvents();
-
 		}
 
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "Closing down");
@@ -580,7 +556,6 @@ public abstract class LintfordCore {
 		onUnloadResources();
 
 		System.exit(0);
-
 	}
 
 	/** called automatically within the gameloop.
@@ -590,7 +565,6 @@ public abstract class LintfordCore {
 		Debug.debugManager().handleInput(this);
 		mHUD.handleInput(this);
 		mControllerManager.handleInput(this, CORE_ENTITY_GROUP_ID);
-
 	}
 
 	/** called automatically within the gameloop.
@@ -606,7 +580,6 @@ public abstract class LintfordCore {
 
 		mControllerManager.update(this, CORE_ENTITY_GROUP_ID);
 		Debug.debugManager().update(this);
-
 	}
 
 	/** Implemented in sub-class. Draws the game components. */
@@ -619,9 +592,7 @@ public abstract class LintfordCore {
 
 	/** When called, sends the glfwWindowShouldClose message to GLFW. */
 	public void closeApp() {
-		// Close the GLFW window
 		glfwSetWindowShouldClose(mMasterConfig.display().windowID(), true);
-
 	}
 
 	// ---------------------------------------------
@@ -638,19 +609,24 @@ public abstract class LintfordCore {
 		glfwSetCursorPosCallback(lWindowID, mInputState.mouse().mMousePositionCallback);
 		glfwSetScrollCallback(lWindowID, mInputState.mouse().mMouseScrollCallback);
 
+		/** This function sets the joystick configuration callback, or removes the currently set callback. This is called when a joystick is connected to or disconnected from the system. */
+		glfwSetJoystickCallback(mInputState.gamepads().lintfordJoystick);
+
+		/**This function sets the user-defined pointer of the specified joystick. The current value is retained until the joystick is disconnected. The initial value is NULL.*/
+		// glfwSetJoystickUserPointer(CORE_ENTITY_GROUP_ID, lWindowID);
+
 		mInputState.resetFlags();
 
 		return lWindowID;
-
 	}
 
-	public ICamera setNewGameCamera(ICamera pCamera) {
-		mGameCamera = pCamera;
+	public ICamera setNewGameCamera(ICamera camera) {
+		mGameCamera = camera;
 
 		if (mMasterConfig == null)
 			throw new RuntimeException("mMasterConfig not initialized. You must call setNewGameCamera from LintfordCore.initialize (or later)!");
 
-		if (pCamera == null)
+		if (camera == null)
 			mGameCamera = new Camera(mMasterConfig.display());
 
 		mCameraController = new CameraController(mControllerManager, mGameCamera, CORE_ENTITY_GROUP_ID);
@@ -663,15 +639,10 @@ public abstract class LintfordCore {
 		if (mCameraController != null) {
 			mControllerManager.removeController(mCameraController, CORE_ENTITY_GROUP_ID);
 			mCameraController = null;
-
 		}
-
 	}
 
-	protected void registerGameInfoConstants(GameInfo pGameInfo) {
-		ConstantsApp.registerValue("APPLICATION_NAME", pGameInfo.applicationName());
-		ConstantsApp.registerValue("WINDOW_TITLE", pGameInfo.windowTitle());
-
+	protected void registerGameInfoConstants(GameInfo gameInfo) {
+		ConstantsApp.registerValue(ConstantsApp.CONSTANT_APP_NAME_TAG, gameInfo.applicationName());
 	}
-
 }

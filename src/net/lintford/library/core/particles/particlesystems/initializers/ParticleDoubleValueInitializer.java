@@ -24,32 +24,26 @@ public abstract class ParticleDoubleValueInitializer extends ParticleInitializer
 	// Constructor
 	// --------------------------------------
 
-	public ParticleDoubleValueInitializer(final String pDefinitionName) {
-		super(pDefinitionName);
-
+	public ParticleDoubleValueInitializer(final String definitionName) {
+		super(definitionName);
 	}
 
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
 
-	public abstract void onIntialiseParticle(final Particle pParticle, final float pValue0, final float pValue1);
+	public abstract void onIntialiseParticle(final Particle particle, final float value0, final float value1);
 
 	@Override
-	public void initialize(Particle pParticle) {
-		onIntialiseParticle(pParticle, getRandomValue(minValue0, maxValue0), getRandomValue(minValue1, maxValue1));
-
+	public void initialize(Particle particle) {
+		onIntialiseParticle(particle, getRandomValue(minValue0, maxValue0), getRandomValue(minValue1, maxValue1));
 	}
 
-	protected float getRandomValue(float pMin, float pMax) {
-		if (pMin == pMax) {
-			return pMax;
-
+	protected float getRandomValue(float minValue, float maxValue) {
+		if (minValue == maxValue) {
+			return maxValue;
 		} else {
-			return RandomNumbers.random(pMin, pMax);
-
+			return RandomNumbers.random(minValue, maxValue);
 		}
-
 	}
-
 }

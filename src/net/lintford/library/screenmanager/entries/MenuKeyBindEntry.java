@@ -31,11 +31,9 @@ public class MenuKeyBindEntry extends MenuEntry implements IKeyInputCallback {
 
 	private boolean mIsDirty;
 	private String mBoundKeyText;
-
 	private float mPadding = 15f;
 	private boolean mShow;
-
-	private final EventAction eventAction;
+	private final EventAction mEventAction;
 	private boolean mBindingKey;
 	private float mCaretFlashTimer;
 
@@ -44,7 +42,7 @@ public class MenuKeyBindEntry extends MenuEntry implements IKeyInputCallback {
 	// --------------------------------------
 
 	public EventAction eventAction() {
-		return eventAction;
+		return mEventAction;
 	}
 
 	/** Padding is applied when the label is either aligned left or right (not when centered). */
@@ -53,34 +51,20 @@ public class MenuKeyBindEntry extends MenuEntry implements IKeyInputCallback {
 	}
 
 	/** Padding is applied when the label is either aligned left or right (not when centered). */
-	public void padding(float pNewValue) {
-		mPadding = pNewValue;
-	}
-
-	@Override
-	public boolean hasFocus() {
-		return super.hasFocus();
-	}
-
-	@Override
-	public void hasFocus(boolean pNewValue) {
-		if (pNewValue) {
-
-		}
-
-		super.hasFocus(pNewValue);
+	public void padding(float newValue) {
+		mPadding = newValue;
 	}
 
 	public boolean show() {
 		return mShow;
 	}
 
-	public void show(boolean pNewValue) {
-		mShow = pNewValue;
+	public void show(boolean newValue) {
+		mShow = newValue;
 	}
 
-	public void label(String pNewLabel) {
-		mText = pNewLabel;
+	public void label(String newLabel) {
+		mText = newLabel;
 	}
 
 	public String label() {
@@ -91,10 +75,10 @@ public class MenuKeyBindEntry extends MenuEntry implements IKeyInputCallback {
 	// Constructor
 	// --------------------------------------
 
-	public MenuKeyBindEntry(ScreenManager pScreenManager, BaseLayout pParentLayout, EventAction pEventAction) {
-		super(pScreenManager, pParentLayout, "");
+	public MenuKeyBindEntry(ScreenManager screenManager, BaseLayout parentLayout, EventAction eventAction) {
+		super(screenManager, parentLayout, "");
 
-		eventAction = pEventAction;
+		mEventAction = eventAction;
 		mDrawBackground = false;
 		mText = "Add your message";
 		mShow = true;
@@ -104,7 +88,6 @@ public class MenuKeyBindEntry extends MenuEntry implements IKeyInputCallback {
 
 		mIsDirty = true;
 		mVerticalFillType = FILLTYPE.TAKE_WHATS_NEEDED;
-
 	}
 
 	// --------------------------------------
@@ -120,41 +103,37 @@ public class MenuKeyBindEntry extends MenuEntry implements IKeyInputCallback {
 	}
 
 	@Override
-	public boolean handleInput(LintfordCore pCore) {
+	public boolean handleInput(LintfordCore core) {
 		if (!mEnabled)
 			return false;
 
 		if (mHasFocus) {
-			if (!pCore.input().keyboard().isSomeComponentCapturingInputKeys()) {
-				Debug.debugManager().logger().i(getClass().getSimpleName(), "Changing key bind for " + eventAction.eventActionUid);
-				pCore.input().keyboard().StartKeyInputCapture(this);
+			if (!core.input().keyboard().isSomeComponentCapturingInputKeys()) {
+				Debug.debugManager().logger().i(getClass().getSimpleName(), "Changing key bind for " + mEventAction.eventActionUid());
+				core.input().keyboard().StartKeyInputCapture(this);
 				mBindingKey = true;
-
 			}
-
 		}
 
-		return super.handleInput(pCore);
+		return super.handleInput(core);
 	}
 
 	@Override
-	public void update(LintfordCore pCore, MenuScreen pScreen, boolean pIsSelected) {
-		super.update(pCore, pScreen, pIsSelected);
+	public void update(LintfordCore core, MenuScreen screen, boolean isSelected) {
+		super.update(core, screen, isSelected);
 
 		if (mIsDirty) {
-			mBoundKeyText = InputHelper.getGlfwPrintableKeyFromKeyCode(eventAction.getBoundKeyCode()).toUpperCase();
+			mBoundKeyText = InputHelper.getGlfwPrintableKeyFromKeyCode(mEventAction.getBoundKeyCode()).toUpperCase();
 			mIsDirty = false;
-
 		}
-
 	}
 
 	@Override
-	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pParentZDepth) {
+	public void draw(LintfordCore core, Screen screen, boolean isSelected, float parentZDepth) {
 		if (!enabled())
 			return;
 
-		if (eventAction == null)
+		if (mEventAction == null)
 			return;
 
 		final var lParentScreen = mParentLayout.parentScreen;
@@ -175,56 +154,54 @@ public class MenuKeyBindEntry extends MenuEntry implements IKeyInputCallback {
 		final var lSpriteBatch = lParentScreen.spriteBatch();
 
 		if (mDrawBackground) {
-			lSpriteBatch.begin(pCore.HUD());
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, x, y, w, h, pParentZDepth + .15f, entryColor);
+			lSpriteBatch.begin(core.HUD());
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX, mY, mW, mH, parentZDepth + .15f, entryColor);
 			lSpriteBatch.end();
 
 		} else if (mHoveredOver) {
-			lSpriteBatch.begin(pCore.HUD());
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, centerX() - w / 2, centerY() - h / 2, 32, h, pParentZDepth + .15f, ColorConstants.MenuEntryHighlightColor);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, centerX() - (w / 2) + 32, centerY() - h / 2, w - 64, h, pParentZDepth + .15f, ColorConstants.MenuEntryHighlightColor);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, centerX() + (w / 2) - 32, centerY() - h / 2, 32, h, pParentZDepth + .15f, ColorConstants.MenuEntryHighlightColor);
+			lSpriteBatch.begin(core.HUD());
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, centerX() - mW / 2, centerY() - mH / 2, 32, mH, parentZDepth + .15f, ColorConstants.MenuEntryHighlightColor);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, centerX() - (mW / 2) + 32, centerY() - mH / 2, mW - 64, mH, parentZDepth + .15f, ColorConstants.MenuEntryHighlightColor);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, centerX() + (mW / 2) - 32, centerY() - mH / 2, 32, mH, parentZDepth + .15f, ColorConstants.MenuEntryHighlightColor);
 			lSpriteBatch.end();
 		}
 
-		float lX = x + w / 2;
+		float lX = mX + mW / 2;
 
-		mCaretFlashTimer += pCore.appTime().elapsedTimeMilli() * 0.001f;
+		mCaretFlashTimer += core.appTime().elapsedTimeMilli() * 0.001f;
 
-		lTextBoldFont.begin(pCore.HUD());
-		lTextBoldFont.drawText(mText, lX - lLabelWidth - 20.f, y + h / 2f - lFontHeight / 2f, pParentZDepth + .15f, textColor, lUiTextScale);
-		lTextBoldFont.drawText(":", lX - 5.f, y + h / 2f - lFontHeight / 2f, pParentZDepth + .15f, textColor, lUiTextScale);
+		lTextBoldFont.begin(core.HUD());
+		lTextBoldFont.drawText(mText, lX - lLabelWidth - 20.f, mY + mH / 2f - lFontHeight / 2f, parentZDepth + .15f, textColor, lUiTextScale);
+		lTextBoldFont.drawText(":", lX - 5.f, mY + mH / 2f - lFontHeight / 2f, parentZDepth + .15f, textColor, lUiTextScale);
 
 		if (mBindingKey) {
 			final String lBoundKeyText = "|";
 			final float lColorMod = .5f;
 			final var lColor = ColorConstants.getColorWithRGBMod(ColorConstants.PrimaryColor, lColorMod);
 
-			lSpriteBatch.begin(pCore.HUD());
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, x, y, w, h, pParentZDepth + .15f, lColor);
+			lSpriteBatch.begin(core.HUD());
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX, mY, mW, mH, parentZDepth + .15f, lColor);
 			lSpriteBatch.end();
 
 			if (mCaretFlashTimer % 1.f > .5f) {
-				lTextBoldFont.drawText(lBoundKeyText, lX + 20.f, y + h / 2f - lFontHeight / 2f, pParentZDepth + .15f, textColor, lUiTextScale);
+				lTextBoldFont.drawText(lBoundKeyText, lX + 20.f, mY + mH / 2f - lFontHeight / 2f, parentZDepth + .15f, textColor, lUiTextScale);
 			}
 
 		} else if (mBoundKeyText != null && mBoundKeyText.length() > 0) {
-			lTextBoldFont.drawText(mBoundKeyText, lX + 20.f, y + h / 2f - lFontHeight / 2f, pParentZDepth + .15f, textColor, lUiTextScale);
+			lTextBoldFont.drawText(mBoundKeyText, lX + 20.f, mY + mH / 2f - lFontHeight / 2f, parentZDepth + .15f, textColor, lUiTextScale);
 		}
 
 		lTextBoldFont.end();
 
-		if (mShowInfoIcon) {
-			drawInfoIcon(pCore, lSpriteBatch, mInfoIconDstRectangle, lParentScreen.screenColor.a);
-		}
+		if (mShowInfoIcon)
+			drawInfoIcon(core, lSpriteBatch, mInfoIconDstRectangle, lParentScreen.screenColor.a);
 
-		if (mShowWarnIcon) {
-			drawWarningIcon(pCore, lSpriteBatch, mWarnIconDstRectangle, lParentScreen.screenColor.a);
-		}
+		if (mShowWarnIcon)
+			drawWarningIcon(core, lSpriteBatch, mWarnIconDstRectangle, lParentScreen.screenColor.a);
 
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
-			lSpriteBatch.begin(pCore.HUD());
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, x, y, w, h, mZ, ColorConstants.Debug_Transparent_Magenta);
+			lSpriteBatch.begin(core.HUD());
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX, mY, mW, mH, mZ, ColorConstants.Debug_Transparent_Magenta);
 			lSpriteBatch.end();
 		}
 	}
@@ -234,14 +211,13 @@ public class MenuKeyBindEntry extends MenuEntry implements IKeyInputCallback {
 	// --------------------------------------
 
 	@Override
-	public void keyInput(int pKey, int pScanCode, int pAction, int pMods) {
+	public void keyInput(int key, int scanCode, int action, int mods) {
 		if (mHasFocus) {
-			Debug.debugManager().logger().i(getClass().getSimpleName(), "key bind invoke " + eventAction.eventActionUid + " called to " + GLFW.glfwGetKeyName(GLFW.glfwGetKeyScancode(pKey), pScanCode));
-			eventAction.boundKeyCode = pKey;
+			Debug.debugManager().logger().i(getClass().getSimpleName(), "key bind invoke " + mEventAction.eventActionUid() + " called to " + GLFW.glfwGetKeyName(GLFW.glfwGetKeyScancode(key), scanCode));
+			mEventAction.boundKeyCode(key);
 			mBindingKey = false;
 			mHasFocus = false;
 			mIsDirty = true;
-
 		}
 	}
 

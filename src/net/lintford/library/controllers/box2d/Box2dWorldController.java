@@ -18,17 +18,17 @@ public class Box2dWorldController extends BaseController {
 
 	public static final String CONTROLLER_NAME = "Box2dWorldController";
 
+	public static final float UPDATE_TIMER = (1.f / 60.f);
+
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
 	protected ResourceController mResourceController;
 	protected World mWorld;
-
-	protected boolean singleStep;
-	protected boolean isPaused;
+	protected boolean mIsSingleStep;
+	protected boolean mIsPaused;
 	protected int mLogicalStepCounter;
-
 	protected int mVelocityIterations;
 	protected int mPositionIterations;
 
@@ -40,18 +40,18 @@ public class Box2dWorldController extends BaseController {
 		return mVelocityIterations;
 	}
 
-	public void velocityIterations(int pNewVelocityIterationCount) {
-		pNewVelocityIterationCount = MathHelper.clampi(pNewVelocityIterationCount, 1, 50);
-		mVelocityIterations = pNewVelocityIterationCount;
+	public void velocityIterations(int velocityIterationCount) {
+		velocityIterationCount = MathHelper.clampi(velocityIterationCount, 1, 50);
+		mVelocityIterations = velocityIterationCount;
 	}
 
 	public int positionIterations() {
 		return mPositionIterations;
 	}
 
-	public void positionIterations(int pNewPositionIterationCount) {
-		pNewPositionIterationCount = MathHelper.clampi(pNewPositionIterationCount, 1, 50);
-		mPositionIterations = pNewPositionIterationCount;
+	public void positionIterations(int positionIterationCount) {
+		positionIterationCount = MathHelper.clampi(positionIterationCount, 1, 50);
+		mPositionIterations = positionIterationCount;
 	}
 
 	public int logicalStepCounter() {
@@ -66,20 +66,18 @@ public class Box2dWorldController extends BaseController {
 	// Constructors
 	// --------------------------------------
 
-	public Box2dWorldController(ControllerManager pControllerManager, World pWorld, int pEntityGroupID) {
-		this(pControllerManager, CONTROLLER_NAME, pWorld, pEntityGroupID);
-
+	public Box2dWorldController(ControllerManager controllerManager, World box2dWorld, int pEntityGroupUid) {
+		this(controllerManager, CONTROLLER_NAME, box2dWorld, pEntityGroupUid);
 	}
 
-	public Box2dWorldController(ControllerManager pControllerManager, String pControllerNamer, World pWorld, int pEntityGroupID) {
-		super(pControllerManager, pControllerNamer, pEntityGroupID);
+	public Box2dWorldController(ControllerManager controllerManager, String controllerNamer, World box2dWorld, int entityGroupUid) {
+		super(controllerManager, controllerNamer, entityGroupUid);
 
 		mVelocityIterations = 8;
 		mPositionIterations = 3;
 
-		mWorld = pWorld;
-		isPaused = false;
-
+		mWorld = box2dWorld;
+		mIsPaused = false;
 	}
 
 	// --------------------------------------
@@ -87,41 +85,36 @@ public class Box2dWorldController extends BaseController {
 	// --------------------------------------
 
 	@Override
-	public void initialize(LintfordCore pCore) {
-		super.initialize(pCore);
-		mResourceController = (ResourceController) pCore.controllerManager().getControllerByNameRequired(ResourceController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
+	public void initialize(LintfordCore core) {
+		super.initialize(core);
+
+		mResourceController = (ResourceController) core.controllerManager().getControllerByNameRequired(ResourceController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
 	}
 
 	@Override
-	public void update(LintfordCore pCore) {
-		super.update(pCore);
+	public void update(LintfordCore core) {
+		super.update(core);
 
-		if (singleStep) {
-			stepWorld(pCore);
+		if (mIsSingleStep) {
+			stepWorld(core);
 
-			singleStep = false;
-			isPaused = true;
+			mIsSingleStep = false;
+			mIsPaused = true;
 
 			return;
 		}
 
-		if (isPaused) {
+		if (mIsPaused)
 			return;
 
-		}
-
-		if (mWorld != null && !pCore.gameTime().isTimePaused()) {
-			stepWorld(pCore);
-
-		}
-
+		if (mWorld != null && !core.gameTime().isTimePaused())
+			stepWorld(core);
 	}
 
-	private void stepWorld(LintfordCore pCore) {
+	private void stepWorld(LintfordCore core) {
 		mLogicalStepCounter++;
 
-		mWorld.step((1f / 60f) * pCore.gameTime().timeModifier(), mVelocityIterations, mPositionIterations);
-
+		mWorld.step(UPDATE_TIMER * core.gameTime().timeModifier(), mVelocityIterations, mPositionIterations);
 	}
 
 	@Override
@@ -134,42 +127,40 @@ public class Box2dWorldController extends BaseController {
 	// Methods
 	// --------------------------------------
 
-	public void returnBox2dInstance(JBox2dEntityInstance pJBox2dEntityInstanceToReturn) {
-		if (pJBox2dEntityInstanceToReturn == null)
+	public void returnBox2dInstance(JBox2dEntityInstance box2dEntityInstanceToReturn) {
+		if (box2dEntityInstanceToReturn == null)
 			return;
 
-		if (pJBox2dEntityInstanceToReturn.userDataObject() != null) {
-			Debug.debugManager().logger().w(getClass().getSimpleName(), "JBox2dEntityInstance unloaded without first removing the userdata object. typeof (" + pJBox2dEntityInstanceToReturn.userDataObject().toString() + ")");
-			pJBox2dEntityInstanceToReturn.userDataObject(null);
-
+		if (box2dEntityInstanceToReturn.userDataObject() != null) {
+			Debug.debugManager().logger().w(getClass().getSimpleName(), "JBox2dEntityInstance unloaded without first removing the userdata object. typeof (" + box2dEntityInstanceToReturn.userDataObject().toString() + ")");
+			box2dEntityInstanceToReturn.userDataObject(null);
 		}
 
-		pJBox2dEntityInstanceToReturn.unloadPhysics();
+		box2dEntityInstanceToReturn.unloadPhysics();
 		final var lResourceManager = mResourceController.resourceManager();
 
-		lResourceManager.pobjectManager().returnPooledItem(pJBox2dEntityInstanceToReturn);
-
+		lResourceManager.pobjectManager().returnPooledItem(box2dEntityInstanceToReturn);
 	}
 
 	public void reset() {
 		mLogicalStepCounter = 0;
-		singleStep = false;
-		isPaused = true;
+		mIsSingleStep = false;
+		mIsPaused = true;
 	}
 
 	public void pause() {
-		singleStep = false;
-		isPaused = true;
+		mIsSingleStep = false;
+		mIsPaused = true;
 	}
 
 	public void singleStep() {
-		singleStep = true;
-		isPaused = false;
+		mIsSingleStep = true;
+		mIsPaused = false;
 	}
 
 	public void play() {
-		singleStep = false;
-		isPaused = false;
+		mIsSingleStep = false;
+		mIsPaused = false;
 	}
 
 }

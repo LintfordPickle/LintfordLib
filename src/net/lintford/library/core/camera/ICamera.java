@@ -201,7 +201,7 @@ public interface ICamera {
 
 	public abstract float getZoomFactor();
 
-	public abstract void setZoomFactor(float pNewValue);
+	public abstract void setZoomFactor(float zoomFactor);
 
 	public abstract float getZoomFactorOverOne();
 
@@ -213,9 +213,9 @@ public interface ICamera {
 	// Core-Methods
 	// --------------------------------------
 
-	public abstract void handleInput(LintfordCore pCore);
+	public abstract void handleInput(LintfordCore core);
 
-	public abstract void update(LintfordCore pCore);
+	public abstract void update(LintfordCore core);
 
 	// --------------------------------------
 	// Methods
@@ -223,9 +223,9 @@ public interface ICamera {
 
 	public abstract CameraState getCameraState();
 
-	public abstract void setCameraState(CameraState pCameraState);
+	public abstract void setCameraState(CameraState cameraState);
 
-	public abstract void setPosition(float pX, float pY);
+	public abstract void setPosition(float positionX, float positionY);
 
 	public abstract Vector2f getMouseCameraSpace();
 
@@ -234,14 +234,14 @@ public interface ICamera {
 	public abstract float getMouseWorldSpaceY();
 
 	/** This maps the input X coordinate into the camera space. */
-	public abstract float getPointCameraSpaceX(float pPointX);
+	public abstract float getPointCameraSpaceX(float pointX);
 
 	/** This maps the input Y coordinate into the camera space. */
-	public abstract float getPointCameraSpaceY(float pPointY);
+	public abstract float getPointCameraSpaceY(float pointY);
 
-	public abstract float getWorldPositionXInCameraSpace(float pPointX);
+	public abstract float getWorldPositionXInCameraSpace(float pointX);
 
-	public abstract float getWorldPositionYInCameraSpace(float pPointY);
+	public abstract float getWorldPositionYInCameraSpace(float pointY);
 
 	public abstract void applyGameViewport();
 

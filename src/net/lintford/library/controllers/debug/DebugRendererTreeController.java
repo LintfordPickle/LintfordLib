@@ -38,25 +38,23 @@ public class DebugRendererTreeController extends BaseController {
 	// Constructor
 	// --------------------------------------
 
-	public DebugRendererTreeController(ControllerManager pControllerManager, int pControllerGroup) {
-		super(pControllerManager, CONTROLLER_NAME, pControllerGroup);
+	public DebugRendererTreeController(ControllerManager controllerManager, int controllerGroup) {
+		super(controllerManager, CONTROLLER_NAME, controllerGroup);
 
 		mDebugTreeComponents = new ArrayList<BaseRendererWidget>();
-
 	}
 
 	// --------------------------------------
 	// Core-Methods
 	// --------------------------------------
 
-	public void trackRendererManager(RendererManager pRendererManager) {
-		mRendererManager = pRendererManager;
+	public void trackRendererManager(RendererManager rendererManager) {
+		mRendererManager = rendererManager;
 
 		unload();
 
-		if (mRendererManager != null && mRendererManager.equals(pRendererManager)) {
+		if (mRendererManager != null && mRendererManager.equals(rendererManager)) {
 			// TODO: Unload current RendererManager ...
-
 		}
 
 		if (mRendererManager != null) {
@@ -65,7 +63,6 @@ public class DebugRendererTreeController extends BaseController {
 
 			final List<UiWindow> lListOfBaseWindowRenderers = mRendererManager.windows();
 			maintainWindowRendererWidgetList(lListOfBaseWindowRenderers);
-
 		} else {
 			clearRendererWidgetList();
 		}
@@ -77,8 +74,8 @@ public class DebugRendererTreeController extends BaseController {
 	}
 
 	@Override
-	public void update(LintfordCore pCore) {
-		super.update(pCore);
+	public void update(LintfordCore core) {
+		super.update(core);
 
 		if (!isInitialized())
 			return;
@@ -107,12 +104,12 @@ public class DebugRendererTreeController extends BaseController {
 	// --------------------------------------
 
 	// makes sure that every controller gets its own rendering widget
-	private void maintainRendererWidgetList(final List<BaseRenderer> pRenderers) {
+	private void maintainRendererWidgetList(final List<BaseRenderer> renderers) {
 		int lPositionCounter = 0;
 
-		final var lNumBaseRenderers = pRenderers.size();
+		final var lNumBaseRenderers = renderers.size();
 		for (var i = 0; i < lNumBaseRenderers; i++) {
-			final var lRenderer = pRenderers.get(i);
+			final var lRenderer = renderers.get(i);
 
 			if (lRenderer == null)
 				continue;
@@ -124,12 +121,12 @@ public class DebugRendererTreeController extends BaseController {
 		}
 	}
 
-	private void maintainWindowRendererWidgetList(final List<UiWindow> pWindowRenderers) {
+	private void maintainWindowRendererWidgetList(final List<UiWindow> windowRenderers) {
 		int lPositionCounter = 0;
 
-		final var lNumBaseRenderers = pWindowRenderers.size();
+		final var lNumBaseRenderers = windowRenderers.size();
 		for (var i = 0; i < lNumBaseRenderers; i++) {
-			final var lRenderer = pWindowRenderers.get(i);
+			final var lRenderer = windowRenderers.get(i);
 
 			if (lRenderer == null)
 				continue;
@@ -145,25 +142,25 @@ public class DebugRendererTreeController extends BaseController {
 
 	}
 
-	private boolean debugTreeContainsRendererId(final int pRendererId) {
+	private boolean debugTreeContainsRendererId(final int rendererId) {
 		final int lNumBaseControllerAreas = mDebugTreeComponents.size();
 		for (var i = 0; i < lNumBaseControllerAreas; i++) {
-			if (mDebugTreeComponents.get(i).rendererId == pRendererId)
+			if (mDebugTreeComponents.get(i).rendererId == rendererId)
 				return true;
 		}
-		return false;
 
+		return false;
 	}
 
-	private void addBaseRendererToDebugTree(BaseRenderer pRenderer, final int pAtIndex, final int pIndentation) {
-		if (pRenderer == null)
+	private void addBaseRendererToDebugTree(BaseRenderer renderer, final int atIndex, final int indentation) {
+		if (renderer == null)
 			return;
 
 		final var lNewDebugArea = new BaseRendererWidget();
-		lNewDebugArea.rendererId = pRenderer.rendererId();
-		lNewDebugArea.baseRenderer = pRenderer;
-		lNewDebugArea.displayName = pRenderer.rendererName();
-		lNewDebugArea.rendererLevel = pIndentation;
+		lNewDebugArea.rendererId = renderer.rendererId();
+		lNewDebugArea.baseRenderer = renderer;
+		lNewDebugArea.displayName = renderer.rendererName();
+		lNewDebugArea.rendererLevel = indentation;
 
 		mDebugTreeComponents.add(lNewDebugArea);
 	}
@@ -171,5 +168,4 @@ public class DebugRendererTreeController extends BaseController {
 	public void addDebugComponent() {
 
 	}
-
 }

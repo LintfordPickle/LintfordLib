@@ -6,6 +6,12 @@ import net.lintford.library.options.reader.IniFile;
 public class AudioConfig extends IniFile {
 
 	// --------------------------------------
+	// Constants
+	// --------------------------------------
+
+	public static final String SECTION_NAME_SETTINGS = "Audio Settings";
+
+	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
@@ -26,83 +32,71 @@ public class AudioConfig extends IniFile {
 		return mPreferredOpenAlDevice;
 	}
 
-	public void preferredAudioDeviceName(String pPreferredAudioDeviceName) {
-		mPreferredOpenAlDevice = pPreferredAudioDeviceName;
+	public void preferredAudioDeviceName(String preferredAudioDeviceName) {
+		mPreferredOpenAlDevice = preferredAudioDeviceName;
 	}
 
 	public boolean masterEnabled() {
 		return mMasterEnabled;
 	}
 
-	public void masterEnabled(boolean pNewMasterEnabled) {
-		mMasterEnabled = pNewMasterEnabled;
+	public void masterEnabled(boolean nwMasterEnabled) {
+		mMasterEnabled = nwMasterEnabled;
 	}
 
 	public boolean musicEnabled() {
 		return mMusicEnabled;
 	}
 
-	public void musicEnabled(boolean pNewMusicEnabled) {
-		mMusicEnabled = pNewMusicEnabled;
+	public void musicEnabled(boolean newMusicEnabled) {
+		mMusicEnabled = newMusicEnabled;
 	}
 
 	public boolean soundFxEnabled() {
 		return mSoundFxEnabled;
 	}
 
-	public void soundFxEnabled(boolean pNewSoundFxEnabled) {
-		mSoundFxEnabled = pNewSoundFxEnabled;
+	public void soundFxEnabled(boolean newSoundFxEnabled) {
+		mSoundFxEnabled = newSoundFxEnabled;
 	}
 
 	public float masterVolume() {
 		return mMasterVolume;
 	}
 
-	public void masterVolume(float pNewMasterVolume) {
-		mMasterVolume = pNewMasterVolume;
+	public void masterVolume(float newMasterVolume) {
+		mMasterVolume = newMasterVolume;
 	}
 
 	public float soundFxVolume() {
 		return mSoundFxVolume;
 	}
 
-	public void soundFxVolume(float pNewSoundFxVolume) {
-		mSoundFxVolume = pNewSoundFxVolume;
+	public void soundFxVolume(float newSoundFxVolume) {
+		mSoundFxVolume = newSoundFxVolume;
 	}
 
 	public float musicVolume() {
 		return mMusicVolume;
 	}
 
-	public void musicVolume(float pNewMusicVolume) {
-		mMusicVolume = pNewMusicVolume;
+	public void musicVolume(float newMusicVolume) {
+		mMusicVolume = newMusicVolume;
 	}
 
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
-	public AudioConfig(GameInfo pGameInfo, String pConfigFilename) {
-		super(pConfigFilename);
+	public AudioConfig(GameInfo gameInfo, String configFilename) {
+		super(configFilename);
 
 		loadConfig();
-
-		// if no file previously existed, the underlying config is empty, so we need to set some defaults
-		if (isEmpty()) {
-
-		}
-
 	}
-
-	// --------------------------------------
-	// Core-Methods
-	// --------------------------------------
 
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
-
-	public static final String SECTION_NAME_SETTINGS = "Audio Settings";
 
 	@Override
 	public void loadConfig() {
@@ -120,7 +114,6 @@ public class AudioConfig extends IniFile {
 			mSoundFxEnabled = true;
 
 			saveConfig();
-
 		} else {
 			// Get the values we need
 			mMasterVolume = getFloat(SECTION_NAME_SETTINGS, "MasterVolume", 1);
@@ -134,14 +127,11 @@ public class AudioConfig extends IniFile {
 			// TODO: Read preferred device name
 
 			saveConfig();
-
 		}
-
 	}
 
 	@Override
 	public void saveConfig() {
-
 		clearEntries();
 
 		// Update the entries in the map
@@ -155,7 +145,5 @@ public class AudioConfig extends IniFile {
 
 		// save the entries to file
 		super.saveConfig();
-
 	}
-
 }

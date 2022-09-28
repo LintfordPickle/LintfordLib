@@ -38,17 +38,13 @@ public class DebugDrawers {
 	// --------------------------------------
 
 	private final Debug mDebugManager;
-
 	private FontUnit mSystemFontUnit;
-
 	private PointBatch mImmediatePointBatch;
 	private LineBatch mImmediateLineBatch;
 	private PolyBatch mImmediatePolyBatch;
-
 	private PointBatch mPointBatch;
 	private LineBatch mLineBatch;
 	private PolyBatch mPolyBatch;
-
 	private TextureBatchPCT mTextureBatch;
 	private TexturedQuad mTexturedQuad;
 	private ShaderMVP_PT mBasicShader;
@@ -57,8 +53,8 @@ public class DebugDrawers {
 	// Constructor
 	// --------------------------------------
 
-	public DebugDrawers(final Debug pDebugManager) {
-		mDebugManager = pDebugManager;
+	public DebugDrawers(final Debug debugManager) {
+		mDebugManager = debugManager;
 
 		if (!mDebugManager.debugManagerEnabled())
 			return;
@@ -81,30 +77,29 @@ public class DebugDrawers {
 				GL20.glBindAttribLocation(pShaderID, 1, "inTexCoord");
 			}
 		};
-
 	}
 
 	// --------------------------------------
 	// Core-Methods
 	// --------------------------------------
 
-	public void loadResources(ResourceManager pResourceManager) {
+	public void loadResources(ResourceManager resourceManager) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
-		mSystemFontUnit = pResourceManager.fontManager().getFontUnit(BitmapFontManager.SYSTEM_FONT_CORE_TEXT_NAME);
+		mSystemFontUnit = resourceManager.fontManager().getFontUnit(BitmapFontManager.SYSTEM_FONT_CORE_TEXT_NAME);
 
-		mTextureBatch.loadResources(pResourceManager);
-		mBasicShader.loadResources(pResourceManager);
-		mTexturedQuad.loadResources(pResourceManager);
+		mTextureBatch.loadResources(resourceManager);
+		mBasicShader.loadResources(resourceManager);
+		mTexturedQuad.loadResources(resourceManager);
 
-		mImmediatePointBatch.loadResources(pResourceManager);
-		mImmediateLineBatch.loadResources(pResourceManager);
-		mImmediatePolyBatch.loadResources(pResourceManager);
+		mImmediatePointBatch.loadResources(resourceManager);
+		mImmediateLineBatch.loadResources(resourceManager);
+		mImmediatePolyBatch.loadResources(resourceManager);
 
-		mPointBatch.loadResources(pResourceManager);
-		mLineBatch.loadResources(pResourceManager);
-		mPolyBatch.loadResources(pResourceManager);
+		mPointBatch.loadResources(resourceManager);
+		mLineBatch.loadResources(resourceManager);
+		mPolyBatch.loadResources(resourceManager);
 	}
 
 	public void unloadResources() {
@@ -130,189 +125,173 @@ public class DebugDrawers {
 
 	// 'Immediate' mode renderers
 
-	public void drawPointImmediate(ICamera pCamera, float pX, float pY) {
-		drawPointImmediate(pCamera, pX, pY, -0.01f);
+	public void drawPointImmediate(ICamera camera, float x, float y) {
+		drawPointImmediate(camera, x, y, -0.01f);
 	}
 
-	public void drawPointImmediate(ICamera pCamera, float pX, float pY, float pZ) {
-		drawPointImmediate(pCamera, pX, pY, pZ, 1f, 1f, 1f, 1f);
+	public void drawPointImmediate(ICamera camera, float x, float y, float z) {
+		drawPointImmediate(camera, x, y, z, 1f, 1f, 1f, 1f);
 	}
 
-	public void drawPointImmediate(ICamera pCamera, float pX, float pY, float pZ, float pR, float pG, float pB, float pA) {
+	public void drawPointImmediate(ICamera camera, float x, float y, float z, float red, float green, float blue, float alpha) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
-		mImmediatePointBatch.begin(pCamera);
-		mImmediatePointBatch.draw(pX, pY, pZ, pR, pG, pB, pA);
+		mImmediatePointBatch.begin(camera);
+		mImmediatePointBatch.draw(x, y, z, red, green, blue, alpha);
 		mImmediatePointBatch.end();
-
 	}
 
-	public void drawLineImmediate(ICamera pCamera, float pSX, float pSY, float pEX, float pEY) {
-		drawLineImmediate(pCamera, pSX, pSY, pEX, pEY, -0.01f);
-
+	public void drawLineImmediate(ICamera camera, float startX, float startY, float endX, float endY) {
+		drawLineImmediate(camera, startX, startY, endX, endY, -0.01f);
 	}
 
-	public void drawLineImmediate(ICamera pCamera, float pSX, float pSY, float pEX, float pEY, float pZ) {
-		drawLineImmediate(pCamera, pSX, pSY, pEX, pEY, pZ, 1f, 1f, 1f);
-
+	public void drawLineImmediate(ICamera camera, float startX, float startY, float endX, float endY, float z) {
+		drawLineImmediate(camera, startX, startY, endX, endY, z, 1f, 1f, 1f);
 	}
 
-	public void drawLineImmediate(ICamera pCamera, float pSX, float pSY, float pEX, float pEY, float pZ, float pR, float pG, float pB) {
+	public void drawLineImmediate(ICamera camera, float startX, float startY, float endX, float endY, float z, float red, float green, float blue) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
 		mLineBatch.lineType(GL11.GL_LINES);
-		mLineBatch.begin(pCamera);
-		mLineBatch.draw(pSX, pSY, pEX, pEY, -0.01f, pR, pG, pB);
+		mLineBatch.begin(camera);
+		mLineBatch.draw(startX, startY, endX, endY, -0.01f, red, green, blue);
 		mLineBatch.end();
 	}
 
-	public void drawRectImmediate(ICamera pCamera, Rectangle pDstRect) {
-		if (pDstRect == null)
+	public void drawRectImmediate(ICamera camera, Rectangle destRectangle) {
+		if (destRectangle == null)
 			return;
-		drawRectImmediate(pCamera, pDstRect.left(), pDstRect.top(), pDstRect.width(), pDstRect.height());
-
+		
+		drawRectImmediate(camera, destRectangle.left(), destRectangle.top(), destRectangle.width(), destRectangle.height());
 	}
 
-	public void drawRectImmediate(ICamera pCamera, float pX, float pY, float pW, float pH) {
-		drawRectImmediate(pCamera, pX, pY, pW, pH, 1f, 1f, 1f);
+	public void drawRectImmediate(ICamera camera, float x, float y, float width, float height) {
+		drawRectImmediate(camera, x, y, width, height, 1f, 1f, 1f);
 	}
 
-	public void drawRectImmediate(ICamera pCamera, Rectangle pDstRect, float pR, float pG, float pB) {
-		drawRectImmediate(pCamera, pDstRect.left(), pDstRect.top(), pDstRect.width(), pDstRect.height(), pR, pG, pB);
-
+	public void drawRectImmediate(ICamera camera, Rectangle destRectangle, float red, float green, float blue) {
+		drawRectImmediate(camera, destRectangle.left(), destRectangle.top(), destRectangle.width(), destRectangle.height(), red, green, blue);
 	}
 
-	public void drawRectImmediate(ICamera pCamera, Rectangle pDstRect, float pLineWidth, float pR, float pG, float pB) {
-		drawRectImmediate(pCamera, pDstRect.left(), pDstRect.top(), pDstRect.width(), pDstRect.height(), pLineWidth, pR, pG, pB);
-
+	public void drawRectImmediate(ICamera camera, Rectangle destRectangle, float lineWidth, float red, float green, float blue) {
+		drawRectImmediate(camera, destRectangle.left(), destRectangle.top(), destRectangle.width(), destRectangle.height(), lineWidth, red, green, blue);
 	}
 
-	public void drawRectImmediate(ICamera pCamera, float pX, float pY, float pW, float pH, float pR, float pG, float pB) {
-		drawRectImmediate(pCamera, pX, pY, pW, pH, 1f, pR, pG, pB);
-
+	public void drawRectImmediate(ICamera camera, float x, float y, float width, float height, float red, float green, float blue) {
+		drawRectImmediate(camera, x, y, width, height, 1f, red, green, blue);
 	}
 
-	public void drawRectImmediate(ICamera pCamera, float pX, float pY, float pW, float pH, float pLineWidth, float pR, float pG, float pB) {
+	public void drawRectImmediate(ICamera camera, float x, float y, float width, float height, float lineWidth, float red, float green, float blue) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
 		mImmediateLineBatch.lineType(GL11.GL_LINES);
-		mImmediateLineBatch.lineWidth(pLineWidth);
-		mImmediateLineBatch.begin(pCamera);
-		mImmediateLineBatch.drawRect(pX, pY, pW, pH, -.01f, pR, pG, pB);
+		mImmediateLineBatch.lineWidth(lineWidth);
+		mImmediateLineBatch.begin(camera);
+		mImmediateLineBatch.drawRect(x, y, width, height, -.01f, red, green, blue);
 		mImmediateLineBatch.end();
 	}
 
-	public void drawPolyImmediate(ICamera pCamera, Rectangle pRect) {
+	public void drawPolyImmediate(ICamera camera, Rectangle rectangle) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
-		mImmediatePolyBatch.begin(pCamera);
-		mImmediatePolyBatch.drawRect(pRect, -0.1f, 1f, 1f, 1f);
+		mImmediatePolyBatch.begin(camera);
+		mImmediatePolyBatch.drawRect(rectangle, -.1f, 1.f, 1.f, 1.f);
 		mImmediatePolyBatch.end();
 	}
 
-	public void drawPolyImmediate(ICamera pCamera, List<Vector2f> pVertices, boolean pClose) {
+	public void drawPolyImmediate(ICamera camera, List<Vector2f> vertices, boolean closePolygon) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
-		drawPolyImmediate(pCamera, pVertices, 1f, 1f, 1f, pClose);
-
+		drawPolyImmediate(camera, vertices, 1f, 1f, 1f, closePolygon);
 	}
 
-	public void drawPolyImmediate(ICamera pCamera, List<Vector2f> pVertices, float pR, float pG, float pB, boolean pClose) {
-		drawPolyImmediate(pCamera, pVertices, pVertices.size(), pR, pG, pB, pClose);
-
+	public void drawPolyImmediate(ICamera camera, List<Vector2f> vertices, float red, float green, float blue, boolean pClose) {
+		drawPolyImmediate(camera, vertices, vertices.size(), red, green, blue, pClose);
 	}
 
-	public void drawPolyImmediate(ICamera pCamera, List<Vector2f> pVertices, int pAmt, float pR, float pG, float pB, boolean pClose) {
+	public void drawPolyImmediate(ICamera camera, List<Vector2f> vertices, int numVertices, float red, float green, float blue, boolean closePolygon) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
-		mImmediatePolyBatch.begin(pCamera);
-		mImmediatePolyBatch.drawRect(pVertices, pAmt, -0.1f, pClose, pR, pG, pB);
+		mImmediatePolyBatch.begin(camera);
+		mImmediatePolyBatch.drawRect(vertices, numVertices, -0.1f, closePolygon, red, green, blue);
 		mImmediatePolyBatch.end();
-
 	}
 
-	public void drawCircleImmediate(ICamera pCamera, float pX, float pY, float pRadius) {
-		drawCircleImmediate(pCamera, pX, pY, pRadius, 32);
-
+	public void drawCircleImmediate(ICamera camera, float x, float y, float radius) {
+		drawCircleImmediate(camera, x, y, radius, 32);
 	}
 
-	public void drawCircleImmediate(ICamera pCamera, float pX, float pY, float pRadius, int pSegCount) {
-		drawCircleImmediate(pCamera, pX, pY, pRadius, pSegCount, GL11.GL_LINE_STRIP);
-
+	public void drawCircleImmediate(ICamera camera, float x, float y, float radius, int segCount) {
+		drawCircleImmediate(camera, x, y, radius, segCount, GL11.GL_LINE_STRIP);
 	}
 
-	public void drawCircleImmediate(ICamera pCamera, float pX, float pY, float pRadius, int pSegCount, int pGLLineType) {
+	public void drawCircleImmediate(ICamera camera, float x, float y, float radius, int segCount, int glLineType) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
-		mImmediateLineBatch.lineType(pGLLineType);
-		mImmediateLineBatch.begin(pCamera);
+		mImmediateLineBatch.lineType(glLineType);
+		mImmediateLineBatch.begin(camera);
 
-		final int lNumSegments = pSegCount / 2;
+		final int lNumSegments = segCount / 2;
 		for (float i = 0; i < 2 * Math.PI; i += Math.PI / lNumSegments) {
 
-			float xx = pX + (float) (pRadius * Math.cos(i));
-			float yy = pY + (float) (pRadius * Math.sin(i));
+			float xx = x + (float) (radius * Math.cos(i));
+			float yy = y + (float) (radius * Math.sin(i));
 
 			mImmediateLineBatch.draw(xx, yy, -0.01f, 1f, 1f, 1f, 1f);
-
 		}
 
-		// Add the first vert again
-		mImmediateLineBatch.draw(pX + (float) (pRadius * Math.cos(0)), pY + (float) (pRadius * Math.sin(0)), -0.01f, 1f, 1f, 1f, 1f);
-
+		mImmediateLineBatch.draw(x + (float) (radius * Math.cos(0)), y + (float) (radius * Math.sin(0)), -0.01f, 1f, 1f, 1f, 1f);
 		mImmediateLineBatch.end();
-
 	}
 
-	public void drawRenderTargetImmediate(LintfordCore pCore, float pDestinationPositionX, float pDestinationPositionY, float pDestinationWidth, float pDestinationHeight, float pDestinationZ,
-			RenderTarget pRenderTarget) {
+	public void drawRenderTargetImmediate(LintfordCore core, float destinationX, float destinationY, float destinationWidth, float destinationHeight, float zDepth, RenderTarget renderTarget) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
-		if (pRenderTarget == null)
+		if (renderTarget == null)
 			return;
 
-		GL13.glActiveTexture(GL13.GL_TEXTURE0); // add scene texture
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, pRenderTarget.colorTextureID());
+		GL13.glActiveTexture(GL13.GL_TEXTURE0);
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, renderTarget.colorTextureID());
 
-		mBasicShader.projectionMatrix(pCore.HUD().projection());
-		mBasicShader.viewMatrix(pCore.HUD().view());
+		mBasicShader.projectionMatrix(core.HUD().projection());
+		mBasicShader.viewMatrix(core.HUD().view());
 
-		mTexturedQuad.createModelMatrix(pDestinationPositionX, pDestinationPositionY, pDestinationWidth, pDestinationHeight, -1f);
+		mTexturedQuad.createModelMatrix(destinationX, destinationY, zDepth, destinationWidth, destinationHeight);
 		mBasicShader.modelMatrix(mTexturedQuad.modelMatrix());
 
 		mBasicShader.bind();
-		mTexturedQuad.draw(pCore);
+		mTexturedQuad.draw(core);
 		mBasicShader.unbind();
 
-		GL13.glActiveTexture(GL13.GL_TEXTURE0); //
+		GL13.glActiveTexture(GL13.GL_TEXTURE0);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 	}
 
 	// 'Batched' mode renderers
 
-	public void beginTextureRenderer(ICamera pCamera) {
+	public void beginTextureRenderer(ICamera camera) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
-		mTextureBatch.begin(pCamera);
+		mTextureBatch.begin(camera);
 	}
 
-	public void drawTexture(Texture pTexture, float pDX, float pDY, float pDW, float pDH, float pDZ) {
+	public void drawTexture(Texture texture, float destX, float destY, float destW, float destH, float zDepth) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
-		drawTexture(pTexture, 0, 0, pTexture.getTextureWidth(), pTexture.getTextureHeight(), pDX, pDY, pDW, pDH, pDZ);
+		drawTexture(texture, 0, 0, texture.getTextureWidth(), texture.getTextureHeight(), destX, destY, destW, destH, zDepth);
 	}
 
-	public void drawTexture(Texture pTexture, float pSourceX, float pSourceY, float pSourceWidth, float pSourceHeight, float pDX, float pDY, float pDW, float pDH, float pDZ) {
+	public void drawTexture(Texture texture, float sourceX, float sourceY, float sourceWidth, float sourceHeight, float destX, float destY, float destW, float destH, float zDepth) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
@@ -321,8 +300,7 @@ public class DebugDrawers {
 			return;
 		}
 
-		mTextureBatch.draw(pTexture, pSourceX, pSourceY, pSourceWidth, pSourceHeight, pDX, pDY, pDW, pDH, pDZ, ColorConstants.WHITE);
-
+		mTextureBatch.draw(texture, sourceX, sourceY, sourceWidth, sourceHeight, destX, destY, destW, destH, zDepth, ColorConstants.WHITE);
 	}
 
 	public void endTextureRenderer() {
@@ -332,88 +310,80 @@ public class DebugDrawers {
 		mTextureBatch.end();
 	}
 
-	public void beginPointRenderer(ICamera pCamera) {
+	public void beginPointRenderer(ICamera camera) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
-		mPointBatch.begin(pCamera);
+		mPointBatch.begin(camera);
+	}
+
+	public void beginLineRenderer(ICamera camera) {
+		beginLineRenderer(camera, GL11.GL_LINE_STRIP);
 
 	}
 
-	public void beginLineRenderer(ICamera pCamera) {
-		beginLineRenderer(pCamera, GL11.GL_LINE_STRIP);
-
+	public void beginLineRenderer(ICamera camera, int glLineType) {
+		beginLineRenderer(camera, glLineType, 1f);
 	}
 
-	public void beginLineRenderer(ICamera pCamera, int pGLLineType) {
-		beginLineRenderer(pCamera, pGLLineType, 1f);
-
-	}
-
-	public void beginLineRenderer(ICamera pCamera, int pGLLineType, float pLineWidth) {
+	public void beginLineRenderer(ICamera camera, int glLineType, float lineWidth) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
-		mLineBatch.lineType(pGLLineType);
-		mLineBatch.lineWidth(pLineWidth);
-		mLineBatch.begin(pCamera);
-
+		mLineBatch.lineType(glLineType);
+		mLineBatch.lineWidth(lineWidth);
+		mLineBatch.begin(camera);
 	}
 
-	public void drawPoint(float pX, float pY) {
-		drawPoint(pX, pY, 1f, 1f, 1f, 1f);
-
+	public void drawPoint(float x, float y) {
+		drawPoint(x, y, 1f, 1f, 1f, 1f);
 	}
 
-	public void drawPoint(float pX, float pY, float pR, float pG, float pB, float pA) {
+	public void drawPoint(float x, float y, float red, float green, float blue, float alpha) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
-		mPointBatch.draw(pX, pY, -0.01f, pR, pG, pB, pA);
-
+		mPointBatch.draw(x, y, -0.01f, red, green, blue, alpha);
 	}
 
-	public void drawLine(float pSX, float pSY, float pEX, float pEY) {
-		drawLine(pSX, pSY, pEX, pEY, 1f, 1f, 1f);
-
+	public void drawLine(float startX, float startY, float endX, float endY) {
+		drawLine(startX, startY, endX, endY, 1f, 1f, 1f);
 	}
 
-	public void drawLine(float pSX, float pSY, float pEX, float pEY, float pR, float pG, float pB) {
+	public void drawLine(float startX, float startY, float endX, float endY, float red, float green, float blue) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
 		if (!mLineBatch.isDrawing())
 			return;
 
-		mLineBatch.draw(pSX, pSY, pEX, pEY, -0.01f, pR, pG, pB);
+		mLineBatch.draw(startX, startY, endX, endY, -0.01f, red, green, blue);
 	}
 
-	public void drawRect(Rectangle pRect, float pR, float pG, float pB) {
-		if (pRect == null)
+	public void drawRect(Rectangle rectangle, float red, float green, float blue) {
+		if (rectangle == null)
 			return;
 
-		drawRect(pRect.left(), pRect.top(), pRect.width(), pRect.height(), pR, pG, pB);
+		drawRect(rectangle.left(), rectangle.top(), rectangle.width(), rectangle.height(), red, green, blue);
 	}
 
-	public void drawRect(float pX, float pY, float pW, float pH, float pR, float pG, float pB) {
+	public void drawRect(float x, float y, float width, float height, float red, float green, float blue) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
 		mLineBatch.lineType(GL11.GL_LINES);
-		mLineBatch.drawRect(pX, pY, pW, pH, -.01f, pR, pG, pB);
+		mLineBatch.drawRect(x, y, width, height, -.01f, red, green, blue);
 	}
 
-	public void drawCircle(float pX, float pY, float pRadius) {
-		drawCircle(pX, pY, pRadius, 32);
-
+	public void drawCircle(float x, float y, float radius) {
+		drawCircle(x, y, radius, 32);
 	}
 
-	public void drawCircle(float pX, float pY, float pRadius, int pSegCount) {
-		drawCircle(pX, pY, pRadius, 0.f, pSegCount, GL11.GL_LINE_STRIP);
-
+	public void drawCircle(float x, float y, float radius, int segCount) {
+		drawCircle(x, y, radius, 0.f, segCount, GL11.GL_LINE_STRIP);
 	}
 
-	public void drawCircle(float pX, float pY, float pRadius, float pInitialAngle, int pSegCount, int pGLLineType) {
+	public void drawCircle(float x, float y, float radius, float initialAngle, int segCount, int glLineType) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
@@ -422,26 +392,16 @@ public class DebugDrawers {
 			return;
 		}
 
-		// if (mLineBatch.lineType() != pGLLineType) {
-		// Debug.debugManager().logger().w(getClass().getSimpleName(), "Forced flush of LineBatch: different lineType");
-		// mLineBatch.forceFlush();
-		// }
-		//
-		// mLineBatch.lineType(pGLLineType);
+		final int lNumSegments = segCount / 2;
+		for (float i = -initialAngle; i < 2 * Math.PI - initialAngle; i += Math.PI / lNumSegments) {
 
-		final int lNumSegments = pSegCount / 2;
-		for (float i = -pInitialAngle; i < 2 * Math.PI - pInitialAngle; i += Math.PI / lNumSegments) {
-
-			float xx = pX + (float) (pRadius * Math.cos(i));
-			float yy = pY + (float) (pRadius * Math.sin(i));
+			float xx = x + (float) (radius * Math.cos(i));
+			float yy = y + (float) (radius * Math.sin(i));
 
 			mLineBatch.draw(xx, yy, -0.01f, 1f, 1f, 1f, 1f);
-
 		}
 
-		// Add the first vert again
-		mLineBatch.draw(pX + (float) (pRadius * Math.cos(-pInitialAngle)), pY + (float) (pRadius * Math.sin(-pInitialAngle)), -0.01f, 1f, 1f, 1f, 1f);
-
+		mLineBatch.draw(x + (float) (radius * Math.cos(-initialAngle)), y + (float) (radius * Math.sin(-initialAngle)), -0.01f, 1f, 1f, 1f, 1f);
 	}
 
 	public void endLineRenderer() {
@@ -451,18 +411,16 @@ public class DebugDrawers {
 		mLineBatch.end();
 	}
 
-	public void beginTextRenderer(ICamera pCamera) {
+	public void beginTextRenderer(ICamera camera) {
 		if (mDebugManager.debugManagerEnabled())
-			mSystemFontUnit.begin(pCamera);
-
+			mSystemFontUnit.begin(camera);
 	}
 
-	public void drawText(String pText, float pX, float pY) {
-		drawText(pText, pX, pY, 1f);
-
+	public void drawText(String text, float x, float y) {
+		drawText(text, x, y, 1.f);
 	}
 
-	public void drawText(String pText, float pX, float pY, float pScale) {
+	public void drawText(String text, float x, float y, float scale) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
@@ -471,7 +429,7 @@ public class DebugDrawers {
 			return;
 		}
 
-		mSystemFontUnit.drawText(pText, pX, pY, -0.01f, ColorConstants.WHITE, pScale);
+		mSystemFontUnit.drawText(text, x, y, -.01f, ColorConstants.WHITE, scale);
 	}
 
 	public void endTextRenderer() {
@@ -484,36 +442,21 @@ public class DebugDrawers {
 			return;
 
 		mPointBatch.end();
-
 	}
 
-	public void beginPolyRenderer(ICamera pCamera) {
-		beginPolyRenderer(pCamera, GL11.GL_LINES);
-
+	public void beginPolyRenderer(ICamera camera) {
+		beginPolyRenderer(camera, GL11.GL_LINES);
 	}
 
-	public void beginPolyRenderer(ICamera pCamera, int pDrawMode) {
+	public void beginPolyRenderer(ICamera camera, int glLineMode) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
-		mPolyBatch.lineMode(pDrawMode);
-		mPolyBatch.begin(pCamera);
-
+		mPolyBatch.lineMode(glLineMode);
+		mPolyBatch.begin(camera);
 	}
 
-	public void drawPoly(Rectangle pRect) {
-		if (!mDebugManager.debugManagerEnabled())
-			return;
-
-		if (!mPolyBatch.isDrawing()) {
-			Debug.debugManager().logger().w(getClass().getSimpleName(), "Cannot draw poly (cached): the PolyRenderer has not been started (must call beginPolyRenderer() first)");
-			return;
-		}
-
-		drawPoly(pRect.getVertices(), 1f, 1f, 1f, true);
-	}
-
-	public void drawPoly(List<Vector2f> pVertices, boolean pClose) {
+	public void drawPoly(Rectangle rectangle) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
@@ -522,11 +465,10 @@ public class DebugDrawers {
 			return;
 		}
 
-		drawPoly(pVertices, 1f, 1f, 1f, pClose);
-
+		drawPoly(rectangle.getVertices(), 1.f, 1.f, 1.f, true);
 	}
 
-	public void drawPoly(List<Vector2f> pVertices, float pR, float pG, float pB, boolean pClose) {
+	public void drawPoly(List<Vector2f> vertices, boolean closePolygon) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
@@ -535,11 +477,10 @@ public class DebugDrawers {
 			return;
 		}
 
-		drawPoly(pVertices, pVertices.size(), pR, pG, pB, pClose);
-
+		drawPoly(vertices, 1.f, 1.f, 1.f, closePolygon);
 	}
 
-	public void drawPoly(List<Vector2f> pVertices, int pAmt, float pR, float pG, float pB, boolean pClose) {
+	public void drawPoly(List<Vector2f> vertices, float red, float green, float blue, boolean closePolygon) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
@@ -548,20 +489,28 @@ public class DebugDrawers {
 			return;
 		}
 
-		mPolyBatch.drawRect(pVertices, pAmt, -0.1f, pClose, pR, pG, pB);
+		drawPoly(vertices, vertices.size(), red, green, blue, closePolygon);
+	}
 
+	public void drawPoly(List<Vector2f> vertices, int numberVerts, float red, float green, float blue, boolean closePolygon) {
+		if (!mDebugManager.debugManagerEnabled())
+			return;
+
+		if (!mPolyBatch.isDrawing()) {
+			Debug.debugManager().logger().w(getClass().getSimpleName(), "Cannot draw poly (cached): the PolyRenderer has not been started (must call beginPolyRenderer() first)");
+			return;
+		}
+
+		mPolyBatch.drawRect(vertices, numberVerts, -.1f, closePolygon, red, green, blue);
 	}
 
 	public void endPolyRenderer() {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
-		if (!mPolyBatch.isDrawing()) {
+		if (!mPolyBatch.isDrawing())
 			return;
-		}
 
 		mPolyBatch.end();
-
 	}
-
 }

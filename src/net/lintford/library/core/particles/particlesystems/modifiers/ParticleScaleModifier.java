@@ -30,12 +30,12 @@ public class ParticleScaleModifier extends ParticleModifierBase {
 	// --------------------------------------
 
 	@Override
-	public void initialize(Particle pParticle) {
+	public void initialize(Particle particle) {
 
 	}
 
 	@Override
-	public void update(LintfordCore pCore) {
+	public void update(LintfordCore core) {
 
 	}
 
@@ -44,11 +44,9 @@ public class ParticleScaleModifier extends ParticleModifierBase {
 	// --------------------------------------
 
 	@Override
-	public void updateParticle(LintfordCore pCore, Particle pParticle) {
-		float normalizedLifetime = pParticle.timeSinceStart / pParticle.lifeTime();
+	public void updateParticle(LintfordCore core, Particle particle) {
+		final var lNormalizedLifetime = particle.timeSinceStart / particle.lifeTime();
 
-		pParticle.scale = (1 - normalizedLifetime);
-
+		particle.scale = (1 - lNormalizedLifetime);
 	}
-
 }

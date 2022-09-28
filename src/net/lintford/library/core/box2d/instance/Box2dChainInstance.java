@@ -42,7 +42,6 @@ public class Box2dChainInstance extends BaseInstanceData implements ShapeInstanc
 	public void savePhysics() {
 		if (chainShape == null)
 			return;
-
 	}
 
 	public void loadPhysics() {
@@ -55,5 +54,4 @@ public class Box2dChainInstance extends BaseInstanceData implements ShapeInstanc
 
 		return lReturn;
 	}
-
 }

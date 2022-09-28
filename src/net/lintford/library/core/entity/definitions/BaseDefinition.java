@@ -5,10 +5,16 @@ import net.lintford.library.core.entity.BaseEntity;
 public abstract class BaseDefinition extends BaseEntity {
 
 	// --------------------------------------
+	// Constants
+	// --------------------------------------
+
+	public static final short INVALID_DEFINITION_UID = -1;
+
+	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
-	public transient short definitionUid;
+	protected transient short mDefinitionUid;
 
 	/** used for linking entities */
 	protected String outname;
@@ -19,6 +25,10 @@ public abstract class BaseDefinition extends BaseEntity {
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public short definitionUid() {
+		return mDefinitionUid;
+	}
 
 	public String definitionName() {
 		return name;
@@ -40,7 +50,11 @@ public abstract class BaseDefinition extends BaseEntity {
 	// --------------------------------------
 
 	public BaseDefinition() {
-		definitionUid = -1;
+		this(INVALID_DEFINITION_UID);
+	}
+
+	public BaseDefinition(short definitionUid) {
+		mDefinitionUid = definitionUid;
 	}
 
 	// --------------------------------------
@@ -48,6 +62,6 @@ public abstract class BaseDefinition extends BaseEntity {
 	// --------------------------------------
 
 	public void initialize(final short pDefinitionUid) {
-		definitionUid = pDefinitionUid;
+		mDefinitionUid = pDefinitionUid;
 	}
 }

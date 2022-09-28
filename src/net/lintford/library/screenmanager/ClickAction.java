@@ -6,21 +6,21 @@ public class ClickAction {
 	// Constants
 	// --------------------------------------
 
-	public static final int BUTTON_UID_UNASSIGNED = -1;
+	public static final int ENTRY_UID_UNASSIGNED = -1;
 
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
-	private int mButtonUid = BUTTON_UID_UNASSIGNED;
+	private int mEntryUid = ENTRY_UID_UNASSIGNED;
 	private boolean mConsumed;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
 
-	public int buttonUid() {
-		return mButtonUid;
+	public int entryUid() {
+		return mEntryUid;
 	}
 
 	public boolean isConsumed() {
@@ -35,9 +35,9 @@ public class ClickAction {
 		mConsumed = false;
 	}
 
-	public ClickAction(int pButtonID) {
+	public ClickAction(int entryUid) {
 		this();
-		mButtonUid = pButtonID;
+		mEntryUid = entryUid;
 	}
 
 	// --------------------------------------
@@ -46,18 +46,16 @@ public class ClickAction {
 
 	public int consume() {
 		mConsumed = true;
-		return mButtonUid;
+		return mEntryUid;
 	}
 
-	public void setNewClick(int pEntryID) {
+	public void setNewClick(int entryUid) {
 		mConsumed = false;
-		mButtonUid = pEntryID;
-
+		mEntryUid = entryUid;
 	}
 
 	public void reset() {
 		mConsumed = false;
-		mButtonUid = BUTTON_UID_UNASSIGNED;
+		mEntryUid = ENTRY_UID_UNASSIGNED;
 	}
-
 }

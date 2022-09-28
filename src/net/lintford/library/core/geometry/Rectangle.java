@@ -3,6 +3,8 @@ package net.lintford.library.core.geometry;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.gson.annotations.SerializedName;
+
 import net.lintford.library.core.maths.Vector2f;
 
 public class Rectangle extends Shape {
@@ -21,151 +23,135 @@ public class Rectangle extends Shape {
 
 	protected boolean mAreVerticesDirty;
 	protected List<Vector2f> mVertices;
-	protected float x;
-	protected float y;
-	protected float w;
-	protected float h;
-	protected float scaleX;
-	protected float scaleY;
-	protected boolean flipHorizontal;
-	protected boolean flipVertical;
+
+	@SerializedName(value = "x")
+	protected float mX;
+	@SerializedName(value = "y")
+	protected float mY;
+	@SerializedName(value = "w")
+	protected float mW;
+	@SerializedName(value = "h")
+	protected float mH;
+	@SerializedName(value = "scaleX")
+	protected float mScaleX;
+	@SerializedName(value = "scaleY")
+	protected float mScaleY;
+
+	protected boolean mFlipHorizontal;
+	protected boolean mFlipVertical;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
 
 	public float x() {
-		return x;
+		return mX;
 	}
 
 	public void x(float pX) {
-		mAreVerticesDirty = mAreVerticesDirty || x != pX;
-		x = pX;
+		mAreVerticesDirty = mAreVerticesDirty || mX != pX;
+		mX = pX;
 	}
 
 	public float y() {
-		return y;
+		return mY;
 	}
 
 	public void y(float pY) {
-		mAreVerticesDirty = mAreVerticesDirty || y != pY;
-		y = pY;
-	}
-
-	public float w() {
-		return w;
-	}
-
-	public void w(float pW) {
-		mAreVerticesDirty = mAreVerticesDirty || w != pW;
-		w = pW;
-	}
-
-	public float h() {
-		return h;
-	}
-
-	public void h(float pH) {
-		mAreVerticesDirty = mAreVerticesDirty || h != pH;
-		h = pH;
+		mAreVerticesDirty = mAreVerticesDirty || mY != pY;
+		mY = pY;
 	}
 
 	public float left() {
-		return x;
+		return mX;
 	}
 
 	public float right() {
-		return x + w;
+		return mX + mW;
 	}
 
 	public float top() {
-		return y;
+		return mY;
 	}
 
 	public float bottom() {
-		return y + h;
+		return mY + mH;
 	}
 
 	public float width() {
-		return w;
+		return mW;
 	}
 
-	public void width(float pWidth) {
-		mAreVerticesDirty = mAreVerticesDirty || pWidth != w;
-		w = pWidth;
-
+	public void width(float width) {
+		mAreVerticesDirty = mAreVerticesDirty || width != mW;
+		mW = width;
 	}
 
 	public float height() {
-		return h;
+		return mH;
 	}
 
-	public void height(float pHeight) {
-		mAreVerticesDirty = mAreVerticesDirty || pHeight != h;
-		h = pHeight;
+	public void height(float height) {
+		mAreVerticesDirty = mAreVerticesDirty || height != mH;
+		mH = height;
 	}
 
 	public boolean flipHorizontal() {
-		return flipHorizontal;
+		return mFlipHorizontal;
 	}
 
-	public void flipHorizontal(boolean pFlipHorizontal) {
-		mAreVerticesDirty = mAreVerticesDirty || pFlipHorizontal != flipHorizontal;
-		flipHorizontal = pFlipHorizontal;
-
+	public void flipHorizontal(boolean flipHorizontal) {
+		mAreVerticesDirty = mAreVerticesDirty || flipHorizontal != mFlipHorizontal;
+		mFlipHorizontal = flipHorizontal;
 	}
 
 	public boolean flipVertical() {
-		return flipVertical;
+		return mFlipVertical;
 	}
 
-	public void flipVertical(boolean pFlipVertical) {
-		mAreVerticesDirty = mAreVerticesDirty || pFlipVertical != flipVertical;
-		flipVertical = pFlipVertical;
-
+	public void flipVertical(boolean flipVertical) {
+		mAreVerticesDirty = mAreVerticesDirty || flipVertical != mFlipVertical;
+		mFlipVertical = flipVertical;
 	}
 
 	public float scaleX() {
-		return scaleX;
+		return mScaleX;
 	}
 
-	public void scaleX(float pScaleX) {
-		mAreVerticesDirty = mAreVerticesDirty || pScaleX != scaleX;
-		scaleX = pScaleX;
+	public void scaleX(float scaleX) {
+		mAreVerticesDirty = mAreVerticesDirty || scaleX != mScaleX;
+		mScaleX = scaleX;
 	}
 
 	public float scaleY() {
-		return scaleY;
+		return mScaleY;
 	}
 
-	public void scaleY(float pScaleY) {
-		mAreVerticesDirty = mAreVerticesDirty || pScaleY != scaleY;
-		scaleY = pScaleY;
-
+	public void scaleY(float scaleY) {
+		mAreVerticesDirty = mAreVerticesDirty || scaleY != mScaleY;
+		mScaleY = scaleY;
 	}
 
-	public void setScale(float pX, float pY) {
-		mAreVerticesDirty = mAreVerticesDirty || pX != scaleX || pY != scaleY;
-		scaleX = pX;
-		scaleY = pY;
-
+	public void setScale(float scaleX, float scaleY) {
+		mAreVerticesDirty = mAreVerticesDirty || scaleX != mScaleX || scaleY != mScaleY;
+		mScaleX = scaleX;
+		mScaleY = scaleY;
 	}
 
 	public List<Vector2f> getVertices() {
 		if (mAreVerticesDirty) {
 			updateVertices();
-
 		}
 
 		return mVertices;
 	}
 
 	public float centerX() {
-		return x + w / 2;
+		return mX + mW / 2;
 	}
 
 	public float centerY() {
-		return y + h / 2;
+		return mY + mH / 2;
 	}
 
 	// --------------------------------------
@@ -174,31 +160,28 @@ public class Rectangle extends Shape {
 
 	public Rectangle() {
 		this(0, 0, 0, 0);
-
 	}
 
-	public Rectangle(Rectangle pRectangle) {
-		this(pRectangle.x, pRectangle.y, pRectangle.width(), pRectangle.height());
-
+	public Rectangle(Rectangle rectangle) {
+		this(rectangle.mX, rectangle.mY, rectangle.width(), rectangle.height());
 	}
 
-	public Rectangle(float pX, float pY, float pWidth, float pHeight) {
-		x = pX;
-		y = pY;
-		w = pWidth;
-		h = pHeight;
+	public Rectangle(float x, float y, float width, float height) {
+		mX = x;
+		mY = y;
+		mW = width;
+		mH = height;
 
 		mVertices = new ArrayList<>(NUM_VERTICES);
-		mVertices.add(new Vector2f(x, y));
-		mVertices.add(new Vector2f(x + w, y));
-		mVertices.add(new Vector2f(x, y + h));
-		mVertices.add(new Vector2f(x + w, y + h));
+		mVertices.add(new Vector2f(mX, mY));
+		mVertices.add(new Vector2f(mX + mW, mY));
+		mVertices.add(new Vector2f(mX, mY + mH));
+		mVertices.add(new Vector2f(mX + mW, mY + mH));
 
-		scaleX = 1f;
-		scaleY = 1f;
+		mScaleX = 1f;
+		mScaleY = 1f;
 
 		mAreVerticesDirty = true;
-
 	}
 
 	// --------------------------------------
@@ -211,8 +194,8 @@ public class Rectangle extends Shape {
 	 * @param otherRect
 	 * @Returns True if this rectangle instance entirely contains the given rectangle. False otherwise.
 	 */
-	public boolean intersectsAA(Rectangle pOtherRect) {
-		return ((((pOtherRect.left() < right()) && (left() < pOtherRect.right())) && (pOtherRect.top() < bottom())) && (top() < pOtherRect.bottom()));
+	public boolean intersectsAA(Rectangle otherRectangle) {
+		return ((((otherRectangle.left() < right()) && (left() < otherRectangle.right())) && (otherRectangle.top() < bottom())) && (top() < otherRectangle.bottom()));
 	}
 
 	/**
@@ -221,8 +204,8 @@ public class Rectangle extends Shape {
 	 * @param otherRect
 	 * @Returns True if this rectangle instance entirely contains the given point. False otherwise.
 	 */
-	public boolean intersectsAA(Vector2f pPoint) {
-		return ((((left() <= pPoint.x) && (pPoint.x < right())) && (top() <= pPoint.y)) && (pPoint.y < bottom()));
+	public boolean intersectsAA(Vector2f otherPoint) {
+		return ((((left() <= otherPoint.x) && (otherPoint.x < right())) && (top() <= otherPoint.y)) && (otherPoint.y < bottom()));
 	}
 
 	/**
@@ -231,18 +214,19 @@ public class Rectangle extends Shape {
 	 * @param otherRect
 	 * @Returns True if this rectangle instance entirely contains the given point. False otherwise.
 	 */
-	public boolean intersectsAA(float pX, float pY) {
-		return pX >= left() && pX <= right() && pY >= top() && pY <= bottom();
+	public boolean intersectsAA(float pointX, float pointY) {
+		return pointX >= left() && pointX <= right() && pointY >= top() && pointY <= bottom();
 	}
 
 	@Override
 	public Vector2f[] getAxes() {
 		updateVertices();
 
+		// FIXME: Garbage
 		final int AXES_LENGTH = 2;
 		Vector2f[] axes = new Vector2f[AXES_LENGTH]; // Rectangle only has two axis to be tested against
 
-		// FIXME: Garbage created
+		// FIXME: Garbage
 		// The order of the vertices used here depends on the winding-order
 		axes[0] = new Vector2f((mVertices.get(0).y - mVertices.get(1).y), -(mVertices.get(0).x - mVertices.get(1).x)).nor();
 		axes[1] = new Vector2f((mVertices.get(0).y - mVertices.get(2).y), -(mVertices.get(0).x - mVertices.get(2).x)).nor();
@@ -251,37 +235,33 @@ public class Rectangle extends Shape {
 	}
 
 	@Override
-	public Vector2f project(Vector2f pAxis, Vector2f pToFill) {
-		if (pAxis == null)
-			return pToFill;
-		float min = Vector2f.dot(mVertices.get(0).x, mVertices.get(0).y, pAxis.x, pAxis.y);
+	public Vector2f project(Vector2f axis, Vector2f toFill) {
+		if (axis == null)
+			return toFill;
+
+		float min = Vector2f.dot(mVertices.get(0).x, mVertices.get(0).y, axis.x, axis.y);
 		float max = min;
 		final int lVertCount = mVertices.size();
 		for (int i = 1; i < lVertCount; i++) {
-			float p = Vector2f.dot(mVertices.get(i).x, mVertices.get(i).y, pAxis.x, pAxis.y);
+			float p = Vector2f.dot(mVertices.get(i).x, mVertices.get(i).y, axis.x, axis.y);
 			if (p < min) {
 				min = p;
-
 			} else if (p > max) {
 				max = p;
-
 			}
-
 		}
 
-		if (pToFill == null)
-			pToFill = new Vector2f();
+		if (toFill == null)
+			toFill = new Vector2f();
 
-		pToFill.x = min;
-		pToFill.y = max;
+		toFill.x = min;
+		toFill.y = max;
 
-		return pToFill;
-
+		return toFill;
 	}
 
-	public boolean overlaps(Vector2f p1, Vector2f p2) {
-		return !(p1.x > p2.y || p2.x > p1.y);
-
+	public boolean overlaps(Vector2f point1, Vector2f point2) {
+		return !(point1.x > point2.y || point2.x > point1.y);
 	}
 
 	/**
@@ -290,7 +270,7 @@ public class Rectangle extends Shape {
 	 * @Returs True if everything is zero.
 	 */
 	public boolean isEmpty() {
-		return (this.w == 0 && this.h == 0);
+		return (this.mW == 0 && this.mH == 0);
 	}
 
 	/**
@@ -299,123 +279,114 @@ public class Rectangle extends Shape {
 	 * @param cx
 	 * @param cy
 	 */
-	public void setPosition(float pX, float pY) {
-		mAreVerticesDirty = mAreVerticesDirty || x != pX || y != pY;
-		x = pX;
-		y = pY;
-
+	public void setPosition(float x, float y) {
+		mAreVerticesDirty = mAreVerticesDirty || mX != x || mY != y;
+		mX = x;
+		mY = y;
 	}
 
-	public void setCenterPosition(float pNewCenterX, float pNewCenterY) {
-		mAreVerticesDirty = mAreVerticesDirty || pNewCenterX != x || pNewCenterY != y;
-		x = pNewCenterX - w / 2;
-		y = pNewCenterY - h / 2;
-
+	public void setCenterPosition(float newCenterX, float newCenterY) {
+		mAreVerticesDirty = mAreVerticesDirty || newCenterX != mX || newCenterY != mY;
+		mX = newCenterX - mW / 2;
+		mY = newCenterY - mH / 2;
 	}
 
-	public void setDimensions(float pWidth, float pHeight) {
-		w = pWidth;
-		h = pHeight;
-
+	public void setDimensions(float width, float height) {
+		mW = width;
+		mH = height;
 	}
 
-	public void set(Rectangle pRect) {
-		mAreVerticesDirty = mAreVerticesDirty || pRect.x != x || pRect.y != y || pRect.w != w || pRect.h != h;
-		x = pRect.x;
-		y = pRect.y;
-		w = pRect.w;
-		h = pRect.h;
-
+	public void set(Rectangle rectangle) {
+		mAreVerticesDirty = mAreVerticesDirty || rectangle.mX != mX || rectangle.mY != mY || rectangle.mW != mW || rectangle.mH != mH;
+		mX = rectangle.mX;
+		mY = rectangle.mY;
+		mW = rectangle.mW;
+		mH = rectangle.mH;
 	}
 
-	public void set(float pX, float pY, float pWidth, float pHeight) {
-		mAreVerticesDirty = mAreVerticesDirty || pX != x || pY != y || pWidth != w || pHeight != h;
-		x = pX;
-		y = pY;
-		w = pWidth;
-		h = pHeight;
-
+	public void set(float x, float y, float width, float height) {
+		mAreVerticesDirty = mAreVerticesDirty || x != mX || y != mY || width != mW || height != mH;
+		mX = x;
+		mY = y;
+		mW = width;
+		mH = height;
 	}
 
-	public void setCenter(float pCenterX, float pCenterY, float pWidth, float pHeight) {
-		mAreVerticesDirty = mAreVerticesDirty || (pCenterX - pWidth / 2) != x || (pCenterY - pHeight / 2) != y || pWidth != w || pHeight != h;
-		x = pCenterX - pWidth / 2;
-		y = pCenterY - pHeight / 2;
-		w = pWidth;
-		h = pHeight;
-
+	public void setCenter(float centerX, float centerY, float width, float height) {
+		mAreVerticesDirty = mAreVerticesDirty || (centerX - width / 2) != mX || (centerY - height / 2) != mY || width != mW || height != mH;
+		mX = centerX - width / 2;
+		mY = centerY - height / 2;
+		mW = width;
+		mH = height;
 	}
 
-	public void expand(float pAmt) {
+	public void expand(float expandByAmount) {
 		mAreVerticesDirty = true;
-		x -= pAmt * 0.5f;
-		y -= pAmt * 0.5f;
-		w += pAmt * 2;
-		h += pAmt * 2;
+		mX -= expandByAmount * 0.5f;
+		mY -= expandByAmount * 0.5f;
+		mW += expandByAmount * 2;
+		mH += expandByAmount * 2;
 	}
 
 	@Override
-	public void rotateRel(float pRotAmt) {
+	public void rotateRel(float relativeRotation) {
 		mAreVerticesDirty = true;
-		rotation += pRotAmt;
-
+		mRotation += relativeRotation;
 	}
 
 	@Override
-	public void rotateAbs(float pRotAmt) {
+	public void rotateAbs(float absoluteRotationAmount) {
 		mAreVerticesDirty = true;
-		rotation = pRotAmt;
-
+		mRotation = absoluteRotationAmount;
 	}
 
 	protected void updateVertices() {
 		if (!mAreVerticesDirty)
 			return;
 
-		final float lWidth = flipHorizontal ? -w : w;
-		final float lHeight = flipVertical ? -h : h;
+		final float lWidth = mFlipHorizontal ? -mW : mW;
+		final float lHeight = mFlipVertical ? -mH : mH;
 
-		final float lPX = flipHorizontal ? -pivotX : pivotX;
-		final float lPY = flipVertical ? -pivotY : pivotY;
+		final float lPX = mFlipHorizontal ? -mPivotX : mPivotX;
+		final float lPY = mFlipVertical ? -mPivotY : mPivotY;
 
 		mVertices.get(0).set(-lWidth / 2, -lHeight / 2);
 		mVertices.get(1).set(lWidth / 2, -lHeight / 2);
 		mVertices.get(2).set(-lWidth / 2, lHeight / 2);
 		mVertices.get(3).set(lWidth / 2, lHeight / 2);
 
-		final var sin = (float) (Math.sin(rotation));
-		final var cos = (float) (Math.cos(rotation));
+		final var sin = (float) (Math.sin(mRotation));
+		final var cos = (float) (Math.cos(mRotation));
 
 		for (int i = 0; i < NUM_VERTICES; i++) {
 			float dx = -lPX + mVertices.get(i).x * 1.f;
 			float dy = -lPY + mVertices.get(i).y * 1.f;
 
-			mVertices.get(i).set(centerX() + (dx * cos - (dy * 1f) * sin) * scaleX, centerY() + (dx * sin + (dy * 1f) * cos) * scaleY);
+			mVertices.get(i).set(centerX() + (dx * cos - (dy * 1f) * sin) * mScaleX, centerY() + (dx * sin + (dy * 1f) * cos) * mScaleY);
 		}
 
 		mAreVerticesDirty = false;
 	}
 
 	/** Expands the bounds of this rectangle to include the new point */
-	public void updateAABBToEnclosePoint(float pPointX, float pPointY) {
-		if (x > pPointX) {
-			final float lDiffX = x - pPointX;
-			x = pPointX;
-			w += lDiffX;
-
+	public void updateAABBToEnclosePoint(float pointX, float pointY) {
+		if (mX > pointX) {
+			final float lDiffX = mX - pointX;
+			mX = pointX;
+			mW += lDiffX;
 		}
-		if (right() < pPointX)
-			w = pPointX - x;
 
-		if (y > pPointY) {
-			final float lDiffY = y - pPointY;
-			y = pPointY;
-			h += lDiffY;
+		if (right() < pointX)
+			mW = pointX - mX;
 
+		if (mY > pointY) {
+			final float lDiffY = mY - pointY;
+			mY = pointY;
+			mH += lDiffY;
 		}
-		if (bottom() < pPointY)
-			h = pPointY - y;
+
+		if (bottom() < pointY)
+			mH = pointY - mY;
 
 	}
-
 }

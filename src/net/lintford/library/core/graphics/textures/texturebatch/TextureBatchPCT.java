@@ -210,14 +210,14 @@ public class TextureBatchPCT {
 	public void draw(Texture pTexture, Rectangle pSrcRect, Rectangle pDestRect, float pZ, Color pTint) {
 		if (pSrcRect == null || pDestRect == null)
 			return;
-		draw(pTexture, pSrcRect.x(), pSrcRect.y(), pSrcRect.w(), pSrcRect.h(), pDestRect, pZ, pTint);
+		draw(pTexture, pSrcRect.x(), pSrcRect.y(), pSrcRect.width(), pSrcRect.height(), pDestRect, pZ, pTint);
 	}
 
 	public void draw(Texture pTexture, Rectangle pSrcRect, float pDX, float pDY, float pDW, float pDH, float pZ, Color pTint) {
 		if (pSrcRect == null)
 			return;
 
-		draw(pTexture, pSrcRect.x(), pSrcRect.y(), pSrcRect.w(), pSrcRect.h(), pDX, pDY, pDW, pDH, pZ, pTint);
+		draw(pTexture, pSrcRect.x(), pSrcRect.y(), pSrcRect.width(), pSrcRect.height(), pDX, pDY, pDW, pDH, pZ, pTint);
 	}
 
 	public void draw(Texture pTexture, float pSX, float pSY, float pSW, float pSH, Rectangle pDestRect, float pZ, Color pTint) {
@@ -342,7 +342,7 @@ public class TextureBatchPCT {
 		if (pSrcRect == null)
 			return;
 
-		drawAroundCenter(pTexture, pSrcRect.x(), pSrcRect.y(), pSrcRect.w(), pSrcRect.h(), pDX, pDY, pDW, pDH, pZ, pRot, pROX, pROY, pScale, pTint);
+		drawAroundCenter(pTexture, pSrcRect.x(), pSrcRect.y(), pSrcRect.width(), pSrcRect.height(), pDX, pDY, pDW, pDH, pZ, pRot, pROX, pROY, pScale, pTint);
 	}
 
 	public void drawAroundCenter(Texture pTexture, float pSX, float pSY, float pSW, float pSH, float pDX, float pDY, float pDW, float pDH, float pZ, float pRot, float pROX, float pROY, float pScale, Color pTint) {
@@ -453,16 +453,16 @@ public class TextureBatchPCT {
 			float v0 = 0.5f;
 
 			// Vertex 1
-			float x1 = dstCircle.centerX() + (float) Math.cos(angle + dstCircle.rotation) * dstCircle.radius;
-			float y1 = dstCircle.centerY() + (float) Math.sin(angle + dstCircle.rotation) * dstCircle.radius;
+			float x1 = dstCircle.centerX() + (float) Math.cos(angle + dstCircle.rotation()) * dstCircle.radius();
+			float y1 = dstCircle.centerY() + (float) Math.sin(angle + dstCircle.rotation()) * dstCircle.radius();
 			float u1 = 0.5f + ((float) Math.cos(angle) * 0.5f);
 			float v1 = 0.5f + ((float) Math.sin(angle) * 0.5f);
 
 			angle += intervalSize;
 
 			// Vertex 2
-			float x2 = dstCircle.centerX() + (float) Math.cos(angle + dstCircle.rotation) * dstCircle.radius;
-			float y2 = dstCircle.centerY() + (float) Math.sin(angle + dstCircle.rotation) * dstCircle.radius;
+			float x2 = dstCircle.centerX() + (float) Math.cos(angle + dstCircle.rotation()) * dstCircle.radius();
+			float y2 = dstCircle.centerY() + (float) Math.sin(angle + dstCircle.rotation()) * dstCircle.radius();
 			float u2 = 0.5f + ((float) Math.cos(angle) * 0.5f);
 			float v2 = 0.5f + ((float) Math.sin(angle) * 0.5f);
 

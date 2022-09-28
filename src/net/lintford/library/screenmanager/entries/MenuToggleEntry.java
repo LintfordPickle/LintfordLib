@@ -30,36 +30,35 @@ public class MenuToggleEntry extends MenuEntry {
 	// Properties
 	// --------------------------------------
 
-	public void label(String pNewLabel) {
-		mText = pNewLabel;
+	public void label(String label) {
+		mText = label;
 	}
 
 	public String label() {
 		return mText;
 	}
 
-	public void entryText(String pNewValue) {
-		mText = pNewValue;
+	public void entryText(String text) {
+		mText = text;
 	}
 
 	public boolean isChecked() {
 		return mIsChecked;
 	}
 
-	public void isChecked(boolean pNewValue) {
-		mIsChecked = pNewValue;
+	public void isChecked(boolean isChecked) {
+		mIsChecked = isChecked;
 	}
 
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
-	public MenuToggleEntry(ScreenManager pScreenManager, BaseLayout pParentlayout) {
-		super(pScreenManager, pParentlayout, "");
+	public MenuToggleEntry(ScreenManager screenManager, BaseLayout parentlayout) {
+		super(screenManager, parentlayout, "");
 
 		mHighlightOnHover = false;
 		mDrawBackground = false;
-
 	}
 
 	// --------------------------------------
@@ -75,33 +74,30 @@ public class MenuToggleEntry extends MenuEntry {
 	}
 
 	@Override
-	public boolean handleInput(LintfordCore pCore) {
+	public boolean handleInput(LintfordCore core) {
 		if (mHasFocus) {
 
 		} else {
-			mFocusLocked = false; // no lock if not focused
+			mFocusLocked = false;
 		}
 
-		if (intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().isMouseOverThisComponent(hashCode())) {
-			if (pCore.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
+		if (intersectsAA(core.HUD().getMouseCameraSpace()) && core.input().mouse().isMouseOverThisComponent(hashCode())) {
+			if (core.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
 				if (mEnabled) {
 
 					// TODO: Play menu click sound
 
-					mParentLayout.parentScreen.setFocusOn(pCore, this, true);
+					mParentLayout.parentScreen.setFocusOn(core, this, true);
 
 					mIsChecked = !mIsChecked;
 
-					if (mClickListener != null) {
+					if (mClickListener != null)
 						mClickListener.menuEntryChanged(this);
-
-					}
 
 				}
 
 			} else {
 				hasFocus(true);
-
 			}
 
 			return true;
@@ -114,20 +110,18 @@ public class MenuToggleEntry extends MenuEntry {
 	}
 
 	@Override
-	public void update(LintfordCore pCore, MenuScreen pScreen, boolean pIsSelected) {
-		super.update(pCore, pScreen, pIsSelected);
+	public void update(LintfordCore core, MenuScreen screen, boolean isSelected) {
+		super.update(core, screen, isSelected);
 
-		final double lDeltaTime = pCore.appTime().elapsedTimeMilli() / 1000.;
+		final double lDeltaTime = core.appTime().elapsedTimeMilli() / 1000.;
 
-		// Check if tool tips are enabled.
-		if (mToolTipEnabled) {
+		if (mToolTipEnabled)
 			mToolTipTimer += lDeltaTime;
-		}
 
 	}
 
 	@Override
-	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pParentZDepth) {
+	public void draw(LintfordCore core, Screen screen, boolean isSelected, float parentZDepth) {
 		final var lParentScreen = mParentLayout.parentScreen;
 		final var lTextBoldFont = lParentScreen.fontBold();
 		final float lUiTextScale = lParentScreen.uiTextScale();
@@ -140,54 +134,50 @@ public class MenuToggleEntry extends MenuEntry {
 
 		final float lTileSize = 32;
 
-		final var lScreenOffset = pScreen.screenPositionOffset();
-		final var lParentScreenAlpha = pScreen.screenColor.a;
+		final var lScreenOffset = screen.screenPositionOffset();
+		final var lParentScreenAlpha = screen.screenColor.a;
 
 		entryColor.setFromColor(lParentScreen.screenColor);
 		textColor.a = lParentScreenAlpha;
 
-		mZ = pParentZDepth;
+		mZ = parentZDepth;
 
 		if (mHoveredOver) {
-			lSpriteBatch.begin(pCore.HUD());
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - w / 2, lScreenOffset.y + centerY() - h / 2, 32, h, mZ, ColorConstants.MenuEntryHighlightColor);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - (w / 2) + 32, lScreenOffset.y + centerY() - h / 2, w - 64, h, mZ, ColorConstants.MenuEntryHighlightColor);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() + (w / 2) - 32, lScreenOffset.y + centerY() - h / 2, 32, h, mZ, ColorConstants.MenuEntryHighlightColor);
+			lSpriteBatch.begin(core.HUD());
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - mW / 2, lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ, ColorConstants.MenuEntryHighlightColor);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - (mW / 2) + 32, lScreenOffset.y + centerY() - mH / 2, mW - 64, mH, mZ, ColorConstants.MenuEntryHighlightColor);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() + (mW / 2) - 32, lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ, ColorConstants.MenuEntryHighlightColor);
 			lSpriteBatch.end();
-
 		}
 
-		lSpriteBatch.begin(pCore.HUD());
+		lSpriteBatch.begin(core.HUD());
 
 		// Render the check box (either ticked or empty)
 		if (mIsChecked)
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_TICK, lScreenOffset.x + x + w / 2 + 16, lScreenOffset.y + y + h / 2 - lTileSize / 2, lTileSize, lTileSize, mZ, entryColor);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_TICK, lScreenOffset.x + mX + mW / 2 + 16, lScreenOffset.y + mY + mH / 2 - lTileSize / 2, lTileSize, lTileSize, mZ, entryColor);
 		else
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_CROSS, lScreenOffset.x + centerX() + lTileSize / 2, lScreenOffset.y + y + h / 2 - lTileSize / 2, lTileSize, lTileSize, mZ, entryColor);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_CROSS, lScreenOffset.x + centerX() + lTileSize / 2, lScreenOffset.y + mY + mH / 2 - lTileSize / 2, lTileSize, lTileSize, mZ, entryColor);
 
 		lSpriteBatch.end();
 
-		lTextBoldFont.begin(pCore.HUD());
-		lTextBoldFont.drawText(mText, lScreenOffset.x + x + w / 2 - lLabelWidth - SPACE_BETWEEN_TEXT - lSeparatorHalfWidth, lScreenOffset.y + y + h / 2 - lTextHeight * 0.5f, mZ, textColor, lUiTextScale, -1);
-		lTextBoldFont.drawText(mSeparator, lScreenOffset.x + x + w / 2 - lSeparatorHalfWidth, lScreenOffset.y + y + h / 2 - lTextHeight * 0.5f, mZ, textColor, lUiTextScale, -1);
+		lTextBoldFont.begin(core.HUD());
+		lTextBoldFont.drawText(mText, lScreenOffset.x + mX + mW / 2 - lLabelWidth - SPACE_BETWEEN_TEXT - lSeparatorHalfWidth, lScreenOffset.y + mY + mH / 2 - lTextHeight * 0.5f, mZ, textColor, lUiTextScale, -1);
+		lTextBoldFont.drawText(mSeparator, lScreenOffset.x + mX + mW / 2 - lSeparatorHalfWidth, lScreenOffset.y + mY + mH / 2 - lTextHeight * 0.5f, mZ, textColor, lUiTextScale, -1);
 
-		if (mIsChecked) {
-			lTextBoldFont.drawText("Enabled", lScreenOffset.x + x + w / 2 + lSeparatorHalfWidth + lTileSize * 2, lScreenOffset.y + y + h / 2 - lTextHeight * 0.5f, mZ, textColor, lUiTextScale, -1);
-		} else {
-			lTextBoldFont.drawText("Disabled", lScreenOffset.x + x + w / 2 + lSeparatorHalfWidth + lTileSize * 2, lScreenOffset.y + y + h / 2 - lTextHeight * 0.5f, mZ, textColor, lUiTextScale, -1);
-		}
+		if (mIsChecked)
+			lTextBoldFont.drawText("Enabled", lScreenOffset.x + mX + mW / 2 + lSeparatorHalfWidth + lTileSize * 2, lScreenOffset.y + mY + mH / 2 - lTextHeight * 0.5f, mZ, textColor, lUiTextScale, -1);
+		else
+			lTextBoldFont.drawText("Disabled", lScreenOffset.x + mX + mW / 2 + lSeparatorHalfWidth + lTileSize * 2, lScreenOffset.y + mY + mH / 2 - lTextHeight * 0.5f, mZ, textColor, lUiTextScale, -1);
 
 		lTextBoldFont.end();
 
-		if (mShowInfoIcon) {
-			drawInfoIcon(pCore, lSpriteBatch, mInfoIconDstRectangle, lParentScreenAlpha);
-		}
+		if (mShowInfoIcon)
+			drawInfoIcon(core, lSpriteBatch, mInfoIconDstRectangle, lParentScreenAlpha);
 
-		if (mShowWarnIcon) {
-			drawWarningIcon(pCore, lSpriteBatch, mWarnIconDstRectangle, lParentScreenAlpha);
-		}
+		if (mShowWarnIcon)
+			drawWarningIcon(core, lSpriteBatch, mWarnIconDstRectangle, lParentScreenAlpha);
 
-		drawDebugCollidableBounds(pCore, lSpriteBatch);
+		drawDebugCollidableBounds(core, lSpriteBatch);
 	}
 
 	// --------------------------------------
@@ -195,16 +185,14 @@ public class MenuToggleEntry extends MenuEntry {
 	// --------------------------------------
 
 	@Override
-	public void onClick(InputManager pInputState) {
-		super.onClick(pInputState);
+	public void onClick(InputManager inputManager) {
+		super.onClick(inputManager);
 
 		mHasFocus = !mHasFocus;
-		if (mHasFocus) {
+		if (mHasFocus)
 			mFocusLocked = true;
-
-		} else {
+		else
 			mFocusLocked = false;
 
-		}
 	}
 }

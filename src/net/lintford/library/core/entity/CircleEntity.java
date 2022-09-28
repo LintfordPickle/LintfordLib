@@ -12,14 +12,18 @@ public abstract class CircleEntity extends WorldEntity {
 	// Variables
 	// --------------------------------------
 
-	public float radius;
+	protected float mRadius;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
 
-	public float rad() {
-		return radius;
+	public float radius() {
+		return mRadius;
+	}
+
+	public void radius(float radius) {
+		mRadius = radius;
 	}
 
 	// --------------------------------------
@@ -29,6 +33,6 @@ public abstract class CircleEntity extends WorldEntity {
 	public CircleEntity() {
 		super();
 
-		radius = 0.5f;
+		mRadius = 0.5f;
 	}
 }

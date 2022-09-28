@@ -16,24 +16,19 @@ public class Debug {
 	private static boolean mDebugManagerCreated = false;
 
 	public static Debug debugManager() {
-		// If the DebugManager hasn't been created before the first call to retrieve it,
-		// create a new instance but disbale all debugging.
 		if (!mDebugManagerCreated)
 			return debugManager(DebugLogLevel.off);
 
 		return manager;
-
 	}
 
-	public static Debug debugManager(DebugLogLevel pDebugLogLevel) {
+	public static Debug debugManager(DebugLogLevel debugLogLevel) {
 		if (Debug.manager == null) {
-			Debug.manager = new Debug(pDebugLogLevel);
+			Debug.manager = new Debug(debugLogLevel);
 			mDebugManagerCreated = true;
-
 		}
 
 		return debugManager();
-
 	}
 
 	// --------------------------------------
@@ -77,16 +72,13 @@ public class Debug {
 	// --------------------------------------
 
 	private boolean mDebugManagerEnabled = false;
-
 	private DebugLogLevel mCurrentLoggingLevel;
-
 	private DebugLogger mDebugLogger;
 	private DebugConsole mDebugConsole;
 	private DebugDrawers mDebugDrawers;
 	private DebugStats mDebugStats;
 	private DebugRendererTreeRenderer mDebugRendererRenderer;
 	private DebugControllerTreeRenderer mDebugControllerRenderer;
-
 	private boolean mResourcesLoaded;
 
 	// --------------------------------------
@@ -129,8 +121,8 @@ public class Debug {
 	// Constructor
 	// --------------------------------------
 
-	private Debug(DebugLogLevel pDebugLogLevel) {
-		setDebugMode(pDebugLogLevel);
+	private Debug(DebugLogLevel debugLogLevel) {
+		setDebugMode(debugLogLevel);
 
 		// We always need to instantiate this classes
 		mDebugLogger = new DebugLogger(this);
@@ -143,19 +135,18 @@ public class Debug {
 		addDebugConsoleCommands();
 
 		mDebugLogger.i("Help", "Type 'help' in the console to see a list of commands");
-
 	}
 
 	// --------------------------------------
 	// Core-Methods
 	// --------------------------------------
 
-	public void loadResources(final ResourceManager pResourceManager) {
-		mDebugConsole.loadResources(pResourceManager);
-		mDebugDrawers.loadResources(pResourceManager);
-		mDebugStats.loadResources(pResourceManager);
-		mDebugControllerRenderer.loadResources(pResourceManager);
-		mDebugRendererRenderer.loadResources(pResourceManager);
+	public void loadResources(final ResourceManager resourceManager) {
+		mDebugConsole.loadResources(resourceManager);
+		mDebugDrawers.loadResources(resourceManager);
+		mDebugStats.loadResources(resourceManager);
+		mDebugControllerRenderer.loadResources(resourceManager);
+		mDebugRendererRenderer.loadResources(resourceManager);
 
 		mResourcesLoaded = true;
 	}
@@ -170,66 +161,58 @@ public class Debug {
 		mResourcesLoaded = false;
 	}
 
-	public void handleInput(LintfordCore pCore) {
-		mDebugConsole.handleInput(pCore);
-		mDebugStats.handleInput(pCore);
-		mDebugControllerRenderer.handleInput(pCore);
-		mDebugRendererRenderer.handleInput(pCore);
-
+	public void handleInput(LintfordCore core) {
+		mDebugConsole.handleInput(core);
+		mDebugStats.handleInput(core);
+		mDebugControllerRenderer.handleInput(core);
+		mDebugRendererRenderer.handleInput(core);
 	}
 
-	public void preUpdate(LintfordCore pCore) {
-		mDebugStats.preUpdate(pCore);
-
+	public void preUpdate(LintfordCore core) {
+		mDebugStats.preUpdate(core);
 	}
 
-	public void update(LintfordCore pCore) {
-
-		// Update the relative positions of the components based on which are currently enabled
-		float lWindowWidth = -pCore.config().display().windowWidth() / 2;
-		float lPosY = -pCore.config().display().windowHeight() / 2;
+	public void update(LintfordCore core) {
+		float lWindowWidth = -core.config().display().windowWidth() / 2;
+		float lPosY = -core.config().display().windowHeight() / 2;
 		if (mDebugConsole.isOpen()) {
 			mDebugConsole.setPosition(lWindowWidth, lPosY);
 			lPosY += mDebugConsole.height();
 
 		}
 
-		mDebugConsole.update(pCore);
-		mDebugStats.update(pCore);
-		mDebugRendererRenderer.update(pCore);
-		mDebugControllerRenderer.update(pCore);
-
+		mDebugConsole.update(core);
+		mDebugStats.update(core);
+		mDebugRendererRenderer.update(core);
+		mDebugControllerRenderer.update(core);
 	}
 
-	public void draw(LintfordCore pCore) {
+	public void draw(LintfordCore core) {
 		if (!mResourcesLoaded)
 			return;
 
-		mDebugConsole.draw(pCore);
-		mDebugStats.draw(pCore);
-		mDebugControllerRenderer.draw(pCore);
-		mDebugRendererRenderer.draw(pCore);
-
+		mDebugConsole.draw(core);
+		mDebugStats.draw(core);
+		mDebugControllerRenderer.draw(core);
+		mDebugRendererRenderer.draw(core);
 	}
 
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
 
-	private void setDebugMode(DebugLogLevel pLoggingLevel) {
-		if (pLoggingLevel == null)
-			pLoggingLevel = DebugLogLevel.off;
+	private void setDebugMode(DebugLogLevel loggingLevel) {
+		if (loggingLevel == null)
+			loggingLevel = DebugLogLevel.off;
 
-		if (pLoggingLevel == DebugLogLevel.off) {
+		if (loggingLevel == DebugLogLevel.off) {
 			mCurrentLoggingLevel = DebugLogLevel.off;
 			mDebugManagerEnabled = false;
 
 		} else {
 			mDebugManagerEnabled = true;
-			mCurrentLoggingLevel = pLoggingLevel;
-
+			mCurrentLoggingLevel = loggingLevel;
 		}
-
 	}
 
 	public void addDebugConsoleCommands() {
@@ -253,7 +236,5 @@ public class Debug {
 
 		mDebugConsole.addConsoleCommand(lListConsoleCommands);
 		mDebugConsole.addConsoleCommand(lSaveLogCommand);
-
 	}
-
 }

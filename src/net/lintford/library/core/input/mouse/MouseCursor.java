@@ -1,11 +1,9 @@
 package net.lintford.library.core.input.mouse;
 
-import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 
 import javax.imageio.ImageIO;
 
@@ -22,29 +20,29 @@ public class MouseCursor {
 	// TODO: Put this elsewhere
 	private static GLFWImage imageToGLFWImage(BufferedImage image) {
 		if (image.getType() != BufferedImage.TYPE_INT_ARGB_PRE) {
-			final BufferedImage convertedImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB_PRE);
-			final Graphics2D graphics = convertedImage.createGraphics();
-			final int targetWidth = image.getWidth();
-			final int targetHeight = image.getHeight();
-			graphics.drawImage(image, 0, 0, targetWidth, targetHeight, null);
-			graphics.dispose();
-			image = convertedImage;
+			final var lConvertedImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB_PRE);
+			final var lGraphics2d = lConvertedImage.createGraphics();
+			final int lTargetWidth = image.getWidth();
+			final int lTargetHeight = image.getHeight();
+			lGraphics2d.drawImage(image, 0, 0, lTargetWidth, lTargetHeight, null);
+			lGraphics2d.dispose();
+			image = lConvertedImage;
 		}
 
-		final ByteBuffer buffer = BufferUtils.createByteBuffer(image.getWidth() * image.getHeight() * 4);
+		final var lByteBuffer = BufferUtils.createByteBuffer(image.getWidth() * image.getHeight() * 4);
 		for (int i = 0; i < image.getHeight(); i++) {
 			for (int j = 0; j < image.getWidth(); j++) {
 				int col = image.getRGB(j, i);
-				buffer.put((byte) ((col << 8) >> 24));
-				buffer.put((byte) ((col << 16) >> 24));
-				buffer.put((byte) ((col << 24) >> 24));
-				buffer.put((byte) (col >> 24));
+				lByteBuffer.put((byte) ((col << 8) >> 24));
+				lByteBuffer.put((byte) ((col << 16) >> 24));
+				lByteBuffer.put((byte) ((col << 24) >> 24));
+				lByteBuffer.put((byte) (col >> 24));
 			}
 		}
-		buffer.flip();
+		lByteBuffer.flip();
 
-		final GLFWImage result = GLFWImage.create();
-		result.set(image.getWidth(), image.getHeight(), buffer);
+		final var result = GLFWImage.create();
+		result.set(image.getWidth(), image.getHeight(), lByteBuffer);
 
 		return result;
 	}
@@ -90,13 +88,12 @@ public class MouseCursor {
 	// Constructor
 	// --------------------------------------
 
-	private MouseCursor(String pCursorName, String pFilename, int pHotX, int pHotY) {
+	private MouseCursor(String cursorName, String filename, int hotspotX, int hotspotY) {
 		mCursorId = CURSOR_NOT_LOADED;
-		mCursorName = pCursorName;
-		mCursorFilename = pFilename;
-		mHotX = pHotX;
-		mHotY = pHotY;
-
+		mCursorName = cursorName;
+		mCursorFilename = filename;
+		mHotX = hotspotX;
+		mHotY = hotspotY;
 	}
 
 	// --------------------------------------
@@ -107,20 +104,17 @@ public class MouseCursor {
 		return mCursorId != CURSOR_NOT_LOADED;
 	}
 
-	private void loadCursorFromGLFWImage(GLFWImage pImage, int pHotX, int pHotY) {
-		mCursorId = GLFW.glfwCreateCursor(pImage, pHotX, pHotY);
-
+	private void loadCursorFromGLFWImage(GLFWImage image, int hotspotX, int hotspotY) {
+		mCursorId = GLFW.glfwCreateCursor(image, hotspotX, hotspotY);
 	}
 
-	public static MouseCursor loadCursorFromResource(String pCursorName, String pResourceName, int pHotX, int pHotY) {
-		var lNewMouseCursorInstance = new MouseCursor(pCursorName, pResourceName, pHotX, pHotY);
+	public static MouseCursor loadCursorFromResource(String cursorName, String resourceName, int hotspotX, int hotspotY) {
+		var lNewMouseCursorInstance = new MouseCursor(cursorName, resourceName, hotspotX, hotspotY);
 		try {
-			var glfwImage = imageToGLFWImage(ImageIO.read(MouseCursor.class.getResourceAsStream(pResourceName)));
-
-			lNewMouseCursorInstance.loadCursorFromGLFWImage(glfwImage, pHotX, pHotY);
+			var glfwImage = imageToGLFWImage(ImageIO.read(MouseCursor.class.getResourceAsStream(resourceName)));
+			lNewMouseCursorInstance.loadCursorFromGLFWImage(glfwImage, hotspotX, hotspotY);
 
 			return lNewMouseCursorInstance;
-
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -128,18 +122,15 @@ public class MouseCursor {
 		}
 
 		return null;
-
 	}
 
-	public static MouseCursor loadCursorFromFile(String pCursorName, String pFilename, int pHotX, int pHotY) {
-		var lNewMouseCursorInstance = new MouseCursor(pCursorName, pFilename, pHotX, pHotY);
+	public static MouseCursor loadCursorFromFile(String cursorName, String filename, int hotspotX, int hotspotY) {
+		var lNewMouseCursorInstance = new MouseCursor(cursorName, filename, hotspotX, hotspotY);
 		try {
-			var glfwImage = imageToGLFWImage(ImageIO.read(new File(pFilename)));
-
-			lNewMouseCursorInstance.loadCursorFromGLFWImage(glfwImage, pHotX, pHotY);
+			var glfwImage = imageToGLFWImage(ImageIO.read(new File(filename)));
+			lNewMouseCursorInstance.loadCursorFromGLFWImage(glfwImage, hotspotX, hotspotY);
 
 			return lNewMouseCursorInstance;
-
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -147,7 +138,5 @@ public class MouseCursor {
 		}
 
 		return null;
-
 	}
-
 }

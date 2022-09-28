@@ -24,17 +24,16 @@ public class GameVersion {
 	/** Returns the game version as a string */
 	private static String getGameVersion() {
 		return APP_VERSION_MAJ + DELIMITOR + APP_VERSION_MIN + DELIMITOR + APP_VERSION_BUILD;
-
 	}
 
 	/** Checks if the given version string matches the version of the game as defined in {@link GameVersion} */
-	public static boolean checkVersion(String pVersionString) {
+	public static boolean checkVersion(String versionString) {
 		int mj, mi, bu = 0;
 
-		String[] lParts = pVersionString.split(DELIMITOR);
+		final var lParts = versionString.split(DELIMITOR);
 
 		if (lParts.length != 3) {
-			System.err.println("Not a valid game version (not enough parts)");
+			System.err.println("Not a valid app version (not enough parts)");
 			return false;
 		}
 
@@ -44,5 +43,4 @@ public class GameVersion {
 
 		return APP_VERSION_MAJ == mj && APP_VERSION_MIN == mi && APP_VERSION_BUILD == bu;
 	}
-
 }

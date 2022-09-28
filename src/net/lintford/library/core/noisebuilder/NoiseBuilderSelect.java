@@ -406,9 +406,9 @@ public class NoiseBuilderSelect extends NoiseBuilderModuleBase {
 
 	@Override
 	public float get(float x, float y) {
-		float control = mControl.get(x, y);
-		float falloff = mFalloff.get(x, y);
-		float threshold = mThreshold.get(x, y);
+		final var control = mControl.get(x, y);
+		final var falloff = mFalloff.get(x, y);
+		final var threshold = mThreshold.get(x, y);
 
 		if (falloff > 0.0) {
 			if (control < (threshold - falloff)) {
@@ -437,9 +437,9 @@ public class NoiseBuilderSelect extends NoiseBuilderModuleBase {
 
 	@Override
 	public float get(float x, float y, float z) {
-		float control = mControl.get(x, y, z);
-		float falloff = mFalloff.get(x, y, z);
-		float threshold = mThreshold.get(x, y, z);
+		final var control = mControl.get(x, y, z);
+		final var falloff = mFalloff.get(x, y, z);
+		final var threshold = mThreshold.get(x, y, z);
 
 		if (falloff > 0.0) {
 			if (control < (threshold - falloff)) {

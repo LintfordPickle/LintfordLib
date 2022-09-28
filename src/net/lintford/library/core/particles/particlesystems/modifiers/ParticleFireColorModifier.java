@@ -45,12 +45,12 @@ public class ParticleFireColorModifier extends ParticleModifierBase {
 	// --------------------------------------
 
 	@Override
-	public void initialize(Particle pParticle) {
+	public void initialize(Particle particle) {
 
 	}
 
 	@Override
-	public void update(LintfordCore pCore) {
+	public void update(LintfordCore core) {
 
 	}
 
@@ -59,33 +59,18 @@ public class ParticleFireColorModifier extends ParticleModifierBase {
 	// --------------------------------------
 
 	@Override
-	public void updateParticle(LintfordCore pCore, Particle pParticle) {
-		float normalizedLifetime = pParticle.timeSinceStart / pParticle.lifeTime();
-
-		// we want particles to fade in and fade out, so we'll calculate alpha
-		// to be (normalizedLifetime) * (1-normalizedLifetime). this way, when
-		// normalizedLifetime is 0 or 1, alpha is 0. the maximum value is at
-		// normalizedLifetime = .5, and is
-		// (normalizedLifetime) * (1-normalizedLifetime)
-		// (.5) * (1-.5)
-		// .25
-		// since we want the maximum alpha to be 1, not .25, we'll scale the
-		// entire equation by 4.
-		pParticle.color.r = getRandomValue(mRMin, mRMax) * normalizedLifetime * (normalizedLifetime - pParticle.color.r);
-		pParticle.color.g = getRandomValue(mGMin, mGMax) * normalizedLifetime * (normalizedLifetime - pParticle.color.g);
-		pParticle.color.b = getRandomValue(mBMin, mBMax) * normalizedLifetime * (normalizedLifetime - pParticle.color.b);
-
+	public void updateParticle(LintfordCore core, Particle particle) {
+		final var lNormalizedLifetime = particle.timeSinceStart / particle.lifeTime();
+		particle.color.r = getRandomValue(mRMin, mRMax) * lNormalizedLifetime * (lNormalizedLifetime - particle.color.r);
+		particle.color.g = getRandomValue(mGMin, mGMax) * lNormalizedLifetime * (lNormalizedLifetime - particle.color.g);
+		particle.color.b = getRandomValue(mBMin, mBMax) * lNormalizedLifetime * (lNormalizedLifetime - particle.color.b);
 	}
 
-	protected float getRandomValue(final float pMin, final float pMax) {
-		if (pMin == pMax) {
-			return pMax;
-
+	protected float getRandomValue(final float minValue, final float maxValue) {
+		if (minValue == maxValue) {
+			return maxValue;
 		} else {
-			return RandomNumbers.random(pMin, pMax);
-
+			return RandomNumbers.random(minValue, maxValue);
 		}
-
 	}
-
 }

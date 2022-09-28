@@ -30,25 +30,25 @@ public class BlurShader extends ShaderMVP_PT {
 	// Properties
 	// --------------------------------------
 
-	public void resolution(float pNewValue) {
-		mResolution = pNewValue;
+	public void resolution(float newValue) {
+		mResolution = newValue;
 	}
 
 	public float resolution() {
 		return mResolution;
 	}
 
-	public void radius(float pNewValue) {
-		mRadius = pNewValue;
+	public void radius(float newValue) {
+		mRadius = newValue;
 	}
 
 	public float radius() {
 		return mRadius;
 	}
 
-	public void direction(Vector2f pNewValue) {
-		mDirection.x = pNewValue.x;
-		mDirection.y = pNewValue.y;
+	public void direction(Vector2f newValue) {
+		mDirection.x = newValue.x;
+		mDirection.y = newValue.y;
 	}
 
 	public Vector2f direction() {
@@ -59,8 +59,8 @@ public class BlurShader extends ShaderMVP_PT {
 	// Constructors
 	// --------------------------------------
 
-	public BlurShader(String pVertPath, String pFragPath) {
-		super("BlurShader", pVertPath, pFragPath);
+	public BlurShader(String vertPath, String fragPath) {
+		super("BlurShader", vertPath, fragPath);
 
 		mDirection = new Vector2f();
 	}
@@ -93,7 +93,6 @@ public class BlurShader extends ShaderMVP_PT {
 		if (mDirectionLocation != -1) {
 			GL20.glUniform2f(mDirectionLocation, mDirection.x, mDirection.y);
 		}
-
 	}
 
 }

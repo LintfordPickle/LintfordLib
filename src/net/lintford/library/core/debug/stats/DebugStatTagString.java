@@ -12,32 +12,32 @@ public class DebugStatTagString extends DebugStatTag<String> {
 	public DebugStatTagString(String pLabel) {
 		super(pLabel);
 
-		autoReset = false;
+		mAtoReset = false;
 
 	}
 
 	public DebugStatTagString(String pLabel, String pValue) {
 		this(pLabel);
 
-		autoReset = false;
-		value = pValue;
+		mAtoReset = false;
+		mValue = pValue;
 
 	}
 
-	DebugStatTagString(final int pID, String pLabel, String pValue) {
-		super(pID, pLabel);
+	DebugStatTagString(final int uid, String label, String pValue) {
+		super(uid, label);
 
-		value = pValue;
-		defaultValue = pValue;
+		mValue = pValue;
+		mDefaultValue = pValue;
 
-		autoReset = false;
+		mAtoReset = false;
 
 	}
 
-	DebugStatTagString(final int pID, String pLabel, String pValue, boolean pAutoReset) {
-		this(pID, pLabel, pValue);
+	DebugStatTagString(final int uid, String label, String pValue, boolean pAutoReset) {
+		this(uid, label, pValue);
 
-		autoReset = pAutoReset;
+		mAtoReset = pAutoReset;
 
 	}
 
@@ -46,9 +46,7 @@ public class DebugStatTagString extends DebugStatTag<String> {
 	// --------------------------------------
 
 	@Override
-	public void draw(FontUnit pFontUnit, float pPosX, float pPosY) {
-		pFontUnit.drawText(String.format("%s : %s", label, value), pPosX, pPosY, -0.01f, ColorConstants.getColor(r, g, b), 1.f, -1);
-
+	public void draw(FontUnit fontUnit, float positionX, float positionY) {
+		fontUnit.drawText(String.format("%s : %s", mLabel, mValue), positionX, positionY, -0.01f, ColorConstants.getColor(mRed, mGreen, mBlue), 1.f, -1);
 	}
-
 }

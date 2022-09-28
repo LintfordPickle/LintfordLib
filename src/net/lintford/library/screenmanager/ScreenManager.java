@@ -37,7 +37,6 @@ public class ScreenManager implements IInputClickedFocusManager {
 	private final List<Screen> mScreens = new ArrayList<>();
 	private final List<Screen> mScreensToUpdate = new ArrayList<>();
 	private final List<Screen> mScreensToAdd = new ArrayList<>();
-
 	private ToolTip mToolTip;
 	private ResourceManager mResourceManager;
 	private AudioFireAndForgetManager mUISoundManager;
@@ -58,16 +57,16 @@ public class ScreenManager implements IInputClickedFocusManager {
 		return mTrackedInputControl;
 	}
 
-	public void setTrackedClickedFocusControl(IInputClickedFocusTracker pControlToTrack) {
-		mTrackedInputControl = pControlToTrack;
+	public void setTrackedClickedFocusControl(IInputClickedFocusTracker controlToTrack) {
+		mTrackedInputControl = controlToTrack;
 	}
 
 	public float columnMaxWidth() {
 		return mColumnMaxWidth;
 	}
 
-	public void columnMaxWidth(float pNewColumnMaxWidth) {
-		mColumnMaxWidth = pNewColumnMaxWidth;
+	public void columnMaxWidth(float newColumnMaxWidth) {
+		mColumnMaxWidth = newColumnMaxWidth;
 	}
 
 	public ToastManager toastManager() {
@@ -106,8 +105,8 @@ public class ScreenManager implements IInputClickedFocusManager {
 	// Constructor
 	// --------------------------------------
 
-	public ScreenManager(LintfordCore pCore) {
-		mLWJGLCore = pCore;
+	public ScreenManager(LintfordCore core) {
+		mLWJGLCore = core;
 		mScreenUIDCounter = 100;
 
 		mToastManager = new ToastManager();
@@ -138,29 +137,26 @@ public class ScreenManager implements IInputClickedFocusManager {
 		mIsinitialized = true;
 	}
 
-	public void loadResources(final ResourceManager pResourceManager) {
-		mResourceManager = pResourceManager;
+	public void loadResources(final ResourceManager resourceManager) {
+		mResourceManager = resourceManager;
 
 		final int lScreenToAddCount = mScreensToAdd.size();
 		for (int i = 0; i < lScreenToAddCount; i++) {
-			mScreensToAdd.get(i).loadResources(pResourceManager);
+			mScreensToAdd.get(i).loadResources(resourceManager);
 		}
 
-		mUISoundManager = new AudioFireAndForgetManager(pResourceManager.audioManager());
+		mUISoundManager = new AudioFireAndForgetManager(resourceManager.audioManager());
 		mUISoundManager.acquireAudioSources(2);
 
-		mToolTip.loadResources(pResourceManager);
-		mToastManager.loadResources(pResourceManager);
+		mToolTip.loadResources(resourceManager);
+		mToastManager.loadResources(resourceManager);
 
 		// Add a viewport listener so the screenmanager screens can react to changes in window size
 		mResizeListener = new IResizeListener() {
-
 			@Override
 			public void onResize(final int pWidth, final int pHeight) {
 				onViewportChanged(pWidth, pHeight);
-
 			}
-
 		};
 
 		core().config().display().addResizeListener(mResizeListener);
@@ -186,7 +182,7 @@ public class ScreenManager implements IInputClickedFocusManager {
 		mResourcesLoaded = false;
 	}
 
-	public void handleInput(LintfordCore pCore) {
+	public void handleInput(LintfordCore core) {
 		if (mScreens == null || mScreens.size() == 0)
 			return;
 
@@ -197,37 +193,34 @@ public class ScreenManager implements IInputClickedFocusManager {
 			final var lScreen = mScreens.get(i);
 
 			if (lInputBlockedByHigherScreen) {
-				pCore.input().mouse().tryAcquireMouseMiddle(hashCode());
-
+				core.input().mouse().tryAcquireMouseMiddle(hashCode());
 			}
 
 			lScreen.acceptMouseInput = !lInputBlockedByHigherScreen;
 			lScreen.acceptKeyboardInput = !lInputBlockedByHigherScreen;
 
 			if (!lInputBlockedByHigherScreen && lScreen.screenState() == ScreenState.Active) {
-				lScreen.handleInput(pCore);
-
+				lScreen.handleInput(core);
 			}
 
 			lInputBlockedByHigherScreen = lInputBlockedByHigherScreen || lScreen.mBlockInputInBackground;
 		}
 
-		mToolTip.handleInput(pCore);
+		mToolTip.handleInput(core);
 
 		if (mTrackedInputControl != null) {
 			if (mTrackedInputControl.inputHandledInCoreFrame() == false) {
-				mTrackedInputControl.handleInput(pCore, this);
+				mTrackedInputControl.handleInput(core, this);
 			}
 
 			mTrackedInputControl.resetInputHandledInCoreFrameFlag();
-			if (pCore.input().mouse().isMouseLeftButtonDown() == false) {
+			if (core.input().mouse().isMouseLeftButtonDown() == false) {
 				mTrackedInputControl = null;
 			}
 		}
-
 	}
 
-	private void updateScreensToAdd(LintfordCore pCore) {
+	private void updateScreensToAdd(LintfordCore core) {
 		// First update transitions
 		final int lToAddCount = mScreensToAdd.size();
 		if (lToAddCount > 0) {
@@ -257,14 +250,14 @@ public class ScreenManager implements IInputClickedFocusManager {
 		}
 	}
 
-	public void update(LintfordCore pCore) {
+	public void update(LintfordCore core) {
 		if (!mIsinitialized || !mResourcesLoaded)
 			return;
 
 		boolean lOtherScreenHasFocus = false;
 		boolean lCoveredByOtherScreen = false;
 
-		updateScreensToAdd(pCore);
+		updateScreensToAdd(core);
 
 		mScreensToUpdate.clear();
 
@@ -287,8 +280,7 @@ public class ScreenManager implements IInputClickedFocusManager {
 			if (mScreensToAdd.size() > 0)
 				lCoveredByOtherScreen = true;
 
-			// Update the screen
-			lScreen.update(pCore, lOtherScreenHasFocus, lCoveredByOtherScreen);
+			lScreen.update(core, lOtherScreenHasFocus, lCoveredByOtherScreen);
 
 			if (lScreen.screenState() == ScreenState.TransitionOn || lScreen.screenState() == ScreenState.Active) {
 				lOtherScreenHasFocus = true;
@@ -298,11 +290,11 @@ public class ScreenManager implements IInputClickedFocusManager {
 			}
 		}
 
-		mToastManager.update(pCore);
-		mToolTip.update(pCore);
+		mToastManager.update(core);
+		mToolTip.update(core);
 	}
 
-	public void draw(LintfordCore pCore) {
+	public void draw(LintfordCore core) {
 		if (!mIsinitialized || !mResourcesLoaded)
 			return;
 
@@ -319,23 +311,21 @@ public class ScreenManager implements IInputClickedFocusManager {
 			if (lScreen.screenState() == ScreenState.Hidden && !lScreen.showBackgroundScreens())
 				continue;
 
-			lScreen.draw(pCore);
-
-			GLDebug.checkGLErrorsException(lScreen.getClass().getSimpleName());
+			lScreen.draw(core);
 		}
 
-		mToastManager.draw(pCore);
-		mToolTip.draw(pCore);
+		mToastManager.draw(core);
+		mToolTip.draw(core);
 	}
 
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
 
-	public void addScreen(Screen pScreen) {
-		if (pScreen.singletonScreen()) {
+	public void addScreen(Screen screenToAdd) {
+		if (screenToAdd.singletonScreen()) {
 			final int lScreenCount = mScreens.size();
-			final var pNewScreenSImpleName = pScreen.getClass().getSimpleName();
+			final var pNewScreenSImpleName = screenToAdd.getClass().getSimpleName();
 			for (int i = 0; i < lScreenCount; i++) {
 				final var lScreen = mScreens.get(i);
 				if (lScreen.getClass().getSimpleName().equals(pNewScreenSImpleName)) {
@@ -345,23 +335,23 @@ public class ScreenManager implements IInputClickedFocusManager {
 			}
 		}
 
-		if (!pScreen.isResourcesLoaded()) {
-			pScreen.isExiting(false);
+		if (!screenToAdd.isResourcesLoaded()) {
+			screenToAdd.isExiting(false);
 
-			if (mIsinitialized && !pScreen.isinitialized()) {
-				pScreen.initialize();
+			if (mIsinitialized && !screenToAdd.isinitialized()) {
+				screenToAdd.initialize();
 			}
 
 			if (mResourcesLoaded) {
-				pScreen.loadResources(mResourceManager);
+				screenToAdd.loadResources(mResourceManager);
 
 				GLDebug.checkGLErrorsException();
 			}
 		}
 
-		mScreensToAdd.add(pScreen);
+		mScreensToAdd.add(screenToAdd);
 
-		Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("Added screen '%s'", pScreen.getClass().getSimpleName()));
+		Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("Added screen '%s'", screenToAdd.getClass().getSimpleName()));
 	}
 
 	private Screen getTopScreen() {
@@ -376,61 +366,55 @@ public class ScreenManager implements IInputClickedFocusManager {
 		return mScreens.get(mScreens.size() - 1);
 	}
 
-	public void removeScreen(Screen pScreen) {
+	public void removeScreen(Screen screenToRemove) {
 		if (mIsinitialized) {
-			pScreen.unloadResources();
-
+			screenToRemove.unloadResources();
 		}
 
-		pScreen.onScreenRemovedFromScreenManager();
+		screenToRemove.onScreenRemovedFromScreenManager();
 
-		if (mScreens.contains(pScreen)) {
+		if (mScreens.contains(screenToRemove)) {
 			// if this screen was the top screen, then the screen below gains focus
-			if (mScreens.size() > 1 && mScreens.get(mScreens.size() - 1) == pScreen) {
+			if (mScreens.size() > 1 && mScreens.get(mScreens.size() - 1) == screenToRemove) {
 				mScreens.get(mScreens.size() - 2).onGainedFocus();
 			}
 
-			mScreens.remove(pScreen);
-
+			mScreens.remove(screenToRemove);
 		}
 
-		if (mScreensToUpdate.contains(pScreen))
-			mScreensToUpdate.remove(pScreen);
+		if (mScreensToUpdate.contains(screenToRemove))
+			mScreensToUpdate.remove(screenToRemove);
 
-		Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("Removed screen '%s'", pScreen.getClass().getSimpleName()));
-
+		Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("Removed screen '%s'", screenToRemove.getClass().getSimpleName()));
 	}
 
 	public void exitGame() {
 		mLWJGLCore.closeApp();
-
 	}
 
-	public void onViewportChanged(float pWidth, float pHeight) {
+	public void onViewportChanged(float width, float height) {
 		final int lScreenCount = mScreens.size();
 		for (int i = 0; i < lScreenCount; i++) {
-			mScreens.get(i).onViewportChange(pWidth, pHeight);
-
+			mScreens.get(i).onViewportChange(width, height);
 		}
-
 	}
 
-	public void createLoadingScreen(Screen pLoadingScreen) {
+	public void createLoadingScreen(Screen loadingScreen) {
 		exitAllScreens();
 
 		Debug.debugManager().logger().v(getClass().getSimpleName(), "=== Loading Screen ===");
 
 		System.gc();
 
-		if (pLoadingScreen.isinitialized() == false) {
-			pLoadingScreen.initialize();
+		if (loadingScreen.isinitialized() == false) {
+			loadingScreen.initialize();
 		}
 
-		if (pLoadingScreen.isResourcesLoaded() == false) {
-			pLoadingScreen.loadResources(mResourceManager);
+		if (loadingScreen.isResourcesLoaded() == false) {
+			loadingScreen.loadResources(mResourceManager);
 		}
 
-		addScreen(pLoadingScreen);
+		addScreen(loadingScreen);
 	}
 
 	private void exitAllScreens() {

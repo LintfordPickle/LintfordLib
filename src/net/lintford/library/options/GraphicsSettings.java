@@ -9,7 +9,7 @@ public class GraphicsSettings {
 	// --------------------------------------
 
 	static final GraphicsSettings createBasicTemplate() {
-		GraphicsSettings lBasic = new GraphicsSettings();
+		final var lBasic = new GraphicsSettings();
 
 		lBasic.mUIScale = 1f;
 		lBasic.mUITextScale = 1f;
@@ -41,24 +41,24 @@ public class GraphicsSettings {
 		return mUIScale;
 	}
 
-	public void setUIScale(float pNewValue) {
-		mUIScale = MathHelper.clamp(pNewValue, 0.75f, 1.5f);
+	public void setUIScale(float newValue) {
+		mUIScale = MathHelper.clamp(newValue, 0.75f, 1.5f);
 	}
 
 	public float UITextScale() {
 		return mUITextScale;
 	}
 
-	public void setUITextScale(float pNewValue) {
-		mUITextScale = MathHelper.clamp(pNewValue, 0.75f, 1.5f);
+	public void setUITextScale(float newValue) {
+		mUITextScale = MathHelper.clamp(newValue, 0.75f, 1.5f);
 	}
 
 	public float UITransparencyScale() {
 		return mUITransparency;
 	}
 
-	public void setUITransparencyScale(float pNewValue) {
-		mUITransparency = MathHelper.clamp(pNewValue, 0.75f, 1.5f);
+	public void setUITransparencyScale(float newValue) {
+		mUITransparency = MathHelper.clamp(newValue, 0.75f, 1.5f);
 	}
 
 	// --------------------------------------
@@ -73,22 +73,24 @@ public class GraphicsSettings {
 	// Methods
 	// --------------------------------------
 
-	public GraphicsSettings(GraphicsSettings pCopy) {
-		this.copy(pCopy);
-
+	public GraphicsSettings(GraphicsSettings graphicsSettingsToCopy) {
+		this.copy(graphicsSettingsToCopy);
 	}
 
-	public void copy(GraphicsSettings pCopy) {
-		this.mUIScale = pCopy.mUIScale;
-		this.mUITextScale = pCopy.mUITextScale;
-		this.mUITransparency = pCopy.mUITransparency;
+	public void copy(GraphicsSettings graphicsSettingsToCopy) {
+		this.mUIScale = graphicsSettingsToCopy.mUIScale;
+		this.mUITextScale = graphicsSettingsToCopy.mUITextScale;
+		this.mUITransparency = graphicsSettingsToCopy.mUITransparency;
 	}
 
-	public boolean isDifferent(GraphicsSettings pOther) {
-		if (pOther == null)
+	public boolean isDifferent(GraphicsSettings otherGrpahicsSettingsToCheckAgainst) {
+		if (otherGrpahicsSettingsToCheckAgainst == null)
 			return true;
 
-		return mUIScale != pOther.mUIScale || mUITextScale != pOther.mUITextScale || mUITransparency != pOther.mUITransparency;
-
+		// @formatter:off
+		return mUIScale != otherGrpahicsSettingsToCheckAgainst.mUIScale 
+			|| mUITextScale != otherGrpahicsSettingsToCheckAgainst.mUITextScale 
+			|| mUITransparency != otherGrpahicsSettingsToCheckAgainst.mUITransparency;
+		// @formatter:on
 	}
 }

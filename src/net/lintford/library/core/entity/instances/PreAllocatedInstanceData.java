@@ -24,8 +24,8 @@ public abstract class PreAllocatedInstanceData extends BaseInstanceData {
 		return mInternalIsAssigned;
 	}
 
-	void internalIsAssigned(boolean pNewValue) {
-		mInternalIsAssigned = pNewValue;
+	void internalIsAssigned(boolean internalIsAssigned) {
+		mInternalIsAssigned = internalIsAssigned;
 	}
 
 	// --------------------------------------

@@ -41,33 +41,31 @@ public abstract class UIWidget extends Rectangle implements IProcessMouseInput {
 		return mIsEnabled;
 	}
 
-	public void isEnabled(boolean pNewValue) {
-		mIsEnabled = pNewValue;
+	public void isEnabled(boolean newValue) {
+		mIsEnabled = newValue;
 	}
 
 	public boolean isVisible() {
 		return mIsVisible;
 	}
 
-	public void isVisible(boolean pNewValue) {
-		mIsVisible = pNewValue;
+	public void isVisible(boolean newValue) {
+		mIsVisible = newValue;
 	}
 
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
-	public UIWidget(final UiWindow pParentWindow) {
-		this(pParentWindow, 0, 0, 0, 0);
-
+	public UIWidget(final UiWindow parentWindow) {
+		this(parentWindow, 0, 0, 0, 0);
 	}
 
-	public UIWidget(final UiWindow pParentWindow, final Rectangle pBounds) {
-		this(pParentWindow, pBounds.x(), pBounds.y(), pBounds.w(), pBounds.h());
-
+	public UIWidget(final UiWindow parentWindow, final Rectangle bounds) {
+		this(parentWindow, bounds.x(), bounds.y(), bounds.width(), bounds.height());
 	}
 
-	public UIWidget(final UiWindow pParentWindow, float x, float y, float w, float h) {
+	public UIWidget(final UiWindow parentWindow, float x, float y, float w, float h) {
 		super(x, y, w, h);
 
 		setDimensions(100.f, 25.f);
@@ -75,8 +73,7 @@ public abstract class UIWidget extends Rectangle implements IProcessMouseInput {
 		mIsVisible = true;
 		mIsEnabled = true;
 
-		mParentWindow = pParentWindow;
-
+		mParentWindow = parentWindow;
 	}
 
 	// --------------------------------------
@@ -87,7 +84,7 @@ public abstract class UIWidget extends Rectangle implements IProcessMouseInput {
 
 	}
 
-	public void loadResources(final ResourceManager pResourceManager) {
+	public void loadResources(final ResourceManager resourceManager) {
 
 	}
 
@@ -95,19 +92,17 @@ public abstract class UIWidget extends Rectangle implements IProcessMouseInput {
 
 	}
 
-	public boolean handleInput(LintfordCore pCore) {
+	public boolean handleInput(LintfordCore core) {
 		return false;
 	}
 
-	public void update(LintfordCore pCore) {
+	public void update(LintfordCore core) {
 		if (mMouseTimer >= 0) {
-			mMouseTimer -= pCore.appTime().elapsedTimeMilli();
-
+			mMouseTimer -= core.appTime().elapsedTimeMilli();
 		}
-
 	}
 
-	public abstract void draw(LintfordCore pCore, SpriteBatch pSpriteBatch, SpriteSheetDefinition pCoreSpritesheet, FontUnit pTextFont, float pComponentZDepth);
+	public abstract void draw(LintfordCore core, SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheet, FontUnit textFont, float componentZDepth);
 
 	@Override
 	public boolean isCoolDownElapsed() {
@@ -118,5 +113,4 @@ public abstract class UIWidget extends Rectangle implements IProcessMouseInput {
 	public void resetCoolDownTimer() {
 		mMouseTimer = 200;
 	}
-
 }

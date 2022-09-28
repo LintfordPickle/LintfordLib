@@ -2,18 +2,10 @@ package net.lintford.library.core.graphics.polybatch;
 
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Vec2;
-import org.jbox2d.dynamics.Body;
-import org.jbox2d.dynamics.Fixture;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
-import net.lintford.library.core.box2d.entities.JBox2dEntityInstance;
-import net.lintford.library.core.box2d.instance.Box2dBodyInstance;
-import net.lintford.library.core.box2d.instance.Box2dFixtureInstance;
 import net.lintford.library.core.entity.JBox2dEntity;
-import net.lintford.library.core.graphics.sprites.SpriteFrame;
-import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
-import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.maths.Vector2f;
 
 public class PObjectRenderer {
@@ -22,7 +14,7 @@ public class PObjectRenderer {
 	// Variables
 	// ---------------------------------------------
 
-	private int mEntityGroupID;
+	private int mEntityGroupUid;
 	private ResourceManager mResourceManager;
 	private JBox2dPolyBatch mTextureBatch;
 
@@ -35,42 +27,41 @@ public class PObjectRenderer {
 	// Constructor
 	// ---------------------------------------------
 
-	public PObjectRenderer(int pEntityGroupID) {
-		mEntityGroupID = pEntityGroupID;
+	public PObjectRenderer(int entityGroupUid) {
+		mEntityGroupUid = entityGroupUid;
 		mTextureBatch = new JBox2dPolyBatch();
-
 	}
 
 	// ---------------------------------------------
 	// Core-Methods
 	// ---------------------------------------------
 
-	public void loadResources(ResourceManager pResourceManager) {
-		mResourceManager = pResourceManager;
-		mTextureBatch.loadResources(pResourceManager);
+	public void loadResources(ResourceManager resourceManager) {
+		mResourceManager = resourceManager;
+		mTextureBatch.loadResources(resourceManager);
 	}
 
 	public void unloadResources() {
 		mTextureBatch.unloadResources();
 	}
 
-	public void handleInput(LintfordCore pCore) {
+	public void handleInput(LintfordCore core) {
 
 	}
 
-	public void update(LintfordCore pCore) {
+	public void update(LintfordCore core) {
 
 	}
 
-	public void draw(LintfordCore pCore, JBox2dEntity pPObject) {
-		if (!pPObject.hasPhysicsEntity())
+	public void draw(LintfordCore core, JBox2dEntity pObject) {
+		if (!pObject.hasPhysicsEntity())
 			return;
 
-		String lSpriteSheetDefName = pPObject.box2dEntityInstance().spriteSheetName;
+		final var lSpriteSheetDefName = pObject.box2dEntityInstance().spriteSheetName;
 		if (lSpriteSheetDefName == null)
 			return;
 
-		SpriteSheetDefinition lSpriteSheetDef = mResourceManager.spriteSheetManager().getSpriteSheet(lSpriteSheetDefName, mEntityGroupID);
+		final var lSpriteSheetDef = mResourceManager.spriteSheetManager().getSpriteSheet(lSpriteSheetDefName, mEntityGroupUid);
 
 		if (lSpriteSheetDef == null)
 			return;
@@ -82,45 +73,46 @@ public class PObjectRenderer {
 			}
 		}
 
-		mTextureBatch.begin(pCore.gameCamera());
+		final var lEntityInst = pObject.box2dEntityInstance();
+		final int lBodyCount = lEntityInst.bodies().size();
+		if (lBodyCount == 0)
+			return;
 
-		JBox2dEntityInstance lInst = pPObject.box2dEntityInstance();
-		final int lBodyCount = lInst.bodies().size();
+		mTextureBatch.begin(core.gameCamera());
+
 		for (int i = 0; i < lBodyCount; i++) {
-			Box2dBodyInstance lBodyInst = lInst.bodies().get(i);
-			Body lBody = lBodyInst.mBody;
+			final var lBodyInst = lEntityInst.bodies().get(i);
+			final var lBody = lBodyInst.mBody;
 			if (lBody == null)
 				continue;
 
-			Texture lTexture = lSpriteSheetDef.texture();
+			final var lTexture = lSpriteSheetDef.texture();
 
 			final int lFixtureCount = lBodyInst.mFixtures.length;
 			for (int j = 0; j < lFixtureCount; j++) {
-				Box2dFixtureInstance lFixtureInst = lBodyInst.mFixtures[j];
+				final var lFixtureInst = lBodyInst.mFixtures[j];
 
 				if (lFixtureInst.spriteIndex == -1) {
 					String lSpriteFrameName = lFixtureInst.spriteName;
 					lFixtureInst.spriteIndex = lSpriteSheetDef.getSpriteFrameIndexByName(lSpriteFrameName);
 				}
 
-				SpriteFrame lFrame = lSpriteSheetDef.getSpriteFrame(lFixtureInst.spriteIndex);
+				final var lSpriteFrame = lSpriteSheetDef.getSpriteFrame(lFixtureInst.spriteIndex);
 
-				if (lFrame == null)
+				if (lSpriteFrame == null)
 					continue;
 
-				Fixture lFixt = lFixtureInst.mFixture;
-				if (lFixt == null)
+				final var lFixture = lFixtureInst.mFixture;
+				if (lFixture == null)
 					continue;
 
-				if (lFixt.getShape() instanceof PolygonShape) {
-					final PolygonShape fixtureShape = (PolygonShape) lFixt.getShape();
-					mTextureBatch.drawPolygon(lTexture, lBody, fixtureShape.getVertices(), lFrame, -0.2f, 1f, 1f, 1f, 1f);
-
+				if (lFixture.getShape() instanceof PolygonShape) {
+					final PolygonShape fixtureShape = (PolygonShape) lFixture.getShape();
+					mTextureBatch.drawPolygon(lTexture, lBody, fixtureShape.getVertices(), lSpriteFrame, -0.2f, 1f, 1f, 1f, 1f);
 				}
 			}
 		}
 
 		mTextureBatch.end();
-
 	}
 }

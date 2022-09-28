@@ -4,9 +4,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.imageio.ImageIO;
 
@@ -39,7 +37,6 @@ public class TextureManager extends EntityGroupManager {
 
 	public class TextureMetaData {
 		public TextureDataDefinition[] textureDefinitions;
-
 	}
 
 	public class TextureGroup {
@@ -48,12 +45,11 @@ public class TextureManager extends EntityGroupManager {
 		// Variables
 		// --------------------------------------
 
-		Map<String, Texture> mTextureMap;
-
-		boolean automaticUnload = true;
-		int entityGroupID;
-		String name = "";
-		int referenceCount = 0;
+		protected Map<String, Texture> mTextureMap;
+		protected boolean mAutomaticUnload = true;
+		protected int mEntityGroupID;
+		protected String mTextureGroupName = "";
+		protected int mReferenceCount = 0;
 
 		// --------------------------------------
 		// Properties
@@ -67,20 +63,19 @@ public class TextureManager extends EntityGroupManager {
 		// Constructor
 		// --------------------------------------
 
-		public TextureGroup(int pEntityGroupID) {
+		public TextureGroup(int entityGroupUid) {
 			mTextureMap = new HashMap<>();
 
-			entityGroupID = pEntityGroupID;
-			referenceCount = 0;
-
+			mEntityGroupID = entityGroupUid;
+			mReferenceCount = 0;
 		}
 
 		// --------------------------------------
 		// Methods
 		// --------------------------------------
 
-		Texture getTextureByName(String pTextureName) {
-			return mTextureMap.get(pTextureName);
+		Texture getTextureByName(String textureName) {
+			return mTextureMap.get(textureName);
 		}
 	}
 
@@ -125,15 +120,15 @@ public class TextureManager extends EntityGroupManager {
 		return mTextureGroupMap;
 	}
 
-	public TextureGroup textureGroup(int pEntityGroupID) {
-		if (!mTextureGroupMap.containsKey(pEntityGroupID)) {
-			TextureGroup lNewTextureGroup = new TextureGroup(pEntityGroupID);
-			mTextureGroupMap.put(pEntityGroupID, lNewTextureGroup);
+	public TextureGroup textureGroup(int entityGroupUid) {
+		if (!mTextureGroupMap.containsKey(entityGroupUid)) {
+			TextureGroup lNewTextureGroup = new TextureGroup(entityGroupUid);
+			mTextureGroupMap.put(entityGroupUid, lNewTextureGroup);
 
 			return lNewTextureGroup;
 		}
 
-		return mTextureGroupMap.get(pEntityGroupID);
+		return mTextureGroupMap.get(entityGroupUid);
 	}
 
 	public int textureGroupCount() {
@@ -164,53 +159,50 @@ public class TextureManager extends EntityGroupManager {
 		return mTextureCheckerIndexed;
 	}
 
-	public boolean isTextureLoaded(Texture pTexture) {
-		return (pTexture != null && pTexture.name().equals(TextureManager.TEXTURE_NOT_FOUND_NAME) == false);
+	public boolean isTextureLoaded(Texture texture) {
+		return (texture != null && texture.name().equals(TextureManager.TEXTURE_NOT_FOUND_NAME) == false);
 	}
 
-	public Texture getTextureOrLoad(String pName, String pTextureFilepath, int pTextureFilter, int pEntityGroupID) {
-		Texture lRetTexture = isTextureLoaded(pName, pEntityGroupID);
+	public Texture getTextureOrLoad(String textureName, String textureFilepath, int textureFilter, int entityGroupUid) {
+		Texture lRetTexture = isTextureLoaded(textureName, entityGroupUid);
 
 		if (isTextureLoaded(lRetTexture)) {
 			return lRetTexture;
 		}
 
-		if (pTextureFilepath == null || pTextureFilepath.length() == 0) {
+		if (textureFilepath == null || textureFilepath.length() == 0) {
 			return null;
 		}
 
-		String lTextureName = pName != null ? pName : pTextureFilepath;
+		String lTextureName = textureName != null ? textureName : textureFilepath;
 
-		return loadTexture(lTextureName, pTextureFilepath, pTextureFilter, pEntityGroupID);
+		return loadTexture(lTextureName, textureFilepath, textureFilter, entityGroupUid);
 	}
 
 	// returns the texture if one is found, otherwise null
-	public Texture isTextureLoaded(String pName, int pEntityGroupID) {
-		TextureGroup lTextureGroup = mTextureGroupMap.get(pEntityGroupID);
+	public Texture isTextureLoaded(String textureName, int entityGroupUid) {
+		TextureGroup lTextureGroup = mTextureGroupMap.get(entityGroupUid);
 		if (lTextureGroup == null) {
 			return null;
 		}
-		return lTextureGroup.getTextureByName(pName);
+		return lTextureGroup.getTextureByName(textureName);
 	}
 
 	/** Returns the {@link Texture} with the given name. If no {@link Texture} by the given name is found, a default MAGENTA texture will be returned. */
-	public Texture getTexture(String pName, int pEntityGroupID) {
-		TextureGroup lTextureGroup = mTextureGroupMap.get(pEntityGroupID);
+	public Texture getTexture(String textureName, int entityGroupUid) {
+		TextureGroup lTextureGroup = mTextureGroupMap.get(entityGroupUid);
 
 		if (lTextureGroup == null) {
-			Debug.debugManager().logger().w(getClass().getSimpleName(), String.format("Couldn't getTexture %s: TextureGroup %d doesn't exit", pName, pEntityGroupID));
+			Debug.debugManager().logger().w(getClass().getSimpleName(), String.format("Couldn't getTexture %s: TextureGroup %d doesn't exit", textureName, entityGroupUid));
 			return mTextureNotFound;
-
 		}
 
-		if (lTextureGroup.mTextureMap.containsKey(pName)) {
-			return lTextureGroup.mTextureMap.get(pName);
-
+		if (lTextureGroup.mTextureMap.containsKey(textureName)) {
+			return lTextureGroup.mTextureMap.get(textureName);
 		}
 
-		Debug.debugManager().logger().w(getClass().getSimpleName(), String.format("Couldn't getTexture %s: TextureGroup %d doesn't exit", pName, pEntityGroupID));
+		Debug.debugManager().logger().w(getClass().getSimpleName(), String.format("Couldn't getTexture %s: TextureGroup %d doesn't exit", textureName, entityGroupUid));
 		return mTextureNotFound;
-
 	}
 
 	// --------------------------------------
@@ -220,10 +212,10 @@ public class TextureManager extends EntityGroupManager {
 	public TextureManager() {
 		mTextureGroupMap = new HashMap<>();
 
-		TextureGroup lCoreTextureGroup = new TextureGroup(LintfordCore.CORE_ENTITY_GROUP_ID);
-		lCoreTextureGroup.automaticUnload = false;
-		lCoreTextureGroup.name = "CORE";
-		lCoreTextureGroup.referenceCount = 1;
+		final var lCoreTextureGroup = new TextureGroup(LintfordCore.CORE_ENTITY_GROUP_ID);
+		lCoreTextureGroup.mAutomaticUnload = false;
+		lCoreTextureGroup.mTextureGroupName = "CORE";
+		lCoreTextureGroup.mReferenceCount = 1;
 		mTextureGroupMap.put(LintfordCore.CORE_ENTITY_GROUP_ID, lCoreTextureGroup);
 
 		loadTexturesFromMetafile(CORE_META_FILE, LintfordCore.CORE_ENTITY_GROUP_ID);
@@ -237,36 +229,30 @@ public class TextureManager extends EntityGroupManager {
 	// Core-Methods
 	// --------------------------------------
 
-	public void loadResources(ResourceManager pResourceManager) {
-		mResourceManager = pResourceManager;
+	public void loadResources(ResourceManager resourceManager) {
+		mResourceManager = resourceManager;
 
 		mIsLoaded = true;
-
 	}
 
 	public void unloadResources() {
 		if (!mIsLoaded)
 			return;
 
-		final var map = mTextureGroupMap;
-		for (final var entry : map.entrySet()) {
-			Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("TextureGroup %s (%d)..", entry.getValue().name, entry.getValue().entityGroupID));
+		for (final var entry : mTextureGroupMap.entrySet()) {
+			Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("TextureGroup %s (%d)..", entry.getValue().mTextureGroupName, entry.getValue().mEntityGroupID));
 
 			final var lTextureGroup = entry.getValue();
 			final var lGroupMap = lTextureGroup.textureMap();
 			for (final var lTexture : lGroupMap.entrySet()) {
-
 				Texture.unloadTexture(lTexture.getValue());
-
 			}
 
 			lGroupMap.clear();
-
 		}
 		mTextureGroupMap.clear();
 
 		mIsLoaded = false;
-
 	}
 
 	// --------------------------------------
@@ -274,106 +260,95 @@ public class TextureManager extends EntityGroupManager {
 	// --------------------------------------
 
 	@Override
-	public int increaseReferenceCounts(int pEntityGroupID) {
-		TextureGroup lTextureGroup = mTextureGroupMap.get(pEntityGroupID);
+	public int increaseReferenceCounts(int entityGroupUid) {
+		TextureGroup lTextureGroup = mTextureGroupMap.get(entityGroupUid);
 
-		// Create a new TextureGroup for this EntityGroupID if one doesn't exist
 		if (lTextureGroup == null) {
-			lTextureGroup = new TextureGroup(pEntityGroupID);
-			lTextureGroup.referenceCount = 1;
+			lTextureGroup = new TextureGroup(entityGroupUid);
+			lTextureGroup.mReferenceCount = 1;
 
-			mTextureGroupMap.put(pEntityGroupID, lTextureGroup);
-
+			mTextureGroupMap.put(entityGroupUid, lTextureGroup);
 		} else {
-			lTextureGroup.referenceCount++;
-
+			lTextureGroup.mReferenceCount++;
 		}
 
-		return lTextureGroup.referenceCount;
-
+		return lTextureGroup.mReferenceCount;
 	}
 
 	@Override
-	public int decreaseReferenceCounts(int pEntityGroupID) {
-		final var lTextureGroup = mTextureGroupMap.get(pEntityGroupID);
+	public int decreaseReferenceCounts(int entityGroupUid) {
+		final var lTextureGroup = mTextureGroupMap.get(entityGroupUid);
 
 		if (lTextureGroup == null) {
 			return 0;
 		} else {
-			if (mResourceManager.isEntityGroupUidProtected(pEntityGroupID)) {
-				Debug.debugManager().logger().i(getClass().getSimpleName(), "Cannot decrease reference count on EntityGroupUid: " + pEntityGroupID + " (protected)");
-				return lTextureGroup.referenceCount;
+			if (mResourceManager.isEntityGroupUidProtected(entityGroupUid)) {
+				Debug.debugManager().logger().i(getClass().getSimpleName(), "Cannot decrease reference count on EntityGroupUid: " + entityGroupUid + " (protected)");
+				return lTextureGroup.mReferenceCount;
 			}
 
-			if (lTextureGroup.referenceCount > 0) {
-				lTextureGroup.referenceCount--;
+			if (lTextureGroup.mReferenceCount > 0) {
+				lTextureGroup.mReferenceCount--;
 			}
 		}
 
-		if (lTextureGroup.referenceCount <= 0) {
-			// Unload textures for this entityGroupID
-			unloadEntityGroup(pEntityGroupID);
+		if (lTextureGroup.mReferenceCount <= 0) {
+			unloadEntityGroup(entityGroupUid);
 
-			mTextureGroupMap.remove(pEntityGroupID);
+			mTextureGroupMap.remove(entityGroupUid);
 			return 0;
 		}
 
-		return lTextureGroup.referenceCount;
+		return lTextureGroup.mReferenceCount;
 	}
 
-	public Texture loadTexture(String pName, String pTextureLocation, int pEntityGroupID) {
-		return loadTexture(pName, pTextureLocation, GL11.GL_NEAREST, pEntityGroupID);
+	public Texture loadTexture(String textureName, String textureLocation, int entityGroupUid) {
+		return loadTexture(textureName, textureLocation, GL11.GL_NEAREST, entityGroupUid);
 	}
 
-	public Texture loadTexture(String pName, String pTextureLocation, int pFilter, int pEntityGroupID) {
-		return loadTexture(pName, pTextureLocation, pFilter, false, pEntityGroupID);
+	public Texture loadTexture(String textureName, String textureLocation, int filter, int entityGroupUid) {
+		return loadTexture(textureName, textureLocation, filter, false, entityGroupUid);
 	}
 
-	public Texture loadTexture(String pName, String pTextureLocation, int pFilter, boolean pReload, int pEntityGroupID) {
-		return loadTexture(pName, pTextureLocation, pFilter, GL12.GL_REPEAT, GL12.GL_REPEAT, pReload, pEntityGroupID);
+	public Texture loadTexture(String textureName, String textureLocation, int filter, boolean reload, int entityGroupUid) {
+		return loadTexture(textureName, textureLocation, filter, GL12.GL_REPEAT, GL12.GL_REPEAT, reload, entityGroupUid);
 	}
 
-	public Texture loadTexture(String pName, String pTextureLocation, int pFilter, int pWrapModeS, int pWrapModeT, int pEntityGroupID) {
-		return loadTexture(pName, pTextureLocation, pFilter, pWrapModeS, pWrapModeT, false, pEntityGroupID);
+	public Texture loadTexture(String textureName, String textureLocation, int filter, int wrapModeS, int wrapModeT, int entityGroupUid) {
+		return loadTexture(textureName, textureLocation, filter, wrapModeS, wrapModeT, false, entityGroupUid);
 	}
 
-	public Texture loadTexture(String pName, String pTextureLocation, int pFilter, int pWrapModeS, int pWrapModeT, boolean pReload, int pEntityGroupID) {
-		if (pTextureLocation == null || pTextureLocation.length() == 0) {
+	public Texture loadTexture(String textureName, String textureLocation, int filter, int wrapModeS, int wrapModeT, boolean reload, int entityGroupUid) {
+		if (textureLocation == null || textureLocation.length() == 0) {
 			return null;
-
 		}
 
-		final var lTextureGroup = getTextureGroup(pEntityGroupID);
+		final var lTextureGroup = getTextureGroup(entityGroupUid);
 
 		Texture lTexture = null;
-		if (lTextureGroup.mTextureMap.containsKey(pName)) {
-			lTexture = lTextureGroup.mTextureMap.get(pName);
+		if (lTextureGroup.mTextureMap.containsKey(textureName)) {
+			lTexture = lTextureGroup.mTextureMap.get(textureName);
 
-			if (!pReload)
+			if (!reload)
 				return lTexture;
 
-			Debug.debugManager().logger().v(getClass().getSimpleName(), "Unloading " + pName + ", so it can be reloaded");
-			unloadTexture(lTexture, pEntityGroupID);
-
+			Debug.debugManager().logger().v(getClass().getSimpleName(), "Unloading " + textureName + ", so it can be reloaded");
+			unloadTexture(lTexture, entityGroupUid);
 		}
 
 		// Create new texture
-		if (pTextureLocation.charAt(0) == '/') {
-			lTexture = Texture.loadTextureFromResource(pName, pTextureLocation, pFilter);
-
+		if (textureLocation.charAt(0) == '/') {
+			lTexture = Texture.loadTextureFromResource(textureName, textureLocation, filter);
 		} else {
-			lTexture = Texture.loadTextureFromFile(pName, pTextureLocation, pFilter);
-
+			lTexture = Texture.loadTextureFromFile(textureName, textureLocation, filter);
 		}
 
 		if (lTexture != null) {
-			lTextureGroup.mTextureMap.put(pName, lTexture);
-
+			lTextureGroup.mTextureMap.put(textureName, lTexture);
 		}
 
 		if (lTexture == null) {
 			return mTextureNotFound;
-
 		}
 
 		Debug.debugManager().stats().incTag(DebugStats.TAG_ID_TEXTURES, 1);
@@ -381,58 +356,58 @@ public class TextureManager extends EntityGroupManager {
 		return lTexture;
 	}
 
-	private TextureGroup getTextureGroup(int pEntityGroupID) {
-		TextureGroup lTextureGroup = mTextureGroupMap.get(pEntityGroupID);
+	private TextureGroup getTextureGroup(int entityGroupUid) {
+		TextureGroup lTextureGroup = mTextureGroupMap.get(entityGroupUid);
 		if (lTextureGroup == null) {
-			Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("EntityGroupID does not exist! Creating a new one", pEntityGroupID));
-			lTextureGroup = new TextureGroup(pEntityGroupID);
-			mTextureGroupMap.put(pEntityGroupID, lTextureGroup);
+			Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("EntityGroupID does not exist! Creating a new one", entityGroupUid));
+			lTextureGroup = new TextureGroup(entityGroupUid);
+			mTextureGroupMap.put(entityGroupUid, lTextureGroup);
 
 		}
 		return lTextureGroup;
 	}
 
-	public Texture loadTexture(String pName, int[] pColorDataARGB, int pWidth, int pHeight, int pEntityGroupID) {
-		return loadTexture(pName, pColorDataARGB, pWidth, pHeight, GL11.GL_NEAREST, GL12.GL_REPEAT, GL12.GL_REPEAT, pEntityGroupID);
+	public Texture loadTexture(String textureName, int[] colorDataARGB, int width, int height, int entityGroupUid) {
+		return loadTexture(textureName, colorDataARGB, width, height, GL11.GL_NEAREST, GL12.GL_REPEAT, GL12.GL_REPEAT, entityGroupUid);
 	}
 
-	public Texture loadTexture(String pName, int[] pColorDataARGB, int pWidth, int pHeight, int pFilter, int pWrapSMode, int pWrapTMode, int pEntityGroupID) {
+	public Texture loadTexture(String name, int[] colorDataARGB, int width, int height, int filter, int wrapSMode, int wrapTMode, int entityGroupUid) {
 		Texture lResult = null;
-		TextureGroup lTextureGroup = getTextureGroup(pEntityGroupID);
+		TextureGroup lTextureGroup = getTextureGroup(entityGroupUid);
 
-		if (lTextureGroup.mTextureMap.containsKey(pName)) {
-			lResult = lTextureGroup.mTextureMap.get(pName);
+		if (lTextureGroup.mTextureMap.containsKey(name)) {
+			lResult = lTextureGroup.mTextureMap.get(name);
 		}
 
 		if (lResult != null && lResult.getTextureID() != -1) {
-			lResult.updateGLTextureData(pColorDataARGB, pWidth, pHeight);
+			lResult.updateGLTextureData(colorDataARGB, width, height);
 			return lResult;
 		} else {
-			Texture lTex = Texture.createTexture(pName, pName, pColorDataARGB, pWidth, pHeight, pFilter, pWrapSMode, pWrapTMode);
+			Texture lTex = Texture.createTexture(name, name, colorDataARGB, width, height, filter, wrapSMode, wrapTMode);
 			if (lTex != null) {
 				lTex.reloadable(false);
-				lTextureGroup.mTextureMap.put(pName, lTex);
+				lTextureGroup.mTextureMap.put(name, lTex);
 			}
 
 			return lTex;
 		}
 	}
 
-	public boolean saveTextureToFile(int pWidth, int pHeight, int[] pData, String pFileLocation) {
-		BufferedImage lImage = new BufferedImage(pWidth, pHeight, BufferedImage.TYPE_INT_ARGB);
+	public boolean saveTextureToFile(int width, int height, int[] imageData, String pFileLocation) {
+		BufferedImage lImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 
 		// Convert our ARGB to output ABGR
-		int[] lTextureData = new int[pWidth * pHeight];
-		for (int i = 0; i < pWidth * pHeight; i++) {
-			int a = (pData[i] & 0xff000000) >> 24;
-			int r = (pData[i] & 0xff0000) >> 16;
-			int g = (pData[i] & 0xff00) >> 8;
-			int b = (pData[i] & 0xff);
+		int[] lTextureData = new int[width * height];
+		for (int i = 0; i < width * height; i++) {
+			int a = (imageData[i] & 0xff000000) >> 24;
+			int r = (imageData[i] & 0xff0000) >> 16;
+			int g = (imageData[i] & 0xff00) >> 8;
+			int b = (imageData[i] & 0xff);
 
 			lTextureData[i] = a << 24 | b << 16 | g << 8 | r;
 		}
 
-		lImage.setRGB(0, 0, pWidth, pHeight, lTextureData, 0, pWidth);
+		lImage.setRGB(0, 0, width, height, lTextureData, 0, width);
 
 		File outputfile = new File(pFileLocation);
 		try {
@@ -446,26 +421,24 @@ public class TextureManager extends EntityGroupManager {
 
 	}
 
-	public Texture createFontTexture(String pName, BufferedImage pImage, int pEntityGroupID) {
-		return createFontTexture(pName, pImage, GL11.GL_NEAREST, pEntityGroupID);
+	public Texture createFontTexture(String textureName, BufferedImage image, int entityGroupUid) {
+		return createFontTexture(textureName, image, GL11.GL_NEAREST, entityGroupUid);
 	}
 
-	public Texture createFontTexture(String pName, BufferedImage pImage, int pFilter, int pEntityGroupID) {
-		TextureGroup lTextureGroup = mTextureGroupMap.get(pEntityGroupID);
+	public Texture createFontTexture(String textureName, BufferedImage image, int filter, int entityGroupUid) {
+		TextureGroup lTextureGroup = mTextureGroupMap.get(entityGroupUid);
 		if (lTextureGroup == null) {
-			Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Cannot load texture %s for EntityGroupID %d: EntityGroupID does not exist!", (pName + " (Font)"), pEntityGroupID));
+			Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Cannot load texture %s for EntityGroupID %d: EntityGroupID does not exist!", (textureName + " (Font)"), entityGroupUid));
 			return null;
 
-		} else if (lTextureGroup.mTextureMap.containsKey(pName)) {
-			// This texture group already contains a texture with the same name, so return it
-			return lTextureGroup.mTextureMap.get(pName);
-
+		} else if (lTextureGroup.mTextureMap.containsKey(textureName)) {
+			return lTextureGroup.mTextureMap.get(textureName);
 		}
 
-		Texture lNewTexture = Texture.createTexture(pName, pName, pImage, pFilter);
+		final var lNewTexture = Texture.createTexture(textureName, textureName, image, filter);
 		lNewTexture.reloadable(false); // no need to reload font textures (on-the-fly)
 
-		lTextureGroup.mTextureMap.put(pName, lNewTexture);
+		lTextureGroup.mTextureMap.put(textureName, lNewTexture);
 
 		return lNewTexture;
 	}
@@ -473,75 +446,67 @@ public class TextureManager extends EntityGroupManager {
 	public void reloadTextures() {
 		Debug.debugManager().logger().v(getClass().getSimpleName(), "Reloading all modified files");
 
-		for (TextureGroup lTextureGroup : mTextureGroupMap.values()) {
-			for (Texture lTexture : lTextureGroup.mTextureMap.values()) {
+		for (final var lTextureGroup : mTextureGroupMap.values()) {
+			for (final var lTexture : lTextureGroup.mTextureMap.values()) {
 				if (lTexture != null) {
 					lTexture.reload();
 				}
-
 			}
-
 		}
-
 	}
 
 	/** Unloads the specified texture in the texture group, if applicable. */
-	public void unloadTexture(Texture pTexture, int pEntityGroupID) {
-		if (pTexture == null)
+	public void unloadTexture(Texture texture, int entityGroupUid) {
+		if (texture == null)
 			return; // already lost reference
 
-		TextureGroup lTextureGroup = mTextureGroupMap.get(pEntityGroupID);
+		TextureGroup lTextureGroup = mTextureGroupMap.get(entityGroupUid);
 		if (lTextureGroup == null) {
 			return;
 
-		} else if (lTextureGroup.mTextureMap.containsValue(pTexture)) {
-			String lTextureName = pTexture.name();
+		} else if (lTextureGroup.mTextureMap.containsValue(texture)) {
+			String lTextureName = texture.name();
+			Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("unloading texture: %s from texture group %d", lTextureName, entityGroupUid));
 
-			Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("unloading texture: %s from texture group %d", lTextureName, pEntityGroupID));
-
-			Texture.unloadTexture(pTexture);
+			Texture.unloadTexture(texture);
 
 			lTextureGroup.mTextureMap.remove(lTextureName);
-			pTexture = null;
-
+			texture = null;
 		}
 
 		return;
-
 	}
 
-	public void unloadEntityGroup(int pEntityGroupID) {
-		final var lTextureGroup = mTextureGroupMap.get(pEntityGroupID);
+	public void unloadEntityGroup(int entityGroupUid) {
+		final var lTextureGroup = mTextureGroupMap.get(entityGroupUid);
 
 		if (lTextureGroup == null)
 			return;
 
 		final int lTextureCount = lTextureGroup.mTextureMap.size();
-		Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("Unloading TextureGroup %d (freeing total %d textures)", pEntityGroupID, lTextureCount));
+		Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("Unloading TextureGroup %d (freeing total %d textures)", entityGroupUid, lTextureCount));
 
 		if (lTextureGroup != null) {
-			// Iterate over all the textures in the group and unload them
-			Iterator<Entry<String, Texture>> it = lTextureGroup.mTextureMap.entrySet().iterator();
-			while (it.hasNext()) {
-				Entry<String, Texture> lNextTexture = it.next();
+			final var lIterator = lTextureGroup.mTextureMap.entrySet().iterator();
+			while (lIterator.hasNext()) {
+				final var lNextTexture = lIterator.next();
 				Texture.unloadTexture(lNextTexture.getValue());
 
-				it.remove();
+				lIterator.remove();
 			}
 		}
 	}
 
 	/** Batch load textures */
-	public void loadTexturesFromMetafile(String pMetaFileLocation, int pEntityGroupID) {
-
-		Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("Loading textures from meta-file %s", pMetaFileLocation));
+	public void loadTexturesFromMetafile(String metaFileLocation, int entityGroupUid) {
+		Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("Loading textures from meta-file %s", metaFileLocation));
 
 		final var lGson = new GsonBuilder().create();
 
 		String lMetaFileContentsString = null;
 		TextureMetaData lTextureMetaData = null;
 
-		lMetaFileContentsString = FileUtils.loadString(pMetaFileLocation);
+		lMetaFileContentsString = FileUtils.loadString(metaFileLocation);
 
 		try {
 			lTextureMetaData = lGson.fromJson(lMetaFileContentsString, TextureMetaData.class);
@@ -549,10 +514,9 @@ public class TextureManager extends EntityGroupManager {
 			if (lTextureMetaData == null || lTextureMetaData.textureDefinitions == null || lTextureMetaData.textureDefinitions.length == 0) {
 				Debug.debugManager().logger().e(getClass().getSimpleName(), "There was an error reading the PObject meta file");
 				return;
-
 			}
 
-			final var lTextureGroup = getTextureGroup(pEntityGroupID);
+			final var lTextureGroup = getTextureGroup(entityGroupUid);
 
 			final int lNumberOfTextureDefinitions = lTextureMetaData.textureDefinitions.length;
 			for (int i = 0; i < lNumberOfTextureDefinitions; i++) {
@@ -561,29 +525,23 @@ public class TextureManager extends EntityGroupManager {
 				final var lTextureName = lTextureDataDefinition.textureName;
 				final var lFilepath = lTextureDataDefinition.filepath;
 
-				int lGlFilterMode = mapTextureFilterMode(lTextureDataDefinition.filterIndex);
-				int lGlWrapSFilter = mapWrapMode(lTextureDataDefinition.filterIndex);
-				int lGlWrapTFilter = mapWrapMode(lTextureDataDefinition.filterIndex);
+				final int lGlFilterMode = mapTextureFilterMode(lTextureDataDefinition.filterIndex);
+				final int lGlWrapSFilter = mapWrapMode(lTextureDataDefinition.filterIndex);
+				final int lGlWrapTFilter = mapWrapMode(lTextureDataDefinition.filterIndex);
 
-				final var lNewTexture = loadTexture(lTextureName, lFilepath, lGlFilterMode, lGlWrapSFilter, lGlWrapTFilter, true, pEntityGroupID);
+				final var lNewTexture = loadTexture(lTextureName, lFilepath, lGlFilterMode, lGlWrapSFilter, lGlWrapTFilter, true, entityGroupUid);
 
 				if (lNewTexture != null) {
-					// All textures that we manualy load can be reloaded be re-calling this method
 					lNewTexture.reloadable(true);
 
-					Debug.debugManager().logger().i(getClass().getSimpleName(), "Loaded texture from Meta '" + lTextureName + "' into EntityGroupID: " + pEntityGroupID);
+					Debug.debugManager().logger().i(getClass().getSimpleName(), "Loaded texture from Meta '" + lTextureName + "' into EntityGroupID: " + entityGroupUid);
 
 					lTextureGroup.mTextureMap.put(lTextureName, lNewTexture);
-
 				}
-
 			}
-
 		} catch (Exception e) {
 			Debug.debugManager().logger().e(getClass().getSimpleName(), "");
-
 		}
-
 	}
 
 	/**
@@ -591,8 +549,8 @@ public class TextureManager extends EntityGroupManager {
 	 * 
 	 * 1 = GL_NEAREST 2 = GL_LINEAR
 	 */
-	private int mapTextureFilterMode(int pIndex) {
-		switch (pIndex) {
+	private int mapTextureFilterMode(int filterModeIndex) {
+		switch (filterModeIndex) {
 		case 1:
 			return GL11.GL_NEAREST;
 		default:
@@ -605,8 +563,8 @@ public class TextureManager extends EntityGroupManager {
 	 * 
 	 * 1 = GL_CLAMP_TO_EDGE 2 = GL_MIRRORED_REPEAT 3 = GL_REPEAT
 	 */
-	private int mapWrapMode(int pIndex) {
-		switch (pIndex) {
+	private int mapWrapMode(int wrapModeIndex) {
+		switch (wrapModeIndex) {
 		case 1:
 			return GL12.GL_CLAMP_TO_EDGE;
 		case 2:
@@ -619,23 +577,14 @@ public class TextureManager extends EntityGroupManager {
 	}
 
 	public void dumpTextureInformation() {
-
-		Map<Integer, TextureGroup> map = mTextureGroupMap;
-		for (Map.Entry<Integer, TextureGroup> entry : map.entrySet()) {
-
-			Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("TextureGroup %s (%d)..", entry.getValue().name, entry.getValue().entityGroupID));
-
+		for (Map.Entry<Integer, TextureGroup> entry : mTextureGroupMap.entrySet()) {
+			Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("TextureGroup %s (%d)..", entry.getValue().mTextureGroupName, entry.getValue().mEntityGroupID));
 			TextureGroup lTextureGroup = entry.getValue();
 
 			Map<String, Texture> lGroupMap = lTextureGroup.textureMap();
 			for (Map.Entry<String, Texture> lTexture : lGroupMap.entrySet()) {
-
 				Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("  Texture %s (%d)", lTexture.getValue().name(), lTexture.getValue().getTextureID()));
-
 			}
-
 		}
-
 	}
-
 }

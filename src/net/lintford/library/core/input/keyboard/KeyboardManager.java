@@ -19,11 +19,10 @@ public class KeyboardManager {
 
 	public class KeyCallback extends GLFWKeyCallback {
 		@Override
-		public void invoke(long pWindow, int pKey, int pScanCode, int pAction, int pMods) {
+		public void invoke(long windowUid, int key, int scanCode, int action, int mods) {
 			if (mKeyInputCallback != null) {
-				mKeyInputCallback.keyInput(pKey, pScanCode, pAction, pMods);
+				mKeyInputCallback.keyInput(key, scanCode, action, mods);
 				stopKeyInputCapture();
-
 			}
 
 			// We need to handle keypresses differently depending on whether or not some UI component is
@@ -31,8 +30,8 @@ public class KeyboardManager {
 			if (mBufferedTextInputCallback != null) {
 				// Buffered input (here we just listen for special keys (backspace, return etc.) used to stop the input capture,
 				// but otherwise, we don't register or process the keys
-				if (pAction == GLFW.GLFW_PRESS) {
-					if (pKey == GLFW.GLFW_KEY_ENTER) {
+				if (action == GLFW.GLFW_PRESS) {
+					if (key == GLFW.GLFW_KEY_ENTER) {
 						if (mBufferedTextInputCallback.onEnterPressed()) {
 							stopBufferedTextCapture();
 							return;
@@ -40,7 +39,7 @@ public class KeyboardManager {
 						if (mBufferedTextInputCallback.getEnterFinishesInput()) {
 							stopBufferedTextCapture();
 						}
-					} else if (pKey == GLFW.GLFW_KEY_ESCAPE) {
+					} else if (key == GLFW.GLFW_KEY_ESCAPE) {
 						if (mBufferedTextInputCallback.onEscapePressed()) {
 							stopBufferedTextCapture();
 							return;
@@ -50,38 +49,36 @@ public class KeyboardManager {
 						}
 					}
 
-					else if (pKey == GLFW.GLFW_KEY_BACKSPACE) {
+					else if (key == GLFW.GLFW_KEY_BACKSPACE) {
 						if (mBufferedTextInputCallback.getStringBuilder().length() > 0) {
 							mBufferedTextInputCallback.getStringBuilder().delete(mBufferedTextInputCallback.getStringBuilder().length() - 1, mBufferedTextInputCallback.getStringBuilder().length());
-							mBufferedTextInputCallback.onKeyPressed((char) pKey);
+							mBufferedTextInputCallback.onKeyPressed((char) key);
 						}
 					}
 
 					// Treat some keys as unbuffered
-					else if (pKey == GLFW.GLFW_KEY_LEFT || pKey == GLFW.GLFW_KEY_UP || pKey == GLFW.GLFW_KEY_RIGHT || pKey == GLFW.GLFW_KEY_DOWN) {
-						if (pKey < KEY_LIMIT) {
-							if (pKey != -1)
-								mKeyButtonStates[pKey] = !(pAction == GLFW.GLFW_RELEASE);
+					else if (key == GLFW.GLFW_KEY_LEFT || key == GLFW.GLFW_KEY_UP || key == GLFW.GLFW_KEY_RIGHT || key == GLFW.GLFW_KEY_DOWN) {
+						if (key < KEY_LIMIT) {
+							if (key != -1)
+								mKeyButtonStates[key] = !(action == GLFW.GLFW_RELEASE);
 						}
 					}
 				}
 
 			} else {
 				// normal Keyboad events
-				if (pKey < KEY_LIMIT) {
-					if (pKey != -1)
-						mKeyButtonStates[pKey] = !(pAction == GLFW.GLFW_RELEASE);
+				if (key < KEY_LIMIT) {
+					if (key != -1)
+						mKeyButtonStates[key] = !(action == GLFW.GLFW_RELEASE);
 				}
 			}
 
 			// however, if this was a key release, then at least set the array to 0
-			if (pAction == GLFW.GLFW_RELEASE) {
-				if (pKey != -1)
-					mKeyButtonStates[pKey] = false;
+			if (action == GLFW.GLFW_RELEASE) {
+				if (key != -1)
+					mKeyButtonStates[key] = false;
 			}
-
 		}
-
 	}
 
 	public class TextCallback extends GLFWCharModsCallback {
@@ -92,13 +89,10 @@ public class KeyboardManager {
 				if (mBufferedTextInputCallback.captureSingleKey()) {
 					mBufferedTextInputCallback.onKeyPressed(codepoint);
 					stopBufferedTextCapture();
-
 				} else {
 					mBufferedTextInputCallback.getStringBuilder().append((char) codepoint);
 					mBufferedTextInputCallback.onKeyPressed(codepoint);
-
 				}
-
 			}
 		}
 	}
@@ -126,26 +120,25 @@ public class KeyboardManager {
 	// Properties
 	// --------------------------------------
 
-	public boolean isKeyDown(int pKeyCode) {
-		if (pKeyCode >= KEY_LIMIT) {
-			System.err.println("Key " + pKeyCode + " out of range! ");
+	public boolean isKeyDown(int keyCode) {
+		if (keyCode >= KEY_LIMIT) {
+			Debug.debugManager().logger().e(getClass().getSimpleName(), "Key " + keyCode + " out of range! ");
 			return false;
 		}
 
-		return mKeyButtonStates[pKeyCode];
+		return mKeyButtonStates[keyCode];
 	}
 
-	public boolean isKeyDownTimed(int pKeyCode) {
+	public boolean isKeyDownTimed(int keyCode) {
 		if (mKeyTimer < TIMED_KEY_DELAY)
 			return false;
 
-		if (pKeyCode >= KEY_LIMIT) {
-			Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Key %d out of range!", pKeyCode));
+		if (keyCode >= KEY_LIMIT) {
+			Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Key %d out of range!", keyCode));
 			return false;
-
 		}
 
-		if (mKeyButtonStates[pKeyCode]) {
+		if (mKeyButtonStates[keyCode]) {
 			mKeyTimer = 0;
 			return true;
 		}
@@ -161,14 +154,12 @@ public class KeyboardManager {
 		mKeyTimer = 0;
 	}
 
-	public void startBufferedTextCapture(IBufferedTextInputCallback pCallbackFunction) {
+	public void startBufferedTextCapture(IBufferedTextInputCallback callbackFunction) {
 		if (mBufferedTextInputCallback != null) {
 			mBufferedTextInputCallback.captureStopped();
-
 		}
 
-		mBufferedTextInputCallback = pCallbackFunction;
-
+		mBufferedTextInputCallback = callbackFunction;
 	}
 
 	public boolean isSomeComponentCapturingKeyboardText() {
@@ -181,16 +172,10 @@ public class KeyboardManager {
 		}
 
 		mBufferedTextInputCallback = null;
-
 	}
 
-	public void StartKeyInputCapture(IKeyInputCallback pKeyInputCallback) {
-		if (pKeyInputCallback != null) {
-
-		}
-
-		mKeyInputCallback = pKeyInputCallback;
-
+	public void StartKeyInputCapture(IKeyInputCallback keyInputCallback) {
+		mKeyInputCallback = keyInputCallback;
 	}
 
 	public boolean isSomeComponentCapturingInputKeys() {
@@ -198,12 +183,7 @@ public class KeyboardManager {
 	}
 
 	public void stopKeyInputCapture() {
-		if (mKeyInputCallback != null) {
-
-		}
-
 		mKeyInputCallback = null;
-
 	}
 
 	// --------------------------------------
@@ -220,9 +200,8 @@ public class KeyboardManager {
 	// Core-Methods
 	// --------------------------------------
 
-	public void update(LintfordCore pCore) {
-		final double lDeltaTime = pCore.appTime().elapsedTimeMilli();
-
+	public void update(LintfordCore core) {
+		final var lDeltaTime = (float) core.appTime().elapsedTimeMilli();
 		mKeyTimer += lDeltaTime;
 	}
 
@@ -235,9 +214,6 @@ public class KeyboardManager {
 	}
 
 	public void resetFlags() {
-		// This is needed in the case of toggling the GLFW window
 		Arrays.fill(mKeyButtonStates, false);
-
 	}
-
 }

@@ -22,12 +22,7 @@ public class ShaderManager {
 
 	private ResourceManager mResourceManager;
 	private Map<String, Shader> mShaderMap;
-
 	private ShaderSubPixel mSystemShader;
-
-	// --------------------------------------
-	// Properties
-	// --------------------------------------
 
 	// --------------------------------------
 	// Constructor
@@ -43,13 +38,13 @@ public class ShaderManager {
 	// Core-Methods
 	// --------------------------------------
 
-	public void loadResources(ResourceManager pResourceManager) {
-		mResourceManager = pResourceManager;
+	public void loadResources(ResourceManager resourceManager) {
+		mResourceManager = resourceManager;
 
 		mSystemShader.loadResources(mResourceManager);
 
 		for (final var lShader : mShaderMap.values()) {
-			lShader.loadResources(pResourceManager);
+			lShader.loadResources(resourceManager);
 		}
 	}
 
@@ -71,40 +66,31 @@ public class ShaderManager {
 		for (final var lShader : mShaderMap.values()) {
 			if (lShader != null) {
 				lShader.reloadShader();
-
 			}
-
 		}
-
 	}
 
-	public void unloadShader(Shader pShader, int pEntityGroupID) {
-		if (pShader == null)
+	public void unloadShader(Shader shader, int entityGroupUid) {
+		if (shader == null)
 			return; // already lost reference
 
-		if (mShaderMap.containsValue(pShader)) {
-			String lShaderName = pShader.name();
+		if (mShaderMap.containsValue(shader)) {
+			Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("unloading texture: %s from texture group %d\n", shader.name(), entityGroupUid));
 
-			Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("unloading texture: %s from texture group %d\n", lShaderName, pEntityGroupID));
+			shader.unloadResources();
 
-			pShader.unloadResources();
-
-			mShaderMap.remove(lShaderName);
-			pShader = null;
-
+			mShaderMap.remove(shader.name());
+			shader = null;
 		}
 
 		return;
-
 	}
 
-	public Shader getShader(String pShaderName) {
-		if (mShaderMap.containsKey(pShaderName)) {
-			return mShaderMap.get(pShaderName);
-
+	public Shader getShader(String shaderName) {
+		if (mShaderMap.containsKey(shaderName)) {
+			return mShaderMap.get(shaderName);
 		}
 
 		return mSystemShader;
 	}
-
 }

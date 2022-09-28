@@ -34,10 +34,10 @@ public abstract class InstanceManager<T extends BaseInstanceData> extends BaseIn
 		return mInstances;
 	}
 
-	public T getInstanceByIndex(int pIndex) {
-		if (pIndex < 0 || pIndex >= mInstances.size())
+	public T getInstanceByIndex(int index) {
+		if (index < 0 || index >= mInstances.size())
 			return null;
-		return mInstances.get(pIndex);
+		return mInstances.get(index);
 	}
 
 	// --------------------------------------

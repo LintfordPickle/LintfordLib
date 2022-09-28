@@ -13,79 +13,71 @@ public class ConstantsApp {
 
 	public static final String TAG = "ConstantsApp";
 
-	public static final String APP_NAME = "D284";
-	public static final String DEBUG_APP = "_D284 DEBUG";
+	public static final String CONSTANT_APP_NAME_TAG = "APP_NAME";
+	public static final String CONSTANT_IS_DEBUG_TAG = "DEBUG_APP";
 
 	public static final int BASE_RESOLUTION_WIDTH = 800;
 	public static final int BASE_RESOLUTION_HEIGHT = 500;
+
+	private static Map<String, String> constTab = new HashMap<>();
 
 	// ---------------------------------------------
 	// Methods
 	// ---------------------------------------------
 
-	public static void setAppConstants(String pAppName) {
-		ConstantsApp.registerValue(APP_NAME, pAppName);
-	}
-
-	public static void setDebugConstants() {
-		ConstantsApp.registerValue(DEBUG_APP, "true");
-	}
-
-	private static Map<String, String> constTab = new HashMap<>();
-
-	public static String getStringValueDef(String pName, String pDef) {
-		if (constTab.containsKey(pName)) {
-			return constTab.get(pName);
+	public static String getStringValueDef(String name, String defaultValue) {
+		if (constTab.containsKey(name)) {
+			return constTab.get(name);
 		}
 
-		Debug.debugManager().logger().w(TAG, "String value was not found: " + pName);
+		Debug.debugManager().logger().w(TAG, "String value was not found: " + name);
 
-		return pDef;
+		return defaultValue;
 	}
 
-	public static float getFloatValueDef(String pName, float pDef) {
-		if (constTab.containsKey(pName)) {
+	public static float getFloatValueDef(String name, float defaultValue) {
+		if (constTab.containsKey(name)) {
 			try {
-				float lValue = Float.valueOf(constTab.get(pName));
+				float lValue = Float.valueOf(constTab.get(name));
 				return lValue;
 			} catch (Exception e) {
-				Debug.debugManager().logger().w(TAG, "Float value was not found: " + pName);
+				Debug.debugManager().logger().w(TAG, "Float value was not found: " + name);
 			}
 		}
 
-		return pDef;
+		return defaultValue;
 	}
 
-	public static int getIntValueDef(String pName, int pDef) {
-		if (constTab.containsKey(pName)) {
+	public static int getIntValueDef(String name, int defaultValue) {
+		if (constTab.containsKey(name)) {
 			try {
-				int lValue = Integer.valueOf(constTab.get(pName));
+				int lValue = Integer.valueOf(constTab.get(name));
 				return lValue;
 			} catch (Exception e) {
-				Debug.debugManager().logger().w(TAG, "Integer value was not found: " + pName);
+				Debug.debugManager().logger().w(TAG, "Integer value was not found: " + name);
 			}
 		}
 
-		return pDef;
+		return defaultValue;
 	}
 
-	public static boolean getBooleanValueDef(String pName, boolean pDef) {
-		if (constTab.containsKey(pName)) {
+	public static boolean getBooleanValueDef(String name, boolean defaultValue) {
+		if (constTab.containsKey(name)) {
 			try {
-				boolean lValue = Boolean.valueOf(constTab.get(pName));
+				boolean lValue = Boolean.valueOf(constTab.get(name));
 				return lValue;
 			} catch (Exception e) {
-				Debug.debugManager().logger().w(TAG, "Boolean value was not found: " + pName);
+				Debug.debugManager().logger().w(TAG, "Boolean value was not found: " + name);
 			}
 		}
 
-		return pDef;
+		return defaultValue;
 	}
 
-	public static void registerValue(String pName, String pValue) {
-		Debug.debugManager().logger().i(TAG, "Registered value: " + pName + " : " + pValue);
+	public static void registerValue(String name, String value) {
+		Debug.debugManager().logger().i(TAG, "Registered value: " + name + " : " + value);
 
 		// Automagically replaces values which already exist
-		constTab.put(pName.toUpperCase(), pValue);
+		constTab.put(name.toUpperCase(), value);
 	}
 }

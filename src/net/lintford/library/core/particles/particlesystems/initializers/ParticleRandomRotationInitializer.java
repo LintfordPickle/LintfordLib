@@ -26,10 +26,8 @@ public class ParticleRandomRotationInitializer extends ParticleSingleValueInitia
 	// --------------------------------------
 
 	@Override
-	public void onIntialiseParticle(Particle pParticle, float pValue0) {
-		pParticle.rotationInRadians = pValue0;
-		pParticle.dr = pValue0;
-
+	public void onIntialiseParticle(Particle particle, float rotationAmount) {
+		particle.rotationInRadians = rotationAmount;
+		particle.dr = rotationAmount;
 	}
-
 }

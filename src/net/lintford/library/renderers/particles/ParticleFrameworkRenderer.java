@@ -17,7 +17,7 @@ public class ParticleFrameworkRenderer extends BaseRenderer {
 	// Constants
 	// --------------------------------------
 
-	public static final String RENDERER_NAME = "GameParticleRenderer";
+	public static final String RENDERER_NAME = "Game Particle Renderer";
 
 	private static int RENDERER_ID;
 	private static final int RENDERER_POOL_SIZE = 32;
@@ -36,27 +36,23 @@ public class ParticleFrameworkRenderer extends BaseRenderer {
 
 	@Override
 	public boolean isInitialized() {
-		// TODO Auto-generated method stub
-		return false;
+		return mParticleSystemController != null;
 	}
 
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
-	public ParticleFrameworkRenderer(RendererManager pRendererManager, int pEntityGroupID) {
-		super(pRendererManager, RENDERER_NAME, pEntityGroupID);
+	public ParticleFrameworkRenderer(RendererManager rendererManager, int entityGroupUid) {
+		super(rendererManager, RENDERER_NAME, entityGroupUid);
 
 		mParticleRenderers = new ArrayList<>();
 
-		mEntityGroupID = pEntityGroupID;
+		mEntityGroupID = entityGroupUid;
 
-		// Fill the pool
 		for (int i = 0; i < RENDERER_POOL_SIZE; i++) {
 			mParticleRenderers.add(new ParticleRenderer(getNewRendererId(), mEntityGroupID));
-
 		}
-
 	}
 
 	// --------------------------------------
@@ -64,15 +60,14 @@ public class ParticleFrameworkRenderer extends BaseRenderer {
 	// --------------------------------------
 
 	@Override
-	public void initialize(LintfordCore pCore) {
-		mParticleSystemController = (ParticleFrameworkController) pCore.controllerManager().getControllerByNameRequired(ParticleFrameworkController.CONTROLLER_NAME, mEntityGroupID);
-
+	public void initialize(LintfordCore core) {
+		mParticleSystemController = (ParticleFrameworkController) core.controllerManager().getControllerByNameRequired(ParticleFrameworkController.CONTROLLER_NAME, mEntityGroupID);
 	}
 
 	@Override
-	public void loadResources(ResourceManager pResourceManager) {
+	public void loadResources(ResourceManager resourceManager) {
 		for (int i = 0; i < RENDERER_POOL_SIZE; i++) {
-			mParticleRenderers.get(i).loadResources(pResourceManager);
+			mParticleRenderers.get(i).loadResources(resourceManager);
 		}
 
 		mResourcesLoaded = true;
@@ -88,16 +83,13 @@ public class ParticleFrameworkRenderer extends BaseRenderer {
 	}
 
 	@Override
-	public void update(LintfordCore pCore) {
+	public void update(LintfordCore core) {
 		if (mParticleSystemController == null)
 			return;
 
-		// Monitor and update any particlesystems needing renderers.
-		final List<ParticleSystemInstance> lInstances = mParticleSystemController.particleFrameworkData().particleSystemManager().particleSystems();
-
+		final var lInstances = mParticleSystemController.particleFrameworkData().particleSystemManager().particleSystems();
 		if (lInstances != null && lInstances.size() > 0) {
 			final int lNumParticleSystems = lInstances.size();
-
 			for (int i = 0; i < lNumParticleSystems; i++) {
 				maintainParticleSystemRenderer(lInstances.get(i));
 			}
@@ -105,11 +97,11 @@ public class ParticleFrameworkRenderer extends BaseRenderer {
 	}
 
 	@Override
-	public void draw(LintfordCore pCore) {
+	public void draw(LintfordCore core) {
 		final int lNumParticleRenderers = mParticleRenderers.size();
 		for (int i = 0; i < lNumParticleRenderers; i++) {
 			if (mParticleRenderers.get(i).isAssigned())
-				mParticleRenderers.get(i).draw(pCore);
+				mParticleRenderers.get(i).draw(core);
 		}
 	}
 
@@ -121,17 +113,15 @@ public class ParticleFrameworkRenderer extends BaseRenderer {
 		return RENDERER_ID++;
 	}
 
-	public void maintainParticleSystemRenderer(ParticleSystemInstance pPSInstance) {
-		if (pPSInstance.rendererId() != ParticleSystemInstance.NO_RENDERER_ASSIGNED)
+	public void maintainParticleSystemRenderer(ParticleSystemInstance particleSystemInstance) {
+		if (particleSystemInstance.rendererId() != ParticleSystemInstance.NO_RENDERER_ASSIGNED)
 			return;
 
 		final var particleRenderer = getFreeParticleSystemRenderer();
 		if (particleRenderer != null) {
-			pPSInstance.assignedRendererId(particleRenderer.particleRendererId());
-			particleRenderer.assignParticleSystem(pPSInstance);
-
+			particleSystemInstance.assignedRendererId(particleRenderer.particleRendererId());
+			particleRenderer.assignParticleSystem(particleSystemInstance);
 		}
-
 	}
 
 	/**
@@ -145,7 +135,6 @@ public class ParticleFrameworkRenderer extends BaseRenderer {
 			}
 		}
 
-		// TODO: Before returning null, we need to check if it is possible to expand the PARTICLE_SYSTEM_RENDERER pool.
 		return null;
 	}
 }

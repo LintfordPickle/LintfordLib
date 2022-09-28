@@ -20,29 +20,27 @@ public class ScreenShakeController extends BaseController {
 	// Variables
 	// ---------------------------------------------
 
-	private Camera mGameCamera;
-
+	protected Camera mGameCamera;
 	protected Random mRandom = new Random();
 	protected float mShakeMag;
 	protected float mShakeDur;
 	protected float mShakeTimer;
-
 	protected final Vector2f mOffsetPosition = new Vector2f();
 
 	// ---------------------------------------------
 	// Properties
 	// ---------------------------------------------
 
-	public void setCamera(Camera pCamera) {
-		mGameCamera = pCamera;
+	public void setCamera(Camera camera) {
+		mGameCamera = camera;
 	}
 
 	// ---------------------------------------------
 	// Constructor
 	// ---------------------------------------------
 
-	public ScreenShakeController(ControllerManager pControllerManager, int pEntityGroupID) {
-		super(pControllerManager, CONTROLLER_NAME, pEntityGroupID);
+	public ScreenShakeController(ControllerManager controllerManager, int entityGroupUid) {
+		super(controllerManager, CONTROLLER_NAME, entityGroupUid);
 	}
 
 	// ---------------------------------------------
@@ -55,19 +53,17 @@ public class ScreenShakeController extends BaseController {
 	}
 
 	@Override
-	public void update(LintfordCore pCore) {
-		super.update(pCore);
+	public void update(LintfordCore core) {
+		super.update(core);
 
 		if (mGameCamera == null)
 			return;
 
 		if (mShakeTimer > 0.f) {
-			mShakeTimer -= pCore.appTime().elapsedTimeMilli();
+			mShakeTimer -= core.appTime().elapsedTimeMilli();
 
-			// normal time
-			float progress = mShakeTimer / mShakeDur;
-
-			float lMagnitude = mShakeMag * (1f - (progress * progress));
+			final var progress = mShakeTimer / mShakeDur;
+			final var lMagnitude = mShakeMag * (1f - (progress * progress));
 
 			mOffsetPosition.x = mRandom.nextFloat() * lMagnitude;
 			mOffsetPosition.y = mRandom.nextFloat() * lMagnitude;
@@ -86,16 +82,16 @@ public class ScreenShakeController extends BaseController {
 	// Methods
 	// ---------------------------------------------
 
-	public void shakeCamera(float pDuration, float pMagnitude) {
+	public void shakeCamera(float duration, float magnitude) {
 		// don't interrupt large shakes with little ones
 		if (mShakeTimer > 0.f) {
-			if (mShakeMag > pMagnitude)
+			if (mShakeMag > magnitude)
 				return;
 		}
 
-		mShakeMag = pMagnitude;
-		mShakeDur = Math.max(pDuration, mShakeDur);
+		mShakeMag = magnitude;
+		mShakeDur = Math.max(duration, mShakeDur);
 
-		mShakeTimer = pDuration;
+		mShakeTimer = duration;
 	}
 }

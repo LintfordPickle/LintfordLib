@@ -41,7 +41,6 @@ public class ParticleFrameworkData extends BaseInstanceData {
 	public ParticleFrameworkData() {
 		mParticleSystemManager = new ParticleSystemManager(this);
 		mParticleEmitterManager = new ParticleEmitterManager(this);
-
 	}
 
 	// --------------------------------------
@@ -49,27 +48,23 @@ public class ParticleFrameworkData extends BaseInstanceData {
 	// --------------------------------------
 
 	@Override
-	public void afterLoaded(Object pParent) {
+	public void afterLoaded(Object parent) {
 		mParticleSystemManager.afterLoaded(this);
 		mParticleEmitterManager.afterLoaded(this);
 
 		loadSystemMetaDefinitionFile(PARTICLE_SYSTEM_META_FILE);
 		loadEmitterMetaDefinitionFile(EMITTER_META_FILE);
-
 	}
 
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
 
-	public void loadSystemMetaDefinitionFile(String pFilepath) {
-		mParticleSystemManager.definitionManager().loadDefinitionsFromMetaFile(pFilepath);
-
+	public void loadSystemMetaDefinitionFile(String filepath) {
+		mParticleSystemManager.definitionManager().loadDefinitionsFromMetaFile(filepath);
 	}
 
-	public void loadEmitterMetaDefinitionFile(String pFilepath) {
-		mParticleEmitterManager.definitionManager().loadDefinitionsFromMetaFile(pFilepath);
-
+	public void loadEmitterMetaDefinitionFile(String filepath) {
+		mParticleEmitterManager.definitionManager().loadDefinitionsFromMetaFile(filepath);
 	}
-
 }

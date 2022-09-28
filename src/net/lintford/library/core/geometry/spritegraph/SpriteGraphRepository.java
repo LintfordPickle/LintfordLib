@@ -24,19 +24,14 @@ public class SpriteGraphRepository extends EntityGroupManager {
 		// Variables
 		// --------------------------------------
 
-		boolean automaticUnload = true;
-		int entityGroupID;
-		String name = "";
-		int referenceCount = 0;
+		private int mReferenceCount = 0;
 
 		// --------------------------------------
 		// Constructor
 		// --------------------------------------
 
 		public SpriteGraphGroup(int pEntityGroupID) {
-			entityGroupID = pEntityGroupID;
-			referenceCount = 0;
-
+			mReferenceCount = 0;
 		}
 
 		// --------------------------------------
@@ -44,12 +39,13 @@ public class SpriteGraphRepository extends EntityGroupManager {
 		// --------------------------------------
 
 		@Override
-		public void loadDefinitionsFromFolderWatcher(EntityLocationProvider pEntityLocationProvider) {
+		public void loadDefinitionsFromFolderWatcher(EntityLocationProvider entityLocationProvider) {
+
 		}
 
 		@Override
-		public void loadDefinitionsFromMetaFile(String pMetaFileLocation) {
-			if (pMetaFileLocation == null || pMetaFileLocation.length() == 0) {
+		public void loadDefinitionsFromMetaFile(String metaFileLocation) {
+			if (metaFileLocation == null || metaFileLocation.length() == 0) {
 				Debug.debugManager().logger().w(getClass().getSimpleName(), "SpriteGraphManager meta file cannot be null or empty when loading SpriteSheets.");
 				return;
 			}
@@ -57,11 +53,11 @@ public class SpriteGraphRepository extends EntityGroupManager {
 			final var lGson = new GsonBuilder().create();
 			SpriteGraphMetaData lSpriteGraphMetaData = null;
 			try {
-				String lMetaFileContents = new String(Files.readAllBytes(Paths.get(pMetaFileLocation)));
+				String lMetaFileContents = new String(Files.readAllBytes(Paths.get(metaFileLocation)));
 				lSpriteGraphMetaData = lGson.fromJson(lMetaFileContents, SpriteGraphMetaData.class);
 
 				if (lSpriteGraphMetaData == null || lSpriteGraphMetaData.spriteGraphLocations == null || lSpriteGraphMetaData.spriteGraphLocations.length == 0) {
-					Debug.debugManager().logger().w(getClass().getSimpleName(), "Couldn't load sprites from SpriteGraphDef meta file: " + pMetaFileLocation);
+					Debug.debugManager().logger().w(getClass().getSimpleName(), "Couldn't load sprites from SpriteGraphDef meta file: " + metaFileLocation);
 
 					return;
 				}
@@ -76,23 +72,22 @@ public class SpriteGraphRepository extends EntityGroupManager {
 		}
 
 		@Override
-		public void loadDefinitionFromFile(String pFilepath) {
-			final var lSpriteGraphFile = new File(pFilepath);
+		public void loadDefinitionFromFile(String filepath) {
+			final var lSpriteGraphFile = new File(filepath);
 
 			if (!lSpriteGraphFile.exists()) {
 				Debug.debugManager().logger().w(getClass().getSimpleName(), "Error loading SpriteGraphDef from " + lSpriteGraphFile.getPath() + ". File doesn't exist!");
 				return;
-
 			}
 
-			final SpriteGraphDefinition lSpriteGraphDef = SpriteGraphDefinition.load(lSpriteGraphFile);
-			if (lSpriteGraphDef == null) {
+			final var lSpriteGraphDefinition = SpriteGraphDefinition.load(lSpriteGraphFile);
+			if (lSpriteGraphDefinition == null) {
 				return;
 			}
 
-			lSpriteGraphDef.filename = lSpriteGraphFile.getPath();
+			lSpriteGraphDefinition.filename(lSpriteGraphFile.getPath());
 
-			addDefintion(lSpriteGraphDef);
+			addDefintion(lSpriteGraphDefinition);
 		}
 
 		public void unloadDefinitions() {
@@ -108,7 +103,6 @@ public class SpriteGraphRepository extends EntityGroupManager {
 
 	public class SpriteGraphMetaData {
 		public String[] spriteGraphLocations;
-
 	}
 
 	// --------------------------------------
@@ -130,17 +124,16 @@ public class SpriteGraphRepository extends EntityGroupManager {
 		return mSpriteGraphGroupMap;
 	}
 
-	public SpriteGraphGroup spriteGraphGroup(int pEntityGroupID) {
-		if (!mSpriteGraphGroupMap.containsKey(pEntityGroupID)) {
-			SpriteGraphGroup lNewSpriteGraphGroup = new SpriteGraphGroup(pEntityGroupID);
-			lNewSpriteGraphGroup.referenceCount = 1;
+	public SpriteGraphGroup spriteGraphGroup(int entityGroupUid) {
+		if (!mSpriteGraphGroupMap.containsKey(entityGroupUid)) {
+			final var lNewSpriteGraphGroup = new SpriteGraphGroup(entityGroupUid);
+			lNewSpriteGraphGroup.mReferenceCount = 1;
 
-			mSpriteGraphGroupMap.put(pEntityGroupID, lNewSpriteGraphGroup);
+			mSpriteGraphGroupMap.put(entityGroupUid, lNewSpriteGraphGroup);
 			return lNewSpriteGraphGroup;
 		}
 
-		return mSpriteGraphGroupMap.get(pEntityGroupID);
-
+		return mSpriteGraphGroupMap.get(entityGroupUid);
 	}
 
 	// --------------------------------------
@@ -149,15 +142,14 @@ public class SpriteGraphRepository extends EntityGroupManager {
 
 	public SpriteGraphRepository() {
 		mSpriteGraphGroupMap = new HashMap<>();
-
 	}
 
 	// --------------------------------------
 	// Core-Methods
 	// --------------------------------------
 
-	public void loadResources(ResourceManager pResourceManager) {
-		mResourceManager = pResourceManager;
+	public void loadResources(ResourceManager resourceManager) {
+		mResourceManager = resourceManager;
 	}
 
 	public void unloadResources() {
@@ -169,73 +161,58 @@ public class SpriteGraphRepository extends EntityGroupManager {
 	// --------------------------------------
 
 	@Override
-	public int increaseReferenceCounts(int pEntityGroupID) {
-		var lSpriteGraphGroup = mSpriteGraphGroupMap.get(pEntityGroupID);
+	public int increaseReferenceCounts(int entityGroupUid) {
+		var lSpriteGraphGroup = mSpriteGraphGroupMap.get(entityGroupUid);
 
-		if (!mSpriteGraphGroupMap.containsKey(pEntityGroupID)) {
-			mSpriteGraphGroupMap.put(pEntityGroupID, lSpriteGraphGroup);
+		if (!mSpriteGraphGroupMap.containsKey(entityGroupUid))
+			mSpriteGraphGroupMap.put(entityGroupUid, lSpriteGraphGroup);
+		else
+			lSpriteGraphGroup.mReferenceCount++;
 
-		} else {
-			lSpriteGraphGroup.referenceCount++;
-
-		}
-
-		return lSpriteGraphGroup.referenceCount;
-
+		return lSpriteGraphGroup.mReferenceCount;
 	}
 
 	@Override
-	public int decreaseReferenceCounts(int pEntityGroupID) {
-		var lSpriteGraphGroup = mSpriteGraphGroupMap.get(pEntityGroupID);
+	public int decreaseReferenceCounts(int entityGroupUid) {
+		var lSpriteGraphGroup = mSpriteGraphGroupMap.get(entityGroupUid);
 
-		if (lSpriteGraphGroup == null) {
+		if (lSpriteGraphGroup == null)
 			return 0;
+		else
+			lSpriteGraphGroup.mReferenceCount--;
 
-		} else {
-			lSpriteGraphGroup.referenceCount--;
+		if (lSpriteGraphGroup.mReferenceCount <= 0) {
+			unloadEntityGroup(entityGroupUid);
 
-		}
+			if (mSpriteGraphGroupMap.containsKey(entityGroupUid))
+				mSpriteGraphGroupMap.remove(entityGroupUid);
 
-		if (lSpriteGraphGroup.referenceCount <= 0) {
-			// Unload SpriteGraphs for this entityGroupID
-			unloadEntityGroup(pEntityGroupID);
-
-			if (mSpriteGraphGroupMap.containsKey(pEntityGroupID)) {
-				mSpriteGraphGroupMap.remove(pEntityGroupID);
-
-			}
 			lSpriteGraphGroup = null;
 
 			return 0;
-
 		}
 
-		return lSpriteGraphGroup.referenceCount;
-
+		return lSpriteGraphGroup.mReferenceCount;
 	}
 
-	public void unloadEntityGroup(int pEntityGroupID) {
-		var lSpriteGraphGroup = mSpriteGraphGroupMap.get(pEntityGroupID);
-
+	public void unloadEntityGroup(int entityGroupUid) {
+		var lSpriteGraphGroup = mSpriteGraphGroupMap.get(entityGroupUid);
 		if (lSpriteGraphGroup == null)
 			return;
 
 		final var lSpriteGraphCount = lSpriteGraphGroup.definitionCount();
-		Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("Unloading SpriteGraphGroup %d (freeing total %d SpriteGraphs)", pEntityGroupID, lSpriteGraphCount));
+		Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("Unloading SpriteGraphGroup %d (freeing total %d SpriteGraphs)", entityGroupUid, lSpriteGraphCount));
 
 		lSpriteGraphGroup.unloadDefinitions();
-
 	}
 
-	public void loadSpriteGraphsFromMeta(String pSpritegraphMetafileLocation, int pEntityGroupID) {
-		var lSpriteGraphGroup = spriteGraphGroup(pEntityGroupID); // mSpriteGraphGroupMap.get(pEntityGroupID);
-
-		lSpriteGraphGroup.loadDefinitionsFromMetaFile(pSpritegraphMetafileLocation);
-
+	public void loadSpriteGraphsFromMeta(String spritegraphMetafileLocation, int entityGroupUid) {
+		var lSpriteGraphGroup = spriteGraphGroup(entityGroupUid);
+		lSpriteGraphGroup.loadDefinitionsFromMetaFile(spritegraphMetafileLocation);
 	}
 
-	public SpriteGraphDefinition getSpriteGraphDefinition(String pSpriteGraphDefinitionName, int mEntityGroupID) {
-		final var lSpriteGraphGroup = spriteGraphGroup(mEntityGroupID);
-		return lSpriteGraphGroup.getByName(pSpriteGraphDefinitionName);
+	public SpriteGraphDefinition getSpriteGraphDefinition(String spriteGraphDefinitionName, int entityGroupUid) {
+		final var lSpriteGraphGroup = spriteGraphGroup(entityGroupUid);
+		return lSpriteGraphGroup.getByName(spriteGraphDefinitionName);
 	}
 }

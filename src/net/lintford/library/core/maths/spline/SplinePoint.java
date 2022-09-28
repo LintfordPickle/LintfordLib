@@ -39,9 +39,9 @@ public class SplinePoint {
 		length = pL;
 	}
 
-	public void set(SplinePoint pOtherSplinePoint) {
-		x = pOtherSplinePoint.x;
-		y = pOtherSplinePoint.y;
-		length = pOtherSplinePoint.length;
+	public void set(SplinePoint otherSplinePoint) {
+		x = otherSplinePoint.x;
+		y = otherSplinePoint.y;
+		length = otherSplinePoint.length;
 	}
 }

@@ -30,19 +30,18 @@ public abstract class PoolInstanceManager<T extends PooledBaseData> extends Inst
 		return mEnlargePoolStepAmount;
 	}
 
-	public void enlargePoolStepAmount(int pEnlargeAmount) {
-		if (pEnlargeAmount < 0)
+	public void enlargePoolStepAmount(int enlargeByAmount) {
+		if (enlargeByAmount < 0)
 			return;
 
-		mEnlargePoolStepAmount = pEnlargeAmount;
+		mEnlargePoolStepAmount = enlargeByAmount;
 	}
 
-	public T getInstanceByIndex(final int pItemIndex) {
-		if (pItemIndex < 0 || pItemIndex > instances().size() - 1)
+	public T getInstanceByIndex(final int itemIndex) {
+		if (itemIndex < 0 || itemIndex > instances().size() - 1)
 			return null;
 
-		return instances().get(pItemIndex);
-
+		return instances().get(itemIndex);
 	}
 
 	// --------------------------------------
@@ -53,10 +52,10 @@ public abstract class PoolInstanceManager<T extends PooledBaseData> extends Inst
 		this(0);
 	}
 
-	public PoolInstanceManager(int pInitialialCapacity) {
+	public PoolInstanceManager(int initialCapacity) {
 		mPooledItems = new ArrayList<>();
 
-		for (int i = 0; i < pInitialialCapacity; i++) {
+		for (int i = 0; i < initialCapacity; i++) {
 			mPooledItems.add(createPoolObjectInstance());
 		}
 	}
@@ -76,26 +75,26 @@ public abstract class PoolInstanceManager<T extends PooledBaseData> extends Inst
 		return lInst;
 	}
 
-	public void returnPooledItem(T pReturnedItem) {
-		if (pReturnedItem == null)
+	public void returnPooledItem(T returnItem) {
+		if (returnItem == null)
 			return;
 
-		if (mInstances.contains(pReturnedItem)) {
-			mInstances.remove(pReturnedItem);
+		if (mInstances.contains(returnItem)) {
+			mInstances.remove(returnItem);
 		}
 
 		if (mPooledItems == null) {
 			mPooledItems = new ArrayList<>();
 		}
 
-		if (!mPooledItems.contains(pReturnedItem)) {
-			pReturnedItem.reset();
-			mPooledItems.add(pReturnedItem);
+		if (!mPooledItems.contains(returnItem)) {
+			returnItem.reset();
+			mPooledItems.add(returnItem);
 		}
 	}
 
-	private T enlargenInstancePool(int pAmt) {
-		for (int i = 0; i < pAmt; i++) {
+	private T enlargenInstancePool(int enlargeByAmount) {
+		for (int i = 0; i < enlargeByAmount; i++) {
 			mPooledItems.add(createPoolObjectInstance());
 		}
 
@@ -111,5 +110,4 @@ public abstract class PoolInstanceManager<T extends PooledBaseData> extends Inst
 		mPooledItems.addAll(mInstances);
 		mInstances.clear();
 	}
-
 }

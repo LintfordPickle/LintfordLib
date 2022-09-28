@@ -83,11 +83,11 @@ public class IndexedPolyBatchPCT {
 	// Core-Methods
 	// --------------------------------------
 
-	public void loadResources(ResourceManager pResourceManager) {
+	public void loadResources(ResourceManager resourceManager) {
 		if (mResourcesLoaded)
 			return;
 
-		mShader.loadResources(pResourceManager);
+		mShader.loadResources(resourceManager);
 
 		if (mVioId == -1) {
 			mVioId = GL15.glGenBuffers();
@@ -191,32 +191,31 @@ public class IndexedPolyBatchPCT {
 		mIsDrawing = true;
 	}
 
-	public void drawRect(Texture pTexture, Rectangle pSrcRect, List<Vector2f> pVertexArray, float pZ, boolean pClose) {
-		drawRect(pTexture, pSrcRect, pVertexArray, pZ, pClose, mColor.r, mColor.g, mColor.b);
+	public void drawRect(Texture texture, Rectangle sourceRect, List<Vector2f> vertexArray, float zDepth, boolean closePolygon) {
+		drawRect(texture, sourceRect, vertexArray, zDepth, closePolygon, mColor.r, mColor.g, mColor.b);
 	}
 
-	public void drawRect(Texture pTexture, Rectangle pSrcRect, List<Vector2f> pVertexArray, float pZ, boolean pClose, float pR, float pG, float pB) {
-		if (pVertexArray == null)
+	public void drawRect(Texture texture, Rectangle sourceRect, List<Vector2f> vertexArray, float zDepth, boolean closePolygon, float red, float green, float blue) {
+		if (vertexArray == null)
 			return;
 
-		final var lRectVerts = pVertexArray;
+		final var lRectVerts = vertexArray;
 		if (lRectVerts.size() < 4)
 			return;
 
-		if (pTexture != null) {
+		if (texture != null) {
 			if (mCurrentTexID == -1) {
-				mCurrentTexID = pTexture.getTextureID();
-
-			} else if (mCurrentTexID != pTexture.getTextureID()) {
+				mCurrentTexID = texture.getTextureID();
+			} else if (mCurrentTexID != texture.getTextureID()) {
 				flush();
-				mCurrentTexID = pTexture.getTextureID();
+				mCurrentTexID = texture.getTextureID();
 			}
 		}
 
-		addVertToBuffer(lRectVerts.get(0).x, lRectVerts.get(0).y, pZ, 1f, pR, pG, pB, mColor.a, pSrcRect.left(), pSrcRect.top());
-		addVertToBuffer(lRectVerts.get(1).x, lRectVerts.get(1).y, pZ, 1f, pR, pG, pB, mColor.a, pSrcRect.right(), pSrcRect.top());
-		addVertToBuffer(lRectVerts.get(2).x, lRectVerts.get(2).y, pZ, 1f, pR, pG, pB, mColor.a, pSrcRect.left(), pSrcRect.bottom());
-		addVertToBuffer(lRectVerts.get(3).x, lRectVerts.get(3).y, pZ, 1f, pR, pG, pB, mColor.a, pSrcRect.right(), pSrcRect.bottom());
+		addVertToBuffer(lRectVerts.get(0).x, lRectVerts.get(0).y, zDepth, 1f, red, green, blue, mColor.a, sourceRect.left(), sourceRect.top());
+		addVertToBuffer(lRectVerts.get(1).x, lRectVerts.get(1).y, zDepth, 1f, red, green, blue, mColor.a, sourceRect.right(), sourceRect.top());
+		addVertToBuffer(lRectVerts.get(2).x, lRectVerts.get(2).y, zDepth, 1f, red, green, blue, mColor.a, sourceRect.left(), sourceRect.bottom());
+		addVertToBuffer(lRectVerts.get(3).x, lRectVerts.get(3).y, zDepth, 1f, red, green, blue, mColor.a, sourceRect.right(), sourceRect.bottom());
 
 		// Index the triangles
 		mIndexBuffer.put(mVertexCount - 4);
@@ -228,7 +227,6 @@ public class IndexedPolyBatchPCT {
 		mIndexBuffer.put(mVertexCount - 2);
 
 		mIndexCount += 6;
-
 	}
 
 	protected void addVertToBuffer(float x, float y, float z, float w, float r, float g, float b, float a, float u, float v) {
@@ -306,7 +304,6 @@ public class IndexedPolyBatchPCT {
 
 		GL30.glBindVertexArray(mVaoId);
 
-		// TODO: 
-
+		// TODO: Mising implementation
 	}
 }

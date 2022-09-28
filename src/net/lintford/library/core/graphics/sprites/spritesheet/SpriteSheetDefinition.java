@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.gson.annotations.SerializedName;
+
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.graphics.sprites.SpriteDefinition;
@@ -21,38 +23,46 @@ public class SpriteSheetDefinition {
 	// --------------------------------------
 
 	/** Textures referenced within this spritesheet need to be referenced with the correct entity group Id. */
-	private transient int mEntityGroupID;
+	protected transient int mEntityGroupUid;
 
 	/** The unique name given to this {@link SpriteSheetDefinition}. */
-	public String spriteSheetName;
-	public boolean reloadable;
-	public String spriteSheetFilename;
+	@SerializedName(value = "spriteSheetName")
+	protected String mSpriteSheetName;
+
+	@SerializedName(value = "reloadable")
+	protected boolean mIsReloadable;
+
+	@SerializedName(value = "spriteSheetFilename")
+	protected String mSpriteSheetFilename;
 
 	/** The name of the {@link Texture} associated to this {@link SpriteSheetDefinition} */
-	protected String textureName;
+	@SerializedName(value = "textureName")
+	protected String mTextureName;
 
 	/** The {@link Texture} instance associated with this {@link SpriteSheetDefinition} */
-	private transient Texture texture;
+	protected transient Texture mTexture;
 
 	/**
 	 * In order to detect changes to the SpriteSheet when trying to reload textures, we will store the file size of the texture each time it is loaded.
 	 */
-	private long mFileSizeOnLoad;
+	protected long mFileSizeOnLoad;
 
 	/** A collection of {@link ISprite} instances contained within this {@link SpriteSheetDefinition} */
-	private SpriteFrame[] spriteFrames;
-
-	// SpriteDefinition
-	public Map<String, SpriteDefinition> animationFramesMap;
-	protected List<SpriteInstance> spriteInstancePool;
+	@SerializedName(value = "spriteFrames")
+	protected SpriteFrame[] mSpriteFrames;
 
 	/** The width of the associated texture. */
-	public transient float textureWidth;
+	protected transient int mTextureWidth;
 
 	/** The height of the associated texture. */
-	public transient float textureHeight;
+	protected transient int mTextureHeight;
 
-	public String spriteGraphNodeName;
+	@SerializedName(value = "animationFramesMap")
+	protected Map<String, SpriteDefinition> mAnimationFramesMap;
+	protected List<SpriteInstance> mSpriteInstancePool;
+
+	@SerializedName(value = "spriteGraphNodeName")
+	protected String mSpriteGraphNodeName;
 
 	// --------------------------------------
 	// Properties
@@ -62,31 +72,39 @@ public class SpriteSheetDefinition {
 		return mFileSizeOnLoad;
 	}
 
-	public void fileSizeOnLoad(long v) {
-		mFileSizeOnLoad = v;
+	public void fileSizeOnLoad(long filesizeOnLoad) {
+		mFileSizeOnLoad = filesizeOnLoad;
 	}
 
 	/** Returns true if this {@link SpriteSheetDefinition}'s GL resources have been laoded, false otherwise. */
 	public boolean isLoaded() {
-		return texture != null;
+		return mTexture != null;
 	}
 
 	/** Returns the texture loaded for this {@link SpriteSheetDefinition}. */
 	public Texture texture() {
-		return texture;
+		return mTexture;
 	}
 
 	/** Returns the number of {@link SpriteFrame}s assigned to the {@link SpriteSheetDefinition}. */
 	public int getSpriteCount() {
-		return animationFramesMap.size();
+		return mAnimationFramesMap.size();
 	}
 
 	public boolean reloadable() {
-		return reloadable;
+		return mIsReloadable;
 	}
 
-	public void reloadable(boolean pNewValue) {
-		reloadable = pNewValue;
+	public void reloadable(boolean newValue) {
+		mIsReloadable = newValue;
+	}
+
+	public int textureWidth() {
+		return mTextureWidth;
+	}
+
+	public int textureHeight() {
+		return mTextureHeight;
 	}
 
 	// --------------------------------------
@@ -94,194 +112,196 @@ public class SpriteSheetDefinition {
 	// --------------------------------------
 
 	public SpriteSheetDefinition() {
-		animationFramesMap = new HashMap<>();
-		spriteInstancePool = new ArrayList<>();
+		mAnimationFramesMap = new HashMap<>();
+		mSpriteInstancePool = new ArrayList<>();
 	}
 
 	/** Creates a new instance of {@link SpriteSheetDefinition} as assigns it the given name. */
 	public SpriteSheetDefinition(final String pSpriteSheetName) {
 		this();
-		spriteSheetName = pSpriteSheetName;
+		mSpriteSheetName = pSpriteSheetName;
 	}
 
-	public void copyFrom(SpriteSheetDefinition pOtherSpritesheet) {
-		// mEntityGroupID = pOtherSpritesheet.mEntityGroupID;
-		spriteSheetName = pOtherSpritesheet.spriteSheetName;
-		reloadable = pOtherSpritesheet.reloadable;
-		spriteSheetFilename = pOtherSpritesheet.spriteSheetFilename;
-		textureName = pOtherSpritesheet.textureName;
-		texture = pOtherSpritesheet.texture;
-		mFileSizeOnLoad = pOtherSpritesheet.fileSizeOnLoad();
-		spriteFrames = pOtherSpritesheet.spriteFrames;
-		animationFramesMap = pOtherSpritesheet.animationFramesMap;
-		textureWidth = pOtherSpritesheet.textureWidth;
-		textureHeight = pOtherSpritesheet.textureHeight;
-		spriteGraphNodeName = pOtherSpritesheet.spriteGraphNodeName;
+	public void copyFrom(SpriteSheetDefinition otherSpritesheet) {
+		mSpriteSheetName = otherSpritesheet.mSpriteSheetName;
+		mIsReloadable = otherSpritesheet.mIsReloadable;
+		mSpriteSheetFilename = otherSpritesheet.mSpriteSheetFilename;
+		mTextureName = otherSpritesheet.mTextureName;
+		mTexture = otherSpritesheet.mTexture;
+		mFileSizeOnLoad = otherSpritesheet.fileSizeOnLoad();
+		mSpriteFrames = otherSpritesheet.mSpriteFrames;
+		mAnimationFramesMap = otherSpritesheet.mAnimationFramesMap;
+		mTextureWidth = otherSpritesheet.mTextureWidth;
+		mTextureHeight = otherSpritesheet.mTextureHeight;
+		mSpriteGraphNodeName = otherSpritesheet.mSpriteGraphNodeName;
 	}
 
 	// --------------------------------------
 	// Core-Methods
 	// --------------------------------------
 
-	public void loadResources(ResourceManager pResourceManager) {
-		loadResources(pResourceManager, mEntityGroupID);
+	public void loadResources(ResourceManager resourceManager) {
+		loadResources(resourceManager, mEntityGroupUid);
 	}
 
 	/** Loads the associated texture. */
-	public void loadResources(ResourceManager pResourceManager, int pEntityGroupID) {
-		if (textureName == null || textureName.length() == 0) {
-			System.err.println("SpriteSheet texture name and filename cannot be null!");
+	public void loadResources(ResourceManager resourceManager, int entityGroupUid) {
+		if (mTextureName == null || mTextureName.length() == 0) {
+			Debug.debugManager().logger().e(getClass().getSimpleName(), "SpriteSheet texture name and filename cannot be null!");
 			return;
+		}
 
-		}
-		mEntityGroupID = pEntityGroupID;
+		mEntityGroupUid = entityGroupUid;
 
-		var lTextureManager = pResourceManager.textureManager();
-		texture = lTextureManager.getTexture(textureName, mEntityGroupID);
-		if (texture == null || texture.name().equals(TextureManager.TEXTURE_NOT_FOUND_NAME)) {
-			Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Spritesheet '%s' cannot locate texture %s in EntityGroupID %d.", spriteSheetName, textureName, pEntityGroupID));
+		final var lTextureManager = resourceManager.textureManager();
+		mTexture = lTextureManager.getTexture(mTextureName, mEntityGroupUid);
+		if (mTexture == null || mTexture.name().equals(TextureManager.TEXTURE_NOT_FOUND_NAME)) {
+			Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Spritesheet '%s' cannot locate texture %s in EntityGroupID %d.", mSpriteSheetName, mTextureName, entityGroupUid));
 		}
-		textureWidth = texture.getTextureWidth();
-		textureHeight = texture.getTextureHeight();
-		if (spriteFrames == null) {
-			spriteFrames = new SpriteFrame[0];
-		}
-		if (spriteInstancePool == null) {
-			spriteInstancePool = new ArrayList<>();
-		}
-		if (animationFramesMap == null) {
-			animationFramesMap = new HashMap<>();
 
+		mTextureWidth = mTexture.getTextureWidth();
+		mTextureHeight = mTexture.getTextureHeight();
+		if (mSpriteFrames == null) {
+			mSpriteFrames = new SpriteFrame[0];
+		}
+
+		if (mSpriteInstancePool == null) {
+			mSpriteInstancePool = new ArrayList<>();
+		}
+
+		if (mAnimationFramesMap == null) {
+			mAnimationFramesMap = new HashMap<>();
 		} else {
 			// If the SpriteSheet definition had animations, then iterate over them
 			// Resolve the Sprite references in the Animations
-			for (Map.Entry<String, SpriteDefinition> entry : animationFramesMap.entrySet()) {
+			for (Map.Entry<String, SpriteDefinition> entry : mAnimationFramesMap.entrySet()) {
 				final var lSpriteDefinition = entry.getValue();
-				lSpriteDefinition.name = entry.getKey();
+				lSpriteDefinition.name(entry.getKey());
 				lSpriteDefinition.loadContent(this);
 			}
 		}
+
 		// Create an AnimationFrames objects for each single SpriteFrame
-		final int lSpriteFrameArrayCount = spriteFrames.length;
+		final int lSpriteFrameArrayCount = mSpriteFrames.length;
 		for (int i = 0; i < lSpriteFrameArrayCount; i++) {
-			final String lSpriteFrameName = spriteFrames[i].name();
-			if (animationFramesMap.containsKey(lSpriteFrameName)) {
+			final String lSpriteFrameName = mSpriteFrames[i].name();
+			if (mAnimationFramesMap.containsKey(lSpriteFrameName)) {
 				continue;
 			}
-			final SpriteFrame lSpriteFrame = spriteFrames[i];
-
-			SpriteDefinition lNewSprite = new SpriteDefinition();
-			lNewSprite.name = lSpriteFrameName;
+			final var lSpriteFrame = mSpriteFrames[i];
+			final var lNewSprite = new SpriteDefinition();
+			lNewSprite.name(lSpriteFrameName);
 			lNewSprite.addFrame(lSpriteFrame);
 
-			animationFramesMap.put(lSpriteFrameName, lNewSprite);
+			mAnimationFramesMap.put(lSpriteFrameName, lNewSprite);
 		}
 	}
 
 	/** unloads the GL Content created by this SpriteSheet. */
 	public void unloadResources() {
-		texture = null;
-		textureWidth = -1;
-		textureHeight = -1;
+		mTexture = null;
+		mTextureWidth = -1;
+		mTextureHeight = -1;
 	}
 
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
 
-	public SpriteFrame getSpriteFrame(int pIndex) {
-		if (pIndex < 0 || pIndex >= spriteFrames.length)
+	public SpriteFrame getSpriteFrame(int index) {
+		if (index < 0 || index >= mSpriteFrames.length)
 			return null;
 
-		return spriteFrames[pIndex];
+		return mSpriteFrames[index];
 	}
 
-	public SpriteFrame getSpriteFrame(String pSpriteName) {
-		final var lSpriteIndex = getSpriteFrameIndexByName(pSpriteName);
-		if (lSpriteIndex < 0 || lSpriteIndex >= spriteFrames.length)
+	public SpriteFrame getSpriteFrame(String spriteName) {
+		final var lSpriteIndex = getSpriteFrameIndexByName(spriteName);
+		if (lSpriteIndex < 0 || lSpriteIndex >= mSpriteFrames.length)
 			return null;
 
-		return spriteFrames[lSpriteIndex];
+		return mSpriteFrames[lSpriteIndex];
 	}
 
-	public int getSpriteFrameIndexByName(String pFrameName) {
-		if (pFrameName == null || pFrameName.length() == 0)
+	public int getSpriteFrameIndexByName(String frameName) {
+		if (frameName == null || frameName.length() == 0)
 			return -1;
-		final int lFrameCount = spriteFrames.length;
+
+		final int lFrameCount = mSpriteFrames.length;
 		for (int i = 0; i < lFrameCount; i++) {
-			if (spriteFrames[i].name().equals(pFrameName))
+			if (mSpriteFrames[i].name().equals(frameName))
 				return i;
 		}
+
 		return -1;
 	}
 
 	/** Adds a new sprite definition to this SpriteSheet. */
-	public void addSpriteDefinition(final String pNewName, final SpriteDefinition pNewSprite) {
-		animationFramesMap.put(pNewName, pNewSprite);
+	public void addSpriteDefinition(final String definitionName, final SpriteDefinition newSpriteDefinition) {
+		mAnimationFramesMap.put(definitionName, newSpriteDefinition);
 	}
 
-	public SpriteDefinition getSpriteDefinition(final String pSpriteName) {
-		return animationFramesMap.get(pSpriteName);
+	public SpriteDefinition getSpriteDefinition(final String spriteName) {
+		return mAnimationFramesMap.get(spriteName);
 	}
 
 	/** Returns a new {@link SpriteInstance} based on the {@link ISpriteDefinition} of the name provided. Null is returned if the {@link SpriteSheetDefinition} doesn*t contains a Sprite instance of the given name. */
-	public SpriteInstance getSpriteInstance(final String pSpriteName) {
-		if (animationFramesMap.containsKey(pSpriteName)) {
-			return getSpriteInstance(animationFramesMap.get(pSpriteName));
+	public SpriteInstance getSpriteInstance(final String spriteName) {
+		if (mAnimationFramesMap.containsKey(spriteName)) {
+			return getSpriteInstance(mAnimationFramesMap.get(spriteName));
 		}
+
 		return null;
 	}
 
 	/** Returns a new {@link SpriteInstance} based on the {@link ISpriteDefinition} provided. Null is returned if the {@link SpriteSheetDefinition} doesn*t contains a Sprite instance of the given name. */
-	public SpriteInstance getSpriteInstance(final SpriteDefinition pSpriteDefinition) {
-		if (pSpriteDefinition == null) {
+	public SpriteInstance getSpriteInstance(final SpriteDefinition spriteDefinition) {
+		if (spriteDefinition == null)
 			return null;
 
-		}
 		final var lReturnSpriteInstance = getFreeInstance();
-		lReturnSpriteInstance.init(pSpriteDefinition);
+		lReturnSpriteInstance.init(spriteDefinition);
 
 		return lReturnSpriteInstance;
 	}
 
-	public void releaseInstance(SpriteInstance pInstance) {
-		if (pInstance == null)
+	public void releaseInstance(SpriteInstance spriteInstance) {
+		if (spriteInstance == null)
 			return;
-		pInstance.kill();
-		if (!spriteInstancePool.contains(pInstance)) {
-			spriteInstancePool.add(pInstance);
+
+		spriteInstance.kill();
+		if (!mSpriteInstancePool.contains(spriteInstance)) {
+			mSpriteInstancePool.add(spriteInstance);
 		}
 	}
 
 	private SpriteInstance getFreeInstance() {
 		SpriteInstance lReturnInstance = null;
 
-		if (spriteInstancePool == null)
-			spriteInstancePool = new ArrayList<>();
+		if (mSpriteInstancePool == null)
+			mSpriteInstancePool = new ArrayList<>();
 
-		final int POOL_SIZE = spriteInstancePool.size();
-		for (int i = 0; i < POOL_SIZE; i++) {
-			SpriteInstance lSprite = spriteInstancePool.get(i);
-			if (lSprite.isFree()) {
-				lReturnInstance = lSprite;
+		final int lNumSpriteInPool = mSpriteInstancePool.size();
+		for (int i = 0; i < lNumSpriteInPool; i++) {
+			final var lSpriteInstance = mSpriteInstancePool.get(i);
+			if (lSpriteInstance.isFree()) {
+				lReturnInstance = lSpriteInstance;
 				break;
-
 			}
 		}
-		if (lReturnInstance != null) {
-			spriteInstancePool.remove(lReturnInstance);
-			return lReturnInstance;
 
+		if (lReturnInstance != null) {
+			mSpriteInstancePool.remove(lReturnInstance);
+			return lReturnInstance;
 		}
+
 		return extendInstancePool(4);
 	}
 
-	private SpriteInstance extendInstancePool(int pAmt) {
-		for (int i = 0; i < pAmt; i++) {
-			spriteInstancePool.add(new SpriteInstance());
-
+	private SpriteInstance extendInstancePool(int extendByAmount) {
+		for (int i = 0; i < extendByAmount; i++) {
+			mSpriteInstancePool.add(new SpriteInstance());
 		}
 		return new SpriteInstance();
 	}
-
 }

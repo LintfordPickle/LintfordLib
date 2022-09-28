@@ -6,7 +6,6 @@ import net.lintford.library.core.graphics.Color;
 import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.shaders.ShaderMVP_PCT;
 import net.lintford.library.core.graphics.shaders.ShaderSubPixel;
-import net.lintford.library.core.graphics.sprites.SpriteFrame;
 import net.lintford.library.core.graphics.sprites.spritebatch.SpriteBatch;
 
 public class FontUnit {
@@ -29,10 +28,9 @@ public class FontUnit {
 	// Variables
 	// --------------------------------------
 
-	public final int id;
-	public BitmapFontDefinition mFontDefinition;
-	public SpriteBatch mFontRenderer;
-	public WrapType mWrapType = WrapType.WordWrap;
+	private BitmapFontDefinition mFontDefinition;
+	private SpriteBatch mFontRenderer;
+	private WrapType mWrapType = WrapType.WordWrap;
 	private ShaderSubPixel mShaderSubPixel;
 
 	// --------------------------------------
@@ -43,30 +41,28 @@ public class FontUnit {
 		return mWrapType;
 	}
 
-	public void setWrapType(WrapType pWrapType) {
-		mWrapType = pWrapType;
+	public void setWrapType(WrapType wrapType) {
+		mWrapType = wrapType;
 	}
 
 	public boolean isLoaded() {
 		return mFontRenderer != null && mFontRenderer.isLoaded();
 	}
 
-	public float getStringHeight(String pText) {
-		return getStringHeightWrapping(pText, NO_WORD_WRAP);
+	public float getStringHeight(String text) {
+		return getStringHeightWrapping(text, NO_WORD_WRAP);
 	}
 
-	public float getStringHeight(String pText, float pScale) {
-		return getStringHeightWrapping(pText, NO_WORD_WRAP) * pScale;
+	public float getStringHeight(String text, float scale) {
+		return getStringHeightWrapping(text, NO_WORD_WRAP) * scale;
 	}
 
-	public float getStringHeightWrapping(String pText, float pWrapWidth) {
-		if (mWrapType == WrapType.LetterCountTrim || pWrapWidth == NO_WORD_WRAP) {
+	public float getStringHeightWrapping(String text, float wrapWidth) {
+		if (mWrapType == WrapType.LetterCountTrim || wrapWidth == NO_WORD_WRAP)
 			return mFontDefinition.getFontHeight();
-		}
 
-		if (pText == null) {
+		if (text == null)
 			return mFontDefinition.getFontHeight();
-		}
 
 		float lReturnHeight = fontHeight();
 		float lX = 0;
@@ -81,10 +77,10 @@ public class FontUnit {
 
 		final float lScaledLineHeight = (mFontDefinition.getFontHeight() + lSpaceBetweenLines);
 		final int lLineSpacing = BitmapFontDefinition.LINE_SPACING;
-		int lCharacterLength = pText.length();
+		int lCharacterLength = text.length();
 		for (int i = 0; i < lCharacterLength; i++) {
-			char ch_c = pText.charAt(i);
-			SpriteFrame glyph_c = mFontDefinition.getGlyphFrame((int) ch_c);
+			char ch_c = text.charAt(i);
+			final var glyph_c = mFontDefinition.getGlyphFrame((int) ch_c);
 
 			// Special characters
 			if (ch_c == '\n' || ch_c == '\r') {
@@ -100,7 +96,7 @@ public class FontUnit {
 				lClearedWord = false;
 			}
 
-			if (pWrapWidth != NO_WORD_WRAP) {
+			if (wrapWidth != NO_WORD_WRAP) {
 				if (mWrapType == WrapType.WordWrap || mWrapType == WrapType.WordWrapTrim && !lClearedWord) {
 
 					if (mWrapType == WrapType.WordWrapTrim && lJustWrapped) {
@@ -108,10 +104,10 @@ public class FontUnit {
 					}
 
 					lWordWidth = glyph_c.width();
-					lBreakCharFitsOnThisLine = lWrapWidth + glyph_c.width() <= pWrapWidth;
+					lBreakCharFitsOnThisLine = lWrapWidth + glyph_c.width() <= wrapWidth;
 					if ((lX == 0) || BREAK_CHARS.indexOf(ch_c) >= 0) {
-						for (int j = i + 1; j < pText.length(); j++) {
-							char ch_n = pText.charAt(j);
+						for (int j = i + 1; j < text.length(); j++) {
+							char ch_n = text.charAt(j);
 							var lCharGlyph = mFontDefinition.getGlyphFrame((int) ch_n);
 
 							if (lCharGlyph == null)
@@ -123,7 +119,7 @@ public class FontUnit {
 								break;
 							}
 
-							if (lWrapWidth + lWordWidth + lCharGlyph.width() > pWrapWidth) {
+							if (lWrapWidth + lWordWidth + lCharGlyph.width() > wrapWidth) {
 								lWrapWidth = 0;
 								lJustWrapped = true;
 								break;
@@ -135,17 +131,14 @@ public class FontUnit {
 				}
 			}
 
-			if (ch_c == ' ' && lX == 0) {
+			if (ch_c == ' ' && lX == 0)
 				continue;
-			}
 
-			if (glyph_c == null) {
+			if (glyph_c == null)
 				continue;
-			}
 
-			if (lJustWrapped && lBreakCharFitsOnThisLine == false) {
+			if (lJustWrapped && lBreakCharFitsOnThisLine == false)
 				lReturnHeight += lScaledLineHeight;
-			}
 
 			if (lJustWrapped && lBreakCharFitsOnThisLine) {
 				lReturnHeight += lScaledLineHeight;
@@ -153,9 +146,8 @@ public class FontUnit {
 			} else {
 				if (!lJustWrapped)
 					lX += glyph_c.width();
-				else {
+				else
 					lX += glyph_c.width();
-				}
 			}
 
 			lJustWrapped = false;
@@ -165,12 +157,12 @@ public class FontUnit {
 		return lReturnHeight;
 	}
 
-	public float getStringWidth(String pText, float pScale) {
-		return mFontDefinition.getStringWidth(pText, pScale);
+	public float getStringWidth(String text, float scale) {
+		return mFontDefinition.getStringWidth(text, scale);
 	}
 
-	public float getStringWidth(String pText) {
-		return mFontDefinition.getStringWidth(pText);
+	public float getStringWidth(String text) {
+		return mFontDefinition.getStringWidth(text);
 	}
 
 	public float fontHeight() {
@@ -185,11 +177,9 @@ public class FontUnit {
 	// Constructor
 	// --------------------------------------
 
-	public FontUnit(int pId, BitmapFontDefinition pBitmapFontDefinition) {
-		id = pId;
-		mFontDefinition = pBitmapFontDefinition;
+	public FontUnit(BitmapFontDefinition bitmapFontDefinition) {
+		mFontDefinition = bitmapFontDefinition;
 		mFontRenderer = new SpriteBatch();
-		// TODO: Cache Shaders (and retrieve from here the SubPixelShader instance)
 		mShaderSubPixel = new ShaderSubPixel("SubPixelShader", ShaderSubPixel.VERT_FILENAME, ShaderSubPixel.FRAG_FILENAME);
 	}
 
@@ -197,10 +187,10 @@ public class FontUnit {
 	// Methods
 	// --------------------------------------
 
-	public void loadResources(ResourceManager pResouceManager) {
-		mFontRenderer.loadResources(pResouceManager);
-		mFontDefinition.loadResources(pResouceManager);
-		mShaderSubPixel.loadResources(pResouceManager);
+	public void loadResources(ResourceManager resouceManager) {
+		mFontRenderer.loadResources(resouceManager);
+		mFontDefinition.loadResources(resouceManager);
+		mShaderSubPixel.loadResources(resouceManager);
 	}
 
 	public void unloadResources() {
@@ -209,34 +199,34 @@ public class FontUnit {
 		mShaderSubPixel.unloadResources();
 	}
 
-	public void begin(ICamera pCamera) {
-		if (mFontDefinition.useSubPixelRendering)
-			mFontRenderer.begin(pCamera, mShaderSubPixel);
+	public void begin(ICamera camera) {
+		if (mFontDefinition.mUseSubPixelRendering)
+			mFontRenderer.begin(camera, mShaderSubPixel);
 		else
-			mFontRenderer.begin(pCamera);
+			mFontRenderer.begin(camera);
 	}
 
-	public void begin(ICamera pCamera, ShaderMVP_PCT pCustomShader) {
-		mFontRenderer.begin(pCamera, pCustomShader);
+	public void begin(ICamera camera, ShaderMVP_PCT customShader) {
+		mFontRenderer.begin(camera, customShader);
 	}
 
-	public void drawText(String pText, float pX, float pY, float pZ, float pScale) {
-		if (pText == null)
+	public void drawText(String text, float positionX, float positionY, float zDepth, float scale) {
+		if (text == null)
 			return;
 
-		drawText(pText, pX, pY, pZ, ColorConstants.WHITE, pScale, -1);
+		drawText(text, positionX, positionY, zDepth, ColorConstants.WHITE, scale, -1);
 	}
 
-	public void drawText(String pText, float pX, float pY, float pZ, Color pTextColor, float pScale) {
-		drawText(pText, pX, pY, pZ, pTextColor, pScale, -1);
+	public void drawText(String text, float positionX, float positionY, float zDepth, Color textColor, float scale) {
+		drawText(text, positionX, positionY, zDepth, textColor, scale, -1);
 	}
 
-	public void drawText(String pText, float pX, float pY, float pZ, Color pTextColor, float pScale, float pWrapWidth) {
-		if (pText == null)
+	public void drawText(String text, float positionX, float positionY, float zDepth, Color textColor, float scale, float wrapWidth) {
+		if (text == null)
 			return;
 
-		int lX = (int) pX;
-		int lY = (int) pY;
+		int lX = (int) positionX;
+		int lY = (int) positionY;
 
 		float lWrapWidth = 0;
 		boolean lJustWrapped = false;
@@ -246,16 +236,16 @@ public class FontUnit {
 
 		final float lSpaceBetweenLines = 0f;
 
-		final float lScaledLineHeight = (mFontDefinition.getFontHeight() + lSpaceBetweenLines) * pScale;
+		final float lScaledLineHeight = (mFontDefinition.getFontHeight() + lSpaceBetweenLines) * scale;
 		final int lLineSpacing = BitmapFontDefinition.LINE_SPACING;
-		int lCharacterLength = pText.length();
+		int lCharacterLength = text.length();
 		for (int i = 0; i < lCharacterLength; i++) {
-			char lCh_Current = pText.charAt(i);
-			SpriteFrame glyph_c = mFontDefinition.getGlyphFrame((int) lCh_Current);
+			char lCurrentCharacter = text.charAt(i);
+			final var lCurrentGlyph = mFontDefinition.getGlyphFrame((int) lCurrentCharacter);
 
 			// Special characters
-			if (lCh_Current == '\n' || lCh_Current == '\r') {
-				lX = (int) pX;
+			if (lCurrentCharacter == '\n' || lCurrentCharacter == '\r') {
+				lX = (int) positionX;
 				lY += mFontDefinition.getFontHeight() + lLineSpacing;
 				lWrapWidth = 0.f;
 				lWordWidth = 0.f;
@@ -263,51 +253,50 @@ public class FontUnit {
 				continue;
 			}
 
-			if (BREAK_CHARS.indexOf(lCh_Current) >= 0) {
+			if (BREAK_CHARS.indexOf(lCurrentCharacter) >= 0)
 				lClearedWord = false;
-			}
 
-			if (pWrapWidth != NO_WORD_WRAP) {
+			if (wrapWidth != NO_WORD_WRAP) {
 				if (mWrapType == WrapType.WordWrap || mWrapType == WrapType.WordWrapTrim && !lClearedWord) {
-					if (mWrapType == WrapType.WordWrapTrim && lJustWrapped) {
+					if (mWrapType == WrapType.WordWrapTrim && lJustWrapped)
 						break;
-					}
 
-					lWordWidth = glyph_c.width() * pScale;
-					lBreakCharFitsOnThisLine = lWrapWidth + glyph_c.width() <= pWrapWidth;
-					if ((lX == pX) || BREAK_CHARS.indexOf(lCh_Current) >= 0) {
-						for (int j = i + 1; j < pText.length(); j++) {
-							char lCh_Next = pText.charAt(j);
-							var lCharGlyph = mFontDefinition.getGlyphFrame((int) lCh_Next);
+					lWordWidth = lCurrentGlyph.width() * scale;
+					lBreakCharFitsOnThisLine = lWrapWidth + lCurrentGlyph.width() <= wrapWidth;
+					if ((lX == positionX) || BREAK_CHARS.indexOf(lCurrentCharacter) >= 0) {
+						for (int j = i + 1; j < text.length(); j++) {
+							char lCharcterNext = text.charAt(j);
+							var lNextGlyph = mFontDefinition.getGlyphFrame((int) lCharcterNext);
 
-							if (lCharGlyph == null)
+							if (lNextGlyph == null)
 								continue;
 
-							if (BREAK_CHARS.indexOf(lCh_Next) >= 0) {
+							if (BREAK_CHARS.indexOf(lCharcterNext) >= 0) {
 								lClearedWord = true;
 								lWrapWidth += lWordWidth;
 								break;
 							}
 
 							float lOverflowSpaceForElipsis = mWrapType == WrapType.WordWrapTrim ? 20.f : 0.f;
-							if (lWrapWidth + lWordWidth + lCharGlyph.width() * pScale + lOverflowSpaceForElipsis > pWrapWidth) {
+							if (lWrapWidth + lWordWidth + lNextGlyph.width() * scale + lOverflowSpaceForElipsis > wrapWidth) {
 								lWrapWidth = 0;
 								lJustWrapped = true;
 
 								break;
 							}
 
-							lWordWidth += lCharGlyph.width() * pScale;
+							lWordWidth += lNextGlyph.width() * scale;
 						}
 					}
 				} else if (mWrapType == WrapType.LetterCountTrim) {
 					final int lNumElpsis = 3;
-					if (i >= pWrapWidth - lNumElpsis) {
+					if (i >= wrapWidth - lNumElpsis) {
 
 						final var lDotGlyph = mFontDefinition.getGlyphFrame((int) '.');
 						if (lDotGlyph != null) {
 							for (int j = 0; j < lNumElpsis; j++) {
-								mFontRenderer.draw(mFontDefinition.texture(), lDotGlyph.x(), lDotGlyph.y(), lDotGlyph.w(), lDotGlyph.h(), (int) (lX) + j * lDotGlyph.width(), (int) lY, glyph_c.width() * pScale, glyph_c.height() * pScale, pZ, pTextColor);
+								mFontRenderer.draw(mFontDefinition.texture(), lDotGlyph.x(), lDotGlyph.y(), lDotGlyph.width(), lDotGlyph.height(), (int) (lX) + j * lDotGlyph.width(), (int) lY, lCurrentGlyph.width() * scale, lCurrentGlyph.height() * scale, zDepth,
+										textColor);
 							}
 						}
 
@@ -316,9 +305,8 @@ public class FontUnit {
 				}
 			}
 
-			if (glyph_c == null) {
+			if (lCurrentGlyph == null)
 				continue;
-			}
 
 			if (lJustWrapped && mWrapType == WrapType.WordWrapTrim) {
 				final int lNumElpsis = 3;
@@ -326,7 +314,8 @@ public class FontUnit {
 				final var lDotGlyph = mFontDefinition.getGlyphFrame((int) '.');
 				if (lDotGlyph != null) {
 					for (int j = 0; j < lNumElpsis; j++) {
-						mFontRenderer.draw(mFontDefinition.texture(), lDotGlyph.x(), lDotGlyph.y(), (int) lDotGlyph.w(), lDotGlyph.h(), (int) (lX) + j * lDotGlyph.width(), (int) lY, glyph_c.width() * pScale, glyph_c.height() * pScale, pZ, pTextColor);
+						mFontRenderer.draw(mFontDefinition.texture(), lDotGlyph.x(), lDotGlyph.y(), (int) lDotGlyph.width(), lDotGlyph.height(), (int) (lX) + j * lDotGlyph.width(), (int) lY, lCurrentGlyph.width() * scale, lCurrentGlyph.height() * scale, zDepth,
+								textColor);
 					}
 				}
 
@@ -335,31 +324,29 @@ public class FontUnit {
 
 			if (lJustWrapped) {
 				lY += lScaledLineHeight;
-				lX = (int) pX;
+				lX = (int) positionX;
 			}
 
-			if (lCh_Current == ' ' && lX == pX && lY > pY) {
+			if (lCurrentCharacter == ' ' && lX == positionX && lY > positionY) {
 				lJustWrapped = false;
 				continue;
 			}
 
-			mFontRenderer.draw(mFontDefinition.texture(), glyph_c.x(), glyph_c.y(), (int) glyph_c.w(), glyph_c.h(), (int) lX, (int) lY, glyph_c.width() * pScale, glyph_c.height() * pScale, pZ, pTextColor);
+			mFontRenderer.draw(mFontDefinition.texture(), lCurrentGlyph.x(), lCurrentGlyph.y(), (int) lCurrentGlyph.width(), lCurrentGlyph.height(), (int) lX, (int) lY, lCurrentGlyph.width() * scale, lCurrentGlyph.height() * scale, zDepth, textColor);
 
 			if (lJustWrapped && lBreakCharFitsOnThisLine) {
 				lY += lScaledLineHeight;
-				lX = (int) pX;
+				lX = (int) positionX;
 			} else {
-				lX += glyph_c.width() * pScale;
+				lX += lCurrentGlyph.width() * scale;
 			}
 
 			lJustWrapped = false;
 			lBreakCharFitsOnThisLine = true;
 		}
-
 	}
 
 	public void end() {
 		mFontRenderer.end();
 	}
-
 }

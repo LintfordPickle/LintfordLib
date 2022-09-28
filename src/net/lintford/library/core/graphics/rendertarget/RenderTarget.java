@@ -19,7 +19,7 @@ public class RenderTarget {
 	// Variables
 	// --------------------------------------
 
-	public String targetName;
+	private String mTargetName;
 	private int mColorTextureID;
 	private int mDepthTextureID;
 	private int mFramebufferID;
@@ -39,54 +39,52 @@ public class RenderTarget {
 	// Properties
 	// --------------------------------------
 
+	public String targetName() {
+		return mTargetName;
+	}
+
 	/**
 	 * Sets the texture filter mode for mag. and min. (default: GL11.GL_LINEAR).
 	 * 
-	 * @param pParam The GL11 filter mode
+	 * @param newValue The GL11 filter mode
 	 */
-	public void textureFilter(int pParam) {
-		mTextureFilter = pParam;
+	public void textureFilter(int newValue) {
+		mTextureFilter = newValue;
 
 		if (mResourcesLoaded) {
 			GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, mFramebufferID);
 			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, mTextureFilter);
 			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, mTextureFilter);
 			GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
-
 		}
-
 	}
 
 	public int textureFilter() {
 		return mTextureFilter;
 	}
 
-	public void textureWrapModeS(int pParam) {
-		mTextureWrapModeS = pParam;
+	public void textureWrapModeS(int newValue) {
+		mTextureWrapModeS = newValue;
 
 		if (mResourcesLoaded) {
 			GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, mFramebufferID);
 			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, mTextureWrapModeS);
 			GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
-
 		}
-
 	}
 
 	public int textureWrapModeS() {
 		return mTextureWrapModeS;
 	}
 
-	public void textureWrapModeT(int pParam) {
-		mTextureWrapModeT = pParam;
+	public void textureWrapModeT(int newValue) {
+		mTextureWrapModeT = newValue;
 
 		if (mResourcesLoaded) {
 			GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, mFramebufferID);
 			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, mTextureWrapModeT);
 			GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
-
 		}
-
 	}
 
 	public int textureWrapModeT() {
@@ -125,8 +123,8 @@ public class RenderTarget {
 	// Constructor
 	// --------------------------------------
 
-	public RenderTarget() {
-
+	public RenderTarget(String renderTargetName) {
+		mTargetName = renderTargetName;
 		mTextureFilter = GL11.GL_LINEAR;
 		mTextureWrapModeS = GL12.GL_CLAMP_TO_EDGE;
 		mTextureWrapModeT = GL12.GL_CLAMP_TO_EDGE;
@@ -135,31 +133,29 @@ public class RenderTarget {
 		mColorTextureID = -1;
 
 		mDepthBufferEnabled = false;
-		targetName = "unnamed";
-
 	}
 
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
 
-	public void loadResources(int pWidth, int pHeight, float pScale) {
+	public void loadResources(int width, int height, float scale) {
 
 	}
 
-	public void initialiszeGl(int pWidth, int pHeight, float pScale) {
-		if (pWidth == 0 || pHeight == 0)
+	public void initialiszeGl(int width, int height, float scale) {
+		if (width == 0 || height == 0)
 			return;
 
 		if (mResourcesLoaded)
 			return;
 
-		Debug.debugManager().logger().i(getClass().getSimpleName(), "Loading RenderTarget: " + targetName);
+		Debug.debugManager().logger().i(getClass().getSimpleName(), "Loading RenderTarget: " + mTargetName);
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "  GL texture filter mode enum: " + mTextureFilter);
 
-		mScale = pScale;
-		mWidth = (int) (pWidth * mScale);
-		mHeight = (int) (pHeight * mScale);
+		mScale = scale;
+		mWidth = (int) (width * mScale);
+		mHeight = (int) (height * mScale);
 
 		createFloatBuffer();
 
@@ -269,20 +265,20 @@ public class RenderTarget {
 		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
 	}
 
-	public void resize(int pWidth, int pHeight) {
-		if (pWidth == 0 || pHeight == 0)
+	public void resize(int newWidth, int newHeight) {
+		if (newWidth == 0 || newHeight == 0)
 			return;
 
 		if (!mResourcesLoaded)
 			return;
 
-		mWidth = pWidth;
-		mHeight = pHeight;
+		mWidth = newWidth;
+		mHeight = newHeight;
 
 		createFloatBuffer();
 
 		if (ConstantsApp.getBooleanValueDef("DEBUG_RENDER_TARGET_RESIZE", false)) {
-			Debug.debugManager().logger().i(getClass().getSimpleName(), "Loading RenderTarget: " + targetName);
+			Debug.debugManager().logger().i(getClass().getSimpleName(), "Loading RenderTarget: " + mTargetName);
 			Debug.debugManager().logger().i(getClass().getSimpleName(), "  GL_TEXTURE_MAG_FILTER: " + mTextureFilter);
 			Debug.debugManager().logger().i(getClass().getSimpleName(), "  GL_TEXTURE_MIN_FILTER: " + mTextureFilter);
 			Debug.debugManager().logger().i(getClass().getSimpleName(), "  GL_TEXTURE_WRAP_S: " + GL12.GL_CLAMP_TO_EDGE);

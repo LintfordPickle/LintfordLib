@@ -14,9 +14,8 @@ public abstract class BasePhysicsData extends IndexedPooledBaseData {
 	// Constructor
 	// --------------------------------------
 
-	public BasePhysicsData(int pPoolUid) {
-		super(pPoolUid);
-
+	public BasePhysicsData(int poolUid) {
+		super(poolUid);
 	}
 
 	// --------------------------------------

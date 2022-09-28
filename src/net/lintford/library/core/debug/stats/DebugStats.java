@@ -37,6 +37,7 @@ public class DebugStats extends Rectangle implements IScrollBarArea, IProcessMou
 	public static final int TAG_ID_FPS = 4;
 	public static final int TAG_ID_TIMESTEP = 13;
 	public static final int TAG_ID_TIMING = 12;
+	public static final int TAG_ID_TOTAL_ELAPSED_TIME_MS = 14;
 	public static final int TAG_ID_TEXTURES = 5;
 	public static final int TAG_ID_RENDERTEXTURES = 6;
 	public static final int TAG_ID_RES = 7;
@@ -57,18 +58,15 @@ public class DebugStats extends Rectangle implements IScrollBarArea, IProcessMou
 	private final Debug mDebugManager;
 	private double mLastUpdateElapsed;
 	private double mLastDrawElapsed;
-
 	private SpriteSheetDefinition mCoreSpritesheet;
 	private SpriteBatch mSpriteBatch;
 	private StringBuilder mStringBuilder;
-
-	private int deltaFrameCount;
-	private int frameCount;
-	private double timer;
+	private int mDeltaFrameCount;
+	private int mFrameCount;
+	private double mTimer;
 	private List<DebugStatTag<?>> mTags;
 	private transient FontUnit mConsoleFont;
 	private boolean mIsOpen;
-
 	private float mTagLineHeight = 20.f;
 	private transient ScrollBarContentRectangle mContentRectangle;
 	private transient ScrollBar mScrollBar;
@@ -82,8 +80,8 @@ public class DebugStats extends Rectangle implements IScrollBarArea, IProcessMou
 		return ++sTagIDCounter;
 	}
 
-	public void isOpen(boolean pNewValue) {
-		mIsOpen = pNewValue;
+	public void isOpen(boolean newValue) {
+		mIsOpen = newValue;
 	}
 
 	public boolean isOpen() {
@@ -94,8 +92,8 @@ public class DebugStats extends Rectangle implements IScrollBarArea, IProcessMou
 	// Constructor
 	// --------------------------------------
 
-	public DebugStats(final Debug pDebugManager) {
-		mDebugManager = pDebugManager;
+	public DebugStats(final Debug debugManager) {
+		mDebugManager = debugManager;
 
 		mTags = new ArrayList<>();
 		mStringBuilder = new StringBuilder();
@@ -111,6 +109,7 @@ public class DebugStats extends Rectangle implements IScrollBarArea, IProcessMou
 		mTags.add(new DebugStatTagCaption(-1, "App:"));
 		mTags.add(new DebugStatTagFloat(TAG_ID_FPS, "FPS", 0, false));
 		mTags.add(new DebugStatTagString(TAG_ID_TIMING, "Timing", ""));
+		mTags.add(new DebugStatTagString(TAG_ID_TOTAL_ELAPSED_TIME_MS, "Up (ms)", ""));
 		mTags.add(new DebugStatTagString(TAG_ID_TIMESTEP, "Timestep", ""));
 		mTags.add(new DebugStatTagString(TAG_ID_RES, "Resolution", ""));
 		// mTags.add(new DebugStatTagFloat(-1, "Ram Used", 0, false));
@@ -137,16 +136,16 @@ public class DebugStats extends Rectangle implements IScrollBarArea, IProcessMou
 	// Core-Methods
 	// --------------------------------------
 
-	public void loadResources(ResourceManager pResourceManager) {
+	public void loadResources(ResourceManager resourceManager) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
 		Debug.debugManager().logger().v(getClass().getSimpleName(), "DebugStats loading GL content");
 
-		mCoreSpritesheet = pResourceManager.spriteSheetManager().coreSpritesheet();
-		mConsoleFont = pResourceManager.fontManager().getFontUnit(BitmapFontManager.SYSTEM_FONT_CONSOLE_NAME);
+		mCoreSpritesheet = resourceManager.spriteSheetManager().coreSpritesheet();
+		mConsoleFont = resourceManager.fontManager().getFontUnit(BitmapFontManager.SYSTEM_FONT_CONSOLE_NAME);
 
-		mSpriteBatch.loadResources(pResourceManager);
+		mSpriteBatch.loadResources(resourceManager);
 	}
 
 	public void unloadResources() {
@@ -161,7 +160,7 @@ public class DebugStats extends Rectangle implements IScrollBarArea, IProcessMou
 		mCoreSpritesheet = null;
 	}
 
-	public void preUpdate(LintfordCore pCore) {
+	public void preUpdate(LintfordCore core) {
 		// reset all tags
 		final int lTagCount = mTags.size();
 		for (int i = 0; i < lTagCount; i++) {
@@ -169,44 +168,44 @@ public class DebugStats extends Rectangle implements IScrollBarArea, IProcessMou
 		}
 	}
 
-	public void handleInput(LintfordCore pCore) {
+	public void handleInput(LintfordCore core) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
-		if (pCore.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_F3)) {
+		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_F3)) {
 			mIsOpen = !mIsOpen;
 		}
 
 		if (mIsOpen == false)
 			return;
 
-		final boolean lMouseOverWindow = intersectsAA(pCore.HUD().getMouseCameraSpace());
+		final boolean lMouseOverWindow = intersectsAA(core.HUD().getMouseCameraSpace());
 		if (lMouseOverWindow) {
-			if (pCore.input().mouse().tryAcquireMouseOverThisComponent((hashCode()))) {
-				final float scrollAccelerationAmt = pCore.input().mouse().mouseWheelYOffset() * 250.0f;
+			if (core.input().mouse().tryAcquireMouseOverThisComponent((hashCode()))) {
+				final float scrollAccelerationAmt = core.input().mouse().mouseWheelYOffset() * 250.0f;
 				mScrollBar.scrollRelAcceleration(scrollAccelerationAmt);
 			}
 		}
 
-		if (mScrollBar.handleInput(pCore, null)) {
+		if (mScrollBar.handleInput(core, null)) {
 			return;
 		}
 	}
 
-	public void update(LintfordCore pCore) {
+	public void update(LintfordCore core) {
 		if (mIsOpen == false)
 			return;
 
-		final var lHUDRectangle = pCore.HUD().boundingRectangle();
+		final var lHUDRectangle = core.HUD().boundingRectangle();
 		final var lHeightOffset = Debug.debugManager().console().isOpen() ? 200f : 10f;
 		final var lWidthOffset = Debug.debugManager().console().isOpen() ? 360f : 0f;
 
 		y(lHUDRectangle.top() + lHeightOffset + INNER_CONTENT_MARGIN);
-		x(lHUDRectangle.right() - w() - lWidthOffset - INNER_CONTENT_MARGIN);
+		x(lHUDRectangle.right() - width() - lWidthOffset - INNER_CONTENT_MARGIN);
 		width(WINDOW_SIZE_WIDTH);
 		height(WINDOW_SIZE_HEIGHT);
 
-		mLastUpdateElapsed = pCore.appTime().elapsedTimeMilli();
+		mLastUpdateElapsed = core.appTime().elapsedTimeMilli();
 
 		float lContentHeight = 0.f;
 		final int lTagCount = mTags.size();
@@ -216,6 +215,7 @@ public class DebugStats extends Rectangle implements IScrollBarArea, IProcessMou
 				lContentHeight += 5f; // before
 				lContentHeight += 5f; // after
 			} else {
+
 			}
 
 			lContentHeight += mTagLineHeight;
@@ -223,69 +223,74 @@ public class DebugStats extends Rectangle implements IScrollBarArea, IProcessMou
 
 		lContentHeight += INNER_CONTENT_PADDING * 2.f;
 
-		mContentRectangle.h(lContentHeight);
+		mContentRectangle.height(lContentHeight);
 
-		final String lSpace = " ";
 		final String lDelimiter = "|";
 
-		String lUElapsed = String.format(java.util.Locale.US, "%.2f", mLastUpdateElapsed);
-		String lDElapsed = String.format(java.util.Locale.US, "%.2f", mLastDrawElapsed);
-		String lTotalElapsed = "(" + String.format(java.util.Locale.US, "%.1f", pCore.appTime().totalTimeSeconds()) + "s)";
+		String lUpdateElapsed = String.format(java.util.Locale.US, "%.2f", mLastUpdateElapsed);
+		String lDrawElapsed = String.format(java.util.Locale.US, "%.2f", mLastDrawElapsed);
+		String lTotalElapsed = String.format(java.util.Locale.US, "%.2f", core.appTime().totalTimeSeconds());
 
 		if (mStringBuilder.length() > 0)
 			mStringBuilder.delete(0, mStringBuilder.length());
 
-		mStringBuilder.append(lUElapsed).append("/").append(lDElapsed).append(lSpace).append(lTotalElapsed).append(lSpace);
+		mStringBuilder.append(lUpdateElapsed).append("/").append(lDrawElapsed);
 
-		((DebugStatTagString) getTagByID(TAG_ID_TIMING)).value = mStringBuilder.toString();
+		((DebugStatTagString) getTagByID(TAG_ID_TIMING)).mValue = mStringBuilder.toString();
 
 		if (mStringBuilder.length() > 0)
 			mStringBuilder.delete(0, mStringBuilder.length());
 
-		String lIsFixed = (pCore.isFixedTimeStep() ? "fixed" : "variable");
-		String lIsRunningSlowly = (pCore.appTime().isRunningSlowly() ? "slow" : "");
+		mStringBuilder.append(lTotalElapsed);
+		((DebugStatTagString) getTagByID(TAG_ID_TOTAL_ELAPSED_TIME_MS)).mValue = mStringBuilder.toString();
 
-		mStringBuilder.append(lIsFixed).append(lDelimiter).append(lIsRunningSlowly);
+		if (mStringBuilder.length() > 0)
+			mStringBuilder.delete(0, mStringBuilder.length());
 
-		((DebugStatTagString) getTagByID(TAG_ID_TIMESTEP)).value = mStringBuilder.toString();
+		String lIsFixed = (core.isFixedTimeStep() ? "fixed" : "variable");
+		String lIsRunningSlowly = (core.appTime().isRunningSlowly() ? lDelimiter + "slow" : "");
 
-		mScrollBar.update(pCore);
+		mStringBuilder.append(lIsFixed).append(lIsRunningSlowly);
+
+		((DebugStatTagString) getTagByID(TAG_ID_TIMESTEP)).mValue = mStringBuilder.toString();
+
+		mScrollBar.update(core);
 	}
 
-	public void draw(LintfordCore pCore) {
+	public void draw(LintfordCore core) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
-		deltaFrameCount++;
+		mDeltaFrameCount++;
 
-		timer += pCore.appTime().elapsedTimeMilli();
-		if (timer > 1000) {
-			frameCount = deltaFrameCount;
-			deltaFrameCount = 0;
-			timer -= 1000;
-
-			Debug.debugManager().stats().setTagValue(DebugStats.TAG_ID_FPS, frameCount);
+		mTimer += core.appTime().elapsedTimeMilli();
+		if (mTimer > 1000) {
+			mFrameCount = mDeltaFrameCount;
+			mDeltaFrameCount = 0;
+			mTimer -= 1000;
 		}
 
-		mLastDrawElapsed = pCore.appTime().elapsedTimeMilli();
+		Debug.debugManager().stats().setTagValue(DebugStats.TAG_ID_FPS, mFrameCount);
+
+		mLastDrawElapsed = core.appTime().elapsedTimeMilli();
 
 		if (!mIsOpen)
 			return;
 
-		mSpriteBatch.begin(pCore.HUD());
-		mConsoleFont.begin(pCore.HUD());
+		mSpriteBatch.begin(core.HUD());
+		mConsoleFont.begin(core.HUD());
 
 		mSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, this, -0.01f, ColorConstants.getColor(.05f, .05f, .05f, .95f));
 
 		mSpriteBatch.end();
 		mConsoleFont.end();
 
-		if (mContentRectangle.h() - this.h() > 0) {
-			mContentRectangle.preDraw(pCore, mSpriteBatch, mCoreSpritesheet);
+		if (mContentRectangle.height() - this.height() > 0) {
+			mContentRectangle.preDraw(core, mSpriteBatch, mCoreSpritesheet);
 		}
 
-		mSpriteBatch.begin(pCore.HUD());
-		mConsoleFont.begin(pCore.HUD());
+		mSpriteBatch.begin(core.HUD());
+		mConsoleFont.begin(core.HUD());
 
 		float lTagPosY = y() + mScrollBar.currentYPos();
 		final int lTagCount = mTags.size();
@@ -293,10 +298,10 @@ public class DebugStats extends Rectangle implements IScrollBarArea, IProcessMou
 			DebugStatTag<?> lTag = mTags.get(i);
 			if (lTag instanceof DebugStatTagCaption) {
 				lTagPosY += 5f;
-				lTag.draw(mConsoleFont, x + 5f, lTagPosY);
+				lTag.draw(mConsoleFont, mX + 5f, lTagPosY);
 				lTagPosY += 5f;
 			} else {
-				lTag.draw(mConsoleFont, x + 15f, lTagPosY);
+				lTag.draw(mConsoleFont, mX + 15f, lTagPosY);
 			}
 
 			lTagPosY += mTagLineHeight;
@@ -305,8 +310,8 @@ public class DebugStats extends Rectangle implements IScrollBarArea, IProcessMou
 		mSpriteBatch.end();
 		mConsoleFont.end();
 
-		if (mContentRectangle.h() - this.h() > 0) {
-			mContentRectangle.postDraw(pCore);
+		if (mContentRectangle.height() - this.height() > 0) {
+			mContentRectangle.postDraw(core);
 		}
 	}
 
@@ -314,86 +319,85 @@ public class DebugStats extends Rectangle implements IScrollBarArea, IProcessMou
 	// Methods
 	// --------------------------------------
 
-	public void setTagValue(int pTagID, int pValue) {
-		DebugStatTag<?> lTag = getTagByID(pTagID);
+	public void setTagValue(int tagUid, int pValue) {
+		DebugStatTag<?> lTag = getTagByID(tagUid);
 		if (lTag != null && lTag instanceof DebugStatTagInt) {
-			((DebugStatTagInt) lTag).value = pValue;
+			((DebugStatTagInt) lTag).mValue = pValue;
 		}
 		if (lTag != null && lTag instanceof DebugStatTagFloat) {
-			((DebugStatTagFloat) lTag).value = (float) pValue;
+			((DebugStatTagFloat) lTag).mValue = (float) pValue;
 		}
 	}
 
-	public void setTagValue(int pTagID, float pValue) {
-		DebugStatTag<?> lTag = getTagByID(pTagID);
+	public void setTagValue(int tagUid, float pValue) {
+		DebugStatTag<?> lTag = getTagByID(tagUid);
 		if (lTag != null && lTag instanceof DebugStatTagFloat) {
-			((DebugStatTagFloat) lTag).value = pValue;
+			((DebugStatTagFloat) lTag).mValue = pValue;
 		}
 	}
 
-	public void setTagValue(int pTagID, String pValue) {
-		DebugStatTag<?> lTag = getTagByID(pTagID);
+	public void setTagValue(int tagUid, String pValue) {
+		DebugStatTag<?> lTag = getTagByID(tagUid);
 		if (lTag != null && lTag instanceof DebugStatTagString) {
-			((DebugStatTagString) lTag).value = pValue;
+			((DebugStatTagString) lTag).mValue = pValue;
 		}
 	}
 
-	public void incTag(int pTagID) {
-		incTag(pTagID, 1);
+	public void incTag(int tagUid) {
+		incTag(tagUid, 1);
 	}
 
-	public void incTag(int pTagID, float pAmt) {
-		DebugStatTag<?> lTag = getTagByID(pTagID);
+	public void incTag(int tagUid, float amount) {
+		DebugStatTag<?> lTag = getTagByID(tagUid);
 		if (lTag instanceof DebugStatTagInt) {
 			DebugStatTagInt lIntTag = (DebugStatTagInt) lTag;
-			lIntTag.value += (int) pAmt;
+			lIntTag.mValue += (int) amount;
 		} else if (lTag instanceof DebugStatTagFloat) {
 			DebugStatTagFloat lIntTag = (DebugStatTagFloat) lTag;
-			lIntTag.value += pAmt;
+			lIntTag.mValue += amount;
 		}
 	}
 
-	public void decTag(int pTagID) {
-		decTag(pTagID, 1);
+	public void decTag(int tagUid) {
+		decTag(tagUid, 1);
 	}
 
-	public void decTag(int pTagID, int pAmt) {
-		DebugStatTag<?> lTag = getTagByID(pTagID);
+	public void decTag(int tagUid, int amount) {
+		DebugStatTag<?> lTag = getTagByID(tagUid);
 		if (lTag instanceof DebugStatTagInt) {
 			DebugStatTagInt lIntTag = (DebugStatTagInt) lTag;
-			lIntTag.value -= pAmt;
+			lIntTag.mValue -= amount;
 		} else if (lTag instanceof DebugStatTagFloat) {
 			DebugStatTagFloat lIntTag = (DebugStatTagFloat) lTag;
-			lIntTag.value -= pAmt;
+			lIntTag.mValue -= amount;
 		}
 	}
 
-	public DebugStatTag<?> getTagByID(int pTagId) {
+	public DebugStatTag<?> getTagByID(int tagUid) {
 		final int lTagCount = mTags.size();
 		for (int i = 0; i < lTagCount; i++) {
-			if (mTags.get(i).id == pTagId)
+			if (mTags.get(i).mUid == tagUid)
 				return mTags.get(i);
 		}
 
 		return null;
-
 	}
 
-	public void addCustomStatTag(DebugStatTag<?> pCustomTag) {
-		if (pCustomTag == null)
+	public void addCustomStatTag(DebugStatTag<?> customTag) {
+		if (customTag == null)
 			return;
 
-		if (!mTags.contains(pCustomTag)) {
-			mTags.add(pCustomTag);
+		if (!mTags.contains(customTag)) {
+			mTags.add(customTag);
 		}
 	}
 
-	public void removeCustomStatTag(DebugStatTag<?> pCustomTag) {
-		if (pCustomTag == null)
+	public void removeCustomStatTag(DebugStatTag<?> customTag) {
+		if (customTag == null)
 			return;
 
-		if (mTags.contains(pCustomTag)) {
-			mTags.remove(pCustomTag);
+		if (mTags.contains(customTag)) {
+			mTags.remove(customTag);
 		}
 	}
 

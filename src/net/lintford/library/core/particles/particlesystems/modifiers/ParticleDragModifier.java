@@ -27,14 +27,12 @@ public class ParticleDragModifier extends ParticleModifierBase {
 
 	public ParticleDragModifier() {
 		this(0.75f);
-
 	}
 
-	public ParticleDragModifier(float pDragValue) {
+	public ParticleDragModifier(float dragValue) {
 		super(MODIFIER_NAME);
 
 		mDrag = 0.75f;
-
 	}
 
 	// --------------------------------------
@@ -42,25 +40,23 @@ public class ParticleDragModifier extends ParticleModifierBase {
 	// --------------------------------------
 
 	@Override
-	public void initialize(Particle pParticle) {
-		// TODO Auto-generated method stub
+	public void initialize(Particle particle) {
 
 	}
 
 	@Override
-	public void update(LintfordCore pCore) {
+	public void update(LintfordCore core) {
 
 	}
 
 	@Override
-	public void updateParticle(LintfordCore pCore, Particle pParticle) {
-		pParticle.dx *= mDrag;
-		pParticle.dy *= mDrag;
+	public void updateParticle(LintfordCore core, Particle particle) {
+		particle.dx *= mDrag;
+		particle.dy *= mDrag;
 
-		if (Math.abs(pParticle.dx) < EPSILON)
-			pParticle.dx = 0;
-		if (Math.abs(pParticle.dy) < 0.001f)
-			pParticle.dy = 0;
+		if (Math.abs(particle.dx) < EPSILON)
+			particle.dx = 0;
+		if (Math.abs(particle.dy) < 0.001f)
+			particle.dy = 0;
 	}
-
 }

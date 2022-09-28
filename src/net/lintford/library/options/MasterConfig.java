@@ -51,33 +51,31 @@ public class MasterConfig {
 	// Constructor
 	// --------------------------------------
 
-	public MasterConfig(final GameInfo pGameInfo) {
-		mGameInfo = pGameInfo;
+	public MasterConfig(final GameInfo gameInfo) {
+		mGameInfo = gameInfo;
 
 		// Make sure that a game save directory exists for this application...
-		AppStorage.createGameDataDirectory(ConstantsApp.getStringValueDef("APPLICATION_NAME", "LintfordLib"));
+		AppStorage.createGameDataDirectory(ConstantsApp.getStringValueDef(ConstantsApp.CONSTANT_APP_NAME_TAG, "LintfordLib"));
 
 		final String lDisplayConfigFilename = AppStorage.getGameDataDirectory() + VIDEO_CONFIG_FILENAME;
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "Loading video settings from '" + lDisplayConfigFilename + "'");
-		mDisplayConfig = new DisplayManager(pGameInfo, lDisplayConfigFilename);
+		mDisplayConfig = new DisplayManager(gameInfo, lDisplayConfigFilename);
 
 		final String lAudioConfigFilename = AppStorage.getGameDataDirectory() + AUDIO_CONFIG_FILENAME;
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "Loading audio settings from '" + lAudioConfigFilename + "'");
-		mAudioConfig = new AudioConfig(pGameInfo, lAudioConfigFilename);
-
+		mAudioConfig = new AudioConfig(gameInfo, lAudioConfigFilename);
 	}
 
 	// --------------------------------------
 	// Core-Methods
 	// --------------------------------------
 
-	public void handleInput(LintfordCore pCore) {
+	public void handleInput(LintfordCore core) {
 
 	}
 
-	public void update(LintfordCore pCore) {
-		mDisplayConfig.update(pCore);
-
+	public void update(LintfordCore core) {
+		mDisplayConfig.update(core);
 	}
 
 	// --------------------------------------
@@ -85,42 +83,35 @@ public class MasterConfig {
 	// --------------------------------------
 
 	public long onCreateWindow() {
-
-		long lWindowID = mDisplayConfig.createWindow(mGameInfo);
+		final long lWindowID = mDisplayConfig.createWindow(mGameInfo);
 
 		if (lWindowID == MemoryUtil.NULL) {
 			throw new RuntimeException("Failed to get correct GLFWWindow handle");
-
 		}
 
 		return lWindowID;
-
 	}
 
-	public void loadConfigFiles(configuration c) {
-		switch (c) {
+	public void loadConfigFiles(configuration config) {
+		switch (config) {
 		case audioConfig:
 			mAudioConfig.loadConfig();
-
 			break;
 
 		case videoConfig:
 			mDisplayConfig.loadConfig();
-
 			break;
 
 		case all:
 		default:
 			loadConfigFiles(configuration.videoConfig);
 			loadConfigFiles(configuration.audioConfig);
-
 			break;
-
 		}
 	}
 
-	public void saveConfigFiles(configuration c) {
-		switch (c) {
+	public void saveConfigFiles(configuration config) {
+		switch (config) {
 		case audioConfig:
 			audio().saveConfig();
 			break;
@@ -134,5 +125,4 @@ public class MasterConfig {
 			break;
 		}
 	}
-
 }

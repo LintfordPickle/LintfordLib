@@ -51,19 +51,19 @@ public class UIInputText extends UIWidget implements IBufferedTextInputCallback 
 		return mMouseClickBreaksInputTextFocus;
 	}
 
-	public void mouseClickBreaksInputTextFocus(boolean pNewValue) {
-		mMouseClickBreaksInputTextFocus = pNewValue;
+	public void mouseClickBreaksInputTextFocus(boolean newValue) {
+		mMouseClickBreaksInputTextFocus = newValue;
 	}
 
 	public String emptyString() {
 		return mEmptyString;
 	}
 
-	public void emptyString(String pNewString) {
-		if (pNewString == null)
+	public void emptyString(String newValue) {
+		if (newValue == null)
 			mEmptyString = "";
 		else
-			mEmptyString = pNewString;
+			mEmptyString = newValue;
 	}
 
 	public int stringLength() {
@@ -82,11 +82,11 @@ public class UIInputText extends UIWidget implements IBufferedTextInputCallback 
 		mHasFocus = v;
 	}
 
-	public void inputString(String pNewValue) {
+	public void inputString(String newValue) {
 		if (mInputField.length() > 0) {
 			mInputField.delete(0, mInputField.length());
 		}
-		mInputField.append(pNewValue);
+		mInputField.append(newValue);
 	}
 
 	public StringBuilder inputString() {
@@ -101,75 +101,71 @@ public class UIInputText extends UIWidget implements IBufferedTextInputCallback 
 	// Constructor
 	// --------------------------------------
 
-	public UIInputText(UiWindow pParentWindow) {
-		super(pParentWindow);
+	public UIInputText(UiWindow parentWindow) {
+		super(parentWindow);
 
 		mResetOnDefaultClick = true;
 		mInputField = new StringBuilder();
 
 		mCancelRectangle = new Rectangle();
 		mEmptyString = "";
-
 	}
 
 	// --------------------------------------
 	// Core-Methods
 	// --------------------------------------
 
-	public boolean handleInput(LintfordCore pCore) {
-		if (mCancelRectangle.intersectsAA(pCore.HUD().getMouseCameraSpace())) {
+	public boolean handleInput(LintfordCore core) {
+		if (mCancelRectangle.intersectsAA(core.HUD().getMouseCameraSpace())) {
 			mCancelRectHovered = true;
-			if (pCore.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
+			if (core.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
 				if (mInputField.length() > 0) {
 
 					if (mInputField.length() > 0)
 						mInputField.delete(0, mInputField.length());
 					mStringLength = 0;
 
-					pCore.input().keyboard().stopBufferedTextCapture();
+					core.input().keyboard().stopBufferedTextCapture();
 
 					mHasFocus = false;
 					mShowCaret = false;
-
 				}
 			}
 		} else {
 			mCancelRectHovered = false;
 		}
 
-		if (intersectsAA(pCore.HUD().getMouseCameraSpace())) {
-			if (pCore.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
+		if (intersectsAA(core.HUD().getMouseCameraSpace())) {
+			if (core.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
 
-				onClick(pCore.input());
+				onClick(core.input());
 				mHasFocus = true;
 
 				return true;
-
 			}
-
 		}
 
 		// Stop the keyboard capture if the player clicks somewhere else within the game
-		if (mHasFocus && mMouseClickBreaksInputTextFocus && (pCore.input().mouse().isMouseLeftButtonDownTimed(this) || pCore.input().mouse().isMouseRightButtonDownTimed(this))) {
-			pCore.input().keyboard().stopBufferedTextCapture();
+		if (mHasFocus && mMouseClickBreaksInputTextFocus && (core.input().mouse().isMouseLeftButtonDownTimed(this) || core.input().mouse().isMouseRightButtonDownTimed(this))) {
+			core.input().keyboard().stopBufferedTextCapture();
 
 			mHasFocus = false;
 			mShowCaret = false;
-
 		}
 
 		return false;
-
 	}
 
-	public void update(LintfordCore pCore) {
-		super.update(pCore);
+	public void update(LintfordCore core) {
+		super.update(core);
 
-		mCaretFlashTimer += pCore.appTime().elapsedTimeMilli();
+		mCaretFlashTimer += core.appTime().elapsedTimeMilli();
 
 		final int lHorizontalPadding = 5;
+
+		// TODO: Make the icon sizes a UiConstant
 		final int lCancelRectSize = 16;
-		mCancelRectangle.set(x + w - lCancelRectSize - lHorizontalPadding, y + h / 2 - lCancelRectSize / 2, lCancelRectSize, lCancelRectSize);
+		mCancelRectangle.set(mX + mW - lCancelRectSize - lHorizontalPadding, mY + mH / 2 - lCancelRectSize / 2, lCancelRectSize, lCancelRectSize);
 
 		if (mHasFocus) {
 			// flash and update the location of the caret
@@ -181,28 +177,26 @@ public class UIInputText extends UIWidget implements IBufferedTextInputCallback 
 			// Limit the number of characters which can be entered
 			if (mInputField.length() > 15)
 				mInputField.delete(15, mInputField.length() - 1);
-
 		}
-
 	}
 
 	@Override
-	public void draw(LintfordCore pCore, SpriteBatch pSpriteBatch, SpriteSheetDefinition pCoreSpritesheet, FontUnit pTextFont, float pComponentZDepth) {
+	public void draw(LintfordCore core, SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheetDefinition, FontUnit textFont, float componentZDepth) {
 		// Renders the background of the input text widget
-		pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_LEFT, (int) x, y, 32, h, pComponentZDepth, ColorConstants.MenuPanelPrimaryColor);
-		if (w > 32) {
-			pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_MID, (int) x + 32, y, w - 64, h, pComponentZDepth, ColorConstants.MenuPanelPrimaryColor);
-			pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_RIGHT, (int) x + w - 32, y, 32, h, pComponentZDepth, ColorConstants.MenuPanelPrimaryColor);
+		spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_LEFT, (int) mX, mY, 32, mH, componentZDepth, ColorConstants.MenuPanelPrimaryColor);
+		if (mW > 32) {
+			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_MID, (int) mX + 32, mY, mW - 64, mH, componentZDepth, ColorConstants.MenuPanelPrimaryColor);
+			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_RIGHT, (int) mX + mW - 32, mY, 32, mH, componentZDepth, ColorConstants.MenuPanelPrimaryColor);
 		}
 
 		// Draw the cancel button rectangle
 		final var lEraserColor = mCancelRectHovered ? ColorConstants.WHITE : ColorConstants.getWhiteWithAlpha(.5f);
-		pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_ERASER, mCancelRectangle, pComponentZDepth, lEraserColor);
+		spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_ERASER, mCancelRectangle, componentZDepth, lEraserColor);
 
-		final float lInputTextWidth = pTextFont.getStringWidth(mInputField.toString());
+		final float lInputTextWidth = textFont.getStringWidth(mInputField.toString());
 
 		String lText = mInputField.toString();
-		final float lTextHeight = pTextFont.fontHeight();
+		final float lTextHeight = textFont.fontHeight();
 		if (lText.length() == 0 && !mHasFocus) {
 			if (mEmptyString.isEmpty()) {
 				lText = "<search>";
@@ -211,9 +205,9 @@ public class UIInputText extends UIWidget implements IBufferedTextInputCallback 
 			}
 		}
 
-		pTextFont.drawText(lText, x + 10, y + h * .5f - lTextHeight * .5f, pComponentZDepth, ColorConstants.TextEntryColor, 1f, -1);
+		textFont.drawText(lText, mX + 10, mY + mH * .5f - lTextHeight * .5f, componentZDepth, ColorConstants.TextEntryColor, 1f, -1);
 		if (mShowCaret && mHasFocus) {
-			pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, x + 10 + lInputTextWidth, y + h * .5f - lTextHeight * .5f, pTextFont.fontHeight() / 2.f, pTextFont.fontHeight(), pComponentZDepth, ColorConstants.WHITE);
+			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, mX + 10 + lInputTextWidth, mY + mH * .5f - lTextHeight * .5f, textFont.fontHeight() / 2.f, textFont.fontHeight(), componentZDepth, ColorConstants.WHITE);
 		}
 	}
 
@@ -221,19 +215,16 @@ public class UIInputText extends UIWidget implements IBufferedTextInputCallback 
 	// Methods
 	// --------------------------------------
 
-	public void setKeyUpdateListener(IUiInputKeyPressCallback pKeyUpdateListener) {
-		mIUiInputKeyPressCallback = pKeyUpdateListener;
-
+	public void setKeyUpdateListener(IUiInputKeyPressCallback keyUpdateListener) {
+		mIUiInputKeyPressCallback = keyUpdateListener;
 	}
 
-	public void onClick(InputManager pInputState) {
+	public void onClick(InputManager inputState) {
 		mHasFocus = !mHasFocus;
 
 		if (mHasFocus) {
-			pInputState.keyboard().startBufferedTextCapture(this);
+			inputState.keyboard().startBufferedTextCapture(this);
 
-			// Store the current string in case the user cancels the input, in which case, we
-			// can restore the previous entry.
 			if (mInputField.length() > 0)
 				mTempString = mInputField.toString();
 
@@ -241,11 +232,8 @@ public class UIInputText extends UIWidget implements IBufferedTextInputCallback 
 				if (mInputField.length() > 0) {
 					mInputField.delete(0, mInputField.length());
 				}
-
 			}
-
 		}
-
 	}
 
 	@Override
@@ -259,18 +247,15 @@ public class UIInputText extends UIWidget implements IBufferedTextInputCallback 
 		mShowCaret = false;
 
 		return getEnterFinishesInput();
-
 	}
 
 	@Override
-	public void onKeyPressed(int pCodePoint) {
+	public void onKeyPressed(int codePoint) {
 		mStringLength = mInputField.length();
 
 		if (mIUiInputKeyPressCallback != null) {
-			mIUiInputKeyPressCallback.keyPressUpdate(pCodePoint);
-
+			mIUiInputKeyPressCallback.keyPressUpdate(codePoint);
 		}
-
 	}
 
 	@Override
@@ -293,12 +278,10 @@ public class UIInputText extends UIWidget implements IBufferedTextInputCallback 
 		mShowCaret = false;
 
 		return getEscapeFinishesInput();
-
 	}
 
 	@Override
 	public boolean getEscapeFinishesInput() {
 		return true;
 	}
-
 }

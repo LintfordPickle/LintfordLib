@@ -25,34 +25,21 @@ public class SpriteGraphNodeInstance extends IndexedPooledBaseData {
 	// Variables
 	// --------------------------------------
 
-	public String name;
-	public SpriteGraphInstance mParentGraphInst;
-
+	private String mName;
+	private SpriteGraphInstance mParentGraphInst;
 	private transient SpriteGraphAttachmentInstance mSpritegraphAttachmentInstance;
-	public transient SpriteInstance mSpriteInstance;
-
-	/** The ID of the {@link SpriteGraphAnchorDef} on the parent. */
-	public int parentAnchorID;
-
-	/** The name of the {@link SpriteGraphAnchorDef} on the parent. */
-	public String anchorNodeName;
-	public String nextAnimationName;
-	public String currentNodeSpriteActionName;
-	public boolean controlsGraphAnimationListener;
-
-	/** A list of child parts which are anchored on this {@link SpriteGraphNodeInstance}. */
-	public List<SpriteGraphNodeInstance> childNodes;
-
-	public int nodeDepth;
-	public int zDepth;
-
-	public int entityGroupID;
-	public int attachmentCategory;
-
-	public boolean angToPointEnabled;
-	public float angToPoint;
-	public float staticRotationOffset;
-
+	private transient SpriteInstance mSpriteInstance;
+	private String mAnchorNodeName;
+	private String mNextAnimationName;
+	private String mCurrentNodeSpriteActionName;
+	private boolean mControlsGraphAnimationListener;
+	private List<SpriteGraphNodeInstance> mChildNodes;
+	private int mNodeDepth;
+	private int mZDepth;
+	private int mEntityGroupUid;
+	private int mAttachmentCategory;
+	private boolean mAngToPointEnabled;
+	private float mAngleToPoint;
 	private boolean mFlippedHorizontal;
 	private boolean mFlippedVertical;
 	private float mPositionX;
@@ -60,19 +47,59 @@ public class SpriteGraphNodeInstance extends IndexedPooledBaseData {
 	private int mPivotX;
 	private int mPivotY;
 	private float mRotationInRadians;
-	public boolean disableTreeUpdatesPosition;
-	public boolean disableTreeUpdatesRotation;
+	private boolean mDisableTreeUpdatesPosition;
+	private boolean mDisableTreeUpdatesRotation;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public void setAngToPoint(float newValue) {
+		mAngleToPoint = newValue;
+	}
+
+	public float setAngleToPoint() {
+		return mAngleToPoint;
+	}
+
+	public void disableTreeUpdatesPositions(boolean pNewValue) {
+		mDisableTreeUpdatesPosition = pNewValue;
+	}
+
+	public boolean disableTreeUpdatesPositions() {
+		return mDisableTreeUpdatesPosition;
+	}
+
+	public void disableTreeUpdatesRotations(boolean pNewValue) {
+		mDisableTreeUpdatesRotation = pNewValue;
+	}
+
+	public boolean disableTreeUpdatesRotations() {
+		return mDisableTreeUpdatesRotation;
+	}
+
+	public int zDepth() {
+		return mZDepth;
+	}
+
+	public void zDepth(int zDepth) {
+		mZDepth = zDepth;
+	}
+
+	public boolean angToPointEnabled() {
+		return mAngToPointEnabled;
+	}
+
+	public void angToPointEnabled(boolean newValue) {
+		mAngToPointEnabled = newValue;
+	}
 
 	public SpriteGraphAttachmentInstance spritegraphAttachmentInstance() {
 		return mSpritegraphAttachmentInstance;
 	}
 
 	public void nextAnimationName(String pNextAnimationName) {
-		nextAnimationName = pNextAnimationName;
+		mNextAnimationName = pNextAnimationName;
 	}
 
 	public SpriteInstance spriteInstance() {
@@ -148,19 +175,19 @@ public class SpriteGraphNodeInstance extends IndexedPooledBaseData {
 	}
 
 	public SpriteGraphNodeInstance getNodeNyNodeName(String pNodeName) {
-		if (name == null) {
+		if (mName == null) {
 			return null;
 
 		}
 
-		if (name.equals(pNodeName)) {
+		if (mName.equals(pNodeName)) {
 			return this;
 
 		}
 
-		final int lNumChildNodes = childNodes.size();
+		final int lNumChildNodes = mChildNodes.size();
 		for (int i = 0; i < lNumChildNodes; i++) {
-			final var lSpriteGraphNodeInstance = childNodes.get(i).getNodeNyNodeName(pNodeName);
+			final var lSpriteGraphNodeInstance = mChildNodes.get(i).getNodeNyNodeName(pNodeName);
 			if (lSpriteGraphNodeInstance != null) {
 				return lSpriteGraphNodeInstance;
 
@@ -173,17 +200,17 @@ public class SpriteGraphNodeInstance extends IndexedPooledBaseData {
 	}
 
 	public SpriteGraphNodeInstance getNodeNyAttachmentCategory(int pNodeCategory) {
-		if (name == null) {
+		if (mName == null) {
 			return null;
 		}
 
-		if (attachmentCategory == pNodeCategory) {
+		if (mAttachmentCategory == pNodeCategory) {
 			return this;
 		}
 
-		final int lNumChildNodes = childNodes.size();
+		final int lNumChildNodes = mChildNodes.size();
 		for (int i = 0; i < lNumChildNodes; i++) {
-			final var lSpriteGraphNodeInstance = childNodes.get(i).getNodeNyAttachmentCategory(pNodeCategory);
+			final var lSpriteGraphNodeInstance = mChildNodes.get(i).getNodeNyAttachmentCategory(pNodeCategory);
 			if (lSpriteGraphNodeInstance != null) {
 				return lSpriteGraphNodeInstance;
 			}
@@ -193,14 +220,14 @@ public class SpriteGraphNodeInstance extends IndexedPooledBaseData {
 	}
 
 	public SpriteGraphNodeInstance getNodeNyNodeSpriteFrameName(String pSpriteFrameNodeName) {
-		if (anchorNodeName != null && anchorNodeName.equals(pSpriteFrameNodeName)) {
+		if (mAnchorNodeName != null && mAnchorNodeName.equals(pSpriteFrameNodeName)) {
 			return this;
 
 		}
 
-		final int lNumChildNodes = childNodes.size();
+		final int lNumChildNodes = mChildNodes.size();
 		for (int i = 0; i < lNumChildNodes; i++) {
-			final var lSpriteGraphNodeInstance = childNodes.get(i).getNodeNyNodeSpriteFrameName(pSpriteFrameNodeName);
+			final var lSpriteGraphNodeInstance = mChildNodes.get(i).getNodeNyNodeSpriteFrameName(pSpriteFrameNodeName);
 			if (lSpriteGraphNodeInstance != null) {
 				return lSpriteGraphNodeInstance;
 
@@ -233,9 +260,9 @@ public class SpriteGraphNodeInstance extends IndexedPooledBaseData {
 	public SpriteGraphNodeInstance(final int pPoolUid) {
 		super(pPoolUid);
 
-		disableTreeUpdatesRotation = false;
-		disableTreeUpdatesPosition = false;
-		childNodes = new ArrayList<>();
+		mDisableTreeUpdatesRotation = false;
+		mDisableTreeUpdatesPosition = false;
+		mChildNodes = new ArrayList<>();
 
 	}
 
@@ -243,52 +270,50 @@ public class SpriteGraphNodeInstance extends IndexedPooledBaseData {
 	// Core-Methods
 	// --------------------------------------
 
-	public void init(List<SpriteGraphNodeInstance> pFlat, ISpriteGraphPool pSpriteGraphPool, SpriteGraphInstance pSpriteGraphInst, SpriteGraphNodeDefinition pGraphNodeDef, int pEntityGroupUid, int pNodeDepth) {
+	public void init(List<SpriteGraphNodeInstance> pFlat, ISpriteGraphPool pSpriteGraphPool, SpriteGraphInstance pSpriteGraphInst, SpriteGraphNodeDefinition pGraphNodeDef, int entityGroupUid, int pNodeDepth) {
 		mParentGraphInst = pSpriteGraphInst;
-		name = pGraphNodeDef.name;
-		anchorNodeName = pGraphNodeDef.anchorNodeName;
-		nodeDepth = pNodeDepth;
-		entityGroupID = pEntityGroupUid;
-		zDepth = pGraphNodeDef.zDepth;
-		attachmentCategory = pGraphNodeDef.attachmentCategory;
-		controlsGraphAnimationListener = pGraphNodeDef.controlsGraphAnimationListener;
+		mName = pGraphNodeDef.name();
+		mAnchorNodeName = pGraphNodeDef.anchorNodeName();
+		mEntityGroupUid = entityGroupUid;
+		mZDepth = pGraphNodeDef.zDepth();
+		mAttachmentCategory = pGraphNodeDef.attachmentCategory();
+		mControlsGraphAnimationListener = pGraphNodeDef.controlsGraphAnimationListener();
+		mNodeDepth = pNodeDepth;
 
-		final int lChildNodeCount = pGraphNodeDef.childParts.size();
+		final int lChildNodeCount = pGraphNodeDef.childParts().size();
 		for (int i = 0; i < lChildNodeCount; i++) {
-			final var lSpriteGraphNodeDefinition = pGraphNodeDef.childParts.get(i);
+			final var lSpriteGraphNodeDefinition = pGraphNodeDef.childParts().get(i);
 			final var lNewNode = pSpriteGraphPool.getSpriteGraphNodeInstance();
 
-			lNewNode.init(pFlat, pSpriteGraphPool, pSpriteGraphInst, lSpriteGraphNodeDefinition, pEntityGroupUid, nodeDepth + 1);
+			lNewNode.init(pFlat, pSpriteGraphPool, pSpriteGraphInst, lSpriteGraphNodeDefinition, entityGroupUid, mNodeDepth + 1);
 
 			pFlat.add(lNewNode);
 
-			childNodes.add(lNewNode);
-
+			mChildNodes.add(lNewNode);
 		}
-
 	}
 
 	public void reset(ISpriteGraphPool pSpriteGraphPool) {
-		controlsGraphAnimationListener = false;
+		mControlsGraphAnimationListener = false;
 	}
 
-	public void update(LintfordCore pCore, SpriteGraphInstance pParentGraph, SpriteGraphNodeInstance pParentGraphNode) {
-		updateSpriteInstance(pCore, pParentGraph, pParentGraphNode);
+	public void update(LintfordCore core, SpriteGraphInstance parentGraph, SpriteGraphNodeInstance parentGraphNode) {
+		updateSpriteInstance(core, parentGraph, parentGraphNode);
 
 		if (mSpriteInstance != null) {
-			flippedHorizontal(mParentGraphInst.mFlipHorizontal);
-			flippedVertical(mParentGraphInst.mFlipVertical);
+			flippedHorizontal(mParentGraphInst.flipHorizontal());
+			flippedVertical(mParentGraphInst.flipVerticle());
 
 			mSpriteInstance.flipHorizontal(flippedHorizontal());
 			mSpriteInstance.flipVertical(flippedVertical());
 
-			mSpriteInstance.update(pCore);
+			mSpriteInstance.update(core);
 
 			final var lSpriteWidth = mSpriteInstance.width();
 			final var lSpriteHeight = mSpriteInstance.height();
 
-			mPivotX = mSpriteInstance.flipHorizontal() ? -(int) mSpriteInstance.pivotX - 1 : (int) mSpriteInstance.pivotX;
-			mPivotY = (int) mSpriteInstance.pivotY;
+			mPivotX = mSpriteInstance.flipHorizontal() ? -(int) mSpriteInstance.pivotX() - 1 : (int) mSpriteInstance.pivotX();
+			mPivotY = (int) mSpriteInstance.pivotY();
 
 			final float lRotationRadians = mRotationInRadians;
 
@@ -298,33 +323,32 @@ public class SpriteGraphNodeInstance extends IndexedPooledBaseData {
 			final float lRotationAdapted = mSpriteInstance.flipHorizontal() ? -lRotationRadians : lRotationRadians;
 			mSpriteInstance.rotateAbs(lRotationAdapted);
 			mSpriteInstance.set(mPositionX - lSpriteHalfWidth, mPositionY - lSpriteHalfHeight, lSpriteWidth, lSpriteHeight);
-
 		}
 
-		final int lChildrenCount = childNodes.size();
+		final int lChildrenCount = mChildNodes.size();
 		for (int i = 0; i < lChildrenCount; i++) {
-			final var lChildSpriteGraphNode = childNodes.get(i);
-			updateChildNodeTransform(pCore, lChildSpriteGraphNode);
+			final var lChildSpriteGraphNode = mChildNodes.get(i);
+			updateChildNodeTransform(core, lChildSpriteGraphNode);
 
-			childNodes.get(i).update(pCore, pParentGraph, this);
+			mChildNodes.get(i).update(core, parentGraph, this);
 		}
 	}
 
-	private void updateSpriteInstance(LintfordCore pCore, SpriteGraphInstance pSpriteGraph, SpriteGraphNodeInstance pParentSpriteGraphNode) {
+	private void updateSpriteInstance(LintfordCore core, SpriteGraphInstance spriteGraph, SpriteGraphNodeInstance parentSpriteGraphNode) {
 		if (mSpritegraphAttachmentInstance == null || mSpritegraphAttachmentInstance.isInitialized() == false)
 			return;
 
 		final var lAttachment = mSpritegraphAttachmentInstance;
 
 		if (lAttachment.spritesheetDefinition() == null) {
-			if (lAttachment.resolvedSpritesheetDefinitionName) {
+			if (lAttachment.resolvedSpritesheetDefinitionName()) {
 				return;
 			}
 
-			if (lAttachment.useDynamicNames) {
-				loadNodeSpritesheetDefinitionFromAttachment(pCore, pSpriteGraph, lAttachment);
+			if (lAttachment.useDynamicNames()) {
+				loadNodeSpritesheetDefinitionFromAttachment(core, spriteGraph, lAttachment);
 			} else {
-				loadNodeSpritesheetDefinitionFromAttachment(pCore, lAttachment);
+				loadNodeSpritesheetDefinitionFromAttachment(core, lAttachment);
 			}
 			// this causes us to miss one frame of animation
 			return;
@@ -344,96 +368,87 @@ public class SpriteGraphNodeInstance extends IndexedPooledBaseData {
 
 		boolean reqUpdate = false;
 		String tlTempNextAnimFrameName = null;
-		if (currentNodeSpriteActionName == null) {
-			if (nextAnimationName != null) {
-				tlTempNextAnimFrameName = nextAnimationName;
+		if (mCurrentNodeSpriteActionName == null) {
+			if (mNextAnimationName != null) {
+				tlTempNextAnimFrameName = mNextAnimationName;
 			}
 
-			else if (mSpritegraphAttachmentInstance.defaultAnimationName != null) {
-				tlTempNextAnimFrameName = mSpritegraphAttachmentInstance.defaultAnimationName;
+			else if (mSpritegraphAttachmentInstance.defaultAnimationName() != null) {
+				tlTempNextAnimFrameName = mSpritegraphAttachmentInstance.defaultAnimationName();
 			}
 
-			else if (mSpritegraphAttachmentInstance.defaultSpriteName != null) {
-				tlTempNextAnimFrameName = mSpritegraphAttachmentInstance.defaultSpriteName;
+			else if (mSpritegraphAttachmentInstance.defaultSpriteName() != null) {
+				tlTempNextAnimFrameName = mSpritegraphAttachmentInstance.defaultSpriteName();
 			}
 			reqUpdate = true;
-		} else if (nextAnimationName != null && nextAnimationName.equals(currentNodeSpriteActionName) == false) {
-			tlTempNextAnimFrameName = nextAnimationName;
+		} else if (mNextAnimationName != null && mNextAnimationName.equals(mCurrentNodeSpriteActionName) == false) {
+			tlTempNextAnimFrameName = mNextAnimationName;
 			reqUpdate = true;
 		}
-
-		//      Maybe still need a method of playing animations based on the parent spritegraph (as opposed to a frame-based solution above)
-		//		if (reqUpdate == false && currentNodeSpriteActionName == null && tlTempNextAnimFrameName == null) {
-		//			var lFoundSprintInstance = lSpritesheetDefinition.getSpriteInstance(pSpriteGraph.currentAnimation());
-		//			if (lFoundSprintInstance != null) {
-		//				mSpriteInstance = lFoundSprintInstance;
-		//				currentNodeSpriteActionName = pSpriteGraph.currentAnimation();
-		//			}
-		//		}
 
 		if (reqUpdate && tlTempNextAnimFrameName != null) {
 			var lFoundSprintInstance = lSpritesheetDefinition.getSpriteInstance(tlTempNextAnimFrameName);
 			if (lFoundSprintInstance != null) {
 				mSpriteInstance = lFoundSprintInstance;
-				currentNodeSpriteActionName = nextAnimationName;
+				mCurrentNodeSpriteActionName = mNextAnimationName;
 			} else {
-				lFoundSprintInstance = lSpritesheetDefinition.getSpriteInstance(lAttachment.defaultSpriteName);
+				lFoundSprintInstance = lSpritesheetDefinition.getSpriteInstance(lAttachment.defaultSpriteName());
 				if (lFoundSprintInstance != null) {
 					mSpriteInstance = lFoundSprintInstance;
-					currentNodeSpriteActionName = lAttachment.defaultSpriteName;
+					mCurrentNodeSpriteActionName = lAttachment.defaultSpriteName();
 				}
 			}
 
 			if (lFoundSprintInstance == null) {
 				// Sometimes it is okay that no animation is found on a graph node
-				nextAnimationName = null;
-				currentNodeSpriteActionName = null;
+				mNextAnimationName = null;
+				mCurrentNodeSpriteActionName = null;
 			}
 
-			if (controlsGraphAnimationListener) {
-				mSpriteInstance.animatedSpriteListender(pSpriteGraph);
+			if (mControlsGraphAnimationListener) {
+				mSpriteInstance.animatedSpriteListender(spriteGraph);
 			}
 		}
 	}
 
-	private void loadNodeSpritesheetDefinitionFromAttachment(LintfordCore pCore, SpriteGraphInstance pSpriteGraph, SpriteGraphAttachmentInstance pAttachment) {
-		pAttachment.resolvedSpritesheetDefinitionName = true;
+	private void loadNodeSpritesheetDefinitionFromAttachment(LintfordCore core, SpriteGraphInstance spriteGraph, SpriteGraphAttachmentInstance attachment) {
+		attachment.resolvedSpritesheetDefinitionName(true);
 
-		var lSpriteSheetDefinition = pAttachment.spritesheetDefinition();
+		var lSpriteSheetDefinition = attachment.spritesheetDefinition();
 		if (lSpriteSheetDefinition == null) {
-			final var lResolvedSpriteName = "SPRITESHEET_" + pSpriteGraph.mDynamicSpritesheetName + pAttachment.spritesheetDefinitionName;
+			final var lResolvedSpriteName = "SPRITESHEET_" + spriteGraph.dynamicSpritesheetName() + attachment.spritesheetDefinitionName();
 			Debug.debugManager().logger().i(getClass().getSimpleName(), "Resolving dynamic sprite name to : " + lResolvedSpriteName);
 
-			final var lResourceManager = pCore.resources();
-			lSpriteSheetDefinition = lResourceManager.spriteSheetManager().getSpriteSheet(lResolvedSpriteName, entityGroupID);
+			final var lResourceManager = core.resources();
+			lSpriteSheetDefinition = lResourceManager.spriteSheetManager().getSpriteSheet(lResolvedSpriteName, mEntityGroupUid);
 
 			if (lSpriteSheetDefinition == null) {
 				Debug.debugManager().logger().w(getClass().getSimpleName(), "Couldn't resolve dynamic SpriteGraphNodeSpritesheetDefinition name '" + lResolvedSpriteName + "'");
 				return;
 			}
 
-			pAttachment.spritesheetDefinition(lSpriteSheetDefinition);
+			attachment.spritesheetDefinition(lSpriteSheetDefinition);
 		}
 	}
 
-	private void loadNodeSpritesheetDefinitionFromAttachment(LintfordCore pCore, SpriteGraphAttachmentInstance pAttachment) {
-		pAttachment.resolvedSpritesheetDefinitionName = true;
+	private void loadNodeSpritesheetDefinitionFromAttachment(LintfordCore core, SpriteGraphAttachmentInstance attachment) {
+		attachment.resolvedSpritesheetDefinitionName(true);
 
-		var lSpriteSheetDefinition = pAttachment.spritesheetDefinition();
+		var lSpriteSheetDefinition = attachment.spritesheetDefinition();
 		if (lSpriteSheetDefinition == null) {
-			final var lResourceManager = pCore.resources();
-			lSpriteSheetDefinition = lResourceManager.spriteSheetManager().getSpriteSheet(pAttachment.spritesheetDefinitionName, entityGroupID);
+			final var lResourceManager = core.resources();
+			lSpriteSheetDefinition = lResourceManager.spriteSheetManager().getSpriteSheet(attachment.spritesheetDefinitionName(), mEntityGroupUid);
 
 			if (lSpriteSheetDefinition == null) {
-				Debug.debugManager().logger().w(getClass().getSimpleName(), "Couldn't resolve static SpriteGraphNodeSpritesheetDefinition name '" + pAttachment.spritesheetDefinitionName + "'");
+				Debug.debugManager().logger().w(getClass().getSimpleName(), "Couldn't resolve static SpriteGraphNodeSpritesheetDefinition name '" + attachment.spritesheetDefinitionName() + "'");
 				return;
 			}
 
-			pAttachment.spritesheetDefinition(lSpriteSheetDefinition);
+			attachment.spritesheetDefinition(lSpriteSheetDefinition);
 		}
 	}
 
-	private void updateChildNodeTransform(LintfordCore pCore, SpriteGraphNodeInstance pChildGraphNodeInstance) {
+	private void updateChildNodeTransform(LintfordCore core, SpriteGraphNodeInstance childGraphNodeInstance) {
 		int lAnchorPositionX = 0;
 		int lAnchorPositionY = 0;
 		float lAnchorRotation = 0.0f;
@@ -441,61 +456,57 @@ public class SpriteGraphNodeInstance extends IndexedPooledBaseData {
 		if (mSpriteInstance != null) {
 			final var lCurrentSpriteFrame = mSpriteInstance.currentSpriteFrame();
 			if (lCurrentSpriteFrame != null) {
-				final var lAnchorPoint = lCurrentSpriteFrame.getAnchorByName(pChildGraphNodeInstance.anchorNodeName);
+				final var lAnchorPoint = lCurrentSpriteFrame.getAnchorByName(childGraphNodeInstance.mAnchorNodeName);
 
 				if (lAnchorPoint != null) {
-					lAnchorPositionX = mParentGraphInst.mFlipHorizontal ? -lAnchorPoint.x : lAnchorPoint.x;
-					lAnchorPositionY = lAnchorPoint.y;
-					lAnchorRotation = lAnchorPoint.r;
+					lAnchorPositionX = mParentGraphInst.flipHorizontal() ? -lAnchorPoint.localX() : lAnchorPoint.localX();
+					lAnchorPositionY = lAnchorPoint.localY();
+					lAnchorRotation = lAnchorPoint.rotation();
 				}
-
 			}
-
 		}
 
-		if (!pChildGraphNodeInstance.disableTreeUpdatesPosition) {
+		if (!childGraphNodeInstance.mDisableTreeUpdatesPosition) {
 			float lAngleInRadians = flippedHorizontal() ? -mRotationInRadians : mRotationInRadians;
 
 			float lNX = rotatePointX(pivotX(), pivotY(), lAngleInRadians, lAnchorPositionX, lAnchorPositionY);
 			float lNY = rotatePointY(pivotX(), pivotY(), lAngleInRadians, lAnchorPositionX, lAnchorPositionY);
 
-			pChildGraphNodeInstance.positionX(mPositionX - mPivotX + lNX);
-			pChildGraphNodeInstance.positionY(mPositionY - mPivotY + lNY);
-
+			childGraphNodeInstance.positionX(mPositionX - mPivotX + lNX);
+			childGraphNodeInstance.positionY(mPositionY - mPivotY + lNY);
 		}
 
-		if (!pChildGraphNodeInstance.disableTreeUpdatesRotation)
-			pChildGraphNodeInstance.rotationInRadians((float) Math.toRadians(lAnchorRotation) + mRotationInRadians);
-
+		if (!childGraphNodeInstance.mDisableTreeUpdatesRotation)
+			childGraphNodeInstance.rotationInRadians((float) Math.toRadians(lAnchorRotation) + mRotationInRadians);
 	}
 
-	float rotatePointX(float cx, float cy, float angle, float pX, float pY) {
-		float cos = (float) Math.cos(angle);
-		float sin = (float) Math.sin(angle);
+	private float rotatePointX(float cx, float cy, float angle, float x, float y) {
+		final float cos = (float) Math.cos(angle);
+		final float sin = (float) Math.sin(angle);
 
-		return cos * (pX - cx) - sin * (pY - cy) + cx;
+		return cos * (x - cx) - sin * (y - cy) + cx;
 	}
 
-	float rotatePointY(float cx, float cy, float angle, float pX, float pY) {
-		float cos = (float) Math.cos(angle);
-		float sin = (float) Math.sin(angle);
+	private float rotatePointY(float cx, float cy, float angle, float x, float y) {
+		final float cos = (float) Math.cos(angle);
+		final float sin = (float) Math.sin(angle);
 
-		return sin * (pX - cx) + cos * (pY - cy) + cy;
+		return sin * (x - cx) + cos * (y - cy) + cy;
 	}
 
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
 
-	public void attachItemToSpriteGraphNode(SpriteGraphAttachmentInstance pAttachmentInstance) {
+	public void attachItemToSpriteGraphNode(SpriteGraphAttachmentInstance attachmentInstance) {
 		if (mSpritegraphAttachmentInstance != null && mSpritegraphAttachmentInstance.isInitialized()) {
 			detachItemFromSpriteGraphNode();
 		}
 
-		currentNodeSpriteActionName = null;
-		nextAnimationName = null;
+		mCurrentNodeSpriteActionName = null;
+		mNextAnimationName = null;
 
-		mSpritegraphAttachmentInstance = pAttachmentInstance;
+		mSpritegraphAttachmentInstance = attachmentInstance;
 	}
 
 	public void detachItemFromSpriteGraphNode() {
@@ -510,24 +521,22 @@ public class SpriteGraphNodeInstance extends IndexedPooledBaseData {
 		}
 	}
 
-	public void addChild(SpriteGraphNodeInstance pPart) {
-		if (!childNodes.contains(pPart)) {
-			childNodes.add(pPart);
-
+	public void addChild(SpriteGraphNodeInstance spriteGraphNodeInstance) {
+		if (!mChildNodes.contains(spriteGraphNodeInstance)) {
+			mChildNodes.add(spriteGraphNodeInstance);
 		}
-
 	}
 
 	public void reset() {
 		// reset child nodes
-		final int lNumChildNodes = childNodes.size();
+		final int lNumChildNodes = mChildNodes.size();
 		for (int i = 0; i < lNumChildNodes; i++) {
-			childNodes.get(i).reset();
+			mChildNodes.get(i).reset();
 
 		}
 
-		name = null;
-		anchorNodeName = null;
+		mName = null;
+		mAnchorNodeName = null;
 
 	}
 
@@ -538,11 +547,6 @@ public class SpriteGraphNodeInstance extends IndexedPooledBaseData {
 		}
 
 		mSpriteInstance = null;
-
-	}
-
-	public void setAngToPoint(float pNewValue) {
-		angToPoint = pNewValue;
 
 	}
 }

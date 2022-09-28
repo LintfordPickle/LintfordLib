@@ -16,7 +16,6 @@ public class BaseRendererWidget extends Rectangle {
 	// Variables
 	// --------------------------------------
 
-	// Id is used when building the BaseRendererWidget tree (to check we have captured all renderers).
 	public int rendererId;
 	public int rendererLevel;
 	public BaseRenderer baseRenderer;
@@ -31,15 +30,12 @@ public class BaseRendererWidget extends Rectangle {
 
 	}
 
-	public void handleInput(LintfordCore pCore) {
+	public void handleInput(LintfordCore core) {
 
 	}
 
-	public void update(LintfordCore pCore) {
-		if (baseRenderer != null) {
+	public void update(LintfordCore core) {
+		if (baseRenderer != null)
 			isRendererActive = baseRenderer.isActive();
-
-		}
-
 	}
 }

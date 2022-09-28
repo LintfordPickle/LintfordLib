@@ -29,7 +29,7 @@ public class Texture {
 
 	private String mName;
 	private int mTextureId;
-	public final int entityId;
+	private final int mEntityUId;
 	private String mTextureLocation;
 	private int mTextureWidth;
 	private int mTextureHeight;
@@ -53,6 +53,10 @@ public class Texture {
 	// Properties
 	// --------------------------------------
 
+	public int entityUid() {
+		return mEntityUId;
+	}
+
 	public int[] RGBColorData() {
 		return mARGBColorData;
 	}
@@ -65,16 +69,16 @@ public class Texture {
 		return mReloadable;
 	}
 
-	public void reloadable(boolean v) {
-		mReloadable = v;
+	public void reloadable(boolean isReloadable) {
+		mReloadable = isReloadable;
 	}
 
 	public long fileSizeOnLoad() {
 		return mFileSizeOnLoad;
 	}
 
-	public void fileSizeOnLoad(long v) {
-		mFileSizeOnLoad = v;
+	public void fileSizeOnLoad(long filesize) {
+		mFileSizeOnLoad = filesize;
 	}
 
 	public String textureLocation() {
@@ -97,16 +101,15 @@ public class Texture {
 	// Constructor
 	// --------------------------------------
 
-	private Texture(String pName, int pTextureId, String pFilename, int pWidth, int pHeight, int pFilter) {
-		mName = pName;
-		entityId = getNewTextureEntityId();
-		mTextureId = pTextureId;
-		mTextureLocation = pFilename;
-		mTextureWidth = pWidth;
-		mTextureHeight = pHeight;
-		mTextureFilterMode = pFilter;
+	private Texture(String textureName, int textureId, String filename, int width, int height, int filter) {
+		mName = textureName;
+		mEntityUId = getNewTextureEntityId();
+		mTextureId = textureId;
+		mTextureLocation = filename;
+		mTextureWidth = width;
+		mTextureHeight = height;
+		mTextureFilterMode = filter;
 		mReloadable = true;
-
 	}
 
 	// --------------------------------------
@@ -114,97 +117,69 @@ public class Texture {
 	// --------------------------------------
 
 	// package access (textures should be loaded using the texture manager.
-	static Texture loadTextureFromFile(String pName, String pFilename, int pFilter) {
-		if (pFilename == null || pFilename.length() == 0) {
+	static Texture loadTextureFromFile(String ptextureName, String filename, int filter) {
+		if (filename == null || filename.length() == 0) {
 			return null;
-
 		}
 
-		String lCleanFilename = cleanFilename(pFilename);
+		String lCleanFilename = cleanFilename(filename);
 
-		BufferedImage lImage = null;
-		long lFileSize = 0;
-
-		// 1. load the image
 		try {
-			// Load the file from the path, ignoring whitespace, tabs and new lines from the path string.
-			File lTextureFile = new File(lCleanFilename);
-			lFileSize = lTextureFile.length();
+			final var lFile = new File(lCleanFilename);
+			final var lFileSize = lFile.length();
+			final var lImage = ImageIO.read(lFile);
 
-			lImage = ImageIO.read(lTextureFile);
-
-			Texture lNewTexture = createTexture(pName, pFilename, lImage, pFilter);
-
+			final var lNewTexture = createTexture(ptextureName, filename, lImage, filter);
 			lNewTexture.fileSizeOnLoad(lFileSize);
 			lNewTexture.reloadable(true);
 
-			Debug.debugManager().logger().v(Texture.class.getSimpleName(), "Loaded texture from file: " + pFilename);
+			Debug.debugManager().logger().v(Texture.class.getSimpleName(), "Loaded texture from file: " + filename);
 
 			return lNewTexture;
 
-		} catch (IIOException e) {
-			Debug.debugManager().logger().e(Texture.class.getSimpleName(), "Error loading texture from file (" + pFilename + ")");
-			return null;
-
 		} catch (FileNotFoundException e) {
-			Debug.debugManager().logger().e(Texture.class.getSimpleName(), "Error loading texture from file (" + pFilename + ")");
-			return null;
-
+			Debug.debugManager().logger().e(Texture.class.getSimpleName(), "FileNotFoundException: Error loading texture from file (" + filename + ")");
+		} catch (IIOException e) {
+			Debug.debugManager().logger().e(Texture.class.getSimpleName(), "IIOException: Error loading texture from file (" + filename + ")");
 		} catch (IOException e) {
-			Debug.debugManager().logger().e(Texture.class.getSimpleName(), "Error loading texture from file (" + pFilename + ")");
-			return null;
-
+			Debug.debugManager().logger().e(Texture.class.getSimpleName(), "IOException: Error loading texture from file (" + filename + ")");
 		}
 
+		return null;
 	}
 
-	static Texture loadTextureFromResource(String pName, String pFilename, int pFilter) {
-		if (pFilename == null || pFilename.length() == 0) {
+	static Texture loadTextureFromResource(String textureName, String filename, int filter) {
+		if (filename == null || filename.length() == 0) {
 			return null;
-
 		}
 
-		BufferedImage lImage = null;
-		long lFileSize = 0;
-
-		// 1. load the image
 		try {
-			// Load the file from the path, ignoring whitespace, tabs and new lines from the path string.
-			InputStream lInputStream = Texture.class.getResourceAsStream(pFilename);
+			InputStream lInputStream = Texture.class.getResourceAsStream(filename);
 			if (lInputStream == null) {
-				Debug.debugManager().logger().e("Texture", "Couldn't open InputStream: " + pFilename);
-				throw new FileNotFoundException();
+				Debug.debugManager().logger().e(Texture.class.getSimpleName(), "Couldn't open InputStream: " + filename);
+				return null;
 			}
 
-			// Resource paths don't allow double slashes
-			pFilename = pFilename.replace("//", "/");
+			filename = filename.replace("//", "/");
 
-			lImage = ImageIO.read(lInputStream);
+			final var lImage = ImageIO.read(lInputStream);
 
-			Texture lNewTexture = createTexture(pName, pFilename, lImage, pFilter);
-
-			lNewTexture.fileSizeOnLoad(lFileSize);
-
-			// Don't attempt to reload textures loaded from the embedded resources
+			final var lNewTexture = createTexture(textureName, filename, lImage, filter);
+			lNewTexture.fileSizeOnLoad(0);
 			lNewTexture.reloadable(false);
 
-			Debug.debugManager().logger().v(Texture.class.getSimpleName(), "Loaded texture from resource: " + pFilename);
+			Debug.debugManager().logger().v(Texture.class.getSimpleName(), "Loaded texture from resource: " + filename);
 
 			return lNewTexture;
-
 		} catch (FileNotFoundException e) {
-			Debug.debugManager().logger().e(Texture.class.getSimpleName(), "Error loading texture from resource (" + pFilename + " )");
+			Debug.debugManager().logger().e(Texture.class.getSimpleName(), "Error loading texture from resource (" + filename + " )");
 			Debug.debugManager().logger().printException(Texture.class.getSimpleName(), e);
-
-			return null;
-
 		} catch (IOException e) {
-			Debug.debugManager().logger().e(Texture.class.getSimpleName(), "Error loading texture from resource (" + pFilename + " )");
+			Debug.debugManager().logger().e(Texture.class.getSimpleName(), "Error loading texture from resource (" + filename + " )");
 			Debug.debugManager().logger().printException(Texture.class.getSimpleName(), e);
-
-			return null;
 		}
 
+		return null;
 	}
 
 	public void saveTextureToFile(String pPathname) {
@@ -223,12 +198,11 @@ public class Texture {
 
 	}
 
-	public static boolean saveTextureToFile(int pWidth, int pHeight, int[] pData, String pFileLocation) {
-		BufferedImage lImage = new BufferedImage(pWidth, pHeight, BufferedImage.TYPE_INT_ARGB);
+	public static boolean saveTextureToFile(int width, int height, int[] pData, String fileLocation) {
+		final var lImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 
-		// Convert our ARGB to output ABGR
-		int[] lTextureData = new int[pWidth * pHeight];
-		for (int i = 0; i < pWidth * pHeight; i++) {
+		int[] lTextureData = new int[width * height];
+		for (int i = 0; i < width * height; i++) {
 			int a = (pData[i] & 0xff000000) >> 24;
 			int r = (pData[i] & 0xff0000) >> 16;
 			int g = (pData[i] & 0xff00) >> 8;
@@ -237,77 +211,75 @@ public class Texture {
 			lTextureData[i] = a << 24 | b << 16 | g << 8 | r;
 		}
 
-		lImage.setRGB(0, 0, pWidth, pHeight, lTextureData, 0, pWidth);
+		lImage.setRGB(0, 0, width, height, lTextureData, 0, width);
 
-		File outputfile = new File(pFileLocation);
 		try {
-			ImageIO.write(lImage, "png", outputfile);
+			ImageIO.write(lImage, "png", new File(fileLocation));
 		} catch (IOException e) {
-			// e.printStackTrace();
+			Debug.debugManager().logger().e(Texture.class.getSimpleName(), "Error saving png to disk : " + fileLocation);
 			return false;
 		}
 
 		return true;
-
 	}
 
-	static void unloadTexture(Texture pTexture) {
-		if (pTexture == null)
+	static void unloadTexture(Texture texture) {
+		if (texture == null)
 			return;
 
-		GL11.glDeleteTextures(pTexture.mTextureId);
-		pTexture.mTextureId = -1;
-		pTexture.mTextureLocation = null;
-		pTexture.mTextureWidth = 0;
-		pTexture.mTextureHeight = 0;
-		pTexture = null;
+		GL11.glDeleteTextures(texture.mTextureId);
+		texture.mTextureId = -1;
+		texture.mTextureLocation = null;
+		texture.mTextureWidth = 0;
+		texture.mTextureHeight = 0;
+		texture = null;
 	}
 
-	private static String cleanFilename(String pFilename) {
-		return pFilename.replaceAll("\\s+", "");
+	private static String cleanFilename(String filename) {
+		return filename.replaceAll("\\s+", "");
 	}
 
 	/**
 	 * Creates an OpenGL {@link Texture} from a {@link BufferedImage}.
 	 */
-	static Texture createTexture(String pName, String pTextureLocation, BufferedImage pImage, int pFilter) {
-		final int lWidth = pImage.getWidth();
-		final int lHeight = pImage.getHeight();
+	static Texture createTexture(String textureName, String textureLocation, BufferedImage image, int filter) {
+		final int lWidth = image.getWidth();
+		final int lHeight = image.getHeight();
 
-		final var lPixelsARGB = pImage.getRGB(0, 0, lWidth, lHeight, null, 0, lWidth);
+		final var lPixelsARGB = image.getRGB(0, 0, lWidth, lHeight, null, 0, lWidth);
 
-		return createTexture(pName, pTextureLocation, lPixelsARGB, lWidth, lHeight, pFilter, GL12.GL_REPEAT, GL12.GL_REPEAT);
+		return createTexture(textureName, textureLocation, lPixelsARGB, lWidth, lHeight, filter, GL12.GL_REPEAT, GL12.GL_REPEAT);
 	}
 
 	/**
 	 * Creates an OpenGL Texture from RGB data.
 	 */
-	static Texture createTexture(String pName, String mTextureLocation, int[] pPixelsARGB, int pWidth, int pHeight, int pFilter, int pWrapModeS, int pWrapModeT) {
+	static Texture createTexture(String textureName, String textureLocation, int[] pixelsARGB, int width, int height, int filter, int wrapModeS, int wrapModeT) {
 		final int lTexID = GL11.glGenTextures();
 
-		var lIntBuffer = MemoryUtil.memAllocInt(pPixelsARGB.length * 4);
-		lIntBuffer.put(pPixelsARGB);
+		var lIntBuffer = MemoryUtil.memAllocInt(pixelsARGB.length * 4);
+		lIntBuffer.put(pixelsARGB);
 		lIntBuffer.flip();
 
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, lTexID);
-		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, pFilter);
-		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, pFilter);
+		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, filter);
+		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, filter);
 
-		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, pWrapModeS);
-		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, pWrapModeT);
+		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, wrapModeS);
+		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, wrapModeT);
 
-		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, pWidth, pHeight, 0, GL12.GL_BGRA, GL11.GL_UNSIGNED_BYTE, lIntBuffer);
+		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, width, height, 0, GL12.GL_BGRA, GL11.GL_UNSIGNED_BYTE, lIntBuffer);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 
 		MemoryUtil.memFree(lIntBuffer);
 		lIntBuffer = null;
 
-		final var lNewTexture = new Texture(pName, lTexID, mTextureLocation, pWidth, pHeight, pFilter);
+		final var lNewTexture = new Texture(textureName, lTexID, textureLocation, width, height, filter);
 
-		lNewTexture.mARGBColorData = pPixelsARGB;
-		lNewTexture.mTextureFilterMode = pFilter;
-		lNewTexture.mWrapModeS = pWrapModeS;
-		lNewTexture.mWrapModeT = pWrapModeT;
+		lNewTexture.mARGBColorData = pixelsARGB;
+		lNewTexture.mTextureFilterMode = filter;
+		lNewTexture.mWrapModeS = wrapModeS;
+		lNewTexture.mWrapModeT = wrapModeT;
 
 		return lNewTexture;
 	}
@@ -316,24 +288,18 @@ public class Texture {
 		return mTextureEntityId++;
 	}
 
-	public void reloadTexture(String pFilename) {
-		// If a new filename is explicitly passed in, then ignore the reloadable flag
-		String lCleanFilename = cleanFilename(pFilename);
-
-		BufferedImage lImage = null;
-		long lFileSize = 0;
+	public void reloadTexture(String textureFilename) {
+		String lCleanFilename = cleanFilename(textureFilename);
 
 		try {
-			// Load the file from the path, ignoring whitespace, tabs and new lines from the path string.
-			File lTextureFile = new File(lCleanFilename);
-			lFileSize = lTextureFile.length();
+			final var lTextureFile = new File(lCleanFilename);
+			final var lFileSize = lTextureFile.length();
 
-			lImage = ImageIO.read(lTextureFile);
+			final var lImage = ImageIO.read(lTextureFile);
 
 			final int lWidth = lImage.getWidth();
 			final int lHeight = lImage.getHeight();
 
-			// Get the pixels from the buffered image
 			final int[] lPixels = new int[lWidth * lHeight];
 			lImage.getRGB(0, 0, lWidth, lHeight, lPixels, 0, lWidth);
 
@@ -347,37 +313,25 @@ public class Texture {
 			reloadable(true);
 
 			Debug.debugManager().logger().i(getClass().getSimpleName(), "Reloaded texture: " + mTextureLocation);
-
-			return;
-
 		} catch (FileNotFoundException e) {
-			Debug.debugManager().logger().e(Texture.class.getSimpleName(), "Error loading texture from file (" + pFilename + ")");
+			Debug.debugManager().logger().e(Texture.class.getSimpleName(), "Error loading texture from file (" + textureFilename + ")");
 			Debug.debugManager().logger().printException(Texture.class.getSimpleName(), e);
-
-			return;
-
 		} catch (IOException e) {
-			Debug.debugManager().logger().e(Texture.class.getSimpleName(), "Error loading texture from file (" + pFilename + ")");
+			Debug.debugManager().logger().e(Texture.class.getSimpleName(), "Error loading texture from file (" + textureFilename + ")");
 			Debug.debugManager().logger().printException(Texture.class.getSimpleName(), e);
-
-			return;
-
 		}
-
 	}
 
 	public void reload() {
 		if (!mReloadable) {
 			return;
-
 		}
 
 		reloadTexture(mTextureLocation);
-
 	}
 
-	void updateGLTextureData(int[] pPixelsARGB, int pWidth, int pHeight) {
-		if (pPixelsARGB.length == 0 || pPixelsARGB.length != pWidth * pHeight)
+	void updateGLTextureData(int[] pixelsARGB, int width, int height) {
+		if (pixelsARGB.length == 0 || pixelsARGB.length != width * height)
 			return;
 
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, mTextureId);
@@ -388,33 +342,31 @@ public class Texture {
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, mWrapModeS);
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, mWrapModeT);
 
-		var lIntBuffer = MemoryUtil.memAllocInt(pPixelsARGB.length * 4);
-		lIntBuffer.put(pPixelsARGB);
+		final var lIntBuffer = MemoryUtil.memAllocInt(pixelsARGB.length * 4);
+		lIntBuffer.put(pixelsARGB);
 		lIntBuffer.flip();
 
-		mARGBColorData = pPixelsARGB;
-		mTextureWidth = pWidth;
-		mTextureHeight = pHeight;
+		mARGBColorData = pixelsARGB;
+		mTextureWidth = width;
+		mTextureHeight = height;
 
-		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, pWidth, pHeight, 0, GL12.GL_BGRA, GL11.GL_UNSIGNED_BYTE, lIntBuffer);
+		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, width, height, 0, GL12.GL_BGRA, GL11.GL_UNSIGNED_BYTE, lIntBuffer);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 
 		MemoryUtil.memFree(lIntBuffer);
-		lIntBuffer = null;
-
 	}
 
 	// --------------------------------------
 	// Helpers
 	// --------------------------------------
 
-	static int[] changeARGBtoABGR(int[] pInput, int pWidth, int pHeight) {
-		int[] lReturnData = new int[pWidth * pHeight];
-		for (int i = 0; i < pWidth * pHeight; i++) {
-			int a = (pInput[i] & 0xff000000) >> 24;
-			int r = (pInput[i] & 0xff0000) >> 16;
-			int g = (pInput[i] & 0xff00) >> 8;
-			int b = (pInput[i] & 0xff);
+	static int[] changeARGBtoABGR(int[] input, int width, int height) {
+		int[] lReturnData = new int[width * height];
+		for (int i = 0; i < width * height; i++) {
+			int a = (input[i] & 0xff000000) >> 24;
+			int r = (input[i] & 0xff0000) >> 16;
+			int g = (input[i] & 0xff00) >> 8;
+			int b = (input[i] & 0xff);
 
 			lReturnData[i] = a << 24 | b << 16 | g << 8 | r;
 		}
@@ -422,13 +374,13 @@ public class Texture {
 		return lReturnData;
 	}
 
-	static int[] changeABGRtoARGB(int[] pInput, int pWidth, int pHeight) {
-		int[] lReturnData = new int[pWidth * pHeight];
-		for (int i = 0; i < pWidth * pHeight; i++) {
-			int a = (pInput[i] & 0xff000000) >> 24;
-			int b = (pInput[i] & 0xff0000) >> 16;
-			int g = (pInput[i] & 0xff00) >> 8;
-			int r = (pInput[i] & 0xff);
+	static int[] changeABGRtoARGB(int[] input, int width, int height) {
+		int[] lReturnData = new int[width * height];
+		for (int i = 0; i < width * height; i++) {
+			int a = (input[i] & 0xff000000) >> 24;
+			int b = (input[i] & 0xff0000) >> 16;
+			int g = (input[i] & 0xff00) >> 8;
+			int r = (input[i] & 0xff);
 
 			lReturnData[i] = a << 24 | r << 16 | g << 8 | b;
 		}
@@ -436,13 +388,13 @@ public class Texture {
 		return lReturnData;
 	}
 
-	static int[] changeBGRAtoARGB(int[] pInput, int pWidth, int pHeight) {
-		int[] lReturnData = new int[pWidth * pHeight];
-		for (int i = 0; i < pWidth * pHeight; i++) {
-			int b = (pInput[i] & 0xff000000) >> 24;
-			int g = (pInput[i] & 0xff0000) >> 16;
-			int r = (pInput[i] & 0xff00) >> 8;
-			int a = (pInput[i] & 0xff);
+	static int[] changeBGRAtoARGB(int[] input, int width, int height) {
+		int[] lReturnData = new int[width * height];
+		for (int i = 0; i < width * height; i++) {
+			int b = (input[i] & 0xff000000) >> 24;
+			int g = (input[i] & 0xff0000) >> 16;
+			int r = (input[i] & 0xff00) >> 8;
+			int a = (input[i] & 0xff);
 
 			lReturnData[i] = a << 24 | r << 16 | g << 8 | b;
 		}
@@ -450,13 +402,13 @@ public class Texture {
 		return lReturnData;
 	}
 
-	static int[] changeARGBAtoRGBA(int[] pInput, int pWidth, int pHeight) {
-		int[] lReturnData = new int[pWidth * pHeight];
-		for (int i = 0; i < pWidth * pHeight; i++) {
-			int a = (pInput[i] & 0xff000000) >> 24;
-			int r = (pInput[i] & 0xff0000) >> 16;
-			int g = (pInput[i] & 0xff00) >> 8;
-			int b = (pInput[i] & 0xff);
+	static int[] changeARGBAtoRGBA(int[] input, int width, int height) {
+		int[] lReturnData = new int[width * height];
+		for (int i = 0; i < width * height; i++) {
+			int a = (input[i] & 0xff000000) >> 24;
+			int r = (input[i] & 0xff0000) >> 16;
+			int g = (input[i] & 0xff00) >> 8;
+			int b = (input[i] & 0xff);
 
 			lReturnData[i] = r << 24 | g << 16 | b << 8 | a;
 		}
@@ -464,18 +416,17 @@ public class Texture {
 		return lReturnData;
 	}
 
-	static int[] changeRGBAtoARGB(int[] pInput, int pWidth, int pHeight) {
-		int[] lReturnData = new int[pWidth * pHeight];
-		for (int i = 0; i < pWidth * pHeight; i++) {
-			int r = (pInput[i] & 0xff000000) >> 24;
-			int g = (pInput[i] & 0xff0000) >> 16;
-			int b = (pInput[i] & 0xff00) >> 8;
-			int a = (pInput[i] & 0xff);
+	static int[] changeRGBAtoARGB(int[] input, int width, int height) {
+		int[] lReturnData = new int[width * height];
+		for (int i = 0; i < width * height; i++) {
+			int r = (input[i] & 0xff000000) >> 24;
+			int g = (input[i] & 0xff0000) >> 16;
+			int b = (input[i] & 0xff00) >> 8;
+			int a = (input[i] & 0xff);
 
 			lReturnData[i] = a << 24 | r << 16 | g << 8 | b;
 		}
 
 		return lReturnData;
 	}
-
 }

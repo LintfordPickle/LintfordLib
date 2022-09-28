@@ -49,7 +49,7 @@ public class InputManager {
 		return mMouseManager;
 	}
 
-	public GamepadManager gamepad() {
+	public GamepadManager gamepads() {
 		return mGamepadManager;
 	}
 
@@ -64,35 +64,29 @@ public class InputManager {
 
 		final String lInputConfigFilename = AppStorage.getGameDataDirectory() + InputConfigFilename;
 		mEventActionManager = new EventActionManager(this, lInputConfigFilename);
-
 	}
 
 	// --------------------------------------
 	// Core-Methods
 	// --------------------------------------
 
-	public void update(LintfordCore pCore) {
-		mMouseManager.update(pCore);
-		mKeyboardManager.update(pCore);
-
+	public void update(LintfordCore core) {
+		mMouseManager.update(core);
+		mKeyboardManager.update(core);
 	}
 
 	public void endUpdate() {
 		mMouseManager.endUpdate();
 		mKeyboardManager.endUpdate();
-
 	}
 
 	public void resetKeyFlags() {
 		mKeyboardManager.resetKeyFlags();
-
 	}
 
 	/** Resets state variables of the {@link InputManager} such as the mouse scroll wheel (which should be consumed and reset). */
 	public void resetFlags() {
 		mMouseManager.resetFlags();
 		mKeyboardManager.resetFlags();
-
 	}
-
 }

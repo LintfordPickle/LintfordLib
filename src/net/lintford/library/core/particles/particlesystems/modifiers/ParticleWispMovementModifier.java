@@ -28,28 +28,25 @@ public class ParticleWispMovementModifier extends ParticleModifierBase {
 	// --------------------------------------
 
 	@Override
-	public void initialize(Particle pParticle) {
+	public void initialize(Particle particle) {
 		// Give each Wisp particle a random direction
-		float lInitialAngle = RandomNumbers.RANDOM.nextFloat() * (float) Math.PI * 2f;
+		final var lInitialAngle = RandomNumbers.RANDOM.nextFloat() * (float) Math.PI * 2f;
 
-		pParticle.dx += (float) Math.cos(lInitialAngle);
-		pParticle.dy += (float) Math.sin(lInitialAngle);
+		particle.dx += (float) Math.cos(lInitialAngle);
+		particle.dy += (float) Math.sin(lInitialAngle);
+	}
+
+	@Override
+	public void update(LintfordCore core) {
 
 	}
 
 	@Override
-	public void update(LintfordCore pCore) {
-
-	}
-
-	@Override
-	public void updateParticle(LintfordCore pCore, Particle pParticle) {
-		float lAngle = (float) Math.atan2(pParticle.dy, pParticle.dx);
+	public void updateParticle(LintfordCore core, Particle particle) {
+		float lAngle = (float) Math.atan2(particle.dy, particle.dx);
 		lAngle += RandomNumbers.RANDOM.nextFloat() * 10f;
 
-		pParticle.dx += (float) Math.cos(lAngle);
-		pParticle.dy += (float) Math.sin(lAngle);
-
+		particle.dx += (float) Math.cos(lAngle);
+		particle.dy += (float) Math.sin(lAngle);
 	}
-
 }

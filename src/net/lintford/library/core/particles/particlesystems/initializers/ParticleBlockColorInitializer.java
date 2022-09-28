@@ -43,25 +43,24 @@ public class ParticleBlockColorInitializer extends ParticleInitializerBase {
 		mGMax = 0.6f;
 		mBMin = 0.03f;
 		mBMax = 0.1f;
-
 	}
 
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
 
-	public void setBlockColor(final float pR, final float pG, final float pB) {
-		final float L = mRandom.nextFloat() * 0.8f;
-		final float H = mRandom.nextFloat() * 0.15f;
+	public void setBlockColor(final float red, final float green, final float blue) {
+		final var lLow = mRandom.nextFloat() * 0.8f;
+		final var lHigh = mRandom.nextFloat() * 0.15f;
 
-		mRMin = pR - L;
-		mRMax = pR + H;
+		mRMin = red - lLow;
+		mRMax = red + lHigh;
 
-		mGMin = pG - L;
-		mGMax = pG + H;
+		mGMin = green - lLow;
+		mGMax = green + lHigh;
 
-		mBMin = pB - L;
-		mBMax = pB + H;
+		mBMin = blue - lLow;
+		mBMax = blue + lHigh;
 
 		mRMin = MathHelper.clamp(mRMin, 0, 1);
 		mRMax = MathHelper.clamp(mRMax, 0, 1);
@@ -71,26 +70,20 @@ public class ParticleBlockColorInitializer extends ParticleInitializerBase {
 
 		mBMin = MathHelper.clamp(mBMin, 0, 1);
 		mBMax = MathHelper.clamp(mBMax, 0, 1);
-
 	}
 
 	@Override
-	public void initialize(Particle pParticle) {
-		pParticle.color.r = getRandomValue(mRMin, mRMax);
-		pParticle.color.g = getRandomValue(mGMin, mGMax);
-		pParticle.color.b = getRandomValue(mBMin, mBMax);
-
+	public void initialize(Particle particle) {
+		particle.color.r = getRandomValue(mRMin, mRMax);
+		particle.color.g = getRandomValue(mGMin, mGMax);
+		particle.color.b = getRandomValue(mBMin, mBMax);
 	}
 
-	protected float getRandomValue(final float pMin, final float pMax) {
-		if (pMin == pMax) {
-			return pMax;
-
+	protected float getRandomValue(final float minValue, final float maxValue) {
+		if (minValue == maxValue) {
+			return maxValue;
 		} else {
-			return RandomNumbers.random(pMin, pMax);
-
+			return RandomNumbers.random(minValue, maxValue);
 		}
-
 	}
-
 }

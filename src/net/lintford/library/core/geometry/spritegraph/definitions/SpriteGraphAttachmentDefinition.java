@@ -1,5 +1,7 @@
 package net.lintford.library.core.geometry.spritegraph.definitions;
 
+import com.google.gson.annotations.SerializedName;
+
 import net.lintford.library.core.entity.definitions.BaseDefinition;
 import net.lintford.library.core.geometry.spritegraph.instances.SpriteGraphInstance;
 import net.lintford.library.core.geometry.spritegraph.instances.SpriteGraphNodeInstance;
@@ -14,17 +16,32 @@ public class SpriteGraphAttachmentDefinition extends BaseDefinition implements I
 	// Variables
 	// ---------------------------------------------
 
-	protected String spriteGraphSpritesheetName;
-	protected int spriteGraphAttachmentCategory;
-	protected String defaultSpriteName;
-	protected boolean isAttachmentRemovable = true;
-	protected int relativeZDepth;
+	@SerializedName(value = "spriteGraphSpritesheetName")
+	protected String mSpriteGraphSpritesheetName;
 
-	protected int baseColorTintR = 255;
-	protected int baseColorTintG = 255;
-	protected int baseColorTintB = 255;
+	@SerializedName(value = "spriteGraphAttachmentCategory")
+	protected int mSpriteGraphAttachmentCategory;
 
-	protected boolean useDynamicSpritesheetNames;
+	@SerializedName(value = "defaultSpriteName")
+	protected String mDefaultSpriteName;
+
+	@SerializedName(value = "isAttachmentRemovable")
+	protected boolean mIsAttachmentRemovable = true;
+
+	@SerializedName(value = "relativeZDepth")
+	protected int mRelativeZDepth;
+
+	@SerializedName(value = "baseColorTintR")
+	protected int mBaseColorTintR = 255;
+
+	@SerializedName(value = "baseColorTintG")
+	protected int mBaseColorTintG = 255;
+
+	@SerializedName(value = "baseColorTintB")
+	protected int mBaseColorTintB = 255;
+
+	@SerializedName(value = "useDynamicSpritesheetNames")
+	protected boolean mUseDynamicSpritesheetNames;
 
 	// ---------------------------------------------
 	// Properties
@@ -36,52 +53,51 @@ public class SpriteGraphAttachmentDefinition extends BaseDefinition implements I
 	}
 
 	public boolean useDynamicSpritesheetName() {
-		return useDynamicSpritesheetNames;
+		return mUseDynamicSpritesheetNames;
 	}
 
 	@Override
 	public int relativeZDepth() {
-		return relativeZDepth;
+		return mRelativeZDepth;
 	}
 
 	@Override
 	public int attachmentCategory() {
-		return spriteGraphAttachmentCategory;
+		return mSpriteGraphAttachmentCategory;
 	}
 
 	@Override
 	public String spritesheetName() {
-		return spriteGraphSpritesheetName;
+		return mSpriteGraphSpritesheetName;
 	}
 
 	@Override
 	public String defaultSpriteName() {
-		return defaultSpriteName;
+		return mDefaultSpriteName;
 	}
 
 	@Override
 	public boolean isAttachmentRemovable() {
-		return isAttachmentRemovable;
+		return mIsAttachmentRemovable;
 	}
 
 	@Override
 	public int colorTint() {
-		return (baseColorTintR << 16) | (baseColorTintG << 8) | baseColorTintB;
+		return (mBaseColorTintR << 16) | (mBaseColorTintG << 8) | mBaseColorTintB;
 	}
 
 	@Override
-	public void setColorTint(int r, int g, int b) {
-		baseColorTintR = r;
-		baseColorTintG = g;
-		baseColorTintB = b;
+	public void setColorTint(int red, int green, int blue) {
+		mBaseColorTintR = red;
+		mBaseColorTintG = green;
+		mBaseColorTintB = blue;
 	}
 
 	// ---------------------------------------------
 	// Constructor
 	// ---------------------------------------------
 
-	public SpriteGraphAttachmentDefinition(String pAttachmentDefinitionName) {
-		name = pAttachmentDefinitionName;
+	public SpriteGraphAttachmentDefinition(String attachmentDefinitionName) {
+		name = attachmentDefinitionName;
 	}
-
 }

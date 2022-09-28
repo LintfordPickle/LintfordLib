@@ -2,6 +2,8 @@ package net.lintford.library.core.graphics.sprites;
 
 import java.io.Serializable;
 
+import com.google.gson.annotations.SerializedName;
+
 import net.lintford.library.core.geometry.Rectangle;
 
 /** Defines a single sprite animation frame */
@@ -13,27 +15,30 @@ public class SpriteFrame extends Rectangle implements Serializable {
 
 	private static final long serialVersionUID = 3808825740133201931L;
 
-	private String name;
-	private SpriteAnchor[] anchorPoints;
+	@SerializedName(value = "name")
+	private String mName;
+
+	@SerializedName(value = "anchorPoints")
+	private SpriteAnchor[] mAnchorPoints;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
 
 	public String name() {
-		return name;
+		return mName;
 	}
-	
+
 	public float getDefaultRotation() {
-		return rotation;
+		return mRotation;
 	}
 
 	public float getPivotPointX() {
-		return pivotX;
+		return mPivotX;
 	}
 
 	public float getPivotPointY() {
-		return pivotY;
+		return mPivotY;
 	}
 
 	// --------------------------------------
@@ -41,18 +46,17 @@ public class SpriteFrame extends Rectangle implements Serializable {
 	// --------------------------------------
 
 	public SpriteFrame() {
-		scaleX = 1.0f;
-		scaleY = 1.0f;
-
+		mScaleX = 1.0f;
+		mScaleY = 1.0f;
 	}
 
-	public SpriteFrame(float pSrcX, float pSrcY, float pSrcW, float pSrcH) {
+	public SpriteFrame(float sourceX, float sourceY, float sourceW, float sourceH) {
 		this();
 
-		x = pSrcX;
-		y = pSrcY;
-		w = pSrcW;
-		h = pSrcH;
+		mX = sourceX;
+		mY = sourceY;
+		mW = sourceW;
+		mH = sourceH;
 	}
 
 	// --------------------------------------
@@ -60,36 +64,33 @@ public class SpriteFrame extends Rectangle implements Serializable {
 	// --------------------------------------
 
 	public int anchorCount() {
-		if (anchorPoints == null)
+		if (mAnchorPoints == null)
 			return 0;
 
-		return anchorPoints.length;
+		return mAnchorPoints.length;
 	}
 
-	public SpriteAnchor getAnchorByIndex(int pArrayIndex) {
-		if (anchorPoints == null || anchorPoints.length == 0 || pArrayIndex >= anchorPoints.length) {
+	public SpriteAnchor getAnchorByIndex(int arrayIndex) {
+		if (mAnchorPoints == null || mAnchorPoints.length == 0 || arrayIndex >= mAnchorPoints.length) {
 			return null;
-
 		}
 
-		return anchorPoints[pArrayIndex];
-
+		return mAnchorPoints[arrayIndex];
 	}
 
-	public SpriteAnchor getAnchorByName(String pName) {
-		if (anchorPoints == null || anchorPoints.length == 0)
+	public SpriteAnchor getAnchorByName(String anchorName) {
+		if (mAnchorPoints == null || mAnchorPoints.length == 0)
 			return null;
 
-		final int lAnchorCount = anchorPoints.length;
+		final int lAnchorCount = mAnchorPoints.length;
 		for (int i = 0; i < lAnchorCount; i++) {
-			if (anchorPoints[i] == null)
+			if (mAnchorPoints[i] == null)
 				continue;
 
-			if (anchorPoints[i].anchorName.equals(pName))
-				return anchorPoints[i];
+			if (mAnchorPoints[i].anchorName().equals(anchorName))
+				return mAnchorPoints[i];
 		}
 
 		return null;
-
 	}
 }

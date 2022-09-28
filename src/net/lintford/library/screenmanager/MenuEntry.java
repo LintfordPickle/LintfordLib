@@ -51,19 +51,16 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 	protected ALIGNMENT mVerticalAlignment = ALIGNMENT.CENTER;
 	protected FILLTYPE mHorizontalFillType = FILLTYPE.TAKE_WHATS_NEEDED;
 	protected FILLTYPE mVerticalFillType = FILLTYPE.TAKE_WHATS_NEEDED;
-
 	protected final Rectangle mInfoIconDstRectangle = new Rectangle();
 	protected final Rectangle mWarnIconDstRectangle = new Rectangle();
 	public final Color entryColor = new Color();
 	public final Color textColor = new Color();
-
 	protected ScreenManager mScreenManager;
 	protected SpriteSheetDefinition mCoreSpritesheet;
 	protected BaseLayout mParentLayout;
-
-	protected boolean mDormant; // Added to list but completly inactive
-	protected boolean mActiveUpdateDraw; // Not drawn/updated etc.
-	protected boolean mEnabled; // drawn/updated but not responsive to input
+	protected boolean mDormant;
+	protected boolean mActiveUpdateDraw;
+	protected boolean mEnabled;
 	protected String mText;
 	protected float mScale;
 	private float mScaleCounter;
@@ -81,33 +78,25 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 	protected boolean mShowInfoIcon;
 	protected boolean mShowWarnIcon;
 	protected boolean mHasFocus;
-	protected boolean mFocusLocked; // used only for buffered input
-	protected boolean mCanHaveFocus; // some menuEntry sub-types aren't focusable (like the labels)
+	protected boolean mFocusLocked;
+	protected boolean mCanHaveFocus;
 	protected float mClickTimer;
-
 	private boolean mIsinitialized, mResourcesLoaded;
 	public float mZ;
-
-	// This is the padding INSIDE of the component (i.e. applied to child elements).
 	protected float mTopPadding;
 	protected float mBottomPadding;
 	protected float mLeftPadding;
 	protected float mRightPadding;
-
-	// The margin is applied to the outside of this component
 	protected float mTopMargin;
 	protected float mBottomMargin;
 	protected float mLeftMargin;
 	protected float mRightMargin;
-
 	protected float mDesiredWidth;
 	protected float mDesiredHeight;
-
 	protected float mMinWidth;
 	protected float mMinHeight;
 	protected float mMaxWidth;
 	protected float mMaxHeight;
-
 	protected boolean isAnimating;
 	protected float animationTimeRemaining;
 
@@ -127,40 +116,40 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 		return mHorizontalAlignment;
 	}
 
-	public void horizontalAlignment(ALIGNMENT pNewValue) {
-		mHorizontalAlignment = pNewValue;
+	public void horizontalAlignment(ALIGNMENT newValue) {
+		mHorizontalAlignment = newValue;
 	}
 
 	public ALIGNMENT verticalAlignment() {
 		return mVerticalAlignment;
 	}
 
-	public void verticalAlignment(ALIGNMENT pNewValue) {
-		mVerticalAlignment = pNewValue;
+	public void verticalAlignment(ALIGNMENT newValue) {
+		mVerticalAlignment = newValue;
 	}
 
 	public FILLTYPE horizontalFillType() {
 		return mHorizontalFillType;
 	}
 
-	public void horizontalFillType(FILLTYPE pNewValue) {
-		mHorizontalFillType = pNewValue;
+	public void horizontalFillType(FILLTYPE newValue) {
+		mHorizontalFillType = newValue;
 	}
 
 	public FILLTYPE verticalFillType() {
 		return mVerticalFillType;
 	}
 
-	public void verticalFillType(FILLTYPE pNewValue) {
-		mVerticalFillType = pNewValue;
+	public void verticalFillType(FILLTYPE newValue) {
+		mVerticalFillType = newValue;
 	}
 
 	public boolean drawButtonBackground() {
 		return mDrawBackground;
 	}
 
-	public void drawButtonBackground(boolean pNewValue) {
-		mDrawBackground = pNewValue;
+	public void drawButtonBackground(boolean newValue) {
+		mDrawBackground = newValue;
 	}
 
 	public BaseLayout parentLayout() {
@@ -171,16 +160,16 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 		return mCanHaveFocus;
 	}
 
-	public void canHaveFocus(boolean pNewValue) {
-		mCanHaveFocus = pNewValue;
+	public void canHaveFocus(boolean newValue) {
+		mCanHaveFocus = newValue;
 	}
 
 	public boolean canHoverOver() {
 		return mCanHoverOver;
 	}
 
-	public void canHoverOver(boolean pNewValue) {
-		mCanHoverOver = pNewValue;
+	public void canHoverOver(boolean newValue) {
+		mCanHoverOver = newValue;
 	}
 
 	public float paddingLeft() {
@@ -203,44 +192,44 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 		return mLeftMargin;
 	}
 
-	public void marginLeft(float pNewValue) {
-		mLeftMargin = pNewValue;
+	public void marginLeft(float newValue) {
+		mLeftMargin = newValue;
 	}
 
 	public float marginRight() {
 		return mRightMargin;
 	}
 
-	public void marginRight(float pNewValue) {
-		mRightMargin = pNewValue;
+	public void marginRight(float newValue) {
+		mRightMargin = newValue;
 	}
 
 	public float marginTop() {
 		return mTopMargin;
 	}
 
-	public void marginTop(float pNewValue) {
-		mTopMargin = pNewValue;
+	public void marginTop(float newValue) {
+		mTopMargin = newValue;
 	}
 
 	public float marginBottom() {
 		return mBottomMargin;
 	}
 
-	public void marginBottom(float pNewValue) {
-		mBottomMargin = pNewValue;
+	public void marginBottom(float newValue) {
+		mBottomMargin = newValue;
 	}
 
-	public void entryID(int pNewValue) {
-		mMenuEntryID = pNewValue;
+	public void entryID(int newValue) {
+		mMenuEntryID = newValue;
 	}
 
 	public String entryText() {
 		return mText;
 	}
 
-	public void entryText(String pNewValue) {
-		mText = pNewValue;
+	public void entryText(String newValue) {
+		mText = newValue;
 	}
 
 	public float minWidth() {
@@ -259,65 +248,65 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 		return mMaxHeight;
 	}
 
-	public void minWidth(float pNewValue) {
-		mMinWidth = pNewValue;
+	public void minWidth(float newValue) {
+		mMinWidth = newValue;
 	}
 
-	public void minHeight(float pNewValue) {
-		mMinHeight = pNewValue;
+	public void minHeight(float newValue) {
+		mMinHeight = newValue;
 	}
 
-	public void maxWidth(float pNewValue) {
-		mMaxWidth = pNewValue;
+	public void maxWidth(float newValue) {
+		mMaxWidth = newValue;
 	}
 
-	public void maxHeight(float pNewValue) {
-		mMaxHeight = pNewValue;
+	public void maxHeight(float newValue) {
+		mMaxHeight = newValue;
 	}
 
 	public boolean hoveredOver() {
 		return mHoveredOver;
 	}
 
-	public void hoveredOver(boolean pNewValue) {
-		mHoveredOver = mCanHoverOver && pNewValue;
+	public void hoveredOver(boolean newValue) {
+		mHoveredOver = mCanHoverOver && newValue;
 	}
 
 	public boolean hasFocus() {
 		return mHasFocus;
 	}
 
-	public void hasFocus(boolean pNewValue) {
-		mHasFocus = pNewValue;
+	public void hasFocus(boolean newValue) {
+		mHasFocus = newValue;
 	}
 
 	public boolean hasFocusLock() {
 		return mFocusLocked;
 	}
 
-	public void hasFocusLock(boolean pNewValue) {
-		mFocusLocked = pNewValue;
+	public void hasFocusLock(boolean newValue) {
+		mFocusLocked = newValue;
 	}
 
 	public boolean enabled() {
 		return mEnabled;
 	}
 
-	public void enabled(boolean pEnabled) {
-		mEnabled = pEnabled;
+	public void enabled(boolean enabled) {
+		mEnabled = enabled;
 	}
 
 	public boolean activeUpdateDraw() {
 		return mActiveUpdateDraw;
 	}
 
-	public void active(boolean pEnabled) {
-		mActiveUpdateDraw = pEnabled;
+	public void active(boolean enabled) {
+		mActiveUpdateDraw = enabled;
 	}
 
 	@Override
-	public float h() {
-		return !mActiveUpdateDraw ? 0 : super.h();
+	public float height() {
+		return !mActiveUpdateDraw ? 0 : super.height();
 	}
 
 	public int entryID() {
@@ -328,16 +317,16 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 		return mShowInfoIcon;
 	}
 
-	public void showInfoButton(boolean pNewValue) {
-		mShowInfoIcon = pNewValue;
+	public void showInfoButton(boolean newValue) {
+		mShowInfoIcon = newValue;
 	}
 
 	public boolean showWarnButton() {
 		return mShowWarnIcon;
 	}
 
-	public void showWarnButton(boolean pNewValue) {
-		mShowWarnIcon = pNewValue;
+	public void showWarnButton(boolean newValue) {
+		mShowWarnIcon = newValue;
 	}
 
 	public boolean isInClickedState() {
@@ -352,26 +341,26 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 		return mDesiredWidth;
 	}
 
-	public void desiredWidth(float pNewValue) {
-		mDesiredWidth = pNewValue;
+	public void desiredWidth(float newValue) {
+		mDesiredWidth = newValue;
 	}
 
 	public float desiredHeight() {
 		return mDesiredHeight;
 	}
 
-	public void desiredHeight(float pNewValue) {
-		mDesiredHeight = pNewValue;
+	public void desiredHeight(float newValue) {
+		mDesiredHeight = newValue;
 	}
 
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
-	public MenuEntry(ScreenManager pScreenManager, BaseLayout pParentLayout, String pMenuEntryLabel) {
-		mScreenManager = pScreenManager;
-		mParentLayout = pParentLayout;
-		mText = pMenuEntryLabel;
+	public MenuEntry(ScreenManager screenManager, BaseLayout parentLayout, String menuEntryLabel) {
+		mScreenManager = screenManager;
+		mParentLayout = parentLayout;
+		mText = menuEntryLabel;
 
 		mActiveUpdateDraw = true;
 		mEnabled = true;
@@ -394,8 +383,8 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 		mMaxHeight = 2048.f;
 		mDesiredHeight = 32.f;
 
-		w = mDesiredWidth;
-		h = mDesiredHeight;
+		mW = mDesiredWidth;
+		mH = mDesiredHeight;
 
 		entryColor.setFromColor(ColorConstants.WHITE);
 		textColor.setFromColor(ColorConstants.TextEntryColor);
@@ -410,12 +399,10 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 
 	public void initialize() {
 		mIsinitialized = true;
-
 	}
 
-	public void loadResources(ResourceManager pResourceManager) {
-		mCoreSpritesheet = pResourceManager.spriteSheetManager().coreSpritesheet();
-
+	public void loadResources(ResourceManager resourceManager) {
+		mCoreSpritesheet = resourceManager.spriteSheetManager().coreSpritesheet();
 		mResourcesLoaded = true;
 	}
 
@@ -423,29 +410,27 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 		mResourcesLoaded = false;
 	}
 
-	public boolean handleInput(LintfordCore pCore) {
+	public boolean handleInput(LintfordCore core) {
 		if (mDormant || !mActiveUpdateDraw || !mEnabled || isAnimating)
 			return false;
 
-		if (intersectsAA(pCore.HUD().getMouseCameraSpace()) && pCore.input().mouse().isMouseOverThisComponent(hashCode())) {
+		if (intersectsAA(core.HUD().getMouseCameraSpace()) && core.input().mouse().isMouseOverThisComponent(hashCode())) {
 			hoveredOver(parentLayout().parentScreen.acceptMouseInput);
 
 			// Check if tool tips are enabled.
 			if (mToolTipEnabled) {
-				mToolTipTimer += pCore.appTime().elapsedTimeMilli();
-
+				mToolTipTimer += core.appTime().elapsedTimeMilli();
 			}
 
 			if (canHoverOver()) {
-				if (pCore.input().mouse().isMiddleOwnerNotAssigned()) {
+				if (core.input().mouse().isMiddleOwnerNotAssigned())
 					mParentLayout.parentScreen.setHoveringOn(this);
-				}
 
-				if (pCore.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
+				if (core.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
 					hasFocus(true);
-					mParentLayout.parentScreen.setFocusOn(pCore, this, false);
+					mParentLayout.parentScreen.setFocusOn(core, this, false);
 
-					onClick(pCore.input());
+					onClick(core.input());
 
 					return true;
 				}
@@ -454,7 +439,6 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 		} else {
 			hoveredOver(false);
 			mToolTipTimer = 0;
-
 		}
 
 		return false;
@@ -463,36 +447,33 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 	public void updateStructure() {
 		final var lScreenOffset = parentLayout() != null ? parentLayout().parentScreen.screenPositionOffset() : Vector2f.Zero;
 
-		if (mShowInfoIcon) {
-			mInfoIconDstRectangle.set(lScreenOffset.x + x + paddingLeft(), lScreenOffset.y + y, 32f, 32f);
-		}
+		if (mShowInfoIcon)
+			mInfoIconDstRectangle.set(lScreenOffset.x + mX + paddingLeft(), lScreenOffset.y + mY, 32f, 32f);
 
-		if (mShowWarnIcon) {
-			mWarnIconDstRectangle.set(lScreenOffset.x + x + paddingLeft(), lScreenOffset.y + y, 32f, 32f);
-		}
+		if (mShowWarnIcon)
+			mWarnIconDstRectangle.set(lScreenOffset.x + mX + paddingLeft(), lScreenOffset.y + mY, 32f, 32f);
+
 	};
 
-	public void update(LintfordCore pCore, MenuScreen pScreen, boolean pIsSelected) {
+	public void update(LintfordCore core, MenuScreen screen, boolean isSelected) {
 		if (mDormant && !mActiveUpdateDraw)
 			return;
 
-		final float lParentScreenAlpha = pScreen.screenColor.a;
+		final float lParentScreenAlpha = screen.screenColor.a;
 		entryColor.a = lParentScreenAlpha;
 		textColor.a = lParentScreenAlpha;
 
-		if (!intersectsAA(pCore.HUD().getMouseCameraSpace())) {
+		if (!intersectsAA(core.HUD().getMouseCameraSpace())) {
 			mHoveredOver = false;
 		}
 
-		final var lDeltaTime = (float) pCore.appTime().elapsedTimeMilli();
+		final var lDeltaTime = (float) core.appTime().elapsedTimeMilli();
 
-		if (mClickTimer >= 0) {
+		if (mClickTimer >= 0)
 			mClickTimer -= lDeltaTime;
-		}
 
-		if (mAnimationTimer > 0) {
+		if (mAnimationTimer > 0)
 			mAnimationTimer -= lDeltaTime;
-		}
 
 		if (mScaleonHover && mHasFocus && canHaveFocus()) {
 			mScaleCounter += lDeltaTime;
@@ -504,19 +485,19 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 			mScale = 0.75f;
 		}
 
-		if ((mToolTipEnabled && mToolTipTimer >= 1000 && mHoveredOver) || mInfoIconDstRectangle.intersectsAA(pCore.HUD().getMouseCameraSpace())) {
+		if ((mToolTipEnabled && mToolTipTimer >= 1000 && mHoveredOver) || mInfoIconDstRectangle.intersectsAA(core.HUD().getMouseCameraSpace())) {
 			mScreenManager.toolTip().toolTipProvider(this);
 		}
 	}
 
-	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pParentZDepth) {
+	public void draw(LintfordCore core, Screen screen, boolean isSelected, float parentZDepth) {
 		if (mDormant || !mActiveUpdateDraw || !mIsinitialized || !mResourcesLoaded)
 			return;
 
-		mZ = pParentZDepth;
+		mZ = parentZDepth;
 
-		final var lScreenOffset = pScreen.screenPositionOffset();
-		final var lParentScreenAlpha = pScreen.screenColor.a;
+		final var lScreenOffset = screen.screenPositionOffset();
+		final var lParentScreenAlpha = screen.screenColor.a;
 		final var isAnimationActive = mAnimationTimer > 0.f;
 
 		if (mEnabled) {
@@ -535,43 +516,43 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 		final var lSpriteBatch = mParentLayout.parentScreen.spriteBatch();
 
 		if (mDrawBackground) {
-			boolean use5Steps = w > 32 * 8;
+			boolean use5Steps = mW > 32 * 8;
 
 			final float lTileSize = 32;
-			final float lHalfWidth = (int) (w * .5f);
+			final float lHalfWidth = (int) (mW * .5f);
 			int lLeft = (int) (lScreenOffset.x + centerX() - lHalfWidth);
-			final float lInnerWidth = w - 32 * (use5Steps ? 4 : 2);
+			final float lInnerWidth = mW - 32 * (use5Steps ? 4 : 2);
 			entryColor.a = 1.f;
 			if (isInClickedState()) {
-				lSpriteBatch.begin(pCore.HUD());
-				lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_BUTTON_SELECTED_HORIZONTAL_LEFT, lLeft, lScreenOffset.y + centerY() - h / 2, lTileSize, h, mZ, entryColor);
+				lSpriteBatch.begin(core.HUD());
+				lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_BUTTON_SELECTED_HORIZONTAL_LEFT, lLeft, lScreenOffset.y + centerY() - mH / 2, lTileSize, mH, mZ, entryColor);
 				if (use5Steps)
-					lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_BUTTON_SELECTED_HORIZONTAL_MIDLEFT, lLeft += 32, lScreenOffset.y + centerY() - h / 2, lTileSize, h, mZ, entryColor);
-				lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_BUTTON_SELECTED_HORIZONTAL_MID, lLeft += 32, lScreenOffset.y + centerY() - h / 2, lInnerWidth, h, mZ, entryColor);
+					lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_BUTTON_SELECTED_HORIZONTAL_MIDLEFT, lLeft += 32, lScreenOffset.y + centerY() - mH / 2, lTileSize, mH, mZ, entryColor);
+				lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_BUTTON_SELECTED_HORIZONTAL_MID, lLeft += 32, lScreenOffset.y + centerY() - mH / 2, lInnerWidth, mH, mZ, entryColor);
 				if (use5Steps)
-					lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_BUTTON_SELECTED_HORIZONTAL_MIDRIGHT, (lLeft -= 32) + lHalfWidth * 2 - 96, lScreenOffset.y + centerY() - h / 2, lTileSize, h, mZ, entryColor);
-				lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_BUTTON_SELECTED_HORIZONTAL_RIGHT, (lLeft -= 32) + lHalfWidth * 2 - 32, lScreenOffset.y + centerY() - h / 2, lTileSize, h, mZ, entryColor);
+					lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_BUTTON_SELECTED_HORIZONTAL_MIDRIGHT, (lLeft -= 32) + lHalfWidth * 2 - 96, lScreenOffset.y + centerY() - mH / 2, lTileSize, mH, mZ, entryColor);
+				lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_BUTTON_SELECTED_HORIZONTAL_RIGHT, (lLeft -= 32) + lHalfWidth * 2 - 32, lScreenOffset.y + centerY() - mH / 2, lTileSize, mH, mZ, entryColor);
 				lSpriteBatch.end();
 			} else if (mHoveredOver && mHighlightOnHover) {
-				lSpriteBatch.begin(pCore.HUD());
-				lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_BUTTON_HOVER_HORIZONTAL_LEFT, lLeft, lScreenOffset.y + centerY() - h / 2, lTileSize, h, mZ, entryColor);
+				lSpriteBatch.begin(core.HUD());
+				lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_BUTTON_HOVER_HORIZONTAL_LEFT, lLeft, lScreenOffset.y + centerY() - mH / 2, lTileSize, mH, mZ, entryColor);
 				if (use5Steps)
-					lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_BUTTON_HOVER_HORIZONTAL_MIDLEFT, lLeft += 32, lScreenOffset.y + centerY() - h / 2, lTileSize, h, mZ, entryColor);
-				lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_BUTTON_HOVER_HORIZONTAL_MID, lLeft += 32, lScreenOffset.y + centerY() - h / 2, lInnerWidth, h, mZ, entryColor);
+					lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_BUTTON_HOVER_HORIZONTAL_MIDLEFT, lLeft += 32, lScreenOffset.y + centerY() - mH / 2, lTileSize, mH, mZ, entryColor);
+				lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_BUTTON_HOVER_HORIZONTAL_MID, lLeft += 32, lScreenOffset.y + centerY() - mH / 2, lInnerWidth, mH, mZ, entryColor);
 				if (use5Steps)
-					lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_BUTTON_HOVER_HORIZONTAL_MIDRIGHT, (lLeft -= 32) + lHalfWidth * 2 - 96, lScreenOffset.y + centerY() - h / 2, lTileSize, h, mZ, entryColor);
-				lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_BUTTON_HOVER_HORIZONTAL_RIGHT, (lLeft -= 32) + lHalfWidth * 2 - 32, lScreenOffset.y + centerY() - h / 2, lTileSize, h, mZ, entryColor);
+					lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_BUTTON_HOVER_HORIZONTAL_MIDRIGHT, (lLeft -= 32) + lHalfWidth * 2 - 96, lScreenOffset.y + centerY() - mH / 2, lTileSize, mH, mZ, entryColor);
+				lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_BUTTON_HOVER_HORIZONTAL_RIGHT, (lLeft -= 32) + lHalfWidth * 2 - 32, lScreenOffset.y + centerY() - mH / 2, lTileSize, mH, mZ, entryColor);
 				lSpriteBatch.end();
 
 			} else {
-				lSpriteBatch.begin(pCore.HUD());
-				lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_BUTTON_HORIZONTAL_LEFT, lLeft, lScreenOffset.y + centerY() - h / 2, lTileSize, h, mZ, entryColor);
+				lSpriteBatch.begin(core.HUD());
+				lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_BUTTON_HORIZONTAL_LEFT, lLeft, lScreenOffset.y + centerY() - mH / 2, lTileSize, mH, mZ, entryColor);
 				if (use5Steps)
-					lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_BUTTON_HORIZONTAL_MIDLEFT, lLeft += 32, lScreenOffset.y + centerY() - h / 2, lTileSize, h, mZ, entryColor);
-				lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_BUTTON_HORIZONTAL_MID, lLeft += 32, lScreenOffset.y + centerY() - h / 2, lInnerWidth, h, mZ, entryColor);
+					lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_BUTTON_HORIZONTAL_MIDLEFT, lLeft += 32, lScreenOffset.y + centerY() - mH / 2, lTileSize, mH, mZ, entryColor);
+				lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_BUTTON_HORIZONTAL_MID, lLeft += 32, lScreenOffset.y + centerY() - mH / 2, lInnerWidth, mH, mZ, entryColor);
 				if (use5Steps)
-					lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_BUTTON_HORIZONTAL_MIDRIGHT, (lLeft -= 32) + lHalfWidth * 2 - 96, lScreenOffset.y + centerY() - h / 2, lTileSize, h, mZ, entryColor);
-				lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_BUTTON_HORIZONTAL_RIGHT, (lLeft -= 32) + lHalfWidth * 2 - 32, lScreenOffset.y + centerY() - h / 2, lTileSize, h, mZ, entryColor);
+					lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_BUTTON_HORIZONTAL_MIDRIGHT, (lLeft -= 32) + lHalfWidth * 2 - 96, lScreenOffset.y + centerY() - mH / 2, lTileSize, mH, mZ, entryColor);
+				lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_BUTTON_HORIZONTAL_RIGHT, (lLeft -= 32) + lHalfWidth * 2 - 32, lScreenOffset.y + centerY() - mH / 2, lTileSize, mH, mZ, entryColor);
 				lSpriteBatch.end();
 			}
 		}
@@ -581,10 +562,10 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 			final var lColor = ColorConstants.getColorWithRGBMod(ColorConstants.PrimaryColor, lColorMod);
 			lColor.a = 0.25f;
 
-			lSpriteBatch.begin(pCore.HUD());
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - w / 2, lScreenOffset.y + centerY() - h / 2, 32, h, mZ, lColor);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - (w / 2) + 32, lScreenOffset.y + centerY() - h / 2, w - 64, h, mZ, lColor);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() + (w / 2) - 32, lScreenOffset.y + centerY() - h / 2, 32, h, mZ, lColor);
+			lSpriteBatch.begin(core.HUD());
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - mW / 2, lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ, lColor);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - (mW / 2) + 32, lScreenOffset.y + centerY() - mH / 2, mW - 64, mH, mZ, lColor);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() + (mW / 2) - 32, lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ, lColor);
 			lSpriteBatch.end();
 		}
 
@@ -594,7 +575,7 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 			final var lMenuFont = mParentLayout.parentScreen.font();
 
 			if (lMenuFont != null) {
-				lMenuFont.begin(pCore.HUD());
+				lMenuFont.begin(core.HUD());
 				final float lStringWidth = lMenuFont.getStringWidth(mText, lUiTextScale);
 				final var lTextColor = mHoveredOver ? ColorConstants.FLAME : ColorConstants.TextHeadingColor;
 				lTextColor.a = lParentScreenAlpha;
@@ -603,26 +584,20 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 			}
 		}
 
-		if (mShowInfoIcon) {
-			drawInfoIcon(pCore, lSpriteBatch, mInfoIconDstRectangle, entryColor.a);
-		}
+		if (mShowInfoIcon)
+			drawInfoIcon(core, lSpriteBatch, mInfoIconDstRectangle, entryColor.a);
 
-		if (mShowWarnIcon) {
-			drawWarningIcon(pCore, lSpriteBatch, mWarnIconDstRectangle, entryColor.a);
-		}
-
-		//		if (!mEnabled) {
-		//			drawdisabledBlackOverbar(pCore, lSpriteBatch, entryColor.a);
-		//		}
+		if (mShowWarnIcon)
+			drawWarningIcon(core, lSpriteBatch, mWarnIconDstRectangle, entryColor.a);
 
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
-			lSpriteBatch.begin(pCore.HUD());
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + x, lScreenOffset.y + y, w, h, mZ, ColorConstants.Debug_Transparent_Magenta);
+			lSpriteBatch.begin(core.HUD());
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + mX, lScreenOffset.y + mY, mW, mH, mZ, ColorConstants.Debug_Transparent_Magenta);
 			lSpriteBatch.end();
 		}
 	}
 
-	public void postStencilDraw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pParentZDepth) {
+	public void postStencilDraw(LintfordCore core, Screen screen, boolean isSelected, float parentZDepth) {
 
 	}
 
@@ -630,73 +605,70 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 	// Methods
 	// --------------------------------------
 
-	public void drawInfoIcon(LintfordCore pCore, SpriteBatch pSpriteBatch, Rectangle pDestRect, float pScreenAlpha) {
-		final var lColor = ColorConstants.getColor(1.f, 1.f, 1.f, pScreenAlpha);
+	public void drawInfoIcon(LintfordCore core, SpriteBatch spriteBatch, Rectangle destRect, float screenAlpha) {
+		final var lColor = ColorConstants.getColor(1.f, 1.f, 1.f, screenAlpha);
 		final var lScreenOffset = parentLayout() != null ? parentLayout().parentScreen.screenPositionOffset() : Vector2f.Zero;
 
-		pSpriteBatch.begin(pCore.HUD());
-		pSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_INFO, lScreenOffset.x + pDestRect.x(), lScreenOffset.y + pDestRect.y(), pDestRect.w(), pDestRect.h(), mZ, lColor);
-		pSpriteBatch.end();
+		spriteBatch.begin(core.HUD());
+		spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_INFO, lScreenOffset.x + destRect.x(), lScreenOffset.y + destRect.y(), destRect.width(), destRect.height(), mZ, lColor);
+		spriteBatch.end();
 	}
 
-	public void drawWarningIcon(LintfordCore pCore, SpriteBatch pSpriteBatch, Rectangle pDestRect, float pScreenAlpha) {
-		final var lColor = ColorConstants.getColor(1.f, 1.f, 1.f, pScreenAlpha);
+	public void drawWarningIcon(LintfordCore core, SpriteBatch spriteBatch, Rectangle destRect, float screenAlpha) {
+		final var lColor = ColorConstants.getColor(1.f, 1.f, 1.f, screenAlpha);
 		final var lScreenOffset = parentLayout() != null ? parentLayout().parentScreen.screenPositionOffset() : Vector2f.Zero;
 
-		pSpriteBatch.begin(pCore.HUD());
-		pSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_WARNING, lScreenOffset.x + pDestRect.x(), lScreenOffset.y + pDestRect.y(), pDestRect.w(), pDestRect.h(), mZ, lColor);
-		pSpriteBatch.end();
+		spriteBatch.begin(core.HUD());
+		spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_WARNING, lScreenOffset.x + destRect.x(), lScreenOffset.y + destRect.y(), destRect.width(), destRect.height(), mZ, lColor);
+		spriteBatch.end();
 	}
 
-	public void drawDebugCollidableBounds(LintfordCore pCore, SpriteBatch pSpriteBatch) {
+	public void drawDebugCollidableBounds(LintfordCore core, SpriteBatch spriteBatch) {
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
 			final var lScreenOffset = parentLayout() != null ? parentLayout().parentScreen.screenPositionOffset() : Vector2f.Zero;
-			pSpriteBatch.begin(pCore.HUD());
-			pSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + x, lScreenOffset.y + y, w, h, mZ, ColorConstants.Debug_Transparent_Magenta);
-			pSpriteBatch.end();
+			spriteBatch.begin(core.HUD());
+			spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + mX, lScreenOffset.y + mY, mW, mH, mZ, ColorConstants.Debug_Transparent_Magenta);
+			spriteBatch.end();
 		}
 	}
 
-	public void drawdisabledBlackOverbar(LintfordCore pCore, SpriteBatch pSpriteBatch, float pScreenAlpha) {
-		final var lColor = ColorConstants.getColor(.1f, .1f, .1f, .75f * pScreenAlpha);
+	public void drawdisabledBlackOverbar(LintfordCore core, SpriteBatch spriteBatch, float screenAlpha) {
+		final var lColor = ColorConstants.getColor(.1f, .1f, .1f, .75f * screenAlpha);
 		final var lScreenOffset = parentLayout() != null ? parentLayout().parentScreen.screenPositionOffset() : Vector2f.Zero;
 
-		pSpriteBatch.begin(pCore.HUD());
-		pSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - (w / 2), lScreenOffset.y + centerY() - h / 2, w, h, mZ, lColor);
-		pSpriteBatch.end();
+		spriteBatch.begin(core.HUD());
+		spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - (mW / 2), lScreenOffset.y + centerY() - mH / 2, mW, mH, mZ, lColor);
+		spriteBatch.end();
 	}
 
-	public void setToolTip(String pToolTipText) {
-		if (pToolTipText == null || pToolTipText.length() == 0) {
+	public void setToolTip(String toolTipText) {
+		if (toolTipText == null || toolTipText.length() == 0) {
 			mToolTipEnabled = false;
 			return;
 		}
 
 		mToolTipEnabled = true;
-		mToolTipText = pToolTipText;
+		mToolTipText = toolTipText;
 	}
 
-	public void registerClickListener(EntryInteractions pListener, int pID) {
-		mMenuEntryID = pID;
-		mClickListener = pListener;
+	public void registerClickListener(EntryInteractions listener, int entryUid) {
+		mMenuEntryID = entryUid;
+		mClickListener = listener;
 	}
 
-	public void onClick(InputManager pInputState) {
+	public void onClick(InputManager inputState) {
 		if (mClickListener == null || mMenuEntryID == -1)
 			return;
 
-		if (mClickListener.isActionConsumed()) {
+		if (mClickListener.isActionConsumed())
 			return;
-
-		}
 
 		mAnimationTimer = MenuScreen.ANIMATION_TIMER_LENGTH;
 		mScreenManager.uiSounds().play("SOUND_MENU_CLICK");
-		mClickListener.menuEntryOnClick(pInputState, mMenuEntryID);
-
+		mClickListener.menuEntryOnClick(inputState, mMenuEntryID);
 	}
 
-	public void onViewportChange(float pWidth, float pHeight) {
+	public void onViewportChange(float width, float height) {
 
 	}
 
@@ -708,19 +680,16 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 	@Override
 	public void resetCoolDownTimer() {
 		mClickTimer = 200;
-
 	}
 
 	@Override
 	public String toolTipText() {
 		return mToolTipText;
-
 	}
 
 	@Override
 	public boolean isMouseOver() {
 		return mHoveredOver;
-
 	}
 
 	@Override

@@ -40,33 +40,30 @@ public class Box2dBodyInstance extends IndexedPooledBaseData {
 	public float gravityScale = 1f;
 	public float mass;
 	public float massI;
-
 	public boolean allowSleep = true;
 	public boolean awake = true;
 	public boolean fixedRotation = false;
 	public boolean bullet = true;
 	public boolean active = true;
-
 	public Box2dFixtureInstance[] mFixtures;
 
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
-	public Box2dBodyInstance(int pPoolUid) {
-		super(pPoolUid);
+	public Box2dBodyInstance(int poolUid) {
+		super(poolUid);
 
 		objectPositionInUnits = new Vec2();
 		linearVelocity = new Vec2();
 		massCenter = new Vec2();
-
 	}
 
 	// --------------------------------------
 	// Core-Methods
 	// --------------------------------------
 
-	public void savePhysics(JBox2dEntityInstance pParentInst) {
+	public void savePhysics(JBox2dEntityInstance parentInst) {
 		if (mBody == null)
 			return; // nothing to save
 
@@ -83,9 +80,8 @@ public class Box2dBodyInstance extends IndexedPooledBaseData {
 		}
 
 		float lParentAngle = 0.f;
-		if (pParentInst != null) {
-			lParentAngle = pParentInst.entityAngle();
-		}
+		if (parentInst != null)
+			lParentAngle = parentInst.entityAngle();
 
 		this.objectAngleInRadians = mBody.getAngle() - lParentAngle;
 
@@ -110,7 +106,7 @@ public class Box2dBodyInstance extends IndexedPooledBaseData {
 		}
 	}
 
-	public void loadPhysics(World pWorld, JBox2dEntityInstance pParentInst) {
+	public void loadPhysics(World box2dWorld, JBox2dEntityInstance parentInst) {
 		BodyDef lBodyDef = new BodyDef();
 
 		switch (bodyTypeIndex) {
@@ -128,11 +124,10 @@ public class Box2dBodyInstance extends IndexedPooledBaseData {
 		float lParentPositionX = 0.f;
 		float lParentPositionY = 0.f;
 		float lParentAngle = 0.f;
-		if (pParentInst != null) {
-			lParentPositionX = pParentInst.entityPosition().x;
-			lParentPositionY = pParentInst.entityPosition().y;
-			lParentAngle = pParentInst.entityAngle();
-
+		if (parentInst != null) {
+			lParentPositionX = parentInst.entityPosition().x;
+			lParentPositionY = parentInst.entityPosition().y;
+			lParentAngle = parentInst.entityAngle();
 		}
 
 		lBodyDef.position.x = lParentPositionX + objectPositionInUnits.x;
@@ -152,7 +147,7 @@ public class Box2dBodyInstance extends IndexedPooledBaseData {
 		lBodyDef.bullet = bullet;
 		lBodyDef.active = true;
 
-		mBody = pWorld.createBody(lBodyDef);
+		mBody = box2dWorld.createBody(lBodyDef);
 
 		if (bodyPhysicsData != null)
 			mBody.setUserData(bodyPhysicsData);
@@ -160,12 +155,9 @@ public class Box2dBodyInstance extends IndexedPooledBaseData {
 		final int lFixtureCount = mFixtures.length;
 		for (int i = 0; i < lFixtureCount; i++) {
 			final var lFixtureInstance = mFixtures[i];
-
 			if (lFixtureInstance != null)
-				lFixtureInstance.loadPhysics(pWorld, mBody);
-
+				lFixtureInstance.loadPhysics(box2dWorld, mBody);
 		}
-
 	}
 
 	public void unloadPhysics() {
@@ -183,21 +175,18 @@ public class Box2dBodyInstance extends IndexedPooledBaseData {
 			if (lBox2dFixtureInstance.mFixture != null)
 				mBody.destroyFixture(lBox2dFixtureInstance.mFixture);
 			lBox2dFixtureInstance.mFixture = null;
-
 		}
 
 		if (mBody.getUserData() != null) {
 			Debug.debugManager().logger().w(getClass().getSimpleName(), "JBox2dBodyInstance was unloaded without removing the userdata. Typeof (" + mBody.getUserData().toString() + ")");
 			mBody.setUserData(null);
-
 		}
 
 		lBox2dWorld.destroyBody(mBody);
 		mBody = null;
-
 	}
 
-	public void update(LintfordCore pCore) {
+	public void update(LintfordCore core) {
 
 	}
 
@@ -205,44 +194,35 @@ public class Box2dBodyInstance extends IndexedPooledBaseData {
 	// Methods
 	// --------------------------------------
 
-	public void setActive(boolean pNewValue) {
-		active = pNewValue;
+	public void setActive(boolean isActive) {
+		active = isActive;
 
 		if (mBody != null) {
-			mBody.setActive(pNewValue);
-
+			mBody.setActive(isActive);
 		}
-
 	}
 
-	public void setFixedRotation(boolean pIsFixedRotation) {
-		fixedRotation = pIsFixedRotation;
+	public void setFixedRotation(boolean isFixedRotation) {
+		fixedRotation = isFixedRotation;
 
 		if (mBody != null) {
-			mBody.setFixedRotation(pIsFixedRotation);
-
+			mBody.setFixedRotation(isFixedRotation);
 		}
-
 	}
 
-	public void setAngularDamping(float pNewValue) {
-		angularDamping = pNewValue;
+	public void setAngularDamping(float newValue) {
+		angularDamping = newValue;
 
 		if (mBody != null) {
-			mBody.setAngularDamping(pNewValue);
-
+			mBody.setAngularDamping(newValue);
 		}
-
 	}
 
-	public void setIsBullet(boolean pIsBullet) {
-		bullet = pIsBullet;
+	public void setIsBullet(boolean iIsBullet) {
+		bullet = iIsBullet;
 
 		if (mBody != null) {
-			mBody.setBullet(pIsBullet);
-
+			mBody.setBullet(iIsBullet);
 		}
-
 	}
-
 }

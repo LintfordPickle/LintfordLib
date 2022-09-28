@@ -56,9 +56,9 @@ public class ToastManager {
 	// Core-Methods
 	// --------------------------------------
 
-	public void loadResources(ResourceManager pResourceManager) {
-		mTextureBatch.loadResources(pResourceManager);
-		mFontUnit = pResourceManager.fontManager().getFontUnit(FONT_TOAST_NAME);
+	public void loadResources(ResourceManager resourceManager) {
+		mTextureBatch.loadResources(resourceManager);
+		mFontUnit = resourceManager.fontManager().getFontUnit(FONT_TOAST_NAME);
 	}
 
 	public void unloadResources() {
@@ -129,58 +129,53 @@ public class ToastManager {
 	// Methods
 	// --------------------------------------
 
-	public void addMessage(String pTitle, String pMessage) {
+	public void addMessage(String title, String message, int messageLifeTimeInMs) {
 		if (mAddTimer < MIN_TIME_BETWEEN_ADD)
 			return;
 
-		if (pMessage == null || pMessage.length() == 0)
+		if (message == null || message.length() == 0)
 			return;
 
 		mAddTimer = 0;
 
-		ToastMessage tm = getFreeToast();
-		mToastMessages.add(tm);
+		final var lToastMessage = getFreeToast();
+		mToastMessages.add(lToastMessage);
 
-		if (tm == null)
+		if (lToastMessage == null)
 			return;
 
-		tm.y = 0;
+		lToastMessage.y = 0;
 
-		tm.init(pTitle, pMessage, 3000);
-
+		lToastMessage.init(title, message, messageLifeTimeInMs);
 	}
 
 	private ToastMessage getFreeToast() {
 		if (mToastMessagePool.size() > 0) {
-			ToastMessage lTM = mToastMessagePool.get(mToastMessagePool.size() - 1);
+			final var lToastMessage = mToastMessagePool.get(mToastMessagePool.size() - 1);
 			mToastMessagePool.remove(mToastMessagePool.size() - 1);
-			return lTM;
+			return lToastMessage;
 		}
 
 		return allocateNewMesssages(8);
-
 	}
 
-	private ToastMessage allocateNewMesssages(int pAmt) {
-		if (pAmt < 1)
-			pAmt = 2;
+	private ToastMessage allocateNewMesssages(int amountToPreAllocate) {
+		if (amountToPreAllocate < 1)
+			amountToPreAllocate = 2;
 
-		if (mToastCounter + pAmt > MAX_TOASTPOOL_SIZE) {
-			pAmt = MAX_TOASTPOOL_SIZE - mToastCounter;
-
+		if (mToastCounter + amountToPreAllocate > MAX_TOASTPOOL_SIZE) {
+			amountToPreAllocate = MAX_TOASTPOOL_SIZE - mToastCounter;
 		}
 
-		ToastMessage lReturn = new ToastMessage();
+		final var lReturnMessage = new ToastMessage();
 		mToastCounter++;
 
-		for (int i = 0; i < pAmt - 1; i++) {
+		for (int i = 0; i < amountToPreAllocate - 1; i++) {
 			mToastCounter++;
 			mToastMessagePool.add(new ToastMessage());
-
 		}
 
-		return lReturn;
-
+		return lReturnMessage;
 	}
 
 }

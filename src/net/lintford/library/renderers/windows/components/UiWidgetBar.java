@@ -73,18 +73,18 @@ public class UiWidgetBar extends UIWidget {
 
 	@Override
 	public void draw(LintfordCore pCore, SpriteBatch pSpriteBatch, SpriteSheetDefinition pCoreSpritesheet, FontUnit pTextFont, float pComponentZDepth) {
-		pTextFont.drawText(mLabelString, x + lHorizontalPadding, y + 1, pComponentZDepth, ColorConstants.WHITE, 1.f);
+		pTextFont.drawText(mLabelString, mX + lHorizontalPadding, mY + 1, pComponentZDepth, ColorConstants.WHITE, 1.f);
 
 		final float lInnerBorderPadding = 1.f;
 
-		float lBarWidth = MathHelper.scaleToRange(mCurValue, mMinValue, mMaxValue, 0, w);
-		lBarWidth = MathHelper.clamp(lBarWidth - lInnerBorderPadding * 2, 0, w - lHorizontalPadding * 2.f);
+		float lBarWidth = MathHelper.scaleToRange(mCurValue, mMinValue, mMaxValue, 0, mW);
+		lBarWidth = MathHelper.clamp(lBarWidth - lInnerBorderPadding * 2, 0, mW - lHorizontalPadding * 2.f);
 
 		// Draw background bar
-		pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, x + lHorizontalPadding, y + 25, w - lHorizontalPadding * 2.f, BAR_HEIGHT, -0.1f, ColorConstants.BLACK);
+		pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX + lHorizontalPadding, mY + 25, mW - lHorizontalPadding * 2.f, BAR_HEIGHT, -0.1f, ColorConstants.BLACK);
 
-		float xx = x + lHorizontalPadding;
-		float yy = y + 25;
+		float xx = mX + lHorizontalPadding;
+		float yy = mY + 25;
 		float ww = lBarWidth;
 		float hh = BAR_HEIGHT - lInnerBorderPadding * 2.f;
 

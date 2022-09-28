@@ -10,7 +10,6 @@ import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.textures.CoreTextureNames;
 import net.lintford.library.core.input.InputManager;
-import net.lintford.library.core.maths.Vector2f;
 import net.lintford.library.renderers.windows.components.IScrollBarArea;
 import net.lintford.library.renderers.windows.components.ScrollBar;
 import net.lintford.library.renderers.windows.components.ScrollBarContentRectangle;
@@ -45,14 +44,11 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 	protected List<ListBoxItem> mItems;
 	protected ScrollBarContentRectangle mContentArea;
 	protected ScrollBar mScrollBar;
-
 	protected float mLastMouseYPos;
 	protected IListBoxItemSelected mSelecterListener;
 	protected IListBoxItemDoubleClick mItemDoubleClickListener;
-
 	protected int mSelectedItem = -1;
-
-	protected boolean mClickActive; // Clicked within the listbox (and dragging, i.e. for scrolling)
+	protected boolean mClickActive;
 
 	// --------------------------------------
 	// Properties
@@ -93,7 +89,7 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 
 	@Override
 	public float height() {
-		return h;// mContentArea.h;
+		return mH;// mContentArea.h;
 
 	}
 
@@ -101,14 +97,14 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 	// Constructor
 	// --------------------------------------
 
-	public ListBox(ScreenManager pScreenManager, BaseLayout pParentLayout, String pMenuEntryLabel) {
-		super(pScreenManager, pParentLayout, pMenuEntryLabel);
+	public ListBox(ScreenManager screenManager, BaseLayout parentLayout, String menuEntryLabel) {
+		super(screenManager, parentLayout, menuEntryLabel);
 
 		mItems = new ArrayList<>();
 
 		mContentArea = new ScrollBarContentRectangle(this);
 
-		mScrollBar = new ScrollBar(this, new Rectangle(x + w - ScrollBar.BAR_WIDTH, y, 20, h));
+		mScrollBar = new ScrollBar(this, new Rectangle(mX + mW - ScrollBar.BAR_WIDTH, mY, 20, mH));
 
 		mLeftMargin = 10f;
 		mRightMargin = 10f;
@@ -121,7 +117,6 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 		mMaxHeight = 1000;
 
 		mVerticalFillType = FILLTYPE.FILL_CONTAINER;
-
 	}
 
 	// --------------------------------------
@@ -129,40 +124,35 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 	// --------------------------------------
 
 	@Override
-	public boolean handleInput(LintfordCore pCore) {
-		final Vector2f lMouseHUDCoords = pCore.HUD().getMouseCameraSpace();
+	public boolean handleInput(LintfordCore core) {
+		final var lMouseHUDCoords = core.HUD().getMouseCameraSpace();
 
-		// Check if the mouse is clicked outside of this list box
-		// In this case, we shouldn't un-select the current selected entry, otherwise we'd never be able to click a button outside of this list box
-		if (!mScrollBar.clickAction() && !intersectsAA(lMouseHUDCoords) && pCore.input().mouse().isMouseLeftClick(hashCode())) {
+		if (!mScrollBar.clickAction() && !intersectsAA(lMouseHUDCoords) && core.input().mouse().isMouseLeftClick(hashCode()))
 			return false;
-		}
 
-		if (mScrollBar.handleInput(pCore, mScreenManager)) {
+		if (mScrollBar.handleInput(core, mScreenManager)) {
 			mClickActive = false;
 			return true;
 		}
 
 		// Check each of the items if they havae captured mouse input
 		for (int i = 0; i < mItems.size(); i++) {
-			boolean lResult = mItems.get(i).handleInput(pCore);
+			boolean lResult = mItems.get(i).handleInput(core);
 			// FIXME: Double check - if an item was click
-			if (lResult) {
+			if (lResult)
 				return true;
-			}
 
-			if (pCore.input().mouse().isMouseLeftButtonDown()) {
+			if (core.input().mouse().isMouseLeftButtonDown())
 				mSelectedItem = -1;
-			}
+
 		}
 
-		if (!pCore.input().mouse().isMouseLeftButtonDown()) {
+		if (!core.input().mouse().isMouseLeftButtonDown()) {
 			mClickActive = false;
-
 			return false;
 		}
 
-		if (!pCore.input().mouse().tryAcquireMouseLeftClick(hashCode())) {
+		if (!core.input().mouse().tryAcquireMouseLeftClick(hashCode())) {
 			mClickActive = false;
 			return false;
 		}
@@ -177,50 +167,51 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 	}
 
 	@Override
-	public void update(LintfordCore pCore, MenuScreen pScreen, boolean pIsSelected) {
+	public void update(LintfordCore core, MenuScreen screen, boolean isSelected) {
 		final int lCount = mItems.size();
 		float mItemYPos = 0;
 
 		float lTotalContentHeight = marginTop() + marginBottom();
 		for (int i = 0; i < lCount; i++) {
 			ListBoxItem lItem = mItems.get(i);
-			mItems.get(i).update(pCore, pScreen, pIsSelected);
+			mItems.get(i).update(core, screen, isSelected);
 
-			final float lInnerPadding = mScrollBar.scrollBarEnabled() ? mScrollBar.w() : 0;
-			mItems.get(i).w(w - marginLeft() - marginRight() - lInnerPadding);
-			mItems.get(i).setPosition(x + marginLeft(), y + marginTop() + mScrollBar.currentYPos() + mItemYPos);
+			final float lInnerPadding = mScrollBar.scrollBarEnabled() ? mScrollBar.width() : 0;
+			mItems.get(i).width(mW - marginLeft() - marginRight() - lInnerPadding);
+			mItems.get(i).setPosition(mX + marginLeft(), mY + marginTop() + mScrollBar.currentYPos() + mItemYPos);
 
-			mItemYPos += lItem.h() + LISTBOX_ITEM_VPADDING;
-			lTotalContentHeight += lItem.h() + LISTBOX_ITEM_VPADDING;
+			mItemYPos += lItem.height() + LISTBOX_ITEM_VPADDING;
+			lTotalContentHeight += lItem.height() + LISTBOX_ITEM_VPADDING;
 		}
 
 		if (mVerticalFillType == FILLTYPE.FILL_CONTAINER || mVerticalFillType == FILLTYPE.TAKE_WHATS_NEEDED)
-			mContentArea.h(lTotalContentHeight);
+			mContentArea.height(lTotalContentHeight);
 
-		mScrollBar.scrollBarEnabled(mContentArea.h() - h > 0);
-		mScrollBar.update(pCore);
+		mScrollBar.scrollBarEnabled(mContentArea.height() - mH > 0);
+		mScrollBar.update(core);
 	}
 
 	@Override
-	public void draw(LintfordCore pCore, Screen pScreen, boolean pIsSelected, float pParentZDepth) {
+	public void draw(LintfordCore core, Screen screen, boolean isSelected, float parentZDepth) {
 		final var lSpriteBatch = mParentLayout.parentScreen.spriteBatch();
 
-		final var lScreenOffset = pScreen.screenPositionOffset();
+		final var lScreenOffset = screen.screenPositionOffset();
 		final float lTileSize = 32;
 
-		lSpriteBatch.begin(pCore.HUD());
+		lSpriteBatch.begin(core.HUD());
 		final var lBackgroundColor = ColorConstants.getColor(.15f, .15f, .15f, 0.4f);
-		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_LEFT, (int) (lScreenOffset.x + x), (int) (lScreenOffset.y + y), lTileSize, lTileSize, pParentZDepth, lBackgroundColor);
-		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_MID, (int) (lScreenOffset.x + x + lTileSize), (int) (lScreenOffset.y + y), (int)w - lTileSize * 2, lTileSize, pParentZDepth, lBackgroundColor);
-		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_RIGHT, (int) (lScreenOffset.x + x + (int)w - lTileSize), (int) (lScreenOffset.y + y), lTileSize, lTileSize, pParentZDepth, lBackgroundColor);
+		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_LEFT, (int) (lScreenOffset.x + mX), (int) (lScreenOffset.y + mY), lTileSize, lTileSize, parentZDepth, lBackgroundColor);
+		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_MID, (int) (lScreenOffset.x + mX + lTileSize), (int) (lScreenOffset.y + mY), (int) mW - lTileSize * 2, lTileSize, parentZDepth, lBackgroundColor);
+		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_RIGHT, (int) (lScreenOffset.x + mX + (int) mW - lTileSize), (int) (lScreenOffset.y + mY), lTileSize, lTileSize, parentZDepth, lBackgroundColor);
 
-		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_MID_LEFT, (int) (lScreenOffset.x + x), (int) (lScreenOffset.y + y + lTileSize), lTileSize, (int)h - lTileSize * 2, pParentZDepth, lBackgroundColor);
-		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_MID_CENTER, (int) (lScreenOffset.x + x + lTileSize), (int) (lScreenOffset.y + y + lTileSize), (int)w - lTileSize * 2, (int)h - 64, pParentZDepth, lBackgroundColor);
-		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_MID_RIGHT, (int) (lScreenOffset.x + x + (int)w - lTileSize), (int) (lScreenOffset.y + y + lTileSize), lTileSize, (int)h - lTileSize * 2, pParentZDepth, lBackgroundColor);
+		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_MID_LEFT, (int) (lScreenOffset.x + mX), (int) (lScreenOffset.y + mY + lTileSize), lTileSize, (int) mH - lTileSize * 2, parentZDepth, lBackgroundColor);
+		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_MID_CENTER, (int) (lScreenOffset.x + mX + lTileSize), (int) (lScreenOffset.y + mY + lTileSize), (int) mW - lTileSize * 2, (int) mH - 64, parentZDepth, lBackgroundColor);
+		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_MID_RIGHT, (int) (lScreenOffset.x + mX + (int) mW - lTileSize), (int) (lScreenOffset.y + mY + lTileSize), lTileSize, (int) mH - lTileSize * 2, parentZDepth, lBackgroundColor);
 
-		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_LEFT, (int) (lScreenOffset.x + x), (int) (lScreenOffset.y + (int)y + (int)h - lTileSize), lTileSize, lTileSize, pParentZDepth, lBackgroundColor);
-		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_MID, (int) (lScreenOffset.x + x + lTileSize), (int) (lScreenOffset.y + y + (int)h - lTileSize), w - lTileSize * 2, lTileSize, pParentZDepth, lBackgroundColor);
-		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_RIGHT, (int) (lScreenOffset.x + x + (int)w - lTileSize), (int) (lScreenOffset.y + (int)y + (int)h - lTileSize), lTileSize, lTileSize, pParentZDepth, lBackgroundColor);
+		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_LEFT, (int) (lScreenOffset.x + mX), (int) (lScreenOffset.y + (int) mY + (int) mH - lTileSize), lTileSize, lTileSize, parentZDepth, lBackgroundColor);
+		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_MID, (int) (lScreenOffset.x + mX + lTileSize), (int) (lScreenOffset.y + mY + (int) mH - lTileSize), mW - lTileSize * 2, lTileSize, parentZDepth, lBackgroundColor);
+		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_RIGHT, (int) (lScreenOffset.x + mX + (int) mW - lTileSize), (int) (lScreenOffset.y + (int) mY + (int) mH - lTileSize), lTileSize, lTileSize, parentZDepth,
+				lBackgroundColor);
 		lSpriteBatch.end();
 
 		GL11.glEnable(GL11.GL_STENCIL_TEST);
@@ -232,46 +223,45 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 		GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT); // Clear the stencil buffer
 
 		// Fill in the renderable parts of the list box (this is needed!)
-		lSpriteBatch.begin(pCore.HUD());
+		lSpriteBatch.begin(core.HUD());
 		final var lColor = ColorConstants.getWhiteWithAlpha(0.f);
-		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_BLACK, x, y + 2, w, h - 4, pParentZDepth, lColor);
+		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_BLACK, mX, mY + 2, mW, mH - 4, parentZDepth, lColor);
 		lSpriteBatch.end();
 
-		GL11.glStencilFunc(GL11.GL_EQUAL, 1, 0xFF); // Pass test if stencil value is 1
+		GL11.glStencilFunc(GL11.GL_EQUAL, 1, 0xFF);
 
-		for (int i = 0; i < mItems.size(); i++) {
-			mItems.get(i).draw(pCore, pScreen, lSpriteBatch, mSelectedItem == mItems.get(i).mItemIndex, pParentZDepth);
-		}
+		for (int i = 0; i < mItems.size(); i++)
+			mItems.get(i).draw(core, screen, lSpriteBatch, mSelectedItem == mItems.get(i).mItemIndex, parentZDepth);
 
 		if (mScrollBar.scrollBarEnabled()) {
-			lSpriteBatch.begin(pCore.HUD());
-			mScrollBar.draw(pCore, lSpriteBatch, mCoreSpritesheet, pParentZDepth);
+			lSpriteBatch.begin(core.HUD());
+			mScrollBar.draw(core, lSpriteBatch, mCoreSpritesheet, parentZDepth);
 			lSpriteBatch.end();
 		}
 
 		GL11.glDisable(GL11.GL_STENCIL_TEST);
 
-		drawDebugCollidableBounds(pCore, lSpriteBatch);
+		drawDebugCollidableBounds(core, lSpriteBatch);
 	}
 
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
 
-	public void addEntry(ListBoxItem pItem) {
-		if (!mItems.contains(pItem)) {
-			mItems.add(pItem);
+	public void addEntry(ListBoxItem item) {
+		if (!mItems.contains(item)) {
+			mItems.add(item);
 		}
 	}
 
-	public void removeEntry(ListBoxItem pItem) {
-		if (mItems.contains(pItem)) {
-			mItems.remove(pItem);
+	public void removeEntry(ListBoxItem item) {
+		if (mItems.contains(item)) {
+			mItems.remove(item);
 		}
 	}
 
 	@Override
-	public void onClick(InputManager pInputState) {
+	public void onClick(InputManager inputManager) {
 
 	}
 
@@ -282,12 +272,12 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 		}
 
 		return null;
-
 	}
 
 	public boolean isItemSelected() {
 		if (mSelectedItem == -1)
 			return false;
+
 		for (int i = 0; i < mItems.size(); i++) {
 			if (mItems.get(i).mItemIndex == mSelectedItem)
 				return true;
@@ -298,17 +288,14 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 
 	public void clearListBox() {
 		mItems.clear();
-
 	}
 
-	public void setItemSelectedListener(IListBoxItemSelected pListBoxItemSelected) {
-		mSelecterListener = pListBoxItemSelected;
-
+	public void setItemSelectedListener(IListBoxItemSelected listBoxItemSelected) {
+		mSelecterListener = listBoxItemSelected;
 	}
 
-	public void setItemDoubleClickListener(IListBoxItemDoubleClick pListBoxItemDoubleClick) {
-		mItemDoubleClickListener = pListBoxItemDoubleClick;
-
+	public void setItemDoubleClickListener(IListBoxItemDoubleClick listBoxItemDoubleClick) {
+		mItemDoubleClickListener = listBoxItemDoubleClick;
 	}
 
 	// --------------------------------------
@@ -326,14 +313,11 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 	}
 
 	@Override
-	public void onViewportChange(float pWidth, float pHeight) {
-		super.onViewportChange(pWidth, pHeight);
+	public void onViewportChange(float width, float height) {
+		super.onViewportChange(width, height);
 
 		if (mScrollBar != null) {
 			mScrollBar.resetBarTop();
-
 		}
-
 	}
-
 }

@@ -84,8 +84,8 @@ public class JBox2dPolyBatch {
 		return mUseCheckerPattern;
 	}
 
-	public void useCheckerPattern(boolean pNewValue) {
-		mUseCheckerPattern = pNewValue;
+	public void useCheckerPattern(boolean newValue) {
+		mUseCheckerPattern = newValue;
 	}
 
 	public boolean isDrawing() {
@@ -115,13 +115,13 @@ public class JBox2dPolyBatch {
 	// Core-Methods
 	// --------------------------------------
 
-	public void loadResources(ResourceManager pResourceManager) {
+	public void loadResources(ResourceManager resourceManager) {
 		if (mResourcesLoaded)
 			return;
 
-		mResourceManager = pResourceManager;
+		mResourceManager = resourceManager;
 
-		mShader.loadResources(pResourceManager);
+		mShader.loadResources(resourceManager);
 
 		if (mVboId == -1) {
 			mVboId = GL15.glGenBuffers();
@@ -180,97 +180,87 @@ public class JBox2dPolyBatch {
 		}
 	}
 
-	public void begin(ICamera pCamera) {
+	public void begin(ICamera camera) {
 		if (!mResourcesLoaded)
 			return;
 
-		if (pCamera == null)
+		if (camera == null)
 			return;
 
 		if (mIsDrawing)
 			return;
 
-		mCamera = pCamera;
+		mCamera = camera;
 
 		mBuffer.clear();
 		mVertexCount = 0;
 		mIsDrawing = true;
-
 	}
 
-	public void drawPolygon(Texture pTexture, Body pBody, Vec2[] pVertexArray, Rectangle pSrcRect, float pZ, float pR, float pG, float pB, float pA) {
-		drawPolygon(pTexture, pBody, pVertexArray, pSrcRect.x(), pSrcRect.y(), pSrcRect.w(), pSrcRect.h(), pZ, pR, pG, pB, pA);
-
+	public void drawPolygon(Texture texture, Body body, Vec2[] vertexArray, Rectangle sourceRect, float zDepth, float red, float green, float blue, float alpha) {
+		drawPolygon(texture, body, vertexArray, sourceRect.x(), sourceRect.y(), sourceRect.width(), sourceRect.height(), zDepth, red, green, blue, alpha);
 	}
 
-	public void drawPolygon(Texture pTexture, Body pBody, Vec2[] pVertexArray, float pSX, float pSY, float pSW, float pSH, float pZ, float pR, float pG, float pB, float pA) {
+	public void drawPolygon(Texture texture, Body body, Vec2[] vertexArray, float sourceX, float sourceY, float sourceWidth, float sourceHeight, float zDepth, float red, float green, float blue, float alpha) {
 		if (!mResourcesLoaded || !mIsDrawing)
 			return;
 
-		// TODO: Only supports polygons with 4 vertices so far (we don't actually need more for now) ...
-		if (pVertexArray == null || pVertexArray.length < 4)
+		if (vertexArray == null || vertexArray.length < 4)
 			return;
 
-		if (pTexture == null) {
-			// Resolve to use a default texture, or the 'MISSING_TEXTURE'
+		if (texture == null) {
 			if (TextureManager.USE_DEBUG_MISSING_TEXTURES) {
-				pTexture = mResourceManager.textureManager().textureNotFound();
-				if (pTexture == null)
-					return;
-
+				texture = mResourceManager.textureManager().textureNotFound();
 			} else {
 				return;
-
 			}
 		}
 
 		if (mCurrentTexID == -1) { // first texture
-			mCurrentTexID = pTexture.getTextureID();
-		} else if (mCurrentTexID != pTexture.getTextureID()) {
+			mCurrentTexID = texture.getTextureID();
+		} else if (mCurrentTexID != texture.getTextureID()) {
 			flush();
-			mCurrentTexID = pTexture.getTextureID();
+			mCurrentTexID = texture.getTextureID();
 		}
 
 		if (mUseCheckerPattern) {
-			pTexture = mResourceManager.textureManager().checkerIndexedTexture();
-
+			texture = mResourceManager.textureManager().checkerIndexedTexture();
 		}
 
 		// Vertex 0
-		final var vert0 = pBody.getWorldPoint(pVertexArray[0]);
+		final var vert0 = body.getWorldPoint(vertexArray[0]);
 		float x0 = vert0.x * ConstantsPhysics.UnitsToPixels();
 		float y0 = vert0.y * ConstantsPhysics.UnitsToPixels();
-		float u0 = (pSX + pSW) / pTexture.getTextureWidth();
-		float v0 = pSY / pTexture.getTextureHeight();
+		float u0 = (sourceX + sourceWidth) / texture.getTextureWidth();
+		float v0 = sourceY / texture.getTextureHeight();
 
 		// Vertex 1
-		final var vert1 = pBody.getWorldPoint(pVertexArray[1]);
+		final var vert1 = body.getWorldPoint(vertexArray[1]);
 		float x1 = vert1.x * ConstantsPhysics.UnitsToPixels();
 		float y1 = vert1.y * ConstantsPhysics.UnitsToPixels();
-		float u1 = (pSX) / pTexture.getTextureWidth();
-		float v1 = (pSY) / pTexture.getTextureHeight();
+		float u1 = (sourceX) / texture.getTextureWidth();
+		float v1 = (sourceY) / texture.getTextureHeight();
 
 		// Vertex 2
-		final var vert2 = pBody.getWorldPoint(pVertexArray[3]);
+		final var vert2 = body.getWorldPoint(vertexArray[3]);
 		float x2 = vert2.x * ConstantsPhysics.UnitsToPixels();
 		float y2 = vert2.y * ConstantsPhysics.UnitsToPixels();
-		float u2 = pSX / pTexture.getTextureWidth();
-		float v2 = (pSY + pSH) / pTexture.getTextureHeight();
+		float u2 = sourceX / texture.getTextureWidth();
+		float v2 = (sourceY + sourceHeight) / texture.getTextureHeight();
 
 		// Vertex 3
-		final var vert3 = pBody.getWorldPoint(pVertexArray[2]);
+		final var vert3 = body.getWorldPoint(vertexArray[2]);
 		float x3 = vert3.x * ConstantsPhysics.UnitsToPixels();
 		float y3 = vert3.y * ConstantsPhysics.UnitsToPixels();
-		float u3 = (pSX + pSW) / pTexture.getTextureWidth();
-		float v3 = (pSY + pSH) / pTexture.getTextureHeight();
+		float u3 = (sourceX + sourceWidth) / texture.getTextureWidth();
+		float v3 = (sourceY + sourceHeight) / texture.getTextureHeight();
 
-		addVertToBuffer(x0, y0, pZ, 1f, pR, pG, pB, pA, u0, v0); // 0
-		addVertToBuffer(x2, y2, pZ, 1f, pR, pG, pB, pA, u2, v2); // 2
-		addVertToBuffer(x3, y3, pZ, 1f, pR, pG, pB, pA, u3, v3); // 3
-		addVertToBuffer(x0, y0, pZ, 1f, pR, pG, pB, pA, u0, v0); // 0
-		addVertToBuffer(x1, y1, pZ, 1f, pR, pG, pB, pA, u1, v1); // 1
-		addVertToBuffer(x2, y2, pZ, 1f, pR, pG, pB, pA, u2, v2); // 2
-
+		addVertToBuffer(x0, y0, zDepth, 1f, red, green, blue, alpha, u0, v0); // 0
+		addVertToBuffer(x2, y2, zDepth, 1f, red, green, blue, alpha, u2, v2); // 2
+		addVertToBuffer(x3, y3, zDepth, 1f, red, green, blue, alpha, u3, v3); // 3
+		addVertToBuffer(x0, y0, zDepth, 1f, red, green, blue, alpha, u0, v0); // 0
+		addVertToBuffer(x1, y1, zDepth, 1f, red, green, blue, alpha, u1, v1); // 1
+		addVertToBuffer(x2, y2, zDepth, 1f, red, green, blue, alpha, u2, v2); // 2
 	}
 
 	private void addVertToBuffer(float x, float y, float z, float w, float r, float g, float b, float a, float u, float v) {
@@ -292,7 +282,6 @@ public class JBox2dPolyBatch {
 		mBuffer.put(v);
 
 		mVertexCount++;
-
 	}
 
 	public void end() {
@@ -301,7 +290,6 @@ public class JBox2dPolyBatch {
 
 		mIsDrawing = false;
 		flush();
-
 	}
 
 	private void flush() {
@@ -341,7 +329,6 @@ public class JBox2dPolyBatch {
 		if (mCurrentTexID != -1) {
 			GL13.glActiveTexture(GL13.GL_TEXTURE0);
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, mCurrentTexID);
-
 		}
 
 		mShader.projectionMatrix(mCamera.projection());

@@ -33,8 +33,8 @@ public abstract class BaseRenderer {
 	// Properties
 	// --------------------------------------
 
-	public void isManagedDraw(boolean pNewValue) {
-		mIsManagedDraw = pNewValue;
+	public void isManagedDraw(boolean newValue) {
+		mIsManagedDraw = newValue;
 	}
 
 	public boolean isManagedDraw() {
@@ -67,8 +67,8 @@ public abstract class BaseRenderer {
 		return mIsActive;
 	}
 
-	public void isActive(boolean pNewValue) {
-		mIsActive = pNewValue;
+	public void isActive(boolean newValue) {
+		mIsActive = newValue;
 	}
 
 	public String rendererName() {
@@ -85,26 +85,24 @@ public abstract class BaseRenderer {
 	// Constructor
 	// --------------------------------------
 
-	public BaseRenderer(final RendererManager pRendererManager, final String pRendererName, final int pEntityGroupID) {
-		if (pRendererManager == null || pRendererName == null || pRendererName.length() == 0)
+	public BaseRenderer(final RendererManager rendererManager, final String rendererName, final int entityGroupUid) {
+		if (rendererManager == null || rendererName == null || rendererName.length() == 0)
 			throw new RuntimeException("Renderer names cannot be null or empty!");
 
-		mRendererId = pRendererManager.getNewRendererId();
+		mRendererId = rendererManager.getNewRendererId();
 
-		mRendererManager = pRendererManager;
-		mRendererName = pRendererName;
+		mRendererManager = rendererManager;
+		mRendererName = rendererName;
 
 		mIsManagedDraw = true;
 
-		if (pRendererManager != null) {
-			pRendererManager.addRenderer(this);
-
+		if (rendererManager != null) {
+			rendererManager.addRenderer(this);
 		}
 
-		mEntityGroupID = pEntityGroupID;
+		mEntityGroupID = entityGroupUid;
 
 		isActive(true);
-
 	}
 
 	// --------------------------------------
@@ -113,12 +111,11 @@ public abstract class BaseRenderer {
 
 	public abstract boolean isInitialized();
 
-	public abstract void initialize(LintfordCore pCore);
+	public abstract void initialize(LintfordCore core);
 
-	public void loadResources(ResourceManager pResourceManager) {
+	public void loadResources(ResourceManager resourceManager) {
 		Debug.debugManager().logger().i(TAG, "Loading GL Content (" + getClass().getSimpleName() + ")");
 		mResourcesLoaded = true;
-
 	}
 
 	public void unloadResources() {
@@ -126,18 +123,14 @@ public abstract class BaseRenderer {
 		mResourcesLoaded = false;
 	}
 
-	public boolean handleInput(LintfordCore pCore) {
+	public boolean handleInput(LintfordCore core) {
 		return false;
 	}
 
-	public void update(LintfordCore pCore) {
+	public void update(LintfordCore core) {
 		return;
 	}
 
-	public abstract void draw(LintfordCore pCore);
-
-	// --------------------------------------
-	// Methods
-	// --------------------------------------
+	public abstract void draw(LintfordCore core);
 
 }

@@ -37,7 +37,6 @@ public class ParticleSystemManager extends InstanceManager<ParticleSystemInstanc
 		public void loadDefinitionsFromFolderWatcher(EntityLocationProvider pEntityLocationProvider) {
 			final var lGson = new GsonBuilder().create();
 			loadDefinitionsFromFolderWatcherItems(pEntityLocationProvider, lGson, ParticleSystemDefinition.class);
-
 		}
 
 		@Override
@@ -47,7 +46,6 @@ public class ParticleSystemManager extends InstanceManager<ParticleSystemInstanc
 			final var lGson = gsonBuilder.create();
 
 			loadDefinitionsFromMetaFileItems(pMetaFilepath, lGson, ParticleSystemDefinition.class);
-
 		}
 
 		@Override
@@ -89,10 +87,10 @@ public class ParticleSystemManager extends InstanceManager<ParticleSystemInstanc
 	// Constructor
 	// --------------------------------------
 
-	public ParticleSystemManager(ParticleFrameworkData pParticleFrameworkData) {
+	public ParticleSystemManager(ParticleFrameworkData particleFrameworkData) {
 		super();
 
-		mParticleFrameworkData = pParticleFrameworkData;
+		mParticleFrameworkData = particleFrameworkData;
 		mParticleSystemDefinitionManager = new ParticleSystemDefinitionManager();
 		ParticleSystemUidCounter = 0;
 	}
@@ -102,21 +100,19 @@ public class ParticleSystemManager extends InstanceManager<ParticleSystemInstanc
 	// --------------------------------------
 
 	/** Returns the {@link ParticleController} whose {@link ParticleSystemInstance}'s name matches the given {@link String}. null is returned if the ParticleController is not found. */
-	public ParticleSystemInstance getParticleSystemByName(final String pParticleSystemName) {
-		// If the named particle system has already been created, then return the instance
+	public ParticleSystemInstance getParticleSystemByName(final String particleSystemName) {
 		final var lNumParticleSystems = mInstances.size();
 		for (var i = 0; i < lNumParticleSystems; i++) {
 			final var lParticleSystemInstance = mInstances.get(i);
 			if (!lParticleSystemInstance.isInitialized())
 				continue;
 
-			if (lParticleSystemInstance.definition().name.equals(pParticleSystemName)) {
+			if (lParticleSystemInstance.definition().name.equals(particleSystemName)) {
 				return mInstances.get(i);
 			}
 		}
 
-		// Otherwise create a new instance of the particle system.
-		final var lParticleSystemDefinition = mParticleSystemDefinitionManager.getByName(pParticleSystemName);
+		final var lParticleSystemDefinition = mParticleSystemDefinitionManager.getByName(particleSystemName);
 		if (lParticleSystemDefinition != null) {
 			final var lNewParticleSystem = new ParticleSystemInstance();
 			lNewParticleSystem.initialize(ParticleSystemUidCounter++, lParticleSystemDefinition);
@@ -128,7 +124,7 @@ public class ParticleSystemManager extends InstanceManager<ParticleSystemInstanc
 			return lNewParticleSystem;
 		}
 
-		Debug.debugManager().logger().w(getClass().getSimpleName(), String.format("Couldn't find ParticleSystemDefinition '%s'", pParticleSystemName));
+		Debug.debugManager().logger().w(getClass().getSimpleName(), String.format("Couldn't find ParticleSystemDefinition '%s'", particleSystemName));
 
 		return null;
 	}

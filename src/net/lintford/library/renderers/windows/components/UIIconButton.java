@@ -25,7 +25,7 @@ public class UIIconButton extends UIWidget {
 	// --------------------------------------
 
 	private transient EntryInteractions mCallback;
-	private transient int mClickID;
+	private transient int mEntryUid;
 	private transient String mButtonLabel;
 	private transient boolean mHoveredOver;
 	private transient boolean mDrawButtonText;
@@ -43,16 +43,16 @@ public class UIIconButton extends UIWidget {
 		return mButtonLabel;
 	}
 
-	public void buttonLabel(final String pNewLabel) {
-		mButtonLabel = pNewLabel;
+	public void buttonLabel(final String newLabel) {
+		mButtonLabel = newLabel;
 	}
 
-	public int buttonListenerID() {
-		return mClickID;
+	public int buttonUid() {
+		return mEntryUid;
 	}
 
-	public void buttonListenerID(final int pNewLabel) {
-		mClickID = pNewLabel;
+	public void buttionUid(final int entryUid) {
+		mEntryUid = entryUid;
 	}
 
 	public void setButtonSolidBackgroundColor(Color pColor) {
@@ -76,17 +76,17 @@ public class UIIconButton extends UIWidget {
 	// Constructor
 	// --------------------------------------
 
-	public UIIconButton(final UiWindow pParentWindow) {
-		this(pParentWindow, 0);
+	public UIIconButton(final UiWindow parentWindow) {
+		this(parentWindow, 0);
 	}
 
-	public UIIconButton(final UiWindow pParentWindow, final int pClickID) {
-		super(pParentWindow);
+	public UIIconButton(final UiWindow parentWindow, final int entryUid) {
+		super(parentWindow);
 
-		mClickID = pClickID;
+		mEntryUid = entryUid;
 
-		w = 200;
-		h = 25;
+		mW = 200;
+		mH = 25;
 
 		mButtonSolidColorBackground = true;
 		mDrawButtonText = true;
@@ -97,98 +97,91 @@ public class UIIconButton extends UIWidget {
 	// --------------------------------------
 
 	@Override
-	public boolean handleInput(LintfordCore pCore) {
+	public boolean handleInput(LintfordCore core) {
 		if (!mIsVisible)
 			return false;
 
-		if (intersectsAA(pCore.HUD().getMouseCameraSpace())) {
+		if (intersectsAA(core.HUD().getMouseCameraSpace())) {
 			mHoveredOver = true;
 
 			if (mClickTimer > CLICK_TIMER) {
-				if (pCore.input().mouse().tryAcquireMouseLeftClick(hashCode())) {
+				if (core.input().mouse().tryAcquireMouseLeftClick(hashCode())) {
 					// Callback to the listener and pass our ID
 					if (mCallback != null) {
-						mCallback.menuEntryOnClick(pCore.input(), mClickID);
-
+						mCallback.menuEntryOnClick(core.input(), mEntryUid);
 					}
 
 					mClickTimer = 0;
 
 					return true;
-
 				}
 			}
 
 		} else {
 			mHoveredOver = false;
-
 		}
 
 		return false;
 	}
 
 	@Override
-	public void update(LintfordCore pCore) {
+	public void update(LintfordCore core) {
 		if (!mIsVisible)
 			return;
 
-		super.update(pCore);
+		super.update(core);
 
-		mClickTimer += pCore.appTime().elapsedTimeMilli();
-
+		mClickTimer += core.appTime().elapsedTimeMilli();
 	}
 
 	@Override
-	public void draw(LintfordCore pCore, SpriteBatch pSpriteBatch, SpriteSheetDefinition pCoreSpritesheet, FontUnit pTextFont, float pComponentZDepth) {
+	public void draw(LintfordCore core, SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheetDefinition, FontUnit textFont, float componentZDepth) {
 		if (!mIsVisible)
 			return;
 
 		if (mButtonSolidColorBackground) {
-			drawSolidColorBackground(pCore, pSpriteBatch, pCoreSpritesheet);
+			drawSolidColorBackground(core, spriteBatch, coreSpritesheetDefinition);
 		} else if (mButtonTexture != null) {
-			drawTextureBackground(pCore, pSpriteBatch);
+			drawTextureBackground(core, spriteBatch);
 		}
 
-		// text
 		if (mDrawButtonText && mButtonLabel != null && mButtonLabel.length() > 0) {
-			final float lTextWidth = pTextFont.getStringWidth(mButtonLabel);
-
-			pTextFont.drawText(mButtonLabel, x + w / 2f - lTextWidth / 2f, y + h / 2f - pTextFont.fontHeight() / 2f, pComponentZDepth, ColorConstants.WHITE, 1f);
+			final float lTextWidth = textFont.getStringWidth(mButtonLabel);
+			textFont.drawText(mButtonLabel, mX + mW / 2f - lTextWidth / 2f, mY + mH / 2f - textFont.fontHeight() / 2f, componentZDepth, ColorConstants.WHITE, 1f);
 		}
 	}
 
-	private void drawSolidColorBackground(LintfordCore pCore, SpriteBatch pSpriteBatch, SpriteSheetDefinition pCoreSpritesheet) {
+	private void drawSolidColorBackground(LintfordCore core, SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheet) {
 		final float lColorMod = mHoveredOver ? mHoveredOver ? .9f : 1.f : .3f;
 		final var lColor = ColorConstants.getColorWithRGBMod(entityColor, lColorMod);
 
-		pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, x, y, w, h, -1.0f, lColor);
+		spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX, mY, mW, mH, -1.0f, lColor);
 	}
 
 	private void drawTextureBackground(LintfordCore pCore, SpriteBatch pSpriteBatch) {
 		final var lColorMod = mHoveredOver ? .5f : 1.f;
 		final var lColor = ColorConstants.getColorWithRGBMod(entityColor, lColorMod);
 
-		pSpriteBatch.draw(mButtonTexture, mSourceFrameIndex, x, y, w, h, -1.0f, lColor);
+		pSpriteBatch.draw(mButtonTexture, mSourceFrameIndex, mX, mY, mW, mH, -1.0f, lColor);
 	}
 
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
 
-	public void setClickListener(final EntryInteractions pCallbackObject, int pClickID) {
-		mCallback = pCallbackObject;
-		mClickID = pClickID;
-
+	public void setClickListener(final EntryInteractions callbackObject, int entryUid) {
+		mCallback = callbackObject;
+		mEntryUid = entryUid;
 	}
 
-	public void removeClickListener(final EntryInteractions pCallbackObject) {
+	public void removeClickListener(final EntryInteractions callbackObject) {
 		mCallback = null;
 	}
 
-	public void setTextureSource(final SpriteSheetDefinition pSpritesheetDefinition, final int pSpriteFrameIndex) {
+	public void setTextureSource(final SpriteSheetDefinition spritesheetDefinition, final int spriteFrameIndex) {
 		mButtonSolidColorBackground = false;
 
-		mButtonTexture = pSpritesheetDefinition;
-		mSourceFrameIndex = pSpriteFrameIndex;
+		mButtonTexture = spritesheetDefinition;
+		mSourceFrameIndex = spriteFrameIndex;
 	}
 }

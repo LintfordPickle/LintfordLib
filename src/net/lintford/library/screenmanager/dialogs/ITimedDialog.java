@@ -1,6 +1,6 @@
 package net.lintford.library.screenmanager.dialogs;
 
-public interface TimedDialogInterface {
+public interface ITimedDialog {
 
 	public abstract void timeExpired();
 

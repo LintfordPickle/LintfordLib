@@ -29,17 +29,15 @@ public class OGGAudioData extends AudioData {
 	// --------------------------------------
 
 	@Override
-	public boolean loadAudioFromInputStream(String pName, InputStream pInputStream) {
+	public boolean loadAudioFromInputStream(String audioName, InputStream inputStream) {
 		if (isLoaded())
 			return false;
 
-		mName = pName;
+		mName = audioName;
 		mBufferID = AL10.alGenBuffers();
 
 		try (STBVorbisInfo info = STBVorbisInfo.malloc()) {
-			ShortBuffer pcm = readVorbis(pInputStream, 32 * 1024, info);
-
-			// copy to buffer
+			final var pcm = readVorbis(inputStream, 32 * 1024, info);
 			alBufferData(mBufferID, info.channels() == 1 ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16, pcm, info.sample_rate());
 
 			mSize = AL10.alGetBufferi(mBufferID, AL10.AL_SIZE);
@@ -52,20 +50,17 @@ public class OGGAudioData extends AudioData {
 
 			if (ConstantsApp.getBooleanValueDef("DEBUG_AUDIO_ENABLED", false)) {
 				Debug.debugManager().logger().i(getClass().getSimpleName(), " ------ ");
-				Debug.debugManager().logger().i(getClass().getSimpleName(), "AudioEntity Name: " + pName);
+				Debug.debugManager().logger().i(getClass().getSimpleName(), "AudioEntity Name: " + audioName);
 				Debug.debugManager().logger().i(getClass().getSimpleName(), "Size: " + mSize);
 				Debug.debugManager().logger().i(getClass().getSimpleName(), "Frequency: " + mFrequency);
 				Debug.debugManager().logger().i(getClass().getSimpleName(), "Channels: " + mChannels);
 				Debug.debugManager().logger().i(getClass().getSimpleName(), "mBitsPerSample: " + mBitsPerSample);
 				Debug.debugManager().logger().i(getClass().getSimpleName(), "Duration (Seconds): " + mDurationInSeconds);
 				Debug.debugManager().logger().i(getClass().getSimpleName(), " ------ ");
-
 			}
 
 			return true;
-
 		}
-
 	}
 
 	// --------------------------------------

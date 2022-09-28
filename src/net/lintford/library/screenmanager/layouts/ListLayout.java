@@ -29,8 +29,8 @@ public class ListLayout extends BaseLayout implements IProcessMouseInput {
 	// Constructor
 	// --------------------------------------
 
-	public ListLayout(MenuScreen pParentScreen) {
-		super(pParentScreen);
+	public ListLayout(MenuScreen parentScreen) {
+		super(parentScreen);
 
 		mMinWidth = 0.f;
 		mMaxWidth = 900.f;
@@ -41,18 +41,18 @@ public class ListLayout extends BaseLayout implements IProcessMouseInput {
 		mCropPaddingTop = 0.f;
 	}
 
-	public ListLayout(MenuScreen pParentScreen, float pX, float pY) {
-		this(pParentScreen);
+	public ListLayout(MenuScreen parentScreen, float x, float y) {
+		this(parentScreen);
 
-		x = pX;
-		y = pY;
+		mX = x;
+		mY = y;
 	}
 
-	public ListLayout(MenuScreen pParentScreen, float pX, float pY, float pW, float pH) {
-		this(pParentScreen, pX, pY);
+	public ListLayout(MenuScreen parentScreen, float x, float y, float width, float height) {
+		this(parentScreen, x, y);
 
-		w = pW;
-		h = pH;
+		mW = width;
+		mH = height;
 	}
 
 	// --------------------------------------
@@ -60,10 +60,10 @@ public class ListLayout extends BaseLayout implements IProcessMouseInput {
 	// --------------------------------------
 
 	@Override
-	public boolean handleInput(LintfordCore pCore) {
-		final var lIntersectsAA = intersectsAA(pCore.HUD().getMouseCameraSpace());
-		if (lIntersectsAA && pCore.input().mouse().isMouseOverThisComponent(hashCode())) {
-			if (super.handleInput(pCore) || pCore.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
+	public boolean handleInput(LintfordCore core) {
+		final var lIntersectsAA = intersectsAA(core.HUD().getMouseCameraSpace());
+		if (lIntersectsAA && core.input().mouse().isMouseOverThisComponent(hashCode())) {
+			if (super.handleInput(core) || core.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
 				return true;
 			}
 		}
@@ -82,11 +82,11 @@ public class ListLayout extends BaseLayout implements IProcessMouseInput {
 	}
 
 	@Override
-	public void update(LintfordCore pCore) {
-		super.update(pCore);
+	public void update(LintfordCore core) {
+		super.update(core);
 
 		if (mClickTimer >= 0) {
-			mClickTimer -= pCore.appTime().elapsedTimeMilli();
+			mClickTimer -= core.appTime().elapsedTimeMilli();
 		}
 	}
 
@@ -94,17 +94,17 @@ public class ListLayout extends BaseLayout implements IProcessMouseInput {
 	public void updateStructure() {
 		super.updateStructure();
 
-		final var lUiStructureController = parentScreen.screenManager.UiStructureController();
-		final float lTitleHeight = mShowTitle ? parentScreen.rendererManager.headerFontHeight() : 0.f;
+		final var lUiStructureController = parentScreen.screenManager().UiStructureController();
+		final float lTitleHeight = mShowTitle ? parentScreen.rendererManager().headerFontHeight() : 0.f;
 		final float lWindowScaleFactorX = lUiStructureController.windowAutoScaleFactorX();
 
-		float lYPos = y + mEntryOffsetFromTop + lTitleHeight + mScrollBar.currentYPos() + mCropPaddingTop + paddingTop();
+		float lYPos = mY + mEntryOffsetFromTop + lTitleHeight + mScrollBar.currentYPos() + mCropPaddingTop + paddingTop();
 
 		final int lEntryCount = mMenuEntries.size();
-		final float lLayoutHeight = h - marginBottom() - marginTop() - lTitleHeight - mCropPaddingBottom - mCropPaddingTop + paddingTop() + paddingBottom();
+		final float lLayoutHeight = mH - marginBottom() - marginTop() - lTitleHeight - mCropPaddingBottom - mCropPaddingTop + paddingTop() + paddingBottom();
 
 		// If the height of the content is smaller than the height of this layout, disable the scroll bar
-		if (mContentArea.h() < lLayoutHeight) {
+		if (mContentArea.height() < lLayoutHeight) {
 			mScrollBar.AbsCurrentYPos(0);
 			lYPos += 5f;
 		}
@@ -143,29 +143,29 @@ public class ListLayout extends BaseLayout implements IProcessMouseInput {
 			final float lSpacingLeft = (mLeftPadding + lMenuEntry.marginLeft()) * lWindowScaleFactorX;
 			final float lSpacingRight = (mRightPadding + lMenuEntry.marginRight()) * lWindowScaleFactorX;
 
-			final float lNewEntryWidth = w - lSpacingLeft - lSpacingRight - lScrollBarWidth;
+			final float lNewEntryWidth = mW - lSpacingLeft - lSpacingRight - lScrollBarWidth;
 
 			if (lMenuEntry.horizontalFillType() == FILLTYPE.FILL_CONTAINER) {
-				lMenuEntry.w(lNewEntryWidth);
+				lMenuEntry.width(lNewEntryWidth);
 			} else if (lMenuEntry.horizontalFillType() == FILLTYPE.QUARTER_PARENT) {
-				lMenuEntry.w(lNewEntryWidth * .25f);
+				lMenuEntry.width(lNewEntryWidth * .25f);
 			} else if (lMenuEntry.horizontalFillType() == FILLTYPE.HALF_PARENT) {
-				lMenuEntry.w(lNewEntryWidth * .5f);
+				lMenuEntry.width(lNewEntryWidth * .5f);
 			} else if (lMenuEntry.horizontalFillType() == FILLTYPE.THREEQUARTER_PARENT) {
-				lMenuEntry.w(lNewEntryWidth * .75f);
+				lMenuEntry.width(lNewEntryWidth * .75f);
 			} else if (lMenuEntry.horizontalFillType() == FILLTYPE.TAKE_DESIRED_SIZE) {
-				lMenuEntry.w(MathHelper.clamp(lMenuEntry.desiredWidth() * lUiStructureController.windowAutoScaleFactorX(), lMenuEntry.minWidth(), lMenuEntry.maxWidth()));
+				lMenuEntry.width(MathHelper.clamp(lMenuEntry.desiredWidth() * lUiStructureController.windowAutoScaleFactorX(), lMenuEntry.minWidth(), lMenuEntry.maxWidth()));
 			} else {
-				lMenuEntry.w(lNewEntryWidth);
+				lMenuEntry.width(lNewEntryWidth);
 			}
 
-			lMenuEntry.x(centerX() - lMenuEntry.w() / 2 - lScrollBarWidth / 2);
+			lMenuEntry.x(centerX() - lMenuEntry.width() / 2 - lScrollBarWidth / 2);
 
 			// Assign the entry height here
 			if (lMenuEntry.verticalFillType() == FILLTYPE.TAKE_WHATS_NEEDED) {
-				lMenuEntry.h(MathHelper.clamp(lMenuEntry.desiredHeight(), lMenuEntry.minHeight(), lMenuEntry.maxHeight()));
+				lMenuEntry.height(MathHelper.clamp(lMenuEntry.desiredHeight(), lMenuEntry.minHeight(), lMenuEntry.maxHeight()));
 			} else {
-				lMenuEntry.h(lSizeOfEachFillElement - lMenuEntry.marginBottom() - lMenuEntry.marginTop());
+				lMenuEntry.height(lSizeOfEachFillElement - lMenuEntry.marginBottom() - lMenuEntry.marginTop());
 			}
 
 			lMenuEntry.y(lYPos);

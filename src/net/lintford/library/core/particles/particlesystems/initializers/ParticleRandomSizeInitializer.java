@@ -18,7 +18,6 @@ public class ParticleRandomSizeInitializer extends ParticleSingleValueInitialize
 
 	public ParticleRandomSizeInitializer() {
 		super(INITIALIZER_NAME);
-
 	}
 
 	// --------------------------------------
@@ -26,9 +25,7 @@ public class ParticleRandomSizeInitializer extends ParticleSingleValueInitialize
 	// --------------------------------------
 
 	@Override
-	public void onIntialiseParticle(Particle pParticle, float pValue) {
-		pParticle.scale = pValue;
-
+	public void onIntialiseParticle(Particle particle, float value) {
+		particle.scale = value;
 	}
-
 }

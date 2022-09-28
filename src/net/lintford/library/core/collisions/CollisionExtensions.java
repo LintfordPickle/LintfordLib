@@ -7,62 +7,55 @@ import net.lintford.library.core.maths.Vector2f;
 public class CollisionExtensions {
 
 	/** Checks for an intersection between the given circle entity and rectangle entity. */
-	public static boolean intersects(CircleEntity pCircle, RectangleEntity pRect) {
-		final float circleDistanceX = Math.abs(pCircle.worldPositionX - pRect.worldPositionX + pRect.w() / 2);
-		final float circleDistanceY = Math.abs(pCircle.worldPositionY - pRect.worldPositionY + pRect.h() / 2);
+	public static boolean intersects(CircleEntity circle, RectangleEntity rectangle) {
+		final float circleDistanceX = Math.abs(circle.worldPositionX() - rectangle.worldPositionX() + rectangle.w() / 2);
+		final float circleDistanceY = Math.abs(circle.worldPositionY() - rectangle.worldPositionY() + rectangle.h() / 2);
 
-		final float lRECT_WIDTH_H = pRect.w() / 2;
-		final float lRECT_HEIGHT_H = pRect.h() / 2;
+		final float lRectWidthHalf = rectangle.w() / 2;
+		final float lRectHeightHalf = rectangle.h() / 2;
 
-		if (circleDistanceX > (lRECT_WIDTH_H + pCircle.rad())) {
+		if (circleDistanceX > (lRectWidthHalf + circle.radius()))
 			return false;
-		}
-		if (circleDistanceY > (lRECT_HEIGHT_H + pCircle.rad())) {
+
+		if (circleDistanceY > (lRectHeightHalf + circle.radius()))
 			return false;
-		}
 
-		if (circleDistanceX <= lRECT_WIDTH_H) {
+		if (circleDistanceX <= lRectWidthHalf)
 			return true;
-		}
-		if (circleDistanceY <= lRECT_HEIGHT_H) {
+
+		if (circleDistanceY <= lRectHeightHalf)
 			return true;
-		}
 
-		final float cornerDistance_sq = (circleDistanceX - lRECT_WIDTH_H) * (circleDistanceX - lRECT_WIDTH_H) + (circleDistanceY - lRECT_HEIGHT_H) * (circleDistanceY - lRECT_HEIGHT_H);
+		final float cornerDistance_sq = (circleDistanceX - lRectWidthHalf) * (circleDistanceX - lRectWidthHalf) + (circleDistanceY - lRectHeightHalf) * (circleDistanceY - lRectHeightHalf);
 
-		return (cornerDistance_sq <= pCircle.rad() * pCircle.rad());
+		return (cornerDistance_sq <= circle.radius() * circle.radius());
 	}
 
 	/** Checks if a point is within a given circle */
-	public static boolean intersectsCirclePoint(CircleEntity pCircle, Vector2f pPoint) {
-		return intersectsCirclePoint(pCircle.worldPositionX, pCircle.worldPositionY, pCircle.radius, pPoint.x, pPoint.y);
-
+	public static boolean intersectsCirclePoint(CircleEntity circle, Vector2f point) {
+		return intersectsCirclePoint(circle.worldPositionX(), circle.worldPositionY(), circle.radius(), point.x, point.y);
 	}
 
 	/** Checks if a point is within a given circle */
-	public static boolean intersectsCirclePoint(float pCircleX, float pCircleY, float pCircleRadius, float pPointX, float pPointY) {
-		final float lDist = (float) (pCircleX - pPointX) * (pCircleX - pPointX) + (pCircleY - pPointY) * (pCircleY - pPointY);
-		if (lDist < pCircleRadius * pCircleRadius) {
+	public static boolean intersectsCirclePoint(float circleX, float circleY, float circleRadius, float pointX, float pointY) {
+		final float lDist = (float) (circleX - pointX) * (circleX - pointX) + (circleY - pointY) * (circleY - pointY);
+		if (lDist < circleRadius * circleRadius) {
 			return true;
-
 		}
 
 		return false;
-
 	}
 
 	/** A quick approximate distance check which doesn't rely on a square root */
-	public static boolean fastIntersects(float pPoint1X, float pPoint1Y, float pPoint2X, float pPoint2Y, float pObjectSize) {
-		if (Math.abs(pPoint1X - pPoint1Y) < pObjectSize && Math.abs(pPoint1X - pPoint1Y) < pObjectSize) {
+	public static boolean fastIntersects(float point1X, float point1Y, float point2X, float point2Y, float objectSize) {
+		if (Math.abs(point1X - point1Y) < objectSize && Math.abs(point1X - point1Y) < objectSize) {
 			return true;
-
 		}
 
 		return false;
-
 	}
 
-	public static boolean intersection(Vector2f a, Vector2f b, Vector2f p, Vector2f q, Vector2f pOutVector) {
+	public static boolean intersection(Vector2f a, Vector2f b, Vector2f p, Vector2f q, Vector2f outVector) {
 		final float l0x = b.x - a.x;
 		final float l0y = b.y - a.y;
 		final float l1x = q.x - p.x;
@@ -73,40 +66,15 @@ public class CollisionExtensions {
 		float t = (l1x * (a.y - p.y) - l1y * (a.x - p.x)) / (-l1x * l0y + l0x * l1y);
 
 		if (s >= 0 && s <= 1 && t >= 0 && t <= 1) {
-			pOutVector.x = a.x + (t * l0x);
-			pOutVector.y = a.y + (t * l0y);
-
+			outVector.x = a.x + (t * l0x);
+			outVector.y = a.y + (t * l0y);
 			return true;
 		}
 
 		return false; // No collision 
-
-		//		float A1 = b.y - a.y;
-		//		float B1 = a.x - b.x;
-		//		float C1 = A1 * a.x + B1 * a.y;
-		//
-		//		float A2 = q.y - p.y;
-		//		float B2 = p.x - q.x;
-		//		float C2 = A2 * p.x + B2 * p.y;
-		//
-		//		float det = A1 * B2 - A2 * B1;
-		//		float x = (B2 * C1 - B1 * C2) / det;
-		//		float y = (A1 * C2 - A2 * C1) / det;
-		//
-		//		pOutVector.x = x;
-		//		pOutVector.y = y;
-		//
-		//		if (x != x || y != y) {
-		//			return false;
-		//		}
-		//
-		//		return true;
-
 	}
 
-	public static boolean checkHasArrived(float pEntityAPositionX, float pEntityAPositionY, float pEntityBPositionX, float pEntityBPositionY, float pMinDist) {
-		return Vector2f.distance(pEntityAPositionX, pEntityAPositionY, pEntityBPositionX, pEntityBPositionY) < pMinDist;
-
+	public static boolean checkHasArrived(float entityAPositionX, float entityAPositionY, float entityBPositionX, float entityBPositionY, float minDistance) {
+		return Vector2f.distance(entityAPositionX, entityAPositionY, entityBPositionX, entityBPositionY) < minDistance;
 	}
-
 }

@@ -28,14 +28,14 @@ public class PhysicsState implements Serializable {
 
 	public boolean mPushedRightWall;
 	public boolean mPushesRightWall;
-	
+
 	// Collision with right wall is foot height
 	public boolean mPushesRightWallFoot;
 	public boolean mPushesRightWallWaist;
 
 	public boolean mPushedLeftWall;
 	public boolean mPushesLeftWall;
-	
+
 	// Collision with left wall is foot height
 	public boolean mPushesLeftWallFoot;
 	public boolean mPushesLeftWallWaist;
@@ -70,14 +70,13 @@ public class PhysicsState implements Serializable {
 
 	}
 
-	public void update(LintfordCore pCore) {
+	public void update(LintfordCore core) {
 		mWasOnGround = mOnGround;
 		mPushedRightWall = mPushesRightWall;
 		mPushedLeftWall = mPushesLeftWall;
 		mWasAtCeiling = mAtCeiling;
 
 		reset();
-
 	}
 
 	public void setOnGround() {

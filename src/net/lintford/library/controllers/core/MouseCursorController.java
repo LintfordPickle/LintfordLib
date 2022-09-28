@@ -40,11 +40,10 @@ public class MouseCursorController extends BaseController {
 	// Constructor
 	// --------------------------------------
 
-	public MouseCursorController(ControllerManager pControllerManager, int pEntityGroupID) {
-		super(pControllerManager, CONTROLLER_NAME, pEntityGroupID);
+	public MouseCursorController(ControllerManager controllerManager, int entityGroupUid) {
+		super(controllerManager, CONTROLLER_NAME, entityGroupUid);
 
 		mCursorMap = new HashMap<>();
-
 	}
 
 	// --------------------------------------
@@ -52,9 +51,9 @@ public class MouseCursorController extends BaseController {
 	// --------------------------------------
 
 	@Override
-	public void initialize(LintfordCore pCore) {
-		super.initialize(pCore);
-		mWindowId = pCore.config().display().windowID();
+	public void initialize(LintfordCore core) {
+		super.initialize(core);
+		mWindowId = core.config().display().windowID();
 
 		mDefaultCursor = MouseCursor.loadCursorFromResource("default", "/res/cursors/cursorDefault.png", 0, 0);
 
@@ -71,47 +70,35 @@ public class MouseCursorController extends BaseController {
 	// Methods
 	// --------------------------------------
 
-	public void loadCursorFromFile(String pCursorName, String pFilename, int pHotX, int pHotY) {
-		var lCustomCursor = MouseCursor.loadCursorFromFile(pCursorName, pFilename, pHotX, pHotY);
-
-		if (lCustomCursor.isLoaded()) {
-			mCursorMap.put(pCursorName, lCustomCursor);
-
-		}
-
+	public void loadCursorFromFile(String cursorName, String filename, int hotspotX, int hotspotY) {
+		var lCustomCursor = MouseCursor.loadCursorFromFile(cursorName, filename, hotspotX, hotspotY);
+		if (lCustomCursor.isLoaded())
+			mCursorMap.put(cursorName, lCustomCursor);
 	}
 
-	public void loadCursorFromResources(String pCursorName, String pResourceName, int pHotX, int pHotY) {
-		var lCustomCursor = MouseCursor.loadCursorFromResource(pCursorName, pResourceName, pHotX, pHotY);
-
-		if (lCustomCursor.isLoaded()) {
-			mCursorMap.put(pCursorName, lCustomCursor);
-
-		}
-
+	public void loadCursorFromResources(String cursorName, String resourceName, int hotspotX, int hotspotY) {
+		var lCustomCursor = MouseCursor.loadCursorFromResource(cursorName, resourceName, hotspotX, hotspotY);
+		if (lCustomCursor.isLoaded())
+			mCursorMap.put(cursorName, lCustomCursor);
 	}
 
-	public void setCursor(String pCursorName) {
-		if (pCursorName == null) {
+	public void setCursor(String cursorName) {
+		if (cursorName == null) {
 			GLFW.glfwSetCursor(mWindowId, mDefaultCursor.cursorUid());
 			return;
-
 		}
 
-		var lCustomCursor = mCursorMap.get(pCursorName);
+		var lCustomCursor = mCursorMap.get(cursorName);
 
-		if (lCustomCursor != null && lCustomCursor.isLoaded()) {
+		if (lCustomCursor != null && lCustomCursor.isLoaded())
 			GLFW.glfwSetCursor(mWindowId, lCustomCursor.cursorUid());
-		} else {
+		else
 			GLFW.glfwSetCursor(mWindowId, mDefaultCursor.cursorUid());
-		}
 
 		mIsCustomMouseEnabled = true;
-
 	}
 
 	public void disableCustomMouse() {
 		mIsCustomMouseEnabled = false;
-
 	}
 }
