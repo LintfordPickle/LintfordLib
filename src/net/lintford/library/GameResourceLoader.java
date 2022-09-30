@@ -105,7 +105,9 @@ public abstract class GameResourceLoader extends Thread {
 		mDisplayManager = displayManager;
 		loadingThreadStarted = false;
 		windowId = displayManager.windowID();
+
 		setName("Background Resource Loader Thread");
+		currentStatusMessage("Loading");
 	}
 
 	// ---------------------------------------------
