@@ -495,12 +495,9 @@ public abstract class LintfordCore {
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
-
 				continue;
 			}
 
-			// we don't want to report elapsed time of greater than max elapsed time (which
-			// affects frame delta calculations)
 			if (mCoreTime.accumulatedElapsedTimeMilli > mCoreTime.maxElapsedTimeMilli)
 				mCoreTime.accumulatedElapsedTimeMilli = mCoreTime.maxElapsedTimeMilli;
 
@@ -520,22 +517,17 @@ public abstract class LintfordCore {
 					lStepCount++;
 				}
 
-				Debug.debugManager().logger().i("MAIN_LOOP", "Step Count: " + lStepCount);
-
 				// Every update after the first accumulates lag
 				lUpdateFrameLag += Math.max(0, lStepCount - 1);
 
 				if (mCoreTime.isRunningSlowly()) {
 					if (lUpdateFrameLag == 0)
 						mCoreTime.isRunningSlowly = false;
-
 				} else if (lUpdateFrameLag >= 5) {
-					// If we lag more than 5 frames, start thinking we are running slowly
 					mCoreTime.isRunningSlowly = true;
 				}
 
-				// Draw needs to know the total elapsed time that occured for the fixed length
-				// updates.
+				// Draw needs to know the total elapsed time that occured for the fixed length updates.
 				mCoreTime.elapsedTimeMilli = mCoreTime.targetElapsedTimeMilli * lStepCount;
 
 				if (!mGameTime.isTimePaused) {
@@ -544,9 +536,8 @@ public abstract class LintfordCore {
 					mGameTime.elapsedTimeMilli = .0f;
 
 			} else {
-				// Variable time step
+				// Variable time - single step (consumes all accumulated time)
 
-				// Perform a single variable length update.
 				if (!mGameTime.isTimePaused)
 					mGameTime.elapsedTimeMilli = mCoreTime.accumulatedElapsedTimeMilli * mGameTime.timeModifier;
 				else
@@ -558,7 +549,7 @@ public abstract class LintfordCore {
 				mCoreTime.elapsedTimeMilli = mCoreTime.accumulatedElapsedTimeMilli;
 				mCoreTime.totalTimeMilli += mCoreTime.accumulatedElapsedTimeMilli;
 
-				mCoreTime.accumulatedElapsedTimeMilli = 0.0; // consume all the time in a variable length step
+				mCoreTime.accumulatedElapsedTimeMilli = 0.0;
 
 				onUpdate();
 			}
