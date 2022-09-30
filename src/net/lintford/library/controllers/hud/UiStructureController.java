@@ -167,12 +167,19 @@ public class UiStructureController extends BaseController {
 	}
 
 	private void updateWindowUiComponentStructures(LintfordCore core) {
+		final float lWindowWidth = mDisplayManager.windowWidth();
+		final float lWindowHeight = mDisplayManager.windowHeight();
+		
+		
 		mUIScaleFactorActual = mDisplayManager.graphicsSettings().UIScale();
 		mUITextScaleFactorActual = mDisplayManager.graphicsSettings().UITextScale();
 		mUITransparencyFactorActual = mDisplayManager.graphicsSettings().UITransparencyScale();
 
-		mWindowPaddingH = 40;
-		mWindowPaddingV = 30;
+		mMinimumTitleHeight = lWindowHeight * 0.2f;
+		mMinimumFooterHeight = lWindowHeight * 0.15f;
+		
+		mWindowPaddingH = lWindowWidth * 0.05f;
+		mWindowPaddingV = lWindowHeight * 0.05f;
 	}
 
 	private void updateMenuUiStructure(LintfordCore core) {
@@ -186,8 +193,8 @@ public class UiStructureController extends BaseController {
 		final float lModHeight = lWindowHeight - mWindowPaddingV * 2.f;
 
 		float lRemainingHeight = lModHeight;
-		final float lMinimumTitleHeight = mMinimumTitleHeight * mWindowAutoScaleFactorY;
-		final float lMinimumFooterHeight = mMinimumFooterHeight * mWindowAutoScaleFactorY;
+		final float lMinimumTitleHeight = mMinimumTitleHeight;
+		final float lMinimumFooterHeight = mMinimumFooterHeight;
 		final float lTitleHeight = (float) Math.max(lMinimumTitleHeight, lModHeight * .15f - lVerticalInnerPadding);
 		final float lFooterHeight = (float) Math.max(lMinimumFooterHeight, lModHeight * .10f - lVerticalInnerPadding);
 		lRemainingHeight -= lTitleHeight;
