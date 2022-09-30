@@ -242,13 +242,13 @@ public class Camera implements ICamera {
 	private void createOrtho(final float gameViewportWidth, final float gameViewportheight) {
 		mProjectionMatrix.setIdentity();
 		mProjectionMatrix.createOrtho(-gameViewportWidth * 0.5f, gameViewportWidth * 0.5f, gameViewportheight * 0.5f, -gameViewportheight * 0.5f, Z_NEAR, Z_FAR);
+
+		// Update the scaled camera dimensions based on what we used for the projection matrix
+		mScaledWindowWidth = gameViewportWidth * getZoomFactorOverOne();
+		mScaledWindowHeight = gameViewportheight * getZoomFactorOverOne();
 	}
 
 	private void updateZoomBounds(final float gameViewportWidth, final float gameViewportheight) {
-		// Update the scaled camera position, width and height.
-		mScaledWindowWidth = gameViewportWidth * getZoomFactorOverOne();
-		mScaledWindowHeight = gameViewportheight * getZoomFactorOverOne();
-
 		// Update the camera position
 		mMinX = mInternalPosition.x - mScaledWindowWidth / 2.0f;
 		mMinY = mInternalPosition.y - mScaledWindowHeight / 2.0f;
