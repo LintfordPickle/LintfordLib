@@ -1,4 +1,4 @@
-package net.lintford.library.core.maths.spline;
+package net.lintford.library.core.splines;
 
 public class SplinePoint {
 

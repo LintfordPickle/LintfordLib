@@ -1,4 +1,4 @@
-package net.lintford.library.core.maths.spline;
+package net.lintford.library.core.splines;
 
 import java.util.ArrayList;
 import java.util.Arrays;
