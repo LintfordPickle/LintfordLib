@@ -491,7 +491,6 @@ public abstract class LintfordCore {
 					continue;
 
 				try {
-					Debug.debugManager().logger().i("MAIN_LOOP", "Sleep: " + lSleepTime);
 					Thread.sleep(lSleepTime);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
