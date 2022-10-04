@@ -204,7 +204,6 @@ public abstract class ShaderBackground extends Screen {
 		super.draw(core);
 
 		final var lTextureBatch = textureBatch();
-
 		final var lHudBoundingRectangle = core.HUD().boundingRectangle();
 
 		final var lX = lHudBoundingRectangle.left();

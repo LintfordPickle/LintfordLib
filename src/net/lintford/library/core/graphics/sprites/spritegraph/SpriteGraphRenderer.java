@@ -44,6 +44,10 @@ public class SpriteGraphRenderer extends SpriteBatch {
 	// Methods
 	// --------------------------------------
 
+	public void reassignedEntityGroupUid(int newEntityGroupUid) {
+		mEntityGroupUid = newEntityGroupUid;
+	}
+
 	public void drawSpriteGraphList(LintfordCore core, SpriteGraphInstance spriteGraphInstance) {
 		if (spriteGraphInstance == null || !spriteGraphInstance.isAssigned())
 			return;
