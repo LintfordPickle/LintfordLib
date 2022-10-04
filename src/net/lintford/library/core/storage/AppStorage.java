@@ -14,9 +14,9 @@ public class AppStorage {
 	public static final String FILE_SEPERATOR = System.getProperty("file.separator");
 	public static final String LINE_SEPERATOR = System.getProperty("line.separator");
 
-	/** USe working directory for app storage (System.getProperty("user.dir"))*/
+	/** USe working directory for app storage (System.getProperty("user.dir")) */
 	// https://docs.oracle.com/javase/tutorial/essential/environment/sysprop.html
-	public static boolean UseLocalDirectory = true;
+	public static boolean useLocalDirectory = true;
 
 	// --------------------------------------
 	// Methods
@@ -25,7 +25,7 @@ public class AppStorage {
 	public static String createGameDataDirectory(String applicationName) {
 		String lSaveFolder = null;
 
-		if (UseLocalDirectory) {
+		if (useLocalDirectory) {
 			lSaveFolder = System.getProperty("user.dir") + FILE_SEPERATOR + "config" + FILE_SEPERATOR;
 		} else {
 			final var lOSName = System.getProperty("os.name").toLowerCase();
@@ -46,12 +46,13 @@ public class AppStorage {
 	}
 
 	/**
-	 * Returns a platform dependant folder which can be used for saving application data. The data folder will be created as Roaming\pApplicationName
+	 * Returns a platform dependant folder which can be used for saving application
+	 * data. The data folder will be created as Roaming\pApplicationName
 	 */
 	public static String getGameDataDirectory(String applicationName) {
 		String lSaveFolder = null;
 
-		if (UseLocalDirectory) {
+		if (useLocalDirectory) {
 			lSaveFolder = System.getProperty("user.dir") + FILE_SEPERATOR + "config" + FILE_SEPERATOR;
 		} else {
 			final var lOSName = System.getProperty("os.name").toLowerCase();
@@ -66,10 +67,13 @@ public class AppStorage {
 	}
 
 	/**
-	 * Returns a platform dependant folder which can be used for saving application data. Will use the APPLICATION_NAME from the ConstantsTable, if one has been defined.
+	 * Returns a platform dependant folder which can be used for saving application
+	 * data. Will use the APPLICATION_NAME from the ConstantsTable, if one has been
+	 * defined.
 	 */
 	public static String getGameDataDirectory() {
-		final String lApplicationName = ConstantsApp.getStringValueDef(ConstantsApp.CONSTANT_APP_NAME_TAG, "LintfordLib");
+		final String lApplicationName = ConstantsApp.getStringValueDef(ConstantsApp.CONSTANT_APP_NAME_TAG,
+				"LintfordLib");
 		return getGameDataDirectory(lApplicationName);
 	}
 }

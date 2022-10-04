@@ -65,7 +65,8 @@ public class CameraChaseController extends BaseController {
 	// Constructor
 	// ---------------------------------------------
 
-	public CameraChaseController(ControllerManager controllerManager, ICamera camera, WorldEntity trackEntity, int controllerGroup) {
+	public CameraChaseController(ControllerManager controllerManager, ICamera camera, WorldEntity trackEntity,
+			int controllerGroup) {
 		super(controllerManager, CONTROLLER_NAME, controllerGroup);
 
 		mVelocity = new Vector2f();
@@ -73,8 +74,8 @@ public class CameraChaseController extends BaseController {
 		mPosition = new Vector2f();
 		mLookAhead = new Vector2f();
 
-		mPosition.x = trackEntity.worldPositionX();
-		mPosition.y = trackEntity.worldPositionY();
+		mPosition.x = trackEntity.x;
+		mPosition.y = trackEntity.y;
 
 		mGameCamera = camera;
 		mTrackedEntity = trackEntity;
@@ -162,11 +163,11 @@ public class CameraChaseController extends BaseController {
 	}
 
 	private void updatewWorldPositions(LintfordCore core) {
-		mLookAhead.x = mTrackedEntity.worldPositionX() + mVelocity.x;
-		mLookAhead.y = mTrackedEntity.worldPositionY() + mVelocity.y;
+		mLookAhead.x = mTrackedEntity.x + mVelocity.x;
+		mLookAhead.y = mTrackedEntity.y + mVelocity.y;
 
-		mDesiredPosition.x = mTrackedEntity.worldPositionX();
-		mDesiredPosition.y = mTrackedEntity.worldPositionY();
+		mDesiredPosition.x = mTrackedEntity.x;
+		mDesiredPosition.y = mTrackedEntity.y;
 	}
 
 	// ---------------------------------------------

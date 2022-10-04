@@ -58,7 +58,8 @@ public class CameraFollowController extends BaseController {
 	// Constructor
 	// ---------------------------------------------
 
-	public CameraFollowController(ControllerManager controllerManager, ICamera camera, WorldEntity entityToTrack, int controllerGroup) {
+	public CameraFollowController(ControllerManager controllerManager, ICamera camera, WorldEntity entityToTrack,
+			int controllerGroup) {
 		super(controllerManager, CONTROLLER_NAME, controllerGroup);
 
 		mVelocity = new Vector2f();
@@ -115,8 +116,7 @@ public class CameraFollowController extends BaseController {
 
 		mIsTrackingPlayer = mTrackedEntity != null;
 		if (mIsTrackingPlayer) {
-			mGameCamera.setPosition(-mTrackedEntity.worldPositionX(), -mTrackedEntity.worldPositionY());
-
+			mGameCamera.setPosition(-mTrackedEntity.x, -mTrackedEntity.y);
 		} else {
 			if (mVelocity.x < -CAMERA_MAN_MOVE_SPEED_MAX)
 				mVelocity.x = -CAMERA_MAN_MOVE_SPEED_MAX;

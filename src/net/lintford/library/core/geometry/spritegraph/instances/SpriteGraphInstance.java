@@ -14,7 +14,9 @@ import net.lintford.library.core.graphics.sprites.AnimatedSpriteListener;
 import net.lintford.library.core.graphics.sprites.SpriteInstance;
 
 /**
- * Represents a geometric instance of a SpriteGraphDef in the world, complete with information about transforms and part types (if for example multiple types are available per part).
+ * Represents a geometric instance of a SpriteGraphDef in the world, complete
+ * with information about transforms and part types (if for example multiple
+ * types are available per part).
  */
 public class SpriteGraphInstance extends IndexedPooledBaseData implements AnimatedSpriteListener {
 
@@ -44,24 +46,17 @@ public class SpriteGraphInstance extends IndexedPooledBaseData implements Animat
 	private String mSpriteGraphName;
 	private String mCurrentlyPlayingAction;
 	private String mDynamicSpritesheetName;
-	private boolean mFlipHorizontal;
-	private boolean mFlipVertical;
 	private boolean mOrdered;
-	private float mPositionX;
-	private float mPositionY;
-	private float mRtationInRadians;
+	public boolean flipHorizontal;
+	public boolean flipVertical;
+
+	public float x;
+	public float y;
+	public float rot;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
-
-	public float rotationInRadians() {
-		return mRtationInRadians;
-	}
-
-	public void rotationInRadians(float rotationInRadians) {
-		mRtationInRadians = rotationInRadians;
-	}
 
 	public String currentlyPlayingAction() {
 		return mCurrentlyPlayingAction;
@@ -73,38 +68,6 @@ public class SpriteGraphInstance extends IndexedPooledBaseData implements Animat
 
 	public void dynamicSpritesheetName(String newDynamicSpritesheetName) {
 		mDynamicSpritesheetName = newDynamicSpritesheetName;
-	}
-
-	public boolean flipHorizontal() {
-		return mFlipHorizontal;
-	}
-
-	public void flipHorizontal(boolean flipHorizontal) {
-		mFlipHorizontal = flipHorizontal;
-	}
-
-	public boolean flipVerticle() {
-		return mFlipVertical;
-	}
-
-	public void flipVerticle(boolean flipVertical) {
-		mFlipVertical = flipVertical;
-	}
-
-	public float positionX() {
-		return mPositionX;
-	}
-
-	public void positionX(float positionX) {
-		mPositionX = positionX;
-	}
-
-	public float positionY() {
-		return mPositionY;
-	}
-
-	public void positionY(float positionY) {
-		mPositionY = positionY;
 	}
 
 	public SpriteGraphNodeInstance rootNode() {
@@ -135,7 +98,9 @@ public class SpriteGraphInstance extends IndexedPooledBaseData implements Animat
 		return mFlatNodes;
 	}
 
-	/** Returns a list of all nodes in this graph, ordered by the ascending Z depth. */
+	/**
+	 * Returns a list of all nodes in this graph, ordered by the ascending Z depth.
+	 */
 	public List<SpriteGraphNodeInstance> getZOrderedFlatList(Comparator<SpriteGraphNodeInstance> comparator) {
 		if (!mOrdered) {
 			mFlatNodes.sort(comparator);
@@ -169,7 +134,8 @@ public class SpriteGraphInstance extends IndexedPooledBaseData implements Animat
 	// Core-Methods
 	// --------------------------------------
 
-	public void init(SpriteGraphDefinition spriteGraphDefinition, ISpriteGraphPool spriteGraphPool, int entityGroupUid) {
+	public void init(SpriteGraphDefinition spriteGraphDefinition, ISpriteGraphPool spriteGraphPool,
+			int entityGroupUid) {
 		mSpriteGraphName = spriteGraphDefinition.name;
 
 		mFlatNodes = new ArrayList<>();
@@ -188,7 +154,8 @@ public class SpriteGraphInstance extends IndexedPooledBaseData implements Animat
 			mFlatNodes.clear();
 		}
 
-		// TODO: Need to properly return the SpriteGraphInstance and all SpriteGraphNodeInstances to the manager.
+		// TODO: Need to properly return the SpriteGraphInstance and all
+		// SpriteGraphNodeInstances to the manager.
 
 	}
 
@@ -199,8 +166,8 @@ public class SpriteGraphInstance extends IndexedPooledBaseData implements Animat
 	}
 
 	public void updateRootNodeTransform() {
-		mRootNode.positionX(mPositionX);
-		mRootNode.positionY(mPositionY);
+		mRootNode.positionX(x);
+		mRootNode.positionY(y);
 	}
 
 	// --------------------------------------
