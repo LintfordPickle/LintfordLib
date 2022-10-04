@@ -179,6 +179,12 @@ public class MathHelper {
 		}
 		return num8;
 	}
+	
+	public static float catmullRom(float value1, float value2, float value3, float value4, float amount) {
+		float num = amount * amount;
+		float num2 = amount * num;
+		return (0.5f * ((((2f * value2) + ((-value1 + value3) * amount)) + (((((2f * value1) - (5f * value2)) + (4f * value3)) - value4) * num)) + ((((-value1 + (3f * value2)) - (3f * value3)) + value4) * num2)));
+	}
 
 	public static final boolean isEven(final int pV) {
 		return pV % 2 == 0;
