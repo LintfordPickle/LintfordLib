@@ -53,16 +53,16 @@ public abstract class JBox2dEntity extends WorldEntity {
 	// --------------------------------------
 
 	@Override
-	public void afterLoaded(Object pParent) {
-		super.afterLoaded(pParent);
+	public void afterLoaded(Object parent) {
+		super.afterLoaded(parent);
 
 		mJBox2dEntityInstance.afterLoaded(this);
 	}
 
-	public void setPhysicsObject(JBox2dEntityInstance pJBox2dEntity) {
-		mJBox2dEntityInstance = pJBox2dEntity;
+	public void setPhysicsObject(JBox2dEntityInstance jbox2dEntity) {
+		mJBox2dEntityInstance = jbox2dEntity;
 
-		transformPObject(mWorldPositionX, mWorldPositionY, mRotationInRadians);
+		transformPObject(x, y, rotationRadians);
 	}
 
 	public void savePhysics() {
@@ -76,66 +76,62 @@ public abstract class JBox2dEntity extends WorldEntity {
 		loadPhysics(pWorld, true);
 	}
 
-	public void loadPhysics(World pWorld, boolean pUpdateWorldTranformation) {
+	public void loadPhysics(World world, boolean updateWorldTranformation) {
 		if (isPhysicsLoaded())
 			return;
 
-		mJBox2dEntityInstance.loadPhysics(pWorld);
+		mJBox2dEntityInstance.loadPhysics(world);
 
-		// Initially we should set the new instance (loaded from a reference defintion) to the WorldEntity SRT.
-		if (pUpdateWorldTranformation && isPhysicsLoaded()) {
-			transformPObject(mWorldPositionX, mWorldPositionY, mRotationInRadians);
-		}
+		if (updateWorldTranformation && isPhysicsLoaded())
+			transformPObject(x, y, rotationRadians);
 	}
 
-	@Override
-	public void setPosition(float pWorldX, float pWorldY) {
-		super.setPosition(pWorldX, pWorldY);
+	public void setPosition(float worldX, float worldY) {
+		x = worldX;
+		y = worldY;
 
-		if (hasPhysicsEntity()) {
-			mJBox2dEntityInstance.transformEntityInstance(mWorldPositionX, mWorldPositionY, mRotationInRadians);
-		}
+		if (hasPhysicsEntity())
+			mJBox2dEntityInstance.transformEntityInstance(x, y, rotationRadians);
 	}
 
-	public void transformPObject(float pWorldPositionX, float pWorldPositionY, float pRotationInRadians) {
-		if (hasPhysicsEntity()) {
-			mJBox2dEntityInstance.transformEntityInstance(pWorldPositionX, pWorldPositionY, pRotationInRadians);
-		}
+	public void transformPObject(float worldX, float worldY, float rotation) {
+		if (hasPhysicsEntity())
+			mJBox2dEntityInstance.transformEntityInstance(worldX, worldY, rotation);
 
-		mWorldPositionX = pWorldPositionX;
-		mWorldPositionY = pWorldPositionY;
-		mRotationInRadians = pRotationInRadians;
+		x = worldX;
+		y = worldY;
+		rotationRadians = rotation;
 	}
 
 	public void reset() {
-		mWorldPositionX = 0.f;
-		mWorldPositionY = 0.f;
-		mRotationInRadians = 0.f;
+		x = 0.f;
+		y = 0.f;
+		rotationRadians = 0.f;
 
-		if (hasPhysicsEntity()) {
+		if (hasPhysicsEntity())
 			mJBox2dEntityInstance.resetEntityInstance();
-		}
+
 	}
 
 	public void unloadPhysics() {
-		if (isPhysicsLoaded()) {
+		if (isPhysicsLoaded())
 			mJBox2dEntityInstance.unloadPhysics();
-		}
+
 	}
 
 	public void setNewPhysicsProperties() {
-		if (!hasPhysicsEntity()) {
+		if (!hasPhysicsEntity())
 			return;
-		}
+
 	}
 
-	public void updatePhysics(LintfordCore pCore) {
+	public void updatePhysics(LintfordCore core) {
 		if (isPhysicsLoaded()) {
 			final var lBox2dBodyInstance = mJBox2dEntityInstance.mainBody();
 			if (lBox2dBodyInstance != null) {
-				mWorldPositionX = ConstantsPhysics.toPixels(lBox2dBodyInstance.mBody.getPosition().x);
-				mWorldPositionY = ConstantsPhysics.toPixels(lBox2dBodyInstance.mBody.getPosition().y);
-				mRotationInRadians = lBox2dBodyInstance.mBody.getAngle();
+				x = ConstantsPhysics.toPixels(lBox2dBodyInstance.mBody.getPosition().x);
+				y = ConstantsPhysics.toPixels(lBox2dBodyInstance.mBody.getPosition().y);
+				rotationRadians = lBox2dBodyInstance.mBody.getAngle();
 			}
 		}
 	}

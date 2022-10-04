@@ -77,8 +77,8 @@ public class ParticleFrameworkController extends BaseController {
 				continue;
 
 			if (lParticleEmitterInstance.parentEntity() != null) {
-				lParticleEmitterInstance.worldPositionX(lParticleEmitterInstance.parentEntity().worldPositionX());
-				lParticleEmitterInstance.worldPositionY(lParticleEmitterInstance.parentEntity().worldPositionY());
+				lParticleEmitterInstance.x = lParticleEmitterInstance.parentEntity().x;
+				lParticleEmitterInstance.y = lParticleEmitterInstance.parentEntity().y;
 			}
 
 			lParticleEmitterInstance.update(core);

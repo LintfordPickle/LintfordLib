@@ -19,61 +19,32 @@ public abstract class WorldEntity extends PooledBaseData {
 	// Variables
 	// --------------------------------------
 
-	protected transient int mWorldInstanceUid;
-	protected float mWorldPositionX;
-	protected float mWorldPositionY;
-	protected float mRotationInRadians;
+	protected transient int mInstanceUid;
+	public float x;
+	public float y;
+	public float rotationRadians;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
 
-	public int worldInstanceUid() {
-		return mWorldInstanceUid;
+	public int instanceUid() {
+		return mInstanceUid;
 	}
 
 	public boolean isInitialized() {
-		return mWorldInstanceUid != INSTANCE_UID_NOT_ASSIGNED;
-	}
-
-	public float worldPositionX() {
-		return mWorldPositionX;
-	}
-
-	public void worldPositionX(float worldPositionX) {
-		mWorldPositionX = worldPositionX;
-	}
-
-	public float worldPositionY() {
-		return mWorldPositionY;
-	}
-
-	public void worldPositionY(float worldPositionY) {
-		mWorldPositionY = worldPositionY;
-	}
-
-	public float rotationInRadians() {
-		return mRotationInRadians;
-	}
-
-	public void rotationInRadians(float rotationInRadians) {
-		mRotationInRadians = rotationInRadians;
-	}
-
-	public void setPosition(float positionX, float positionY) {
-		mWorldPositionX = positionX;
-		mWorldPositionY = positionY;
+		return mInstanceUid != INSTANCE_UID_NOT_ASSIGNED;
 	}
 
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
 
-	public void init(int worldInstanceUid) {
-		mWorldInstanceUid = worldInstanceUid;
+	public void init(int instanceUid) {
+		mInstanceUid = instanceUid;
 	}
 
 	public void reset() {
-		mWorldInstanceUid = INSTANCE_UID_NOT_ASSIGNED;
+		mInstanceUid = INSTANCE_UID_NOT_ASSIGNED;
 	}
 }

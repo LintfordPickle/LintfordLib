@@ -57,7 +57,7 @@ public class SpriteGraphRenderer extends SpriteBatch {
 
 		if (RENDER_DEBUG) {
 			renderSpriteTreeNodeDebug(core, spriteGraphInstance, spriteGraphInstance.rootNode());
-			Debug.debugManager().drawers().drawPointImmediate(core.gameCamera(), spriteGraphInstance.positionX(), spriteGraphInstance.positionY(), -0.01f, 1f, 1f, 1f, 1f);
+			Debug.debugManager().drawers().drawPointImmediate(core.gameCamera(), spriteGraphInstance.x, spriteGraphInstance.y, -0.01f, 1f, 1f, 1f, 1f);
 		}
 	}
 
@@ -99,8 +99,8 @@ public class SpriteGraphRenderer extends SpriteBatch {
 				for (int i = 0; i < lAnchorCount; i++) {
 					final var lAnchorPoint = lSpriteFrame.getAnchorByIndex(i);
 
-					final var lFlipHorizontal = spriteGraph.flipHorizontal();
-					final var lFlipVertical = spriteGraph.flipVerticle();
+					final var lFlipHorizontal = spriteGraph.flipHorizontal;
+					final var lFlipVertical = spriteGraph.flipVertical;
 
 					final var lAnchorWorldX = spriteGraphNode.positionX() + (lFlipHorizontal ? -lAnchorPoint.localX() : lAnchorPoint.localX()) * lSpriteFrame.scaleX();
 					final var lAnchorWorldY = spriteGraphNode.positionY() + (lFlipVertical ? -lAnchorPoint.localY() : lAnchorPoint.localY()) * lSpriteFrame.scaleY();
