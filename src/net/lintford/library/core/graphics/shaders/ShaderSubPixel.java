@@ -11,10 +11,10 @@ public class ShaderSubPixel extends ShaderMVP_PCT {
 	// Constants
 	// --------------------------------------
 
+	public final static String SHADER_NAME = "Sub Pixel Shader";
+
 	public static final String VERT_FILENAME = "/res/shaders/shader_basic_pct.vert";
 	public static final String FRAG_FILENAME = "/res/shaders/shader_subpixel_pct.frag";
-
-	public final static String SHADER_NAME = "BasicShader";
 
 	public final static String SHADER_UNIFORM_PROJECTION_NAME = "projectionMatrix";
 	public final static String SHADER_UNIFORM_VIEW_NAME = "viewMatrix";
@@ -32,9 +32,38 @@ public class ShaderSubPixel extends ShaderMVP_PCT {
 	protected Matrix4f mViewMatrix;
 	protected Matrix4f mModelMatrix;
 
+	private int mScreenResolutionLocationID;
+	private int mCameraResolutionLocationID;
+	private int mPixelSizeLocationId;
+
+	private float mScreenResolutionW, mScreenResolutionH;
+	private float mCameraResolutionW, mCameraResolutionH;
+	private float mPixelSize;
+
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public void pixelSize(float pNewPixelSize) {
+		mPixelSize = pNewPixelSize;
+
+	}
+
+	public void screenResolutionWidth(float pWidth) {
+		mScreenResolutionW = pWidth;
+	}
+
+	public void screenResolutionHeight(float pHeight) {
+		mScreenResolutionH = pHeight;
+	}
+
+	public void cameraResolutionWidth(float pWidth) {
+		mCameraResolutionW = pWidth;
+	}
+
+	public void cameraResolutionHeight(float pHeight) {
+		mCameraResolutionH = pHeight;
+	}
 
 	public Matrix4f projectionMatrix() {
 		return mProjectionMatrix;
@@ -89,6 +118,18 @@ public class ShaderSubPixel extends ShaderMVP_PCT {
 		if (mModelMatrixLocation != -1 && mModelMatrix != null) {
 			GL20.glUniformMatrix4fv(mModelMatrixLocation, false, MathUtil.getMatBufferColMaj(mModelMatrix));
 		}
+
+		if (mScreenResolutionLocationID != -1) {
+			GL20.glUniform2f(mScreenResolutionLocationID, mScreenResolutionW, mScreenResolutionH);
+		}
+
+		if (mCameraResolutionLocationID != -1) {
+			GL20.glUniform2f(mCameraResolutionLocationID, mCameraResolutionW, mCameraResolutionH);
+		}
+
+		if (mPixelSizeLocationId != -1) {
+			GL20.glUniform1f(mPixelSizeLocationId, mPixelSize);
+		}
 	}
 
 	// --------------------------------------
@@ -113,5 +154,9 @@ public class ShaderSubPixel extends ShaderMVP_PCT {
 		mProjectionMatrixLocation = GL20.glGetUniformLocation(shaderID(), SHADER_UNIFORM_PROJECTION_NAME);
 		mViewMatrixLocation = GL20.glGetUniformLocation(shaderID(), SHADER_UNIFORM_VIEW_NAME);
 		mModelMatrixLocation = GL20.glGetUniformLocation(shaderID(), SHADER_UNIFORM_MODEL_NAME);
+
+		mScreenResolutionLocationID = GL20.glGetUniformLocation(shaderID(), "v2ScreenResolution");
+		mCameraResolutionLocationID = GL20.glGetUniformLocation(shaderID(), "v2CameraResolution");
+		mPixelSizeLocationId = GL20.glGetUniformLocation(shaderID(), "fPixelSize");
 	}
 }
