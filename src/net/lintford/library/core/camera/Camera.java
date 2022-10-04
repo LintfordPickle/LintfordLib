@@ -198,10 +198,8 @@ public class Camera implements ICamera {
 	// --------------------------------------
 
 	public void handleInput(LintfordCore core) {
-		// Update the MouseCameraSpace instance
-		// FIXME: Move the mMouseWorldSpace away from the camera - it doesn't belong here
-		mMouseWorldSpace.x = core.input().mouse().mouseWindowCoords().x * getZoomFactorOverOne() + getMinX();
-		mMouseWorldSpace.y = core.input().mouse().mouseWindowCoords().y * getZoomFactorOverOne() + getMinY();
+		mMouseWorldSpace.x = (core.input().mouse().mouseWindowCoords().x / mWindowWidth * mScaledWindowWidth) + getMinX();
+		mMouseWorldSpace.y = (core.input().mouse().mouseWindowCoords().y / mWindowHeight * mScaledWindowHeight) + getMinY();
 	}
 
 	public void update(LintfordCore core) {
@@ -236,7 +234,7 @@ public class Camera implements ICamera {
 	public void createView() {
 		mViewMatrix.setIdentity();
 		mViewMatrix.scale(mZoomFactor, mZoomFactor, 1f);
-		mViewMatrix.translate((int) (-mInternalPosition.x * getZoomFactor()), (int) (-mInternalPosition.y * getZoomFactor()), 0f);
+		mViewMatrix.translate(-mInternalPosition.x * getZoomFactor(), -mInternalPosition.y * getZoomFactor(), 0f);
 	}
 
 	private void createOrtho(final float gameViewportWidth, final float gameViewportheight) {
