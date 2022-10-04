@@ -480,7 +480,7 @@ public abstract class LintfordCore {
 			lUpdateFrameLag = 0;
 			mCoreTime.accumulatedElapsedTimeMilli += mCoreTime.getDelta();
 
-			onHandleInput();
+			
 
 			// If we are using a fixed time step, then make sure enough time has elapsed
 			// since the last frame
@@ -497,6 +497,8 @@ public abstract class LintfordCore {
 				}
 				continue;
 			}
+			
+			onHandleInput();
 
 			if (mCoreTime.accumulatedElapsedTimeMilli > mCoreTime.maxElapsedTimeMilli)
 				mCoreTime.accumulatedElapsedTimeMilli = mCoreTime.maxElapsedTimeMilli;
