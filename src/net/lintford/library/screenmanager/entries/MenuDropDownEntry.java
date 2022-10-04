@@ -237,9 +237,6 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 
 	@Override
 	public void update(LintfordCore core, MenuScreen screen, boolean isSelected) {
-		if (mItems == null || mItems.size() == 0)
-			return;
-
 		super.update(core, screen, isSelected);
 
 		if (mShowInfoIcon)
@@ -295,7 +292,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 		if (mItems == null || mItems.size() == 0) {
 			// LOCALIZATION: No entries added to dropdown list
 			final String lNoEntriesText = "No items found";
-			lTextBoldFont.drawText(lNoEntriesText, lScreenOffset.x + mX + mW / 2 + lSeparatorHalfWidth + SPACE_BETWEEN_TEXT, lScreenOffset.y + mY + mH / 2f - lFontHeight / 2f, mZ, textColor, lUiTextScale, -1);
+			lTextBoldFont.drawText(lNoEntriesText, lScreenOffset.x + mX + mW / 2 + lSeparatorHalfWidth + SPACE_BETWEEN_TEXT, lScreenOffset.y + mY + mItemHeight / 2f - lFontHeight / 2f, mZ, textColor, lUiTextScale, -1);
 			lTextBoldFont.end();
 			return;
 		}
