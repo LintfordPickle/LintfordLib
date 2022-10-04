@@ -199,6 +199,15 @@ public class Vector2f implements Serializable {
 		return this;
 	}
 
+	public float norAndRetLen() {
+		float len = len();
+		if (len != 0) {
+			x /= len;
+			y /= len;
+		}
+		return len;
+	}
+
 	/**
 	 * Adds the given vector to this vector
 	 * 
