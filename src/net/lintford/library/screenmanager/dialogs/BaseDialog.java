@@ -225,11 +225,11 @@ public abstract class BaseDialog extends MenuScreen {
 			mMenuFont.drawText(mMenuTitle, -DIALOG_WIDTH / 2f + TEXT_HORIZONTAL_PADDING + lHorizontalOffsetX, -DIALOG_HEIGHT / 2f + 4.f, lZDepth, screenColor, 1.f);
 			mMenuFont.end();
 		}
+
 		mMenuFont.begin(core.HUD());
 		mMenuFont.drawText(mMessageString, -DIALOG_WIDTH * 0.5f + 15.f * 2.f + 64.f, -DIALOG_HEIGHT * 0.5f + 48f, lZDepth, ColorConstants.WHITE, 1f, DIALOG_WIDTH - 120);
 		mMenuFont.end();
 
-		// Draw each layout in turn.
 		final int lCount = mLayouts.size();
 		for (int i = 0; i < lCount; i++) {
 			mLayouts.get(i).draw(core, lZDepth + (i * 0.001f));

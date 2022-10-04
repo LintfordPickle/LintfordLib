@@ -13,6 +13,7 @@ import org.lwjgl.glfw.GLFWJoystickCallback;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.debug.Debug;
 
+@SuppressWarnings("unused")
 public class GamepadManager {
 
 	// --------------------------------------
@@ -26,6 +27,7 @@ public class GamepadManager {
 		// --------------------------------------
 
 		private final int mJoystickIndex;
+
 		private ByteBuffer mJoystickButtons;
 		private FloatBuffer mJoystickAxes;
 		private String mJoystickName;

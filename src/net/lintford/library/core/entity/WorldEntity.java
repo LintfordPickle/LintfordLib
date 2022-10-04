@@ -36,6 +36,11 @@ public abstract class WorldEntity extends PooledBaseData {
 		return mInstanceUid != INSTANCE_UID_NOT_ASSIGNED;
 	}
 
+	public void setPosition(float xPosition, float yPosition) {
+		x = xPosition;
+		y = yPosition;
+	}
+
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
