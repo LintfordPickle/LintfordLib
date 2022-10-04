@@ -15,10 +15,12 @@ public class Spline {
 	// Variables
 	// --------------------------------------
 
+	// Don't forget, these two are shared objects. Subsequent calls of getPointOnSpline / getgradientOnSpline will overwrite previous results
 	private final SplinePoint mReturnSplinePoint = new SplinePoint();
 	private final SplinePoint mReturnSplineGradient = new SplinePoint();
 
 	private List<SplinePoint> mPoints;
+
 	private float mTotalSplineLength;
 	private boolean mIsLooped;
 
@@ -44,7 +46,7 @@ public class Spline {
 
 	public void isLooped(boolean pIsLooped) {
 		mIsLooped = pIsLooped;
-		calculateSegmentLength();
+		calculateSplineLength();
 	}
 
 	// --------------------------------------
@@ -62,42 +64,47 @@ public class Spline {
 			mPoints = Arrays.asList(points);
 		}
 
-		calculateSegmentLength();
+		mIsLooped = true;
+		calculateSplineLength();
 	}
 
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
 
-	public SplinePoint getControlPoint(int index) {
-		return mPoints.get(index);
+	public SplinePoint getControlPoint(int nodeIndex) {
+		return mPoints.get(nodeIndex);
 	}
 
-	public SplinePoint getPointOnSpline(float t) {
+	/*
+	 * This returns a point on the spline as a whole. The integer part references a node on the spline, and the fraction part is the the distaince between this node and the next (the distance into the segment).
+	 */
+	public SplinePoint getPointOnSpline(float nodeIndexAndFraction) {
 		int p0, p1, p2, p3;
 
 		if (!mIsLooped) {
-			p1 = (int) t + 1;
+			p1 = (int) nodeIndexAndFraction + 1;
 			p2 = p1 + 1;
 			p3 = p2 + 1;
 			p0 = p1 - 1;
 
 		} else {
-			p1 = (int) t;
+			p1 = (int) nodeIndexAndFraction;
 			p2 = (p1 + 1) % mPoints.size();
 			p3 = (p2 + 1) % mPoints.size();
 			p0 = p1 >= 1 ? p1 - 1 : mPoints.size() - 1;
 		}
 
-		t = t - (int) t;
+		// fraction [0,1] - for between segments
+		float lFraction = nodeIndexAndFraction - (int) nodeIndexAndFraction;
 
-		float tt = t * t;
-		float ttt = tt * t;
+		float tt = lFraction * lFraction;
+		float ttt = tt * lFraction;
 
 		// influencial field values
-		float q0 = -ttt + 2.f * tt - t;
+		float q0 = -ttt + 2.f * tt - lFraction;
 		float q1 = 3.f * ttt - 5.f * tt + 2.f;
-		float q2 = -3.f * ttt + 4.f * tt + t;
+		float q2 = -3.f * ttt + 4.f * tt + lFraction;
 		float q3 = ttt - tt;
 
 		float tx = 0.5f * (mPoints.get(p0).x * q0 + mPoints.get(p1).x * q1 + mPoints.get(p2).x * q2 + mPoints.get(p3).x * q3);
@@ -108,31 +115,39 @@ public class Spline {
 		return mReturnSplinePoint;
 	}
 
-	public SplinePoint getSplineGradient(float t) {
+	public float getSplineGradient(float nodeIndexAndFraction) {
+		final var lSplineGradient = getSplineGradientPoint(nodeIndexAndFraction);
+		return (float) Math.atan2(lSplineGradient.y, lSplineGradient.x);
+	}
+
+	/*
+	 * This returns a gradient at a point on the spline as a whole. The integer part references a node on the spline, and the fraction part is the the distaince between this node and the next (the distance into the segment).
+	 */
+	public SplinePoint getSplineGradientPoint(float nodeIndexAndFraction) {
 		int p0, p1, p2, p3;
 
 		if (!mIsLooped) {
-			p1 = (int) t + 1;
+			p1 = (int) nodeIndexAndFraction + 1;
 			p2 = p1 + 1;
 			p3 = p2 + 1;
 			p0 = p1 - 1;
 
 		} else {
-			p1 = (int) t;
+			p1 = (int) nodeIndexAndFraction;
 			p2 = (p1 + 1) % mPoints.size();
 			p3 = (p2 + 1) % mPoints.size();
 			p0 = p1 >= 1 ? p1 - 1 : mPoints.size() - 1;
 		}
 
-		t = t - (int) t;
-
-		float tt = t * t;
+		// fraction [0,1] - for between segments
+		float lFraction = nodeIndexAndFraction - (int) nodeIndexAndFraction;
+		float tt = lFraction * lFraction;
 
 		// influencial field values
-		float q0 = -3.f * tt + 4.f * t - 1;
-		float q1 = 9.f * tt - 10.f * t;
-		float q2 = -9.f * tt + 8.f * t + 1.f;
-		float q3 = 3.f * tt - 2.f * t;
+		float q0 = -3.f * tt + 4.f * lFraction - 1.f;
+		float q1 = 9.f * tt - 10.f * lFraction;
+		float q2 = -9.f * tt + 8.f * lFraction + 1.f;
+		float q3 = 3.f * tt - 2.f * lFraction;
 
 		float tx = 0.5f * (mPoints.get(p0).x * q0 + mPoints.get(p1).x * q1 + mPoints.get(p2).x * q2 + mPoints.get(p3).x * q3);
 		float ty = 0.5f * (mPoints.get(p0).y * q0 + mPoints.get(p1).y * q1 + mPoints.get(p2).y * q2 + mPoints.get(p3).y * q3);
@@ -142,6 +157,9 @@ public class Spline {
 		return mReturnSplineGradient;
 	}
 
+	/*
+	 * Returns the nodeIndex and fraction for a point at the give distance into the spline from the start.
+	 */
 	public float getNormalizedOffset(float distance) {
 		int i = 0;
 		while (distance > mPoints.get(i).length) {
@@ -152,41 +170,47 @@ public class Spline {
 		return (float) i + (distance / mPoints.get(i).length);
 	}
 
-	public void calculateSegmentLength() {
+	public void recalculate() {
+		calculateSplineLength();
+	}
+
+	/*
+	 * Calculates the total length of the spline (only needed one per track-change
+	 */
+	public void calculateSplineLength() {
 		mTotalSplineLength = 0;
 
 		final int lIdOffset = mIsLooped ? 0 : 3;
-		for (int i = 0; i < mPoints.size() - lIdOffset - 1; i++) {
+		for (int i = 0; i <= mPoints.size() - lIdOffset - 1; i++) {
 			final float lSegmentLength = calculateSegmentLength(i);
 			mPoints.get(i).accLength = mTotalSplineLength;
 			mTotalSplineLength += lSegmentLength;
 		}
 	}
 
-	public float calculateSegmentLength(int node) {
+	/*
+	 * Calculates the length of the segment at the given node index.
+	 */
+	public float calculateSegmentLength(int nodeIndex) {
+		nodeIndex %= mPoints.size();
+
 		float lLength = 0f;
 		float lStepSize = 0.005f;
 
 		final SplinePoint lOldPoint = new SplinePoint();
 		final SplinePoint lNewPoint = new SplinePoint();
-		lOldPoint.set(getPointOnSpline((float) node));
+		lOldPoint.set(getPointOnSpline((float) nodeIndex));
 
-		for (float t = 0; t < 1f; t += lStepSize) {
-			lNewPoint.set(getPointOnSpline((float) node + t));
+		for (float t = 0; t < 1f - lStepSize; t += lStepSize) {
+			lNewPoint.set(getPointOnSpline((float) nodeIndex + t));
 
 			lLength += Math.sqrt((lNewPoint.x - lOldPoint.x) * (lNewPoint.x - lOldPoint.x) + (lNewPoint.y - lOldPoint.y) * (lNewPoint.y - lOldPoint.y));
 
 			lOldPoint.set(lNewPoint);
 		}
-		mPoints.get(node).length = lLength;
+		mPoints.get(nodeIndex).length = lLength;
 
 		return lLength;
-	}
-
-	public static float catmullRom(float value1, float value2, float value3, float value4, float amount) {
-		float num = amount * amount;
-		float num2 = amount * num;
-		return (0.5f * ((((2f * value2) + ((-value1 + value3) * amount)) + (((((2f * value1) - (5f * value2)) + (4f * value3)) - value4) * num)) + ((((-value1 + (3f * value2)) - (3f * value3)) + value4) * num2)));
 	}
 
 	public float getNormalizedPositionAlongSpline(int fromNode, float positionX, float positionY) {
