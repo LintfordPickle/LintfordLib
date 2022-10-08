@@ -415,7 +415,7 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 			return false;
 
 		if (intersectsAA(core.HUD().getMouseCameraSpace()) && core.input().mouse().isMouseOverThisComponent(hashCode())) {
-			hoveredOver(parentLayout().parentScreen.acceptMouseInput);
+			hoveredOver(parentLayout().parentScreen.mAcceptMouseInput);
 
 			// Check if tool tips are enabled.
 			if (mToolTipEnabled) {

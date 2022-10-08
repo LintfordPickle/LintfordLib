@@ -81,6 +81,6 @@ public class SpriteGraphController extends BaseController {
 			return null;
 		}
 
-		return spriteGraphManager().getInstanceOfGraph(lSpriteGraphDefinition, entityGroupID());
+		return spriteGraphManager().getInstanceOfGraph(lSpriteGraphDefinition, entityGroupUid());
 	}
 }

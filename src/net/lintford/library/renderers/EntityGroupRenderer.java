@@ -12,7 +12,7 @@ public class EntityGroupRenderer {
 	// Properties
 	// --------------------------------------
 
-	public int entityGroupID() {
+	public int entityGroupUid() {
 		return mEntityGroupUid;
 	}
 

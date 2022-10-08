@@ -196,8 +196,8 @@ public class ScreenManager implements IInputClickedFocusManager {
 				core.input().mouse().tryAcquireMouseMiddle(hashCode());
 			}
 
-			lScreen.acceptMouseInput = !lInputBlockedByHigherScreen;
-			lScreen.acceptKeyboardInput = !lInputBlockedByHigherScreen;
+			lScreen.mAcceptMouseInput = !lInputBlockedByHigherScreen;
+			lScreen.mAcceptKeyboardInput = !lInputBlockedByHigherScreen;
 
 			if (!lInputBlockedByHigherScreen && lScreen.screenState() == ScreenState.Active) {
 				lScreen.handleInput(core);

@@ -34,7 +34,6 @@ public abstract class Screen implements IProcessMouseInput {
 	// --------------------------------------
 
 	public final Color screenColor = new Color(ColorConstants.WHITE);
-
 	protected final ScreenManager mScreenManager;
 	protected final RendererManager mRendererManager;
 	protected SpriteSheetDefinition mCoreSpritesheet;
@@ -52,8 +51,8 @@ public abstract class Screen implements IProcessMouseInput {
 	protected boolean mShowMouseCursor;
 	protected boolean mShowBackgroundScreens;
 	protected boolean mBlockInputInBackground;
-	protected boolean acceptMouseInput;
-	protected boolean acceptKeyboardInput;
+	protected boolean mAcceptMouseInput;
+	protected boolean mAcceptKeyboardInput;
 	protected float mMouseClickTimer;
 	protected final Vector2f mScreenOffset = new Vector2f();
 
@@ -90,8 +89,9 @@ public abstract class Screen implements IProcessMouseInput {
 		return mSingletonScreen;
 	}
 
-	/** Some screens are just hotbars, floating on top of the other screens in the {@link ScreenManager} stack. 
-	 * Screens which are always on top do not block input to screens below them.*/
+	/**
+	 * Some screens are just hotbars, floating on top of the other screens in the {@link ScreenManager} stack. Screens which are always on top do not block input to screens below them.
+	 */
 	public boolean alwaysOnTop() {
 		return mAlwaysOnTop;
 	}
@@ -121,12 +121,12 @@ public abstract class Screen implements IProcessMouseInput {
 		return !mOtherScreenHasFocus && (mScreenState == ScreenState.Active || mScreenState == ScreenState.TransitionOn);
 	}
 
-	/** If true, underlying screens in the stack will be visible in the background of this popup screen*/
+	/** If true, underlying screens in the stack will be visible in the background of this popup screen */
 	public boolean isPopup() {
 		return mIsPopup;
 	}
 
-	/** If true, this screen is currently in the process (transition) of exiting*/
+	/** If true, this screen is currently in the process (transition) of exiting */
 	public boolean isExiting() {
 		return mIsExiting;
 	}
