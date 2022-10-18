@@ -2,11 +2,12 @@ package net.lintford.library.core.graphics.fonts;
 
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.camera.ICamera;
+import net.lintford.library.core.debug.GLDebug;
 import net.lintford.library.core.graphics.Color;
 import net.lintford.library.core.graphics.ColorConstants;
+import net.lintford.library.core.graphics.batching.SpriteBatch;
 import net.lintford.library.core.graphics.shaders.ShaderMVP_PCT;
 import net.lintford.library.core.graphics.shaders.ShaderSubPixel;
-import net.lintford.library.core.graphics.sprites.spritebatch.SpriteBatch;
 
 public class FontUnit {
 
@@ -30,12 +31,16 @@ public class FontUnit {
 
 	private BitmapFontDefinition mFontDefinition;
 	private SpriteBatch mFontRenderer;
-	private WrapType mWrapType = WrapType.WordWrap;
 	private ShaderSubPixel mShaderSubPixel;
+	private WrapType mWrapType = WrapType.WordWrap;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public void _countDebugStats(boolean enableDebugStats) {
+		mFontRenderer._countDebugStats(enableDebugStats);
+	}
 
 	public WrapType getWrapType() {
 		return mWrapType;
@@ -191,6 +196,7 @@ public class FontUnit {
 		mFontRenderer.loadResources(resouceManager);
 		mFontDefinition.loadResources(resouceManager);
 		mShaderSubPixel.loadResources(resouceManager);
+		GLDebug.checkGLErrorsException();
 	}
 
 	public void unloadResources() {
@@ -295,8 +301,8 @@ public class FontUnit {
 						final var lDotGlyph = mFontDefinition.getGlyphFrame((int) '.');
 						if (lDotGlyph != null) {
 							for (int j = 0; j < lNumElpsis; j++) {
-								mFontRenderer.draw(mFontDefinition.texture(), lDotGlyph.x(), lDotGlyph.y(), lDotGlyph.width(), lDotGlyph.height(), (int) (lX) + j * lDotGlyph.width(), (int) lY, lCurrentGlyph.width() * scale, lCurrentGlyph.height() * scale, zDepth,
-										textColor);
+								mFontRenderer.draw(mFontDefinition.texture(), lDotGlyph.x(), lDotGlyph.y(), lDotGlyph.width(), lDotGlyph.height(), (int) (lX) + j * lDotGlyph.width(), (int) lY, lCurrentGlyph.width() * scale,
+										lCurrentGlyph.height() * scale, zDepth, textColor);
 							}
 						}
 
@@ -314,8 +320,8 @@ public class FontUnit {
 				final var lDotGlyph = mFontDefinition.getGlyphFrame((int) '.');
 				if (lDotGlyph != null) {
 					for (int j = 0; j < lNumElpsis; j++) {
-						mFontRenderer.draw(mFontDefinition.texture(), lDotGlyph.x(), lDotGlyph.y(), (int) lDotGlyph.width(), lDotGlyph.height(), (int) (lX) + j * lDotGlyph.width(), (int) lY, lCurrentGlyph.width() * scale, lCurrentGlyph.height() * scale, zDepth,
-								textColor);
+						mFontRenderer.draw(mFontDefinition.texture(), lDotGlyph.x(), lDotGlyph.y(), (int) lDotGlyph.width(), lDotGlyph.height(), (int) (lX) + j * lDotGlyph.width(), (int) lY, lCurrentGlyph.width() * scale,
+								lCurrentGlyph.height() * scale, zDepth, textColor);
 					}
 				}
 
@@ -332,7 +338,8 @@ public class FontUnit {
 				continue;
 			}
 
-			mFontRenderer.draw(mFontDefinition.texture(), lCurrentGlyph.x(), lCurrentGlyph.y(), (int) lCurrentGlyph.width(), lCurrentGlyph.height(), (int) lX, (int) lY, lCurrentGlyph.width() * scale, lCurrentGlyph.height() * scale, zDepth, textColor);
+			mFontRenderer.draw(mFontDefinition.texture(), lCurrentGlyph.x(), lCurrentGlyph.y(), (int) lCurrentGlyph.width(), lCurrentGlyph.height(), (int) lX, (int) lY, lCurrentGlyph.width() * scale, lCurrentGlyph.height() * scale, zDepth,
+					textColor);
 
 			if (lJustWrapped && lBreakCharFitsOnThisLine) {
 				lY += lScaledLineHeight;

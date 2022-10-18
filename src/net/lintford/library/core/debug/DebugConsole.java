@@ -13,10 +13,10 @@ import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.Color;
 import net.lintford.library.core.graphics.ColorConstants;
+import net.lintford.library.core.graphics.batching.SpriteBatch;
 import net.lintford.library.core.graphics.fonts.BitmapFontManager;
 import net.lintford.library.core.graphics.fonts.FontUnit;
 import net.lintford.library.core.graphics.fonts.FontUnit.WrapType;
-import net.lintford.library.core.graphics.sprites.spritebatch.SpriteBatch;
 import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintford.library.core.graphics.textures.CoreTextureNames;
 import net.lintford.library.core.input.IBufferedTextInputCallback;
@@ -487,15 +487,14 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 				mConsoleFont.drawText(PROMT_CHAR, -lDisplayConfig.windowWidth() * 0.5f + PADDING_LEFT, mY + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET, Z_DEPTH + 0.1f, ColorConstants.WHITE, 1f);
 				mConsoleFont.drawText(mInputText.toString(), -lDisplayConfig.windowWidth() * 0.5f + PADDING_LEFT + lInputTextXOffset, mY + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET, Z_DEPTH + 0.1f, ColorConstants.WHITE, 1f);
 				if (mShowCaret && mHasFocus)
-					mConsoleFont.drawText(CARET_CHAR, -lDisplayConfig.windowWidth() * 0.5f + PADDING_LEFT + lInputTextXOffset + mConsoleFont.getStringWidth(mInputText.toString()), mY + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET, Z_DEPTH + 0.1f,
-							ColorConstants.WHITE, 1f);
+					mConsoleFont.drawText(CARET_CHAR, -lDisplayConfig.windowWidth() * 0.5f + PADDING_LEFT + lInputTextXOffset + mConsoleFont.getStringWidth(mInputText.toString()), mY + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET,
+							Z_DEPTH + 0.1f, ColorConstants.WHITE, 1f);
 			}
 		}
 
 		var lAutoScrollIconColor = ColorConstants.WHITE;
-		if (mAutoScroll == false) {
+		if (mAutoScroll == false)
 			lAutoScrollIconColor = ColorConstants.getWhiteWithAlpha(.1f);
-		}
 
 		mSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_AUTOSCROLL, mAutoScrollIconRectangle, Z_DEPTH, lAutoScrollIconColor);
 

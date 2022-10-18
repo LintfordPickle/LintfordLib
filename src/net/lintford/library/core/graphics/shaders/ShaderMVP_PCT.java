@@ -103,7 +103,7 @@ public class ShaderMVP_PCT extends Shader {
 	@Override
 	protected void getUniformLocations() {
 		super.getUniformLocations();
-
+		
 		mProjectionMatrixLocation = GL20.glGetUniformLocation(shaderID(), SHADER_UNIFORM_PROJECTION_NAME);
 		mViewMatrixLocation = GL20.glGetUniformLocation(shaderID(), SHADER_UNIFORM_VIEW_NAME);
 		mModelMatrixLocation = GL20.glGetUniformLocation(shaderID(), SHADER_UNIFORM_MODEL_NAME);

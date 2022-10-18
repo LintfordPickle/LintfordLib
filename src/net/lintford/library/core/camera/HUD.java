@@ -1,7 +1,5 @@
 package net.lintford.library.core.camera;
 
-import org.lwjgl.opengl.GL11;
-
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.maths.Matrix4f;
@@ -125,14 +123,13 @@ public class HUD implements ICamera, IResizeListener {
 		mRatioH = ((float) mWindowHeight / (float) mDisplayConfig.windowHeight());
 
 		if (mDisplayConfig.stretchGameScreen()) {
-			//			lWindowWidth = mDisplayConfig.baseGameResolutionWidth();
-			//			lWindowHeight = mDisplayConfig.baseGameResolutionHeight();
-			//
-			//			mRatioW = ((float) lWindowWidth / (float) mDisplayConfig.windowWidth());
-			//			mRatioH = ((float) lWindowHeight / (float) mDisplayConfig.windowHeight());
+			lWindowWidth = mDisplayConfig.baseGameResolutionWidth();
+			lWindowHeight = mDisplayConfig.baseGameResolutionHeight();
+
+			mRatioW = ((float) lWindowWidth / (float) mDisplayConfig.windowWidth());
+			mRatioH = ((float) lWindowHeight / (float) mDisplayConfig.windowHeight());
 		}
 
-		// FIXME: Remove the mMouseHUDSpace away from this class - it doesn't belong here
 		mMouseHUDSpace.x = (float) (-lWindowWidth * 0.5f + (core.input().mouse().mouseWindowCoords().x - 1) * mRatioW);
 		mMouseHUDSpace.y = (float) (-lWindowHeight * 0.5f + (core.input().mouse().mouseWindowCoords().y - 1) * mRatioH);
 	}
@@ -151,27 +148,32 @@ public class HUD implements ICamera, IResizeListener {
 		if ((mWindowHeight % 2) == 1)
 			mWindowHeight = mWindowHeight + 1;
 
-		mViewMatrix.setIdentity(); // points at -Z
+		mViewMatrix.setIdentity();
 		mViewMatrix.translate(position.x, position.y, 0);
 		mViewMatrix.scale(mScaleFactor, mScaleFactor, 1.f);
 
-		createOrtho(mWindowWidth, mWindowHeight);
+		if (mDisplayConfig.stretchGameScreen()) {
+			createOrtho(mDisplayConfig.baseGameResolutionWidth(), mDisplayConfig.baseGameResolutionHeight());
 
-		// update the bounding rectangle so we can properly do frustum culling
-		mBoundingRectangle.setCenterPosition(0, 0);
-		mBoundingRectangle.width(mWindowWidth);
-		mBoundingRectangle.height(mWindowHeight);
+			mBoundingRectangle.setCenterPosition(0, 0);
+			mBoundingRectangle.width(mDisplayConfig.baseGameResolutionWidth());
+			mBoundingRectangle.height(mDisplayConfig.baseGameResolutionHeight());
+		} else {
+			createOrtho(mWindowWidth, mWindowHeight);
 
-		applyGameViewport();
+			mBoundingRectangle.setCenterPosition(0, 0);
+			mBoundingRectangle.width(mWindowWidth);
+			mBoundingRectangle.height(mWindowHeight);
+		}
 	}
 
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
 
-	private void createOrtho(final float gameViewportWidth, final float gameViewportheight) {
+	private void createOrtho(int gameViewportWidth, int gameViewportHeight) {
 		mProjectionMatrix.setIdentity();
-		mProjectionMatrix.createOrtho(-gameViewportWidth * 0.5f, gameViewportWidth * 0.5f, gameViewportheight * 0.5f, -gameViewportheight * 0.5f, Z_NEAR, Z_FAR);
+		mProjectionMatrix.createOrtho(-gameViewportWidth * 0.5f, gameViewportWidth * 0.5f, gameViewportHeight * 0.5f, -gameViewportHeight * 0.5f, Z_NEAR, Z_FAR);
 	}
 
 	@Override
@@ -254,11 +256,6 @@ public class HUD implements ICamera, IResizeListener {
 
 	@Override
 	public void setCameraState(CameraState cameraState) {
-
-	}
-
-	public void applyGameViewport() {
-		GL11.glViewport(0, 0, mWindowWidth, mWindowHeight);
 
 	}
 

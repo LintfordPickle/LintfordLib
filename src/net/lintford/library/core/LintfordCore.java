@@ -30,6 +30,7 @@ import net.lintford.library.core.camera.ICamera;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.debug.Debug.DebugLogLevel;
 import net.lintford.library.core.debug.DebugMemory;
+import net.lintford.library.core.debug.GLDebug;
 import net.lintford.library.core.entity.BaseEntity;
 import net.lintford.library.core.graphics.fonts.BitmapFontManager;
 import net.lintford.library.core.input.EventActionManager;
@@ -43,10 +44,8 @@ import net.lintford.library.renderers.RendererManager;
 import net.lintford.library.screenmanager.ScreenManager;
 
 /**
- * The LintfordCore tracks the core state of an LWJGL application including a
- * {@link DisplayManager}, {@link ResourceManager}, {@link CoreTime},
- * {@link Camera}, {@link HUD}, {@link InputManager} and {@link RenderState}. It
- * also defines the behaviour for creating an OpenGL window.
+ * The LintfordCore tracks the core state of an LWJGL application including a {@link DisplayManager}, {@link ResourceManager}, {@link CoreTime}, {@link Camera}, {@link HUD}, {@link InputManager} and {@link RenderState}. It also defines the behaviour
+ * for creating an OpenGL window.
  */
 public abstract class LintfordCore {
 
@@ -112,8 +111,7 @@ public abstract class LintfordCore {
 		// --------------------------------------
 
 		/**
-		 * This flags returns true we've been missing update calls due to the amount of
-		 * time taken to perform each draw call.
+		 * This flags returns true we've been missing update calls due to the amount of time taken to perform each draw call.
 		 */
 		public boolean isRunningSlowly() {
 			return isRunningSlowly;
@@ -207,27 +205,21 @@ public abstract class LintfordCore {
 	}
 
 	/**
-	 * Returns the instance of {@link CoreTime} which tracks the time realted to the
-	 * application.
+	 * Returns the instance of {@link CoreTime} which tracks the time realted to the application.
 	 */
 	public CoreTime appTime() {
 		return mCoreTime;
 	}
 
 	/**
-	 * Returns the instance of {@link CoreTime} which tracks the time realted to the
-	 * game. GameTime can be slowed or sped up, which will result n changes in the
-	 * game simulation.
+	 * Returns the instance of {@link CoreTime} which tracks the time realted to the game. GameTime can be slowed or sped up, which will result n changes in the game simulation.
 	 */
 	public GameTime gameTime() {
 		return mGameTime;
 	}
 
 	/**
-	 * Returns the instance of {@link InputManager} which was created when the LWJGL
-	 * window was created. InputState is updated per-frame and tracks user input
-	 * from the mouse and keyboard. null is returned if the LWJGL window has not yet
-	 * been created.
+	 * Returns the instance of {@link InputManager} which was created when the LWJGL window was created. InputState is updated per-frame and tracks user input from the mouse and keyboard. null is returned if the LWJGL window has not yet been created.
 	 */
 	public InputManager input() {
 		return mInputState;
@@ -247,23 +239,18 @@ public abstract class LintfordCore {
 	}
 
 	/**
-	 * Returns the active HUD {@link ICamera} instance assigned to this
-	 * {@link RenderState}.
+	 * Returns the active HUD {@link ICamera} instance assigned to this {@link RenderState}.
 	 */
 	public ICamera HUD() {
 		return mHUD;
 	}
 
 	/**
-	 * Returns the active game {@link ICamera} instance assigned to this
-	 * {@link RenderState}. This can return null if no game camera has been
-	 * explicitly set!
+	 * Returns the active game {@link ICamera} instance assigned to this {@link RenderState}. This can return null if no game camera has been explicitly set!
 	 */
 	public ICamera gameCamera() {
-		if (mGameCamera == null) {
+		if (mGameCamera == null)
 			return ICamera.EMPTY;
-
-		}
 
 		return mGameCamera;
 	}
@@ -316,7 +303,6 @@ public abstract class LintfordCore {
 	private void printSystemInformationToConsole() {
 		DebugMemory.dumpMemoryToLog();
 
-		// Print out the working directory
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "Working directory: " + System.getProperty("user.dir"));
 		Debug.debugManager().logger().i(getClass().getSimpleName(), System.getProperty("java.vendor"));
 		Debug.debugManager().logger().i(getClass().getSimpleName(), System.getProperty("java.vendor.url"));
@@ -331,8 +317,7 @@ public abstract class LintfordCore {
 	// ---------------------------------------------
 
 	/**
-	 * Creates a new OpenGL window, instantiates all auxiliary classes and starts
-	 * the main game loop.
+	 * Creates a new OpenGL window, instantiates all auxiliary classes and starts the main game loop.
 	 */
 	public void createWindow() {
 		// Load the configuration files saved previously by the user (or else create new
@@ -411,8 +396,7 @@ public abstract class LintfordCore {
 	}
 
 	/**
-	 * Implemented in the sub-class. Sets the default state of the application
-	 * (note. OpenGL context is not available at this point).
+	 * Implemented in the sub-class. Sets the default state of the application (note. OpenGL context is not available at this point).
 	 */
 	protected void onInitializeApp() {
 		new UiStructureController(mMasterConfig.display(), mControllerManager, CORE_ENTITY_GROUP_ID);
@@ -424,44 +408,48 @@ public abstract class LintfordCore {
 
 	private void onLoadBitmapFonts() {
 		final var lFontManager = mResourceManager.fontManager();
+		
+		GLDebug.checkGLErrorsException();
 		lFontManager.loadBitmapFontDefinitionsFromMetaData(BitmapFontManager.CoreFonts);
+		
+		GLDebug.checkGLErrorsException();
 		lFontManager.loadBitmapFontDefinitionsFromMetaData(ScreenManager.ScreenManagerFonts);
 		lFontManager.loadBitmapFontDefinitionsFromMetaData(RendererManager.RendererManagerFonts);
 	}
 
 	/**
-	 * Provides an opportunity before the bitmapfonts are loaded into memory, to
-	 * change the default locations that the core/library loads fonts from for
-	 * rendering in the 'standard' Ui components.
+	 * Provides an opportunity before the bitmapfonts are loaded into memory, to change the default locations that the core/library loads fonts from for rendering in the 'standard' Ui components.
 	 */
 	protected void onInitializeBitmapFontSources(BitmapFontManager fontManager) {
 
 	}
 
 	/**
-	 * Allows the registration of game input actions and the respective key
-	 * bindings.
+	 * Allows the registration of game input actions and the respective key bindings.
 	 */
 	protected void onInitializeInputActions(EventActionManager eventActionManager) {
 		eventActionManager.loadConfig();
 	}
 
 	/**
-	 * Called automatically before entering the main game loop. OpenGL content can
-	 * be setup.
+	 * Called automatically before entering the main game loop. OpenGL content can be setup.
 	 */
 	protected void onLoadResources() {
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "Loading GL content");
 
 		onLoadBitmapFonts();
+
+		GLDebug.checkGLErrorsException();
+
 		mResourceManager.loadResources();
+
+		GLDebug.checkGLErrorsException();
 
 		Debug.debugManager().loadResources(mResourceManager);
 	}
 
 	/**
-	 * Called automatically after exiting the main game loop. OpenGL resources
-	 * should be released.
+	 * Called automatically after exiting the main game loop. OpenGL resources should be released.
 	 */
 	protected void onUnloadResources() {
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "Unloading GL content");
@@ -480,8 +468,6 @@ public abstract class LintfordCore {
 			lUpdateFrameLag = 0;
 			mCoreTime.accumulatedElapsedTimeMilli += mCoreTime.getDelta();
 
-			
-
 			// If we are using a fixed time step, then make sure enough time has elapsed
 			// since the last frame
 			// before performing another update & draw
@@ -497,7 +483,7 @@ public abstract class LintfordCore {
 				}
 				continue;
 			}
-			
+
 			onHandleInput();
 
 			if (mCoreTime.accumulatedElapsedTimeMilli > mCoreTime.maxElapsedTimeMilli)
@@ -628,16 +614,12 @@ public abstract class LintfordCore {
 		glfwSetScrollCallback(lWindowID, mInputState.mouse().mMouseScrollCallback);
 
 		/**
-		 * This function sets the joystick configuration callback, or removes the
-		 * currently set callback. This is called when a joystick is connected to or
-		 * disconnected from the system.
+		 * This function sets the joystick configuration callback, or removes the currently set callback. This is called when a joystick is connected to or disconnected from the system.
 		 */
 		glfwSetJoystickCallback(mInputState.gamepads().lintfordJoystick);
 
 		/**
-		 * This function sets the user-defined pointer of the specified joystick. The
-		 * current value is retained until the joystick is disconnected. The initial
-		 * value is NULL.
+		 * This function sets the user-defined pointer of the specified joystick. The current value is retained until the joystick is disconnected. The initial value is NULL.
 		 */
 		// glfwSetJoystickUserPointer(CORE_ENTITY_GROUP_ID, lWindowID);
 

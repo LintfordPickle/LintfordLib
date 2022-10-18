@@ -1,13 +1,11 @@
-package net.lintford.library.core.graphics.sprites.spritebatch;
+package net.lintford.library.core.graphics.batching;
 
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.Color;
 import net.lintford.library.core.graphics.sprites.SpriteFrame;
 import net.lintford.library.core.graphics.sprites.SpriteInstance;
 import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
-import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 
-// TODO: ---> Add batching based on SpriteSheetDef (or rather, the Texture).
 public class SpriteBatch extends TextureBatchPCT {
 
 	// --------------------------------------

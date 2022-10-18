@@ -12,10 +12,26 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.debug.stats.DebugStats;
-import net.lintford.library.core.graphics.vertices.VertexDataStructurePT;
 import net.lintford.library.core.maths.Matrix4f;
 
 public class TexturedQuad {
+
+	public class VertexDefinition {
+
+		public static final int elementBytes = 4;
+
+		public static final int positionElementCount = 4;
+		public static final int textureElementCount = 2;
+		public static final int textureIndexElementCount = 1;
+
+		public static final int positionBytesCount = positionElementCount * elementBytes;
+		public static final int textureBytesCount = textureElementCount * elementBytes;
+
+		public static final int positionByteOffset = 0;
+		public static final int textureByteOffset = positionByteOffset + positionBytesCount;
+
+		public static final int stride = positionBytesCount + textureBytesCount;
+	}
 
 	// --------------------------------------
 	// Variables
@@ -90,7 +106,7 @@ public class TexturedQuad {
 			mVboId = GL15.glGenBuffers();
 		}
 
-		mBuffer = MemoryUtil.memAllocFloat(6 * VertexDataStructurePT.stride);
+		mBuffer = MemoryUtil.memAllocFloat(6 * VertexDefinition.stride);
 
 		setupVerts();
 
@@ -113,31 +129,23 @@ public class TexturedQuad {
 	}
 
 	public void setupVerts() {
-		VertexDataStructurePT lNewVertex0 = new VertexDataStructurePT();
-		lNewVertex0.xyzw(-.5f, .5f, 0f, 1f);
-		lNewVertex0.uv(0, 0);
-
-		VertexDataStructurePT lNewVertex1 = new VertexDataStructurePT();
-		lNewVertex1.xyzw(-.5f, -.5f, 0f, 1f);
-		lNewVertex1.uv(0, 1);
-
-		VertexDataStructurePT lNewVertex2 = new VertexDataStructurePT();
-		lNewVertex2.xyzw(.5f, -.5f, 0f, 1f);
-		lNewVertex2.uv(1, 1);
-
-		VertexDataStructurePT lNewVertex3 = new VertexDataStructurePT();
-		lNewVertex3.xyzw(.5f, .5f, 0f, 1f);
-		lNewVertex3.uv(1, 0);
-
-		mBuffer.put(lNewVertex0.getElements());
-		mBuffer.put(lNewVertex1.getElements());
-		mBuffer.put(lNewVertex2.getElements());
-
-		mBuffer.put(lNewVertex2.getElements());
-		mBuffer.put(lNewVertex3.getElements());
-		mBuffer.put(lNewVertex0.getElements());
-
+		// @formatter:off
+		addVertToBuffer(-.5f,  .5f, 0.f, 1.f, 0.f, 0.f);
+		addVertToBuffer(-.5f, -.5f, 0.f, 1.f, 0.f, 1.f);
+		addVertToBuffer( .5f, -.5f, 0.f, 1.f, 1.f, 1.f);
+		addVertToBuffer( .5f,  .5f, 0.f, 1.f, 1.f, 0.f);
+		// @formatter:on
 		mBuffer.flip();
+	}
+
+	protected void addVertToBuffer(float x, float y, float z, float w, float u, float v) {
+		mBuffer.put(x);
+		mBuffer.put(y);
+		mBuffer.put(z);
+		mBuffer.put(w);
+
+		mBuffer.put(u);
+		mBuffer.put(v);
 	}
 
 	public void cleanup() {
@@ -190,8 +198,8 @@ public class TexturedQuad {
 			GL20.glEnableVertexAttribArray(0);
 			GL20.glEnableVertexAttribArray(1);
 
-			GL20.glVertexAttribPointer(0, VertexDataStructurePT.positionElementCount, GL11.GL_FLOAT, false, VertexDataStructurePT.stride, VertexDataStructurePT.positionByteOffset);
-			GL20.glVertexAttribPointer(1, VertexDataStructurePT.textureElementCount, GL11.GL_FLOAT, false, VertexDataStructurePT.stride, VertexDataStructurePT.textureByteOffset);
+			GL20.glVertexAttribPointer(0, VertexDefinition.positionElementCount, GL11.GL_FLOAT, false, VertexDefinition.stride, VertexDefinition.positionByteOffset);
+			GL20.glVertexAttribPointer(1, VertexDefinition.textureElementCount, GL11.GL_FLOAT, false, VertexDefinition.stride, VertexDefinition.textureByteOffset);
 		}
 	}
 

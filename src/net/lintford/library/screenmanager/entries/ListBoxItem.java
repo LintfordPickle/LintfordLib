@@ -3,7 +3,7 @@ package net.lintford.library.screenmanager.entries;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.Color;
-import net.lintford.library.core.graphics.sprites.spritebatch.SpriteBatch;
+import net.lintford.library.core.graphics.batching.SpriteBatch;
 import net.lintford.library.core.maths.Vector2f;
 import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.Screen;

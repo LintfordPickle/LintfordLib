@@ -1,7 +1,5 @@
 package net.lintford.library.core.camera;
 
-import org.lwjgl.opengl.GL11;
-
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.maths.Matrix4f;
@@ -227,17 +225,15 @@ public class Camera implements ICamera {
 			createOrtho(mWindowWidth, mWindowHeight);
 
 		updateZoomBounds(mWindowWidth, mWindowHeight);
-
-		applyGameViewport();
 	}
 
 	public void createView() {
 		mViewMatrix.setIdentity();
 		mViewMatrix.scale(mZoomFactor, mZoomFactor, 1f);
-		mViewMatrix.translate(-mInternalPosition.x * getZoomFactor(), -mInternalPosition.y * getZoomFactor(), 0f);
+		mViewMatrix.translate(mInternalPosition.x * getZoomFactor(), mInternalPosition.y * getZoomFactor(), 0f);
 	}
 
-	private void createOrtho(final float gameViewportWidth, final float gameViewportheight) {
+	private void createOrtho(float gameViewportWidth, float gameViewportheight) {
 		mProjectionMatrix.setIdentity();
 		mProjectionMatrix.createOrtho(-gameViewportWidth * 0.5f, gameViewportWidth * 0.5f, gameViewportheight * 0.5f, -gameViewportheight * 0.5f, Z_NEAR, Z_FAR);
 
@@ -246,7 +242,7 @@ public class Camera implements ICamera {
 		mScaledWindowHeight = gameViewportheight * getZoomFactorOverOne();
 	}
 
-	private void updateZoomBounds(final float gameViewportWidth, final float gameViewportheight) {
+	private void updateZoomBounds(float gameViewportWidth, float gameViewportheight) {
 		// Update the camera position
 		mMinX = mInternalPosition.x - mScaledWindowWidth / 2.0f;
 		mMinY = mInternalPosition.y - mScaledWindowHeight / 2.0f;
@@ -258,14 +254,6 @@ public class Camera implements ICamera {
 		mBoundingRectangle.setCenterPosition(mInternalPosition.x, mInternalPosition.y);
 		mBoundingRectangle.width(mScaledWindowWidth);
 		mBoundingRectangle.height(mScaledWindowHeight);
-	}
-
-	@Override
-	public void applyGameViewport() {
-		int lNearestW = ((mWindowWidth % 2) == 0) ? mWindowWidth : mWindowWidth + 1;
-		int lNearestH = ((mWindowHeight % 2) == 0) ? mWindowHeight : mWindowHeight + 1;
-
-		GL11.glViewport(0, 0, lNearestW, lNearestH);
 	}
 
 	// --------------------------------------
@@ -342,7 +330,14 @@ public class Camera implements ICamera {
 		mZoomFactor = zoomFactor;
 
 		createView();
-		updateZoomBounds(mWindowWidth, mWindowHeight);
+		if (mDisplayConfig.stretchGameScreen()) {
+			createOrtho(mDisplayConfig.baseGameResolutionWidth(), mDisplayConfig.baseGameResolutionHeight());
+			updateZoomBounds(mDisplayConfig.baseGameResolutionWidth(), mDisplayConfig.baseGameResolutionHeight());
+		} else {
+			createOrtho(mWindowWidth, mWindowHeight);
+			updateZoomBounds(mWindowWidth, mWindowHeight);
+		}
+
 	}
 
 	@Override

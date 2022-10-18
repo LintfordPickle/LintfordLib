@@ -10,9 +10,9 @@ import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.ColorConstants;
+import net.lintford.library.core.graphics.batching.SpriteBatch;
 import net.lintford.library.core.graphics.fonts.BitmapFontManager;
 import net.lintford.library.core.graphics.fonts.FontUnit;
-import net.lintford.library.core.graphics.sprites.spritebatch.SpriteBatch;
 import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintford.library.core.graphics.textures.CoreTextureNames;
 import net.lintford.library.core.input.IProcessMouseInput;
@@ -286,25 +286,22 @@ public class DebugStats extends Rectangle implements IScrollBarArea, IProcessMou
 
 		mLastDrawElapsed = core.appTime().elapsedTimeMilli();
 
+		mSpriteBatch._countDebugStats(false);
 		mSpriteBatch.begin(core.HUD());
-		mConsoleFont.begin(core.HUD());
-
 		mSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, this, -0.01f, ColorConstants.getColor(.05f, .05f, .05f, .95f));
-
 		mSpriteBatch.end();
-		mConsoleFont.end();
+		mSpriteBatch._countDebugStats(true);
 
-		if (mContentRectangle.height() - this.height() > 0) {
+		if (mContentRectangle.height() - this.height() > 0)
 			mContentRectangle.preDraw(core, mSpriteBatch, mCoreSpritesheet);
-		}
 
-		mSpriteBatch.begin(core.HUD());
+		mConsoleFont._countDebugStats(false);
 		mConsoleFont.begin(core.HUD());
 
 		float lTagPosY = y() + mScrollBar.currentYPos();
 		final int lTagCount = mTags.size();
 		for (int i = 0; i < lTagCount; i++) {
-			DebugStatTag<?> lTag = mTags.get(i);
+			final var lTag = mTags.get(i);
 			if (lTag instanceof DebugStatTagCaption) {
 				lTagPosY += 5f;
 				lTag.draw(mConsoleFont, mX + 5f, lTagPosY);
@@ -316,12 +313,12 @@ public class DebugStats extends Rectangle implements IScrollBarArea, IProcessMou
 			lTagPosY += mTagLineHeight;
 		}
 
-		mSpriteBatch.end();
 		mConsoleFont.end();
+		mConsoleFont._countDebugStats(true);
 
-		if (mContentRectangle.height() - this.height() > 0) {
+		if (mContentRectangle.height() - this.height() > 0)
 			mContentRectangle.postDraw(core);
-		}
+
 	}
 
 	// --------------------------------------

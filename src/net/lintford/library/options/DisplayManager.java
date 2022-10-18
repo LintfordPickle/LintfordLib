@@ -472,12 +472,9 @@ public class DisplayManager extends IniFile {
 	}
 
 	/**
-	 *  This line is critical for LWJGL's interoperation with GLFW's
-		OpenGL context, or any context that is managed externally.
-		LWJGL detects the context that is current in the current thread,
-		creates the GLCapabilities instance and makes the OpenGL
-		bindings available for use.
-	 * */
+	 * This line is critical for LWJGL's interoperation with GLFW's OpenGL context, or any context that is managed externally. LWJGL detects the context that is current in the current thread, creates the GLCapabilities instance and makes the OpenGL
+	 * bindings available for use.
+	 */
 	public void createGlCompatiblities() {
 		GL.createCapabilities();
 	}
@@ -542,6 +539,9 @@ public class DisplayManager extends IniFile {
 		final var lResTag = (DebugStatTagString) Debug.debugManager().stats().getTagByID(DebugStats.TAG_ID_RES);
 		lResTag.setValue(String.format("%dx%d", width, height));
 
+//		int lNearestW = ((width % 2) == 0) ? width : width + 1;
+//		int lNearestH = ((height % 2) == 0) ? height : height + 1;
+
 		GL11.glViewport(0, 0, width, height);
 	}
 
@@ -588,7 +588,7 @@ public class DisplayManager extends IniFile {
 
 		}
 
-		// If we reach this point, then the saved resolution was not found on the monitor and we should revert back 
+		// If we reach this point, then the saved resolution was not found on the monitor and we should revert back
 		// to the base resolution of the game (in windowed mode)
 		mDisplaySettings.windowWidth(gameInfo.baseGameResolutionWidth());
 		mDisplaySettings.windowHeight(gameInfo.baseGameResolutionHeight());

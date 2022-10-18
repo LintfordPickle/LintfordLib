@@ -1,7 +1,5 @@
 package net.lintford.library.core.graphics.rendertarget;
 
-import org.lwjgl.opengl.GL11;
-
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.camera.CameraState;
 import net.lintford.library.core.camera.ICamera;
@@ -186,8 +184,6 @@ public class RTCamera implements ICamera {
 		createOrtho(mWindowWidth, mWindowHeight);
 
 		updateZoomBounds(mWindowWidth, mWindowHeight);
-
-		applyGameViewport();
 	}
 
 	public void createView() {
@@ -214,14 +210,6 @@ public class RTCamera implements ICamera {
 		mBoundingRectangle.setCenterPosition(mInternalPosition.x, mInternalPosition.y);
 		mBoundingRectangle.width(mScaledWindowWidth);
 		mBoundingRectangle.height(mScaledWindowHeight);
-	}
-
-	@Override
-	public void applyGameViewport() {
-		int lNearestW = ((mWindowWidth % 2) == 0) ? mWindowWidth : mWindowWidth + 1;
-		int lNearestH = ((mWindowHeight % 2) == 0) ? mWindowHeight : mWindowHeight + 1;
-
-		GL11.glViewport(0, 0, lNearestW, lNearestH);
 	}
 
 	// --------------------------------------

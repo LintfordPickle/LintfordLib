@@ -1,7 +1,5 @@
 package net.lintford.library.core.camera;
 
-import org.lwjgl.opengl.GL11;
-
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.geometry.Rectangle;
@@ -15,9 +13,6 @@ public interface ICamera {
 		// --------------------------------------
 		// Variables
 		// --------------------------------------
-
-		int mWindowWidth = 800;
-		int mWindowHeight = 600;
 
 		Matrix4f mView = new Matrix4f();
 		Matrix4f mProjection = new Matrix4f();
@@ -134,11 +129,6 @@ public interface ICamera {
 		}
 
 		@Override
-		public void applyGameViewport() {
-			GL11.glViewport(0, 0, mWindowWidth, mWindowHeight);
-		}
-
-		@Override
 		public float getWorldPositionXInCameraSpace(float pPointX) {
 			return 0;
 		}
@@ -169,7 +159,6 @@ public interface ICamera {
 
 		@Override
 		public void update(LintfordCore pCore) {
-			applyGameViewport();
 
 		}
 
@@ -242,7 +231,5 @@ public interface ICamera {
 	public abstract float getWorldPositionXInCameraSpace(float pointX);
 
 	public abstract float getWorldPositionYInCameraSpace(float pointY);
-
-	public abstract void applyGameViewport();
 
 }

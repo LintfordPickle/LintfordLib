@@ -3,6 +3,7 @@ package net.lintford.library.core.maths;
 import java.io.Serializable;
 
 /** A column-major (down-then across) Matrix4f class */
+/* As is OpenGL! */
 public class Matrix4f implements Serializable {
 
 	// --------------------------------------
@@ -19,10 +20,10 @@ public class Matrix4f implements Serializable {
 
 	private static Vector3f TEMP_VECTOR = new Vector3f();
 
-	public float m00, m01, m02, m03;
-	public float m10, m11, m12, m13;
-	public float m20, m21, m22, m23;
-	public float m30, m31, m32, m33;
+	public float m00, m10, m20, m30;
+	public float m01, m11, m21, m31;
+	public float m02, m12, m22, m32;
+	public float m03, m13, m23, m33;
 
 	// --------------------------------------
 	// Constructor
@@ -150,13 +151,29 @@ public class Matrix4f implements Serializable {
 	}
 
 	public void createOrtho(float left, float right, float bottom, float top, float near, float far) {
+		createOrthoRightHand(left, right, bottom, top, near, far);
+	}
+
+	public void createOrthoLeftHand(float left, float right, float bottom, float top, float near, float far) {
+		m00 = 2f / (right - left);
+		m11 = 2f / (top - bottom);
+		m22 = (2f / (far - near));
+
+		m30 = -(right + left) / (right - left);
+		m31 = -(top + bottom) / (top - bottom);
+		m32 = -(far + near) / (far - near);
+
+		m33 = 1f;
+	}
+
+	public void createOrthoRightHand(float left, float right, float bottom, float top, float near, float far) {
 		m00 = 2f / (right - left);
 		m11 = 2f / (top - bottom);
 		m22 = -(2f / (far - near));
 
-		m03 = -(right + left) / (right - left);
-		m13 = -(top + bottom) / (top - bottom);
-		m23 = -(far + near) / (far - near);
+		m30 = -(right + left) / (right - left);
+		m31 = -(top + bottom) / (top - bottom);
+		m32 = -(far + near) / (far - near);
 
 		m33 = 1f;
 	}
@@ -166,10 +183,9 @@ public class Matrix4f implements Serializable {
 	}
 
 	public void translate(float pX, float pY, float pZ) {
-		m03 += pX;
-		m13 += pY;
-		m23 += pZ;
-
+		m30 = pX;
+		m31 = pY;
+		m32 = pZ;
 	}
 
 	public void scale(Vector3f scale) {
@@ -188,8 +204,8 @@ public class Matrix4f implements Serializable {
 
 	/** Rotates the matrice around the given axes by the specified number of degrees */
 	public void rotate(float angle, float x, float y, float z) {
-		float c = (float) Math.cos(Math.toRadians(angle));
-		float s = (float) Math.sin(Math.toRadians(angle));
+		float c = (float) Math.cos(angle);
+		float s = (float) Math.sin(angle);
 
 		TEMP_VECTOR.x = x;
 		TEMP_VECTOR.y = y;
@@ -202,13 +218,13 @@ public class Matrix4f implements Serializable {
 		}
 
 		m00 = x * x * (1f - c) + c;
-		m10 = y * x * (1f - c) + z * s;
-		m20 = x * z * (1f - c) - y * s;
-		m01 = x * y * (1f - c) - z * s;
+		m01 = y * x * (1f - c) + z * s;
+		m02 = x * z * (1f - c) - y * s;
+		m10 = x * y * (1f - c) - z * s;
 		m11 = y * y * (1f - c) + c;
-		m21 = y * z * (1f - c) + x * s;
-		m02 = x * z * (1f - c) + y * s;
-		m12 = y * z * (1f - c) - x * s;
+		m12 = y * z * (1f - c) + x * s;
+		m20 = x * z * (1f - c) + y * s;
+		m21 = y * z * (1f - c) - x * s;
 		m22 = z * z * (1f - c) + c;
 
 	}
@@ -270,10 +286,10 @@ public class Matrix4f implements Serializable {
 		if (dest == null)
 			dest = new Vector4f();
 
-		float x = left.m00 * right.x + left.m10 * right.y + left.m20 * right.z + left.m30 * right.w;
-		float y = left.m01 * right.x + left.m11 * right.y + left.m21 * right.z + left.m31 * right.w;
-		float z = left.m02 * right.x + left.m12 * right.y + left.m22 * right.z + left.m32 * right.w;
-		float w = left.m03 * right.x + left.m13 * right.y + left.m23 * right.z + left.m33 * right.w;
+		float x = left.m00 * right.x + left.m01 * right.y + left.m02 * right.z + left.m30 * right.w;
+		float y = left.m10 * right.x + left.m11 * right.y + left.m12 * right.z + left.m13 * right.w;
+		float z = left.m20 * right.x + left.m21 * right.y + left.m22 * right.z + left.m23 * right.w;
+		float w = left.m30 * right.x + left.m31 * right.y + left.m32 * right.z + left.m33 * right.w;
 
 		dest.x = x;
 		dest.y = y;

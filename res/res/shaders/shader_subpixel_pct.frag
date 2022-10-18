@@ -1,10 +1,11 @@
 #version 150 core
 precision highp float;
 
-uniform sampler2D textureSampler;
+uniform sampler2D textureSampler[16];
 
 in vec2 passTexCoord;
 in vec4 passColor;
+in float passTextureIndex;
 
 out vec4 outColor;
 
@@ -41,11 +42,12 @@ vec2 uv_klems( vec2 uv, ivec2 texture_size ) {
 }
 
 void main() {
+	int textureIndex = int(passTextureIndex);
     vec2 uv = passTexCoord;
-    ivec2 textureResolution = textureSize(textureSampler, 0);
+    ivec2 textureResolution = textureSize(textureSampler[textureIndex], 0);
     
     vec2 pixel = uv_cstantos(uv, textureResolution);
-    outColor = texture(textureSampler, pixel);
+    outColor = texture(textureSampler[textureIndex], pixel);
 
 	outColor *= passColor;
 }

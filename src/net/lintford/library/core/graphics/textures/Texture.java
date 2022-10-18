@@ -44,8 +44,7 @@ public class Texture {
 	private long mFileSizeOnLoad;
 
 	/**
-	 * Some textures, like textures generated from system fonts, do not need to be reloaded when checking for changes to textures on the harddisk. Setting this Boolean to false will skip the texture reload requests on
-	 * this texture.
+	 * Some textures, like textures generated from system fonts, do not need to be reloaded when checking for changes to textures on the harddisk. Setting this Boolean to false will skip the texture reload requests on this texture.
 	 */
 	private boolean mReloadable;
 
@@ -247,6 +246,15 @@ public class Texture {
 		final int lHeight = image.getHeight();
 
 		final var lPixelsARGB = image.getRGB(0, 0, lWidth, lHeight, null, 0, lWidth);
+//		final var lFlippedImage = new int[lWidth * lHeight];
+//
+//		// AWT coordinates are [0,0] top-left, opengl [0,0] is bottom right
+//		for (int y = 0; y < lHeight; y++) {
+//			for (int x = 0; x < lWidth; x++) {
+//				final int lInvertedY = lHeight - 1 - y;
+//				lFlippedImage[lInvertedY * lWidth + x] = lPixelsARGB[y * lWidth + x];
+//			}
+//		}
 
 		return createTexture(textureName, textureLocation, lPixelsARGB, lWidth, lHeight, filter, GL12.GL_REPEAT, GL12.GL_REPEAT);
 	}

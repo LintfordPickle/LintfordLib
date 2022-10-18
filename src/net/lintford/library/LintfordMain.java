@@ -7,7 +7,7 @@ import org.lwjgl.opengl.GL11;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.graphics.ColorConstants;
-import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
+import net.lintford.library.core.graphics.batching.TextureBatchPCT;
 
 public class LintfordMain extends LintfordCore {
 
