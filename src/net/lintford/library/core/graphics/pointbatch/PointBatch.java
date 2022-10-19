@@ -17,12 +17,14 @@ import net.lintford.library.core.maths.Matrix4f;
 
 public class PointBatch {
 
-	public class VertexDataStructure {
+	private class VertexDataStructure {
 
 		public static final int elementBytes = 4;
 
 		public static final int positionElementCount = 4;
 		public static final int colorElementCount = 4;
+
+		public static final int elementCount = positionElementCount + colorElementCount;
 
 		public static final int positionBytesCount = positionElementCount * elementBytes;
 		public static final int colorBytesCount = colorElementCount * elementBytes;
@@ -93,7 +95,7 @@ public class PointBatch {
 
 		mShader.loadResources(resourceManager);
 
-		mBuffer = MemoryUtil.memAllocFloat(MAX_POINTS * NUM_VERTS_PER_POINT * VertexDataStructure.stride);
+		mBuffer = MemoryUtil.memAllocFloat(MAX_POINTS * NUM_VERTS_PER_POINT * VertexDataStructure.elementCount);
 
 		if (mVaoId == -1)
 			mVaoId = GL30.glGenVertexArrays();

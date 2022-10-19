@@ -18,12 +18,14 @@ import net.lintford.library.core.maths.Matrix4f;
 
 public class LineBatch {
 
-	public class VertexDataStructure {
+	private class VertexDataStructure {
 
 		public static final int elementBytes = 4;
 
 		public static final int positionElementCount = 4;
 		public static final int colorElementCount = 4;
+
+		public static final int elementCount = positionElementCount + colorElementCount;
 
 		public static final int positionBytesCount = positionElementCount * elementBytes;
 		public static final int colorBytesCount = colorElementCount * elementBytes;
@@ -156,7 +158,7 @@ public class LineBatch {
 		if (mVboId == -1)
 			mVboId = GL15.glGenBuffers();
 
-		mBuffer = MemoryUtil.memAllocFloat(MAX_LINES * NUM_VERTS_PER_LINE * VertexDataStructure.stride);
+		mBuffer = MemoryUtil.memAllocFloat(MAX_LINES * NUM_VERTS_PER_LINE * VertexDataStructure.elementCount);
 
 		initializeGlContent();
 
