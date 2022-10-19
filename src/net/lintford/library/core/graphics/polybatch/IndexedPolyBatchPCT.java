@@ -24,7 +24,7 @@ import net.lintford.library.core.maths.Vector2f;
 
 public class IndexedPolyBatchPCT {
 
-	public class VertexDefinition {
+	private class VertexDefinition {
 
 		public static final int elementBytes = 4;
 
@@ -32,6 +32,8 @@ public class IndexedPolyBatchPCT {
 		public static final int colorElementCount = 4;
 		public static final int textureElementCount = 2;
 		public static final int textureIndexElementCount = 1;
+
+		public static final int elementCount = positionElementCount + colorElementCount + textureElementCount + textureIndexElementCount;
 
 		public static final int positionBytesCount = positionElementCount * elementBytes;
 		public static final int colorBytesCount = colorElementCount * elementBytes;
@@ -119,7 +121,7 @@ public class IndexedPolyBatchPCT {
 		if (mVboId == -1)
 			mVboId = GL15.glGenBuffers();
 
-		mBuffer = MemoryUtil.memAllocFloat(MAX_TRIS * NUM_VERTS_PER_TRI * VertexDefinition.stride);
+		mBuffer = MemoryUtil.memAllocFloat(MAX_TRIS * NUM_VERTS_PER_TRI * VertexDefinition.elementCount);
 		mIndexBuffer = MemoryUtil.memAllocInt(MAX_TRIS * NUM_VERTS_PER_TRI);
 
 		initializeGlContent();

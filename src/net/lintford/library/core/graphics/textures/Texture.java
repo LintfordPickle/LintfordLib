@@ -265,7 +265,7 @@ public class Texture {
 	static Texture createTexture(String textureName, String textureLocation, int[] pixelsARGB, int width, int height, int filter, int wrapModeS, int wrapModeT) {
 		final int lTexID = GL11.glGenTextures();
 
-		var lIntBuffer = MemoryUtil.memAllocInt(pixelsARGB.length * 4);
+		var lIntBuffer = MemoryUtil.memAllocInt(pixelsARGB.length);
 		lIntBuffer.put(pixelsARGB);
 		lIntBuffer.flip();
 
@@ -350,7 +350,7 @@ public class Texture {
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, mWrapModeS);
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, mWrapModeT);
 
-		final var lIntBuffer = MemoryUtil.memAllocInt(pixelsARGB.length * 4);
+		final var lIntBuffer = MemoryUtil.memAllocInt(pixelsARGB.length);
 		lIntBuffer.put(pixelsARGB);
 		lIntBuffer.flip();
 

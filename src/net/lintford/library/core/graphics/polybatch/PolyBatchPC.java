@@ -25,6 +25,8 @@ public class PolyBatchPC {
 		public static final int positionElementCount = 4;
 		public static final int colorElementCount = 4;
 
+		public static final int elementCount = positionElementCount + colorElementCount;
+
 		public static final int positionBytesCount = positionElementCount * elementBytes;
 		public static final int colorBytesCount = colorElementCount * elementBytes;
 
@@ -117,7 +119,7 @@ public class PolyBatchPC {
 		if (mVboId == -1)
 			mVboId = GL15.glGenBuffers();
 
-		mBuffer = MemoryUtil.memAllocFloat(MAX_LINES * NUM_VERTS_PER_LINE * VertexDefinition.stride);
+		mBuffer = MemoryUtil.memAllocFloat(MAX_LINES * NUM_VERTS_PER_LINE * VertexDefinition.elementCount);
 
 		initializeGlContent();
 

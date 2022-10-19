@@ -26,7 +26,7 @@ import net.lintford.library.core.maths.Matrix4f;
 
 public class TextureBatchPCT {
 
-	public class VertexDefinition {
+	private class VertexDefinition {
 
 		public static final int elementBytes = 4;
 
@@ -34,6 +34,8 @@ public class TextureBatchPCT {
 		public static final int colorElementCount = 4;
 		public static final int textureElementCount = 2;
 		public static final int textureIndexElementCount = 1;
+
+		public static final int elementCount = positionElementCount + colorElementCount + textureElementCount + textureIndexElementCount;
 
 		public static final int positionBytesCount = positionElementCount * elementBytes;
 		public static final int colorBytesCount = colorElementCount * elementBytes;
@@ -189,7 +191,7 @@ public class TextureBatchPCT {
 		if (mVioId == -1)
 			mVioId = GL15.glGenBuffers();
 
-		mBuffer = MemoryUtil.memAllocFloat(MAX_SPRITES * NUM_VERTICES_PER_SPRITE * VertexDefinition.stride);
+		mBuffer = MemoryUtil.memAllocFloat(MAX_SPRITES * NUM_VERTICES_PER_SPRITE * VertexDefinition.elementCount);
 		mIndexBuffer = MemoryUtil.memAllocInt(MAX_SPRITES * NUM_INDICES_PER_SPRITE);
 
 		initializeGlContent();
