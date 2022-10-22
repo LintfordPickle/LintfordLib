@@ -408,11 +408,9 @@ public abstract class LintfordCore {
 
 	private void onLoadBitmapFonts() {
 		final var lFontManager = mResourceManager.fontManager();
-		
-		GLDebug.checkGLErrorsException();
+
 		lFontManager.loadBitmapFontDefinitionsFromMetaData(BitmapFontManager.CoreFonts);
-		
-		GLDebug.checkGLErrorsException();
+
 		lFontManager.loadBitmapFontDefinitionsFromMetaData(ScreenManager.ScreenManagerFonts);
 		lFontManager.loadBitmapFontDefinitionsFromMetaData(RendererManager.RendererManagerFonts);
 	}
@@ -439,13 +437,10 @@ public abstract class LintfordCore {
 
 		onLoadBitmapFonts();
 
-		GLDebug.checkGLErrorsException();
-
 		mResourceManager.loadResources();
-
-		GLDebug.checkGLErrorsException();
-
 		Debug.debugManager().loadResources(mResourceManager);
+
+		GLDebug.checkGLErrorsException("LintfordCore onLoadResources");
 	}
 
 	/**

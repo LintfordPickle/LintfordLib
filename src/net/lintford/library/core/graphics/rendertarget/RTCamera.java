@@ -34,6 +34,12 @@ public class RTCamera implements ICamera {
 	protected final Matrix4f mProjectionMatrix;
 	protected final Matrix4f mViewMatrix;
 
+	@Override
+	public Vector2f internalPosition() {
+		// TODO Auto-generated method stub
+		return mInternalPosition;
+	}
+
 	protected float mMinX;
 	protected float mMaxX;
 	protected float mMinY;
@@ -331,15 +337,5 @@ public class RTCamera implements ICamera {
 	@Override
 	public float getPointCameraSpaceY(float pointY) {
 		return pointY * getZoomFactorOverOne() + this.getMinY();
-	}
-
-	@Override
-	public float getWorldPositionXInCameraSpace(float pointX) {
-		return (mInternalPosition.x - pointX) * getZoomFactor();
-	}
-
-	@Override
-	public float getWorldPositionYInCameraSpace(float pointY) {
-		return (mInternalPosition.y - pointY) * getZoomFactor();
 	}
 }

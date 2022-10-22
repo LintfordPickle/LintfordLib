@@ -10,6 +10,11 @@ public interface ICamera {
 
 	public static ICamera EMPTY = new ICamera() {
 
+		@Override
+		public Vector2f internalPosition() {
+			return Vector2f.Zero;
+		}
+
 		// --------------------------------------
 		// Variables
 		// --------------------------------------
@@ -129,16 +134,6 @@ public interface ICamera {
 		}
 
 		@Override
-		public float getWorldPositionXInCameraSpace(float pPointX) {
-			return 0;
-		}
-
-		@Override
-		public float getWorldPositionYInCameraSpace(float pPointY) {
-			return 0;
-		}
-
-		@Override
 		public int windowWidth() {
 			return 800;
 		}
@@ -167,6 +162,9 @@ public interface ICamera {
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	// TODO: Remove before commit
+	public Vector2f internalPosition();
 
 	public abstract Matrix4f projection();
 
@@ -222,14 +220,7 @@ public interface ICamera {
 
 	public abstract float getMouseWorldSpaceY();
 
-	/** This maps the input X coordinate into the camera space. */
 	public abstract float getPointCameraSpaceX(float pointX);
 
-	/** This maps the input Y coordinate into the camera space. */
 	public abstract float getPointCameraSpaceY(float pointY);
-
-	public abstract float getWorldPositionXInCameraSpace(float pointX);
-
-	public abstract float getWorldPositionYInCameraSpace(float pointY);
-
 }
