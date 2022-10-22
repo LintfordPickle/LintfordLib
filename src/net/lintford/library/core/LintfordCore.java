@@ -480,8 +480,6 @@ public abstract class LintfordCore {
 			lUpdateFrameLag = 0;
 			mCoreTime.accumulatedElapsedTimeMilli += mCoreTime.getDelta();
 
-			
-
 			// If we are using a fixed time step, then make sure enough time has elapsed
 			// since the last frame
 			// before performing another update & draw
@@ -497,7 +495,7 @@ public abstract class LintfordCore {
 				}
 				continue;
 			}
-			
+
 			onHandleInput();
 
 			if (mCoreTime.accumulatedElapsedTimeMilli > mCoreTime.maxElapsedTimeMilli)
@@ -644,6 +642,10 @@ public abstract class LintfordCore {
 		mInputState.resetFlags();
 
 		return lWindowID;
+	}
+
+	public ICamera createNewGameCamera() {
+		return setNewGameCamera(null);
 	}
 
 	public ICamera setNewGameCamera(ICamera camera) {
