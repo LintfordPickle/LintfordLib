@@ -628,6 +628,10 @@ public abstract class LintfordCore {
 		return lWindowID;
 	}
 
+	public ICamera createNewGameCamera() {
+		return setNewGameCamera(null);
+	}
+
 	public ICamera setNewGameCamera(ICamera camera) {
 		mGameCamera = camera;
 
