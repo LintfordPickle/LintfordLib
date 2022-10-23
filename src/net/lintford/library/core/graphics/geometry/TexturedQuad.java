@@ -22,9 +22,8 @@ public class TexturedQuad {
 
 		public static final int positionElementCount = 4;
 		public static final int textureElementCount = 2;
-		public static final int textureIndexElementCount = 1;
 
-		public static final int elementCount = positionElementCount + textureElementCount + textureIndexElementCount;
+		public static final int elementCount = positionElementCount + textureElementCount;
 
 		public static final int positionBytesCount = positionElementCount * elementBytes;
 		public static final int textureBytesCount = textureElementCount * elementBytes;
@@ -118,14 +117,7 @@ public class TexturedQuad {
 		if (mVboId == -1)
 			mVboId = GL15.glGenBuffers();
 
-		// @formatter:off
-		addVertToBuffer(-.5f,  .5f, 0.f, 1.f, 0.f, 0.f);
-		addVertToBuffer(-.5f, -.5f, 0.f, 1.f, 0.f, 1.f);
-		addVertToBuffer( .5f, -.5f, 0.f, 1.f, 1.f, 1.f);
-		addVertToBuffer( .5f,  .5f, 0.f, 1.f, 1.f, 0.f);
-		// @formatter:on
-
-		mBuffer.flip();
+		loadGLGeometry();
 
 		GL30.glBindVertexArray(mVaoId);
 
@@ -139,6 +131,53 @@ public class TexturedQuad {
 		GL20.glVertexAttribPointer(1, VertexDefinition.textureElementCount, GL11.GL_FLOAT, false, VertexDefinition.stride, VertexDefinition.textureByteOffset);
 
 		GL30.glBindVertexArray(0);
+	}
+
+	private void loadGLGeometry() {
+		if (mVboId == -1)
+			mVboId = GL15.glGenBuffers();
+
+		// vert 0
+		final var x0 = -.5f;
+		final var y0 = .5f;
+		final var z0 = 0.f;
+		final var w0 = 1.f;
+		final var u0 = 0.f;
+		final var v0 = 0.f;
+
+		// vert 1
+		final var x1 = -.5f;
+		final var y1 = -.5f;
+		final var z1 = 0.f;
+		final var w1 = 1.f;
+		final var u1 = 0.f;
+		final var v1 = 1.f;
+
+		// vert 2
+		final var x2 = .5f;
+		final var y2 = -.5f;
+		final var z2 = 0.f;
+		final var w2 = 1.f;
+		final var u2 = 1.f;
+		final var v2 = 1.f;
+
+		// vert 4
+		final var x3 = .5f;
+		final var y3 = .5f;
+		final var z3 = 0.f;
+		final var w3 = 1.f;
+		final var u3 = 1.f;
+		final var v3 = 0.f;
+
+		mBuffer.put(x0).put(y0).put(z0).put(w0).put(u0).put(v0);
+		mBuffer.put(x1).put(y1).put(z1).put(w1).put(u1).put(v1);
+		mBuffer.put(x2).put(y2).put(z2).put(w2).put(u2).put(v2);
+
+		mBuffer.put(x2).put(y2).put(z2).put(w2).put(u2).put(v2);
+		mBuffer.put(x3).put(y3).put(z3).put(w3).put(u3).put(v3);
+		mBuffer.put(x0).put(y0).put(z0).put(w0).put(u0).put(v0);
+
+		mBuffer.flip();
 	}
 
 	protected void addVertToBuffer(float x, float y, float z, float w, float u, float v) {
