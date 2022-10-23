@@ -40,7 +40,6 @@ public class DebugStats extends Rectangle implements IScrollBarArea, IProcessMou
 	public static final int TAG_ID_TOTAL_ELAPSED_TIME_MS = 14;
 	public static final int TAG_ID_TEXTURES = 5;
 	public static final int TAG_ID_RENDERTEXTURES = 6;
-	public static final int TAG_ID_RES = 7;
 	public static final int TAG_ID_WINDOW_SIZE = 15;
 	public static final int TAG_ID_VRAM = 8;
 	public static final int TAG_ID_VBO = 9;
@@ -112,7 +111,6 @@ public class DebugStats extends Rectangle implements IScrollBarArea, IProcessMou
 		mTags.add(new DebugStatTagString(TAG_ID_TIMING, "Timing", ""));
 		mTags.add(new DebugStatTagString(TAG_ID_TOTAL_ELAPSED_TIME_MS, "Up (ms)", ""));
 		mTags.add(new DebugStatTagString(TAG_ID_TIMESTEP, "Timestep", ""));
-		mTags.add(new DebugStatTagString(TAG_ID_RES, "Resolution", ""));
 		mTags.add(new DebugStatTagString(TAG_ID_WINDOW_SIZE, "Window", ""));
 		// mTags.add(new DebugStatTagFloat(-1, "Ram Used", 0, false));
 		// mTags.add(new DebugStatTagFloat(-1, "Ram Free", 0, false));
@@ -266,10 +264,6 @@ public class DebugStats extends Rectangle implements IScrollBarArea, IProcessMou
 		if (!mIsOpen)
 			return;
 
-		final var lCamWidth = (int) core.gameCamera().getWidth();
-		final var lCamHeight = (int) core.gameCamera().getHeight();
-
-		Debug.debugManager().stats().setTagValue(DebugStats.TAG_ID_RES, lCamWidth + "x" + lCamHeight);
 		final var lDisplaySettings = core.config().display();
 		Debug.debugManager().stats().setTagValue(DebugStats.TAG_ID_WINDOW_SIZE, lDisplaySettings.windowWidth() + "x" + lDisplaySettings.windowHeight());
 
