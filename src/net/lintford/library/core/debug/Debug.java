@@ -37,7 +37,7 @@ public class Debug {
 
 	/**
 	 * Debug message used to log an error to the console if a feature was removed for testing
-	 * */
+	 */
 	public static final void notifyReleaseFeatureDisabled(String message) {
 		debugManager().logger().e("FEATURE DISABLED", message);
 	}
@@ -124,7 +124,6 @@ public class Debug {
 	private Debug(DebugLogLevel debugLogLevel) {
 		setDebugMode(debugLogLevel);
 
-		// We always need to instantiate this classes
 		mDebugLogger = new DebugLogger(this);
 		mDebugDrawers = new DebugDrawers(this);
 		mDebugConsole = new DebugConsole(this);

@@ -164,15 +164,13 @@ public class TextureManager extends EntityGroupManager {
 	}
 
 	public Texture getTextureOrLoad(String textureName, String textureFilepath, int textureFilter, int entityGroupUid) {
-		Texture lRetTexture = isTextureLoaded(textureName, entityGroupUid);
+		final var lRetTexture = isTextureLoaded(textureName, entityGroupUid);
 
-		if (isTextureLoaded(lRetTexture)) {
+		if (isTextureLoaded(lRetTexture))
 			return lRetTexture;
-		}
 
-		if (textureFilepath == null || textureFilepath.length() == 0) {
+		if (textureFilepath == null || textureFilepath.length() == 0)
 			return null;
-		}
 
 		String lTextureName = textureName != null ? textureName : textureFilepath;
 
@@ -181,10 +179,10 @@ public class TextureManager extends EntityGroupManager {
 
 	// returns the texture if one is found, otherwise null
 	public Texture isTextureLoaded(String textureName, int entityGroupUid) {
-		TextureGroup lTextureGroup = mTextureGroupMap.get(entityGroupUid);
-		if (lTextureGroup == null) {
+		final var lTextureGroup = mTextureGroupMap.get(entityGroupUid);
+		if (lTextureGroup == null)
 			return null;
-		}
+
 		return lTextureGroup.getTextureByName(textureName);
 	}
 
@@ -197,9 +195,8 @@ public class TextureManager extends EntityGroupManager {
 			return mTextureNotFound;
 		}
 
-		if (lTextureGroup.mTextureMap.containsKey(textureName)) {
+		if (lTextureGroup.mTextureMap.containsKey(textureName))
 			return lTextureGroup.mTextureMap.get(textureName);
-		}
 
 		Debug.debugManager().logger().w(getClass().getSimpleName(), String.format("Couldn't getTexture %s: TextureGroup %d doesn't exit", textureName, entityGroupUid));
 		return mTextureNotFound;
@@ -393,7 +390,7 @@ public class TextureManager extends EntityGroupManager {
 		}
 	}
 
-	public boolean saveTextureToFile(int width, int height, int[] imageData, String pFileLocation) {
+	public boolean saveTextureToFile(int width, int height, int[] imageData, String fileLocation) {
 		BufferedImage lImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 
 		// Convert our ARGB to output ABGR
@@ -409,11 +406,10 @@ public class TextureManager extends EntityGroupManager {
 
 		lImage.setRGB(0, 0, width, height, lTextureData, 0, width);
 
-		File outputfile = new File(pFileLocation);
+		final var lOutputfile = new File(fileLocation);
 		try {
-			ImageIO.write(lImage, "png", outputfile);
+			ImageIO.write(lImage, "png", lOutputfile);
 		} catch (IOException e) {
-			// e.printStackTrace();
 			return false;
 		}
 

@@ -11,13 +11,13 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.debug.GLDebug;
+import net.lintford.library.core.graphics.batching.SpriteBatch;
+import net.lintford.library.core.graphics.batching.TextureBatchPCT;
 import net.lintford.library.core.graphics.fonts.FontMetaData;
 import net.lintford.library.core.graphics.fonts.FontUnit;
 import net.lintford.library.core.graphics.linebatch.LineBatch;
-import net.lintford.library.core.graphics.polybatch.PolyBatch;
+import net.lintford.library.core.graphics.polybatch.IndexedPolyBatchPCT;
 import net.lintford.library.core.graphics.rendertarget.RenderTarget;
-import net.lintford.library.core.graphics.sprites.spritebatch.SpriteBatch;
-import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.core.input.IInputClickedFocusTracker;
 import net.lintford.library.core.rendering.RenderState;
 import net.lintford.library.options.DisplayManager;
@@ -61,7 +61,7 @@ public class RendererManager implements IInputClickedFocusManager {
 	private ResourceManager mResourceManager;
 	private DisplayManager mDisplayConfig;
 
-	/** Tracks the number of times a loadResources method is called using this renderManager/entityGroupId*/
+	/** Tracks the number of times a loadResources method is called using this renderManager/entityGroupId */
 	private int mSharedGlContentCount;
 
 	private UiStructureController mUiStructureController;
@@ -84,7 +84,7 @@ public class RendererManager implements IInputClickedFocusManager {
 	private SpriteBatch mSpriteBatch;
 	private TextureBatchPCT mTextureBatch;
 	private LineBatch mLineBatch;
-	private PolyBatch mPolyBatch;
+	private IndexedPolyBatchPCT mPolyBatch;
 
 	private List<RenderTarget> mRenderTargets;
 	private List<RenderTarget> mRenderTargetAutoResize;
@@ -196,7 +196,7 @@ public class RendererManager implements IInputClickedFocusManager {
 		return mSpriteBatch;
 	}
 
-	public PolyBatch uiPolyBatch() {
+	public IndexedPolyBatchPCT uiPolyBatch() {
 		return mPolyBatch;
 	}
 
@@ -232,7 +232,7 @@ public class RendererManager implements IInputClickedFocusManager {
 		mSpriteBatch = new SpriteBatch();
 		mTextureBatch = new TextureBatchPCT();
 		mLineBatch = new LineBatch();
-		mPolyBatch = new PolyBatch();
+		mPolyBatch = new IndexedPolyBatchPCT();
 
 		mListeners = new ArrayList<>();
 
@@ -456,7 +456,7 @@ public class RendererManager implements IInputClickedFocusManager {
 		return null;
 	}
 
-	/** Adds a renderer to the manager. This automatically re-orders the renderers to take into consideration their relative z-depths.*/
+	/** Adds a renderer to the manager. This automatically re-orders the renderers to take into consideration their relative z-depths. */
 	public void addRenderer(BaseRenderer renderer) {
 		if (getRenderer(renderer.rendererName()) == null) {
 			if (renderer instanceof UiWindow) {

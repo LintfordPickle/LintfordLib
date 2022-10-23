@@ -7,7 +7,7 @@ import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.geometry.spritegraph.instances.SpriteGraphInstance;
 import net.lintford.library.core.geometry.spritegraph.instances.SpriteGraphNodeInstance;
 import net.lintford.library.core.graphics.ColorConstants;
-import net.lintford.library.core.graphics.sprites.spritebatch.SpriteBatch;
+import net.lintford.library.core.graphics.batching.SpriteBatch;
 
 public class SpriteGraphRenderer extends SpriteBatch {
 

@@ -1,7 +1,5 @@
 package net.lintford.library.core.camera;
 
-import org.lwjgl.opengl.GL11;
-
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.maths.Matrix4f;
@@ -40,6 +38,7 @@ public class Camera implements ICamera {
 	protected final Vector2f mInternalPosition;
 	protected final Vector2f mAcceleration;
 	protected final Vector2f mVelocity;
+	protected final Vector2f mScaleRatio = new Vector2f();
 	protected final Vector2f mTargetPosition;
 	protected final Vector2f mOffsetPosition;
 	protected final Matrix4f mProjectionMatrix;
@@ -222,13 +221,14 @@ public class Camera implements ICamera {
 
 		createView();
 		if (mDisplayConfig.stretchGameScreen()) {
+			mScaleRatio.set(mDisplayConfig.baseGameResolutionWidth() / (float) mWindowWidth, mDisplayConfig.baseGameResolutionHeight() / (float) mWindowHeight);
 			createOrtho(mDisplayConfig.baseGameResolutionWidth(), mDisplayConfig.baseGameResolutionHeight());
-		} else
+			updateZoomBounds(mDisplayConfig.baseGameResolutionWidth(), mDisplayConfig.baseGameResolutionHeight());
+		} else {
+			mScaleRatio.set(1.f, 1.f);
 			createOrtho(mWindowWidth, mWindowHeight);
-
-		updateZoomBounds(mWindowWidth, mWindowHeight);
-
-		applyGameViewport();
+			updateZoomBounds(mWindowWidth, mWindowHeight);
+		}
 	}
 
 	public void createView() {
@@ -237,7 +237,7 @@ public class Camera implements ICamera {
 		mViewMatrix.translate(-mInternalPosition.x * getZoomFactor(), -mInternalPosition.y * getZoomFactor(), 0f);
 	}
 
-	private void createOrtho(final float gameViewportWidth, final float gameViewportheight) {
+	private void createOrtho(float gameViewportWidth, float gameViewportheight) {
 		mProjectionMatrix.setIdentity();
 		mProjectionMatrix.createOrtho(-gameViewportWidth * 0.5f, gameViewportWidth * 0.5f, gameViewportheight * 0.5f, -gameViewportheight * 0.5f, Z_NEAR, Z_FAR);
 
@@ -246,26 +246,18 @@ public class Camera implements ICamera {
 		mScaledWindowHeight = gameViewportheight * getZoomFactorOverOne();
 	}
 
-	private void updateZoomBounds(final float gameViewportWidth, final float gameViewportheight) {
+	private void updateZoomBounds(float gameViewportWidth, float gameViewportheight) {
 		// Update the camera position
-		mMinX = mInternalPosition.x - mScaledWindowWidth / 2.0f;
-		mMinY = mInternalPosition.y - mScaledWindowHeight / 2.0f;
+		mMinX = mInternalPosition.x - (gameViewportWidth * getZoomFactorOverOne()) / 2.0f;
+		mMinY = mInternalPosition.y - (gameViewportheight * getZoomFactorOverOne()) / 2.0f;
 
-		mMaxX = mInternalPosition.x + mScaledWindowWidth / 2.0f;
-		mMaxY = mInternalPosition.y + mScaledWindowHeight / 2.0f;
+		mMaxX = mInternalPosition.x + (gameViewportWidth * getZoomFactorOverOne()) / 2.0f;
+		mMaxY = mInternalPosition.y + (gameViewportheight * getZoomFactorOverOne()) / 2.0f;
 
 		// update the bounding rectangle so we can properly do frustum culling
-		mBoundingRectangle.setCenterPosition(mInternalPosition.x, mInternalPosition.y);
 		mBoundingRectangle.width(mScaledWindowWidth);
 		mBoundingRectangle.height(mScaledWindowHeight);
-	}
-
-	@Override
-	public void applyGameViewport() {
-		int lNearestW = ((mWindowWidth % 2) == 0) ? mWindowWidth : mWindowWidth + 1;
-		int lNearestH = ((mWindowHeight % 2) == 0) ? mWindowHeight : mWindowHeight + 1;
-
-		GL11.glViewport(0, 0, lNearestW, lNearestH);
+		mBoundingRectangle.setCenterPosition(mInternalPosition.x, mInternalPosition.y);
 	}
 
 	// --------------------------------------
@@ -342,7 +334,14 @@ public class Camera implements ICamera {
 		mZoomFactor = zoomFactor;
 
 		createView();
-		updateZoomBounds(mWindowWidth, mWindowHeight);
+		if (mDisplayConfig.stretchGameScreen()) {
+			createOrtho(mDisplayConfig.baseGameResolutionWidth(), mDisplayConfig.baseGameResolutionHeight());
+			updateZoomBounds(mDisplayConfig.baseGameResolutionWidth(), mDisplayConfig.baseGameResolutionHeight());
+		} else {
+			createOrtho(mWindowWidth, mWindowHeight);
+			updateZoomBounds(mWindowWidth, mWindowHeight);
+		}
+
 	}
 
 	@Override
@@ -380,21 +379,16 @@ public class Camera implements ICamera {
 
 	@Override
 	public float getPointCameraSpaceX(float pointX) {
-		return pointX * getZoomFactorOverOne() + this.getMinX();
+		return this.getMinX() + (pointX * mScaleRatio.x) / getZoomFactor();
 	}
 
 	@Override
 	public float getPointCameraSpaceY(float pointY) {
-		return pointY * getZoomFactorOverOne() + this.getMinY();
+		return this.getMinY() + pointY * mScaleRatio.y / getZoomFactor();
 	}
 
 	@Override
-	public float getWorldPositionXInCameraSpace(float pointX) {
-		return (mInternalPosition.x - pointX) * getZoomFactor();
-	}
-
-	@Override
-	public float getWorldPositionYInCameraSpace(float pointY) {
-		return (mInternalPosition.y - pointY) * getZoomFactor();
+	public Vector2f internalPosition() {
+		return mInternalPosition;
 	}
 }

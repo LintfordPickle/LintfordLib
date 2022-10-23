@@ -55,12 +55,12 @@ public class UiStructureController extends BaseController {
 		mMinimumFooterHeight = minimumFooterHeight;
 	}
 
-	/** The windowAutoScaleFactorX is the factor between the current window width and the base window width.*/
+	/** The windowAutoScaleFactorX is the factor between the current window width and the base window width. */
 	public float windowAutoScaleFactorX() {
 		return mWindowAutoScaleFactorX;
 	}
 
-	/** The windowAutoScaleFactorY is the factor between the current window height and the base window height.*/
+	/** The windowAutoScaleFactorY is the factor between the current window height and the base window height. */
 	public float windowAutoScaleFactorY() {
 		return mWindowAutoScaleFactorY;
 	}
@@ -169,21 +169,24 @@ public class UiStructureController extends BaseController {
 	private void updateWindowUiComponentStructures(LintfordCore core) {
 		final float lWindowWidth = mDisplayManager.windowWidth();
 		final float lWindowHeight = mDisplayManager.windowHeight();
-		
-		
+
 		mUIScaleFactorActual = mDisplayManager.graphicsSettings().UIScale();
 		mUITextScaleFactorActual = mDisplayManager.graphicsSettings().UITextScale();
 		mUITransparencyFactorActual = mDisplayManager.graphicsSettings().UITransparencyScale();
 
 		mMinimumTitleHeight = lWindowHeight * 0.2f;
 		mMinimumFooterHeight = lWindowHeight * 0.15f;
-		
+
 		mWindowPaddingH = lWindowWidth * 0.05f;
 		mWindowPaddingV = lWindowHeight * 0.05f;
 	}
 
 	private void updateMenuUiStructure(LintfordCore core) {
 		updateWindowUiComponentStructures(core); // FIXME: remove from update when finished
+
+		// TODO: You are here
+		// The problem is, the UiStructureController is assigning a boundary for the hud to render controls into (e.g. for the pause menu)
+		// but it assumes it always has the area of the window - it actually has the game canvas, which when stretched, is just a subset
 
 		final float lWindowWidth = core.config().display().windowWidth();
 		final float lWindowHeight = core.config().display().windowHeight();

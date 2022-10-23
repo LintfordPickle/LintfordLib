@@ -13,16 +13,33 @@ import net.lintford.library.core.camera.ICamera;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.debug.stats.DebugStats;
 import net.lintford.library.core.graphics.shaders.ShaderMVP_PT;
-import net.lintford.library.core.graphics.vertices.VertexDataStructurePC;
 import net.lintford.library.core.maths.Matrix4f;
 
 public class PointBatch {
+
+	private class VertexDataStructure {
+
+		public static final int elementBytes = 4;
+
+		public static final int positionElementCount = 4;
+		public static final int colorElementCount = 4;
+
+		public static final int elementCount = positionElementCount + colorElementCount;
+
+		public static final int positionBytesCount = positionElementCount * elementBytes;
+		public static final int colorBytesCount = colorElementCount * elementBytes;
+
+		public static final int positionByteOffset = 0;
+		public static final int colorByteOffset = positionByteOffset + positionBytesCount;
+
+		public static final int stride = positionBytesCount + colorBytesCount;
+	}
 
 	// --------------------------------------
 	// Constants
 	// --------------------------------------
 
-	public static final int MAX_POINTS = 16384;
+	public static final int MAX_POINTS = 2000;
 	public static final int NUM_VERTS_PER_POINT = 1;
 
 	private static final String VERT_FILENAME = "/res/shaders/shader_basic_pc.vert";
@@ -78,14 +95,30 @@ public class PointBatch {
 
 		mShader.loadResources(resourceManager);
 
-		if (mVboId == -1) {
-			mVboId = GL15.glGenBuffers();
-			Debug.debugManager().logger().v("OpenGL", "PointBatch: VboId = " + mVboId);
-		}
+		mBuffer = MemoryUtil.memAllocFloat(MAX_POINTS * NUM_VERTS_PER_POINT * VertexDataStructure.elementCount);
 
-		mBuffer = MemoryUtil.memAllocFloat(MAX_POINTS * NUM_VERTS_PER_POINT * VertexDataStructurePC.stride);
+		if (mVaoId == -1)
+			mVaoId = GL30.glGenVertexArrays();
+
+		if (mVboId == -1)
+			mVboId = GL15.glGenBuffers();
+
+		initializeGlContent();
 
 		mIsLoaded = true;
+	}
+
+	private void initializeGlContent() {
+		GL30.glBindVertexArray(mVaoId);
+
+		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, mVboId);
+		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, MAX_POINTS * VertexDataStructure.stride, GL15.GL_DYNAMIC_DRAW);
+
+		GL20.glEnableVertexAttribArray(0);
+		GL20.glEnableVertexAttribArray(1);
+
+		GL20.glVertexAttribPointer(0, VertexDataStructure.positionElementCount, GL11.GL_FLOAT, false, VertexDataStructure.stride, VertexDataStructure.positionByteOffset);
+		GL20.glVertexAttribPointer(1, VertexDataStructure.colorElementCount, GL11.GL_FLOAT, false, VertexDataStructure.stride, VertexDataStructure.colorByteOffset);
 	}
 
 	public void unloadResources() {
@@ -117,21 +150,6 @@ public class PointBatch {
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
-
-	private void initializeGlContent() {
-		if (mVaoId == -1) {
-			mVaoId = GL30.glGenVertexArrays();
-
-			GL30.glBindVertexArray(mVaoId);
-			GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, mVboId);
-
-			GL20.glEnableVertexAttribArray(0);
-			GL20.glEnableVertexAttribArray(1);
-
-			GL20.glVertexAttribPointer(0, VertexDataStructurePC.positionElementCount, GL11.GL_FLOAT, false, VertexDataStructurePC.stride, VertexDataStructurePC.positionByteOffset);
-			GL20.glVertexAttribPointer(1, VertexDataStructurePC.colorElementCount, GL11.GL_FLOAT, false, VertexDataStructurePC.stride, VertexDataStructurePC.colorByteOffset);
-		}
-	}
 
 	public void begin(ICamera pCamera) {
 		if (pCamera == null)

@@ -1,5 +1,6 @@
 package net.lintford.library.core.graphics.shaders;
 
+import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL20;
 
 import net.lintford.library.core.maths.MathUtil;
@@ -141,6 +142,7 @@ public class ShaderSubPixel extends ShaderMVP_PCT {
 		GL20.glBindAttribLocation(shaderID, 0, "inPosition");
 		GL20.glBindAttribLocation(shaderID, 1, "inColor");
 		GL20.glBindAttribLocation(shaderID, 2, "inTexCoord");
+		GL20.glBindAttribLocation(shaderID, 3, "inTexIndex");
 	}
 
 	@Override
@@ -158,5 +160,12 @@ public class ShaderSubPixel extends ShaderMVP_PCT {
 		mScreenResolutionLocationID = GL20.glGetUniformLocation(shaderID(), "v2ScreenResolution");
 		mCameraResolutionLocationID = GL20.glGetUniformLocation(shaderID(), "v2CameraResolution");
 		mPixelSizeLocationId = GL20.glGetUniformLocation(shaderID(), "fPixelSize");
+
+		final var lIntBuffer = BufferUtils.createIntBuffer(8);
+		lIntBuffer.put(new int[] { 0, 1, 2, 3, 4, 5, 6, 7 });
+		lIntBuffer.flip();
+
+		int lTextureSamplerLocation = GL20.glGetUniformLocation(shaderID(), "textureSampler");
+		GL20.glUniform1iv(lTextureSamplerLocation, lIntBuffer);
 	}
 }

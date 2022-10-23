@@ -1,7 +1,5 @@
 package net.lintford.library.core.camera;
 
-import org.lwjgl.opengl.GL11;
-
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.geometry.Rectangle;
@@ -12,12 +10,14 @@ public interface ICamera {
 
 	public static ICamera EMPTY = new ICamera() {
 
+		@Override
+		public Vector2f internalPosition() {
+			return Vector2f.Zero;
+		}
+
 		// --------------------------------------
 		// Variables
 		// --------------------------------------
-
-		int mWindowWidth = 800;
-		int mWindowHeight = 600;
 
 		Matrix4f mView = new Matrix4f();
 		Matrix4f mProjection = new Matrix4f();
@@ -134,21 +134,6 @@ public interface ICamera {
 		}
 
 		@Override
-		public void applyGameViewport() {
-			GL11.glViewport(0, 0, mWindowWidth, mWindowHeight);
-		}
-
-		@Override
-		public float getWorldPositionXInCameraSpace(float pPointX) {
-			return 0;
-		}
-
-		@Override
-		public float getWorldPositionYInCameraSpace(float pPointY) {
-			return 0;
-		}
-
-		@Override
 		public int windowWidth() {
 			return 800;
 		}
@@ -169,7 +154,6 @@ public interface ICamera {
 
 		@Override
 		public void update(LintfordCore pCore) {
-			applyGameViewport();
 
 		}
 
@@ -178,6 +162,9 @@ public interface ICamera {
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	// TODO: Remove before commit
+	public Vector2f internalPosition();
 
 	public abstract Matrix4f projection();
 
@@ -233,16 +220,7 @@ public interface ICamera {
 
 	public abstract float getMouseWorldSpaceY();
 
-	/** This maps the input X coordinate into the camera space. */
 	public abstract float getPointCameraSpaceX(float pointX);
 
-	/** This maps the input Y coordinate into the camera space. */
 	public abstract float getPointCameraSpaceY(float pointY);
-
-	public abstract float getWorldPositionXInCameraSpace(float pointX);
-
-	public abstract float getWorldPositionYInCameraSpace(float pointY);
-
-	public abstract void applyGameViewport();
-
 }

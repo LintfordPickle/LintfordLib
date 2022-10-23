@@ -134,7 +134,7 @@ class BitmapFontDefinition {
 		mEntityGroupUid = entityGroupUid;
 
 		final var lTextureManager = resourceManager.textureManager();
-		final int lFilteringMode = mUseSubPixelRendering ? GL11.GL_LINEAR : GL11.GL_NEAREST;
+		final var lFilteringMode = mUseSubPixelRendering ? GL11.GL_LINEAR : GL11.GL_NEAREST;
 		mTexture = lTextureManager.getTextureOrLoad(mTextureName, mTextureFilepath, lFilteringMode, mEntityGroupUid);
 
 		if (lTextureManager.isTextureLoaded(mTexture) == false) {
@@ -143,8 +143,8 @@ class BitmapFontDefinition {
 
 		if (mFontHeight == 0) {
 			int lFontHeight = 0;
-			for (Map.Entry<Integer, SpriteFrame> entry : mGlyphMap.entrySet()) {
-				final var lSpriteFrame = entry.getValue();
+			for (final var lEntry : mGlyphMap.entrySet()) {
+				final var lSpriteFrame = lEntry.getValue();
 				if (lSpriteFrame.height() > lFontHeight)
 					lFontHeight = (int) lSpriteFrame.height();
 			}

@@ -29,17 +29,33 @@ public class MathUtil {
 		}
 	}
 
+	public static FloatBuffer getMatBufferRowMaj(Matrix4f matrix) {
+		if (int_mat_float_buffer == null)
+			allocResources();
+
+		int_mat_float_buffer.clear();
+
+		// row-major
+		int_mat_float_buffer.put(matrix.m00).put(matrix.m10).put(matrix.m20).put(matrix.m30);
+		int_mat_float_buffer.put(matrix.m01).put(matrix.m11).put(matrix.m21).put(matrix.m31);
+		int_mat_float_buffer.put(matrix.m02).put(matrix.m12).put(matrix.m22).put(matrix.m32);
+		int_mat_float_buffer.put(matrix.m03).put(matrix.m13).put(matrix.m23).put(matrix.m33);
+
+		int_mat_float_buffer.flip();
+		return int_mat_float_buffer;
+	}
+
 	public static FloatBuffer getMatBufferColMaj(Matrix4f matrix) {
 		if (int_mat_float_buffer == null)
 			allocResources();
 
 		int_mat_float_buffer.clear();
 
-		// Col Major (Col elements are next to each other in memory)
-		int_mat_float_buffer.put(matrix.m00).put(matrix.m10).put(matrix.m20).put(matrix.m30);
-		int_mat_float_buffer.put(matrix.m01).put(matrix.m11).put(matrix.m21).put(matrix.m31);
-		int_mat_float_buffer.put(matrix.m02).put(matrix.m12).put(matrix.m22).put(matrix.m32);
-		int_mat_float_buffer.put(matrix.m03).put(matrix.m13).put(matrix.m23).put(matrix.m33);
+		// col-major
+		int_mat_float_buffer.put(matrix.m00).put(matrix.m01).put(matrix.m02).put(matrix.m03);
+		int_mat_float_buffer.put(matrix.m10).put(matrix.m11).put(matrix.m12).put(matrix.m13);
+		int_mat_float_buffer.put(matrix.m20).put(matrix.m21).put(matrix.m22).put(matrix.m23);
+		int_mat_float_buffer.put(matrix.m30).put(matrix.m31).put(matrix.m32).put(matrix.m33);
 
 		int_mat_float_buffer.flip();
 		return int_mat_float_buffer;
@@ -50,7 +66,7 @@ public class MathUtil {
 	 * 
 	 * @return A FloatBuffer containing a col-maj matrix
 	 */
-	public FloatBuffer copyToBuffer(final FloatBuffer floatBuffer, Matrix4f matrix) {
+	public FloatBuffer copyToBufferColMaj(final FloatBuffer floatBuffer, Matrix4f matrix) {
 		if (floatBuffer == null)
 			return null;
 

@@ -12,16 +12,16 @@ import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.camera.ICamera;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.ColorConstants;
+import net.lintford.library.core.graphics.batching.TextureBatchPCT;
 import net.lintford.library.core.graphics.fonts.BitmapFontManager;
 import net.lintford.library.core.graphics.fonts.FontUnit;
 import net.lintford.library.core.graphics.geometry.TexturedQuad;
 import net.lintford.library.core.graphics.linebatch.LineBatch;
 import net.lintford.library.core.graphics.pointbatch.PointBatch;
-import net.lintford.library.core.graphics.polybatch.PolyBatch;
+import net.lintford.library.core.graphics.polybatch.PolyBatchPC;
 import net.lintford.library.core.graphics.rendertarget.RenderTarget;
 import net.lintford.library.core.graphics.shaders.ShaderMVP_PT;
 import net.lintford.library.core.graphics.textures.Texture;
-import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.core.maths.Vector2f;
 
 public class DebugDrawers {
@@ -41,10 +41,10 @@ public class DebugDrawers {
 	private FontUnit mSystemFontUnit;
 	private PointBatch mImmediatePointBatch;
 	private LineBatch mImmediateLineBatch;
-	private PolyBatch mImmediatePolyBatch;
+	private PolyBatchPC mImmediatePolyBatch;
 	private PointBatch mPointBatch;
 	private LineBatch mLineBatch;
-	private PolyBatch mPolyBatch;
+	private PolyBatchPC mPolyBatch;
 	private TextureBatchPCT mTextureBatch;
 	private TexturedQuad mTexturedQuad;
 	private ShaderMVP_PT mBasicShader;
@@ -61,11 +61,11 @@ public class DebugDrawers {
 
 		mImmediatePointBatch = new PointBatch();
 		mImmediateLineBatch = new LineBatch();
-		mImmediatePolyBatch = new PolyBatch();
+		mImmediatePolyBatch = new PolyBatchPC();
 
 		mPointBatch = new PointBatch();
 		mLineBatch = new LineBatch();
-		mPolyBatch = new PolyBatch();
+		mPolyBatch = new PolyBatchPC();
 
 		mTextureBatch = new TextureBatchPCT();
 		mTexturedQuad = new TexturedQuad();
@@ -163,7 +163,7 @@ public class DebugDrawers {
 	public void drawRectImmediate(ICamera camera, Rectangle destRectangle) {
 		if (destRectangle == null)
 			return;
-		
+
 		drawRectImmediate(camera, destRectangle.left(), destRectangle.top(), destRectangle.width(), destRectangle.height());
 	}
 
@@ -199,27 +199,7 @@ public class DebugDrawers {
 			return;
 
 		mImmediatePolyBatch.begin(camera);
-		mImmediatePolyBatch.drawRect(rectangle, -.1f, 1.f, 1.f, 1.f);
-		mImmediatePolyBatch.end();
-	}
-
-	public void drawPolyImmediate(ICamera camera, List<Vector2f> vertices, boolean closePolygon) {
-		if (!mDebugManager.debugManagerEnabled())
-			return;
-
-		drawPolyImmediate(camera, vertices, 1f, 1f, 1f, closePolygon);
-	}
-
-	public void drawPolyImmediate(ICamera camera, List<Vector2f> vertices, float red, float green, float blue, boolean pClose) {
-		drawPolyImmediate(camera, vertices, vertices.size(), red, green, blue, pClose);
-	}
-
-	public void drawPolyImmediate(ICamera camera, List<Vector2f> vertices, int numVertices, float red, float green, float blue, boolean closePolygon) {
-		if (!mDebugManager.debugManagerEnabled())
-			return;
-
-		mImmediatePolyBatch.begin(camera);
-		mImmediatePolyBatch.drawRect(vertices, numVertices, -0.1f, closePolygon, red, green, blue);
+		// mImmediatePolyBatch.drawRect(rectangle, -.1f, true, 1.f, 1.f, 1.f);
 		mImmediatePolyBatch.end();
 	}
 
@@ -445,14 +425,6 @@ public class DebugDrawers {
 	}
 
 	public void beginPolyRenderer(ICamera camera) {
-		beginPolyRenderer(camera, GL11.GL_LINES);
-	}
-
-	public void beginPolyRenderer(ICamera camera, int glLineMode) {
-		if (!mDebugManager.debugManagerEnabled())
-			return;
-
-		mPolyBatch.lineMode(glLineMode);
 		mPolyBatch.begin(camera);
 	}
 
@@ -501,7 +473,7 @@ public class DebugDrawers {
 			return;
 		}
 
-		mPolyBatch.drawRect(vertices, numberVerts, -.1f, closePolygon, red, green, blue);
+		mPolyBatch.drawVertices(vertices, numberVerts, -.1f, closePolygon, red, green, blue);
 	}
 
 	public void endPolyRenderer() {

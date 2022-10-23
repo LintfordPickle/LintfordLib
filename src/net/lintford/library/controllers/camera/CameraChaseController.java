@@ -65,8 +65,7 @@ public class CameraChaseController extends BaseController {
 	// Constructor
 	// ---------------------------------------------
 
-	public CameraChaseController(ControllerManager controllerManager, ICamera camera, WorldEntity trackEntity,
-			int controllerGroup) {
+	public CameraChaseController(ControllerManager controllerManager, ICamera camera, WorldEntity trackEntity, int controllerGroup) {
 		super(controllerManager, CONTROLLER_NAME, controllerGroup);
 
 		mVelocity = new Vector2f();

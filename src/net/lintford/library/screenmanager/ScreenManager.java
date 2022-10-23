@@ -168,15 +168,21 @@ public class ScreenManager implements IInputClickedFocusManager {
 	}
 
 	public void unloadResources() {
+		GLDebug.checkGLErrorsException(getClass().getSimpleName());
 		final int lScreenCount = mScreens.size();
 		for (int i = 0; i < lScreenCount; i++) {
 			mScreens.get(i).unloadResources();
 		}
 
+		GLDebug.checkGLErrorsException(getClass().getSimpleName());
+
 		mToolTip.unloadResources();
+
+		GLDebug.checkGLErrorsException(getClass().getSimpleName());
 		mToastManager.unloadResources();
 
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "Finished ScreenManager.UnloadResources");
+
 		GLDebug.checkGLErrorsException(getClass().getSimpleName());
 
 		mResourcesLoaded = false;

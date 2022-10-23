@@ -9,10 +9,6 @@ import net.lintford.library.core.debug.stats.DebugStatTagString;
 public class CameraDebugStatsTracker {
 
 	// ---------------------------------------------
-	// Constants
-	// ---------------------------------------------
-
-	// ---------------------------------------------
 	// Variables
 	// ---------------------------------------------
 
@@ -51,14 +47,17 @@ public class CameraDebugStatsTracker {
 
 	public void update(LintfordCore core) {
 		final var lCameraPosition = mCamera.getPosition();
-		final var lMousePosition = core.input().mouse().mouseWindowCoords();
-		final float lMouseX = mCamera.getWorldPositionXInCameraSpace(lMousePosition.x);
-		final float lMouseY = mCamera.getWorldPositionXInCameraSpace(lMousePosition.y);
+		final float lMouseX = mCamera.getMouseWorldSpaceX();
+		final float lMouseY = mCamera.getMouseWorldSpaceY();
 
-		mMouseCordsInCamSpace.setValue("x:" + lMouseX + " y:" + lMouseY);
-		mCameraPosition.setValue("x:" + lCameraPosition.x + " y:" + lCameraPosition.y);
+		mMouseCordsInCamSpace.setValue("x:" + roundFloatToTwoDps(lMouseX) + " y:" + roundFloatToTwoDps(lMouseY));
+		mCameraPosition.setValue("x:" + roundFloatToTwoDps(lCameraPosition.x) + " y:" + roundFloatToTwoDps(lCameraPosition.y));
 		mCameraDimensions.setValue((int) mCamera.getWidth() + "x" + (int) mCamera.getHeight());
 		mCameraZoomFactor.setValue(mCamera.getZoomFactor());
+	}
+
+	private float roundFloatToTwoDps(float v) {
+		return Math.round(v * 100.f) / 100.f;
 	}
 
 }

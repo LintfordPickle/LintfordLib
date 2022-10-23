@@ -1,7 +1,5 @@
 package net.lintford.library.core.graphics.rendertarget;
 
-import org.lwjgl.opengl.GL11;
-
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.camera.CameraState;
 import net.lintford.library.core.camera.ICamera;
@@ -35,6 +33,12 @@ public class RTCamera implements ICamera {
 
 	protected final Matrix4f mProjectionMatrix;
 	protected final Matrix4f mViewMatrix;
+
+	@Override
+	public Vector2f internalPosition() {
+		// TODO Auto-generated method stub
+		return mInternalPosition;
+	}
 
 	protected float mMinX;
 	protected float mMaxX;
@@ -186,8 +190,6 @@ public class RTCamera implements ICamera {
 		createOrtho(mWindowWidth, mWindowHeight);
 
 		updateZoomBounds(mWindowWidth, mWindowHeight);
-
-		applyGameViewport();
 	}
 
 	public void createView() {
@@ -214,14 +216,6 @@ public class RTCamera implements ICamera {
 		mBoundingRectangle.setCenterPosition(mInternalPosition.x, mInternalPosition.y);
 		mBoundingRectangle.width(mScaledWindowWidth);
 		mBoundingRectangle.height(mScaledWindowHeight);
-	}
-
-	@Override
-	public void applyGameViewport() {
-		int lNearestW = ((mWindowWidth % 2) == 0) ? mWindowWidth : mWindowWidth + 1;
-		int lNearestH = ((mWindowHeight % 2) == 0) ? mWindowHeight : mWindowHeight + 1;
-
-		GL11.glViewport(0, 0, lNearestW, lNearestH);
 	}
 
 	// --------------------------------------
@@ -343,15 +337,5 @@ public class RTCamera implements ICamera {
 	@Override
 	public float getPointCameraSpaceY(float pointY) {
 		return pointY * getZoomFactorOverOne() + this.getMinY();
-	}
-
-	@Override
-	public float getWorldPositionXInCameraSpace(float pointX) {
-		return (mInternalPosition.x - pointX) * getZoomFactor();
-	}
-
-	@Override
-	public float getWorldPositionYInCameraSpace(float pointY) {
-		return (mInternalPosition.y - pointY) * getZoomFactor();
 	}
 }
