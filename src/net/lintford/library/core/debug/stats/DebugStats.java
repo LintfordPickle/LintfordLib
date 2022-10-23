@@ -41,6 +41,7 @@ public class DebugStats extends Rectangle implements IScrollBarArea, IProcessMou
 	public static final int TAG_ID_TEXTURES = 5;
 	public static final int TAG_ID_RENDERTEXTURES = 6;
 	public static final int TAG_ID_WINDOW_SIZE = 15;
+	public static final int TAG_ID_RES = 7;
 	public static final int TAG_ID_VRAM = 8;
 	public static final int TAG_ID_VBO = 9;
 	public static final int TAG_ID_VB_UPLOADS = 10;
