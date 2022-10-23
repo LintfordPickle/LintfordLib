@@ -32,8 +32,8 @@ public class UiStructureController extends BaseController {
 	private float mUITextScaleFactorActual;
 	private float mWindowPaddingH;
 	private float mWindowPaddingV;
-	private float mMinimumTitleHeight = 100.f;
-	private float mMinimumFooterHeight = 80.f;
+	private float mMinimumTitleHeight = 30.f;
+	private float mMinimumFooterHeight = 30.f;
 
 	// --------------------------------------
 	// Properties
@@ -148,11 +148,18 @@ public class UiStructureController extends BaseController {
 	public void update(LintfordCore core) {
 		super.update(core);
 
-		final float lBaseWindowWidth = core.config().display().baseGameResolutionWidth();
-		final float lBaseWindowHeight = core.config().display().baseGameResolutionHeight();
+		final var lDisplayConfig = core.config().display();
 
-		mWindowAutoScaleFactorX = core.config().display().windowWidth() / lBaseWindowWidth;
-		mWindowAutoScaleFactorY = core.config().display().windowHeight() / lBaseWindowHeight;
+		final float lBaseWindowWidth = lDisplayConfig.baseGameResolutionWidth();
+		final float lBaseWindowHeight = lDisplayConfig.baseGameResolutionHeight();
+
+		if (lDisplayConfig.stretchGameScreen()) {
+			mWindowAutoScaleFactorX = 1.f;
+			mWindowAutoScaleFactorY = 1.f;
+		} else {
+			mWindowAutoScaleFactorX = core.config().display().windowWidth() / lBaseWindowWidth;
+			mWindowAutoScaleFactorY = core.config().display().windowHeight() / lBaseWindowHeight;
+		}
 
 		updateHUDAreas(core);
 	}
@@ -167,18 +174,9 @@ public class UiStructureController extends BaseController {
 	}
 
 	private void updateWindowUiComponentStructures(LintfordCore core) {
-		final float lWindowWidth = mDisplayManager.windowWidth();
-		final float lWindowHeight = mDisplayManager.windowHeight();
-
 		mUIScaleFactorActual = mDisplayManager.graphicsSettings().UIScale();
 		mUITextScaleFactorActual = mDisplayManager.graphicsSettings().UITextScale();
 		mUITransparencyFactorActual = mDisplayManager.graphicsSettings().UITransparencyScale();
-
-		mMinimumTitleHeight = lWindowHeight * 0.2f;
-		mMinimumFooterHeight = lWindowHeight * 0.15f;
-
-		mWindowPaddingH = lWindowWidth * 0.05f;
-		mWindowPaddingV = lWindowHeight * 0.05f;
 	}
 
 	private void updateMenuUiStructure(LintfordCore core) {
@@ -188,8 +186,8 @@ public class UiStructureController extends BaseController {
 		// The problem is, the UiStructureController is assigning a boundary for the hud to render controls into (e.g. for the pause menu)
 		// but it assumes it always has the area of the window - it actually has the game canvas, which when stretched, is just a subset
 
-		final float lWindowWidth = core.config().display().windowWidth();
-		final float lWindowHeight = core.config().display().windowHeight();
+		final float lWindowWidth = core.config().display().baseGameResolutionWidth();
+		final float lWindowHeight = core.config().display().baseGameResolutionHeight();
 
 		final float lVerticalInnerPadding = 1.f * mWindowAutoScaleFactorY;
 		final float lModWidth = lWindowWidth - mWindowPaddingH * 2.f;
