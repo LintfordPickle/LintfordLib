@@ -3,7 +3,6 @@ package net.lintford.library.core.graphics.batching;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
-import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
@@ -16,12 +15,12 @@ import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.debug.stats.DebugStats;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.Color;
-import net.lintford.library.core.graphics.shaders.ShaderMVP_PCT;
+import net.lintford.library.core.graphics.shaders.ShaderMVP_PC;
 import net.lintford.library.core.maths.Matrix4f;
 
 public class TextureBatchPC {
 
-	private class VertexDataStructure {
+	private static class VertexDataStructure {
 
 		public static final int elementBytes = 4;
 
@@ -43,7 +42,7 @@ public class TextureBatchPC {
 	// Constants
 	// --------------------------------------
 
-	protected static final int MAX_SPRITES = 10000;
+	protected static final int MAX_SPRITES = 5000;
 	protected static final int NUM_VERTICES_PER_SPRITE = 4;
 	protected static final int NUM_INDICES_PER_SPRITE = 6;
 
@@ -58,8 +57,8 @@ public class TextureBatchPC {
 	// --------------------------------------
 
 	protected ICamera mCamera;
-	protected ShaderMVP_PCT mShader;
-	protected ShaderMVP_PCT mCustomShader;
+	protected ShaderMVP_PC mShader;
+	protected ShaderMVP_PC mCustomShader;
 
 	protected FloatBuffer mBuffer;
 	protected IntBuffer mIndexBuffer;
@@ -124,25 +123,11 @@ public class TextureBatchPC {
 	// --------------------------------------
 
 	public TextureBatchPC() {
-		mShader = new ShaderMVP_PCT("TextureBatchShader", VERT_FILENAME, FRAG_FILENAME) {
+		mShader = new ShaderMVP_PC("TextureBatchShader", VERT_FILENAME, FRAG_FILENAME) {
 			@Override
 			protected void bindAtrributeLocations(int pShaderID) {
 				GL20.glBindAttribLocation(pShaderID, 0, "inPosition");
 				GL20.glBindAttribLocation(pShaderID, 1, "inColor");
-				GL20.glBindAttribLocation(pShaderID, 2, "inTexCoord");
-				GL20.glBindAttribLocation(pShaderID, 3, "inTexIndex");
-			}
-
-			@Override
-			protected void getUniformLocations() {
-				super.getUniformLocations();
-
-				final var lIntBuffer = BufferUtils.createIntBuffer(8);
-				lIntBuffer.put(new int[] { 0, 1, 2, 3, 4, 5, 6, 7 });
-				lIntBuffer.flip();
-
-				int lTextureSamplerLocation = GL20.glGetUniformLocation(shaderID(), "textureSampler");
-				GL20.glUniform1iv(lTextureSamplerLocation, lIntBuffer);
 			}
 		};
 
@@ -262,7 +247,7 @@ public class TextureBatchPC {
 		begin(pCamera, mShader);
 	}
 
-	public void begin(ICamera pCamera, ShaderMVP_PCT pCustomShader) {
+	public void begin(ICamera pCamera, ShaderMVP_PC pCustomShader) {
 		if (pCamera == null)
 			return;
 

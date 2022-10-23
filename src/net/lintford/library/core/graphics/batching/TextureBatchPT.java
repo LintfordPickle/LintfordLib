@@ -2,12 +2,9 @@ package net.lintford.library.core.graphics.batching;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
@@ -26,7 +23,7 @@ import net.lintford.library.core.maths.Matrix4f;
 
 public class TextureBatchPT {
 
-	private class VertexDefinition {
+	private static class VertexDefinition {
 
 		public static final int elementBytes = 4;
 
@@ -68,6 +65,8 @@ public class TextureBatchPT {
 	// Variables
 	// --------------------------------------
 
+	protected final TextureSlotBatch mTextureSlots = new TextureSlotBatch();
+
 	protected ICamera mCamera;
 	protected ShaderMVP_PT mShader;
 	protected ShaderMVP_PT mCustomShader;
@@ -89,9 +88,6 @@ public class TextureBatchPT {
 	protected boolean mIsDrawing;
 
 	private int mIndexCount;
-
-	protected final List<Integer> mTextureSlots = new ArrayList<>();
-	protected int mTextureSlotIndex; // next free texture slot
 
 	private boolean _countDebugStats = true;
 
@@ -320,11 +316,7 @@ public class TextureBatchPT {
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, mVboId);
 		GL15.glBufferSubData(GL15.GL_ARRAY_BUFFER, 0, mBuffer);
 
-		for (int i = 0; i < mTextureSlotIndex; i++) {
-			GL13.glActiveTexture(GL13.GL_TEXTURE0 + i);
-			final int lTextureIdInSlot = mTextureSlots.get(i);
-			GL11.glBindTexture(GL11.GL_TEXTURE_2D, lTextureIdInSlot);
-		}
+		mTextureSlots.bindTextures();
 
 		if (mBlendEnabled) {
 			GL11.glEnable(GL11.GL_BLEND);
@@ -355,30 +347,9 @@ public class TextureBatchPT {
 		mCustomShader.unbind();
 
 		mBuffer.clear();
-		clearTextureSlots();
+		mTextureSlots.clear();
 
 		_countDebugStats = true;
-	}
-
-	public void clearTextureSlots() {
-		mTextureSlots.clear();
-		mTextureSlotIndex = 0;
-	}
-
-	public int getTextureSlotIndex(Texture texture) {
-		final int lNumTextures = mTextureSlots.size();
-		for (int i = 0; i < lNumTextures; i++) {
-			if (mTextureSlots.get(i) == texture.getTextureID()) {
-				return i;
-			}
-		}
-
-		if (mTextureSlotIndex < MAX_TEXTURE_SLOTS) {
-			mTextureSlots.add(texture.getTextureID());
-			return mTextureSlotIndex++;
-		}
-
-		return -1;
 	}
 
 	// ---
@@ -407,10 +378,13 @@ public class TextureBatchPT {
 		if (mIndexCount >= MAX_SPRITES * NUM_INDICES_PER_SPRITE - NUM_INDICES_PER_SPRITE)
 			flush();
 
-		float lTextureSlotIndex = getTextureSlotIndex(pTexture);
-		if (lTextureSlotIndex == -1) {
-			flush();
-			lTextureSlotIndex = getTextureSlotIndex(pTexture);
+		float lTextureSlotIndex = mTextureSlots.getTextureSlotIndex(pTexture);
+		if (lTextureSlotIndex == TextureSlotBatch.TEXTURE_SLOTS_TEXTURE_INVALID)
+			return;
+
+		if (lTextureSlotIndex == TextureSlotBatch.TEXTURE_SLOTS_FULL) {
+			flush(); // flush and try again
+			lTextureSlotIndex = mTextureSlots.getTextureSlotIndex(pTexture);
 		}
 
 		float x0 = pDX;
@@ -458,10 +432,13 @@ public class TextureBatchPT {
 		if (pTexture == null && TextureManager.USE_DEBUG_MISSING_TEXTURES)
 			pTexture = mResourceManager.textureManager().textureNotFound();
 
-		float lTextureSlotIndex = getTextureSlotIndex(pTexture);
-		if (lTextureSlotIndex == -1) {
-			flush();
-			lTextureSlotIndex = getTextureSlotIndex(pTexture);
+		float lTextureSlotIndex = mTextureSlots.getTextureSlotIndex(pTexture);
+		if (lTextureSlotIndex == TextureSlotBatch.TEXTURE_SLOTS_TEXTURE_INVALID)
+			return;
+
+		if (lTextureSlotIndex == TextureSlotBatch.TEXTURE_SLOTS_FULL) {
+			flush(); // flush and try again
+			lTextureSlotIndex = mTextureSlots.getTextureSlotIndex(pTexture);
 		}
 
 		final float sin = (float) Math.sin(pRot);

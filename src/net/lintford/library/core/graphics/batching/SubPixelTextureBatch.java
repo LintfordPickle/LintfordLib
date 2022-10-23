@@ -2,11 +2,8 @@ package net.lintford.library.core.graphics.batching;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
@@ -26,7 +23,7 @@ import net.lintford.library.core.maths.Matrix4f;
 
 public class SubPixelTextureBatch {
 
-	private class VertexDefinition {
+	private static class VertexDefinition {
 
 		public static final int elementBytes = 4;
 
@@ -61,14 +58,14 @@ public class SubPixelTextureBatch {
 	protected static final int MAX_VERTEX_COUNT = MAX_SPRITES * NUM_VERTICES_PER_SPRITE;
 	protected static final int MAX_INDEX_COUNT = MAX_SPRITES * NUM_INDICES_PER_SPRITE;
 
-	protected static final int MAX_TEXTURE_SLOTS = 8;
-
 	protected static final String VERT_FILENAME = "/res/shaders/shader_batch_pct.vert";
 	protected static final String FRAG_FILENAME = "/res/shaders/shader_subpixel_pct.frag";
 
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
+
+	protected final TextureSlotBatch mTextureSlots = new TextureSlotBatch();
 
 	protected ICamera mCamera;
 	protected ShaderSubPixel mShader;
@@ -86,9 +83,6 @@ public class SubPixelTextureBatch {
 	protected boolean mIsDrawing;
 
 	protected int mIndexCount;
-
-	protected final List<Integer> mTextureSlots = new ArrayList<>();
-	protected int mTextureSlotIndex;
 
 	private boolean _countDebugStats = true;
 
@@ -239,38 +233,7 @@ public class SubPixelTextureBatch {
 		Debug.debugManager().stats().decTag(DebugStats.TAG_ID_BATCH_OBJECTS);
 	}
 
-	public void clearTextureSlots() {
-		mTextureSlots.clear();
-		mTextureSlotIndex = 0;
-	}
-
 	// ---
-
-	private float getTextureSlotIndexAndFlush(Texture texture) {
-		float lTextureSlotIndex = getTextureSlotIndex(texture);
-		if (lTextureSlotIndex == -1) {
-			flush();
-			lTextureSlotIndex = getTextureSlotIndex(texture);
-		}
-
-		return lTextureSlotIndex;
-	}
-
-	public int getTextureSlotIndex(Texture texture) {
-		final int lNumTextures = mTextureSlots.size();
-		for (int i = 0; i < lNumTextures; i++) {
-			if (mTextureSlots.get(i) == texture.getTextureID()) {
-				return i;
-			}
-		}
-
-		if (mTextureSlotIndex < MAX_TEXTURE_SLOTS) {
-			mTextureSlots.add(texture.getTextureID());
-			return mTextureSlotIndex++;
-		}
-
-		return -1;
-	}
 
 	// --------------------------------------
 	// Methods
@@ -316,10 +279,17 @@ public class SubPixelTextureBatch {
 		if (pTexture == null && TextureManager.USE_DEBUG_MISSING_TEXTURES)
 			pTexture = mResourceManager.textureManager().textureNotFound();
 
-		final float lTexIndex = getTextureSlotIndexAndFlush(pTexture);
-
 		if (mIndexCount >= MAX_SPRITES * NUM_INDICES_PER_SPRITE - NUM_INDICES_PER_SPRITE)
 			flush();
+
+		float lTextureSlotIndex = mTextureSlots.getTextureSlotIndex(pTexture);
+		if (lTextureSlotIndex == TextureSlotBatch.TEXTURE_SLOTS_TEXTURE_INVALID)
+			return;
+
+		if (lTextureSlotIndex == TextureSlotBatch.TEXTURE_SLOTS_FULL) {
+			flush(); // flush and try again
+			lTextureSlotIndex = mTextureSlots.getTextureSlotIndex(pTexture);
+		}
 
 		final var lVertList = pDestRect.getVertices();
 
@@ -343,12 +313,12 @@ public class SubPixelTextureBatch {
 		float u3 = (pSX + pSW) / pTexture.getTextureWidth();
 		float v3 = (pSY + pSH) / pTexture.getTextureHeight();
 
-		addVertToBuffer(x1, y1, zDepth, 1f, color.r, color.g, color.b, color.a, u1, v1, lTexIndex);
-		addVertToBuffer(x0, y0, zDepth, 1f, color.r, color.g, color.b, color.a, u0, v0, lTexIndex);
-		addVertToBuffer(x2, y2, zDepth, 1f, color.r, color.g, color.b, color.a, u2, v2, lTexIndex);
-		addVertToBuffer(x1, y1, zDepth, 1f, color.r, color.g, color.b, color.a, u1, v1, lTexIndex);
-		addVertToBuffer(x2, y2, zDepth, 1f, color.r, color.g, color.b, color.a, u2, v2, lTexIndex);
-		addVertToBuffer(x3, y3, zDepth, 1f, color.r, color.g, color.b, color.a, u3, v3, lTexIndex);
+		addVertToBuffer(x1, y1, zDepth, 1f, color.r, color.g, color.b, color.a, u1, v1, lTextureSlotIndex);
+		addVertToBuffer(x0, y0, zDepth, 1f, color.r, color.g, color.b, color.a, u0, v0, lTextureSlotIndex);
+		addVertToBuffer(x2, y2, zDepth, 1f, color.r, color.g, color.b, color.a, u2, v2, lTextureSlotIndex);
+		addVertToBuffer(x1, y1, zDepth, 1f, color.r, color.g, color.b, color.a, u1, v1, lTextureSlotIndex);
+		addVertToBuffer(x2, y2, zDepth, 1f, color.r, color.g, color.b, color.a, u2, v2, lTextureSlotIndex);
+		addVertToBuffer(x3, y3, zDepth, 1f, color.r, color.g, color.b, color.a, u3, v3, lTextureSlotIndex);
 
 		mIndexCount += NUM_INDICES_PER_SPRITE;
 	}
@@ -360,11 +330,18 @@ public class SubPixelTextureBatch {
 		if (pTexture == null && TextureManager.USE_DEBUG_MISSING_TEXTURES)
 			pTexture = mResourceManager.textureManager().textureNotFound();
 
-		final float lTexIndex = getTextureSlotIndexAndFlush(pTexture);
-
 		if (mIndexCount >= MAX_SPRITES * NUM_INDICES_PER_SPRITE - NUM_INDICES_PER_SPRITE)
 			flush();
 
+		float lTextureSlotIndex = mTextureSlots.getTextureSlotIndex(pTexture);
+		if (lTextureSlotIndex == TextureSlotBatch.TEXTURE_SLOTS_TEXTURE_INVALID)
+			return;
+
+		if (lTextureSlotIndex == TextureSlotBatch.TEXTURE_SLOTS_FULL) {
+			flush(); // flush and try again
+			lTextureSlotIndex = mTextureSlots.getTextureSlotIndex(pTexture);
+		}
+		
 		float x1 = pDX;
 		float y1 = pDY;
 		float u1 = pSX / pTexture.getTextureWidth();
@@ -385,12 +362,12 @@ public class SubPixelTextureBatch {
 		float u3 = (pSX + pSW) / pTexture.getTextureWidth();
 		float v3 = (pSY + pSH) / pTexture.getTextureHeight();
 
-		addVertToBuffer(x1, y1, zDepth, 1f, color.r, color.g, color.b, color.a, u1, v1, lTexIndex);
-		addVertToBuffer(x0, y0, zDepth, 1f, color.r, color.g, color.b, color.a, u0, v0, lTexIndex);
-		addVertToBuffer(x2, y2, zDepth, 1f, color.r, color.g, color.b, color.a, u2, v2, lTexIndex);
-		addVertToBuffer(x2, y2, zDepth, 1f, color.r, color.g, color.b, color.a, u2, v2, lTexIndex);
-		addVertToBuffer(x0, y0, zDepth, 1f, color.r, color.g, color.b, color.a, u0, v0, lTexIndex);
-		addVertToBuffer(x3, y3, zDepth, 1f, color.r, color.g, color.b, color.a, u3, v3, lTexIndex);
+		addVertToBuffer(x1, y1, zDepth, 1f, color.r, color.g, color.b, color.a, u1, v1, lTextureSlotIndex);
+		addVertToBuffer(x0, y0, zDepth, 1f, color.r, color.g, color.b, color.a, u0, v0, lTextureSlotIndex);
+		addVertToBuffer(x2, y2, zDepth, 1f, color.r, color.g, color.b, color.a, u2, v2, lTextureSlotIndex);
+		addVertToBuffer(x2, y2, zDepth, 1f, color.r, color.g, color.b, color.a, u2, v2, lTextureSlotIndex);
+		addVertToBuffer(x0, y0, zDepth, 1f, color.r, color.g, color.b, color.a, u0, v0, lTextureSlotIndex);
+		addVertToBuffer(x3, y3, zDepth, 1f, color.r, color.g, color.b, color.a, u3, v3, lTextureSlotIndex);
 
 		mIndexCount += NUM_INDICES_PER_SPRITE;
 	}
@@ -405,10 +382,17 @@ public class SubPixelTextureBatch {
 		if (pTexture == null && TextureManager.USE_DEBUG_MISSING_TEXTURES)
 			pTexture = mResourceManager.textureManager().textureNotFound();
 
-		final float lTexIndex = getTextureSlotIndexAndFlush(pTexture);
-
 		if (mIndexCount >= MAX_SPRITES * NUM_INDICES_PER_SPRITE - NUM_INDICES_PER_SPRITE)
 			flush();
+		
+		float lTextureSlotIndex = mTextureSlots.getTextureSlotIndex(pTexture);
+		if (lTextureSlotIndex == TextureSlotBatch.TEXTURE_SLOTS_TEXTURE_INVALID)
+			return;
+
+		if (lTextureSlotIndex == TextureSlotBatch.TEXTURE_SLOTS_FULL) {
+			flush(); // flush and try again
+			lTextureSlotIndex = mTextureSlots.getTextureSlotIndex(pTexture);
+		}
 
 		float sin = (float) Math.sin(pRot);
 		float cos = (float) Math.cos(pRot);
@@ -441,16 +425,15 @@ public class SubPixelTextureBatch {
 		float u3 = (pSX + pSW) / pTexture.getTextureWidth();
 		float v3 = (pSY + pSH) / pTexture.getTextureHeight();
 
-		// Apply the difference back to the global positions
 		pDX += pROX;
 		pDY += pROY;
 
-		addVertToBuffer(pDX + x1, pDY + y1, zDepth, 1f, pR, pG, pB, pA, u1, v1, lTexIndex);
-		addVertToBuffer(pDX + x0, pDY + y0, zDepth, 1f, pR, pG, pB, pA, u0, v0, lTexIndex);
-		addVertToBuffer(pDX + x2, pDY + y2, zDepth, 1f, pR, pG, pB, pA, u2, v2, lTexIndex);
-		addVertToBuffer(pDX + x2, pDY + y2, zDepth, 1f, pR, pG, pB, pA, u2, v2, lTexIndex);
-		addVertToBuffer(pDX + x0, pDY + y0, zDepth, 1f, pR, pG, pB, pA, u0, v0, lTexIndex);
-		addVertToBuffer(pDX + x3, pDY + y3, zDepth, 1f, pR, pG, pB, pA, u3, v3, lTexIndex);
+		addVertToBuffer(pDX + x1, pDY + y1, zDepth, 1f, pR, pG, pB, pA, u1, v1, lTextureSlotIndex);
+		addVertToBuffer(pDX + x0, pDY + y0, zDepth, 1f, pR, pG, pB, pA, u0, v0, lTextureSlotIndex);
+		addVertToBuffer(pDX + x2, pDY + y2, zDepth, 1f, pR, pG, pB, pA, u2, v2, lTextureSlotIndex);
+		addVertToBuffer(pDX + x2, pDY + y2, zDepth, 1f, pR, pG, pB, pA, u2, v2, lTextureSlotIndex);
+		addVertToBuffer(pDX + x0, pDY + y0, zDepth, 1f, pR, pG, pB, pA, u0, v0, lTextureSlotIndex);
+		addVertToBuffer(pDX + x3, pDY + y3, zDepth, 1f, pR, pG, pB, pA, u3, v3, lTextureSlotIndex);
 
 		mIndexCount += NUM_INDICES_PER_SPRITE;
 	}
@@ -465,7 +448,14 @@ public class SubPixelTextureBatch {
 		if (pTexture == null && TextureManager.USE_DEBUG_MISSING_TEXTURES)
 			pTexture = mResourceManager.textureManager().textureNotFound();
 
-		final var lTexIndex = getTextureSlotIndexAndFlush(pTexture);
+		float lTextureSlotIndex = mTextureSlots.getTextureSlotIndex(pTexture);
+		if (lTextureSlotIndex == TextureSlotBatch.TEXTURE_SLOTS_TEXTURE_INVALID)
+			return;
+
+		if (lTextureSlotIndex == TextureSlotBatch.TEXTURE_SLOTS_FULL) {
+			flush(); // flush and try again
+			lTextureSlotIndex = mTextureSlots.getTextureSlotIndex(pTexture);
+		}
 
 		final int lNumPointsInCircle = 12;
 
@@ -489,9 +479,9 @@ public class SubPixelTextureBatch {
 			float u2 = 0.5f + ((float) Math.cos(angle) * 0.5f);
 			float v2 = 0.5f + ((float) Math.sin(angle) * 0.5f);
 
-			addVertToBuffer(x1, y1, zDepth, 1f, color.r, color.g, color.b, color.a, u1, v1, lTexIndex);
-			addVertToBuffer(x0, y0, zDepth, 1f, color.r, color.g, color.b, color.a, u0, v0, lTexIndex);
-			addVertToBuffer(x2, y2, zDepth, 1f, color.r, color.g, color.b, color.a, u2, v2, lTexIndex);
+			addVertToBuffer(x1, y1, zDepth, 1f, color.r, color.g, color.b, color.a, u1, v1, lTextureSlotIndex);
+			addVertToBuffer(x0, y0, zDepth, 1f, color.r, color.g, color.b, color.a, u0, v0, lTextureSlotIndex);
+			addVertToBuffer(x2, y2, zDepth, 1f, color.r, color.g, color.b, color.a, u2, v2, lTextureSlotIndex);
 		}
 
 		mIndexCount += NUM_INDICES_PER_SPRITE;
@@ -535,11 +525,7 @@ public class SubPixelTextureBatch {
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, mVboId);
 		GL15.glBufferSubData(GL15.GL_ARRAY_BUFFER, 0, mBuffer);
 
-		for (int i = 0; i < mTextureSlotIndex; i++) {
-			GL13.glActiveTexture(GL13.GL_TEXTURE0 + i);
-			final int lTextureIdInSlot = mTextureSlots.get(i);
-			GL11.glBindTexture(GL11.GL_TEXTURE_2D, lTextureIdInSlot);
-		}
+		mTextureSlots.bindTextures();
 
 		mShader.projectionMatrix(mCamera.projection());
 		mShader.viewMatrix(mCamera.view());
@@ -560,7 +546,7 @@ public class SubPixelTextureBatch {
 		GL30.glBindVertexArray(0);
 
 		mBuffer.clear();
-		clearTextureSlots();
+		mTextureSlots.clear();
 
 		_countDebugStats = true;
 	}
