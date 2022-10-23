@@ -13,6 +13,9 @@ public class ShaderMVP_PT extends Shader {
 
 	public final static String SHADER_NAME = "ShaderMVP_PT";
 
+	public static final String BASIC_VERT_FILENAME = "/res/shaders/shader_basic_pt.vert";
+	public static final String BASIC_FRAG_FILENAME = "/res/shaders/shader_basic_pt.frag";
+
 	public final static String SHADER_UNIFORM_PROJECTION_NAME = "projectionMatrix";
 	public final static String SHADER_UNIFORM_VIEW_NAME = "viewMatrix";
 	public final static String SHADER_UNIFORM_MODEL_NAME = "modelMatrix";
