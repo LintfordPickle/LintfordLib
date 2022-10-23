@@ -379,8 +379,8 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 		mMaxWidth = 2048.f;
 		mDesiredWidth = 400.f;
 
-		mMinHeight = 32.f;
-		mMaxHeight = 2048.f;
+		mMinHeight = 4.f;
+		mMaxHeight = 512.f;
 		mDesiredHeight = 32.f;
 
 		mW = mDesiredWidth;
