@@ -3,6 +3,7 @@ package net.lintford.library.core.graphics.sprites.custombatch;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.Color;
 import net.lintford.library.core.graphics.batching.SpriteBatch;
+import net.lintford.library.core.graphics.batching.TextureSlotBatch;
 import net.lintford.library.core.graphics.sprites.SpriteInstance;
 import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintford.library.core.graphics.textures.Texture;
@@ -88,7 +89,14 @@ public class SwaySpriteBatch extends SpriteBatch {
 			}
 		}
 
-		final float lTextureSlotIndex = resolveTexture(texture);
+		float lTextureSlotIndex = mTextureSlots.getTextureSlotIndex(texture);
+		if (lTextureSlotIndex == TextureSlotBatch.TEXTURE_SLOTS_TEXTURE_INVALID)
+			return;
+
+		if (lTextureSlotIndex == TextureSlotBatch.TEXTURE_SLOTS_FULL) {
+			flush(); // flush and try again
+			lTextureSlotIndex = mTextureSlots.getTextureSlotIndex(texture);
+		}
 
 		final float lHalfWPixel = (1f / texture.getTextureWidth()) * 0.5f;
 		final float lHalfHPixel = (1f / texture.getTextureHeight()) * 0.5f;
