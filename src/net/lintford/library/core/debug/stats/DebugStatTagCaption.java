@@ -12,13 +12,13 @@ public class DebugStatTagCaption extends DebugStatTag<String> {
 	public DebugStatTagCaption(String label) {
 		super(label);
 
-		mAtoReset = false;
+		mAutoReset = false;
 	}
 
 	DebugStatTagCaption(final int uid, String label) {
 		super(uid, label);
 
-		mAtoReset = false;
+		mAutoReset = false;
 	}
 
 	// --------------------------------------

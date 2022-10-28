@@ -12,14 +12,14 @@ public class DebugStatTagString extends DebugStatTag<String> {
 	public DebugStatTagString(String pLabel) {
 		super(pLabel);
 
-		mAtoReset = false;
+		mAutoReset = false;
 
 	}
 
 	public DebugStatTagString(String pLabel, String pValue) {
 		this(pLabel);
 
-		mAtoReset = false;
+		mAutoReset = false;
 		mValue = pValue;
 
 	}
@@ -30,14 +30,14 @@ public class DebugStatTagString extends DebugStatTag<String> {
 		mValue = pValue;
 		mDefaultValue = pValue;
 
-		mAtoReset = false;
+		mAutoReset = false;
 
 	}
 
 	DebugStatTagString(final int uid, String label, String pValue, boolean pAutoReset) {
 		this(uid, label, pValue);
 
-		mAtoReset = pAutoReset;
+		mAutoReset = pAutoReset;
 
 	}
 

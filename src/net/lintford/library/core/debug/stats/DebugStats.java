@@ -163,9 +163,12 @@ public class DebugStats extends Rectangle implements IScrollBarArea, IProcessMou
 	}
 
 	public void preUpdate(LintfordCore core) {
-		// reset all tags
 		final int lTagCount = mTags.size();
 		for (int i = 0; i < lTagCount; i++) {
+			final var lTag = mTags.get(i);
+			if (!lTag.autoResetEachFrame())
+				continue;
+
 			mTags.get(i).reset();
 		}
 	}
@@ -212,12 +215,10 @@ public class DebugStats extends Rectangle implements IScrollBarArea, IProcessMou
 		float lContentHeight = 0.f;
 		final int lTagCount = mTags.size();
 		for (int i = 0; i < lTagCount; i++) {
-			DebugStatTag<?> lTag = mTags.get(i);
+			final var lTag = mTags.get(i);
 			if (lTag instanceof DebugStatTagCaption) {
 				lContentHeight += 5f; // before
 				lContentHeight += 5f; // after
-			} else {
-
 			}
 
 			lContentHeight += mTagLineHeight;

@@ -19,7 +19,7 @@ public class DebugStatTagFloat extends DebugStatTag<Float> {
 	public DebugStatTagFloat(String label, float defaultValue, boolean autoReset) {
 		this(label, defaultValue);
 
-		mAtoReset = autoReset;
+		mAutoReset = autoReset;
 	}
 
 	DebugStatTagFloat(final int uid, String label, float defaultValue) {
@@ -32,7 +32,7 @@ public class DebugStatTagFloat extends DebugStatTag<Float> {
 	DebugStatTagFloat(final int uid, String label, float defaultValue, boolean autoReset) {
 		this(uid, label, defaultValue);
 
-		mAtoReset = autoReset;
+		mAutoReset = autoReset;
 	}
 
 	// --------------------------------------

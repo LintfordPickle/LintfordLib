@@ -19,7 +19,7 @@ public class DebugStatTagInt extends DebugStatTag<Integer> {
 	public DebugStatTagInt(String label, int defaultValue, boolean autoReset) {
 		this(label, defaultValue);
 
-		mAtoReset = autoReset;
+		mAutoReset = autoReset;
 	}
 
 	DebugStatTagInt(final int uid, String label, int defaultValue) {
@@ -32,7 +32,7 @@ public class DebugStatTagInt extends DebugStatTag<Integer> {
 	DebugStatTagInt(final int pID, String label, int defaultValue, boolean autoReset) {
 		this(pID, label, defaultValue);
 
-		mAtoReset = autoReset;
+		mAutoReset = autoReset;
 	}
 
 	// --------------------------------------

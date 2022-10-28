@@ -9,7 +9,7 @@ public abstract class DebugStatTag<T> {
 	// Variables
 	// --------------------------------------
 
-	protected boolean mAtoReset;
+	protected boolean mAutoReset;
 	protected String mLabel;
 	protected String mPostFix;
 	protected final int mUid;
@@ -22,6 +22,10 @@ public abstract class DebugStatTag<T> {
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public boolean autoResetEachFrame() {
+		return mAutoReset;
+	}
 
 	public void setColor(float red, float green, float blue) {
 		mRed = red;
@@ -57,7 +61,7 @@ public abstract class DebugStatTag<T> {
 	DebugStatTag(final int uid, String label) {
 		mUid = uid;
 		mLabel = label;
-		mAtoReset = true;
+		mAutoReset = true;
 		mRed = mGreen = mBlue = 1.f;
 	}
 
