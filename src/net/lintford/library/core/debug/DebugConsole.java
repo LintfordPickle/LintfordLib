@@ -116,6 +116,7 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 	protected PrintStream mErrPrintStream;
 	protected SpriteSheetDefinition mCoreSpritesheet;
 	private transient Rectangle mAutoScrollIconRectangle;
+	private float mOpenHeight;
 
 	// --------------------------------------
 	// Properties
@@ -134,8 +135,7 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 	}
 
 	public float openHeight() {
-		return (float) Math.pow(14, 2);
-
+		return mOpenHeight;
 	}
 
 	public void setConsoleState(CONSOLE_STATE newState) {
@@ -153,7 +153,6 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 		mDebugManager = debugManager;
 
 		if (debugManager.debugManagerEnabled()) {
-			// Intercept the system out and copy any strings into our debug console so we can see it in the game.
 			mErrPrintStream = new PrintStream(System.out) {
 				public void print(String stringToPrint) {
 					if (!stringToPrint.isEmpty()) {
@@ -163,7 +162,6 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 				};
 			};
 
-			// TODO: There is something not quite right here. LWJGL error out is not being redirected/captured by our console logger.
 			System.setOut(mErrPrintStream);
 			System.setErr(mErrPrintStream);
 
@@ -314,7 +312,8 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 
 			} else if (mMessageFilterText.intersectsAA(core.HUD().getMouseCameraSpace()) && core.input().mouse().tryAcquireMouseLeftClick(mMessageFilterText.hashCode())) {
 
-			} else if (mFocusTimer > FOCUS_TIMER && core.input().mouse().mouseWindowCoords().y < openHeight() && core.input().mouse().tryAcquireMouseLeftClick(hashCode()) && core.input().mouse().isMouseOverThisComponent(hashCode())) {
+			} else if (mFocusTimer > FOCUS_TIMER && core.input().mouse().mouseWindowCoords().y < openHeight() && core.input().mouse().tryAcquireMouseLeftClick(hashCode())
+					&& core.input().mouse().isMouseOverThisComponent(hashCode())) {
 				mHasFocus = !mHasFocus;
 				resetCoolDownTimer();
 				core.input().keyboard().stopBufferedTextCapture();
@@ -370,6 +369,8 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
+		mOpenHeight = core.HUD().getHeight() * 0.3f;
+		
 		if (mConsoleState == CONSOLE_STATE.minimal)
 			mAutoScroll = true;
 
@@ -401,11 +402,10 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 		final var lNumberLinesInConsole = mFilterProcessed ? mProcessedMessages.size() : Debug.debugManager().logger().logLines().size();
 		fullContentArea().setCenter(mX, mY, mW - mScrollBar.width(), lNumberLinesInConsole * 25);
 
-		final var lDisplay = core.config().display();
-		// Update the bounds of the window view
-		mX = -lDisplay.windowWidth() * 0.5f;
-		mY = -lDisplay.windowHeight() * 0.5f;
-		mW = lDisplay.windowWidth();
+		final var lHudBounds = core.HUD().boundingRectangle();
+		mX = lHudBounds.left();
+		mY = lHudBounds.top();
+		mW = lHudBounds.width();
 		mH = openHeight();
 
 		mLowerBound = (int) -((mScrollBar.currentYPos()) / mConsoleLineHeight) + 1;
@@ -485,10 +485,11 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 			if (mInputText != null) {
 				final float INPUT_Y_OFFSET = 0;
 				mConsoleFont.drawText(PROMT_CHAR, -lDisplayConfig.windowWidth() * 0.5f + PADDING_LEFT, mY + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET, Z_DEPTH + 0.1f, ColorConstants.WHITE, 1f);
-				mConsoleFont.drawText(mInputText.toString(), -lDisplayConfig.windowWidth() * 0.5f + PADDING_LEFT + lInputTextXOffset, mY + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET, Z_DEPTH + 0.1f, ColorConstants.WHITE, 1f);
+				mConsoleFont.drawText(mInputText.toString(), -lDisplayConfig.windowWidth() * 0.5f + PADDING_LEFT + lInputTextXOffset, mY + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET, Z_DEPTH + 0.1f,
+						ColorConstants.WHITE, 1f);
 				if (mShowCaret && mHasFocus)
-					mConsoleFont.drawText(CARET_CHAR, -lDisplayConfig.windowWidth() * 0.5f + PADDING_LEFT + lInputTextXOffset + mConsoleFont.getStringWidth(mInputText.toString()), mY + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET,
-							Z_DEPTH + 0.1f, ColorConstants.WHITE, 1f);
+					mConsoleFont.drawText(CARET_CHAR, -lDisplayConfig.windowWidth() * 0.5f + PADDING_LEFT + lInputTextXOffset + mConsoleFont.getStringWidth(mInputText.toString()),
+							mY + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET, Z_DEPTH + 0.1f, ColorConstants.WHITE, 1f);
 			}
 		}
 
@@ -517,7 +518,7 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 		final float POSITION_OFFSET_TAG = 170;
 		final float POSITION_OFFSET_MESSAGE = 400;
 
-		final var lDisplayConfig = core.config().display();
+		final var lHudBb = core.HUD().boundingRectangle();
 
 		final int lMessageCount = messages.size();
 		if (messages != null && lMessageCount > 0) {
@@ -537,17 +538,17 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 
 					// Draw Timestamp
 					mConsoleFont.setWrapType(WrapType.LetterCountTrim);
-					mConsoleFont.drawText(lMessage.timestamp(), mX + POSITION_OFFSET_TIME, -lDisplayConfig.windowHeight() * 0.5f - lTextPosition, ZLayers.LAYER_DEBUG + 0.1f, mConsoleTextColor, 1f, 18);
+					mConsoleFont.drawText(lMessage.timestamp(), mX + POSITION_OFFSET_TIME, lHudBb.top() - lTextPosition, ZLayers.LAYER_DEBUG + 0.1f, mConsoleTextColor, 1f, 18);
 
 					// Draw TAG
 					mConsoleFont.setWrapType(WrapType.LetterCountTrim);
-					mConsoleFont.drawText(lMessage.tag(), mX + POSITION_OFFSET_TAG, -lDisplayConfig.windowHeight() * 0.5f - lTextPosition, ZLayers.LAYER_DEBUG + 0.1f, mConsoleTextColor, 1f, 18);
+					mConsoleFont.drawText(lMessage.tag(), mX + POSITION_OFFSET_TAG, lHudBb.top() - lTextPosition, ZLayers.LAYER_DEBUG + 0.1f, mConsoleTextColor, 1f, 18);
 
 					// Draw MESSAGE
 					mConsoleFont.setWrapType(WrapType.LetterCountTrim);
 					final float lCharWidth = mConsoleFont.getStringWidth("e");
 					final float lHorizontalSpace = core.HUD().getWidth() - POSITION_OFFSET_MESSAGE;
-					mConsoleFont.drawText(lMessage.message(), mX + POSITION_OFFSET_MESSAGE, -lDisplayConfig.windowHeight() * 0.5f - lTextPosition, ZLayers.LAYER_DEBUG + 0.1f, mConsoleTextColor, 1f, lHorizontalSpace / lCharWidth - 3);
+					mConsoleFont.drawText(lMessage.message(), mX + POSITION_OFFSET_MESSAGE, lHudBb.top() - lTextPosition, ZLayers.LAYER_DEBUG + 0.1f, mConsoleTextColor, 1f, lHorizontalSpace / lCharWidth - 3);
 				}
 			}
 		}
