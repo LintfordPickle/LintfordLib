@@ -95,6 +95,7 @@ public class DisplayManager extends IniFile {
 
 	private VideoSettings mDisplaySettings;
 	private GraphicsSettings mGraphicsSettings;
+	private long mOpenGlMainThreadId = -1;
 
 	private GLFWFramebufferSizeCallback mFrameBufferSizeCallback;
 	private GLFWVidMode mDesktopVideoMode;
@@ -124,6 +125,10 @@ public class DisplayManager extends IniFile {
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public long mainOpenGlThreadId() {
+		return mOpenGlMainThreadId;
+	}
 
 	public VideoSettings currentOptionsConfig() {
 		return mDisplaySettings;
@@ -239,7 +244,7 @@ public class DisplayManager extends IniFile {
 	}
 
 	public void update(LintfordCore core) {
-		if (mWindowResolutionChanged) {
+		if (mWindowResolutionChanged && stretchGameScreen() == false) {
 			synchronized (this) {
 				mLockedListeners = true;
 				final int lNumWindowResizeListeners = mWindowResizeListeners.size();
@@ -397,6 +402,10 @@ public class DisplayManager extends IniFile {
 		glfwSetWindowSizeLimits(mMasterWindowId, gameInfo.minimumWindowWidth(), gameInfo.minimumWindowHeight(), GLFW_DONT_CARE, GLFW_DONT_CARE);
 
 		// Make the openGL the current context
+		mOpenGlMainThreadId = Thread.currentThread().getId();
+		// The main opengl thread is important, because it allows us to ensure that we only initial OpenGl ocntainers
+		// on the main context thread (as containers are not shared with shared contexts).
+		Debug.debugManager().logger().i(getClass().getSimpleName(), "Main OpenGl thread id: " + mOpenGlMainThreadId);
 		makeContextCurrent(mMasterWindowId);
 
 		createGlCompatiblities();
@@ -472,8 +481,8 @@ public class DisplayManager extends IniFile {
 	}
 
 	/**
-	 * This line is critical for LWJGL's interoperation with GLFW's OpenGL context, or any context that is managed externally. LWJGL detects the context that is current in the current thread, creates the GLCapabilities instance and makes the OpenGL
-	 * bindings available for use.
+	 * This line is critical for LWJGL's interoperation with GLFW's OpenGL context, or any context that is managed externally. LWJGL detects the context that is current in the current thread, creates the GLCapabilities
+	 * instance and makes the OpenGL bindings available for use.
 	 */
 	public void createGlCompatiblities() {
 		GL.createCapabilities();
@@ -539,10 +548,11 @@ public class DisplayManager extends IniFile {
 		final var lResTag = (DebugStatTagString) Debug.debugManager().stats().getTagByID(DebugStats.TAG_ID_RES);
 		lResTag.setValue(String.format("%dx%d", width, height));
 
-//		int lNearestW = ((width % 2) == 0) ? width : width + 1;
-//		int lNearestH = ((height % 2) == 0) ? height : height + 1;
-
 		GL11.glViewport(0, 0, width, height);
+	}
+
+	public void reapplyGlViewport() {
+		GL11.glViewport(0, 0, mDisplaySettings.windowWidth(), mDisplaySettings.windowHeight());
 	}
 
 	private boolean validateSavedMonitor(GameInfo gamnfo, long monitorId) {
@@ -596,7 +606,8 @@ public class DisplayManager extends IniFile {
 
 		// TODO: Display toast to the user than an unsupported resolution was saved
 
-		Debug.debugManager().logger().w(getClass().getSimpleName(), "Non-standard resolution found (" + lLookingForWidth + "," + lLookingForHeight + ")! Defaulting back to " + mDisplaySettings.windowWidth() + "," + mDisplaySettings.windowHeight());
+		Debug.debugManager().logger().w(getClass().getSimpleName(),
+				"Non-standard resolution found (" + lLookingForWidth + "," + lLookingForHeight + ")! Defaulting back to " + mDisplaySettings.windowWidth() + "," + mDisplaySettings.windowHeight());
 	}
 
 	// --------------------------------------
