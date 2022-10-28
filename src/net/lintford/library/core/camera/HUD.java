@@ -159,15 +159,18 @@ public class HUD implements ICamera, IResizeListener {
 		if (mDisplayConfig.stretchGameScreen()) {
 			createOrtho(mDisplayConfig.baseGameResolutionWidth(), mDisplayConfig.baseGameResolutionHeight());
 
-			mBoundingRectangle.setCenterPosition(0, 0);
 			mBoundingRectangle.width(mDisplayConfig.baseGameResolutionWidth());
 			mBoundingRectangle.height(mDisplayConfig.baseGameResolutionHeight());
+			mBoundingRectangle.setCenterPosition(0, 0);
+
+			mWindowWidth = mDisplayConfig.baseGameResolutionWidth();
+			mWindowHeight = mDisplayConfig.baseGameResolutionHeight();
 		} else {
 			createOrtho(mWindowWidth, mWindowHeight);
 
-			mBoundingRectangle.setCenterPosition(0, 0);
 			mBoundingRectangle.width(mWindowWidth);
 			mBoundingRectangle.height(mWindowHeight);
+			mBoundingRectangle.setCenterPosition(0, 0);
 		}
 	}
 
