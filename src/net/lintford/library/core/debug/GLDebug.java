@@ -5,6 +5,18 @@ import org.lwjgl.opengl.GL30;
 
 public class GLDebug {
 
+	// --------------------------------------
+	// Constants
+	// --------------------------------------
+
+	public static final boolean GL_CHECKS_IN_LOADRESOURCES = true;
+	public static final boolean GL_CHECKS_IN_UNLOADRESOURCES = true;
+	public static final boolean GL_CHECKS_IN_DRAWS = true;
+
+	// --------------------------------------
+	// Methods
+	// --------------------------------------
+
 	public static boolean checkGLErrorsException() {
 		checkGLErrors("GLDebug", true);
 
@@ -27,12 +39,10 @@ public class GLDebug {
 	}
 
 	private static boolean checkGLErrors(String customTAG, boolean printStackTrace) {
-		// FIXME: Need to add some proper handling in all of these cases - there is probably some way to handle each of the
-		// cases in a graceful way which SHOULD NOT result in a runtime exception being thrown!
-
 		final int lGLError = GL11.glGetError();
 		if (lGLError == GL11.GL_NO_ERROR)
 			return false;
+
 		switch (lGLError) {
 		case GL11.GL_INVALID_ENUM:
 			Debug.debugManager().logger().e(GLDebug.class.getSimpleName(), String.format("GL_INVALID_ENUM (%d)", GL11.GL_INVALID_ENUM));
