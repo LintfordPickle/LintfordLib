@@ -228,6 +228,13 @@ public class DebugLogger {
 		}
 	}
 
+	public void printStacktrace(String tag) {
+		var st = Thread.currentThread().getStackTrace();
+		for (final var ste : st) {
+			log(DebugLogLevel.info, tag, ste.toString());
+		}
+	}
+
 	/** Appends the given message into a file at the given location. */
 	public boolean writeDebugMessageToFile(String tag, String timestamp, String message) {
 		if (!mDebugManager.debugManagerEnabled())
