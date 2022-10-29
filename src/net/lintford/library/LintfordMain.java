@@ -6,6 +6,7 @@ import static org.lwjgl.opengl.GL11.glClearColor;
 import org.lwjgl.opengl.GL11;
 
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.debug.Debug.DebugLogLevel;
 import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.batching.TextureBatchPCT;
 
@@ -16,7 +17,12 @@ public class LintfordMain extends LintfordCore {
 	// ---------------------------------------------
 
 	public static void main(String[] args) {
-		GameInfo lGameInfo = new GameInfo() {
+		final var lGameInfo = new GameInfo() {
+			@Override
+			public DebugLogLevel debugLogLevel() {
+				return DebugLogLevel.info;
+			}
+
 			@Override
 			public String applicationName() {
 				return "LDLibrary";
@@ -29,12 +35,22 @@ public class LintfordMain extends LintfordCore {
 
 			@Override
 			public int baseGameResolutionWidth() {
-				return 320;
+				return 640;
 			}
 
 			@Override
 			public int baseGameResolutionHeight() {
-				return 240;
+				return 480;
+			}
+
+			@Override
+			public int minimumWindowWidth() {
+				return baseGameResolutionWidth();
+			}
+
+			@Override
+			public int minimumWindowHeight() {
+				return baseGameResolutionHeight();
 			}
 
 			@Override
