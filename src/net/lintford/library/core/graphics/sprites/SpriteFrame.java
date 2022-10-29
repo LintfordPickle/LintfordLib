@@ -33,14 +33,6 @@ public class SpriteFrame extends Rectangle implements Serializable {
 		return mRotation;
 	}
 
-	public float getPivotPointX() {
-		return mPivotX;
-	}
-
-	public float getPivotPointY() {
-		return mPivotY;
-	}
-
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------

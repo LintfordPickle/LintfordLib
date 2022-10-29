@@ -206,6 +206,9 @@ public abstract class Screen implements IProcessMouseInput {
 		mRendererManager.increaseGlContentCount();
 
 		mCoreSpritesheet = resourceManager.spriteSheetManager().coreSpritesheet();
+
+		initializeGlContent();
+
 		mResourcesLoaded = true;
 	}
 
@@ -231,9 +234,6 @@ public abstract class Screen implements IProcessMouseInput {
 	}
 
 	public void update(LintfordCore core, boolean otherScreenHasFocus, boolean coveredByOtherScreen) {
-		if (!mRendererManager.isLoaded())
-			throw new RuntimeException("RendererManager not loaded");
-
 		if (mMouseClickTimer > 0)
 			mMouseClickTimer -= core.appTime().elapsedTimeMilli();
 
@@ -268,10 +268,6 @@ public abstract class Screen implements IProcessMouseInput {
 	}
 
 	public void draw(LintfordCore core) {
-		if (isGlInitialized() == false) {
-			initializeGlContent();
-		}
-
 		mRendererManager.draw(core);
 	}
 

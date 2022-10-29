@@ -105,6 +105,11 @@ public class ResourceManager {
 		return mSpriteGraphRepository;
 	}
 
+	// returns true if called on the main thread. otherwise false
+	public boolean isMainOpenGlThread() {
+		return Thread.currentThread().getId() == config().display().mainOpenGlThreadId();
+	}
+
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------

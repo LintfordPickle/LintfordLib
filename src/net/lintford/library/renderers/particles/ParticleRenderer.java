@@ -124,7 +124,10 @@ public class ParticleRenderer {
 	}
 
 	private void loadParticleContent(final ParticleSystemInstance particleSystemInst) {
-		ParticleSystemDefinition lParticleDefinition = particleSystemInst.definition();
+		if (!mResourcesLoaded)
+			return;
+
+		final var lParticleDefinition = particleSystemInst.definition();
 
 		mTexture = mResourceManager.textureManager().loadTexture(lParticleDefinition.textureName(), lParticleDefinition.textureFilename(), GL11.GL_NEAREST, mEntityGroupId);
 		mIsParticleLoaded = mTexture != null;

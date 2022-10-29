@@ -61,6 +61,7 @@ public class LineBatch {
 	private FloatBuffer mBuffer;
 	private boolean mIsDrawing;
 	private boolean mResourcesLoaded;
+	private boolean mAreGlContainersInitialized = false;
 	private int mGLLineType;
 	private float mGLLineWidth;
 	private boolean mAntiAliasing;
@@ -152,28 +153,45 @@ public class LineBatch {
 
 		mShader.loadResources(resourceManager);
 
-		if (mVaoId == -1)
-			mVaoId = GL30.glGenVertexArrays();
-
-		if (mVboId == -1)
+		if (mVboId == -1) {
 			mVboId = GL15.glGenBuffers();
+			Debug.debugManager().logger().v(getClass().getSimpleName(), "[OpenGl] glGenBuffers: vbo " + mVboId);
+		}
 
 		mBuffer = MemoryUtil.memAllocFloat(MAX_LINES * NUM_VERTS_PER_LINE * VertexDataStructure.elementCount);
 
-		initializeGlContent();
-
 		mResourcesLoaded = true;
+
+		if (resourceManager.isMainOpenGlThread())
+			initializeGlContainers();
+
 	}
 
-	private void initializeGlContent() {
+	private void initializeGlContainers() {
+		if (!mResourcesLoaded)
+			return;
+
+		if (mAreGlContainersInitialized)
+			return;
+
+		if (mVaoId == -1) {
+			mVaoId = GL30.glGenVertexArrays();
+			Debug.debugManager().logger().v(getClass().getSimpleName(), "[OpenGl] glGenVertexArrays: " + mVaoId);
+		}
+
 		GL30.glBindVertexArray(mVaoId);
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, mVboId);
+		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, MAX_LINES * NUM_VERTS_PER_LINE * VertexDataStructure.stride, GL15.GL_DYNAMIC_DRAW);
 
 		GL20.glEnableVertexAttribArray(0);
 		GL20.glEnableVertexAttribArray(1);
 
 		GL20.glVertexAttribPointer(0, VertexDataStructure.positionElementCount, GL11.GL_FLOAT, false, VertexDataStructure.stride, VertexDataStructure.positionByteOffset);
 		GL20.glVertexAttribPointer(1, VertexDataStructure.colorElementCount, GL11.GL_FLOAT, false, VertexDataStructure.stride, VertexDataStructure.colorByteOffset);
+
+		GL30.glBindVertexArray(0);
+
+		mAreGlContainersInitialized = true;
 	}
 
 	public void unloadResources() {
@@ -182,16 +200,16 @@ public class LineBatch {
 
 		mShader.unloadResources();
 
-		if (mVboId > -1) {
-			GL15.glDeleteBuffers(mVboId);
-			Debug.debugManager().logger().v("OpenGL", "LineBatch: Unloading VboId = " + mVboId);
-			mVboId = -1;
-		}
-
 		if (mVaoId > -1) {
 			GL30.glDeleteVertexArrays(mVaoId);
-			Debug.debugManager().logger().v("OpenGL", "LineBatch: Unloading VaoId = " + mVaoId);
+			Debug.debugManager().logger().v(getClass().getSimpleName(), "[OpenGl] glDeleteVertexArrays: " + mVaoId);
 			mVaoId = -1;
+		}
+
+		if (mVboId > -1) {
+			GL15.glDeleteBuffers(mVboId);
+			Debug.debugManager().logger().v(getClass().getSimpleName(), "[OpenGl] glDeleteBuffers VboId: " + mVboId);
+			mVboId = -1;
 		}
 
 		if (mBuffer != null) {
@@ -201,6 +219,7 @@ public class LineBatch {
 		}
 
 		mResourcesLoaded = false;
+		mAreGlContainersInitialized = false;
 	}
 
 	// --------------------------------------
@@ -384,12 +403,13 @@ public class LineBatch {
 
 		mBuffer.flip();
 
-		initializeGlContent();
+		if (!mAreGlContainersInitialized)
+			initializeGlContainers();
 
 		GL30.glBindVertexArray(mVaoId);
 
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, mVboId);
-		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, mBuffer, GL15.GL_DYNAMIC_DRAW);
+		GL15.glBufferSubData(GL15.GL_ARRAY_BUFFER, 0, mBuffer);
 
 		mShader.projectionMatrix(mCamera.projection());
 		mShader.viewMatrix(mCamera.view());
@@ -410,6 +430,7 @@ public class LineBatch {
 
 		GL11.glLineWidth(mGLLineWidth);
 		GL11.glDrawArrays(mGLLineType, 0, mVertexCount);
+
 		GL30.glBindVertexArray(0);
 
 		mShader.unbind();

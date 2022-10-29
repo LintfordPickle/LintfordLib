@@ -8,7 +8,6 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.audio.AudioFireAndForgetManager;
 import net.lintford.library.core.debug.Debug;
-import net.lintford.library.core.debug.GLDebug;
 import net.lintford.library.core.graphics.fonts.FontMetaData;
 import net.lintford.library.core.input.IInputClickedFocusTracker;
 import net.lintford.library.options.IResizeListener;
@@ -162,28 +161,20 @@ public class ScreenManager implements IInputClickedFocusManager {
 		core().config().display().addResizeListener(mResizeListener);
 
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "Finished loadingGLContent");
-		GLDebug.checkGLErrorsException(getClass().getSimpleName());
 
 		mResourcesLoaded = true;
 	}
 
 	public void unloadResources() {
-		GLDebug.checkGLErrorsException(getClass().getSimpleName());
 		final int lScreenCount = mScreens.size();
 		for (int i = 0; i < lScreenCount; i++) {
 			mScreens.get(i).unloadResources();
 		}
 
-		GLDebug.checkGLErrorsException(getClass().getSimpleName());
-
 		mToolTip.unloadResources();
-
-		GLDebug.checkGLErrorsException(getClass().getSimpleName());
 		mToastManager.unloadResources();
 
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "Finished ScreenManager.UnloadResources");
-
-		GLDebug.checkGLErrorsException(getClass().getSimpleName());
 
 		mResourcesLoaded = false;
 	}
@@ -344,15 +335,12 @@ public class ScreenManager implements IInputClickedFocusManager {
 		if (!screenToAdd.isResourcesLoaded()) {
 			screenToAdd.isExiting(false);
 
-			if (mIsinitialized && !screenToAdd.isinitialized()) {
+			if (mIsinitialized && !screenToAdd.isinitialized())
 				screenToAdd.initialize();
-			}
 
-			if (mResourcesLoaded) {
+			if (mResourcesLoaded)
 				screenToAdd.loadResources(mResourceManager);
 
-				GLDebug.checkGLErrorsException();
-			}
 		}
 
 		mScreensToAdd.add(screenToAdd);

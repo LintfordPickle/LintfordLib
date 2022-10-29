@@ -58,7 +58,8 @@ public class PointBatch {
 	private Matrix4f mModelMatrix;
 	private FloatBuffer mBuffer;
 	private boolean mIsDrawing;
-	private boolean mIsLoaded;
+	private boolean mAreResourcesLoaded;
+	private boolean mAreGlContainersInitialized = false;
 
 	// --------------------------------------
 	// Properties
@@ -82,7 +83,7 @@ public class PointBatch {
 		};
 
 		mModelMatrix = new Matrix4f();
-		mIsLoaded = false;
+		mAreResourcesLoaded = false;
 	}
 
 	// --------------------------------------
@@ -90,25 +91,33 @@ public class PointBatch {
 	// --------------------------------------
 
 	public void loadResources(ResourceManager resourceManager) {
-		if (mIsLoaded)
+		if (mAreResourcesLoaded)
 			return;
 
 		mShader.loadResources(resourceManager);
 
 		mBuffer = MemoryUtil.memAllocFloat(MAX_POINTS * NUM_VERTS_PER_POINT * VertexDataStructure.elementCount);
 
-		if (mVaoId == -1)
-			mVaoId = GL30.glGenVertexArrays();
-
-		if (mVboId == -1)
+		if (mVboId == -1) {
 			mVboId = GL15.glGenBuffers();
+			Debug.debugManager().logger().v(getClass().getSimpleName(), "[OpenGl] glGenBuffers: vbo " + mVboId);
+		}
 
-		initializeGlContent();
+		if (resourceManager.isMainOpenGlThread())
+			initializeGlContainers();
 
-		mIsLoaded = true;
+		mAreResourcesLoaded = true;
 	}
 
-	private void initializeGlContent() {
+	private void initializeGlContainers() {
+		if (mAreGlContainersInitialized)
+			return;
+
+		if (mVaoId == -1) {
+			mVaoId = GL30.glGenVertexArrays();
+			Debug.debugManager().logger().v(getClass().getSimpleName(), "[OpenGl] glGenVertexArrays: " + mVaoId);
+		}
+
 		GL30.glBindVertexArray(mVaoId);
 
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, mVboId);
@@ -119,10 +128,12 @@ public class PointBatch {
 
 		GL20.glVertexAttribPointer(0, VertexDataStructure.positionElementCount, GL11.GL_FLOAT, false, VertexDataStructure.stride, VertexDataStructure.positionByteOffset);
 		GL20.glVertexAttribPointer(1, VertexDataStructure.colorElementCount, GL11.GL_FLOAT, false, VertexDataStructure.stride, VertexDataStructure.colorByteOffset);
+
+		mAreGlContainersInitialized = true;
 	}
 
 	public void unloadResources() {
-		if (!mIsLoaded)
+		if (!mAreResourcesLoaded)
 			return;
 
 		mShader.unloadResources();
@@ -135,16 +146,18 @@ public class PointBatch {
 
 		if (mVboId > -1) {
 			GL15.glDeleteBuffers(mVboId);
-			Debug.debugManager().logger().v("OpenGL", "PointBatch: Unloading VboId = " + mVboId);
+			Debug.debugManager().logger().v(getClass().getSimpleName(), "[OpenGl] glDeleteBuffers VboId: " + mVboId);
 			mVboId = -1;
 		}
 
 		if (mBuffer != null) {
 			mBuffer.clear();
 			MemoryUtil.memFree(mBuffer);
+			mBuffer = null;
 		}
 
-		mIsLoaded = false;
+		mAreResourcesLoaded = false;
+		mAreGlContainersInitialized = false;
 	}
 
 	// --------------------------------------
@@ -198,7 +211,7 @@ public class PointBatch {
 	}
 
 	private void flush() {
-		if (!mIsLoaded)
+		if (!mAreResourcesLoaded)
 			return;
 
 		if (mVertexCount == 0)
@@ -206,12 +219,13 @@ public class PointBatch {
 
 		mBuffer.flip();
 
-		initializeGlContent();
+		if (!mAreGlContainersInitialized)
+			initializeGlContainers();
 
 		GL30.glBindVertexArray(mVaoId);
 
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, mVboId);
-		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, mBuffer, GL15.GL_DYNAMIC_DRAW);
+		GL15.glBufferSubData(GL15.GL_ARRAY_BUFFER, 0, mBuffer);
 
 		mShader.projectionMatrix(mCamera.projection());
 		mShader.viewMatrix(mCamera.view());

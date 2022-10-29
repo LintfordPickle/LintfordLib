@@ -12,7 +12,6 @@ import static org.lwjgl.glfw.GLFW.GLFW_VISIBLE;
 import static org.lwjgl.glfw.GLFW.glfwCreateWindow;
 import static org.lwjgl.glfw.GLFW.glfwDefaultWindowHints;
 import static org.lwjgl.glfw.GLFW.glfwDestroyWindow;
-import static org.lwjgl.glfw.GLFW.glfwGetPrimaryMonitor;
 import static org.lwjgl.glfw.GLFW.glfwGetVersionString;
 import static org.lwjgl.glfw.GLFW.glfwGetWindowAttrib;
 import static org.lwjgl.glfw.GLFW.glfwGetWindowSize;
@@ -282,10 +281,10 @@ public class DisplayManager extends IniFile {
 			saveConfig();
 		} else {
 			// Get the values we need
-			final var lSavedMonitorIndex = getLong("Settings", "MonitorIndex", glfwGetPrimaryMonitor());
+			// final var lSavedMonitorIndex = getLong("Settings", "MonitorIndex", glfwGetPrimaryMonitor());
 			// TODO: Verify the monitor index is (still?) valid
 
-			mDisplaySettings.monitorIndex(lSavedMonitorIndex);
+			// mDisplaySettings.monitorIndex(lSavedMonitorIndex);
 			mDisplaySettings.windowWidth(getInt(SECTION_NAME_SETTINGS, "WindowWidth", gameInfo.baseGameResolutionWidth()));
 			mDisplaySettings.windowHeight(getInt(SECTION_NAME_SETTINGS, "WindowHeight", gameInfo.baseGameResolutionHeight()));
 			mDisplaySettings.fullScreenIndex(getInt(SECTION_NAME_SETTINGS, "WindowFullscreen", VideoSettings.FULLSCREEN_NO_INDEX));
@@ -406,6 +405,7 @@ public class DisplayManager extends IniFile {
 		// The main opengl thread is important, because it allows us to ensure that we only initial OpenGl ocntainers
 		// on the main context thread (as containers are not shared with shared contexts).
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "Main OpenGl thread id: " + mOpenGlMainThreadId);
+
 		makeContextCurrent(mMasterWindowId);
 
 		createGlCompatiblities();
@@ -414,8 +414,6 @@ public class DisplayManager extends IniFile {
 
 		glfwShowWindow(mMasterWindowId);
 		mIsWindowFocused = glfwGetWindowAttrib(mMasterWindowId, GLFW_VISIBLE) != 0;
-
-		GLDebug.checkGLErrors();
 
 		// Create only one size callback thing
 		if (mFrameBufferSizeCallback == null) {
@@ -435,15 +433,12 @@ public class DisplayManager extends IniFile {
 			}
 		});
 
-		// Set our default OpenGL variables
 		oninitializeGL();
 
 		mStretchGameScreen = gameInfo.stretchGameResolution();
 
-		// Setup the UI to match the new resolution
 		changeResolution(mDisplaySettings.windowWidth(), mDisplaySettings.windowHeight());
 
-		// output debug information
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "   Window Position:   (" + mDisplaySettings.windowPositionX() + "," + mDisplaySettings.windowPositionY() + ")");
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "   Window Size:       (" + mDisplaySettings.windowWidth() + "," + mDisplaySettings.windowHeight() + ")");
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "   Desktop Size:      (" + mDesktopWidth + "," + mDesktopHeight + ")");
@@ -452,6 +447,8 @@ public class DisplayManager extends IniFile {
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "   Aspect Radio Index: " + mDisplaySettings.aspectRatioIndex());
 
 		createSharedContext();
+
+		GLDebug.checkGLErrorsException();
 
 		return mMasterWindowId;
 	}

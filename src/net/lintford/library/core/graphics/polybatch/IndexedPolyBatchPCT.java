@@ -5,7 +5,6 @@ import java.nio.IntBuffer;
 import java.util.List;
 
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
@@ -14,7 +13,6 @@ import org.lwjgl.system.MemoryUtil;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.camera.ICamera;
 import net.lintford.library.core.debug.Debug;
-import net.lintford.library.core.debug.stats.DebugStats;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.Color;
 import net.lintford.library.core.graphics.shaders.ShaderMVP_PCT;
@@ -78,6 +76,7 @@ public class IndexedPolyBatchPCT {
 	protected IntBuffer mIndexBuffer;
 	protected boolean mIsDrawing;
 	protected boolean mResourcesLoaded;
+	protected boolean mAreGlContainersInitialized = false;
 
 	// --------------------------------------
 	// Properties
@@ -102,7 +101,7 @@ public class IndexedPolyBatchPCT {
 		mResourcesLoaded = false;
 	}
 
-	// --------------------------------------1
+	// --------------------------------------
 	// Core-Methods
 	// --------------------------------------
 
@@ -111,9 +110,6 @@ public class IndexedPolyBatchPCT {
 			return;
 
 		mShader.loadResources(resourceManager);
-
-		if (mVaoId == -1)
-			mVaoId = GL30.glGenVertexArrays();
 
 		if (mVioId == -1)
 			mVioId = GL15.glGenBuffers();
@@ -124,12 +120,27 @@ public class IndexedPolyBatchPCT {
 		mBuffer = MemoryUtil.memAllocFloat(MAX_TRIS * NUM_VERTS_PER_TRI * VertexDefinition.elementCount);
 		mIndexBuffer = MemoryUtil.memAllocInt(MAX_TRIS * NUM_VERTS_PER_TRI);
 
-		initializeGlContent();
-
 		mResourcesLoaded = true;
+
+		if (resourceManager.isMainOpenGlThread())
+			initializeGlContainers();
+
 	}
 
-	private void initializeGlContent() {
+	private void initializeGlContainers() {
+		if (!mResourcesLoaded) {
+			Debug.debugManager().logger().i(getClass().getSimpleName(), "Cannot create Gl containers until resources have been loaded");
+			return;
+		}
+
+		if (mAreGlContainersInitialized)
+			return;
+
+		if (mVaoId == -1) {
+			mVaoId = GL30.glGenVertexArrays();
+			Debug.debugManager().logger().v(getClass().getSimpleName(), "[OpenGl] glGenVertexArrays: " + mVaoId);
+		}
+
 		GL30.glBindVertexArray(mVaoId);
 
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, mVboId);
@@ -286,45 +297,47 @@ public class IndexedPolyBatchPCT {
 		if (!mResourcesLoaded || !mIsDrawing)
 			return;
 
-		if (mIndexCount == 0)
-			return;
-
-		if (mCurrentTexID != -1) {
-			GL13.glActiveTexture(GL13.GL_TEXTURE0);
-			GL11.glBindTexture(GL11.GL_TEXTURE_2D, mCurrentTexID);
-		} else {
-			return;
-		}
-
-		mBuffer.flip();
-		mIndexBuffer.flip();
-
-		GL30.glBindVertexArray(mVaoId);
-
-		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, mVboId);
-		GL15.glBufferSubData(GL15.GL_ARRAY_BUFFER, 0, mBuffer);
-
-		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, mVioId);
-		GL15.glBufferSubData(GL15.GL_ARRAY_BUFFER, 0, mIndexBuffer);
-
-		mShader.projectionMatrix(mCamera.projection());
-		mShader.viewMatrix(mCamera.view());
-		mShader.modelMatrix(mModelMatrix);
-
-		mShader.bind();
-
-		{
-			Debug.debugManager().stats().incTag(DebugStats.TAG_ID_DRAWCALLS);
-
-			final int lNumTris = mIndexCount / NUM_VERTS_PER_TRI;
-			Debug.debugManager().stats().incTag(DebugStats.TAG_ID_TRIS, lNumTris);
-			Debug.debugManager().stats().incTag(DebugStats.TAG_ID_VERTS, mVertexCount);
-		}
-
-		GL11.glDrawElements(GL11.GL_TRIANGLES, mIndexCount, GL11.GL_UNSIGNED_INT, 0);
-
-		mShader.unbind();
-
-		GL30.glBindVertexArray(0);
+		// TODO: this causes crashes
+		
+//		if (!mAreGlContainersInitialized)
+//			initializeGlContainers();
+//
+//		mBuffer.flip();
+//		mIndexBuffer.flip();
+//
+//		GL30.glBindVertexArray(mVaoId);
+//
+//		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, mVboId);
+//		GL15.glBufferSubData(GL15.GL_ARRAY_BUFFER, 0, mBuffer);
+//
+//		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, mVioId);
+//		GL15.glBufferSubData(GL15.GL_ARRAY_BUFFER, 0, mIndexBuffer);
+//
+//		if (mCurrentTexID != -1) {
+//			GL13.glActiveTexture(GL13.GL_TEXTURE0);
+//			GL11.glBindTexture(GL11.GL_TEXTURE_2D, mCurrentTexID);
+//		} else {
+//			return;
+//		}
+//
+//		mShader.projectionMatrix(mCamera.projection());
+//		mShader.viewMatrix(mCamera.view());
+//		mShader.modelMatrix(mModelMatrix);
+//
+//		mShader.bind();
+//
+//		{
+//			Debug.debugManager().stats().incTag(DebugStats.TAG_ID_DRAWCALLS);
+//
+//			final int lNumTris = mIndexCount / NUM_VERTS_PER_TRI;
+//			Debug.debugManager().stats().incTag(DebugStats.TAG_ID_TRIS, lNumTris);
+//			Debug.debugManager().stats().incTag(DebugStats.TAG_ID_VERTS, mVertexCount);
+//		}
+//
+//		GL11.glDrawElements(GL11.GL_TRIANGLES, mIndexCount, GL11.GL_UNSIGNED_INT, 0);
+//
+//		mShader.unbind();
+//
+//		GL30.glBindVertexArray(0);
 	}
 }

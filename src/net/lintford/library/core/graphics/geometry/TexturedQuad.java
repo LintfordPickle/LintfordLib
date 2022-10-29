@@ -46,6 +46,7 @@ public class TexturedQuad {
 	protected float mHeight;
 	protected float mZDepth;
 	protected FloatBuffer mBuffer;
+	private boolean mAreGlContainersInitialized = false;
 
 	// --------------------------------------
 	// Properties
@@ -104,18 +105,28 @@ public class TexturedQuad {
 			return;
 
 		mBuffer = MemoryUtil.memAllocFloat(6 * VertexDefinition.elementCount);
-
-		initializeGlContent();
+		if (mVboId == -1) {
+			mVboId = GL15.glGenBuffers();
+			Debug.debugManager().logger().v(getClass().getSimpleName(), "[OpenGl] glGenBuffers: vbo " + mVboId);
+		}
 
 		mResourcesLoaded = true;
+
+		if (resourceManager.isMainOpenGlThread())
+			initializeGlContainers();
 	}
 
-	private void initializeGlContent() {
-		if (mVaoId == -1)
-			mVaoId = GL30.glGenVertexArrays();
+	private void initializeGlContainers() {
+		if (!mResourcesLoaded)
+			return;
 
-		if (mVboId == -1)
-			mVboId = GL15.glGenBuffers();
+		if (mAreGlContainersInitialized)
+			return;
+
+		if (mVaoId == -1) {
+			mVaoId = GL30.glGenVertexArrays();
+			Debug.debugManager().logger().v(getClass().getSimpleName(), "[OpenGl] glGenVertexArrays: " + mVaoId);
+		}
 
 		loadGLGeometry();
 
@@ -131,12 +142,11 @@ public class TexturedQuad {
 		GL20.glVertexAttribPointer(1, VertexDefinition.textureElementCount, GL11.GL_FLOAT, false, VertexDefinition.stride, VertexDefinition.textureByteOffset);
 
 		GL30.glBindVertexArray(0);
+
+		mAreGlContainersInitialized = true;
 	}
 
 	private void loadGLGeometry() {
-		if (mVboId == -1)
-			mVboId = GL15.glGenBuffers();
-
 		// vert 0
 		final var x0 = -.5f;
 		final var y0 = .5f;
@@ -203,18 +213,19 @@ public class TexturedQuad {
 		}
 
 		mResourcesLoaded = false;
+		mAreGlContainersInitialized = false;
 	}
 
 	public void cleanup() {
 		if (mVboId > -1) {
 			GL15.glDeleteBuffers(mVboId);
-			Debug.debugManager().logger().v("OpenGL", "TexturedQuad: Unloading VboId = " + mVboId);
+			Debug.debugManager().logger().v(getClass().getSimpleName(), "[OpenGl] glDeleteBuffers VboId: " + mVboId);
 			mVaoId = -1;
 		}
 
 		if (mVaoId > -1) {
 			GL30.glDeleteVertexArrays(mVaoId);
-			Debug.debugManager().logger().v("OpenGL", "TexturedQuad: Unloading VaoId = " + mVaoId);
+			Debug.debugManager().logger().v(getClass().getSimpleName(), "[OpenGl] glDeleteVertexArrays: " + mVaoId);
 			mVboId = -1;
 		}
 	}
@@ -224,6 +235,9 @@ public class TexturedQuad {
 	// --------------------------------------
 
 	public void draw(LintfordCore core) {
+		if (!mAreGlContainersInitialized)
+			initializeGlContainers();
+
 		GL30.glBindVertexArray(mVaoId);
 
 		{

@@ -10,7 +10,6 @@ import net.lintford.library.controllers.hud.UiStructureController;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.Debug;
-import net.lintford.library.core.debug.GLDebug;
 import net.lintford.library.core.graphics.batching.SpriteBatch;
 import net.lintford.library.core.graphics.batching.TextureBatchPCT;
 import net.lintford.library.core.graphics.fonts.FontMetaData;
@@ -302,8 +301,6 @@ public class RendererManager implements IInputClickedFocusManager {
 			mDisplayConfig.addResizeListener(mResizeListener);
 		}
 
-		GLDebug.checkGLErrorsException(getClass().getSimpleName());
-
 		mResourcesLoaded = true;
 	}
 
@@ -313,7 +310,6 @@ public class RendererManager implements IInputClickedFocusManager {
 
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "Unloading Resources for all renderers");
 
-		// Unloaded each of the renderers
 		final int lRendererCount = mRenderers.size();
 		for (int i = 0; i < lRendererCount; i++) {
 			mRenderers.get(i).unloadResources();
@@ -371,11 +367,6 @@ public class RendererManager implements IInputClickedFocusManager {
 			if (!lRenderer.isActive())
 				continue;
 
-			if (!lRenderer.isLoaded() && mResourcesLoaded) {
-				Debug.debugManager().logger().w(getClass().getSimpleName(), lRenderer.getClass().getSimpleName());
-				lRenderer.loadResources(mResourceManager);
-			}
-
 			lRenderer.update(core);
 		}
 
@@ -384,11 +375,6 @@ public class RendererManager implements IInputClickedFocusManager {
 			final var lWindowRenderer = mWindowRenderers.get(i);
 			if (!lWindowRenderer.isActive())
 				continue;
-
-			if (!lWindowRenderer.isLoaded() && mResourcesLoaded) {
-				Debug.debugManager().logger().w(getClass().getSimpleName(), lWindowRenderer.getClass().getSimpleName());
-				lWindowRenderer.loadResources(mResourceManager);
-			}
 
 			lWindowRenderer.update(core);
 		}
@@ -402,12 +388,6 @@ public class RendererManager implements IInputClickedFocusManager {
 				if (!lRenderer.isActive() || !lRenderer.isManagedDraw())
 					continue;
 
-				if (!lRenderer.isLoaded() && mResourcesLoaded) {
-					Debug.debugManager().logger().w(getClass().getSimpleName(), "Reloading content in Update() (BaseRenderer) ");
-					lRenderer.loadResources(mResourceManager);
-				}
-
-				// Update the renderer
 				lRenderer.draw(core);
 			}
 		}
@@ -419,12 +399,6 @@ public class RendererManager implements IInputClickedFocusManager {
 				if (!lWindow.isActive() || !lWindow.isOpen())
 					continue;
 
-				if (!lWindow.isLoaded() && mResourcesLoaded) {
-					Debug.debugManager().logger().w(getClass().getSimpleName(), "Reloading content in Update() (UIWindow) ");
-					lWindow.loadResources(mResourceManager);
-				}
-
-				// Update the renderer
 				lWindow.draw(core);
 			}
 		}

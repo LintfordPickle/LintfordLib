@@ -165,7 +165,7 @@ public class RenderTarget {
 		// Create and bind framebuffer
 		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, mFramebufferID);
 
-		// Create and bind geometry texture
+		// Create and bind texture
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, mColorTextureID);
 
 		// Create an empty texture
@@ -200,25 +200,25 @@ public class RenderTarget {
 				throw new RuntimeException("GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT");
 
 			case GL30.GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
-				throw new RuntimeException("GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT ");
+				throw new RuntimeException("GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT");
 
 			case GL30.GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER:
-				throw new RuntimeException("GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER ");
+				throw new RuntimeException("GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER");
 
 			case GL30.GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE:
-				throw new RuntimeException("GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE ");
+				throw new RuntimeException("GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE");
 
 			case GL30.GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER:
-				throw new RuntimeException("GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER  ");
+				throw new RuntimeException("GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER");
 
 			case GL30.GL_FRAMEBUFFER_UNSUPPORTED:
-				throw new RuntimeException("GL_FRAMEBUFFER_UNSUPPORTED  ");
+				throw new RuntimeException("GL_FRAMEBUFFER_UNSUPPORTED");
 
 			case GL30.GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE:
-				throw new RuntimeException("GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE   ");
+				throw new RuntimeException("GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE");
 
 			case GL30.GL_FRAMEBUFFER_UNDEFINED:
-				throw new RuntimeException("GL_FRAMEBUFFER_UNDEFINED    ");
+				throw new RuntimeException("GL_FRAMEBUFFER_UNDEFINED");
 			}
 		}
 
@@ -283,7 +283,6 @@ public class RenderTarget {
 			Debug.debugManager().logger().i(getClass().getSimpleName(), "  GL_TEXTURE_MIN_FILTER: " + mTextureFilter);
 			Debug.debugManager().logger().i(getClass().getSimpleName(), "  GL_TEXTURE_WRAP_S: " + GL12.GL_CLAMP_TO_EDGE);
 			Debug.debugManager().logger().i(getClass().getSimpleName(), "  GL_TEXTURE_WRAP_T: " + GL12.GL_CLAMP_TO_EDGE);
-
 		}
 
 		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, mFramebufferID);
@@ -303,7 +302,6 @@ public class RenderTarget {
 		if (mDepthBufferEnabled) {
 			GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, mDepthTextureID);
 			GL30.glRenderbufferStorage(GL30.GL_RENDERBUFFER, GL30.GL_DEPTH24_STENCIL8, mWidth, mHeight);
-
 		}
 
 		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
@@ -322,7 +320,6 @@ public class RenderTarget {
 
 		} else {
 			mTextureBufferData = MemoryUtil.memAllocFloat(lNewSize);
-
 		}
 	}
 

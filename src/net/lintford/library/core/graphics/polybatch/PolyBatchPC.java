@@ -73,8 +73,8 @@ public class PolyBatchPC {
 	}
 
 	/**
-	 * Specifies what kind of primitives to render. Symbolic constants GL_POINTS, GL_LINE_STRIP, GL_LINE_LOOP, GL_LINES, GL_LINE_STRIP_ADJACENCY, GL_LINES_ADJACENCY, GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_TRIANGLES, GL_TRIANGLE_STRIP_ADJACENCY,
-	 * GL_TRIANGLES_ADJACENCY and GL_PATCHES are accepted.
+	 * Specifies what kind of primitives to render. Symbolic constants GL_POINTS, GL_LINE_STRIP, GL_LINE_LOOP, GL_LINES, GL_LINE_STRIP_ADJACENCY, GL_LINES_ADJACENCY, GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_TRIANGLES,
+	 * GL_TRIANGLE_STRIP_ADJACENCY, GL_TRIANGLES_ADJACENCY and GL_PATCHES are accepted.
 	 */
 	public void lineMode(int lineType) {
 		mLineMode = lineType;
@@ -113,11 +113,15 @@ public class PolyBatchPC {
 
 		mShader.loadResources(resourceManager);
 
-		if (mVaoId == -1)
+		if (mVaoId == -1) {
 			mVaoId = GL30.glGenVertexArrays();
+			Debug.debugManager().logger().v(getClass().getSimpleName(), "[OpenGl] glGenVertexArrays: " + mVaoId);
+		}
 
-		if (mVboId == -1)
+		if (mVboId == -1) {
 			mVboId = GL15.glGenBuffers();
+			Debug.debugManager().logger().v(getClass().getSimpleName(), "[OpenGl] glGenBuffers: vbo " + mVboId);
+		}
 
 		mBuffer = MemoryUtil.memAllocFloat(MAX_LINES * NUM_VERTS_PER_LINE * VertexDefinition.elementCount);
 
@@ -147,21 +151,21 @@ public class PolyBatchPC {
 
 		mShader.unloadResources();
 
-		if (mVaoId > -1) {
-			GL30.glDeleteVertexArrays(mVaoId);
-			Debug.debugManager().logger().v("OpenGL", "PolyBatch: Unloading VaoId = " + mVaoId);
-			mVaoId = -1;
-		}
-
 		if (mVboId > -1) {
 			GL15.glDeleteBuffers(mVboId);
-			Debug.debugManager().logger().v("OpenGL", "PolyBatch: Unloading VboId = " + mVboId);
+			Debug.debugManager().logger().v(getClass().getSimpleName(), "[OpenGl] glDeleteBuffers VboId: " + mVboId);
 			mVboId = -1;
 		}
 
 		if (mBuffer != null) {
 			mBuffer.clear();
 			MemoryUtil.memFree(mBuffer);
+		}
+
+		if (mVaoId > -1) {
+			GL30.glDeleteVertexArrays(mVaoId);
+			Debug.debugManager().logger().v(getClass().getSimpleName(), "[OpenGl] glDeleteVertexArrays: " + mVaoId);
+			mVaoId = -1;
 		}
 
 		Debug.debugManager().stats().decTag(DebugStats.TAG_ID_BATCH_OBJECTS);

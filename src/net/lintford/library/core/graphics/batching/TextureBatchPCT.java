@@ -62,6 +62,28 @@ public class TextureBatchPCT {
 	protected static final String VERT_FILENAME = "/res/shaders/shader_batch_pct.vert";
 	protected static final String FRAG_FILENAME = "/res/shaders/shader_batch_pct.frag";
 
+	private static IntBuffer mIndexBuffer;
+
+	private static IntBuffer getIndexBuffer() {
+		if (mIndexBuffer == null) {
+			mIndexBuffer = MemoryUtil.memAllocInt(MAX_SPRITES * NUM_INDICES_PER_SPRITE);
+
+			mIndexBuffer.clear();
+			for (int i = 0; i < MAX_SPRITES; i += NUM_VERTICES_PER_SPRITE) {
+				mIndexBuffer.put(i + 1);
+				mIndexBuffer.put(i + 0);
+				mIndexBuffer.put(i + 2);
+
+				mIndexBuffer.put(i + 2);
+				mIndexBuffer.put(i + 0);
+				mIndexBuffer.put(i + 3);
+			}
+			mIndexBuffer.flip();
+		}
+
+		return mIndexBuffer;
+	}
+
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
@@ -73,7 +95,6 @@ public class TextureBatchPCT {
 	protected ShaderMVP_PCT mCustomShader;
 
 	protected FloatBuffer mBuffer;
-	protected IntBuffer mIndexBuffer;
 
 	private boolean mBlendEnabled;
 	private int mBlendFuncSrcFactor;
@@ -86,6 +107,7 @@ public class TextureBatchPCT {
 
 	protected ResourceManager mResourceManager;
 	private boolean mResourcesLoaded;
+	private boolean mAreGlContainersInitialized = false;
 	protected boolean mIsDrawing;
 
 	protected int mIndexCount;
@@ -108,12 +130,12 @@ public class TextureBatchPCT {
 		return mResourcesLoaded;
 	}
 
-	public void modelMatrix(Matrix4f pNewMatrix) {
-		if (pNewMatrix == null) {
+	public void modelMatrix(Matrix4f newModelMatrix) {
+		if (newModelMatrix == null) {
 			mModelMatrix = new Matrix4f();
 			mModelMatrix.setIdentity();
 		} else {
-			mModelMatrix = pNewMatrix;
+			mModelMatrix = newModelMatrix;
 		}
 	}
 
@@ -121,13 +143,13 @@ public class TextureBatchPCT {
 		return mModelMatrix;
 	}
 
-	public void setGlBlendEnabled(boolean pBlendEnabled) {
-		mBlendEnabled = pBlendEnabled;
+	public void setGlBlendEnabled(boolean blendEnabled) {
+		mBlendEnabled = blendEnabled;
 	}
 
-	public void setGlBlendFactor(int pSrcFactor, int pDstFactor) {
-		mBlendFuncSrcFactor = pSrcFactor;
-		mBlendFuncDstFactor = pDstFactor;
+	public void setGlBlendFactor(int sourceFactor, int destFactor) {
+		mBlendFuncSrcFactor = sourceFactor;
+		mBlendFuncDstFactor = destFactor;
 	}
 
 	// --------------------------------------
@@ -137,11 +159,11 @@ public class TextureBatchPCT {
 	public TextureBatchPCT() {
 		mShader = new ShaderMVP_PCT("TextureBatchShader", VERT_FILENAME, FRAG_FILENAME) {
 			@Override
-			protected void bindAtrributeLocations(int pShaderID) {
-				GL20.glBindAttribLocation(pShaderID, 0, "inPosition");
-				GL20.glBindAttribLocation(pShaderID, 1, "inColor");
-				GL20.glBindAttribLocation(pShaderID, 2, "inTexCoord");
-				GL20.glBindAttribLocation(pShaderID, 3, "inTexIndex");
+			protected void bindAtrributeLocations(int shaderID) {
+				GL20.glBindAttribLocation(shaderID, 0, "inPosition");
+				GL20.glBindAttribLocation(shaderID, 1, "inColor");
+				GL20.glBindAttribLocation(shaderID, 2, "inTexCoord");
+				GL20.glBindAttribLocation(shaderID, 3, "inTexIndex");
 			}
 
 			@Override
@@ -168,56 +190,56 @@ public class TextureBatchPCT {
 	// Core-Methods
 	// --------------------------------------
 
-	public void loadResources(ResourceManager pResourceManager) {
+	public void loadResources(ResourceManager resourceManager) {
 		if (mResourcesLoaded)
 			return;
 
-		mResourceManager = pResourceManager;
+		mResourceManager = resourceManager;
 
-		mShader.loadResources(pResourceManager);
-
-		if (mVaoId == -1)
-			mVaoId = GL30.glGenVertexArrays();
-
-		if (mVboId == -1)
-			mVboId = GL15.glGenBuffers();
-
-		if (mVioId == -1)
-			mVioId = GL15.glGenBuffers();
+		mShader.loadResources(resourceManager);
 
 		mBuffer = MemoryUtil.memAllocFloat(MAX_SPRITES * NUM_VERTICES_PER_SPRITE * VertexDefinition.elementCount);
-		mIndexBuffer = MemoryUtil.memAllocInt(MAX_SPRITES * NUM_INDICES_PER_SPRITE);
+		getIndexBuffer();
 
-		initializeGlContent();
+		if (mVboId == -1) {
+			mVboId = GL15.glGenBuffers();
+			Debug.debugManager().logger().v(getClass().getSimpleName(), "[OpenGl] glGenBuffers: vbo " + mVboId);
+		}
+
+		if (mVioId == -1) {
+			mVioId = GL15.glGenBuffers();
+			Debug.debugManager().logger().v(getClass().getSimpleName(), "[OpenGl] glGenBuffers: vio " + mVioId);
+		}
 
 		mResourcesLoaded = true;
+
+		if (resourceManager.isMainOpenGlThread())
+			initializeGlContainers();
 
 		Debug.debugManager().stats().incTag(DebugStats.TAG_ID_BATCH_OBJECTS);
 	}
 
-	private void initializeGlContent() {
+	/**
+	 * OpenGl container objects (Array objects/framebuffers/program pipeline/transform feedback) are not shared between OpenGl contexts and must be created on the main thread.
+	 */
+	private void initializeGlContainers() {
+		if (!mResourcesLoaded) {
+			Debug.debugManager().logger().i(getClass().getSimpleName(), "Cannot create Gl containers until resources have been loaded");
+			return;
+		}
+
+		if (mAreGlContainersInitialized)
+			return;
+
+		if (mVaoId == -1) {
+			mVaoId = GL30.glGenVertexArrays();
+			Debug.debugManager().logger().v(getClass().getSimpleName(), "[OpenGl] glGenVertexArrays: " + mVaoId);
+		}
+
 		GL30.glBindVertexArray(mVaoId);
 
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, mVboId);
 		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, MAX_SPRITES * NUM_VERTICES_PER_SPRITE * VertexDefinition.stride, GL15.GL_DYNAMIC_DRAW);
-
-		{ // prepare the static indices
-			mIndexBuffer.clear();
-			for (int i = 0; i < MAX_SPRITES; i += NUM_VERTICES_PER_SPRITE) {
-				mIndexBuffer.put(i + 1);
-				mIndexBuffer.put(i + 0);
-				mIndexBuffer.put(i + 2);
-
-				mIndexBuffer.put(i + 2);
-				mIndexBuffer.put(i + 0);
-				mIndexBuffer.put(i + 3);
-
-			}
-			mIndexBuffer.flip();
-		}
-
-		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, mVioId);
-		GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, mIndexBuffer, GL15.GL_STATIC_DRAW);
 
 		GL20.glEnableVertexAttribArray(0);
 		GL20.glVertexAttribPointer(0, VertexDefinition.positionElementCount, GL11.GL_FLOAT, false, VertexDefinition.stride, VertexDefinition.positionByteOffset);
@@ -231,7 +253,11 @@ public class TextureBatchPCT {
 		GL20.glEnableVertexAttribArray(3);
 		GL20.glVertexAttribPointer(3, VertexDefinition.textureIndexElementCount, GL11.GL_FLOAT, false, VertexDefinition.stride, VertexDefinition.textureIndexByteOffset);
 
+		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, mVioId);
+		GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, getIndexBuffer(), GL15.GL_STATIC_DRAW);
+
 		GL30.glBindVertexArray(0);
+		mAreGlContainersInitialized = true;
 	}
 
 	public void unloadResources() {
@@ -239,19 +265,23 @@ public class TextureBatchPCT {
 			return;
 
 		mShader.unloadResources();
+
+		if (mVaoId > -1) {
+			GL30.glDeleteVertexArrays(mVaoId);
+			Debug.debugManager().logger().v(getClass().getSimpleName(), "[OpenGl] glDeleteVertexArrays: " + mVaoId);
+			mVaoId = -1;
+		}
+
 		if (mVboId > -1) {
 			GL15.glDeleteBuffers(mVboId);
+			Debug.debugManager().logger().v(getClass().getSimpleName(), "[OpenGl] glDeleteBuffers VboId: " + mVboId);
 			mVboId = -1;
 		}
 
 		if (mVioId > -1) {
 			GL15.glDeleteBuffers(mVioId);
+			Debug.debugManager().logger().v(getClass().getSimpleName(), "[OpenGl] glDeleteBuffers VioId: " + mVioId);
 			mVioId = -1;
-		}
-
-		if (mVaoId > -1) {
-			GL30.glDeleteVertexArrays(mVaoId);
-			mVaoId = -1;
 		}
 
 		if (mBuffer != null) {
@@ -260,12 +290,7 @@ public class TextureBatchPCT {
 			mBuffer = null;
 		}
 
-		if (mIndexBuffer != null) {
-			mIndexBuffer.clear();
-			MemoryUtil.memFree(mIndexBuffer);
-			mIndexBuffer = null;
-		}
-
+		mAreGlContainersInitialized = false;
 		mResourcesLoaded = false;
 
 		Debug.debugManager().stats().decTag(DebugStats.TAG_ID_BATCH_OBJECTS);
@@ -317,9 +342,29 @@ public class TextureBatchPCT {
 
 		mBuffer.flip();
 
+		if (GLDebug.GL_CHECKS_IN_DRAWS) {
+			GLDebug.checkGLErrorsException(getClass().getSimpleName() + ":" + getClass().getEnclosingMethod());
+		}
+
+		if (!mAreGlContainersInitialized)
+			initializeGlContainers();
+
+		if (GLDebug.GL_CHECKS_IN_DRAWS) {
+			GLDebug.checkGLErrorsException(getClass().getSimpleName() + ":" + getClass().getEnclosingMethod());
+		}
+
 		GL30.glBindVertexArray(mVaoId);
+
+		if (GLDebug.GL_CHECKS_IN_DRAWS) {
+			GLDebug.checkGLErrorsException(getClass().getSimpleName() + ":" + getClass().getEnclosingMethod());
+		}
+
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, mVboId);
 		GL15.glBufferSubData(GL15.GL_ARRAY_BUFFER, 0, mBuffer);
+
+		if (GLDebug.GL_CHECKS_IN_DRAWS) {
+			GLDebug.checkGLErrorsException(getClass().getSimpleName() + ":" + getClass().getEnclosingMethod());
+		}
 
 		if (mBlendEnabled) {
 			GL11.glEnable(GL11.GL_BLEND);
@@ -344,14 +389,18 @@ public class TextureBatchPCT {
 			Debug.debugManager().stats().incTag(DebugStats.TAG_ID_TRIS, lNumQuads * 2);
 		}
 
-		GLDebug.checkGLErrorsException(getClass().getSimpleName());
-
 		GL11.glDrawElements(GL11.GL_TRIANGLES, mIndexCount, GL11.GL_UNSIGNED_INT, 0);
 
-		GLDebug.checkGLErrorsException(getClass().getSimpleName());
+		if (GLDebug.GL_CHECKS_IN_DRAWS) {
+			GLDebug.checkGLErrorsException(getClass().getSimpleName() + ":" + getClass().getEnclosingMethod());
+		}
 
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 		GL30.glBindVertexArray(0);
+
+		if (GLDebug.GL_CHECKS_IN_DRAWS) {
+			GLDebug.checkGLErrorsException(getClass().getSimpleName() + ":" + getClass().getEnclosingMethod());
+		}
 
 		mCustomShader.unbind();
 
@@ -360,6 +409,10 @@ public class TextureBatchPCT {
 		mTextureSlots.clear();
 
 		_countDebugStats = true;
+
+		if (GLDebug.GL_CHECKS_IN_DRAWS) {
+			GLDebug.checkGLErrorsException(getClass().getSimpleName() + ":" + getClass().getEnclosingMethod());
+		}
 	}
 
 	// ---
