@@ -1,15 +1,11 @@
 package net.lintford.library.renderers.particles;
 
-import java.util.List;
-
 import org.lwjgl.opengl.GL11;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.graphics.batching.TextureBatchPCT;
 import net.lintford.library.core.graphics.textures.Texture;
-import net.lintford.library.core.particles.Particle;
-import net.lintford.library.core.particles.particlesystems.ParticleSystemDefinition;
 import net.lintford.library.core.particles.particlesystems.ParticleSystemInstance;
 
 public class ParticleRenderer {
@@ -20,7 +16,6 @@ public class ParticleRenderer {
 
 	private ParticleSystemInstance mParticleSystem;
 	private ResourceManager mResourceManager;
-	private TextureBatchPCT mTextureBatch;
 	private Texture mTexture;
 	private int mParticleRendererId;
 	private int mEntityGroupId;
@@ -57,7 +52,6 @@ public class ParticleRenderer {
 		mEntityGroupId = entityGroupUid;
 
 		mParticleRendererId = rendererUid;
-		mTextureBatch = new TextureBatchPCT();
 		mIsAssigned = false;
 	}
 
@@ -71,29 +65,25 @@ public class ParticleRenderer {
 
 	public void loadResources(ResourceManager resourceManager) {
 		mResourceManager = resourceManager;
-		mTextureBatch.loadResources(resourceManager);
 
 		mResourcesLoaded = true;
 	}
 
 	public void unloadResources() {
-		mTextureBatch.unloadResources();
 		mResourceManager = null;
 
 		mResourcesLoaded = false;
 	}
 
-	public void draw(LintfordCore core) {
+	public void draw(LintfordCore core, TextureBatchPCT textureBatch) {
 		if (!mResourcesLoaded || !mIsParticleLoaded || !mIsAssigned)
 			return;
 
-		final List<Particle> lParticleSystem = mParticleSystem.particles();
-		final int lNumParticles = lParticleSystem.size();
-
-		mTextureBatch.begin(core.gameCamera());
+		final var lParticleSystem = mParticleSystem.particles();
+		final var lNumParticles = lParticleSystem.size();
 
 		for (int i = 0; i < lNumParticles; i++) {
-			final Particle lParticleInst = lParticleSystem.get(i);
+			final var lParticleInst = lParticleSystem.get(i);
 
 			if (!lParticleInst.isAssigned())
 				continue;
@@ -101,11 +91,10 @@ public class ParticleRenderer {
 			final float lWidthScaled = lParticleInst.width * lParticleInst.scale;
 			final float lHeightScaled = lParticleInst.height * lParticleInst.scale;
 
-			mTextureBatch.drawAroundCenter(mTexture, lParticleInst.sx, lParticleInst.sy, lParticleInst.sw, lParticleInst.sh, lParticleInst.worldPositionX, lParticleInst.worldPositionY, lWidthScaled, lHeightScaled, -0.2f,
+			textureBatch.drawAroundCenter(mTexture, lParticleInst.sx, lParticleInst.sy, lParticleInst.sw, lParticleInst.sh, lParticleInst.worldPositionX, lParticleInst.worldPositionY, lWidthScaled, lHeightScaled, -0.2f,
 					lParticleInst.rotationInRadians, lParticleInst.rox, lParticleInst.roy, lParticleInst.scale, lParticleInst.color);
 		}
 
-		mTextureBatch.end();
 	}
 
 	// --------------------------------------

@@ -6,6 +6,7 @@ import java.util.List;
 import net.lintford.library.controllers.core.particles.ParticleFrameworkController;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
+import net.lintford.library.core.graphics.batching.TextureBatchPCT;
 import net.lintford.library.core.particles.particlesystems.ParticleSystemInstance;
 import net.lintford.library.renderers.BaseRenderer;
 import net.lintford.library.renderers.RendererManager;
@@ -26,6 +27,7 @@ public class ParticleFrameworkRenderer extends BaseRenderer {
 	// Variables
 	// --------------------------------------
 
+	private TextureBatchPCT mTextureBatch;
 	private List<ParticleRenderer> mParticleRenderers;
 	private ParticleFrameworkController mParticleSystemController;
 	private int mEntityGroupID;
@@ -47,8 +49,8 @@ public class ParticleFrameworkRenderer extends BaseRenderer {
 		super(rendererManager, RENDERER_NAME, entityGroupUid);
 
 		mParticleRenderers = new ArrayList<>();
-
 		mEntityGroupID = entityGroupUid;
+		mTextureBatch = new TextureBatchPCT();
 
 		for (int i = 0; i < RENDERER_POOL_SIZE; i++) {
 			mParticleRenderers.add(new ParticleRenderer(getNewRendererId(), mEntityGroupID));
@@ -66,6 +68,8 @@ public class ParticleFrameworkRenderer extends BaseRenderer {
 
 	@Override
 	public void loadResources(ResourceManager resourceManager) {
+		mTextureBatch.loadResources(resourceManager);
+
 		for (int i = 0; i < RENDERER_POOL_SIZE; i++) {
 			mParticleRenderers.get(i).loadResources(resourceManager);
 		}
@@ -75,6 +79,8 @@ public class ParticleFrameworkRenderer extends BaseRenderer {
 
 	@Override
 	public void unloadResources() {
+		mTextureBatch.unloadResources();
+
 		for (int i = 0; i < RENDERER_POOL_SIZE; i++) {
 			mParticleRenderers.get(i).unloadResources();
 		}
@@ -98,11 +104,15 @@ public class ParticleFrameworkRenderer extends BaseRenderer {
 
 	@Override
 	public void draw(LintfordCore core) {
+		mTextureBatch.begin(core.gameCamera());
+
 		final int lNumParticleRenderers = mParticleRenderers.size();
 		for (int i = 0; i < lNumParticleRenderers; i++) {
 			if (mParticleRenderers.get(i).isAssigned())
-				mParticleRenderers.get(i).draw(core);
+				mParticleRenderers.get(i).draw(core, mTextureBatch);
 		}
+
+		mTextureBatch.end();
 	}
 
 	// --------------------------------------

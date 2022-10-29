@@ -3,7 +3,6 @@ package net.lintford.library.screenmanager;
 import net.lintford.library.ConstantsApp;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
-import net.lintford.library.core.debug.GLDebug;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.Color;
 import net.lintford.library.core.graphics.ColorConstants;
