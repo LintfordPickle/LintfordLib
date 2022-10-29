@@ -1,11 +1,9 @@
-#version 150 core
+#version 330 core
 
-// uniforms
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 modelMatrix;
 
-// Attributes
 in vec4 inPosition;
 in vec4 inColor;
 

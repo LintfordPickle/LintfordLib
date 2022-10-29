@@ -1,6 +1,5 @@
-#version 150 core
+#version 330 core
 
-// uniforms
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 modelMatrix;
@@ -9,7 +8,6 @@ uniform float time;
 uniform float random;
 uniform float intensity;
 
-// Attributes
 in vec4 inPosition;
 in vec4 inColor;
 in vec2 inTexCoord;
@@ -23,12 +21,10 @@ void main() {
                         0, 
                         0);
 
-	// col-maj mats
 	gl_Position = projectionMatrix * viewMatrix * modelMatrix * (inPosition + offset);
 	gl_Position;
 	
 	passColor = inColor;
 	
 	passTexCoord  = inTexCoord;
-	
 }
