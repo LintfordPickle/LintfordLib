@@ -190,16 +190,6 @@ public class TexturedQuad {
 		mBuffer.flip();
 	}
 
-	protected void addVertToBuffer(float x, float y, float z, float w, float u, float v) {
-		mBuffer.put(x);
-		mBuffer.put(y);
-		mBuffer.put(z);
-		mBuffer.put(w);
-
-		mBuffer.put(u);
-		mBuffer.put(v);
-	}
-
 	public void unloadResources() {
 		if (!mResourcesLoaded)
 			return;
@@ -217,15 +207,15 @@ public class TexturedQuad {
 	}
 
 	public void cleanup() {
-		if (mVboId > -1) {
-			GL15.glDeleteBuffers(mVboId);
-			Debug.debugManager().logger().v(getClass().getSimpleName(), "[OpenGl] glDeleteBuffers VboId: " + mVboId);
-			mVaoId = -1;
-		}
-
 		if (mVaoId > -1) {
 			GL30.glDeleteVertexArrays(mVaoId);
 			Debug.debugManager().logger().v(getClass().getSimpleName(), "[OpenGl] glDeleteVertexArrays: " + mVaoId);
+			mVaoId = -1;
+		}
+
+		if (mVboId > -1) {
+			GL15.glDeleteBuffers(mVboId);
+			Debug.debugManager().logger().v(getClass().getSimpleName(), "[OpenGl] glDeleteBuffers VboId: " + mVboId);
 			mVboId = -1;
 		}
 	}
