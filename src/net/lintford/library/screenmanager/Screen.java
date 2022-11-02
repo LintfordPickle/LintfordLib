@@ -265,6 +265,8 @@ public abstract class Screen implements IProcessMouseInput {
 		if (!coveredByOtherScreen)
 			mScreenManager.core().controllerManager().update(mScreenManager.core(), entityGroupUid());
 
+		mRendererManager.update(core);
+
 	}
 
 	public void draw(LintfordCore core) {
