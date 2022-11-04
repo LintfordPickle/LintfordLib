@@ -1,13 +1,12 @@
 package net.lintford.library.core.geometry;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.Serializable;
 
 import com.google.gson.annotations.SerializedName;
 
 import net.lintford.library.core.maths.Vector2f;
 
-public class Rectangle extends Shape {
+public class Rectangle implements Serializable {
 
 	// --------------------------------------
 	// Constants
@@ -20,9 +19,6 @@ public class Rectangle extends Shape {
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
-
-	protected boolean mAreVerticesDirty;
-	protected List<Vector2f> mVertices;
 
 	@SerializedName(value = "x")
 	protected float mX;
@@ -37,6 +33,14 @@ public class Rectangle extends Shape {
 	@SerializedName(value = "scaleY")
 	protected float mScaleY;
 
+	@SerializedName(value = "pivotX")
+	protected float mPivotX;
+	@SerializedName(value = "pivotY")
+	protected float mPivotY;
+
+	@SerializedName(value = "rotation")
+	protected float mRotationInRadians;
+
 	protected boolean mFlipHorizontal;
 	protected boolean mFlipVertical;
 
@@ -44,12 +48,23 @@ public class Rectangle extends Shape {
 	// Properties
 	// --------------------------------------
 
+	public float rotationInRadians() {
+		return mRotationInRadians;
+	}
+
+	public void rotationInRadians(float absRotation) {
+		mRotationInRadians = absRotation;
+	}
+
+	public void rotationInRadiansRel(float relRotation) {
+		mRotationInRadians += relRotation;
+	}
+
 	public float x() {
 		return mX;
 	}
 
 	public void x(float pX) {
-		mAreVerticesDirty = mAreVerticesDirty || mX != pX;
 		mX = pX;
 	}
 
@@ -58,7 +73,6 @@ public class Rectangle extends Shape {
 	}
 
 	public void y(float pY) {
-		mAreVerticesDirty = mAreVerticesDirty || mY != pY;
 		mY = pY;
 	}
 
@@ -83,7 +97,6 @@ public class Rectangle extends Shape {
 	}
 
 	public void width(float width) {
-		mAreVerticesDirty = mAreVerticesDirty || width != mW;
 		mW = width;
 	}
 
@@ -92,7 +105,6 @@ public class Rectangle extends Shape {
 	}
 
 	public void height(float height) {
-		mAreVerticesDirty = mAreVerticesDirty || height != mH;
 		mH = height;
 	}
 
@@ -101,7 +113,6 @@ public class Rectangle extends Shape {
 	}
 
 	public void flipHorizontal(boolean flipHorizontal) {
-		mAreVerticesDirty = mAreVerticesDirty || flipHorizontal != mFlipHorizontal;
 		mFlipHorizontal = flipHorizontal;
 	}
 
@@ -110,7 +121,6 @@ public class Rectangle extends Shape {
 	}
 
 	public void flipVertical(boolean flipVertical) {
-		mAreVerticesDirty = mAreVerticesDirty || flipVertical != mFlipVertical;
 		mFlipVertical = flipVertical;
 	}
 
@@ -119,7 +129,6 @@ public class Rectangle extends Shape {
 	}
 
 	public void scaleX(float scaleX) {
-		mAreVerticesDirty = mAreVerticesDirty || scaleX != mScaleX;
 		mScaleX = scaleX;
 	}
 
@@ -128,22 +137,12 @@ public class Rectangle extends Shape {
 	}
 
 	public void scaleY(float scaleY) {
-		mAreVerticesDirty = mAreVerticesDirty || scaleY != mScaleY;
 		mScaleY = scaleY;
 	}
 
 	public void setScale(float scaleX, float scaleY) {
-		mAreVerticesDirty = mAreVerticesDirty || scaleX != mScaleX || scaleY != mScaleY;
 		mScaleX = scaleX;
 		mScaleY = scaleY;
-	}
-
-	public List<Vector2f> getVertices() {
-		if (mAreVerticesDirty) {
-			updateVertices();
-		}
-
-		return mVertices;
 	}
 
 	public float centerX() {
@@ -152,6 +151,27 @@ public class Rectangle extends Shape {
 
 	public float centerY() {
 		return mY + mH / 2;
+	}
+
+	public void setPivotPoint(float pX, float pY) {
+		mPivotX = pX;
+		mPivotY = pY;
+	}
+
+	public float pivotX() {
+		return mPivotX;
+	}
+
+	public void pivotX(float pNewPivotX) {
+		mPivotX = pNewPivotX;
+	}
+
+	public float pivotY() {
+		return mPivotY;
+	}
+
+	public void pivotY(float pNewPivotY) {
+		mPivotY = pNewPivotY;
 	}
 
 	// --------------------------------------
@@ -172,16 +192,8 @@ public class Rectangle extends Shape {
 		mW = width;
 		mH = height;
 
-		mVertices = new ArrayList<>(NUM_VERTICES);
-		mVertices.add(new Vector2f(mX, mY));
-		mVertices.add(new Vector2f(mX + mW, mY));
-		mVertices.add(new Vector2f(mX, mY + mH));
-		mVertices.add(new Vector2f(mX + mW, mY + mH));
-
 		mScaleX = 1f;
 		mScaleY = 1f;
-
-		mAreVerticesDirty = true;
 	}
 
 	// --------------------------------------
@@ -218,48 +230,6 @@ public class Rectangle extends Shape {
 		return pointX >= left() && pointX <= right() && pointY >= top() && pointY <= bottom();
 	}
 
-	@Override
-	public Vector2f[] getAxes() {
-		updateVertices();
-
-		// FIXME: Garbage
-		final int AXES_LENGTH = 2;
-		Vector2f[] axes = new Vector2f[AXES_LENGTH]; // Rectangle only has two axis to be tested against
-
-		// FIXME: Garbage
-		// The order of the vertices used here depends on the winding-order
-		axes[0] = new Vector2f((mVertices.get(0).y - mVertices.get(1).y), -(mVertices.get(0).x - mVertices.get(1).x)).nor();
-		axes[1] = new Vector2f((mVertices.get(0).y - mVertices.get(2).y), -(mVertices.get(0).x - mVertices.get(2).x)).nor();
-
-		return axes;
-	}
-
-	@Override
-	public Vector2f project(Vector2f axis, Vector2f toFill) {
-		if (axis == null)
-			return toFill;
-
-		float min = Vector2f.dot(mVertices.get(0).x, mVertices.get(0).y, axis.x, axis.y);
-		float max = min;
-		final int lVertCount = mVertices.size();
-		for (int i = 1; i < lVertCount; i++) {
-			float p = Vector2f.dot(mVertices.get(i).x, mVertices.get(i).y, axis.x, axis.y);
-			if (p < min) {
-				min = p;
-			} else if (p > max) {
-				max = p;
-			}
-		}
-
-		if (toFill == null)
-			toFill = new Vector2f();
-
-		toFill.x = min;
-		toFill.y = max;
-
-		return toFill;
-	}
-
 	public boolean overlaps(Vector2f point1, Vector2f point2) {
 		return !(point1.x > point2.y || point2.x > point1.y);
 	}
@@ -280,13 +250,11 @@ public class Rectangle extends Shape {
 	 * @param cy
 	 */
 	public void setPosition(float x, float y) {
-		mAreVerticesDirty = mAreVerticesDirty || mX != x || mY != y;
 		mX = x;
 		mY = y;
 	}
 
 	public void setCenterPosition(float newCenterX, float newCenterY) {
-		mAreVerticesDirty = mAreVerticesDirty || newCenterX != mX || newCenterY != mY;
 		mX = newCenterX - mW / 2;
 		mY = newCenterY - mH / 2;
 	}
@@ -297,7 +265,6 @@ public class Rectangle extends Shape {
 	}
 
 	public void set(Rectangle rectangle) {
-		mAreVerticesDirty = mAreVerticesDirty || rectangle.mX != mX || rectangle.mY != mY || rectangle.mW != mW || rectangle.mH != mH;
 		mX = rectangle.mX;
 		mY = rectangle.mY;
 		mW = rectangle.mW;
@@ -305,7 +272,6 @@ public class Rectangle extends Shape {
 	}
 
 	public void set(float x, float y, float width, float height) {
-		mAreVerticesDirty = mAreVerticesDirty || x != mX || y != mY || width != mW || height != mH;
 		mX = x;
 		mY = y;
 		mW = width;
@@ -313,7 +279,6 @@ public class Rectangle extends Shape {
 	}
 
 	public void setCenter(float centerX, float centerY, float width, float height) {
-		mAreVerticesDirty = mAreVerticesDirty || (centerX - width / 2) != mX || (centerY - height / 2) != mY || width != mW || height != mH;
 		mX = centerX - width / 2;
 		mY = centerY - height / 2;
 		mW = width;
@@ -321,51 +286,10 @@ public class Rectangle extends Shape {
 	}
 
 	public void expand(float expandByAmount) {
-		mAreVerticesDirty = true;
 		mX -= expandByAmount * 0.5f;
 		mY -= expandByAmount * 0.5f;
 		mW += expandByAmount * 2;
 		mH += expandByAmount * 2;
-	}
-
-	@Override
-	public void rotateRel(float relativeRotation) {
-		mAreVerticesDirty = true;
-		mRotation += relativeRotation;
-	}
-
-	@Override
-	public void rotateAbs(float absoluteRotationAmount) {
-		mAreVerticesDirty = true;
-		mRotation = absoluteRotationAmount;
-	}
-
-	protected void updateVertices() {
-		if (!mAreVerticesDirty)
-			return;
-
-		final float lWidth = mFlipHorizontal ? -mW : mW;
-		final float lHeight = mFlipVertical ? -mH : mH;
-
-		final float lPX = mFlipHorizontal ? -mPivotX : mPivotX;
-		final float lPY = mFlipVertical ? -mPivotY : mPivotY;
-
-		mVertices.get(0).set(-lWidth / 2, -lHeight / 2);
-		mVertices.get(1).set(lWidth / 2, -lHeight / 2);
-		mVertices.get(2).set(-lWidth / 2, lHeight / 2);
-		mVertices.get(3).set(lWidth / 2, lHeight / 2);
-
-		final var sin = (float) (Math.sin(mRotation));
-		final var cos = (float) (Math.cos(mRotation));
-
-		for (int i = 0; i < NUM_VERTICES; i++) {
-			float dx = -lPX + mVertices.get(i).x * 1.f;
-			float dy = -lPY + mVertices.get(i).y * 1.f;
-
-			mVertices.get(i).set(centerX() + (dx * cos - (dy * 1f) * sin) * mScaleX, centerY() + (dx * sin + (dy * 1f) * cos) * mScaleY);
-		}
-
-		mAreVerticesDirty = false;
 	}
 
 	/** Expands the bounds of this rectangle to include the new point */
@@ -387,6 +311,5 @@ public class Rectangle extends Shape {
 
 		if (bottom() < pointY)
 			mH = pointY - mY;
-
 	}
 }

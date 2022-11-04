@@ -428,18 +428,6 @@ public class DebugDrawers {
 		mPolyBatch.begin(camera);
 	}
 
-	public void drawPoly(Rectangle rectangle) {
-		if (!mDebugManager.debugManagerEnabled())
-			return;
-
-		if (!mPolyBatch.isDrawing()) {
-			Debug.debugManager().logger().w(getClass().getSimpleName(), "Cannot draw poly (cached): the PolyRenderer has not been started (must call beginPolyRenderer() first)");
-			return;
-		}
-
-		drawPoly(rectangle.getVertices(), 1.f, 1.f, 1.f, true);
-	}
-
 	public void drawPoly(List<Vector2f> vertices, boolean closePolygon) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;

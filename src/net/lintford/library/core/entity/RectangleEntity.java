@@ -69,7 +69,7 @@ public abstract class RectangleEntity extends WorldEntity {
 	// --------------------------------------
 
 	public void update(LintfordCore pCore) {
-		mBounds.rotateAbs(rotationRadians);
+		mBounds.rotationInRadians(rotationRadians);
 		mBounds.setCenter(x, y, mWidth, mHeight);
 	}
 

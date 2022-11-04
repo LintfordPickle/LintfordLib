@@ -308,8 +308,10 @@ public class TextureBatchPCT {
 		if (pCamera == null)
 			return;
 
-		if (mIsDrawing)
+		if (mIsDrawing) {
+			Debug.debugManager().logger().w(getClass().getSimpleName(), "Already drawing!");
 			return;
+		}
 
 		if (pCustomShader != null)
 			mCustomShader = pCustomShader;
@@ -494,7 +496,12 @@ public class TextureBatchPCT {
 		drawAroundCenter(pTexture, pSrcRect.x(), pSrcRect.y(), pSrcRect.width(), pSrcRect.height(), pDX, pDY, pDW, pDH, pZ, pRot, pROX, pROY, pScale, pTint);
 	}
 
-	public void drawAroundCenter(Texture pTexture, float pSX, float pSY, float pSW, float pSH, float pDX, float pDY, float pDW, float pDH, float pZ, float pRot, float pROX, float pROY, float pScale, Color pTint) {
+	public void drawAroundCenter(Texture pTexture, 
+			float pSX, float pSY, float pSW, float pSH, 
+			float pDX, float pDY, float pDW, float pDH, 
+			float pZ, float pRot, float pROX, float pROY, 
+			float pScale, Color pTint) {
+		
 		if (!mResourcesLoaded)
 			return;
 

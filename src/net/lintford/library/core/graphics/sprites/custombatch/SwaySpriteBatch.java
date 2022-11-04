@@ -74,12 +74,12 @@ public class SwaySpriteBatch extends SpriteBatch {
 		if (destRectangle == null)
 			return;
 
-		final var lVertList = destRectangle.getVertices();
+		// TODO: Fix rotations
 
-		final float pDX = lVertList.get(0).x;
-		final float pDY = lVertList.get(0).y;
-		final float pDW = lVertList.get(1).x - lVertList.get(0).x;
-		final float pDH = lVertList.get(2).y - lVertList.get(0).y;
+		final float pDX = destRectangle.x();
+		final float pDY = destRectangle.y();
+		final float pDW = destRectangle.width();
+		final float pDH = destRectangle.height();
 
 		if (texture == null) {
 			if (TextureManager.USE_DEBUG_MISSING_TEXTURES) {

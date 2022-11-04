@@ -30,7 +30,7 @@ public class SpriteFrame extends Rectangle implements Serializable {
 	}
 
 	public float getDefaultRotation() {
-		return mRotation;
+		return mRotationInRadians;
 	}
 
 	// --------------------------------------

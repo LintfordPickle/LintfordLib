@@ -136,7 +136,6 @@ public class SpriteInstance extends Rectangle {
 		mSpriteDefinition = spriteDefinition;
 		mLoopingEnabled = spriteDefinition.loopEnabled();
 		mAnimationEnabled = true;
-		mAreVerticesDirty = true;
 
 		updateDimensionsOnCurrentFrame();
 	}

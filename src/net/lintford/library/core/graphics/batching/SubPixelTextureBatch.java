@@ -296,57 +296,10 @@ public class SubPixelTextureBatch {
 	}
 
 	public void draw(Texture pTexture, float pSX, float pSY, float pSW, float pSH, Rectangle pDestRect, float zDepth, Color color) {
-		if (!mResourcesLoaded)
+		if (pDestRect == null)
 			return;
 
-		if (!mIsDrawing)
-			return;
-
-		if (pTexture == null && TextureManager.USE_DEBUG_MISSING_TEXTURES)
-			pTexture = mResourceManager.textureManager().textureNotFound();
-
-		if (mIndexCount >= MAX_SPRITES * NUM_INDICES_PER_SPRITE - NUM_INDICES_PER_SPRITE)
-			flush();
-
-		float lTextureSlotIndex = mTextureSlots.getTextureSlotIndex(pTexture);
-		if (lTextureSlotIndex == TextureSlotBatch.TEXTURE_SLOTS_TEXTURE_INVALID)
-			return;
-
-		if (lTextureSlotIndex == TextureSlotBatch.TEXTURE_SLOTS_FULL) {
-			flush(); // flush and try again
-			lTextureSlotIndex = mTextureSlots.getTextureSlotIndex(pTexture);
-		}
-
-		final var lVertList = pDestRect.getVertices();
-
-		float x0 = lVertList.get(0).x;
-		float y0 = lVertList.get(0).y;
-		float u0 = pSX / pTexture.getTextureWidth();
-		float v0 = pSY / pTexture.getTextureHeight();
-
-		float x1 = lVertList.get(1).x;
-		float y1 = lVertList.get(1).y;
-		float u1 = (pSX + pSW) / pTexture.getTextureWidth();
-		float v1 = pSY / pTexture.getTextureHeight();
-
-		float x2 = lVertList.get(2).x;
-		float y2 = lVertList.get(2).y;
-		float u2 = pSX / pTexture.getTextureWidth();
-		float v2 = (pSY + pSH) / pTexture.getTextureHeight();
-
-		float x3 = lVertList.get(3).x;
-		float y3 = lVertList.get(3).y;
-		float u3 = (pSX + pSW) / pTexture.getTextureWidth();
-		float v3 = (pSY + pSH) / pTexture.getTextureHeight();
-
-		addVertToBuffer(x1, y1, zDepth, 1f, color.r, color.g, color.b, color.a, u1, v1, lTextureSlotIndex);
-		addVertToBuffer(x0, y0, zDepth, 1f, color.r, color.g, color.b, color.a, u0, v0, lTextureSlotIndex);
-		addVertToBuffer(x2, y2, zDepth, 1f, color.r, color.g, color.b, color.a, u2, v2, lTextureSlotIndex);
-		addVertToBuffer(x1, y1, zDepth, 1f, color.r, color.g, color.b, color.a, u1, v1, lTextureSlotIndex);
-		addVertToBuffer(x2, y2, zDepth, 1f, color.r, color.g, color.b, color.a, u2, v2, lTextureSlotIndex);
-		addVertToBuffer(x3, y3, zDepth, 1f, color.r, color.g, color.b, color.a, u3, v3, lTextureSlotIndex);
-
-		mIndexCount += NUM_INDICES_PER_SPRITE;
+		draw(pTexture, pSX, pSY, pSW, pSH, pDestRect.x(), pDestRect.y(), pDestRect.width(), pDestRect.height(), zDepth, color);
 	}
 
 	public void draw(Texture pTexture, float pSX, float pSY, float pSW, float pSH, float pDX, float pDY, float pDW, float pDH, float zDepth, Color color) {
@@ -398,8 +351,7 @@ public class SubPixelTextureBatch {
 		mIndexCount += NUM_INDICES_PER_SPRITE;
 	}
 
-	public void draw(Texture pTexture, float pSX, float pSY, float pSW, float pSH, float pDX, float pDY, float pDW, float pDH, float zDepth, float pRot, float pROX, float pROY, float pScale, float pR, float pG, float pB,
-			float pA) {
+	public void draw(Texture pTexture, float pSX, float pSY, float pSW, float pSH, float pDX, float pDY, float pDW, float pDH, float zDepth, float pRot, float pROX, float pROY, float pScale, float pR, float pG, float pB, float pA) {
 		if (!mResourcesLoaded)
 			return;
 
