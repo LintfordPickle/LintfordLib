@@ -212,9 +212,14 @@ public class DebugDrawers {
 	}
 
 	public void drawCircleImmediate(ICamera camera, float x, float y, float radius, int segCount, int glLineType) {
+		drawCircleImmediate(camera, x, y, radius, segCount, glLineType, 1.0f);
+	}
+
+	public void drawCircleImmediate(ICamera camera, float x, float y, float radius, int segCount, int glLineType, float glLineWidth) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
+		mImmediateLineBatch.lineWidth(glLineWidth);
 		mImmediateLineBatch.lineType(glLineType);
 		mImmediateLineBatch.begin(camera);
 
