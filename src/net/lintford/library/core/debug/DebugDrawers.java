@@ -49,6 +49,10 @@ public class DebugDrawers {
 	private TexturedQuad mTexturedQuad;
 	private ShaderMVP_PT mBasicShader;
 
+	public LineBatch immediateLineBatch() {
+		return mImmediateLineBatch;
+	}
+
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
