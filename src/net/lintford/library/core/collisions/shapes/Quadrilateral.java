@@ -1,4 +1,4 @@
-package net.lintford.library.core.geometry;
+package net.lintford.library.core.collisions.shapes;
 
 import java.util.ArrayList;
 import java.util.List;

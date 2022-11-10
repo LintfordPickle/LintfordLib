@@ -1,7 +1,7 @@
 package net.lintford.library.core.collisions;
 
-import net.lintford.library.core.geometry.Circle;
-import net.lintford.library.core.geometry.Shape;
+import net.lintford.library.core.collisions.shapes.CircleShape;
+import net.lintford.library.core.collisions.shapes.Shape;
 import net.lintford.library.core.maths.Vector2f;
 
 public class SAT {
@@ -19,16 +19,16 @@ public class SAT {
 		var lAxes0 = shape0.getAxes();
 		var lAxes1 = shape1.getAxes();
 
-		if (lAxes0 == null && shape0 instanceof Circle) {
+		if (lAxes0 == null && shape0 instanceof CircleShape) {
 			lAxes0 = mTempAxes0;
-			mTempVector2f0 = ((Circle) shape0).getNearestVertex(shape1, mTempVector2f0);
+			mTempVector2f0 = ((CircleShape) shape0).getNearestVertex(shape1, mTempVector2f0);
 			lAxes0[0].x = mTempVector2f0.x;
 			lAxes0[0].y = mTempVector2f0.y;
 		}
 
-		if (lAxes1 == null && shape1 instanceof Circle) {
+		if (lAxes1 == null && shape1 instanceof CircleShape) {
 			lAxes1 = mTempAxes1;
-			mTempVector2f0 = ((Circle) shape1).getNearestVertex(shape0, mTempVector2f0);
+			mTempVector2f0 = ((CircleShape) shape1).getNearestVertex(shape0, mTempVector2f0);
 			lAxes1[0].x = mTempVector2f0.x;
 			lAxes1[0].y = mTempVector2f0.y;
 		}

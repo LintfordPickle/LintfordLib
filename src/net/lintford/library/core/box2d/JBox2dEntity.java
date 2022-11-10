@@ -1,10 +1,11 @@
-package net.lintford.library.core.entity;
+package net.lintford.library.core.box2d;
 
 import org.jbox2d.dynamics.World;
 
 import net.lintford.library.ConstantsPhysics;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.box2d.entities.JBox2dEntityInstance;
+import net.lintford.library.core.entity.WorldEntity;
 
 public abstract class JBox2dEntity extends WorldEntity {
 

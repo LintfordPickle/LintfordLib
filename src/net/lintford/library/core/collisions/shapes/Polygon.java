@@ -1,9 +1,10 @@
-package net.lintford.library.core.geometry;
+package net.lintford.library.core.collisions.shapes;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.maths.Vector2f;
 
 // SAT Ref: http://www.dyn4j.org/2010/01/sat/

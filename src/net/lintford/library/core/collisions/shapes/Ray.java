@@ -1,4 +1,4 @@
-package net.lintford.library.core.collisions;
+package net.lintford.library.core.collisions.shapes;
 
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.maths.Vector2f;

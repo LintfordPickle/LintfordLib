@@ -5,7 +5,7 @@ import org.jbox2d.common.Vec2;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
-import net.lintford.library.core.entity.JBox2dEntity;
+import net.lintford.library.core.box2d.JBox2dEntity;
 import net.lintford.library.core.maths.Vector2f;
 
 public class PObjectRenderer {
