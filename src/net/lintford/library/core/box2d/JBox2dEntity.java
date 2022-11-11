@@ -5,9 +5,9 @@ import org.jbox2d.dynamics.World;
 import net.lintford.library.ConstantsPhysics;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.box2d.entities.JBox2dEntityInstance;
-import net.lintford.library.core.entity.WorldEntity;
+import net.lintford.library.core.entity.Entity;
 
-public abstract class JBox2dEntity extends WorldEntity {
+public abstract class JBox2dEntity extends Entity {
 
 	// --------------------------------------
 	// Constants
@@ -45,8 +45,8 @@ public abstract class JBox2dEntity extends WorldEntity {
 	// Constructor
 	// --------------------------------------
 
-	public JBox2dEntity() {
-		super();
+	public JBox2dEntity(int entityUid) {
+		super(entityUid);
 	}
 
 	// --------------------------------------

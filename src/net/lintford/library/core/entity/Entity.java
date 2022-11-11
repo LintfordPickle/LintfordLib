@@ -1,11 +1,12 @@
 package net.lintford.library.core.entity;
 
-import net.lintford.library.core.entity.instances.PooledBaseData;
+public abstract class Entity extends BaseInstanceData {
 
-/**
- * The {@link WorldEntity} class allows us to order an entity spatially within the world.
- */
-public abstract class WorldEntity extends PooledBaseData {
+	private static int ENTITY_UID_COUNTER = 0;
+
+	public static int getNewEntityUid() {
+		return ENTITY_UID_COUNTER++;
+	}
 
 	// --------------------------------------
 	// Constants
@@ -13,13 +14,11 @@ public abstract class WorldEntity extends PooledBaseData {
 
 	private static final long serialVersionUID = 3376631186484307065L;
 
-	public static final int INSTANCE_UID_NOT_ASSIGNED = -1;
-
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
-	protected transient int mInstanceUid;
+	public final int entityUid;
 	public float x;
 	public float y;
 	public float rotationRadians;
@@ -28,28 +27,16 @@ public abstract class WorldEntity extends PooledBaseData {
 	// Properties
 	// --------------------------------------
 
-	public int instanceUid() {
-		return mInstanceUid;
-	}
-
-	public boolean isInitialized() {
-		return mInstanceUid != INSTANCE_UID_NOT_ASSIGNED;
-	}
-
 	public void setPosition(float xPosition, float yPosition) {
 		x = xPosition;
 		y = yPosition;
 	}
 
 	// --------------------------------------
-	// Methods
+	// Constructor
 	// --------------------------------------
 
-	public void init(int instanceUid) {
-		mInstanceUid = instanceUid;
-	}
-
-	public void reset() {
-		mInstanceUid = INSTANCE_UID_NOT_ASSIGNED;
+	public Entity(int entityUid) {
+		this.entityUid = entityUid;
 	}
 }

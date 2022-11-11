@@ -6,7 +6,7 @@ import net.lintford.library.controllers.BaseController;
 import net.lintford.library.controllers.core.ControllerManager;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.camera.ICamera;
-import net.lintford.library.core.entity.WorldEntity;
+import net.lintford.library.core.entity.Entity;
 import net.lintford.library.core.maths.Vector2f;
 
 public class CameraChaseController extends BaseController {
@@ -24,7 +24,7 @@ public class CameraChaseController extends BaseController {
 	// ---------------------------------------------
 
 	private ICamera mGameCamera;
-	private WorldEntity mTrackedEntity;
+	private Entity mTrackedEntity;
 	private boolean mAllowManualControl;
 	private boolean mIsTrackingPlayer;
 
@@ -65,7 +65,7 @@ public class CameraChaseController extends BaseController {
 	// Constructor
 	// ---------------------------------------------
 
-	public CameraChaseController(ControllerManager controllerManager, ICamera camera, WorldEntity trackEntity, int controllerGroup) {
+	public CameraChaseController(ControllerManager controllerManager, ICamera camera, Entity trackEntity, int controllerGroup) {
 		super(controllerManager, CONTROLLER_NAME, controllerGroup);
 
 		mVelocity = new Vector2f();

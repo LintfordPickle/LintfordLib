@@ -3,7 +3,7 @@ package net.lintford.library.core.entity;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.geometry.Rectangle;
 
-public abstract class RectangleEntity extends WorldEntity {
+public abstract class RectangleEntity extends Entity {
 
 	// --------------------------------------
 	// Variables
@@ -44,16 +44,16 @@ public abstract class RectangleEntity extends WorldEntity {
 	// Constructor
 	// --------------------------------------
 
-	public RectangleEntity() {
-		this(0, 0, 0, 0);
+	public RectangleEntity(int entityUid) {
+		this(entityUid, 0, 0, 0, 0);
 	}
 
-	public RectangleEntity(float width, float height) {
-		this(0, 0, width, height);
+	public RectangleEntity(int entityUid, float width, float height) {
+		this(entityUid, 0, 0, width, height);
 	}
 
-	public RectangleEntity(float xPosition, float yPosition, float width, float height) {
-		super();
+	public RectangleEntity(int entityUid, float xPosition, float yPosition, float width, float height) {
+		super(entityUid);
 
 		x = xPosition;
 		y = yPosition;

@@ -1,8 +1,8 @@
 package net.lintford.library.core.entity.instances;
 
-import net.lintford.library.core.entity.BaseInstanceData;
+import net.lintford.library.core.entity.Entity;
 
-public abstract class PooledBaseData extends BaseInstanceData {
+public abstract class PooledBaseData extends Entity {
 
 	// --------------------------------------
 	// Constants
@@ -14,8 +14,8 @@ public abstract class PooledBaseData extends BaseInstanceData {
 	// Constructor
 	// --------------------------------------
 
-	public PooledBaseData() {
-
+	public PooledBaseData(int entityUid) {
+		super(entityUid);
 	}
 
 	// --------------------------------------

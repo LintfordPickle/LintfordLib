@@ -6,9 +6,14 @@ import net.lintford.library.core.maths.Vector2f;
 
 public class CollisionExtensions {
 
+	public static boolean intersects(CircleEntity c, float pointX, float pointY) {
+		final float xx = c.x - pointX;
+		final float yy = c.y - pointY;
+		return (xx * xx + yy * yy) < (c.radius * c.radius);
+	}
+
 	/**
-	 * Checks for an intersection between the given circle entity and rectangle
-	 * entity.
+	 * Checks for an intersection between the given circle entity and rectangle entity.
 	 */
 	public static boolean intersects(CircleEntity circle, RectangleEntity rectangle) {
 		final float circleDistanceX = Math.abs(circle.x - rectangle.x + rectangle.w() / 2);
@@ -29,8 +34,7 @@ public class CollisionExtensions {
 		if (circleDistanceY <= lRectHeightHalf)
 			return true;
 
-		final float cornerDistance_sq = (circleDistanceX - lRectWidthHalf) * (circleDistanceX - lRectWidthHalf)
-				+ (circleDistanceY - lRectHeightHalf) * (circleDistanceY - lRectHeightHalf);
+		final float cornerDistance_sq = (circleDistanceX - lRectWidthHalf) * (circleDistanceX - lRectWidthHalf) + (circleDistanceY - lRectHeightHalf) * (circleDistanceY - lRectHeightHalf);
 
 		return (cornerDistance_sq <= circle.radius * circle.radius);
 	}
@@ -41,8 +45,7 @@ public class CollisionExtensions {
 	}
 
 	/** Checks if a point is within a given circle */
-	public static boolean intersectsCirclePoint(float circleX, float circleY, float circleRadius, float pointX,
-			float pointY) {
+	public static boolean intersectsCirclePoint(float circleX, float circleY, float circleRadius, float pointX, float pointY) {
 		final float lDist = (float) (circleX - pointX) * (circleX - pointX) + (circleY - pointY) * (circleY - pointY);
 		if (lDist < circleRadius * circleRadius) {
 			return true;
@@ -79,8 +82,7 @@ public class CollisionExtensions {
 		return false; // No collision
 	}
 
-	public static boolean checkHasArrived(float entityAPositionX, float entityAPositionY, float entityBPositionX,
-			float entityBPositionY, float minDistance) {
+	public static boolean checkHasArrived(float entityAPositionX, float entityAPositionY, float entityBPositionX, float entityBPositionY, float minDistance) {
 		return Vector2f.distance(entityAPositionX, entityAPositionY, entityBPositionX, entityBPositionY) < minDistance;
 	}
 }

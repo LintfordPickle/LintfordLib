@@ -1,6 +1,6 @@
 package net.lintford.library.core.entity;
 
-public abstract class PolyEntity extends WorldEntity {
+public abstract class PolyEntity extends Entity {
 
 	// --------------------------------------
 	// Constants
@@ -39,8 +39,8 @@ public abstract class PolyEntity extends WorldEntity {
 	// Constructor
 	// --------------------------------------
 
-	public PolyEntity() {
-		super();
+	public PolyEntity(int entityUid) {
+		super(entityUid);
 	}
 
 	// --------------------------------------

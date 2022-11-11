@@ -2,13 +2,14 @@ package net.lintford.library.core.particles.particleemitters;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.debug.Debug;
-import net.lintford.library.core.entity.WorldEntity;
+import net.lintford.library.core.entity.Entity;
+import net.lintford.library.core.entity.instances.PooledBaseData;
 import net.lintford.library.core.maths.MathHelper;
 import net.lintford.library.core.maths.RandomNumbers;
 import net.lintford.library.core.particles.ParticleFrameworkData;
 import net.lintford.library.core.particles.particlesystems.ParticleSystemInstance;
 
-public class ParticleEmitterInstance extends WorldEntity {
+public class ParticleEmitterInstance extends PooledBaseData {
 
 	// --------------------------------------
 	// Constants
@@ -23,7 +24,7 @@ public class ParticleEmitterInstance extends WorldEntity {
 	// Variables
 	// --------------------------------------
 
-	private transient WorldEntity mAttachedToEntity;
+	private transient Entity mAttachedToEntity;
 	private transient ParticleEmitterInstance[] mChildEmitters;
 	private transient ParticleSystemInstance mParticleSystem;
 
@@ -64,11 +65,11 @@ public class ParticleEmitterInstance extends WorldEntity {
 		return mParticleSystem;
 	}
 
-	public WorldEntity parentEntity() {
+	public Entity parentEntity() {
 		return mAttachedToEntity;
 	}
 
-	public void parentEntity(WorldEntity newValue) {
+	public void parentEntity(Entity newValue) {
 		mAttachedToEntity = newValue;
 	}
 
@@ -116,12 +117,12 @@ public class ParticleEmitterInstance extends WorldEntity {
 		this(0);
 	}
 
-	public ParticleEmitterInstance(int emitterInstanceUid) {
-		super();
+	public ParticleEmitterInstance(int entityUid) {
+		super(entityUid);
 
 		mChildEmitters = new ParticleEmitterInstance[MAX_NUM_CHILD_EMITTERS];
 		enabled = true;
-		mEmitterInstanceId = emitterInstanceUid;
+		mEmitterInstanceId = entityUid;
 		mEmitterEmitModifier = 1.f;
 	}
 

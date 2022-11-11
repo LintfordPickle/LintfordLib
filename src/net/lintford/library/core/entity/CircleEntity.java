@@ -1,6 +1,6 @@
 package net.lintford.library.core.entity;
 
-public abstract class CircleEntity extends WorldEntity {
+public abstract class CircleEntity extends Entity {
 
 	// --------------------------------------
 	// Constants
@@ -18,9 +18,19 @@ public abstract class CircleEntity extends WorldEntity {
 	// Properties
 	// --------------------------------------
 
-	public CircleEntity() {
-		super();
+	public CircleEntity(int entityUid) {
+		super(entityUid);
 
 		radius = 0.5f;
+	}
+
+	// --------------------------------------
+	// Methods
+	// --------------------------------------
+
+	public void setCircle(float centerX, float centerY, float radius) {
+		this.x = centerX;
+		this.y = centerY;
+		this.radius = radius;
 	}
 }
