@@ -68,14 +68,15 @@ public class TextureBatchPT {
 			mIndexBuffer = MemoryUtil.memAllocInt(MAX_SPRITES * NUM_INDICES_PER_SPRITE);
 
 			mIndexBuffer.clear();
-			for (int i = 0; i < MAX_SPRITES; i += NUM_VERTICES_PER_SPRITE) {
-				mIndexBuffer.put(i + 1);
-				mIndexBuffer.put(i + 0);
-				mIndexBuffer.put(i + 2);
+			for (int i = 0; i < MAX_SPRITES; i++) {
+				final int offset = i * NUM_VERTICES_PER_SPRITE;
+				mIndexBuffer.put(offset + 1);
+				mIndexBuffer.put(offset + 0);
+				mIndexBuffer.put(offset + 2);
 
-				mIndexBuffer.put(i + 2);
-				mIndexBuffer.put(i + 0);
-				mIndexBuffer.put(i + 3);
+				mIndexBuffer.put(offset + 2);
+				mIndexBuffer.put(offset + 0);
+				mIndexBuffer.put(offset + 3);
 			}
 			mIndexBuffer.flip();
 		}

@@ -13,7 +13,6 @@ import org.lwjgl.system.MemoryUtil;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.camera.ICamera;
 import net.lintford.library.core.debug.Debug;
-import net.lintford.library.core.debug.GLDebug;
 import net.lintford.library.core.debug.stats.DebugStats;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.Color;
@@ -69,14 +68,15 @@ public class TextureBatchPCT {
 			mIndexBuffer = MemoryUtil.memAllocInt(MAX_SPRITES * NUM_INDICES_PER_SPRITE);
 
 			mIndexBuffer.clear();
-			for (int i = 0; i < MAX_SPRITES; i += NUM_VERTICES_PER_SPRITE) {
-				mIndexBuffer.put(i + 1);
-				mIndexBuffer.put(i + 0);
-				mIndexBuffer.put(i + 2);
+			for (int i = 0; i < MAX_SPRITES; i++) {
+				final int offset = i * NUM_VERTICES_PER_SPRITE;
+				mIndexBuffer.put(offset + 1);
+				mIndexBuffer.put(offset + 0);
+				mIndexBuffer.put(offset + 2);
 
-				mIndexBuffer.put(i + 2);
-				mIndexBuffer.put(i + 0);
-				mIndexBuffer.put(i + 3);
+				mIndexBuffer.put(offset + 2);
+				mIndexBuffer.put(offset + 0);
+				mIndexBuffer.put(offset + 3);
 			}
 			mIndexBuffer.flip();
 		}
@@ -344,29 +344,13 @@ public class TextureBatchPCT {
 
 		mBuffer.flip();
 
-		if (GLDebug.GL_CHECKS_IN_DRAWS) {
-			GLDebug.checkGLErrorsException(getClass().getSimpleName() + ":" + getClass().getEnclosingMethod());
-		}
-
 		if (!mAreGlContainersInitialized)
 			initializeGlContainers();
 
-		if (GLDebug.GL_CHECKS_IN_DRAWS) {
-			GLDebug.checkGLErrorsException(getClass().getSimpleName() + ":" + getClass().getEnclosingMethod());
-		}
-
 		GL30.glBindVertexArray(mVaoId);
-
-		if (GLDebug.GL_CHECKS_IN_DRAWS) {
-			GLDebug.checkGLErrorsException(getClass().getSimpleName() + ":" + getClass().getEnclosingMethod());
-		}
 
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, mVboId);
 		GL15.glBufferSubData(GL15.GL_ARRAY_BUFFER, 0, mBuffer);
-
-		if (GLDebug.GL_CHECKS_IN_DRAWS) {
-			GLDebug.checkGLErrorsException(getClass().getSimpleName() + ":" + getClass().getEnclosingMethod());
-		}
 
 		if (mBlendEnabled) {
 			GL11.glEnable(GL11.GL_BLEND);
@@ -393,16 +377,8 @@ public class TextureBatchPCT {
 
 		GL11.glDrawElements(GL11.GL_TRIANGLES, mIndexCount, GL11.GL_UNSIGNED_INT, 0);
 
-		if (GLDebug.GL_CHECKS_IN_DRAWS) {
-			GLDebug.checkGLErrorsException(getClass().getSimpleName() + ":" + getClass().getEnclosingMethod());
-		}
-
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 		GL30.glBindVertexArray(0);
-
-		if (GLDebug.GL_CHECKS_IN_DRAWS) {
-			GLDebug.checkGLErrorsException(getClass().getSimpleName() + ":" + getClass().getEnclosingMethod());
-		}
 
 		mCustomShader.unbind();
 
@@ -411,10 +387,6 @@ public class TextureBatchPCT {
 		mTextureSlots.clear();
 
 		_countDebugStats = true;
-
-		if (GLDebug.GL_CHECKS_IN_DRAWS) {
-			GLDebug.checkGLErrorsException(getClass().getSimpleName() + ":" + getClass().getEnclosingMethod());
-		}
 	}
 
 	// ---
@@ -496,12 +468,8 @@ public class TextureBatchPCT {
 		drawAroundCenter(pTexture, pSrcRect.x(), pSrcRect.y(), pSrcRect.width(), pSrcRect.height(), pDX, pDY, pDW, pDH, pZ, pRot, pROX, pROY, pScale, pTint);
 	}
 
-	public void drawAroundCenter(Texture pTexture, 
-			float pSX, float pSY, float pSW, float pSH, 
-			float pDX, float pDY, float pDW, float pDH, 
-			float pZ, float pRot, float pROX, float pROY, 
-			float pScale, Color pTint) {
-		
+	public void drawAroundCenter(Texture pTexture, float pSX, float pSY, float pSW, float pSH, float pDX, float pDY, float pDW, float pDH, float pZ, float pRot, float pROX, float pROY, float pScale, Color pTint) {
+
 		if (!mResourcesLoaded)
 			return;
 
