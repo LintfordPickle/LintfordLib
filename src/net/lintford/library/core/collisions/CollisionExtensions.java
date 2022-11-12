@@ -63,6 +63,10 @@ public class CollisionExtensions {
 		return false;
 	}
 
+	public static boolean doCirclesOverlap(float x1, float y1, float r1, float x2, float y2, float r2) {
+		return Math.abs((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)) < (r1 + r2) * (r1 + r2);
+	}
+
 	public static boolean intersection(Vector2f a, Vector2f b, Vector2f p, Vector2f q, Vector2f outVector) {
 		final float l0x = b.x - a.x;
 		final float l0y = b.y - a.y;
