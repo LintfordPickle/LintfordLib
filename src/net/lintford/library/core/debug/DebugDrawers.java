@@ -240,6 +240,13 @@ public class DebugDrawers {
 		mImmediateLineBatch.end();
 	}
 
+	public void drawRenderTargetImmediate(LintfordCore core, Rectangle dest, float zDepth, RenderTarget renderTarget) {
+		if (dest == null)
+			return;
+
+		drawRenderTargetImmediate(core, dest.x(), dest.y(), dest.width(), dest.height(), zDepth, renderTarget);
+	}
+
 	public void drawRenderTargetImmediate(LintfordCore core, float destinationX, float destinationY, float destinationWidth, float destinationHeight, float zDepth, RenderTarget renderTarget) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
