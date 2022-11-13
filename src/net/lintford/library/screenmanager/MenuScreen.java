@@ -328,7 +328,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	}
 
 	public void updateLayoutSize(LintfordCore core) {
-		if (mRendererManager == null || mLayouts.size() == 0)
+		if (mRendererManager == null || mLayouts.size() == 0 && floatingEntries().size() == 0)
 			return;
 
 		updateLayout(core, mLayouts, mLayoutAlignment);
@@ -521,7 +521,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		final var lHeaderFontHeight = mMenuHeaderFont.fontHeight() * lUiTextScale;
 
 		final float lMenuTitlePositionX = lHeaderRect.centerX() - lHeaderFontWidth * .5f;
-		final float lMenuTitlePositionY = lHeaderRect.bottom() - lHeaderFontHeight - TITLE_PADDING_Y * lUiStructureController.windowAutoScaleFactorY();
+		final float lMenuTitlePositionY = lHeaderRect.top() + 5 * lUiStructureController.windowAutoScaleFactorY();
 
 		mMenuHeaderFont.begin(core.HUD());
 		mMenuHeaderFont.drawText(mMenuTitle, lMenuTitlePositionX, lMenuTitlePositionY, -0.01f, screenColor, lUiTextScale);
