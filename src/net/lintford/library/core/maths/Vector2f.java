@@ -84,38 +84,19 @@ public class Vector2f implements Serializable {
 		return (float) Math.sqrt(x * x + y * y);
 	}
 
-	public static float len(Vector2f x, Vector2f y) {
-		return (float) Math.sqrt((y.y - x.y) * (y.y - x.y) + (y.x - x.x) * (y.x - x.x));
+	public static float distance(Vector2f x, Vector2f y) {
+		return distance(x.x, x.y, y.x, y.y);
+
 	}
 
-	public static float len(float x1, float y1, float x2, float y2) {
-		return (float) Math.sqrt((y2 - y1) * (y2 - y1) + (x2 - x1) * (x2 - x1));
-	}
-
-	public static Vector2f CatmullRom(Vector2f value1, Vector2f value2, Vector2f value3, Vector2f value4, float amount, Vector2f returnVector) {
-		float num = amount * amount;
-		float num2 = amount * num;
-		returnVector.x = 0.5f * ((((2f * value2.x) + ((-value1.x + value3.x) * amount)) + (((((2f * value1.x) - (5f * value2.x)) + (4f * value3.x)) - value4.x) * num)) + ((((-value1.x + (3f * value2.x)) - (3f * value3.x)) + value4.x) * num2));
-		returnVector.y = 0.5f * ((((2f * value2.y) + ((-value1.y + value3.y) * amount)) + (((((2f * value1.y) - (5f * value2.y)) + (4f * value3.y)) - value4.y) * num)) + ((((-value1.y + (3f * value2.y)) - (3f * value3.y)) + value4.y) * num2));
-		return returnVector;
-	}
-
-	public static float distance(Vector2f value1, Vector2f value2) {
-		float num2 = value1.x - value2.x;
-		float num = value1.y - value2.y;
-		float num3 = (num2 * num2) + (num * num);
-		return (float) Math.sqrt(num3);
+	public static float distance(float pX1, float pY1, float pX2, float pY2) {
+		return (float) Math.sqrt(distance2(pX1, pY1, pX2, pY2));
 	}
 
 	public static float distance2(float pX1, float pY1, float pX2, float pY2) {
 		float num2 = pX1 - pX2;
 		float num = pY1 - pY2;
 		return (num2 * num2) + (num * num);
-	}
-
-	public static float distance(float pX1, float pY1, float pX2, float pY2) {
-		return (float) Math.sqrt(distance2(pX1, pY1, pX2, pY2));
-
 	}
 
 	/**
@@ -131,6 +112,14 @@ public class Vector2f implements Serializable {
 		x /= pX;
 		y /= pY;
 		return this;
+	}
+
+	public static Vector2f CatmullRom(Vector2f value1, Vector2f value2, Vector2f value3, Vector2f value4, float amount, Vector2f returnVector) {
+		float num = amount * amount;
+		float num2 = amount * num;
+		returnVector.x = 0.5f * ((((2f * value2.x) + ((-value1.x + value3.x) * amount)) + (((((2f * value1.x) - (5f * value2.x)) + (4f * value3.x)) - value4.x) * num)) + ((((-value1.x + (3f * value2.x)) - (3f * value3.x)) + value4.x) * num2));
+		returnVector.y = 0.5f * ((((2f * value2.y) + ((-value1.y + value3.y) * amount)) + (((((2f * value1.y) - (5f * value2.y)) + (4f * value3.y)) - value4.y) * num)) + ((((-value1.y + (3f * value2.y)) - (3f * value3.y)) + value4.y) * num2));
+		return returnVector;
 	}
 
 	/**
@@ -285,6 +274,10 @@ public class Vector2f implements Serializable {
 	 */
 	public float dot(Vector2f v) {
 		return x * v.x + y * v.y;
+	}
+
+	public float dot(float vx, float vy) {
+		return x * vx + y * vy;
 	}
 
 	public static float dot(float x1, float y1, float x2, float y2) {
