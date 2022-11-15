@@ -13,6 +13,25 @@ public class CollisionExtensions {
 	}
 
 	/**
+	 * Checks to see if the given point P lies within the rectangle defined by AB, BC
+	 */
+	public static boolean insersects(Vector2f a, Vector2f b, Vector2f c, Vector2f p) {
+		final var ABx = b.x - a.x;
+		final var ABy = b.y - a.y;
+
+		final var BCx = c.x - b.x;
+		final var BCy = c.y - b.y;
+
+		final var magAB = Vector2f.dot(ABx, ABy, ABx, ABy); // square of magnitude of vector AB
+		final var magBC = Vector2f.dot(BCx, BCy, BCx, BCy); // square of magnitude of vector BC
+
+		float projX = Vector2f.dot(ABx, ABy, p.x - a.x, p.y - a.y);
+		float projY = Vector2f.dot(BCx, BCy, p.x - b.x, p.y - b.y);
+
+		return projX >= 0.f && projX <= magAB && projY >= 0.f && projY <= magBC;
+	}
+
+	/**
 	 * Checks for an intersection between the given circle entity and rectangle entity.
 	 */
 	public static boolean intersects(CircleEntity circle, RectangleEntity rectangle) {
