@@ -5,16 +5,9 @@ import net.lintford.library.core.storage.AppStorage;
 import net.lintford.library.options.DisplayManager;
 
 /**
- * The {@link GameInfo} interface defines the properties for an application, as well as the default settings to use by the {@link DisplayManager} when creating an OpenGL window for the first time (i.e. when no
- * DisplayConfig.INI exists).
+ * The {@link GameInfo} interface defines the properties for an application, as well as the default settings to use by the {@link DisplayManager} when creating an OpenGL window for the first time (i.e. when no DisplayConfig.INI exists).
  */
 public interface GameInfo {
-
-	public static final int DEF_BASE_GAME_RESOLUTION_W = 800;
-	public static final int DEF_BASE_GAME_RESOLUTION_H = 600;
-
-	public static final int MIN_BASE_GAME_RESOLUTION_W = 800;
-	public static final int MIN_BASE_GAME_RESOLUTION_H = 600;
 
 	/* Specifies the debug logging level. Default is off (no logs are generated). */
 	public default DebugLogLevel debugLogLevel() {
@@ -53,20 +46,32 @@ public interface GameInfo {
 		return false;
 	}
 
-	public default int baseGameResolutionWidth() {
-		return DEF_BASE_GAME_RESOLUTION_W;
+	public default boolean stretchUiResolution() {
+		return false;
 	}
 
-	public default int baseGameResolutionHeight() {
-		return DEF_BASE_GAME_RESOLUTION_H;
+	public default int gameCanvasResolutionWidth() {
+		return ConstantsDisplay.REFERENCE_GAME_RESOLUTION_W;
+	}
+
+	public default int gameCanvasResolutionHeight() {
+		return ConstantsDisplay.REFERENCE_GAME_RESOLUTION_H;
+	}
+
+	public default int uiCanvasResolutionWidth() {
+		return ConstantsDisplay.REFERENCE_UI_RESOLUTION_W;
+	}
+
+	public default int uiCanvasResolutionHeight() {
+		return ConstantsDisplay.REFERENCE_UI_RESOLUTION_H;
 	}
 
 	public default int minimumWindowWidth() {
-		return MIN_BASE_GAME_RESOLUTION_W;
+		return ConstantsDisplay.REFERENCE_GAME_RESOLUTION_W;
 	}
 
 	public default int minimumWindowHeight() {
-		return MIN_BASE_GAME_RESOLUTION_H;
+		return ConstantsDisplay.REFERENCE_GAME_RESOLUTION_H;
 	}
 
 	/** Returns true if the OpenGL window is resizable or not. */

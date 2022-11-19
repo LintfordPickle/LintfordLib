@@ -308,7 +308,6 @@ public class MouseManager {
 		}
 
 		return false;
-
 	}
 
 	public boolean isMouseOverThisComponent(int hashCode) {

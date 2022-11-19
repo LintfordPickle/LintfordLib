@@ -34,23 +34,23 @@ public class LintfordMain extends LintfordCore {
 			}
 
 			@Override
-			public int baseGameResolutionWidth() {
+			public int gameCanvasResolutionWidth() {
 				return 640;
 			}
 
 			@Override
-			public int baseGameResolutionHeight() {
+			public int gameCanvasResolutionHeight() {
 				return 480;
 			}
 
 			@Override
 			public int minimumWindowWidth() {
-				return baseGameResolutionWidth();
+				return gameCanvasResolutionWidth();
 			}
 
 			@Override
 			public int minimumWindowHeight() {
-				return baseGameResolutionHeight();
+				return gameCanvasResolutionHeight();
 			}
 
 			@Override

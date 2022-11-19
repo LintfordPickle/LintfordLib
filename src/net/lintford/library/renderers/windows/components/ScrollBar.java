@@ -37,6 +37,7 @@ public class ScrollBar extends Rectangle implements IProcessMouseInput, IInputCl
 	private float mWindowRightOffset;
 	private float mMouseTimer;
 	private float mScrollBarAlpha;
+	private boolean mScrollbarAutoHide;
 	private boolean mScrollbarEnabled;
 
 	private float mScrollPosition;
@@ -51,6 +52,14 @@ public class ScrollBar extends Rectangle implements IProcessMouseInput, IInputCl
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public boolean autoHide() {
+		return mScrollbarAutoHide;
+	}
+
+	public void autoHide(boolean autoHideEnabled) {
+		mScrollbarAutoHide = autoHideEnabled;
+	}
 
 	@Override
 	public void resetInputHandledInCoreFrameFlag() {
@@ -132,6 +141,7 @@ public class ScrollBar extends Rectangle implements IProcessMouseInput, IInputCl
 		mScrollBarArea = pWindowBounds;
 		mWindowRightOffset = -25;
 		mIsActive = true;
+		mScrollbarAutoHide = true;
 
 		set(0, 0, BAR_WIDTH, 0);
 	}
@@ -202,7 +212,11 @@ public class ScrollBar extends Rectangle implements IProcessMouseInput, IInputCl
 		if (mIsActive == false)
 			return;
 
-		mScrollbarEnabled = mScrollBarArea.fullContentArea().height() - mScrollBarArea.contentDisplayArea().height() > 0;
+		if (mScrollbarAutoHide) {
+			mScrollbarEnabled = mScrollBarArea.fullContentArea().height() - mScrollBarArea.contentDisplayArea().height() > 0;
+		} else {
+			mScrollbarEnabled = true;
+		}
 
 		updateMovement(pCore);
 		updateBar(pCore);

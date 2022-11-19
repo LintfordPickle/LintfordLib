@@ -21,14 +21,14 @@ public class UIHorizontalEntryGroup extends UIWidget {
 
 	private static final long serialVersionUID = 4358093208729572051L;
 
-	private List<UIWidget> mChildEntries;
+	private List<UIWidget> mChildWidgets;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
 
-	public List<UIWidget> entries() {
-		return mChildEntries;
+	public List<UIWidget> widgets() {
+		return mChildWidgets;
 	}
 
 	// --------------------------------------
@@ -38,7 +38,7 @@ public class UIHorizontalEntryGroup extends UIWidget {
 	public UIHorizontalEntryGroup(final UiWindow parentWindow) {
 		super(parentWindow);
 
-		mChildEntries = new ArrayList<>();
+		mChildWidgets = new ArrayList<>();
 	}
 
 	// --------------------------------------
@@ -49,21 +49,21 @@ public class UIHorizontalEntryGroup extends UIWidget {
 	public void initialize() {
 		super.initialize();
 
-		final int lChildEntryCount = mChildEntries.size();
+		final int lChildEntryCount = mChildWidgets.size();
 		for (int i = 0; i < lChildEntryCount; i++) {
-			mChildEntries.get(i).initialize();
+			mChildWidgets.get(i).initialize();
 		}
 
-		updateEntries();
+		updateWidgets();
 	}
 
 	@Override
 	public void loadResources(ResourceManager resourceManager) {
 		super.loadResources(resourceManager);
 
-		final int lChildEntryCount = mChildEntries.size();
+		final int lChildEntryCount = mChildWidgets.size();
 		for (int i = 0; i < lChildEntryCount; i++) {
-			mChildEntries.get(i).loadResources(resourceManager);
+			mChildWidgets.get(i).loadResources(resourceManager);
 		}
 	}
 
@@ -71,23 +71,28 @@ public class UIHorizontalEntryGroup extends UIWidget {
 	public void unloadResources() {
 		super.unloadResources();
 
-		final int lChildEntryCount = mChildEntries.size();
+		final int lChildEntryCount = mChildWidgets.size();
 		for (int i = 0; i < lChildEntryCount; i++) {
-			mChildEntries.get(i).unloadResources();
+			mChildWidgets.get(i).unloadResources();
 		}
 	}
 
 	@Override
 	public boolean handleInput(LintfordCore core) {
 		if (intersectsAA(core.HUD().getMouseCameraSpace())) {
-			int lCount = mChildEntries.size();
+			int lCount = mChildWidgets.size();
 			for (int i = 0; i < lCount; i++) {
-				if (mChildEntries.get(i).handleInput(core)) {
+				if (mChildWidgets.get(i).handleInput(core)) {
 					return true;
 				}
 			}
 
 			return true;
+		} else {
+			final int lChildEntryCount = mChildWidgets.size();
+			for (int i = 0; i < lChildEntryCount; i++) {
+				mChildWidgets.get(i).isHoveredOver(false);
+			}
 		}
 
 		return false;
@@ -97,23 +102,23 @@ public class UIHorizontalEntryGroup extends UIWidget {
 	public void update(LintfordCore core) {
 		super.update(core);
 
-		updateEntries();
+		updateWidgets();
 
-		final int lChildEntryCount = mChildEntries.size();
+		final int lChildEntryCount = mChildWidgets.size();
 		for (int i = 0; i < lChildEntryCount; i++) {
-			mChildEntries.get(i).update(core);
+			mChildWidgets.get(i).update(core);
 		}
 	}
 
 	@Override
 	public void draw(LintfordCore core, SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheetDefinition, FontUnit textFont, float componentZDepth) {
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
-			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, mX, mY, mW, mH, componentZDepth + .1f, ColorConstants.WHITE);
+			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, mX, mY, mW, mH, -0.01f, ColorConstants.Debug_Transparent_Magenta);
 		}
 
-		final int lNumChildEntries = mChildEntries.size();
+		final int lNumChildEntries = mChildWidgets.size();
 		for (int i = 0; i < lNumChildEntries; i++) {
-			mChildEntries.get(i).draw(core, spriteBatch, coreSpritesheetDefinition, textFont, componentZDepth + 0.01f);
+			mChildWidgets.get(i).draw(core, spriteBatch, coreSpritesheetDefinition, textFont, componentZDepth + 0.01f);
 		}
 	}
 
@@ -121,39 +126,21 @@ public class UIHorizontalEntryGroup extends UIWidget {
 	// Methods
 	// --------------------------------------
 
-	private void updateEntries() {
-		// Here we will use the position given to us by the parent screen and use it
-		// to orientation our children (for now just horizontally).
-		if (mChildEntries == null || mChildEntries.size() == 0)
+	private void updateWidgets() {
+		if (mChildWidgets == null || mChildWidgets.size() == 0)
 			return;
 
-		final float lPadding = 15.f;
+		final int lChildEntryCount = mChildWidgets.size();
 
-		final int lChildEntryCount = mChildEntries.size();
-		float lTotalWidth = 0;
-		float lTotalHeight = 0;
+		final float lContentWidth = mW;
+		final float lSpacingW = 5.0f;
+		final float lWidgetWidth = (lContentWidth / lChildEntryCount) - lSpacingW * 2.f;
+
 		for (int i = 0; i < lChildEntryCount; i++) {
-			lTotalWidth += lPadding;
-			lTotalWidth += mChildEntries.get(i).width();
-			lTotalWidth += lPadding;
-
-			if (mChildEntries.get(i).height() + lPadding * 2 > lTotalHeight) {
-				lTotalHeight = mChildEntries.get(i).height() + lPadding * 2;
-			}
+			final var lWidget = mChildWidgets.get(i);
+			lWidget.setPosition(mX + i * lWidgetWidth + lSpacingW * 2 * i, mY);
+			lWidget.width(lWidgetWidth);
+			lWidget.height(mH);
 		}
-
-		final float lHSpace = lTotalWidth / lChildEntryCount;
-		for (int i = 0; i < lChildEntryCount; i++) {
-			// we have to manually take away the half screen width because the entries on
-			// the menu screen are placed in the middle.
-			final float lPosX = mX + lPadding + lHSpace * i;
-			final float lPosY = mY + lPadding;
-
-			mChildEntries.get(i).setPosition(lPosX, lPosY);
-		}
-
-		mW = lTotalWidth;
-		mH = lTotalHeight;
 	}
-
 }

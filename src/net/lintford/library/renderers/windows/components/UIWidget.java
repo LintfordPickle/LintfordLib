@@ -30,12 +30,21 @@ public abstract class UIWidget extends Rectangle implements IProcessMouseInput {
 
 	protected boolean mIsEnabled;
 	protected boolean mIsVisible;
+	protected boolean mIsHoveredOver;
 
 	protected float mMouseTimer;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public boolean isHoveredOver() {
+		return mIsHoveredOver;
+	}
+
+	public void isHoveredOver(boolean newValue) {
+		mIsHoveredOver = newValue;
+	}
 
 	public boolean isEnabled() {
 		return mIsEnabled;
@@ -67,8 +76,6 @@ public abstract class UIWidget extends Rectangle implements IProcessMouseInput {
 
 	public UIWidget(final UiWindow parentWindow, float x, float y, float w, float h) {
 		super(x, y, w, h);
-
-		setDimensions(100.f, 25.f);
 
 		mIsVisible = true;
 		mIsEnabled = true;

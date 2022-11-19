@@ -7,7 +7,6 @@ import net.lintford.library.core.graphics.fonts.FontUnit;
 import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintford.library.core.graphics.textures.CoreTextureNames;
 import net.lintford.library.renderers.windows.UiWindow;
-import net.lintford.library.screenmanager.entries.EntryInteractions;
 
 public class UIButton extends UIWidget {
 
@@ -23,10 +22,9 @@ public class UIButton extends UIWidget {
 	// Variables
 	// --------------------------------------
 
-	private EntryInteractions mCallback;
+	private IUiWidgetInteractions mCallback;
 	private int mClickID;
 	private String mButtonLabel;
-	private boolean mHoveredOver;
 	private boolean mIsClicked;
 	private float mClickTimer;
 
@@ -55,18 +53,11 @@ public class UIButton extends UIWidget {
 	// --------------------------------------
 
 	public UIButton(final UiWindow pParentWindow) {
-		this(pParentWindow, 0);
-	}
-
-	public UIButton(final UiWindow pParentWindow, final int pClickID) {
 		super(pParentWindow);
-
-		mClickID = pClickID;
 
 		mButtonLabel = NO_LABEL_TEXT;
 		mW = 200;
 		mH = 25;
-
 	}
 
 	// --------------------------------------
@@ -74,70 +65,63 @@ public class UIButton extends UIWidget {
 	// --------------------------------------
 
 	@Override
-	public boolean handleInput(LintfordCore pCore) {
-		if (!mIsClicked && intersectsAA(pCore.HUD().getMouseCameraSpace())) {
-			mHoveredOver = true;
+	public boolean handleInput(LintfordCore core) {
+		if (!mIsClicked && intersectsAA(core.HUD().getMouseCameraSpace())) {
+			mIsHoveredOver = true;
 
-			if (pCore.input().mouse().tryAcquireMouseLeftClick(hashCode())) {
+			if (core.input().mouse().tryAcquireMouseLeftClick(hashCode())) {
 				mIsClicked = true;
 				final var MINIMUM_CLICK_TIMER = 200;
 
-				// Callback to the listener and pass our ID
 				if (mCallback != null && mClickTimer > MINIMUM_CLICK_TIMER) {
 					mClickTimer = 0;
-					mCallback.menuEntryOnClick(pCore.input(), mClickID);
+					mCallback.widgetOnClick(core.input(), mClickID);
 
 					return true;
-
 				}
-
 			}
-
 		} else {
-			mHoveredOver = false;
+			mIsHoveredOver = false;
 		}
 
-		if (!pCore.input().mouse().tryAcquireMouseLeftClick(hashCode())) {
+		if (mIsClicked && !core.input().mouse().tryAcquireMouseLeftClick(hashCode()))
 			mIsClicked = false;
 
-		}
-
 		return false;
-
 	}
 
 	@Override
-	public void update(LintfordCore pCore) {
-		super.update(pCore);
+	public void update(LintfordCore core) {
+		super.update(core);
 
-		mClickTimer += pCore.appTime().elapsedTimeMilli();
-
+		mClickTimer += core.appTime().elapsedTimeMilli();
 	}
 
 	@Override
-	public void draw(LintfordCore pCore, SpriteBatch pSpriteBatch, SpriteSheetDefinition pCoreSpritesheet, FontUnit pTextFont, float pComponentZDepth) {
-		final float lColorMod = mHoveredOver ? .9f : 1.f;
+	public void draw(LintfordCore core, SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheet, FontUnit textFont, float componentZDepth) {
+		final float lCanvasScale = mParentWindow != null ? mParentWindow.uiStructureController().uiCanvasWScaleFactor() : 1.0f;
+		final float lColorMod = mIsHoveredOver ? .9f : 1.f;
+
 		final var lColor = ColorConstants.getColorWithRGBMod(entityColor, lColorMod);
 
-		pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_RED, centerX() - (mW / 2) + 32, centerY() - mH / 2, mW - 64, mH, pComponentZDepth, lColor);
-		pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_RED, centerX() - (mW / 2) + 32, centerY() - mH / 2, mW - 64, mH, pComponentZDepth, lColor);
-		pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_RED, centerX() - (mW / 2) + 32, centerY() - mH / 2, mW - 64, mH, pComponentZDepth, lColor);
+		spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_RED, mX, centerY() - mH / 2, mW, mH, componentZDepth, lColor);
 
-		final String lButtonText = mButtonLabel != null ? mButtonLabel : NO_LABEL_TEXT;
-		final float lTextWidth = pTextFont.getStringWidth(lButtonText);
+		final var lButtonText = mButtonLabel != null ? mButtonLabel : NO_LABEL_TEXT;
+		final var lTextWidth = textFont.getStringWidth(lButtonText, lCanvasScale);
 
-		pTextFont.drawText(lButtonText, mX + mW / 2f - lTextWidth / 2f, mY + mH / 2f - pTextFont.fontHeight() / 2f, pComponentZDepth, ColorConstants.WHITE, 1f);
+		textFont.drawText(lButtonText, mX + mW / 2f - lTextWidth / 2f, mY + mH / 2f - textFont.fontHeight() / 2f, componentZDepth, ColorConstants.WHITE, lCanvasScale);
 	}
 
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
 
-	public void setClickListener(final EntryInteractions pCallbackObject) {
-		mCallback = pCallbackObject;
+	public void setClickListener(IUiWidgetInteractions callbackObject, int clickUid) {
+		mCallback = callbackObject;
+		mClickID = clickUid;
 	}
 
-	public void removeClickListener(final EntryInteractions pCallbackObject) {
+	public void removeClickListener(IUiWidgetInteractions callbackObject) {
 		mCallback = null;
 	}
 

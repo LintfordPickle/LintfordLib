@@ -221,9 +221,9 @@ public class Camera implements ICamera {
 
 		createView();
 		if (mDisplayConfig.stretchGameScreen()) {
-			mScaleRatio.set(mDisplayConfig.baseGameResolutionWidth() / (float) mWindowWidth, mDisplayConfig.baseGameResolutionHeight() / (float) mWindowHeight);
-			createOrtho(mDisplayConfig.baseGameResolutionWidth(), mDisplayConfig.baseGameResolutionHeight());
-			updateZoomBounds(mDisplayConfig.baseGameResolutionWidth(), mDisplayConfig.baseGameResolutionHeight());
+			mScaleRatio.set(mDisplayConfig.gameResolutionWidth() / (float) mWindowWidth, mDisplayConfig.gameResolutionHeight() / (float) mWindowHeight);
+			createOrtho(mDisplayConfig.gameResolutionWidth(), mDisplayConfig.gameResolutionHeight());
+			updateZoomBounds(mDisplayConfig.gameResolutionWidth(), mDisplayConfig.gameResolutionHeight());
 		} else {
 			mScaleRatio.set(1.f, 1.f);
 			createOrtho(mWindowWidth, mWindowHeight);
@@ -335,8 +335,8 @@ public class Camera implements ICamera {
 
 		createView();
 		if (mDisplayConfig.stretchGameScreen()) {
-			createOrtho(mDisplayConfig.baseGameResolutionWidth(), mDisplayConfig.baseGameResolutionHeight());
-			updateZoomBounds(mDisplayConfig.baseGameResolutionWidth(), mDisplayConfig.baseGameResolutionHeight());
+			createOrtho(mDisplayConfig.gameResolutionWidth(), mDisplayConfig.gameResolutionHeight());
+			updateZoomBounds(mDisplayConfig.gameResolutionWidth(), mDisplayConfig.gameResolutionHeight());
 		} else {
 			createOrtho(mWindowWidth, mWindowHeight);
 			updateZoomBounds(mWindowWidth, mWindowHeight);

@@ -76,7 +76,7 @@ public class UiIntSlider extends UIWidget {
 		return mSliderLabel;
 	}
 
-	public void buttonLabel(final String newLabel) {
+	public void sliderLabel(final String newLabel) {
 		mSliderLabel = newLabel;
 	}
 

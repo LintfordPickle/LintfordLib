@@ -10,6 +10,7 @@ import net.lintford.library.core.graphics.textures.CoreTextureNames;
 import net.lintford.library.core.input.IBufferedTextInputCallback;
 import net.lintford.library.core.input.IUiInputKeyPressCallback;
 import net.lintford.library.core.input.InputManager;
+import net.lintford.library.renderers.windows.ConstantsUi;
 import net.lintford.library.renderers.windows.UiWindow;
 
 public class UIInputText extends UIWidget implements IBufferedTextInputCallback {
@@ -20,12 +21,11 @@ public class UIInputText extends UIWidget implements IBufferedTextInputCallback 
 
 	private static final long serialVersionUID = 3637330515154931480L;
 
-	private static final float CARET_FLASH_TIME = 250;
-
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
+	private int mMaxInputCharacters;
 	private transient boolean mHasFocus;
 	private transient float mCaretFlashTimer;
 	private transient boolean mShowCaret;
@@ -46,6 +46,14 @@ public class UIInputText extends UIWidget implements IBufferedTextInputCallback 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public int maxnumInputCharacters() {
+		return mMaxInputCharacters;
+	}
+
+	public void maxnumInputCharacters(int maxNumInputCharacters) {
+		mMaxInputCharacters = maxNumInputCharacters;
+	}
 
 	public boolean mouseClickBreaksInputTextFocus() {
 		return mMouseClickBreaksInputTextFocus;
@@ -109,6 +117,7 @@ public class UIInputText extends UIWidget implements IBufferedTextInputCallback 
 
 		mCancelRectangle = new Rectangle();
 		mEmptyString = "";
+		mMaxInputCharacters = 15;
 	}
 
 	// --------------------------------------
@@ -159,34 +168,35 @@ public class UIInputText extends UIWidget implements IBufferedTextInputCallback 
 	public void update(LintfordCore core) {
 		super.update(core);
 
+		final float lCanvasScale = mParentWindow != null ? mParentWindow.uiStructureController().gameCanvasWScaleFactor() : 1.0f;
 		mCaretFlashTimer += core.appTime().elapsedTimeMilli();
-
-		final int lHorizontalPadding = 5;
 
 		// TODO: Make the icon sizes a UiConstant
 		final int lCancelRectSize = 16;
-		mCancelRectangle.set(mX + mW - lCancelRectSize - lHorizontalPadding, mY + mH / 2 - lCancelRectSize / 2, lCancelRectSize, lCancelRectSize);
+		mCancelRectangle.set(mX + mW - lCancelRectSize * lCanvasScale, mY + mH / 2 * lCanvasScale - lCancelRectSize / 2 * lCanvasScale, lCancelRectSize * lCanvasScale, lCancelRectSize * lCanvasScale);
 
 		if (mHasFocus) {
 			// flash and update the location of the caret
-			if (mCaretFlashTimer > CARET_FLASH_TIME) {
+			if (mCaretFlashTimer > ConstantsUi.CARET_FLASH_TIME) {
 				mShowCaret = !mShowCaret;
 				mCaretFlashTimer = 0;
 			}
 
 			// Limit the number of characters which can be entered
-			if (mInputField.length() > 15)
-				mInputField.delete(15, mInputField.length() - 1);
+			if (mInputField.length() > mMaxInputCharacters)
+				mInputField.delete(mMaxInputCharacters, mInputField.length() - 1);
 		}
 	}
 
 	@Override
 	public void draw(LintfordCore core, SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheetDefinition, FontUnit textFont, float componentZDepth) {
+		final float lCanvasScale = mParentWindow != null ? mParentWindow.uiStructureController().gameCanvasWScaleFactor() : 1.0f;
+
 		// Renders the background of the input text widget
-		spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_LEFT, (int) mX, mY, 32, mH, componentZDepth, ColorConstants.MenuPanelPrimaryColor);
+		spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_LEFT, (int) mX, mY, 32 * lCanvasScale, mH * lCanvasScale, componentZDepth, ColorConstants.MenuPanelPrimaryColor);
 		if (mW > 32) {
-			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_MID, (int) mX + 32, mY, mW - 64, mH, componentZDepth, ColorConstants.MenuPanelPrimaryColor);
-			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_RIGHT, (int) mX + mW - 32, mY, 32, mH, componentZDepth, ColorConstants.MenuPanelPrimaryColor);
+			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_MID, (int) mX + 32 * lCanvasScale, mY, mW - 64 * lCanvasScale, mH * lCanvasScale, componentZDepth, ColorConstants.MenuPanelPrimaryColor);
+			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_RIGHT, (int) mX + mW - 32 * lCanvasScale, mY, 32 * lCanvasScale, mH * lCanvasScale, componentZDepth, ColorConstants.MenuPanelPrimaryColor);
 		}
 
 		// Draw the cancel button rectangle
@@ -205,9 +215,10 @@ public class UIInputText extends UIWidget implements IBufferedTextInputCallback 
 			}
 		}
 
-		textFont.drawText(lText, mX + 10, mY + mH * .5f - lTextHeight * .5f, componentZDepth, ColorConstants.TextEntryColor, 1f, -1);
+		textFont.drawText(lText, mX + 10, mY + mH * .5f - lTextHeight * .5f, componentZDepth, ColorConstants.TextEntryColor, lCanvasScale, -1);
 		if (mShowCaret && mHasFocus) {
-			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, mX + 10 + lInputTextWidth, mY + mH * .5f - lTextHeight * .5f, textFont.fontHeight() / 2.f, textFont.fontHeight(), componentZDepth, ColorConstants.WHITE);
+			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, mX + lInputTextWidth * lCanvasScale + 10, mY + mH * .5f * lCanvasScale - lTextHeight * .5f * lCanvasScale, textFont.fontHeight() / 2.f * lCanvasScale,
+					textFont.fontHeight() * lCanvasScale, componentZDepth, ColorConstants.WHITE);
 		}
 	}
 

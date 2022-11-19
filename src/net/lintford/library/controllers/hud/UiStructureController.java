@@ -1,5 +1,6 @@
 package net.lintford.library.controllers.hud;
 
+import net.lintford.library.ConstantsDisplay;
 import net.lintford.library.controllers.BaseController;
 import net.lintford.library.controllers.core.ControllerManager;
 import net.lintford.library.core.LintfordCore;
@@ -25,44 +26,50 @@ public class UiStructureController extends BaseController {
 	private Rectangle mMenuTitleRectangle;
 	private Rectangle mMenuMainRectangle;
 	private Rectangle mMenuFooterRectangle;
-	private float mWindowAutoScaleFactorX;
-	private float mWindowAutoScaleFactorY;
+
+	private float mGameCanvasWScaleFactor;
+	private float mGameCanvasHScaleFactor;
+	private float mUiCanvasWScaleFactor;
+	private float mUiCanvasHScaleFactor;
+
 	private float mUITransparencyFactorActual;
 	private float mUIScaleFactorActual;
 	private float mUITextScaleFactorActual;
+
 	private float mWindowPaddingH;
 	private float mWindowPaddingV;
 	private float mMinimumTitleHeight = 30.f;
-	private float mMinimumFooterHeight = 30.f;
+	private float mFooterHeight = 30.f;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
 
+	/**
+	 * Assuming all UiWindow / UiWidgets are prepared for 1920, this is the scale factor for different canvas sizes
+	 */
+	public float gameCanvasWScaleFactor() {
+		return mGameCanvasWScaleFactor;
+	}
+
+	public float gameCanvasHScaleFactor() {
+		return mGameCanvasHScaleFactor;
+	}
+
+	public float uiCanvasWScaleFactor() {
+		return mUiCanvasWScaleFactor;
+	}
+
+	public float uiCanvasHScaleFactor() {
+		return mUiCanvasHScaleFactor;
+	}
+
 	public float minimumTitleHeight() {
 		return mMinimumTitleHeight;
 	}
 
-	public void minimumTitleHeight(float minimumTitleHeight) {
-		mMinimumTitleHeight = minimumTitleHeight;
-	}
-
-	public float minimumFooterHeight() {
-		return mMinimumFooterHeight;
-	}
-
-	public void minimumFooterHeight(float minimumFooterHeight) {
-		mMinimumFooterHeight = minimumFooterHeight;
-	}
-
-	/** The windowAutoScaleFactorX is the factor between the current window width and the base window width. */
-	public float windowAutoScaleFactorX() {
-		return mWindowAutoScaleFactorX;
-	}
-
-	/** The windowAutoScaleFactorY is the factor between the current window height and the base window height. */
-	public float windowAutoScaleFactorY() {
-		return mWindowAutoScaleFactorY;
+	public float footerHeight() {
+		return mFooterHeight;
 	}
 
 	/** Represents the padding space at the edge of the screen (horizontal). */
@@ -150,15 +157,18 @@ public class UiStructureController extends BaseController {
 
 		final var lDisplayConfig = core.config().display();
 
-		final float lBaseWindowWidth = lDisplayConfig.baseGameResolutionWidth();
-		final float lBaseWindowHeight = lDisplayConfig.baseGameResolutionHeight();
-
 		if (lDisplayConfig.stretchGameScreen()) {
-			mWindowAutoScaleFactorX = 1.f;
-			mWindowAutoScaleFactorY = 1.f;
+			mGameCanvasWScaleFactor = (float) lDisplayConfig.gameResolutionWidth() / (float) ConstantsDisplay.REFERENCE_GAME_RESOLUTION_W;
+			mGameCanvasHScaleFactor = (float) lDisplayConfig.gameResolutionHeight() / (float) ConstantsDisplay.REFERENCE_GAME_RESOLUTION_H;
+
+			mUiCanvasWScaleFactor = (float) lDisplayConfig.uiResolutionWidth() / (float) ConstantsDisplay.REFERENCE_UI_RESOLUTION_W;
+			mUiCanvasHScaleFactor = (float) lDisplayConfig.uiResolutionHeight() / (float) ConstantsDisplay.REFERENCE_UI_RESOLUTION_H;
 		} else {
-			mWindowAutoScaleFactorX = core.config().display().windowWidth() / lBaseWindowWidth;
-			mWindowAutoScaleFactorY = core.config().display().windowHeight() / lBaseWindowHeight;
+			mGameCanvasWScaleFactor = 1.f;
+			mGameCanvasHScaleFactor = 1.f;
+
+			mUiCanvasWScaleFactor = 1.f;
+			mUiCanvasHScaleFactor = 1.f;
 		}
 
 		updateHUDAreas(core);
@@ -174,9 +184,9 @@ public class UiStructureController extends BaseController {
 	}
 
 	private void updateWindowUiComponentStructures(LintfordCore core) {
-		mUIScaleFactorActual = mDisplayManager.graphicsSettings().UIScale();
-		mUITextScaleFactorActual = mDisplayManager.graphicsSettings().UITextScale();
-		mUITransparencyFactorActual = mDisplayManager.graphicsSettings().UITransparencyScale();
+		mUIScaleFactorActual = mDisplayManager.graphicsSettings().UiUserScale();
+		mUITextScaleFactorActual = mDisplayManager.graphicsSettings().UiUserTextScale();
+		mUITransparencyFactorActual = mDisplayManager.graphicsSettings().UiUserTransparencyScale();
 	}
 
 	private void updateMenuUiStructure(LintfordCore core) {
@@ -186,16 +196,16 @@ public class UiStructureController extends BaseController {
 		// The problem is, the UiStructureController is assigning a boundary for the hud to render controls into (e.g. for the pause menu)
 		// but it assumes it always has the area of the window - it actually has the game canvas, which when stretched, is just a subset
 
-		final float lWindowWidth = core.config().display().baseGameResolutionWidth();
-		final float lWindowHeight = core.config().display().baseGameResolutionHeight();
+		final float lWindowWidth = core.config().display().gameResolutionWidth();
+		final float lWindowHeight = core.config().display().gameResolutionHeight();
 
-		final float lVerticalInnerPadding = 1.f * mWindowAutoScaleFactorY;
+		final float lVerticalInnerPadding = 1.f * mGameCanvasHScaleFactor;
 		final float lModWidth = lWindowWidth - mWindowPaddingH * 2.f;
 		final float lModHeight = lWindowHeight - mWindowPaddingV * 2.f;
 
 		float lRemainingHeight = lModHeight;
 		final float lMinimumTitleHeight = mMinimumTitleHeight;
-		final float lMinimumFooterHeight = mMinimumFooterHeight;
+		final float lMinimumFooterHeight = mFooterHeight;
 		final float lTitleHeight = (float) Math.max(lMinimumTitleHeight, lModHeight * .15f - lVerticalInnerPadding);
 		final float lFooterHeight = (float) Math.max(lMinimumFooterHeight, lModHeight * .10f - lVerticalInnerPadding);
 		lRemainingHeight -= lTitleHeight;
@@ -212,8 +222,8 @@ public class UiStructureController extends BaseController {
 		final float lWindowWidth = core.config().display().windowWidth();
 		final float lWindowHeight = core.config().display().windowHeight();
 
-		final float lGameHeaderHeight = 40f * windowAutoScaleFactorY();
-		final float lGameFooterHeight = 70f * windowAutoScaleFactorY();
+		final float lGameHeaderHeight = 40.f * mGameCanvasHScaleFactor;
+		final float lGameFooterHeight = 70.f * mGameCanvasHScaleFactor;
 
 		final float lMaxGameHudWidth = 1280.f;
 		final float lMinGameHudWidth = 800.f;

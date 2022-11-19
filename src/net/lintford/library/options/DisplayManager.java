@@ -107,8 +107,13 @@ public class DisplayManager extends IniFile {
 
 	private boolean mStretchGameScreen = false;
 	private boolean mRecompileShaders = false;
-	private final int mBaseGameResolutionWidth;
-	private final int mBaseGameResolutionHeight;
+
+	private final int mGameResolutionWidth;
+	private final int mGameResolutionHeight;
+
+	private final int mUiResolutionWidth;
+	private final int mUiResolutionHeight;
+
 	private boolean mWindowWasResized;
 	boolean mWindowResolutionChanged;
 	boolean mWaitForMouseRelease;
@@ -181,12 +186,20 @@ public class DisplayManager extends IniFile {
 		return mStretchGameScreen;
 	}
 
-	public int baseGameResolutionWidth() {
-		return mBaseGameResolutionWidth;
+	public int gameResolutionWidth() {
+		return mGameResolutionWidth;
 	}
 
-	public int baseGameResolutionHeight() {
-		return mBaseGameResolutionHeight;
+	public int gameResolutionHeight() {
+		return mGameResolutionHeight;
+	}
+
+	public int uiResolutionWidth() {
+		return mUiResolutionWidth;
+	}
+
+	public int uiResolutionHeight() {
+		return mUiResolutionHeight;
 	}
 
 	public void resizeListeners(List<IResizeListener> resizeListeners) {
@@ -212,10 +225,12 @@ public class DisplayManager extends IniFile {
 	public DisplayManager(GameInfo gameInfo, String configFilename) {
 		super(configFilename);
 
-		mBaseGameResolutionWidth = gameInfo.baseGameResolutionWidth();
-		mBaseGameResolutionHeight = gameInfo.baseGameResolutionHeight();
+		mGameResolutionWidth = gameInfo.gameCanvasResolutionWidth();
+		mGameResolutionHeight = gameInfo.gameCanvasResolutionHeight();
 
-		// Make sure we always have a solid base instances with valid values
+		mUiResolutionWidth = gameInfo.uiCanvasResolutionWidth();
+		mUiResolutionHeight = gameInfo.uiCanvasResolutionHeight();
+
 		mDisplaySettings = VideoSettings.createBasicTemplate();
 		mGraphicsSettings = GraphicsSettings.createBasicTemplate();
 
@@ -243,22 +258,25 @@ public class DisplayManager extends IniFile {
 	}
 
 	public void update(LintfordCore core) {
-		if (mWindowResolutionChanged && stretchGameScreen() == false) {
+		if (mWindowResolutionChanged) {
 			synchronized (this) {
-				mLockedListeners = true;
-				final int lNumWindowResizeListeners = mWindowResizeListeners.size();
+				if (stretchGameScreen() == false) {
+					mLockedListeners = true;
+					final int lNumWindowResizeListeners = mWindowResizeListeners.size();
 
-				Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("Resolution changed: %dx%d", mDisplaySettings.windowWidth(), mDisplaySettings.windowHeight()));
-				Debug.debugManager().logger().i("SYSTEM", "calling window resize listeners.");
+					Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("Resolution changed: %dx%d", mDisplaySettings.windowWidth(), mDisplaySettings.windowHeight()));
+					Debug.debugManager().logger().i("SYSTEM", "calling window resize listeners.");
 
-				for (int i = 0; i < lNumWindowResizeListeners; i++) {
-					if (mWindowResizeListeners.get(i) == null)
-						continue;
+					for (int i = 0; i < lNumWindowResizeListeners; i++) {
+						if (mWindowResizeListeners.get(i) == null)
+							continue;
 
-					mWindowResizeListeners.get(i).onResize(mDisplaySettings.windowWidth(), mDisplaySettings.windowHeight());
+						mWindowResizeListeners.get(i).onResize(mDisplaySettings.windowWidth(), mDisplaySettings.windowHeight());
+					}
+
+					mLockedListeners = false;
 				}
 
-				mLockedListeners = false;
 				mWindowResolutionChanged = false;
 
 				saveConfig();
@@ -274,8 +292,8 @@ public class DisplayManager extends IniFile {
 			// create default values from the GameInfo
 			mDisplaySettings.monitorIndex(NULL); // default to primary monitor first time
 			mDisplaySettings.fullScreenIndex(gameInfo.defaultFullScreen() ? VideoSettings.FULLSCREEN_YES_INDEX : VideoSettings.FULLSCREEN_NO_INDEX);
-			mDisplaySettings.windowWidth(gameInfo.baseGameResolutionWidth());
-			mDisplaySettings.windowHeight(gameInfo.baseGameResolutionHeight());
+			mDisplaySettings.windowWidth(gameInfo.gameCanvasResolutionWidth());
+			mDisplaySettings.windowHeight(gameInfo.gameCanvasResolutionHeight());
 			mDisplaySettings.resizeable(gameInfo.windowResizeable());
 
 			saveConfig();
@@ -285,15 +303,15 @@ public class DisplayManager extends IniFile {
 			// TODO: Verify the monitor index is (still?) valid
 
 			// mDisplaySettings.monitorIndex(lSavedMonitorIndex);
-			mDisplaySettings.windowWidth(getInt(SECTION_NAME_SETTINGS, "WindowWidth", gameInfo.baseGameResolutionWidth()));
-			mDisplaySettings.windowHeight(getInt(SECTION_NAME_SETTINGS, "WindowHeight", gameInfo.baseGameResolutionHeight()));
+			mDisplaySettings.windowWidth(getInt(SECTION_NAME_SETTINGS, "WindowWidth", gameInfo.gameCanvasResolutionWidth()));
+			mDisplaySettings.windowHeight(getInt(SECTION_NAME_SETTINGS, "WindowHeight", gameInfo.gameCanvasResolutionHeight()));
 			mDisplaySettings.fullScreenIndex(getInt(SECTION_NAME_SETTINGS, "WindowFullscreen", VideoSettings.FULLSCREEN_NO_INDEX));
 			mDisplaySettings.vSyncEnabled(getBoolean(SECTION_NAME_SETTINGS, "vSync", true));
 			mDisplaySettings.resizeable(gameInfo.windowResizeable()); // not overridable from config file
 
-			mGraphicsSettings.setUIScale((float) getInt(SECTION_NAME_UI, "uiScale", 100) / 100f);
-			mGraphicsSettings.setUITextScale((float) getInt(SECTION_NAME_UI, "uiTextScale", 100) / 100f);
-			mGraphicsSettings.setUITransparencyScale((float) getInt(SECTION_NAME_UI, "uiTransparencyScale", 80) / 100f);
+			mGraphicsSettings.setUiUserScale((float) getInt(SECTION_NAME_UI, "uiScale", 100) / 100f);
+			mGraphicsSettings.setUiUserTextScale((float) getInt(SECTION_NAME_UI, "uiTextScale", 100) / 100f);
+			mGraphicsSettings.setUiUserTransparencyScale((float) getInt(SECTION_NAME_UI, "uiTransparencyScale", 80) / 100f);
 
 			saveConfig();
 		}
@@ -303,7 +321,6 @@ public class DisplayManager extends IniFile {
 	public void saveConfig() {
 		clearEntries();
 
-		// Update the entries in the map
 		setValue(SECTION_NAME_SETTINGS, "MonitorIndex", mDisplaySettings.monitorIndex());
 		setValue(SECTION_NAME_SETTINGS, "WindowWidth", mDisplaySettings.windowWidth());
 		setValue(SECTION_NAME_SETTINGS, "WindowHeight", mDisplaySettings.windowHeight());
@@ -318,11 +335,10 @@ public class DisplayManager extends IniFile {
 
 		setValue(SECTION_NAME_MISC, "Created", DateTimeFormatter.ofPattern("dd.MM.yyyy").format(LocalDate.now()));
 
-		setValue(SECTION_NAME_UI, "uiScale", (int) (mGraphicsSettings.UIScale() * 100f));
-		setValue(SECTION_NAME_UI, "uiTextScale", (int) (mGraphicsSettings.UITextScale() * 100f));
-		setValue(SECTION_NAME_UI, "uiTransparencyScale", (int) (mGraphicsSettings.UITransparencyScale() * 100f));
+		setValue(SECTION_NAME_UI, "uiScale", (int) (mGraphicsSettings.UiUserScale() * 100f));
+		setValue(SECTION_NAME_UI, "uiTextScale", (int) (mGraphicsSettings.UiUserTextScale() * 100f));
+		setValue(SECTION_NAME_UI, "uiTransparencyScale", (int) (mGraphicsSettings.UiUserTransparencyScale() * 100f));
 
-		// save the entries to file
 		super.saveConfig();
 	}
 
@@ -333,7 +349,6 @@ public class DisplayManager extends IniFile {
 	public long createWindow(GameInfo gameInfo) {
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "Creating GLFWWindow");
 
-		// All GLFW errors to the system err print stream
 		glfwSetErrorCallback(GLFWErrorCallback.createPrint(System.err));
 
 		if (!glfwInit()) {
@@ -359,10 +374,9 @@ public class DisplayManager extends IniFile {
 		mDesktopWidth = mDesktopVideoMode.width();
 		mDesktopHeight = mDesktopVideoMode.height();
 
-		// Constraints check (don't allow changes in the INI file)
 		if (!gameInfo.windowResizeable()) {
-			mDisplaySettings.windowWidth(gameInfo.baseGameResolutionWidth());
-			mDisplaySettings.windowHeight(gameInfo.baseGameResolutionHeight());
+			mDisplaySettings.windowWidth(gameInfo.gameCanvasResolutionWidth());
+			mDisplaySettings.windowHeight(gameInfo.gameCanvasResolutionHeight());
 		}
 
 		validateFullScreenResolution(gameInfo);
@@ -372,21 +386,16 @@ public class DisplayManager extends IniFile {
 			glfwDestroyWindow(mMasterWindowId);
 
 			mMasterWindowId = lNewWindowID;
-		}
-
-		// Create a new windowed window
-		else {
+		} else {
 			long lMonitorID = NULL; // windowed
 			long lNewWindowID = glfwCreateWindow(mDisplaySettings.windowWidth(), mDisplaySettings.windowHeight(), gameInfo.windowTitle(), lMonitorID, mMasterWindowId);
 			glfwDestroyWindow(mMasterWindowId);
 
 			mMasterWindowId = lNewWindowID;
 
-			// In the case the window is in windowed mode, and the desired size is that of the desktop
 			if (mDisplaySettings.windowWidth() == mDesktopWidth && mDisplaySettings.windowHeight() == mDesktopHeight) {
 				glfwMaximizeWindow(mMasterWindowId);
 
-				// Adjust the position of the window based on the window size
 				int[] w = new int[2];
 				int[] h = new int[2];
 				glfwGetWindowSize(mMasterWindowId, w, h);
@@ -397,11 +406,10 @@ public class DisplayManager extends IniFile {
 			glfwSetWindowPos(mMasterWindowId, (mDesktopWidth - mDisplaySettings.windowWidth()) / 2, (mDesktopHeight - mDisplaySettings.windowHeight()) / 2);
 		}
 
-		// Set a minimum window
 		glfwSetWindowSizeLimits(mMasterWindowId, gameInfo.minimumWindowWidth(), gameInfo.minimumWindowHeight(), GLFW_DONT_CARE, GLFW_DONT_CARE);
 
-		// Make the openGL the current context
 		mOpenGlMainThreadId = Thread.currentThread().getId();
+
 		// The main opengl thread is important, because it allows us to ensure that we only initial OpenGl ocntainers
 		// on the main context thread (as containers are not shared with shared contexts).
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "Main OpenGl thread id: " + mOpenGlMainThreadId);
@@ -478,8 +486,8 @@ public class DisplayManager extends IniFile {
 	}
 
 	/**
-	 * This line is critical for LWJGL's interoperation with GLFW's OpenGL context, or any context that is managed externally. LWJGL detects the context that is current in the current thread, creates the GLCapabilities
-	 * instance and makes the OpenGL bindings available for use.
+	 * This line is critical for LWJGL's interoperation with GLFW's OpenGL context, or any context that is managed externally. LWJGL detects the context that is current in the current thread, creates the GLCapabilities instance and makes the OpenGL
+	 * bindings available for use.
 	 */
 	public void createGlCompatiblities() {
 		GL.createCapabilities();
@@ -597,14 +605,13 @@ public class DisplayManager extends IniFile {
 
 		// If we reach this point, then the saved resolution was not found on the monitor and we should revert back
 		// to the base resolution of the game (in windowed mode)
-		mDisplaySettings.windowWidth(gameInfo.baseGameResolutionWidth());
-		mDisplaySettings.windowHeight(gameInfo.baseGameResolutionHeight());
+		mDisplaySettings.windowWidth(gameInfo.gameCanvasResolutionWidth());
+		mDisplaySettings.windowHeight(gameInfo.gameCanvasResolutionHeight());
 		mDisplaySettings.fullScreenIndex(VideoSettings.FULLSCREEN_NO_INDEX);
 
 		// TODO: Display toast to the user than an unsupported resolution was saved
 
-		Debug.debugManager().logger().w(getClass().getSimpleName(),
-				"Non-standard resolution found (" + lLookingForWidth + "," + lLookingForHeight + ")! Defaulting back to " + mDisplaySettings.windowWidth() + "," + mDisplaySettings.windowHeight());
+		Debug.debugManager().logger().w(getClass().getSimpleName(), "Non-standard resolution found (" + lLookingForWidth + "," + lLookingForHeight + ")! Defaulting back to " + mDisplaySettings.windowWidth() + "," + mDisplaySettings.windowHeight());
 	}
 
 	// --------------------------------------

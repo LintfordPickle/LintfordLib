@@ -11,54 +11,48 @@ public class GraphicsSettings {
 	static final GraphicsSettings createBasicTemplate() {
 		final var lBasic = new GraphicsSettings();
 
-		lBasic.mUIScale = 1f;
-		lBasic.mUITextScale = 1f;
-		lBasic.mUITransparency = .8f;
+		lBasic.mUiUserScale = 1f;
+		lBasic.mUiUserTextScale = 1f;
+		lBasic.mUiUserTransparency = .8f;
 
 		return lBasic;
 	}
-
-	/** These is the factor by which to scale UI elements and text by when in the 'Big' UI mode (i..e when the window dimensions are normal/high). */
-	public static final float BIG_UI_SCALE_FACTOR = 1f;
-
-	/** These is the factor by which to scale UI elements and text by when in the 'small' UI mode (i..e when the window dimensions are quite small). */
-	public static final float SMALL_UI_SCALE_FACTOR = 0.8f;
 
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
 	// Normalized values only
-	private float mUIScale;
-	private float mUITextScale;
-	private float mUITransparency;
+	private float mUiUserScale;
+	private float mUiUserTextScale;
+	private float mUiUserTransparency;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
 
-	public float UIScale() {
-		return mUIScale;
+	public float UiUserScale() {
+		return mUiUserScale;
 	}
 
-	public void setUIScale(float newValue) {
-		mUIScale = MathHelper.clamp(newValue, 0.75f, 1.5f);
+	public void setUiUserScale(float newValue) {
+		mUiUserScale = MathHelper.clamp(newValue, 0.75f, 1.5f);
 	}
 
-	public float UITextScale() {
-		return mUITextScale;
+	public float UiUserTextScale() {
+		return mUiUserTextScale;
 	}
 
-	public void setUITextScale(float newValue) {
-		mUITextScale = MathHelper.clamp(newValue, 0.75f, 1.5f);
+	public void setUiUserTextScale(float newValue) {
+		mUiUserTextScale = MathHelper.clamp(newValue, 0.75f, 1.5f);
 	}
 
-	public float UITransparencyScale() {
-		return mUITransparency;
+	public float UiUserTransparencyScale() {
+		return mUiUserTransparency;
 	}
 
-	public void setUITransparencyScale(float newValue) {
-		mUITransparency = MathHelper.clamp(newValue, 0.75f, 1.5f);
+	public void setUiUserTransparencyScale(float newValue) {
+		mUiUserTransparency = MathHelper.clamp(newValue, 0.75f, 1.5f);
 	}
 
 	// --------------------------------------
@@ -78,9 +72,9 @@ public class GraphicsSettings {
 	}
 
 	public void copy(GraphicsSettings graphicsSettingsToCopy) {
-		this.mUIScale = graphicsSettingsToCopy.mUIScale;
-		this.mUITextScale = graphicsSettingsToCopy.mUITextScale;
-		this.mUITransparency = graphicsSettingsToCopy.mUITransparency;
+		this.mUiUserScale = graphicsSettingsToCopy.UiUserScale();
+		this.mUiUserTextScale = graphicsSettingsToCopy.UiUserTextScale();
+		this.mUiUserTransparency = graphicsSettingsToCopy.UiUserTransparencyScale();
 	}
 
 	public boolean isDifferent(GraphicsSettings otherGrpahicsSettingsToCheckAgainst) {
@@ -88,9 +82,8 @@ public class GraphicsSettings {
 			return true;
 
 		// @formatter:off
-		return mUIScale != otherGrpahicsSettingsToCheckAgainst.mUIScale 
-			|| mUITextScale != otherGrpahicsSettingsToCheckAgainst.mUITextScale 
-			|| mUITransparency != otherGrpahicsSettingsToCheckAgainst.mUITransparency;
-		// @formatter:on
+		return mUiUserScale != otherGrpahicsSettingsToCheckAgainst.UiUserScale() 
+			|| mUiUserTextScale != otherGrpahicsSettingsToCheckAgainst.UiUserTextScale() 
+			|| mUiUserTransparency != otherGrpahicsSettingsToCheckAgainst.UiUserTransparencyScale();
 	}
 }

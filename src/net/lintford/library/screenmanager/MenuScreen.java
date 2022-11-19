@@ -336,7 +336,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		// *** FOOTER *** //
 		final var lHUDController = mRendererManager.uiStructureController();
 
-		final float lInnerPaddingW = OUTER_PADDING_W * lHUDController.windowAutoScaleFactorX();
+		final float lInnerPaddingW = OUTER_PADDING_W * lHUDController.gameCanvasWScaleFactor();
 
 		float lWidthOfPage = lHUDController.menuFooterRectangle().width() - lInnerPaddingW * 2f;
 		float lHeightOfPage = lHUDController.menuFooterRectangle().height();
@@ -363,8 +363,8 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 		final float lScreenContentWidth = lUIHUDStructureController.menuMainRectangle().width();
 
-		final float lInnerPaddingW = INNER_PADDING_W * lUIHUDStructureController.windowAutoScaleFactorX();
-		final float lInnerPaddingH = INNER_PADDING_H * lUIHUDStructureController.windowAutoScaleFactorY();
+		final float lInnerPaddingW = INNER_PADDING_W * lUIHUDStructureController.gameCanvasWScaleFactor();
+		final float lInnerPaddingH = INNER_PADDING_H * lUIHUDStructureController.gameCanvasHScaleFactor();
 
 		for (int i = 0; i < lLeftLayoutCount; i++) {
 			final var lBaseLayout = layoutList.get(i);
@@ -521,7 +521,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		final var lHeaderFontHeight = mMenuHeaderFont.fontHeight() * lUiTextScale;
 
 		final float lMenuTitlePositionX = lHeaderRect.centerX() - lHeaderFontWidth * .5f;
-		final float lMenuTitlePositionY = lHeaderRect.top() + 5 * lUiStructureController.windowAutoScaleFactorY();
+		final float lMenuTitlePositionY = lHeaderRect.top() + 5 * lUiStructureController.gameCanvasHScaleFactor();
 
 		mMenuHeaderFont.begin(core.HUD());
 		mMenuHeaderFont.drawText(mMenuTitle, lMenuTitlePositionX, lMenuTitlePositionY, -0.01f, screenColor, lUiTextScale);

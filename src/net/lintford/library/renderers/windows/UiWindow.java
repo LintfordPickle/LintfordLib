@@ -31,28 +31,19 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 
 	protected static final float Z_DEPTH = -2.f;
 
-	/** Define the base size of the panels and title bar. These are re-calculated on a per-frame basis using the current window size (see bnelow in UiWindow class) */
-	protected static final float BASE_TITLEBAR_HEIGHT = 32.f;
-	protected static final float BASE_PANEL_WIDTH = 32.f;
-	protected static final float BASE_PANEL_HEIGHT = 32.f;
-
-	protected static final float SCREEN_PADDING_X = 50.f;
-	protected static final float SCREEN_PADDING_Y = 50.f;
-
-	// Inter-content padding
-	protected static final float WINDOW_CONTENT_PADDING_X = 16.f;
-
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
-	protected float mTitleBarHeight;
 	protected float mPanelSizeWidth;
 	protected float mPanelSizeHeight;
 
 	protected List<UIWidget> mComponents;
-	protected String mWindowTitle;
 	protected boolean mIsOpen;
+
+	protected boolean mRenderWindowTitle;
+	protected String mWindowTitle;
+	protected float mTitleBarHeight;
 
 	protected boolean mMouseDownLastUpdate;
 
@@ -102,6 +93,26 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public UiStructureController uiStructureController() {
+		return mUiStructureController;
+	}
+
+	public SpriteSheetDefinition coreSpritesheet() {
+		return mCoreSpritesheet;
+	}
+
+	public SpriteSheetDefinition hudSpritesheet() {
+		return mHudSpritesheet;
+	}
+
+	public boolean renderWindowTitle() {
+		return mRenderWindowTitle;
+	}
+
+	public void renderWindowTitle(boolean renderTitle) {
+		mRenderWindowTitle = renderTitle;
+	}
 
 	public void paddingLeft(float newValue) {
 		mWindowPaddingLeft = newValue;
@@ -232,10 +243,7 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 		mFullContentRectangle = new ScrollBarContentRectangle(this);
 		mScrollBar = new ScrollBar(this, mFullContentRectangle);
 
-		mFullContentRectangle.set(mWindowArea.x(), mWindowArea.y() + BASE_TITLEBAR_HEIGHT, 0, 0);
-
-		// sane default
-		mWindowTitle = rendererName;
+		mFullContentRectangle.set(mWindowArea.x(), mWindowArea.y() + ConstantsUi.UI_WINDOW_REFERENCE_TITLEBAR_HEIGHT, 0, 0);
 
 		mIsWindowMoveable = false;
 		mUiInputFromUiManager = true;
@@ -282,12 +290,9 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 			}
 		}
 
-		// 1. Check if the scroll bar has been used
-		if (mScrollBar.handleInput(core, rendererManager())) {
+		if (mScrollBar.handleInput(core, rendererManager()))
 			return true;
-		}
 
-		// Update the window components
 		final int lComponentCount = mComponents.size();
 		for (int i = 0; i < lComponentCount; i++) {
 			if (mComponents.get(i).handleInput(core)) {
@@ -296,7 +301,6 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 		}
 
 		if (mIsWindowMoving) {
-			// check if user has stopped dragging the window (worst case we skip this frame)
 			if (!core.input().mouse().isMouseLeftClick(hashCode())) {
 				mIsWindowMoving = false;
 				mMouseDownLastUpdate = false;
@@ -310,23 +314,18 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 			mWindowArea.x(mWindowArea.x() + lDifferenceX);
 			mWindowArea.y(mWindowArea.y() + lDifferenceY);
 
-			// update the delta
 			dx = core.input().mouse().mouseWindowCoords().x;
 			dy = core.input().mouse().mouseWindowCoords().y;
 
 			return true;
 		}
 
-		// 2. window captures mouse clicks even if not dragging
 		if (mIsWindowMoveable && !mIsWindowMoving && lMouseOverWindow) {
-
-			// Only acquire lock when we are ready to move ...
 			if (core.input().mouse().tryAcquireMouseLeftClick(hashCode())) {
 				if (!mMouseDownLastUpdate) {
 					mMouseDownLastUpdate = true;
 					dx = core.input().mouse().mouseWindowCoords().x;
 					dy = core.input().mouse().mouseWindowCoords().y;
-
 				}
 
 				final float nx = core.input().mouse().mouseWindowCoords().x;
@@ -335,7 +334,6 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 				final int MINIMUM_TOLERENCE = 3;
 
 				if (Math.abs(nx - dx) > MINIMUM_TOLERENCE || Math.abs(ny - dy) > MINIMUM_TOLERENCE) {
-					// Now we can try to acquire the lock, and if we get it, start dragging the window
 					if (core.input().mouse().tryAcquireMouseLeftClick(hashCode())) {
 						mIsWindowMoving = true;
 					}
@@ -348,7 +346,6 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 			mMouseDownLastUpdate = false;
 		}
 
-		// This is needed because when the mouse is over a component
 		if (lMouseOverWindow) {
 			mIsMouseOver = true;
 
@@ -366,27 +363,23 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 		if (!isOpen())
 			return;
 
-		if (!mIsWindowMoveable) {
+		if (!mIsWindowMoveable)
 			updateWindowPosition(core);
-		} else {
+		else
 			keepWindowOnScreen(core.HUD());
-		}
 
 		updateWindowScales(core);
 
-		if (mMouseClickTimer >= 0) {
+		if (mMouseClickTimer >= 0)
 			mMouseClickTimer -= core.appTime().elapsedTimeMilli();
-		}
 
-		// Update the window components
 		final int lComponentCount = mComponents.size();
 		for (int i = 0; i < lComponentCount; i++) {
 			mComponents.get(i).update(core);
 		}
 
-		if (mFullContentRectangle.height() < mContentDisplayArea.height()) {
+		if (mFullContentRectangle.height() < mContentDisplayArea.height())
 			mFullContentRectangle.height(mContentDisplayArea.height());
-		}
 
 		mScrollBar.update(core);
 	}
@@ -417,15 +410,17 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 		// Draw the title bar
 		lSpritebatch.begin(core.HUD());
 
-		float lTitleX = mWindowArea.x() + WINDOW_CONTENT_PADDING_X;
-		float lTitleY = mWindowArea.y();
+		float lTitleX = mWindowArea.x() + 5.f;
+		float lTitleY = mWindowArea.y() + 5.f;
 
-		lUiHeaderFont.begin(core.HUD());
-		lUiHeaderFont.drawText(mWindowTitle, lTitleX, lTitleY + getTitleBarHeight() * .5f - lUiHeaderFont.fontHeight() * .5f + 3.f, Z_DEPTH, ColorConstants.TextHeadingColor, 1f);
-
-		if (mFullContentRectangle.height() - contentDisplayArea().height() > 0) {
-			mScrollBar.draw(core, lSpritebatch, mCoreSpritesheet, Z_DEPTH);
+		if (mWindowTitle != null) {
+			lUiHeaderFont.begin(core.HUD());
+			lUiHeaderFont.drawText(mWindowTitle, lTitleX, lTitleY + getTitleBarHeight() * .5f - lUiHeaderFont.fontHeight() * .5f + 3.f, -0.01f, ColorConstants.WHITE, 1f);
+			lUiHeaderFont.end();
 		}
+
+		if (mScrollBar.scrollBarEnabled())
+			mScrollBar.draw(core, lSpritebatch, mCoreSpritesheet, Z_DEPTH);
 
 		lTextFont.begin(core.HUD());
 
@@ -437,7 +432,6 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 
 		lTextFont.end();
 		lSpritebatch.end();
-		lUiHeaderFont.end();
 
 		if (ConstantsApp.getBooleanValueDef("DRAW_UI_BOUNDS", false)) {
 			Debug.debugManager().drawers().drawRectImmediate(core.HUD(), mWindowArea);
@@ -451,15 +445,14 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 	public void updateWindowPosition(LintfordCore core) {
 		final var lHUDBoundingRect = core.HUD().boundingRectangle();
 
-		if (lHUDBoundingRect == null) {
+		if (lHUDBoundingRect == null)
 			return;
-		}
 
-		final float lWindowScaleFactorX = mUiStructureController.windowAutoScaleFactorX();
-		final float lWindowScaleFactorY = mUiStructureController.windowAutoScaleFactorY();
+		final float lWindowScaleFactorX = mUiStructureController.gameCanvasWScaleFactor();
+		final float lWindowScaleFactorY = mUiStructureController.gameCanvasHScaleFactor();
 
-		final float lScreenPaddingX = SCREEN_PADDING_X * lWindowScaleFactorX;
-		final float lScreenPaddingY = SCREEN_PADDING_Y * lWindowScaleFactorY;
+		final float lScreenPaddingX = ConstantsUi.UI_WINDOW_PADDING_X * lWindowScaleFactorX;
+		final float lScreenPaddingY = ConstantsUi.UI_WINDOW_PADDING_Y * lWindowScaleFactorY;
 
 		final float lWindowPaddingX = (paddingLeft() + paddingRight()) * lWindowScaleFactorX;
 		final float lWindowPaddingY = (paddingTop() + paddingBottom()) * lWindowScaleFactorY;
@@ -487,20 +480,21 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 	}
 
 	protected void updateWindowScales(LintfordCore core) {
-
-		if (mUiStructureController == null) {
+		if (mUiStructureController == null)
 			mUiStructureController = (UiStructureController) core.controllerManager().getControllerByName(UiStructureController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
-		}
 
-		final float lUiScaleFactor = mUiStructureController.uiScaleFactor();
-		final float lWindowScaleFactorX = mUiStructureController.windowAutoScaleFactorX() * lUiScaleFactor;
-		final float lWindowScaleFactorY = mUiStructureController.windowAutoScaleFactorY() * lUiScaleFactor;
+		final var lUiScaleFactor = mUiStructureController.uiScaleFactor();
+		final var lUiScaleX = mUiStructureController.uiCanvasWScaleFactor();
+		final var lUiScaleY = mUiStructureController.uiCanvasHScaleFactor();
 
-		final float MAX_TITLEBAR_HEIGHT = 32.f;
+		final var MAX_TITLEBAR_HEIGHT = 32.f * lUiScaleY;
+		final var lUiWindowReferenceWidth = ConstantsUi.UI_WINDOW_REFERENCE_WIDTH;
+		final var lUiWindowReferenceHeight = ConstantsUi.UI_WINDOW_REFERENCE_HEIGHT;
+		final var lUiWindowTitlebarHeight = ConstantsUi.UI_WINDOW_REFERENCE_TITLEBAR_HEIGHT;
 
-		mTitleBarHeight = MathHelper.clamp(BASE_TITLEBAR_HEIGHT * lWindowScaleFactorY * lWindowScaleFactorY, BASE_TITLEBAR_HEIGHT, MAX_TITLEBAR_HEIGHT);
-		mPanelSizeWidth = BASE_PANEL_WIDTH * lWindowScaleFactorX * lWindowScaleFactorX;
-		mPanelSizeHeight = BASE_PANEL_HEIGHT * lWindowScaleFactorY * lWindowScaleFactorY;
+		mTitleBarHeight = MathHelper.clamp(lUiWindowTitlebarHeight * lUiScaleX * lUiScaleFactor, lUiWindowTitlebarHeight, MAX_TITLEBAR_HEIGHT);
+		mPanelSizeWidth = lUiWindowReferenceWidth * lUiScaleX * lUiScaleFactor;
+		mPanelSizeHeight = lUiWindowReferenceHeight * lUiScaleY * lUiScaleFactor;
 	}
 
 	// --------------------------------------
