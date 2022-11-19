@@ -113,8 +113,10 @@ public class CameraZoomController extends BaseController {
 		if (mCamera == null)
 			return false;
 
-		if (mAllowZoom && core.input().mouse().tryAcquireMouseOverThisComponent(hashCode()))
-			mZoomAcceleration += core.input().mouse().mouseWheelYOffset() * mCamera.getZoomFactor();
+		if (mAllowZoom && core.input().mouse().tryAcquireMouseOverThisComponent(hashCode())) {
+			if (core.input().mouse().tryAcquireMouseMiddle(hashCode()))
+				mZoomAcceleration += core.input().mouse().mouseWheelYOffset() * mCamera.getZoomFactor();
+		}
 
 		return super.handleInput(core);
 	}
