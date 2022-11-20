@@ -346,6 +346,8 @@ public class TextureBatchPC {
 		mCustomShader.unbind();
 
 		mBuffer.clear();
+		mIndexCount = 0;
+
 		_countDebugStats = true;
 	}
 

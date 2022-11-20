@@ -383,6 +383,7 @@ public class TextureBatchPCT {
 		mCustomShader.unbind();
 
 		mBuffer.clear();
+		mIndexCount = 0;
 
 		mTextureSlots.clear();
 

@@ -373,6 +373,7 @@ public class TextureBatchPT {
 
 		mBuffer.clear();
 		mTextureSlots.clear();
+		mIndexCount = 0;
 
 		_countDebugStats = true;
 	}
