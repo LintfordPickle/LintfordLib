@@ -34,9 +34,85 @@ public abstract class UIWidget extends Rectangle implements IProcessMouseInput {
 
 	protected float mMouseTimer;
 
+	// The margin is applied to the outside of this component
+	protected int mMarginTop;
+	protected int mMarginBottom;
+	protected int mMarginLeft;
+	protected int mMarginRight;
+
+	// The margin is applied to the inside of this component
+	protected float mPaddingTop;
+	protected float mPaddingBottom;
+	protected float mPaddingLeft;
+	protected float mPaddingRight;
+
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public float paddingLeft() {
+		return mPaddingLeft;
+	}
+
+	public float paddingRight() {
+		return mPaddingRight;
+	}
+
+	public float paddingTop() {
+		return mPaddingTop;
+	}
+
+	public float paddingBottom() {
+		return mPaddingBottom;
+	}
+
+	public void paddingLeft(float pNewValue) {
+		mPaddingLeft = pNewValue;
+	}
+
+	public void paddingRight(float pNewValue) {
+		mPaddingRight = pNewValue;
+	}
+
+	public void paddingTop(float pNewValue) {
+		mPaddingTop = pNewValue;
+	}
+
+	public void paddingBottom(float pNewValue) {
+		mPaddingBottom = pNewValue;
+	}
+
+	public int marginRight() {
+		return mMarginRight;
+	}
+
+	public void marginRight(int newValue) {
+		mMarginRight = newValue;
+	}
+
+	public int marginLeft() {
+		return mMarginLeft;
+	}
+
+	public void marginLeft(int newValue) {
+		mMarginLeft = newValue;
+	}
+
+	public int marginBottom() {
+		return mMarginBottom;
+	}
+
+	public void marginBottom(int newValue) {
+		mMarginBottom = newValue;
+	}
+
+	public int marginTop() {
+		return mMarginTop;
+	}
+
+	public void marginTop(int newValue) {
+		mMarginTop = newValue;
+	}
 
 	public boolean isHoveredOver() {
 		return mIsHoveredOver;

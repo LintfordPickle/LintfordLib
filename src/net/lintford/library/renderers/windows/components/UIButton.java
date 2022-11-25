@@ -104,7 +104,10 @@ public class UIButton extends UIWidget {
 
 		final var lColor = ColorConstants.getColorWithRGBMod(entityColor, lColorMod);
 
-		spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_RED, mX, centerY() - mH / 2, mW, mH, componentZDepth, lColor);
+		final var lTileSize = 32;
+		spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X1_LEFT, mX, mY, lTileSize, mH, componentZDepth, lColor);
+		spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X1_MID, mX + lTileSize, mY, mW - lTileSize * 2, mH, componentZDepth, lColor);
+		spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X1_RIGHT, mX + mW - lTileSize, mY, lTileSize, mH, componentZDepth, lColor);
 
 		final var lButtonText = mButtonLabel != null ? mButtonLabel : NO_LABEL_TEXT;
 		final var lTextWidth = textFont.getStringWidth(lButtonText, lCanvasScale);

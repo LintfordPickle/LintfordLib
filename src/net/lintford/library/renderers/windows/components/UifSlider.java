@@ -71,7 +71,7 @@ public class UifSlider extends UIWidget {
 		return mSliderLabel;
 	}
 
-	public void buttonLabel(final String newLabel) {
+	public void sliderLabel(final String newLabel) {
 		mSliderLabel = newLabel;
 	}
 
@@ -132,7 +132,7 @@ public class UifSlider extends UIWidget {
 		// Render Slider label
 		final var lAmtText = String.format("%.2f", mCurrentValue);
 		textFont.drawText(mSliderLabel, mX, mY - mH / 2, componentZDepth, ColorConstants.WHITE, 1f);
-		textFont.drawText(lAmtText, mX + mW - textFont.getStringWidth(lAmtText), mY - mH / 2, componentZDepth, ColorConstants.WHITE, 1f);
+		textFont.drawText(lAmtText, mX + mW - textFont.getStringWidth(lAmtText), mY - mH / 2, -0.01f, ColorConstants.WHITE, 1f);
 	}
 
 	// --------------------------------------

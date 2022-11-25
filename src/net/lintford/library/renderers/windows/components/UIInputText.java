@@ -94,6 +94,7 @@ public class UIInputText extends UIWidget implements IBufferedTextInputCallback 
 		if (mInputField.length() > 0) {
 			mInputField.delete(0, mInputField.length());
 		}
+
 		mInputField.append(newValue);
 	}
 

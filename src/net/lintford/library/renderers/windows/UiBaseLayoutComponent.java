@@ -46,17 +46,6 @@ public class UiBaseLayoutComponent extends UIWidget implements IScrollBarArea {
 
 	protected boolean mDrawBackground;
 
-	// The margin is applied to the outside of this component
-	protected float mTopMargin;
-	protected float mBottomMargin;
-	protected float mLeftMargin;
-	protected float mRightMargin;
-
-	protected float mTopPadding;
-	protected float mBottomPadding;
-	protected float mLeftPadding;
-	protected float mRightPadding;
-
 	protected float mMinWidth;
 	protected float mMaxWidth = -1; // inactive
 	protected float mMinHeight;
@@ -142,70 +131,6 @@ public class UiBaseLayoutComponent extends UIWidget implements IScrollBarArea {
 		return mResourcesLoaded;
 	}
 
-	public float marginLeft() {
-		return mLeftMargin;
-	}
-
-	public float marginRight() {
-		return mRightMargin;
-	}
-
-	public float marginTop() {
-		return mTopMargin;
-	}
-
-	public float marginBottom() {
-		return mBottomMargin;
-	}
-
-	public void marginLeft(float pNewValue) {
-		mLeftMargin = pNewValue;
-	}
-
-	public void marginRight(float pNewValue) {
-		mRightMargin = pNewValue;
-	}
-
-	public void marginTop(float pNewValue) {
-		mTopMargin = pNewValue;
-	}
-
-	public void marginBottom(float pNewValue) {
-		mBottomMargin = pNewValue;
-	}
-
-	public float paddingLeft() {
-		return mLeftPadding;
-	}
-
-	public float paddingRight() {
-		return mRightPadding;
-	}
-
-	public float paddingTop() {
-		return mTopPadding;
-	}
-
-	public float paddingBottom() {
-		return mBottomPadding;
-	}
-
-	public void paddingLeft(float pNewValue) {
-		mLeftPadding = pNewValue;
-	}
-
-	public void paddingRight(float pNewValue) {
-		mRightPadding = pNewValue;
-	}
-
-	public void paddingTop(float pNewValue) {
-		mTopPadding = pNewValue;
-	}
-
-	public void paddingBottom(float pNewValue) {
-		mBottomPadding = pNewValue;
-	}
-
 	/** @returns A list of menu entries so derived classes can change the menu contents. */
 	public List<UIWidget> widgets() {
 		return mUiWidgets;
@@ -248,16 +173,6 @@ public class UiBaseLayoutComponent extends UIWidget implements IScrollBarArea {
 
 		mEnabled = true;
 		mVisible = true;
-
-		mTopMargin = 0f;
-		mBottomMargin = 0f;
-		mLeftMargin = 5f;
-		mRightMargin = 5f;
-
-		mTopPadding = 5.f;
-		mBottomPadding = 5.f;
-		mLeftPadding = 1.f;
-		mRightPadding = 1.f;
 
 		mMinWidth = 100f;
 		mMinHeight = 10f;
