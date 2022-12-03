@@ -81,11 +81,12 @@ public class UIButtonToggle extends UIWidget {
 			if (core.input().mouse().tryAcquireMouseLeftClick(hashCode())) {
 				mIsClicked = true;
 				final var MINIMUM_CLICK_TIMER = 200;
-				mClickTimer = 0;
+
 				mIsToggledOn = !mIsToggledOn;
 
 				if (mCallback != null && mClickTimer > MINIMUM_CLICK_TIMER) {
 					mCallback.widgetOnClick(core.input(), mClickID);
+					mClickTimer = 0;
 
 					return true;
 				}
