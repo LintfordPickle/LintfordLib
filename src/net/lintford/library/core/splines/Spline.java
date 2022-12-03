@@ -19,7 +19,7 @@ public class Spline {
 	private final SplinePoint mReturnSplinePoint = new SplinePoint();
 	private final SplinePoint mReturnSplineGradient = new SplinePoint();
 
-	private List<SplinePoint> mPoints;
+	private final List<SplinePoint> mPoints = new ArrayList<>();
 
 	private float mTotalSplineLength;
 	private boolean mIsLooped;
@@ -49,6 +49,15 @@ public class Spline {
 		calculateSplineLength();
 	}
 
+	public void addControlPointAfter(int controlPointIndex, float worldX, float worldY) {
+		mPoints.add(controlPointIndex, new SplinePoint(worldX, worldY));
+		recalculate();
+	}
+
+	public void removeControlPoint(int controlPointIndex) {
+		mPoints.remove(controlPointIndex);
+	}
+
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
@@ -58,10 +67,8 @@ public class Spline {
 	}
 
 	public Spline(SplinePoint[] points) {
-		if (points == null) {
-			mPoints = new ArrayList<>();
-		} else {
-			mPoints = Arrays.asList(points);
+		if (points != null) {
+			mPoints.addAll(Arrays.asList(points));
 		}
 
 		mIsLooped = true;
