@@ -84,7 +84,6 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 	/** Stores the window area of this renderer window */
 	protected Rectangle mWindowArea;
 	protected SpriteSheetDefinition mCoreSpritesheet;
-	protected SpriteSheetDefinition mHudSpritesheet;
 
 	/** If true, this base renderer consumes input and ends the handleInput invocation chain. */
 	protected boolean mExclusiveHandleInput = true;
@@ -100,10 +99,6 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 
 	public SpriteSheetDefinition coreSpritesheet() {
 		return mCoreSpritesheet;
-	}
-
-	public SpriteSheetDefinition hudSpritesheet() {
-		return mHudSpritesheet;
 	}
 
 	public boolean renderWindowTitle() {
@@ -268,7 +263,6 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 		super.loadResources(resourceManager);
 
 		mCoreSpritesheet = resourceManager.spriteSheetManager().coreSpritesheet();
-		mHudSpritesheet = resourceManager.spriteSheetManager().getSpriteSheet("SPRITESHEET_HUD", entityGroupID());
 
 		mContentDisplayArea.y(mWindowArea.y() + getTitleBarHeight());
 		mContentDisplayArea.height(mWindowArea.height() - +getTitleBarHeight());
