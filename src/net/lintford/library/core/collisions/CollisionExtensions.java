@@ -6,6 +6,33 @@ import net.lintford.library.core.maths.Vector2f;
 
 public class CollisionExtensions {
 
+	public static boolean getLinesIntersectingPoint(double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4, Vector2f result) {
+		double detL1 = determinant(x1, y1, x2, y2);
+		double detL2 = determinant(x3, y3, x4, y4);
+		double x1mx2 = x1 - x2;
+		double x3mx4 = x3 - x4;
+		double y1my2 = y1 - y2;
+		double y3my4 = y3 - y4;
+
+		double xnom = determinant(detL1, x1mx2, detL2, x3mx4);
+		double ynom = determinant(detL1, y1my2, detL2, y3my4);
+		double denom = determinant(x1mx2, y1my2, x3mx4, y3my4);
+		if (denom == 0.0) {
+			result.x = Float.NaN;
+			result.y = Float.NaN;
+			return false;
+		}
+
+		result.x = (float) (xnom / denom);
+		result.y = (float) (ynom / denom);
+
+		return true;
+	}
+
+	public static double determinant(double a, double b, double c, double d) {
+		return a * d - b * c;
+	}
+
 	public static boolean intersects(CircleEntity c, float pointX, float pointY) {
 		final float xx = c.x - pointX;
 		final float yy = c.y - pointY;
@@ -13,7 +40,7 @@ public class CollisionExtensions {
 	}
 
 	/**
-	 * Checks to see if the given point P lies within the rectangle defined by AB, BC
+	 * Checks to see if the given point P lies within the rectangle defined by AB, BC. The rectangledefined by AB BC must have 4 right-angles
 	 */
 	public static boolean insersects(Vector2f a, Vector2f b, Vector2f c, Vector2f p) {
 		final var ABx = b.x - a.x;
