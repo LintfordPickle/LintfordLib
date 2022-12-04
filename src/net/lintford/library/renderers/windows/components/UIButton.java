@@ -66,6 +66,9 @@ public class UIButton extends UIWidget {
 
 	@Override
 	public boolean handleInput(LintfordCore core) {
+		if (!isEnabled())
+			return false;
+
 		if (!mIsClicked && intersectsAA(core.HUD().getMouseCameraSpace())) {
 			mIsHoveredOver = true;
 
@@ -99,8 +102,11 @@ public class UIButton extends UIWidget {
 
 	@Override
 	public void draw(LintfordCore core, SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheet, FontUnit textFont, float componentZDepth) {
+		if (!mIsVisible)
+			return;
+
 		final float lCanvasScale = mParentWindow != null ? mParentWindow.uiStructureController().uiCanvasWScaleFactor() : 1.0f;
-		final float lColorMod = mIsHoveredOver ? .9f : 1.f;
+		final float lColorMod = !mIsEnabled ? .4f : mIsHoveredOver ? .9f : 1.f;
 
 		final var lColor = ColorConstants.getColorWithRGBMod(entityColor, lColorMod);
 
