@@ -473,16 +473,14 @@ public class JBox2dEntityInstance extends IndexedPooledBaseData {
 		}
 	}
 
-	// TODO:
 	/* returns all Box2dBodyInstance and Box2dJointInstances back into the pool */
 	public void returnPooledInstances(Box2dInstanceManager box2dInstanceManager) {
 		final int lBodyCount = mBodies.size();
 		for (int i = 0; i < lBodyCount; i++) {
 			final var lBox2dBodyInstance = mBodies.get(i);
 
-			if (lBox2dBodyInstance.mBody != null) {
+			if (lBox2dBodyInstance.mBody != null)
 				lBox2dBodyInstance.mBody.setUserData(null);
-			}
 
 			lBox2dBodyInstance.unloadPhysics();
 
@@ -497,9 +495,9 @@ public class JBox2dEntityInstance extends IndexedPooledBaseData {
 
 			lBox2dJointInstance.unloadPhysics(mWorld);
 
-			if (lBox2dJointInstance instanceof Box2dRevoluteInstance) {
+			if (lBox2dJointInstance instanceof Box2dRevoluteInstance)
 				box2dInstanceManager.box2dJointInstanceRepository().returnPooledItem((Box2dRevoluteInstance) lBox2dJointInstance);
-			}
+
 		}
 
 		mJoints.clear();

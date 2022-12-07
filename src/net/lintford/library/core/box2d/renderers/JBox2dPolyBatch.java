@@ -214,8 +214,8 @@ public class JBox2dPolyBatch {
 		if (mUseCheckerPattern)
 			texture = mResourceManager.textureManager().checkerIndexedTexture();
 
-		// TODO: This doesn't make sense - we are trying to draw a polygon, yet restricting it to a quadrilatral (and how are the UVs being mapped!)?
-
+		// This doesn't make sense - we are trying to draw a polygon, 
+		// yet restricting it to a quadrilatral (and how are the UVs being mapped!)?
 		final var vert0 = body.getWorldPoint(vertexArray[0]);
 		float x0 = vert0.x * ConstantsPhysics.UnitsToPixels();
 		float y0 = vert0.y * ConstantsPhysics.UnitsToPixels();
