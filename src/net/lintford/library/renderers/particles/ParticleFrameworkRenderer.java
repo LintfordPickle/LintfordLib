@@ -11,7 +11,6 @@ import net.lintford.library.core.particles.particlesystems.ParticleSystemInstanc
 import net.lintford.library.renderers.BaseRenderer;
 import net.lintford.library.renderers.RendererManager;
 
-// FIXME: improve the performance by storing an ID integer between the controller and the renderers.
 public class ParticleFrameworkRenderer extends BaseRenderer {
 
 	// --------------------------------------

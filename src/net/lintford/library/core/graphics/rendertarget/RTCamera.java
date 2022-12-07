@@ -36,7 +36,6 @@ public class RTCamera implements ICamera {
 
 	@Override
 	public Vector2f internalPosition() {
-		// TODO Auto-generated method stub
 		return mInternalPosition;
 	}
 
