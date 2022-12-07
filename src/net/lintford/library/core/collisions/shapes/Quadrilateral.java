@@ -23,6 +23,7 @@ public class Quadrilateral extends Shape {
 
 	protected boolean mAreVerticesDirty;
 	protected List<Vector2f> mVertices;
+	protected final Vector2f[] mAxes = new Vector2f[2];
 
 	@SerializedName(value = "x")
 	protected float mX;
@@ -178,6 +179,9 @@ public class Quadrilateral extends Shape {
 		mVertices.add(new Vector2f(mX, mY + mH));
 		mVertices.add(new Vector2f(mX + mW, mY + mH));
 
+		mAxes[0] = new Vector2f();
+		mAxes[1] = new Vector2f();
+
 		mScaleX = 1f;
 		mScaleY = 1f;
 
@@ -222,16 +226,11 @@ public class Quadrilateral extends Shape {
 	public Vector2f[] getAxes() {
 		updateVertices();
 
-		// FIXME: Garbage
-		final int AXES_LENGTH = 2;
-		Vector2f[] axes = new Vector2f[AXES_LENGTH]; // Rectangle only has two axis to be tested against
-
-		// FIXME: Garbage
 		// The order of the vertices used here depends on the winding-order
-		axes[0] = new Vector2f((mVertices.get(0).y - mVertices.get(1).y), -(mVertices.get(0).x - mVertices.get(1).x)).nor();
-		axes[1] = new Vector2f((mVertices.get(0).y - mVertices.get(2).y), -(mVertices.get(0).x - mVertices.get(2).x)).nor();
+		mAxes[0].set((mVertices.get(0).y - mVertices.get(1).y), -(mVertices.get(0).x - mVertices.get(1).x)).nor();
+		mAxes[1].set((mVertices.get(0).y - mVertices.get(2).y), -(mVertices.get(0).x - mVertices.get(2).x)).nor();
 
-		return axes;
+		return mAxes;
 	}
 
 	@Override
