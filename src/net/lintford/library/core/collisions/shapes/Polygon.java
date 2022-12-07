@@ -142,10 +142,9 @@ public class Polygon extends Shape {
 	@Override
 	public Vector2f[] getAxes() {
 		if (mDirty || mAxes == null) {
-			if (mAxes == null || mAxes.length != mVertices.size())
+			if (mAxes == null || mAxes.length != mVertices.size()) 
 				mAxes = new Vector2f[mVertices.size()];
-
-			// FIXME: Garbage created
+			
 			for (int i = 0; i < mVertices.size(); i++) {
 				int nextIndex = i < mVertices.size() - 1 ? i + 1 : 0;
 
@@ -154,12 +153,10 @@ public class Polygon extends Shape {
 
 				if (mAxes[i] == null)
 					mAxes[i] = new Vector2f();
-
-				// This could cause problems later
+				
 				mAxes[i].x = (mVertices.get(i).y - mVertices.get(nextIndex).y);
 				mAxes[i].y = -(mVertices.get(i).x - mVertices.get(nextIndex).x);
 				mAxes[i].nor();
-
 			}
 
 			mDirty = false;
@@ -167,7 +164,6 @@ public class Polygon extends Shape {
 		}
 
 		return mAxes;
-
 	}
 
 	@Override
@@ -297,7 +293,7 @@ public class Polygon extends Shape {
 		for (int i = 0; i < len; i++) {
 			int len2 = pResult.getVertices().size();
 			Polygon lInputPolygon = pResult;
-			pResult = new Polygon(); // TODO: Garbage
+			pResult = new Polygon();
 
 			Vector2f A = clipper.getVertices().get((i + len - 1) % len);
 			Vector2f B = clipper.getVertices().get(i);
