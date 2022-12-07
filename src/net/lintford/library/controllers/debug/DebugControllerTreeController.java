@@ -20,6 +20,7 @@ public class DebugControllerTreeController extends BaseController {
 	// Variables
 	// --------------------------------------
 
+	protected final List<BaseControllerWidget> mUpdateTreeList = new ArrayList<>();
 	protected List<BaseControllerWidget> mDebugTreeComponents;
 	protected int mCountAtLastUpdate = -1;
 
@@ -63,17 +64,19 @@ public class DebugControllerTreeController extends BaseController {
 
 		maintainControllerWidgetList(lControllers);
 
-		final var lControllerWidgetCount = mDebugTreeComponents.size();
+		mUpdateTreeList.clear();
+		mUpdateTreeList.addAll(mDebugTreeComponents);
+
+		final var lControllerWidgetCount = mUpdateTreeList.size();
 		for (int i = 0; i < lControllerWidgetCount; i++) {
-			final var lWidget = mDebugTreeComponents.get(i);
+			final var lWidget = mUpdateTreeList.get(i);
 
 			if (lWidget.baseController == null) {
-				// FIXME: Remove the ControllerWidget from the list, the BaseController attached has been destroyed.
+				mDebugTreeComponents.remove(lWidget);
 			}
 		}
 	}
 
-	// makes sure that every controller gets its own rendering widget
 	private void maintainControllerWidgetList(final Map<Integer, List<BaseController>> controllers) {
 		int lPositionCounter = 0;
 		for (final var lEntry : controllers.entrySet()) {
