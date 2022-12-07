@@ -22,8 +22,6 @@ public class UIButtonToggle extends UIWidget {
 	// Variables
 	// --------------------------------------
 
-	private IUiWidgetInteractions mCallback;
-	private int mClickID;
 	private String mButtonLabel;
 	private boolean mIsClicked;
 	private float mClickTimer;
@@ -47,14 +45,6 @@ public class UIButtonToggle extends UIWidget {
 
 	public void buttonLabel(final String pNewLabel) {
 		mButtonLabel = pNewLabel;
-	}
-
-	public int buttonListenerID() {
-		return mClickID;
-	}
-
-	public void buttonListenerID(final int pNewLabel) {
-		mClickID = pNewLabel;
 	}
 
 	// --------------------------------------
@@ -85,7 +75,7 @@ public class UIButtonToggle extends UIWidget {
 				mIsToggledOn = !mIsToggledOn;
 
 				if (mCallback != null && mClickTimer > MINIMUM_CLICK_TIMER) {
-					mCallback.widgetOnClick(core.input(), mClickID);
+					mCallback.widgetOnClick(core.input(), mUiWidgetUid);
 					mClickTimer = 0;
 
 					return true;
@@ -125,18 +115,4 @@ public class UIButtonToggle extends UIWidget {
 
 		textFont.drawText(lButtonText, mX + mW / 2f - lTextWidth / 2f, mY + mH / 2f - textFont.fontHeight() / 2f, componentZDepth, ColorConstants.WHITE, lCanvasScale);
 	}
-
-	// --------------------------------------
-	// Methods
-	// --------------------------------------
-
-	public void setClickListener(IUiWidgetInteractions callbackObject, int clickUid) {
-		mCallback = callbackObject;
-		mClickID = clickUid;
-	}
-
-	public void removeClickListener(IUiWidgetInteractions callbackObject) {
-		mCallback = null;
-	}
-
 }

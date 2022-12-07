@@ -22,8 +22,6 @@ public class UIButton extends UIWidget {
 	// Variables
 	// --------------------------------------
 
-	private IUiWidgetInteractions mCallback;
-	private int mClickID;
 	private String mButtonLabel;
 	private boolean mIsClicked;
 	private float mClickTimer;
@@ -41,11 +39,11 @@ public class UIButton extends UIWidget {
 	}
 
 	public int buttonListenerID() {
-		return mClickID;
+		return mUiWidgetUid;
 	}
 
 	public void buttonListenerID(final int pNewLabel) {
-		mClickID = pNewLabel;
+		mUiWidgetUid = pNewLabel;
 	}
 
 	// --------------------------------------
@@ -78,7 +76,7 @@ public class UIButton extends UIWidget {
 
 				if (mCallback != null && mClickTimer > MINIMUM_CLICK_TIMER) {
 					mClickTimer = 0;
-					mCallback.widgetOnClick(core.input(), mClickID);
+					mCallback.widgetOnClick(core.input(), mUiWidgetUid);
 
 					return true;
 				}
@@ -120,18 +118,4 @@ public class UIButton extends UIWidget {
 
 		textFont.drawText(lButtonText, mX + mW / 2f - lTextWidth / 2f, mY + mH / 2f - textFont.fontHeight() / 2f, componentZDepth, ColorConstants.WHITE, lCanvasScale);
 	}
-
-	// --------------------------------------
-	// Methods
-	// --------------------------------------
-
-	public void setClickListener(IUiWidgetInteractions callbackObject, int clickUid) {
-		mCallback = callbackObject;
-		mClickID = clickUid;
-	}
-
-	public void removeClickListener(IUiWidgetInteractions callbackObject) {
-		mCallback = null;
-	}
-
 }

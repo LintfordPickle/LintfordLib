@@ -28,6 +28,9 @@ public abstract class UIWidget extends Rectangle implements IProcessMouseInput {
 	public Color entityColor = new Color(1.f, 1.f, 1.f, 1.f);
 	protected UiWindow mParentWindow;
 
+	protected IUiWidgetInteractions mCallback;
+	protected int mUiWidgetUid;
+
 	protected boolean mIsEnabled;
 	protected boolean mIsVisible;
 	protected boolean mIsHoveredOver;
@@ -195,5 +198,14 @@ public abstract class UIWidget extends Rectangle implements IProcessMouseInput {
 	@Override
 	public void resetCoolDownTimer() {
 		mMouseTimer = 200;
+	}
+
+	public void setClickListener(IUiWidgetInteractions callback, int clickUid) {
+		mCallback = callback;
+		mUiWidgetUid = clickUid;
+	}
+
+	public void removeClickListener() {
+		mCallback = null;
 	}
 }

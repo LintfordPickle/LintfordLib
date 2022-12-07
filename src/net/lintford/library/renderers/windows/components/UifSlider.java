@@ -8,7 +8,6 @@ import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDefinit
 import net.lintford.library.core.graphics.textures.CoreTextureNames;
 import net.lintford.library.core.maths.MathHelper;
 import net.lintford.library.renderers.windows.UiWindow;
-import net.lintford.library.screenmanager.entries.EntryInteractions;
 
 public class UifSlider extends UIWidget {
 
@@ -24,8 +23,6 @@ public class UifSlider extends UIWidget {
 	// Variables
 	// --------------------------------------
 
-	private EntryInteractions mCallback;
-	private int mEntryUid;
 	private String mSliderLabel;
 
 	private float mMinValue;
@@ -79,14 +76,12 @@ public class UifSlider extends UIWidget {
 	// Constructor
 	// --------------------------------------
 
-	public UifSlider(final UiWindow parentWindow) {
-		this(parentWindow, 0);
+	public UifSlider(UiWindow parentWindow) {
+		this(parentWindow, -1);
 	}
 
-	public UifSlider(final UiWindow parentWindow, final int entryUid) {
+	public UifSlider(UiWindow parentWindow, int entryUid) {
 		super(parentWindow);
-
-		mEntryUid = entryUid;
 
 		mSliderLabel = NO_LABEL_TEXT;
 		mW = 200;
@@ -99,18 +94,16 @@ public class UifSlider extends UIWidget {
 
 	@Override
 	public boolean handleInput(LintfordCore core) {
-		if (!mIsEnabled) {
+		if (!mIsEnabled)
 			return false;
-		}
 
 		if (intersectsAA(core.HUD().getMouseCameraSpace()) && core.input().mouse().isMouseOverThisComponent(hashCode())) {
 			if (core.input().mouse().tryAcquireMouseLeftClick(hashCode())) {
 				final float lMouseX = core.HUD().getMouseCameraSpace().x;
 				updateValue(MathHelper.clamp(lMouseX - mX, 0, mW));
 
-				if (mCallback != null) {
-					mCallback.menuEntryOnClick(core.input(), mEntryUid);
-				}
+				if (mCallback != null)
+					mCallback.widgetOnDataChanged(core.input(), mUiWidgetUid);
 
 				return true;
 			}
@@ -142,14 +135,5 @@ public class UifSlider extends UIWidget {
 	private void updateValue(float relPositionX) {
 		mCurrentRelPosition = relPositionX;
 		mCurrentValue = MathHelper.scaleToRange(mCurrentRelPosition, 0, mW, mMinValue, mMaxValue);
-	}
-
-	public void setClickListener(final EntryInteractions callbackObject, final int entryUid) {
-		mCallback = callbackObject;
-		mEntryUid = entryUid;
-	}
-
-	public void removeClickListener(final EntryInteractions callbackObject) {
-		mCallback = null;
 	}
 }
