@@ -399,13 +399,13 @@ public class UiBaseLayoutComponent extends UIWidget implements IScrollBarArea {
 		if (lEntryCount == 0)
 			return 0;
 
-		// Return the combined height
 		float lResult = marginTop();
 
 		for (int i = 0; i < lEntryCount; i++) {
 			final var lMenuEntry = widgets().get(i);
+			lResult += lMenuEntry.marginTop();
 			lResult += lMenuEntry.height();
-			// TODO: Missing entry margins
+			lResult += lMenuEntry.marginBottom();
 		}
 
 		return lResult + marginBottom();
