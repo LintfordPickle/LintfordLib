@@ -50,8 +50,7 @@ public class Spline {
 	}
 
 	public void addControlPointAfter(int controlPointIndex, float worldX, float worldY) {
-		mPoints.add(controlPointIndex, new SplinePoint(worldX, worldY));
-		recalculate();
+		mPoints.add(controlPointIndex + 1, new SplinePoint(worldX, worldY));
 	}
 
 	public void removeControlPoint(int controlPointIndex) {
