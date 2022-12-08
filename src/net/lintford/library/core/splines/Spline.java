@@ -21,15 +21,15 @@ public class Spline {
 
 	private final List<SplinePoint> mPoints = new ArrayList<>();
 
-	private float mTotalSplineLength;
+	private float mTotalSplineLengthPx;
 	private boolean mIsLooped;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
 
-	public float totalSplineLength() {
-		return mTotalSplineLength;
+	public float totalSplineLengthPx() {
+		return mTotalSplineLengthPx;
 	}
 
 	public int numberSplineControlPoints() {
@@ -185,13 +185,13 @@ public class Spline {
 	 * Calculates the total length of the spline (only needed one per track-change
 	 */
 	public void calculateSplineLength() {
-		mTotalSplineLength = 0;
+		mTotalSplineLengthPx = 0;
 
 		final int lIdOffset = mIsLooped ? 0 : 3;
 		for (int i = 0; i <= mPoints.size() - lIdOffset - 1; i++) {
 			final float lSegmentLength = calculateSegmentLength(i);
-			mPoints.get(i).accLength = mTotalSplineLength;
-			mTotalSplineLength += lSegmentLength;
+			mPoints.get(i).accLength = mTotalSplineLengthPx;
+			mTotalSplineLengthPx += lSegmentLength;
 		}
 	}
 
