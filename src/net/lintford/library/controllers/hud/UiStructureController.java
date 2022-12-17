@@ -192,10 +192,6 @@ public class UiStructureController extends BaseController {
 	private void updateMenuUiStructure(LintfordCore core) {
 		updateWindowUiComponentStructures(core); // FIXME: remove from update when finished
 
-		// TODO: You are here
-		// The problem is, the UiStructureController is assigning a boundary for the hud to render controls into (e.g. for the pause menu)
-		// but it assumes it always has the area of the window - it actually has the game canvas, which when stretched, is just a subset
-
 		final float lWindowWidth = core.config().display().gameResolutionWidth();
 		final float lWindowHeight = core.config().display().gameResolutionHeight();
 
