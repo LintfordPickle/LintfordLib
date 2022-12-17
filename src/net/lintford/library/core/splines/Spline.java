@@ -49,8 +49,18 @@ public class Spline {
 		calculateSplineLength();
 	}
 
+	public void addControlPoint(SplinePoint newPoint) {
+		mPoints.add(newPoint);
+	}
+
 	public void addControlPointAfter(int controlPointIndex, float worldX, float worldY) {
 		mPoints.add(controlPointIndex + 1, new SplinePoint(worldX, worldY));
+	}
+
+	public void addControlPoints(SplinePoint[] points) {
+		if (points != null) {
+			mPoints.addAll(Arrays.asList(points));
+		}
 	}
 
 	public void removeControlPoint(int controlPointIndex) {
@@ -66,9 +76,7 @@ public class Spline {
 	}
 
 	public Spline(SplinePoint[] points) {
-		if (points != null) {
-			mPoints.addAll(Arrays.asList(points));
-		}
+		addControlPoints(points);
 
 		mIsLooped = true;
 		calculateSplineLength();
