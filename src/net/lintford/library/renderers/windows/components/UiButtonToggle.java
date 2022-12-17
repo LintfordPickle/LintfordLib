@@ -8,7 +8,7 @@ import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDefinit
 import net.lintford.library.core.graphics.textures.CoreTextureNames;
 import net.lintford.library.renderers.windows.UiWindow;
 
-public class UIButtonToggle extends UIWidget {
+public class UiButtonToggle extends UIWidget {
 
 	// --------------------------------------
 	// Constants
@@ -51,7 +51,7 @@ public class UIButtonToggle extends UIWidget {
 	// Constructor
 	// --------------------------------------
 
-	public UIButtonToggle(final UiWindow pParentWindow) {
+	public UiButtonToggle(final UiWindow pParentWindow) {
 		super(pParentWindow);
 
 		mButtonLabel = NO_LABEL_TEXT;
