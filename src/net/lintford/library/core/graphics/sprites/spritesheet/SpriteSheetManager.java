@@ -80,7 +80,16 @@ public class SpriteSheetManager {
 		loadSpriteSheetFromResource("/res/spritesheets/core/spritesheetCore.json", LintfordCore.CORE_ENTITY_GROUP_ID);
 	}
 
+	public SpriteSheetDefinition loadSpriteSheet(String spritesheetName, String filepath, int entityGroupUid) {
+		final var lExists = getSpriteSheet(spritesheetName, entityGroupUid);
+		if (lExists != null)
+			return lExists;
+
+		return loadSpriteSheet(filepath, entityGroupUid);
+	}
+
 	public SpriteSheetDefinition loadSpriteSheet(String filepath, int entityGroupUid) {
+
 		if (filepath == null || filepath.length() == 0) {
 			Debug.debugManager().logger().v(getClass().getSimpleName(), "Error loading spritesheet. Pathname is null! ");
 			return null;
