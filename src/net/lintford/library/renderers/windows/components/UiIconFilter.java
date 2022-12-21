@@ -10,7 +10,7 @@ import net.lintford.library.core.graphics.batching.SpriteBatch;
 import net.lintford.library.core.graphics.fonts.FontUnit;
 import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 
-public class UIIconFilter extends Rectangle {
+public class UiIconFilter extends Rectangle {
 
 	// --------------------------------------
 	// Constants
@@ -67,7 +67,7 @@ public class UIIconFilter extends Rectangle {
 	// Constructor
 	// --------------------------------------
 
-	public UIIconFilter() {
+	public UiIconFilter() {
 		mIconFilters = new ArrayList<>();
 
 	}

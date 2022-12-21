@@ -13,7 +13,7 @@ import net.lintford.library.core.input.InputManager;
 import net.lintford.library.renderers.windows.ConstantsUi;
 import net.lintford.library.renderers.windows.UiWindow;
 
-public class UIInputInteger extends UIWidget implements IBufferedTextInputCallback {
+public class UiInputInteger extends UIWidget implements IBufferedTextInputCallback {
 
 	// --------------------------------------
 	// Constants
@@ -109,7 +109,7 @@ public class UIInputInteger extends UIWidget implements IBufferedTextInputCallba
 	// Constructor
 	// --------------------------------------
 
-	public UIInputInteger(UiWindow parentWindow) {
+	public UiInputInteger(UiWindow parentWindow) {
 		super(parentWindow);
 
 		mResetOnDefaultClick = true;

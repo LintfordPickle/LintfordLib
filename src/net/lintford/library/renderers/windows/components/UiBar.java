@@ -8,7 +8,7 @@ import net.lintford.library.core.graphics.fonts.FontUnit;
 import net.lintford.library.core.graphics.textures.CoreTextureNames;
 import net.lintford.library.core.maths.MathHelper;
 
-public class UIBar {
+public class UiBar {
 
 	// --------------------------------------
 	// Variables
@@ -96,7 +96,7 @@ public class UIBar {
 	// Constructor
 	// --------------------------------------
 
-	public UIBar(float pMinValue, float pMaxValue) {
+	public UiBar(float pMinValue, float pMaxValue) {
 		mMinValue = pMinValue;
 		mMaxValue = pMaxValue;
 

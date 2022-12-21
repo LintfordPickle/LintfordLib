@@ -27,7 +27,7 @@ import net.lintford.library.renderers.ZLayers;
 import net.lintford.library.renderers.windows.components.IScrollBarArea;
 import net.lintford.library.renderers.windows.components.ScrollBar;
 import net.lintford.library.renderers.windows.components.ScrollBarContentRectangle;
-import net.lintford.library.renderers.windows.components.UIInputText;
+import net.lintford.library.renderers.windows.components.UiInputText;
 
 public class DebugConsole extends Rectangle implements IBufferedTextInputCallback, IScrollBarArea, IProcessMouseInput {
 
@@ -103,9 +103,9 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 	private float mMouseTimer;
 	private transient boolean mAutoScroll;
 	private boolean mResourcesLoaded;
-	private UIInputText mTAGFilterText;
+	private UiInputText mTAGFilterText;
 	private int mTAGFilterLastSize;
-	private UIInputText mMessageFilterText;
+	private UiInputText mMessageFilterText;
 	private int mMessageFilterLastSize;
 	private final Color mConsoleBackgroundColor = new Color(0f, 0f, 0f, 0.9f);
 	private final Color mConsoleTextColor = new Color();
@@ -177,11 +177,11 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 			mConsoleCommands = new ArrayList<>();
 			mAutoScroll = true;
 
-			mTAGFilterText = new UIInputText(null);
+			mTAGFilterText = new UiInputText(null);
 			mTAGFilterText.emptyString("Filter");
 			mTAGFilterText.mouseClickBreaksInputTextFocus(true);
 
-			mMessageFilterText = new UIInputText(null);
+			mMessageFilterText = new UiInputText(null);
 			mMessageFilterText.emptyString("Filter");
 			mMessageFilterText.mouseClickBreaksInputTextFocus(true);
 

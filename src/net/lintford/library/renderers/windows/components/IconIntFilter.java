@@ -16,7 +16,7 @@ public class IconIntFilter implements IProcessMouseInput {
 	// Variables
 	// --------------------------------------
 
-	private UIIconFilter mUIIconFilter;
+	private UiIconFilter mUIIconFilter;
 	private int mFilterValue;
 	private transient SpriteSheetDefinition mIconSpritesheetDefinition;
 	private transient int mIconSpriteFrameIndex;
@@ -67,7 +67,7 @@ public class IconIntFilter implements IProcessMouseInput {
 	// Constructor
 	// --------------------------------------
 
-	public IconIntFilter(UIIconFilter parent, SpriteSheetDefinition spritesheet, int spriteFrameIndex, String name, int filterValue) {
+	public IconIntFilter(UiIconFilter parent, SpriteSheetDefinition spritesheet, int spriteFrameIndex, String name, int filterValue) {
 		mEnabled = false;
 
 		mUIIconFilter = parent;

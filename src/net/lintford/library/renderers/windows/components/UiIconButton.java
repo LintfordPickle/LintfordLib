@@ -10,7 +10,7 @@ import net.lintford.library.core.graphics.textures.CoreTextureNames;
 import net.lintford.library.renderers.windows.UiWindow;
 import net.lintford.library.screenmanager.entries.EntryInteractions;
 
-public class UIIconButton extends UIWidget {
+public class UiIconButton extends UIWidget {
 
 	// --------------------------------------
 	// Constants
@@ -76,11 +76,11 @@ public class UIIconButton extends UIWidget {
 	// Constructor
 	// --------------------------------------
 
-	public UIIconButton(final UiWindow parentWindow) {
+	public UiIconButton(final UiWindow parentWindow) {
 		this(parentWindow, 0);
 	}
 
-	public UIIconButton(final UiWindow parentWindow, final int entryUid) {
+	public UiIconButton(final UiWindow parentWindow, final int entryUid) {
 		super(parentWindow);
 
 		mEntryUid = entryUid;

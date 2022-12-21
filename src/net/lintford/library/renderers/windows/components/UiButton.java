@@ -8,7 +8,7 @@ import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDefinit
 import net.lintford.library.core.graphics.textures.CoreTextureNames;
 import net.lintford.library.renderers.windows.UiWindow;
 
-public class UIButton extends UIWidget {
+public class UiButton extends UIWidget {
 
 	// --------------------------------------
 	// Constants
@@ -50,7 +50,7 @@ public class UIButton extends UIWidget {
 	// Constructor
 	// --------------------------------------
 
-	public UIButton(final UiWindow pParentWindow) {
+	public UiButton(final UiWindow pParentWindow) {
 		super(pParentWindow);
 
 		mButtonLabel = NO_LABEL_TEXT;

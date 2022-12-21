@@ -13,7 +13,7 @@ import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDefinit
 import net.lintford.library.core.graphics.textures.CoreTextureNames;
 import net.lintford.library.renderers.windows.UiWindow;
 
-public class UIHorizontalEntryGroup extends UIWidget {
+public class UiHorizontalEntryGroup extends UIWidget {
 
 	// --------------------------------------
 	// Variables
@@ -35,7 +35,7 @@ public class UIHorizontalEntryGroup extends UIWidget {
 	// Constructor
 	// --------------------------------------
 
-	public UIHorizontalEntryGroup(final UiWindow parentWindow) {
+	public UiHorizontalEntryGroup(final UiWindow parentWindow) {
 		super(parentWindow);
 
 		mChildWidgets = new ArrayList<>();
