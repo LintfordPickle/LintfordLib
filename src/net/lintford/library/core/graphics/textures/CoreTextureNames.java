@@ -117,7 +117,9 @@ public class CoreTextureNames {
 	public static final int TEXTURE_OUTLINE_SMALL = 112;
 	public static final int TEXTURE_RED = 113;
 	public static final int TEXTURE_SCROLLBAR_DOWN = 114;
-	public static final int TEXTURE_SCROLLBAR_UP = 115;
-	public static final int TEXTURE_WHITE = 116;
+	public static final int TEXTURE_SCROLLBAR_LEFT = 115;
+	public static final int TEXTURE_SCROLLBAR_RIGHT = 116;
+	public static final int TEXTURE_SCROLLBAR_UP = 117;
+	public static final int TEXTURE_WHITE = 118;
 
 }
