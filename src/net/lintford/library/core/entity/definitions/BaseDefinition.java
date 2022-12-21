@@ -20,7 +20,7 @@ public abstract class BaseDefinition extends BaseEntity {
 	protected String outname;
 
 	/** user friendly name for the front end */
-	protected String displayName;
+	public String displayName;
 
 	// --------------------------------------
 	// Properties
@@ -32,10 +32,6 @@ public abstract class BaseDefinition extends BaseEntity {
 
 	public String definitionName() {
 		return name;
-	}
-
-	public String displayName() {
-		return displayName;
 	}
 
 	public String outname() {
