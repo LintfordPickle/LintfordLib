@@ -210,13 +210,15 @@ public class ScrollBarHorizontal extends Rectangle implements IProcessMouseInput
 			return;
 
 		if (mScrollbarAutoHide) {
-			mScrollbarEnabled = mScrollBarArea.fullContentArea().height() - mScrollBarArea.contentDisplayArea().height() > 0;
+			mScrollbarEnabled = mScrollBarArea.fullContentArea().width() - mScrollBarArea.contentDisplayArea().width() > 0;
 		} else {
 			mScrollbarEnabled = true;
 		}
 
-		updateMovement(pCore);
-		updateBar(pCore);
+		if (mScrollbarEnabled) {
+			updateMovement(pCore);
+			updateBar(pCore);
+		}
 	}
 
 	private void updateMovement(LintfordCore pCore) {
@@ -263,6 +265,9 @@ public class ScrollBarHorizontal extends Rectangle implements IProcessMouseInput
 
 	public void draw(LintfordCore pCore, SpriteBatch pSpriteBatch, SpriteSheetDefinition pCoreSpritesheet, float pZDepth) {
 		if (mIsActive == false)
+			return;
+
+		if (mScrollbarEnabled == false)
 			return;
 
 		// Scroll bar background
