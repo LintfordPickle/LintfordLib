@@ -93,10 +93,16 @@ public class SpriteBatch extends TextureBatchPCT {
 	}
 
 	public void drawAroundCenter(SpriteSheetDefinition spriteSheetDefinition, int spriteFrameIndex, float destX, float destY, float destWidth, float destHeight, float rot, float pivotX, float pivotY, float zDepth, Color colorTint) {
+		if (spriteSheetDefinition == null)
+			return;
+
 		drawAroundCenter(spriteSheetDefinition, spriteSheetDefinition.getSpriteFrame(spriteFrameIndex), destX, destY, destWidth, destHeight, rot, pivotX, pivotY, zDepth, colorTint);
 	}
 
 	public void drawAroundCenter(SpriteSheetDefinition spriteSheetDefinition, SpriteFrame spriteFrame, float destX, float destY, float destWidth, float destHeight, float rot, float pivotX, float pivotY, float zDepth, Color colorTint) {
+		if (spriteFrame == null)
+			return;
+
 		drawAroundCenter(spriteSheetDefinition.texture(), spriteFrame.x(), spriteFrame.y(), spriteFrame.width(), spriteFrame.height(), destX, destY, destWidth, destHeight, -0.01f, rot, pivotX, pivotY, 1.f, colorTint);
 	}
 }
