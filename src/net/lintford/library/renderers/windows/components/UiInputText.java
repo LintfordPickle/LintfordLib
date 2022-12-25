@@ -179,7 +179,7 @@ public class UiInputText extends UIWidget implements IBufferedTextInputCallback 
 		if (mIsReadonly)
 			return;
 
-		final float lCanvasScale = mParentWindow != null ? mParentWindow.uiStructureController().gameCanvasWScaleFactor() : 1.0f;
+		final float lCanvasScale = mParentWindow != null ? mParentWindow.uiStructureController().uiCanvasWScaleFactor() : 1.0f;
 		mCaretFlashTimer += core.appTime().elapsedTimeMilli();
 
 		final int lCancelRectSize = 16;
@@ -198,7 +198,7 @@ public class UiInputText extends UIWidget implements IBufferedTextInputCallback 
 
 	@Override
 	public void draw(LintfordCore core, SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheetDefinition, FontUnit textFont, float componentZDepth) {
-		final float lCanvasScale = mParentWindow != null ? mParentWindow.uiStructureController().gameCanvasWScaleFactor() : 1.0f;
+		final float lCanvasScale = mParentWindow != null ? mParentWindow.uiStructureController().uiCanvasWScaleFactor() : 1.0f;
 
 		spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_LEFT, (int) mX, mY, 32 * lCanvasScale, mH * lCanvasScale, componentZDepth, ColorConstants.MenuPanelPrimaryColor);
 		if (mW > 32) {
