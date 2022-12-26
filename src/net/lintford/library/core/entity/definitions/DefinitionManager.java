@@ -176,6 +176,10 @@ public abstract class DefinitionManager<T extends BaseDefinition> {
 			final var lNewDefinition = gson.fromJson(lFileContents, classType);
 
 			if (lNewDefinition != null) {
+				if (lNewDefinition.name == null) {
+					Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Definition at path doesn't contain definition name: %s", filepath));
+				}
+
 				addDefintion(lNewDefinition);
 
 				return lNewDefinition;
