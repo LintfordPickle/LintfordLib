@@ -2,6 +2,12 @@ package net.lintford.library.core.entity;
 
 public abstract class Entity extends BaseInstanceData {
 
+	// --------------------------------------
+	// Constants
+	// --------------------------------------
+
+	private static final long serialVersionUID = 3376631186484307065L;
+
 	private static int ENTITY_UID_COUNTER = 0;
 
 	public static int getNewEntityUid() {
@@ -9,28 +15,10 @@ public abstract class Entity extends BaseInstanceData {
 	}
 
 	// --------------------------------------
-	// Constants
-	// --------------------------------------
-
-	private static final long serialVersionUID = 3376631186484307065L;
-
-	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
 	public final int entityUid;
-	public float x;
-	public float y;
-	public float rotationRadians;
-
-	// --------------------------------------
-	// Properties
-	// --------------------------------------
-
-	public void setPosition(float xPosition, float yPosition) {
-		x = xPosition;
-		y = yPosition;
-	}
 
 	// --------------------------------------
 	// Constructor

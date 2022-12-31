@@ -18,7 +18,6 @@
 			<attribute name="javadoc_location" value="jar:platform:/resource/LDLibrary/libs/commons-collections4-4.4-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="libs/JBox2d.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/json-20180813.jar"/>
 	<classpathentry kind="output" path="target/"/>
 </classpath>

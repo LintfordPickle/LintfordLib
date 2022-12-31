@@ -28,6 +28,9 @@ public class ParticleEmitterInstance extends PooledBaseData {
 	private transient ParticleEmitterInstance[] mChildEmitters;
 	private transient ParticleSystemInstance mParticleSystem;
 
+	public float x;
+	public float y;
+
 	private int mParticleSystemId;
 	protected int mEmitterInstanceId;
 	protected int mEmitterDefinitionId;

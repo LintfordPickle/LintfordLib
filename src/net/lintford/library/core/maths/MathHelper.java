@@ -179,7 +179,7 @@ public class MathHelper {
 		}
 		return num8;
 	}
-	
+
 	public static float catmullRom(float value1, float value2, float value3, float value4, float amount) {
 		float num = amount * amount;
 		float num2 = amount * num;
@@ -291,5 +291,21 @@ public class MathHelper {
 		final var lDifference = clamp(wrapAngle(lDesiredAngle - currentAngle), -turnSpeed, turnSpeed);
 
 		return wrapAngle(currentAngle + lDifference);
+	}
+
+	/** returns true if the order of the vertices are Ccw, otherwise false */
+	public static boolean isTriangleCcw(float ax, float ay, float bx, float by, float cx, float cy) {
+		final float abx = bx - ax;
+		final float aby = by - ay;
+
+		final float acx = cx - ax;
+		final float acy = cy - ay;
+
+		float z = windingOrderZFromCross(abx, aby, acx, acy);
+		return z > 0;
+	}
+
+	public static float windingOrderZFromCross(float ax, float ay, float bx, float by) {
+		return (ax * by) - (ay * bx);
 	}
 }

@@ -17,7 +17,6 @@ import java.util.List;
 import net.lintford.library.ConstantsApp;
 import net.lintford.library.core.audio.AudioManager;
 import net.lintford.library.core.audio.music.MusicManager;
-import net.lintford.library.core.box2d.PObjectManager;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.geometry.spritegraph.SpriteGraphRepository;
 import net.lintford.library.core.graphics.fonts.BitmapFontManager;
@@ -49,7 +48,6 @@ public class ResourceManager {
 	protected BitmapFontManager mFontManager;
 	protected SpriteSheetManager mSpriteSheetManager;
 	protected AudioManager mAudioManager;
-	protected PObjectManager mPObjectManager;
 	protected SpriteGraphRepository mSpriteGraphRepository;
 
 	// TODO: ResouceManagers still to be implemented:
@@ -97,10 +95,6 @@ public class ResourceManager {
 		return mAudioManager.musicManager();
 	}
 
-	public PObjectManager pobjectManager() {
-		return mPObjectManager;
-	}
-
 	public SpriteGraphRepository spriteGraphRepository() {
 		return mSpriteGraphRepository;
 	}
@@ -124,7 +118,6 @@ public class ResourceManager {
 		mSpriteSheetManager.initialize(this);
 		mAudioManager = new AudioManager(config.audio());
 		mSpriteGraphRepository = new SpriteGraphRepository();
-		mPObjectManager = new PObjectManager();
 
 		enableFolderWatchersForResourceChanges();
 	}
@@ -136,7 +129,6 @@ public class ResourceManager {
 	public void loadResources() {
 		mTextureManager.loadResources(this);
 		mAudioManager.loadResources(this);
-		mPObjectManager.loadResources(this);
 		mSpriteGraphRepository.loadResources(this);
 
 		mResourcesLoaded = true;
@@ -145,7 +137,6 @@ public class ResourceManager {
 	public void unloadContent() {
 		mAudioManager.unloadResources();
 		mTextureManager.unloadResources();
-		mPObjectManager.unloadResources();
 		mSpriteGraphRepository.unloadResources();
 
 		mResourcesLoaded = false;

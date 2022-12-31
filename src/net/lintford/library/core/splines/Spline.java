@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.jbox2d.common.Vec2;
-
 import net.lintford.library.core.maths.MathHelper;
 import net.lintford.library.core.maths.Vector2f;
 
@@ -236,10 +234,10 @@ public class Spline {
 		float lVectorBetweenX = lControlPoint1.x - lControlPoint0.x;
 		float lVectorBetweenY = lControlPoint1.y - lControlPoint0.y;
 
-		Vec2 v1 = new Vec2(lVectorBetweenX, lVectorBetweenY);
-		Vec2 v2 = new Vec2(positionX - lControlPoint0.x, positionY - lControlPoint0.y);
+		var v1 = new Vector2f(lVectorBetweenX, lVectorBetweenY);
+		var v2 = new Vector2f(positionX - lControlPoint0.x, positionY - lControlPoint0.y);
 
-		float veLength = v1.normalize();
+		float veLength = v1.norAndRetLen();
 		float lResult = Vector2f.dot(v1.x, v1.y, v2.x, v2.y) / veLength;
 
 		return MathHelper.clamp(lResult, 0.f, 1.f);

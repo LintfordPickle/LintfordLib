@@ -220,6 +220,10 @@ public class DebugDrawers {
 	}
 
 	public void drawCircleImmediate(ICamera camera, float x, float y, float radius, int segCount, int glLineType, float glLineWidth) {
+		drawCircleImmediate(camera, x, y, radius, segCount, glLineType, glLineWidth, 1.f, 1.f, 1.f);
+	}
+
+	public void drawCircleImmediate(ICamera camera, float x, float y, float radius, int segCount, int glLineType, float glLineWidth, float r, float g, float b) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
@@ -233,7 +237,7 @@ public class DebugDrawers {
 			float xx = x + (float) (radius * Math.cos(i));
 			float yy = y + (float) (radius * Math.sin(i));
 
-			mImmediateLineBatch.draw(xx, yy, -0.01f, 1f, 1f, 1f, 1f);
+			mImmediateLineBatch.draw(xx, yy, -0.01f, r, g, b, 1f);
 		}
 
 		mImmediateLineBatch.draw(x + (float) (radius * Math.cos(0)), y + (float) (radius * Math.sin(0)), -0.01f, 1f, 1f, 1f, 1f);
