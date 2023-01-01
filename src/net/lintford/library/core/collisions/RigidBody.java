@@ -198,6 +198,35 @@ public class RigidBody {
 	}
 
 	// --------------------------------------
+	// Core-Methods
+	// --------------------------------------
+
+	public void step(float time, Vector2f gravity, int iterations) {
+		// TODO:
+
+		if (isStatic())
+			return;
+
+		time /= iterations;
+
+		// force = mass * acc
+		// acc = force / mass
+
+		vx += gravity.x * time;
+		vy += gravity.y * time;
+
+		x += vx * time;
+		y += vy * time;
+
+		rotation += rotationVel * time;
+
+		ax = 0.f;
+		ay = 0.f;
+
+		setManualDirty();
+	}
+
+	// --------------------------------------
 	// Methods
 	// --------------------------------------
 
@@ -471,6 +500,7 @@ public class RigidBody {
 		float bottom = -height / 2f;
 		float top = bottom + height;
 
+		// clock-wise
 		newVertices.add(new Vector2f(left, top));
 		newVertices.add(new Vector2f(right, top));
 		newVertices.add(new Vector2f(right, bottom));
@@ -490,6 +520,8 @@ public class RigidBody {
 
 	private static List<Vector2f> createCircleVertices() {
 		var newVertices = new ArrayList<Vector2f>(1);
+
+		// TODO: circles don't require any vertices (neither local nor world)
 
 		newVertices.add(new Vector2f(0.f, 0.f));
 
