@@ -105,6 +105,86 @@ public class SAT {
 		return true;
 	}
 
+	public static boolean intersectsCirclePolygon(float circleX, float circleY, float circleRadius, List<Vector2f> polygonVertices, float polygonCenterX, float polygonCenterY, CollisionManifold result) {
+		result.intersection = true;
+		result.normal.x = 0.f;
+		result.normal.y = 0.f;
+		result.depth = Float.MAX_VALUE;
+
+		final var lNumVertsA = polygonVertices.size();
+		for (int i = 0; i < lNumVertsA; i++) {
+			final var va = polygonVertices.get(i);
+			final var vb = polygonVertices.get((i + 1) % lNumVertsA);
+
+			final var edgeX = vb.x - va.x;
+			final var edgeY = vb.y - va.y;
+
+			final var edgeLength = (float) Math.sqrt(edgeX * edgeX + edgeY * edgeY);
+
+			// note: the cross depends on the winding order of the triangle (this is cw)
+			final var axisX = -edgeY / edgeLength;
+			final var axisY = edgeX / edgeLength;
+
+			projectVertices(polygonVertices, axisX, axisY, _vec2fResult00);
+			projectCircle(circleX, circleY, circleRadius, axisX, axisY, _vec2fResult01);
+
+			if (_vec2fResult00.x >= _vec2fResult01.y || _vec2fResult00.x >= _vec2fResult01.y) {
+				result.intersection = false;
+				return false; // early out
+			}
+
+			// overlap
+			final float minimumDepthValueA = (_vec2fResult00.y - _vec2fResult01.x);
+
+			if (minimumDepthValueA < result.depth) {
+				result.depth = minimumDepthValueA;
+				result.normal.x = axisX;
+				result.normal.y = axisY;
+			}
+
+			final float minimumDepthValueB = (_vec2fResult01.y - _vec2fResult00.x);
+			if (minimumDepthValueB < result.depth) {
+				result.depth = minimumDepthValueB;
+				result.normal.x = -axisX;
+				result.normal.y = -axisY;
+			}
+		}
+
+		float axisX = polygonCenterX - circleX;
+		float axisY = polygonCenterY - circleY;
+
+		final float axisLength = (float) Math.sqrt(axisX * axisX + axisY * axisY);
+
+		axisX /= axisLength;
+		axisY /= axisLength;
+
+		projectVertices(polygonVertices, axisX, axisY, _vec2fResult00);
+		projectCircle(circleX, circleY, circleRadius, axisX, axisY, _vec2fResult01);
+
+		if (_vec2fResult00.x >= _vec2fResult01.y || _vec2fResult00.x >= _vec2fResult01.y) {
+			result.intersection = false;
+			return false; // early out
+		}
+
+		// overlap
+		final float minimumDepthValueA = (_vec2fResult00.y - _vec2fResult01.x);
+
+		if (minimumDepthValueA < result.depth) {
+			result.depth = minimumDepthValueA;
+			result.normal.x = axisX;
+			result.normal.y = axisY;
+		}
+
+		final float minimumDepthValueB = (_vec2fResult01.y - _vec2fResult00.x);
+		if (minimumDepthValueB < result.depth) {
+			result.depth = minimumDepthValueB;
+			result.normal.x = -axisX;
+			result.normal.y = -axisY;
+		}
+
+		return true;
+	}
+
 	public static boolean intersectsCirclePolygon(float circleX, float circleY, float circleRadius, List<Vector2f> polygonVertices, CollisionManifold result) {
 		result.intersection = true;
 		result.normal.x = 0.f;

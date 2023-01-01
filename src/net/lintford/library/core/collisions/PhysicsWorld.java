@@ -37,8 +37,11 @@ public class PhysicsWorld {
 	// --------------------------------------
 
 	public PhysicsWorld() {
-		mGravityX = 0.f;
-		mGravityY = 0.f;// 9.81f;
+	}
+
+	public PhysicsWorld(float gravityX, float gravityY) {
+		mGravityX = gravityX;
+		mGravityY = gravityY;
 	}
 
 	// --------------------------------------
@@ -70,8 +73,8 @@ public class PhysicsWorld {
 						lBodyB.x += result.normal.x * result.depth;
 						lBodyB.y += result.normal.y * result.depth;
 					} else if (lBodyB.isStatic()) {
-						lBodyA.x += result.normal.x * result.depth;
-						lBodyA.y += result.normal.y * result.depth;
+						lBodyA.x -= result.normal.x * result.depth;
+						lBodyA.y -= result.normal.y * result.depth;
 					} else {
 						lBodyA.x += -result.normal.x * result.depth / 2.f;
 						lBodyA.y += -result.normal.y * result.depth / 2.f;
@@ -96,14 +99,14 @@ public class PhysicsWorld {
 					return SAT.tempResult;
 				}
 			} else if (lShapeTypeB == ShapeType.Circle) {
-				if (SAT.intersectsCirclePolygon(bodyB.x, bodyB.y, bodyB.radius, bodyA.getTransformedVertices(), SAT.tempResult)) {
+				if (SAT.intersectsCirclePolygon(bodyB.x, bodyB.y, bodyB.radius, bodyA.getTransformedVertices(), bodyB.x, bodyB.y, SAT.tempResult)) {
 					return SAT.tempResult;
 				}
 			}
 
 		} else if (lShapeTypeA == ShapeType.Circle) {
 			if (lShapeTypeB == ShapeType.Polygon) {
-				if (SAT.intersectsCirclePolygon(bodyA.x, bodyA.y, bodyA.radius, bodyB.getTransformedVertices(), SAT.tempResult)) {
+				if (SAT.intersectsCirclePolygon(bodyA.x, bodyA.y, bodyA.radius, bodyB.getTransformedVertices(), bodyB.x, bodyB.y, SAT.tempResult)) {
 					SAT.tempResult.normal.x = -SAT.tempResult.normal.x;
 					SAT.tempResult.normal.y = -SAT.tempResult.normal.y;
 					return SAT.tempResult;

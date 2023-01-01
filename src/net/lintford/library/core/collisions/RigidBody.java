@@ -211,11 +211,11 @@ public class RigidBody {
 		final float ax = forceX / mass();
 		final float ay = forceY / mass();
 
-		vx += gravityX * time;
-		vy += gravityY * time;
-
 		vx += ax * time;
 		vy += ay * time;
+
+		vx += gravityX * time;
+		vy += gravityY * time;
 
 		x += vx * time;
 		y += vy * time;
