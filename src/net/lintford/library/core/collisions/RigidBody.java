@@ -52,10 +52,10 @@ public class RigidBody {
 	public float vy;
 
 	@SerializedName(value = "ax")
-	public float ax;
+	public float forceX;
 
 	@SerializedName(value = "ay")
-	public float ay;
+	public float forceY;
 
 	@SerializedName(value = "rot")
 	public float rotation;
@@ -208,16 +208,22 @@ public class RigidBody {
 		// force = mass * acc
 		// acc = force / mass
 
+		final float ax = forceX / mass();
+		final float ay = forceY / mass();
+
 		vx += gravityX * time;
 		vy += gravityY * time;
+
+		vx += ax * time;
+		vy += ay * time;
 
 		x += vx * time;
 		y += vy * time;
 
 		rotation += rotationVel * time;
 
-		ax = 0.f;
-		ay = 0.f;
+		forceX = 0.f;
+		forceY = 0.f;
 
 		setManualDirty();
 	}
@@ -403,6 +409,11 @@ public class RigidBody {
 	// Helper-Methods
 	// --------------------------------------
 
+	public void addForce(float x, float y) {
+		forceY += y;
+		forceX += x;
+	}
+
 	public void setLocalVertices(Vector2f... verts) {
 		if (verts == null || verts.length != mLocalVertices.size())
 			return;
@@ -529,11 +540,11 @@ public class RigidBody {
 	// --------------------------------------
 
 	public static RigidBody createCircleBody(float x, float y, float rotation, float radius, float density, boolean isStatic, float restitution) {
-		final float area = radius * radius * (float) Math.PI;
-		final float mass = area * density;
+		final float lArea = radius * radius * (float) Math.PI;
+		final float lMass = lArea * density;
 		restitution = MathHelper.clamp(restitution, 0f, 1f);
 
-		return new RigidBody(x, y, rotation, density, mass, restitution, area, isStatic, 0.f, 0.f, radius, ShapeType.Circle);
+		return new RigidBody(x, y, rotation, density, lMass, restitution, lArea, isStatic, 0.f, 0.f, radius, ShapeType.Circle);
 	}
 
 	public static RigidBody createLineBody(float x, float y, float rotation, float width, float height, float density, boolean isStatic, float restitution) {
@@ -543,7 +554,6 @@ public class RigidBody {
 
 		final float lRadius = (float) Math.max(width, height) * .5f;
 
-		// TODO: for the love of God, do something about width/height/length/radius!
 		return new RigidBody(x, y, rotation, density, lMass, restitution, lArea, isStatic, width, height, lRadius, ShapeType.Line);
 	}
 

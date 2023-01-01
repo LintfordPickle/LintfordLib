@@ -33,10 +33,8 @@ public class ConstantsPhysics {
 	// Methods
 	// --------------------------------------
 
-	public void setPhysicsWorldConstants(float pNumPixelsPerUnit) {
+	public static void setPhysicsWorldConstants(float pNumPixelsPerUnit) {
 		UNITS_TO_PIXELS = pNumPixelsPerUnit;
 		PIXELS_TO_UNITS = 1f / UNITS_TO_PIXELS;
-
 	}
-
 }

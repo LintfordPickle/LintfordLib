@@ -19,13 +19,11 @@ public class SAT {
 	// Methods
 	// ---------------------------------------------
 
-	public static CollisionManifold intersectsPolygons(List<Vector2f> verticesA, List<Vector2f> verticesB) {
-		boolean negateDepth = false;
-
-		tempResult.intersection = true;
-		tempResult.normal.x = 0.f;
-		tempResult.normal.y = 0.f;
-		tempResult.depth = Float.MAX_VALUE;
+	public static boolean intersectsPolygons(List<Vector2f> verticesA, List<Vector2f> verticesB, CollisionManifold result) {
+		result.intersection = true;
+		result.normal.x = 0.f;
+		result.normal.y = 0.f;
+		result.depth = Float.MAX_VALUE;
 
 		final var lNumVertsA = verticesA.size();
 		for (int i = 0; i < lNumVertsA; i++) {
@@ -45,26 +43,24 @@ public class SAT {
 			projectVertices(verticesB, axisX, axisY, _vec2fResult01);
 
 			if (_vec2fResult00.x >= _vec2fResult01.y || _vec2fResult00.x >= _vec2fResult01.y) {
-				tempResult.intersection = false;
-				return tempResult; // early out
+				result.intersection = false;
+				return false; // early out
 			}
 
 			// overlap
 			final float minimumDepthValueA = (_vec2fResult00.y - _vec2fResult01.x);
 
-			if (minimumDepthValueA < tempResult.depth) {
-				tempResult.depth = minimumDepthValueA;
-				tempResult.normal.x = axisX;
-				tempResult.normal.y = axisY;
-				negateDepth = false;
+			if (minimumDepthValueA < result.depth) {
+				result.depth = minimumDepthValueA;
+				result.normal.x = axisX;
+				result.normal.y = axisY;
 			}
 
 			final float minimumDepthValueB = (_vec2fResult01.y - _vec2fResult00.x);
-			if (minimumDepthValueB < tempResult.depth) {
-				tempResult.depth = minimumDepthValueB;
-				tempResult.normal.x = axisX;
-				tempResult.normal.y = axisY;
-				negateDepth = true;
+			if (minimumDepthValueB < result.depth) {
+				result.depth = minimumDepthValueB;
+				result.normal.x = -axisX;
+				result.normal.y = -axisY;
 			}
 		}
 
@@ -76,53 +72,44 @@ public class SAT {
 			final var edgeX = vb.x - va.x;
 			final var edgeY = vb.y - va.y;
 
-			final var edgeLength2 = (float) Math.sqrt(edgeX * edgeX + edgeY * edgeY);
+			final var edgeLength = (float) Math.sqrt(edgeX * edgeX + edgeY * edgeY);
 
 			// note: the cross depends on the winding order of the triangle (this is cw)
-			final var axisX = -edgeY / edgeLength2;
-			final var axisY = edgeX / edgeLength2;
+			final var axisX = -edgeY / edgeLength;
+			final var axisY = edgeX / edgeLength;
 
 			projectVertices(verticesA, axisX, axisY, _vec2fResult00);
 			projectVertices(verticesB, axisX, axisY, _vec2fResult01);
 
 			if (_vec2fResult00.x >= _vec2fResult01.y || _vec2fResult00.x >= _vec2fResult01.y) {
-				tempResult.intersection = false;
-				return tempResult; // early out
+				return false; // early out
 			}
 
 			// overlap
 			final float minimumDepthValueA = (_vec2fResult00.y - _vec2fResult01.x);
 
-			if (minimumDepthValueA < tempResult.depth) {
-				tempResult.depth = minimumDepthValueA;
-				tempResult.normal.x = axisX;
-				tempResult.normal.y = axisY;
-				negateDepth = false;
+			if (minimumDepthValueA < result.depth) {
+				result.depth = minimumDepthValueA;
+				result.normal.x = axisX;
+				result.normal.y = axisY;
 			}
 
 			final float minimumDepthValueB = (_vec2fResult01.y - _vec2fResult00.x);
-			if (minimumDepthValueB < tempResult.depth) {
-				tempResult.depth = minimumDepthValueB;
-				tempResult.normal.x = axisX;
-				tempResult.normal.y = axisY;
-				negateDepth = true;
+			if (minimumDepthValueB < result.depth) {
+				result.depth = minimumDepthValueB;
+				result.normal.x = -axisX;
+				result.normal.y = -axisY;
 			}
 		}
 
-		if (negateDepth) {
-			tempResult.depth = -tempResult.depth;
-		}
-
-		return tempResult;
+		return true;
 	}
 
-	public static CollisionManifold intersectsCirclePolygon(float circleX, float circleY, float circleRadius, List<Vector2f> polygonVertices) {
-		boolean negateDepth = false;
-
-		tempResult.intersection = true;
-		tempResult.normal.x = 0.f;
-		tempResult.normal.y = 0.f;
-		tempResult.depth = Float.MAX_VALUE;
+	public static boolean intersectsCirclePolygon(float circleX, float circleY, float circleRadius, List<Vector2f> polygonVertices, CollisionManifold result) {
+		result.intersection = true;
+		result.normal.x = 0.f;
+		result.normal.y = 0.f;
+		result.depth = Float.MAX_VALUE;
 
 		final var lNumVertsA = polygonVertices.size();
 		for (int i = 0; i < lNumVertsA; i++) {
@@ -142,26 +129,24 @@ public class SAT {
 			projectCircle(circleX, circleY, circleRadius, axisX, axisY, _vec2fResult01);
 
 			if (_vec2fResult00.x >= _vec2fResult01.y || _vec2fResult00.x >= _vec2fResult01.y) {
-				tempResult.intersection = false;
-				return tempResult; // early out
+				result.intersection = false;
+				return false; // early out
 			}
 
 			// overlap
 			final float minimumDepthValueA = (_vec2fResult00.y - _vec2fResult01.x);
 
-			if (minimumDepthValueA < tempResult.depth) {
-				tempResult.depth = minimumDepthValueA;
-				tempResult.normal.x = axisX;
-				tempResult.normal.y = axisY;
-				negateDepth = false;
+			if (minimumDepthValueA < result.depth) {
+				result.depth = minimumDepthValueA;
+				result.normal.x = axisX;
+				result.normal.y = axisY;
 			}
 
 			final float minimumDepthValueB = (_vec2fResult01.y - _vec2fResult00.x);
-			if (minimumDepthValueB < tempResult.depth) {
-				tempResult.depth = minimumDepthValueB;
-				tempResult.normal.x = axisX;
-				tempResult.normal.y = axisY;
-				negateDepth = true;
+			if (minimumDepthValueB < result.depth) {
+				result.depth = minimumDepthValueB;
+				result.normal.x = -axisX;
+				result.normal.y = -axisY;
 			}
 		}
 
@@ -180,52 +165,46 @@ public class SAT {
 		projectCircle(circleX, circleY, circleRadius, axisX, axisY, _vec2fResult01);
 
 		if (_vec2fResult00.x >= _vec2fResult01.y || _vec2fResult00.x >= _vec2fResult01.y) {
-			tempResult.intersection = false;
-			return tempResult; // early out
+			result.intersection = false;
+			return false; // early out
 		}
 
 		// overlap
 		final float minimumDepthValueA = (_vec2fResult00.y - _vec2fResult01.x);
 
-		if (minimumDepthValueA < tempResult.depth) {
-			tempResult.depth = minimumDepthValueA;
-			tempResult.normal.x = axisX;
-			tempResult.normal.y = axisY;
-			negateDepth = false;
+		if (minimumDepthValueA < result.depth) {
+			result.depth = minimumDepthValueA;
+			result.normal.x = axisX;
+			result.normal.y = axisY;
 		}
 
 		final float minimumDepthValueB = (_vec2fResult01.y - _vec2fResult00.x);
-		if (minimumDepthValueB < tempResult.depth) {
-			tempResult.depth = minimumDepthValueB;
-			tempResult.normal.x = axisX;
-			tempResult.normal.y = axisY;
-			negateDepth = true;
+		if (minimumDepthValueB < result.depth) {
+			result.depth = minimumDepthValueB;
+			result.normal.x = -axisX;
+			result.normal.y = -axisY;
 		}
 
-		if (negateDepth) {
-			tempResult.depth = -tempResult.depth;
-		}
-
-		return tempResult;
+		return true;
 	}
 
-	public static CollisionManifold intersectsCircles(float circleAX, float circleAY, float radiusA, float circleBX, float circleBY, float radiusB) {
+	public static boolean intersectsCircles(float circleAX, float circleAY, float radiusA, float circleBX, float circleBY, float radiusB, CollisionManifold result) {
 		final float dist = Vector2f.distance(circleAX, circleAY, circleBX, circleBY);
 		final float radii = radiusA + radiusB;
 
-		tempResult.intersection = false;
+		result.intersection = false;
 
 		if (dist >= radii)
-			return tempResult;
+			return false;
 
-		tempResult.normal.x = circleBX - circleAX;
-		tempResult.normal.y = circleBY - circleAY;
-		tempResult.normal.nor();
-		tempResult.depth = radii - dist;
+		result.normal.x = circleBX - circleAX;
+		result.normal.y = circleBY - circleAY;
+		result.normal.nor();
+		result.depth = radii - dist;
 
-		tempResult.intersection = true;
+		result.intersection = true;
 
-		return tempResult;
+		return true;
 	}
 
 	private static int findClosestVertexIndexOnPolygon(float centerX, float centerY, List<Vector2f> vertices) {
