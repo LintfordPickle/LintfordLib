@@ -60,13 +60,25 @@ public class PhysicsWorld {
 			for (int j = i + 1; j < lNumBodies; j++) {
 				final var lBodyB = mBodies.get(j);
 
+				if (lBodyA.isStatic() && lBodyB.isStatic())
+					continue;
+
 				final var result = collide(lBodyA, lBodyB);
 				if (result != null && result.intersection) {
-					lBodyA.x += -result.normal.x * result.depth / 2.f;
-					lBodyA.y += -result.normal.y * result.depth / 2.f;
 
-					lBodyB.x += result.normal.x * result.depth / 2.f;
-					lBodyB.y += result.normal.y * result.depth / 2.f;
+					if (lBodyA.isStatic()) {
+						lBodyB.x += result.normal.x * result.depth;
+						lBodyB.y += result.normal.y * result.depth;
+					} else if (lBodyB.isStatic()) {
+						lBodyA.x += result.normal.x * result.depth;
+						lBodyA.y += result.normal.y * result.depth;
+					} else {
+						lBodyA.x += -result.normal.x * result.depth / 2.f;
+						lBodyA.y += -result.normal.y * result.depth / 2.f;
+
+						lBodyB.x += result.normal.x * result.depth / 2.f;
+						lBodyB.y += result.normal.y * result.depth / 2.f;
+					}
 
 					resolveCollision(lBodyA, lBodyB, result);
 				}
