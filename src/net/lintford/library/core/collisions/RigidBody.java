@@ -201,19 +201,15 @@ public class RigidBody {
 	// Core-Methods
 	// --------------------------------------
 
-	public void step(float time, Vector2f gravity, int iterations) {
-		// TODO:
-
+	public void step(float time, float gravityX, float gravityY) {
 		if (isStatic())
 			return;
-
-		time /= iterations;
 
 		// force = mass * acc
 		// acc = force / mass
 
-		vx += gravity.x * time;
-		vy += gravity.y * time;
+		vx += gravityX * time;
+		vy += gravityY * time;
 
 		x += vx * time;
 		y += vy * time;

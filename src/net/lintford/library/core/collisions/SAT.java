@@ -19,10 +19,6 @@ public class SAT {
 	// Methods
 	// ---------------------------------------------
 
-	public static CollisionManifold intersects(RigidBody bodyA, RigidBody bodyB) {
-		return null;
-	}
-
 	public static CollisionManifold intersectsPolygons(List<Vector2f> verticesA, List<Vector2f> verticesB) {
 		boolean negateDepth = false;
 
@@ -213,8 +209,8 @@ public class SAT {
 		return tempResult;
 	}
 
-	public static CollisionManifold intersectsCircles(Vector2f centerA, float radiusA, Vector2f centerB, float radiusB) {
-		final float dist = Vector2f.distance(centerA.x, centerA.y, centerB.x, centerB.y);
+	public static CollisionManifold intersectsCircles(float circleAX, float circleAY, float radiusA, float circleBX, float circleBY, float radiusB) {
+		final float dist = Vector2f.distance(circleAX, circleAY, circleBX, circleBY);
 		final float radii = radiusA + radiusB;
 
 		tempResult.intersection = false;
@@ -222,8 +218,8 @@ public class SAT {
 		if (dist >= radii)
 			return tempResult;
 
-		tempResult.normal.x = centerB.x - centerA.x;
-		tempResult.normal.y = centerB.y - centerA.y;
+		tempResult.normal.x = circleBX - circleAX;
+		tempResult.normal.y = circleBY - circleAY;
 		tempResult.normal.nor();
 		tempResult.depth = radii - dist;
 
