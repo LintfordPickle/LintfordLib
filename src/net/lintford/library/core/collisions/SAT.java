@@ -2,6 +2,7 @@ package net.lintford.library.core.collisions;
 
 import java.util.List;
 
+import net.lintford.library.ConstantsPhysics;
 import net.lintford.library.core.maths.Vector2f;
 
 public class SAT {
@@ -314,6 +315,7 @@ public class SAT {
 
 		if (lShapeTypeA == ShapeType.Polygon) {
 			if (lShapeTypeB == ShapeType.Polygon) {
+				findContactPoint(bodyA.getTransformedVertices(), bodyB.getTransformedVertices(), manifold);
 
 			} else if (lShapeTypeB == ShapeType.Circle) {
 				findContactPoint(bodyB.x, bodyB.y, bodyB.radius, bodyA.x, bodyA.y, bodyA.getTransformedVertices(), manifold);
@@ -332,6 +334,75 @@ public class SAT {
 
 			}
 		}
+	}
+
+	private static void findContactPoint(List<Vector2f> polyAVerts, List<Vector2f> polyBVerts, ContactManifold contactManifold) {
+
+		float minDist2 = Float.MAX_VALUE;
+
+		final int lNumVertsA = polyAVerts.size();
+		final int lNumVertsB = polyAVerts.size();
+		for (int i = 0; i < lNumVertsA; i++) {
+			final var p = polyAVerts.get(i);
+
+			for (int j = 0; j < lNumVertsB; j++) {
+				final var va = polyBVerts.get(j);
+				final var vb = polyBVerts.get((j + 1) % polyBVerts.size());
+
+				final var lPointSegmentDist = pointSegmentDistance2(p.x, p.y, va.x, va.y, vb.x, vb.y);
+
+				// a second point with ~same distance
+				if (equalWithinEpsilon(lPointSegmentDist.dist2, minDist2)) {
+					if (!equalWithinEpsilon(lPointSegmentDist.contactX, contactManifold.contact1.x) || !equalWithinEpsilon(lPointSegmentDist.contactY, contactManifold.contact1.y)) {
+						contactManifold.contactCount = 2;
+						contactManifold.contact2.x = lPointSegmentDist.contactX;
+						contactManifold.contact2.y = lPointSegmentDist.contactY;
+					}
+				}
+
+				// new minimum distance found
+				else if (lPointSegmentDist.dist2 < minDist2) {
+					minDist2 = lPointSegmentDist.dist2;
+
+					contactManifold.contactCount = 1;
+					contactManifold.contact1.x = lPointSegmentDist.contactX;
+					contactManifold.contact1.y = lPointSegmentDist.contactY;
+				}
+			}
+		}
+
+		for (int i = 0; i < lNumVertsB; i++) {
+			final var p = polyBVerts.get(i);
+
+			for (int j = 0; j < lNumVertsA; j++) {
+				final var va = polyAVerts.get(j);
+				final var vb = polyAVerts.get((j + 1) % polyAVerts.size());
+
+				final var lPointSegmentDist = pointSegmentDistance2(p.x, p.y, va.x, va.y, vb.x, vb.y);
+
+				// a second point with ~same distance
+				if (equalWithinEpsilon(lPointSegmentDist.dist2, minDist2)) {
+					if (!equalWithinEpsilon(lPointSegmentDist.contactX, contactManifold.contact1.x) || !equalWithinEpsilon(lPointSegmentDist.contactY, contactManifold.contact1.y)) {
+						contactManifold.contactCount = 2;
+						contactManifold.contact2.x = lPointSegmentDist.contactX;
+						contactManifold.contact2.y = lPointSegmentDist.contactY;
+					}
+				}
+
+				// new minimum distance found
+				else if (lPointSegmentDist.dist2 < minDist2) {
+					minDist2 = lPointSegmentDist.dist2;
+
+					contactManifold.contactCount = 1;
+					contactManifold.contact1.x = lPointSegmentDist.contactX;
+					contactManifold.contact1.y = lPointSegmentDist.contactY;
+				}
+			}
+		}
+	}
+
+	private static boolean equalWithinEpsilon(float a, float b) {
+		return Math.abs(a - b) < ConstantsPhysics.EPISLON;
 	}
 
 	private static void findContactPoint(float circleAX, float circleAY, float radiusA, float polyCenterX, float polyCenterY, List<Vector2f> verts, ContactManifold contactManifold) {
