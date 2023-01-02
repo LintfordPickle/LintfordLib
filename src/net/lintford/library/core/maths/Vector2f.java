@@ -93,10 +93,14 @@ public class Vector2f implements Serializable {
 		return (float) Math.sqrt(distance2(pX1, pY1, pX2, pY2));
 	}
 
+	public static float distance2(float x, float y) {
+		return (x * x) + (y * y);
+	}
+
 	public static float distance2(float pX1, float pY1, float pX2, float pY2) {
-		float num2 = pX1 - pX2;
-		float num = pY1 - pY2;
-		return (num2 * num2) + (num * num);
+		float x = pX1 - pX2;
+		float y = pY1 - pY2;
+		return (x * x) + (y * y);
 	}
 
 	/**
