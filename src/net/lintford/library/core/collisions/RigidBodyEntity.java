@@ -1,5 +1,6 @@
 package net.lintford.library.core.collisions;
 
+import net.lintford.library.ConstantsPhysics;
 import net.lintford.library.core.geometry.partitioning.GridEntity;
 import net.lintford.library.core.geometry.partitioning.SpatialHashGrid;
 
@@ -46,11 +47,13 @@ public abstract class RigidBodyEntity extends GridEntity {
 	public void fillEntityBounds(SpatialHashGrid<?> grid) {
 		final var aabb = body.aabb();
 
-		minX = grid.getCellIndexX((int) aabb.left());
-		minY = grid.getCellIndexY((int) aabb.top());
+		final var lUnitToPixels = ConstantsPhysics.UnitsToPixels();
 
-		maxX = grid.getCellIndexX((int) aabb.right());
-		maxY = grid.getCellIndexY((int) aabb.bottom());
+		minX = grid.getCellIndexX((int) (aabb.left() * lUnitToPixels));
+		minY = grid.getCellIndexY((int) (aabb.top() * lUnitToPixels));
+
+		maxX = grid.getCellIndexX((int) (aabb.right() * lUnitToPixels));
+		maxY = grid.getCellIndexY((int) (aabb.bottom() * lUnitToPixels));
 	}
 
 	@Override

@@ -6,6 +6,9 @@ public class ConstantsPhysics {
 	// Statics
 	// --------------------------------------
 
+	public static final int MIN_ITERATIONS = 1;
+	public static final int MAX_ITERATIONS = 128;
+
 	private static float UNITS_TO_PIXELS = 32.f;
 	private static float PIXELS_TO_UNITS = 1.f / UNITS_TO_PIXELS;
 

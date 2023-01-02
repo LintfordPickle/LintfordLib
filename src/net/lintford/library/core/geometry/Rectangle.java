@@ -210,6 +210,10 @@ public class Rectangle implements Serializable {
 		return ((((otherRectangle.left() < right()) && (left() < otherRectangle.right())) && (otherRectangle.top() < bottom())) && (top() < otherRectangle.bottom()));
 	}
 
+	public boolean intersectsAA(float x, float y, float w, float h) {
+		return ((((x < right()) && (left() < x + w)) && (y < bottom())) && (top() < y + h));
+	}
+
 	/**
 	 * This axis-aligned Rectangle contains that point. n.b. If you have applied a rotation to this Rectangle, then it is no longer axis-aligned
 	 * 

@@ -3,6 +3,8 @@ package net.lintford.library.core.collisions;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.lintford.library.ConstantsPhysics;
+import net.lintford.library.core.maths.MathHelper;
 import net.lintford.library.core.maths.Vector2f;
 
 public class PhysicsWorld {
@@ -48,42 +50,48 @@ public class PhysicsWorld {
 	// Core-Methods
 	// --------------------------------------
 
-	public void step(float time) {
+	public void step(float time, int iterations) {
 
-		// 1. Movement
-		final int lNumBodies = mBodies.size();
-		for (int i = 0; i < lNumBodies; i++) {
-			mBodies.get(i).step(time, mGravityX, mGravityY);
-		}
+		iterations = MathHelper.clampi(iterations, ConstantsPhysics.MIN_ITERATIONS, ConstantsPhysics.MAX_ITERATIONS);
 
-		// 2. Collision
-		for (int i = 0; i < lNumBodies - 1; i++) {
-			final var lBodyA = mBodies.get(i);
+		time /= (float) iterations;
+		for (int it = 0; it < iterations; it++) {
 
-			for (int j = i + 1; j < lNumBodies; j++) {
-				final var lBodyB = mBodies.get(j);
+			// 1. Movement
+			final int lNumBodies = mBodies.size();
+			for (int i = 0; i < lNumBodies; i++) {
+				mBodies.get(i).step(time, mGravityX, mGravityY);
+			}
 
-				if (lBodyA.isStatic() && lBodyB.isStatic())
-					continue;
+			// 2. Collision
+			for (int i = 0; i < lNumBodies - 1; i++) {
+				final var lBodyA = mBodies.get(i);
 
-				final var result = collide(lBodyA, lBodyB);
-				if (result != null && result.intersection) {
+				for (int j = i + 1; j < lNumBodies; j++) {
+					final var lBodyB = mBodies.get(j);
 
-					if (lBodyA.isStatic()) {
-						lBodyB.x += result.normal.x * result.depth;
-						lBodyB.y += result.normal.y * result.depth;
-					} else if (lBodyB.isStatic()) {
-						lBodyA.x -= result.normal.x * result.depth;
-						lBodyA.y -= result.normal.y * result.depth;
-					} else {
-						lBodyA.x += -result.normal.x * result.depth / 2.f;
-						lBodyA.y += -result.normal.y * result.depth / 2.f;
+					if (lBodyA.isStatic() && lBodyB.isStatic())
+						continue;
 
-						lBodyB.x += result.normal.x * result.depth / 2.f;
-						lBodyB.y += result.normal.y * result.depth / 2.f;
+					final var result = collide(lBodyA, lBodyB);
+					if (result != null && result.intersection) {
+
+						if (lBodyA.isStatic()) {
+							lBodyB.x += result.normal.x * result.depth;
+							lBodyB.y += result.normal.y * result.depth;
+						} else if (lBodyB.isStatic()) {
+							lBodyA.x -= result.normal.x * result.depth;
+							lBodyA.y -= result.normal.y * result.depth;
+						} else {
+							lBodyA.x += -result.normal.x * result.depth / 2.f;
+							lBodyA.y += -result.normal.y * result.depth / 2.f;
+
+							lBodyB.x += result.normal.x * result.depth / 2.f;
+							lBodyB.y += result.normal.y * result.depth / 2.f;
+						}
+
+						resolveCollision(lBodyA, lBodyB, result);
 					}
-
-					resolveCollision(lBodyA, lBodyB, result);
 				}
 			}
 		}
