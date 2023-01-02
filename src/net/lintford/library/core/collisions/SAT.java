@@ -7,6 +7,16 @@ import net.lintford.library.core.maths.Vector2f;
 public class SAT {
 
 	// ---------------------------------------------
+	// Inner-Classes
+	// ---------------------------------------------
+
+	private static class PointSegmentResult {
+		public float dist2;
+		public float contactX;
+		public float contactY;
+	}
+
+	// ---------------------------------------------
 	// Constants
 	// ---------------------------------------------
 
@@ -14,6 +24,8 @@ public class SAT {
 
 	private static final Vector2f _vec2fResult00 = new Vector2f();
 	private static final Vector2f _vec2fResult01 = new Vector2f();
+
+	private static final PointSegmentResult pointSegmentResult = new PointSegmentResult();
 
 	// ---------------------------------------------
 	// Methods
@@ -304,14 +316,38 @@ public class SAT {
 			if (lShapeTypeB == ShapeType.Polygon) {
 
 			} else if (lShapeTypeB == ShapeType.Circle) {
+				findContactPoint(bodyB.x, bodyB.y, bodyB.radius, bodyA.x, bodyA.y, bodyA.getTransformedVertices(), manifold);
+				manifold.contactCount = 1;
 
 			}
 
 		} else if (lShapeTypeA == ShapeType.Circle) {
 			if (lShapeTypeB == ShapeType.Polygon) {
+				findContactPoint(bodyA.x, bodyA.y, bodyA.radius, bodyB.x, bodyB.y, bodyB.getTransformedVertices(), manifold);
+				manifold.contactCount = 1;
 
 			} else if (lShapeTypeB == ShapeType.Circle) {
 				findContactPoint(bodyA.x, bodyA.y, bodyA.radius, bodyB.x, bodyB.y, manifold);
+				manifold.contactCount = 1;
+
+			}
+		}
+	}
+
+	private static void findContactPoint(float circleAX, float circleAY, float radiusA, float polyCenterX, float polyCenterY, List<Vector2f> verts, ContactManifold contactManifold) {
+		float minDist2 = Float.MAX_VALUE;
+
+		final int lNumVerts = verts.size();
+		for (int i = 0; i < lNumVerts; i++) {
+			final var va = verts.get(i);
+			final var vb = verts.get((i + 1) % verts.size());
+
+			final var lPointSegmentDist = pointSegmentDistance2(circleAX, circleAY, va.x, va.y, vb.x, vb.y);
+			if (lPointSegmentDist.dist2 < minDist2) {
+				minDist2 = lPointSegmentDist.dist2;
+
+				contactManifold.contact1.x = lPointSegmentDist.contactX;
+				contactManifold.contact1.y = lPointSegmentDist.contactY;
 			}
 		}
 	}
@@ -327,7 +363,33 @@ public class SAT {
 
 		contactManifold.contact1.x = circleAX + abX * radiusA;
 		contactManifold.contact1.y = circleAY + abY * radiusA;
-		contactManifold.contactCount = 1;
 
 	}
+
+	private static PointSegmentResult pointSegmentDistance2(float px, float py, float ax, float ay, float bx, float by) {
+		final var abX = bx - ax;
+		final var abY = by - ay;
+
+		final var apX = px - ax;
+		final var apY = py - ay;
+
+		final var proj = Vector2f.dot(abX, abY, apX, apY);
+		final var projLength = Vector2f.distance2(abX, abY);
+		final var d = proj / projLength;
+
+		if (d <= 0.f) {
+			pointSegmentResult.contactX = ax;
+			pointSegmentResult.contactY = ay;
+		} else if (d >= 1.f) {
+			pointSegmentResult.contactX = bx;
+			pointSegmentResult.contactY = by;
+		} else {
+			pointSegmentResult.contactX = ax + abX * d;
+			pointSegmentResult.contactY = ay + abY * d;
+		}
+
+		pointSegmentResult.dist2 = Vector2f.distance2(px, py, pointSegmentResult.contactX, pointSegmentResult.contactY);
+		return pointSegmentResult;
+	}
+
 }
