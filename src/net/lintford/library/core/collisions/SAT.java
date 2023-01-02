@@ -10,7 +10,7 @@ public class SAT {
 	// Constants
 	// ---------------------------------------------
 
-	public static final CollisionManifold tempResult = new CollisionManifold();
+	public static final ContactManifold tempResult = new ContactManifold();
 
 	private static final Vector2f _vec2fResult00 = new Vector2f();
 	private static final Vector2f _vec2fResult01 = new Vector2f();
@@ -19,7 +19,7 @@ public class SAT {
 	// Methods
 	// ---------------------------------------------
 
-	public static boolean intersectsPolygons(List<Vector2f> verticesA, List<Vector2f> verticesB, CollisionManifold result) {
+	public static boolean intersectsPolygons(List<Vector2f> verticesA, List<Vector2f> verticesB, ContactManifold result) {
 		result.intersection = true;
 		result.normal.x = 0.f;
 		result.normal.y = 0.f;
@@ -105,7 +105,7 @@ public class SAT {
 		return true;
 	}
 
-	public static boolean intersectsCirclePolygon(float circleX, float circleY, float circleRadius, List<Vector2f> polygonVertices, float polygonCenterX, float polygonCenterY, CollisionManifold result) {
+	public static boolean intersectsCirclePolygon(float circleX, float circleY, float circleRadius, List<Vector2f> polygonVertices, float polygonCenterX, float polygonCenterY, ContactManifold result) {
 		result.intersection = true;
 		result.normal.x = 0.f;
 		result.normal.y = 0.f;
@@ -185,7 +185,7 @@ public class SAT {
 		return true;
 	}
 
-	public static boolean intersectsCirclePolygon(float circleX, float circleY, float circleRadius, List<Vector2f> polygonVertices, CollisionManifold result) {
+	public static boolean intersectsCirclePolygon(float circleX, float circleY, float circleRadius, List<Vector2f> polygonVertices, ContactManifold result) {
 		result.intersection = true;
 		result.normal.x = 0.f;
 		result.normal.y = 0.f;
@@ -268,7 +268,7 @@ public class SAT {
 		return true;
 	}
 
-	public static boolean intersectsCircles(float circleAX, float circleAY, float radiusA, float circleBX, float circleBY, float radiusB, CollisionManifold result) {
+	public static boolean intersectsCircles(float circleAX, float circleAY, float radiusA, float circleBX, float circleBY, float radiusB, ContactManifold result) {
 		final float dist = Vector2f.distance(circleAX, circleAY, circleBX, circleBY);
 		final float radii = radiusA + radiusB;
 
