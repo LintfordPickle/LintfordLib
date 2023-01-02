@@ -30,6 +30,7 @@ public class PhysicsWorld {
 
 	private final LinkedList<ContactManifold> mContactPool;
 	private final List<ContactManifold> mContacts = new ArrayList<>(64);
+	public final List<ContactManifold> mContactsPointsList = new ArrayList<>(64);
 
 	private DebugStatTagCaption mDebugStatPhysicsCaption;
 	private DebugStatTagInt mDebugStatsNumBodies;
@@ -104,6 +105,8 @@ public class PhysicsWorld {
 	}
 
 	public void step(float time, int iterations) {
+		mContactsPointsList.clear();
+
 		if (mInitialized == false) {
 			Debug.debugManager().logger().w(getClass().getSimpleName(), "Cannot step physics world - not initialized");
 			return;
@@ -129,14 +132,19 @@ public class PhysicsWorld {
 			// 2. Collision
 			for (int i = 0; i < lNumBodies - 1; i++) {
 				final var lBodyA = mBodies.get(i);
+				final var lBodyA_aabb = lBodyA.aabb();
 
 				for (int j = i + 1; j < lNumBodies; j++) {
 					final var lBodyB = mBodies.get(j);
+					final var lBodyB_aabb = lBodyB.aabb();
 
 					if (lBodyA.isStatic() && lBodyB.isStatic())
 						continue;
 
-					if (collide(lBodyA, lBodyB, lManifold)) {
+					if (lBodyA_aabb.intersectsAA(lBodyB_aabb) == false)
+						continue;
+
+					if (SAT.checkCollides(lBodyA, lBodyB, lManifold)) {
 						if (lBodyA.isStatic()) {
 							lBodyB.x += lManifold.normal.x * lManifold.depth;
 							lBodyB.y += lManifold.normal.y * lManifold.depth;
@@ -151,8 +159,13 @@ public class PhysicsWorld {
 							lBodyB.y += lManifold.normal.y * lManifold.depth / 2.f;
 						}
 
+						SAT.fillContactPoints(lManifold);
+
 						mContacts.add(lManifold);
 						lManifold = getFreeContactManifold();
+
+						if (mContactsPointsList.contains(lManifold) == false)
+							mContactsPointsList.add(lManifold);
 					}
 				}
 			}
@@ -172,48 +185,6 @@ public class PhysicsWorld {
 
 		final var lDelta = ((System.nanoTime() - lSystemTimeBegin) / TimeConstants.NanoToMilli);
 		mDebugStepTimeInMm.setValue((float) lDelta);
-	}
-
-	private boolean collide(RigidBody bodyA, RigidBody bodyB, ContactManifold manifold) {
-		final var lShapeTypeA = bodyA.shapeType();
-		final var lShapeTypeB = bodyB.shapeType();
-
-		if (lShapeTypeA == ShapeType.Polygon) {
-			if (lShapeTypeB == ShapeType.Polygon) {
-				if (SAT.intersectsPolygons(bodyA.getTransformedVertices(), bodyB.getTransformedVertices(), manifold)) {
-					manifold.bodyA = bodyA;
-					manifold.bodyB = bodyB;
-					return true;
-				}
-			} else if (lShapeTypeB == ShapeType.Circle) {
-				if (SAT.intersectsCirclePolygon(bodyB.x, bodyB.y, bodyB.radius, bodyA.getTransformedVertices(), bodyA.x, bodyA.y, manifold)) {
-					manifold.bodyA = bodyA;
-					manifold.bodyB = bodyB;
-					return true;
-				}
-			}
-
-		} else if (lShapeTypeA == ShapeType.Circle) {
-			if (lShapeTypeB == ShapeType.Polygon) {
-				if (SAT.intersectsCirclePolygon(bodyA.x, bodyA.y, bodyA.radius, bodyB.getTransformedVertices(), bodyB.x, bodyB.y, manifold)) {
-					manifold.bodyA = bodyA;
-					manifold.bodyB = bodyB;
-
-					manifold.normal.x = -manifold.normal.x;
-					manifold.normal.y = -manifold.normal.y;
-					return true;
-				}
-
-			} else if (lShapeTypeB == ShapeType.Circle) {
-				if (SAT.intersectsCircles(bodyA.x, bodyA.y, bodyA.radius, bodyB.x, bodyB.y, bodyB.radius, manifold)) {
-					manifold.bodyA = bodyA;
-					manifold.bodyB = bodyB;
-					return true;
-				}
-			}
-		}
-
-		return false;
 	}
 
 	private void resolveCollision(RigidBody bodyA, RigidBody bodyB, ContactManifold manifold) {

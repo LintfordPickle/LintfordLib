@@ -19,6 +19,48 @@ public class SAT {
 	// Methods
 	// ---------------------------------------------
 
+	public static boolean checkCollides(RigidBody bodyA, RigidBody bodyB, ContactManifold manifold) {
+		final var lShapeTypeA = bodyA.shapeType();
+		final var lShapeTypeB = bodyB.shapeType();
+
+		if (lShapeTypeA == ShapeType.Polygon) {
+			if (lShapeTypeB == ShapeType.Polygon) {
+				if (intersectsPolygons(bodyA.getTransformedVertices(), bodyB.getTransformedVertices(), manifold)) {
+					manifold.bodyA = bodyA;
+					manifold.bodyB = bodyB;
+					return true;
+				}
+			} else if (lShapeTypeB == ShapeType.Circle) {
+				if (intersectsCirclePolygon(bodyB.x, bodyB.y, bodyB.radius, bodyA.getTransformedVertices(), bodyA.x, bodyA.y, manifold)) {
+					manifold.bodyA = bodyA;
+					manifold.bodyB = bodyB;
+					return true;
+				}
+			}
+
+		} else if (lShapeTypeA == ShapeType.Circle) {
+			if (lShapeTypeB == ShapeType.Polygon) {
+				if (intersectsCirclePolygon(bodyA.x, bodyA.y, bodyA.radius, bodyB.getTransformedVertices(), bodyB.x, bodyB.y, manifold)) {
+					manifold.bodyA = bodyA;
+					manifold.bodyB = bodyB;
+
+					manifold.normal.x = -manifold.normal.x;
+					manifold.normal.y = -manifold.normal.y;
+					return true;
+				}
+
+			} else if (lShapeTypeB == ShapeType.Circle) {
+				if (intersectsCircles(bodyA.x, bodyA.y, bodyA.radius, bodyB.x, bodyB.y, bodyB.radius, manifold)) {
+					manifold.bodyA = bodyA;
+					manifold.bodyB = bodyB;
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
 	public static boolean intersectsPolygons(List<Vector2f> verticesA, List<Vector2f> verticesB, ContactManifold result) {
 		result.intersection = true;
 		result.normal.x = 0.f;
@@ -185,89 +227,6 @@ public class SAT {
 		return true;
 	}
 
-	public static boolean intersectsCirclePolygon(float circleX, float circleY, float circleRadius, List<Vector2f> polygonVertices, ContactManifold result) {
-		result.intersection = true;
-		result.normal.x = 0.f;
-		result.normal.y = 0.f;
-		result.depth = Float.MAX_VALUE;
-
-		final var lNumVertsA = polygonVertices.size();
-		for (int i = 0; i < lNumVertsA; i++) {
-			final var va = polygonVertices.get(i);
-			final var vb = polygonVertices.get((i + 1) % lNumVertsA);
-
-			final var edgeX = vb.x - va.x;
-			final var edgeY = vb.y - va.y;
-
-			final var edgeLength = (float) Math.sqrt(edgeX * edgeX + edgeY * edgeY);
-
-			// note: the cross depends on the winding order of the triangle (this is cw)
-			final var axisX = -edgeY / edgeLength;
-			final var axisY = edgeX / edgeLength;
-
-			projectVertices(polygonVertices, axisX, axisY, _vec2fResult00);
-			projectCircle(circleX, circleY, circleRadius, axisX, axisY, _vec2fResult01);
-
-			if (_vec2fResult00.x >= _vec2fResult01.y || _vec2fResult00.x >= _vec2fResult01.y) {
-				result.intersection = false;
-				return false; // early out
-			}
-
-			// overlap
-			final float minimumDepthValueA = (_vec2fResult00.y - _vec2fResult01.x);
-
-			if (minimumDepthValueA < result.depth) {
-				result.depth = minimumDepthValueA;
-				result.normal.x = axisX;
-				result.normal.y = axisY;
-			}
-
-			final float minimumDepthValueB = (_vec2fResult01.y - _vec2fResult00.x);
-			if (minimumDepthValueB < result.depth) {
-				result.depth = minimumDepthValueB;
-				result.normal.x = -axisX;
-				result.normal.y = -axisY;
-			}
-		}
-
-		int lCpIndex = findClosestVertexIndexOnPolygon(circleX, circleY, polygonVertices);
-		final var lClosestVertex = polygonVertices.get(lCpIndex);
-
-		float axisX = lClosestVertex.x - circleX;
-		float axisY = lClosestVertex.y - circleY;
-
-		final float axisLength = (float) Math.sqrt(axisX * axisX + axisY * axisY);
-
-		axisX /= axisLength;
-		axisY /= axisLength;
-
-		projectVertices(polygonVertices, axisX, axisY, _vec2fResult00);
-		projectCircle(circleX, circleY, circleRadius, axisX, axisY, _vec2fResult01);
-
-		if (_vec2fResult00.x >= _vec2fResult01.y || _vec2fResult00.x >= _vec2fResult01.y) {
-			result.intersection = false;
-			return false; // early out
-		}
-
-		// overlap
-		final float minimumDepthValueA = (_vec2fResult00.y - _vec2fResult01.x);
-
-		if (minimumDepthValueA < result.depth) {
-			result.depth = minimumDepthValueA;
-			result.normal.x = axisX;
-			result.normal.y = axisY;
-		}
-
-		final float minimumDepthValueB = (_vec2fResult01.y - _vec2fResult00.x);
-		if (minimumDepthValueB < result.depth) {
-			result.depth = minimumDepthValueB;
-			result.normal.x = -axisX;
-			result.normal.y = -axisY;
-		}
-
-		return true;
-	}
-
 	public static boolean intersectsCircles(float circleAX, float circleAY, float radiusA, float circleBX, float circleBY, float radiusB, ContactManifold result) {
 		final float dist = Vector2f.distance(circleAX, circleAY, circleBX, circleBY);
 		final float radii = radiusA + radiusB;
@@ -285,22 +244,6 @@ public class SAT {
 		result.intersection = true;
 
 		return true;
-	}
-
-	private static int findClosestVertexIndexOnPolygon(float centerX, float centerY, List<Vector2f> vertices) {
-		int result = -1;
-		float dist = Float.MAX_VALUE;
-
-		final int lNumVertices = vertices.size();
-		for (int i = 0; i < lNumVertices; i++) {
-			final float lNewDist = Vector2f.distance2(centerX, centerY, vertices.get(i).x, vertices.get(i).y);
-			if (lNewDist < dist) {
-				dist = lNewDist;
-				result = i;
-			}
-		}
-
-		return result;
 	}
 
 	private static void projectVertices(List<Vector2f> vertices, float axisX, float axisY, Vector2f toFill) {
@@ -345,6 +288,46 @@ public class SAT {
 			toFill.x = toFill.y;
 			toFill.y = t;
 		}
+
+	}
+
+	public static void fillContactPoints(ContactManifold manifold) {
+		final var bodyA = manifold.bodyA;
+		final var bodyB = manifold.bodyB;
+
+		final var lShapeTypeA = bodyA.shapeType();
+		final var lShapeTypeB = bodyB.shapeType();
+
+		manifold.contactCount = 0;
+
+		if (lShapeTypeA == ShapeType.Polygon) {
+			if (lShapeTypeB == ShapeType.Polygon) {
+
+			} else if (lShapeTypeB == ShapeType.Circle) {
+
+			}
+
+		} else if (lShapeTypeA == ShapeType.Circle) {
+			if (lShapeTypeB == ShapeType.Polygon) {
+
+			} else if (lShapeTypeB == ShapeType.Circle) {
+				findContactPoint(bodyA.x, bodyA.y, bodyA.radius, bodyB.x, bodyB.y, manifold);
+			}
+		}
+	}
+
+	private static void findContactPoint(float circleAX, float circleAY, float radiusA, float circleBX, float circleBY, ContactManifold contactManifold) {
+		var abX = circleBX - circleAX;
+		var abY = circleBY - circleAY;
+
+		final var abLength = (float) Math.sqrt(abX * abX + abY * abY);
+
+		abX /= abLength;
+		abY /= abLength;
+
+		contactManifold.contact1.x = circleAX + abX * radiusA;
+		contactManifold.contact1.y = circleAY + abY * radiusA;
+		contactManifold.contactCount = 1;
 
 	}
 }
