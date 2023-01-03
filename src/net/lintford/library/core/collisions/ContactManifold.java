@@ -7,7 +7,7 @@ public class ContactManifold {
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
-	
+
 	public boolean intersection;
 
 	public RigidBody bodyA;
@@ -23,19 +23,16 @@ public class ContactManifold {
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
-	
+
 	public boolean isInUse() {
 		return intersection;
 	}
-	
+
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
-	
-	public void initialize(RigidBody bodyA, RigidBody bodyB, 
-			float normalX, float normalY, float depth, 
-			float contact1X, float contact1Y, 
-			float contact2X, float contact2Y, int contactCount) {
+
+	public void initialize(RigidBody bodyA, RigidBody bodyB, float normalX, float normalY, float depth, float contact1X, float contact1Y, float contact2X, float contact2Y, int contactCount) {
 
 		this.bodyA = bodyA;
 		this.bodyB = bodyB;
@@ -62,5 +59,4 @@ public class ContactManifold {
 
 		contactCount = 0;
 	}
-
 }

@@ -17,10 +17,10 @@ public class RigidBody {
 	// --------------------------------------
 
 	private class BodyState {
-		private float x, y, radius, width, height, rotation;
+		private float x, y, radius, width, height, angle;
 
 		private boolean isBodyDirty(RigidBody body) {
-			return x != body.x || y != body.y || rotation != body.rotation || radius != body.radius || width != body.width || height != body.height;
+			return x != body.x || y != body.y || angle != body.angle || radius != body.radius || width != body.width || height != body.height;
 		}
 
 		private void update(RigidBody body) {
@@ -29,7 +29,7 @@ public class RigidBody {
 			radius = body.radius;
 			width = body.width;
 			height = body.height;
-			rotation = body.rotation;
+			angle = body.angle;
 		}
 	}
 
@@ -38,6 +38,7 @@ public class RigidBody {
 	// --------------------------------------
 
 	private final BodyState state = new BodyState();
+	private transient final Rectangle mAABB = new Rectangle();
 
 	@SerializedName(value = "x")
 	public float x;
@@ -58,10 +59,10 @@ public class RigidBody {
 	public float forceY;
 
 	@SerializedName(value = "rot")
-	public float rotation;
+	public float angle;
 
 	@SerializedName(value = "rotVel")
-	public float rotationVel;
+	public float angularVelocity;
 
 	@SerializedName(value = "mass")
 	private float mMass;
@@ -71,6 +72,9 @@ public class RigidBody {
 	private transient float mArea;
 	private transient float mDensity;
 	private transient float mInvMass;
+
+	private transient float mInertia;
+	private transient float mInvInertia;
 
 	@SerializedName(value = "isStatic")
 	private boolean mIsStatic;
@@ -89,10 +93,8 @@ public class RigidBody {
 	private transient List<Vector2f> mTransformedVertices;
 	private boolean mManualIsDirty;
 
-	private transient final Rectangle mAABB = new Rectangle();
-
 	@SerializedName(value = "shapeType")
-	private ShapeType mShapeType = ShapeType.Box;
+	private ShapeType mShapeType;
 
 	// --------------------------------------
 	// Properties
@@ -144,6 +146,14 @@ public class RigidBody {
 		return mInvMass;
 	}
 
+	public float inertia() {
+		return mInertia;
+	}
+
+	public float invInertia() {
+		return mInvInertia;
+	}
+
 	public float restitution() {
 		return mRestitution;
 	}
@@ -160,9 +170,7 @@ public class RigidBody {
 	// Constructor
 	// --------------------------------------
 
-	public RigidBody(float x, float y, float rotation, float density, float mass, float restitution, float area, boolean isStatic, float width, float height, float radius, ShapeType shapeType) {
-		this.x = x;
-		this.y = y;
+	public RigidBody(float density, float mass, float inertia, float restitution, float area, boolean isStatic, float width, float height, float radius, ShapeType shapeType) {
 		this.radius = radius;
 		this.width = width;
 		this.height = height;
@@ -173,12 +181,16 @@ public class RigidBody {
 		this.mArea = area;
 		this.mShapeType = shapeType;
 		this.mIsStatic = isStatic;
-		this.rotation = rotation;
 
-		if (this.mIsStatic)
+		this.mInertia = inertia;
+
+		if (this.mIsStatic) {
 			this.mInvMass = 0.f;
-		else
+			this.mInertia = 0.f;
+		} else {
 			this.mInvMass = 1.f / this.mMass;
+			this.mInvInertia = 1.f / this.mInertia;
+		}
 
 		if (this.mShapeType == ShapeType.Polygon || this.mShapeType == ShapeType.Box) {
 			mLocalVertices = createBoxVertices(width, height);
@@ -220,7 +232,7 @@ public class RigidBody {
 		x += vx * time;
 		y += vy * time;
 
-		rotation += rotationVel * time;
+		angle += angularVelocity * time;
 
 		forceX = 0.f;
 		forceY = 0.f;
@@ -263,8 +275,8 @@ public class RigidBody {
 			radius = furthestVertDist;
 
 		} else if (mShapeType == ShapeType.Line) {
-			final var sin = (float) Math.sin(rotation);
-			final var cos = (float) Math.cos(rotation);
+			final var sin = (float) Math.sin(angle);
+			final var cos = (float) Math.cos(angle);
 
 			final var hwc = width * .5f * cos;
 			final var hhc = radius * cos;
@@ -308,8 +320,8 @@ public class RigidBody {
 		case Polygon: {
 
 			// vertex-centric implementation (polygons)
-			final var c = (float) Math.cos(rotation);
-			final var s = (float) Math.sin(rotation);
+			final var c = (float) Math.cos(angle);
+			final var s = (float) Math.sin(angle);
 
 			// local vertices have neither world position nor rotation
 			final var la = mLocalVertices.get(0);
@@ -350,8 +362,8 @@ public class RigidBody {
 		}
 		case Box: {
 			// vertex-centric implementation (polygons)
-			final var cos = (float) Math.cos(rotation);
-			final var sin = (float) Math.sin(rotation);
+			final var cos = (float) Math.cos(angle);
+			final var sin = (float) Math.sin(angle);
 
 			float lHalfW = width / 2f;
 			float lHalfH = height / 2f;
@@ -386,11 +398,11 @@ public class RigidBody {
 			final var s = mTransformedVertices.get(0);
 			final var e = mTransformedVertices.get(1);
 
-			s.x = lWorldX - (float) Math.cos(rotation) * width * .5f;
-			s.y = lWorldY - (float) Math.sin(rotation) * width * .5f;
+			s.x = lWorldX - (float) Math.cos(angle) * width * .5f;
+			s.y = lWorldY - (float) Math.sin(angle) * width * .5f;
 
-			e.x = lWorldX + (float) Math.cos(rotation) * width * .5f;
-			e.y = lWorldY + (float) Math.sin(rotation) * width * .5f;
+			e.x = lWorldX + (float) Math.cos(angle) * width * .5f;
+			e.y = lWorldY + (float) Math.sin(angle) * width * .5f;
 
 			break;
 		}
@@ -408,6 +420,20 @@ public class RigidBody {
 	// --------------------------------------
 	// Helper-Methods
 	// --------------------------------------
+
+	public void moveTo(float x, float y) {
+		this.x = x;
+		this.y = y;
+	}
+
+	public void move(float x, float y) {
+		this.x += x;
+		this.y += y;
+	}
+
+	public void angle(float a) {
+		this.angle = a;
+	}
 
 	public void addForce(float x, float y) {
 		forceY += y;
@@ -539,41 +565,52 @@ public class RigidBody {
 	// Factory-Methods
 	// --------------------------------------
 
-	public static RigidBody createCircleBody(float x, float y, float rotation, float radius, float density, boolean isStatic, float restitution) {
+	public static RigidBody createCircleBody(float radius, float density, boolean isStatic, float restitution) {
 		final float lArea = radius * radius * (float) Math.PI;
 		final float lMass = lArea * density;
 		restitution = MathHelper.clamp(restitution, 0f, 1f);
 
-		return new RigidBody(x, y, rotation, density, lMass, restitution, lArea, isStatic, 0.f, 0.f, radius, ShapeType.Circle);
+		// I = (1/2)mr^2
+		final float lInertia = .5f * lMass * radius * radius;
+
+		return new RigidBody(density, lMass, lInertia, restitution, lArea, isStatic, 0.f, 0.f, radius, ShapeType.Circle);
 	}
 
-	public static RigidBody createLineBody(float x, float y, float rotation, float width, float height, float density, boolean isStatic, float restitution) {
+	public static RigidBody createLineBody(float width, float height, float density, boolean isStatic, float restitution) {
 		final float lArea = width * height;
 		final float lMass = lArea * density;
 		restitution = MathHelper.clamp(restitution, 0f, 1f);
 
 		final float lRadius = (float) Math.max(width, height) * .5f;
 
-		return new RigidBody(x, y, rotation, density, lMass, restitution, lArea, isStatic, width, height, lRadius, ShapeType.Line);
+		// I = (1/12)m(h^2+w^2)
+		final float lInertia = (1.f / 12.f) * lMass * (height * height + width * width);
+
+		return new RigidBody(density, lMass, lInertia, restitution, lArea, isStatic, width, height, lRadius, ShapeType.Line);
 	}
 
-	public static RigidBody createBoxBody(float x, float y, float rotation, float width, float height, float density, boolean isStatic, float restitution) {
+	public static RigidBody createBoxBody(float width, float height, float density, boolean isStatic, float restitution) {
 		final float lArea = width * height;
 		final float lMass = lArea * density;
 		restitution = MathHelper.clamp(restitution, 0f, 1f);
 
 		final float lRadius = (float) Math.max(width, height) * .5f;
 
-		return new RigidBody(x, y, rotation, density, lMass, restitution, lArea, isStatic, width, height, lRadius, ShapeType.Box);
+		// I = (1/12)m(h^2+w^2)
+		final float lInertia = (1.f / 12.f) * lMass * (height * height + width * width);
+
+		return new RigidBody(density, lMass, lInertia, restitution, lArea, isStatic, width, height, lRadius, ShapeType.Box);
 	}
 
-	public static RigidBody createPolygonBody(float x, float y, float rotation, float width, float height, float density, boolean isStatic, float restitution) {
+	public static RigidBody createPolygonBody(float width, float height, float density, boolean isStatic, float restitution) {
 		final float lArea = width * height;
 		final float lMass = lArea * density;
 		restitution = MathHelper.clamp(restitution, 0f, 1f);
 
 		final float lRadius = (float) Math.max(width, height) * .5f;
+		// I = (1/12)m(h^2+w^2)
+		final float lInertia = (1.f / 12.f) * lMass * (height * height + width * width);
 
-		return new RigidBody(x, y, rotation, density, lMass, restitution, lArea, isStatic, width, height, lRadius, ShapeType.Polygon);
+		return new RigidBody(density, lMass, lInertia, restitution, lArea, isStatic, width, height, lRadius, ShapeType.Polygon);
 	}
 }

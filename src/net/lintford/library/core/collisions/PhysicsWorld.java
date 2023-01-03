@@ -95,6 +95,7 @@ public class PhysicsWorld {
 		Debug.debugManager().stats().removeCustomStatTag(mDebugStatsNumBodies);
 		Debug.debugManager().stats().removeCustomStatTag(mDebugStepTimeInMm);
 		Debug.debugManager().stats().removeCustomStatTag(mDebugNumIterations);
+		Debug.debugManager().stats().removeCustomStatTag(mDebugNumContacts);
 
 		mDebugStatPhysicsCaption = null;
 		mDebugStatsNumBodies = null;
