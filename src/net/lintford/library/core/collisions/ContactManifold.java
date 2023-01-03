@@ -14,7 +14,7 @@ public class ContactManifold {
 	public RigidBody bodyB;
 
 	public float depth;
-	public final Vector2f normal = new Vector2f();
+	public final Vector2f mtv = new Vector2f();
 
 	public final Vector2f contact1 = new Vector2f();
 	public final Vector2f contact2 = new Vector2f();
@@ -36,8 +36,8 @@ public class ContactManifold {
 
 		this.bodyA = bodyA;
 		this.bodyB = bodyB;
-		this.normal.x = normalX;
-		this.normal.y = normalY;
+		this.mtv.x = normalX;
+		this.mtv.y = normalY;
 		this.depth = depth;
 
 		this.contact1.x = contact1X;
@@ -55,7 +55,7 @@ public class ContactManifold {
 		bodyB = null;
 
 		intersection = false;
-		normal.set(0, 0);
+		mtv.set(0, 0);
 
 		contactCount = 0;
 	}

@@ -30,7 +30,7 @@ public class PhysicsWorld {
 
 	private final LinkedList<ContactManifold> mContactPool;
 	private final List<ContactManifold> mContacts = new ArrayList<>(64);
-	public final List<ContactManifold> mContactsPointsList = new ArrayList<>(64);
+	public final List<ContactManifold> mActiveContactsManifoldsList = new ArrayList<>(64);
 
 	private DebugStatTagCaption mDebugStatPhysicsCaption;
 	private DebugStatTagInt mDebugStatsNumBodies;
@@ -106,7 +106,7 @@ public class PhysicsWorld {
 	}
 
 	public void step(float time, int iterations) {
-		mContactsPointsList.clear();
+		mActiveContactsManifoldsList.clear();
 
 		if (mInitialized == false) {
 			Debug.debugManager().logger().w(getClass().getSimpleName(), "Cannot step physics world - not initialized");
@@ -130,7 +130,7 @@ public class PhysicsWorld {
 
 			var lManifold = getFreeContactManifold();
 
-			// 2. Collision
+			// 2. Collision (Broad phase)
 			for (int i = 0; i < lNumBodies - 1; i++) {
 				final var lBodyA = mBodies.get(i);
 				final var lBodyA_aabb = lBodyA.aabb();
@@ -145,39 +145,33 @@ public class PhysicsWorld {
 					if (lBodyA_aabb.intersectsAA(lBodyB_aabb) == false)
 						continue;
 
+					// TODO: Move to narrow phase
 					if (SAT.checkCollides(lBodyA, lBodyB, lManifold)) {
-						if (lBodyA.isStatic()) {
-							lBodyB.x += lManifold.normal.x * lManifold.depth;
-							lBodyB.y += lManifold.normal.y * lManifold.depth;
-						} else if (lBodyB.isStatic()) {
-							lBodyA.x -= lManifold.normal.x * lManifold.depth;
-							lBodyA.y -= lManifold.normal.y * lManifold.depth;
-						} else {
-							lBodyA.x += -lManifold.normal.x * lManifold.depth / 2.f;
-							lBodyA.y += -lManifold.normal.y * lManifold.depth / 2.f;
 
-							lBodyB.x += lManifold.normal.x * lManifold.depth / 2.f;
-							lBodyB.y += lManifold.normal.y * lManifold.depth / 2.f;
-						}
+						separateBodiesByMTV(lBodyA, lBodyB, lManifold.mtv.x * lManifold.depth, lManifold.mtv.y * lManifold.depth);
 
 						SAT.fillContactPoints(lManifold);
 
 						mContacts.add(lManifold);
 						lManifold = getFreeContactManifold();
-
-						if (mContactsPointsList.contains(lManifold) == false)
-							mContactsPointsList.add(lManifold);
 					}
 				}
 			}
 
 			mDebugNumContacts.setValue(mContacts.size());
 
-			// 3. Resolve all collisions
+			// 3. Resolution (Narrow Phase)
 			final var lNumContacts = mContacts.size();
 			for (int i = 0; i < lNumContacts; i++) {
 				final var lNextCollision = mContacts.get(i);
 				resolveCollision(lNextCollision.bodyA, lNextCollision.bodyB, lNextCollision);
+
+				if (it == iterations - 1) {
+
+					// Add contact points for debug display
+					if (mActiveContactsManifoldsList.contains(lManifold) == false)
+						mActiveContactsManifoldsList.add(lManifold);
+				}
 			}
 
 			mContactPool.addAll(mContacts);
@@ -188,11 +182,27 @@ public class PhysicsWorld {
 		mDebugStepTimeInMm.setValue((float) lDelta);
 	}
 
+	private void separateBodiesByMTV(final RigidBody lBodyA, final RigidBody lBodyB, float mtvX, float mtvY) {
+		if (lBodyA.isStatic()) {
+			lBodyB.x += mtvX;
+			lBodyB.y += mtvY;
+		} else if (lBodyB.isStatic()) {
+			lBodyA.x -= mtvX;
+			lBodyA.y -= mtvY;
+		} else {
+			lBodyA.x += -mtvX / 2.f;
+			lBodyA.y += -mtvY / 2.f;
+
+			lBodyB.x += mtvX / 2.f;
+			lBodyB.y += mtvY / 2.f;
+		}
+	}
+
 	private void resolveCollision(RigidBody bodyA, RigidBody bodyB, ContactManifold manifold) {
 		final float relVelX = bodyB.vx - bodyA.vx;
 		final float relVelY = bodyB.vy - bodyA.vy;
 
-		final float dotVelNor = Vector2f.dot(relVelX, relVelY, manifold.normal.x, manifold.normal.y);
+		final float dotVelNor = Vector2f.dot(relVelX, relVelY, manifold.mtv.x, manifold.mtv.y);
 
 		if (dotVelNor > 0.f)
 			return;
@@ -202,8 +212,8 @@ public class PhysicsWorld {
 
 		j /= (bodyA.invMass() + bodyB.invMass());
 
-		final float impulseX = j * manifold.normal.x;
-		final float impulseY = j * manifold.normal.y;
+		final float impulseX = j * manifold.mtv.x;
+		final float impulseY = j * manifold.mtv.y;
 
 		bodyA.vx -= impulseX * bodyA.invMass();
 		bodyA.vy -= impulseY * bodyA.invMass();

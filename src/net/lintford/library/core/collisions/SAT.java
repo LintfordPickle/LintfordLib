@@ -57,8 +57,8 @@ public class SAT {
 					manifold.bodyA = bodyA;
 					manifold.bodyB = bodyB;
 
-					manifold.normal.x = -manifold.normal.x;
-					manifold.normal.y = -manifold.normal.y;
+					manifold.mtv.x = -manifold.mtv.x;
+					manifold.mtv.y = -manifold.mtv.y;
 					return true;
 				}
 
@@ -76,8 +76,8 @@ public class SAT {
 
 	public static boolean intersectsPolygons(List<Vector2f> verticesA, List<Vector2f> verticesB, ContactManifold result) {
 		result.intersection = true;
-		result.normal.x = 0.f;
-		result.normal.y = 0.f;
+		result.mtv.x = 0.f;
+		result.mtv.y = 0.f;
 		result.depth = Float.MAX_VALUE;
 
 		final var lNumVertsA = verticesA.size();
@@ -107,15 +107,15 @@ public class SAT {
 
 			if (minimumDepthValueA < result.depth) {
 				result.depth = minimumDepthValueA;
-				result.normal.x = axisX;
-				result.normal.y = axisY;
+				result.mtv.x = axisX;
+				result.mtv.y = axisY;
 			}
 
 			final float minimumDepthValueB = (_vec2fResult01.y - _vec2fResult00.x);
 			if (minimumDepthValueB < result.depth) {
 				result.depth = minimumDepthValueB;
-				result.normal.x = -axisX;
-				result.normal.y = -axisY;
+				result.mtv.x = -axisX;
+				result.mtv.y = -axisY;
 			}
 		}
 
@@ -145,15 +145,15 @@ public class SAT {
 
 			if (minimumDepthValueA < result.depth) {
 				result.depth = minimumDepthValueA;
-				result.normal.x = axisX;
-				result.normal.y = axisY;
+				result.mtv.x = axisX;
+				result.mtv.y = axisY;
 			}
 
 			final float minimumDepthValueB = (_vec2fResult01.y - _vec2fResult00.x);
 			if (minimumDepthValueB < result.depth) {
 				result.depth = minimumDepthValueB;
-				result.normal.x = -axisX;
-				result.normal.y = -axisY;
+				result.mtv.x = -axisX;
+				result.mtv.y = -axisY;
 			}
 		}
 
@@ -162,8 +162,8 @@ public class SAT {
 
 	public static boolean intersectsCirclePolygon(float circleX, float circleY, float circleRadius, List<Vector2f> polygonVertices, float polygonCenterX, float polygonCenterY, ContactManifold result) {
 		result.intersection = true;
-		result.normal.x = 0.f;
-		result.normal.y = 0.f;
+		result.mtv.x = 0.f;
+		result.mtv.y = 0.f;
 		result.depth = Float.MAX_VALUE;
 
 		final var lNumVertsA = polygonVertices.size();
@@ -193,15 +193,15 @@ public class SAT {
 
 			if (minimumDepthValueA < result.depth) {
 				result.depth = minimumDepthValueA;
-				result.normal.x = axisX;
-				result.normal.y = axisY;
+				result.mtv.x = axisX;
+				result.mtv.y = axisY;
 			}
 
 			final float minimumDepthValueB = (_vec2fResult01.y - _vec2fResult00.x);
 			if (minimumDepthValueB < result.depth) {
 				result.depth = minimumDepthValueB;
-				result.normal.x = -axisX;
-				result.normal.y = -axisY;
+				result.mtv.x = -axisX;
+				result.mtv.y = -axisY;
 			}
 		}
 
@@ -226,15 +226,15 @@ public class SAT {
 
 		if (minimumDepthValueA < result.depth) {
 			result.depth = minimumDepthValueA;
-			result.normal.x = axisX;
-			result.normal.y = axisY;
+			result.mtv.x = axisX;
+			result.mtv.y = axisY;
 		}
 
 		final float minimumDepthValueB = (_vec2fResult01.y - _vec2fResult00.x);
 		if (minimumDepthValueB < result.depth) {
 			result.depth = minimumDepthValueB;
-			result.normal.x = -axisX;
-			result.normal.y = -axisY;
+			result.mtv.x = -axisX;
+			result.mtv.y = -axisY;
 		}
 
 		return true;
@@ -249,9 +249,9 @@ public class SAT {
 		if (dist >= radii)
 			return false;
 
-		result.normal.x = circleBX - circleAX;
-		result.normal.y = circleBY - circleAY;
-		result.normal.nor();
+		result.mtv.x = circleBX - circleAX;
+		result.mtv.y = circleBY - circleAY;
+		result.mtv.nor();
 		result.depth = radii - dist;
 
 		result.intersection = true;
@@ -304,6 +304,8 @@ public class SAT {
 
 	}
 
+	// Contacts
+
 	public static void fillContactPoints(ContactManifold manifold) {
 		final var bodyA = manifold.bodyA;
 		final var bodyB = manifold.bodyB;
@@ -314,29 +316,21 @@ public class SAT {
 		manifold.contactCount = 0;
 
 		if (lShapeTypeA == ShapeType.Polygon) {
-			if (lShapeTypeB == ShapeType.Polygon) {
-				findContactPoint(bodyA.getTransformedVertices(), bodyB.getTransformedVertices(), manifold);
-
-			} else if (lShapeTypeB == ShapeType.Circle) {
-				findContactPoint(bodyB.x, bodyB.y, bodyB.radius, bodyA.x, bodyA.y, bodyA.getTransformedVertices(), manifold);
-				manifold.contactCount = 1;
-
-			}
+			if (lShapeTypeB == ShapeType.Polygon)
+				findPolygonPolygonContactPoints(bodyA.getTransformedVertices(), bodyB.getTransformedVertices(), manifold);
+			else if (lShapeTypeB == ShapeType.Circle)
+				findCirclePolygonContactPoint(bodyB.x, bodyB.y, bodyB.radius, bodyA.x, bodyA.y, bodyA.getTransformedVertices(), manifold);
 
 		} else if (lShapeTypeA == ShapeType.Circle) {
-			if (lShapeTypeB == ShapeType.Polygon) {
-				findContactPoint(bodyA.x, bodyA.y, bodyA.radius, bodyB.x, bodyB.y, bodyB.getTransformedVertices(), manifold);
-				manifold.contactCount = 1;
+			if (lShapeTypeB == ShapeType.Polygon)
+				findCirclePolygonContactPoint(bodyA.x, bodyA.y, bodyA.radius, bodyB.x, bodyB.y, bodyB.getTransformedVertices(), manifold);
+			else if (lShapeTypeB == ShapeType.Circle)
+				findCircleCircleContactPoint(bodyA.x, bodyA.y, bodyA.radius, bodyB.x, bodyB.y, manifold);
 
-			} else if (lShapeTypeB == ShapeType.Circle) {
-				findContactPoint(bodyA.x, bodyA.y, bodyA.radius, bodyB.x, bodyB.y, manifold);
-				manifold.contactCount = 1;
-
-			}
 		}
 	}
 
-	private static void findContactPoint(List<Vector2f> polyAVerts, List<Vector2f> polyBVerts, ContactManifold contactManifold) {
+	private static void findPolygonPolygonContactPoints(List<Vector2f> polyAVerts, List<Vector2f> polyBVerts, ContactManifold contactManifold) {
 
 		float minDist2 = Float.MAX_VALUE;
 
@@ -353,7 +347,7 @@ public class SAT {
 
 				// a second point with ~same distance
 				if (equalWithinEpsilon(lPointSegmentDist.dist2, minDist2)) {
-					if (!equalWithinEpsilon(lPointSegmentDist.contactX, contactManifold.contact1.x) || !equalWithinEpsilon(lPointSegmentDist.contactY, contactManifold.contact1.y)) {
+					if (!equalWithinEpsilon(lPointSegmentDist.contactX, lPointSegmentDist.contactY, contactManifold.contact1.x, contactManifold.contact1.y)) {
 						contactManifold.contactCount = 2;
 						contactManifold.contact2.x = lPointSegmentDist.contactX;
 						contactManifold.contact2.y = lPointSegmentDist.contactY;
@@ -382,7 +376,7 @@ public class SAT {
 
 				// a second point with ~same distance
 				if (equalWithinEpsilon(lPointSegmentDist.dist2, minDist2)) {
-					if (!equalWithinEpsilon(lPointSegmentDist.contactX, contactManifold.contact1.x) || !equalWithinEpsilon(lPointSegmentDist.contactY, contactManifold.contact1.y)) {
+					if (!equalWithinEpsilon(lPointSegmentDist.contactX, lPointSegmentDist.contactY, contactManifold.contact1.x, contactManifold.contact1.y)) {
 						contactManifold.contactCount = 2;
 						contactManifold.contact2.x = lPointSegmentDist.contactX;
 						contactManifold.contact2.y = lPointSegmentDist.contactY;
@@ -405,7 +399,11 @@ public class SAT {
 		return Math.abs(a - b) < ConstantsPhysics.EPISLON;
 	}
 
-	private static void findContactPoint(float circleAX, float circleAY, float radiusA, float polyCenterX, float polyCenterY, List<Vector2f> verts, ContactManifold contactManifold) {
+	private static boolean equalWithinEpsilon(float p1x, float p1y, float p2x, float p2y) {
+		return (p1x * p2x + p1y * p2y) < ConstantsPhysics.EPISLON * ConstantsPhysics.EPISLON;
+	}
+
+	private static void findCirclePolygonContactPoint(float circleAX, float circleAY, float radiusA, float polyCenterX, float polyCenterY, List<Vector2f> verts, ContactManifold contactManifold) {
 		float minDist2 = Float.MAX_VALUE;
 
 		final int lNumVerts = verts.size();
@@ -419,11 +417,12 @@ public class SAT {
 
 				contactManifold.contact1.x = lPointSegmentDist.contactX;
 				contactManifold.contact1.y = lPointSegmentDist.contactY;
+				contactManifold.contactCount = 1;
 			}
 		}
 	}
 
-	private static void findContactPoint(float circleAX, float circleAY, float radiusA, float circleBX, float circleBY, ContactManifold contactManifold) {
+	private static void findCircleCircleContactPoint(float circleAX, float circleAY, float radiusA, float circleBX, float circleBY, ContactManifold contactManifold) {
 		var abX = circleBX - circleAX;
 		var abY = circleBY - circleAY;
 
@@ -434,6 +433,7 @@ public class SAT {
 
 		contactManifold.contact1.x = circleAX + abX * radiusA;
 		contactManifold.contact1.y = circleAY + abY * radiusA;
+		contactManifold.contactCount = 1;
 
 	}
 
