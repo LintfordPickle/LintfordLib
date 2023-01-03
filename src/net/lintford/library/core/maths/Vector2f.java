@@ -2,12 +2,6 @@ package net.lintford.library.core.maths;
 
 import java.io.Serializable;
 
-/**
- * Encapsulates a 2D vector. Allows chaining methods by returning a reference to itself
- * 
- * @author badlogicgames@gmail.com
- * 
- */
 public class Vector2f implements Serializable {
 
 	// --------------------------------------
@@ -376,6 +370,10 @@ public class Vector2f implements Serializable {
 	 */
 	public float cross(final Vector2f v) {
 		return this.x * v.y - v.x * this.y;
+	}
+
+	public static float cross(float x1, float y1, float x2, float y2) {
+		return x1 * y2 - y1 * x2;
 	}
 
 	/**

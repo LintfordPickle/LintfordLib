@@ -57,8 +57,8 @@ public class SAT {
 					manifold.bodyA = bodyA;
 					manifold.bodyB = bodyB;
 
-					manifold.mtv.x = -manifold.mtv.x;
-					manifold.mtv.y = -manifold.mtv.y;
+					manifold.normal.x = -manifold.normal.x;
+					manifold.normal.y = -manifold.normal.y;
 					return true;
 				}
 
@@ -76,8 +76,8 @@ public class SAT {
 
 	public static boolean intersectsPolygons(List<Vector2f> verticesA, List<Vector2f> verticesB, ContactManifold result) {
 		result.intersection = true;
-		result.mtv.x = 0.f;
-		result.mtv.y = 0.f;
+		result.normal.x = 0.f;
+		result.normal.y = 0.f;
 		result.depth = Float.MAX_VALUE;
 
 		final var lNumVertsA = verticesA.size();
@@ -107,15 +107,15 @@ public class SAT {
 
 			if (minimumDepthValueA < result.depth) {
 				result.depth = minimumDepthValueA;
-				result.mtv.x = axisX;
-				result.mtv.y = axisY;
+				result.normal.x = axisX;
+				result.normal.y = axisY;
 			}
 
 			final float minimumDepthValueB = (_vec2fResult01.y - _vec2fResult00.x);
 			if (minimumDepthValueB < result.depth) {
 				result.depth = minimumDepthValueB;
-				result.mtv.x = -axisX;
-				result.mtv.y = -axisY;
+				result.normal.x = -axisX;
+				result.normal.y = -axisY;
 			}
 		}
 
@@ -145,15 +145,15 @@ public class SAT {
 
 			if (minimumDepthValueA < result.depth) {
 				result.depth = minimumDepthValueA;
-				result.mtv.x = axisX;
-				result.mtv.y = axisY;
+				result.normal.x = axisX;
+				result.normal.y = axisY;
 			}
 
 			final float minimumDepthValueB = (_vec2fResult01.y - _vec2fResult00.x);
 			if (minimumDepthValueB < result.depth) {
 				result.depth = minimumDepthValueB;
-				result.mtv.x = -axisX;
-				result.mtv.y = -axisY;
+				result.normal.x = -axisX;
+				result.normal.y = -axisY;
 			}
 		}
 
@@ -162,8 +162,8 @@ public class SAT {
 
 	public static boolean intersectsCirclePolygon(float circleX, float circleY, float circleRadius, List<Vector2f> polygonVertices, float polygonCenterX, float polygonCenterY, ContactManifold result) {
 		result.intersection = true;
-		result.mtv.x = 0.f;
-		result.mtv.y = 0.f;
+		result.normal.x = 0.f;
+		result.normal.y = 0.f;
 		result.depth = Float.MAX_VALUE;
 
 		final var lNumVertsA = polygonVertices.size();
@@ -193,15 +193,15 @@ public class SAT {
 
 			if (minimumDepthValueA < result.depth) {
 				result.depth = minimumDepthValueA;
-				result.mtv.x = axisX;
-				result.mtv.y = axisY;
+				result.normal.x = axisX;
+				result.normal.y = axisY;
 			}
 
 			final float minimumDepthValueB = (_vec2fResult01.y - _vec2fResult00.x);
 			if (minimumDepthValueB < result.depth) {
 				result.depth = minimumDepthValueB;
-				result.mtv.x = -axisX;
-				result.mtv.y = -axisY;
+				result.normal.x = -axisX;
+				result.normal.y = -axisY;
 			}
 		}
 
@@ -226,15 +226,15 @@ public class SAT {
 
 		if (minimumDepthValueA < result.depth) {
 			result.depth = minimumDepthValueA;
-			result.mtv.x = axisX;
-			result.mtv.y = axisY;
+			result.normal.x = axisX;
+			result.normal.y = axisY;
 		}
 
 		final float minimumDepthValueB = (_vec2fResult01.y - _vec2fResult00.x);
 		if (minimumDepthValueB < result.depth) {
 			result.depth = minimumDepthValueB;
-			result.mtv.x = -axisX;
-			result.mtv.y = -axisY;
+			result.normal.x = -axisX;
+			result.normal.y = -axisY;
 		}
 
 		return true;
@@ -249,9 +249,9 @@ public class SAT {
 		if (dist >= radii)
 			return false;
 
-		result.mtv.x = circleBX - circleAX;
-		result.mtv.y = circleBY - circleAY;
-		result.mtv.nor();
+		result.normal.x = circleBX - circleAX;
+		result.normal.y = circleBY - circleAY;
+		result.normal.nor();
 		result.depth = radii - dist;
 
 		result.intersection = true;
