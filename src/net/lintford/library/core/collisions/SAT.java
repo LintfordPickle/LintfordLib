@@ -395,12 +395,14 @@ public class SAT {
 		}
 	}
 
-	private static boolean equalWithinEpsilon(float a, float b) {
+	public static boolean equalWithinEpsilon(float a, float b) {
 		return Math.abs(a - b) < ConstantsPhysics.EPISLON;
 	}
 
-	private static boolean equalWithinEpsilon(float p1x, float p1y, float p2x, float p2y) {
-		return (p1x * p2x + p1y * p2y) < ConstantsPhysics.EPISLON * ConstantsPhysics.EPISLON;
+	public static boolean equalWithinEpsilon(float p1x, float p1y, float p2x, float p2y) {
+		final float xx = p1x - p2x;
+		final float yy = p1y - p2y;
+		return (xx * xx + yy * yy) < ConstantsPhysics.EPISLON * ConstantsPhysics.EPISLON;
 	}
 
 	private static void findCirclePolygonContactPoint(float circleAX, float circleAY, float radiusA, float polyCenterX, float polyCenterY, List<Vector2f> verts, ContactManifold contactManifold) {
