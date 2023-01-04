@@ -73,6 +73,9 @@ public class RigidBody {
 	private transient float mDensity;
 	private transient float mInvMass;
 
+	private transient float mStaticFriction;
+	private transient float mDynamicFriction;
+
 	private transient float mInertia;
 	private transient float mInvInertia;
 
@@ -99,6 +102,14 @@ public class RigidBody {
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public float dynamicFriction() {
+		return mDynamicFriction;
+	}
+
+	public float staticFriction() {
+		return mStaticFriction;
+	}
 
 	public boolean isManualDirty() {
 		return mManualIsDirty;
@@ -170,7 +181,7 @@ public class RigidBody {
 	// Constructor
 	// --------------------------------------
 
-	public RigidBody(float density, float mass, float inertia, float restitution, float area, boolean isStatic, float width, float height, float radius, ShapeType shapeType) {
+	public RigidBody(float density, float restitution, float staticFriction, float dynamicFriction, float mass, float inertia, float area, boolean isStatic, float width, float height, float radius, ShapeType shapeType) {
 		this.radius = radius;
 		this.width = width;
 		this.height = height;
@@ -181,6 +192,9 @@ public class RigidBody {
 		this.mArea = area;
 		this.mShapeType = shapeType;
 		this.mIsStatic = isStatic;
+
+		this.mStaticFriction = staticFriction;
+		this.mDynamicFriction = dynamicFriction;
 
 		this.mInertia = inertia;
 
@@ -565,7 +579,7 @@ public class RigidBody {
 	// Factory-Methods
 	// --------------------------------------
 
-	public static RigidBody createCircleBody(float radius, float density, boolean isStatic, float restitution) {
+	public static RigidBody createCircleBody(float radius, float density, float restitution, float staticFriction, float dynamicFriction, boolean isStatic) {
 		final float lArea = radius * radius * (float) Math.PI;
 		final float lMass = lArea * density;
 		restitution = MathHelper.clamp(restitution, 0f, 1f);
@@ -573,10 +587,10 @@ public class RigidBody {
 		// I = (1/2)mr^2
 		final float lInertia = .5f * lMass * radius * radius;
 
-		return new RigidBody(density, lMass, lInertia, restitution, lArea, isStatic, 0.f, 0.f, radius, ShapeType.Circle);
+		return new RigidBody(density, restitution, staticFriction, dynamicFriction, lMass, lInertia, lArea, isStatic, 0.f, 0.f, radius, ShapeType.Circle);
 	}
 
-	public static RigidBody createLineBody(float width, float height, float density, boolean isStatic, float restitution) {
+	public static RigidBody createLineBody(float width, float height, float density, float restitution, float staticFriction, float dynamicFriction, boolean isStatic) {
 		final float lArea = width * height;
 		final float lMass = lArea * density;
 		restitution = MathHelper.clamp(restitution, 0f, 1f);
@@ -586,10 +600,10 @@ public class RigidBody {
 		// I = (1/12)m(h^2+w^2)
 		final float lInertia = (1.f / 12.f) * lMass * (height * height + width * width);
 
-		return new RigidBody(density, lMass, lInertia, restitution, lArea, isStatic, width, height, lRadius, ShapeType.Line);
+		return new RigidBody(density, restitution, staticFriction, dynamicFriction, lMass, lInertia, lArea, isStatic, width, height, lRadius, ShapeType.Line);
 	}
 
-	public static RigidBody createBoxBody(float width, float height, float density, boolean isStatic, float restitution) {
+	public static RigidBody createBoxBody(float width, float height, float density, float restitution, float staticFriction, float dynamicFriction, boolean isStatic) {
 		final float lArea = width * height;
 		final float lMass = lArea * density;
 		restitution = MathHelper.clamp(restitution, 0f, 1f);
@@ -599,10 +613,10 @@ public class RigidBody {
 		// I = (1/12)m(h^2+w^2)
 		final float lInertia = (1.f / 12.f) * lMass * (height * height + width * width);
 
-		return new RigidBody(density, lMass, lInertia, restitution, lArea, isStatic, width, height, lRadius, ShapeType.Box);
+		return new RigidBody(density, restitution, staticFriction, dynamicFriction, lMass, lInertia, lArea, isStatic, width, height, lRadius, ShapeType.Box);
 	}
 
-	public static RigidBody createPolygonBody(float width, float height, float density, boolean isStatic, float restitution) {
+	public static RigidBody createPolygonBody(float width, float height, float density, float restitution, float staticFriction, float dynamicFriction, boolean isStatic) {
 		final float lArea = width * height;
 		final float lMass = lArea * density;
 		restitution = MathHelper.clamp(restitution, 0f, 1f);
@@ -611,6 +625,6 @@ public class RigidBody {
 		// I = (1/12)m(h^2+w^2)
 		final float lInertia = (1.f / 12.f) * lMass * (height * height + width * width);
 
-		return new RigidBody(density, lMass, lInertia, restitution, lArea, isStatic, width, height, lRadius, ShapeType.Polygon);
+		return new RigidBody(density, restitution, staticFriction, dynamicFriction, lMass, lInertia, lArea, isStatic, width, height, lRadius, ShapeType.Polygon);
 	}
 }
