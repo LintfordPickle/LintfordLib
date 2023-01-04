@@ -241,7 +241,7 @@ public class SAT {
 	}
 
 	public static boolean intersectsCircles(float circleAX, float circleAY, float radiusA, float circleBX, float circleBY, float radiusB, ContactManifold result) {
-		final float dist = Vector2f.distance(circleAX, circleAY, circleBX, circleBY);
+		final float dist = Vector2f.dst(circleAX, circleAY, circleBX, circleBY);
 		final float radii = radiusA + radiusB;
 
 		result.intersection = false;
@@ -447,7 +447,7 @@ public class SAT {
 		final var apY = py - ay;
 
 		final var proj = Vector2f.dot(abX, abY, apX, apY);
-		final var projLength = Vector2f.distance2(abX, abY);
+		final var projLength = Vector2f.dst2(abX, abY);
 		final var d = proj / projLength;
 
 		if (d <= 0.f) {
@@ -461,7 +461,7 @@ public class SAT {
 			pointSegmentResult.contactY = ay + abY * d;
 		}
 
-		pointSegmentResult.dist2 = Vector2f.distance2(px, py, pointSegmentResult.contactX, pointSegmentResult.contactY);
+		pointSegmentResult.dist2 = Vector2f.dst2(px, py, pointSegmentResult.contactX, pointSegmentResult.contactY);
 		return pointSegmentResult;
 	}
 

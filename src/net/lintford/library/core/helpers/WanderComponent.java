@@ -50,7 +50,7 @@ public class WanderComponent {
 		// turn speed. This too is a "magic number" which works well for the sample. Feel free to play around with this one as well: smaller values will make
 		// the characters explore further away from the center, but they may get stuck on the walls. Larger numbers will hold the characters to center of
 		// the screen. If the number is too large, the characters may end up "orbiting" the center.
-		float distanceFromScreenCenter = Vector2f.distance(centerPosition.x, centerPosition.y, wanderPosition.x, wanderPosition.y);
+		float distanceFromScreenCenter = Vector2f.dst(centerPosition.x, centerPosition.y, wanderPosition.x, wanderPosition.y);
 		float maxDistanceFromScreenCenter = Math.min(maxDistFromCenter.x, maxDistFromCenter.y);
 
 		float normalizedDistance = distanceFromScreenCenter / maxDistanceFromScreenCenter;
