@@ -231,9 +231,6 @@ public class RigidBody {
 		if (isStatic())
 			return;
 
-		// force = mass * acc
-		// acc = force / mass
-
 		final float ax = forceX / mass();
 		final float ay = forceY / mass();
 
@@ -280,7 +277,7 @@ public class RigidBody {
 				if (v.y > maxY)
 					maxY = v.y;
 
-				final var lDist = Vector2f.distance(x, y, v.x, v.y);
+				final var lDist = Vector2f.dst(x, y, v.x, v.y);
 				if (lDist > furthestVertDist)
 					furthestVertDist = lDist;
 
@@ -532,10 +529,10 @@ public class RigidBody {
 
 		final var lExtendMargin = 5.f;
 		radius = 0.f;
-		radius = Math.max(radius, Vector2f.distance(x, y, verts.get(0).x, verts.get(0).y));
-		radius = Math.max(radius, Vector2f.distance(x, y, verts.get(1).x, verts.get(1).y));
-		radius = Math.max(radius, Vector2f.distance(x, y, verts.get(2).x, verts.get(2).y));
-		radius = Math.max(radius, Vector2f.distance(x, y, verts.get(3).x, verts.get(3).y));
+		radius = Math.max(radius, Vector2f.dst(x, y, verts.get(0).x, verts.get(0).y));
+		radius = Math.max(radius, Vector2f.dst(x, y, verts.get(1).x, verts.get(1).y));
+		radius = Math.max(radius, Vector2f.dst(x, y, verts.get(2).x, verts.get(2).y));
+		radius = Math.max(radius, Vector2f.dst(x, y, verts.get(3).x, verts.get(3).y));
 		radius += lExtendMargin;
 	}
 
@@ -595,7 +592,7 @@ public class RigidBody {
 		final float lMass = lArea * density;
 		restitution = MathHelper.clamp(restitution, 0f, 1f);
 
-		final float lRadius = (float) Math.max(width, height) * .5f;
+		final float lRadius = (float) Math.sqrt(width * width + height * height);
 
 		// I = (1/12)m(h^2+w^2)
 		final float lInertia = (1.f / 12.f) * lMass * (height * height + width * width);
@@ -608,7 +605,7 @@ public class RigidBody {
 		final float lMass = lArea * density;
 		restitution = MathHelper.clamp(restitution, 0f, 1f);
 
-		final float lRadius = (float) Math.max(width, height) * .5f;
+		final float lRadius = (float) Math.sqrt(width * width + height * height);
 
 		// I = (1/12)m(h^2+w^2)
 		final float lInertia = (1.f / 12.f) * lMass * (height * height + width * width);
@@ -621,7 +618,8 @@ public class RigidBody {
 		final float lMass = lArea * density;
 		restitution = MathHelper.clamp(restitution, 0f, 1f);
 
-		final float lRadius = (float) Math.max(width, height) * .5f;
+		final float lRadius = (float) Math.sqrt(width * width + height * height);
+
 		// I = (1/12)m(h^2+w^2)
 		final float lInertia = (1.f / 12.f) * lMass * (height * height + width * width);
 
