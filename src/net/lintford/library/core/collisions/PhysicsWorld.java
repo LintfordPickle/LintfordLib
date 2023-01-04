@@ -195,13 +195,16 @@ public class PhysicsWorld {
 	}
 
 	@SuppressWarnings("unused")
-	private void resolveCollisionBasic(final RigidBody lBodyA, final RigidBody lBodyB) {
+	private void resolveCollisionBasic(final ContactManifold contact) {
+		final var lBodyA = contact.bodyA;
+		final var lBodyB = contact.bodyB;
+
 		final float relVelX = lBodyB.vx - lBodyA.vx;
 		final float relVelY = lBodyB.vy - lBodyA.vy;
 
 		final float dotVelNor = Vector2f.dot(relVelX, relVelY, mContactManifold.normal.x, mContactManifold.normal.y);
 
-		if (dotVelNor > 0.f)
+		if (dotVelNor >= 0.f)
 			return;
 
 		final float minRestitution = Math.min(lBodyA.restitution(), lBodyB.restitution());
@@ -514,7 +517,6 @@ public class PhysicsWorld {
 			lBodyB.vy += _impulseY * lBodyB.invMass();
 			lBodyB.angularVelocity += Vector2f.cross(rbX, rbY, _impulseX, _impulseY) * lBodyB.invInertia();
 		}
-
 	}
 
 	// --------------------------------------
