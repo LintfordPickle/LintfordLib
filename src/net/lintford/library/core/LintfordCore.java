@@ -102,9 +102,9 @@ public abstract class LintfordCore {
 		double totalTimeMilli;
 		double elapsedTimeMilli;
 		double accumulatedElapsedTimeMilli;
-		double targetElapsedTimeMilli = 16;
-		double maxElapsedTimeMilli = 500;
-		boolean isRunningSlowly;
+		double targetElapsedTimeMilli;
+		double maxElapsedTimeMilli;
+		boolean isRenderingRunningSlowly;
 
 		// --------------------------------------
 		// Properties
@@ -114,7 +114,7 @@ public abstract class LintfordCore {
 		 * This flags returns true we've been missing update calls due to the amount of time taken to perform each draw call.
 		 */
 		public boolean isRunningSlowly() {
-			return isRunningSlowly;
+			return isRenderingRunningSlowly;
 		}
 
 		/** @return The total time in seconds. */
@@ -143,7 +143,9 @@ public abstract class LintfordCore {
 
 		public CoreTime() {
 			getDelta();
-			maxElapsedTimeMilli = 500;
+
+			targetElapsedTimeMilli = 16.666f;
+			maxElapsedTimeMilli = 64;
 		}
 
 		// --------------------------------------
@@ -290,6 +292,14 @@ public abstract class LintfordCore {
 				}
 			}
 		}
+
+		// TODO: Need to set the target simulaation spede based on the display refresh rate / computer spec.
+		// The target simulation speed can be set in the CoreTime.targetElapsedTimeMilli. Examples:
+
+		// 30Hz is 33.33 ms
+		// 60Hz is 16.66 ms
+		// 90Hz is 11.111 ms
+		// 120Hz is 8.33 ms
 
 		Debug.debugManager(lNewLogLevel);
 
@@ -455,12 +465,12 @@ public abstract class LintfordCore {
 
 	/** The main game loop. */
 	protected void onRunGameLoop() {
-		int lUpdateFrameLag = 0;
+		int lRenderingIsSlow = 0;
 
 		final var lDisplayConfig = mMasterConfig.display();
 
 		while (!glfwWindowShouldClose(lDisplayConfig.windowID())) {
-			lUpdateFrameLag = 0;
+			lRenderingIsSlow = 0;
 			mCoreTime.accumulatedElapsedTimeMilli += mCoreTime.getDelta();
 
 			if (mIsFixedTimeStep && mCoreTime.accumulatedElapsedTimeMilli < mCoreTime.targetElapsedTimeMilli) {
@@ -498,18 +508,16 @@ public abstract class LintfordCore {
 				}
 
 				// Every update after the first accumulates lag
-				lUpdateFrameLag += Math.max(0, lStepCount - 1);
+				lRenderingIsSlow += Math.max(0, lStepCount - 1);
 
 				if (mCoreTime.isRunningSlowly()) {
-					if (lUpdateFrameLag == 0)
-						mCoreTime.isRunningSlowly = false;
-				} else if (lUpdateFrameLag >= 5) {
-					mCoreTime.isRunningSlowly = true;
+					if (lRenderingIsSlow == 0)
+						mCoreTime.isRenderingRunningSlowly = false;
+				} else if (lRenderingIsSlow >= 5) {
+					mCoreTime.isRenderingRunningSlowly = true;
 				}
 
 				// Draw needs to know the total elapsed time that occured for the fixed length updates.
-				mCoreTime.elapsedTimeMilli = mCoreTime.targetElapsedTimeMilli * lStepCount;
-
 				if (!mGameTime.isTimePaused) {
 					mGameTime.elapsedTimeMilli = (mCoreTime.targetElapsedTimeMilli * lStepCount) * mGameTime.timeModifier;
 				} else
@@ -517,7 +525,6 @@ public abstract class LintfordCore {
 
 			} else {
 				// Variable time - single step (consumes all accumulated time)
-
 				if (!mGameTime.isTimePaused)
 					mGameTime.elapsedTimeMilli = mCoreTime.accumulatedElapsedTimeMilli * mGameTime.timeModifier;
 				else
@@ -543,7 +550,7 @@ public abstract class LintfordCore {
 			glfwSwapBuffers(lDisplayConfig.windowID());
 
 			glfwPollEvents();
-
+			
 		}
 
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "Closing down");
