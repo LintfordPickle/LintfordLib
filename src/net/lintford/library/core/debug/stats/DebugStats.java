@@ -237,7 +237,7 @@ public class DebugStats extends Rectangle implements IScrollBarArea, IProcessMou
 		if (mStringBuilder.length() > 0)
 			mStringBuilder.delete(0, mStringBuilder.length());
 
-		mStringBuilder.append(lUpdateElapsed).append("/").append(lDrawElapsed);
+		mStringBuilder.append("u:").append(lUpdateElapsed).append("/d:").append(lDrawElapsed);
 
 		((DebugStatTagString) getTagByID(TAG_ID_TIMING)).mValue = mStringBuilder.toString();
 
@@ -251,9 +251,9 @@ public class DebugStats extends Rectangle implements IScrollBarArea, IProcessMou
 			mStringBuilder.delete(0, mStringBuilder.length());
 
 		String lIsFixed = (core.isFixedTimeStep() ? "fixed" : "variable");
-		String lIsRunningSlowly = (core.appTime().isRunningSlowly() ? lDelimiter + "slow" : "");
+		String lIsRunningSlowly = (core.appTime().isRunningSlowly() ? lDelimiter + "slow" : "normal");
 
-		mStringBuilder.append(lIsFixed).append(lIsRunningSlowly);
+		mStringBuilder.append(lIsFixed).append(" | ").append(lIsRunningSlowly);
 
 		((DebugStatTagString) getTagByID(TAG_ID_TIMESTEP)).mValue = mStringBuilder.toString();
 
