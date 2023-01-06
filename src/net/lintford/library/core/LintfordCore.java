@@ -144,7 +144,7 @@ public abstract class LintfordCore {
 		public CoreTime() {
 			getDelta();
 
-			targetElapsedTimeMilli = 16.666f;
+			targetElapsedTimeMilli = 11.11111f; // ~90fps
 			maxElapsedTimeMilli = 64;
 		}
 
@@ -550,7 +550,6 @@ public abstract class LintfordCore {
 			glfwSwapBuffers(lDisplayConfig.windowID());
 
 			glfwPollEvents();
-			
 		}
 
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "Closing down");
