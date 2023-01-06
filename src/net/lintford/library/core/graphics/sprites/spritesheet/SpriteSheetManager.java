@@ -209,7 +209,12 @@ public class SpriteSheetManager {
 		if (metaFileLocation == null || metaFileLocation.length() == 0) {
 			Debug.debugManager().logger().w(getClass().getSimpleName(), "SpriteSheetManager meta file cannot be null or empty when loading SpriteSheets.");
 			return;
+		}
 
+		final var lFile = new File(metaFileLocation);
+		if (lFile.exists() == false) {
+			Debug.debugManager().logger().w(getClass().getSimpleName(), "SpriteSheetManager meta file doesn't exist - skipping.");
+			return;
 		}
 
 		final Gson lGson = new GsonBuilder().create();
