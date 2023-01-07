@@ -53,10 +53,13 @@ public class RigidBody {
 	public float vy;
 
 	@SerializedName(value = "ax")
-	public float forceX;
+	public float accX;
 
 	@SerializedName(value = "ay")
-	public float forceY;
+	public float accY;
+
+	@SerializedName(value = "torque")
+	public float torque;
 
 	@SerializedName(value = "rot")
 	public float angle;
@@ -231,11 +234,9 @@ public class RigidBody {
 		if (isStatic())
 			return;
 
-		final float ax = forceX / mass();
-		final float ay = forceY / mass();
-
-		vx += ax * time;
-		vy += ay * time;
+		vx += accX * time;
+		vy += accY * time;
+		angularVelocity += torque * time;
 
 		vx += gravityX * time;
 		vy += gravityY * time;
@@ -244,9 +245,11 @@ public class RigidBody {
 		y += vy * time;
 
 		angle += angularVelocity * time;
-
-		forceX = 0.f;
-		forceY = 0.f;
+		angle = MathHelper.wrapAngle(angle);
+		
+		accX = 0.f;
+		accY = 0.f;
+		torque = 0.f;
 
 		setManualDirty();
 	}
@@ -447,8 +450,8 @@ public class RigidBody {
 	}
 
 	public void addForce(float x, float y) {
-		forceY += y;
-		forceX += x;
+		accY += y * invMass();
+		accX += x * invMass();
 	}
 
 	public void setLocalVertices(Vector2f... verts) {
