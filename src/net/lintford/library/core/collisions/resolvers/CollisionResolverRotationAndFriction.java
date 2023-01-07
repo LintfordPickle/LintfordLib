@@ -49,8 +49,8 @@ public class CollisionResolverRotationAndFriction implements ICollisionResolver 
 			final float angLinB_Y = rbPerp_y * lBodyB.angularVelocity;
 
 			// relative velocity at POC taking into account angular velocity
-			final float relVelX = lBodyB.vx + angLinB_X - lBodyA.vx + angLinA_X;
-			final float relVelY = lBodyB.vy + angLinB_Y - lBodyA.vy + angLinA_Y;
+			final float relVelX = (lBodyB.vx + angLinB_X) - (lBodyA.vx + angLinA_X);
+			final float relVelY = (lBodyB.vy + angLinB_Y) - (lBodyA.vy + angLinA_Y);
 
 			final float contactVelocityMagnitude = Vector2f.dot(relVelX, relVelY, normalX, normalY);
 
@@ -134,8 +134,8 @@ public class CollisionResolverRotationAndFriction implements ICollisionResolver 
 			final float angLinB_Y = rbPerp_y * lBodyB.angularVelocity;
 
 			// relative velocity at POC taking into account angular velocity
-			final float relVelX = lBodyB.vx + angLinB_X - lBodyA.vx + angLinA_X;
-			final float relVelY = lBodyB.vy + angLinB_Y - lBodyA.vy + angLinA_Y;
+			final float relVelX = (lBodyB.vx + angLinB_X) - (lBodyA.vx + angLinA_X);
+			final float relVelY = (lBodyB.vy + angLinB_Y) - (lBodyA.vy + angLinA_Y);
 
 			final float d = Vector2f.dot(relVelX, relVelY, normalX, normalY);
 			float tangent_X = relVelX - d * normalX;

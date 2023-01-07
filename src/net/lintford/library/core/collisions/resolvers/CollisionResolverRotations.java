@@ -43,8 +43,8 @@ public class CollisionResolverRotations implements ICollisionResolver {
 			final float angLinB_Y = rbPerp_y * lBodyB.angularVelocity;
 
 			// relative velocity at POC taking into account angular velocity
-			final float relVelX = lBodyB.vx + angLinB_X - lBodyA.vx + angLinA_X;
-			final float relVelY = lBodyB.vy + angLinB_Y - lBodyA.vy + angLinA_Y;
+			final float relVelX = (lBodyB.vx + angLinB_X) - (lBodyA.vx + angLinA_X);
+			final float relVelY = (lBodyB.vy + angLinB_Y) - (lBodyA.vy + angLinA_Y);
 
 			final float contactVelocityMagnitude = Vector2f.dot(relVelX, relVelY, normalX, normalY);
 
@@ -54,8 +54,12 @@ public class CollisionResolverRotations implements ICollisionResolver {
 			final float ra_perp_dot_n = Vector2f.dot(raPerp_x, raPerp_y, normalX, normalY);
 			final float rb_perp_dot_n = Vector2f.dot(rbPerp_x, rbPerp_y, normalX, normalY);
 
+			final float denominator = lBodyA.invMass() + lBodyB.invMass() + 
+					(ra_perp_dot_n * ra_perp_dot_n) * lBodyA.invInertia() + 
+					(rb_perp_dot_n * rb_perp_dot_n) * lBodyB.invInertia();
+			
 			float j = -(1.f + e) * contactVelocityMagnitude;
-			j /= (lBodyA.invMass() + lBodyB.invMass()) + (ra_perp_dot_n * ra_perp_dot_n) * lBodyA.invInertia() + (rb_perp_dot_n * rb_perp_dot_n) * lBodyB.invInertia();
+			j /= denominator;
 			j /= lContactCount;
 
 			if (i == 0) {
