@@ -246,7 +246,7 @@ public class RigidBody {
 
 		angle += angularVelocity * time;
 		angle = MathHelper.wrapAngle(angle);
-		
+
 		accX = 0.f;
 		accY = 0.f;
 		torque = 0.f;
@@ -449,9 +449,16 @@ public class RigidBody {
 		this.angle = a;
 	}
 
-	public void addForce(float x, float y) {
-		accY += y * invMass();
-		accX += x * invMass();
+	public void addForce(float fx, float fy) {
+		accY += fy * invMass();
+		accX += fx * invMass();
+	}
+
+	public void addForceAtPoint(float fx, float fy, float px, float py) {
+		accY += fy * invMass();
+		accX += fx * invMass();
+
+		torque += Vector2f.cross(px - x, py - y, fx, fy);
 	}
 
 	public void setLocalVertices(Vector2f... verts) {
