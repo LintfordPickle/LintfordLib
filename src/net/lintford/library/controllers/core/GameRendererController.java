@@ -43,7 +43,7 @@ public class GameRendererController extends BaseController {
 	// --------------------------------------
 
 	@Override
-	public void unload() {
+	public void unloadController() {
 		mRendererManager = null;
 	}
 

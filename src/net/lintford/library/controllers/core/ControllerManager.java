@@ -197,7 +197,7 @@ public class ControllerManager {
 		if (lControllerList.contains(controller))
 			lControllerList.remove(controller);
 
-		controller.unload();
+		controller.unloadController();
 	}
 
 	/** Unloads all {@link BaseController} instances registered to this {@link ControllerManager} which have the given group ID assigned to them. */
@@ -210,7 +210,7 @@ public class ControllerManager {
 
 		final var lControllerCount = lControllerList.size();
 		for (int i = 0; i < lControllerCount; i++) {
-			lControllerList.get(i).unload();
+			lControllerList.get(i).unloadController();
 		}
 
 		lControllerList.clear();

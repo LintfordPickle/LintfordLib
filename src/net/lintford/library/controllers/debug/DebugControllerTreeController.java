@@ -47,7 +47,7 @@ public class DebugControllerTreeController extends BaseController {
 	// --------------------------------------
 
 	@Override
-	public void unload() {
+	public void unloadController() {
 		if (mDebugTreeComponents != null) {
 			mDebugTreeComponents.clear();
 			mDebugTreeComponents = null;

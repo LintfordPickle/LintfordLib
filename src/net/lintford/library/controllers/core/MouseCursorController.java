@@ -61,11 +61,6 @@ public class MouseCursorController extends BaseController {
 		setCursor(DEFAULT_CURSOR_NAME);
 	}
 
-	@Override
-	public void unload() {
-
-	}
-
 	// --------------------------------------
 	// Methods
 	// --------------------------------------

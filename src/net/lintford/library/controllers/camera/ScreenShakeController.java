@@ -48,11 +48,6 @@ public class ScreenShakeController extends BaseController {
 	// ---------------------------------------------
 
 	@Override
-	public void unload() {
-
-	}
-
-	@Override
 	public void update(LintfordCore core) {
 		super.update(core);
 

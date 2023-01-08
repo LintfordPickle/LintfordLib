@@ -43,13 +43,4 @@ public class CoreTimeController extends BaseController {
 
 		mIsInitialized = false;
 	}
-
-	// ---------------------------------------------
-	// Core-Methods
-	// ---------------------------------------------
-
-	@Override
-	public void unload() {
-
-	}
 }

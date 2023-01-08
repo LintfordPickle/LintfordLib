@@ -51,7 +51,7 @@ public class DebugRendererTreeController extends BaseController {
 	public void trackRendererManager(RendererManager rendererManager) {
 		mRendererManager = rendererManager;
 
-		unload();
+		unloadController();
 
 		if (mRendererManager != null && mRendererManager.equals(rendererManager)) {
 			// TODO: Unload current RendererManager ...
@@ -69,7 +69,7 @@ public class DebugRendererTreeController extends BaseController {
 	}
 
 	@Override
-	public void unload() {
+	public void unloadController() {
 		mDebugTreeComponents.clear();
 	}
 

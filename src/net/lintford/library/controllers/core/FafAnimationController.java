@@ -67,7 +67,7 @@ public abstract class FafAnimationController extends BaseController {
 	// --------------------------------------
 
 	@Override
-	public void unload() {
+	public void unloadController() {
 		if (mSpritesheetDefintion == null)
 			return;
 

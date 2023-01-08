@@ -34,13 +34,4 @@ public class ResourceController extends BaseController {
 
 		mResourceManager = resourceManager;
 	}
-
-	// ---------------------------------------------
-	// Core-Methods
-	// ---------------------------------------------
-
-	@Override
-	public void unload() {
-
-	}
 }

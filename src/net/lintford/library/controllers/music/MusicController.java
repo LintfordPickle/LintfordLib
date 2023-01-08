@@ -40,9 +40,8 @@ public class MusicController extends BaseController {
 	// --------------------------------------
 
 	@Override
-	public void unload() {
+	public void unloadController() {
 		mMusicManager = null;
-
 	}
 
 	@Override

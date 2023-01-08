@@ -52,11 +52,6 @@ public class SpriteGraphController extends BaseController {
 		mResourceController = (ResourceController) core.controllerManager().getControllerByNameRequired(ResourceController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
 	}
 
-	@Override
-	public void unload() {
-
-	}
-
 	public void update(LintfordCore core) {
 		final var lSpriteGraphList = mSpriteGraphManager.instances();
 		final var lSpriteGraphCount = lSpriteGraphList.size();

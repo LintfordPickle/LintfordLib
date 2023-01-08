@@ -46,11 +46,6 @@ public class MessageConsoleController extends BaseController implements IMessage
 	// --------------------------------------
 
 	@Override
-	public void unload() {
-
-	}
-
-	@Override
 	public void addMessage(String tag, String message) {
 		addMessage(tag, message, -1);
 	}

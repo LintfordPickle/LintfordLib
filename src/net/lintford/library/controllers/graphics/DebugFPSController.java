@@ -50,11 +50,6 @@ public class DebugFPSController extends BaseController {
 	// Core-Methods
 	// --------------------------------------
 
-	@Override
-	public void unload() {
-
-	}
-
 	public void update(CoreTime coreTime) {
 		if (!mEnableFPSDisplay)
 			return;

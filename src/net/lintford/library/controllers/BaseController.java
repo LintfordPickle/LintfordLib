@@ -11,8 +11,7 @@ public abstract class BaseController {
 	// --------------------------------------
 
 	/**
-	 * A group ID is assigned to all {@link BaseController} instances. It allows the developer to programmatically unload batches of particular parts of the game when required (i.e. unload the game controllers when
-	 * returning to the main menu)
+	 * A group ID is assigned to all {@link BaseController} instances. It allows the developer to programmatically unload batches of particular parts of the game when required (i.e. unload the game controllers when returning to the main menu)
 	 */
 	protected int mEntityGroupUid;
 	protected BaseControllerWidget mBaseControllerWidget;
@@ -28,8 +27,7 @@ public abstract class BaseController {
 	// --------------------------------------
 
 	/**
-	 * A group ID is assigned to all {@link BaseController} instances. It allows the developer to programmatically unload batches of particular parts of the game when required (i.e. unload the game controllers when
-	 * returning to the main menu)
+	 * A group ID is assigned to all {@link BaseController} instances. It allows the developer to programmatically unload batches of particular parts of the game when required (i.e. unload the game controllers when returning to the main menu)
 	 */
 	public int entityGroupUid() {
 		return mEntityGroupUid;
@@ -98,7 +96,9 @@ public abstract class BaseController {
 		mIsInitialized = true;
 	}
 
-	public abstract void unload();
+	public void unloadController() {
+		mIsInitialized = false;
+	}
 
 	public boolean handleInput(LintfordCore core) {
 		return false;

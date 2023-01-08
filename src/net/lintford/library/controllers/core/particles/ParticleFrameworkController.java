@@ -94,13 +94,4 @@ public class ParticleFrameworkController extends BaseController {
 			lParticleSystemInstance.update(core);
 		}
 	}
-
-	// --------------------------------------
-	// Methods
-	// --------------------------------------
-
-	@Override
-	public void unload() {
-
-	}
 }

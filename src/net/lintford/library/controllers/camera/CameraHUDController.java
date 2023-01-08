@@ -45,7 +45,7 @@ public class CameraHUDController extends BaseController {
 	// ---------------------------------------------
 
 	@Override
-	public void unload() {
+	public void unloadController() {
 		mCamera = null;
 	}
 }
