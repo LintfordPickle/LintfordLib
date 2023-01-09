@@ -6,6 +6,7 @@ import java.util.List;
 import com.google.gson.annotations.SerializedName;
 
 import net.lintford.library.core.debug.Debug;
+import net.lintford.library.core.entity.BaseInstanceData;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.maths.MathHelper;
 import net.lintford.library.core.maths.Vector2f;
@@ -102,9 +103,19 @@ public class RigidBody {
 	@SerializedName(value = "shapeType")
 	private ShapeType mShapeType;
 
+	private BaseInstanceData userData;
+
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public BaseInstanceData userData() {
+		return userData;
+	}
+
+	public void userData(BaseInstanceData userData) {
+		this.userData = userData;
+	}
 
 	public float dynamicFriction() {
 		return mDynamicFriction;

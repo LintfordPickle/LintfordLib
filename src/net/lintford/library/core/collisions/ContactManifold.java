@@ -9,6 +9,10 @@ public class ContactManifold {
 	// --------------------------------------
 
 	public boolean intersection;
+	public boolean enableContact;
+
+	public float impulseX;
+	public float impulseY;
 
 	public RigidBody bodyA;
 	public RigidBody bodyB;
@@ -53,6 +57,7 @@ public class ContactManifold {
 	public void reset() {
 		bodyA = null;
 		bodyB = null;
+		enableContact = true;
 
 		intersection = false;
 		normal.set(0, 0);

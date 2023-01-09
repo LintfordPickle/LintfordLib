@@ -41,9 +41,8 @@ public class PhysicsWorld {
 
 	private final LinkedList<CollisionPair> mCollisionPairPool = new LinkedList<>();
 	private final List<CollisionPair> mCollisionPair = new ArrayList<>(16);
-
+	private ICollisionCallback mCollisionCallback;
 	private ICollisionResolver mCollisionResolver;
-
 	private DebugStatTagCaption mDebugStatPhysicsCaption;
 	private DebugStatTagInt mDebugStatsNumBodies;
 	private DebugStatTagFloat mDebugStepTimeInMm;
@@ -54,6 +53,14 @@ public class PhysicsWorld {
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public void collisionCallback(ICollisionCallback callback) {
+		mCollisionCallback = callback;
+	}
+
+	public ICollisionCallback collisionCallback() {
+		return mCollisionCallback;
+	}
 
 	public void setContactResolver(ICollisionResolver resolver) {
 		mCollisionResolver = resolver;
@@ -188,12 +195,32 @@ public class PhysicsWorld {
 			final var lBodyA = mBodies.get(lCollisionPair.bodyAUid);
 			final var lBodyB = mBodies.get(lCollisionPair.bodyBUid);
 
+			mContactManifold.reset();
+
 			if (SAT.checkCollides(lBodyA, lBodyB, mContactManifold)) {
+
+				if (mCollisionCallback != null)
+					mCollisionCallback.preContact(mContactManifold);
+
+				if (mContactManifold.enableContact == false)
+					continue;
+
 				separateBodiesByMTV(lBodyA, lBodyB, mContactManifold.normal.x * mContactManifold.depth, mContactManifold.normal.y * mContactManifold.depth);
 
+				SAT.fillContactPoints(mContactManifold);
+
+				if (mCollisionCallback != null)
+					mCollisionCallback.postContact(mContactManifold);
+
 				if (mCollisionResolver != null) {
-					SAT.fillContactPoints(mContactManifold);
+					if (mCollisionCallback != null)
+						mCollisionCallback.preSolve(mContactManifold);
+
 					mCollisionResolver.resolveCollisions(mContactManifold);
+
+					if (mCollisionCallback != null)
+						mCollisionCallback.postSolve(mContactManifold);
+
 				}
 			}
 

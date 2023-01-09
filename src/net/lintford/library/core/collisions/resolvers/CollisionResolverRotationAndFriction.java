@@ -106,6 +106,9 @@ public class CollisionResolverRotationAndFriction implements ICollisionResolver 
 			lBodyB.vx += _impulseX * lBodyB.invMass();
 			lBodyB.vy += _impulseY * lBodyB.invMass();
 			lBodyB.angularVelocity += Vector2f.cross(rbX, rbY, _impulseX, _impulseY) * lBodyB.invInertia();
+
+			contact.impulseX = _impulseX;
+			contact.impulseY = _impulseY;
 		}
 
 		// -----
