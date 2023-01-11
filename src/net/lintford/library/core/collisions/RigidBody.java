@@ -608,12 +608,12 @@ public class RigidBody {
 		return new RigidBody(density, restitution, staticFriction, dynamicFriction, lMass, lInertia, lArea, isStatic, 0.f, 0.f, radius, ShapeType.Circle);
 	}
 
-	public static RigidBody createLineWidthBody(float width, float height, float density, float restitution, float staticFriction, float dynamicFriction, boolean isStatic) {
-		
-		
-		if(height <= 0.f)
+	public static RigidBody createLineWidthBody(float width, float height, float density, float restitution, float staticFriction, float dynamicFriction) {
+		final boolean isStatic = true;
+
+		if (height <= 0.f)
 			height = 0.01f;
-		
+
 		final float lArea = width * height;
 		final float lMass = lArea * density;
 		restitution = MathHelper.clamp(restitution, 0f, 1f);

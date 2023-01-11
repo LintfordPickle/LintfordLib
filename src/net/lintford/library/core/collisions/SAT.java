@@ -58,9 +58,7 @@ public class SAT {
 			else if (lShapeTypeB == ShapeType.Circle)
 				return intersectsCirclePolygon(bodyB.x, bodyB.y, bodyB.radius, bodyA.getTransformedVertices(), bodyA.x, bodyA.y, manifold);
 			else if (lShapeTypeB == ShapeType.LineWidth) {
-				// GROUND POLY MOUSE LINE
-				// broken
-				if( intersectsLinePolygon(bodyB.getTransformedVertices(), bodyA.getTransformedVertices(), bodyA.x, bodyA.y, manifold)) {
+				if (intersectsLinePolygon(bodyB.getTransformedVertices(), bodyA.getTransformedVertices(), bodyA.x, bodyA.y, manifold)) {
 					return true;
 				}
 			}
@@ -93,9 +91,9 @@ public class SAT {
 				if (intersectsLineCircle(bodyA.getTransformedVertices(), bodyA.height, bodyB.x, bodyB.y, bodyB.radius, manifold)) {
 					return true;
 				}
-			} else if (lShapeTypeB == ShapeType.LineWidth) {
-				// TODO: Line line
 			}
+
+			// no line/line intersections for now (doesn't work)
 		}
 
 		return false;
@@ -418,8 +416,89 @@ public class SAT {
 		return false;
 	}
 
-	public static boolean intersectsLineLine(List<Vector2f> lineAVertices, float lineARadius, List<Vector2f> lineBVertices, float lineBRadius) {
-		return false;
+	public static boolean intersectsLineLine(List<Vector2f> lineAVertices, float lineARadius, List<Vector2f> lineBVertices, float lineBRadius, ContactManifold result) {
+		result.isIntersecting = true;
+		result.normal.x = 0.f;
+		result.normal.y = 0.f;
+		result.depth = Float.MAX_VALUE;
+
+		final var ax = lineAVertices.get(0).x;
+		final var ay = lineAVertices.get(0).y;
+		final var bx = lineAVertices.get(1).x;
+		final var by = lineAVertices.get(1).y;
+		final var px = lineBVertices.get(0).x;
+		final var py = lineBVertices.get(0).y;
+		final var qx = lineBVertices.get(1).x;
+		final var qy = lineBVertices.get(1).y;
+
+		{// project line 2 onto line 1
+			float tx = (bx - ax) * .5f;
+			float ty = (by - ay) * .5f;
+
+			var axis01X = -ty;
+			var axis01Y = tx;
+			final var axis01Length = Math.sqrt(tx * tx + ty * ty);
+
+			axis01X /= axis01Length;
+			axis01Y /= axis01Length;
+
+			projectLine(ax, ay, bx, by, axis01X, axis01Y, projectionResult1);
+			projectLine(px, py, qx, qy, axis01X, axis01Y, projectionResult2);
+
+			if (projectionResult1.min >= projectionResult2.max || projectionResult1.min >= projectionResult2.max) {
+				return false; // early out
+			}
+
+			// overlap
+			final float minimumDepthValueA = Math.abs(projectionResult1.max - projectionResult2.min);
+			if (minimumDepthValueA < result.depth) {
+				result.depth = minimumDepthValueA;
+				result.normal.x = -axis01X;
+				result.normal.y = -axis01Y;
+			}
+
+			final float minimumDepthValueB = Math.abs(projectionResult2.max - projectionResult1.min);
+			if (minimumDepthValueB < result.depth) {
+				result.depth = minimumDepthValueB;
+				result.normal.x = axis01X;
+				result.normal.y = axis01Y;
+			}
+		}
+
+		{// project line 1 onto line 2
+			var axis02X = -(qy - py) * .5f;
+			var axis02Y = (qx - px) * .5f;
+			final var axis02Length = Math.sqrt(axis02X * axis02X + axis02Y * axis02Y);
+
+			axis02X /= axis02Length;
+			axis02Y /= axis02Length;
+
+			projectionResult1.min = 0;
+			projectionResult1.max = 0;
+			projectLine(px, py, qx, qy, axis02X, axis02Y, projectionResult1);
+			projectLine(ax, ay, bx, by, axis02X, axis02Y, projectionResult2);
+
+			if (projectionResult1.min >= projectionResult2.max || projectionResult1.min >= projectionResult2.max) {
+				return false; // early out
+			}
+
+			// overlap
+			final float minimumDepthValueA = Math.abs(projectionResult1.max - projectionResult2.min);
+			if (minimumDepthValueA < result.depth) {
+				result.depth = minimumDepthValueA;
+				result.normal.x = axis02X;
+				result.normal.y = axis02Y;
+			}
+
+			final float minimumDepthValueB = Math.abs(projectionResult2.max - projectionResult1.min);
+			if (minimumDepthValueB < result.depth) {
+				result.depth = minimumDepthValueB;
+				result.normal.x = -axis02X;
+				result.normal.y = -axis02Y;
+			}
+		}
+
+		return true;
 	}
 
 	// Projections
@@ -705,7 +784,69 @@ public class SAT {
 	}
 
 	private static void findLineLineContactPoints(List<Vector2f> lineAVertices, float lineARadius, List<Vector2f> lineBVertices, float lineBRadius, ContactManifold contactManifold) {
-		// TODO:
+
+		float minDist2 = Float.MAX_VALUE;
+
+		final int lNumVertsA = lineAVertices.size();
+		final int lNumVertsB = lineBVertices.size();
+		for (int i = 0; i < lNumVertsA; i++) {
+			final var p = lineAVertices.get(i);
+
+			for (int j = 0; j < lNumVertsB; j++) {
+				final var va = lineBVertices.get(j);
+				final var vb = lineBVertices.get((j + 1) % lineBVertices.size());
+
+				final var lPointSegmentDist = pointSegmentDistance2(p.x, p.y, va.x, va.y, vb.x, vb.y);
+
+				// a second point with ~same distance
+				if (equalWithinEpsilon(lPointSegmentDist.dist2, minDist2)) {
+					if (!equalWithinEpsilon(lPointSegmentDist.contactX, lPointSegmentDist.contactY, contactManifold.contact1.x, contactManifold.contact1.y)) {
+						contactManifold.contactCount = 2;
+						contactManifold.contact2.x = lPointSegmentDist.contactX;
+						contactManifold.contact2.y = lPointSegmentDist.contactY;
+					}
+				}
+
+				// new minimum distance found
+				else if (lPointSegmentDist.dist2 < minDist2) {
+					minDist2 = lPointSegmentDist.dist2;
+
+					contactManifold.contactCount = 1;
+					contactManifold.contact1.x = lPointSegmentDist.contactX;
+					contactManifold.contact1.y = lPointSegmentDist.contactY;
+				}
+			}
+		}
+
+		for (int i = 0; i < lNumVertsB; i++) {
+			final var p = lineBVertices.get(i);
+
+			for (int j = 0; j < lNumVertsA; j++) {
+				final var va = lineAVertices.get(j);
+				final var vb = lineAVertices.get((j + 1) % lineAVertices.size());
+
+				final var lPointSegmentDist = pointSegmentDistance2(p.x, p.y, va.x, va.y, vb.x, vb.y);
+
+				// a second point with ~same distance
+				if (equalWithinEpsilon(lPointSegmentDist.dist2, minDist2)) {
+					if (!equalWithinEpsilon(lPointSegmentDist.contactX, lPointSegmentDist.contactY, contactManifold.contact1.x, contactManifold.contact1.y)) {
+						contactManifold.contactCount = 2;
+						contactManifold.contact2.x = lPointSegmentDist.contactX;
+						contactManifold.contact2.y = lPointSegmentDist.contactY;
+					}
+				}
+
+				// new minimum distance found
+				else if (lPointSegmentDist.dist2 < minDist2) {
+					minDist2 = lPointSegmentDist.dist2;
+
+					contactManifold.contactCount = 1;
+					contactManifold.contact1.x = lPointSegmentDist.contactX;
+					contactManifold.contact1.y = lPointSegmentDist.contactY;
+				}
+			}
+		}
+
 	}
 
 	private static PointSegmentResult pointSegmentDistance2(float px, float py, float ax, float ay, float bx, float by) {
