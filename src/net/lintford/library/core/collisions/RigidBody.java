@@ -608,7 +608,7 @@ public class RigidBody {
 		return new RigidBody(density, restitution, staticFriction, dynamicFriction, lMass, lInertia, lArea, isStatic, 0.f, 0.f, radius, ShapeType.Circle);
 	}
 
-	public static RigidBody createLineWidthBody(float width, float height, float density, float restitution, float staticFriction, float dynamicFriction) {
+	public static RigidBody createStaticLineBody(float width, float height, float density, float restitution, float staticFriction, float dynamicFriction) {
 		final boolean isStatic = true;
 
 		if (height <= 0.f)

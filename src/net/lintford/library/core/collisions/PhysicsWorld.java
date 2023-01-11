@@ -11,7 +11,6 @@ import net.lintford.library.core.debug.stats.DebugStatTagCaption;
 import net.lintford.library.core.debug.stats.DebugStatTagFloat;
 import net.lintford.library.core.debug.stats.DebugStatTagInt;
 import net.lintford.library.core.maths.MathHelper;
-import net.lintford.library.core.maths.Vector2f;
 import net.lintford.library.core.time.TimeConstants;
 
 public class PhysicsWorld {
@@ -42,7 +41,8 @@ public class PhysicsWorld {
 
 	private final LinkedList<CollisionPair> mCollisionPairPool = new LinkedList<>();
 	private final List<CollisionPair> mCollisionPair = new ArrayList<>(16);
-	private ICollisionCallback mCollisionCallback;
+	private final List<ICollisionCallback> mCollisionCallbackList = new ArrayList<>();
+
 	private ICollisionResolver mCollisionResolver;
 	private DebugStatTagCaption mDebugStatPhysicsCaption;
 	private DebugStatTagInt mDebugStatsNumBodies;
@@ -51,19 +51,18 @@ public class PhysicsWorld {
 
 	private boolean mInitialized = false;
 
-	// TODO: Remove before commit
-	public final List<Vector2f> debugContactPoints = new ArrayList<>();
-
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
 
-	public void collisionCallback(ICollisionCallback callback) {
-		mCollisionCallback = callback;
+	public void addCollisionCallback(ICollisionCallback callback) {
+		if (mCollisionCallbackList.contains(callback) == false)
+			mCollisionCallbackList.add(callback);
 	}
 
-	public ICollisionCallback collisionCallback() {
-		return mCollisionCallback;
+	public void removeCllisionCallback(ICollisionCallback callback) {
+		if (mCollisionCallbackList.contains(callback))
+			mCollisionCallbackList.remove(callback);
 	}
 
 	public void setContactResolver(ICollisionResolver resolver) {
@@ -152,7 +151,7 @@ public class PhysicsWorld {
 
 			broadPhase();
 
-			narrowPhase(it == totalIterations - 1);
+			narrowPhase();
 		}
 
 		final var lDelta = ((System.nanoTime() - lSystemTimeBegin) / TimeConstants.NanoToMilli);
@@ -191,9 +190,9 @@ public class PhysicsWorld {
 		}
 	}
 
-	private void narrowPhase(boolean updateDebugContactList) {
-		if(updateDebugContactList)
-			debugContactPoints.clear();
+	private void narrowPhase() {
+
+		final var lNumCallbacks = mCollisionCallbackList.size();
 
 		final var lNumCollisionPairs = mCollisionPair.size();
 		for (int i = 0; i < lNumCollisionPairs; i++) {
@@ -206,8 +205,9 @@ public class PhysicsWorld {
 
 			if (SAT.checkCollides(lBodyA, lBodyB, mContactManifold)) {
 
-				if (mCollisionCallback != null)
-					mCollisionCallback.preContact(mContactManifold);
+				for (int j = 0; j < lNumCallbacks; j++) {
+					mCollisionCallbackList.get(j).preContact(mContactManifold);
+				}
 
 				if (mContactManifold.enableResolveContact == false) {
 					returnCollisionPair(lCollisionPair);
@@ -218,26 +218,20 @@ public class PhysicsWorld {
 
 				SAT.fillContactPoints(mContactManifold);
 
-				if(updateDebugContactList)
-				for (int j = 0; j < mContactManifold.contactCount; j++) {
-					if (j == 0)
-						debugContactPoints.add(new Vector2f(mContactManifold.contact1));
-					else
-						debugContactPoints.add(new Vector2f(mContactManifold.contact2));
+				for (int j = 0; j < lNumCallbacks; j++) {
+					mCollisionCallbackList.get(j).postContact(mContactManifold);
 				}
 
-				if (mCollisionCallback != null)
-					mCollisionCallback.postContact(mContactManifold);
-
 				if (mCollisionResolver != null) {
-					if (mCollisionCallback != null)
-						mCollisionCallback.preSolve(mContactManifold);
+					for (int j = 0; j < lNumCallbacks; j++) {
+						mCollisionCallbackList.get(j).postContact(mContactManifold);
+					}
 
 					mCollisionResolver.resolveCollisions(mContactManifold);
 
-					if (mCollisionCallback != null)
-						mCollisionCallback.postSolve(mContactManifold);
-
+					for (int j = 0; j < lNumCallbacks; j++) {
+						mCollisionCallbackList.get(j).postSolve(mContactManifold);
+					}
 				}
 			}
 
