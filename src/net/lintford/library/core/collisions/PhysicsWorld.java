@@ -11,6 +11,7 @@ import net.lintford.library.core.debug.stats.DebugStatTagCaption;
 import net.lintford.library.core.debug.stats.DebugStatTagFloat;
 import net.lintford.library.core.debug.stats.DebugStatTagInt;
 import net.lintford.library.core.maths.MathHelper;
+import net.lintford.library.core.maths.Vector2f;
 import net.lintford.library.core.time.TimeConstants;
 
 public class PhysicsWorld {
@@ -49,6 +50,9 @@ public class PhysicsWorld {
 	private DebugStatTagInt mDebugNumIterations;
 
 	private boolean mInitialized = false;
+
+	// TODO: Remove before commit
+	public final List<Vector2f> debugContactPoints = new ArrayList<>();
 
 	// --------------------------------------
 	// Properties
@@ -148,7 +152,7 @@ public class PhysicsWorld {
 
 			broadPhase();
 
-			narrowPhase();
+			narrowPhase(it == totalIterations - 1);
 		}
 
 		final var lDelta = ((System.nanoTime() - lSystemTimeBegin) / TimeConstants.NanoToMilli);
@@ -187,7 +191,10 @@ public class PhysicsWorld {
 		}
 	}
 
-	private void narrowPhase() {
+	private void narrowPhase(boolean updateDebugContactList) {
+		if(updateDebugContactList)
+			debugContactPoints.clear();
+
 		final var lNumCollisionPairs = mCollisionPair.size();
 		for (int i = 0; i < lNumCollisionPairs; i++) {
 			final var lCollisionPair = mCollisionPair.get(i);
@@ -202,12 +209,22 @@ public class PhysicsWorld {
 				if (mCollisionCallback != null)
 					mCollisionCallback.preContact(mContactManifold);
 
-				if (mContactManifold.enableContact == false)
+				if (mContactManifold.enableResolveContact == false) {
+					returnCollisionPair(lCollisionPair);
 					continue;
+				}
 
 				separateBodiesByMTV(lBodyA, lBodyB, mContactManifold.normal.x * mContactManifold.depth, mContactManifold.normal.y * mContactManifold.depth);
 
 				SAT.fillContactPoints(mContactManifold);
+
+				if(updateDebugContactList)
+				for (int j = 0; j < mContactManifold.contactCount; j++) {
+					if (j == 0)
+						debugContactPoints.add(new Vector2f(mContactManifold.contact1));
+					else
+						debugContactPoints.add(new Vector2f(mContactManifold.contact2));
+				}
 
 				if (mCollisionCallback != null)
 					mCollisionCallback.postContact(mContactManifold);

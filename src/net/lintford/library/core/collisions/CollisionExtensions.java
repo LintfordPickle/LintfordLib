@@ -47,7 +47,7 @@ public class CollisionExtensions {
 			return false;
 		}
 
-		case Line: {
+		case LineWidth: {
 			final var lWorldVertices = body.getTransformedVertices();
 			final var start = lWorldVertices.get(0);
 			final var end = lWorldVertices.get(1);

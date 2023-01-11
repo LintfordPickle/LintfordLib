@@ -223,7 +223,7 @@ public class RigidBody {
 		if (this.mShapeType == ShapeType.Polygon || this.mShapeType == ShapeType.Box) {
 			mLocalVertices = createBoxVertices(width, height);
 			mTransformedVertices = new ArrayList<>(mLocalVertices.size());
-		} else if (this.mShapeType == ShapeType.Line) {
+		} else if (this.mShapeType == ShapeType.LineWidth) {
 			mLocalVertices = createLineVertices(width);
 			mTransformedVertices = new ArrayList<>(mLocalVertices.size());
 		} else {
@@ -299,14 +299,14 @@ public class RigidBody {
 
 			radius = furthestVertDist;
 
-		} else if (mShapeType == ShapeType.Line) {
+		} else if (mShapeType == ShapeType.LineWidth) {
 			final var sin = (float) Math.sin(angle);
 			final var cos = (float) Math.cos(angle);
 
 			final var hwc = width * .5f * cos;
-			final var hhc = radius * cos;
+			final var hhc = height * cos;
 			final var hws = width * .5f * sin;
-			final var hhs = radius * sin;
+			final var hhs = height * sin;
 
 			// bl
 			final var x0 = -hwc - hhs;
@@ -413,7 +413,7 @@ public class RigidBody {
 			break;
 		}
 
-		case Line: {
+		case LineWidth: {
 			final var lWorldX = x;
 			final var lWorldY = y;
 
@@ -490,7 +490,7 @@ public class RigidBody {
 
 			break;
 
-		case Line:
+		case LineWidth:
 			if (verts == null || verts.length != 2) {
 				Debug.debugManager().logger().w(getClass().getSimpleName(), "Cannot set RigidBody vertices on Line - vertex count incorrect!");
 				return;
@@ -608,7 +608,12 @@ public class RigidBody {
 		return new RigidBody(density, restitution, staticFriction, dynamicFriction, lMass, lInertia, lArea, isStatic, 0.f, 0.f, radius, ShapeType.Circle);
 	}
 
-	public static RigidBody createLineBody(float width, float height, float density, float restitution, float staticFriction, float dynamicFriction, boolean isStatic) {
+	public static RigidBody createLineWidthBody(float width, float height, float density, float restitution, float staticFriction, float dynamicFriction, boolean isStatic) {
+		
+		
+		if(height <= 0.f)
+			height = 0.01f;
+		
 		final float lArea = width * height;
 		final float lMass = lArea * density;
 		restitution = MathHelper.clamp(restitution, 0f, 1f);
@@ -618,7 +623,7 @@ public class RigidBody {
 		// I = (1/12)m(h^2+w^2)
 		final float lInertia = (1.f / 12.f) * lMass * (height * height + width * width);
 
-		return new RigidBody(density, restitution, staticFriction, dynamicFriction, lMass, lInertia, lArea, isStatic, width, height, lRadius, ShapeType.Line);
+		return new RigidBody(density, restitution, staticFriction, dynamicFriction, lMass, lInertia, lArea, isStatic, width, height, lRadius, ShapeType.LineWidth);
 	}
 
 	public static RigidBody createBoxBody(float width, float height, float density, float restitution, float staticFriction, float dynamicFriction, boolean isStatic) {

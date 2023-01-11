@@ -8,8 +8,8 @@ public class ContactManifold {
 	// Variables
 	// --------------------------------------
 
-	public boolean intersection;
-	public boolean enableContact;
+	public boolean isIntersecting;
+	public boolean enableResolveContact;
 
 	public float impulseX;
 	public float impulseY;
@@ -29,7 +29,7 @@ public class ContactManifold {
 	// --------------------------------------
 
 	public boolean isInUse() {
-		return intersection;
+		return isIntersecting;
 	}
 
 	// --------------------------------------
@@ -51,15 +51,15 @@ public class ContactManifold {
 		this.contact2.y = contact2Y;
 
 		this.contactCount = contactCount;
-		intersection = contactCount > 0;
+		isIntersecting = contactCount > 0;
 	}
 
 	public void reset() {
 		bodyA = null;
 		bodyB = null;
-		enableContact = true;
+		enableResolveContact = true;
 
-		intersection = false;
+		isIntersecting = false;
 		normal.set(0, 0);
 
 		contactCount = 0;
