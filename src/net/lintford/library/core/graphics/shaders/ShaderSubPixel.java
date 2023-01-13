@@ -14,7 +14,7 @@ public class ShaderSubPixel extends ShaderMVP_PCT {
 
 	public final static String SHADER_NAME = "Sub Pixel Shader";
 
-	public static final String VERT_FILENAME = "/res/shaders/shader_basic_pct.vert";
+	public static final String VERT_FILENAME = "/res/shaders/shader_batch_pct.vert";
 	public static final String FRAG_FILENAME = "/res/shaders/shader_subpixel_pct.frag";
 
 	public final static String SHADER_UNIFORM_PROJECTION_NAME = "projectionMatrix";
