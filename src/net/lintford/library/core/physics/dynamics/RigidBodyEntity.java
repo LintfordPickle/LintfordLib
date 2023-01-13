@@ -1,4 +1,4 @@
-package net.lintford.library.core.collisions;
+package net.lintford.library.core.physics.dynamics;
 
 import net.lintford.library.ConstantsPhysics;
 import net.lintford.library.core.geometry.partitioning.GridEntity;

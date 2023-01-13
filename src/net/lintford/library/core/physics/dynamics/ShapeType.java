@@ -1,4 +1,4 @@
-package net.lintford.library.core.collisions;
+package net.lintford.library.core.physics.dynamics;
 
 // @formatter:off	
 

@@ -1,16 +1,21 @@
-package net.lintford.library.core.collisions;
+package net.lintford.library.core.physics;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 import net.lintford.library.ConstantsPhysics;
-import net.lintford.library.core.collisions.resolvers.ICollisionResolver;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.debug.stats.DebugStatTagCaption;
 import net.lintford.library.core.debug.stats.DebugStatTagFloat;
 import net.lintford.library.core.debug.stats.DebugStatTagInt;
 import net.lintford.library.core.maths.MathHelper;
+import net.lintford.library.core.physics.collisions.ContactManifold;
+import net.lintford.library.core.physics.collisions.SAT;
+import net.lintford.library.core.physics.dynamics.RigidBody;
+import net.lintford.library.core.physics.interfaces.ICollisionCallback;
+import net.lintford.library.core.physics.resolvers.ICollisionResolver;
+import net.lintford.library.core.physics.spatial.PhysicsHashGrid;
 import net.lintford.library.core.time.TimeConstants;
 
 public class PhysicsWorld {
@@ -20,8 +25,8 @@ public class PhysicsWorld {
 	// --------------------------------------
 
 	private class CollisionPair {
-		public int bodyAUid;
-		public int bodyBUid;
+		public RigidBody bodyA;
+		public RigidBody bodyB;
 	}
 
 	// --------------------------------------
@@ -37,6 +42,7 @@ public class PhysicsWorld {
 	private float mGravityX;
 	private float mGravityY; // mps/s
 
+	private PhysicsHashGrid<RigidBody> mWorldHashGrid;
 	private final List<RigidBody> mBodies = new ArrayList<>();
 
 	private final LinkedList<CollisionPair> mCollisionPairPool = new LinkedList<>();
@@ -44,16 +50,34 @@ public class PhysicsWorld {
 	private final List<ICollisionCallback> mCollisionCallbackList = new ArrayList<>();
 
 	private ICollisionResolver mCollisionResolver;
+
+	// Debug
 	private DebugStatTagCaption mDebugStatPhysicsCaption;
 	private DebugStatTagInt mDebugStatsNumBodies;
 	private DebugStatTagFloat mDebugStepTimeInMm;
 	private DebugStatTagInt mDebugNumIterations;
+	private DebugStatTagInt mNumSpatialCells;
+	private DebugStatTagInt mNumActiveCells;
 
 	private boolean mInitialized = false;
+	private int updateCounter = 0;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public void setGravity(float x, float y) {
+		mGravityX = x;
+		mGravityY = y;
+	}
+
+	public PhysicsHashGrid<RigidBody> grid() {
+		return mWorldHashGrid;
+	}
+
+	public List<RigidBody> bodies() {
+		return mBodies;
+	}
 
 	public void addCollisionCallback(ICollisionCallback callback) {
 		if (mCollisionCallbackList.contains(callback) == false)
@@ -69,25 +93,16 @@ public class PhysicsWorld {
 		mCollisionResolver = resolver;
 	}
 
-	public List<RigidBody> bodies() {
-		return mBodies;
-	}
-
-	public int numBodies() {
-		return mBodies.size();
-	}
-
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
 	public PhysicsWorld() {
-		this(0.f, 0.f);
+		this(100, 100, 10, 10);
 	}
 
-	public PhysicsWorld(float gravityX, float gravityY) {
-		mGravityX = gravityX;
-		mGravityY = gravityY;
+	public PhysicsWorld(int fieldWidth, int fieldHeight, int numCellsWide, int numCellsHigh) {
+		mWorldHashGrid = new PhysicsHashGrid<>(fieldWidth, fieldHeight, numCellsWide, numCellsHigh);
 	}
 
 	// --------------------------------------
@@ -102,11 +117,15 @@ public class PhysicsWorld {
 		mDebugStatsNumBodies = new DebugStatTagInt("Num Bodies", 0, false);
 		mDebugStepTimeInMm = new DebugStatTagFloat("step", 0.0f, false);
 		mDebugNumIterations = new DebugStatTagInt("Num Iterations", 0, false);
+		mNumSpatialCells = new DebugStatTagInt("Num Cells", 0, false);
+		mNumActiveCells = new DebugStatTagInt("Active Cells", 0, false);
 
 		Debug.debugManager().stats().addCustomStatTag(mDebugStatPhysicsCaption);
 		Debug.debugManager().stats().addCustomStatTag(mDebugStatsNumBodies);
 		Debug.debugManager().stats().addCustomStatTag(mDebugStepTimeInMm);
 		Debug.debugManager().stats().addCustomStatTag(mDebugNumIterations);
+		Debug.debugManager().stats().addCustomStatTag(mNumSpatialCells);
+		Debug.debugManager().stats().addCustomStatTag(mNumActiveCells);
 
 		mInitialized = true;
 	}
@@ -122,11 +141,15 @@ public class PhysicsWorld {
 		Debug.debugManager().stats().removeCustomStatTag(mDebugStatsNumBodies);
 		Debug.debugManager().stats().removeCustomStatTag(mDebugStepTimeInMm);
 		Debug.debugManager().stats().removeCustomStatTag(mDebugNumIterations);
+		Debug.debugManager().stats().removeCustomStatTag(mNumSpatialCells);
+		Debug.debugManager().stats().removeCustomStatTag(mNumActiveCells);
 
 		mDebugStatPhysicsCaption = null;
 		mDebugStatsNumBodies = null;
 		mDebugStepTimeInMm = null;
 		mDebugNumIterations = null;
+		mNumSpatialCells = null;
+		mNumActiveCells = null;
 
 		mInitialized = false;
 	}
@@ -139,7 +162,9 @@ public class PhysicsWorld {
 
 		totalIterations = MathHelper.clampi(totalIterations, ConstantsPhysics.MIN_ITERATIONS, ConstantsPhysics.MAX_ITERATIONS);
 		mDebugNumIterations.setValue(totalIterations);
-		mDebugStatsNumBodies.setValue(numBodies());
+		mDebugStatsNumBodies.setValue(mBodies.size());
+		mNumSpatialCells.setValue(mWorldHashGrid.getTotalCellCount());
+		mNumActiveCells.setValue(mWorldHashGrid.getActiveCellKeys().size());
 
 		final var lSystemTimeBegin = System.nanoTime();
 
@@ -159,33 +184,69 @@ public class PhysicsWorld {
 	}
 
 	private void stepBodies(float time) {
-		final int lNumBodies = mBodies.size();
-		for (int i = 0; i < lNumBodies; i++) {
-			mBodies.get(i).step(time, mGravityX, mGravityY);
+		updateCounter++;
+
+		final var lActiveCellKeys = mWorldHashGrid.getActiveCellKeys();
+		final int lNumActiveCellKeys = lActiveCellKeys.size();
+		for (int i = 0; i < lNumActiveCellKeys; i++) {
+			final var lCellKey = lActiveCellKeys.get(i);
+			final var lCell = mWorldHashGrid.getCell(lCellKey);
+			final var lNumEntitiesInCell = lCell.size();
+
+			boolean isCellActive = false;
+			for (int j = lNumEntitiesInCell - 1; j >= 0; j--) {
+				final var lBody = lCell.get(j);
+
+				if (lBody._updateCounter >= updateCounter)
+					continue;
+
+				lBody._updateCounter = updateCounter;
+				lBody.step(time, mGravityX, mGravityY);
+
+				mWorldHashGrid.updateEntity(lBody);
+
+				isCellActive = isCellActive || lBody._isActive;
+			}
 		}
 	}
 
 	private void broadPhase() {
-		final var lNumBodies = mBodies.size();
-		for (int i = 0; i < lNumBodies - 1; i++) {
-			final var lBodyA = mBodies.get(i);
-			final var lBodyA_aabb = lBodyA.aabb();
+		final var lActiveCellKeys = mWorldHashGrid.getActiveCellKeys();
+		final int lNumActiveCellKeys = lActiveCellKeys.size();
+		for (int i = lNumActiveCellKeys - 1; i >= 0; i--) {
+			final var lCellKey = lActiveCellKeys.get(i);
+			final var lCell = mWorldHashGrid.getCell(lCellKey);
+			final var lNumEntitiesInCell = lCell.size();
 
-			for (int j = i + 1; j < lNumBodies; j++) {
-				final var lBodyB = mBodies.get(j);
-				final var lBodyB_aabb = lBodyB.aabb();
+			if (lNumEntitiesInCell == 0) {
+				lActiveCellKeys.remove(i);
+				continue;
+			}
 
-				if (lBodyA.isStatic() && lBodyB.isStatic())
-					continue;
+			for (int j = 0; j < lNumEntitiesInCell; j++) {
+				final var lBodyA = lCell.get(j);
+				final var lBodyA_aabb = lBodyA.aabb();
 
-				if (lBodyA_aabb.intersectsAA(lBodyB_aabb) == false)
-					continue;
+				for (int s = j + 1; s < lNumEntitiesInCell; s++) {
+					final var lBodyB = lCell.get(s);
 
-				final var lCollisionPair = getFreeCollisionPair();
-				lCollisionPair.bodyAUid = i;
-				lCollisionPair.bodyBUid = j;
+					if (lBodyA == lBodyB)
+						continue;
 
-				mCollisionPair.add(lCollisionPair);
+					final var lBodyB_aabb = lBodyB.aabb();
+
+					if (lBodyA.isStatic() && lBodyB.isStatic())
+						continue;
+
+					if (lBodyA_aabb.intersectsAA(lBodyB_aabb) == false)
+						continue;
+
+					final var lCollisionPair = getFreeCollisionPair();
+					lCollisionPair.bodyA = lBodyA;
+					lCollisionPair.bodyB = lBodyB;
+
+					mCollisionPair.add(lCollisionPair);
+				}
 			}
 		}
 	}
@@ -198,8 +259,8 @@ public class PhysicsWorld {
 		for (int i = 0; i < lNumCollisionPairs; i++) {
 			final var lCollisionPair = mCollisionPair.get(i);
 
-			final var lBodyA = mBodies.get(lCollisionPair.bodyAUid);
-			final var lBodyB = mBodies.get(lCollisionPair.bodyBUid);
+			final var lBodyA = lCollisionPair.bodyA;
+			final var lBodyB = lCollisionPair.bodyB;
 
 			mContactManifold.reset();
 
@@ -243,6 +304,7 @@ public class PhysicsWorld {
 	// Methods
 	// --------------------------------------
 
+	// TODO: Move this to the collision package
 	private void separateBodiesByMTV(final RigidBody lBodyA, final RigidBody lBodyB, float mtvX, float mtvY) {
 		if (lBodyA.isStatic()) {
 			lBodyB.x += mtvX;
@@ -260,10 +322,16 @@ public class PhysicsWorld {
 	}
 
 	public void addBody(RigidBody newBody) {
+		// TODO:
+		mWorldHashGrid.addEntity(newBody);
+
 		mBodies.add(newBody);
 	}
 
 	public boolean removeBody(RigidBody body) {
+		// TODO:
+		mWorldHashGrid.removeEntity(body);
+
 		return mBodies.remove(body);
 	}
 
@@ -285,6 +353,8 @@ public class PhysicsWorld {
 		return obj;
 	}
 
+	// -----
+
 	private void enlargeCollisionPairPool(final int amount) {
 		for (int i = 0; i < amount; i++) {
 			mCollisionPairPool.addLast(new CollisionPair());
@@ -292,8 +362,8 @@ public class PhysicsWorld {
 	}
 
 	private void returnCollisionPair(CollisionPair obj) {
-		obj.bodyAUid = 0;
-		obj.bodyBUid = 0;
+		obj.bodyA = null;
+		obj.bodyB = null;
 		mCollisionPairPool.addLast(obj);
 	}
 

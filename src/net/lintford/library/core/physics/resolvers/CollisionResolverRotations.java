@@ -1,7 +1,7 @@
-package net.lintford.library.core.collisions.resolvers;
+package net.lintford.library.core.physics.resolvers;
 
-import net.lintford.library.core.collisions.ContactManifold;
 import net.lintford.library.core.maths.Vector2f;
+import net.lintford.library.core.physics.collisions.ContactManifold;
 
 public class CollisionResolverRotations implements ICollisionResolver {
 

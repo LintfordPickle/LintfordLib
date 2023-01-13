@@ -1,6 +1,7 @@
-package net.lintford.library.core.collisions;
+package net.lintford.library.core.physics.collisions;
 
 import net.lintford.library.core.maths.Vector2f;
+import net.lintford.library.core.physics.dynamics.RigidBody;
 
 public class ContactManifold {
 

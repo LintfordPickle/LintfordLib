@@ -1,10 +1,12 @@
-package net.lintford.library.core.collisions;
+package net.lintford.library.core.physics.collisions;
 
 import java.util.List;
 
 import net.lintford.library.ConstantsPhysics;
 import net.lintford.library.core.maths.MathHelper;
 import net.lintford.library.core.maths.Vector2f;
+import net.lintford.library.core.physics.dynamics.RigidBody;
+import net.lintford.library.core.physics.dynamics.ShapeType;
 
 public class SAT {
 

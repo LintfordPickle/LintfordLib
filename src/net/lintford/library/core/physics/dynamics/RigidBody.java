@@ -1,4 +1,4 @@
-package net.lintford.library.core.collisions;
+package net.lintford.library.core.physics.dynamics;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,8 +10,18 @@ import net.lintford.library.core.entity.BaseInstanceData;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.maths.MathHelper;
 import net.lintford.library.core.maths.Vector2f;
+import net.lintford.library.core.physics.spatial.PhysicsGridEntity;
+import net.lintford.library.core.physics.spatial.PhysicsHashGrid;
 
-public class RigidBody {
+public class RigidBody extends PhysicsGridEntity {
+
+	private static final long serialVersionUID = 6671253042965704538L;
+
+	private static int uidCounter;
+
+	public static int getNewRigidBodyUid() {
+		return uidCounter++;
+	}
 
 	// --------------------------------------
 	// Inner-Classes
@@ -37,6 +47,10 @@ public class RigidBody {
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
+
+	// TODO: implement body sleeping
+	public boolean _isActive = true;
+	public int _updateCounter = 0;
 
 	private final BodyState state = new BodyState();
 	private transient final Rectangle mAABB = new Rectangle();
@@ -195,7 +209,9 @@ public class RigidBody {
 	// Constructor
 	// --------------------------------------
 
-	public RigidBody(float density, float restitution, float staticFriction, float dynamicFriction, float mass, float inertia, float area, boolean isStatic, float width, float height, float radius, ShapeType shapeType) {
+	public RigidBody(int uid, float density, float restitution, float staticFriction, float dynamicFriction, float mass, float inertia, float area, boolean isStatic, float width, float height, float radius, ShapeType shapeType) {
+		super(uid);
+
 		this.radius = radius;
 		this.width = width;
 		this.height = height;
@@ -605,7 +621,7 @@ public class RigidBody {
 		// I = (1/2)mr^2
 		final float lInertia = .5f * lMass * radius * radius;
 
-		return new RigidBody(density, restitution, staticFriction, dynamicFriction, lMass, lInertia, lArea, isStatic, 0.f, 0.f, radius, ShapeType.Circle);
+		return new RigidBody(getNewRigidBodyUid(), density, restitution, staticFriction, dynamicFriction, lMass, lInertia, lArea, isStatic, 0.f, 0.f, radius, ShapeType.Circle);
 	}
 
 	public static RigidBody createStaticLineBody(float width, float height, float density, float restitution, float staticFriction, float dynamicFriction) {
@@ -623,7 +639,7 @@ public class RigidBody {
 		// I = (1/12)m(h^2+w^2)
 		final float lInertia = (1.f / 12.f) * lMass * (height * height + width * width);
 
-		return new RigidBody(density, restitution, staticFriction, dynamicFriction, lMass, lInertia, lArea, isStatic, width, height, lRadius, ShapeType.LineWidth);
+		return new RigidBody(getNewRigidBodyUid(), density, restitution, staticFriction, dynamicFriction, lMass, lInertia, lArea, isStatic, width, height, lRadius, ShapeType.LineWidth);
 	}
 
 	public static RigidBody createBoxBody(float width, float height, float density, float restitution, float staticFriction, float dynamicFriction, boolean isStatic) {
@@ -636,7 +652,7 @@ public class RigidBody {
 		// I = (1/12)m(h^2+w^2)
 		final float lInertia = (1.f / 12.f) * lMass * (height * height + width * width);
 
-		return new RigidBody(density, restitution, staticFriction, dynamicFriction, lMass, lInertia, lArea, isStatic, width, height, lRadius, ShapeType.Box);
+		return new RigidBody(getNewRigidBodyUid(), density, restitution, staticFriction, dynamicFriction, lMass, lInertia, lArea, isStatic, width, height, lRadius, ShapeType.Box);
 	}
 
 	public static RigidBody createPolygonBody(float width, float height, float density, float restitution, float staticFriction, float dynamicFriction, boolean isStatic) {
@@ -649,6 +665,38 @@ public class RigidBody {
 		// I = (1/12)m(h^2+w^2)
 		final float lInertia = (1.f / 12.f) * lMass * (height * height + width * width);
 
-		return new RigidBody(density, restitution, staticFriction, dynamicFriction, lMass, lInertia, lArea, isStatic, width, height, lRadius, ShapeType.Polygon);
+		return new RigidBody(getNewRigidBodyUid(), density, restitution, staticFriction, dynamicFriction, lMass, lInertia, lArea, isStatic, width, height, lRadius, ShapeType.Polygon);
 	}
+
+	// --------------------------------------
+	// Inherited-Methods
+	// --------------------------------------
+
+	@Override
+	public void fillEntityBounds(PhysicsHashGrid<?> grid) {
+		final var aabb = aabb();
+
+		minX = grid.getColumnAtX(aabb.left());
+		minY = grid.getRowAtY(aabb.top());
+
+		maxX = grid.getColumnAtX(aabb.right());
+		maxY = grid.getRowAtY(aabb.bottom());
+	}
+
+	@Override
+	public boolean isGridCacheOld(PhysicsHashGrid<?> grid) {
+		final var aabb = aabb();
+
+		final var newMinX = grid.getColumnAtX(aabb.left());
+		final var newMinY = grid.getRowAtY(aabb.top());
+
+		final var newMaxX = grid.getColumnAtX(aabb.right());
+		final var newMaxY = grid.getRowAtY(aabb.bottom());
+
+		if (newMinX == minX && newMinY == minY && newMaxX == maxX && newMaxY == maxY)
+			return false; // early out
+
+		return true;
+	}
+
 }

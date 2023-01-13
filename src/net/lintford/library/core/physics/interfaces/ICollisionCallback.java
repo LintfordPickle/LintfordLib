@@ -1,4 +1,6 @@
-package net.lintford.library.core.collisions;
+package net.lintford.library.core.physics.interfaces;
+
+import net.lintford.library.core.physics.collisions.ContactManifold;
 
 public interface ICollisionCallback {
 
