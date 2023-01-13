@@ -285,7 +285,7 @@ public class PhysicsWorld {
 
 				if (mCollisionResolver != null) {
 					for (int j = 0; j < lNumCallbacks; j++) {
-						mCollisionCallbackList.get(j).postContact(mContactManifold);
+						mCollisionCallbackList.get(j).preSolve(mContactManifold);
 					}
 
 					mCollisionResolver.resolveCollisions(mContactManifold);
