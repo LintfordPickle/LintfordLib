@@ -144,7 +144,7 @@ public abstract class LintfordCore {
 		public CoreTime() {
 			getDelta();
 
-			targetElapsedTimeMilli = 11.11111f; // ~90fps
+			targetElapsedTimeMilli = 16.666f;// 11.11111f; // ~90fps
 			maxElapsedTimeMilli = 64;
 		}
 
