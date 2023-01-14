@@ -59,12 +59,18 @@ public class PhysicsWorld {
 	private DebugStatTagInt mNumSpatialCells;
 	private DebugStatTagInt mNumActiveCells;
 
+	private boolean _lockedBodies;
 	private boolean mInitialized = false;
 	private int updateCounter = 0;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	/** Bodies are locked durin the step and broad phase and cannot be removed from the world during this time. */
+	public boolean bodiesLocked() {
+		return _lockedBodies;
+	}
 
 	public void setGravity(float x, float y) {
 		mGravityX = x;
@@ -171,10 +177,12 @@ public class PhysicsWorld {
 		time /= (float) totalIterations;
 		for (int it = 0; it < totalIterations; it++) {
 
+			_lockedBodies = true;
 			mCollisionPair.clear();
 			stepBodies(time);
 
 			broadPhase();
+			_lockedBodies = false;
 
 			narrowPhase();
 		}
@@ -252,7 +260,6 @@ public class PhysicsWorld {
 	}
 
 	private void narrowPhase() {
-
 		final var lNumCallbacks = mCollisionCallbackList.size();
 
 		final var lNumCollisionPairs = mCollisionPair.size();
@@ -322,16 +329,18 @@ public class PhysicsWorld {
 	}
 
 	public void addBody(RigidBody newBody) {
-		// TODO:
 		mWorldHashGrid.addEntity(newBody);
 
 		mBodies.add(newBody);
 	}
 
 	public boolean removeBody(RigidBody body) {
-		// TODO:
-		mWorldHashGrid.removeEntity(body);
+		if (_lockedBodies) {
+			Debug.debugManager().logger().w(getClass().getSimpleName(), "Cannot remove bodies from the physics world while the _LockedBodies flag is set");
+			return false;
+		}
 
+		mWorldHashGrid.removeEntity(body);
 		return mBodies.remove(body);
 	}
 
