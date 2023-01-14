@@ -349,7 +349,7 @@ public class DisplayManager extends IniFile {
 	public long createWindow(GameInfo gameInfo) {
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "Creating GLFWWindow");
 
-		glfwSetErrorCallback(GLFWErrorCallback.createPrint(System.err));
+		glfwSetErrorCallback(GLFWErrorCallback.createPrint(System.out));
 
 		if (!glfwInit()) {
 			Debug.debugManager().logger().e(getClass().getSimpleName(), "Unable to initialize GLFW");
