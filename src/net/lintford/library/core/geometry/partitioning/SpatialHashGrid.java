@@ -164,7 +164,7 @@ public class SpatialHashGrid<T extends GridEntity> {
 
 					final var isFilterSet = entityTypeFlag != COLLISION_ENTITY_TYPE_NONE;
 					if (isFilterSet) {
-						final var doesEntityPass = (entityTypeFlag & lEntity.collEntityType) == lEntity.collEntityType;
+						final var doesEntityPass = (entityTypeFlag & lEntity.gridEntityType) == lEntity.gridEntityType;
 						if (!doesEntityPass)
 							continue;
 

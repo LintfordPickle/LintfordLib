@@ -14,7 +14,7 @@ public abstract class GridEntity extends Entity {
 	// Variables
 	// ---------------------------------------------
 
-	public int collEntityType;
+	public int gridEntityType;
 
 	// -caching
 	public int minX;
@@ -37,10 +37,10 @@ public abstract class GridEntity extends Entity {
 	// Constructor
 	// ---------------------------------------------
 
-	public GridEntity(int entityUid, int collEntityType) {
+	public GridEntity(int entityUid, int GridEntityType) {
 		super(entityUid);
 
-		this.collEntityType = collEntityType;
+		this.gridEntityType = GridEntityType;
 	}
 
 	// ---------------------------------------------
