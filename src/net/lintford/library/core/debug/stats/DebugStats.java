@@ -114,9 +114,9 @@ public class DebugStats extends Rectangle implements IScrollBarArea, IProcessMou
 		mTags.add(new DebugStatTagString(TAG_ID_TIMESTEP, "Timestep", ""));
 		mTags.add(new DebugStatTagString(TAG_ID_WINDOW_SIZE, "Window", ""));
 		mTags.add(new DebugStatTagString(TAG_ID_RES, "Resolution", ""));
-		// mTags.add(new DebugStatTagFloat(-1, "Ram Used", 0, false));
-		// mTags.add(new DebugStatTagFloat(-1, "Ram Free", 0, false));
-		// mTags.add(new DebugStatTagFloat(TAG_ID_VRAM, "VRam", 0, false));
+		mTags.add(new DebugStatTagFloat(-1, "Ram Used", 0, false));
+		mTags.add(new DebugStatTagFloat(-1, "Ram Free", 0, false));
+		mTags.add(new DebugStatTagFloat(TAG_ID_VRAM, "VRam", 0, false));
 
 		mTags.add(new DebugStatTagCaption(-1, "Graphics:"));
 		mTags.add(new DebugStatTagInt(TAG_ID_DRAWCALLS, "Draw Calls", 0));
