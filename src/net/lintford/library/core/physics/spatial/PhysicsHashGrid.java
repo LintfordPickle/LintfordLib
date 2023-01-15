@@ -171,15 +171,6 @@ public class PhysicsHashGrid<T extends PhysicsGridEntity> {
 				final int lNumEntitiesInCell = lCell.size();
 				for (int j = 0; j < lNumEntitiesInCell; j++) { // O(n)
 					final var lEntity = lCell.get(j);
-
-					final var isFilterSet = entityTypeFlag != COLLISION_ENTITY_TYPE_NONE;
-					if (isFilterSet) {
-						final var doesEntityPass = (entityTypeFlag & lEntity.collEntityType) == lEntity.collEntityType;
-						if (!doesEntityPass)
-							continue;
-
-					}
-
 					if (lEntity.queryId != mQueryId) {
 						mReturnResultsList.add(lEntity); // O(1) - (O(n) if new array has to be created)
 						lEntity.queryId = mQueryId;

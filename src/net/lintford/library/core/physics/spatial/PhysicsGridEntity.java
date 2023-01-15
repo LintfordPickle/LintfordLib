@@ -14,8 +14,6 @@ public abstract class PhysicsGridEntity extends Entity {
 	// Variables
 	// ---------------------------------------------
 
-	public int collEntityType;
-
 	// -caching
 	public int minX;
 	public int minY;
