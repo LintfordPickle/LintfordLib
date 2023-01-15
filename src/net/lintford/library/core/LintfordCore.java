@@ -493,6 +493,9 @@ public abstract class LintfordCore {
 
 			if (mIsFixedTimeStep) {
 				mCoreTime.elapsedTimeMilli = mCoreTime.targetElapsedTimeMilli;
+
+				// Each step should perform at the target elapsed framerate
+				mGameTime.elapsedTimeMilli = mCoreTime.targetElapsedTimeMilli;
 				int lStepCount = 0;
 
 				while (mCoreTime.accumulatedElapsedTimeMilli >= mCoreTime.targetElapsedTimeMilli) {
@@ -517,7 +520,7 @@ public abstract class LintfordCore {
 					mCoreTime.isRenderingRunningSlowly = true;
 				}
 
-				// Draw needs to know the total elapsed time that occured for the fixed length updates.
+				// Inform the (next) draw about how much time was actually simulated this iteration
 				if (!mGameTime.isTimePaused) {
 					mGameTime.elapsedTimeMilli = (mCoreTime.targetElapsedTimeMilli * lStepCount) * mGameTime.timeModifier;
 				} else
