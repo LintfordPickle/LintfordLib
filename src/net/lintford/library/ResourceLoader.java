@@ -7,6 +7,7 @@ import static org.lwjgl.opengl.GL11.glClearColor;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL32;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
@@ -17,7 +18,7 @@ import net.lintford.library.core.maths.MathHelper;
 import net.lintford.library.core.time.TimeConstants;
 import net.lintford.library.options.DisplayManager;
 
-public abstract class GameResourceLoader extends Thread {
+public abstract class ResourceLoader extends Thread {
 
 	// ---------------------------------------------
 	// Variables
@@ -43,6 +44,9 @@ public abstract class GameResourceLoader extends Thread {
 	private float mPeriodFlashTimeMs = 400;
 	private int mPeriodFlashCount = 3;
 	private float minimumTimeToShowLogos = 4000; // ms
+
+	private long mGlSyncObjectId = -1;
+	private boolean _loadOnBackgroundThread = true;
 
 	// --------------------------------------
 	// Properties
@@ -100,11 +104,13 @@ public abstract class GameResourceLoader extends Thread {
 	// Constructor
 	// ---------------------------------------------
 
-	public GameResourceLoader(ResourceManager resourceManager, DisplayManager displayManager) {
+	public ResourceLoader(ResourceManager resourceManager, DisplayManager displayManager, boolean useBackgroundThread) {
 		mResourceManager = resourceManager;
 		mDisplayManager = displayManager;
 		loadingThreadStarted = false;
 		windowId = displayManager.windowID();
+
+		_loadOnBackgroundThread = useBackgroundThread;
 
 		setName("Background Resource Loader Thread");
 		currentStatusMessage("Loading");
@@ -115,26 +121,42 @@ public abstract class GameResourceLoader extends Thread {
 	// ---------------------------------------------
 
 	public void loadResourcesInBackground(LintfordCore core) {
-		start();
-		runLoadingScreenUntilFinish(core);
-		unloadResources();
+		if (_loadOnBackgroundThread) {
+			start();
+
+			runLoadingScreenUntilFinish(core);
+
+			unloadResources();
+		} else {
+			loadingThreadStarted = true;
+			resourcesToLoadInBackground();
+		}
 	}
 
+	// [Main]
 	@Override
 	public synchronized void start() {
 		if (loadingThreadStarted)
 			return;
+
+		mGlSyncObjectId = GL32.glFenceSync(GL32.GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+		Debug.debugManager().logger().i(getClass().getSimpleName(), "Called glFenceSync, objectId: " + mGlSyncObjectId);
+
 		loadingThreadStarted = true;
 		super.start();
 	}
 
+	// [Background]
 	@Override
 	public void run() {
+		Debug.debugManager().logger().i(getClass().getSimpleName(), "Thread run()");
+
 		super.run();
 
 		mDisplayManager.makeOffscreenContextCurrentOnThread();
 
 		loadResourcesOnBackgroundThread();
+
 	}
 
 	public void runLoadingScreenUntilFinish(LintfordCore core) {
@@ -146,8 +168,12 @@ public abstract class GameResourceLoader extends Thread {
 			glfwSwapBuffers(windowId);
 			glfwPollEvents();
 		}
+
+		Debug.debugManager().logger().i(getClass().getSimpleName(), "Making main window context current again (after background loading)");
+		mDisplayManager.makeContextCurrent(mDisplayManager.windowID());
 	}
 
+	// [Background]
 	private void loadResourcesOnBackgroundThread() {
 		final long lStartTime = System.currentTimeMillis();
 
@@ -166,6 +192,13 @@ public abstract class GameResourceLoader extends Thread {
 			}
 			Debug.debugManager().logger().i(getClass().getSimpleName(), "Waiting for logos : " + lTimeRemainingMs + "ms");
 		}
+
+		// apparently we need to flush all GL commands on the off-thread
+
+		GL11.glFlush();
+
+		Debug.debugManager().logger().i(getClass().getSimpleName(), "Calling glClientWaitSync on objectId: " + mGlSyncObjectId);
+		GL32.glClientWaitSync(mGlSyncObjectId, 0, GL32.GL_TIMEOUT_IGNORED);
 	}
 
 	// ---------------------------------------------

@@ -469,7 +469,7 @@ public class DisplayManager extends IniFile {
 		// by specifing the masterwindow id, we create a openGL shared context
 		mOffscreenWindowId = glfwCreateWindow(1, 1, "Shared Context", NULL, mMasterWindowId);
 
-		Debug.debugManager().logger().i(getClass().getSimpleName(), "Creating shared context (offscreen window: " + mOffscreenWindowId + ")");
+		Debug.debugManager().logger().i(getClass().getSimpleName(), "Created shared context (master window: " + mMasterWindowId + ", offscreen window: " + mOffscreenWindowId + ")");
 
 		return mOffscreenWindowId;
 	}
