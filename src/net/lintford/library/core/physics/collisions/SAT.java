@@ -880,12 +880,12 @@ public class SAT {
 	// Helper Methods
 
 	public static boolean equalWithinEpsilon(float a, float b) {
-		return Math.abs(a - b) < ConstantsPhysics.EPISLON;
+		return Math.abs(a - b) < ConstantsPhysics.EPSILON;
 	}
 
 	public static boolean equalWithinEpsilon(float p1x, float p1y, float p2x, float p2y) {
 		final float xx = p1x - p2x;
 		final float yy = p1y - p2y;
-		return (xx * xx + yy * yy) < ConstantsPhysics.EPISLON * ConstantsPhysics.EPISLON;
+		return (xx * xx + yy * yy) < ConstantsPhysics.EPSILON * ConstantsPhysics.EPSILON;
 	}
 }
