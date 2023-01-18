@@ -5,6 +5,7 @@ import net.lintford.library.controllers.core.GameRendererController;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.camera.ICamera;
+import net.lintford.library.core.time.LogicialCounter;
 import net.lintford.library.renderers.RendererManager;
 import net.lintford.library.screenmanager.Screen;
 import net.lintford.library.screenmanager.ScreenManager;
@@ -16,23 +17,36 @@ public abstract class BaseGameScreen extends Screen {
 	// --------------------------------------
 
 	protected ICamera mGameCamera;
+	protected LogicialCounter mGameUpdateLogicalCounter;
+	protected LogicialCounter mGameDrawLogicalCounter;
+
+	// --------------------------------------
+	// Properties
+	// --------------------------------------
+
+	public LogicialCounter updateCounter() {
+		return mGameUpdateLogicalCounter;
+	}
+
+	public LogicialCounter drawCounter() {
+		return mGameDrawLogicalCounter;
+	}
 
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
 	public BaseGameScreen(ScreenManager screenManager) {
-		super(screenManager);
+		this(screenManager, null);
 	}
 
 	public BaseGameScreen(ScreenManager screenManager, RendererManager rendererManager) {
 		super(screenManager, rendererManager);
 
 		mSingletonScreen = true;
-		final var lCore = screenManager().core();
-		final var lControllerManager = lCore.controllerManager();
-		createControllers(lControllerManager);
-		createRenderers(lCore);
+
+		mGameUpdateLogicalCounter = new LogicialCounter();
+		mGameDrawLogicalCounter = new LogicialCounter();
 	}
 
 	// --------------------------------------
@@ -43,11 +57,13 @@ public abstract class BaseGameScreen extends Screen {
 	public void initialize() {
 		super.initialize();
 
-		new GameRendererController(mScreenManager.core().controllerManager(), mRendererManager, entityGroupUid());
-		mGameCamera = mScreenManager.core().setNewGameCamera(mGameCamera);
-
 		final var lCore = screenManager().core();
 		final var lControllerManager = lCore.controllerManager();
+		createControllers(lControllerManager);
+		createRenderers(lCore);
+
+		new GameRendererController(mScreenManager.core().controllerManager(), mRendererManager, entityGroupUid());
+		mGameCamera = mScreenManager.core().setNewGameCamera(mGameCamera);
 
 		createControllers(lControllerManager);
 		createRenderers(lCore);
@@ -62,6 +78,20 @@ public abstract class BaseGameScreen extends Screen {
 		super.loadResources(resourceManager);
 
 		loadRendererResources(resourceManager);
+	}
+
+	@Override
+	public void update(LintfordCore core, boolean otherScreenHasFocus, boolean coveredByOtherScreen) {
+		super.update(core, otherScreenHasFocus, coveredByOtherScreen);
+
+		mGameUpdateLogicalCounter.incrementCounter();
+	}
+
+	@Override
+	public void draw(LintfordCore core) {
+		super.draw(core);
+
+		mGameDrawLogicalCounter.incrementCounter();
 	}
 
 	// --------------------------------------
