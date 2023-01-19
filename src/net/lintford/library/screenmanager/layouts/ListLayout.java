@@ -1,7 +1,7 @@
 package net.lintford.library.screenmanager.layouts;
 
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.input.IProcessMouseInput;
+import net.lintford.library.core.input.mouse.IProcessMouseInput;
 import net.lintford.library.core.maths.MathHelper;
 import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.ScreenManagerConstants.FILLTYPE;

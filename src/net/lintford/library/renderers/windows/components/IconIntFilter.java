@@ -8,7 +8,7 @@ import net.lintford.library.core.graphics.batching.SpriteBatch;
 import net.lintford.library.core.graphics.fonts.FontUnit;
 import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintford.library.core.graphics.textures.CoreTextureNames;
-import net.lintford.library.core.input.IProcessMouseInput;
+import net.lintford.library.core.input.mouse.IProcessMouseInput;
 
 public class IconIntFilter implements IProcessMouseInput {
 

@@ -2,7 +2,7 @@ package net.lintford.library.core.input;
 
 import java.io.Serializable;
 
-public class EventAction implements Serializable {
+public class KeyEventAction implements Serializable {
 
 	// --------------------------------------
 	// Constants
@@ -44,14 +44,14 @@ public class EventAction implements Serializable {
 	// Constructors
 	// --------------------------------------
 
-	public EventAction(int eventActionUid, int defaultBoundKeyCode) {
+	public KeyEventAction(int eventActionUid, int defaultBoundKeyCode) {
 		mEventActionUid = eventActionUid;
 		mDefaultBoundKeyCode = defaultBoundKeyCode;
 		mBoundKeyCode = UNASSIGNED_KEY_CODE;
 
 	}
 
-	public EventAction(int eventActionUid, int defaultBoundKeyCode, int initialBoundKeyCode) {
+	public KeyEventAction(int eventActionUid, int defaultBoundKeyCode, int initialBoundKeyCode) {
 		this(eventActionUid, defaultBoundKeyCode);
 
 		mBoundKeyCode = initialBoundKeyCode;

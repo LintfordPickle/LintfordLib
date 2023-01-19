@@ -33,7 +33,7 @@ import net.lintford.library.core.debug.DebugMemory;
 import net.lintford.library.core.debug.GLDebug;
 import net.lintford.library.core.entity.BaseEntity;
 import net.lintford.library.core.graphics.fonts.BitmapFontManager;
-import net.lintford.library.core.input.EventActionManager;
+import net.lintford.library.core.input.KeyEventActionManager;
 import net.lintford.library.core.input.InputManager;
 import net.lintford.library.core.maths.MathHelper;
 import net.lintford.library.core.rendering.RenderState;
@@ -44,8 +44,8 @@ import net.lintford.library.renderers.RendererManager;
 import net.lintford.library.screenmanager.ScreenManager;
 
 /**
- * The LintfordCore tracks the core state of an LWJGL application including a {@link DisplayManager}, {@link ResourceManager}, {@link CoreTime}, {@link Camera}, {@link HUD}, {@link InputManager} and {@link RenderState}. It also defines the behaviour
- * for creating an OpenGL window.
+ * The LintfordCore tracks the core state of an LWJGL application including a {@link DisplayManager}, {@link ResourceManager}, {@link CoreTime}, {@link Camera}, {@link HUD}, {@link InputManager} and {@link RenderState}.
+ * It also defines the behaviour for creating an OpenGL window.
  */
 public abstract class LintfordCore {
 
@@ -221,7 +221,8 @@ public abstract class LintfordCore {
 	}
 
 	/**
-	 * Returns the instance of {@link InputManager} which was created when the LWJGL window was created. InputState is updated per-frame and tracks user input from the mouse and keyboard. null is returned if the LWJGL window has not yet been created.
+	 * Returns the instance of {@link InputManager} which was created when the LWJGL window was created. InputState is updated per-frame and tracks user input from the mouse and keyboard. null is returned if the LWJGL
+	 * window has not yet been created.
 	 */
 	public InputManager input() {
 		return mInputState;
@@ -435,7 +436,7 @@ public abstract class LintfordCore {
 	/**
 	 * Allows the registration of game input actions and the respective key bindings.
 	 */
-	protected void onInitializeInputActions(EventActionManager eventActionManager) {
+	protected void onInitializeInputActions(KeyEventActionManager eventActionManager) {
 		eventActionManager.loadConfig();
 	}
 
@@ -486,7 +487,7 @@ public abstract class LintfordCore {
 				continue;
 			}
 
-			onHandleInput();
+// 			onHandleInput();
 
 			if (mCoreTime.accumulatedElapsedTimeMilli > mCoreTime.maxElapsedTimeMilli)
 				mCoreTime.accumulatedElapsedTimeMilli = mCoreTime.maxElapsedTimeMilli;
@@ -504,6 +505,8 @@ public abstract class LintfordCore {
 
 					mCoreTime.totalTimeMilli += mCoreTime.targetElapsedTimeMilli;
 					mCoreTime.accumulatedElapsedTimeMilli -= mCoreTime.targetElapsedTimeMilli;
+
+					onHandleInput();
 
 					onUpdate();
 

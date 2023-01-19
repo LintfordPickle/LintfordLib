@@ -6,7 +6,7 @@ import java.util.Map;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.options.reader.IniFile;
 
-public class EventActionManager extends IniFile {
+public class KeyEventActionManager extends IniFile {
 
 	// --------------------------------------
 	// Constants
@@ -17,13 +17,13 @@ public class EventActionManager extends IniFile {
 	// --------------------------------------
 
 	private InputManager mInputManager;
-	private final Map<Integer, EventAction> mEventActionMap = new HashMap<>();
+	private final Map<Integer, KeyEventAction> mEventActionMap = new HashMap<>();
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
 
-	public EventAction getEventActionByUid(int eventActionUid) {
+	public KeyEventAction getEventActionByUid(int eventActionUid) {
 		return mEventActionMap.get(eventActionUid);
 	}
 
@@ -31,7 +31,7 @@ public class EventActionManager extends IniFile {
 	// Constructor
 	// --------------------------------------
 
-	public EventActionManager(InputManager inputManager, String configFilename) {
+	public KeyEventActionManager(InputManager inputManager, String configFilename) {
 		super(configFilename);
 
 		mInputManager = inputManager;
@@ -45,7 +45,7 @@ public class EventActionManager extends IniFile {
 		if (mEventActionMap.get(eventActionUid) != null)
 			return; // already taken
 
-		final var lNewEventAction = new EventAction(eventActionUid, defaultKeyCode);
+		final var lNewEventAction = new KeyEventAction(eventActionUid, defaultKeyCode);
 		mEventActionMap.put(eventActionUid, lNewEventAction);
 
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "Registered new event action " + eventActionUid + " to key code [" + defaultKeyCode + "]");
@@ -81,14 +81,13 @@ public class EventActionManager extends IniFile {
 	public void loadConfig() {
 		super.loadConfig();
 
-		// if no file exists, then do nothing
-		if (isEmpty()) {
+		if (isEmpty())
+			return;
 
-		} else {
-			for (var lKeyBindingEntry : mEventActionMap.entrySet()) {
-				final var lValue = getInt(lSectionName, Integer.toString(lKeyBindingEntry.getValue().eventActionUid()), lKeyBindingEntry.getValue().defaultBoundKeyCode());
-				lKeyBindingEntry.getValue().boundKeyCode(lValue);
-			}
+		// TODO: Does this work if the order of the keybinds changes (either in the file or in LintfordCore.onInitializeInputActions()) ?
+		for (var lKeyBindingEntry : mEventActionMap.entrySet()) {
+			final var lValue = getInt(lSectionName, Integer.toString(lKeyBindingEntry.getValue().eventActionUid()), lKeyBindingEntry.getValue().defaultBoundKeyCode());
+			lKeyBindingEntry.getValue().boundKeyCode(lValue);
 		}
 	}
 }

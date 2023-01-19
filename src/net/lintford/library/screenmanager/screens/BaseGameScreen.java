@@ -17,15 +17,15 @@ public abstract class BaseGameScreen extends Screen {
 	// --------------------------------------
 
 	protected ICamera mGameCamera;
-	protected LogicialCounter mGameUpdateLogicalCounter;
+	protected LogicialCounter mGameInputLogicalCounter;
 	protected LogicialCounter mGameDrawLogicalCounter;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
 
-	public LogicialCounter updateCounter() {
-		return mGameUpdateLogicalCounter;
+	public LogicialCounter inputCounter() {
+		return mGameInputLogicalCounter;
 	}
 
 	public LogicialCounter drawCounter() {
@@ -45,7 +45,7 @@ public abstract class BaseGameScreen extends Screen {
 
 		mSingletonScreen = true;
 
-		mGameUpdateLogicalCounter = new LogicialCounter();
+		mGameInputLogicalCounter = new LogicialCounter();
 		mGameDrawLogicalCounter = new LogicialCounter();
 	}
 
@@ -59,10 +59,8 @@ public abstract class BaseGameScreen extends Screen {
 
 		final var lCore = screenManager().core();
 		final var lControllerManager = lCore.controllerManager();
-		createControllers(lControllerManager);
-		createRenderers(lCore);
 
-		new GameRendererController(mScreenManager.core().controllerManager(), mRendererManager, entityGroupUid());
+		new GameRendererController(lControllerManager, mRendererManager, entityGroupUid());
 		mGameCamera = mScreenManager.core().setNewGameCamera(mGameCamera);
 
 		createControllers(lControllerManager);
@@ -81,10 +79,10 @@ public abstract class BaseGameScreen extends Screen {
 	}
 
 	@Override
-	public void update(LintfordCore core, boolean otherScreenHasFocus, boolean coveredByOtherScreen) {
-		super.update(core, otherScreenHasFocus, coveredByOtherScreen);
+	public void handleInput(LintfordCore core) {
+		super.handleInput(core);
 
-		mGameUpdateLogicalCounter.incrementCounter();
+		mGameInputLogicalCounter.incrementCounter();
 	}
 
 	@Override

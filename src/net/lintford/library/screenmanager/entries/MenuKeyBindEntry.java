@@ -7,7 +7,7 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.textures.CoreTextureNames;
-import net.lintford.library.core.input.EventAction;
+import net.lintford.library.core.input.KeyEventAction;
 import net.lintford.library.core.input.IKeyInputCallback;
 import net.lintford.library.core.input.InputHelper;
 import net.lintford.library.screenmanager.MenuEntry;
@@ -33,7 +33,7 @@ public class MenuKeyBindEntry extends MenuEntry implements IKeyInputCallback {
 	private String mBoundKeyText;
 	private float mPadding = 15f;
 	private boolean mShow;
-	private final EventAction mEventAction;
+	private final KeyEventAction mEventAction;
 	private boolean mBindingKey;
 	private float mCaretFlashTimer;
 
@@ -41,7 +41,7 @@ public class MenuKeyBindEntry extends MenuEntry implements IKeyInputCallback {
 	// Properties
 	// --------------------------------------
 
-	public EventAction eventAction() {
+	public KeyEventAction eventAction() {
 		return mEventAction;
 	}
 
@@ -75,7 +75,7 @@ public class MenuKeyBindEntry extends MenuEntry implements IKeyInputCallback {
 	// Constructor
 	// --------------------------------------
 
-	public MenuKeyBindEntry(ScreenManager screenManager, BaseLayout parentLayout, EventAction eventAction) {
+	public MenuKeyBindEntry(ScreenManager screenManager, BaseLayout parentLayout, KeyEventAction eventAction) {
 		super(screenManager, parentLayout, "");
 
 		mEventAction = eventAction;

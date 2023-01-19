@@ -9,7 +9,7 @@ import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.batching.SpriteBatch;
 import net.lintford.library.core.graphics.batching.TextureBatchPCT;
 import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
-import net.lintford.library.core.input.IProcessMouseInput;
+import net.lintford.library.core.input.mouse.IProcessMouseInput;
 import net.lintford.library.core.maths.Vector2f;
 import net.lintford.library.core.time.TimeSpan;
 import net.lintford.library.renderers.RendererManager;

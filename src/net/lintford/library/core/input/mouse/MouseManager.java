@@ -8,7 +8,6 @@ import org.lwjgl.glfw.GLFWMouseButtonCallback;
 import org.lwjgl.glfw.GLFWScrollCallback;
 
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.input.IProcessMouseInput;
 import net.lintford.library.core.maths.Vector2f;
 
 public class MouseManager {

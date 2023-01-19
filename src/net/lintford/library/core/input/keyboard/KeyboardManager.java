@@ -8,7 +8,6 @@ import org.lwjgl.glfw.GLFWKeyCallback;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.debug.Debug;
-import net.lintford.library.core.input.IBufferedTextInputCallback;
 import net.lintford.library.core.input.IKeyInputCallback;
 
 public class KeyboardManager {

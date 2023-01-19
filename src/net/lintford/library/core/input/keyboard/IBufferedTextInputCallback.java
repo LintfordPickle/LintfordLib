@@ -1,4 +1,4 @@
-package net.lintford.library.core.input;
+package net.lintford.library.core.input.keyboard;
 
 public interface IBufferedTextInputCallback {
 
