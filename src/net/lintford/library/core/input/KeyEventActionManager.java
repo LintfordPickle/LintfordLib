@@ -59,6 +59,14 @@ public class KeyEventActionManager extends IniFile {
 		return mInputManager.keyboard().isKeyDown(lEventAction.getBoundKeyCode());
 	}
 
+	public boolean getCurrentControlActionStateTimed(int eventActionUid) {
+		final var lEventAction = mEventActionMap.get(eventActionUid);
+		if (lEventAction == null)
+			return false;
+
+		return mInputManager.keyboard().isKeyDownTimed(lEventAction.getBoundKeyCode());
+	}
+
 	// --------------------------------------
 	// Ini-File
 	// --------------------------------------
