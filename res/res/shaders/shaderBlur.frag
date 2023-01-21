@@ -2,8 +2,7 @@
 // Implements a 2-pass 9-tap gausian blur
 //
 
-
-#version 330 core
+#version 150 core
 
 uniform sampler2D sceneSampler;
 
@@ -46,5 +45,5 @@ void main() {
     finalColor += texture(sceneSampler, vec2(tc.x + 3.0*blur*hstep, tc.y + 3.0*blur*vstep)) * 0.0540540541;
     finalColor += texture(sceneSampler, vec2(tc.x + 4.0*blur*hstep, tc.y + 4.0*blur*vstep)) * 0.0162162162;
 	
-	outColor = finalColor;// vec4(1,0,0,1);
+	outColor = finalColor;
 }

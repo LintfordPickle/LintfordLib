@@ -2,6 +2,7 @@ package net.lintford.library.core.graphics.shaders;
 
 import static org.lwjgl.opengl.GL11.GL_FALSE;
 import static org.lwjgl.opengl.GL20.GL_COMPILE_STATUS;
+import static org.lwjgl.opengl.GL20.GL_INFO_LOG_LENGTH;
 import static org.lwjgl.opengl.GL20.GL_FRAGMENT_SHADER;
 import static org.lwjgl.opengl.GL20.GL_LINK_STATUS;
 import static org.lwjgl.opengl.GL20.GL_VERTEX_SHADER;
@@ -131,21 +132,18 @@ public abstract class Shader {
 		glCompileShader(lVertID);
 		if (glGetShaderi(lVertID, GL_COMPILE_STATUS) == GL_FALSE) {
 			Debug.debugManager().logger().e(DEBUG_TAG_VERT_NAME, "Failed to compile vertex shader!" + mVertPathname);
-			Debug.debugManager().logger().e(DEBUG_TAG_VERT_NAME, glGetShaderInfoLog(lVertID, 2048));
+			final int logSize = glGetShaderi(lFragID, GL_INFO_LOG_LENGTH);
+			Debug.debugManager().logger().e(DEBUG_TAG_VERT_NAME, glGetShaderInfoLog(lVertID, logSize));
 			throw new RuntimeException("Failed to compile vertex shader (" + GL_VERTEX_SHADER + ")");
-
-		} else {
-			Debug.debugManager().logger().e(getClass().getSimpleName(), glGetShaderInfoLog(lVertID, 2048));
 		}
 
 		glCompileShader(lFragID);
 		if (glGetShaderi(lFragID, GL_COMPILE_STATUS) == GL_FALSE) {
 			Debug.debugManager().logger().e(DEBUG_TAG_FRAG_NAME, "Failed to compile fragment shader!" + mFragPathname);
-			Debug.debugManager().logger().e(DEBUG_TAG_FRAG_NAME, glGetShaderInfoLog(lFragID, 2048));
+			final int logSize = glGetShaderi(lFragID, GL_INFO_LOG_LENGTH);
+			Debug.debugManager().logger().e(DEBUG_TAG_FRAG_NAME, glGetShaderInfoLog(lFragID, logSize));
 
 			throw new RuntimeException("Failed to compile fragment shader (" + GL_FRAGMENT_SHADER + ")");
-		} else {
-			Debug.debugManager().logger().e(getClass().getSimpleName(), glGetShaderInfoLog(lFragID, 2048));
 		}
 
 		glAttachShader(lProgramID, lVertID);
