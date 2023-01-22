@@ -25,6 +25,7 @@ public abstract class ActionEventController<T extends IActionFrame> extends Base
 		public final ActionEventManager actionEventManager;
 
 		public final boolean playbackAvailable;
+		public boolean isTempFrameConsumed;
 
 		public final T tempFrameInput; // last 'read' frame, not necessarily current yet
 		public final T lastActionEvents; // last frame
@@ -39,6 +40,8 @@ public abstract class ActionEventController<T extends IActionFrame> extends Base
 			tempFrameInput = createActionFrameInstance();
 			lastActionEvents = createActionFrameInstance();
 			currentActionEvents = createActionFrameInstance();
+
+			isTempFrameConsumed = true; // force first read
 		}
 	}
 
@@ -56,8 +59,6 @@ public abstract class ActionEventController<T extends IActionFrame> extends Base
 	// ---------------------------------------------
 	// Variables
 	// ---------------------------------------------
-
-	protected boolean mIsTempFrameConsumed;
 
 	private final ActionEventPlayer mDefaultPlayer;
 	private final List<ActionEventPlayer> mActionEventPlayers = new ArrayList<>();
@@ -110,7 +111,6 @@ public abstract class ActionEventController<T extends IActionFrame> extends Base
 
 		mDefaultPlayer = new ActionEventPlayer(PlaybackMode.Normal, 0, 0);
 		mActionEventPlayers.add(mDefaultPlayer);
-		mIsTempFrameConsumed = true;
 
 		mLogicialCounter = frameCounter;
 	}
@@ -137,21 +137,26 @@ public abstract class ActionEventController<T extends IActionFrame> extends Base
 
 			switch (actionManager.mode()) {
 			case Playback:
-				if (mIsTempFrameConsumed) {
+				// TODO: Handle the case of two updates per frame (custom + input)
+				// boolean checkOneMoreFrame = true;
+
+				if (actionPlayer.isTempFrameConsumed) {
 					// we need another frame, if available
 					if (!actionManager.endOfFileReached()) {
 						readNextFrame(actionManager.dataByteBuffer(), actionPlayer);
 					}
+
+					actionPlayer.isTempFrameConsumed = false;
 				}
 
-				// is it time to act upon the new frame's content?
 				if (mLogicialCounter.getCounter() == actionPlayer.tempFrameInput.tickNumber()) {
 					actionPlayer.currentActionEvents.copy(actionPlayer.tempFrameInput);
 
 					mCurrentTick = actionPlayer.currentActionEvents.tickNumber();
 
 					actionPlayer.tempFrameInput.reset();
-					mIsTempFrameConsumed = true;
+					actionPlayer.isTempFrameConsumed = true;
+
 				}
 				break;
 
@@ -202,6 +207,12 @@ public abstract class ActionEventController<T extends IActionFrame> extends Base
 		}
 	}
 
+	public void saveCustomFrame(LintfordCore core, int playerUid) {
+		final var actionPlayer = mActionEventPlayers.get(playerUid);
+		final var actionManager = actionPlayer.actionEventManager;
+		saveCustomActionEvents(actionPlayer.currentActionEvents, actionManager.dataByteBuffer());
+	}
+
 	// ---------------------------------------------
 	// Methods
 	// ---------------------------------------------
@@ -211,6 +222,8 @@ public abstract class ActionEventController<T extends IActionFrame> extends Base
 	protected abstract void readHeaderBuffer(ByteBuffer headerBuffer);
 
 	protected abstract void saveActionEvents(T frame, ByteBuffer dataBuffer);
+
+	protected abstract void saveCustomActionEvents(T frame, ByteBuffer dataBuffer);
 
 	protected abstract void saveEndOfFile(T frame, ByteBuffer dataBuffer);
 
