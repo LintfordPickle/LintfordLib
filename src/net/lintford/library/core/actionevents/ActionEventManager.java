@@ -19,9 +19,9 @@ public class ActionEventManager {
 
 	// @formatter:off
 	public enum PlaybackMode {
-		Normal,   // manager is inactive
-		Record, // manager records input and state and stores into file
-		Read    // manager provides data from input file
+		Normal,   // The manager is largely inactive, providing neither playback of a file nor recording of actions to a file.
+		Record,   // The manager actively records input and state and stores into the file (mFilename)
+		Playback      // The manager actively reads input and state and exposes the data in the headerByteBuffer and dataByteBuffer.
 	}
 	// @formatter:on
 
@@ -29,66 +29,64 @@ public class ActionEventManager {
 	// Variables
 	// ---------------------------------------------
 
-	private PlaybackMode mPlaybackMode = PlaybackMode.Normal;
+	private final PlaybackMode mPlaybackMode;
 	private String mFilename;
 
-	protected ByteBuffer mHeaderByteBuffer;
-	protected ByteBuffer mDataByteBuffer;
+	protected final ByteBuffer mHeaderByteBuffer;
+	protected final ByteBuffer mDataByteBuffer;
 
 	// ---------------------------------------------
 	// Properties
 	// --------------------------------------------
 
+	/** Returns the header bytebuffer for the {@link ActionEventManager}. If the ActionEventManager was created with mode Normal, then this will return null. */
 	public ByteBuffer headerByteBuffer() {
 		return mHeaderByteBuffer;
 	}
 
+	/** Returns the data (actions) bytebuffer for the {@link ActionEventManager}. If the ActionEventManager was created with mode Normal, then this will return null. */
 	public ByteBuffer dataByteBuffer() {
 		return mDataByteBuffer;
 	}
 
+	/**
+	 * Returns the mode designated during creation of this {@link ActionEventManager}. If the mode is {@link PlaybackMode.Record} or {@link PlaybackMode.Read}, then this manager will have appropriate byteBuffers.
+	 */
 	public PlaybackMode mode() {
 		return mPlaybackMode;
 	}
 
 	/** Returns true if we are in READ mode and the end of the input file has been reached. */
 	public boolean endOfFileReached() {
-		return mPlaybackMode == PlaybackMode.Read && mDataByteBuffer.position() == mDataByteBuffer.limit();
+		return mPlaybackMode == PlaybackMode.Playback && mDataByteBuffer.position() == mDataByteBuffer.limit();
 	}
 
 	// ---------------------------------------------
 	// Constructor
 	// ---------------------------------------------
 
-	public ActionEventManager(int headerSizeInBytes, int dataSizeInBytes) {
-		mHeaderByteBuffer = MemoryUtil.memAlloc(headerSizeInBytes);
-		mDataByteBuffer = MemoryUtil.memAlloc(dataSizeInBytes);
+	public ActionEventManager(PlaybackMode mode, int headerSizeInBytes, int dataSizeInBytes) {
+		mPlaybackMode = mode;
+
+		if (mPlaybackMode != PlaybackMode.Normal) {
+			mHeaderByteBuffer = MemoryUtil.memAlloc(headerSizeInBytes);
+			mDataByteBuffer = MemoryUtil.memAlloc(dataSizeInBytes);
+		} else {
+			mHeaderByteBuffer = null;
+			mDataByteBuffer = null;
+		}
 	}
 
 	// ---------------------------------------------
 	// Methods
 	// ---------------------------------------------
 
-	public void setNormalMode() {
-		mPlaybackMode = PlaybackMode.Normal;
+	public void filename(String filename) {
+		mFilename = filename;
 	}
 
-	public void setRecordingMode(String filename) {
-		if (mPlaybackMode != PlaybackMode.Normal)
-			return;
-
-		mFilename = filename;
-		mPlaybackMode = PlaybackMode.Record;
-	}
-
-	public void setPlaybackMode(String filename) {
-		if (mPlaybackMode != PlaybackMode.Normal)
-			return;
-
-		mFilename = filename;
-		if (loadFromFile()) {
-			mPlaybackMode = PlaybackMode.Read;
-		}
+	public String filename() {
+		return mFilename;
 	}
 
 	// ---- FILE
@@ -123,8 +121,8 @@ public class ActionEventManager {
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "Saved input to file: " + mFilename);
 	}
 
-	private boolean loadFromFile() {
-		var file = new File(mFilename);
+	public boolean loadFromFile(String filename) {
+		var file = new File(filename);
 
 		if (!file.exists() || file.isDirectory())
 			return false;

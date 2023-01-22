@@ -1,17 +1,46 @@
 package net.lintford.library.controllers.actionevents;
 
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
 
 import net.lintford.library.controllers.BaseController;
 import net.lintford.library.controllers.core.ControllerManager;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.actionevents.ActionEventManager;
-import net.lintford.library.core.actionevents.IActionFrame;
 import net.lintford.library.core.actionevents.ActionEventManager.PlaybackMode;
+import net.lintford.library.core.actionevents.IActionFrame;
 import net.lintford.library.core.input.mouse.IProcessMouseInput;
 import net.lintford.library.core.time.LogicialCounter;
 
 public abstract class ActionEventController<T extends IActionFrame> extends BaseController implements IProcessMouseInput {
+
+	// ---------------------------------------------
+	// Inner-Class
+	// ---------------------------------------------
+
+	public class ActionEventPlayer {
+		public final int entityUid;
+
+		public final ActionEventManager actionEventManager;
+
+		public final boolean playbackAvailable;
+
+		public final T tempFrameInput; // last 'read' frame, not necessarily current yet
+		public final T lastActionEvents; // last frame
+		public final T currentActionEvents; // current frame
+
+		public ActionEventPlayer(PlaybackMode mode, int headerSize, int inputSize) {
+			entityUid = getNewActionManagerUid();
+			playbackAvailable = headerSize >= 0 && inputSize >= 0;
+
+			actionEventManager = new ActionEventManager(mode, headerSize, inputSize);
+
+			tempFrameInput = createActionFrameInstance();
+			lastActionEvents = createActionFrameInstance();
+			currentActionEvents = createActionFrameInstance();
+		}
+	}
 
 	// ---------------------------------------------
 	// Constants
@@ -21,43 +50,54 @@ public abstract class ActionEventController<T extends IActionFrame> extends Base
 
 	protected static final float MOUSE_CLICK_COOLDOWN_TIME = 200; // ms
 
+	// This ActionEventPlayer is created by default and provides the action events without playback or recording enabled.
+	public static final int DEFAULT_PLAYER_UID = 0;
+
 	// ---------------------------------------------
 	// Variables
 	// ---------------------------------------------
 
-	protected final T mTempFrameInput; // last 'read' frame, not necessarily current yet
-	protected final T mLastActionEvents; // last frame
-	protected final T mCurrentActionEvents; // current frame
-
 	protected boolean mIsTempFrameConsumed;
 
-	private ActionEventManager mActionEventManager;
+	private final ActionEventPlayer mDefaultPlayer;
+	private final List<ActionEventPlayer> mActionEventPlayers = new ArrayList<>();
+
 	protected LogicialCounter mLogicialCounter;
 	protected float mMouseClickTimer;
 
 	protected int mTotalTicks;
 	protected int mCurrentTick;
 
+	private int mActionManagerCounter;
+
+	public int getNewActionManagerUid() {
+		return mActionManagerCounter++;
+	}
+
 	// ---------------------------------------------
 	// Properties
 	// ---------------------------------------------
 
-	public ActionEventManager actionEventManager() {
-		return mActionEventManager;
+	public ActionEventPlayer defaultPlayer() {
+		return mDefaultPlayer;
 	}
 
-	public T currentInput() {
-		return mCurrentActionEvents;
+	public ActionEventPlayer actionEventPlayer(int uid) {
+		final int numActionManagers = mActionEventPlayers.size();
+		for (int i = 0; i < numActionManagers; i++) {
+			final var actionManager = mActionEventPlayers.get(i);
+			if (actionManager.entityUid == uid) {
+				return actionManager;
+
+			}
+		}
+
+		return null;
 	}
 
-	/** this indicates that we have read the last set of bytes from the input file (not that the last control has been played back) */
-	public boolean reachedLastFrame() {
-		final var lRenderedLastFrame = mLogicialCounter.getCounter() >= mTotalTicks;
-		return mActionEventManager.mode() == PlaybackMode.Read && lRenderedLastFrame;
-	}
-
-	public boolean reachedEndOfFile() {
-		return mActionEventManager.endOfFileReached();
+	public boolean reachedEndOfFile(int actionManagerUid) {
+		final var actionManager = actionEventPlayer(actionManagerUid);
+		return actionManager.actionEventManager.endOfFileReached();
 	}
 
 	// ---------------------------------------------
@@ -68,18 +108,16 @@ public abstract class ActionEventController<T extends IActionFrame> extends Base
 	public ActionEventController(ControllerManager controllerManager, LogicialCounter frameCounter, int entityGroupUid) {
 		super(controllerManager, CONTROLLER_NAME, entityGroupUid);
 
+		mDefaultPlayer = new ActionEventPlayer(PlaybackMode.Normal, 0, 0);
+		mActionEventPlayers.add(mDefaultPlayer);
 		mIsTempFrameConsumed = true;
 
-		mTempFrameInput = createActionFrameInstance();
-		mLastActionEvents = createActionFrameInstance();
-		mCurrentActionEvents = createActionFrameInstance();
-
 		mLogicialCounter = frameCounter;
-		mActionEventManager = createActionEventManager();
-
 	}
 
-	protected abstract ActionEventManager createActionEventManager();
+	protected abstract int getHeaderSizeInBytes();
+
+	protected abstract int getInputSizeInBytes();
 
 	protected abstract T createActionFrameInstance();
 
@@ -92,61 +130,75 @@ public abstract class ActionEventController<T extends IActionFrame> extends Base
 
 		mMouseClickTimer -= core.gameTime().elapsedTimeMilli();
 
-		switch (mActionEventManager.mode()) {
-		case Read:
-			if (mIsTempFrameConsumed) {
-				// we need another frame, if available
-				if (!mActionEventManager.endOfFileReached()) {
-					readNextFrame(mActionEventManager.dataByteBuffer());
+		final int numActionManagers = mActionEventPlayers.size();
+		for (int i = 0; i < numActionManagers; i++) {
+			final var actionPlayer = mActionEventPlayers.get(i);
+			final var actionManager = actionPlayer.actionEventManager;
+
+			switch (actionManager.mode()) {
+			case Playback:
+				if (mIsTempFrameConsumed) {
+					// we need another frame, if available
+					if (!actionManager.endOfFileReached()) {
+						readNextFrame(actionManager.dataByteBuffer(), actionPlayer);
+					}
 				}
+
+				// is it time to act upon the new frame's content?
+				if (mLogicialCounter.getCounter() == actionPlayer.tempFrameInput.tickNumber()) {
+					actionPlayer.currentActionEvents.copy(actionPlayer.tempFrameInput);
+
+					mCurrentTick = actionPlayer.currentActionEvents.tickNumber();
+
+					actionPlayer.tempFrameInput.reset();
+					mIsTempFrameConsumed = true;
+				}
+				break;
+
+			case Record:
+
+				actionPlayer.lastActionEvents.copy(actionPlayer.currentActionEvents);
+				actionPlayer.currentActionEvents.reset();
+				actionPlayer.currentActionEvents.tickNumber(mLogicialCounter.getCounter());
+
+				updateInputActionEvents(core, actionPlayer);
+
+				if (actionPlayer.currentActionEvents.hasChanges())
+					saveActionEvents(actionPlayer.currentActionEvents, actionManager.dataByteBuffer());
+
+				break;
+
+			default:
+			case Normal:
+
+				actionPlayer.lastActionEvents.copy(actionPlayer.currentActionEvents);
+				actionPlayer.currentActionEvents.reset();
+				actionPlayer.currentActionEvents.tickNumber(mLogicialCounter.getCounter());
+
+				updateInputActionEvents(core, actionPlayer);
+
+				break;
 			}
-
-			// is it time to act upon the new frame's content?
-			if (mLogicialCounter.getCounter() == mTempFrameInput.tickNumber()) { // TODO: or bigger maybe?
-				mCurrentActionEvents.copy(mTempFrameInput);
-
-				mCurrentTick = mCurrentActionEvents.tickNumber();
-
-				mTempFrameInput.reset();
-				mIsTempFrameConsumed = true;
-			}
-			break;
-
-		case Record:
-
-			mLastActionEvents.copy(mCurrentActionEvents);
-			mCurrentActionEvents.reset();
-			mCurrentActionEvents.tickNumber(mLogicialCounter.getCounter());
-
-			updateInputActionEvents(core);
-
-			if (mCurrentActionEvents.hasChanges())
-				saveActionEvents(mCurrentActionEvents, mActionEventManager.dataByteBuffer());
-
-			break;
-
-		default:
-		case Normal:
-
-			mLastActionEvents.copy(mCurrentActionEvents);
-			mCurrentActionEvents.reset();
-			mCurrentActionEvents.tickNumber(mLogicialCounter.getCounter());
-
-			updateInputActionEvents(core);
-
-			break;
 		}
 
 		super.update(core);
 	}
 
 	public void onExitingGame() {
-		if (mActionEventManager.mode() == PlaybackMode.Record) {
-			mCurrentActionEvents.tickNumber(mLogicialCounter.getCounter());
+		// save any recorders into their files
+		final int numActionPlayers = mActionEventPlayers.size();
+		for (int i = 0; i < numActionPlayers; i++) {
+			final var actionPlayer = mActionEventPlayers.get(i);
+			final var actionManager = actionPlayer.actionEventManager;
 
-			saveEndOfFile(mCurrentActionEvents, mActionEventManager.dataByteBuffer());
-			saveHeaderToBuffer(mCurrentActionEvents, mActionEventManager.headerByteBuffer());
-			mActionEventManager.saveToFile();
+			if (actionPlayer.actionEventManager.mode() == PlaybackMode.Record) {
+				actionPlayer.currentActionEvents.tickNumber(mLogicialCounter.getCounter());
+
+				saveEndOfFile(actionPlayer.currentActionEvents, actionManager.dataByteBuffer());
+				saveHeaderToBuffer(actionPlayer.currentActionEvents, actionManager.headerByteBuffer());
+
+				actionManager.saveToFile();
+			}
 		}
 	}
 
@@ -162,21 +214,28 @@ public abstract class ActionEventController<T extends IActionFrame> extends Base
 
 	protected abstract void saveEndOfFile(T frame, ByteBuffer dataBuffer);
 
-	protected abstract void readNextFrame(ByteBuffer dataBuffer);
+	protected abstract void readNextFrame(ByteBuffer dataBuffer, ActionEventPlayer player);
 
-	protected abstract void updateInputActionEvents(LintfordCore core);
+	protected abstract void updateInputActionEvents(LintfordCore core, ActionEventPlayer player);
 
 	public void setNormalMode() {
-		mActionEventManager.setNormalMode();
+
 	}
 
-	public void setRecordingMode(String filename) {
-		mActionEventManager.setRecordingMode(filename);
+	public int setActionRecorder(String filename) {
+		final var lNewActionEventPlayer = new ActionEventPlayer(PlaybackMode.Record, getHeaderSizeInBytes(), getInputSizeInBytes());
+		lNewActionEventPlayer.actionEventManager.filename(filename);
+		mActionEventPlayers.add(lNewActionEventPlayer);
+
+		return lNewActionEventPlayer.entityUid;
 	}
 
-	public void setPlaybackMode(String filename) {
-		mActionEventManager.setPlaybackMode(filename);
-		readHeaderBuffer(mActionEventManager.headerByteBuffer());
+	public int setActionPlayback(String filename) {
+		final var lNewActionEventPlayer = new ActionEventPlayer(PlaybackMode.Playback, getHeaderSizeInBytes(), getInputSizeInBytes());
+		lNewActionEventPlayer.actionEventManager.loadFromFile(filename);
+		mActionEventPlayers.add(lNewActionEventPlayer);
+
+		return lNewActionEventPlayer.entityUid;
 	}
 
 	// ---------------------------------------------

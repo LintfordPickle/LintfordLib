@@ -383,6 +383,10 @@ public class DisplayManager extends IniFile {
 
 		if (mDisplaySettings.fullscreen()) {
 			long lNewWindowID = glfwCreateWindow(mDisplaySettings.windowWidth(), mDisplaySettings.windowHeight(), gameInfo.windowTitle(), mDisplaySettings.monitorIndex(), mMasterWindowId);
+			if (lNewWindowID == NULL) {
+				throw new IllegalStateException("Failed to create the GLFW window");
+			}
+
 			glfwDestroyWindow(mMasterWindowId);
 
 			mMasterWindowId = lNewWindowID;
@@ -486,8 +490,8 @@ public class DisplayManager extends IniFile {
 	}
 
 	/**
-	 * This line is critical for LWJGL's interoperation with GLFW's OpenGL context, or any context that is managed externally. LWJGL detects the context that is current in the current thread, creates the GLCapabilities instance and makes the OpenGL
-	 * bindings available for use.
+	 * This line is critical for LWJGL's interoperation with GLFW's OpenGL context, or any context that is managed externally. LWJGL detects the context that is current in the current thread, creates the GLCapabilities
+	 * instance and makes the OpenGL bindings available for use.
 	 */
 	public void createGlCompatiblities() {
 		GL.createCapabilities();
@@ -611,7 +615,8 @@ public class DisplayManager extends IniFile {
 
 		// TODO: Display toast to the user than an unsupported resolution was saved
 
-		Debug.debugManager().logger().w(getClass().getSimpleName(), "Non-standard resolution found (" + lLookingForWidth + "," + lLookingForHeight + ")! Defaulting back to " + mDisplaySettings.windowWidth() + "," + mDisplaySettings.windowHeight());
+		Debug.debugManager().logger().w(getClass().getSimpleName(),
+				"Non-standard resolution found (" + lLookingForWidth + "," + lLookingForHeight + ")! Defaulting back to " + mDisplaySettings.windowWidth() + "," + mDisplaySettings.windowHeight());
 	}
 
 	// --------------------------------------
