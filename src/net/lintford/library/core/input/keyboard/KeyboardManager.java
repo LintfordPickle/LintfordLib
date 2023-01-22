@@ -16,6 +16,8 @@ public class KeyboardManager {
 	// Inner-Classes
 	// --------------------------------------
 
+	// TODO: The timer in the KeyboardManager class is a per-class timer (and not per-key). Pressing two keys simultaneously won't work.
+
 	public class KeyCallback extends GLFWKeyCallback {
 		@Override
 		public void invoke(long windowUid, int key, int scanCode, int action, int mods) {

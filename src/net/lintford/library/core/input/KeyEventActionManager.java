@@ -1,8 +1,11 @@
 package net.lintford.library.core.input;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.options.reader.IniFile;
 
@@ -17,7 +20,9 @@ public class KeyEventActionManager extends IniFile {
 	// --------------------------------------
 
 	private InputManager mInputManager;
+
 	private final Map<Integer, KeyEventAction> mEventActionMap = new HashMap<>();
+	private final List<KeyEventAction> mUpdateActionList = new ArrayList<>();
 
 	// --------------------------------------
 	// Properties
@@ -33,8 +38,25 @@ public class KeyEventActionManager extends IniFile {
 
 	public KeyEventActionManager(InputManager inputManager, String configFilename) {
 		super(configFilename);
-
 		mInputManager = inputManager;
+	}
+
+	// --------------------------------------
+	// Core-Methods
+	// --------------------------------------
+
+	public void update(LintfordCore core) {
+		final var lDeltaTime = (float) core.appTime().elapsedTimeMilli();
+
+		// we pol the keyboard once, so the individual action players don't separately poll the keyboard (and consume the timers etc.)
+		final int lNumEventActions = mUpdateActionList.size();
+		for (int i = 0; i < lNumEventActions; i++) {
+			final var lAction = mUpdateActionList.get(i);
+			final var lIsKeyDown = mInputManager.keyboard().isKeyDownTimed(lAction.getBoundKeyCode());
+
+			lAction.incDownTimer(lDeltaTime);
+			lAction.isDown(lIsKeyDown);
+		}
 	}
 
 	// --------------------------------------
@@ -47,6 +69,7 @@ public class KeyEventActionManager extends IniFile {
 
 		final var lNewEventAction = new KeyEventAction(eventActionUid, defaultKeyCode);
 		mEventActionMap.put(eventActionUid, lNewEventAction);
+		mUpdateActionList.add(lNewEventAction);
 
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "Registered new event action " + eventActionUid + " to key code [" + defaultKeyCode + "]");
 	}
@@ -56,7 +79,7 @@ public class KeyEventActionManager extends IniFile {
 		if (lEventAction == null)
 			return false;
 
-		return mInputManager.keyboard().isKeyDown(lEventAction.getBoundKeyCode());
+		return lEventAction.isDown();
 	}
 
 	public boolean getCurrentControlActionStateTimed(int eventActionUid) {
@@ -64,7 +87,7 @@ public class KeyEventActionManager extends IniFile {
 		if (lEventAction == null)
 			return false;
 
-		return mInputManager.keyboard().isKeyDownTimed(lEventAction.getBoundKeyCode());
+		return lEventAction.isDownTimed();
 	}
 
 	// --------------------------------------

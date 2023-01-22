@@ -13,17 +13,18 @@ import net.lintford.library.core.actionevents.IActionFrame;
 import net.lintford.library.core.input.mouse.IProcessMouseInput;
 import net.lintford.library.core.time.LogicialCounter;
 
-public abstract class ActionEventController<T extends IActionFrame> extends BaseController implements IProcessMouseInput {
+public abstract class ActionEventController<T extends IActionFrame> extends BaseController {
 
 	// ---------------------------------------------
 	// Inner-Class
 	// ---------------------------------------------
 
-	public class ActionEventPlayer {
+	public class ActionEventPlayer implements IProcessMouseInput {
 		public final int entityUid;
 
 		public final ActionEventManager actionEventManager;
 
+		protected float mMouseClickTimer;
 		public final boolean playbackAvailable;
 		public boolean isTempFrameConsumed;
 
@@ -42,6 +43,21 @@ public abstract class ActionEventController<T extends IActionFrame> extends Base
 			currentActionEvents = createActionFrameInstance();
 
 			isTempFrameConsumed = true; // force first read
+		}
+
+		public void update(LintfordCore core) {
+			final var lDeltaTime = core.gameTime().elapsedTimeMilli();
+			mMouseClickTimer -= lDeltaTime;
+		}
+
+		@Override
+		public boolean isCoolDownElapsed() {
+			return mMouseClickTimer <= 0;
+		}
+
+		@Override
+		public void resetCoolDownTimer() {
+			mMouseClickTimer = MOUSE_CLICK_COOLDOWN_TIME;
 		}
 	}
 
@@ -64,7 +80,6 @@ public abstract class ActionEventController<T extends IActionFrame> extends Base
 	private final List<ActionEventPlayer> mActionEventPlayers = new ArrayList<>();
 
 	protected LogicialCounter mLogicialCounter;
-	protected float mMouseClickTimer;
 
 	protected int mTotalTicks;
 	protected int mCurrentTick;
@@ -127,16 +142,17 @@ public abstract class ActionEventController<T extends IActionFrame> extends Base
 
 	@Override
 	public void update(LintfordCore core) {
-
-		mMouseClickTimer -= core.gameTime().elapsedTimeMilli();
-
 		final int numActionManagers = mActionEventPlayers.size();
 		for (int i = 0; i < numActionManagers; i++) {
 			final var actionPlayer = mActionEventPlayers.get(i);
 			final var actionManager = actionPlayer.actionEventManager;
 
+			actionPlayer.update(core);
+
 			switch (actionManager.mode()) {
 			case Playback:
+				actionPlayer.currentActionEvents.reset();
+				
 				// TODO: Handle the case of two updates per frame (custom + input)
 				// boolean checkOneMoreFrame = true;
 
@@ -249,21 +265,6 @@ public abstract class ActionEventController<T extends IActionFrame> extends Base
 		mActionEventPlayers.add(lNewActionEventPlayer);
 
 		return lNewActionEventPlayer.entityUid;
-	}
-
-	// ---------------------------------------------
-	// Inherited-Methods (IProcessMouseInput)
-	// ---------------------------------------------
-
-	@Override
-	public boolean isCoolDownElapsed() {
-		return mMouseClickTimer <= 0;
-	}
-
-	@Override
-	public void resetCoolDownTimer() {
-		mMouseClickTimer = MOUSE_CLICK_COOLDOWN_TIME;
-
 	}
 
 }

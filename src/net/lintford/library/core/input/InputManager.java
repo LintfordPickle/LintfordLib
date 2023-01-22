@@ -73,6 +73,7 @@ public class InputManager {
 	public void update(LintfordCore core) {
 		mMouseManager.update(core);
 		mKeyboardManager.update(core);
+		mEventActionManager.update(core);
 	}
 
 	public void endUpdate() {
