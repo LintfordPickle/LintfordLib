@@ -81,6 +81,7 @@ public abstract class ActionEventController<T extends IActionFrame> extends Base
 
 	protected LogicialCounter mLogicialCounter;
 
+	// TODO: move these into the ActionEventPlayer class (we can have multiple recorders and players - so no one total time)
 	protected int mTotalTicks;
 	protected int mCurrentTick;
 
@@ -152,7 +153,7 @@ public abstract class ActionEventController<T extends IActionFrame> extends Base
 			switch (actionManager.mode()) {
 			case Playback:
 				actionPlayer.currentActionEvents.reset();
-				
+
 				// TODO: Handle the case of two updates per frame (custom + input)
 				// boolean checkOneMoreFrame = true;
 
@@ -251,7 +252,7 @@ public abstract class ActionEventController<T extends IActionFrame> extends Base
 
 	}
 
-	public int setActionRecorder(String filename) {
+	public int createActionRecorder(String filename) {
 		final var lNewActionEventPlayer = new ActionEventPlayer(PlaybackMode.Record, getHeaderSizeInBytes(), getInputSizeInBytes());
 		lNewActionEventPlayer.actionEventManager.filename(filename);
 		mActionEventPlayers.add(lNewActionEventPlayer);
@@ -259,7 +260,7 @@ public abstract class ActionEventController<T extends IActionFrame> extends Base
 		return lNewActionEventPlayer.entityUid;
 	}
 
-	public int setActionPlayback(String filename) {
+	public int createActionPlayback(String filename) {
 		final var lNewActionEventPlayer = new ActionEventPlayer(PlaybackMode.Playback, getHeaderSizeInBytes(), getInputSizeInBytes());
 		lNewActionEventPlayer.actionEventManager.loadFromFile(filename);
 		mActionEventPlayers.add(lNewActionEventPlayer);
