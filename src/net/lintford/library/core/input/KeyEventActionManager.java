@@ -52,7 +52,7 @@ public class KeyEventActionManager extends IniFile {
 		final int lNumEventActions = mUpdateActionList.size();
 		for (int i = 0; i < lNumEventActions; i++) {
 			final var lAction = mUpdateActionList.get(i);
-			final var lIsKeyDown = mInputManager.keyboard().isKeyDownTimed(lAction.getBoundKeyCode());
+			final var lIsKeyDown = mInputManager.keyboard().isKeyDown(lAction.getBoundKeyCode());
 
 			lAction.incDownTimer(lDeltaTime);
 			lAction.isDown(lIsKeyDown);
