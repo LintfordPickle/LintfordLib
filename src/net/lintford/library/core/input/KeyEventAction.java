@@ -49,7 +49,6 @@ public class KeyEventAction implements Serializable {
 		this.mIsDown = isDown;
 
 		if (isDown && mDownTimer > DOWN_TIMER_DELAY_MS) {
-			System.out.println("down timed");
 			mIsDownTimed = true;
 			mDownTimer = 0;
 		} else {
