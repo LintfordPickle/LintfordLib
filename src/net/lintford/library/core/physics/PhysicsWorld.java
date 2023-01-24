@@ -273,6 +273,17 @@ public class PhysicsWorld {
 
 			if (SAT.checkCollides(lBodyA, lBodyB, mContactManifold)) {
 
+				final var includeFilter = lBodyA.maskBits() != 0 && lBodyB.maskBits() != 0 && lBodyA.categoryBits() != 0 && lBodyB.categoryBits() != 0;
+				final var passedFilterCollision = !includeFilter || (lBodyA.maskBits() & lBodyB.categoryBits()) != 0 && (lBodyA.categoryBits() & lBodyB.maskBits()) != 0;
+
+				if (!passedFilterCollision) {
+
+					// TODO: Handle the case of sensor bodies
+
+					returnCollisionPair(lCollisionPair);
+					break;
+				}
+
 				for (int j = 0; j < lNumCallbacks; j++) {
 					mCollisionCallbackList.get(j).preContact(mContactManifold);
 				}

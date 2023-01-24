@@ -97,6 +97,9 @@ public class RigidBody extends PhysicsGridEntity {
 	private transient float mInertia;
 	private transient float mInvInertia;
 
+	private int mCategoryBit; // I'm a ..
+	private int mMaskBit;     // I collide with ...
+	
 	@SerializedName(value = "isStatic")
 	private boolean mIsStatic;
 
@@ -205,6 +208,22 @@ public class RigidBody extends PhysicsGridEntity {
 		return mArea;
 	}
 
+	public int maskBits() {
+		return mMaskBit;
+	}
+	
+	public void maskBits(int maskBits) {
+		mMaskBit = maskBits;
+	}
+	
+	public int categoryBits() {
+		return mCategoryBit;
+	}
+	
+	public void categoryBits(int categoryBits) {
+		mCategoryBit = categoryBits;
+	}
+	
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
