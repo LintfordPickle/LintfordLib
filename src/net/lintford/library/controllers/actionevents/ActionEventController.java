@@ -152,7 +152,6 @@ public abstract class ActionEventController<T extends IActionFrame> extends Base
 
 			switch (actionManager.mode()) {
 			case Playback:
-				actionPlayer.currentActionEvents.reset();
 
 				// TODO: Handle the case of two updates per frame (custom + input)
 				// boolean checkOneMoreFrame = true;
