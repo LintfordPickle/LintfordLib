@@ -27,6 +27,7 @@ public abstract class ActionEventController<T extends IActionFrame> extends Base
 		protected float mMouseClickTimer;
 		public final boolean playbackAvailable;
 		public boolean isTempFrameConsumed;
+		public boolean isPlayerControlled;
 
 		public final T tempFrameInput; // last 'read' frame, not necessarily current yet
 		public final T lastActionEvents; // last frame
@@ -94,6 +95,10 @@ public abstract class ActionEventController<T extends IActionFrame> extends Base
 	// ---------------------------------------------
 	// Properties
 	// ---------------------------------------------
+
+	public List<ActionEventPlayer> actionEventPlayers() {
+		return mActionEventPlayers;
+	}
 
 	public ActionEventPlayer defaultPlayer() {
 		return mDefaultPlayer;
