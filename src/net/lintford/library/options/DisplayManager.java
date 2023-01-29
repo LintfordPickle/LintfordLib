@@ -361,7 +361,9 @@ public class DisplayManager extends IniFile {
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_FALSE);
+		
+		// Remove all functionality marked as deprecated from the OpenGl context
+		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 		glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
 		glfwWindowHint(GLFW_DECORATED, GL_TRUE);
 		glfwWindowHint(GLFW_RESIZABLE, mDisplaySettings.resizeable() ? GL_TRUE : GL_FALSE);
