@@ -348,9 +348,10 @@ public class ScreenManager implements IInputClickedFocusManager {
 		Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("Added screen '%s'", screenToAdd.getClass().getSimpleName()));
 	}
 
-	private Screen getTopScreen() {
+	public Screen getTopScreen() {
 		if (mScreens == null || mScreens.size() == 0)
 			return null;
+
 		final int lScreenCount = mScreens.size();
 		for (int i = lScreenCount - 1; i >= 0; i--) {
 			if (mScreens.get(i).alwaysOnTop() == false)
