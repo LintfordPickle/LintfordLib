@@ -57,6 +57,8 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	protected FontUnit mMenuFont;
 	protected FontUnit mMenuFontBold;
 	protected FontUnit mMenuHeaderFont;
+	protected float mMenuScreenWidthScaleFactor;
+	protected float mMenuScreenHeightScaleFactor;
 
 	// --------------------------------------
 	// Properties
@@ -135,6 +137,9 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		mPaddingBottomNormalized = 0.f;
 		mPaddingLeftNormalized = 0.f;
 		mPaddingRightNormalized = 0.f;
+
+		mMenuScreenWidthScaleFactor = 1.f;
+		mMenuScreenHeightScaleFactor = 1.f;
 
 		mClickAction = new ClickAction();
 		mESCBackEnabled = true;
@@ -361,7 +366,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 		final int lLeftLayoutCount = layoutList.size();
 
-		final float lScreenContentWidth = lUIHUDStructureController.menuMainRectangle().width();
+		final float lScreenContentWidth = lUIHUDStructureController.menuMainRectangle().width() * mMenuScreenWidthScaleFactor;
 
 		final float lInnerPaddingW = INNER_PADDING_W * lUIHUDStructureController.gameCanvasWScaleFactor();
 		final float lInnerPaddingH = INNER_PADDING_H * lUIHUDStructureController.gameCanvasHScaleFactor();
@@ -403,7 +408,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 		// Set the layout Y and H
 		float lLayoutNewY = lUIHUDStructureController.menuMainRectangle().top() + mPaddingTopNormalized;
-		float lLayoutHeight = lUIHUDStructureController.menuMainRectangle().height() - mPaddingTopNormalized;
+		float lLayoutHeight = (lUIHUDStructureController.menuMainRectangle().height() - mPaddingTopNormalized) * mMenuScreenHeightScaleFactor;
 
 		// See how many layouts only take what they need
 		int lCountOfSharers = lLeftLayoutCount;
