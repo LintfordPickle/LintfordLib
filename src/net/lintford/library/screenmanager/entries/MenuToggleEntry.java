@@ -75,6 +75,9 @@ public class MenuToggleEntry extends MenuEntry {
 
 	@Override
 	public boolean handleInput(LintfordCore core) {
+		if (!mActiveUpdateDraw)
+			return false;
+
 		if (mHasFocus) {
 
 		} else {
@@ -111,6 +114,9 @@ public class MenuToggleEntry extends MenuEntry {
 
 	@Override
 	public void update(LintfordCore core, MenuScreen screen, boolean isSelected) {
+		if (!mActiveUpdateDraw)
+			return;
+
 		super.update(core, screen, isSelected);
 
 		final double lDeltaTime = core.appTime().elapsedTimeMilli() / 1000.;
@@ -122,6 +128,9 @@ public class MenuToggleEntry extends MenuEntry {
 
 	@Override
 	public void draw(LintfordCore core, Screen screen, boolean isSelected, float parentZDepth) {
+		if (!mActiveUpdateDraw)
+			return;
+
 		final var lParentScreen = mParentLayout.parentScreen;
 		final var lTextBoldFont = lParentScreen.fontBold();
 		final float lUiTextScale = lParentScreen.uiTextScale();

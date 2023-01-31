@@ -121,7 +121,7 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 
 	@Override
 	public boolean handleInput(LintfordCore core) {
-		if (!mEnabled)
+		if (!mEnabled || !mActiveUpdateDraw)
 			return false;
 
 		boolean lResult = super.handleInput(core);
@@ -134,6 +134,9 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 	@Override
 	public void update(LintfordCore core, MenuScreen screen, boolean isSelected) {
 		super.update(core, screen, isSelected);
+
+		if (!mActiveUpdateDraw)
+			return;
 
 		if (!mEnabled) {
 			mHasFocus = false;
