@@ -412,6 +412,8 @@ public abstract class LintfordCore {
 	protected void onInitializeApp() {
 		new UiStructureController(mMasterConfig.display(), mControllerManager, CORE_ENTITY_GROUP_ID);
 
+		mInputState.initialize(this);
+
 		onInitializeInputActions(mInputState.eventActionManager());
 
 		onInitializeBitmapFontSources(mResourceManager.fontManager());
@@ -623,7 +625,7 @@ public abstract class LintfordCore {
 		/**
 		 * This function sets the joystick configuration callback, or removes the currently set callback. This is called when a joystick is connected to or disconnected from the system.
 		 */
-		glfwSetJoystickCallback(mInputState.gamepads().lintfordJoystick);
+		glfwSetJoystickCallback(mInputState.gamepads());
 
 		/**
 		 * This function sets the user-defined pointer of the specified joystick. The current value is retained until the joystick is disconnected. The initial value is NULL.

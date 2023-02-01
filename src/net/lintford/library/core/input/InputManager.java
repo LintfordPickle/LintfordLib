@@ -70,9 +70,14 @@ public class InputManager {
 	// Core-Methods
 	// --------------------------------------
 
+	public void initialize(LintfordCore core) {
+		mGamepadManager.initialize();
+	}
+
 	public void update(LintfordCore core) {
 		mMouseManager.update(core);
 		mKeyboardManager.update(core);
+		mGamepadManager.update(core);
 		mEventActionManager.update(core);
 	}
 
