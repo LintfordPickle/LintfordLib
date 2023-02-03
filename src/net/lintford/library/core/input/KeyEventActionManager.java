@@ -21,7 +21,9 @@ public class KeyEventActionManager extends IniFile {
 
 	private InputManager mInputManager;
 
-	private final Map<Integer, KeyEventAction> mEventActionMap = new HashMap<>();
+	private final Map<Integer, KeyEventAction> mKeyboardEventActionMap = new HashMap<>();
+	private final Map<Integer, KeyEventAction> mGamepadEventActionMap = new HashMap<>();
+
 	private final List<KeyEventAction> mUpdateActionList = new ArrayList<>();
 
 	// --------------------------------------
@@ -29,7 +31,7 @@ public class KeyEventActionManager extends IniFile {
 	// --------------------------------------
 
 	public KeyEventAction getEventActionByUid(int eventActionUid) {
-		return mEventActionMap.get(eventActionUid);
+		return mKeyboardEventActionMap.get(eventActionUid);
 	}
 
 	// --------------------------------------
@@ -63,31 +65,56 @@ public class KeyEventActionManager extends IniFile {
 	// Methods
 	// --------------------------------------
 
-	public void registerNewEventAction(int eventActionUid, int defaultKeyCode) {
-		if (mEventActionMap.get(eventActionUid) != null)
+	public void registerNewKeyboardEventAction(int eventActionUid, int defaultKeyCode) {
+		if (mKeyboardEventActionMap.get(eventActionUid) != null)
 			return; // already taken
 
 		final var lNewEventAction = new KeyEventAction(eventActionUid, defaultKeyCode);
-		mEventActionMap.put(eventActionUid, lNewEventAction);
+		mKeyboardEventActionMap.put(eventActionUid, lNewEventAction);
+		mUpdateActionList.add(lNewEventAction);
+
+		Debug.debugManager().logger().i(getClass().getSimpleName(), "Registered new event action " + eventActionUid + " to key code [" + defaultKeyCode + "]");
+	}
+
+	public void registerNewGamepadEventAction(int eventActionUid, int defaultKeyCode) {
+		if (mGamepadEventActionMap.get(eventActionUid) != null)
+			return; // already taken
+
+		final var lNewEventAction = new KeyEventAction(eventActionUid, defaultKeyCode);
+		mGamepadEventActionMap.put(eventActionUid, lNewEventAction);
 		mUpdateActionList.add(lNewEventAction);
 
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "Registered new event action " + eventActionUid + " to key code [" + defaultKeyCode + "]");
 	}
 
 	public boolean getCurrentControlActionState(int eventActionUid) {
-		final var lEventAction = mEventActionMap.get(eventActionUid);
-		if (lEventAction == null)
-			return false;
+		var actionState = false;
+		final var lKeyboardEventAction = mKeyboardEventActionMap.get(eventActionUid);
+		if (lKeyboardEventAction != null) {
+			actionState |= lKeyboardEventAction.isDown();
+		}
 
-		return lEventAction.isDown();
+		final var lGamepadEventAction = mGamepadEventActionMap.get(eventActionUid);
+		if (lGamepadEventAction != null) {
+			actionState |= lGamepadEventAction.isDown();
+		}
+
+		return actionState;
 	}
 
 	public boolean getCurrentControlActionStateTimed(int eventActionUid) {
-		final var lEventAction = mEventActionMap.get(eventActionUid);
-		if (lEventAction == null)
-			return false;
+		var actionState = false;
+		final var lKeyboardEventAction = mKeyboardEventActionMap.get(eventActionUid);
+		if (lKeyboardEventAction != null) {
+			actionState |= lKeyboardEventAction.isDownTimed();
+		}
 
-		return lEventAction.isDownTimed();
+		final var lGamepadEventAction = mGamepadEventActionMap.get(eventActionUid);
+		if (lGamepadEventAction != null) {
+			actionState |= lGamepadEventAction.isDownTimed();
+		}
+
+		return actionState;
 	}
 
 	// --------------------------------------
@@ -100,7 +127,7 @@ public class KeyEventActionManager extends IniFile {
 	public void saveConfig() {
 		clearEntries();
 
-		for (var lKeyBindingEntry : mEventActionMap.entrySet()) {
+		for (var lKeyBindingEntry : mKeyboardEventActionMap.entrySet()) {
 			setValue(lSectionName, Integer.toString(lKeyBindingEntry.getKey()), Integer.toString(lKeyBindingEntry.getValue().getBoundKeyCode()));
 
 		}
@@ -116,7 +143,7 @@ public class KeyEventActionManager extends IniFile {
 			return;
 
 		// TODO: Does this work if the order of the keybinds changes (either in the file or in LintfordCore.onInitializeInputActions()) ?
-		for (var lKeyBindingEntry : mEventActionMap.entrySet()) {
+		for (var lKeyBindingEntry : mKeyboardEventActionMap.entrySet()) {
 			final var lValue = getInt(lSectionName, Integer.toString(lKeyBindingEntry.getValue().eventActionUid()), lKeyBindingEntry.getValue().defaultBoundKeyCode());
 			lKeyBindingEntry.getValue().boundKeyCode(lValue);
 		}

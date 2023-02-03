@@ -11,6 +11,9 @@ public interface IActionFrame {
 	 * it is important to flag changes as both key/button down as well as released.
 	 * The input states are not automatically reset each frame, and are only reset when the
 	 * corresponding key/button up is received.
+	 * 
+	 * Equally important is the distinction between input devices and the input events that drive the game.
+	 * Here we are only interested in preserving the input events - the source should be irrelevant.
 	 * */
 	// @formatter:on
 	public abstract boolean hasChanges();
