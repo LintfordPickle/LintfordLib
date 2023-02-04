@@ -87,6 +87,10 @@ public class KeyEventActionManager extends IniFile {
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "Registered new event action " + eventActionUid + " to key code [" + defaultKeyCode + "]");
 	}
 
+	public void registerNewGamepadAxisAction(int eventActionUid, int defaultKeyCode) {
+
+	}
+
 	public boolean getCurrentControlActionState(int eventActionUid) {
 		var actionState = false;
 		final var lKeyboardEventAction = mKeyboardEventActionMap.get(eventActionUid);

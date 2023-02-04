@@ -1,6 +1,7 @@
 package net.lintford.library.core.input.gamepad;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,7 +12,6 @@ import org.lwjgl.glfw.GLFWJoystickCallback;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.debug.Debug;
 
-@SuppressWarnings("unused")
 public class GamepadManager extends GLFWJoystickCallback {
 
 	// --------------------------------------
@@ -25,7 +25,33 @@ public class GamepadManager extends GLFWJoystickCallback {
 	// --------------------------------------
 
 	public final Map<Integer, InputGamepad> mJoysticks = new HashMap<>();
-	private final List<InputGamepad> mControllerUpdateList = new ArrayList<>();
+	private final List<InputGamepad> mUpdateControllerList = new ArrayList<>();
+	private final List<InputGamepad> mActiveControllers = Collections.unmodifiableList(mUpdateControllerList);
+
+	private IGamepadListener mGamepadListener;
+
+	// --------------------------------------
+	// Properties
+	// --------------------------------------
+
+	public void gamepadListener(IGamepadListener newGamepadListener) {
+		mGamepadListener = newGamepadListener;
+	}
+
+	public IGamepadListener gamepadListener() {
+		return mGamepadListener;
+	}
+
+	public InputGamepad getGamepad(int gamepadId) {
+		if (gamepadId < 0 || gamepadId >= MAX_NUM_CONTROLLERS)
+			return null;
+
+		return mJoysticks.get(gamepadId);
+	}
+
+	public List<InputGamepad> getActiveGamepads() {
+		return mActiveControllers;
+	}
 
 	// --------------------------------------
 	// Constructor
@@ -44,9 +70,9 @@ public class GamepadManager extends GLFWJoystickCallback {
 	}
 
 	public void update(LintfordCore core) {
-		final int lNumConnectedJoysticks = mControllerUpdateList.size();
+		final int lNumConnectedJoysticks = mUpdateControllerList.size();
 		for (int i = 0; i < lNumConnectedJoysticks; i++) {
-			final var lJoystick = mControllerUpdateList.get(i);
+			final var lJoystick = mUpdateControllerList.get(i);
 			if (lJoystick.isActive() == false)
 				continue;
 
@@ -61,7 +87,7 @@ public class GamepadManager extends GLFWJoystickCallback {
 
 	private void detectControllers() {
 		for (int i = 0; i < MAX_NUM_CONTROLLERS; i++) {
-			initializeController(i);
+			connectController(i);
 		}
 	}
 
@@ -76,7 +102,7 @@ public class GamepadManager extends GLFWJoystickCallback {
 	private InputGamepad createNewInputGamepad(int joystickIndex) {
 		final var lNewJoystick = new InputGamepad(joystickIndex);
 		mJoysticks.put(joystickIndex, lNewJoystick);
-		mControllerUpdateList.add(lNewJoystick);
+		mUpdateControllerList.add(lNewJoystick);
 
 		return lNewJoystick;
 	}
@@ -88,22 +114,26 @@ public class GamepadManager extends GLFWJoystickCallback {
 	@Override
 	public void invoke(int joystickIndex, int event) {
 		if (event == GLFW.GLFW_CONNECTED) {
-			initializeController(joystickIndex);
+			connectController(joystickIndex);
 		} else if (event == GLFW.GLFW_DISCONNECTED) {
-			resetController(joystickIndex);
+			disconnectController(joystickIndex);
 		}
 	}
 
-	private void initializeController(int controllerIndex) {
-		var present = GLFW.glfwJoystickPresent(controllerIndex);
-		if (present) {
+	private void connectController(int controllerIndex) {
+		var lGamepadPresent = GLFW.glfwJoystickPresent(controllerIndex);
+		if (lGamepadPresent) {
 			final var lJoystick = getInputGamepad(controllerIndex);
 			lJoystick.initialize();
+
+			if (mGamepadListener != null)
+				mGamepadListener.onGamepadConnected(lJoystick);
 
 			Debug.debugManager().logger().i(getClass().getSimpleName(), "Controller " + controllerIndex + " is present (" + lJoystick.name() + ")");
 			Debug.debugManager().logger().i(getClass().getSimpleName(), "Num Buttons: " + lJoystick.numButtons());
 			Debug.debugManager().logger().i(getClass().getSimpleName(), "Num Axis: " + lJoystick.numAxis());
 			Debug.debugManager().logger().i(getClass().getSimpleName(), "Num Hats: " + lJoystick.numHats());
+
 			if (lJoystick.isGamepadMappingAvailable())
 				Debug.debugManager().logger().i(getClass().getSimpleName(), "Controller " + controllerIndex + " has gamepad mappings available");
 			else
@@ -112,8 +142,15 @@ public class GamepadManager extends GLFWJoystickCallback {
 		}
 	}
 
-	private void resetController(int controllerIndex) {
-		getInputGamepad(controllerIndex).reset();
+	private void disconnectController(int controllerIndex) {
+		final var lDisconnectedGamepad = getInputGamepad(controllerIndex);
+		if (lDisconnectedGamepad == null || lDisconnectedGamepad.isActive() == false)
+			return;
+
+		if (mGamepadListener != null)
+			mGamepadListener.onGamepadDisconnected(lDisconnectedGamepad);
+
+		lDisconnectedGamepad.reset();
 	}
 
 }

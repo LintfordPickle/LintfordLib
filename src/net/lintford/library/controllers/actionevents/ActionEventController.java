@@ -20,11 +20,12 @@ public abstract class ActionEventController<T extends IActionFrame> extends Base
 	// ---------------------------------------------
 
 	public class ActionEventPlayer implements IProcessMouseInput {
-		public final int entityUid;
+		public final int playerUid;
 
 		public final ActionEventManager actionEventManager;
 
 		protected float mMouseClickTimer;
+		public int gamepadUid;
 		public final boolean playbackAvailable;
 		public boolean isTempFrameConsumed;
 		public boolean isPlayerControlled;
@@ -33,8 +34,11 @@ public abstract class ActionEventController<T extends IActionFrame> extends Base
 		public final T lastActionEvents; // last frame
 		public final T currentActionEvents; // current frame
 
-		public ActionEventPlayer(PlaybackMode mode, int headerSize, int inputSize) {
-			entityUid = getNewActionManagerUid();
+		//
+		public boolean isActionRecordingEnded;
+
+		public ActionEventPlayer(int playerUid, PlaybackMode mode, int headerSize, int inputSize) {
+			this.playerUid = playerUid;
 			playbackAvailable = headerSize >= 0 && inputSize >= 0;
 
 			actionEventManager = new ActionEventManager(mode, headerSize, inputSize);
@@ -43,7 +47,10 @@ public abstract class ActionEventController<T extends IActionFrame> extends Base
 			lastActionEvents = createActionFrameInstance();
 			currentActionEvents = createActionFrameInstance();
 
+			gamepadUid = -1;
+
 			isTempFrameConsumed = true; // force first read
+			isActionRecordingEnded = false;
 		}
 
 		public void update(LintfordCore core) {
@@ -61,7 +68,7 @@ public abstract class ActionEventController<T extends IActionFrame> extends Base
 			mMouseClickTimer = MOUSE_CLICK_COOLDOWN_TIME;
 		}
 	}
-
+	
 	// ---------------------------------------------
 	// Constants
 	// ---------------------------------------------
@@ -86,12 +93,6 @@ public abstract class ActionEventController<T extends IActionFrame> extends Base
 	protected int mTotalTicks;
 	protected int mCurrentTick;
 
-	private int mActionManagerCounter;
-
-	public int getNewActionManagerUid() {
-		return mActionManagerCounter++;
-	}
-
 	// ---------------------------------------------
 	// Properties
 	// ---------------------------------------------
@@ -108,7 +109,7 @@ public abstract class ActionEventController<T extends IActionFrame> extends Base
 		final int numActionManagers = mActionEventPlayers.size();
 		for (int i = 0; i < numActionManagers; i++) {
 			final var actionManager = mActionEventPlayers.get(i);
-			if (actionManager.entityUid == uid) {
+			if (actionManager.playerUid == uid) {
 				return actionManager;
 
 			}
@@ -130,7 +131,7 @@ public abstract class ActionEventController<T extends IActionFrame> extends Base
 	public ActionEventController(ControllerManager controllerManager, LogicialCounter frameCounter, int entityGroupUid) {
 		super(controllerManager, CONTROLLER_NAME, entityGroupUid);
 
-		mDefaultPlayer = new ActionEventPlayer(PlaybackMode.Normal, 0, 0);
+		mDefaultPlayer = new ActionEventPlayer(0, PlaybackMode.Normal, 0, 0);
 		mActionEventPlayers.add(mDefaultPlayer);
 
 		mLogicialCounter = frameCounter;
@@ -152,6 +153,9 @@ public abstract class ActionEventController<T extends IActionFrame> extends Base
 		for (int i = 0; i < numActionManagers; i++) {
 			final var actionPlayer = mActionEventPlayers.get(i);
 			final var actionManager = actionPlayer.actionEventManager;
+
+			if (actionPlayer.isActionRecordingEnded)
+				continue;
 
 			actionPlayer.update(core);
 
@@ -218,6 +222,7 @@ public abstract class ActionEventController<T extends IActionFrame> extends Base
 			final var actionManager = actionPlayer.actionEventManager;
 
 			if (actionPlayer.actionEventManager.mode() == PlaybackMode.Record) {
+				actionPlayer.isActionRecordingEnded = true;
 				actionPlayer.currentActionEvents.tickNumber(mLogicialCounter.getCounter());
 
 				saveEndOfFile(actionPlayer.currentActionEvents, actionManager.dataByteBuffer());
@@ -256,20 +261,20 @@ public abstract class ActionEventController<T extends IActionFrame> extends Base
 
 	}
 
-	public int createActionRecorder(String filename) {
-		final var lNewActionEventPlayer = new ActionEventPlayer(PlaybackMode.Record, getHeaderSizeInBytes(), getInputSizeInBytes());
+	public int createActionRecorder(int playerUid, String filename) {
+		final var lNewActionEventPlayer = new ActionEventPlayer(playerUid, PlaybackMode.Record, getHeaderSizeInBytes(), getInputSizeInBytes());
 		lNewActionEventPlayer.actionEventManager.filename(filename);
 		mActionEventPlayers.add(lNewActionEventPlayer);
 
-		return lNewActionEventPlayer.entityUid;
+		return lNewActionEventPlayer.playerUid;
 	}
 
-	public int createActionPlayback(String filename) {
-		final var lNewActionEventPlayer = new ActionEventPlayer(PlaybackMode.Playback, getHeaderSizeInBytes(), getInputSizeInBytes());
+	public int createActionPlayback(int playerUid, String filename) {
+		final var lNewActionEventPlayer = new ActionEventPlayer(playerUid, PlaybackMode.Playback, getHeaderSizeInBytes(), getInputSizeInBytes());
 		lNewActionEventPlayer.actionEventManager.loadFromFile(filename);
 		mActionEventPlayers.add(lNewActionEventPlayer);
 
-		return lNewActionEventPlayer.entityUid;
+		return lNewActionEventPlayer.playerUid;
 	}
 
 }
