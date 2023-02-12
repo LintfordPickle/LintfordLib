@@ -15,20 +15,19 @@ import net.lintford.library.screenmanager.ScreenManagerConstants.ALIGNMENT;
 import net.lintford.library.screenmanager.ScreenManagerConstants.FILLTYPE;
 import net.lintford.library.screenmanager.ScreenManagerConstants.LAYOUT_WIDTH;
 import net.lintford.library.screenmanager.dialogs.ConfirmationDialog;
-import net.lintford.library.screenmanager.dialogs.TimedConfirmationDialog;
 import net.lintford.library.screenmanager.dialogs.ITimedDialog;
-import net.lintford.library.screenmanager.entries.EntryInteractions;
-import net.lintford.library.screenmanager.entries.HorizontalEntryGroup;
+import net.lintford.library.screenmanager.dialogs.TimedConfirmationDialog;
 import net.lintford.library.screenmanager.entries.MenuDropDownEntry;
 import net.lintford.library.screenmanager.entries.MenuEnumEntryIndexed;
 import net.lintford.library.screenmanager.entries.MenuLabelEntry;
 import net.lintford.library.screenmanager.entries.MenuToggleEntry;
 import net.lintford.library.screenmanager.layouts.BaseLayout;
+import net.lintford.library.screenmanager.layouts.HorizontalLayout;
 import net.lintford.library.screenmanager.layouts.ListLayout;
 
 // TODO: Monitor and Aspect Ratio are only considered in fullscreen mode
 // TODO: Need to add a 15 second cooldown when applying settings for the first time
-public class VideoOptionsScreen extends MenuScreen implements EntryInteractions, ITimedDialog {
+public class VideoOptionsScreen extends MenuScreen implements ITimedDialog {
 
 	// --------------------------------------
 	// Constants
@@ -95,7 +94,7 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 
 		setUIFromVideoSettings(currentVideoConfig);
 
-		mChangesPendingWarning = new MenuLabelEntry(screenManager, mConfirmChangesLayout);
+		mChangesPendingWarning = new MenuLabelEntry(screenManager, this);
 		mChangesPendingWarning.label("Current changes have not yet been applied!");
 		mChangesPendingWarning.textColor.setRGB(1.f, .12f, .17f);
 		mChangesPendingWarning.enabled(true);
@@ -106,21 +105,23 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 		mConfirmChangesLayout.layoutFillType(FILLTYPE.TAKE_WHATS_NEEDED);
 		mConfirmChangesLayout.setDrawBackground(true, ColorConstants.MenuPanelSecondaryColor);
 
-		final var lGroup = new HorizontalEntryGroup(screenManager, footerLayout());
+		final var lFooterList = new HorizontalLayout(this);
 
-		final var lBackButton = new MenuEntry(screenManager, footerLayout(), "Back");
+		final var lBackButton = new MenuEntry(screenManager, this, "Back");
 		lBackButton.registerClickListener(this, BUTTON_CANCEL_CHANGES);
-		mApplyButton = new MenuEntry(screenManager, footerLayout(), "Apply");
+		mApplyButton = new MenuEntry(screenManager, this, "Apply");
 		mApplyButton.registerClickListener(this, BUTTON_APPLY_CHANGES);
 		mApplyButton.enabled(false);
 
-		lGroup.addEntry(lBackButton);
-		lGroup.addEntry(mApplyButton);
-
-		footerLayout().addMenuEntry(lGroup);
+		lFooterList.addMenuEntry(lBackButton);
+		lFooterList.addMenuEntry(mApplyButton);
 
 		addLayout(mVideoList);
 		addLayout(mConfirmChangesLayout);
+		addLayout(lFooterList);
+
+		mSelectedLayoutIndex = 0;
+		mSelectedEntryIndex = 0;
 
 		mConfirmChangesLayout.visible(false);
 	}
@@ -130,23 +131,24 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 	// --------------------------------------
 
 	private void createVideoSection(BaseLayout layout) {
-		final var lVideoOptionsTitle = new MenuLabelEntry(mScreenManager, layout);
+		final var lVideoOptionsTitle = new MenuLabelEntry(mScreenManager, this);
+
 		lVideoOptionsTitle.label("Video Options");
 		lVideoOptionsTitle.drawButtonBackground(true);
 		lVideoOptionsTitle.horizontalAlignment(ALIGNMENT.LEFT);
 		lVideoOptionsTitle.horizontalFillType(FILLTYPE.FILL_CONTAINER);
 
-		mFullScreenEntry = new MenuEnumEntryIndexed<>(mScreenManager, layout, "Fullscreen");
+		mFullScreenEntry = new MenuEnumEntryIndexed<>(mScreenManager, this, "Fullscreen");
 		mFullScreenEntry.horizontalFillType(FILLTYPE.FILL_CONTAINER);
 
-		mResolutionEntry = new MenuDropDownEntry<>(mScreenManager, layout, "Resolution");
+		mResolutionEntry = new MenuDropDownEntry<>(mScreenManager, this, "Resolution");
 		mResolutionEntry.horizontalFillType(FILLTYPE.FILL_CONTAINER);
 
-		mMonitorEntry = new MenuEnumEntryIndexed<>(mScreenManager, layout, "Monitor");
+		mMonitorEntry = new MenuEnumEntryIndexed<>(mScreenManager, this, "Monitor");
 		mMonitorEntry.setButtonsEnabled(true);
 		mMonitorEntry.horizontalFillType(FILLTYPE.FILL_CONTAINER);
 
-		mVSync = new MenuToggleEntry(mScreenManager, layout);
+		mVSync = new MenuToggleEntry(mScreenManager, this);
 		mVSync.horizontalFillType(FILLTYPE.FILL_CONTAINER);
 
 		mFullScreenEntry.addItem(mFullScreenEntry.new MenuEnumEntryItem(FULLSCREEN_NO, VideoSettings.FULLSCREEN_NO_INDEX));
@@ -271,7 +273,7 @@ public class VideoOptionsScreen extends MenuScreen implements EntryInteractions,
 	}
 
 	@Override
-	public void menuEntryChanged(MenuEntry menuEntry) {
+	public void onMenuEntryChanged(MenuEntry menuEntry) {
 		switch (menuEntry.entryID()) {
 		case BUTTON_FULLSCREEN:
 			modifiedVideoConfig.fullScreenIndex(mFullScreenEntry.selectedItem().value);

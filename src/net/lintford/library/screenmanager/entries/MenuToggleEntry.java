@@ -8,7 +8,6 @@ import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.Screen;
 import net.lintford.library.screenmanager.ScreenManager;
-import net.lintford.library.screenmanager.layouts.BaseLayout;
 
 public class MenuToggleEntry extends MenuEntry {
 
@@ -32,7 +31,7 @@ public class MenuToggleEntry extends MenuEntry {
 
 	public void label(String label) {
 		mText = label;
-	}
+	}	
 
 	public String label() {
 		return mText;
@@ -54,8 +53,8 @@ public class MenuToggleEntry extends MenuEntry {
 	// Constructor
 	// --------------------------------------
 
-	public MenuToggleEntry(ScreenManager screenManager, BaseLayout parentlayout) {
-		super(screenManager, parentlayout, "");
+	public MenuToggleEntry(ScreenManager screenManager, MenuScreen parentScreen) {
+		super(screenManager, parentScreen, "");
 
 		mHighlightOnHover = false;
 		mDrawBackground = false;
@@ -74,50 +73,11 @@ public class MenuToggleEntry extends MenuEntry {
 	}
 
 	@Override
-	public boolean handleInput(LintfordCore core) {
-		if (!mActiveUpdateDraw)
-			return false;
-
-		if (mHasFocus) {
-
-		} else {
-			mFocusLocked = false;
-		}
-
-		if (intersectsAA(core.HUD().getMouseCameraSpace()) && core.input().mouse().isMouseOverThisComponent(hashCode())) {
-			if (core.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
-				if (mEnabled) {
-
-					// TODO: Play menu click sound
-
-					mParentLayout.parentScreen.setFocusOn(core, this, true);
-
-					mIsChecked = !mIsChecked;
-
-					if (mClickListener != null)
-						mClickListener.menuEntryChanged(this);
-
-				}
-
-			} else {
-				hasFocus(true);
-			}
-
-			return true;
-
-		} else {
-			mToolTipTimer = 0;
-		}
-
-		return false;
-	}
-
-	@Override
-	public void update(LintfordCore core, MenuScreen screen, boolean isSelected) {
-		if (!mActiveUpdateDraw)
+	public void update(LintfordCore core, MenuScreen screen) {
+		if (!mEnableUpdateDraw)
 			return;
 
-		super.update(core, screen, isSelected);
+		super.update(core, screen);
 
 		final double lDeltaTime = core.appTime().elapsedTimeMilli() / 1000.;
 
@@ -127,31 +87,30 @@ public class MenuToggleEntry extends MenuEntry {
 	}
 
 	@Override
-	public void draw(LintfordCore core, Screen screen, boolean isSelected, float parentZDepth) {
-		if (!mActiveUpdateDraw)
+	public void draw(LintfordCore core, Screen screen, float parentZDepth) {
+		if (!mEnableUpdateDraw)
 			return;
 
-		final var lParentScreen = mParentLayout.parentScreen;
-		final var lTextBoldFont = lParentScreen.fontBold();
-		final float lUiTextScale = lParentScreen.uiTextScale();
+		final var lTextBoldFont = mParentScreen.fontBold();
+		final float lUiTextScale = mParentScreen.uiTextScale();
 
 		final float lLabelWidth = lTextBoldFont.getStringWidth(mText, lUiTextScale);
 		final float lTextHeight = lTextBoldFont.fontHeight() * lUiTextScale;
 		final float lSeparatorHalfWidth = lTextBoldFont.getStringWidth(mSeparator, lUiTextScale) * 0.5f;
 
-		final var lSpriteBatch = lParentScreen.spriteBatch();
+		final var lSpriteBatch = mParentScreen.spriteBatch();
 
 		final float lTileSize = 32;
 
 		final var lScreenOffset = screen.screenPositionOffset();
 		final var lParentScreenAlpha = screen.screenColor.a;
 
-		entryColor.setFromColor(lParentScreen.screenColor);
+		entryColor.setFromColor(mParentScreen.screenColor);
 		textColor.a = lParentScreenAlpha;
 
 		mZ = parentZDepth;
 
-		if (mHoveredOver) {
+		if (mHasFocus) {
 			lSpriteBatch.begin(core.HUD());
 			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - mW / 2, lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ, ColorConstants.MenuEntryHighlightColor);
 			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - (mW / 2) + 32, lScreenOffset.y + centerY() - mH / 2, mW - 64, mH, mZ, ColorConstants.MenuEntryHighlightColor);
@@ -197,11 +156,6 @@ public class MenuToggleEntry extends MenuEntry {
 	public void onClick(InputManager inputManager) {
 		super.onClick(inputManager);
 
-		mHasFocus = !mHasFocus;
-		if (mHasFocus)
-			mFocusLocked = true;
-		else
-			mFocusLocked = false;
-
+		mIsChecked = !mIsChecked;
 	}
 }

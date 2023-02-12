@@ -20,6 +20,8 @@ public class GamepadManager extends GLFWJoystickCallback {
 
 	public static final int MAX_NUM_CONTROLLERS = GLFW.GLFW_JOYSTICK_LAST;
 
+	private static final int BUTTON_COOLDOWN_MS = 200;
+
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
@@ -29,6 +31,8 @@ public class GamepadManager extends GLFWJoystickCallback {
 	private final List<InputGamepad> mActiveControllers = Collections.unmodifiableList(mUpdateControllerList);
 
 	private IGamepadListener mGamepadListener;
+
+	private float mButtonDownTimer;
 
 	// --------------------------------------
 	// Properties
@@ -70,6 +74,10 @@ public class GamepadManager extends GLFWJoystickCallback {
 	}
 
 	public void update(LintfordCore core) {
+		if (mButtonDownTimer > 0) {
+			mButtonDownTimer -= core.gameTime().elapsedTimeMilli();
+		}
+
 		final int lNumConnectedJoysticks = mUpdateControllerList.size();
 		for (int i = 0; i < lNumConnectedJoysticks; i++) {
 			final var lJoystick = mUpdateControllerList.get(i);
@@ -105,6 +113,23 @@ public class GamepadManager extends GLFWJoystickCallback {
 		mUpdateControllerList.add(lNewJoystick);
 
 		return lNewJoystick;
+	}
+
+	// --------------------------------------
+
+	public boolean isGamepadButtonDown(int glfwGamepadButtonIndex) {
+		if (mButtonDownTimer > 0)
+			return false;
+
+		final var lNumConnectGamepads = mActiveControllers.size();
+		for (int i = 0; i < lNumConnectGamepads; i++) {
+			if (mActiveControllers.get(i).getIsButtonDown(glfwGamepadButtonIndex)) {
+				mButtonDownTimer = BUTTON_COOLDOWN_MS;
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	// --------------------------------------

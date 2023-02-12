@@ -4,7 +4,6 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.Color;
 import net.lintford.library.core.graphics.batching.SpriteBatch;
-import net.lintford.library.core.maths.Vector2f;
 import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.Screen;
 import net.lintford.library.screenmanager.ScreenManager;
@@ -61,7 +60,7 @@ public abstract class ListBoxItem extends Rectangle {
 	}
 
 	public boolean handleInput(LintfordCore core) {
-		final Vector2f lMouseMenuSpace = core.HUD().getMouseCameraSpace();
+		final var lMouseMenuSpace = core.HUD().getMouseCameraSpace();
 
 		final var intersectsUs = intersectsAA(lMouseMenuSpace);
 		final var areWeFreeToUseMouse = core.input().mouse().isMouseOverThisComponent(hashCode());
@@ -77,7 +76,7 @@ public abstract class ListBoxItem extends Rectangle {
 
 			return true;
 		}
-
+	
 		if (intersectsUs && mDoubleClickLogicalCounter != -1) {
 			mDoubleClickTimer -= core.appTime().elapsedTimeMilli();
 
@@ -99,11 +98,11 @@ public abstract class ListBoxItem extends Rectangle {
 		return false;
 	}
 
-	public void update(LintfordCore core, MenuScreen screen, boolean isSelected) {
+	public void update(LintfordCore core, MenuScreen screen) {
 		mW = mEntryWidth;
 		mH = mEntryHeight;
 	}
 
-	public abstract void draw(LintfordCore core, Screen screen, SpriteBatch spriteBatch, boolean isSelected, float parentZDepth);
+	public abstract void draw(LintfordCore core, Screen screen, SpriteBatch spriteBatch, float parentZDepth);
 
 }

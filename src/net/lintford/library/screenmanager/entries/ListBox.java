@@ -20,7 +20,6 @@ import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.Screen;
 import net.lintford.library.screenmanager.ScreenManager;
 import net.lintford.library.screenmanager.ScreenManagerConstants.FILLTYPE;
-import net.lintford.library.screenmanager.layouts.BaseLayout;
 
 public class ListBox extends MenuEntry implements IScrollBarArea {
 
@@ -95,8 +94,8 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 	// Constructor
 	// --------------------------------------
 
-	public ListBox(ScreenManager screenManager, BaseLayout parentLayout, String menuEntryLabel) {
-		super(screenManager, parentLayout, menuEntryLabel);
+	public ListBox(ScreenManager screenManager, MenuScreen parentScreen, String menuEntryLabel) {
+		super(screenManager, parentScreen, menuEntryLabel);
 
 		mItems = new ArrayList<>();
 
@@ -122,57 +121,14 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 	// --------------------------------------
 
 	@Override
-	public boolean handleInput(LintfordCore core) {
-		final var lMouseHUDCoords = core.HUD().getMouseCameraSpace();
-
-		if (!mScrollBar.clickAction() && !intersectsAA(lMouseHUDCoords) && core.input().mouse().isMouseLeftClick(hashCode()))
-			return false;
-
-		if (mScrollBar.handleInput(core, mScreenManager)) {
-			mClickActive = false;
-			return true;
-		}
-
-		// Check each of the items if they havae captured mouse input
-		for (int i = 0; i < mItems.size(); i++) {
-			boolean lResult = mItems.get(i).handleInput(core);
-			// FIXME: Double check - if an item was click
-			if (lResult)
-				return true;
-
-			if (core.input().mouse().isMouseLeftButtonDown())
-				mSelectedItem = -1;
-
-		}
-
-		if (!core.input().mouse().isMouseLeftButtonDown()) {
-			mClickActive = false;
-			return false;
-		}
-
-		if (!core.input().mouse().tryAcquireMouseLeftClick(hashCode())) {
-			mClickActive = false;
-			return false;
-		}
-
-		if (!mClickActive) {
-			mClickActive = true;
-			mLastMouseYPos = lMouseHUDCoords.y;
-			return true;
-		}
-
-		return false;
-	}
-
-	@Override
-	public void update(LintfordCore core, MenuScreen screen, boolean isSelected) {
+	public void update(LintfordCore core, MenuScreen screen) {
 		final int lCount = mItems.size();
 		float mItemYPos = 0;
 
 		float lTotalContentHeight = marginTop() + marginBottom();
 		for (int i = 0; i < lCount; i++) {
-			ListBoxItem lItem = mItems.get(i);
-			mItems.get(i).update(core, screen, isSelected);
+			final var lItem = mItems.get(i);
+			mItems.get(i).update(core, screen);
 
 			final float lInnerPadding = mScrollBar.scrollBarEnabled() ? mScrollBar.width() : 0;
 			mItems.get(i).width(mW - marginLeft() - marginRight() - lInnerPadding);
@@ -190,8 +146,8 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 	}
 
 	@Override
-	public void draw(LintfordCore core, Screen screen, boolean isSelected, float parentZDepth) {
-		final var lSpriteBatch = mParentLayout.parentScreen.spriteBatch();
+	public void draw(LintfordCore core, Screen screen, float parentZDepth) {
+		final var lSpriteBatch = mParentScreen.spriteBatch();
 
 		final var lScreenOffset = screen.screenPositionOffset();
 		final float lTileSize = 32;
@@ -236,7 +192,7 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 		GL11.glStencilFunc(GL11.GL_EQUAL, 1, 0xFF);
 
 		for (int i = 0; i < mItems.size(); i++)
-			mItems.get(i).draw(core, screen, lSpriteBatch, mSelectedItem == mItems.get(i).mItemIndex, parentZDepth);
+			mItems.get(i).draw(core, screen, lSpriteBatch, parentZDepth);
 
 		if (mScrollBar.scrollBarEnabled()) {
 			lSpriteBatch.begin(core.HUD());

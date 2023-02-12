@@ -28,7 +28,7 @@ public class ToolTip {
 	// --------------------------------------
 
 	public void toolTipProvider(IToolTipProvider toolTipProvider) {
-		if (toolTipProvider.isParentActive())
+		if (toolTipProvider != null && toolTipProvider.isParentActive())
 			mToolTipProvider = toolTipProvider;
 		else
 			mToolTipProvider = null;

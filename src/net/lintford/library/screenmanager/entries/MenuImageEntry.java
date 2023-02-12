@@ -25,6 +25,7 @@ public class MenuImageEntry extends MenuEntry {
 	// Variables
 	// --------------------------------------
 
+	private BaseLayout mParentLayout;
 	private float mForceHeight;
 	private float mFittedWidth;
 	private float mFittedHeight;
@@ -77,13 +78,13 @@ public class MenuImageEntry extends MenuEntry {
 	// Constructor
 	// --------------------------------------
 
-	public MenuImageEntry(ScreenManager screenManager, BaseLayout parentLayout) {
-		super(screenManager, parentLayout, "");
+	public MenuImageEntry(ScreenManager screenManager, BaseLayout parentLayout, MenuScreen parentScreen) {
+		super(screenManager, parentScreen, "");
 
+		mParentLayout = parentLayout;
 		mText = "Add your message";
 
 		mCanHaveFocus = false;
-		mCanHoverOver = false;
 
 		mScaleToFitParent = true;
 
@@ -118,8 +119,8 @@ public class MenuImageEntry extends MenuEntry {
 	}
 
 	@Override
-	public void update(LintfordCore core, MenuScreen screen, boolean isSelected) {
-		super.update(core, screen, isSelected);
+	public void update(LintfordCore core, MenuScreen screen) {
+		super.update(core, screen);
 		if (mMainTexture != null) {
 			float lAR = (float) mMainTexture.getTextureHeight() / (float) mMainTexture.getTextureWidth();
 
@@ -162,7 +163,7 @@ public class MenuImageEntry extends MenuEntry {
 	}
 
 	@Override
-	public void draw(LintfordCore core, Screen screen, boolean isSelected, float parentZDepth) {
+	public void draw(LintfordCore core, Screen screen, float parentZDepth) {
 		final var lParentScreen = mParentLayout.parentScreen;
 		final var lSpriteBatch = lParentScreen.spriteBatch();
 

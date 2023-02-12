@@ -10,7 +10,6 @@ import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.Screen;
 import net.lintford.library.screenmanager.ScreenManager;
-import net.lintford.library.screenmanager.layouts.BaseLayout;
 
 public class MenuSliderEntry extends MenuEntry {
 
@@ -28,12 +27,10 @@ public class MenuSliderEntry extends MenuEntry {
 	private int mValue;
 	private int mLowerBound;
 	private int mUpperBound;
-	private int mStep;
 	private boolean mButtonsEnabled;
 	private boolean mShowValueEnabled;
 	private boolean mShowGuideValuesEnabled;
 	private boolean mShowUnit;
-	private boolean mTrackingClick;
 	private float mBarPosX;
 	private float mBarWidth;
 
@@ -92,7 +89,6 @@ public class MenuSliderEntry extends MenuEntry {
 	public void setBounds(int lowBound, int highBound, int stepSize) {
 		mLowerBound = lowBound;
 		mUpperBound = highBound;
-		mStep = stepSize;
 		setValue(highBound - lowBound / 2);
 	}
 
@@ -100,8 +96,8 @@ public class MenuSliderEntry extends MenuEntry {
 	// Constructor
 	// --------------------------------------
 
-	public MenuSliderEntry(ScreenManager screenManager, BaseLayout parentLayout) {
-		super(screenManager, parentLayout, "");
+	public MenuSliderEntry(ScreenManager screenManager, MenuScreen parentScreen) {
+		super(screenManager, parentScreen, "");
 
 		mLabel = "Label:";
 
@@ -115,63 +111,12 @@ public class MenuSliderEntry extends MenuEntry {
 
 	@Override
 	public boolean handleInput(LintfordCore core) {
-		if (mHasFocus) {
-
-		} else {
-			mFocusLocked = false; // no lock if not focused
-		}
-
-		if (intersectsAA(core.HUD().getMouseCameraSpace()) && core.input().mouse().isMouseOverThisComponent(hashCode())) {
-			if (core.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
-				if (mEnabled) {
-
-					// TODO: Play menu click sound
-
-					if (mDownButton.intersectsAA(core.HUD().getMouseCameraSpace())) {
-						setValue(mValue - mStep);
-					} else if (mUpButton.intersectsAA(core.HUD().getMouseCameraSpace())) {
-						setValue(mValue + mStep);
-					} else {
-						mTrackingClick = true;
-					}
-
-					if (mClickListener != null)
-						mClickListener.menuEntryChanged(this);
-
-					mParentLayout.parentScreen.setFocusOn(core, this, true);
-					mParentLayout.parentScreen.setHoveringOn(this);
-
-				}
-
-			} else {
-				hasFocus(true);
-
-			}
-
-			if (mToolTipEnabled)
-				mToolTipTimer += core.appTime().elapsedTimeMilli();
-
-		} else {
-			mToolTipTimer = 0;
-		}
-
-		if (mTrackingClick && core.input().mouse().tryAcquireMouseLeftClick(hashCode())) {
-			mValue = (int) MathHelper.scaleToRange(core.HUD().getMouseCameraSpace().x - mBarPosX, 0, mBarWidth - 32 - 16, mLowerBound, mUpperBound);
-			mValue = MathHelper.clampi(mValue, mLowerBound, mUpperBound);
-
-			if (mClickListener != null)
-				mClickListener.menuEntryChanged(this);
-
-		} else {
-			mTrackingClick = false;
-		}
-
-		return mTrackingClick;
+		return false;
 	}
 
 	@Override
-	public void update(LintfordCore core, MenuScreen screen, boolean isSelected) {
-		super.update(core, screen, isSelected);
+	public void update(LintfordCore core, MenuScreen screen) {
+		super.update(core, screen);
 
 		mDownButton.setPosition(mX + mW / 2 + 16, mY);
 		mUpButton.setPosition(mX + mW - 32, mY);
@@ -181,11 +126,10 @@ public class MenuSliderEntry extends MenuEntry {
 	}
 
 	@Override
-	public void draw(LintfordCore core, Screen screen, boolean isSelected, float parentZDepth) {
-		final var lParentScreen = mParentLayout.parentScreen;
-		final var lTextBoldFont = lParentScreen.fontBold();
-		final var lSpriteBatch = lParentScreen.spriteBatch();
-		final var lUiTextScale = lParentScreen.uiTextScale();
+	public void draw(LintfordCore core, Screen screen, float parentZDepth) {
+		final var lTextBoldFont = mParentScreen.fontBold();
+		final var lSpriteBatch = mParentScreen.spriteBatch();
+		final var lUiTextScale = mParentScreen.uiTextScale();
 
 		final var lLabelWidth = lTextBoldFont.getStringWidth(mLabel, lUiTextScale);
 		final var lSeparatorHalfWidth = lTextBoldFont.getStringWidth(mSeparator, lUiTextScale) * 0.5f;
@@ -194,7 +138,7 @@ public class MenuSliderEntry extends MenuEntry {
 		final var lScreenOffset = screen.screenPositionOffset();
 		final var lParentScreenAlpha = screen.screenColor.a;
 
-		if (mHoveredOver & mEnabled) {
+		if (mHasFocus & mEnabled) {
 			final var lHighlightColor = ColorConstants.getColorWithAlpha(ColorConstants.MenuEntryHighlightColor, lParentScreenAlpha);
 			lSpriteBatch.begin(core.HUD());
 			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - mW / 2, lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ, lHighlightColor);
@@ -278,11 +222,12 @@ public class MenuSliderEntry extends MenuEntry {
 	public void onClick(InputManager inputManager) {
 		super.onClick(inputManager);
 
-		mHasFocus = !mHasFocus;
-		if (mHasFocus)
-			mFocusLocked = true;
+		mIsActive = !mIsActive;
+
+		if (mIsActive)
+			mParentScreen.onMenuEntryActivated(this);
 		else
-			mFocusLocked = false;
+			mParentScreen.onMenuEntryDeactivated(this);
 
 	}
 

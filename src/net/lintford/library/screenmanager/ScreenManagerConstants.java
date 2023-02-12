@@ -5,7 +5,6 @@ public class ScreenManagerConstants {
 
 	public enum ALIGNMENT {
 		LEFT, RIGHT, TOP, BOTTOM, CENTER, TOPLEFT, BOTTOMLEFT, TOPRIGHT, BOTTOMRIGHT
-
 	}
 
 	public enum FILLTYPE {
@@ -16,17 +15,14 @@ public class ScreenManagerConstants {
 		HALF_PARENT, 
 		THREEQUARTER_PARENT, 
 		TAKE_DESIRED_SIZE
-
 	}
 
 	public enum LAYOUT_WIDTH {
 		FULL, THREEQUARTER, TWOTHIRD, HALF, THIRD, QUARTER
-
 	}
 
 	public enum LAYOUT_ALIGNMENT {
 		LEFT, CENTER, RIGHT
-
 	}
 
 }

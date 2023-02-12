@@ -16,7 +16,6 @@ import net.lintford.library.screenmanager.ScreenManagerConstants.LAYOUT_ALIGNMEN
 import net.lintford.library.screenmanager.ScreenManagerConstants.LAYOUT_WIDTH;
 import net.lintford.library.screenmanager.entries.EntryInteractions;
 import net.lintford.library.screenmanager.layouts.BaseLayout;
-import net.lintford.library.screenmanager.layouts.ListLayout;
 
 public abstract class MenuScreen extends Screen implements EntryInteractions {
 
@@ -37,16 +36,18 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	// Variables
 	// --------------------------------------
 
-	protected List<MenuEntry> mFloatingEntries;
 	protected List<BaseLayout> mLayouts;
-	protected ListLayout mFooterLayout;
 	protected LAYOUT_ALIGNMENT mLayoutAlignment = LAYOUT_ALIGNMENT.CENTER;
 	protected String mMenuTitle;
 	protected String mMenuOverTitle;
 	protected String mMenuSubTitle;
 	protected float mTitleFontHeight;
-	protected int mSelectedEntry = 0;
-	protected int mSelectedLayout = 0;
+
+	protected MenuEntry mActiveEntry;
+	protected boolean mIsSelectedActive;
+	protected int mSelectedEntryIndex;
+	protected int mSelectedLayoutIndex;
+
 	protected float mPaddingLeftNormalized;
 	protected float mPaddingRightNormalized;
 	protected float mPaddingTopNormalized;
@@ -92,14 +93,6 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		return mAnimationTimer > 0;
 	}
 
-	protected List<MenuEntry> floatingEntries() {
-		return mFloatingEntries;
-	}
-
-	protected ListLayout footerLayout() {
-		return mFooterLayout;
-	}
-
 	public String menuTitle() {
 		return mMenuTitle;
 	}
@@ -124,9 +117,6 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		super(screenManager);
 
 		mLayouts = new ArrayList<>();
-		mFooterLayout = new ListLayout(this);
-
-		mFloatingEntries = new ArrayList<>();
 
 		mShowBackgroundScreens = false;
 
@@ -158,13 +148,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 			mLayouts.get(i).initialize();
 		}
 
-		int lFloatingCount = mFloatingEntries.size();
-		for (int i = 0; i < lFloatingCount; i++) {
-			final var lFloatingEntry = mFloatingEntries.get(i);
-			lFloatingEntry.initialize();
-		}
-
-		footerLayout().initialize();
+		updateAllEntriesToMatchSelected();
 	}
 
 	@Override
@@ -180,14 +164,6 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		for (int i = 0; i < lCount; i++) {
 			mLayouts.get(i).loadResources(resourceManager);
 		}
-
-		int lFloatingCount = mFloatingEntries.size();
-		for (int i = 0; i < lFloatingCount; i++) {
-			final var lFloatingEntry = mFloatingEntries.get(i);
-			lFloatingEntry.loadResources(resourceManager);
-		}
-
-		footerLayout().loadResources(resourceManager);
 	}
 
 	@Override
@@ -198,14 +174,6 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		for (int i = 0; i < lCount; i++) {
 			mLayouts.get(i).unloadResources();
 		}
-
-		int lFloatingCount = mFloatingEntries.size();
-		for (int i = 0; i < lFloatingCount; i++) {
-			final var lFloatingEntry = mFloatingEntries.get(i);
-			lFloatingEntry.unloadResources();
-		}
-
-		footerLayout().unloadResources();
 
 		mMenuFont = null;
 		mMenuHeaderFont = null;
@@ -218,81 +186,54 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 		super.handleInput(core);
 
-		if (mESCBackEnabled && core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_ESCAPE)) {
-			if (mScreenState == ScreenState.Active) {
-				exitScreen();
-				return;
+		if (mESCBackEnabled) {
+			if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_ESCAPE) || core.input().gamepads().isGamepadButtonDown(GLFW.GLFW_GAMEPAD_BUTTON_B)) {
+				if (mScreenState == ScreenState.Active) {
+					exitScreen();
+					return;
+				}
 			}
 		}
 
-		if (mLayouts.size() > 0) {
-			// Respond to UP key
-			if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_UP)) {
+		// Respond to UP key
+		// TODO :Check for gamepad axis ..
+		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_UP) || core.input().gamepads().isGamepadButtonDown(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_UP)) {
+			core.input().mouse().isMouseMenuSelectionEnabled(false);
+			mSelectedEntryIndex = getPreviousEnabledEntry(mSelectedEntryIndex);
 
-				if (mSelectedEntry > 0) {
-					mSelectedEntry--; //
-				}
+			updateAllEntriesToMatchSelected();
 
-				final var lLayout = mLayouts.get(mSelectedLayout);
+			mScreenManager.toolTip().toolTipProvider(null);
 
-				if (!lLayout.hasEntry(mSelectedEntry))
-					return;
+			// TODO: play sound for menu entry changed
 
-				// Set focus on the new entry
-				if (lLayout.getMenuEntryByIndex(mSelectedEntry).enabled()) {
-					lLayout.updateFocusOffAllBut(core, lLayout.getMenuEntryByIndex(mSelectedEntry));
-					lLayout.getMenuEntryByIndex(mSelectedEntry).hasFocus(true);
-				}
-
-				// TODO: play sound for menu entry changed
-
-			}
-
-			// Respond to DOWN key
-			if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_DOWN)) {
-				final var lLayout = mLayouts.get(mSelectedLayout);
-
-				if (mSelectedEntry < lLayout.getMenuEntryCount() - 1) {
-					mSelectedEntry++; //
-				}
-
-				if (!lLayout.hasEntry(mSelectedEntry))
-					return;
-
-				// Set focus on the new entry
-				if (lLayout.getMenuEntryByIndex(mSelectedEntry).enabled()) {
-					lLayout.updateFocusOffAllBut(core, lLayout.getMenuEntryByIndex(mSelectedEntry));
-					lLayout.getMenuEntryByIndex(mSelectedEntry).hasFocus(true);
-				}
-
-				// TODO: play sound for menu entry changed
-
-			}
-
-			// Process ENTER key press
-			if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_ENTER)) {
-				final var lLayout = mLayouts.get(mSelectedLayout);
-				if (!lLayout.hasEntry(mSelectedEntry))
-					return;
-
-				lLayout.getMenuEntryByIndex(mSelectedEntry).onClick(core.input());
-			}
 		}
 
-		int lFloatingCount = mFloatingEntries.size();
-		for (int i = 0; i < lFloatingCount; i++) {
-			final var lFloatingEntry = mFloatingEntries.get(i);
-			lFloatingEntry.handleInput(core);
+		// Respond to DOWN commands
+		// TODO :Check for gamepad axis ..
+		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_DOWN) || core.input().gamepads().isGamepadButtonDown(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_DOWN)) {
+			core.input().mouse().isMouseMenuSelectionEnabled(false);
+			mSelectedEntryIndex = getNextEnabledEntry(mSelectedEntryIndex);
+
+			updateAllEntriesToMatchSelected();
+
+			mScreenManager.toolTip().toolTipProvider(null);
+			
+			// TODO: play sound for menu entry changed
+
 		}
 
-		// Process Mouse input
-		int lLayoutCount = mLayouts.size();
+		// Process ENTER key press
+		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_ENTER) || core.input().gamepads().isGamepadButtonDown(GLFW.GLFW_GAMEPAD_BUTTON_A)) {
+			final var lEntry = getSelectedEntry();
+			lEntry.onClick(core.input());
+		}
+
+		final var lLayoutCount = mLayouts.size();
 		for (int i = 0; i < lLayoutCount; i++) {
 			final var lLayout = mLayouts.get(i);
 			lLayout.handleInput(core);
 		}
-
-		footerLayout().handleInput(core);
 	}
 
 	@Override
@@ -317,40 +258,25 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 			return;
 		}
 
-		final var lFloatingCount = mFloatingEntries.size();
-		for (int i = 0; i < lFloatingCount; i++) {
-			final var lFloatingEntry = mFloatingEntries.get(i);
-			lFloatingEntry.update(core, this, false);
-		}
+		final var lNumLayouts = mLayouts.size();
+		for (int i = 0; i < lNumLayouts; i++) {
+			final var lLayout = mLayouts.get(i);
+			if (mSelectedLayoutIndex == i) {
+				lLayout.focusedEntryIndex(mSelectedEntryIndex);
+			} else {
+				lLayout.focusedEntryIndex(-1);
+			}
 
-		final var lCount = mLayouts.size();
-		for (int i = 0; i < lCount; i++) {
-			mLayouts.get(i).update(core);
+			lLayout.update(core);
 		}
-
-		footerLayout().updateStructure();
-		footerLayout().update(core);
 	}
 
 	public void updateLayoutSize(LintfordCore core) {
-		if (mRendererManager == null || mLayouts.size() == 0 && floatingEntries().size() == 0)
+		if (mRendererManager == null || mLayouts.size() == 0)
 			return;
 
 		updateLayout(core, mLayouts, mLayoutAlignment);
 
-		// *** FOOTER *** //
-		final var lHUDController = mRendererManager.uiStructureController();
-
-		final float lInnerPaddingW = OUTER_PADDING_W * lHUDController.gameCanvasWScaleFactor();
-
-		float lWidthOfPage = lHUDController.menuFooterRectangle().width() - lInnerPaddingW * 2f;
-		float lHeightOfPage = lHUDController.menuFooterRectangle().height();
-
-		float lLeftOfPage = lHUDController.menuFooterRectangle().centerX() - lWidthOfPage / 2;
-		float lTopOfPage = lHUDController.menuFooterRectangle().top();
-
-		footerLayout().set(lLeftOfPage, lTopOfPage, lWidthOfPage, lHeightOfPage);
-		footerLayout().updateStructure();
 	}
 
 	protected void updateLayout(LintfordCore core, List<BaseLayout> layoutList, LAYOUT_ALIGNMENT alignment) {
@@ -438,7 +364,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 			lBaseLayout.y(lTop);
 
 			if (lBaseLayout.layoutFillType() == FILLTYPE.TAKE_WHATS_NEEDED) {
-				// Take whats needed, but cannot be larger than available (I guess)
+				// Take whats needed, but cannot be larger than available
 				float lNewHeight = Math.min(lBaseLayout.getEntryHeight() + lInnerPaddingH, lLayoutHeight) + lBaseLayout.cropPaddingTop() + lBaseLayout.cropPaddingBottom();
 				if (lBaseLayout.maxHeight() > 0 && lNewHeight > lBaseLayout.maxHeight()) {
 					lNewHeight = lBaseLayout.maxHeight();
@@ -447,6 +373,17 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 				lBaseLayout.height(lNewHeight);
 				lBaseLayout.updateStructure();
 				lTop += lBaseLayout.getEntryHeight() + lInnerPaddingH;
+
+//			} else if (lBaseLayout.layoutFillType() == FILLTYPE.FOOTER) {
+//				final var lHUDController = mRendererManager.uiStructureController();
+//				final var lWidthOfPage = lHUDController.menuFooterRectangle().width() - lInnerPaddingW * 2f;
+//				final var lHeightOfPage = lHUDController.menuFooterRectangle().height();
+//
+//				final var lLeftOfPage = lHUDController.menuFooterRectangle().centerX() - lWidthOfPage / 2;
+//				final var lTopOfPage = lHUDController.menuFooterRectangle().top();
+//
+//				lBaseLayout.set(lLeftOfPage, lTopOfPage, lWidthOfPage, lHeightOfPage);
+//				lBaseLayout.updateStructure();
 
 			} else { // sharers
 				float lNewHeight = lSizeOfEachShareElement;
@@ -478,14 +415,6 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		for (int i = 0; i < lCount; i++) {
 			mLayouts.get(i).draw(core, lMenuScreenZDepth + (i * 0.001f));
 		}
-
-		footerLayout().draw(core, lMenuScreenZDepth + (1 * 0.001f));
-
-		final int lNumFloatingEntries = mFloatingEntries.size();
-		for (int i = 0; i < lNumFloatingEntries; i++) {
-			final var lFloatingEntry = mFloatingEntries.get(i);
-			lFloatingEntry.draw(core, this, false, lMenuScreenZDepth + (i * 0.001f));
-		}
 	}
 
 	// --------------------------------------
@@ -500,18 +429,8 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		mLayouts.add(layoutToAdd);
 	}
 
-	public void removeLayout(BaseLayout layoutToRemove) {
-
-	}
-
-	public void clearLayouts() {
-		mLayouts.clear();
-	}
-
-	public BaseLayout getLayoutByIndex(int layoutIndex) {
-		if (layoutIndex < 0 || layoutIndex >= mLayouts.size() - 1)
-			return null;
-		return mLayouts.get(layoutIndex);
+	public void removeLayout(BaseLayout layoutToAdd) {
+		mLayouts.remove(layoutToAdd);
 	}
 
 	protected void drawMenuTitle(LintfordCore core) {
@@ -553,53 +472,6 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		exitScreen();
 	}
 
-	public boolean hasElementFocus() {
-		int lLayoutCount = mLayouts.size();
-		for (int i = 0; i < lLayoutCount; i++) {
-			if (mLayouts.get(i).doesElementHaveFocus()) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	/** Sets the focus to a specific {@link MenuEntry}, clearing the focus from all other entries. */
-	public void setFocusOn(LintfordCore core, MenuEntry menuEntry, boolean forceFocus) {
-		if (mLayouts.size() == 0)
-			return; // nothing to do
-
-		BaseLayout lLayout = mLayouts.get(mSelectedLayout);
-		lLayout.updateFocusOffAllBut(core, menuEntry);
-
-		menuEntry.hasFocus(true);
-
-	}
-
-	public void setHoveringOn(MenuEntry menuEntry) {
-		if (mLayouts.size() == 0)
-			return; // nothing to do
-
-		if (hasElementFocus())
-			return;
-
-		final var lLayout = mLayouts.get(mSelectedLayout);
-		menuEntry.hoveredOver(true);
-
-		int lCount = lLayout.getMenuEntryCount();
-		for (int i = 0; i < lCount; i++) {
-			if (!lLayout.getMenuEntryByIndex(i).equals(menuEntry)) {
-				lLayout.getMenuEntryByIndex(i).hoveredOver(false);
-			} else {
-				mSelectedEntry = i;
-			}
-		}
-	}
-
-	public void setHoveringOffAll() {
-
-	}
-
 	@Override
 	public void menuEntryOnClick(InputManager inputState, int entryUid) {
 		mClickAction.setNewClick(entryUid);
@@ -622,4 +494,267 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 			mLayouts.get(i).onViewportChange(width, height);
 		}
 	}
+
+	// INPUT INTERACTION --------------------
+
+	@Override
+	public void onMenuEntryActivated(MenuEntry activeEntry) {
+		System.out.println("onMenuEntryActivated");
+		mActiveEntry = activeEntry;
+	}
+
+	@Override
+	public void onMenuEntryDeactivated(MenuEntry activeEntry) {
+		System.out.println("onMenuEntryDeactivated");
+		mActiveEntry = null;
+	}
+
+	public void setFocusOnEntry(MenuEntry entry) {
+		mActiveEntry = null;
+
+		final int lNumLayouts = mLayouts.size();
+		for (int i = 0; i < lNumLayouts; i++) {
+			final var lLayout = mLayouts.get(i);
+			final int lNumEntries = lLayout.entries().size();
+			for (int j = 0; j < lNumEntries; j++) {
+				final var lEntry = lLayout.entries().get(j);
+				final var IsDesiredEntry = lEntry == entry;
+
+				if (IsDesiredEntry) {
+					lEntry.mHasFocus = true;
+
+					mSelectedLayoutIndex = i;
+					mSelectedEntryIndex = j;
+
+				} else {
+					lEntry.mHasFocus = false;
+					lEntry.mIsActive = false;
+				}
+			}
+		}
+	}
+
+	public void deactivateAllEntries() {
+
+	}
+
+	protected MenuEntry getSelectedEntry() {
+		final var lLayout = mLayouts.get(mSelectedLayoutIndex);
+		return lLayout.getMenuEntryByIndex(mSelectedEntryIndex);
+	}
+
+	protected void updateAllEntriesToMatchSelected() {
+		final int lNumLayouts = mLayouts.size();
+		for (int i = 0; i < lNumLayouts; i++) {
+			final var lIsLayoutSelected = i == mSelectedLayoutIndex;
+			final var lLayout = mLayouts.get(i);
+			final int lNumEntries = lLayout.entries().size();
+			for (int j = 0; j < lNumEntries; j++) {
+				final var lEntry = lLayout.entries().get(j);
+				final var lIsEntrySelected = lIsLayoutSelected && j == mSelectedEntryIndex;
+
+				if (lIsEntrySelected) {
+					lEntry.mHasFocus = true;
+				} else {
+					lEntry.mHasFocus = false;
+				}
+			}
+		}
+	}
+
+	// NAVIGATION ---------------------------
+
+	protected int getPreviousEnabledEntry(int currentEntryIndex) {
+		if (mActiveEntry != null)
+			return mSelectedEntryIndex;
+
+		boolean found = false;
+
+		var checkEntryIndex = currentEntryIndex;
+
+		if (mSelectedLayoutIndex >= mLayouts.size())
+			mSelectedLayoutIndex = 0;
+
+		while (found == false) {
+			checkEntryIndex--;
+
+			if (checkEntryIndex < 0) {
+				if (mLayouts.size() > 1) {
+					mSelectedLayoutIndex = getPreviousEnabledLayout(mSelectedLayoutIndex);
+
+					// whatever layout is now active, go with it
+					final var lLayout = mLayouts.get(mSelectedLayoutIndex);
+
+					if (lLayout.entries().size() == 0)
+						return 0;
+
+					checkEntryIndex = lLayout.entries().size() - 1;
+
+					if (checkEntryIndex == currentEntryIndex)
+						return currentEntryIndex;
+
+					if (!lLayout.hasEntry(checkEntryIndex))
+						return 0;
+
+					return checkEntryIndex;
+
+				} else {
+					final var lLayout = mLayouts.get(mSelectedLayoutIndex);
+					checkEntryIndex = lLayout.entries().size() - 1;
+
+					if (lLayout.entries().size() == 0)
+						return 0;
+
+					if (checkEntryIndex == currentEntryIndex)
+						return currentEntryIndex;
+
+					final var lFoundEntry = lLayout.entries().get(checkEntryIndex);
+					if (lFoundEntry.enabled() == false)
+						continue;
+
+					return checkEntryIndex;
+				}
+			} else {
+				final var lLayout = mLayouts.get(mSelectedLayoutIndex);
+
+				if (checkEntryIndex == currentEntryIndex) {
+					return currentEntryIndex;
+				}
+
+				final var lFoundEntry = lLayout.entries().get(checkEntryIndex);
+				if (lFoundEntry.enabled() == false)
+					continue;
+
+				return checkEntryIndex;
+			}
+		}
+
+		return currentEntryIndex;
+	}
+
+	protected int getPreviousEnabledLayout(int layoutIndex) {
+		if (mActiveEntry != null)
+			return mSelectedLayoutIndex;
+
+		int selectedLayoutIndex = mSelectedLayoutIndex;
+
+		if (mLayouts.size() == 1)
+			return 0;
+
+		boolean found = false;
+		while (found == false) {
+			selectedLayoutIndex--;
+
+			if (selectedLayoutIndex == mSelectedLayoutIndex)
+				return mSelectedLayoutIndex;
+
+			if (selectedLayoutIndex < 0) {
+				selectedLayoutIndex = mLayouts.size() - 1;
+
+				final var lLayout = mLayouts.get(selectedLayoutIndex);
+				if (lLayout.entries().size() == 0) {
+					selectedLayoutIndex--;
+					continue;
+				}
+
+				return selectedLayoutIndex;
+			}
+
+			final var lLayout = mLayouts.get(selectedLayoutIndex);
+			if (lLayout.entries().size() == 0) {
+				selectedLayoutIndex--;
+				continue;
+			}
+
+			return selectedLayoutIndex;
+
+		}
+
+		return mSelectedEntryIndex;
+	}
+
+	protected int getNextEnabledEntry(int currentEntryIndex) {
+		if (mActiveEntry != null)
+			return mSelectedEntryIndex;
+
+		final var maxTries = 10;
+		var currentTry = 0;
+
+		var checkEntryIndex = currentEntryIndex;
+
+		while (currentTry < maxTries) {
+			checkEntryIndex++;
+			final var lLayout = mLayouts.get(mSelectedLayoutIndex);
+
+			if (checkEntryIndex >= lLayout.entries().size()) {
+				mSelectedLayoutIndex = getNextEnabledLayout(mSelectedLayoutIndex);
+				checkEntryIndex = 0;
+
+				final var lNextLayout = mLayouts.get(mSelectedLayoutIndex);
+				if (lNextLayout.entries().get(checkEntryIndex).enabled() == false)
+					continue;
+
+				return 0;
+
+			} else {
+				if (checkEntryIndex == currentEntryIndex) {
+					return currentEntryIndex;
+				}
+
+				final var lFoundEntry = lLayout.entries().get(checkEntryIndex);
+				if (lFoundEntry.enabled() == false) {
+					currentTry++;
+					continue;
+				}
+
+				if (checkEntryIndex == currentEntryIndex)
+					return currentEntryIndex;
+
+				return checkEntryIndex;
+			}
+		}
+
+		return mSelectedEntryIndex;
+	}
+
+	protected int getNextEnabledLayout(int layoutIndex) {
+		if (mActiveEntry != null)
+			return mSelectedLayoutIndex;
+
+		int selectedLayoutIndex = mSelectedLayoutIndex;
+
+		if (mLayouts.size() == 1)
+			return 0;
+
+		boolean found = false;
+		while (found == false) {
+			selectedLayoutIndex++;
+
+			if (selectedLayoutIndex == mSelectedLayoutIndex)
+				return mSelectedLayoutIndex;
+
+			if (selectedLayoutIndex >= mLayouts.size()) {
+				selectedLayoutIndex = 0;
+
+				final var lLayout = mLayouts.get(selectedLayoutIndex);
+				if (lLayout.entries().size() == 0) {
+					selectedLayoutIndex++;
+					continue;
+				}
+
+				return selectedLayoutIndex;
+			}
+
+			final var lLayout = mLayouts.get(selectedLayoutIndex);
+			if (lLayout.entries().size() == 0) {
+				selectedLayoutIndex++;
+				continue;
+			}
+
+			return selectedLayoutIndex;
+		}
+
+		return mSelectedEntryIndex;
+	}
+
 }

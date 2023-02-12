@@ -58,10 +58,10 @@ public class TimedConfirmationDialog extends BaseDialog {
 
 		final var lListLayout = new ListLayout(this);
 
-		mConfirmEntry = new MenuEntry(screenManager, lListLayout, "Okay");
+		mConfirmEntry = new MenuEntry(screenManager, this, "Okay");
 		mConfirmEntry.registerClickListener(parentScreen, BUTTON_TIMED_CONFIRM_YES);
 
-		mCancelEntry = new MenuEntry(screenManager, lListLayout, "Cancel");
+		mCancelEntry = new MenuEntry(screenManager, this, "Cancel");
 		mCancelEntry.registerClickListener(parentScreen, BUTTON_TIMED_CONFIRM_NO);
 
 		lListLayout.addMenuEntry(mCancelEntry);

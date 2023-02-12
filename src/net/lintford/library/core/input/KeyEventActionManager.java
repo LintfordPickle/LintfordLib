@@ -50,7 +50,8 @@ public class KeyEventActionManager extends IniFile {
 	public void update(LintfordCore core) {
 		final var lDeltaTime = (float) core.appTime().elapsedTimeMilli();
 
-		// we pol the keyboard once, so the individual action players don't separately poll the keyboard (and consume the timers etc.)
+		// we poll the keyboard once for each of the registered key action events,
+		// this way the individual action players don't separately poll the keyboard and consume the key timers
 		final int lNumEventActions = mUpdateActionList.size();
 		for (int i = 0; i < lNumEventActions; i++) {
 			final var lAction = mUpdateActionList.get(i);

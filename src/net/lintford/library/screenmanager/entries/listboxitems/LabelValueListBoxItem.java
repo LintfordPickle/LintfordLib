@@ -60,14 +60,14 @@ public class LabelValueListBoxItem extends ListBoxItem {
 	// --------------------------------------
 
 	@Override
-	public void draw(LintfordCore core, Screen screen, SpriteBatch spriteBatch, boolean isSelected, float parentZDepth) {
+	public void draw(LintfordCore core, Screen screen, SpriteBatch spriteBatch, float parentZDepth) {
 		if (mLabelValue != null && mLabelValue.length() > 0) {
 
 			if (mTextValue == null)
 				mTextValue = "";
 
 			final float lScale = mScreenManager.UiStructureController().uiTextScaleFactor();
-			final var lFont = mParentListBox.parentLayout().parentScreen.font();
+			final var lFont = mParentListBox.parentScreen().font();
 
 			mH = 10;
 

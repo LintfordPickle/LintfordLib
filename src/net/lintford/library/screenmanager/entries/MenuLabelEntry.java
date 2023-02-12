@@ -4,10 +4,10 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.textures.CoreTextureNames;
 import net.lintford.library.screenmanager.MenuEntry;
+import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.Screen;
 import net.lintford.library.screenmanager.ScreenManager;
 import net.lintford.library.screenmanager.ScreenManagerConstants.FILLTYPE;
-import net.lintford.library.screenmanager.layouts.BaseLayout;
 
 public class MenuLabelEntry extends MenuEntry {
 
@@ -48,14 +48,13 @@ public class MenuLabelEntry extends MenuEntry {
 	// Constructor
 	// --------------------------------------
 
-	public MenuLabelEntry(ScreenManager screenManager, BaseLayout parentLayout) {
-		super(screenManager, parentLayout, "");
+	public MenuLabelEntry(ScreenManager screenManager, MenuScreen parentScreen) {
+		super(screenManager, parentScreen, "");
 
 		mDrawBackground = false;
 		mText = "Unnamed Label";
 
 		mCanHaveFocus = false;
-		mCanHoverOver = false;
 		entryColor.setFromColor(ColorConstants.getColorWithRGBMod(ColorConstants.TertiaryColor, .5f));
 
 		mVerticalFillType = FILLTYPE.TAKE_WHATS_NEEDED;
@@ -66,17 +65,16 @@ public class MenuLabelEntry extends MenuEntry {
 	// --------------------------------------
 
 	@Override
-	public void draw(LintfordCore core, Screen screen, boolean isSelected, float parentZDepth) {
+	public void draw(LintfordCore core, Screen screen, float parentZDepth) {
 		if (!enabled())
 			return;
 
-		final var lParentScreen = mParentLayout.parentScreen;
-		final var lTextBoldFont = lParentScreen.fontBold();
+		final var lTextBoldFont = mParentScreen.fontBold();
 		final var lScreenOffset = screen.screenPositionOffset();
-		final var lUiTextScale = lParentScreen.uiTextScale();
+		final var lUiTextScale = mParentScreen.uiTextScale();
 		final var lLabelWidth = lTextBoldFont.getStringWidth(mText, lUiTextScale);
 		final var lFontHeight = lTextBoldFont.fontHeight() * lUiTextScale;
-		final var lSpriteBatch = lParentScreen.spriteBatch();
+		final var lSpriteBatch = mParentScreen.spriteBatch();
 
 		if (mDrawBackground) {
 			lSpriteBatch.begin(core.HUD());
@@ -107,10 +105,10 @@ public class MenuLabelEntry extends MenuEntry {
 		lTextBoldFont.end();
 
 		if (mShowInfoIcon)
-			drawInfoIcon(core, lSpriteBatch, mInfoIconDstRectangle, lParentScreen.screenColor.a);
+			drawInfoIcon(core, lSpriteBatch, mInfoIconDstRectangle, mParentScreen.screenColor.a);
 
 		if (mShowWarnIcon)
-			drawWarningIcon(core, lSpriteBatch, mWarnIconDstRectangle, lParentScreen.screenColor.a);
+			drawWarningIcon(core, lSpriteBatch, mWarnIconDstRectangle, mParentScreen.screenColor.a);
 
 		drawDebugCollidableBounds(core, lSpriteBatch);
 	}

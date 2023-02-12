@@ -51,10 +51,10 @@ public class StringListBoxItem extends ListBoxItem {
 	// --------------------------------------
 
 	@Override
-	public void draw(LintfordCore core, Screen screen, SpriteBatch spriteBatch, boolean isSelected, float parentZDepth) {
+	public void draw(LintfordCore core, Screen screen, SpriteBatch spriteBatch, float parentZDepth) {
 		if (mTextValue != null && mTextValue.length() > 0) {
 			final float lScale = mScreenManager.UiStructureController().uiTextScaleFactor();
-			final var lFont = mParentListBox.parentLayout().parentScreen.font();
+			final var lFont = mParentListBox.parentScreen().font();
 			final float lFontHeight = lFont.getStringHeight(mTextValue, lScale);
 
 			mH = 10;

@@ -19,7 +19,6 @@ import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.Screen;
 import net.lintford.library.screenmanager.ScreenManager;
-import net.lintford.library.screenmanager.layouts.BaseLayout;
 
 /**  */
 public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
@@ -89,14 +88,6 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 		return mLabel;
 	}
 
-	@Override
-	public void hasFocus(boolean newValue) {
-		super.hasFocus(newValue);
-
-		if (!mFocusLocked && !newValue)
-			mOpen = newValue;
-	}
-
 	public MenuEnumEntryItem selectedItem() {
 		if (mItems == null || mItems.size() == 0)
 			return null;
@@ -143,13 +134,13 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 	// Constructor
 	// --------------------------------------
 
-	public MenuDropDownEntry(ScreenManager screenManager, BaseLayout parentLayout, String label) {
-		super(screenManager, parentLayout, "");
+	public MenuDropDownEntry(ScreenManager screenManager, MenuScreen parentScreen, String label) {
+		super(screenManager, parentScreen, "");
 
 		mItems = new ArrayList<>();
 		mLabel = label;
 
-		mActiveUpdateDraw = true;
+		mEnableUpdateDraw = true;
 		mOpen = false;
 
 		mContentRectangle = new ScrollBarContentRectangle(this);
@@ -164,80 +155,8 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 	// --------------------------------------
 
 	@Override
-	public boolean handleInput(LintfordCore core) {
-		if (mItems == null || mItems.size() == 0 || !mEnabled)
-			return false;
-
-		if (mOpen && mScrollBar.handleInput(core, mScreenManager))
-			return true;
-
-		else if (mWindowRectangle.intersectsAA(core.HUD().getMouseCameraSpace()) && core.input().mouse().tryAcquireMouseOverThisComponent(hashCode())) {
-			if (mOpen) {
-				final float lConsoleLineHeight = mItemHeight;
-				// Something inside the dropdown was select
-				float lRelativeheight = core.HUD().getMouseCameraSpace().y - mWindowRectangle.y() - mScrollBar.currentYPos();
-
-				int lRelativeIndex = (int) (lRelativeheight / lConsoleLineHeight);
-				int lSelectedIndex = lRelativeIndex;
-
-				if (lSelectedIndex < 0)
-					lSelectedIndex = 0;
-				if (lSelectedIndex >= mItems.size())
-					lSelectedIndex = mItems.size() - 1;
-
-				mHighlightedIndex = lSelectedIndex;
-			}
-
-			if (core.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
-				if (mOpen) {
-					// TODO: play the menu clicked sound
-
-					final float lConsoleLineHeight = mItemHeight;
-					float lRelativeheight = core.HUD().getMouseCameraSpace().y - mWindowRectangle.y() - mScrollBar.currentYPos();
-
-					int lRelativeIndex = (int) (lRelativeheight / lConsoleLineHeight);
-					int lSelectedIndex = lRelativeIndex;
-
-					if (lSelectedIndex < 0)
-						lSelectedIndex = 0;
-
-					if (lSelectedIndex >= mItems.size())
-						lSelectedIndex = mItems.size() - 1;
-
-					mSelectedIndex = lSelectedIndex;
-
-					if (mClickListener != null)
-						mClickListener.menuEntryChanged(this);
-
-					mOpen = false;
-
-				} else {
-					// First check to see if the player clicked the info button
-					if (mShowInfoIcon && mInfoIconDstRectangle.intersectsAA(core.HUD().getMouseCameraSpace())) {
-						mToolTipEnabled = true;
-						mToolTipTimer = 1000;
-					} else {
-						mOpen = true;
-						mParentLayout.parentScreen.setFocusOn(core, this, true);
-					}
-
-					if (mToolTipEnabled)
-						mToolTipTimer += core.appTime().elapsedTimeMilli();
-
-				}
-
-				return true;
-			}
-		} else {
-			mToolTipTimer = 0;
-		}
-
-		return false;
-	}
-
-	@Override
-	public void update(LintfordCore core, MenuScreen screen, boolean isSelected) {
-		super.update(core, screen, isSelected);
+	public void update(LintfordCore core, MenuScreen screen) {
+		super.update(core, screen);
 
 		if (mShowInfoIcon)
 			mInfoIconDstRectangle.set(mX, mY, 32f, 32f);
@@ -262,10 +181,9 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 	}
 
 	@Override
-	public void draw(LintfordCore core, Screen screen, boolean isSelected, float componentDepth) {
-		final var lParentScreen = mParentLayout.parentScreen;
-		final float lUiTextScale = lParentScreen.uiTextScale();
-		final var lTextBoldFont = lParentScreen.fontBold();
+	public void draw(LintfordCore core, Screen screen, float componentDepth) {
+		final float lUiTextScale = mParentScreen.uiTextScale();
+		final var lTextBoldFont = mParentScreen.fontBold();
 
 		mZ = mOpen ? ZLayers.LAYER_SCREENMANAGER + Z_STATE_MODIFIER_ACTIVE : ZLayers.LAYER_SCREENMANAGER + Z_STATE_MODIFIER_PASSIVE;
 
@@ -274,14 +192,14 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 
 		final var lLabelWidth = lTextBoldFont.getStringWidth(mLabel, lUiTextScale);
 		final var lFontHeight = lTextBoldFont.fontHeight() * lUiTextScale;
-		final var lSpriteBatch = lParentScreen.spriteBatch();
+		final var lSpriteBatch = mParentScreen.spriteBatch();
 
 		final float lSeparatorHalfWidth = lTextBoldFont.getStringWidth(lSeparator, lUiTextScale) * 0.5f;
 		lTextBoldFont.begin(core.HUD());
 		lTextBoldFont.drawText(mLabel, lScreenOffset.x + mX + mW / 2 - 10 - lLabelWidth - lSeparatorHalfWidth, lScreenOffset.y + mY + mItemHeight / 2f - lFontHeight / 2f, mZ, textColor, lUiTextScale, -1);
 		lTextBoldFont.drawText(lSeparator, lScreenOffset.x + mX + mW / 2 - lSeparatorHalfWidth, lScreenOffset.y + mY + mItemHeight / 2f - lFontHeight / 2f, mZ, textColor, lUiTextScale, -1);
 
-		if (mHoveredOver && mEnabled) {
+		if (mHasFocus && mEnabled) {
 			lSpriteBatch.begin(core.HUD());
 			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - mW / 2, lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ, ColorConstants.MenuEntryHighlightColor);
 			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - (mW / 2) + 32, lScreenOffset.y + centerY() - mH / 2, mW - 64, mH, mZ, ColorConstants.MenuEntryHighlightColor);
@@ -330,17 +248,16 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 	}
 
 	@Override
-	public void postStencilDraw(LintfordCore core, Screen screen, boolean isSelected, float parentZDepth) {
-		super.postStencilDraw(core, screen, isSelected, parentZDepth);
+	public void postStencilDraw(LintfordCore core, Screen screen, float parentZDepth) {
+		super.postStencilDraw(core, screen, parentZDepth);
 
-		final var lParentScreen = mParentLayout.parentScreen;
-		final float lUiTextScale = lParentScreen.uiTextScale();
-		final var lTextBoldFont = lParentScreen.fontBold();
+		final float lUiTextScale = mParentScreen.uiTextScale();
+		final var lTextBoldFont = mParentScreen.fontBold();
 
 		mZ = mOpen ? ZLayers.LAYER_SCREENMANAGER + Z_STATE_MODIFIER_ACTIVE : ZLayers.LAYER_SCREENMANAGER + Z_STATE_MODIFIER_PASSIVE;
 
 		final var lScreenOffset = screen.screenPositionOffset();
-		final var lSpriteBatch = lParentScreen.spriteBatch();
+		final var lSpriteBatch = mParentScreen.spriteBatch();
 
 		if (mOpen) {
 			lSpriteBatch.begin(core.HUD());
@@ -399,6 +316,13 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 	@Override
 	public void onClick(InputManager inputManager) {
 		super.onClick(inputManager);
+
+		mIsActive = !mIsActive;
+
+		if (mIsActive)
+			mParentScreen.onMenuEntryActivated(this);
+		else
+			mParentScreen.onMenuEntryDeactivated(this);
 	}
 
 	public void addItem(MenuEnumEntryItem item) {

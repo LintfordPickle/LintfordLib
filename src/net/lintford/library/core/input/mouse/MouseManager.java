@@ -123,9 +123,21 @@ public class MouseManager {
 	public MousePositionCallback mMousePositionCallback;
 	public MouseScrollCallback mMouseScrollCallback;
 
+	private boolean mMouseMenuSelectionEnabled;
+	private float mLastMouseX;
+	private float mLastMouseY;
+
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public boolean isMouseMenuSelectionEnabled() {
+		return mMouseMenuSelectionEnabled;
+	}
+
+	public void isMouseMenuSelectionEnabled(boolean newValue) {
+		mMouseMenuSelectionEnabled = newValue;
+	}
 
 	public int mouseLeftButtonLogicalTimer() {
 		return mLogicalLeftClickTimer;
@@ -378,6 +390,20 @@ public class MouseManager {
 		}
 
 		mMouseMiddleOwnerHashCode = MOUSE_NO_OWNER;
+
+		updateMouseMenuSelectionEnabled(core);
+	}
+
+	private void updateMouseMenuSelectionEnabled(LintfordCore core) {
+		final var lMouseX = core.HUD().getMouseWorldSpaceX();
+		final var lMouseY = core.HUD().getMouseWorldSpaceY();
+
+		if (lMouseX != mLastMouseX || lMouseY != mLastMouseY)
+			mMouseMenuSelectionEnabled = true;
+
+		mLastMouseX = lMouseX;
+		mLastMouseY = lMouseY;
+
 	}
 
 	public void endUpdate() {

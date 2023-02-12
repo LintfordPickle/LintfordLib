@@ -1,10 +1,10 @@
 package net.lintford.library.screenmanager.entries;
 
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.Screen;
 import net.lintford.library.screenmanager.ScreenManager;
 import net.lintford.library.screenmanager.ScreenManagerConstants.FILLTYPE;
-import net.lintford.library.screenmanager.layouts.BaseLayout;
 
 public class MenuLabelValueEntry extends MenuLabelEntry {
 
@@ -41,15 +41,14 @@ public class MenuLabelValueEntry extends MenuLabelEntry {
 	// Constructor
 	// --------------------------------------
 
-	public MenuLabelValueEntry(ScreenManager screenManager, BaseLayout parentLayout) {
-		super(screenManager, parentLayout);
+	public MenuLabelValueEntry(ScreenManager screenManager, MenuScreen parentScreen) {
+		super(screenManager, parentScreen);
 
 		mDrawBackground = false;
 		mText = "Add your message";
 		mShowLabel = true;
 
 		mCanHaveFocus = false;
-		mCanHoverOver = false;
 
 		mVerticalFillType = FILLTYPE.TAKE_WHATS_NEEDED;
 	}
@@ -59,15 +58,14 @@ public class MenuLabelValueEntry extends MenuLabelEntry {
 	// --------------------------------------
 
 	@Override
-	public void draw(LintfordCore core, Screen screen, boolean isSelected, float parentZDepth) {
-		super.draw(core, screen, isSelected, parentZDepth);
+	public void draw(LintfordCore core, Screen screen, float parentZDepth) {
+		super.draw(core, screen, parentZDepth);
 		if (!enabled())
 			return;
 
-		final var lParentScreen = mParentLayout.parentScreen;
-		final var lTextBoldFont = lParentScreen.fontBold();
-		final var lUiTextScale = lParentScreen.uiTextScale();
-		final var lScreenOffset = lParentScreen.screenPositionOffset();
+		final var lTextBoldFont = mParentScreen.fontBold();
+		final var lUiTextScale = mParentScreen.uiTextScale();
+		final var lScreenOffset = mParentScreen.screenPositionOffset();
 
 		final float lLabelWidth = lTextBoldFont.getStringWidth(mText, lUiTextScale);
 		final float lFontHeight = lTextBoldFont.fontHeight() * lUiTextScale;

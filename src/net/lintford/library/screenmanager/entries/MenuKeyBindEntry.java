@@ -7,15 +7,14 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.textures.CoreTextureNames;
-import net.lintford.library.core.input.KeyEventAction;
 import net.lintford.library.core.input.IKeyInputCallback;
 import net.lintford.library.core.input.InputHelper;
+import net.lintford.library.core.input.KeyEventAction;
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.Screen;
 import net.lintford.library.screenmanager.ScreenManager;
 import net.lintford.library.screenmanager.ScreenManagerConstants.FILLTYPE;
-import net.lintford.library.screenmanager.layouts.BaseLayout;
 
 public class MenuKeyBindEntry extends MenuEntry implements IKeyInputCallback {
 
@@ -75,8 +74,8 @@ public class MenuKeyBindEntry extends MenuEntry implements IKeyInputCallback {
 	// Constructor
 	// --------------------------------------
 
-	public MenuKeyBindEntry(ScreenManager screenManager, BaseLayout parentLayout, KeyEventAction eventAction) {
-		super(screenManager, parentLayout, "");
+	public MenuKeyBindEntry(ScreenManager screenManager, MenuScreen parentScreen, KeyEventAction eventAction) {
+		super(screenManager, parentScreen, "");
 
 		mEventAction = eventAction;
 		mDrawBackground = false;
@@ -84,7 +83,6 @@ public class MenuKeyBindEntry extends MenuEntry implements IKeyInputCallback {
 		mShow = true;
 
 		mCanHaveFocus = false;
-		mCanHoverOver = true;
 
 		mIsDirty = true;
 		mVerticalFillType = FILLTYPE.TAKE_WHATS_NEEDED;
@@ -103,24 +101,8 @@ public class MenuKeyBindEntry extends MenuEntry implements IKeyInputCallback {
 	}
 
 	@Override
-	public boolean handleInput(LintfordCore core) {
-		if (!mEnabled)
-			return false;
-
-		if (mHasFocus) {
-			if (!core.input().keyboard().isSomeComponentCapturingInputKeys()) {
-				Debug.debugManager().logger().i(getClass().getSimpleName(), "Changing key bind for " + mEventAction.eventActionUid());
-				core.input().keyboard().StartKeyInputCapture(this);
-				mBindingKey = true;
-			}
-		}
-
-		return super.handleInput(core);
-	}
-
-	@Override
-	public void update(LintfordCore core, MenuScreen screen, boolean isSelected) {
-		super.update(core, screen, isSelected);
+	public void update(LintfordCore core, MenuScreen screen) {
+		super.update(core, screen);
 
 		if (mIsDirty) {
 			mBoundKeyText = InputHelper.getGlfwPrintableKeyFromKeyCode(mEventAction.getBoundKeyCode()).toUpperCase();
@@ -129,36 +111,31 @@ public class MenuKeyBindEntry extends MenuEntry implements IKeyInputCallback {
 	}
 
 	@Override
-	public void draw(LintfordCore core, Screen screen, boolean isSelected, float parentZDepth) {
+	public void draw(LintfordCore core, Screen screen, float parentZDepth) {
 		if (!enabled())
 			return;
 
 		if (mEventAction == null)
 			return;
 
-		final var lParentScreen = mParentLayout.parentScreen;
-		final var lTextBoldFont = lParentScreen.fontBold();
+		final var lTextBoldFont = mParentScreen.fontBold();
 
-		entryColor.r = mHoveredOver ? (ColorConstants.SecondaryColor.r) : .1f;
-		entryColor.g = mHoveredOver ? (ColorConstants.SecondaryColor.g) : .1f;
-		entryColor.b = mHoveredOver ? (ColorConstants.SecondaryColor.b) : .1f;
-		entryColor.a = mHoveredOver ? lParentScreen.screenColor.a : 0.26f;
+		entryColor.setRGB(1.f, 1.f, 1.f);
+		textColor.a = mParentScreen.screenColor.a;
 
-		textColor.a = lParentScreen.screenColor.a;
-
-		final float lUiTextScale = lParentScreen.uiTextScale();
+		final float lUiTextScale = mParentScreen.uiTextScale();
 
 		final float lLabelWidth = lTextBoldFont.getStringWidth(mText, lUiTextScale);
 		final float lFontHeight = lTextBoldFont.fontHeight() * lUiTextScale;
 
-		final var lSpriteBatch = lParentScreen.spriteBatch();
+		final var lSpriteBatch = mParentScreen.spriteBatch();
 
 		if (mDrawBackground) {
 			lSpriteBatch.begin(core.HUD());
 			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX, mY, mW, mH, parentZDepth + .15f, entryColor);
 			lSpriteBatch.end();
 
-		} else if (mHoveredOver) {
+		} else if (mHasFocus) {
 			lSpriteBatch.begin(core.HUD());
 			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, centerX() - mW / 2, centerY() - mH / 2, 32, mH, parentZDepth + .15f, ColorConstants.MenuEntryHighlightColor);
 			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, centerX() - (mW / 2) + 32, centerY() - mH / 2, mW - 64, mH, parentZDepth + .15f, ColorConstants.MenuEntryHighlightColor);
@@ -194,10 +171,10 @@ public class MenuKeyBindEntry extends MenuEntry implements IKeyInputCallback {
 		lTextBoldFont.end();
 
 		if (mShowInfoIcon)
-			drawInfoIcon(core, lSpriteBatch, mInfoIconDstRectangle, lParentScreen.screenColor.a);
+			drawInfoIcon(core, lSpriteBatch, mInfoIconDstRectangle, mParentScreen.screenColor.a);
 
 		if (mShowWarnIcon)
-			drawWarningIcon(core, lSpriteBatch, mWarnIconDstRectangle, lParentScreen.screenColor.a);
+			drawWarningIcon(core, lSpriteBatch, mWarnIconDstRectangle, mParentScreen.screenColor.a);
 
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
 			lSpriteBatch.begin(core.HUD());

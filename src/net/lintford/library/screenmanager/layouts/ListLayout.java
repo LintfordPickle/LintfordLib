@@ -60,28 +60,6 @@ public class ListLayout extends BaseLayout implements IProcessMouseInput {
 	// --------------------------------------
 
 	@Override
-	public boolean handleInput(LintfordCore core) {
-		final var lIntersectsAA = intersectsAA(core.HUD().getMouseCameraSpace());
-		if (lIntersectsAA && core.input().mouse().isMouseOverThisComponent(hashCode())) {
-			if (super.handleInput(core) || core.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
-				return true;
-			}
-		}
-
-		// otherwise, defocus this and all children ??
-		else {
-			final int lEntryCount = mMenuEntries.size();
-			for (int i = 0; i < lEntryCount; i++) {
-				final var lEntry = mMenuEntries.get(i);
-
-				lEntry.hoveredOver(false);
-			}
-		}
-
-		return false;
-	}
-
-	@Override
 	public void update(LintfordCore core) {
 		super.update(core);
 
@@ -117,8 +95,9 @@ public class ListLayout extends BaseLayout implements IProcessMouseInput {
 
 		for (int i = 0; i < lEntryCount; i++) {
 			final var lEntry = mMenuEntries.get(i);
-			if (lEntry.isDormant())
+			if (!lEntry.affectsParentStructure())
 				continue;
+
 			if (lEntry.verticalFillType() == FILLTYPE.TAKE_WHATS_NEEDED) {
 				lCountOfTakers++;
 				lHeightTaken += lEntry.marginTop() + lEntry.height() + lEntry.marginBottom();
@@ -134,8 +113,9 @@ public class ListLayout extends BaseLayout implements IProcessMouseInput {
 
 		for (int i = 0; i < lEntryCount; i++) {
 			final var lMenuEntry = mMenuEntries.get(i);
-			if (lMenuEntry.isDormant())
+			if (!lMenuEntry.affectsParentStructure())
 				continue;
+
 			float lScrollBarWidth = 0.f;
 			if (mScrollBar.scrollBarEnabled())
 				lScrollBarWidth = mScrollBar.width();

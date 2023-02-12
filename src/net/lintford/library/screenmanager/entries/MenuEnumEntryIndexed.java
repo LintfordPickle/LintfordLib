@@ -12,7 +12,6 @@ import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.Screen;
 import net.lintford.library.screenmanager.ScreenManager;
-import net.lintford.library.screenmanager.layouts.BaseLayout;
 
 public class MenuEnumEntryIndexed<T> extends MenuEntry {
 
@@ -135,8 +134,8 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 	// Constructor
 	// --------------------------------------
 
-	public MenuEnumEntryIndexed(ScreenManager screenManager, BaseLayout parentLayout, String label) {
-		super(screenManager, parentLayout, "");
+	public MenuEnumEntryIndexed(ScreenManager screenManager, MenuScreen parentScreen, String label) {
+		super(screenManager, parentScreen, "");
 
 		mLabel = label;
 		mItems = new ArrayList<>();
@@ -156,89 +155,11 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 	// --------------------------------------
 
 	@Override
-	public boolean handleInput(LintfordCore core) {
-		if (!mEnabled || !mActiveUpdateDraw)
-			return false;
-
-		if (mHasFocus) {
-
-		} else {
-			mFocusLocked = false; // no lock if not focused
-		}
-
-		if (mButtonsEnabled) {
-
-			if (mLeftButtonRectangle.intersectsAA(core.HUD().getMouseCameraSpace()) && core.input().mouse().isMouseOverThisComponent(hashCode())) {
-				if (core.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
-					mSelectedIndex--;
-					if (mSelectedIndex < 0)
-						mSelectedIndex = mItems.size() - 1;
-
-					mParentLayout.parentScreen.setFocusOn(core, this, true);
-
-					if (mClickListener != null)
-						mClickListener.menuEntryChanged(this);
-
-					return true;
-				}
-			}
-
-			else if (mRightButtonRectangle.intersectsAA(core.HUD().getMouseCameraSpace()) && core.input().mouse().isMouseOverThisComponent(hashCode())) {
-				if (core.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
-					mSelectedIndex++;
-					if (mSelectedIndex >= mItems.size())
-						mSelectedIndex = 0;
-
-					mParentLayout.parentScreen.setFocusOn(core, this, true);
-
-					if (mClickListener != null)
-						mClickListener.menuEntryChanged(this);
-
-					return true;
-				}
-			}
-		}
-
-		if (intersectsAA(core.HUD().getMouseCameraSpace()) && core.input().mouse().isMouseOverThisComponent(hashCode())) {
-			if (core.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
-				if (mEnabled) {
-
-					mSelectedIndex++;
-					if (mSelectedIndex >= mItems.size())
-						mSelectedIndex = 0;
-
-					// TODO: Play a menu click sound
-
-					mParentLayout.parentScreen.setFocusOn(core, this, true);
-
-					if (mClickListener != null)
-						mClickListener.menuEntryChanged(this);
-
-					mIsChecked = !mIsChecked;
-				}
-			} else {
-				hasFocus(true);
-			}
-
-			if (mToolTipEnabled)
-				mToolTipTimer += core.appTime().elapsedTimeMilli();
-
-			return true;
-
-		} else {
-			hoveredOver(false);
-			mToolTipTimer = 0;
-		}
-
-		return false;
-	}
-
-	@Override
-	public void update(LintfordCore core, MenuScreen screen, boolean isSelected) {
-		if (mActiveUpdateDraw == false)
+	public void update(LintfordCore core, MenuScreen screen) {
+		if (mEnableUpdateDraw == false)
 			return;
 
-		super.update(core, screen, isSelected);
+		super.update(core, screen);
 
 		mLeftButtonRectangle.x(mX + mW / 2 + 16);
 		mLeftButtonRectangle.y(mY);
@@ -250,18 +171,17 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 	}
 
 	@Override
-	public void draw(LintfordCore core, Screen screen, boolean isSelected, float componentDepth) {
-		if (mActiveUpdateDraw == false)
+	public void draw(LintfordCore core, Screen screen, float componentDepth) {
+		if (mEnableUpdateDraw == false)
 			return;
 
 		mZ = componentDepth;
 
-		final var lParentScreen = mParentLayout.parentScreen;
-		final var lTextureBatch = lParentScreen.spriteBatch();
-		final float lUiTextScale = lParentScreen.uiTextScale();
+		final var lTextureBatch = mParentScreen.spriteBatch();
+		final float lUiTextScale = mParentScreen.uiTextScale();
 
-		textColor.a = lParentScreen.screenColor.a;
-		entryColor.a = lParentScreen.screenColor.a;
+		textColor.a = mParentScreen.screenColor.a;
+		entryColor.a = mParentScreen.screenColor.a;
 
 		if (mButtonsEnabled) {
 			lTextureBatch.begin(core.HUD());
@@ -269,7 +189,7 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 			// FIXME: Store this somewhere more central and accessable
 			final float lButtonSize = 32;
 
-			final var lButtonColor = ColorConstants.getWhiteWithAlpha((mEnabled ? 1.f : 0.5f) * lParentScreen.screenColor.a);
+			final var lButtonColor = ColorConstants.getWhiteWithAlpha((mEnabled ? 1.f : 0.5f) * mParentScreen.screenColor.a);
 
 			lTextureBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_LEFT, mLeftButtonRectangle.x(), mLeftButtonRectangle.y(), lButtonSize, lButtonSize, mZ, lButtonColor);
 			lTextureBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_RIGHT, mRightButtonRectangle.x(), mRightButtonRectangle.y(), lButtonSize, lButtonSize, mZ, lButtonColor);
@@ -277,7 +197,7 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 			lTextureBatch.end();
 		}
 
-		final var lTextBoldFont = lParentScreen.fontBold();
+		final var lTextBoldFont = mParentScreen.fontBold();
 
 		final float lLabelWidth = lTextBoldFont.getStringWidth(mLabel, lUiTextScale);
 		float lAdjustedLabelScaleW = lUiTextScale;
@@ -304,7 +224,7 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 
 		lTextBoldFont.end();
 
-		super.draw(core, screen, isSelected, componentDepth);
+		super.draw(core, screen, componentDepth);
 	}
 
 	// --------------------------------------
@@ -316,11 +236,6 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 		super.onClick(inputManager);
 
 		mHasFocus = !mHasFocus;
-		if (mHasFocus)
-			mFocusLocked = true;
-		else
-			mFocusLocked = false;
-
 	}
 
 	public void addItem(MenuEnumEntryItem item) {
