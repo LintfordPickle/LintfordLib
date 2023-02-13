@@ -171,6 +171,48 @@ public class MenuEnumEntry extends MenuEntry {
 	// Core Methods
 	// --------------------------------------
 
+	public boolean handleInput(LintfordCore core) {
+		if (!mEnableUpdateDraw || !mEnabled || isAnimating)
+			return false;
+
+		if (intersectsAA(core.HUD().getMouseCameraSpace()) && core.input().mouse().isMouseOverThisComponent(hashCode())) {
+			mIsMouseOver = true;
+			core.input().mouse().isMouseMenuSelectionEnabled(true);
+			mParentScreen.setFocusOnEntry(this);
+
+			if (mToolTipEnabled)
+				mToolTipTimer += core.appTime().elapsedTimeMilli();
+
+			if (core.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
+
+				if (mLeftButtonRectangle.intersectsAA(core.HUD().getMouseCameraSpace())) {
+					mSelectedIndex--;
+					if (mSelectedIndex < 0) {
+						mSelectedIndex = mItems.size() - 1;
+					}
+					return true;
+				}
+
+				if (mLeftButtonRectangle.intersectsAA(core.HUD().getMouseCameraSpace())) {
+					mSelectedIndex++;
+					if (mSelectedIndex >= mItems.size()) {
+						mSelectedIndex = 0;
+					}
+					return true;
+				}
+
+				onClick(core.input());
+				return true;
+			}
+
+		} else {
+			mIsMouseOver = false;
+			mToolTipTimer = 0;
+		}
+
+		return false;
+	}
+
 	@Override
 	public void update(LintfordCore core, MenuScreen screen) {
 		super.update(core, screen);

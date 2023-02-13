@@ -31,7 +31,7 @@ public class MenuToggleEntry extends MenuEntry {
 
 	public void label(String label) {
 		mText = label;
-	}	
+	}
 
 	public String label() {
 		return mText;

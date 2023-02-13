@@ -234,9 +234,9 @@ public class FontUnit {
 		int lX = (int) positionX;
 		int lY = (int) positionY;
 
-		float lWrapWidth = 0;
+		int lWrapWidth = 0;
 		boolean lJustWrapped = false;
-		float lWordWidth = 0.f;
+		int lWordWidth = 0;
 		boolean lClearedWord = false;
 		boolean lBreakCharFitsOnThisLine = false;
 
@@ -253,8 +253,8 @@ public class FontUnit {
 			if (lCurrentCharacter == '\n' || lCurrentCharacter == '\r') {
 				lX = (int) positionX;
 				lY += mFontDefinition.getFontHeight() + lLineSpacing;
-				lWrapWidth = 0.f;
-				lWordWidth = 0.f;
+				lWrapWidth = 0;
+				lWordWidth = 0;
 				lClearedWord = false;
 				continue;
 			}
@@ -264,10 +264,12 @@ public class FontUnit {
 
 			if (wrapWidth != NO_WORD_WRAP) {
 				if (mWrapType == WrapType.WordWrap || mWrapType == WrapType.WordWrapTrim && !lClearedWord) {
+					// TODO: the line breaks in here are broken (floating point error?)
+
 					if (mWrapType == WrapType.WordWrapTrim && lJustWrapped)
 						break;
 
-					lWordWidth = lCurrentGlyph.width() * scale;
+					lWordWidth = (int) Math.ceil(lCurrentGlyph.width() * scale);
 					lBreakCharFitsOnThisLine = lWrapWidth + lCurrentGlyph.width() <= wrapWidth;
 					if ((lX == positionX) || BREAK_CHARS.indexOf(lCurrentCharacter) >= 0) {
 						for (int j = i + 1; j < text.length(); j++) {
@@ -301,8 +303,8 @@ public class FontUnit {
 						final var lDotGlyph = mFontDefinition.getGlyphFrame((int) '.');
 						if (lDotGlyph != null) {
 							for (int j = 0; j < lNumElpsis; j++) {
-								mFontRenderer.draw(mFontDefinition.texture(), lDotGlyph.x(), lDotGlyph.y(), lDotGlyph.width(), lDotGlyph.height(), (int) (lX) + j * lDotGlyph.width(), (int) lY, lCurrentGlyph.width() * scale,
-										lCurrentGlyph.height() * scale, zDepth, textColor);
+								mFontRenderer.draw(mFontDefinition.texture(), lDotGlyph.x(), lDotGlyph.y(), lDotGlyph.width(), lDotGlyph.height(), (int) (lX) + j * lDotGlyph.width(), (int) lY,
+										lCurrentGlyph.width() * scale, lCurrentGlyph.height() * scale, zDepth, textColor);
 							}
 						}
 
@@ -320,8 +322,8 @@ public class FontUnit {
 				final var lDotGlyph = mFontDefinition.getGlyphFrame((int) '.');
 				if (lDotGlyph != null) {
 					for (int j = 0; j < lNumElpsis; j++) {
-						mFontRenderer.draw(mFontDefinition.texture(), lDotGlyph.x(), lDotGlyph.y(), (int) lDotGlyph.width(), lDotGlyph.height(), (int) (lX) + j * lDotGlyph.width(), (int) lY, lCurrentGlyph.width() * scale,
-								lCurrentGlyph.height() * scale, zDepth, textColor);
+						mFontRenderer.draw(mFontDefinition.texture(), lDotGlyph.x(), lDotGlyph.y(), (int) lDotGlyph.width(), lDotGlyph.height(), (int) (lX) + j * lDotGlyph.width(), (int) lY,
+								lCurrentGlyph.width() * scale, lCurrentGlyph.height() * scale, zDepth, textColor);
 					}
 				}
 
@@ -338,8 +340,8 @@ public class FontUnit {
 				continue;
 			}
 
-			mFontRenderer.draw(mFontDefinition.texture(), lCurrentGlyph.x(), lCurrentGlyph.y(), (int) lCurrentGlyph.width(), lCurrentGlyph.height(), (int) lX, (int) lY, lCurrentGlyph.width() * scale, lCurrentGlyph.height() * scale, zDepth,
-					textColor);
+			mFontRenderer.draw(mFontDefinition.texture(), lCurrentGlyph.x(), lCurrentGlyph.y(), (int) lCurrentGlyph.width(), lCurrentGlyph.height(), (int) lX, (int) lY, lCurrentGlyph.width() * scale,
+					lCurrentGlyph.height() * scale, zDepth, textColor);
 
 			if (lJustWrapped && lBreakCharFitsOnThisLine) {
 				lY += lScaledLineHeight;

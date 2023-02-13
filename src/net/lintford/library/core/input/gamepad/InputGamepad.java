@@ -195,7 +195,7 @@ public class InputGamepad {
 		if (mDataByteBuffer == null || mDataByteBuffer.capacity() == 0)
 			return false;
 
-		if (buttonIndex < 0 || buttonIndex >= mNumButtons)
+		if (buttonIndex < 0 || buttonIndex > mNumButtons)
 			return false;
 
 		if (mIsGamepadMappingAvailable)

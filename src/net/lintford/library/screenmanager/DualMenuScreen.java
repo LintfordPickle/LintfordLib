@@ -20,6 +20,8 @@ public class DualMenuScreen extends MenuScreen {
 
 	protected List<BaseLayout> mRightLayouts;
 
+	private boolean mLeftColumnSelected;
+
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
@@ -33,6 +35,8 @@ public class DualMenuScreen extends MenuScreen {
 		mPaddingRightNormalized = 0.f;
 		mPaddingTopNormalized = 0.f;
 		mPaddingBottomNormalized = 0.f;
+
+		mLeftColumnSelected = true;
 	}
 
 	// --------------------------------------
@@ -87,35 +91,26 @@ public class DualMenuScreen extends MenuScreen {
 		if (mLayouts.size() == 0 && mRightLayouts.size() == 0)
 			return; // nothing to do
 
-		// Respond to UP key
 		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_UP) || core.input().gamepads().isGamepadButtonDown(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_UP)) {
-			core.input().mouse().isMouseMenuSelectionEnabled(false);
-			mSelectedEntryIndex = getPreviousEnabledEntry(mSelectedEntryIndex);
-
-			updateAllEntriesToMatchSelected();
-			
-			mScreenManager.toolTip().toolTipProvider(null);
-
-			// TODO: play sound for menu entry changed
-
+			onNavigationUp(core);
 		}
 
-		// Respond to DOWN key
 		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_DOWN) || core.input().gamepads().isGamepadButtonDown(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_DOWN)) {
-			core.input().mouse().isMouseMenuSelectionEnabled(false);
-			mSelectedEntryIndex = getNextEnabledEntry(mSelectedEntryIndex);
-
-			updateAllEntriesToMatchSelected();
-			
-			mScreenManager.toolTip().toolTipProvider(null);
-
-			// TODO: play sound for menu entry changed
-
+			onNavigationDown(core);
 		}
 
-		// Process ENTER key press
+		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_LEFT) || core.input().gamepads().isGamepadButtonDown(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_LEFT)) {
+			onNavigationLeft(core);
+		}
+
+		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_RIGHT) || core.input().gamepads().isGamepadButtonDown(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_RIGHT)) {
+			onNavigationRight(core);
+		}
+
 		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_ENTER) || core.input().gamepads().isGamepadButtonDown(GLFW.GLFW_GAMEPAD_BUTTON_A)) {
-			final var lEntry = getSelectedEntry();
+
+			final var lSelectedLayouts = mLeftColumnSelected ? mLayouts : mRightLayouts;
+			final var lEntry = getSelectedEntry(lSelectedLayouts);
 			lEntry.onClick(core.input());
 		}
 
@@ -201,6 +196,74 @@ public class DualMenuScreen extends MenuScreen {
 	protected void handleOnClick() {
 		// TODO Auto-generated method stub
 
+	}
+
+	// --------------------------------------
+	// Overriden-Methods
+	// --------------------------------------
+
+	protected void onNavigationUp(LintfordCore core) {
+		if (mActiveEntry != null)
+			return;
+
+		core.input().mouse().isMouseMenuSelectionEnabled(false);
+
+		final var lSelectedLayout = mLeftColumnSelected ? mLayouts : mRightLayouts;
+		mSelectedEntryIndex = getPreviousEnabledEntry(lSelectedLayout, mSelectedEntryIndex);
+
+		updateAllEntriesToMatchSelected(mLayouts, mLeftColumnSelected);
+		updateAllEntriesToMatchSelected(mRightLayouts, !mLeftColumnSelected);
+
+		mScreenManager.toolTip().toolTipProvider(null);
+
+		// TODO: play sound for menu entry changed
+	}
+
+	protected void onNavigationDown(LintfordCore core) {
+		if (mActiveEntry != null)
+			return;
+
+		core.input().mouse().isMouseMenuSelectionEnabled(false);
+
+		final var lSelectedLayout = mLeftColumnSelected ? mLayouts : mRightLayouts;
+		mSelectedEntryIndex = getNextEnabledEntry(lSelectedLayout, mSelectedEntryIndex);
+
+		updateAllEntriesToMatchSelected(mLayouts, mLeftColumnSelected);
+		updateAllEntriesToMatchSelected(mRightLayouts, !mLeftColumnSelected);
+
+		mScreenManager.toolTip().toolTipProvider(null);
+
+		// TODO: play sound for menu entry changed
+	}
+
+	@Override
+	protected void onNavigationLeft(LintfordCore core) {
+		if (mActiveEntry != null)
+			return;
+
+		core.input().mouse().isMouseMenuSelectionEnabled(false);
+
+		mLeftColumnSelected = !mLeftColumnSelected;
+		mSelectedLayoutIndex = 0;
+		mSelectedEntryIndex = 0;
+
+		updateAllEntriesToMatchSelected(mLayouts, mLeftColumnSelected);
+		updateAllEntriesToMatchSelected(mRightLayouts, !mLeftColumnSelected);
+	}
+
+	@Override
+	protected void onNavigationRight(LintfordCore core) {
+		if (mActiveEntry != null)
+			return;
+
+		core.input().mouse().isMouseMenuSelectionEnabled(false);
+
+		mLeftColumnSelected = !mLeftColumnSelected;
+		mSelectedLayoutIndex = 0;
+		mSelectedEntryIndex = 0;
+
+		updateAllEntriesToMatchSelected(mLayouts, mLeftColumnSelected);
+		updateAllEntriesToMatchSelected(mRightLayouts, !mLeftColumnSelected);
 	}
 
 }

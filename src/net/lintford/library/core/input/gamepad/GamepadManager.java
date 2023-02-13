@@ -118,6 +118,17 @@ public class GamepadManager extends GLFWJoystickCallback {
 	// --------------------------------------
 
 	public boolean isGamepadButtonDown(int glfwGamepadButtonIndex) {
+		final var lNumConnectGamepads = mActiveControllers.size();
+		for (int i = 0; i < lNumConnectGamepads; i++) {
+			if (mActiveControllers.get(i).getIsButtonDown(glfwGamepadButtonIndex)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	public boolean isGamepadButtonDownTimed(int glfwGamepadButtonIndex) {
 		if (mButtonDownTimer > 0)
 			return false;
 

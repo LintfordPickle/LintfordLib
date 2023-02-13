@@ -1,5 +1,7 @@
 package net.lintford.library.screenmanager.entries;
 
+import org.lwjgl.glfw.GLFW;
+
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.ColorConstants;
@@ -33,10 +35,20 @@ public class MenuSliderEntry extends MenuEntry {
 	private boolean mShowUnit;
 	private float mBarPosX;
 	private float mBarWidth;
+	private int mStep;
+	private boolean mTrackingClick;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public int step() {
+		return mStep;
+	}
+
+	public void step(int step) {
+		mStep = step;
+	}
 
 	public void showValueGuides(boolean newValue) {
 		mShowGuideValuesEnabled = newValue;
@@ -110,7 +122,85 @@ public class MenuSliderEntry extends MenuEntry {
 	// --------------------------------------
 
 	@Override
-	public boolean handleInput(LintfordCore core) {
+	protected boolean onHandleMouseInput(LintfordCore core) {
+
+		if (!intersectsAA(core.HUD().getMouseCameraSpace()) || !core.input().mouse().isMouseOverThisComponent(hashCode()))
+			return false;
+
+		if (core.input().mouse().tryAcquireMouseLeftClick(hashCode())) {
+			if (mEnabled) {
+
+				// TODO: Play menu click sound
+
+				mStep = 1;
+				if (mDownButton.intersectsAA(core.HUD().getMouseCameraSpace())) {
+					setValue(mValue - mStep);
+				} else if (mUpButton.intersectsAA(core.HUD().getMouseCameraSpace())) {
+					setValue(mValue + mStep);
+				} else {
+					mTrackingClick = true;
+				}
+
+				final var lScreenOffset = mParentScreen.screenPositionOffset();
+
+				if (mTrackingClick && core.input().mouse().tryAcquireMouseLeftClick(hashCode())) {
+					mValue = (int) MathHelper.scaleToRange(core.HUD().getMouseCameraSpace().x - (lScreenOffset.x + mBarPosX + 8), 0, mBarWidth - 32 - 16, mLowerBound, mUpperBound);
+					mValue = MathHelper.clampi(mValue, mLowerBound, mUpperBound);
+
+				} else {
+					mTrackingClick = false;
+				}
+
+				return mTrackingClick;
+
+			}
+
+		} else {
+			mParentScreen.setFocusOnEntry(this);
+
+			mTrackingClick = false;
+		}
+
+		if (mToolTipEnabled)
+			mToolTipTimer += core.appTime().elapsedTimeMilli();
+
+		return false;
+	}
+
+	@Override
+	protected boolean onHandleKeyboardInput(LintfordCore core) {
+
+		mStep = 1;
+		if (mIsActive) {
+			if (core.input().keyboard().isKeyDown(GLFW.GLFW_KEY_LEFT)) {
+				setValue(mValue - mStep);
+				return true;
+			}
+
+			if (core.input().keyboard().isKeyDown(GLFW.GLFW_KEY_RIGHT)) {
+				setValue(mValue + mStep);
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	@Override
+	protected boolean onHandleGamepadInput(LintfordCore core) {
+		mStep = 1;
+		if (mIsActive) {
+			if (core.input().gamepads().isGamepadButtonDown(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_LEFT)) {
+				setValue(mValue - mStep);
+				return true;
+			}
+
+			if (core.input().gamepads().isGamepadButtonDown(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_RIGHT)) {
+				setValue(mValue + mStep);
+				return true;
+			}
+		}
+
 		return false;
 	}
 
@@ -138,17 +228,21 @@ public class MenuSliderEntry extends MenuEntry {
 		final var lScreenOffset = screen.screenPositionOffset();
 		final var lParentScreenAlpha = screen.screenColor.a;
 
-		if (mHasFocus & mEnabled) {
-			final var lHighlightColor = ColorConstants.getColorWithAlpha(ColorConstants.MenuEntryHighlightColor, lParentScreenAlpha);
+		if (mIsActive) {
 			lSpriteBatch.begin(core.HUD());
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - mW / 2, lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ, lHighlightColor);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - (mW / 2) + 32, lScreenOffset.y + centerY() - mH / 2, mW - 64, mH, mZ, lHighlightColor);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() + (mW / 2) - 32, lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ, lHighlightColor);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - mW / 2, lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ, ColorConstants.MenuPanelPrimaryColor);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - (mW / 2) + 32, lScreenOffset.y + centerY() - mH / 2, mW - 64, mH, mZ, ColorConstants.MenuPanelPrimaryColor);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() + (mW / 2) - 32, lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ, ColorConstants.MenuPanelPrimaryColor);
+			lSpriteBatch.end();
+		} else if (mHasFocus & mEnabled) {
+			lSpriteBatch.begin(core.HUD());
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - mW / 2, lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ, ColorConstants.MenuEntryHighlightColor);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - (mW / 2) + 32, lScreenOffset.y + centerY() - mH / 2, mW - 64, mH, mZ, ColorConstants.MenuEntryHighlightColor);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() + (mW / 2) - 32, lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ, ColorConstants.MenuEntryHighlightColor);
 			lSpriteBatch.end();
 		}
-
+		mButtonsEnabled = true;
 		if (mButtonsEnabled) {
-			// Draw the left/right buttons
 			lSpriteBatch.begin(core.HUD());
 			final float lArrowButtonSize = 32;
 			final float lArrowButtonPaddingX = mDownButton.width() - lArrowButtonSize;
@@ -162,11 +256,12 @@ public class MenuSliderEntry extends MenuEntry {
 		// Draw the slider bar and caret
 		lSpriteBatch.begin(core.HUD());
 
-		final float lCaretPos = MathHelper.scaleToRange(mValue, mLowerBound, mUpperBound, mBarPosX, mBarWidth - 16);
+		final float lCaretPos = MathHelper.scaleToRange(mValue, mLowerBound, mUpperBound, 0, mBarWidth - 32 - 32);
+
 		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_SLIDER_HORIZONTAL_LEFT, lScreenOffset.x + mBarPosX, lScreenOffset.y + mY, 32, 32, mZ, entryColor);
 		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_SLIDER_HORIZONTAL_MID, lScreenOffset.x + mBarPosX + 32, lScreenOffset.y + mY, mBarWidth - 64 - 32, 32, mZ, entryColor);
 		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_SLIDER_HORIZONTAL_RIGHT, lScreenOffset.x + mBarPosX + mBarWidth - 64, lScreenOffset.y + mY, 32, 32, mZ, entryColor);
-		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_SLIDER_HORIZONTAL_NUBBLE, lScreenOffset.x + lCaretPos, lScreenOffset.y + mY, 32, 32, mZ, entryColor);
+		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_SLIDER_HORIZONTAL_NUBBLE, lScreenOffset.x + mBarPosX + lCaretPos, lScreenOffset.y + mY, 32, 32, mZ, entryColor);
 		lSpriteBatch.end();
 
 		final var lColorWhiteWithAlpha = ColorConstants.getWhiteWithAlpha(lParentScreenAlpha);
@@ -191,7 +286,7 @@ public class MenuSliderEntry extends MenuEntry {
 			}
 
 			final float endPositionX = lCaretPos + 128.f + lValueStringWidth;
-			final float lValueStringPositionX = endPositionX > mBarPosX + mBarWidth ? lCaretPos - 32.f - 5.f : lCaretPos + 32f;
+			final float lValueStringPositionX = endPositionX > mBarPosX + mBarWidth ? lCaretPos : lCaretPos + 64f;
 			lTextBoldFont.drawText(lValueString, lScreenOffset.x + lValueStringPositionX, lScreenOffset.y + mY + mH * .5f - lLabelHeight * .5f + 16, mZ, lColorWhiteWithAlpha, lUiTextScale);
 
 			if (mShowGuideValuesEnabled) {

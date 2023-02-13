@@ -413,23 +413,47 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 		if (!mEnableUpdateDraw || !mEnabled || isAnimating)
 			return false;
 
-		if (intersectsAA(core.HUD().getMouseCameraSpace()) && core.input().mouse().isMouseOverThisComponent(hashCode())) {
-			mIsMouseOver = true;
-			core.input().mouse().isMouseMenuSelectionEnabled(true);
-			mParentScreen.setFocusOnEntry(this);
+		final var lMouseMenuEnabled = core.input().mouse().isMouseMenuSelectionEnabled();
 
-			if (mToolTipEnabled)
-				mToolTipTimer += core.appTime().elapsedTimeMilli();
-
-			if (core.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
-				onClick(core.input());
-
+		if (lMouseMenuEnabled) {
+			final var lHandleMouseInput = onHandleMouseInput(core);
+			if (lHandleMouseInput) {
 				return true;
 			}
 
 		} else {
-			mIsMouseOver = false;
-			mToolTipTimer = 0;
+			final var lKeyboardInput = onHandleKeyboardInput(core);
+			final var lGamepadInput = onHandleGamepadInput(core);
+
+			return lKeyboardInput || lGamepadInput;
+		}
+
+		return false;
+	}
+
+	protected boolean onHandleKeyboardInput(LintfordCore core) {
+		return false;
+	}
+
+	protected boolean onHandleGamepadInput(LintfordCore core) {
+		return false;
+	}
+
+	protected boolean onHandleMouseInput(LintfordCore core) {
+		if (!intersectsAA(core.HUD().getMouseCameraSpace()) || !core.input().mouse().isMouseOverThisComponent(hashCode()))
+			return false;
+
+		mIsMouseOver = true;
+		core.input().mouse().isMouseMenuSelectionEnabled(true);
+		mParentScreen.setFocusOnEntry(this);
+
+		if (mToolTipEnabled)
+			mToolTipTimer += core.appTime().elapsedTimeMilli();
+
+		if (core.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
+			onClick(core.input());
+
+			return true;
 		}
 
 		return false;
