@@ -20,7 +20,9 @@ public class DualMenuScreen extends MenuScreen {
 
 	protected List<BaseLayout> mRightLayouts;
 
-	private boolean mLeftColumnSelected;
+	private boolean mRightColumnSelected;
+	private int mRightColumnSelectedLayoutIndex;
+	private int mRightColumnSelectedEntryIndex;
 
 	// --------------------------------------
 	// Constructor
@@ -36,7 +38,7 @@ public class DualMenuScreen extends MenuScreen {
 		mPaddingTopNormalized = 0.f;
 		mPaddingBottomNormalized = 0.f;
 
-		mLeftColumnSelected = true;
+		mRightColumnSelected = false;
 	}
 
 	// --------------------------------------
@@ -80,7 +82,7 @@ public class DualMenuScreen extends MenuScreen {
 			return; // don't handle input if 'animation' is playing
 
 		if (mESCBackEnabled) {
-			if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_ESCAPE) || core.input().gamepads().isGamepadButtonDown(GLFW.GLFW_GAMEPAD_BUTTON_B)) {
+			if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_ESCAPE, this) || core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_B, this)) {
 				if (mScreenState == ScreenState.Active) {
 					exitScreen();
 					return;
@@ -91,26 +93,29 @@ public class DualMenuScreen extends MenuScreen {
 		if (mLayouts.size() == 0 && mRightLayouts.size() == 0)
 			return; // nothing to do
 
-		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_UP) || core.input().gamepads().isGamepadButtonDown(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_UP)) {
+		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_UP, this) || core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_UP, this)) {
 			onNavigationUp(core);
 		}
 
-		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_DOWN) || core.input().gamepads().isGamepadButtonDown(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_DOWN)) {
+		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_DOWN, this) || core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_DOWN, this)) {
 			onNavigationDown(core);
 		}
 
-		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_LEFT) || core.input().gamepads().isGamepadButtonDown(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_LEFT)) {
+		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_LEFT, this) || core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_LEFT, this)) {
 			onNavigationLeft(core);
 		}
 
-		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_RIGHT) || core.input().gamepads().isGamepadButtonDown(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_RIGHT)) {
+		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_RIGHT, this) || core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_RIGHT, this)) {
 			onNavigationRight(core);
 		}
 
-		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_ENTER) || core.input().gamepads().isGamepadButtonDown(GLFW.GLFW_GAMEPAD_BUTTON_A)) {
+		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_ENTER, this) || core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_A, this)) {
 
-			final var lSelectedLayouts = mLeftColumnSelected ? mLayouts : mRightLayouts;
-			final var lEntry = getSelectedEntry(lSelectedLayouts);
+			final var lSelectedLayouts = mRightColumnSelected ? mRightLayouts : mLayouts;
+			final var lSelectedLayoutIndex = mRightColumnSelected ? mRightColumnSelectedLayoutIndex : mSelectedLayoutIndex;
+			final var lSelectedEntryIndex = mRightColumnSelected ? mRightColumnSelectedEntryIndex : mSelectedEntryIndex;
+			final var lEntry = getSelectedEntry(lSelectedLayouts, lSelectedLayoutIndex, lSelectedEntryIndex);
+
 			lEntry.onClick(core.input());
 		}
 
@@ -203,16 +208,15 @@ public class DualMenuScreen extends MenuScreen {
 	// --------------------------------------
 
 	protected void onNavigationUp(LintfordCore core) {
-		if (mActiveEntry != null)
+		if (isEntryActive())
 			return;
 
 		core.input().mouse().isMouseMenuSelectionEnabled(false);
 
-		final var lSelectedLayout = mLeftColumnSelected ? mLayouts : mRightLayouts;
-		mSelectedEntryIndex = getPreviousEnabledEntry(lSelectedLayout, mSelectedEntryIndex);
+		getPreviousEnabledEntry();
 
-		updateAllEntriesToMatchSelected(mLayouts, mLeftColumnSelected);
-		updateAllEntriesToMatchSelected(mRightLayouts, !mLeftColumnSelected);
+		updateAllEntriesToMatchSelected(mLayouts, mSelectedLayoutIndex, mSelectedEntryIndex, !mRightColumnSelected);
+		updateAllEntriesToMatchSelected(mRightLayouts, mRightColumnSelectedLayoutIndex, mRightColumnSelectedEntryIndex, mRightColumnSelected);
 
 		mScreenManager.toolTip().toolTipProvider(null);
 
@@ -220,16 +224,15 @@ public class DualMenuScreen extends MenuScreen {
 	}
 
 	protected void onNavigationDown(LintfordCore core) {
-		if (mActiveEntry != null)
+		if (isEntryActive())
 			return;
 
 		core.input().mouse().isMouseMenuSelectionEnabled(false);
 
-		final var lSelectedLayout = mLeftColumnSelected ? mLayouts : mRightLayouts;
-		mSelectedEntryIndex = getNextEnabledEntry(lSelectedLayout, mSelectedEntryIndex);
+		getNextEnabledEntry();
 
-		updateAllEntriesToMatchSelected(mLayouts, mLeftColumnSelected);
-		updateAllEntriesToMatchSelected(mRightLayouts, !mLeftColumnSelected);
+		updateAllEntriesToMatchSelected(mLayouts, mSelectedLayoutIndex, mSelectedEntryIndex, !mRightColumnSelected);
+		updateAllEntriesToMatchSelected(mRightLayouts, mRightColumnSelectedLayoutIndex, mRightColumnSelectedEntryIndex, mRightColumnSelected);
 
 		mScreenManager.toolTip().toolTipProvider(null);
 
@@ -238,32 +241,386 @@ public class DualMenuScreen extends MenuScreen {
 
 	@Override
 	protected void onNavigationLeft(LintfordCore core) {
-		if (mActiveEntry != null)
+		if (isEntryActive())
 			return;
 
 		core.input().mouse().isMouseMenuSelectionEnabled(false);
 
-		mLeftColumnSelected = !mLeftColumnSelected;
-		mSelectedLayoutIndex = 0;
-		mSelectedEntryIndex = 0;
+		mRightColumnSelected = !mRightColumnSelected;
+		final var lSelectedLayoutIndex = mRightColumnSelected ? mRightColumnSelectedLayoutIndex : mSelectedLayoutIndex;
+		final var lSelectedEntryIndex = mRightColumnSelected ? mRightColumnSelectedEntryIndex : mSelectedEntryIndex;
 
-		updateAllEntriesToMatchSelected(mLayouts, mLeftColumnSelected);
-		updateAllEntriesToMatchSelected(mRightLayouts, !mLeftColumnSelected);
+		updateAllEntriesToMatchSelected(mLayouts, lSelectedLayoutIndex, lSelectedEntryIndex, !mRightColumnSelected);
+		updateAllEntriesToMatchSelected(mRightLayouts, lSelectedLayoutIndex, lSelectedEntryIndex, mRightColumnSelected);
 	}
 
 	@Override
 	protected void onNavigationRight(LintfordCore core) {
-		if (mActiveEntry != null)
+		if (isEntryActive())
 			return;
 
 		core.input().mouse().isMouseMenuSelectionEnabled(false);
 
-		mLeftColumnSelected = !mLeftColumnSelected;
-		mSelectedLayoutIndex = 0;
-		mSelectedEntryIndex = 0;
+		mRightColumnSelected = !mRightColumnSelected;
+		final var lSelectedLayoutIndex = mRightColumnSelected ? mRightColumnSelectedLayoutIndex : mSelectedLayoutIndex;
+		final var lSelectedEntryIndex = mRightColumnSelected ? mRightColumnSelectedEntryIndex : mSelectedEntryIndex;
 
-		updateAllEntriesToMatchSelected(mLayouts, mLeftColumnSelected);
-		updateAllEntriesToMatchSelected(mRightLayouts, !mLeftColumnSelected);
+		updateAllEntriesToMatchSelected(mLayouts, lSelectedLayoutIndex, lSelectedEntryIndex, !mRightColumnSelected);
+		updateAllEntriesToMatchSelected(mRightLayouts, lSelectedLayoutIndex, lSelectedEntryIndex, mRightColumnSelected);
+	}
+
+	// --------------------------------------
+
+	@Override
+	protected void getNextEnabledEntry() {
+		if (isEntryActive())
+			return;
+
+		var selectedLayouts = mRightColumnSelected ? mRightLayouts : mLayouts;
+		int checkEntryIndex = mRightColumnSelected ? mRightColumnSelectedEntryIndex : mSelectedEntryIndex;
+
+		final var maxTries = 5;
+		var currentTry = 0;
+
+		while (currentTry < maxTries) {
+			checkEntryIndex++;
+			final var lLayout = selectedLayouts.get(mRightColumnSelected ? mRightColumnSelectedLayoutIndex : mSelectedLayoutIndex);
+
+			if (checkEntryIndex >= lLayout.entries().size()) {
+				getNextEnabledLayout();
+				checkEntryIndex = 0;
+
+				final var lNextLayout = selectedLayouts.get(mRightColumnSelected ? mRightColumnSelectedLayoutIndex : mSelectedLayoutIndex);
+				if (lNextLayout.entries().get(checkEntryIndex).enabled() == false)
+					continue;
+
+				if (mRightColumnSelected) {
+					mRightColumnSelectedEntryIndex = 0;
+				} else {
+					mSelectedEntryIndex = 0;
+				}
+
+				return;
+
+			} else {
+				if (checkEntryIndex == (mRightColumnSelected ? mRightColumnSelectedEntryIndex : mSelectedEntryIndex)) {
+					return;
+				}
+
+				final var lFoundEntry = lLayout.entries().get(checkEntryIndex);
+				if (lFoundEntry.enabled() == false) {
+					currentTry++;
+					continue;
+				}
+
+				if (checkEntryIndex == (mRightColumnSelected ? mRightColumnSelectedEntryIndex : mSelectedEntryIndex))
+					return;
+
+				if (mRightColumnSelected) {
+					mRightColumnSelectedEntryIndex = checkEntryIndex;
+				} else {
+					mSelectedEntryIndex = checkEntryIndex;
+				}
+
+				return;
+			}
+		}
+
+		return;
+	}
+
+	@Override
+	protected void getPreviousEnabledEntry() {
+		if (isEntryActive())
+			return;
+
+		final var maxTries = 5;
+		var currentTry = 0;
+
+		var selectedLayouts = mRightColumnSelected ? mRightLayouts : mLayouts;
+		var checkEntryIndex = mRightColumnSelected ? mRightColumnSelectedEntryIndex : mSelectedEntryIndex;
+
+		if (mRightColumnSelected) {
+			if (mRightColumnSelectedLayoutIndex >= mRightLayouts.size()) {
+				mRightColumnSelectedLayoutIndex = 0;
+			}
+		} else {
+			if (mSelectedLayoutIndex >= mLayouts.size()) {
+				mSelectedLayoutIndex = 0;
+			}
+		}
+
+		while (currentTry < maxTries) {
+			checkEntryIndex--;
+
+			if (checkEntryIndex < 0) {
+				if (selectedLayouts.size() > 1) {
+					getPreviousEnabledLayout();
+
+					// whatever layout is now active, go with it
+					final var lLayout = selectedLayouts.get(mRightColumnSelected ? mRightColumnSelectedLayoutIndex : mSelectedLayoutIndex);
+
+					if (lLayout.entries().size() == 0) {
+						if (mRightColumnSelected) {
+							mRightColumnSelectedEntryIndex = 0;
+						} else {
+							mSelectedEntryIndex = 0;
+						}
+						return;
+					}
+
+					checkEntryIndex = lLayout.entries().size() - 1;
+
+					if (checkEntryIndex == (mRightColumnSelected ? mRightColumnSelectedEntryIndex : mSelectedEntryIndex))
+						return;
+
+					if (!lLayout.hasEntry(checkEntryIndex)) {
+
+						if (mRightColumnSelected) {
+							mRightColumnSelectedEntryIndex = 0;
+						} else {
+							mSelectedEntryIndex = 0;
+						}
+						return;
+					}
+
+					if (mRightColumnSelected) {
+						mRightColumnSelectedEntryIndex = checkEntryIndex;
+					} else {
+						mSelectedEntryIndex = checkEntryIndex;
+					}
+					return;
+
+				} else {
+					final var lLayout = selectedLayouts.get(mRightColumnSelected ? mRightColumnSelectedLayoutIndex : mSelectedLayoutIndex);
+					checkEntryIndex = lLayout.entries().size() - 1;
+
+					if (lLayout.entries().size() == 0) {
+						if (mRightColumnSelected) {
+							mRightColumnSelectedEntryIndex = 0;
+						} else {
+							mSelectedEntryIndex = 0;
+						}
+						return;
+					}
+
+					if (checkEntryIndex == (mRightColumnSelected ? mRightColumnSelectedEntryIndex : mSelectedEntryIndex))
+						return;
+
+					final var lFoundEntry = lLayout.entries().get(checkEntryIndex);
+					if (lFoundEntry.enabled() == false)
+						continue;
+
+					if (mRightColumnSelected) {
+						mRightColumnSelectedEntryIndex = checkEntryIndex;
+					} else {
+						mSelectedEntryIndex = checkEntryIndex;
+					}
+
+					return;
+				}
+			} else {
+				final var lLayout = selectedLayouts.get(mRightColumnSelected ? mRightColumnSelectedLayoutIndex : mSelectedLayoutIndex);
+
+				if (checkEntryIndex == (mRightColumnSelected ? mRightColumnSelectedEntryIndex : mSelectedEntryIndex)) {
+					if (mRightColumnSelected) {
+						mRightColumnSelectedEntryIndex = checkEntryIndex;
+					} else {
+						mSelectedEntryIndex = checkEntryIndex;
+					}
+					return;
+				}
+
+				final var lFoundEntry = lLayout.entries().get(checkEntryIndex);
+				if (lFoundEntry.enabled() == false) {
+					currentTry++;
+					continue;
+				}
+
+				if (mRightColumnSelected) {
+					mRightColumnSelectedEntryIndex = checkEntryIndex;
+				} else {
+					mSelectedEntryIndex = checkEntryIndex;
+				}
+				return;
+			}
+		}
+
+		return;
+	}
+
+	@Override
+	protected void getNextEnabledLayout() {
+		if (isEntryActive())
+			return;
+
+		var selectedLayout = mRightColumnSelected ? mRightLayouts : mLayouts;
+		var selectedLayoutIndex = mRightColumnSelected ? mRightColumnSelectedLayoutIndex : mSelectedLayoutIndex;
+
+		if (selectedLayout.size() == 1) {
+			if (mRightColumnSelected) {
+				mRightColumnSelectedEntryIndex = 0;
+			} else {
+				mSelectedLayoutIndex = 0;
+			}
+			return;
+		}
+
+		boolean found = false;
+		while (found == false) {
+			selectedLayoutIndex++;
+
+			if (selectedLayoutIndex == (mRightColumnSelected ? mRightColumnSelectedLayoutIndex : mSelectedLayoutIndex)) {
+				return;
+			}
+
+			if (selectedLayoutIndex >= selectedLayout.size()) {
+				selectedLayoutIndex = 0;
+
+				final var lLayout = selectedLayout.get(selectedLayoutIndex);
+				if (lLayout.entries().size() == 0) {
+					selectedLayoutIndex++;
+					continue;
+				}
+
+				if (mRightColumnSelected) {
+					mRightColumnSelectedLayoutIndex = selectedLayoutIndex;
+				} else {
+					mSelectedLayoutIndex = selectedLayoutIndex;
+				}
+				return;
+			}
+
+			final var lLayout = selectedLayout.get(selectedLayoutIndex);
+			if (lLayout.entries().size() == 0) {
+				selectedLayoutIndex++;
+				continue;
+			}
+
+			if (mRightColumnSelected) {
+				mRightColumnSelectedLayoutIndex = selectedLayoutIndex;
+			} else {
+				mSelectedLayoutIndex = selectedLayoutIndex;
+			}
+			return;
+		}
+
+		return;
+	}
+
+	@Override
+	protected void getPreviousEnabledLayout() {
+		if (isEntryActive())
+			return;
+
+		var selectedLayout = mRightColumnSelected ? mRightLayouts : mLayouts;
+		int selectedLayoutIndex = mRightColumnSelected ? mRightColumnSelectedLayoutIndex : mSelectedLayoutIndex;
+
+		if (selectedLayout.size() == 1) {
+			if (mRightColumnSelected) {
+				mRightColumnSelectedEntryIndex = 0;
+			} else {
+				mSelectedLayoutIndex = 0;
+			}
+			return;
+		}
+
+		boolean found = false;
+		while (found == false) {
+			selectedLayoutIndex--;
+
+			if (selectedLayoutIndex == (mRightColumnSelected ? mRightColumnSelectedLayoutIndex : mSelectedLayoutIndex))
+				return;
+
+			if (selectedLayoutIndex < 0) {
+				selectedLayoutIndex = selectedLayout.size() - 1;
+
+				final var lLayout = selectedLayout.get(selectedLayoutIndex);
+				if (lLayout.entries().size() == 0) {
+					selectedLayoutIndex--;
+					continue;
+				}
+
+				if (mRightColumnSelected) {
+					mRightColumnSelectedLayoutIndex = selectedLayoutIndex;
+				} else {
+					mSelectedLayoutIndex = selectedLayoutIndex;
+				}
+				return;
+			}
+
+			final var lLayout = selectedLayout.get(selectedLayoutIndex);
+			if (lLayout.entries().size() == 0) {
+				selectedLayoutIndex--;
+				continue;
+			}
+
+			if (mRightColumnSelected) {
+				mRightColumnSelectedLayoutIndex = selectedLayoutIndex;
+			} else {
+				mSelectedLayoutIndex = selectedLayoutIndex;
+			}
+			return;
+
+		}
+
+		return;
+	}
+
+	// --------------------------------------
+
+	public void setFocusOnEntry(MenuEntry entry) {
+		if (mActiveEntry != null)
+			mActiveEntry.onDeselection(mScreenManager.core().input());
+
+		mActiveEntry = null;
+
+		// left
+
+		final int lNumLayouts = mLayouts.size();
+		for (int i = 0; i < lNumLayouts; i++) {
+			final var lLayout = mLayouts.get(i);
+			final int lNumEntries = lLayout.entries().size();
+			for (int j = 0; j < lNumEntries; j++) {
+				final var lEntry = lLayout.entries().get(j);
+				final var IsDesiredEntry = lEntry == entry;
+
+				if (IsDesiredEntry) {
+					lEntry.mHasFocus = true;
+
+					mRightColumnSelected = false;
+					mSelectedLayoutIndex = i;
+					mSelectedEntryIndex = j;
+
+				} else {
+					lEntry.mHasFocus = false;
+					lEntry.mIsActive = false;
+				}
+			}
+		}
+
+		// right
+		final int lNumRightLayouts = mRightLayouts.size();
+		for (int i = 0; i < lNumRightLayouts; i++) {
+			final var lLayout = mRightLayouts.get(i);
+			final int lNumEntries = lLayout.entries().size();
+			for (int j = 0; j < lNumEntries; j++) {
+				final var lEntry = lLayout.entries().get(j);
+				final var IsDesiredEntry = lEntry == entry;
+
+				if (IsDesiredEntry) {
+					lEntry.mHasFocus = true;
+
+					mRightColumnSelected = true;
+					mRightColumnSelectedEntryIndex = i;
+					mRightColumnSelectedEntryIndex = j;
+
+				} else {
+					lEntry.mHasFocus = false;
+					lEntry.mIsActive = false;
+				}
+			}
+		}
 	}
 
 }

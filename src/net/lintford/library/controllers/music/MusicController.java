@@ -6,8 +6,9 @@ import net.lintford.library.controllers.BaseController;
 import net.lintford.library.controllers.core.ControllerManager;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.audio.music.MusicManager;
+import net.lintford.library.core.input.mouse.IInputProcessor;
 
-public class MusicController extends BaseController {
+public class MusicController extends BaseController implements IInputProcessor {
 
 	// --------------------------------------
 	// Constants
@@ -24,6 +25,7 @@ public class MusicController extends BaseController {
 	private boolean mIsPaused;
 	private int mCurrentSongIndex = 0;
 	private boolean mBank0Active;
+	private float mInputTimer;
 
 	// --------------------------------------
 	// Constructor
@@ -46,19 +48,19 @@ public class MusicController extends BaseController {
 
 	@Override
 	public boolean handleInput(LintfordCore core) {
-		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_F5))
+		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_F5, this))
 			play();
 
-		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_F2))
+		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_F2, this))
 			stop();
 
-		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_F6))
+		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_F6, this))
 			nextSong();
 
-		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_F7))
+		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_F7, this))
 			prevSong();
 
-		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_F8))
+		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_F8, this))
 			pause();
 
 		return super.handleInput(core);
@@ -185,5 +187,16 @@ public class MusicController extends BaseController {
 
 		stop();
 		int_play();
+	}
+
+	@Override
+	public boolean isCoolDownElapsed() {
+		return mInputTimer <= 0;
+	}
+
+	@Override
+	public void resetCoolDownTimer() {
+		mInputTimer = IInputProcessor.INPUT_COOLDOWN_TIME;
+
 	}
 }

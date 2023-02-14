@@ -157,7 +157,7 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 
 		entryColor.setRGB(1.f, 1.f, 1.f);
 
-		if (mHasFocus) {
+		if (mHasFocus || mIsActive) {
 			lSpriteBatch.begin(core.HUD());
 			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - mW / 2, lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ, ColorConstants.MenuEntryHighlightColor);
 			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - (mW / 2) + 32, lScreenOffset.y + centerY() - mH / 2, mW - 64, mH, mZ, ColorConstants.MenuEntryHighlightColor);
@@ -221,10 +221,14 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 
 		mIsActive = !mIsActive;
 
-		if (mIsActive)
+		if (mIsActive) {
 			mParentScreen.onMenuEntryActivated(this);
-		else
+
+			inputState.keyboard().startBufferedTextCapture(this);
+		} else {
+			inputState.keyboard().stopBufferedTextCapture();
 			mParentScreen.onMenuEntryDeactivated(this);
+		}
 
 		if (mInputField.length() > 0)
 			mTempString = mInputField.toString();
@@ -234,6 +238,14 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 				mInputField.delete(0, mInputField.length());
 			}
 		}
+
+	}
+
+	@Override
+	public void onDeselection(InputManager inputManager) {
+		if (mIsActive)
+			inputManager.keyboard().stopBufferedTextCapture();
+
 	}
 
 	@Override
@@ -243,7 +255,8 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 
 	@Override
 	public boolean onEnterPressed() {
-		mHasFocus = false;
+		mIsActive = false;
+		mParentScreen.onMenuEntryDeactivated(this);
 		mShowCaret = false;
 
 		if (mResetOnDefaultClick && mInputField.length() == 0)
@@ -265,7 +278,7 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 		if (mTempString != null && mTempString.length() == 0)
 			mInputField.append(mTempString);
 
-		mHasFocus = false;
+		mIsActive = false;
 		mShowCaret = false;
 
 		return getEscapeFinishesInput();

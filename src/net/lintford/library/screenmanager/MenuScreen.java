@@ -65,6 +65,10 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	// Properties
 	// --------------------------------------
 
+	public boolean isEntryActive() {
+		return mActiveEntry != null;
+	}
+
 	public LAYOUT_ALIGNMENT layoutAlignment() {
 		return mLayoutAlignment;
 	}
@@ -148,7 +152,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 			mLayouts.get(i).initialize();
 		}
 
-		updateAllEntriesToMatchSelected(mLayouts, true);
+		updateAllEntriesToMatchSelected(mLayouts, mSelectedLayoutIndex, mSelectedEntryIndex, true);
 	}
 
 	@Override
@@ -187,7 +191,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		super.handleInput(core);
 
 		if (mESCBackEnabled) {
-			if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_ESCAPE) || core.input().gamepads().isGamepadButtonDown(GLFW.GLFW_GAMEPAD_BUTTON_B)) {
+			if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_ESCAPE, this) || core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_B, this)) {
 				if (mScreenState == ScreenState.Active) {
 					exitScreen();
 					return;
@@ -196,25 +200,25 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		}
 
 		// TODO :Check for gamepad axis for each of the cardinal directions ..
-		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_UP) || core.input().gamepads().isGamepadButtonDown(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_UP)) {
+		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_UP, this) || core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_UP, this)) {
 			onNavigationUp(core);
 		}
 
-		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_DOWN) || core.input().gamepads().isGamepadButtonDown(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_DOWN)) {
+		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_DOWN, this) || core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_DOWN, this)) {
 			onNavigationDown(core);
 		}
 
-		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_LEFT) || core.input().gamepads().isGamepadButtonDown(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_LEFT)) {
+		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_LEFT, this) || core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_LEFT, this)) {
 			onNavigationLeft(core);
 		}
 
-		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_RIGHT) || core.input().gamepads().isGamepadButtonDown(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_RIGHT)) {
+		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_RIGHT, this) || core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_RIGHT, this)) {
 			onNavigationRight(core);
 		}
 
 		// Process ENTER key press
-		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_ENTER) || core.input().gamepads().isGamepadButtonDown(GLFW.GLFW_GAMEPAD_BUTTON_A)) {
-			final var lEntry = getSelectedEntry(mLayouts);
+		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_ENTER, this) || core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_A, this)) {
+			final var lEntry = getSelectedEntry(mLayouts, mSelectedLayoutIndex, mSelectedEntryIndex);
 			lEntry.onClick(core.input());
 		}
 
@@ -488,17 +492,24 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 	@Override
 	public void onMenuEntryActivated(MenuEntry activeEntry) {
-		System.out.println("onMenuEntryActivated");
+		if (mActiveEntry != activeEntry)
+			System.out.println("mActiveEntry set to " + activeEntry);
+
 		mActiveEntry = activeEntry;
 	}
 
 	@Override
 	public void onMenuEntryDeactivated(MenuEntry activeEntry) {
-		System.out.println("onMenuEntryDeactivated");
+		System.out.println("mActiveEntry set to null");
+
 		mActiveEntry = null;
 	}
 
 	public void setFocusOnEntry(MenuEntry entry) {
+		if (mActiveEntry != null)
+			mActiveEntry.onDeselection(mScreenManager.core().input());
+
+		System.out.println("mActiveEntry set to null");
 		mActiveEntry = null;
 
 		final int lNumLayouts = mLayouts.size();
@@ -527,20 +538,20 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 	}
 
-	protected MenuEntry getSelectedEntry(List<BaseLayout> selectedLayouts) {
-		final var lLayout = selectedLayouts.get(mSelectedLayoutIndex);
-		return lLayout.getMenuEntryByIndex(mSelectedEntryIndex);
+	protected MenuEntry getSelectedEntry(List<BaseLayout> selectedLayouts, int selectedLayoutIndex, int selectedEntryIndex) {
+		final var lLayout = selectedLayouts.get(selectedLayoutIndex);
+		return lLayout.getMenuEntryByIndex(selectedEntryIndex);
 	}
 
-	protected void updateAllEntriesToMatchSelected(List<BaseLayout> layouts, boolean focusSelected) {
+	protected void updateAllEntriesToMatchSelected(List<BaseLayout> layouts, int selectedLayoutIndex, int selectedEntryIndex, boolean focusSelected) {
 		final int lNumLayouts = layouts.size();
 		for (int i = 0; i < lNumLayouts; i++) {
-			final var lIsLayoutSelected = focusSelected & i == mSelectedLayoutIndex;
+			final var lIsLayoutSelected = focusSelected & i == selectedLayoutIndex;
 			final var lLayout = layouts.get(i);
 			final int lNumEntries = lLayout.entries().size();
 			for (int j = 0; j < lNumEntries; j++) {
 				final var lEntry = lLayout.entries().get(j);
-				final var lIsEntrySelected = lIsLayoutSelected && j == mSelectedEntryIndex;
+				final var lIsEntrySelected = lIsLayoutSelected && j == selectedEntryIndex;
 
 				if (lIsEntrySelected) {
 					lEntry.mHasFocus = true;
@@ -558,9 +569,9 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 			return;
 
 		core.input().mouse().isMouseMenuSelectionEnabled(false);
-		mSelectedEntryIndex = getPreviousEnabledEntry(mLayouts, mSelectedEntryIndex);
+		getPreviousEnabledEntry();
 
-		updateAllEntriesToMatchSelected(mLayouts, true);
+		updateAllEntriesToMatchSelected(mLayouts, mSelectedLayoutIndex, mSelectedEntryIndex, true);
 
 		mScreenManager.toolTip().toolTipProvider(null);
 
@@ -572,9 +583,9 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 			return;
 
 		core.input().mouse().isMouseMenuSelectionEnabled(false);
-		mSelectedEntryIndex = getNextEnabledEntry(mLayouts, mSelectedEntryIndex);
+		getNextEnabledEntry();
 
-		updateAllEntriesToMatchSelected(mLayouts, true);
+		updateAllEntriesToMatchSelected(mLayouts, mSelectedLayoutIndex, mSelectedEntryIndex, true);
 
 		mScreenManager.toolTip().toolTipProvider(null);
 
@@ -589,141 +600,158 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 	}
 
-	protected int getPreviousEnabledEntry(List<BaseLayout> layouts, int currentEntryIndex) {
+	// NAVIGATION ---------------------------
+
+	protected void getPreviousEnabledEntry() {
 		if (mActiveEntry != null)
-			return mSelectedEntryIndex;
+			return;
 
 		boolean found = false;
 
-		var checkEntryIndex = currentEntryIndex;
+		var checkEntryIndex = mSelectedEntryIndex;
 
-		if (mSelectedLayoutIndex >= layouts.size())
+		if (mSelectedLayoutIndex >= mLayouts.size())
 			mSelectedLayoutIndex = 0;
 
 		while (found == false) {
 			checkEntryIndex--;
 
 			if (checkEntryIndex < 0) {
-				if (layouts.size() > 1) {
-					mSelectedLayoutIndex = getPreviousEnabledLayout(layouts, mSelectedLayoutIndex);
+				if (mLayouts.size() > 1) {
+					getPreviousEnabledLayout();
 
 					// whatever layout is now active, go with it
 					final var lLayout = mLayouts.get(mSelectedLayoutIndex);
 
-					if (lLayout.entries().size() == 0)
-						return 0;
+					if (lLayout.entries().size() == 0) {
+						mSelectedEntryIndex = 0;
+						return;
+					}
 
 					checkEntryIndex = lLayout.entries().size() - 1;
 
-					if (checkEntryIndex == currentEntryIndex)
-						return currentEntryIndex;
+					if (checkEntryIndex == mSelectedEntryIndex)
+						return;
 
-					if (!lLayout.hasEntry(checkEntryIndex))
-						return 0;
+					if (!lLayout.hasEntry(checkEntryIndex)) {
+						mSelectedEntryIndex = 0;
+						return;
+					}
 
-					return checkEntryIndex;
+					mSelectedEntryIndex = checkEntryIndex;
+					return;
 
 				} else {
-					final var lLayout = layouts.get(mSelectedLayoutIndex);
+					final var lLayout = mLayouts.get(mSelectedLayoutIndex);
 					checkEntryIndex = lLayout.entries().size() - 1;
 
-					if (lLayout.entries().size() == 0)
-						return 0;
+					if (lLayout.entries().size() == 0) {
+						mSelectedEntryIndex = 0;
+						return;
+					}
 
-					if (checkEntryIndex == currentEntryIndex)
-						return currentEntryIndex;
+					if (checkEntryIndex == mSelectedEntryIndex)
+						return;
 
 					final var lFoundEntry = lLayout.entries().get(checkEntryIndex);
 					if (lFoundEntry.enabled() == false)
 						continue;
 
-					return checkEntryIndex;
+					mSelectedEntryIndex = checkEntryIndex;
+					return;
 				}
 			} else {
-				final var lLayout = layouts.get(mSelectedLayoutIndex);
+				final var lLayout = mLayouts.get(mSelectedLayoutIndex);
 
-				if (checkEntryIndex == currentEntryIndex) {
-					return currentEntryIndex;
+				if (checkEntryIndex == mSelectedEntryIndex) {
+					mSelectedEntryIndex = checkEntryIndex;
+					return;
 				}
 
 				final var lFoundEntry = lLayout.entries().get(checkEntryIndex);
 				if (lFoundEntry.enabled() == false)
 					continue;
 
-				return checkEntryIndex;
+				mSelectedEntryIndex = checkEntryIndex;
+				return;
 			}
 		}
 
-		return currentEntryIndex;
+		return;
 	}
 
-	protected int getPreviousEnabledLayout(List<BaseLayout> layouts, int layoutIndex) {
+	protected void getPreviousEnabledLayout() {
 		if (mActiveEntry != null)
-			return mSelectedLayoutIndex;
+			return;
 
 		int selectedLayoutIndex = mSelectedLayoutIndex;
 
-		if (layouts.size() == 1)
-			return 0;
+		if (mLayouts.size() == 1) {
+			mSelectedLayoutIndex = 0;
+			return;
+		}
 
 		boolean found = false;
 		while (found == false) {
 			selectedLayoutIndex--;
 
 			if (selectedLayoutIndex == mSelectedLayoutIndex)
-				return mSelectedLayoutIndex;
+				return;
 
 			if (selectedLayoutIndex < 0) {
-				selectedLayoutIndex = layouts.size() - 1;
+				selectedLayoutIndex = mLayouts.size() - 1;
 
-				final var lLayout = layouts.get(selectedLayoutIndex);
+				final var lLayout = mLayouts.get(selectedLayoutIndex);
 				if (lLayout.entries().size() == 0) {
 					selectedLayoutIndex--;
 					continue;
 				}
 
-				return selectedLayoutIndex;
+				mSelectedLayoutIndex = selectedLayoutIndex;
+				return;
 			}
 
-			final var lLayout = layouts.get(selectedLayoutIndex);
+			final var lLayout = mLayouts.get(selectedLayoutIndex);
 			if (lLayout.entries().size() == 0) {
 				selectedLayoutIndex--;
 				continue;
 			}
 
-			return selectedLayoutIndex;
+			mSelectedLayoutIndex = selectedLayoutIndex;
+			return;
 
 		}
 
-		return mSelectedEntryIndex;
+		return;
 	}
 
-	protected int getNextEnabledEntry(List<BaseLayout> layouts, int currentEntryIndex) {
+	protected void getNextEnabledEntry() {
 		if (mActiveEntry != null)
-			return mSelectedEntryIndex;
+			return;
 
-		final var maxTries = 10;
+		final var maxTries = 5;
 		var currentTry = 0;
 
-		var checkEntryIndex = currentEntryIndex;
+		var checkEntryIndex = mSelectedEntryIndex;
 
 		while (currentTry < maxTries) {
 			checkEntryIndex++;
-			final var lLayout = layouts.get(mSelectedLayoutIndex);
+			final var lLayout = mLayouts.get(mSelectedLayoutIndex);
 
 			if (checkEntryIndex >= lLayout.entries().size()) {
-				mSelectedLayoutIndex = getNextEnabledLayout(layouts, mSelectedLayoutIndex);
+				getNextEnabledLayout();
 				checkEntryIndex = 0;
 
-				final var lNextLayout = layouts.get(mSelectedLayoutIndex);
+				final var lNextLayout = mLayouts.get(mSelectedLayoutIndex);
 				if (lNextLayout.entries().get(checkEntryIndex).enabled() == false)
 					continue;
 
-				return 0;
+				mSelectedEntryIndex = 0;
+				return;
 
 			} else {
-				if (checkEntryIndex == currentEntryIndex) {
-					return currentEntryIndex;
+				if (checkEntryIndex == mSelectedEntryIndex) {
+					return;
 				}
 
 				final var lFoundEntry = lLayout.entries().get(checkEntryIndex);
@@ -732,54 +760,60 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 					continue;
 				}
 
-				if (checkEntryIndex == currentEntryIndex)
-					return currentEntryIndex;
+				if (checkEntryIndex == mSelectedEntryIndex)
+					return;
 
-				return checkEntryIndex;
+				mSelectedEntryIndex = checkEntryIndex;
+				return;
 			}
 		}
 
-		return mSelectedEntryIndex;
+		return;
 	}
 
-	protected int getNextEnabledLayout(List<BaseLayout> layouts, int layoutIndex) {
+	protected void getNextEnabledLayout() {
 		if (mActiveEntry != null)
-			return mSelectedLayoutIndex;
+			return;
 
 		int selectedLayoutIndex = mSelectedLayoutIndex;
 
-		if (layouts.size() == 1)
-			return 0;
+		if (mLayouts.size() == 1) {
+			mSelectedLayoutIndex = 0;
+			return;
+		}
 
 		boolean found = false;
 		while (found == false) {
 			selectedLayoutIndex++;
 
-			if (selectedLayoutIndex == mSelectedLayoutIndex)
-				return mSelectedLayoutIndex;
+			if (selectedLayoutIndex == mSelectedLayoutIndex) {
+				return;
+			}
 
-			if (selectedLayoutIndex >= layouts.size()) {
+			if (selectedLayoutIndex >= mLayouts.size()) {
 				selectedLayoutIndex = 0;
 
-				final var lLayout = layouts.get(selectedLayoutIndex);
+				final var lLayout = mLayouts.get(selectedLayoutIndex);
 				if (lLayout.entries().size() == 0) {
 					selectedLayoutIndex++;
 					continue;
 				}
 
-				return selectedLayoutIndex;
+				mSelectedLayoutIndex = selectedLayoutIndex;
+				return;
 			}
 
-			final var lLayout = layouts.get(selectedLayoutIndex);
+			final var lLayout = mLayouts.get(selectedLayoutIndex);
 			if (lLayout.entries().size() == 0) {
 				selectedLayoutIndex++;
 				continue;
 			}
 
-			return selectedLayoutIndex;
+			mSelectedLayoutIndex = selectedLayoutIndex;
+			return;
 		}
 
-		return mSelectedEntryIndex;
+		return;
 	}
 
 }

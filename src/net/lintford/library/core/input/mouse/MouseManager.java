@@ -155,7 +155,7 @@ public class MouseManager {
 		return mMouseButtonStates[GLFW.GLFW_MOUSE_BUTTON_RIGHT];
 	}
 
-	public boolean isMouseLeftButtonDownTimed(IProcessMouseInput mouseProcessor) {
+	public boolean isMouseLeftButtonDownTimed(IInputProcessor mouseProcessor) {
 		if (isMouseLeftButtonDown() && mouseProcessor.isCoolDownElapsed()) {
 			mouseProcessor.resetCoolDownTimer();
 			return true;
@@ -164,7 +164,7 @@ public class MouseManager {
 		return false;
 	}
 
-	public boolean isMouseRightButtonDownTimed(IProcessMouseInput mouseProcessor) {
+	public boolean isMouseRightButtonDownTimed(IInputProcessor mouseProcessor) {
 		if (isMouseRightButtonDown() && mouseProcessor.isCoolDownElapsed()) {
 			mouseProcessor.resetCoolDownTimer();
 			return true;
@@ -217,7 +217,7 @@ public class MouseManager {
 
 	}
 
-	public boolean tryAcquireMouseLeftClickTimed(int hashCode, IProcessMouseInput mouseProcessor) {
+	public boolean tryAcquireMouseLeftClickTimed(int hashCode, IInputProcessor mouseProcessor) {
 		if (isMouseLeftClickOwnerAssignedToUsOrNotAssigned(hashCode)) {
 			if (!mLeftMouseClickHandled && isMouseLeftButtonDown() && mouseProcessor.isCoolDownElapsed()) {
 				mLeftMouseClickHandled = true;
@@ -231,7 +231,7 @@ public class MouseManager {
 		return false;
 	}
 
-	public boolean tryAcquireMouseRightClickTimed(int hashCode, IProcessMouseInput mouseProcessor) {
+	public boolean tryAcquireMouseRightClickTimed(int hashCode, IInputProcessor mouseProcessor) {
 		if (isMouseRightClickOwnerAssignedToUsOrNotAssigned(hashCode)) {
 			if (!mRightMouseClickHandled && isMouseRightButtonDown() && mouseProcessor.isCoolDownElapsed()) {
 

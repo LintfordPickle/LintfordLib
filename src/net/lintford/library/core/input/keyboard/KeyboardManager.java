@@ -9,6 +9,7 @@ import org.lwjgl.glfw.GLFWKeyCallback;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.input.IKeyInputCallback;
+import net.lintford.library.core.input.mouse.IInputProcessor;
 
 public class KeyboardManager {
 
@@ -102,7 +103,6 @@ public class KeyboardManager {
 	// Constants
 	// --------------------------------------
 
-	private static final float TIMED_KEY_DELAY = 200f; // ms
 	private final static int KEY_LIMIT = 512;
 
 	// --------------------------------------
@@ -112,7 +112,6 @@ public class KeyboardManager {
 	private boolean[] mKeyButtonStates;
 	public KeyCallback mKeyCallback;
 	public TextCallback mTextCallback;
-	private float mKeyTimer;
 
 	private IBufferedTextInputCallback mBufferedTextInputCallback;
 	private IKeyInputCallback mKeyInputCallback;
@@ -130,8 +129,8 @@ public class KeyboardManager {
 		return mKeyButtonStates[keyCode];
 	}
 
-	public boolean isKeyDownTimed(int keyCode) {
-		if (mKeyTimer < TIMED_KEY_DELAY)
+	public boolean isKeyDownTimed(int keyCode, IInputProcessor inputProcessor) {
+		if (inputProcessor.isCoolDownElapsed() == false)
 			return false;
 
 		if (keyCode >= KEY_LIMIT) {
@@ -140,19 +139,11 @@ public class KeyboardManager {
 		}
 
 		if (mKeyButtonStates[keyCode]) {
-			mKeyTimer = 0;
+			inputProcessor.resetCoolDownTimer();
 			return true;
 		}
 
 		return false;
-	}
-
-	public void handleKeyTimed() {
-		mKeyTimer = 0;
-	}
-
-	public void simulateMenuKeyPress() {
-		mKeyTimer = 0;
 	}
 
 	public void startBufferedTextCapture(IBufferedTextInputCallback callbackFunction) {
@@ -202,12 +193,9 @@ public class KeyboardManager {
 	// --------------------------------------
 
 	public void update(LintfordCore core) {
-		final var lDeltaTime = (float) core.appTime().elapsedTimeMilli();
-		mKeyTimer += lDeltaTime;
 	}
 
 	public void endUpdate() {
-
 	}
 
 	public void resetKeyFlags() {

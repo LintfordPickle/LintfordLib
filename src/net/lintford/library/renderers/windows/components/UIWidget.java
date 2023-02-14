@@ -7,10 +7,10 @@ import net.lintford.library.core.graphics.Color;
 import net.lintford.library.core.graphics.batching.SpriteBatch;
 import net.lintford.library.core.graphics.fonts.FontUnit;
 import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
-import net.lintford.library.core.input.mouse.IProcessMouseInput;
+import net.lintford.library.core.input.mouse.IInputProcessor;
 import net.lintford.library.renderers.windows.UiWindow;
 
-public abstract class UIWidget extends Rectangle implements IProcessMouseInput {
+public abstract class UIWidget extends Rectangle implements IInputProcessor {
 
 	// --------------------------------------
 	// Constants

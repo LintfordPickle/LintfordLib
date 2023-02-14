@@ -11,6 +11,7 @@ import org.lwjgl.glfw.GLFWJoystickCallback;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.debug.Debug;
+import net.lintford.library.core.input.mouse.IInputProcessor;
 
 public class GamepadManager extends GLFWJoystickCallback {
 
@@ -19,8 +20,6 @@ public class GamepadManager extends GLFWJoystickCallback {
 	// --------------------------------------
 
 	public static final int MAX_NUM_CONTROLLERS = GLFW.GLFW_JOYSTICK_LAST;
-
-	private static final int BUTTON_COOLDOWN_MS = 200;
 
 	// --------------------------------------
 	// Variables
@@ -31,8 +30,6 @@ public class GamepadManager extends GLFWJoystickCallback {
 	private final List<InputGamepad> mActiveControllers = Collections.unmodifiableList(mUpdateControllerList);
 
 	private IGamepadListener mGamepadListener;
-
-	private float mButtonDownTimer;
 
 	// --------------------------------------
 	// Properties
@@ -74,17 +71,12 @@ public class GamepadManager extends GLFWJoystickCallback {
 	}
 
 	public void update(LintfordCore core) {
-		if (mButtonDownTimer > 0) {
-			mButtonDownTimer -= core.gameTime().elapsedTimeMilli();
-		}
-
-		final int lNumConnectedJoysticks = mUpdateControllerList.size();
+		final var lNumConnectedJoysticks = mUpdateControllerList.size();
 		for (int i = 0; i < lNumConnectedJoysticks; i++) {
 			final var lJoystick = mUpdateControllerList.get(i);
 			if (lJoystick.isActive() == false)
 				continue;
 
-			// Custom
 			lJoystick.update(core);
 		}
 	}
@@ -128,14 +120,15 @@ public class GamepadManager extends GLFWJoystickCallback {
 		return false;
 	}
 
-	public boolean isGamepadButtonDownTimed(int glfwGamepadButtonIndex) {
-		if (mButtonDownTimer > 0)
+	public boolean isGamepadButtonDownTimed(int glfwGamepadButtonIndex, IInputProcessor inputProcessor) {
+		if (inputProcessor.isCoolDownElapsed() == false)
 			return false;
 
 		final var lNumConnectGamepads = mActiveControllers.size();
 		for (int i = 0; i < lNumConnectGamepads; i++) {
 			if (mActiveControllers.get(i).getIsButtonDown(glfwGamepadButtonIndex)) {
-				mButtonDownTimer = BUTTON_COOLDOWN_MS;
+
+				inputProcessor.resetCoolDownTimer();
 				return true;
 			}
 		}

@@ -5,11 +5,12 @@ import org.lwjgl.glfw.GLFW;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.Debug;
+import net.lintford.library.core.input.mouse.IInputProcessor;
 import net.lintford.library.core.particles.ParticleFrameworkData;
 import net.lintford.library.renderers.BaseRenderer;
 import net.lintford.library.renderers.RendererManager;
 
-public class DebugParticleDrawer extends BaseRenderer {
+public class DebugParticleDrawer extends BaseRenderer implements IInputProcessor {
 
 	// --------------------------------------
 	// Constants
@@ -22,7 +23,7 @@ public class DebugParticleDrawer extends BaseRenderer {
 	// --------------------------------------
 
 	private boolean mShowDebugInformation;
-
+	private float mInputTimer;
 	private ParticleFrameworkData mParticleFrameworkData;
 
 	// --------------------------------------
@@ -75,11 +76,21 @@ public class DebugParticleDrawer extends BaseRenderer {
 
 	@Override
 	public boolean handleInput(LintfordCore core) {
-		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_F11)) {
+		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_F11, this)) {
 			mShowDebugInformation = !mShowDebugInformation;
 		}
 
 		return super.handleInput(core);
+	}
+
+	@Override
+	public void update(LintfordCore core) {
+		super.update(core);
+
+		if (mInputTimer > 0) {
+			final var lDeltaTime = (float) core.gameTime().elapsedTimeMilli();
+			mInputTimer -= lDeltaTime;
+		}
 	}
 
 	@Override
@@ -96,5 +107,15 @@ public class DebugParticleDrawer extends BaseRenderer {
 		Debug.debugManager().drawers().drawText(String.format("Num Systems: %d", lSystemCount), 0, 25);
 
 		Debug.debugManager().drawers().endTextRenderer();
+	}
+
+	@Override
+	public boolean isCoolDownElapsed() {
+		return mInputTimer <= 0;
+	}
+
+	@Override
+	public void resetCoolDownTimer() {
+		mInputTimer = IInputProcessor.INPUT_COOLDOWN_TIME;
 	}
 }

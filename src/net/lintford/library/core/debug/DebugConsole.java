@@ -20,7 +20,7 @@ import net.lintford.library.core.graphics.fonts.FontUnit.WrapType;
 import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintford.library.core.graphics.textures.CoreTextureNames;
 import net.lintford.library.core.input.keyboard.IBufferedTextInputCallback;
-import net.lintford.library.core.input.mouse.IProcessMouseInput;
+import net.lintford.library.core.input.mouse.IInputProcessor;
 import net.lintford.library.core.maths.Vector3f;
 import net.lintford.library.core.messaging.Message;
 import net.lintford.library.renderers.ZLayers;
@@ -29,7 +29,7 @@ import net.lintford.library.renderers.windows.components.ScrollBar;
 import net.lintford.library.renderers.windows.components.ScrollBarContentRectangle;
 import net.lintford.library.renderers.windows.components.UiInputText;
 
-public class DebugConsole extends Rectangle implements IBufferedTextInputCallback, IScrollBarArea, IProcessMouseInput {
+public class DebugConsole extends Rectangle implements IBufferedTextInputCallback, IScrollBarArea, IInputProcessor {
 
 	// --------------------------------------
 	// Constants
@@ -243,14 +243,14 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 				if (mMessageFilterText.handleInput(core))
 					return;
 
-				if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_DELETE)) {
+				if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_DELETE, this)) {
 					mScrollBar.AbsCurrentYPos(0);
 					mAutoScroll = true;
 
 					Debug.debugManager().logger().clearLogLines();
 				}
 
-				if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_DOWN)) {
+				if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_DOWN, this)) {
 					mConsoleLineHeight = (int) (mConsoleFont.fontHeight() + 1);
 					mScrollBar.RelCurrentYPos(-mConsoleLineHeight);
 					mAutoScroll = false;
@@ -259,7 +259,7 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 						mScrollBar.AbsCurrentYPos(mScrollBar.getScrollYBottomPosition() - mConsoleLineHeight);
 				}
 
-				if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_PAGE_DOWN)) {
+				if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_PAGE_DOWN, this)) {
 					mConsoleLineHeight = (int) (mConsoleFont.fontHeight() + 1);
 					mScrollBar.RelCurrentYPos(-mConsoleLineHeight * 10);
 					mAutoScroll = false;
@@ -268,7 +268,7 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 						mScrollBar.AbsCurrentYPos(mScrollBar.getScrollYBottomPosition() - mConsoleLineHeight);
 				}
 
-				if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_UP)) {
+				if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_UP, this)) {
 					mConsoleLineHeight = (int) (mConsoleFont.fontHeight() + 1);
 					mScrollBar.RelCurrentYPos(mConsoleLineHeight);
 					mAutoScroll = false;
@@ -277,7 +277,7 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 						mScrollBar.AbsCurrentYPos(0);
 				}
 
-				if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_PAGE_UP)) {
+				if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_PAGE_UP, this)) {
 					mConsoleLineHeight = (int) (mConsoleFont.fontHeight() + 1);
 					mScrollBar.RelCurrentYPos(mConsoleLineHeight * 10);
 					mAutoScroll = false;
@@ -298,7 +298,7 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 				}
 			}
 
-			if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_ESCAPE)) {
+			if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_ESCAPE, this)) {
 				if (mConsoleState == CONSOLE_STATE.open) {
 					mConsoleState = CONSOLE_STATE.closed;
 
@@ -339,7 +339,7 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 		}
 
 		// listen for opening and closing
-		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_F1)) {
+		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_F1, this)) {
 			switch (mConsoleState) {
 			case closed:
 				mConsoleState = CONSOLE_STATE.minimal;
@@ -370,7 +370,7 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 			return;
 
 		mOpenHeight = core.HUD().getHeight() * 0.3f;
-		
+
 		if (mConsoleState == CONSOLE_STATE.minimal)
 			mAutoScroll = true;
 
@@ -791,6 +791,6 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 
 	@Override
 	public void resetCoolDownTimer() {
-		mMouseTimer = IProcessMouseInput.MOUSE_COOL_TIME_TIME;
+		mMouseTimer = IInputProcessor.INPUT_COOLDOWN_TIME;
 	}
 }

@@ -3,6 +3,7 @@ package net.lintford.library.screenmanager.entries;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 
 import net.lintford.library.ConstantsApp;
@@ -88,6 +89,13 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 		return mLabel;
 	}
 
+	@Override
+	public void isActive(boolean newValue) {
+		super.isActive(newValue);
+
+		mOpen = mIsActive;
+	}
+
 	public MenuEnumEntryItem selectedItem() {
 		if (mItems == null || mItems.size() == 0)
 			return null;
@@ -155,6 +163,139 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 	// --------------------------------------
 
 	@Override
+	public boolean onHandleMouseInput(LintfordCore core) {
+
+		if (!core.input().mouse().isMouseMenuSelectionEnabled())
+			return false;
+
+		if (!mWindowRectangle.intersectsAA(core.HUD().getMouseCameraSpace()) || !core.input().mouse().isMouseOverThisComponent(hashCode()))
+			return false;
+
+		if (mHasFocus == false)
+			mParentScreen.setFocusOnEntry(this);
+
+		if (mOpen && mScrollBar.handleInput(core, mScreenManager))
+			return true;
+
+		else if (mWindowRectangle.intersectsAA(core.HUD().getMouseCameraSpace()) && core.input().mouse().tryAcquireMouseOverThisComponent(hashCode())) {
+			if (mOpen) {
+				final float lConsoleLineHeight = mItemHeight;
+				// Something inside the dropdown was select
+				float lRelativeheight = core.HUD().getMouseCameraSpace().y - mWindowRectangle.y() - mScrollBar.currentYPos();
+
+				int lRelativeIndex = (int) (lRelativeheight / lConsoleLineHeight);
+				int lSelectedIndex = lRelativeIndex;
+
+				if (lSelectedIndex < 0)
+					lSelectedIndex = 0;
+				if (lSelectedIndex >= mItems.size())
+					lSelectedIndex = mItems.size() - 1;
+
+				mHighlightedIndex = lSelectedIndex;
+			}
+
+			if (core.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
+				if (mOpen) {
+					// TODO: play the menu clicked sound
+
+					final float lConsoleLineHeight = mItemHeight;
+					float lRelativeheight = core.HUD().getMouseCameraSpace().y - mWindowRectangle.y() - mScrollBar.currentYPos();
+
+					int lRelativeIndex = (int) (lRelativeheight / lConsoleLineHeight);
+					int lSelectedIndex = lRelativeIndex;
+
+					if (lSelectedIndex < 0)
+						lSelectedIndex = 0;
+
+					if (lSelectedIndex >= mItems.size())
+						lSelectedIndex = mItems.size() - 1;
+
+					mSelectedIndex = lSelectedIndex;
+
+					mOpen = false;
+
+				} else {
+					// First check to see if the player clicked the info button
+					if (mShowInfoIcon && mInfoIconDstRectangle.intersectsAA(core.HUD().getMouseCameraSpace())) {
+						mToolTipEnabled = true;
+						mToolTipTimer = 1000;
+					} else {
+						mOpen = true;
+						mParentScreen.onMenuEntryActivated(this);
+					}
+
+					if (mToolTipEnabled)
+						mToolTipTimer += core.appTime().elapsedTimeMilli();
+
+				}
+
+			}
+
+			return true;
+		} else {
+			mToolTipTimer = 0;
+		}
+
+		return false;
+	}
+
+	@Override
+	public boolean onHandleKeyboardInput(LintfordCore core) {
+
+		if (mIsActive) {
+			if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_UP, this)) {
+				mSelectedIndex--;
+
+				if (mSelectedIndex < 0)
+					mSelectedIndex = 0;
+
+				mHighlightedIndex = mSelectedIndex;
+				return true;
+			}
+
+			if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_DOWN, this)) {
+				mSelectedIndex++;
+
+				if (mSelectedIndex >= mItems.size())
+					mSelectedIndex = mItems.size() - 1;
+
+				mHighlightedIndex = mSelectedIndex;
+				return true;
+			}
+		}
+
+		return super.onHandleKeyboardInput(core);
+	}
+
+	@Override
+	public boolean onHandleGamepadInput(LintfordCore core) {
+
+		if (mIsActive) {
+			if (core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_UP, this)) {
+				mSelectedIndex--;
+
+				if (mSelectedIndex < 0)
+					mSelectedIndex = 0;
+
+				mHighlightedIndex = mSelectedIndex;
+				return true;
+			}
+
+			if (core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_DOWN, this)) {
+				mSelectedIndex++;
+
+				if (mSelectedIndex >= mItems.size())
+					mSelectedIndex = mItems.size() - 1;
+
+				mHighlightedIndex = mSelectedIndex;
+				return true;
+			}
+		}
+		
+		return super.onHandleGamepadInput(core);
+	}
+
+	@Override
 	public void update(LintfordCore core, MenuScreen screen) {
 		super.update(core, screen);
 
@@ -186,6 +327,8 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 		final var lTextBoldFont = mParentScreen.fontBold();
 
 		mZ = mOpen ? ZLayers.LAYER_SCREENMANAGER + Z_STATE_MODIFIER_ACTIVE : ZLayers.LAYER_SCREENMANAGER + Z_STATE_MODIFIER_PASSIVE;
+
+		textColor.setFromColor(ColorConstants.TextEntryColor);
 
 		final var lScreenOffset = screen.screenPositionOffset();
 		final var lSeparator = " : ";
@@ -307,6 +450,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 
 		if (mOpen && mScrollBar.areaNeedsScrolling())
 			mScrollBar.draw(core, lSpriteBatch, mCoreSpritesheet, -0.1f);
+
 	}
 
 	// --------------------------------------
@@ -319,10 +463,21 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 
 		mIsActive = !mIsActive;
 
-		if (mIsActive)
+		if (mIsActive) {
 			mParentScreen.onMenuEntryActivated(this);
-		else
+			mOpen = true;
+		} else {
 			mParentScreen.onMenuEntryDeactivated(this);
+			mOpen = false;
+		}
+	}
+
+	@Override
+	public void onDeselection(InputManager inputManager) {
+		super.onDeselection(inputManager);
+
+		mOpen = false;
+		mIsActive = false;
 	}
 
 	public void addItem(MenuEnumEntryItem item) {

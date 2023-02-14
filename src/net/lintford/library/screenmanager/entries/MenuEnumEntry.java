@@ -178,7 +178,9 @@ public class MenuEnumEntry extends MenuEntry {
 		if (intersectsAA(core.HUD().getMouseCameraSpace()) && core.input().mouse().isMouseOverThisComponent(hashCode())) {
 			mIsMouseOver = true;
 			core.input().mouse().isMouseMenuSelectionEnabled(true);
-			mParentScreen.setFocusOnEntry(this);
+
+			if (!mHasFocus)
+				mParentScreen.setFocusOnEntry(this);
 
 			if (mToolTipEnabled)
 				mToolTipTimer += core.appTime().elapsedTimeMilli();

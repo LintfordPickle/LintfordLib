@@ -8,12 +8,12 @@ import net.lintford.library.core.graphics.batching.SpriteBatch;
 import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintford.library.core.graphics.textures.CoreTextureNames;
 import net.lintford.library.core.input.IInputClickedFocusTracker;
-import net.lintford.library.core.input.mouse.IProcessMouseInput;
+import net.lintford.library.core.input.mouse.IInputProcessor;
 import net.lintford.library.core.maths.MathHelper;
 import net.lintford.library.renderers.ZLayers;
 import net.lintford.library.screenmanager.IInputClickedFocusManager;
 
-public class ScrollBar extends Rectangle implements IProcessMouseInput, IInputClickedFocusTracker {
+public class ScrollBar extends Rectangle implements IInputProcessor, IInputClickedFocusTracker {
 
 	// --------------------------------------
 	// Constants

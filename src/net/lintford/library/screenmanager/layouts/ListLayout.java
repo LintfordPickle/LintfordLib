@@ -1,7 +1,7 @@
 package net.lintford.library.screenmanager.layouts;
 
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.input.mouse.IProcessMouseInput;
+import net.lintford.library.core.input.mouse.IInputProcessor;
 import net.lintford.library.core.maths.MathHelper;
 import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.ScreenManagerConstants.FILLTYPE;
@@ -11,7 +11,7 @@ import net.lintford.library.screenmanager.ScreenManagerConstants.FILLTYPE;
  * 
  * @author Lintford Pickle
  */
-public class ListLayout extends BaseLayout implements IProcessMouseInput {
+public class ListLayout extends BaseLayout implements IInputProcessor {
 
 	// --------------------------------------
 	// COnstants

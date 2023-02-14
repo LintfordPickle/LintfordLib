@@ -1,7 +1,7 @@
 package net.lintford.library.screenmanager.layouts;
 
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.input.mouse.IProcessMouseInput;
+import net.lintford.library.core.input.mouse.IInputProcessor;
 import net.lintford.library.screenmanager.MenuScreen;
 
 /**
@@ -9,7 +9,7 @@ import net.lintford.library.screenmanager.MenuScreen;
  * 
  * @author Lintford Pickle
  */
-public class FloatingLayout extends BaseLayout implements IProcessMouseInput {
+public class FloatingLayout extends BaseLayout implements IInputProcessor {
 
 	// --------------------------------------
 	// COnstants

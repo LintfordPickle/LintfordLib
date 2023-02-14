@@ -10,13 +10,13 @@ import net.lintford.library.core.graphics.batching.SpriteBatch;
 import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintford.library.core.graphics.textures.CoreTextureNames;
 import net.lintford.library.core.input.InputManager;
-import net.lintford.library.core.input.mouse.IProcessMouseInput;
+import net.lintford.library.core.input.mouse.IInputProcessor;
 import net.lintford.library.core.maths.Vector2f;
 import net.lintford.library.screenmanager.ScreenManagerConstants.ALIGNMENT;
 import net.lintford.library.screenmanager.ScreenManagerConstants.FILLTYPE;
 import net.lintford.library.screenmanager.entries.EntryInteractions;
 
-public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTipProvider {
+public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipProvider {
 
 	// --------------------------------------
 	// Constants
@@ -409,43 +409,30 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 
 	};
 
-	public boolean handleInput(LintfordCore core) {
-		if (!mEnableUpdateDraw || !mEnabled || isAnimating)
+	public boolean onHandleKeyboardInput(LintfordCore core) {
+		return false;
+	}
+
+	public boolean onHandleGamepadInput(LintfordCore core) {
+		return false;
+	}
+
+	public boolean onHandleMouseInput(LintfordCore core) {
+		if (mParentScreen == null)
 			return false;
 
-		final var lMouseMenuEnabled = core.input().mouse().isMouseMenuSelectionEnabled();
+		if (!core.input().mouse().isMouseMenuSelectionEnabled())
+			return false;
 
-		if (lMouseMenuEnabled) {
-			final var lHandleMouseInput = onHandleMouseInput(core);
-			if (lHandleMouseInput) {
-				return true;
-			}
-
-		} else {
-			final var lKeyboardInput = onHandleKeyboardInput(core);
-			final var lGamepadInput = onHandleGamepadInput(core);
-
-			return lKeyboardInput || lGamepadInput;
-		}
-
-		return false;
-	}
-
-	protected boolean onHandleKeyboardInput(LintfordCore core) {
-		return false;
-	}
-
-	protected boolean onHandleGamepadInput(LintfordCore core) {
-		return false;
-	}
-
-	protected boolean onHandleMouseInput(LintfordCore core) {
 		if (!intersectsAA(core.HUD().getMouseCameraSpace()) || !core.input().mouse().isMouseOverThisComponent(hashCode()))
 			return false;
 
 		mIsMouseOver = true;
+
 		core.input().mouse().isMouseMenuSelectionEnabled(true);
-		mParentScreen.setFocusOnEntry(this);
+
+		if (!mHasFocus)
+			mParentScreen.setFocusOnEntry(this);
 
 		if (mToolTipEnabled)
 			mToolTipTimer += core.appTime().elapsedTimeMilli();
@@ -676,7 +663,7 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 
 	@Override
 	public void resetCoolDownTimer() {
-		mClickTimer = 200;
+		mClickTimer = IInputProcessor.INPUT_COOLDOWN_TIME;
 	}
 
 	@Override
@@ -694,7 +681,11 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 		return mParentScreen.isExiting() == false;
 	}
 
-	public void onClick(InputManager inputState) {
+	public void onDeselection(InputManager inputManager) {
+
+	}
+
+	public void onClick(InputManager inputManager) {
 		if (mClickListener == null || mMenuEntryID == -1)
 			return;
 
@@ -703,6 +694,6 @@ public class MenuEntry extends Rectangle implements IProcessMouseInput, IToolTip
 
 		mAnimationTimer = MenuScreen.ANIMATION_TIMER_LENGTH;
 		mScreenManager.uiSounds().play("SOUND_MENU_CLICK");
-		mClickListener.menuEntryOnClick(inputState, mMenuEntryID);
+		mClickListener.menuEntryOnClick(inputManager, mMenuEntryID);
 	}
 }

@@ -9,7 +9,7 @@ import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.batching.SpriteBatch;
 import net.lintford.library.core.graphics.batching.TextureBatchPCT;
 import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
-import net.lintford.library.core.input.mouse.IProcessMouseInput;
+import net.lintford.library.core.input.mouse.IInputProcessor;
 import net.lintford.library.core.maths.Vector2f;
 import net.lintford.library.core.time.TimeSpan;
 import net.lintford.library.renderers.RendererManager;
@@ -17,7 +17,7 @@ import net.lintford.library.screenmanager.transitions.BaseTransition;
 import net.lintford.library.screenmanager.transitions.TransitionFadeIn;
 import net.lintford.library.screenmanager.transitions.TransitionFadeOut;
 
-public abstract class Screen implements IProcessMouseInput {
+public abstract class Screen implements IInputProcessor {
 
 	// --------------------------------------
 	// Enums

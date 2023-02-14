@@ -15,12 +15,12 @@ import net.lintford.library.core.graphics.fonts.BitmapFontManager;
 import net.lintford.library.core.graphics.fonts.FontUnit;
 import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintford.library.core.graphics.textures.CoreTextureNames;
-import net.lintford.library.core.input.mouse.IProcessMouseInput;
+import net.lintford.library.core.input.mouse.IInputProcessor;
 import net.lintford.library.renderers.windows.components.IScrollBarArea;
 import net.lintford.library.renderers.windows.components.ScrollBar;
 import net.lintford.library.renderers.windows.components.ScrollBarContentRectangle;
 
-public class DebugStats extends Rectangle implements IScrollBarArea, IProcessMouseInput {
+public class DebugStats extends Rectangle implements IScrollBarArea, IInputProcessor {
 
 	// --------------------------------------
 	// Constants
@@ -177,7 +177,7 @@ public class DebugStats extends Rectangle implements IScrollBarArea, IProcessMou
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
-		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_F3)) {
+		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_F3, this)) {
 			mIsOpen = !mIsOpen;
 		}
 
@@ -419,7 +419,7 @@ public class DebugStats extends Rectangle implements IScrollBarArea, IProcessMou
 
 	@Override
 	public void resetCoolDownTimer() {
-		mMouseTimer = IProcessMouseInput.MOUSE_COOL_TIME_TIME;
+		mMouseTimer = IInputProcessor.INPUT_COOLDOWN_TIME;
 	};
 
 	@Override

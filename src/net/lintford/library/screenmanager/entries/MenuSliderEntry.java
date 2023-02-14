@@ -122,7 +122,7 @@ public class MenuSliderEntry extends MenuEntry {
 	// --------------------------------------
 
 	@Override
-	protected boolean onHandleMouseInput(LintfordCore core) {
+	public boolean onHandleMouseInput(LintfordCore core) {
 
 		if (!intersectsAA(core.HUD().getMouseCameraSpace()) || !core.input().mouse().isMouseOverThisComponent(hashCode()))
 			return false;
@@ -156,7 +156,8 @@ public class MenuSliderEntry extends MenuEntry {
 			}
 
 		} else {
-			mParentScreen.setFocusOnEntry(this);
+			if (mHasFocus == false)
+				mParentScreen.setFocusOnEntry(this);
 
 			mTrackingClick = false;
 		}
@@ -168,8 +169,8 @@ public class MenuSliderEntry extends MenuEntry {
 	}
 
 	@Override
-	protected boolean onHandleKeyboardInput(LintfordCore core) {
-
+	public boolean onHandleKeyboardInput(LintfordCore core) {
+		// TODO: fix stop in slider entry
 		mStep = 1;
 		if (mIsActive) {
 			if (core.input().keyboard().isKeyDown(GLFW.GLFW_KEY_LEFT)) {
@@ -187,15 +188,15 @@ public class MenuSliderEntry extends MenuEntry {
 	}
 
 	@Override
-	protected boolean onHandleGamepadInput(LintfordCore core) {
+	public boolean onHandleGamepadInput(LintfordCore core) {
 		mStep = 1;
 		if (mIsActive) {
-			if (core.input().gamepads().isGamepadButtonDown(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_LEFT)) {
+			if (core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_LEFT, this)) {
 				setValue(mValue - mStep);
 				return true;
 			}
 
-			if (core.input().gamepads().isGamepadButtonDown(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_RIGHT)) {
+			if (core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_RIGHT, this)) {
 				setValue(mValue + mStep);
 				return true;
 			}
@@ -334,5 +335,10 @@ public class MenuSliderEntry extends MenuEntry {
 			newValue = mUpperBound;
 
 		mValue = newValue;
+	}
+
+	@Override
+	public void resetCoolDownTimer() {
+		mClickTimer = 50;
 	}
 }

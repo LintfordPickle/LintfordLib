@@ -1,6 +1,5 @@
 package net.lintford.library.screenmanager.screens;
 
-import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL20;
 
 import net.lintford.library.core.LintfordCore;
@@ -167,15 +166,6 @@ public abstract class ShaderBackground extends Screen {
 		super.unloadResources();
 
 		mBackgroundShader.unloadResources();
-	}
-
-	@Override
-	public void handleInput(LintfordCore core) {
-		super.handleInput(core);
-
-		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_U)) {
-			mBackgroundShader.recompile();
-		}
 	}
 
 	@Override

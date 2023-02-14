@@ -1,8 +1,8 @@
 package net.lintford.library.core.input.mouse;
 
-public interface IProcessMouseInput {
+public interface IInputProcessor {
 
-	public static final int MOUSE_COOL_TIME_TIME = 200;
+	public static final int INPUT_COOLDOWN_TIME = 200;
 
 	boolean isCoolDownElapsed();
 

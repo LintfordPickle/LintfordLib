@@ -10,7 +10,7 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.actionevents.ActionEventManager;
 import net.lintford.library.core.actionevents.ActionEventManager.PlaybackMode;
 import net.lintford.library.core.actionevents.IActionFrame;
-import net.lintford.library.core.input.mouse.IProcessMouseInput;
+import net.lintford.library.core.input.mouse.IInputProcessor;
 import net.lintford.library.core.time.LogicialCounter;
 
 public abstract class ActionEventController<T extends IActionFrame> extends BaseController {
@@ -19,7 +19,7 @@ public abstract class ActionEventController<T extends IActionFrame> extends Base
 	// Inner-Class
 	// ---------------------------------------------
 
-	public class ActionEventPlayer implements IProcessMouseInput {
+	public class ActionEventPlayer implements IInputProcessor {
 		public final int playerUid;
 
 		public final ActionEventManager actionEventManager;

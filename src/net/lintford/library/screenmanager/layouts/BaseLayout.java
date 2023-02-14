@@ -358,7 +358,7 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 
 		// limit mouse interaction within the baseLayout to within the contentDisplayArea
 		// due to the constraints imposed by the title bar, via the crop top and crop bottom, the contentDisplayArea is a subset of the layout
-//		if (core.input().mouse().isMouseMenuSelectionEnabled() && contentDisplayArea().intersectsAA(core.HUD().getMouseCameraSpace())) {
+		if (core.input().mouse().isMouseMenuSelectionEnabled() && contentDisplayArea().intersectsAA(core.HUD().getMouseCameraSpace())) {
 			if (true && core.input().mouse().tryAcquireMouseMiddle((hashCode()))) {
 				final float scrollAccelerationAmt = core.input().mouse().mouseWheelYOffset() * 250.0f;
 				mScrollBar.scrollRelAcceleration(scrollAccelerationAmt);
@@ -366,9 +366,25 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 
 			final int lCount = mMenuEntries.size();
 			for (int i = 0; i < lCount; i++) {
-				mMenuEntries.get(i).handleInput(core);
+				var lInputHandled = false;
+				lInputHandled = mMenuEntries.get(i).onHandleMouseInput(core);
+				
+				System.out.println(i + ": " + lInputHandled);
+
+				if (lInputHandled)
+					return lInputHandled;
 			}
-//		}
+		}
+
+		final int lCount = mMenuEntries.size();
+		for (int i = 0; i < lCount; i++) {
+			var lInputHandled = false;
+			lInputHandled = mMenuEntries.get(i).onHandleKeyboardInput(core);
+			lInputHandled = lInputHandled || mMenuEntries.get(i).onHandleGamepadInput(core);
+
+			if (lInputHandled)
+				return lInputHandled;
+		}
 
 		if (mScrollBar.scrollBarEnabled()) {
 			mScrollBar.handleInput(core, screenManager);
@@ -408,19 +424,21 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 			final var lEntryBottomExtent = lFocusedEntry.bottom();
 
 			if (lEntryTopExtent < lWindowTopExtent) {
-				mScrollBar.RelCurrentYPos(5);
-//				if (Math.abs(lEntryTopExtent - lWindowTopExtent) > 20)
-//					mScrollBar.RelCurrentYPos(20);
-//				else
-//					mScrollBar.RelCurrentYPos(5);
+				if (Math.abs(lEntryTopExtent - lWindowTopExtent) > 20)
+					mScrollBar.RelCurrentYPos(20);
+				if (Math.abs(lEntryTopExtent - lWindowTopExtent) > 5)
+					mScrollBar.RelCurrentYPos(5);
+				else
+					mScrollBar.RelCurrentYPos(1);
 			}
 
 			if (lEntryBottomExtent > lWindowBottomExtent) {
-				mScrollBar.RelCurrentYPos(-5);
-//				if (Math.abs(lEntryBottomExtent - lWindowBottomExtent) > 20)
-//					mScrollBar.RelCurrentYPos(-20);
-//				else
-//					mScrollBar.RelCurrentYPos(-5);
+				if (Math.abs(lEntryBottomExtent - lWindowBottomExtent) > 20)
+					mScrollBar.RelCurrentYPos(-20);
+				if (Math.abs(lEntryBottomExtent - lWindowBottomExtent) > 5)
+					mScrollBar.RelCurrentYPos(-5);
+				else
+					mScrollBar.RelCurrentYPos(-1);
 			}
 
 		}
