@@ -13,19 +13,32 @@ import net.lintford.library.core.graphics.textures.CoreTextureNames;
 public class ToolTip {
 
 	// --------------------------------------
+	// Constants
+	// --------------------------------------
+
+	final float TOOLTIP_PANEL_WIDTH = 400;
+
+	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
-	protected FontUnit mMenuFont;
-	protected SpriteBatch mSpriteBatch;
-	protected SpriteSheetDefinition mCoreSpritesheet;
+	private FontUnit mMenuFont;
+	private SpriteBatch mSpriteBatch;
+	private SpriteSheetDefinition mCoreSpritesheet;
 	private IToolTipProvider mToolTipProvider;
-	private float mPositionX;
-	private float mPositionY;
+	private boolean mTopOfScreen;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public boolean topOfScreen() {
+		return mTopOfScreen;
+	}
+
+	public void topOfScreen(boolean topOfScreen) {
+		mTopOfScreen = topOfScreen;
+	}
 
 	public void toolTipProvider(IToolTipProvider toolTipProvider) {
 		if (toolTipProvider != null && toolTipProvider.isParentActive())
@@ -44,6 +57,7 @@ public class ToolTip {
 
 	public ToolTip() {
 		mSpriteBatch = new SpriteBatch();
+		mTopOfScreen = true;
 	}
 
 	// --------------------------------------
@@ -64,11 +78,6 @@ public class ToolTip {
 		mMenuFont = null;
 	}
 
-	public void handleInput(LintfordCore core) {
-		mPositionX = core.HUD().getMouseWorldSpaceX();
-		mPositionY = core.HUD().getMouseWorldSpaceY();
-	}
-
 	public void update(LintfordCore core) {
 		if (mToolTipProvider != null) {
 			if (!mToolTipProvider.isMouseOver()) {
@@ -81,7 +90,7 @@ public class ToolTip {
 		if (mToolTipProvider == null)
 			return;
 
-		final float TOOLTIP_PANEL_WIDTH = 350;
+		final var lHudBoundingBox = core.HUD().boundingRectangle();
 
 		final float lTextPadding = 5f;
 		final String lToolTipText = mToolTipProvider.toolTipText();
@@ -89,21 +98,12 @@ public class ToolTip {
 		mMenuFont.setWrapType(WrapType.WordWrap);
 		float lToolTipTextHeight = mMenuFont.getStringHeightWrapping(lToolTipText, 350.f);
 
-		float lPositionX = mPositionX;
-		float lPositionY = mPositionY;
+		mTopOfScreen = !mToolTipProvider.isTopHalfOfScreen();
 
-		lPositionX += 15;
-		lPositionY -= 64;// - lToolTipTextHeight;
-
-		// Check for tooltip overlapping the edge of the screen (x axis)
-		if (lPositionX + TOOLTIP_PANEL_WIDTH + 10 > core.config().display().windowWidth() * .5f) {
-			lPositionX -= TOOLTIP_PANEL_WIDTH + 30;
-		}
-
-		// Check for tooltip overlapping the edge of the screen (y axis)
-		if (lPositionY + lToolTipTextHeight + lTextPadding > core.config().display().windowHeight() * .5f) {
-			lPositionY -= lToolTipTextHeight + 30;
-		}
+		final float lPositionX = -TOOLTIP_PANEL_WIDTH * .5f;
+		final float lPositionY = mTopOfScreen 
+				? lHudBoundingBox.top() + lHudBoundingBox.height() / 7 
+				: lHudBoundingBox.centerY() + lHudBoundingBox.height() / 7;
 
 		final var lColor = ColorConstants.getColor(.21f, .11f, .13f, 1.f);
 

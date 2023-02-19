@@ -203,8 +203,6 @@ public class ScreenManager implements IInputClickedFocusManager {
 			lInputBlockedByHigherScreen = lInputBlockedByHigherScreen || lScreen.mBlockInputInBackground;
 		}
 
-		mToolTip.handleInput(core);
-
 		if (mTrackedInputControl != null) {
 			if (mTrackedInputControl.inputHandledInCoreFrame() == false) {
 				mTrackedInputControl.handleInput(core, this);

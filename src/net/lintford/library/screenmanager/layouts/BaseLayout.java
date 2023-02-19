@@ -368,8 +368,6 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 			for (int i = 0; i < lCount; i++) {
 				var lInputHandled = false;
 				lInputHandled = mMenuEntries.get(i).onHandleMouseInput(core);
-				
-				System.out.println(i + ": " + lInputHandled);
 
 				if (lInputHandled)
 					return lInputHandled;
@@ -426,7 +424,7 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 			if (lEntryTopExtent < lWindowTopExtent) {
 				if (Math.abs(lEntryTopExtent - lWindowTopExtent) > 20)
 					mScrollBar.RelCurrentYPos(20);
-				if (Math.abs(lEntryTopExtent - lWindowTopExtent) > 5)
+				else if (Math.abs(lEntryTopExtent - lWindowTopExtent) > 5)
 					mScrollBar.RelCurrentYPos(5);
 				else
 					mScrollBar.RelCurrentYPos(1);
@@ -435,12 +433,11 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 			if (lEntryBottomExtent > lWindowBottomExtent) {
 				if (Math.abs(lEntryBottomExtent - lWindowBottomExtent) > 20)
 					mScrollBar.RelCurrentYPos(-20);
-				if (Math.abs(lEntryBottomExtent - lWindowBottomExtent) > 5)
+				else if (Math.abs(lEntryBottomExtent - lWindowBottomExtent) > 5)
 					mScrollBar.RelCurrentYPos(-5);
 				else
 					mScrollBar.RelCurrentYPos(-1);
 			}
-
 		}
 	}
 

@@ -228,7 +228,6 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 						mToolTipTimer += core.appTime().elapsedTimeMilli();
 
 				}
-
 			}
 
 			return true;
@@ -291,7 +290,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 				return true;
 			}
 		}
-		
+
 		return super.onHandleGamepadInput(core);
 	}
 
@@ -318,6 +317,30 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 
 		if (mOpen && core.input().mouse().isMouseLeftButtonDown() && !intersectsAA(core.HUD().getMouseCameraSpace())) {
 			mOpen = false;
+		}
+
+		final var lMouseMenuControls = core.input().mouse().isMouseMenuSelectionEnabled();
+		if (mOpen && mScrollBar.scrollBarEnabled() && lMouseMenuControls == false) {
+			final var lCurrentIndex = mHighlightedIndex;
+			final var lEntryTopExtent = mContentRectangle.y() + (lCurrentIndex * mItemHeight);
+			final var lEntryBottomExtent = mContentRectangle.y() + ((lCurrentIndex + 1) * mItemHeight);
+
+			final var lWindowTopExtent = mWindowRectangle.y();
+			final var lWindowBottomExtent = mWindowRectangle.bottom();
+
+			if (lEntryTopExtent < lWindowTopExtent) {
+				if (Math.abs(lEntryTopExtent - lWindowTopExtent) > 5)
+					mScrollBar.RelCurrentYPos(5);
+				else
+					mScrollBar.RelCurrentYPos(1);
+			}
+
+			if (lEntryBottomExtent > lWindowBottomExtent) {
+				if (Math.abs(lEntryBottomExtent - lWindowBottomExtent) > 5)
+					mScrollBar.RelCurrentYPos(-5);
+				else
+					mScrollBar.RelCurrentYPos(-1);
+			}
 		}
 	}
 
@@ -387,7 +410,6 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 
 		if (mShowWarnIcon)
 			drawWarningIcon(core, lSpriteBatch, mWarnIconDstRectangle, entryColor.a);
-
 	}
 
 	@Override
@@ -448,9 +470,11 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 			GL11.glDisable(GL11.GL_STENCIL_TEST);
 		}
 
-		if (mOpen && mScrollBar.areaNeedsScrolling())
+		if (mOpen && mScrollBar.areaNeedsScrolling()) {
+			lSpriteBatch.begin(core.HUD());
 			mScrollBar.draw(core, lSpriteBatch, mCoreSpritesheet, -0.1f);
-
+			lSpriteBatch.end();
+		}
 	}
 
 	// --------------------------------------

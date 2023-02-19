@@ -8,4 +8,6 @@ public interface IToolTipProvider {
 
 	public abstract boolean isParentActive();
 
+	public abstract boolean isTopHalfOfScreen();
+
 }

@@ -255,7 +255,7 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 	public void maxWidth(float newValue) {
 		mMaxWidth = newValue;
 	}
-
+	
 	public void maxHeight(float newValue) {
 		mMaxHeight = newValue;
 	}
@@ -421,15 +421,17 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 		if (mParentScreen == null)
 			return false;
 
-		if (!core.input().mouse().isMouseMenuSelectionEnabled())
+		if (!core.input().mouse().isMouseMenuSelectionEnabled()) {
+			mIsMouseOver = false;
 			return false;
+		}
 
-		if (!intersectsAA(core.HUD().getMouseCameraSpace()) || !core.input().mouse().isMouseOverThisComponent(hashCode()))
+		if (!intersectsAA(core.HUD().getMouseCameraSpace()) || !core.input().mouse().isMouseOverThisComponent(hashCode())) {
+			mIsMouseOver = false;
 			return false;
+		}
 
 		mIsMouseOver = true;
-
-		core.input().mouse().isMouseMenuSelectionEnabled(true);
 
 		if (!mHasFocus)
 			mParentScreen.setFocusOnEntry(this);
@@ -695,5 +697,11 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 		mAnimationTimer = MenuScreen.ANIMATION_TIMER_LENGTH;
 		mScreenManager.uiSounds().play("SOUND_MENU_CLICK");
 		mClickListener.menuEntryOnClick(inputManager, mMenuEntryID);
+	}
+
+	@Override
+	public boolean isTopHalfOfScreen() {
+		// this assumes hud is centered at 0,0
+		return mY < 0;
 	}
 }
