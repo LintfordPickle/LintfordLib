@@ -137,6 +137,8 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 		mClickAction = new ClickAction();
 		mESCBackEnabled = true;
+
+		screenManager.contextHintManager().contextHintProvider(null);
 	}
 
 	// --------------------------------------
@@ -219,7 +221,9 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		// Process ENTER key press
 		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_ENTER, this) || core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_A, this)) {
 			final var lEntry = getSelectedEntry(mLayouts, mSelectedLayoutIndex, mSelectedEntryIndex);
-			lEntry.onClick(core.input());
+
+			if (lEntry != null)
+				lEntry.onClick(core.input());
 		}
 
 		final var lLayoutCount = mLayouts.size();
@@ -552,6 +556,9 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	}
 
 	protected MenuEntry getSelectedEntry(List<BaseLayout> selectedLayouts, int selectedLayoutIndex, int selectedEntryIndex) {
+		if (selectedLayouts == null || selectedLayouts.size() == 0)
+			return null;
+
 		final var lLayout = selectedLayouts.get(selectedLayoutIndex);
 		return lLayout.getMenuEntryByIndex(selectedEntryIndex);
 	}

@@ -170,7 +170,10 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 		if (!core.input().mouse().isMouseMenuSelectionEnabled())
 			return false;
 
-		if (!mWindowRectangle.intersectsAA(core.HUD().getMouseCameraSpace()) || !core.input().mouse().isMouseOverThisComponent(hashCode()))
+		if (!mWindowRectangle.intersectsAA(core.HUD().getMouseCameraSpace()))
+			return false;
+
+		if (!core.input().mouse().isMouseOverThisComponent(hashCode()))
 			return false;
 
 		if (mHasFocus == false)
@@ -190,6 +193,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 
 				if (lSelectedIndex < 0)
 					lSelectedIndex = 0;
+
 				if (lSelectedIndex >= mItems.size())
 					lSelectedIndex = mItems.size() - 1;
 
@@ -237,7 +241,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 			mToolTipTimer = 0;
 		}
 
-		return false;
+		return mOpen;
 	}
 
 	@Override
@@ -325,9 +329,11 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 			contextHintState.buttonDpadD = false;
 		}
 
-		if (mOpen && core.input().mouse().isMouseLeftButtonDown() && !intersectsAA(core.HUD().getMouseCameraSpace())) {
+		if (mOpen && core.input().mouse().isMouseLeftButtonDown() && !mWindowRectangle.intersectsAA(core.HUD().getMouseCameraSpace())) {
 			mOpen = false;
 		}
+
+		mIsActive = mOpen;
 
 		final var lMouseMenuControls = core.input().mouse().isMouseMenuSelectionEnabled();
 		if (mOpen && mScrollBar.scrollBarEnabled() && lMouseMenuControls == false) {

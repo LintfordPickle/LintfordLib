@@ -589,6 +589,8 @@ public class DualMenuScreen extends MenuScreen {
 				if (IsDesiredEntry) {
 					lEntry.mHasFocus = true;
 
+					System.out.println(": " + lEntry.getClass().getSimpleName());
+
 					mScreenManager.contextHintManager().contextHintProvider(lEntry);
 
 					mRightColumnSelected = false;
@@ -614,6 +616,8 @@ public class DualMenuScreen extends MenuScreen {
 				if (IsDesiredEntry) {
 					lEntry.mHasFocus = true;
 					
+					System.out.println(": " + lEntry.getClass().getSimpleName());
+
 					mScreenManager.contextHintManager().contextHintProvider(lEntry);
 
 					mRightColumnSelected = true;

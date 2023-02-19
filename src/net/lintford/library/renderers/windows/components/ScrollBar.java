@@ -157,7 +157,8 @@ public class ScrollBar extends Rectangle implements IInputProcessor, IInputClick
 		final var lMouseInContentRegion = mScrollBarArea.contentDisplayArea().intersectsAA(pCore.HUD().getMouseCameraSpace());
 		final var lLeftMouseButtonDown = pCore.input().mouse().isMouseLeftButtonDown();
 		final var lDoWeAlreadyHaveTheMouse = pCore.input().mouse().isMouseLeftClickOwnerAssigned(hashCode()) && pCore.input().mouse().isMouseLeftButtonDown();
-		final var lCanAcquireMouse = lDoWeAlreadyHaveTheMouse || lMouseInScrollbarRegion && lLeftMouseButtonDown && pCore.input().mouse().tryAcquireMouseLeftClick(hashCode());
+		var ttt = lMouseInScrollbarRegion && lMouseInContentRegion && pCore.input().mouse().tryAcquireMouseLeftClick(hashCode());
+		final var lCanAcquireMouse = lDoWeAlreadyHaveTheMouse || (lMouseInScrollbarRegion && lLeftMouseButtonDown && ttt);
 
 		if (lMouseInContentRegion && pCore.input().mouse().tryAcquireMouseMiddle(hashCode())) {
 			mScrollAcceleration += pCore.input().mouse().mouseWheelYOffset() * 250.0f;
