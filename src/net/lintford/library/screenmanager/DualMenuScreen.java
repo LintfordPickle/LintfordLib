@@ -613,6 +613,8 @@ public class DualMenuScreen extends MenuScreen {
 
 				if (IsDesiredEntry) {
 					lEntry.mHasFocus = true;
+					
+					mScreenManager.contextHintManager().contextHintProvider(lEntry);
 
 					mRightColumnSelected = true;
 					mRightColumnSelectedEntryIndex = i;

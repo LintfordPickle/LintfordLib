@@ -40,4 +40,10 @@ public class ContextHintState {
 	public String buttonDpadRHint;
 	public boolean buttonDpadR;
 
+	public String keyReturnHint;
+	public boolean keyReturn;
+
+	public String keyEscHint;
+	public boolean keyEsc;
+
 }
