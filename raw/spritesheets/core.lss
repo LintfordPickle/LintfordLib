@@ -1,8 +1,8 @@
 {
-  "outputDataFilename": "D:\\dev\\java\\_razorrunner\\projects\\LintfordLib\\res\\res\\spritesheets\\core\\spritesheetCore.json",
-  "outputNameDataFilename": "D:\\dev\\java\\_razorrunner\\projects\\LintfordLib\\src\\net\\lintford\\library\\core\\graphics\\textures\\CoreTextureNames.java",
-  "outputImageFilename": "D:\\dev\\java\\_razorrunner\\projects\\LintfordLib\\res\\res\\textures\\core\\textureCore.png",
-  "workingDirectory": "D:\\dev\\java\\_razorrunner\\projects\\LintfordLib\\raw\\spritesheets\\core",
+  "outputDataFilename": "D:\\dev\\java\\ludumdare\\52 - Harvest\\projects\\LintfordLib\\res\\res\\spritesheets\\core\\spritesheetCore.json",
+  "outputNameDataFilename": "D:\\dev\\java\\ludumdare\\52 - Harvest\\projects\\LintfordLib\\src\\net\\lintford\\library\\core\\graphics\\textures\\CoreTextureNames.java",
+  "outputImageFilename": "D:\\dev\\java\\ludumdare\\52 - Harvest\\projects\\LintfordLib\\res\\res\\textures\\core\\textureCore.png",
+  "workingDirectory": "D:\\dev\\java\\ludumdare\\52 - Harvest\\projects\\LintfordLib\\raw\\spritesheets\\core",
   "spriteSheetName": "SPRITESHEET_CORE",
   "textureName": "TEXTURE_CORE",
   "dataPackageName": "net.lintford.library.core.graphics.textures",
@@ -15,7 +15,7 @@
   "crop": false,
   "trim": false,
   "allowRotations": false,
-  "spritePadding": 2,
+  "spritePadding": 1,
   "textureWidthMax": 512,
   "textureWidthActual": 512,
   "textureHeightMax": 512,
@@ -23,7 +23,7 @@
   "forcePoTTextures": true,
   "autoSizeTexture": false,
   "itemFilenames": [
-    "D:\\dev\\java\\_razorrunner\\projects\\LintfordLib\\raw\\spritesheets\\core\\*.*"
+    "D:\\dev\\java\\ludumdare\\52 - Harvest\\projects\\LintfordLib\\raw\\spritesheets\\core\\*.*"
   ],
   "animationItems": {}
 }

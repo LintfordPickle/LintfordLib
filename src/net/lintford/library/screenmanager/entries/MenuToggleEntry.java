@@ -58,6 +58,8 @@ public class MenuToggleEntry extends MenuEntry {
 
 		mHighlightOnHover = false;
 		mDrawBackground = false;
+		
+		contextHintState.buttonAHint = "toggle";
 	}
 
 	// --------------------------------------

@@ -171,7 +171,8 @@ public class MenuEnumEntry extends MenuEntry {
 	// Core Methods
 	// --------------------------------------
 
-	public boolean handleInput(LintfordCore core) {
+	@Override
+	public boolean onHandleMouseInput(LintfordCore core) {
 		if (!mEnableUpdateDraw || !mEnabled || isAnimating)
 			return false;
 

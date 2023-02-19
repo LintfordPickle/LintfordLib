@@ -156,6 +156,8 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 		mScrollBar = new ScrollBar(this, mContentRectangle);
 
 		mSelectedIndex = 0;
+
+		contextHintState.buttonA = true;
 	}
 
 	// --------------------------------------
@@ -314,6 +316,14 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 		}
 
 		mScrollBar.update(core);
+
+		if (mOpen) {
+			contextHintState.buttonDpadU = true;
+			contextHintState.buttonDpadD = true;
+		} else {
+			contextHintState.buttonDpadU = false;
+			contextHintState.buttonDpadD = false;
+		}
 
 		if (mOpen && core.input().mouse().isMouseLeftButtonDown() && !intersectsAA(core.HUD().getMouseCameraSpace())) {
 			mOpen = false;

@@ -80,7 +80,7 @@ public class ToolTip {
 
 	public void update(LintfordCore core) {
 		if (mToolTipProvider != null) {
-			if (!mToolTipProvider.isMouseOver()) {
+			if (!mToolTipProvider.isMouseOver() && !mToolTipProvider.hasFocus()) {
 				mToolTipProvider = null;
 			}
 		}
@@ -101,9 +101,7 @@ public class ToolTip {
 		mTopOfScreen = !mToolTipProvider.isTopHalfOfScreen();
 
 		final float lPositionX = -TOOLTIP_PANEL_WIDTH * .5f;
-		final float lPositionY = mTopOfScreen 
-				? lHudBoundingBox.top() + lHudBoundingBox.height() / 7 
-				: lHudBoundingBox.centerY() + lHudBoundingBox.height() / 7;
+		final float lPositionY = mTopOfScreen ? lHudBoundingBox.top() + lHudBoundingBox.height() / 7 : lHudBoundingBox.centerY() + lHudBoundingBox.height() / 7;
 
 		final var lColor = ColorConstants.getColor(.21f, .11f, .13f, 1.f);
 

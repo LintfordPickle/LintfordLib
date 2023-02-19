@@ -573,6 +573,7 @@ public class DualMenuScreen extends MenuScreen {
 		if (mActiveEntry != null)
 			mActiveEntry.onDeselection(mScreenManager.core().input());
 
+		mScreenManager.contextHintManager().contextHintProvider(null);
 		mActiveEntry = null;
 
 		// left
@@ -587,6 +588,8 @@ public class DualMenuScreen extends MenuScreen {
 
 				if (IsDesiredEntry) {
 					lEntry.mHasFocus = true;
+
+					mScreenManager.contextHintManager().contextHintProvider(lEntry);
 
 					mRightColumnSelected = false;
 					mSelectedLayoutIndex = i;

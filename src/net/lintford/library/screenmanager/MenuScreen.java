@@ -236,6 +236,17 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		if (!mIsinitialized)
 			return;
 
+		if (!coveredByOtherScreen) {
+
+			if (mESCBackEnabled) {
+				mScreenManager.contextHintManager().screenManagerHintState().buttonB = true;
+				mScreenManager.contextHintManager().screenManagerHintState().buttonBHint = "back";
+			} else {
+				mScreenManager.contextHintManager().screenManagerHintState().buttonB = false;
+				mScreenManager.contextHintManager().screenManagerHintState().buttonBHint = null;
+			}
+		}
+
 		final var lDeltaTime = core.appTime().elapsedTimeMilli();
 
 		updateLayoutSize(core);
@@ -505,11 +516,12 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		mActiveEntry = null;
 	}
 
+	// mouse
 	public void setFocusOnEntry(MenuEntry entry) {
 		if (mActiveEntry != null)
 			mActiveEntry.onDeselection(mScreenManager.core().input());
 
-		System.out.println("mActiveEntry set to null");
+		mScreenManager.contextHintManager().contextHintProvider(null);
 		mActiveEntry = null;
 
 		final int lNumLayouts = mLayouts.size();
@@ -522,6 +534,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 				if (IsDesiredEntry) {
 					lEntry.mHasFocus = true;
+					mScreenManager.contextHintManager().contextHintProvider(lEntry);
 
 					mSelectedLayoutIndex = i;
 					mSelectedEntryIndex = j;
@@ -555,6 +568,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 				if (lIsEntrySelected) {
 					lEntry.mHasFocus = true;
+					mScreenManager.contextHintManager().contextHintProvider(lEntry);
 				} else {
 					lEntry.mHasFocus = false;
 				}

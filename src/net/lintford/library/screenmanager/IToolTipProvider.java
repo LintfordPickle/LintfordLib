@@ -5,6 +5,8 @@ public interface IToolTipProvider {
 	public abstract String toolTipText();
 
 	public abstract boolean isMouseOver();
+	
+	public abstract boolean hasFocus();
 
 	public abstract boolean isParentActive();
 

@@ -16,7 +16,7 @@ import net.lintford.library.screenmanager.ScreenManagerConstants.ALIGNMENT;
 import net.lintford.library.screenmanager.ScreenManagerConstants.FILLTYPE;
 import net.lintford.library.screenmanager.entries.EntryInteractions;
 
-public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipProvider {
+public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipProvider, IContextHintProvider {
 
 	// --------------------------------------
 	// Constants
@@ -57,6 +57,8 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 	public final Color entryColor = new Color();
 	public final Color textColor = new Color();
 	protected SpriteSheetDefinition mCoreSpritesheet;
+
+	public final ContextHintState contextHintState = new ContextHintState();
 
 	protected boolean mEnabled;
 	protected boolean mEnableUpdateDraw;
@@ -255,7 +257,7 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 	public void maxWidth(float newValue) {
 		mMaxWidth = newValue;
 	}
-	
+
 	public void maxHeight(float newValue) {
 		mMaxHeight = newValue;
 	}
@@ -379,6 +381,9 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 
 		mVerticalFillType = FILLTYPE.TAKE_WHATS_NEEDED;
 		mHorizontalFillType = FILLTYPE.HALF_PARENT;
+
+		contextHintState.buttonA = true;
+		contextHintState.buttonAHint = "select";
 	}
 
 	// --------------------------------------
@@ -474,7 +479,13 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 			mScale = 0.75f;
 		}
 
-		if ((mToolTipEnabled && mToolTipTimer >= 1000 && mHasFocus) || mInfoIconDstRectangle.intersectsAA(core.HUD().getMouseCameraSpace())) {
+		if ((mToolTipEnabled && mHasFocus) || mInfoIconDstRectangle.intersectsAA(core.HUD().getMouseCameraSpace())) {
+			mToolTipTimer += core.gameTime().elapsedTimeMilli();
+		} else {
+			mToolTipTimer = 0;
+		}
+
+		if (mToolTipEnabled && mToolTipTimer >= 1000 && mHasFocus) {
 			mScreenManager.toolTip().toolTipProvider(this);
 		}
 	}
@@ -703,5 +714,10 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 	public boolean isTopHalfOfScreen() {
 		// this assumes hud is centered at 0,0
 		return mY < 0;
+	}
+
+	@Override
+	public ContextHintState contextHints() {
+		return contextHintState;
 	}
 }

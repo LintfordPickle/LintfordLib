@@ -37,6 +37,7 @@ public class ScreenManager implements IInputClickedFocusManager {
 	private final List<Screen> mScreensToUpdate = new ArrayList<>();
 	private final List<Screen> mScreensToAdd = new ArrayList<>();
 	private ToolTip mToolTip;
+	private ContextHintManager mContextHintManager;
 	private ResourceManager mResourceManager;
 	private AudioFireAndForgetManager mUISoundManager;
 	private ToastManager mToastManager;
@@ -51,6 +52,10 @@ public class ScreenManager implements IInputClickedFocusManager {
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public ContextHintManager contextHintManager() {
+		return mContextHintManager;
+	}
 
 	public IInputClickedFocusTracker getTrackedClickedFocusControl() {
 		return mTrackedInputControl;
@@ -109,7 +114,7 @@ public class ScreenManager implements IInputClickedFocusManager {
 		mScreenUIDCounter = 100;
 
 		mToastManager = new ToastManager();
-
+		mContextHintManager = new ContextHintManager();
 		mToolTip = new ToolTip();
 
 		mIsinitialized = false;
@@ -149,6 +154,7 @@ public class ScreenManager implements IInputClickedFocusManager {
 
 		mToolTip.loadResources(resourceManager);
 		mToastManager.loadResources(resourceManager);
+		mContextHintManager.loadGlContent(mResourceManager);
 
 		// Add a viewport listener so the screenmanager screens can react to changes in window size
 		mResizeListener = new IResizeListener() {
@@ -173,6 +179,7 @@ public class ScreenManager implements IInputClickedFocusManager {
 
 		mToolTip.unloadResources();
 		mToastManager.unloadResources();
+		mContextHintManager.unloadResources();
 
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "Finished ScreenManager.UnloadResources");
 
@@ -287,6 +294,7 @@ public class ScreenManager implements IInputClickedFocusManager {
 
 		mToastManager.update(core);
 		mToolTip.update(core);
+		mContextHintManager.update(core);
 	}
 
 	public void draw(LintfordCore core) {
@@ -311,6 +319,7 @@ public class ScreenManager implements IInputClickedFocusManager {
 
 		mToastManager.draw(core);
 		mToolTip.draw(core);
+		mContextHintManager.draw(core);
 	}
 
 	// --------------------------------------
