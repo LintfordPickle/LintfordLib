@@ -507,16 +507,11 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 	@Override
 	public void onMenuEntryActivated(MenuEntry activeEntry) {
-		if (mActiveEntry != activeEntry)
-			System.out.println("mActiveEntry set to " + activeEntry);
-
 		mActiveEntry = activeEntry;
 	}
 
 	@Override
 	public void onMenuEntryDeactivated(MenuEntry activeEntry) {
-		System.out.println("mActiveEntry set to null");
-
 		mActiveEntry = null;
 	}
 

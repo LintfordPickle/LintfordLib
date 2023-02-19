@@ -106,10 +106,9 @@ public class NoiseBuilderFractal extends NoiseBuilderModuleBase {
 		mNoise.setSeed(mSeed);
 		mNoise.setFractalOctaves(mOctaves);
 		mNoise.setFrequency(mFrequency);
-		//mNoise.setFractalGain(mGain);
+		// mNoise.setFractalGain(mGain);
 
 		float result = mNoise.getNoise(nx, ny);
-		// System.out.println(result);
 		return result;
 	}
 
