@@ -1,10 +1,13 @@
 package net.lintford.library.core.graphics.batching;
 
+import java.util.List;
+
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.Color;
 import net.lintford.library.core.graphics.sprites.SpriteFrame;
 import net.lintford.library.core.graphics.sprites.SpriteInstance;
 import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
+import net.lintford.library.core.maths.Vector2f;
 
 public class SpriteBatch extends TextureBatchPCT {
 
@@ -91,6 +94,41 @@ public class SpriteBatch extends TextureBatchPCT {
 
 		draw(lTexture, lCurrentSpriteFrame, destRectangle, zDepth, colorTint);
 	}
+
+	// ---
+
+	public void drawQuadrilateral(SpriteSheetDefinition spriteSheetDefinition, SpriteInstance spriteInstance, List<Vector2f> dstPoints, float zDepth, Color colorTint) {
+		if (!mIsDrawing)
+			return;
+
+		if (spriteSheetDefinition == null)
+			return;
+
+		if (spriteInstance == null)
+			return;
+
+		final var lTexture = spriteSheetDefinition.texture();
+		final var lCurrentSpriteFrame = spriteInstance.currentSpriteFrame();
+
+		drawQuadrilateral(lTexture, lCurrentSpriteFrame, dstPoints, zDepth, colorTint);
+	}
+
+	public void drawQuadrilateral(SpriteSheetDefinition spriteSheetDefinition, SpriteFrame spriteFrame, List<Vector2f> dstPoints, float zDepth, Color colorTint) {
+		if (!mIsDrawing)
+			return;
+
+		if (spriteSheetDefinition == null)
+			return;
+
+		if (spriteFrame == null)
+			return;
+
+		final var lTexture = spriteSheetDefinition.texture();
+
+		drawQuadrilateral(lTexture, spriteFrame, dstPoints, zDepth, colorTint);
+	}
+
+	// ---
 
 	public void drawAroundCenter(SpriteSheetDefinition spriteSheetDefinition, int spriteFrameIndex, float destX, float destY, float destWidth, float destHeight, float rot, float pivotX, float pivotY, float zDepth, Color colorTint) {
 		if (spriteSheetDefinition == null)
