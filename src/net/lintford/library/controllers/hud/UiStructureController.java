@@ -187,8 +187,8 @@ public class UiStructureController extends BaseController {
 	private void updateMenuUiStructure(LintfordCore core) {
 		updateWindowUiComponentStructures(core); // FIXME: remove from update when finished
 
-		final float lWindowWidth = core.config().display().gameResolutionWidth();
-		final float lWindowHeight = core.config().display().gameResolutionHeight();
+		final float lWindowWidth = core.config().display().uiResolutionWidth();
+		final float lWindowHeight = core.config().display().uiResolutionHeight();
 
 		final float lVerticalInnerPadding = 1.f * mGameCanvasHScaleFactor;
 		final float lModWidth = lWindowWidth - mWindowPaddingH * 2.f;

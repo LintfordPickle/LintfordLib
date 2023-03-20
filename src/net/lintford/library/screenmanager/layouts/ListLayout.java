@@ -8,8 +8,6 @@ import net.lintford.library.screenmanager.ScreenManagerConstants.FILLTYPE;
 
 /**
  * The list layout lays out all the menu entries linearly down the layout.
- * 
- * @author Lintford Pickle
  */
 public class ListLayout extends BaseLayout implements IInputProcessor {
 

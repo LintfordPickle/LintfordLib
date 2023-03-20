@@ -6,8 +6,6 @@ import net.lintford.library.screenmanager.MenuScreen;
 
 /**
  * The list layout lays out all the menu entries linearly down the layout.
- * 
- * @author Lintford Pickle
  */
 public class FloatingLayout extends BaseLayout implements IInputProcessor {
 

@@ -22,10 +22,10 @@ public class ScreenManager implements IInputClickedFocusManager {
 	// Constants
 	// --------------------------------------
 
-	public static final String FONT_MENU_TITLE_NAME = "FONT_TITLE";
+	public static final String FONT_MENU_TITLE_NAME      = "FONT_TITLE";
 	public static final String FONT_MENU_BOLD_ENTRY_NAME = "FONT_BOLD_ENTRY";
-	public static final String FONT_MENU_ENTRY_NAME = "FONT_ENTRY";
-	public static final String FONT_MENU_TOOLTIP_NAME = "FONT_MENU_TOOLTIP_NAME";
+	public static final String FONT_MENU_ENTRY_NAME      = "FONT_ENTRY";
+	public static final String FONT_MENU_TOOLTIP_NAME    = "FONT_MENU_TOOLTIP_NAME";
 
 	// --------------------------------------
 	// Variables

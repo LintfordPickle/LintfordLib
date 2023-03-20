@@ -126,16 +126,16 @@ public class HUD implements ICamera, IResizeListener {
 		float lWindowHeight = mWindowHeight;
 
 		if (mDisplayConfig.stretchGameScreen()) {
-			lWindowWidth = mDisplayConfig.gameResolutionWidth();
-			lWindowHeight = mDisplayConfig.gameResolutionHeight();
+			lWindowWidth = mDisplayConfig.uiResolutionWidth();
+			lWindowHeight = mDisplayConfig.uiResolutionHeight();
 
-			mScaleRatio.set(((float) lWindowWidth / (float) mDisplayConfig.windowWidth()), ((float) lWindowHeight / (float) mDisplayConfig.windowHeight()));
+			mScaleRatio.set((lWindowWidth / (float) mDisplayConfig.windowWidth()), (lWindowHeight / (float) mDisplayConfig.windowHeight()));
 		} else {
-			mScaleRatio.set(((float) mWindowWidth / (float) mDisplayConfig.windowWidth()), ((float) mWindowHeight / (float) mDisplayConfig.windowHeight()));
+			mScaleRatio.set((mWindowWidth / (float) mDisplayConfig.windowWidth()), (mWindowHeight / (float) mDisplayConfig.windowHeight()));
 		}
 
-		mMouseHUDSpace.x = (float) (-lWindowWidth * .5f + (core.input().mouse().mouseWindowCoords().x) * mScaleRatio.x);
-		mMouseHUDSpace.y = (float) (-lWindowHeight * .5f + (core.input().mouse().mouseWindowCoords().y) * mScaleRatio.y);
+		mMouseHUDSpace.x = -lWindowWidth * .5f + (core.input().mouse().mouseWindowCoords().x) * mScaleRatio.x;
+		mMouseHUDSpace.y = -lWindowHeight * .5f + (core.input().mouse().mouseWindowCoords().y) * mScaleRatio.y;
 	}
 
 	@Override
@@ -157,14 +157,14 @@ public class HUD implements ICamera, IResizeListener {
 		mViewMatrix.scale(mScaleFactor, mScaleFactor, 1.f);
 
 		if (mDisplayConfig.stretchGameScreen()) {
-			createOrtho(mDisplayConfig.gameResolutionWidth(), mDisplayConfig.gameResolutionHeight());
+			createOrtho(mDisplayConfig.uiResolutionWidth(), mDisplayConfig.uiResolutionHeight());
 
-			mBoundingRectangle.width(mDisplayConfig.gameResolutionWidth());
-			mBoundingRectangle.height(mDisplayConfig.gameResolutionHeight());
+			mBoundingRectangle.width(mDisplayConfig.uiResolutionWidth());
+			mBoundingRectangle.height(mDisplayConfig.uiResolutionHeight());
 			mBoundingRectangle.setCenterPosition(0, 0);
 
-			mWindowWidth = mDisplayConfig.gameResolutionWidth();
-			mWindowHeight = mDisplayConfig.gameResolutionHeight();
+			mWindowWidth = mDisplayConfig.uiResolutionWidth();
+			mWindowHeight = mDisplayConfig.uiResolutionHeight();
 		} else {
 			createOrtho(mWindowWidth, mWindowHeight);
 
@@ -180,7 +180,7 @@ public class HUD implements ICamera, IResizeListener {
 
 	private void createOrtho(int gameViewportWidth, int gameViewportHeight) {
 		mProjectionMatrix.setIdentity();
-		mProjectionMatrix.createOrtho(-gameViewportWidth * 0.5f, gameViewportWidth * 0.5f, gameViewportHeight * 0.5f, -gameViewportHeight * 0.5f, Z_NEAR, Z_FAR);
+		mProjectionMatrix.createOrtho(-gameViewportWidth / 2, gameViewportWidth / 2, gameViewportHeight / 2, -gameViewportHeight / 2, Z_NEAR, Z_FAR);
 
 		mScaledWindowWidth = gameViewportWidth * getZoomFactorOverOne();
 		mScaledWindowHeight = gameViewportHeight * getZoomFactorOverOne();

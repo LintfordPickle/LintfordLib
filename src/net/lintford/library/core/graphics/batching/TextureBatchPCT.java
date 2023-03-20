@@ -2,6 +2,7 @@ package net.lintford.library.core.graphics.batching;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.List;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
@@ -20,6 +21,7 @@ import net.lintford.library.core.graphics.shaders.ShaderMVP_PCT;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.TextureManager;
 import net.lintford.library.core.maths.Matrix4f;
+import net.lintford.library.core.maths.Vector2f;
 
 public class TextureBatchPCT {
 
@@ -62,6 +64,13 @@ public class TextureBatchPCT {
 	protected static final String FRAG_FILENAME = "/res/shaders/shader_batch_pct.frag";
 
 	private static IntBuffer mIndexBuffer;
+
+	// @formatter:off
+	//  1 ---- 2
+	//  |      |
+	//  |      |
+	//  0------3
+	// @formatter:on
 
 	private static IntBuffer getIndexBuffer() {
 		if (mIndexBuffer == null) {
@@ -369,8 +378,9 @@ public class TextureBatchPCT {
 		mCustomShader.bind();
 
 		if (_countDebugStats) {
-			final int lNumQuads = mIndexCount / NUM_INDICES_PER_SPRITE;
 			Debug.debugManager().stats().incTag(DebugStats.TAG_ID_DRAWCALLS);
+
+			final int lNumQuads = mIndexCount / NUM_INDICES_PER_SPRITE;
 			Debug.debugManager().stats().incTag(DebugStats.TAG_ID_VERTS, lNumQuads * 4);
 			Debug.debugManager().stats().incTag(DebugStats.TAG_ID_TRIS, lNumQuads * 2);
 		}
@@ -451,6 +461,62 @@ public class TextureBatchPCT {
 		float y3 = pDY + pDH;
 		float u3 = (pSX + pSW) / pTexture.getTextureWidth();
 		float v3 = (pSY + pSH) / pTexture.getTextureHeight();
+
+		addVertToBuffer(x0, y0, pZ, 1f, pTint.r, pTint.g, pTint.b, pTint.a, u0, v0, lTextureSlotIndex);
+		addVertToBuffer(x1, y1, pZ, 1f, pTint.r, pTint.g, pTint.b, pTint.a, u1, v1, lTextureSlotIndex);
+		addVertToBuffer(x2, y2, pZ, 1f, pTint.r, pTint.g, pTint.b, pTint.a, u2, v2, lTextureSlotIndex);
+		addVertToBuffer(x3, y3, pZ, 1f, pTint.r, pTint.g, pTint.b, pTint.a, u3, v3, lTextureSlotIndex);
+
+		mIndexCount += NUM_INDICES_PER_SPRITE;
+	}
+
+	// ---
+
+	public void drawQuadrilateral(Texture texture, Rectangle srcRect, List<Vector2f> dstPoints, float zDepth, Color colorTint) {
+		drawQuadrilateral(texture, srcRect.x(), srcRect.y(), srcRect.width(), srcRect.height(), dstPoints, zDepth, colorTint);
+	}
+
+	public void drawQuadrilateral(Texture texture, float sx, float sy, float sw, float sh, List<Vector2f> dstPoints, float pZ, Color pTint) {
+		if (dstPoints == null || dstPoints.size() != 4)
+			return; // Quadrilateral requires exactly 4 points
+
+		if (!mIsDrawing)
+			return;
+
+		if (texture == null && TextureManager.USE_DEBUG_MISSING_TEXTURES)
+			texture = mResourceManager.textureManager().textureNotFound();
+
+		if (mIndexCount >= MAX_SPRITES * NUM_INDICES_PER_SPRITE - NUM_INDICES_PER_SPRITE)
+			flush();
+
+		float lTextureSlotIndex = mTextureSlots.getTextureSlotIndex(texture);
+		if (lTextureSlotIndex == TextureSlotBatch.TEXTURE_SLOTS_TEXTURE_INVALID)
+			return;
+
+		if (lTextureSlotIndex == TextureSlotBatch.TEXTURE_SLOTS_FULL) {
+			flush(); // flush and try again
+			lTextureSlotIndex = mTextureSlots.getTextureSlotIndex(texture);
+		}
+
+		float x0 = dstPoints.get(0).x;
+		float y0 = dstPoints.get(0).y;
+		float u0 = sx / texture.getTextureWidth();
+		float v0 = (sy + sh) / texture.getTextureHeight();
+
+		float x1 = dstPoints.get(1).x;
+		float y1 = dstPoints.get(1).y;
+		float u1 = sx / texture.getTextureWidth();
+		float v1 = sy / texture.getTextureHeight();
+
+		float x2 = dstPoints.get(2).x;
+		float y2 = dstPoints.get(2).y;
+		float u2 = (sx + sw) / texture.getTextureWidth();
+		float v2 = sy / texture.getTextureHeight();
+
+		float x3 = dstPoints.get(3).x;
+		float y3 = dstPoints.get(3).y;
+		float u3 = (sx + sw) / texture.getTextureWidth();
+		float v3 = (sy + sh) / texture.getTextureHeight();
 
 		addVertToBuffer(x0, y0, pZ, 1f, pTint.r, pTint.g, pTint.b, pTint.a, u0, v0, lTextureSlotIndex);
 		addVertToBuffer(x1, y1, pZ, 1f, pTint.r, pTint.g, pTint.b, pTint.a, u1, v1, lTextureSlotIndex);

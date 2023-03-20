@@ -9,9 +9,6 @@ import net.lintford.library.screenmanager.screens.VideoOptionsScreen;
 
 /**
  * Used in the {@link VideoOptionsScreen} to revert the changes of a monitor change if the user doesn't interact with the dialog after the alloted amount of time.
- * 
- * @author Lintford
- *
  */
 public class TimedConfirmationDialog extends BaseDialog {
 

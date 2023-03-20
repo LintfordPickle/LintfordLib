@@ -89,7 +89,6 @@ public class SpriteSheetManager {
 	}
 
 	public SpriteSheetDefinition loadSpriteSheet(String filepath, int entityGroupUid) {
-
 		if (filepath == null || filepath.length() == 0) {
 			Debug.debugManager().logger().v(getClass().getSimpleName(), "Error loading spritesheet. Pathname is null! ");
 			return null;

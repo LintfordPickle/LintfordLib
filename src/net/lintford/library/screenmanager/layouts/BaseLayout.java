@@ -276,8 +276,7 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 	}
 
 	/**
-	 * This is the amount of padding to add to the top of the inner-area when cropping during scrolling. The amount should be tied with the graphic CoreSpriteSheet.Panel3x3Top. n.b. If the ShowTitleBar is enabled, then
-	 * the cropping amount should likely be reduced to take this (additional offset) into account
+	 * This is the amount of padding to add to the top of the inner-area when cropping during scrolling. The amount should be tied with the graphic CoreSpriteSheet.Panel3x3Top. n.b. If the ShowTitleBar is enabled, then the cropping amount should likely be reduced to take this (additional offset) into account
 	 */
 	public void cropPaddingTop(float newCropPaddingTop) {
 		mCropPaddingTop = newCropPaddingTop;
@@ -447,9 +446,6 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 
 		final var lSpriteBatch = parentScreen.spriteBatch();
 		final var lSpriteSheetCore = core.resources().spriteSheetManager().coreSpritesheet();
-		final var lParentScreenAlpha = parentScreen.screenColor.a;
-
-		layoutColor.a = lParentScreenAlpha;
 
 		if (mDrawBackground)
 			drawBackground(core, mShowTitle, componentDepth);
@@ -475,7 +471,7 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 		if (mScrollBar.scrollBarEnabled()) {
 			mContentArea.postDraw(core);
 			lSpriteBatch.begin(core.HUD());
-			mScrollBar.scrollBarAlpha(lParentScreenAlpha);
+			mScrollBar.scrollBarAlpha(parentScreen.screenColor.a);
 			mScrollBar.draw(core, lSpriteBatch, lSpriteSheetCore, componentDepth + .1f);
 			lSpriteBatch.end();
 		}
@@ -497,81 +493,64 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 		final var lSpriteSheetCore = core.resources().spriteSheetManager().coreSpritesheet();
 
 		final var lScreenOffset = parentScreen.screenPositionOffset();
-		final float lTileSize = 32;
+		final int lTileSize = 32;
 
+		final var lColor = ColorConstants.getColorWithAlpha(layoutColor, layoutColor.a * parentScreen.screenColor.a);
+
+		final int x = (int) Math.floor(mX);
+		final int y = (int) Math.floor(mY);
+		final int w = (int) Math.floor(mW);
+		final int h = (int) Math.floor(mH);
+
+		// @formatter:off
 		lSpriteBatch.begin(core.HUD());
 		if (withTitlebar) {
 			if (mH < 64) {
-				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT, (int) (lScreenOffset.x + mX), (int) (lScreenOffset.y + mY), lTileSize, lTileSize, componentDepth, layoutColor);
-				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_MID, (int) (lScreenOffset.x + mX + lTileSize), (int) (lScreenOffset.y + mY), mW - lTileSize * 2, lTileSize, componentDepth,
-						layoutColor);
-				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_RIGHT, (int) (lScreenOffset.x + mX + mW - lTileSize), (int) (lScreenOffset.y + mY), lTileSize, lTileSize, componentDepth,
-						layoutColor);
+				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT,     (int) (lScreenOffset.x + x),                 (int) (lScreenOffset.y + y), lTileSize, lTileSize, componentDepth, lColor);
+				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_MID,      (int) (lScreenOffset.x + x + lTileSize),     (int) (lScreenOffset.y + y), w - lTileSize * 2, lTileSize, componentDepth, lColor);
+				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_RIGHT,    (int) (lScreenOffset.x + x + w - lTileSize), (int) (lScreenOffset.y + y), lTileSize, lTileSize, componentDepth, lColor);
 
-				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_00_BOTTOM_LEFT, (int) (lScreenOffset.x + mX), (int) (lScreenOffset.y + mY + mH - lTileSize), lTileSize, lTileSize, componentDepth,
-						layoutColor);
-				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_00_BOTTOM_MID, (int) (lScreenOffset.x + mX + lTileSize), (int) (lScreenOffset.y + mY + mH - lTileSize), mW - lTileSize * 2,
-						lTileSize, componentDepth, layoutColor);
-				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_00_BOTTOM_RIGHT, (int) (lScreenOffset.x + mX + mW - lTileSize), (int) (lScreenOffset.y + mY + mH - lTileSize), lTileSize, lTileSize,
-						componentDepth, layoutColor);
+				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_00_BOTTOM_LEFT,  (int) (lScreenOffset.x + x),                 (int) (lScreenOffset.y + y + h - lTileSize), lTileSize, lTileSize, componentDepth, lColor);
+				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_00_BOTTOM_MID,   (int) (lScreenOffset.x + x + lTileSize),     (int) (lScreenOffset.y + y + h - lTileSize), w - lTileSize * 2, lTileSize, componentDepth, lColor);
+				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_00_BOTTOM_RIGHT, (int) (lScreenOffset.x + x + w - lTileSize), (int) (lScreenOffset.y + y + h - lTileSize), lTileSize, lTileSize, componentDepth, lColor);
 			} else {
-				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT, (int) (lScreenOffset.x + mX), (int) (lScreenOffset.y + mY), lTileSize, lTileSize, componentDepth, layoutColor);
-				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_MID, (int) (lScreenOffset.x + mX + lTileSize), (int) (lScreenOffset.y + mY), mW - lTileSize * 2 + 1, lTileSize,
-						componentDepth, layoutColor);
-				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_RIGHT, (int) (lScreenOffset.x + mX + mW - lTileSize), (int) (lScreenOffset.y + mY), lTileSize, lTileSize, componentDepth,
-						layoutColor);
+				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT,     (int) (lScreenOffset.x + x),                 (int) (lScreenOffset.y + y), lTileSize, lTileSize, componentDepth, lColor);
+				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_MID,      (int) (lScreenOffset.x + x + lTileSize),     (int) (lScreenOffset.y + y), w - lTileSize * 2, lTileSize, componentDepth, lColor);
+				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_RIGHT,    (int) (lScreenOffset.x + x + w - lTileSize), (int) (lScreenOffset.y + y), lTileSize, lTileSize, componentDepth, lColor);
 
-				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_00_MID_LEFT, (int) (lScreenOffset.x + mX), (int) (lScreenOffset.y + mY + lTileSize), lTileSize, mH - lTileSize * 2 + 1,
-						componentDepth, layoutColor);
-				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_00_MID_CENTER, (int) (lScreenOffset.x + mX + lTileSize), (int) (lScreenOffset.y + mY + lTileSize), (int) (mW - lTileSize * 2) + 1,
-						mH - 64 + 1, componentDepth, layoutColor);
-				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_00_MID_RIGHT, (int) (lScreenOffset.x + mX + mW - lTileSize), (int) (lScreenOffset.y + mY + lTileSize), (int) lTileSize,
-						(int) (mH - lTileSize * 2) + 1, componentDepth, layoutColor);
+				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_00_MID_LEFT,     (int) (lScreenOffset.x + x),                 (int) (lScreenOffset.y + y + lTileSize), lTileSize, h - lTileSize * 2, componentDepth, lColor);
+				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_00_MID_CENTER,   (int) (lScreenOffset.x + x + lTileSize),     (int) (lScreenOffset.y + y + lTileSize), (int) (w - lTileSize * 2), h - 64, componentDepth, lColor);
+				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_00_MID_RIGHT,    (int) (lScreenOffset.x + x + w - lTileSize), (int) (lScreenOffset.y + y + lTileSize), (int) lTileSize, (int) (h - lTileSize * 2), componentDepth, lColor);
 
-				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_00_BOTTOM_LEFT, (int) (lScreenOffset.x + mX), (int) (lScreenOffset.y + mY + mH - lTileSize), lTileSize, lTileSize, componentDepth,
-						layoutColor);
-				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_00_BOTTOM_MID, (int) (lScreenOffset.x + mX + lTileSize), (int) (lScreenOffset.y + mY + mH - lTileSize),
-						(int) (mW - lTileSize * 2) + 1, lTileSize, componentDepth, layoutColor);
-				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_00_BOTTOM_RIGHT, (int) (lScreenOffset.x + mX + mW - lTileSize), (int) (lScreenOffset.y + mY + mH - lTileSize), lTileSize, lTileSize,
-						componentDepth, layoutColor);
+				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_00_BOTTOM_LEFT,  (int) (lScreenOffset.x + x),                 (int) (lScreenOffset.y + y + h - lTileSize), lTileSize, lTileSize, componentDepth, lColor);
+				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_00_BOTTOM_MID,   (int) (lScreenOffset.x + x + lTileSize),     (int) (lScreenOffset.y + y + h - lTileSize), (int) (w - lTileSize * 2), lTileSize, componentDepth, lColor);
+				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_00_BOTTOM_RIGHT, (int) (lScreenOffset.x + x + w - lTileSize), (int) (lScreenOffset.y + y + h - lTileSize), lTileSize, lTileSize, componentDepth, lColor);
 			}
 		} else {
 			if (mH < 64) {
-				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_LEFT, (int) (lScreenOffset.x + mX), (int) (lScreenOffset.y + mY), lTileSize, lTileSize, componentDepth, layoutColor);
-				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_MID, (int) (lScreenOffset.x + mX + lTileSize), (int) (lScreenOffset.y + mY), mW - lTileSize * 2, lTileSize, componentDepth,
-						layoutColor);
-				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_RIGHT, (int) (lScreenOffset.x + mX + mW - lTileSize), (int) (lScreenOffset.y + mY), lTileSize, lTileSize, componentDepth,
-						layoutColor);
+				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_LEFT,     (int) (lScreenOffset.x + mX), (int) (lScreenOffset.y + mY), lTileSize, lTileSize, componentDepth, lColor);
+				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_MID,      (int) (lScreenOffset.x + mX + lTileSize), (int) (lScreenOffset.y + mY), mW - lTileSize * 2, lTileSize, componentDepth, lColor);
+				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_RIGHT,    (int) (lScreenOffset.x + mX + mW - lTileSize), (int) (lScreenOffset.y + mY), lTileSize, lTileSize, componentDepth, lColor);
 
-				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_LEFT, (int) (lScreenOffset.x + mX), (int) (lScreenOffset.y + mY + mH - lTileSize), lTileSize, lTileSize, componentDepth,
-						layoutColor);
-				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_MID, (int) (lScreenOffset.x + mX + lTileSize), (int) (lScreenOffset.y + mY + mH - lTileSize), mW - lTileSize * 2,
-						lTileSize, componentDepth, layoutColor);
-				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_RIGHT, (int) (lScreenOffset.x + mX + mW - lTileSize), (int) (lScreenOffset.y + mY + mH - lTileSize), lTileSize, lTileSize,
-						componentDepth, layoutColor);
+				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_LEFT,  (int) (lScreenOffset.x + mX), (int) (lScreenOffset.y + mY + mH - lTileSize), lTileSize, lTileSize, componentDepth, lColor);
+				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_MID,   (int) (lScreenOffset.x + mX + lTileSize), (int) (lScreenOffset.y + mY + mH - lTileSize), mW - lTileSize * 2, lTileSize, componentDepth, lColor);
+				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_RIGHT, (int) (lScreenOffset.x + mX + mW - lTileSize), (int) (lScreenOffset.y + mY + mH - lTileSize), lTileSize, lTileSize, componentDepth, lColor);
 			} else {
-				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_LEFT, (int) (lScreenOffset.x + mX), (int) (lScreenOffset.y + mY), lTileSize, lTileSize, componentDepth, layoutColor);
-				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_MID, (int) (lScreenOffset.x + mX + lTileSize), (int) (lScreenOffset.y + mY), mW - lTileSize * 2 + 1, lTileSize,
-						componentDepth, layoutColor);
-				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_RIGHT, (int) (lScreenOffset.x + mX + mW - lTileSize), (int) (lScreenOffset.y + mY), lTileSize, lTileSize, componentDepth,
-						layoutColor);
+				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_LEFT,     (int) (lScreenOffset.x + mX), (int) (lScreenOffset.y + mY), lTileSize, lTileSize, componentDepth, lColor);
+				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_MID,      (int) (lScreenOffset.x + mX + lTileSize), (int) (lScreenOffset.y + mY), mW - lTileSize * 2, lTileSize, componentDepth, lColor);
+				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_RIGHT,    (int) (lScreenOffset.x + mX + mW - lTileSize), (int) (lScreenOffset.y + mY), lTileSize, lTileSize, componentDepth, lColor);
 
-				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_MID_LEFT, (int) (lScreenOffset.x + mX), (int) (lScreenOffset.y + mY + lTileSize), lTileSize, mH - lTileSize * 2 + 1,
-						componentDepth, layoutColor);
-				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_MID_CENTER, (int) (lScreenOffset.x + mX + lTileSize), (int) (lScreenOffset.y + mY + lTileSize), (int) (mW - lTileSize * 2) + 1,
-						mH - 64 + 1, componentDepth, layoutColor);
-				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_MID_RIGHT, (int) (lScreenOffset.x + mX + mW - lTileSize), (int) (lScreenOffset.y + mY + lTileSize), (int) lTileSize,
-						(int) (mH - lTileSize * 2) + 1, componentDepth, layoutColor);
+				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_MID_LEFT,     (int) (lScreenOffset.x + mX), (int) (lScreenOffset.y + mY + lTileSize), lTileSize, mH - lTileSize * 2 + 1, componentDepth, lColor);
+				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_MID_CENTER,   (int) (lScreenOffset.x + mX + lTileSize), (int) (lScreenOffset.y + mY + lTileSize), (int) (mW - lTileSize * 2), mH - 64 + 1, componentDepth, lColor);
+				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_MID_RIGHT,    (int) (lScreenOffset.x + mX + mW - lTileSize), (int) (lScreenOffset.y + mY + lTileSize), (int) lTileSize, (int) (mH - lTileSize * 2) + 1, componentDepth, lColor);
 
-				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_LEFT, (int) (lScreenOffset.x + mX), (int) (lScreenOffset.y + mY + mH - lTileSize), lTileSize, lTileSize, componentDepth,
-						layoutColor);
-				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_MID, (int) (lScreenOffset.x + mX + lTileSize), (int) (lScreenOffset.y + mY + mH - lTileSize),
-						(int) (mW - lTileSize * 2) + 1, (int) lTileSize, componentDepth, layoutColor);
-				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_RIGHT, (int) (lScreenOffset.x + mX + mW - lTileSize), (int) (lScreenOffset.y + mY + mH - lTileSize), lTileSize, lTileSize,
-						componentDepth, layoutColor);
+				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_LEFT,  (int) (lScreenOffset.x + mX), (int) (lScreenOffset.y + mY + mH - lTileSize), lTileSize, lTileSize, componentDepth, layoutColor);
+				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_MID,   (int) (lScreenOffset.x + mX + lTileSize), (int) (lScreenOffset.y + mY + mH - lTileSize), (int) (mW - lTileSize * 2), (int) lTileSize, componentDepth, lColor);
+				lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_RIGHT, (int) (lScreenOffset.x + mX + mW - lTileSize), (int) (lScreenOffset.y + mY + mH - lTileSize), lTileSize, lTileSize, componentDepth, lColor);
 			}
 		}
 		lSpriteBatch.end();
+		// @formatter:on
 
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_OUTLINES", false)) {
 			Debug.debugManager().drawers().drawRectImmediate(core.HUD(), this);

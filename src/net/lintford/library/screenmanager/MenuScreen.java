@@ -27,7 +27,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 	public static final float OUTER_PADDING_W = 50f;
 	public static final float OUTER_PADDING_H = 5f;
-	public static final float INNER_PADDING_W = 5f;
+	public static float INNER_PADDING_W = 5f;
 	public static final float INNER_PADDING_H = 2f;
 	public static final float TITLE_PADDING_X = 10f;
 	public static final float TITLE_PADDING_Y = 20f;
@@ -284,7 +284,6 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 			return;
 
 		updateLayout(core, mLayouts, mLayoutAlignment);
-
 	}
 
 	protected void updateLayout(LintfordCore core, List<BaseLayout> layoutList, LAYOUT_ALIGNMENT alignment) {
@@ -321,18 +320,16 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 				lLayoutWidth = MathHelper.clamp(lScreenContentWidth / 4f - lInnerPaddingW * 2f, 0.f, lBaseLayout.maxWidth());
 			}
 
-			final float lScreenContentLeft = lUIHUDStructureController.menuMainRectangle().centerX() - lInnerPaddingW - lLayoutWidth;
-
-			float lLayoutNewX = 0;
+			var lLayoutNewX = 0.f;
 			switch (alignment) {
 			case LEFT:
-				lLayoutNewX = lScreenContentLeft + lInnerPaddingW;
+				lLayoutNewX = lUIHUDStructureController.menuMainRectangle().left() + lInnerPaddingW;
 				break;
 			case CENTER:
 				lLayoutNewX = 0 - lLayoutWidth / 2f;
 				break;
 			case RIGHT:
-				lLayoutNewX = 0 + lInnerPaddingW;
+				lLayoutNewX = lUIHUDStructureController.menuMainRectangle().right() - lInnerPaddingW - lLayoutWidth;
 				break;
 			}
 
