@@ -27,7 +27,7 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 
 	private String mLabel;
 	private String mDefaultText;
-	private final String mSeparator = " : ";
+	private final String mSeparator = ":";
 	private float mCaretFlashTimer;
 	private boolean mShowCaret;
 	private String mTempString;
@@ -181,11 +181,9 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 		textColor.a = mParentScreen.screenColor.a;
 
 		lTextBoldFont.begin(core.HUD());
-		lTextBoldFont.drawText(mLabel, lScreenOffset.x + mX + mW / 2 - 10 - (lLabelTextWidth * lAdjustedLabelScaleW) - lSeparatorHalfWidth, lScreenOffset.y + mY + mH / 2 - lLabelTextHeight * 0.5f, parentZDepth + .1f,
-				textColor, lAdjustedLabelScaleW, -1);
-		lTextBoldFont.drawText(mSeparator, lScreenOffset.x + mX + mW / 2 - lSeparatorHalfWidth, lScreenOffset.y + mY + mH / 2 - lLabelTextHeight * 0.5f, parentZDepth + .1f, textColor, lUiTextScale, -1);
-		lTextBoldFont.drawText(mInputField.toString(), lScreenOffset.x + mX + mW / 2 + lSeparatorHalfWidth * lAdjustedLInputScaleW + SPACE_BETWEEN_TEXT, lScreenOffset.y + mY + mH / 2 - lInputTextHeight * 0.5f,
-				parentZDepth + .1f, textColor, lAdjustedLInputScaleW, -1);
+		lTextBoldFont.drawText(mLabel, lScreenOffset.x + mX + mW / 2 - 10 - (lLabelTextWidth * lAdjustedLabelScaleW) - lSeparatorHalfWidth, lScreenOffset.y + mY + mH / 2 - lLabelTextHeight * 0.5f, parentZDepth + .1f, textColor, lAdjustedLabelScaleW, -1);
+		lTextBoldFont.drawText(mSeparator, lScreenOffset.x + mX + mW / 2 - lSeparatorHalfWidth, lScreenOffset.y + mY + mH / 2 - lLabelTextHeight * 0.5f, parentZDepth + .1f, textColor, 1.f, -1);
+		lTextBoldFont.drawText(mInputField.toString(), lScreenOffset.x + mX + mW / 2 + lSeparatorHalfWidth * lAdjustedLInputScaleW + SPACE_BETWEEN_TEXT, lScreenOffset.y + mY + mH / 2 - lInputTextHeight * 0.5f, parentZDepth + .1f, textColor, lAdjustedLInputScaleW, -1);
 
 		final float lTextHeight = lTextBoldFont.fontHeight();
 

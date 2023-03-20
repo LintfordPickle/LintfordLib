@@ -370,7 +370,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 		textColor.setFromColor(ColorConstants.TextEntryColor);
 
 		final var lScreenOffset = screen.screenPositionOffset();
-		final var lSeparator = " : ";
+		final var lSeparator = ":";
 
 		final var lLabelWidth = lTextBoldFont.getStringWidth(mLabel, lUiTextScale);
 		final var lFontHeight = lTextBoldFont.fontHeight() * lUiTextScale;

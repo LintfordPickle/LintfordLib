@@ -34,7 +34,7 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 
 	private String mLabel;
 	private boolean mIsChecked;
-	private final String mSeparator = " : ";
+	private final String mSeparator = ":";
 	private List<MenuEnumEntryItem> mItems;
 	private int mSelectedIndex;
 	private boolean mEnableScaleTextToWidth;

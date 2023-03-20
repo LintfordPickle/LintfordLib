@@ -70,7 +70,7 @@ public class MenuEnumEntry extends MenuEntry {
 
 	private String mLabel;
 	private boolean mIsChecked;
-	private final String mSeparator = " : ";
+	private final String mSeparator = ":";
 	private List<EnumEntryItem> mItems;
 	private int mSelectedIndex;
 	private boolean mEnableScaleTextToWidth;
@@ -250,18 +250,15 @@ public class MenuEnumEntry extends MenuEntry {
 		final float lArrowButtonPaddingY = mLeftButtonRectangle.height() - lArrowButtonSize;
 		if (mButtonsEnabled) {
 			final var lColorWhiteWithAlpha = ColorConstants.getWhiteWithAlpha(lParentScreenAlpha);
-			lTextureBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_LEFT, lScreenOffset.x + mLeftButtonRectangle.x(), lScreenOffset.y + mLeftButtonRectangle.y() + lArrowButtonPaddingY, lArrowButtonSize,
-					lArrowButtonSize, 0f, lColorWhiteWithAlpha);
-			lTextureBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_RIGHT, lScreenOffset.x + mRightButtonRectangle.x(), lScreenOffset.y + mRightButtonRectangle.y() + lArrowButtonPaddingY, lArrowButtonSize,
-					lArrowButtonSize, 0f, lColorWhiteWithAlpha);
+			lTextureBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_LEFT, lScreenOffset.x + mLeftButtonRectangle.x(), lScreenOffset.y + mLeftButtonRectangle.y() + lArrowButtonPaddingY, lArrowButtonSize, lArrowButtonSize, 0f, lColorWhiteWithAlpha);
+			lTextureBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_RIGHT, lScreenOffset.x + mRightButtonRectangle.x(), lScreenOffset.y + mRightButtonRectangle.y() + lArrowButtonPaddingY, lArrowButtonSize, lArrowButtonSize, 0f, lColorWhiteWithAlpha);
 		}
 
 		lTextureBatch.end();
 
 		lTextBoldFont.begin(core.HUD());
 		final float lStringWidth = lTextBoldFont.getStringWidth(mLabel, lAdjustedScaleW);
-		lTextBoldFont.drawText(mLabel, lScreenOffset.x + (mX + mW / 2 - 10) - lStringWidth - lSeparatorHalfWidth, lScreenOffset.y + mY + mH / 2.f - lTextBoldFont.getStringHeight(mLabel, lAdjustedScaleW) * 0.5f,
-				parentZDepth, textColor, lAdjustedScaleW, -1);
+		lTextBoldFont.drawText(mLabel, lScreenOffset.x + (mX + mW / 2 - 10) - lStringWidth - lSeparatorHalfWidth, lScreenOffset.y + mY + mH / 2.f - lTextBoldFont.getStringHeight(mLabel, lAdjustedScaleW) * 0.5f, parentZDepth, textColor, lAdjustedScaleW, -1);
 		lTextBoldFont.drawText(mSeparator, lScreenOffset.x + mX + mW / 2 - lSeparatorHalfWidth, lScreenOffset.y + mY + mH / 2 - lTextHeight * 0.5f, parentZDepth, textColor, lUiTextScale, -1);
 
 		if (mItems.size() > 0) {

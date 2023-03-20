@@ -24,7 +24,7 @@ public class MenuSliderEntry extends MenuEntry {
 	private Rectangle mDownButton;
 	private Rectangle mUpButton;
 	private String mLabel;
-	private final String mSeparator = " : ";
+	private final String mSeparator = ":";
 	private String mUnit = "%";
 	private int mValue;
 	private int mLowerBound;
