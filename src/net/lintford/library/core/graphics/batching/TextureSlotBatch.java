@@ -31,7 +31,7 @@ public class TextureSlotBatch {
 	// Constructors
 	// --------------------------------------
 
-	TextureSlotBatch() {
+	public TextureSlotBatch() {
 
 	}
 
