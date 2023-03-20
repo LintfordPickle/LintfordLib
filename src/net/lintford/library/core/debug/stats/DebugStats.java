@@ -198,6 +198,9 @@ public class DebugStats extends Rectangle implements IScrollBarArea, IInputProce
 	}
 
 	public void update(LintfordCore core) {
+		if (mMouseTimer >= 0)
+			mMouseTimer -= core.gameTime().elapsedTimeMilli();
+
 		if (mIsOpen == false)
 			return;
 

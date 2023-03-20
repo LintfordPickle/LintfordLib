@@ -312,8 +312,7 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 
 			} else if (mMessageFilterText.intersectsAA(core.HUD().getMouseCameraSpace()) && core.input().mouse().tryAcquireMouseLeftClick(mMessageFilterText.hashCode())) {
 
-			} else if (mFocusTimer > FOCUS_TIMER && core.input().mouse().mouseWindowCoords().y < openHeight() && core.input().mouse().tryAcquireMouseLeftClick(hashCode())
-					&& core.input().mouse().isMouseOverThisComponent(hashCode())) {
+			} else if (mFocusTimer > FOCUS_TIMER && core.input().mouse().mouseWindowCoords().y < openHeight() && core.input().mouse().tryAcquireMouseLeftClick(hashCode()) && core.input().mouse().isMouseOverThisComponent(hashCode())) {
 				mHasFocus = !mHasFocus;
 				resetCoolDownTimer();
 				core.input().keyboard().stopBufferedTextCapture();
@@ -374,13 +373,13 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 		if (mConsoleState == CONSOLE_STATE.minimal)
 			mAutoScroll = true;
 
+		if (mMouseTimer >= 0)
+			mMouseTimer -= core.appTime().elapsedTimeMilli();
+
 		if (!mResourcesLoaded || mConsoleState == CONSOLE_STATE.closed)
 			return;
 
 		final float lDeltaTime = (float) core.appTime().elapsedTimeMilli() / 1000f;
-
-		if (mMouseTimer >= 0)
-			mMouseTimer -= core.appTime().elapsedTimeMilli();
 
 		mFocusTimer += lDeltaTime * 1000f;
 		mCaretTimer += lDeltaTime * 1000f;
@@ -485,11 +484,9 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 			if (mInputText != null) {
 				final float INPUT_Y_OFFSET = 0;
 				mConsoleFont.drawText(PROMT_CHAR, -lDisplayConfig.windowWidth() * 0.5f + PADDING_LEFT, mY + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET, Z_DEPTH + 0.1f, ColorConstants.WHITE, 1f);
-				mConsoleFont.drawText(mInputText.toString(), -lDisplayConfig.windowWidth() * 0.5f + PADDING_LEFT + lInputTextXOffset, mY + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET, Z_DEPTH + 0.1f,
-						ColorConstants.WHITE, 1f);
+				mConsoleFont.drawText(mInputText.toString(), -lDisplayConfig.windowWidth() * 0.5f + PADDING_LEFT + lInputTextXOffset, mY + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET, Z_DEPTH + 0.1f, ColorConstants.WHITE, 1f);
 				if (mShowCaret && mHasFocus)
-					mConsoleFont.drawText(CARET_CHAR, -lDisplayConfig.windowWidth() * 0.5f + PADDING_LEFT + lInputTextXOffset + mConsoleFont.getStringWidth(mInputText.toString()),
-							mY + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET, Z_DEPTH + 0.1f, ColorConstants.WHITE, 1f);
+					mConsoleFont.drawText(CARET_CHAR, -lDisplayConfig.windowWidth() * 0.5f + PADDING_LEFT + lInputTextXOffset + mConsoleFont.getStringWidth(mInputText.toString()), mY + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET, Z_DEPTH + 0.1f, ColorConstants.WHITE, 1f);
 			}
 		}
 
