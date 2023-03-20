@@ -11,11 +11,10 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.graphics.batching.SpriteBatch;
-import net.lintford.library.core.graphics.batching.TextureBatchPCT;
 import net.lintford.library.core.graphics.fonts.FontMetaData;
 import net.lintford.library.core.graphics.fonts.FontUnit;
 import net.lintford.library.core.graphics.linebatch.LineBatch;
-import net.lintford.library.core.graphics.polybatch.PolyBatchPC;
+import net.lintford.library.core.graphics.polybatch.IndexedPolyBatchPCT;
 import net.lintford.library.core.graphics.rendertarget.RenderTarget;
 import net.lintford.library.core.input.IInputClickedFocusTracker;
 import net.lintford.library.core.rendering.RenderState;
@@ -81,9 +80,8 @@ public class RendererManager implements IInputClickedFocusManager {
 	private List<UIWindowChangeListener> mListeners;
 
 	private SpriteBatch mSpriteBatch;
-	private TextureBatchPCT mTextureBatch;
 	private LineBatch mLineBatch;
-	private PolyBatchPC mPolyBatch;
+	private IndexedPolyBatchPCT mPolyBatch;
 
 	private List<RenderTarget> mRenderTargets;
 	private List<RenderTarget> mRenderTargetAutoResize;
@@ -187,15 +185,11 @@ public class RendererManager implements IInputClickedFocusManager {
 		return mDisplayConfig;
 	}
 
-	public TextureBatchPCT uiTextureBatch() {
-		return mTextureBatch;
-	}
-
 	public SpriteBatch uiSpriteBatch() {
 		return mSpriteBatch;
 	}
 
-	public PolyBatchPC uiPolyBatch() {
+	public IndexedPolyBatchPCT uiPolyBatch() {
 		return mPolyBatch;
 	}
 
@@ -229,9 +223,8 @@ public class RendererManager implements IInputClickedFocusManager {
 		mRenderTargetAutoResize = new ArrayList<>();
 
 		mSpriteBatch = new SpriteBatch();
-		mTextureBatch = new TextureBatchPCT();
 		mLineBatch = new LineBatch();
-		mPolyBatch = new PolyBatchPC();
+		mPolyBatch = new IndexedPolyBatchPCT();
 
 		mListeners = new ArrayList<>();
 
@@ -278,7 +271,6 @@ public class RendererManager implements IInputClickedFocusManager {
 		mUiTitleFont = resourceManager.fontManager().getFontUnit(UI_FONT_TITLE_NAME);
 
 		mSpriteBatch.loadResources(resourceManager);
-		mTextureBatch.loadResources(resourceManager);
 		mLineBatch.loadResources(resourceManager);
 		mPolyBatch.loadResources(resourceManager);
 
@@ -321,7 +313,6 @@ public class RendererManager implements IInputClickedFocusManager {
 		}
 
 		mSpriteBatch.unloadResources();
-		mTextureBatch.unloadResources();
 		mLineBatch.unloadResources();
 		mPolyBatch.unloadResources();
 
