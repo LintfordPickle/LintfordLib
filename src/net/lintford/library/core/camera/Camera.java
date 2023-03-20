@@ -1,6 +1,9 @@
 package net.lintford.library.core.camera;
 
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.debug.Debug;
+import net.lintford.library.core.debug.stats.DebugStatTagString;
+import net.lintford.library.core.debug.stats.DebugStats;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.maths.Matrix4f;
 import net.lintford.library.core.maths.Vector2f;
@@ -229,6 +232,10 @@ public class Camera implements ICamera {
 			createOrtho(mWindowWidth, mWindowHeight);
 			updateZoomBounds(mWindowWidth, mWindowHeight);
 		}
+
+		final var lResTag = (DebugStatTagString) Debug.debugManager().stats().getTagByID(DebugStats.TAG_ID_RES);
+		lResTag.setValue(String.format("%.0fx%.0f", mScaledWindowWidth, mScaledWindowHeight));
+
 	}
 
 	public void createView() {

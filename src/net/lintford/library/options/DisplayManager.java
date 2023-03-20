@@ -361,7 +361,7 @@ public class DisplayManager extends IniFile {
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-		
+
 		// Remove all functionality marked as deprecated from the OpenGl context
 		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 		glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
@@ -492,8 +492,7 @@ public class DisplayManager extends IniFile {
 	}
 
 	/**
-	 * This line is critical for LWJGL's interoperation with GLFW's OpenGL context, or any context that is managed externally. LWJGL detects the context that is current in the current thread, creates the GLCapabilities
-	 * instance and makes the OpenGL bindings available for use.
+	 * This line is critical for LWJGL's interoperation with GLFW's OpenGL context, or any context that is managed externally. LWJGL detects the context that is current in the current thread, creates the GLCapabilities instance and makes the OpenGL bindings available for use.
 	 */
 	public void createGlCompatiblities() {
 		GL.createCapabilities();
@@ -556,9 +555,6 @@ public class DisplayManager extends IniFile {
 		mDisplaySettings.windowWidth(width);
 		mDisplaySettings.windowHeight(height);
 
-		final var lResTag = (DebugStatTagString) Debug.debugManager().stats().getTagByID(DebugStats.TAG_ID_RES);
-		lResTag.setValue(String.format("%dx%d", width, height));
-
 		GL11.glViewport(0, 0, width, height);
 	}
 
@@ -617,8 +613,7 @@ public class DisplayManager extends IniFile {
 
 		// TODO: Display toast to the user than an unsupported resolution was saved
 
-		Debug.debugManager().logger().w(getClass().getSimpleName(),
-				"Non-standard resolution found (" + lLookingForWidth + "," + lLookingForHeight + ")! Defaulting back to " + mDisplaySettings.windowWidth() + "," + mDisplaySettings.windowHeight());
+		Debug.debugManager().logger().w(getClass().getSimpleName(), "Non-standard resolution found (" + lLookingForWidth + "," + lLookingForHeight + ")! Defaulting back to " + mDisplaySettings.windowWidth() + "," + mDisplaySettings.windowHeight());
 	}
 
 	// --------------------------------------
