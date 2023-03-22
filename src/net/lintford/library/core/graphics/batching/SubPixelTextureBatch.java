@@ -322,6 +322,11 @@ public class SubPixelTextureBatch {
 			lTextureSlotIndex = mTextureSlots.getTextureSlotIndex(pTexture);
 		}
 
+		float x0 = pDX;
+		float y0 = pDY + pDH;
+		float u0 = pSX / pTexture.getTextureWidth();
+		float v0 = (pSY + pSH) / pTexture.getTextureHeight();
+
 		float x1 = pDX;
 		float y1 = pDY;
 		float u1 = pSX / pTexture.getTextureWidth();
@@ -332,21 +337,14 @@ public class SubPixelTextureBatch {
 		float u2 = (pSX + pSW) / pTexture.getTextureWidth();
 		float v2 = pSY / pTexture.getTextureHeight();
 
-		float x0 = pDX;
-		float y0 = pDY + pDH;
-		float u0 = pSX / pTexture.getTextureWidth();
-		float v0 = (pSY + pSH) / pTexture.getTextureHeight();
-
 		float x3 = pDX + pDW;
 		float y3 = pDY + pDH;
 		float u3 = (pSX + pSW) / pTexture.getTextureWidth();
 		float v3 = (pSY + pSH) / pTexture.getTextureHeight();
 
+		addVertToBuffer(x0, y0, zDepth, 1f, color.r, color.g, color.b, color.a, u0, v0, lTextureSlotIndex);
 		addVertToBuffer(x1, y1, zDepth, 1f, color.r, color.g, color.b, color.a, u1, v1, lTextureSlotIndex);
-		addVertToBuffer(x0, y0, zDepth, 1f, color.r, color.g, color.b, color.a, u0, v0, lTextureSlotIndex);
 		addVertToBuffer(x2, y2, zDepth, 1f, color.r, color.g, color.b, color.a, u2, v2, lTextureSlotIndex);
-		addVertToBuffer(x2, y2, zDepth, 1f, color.r, color.g, color.b, color.a, u2, v2, lTextureSlotIndex);
-		addVertToBuffer(x0, y0, zDepth, 1f, color.r, color.g, color.b, color.a, u0, v0, lTextureSlotIndex);
 		addVertToBuffer(x3, y3, zDepth, 1f, color.r, color.g, color.b, color.a, u3, v3, lTextureSlotIndex);
 
 		mIndexCount += NUM_INDICES_PER_SPRITE;
@@ -385,34 +383,36 @@ public class SubPixelTextureBatch {
 		float originX = -pROX;
 		float originY = -pROY;
 
-		float x0 = (originX - lHalfW) * cos - (originY + lHalfH) * sin;
-		float y0 = (originX - lHalfW) * sin + (originY + lHalfH) * cos;
+		// Vertex 0 (bottom left)
+		float x0 = -(lHalfW - originX) * cos - (lHalfH + originY) * sin;
+		float y0 = -(lHalfW - originX) * sin + (lHalfH + originY) * cos;
 		float u0 = pSX / pTexture.getTextureWidth();
 		float v0 = (pSY + pSH) / pTexture.getTextureHeight();
 
-		float x1 = (originX - lHalfW) * cos - (originY - lHalfH) * sin;
-		float y1 = (originX - lHalfW) * sin + (originY - lHalfH) * cos;
+		// Vertex 1 (top left)
+		float x1 = -(lHalfW - originX) * cos - (-lHalfH + originY) * sin;
+		float y1 = -(lHalfW - originX) * sin + (-lHalfH + originY) * cos;
 		float u1 = pSX / pTexture.getTextureWidth();
 		float v1 = pSY / pTexture.getTextureHeight();
 
-		float x2 = (originX + lHalfW) * cos - (originY - lHalfH) * sin;
-		float y2 = (originX + lHalfW) * sin + (originY - lHalfH) * cos;
+		// Vertex 2 (top right)
+		float x2 = (lHalfW + originX) * cos - (-lHalfH + originY) * sin;
+		float y2 = (lHalfW + originX) * sin + (-lHalfH + originY) * cos;
 		float u2 = (pSX + pSW) / pTexture.getTextureWidth();
 		float v2 = pSY / pTexture.getTextureHeight();
 
-		float x3 = (originX + lHalfW) * cos - (originY + lHalfH) * sin;
-		float y3 = (originX + lHalfW) * sin + (originY + lHalfH) * cos;
+		// Vertex 3 (bottom right)
+		float x3 = (lHalfW + originX) * cos - (lHalfH + originY) * sin;
+		float y3 = (lHalfW + originX) * sin + (lHalfH + originY) * cos;
 		float u3 = (pSX + pSW) / pTexture.getTextureWidth();
 		float v3 = (pSY + pSH) / pTexture.getTextureHeight();
 
 		pDX += pROX;
 		pDY += pROY;
 
+		addVertToBuffer(pDX + x0, pDY + y0, zDepth, 1f, pR, pG, pB, pA, u0, v0, lTextureSlotIndex);
 		addVertToBuffer(pDX + x1, pDY + y1, zDepth, 1f, pR, pG, pB, pA, u1, v1, lTextureSlotIndex);
-		addVertToBuffer(pDX + x0, pDY + y0, zDepth, 1f, pR, pG, pB, pA, u0, v0, lTextureSlotIndex);
 		addVertToBuffer(pDX + x2, pDY + y2, zDepth, 1f, pR, pG, pB, pA, u2, v2, lTextureSlotIndex);
-		addVertToBuffer(pDX + x2, pDY + y2, zDepth, 1f, pR, pG, pB, pA, u2, v2, lTextureSlotIndex);
-		addVertToBuffer(pDX + x0, pDY + y0, zDepth, 1f, pR, pG, pB, pA, u0, v0, lTextureSlotIndex);
 		addVertToBuffer(pDX + x3, pDY + y3, zDepth, 1f, pR, pG, pB, pA, u3, v3, lTextureSlotIndex);
 
 		mIndexCount += NUM_INDICES_PER_SPRITE;
