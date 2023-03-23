@@ -602,7 +602,6 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 		if (lEntryCount == 0)
 			return 0;
 
-		// return the widest entry
 		float lResult = 0;
 		for (int i = 0; i < lEntryCount; i++) {
 			final var lMenuEntry = mMenuEntries.get(i);
@@ -623,7 +622,7 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 		if (lEntryCount == 0)
 			return 0;
 
-		float lResult = paddingTop() + paddingBottom();
+		float lResult = paddingTop() + paddingBottom() + mEntryOffsetFromTop;
 
 		for (int i = 0; i < lEntryCount; i++) {
 			final var lMenuEntry = mMenuEntries.get(i);

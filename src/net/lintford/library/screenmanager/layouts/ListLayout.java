@@ -34,7 +34,7 @@ public class ListLayout extends BaseLayout implements IInputProcessor {
 		mMaxWidth = 900.f;
 
 		// inevitably, there is some portion of the background graphic which
-		// shouldn't have content rendered over it. that's this
+		// shouldn't have content rendered over it. E.g. The bevel graphic around the borders
 		mCropPaddingBottom = 0.f;
 		mCropPaddingTop = 0.f;
 	}
@@ -71,9 +71,8 @@ public class ListLayout extends BaseLayout implements IInputProcessor {
 		super.updateStructure();
 
 		final var lUiStructureController = parentScreen.screenManager().UiStructureController();
-		final float lTitleHeight = mShowTitle ? parentScreen.rendererManager().headerFontHeight() : 0.f;
+		final float lTitleHeight = mShowTitle ? TITLE_BAR_HEIGHT : 0.f;
 		final float lWindowScaleFactorX = lUiStructureController.gameCanvasWScaleFactor();
-
 		float lYPos = mY + mEntryOffsetFromTop + lTitleHeight + mScrollBar.currentYPos() + mCropPaddingTop + paddingTop();
 
 		final int lEntryCount = mMenuEntries.size();

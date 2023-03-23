@@ -356,7 +356,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 		lCountOfSharers -= lCountOfTakers;
 
-		// Split the remainging height between the shares
+		// Split the remaining height between the shares
 		float lSizeOfEachShareElement = 0.f;
 		if (lCountOfSharers > 0) {
 			lSizeOfEachShareElement = ((lLayoutHeight - heightTaken) / lCountOfSharers) - lInnerPaddingH * (lCountOfSharers + 1);
@@ -369,8 +369,9 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 			lBaseLayout.y(lTop);
 
 			if (lBaseLayout.layoutFillType() == FILLTYPE.TAKE_WHATS_NEEDED) {
-				// Take whats needed, but cannot be larger than available
-				float lNewHeight = Math.min(lBaseLayout.getEntryHeight() + lInnerPaddingH, lLayoutHeight) + lBaseLayout.cropPaddingTop() + lBaseLayout.cropPaddingBottom();
+				// Takers (cannot be larger than available)
+				final var lTitleHeight = lBaseLayout.titleBarSize();
+				var lNewHeight = Math.min(lBaseLayout.getEntryHeight() + lInnerPaddingH + lBaseLayout.cropPaddingTop() + lBaseLayout.cropPaddingBottom() + lTitleHeight, lLayoutHeight);
 				if (lBaseLayout.maxHeight() > 0 && lNewHeight > lBaseLayout.maxHeight()) {
 					lNewHeight = lBaseLayout.maxHeight();
 				}
@@ -378,20 +379,9 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 				lBaseLayout.height(lNewHeight);
 				lBaseLayout.updateStructure();
 				lTop += lBaseLayout.getEntryHeight() + lInnerPaddingH;
-
-//			} else if (lBaseLayout.layoutFillType() == FILLTYPE.FOOTER) {
-//				final var lHUDController = mRendererManager.uiStructureController();
-//				final var lWidthOfPage = lHUDController.menuFooterRectangle().width() - lInnerPaddingW * 2f;
-//				final var lHeightOfPage = lHUDController.menuFooterRectangle().height();
-//
-//				final var lLeftOfPage = lHUDController.menuFooterRectangle().centerX() - lWidthOfPage / 2;
-//				final var lTopOfPage = lHUDController.menuFooterRectangle().top();
-//
-//				lBaseLayout.set(lLeftOfPage, lTopOfPage, lWidthOfPage, lHeightOfPage);
-//				lBaseLayout.updateStructure();
-
-			} else { // sharers
-				float lNewHeight = lSizeOfEachShareElement;
+			} else {
+				// sharers
+				var lNewHeight = lSizeOfEachShareElement;
 				if (lBaseLayout.maxHeight() != -1 && lNewHeight > lBaseLayout.maxHeight()) {
 					lNewHeight = lBaseLayout.maxHeight();
 				}
