@@ -278,7 +278,7 @@ public class DebugControllerTreeRenderer extends Rectangle implements IScrollBar
 			mContentRectangle.postDraw(core);
 
 		mSpriteBatch.begin(core.HUD());
-		mScrollBar.draw(core, mSpriteBatch, mCoreSpritesheet, -0.01f);
+		mScrollBar.draw(core, mSpriteBatch, mCoreSpritesheet, -0.01f, 1.f);
 		mSpriteBatch.end();
 	}
 

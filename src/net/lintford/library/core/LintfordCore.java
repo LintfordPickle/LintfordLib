@@ -44,8 +44,7 @@ import net.lintford.library.renderers.RendererManager;
 import net.lintford.library.screenmanager.ScreenManager;
 
 /**
- * The LintfordCore tracks the core state of an LWJGL application including a {@link DisplayManager}, {@link ResourceManager}, {@link CoreTime}, {@link Camera}, {@link HUD}, {@link InputManager} and {@link RenderState}.
- * It also defines the behaviour for creating an OpenGL window.
+ * The LintfordCore tracks the core state of an LWJGL application including a {@link DisplayManager}, {@link ResourceManager}, {@link CoreTime}, {@link Camera}, {@link HUD}, {@link InputManager} and {@link RenderState}. It also defines the behaviour for creating an OpenGL window.
  */
 public abstract class LintfordCore {
 
@@ -221,8 +220,7 @@ public abstract class LintfordCore {
 	}
 
 	/**
-	 * Returns the instance of {@link InputManager} which was created when the LWJGL window was created. InputState is updated per-frame and tracks user input from the mouse and keyboard. null is returned if the LWJGL
-	 * window has not yet been created.
+	 * Returns the instance of {@link InputManager} which was created when the LWJGL window was created. InputState is updated per-frame and tracks user input from the mouse and keyboard. null is returned if the LWJGL window has not yet been created.
 	 */
 	public InputManager input() {
 		return mInputState;
@@ -488,8 +486,6 @@ public abstract class LintfordCore {
 				}
 				continue;
 			}
-
-// 			onHandleInput();
 
 			if (mCoreTime.accumulatedElapsedTimeMilli > mCoreTime.maxElapsedTimeMilli)
 				mCoreTime.accumulatedElapsedTimeMilli = mCoreTime.maxElapsedTimeMilli;

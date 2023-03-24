@@ -26,6 +26,11 @@ public class ColorConstants {
 		return TempColor;
 	}
 
+	public static Color getColor(Color color) {
+		TempColor.setFromColor(color);
+		return TempColor;
+	}
+
 	public static Color getColor(int color) {
 		TempColor.setRGBA(((color >> 16) & 0x0000FF) / 255.f, ((color >> 8) & 0x0000FF) / 255.f, ((color >> 0) & 0x0000FF) / 255.f, 1.f);
 		return TempColor;

@@ -475,7 +475,7 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 			mSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX + 157, mY + 50 - lTextHeight, 2, mH - 50, Z_DEPTH, lBackgroundInputPanelColor);
 			mSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX, mY + mH - lTextHeight, mW, lTextHeight, Z_DEPTH, lBackgroundInputPanelColor);
 
-			mScrollBar.draw(core, mSpriteBatch, mCoreSpritesheet, Z_DEPTH + 0.1f);
+			mScrollBar.draw(core, mSpriteBatch, mCoreSpritesheet, Z_DEPTH + 0.1f, 1.f);
 
 			mTAGFilterText.draw(core, mSpriteBatch, mCoreSpritesheet, mConsoleFont, -0.001f);
 			mMessageFilterText.draw(core, mSpriteBatch, mCoreSpritesheet, mConsoleFont, Z_DEPTH + 0.01f);

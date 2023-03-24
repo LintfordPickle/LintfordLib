@@ -6,7 +6,8 @@ public class Color {
 	// Variables
 	// --------------------------------------
 
-	public float r, g, b, a;
+	public float r, g, b;
+	public float a;
 
 	// --------------------------------------
 	// Constructor

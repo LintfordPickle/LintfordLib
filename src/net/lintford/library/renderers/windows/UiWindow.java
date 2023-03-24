@@ -414,7 +414,7 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 		}
 
 		if (mScrollBar.scrollBarEnabled())
-			mScrollBar.draw(core, lSpritebatch, mCoreSpritesheet, Z_DEPTH);
+			mScrollBar.draw(core, lSpritebatch, mCoreSpritesheet, Z_DEPTH, mWindowAlpha);
 
 		lTextFont.begin(core.HUD());
 

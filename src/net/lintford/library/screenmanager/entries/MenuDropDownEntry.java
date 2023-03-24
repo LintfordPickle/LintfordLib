@@ -365,6 +365,10 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 		final float lUiTextScale = mParentScreen.uiTextScale();
 		final var lTextBoldFont = mParentScreen.fontBold();
 
+		final float lParentScreenAlpha = screen.screenColor.a;
+		entryColor.a = lParentScreenAlpha;
+		textColor.a = lParentScreenAlpha;
+
 		mZ = mOpen ? ZLayers.LAYER_SCREENMANAGER + Z_STATE_MODIFIER_ACTIVE : ZLayers.LAYER_SCREENMANAGER + Z_STATE_MODIFIER_PASSIVE;
 
 		textColor.setFromColor(ColorConstants.TextEntryColor);
@@ -488,7 +492,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 
 		if (mOpen && mScrollBar.areaNeedsScrolling()) {
 			lSpriteBatch.begin(core.HUD());
-			mScrollBar.draw(core, lSpriteBatch, mCoreSpritesheet, -0.1f);
+			mScrollBar.draw(core, lSpriteBatch, mCoreSpritesheet, -0.1f, screen.screenColor.a);
 			lSpriteBatch.end();
 		}
 	}

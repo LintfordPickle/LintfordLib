@@ -264,7 +264,7 @@ public class ScrollBar extends Rectangle implements IInputProcessor, IInputClick
 		set(lX, lY, lW, lH);
 	}
 
-	public void draw(LintfordCore pCore, SpriteBatch pSpriteBatch, SpriteSheetDefinition pCoreSpritesheet, float pZDepth) {
+	public void draw(LintfordCore pCore, SpriteBatch pSpriteBatch, SpriteSheetDefinition pCoreSpritesheet, float pZDepth, float alpha) {
 		if (mIsActive == false)
 			return;
 
