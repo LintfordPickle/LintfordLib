@@ -200,6 +200,21 @@ public abstract class UIWidget extends Rectangle implements IInputProcessor {
 		mMouseTimer = 200;
 	}
 
+	@Override
+	public boolean allowGamepadInput() {
+		return true;
+	}
+
+	@Override
+	public boolean allowKeyboardInput() {
+		return true;
+	}
+
+	@Override
+	public boolean allowMouseInput() {
+		return true;
+	}
+
 	public void setClickListener(IUiWidgetInteractions callback, int clickUid) {
 		mCallback = callback;
 		mUiWidgetUid = clickUid;

@@ -544,4 +544,19 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 	public void resetCoolDownTimer() {
 		mMouseClickTimer = 200;
 	}
+
+	@Override
+	public boolean allowGamepadInput() {
+		return true;
+	}
+
+	@Override
+	public boolean allowKeyboardInput() {
+		return true;
+	}
+
+	@Override
+	public boolean allowMouseInput() {
+		return true;
+	}
 }

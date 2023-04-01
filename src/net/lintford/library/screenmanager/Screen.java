@@ -49,9 +49,15 @@ public abstract class Screen implements IInputProcessor {
 	protected boolean mAlwaysOnTop;
 	protected boolean mShowMouseCursor;
 	protected boolean mShowBackgroundScreens;
-	protected boolean mBlockInputInBackground;
-	protected boolean mAcceptMouseInput;
-	protected boolean mAcceptKeyboardInput;
+
+	public boolean acceptMouseInput;
+	public boolean acceptKeyboardInput;
+	public boolean acceptGamepadInput;
+
+	protected boolean mBlockKeyboardInputInBackground;
+	protected boolean mBlockGamepadInputInBackground;
+	protected boolean mBlockMouseInputInBackground;
+
 	protected float mMouseClickTimer;
 	protected final Vector2f mScreenOffset = new Vector2f();
 
@@ -180,6 +186,10 @@ public abstract class Screen implements IInputProcessor {
 		mResourcesLoaded = false;
 		mShowMouseCursor = true;
 
+		mBlockKeyboardInputInBackground = true;
+		mBlockMouseInputInBackground = true;
+		mBlockGamepadInputInBackground = true;
+
 		screenColor.a = 1.f;
 	}
 
@@ -225,6 +235,7 @@ public abstract class Screen implements IInputProcessor {
 
 	public void handleInput(LintfordCore core) {
 		mRendererManager.handleInput(core);
+
 		mScreenManager.core().controllerManager().handleInput(mScreenManager.core(), entityGroupUid());
 	}
 
@@ -308,6 +319,21 @@ public abstract class Screen implements IInputProcessor {
 
 	public void onViewportChange(float width, float height) {
 
+	}
+
+	@Override
+	public boolean allowGamepadInput() {
+		return acceptGamepadInput;
+	}
+
+	@Override
+	public boolean allowKeyboardInput() {
+		return acceptKeyboardInput;
+	}
+
+	@Override
+	public boolean allowMouseInput() {
+		return acceptMouseInput;
 	}
 
 	@Override

@@ -790,4 +790,19 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 	public void resetCoolDownTimer() {
 		mMouseTimer = IInputProcessor.INPUT_COOLDOWN_TIME;
 	}
+
+	@Override
+	public boolean allowGamepadInput() {
+		return false;
+	}
+
+	@Override
+	public boolean allowKeyboardInput() {
+		return true;
+	}
+
+	@Override
+	public boolean allowMouseInput() {
+		return false;
+	}
 }

@@ -7,19 +7,17 @@ import java.util.Map;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.debug.Debug;
+import net.lintford.library.core.input.mouse.IInputProcessor;
 import net.lintford.library.options.reader.IniFile;
 
 public class KeyEventActionManager extends IniFile {
-
-	// --------------------------------------
-	// Constants
-	// --------------------------------------
 
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
 	private InputManager mInputManager;
+	private IInputProcessor mInputProcessor;
 
 	private final Map<Integer, KeyEventAction> mKeyboardEventActionMap = new HashMap<>();
 	private final Map<Integer, KeyEventAction> mGamepadEventActionMap = new HashMap<>();
@@ -29,6 +27,14 @@ public class KeyEventActionManager extends IniFile {
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public void setInputProcessor(IInputProcessor inputProcessor) {
+		mInputProcessor = inputProcessor;
+	}
+
+	public void clearInputProcessor() {
+		mInputProcessor = null;
+	}
 
 	public KeyEventAction getEventActionByUid(int eventActionUid) {
 		return mKeyboardEventActionMap.get(eventActionUid);
@@ -51,15 +57,20 @@ public class KeyEventActionManager extends IniFile {
 		final var lDeltaTime = (float) core.appTime().elapsedTimeMilli();
 
 		// we poll the keyboard once for each of the registered key action events,
-		// this way the individual action players don't separately poll the keyboard and consume the key timers
+		// this way the individual action players don't separately poll the keyboard and consume the key timers.
+		// we pass the optional input process, which controls if the event manager should be listening to (keyboard) events.
 		final int lNumEventActions = mUpdateActionList.size();
 		for (int i = 0; i < lNumEventActions; i++) {
 			final var lAction = mUpdateActionList.get(i);
-			final var lIsKeyDown = mInputManager.keyboard().isKeyDown(lAction.getBoundKeyCode());
+			final var lIsKeyDown = mInputManager.keyboard().isKeyDown(lAction.getBoundKeyCode(), mInputProcessor);
 
 			lAction.incDownTimer(lDeltaTime);
 			lAction.isDown(lIsKeyDown);
 		}
+
+		// TODO: Missing Gamepad action updates
+		// and this needs to be across players ...
+
 	}
 
 	// --------------------------------------
@@ -94,14 +105,18 @@ public class KeyEventActionManager extends IniFile {
 
 	public boolean getCurrentControlActionState(int eventActionUid) {
 		var actionState = false;
-		final var lKeyboardEventAction = mKeyboardEventActionMap.get(eventActionUid);
-		if (lKeyboardEventAction != null) {
-			actionState |= lKeyboardEventAction.isDown();
+		if (mInputProcessor == null || mInputProcessor.allowKeyboardInput()) {
+			final var lKeyboardEventAction = mKeyboardEventActionMap.get(eventActionUid);
+			if (lKeyboardEventAction != null) {
+				actionState |= lKeyboardEventAction.isDown();
+			}
 		}
 
-		final var lGamepadEventAction = mGamepadEventActionMap.get(eventActionUid);
-		if (lGamepadEventAction != null) {
-			actionState |= lGamepadEventAction.isDown();
+		if (mInputProcessor == null || mInputProcessor.allowGamepadInput()) {
+			final var lGamepadEventAction = mGamepadEventActionMap.get(eventActionUid);
+			if (lGamepadEventAction != null) {
+				actionState |= lGamepadEventAction.isDown();
+			}
 		}
 
 		return actionState;
@@ -109,14 +124,18 @@ public class KeyEventActionManager extends IniFile {
 
 	public boolean getCurrentControlActionStateTimed(int eventActionUid) {
 		var actionState = false;
-		final var lKeyboardEventAction = mKeyboardEventActionMap.get(eventActionUid);
-		if (lKeyboardEventAction != null) {
-			actionState |= lKeyboardEventAction.isDownTimed();
+		if (mInputProcessor == null || mInputProcessor.allowKeyboardInput()) {
+			final var lKeyboardEventAction = mKeyboardEventActionMap.get(eventActionUid);
+			if (lKeyboardEventAction != null) {
+				actionState |= lKeyboardEventAction.isDownTimed();
+			}
 		}
 
-		final var lGamepadEventAction = mGamepadEventActionMap.get(eventActionUid);
-		if (lGamepadEventAction != null) {
-			actionState |= lGamepadEventAction.isDownTimed();
+		if (mInputProcessor == null || mInputProcessor.allowGamepadInput()) {
+			final var lGamepadEventAction = mGamepadEventActionMap.get(eventActionUid);
+			if (lGamepadEventAction != null) {
+				actionState |= lGamepadEventAction.isDownTimed();
+			}
 		}
 
 		return actionState;

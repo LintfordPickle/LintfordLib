@@ -426,6 +426,21 @@ public class DebugStats extends Rectangle implements IScrollBarArea, IInputProce
 	};
 
 	@Override
+	public boolean allowGamepadInput() {
+		return false;
+	}
+
+	@Override
+	public boolean allowKeyboardInput() {
+		return true;
+	}
+
+	@Override
+	public boolean allowMouseInput() {
+		return false;
+	}
+
+	@Override
 	public Rectangle contentDisplayArea() {
 		return this;
 	}

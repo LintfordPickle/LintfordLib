@@ -654,6 +654,21 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 	}
 
 	@Override
+	public boolean allowGamepadInput() {
+		return mParentScreen.allowGamepadInput();
+	}
+
+	@Override
+	public boolean allowKeyboardInput() {
+		return mParentScreen.allowKeyboardInput();
+	}
+
+	@Override
+	public boolean allowMouseInput() {
+		return mParentScreen.allowMouseInput();
+	}
+
+	@Override
 	public boolean isCoolDownElapsed() {
 		return mClickTimer < 0;
 	}

@@ -45,6 +45,8 @@ public abstract class BaseGameScreen extends Screen {
 
 		mSingletonScreen = true;
 
+		mScreenManager.core().input().eventActionManager().setInputProcessor(this);
+
 		mGameInputLogicalCounter = new LogicialCounter();
 		mGameDrawLogicalCounter = new LogicialCounter();
 	}
@@ -110,6 +112,7 @@ public abstract class BaseGameScreen extends Screen {
 	public void exitScreen() {
 		super.exitScreen();
 
+		mScreenManager.core().input().eventActionManager().setInputProcessor(null);
 		mScreenManager.core().removeGameCamera();
 	}
 }

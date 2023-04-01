@@ -21,7 +21,7 @@ public class ActionEventManager {
 	public enum PlaybackMode {
 		Normal,   // The manager is largely inactive, providing neither playback of a file nor recording of actions to a file.
 		Record,   // The manager actively records input and state and stores into the file (mFilename)
-		Playback      // The manager actively reads input and state and exposes the data in the headerByteBuffer and dataByteBuffer.
+		Playback  // The manager actively reads input and state and exposes the data in the headerByteBuffer and dataByteBuffer.
 	}
 	// @formatter:on
 

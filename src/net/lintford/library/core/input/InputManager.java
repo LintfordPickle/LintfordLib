@@ -13,7 +13,7 @@ public class InputManager {
 	// --------------------------------------
 
 	public enum INPUT_TYPES {
-		Mouse, Keyboard,
+		Mouse, Keyboard, Gamepad,
 	}
 
 	public static final String InputConfigFilename = "keybindings.ini";

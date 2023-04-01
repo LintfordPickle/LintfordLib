@@ -22,10 +22,10 @@ public class ScreenManager implements IInputClickedFocusManager {
 	// Constants
 	// --------------------------------------
 
-	public static final String FONT_MENU_TITLE_NAME      = "FONT_TITLE";
+	public static final String FONT_MENU_TITLE_NAME = "FONT_TITLE";
 	public static final String FONT_MENU_BOLD_ENTRY_NAME = "FONT_BOLD_ENTRY";
-	public static final String FONT_MENU_ENTRY_NAME      = "FONT_ENTRY";
-	public static final String FONT_MENU_TOOLTIP_NAME    = "FONT_MENU_TOOLTIP_NAME";
+	public static final String FONT_MENU_ENTRY_NAME = "FONT_ENTRY";
+	public static final String FONT_MENU_TOOLTIP_NAME = "FONT_MENU_TOOLTIP_NAME";
 
 	// --------------------------------------
 	// Variables
@@ -36,6 +36,7 @@ public class ScreenManager implements IInputClickedFocusManager {
 	private final List<Screen> mScreens = new ArrayList<>();
 	private final List<Screen> mScreensToUpdate = new ArrayList<>();
 	private final List<Screen> mScreensToAdd = new ArrayList<>();
+
 	private ToolTip mToolTip;
 	private ContextHintManager mContextHintManager;
 	private ResourceManager mResourceManager;
@@ -190,24 +191,24 @@ public class ScreenManager implements IInputClickedFocusManager {
 		if (mScreens == null || mScreens.size() == 0)
 			return;
 
-		boolean lInputBlockedByHigherScreen = false;
+		var acceptKeyboardInput = true;
+		var acceptGamepadInput = true;
+		var acceptMouseInput = true;
 
 		final int lScreenCount = mScreens.size() - 1;
 		for (int i = lScreenCount; i >= 0; i--) {
 			final var lScreen = mScreens.get(i);
 
-			if (lInputBlockedByHigherScreen) {
-				core.input().mouse().tryAcquireMouseMiddle(hashCode());
-			}
+			lScreen.acceptKeyboardInput = acceptKeyboardInput;
+			lScreen.acceptGamepadInput = acceptGamepadInput;
+			lScreen.acceptMouseInput = acceptMouseInput;
 
-			lScreen.mAcceptMouseInput = !lInputBlockedByHigherScreen;
-			lScreen.mAcceptKeyboardInput = !lInputBlockedByHigherScreen;
-
-			if (!lInputBlockedByHigherScreen && lScreen.screenState() == ScreenState.Active) {
+			if (lScreen.screenState() == ScreenState.Active)
 				lScreen.handleInput(core);
-			}
 
-			lInputBlockedByHigherScreen = lInputBlockedByHigherScreen || lScreen.mBlockInputInBackground;
+			acceptKeyboardInput = acceptKeyboardInput && !lScreen.mBlockKeyboardInputInBackground;
+			acceptGamepadInput = acceptGamepadInput && !lScreen.mBlockGamepadInputInBackground;
+			acceptMouseInput = acceptMouseInput && !lScreen.mBlockMouseInputInBackground;
 		}
 
 		if (mTrackedInputControl != null) {

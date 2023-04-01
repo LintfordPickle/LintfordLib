@@ -67,8 +67,23 @@ public abstract class ActionEventController<T extends IActionFrame> extends Base
 		public void resetCoolDownTimer() {
 			mMouseClickTimer = MOUSE_CLICK_COOLDOWN_TIME;
 		}
+
+		@Override
+		public boolean allowGamepadInput() {
+			return true;
+		}
+
+		@Override
+		public boolean allowKeyboardInput() {
+			return true;
+		}
+
+		@Override
+		public boolean allowMouseInput() {
+			return true;
+		}
 	}
-	
+
 	// ---------------------------------------------
 	// Constants
 	// ---------------------------------------------
@@ -214,7 +229,7 @@ public abstract class ActionEventController<T extends IActionFrame> extends Base
 		super.update(core);
 	}
 
-	public void onExitingGame() {
+	public void finalizeInputFile() {
 		// save any recorders into their files
 		final int numActionPlayers = mActionEventPlayers.size();
 		for (int i = 0; i < numActionPlayers; i++) {

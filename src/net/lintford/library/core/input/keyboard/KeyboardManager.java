@@ -120,6 +120,13 @@ public class KeyboardManager {
 	// Properties
 	// --------------------------------------
 
+	public boolean isKeyDown(int keyCode, IInputProcessor inputProcessor) {
+		if (inputProcessor != null && inputProcessor.allowKeyboardInput() == false)
+			return false;
+
+		return isKeyDown(keyCode);
+	}
+
 	public boolean isKeyDown(int keyCode) {
 		if (keyCode >= KEY_LIMIT) {
 			Debug.debugManager().logger().e(getClass().getSimpleName(), "Key " + keyCode + " out of range! ");
@@ -130,6 +137,9 @@ public class KeyboardManager {
 	}
 
 	public boolean isKeyDownTimed(int keyCode, IInputProcessor inputProcessor) {
+		if (inputProcessor.allowKeyboardInput() == false)
+			return false;
+
 		if (inputProcessor.isCoolDownElapsed() == false)
 			return false;
 

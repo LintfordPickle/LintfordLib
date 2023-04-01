@@ -8,4 +8,10 @@ public interface IInputProcessor {
 
 	void resetCoolDownTimer();
 
+	boolean allowKeyboardInput();
+
+	boolean allowGamepadInput();
+
+	boolean allowMouseInput();
+
 }

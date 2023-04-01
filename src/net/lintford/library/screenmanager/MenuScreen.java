@@ -125,7 +125,9 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		mShowBackgroundScreens = false;
 
 		mMenuTitle = menuTitle;
-		mBlockInputInBackground = true;
+		mBlockKeyboardInputInBackground = true;
+		mBlockMouseInputInBackground = true;
+		mBlockGamepadInputInBackground = true;
 
 		mPaddingTopNormalized = 0.f;
 		mPaddingBottomNormalized = 0.f;
@@ -468,7 +470,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	}
 
 	@Override
-	public void menuEntryOnClick(InputManager inputState, int entryUid) {
+	public void menuEntryOnClick(InputManager inputState, int entryUid) {	
 		mClickAction.setNewClick(entryUid);
 		mAnimationTimer = ANIMATION_TIMER_LENGTH * 2f;
 	}
@@ -571,6 +573,9 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		if (mActiveEntry != null)
 			return;
 
+		if (acceptGamepadInput == false && acceptKeyboardInput == false)
+			return;
+		
 		core.input().mouse().isMouseMenuSelectionEnabled(false);
 		getPreviousEnabledEntry();
 
@@ -583,6 +588,9 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 	protected void onNavigationDown(LintfordCore core) {
 		if (mActiveEntry != null)
+			return;
+
+		if (acceptGamepadInput == false && acceptKeyboardInput == false)
 			return;
 
 		core.input().mouse().isMouseMenuSelectionEnabled(false);

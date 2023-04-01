@@ -199,4 +199,19 @@ public class MusicController extends BaseController implements IInputProcessor {
 		mInputTimer = IInputProcessor.INPUT_COOLDOWN_TIME;
 
 	}
+
+	@Override
+	public boolean allowGamepadInput() {
+		return true;
+	}
+
+	@Override
+	public boolean allowKeyboardInput() {
+		return true;
+	}
+
+	@Override
+	public boolean allowMouseInput() {
+		return true;
+	}
 }

@@ -334,6 +334,21 @@ public class ScrollBarHorizontal extends Rectangle implements IInputProcessor, I
 
 	}
 
+	@Override
+	public boolean allowGamepadInput() {
+		return false;
+	}
+
+	@Override
+	public boolean allowKeyboardInput() {
+		return false;
+	}
+
+	@Override
+	public boolean allowMouseInput() {
+		return true;
+	}
+
 	public float currentXPos() {
 		return mScrollPosition;
 	}

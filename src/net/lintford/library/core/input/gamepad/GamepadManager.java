@@ -59,7 +59,6 @@ public class GamepadManager extends GLFWJoystickCallback {
 	// --------------------------------------
 
 	public GamepadManager() {
-
 	}
 
 	// --------------------------------------
@@ -121,6 +120,9 @@ public class GamepadManager extends GLFWJoystickCallback {
 	}
 
 	public boolean isGamepadButtonDownTimed(int glfwGamepadButtonIndex, IInputProcessor inputProcessor) {
+		if (inputProcessor.allowGamepadInput() == false)
+			return false;
+
 		if (inputProcessor.isCoolDownElapsed() == false)
 			return false;
 

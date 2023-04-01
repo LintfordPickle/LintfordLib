@@ -173,4 +173,19 @@ public class HorizontalLayout extends BaseLayout implements IInputProcessor {
 
 	}
 
+	@Override
+	public boolean allowGamepadInput() {
+		return parentScreen.allowGamepadInput();
+	}
+
+	@Override
+	public boolean allowKeyboardInput() {
+		return parentScreen.allowKeyboardInput();
+	}
+
+	@Override
+	public boolean allowMouseInput() {
+		return parentScreen.allowMouseInput();
+	}
+
 }

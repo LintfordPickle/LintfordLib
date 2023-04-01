@@ -312,4 +312,19 @@ public class DebugRendererTreeRenderer extends Rectangle implements IScrollBarAr
 	public void resetCoolDownTimer() {
 		mClickTimer = 200;
 	}
+
+	@Override
+	public boolean allowGamepadInput() {
+		return false;
+	}
+
+	@Override
+	public boolean allowKeyboardInput() {
+		return true;
+	}
+
+	@Override
+	public boolean allowMouseInput() {
+		return true;
+	}
 }
