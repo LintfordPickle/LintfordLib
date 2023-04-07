@@ -145,7 +145,7 @@ public class ContextHintManager {
 		}
 
 		mPositionMarker.x -= cIconSize;
-		spriteBatch.draw(mSpritesheetDefinition, mSpritesheetDefinition.getSpriteFrame(spriteFrameIndex), mPositionMarker.x, mPositionMarker.y, cIconSize, cIconSize, -0.01f, ColorConstants.WHITE);
+		spriteBatch.draw(mSpritesheetDefinition, mSpritesheetDefinition.getSpriteFrame(spriteFrameIndex), mPositionMarker.x, mPositionMarker.y + 4, cIconSize, cIconSize, -0.01f, ColorConstants.WHITE);
 		mPositionMarker.x -= cSpacing;
 	}
 
