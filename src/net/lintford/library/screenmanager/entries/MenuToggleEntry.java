@@ -58,7 +58,7 @@ public class MenuToggleEntry extends MenuEntry {
 
 		mHighlightOnHover = false;
 		mDrawBackground = false;
-		
+
 		contextHintState.buttonAHint = "toggle";
 	}
 
@@ -124,14 +124,14 @@ public class MenuToggleEntry extends MenuEntry {
 
 		// Render the check box (either ticked or empty)
 		if (mIsChecked)
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_TICK, lScreenOffset.x + mX + mW / 2 + 16, lScreenOffset.y + mY + mH / 2 - lTileSize / 2, lTileSize, lTileSize, mZ, entryColor);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_TICK, lScreenOffset.x + mX + mW / 2 + 16, lScreenOffset.y + mY, lTileSize, lTileSize, mZ, entryColor);
 		else
 			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_CROSS, lScreenOffset.x + centerX() + lTileSize / 2, lScreenOffset.y + mY + mH / 2 - lTileSize / 2, lTileSize, lTileSize, mZ, entryColor);
 
 		lSpriteBatch.end();
 
 		lTextBoldFont.begin(core.HUD());
-		lTextBoldFont.drawText(mText, lScreenOffset.x + mX + mW / 2 - lLabelWidth - SPACE_BETWEEN_TEXT - lSeparatorHalfWidth, lScreenOffset.y + mY + mH / 2 - lTextHeight * 0.5f, mZ, textColor, lUiTextScale, -1);
+		lTextBoldFont.drawText(mText, lScreenOffset.x + mX + mW / 2 - lLabelWidth - SPACE_BETWEEN_TEXT - lSeparatorHalfWidth, lScreenOffset.y + mY + 32 / 2 - lTextHeight * 0.5f, mZ, textColor, lUiTextScale, -1);
 		lTextBoldFont.drawText(mSeparator, lScreenOffset.x + mX + mW / 2 - lSeparatorHalfWidth, lScreenOffset.y + mY + mH / 2 - lTextHeight * 0.5f, mZ, textColor, lUiTextScale, -1);
 
 		if (mIsChecked)
