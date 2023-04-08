@@ -36,7 +36,6 @@ public class HUD implements ICamera, IResizeListener {
 	private int mWindowHeight;
 	protected final Vector2f mScaleRatio = new Vector2f();
 	private final Vector2f position = new Vector2f();
-	private float mScaleFactor;
 	private Matrix4f mProjectionMatrix;
 	private Matrix4f mViewMatrix;
 	private Vector2f mMouseHUDSpace;
@@ -113,7 +112,6 @@ public class HUD implements ICamera, IResizeListener {
 		mViewMatrix = new Matrix4f();
 
 		mMouseHUDSpace = new Vector2f();
-		mScaleFactor = 1.f;
 	}
 
 	// --------------------------------------
@@ -125,14 +123,7 @@ public class HUD implements ICamera, IResizeListener {
 		float lWindowWidth = mWindowWidth;
 		float lWindowHeight = mWindowHeight;
 
-		if (mDisplayConfig.stretchGameScreen()) {
-			lWindowWidth = mDisplayConfig.uiResolutionWidth();
-			lWindowHeight = mDisplayConfig.uiResolutionHeight();
-
-			mScaleRatio.set((lWindowWidth / (float) mDisplayConfig.windowWidth()), (lWindowHeight / (float) mDisplayConfig.windowHeight()));
-		} else {
-			mScaleRatio.set((mWindowWidth / (float) mDisplayConfig.windowWidth()), (mWindowHeight / (float) mDisplayConfig.windowHeight()));
-		}
+		mScaleRatio.set((mWindowWidth / (float) mDisplayConfig.windowWidth()), (mWindowHeight / (float) mDisplayConfig.windowHeight()));
 
 		mMouseHUDSpace.x = -lWindowWidth * .5f + (core.input().mouse().mouseWindowCoords().x) * mScaleRatio.x;
 		mMouseHUDSpace.y = -lWindowHeight * .5f + (core.input().mouse().mouseWindowCoords().y) * mScaleRatio.y;
@@ -154,24 +145,14 @@ public class HUD implements ICamera, IResizeListener {
 
 		mViewMatrix.setIdentity();
 		mViewMatrix.translate(position.x, position.y, 0);
-		mViewMatrix.scale(mScaleFactor, mScaleFactor, 1.f);
+		mViewMatrix.scale(1.f, 1.f, 1.f);
 
-		if (mDisplayConfig.stretchGameScreen()) {
-			createOrtho(mDisplayConfig.uiResolutionWidth(), mDisplayConfig.uiResolutionHeight());
+		createOrtho(mWindowWidth, mWindowHeight);
 
-			mBoundingRectangle.width(mDisplayConfig.uiResolutionWidth());
-			mBoundingRectangle.height(mDisplayConfig.uiResolutionHeight());
-			mBoundingRectangle.setCenterPosition(0, 0);
+		mBoundingRectangle.width(mWindowWidth);
+		mBoundingRectangle.height(mWindowHeight);
+		mBoundingRectangle.setCenterPosition(0, 0);
 
-			mWindowWidth = mDisplayConfig.uiResolutionWidth();
-			mWindowHeight = mDisplayConfig.uiResolutionHeight();
-		} else {
-			createOrtho(mWindowWidth, mWindowHeight);
-
-			mBoundingRectangle.width(mWindowWidth);
-			mBoundingRectangle.height(mWindowHeight);
-			mBoundingRectangle.setCenterPosition(0, 0);
-		}
 	}
 
 	// --------------------------------------
@@ -233,12 +214,15 @@ public class HUD implements ICamera, IResizeListener {
 
 	@Override
 	public float getZoomFactor() {
-		return mScaleFactor;
+		return 1.f;
 	}
 
+	/**
+	 * Hud camera has no scaling. ZoomFactor is always 1.f
+	 */
 	@Override
 	public void setZoomFactor(float zoomFactor) {
-		mScaleFactor = zoomFactor;
+
 	}
 
 	@Override

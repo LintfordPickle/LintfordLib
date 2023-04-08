@@ -70,9 +70,7 @@ public class HorizontalLayout extends BaseLayout implements IInputProcessor {
 	public void updateStructure() {
 		super.updateStructure();
 
-		final var lUiStructureController = parentScreen.screenManager().UiStructureController();
 		final float lTitleHeight = mShowTitle ? parentScreen.rendererManager().headerFontHeight() : 0.f;
-		final float lWindowScaleFactorX = lUiStructureController.gameCanvasWScaleFactor();
 
 		float lYPos = mY + mEntryOffsetFromTop + lTitleHeight + mScrollBar.currentYPos() + mCropPaddingTop + paddingTop();
 
@@ -118,8 +116,8 @@ public class HorizontalLayout extends BaseLayout implements IInputProcessor {
 			if (mScrollBar.scrollBarEnabled())
 				lScrollBarWidth = mScrollBar.width();
 
-			final float lSpacingLeft = (mLeftPadding + lMenuEntry.marginLeft()) * lWindowScaleFactorX;
-			final float lSpacingRight = (mRightPadding + lMenuEntry.marginRight()) * lWindowScaleFactorX;
+			final float lSpacingLeft = mLeftPadding + lMenuEntry.marginLeft();
+			final float lSpacingRight = mRightPadding + lMenuEntry.marginRight();
 
 			final float lNewEntryWidth = mW - lSpacingLeft - lSpacingRight - lScrollBarWidth;
 
@@ -132,7 +130,7 @@ public class HorizontalLayout extends BaseLayout implements IInputProcessor {
 			} else if (lMenuEntry.horizontalFillType() == FILLTYPE.THREEQUARTER_PARENT) {
 				lMenuEntry.width(lNewEntryWidth * .75f);
 			} else if (lMenuEntry.horizontalFillType() == FILLTYPE.TAKE_DESIRED_SIZE) {
-				lMenuEntry.width(MathHelper.clamp(lMenuEntry.desiredWidth() * lUiStructureController.uiCanvasWScaleFactor(), lMenuEntry.minWidth(), lMenuEntry.maxWidth()));
+				lMenuEntry.width(MathHelper.clamp(lMenuEntry.desiredWidth(), lMenuEntry.minWidth(), lMenuEntry.maxWidth()));
 			} else {
 				lMenuEntry.width(lNewEntryWidth);
 			}

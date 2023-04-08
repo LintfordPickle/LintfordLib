@@ -49,8 +49,6 @@ import net.lintford.library.GameInfo;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.debug.GLDebug;
-import net.lintford.library.core.debug.stats.DebugStatTagString;
-import net.lintford.library.core.debug.stats.DebugStats;
 import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.options.reader.IniFile;
 
@@ -72,8 +70,6 @@ public class DisplayManager extends IniFile {
 
 	public boolean VBOS_ENABLED = true;
 	public boolean FBOS_ENABLED = true;
-
-	public boolean RENDER_NODE_COLLISION_OUTLINE = false;
 
 	public boolean RENDER_NODE_SHADOWS = false;
 	public boolean RENDER_CELL_LIGHTING = true;
@@ -106,6 +102,7 @@ public class DisplayManager extends IniFile {
 	private long mOffscreenWindowId;
 
 	private boolean mStretchGameScreen = false;
+
 	private boolean mRecompileShaders = false;
 
 	private final int mGameResolutionWidth;

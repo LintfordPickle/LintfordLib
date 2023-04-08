@@ -85,13 +85,6 @@ public interface GameInfo {
 	}
 
 	/**
-	 * If return value is true, the game will use a constant size backbuffer to render the game, which will be stretched to fit the window.
-	 */
-	public default boolean stretchGameViewportToWindow() {
-		return false;
-	}
-
-	/**
 	 * If return value is true, the {@link DisplayManager} will take the aspect ratio into account when stretching the back buffer to fit the window.
 	 */
 	public default boolean maintainAspectRatio() {

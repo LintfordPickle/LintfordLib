@@ -100,7 +100,6 @@ public class UiButtonToggle extends UIWidget {
 
 	@Override
 	public void draw(LintfordCore core, SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheet, FontUnit textFont, float componentZDepth) {
-		final float lCanvasScale = mParentWindow != null ? mParentWindow.uiStructureController().uiCanvasWScaleFactor() : 1.0f;
 		final float lColorMod = mIsToggledOn ? 0.65f : mIsHoveredOver ? .9f : 1.f;
 
 		final var lColor = ColorConstants.getColorWithRGBMod(entityColor, lColorMod);
@@ -111,8 +110,8 @@ public class UiButtonToggle extends UIWidget {
 		spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X1_RIGHT, mX + mW - lTileSize, mY, lTileSize, mH, componentZDepth, lColor);
 
 		final var lButtonText = mButtonLabel != null ? mButtonLabel : NO_LABEL_TEXT;
-		final var lTextWidth = textFont.getStringWidth(lButtonText, lCanvasScale);
+		final var lTextWidth = textFont.getStringWidth(lButtonText);
 
-		textFont.drawText(lButtonText, mX + mW / 2f - lTextWidth / 2f, mY + mH / 2f - textFont.fontHeight() / 2f, componentZDepth, ColorConstants.WHITE, lCanvasScale);
+		textFont.drawText(lButtonText, mX + mW / 2f - lTextWidth / 2f, mY + mH / 2f - textFont.fontHeight() / 2f, componentZDepth, ColorConstants.WHITE, 1.f);
 	}
 }

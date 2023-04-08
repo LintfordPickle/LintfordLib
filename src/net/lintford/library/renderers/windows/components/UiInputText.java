@@ -179,11 +179,10 @@ public class UiInputText extends UIWidget implements IBufferedTextInputCallback 
 		if (mIsReadonly)
 			return;
 
-		final float lCanvasScale = mParentWindow != null ? mParentWindow.uiStructureController().uiCanvasWScaleFactor() : 1.0f;
 		mCaretFlashTimer += core.appTime().elapsedTimeMilli();
 
 		final int lCancelRectSize = 16;
-		mCancelRectangle.set(mX + mW - lCancelRectSize * lCanvasScale, mY + mH / 2 * lCanvasScale - lCancelRectSize / 2 * lCanvasScale, lCancelRectSize * lCanvasScale, lCancelRectSize * lCanvasScale);
+		mCancelRectangle.set(mX + mW - lCancelRectSize, mY + mH / 2 - lCancelRectSize / 2, lCancelRectSize, lCancelRectSize);
 
 		if (mHasFocus) {
 			if (mCaretFlashTimer > ConstantsUi.CARET_FLASH_TIME) {
@@ -198,12 +197,10 @@ public class UiInputText extends UIWidget implements IBufferedTextInputCallback 
 
 	@Override
 	public void draw(LintfordCore core, SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheetDefinition, FontUnit textFont, float componentZDepth) {
-		final float lCanvasScale = mParentWindow != null ? mParentWindow.uiStructureController().uiCanvasWScaleFactor() : 1.0f;
-
-		spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_LEFT, (int) mX, mY, 32 * lCanvasScale, mH * lCanvasScale, componentZDepth, ColorConstants.MenuPanelPrimaryColor);
+		spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_LEFT, (int) mX, mY, 32, mH, componentZDepth, ColorConstants.MenuPanelPrimaryColor);
 		if (mW > 32) {
-			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_MID, (int) mX + 32 * lCanvasScale, mY, mW - 64 * lCanvasScale, mH * lCanvasScale, componentZDepth, ColorConstants.MenuPanelPrimaryColor);
-			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_RIGHT, (int) mX + mW - 32 * lCanvasScale, mY, 32 * lCanvasScale, mH * lCanvasScale, componentZDepth, ColorConstants.MenuPanelPrimaryColor);
+			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_MID, (int) mX + 32, mY, mW - 64, mH, componentZDepth, ColorConstants.MenuPanelPrimaryColor);
+			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_RIGHT, (int) mX + mW - 32, mY, 32, mH, componentZDepth, ColorConstants.MenuPanelPrimaryColor);
 		}
 
 		final var lEraserColor = mCancelRectHovered ? ColorConstants.WHITE : ColorConstants.getWhiteWithAlpha(.5f);
@@ -225,10 +222,9 @@ public class UiInputText extends UIWidget implements IBufferedTextInputCallback 
 		if (isReadonly())
 			lTextColor = ColorConstants.GREY_DARK;
 
-		textFont.drawText(lText, mX + 10, mY + mH * .5f - lTextHeight * .5f, componentZDepth, lTextColor, lCanvasScale, -1);
+		textFont.drawText(lText, mX + 10, mY + mH * .5f - lTextHeight * .5f, componentZDepth, lTextColor, -1);
 		if (mShowCaret && mHasFocus) {
-			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, mX + lInputTextWidth * lCanvasScale + 10, mY + mH * .5f * lCanvasScale - lTextHeight * .5f * lCanvasScale, textFont.fontHeight() / 2.f * lCanvasScale,
-					textFont.fontHeight() * lCanvasScale, componentZDepth, ColorConstants.WHITE);
+			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, mX + lInputTextWidth + 10, mY + mH * .5f - lTextHeight * .5f, textFont.fontHeight() / 2.f, textFont.fontHeight(), componentZDepth, ColorConstants.WHITE);
 		}
 	}
 

@@ -169,7 +169,6 @@ public class UiEnumSelection extends UIWidget {
 		if (!mIsVisible)
 			return;
 
-		final var lCanvasScale = mParentWindow != null ? mParentWindow.uiStructureController().uiCanvasWScaleFactor() : 1.0f;
 		final var lColor = ColorConstants.getColorWithRGBMod(entityColor, 1.f);
 
 		final var lTileSize = 32;
@@ -178,26 +177,26 @@ public class UiEnumSelection extends UIWidget {
 		spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X1_RIGHT, mX + mW - lTileSize, mY, lTileSize, mH, componentZDepth, lColor);
 
 		final var lSelectionText = (mItems.size() > 0 ? (mSelectedIndex + 1) + "/" + mItems.size() : "0");
-		final var lSelectionTextWidth = textFont.getStringWidth(lSelectionText, lCanvasScale);
-		textFont.drawText(lSelectionText, mX + mW - lSelectionTextWidth - ARROW_PADDING, mY + ARROW_PADDING, componentZDepth, ColorConstants.WHITE, lCanvasScale);
+		final var lSelectionTextWidth = textFont.getStringWidth(lSelectionText);
+		final var lScale = 1.f;
+		textFont.drawText(lSelectionText, mX + mW - lSelectionTextWidth - ARROW_PADDING, mY + ARROW_PADDING, componentZDepth, ColorConstants.WHITE, lScale);
 
 		final var lLabelText = mButtonLabel != null ? mButtonLabel : NO_LABEL_TEXT;
 
 		spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_SCROLLBAR_LEFT, mLeftRectangle, componentZDepth, lColor);
 		spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_SCROLLBAR_RIGHT, mRightRectangle, componentZDepth - 0.01f, lColor);
 
-		textFont.drawText(lLabelText, mX + ARROW_PADDING, mY + ARROW_PADDING, componentZDepth, ColorConstants.WHITE, lCanvasScale);
+		textFont.drawText(lLabelText, mX + ARROW_PADDING, mY + ARROW_PADDING, componentZDepth, ColorConstants.WHITE, lScale);
 
 		if (mSelectedIndex >= 0 && mSelectedIndex < mItems.size()) {
 			final var lItem = mItems.get(mSelectedIndex);
 			final var lItemDisplayName = lItem.displayName;
-			final var lNoTextWidth = textFont.getStringWidth(lItemDisplayName, lCanvasScale);
-			textFont.drawText(lItemDisplayName, mX + mW / 2f - lNoTextWidth / 2f, mY + mH - ARROW_SIZE - ARROW_PADDING, componentZDepth, ColorConstants.WHITE, lCanvasScale);
+			final var lNoTextWidth = textFont.getStringWidth(lItemDisplayName);
+			textFont.drawText(lItemDisplayName, mX + mW / 2f - lNoTextWidth / 2f, mY + mH - ARROW_SIZE - ARROW_PADDING, componentZDepth, ColorConstants.WHITE, lScale);
 		} else {
 			final var lNoItemSelectedText = "nothing";
-			final var lNoTextWidth = textFont.getStringWidth(lNoItemSelectedText, lCanvasScale);
-			textFont.drawText(lNoItemSelectedText, mX + mW / 2f - lNoTextWidth / 2f, mY + mH - ARROW_SIZE - ARROW_PADDING, componentZDepth, ColorConstants.WHITE, lCanvasScale);
+			final var lNoTextWidth = textFont.getStringWidth(lNoItemSelectedText);
+			textFont.drawText(lNoItemSelectedText, mX + mW / 2f - lNoTextWidth / 2f, mY + mH - ARROW_SIZE - ARROW_PADDING, componentZDepth, ColorConstants.WHITE, lScale);
 		}
-
 	}
 }

@@ -1,6 +1,6 @@
 package net.lintford.library.renderers.debug;
 
-import net.lintford.library.controllers.hud.UiStructureController;
+import net.lintford.library.controllers.hud.HudLayoutController;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.renderers.BaseRenderer;
@@ -18,7 +18,7 @@ public class DebugMenuUiStructureDrawer extends BaseRenderer {
 	// Variables
 	// --------------------------------------
 
-	private UiStructureController mUiStructureController;
+	private HudLayoutController mUiStructureController;
 
 	// --------------------------------------
 	// Properties
@@ -45,7 +45,7 @@ public class DebugMenuUiStructureDrawer extends BaseRenderer {
 
 	@Override
 	public void initialize(LintfordCore core) {
-		mUiStructureController = (UiStructureController) core.controllerManager().getControllerByNameRequired(UiStructureController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
+		mUiStructureController = (HudLayoutController) core.controllerManager().getControllerByNameRequired(HudLayoutController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
 	}
 
 	@Override
@@ -54,7 +54,7 @@ public class DebugMenuUiStructureDrawer extends BaseRenderer {
 			return;
 
 		if (mUiStructureController == null) {
-			mUiStructureController = (UiStructureController) core.controllerManager().getControllerByNameRequired(UiStructureController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
+			mUiStructureController = (HudLayoutController) core.controllerManager().getControllerByNameRequired(HudLayoutController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
 
 		} else {
 			Debug.debugManager().drawers().drawRectImmediate(core.HUD(), mUiStructureController.menuTitleRectangle(), 0f, 1f, 0f);

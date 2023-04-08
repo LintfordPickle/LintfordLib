@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.lwjgl.opengl.GL11;
 
-import net.lintford.library.controllers.hud.UiStructureController;
+import net.lintford.library.controllers.hud.HudLayoutController;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.Debug;
@@ -62,7 +62,7 @@ public class RendererManager implements IInputClickedFocusManager {
 	/** Tracks the number of times a loadResources method is called using this renderManager/entityGroupId */
 	private int mSharedGlContentCount;
 
-	private UiStructureController mUiStructureController;
+	private HudLayoutController mUiStructureController;
 	private List<BaseRenderer> mRenderers;
 	private List<UiWindow> mWindowRenderers;
 
@@ -205,7 +205,7 @@ public class RendererManager implements IInputClickedFocusManager {
 		return mWindowRenderers;
 	}
 
-	public UiStructureController uiStructureController() {
+	public HudLayoutController uiStructureController() {
 		return mUiStructureController;
 	}
 
@@ -244,7 +244,7 @@ public class RendererManager implements IInputClickedFocusManager {
 	// --------------------------------------
 
 	public void initialize() {
-		mUiStructureController = (UiStructureController) mCore.controllerManager().getControllerByNameRequired(UiStructureController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
+		mUiStructureController = (HudLayoutController) mCore.controllerManager().getControllerByNameRequired(HudLayoutController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
 
 		final int lRendererCount = mRenderers.size();
 		for (int i = 0; i < lRendererCount; i++) {

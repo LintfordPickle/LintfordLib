@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.lintford.library.ConstantsApp;
-import net.lintford.library.controllers.hud.UiStructureController;
+import net.lintford.library.controllers.hud.HudLayoutController;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.camera.ICamera;
@@ -53,7 +53,7 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 
 	// This is the area that the content would take up, if not limited by the window bounds (i.e. the area of the 'content' visualisation).
 	protected ScrollBarContentRectangle mFullContentRectangle;
-	protected UiStructureController mUiStructureController;
+	protected HudLayoutController mUiStructureController;
 
 	protected boolean mUiInputFromUiManager;
 	protected boolean mIsWindowMoveable;
@@ -93,7 +93,7 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 	// Properties
 	// --------------------------------------
 
-	public UiStructureController uiStructureController() {
+	public HudLayoutController uiStructureController() {
 		return mUiStructureController;
 	}
 
@@ -256,7 +256,7 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 
 	@Override
 	public void initialize(LintfordCore core) {
-		mUiStructureController = (UiStructureController) core.controllerManager().getControllerByName(UiStructureController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
+		mUiStructureController = (HudLayoutController) core.controllerManager().getControllerByName(HudLayoutController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
 	}
 
 	public void loadResources(ResourceManager resourceManager) {
@@ -384,7 +384,7 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 			return;
 
 		if (mUiStructureController == null) {
-			mUiStructureController = (UiStructureController) core.controllerManager().getControllerByName(UiStructureController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
+			mUiStructureController = (HudLayoutController) core.controllerManager().getControllerByName(HudLayoutController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
 			if (mUiStructureController == null)
 				return;
 		}
@@ -442,14 +442,11 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 		if (lHUDBoundingRect == null)
 			return;
 
-		final float lWindowScaleFactorX = mUiStructureController.gameCanvasWScaleFactor();
-		final float lWindowScaleFactorY = mUiStructureController.gameCanvasHScaleFactor();
+		final float lScreenPaddingX = ConstantsUi.UI_WINDOW_PADDING_X;
+		final float lScreenPaddingY = ConstantsUi.UI_WINDOW_PADDING_Y;
 
-		final float lScreenPaddingX = ConstantsUi.UI_WINDOW_PADDING_X * lWindowScaleFactorX;
-		final float lScreenPaddingY = ConstantsUi.UI_WINDOW_PADDING_Y * lWindowScaleFactorY;
-
-		final float lWindowPaddingX = (paddingLeft() + paddingRight()) * lWindowScaleFactorX;
-		final float lWindowPaddingY = (paddingTop() + paddingBottom()) * lWindowScaleFactorY;
+		final float lWindowPaddingX = (paddingLeft() + paddingRight());
+		final float lWindowPaddingY = (paddingTop() + paddingBottom());
 
 		final var lX = lHUDBoundingRect.left() + lScreenPaddingX;
 		final var lY = lHUDBoundingRect.top() + lScreenPaddingY;
@@ -475,20 +472,18 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 
 	protected void updateWindowScales(LintfordCore core) {
 		if (mUiStructureController == null)
-			mUiStructureController = (UiStructureController) core.controllerManager().getControllerByName(UiStructureController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
+			mUiStructureController = (HudLayoutController) core.controllerManager().getControllerByName(HudLayoutController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
 
 		final var lUiScaleFactor = mUiStructureController.uiScaleFactor();
-		final var lUiScaleX = mUiStructureController.uiCanvasWScaleFactor();
-		final var lUiScaleY = mUiStructureController.uiCanvasHScaleFactor();
 
-		final var MAX_TITLEBAR_HEIGHT = 32.f * lUiScaleY;
+		final var MAX_TITLEBAR_HEIGHT = 32.f;
 		final var lUiWindowReferenceWidth = ConstantsUi.UI_WINDOW_REFERENCE_WIDTH;
 		final var lUiWindowReferenceHeight = ConstantsUi.UI_WINDOW_REFERENCE_HEIGHT;
 		final var lUiWindowTitlebarHeight = ConstantsUi.UI_WINDOW_REFERENCE_TITLEBAR_HEIGHT;
 
-		mTitleBarHeight = MathHelper.clamp(lUiWindowTitlebarHeight * lUiScaleX * lUiScaleFactor, lUiWindowTitlebarHeight, MAX_TITLEBAR_HEIGHT);
-		mPanelSizeWidth = lUiWindowReferenceWidth * lUiScaleX * lUiScaleFactor;
-		mPanelSizeHeight = lUiWindowReferenceHeight * lUiScaleY * lUiScaleFactor;
+		mTitleBarHeight = MathHelper.clamp(lUiWindowTitlebarHeight * lUiScaleFactor, lUiWindowTitlebarHeight, MAX_TITLEBAR_HEIGHT);
+		mPanelSizeWidth = lUiWindowReferenceWidth * lUiScaleFactor;
+		mPanelSizeHeight = lUiWindowReferenceHeight * lUiScaleFactor;
 	}
 
 	// --------------------------------------

@@ -3,7 +3,7 @@ package net.lintford.library.screenmanager;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.lintford.library.controllers.hud.UiStructureController;
+import net.lintford.library.controllers.hud.HudLayoutController;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.audio.AudioFireAndForgetManager;
@@ -45,7 +45,7 @@ public class ScreenManager implements IInputClickedFocusManager {
 	private boolean mIsinitialized;
 	private boolean mResourcesLoaded;
 	private int mScreenUIDCounter;
-	private UiStructureController mUiStructureController;
+	private HudLayoutController mUiStructureController;
 	private IResizeListener mResizeListener;
 	protected float mColumnMaxWidth;
 	protected IInputClickedFocusTracker mTrackedInputControl;
@@ -78,7 +78,7 @@ public class ScreenManager implements IInputClickedFocusManager {
 		return mToastManager;
 	}
 
-	public UiStructureController UiStructureController() {
+	public HudLayoutController UiStructureController() {
 		return mUiStructureController;
 	}
 
@@ -137,7 +137,7 @@ public class ScreenManager implements IInputClickedFocusManager {
 			mScreensToAdd.get(i).initialize();
 		}
 
-		mUiStructureController = (UiStructureController) mLWJGLCore.controllerManager().getControllerByNameRequired(UiStructureController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
+		mUiStructureController = (HudLayoutController) mLWJGLCore.controllerManager().getControllerByNameRequired(HudLayoutController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
 
 		mIsinitialized = true;
 	}
