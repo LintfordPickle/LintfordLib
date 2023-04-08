@@ -33,10 +33,10 @@ public class DualMenuScreen extends MenuScreen {
 
 		mRightLayouts = new ArrayList<>();
 
-		mPaddingLeftNormalized = 0.f;
-		mPaddingRightNormalized = 0.f;
-		mPaddingTopNormalized = 0.f;
-		mPaddingBottomNormalized = 0.f;
+		mScreenPaddingLeft = 0.f;
+		mScreenPaddingRight = 0.f;
+		mScreenPaddingTop = 0.f;
+		mScreenPaddingBottom = 0.f;
 
 		mRightColumnSelected = false;
 	}

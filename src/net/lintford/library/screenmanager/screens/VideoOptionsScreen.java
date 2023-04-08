@@ -73,7 +73,7 @@ public class VideoOptionsScreen extends MenuScreen implements ITimedDialog {
 	public VideoOptionsScreen(ScreenManager screenManager) {
 		super(screenManager, "VIDEO OPTIONS");
 
-		mPaddingTopNormalized = 0;
+		mScreenPaddingTop = 0;
 
 		// Get the config options
 		mDisplayManager = screenManager.core().config().display();

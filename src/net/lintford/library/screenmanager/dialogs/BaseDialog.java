@@ -137,7 +137,7 @@ public abstract class BaseDialog extends MenuScreen {
 		mTransitionOff = null;
 		screenColor.a = 1.f;
 
-		mPaddingTopNormalized = DIALOG_HEIGHT / 2.f - 64.f;
+		mScreenPaddingTop = DIALOG_HEIGHT / 2.f - 64.f;
 
 		mIsPopup = true;
 	}
@@ -153,7 +153,7 @@ public abstract class BaseDialog extends MenuScreen {
 		final int lLayoutCount = mLayouts.size();
 		for (int i = 0; i < lLayoutCount; i++) {
 			final var lBaseLayout = mLayouts.get(i);
-			lBaseLayout.set(-DIALOG_WIDTH * 0.4f, mPaddingTopNormalized, DIALOG_WIDTH * 0.8f, DIALOG_HEIGHT);
+			lBaseLayout.set(-DIALOG_WIDTH * 0.4f, mScreenPaddingTop, DIALOG_WIDTH * 0.8f, DIALOG_HEIGHT);
 			lBaseLayout.updateStructure();
 		}
 	}
