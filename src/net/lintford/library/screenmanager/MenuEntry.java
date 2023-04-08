@@ -61,6 +61,7 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 	public final ContextHintState contextHintState = new ContextHintState();
 
 	protected boolean mEnabled;
+	protected boolean mReadOnly; // Same as enabled, but the text is not greyed (legibility)
 	protected boolean mEnableUpdateDraw;
 
 	protected boolean mHasFocus;
@@ -284,6 +285,14 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 
 	public void enabled(boolean enabled) {
 		mEnabled = enabled;
+	}
+
+	public boolean readOnly() {
+		return mReadOnly;
+	}
+
+	public void readOnly(boolean readOnly) {
+		mReadOnly = readOnly;
 	}
 
 	public boolean activeUpdateDraw() {

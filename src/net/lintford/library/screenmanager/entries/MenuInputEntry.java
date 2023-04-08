@@ -115,7 +115,7 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 		if (!mEnableUpdateDraw)
 			return;
 
-		if (!mEnabled) {
+		if (!mEnabled || mReadOnly) {
 			mHasFocus = false;
 			mIsActive = false;
 			return;
@@ -216,6 +216,9 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 	@Override
 	public void onClick(InputManager inputState) {
 		super.onClick(inputState);
+
+		if (mReadOnly)
+			return;
 
 		mIsActive = !mIsActive;
 
