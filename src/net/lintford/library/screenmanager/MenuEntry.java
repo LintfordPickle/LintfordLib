@@ -91,14 +91,19 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 	protected float mClickTimer;
 	private boolean mIsinitialized, mResourcesLoaded;
 	public float mZ;
+
+	// padding is the spacing within the component
 	protected float mTopPadding;
 	protected float mBottomPadding;
 	protected float mLeftPadding;
 	protected float mRightPadding;
+
+	// margins are the spacings external to the component
 	protected float mTopMargin;
 	protected float mBottomMargin;
 	protected float mLeftMargin;
 	protected float mRightMargin;
+
 	protected float mDesiredWidth;
 	protected float mDesiredHeight;
 	protected float mMinWidth;
@@ -452,7 +457,7 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 
 		mIsMouseOver = true;
 
-		if (!mHasFocus)
+		if (!mHasFocus && mCanHaveFocus)
 			mParentScreen.setFocusOnEntry(this);
 
 		if (mToolTipEnabled)
