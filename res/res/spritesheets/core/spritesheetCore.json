@@ -51,8 +51,20 @@
       "anchorPoints": []
     },
     {
-      "name": "TEXTURE_FOOTER_TRANSITION",
+      "name": "TEXTURE_FOOTER_END_64X64",
       "x": 65,
+      "y": 99,
+      "w": 64,
+      "h": 64,
+      "pivotX": 0,
+      "pivotY": 0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "anchorPoints": []
+    },
+    {
+      "name": "TEXTURE_FOOTER_TRANSITION",
+      "x": 130,
       "y": 99,
       "w": 64,
       "h": 64,
@@ -100,7 +112,7 @@
     },
     {
       "name": "TEXTURE_KEY_LARGE",
-      "x": 328,
+      "x": 409,
       "y": 99,
       "w": 96,
       "h": 32,
@@ -112,7 +124,7 @@
     },
     {
       "name": "TEXTURE_KEY_MEDIUM",
-      "x": 425,
+      "x": 506,
       "y": 99,
       "w": 64,
       "h": 32,
@@ -832,7 +844,7 @@
     },
     {
       "name": "TEXTURE_GAMEPAD_VIEW_DARK",
-      "x": 130,
+      "x": 195,
       "y": 99,
       "w": 32,
       "h": 32,
@@ -844,7 +856,7 @@
     },
     {
       "name": "TEXTURE_GAMEPAD_VIEW_LIGHT",
-      "x": 163,
+      "x": 228,
       "y": 99,
       "w": 32,
       "h": 32,
@@ -856,7 +868,7 @@
     },
     {
       "name": "TEXTURE_GAMEPAD_X_DARK_COLOR",
-      "x": 196,
+      "x": 261,
       "y": 99,
       "w": 32,
       "h": 32,
@@ -868,7 +880,7 @@
     },
     {
       "name": "TEXTURE_GAMEPAD_X_DARK",
-      "x": 229,
+      "x": 294,
       "y": 99,
       "w": 32,
       "h": 32,
@@ -880,7 +892,7 @@
     },
     {
       "name": "TEXTURE_GAMEPAD_Y_DARK_COLOR",
-      "x": 262,
+      "x": 327,
       "y": 99,
       "w": 32,
       "h": 32,
@@ -892,7 +904,7 @@
     },
     {
       "name": "TEXTURE_GAMEPAD_Y_DARK",
-      "x": 295,
+      "x": 360,
       "y": 99,
       "w": 32,
       "h": 32,
@@ -904,7 +916,7 @@
     },
     {
       "name": "TEXTURE_KEY_SMALL",
-      "x": 490,
+      "x": 579,
       "y": 99,
       "w": 32,
       "h": 32,
@@ -916,7 +928,7 @@
     },
     {
       "name": "TEXTURE_MENU_BUTTON_HORIZONTAL_LEFT",
-      "x": 523,
+      "x": 612,
       "y": 99,
       "w": 32,
       "h": 32,
@@ -928,7 +940,7 @@
     },
     {
       "name": "TEXTURE_MENU_BUTTON_HORIZONTAL_MID",
-      "x": 556,
+      "x": 645,
       "y": 99,
       "w": 32,
       "h": 32,
@@ -940,7 +952,7 @@
     },
     {
       "name": "TEXTURE_MENU_BUTTON_HORIZONTAL_MIDLEFT",
-      "x": 589,
+      "x": 678,
       "y": 99,
       "w": 32,
       "h": 32,
@@ -952,7 +964,7 @@
     },
     {
       "name": "TEXTURE_MENU_BUTTON_HORIZONTAL_MIDRIGHT",
-      "x": 622,
+      "x": 711,
       "y": 99,
       "w": 32,
       "h": 32,
@@ -964,7 +976,7 @@
     },
     {
       "name": "TEXTURE_MENU_BUTTON_HORIZONTAL_RIGHT",
-      "x": 655,
+      "x": 744,
       "y": 99,
       "w": 32,
       "h": 32,
@@ -976,7 +988,7 @@
     },
     {
       "name": "TEXTURE_MENU_INPUT_FIELD_LEFT",
-      "x": 688,
+      "x": 777,
       "y": 99,
       "w": 32,
       "h": 32,
@@ -988,7 +1000,7 @@
     },
     {
       "name": "TEXTURE_MENU_INPUT_FIELD_MID",
-      "x": 721,
+      "x": 810,
       "y": 99,
       "w": 32,
       "h": 32,
@@ -1000,7 +1012,7 @@
     },
     {
       "name": "TEXTURE_MENU_INPUT_FIELD_RIGHT",
-      "x": 754,
+      "x": 843,
       "y": 99,
       "w": 32,
       "h": 32,
@@ -1012,7 +1024,7 @@
     },
     {
       "name": "TEXTURE_MENU_LABEL_LEFT",
-      "x": 787,
+      "x": 876,
       "y": 99,
       "w": 32,
       "h": 32,
@@ -1024,7 +1036,7 @@
     },
     {
       "name": "TEXTURE_MENU_LABEL_MID",
-      "x": 820,
+      "x": 909,
       "y": 99,
       "w": 32,
       "h": 32,
@@ -1036,7 +1048,7 @@
     },
     {
       "name": "TEXTURE_MENU_LABEL_RIGHT",
-      "x": 853,
+      "x": 942,
       "y": 99,
       "w": 32,
       "h": 32,
@@ -1048,7 +1060,7 @@
     },
     {
       "name": "TEXTURE_OUTLINE_MEDIUM",
-      "x": 886,
+      "x": 975,
       "y": 99,
       "w": 32,
       "h": 32,
@@ -1060,42 +1072,6 @@
     },
     {
       "name": "TEXTURE_PANEL_1X3_BOTTOM",
-      "x": 919,
-      "y": 99,
-      "w": 32,
-      "h": 32,
-      "pivotX": 0,
-      "pivotY": 0,
-      "scaleX": 1.0,
-      "scaleY": 1.0,
-      "anchorPoints": []
-    },
-    {
-      "name": "TEXTURE_PANEL_1X3_MID",
-      "x": 952,
-      "y": 99,
-      "w": 32,
-      "h": 32,
-      "pivotX": 0,
-      "pivotY": 0,
-      "scaleX": 1.0,
-      "scaleY": 1.0,
-      "anchorPoints": []
-    },
-    {
-      "name": "TEXTURE_PANEL_1X3_TOP",
-      "x": 985,
-      "y": 99,
-      "w": 32,
-      "h": 32,
-      "pivotX": 0,
-      "pivotY": 0,
-      "scaleX": 1.0,
-      "scaleY": 1.0,
-      "anchorPoints": []
-    },
-    {
-      "name": "TEXTURE_PANEL_2X2_BOTTOM_LEFT",
       "x": 486,
       "y": 164,
       "w": 32,
@@ -1107,7 +1083,7 @@
       "anchorPoints": []
     },
     {
-      "name": "TEXTURE_PANEL_2X2_BOTTOM_RIGHT",
+      "name": "TEXTURE_PANEL_1X3_MID",
       "x": 519,
       "y": 164,
       "w": 32,
@@ -1119,7 +1095,7 @@
       "anchorPoints": []
     },
     {
-      "name": "TEXTURE_PANEL_2X2_TOP_LEFT",
+      "name": "TEXTURE_PANEL_1X3_TOP",
       "x": 552,
       "y": 164,
       "w": 32,
@@ -1131,7 +1107,7 @@
       "anchorPoints": []
     },
     {
-      "name": "TEXTURE_PANEL_2X2_TOP_RIGHT",
+      "name": "TEXTURE_PANEL_2X2_BOTTOM_LEFT",
       "x": 585,
       "y": 164,
       "w": 32,
@@ -1143,7 +1119,7 @@
       "anchorPoints": []
     },
     {
-      "name": "TEXTURE_PANEL_2X3_BOTTOM_LEFT",
+      "name": "TEXTURE_PANEL_2X2_BOTTOM_RIGHT",
       "x": 618,
       "y": 164,
       "w": 32,
@@ -1155,7 +1131,7 @@
       "anchorPoints": []
     },
     {
-      "name": "TEXTURE_PANEL_2X3_BOTTOM_RIGHT",
+      "name": "TEXTURE_PANEL_2X2_TOP_LEFT",
       "x": 651,
       "y": 164,
       "w": 32,
@@ -1167,7 +1143,7 @@
       "anchorPoints": []
     },
     {
-      "name": "TEXTURE_PANEL_2X3_MIDLEFT",
+      "name": "TEXTURE_PANEL_2X2_TOP_RIGHT",
       "x": 684,
       "y": 164,
       "w": 32,
@@ -1179,7 +1155,7 @@
       "anchorPoints": []
     },
     {
-      "name": "TEXTURE_PANEL_2X3_MIDRIGHT",
+      "name": "TEXTURE_PANEL_2X3_BOTTOM_LEFT",
       "x": 717,
       "y": 164,
       "w": 32,
@@ -1191,7 +1167,7 @@
       "anchorPoints": []
     },
     {
-      "name": "TEXTURE_PANEL_2X3_TOP_LEFT",
+      "name": "TEXTURE_PANEL_2X3_BOTTOM_RIGHT",
       "x": 750,
       "y": 164,
       "w": 32,
@@ -1203,7 +1179,7 @@
       "anchorPoints": []
     },
     {
-      "name": "TEXTURE_PANEL_2X3_TOP_RIGHT",
+      "name": "TEXTURE_PANEL_2X3_MIDLEFT",
       "x": 783,
       "y": 164,
       "w": 32,
@@ -1215,7 +1191,7 @@
       "anchorPoints": []
     },
     {
-      "name": "TEXTURE_PANEL_3X1_LEFT",
+      "name": "TEXTURE_PANEL_2X3_MIDRIGHT",
       "x": 816,
       "y": 164,
       "w": 32,
@@ -1227,7 +1203,7 @@
       "anchorPoints": []
     },
     {
-      "name": "TEXTURE_PANEL_3X1_MID",
+      "name": "TEXTURE_PANEL_2X3_TOP_LEFT",
       "x": 849,
       "y": 164,
       "w": 32,
@@ -1239,7 +1215,7 @@
       "anchorPoints": []
     },
     {
-      "name": "TEXTURE_PANEL_3X1_RIGHT",
+      "name": "TEXTURE_PANEL_2X3_TOP_RIGHT",
       "x": 882,
       "y": 164,
       "w": 32,
@@ -1251,7 +1227,7 @@
       "anchorPoints": []
     },
     {
-      "name": "TEXTURE_PANEL_3X2_BOTTOM_LEFT",
+      "name": "TEXTURE_PANEL_3X1_LEFT",
       "x": 915,
       "y": 164,
       "w": 32,
@@ -1263,7 +1239,7 @@
       "anchorPoints": []
     },
     {
-      "name": "TEXTURE_PANEL_3X2_BOTTOM_MID",
+      "name": "TEXTURE_PANEL_3X1_MID",
       "x": 948,
       "y": 164,
       "w": 32,
@@ -1275,7 +1251,7 @@
       "anchorPoints": []
     },
     {
-      "name": "TEXTURE_PANEL_3X2_BOTTOM_RIGHT",
+      "name": "TEXTURE_PANEL_3X1_RIGHT",
       "x": 981,
       "y": 164,
       "w": 32,
@@ -1287,7 +1263,7 @@
       "anchorPoints": []
     },
     {
-      "name": "TEXTURE_PANEL_3X2_TOP_LEFT",
+      "name": "TEXTURE_PANEL_3X2_BOTTOM_LEFT",
       "x": 0,
       "y": 261,
       "w": 32,
@@ -1299,7 +1275,7 @@
       "anchorPoints": []
     },
     {
-      "name": "TEXTURE_PANEL_3X2_TOP_MID",
+      "name": "TEXTURE_PANEL_3X2_BOTTOM_MID",
       "x": 33,
       "y": 261,
       "w": 32,
@@ -1311,7 +1287,7 @@
       "anchorPoints": []
     },
     {
-      "name": "TEXTURE_PANEL_3X2_TOP_RIGHT",
+      "name": "TEXTURE_PANEL_3X2_BOTTOM_RIGHT",
       "x": 66,
       "y": 261,
       "w": 32,
@@ -1323,7 +1299,7 @@
       "anchorPoints": []
     },
     {
-      "name": "TEXTURE_PANEL_3X3_00_BOTTOM_LEFT",
+      "name": "TEXTURE_PANEL_3X2_TOP_LEFT",
       "x": 99,
       "y": 261,
       "w": 32,
@@ -1335,7 +1311,7 @@
       "anchorPoints": []
     },
     {
-      "name": "TEXTURE_PANEL_3X3_00_BOTTOM_MID",
+      "name": "TEXTURE_PANEL_3X2_TOP_MID",
       "x": 132,
       "y": 261,
       "w": 32,
@@ -1347,7 +1323,7 @@
       "anchorPoints": []
     },
     {
-      "name": "TEXTURE_PANEL_3X3_00_BOTTOM_RIGHT",
+      "name": "TEXTURE_PANEL_3X2_TOP_RIGHT",
       "x": 165,
       "y": 261,
       "w": 32,
@@ -1359,7 +1335,7 @@
       "anchorPoints": []
     },
     {
-      "name": "TEXTURE_PANEL_3X3_00_MID_CENTER",
+      "name": "TEXTURE_PANEL_3X3_00_BOTTOM_LEFT",
       "x": 198,
       "y": 261,
       "w": 32,
@@ -1371,7 +1347,7 @@
       "anchorPoints": []
     },
     {
-      "name": "TEXTURE_PANEL_3X3_00_MID_LEFT",
+      "name": "TEXTURE_PANEL_3X3_00_BOTTOM_MID",
       "x": 231,
       "y": 261,
       "w": 32,
@@ -1383,7 +1359,7 @@
       "anchorPoints": []
     },
     {
-      "name": "TEXTURE_PANEL_3X3_00_MID_RIGHT",
+      "name": "TEXTURE_PANEL_3X3_00_BOTTOM_RIGHT",
       "x": 264,
       "y": 261,
       "w": 32,
@@ -1395,7 +1371,7 @@
       "anchorPoints": []
     },
     {
-      "name": "TEXTURE_PANEL_3X3_00_TOP_LEFT",
+      "name": "TEXTURE_PANEL_3X3_00_MID_CENTER",
       "x": 297,
       "y": 261,
       "w": 32,
@@ -1407,7 +1383,7 @@
       "anchorPoints": []
     },
     {
-      "name": "TEXTURE_PANEL_3X3_00_TOP_MID",
+      "name": "TEXTURE_PANEL_3X3_00_MID_LEFT",
       "x": 330,
       "y": 261,
       "w": 32,
@@ -1419,7 +1395,7 @@
       "anchorPoints": []
     },
     {
-      "name": "TEXTURE_PANEL_3X3_00_TOP_RIGHT",
+      "name": "TEXTURE_PANEL_3X3_00_MID_RIGHT",
       "x": 363,
       "y": 261,
       "w": 32,
@@ -1431,7 +1407,7 @@
       "anchorPoints": []
     },
     {
-      "name": "TEXTURE_PANEL_3X3_01_BOTTOM_LEFT",
+      "name": "TEXTURE_PANEL_3X3_00_TOP_LEFT",
       "x": 396,
       "y": 261,
       "w": 32,
@@ -1443,7 +1419,7 @@
       "anchorPoints": []
     },
     {
-      "name": "TEXTURE_PANEL_3X3_01_BOTTOM_MID",
+      "name": "TEXTURE_PANEL_3X3_00_TOP_MID",
       "x": 429,
       "y": 261,
       "w": 32,
@@ -1455,7 +1431,7 @@
       "anchorPoints": []
     },
     {
-      "name": "TEXTURE_PANEL_3X3_01_BOTTOM_RIGHT",
+      "name": "TEXTURE_PANEL_3X3_00_TOP_RIGHT",
       "x": 462,
       "y": 261,
       "w": 32,
@@ -1467,7 +1443,7 @@
       "anchorPoints": []
     },
     {
-      "name": "TEXTURE_PANEL_3X3_01_MID_CENTER",
+      "name": "TEXTURE_PANEL_3X3_01_BOTTOM_LEFT",
       "x": 495,
       "y": 261,
       "w": 32,
@@ -1479,7 +1455,7 @@
       "anchorPoints": []
     },
     {
-      "name": "TEXTURE_PANEL_3X3_01_MID_LEFT",
+      "name": "TEXTURE_PANEL_3X3_01_BOTTOM_MID",
       "x": 528,
       "y": 261,
       "w": 32,
@@ -1491,7 +1467,7 @@
       "anchorPoints": []
     },
     {
-      "name": "TEXTURE_PANEL_3X3_01_MID_RIGHT",
+      "name": "TEXTURE_PANEL_3X3_01_BOTTOM_RIGHT",
       "x": 561,
       "y": 261,
       "w": 32,
@@ -1503,7 +1479,7 @@
       "anchorPoints": []
     },
     {
-      "name": "TEXTURE_PANEL_3X3_01_TOP_LEFT",
+      "name": "TEXTURE_PANEL_3X3_01_MID_CENTER",
       "x": 594,
       "y": 261,
       "w": 32,
@@ -1515,7 +1491,7 @@
       "anchorPoints": []
     },
     {
-      "name": "TEXTURE_PANEL_3X3_01_TOP_MID",
+      "name": "TEXTURE_PANEL_3X3_01_MID_LEFT",
       "x": 627,
       "y": 261,
       "w": 32,
@@ -1527,7 +1503,7 @@
       "anchorPoints": []
     },
     {
-      "name": "TEXTURE_PANEL_3X3_01_TOP_RIGHT",
+      "name": "TEXTURE_PANEL_3X3_01_MID_RIGHT",
       "x": 660,
       "y": 261,
       "w": 32,
@@ -1539,7 +1515,7 @@
       "anchorPoints": []
     },
     {
-      "name": "TEXTURE_PROGRESS_BAR_3X1_INNER_LEFT",
+      "name": "TEXTURE_PANEL_3X3_01_TOP_LEFT",
       "x": 693,
       "y": 261,
       "w": 32,
@@ -1551,7 +1527,7 @@
       "anchorPoints": []
     },
     {
-      "name": "TEXTURE_PROGRESS_BAR_3X1_INNER_MID",
+      "name": "TEXTURE_PANEL_3X3_01_TOP_MID",
       "x": 726,
       "y": 261,
       "w": 32,
@@ -1563,7 +1539,7 @@
       "anchorPoints": []
     },
     {
-      "name": "TEXTURE_PROGRESS_BAR_3X1_INNER_RIGHT",
+      "name": "TEXTURE_PANEL_3X3_01_TOP_RIGHT",
       "x": 759,
       "y": 261,
       "w": 32,
@@ -1575,7 +1551,7 @@
       "anchorPoints": []
     },
     {
-      "name": "TEXTURE_PROGRESS_BAR_3X1_OUTER_LEFT",
+      "name": "TEXTURE_PROGRESS_BAR_3X1_INNER_LEFT",
       "x": 792,
       "y": 261,
       "w": 32,
@@ -1587,7 +1563,7 @@
       "anchorPoints": []
     },
     {
-      "name": "TEXTURE_PROGRESS_BAR_3X1_OUTER_MID",
+      "name": "TEXTURE_PROGRESS_BAR_3X1_INNER_MID",
       "x": 825,
       "y": 261,
       "w": 32,
@@ -1599,7 +1575,7 @@
       "anchorPoints": []
     },
     {
-      "name": "TEXTURE_PROGRESS_BAR_3X1_OUTER_RIGHT",
+      "name": "TEXTURE_PROGRESS_BAR_3X1_INNER_RIGHT",
       "x": 858,
       "y": 261,
       "w": 32,
@@ -1611,7 +1587,7 @@
       "anchorPoints": []
     },
     {
-      "name": "TEXTURE_TICK",
+      "name": "TEXTURE_PROGRESS_BAR_3X1_OUTER_LEFT",
       "x": 891,
       "y": 261,
       "w": 32,
@@ -1623,7 +1599,7 @@
       "anchorPoints": []
     },
     {
-      "name": "TEXTURE_TITLE_HORIZONTAL_LEFT",
+      "name": "TEXTURE_PROGRESS_BAR_3X1_OUTER_MID",
       "x": 924,
       "y": 261,
       "w": 32,
@@ -1635,7 +1611,7 @@
       "anchorPoints": []
     },
     {
-      "name": "TEXTURE_TITLE_HORIZONTAL_MID_LEFT",
+      "name": "TEXTURE_PROGRESS_BAR_3X1_OUTER_RIGHT",
       "x": 957,
       "y": 261,
       "w": 32,
@@ -1647,7 +1623,7 @@
       "anchorPoints": []
     },
     {
-      "name": "TEXTURE_TITLE_HORIZONTAL_MID_RIGHT",
+      "name": "TEXTURE_TICK",
       "x": 990,
       "y": 261,
       "w": 32,
@@ -1659,7 +1635,7 @@
       "anchorPoints": []
     },
     {
-      "name": "TEXTURE_TITLE_HORIZONTAL_MID",
+      "name": "TEXTURE_TITLE_HORIZONTAL_LEFT",
       "x": 0,
       "y": 294,
       "w": 32,
@@ -1671,8 +1647,44 @@
       "anchorPoints": []
     },
     {
-      "name": "TEXTURE_TITLE_HORIZONTAL_RIGHT",
+      "name": "TEXTURE_TITLE_HORIZONTAL_MID_LEFT",
       "x": 33,
+      "y": 294,
+      "w": 32,
+      "h": 32,
+      "pivotX": 0,
+      "pivotY": 0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "anchorPoints": []
+    },
+    {
+      "name": "TEXTURE_TITLE_HORIZONTAL_MID_RIGHT",
+      "x": 66,
+      "y": 294,
+      "w": 32,
+      "h": 32,
+      "pivotX": 0,
+      "pivotY": 0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "anchorPoints": []
+    },
+    {
+      "name": "TEXTURE_TITLE_HORIZONTAL_MID",
+      "x": 99,
+      "y": 294,
+      "w": 32,
+      "h": 32,
+      "pivotX": 0,
+      "pivotY": 0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "anchorPoints": []
+    },
+    {
+      "name": "TEXTURE_TITLE_HORIZONTAL_RIGHT",
+      "x": 132,
       "y": 294,
       "w": 32,
       "h": 32,
@@ -1796,6 +1808,42 @@
       "y": 0,
       "w": 16,
       "h": 16,
+      "pivotX": 0,
+      "pivotY": 0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "anchorPoints": []
+    },
+    {
+      "name": "TEXTURE_KEY_END_LEFT",
+      "x": 393,
+      "y": 99,
+      "w": 7,
+      "h": 32,
+      "pivotX": 0,
+      "pivotY": 0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "anchorPoints": []
+    },
+    {
+      "name": "TEXTURE_KEY_END_RIGHT",
+      "x": 401,
+      "y": 99,
+      "w": 7,
+      "h": 32,
+      "pivotX": 0,
+      "pivotY": 0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "anchorPoints": []
+    },
+    {
+      "name": "TEXTURE_KEY_MID",
+      "x": 571,
+      "y": 99,
+      "w": 7,
+      "h": 32,
       "pivotX": 0,
       "pivotY": 0,
       "scaleX": 1.0,

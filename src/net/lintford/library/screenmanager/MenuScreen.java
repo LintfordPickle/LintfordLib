@@ -120,6 +120,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 		mShowBackgroundScreens = false;
 		mShowContextualKeyHints = true;
+		mShowContextualFooterBar = true;
 
 		mMenuTitle = menuTitle;
 		mBlockKeyboardInputInBackground = true;
@@ -202,20 +203,43 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 			}
 		}
 
-		// TODO :Check for gamepad axis for each of the cardinal directions ..
-		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_UP, this) || core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_UP, this)) {
+		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_UP, this)) {
+			screenManager().contextHintManager().setKeyboardHints();
 			onNavigationUp(core);
 		}
 
-		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_DOWN, this) || core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_DOWN, this)) {
+		if (core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_UP, this)) {
+			screenManager().contextHintManager().setGamePadHints();
+			onNavigationUp(core);
+		}
+
+		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_DOWN, this)) {
+			screenManager().contextHintManager().setKeyboardHints();
 			onNavigationDown(core);
 		}
 
-		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_LEFT, this) || core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_LEFT, this)) {
+		if (core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_DOWN, this)) {
+			screenManager().contextHintManager().setGamePadHints();
+			onNavigationDown(core);
+		}
+
+		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_LEFT, this)) {
+			screenManager().contextHintManager().setKeyboardHints();
+			onNavigationLeft(core);
+		}
+		
+		if (core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_LEFT, this)) {
+			screenManager().contextHintManager().setGamePadHints();
 			onNavigationLeft(core);
 		}
 
-		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_RIGHT, this) || core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_RIGHT, this)) {
+		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_RIGHT, this)) {
+			screenManager().contextHintManager().setKeyboardHints();
+			onNavigationRight(core);
+		}
+		
+		if (core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_RIGHT, this)) {
+			screenManager().contextHintManager().setGamePadHints();
 			onNavigationRight(core);
 		}
 

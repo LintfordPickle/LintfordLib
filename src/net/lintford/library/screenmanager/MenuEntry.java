@@ -396,6 +396,8 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 
 		contextHintState.buttonA = true;
 		contextHintState.buttonAHint = "select";
+		contextHintState.keyReturn = true;
+		contextHintState.keyReturnHint = "select";
 	}
 
 	// --------------------------------------

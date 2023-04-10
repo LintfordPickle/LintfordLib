@@ -60,6 +60,7 @@ public class MenuToggleEntry extends MenuEntry {
 		mDrawBackground = false;
 
 		contextHintState.buttonAHint = "toggle";
+		contextHintState.keyReturnHint = "toggle";
 	}
 
 	// --------------------------------------
