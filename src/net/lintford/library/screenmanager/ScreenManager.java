@@ -318,9 +318,9 @@ public class ScreenManager implements IInputClickedFocusManager {
 			lScreen.draw(core);
 		}
 
+		mContextHintManager.draw(core);
 		mToastManager.draw(core);
 		mToolTip.draw(core);
-		mContextHintManager.draw(core);
 	}
 
 	// --------------------------------------
@@ -348,8 +348,9 @@ public class ScreenManager implements IInputClickedFocusManager {
 
 			if (mResourcesLoaded)
 				screenToAdd.loadResources(mResourceManager);
-
 		}
+
+		screenToAdd.onScreenAdded();
 
 		mScreensToAdd.add(screenToAdd);
 
@@ -374,7 +375,8 @@ public class ScreenManager implements IInputClickedFocusManager {
 			screenToRemove.unloadResources();
 		}
 
-		screenToRemove.onScreenRemovedFromScreenManager();
+		screenToRemove.transitionOff();
+		screenToRemove.onScreenRemoved();
 
 		if (mScreens.contains(screenToRemove)) {
 			// if this screen was the top screen, then the screen below gains focus

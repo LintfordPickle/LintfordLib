@@ -46,6 +46,7 @@ public abstract class BaseGameScreen extends Screen {
 		mSingletonScreen = true;
 
 		mScreenManager.core().input().eventActionManager().setInputProcessor(this);
+		mShowContextualKeyHints = false;
 
 		mGameInputLogicalCounter = new LogicialCounter();
 		mGameDrawLogicalCounter = new LogicialCounter();

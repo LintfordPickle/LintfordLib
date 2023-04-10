@@ -80,6 +80,11 @@ public class ToolTip {
 
 	public void update(LintfordCore core) {
 		if (mToolTipProvider != null) {
+			if (mToolTipProvider.isParentActive() == false) {
+				mToolTipProvider = null;
+				return;
+			}
+
 			if (!mToolTipProvider.isMouseOver() && !mToolTipProvider.hasFocus()) {
 				mToolTipProvider = null;
 			}
@@ -101,13 +106,13 @@ public class ToolTip {
 		mTopOfScreen = !mToolTipProvider.isTopHalfOfScreen();
 
 		final var lPositionX = -TOOLTIP_PANEL_WIDTH * .5f;
-		final var lPositionY = mTopOfScreen ? lHudBoundingBox.top() + lHudBoundingBox.height() / 7 : lHudBoundingBox.centerY() + lHudBoundingBox.height() / 7;
+		final var lPositionY = mTopOfScreen ? lHudBoundingBox.top() + lHudBoundingBox.height() / 4 : lHudBoundingBox.centerY() + lHudBoundingBox.height() / 4;
 
 		final var lColor = ColorConstants.getColor(.21f, .11f, .13f, 1.f);
 
 		// Render the background
 		mSpriteBatch.begin(core.HUD());
-		draw9Patch(mSpriteBatch, mCoreSpritesheet, 32.f, lPositionX - lTextPadding, lPositionY - lTextPadding, TOOLTIP_PANEL_WIDTH + lTextPadding * 2, lToolTipTextHeight + lTextPadding * 3, -0.1f, lColor);
+		draw9Patch(mSpriteBatch, mCoreSpritesheet, 32.f, lPositionX - lTextPadding, lPositionY - lTextPadding, TOOLTIP_PANEL_WIDTH + lTextPadding * 2, lToolTipTextHeight + lTextPadding * 3, -0.01f, lColor);
 		mSpriteBatch.end();
 
 		mMenuFont.begin(core.HUD());

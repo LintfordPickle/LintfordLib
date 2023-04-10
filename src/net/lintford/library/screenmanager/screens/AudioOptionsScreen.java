@@ -23,8 +23,6 @@ public class AudioOptionsScreen extends MenuScreen {
 	// Constants
 	// --------------------------------------
 
-	private static final String SCREEN_TITLE = "AUDIO OPTIONS";
-
 	public static final int BUTTON_CANCEL_CHANGES = 0;
 	public static final int BUTTON_APPLY_CHANGES = 1;
 
@@ -54,7 +52,7 @@ public class AudioOptionsScreen extends MenuScreen {
 	// --------------------------------------
 
 	public AudioOptionsScreen(ScreenManager screenManager) {
-		super(screenManager, SCREEN_TITLE);
+		super(screenManager, null);
 
 		final var lAudioListLayout = new ListLayout(this);
 		lAudioListLayout.paddingTop(10.f);
@@ -63,6 +61,8 @@ public class AudioOptionsScreen extends MenuScreen {
 		lAudioListLayout.cropPaddingBottom(13.f);
 		lAudioListLayout.setDrawBackground(true, ColorConstants.MenuPanelSecondaryColor);
 		lAudioListLayout.layoutFillType(FILLTYPE.FILL_CONTAINER);
+		lAudioListLayout.showTitle(true);
+		lAudioListLayout.title("Audio Options");
 
 		createAudioSection(lAudioListLayout);
 

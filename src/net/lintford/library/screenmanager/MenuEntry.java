@@ -12,6 +12,7 @@ import net.lintford.library.core.graphics.textures.CoreTextureNames;
 import net.lintford.library.core.input.InputManager;
 import net.lintford.library.core.input.mouse.IInputProcessor;
 import net.lintford.library.core.maths.Vector2f;
+import net.lintford.library.screenmanager.Screen.ScreenState;
 import net.lintford.library.screenmanager.ScreenManagerConstants.ALIGNMENT;
 import net.lintford.library.screenmanager.ScreenManagerConstants.FILLTYPE;
 import net.lintford.library.screenmanager.entries.EntryInteractions;
@@ -496,7 +497,8 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 			mToolTipTimer = 0;
 		}
 
-		if (mToolTipEnabled && mToolTipTimer >= 1000 && mHasFocus) {
+		final var lParentScreenIsActive = mParentScreen != null && !mParentScreen.mOtherScreenHasFocus;
+		if (lParentScreenIsActive && mToolTipEnabled && mToolTipTimer >= 1000 && mHasFocus) {
 			mScreenManager.toolTip().toolTipProvider(this);
 		}
 	}
@@ -533,7 +535,7 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 			final float lHalfWidth = (int) (mW * .5f);
 			int lLeft = (int) (lScreenOffset.x + centerX() - lHalfWidth);
 			final float lInnerWidth = mW - 32 * (use5Steps ? 4 : 2);
-			entryColor.a = 1.f;
+			entryColor.a = lParentScreenAlpha;
 
 			if (isInClickedState()) {
 				entryColor.r = 1.f;
@@ -701,7 +703,7 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 
 	@Override
 	public boolean isParentActive() {
-		return mParentScreen.isExiting() == false;
+		return mParentScreen.isExiting() == false && mParentScreen.screenState() == ScreenState.Active;
 	}
 
 	public void onDeselection(InputManager inputManager) {

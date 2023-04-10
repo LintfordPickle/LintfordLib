@@ -119,6 +119,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		mLayouts = new ArrayList<>();
 
 		mShowBackgroundScreens = false;
+		mShowContextualKeyHints = true;
 
 		mMenuTitle = menuTitle;
 		mBlockKeyboardInputInBackground = true;
@@ -245,9 +246,12 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 			if (mESCBackEnabled) {
 				mScreenManager.contextHintManager().screenManagerHintState().buttonB = true;
 				mScreenManager.contextHintManager().screenManagerHintState().buttonBHint = "back";
+				mScreenManager.contextHintManager().screenManagerHintState().keyEsc = true;
+				mScreenManager.contextHintManager().screenManagerHintState().keyEscHint = "back";
 			} else {
 				mScreenManager.contextHintManager().screenManagerHintState().buttonB = false;
 				mScreenManager.contextHintManager().screenManagerHintState().buttonBHint = null;
+				mScreenManager.contextHintManager().screenManagerHintState().keyEsc = false;
 			}
 		}
 
@@ -335,9 +339,8 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 			lBaseLayout.width(lLayoutWidth);
 		}
 
-		// Set the layout Y and H
-		float lLayoutNewY = lUIHUDStructureController.menuMainRectangle().top() + mScreenPaddingTop;
-		float lLayoutHeight = (lUIHUDStructureController.menuMainRectangle().height() - mScreenPaddingTop);
+		var lLayoutNewY = (int) (lUIHUDStructureController.menuMainRectangle().top() + mScreenPaddingTop);
+		var lLayoutHeight = (int) (lUIHUDStructureController.menuMainRectangle().height() - mScreenPaddingTop);
 
 		// See how many layouts only take what they need
 		int lCountOfSharers = lLeftLayoutCount;
@@ -355,9 +358,9 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		lCountOfSharers -= lCountOfTakers;
 
 		// Split the remaining height between the shares
-		float lSizeOfEachShareElement = 0.f;
+		int lSizeOfEachShareElement = 0;
 		if (lCountOfSharers > 0) {
-			lSizeOfEachShareElement = ((lLayoutHeight - heightTaken) / lCountOfSharers) - mLayoutPaddingVertical * (lCountOfSharers + 1);
+			lSizeOfEachShareElement = (int) Math.floor(((lLayoutHeight - heightTaken) / lCountOfSharers) - mLayoutPaddingVertical * (lCountOfSharers + 1));
 		}
 
 		float lTop = lLayoutNewY;
@@ -379,9 +382,9 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 				lTop += lBaseLayout.getEntryHeight() + mLayoutPaddingVertical;
 			} else {
 				// sharers
-				var lNewHeight = lSizeOfEachShareElement;
+				int lNewHeight = lSizeOfEachShareElement;
 				if (lBaseLayout.maxHeight() != -1 && lNewHeight > lBaseLayout.maxHeight()) {
-					lNewHeight = lBaseLayout.maxHeight();
+					lNewHeight = (int) lBaseLayout.maxHeight();
 				}
 				lBaseLayout.height(lNewHeight);
 				lBaseLayout.updateStructure();

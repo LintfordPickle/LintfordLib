@@ -49,6 +49,7 @@ public abstract class Screen implements IInputProcessor {
 	protected boolean mAlwaysOnTop;
 	protected boolean mShowMouseCursor;
 	protected boolean mShowBackgroundScreens;
+	protected boolean mShowContextualKeyHints;
 
 	public boolean acceptMouseInput;
 	public boolean acceptKeyboardInput;
@@ -303,7 +304,11 @@ public abstract class Screen implements IInputProcessor {
 		}
 	}
 
-	public void onScreenRemovedFromScreenManager() {
+	public void onScreenAdded() {
+		mScreenManager.contextHintManager().drawContextBackground(mShowContextualKeyHints);
+	}
+
+	public void onScreenRemoved() {
 		mRendererManager.unloadResources();
 		mRendererManager.removeAllListeners();
 		mRendererManager.removeAllRenderers();
@@ -311,6 +316,8 @@ public abstract class Screen implements IInputProcessor {
 
 	public void onGainedFocus() {
 		mScreenManager.core().input().keyboard().stopBufferedTextCapture();
+
+		mScreenManager.contextHintManager().drawContextBackground(mShowContextualKeyHints);
 	}
 
 	public void onLostFocus() {

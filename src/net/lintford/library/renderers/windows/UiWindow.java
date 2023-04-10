@@ -396,9 +396,14 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 		final var lSpritebatch = mRendererManager.uiSpriteBatch();
 		final var lWindowColor = ColorConstants.getWhiteWithAlpha(mWindowAlpha);
 
+		final int x = (int) mWindowArea.x();
+		final int y = (int) mWindowArea.y();
+		final int w = (int) mWindowArea.width();
+		final int h = (int) mWindowArea.height();
+
 		// Draw the window background
 		lSpritebatch.begin(core.HUD());
-		TextureBatch9Patch.draw9Patch(lSpritebatch, mCoreSpritesheet, 32, mWindowArea.x(), mWindowArea.y(), mWindowArea.width(), mWindowArea.height(), Z_DEPTH, lWindowColor);
+		TextureBatch9Patch.drawBackground(core, lSpritebatch, mCoreSpritesheet, 32, x, y, w, h, lWindowColor, false, -0.01f);
 		lSpritebatch.end();
 
 		// Draw the title bar
