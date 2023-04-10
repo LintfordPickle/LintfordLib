@@ -91,16 +91,29 @@ class BitmapFontDefinition {
 		if (text == null || text.length() == 0)
 			return 0f;
 
+		float maxWidthFound = 0.f;
 		float lWidth = 0.f;
 		final int lCharCount = text.length();
 		for (int i = 0; i < lCharCount; i++) {
+			if (text.charAt(i) == '\n' || text.charAt(i) == '\r') {
+				if (lWidth > maxWidthFound) {
+					maxWidthFound = lWidth;
+					lWidth = 0;
+					continue;
+				}
+			}
+
 			final var lGlyph = getGlyphFrame((int) text.charAt(i));
 			if (lGlyph == null)
 				continue;
+
 			lWidth += lGlyph.width() * textScale;
 		}
+		
+		if(lWidth > maxWidthFound)
+			maxWidthFound = lWidth;
 
-		return lWidth;
+		return maxWidthFound;
 	}
 
 	public float getFontHeight() {
