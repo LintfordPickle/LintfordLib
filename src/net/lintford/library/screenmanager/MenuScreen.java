@@ -227,7 +227,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 			screenManager().contextHintManager().setKeyboardHints();
 			onNavigationLeft(core);
 		}
-		
+
 		if (core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_LEFT, this)) {
 			screenManager().contextHintManager().setGamePadHints();
 			onNavigationLeft(core);
@@ -237,7 +237,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 			screenManager().contextHintManager().setKeyboardHints();
 			onNavigationRight(core);
 		}
-		
+
 		if (core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_RIGHT, this)) {
 			screenManager().contextHintManager().setGamePadHints();
 			onNavigationRight(core);
@@ -529,8 +529,8 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 	// mouse
 	public void setFocusOnEntry(MenuEntry entry) {
-		if (mActiveEntry != null)
-			mActiveEntry.onDeselection(mScreenManager.core().input());
+		//		if (mActiveEntry != null)
+		//			mActiveEntry.onDeselection(mScreenManager.core().input());
 
 		mScreenManager.contextHintManager().contextHintProvider(null);
 		mActiveEntry = null;
@@ -646,6 +646,9 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 		if (mSelectedLayoutIndex >= mLayouts.size())
 			mSelectedLayoutIndex = 0;
+
+		if (mLayouts.size() == 0)
+			return;
 
 		while (found == false) {
 			checkEntryIndex--;
@@ -767,6 +770,9 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		var currentTry = 0;
 
 		var checkEntryIndex = mSelectedEntryIndex;
+
+		if (mLayouts.size() == 0)
+			return;
 
 		while (currentTry < maxTries) {
 			checkEntryIndex++;

@@ -1,13 +1,13 @@
-package net.lintford.library.core.entity.definitions;
+package net.lintford.library.core.entities.definitions;
 
 import org.apache.commons.collections4.BidiMap;
 import org.apache.commons.collections4.bidimap.TreeBidiMap;
 
-import net.lintford.library.core.entity.BaseInstanceData;
+import net.lintford.library.core.entities.savedefinitions.BaseSaveDefinition;
 
-public class DefinitionLookUp extends BaseInstanceData {
+public class DefinitionLookUp extends BaseSaveDefinition {
 
-	public class DefinitionNameUid extends BaseInstanceData {
+	public class DefinitionNameUid extends BaseSaveDefinition {
 
 		// --------------------------------------
 		// Constants

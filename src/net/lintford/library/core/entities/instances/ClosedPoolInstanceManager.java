@@ -1,30 +1,37 @@
-package net.lintford.library.core.entity.instances;
+package net.lintford.library.core.entities.instances;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The {@link PoolInstanceManager} maintains an non-indexed array of pool items retreived and later returned for  re-use. 
- * Items given out by this pool are NOT tracked.
+ * The {@link} pre-allocated, indexed instances and maintains them within a pool until they are required. The instances are then
+ * maintains within a separate list until they are returned to the pool. All instances can be tracked with the main.
  */
-public abstract class PoolInstanceManager<T extends PooledBaseData> extends InstanceManager<T> {
+public abstract class ClosedPoolInstanceManager<T extends ClosedPooledBaseData> extends InstanceManager<T> {
 
 	// --------------------------------------
 	// Constants
 	// --------------------------------------
 
-	private static final long serialVersionUID = -2764687870288928563L;
+	public static final int DEFAULT_ENLARGEN_POOL_AMOUNT = 8;
+	public static final int MAXIMUM_ENLARGEN_POOL_AMOUNT = 256;
 
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
-	private transient List<T> mPooledItems;
-	private int mEnlargePoolStepAmount = 8;
+	private List<T> mPooledItems;
+	private int mEnlargePoolStepAmount;
+
+	private int mEntityInstanceCounter;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public int getNewInstanceUID() {
+		return mEntityInstanceCounter++;
+	}
 
 	public int enlargePoolStepAmount() {
 		return mEnlargePoolStepAmount;
@@ -35,6 +42,15 @@ public abstract class PoolInstanceManager<T extends PooledBaseData> extends Inst
 			return;
 
 		mEnlargePoolStepAmount = enlargeByAmount;
+	}
+
+	public T getInstanceByUid(int uid) {
+		final int lNumInstances = mInstances.size();
+		for (int i = 0; i < lNumInstances; i++) {
+			if (mInstances.get(i).uid == uid)
+				return mInstances.get(i);
+		}
+		return null;
 	}
 
 	public T getInstanceByIndex(final int itemIndex) {
@@ -48,11 +64,13 @@ public abstract class PoolInstanceManager<T extends PooledBaseData> extends Inst
 	// Constructor
 	// --------------------------------------
 
-	public PoolInstanceManager() {
+	public ClosedPoolInstanceManager() {
 		this(0);
 	}
 
-	public PoolInstanceManager(int initialCapacity) {
+	public ClosedPoolInstanceManager(int initialCapacity) {
+		mEntityInstanceCounter = 0;
+		mEnlargePoolStepAmount = DEFAULT_ENLARGEN_POOL_AMOUNT;
 		mPooledItems = new ArrayList<>();
 
 		for (int i = 0; i < initialCapacity; i++) {
@@ -64,13 +82,29 @@ public abstract class PoolInstanceManager<T extends PooledBaseData> extends Inst
 	// Methods
 	// --------------------------------------
 
+	protected void refreshInstanceUidCounter() {
+		final int lNumInstances = mInstances.size();
+		for (int i = 0; i < lNumInstances; i++) {
+			if (mInstances.get(i).uid > mEntityInstanceCounter)
+				mEntityInstanceCounter = mInstances.get(i).uid;
+		}
+
+		final int lNumPooledInstances = mPooledItems.size();
+		for (int i = 0; i < lNumPooledInstances; i++) {
+			if (mPooledItems.get(i).uid > mEntityInstanceCounter)
+				mEntityInstanceCounter = mPooledItems.get(i).uid;
+		}
+	}
+
 	public T getFreePooledItem() {
 		if (mPooledItems == null) {
 			mPooledItems = new ArrayList<>();
 		}
 
 		final T lInst = mPooledItems.size() > 0 ? mPooledItems.remove(0) : enlargenInstancePool(mEnlargePoolStepAmount);
-		mInstances.add(lInst);
+
+		if (mInstances.contains(lInst) == false)
+			mInstances.add(lInst);
 
 		return lInst;
 	}
@@ -94,6 +128,9 @@ public abstract class PoolInstanceManager<T extends PooledBaseData> extends Inst
 	}
 
 	private T enlargenInstancePool(int enlargeByAmount) {
+		if (enlargeByAmount > MAXIMUM_ENLARGEN_POOL_AMOUNT)
+			enlargeByAmount = MAXIMUM_ENLARGEN_POOL_AMOUNT;
+
 		for (int i = 0; i < enlargeByAmount; i++) {
 			mPooledItems.add(createPoolObjectInstance());
 		}

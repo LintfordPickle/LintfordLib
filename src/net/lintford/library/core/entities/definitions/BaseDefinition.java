@@ -1,6 +1,6 @@
-package net.lintford.library.core.entity.definitions;
+package net.lintford.library.core.entities.definitions;
 
-import net.lintford.library.core.entity.BaseEntity;
+import net.lintford.library.core.entities.BaseEntity;
 
 public abstract class BaseDefinition extends BaseEntity {
 

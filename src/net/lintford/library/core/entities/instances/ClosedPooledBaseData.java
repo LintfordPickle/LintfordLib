@@ -1,20 +1,14 @@
-package net.lintford.library.core.entity.instances;
+package net.lintford.library.core.entities.instances;
 
-import net.lintford.library.core.entity.BaseInstanceData;
+import net.lintford.library.core.entities.Entity;
 
-public abstract class ClosedInstanceBaseData extends BaseInstanceData {
-
-	// --------------------------------------
-	// Constants
-	// --------------------------------------
-
-	private static final long serialVersionUID = -1444873148544023277L;
+public abstract class ClosedPooledBaseData extends Entity {
 
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
-	boolean internalInUse; // used by the ClosedInstanceManager to track the assigned state of this instance
+	boolean internalInUse;
 
 	// --------------------------------------
 	// Properties
@@ -28,8 +22,8 @@ public abstract class ClosedInstanceBaseData extends BaseInstanceData {
 	// Constructor
 	// --------------------------------------
 
-	public ClosedInstanceBaseData() {
-		reset();
+	public ClosedPooledBaseData(int entityUid) {
+		super(entityUid);
 	}
 
 	// --------------------------------------

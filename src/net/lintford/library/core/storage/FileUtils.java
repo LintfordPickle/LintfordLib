@@ -170,6 +170,7 @@ public class FileUtils {
 		}
 	}
 
+	/* deletes the given file or folder, includes all files and subdirectories. Note the file or folder specified must be contained within the GameStorage directory */
 	public static void deleteFolder(File fileToDelete) throws IOException {
 		// Make sure that the folders and files being deleting belongs within the app storage folder
 		if (!isChild(fileToDelete.toPath(), AppStorage.getGameDataDirectory())) {

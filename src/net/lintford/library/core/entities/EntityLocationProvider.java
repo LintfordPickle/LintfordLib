@@ -1,4 +1,4 @@
-package net.lintford.library.core.entity;
+package net.lintford.library.core.entities;
 
 import java.util.Iterator;
 

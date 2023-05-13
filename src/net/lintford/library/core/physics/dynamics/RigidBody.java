@@ -3,10 +3,7 @@ package net.lintford.library.core.physics.dynamics;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.gson.annotations.SerializedName;
-
 import net.lintford.library.core.debug.Debug;
-import net.lintford.library.core.entity.BaseInstanceData;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.maths.MathHelper;
 import net.lintford.library.core.maths.Vector2f;
@@ -14,8 +11,6 @@ import net.lintford.library.core.physics.spatial.PhysicsGridEntity;
 import net.lintford.library.core.physics.spatial.PhysicsHashGrid;
 
 public class RigidBody extends PhysicsGridEntity {
-
-	private static final long serialVersionUID = 6671253042965704538L;
 
 	private static int uidCounter;
 
@@ -55,36 +50,25 @@ public class RigidBody extends PhysicsGridEntity {
 	private final BodyState state = new BodyState();
 	private transient final Rectangle mAABB = new Rectangle();
 
-	@SerializedName(value = "x")
 	public float x;
 
-	@SerializedName(value = "y")
 	public float y;
 
-	@SerializedName(value = "vx")
 	public float vx;
 
-	@SerializedName(value = "vy")
 	public float vy;
 
-	@SerializedName(value = "ax")
 	public float accX;
 
-	@SerializedName(value = "ay")
 	public float accY;
 
-	@SerializedName(value = "torque")
 	public float torque;
 
-	@SerializedName(value = "rot")
 	public float angle;
 
-	@SerializedName(value = "rotVel")
 	public float angularVelocity;
 
-	@SerializedName(value = "mass")
 	private float mMass;
-	@SerializedName(value = "restitution")
 	private float mRestitution;
 
 	private transient float mArea;
@@ -98,39 +82,33 @@ public class RigidBody extends PhysicsGridEntity {
 	private transient float mInvInertia;
 
 	private int mCategoryBit; // I'm a ..
-	private int mMaskBit;     // I collide with ...
-	
-	@SerializedName(value = "isStatic")
+	private int mMaskBit; // I collide with ...
+
 	private boolean mIsStatic;
 
-	@SerializedName(value = "radius")
 	public float radius;
 
-	@SerializedName(value = "width")
 	public float width;
 
-	@SerializedName(value = "height")
 	public float height;
 
-	@SerializedName(value = "vertices")
 	private final List<Vector2f> mLocalVertices;
 	private transient List<Vector2f> mTransformedVertices;
 	private boolean mManualIsDirty;
 
-	@SerializedName(value = "shapeType")
 	private ShapeType mShapeType;
 
-	private BaseInstanceData userData;
+	private Object userData;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
 
-	public BaseInstanceData userData() {
+	public Object userData() {
 		return userData;
 	}
 
-	public void userData(BaseInstanceData userData) {
+	public void userData(Object userData) {
 		this.userData = userData;
 	}
 
@@ -211,24 +189,25 @@ public class RigidBody extends PhysicsGridEntity {
 	public int maskBits() {
 		return mMaskBit;
 	}
-	
+
 	public void maskBits(int maskBits) {
 		mMaskBit = maskBits;
 	}
-	
+
 	public int categoryBits() {
 		return mCategoryBit;
 	}
-	
+
 	public void categoryBits(int categoryBits) {
 		mCategoryBit = categoryBits;
 	}
-	
+
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
-	public RigidBody(int uid, float density, float restitution, float staticFriction, float dynamicFriction, float mass, float inertia, float area, boolean isStatic, float width, float height, float radius, ShapeType shapeType) {
+	public RigidBody(int uid, float density, float restitution, float staticFriction, float dynamicFriction, float mass, float inertia, float area, boolean isStatic, float width, float height, float radius,
+			ShapeType shapeType) {
 		super(uid);
 
 		this.radius = radius;

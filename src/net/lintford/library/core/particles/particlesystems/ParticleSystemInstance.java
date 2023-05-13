@@ -4,18 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.entity.BaseInstanceData;
 import net.lintford.library.core.particles.Particle;
 import net.lintford.library.core.particles.particlesystems.initializers.ParticleInitializerBase;
 import net.lintford.library.core.particles.particlesystems.modifiers.ParticleModifierBase;
 
-public class ParticleSystemInstance extends BaseInstanceData {
+public class ParticleSystemInstance {
 
 	// --------------------------------------
 	// Constants
 	// --------------------------------------
-
-	private static final long serialVersionUID = 8190016634061373178L;
 
 	public static final int NO_RENDERER_ASSIGNED = -1;
 

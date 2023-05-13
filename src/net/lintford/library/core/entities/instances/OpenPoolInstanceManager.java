@@ -1,27 +1,27 @@
-package net.lintford.library.core.entity.instances;
-
-import java.util.ArrayList;
-import java.util.List;
+package net.lintford.library.core.entities.instances;
 
 /**
- * The {@link IndexedPoolInstanceManager} maintains an indexed array of pool items retreived and later returned for  re-use. 
- * Items given out by this pool are NOT tracked.
- */
-public abstract class IndexedPoolInstanceManager<T extends IndexedPooledBaseData> extends InstanceManager<T> {
+ * The {@link OpenPoolInstanceManager} creates Entities which are first created within a pool, but are released from the pool upon assignment.
+ * The {@link OpenPooledBaseData} instances can be returned for reuse. 
+ * 
+ * The pool can be enlargened at any time (pre-allocation).
+ * */
+public abstract class OpenPoolInstanceManager<T extends OpenPooledBaseData> extends InstanceManager<T> {
 
 	// --------------------------------------
 	// Constants
 	// --------------------------------------
 
-	private static final long serialVersionUID = -2764687870288928563L;
+	public static final int DEFAULT_ENLARGEN_POOL_AMOUNT = 8;
+	public static final int MAXIMUM_ENLARGEN_POOL_AMOUNT = 256;
 
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
-	private transient List<T> mPooledItems;
-	private int mEnlargePoolStepAmount = 8;
-	private int mInstanceUIDCounter;
+	private int mEnlargePoolStepAmount;
+
+	private int mInstanceUidCounter;
 
 	// --------------------------------------
 	// Properties
@@ -45,10 +45,10 @@ public abstract class IndexedPoolInstanceManager<T extends IndexedPooledBaseData
 		return instances().get(itemIndex);
 	}
 
-	public T getInstanceByUid(final int poolUid) {
+	public T getInstanceByUid(final int entityUid) {
 		final int lNumInstances = numInstances();
 		for (int i = 0; i < lNumInstances; i++) {
-			if (instances().get(i).poolUid == poolUid)
+			if (instances().get(i).uid == entityUid)
 				return instances().get(i);
 		}
 
@@ -59,15 +59,15 @@ public abstract class IndexedPoolInstanceManager<T extends IndexedPooledBaseData
 	// Constructor
 	// --------------------------------------
 
-	public IndexedPoolInstanceManager() {
+	public OpenPoolInstanceManager() {
 		this(0);
 	}
 
-	public IndexedPoolInstanceManager(int initialCapacity) {
-		mPooledItems = new ArrayList<>();
+	public OpenPoolInstanceManager(int initialCapacity) {
+		mEnlargePoolStepAmount = DEFAULT_ENLARGEN_POOL_AMOUNT;
 
 		for (int i = 0; i < initialCapacity; i++) {
-			mPooledItems.add(createPoolObjectInstance());
+			mInstances.add(createPoolObjectInstance());
 		}
 	}
 
@@ -78,13 +78,8 @@ public abstract class IndexedPoolInstanceManager<T extends IndexedPooledBaseData
 	public T getFreePooledItem() {
 		T lInst = null;
 
-		if (mPooledItems == null) {
-			mPooledItems = new ArrayList<>();
-		}
-
-		if (mPooledItems.size() > 0) {
-			lInst = mPooledItems.remove(0);
-			mInstances.add(lInst);
+		if (mInstances.size() > 0) {
+			return mInstances.remove(0);
 
 		} else {
 			lInst = enlargenInstancePool(mEnlargePoolStepAmount);
@@ -98,26 +93,20 @@ public abstract class IndexedPoolInstanceManager<T extends IndexedPooledBaseData
 		if (returnedItem == null)
 			return;
 
-		if (mInstances.contains(returnedItem)) {
-			mInstances.remove(returnedItem);
-		}
-
-		if (mPooledItems == null) {
-			mPooledItems = new ArrayList<>();
-		}
-
-		if (!mPooledItems.contains(returnedItem)) {
-			returnedItem.reset();
-			mPooledItems.add(returnedItem);
+		if (mInstances.contains(returnedItem) == false) {
+			mInstances.add(returnedItem);
 		}
 	}
 
 	private T enlargenInstancePool(int enlargeByAmount) {
+		if (enlargeByAmount > MAXIMUM_ENLARGEN_POOL_AMOUNT)
+			enlargeByAmount = MAXIMUM_ENLARGEN_POOL_AMOUNT;
+
 		for (int i = 0; i < enlargeByAmount; i++) {
-			mPooledItems.add(createPoolObjectInstance());
+			mInstances.add(createPoolObjectInstance());
 		}
 
-		T lInst = mPooledItems.remove(0);
+		T lInst = createPoolObjectInstance();
 
 		return lInst;
 	}
@@ -126,11 +115,18 @@ public abstract class IndexedPoolInstanceManager<T extends IndexedPooledBaseData
 
 	@Override
 	public void clearInstances() {
-		mPooledItems.addAll(mInstances);
-		mInstances.clear();
 	}
 
 	protected int getNewInstanceUID() {
-		return mInstanceUIDCounter++;
+		return mInstanceUidCounter++;
 	}
+
+	public int getInstanceCounter() {
+		return mInstanceUidCounter;
+	}
+
+	public void setInstanceCounter(int instanceCounter) {
+		mInstanceUidCounter = instanceCounter;
+	}
+
 }

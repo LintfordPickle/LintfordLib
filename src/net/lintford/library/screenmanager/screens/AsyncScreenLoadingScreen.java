@@ -3,7 +3,7 @@ package net.lintford.library.screenmanager.screens;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.Debug;
-import net.lintford.library.core.entity.BaseEntity;
+import net.lintford.library.core.entities.BaseEntity;
 import net.lintford.library.core.time.TimeSpan;
 import net.lintford.library.options.DisplayManager;
 import net.lintford.library.renderers.RendererManager;

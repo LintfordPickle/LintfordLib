@@ -1,15 +1,8 @@
 package net.lintford.library.core.camera;
 
-import net.lintford.library.core.entity.BaseInstanceData;
 import net.lintford.library.core.maths.Vector2f;
 
-public class CameraState extends BaseInstanceData {
-
-	// --------------------------------------
-	// Constants
-	// --------------------------------------
-
-	private static final long serialVersionUID = 7082675437615744107L;
+public class CameraState {
 
 	// --------------------------------------
 	// Variables

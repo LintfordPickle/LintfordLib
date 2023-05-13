@@ -4,12 +4,12 @@ import java.util.List;
 
 import com.google.gson.GsonBuilder;
 
-import net.lintford.library.core.entity.EntityLocationProvider;
-import net.lintford.library.core.entity.definitions.DefinitionManager;
-import net.lintford.library.core.entity.instances.PoolInstanceManager;
+import net.lintford.library.core.entities.EntityLocationProvider;
+import net.lintford.library.core.entities.definitions.DefinitionManager;
+import net.lintford.library.core.entities.instances.ClosedPoolInstanceManager;
 import net.lintford.library.core.particles.ParticleFrameworkData;
 
-public class ParticleEmitterManager extends PoolInstanceManager<ParticleEmitterInstance> {
+public class ParticleEmitterManager extends ClosedPoolInstanceManager<ParticleEmitterInstance> {
 
 	// --------------------------------------
 	// Inner-Classes
@@ -57,8 +57,6 @@ public class ParticleEmitterManager extends PoolInstanceManager<ParticleEmitterI
 	// Constants
 	// --------------------------------------
 
-	private static final long serialVersionUID = -831550615078707748L;
-
 	public static final int PARTICLE_EMIITER_NOT_ASSIGNED = -1;
 
 	// --------------------------------------
@@ -96,11 +94,9 @@ public class ParticleEmitterManager extends PoolInstanceManager<ParticleEmitterI
 	// Core-Methods
 	// --------------------------------------
 
-	@Override
-	public void afterLoaded(Object parent) {
+	public void initialize(Object parent) {
 		mEmitterDefinitionManager = new EmitterDefinitionManager();
 
-		// Resolve all the ParticleSystems within the emitters to the ParticleSystem instances.
 		if (parent instanceof ParticleFrameworkData) {
 			final var lFramework = (ParticleFrameworkData) parent;
 			mEmitterDefinitionManager.initialize(lFramework);

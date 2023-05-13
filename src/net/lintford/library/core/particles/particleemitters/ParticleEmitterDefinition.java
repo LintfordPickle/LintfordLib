@@ -2,7 +2,7 @@ package net.lintford.library.core.particles.particleemitters;
 
 import com.google.gson.annotations.SerializedName;
 
-import net.lintford.library.core.entity.definitions.BaseDefinition;
+import net.lintford.library.core.entities.definitions.BaseDefinition;
 
 public class ParticleEmitterDefinition extends BaseDefinition {
 

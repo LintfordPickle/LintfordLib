@@ -1,14 +1,8 @@
 package net.lintford.library.core.geometry.partitioning;
 
-import net.lintford.library.core.entity.Entity;
+import net.lintford.library.core.entities.Entity;
 
 public abstract class GridEntity extends Entity {
-
-	// ---------------------------------------------
-	// Constants
-	// ---------------------------------------------
-
-	private static final long serialVersionUID = -8790552505437118157L;
 
 	// ---------------------------------------------
 	// Variables

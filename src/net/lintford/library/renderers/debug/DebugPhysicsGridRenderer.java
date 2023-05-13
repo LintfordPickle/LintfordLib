@@ -119,7 +119,7 @@ public class DebugPhysicsGridRenderer extends BaseRenderer {
 					final int lNumCellContent = lCellContents.size();
 					for (int j = 0; j < lNumCellContent; j++) {
 						final var entity = lCellContents.get(j);
-						lFontUnit.drawText(String.valueOf(entity.entityUid), -lHalfBW + (xx * lTileSizeW) + 10f, -lHalfBH + (yy * lTileSizeH) + 10f + (j * 7), -0.001f, 0.5f);
+						lFontUnit.drawText(String.valueOf(entity.uid), -lHalfBW + (xx * lTileSizeW) + 10f, -lHalfBH + (yy * lTileSizeH) + 10f + (j * 7), -0.001f, 0.5f);
 					}
 				}
 			}

@@ -7,12 +7,6 @@ import net.lintford.library.core.geometry.partitioning.SpatialHashGrid;
 public abstract class RigidBodyEntity extends GridEntity {
 
 	// --------------------------------------
-	// Constants
-	// --------------------------------------
-
-	private static final long serialVersionUID = 8301457813068268466L;
-
-	// --------------------------------------
 	// Variables
 	// --------------------------------------
 

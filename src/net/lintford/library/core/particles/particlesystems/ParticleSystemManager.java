@@ -5,9 +5,9 @@ import java.util.List;
 import com.google.gson.GsonBuilder;
 
 import net.lintford.library.core.debug.Debug;
-import net.lintford.library.core.entity.EntityLocationProvider;
-import net.lintford.library.core.entity.definitions.DefinitionManager;
-import net.lintford.library.core.entity.instances.InstanceManager;
+import net.lintford.library.core.entities.EntityLocationProvider;
+import net.lintford.library.core.entities.definitions.DefinitionManager;
+import net.lintford.library.core.entities.instances.InstanceManager;
 import net.lintford.library.core.particles.ParticleFrameworkData;
 import net.lintford.library.core.particles.particlesystems.deserializer.ParticleSystemDeserializer;
 
@@ -16,8 +16,6 @@ public class ParticleSystemManager extends InstanceManager<ParticleSystemInstanc
 	// --------------------------------------
 	// Constants
 	// --------------------------------------
-
-	private static final long serialVersionUID = -5013183501163339554L;
 
 	public class ParticleSystemDefinitionManager extends DefinitionManager<ParticleSystemDefinition> {
 
