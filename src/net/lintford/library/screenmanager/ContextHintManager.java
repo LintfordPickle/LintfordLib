@@ -39,9 +39,19 @@ public class ContextHintManager {
 	private boolean mGamePadHintsEnabled;
 	private boolean mKeyboardHintsEnabled;
 
+	private boolean mContextHintsEnabled;
+
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public boolean enabled() {
+		return mContextHintsEnabled;
+	}
+
+	public void enabled(boolean enabled) {
+		mContextHintsEnabled = enabled;
+	}
 
 	public void setGamePadHints() {
 		mGamePadHintsEnabled = true;
@@ -119,7 +129,7 @@ public class ContextHintManager {
 	}
 
 	public void draw(LintfordCore core) {
-		if (mDrawContextBackground == false)
+		if (mContextHintsEnabled == false || mDrawContextBackground == false)
 			return;
 
 		final var lHudBoundingBox = core.HUD().boundingRectangle();
@@ -138,11 +148,14 @@ public class ContextHintManager {
 		mSpriteBatch.begin(core.HUD());
 
 		if (mDrawFooterBar)
-			mSpriteBatch.draw(mCoreSpritesheetDefinition, CoreTextureNames.TEXTURE_FOOTER_TRANSITION, lHudBoundingBox.right() - 512, lHudBoundingBox.bottom() - lVersionTextHeight - 2, 64, lVersionTextHeight + 2, -.1f, ColorConstants.GREY_DARK);
+			mSpriteBatch.draw(mCoreSpritesheetDefinition, CoreTextureNames.TEXTURE_FOOTER_TRANSITION, lHudBoundingBox.right() - 512, lHudBoundingBox.bottom() - lVersionTextHeight - 2, 64, lVersionTextHeight + 2, -.1f,
+					ColorConstants.GREY_DARK);
 		else
-			mSpriteBatch.draw(mCoreSpritesheetDefinition, CoreTextureNames.TEXTURE_FOOTER_END_64X64, lHudBoundingBox.right() - 512, lHudBoundingBox.bottom() - lVersionTextHeight - 2, 64, lVersionTextHeight + 2, -.1f, ColorConstants.GREY_DARK);
+			mSpriteBatch.draw(mCoreSpritesheetDefinition, CoreTextureNames.TEXTURE_FOOTER_END_64X64, lHudBoundingBox.right() - 512, lHudBoundingBox.bottom() - lVersionTextHeight - 2, 64, lVersionTextHeight + 2, -.1f,
+					ColorConstants.GREY_DARK);
 
-		mSpriteBatch.draw(mCoreSpritesheetDefinition, CoreTextureNames.TEXTURE_FOOTER_64X64, lHudBoundingBox.right() - (512 - 64), lHudBoundingBox.bottom() - lVersionTextHeight - 2, lHudBoundingBox.width(), lVersionTextHeight + 2, -.1f, ColorConstants.GREY_DARK);
+		mSpriteBatch.draw(mCoreSpritesheetDefinition, CoreTextureNames.TEXTURE_FOOTER_64X64, lHudBoundingBox.right() - (512 - 64), lHudBoundingBox.bottom() - lVersionTextHeight - 2, lHudBoundingBox.width(),
+				lVersionTextHeight + 2, -.1f, ColorConstants.GREY_DARK);
 
 		if (mGamePadHintsEnabled)
 			drawGamePadHints(core);
@@ -225,7 +238,8 @@ public class ContextHintManager {
 		final var lVersionTextHeight = 32;// lVersionFont.fontHeight();
 
 		mSpriteBatch.begin(core.HUD());
-		mSpriteBatch.draw(mCoreSpritesheetDefinition, CoreTextureNames.TEXTURE_FOOTER_32X32, lHudBounds.left(), lHudBounds.bottom() - lVersionTextHeight, lHudBounds.width(), lVersionTextHeight + 2, -0.02f, ColorConstants.GREY_DARK);
+		mSpriteBatch.draw(mCoreSpritesheetDefinition, CoreTextureNames.TEXTURE_FOOTER_32X32, lHudBounds.left(), lHudBounds.bottom() - lVersionTextHeight, lHudBounds.width(), lVersionTextHeight + 2, -0.02f,
+				ColorConstants.GREY_DARK);
 		mSpriteBatch.end();
 
 		String text;
@@ -263,13 +277,16 @@ public class ContextHintManager {
 
 			mPositionMarker.x -= 10.f;
 			mPositionMarker.x -= lKeyHintWidth;
-			spriteBatch.draw(mCoreSpritesheetDefinition, mCoreSpritesheetDefinition.getSpriteFrame(CoreTextureNames.TEXTURE_KEY_END_RIGHT), mPositionMarker.x, mPositionMarker.y, 7, cIconSize, -0.01f, ColorConstants.WHITE);
-			spriteBatch.draw(mCoreSpritesheetDefinition, mCoreSpritesheetDefinition.getSpriteFrame(CoreTextureNames.TEXTURE_KEY_MID), mPositionMarker.x - lKeyTextWidth, mPositionMarker.y, lKeyTextWidth, cIconSize, -0.01f, ColorConstants.WHITE);
+			spriteBatch.draw(mCoreSpritesheetDefinition, mCoreSpritesheetDefinition.getSpriteFrame(CoreTextureNames.TEXTURE_KEY_END_RIGHT), mPositionMarker.x, mPositionMarker.y, 7, cIconSize, -0.01f,
+					ColorConstants.WHITE);
+			spriteBatch.draw(mCoreSpritesheetDefinition, mCoreSpritesheetDefinition.getSpriteFrame(CoreTextureNames.TEXTURE_KEY_MID), mPositionMarker.x - lKeyTextWidth, mPositionMarker.y, lKeyTextWidth, cIconSize,
+					-0.01f, ColorConstants.WHITE);
 			mPositionMarker.x -= lKeyTextWidth;
 			font.drawText(keyText, mPositionMarker.x, mPositionMarker.y + cIconSize * .5f - font.fontHeight() * .5f, -0.001f, ColorConstants.GREY_DARK, 1.f);
 			mPositionMarker.x -= 7.f;
 
-			spriteBatch.draw(mCoreSpritesheetDefinition, mCoreSpritesheetDefinition.getSpriteFrame(CoreTextureNames.TEXTURE_KEY_END_LEFT), mPositionMarker.x, mPositionMarker.y, 7, cIconSize, -0.01f, ColorConstants.WHITE);
+			spriteBatch.draw(mCoreSpritesheetDefinition, mCoreSpritesheetDefinition.getSpriteFrame(CoreTextureNames.TEXTURE_KEY_END_LEFT), mPositionMarker.x, mPositionMarker.y, 7, cIconSize, -0.01f,
+					ColorConstants.WHITE);
 			mPositionMarker.x -= cSpacing;
 		}
 	}
