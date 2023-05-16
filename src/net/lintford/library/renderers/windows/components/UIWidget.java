@@ -37,6 +37,8 @@ public abstract class UIWidget extends Rectangle implements IInputProcessor {
 
 	protected float mMouseTimer;
 
+	protected float mLayoutWeight;
+
 	// The margin is applied to the outside of this component
 	protected int mMarginTop;
 	protected int mMarginBottom;
@@ -52,6 +54,14 @@ public abstract class UIWidget extends Rectangle implements IInputProcessor {
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public float layoutWeight() {
+		return mLayoutWeight;
+	}
+
+	public void layoutWeight(float layoutWeight) {
+		mLayoutWeight = layoutWeight;
+	}
 
 	public float paddingLeft() {
 		return mPaddingLeft;
