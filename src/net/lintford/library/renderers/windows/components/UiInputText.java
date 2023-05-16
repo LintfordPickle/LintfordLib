@@ -212,7 +212,7 @@ public class UiInputText extends UIWidget implements IBufferedTextInputCallback 
 		final float lTextHeight = textFont.fontHeight();
 		if (lText.length() == 0 && !mHasFocus) {
 			if (mEmptyString.isEmpty()) {
-				lText = "<search>";
+				lText = "";
 			} else {
 				lText = mEmptyString;
 			}
@@ -222,7 +222,8 @@ public class UiInputText extends UIWidget implements IBufferedTextInputCallback 
 		if (isReadonly())
 			lTextColor = ColorConstants.GREY_DARK;
 
-		textFont.drawText(lText, mX + 10, mY + mH * .5f - lTextHeight * .5f, componentZDepth, lTextColor, -1);
+		final float lScale = 1.f;
+		textFont.drawText(lText, mX + 10, mY + mH * .5f - lTextHeight * .5f, componentZDepth, lTextColor, lScale);
 		if (mShowCaret && mHasFocus) {
 			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, mX + lInputTextWidth + 10, mY + mH * .5f - lTextHeight * .5f, textFont.fontHeight() / 2.f, textFont.fontHeight(), componentZDepth, ColorConstants.WHITE);
 		}
