@@ -57,6 +57,12 @@ public class UiButton extends UIWidget {
 		mW = 200;
 		mH = 25;
 	}
+	
+	public UiButton(final UiWindow pParentWindow, String labelText) {
+		this(pParentWindow);
+
+		mButtonLabel = labelText;
+	}
 
 	// --------------------------------------
 	// Core-Methods
