@@ -34,6 +34,7 @@ public abstract class UIWidget extends Rectangle implements IInputProcessor {
 	protected boolean mIsEnabled;
 	protected boolean mIsVisible;
 	protected boolean mIsHoveredOver;
+	protected boolean mIsDoubleHeight;
 
 	protected float mMouseTimer;
 
@@ -54,6 +55,14 @@ public abstract class UIWidget extends Rectangle implements IInputProcessor {
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public boolean isDoubleHeight() {
+		return mIsDoubleHeight;
+	}
+
+	public void isDoubleHeight(boolean layoutWeight) {
+		mIsDoubleHeight = layoutWeight;
+	}
 
 	public float layoutWeight() {
 		return mLayoutWeight;
