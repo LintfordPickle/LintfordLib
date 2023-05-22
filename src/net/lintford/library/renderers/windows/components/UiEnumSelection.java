@@ -21,7 +21,7 @@ public class UiEnumSelection extends UIWidget {
 	private static final long serialVersionUID = 7704116387039308007L;
 
 	public static final int NO_UID = -1;
-	private static final String NO_LABEL_TEXT = "unlabled";
+	private static final String NO_LABEL_TEXT = "";
 
 	public static final float ARROW_SIZE = 16.f;
 	public static final float ARROW_PADDING = 8.f;
@@ -194,7 +194,7 @@ public class UiEnumSelection extends UIWidget {
 			final var lNoTextWidth = textFont.getStringWidth(lItemDisplayName);
 			textFont.drawText(lItemDisplayName, mX + mW / 2f - lNoTextWidth / 2f, mY + mH - ARROW_SIZE - ARROW_PADDING, componentZDepth, ColorConstants.WHITE, lScale);
 		} else {
-			final var lNoItemSelectedText = "nothing";
+			final var lNoItemSelectedText = "";
 			final var lNoTextWidth = textFont.getStringWidth(lNoItemSelectedText);
 			textFont.drawText(lNoItemSelectedText, mX + mW / 2f - lNoTextWidth / 2f, mY + mH - ARROW_SIZE - ARROW_PADDING, componentZDepth, ColorConstants.WHITE, lScale);
 		}
