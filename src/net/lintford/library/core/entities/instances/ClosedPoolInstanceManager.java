@@ -82,6 +82,7 @@ public abstract class ClosedPoolInstanceManager<T extends ClosedPooledBaseData> 
 	// Methods
 	// --------------------------------------
 
+	/** Sets the mEntityInstanceCounter to the next available instance counter */
 	protected void refreshInstanceUidCounter() {
 		final int lNumInstances = mInstances.size();
 		for (int i = 0; i < lNumInstances; i++) {
@@ -94,6 +95,8 @@ public abstract class ClosedPoolInstanceManager<T extends ClosedPooledBaseData> 
 			if (mPooledItems.get(i).uid > mEntityInstanceCounter)
 				mEntityInstanceCounter = mPooledItems.get(i).uid;
 		}
+		
+		mEntityInstanceCounter++;
 	}
 
 	public T getFreePooledItem() {
