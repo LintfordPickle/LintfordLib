@@ -47,10 +47,10 @@ public class RTCamera implements ICamera {
 	protected float mRotation = 0.0f;
 
 	protected boolean mAllowMouseScrollZoom = true;
-	protected int mWindowWidth;
-	protected int mWindowHeight;
-	protected float mScaledWindowWidth;
-	protected float mScaledWindowHeight;
+	protected int mViewportWidth;
+	protected int mViewportHeight;
+	protected float mScaledViewportWidth;
+	protected float mScaledViewportHeight;
 
 	protected Vector2f mMouseWorldSpace;
 
@@ -116,19 +116,19 @@ public class RTCamera implements ICamera {
 	}
 
 	public float scaledWindowWidth() {
-		return mScaledWindowWidth;
+		return mScaledViewportWidth;
 	}
 
 	public float scaledWindowHeight() {
-		return mScaledWindowHeight;
+		return mScaledViewportHeight;
 	}
 
-	public int windowWidth() {
-		return mWindowWidth;
+	public int viewportWidth() {
+		return mViewportWidth;
 	}
 
-	public int windowHeight() {
-		return mWindowHeight;
+	public int viewportHeight() {
+		return mViewportHeight;
 	}
 
 	@Override
@@ -141,8 +141,8 @@ public class RTCamera implements ICamera {
 	// --------------------------------------
 
 	public RTCamera(int windowWidth, int windowHeight) {
-		mWindowWidth = windowWidth;
-		mWindowHeight = windowHeight;
+		mViewportWidth = windowWidth;
+		mViewportHeight = windowHeight;
 
 		this.mMinX = 0;
 		this.mMaxX = 0 + windowWidth;
@@ -185,10 +185,16 @@ public class RTCamera implements ICamera {
 		mAcceleration.x = 0.0f;
 		mAcceleration.y = 0.0f;
 
+//		final var lDisplayConfig = core.config().display();
+//		if(lDisplayConfig.stretchGameScreen()) {
+//			mWindowWidth = 960; //lDisplayConfig.windowWidth();
+//			mWindowHeight = 540;//lDisplayConfig.windowHeight();
+//		}
+		
 		createView();
-		createOrtho(mWindowWidth, mWindowHeight);
+		createOrtho(mViewportWidth, mViewportHeight);
 
-		updateZoomBounds(mWindowWidth, mWindowHeight);
+		updateZoomBounds(mViewportWidth, mViewportHeight);
 	}
 
 	public void createView() {
@@ -203,18 +209,18 @@ public class RTCamera implements ICamera {
 	}
 
 	private void updateZoomBounds(final float gameViewportWidth, final float gameViewportheight) {
-		mScaledWindowWidth = gameViewportWidth * getZoomFactorOverOne();
-		mScaledWindowHeight = gameViewportheight * getZoomFactorOverOne();
+		mScaledViewportWidth = gameViewportWidth * getZoomFactorOverOne();
+		mScaledViewportHeight = gameViewportheight * getZoomFactorOverOne();
 
-		mMinX = mInternalPosition.x - mScaledWindowWidth / 2.0f;
-		mMinY = mInternalPosition.y - mScaledWindowHeight / 2.0f;
+		mMinX = mInternalPosition.x - mScaledViewportWidth / 2.0f;
+		mMinY = mInternalPosition.y - mScaledViewportHeight / 2.0f;
 
-		mMaxX = mInternalPosition.x + mScaledWindowWidth / 2.0f;
-		mMaxY = mInternalPosition.y + mScaledWindowHeight / 2.0f;
+		mMaxX = mInternalPosition.x + mScaledViewportWidth / 2.0f;
+		mMaxY = mInternalPosition.y + mScaledViewportHeight / 2.0f;
 
 		mBoundingRectangle.setCenterPosition(mInternalPosition.x, mInternalPosition.y);
-		mBoundingRectangle.width(mScaledWindowWidth);
-		mBoundingRectangle.height(mScaledWindowHeight);
+		mBoundingRectangle.width(mScaledViewportWidth);
+		mBoundingRectangle.height(mScaledViewportHeight);
 	}
 
 	// --------------------------------------
@@ -274,11 +280,11 @@ public class RTCamera implements ICamera {
 	}
 
 	protected float getCenterX() {
-		return mInternalPosition.x + (mScaledWindowWidth * 0.5f);
+		return mInternalPosition.x + (mScaledViewportWidth * 0.5f);
 	}
 
 	protected float getCenterY() {
-		return mInternalPosition.y + (mScaledWindowHeight * 0.5f);
+		return mInternalPosition.y + (mScaledViewportHeight * 0.5f);
 	}
 
 	@Override
@@ -291,7 +297,7 @@ public class RTCamera implements ICamera {
 		mZoomFactor = newValue;
 
 		createView();
-		updateZoomBounds(mWindowWidth, mWindowHeight);
+		updateZoomBounds(mViewportWidth, mViewportHeight);
 	}
 
 	@Override

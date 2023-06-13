@@ -150,11 +150,11 @@ public class Camera implements ICamera {
 		return mScaledWindowHeight;
 	}
 
-	public int windowWidth() {
+	public int viewportWidth() {
 		return mWindowWidth;
 	}
 
-	public int windowHeight() {
+	public int viewportHeight() {
 		return mWindowHeight;
 	}
 

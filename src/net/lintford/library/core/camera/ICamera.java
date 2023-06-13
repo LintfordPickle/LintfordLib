@@ -134,12 +134,12 @@ public interface ICamera {
 		}
 
 		@Override
-		public int windowWidth() {
+		public int viewportWidth() {
 			return 800;
 		}
 
 		@Override
-		public int windowHeight() {
+		public int viewportHeight() {
 			return 600;
 		}
 
@@ -192,9 +192,9 @@ public interface ICamera {
 
 	public abstract float getZoomFactorOverOne();
 
-	public abstract int windowWidth();
+	public abstract int viewportWidth();
 
-	public abstract int windowHeight();
+	public abstract int viewportHeight();
 
 	// --------------------------------------
 	// Core-Methods
