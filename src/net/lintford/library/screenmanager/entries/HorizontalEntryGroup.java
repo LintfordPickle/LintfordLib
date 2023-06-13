@@ -93,16 +93,10 @@ public class HorizontalEntryGroup extends MenuEntry {
 	}
 
 	@Override
-	public boolean onHandleGamepadInput(LintfordCore core) {
-		// TODO Auto-generated method stub
-		return super.onHandleGamepadInput(core);
-	}
-
-	@Override
 	public boolean onHandleMouseInput(LintfordCore core) {
 		if (intersectsAA(core.HUD().getMouseCameraSpace())) {
-			int lCount = mChildEntries.size();
-			for (int i = 0; i < lCount; i++) {
+			final var lChildEntryCount = mChildEntries.size();
+			for (int i = 0; i < lChildEntryCount; i++) {
 				if (mChildEntries.get(i).onHandleMouseInput(core)) {
 					return true;
 				}
@@ -113,10 +107,9 @@ public class HorizontalEntryGroup extends MenuEntry {
 		} else {
 			mToolTipTimer = 0;
 
-			int lCount = mChildEntries.size();
-			for (int i = 0; i < lCount; i++) {
+			final var lChildEntryCount = mChildEntries.size();
+			for (int i = 0; i < lChildEntryCount; i++) {
 				mChildEntries.get(i).hasFocus(false);
-				// mChildEntries.get(i).hoveredOver(false);
 			}
 		}
 
@@ -139,8 +132,8 @@ public class HorizontalEntryGroup extends MenuEntry {
 	public void update(LintfordCore pCore, MenuScreen pScreen) {
 		super.update(pCore, pScreen);
 
-		int lCount = mChildEntries.size();
-		for (int i = 0; i < lCount; i++) {
+		final var lChildEntryCount = mChildEntries.size();
+		for (int i = 0; i < lChildEntryCount; i++) {
 			mChildEntries.get(i).update(pCore, pScreen);
 		}
 
@@ -148,7 +141,7 @@ public class HorizontalEntryGroup extends MenuEntry {
 
 	@Override
 	public void draw(LintfordCore pCore, Screen pScreen, float pParentZDepth) {
-		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
+		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", true)) {
 			final float lR = parentScreen().screenColor.r;
 			final float lG = parentScreen().screenColor.g;
 			final float lB = parentScreen().screenColor.b;
@@ -157,10 +150,9 @@ public class HorizontalEntryGroup extends MenuEntry {
 
 		}
 
-		int lCount = mChildEntries.size();
-		for (int i = 0; i < lCount; i++) {
+		final var lChildEntryCount = mChildEntries.size();
+		for (int i = 0; i < lChildEntryCount; i++) {
 			mChildEntries.get(i).draw(pCore, pScreen, pParentZDepth);
-
 		}
 	}
 
@@ -182,7 +174,7 @@ public class HorizontalEntryGroup extends MenuEntry {
 			}
 		}
 
-		final float lHPadding = 10;
+		final float lHPadding = 10.f;
 		final float lHSpace = (mW - lHPadding) / lCount;
 
 		for (int i = 0; i < lCount; i++) {
@@ -193,7 +185,6 @@ public class HorizontalEntryGroup extends MenuEntry {
 			MenuEntry.width(lHSpace);
 			MenuEntry.setPosition(lPosX, lPosY + mChildEntries.get(i).marginTop());
 		}
-
 	}
 
 	public void addEntry(MenuEntry pEntry) {
@@ -201,9 +192,9 @@ public class HorizontalEntryGroup extends MenuEntry {
 	}
 
 	public void removeEntry(MenuEntry pEntry) {
-		if (mChildEntries.contains(pEntry)) {
+		if (mChildEntries.contains(pEntry))
 			mChildEntries.remove(pEntry);
-		}
+
 	}
 
 }
