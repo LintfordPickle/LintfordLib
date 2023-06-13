@@ -3,8 +3,9 @@ package net.lintford.library.renderers;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.Debug;
+import net.lintford.library.core.input.mouse.IInputProcessor;
 
-public abstract class BaseRenderer {
+public abstract class BaseRenderer implements IInputProcessor {
 
 	// --------------------------------------
 	// Constants
@@ -24,10 +25,11 @@ public abstract class BaseRenderer {
 	protected boolean mResourcesLoaded;
 
 	/**
-	 * An entity group ID is assigned to all {@link BaseRenderer} instances. It allows you to programmatically unload batches of particular parts of the game when required (i.e. unload the game controllers when returning
-	 * to the main menu)
+	 * An entity group ID is assigned to all {@link BaseRenderer} instances. It allows you to programmatically unload batches of particular parts of the game when required (i.e. unload the game controllers when returning to the main menu)
 	 */
 	protected int mEntityGroupUid;
+
+	protected float mInputTimer;
 
 	// --------------------------------------
 	// Properties
@@ -47,8 +49,7 @@ public abstract class BaseRenderer {
 	}
 
 	/**
-	 * A group ID is assigned to all {@link BaseRenderer} instances. It allows the developer to programmatically unload batches of particular parts of the game when required (i.e. unload the game controllers when
-	 * returning to the main menu)
+	 * A group ID is assigned to all {@link BaseRenderer} instances. It allows the developer to programmatically unload batches of particular parts of the game when required (i.e. unload the game controllers when returning to the main menu)
 	 */
 	public int entityGroupID() {
 		return mEntityGroupUid;
@@ -132,5 +133,25 @@ public abstract class BaseRenderer {
 	}
 
 	public abstract void draw(LintfordCore core);
+
+	public boolean isCoolDownElapsed() {
+		return mInputTimer <= 0.f;
+	}
+
+	public void resetCoolDownTimer() {
+		mInputTimer = INPUT_COOLDOWN_TIME;
+	}
+
+	public boolean allowKeyboardInput() {
+		return false;
+	}
+
+	public boolean allowGamepadInput() {
+		return false;
+	}
+
+	public boolean allowMouseInput() {
+		return false;
+	}
 
 }
