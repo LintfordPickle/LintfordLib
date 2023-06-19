@@ -373,25 +373,33 @@ public class RendererManager implements IInputClickedFocusManager {
 
 	public void draw(LintfordCore core) {
 		if (RENDER_GAME_RENDERABLES) {
-			final int lNumBaseRenderers = mRenderers.size();
-			for (int i = 0; i < lNumBaseRenderers; i++) {
-				final var lRenderer = mRenderers.get(i);
-				if (!lRenderer.isActive() || !lRenderer.isManagedDraw())
-					continue;
-
-				lRenderer.draw(core);
-			}
+			drawRenderers(core);
 		}
 
 		if (RENDER_UI_WINDOWS) {
-			final int lNumWindowRenderers = mWindowRenderers.size();
-			for (int i = 0; i < lNumWindowRenderers; i++) {
-				final var lWindow = mWindowRenderers.get(i);
-				if (!lWindow.isActive() || !lWindow.isOpen())
-					continue;
+			drawWindowRenderers(core);
+		}
+	}
 
-				lWindow.draw(core);
-			}
+	public void drawRenderers(LintfordCore core) {
+		final int lNumBaseRenderers = mRenderers.size();
+		for (int i = 0; i < lNumBaseRenderers; i++) {
+			final var lRenderer = mRenderers.get(i);
+			if (!lRenderer.isActive() || !lRenderer.isManagedDraw())
+				continue;
+
+			lRenderer.draw(core);
+		}
+	}
+
+	public void drawWindowRenderers(LintfordCore core) {
+		final int lNumWindowRenderers = mWindowRenderers.size();
+		for (int i = 0; i < lNumWindowRenderers; i++) {
+			final var lWindow = mWindowRenderers.get(i);
+			if (!lWindow.isActive() || !lWindow.isOpen())
+				continue;
+
+			lWindow.draw(core);
 		}
 	}
 

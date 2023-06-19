@@ -246,20 +246,34 @@ public class TexturedQuad {
 	// --------------------------------------
 
 	public void createModelMatrix() {
-		createModelMatrix(0, 0);
+		createModelMatrixCentered(0, 0);
 	}
 
-	public void createModelMatrix(float positionX, float positionY) {
-		createModelMatrix(positionX, positionY, mZDepth);
+	public void createModelMatrixCentered(float positionX, float positionY) {
+		createModelMatrixCentered(positionX, positionY, mZDepth);
 	}
 
-	public void createModelMatrix(float positionX, float positionY, float positionZ) {
-		createModelMatrix(positionX, positionY, positionZ, mWidth, mHeight);
+	public void createModelMatrixAbsolute(float positionX, float positionY) {
+		createModelMatrixAbsolute(positionX, positionY, mZDepth);
 	}
 
-	public void createModelMatrix(float positionX, float positionY, float positionZ, float width, float height) {
+	public void createModelMatrixCentered(float positionX, float positionY, float positionZ) {
+		createModelMatrixCentered(positionX, positionY, positionZ, mWidth, mHeight);
+	}
+
+	public void createModelMatrixAbsolute(float positionX, float positionY, float positionZ) {
+		createModelMatrixAbsolute(positionX, positionY, positionZ, mWidth, mHeight);
+	}
+
+	public void createModelMatrixCentered(float positionX, float positionY, float positionZ, float width, float height) {
 		mModelMatrix.setIdentity();
 		mModelMatrix.scale(width, height, 1f);
 		mModelMatrix.translate(positionX, positionY, positionZ);
+	}
+
+	public void createModelMatrixAbsolute(float positionX, float positionY, float positionZ, float width, float height) {
+		mModelMatrix.setIdentity();
+		mModelMatrix.scale(width, height, 1f);
+		mModelMatrix.translate(positionX + width * .5f, positionY + height * .5f, positionZ);
 	}
 }
