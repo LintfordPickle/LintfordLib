@@ -54,11 +54,11 @@ public abstract class RigidBodyEntity extends GridEntity {
 	public boolean isGridCacheOld(SpatialHashGrid<?> grid) {
 		final var aabb = body.aabb();
 
-		final float newMinX = grid.getCellIndexX((int) aabb.left());
-		final float newMinY = grid.getCellIndexY((int) aabb.top());
+		final float newMinX = grid.getCellIndexX((int) (aabb.left() * ConstantsPhysics.UnitsToPixels()));
+		final float newMinY = grid.getCellIndexY((int) (aabb.top() * ConstantsPhysics.UnitsToPixels()));
 
-		final float newMaxX = grid.getCellIndexX((int) aabb.right());
-		final float newMaxY = grid.getCellIndexY((int) aabb.bottom());
+		final float newMaxX = grid.getCellIndexX((int) (aabb.right() * ConstantsPhysics.UnitsToPixels()));
+		final float newMaxY = grid.getCellIndexY((int) (aabb.bottom() * ConstantsPhysics.UnitsToPixels()));
 
 		if (newMinX == minX && newMinY == minY && newMaxX == maxX && newMaxY == maxY)
 			return false; // early out
