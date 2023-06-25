@@ -129,6 +129,8 @@ public abstract class BaseRenderer implements IInputProcessor {
 	}
 
 	public void update(LintfordCore core) {
+		if(mInputTimer > 0)
+			mInputTimer -= core.gameTime().elapsedTimeMilli();
 		return;
 	}
 
