@@ -16,6 +16,7 @@ public class PlayerSessionViewContainer {
 	private ICamera mPlayerCamera;
 	private RenderTarget mRenderTarget;
 
+	public final Vector2f viewportOffset = new Vector2f();
 	public final Vector2f desiredPosition = new Vector2f();
 	public final Vector2f velocity = new Vector2f();
 	public final Vector2f position = new Vector2f();
