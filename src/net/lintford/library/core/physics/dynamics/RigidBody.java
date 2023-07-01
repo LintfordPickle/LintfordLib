@@ -62,6 +62,9 @@ public class RigidBody extends PhysicsGridEntity {
 
 	public float accY;
 
+	public float linearDampingX;
+	public float linearDampingY;
+
 	public float torque;
 
 	public float angle;
@@ -206,8 +209,7 @@ public class RigidBody extends PhysicsGridEntity {
 	// Constructor
 	// --------------------------------------
 
-	public RigidBody(int uid, float density, float restitution, float staticFriction, float dynamicFriction, float mass, float inertia, float area, boolean isStatic, float width, float height, float radius,
-			ShapeType shapeType) {
+	public RigidBody(int uid, float density, float restitution, float staticFriction, float dynamicFriction, float mass, float inertia, float area, boolean isStatic, float width, float height, float radius, ShapeType shapeType) {
 		super(uid);
 
 		this.radius = radius;
@@ -249,6 +251,9 @@ public class RigidBody extends PhysicsGridEntity {
 		for (int i = 0; i < lNumLocalVertices; i++) {
 			mTransformedVertices.add(new Vector2f(mLocalVertices.get(i)));
 		}
+
+		this.linearDampingX = 1.f;
+		this.linearDampingY = 1.f;
 	}
 
 	// --------------------------------------
@@ -269,12 +274,17 @@ public class RigidBody extends PhysicsGridEntity {
 		x += vx * time;
 		y += vy * time;
 
+		vx *= linearDampingX;
+		vy *= linearDampingY;
+
 		angle += angularVelocity * time;
 		angle = MathHelper.wrapAngle(angle);
 
 		accX = 0.f;
 		accY = 0.f;
 		torque = 0.f;
+
+		angularVelocity *= (float) Math.exp(-.97f * time);
 
 		setManualDirty();
 	}
@@ -492,6 +502,7 @@ public class RigidBody extends PhysicsGridEntity {
 
 		switch (mShapeType) {
 		case Box:
+		case Polygon:
 			if (verts == null || verts.length != 4) {
 				Debug.debugManager().logger().w(getClass().getSimpleName(), "Cannot set RigidBody vertices on Box - vertex count incorrect!");
 				return;
@@ -532,7 +543,23 @@ public class RigidBody extends PhysicsGridEntity {
 		rebuildTransformedVertices();
 		rebuildAABB();
 
-		// Need to update the
+		width = mAABB.width();
+		height = mAABB.height();
+
+		mArea = Math.abs(calculateArea());
+		mMass = mArea * mDensity;
+		radius = (float) Math.sqrt(width * width + height * height);
+
+		// I = (1/12)m(h^2+w^2)
+		mInertia = (1.f / 12.f) * mMass * (height * height + width * width);
+		if (this.mIsStatic) {
+			this.mInvMass = 0.f;
+			this.mInertia = 0.f;
+		} else {
+			this.mInvMass = 1.f / this.mMass;
+			this.mInvInertia = 1.f / this.mInertia;
+		}
+
 		mTransformedVertices = new ArrayList<>(mLocalVertices.size());
 		final int lNumLocalVertices = mLocalVertices.size();
 		for (int i = 0; i < lNumLocalVertices; i++) {
@@ -579,6 +606,12 @@ public class RigidBody extends PhysicsGridEntity {
 		float bottom = -height / 2f;
 		float top = bottom + height;
 
+		// counter-clock-wise
+//		newVertices.add(new Vector2f(left, top));
+//		newVertices.add(new Vector2f(left, bottom));
+//		newVertices.add(new Vector2f(right, bottom));
+//		newVertices.add(new Vector2f(right, top));
+
 		// clock-wise
 		newVertices.add(new Vector2f(left, top));
 		newVertices.add(new Vector2f(right, top));
@@ -610,6 +643,17 @@ public class RigidBody extends PhysicsGridEntity {
 	// --------------------------------------
 	// Factory-Methods
 	// --------------------------------------
+
+	public float calculateArea() {
+		float area = 0.f;
+
+		final int lNumVerts = mLocalVertices.size();
+		for (int i = 0; i < lNumVerts; i++) {
+			area += mLocalVertices.get(i).x * mLocalVertices.get((i + 1) % mLocalVertices.size()).y - mLocalVertices.get(i).y * mLocalVertices.get((i + 1) % mLocalVertices.size()).x;
+		}
+
+		return area / 2.f;
+	}
 
 	public static RigidBody createCircleBody(float radius, float density, float restitution, float staticFriction, float dynamicFriction, boolean isStatic) {
 		final float lArea = radius * radius * (float) Math.PI;
