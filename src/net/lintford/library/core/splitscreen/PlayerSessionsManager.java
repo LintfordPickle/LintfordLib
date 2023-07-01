@@ -68,6 +68,27 @@ public abstract class PlayerSessionsManager<T extends IPlayerSession> {
 
 	public void initialize(LintfordCore core) {
 		updatePlayerViewports(core);
+
+		float lOffsetX = 0.f;
+		float lOffsetY = 0.f;
+		final var lGameCamera = core.gameCamera();
+
+		int numPlayers = numActivePlayers();
+		switch (numPlayers) {
+		default:
+		case 1:
+			mPlayerSessions.get(0).getViewContainer().viewportOffset.set(lOffsetX, lOffsetY);
+			break;
+
+		case 2:
+			lOffsetX = lGameCamera.getWidth() * .5f;
+			lOffsetX = lGameCamera.getHeight() * .5f;
+			mPlayerSessions.get(0).getViewContainer().viewportOffset.set(lOffsetX, lOffsetY);
+			mPlayerSessions.get(1).getViewContainer().viewportOffset.set(lOffsetX, lOffsetY);
+			break;
+
+		// 3/4 players have no offset and thus zoomed out view
+		}
 	}
 
 	public void loadResource(ResourceManager resourceManager) {
@@ -99,17 +120,13 @@ public abstract class PlayerSessionsManager<T extends IPlayerSession> {
 	}
 
 	public void update(LintfordCore core) {
-
+		updatePlayerViewports(core);
 	}
 
 	private void updatePlayerViewports(LintfordCore core) {
 		final var lDisplayConfig = core.config().display();
 		final float lWindowWidth = lDisplayConfig.windowWidth();
 		final float lWindowHeight = lDisplayConfig.windowHeight();
-
-		float lOffsetX = 0.f;
-		float lOffsetY = 0.f;
-		final var lGameCamera = core.gameCamera();
 
 		// Create the viewports depending on how many players joined this game
 		int numPlayers = numActivePlayers();
@@ -118,29 +135,17 @@ public abstract class PlayerSessionsManager<T extends IPlayerSession> {
 		default:
 		case 1:
 			mPlayerSessions.get(0).getViewContainer().viewport().set(-lWindowWidth * .5f, -lWindowHeight * .5f, lWindowWidth, lWindowHeight);
-
-			mPlayerSessions.get(0).getViewContainer().viewportOffset.set(lOffsetX, lOffsetY);
 			break;
 
 		case 2:
 			mPlayerSessions.get(0).getViewContainer().viewport().set(-lWindowWidth * .5f, -lWindowHeight * .5f, lWindowWidth, lWindowHeight);
 			mPlayerSessions.get(1).getViewContainer().viewport().set(0, -lWindowHeight * .5f, lWindowWidth, lWindowHeight);
-
-			lOffsetX = lGameCamera.getWidth() * .5f;
-			lOffsetX = lGameCamera.getHeight() * .5f;
-			mPlayerSessions.get(0).getViewContainer().viewportOffset.set(lOffsetX, lOffsetY);
-			mPlayerSessions.get(1).getViewContainer().viewportOffset.set(lOffsetX, lOffsetY);
-
 			break;
 
 		case 3:
 			mPlayerSessions.get(0).getViewContainer().viewport().set(-lWindowWidth * .5f, -lWindowHeight * .5f, lWindowWidth * .5f, lWindowHeight * .5f);
 			mPlayerSessions.get(1).getViewContainer().viewport().set(0, -lWindowHeight * .5f, lWindowWidth * .5f, lWindowHeight * .5f);
 			mPlayerSessions.get(2).getViewContainer().viewport().set(-lWindowWidth * .5f, 0, lWindowWidth * .5f, lWindowHeight * .5f);
-
-			mPlayerSessions.get(0).getViewContainer().viewportOffset.set(lOffsetX, lOffsetY);
-			mPlayerSessions.get(1).getViewContainer().viewportOffset.set(lOffsetX, lOffsetY);
-			mPlayerSessions.get(2).getViewContainer().viewportOffset.set(lOffsetX, lOffsetY);
 			break;
 
 		case 4:
