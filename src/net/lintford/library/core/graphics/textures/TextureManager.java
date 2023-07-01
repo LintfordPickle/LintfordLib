@@ -356,7 +356,7 @@ public class TextureManager extends EntityGroupManager {
 	private TextureGroup getTextureGroup(int entityGroupUid) {
 		TextureGroup lTextureGroup = mTextureGroupMap.get(entityGroupUid);
 		if (lTextureGroup == null) {
-			Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("EntityGroupID does not exist! Creating a new one", entityGroupUid));
+			Debug.debugManager().logger().w(getClass().getSimpleName(), String.format("EntityGroupID does not exist! Creating a new one", entityGroupUid));
 			lTextureGroup = new TextureGroup(entityGroupUid);
 			mTextureGroupMap.put(entityGroupUid, lTextureGroup);
 
@@ -533,6 +533,8 @@ public class TextureManager extends EntityGroupManager {
 					Debug.debugManager().logger().i(getClass().getSimpleName(), "Loaded texture from Meta '" + lTextureName + "' into EntityGroupID: " + entityGroupUid);
 
 					lTextureGroup.mTextureMap.put(lTextureName, lNewTexture);
+				} else {
+					Debug.debugManager().logger().e(getClass().getSimpleName(), "Unable to Load texture from meta: '" + lTextureName + "'");
 				}
 			}
 		} catch (Exception e) {
