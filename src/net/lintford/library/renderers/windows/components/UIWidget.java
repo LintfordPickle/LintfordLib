@@ -52,9 +52,19 @@ public abstract class UIWidget extends Rectangle implements IInputProcessor {
 	protected float mPaddingLeft;
 	protected float mPaddingRight;
 
+	private float mDesiredHeight;
+
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public void desiredHeight(float desiredHeight) {
+		mDesiredHeight = desiredHeight;
+	}
+
+	public float desiredHeight() {
+		return mDesiredHeight;
+	}
 
 	public boolean isDoubleHeight() {
 		return mIsDoubleHeight;
