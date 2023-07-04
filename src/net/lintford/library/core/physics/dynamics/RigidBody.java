@@ -676,7 +676,7 @@ public class RigidBody extends PhysicsGridEntity {
 		final float lMass = lArea * density;
 		restitution = MathHelper.clamp(restitution, 0f, 1f);
 
-		final float lRadius = (float) Math.sqrt(width * width + height * height);
+		final float lRadius = (float) Math.sqrt(width * width + height * height) * .5f;
 
 		// I = (1/12)m(h^2+w^2)
 		final float lInertia = (1.f / 12.f) * lMass * (height * height + width * width);
@@ -689,7 +689,7 @@ public class RigidBody extends PhysicsGridEntity {
 		final float lMass = lArea * density;
 		restitution = MathHelper.clamp(restitution, 0f, 1f);
 
-		final float lRadius = (float) Math.sqrt(width * width + height * height);
+		final float lRadius = (float) Math.sqrt(width * width + height * height) * .5f;
 
 		// I = (1/12)m(h^2+w^2)
 		final float lInertia = (1.f / 12.f) * lMass * (height * height + width * width);
@@ -702,7 +702,7 @@ public class RigidBody extends PhysicsGridEntity {
 		final float lMass = lArea * density;
 		restitution = MathHelper.clamp(restitution, 0f, 1f);
 
-		final float lRadius = (float) Math.sqrt(width * width + height * height);
+		final float lRadius = (float) Math.sqrt(width * width + height * height) * .5f;
 
 		// I = (1/12)m(h^2+w^2)
 		final float lInertia = (1.f / 12.f) * lMass * (height * height + width * width);
