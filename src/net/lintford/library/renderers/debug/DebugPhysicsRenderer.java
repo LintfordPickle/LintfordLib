@@ -147,7 +147,6 @@ public class DebugPhysicsRenderer extends BaseRenderer {
 		case LineWidth: {
 			lLineBatch.begin(core.gameCamera());
 			lLineBatch.draw(lVertices.get(0).x * lUnitToPixels, lVertices.get(0).y * lUnitToPixels, lVertices.get(1).x * lUnitToPixels, lVertices.get(1).y * lUnitToPixels, -0.01f, r, g, b, 1.f);
-			lLineBatch.draw(lVertices.get(1).x * lUnitToPixels, lVertices.get(1).y * lUnitToPixels, lVertices.get(2).x * lUnitToPixels, lVertices.get(2).y * lUnitToPixels, -0.01f, r, g, b, 1.f);
 			lLineBatch.end();
 			break;
 		}
