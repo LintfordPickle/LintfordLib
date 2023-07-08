@@ -2,8 +2,7 @@ package net.lintford.library.core.maths;
 
 import java.io.Serializable;
 
-/** A column-major (down-then across) Matrix4f class */
-/* As is OpenGL! */
+/** A column-major (down then across) Matrix4f class (as OpenGL likes them) */
 public class Matrix4f implements Serializable {
 
 	// --------------------------------------
@@ -31,16 +30,6 @@ public class Matrix4f implements Serializable {
 
 	public Matrix4f() {
 		setIdentity();
-
-		initialize();
-	}
-
-	// --------------------------------------
-	// Core-Methods
-	// --------------------------------------
-
-	public void initialize() {
-
 	}
 
 	// --------------------------------------
