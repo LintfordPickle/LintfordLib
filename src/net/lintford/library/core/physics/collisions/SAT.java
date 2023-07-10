@@ -53,6 +53,9 @@ public class SAT {
 		manifold.bodyB = bodyB;
 
 		// TODO: Still missing intersection tests for Box shapes (same as polygon, just half the axis checks needed).
+		if (lShapeTypeA == ShapeType.Box || lShapeTypeB == ShapeType.Box) {
+			throw new IllegalArgumentException("Physics world doesn't support box bodies yet");
+		}
 
 		if (lShapeTypeA == ShapeType.Polygon) {
 			if (lShapeTypeB == ShapeType.Polygon)
@@ -64,7 +67,7 @@ public class SAT {
 					return true;
 				}
 			}
-
+			
 		} else if (lShapeTypeA == ShapeType.Circle) {
 			if (lShapeTypeB == ShapeType.Polygon) {
 				if (intersectsCirclePolygon(bodyA.x, bodyA.y, bodyA.radius, bodyB.getTransformedVertices(), bodyB.x, bodyB.y, manifold)) {
