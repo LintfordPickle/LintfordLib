@@ -219,6 +219,7 @@ public class PhysicsWorld {
 	}
 
 	private void broadPhase() {
+		// TODO: Broad phrase double adds entities to the collision pairs if they cross grid boundaries.
 		final var lActiveCellKeys = mWorldHashGrid.getActiveCellKeys();
 		final int lNumActiveCellKeys = lActiveCellKeys.size();
 		for (int i = lNumActiveCellKeys - 1; i >= 0; i--) {
@@ -248,6 +249,13 @@ public class PhysicsWorld {
 
 					if (lBodyA_aabb.intersectsAA(lBodyB_aabb) == false)
 						continue;
+					
+					final var includeFilter = lBodyA.maskBits() != 0 && lBodyB.maskBits() != 0 && lBodyA.categoryBits() != 0 && lBodyB.categoryBits() != 0;
+					final var passedFilterCollision = !includeFilter || (lBodyA.maskBits() & lBodyB.categoryBits()) != 0 && (lBodyA.categoryBits() & lBodyB.maskBits()) != 0;
+
+					if (!passedFilterCollision) {
+						continue;
+					}
 
 					final var lCollisionPair = getFreeCollisionPair();
 					lCollisionPair.bodyA = lBodyA;
@@ -279,7 +287,6 @@ public class PhysicsWorld {
 				if (!passedFilterCollision) {
 
 					// TODO: Handle the case of sensor bodies
-
 					returnCollisionPair(lCollisionPair);
 					break;
 				}
