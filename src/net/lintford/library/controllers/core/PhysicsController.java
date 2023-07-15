@@ -2,6 +2,7 @@ package net.lintford.library.controllers.core;
 
 import net.lintford.library.controllers.BaseController;
 import net.lintford.library.core.physics.PhysicsWorld;
+import net.lintford.library.core.physics.resolvers.CollisionResolverRotationAndFriction;
 
 public class PhysicsController extends BaseController {
 
@@ -28,10 +29,40 @@ public class PhysicsController extends BaseController {
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
-	public PhysicsController(ControllerManager controllerManager, PhysicsWorld world, int entityGroupUid) {
+	public PhysicsController(ControllerManager controllerManager, int entityGroupUid) {
 		super(controllerManager, CONTROLLER_NAME, entityGroupUid);
 
-		mWorld = world;
+	}
+
+	// --------------------------------------
+	// Methods
+	// --------------------------------------
+
+	public PhysicsWorld createNewPhyicsWorld(int boundaryWidth, int boundaryHeight, int numTilesWide, int numTilesHigh) {
+		if (boundaryWidth <= 0)
+			boundaryWidth = 400;
+
+		if (boundaryHeight <= 0)
+			boundaryHeight = 400;
+
+		if (numTilesWide <= 10)
+			numTilesWide = 10;
+
+		if (numTilesHigh <= 10)
+			numTilesHigh = 10;
+
+		mWorld = new PhysicsWorld(boundaryWidth, boundaryHeight, numTilesWide, numTilesHigh);
+		mWorld.setContactResolver(new CollisionResolverRotationAndFriction());
+
+		mWorld.initialize();
+		return mWorld;
+	}
+
+	public void setPhysicsWorldGravity(float gx, float gy) {
+		if (mWorld == null)
+			return;
+
+		mWorld.setGravity(gx, gy);
 	}
 
 }
