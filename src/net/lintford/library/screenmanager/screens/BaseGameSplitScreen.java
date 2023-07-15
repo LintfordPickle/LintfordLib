@@ -43,34 +43,6 @@ public abstract class BaseGameSplitScreen<T extends IPlayerSession> extends Base
 	}
 
 	// --------------------------------------
-	// Core-Methods
-	// --------------------------------------
-
-	@Override
-	public void initialize() {
-		super.initialize();
-
-	}
-
-	@Override
-	public void loadResources(ResourceManager resourceManager) {
-		super.loadResources(resourceManager);
-
-	}
-
-	@Override
-	public void handleInput(LintfordCore core) {
-		super.handleInput(core);
-
-	}
-
-	@Override
-	public void draw(LintfordCore core) {
-		super.draw(core);
-
-	}
-
-	// --------------------------------------
 	// Methods
 	// --------------------------------------
 
