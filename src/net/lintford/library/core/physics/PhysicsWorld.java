@@ -143,6 +143,7 @@ public class PhysicsWorld {
 	}
 
 	public void unload() {
+
 		Debug.debugManager().stats().removeCustomStatTag(mDebugStatPhysicsCaption);
 		Debug.debugManager().stats().removeCustomStatTag(mDebugStatsNumBodies);
 		Debug.debugManager().stats().removeCustomStatTag(mDebugStepTimeInMm);
@@ -158,6 +159,28 @@ public class PhysicsWorld {
 		mNumActiveCells = null;
 
 		mInitialized = false;
+
+		final int lNumObjectsInCollisionPool = mCollisionPairPool.size();
+		for (int i = 0; i < lNumObjectsInCollisionPool; i++) {
+			final var lCollisionPair = mCollisionPairPool.get(i);
+
+			if (lCollisionPair != null) {
+				lCollisionPair.bodyA = null;
+				lCollisionPair.bodyB = null;
+			}
+		}
+		mCollisionPairPool.clear();
+
+		final var lNumBodies = mBodies.size();
+		for (int i = 0; i < lNumBodies; i++) {
+			final var lBody = mBodies.get(i);
+			if (lBody != null) {
+				lBody.userData(null);
+			}
+		}
+		mBodies.clear();
+
+		mCollisionCallbackList.clear();
 	}
 
 	public void stepWorld(float time, int totalIterations) {
@@ -249,7 +272,7 @@ public class PhysicsWorld {
 
 					if (lBodyA_aabb.intersectsAA(lBodyB_aabb) == false)
 						continue;
-					
+
 					final var includeFilter = lBodyA.maskBits() != 0 && lBodyB.maskBits() != 0 && lBodyA.categoryBits() != 0 && lBodyB.categoryBits() != 0;
 					final var passedFilterCollision = !includeFilter || (lBodyA.maskBits() & lBodyB.categoryBits()) != 0 && (lBodyA.categoryBits() & lBodyB.maskBits()) != 0;
 
