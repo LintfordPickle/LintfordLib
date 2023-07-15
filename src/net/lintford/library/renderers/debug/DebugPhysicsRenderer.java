@@ -6,10 +6,10 @@ import java.util.List;
 import org.lwjgl.opengl.GL11;
 
 import net.lintford.library.ConstantsPhysics;
+import net.lintford.library.controllers.core.PhysicsController;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.maths.Vector2f;
-import net.lintford.library.core.physics.PhysicsWorld;
 import net.lintford.library.core.physics.dynamics.RigidBody;
 import net.lintford.library.renderers.BaseRenderer;
 import net.lintford.library.renderers.RendererManager;
@@ -32,7 +32,7 @@ public class DebugPhysicsRenderer extends BaseRenderer {
 	// Variables
 	// ---------------------------------------------
 
-	private PhysicsWorld mWorld;
+	private PhysicsController mPhysicsController;
 
 	// ---------------------------------------------
 	// Properties
@@ -40,17 +40,15 @@ public class DebugPhysicsRenderer extends BaseRenderer {
 
 	@Override
 	public boolean isInitialized() {
-		return mWorld != null;
+		return mPhysicsController != null;
 	}
 
 	// ---------------------------------------------
 	// Constructor
 	// ---------------------------------------------
 
-	public DebugPhysicsRenderer(RendererManager rendererManager, PhysicsWorld world, int entityGroupID) {
+	public DebugPhysicsRenderer(RendererManager rendererManager, int entityGroupID) {
 		super(rendererManager, RENDERER_NAME, entityGroupID);
-
-		mWorld = world;
 	}
 
 	// ---------------------------------------------
@@ -59,14 +57,15 @@ public class DebugPhysicsRenderer extends BaseRenderer {
 
 	@Override
 	public void initialize(LintfordCore core) {
-
+		final var lControllerManager = core.controllerManager();
+		mPhysicsController = (PhysicsController) lControllerManager.getControllerByNameRequired(PhysicsController.CONTROLLER_NAME, mEntityGroupUid);
 	}
 
 	@Override
 	public void draw(LintfordCore core) {
 		final var lLineBatch = rendererManager().uiLineBatch();
 
-		final var lRigidBodies = mWorld.bodies();
+		final var lRigidBodies = mPhysicsController.world().bodies();
 		final int lNumOfBodies = lRigidBodies.size();
 
 		lLineBatch.begin(core.gameCamera());

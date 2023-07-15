@@ -3,6 +3,7 @@ package net.lintford.library.renderers.debug;
 import org.lwjgl.opengl.GL11;
 
 import net.lintford.library.ConstantsPhysics;
+import net.lintford.library.controllers.core.PhysicsController;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.graphics.linebatch.LineBatch;
@@ -40,10 +41,9 @@ public class DebugPhysicsGridRenderer extends BaseRenderer {
 	// Constructor
 	// ---------------------------------------------
 
-	public DebugPhysicsGridRenderer(RendererManager rendererManager, PhysicsWorld world, int entityGroupID) {
+	public DebugPhysicsGridRenderer(RendererManager rendererManager, int entityGroupID) {
 		super(rendererManager, RENDERER_NAME, entityGroupID);
 
-		mWorld = world;
 		mLineBatch = new LineBatch();
 	}
 
@@ -53,7 +53,10 @@ public class DebugPhysicsGridRenderer extends BaseRenderer {
 
 	@Override
 	public void initialize(LintfordCore core) {
+		final var lControllerManager = core.controllerManager();
+		final var lPhysicsController = (PhysicsController) lControllerManager.getControllerByNameRequired(PhysicsController.CONTROLLER_NAME, mEntityGroupUid);
 
+		mWorld = lPhysicsController.world();
 	}
 
 	@Override
