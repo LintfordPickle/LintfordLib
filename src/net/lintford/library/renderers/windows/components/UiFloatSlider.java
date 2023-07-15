@@ -9,7 +9,7 @@ import net.lintford.library.core.graphics.textures.CoreTextureNames;
 import net.lintford.library.core.maths.MathHelper;
 import net.lintford.library.renderers.windows.UiWindow;
 
-public class UifSlider extends UIWidget {
+public class UiFloatSlider extends UIWidget {
 
 	// --------------------------------------
 	// Constants
@@ -76,11 +76,11 @@ public class UifSlider extends UIWidget {
 	// Constructor
 	// --------------------------------------
 
-	public UifSlider(UiWindow parentWindow) {
+	public UiFloatSlider(UiWindow parentWindow) {
 		this(parentWindow, -1);
 	}
 
-	public UifSlider(UiWindow parentWindow, int entryUid) {
+	public UiFloatSlider(UiWindow parentWindow, int entryUid) {
 		super(parentWindow);
 
 		mIsDoubleHeight = true;
