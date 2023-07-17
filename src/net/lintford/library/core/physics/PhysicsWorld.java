@@ -273,8 +273,13 @@ public class PhysicsWorld {
 					if (lBodyA_aabb.intersectsAA(lBodyB_aabb) == false)
 						continue;
 
-					final var includeFilter = lBodyA.maskBits() != 0 && lBodyB.maskBits() != 0 && lBodyA.categoryBits() != 0 && lBodyB.categoryBits() != 0;
-					final var passedFilterCollision = !includeFilter || (lBodyA.maskBits() & lBodyB.categoryBits()) != 0 && (lBodyA.categoryBits() & lBodyB.maskBits()) != 0;
+					final var lWeAreIncludedinPhysics = lBodyA.maskBits() != 0 && lBodyB.maskBits() != 0;
+					if (lWeAreIncludedinPhysics == false)
+						continue;
+
+					final var lWeBothCollideWithOthers = lBodyA.categoryBits() != 0 && lBodyB.categoryBits() != 0;
+
+					final var passedFilterCollision = lWeBothCollideWithOthers == false || (lBodyA.maskBits() & lBodyB.categoryBits()) != 0 && (lBodyA.categoryBits() & lBodyB.maskBits()) != 0;
 
 					if (!passedFilterCollision) {
 						continue;
