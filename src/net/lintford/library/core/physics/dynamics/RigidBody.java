@@ -189,18 +189,23 @@ public class RigidBody extends PhysicsGridEntity {
 		return mArea;
 	}
 
+	/**I collide with*/
 	public int maskBits() {
 		return mMaskBit;
 	}
 
+	
+	/**I collide with*/
 	public void maskBits(int maskBits) {
 		mMaskBit = maskBits;
 	}
 
+	/**I'm a*/
 	public int categoryBits() {
 		return mCategoryBit;
 	}
 
+	/**I'm a*/
 	public void categoryBits(int categoryBits) {
 		mCategoryBit = categoryBits;
 	}
