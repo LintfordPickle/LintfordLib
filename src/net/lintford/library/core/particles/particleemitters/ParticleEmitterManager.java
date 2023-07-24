@@ -63,7 +63,7 @@ public class ParticleEmitterManager extends ClosedPoolInstanceManager<ParticleEm
 	// Variables
 	// --------------------------------------
 
-	protected EmitterDefinitionManager mEmitterDefinitionManager;
+	protected final EmitterDefinitionManager mEmitterDefinitionManager = new EmitterDefinitionManager();
 	protected ParticleFrameworkData mParticleFrameworkData;
 
 	// --------------------------------------
@@ -95,8 +95,6 @@ public class ParticleEmitterManager extends ClosedPoolInstanceManager<ParticleEm
 	// --------------------------------------
 
 	public void initialize(Object parent) {
-		mEmitterDefinitionManager = new EmitterDefinitionManager();
-
 		if (parent instanceof ParticleFrameworkData) {
 			final var lFramework = (ParticleFrameworkData) parent;
 			mEmitterDefinitionManager.initialize(lFramework);

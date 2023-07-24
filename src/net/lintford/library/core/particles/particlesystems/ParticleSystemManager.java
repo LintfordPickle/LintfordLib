@@ -24,7 +24,7 @@ public class ParticleSystemManager extends InstanceManager<ParticleSystemInstanc
 		// --------------------------------------
 
 		public ParticleSystemDefinitionManager() {
-
+			loadDefinitionsFromMetaFile(ParticleFrameworkData.PARTICLE_SYSTEM_META_FILE);
 		}
 
 		// --------------------------------------
@@ -61,7 +61,7 @@ public class ParticleSystemManager extends InstanceManager<ParticleSystemInstanc
 	// --------------------------------------
 
 	protected ParticleFrameworkData mParticleFrameworkData;
-	protected ParticleSystemDefinitionManager mParticleSystemDefinitionManager;
+	protected final ParticleSystemDefinitionManager mParticleSystemDefinitionManager = new ParticleSystemDefinitionManager();
 	private int ParticleSystemUidCounter;
 
 	// --------------------------------------
@@ -89,7 +89,6 @@ public class ParticleSystemManager extends InstanceManager<ParticleSystemInstanc
 		super();
 
 		mParticleFrameworkData = particleFrameworkData;
-		mParticleSystemDefinitionManager = new ParticleSystemDefinitionManager();
 		ParticleSystemUidCounter = 0;
 	}
 

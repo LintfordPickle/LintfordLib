@@ -10,7 +10,7 @@ public class ParticleFrameworkData {
 	// --------------------------------------
 
 	public static String PARTICLE_SYSTEM_META_FILE = "res/def/particles/systems/_meta.json";
-	public static String EMITTER_META_FILE = "res/def/particles/emitters/_meta.json";
+	public static String PARTICLE_EMITTER_META_FILE = "res/def/particles/emitters/_meta.json";
 
 	// --------------------------------------
 	// Variables
@@ -40,15 +40,4 @@ public class ParticleFrameworkData {
 		mParticleEmitterManager = new ParticleEmitterManager(this);
 	}
 
-	// --------------------------------------
-	// Methods
-	// --------------------------------------
-
-	public void loadSystemMetaDefinitionFile(String filepath) {
-		mParticleSystemManager.definitionManager().loadDefinitionsFromMetaFile(filepath);
-	}
-
-	public void loadEmitterMetaDefinitionFile(String filepath) {
-		mParticleEmitterManager.definitionManager().loadDefinitionsFromMetaFile(filepath);
-	}
 }
