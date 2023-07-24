@@ -3,6 +3,7 @@ package net.lintford.library.core.physics.dynamics;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.lintford.library.ConstantsPhysics;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.maths.MathHelper;
@@ -189,23 +190,22 @@ public class RigidBody extends PhysicsGridEntity {
 		return mArea;
 	}
 
-	/**I collide with*/
+	/** I collide with */
 	public int maskBits() {
 		return mMaskBit;
 	}
 
-	
-	/**I collide with*/
+	/** I collide with */
 	public void maskBits(int maskBits) {
 		mMaskBit = maskBits;
 	}
 
-	/**I'm a*/
+	/** I'm a */
 	public int categoryBits() {
 		return mCategoryBit;
 	}
 
-	/**I'm a*/
+	/** I'm a */
 	public void categoryBits(int categoryBits) {
 		mCategoryBit = categoryBits;
 	}
@@ -594,12 +594,11 @@ public class RigidBody extends PhysicsGridEntity {
 		mLocalVertices.get(3).x -= localx;
 		mLocalVertices.get(3).y -= localy;
 
-		final var lExtendMargin = 5.f;
+		final var lExtendMarginInPxs = 5.f;
+		final var lExtendMargin = ConstantsPhysics.toUnits(lExtendMarginInPxs);
 		radius = 0.f;
-		radius = Math.max(radius, Vector2f.dst(x, y, verts.get(0).x, verts.get(0).y));
-		radius = Math.max(radius, Vector2f.dst(x, y, verts.get(1).x, verts.get(1).y));
-		radius = Math.max(radius, Vector2f.dst(x, y, verts.get(2).x, verts.get(2).y));
-		radius = Math.max(radius, Vector2f.dst(x, y, verts.get(3).x, verts.get(3).y));
+		radius = Math.max(radius, Vector2f.dst(verts.get(2).x, verts.get(2).y, verts.get(0).x, verts.get(0).y));
+		radius = Math.max(radius, Vector2f.dst(verts.get(3).x, verts.get(3).y, verts.get(1).x, verts.get(1).y));
 		radius += lExtendMargin;
 	}
 
