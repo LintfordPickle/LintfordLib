@@ -87,7 +87,10 @@ public abstract class BaseRenderer implements IInputProcessor {
 	// --------------------------------------
 
 	public BaseRenderer(final RendererManager rendererManager, final String rendererName, final int entityGroupUid) {
-		if (rendererManager == null || rendererName == null || rendererName.length() == 0)
+		if (rendererManager == null)
+			throw new RuntimeException("Renderers must be provided with valid RendererManager!");
+
+		if (rendererName == null || rendererName.length() == 0)
 			throw new RuntimeException("Renderer names cannot be null or empty!");
 
 		mRendererId = rendererManager.getNewRendererId();
@@ -129,7 +132,7 @@ public abstract class BaseRenderer implements IInputProcessor {
 	}
 
 	public void update(LintfordCore core) {
-		if(mInputTimer > 0)
+		if (mInputTimer > 0)
 			mInputTimer -= core.gameTime().elapsedTimeMilli();
 		return;
 	}
