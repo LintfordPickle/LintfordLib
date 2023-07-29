@@ -90,7 +90,7 @@ public class PhysicsWorld {
 			mCollisionCallbackList.add(callback);
 	}
 
-	public void removeCllisionCallback(ICollisionCallback callback) {
+	public void removeCollisionCallback(ICollisionCallback callback) {
 		if (mCollisionCallbackList.contains(callback))
 			mCollisionCallbackList.remove(callback);
 	}
