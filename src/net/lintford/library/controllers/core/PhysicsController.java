@@ -58,6 +58,14 @@ public class PhysicsController extends BaseController {
 		return mWorld;
 	}
 
+	@Override
+	public void unloadController() {
+		super.unloadController();
+
+		mWorld.unload();
+		mWorld = null;
+	}
+
 	public void setPhysicsWorldGravity(float gx, float gy) {
 		if (mWorld == null)
 			return;
