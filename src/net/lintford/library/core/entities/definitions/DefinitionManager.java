@@ -1,4 +1,4 @@
-package net.lintford.library.core.entity.definitions;
+package net.lintford.library.core.entities.definitions;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -18,7 +18,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 
 import net.lintford.library.core.debug.Debug;
-import net.lintford.library.core.entity.EntityLocationProvider;
+import net.lintford.library.core.entities.EntityLocationProvider;
 
 public abstract class DefinitionManager<T extends BaseDefinition> {
 

@@ -8,7 +8,6 @@ import net.lintford.library.core.graphics.textures.CoreTextureNames;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.renderers.ZLayers;
 import net.lintford.library.screenmanager.MenuScreen;
-import net.lintford.library.screenmanager.Screen;
 import net.lintford.library.screenmanager.ScreenManager;
 
 public abstract class BaseDialog extends MenuScreen {
@@ -79,7 +78,7 @@ public abstract class BaseDialog extends MenuScreen {
 	// --------------------------------------
 
 	protected String mMessageString;
-	protected Screen mParentScreen;
+	protected MenuScreen mParentScreen;
 	protected boolean mDrawBackground;
 	protected boolean mDarkenBackground;
 	protected SpriteSheetDefinition mIconSpritesheet;
@@ -122,7 +121,7 @@ public abstract class BaseDialog extends MenuScreen {
 	// Constructor
 	// --------------------------------------
 
-	public BaseDialog(ScreenManager screenManager, Screen parentScreen, String dialogMessage) {
+	public BaseDialog(ScreenManager screenManager, MenuScreen parentScreen, String dialogMessage) {
 		super(screenManager, "");
 
 		mParentScreen = parentScreen;
@@ -153,7 +152,7 @@ public abstract class BaseDialog extends MenuScreen {
 		final int lLayoutCount = mLayouts.size();
 		for (int i = 0; i < lLayoutCount; i++) {
 			final var lBaseLayout = mLayouts.get(i);
-			lBaseLayout.set(-DIALOG_WIDTH * 0.4f, mScreenPaddingTop, DIALOG_WIDTH * 0.8f, DIALOG_HEIGHT);
+			lBaseLayout.set(-DIALOG_WIDTH * 0.5f, mScreenPaddingTop, DIALOG_WIDTH, DIALOG_HEIGHT);
 			lBaseLayout.updateStructure();
 		}
 	}
@@ -165,9 +164,13 @@ public abstract class BaseDialog extends MenuScreen {
 
 	@Override
 	public void draw(LintfordCore core) {
-		if (mScreenState != ScreenState.Active && mScreenState != ScreenState.TransitionOn && mScreenState != ScreenState.TransitionOff)
+		if (mScreenState != ScreenState.Active || mScreenState == ScreenState.TransitionOn || mScreenState == ScreenState.TransitionOff)
 			return;
 
+		if(mResourcesLoaded == false)
+			return;
+		
+		
 		final float lZDepth = ZLayers.LAYER_SCREENMANAGER + 0.05f;
 		final float lWindowWidth = core.HUD().boundingRectangle().width();
 		final float lWindowHeight = core.HUD().boundingRectangle().height();

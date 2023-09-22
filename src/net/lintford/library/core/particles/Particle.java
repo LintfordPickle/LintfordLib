@@ -1,16 +1,13 @@
 package net.lintford.library.core.particles;
 
-import net.lintford.library.core.entity.BaseInstanceData;
 import net.lintford.library.core.graphics.Color;
 import net.lintford.library.core.particles.particlesystems.initializers.ParticleInitializerBase;
 
-public class Particle extends BaseInstanceData {
+public class Particle {
 
 	// --------------------------------------
 	// Constants
 	// --------------------------------------
-
-	private static final long serialVersionUID = 820164057821427990L;
 
 	public static final float DO_NOT_DESPAWN_LIFETIME = -1;
 

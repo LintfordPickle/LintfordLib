@@ -5,7 +5,7 @@ import java.util.List;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.debug.Debug;
-import net.lintford.library.core.entity.instances.IndexedPooledBaseData;
+import net.lintford.library.core.entities.instances.OpenPooledBaseData;
 import net.lintford.library.core.geometry.spritegraph.ISpriteGraphPool;
 import net.lintford.library.core.geometry.spritegraph.definitions.SpriteGraphNodeDefinition;
 import net.lintford.library.core.graphics.sprites.SpriteAnchor;
@@ -13,13 +13,7 @@ import net.lintford.library.core.graphics.sprites.SpriteInstance;
 
 // ToDo: Attachable Box2d bodies: Some nodes need to interact with the world via the sprite graph nodes
 // ToDo: Attachable SpriteInstance: Each node instance should have its own sprite animation for the current spritesheetdefinition
-public class SpriteGraphNodeInstance extends IndexedPooledBaseData {
-
-	// --------------------------------------
-	// Constants
-	// --------------------------------------
-
-	private static final long serialVersionUID = 622930312736268776L;
+public class SpriteGraphNodeInstance extends OpenPooledBaseData {
 
 	// --------------------------------------
 	// Variables

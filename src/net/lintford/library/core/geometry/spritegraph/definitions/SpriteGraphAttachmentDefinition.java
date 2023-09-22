@@ -2,7 +2,7 @@ package net.lintford.library.core.geometry.spritegraph.definitions;
 
 import com.google.gson.annotations.SerializedName;
 
-import net.lintford.library.core.entity.definitions.BaseDefinition;
+import net.lintford.library.core.entities.definitions.BaseDefinition;
 import net.lintford.library.core.geometry.spritegraph.instances.SpriteGraphInstance;
 import net.lintford.library.core.geometry.spritegraph.instances.SpriteGraphNodeInstance;
 

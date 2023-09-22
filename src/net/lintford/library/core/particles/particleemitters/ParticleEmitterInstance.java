@@ -2,20 +2,18 @@ package net.lintford.library.core.particles.particleemitters;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.debug.Debug;
-import net.lintford.library.core.entity.Entity;
-import net.lintford.library.core.entity.instances.PooledBaseData;
+import net.lintford.library.core.entities.Entity;
+import net.lintford.library.core.entities.instances.ClosedPooledBaseData;
 import net.lintford.library.core.maths.MathHelper;
 import net.lintford.library.core.maths.RandomNumbers;
 import net.lintford.library.core.particles.ParticleFrameworkData;
 import net.lintford.library.core.particles.particlesystems.ParticleSystemInstance;
 
-public class ParticleEmitterInstance extends PooledBaseData {
+public class ParticleEmitterInstance extends ClosedPooledBaseData {
 
 	// --------------------------------------
 	// Constants
 	// --------------------------------------
-
-	private static final long serialVersionUID = -2817782552539182940L;
 
 	private static final int MAX_NUM_CHILD_EMITTERS = 4;
 	public static final int EMITTER_NOT_ASSIGNED_ID = -1;

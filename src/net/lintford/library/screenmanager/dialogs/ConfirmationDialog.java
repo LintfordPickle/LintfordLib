@@ -1,7 +1,7 @@
 package net.lintford.library.screenmanager.dialogs;
 
 import net.lintford.library.screenmanager.MenuEntry;
-import net.lintford.library.screenmanager.Screen;
+import net.lintford.library.screenmanager.MenuScreen;
 import net.lintford.library.screenmanager.ScreenManager;
 import net.lintford.library.screenmanager.layouts.BaseLayout;
 import net.lintford.library.screenmanager.layouts.ListLayout;
@@ -39,15 +39,15 @@ public class ConfirmationDialog extends BaseDialog {
 	// Constructors
 	// --------------------------------------
 
-	public ConfirmationDialog(ScreenManager screenManager, Screen parentScreen, String dialogMessage) {
+	public ConfirmationDialog(ScreenManager screenManager, MenuScreen parentScreen, String dialogMessage) {
 		this(screenManager, parentScreen, "", dialogMessage, true);
 	}
 
-	public ConfirmationDialog(ScreenManager screenManager, Screen parentScreen, String title, String dialogMessage) {
+	public ConfirmationDialog(ScreenManager screenManager, MenuScreen parentScreen, String title, String dialogMessage) {
 		this(screenManager, parentScreen, title, dialogMessage, true);
 	}
 
-	public ConfirmationDialog(ScreenManager screenManager, Screen parentScreen, String title, String dialogMessage, boolean withCancelButton) {
+	public ConfirmationDialog(ScreenManager screenManager, MenuScreen parentScreen, String title, String dialogMessage, boolean withCancelButton) {
 		super(screenManager, parentScreen, dialogMessage);
 
 		mListLayout = new ListLayout(this);
@@ -85,16 +85,8 @@ public class ConfirmationDialog extends BaseDialog {
 
 	@Override
 	protected void handleOnClick() {
-		switch (mClickAction.consume()) {
-		case BUTTON_CONFIRM_YES:
-			break;
+		// Handle onClick in registered MenuEntry's handlers
 
-		case BUTTON_CONFIRM_NO:
-			exitScreen();
-			break;
-
-		default:
-			break;
-		}
+		exitScreen();
 	}
 }

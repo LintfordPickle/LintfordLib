@@ -7,15 +7,12 @@ import java.util.List;
 import java.util.Locale;
 
 import net.lintford.library.core.debug.Debug;
-import net.lintford.library.core.entity.BaseInstanceData;
 
-public class MessageManager extends BaseInstanceData implements IMessageProvider {
+public class MessageManager implements IMessageProvider {
 
 	// --------------------------------------
 	// Constants
 	// --------------------------------------
-
-	private static final long serialVersionUID = 8246052843503897030L;
 
 	private static SimpleDateFormat TimeStampFormat = new SimpleDateFormat("HH:mm:ss", Locale.US);
 	private static SimpleDateFormat TimeStampFormatWithMilli = new SimpleDateFormat("HH:mm:ss.SSS", Locale.US);

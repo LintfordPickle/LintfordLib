@@ -1,17 +1,11 @@
 package net.lintford.library.core.geometry.spritegraph;
 
 import net.lintford.library.core.ResourceManager;
-import net.lintford.library.core.entity.instances.IndexedPoolInstanceManager;
+import net.lintford.library.core.entities.instances.OpenPoolInstanceManager;
 import net.lintford.library.core.geometry.spritegraph.definitions.SpriteGraphDefinition;
 import net.lintford.library.core.geometry.spritegraph.instances.SpriteGraphInstance;
 
-public class SpriteGraphManager extends IndexedPoolInstanceManager<SpriteGraphInstance> {
-
-	// --------------------------------------
-	// Constants
-	// --------------------------------------
-
-	private static final long serialVersionUID = 8130220949944972882L;
+public class SpriteGraphManager extends OpenPoolInstanceManager<SpriteGraphInstance> {
 
 	// --------------------------------------
 	// Variables

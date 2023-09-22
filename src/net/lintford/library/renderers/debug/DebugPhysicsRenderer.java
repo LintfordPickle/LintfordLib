@@ -1,11 +1,15 @@
 package net.lintford.library.renderers.debug;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.lwjgl.opengl.GL11;
 
 import net.lintford.library.ConstantsPhysics;
+import net.lintford.library.controllers.core.PhysicsController;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.debug.Debug;
-import net.lintford.library.core.physics.PhysicsWorld;
+import net.lintford.library.core.maths.Vector2f;
 import net.lintford.library.core.physics.dynamics.RigidBody;
 import net.lintford.library.renderers.BaseRenderer;
 import net.lintford.library.renderers.RendererManager;
@@ -21,11 +25,14 @@ public class DebugPhysicsRenderer extends BaseRenderer {
 	public static final boolean ScaleToScreenCoords = true;
 	public static final boolean RenderAABB = false;
 
+	public static final boolean RENDER_CONTACT_POINTS = false;
+	public static final List<Vector2f> DebugContactPoints = new ArrayList<>();
+
 	// ---------------------------------------------
 	// Variables
 	// ---------------------------------------------
 
-	private PhysicsWorld mWorld;
+	private PhysicsController mPhysicsController;
 
 	// ---------------------------------------------
 	// Properties
@@ -33,17 +40,15 @@ public class DebugPhysicsRenderer extends BaseRenderer {
 
 	@Override
 	public boolean isInitialized() {
-		return mWorld != null;
+		return mPhysicsController != null;
 	}
 
 	// ---------------------------------------------
 	// Constructor
 	// ---------------------------------------------
 
-	public DebugPhysicsRenderer(RendererManager rendererManager, PhysicsWorld world, int entityGroupID) {
+	public DebugPhysicsRenderer(RendererManager rendererManager, int entityGroupID) {
 		super(rendererManager, RENDERER_NAME, entityGroupID);
-
-		mWorld = world;
 	}
 
 	// ---------------------------------------------
@@ -52,14 +57,15 @@ public class DebugPhysicsRenderer extends BaseRenderer {
 
 	@Override
 	public void initialize(LintfordCore core) {
-
+		final var lControllerManager = core.controllerManager();
+		mPhysicsController = (PhysicsController) lControllerManager.getControllerByNameRequired(PhysicsController.CONTROLLER_NAME, mEntityGroupUid);
 	}
 
 	@Override
 	public void draw(LintfordCore core) {
 		final var lLineBatch = rendererManager().uiLineBatch();
 
-		final var lRigidBodies = mWorld.bodies();
+		final var lRigidBodies = mPhysicsController.world().bodies();
 		final int lNumOfBodies = lRigidBodies.size();
 
 		lLineBatch.begin(core.gameCamera());
@@ -69,11 +75,32 @@ public class DebugPhysicsRenderer extends BaseRenderer {
 			debugDrawRigidBody(core, lBody);
 		}
 		lLineBatch.end();
+
+		if (RENDER_CONTACT_POINTS) {
+			drawDebugContactPoints(core);
+			DebugContactPoints.clear();
+		}
 	}
 
 	// ---------------------------------------------
 	// Methods
 	// ---------------------------------------------
+
+	private void drawDebugContactPoints(LintfordCore core) {
+		final int lNumDebugContactPoints = DebugContactPoints.size();
+		if (lNumDebugContactPoints == 0)
+			return;
+
+		final var lToPixels = ConstantsPhysics.UnitsToPixels();
+
+		Debug.debugManager().drawers().beginPointRenderer(core.gameCamera());
+		for (int i = 0; i < lNumDebugContactPoints; i++) {
+			GL11.glPointSize(5.f);
+			final var lDebugContactPoint = DebugContactPoints.get(i);
+			Debug.debugManager().drawers().drawPoint(lDebugContactPoint.x * lToPixels, lDebugContactPoint.y * lToPixels);
+		}
+		Debug.debugManager().drawers().endPointRenderer();
+	}
 
 	private void debugDrawRigidBody(LintfordCore core, RigidBody body) {
 		final var lLineBatch = rendererManager().uiLineBatch();
@@ -119,7 +146,6 @@ public class DebugPhysicsRenderer extends BaseRenderer {
 		case LineWidth: {
 			lLineBatch.begin(core.gameCamera());
 			lLineBatch.draw(lVertices.get(0).x * lUnitToPixels, lVertices.get(0).y * lUnitToPixels, lVertices.get(1).x * lUnitToPixels, lVertices.get(1).y * lUnitToPixels, -0.01f, r, g, b, 1.f);
-			lLineBatch.draw(lVertices.get(1).x * lUnitToPixels, lVertices.get(1).y * lUnitToPixels, lVertices.get(2).x * lUnitToPixels, lVertices.get(2).y * lUnitToPixels, -0.01f, r, g, b, 1.f);
 			lLineBatch.end();
 			break;
 		}
@@ -139,6 +165,11 @@ public class DebugPhysicsRenderer extends BaseRenderer {
 		}
 
 		}
+
+		// Render body center
+		lLineBatch.begin(core.gameCamera());
+		lLineBatch.drawCircle(body.x * lUnitToPixels, body.y * lUnitToPixels, body.angle, 3, 20, 0.8f, .4f, .4f, true);
+		lLineBatch.end();
 
 		if (RenderAABB)
 			Debug.debugManager().drawers().drawRectImmediate(core.gameCamera(), body.aabb().x() * lUnitToPixels, body.aabb().y() * lUnitToPixels, body.aabb().width() * lUnitToPixels, body.aabb().height() * lUnitToPixels, .93f, .06f, .98f);

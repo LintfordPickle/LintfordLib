@@ -46,10 +46,29 @@ public class AppStorage {
 	}
 
 	/**
-	 * Returns a platform dependant folder which can be used for saving application
-	 * data. The data folder will be created as Roaming\pApplicationName
+	 * Returns a platform dependant folder which can be used for saving application data. The data folder will be created as Roaming\pApplicationName
 	 */
 	public static String getGameDataDirectory(String applicationName) {
+		String lSaveFolder = null;
+
+		if (useLocalDirectory) {
+			lSaveFolder = System.getProperty("user.dir") + FILE_SEPERATOR + "Data" + FILE_SEPERATOR;
+		} else {
+			final var lOSName = System.getProperty("os.name").toLowerCase();
+			if (lOSName.startsWith("win")) {
+				lSaveFolder = System.getenv("AppData") + FILE_SEPERATOR + applicationName + FILE_SEPERATOR;
+			} else if (lOSName.startsWith("linux") || lOSName.startsWith("mac") || lOSName.startsWith("darwin")) {
+				lSaveFolder = System.getProperty("user.home") + FILE_SEPERATOR + "." + applicationName + FILE_SEPERATOR;
+			}
+		}
+
+		return lSaveFolder;
+	}
+
+	/**
+	 * Returns a platform dependant folder which can be used for saving application data. The data folder will be created as Roaming\pApplicationName
+	 */
+	public static String getGameCOnfigDirectory(String applicationName) {
 		String lSaveFolder = null;
 
 		if (useLocalDirectory) {
@@ -67,13 +86,10 @@ public class AppStorage {
 	}
 
 	/**
-	 * Returns a platform dependant folder which can be used for saving application
-	 * data. Will use the APPLICATION_NAME from the ConstantsTable, if one has been
-	 * defined.
+	 * Returns a platform dependant folder which can be used for saving application data. Will use the APPLICATION_NAME from the ConstantsTable, if one has been defined.
 	 */
 	public static String getGameDataDirectory() {
-		final String lApplicationName = ConstantsApp.getStringValueDef(ConstantsApp.CONSTANT_APP_NAME_TAG,
-				"LintfordLib");
+		final String lApplicationName = ConstantsApp.getStringValueDef(ConstantsApp.CONSTANT_APP_NAME_TAG, "LintfordLib");
 		return getGameDataDirectory(lApplicationName);
 	}
 }

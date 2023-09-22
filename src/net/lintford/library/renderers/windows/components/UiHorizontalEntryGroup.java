@@ -15,6 +15,10 @@ import net.lintford.library.renderers.windows.UiWindow;
 
 public class UiHorizontalEntryGroup extends UIWidget {
 
+	public enum SPACING_TYPE {
+		even, weighted
+	}
+
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
@@ -22,10 +26,22 @@ public class UiHorizontalEntryGroup extends UIWidget {
 	private static final long serialVersionUID = 4358093208729572051L;
 
 	private List<UIWidget> mChildWidgets;
+	private SPACING_TYPE mSpacingType = SPACING_TYPE.even;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public SPACING_TYPE spacingType() {
+		return mSpacingType;
+	}
+
+	public void spacingType(SPACING_TYPE type) {
+		if (type == null)
+			return;
+
+		mSpacingType = type;
+	}
 
 	public List<UIWidget> widgets() {
 		return mChildWidgets;
@@ -130,6 +146,21 @@ public class UiHorizontalEntryGroup extends UIWidget {
 		if (mChildWidgets == null || mChildWidgets.size() == 0)
 			return;
 
+		switch (mSpacingType) {
+		default:
+		case even:
+			arrangeWidgetsEvenly();
+			break;
+		case weighted:
+			arrangeWidgetsWeighted();
+			break;
+		}
+	}
+
+	private void arrangeWidgetsEvenly() {
+		if (mChildWidgets == null || mChildWidgets.size() == 0)
+			return;
+
 		final int lChildEntryCount = mChildWidgets.size();
 
 		final float lContentWidth = mW;
@@ -141,6 +172,35 @@ public class UiHorizontalEntryGroup extends UIWidget {
 			lWidget.setPosition(mX + i * lWidgetWidth + lSpacingW * 2 * i, mY);
 			lWidget.width(lWidgetWidth);
 			lWidget.height(mH);
+		}
+	}
+
+	private void arrangeWidgetsWeighted() {
+		if (mChildWidgets == null || mChildWidgets.size() == 0)
+			return;
+
+		final int lChildEntryCount = mChildWidgets.size();
+		float lWeightTotal = 0.f;
+		for (int i = 0; i < lChildEntryCount; i++) {
+			lWeightTotal += mChildWidgets.get(i).layoutWeight();
+		}
+		final float lWeightCoefficient = lWeightTotal == 0.f ? 0.f : 1.f / lWeightTotal;
+		
+		final float lContentWidth = mW;
+		final float lSpacingW = 5.0f;
+		
+		final float lAdjustedContentWidth = lContentWidth - lSpacingW * 2.f - lChildEntryCount * lSpacingW;
+		float xx = mX + lSpacingW;
+		for (int i = 0; i < lChildEntryCount; i++) {
+			final var lWidget = mChildWidgets.get(i);
+			
+			final float lAdjustedWeight = lWidget.layoutWeight() * lWeightCoefficient;
+			final float lAdjustedWidth = lAdjustedContentWidth * lAdjustedWeight; 
+			lWidget.setPosition(xx, mY);
+			lWidget.width(lAdjustedWidth);
+			lWidget.height(mH);
+			
+			xx += lAdjustedWidth + lSpacingW;
 		}
 	}
 }

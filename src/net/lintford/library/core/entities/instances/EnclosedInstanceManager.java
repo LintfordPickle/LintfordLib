@@ -1,25 +1,24 @@
-package net.lintford.library.core.entity.instances;
+package net.lintford.library.core.entities.instances;
 
 /**
- * An instance manager whose instances are maintained in an internal list. Whether or not an item has been assigned or is free is handled internally.
- * There is no pool of {@link ClosedInstanceBaseData} items with this instance manager.
- * This class differs to {@link PreAllocatedInstanceManager} in that the internal list of {@link ClosedInstanceBaseData} will grow to meet demand.
+ * An instance manager whose instances are maintained in an internal list. 
+ * 
+ * Whether or not an item has been assigned or is free is handled internally.
  */
-public abstract class ClosedInstanceManager<T extends ClosedInstanceBaseData> extends InstanceManager<T> {
+public abstract class EnclosedInstanceManager<T extends ClosedPooledBaseData> extends InstanceManager<T> {
 
 	// --------------------------------------
 	// Constants
 	// --------------------------------------
 
-	private static final long serialVersionUID = 355313071907418810L;
-
-	private static final int DEFAULT_ENLARGEN_POOL_AMOUNT = 8;
+	public static final int DEFAULT_ENLARGEN_POOL_AMOUNT = 8;
+	public static final int MAXIMUM_ENLARGEN_POOL_AMOUNT = 256;
 
 	// --------------------------------------
 	// Constrcutor
 	// --------------------------------------
 
-	public ClosedInstanceManager() {
+	public EnclosedInstanceManager() {
 
 	}
 
@@ -46,8 +45,8 @@ public abstract class ClosedInstanceManager<T extends ClosedInstanceBaseData> ex
 	}
 
 	private T enlargenInstancePool(int enlargeByAmount) {
-		if (enlargeByAmount <= 0 || enlargeByAmount > 1000)
-			enlargeByAmount = DEFAULT_ENLARGEN_POOL_AMOUNT;
+		if (enlargeByAmount <= 0 || enlargeByAmount > MAXIMUM_ENLARGEN_POOL_AMOUNT)
+			enlargeByAmount = MAXIMUM_ENLARGEN_POOL_AMOUNT;
 
 		for (int i = 0; i < enlargeByAmount; i++) {
 			mInstances.add(createPoolObjectInstance());

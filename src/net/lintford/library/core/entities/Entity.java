@@ -1,44 +1,33 @@
+package net.lintford.library.core.entities;
 
-package net.lintford.library.core.entity;
-
-import java.io.Serializable;
-
-public abstract class BaseInstanceData implements Serializable {
+public abstract class Entity {
 
 	// --------------------------------------
 	// Constants
 	// --------------------------------------
 
-	private static final long serialVersionUID = 934763865686681475L;
+	private static int ENTITY_UID_COUNTER = 0;
+
+	public static int getNewEntityUid() {
+		return ENTITY_UID_COUNTER++;
+	}
 
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
-	protected int mLastSaveHash;
-
-	// --------------------------------------
-	// Properties
-	// --------------------------------------
-
-	public int lastSaveHash() {
-		return mLastSaveHash;
-	}
-
-	public boolean isDirty() {
-		return hashCode() != mLastSaveHash;
-	}
+	public final int uid;
 
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
-	public BaseInstanceData() {
-
+	public Entity(int uid) {
+		this.uid = uid;
 	}
 
 	// --------------------------------------
-	// Core-Methods
+	// Methods
 	// --------------------------------------
 
 	/** Called before the game is about to close. Allows sub-classes to arrange their data for serialization. */
@@ -51,8 +40,13 @@ public abstract class BaseInstanceData implements Serializable {
 
 	}
 
+	/** Called before the object is loaded. Allows sub-classes to arrange their data before deserialization. */
+	public void beforeLoading() {
+
+	}
+
 	/** Called after the object has been loaded. Allows sub-classes to arrange their data after deserialization. */
-	public void afterLoaded(Object pParent) {
+	public void afterLoading(Object pParent) {
 
 	}
 }

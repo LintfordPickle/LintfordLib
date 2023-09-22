@@ -3,7 +3,7 @@ package net.lintford.library.screenmanager;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.LintfordCore.CoreTime;
 import net.lintford.library.core.ResourceManager;
-import net.lintford.library.core.entity.BaseEntity;
+import net.lintford.library.core.entities.BaseEntity;
 import net.lintford.library.core.graphics.Color;
 import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.batching.SpriteBatch;
@@ -22,11 +22,11 @@ public abstract class Screen implements IInputProcessor {
 	// Enums
 	// --------------------------------------
 
+	protected final float INPUT_TIMER_WAIT = 100.0f;
+
 	public enum ScreenState {
 		TransitionOn, Active, TransitionOff, Hidden,
 	}
-
-	protected final float INPUT_TIMER_WAIT = 100.0f;
 
 	// --------------------------------------
 	// Variables

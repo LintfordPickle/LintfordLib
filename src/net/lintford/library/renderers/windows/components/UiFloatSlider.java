@@ -9,7 +9,7 @@ import net.lintford.library.core.graphics.textures.CoreTextureNames;
 import net.lintford.library.core.maths.MathHelper;
 import net.lintford.library.renderers.windows.UiWindow;
 
-public class UifSlider extends UIWidget {
+public class UiFloatSlider extends UIWidget {
 
 	// --------------------------------------
 	// Constants
@@ -76,13 +76,14 @@ public class UifSlider extends UIWidget {
 	// Constructor
 	// --------------------------------------
 
-	public UifSlider(UiWindow parentWindow) {
+	public UiFloatSlider(UiWindow parentWindow) {
 		this(parentWindow, -1);
 	}
 
-	public UifSlider(UiWindow parentWindow, int entryUid) {
+	public UiFloatSlider(UiWindow parentWindow, int entryUid) {
 		super(parentWindow);
 
+		mIsDoubleHeight = true;
 		mSliderLabel = NO_LABEL_TEXT;
 		mW = 200;
 		mH = 25;
@@ -117,15 +118,20 @@ public class UifSlider extends UIWidget {
 		final float lRailHeight = 4;
 		final float lSliderWidth = 10;
 
+		final var lUpperYPosition = mY + mH * .25f;
+		final var lLowerYPosition = mY + mH * .75f;
+		final var lQHeight = mH * .25f;
+		final var lHalfHeight = mH * .5f;
+
 		final var lBackgroundColor = mIsEnabled ? ColorConstants.getColorWithRGBMod(ColorConstants.PrimaryColor, 1.f) : ColorConstants.getBlackWithAlpha(.4f);
-		spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, mX, mY + mH / 2 - lRailHeight / 2, mW, lRailHeight, 0f, lBackgroundColor);
+		spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, mX, lLowerYPosition - lRailHeight * .5f, mW, lRailHeight, 0f, lBackgroundColor);
 		final var lNubbinColor = mIsEnabled ? ColorConstants.getColorWithRGBMod(ColorConstants.TertiaryColor, 1.f) : ColorConstants.getBlackWithAlpha(.4f);
-		spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, mX + mCurrentRelPosition - lSliderWidth / 2, mY + mH / 4, lSliderWidth, mH / 2, 0f, lNubbinColor);
+		spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, mX + mCurrentRelPosition - lSliderWidth / 2, lLowerYPosition - lHalfHeight * .5f, lSliderWidth, lHalfHeight, 0f, lNubbinColor);
 
 		// Render Slider label
 		final var lAmtText = String.format("%.2f", mCurrentValue);
-		textFont.drawText(mSliderLabel, mX, mY - mH / 2, componentZDepth, ColorConstants.WHITE, 1f);
-		textFont.drawText(lAmtText, mX + mW - textFont.getStringWidth(lAmtText), mY - mH / 2, -0.01f, ColorConstants.WHITE, 1f);
+		textFont.drawText(mSliderLabel, mX, lUpperYPosition - textFont.fontHeight() * .5f, componentZDepth, ColorConstants.WHITE, 1f);
+		textFont.drawText(lAmtText, mX + mW - textFont.getStringWidth(lAmtText), lUpperYPosition - textFont.fontHeight() * .5f, -0.01f, ColorConstants.WHITE, 1f);
 	}
 
 	// --------------------------------------

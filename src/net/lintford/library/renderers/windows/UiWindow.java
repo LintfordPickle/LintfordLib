@@ -80,6 +80,7 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 
 	protected boolean mCanCaptureMouse;
 	protected boolean mIsMouseOver;
+	protected boolean mDrawWindowBackground;
 
 	/** Stores the window area of this renderer window */
 	protected Rectangle mWindowArea;
@@ -93,6 +94,14 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 	// Properties
 	// --------------------------------------
 
+	public boolean drawWindowBackground() {
+		return mDrawWindowBackground;
+	}
+	
+	public void drawWindowBackground(boolean drawWindowBackground) {
+		mDrawWindowBackground = drawWindowBackground;
+	}
+	
 	public HudLayoutController uiStructureController() {
 		return mUiStructureController;
 	}
@@ -402,12 +411,12 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 		final int h = (int) mWindowArea.height();
 
 		// Draw the window background
-		lSpritebatch.begin(core.HUD());
-		TextureBatch9Patch.drawBackground(core, lSpritebatch, mCoreSpritesheet, 32, x, y, w, h, lWindowColor, false, -0.01f);
-		lSpritebatch.end();
+		if(mDrawWindowBackground) {
+			lSpritebatch.begin(core.HUD());
+			TextureBatch9Patch.drawBackground(core, lSpritebatch, mCoreSpritesheet, 32, x, y, w, h, lWindowColor, false, -0.01f);
+			lSpritebatch.end();
+		}
 
-		// Draw the title bar
-		lSpritebatch.begin(core.HUD());
 
 		float lTitleX = mWindowArea.x() + 5.f;
 		float lTitleY = mWindowArea.y() + 5.f;
@@ -417,6 +426,8 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 			lUiHeaderFont.drawText(mWindowTitle, lTitleX, lTitleY + getTitleBarHeight() * .5f - lUiHeaderFont.fontHeight() * .5f + 3.f, -0.01f, ColorConstants.WHITE, 1f);
 			lUiHeaderFont.end();
 		}
+		
+		lSpritebatch.begin(core.HUD());
 
 		if (mScrollBar.scrollBarEnabled())
 			mScrollBar.draw(core, lSpritebatch, mCoreSpritesheet, Z_DEPTH, mWindowAlpha);

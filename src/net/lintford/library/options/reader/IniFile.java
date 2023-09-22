@@ -171,7 +171,6 @@ public class IniFile {
 		if (mConfigFilename == null || mConfigFilename.length() == 0) {
 			Debug.debugManager().logger().e(getClass().getSimpleName(), "Failed to save the configuration file to " + mConfigFilename);
 			return;
-
 		}
 
 		try {
@@ -179,13 +178,17 @@ public class IniFile {
 
 		} catch (IOException e) {
 			Debug.debugManager().logger().e(getClass().getSimpleName(), "Failed to save the DisplayConfiguration file to " + mConfigFilename);
-
 		}
-
 	}
 
 	public void saveConfig(String pFilename) throws IOException {
-
+		final var lConfigFile = new File(pFilename);
+		if(lConfigFile.getParentFile().exists() == false) {
+			Debug.debugManager().logger().i(getClass().getSimpleName(), "Creating config directory: " + lConfigFile.getParentFile());
+			lConfigFile.mkdirs();	
+		}
+		
+		
 		try (BufferedWriter br = new BufferedWriter(new FileWriter(pFilename))) {
 
 			for (Map.Entry<String, Map<String, String>> sectionEntry : mEntries.entrySet()) {
@@ -195,11 +198,8 @@ public class IniFile {
 					br.write(lineEntry.getKey() + "=" + lineEntry.getValue() + AppStorage.LINE_SEPERATOR);
 
 				}
-
 			}
-
 		}
-
 	}
 
 	public void loadConfig() {

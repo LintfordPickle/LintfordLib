@@ -34,8 +34,11 @@ public abstract class UIWidget extends Rectangle implements IInputProcessor {
 	protected boolean mIsEnabled;
 	protected boolean mIsVisible;
 	protected boolean mIsHoveredOver;
+	protected boolean mIsDoubleHeight;
 
 	protected float mMouseTimer;
+
+	protected float mLayoutWeight;
 
 	// The margin is applied to the outside of this component
 	protected int mMarginTop;
@@ -49,9 +52,35 @@ public abstract class UIWidget extends Rectangle implements IInputProcessor {
 	protected float mPaddingLeft;
 	protected float mPaddingRight;
 
+	private float mDesiredHeight;
+
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public void desiredHeight(float desiredHeight) {
+		mDesiredHeight = desiredHeight;
+	}
+
+	public float desiredHeight() {
+		return mDesiredHeight;
+	}
+
+	public boolean isDoubleHeight() {
+		return mIsDoubleHeight;
+	}
+
+	public void isDoubleHeight(boolean layoutWeight) {
+		mIsDoubleHeight = layoutWeight;
+	}
+
+	public float layoutWeight() {
+		return mLayoutWeight;
+	}
+
+	public void layoutWeight(float layoutWeight) {
+		mLayoutWeight = layoutWeight;
+	}
 
 	public float paddingLeft() {
 		return mPaddingLeft;

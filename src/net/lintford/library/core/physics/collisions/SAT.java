@@ -53,6 +53,9 @@ public class SAT {
 		manifold.bodyB = bodyB;
 
 		// TODO: Still missing intersection tests for Box shapes (same as polygon, just half the axis checks needed).
+		if (lShapeTypeA == ShapeType.Box || lShapeTypeB == ShapeType.Box) {
+			throw new IllegalArgumentException("Physics world doesn't support box bodies yet");
+		}
 
 		if (lShapeTypeA == ShapeType.Polygon) {
 			if (lShapeTypeB == ShapeType.Polygon)
@@ -64,7 +67,7 @@ public class SAT {
 					return true;
 				}
 			}
-
+			
 		} else if (lShapeTypeA == ShapeType.Circle) {
 			if (lShapeTypeB == ShapeType.Polygon) {
 				if (intersectsCirclePolygon(bodyA.x, bodyA.y, bodyA.radius, bodyB.getTransformedVertices(), bodyB.x, bodyB.y, manifold)) {
@@ -112,6 +115,7 @@ public class SAT {
 		result.depth = Float.MAX_VALUE;
 
 		final var lNumVertsA = verticesA.size();
+		final var lPolyAIsCwWinding = isCwWinding(verticesA.get(0), verticesA.get(1), verticesA.get(2));
 		for (int i = 0; i < lNumVertsA; i++) {
 			final var va = verticesA.get(i);
 			final var vb = verticesA.get((i + 1) % lNumVertsA);
@@ -119,11 +123,15 @@ public class SAT {
 			final var edgeX = vb.x - va.x;
 			final var edgeY = vb.y - va.y;
 
-			final var edgeLength2 = (float) Math.sqrt(edgeX * edgeX + edgeY * edgeY);
+			final var edgeLength = (float) Math.sqrt(edgeX * edgeX + edgeY * edgeY);
 
-			// note: the cross depends on the winding order of the triangle (this is cw)
-			final var axisX = -edgeY / edgeLength2;
-			final var axisY = edgeX / edgeLength2;
+			var axisX = -edgeY / edgeLength;
+			var axisY = edgeX / edgeLength;
+
+			if (lPolyAIsCwWinding == false) {
+				axisX = edgeY / edgeLength;
+				axisY = -edgeX / edgeLength;
+			}
 
 			projectVertices(verticesA, axisX, axisY, projectionResult1);
 			projectVertices(verticesB, axisX, axisY, projectionResult2);
@@ -151,6 +159,7 @@ public class SAT {
 		}
 
 		final var lNumVertsB = verticesB.size();
+		final var lPolyBIsCwWinding = isCwWinding(verticesB.get(0), verticesB.get(1), verticesB.get(2));
 		for (int i = 0; i < lNumVertsB; i++) {
 			final var va = verticesB.get(i);
 			final var vb = verticesB.get((i + 1) % lNumVertsB);
@@ -160,9 +169,13 @@ public class SAT {
 
 			final var edgeLength = (float) Math.sqrt(edgeX * edgeX + edgeY * edgeY);
 
-			// note: the cross depends on the winding order of the triangle (this is cw)
-			final var axisX = -edgeY / edgeLength;
-			final var axisY = edgeX / edgeLength;
+			var axisX = -edgeY / edgeLength;
+			var axisY = edgeX / edgeLength;
+
+			if (lPolyBIsCwWinding == false) {
+				axisX = edgeY / edgeLength;
+				axisY = -edgeX / edgeLength;
+			}
 
 			projectVertices(verticesA, axisX, axisY, projectionResult1);
 			projectVertices(verticesB, axisX, axisY, projectionResult2);
@@ -198,6 +211,7 @@ public class SAT {
 		result.depth = Float.MAX_VALUE;
 
 		final var lNumVertsA = polygonVertices.size();
+		final var lPolyIsCwWinding = isCwWinding(polygonVertices.get(0), polygonVertices.get(1), polygonVertices.get(2));
 		for (int i = 0; i < lNumVertsA; i++) {
 			final var va = polygonVertices.get(i);
 			final var vb = polygonVertices.get((i + 1) % lNumVertsA);
@@ -207,9 +221,13 @@ public class SAT {
 
 			final var edgeLength = (float) Math.sqrt(edgeX * edgeX + edgeY * edgeY);
 
-			// note: the cross depends on the winding order of the triangle (this is cw)
-			final var axisX = -edgeY / edgeLength;
-			final var axisY = edgeX / edgeLength;
+			var axisX = -edgeY / edgeLength;
+			var axisY = edgeX / edgeLength;
+
+			if (lPolyIsCwWinding == false) {
+				axisX = edgeY / edgeLength;
+				axisY = -edgeX / edgeLength;
+			}
 
 			projectVertices(polygonVertices, axisX, axisY, projectionResult1);
 			projectCircle(circleX, circleY, circleRadius, axisX, axisY, projectionResult2);
@@ -304,6 +322,7 @@ public class SAT {
 
 		// first loop through polygons verts
 		final var lNumVertsA = polygonVertices.size();
+		final var lPolyIsCwWinding = isCwWinding(polygonVertices.get(0), polygonVertices.get(1), polygonVertices.get(2));
 		for (int i = 0; i < lNumVertsA; i++) {
 			final var va = polygonVertices.get(i);
 			final var vb = polygonVertices.get((i + 1) % lNumVertsA);
@@ -311,11 +330,15 @@ public class SAT {
 			final var edgeX = vb.x - va.x;
 			final var edgeY = vb.y - va.y;
 
-			final var edgeLength2 = (float) Math.sqrt(edgeX * edgeX + edgeY * edgeY);
+			final var edgeLength = (float) Math.sqrt(edgeX * edgeX + edgeY * edgeY);
 
-			// note: the cross depends on the winding order of the triangle (this is cw)
-			final var axisX = -edgeY / edgeLength2;
-			final var axisY = edgeX / edgeLength2;
+			var axisX = -edgeY / edgeLength;
+			var axisY = edgeX / edgeLength;
+
+			if (lPolyIsCwWinding == false) {
+				axisX = edgeY / edgeLength;
+				axisY = -edgeX / edgeLength;
+			}
 
 			projectVertices(polygonVertices, axisX, axisY, projectionResult1);
 			projectLine(lsx, lsy, lex, ley, axisX, axisY, projectionResult2);
@@ -878,6 +901,23 @@ public class SAT {
 	}
 
 	// Helper Methods
+
+	public static boolean isCwWinding(Vector2f a, Vector2f b, Vector2f c) {
+		final var aXLen = Vector2f.dst2(a.x, a.y, b.x, b.y);
+		if (aXLen == 0)
+			return false;
+
+		final var aXx = (b.x - a.x) / aXLen;
+		final var aXy = (b.y - a.y) / aXLen;
+
+		final var aYLen = Vector2f.dst2(a.x, a.y, c.x, c.y);
+		if (aYLen == 0)
+			return false;
+
+		final var aYx = (c.x - a.x) / aYLen;
+		final var aYy = (c.y - a.y) / aYLen;
+		return Vector2f.cross(aXx, aXy, aYx, aYy) > 0;
+	}
 
 	public static boolean equalWithinEpsilon(float a, float b) {
 		return Math.abs(a - b) < ConstantsPhysics.EPSILON;

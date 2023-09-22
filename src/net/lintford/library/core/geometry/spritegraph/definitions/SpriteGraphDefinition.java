@@ -11,7 +11,7 @@ import com.google.gson.annotations.SerializedName;
 
 import net.lintford.library.ConstantsApp;
 import net.lintford.library.core.debug.Debug;
-import net.lintford.library.core.entity.definitions.BaseDefinition;
+import net.lintford.library.core.entities.definitions.BaseDefinition;
 
 public class SpriteGraphDefinition extends BaseDefinition {
 

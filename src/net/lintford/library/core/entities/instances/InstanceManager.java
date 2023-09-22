@@ -1,25 +1,20 @@
-package net.lintford.library.core.entity.instances;
+package net.lintford.library.core.entities.instances;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import net.lintford.library.core.entity.BaseInstanceData;
+import com.google.gson.annotations.SerializedName;
 
 /**
- * The {@link InstanceManager} maintains an array of serializable instances which extend {@link BaseInstanceData}. Instances are not otherwise tracked.
+ * The {@link InstanceManager} maintains an array of instances, beyond which, instances are not tracked.
  */
-public abstract class InstanceManager<T extends BaseInstanceData> extends BaseInstanceData {
-
-	// --------------------------------------
-	// Constants
-	// --------------------------------------
-
-	private static final long serialVersionUID = 7491642462693673597L;
+public abstract class InstanceManager<T extends Object> {
 
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
+	@SerializedName(value = "instances")
 	protected final List<T> mInstances = new ArrayList<>();
 
 	// --------------------------------------
@@ -37,6 +32,7 @@ public abstract class InstanceManager<T extends BaseInstanceData> extends BaseIn
 	public T getInstanceByIndex(int index) {
 		if (index < 0 || index >= mInstances.size())
 			return null;
+
 		return mInstances.get(index);
 	}
 

@@ -7,6 +7,7 @@ import org.lwjgl.glfw.GLFW;
 
 import net.lintford.library.controllers.BaseController;
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.input.mouse.MouseCursor;
 
 public class MouseCursorController extends BaseController {
@@ -67,6 +68,12 @@ public class MouseCursorController extends BaseController {
 
 	public void loadCursorFromFile(String cursorName, String filename, int hotspotX, int hotspotY) {
 		var lCustomCursor = MouseCursor.loadCursorFromFile(cursorName, filename, hotspotX, hotspotY);
+
+		if (lCustomCursor == null) {
+			Debug.debugManager().logger().e(getClass().getSimpleName(), "Cannot find cursor file " + filename + "(" + cursorName + ")");
+			return;
+		}
+
 		if (lCustomCursor.isLoaded())
 			mCursorMap.put(cursorName, lCustomCursor);
 	}

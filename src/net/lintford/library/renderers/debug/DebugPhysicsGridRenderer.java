@@ -3,6 +3,7 @@ package net.lintford.library.renderers.debug;
 import org.lwjgl.opengl.GL11;
 
 import net.lintford.library.ConstantsPhysics;
+import net.lintford.library.controllers.core.PhysicsController;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.graphics.linebatch.LineBatch;
@@ -40,10 +41,9 @@ public class DebugPhysicsGridRenderer extends BaseRenderer {
 	// Constructor
 	// ---------------------------------------------
 
-	public DebugPhysicsGridRenderer(RendererManager rendererManager, PhysicsWorld world, int entityGroupID) {
+	public DebugPhysicsGridRenderer(RendererManager rendererManager, int entityGroupID) {
 		super(rendererManager, RENDERER_NAME, entityGroupID);
 
-		mWorld = world;
 		mLineBatch = new LineBatch();
 	}
 
@@ -53,7 +53,10 @@ public class DebugPhysicsGridRenderer extends BaseRenderer {
 
 	@Override
 	public void initialize(LintfordCore core) {
+		final var lControllerManager = core.controllerManager();
+		final var lPhysicsController = (PhysicsController) lControllerManager.getControllerByNameRequired(PhysicsController.CONTROLLER_NAME, mEntityGroupUid);
 
+		mWorld = lPhysicsController.world();
 	}
 
 	@Override
@@ -80,14 +83,10 @@ public class DebugPhysicsGridRenderer extends BaseRenderer {
 	// ---------------------------------------------
 
 	private void drawSpatialHashGridGrid(LintfordCore core, PhysicsHashGrid<RigidBody> grid) {
+		final var mBoundaryWidth = grid.boundaryWidth() * ConstantsPhysics.UnitsToPixels();
+		final var mBoundaryHeight = grid.boundaryHeight() * ConstantsPhysics.UnitsToPixels();
 
-		final var lUnitsToPx = ConstantsPhysics.UnitsToPixels();
-		final var lPxToUnits = ConstantsPhysics.PixelsToUnits();
-
-		final var mBoundaryWidth = grid.boundaryWidth() * lUnitsToPx;
-		final var mBoundaryHeight = grid.boundaryHeight() * lUnitsToPx;
-
-		final var lHalfBW = mBoundaryWidth / 2f;
+		final var lHalfBW = mBoundaryWidth / 2.f;
 		final var lHalfBH = mBoundaryHeight / 2.f;
 
 		final var mNumTilesWide = grid.numTilesWide();
@@ -108,8 +107,8 @@ public class DebugPhysicsGridRenderer extends BaseRenderer {
 			for (int yy = 0; yy < mNumTilesHigh; yy++) {
 				mLineBatch.draw(-lHalfBW, -lHalfBH + (yy * lTileSizeH), lHalfBW, -lHalfBH + (yy * lTileSizeH), -0.01f, 1f, 1f, 0f, 1.0f);
 
-				final float xWorld = (-lHalfBW + xx * lTileSizeW + 1) * lPxToUnits;
-				final float yWorld = (-lHalfBH + yy * lTileSizeH + 1) * lPxToUnits;
+				final float xWorld = (-lHalfBW + xx * lTileSizeW + 1);
+				final float yWorld = (-lHalfBH + yy * lTileSizeH + 1);
 
 				final int lCellKey = grid.getCellKeyFromWorldPosition(xWorld, yWorld);
 				lFontUnit.drawText(String.valueOf(lCellKey), -lHalfBW + (xx * lTileSizeW) + 2f, -lHalfBH + (yy * lTileSizeH) + 1f, -0.001f, 0.5f);
@@ -119,7 +118,7 @@ public class DebugPhysicsGridRenderer extends BaseRenderer {
 					final int lNumCellContent = lCellContents.size();
 					for (int j = 0; j < lNumCellContent; j++) {
 						final var entity = lCellContents.get(j);
-						lFontUnit.drawText(String.valueOf(entity.entityUid), -lHalfBW + (xx * lTileSizeW) + 10f, -lHalfBH + (yy * lTileSizeH) + 10f + (j * 7), -0.001f, 0.5f);
+						lFontUnit.drawText(String.valueOf(entity.uid), -lHalfBW + (xx * lTileSizeW) + 10f, -lHalfBH + (yy * lTileSizeH) + 10f + (j * 7), -0.001f, 0.5f);
 					}
 				}
 			}

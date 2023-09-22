@@ -90,7 +90,7 @@ public class PhysicsWorld {
 			mCollisionCallbackList.add(callback);
 	}
 
-	public void removeCllisionCallback(ICollisionCallback callback) {
+	public void removeCollisionCallback(ICollisionCallback callback) {
 		if (mCollisionCallbackList.contains(callback))
 			mCollisionCallbackList.remove(callback);
 	}
@@ -143,6 +143,7 @@ public class PhysicsWorld {
 	}
 
 	public void unload() {
+
 		Debug.debugManager().stats().removeCustomStatTag(mDebugStatPhysicsCaption);
 		Debug.debugManager().stats().removeCustomStatTag(mDebugStatsNumBodies);
 		Debug.debugManager().stats().removeCustomStatTag(mDebugStepTimeInMm);
@@ -158,6 +159,28 @@ public class PhysicsWorld {
 		mNumActiveCells = null;
 
 		mInitialized = false;
+
+		final int lNumObjectsInCollisionPool = mCollisionPairPool.size();
+		for (int i = 0; i < lNumObjectsInCollisionPool; i++) {
+			final var lCollisionPair = mCollisionPairPool.get(i);
+
+			if (lCollisionPair != null) {
+				lCollisionPair.bodyA = null;
+				lCollisionPair.bodyB = null;
+			}
+		}
+		mCollisionPairPool.clear();
+
+		final var lNumBodies = mBodies.size();
+		for (int i = 0; i < lNumBodies; i++) {
+			final var lBody = mBodies.get(i);
+			if (lBody != null) {
+				lBody.userData(null);
+			}
+		}
+		mBodies.clear();
+
+		mCollisionCallbackList.clear();
 	}
 
 	public void stepWorld(float time, int totalIterations) {
@@ -219,6 +242,7 @@ public class PhysicsWorld {
 	}
 
 	private void broadPhase() {
+		// TODO: Broad phrase double adds entities to the collision pairs if they cross grid boundaries.
 		final var lActiveCellKeys = mWorldHashGrid.getActiveCellKeys();
 		final int lNumActiveCellKeys = lActiveCellKeys.size();
 		for (int i = lNumActiveCellKeys - 1; i >= 0; i--) {
@@ -248,6 +272,18 @@ public class PhysicsWorld {
 
 					if (lBodyA_aabb.intersectsAA(lBodyB_aabb) == false)
 						continue;
+
+					final var lWeAreIncludedinPhysics = lBodyA.maskBits() != 0 && lBodyB.maskBits() != 0;
+					if (lWeAreIncludedinPhysics == false)
+						continue;
+
+					final var lWeBothCollideWithOthers = lBodyA.categoryBits() != 0 && lBodyB.categoryBits() != 0;
+
+					final var passedFilterCollision = lWeBothCollideWithOthers == false || (lBodyA.maskBits() & lBodyB.categoryBits()) != 0 && (lBodyA.categoryBits() & lBodyB.maskBits()) != 0;
+
+					if (!passedFilterCollision) {
+						continue;
+					}
 
 					final var lCollisionPair = getFreeCollisionPair();
 					lCollisionPair.bodyA = lBodyA;
@@ -279,7 +315,6 @@ public class PhysicsWorld {
 				if (!passedFilterCollision) {
 
 					// TODO: Handle the case of sensor bodies
-
 					returnCollisionPair(lCollisionPair);
 					break;
 				}

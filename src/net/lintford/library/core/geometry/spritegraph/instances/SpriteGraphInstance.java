@@ -5,7 +5,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.entity.instances.IndexedPooledBaseData;
+import net.lintford.library.core.entities.instances.OpenPooledBaseData;
 import net.lintford.library.core.geometry.spritegraph.AnimatedSpriteGraphListener;
 import net.lintford.library.core.geometry.spritegraph.ISpriteGraphPool;
 import net.lintford.library.core.geometry.spritegraph.SpriteGraphManager;
@@ -18,7 +18,7 @@ import net.lintford.library.core.graphics.sprites.SpriteInstance;
  * with information about transforms and part types (if for example multiple
  * types are available per part).
  */
-public class SpriteGraphInstance extends IndexedPooledBaseData implements AnimatedSpriteListener {
+public class SpriteGraphInstance extends OpenPooledBaseData implements AnimatedSpriteListener {
 
 	public static final Comparator<SpriteGraphNodeInstance> SpriteGraphNodeInstanceZComparator = new SpriteGraphNodeInstanceZComparator();
 
@@ -29,12 +29,6 @@ public class SpriteGraphInstance extends IndexedPooledBaseData implements Animat
 			return o1.zDepth() - o2.zDepth();
 		}
 	}
-
-	// --------------------------------------
-	// Constants
-	// --------------------------------------
-
-	private static final long serialVersionUID = -5557875926084955431L;
 
 	// --------------------------------------
 	// Variables
@@ -134,8 +128,7 @@ public class SpriteGraphInstance extends IndexedPooledBaseData implements Animat
 	// Core-Methods
 	// --------------------------------------
 
-	public void init(SpriteGraphDefinition spriteGraphDefinition, ISpriteGraphPool spriteGraphPool,
-			int entityGroupUid) {
+	public void init(SpriteGraphDefinition spriteGraphDefinition, ISpriteGraphPool spriteGraphPool, int entityGroupUid) {
 		mSpriteGraphName = spriteGraphDefinition.name;
 
 		mFlatNodes = new ArrayList<>();

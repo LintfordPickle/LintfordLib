@@ -264,7 +264,7 @@ public class DebugDrawers {
 		mBasicShader.projectionMatrix(core.HUD().projection());
 		mBasicShader.viewMatrix(core.HUD().view());
 
-		mTexturedQuad.createModelMatrix(destinationX, destinationY, zDepth, destinationWidth, destinationHeight);
+		mTexturedQuad.createModelMatrixAbsolute(destinationX, destinationY, zDepth, destinationWidth, destinationHeight);
 		mBasicShader.modelMatrix(mTexturedQuad.modelMatrix());
 
 		mBasicShader.bind();

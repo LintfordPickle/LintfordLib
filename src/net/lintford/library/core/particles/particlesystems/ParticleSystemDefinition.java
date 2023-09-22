@@ -3,7 +3,7 @@ package net.lintford.library.core.particles.particlesystems;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.lintford.library.core.entity.definitions.BaseDefinition;
+import net.lintford.library.core.entities.definitions.BaseDefinition;
 import net.lintford.library.core.particles.particlesystems.initializers.ParticleInitializerBase;
 import net.lintford.library.core.particles.particlesystems.modifiers.ParticleModifierBase;
 
