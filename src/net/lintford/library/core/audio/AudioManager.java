@@ -473,8 +473,8 @@ public class AudioManager {
 			return;
 		}
 
-		final int lNumberOfFontUnitDefinitions = lAudioMetaObject.AudioMetaDefinitions.length;
-		for (int i = 0; i < lNumberOfFontUnitDefinitions; i++) {
+		final int lNumberOfAudioFileDefinitions = lAudioMetaObject.AudioMetaDefinitions.length;
+		for (int i = 0; i < lNumberOfAudioFileDefinitions; i++) {
 			final var lAudioDataDefinition = lAudioMetaObject.AudioMetaDefinitions[i];
 
 			final var lSoundName = lAudioDataDefinition.soundname;
