@@ -16,6 +16,12 @@ import net.lintford.library.core.storage.FileUtils;
 public class MusicManager {
 
 	// --------------------------------------
+	// Constants
+	// --------------------------------------
+
+	public static final int NO_MUSIC_INDEX = -1;
+
+	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
@@ -57,7 +63,21 @@ public class MusicManager {
 		return mAudioDataBuffers.get(index);
 	}
 
-	public AudioData getAudioDataByName(String bufferName) {
+	public int getMusicIndexByName(String bufferName) {
+		if (bufferName == null || bufferName.length() == 0)
+			return NO_MUSIC_INDEX;
+
+		final var lNumberAudioDataBuffers = mAudioDataBuffers.size();
+		for (int i = 0; i < lNumberAudioDataBuffers; i++) {
+			if (mAudioDataBuffers.get(i).name().equals(bufferName)) {
+				return i;
+			}
+		}
+
+		return NO_MUSIC_INDEX;
+	}
+
+	public AudioData getMusicDataByName(String bufferName) {
 		if (bufferName == null || bufferName.length() == 0)
 			return null;
 
@@ -121,7 +141,7 @@ public class MusicManager {
 			final var lFilepath = lAudioDataDefinition.filepath;
 			final var lReload = lAudioDataDefinition.reload;
 
-			var lAudioDataBuffer = getAudioDataByName(lSoundName);
+			var lAudioDataBuffer = getMusicDataByName(lSoundName);
 			if (lReload || lAudioDataBuffer == null) {
 				lAudioDataBuffer = mAudioManager.loadAudioFile(lSoundName, lFilepath, lReload);
 				mAudioDataBuffers.add(lAudioDataBuffer);
