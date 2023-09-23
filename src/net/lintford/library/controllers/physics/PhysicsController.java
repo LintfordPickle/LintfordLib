@@ -1,8 +1,9 @@
-package net.lintford.library.controllers.core;
+package net.lintford.library.controllers.physics;
 
 import net.lintford.library.controllers.BaseController;
+import net.lintford.library.controllers.core.ControllerManager;
+import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.physics.PhysicsWorld;
-import net.lintford.library.core.physics.resolvers.CollisionResolverRotationAndFriction;
 
 public class PhysicsController extends BaseController {
 
@@ -11,6 +12,8 @@ public class PhysicsController extends BaseController {
 	// --------------------------------------
 
 	public static final String CONTROLLER_NAME = "Physics Controller";
+
+	public static final int NUM_PHYSICS_ITERATIONS = 7;
 
 	// --------------------------------------
 	// Variables
@@ -29,33 +32,22 @@ public class PhysicsController extends BaseController {
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
-	public PhysicsController(ControllerManager controllerManager, int entityGroupUid) {
+
+	public PhysicsController(ControllerManager controllerManager, IPhysicsControllerCallback callback, int entityGroupUid) {
 		super(controllerManager, CONTROLLER_NAME, entityGroupUid);
 
+		mWorld = callback.createPhysicsWorld();
 	}
 
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
 
-	public PhysicsWorld createNewPhyicsWorld(int boundaryWidth, int boundaryHeight, int numTilesWide, int numTilesHigh) {
-		if (boundaryWidth <= 0)
-			boundaryWidth = 400;
+	@Override
+	public void update(LintfordCore core) {
+		super.update(core);
 
-		if (boundaryHeight <= 0)
-			boundaryHeight = 400;
-
-		if (numTilesWide <= 10)
-			numTilesWide = 10;
-
-		if (numTilesHigh <= 10)
-			numTilesHigh = 10;
-
-		mWorld = new PhysicsWorld(boundaryWidth, boundaryHeight, numTilesWide, numTilesHigh);
-		mWorld.setContactResolver(new CollisionResolverRotationAndFriction());
-
-		mWorld.initialize();
-		return mWorld;
+		mWorld.stepWorld((float) core.gameTime().elapsedTimeMilli() * 0.001f, NUM_PHYSICS_ITERATIONS);
 	}
 
 	@Override

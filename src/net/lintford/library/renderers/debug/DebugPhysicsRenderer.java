@@ -6,7 +6,7 @@ import java.util.List;
 import org.lwjgl.opengl.GL11;
 
 import net.lintford.library.ConstantsPhysics;
-import net.lintford.library.controllers.core.PhysicsController;
+import net.lintford.library.controllers.physics.PhysicsController;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.maths.Vector2f;

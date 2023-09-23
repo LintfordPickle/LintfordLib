@@ -119,19 +119,21 @@ public class PhysicsWorld {
 		initializeCollisionPairPool();
 
 		// TODO: Only do this if in debug mode
-		mDebugStatPhysicsCaption = new DebugStatTagCaption("Physics");
-		mDebugStatsNumBodies = new DebugStatTagInt("Num Bodies", 0, false);
-		mDebugStepTimeInMm = new DebugStatTagFloat("step", 0.0f, false);
-		mDebugNumIterations = new DebugStatTagInt("Num Iterations", 0, false);
-		mNumSpatialCells = new DebugStatTagInt("Num Cells", 0, false);
-		mNumActiveCells = new DebugStatTagInt("Active Cells", 0, false);
+		if (Debug.debugManager().debugModeEnabled()) {
+			mDebugStatPhysicsCaption = new DebugStatTagCaption("Physics");
+			mDebugStatsNumBodies = new DebugStatTagInt("Num Bodies", 0, false);
+			mDebugStepTimeInMm = new DebugStatTagFloat("step", 0.0f, false);
+			mDebugNumIterations = new DebugStatTagInt("Num Iterations", 0, false);
+			mNumSpatialCells = new DebugStatTagInt("Num Cells", 0, false);
+			mNumActiveCells = new DebugStatTagInt("Active Cells", 0, false);
 
-		Debug.debugManager().stats().addCustomStatTag(mDebugStatPhysicsCaption);
-		Debug.debugManager().stats().addCustomStatTag(mDebugStatsNumBodies);
-		Debug.debugManager().stats().addCustomStatTag(mDebugStepTimeInMm);
-		Debug.debugManager().stats().addCustomStatTag(mDebugNumIterations);
-		Debug.debugManager().stats().addCustomStatTag(mNumSpatialCells);
-		Debug.debugManager().stats().addCustomStatTag(mNumActiveCells);
+			Debug.debugManager().stats().addCustomStatTag(mDebugStatPhysicsCaption);
+			Debug.debugManager().stats().addCustomStatTag(mDebugStatsNumBodies);
+			Debug.debugManager().stats().addCustomStatTag(mDebugStepTimeInMm);
+			Debug.debugManager().stats().addCustomStatTag(mDebugNumIterations);
+			Debug.debugManager().stats().addCustomStatTag(mNumSpatialCells);
+			Debug.debugManager().stats().addCustomStatTag(mNumActiveCells);
+		}
 
 		mInitialized = true;
 	}

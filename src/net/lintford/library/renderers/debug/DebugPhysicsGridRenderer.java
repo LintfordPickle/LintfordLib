@@ -3,7 +3,7 @@ package net.lintford.library.renderers.debug;
 import org.lwjgl.opengl.GL11;
 
 import net.lintford.library.ConstantsPhysics;
-import net.lintford.library.controllers.core.PhysicsController;
+import net.lintford.library.controllers.physics.PhysicsController;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.graphics.linebatch.LineBatch;
