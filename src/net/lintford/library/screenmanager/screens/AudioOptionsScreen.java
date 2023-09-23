@@ -4,6 +4,7 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.audio.AudioManager;
 import net.lintford.library.core.graphics.ColorConstants;
+import net.lintford.library.core.input.InputManager;
 import net.lintford.library.core.maths.MathHelper;
 import net.lintford.library.screenmanager.MenuEntry;
 import net.lintford.library.screenmanager.MenuScreen;
@@ -217,8 +218,10 @@ public class AudioOptionsScreen extends MenuScreen {
 	// --------------------------------------
 
 	@Override
-	public void onMenuEntryChanged(MenuEntry menuEntry) {
-		switch (menuEntry.entryID()) {
+	public void menuEntryOnClick(InputManager inputState, int entryUid) {
+		super.menuEntryOnClick(inputState, entryUid);
+
+		switch (entryUid) {
 		case BUTTON_ENABLED_MASTER:
 			mAudioManager.audioConfig().masterEnabled(mMasterEnabledEntry.isChecked());
 			mAudioManager.updateSettings();
@@ -253,4 +256,5 @@ public class AudioOptionsScreen extends MenuScreen {
 			break;
 		}
 	}
+
 }

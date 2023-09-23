@@ -22,6 +22,7 @@ public class MusicController extends BaseController implements IInputProcessor {
 	// --------------------------------------
 
 	private MusicManager mMusicManager;
+	private boolean mAutoResumeAfterEnabled;
 	private boolean mIsPlaying;
 	private boolean mIsPaused;
 	private boolean mBank0Active;
@@ -77,16 +78,21 @@ public class MusicController extends BaseController implements IInputProcessor {
 
 		if (!mMusicManager.isMusicEnabled()) {
 			if (mIsPlaying) {
-				mMusicManager.audioSourceBank0().stop();
-				mMusicManager.audioSourceBank1().stop();
+				mMusicManager.audioSourceBank0().pause();
+				mMusicManager.audioSourceBank1().pause();
 
+				mAutoResumeAfterEnabled = true;
 				mIsPlaying = false;
 			}
 			return;
 		}
 
-		if (!mIsPlaying)
-			return;
+		if (!mIsPlaying) {
+			if (mAutoResumeAfterEnabled) {
+				resume();
+			} else
+				return;
+		}
 
 		updatePlayingState(core);
 
@@ -156,14 +162,14 @@ public class MusicController extends BaseController implements IInputProcessor {
 		if (mIsPaused) {
 			if (mBank0Active) {
 				if (mCurrentSongIndex == songIndex) {
-					mMusicManager.audioSourceBank0().continuePlaying();
+					mMusicManager.audioSourceBank0().resume();
 					mIsPlaying = true;
 					mIsPaused = false;
 					return;
 				}
 			} else {
 				if (mCurrentSongIndex == songIndex) {
-					mMusicManager.audioSourceBank0().continuePlaying();
+					mMusicManager.audioSourceBank0().resume();
 					mIsPlaying = true;
 					mIsPaused = false;
 					return;
@@ -199,6 +205,20 @@ public class MusicController extends BaseController implements IInputProcessor {
 			mMusicManager.audioSourceBank0().stop();
 		else
 			mMusicManager.audioSourceBank1().stop();
+	}
+
+	public void resume() {
+		if (!mIsPlaying && !mAutoResumeAfterEnabled)
+			return;
+
+		mIsPlaying = true;
+		mIsPaused = false;
+		mAutoResumeAfterEnabled = false;
+
+		if (mBank0Active)
+			mMusicManager.audioSourceBank0().resume();
+		else
+			mMusicManager.audioSourceBank1().resume();
 	}
 
 	public void pause() {

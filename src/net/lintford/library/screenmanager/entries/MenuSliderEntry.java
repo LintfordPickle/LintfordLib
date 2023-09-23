@@ -147,6 +147,8 @@ public class MenuSliderEntry extends MenuEntry {
 					mValue = (int) MathHelper.scaleToRange(core.HUD().getMouseCameraSpace().x - (lScreenOffset.x + mBarPosX + 8), 0, mBarWidth - 32 - 16, mLowerBound, mUpperBound);
 					mValue = MathHelper.clampi(mValue, mLowerBound, mUpperBound);
 
+					onClick(core.input());
+					
 				} else {
 					mTrackingClick = false;
 				}
@@ -316,15 +318,15 @@ public class MenuSliderEntry extends MenuEntry {
 
 	@Override
 	public void onClick(InputManager inputManager) {
-		super.onClick(inputManager);
-
-		mIsActive = !mIsActive;
-
-		if (mIsActive)
-			mParentScreen.onMenuEntryActivated(this);
-		else
-			mParentScreen.onMenuEntryDeactivated(this);
-
+//		if (mClickListener == null || mMenuEntryID == -1)
+//			return;
+//
+////		if (mClickListener.isActionConsumed())
+////			return;
+////
+////		mAnimationTimer = MenuScreen.ANIMATION_TIMER_LENGTH;
+//		// mScreenManager.uiSounds().play("SOUND_MENU_CLICK");
+		mClickListener.menuEntryOnClick(inputManager, mMenuEntryID);
 	}
 
 	public void setValue(int newValue) {

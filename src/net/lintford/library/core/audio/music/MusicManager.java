@@ -15,6 +15,23 @@ import net.lintford.library.core.storage.FileUtils;
 
 public class MusicManager {
 
+	public class MusicGroup {
+		public final String name;
+		public final List<Integer> mSongIndices = new ArrayList<>();
+		public boolean mShuffle;
+		
+		public MusicGroup(String name) {
+			this.name = name;
+		}
+		
+		public void addSongIndex(int songIndex) { mSongIndices.add(songIndex); }
+		public void removeSongIndex(int songIndex) { mSongIndices.remove((Integer)songIndex); }
+		public void removeAllSongIndices() { mSongIndices.clear(); }
+		public boolean shuffle() {return mShuffle; }
+		public void shuffle(boolean newValue) { mShuffle = newValue; }
+		
+	}
+	
 	// --------------------------------------
 	// Constants
 	// --------------------------------------
@@ -27,7 +44,9 @@ public class MusicManager {
 
 	private AudioManager mAudioManager;
 	private boolean mIsMusicEnabled;
-	private List<AudioData> mAudioDataBuffers;
+	private final List<AudioData> mAudioDataBuffers = new ArrayList<>();
+	private final List<MusicGroup> mMusicGroups = new ArrayList<>();
+	
 	private AudioSource mAudioSourceBank0;
 	private AudioSource mAudioSourceBank1;
 
@@ -98,8 +117,6 @@ public class MusicManager {
 	public MusicManager(AudioManager audioManager) {
 		mAudioManager = audioManager;
 		mIsMusicEnabled = audioManager.audioConfig().masterEnabled();
-
-		mAudioDataBuffers = new ArrayList<>();
 	}
 
 	// --------------------------------------

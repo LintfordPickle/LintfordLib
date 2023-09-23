@@ -175,7 +175,7 @@ public class AudioSource {
 	}
 
 	/** Resumes playing the {@link AudioSource} from a last position when paused. */
-	public void continuePlaying() {
+	public void resume() {
 		AL10.alSourcePlay(mSourceID);
 	}
 

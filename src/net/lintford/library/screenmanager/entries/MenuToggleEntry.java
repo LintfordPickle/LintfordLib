@@ -157,8 +157,8 @@ public class MenuToggleEntry extends MenuEntry {
 
 	@Override
 	public void onClick(InputManager inputManager) {
-		super.onClick(inputManager);
-
 		mIsChecked = !mIsChecked;
+
+		super.onClick(inputManager);
 	}
 }

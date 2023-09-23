@@ -29,12 +29,11 @@ import net.lintford.library.core.camera.HUD;
 import net.lintford.library.core.camera.ICamera;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.debug.Debug.DebugLogLevel;
-import net.lintford.library.core.entities.BaseEntity;
 import net.lintford.library.core.debug.DebugMemory;
 import net.lintford.library.core.debug.GLDebug;
 import net.lintford.library.core.graphics.fonts.BitmapFontManager;
-import net.lintford.library.core.input.KeyEventActionManager;
 import net.lintford.library.core.input.InputManager;
+import net.lintford.library.core.input.KeyEventActionManager;
 import net.lintford.library.core.maths.MathHelper;
 import net.lintford.library.core.rendering.RenderState;
 import net.lintford.library.core.time.TimeConstants;
@@ -172,7 +171,7 @@ public abstract class LintfordCore {
 	// Constants
 	// ---------------------------------------------
 
-	public static final int CORE_ENTITY_GROUP_ID = BaseEntity.getEntityNumber();
+	public static final int CORE_ENTITY_GROUP_ID = ResourceGroupProvider.getRollingEntityNumber();
 
 	// ---------------------------------------------
 	// Variables
