@@ -1,9 +1,9 @@
 package net.lintford.library.screenmanager.screens;
 
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.ResourceGroupProvider;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.Debug;
-import net.lintford.library.core.entities.BaseEntity;
 import net.lintford.library.core.time.TimeSpan;
 import net.lintford.library.options.DisplayManager;
 import net.lintford.library.renderers.RendererManager;
@@ -81,7 +81,7 @@ public abstract class AsyncScreenLoadingScreen extends Screen {
 	// --------------------------------------
 
 	protected AsyncScreenLoadingScreen(ScreenManager screenManager) {
-		this(screenManager, new RendererManager(screenManager.core(), BaseEntity.getEntityNumber()));
+		this(screenManager, new RendererManager(screenManager.core(), ResourceGroupProvider.getRollingEntityNumber()));
 	}
 
 	protected AsyncScreenLoadingScreen(ScreenManager screenManager, RendererManager rendererManager) {

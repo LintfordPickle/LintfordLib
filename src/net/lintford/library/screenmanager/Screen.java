@@ -2,8 +2,8 @@ package net.lintford.library.screenmanager;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.LintfordCore.CoreTime;
+import net.lintford.library.core.ResourceGroupProvider;
 import net.lintford.library.core.ResourceManager;
-import net.lintford.library.core.entities.BaseEntity;
 import net.lintford.library.core.graphics.Color;
 import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.batching.SpriteBatch;
@@ -167,7 +167,7 @@ public abstract class Screen implements IInputProcessor {
 	// --------------------------------------
 
 	public Screen(ScreenManager screenManager) {
-		this(screenManager, new RendererManager(screenManager.core(), BaseEntity.getEntityNumber()));
+		this(screenManager, new RendererManager(screenManager.core(), ResourceGroupProvider.getRollingEntityNumber()));
 	}
 
 	public Screen(ScreenManager screenManager, RendererManager rendererManager) {
@@ -178,7 +178,7 @@ public abstract class Screen implements IInputProcessor {
 		mTransitionOff = new TransitionFadeOut(new TimeSpan(200));
 
 		if (rendererManager == null) {
-			mRendererManager = new RendererManager(mScreenManager.core(), BaseEntity.getEntityNumber());
+			mRendererManager = new RendererManager(mScreenManager.core(), ResourceGroupProvider.getRollingEntityNumber());
 		} else {
 			mRendererManager = rendererManager;
 		}

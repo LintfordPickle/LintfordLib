@@ -1,8 +1,6 @@
 package net.lintford.library.core.entities.definitions;
 
-import net.lintford.library.core.entities.BaseEntity;
-
-public abstract class BaseDefinition extends BaseEntity {
+public abstract class BaseDefinition {
 
 	// --------------------------------------
 	// Constants
@@ -19,6 +17,9 @@ public abstract class BaseDefinition extends BaseEntity {
 	/** used for linking entities */
 	protected String outname;
 
+	/** the name of the definition */
+	public String name;
+	
 	/** user friendly name for the front end */
 	public String displayName;
 
