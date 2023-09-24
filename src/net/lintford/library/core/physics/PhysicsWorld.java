@@ -145,7 +145,6 @@ public class PhysicsWorld {
 	}
 
 	public void unload() {
-
 		Debug.debugManager().stats().removeCustomStatTag(mDebugStatPhysicsCaption);
 		Debug.debugManager().stats().removeCustomStatTag(mDebugStatsNumBodies);
 		Debug.debugManager().stats().removeCustomStatTag(mDebugStepTimeInMm);
@@ -191,12 +190,6 @@ public class PhysicsWorld {
 			return;
 		}
 
-		totalIterations = MathHelper.clampi(totalIterations, ConstantsPhysics.MIN_ITERATIONS, ConstantsPhysics.MAX_ITERATIONS);
-		mDebugNumIterations.setValue(totalIterations);
-		mDebugStatsNumBodies.setValue(mBodies.size());
-		mNumSpatialCells.setValue(mWorldHashGrid.getTotalCellCount());
-		mNumActiveCells.setValue(mWorldHashGrid.getActiveCellKeys().size());
-
 		final var lSystemTimeBegin = System.nanoTime();
 
 		time /= (float) totalIterations;
@@ -213,7 +206,20 @@ public class PhysicsWorld {
 		}
 
 		final var lDelta = ((System.nanoTime() - lSystemTimeBegin) / TimeConstants.NanoToMilli);
-		mDebugStepTimeInMm.setValue((float) lDelta);
+		updateDebugStats(totalIterations, lDelta);
+
+	}
+
+	private void updateDebugStats(int totalIterations, double delta) {
+		if (Debug.debugManager().debugModeEnabled() == false)
+			return;
+
+		totalIterations = MathHelper.clampi(totalIterations, ConstantsPhysics.MIN_ITERATIONS, ConstantsPhysics.MAX_ITERATIONS);
+		mDebugNumIterations.setValue(totalIterations);
+		mDebugStatsNumBodies.setValue(mBodies.size());
+		mNumSpatialCells.setValue(mWorldHashGrid.getTotalCellCount());
+		mNumActiveCells.setValue(mWorldHashGrid.getActiveCellKeys().size());
+		mDebugStepTimeInMm.setValue((float) delta);
 	}
 
 	private void stepBodies(float time) {
