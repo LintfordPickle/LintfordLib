@@ -110,6 +110,8 @@ public class TexturedQuad {
 			Debug.debugManager().logger().v(getClass().getSimpleName(), "[OpenGl] glGenBuffers: vbo " + mVboId);
 		}
 
+		loadGLGeometry();
+
 		mResourcesLoaded = true;
 
 		if (resourceManager.isMainOpenGlThread())
@@ -127,8 +129,6 @@ public class TexturedQuad {
 			mVaoId = GL30.glGenVertexArrays();
 			Debug.debugManager().logger().v(getClass().getSimpleName(), "[OpenGl] glGenVertexArrays: " + mVaoId);
 		}
-
-		loadGLGeometry();
 
 		GL30.glBindVertexArray(mVaoId);
 
