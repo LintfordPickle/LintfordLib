@@ -77,6 +77,7 @@ public class AudioManager {
 	public class AudioMetaDataDefinition {
 		public String filepath;
 		public String soundname;
+		public String group; // used to group music songs into collections (e.g. menu, world-00, world-01 etc.)
 		public boolean reload;
 	}
 
@@ -100,7 +101,7 @@ public class AudioManager {
 
 	/** A pool of {@link AudioSource}s created for other objects (and can be reused). */
 	private List<AudioSource> mAudioSources;
-	private Map<String, AudioData> mAudioDataBuffers;
+	private final Map<String, AudioData> mAudioDataBuffers;
 	private AudioListener mAudioListener;
 	private long mContext;
 	private long mDevice;
@@ -112,7 +113,7 @@ public class AudioManager {
 	private boolean mACL11Supported;
 	private List<String> mAudioDevices;
 	private String mDefaultAudioDevice;
-	private List<AudioFireAndForgetManager> mAudioFireAndForgetManagers = new ArrayList<>();
+	private List<AudioFireAndForgetManager> mAudioFireAndForgetManagers;
 	private MusicManager mMusicManager;
 	private AudioConfig mAudioConfig;
 	private AudioNubble mSoundFxNubble;
@@ -177,9 +178,10 @@ public class AudioManager {
 	public AudioManager(AudioConfig audioConfig) {
 		mAudioConfig = audioConfig;
 
-		mAudioDataBuffers = new HashMap<>();
 		mAudioSources = new ArrayList<>();
 		mAudioListener = new AudioListener();
+		mAudioDataBuffers = new HashMap<>();
+		mAudioFireAndForgetManagers = new ArrayList<>();
 
 		mSoundFxNubble = new AudioNubble(AUDIO_SOURCE_TYPE_SOUNDFX);
 		mMusicNubble = new AudioNubble(AUDIO_SOURCE_TYPE_MUSIC);

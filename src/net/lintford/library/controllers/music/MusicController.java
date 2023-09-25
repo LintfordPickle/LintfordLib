@@ -5,6 +5,7 @@ import org.lwjgl.glfw.GLFW;
 import net.lintford.library.controllers.BaseController;
 import net.lintford.library.controllers.core.ControllerManager;
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.audio.data.AudioData;
 import net.lintford.library.core.audio.music.MusicManager;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.input.mouse.IInputProcessor;
@@ -28,7 +29,16 @@ public class MusicController extends BaseController implements IInputProcessor {
 	private boolean mBank0Active;
 	private float mInputTimer;
 
-	private int mCurrentSongIndex = 0;
+	private int mCurrentSongIndex;
+	private int mCurrentGroupIndex;
+
+	// --------------------------------------
+	// Properties
+	// --------------------------------------
+
+	public int getSongIndexByName(String songName) {
+		return mMusicManager.getMusicIndexByName(songName);
+	}
 
 	// --------------------------------------
 	// Constructor
@@ -38,6 +48,9 @@ public class MusicController extends BaseController implements IInputProcessor {
 		super(cControllerManager, CONTROLLER_NAME, entityGroupUid);
 
 		mMusicManager = musicManager;
+
+		mCurrentSongIndex = 0;
+		mCurrentGroupIndex = 0;
 	}
 
 	// --------------------------------------
@@ -52,7 +65,10 @@ public class MusicController extends BaseController implements IInputProcessor {
 	@Override
 	public boolean handleInput(LintfordCore core) {
 		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_F5, this))
-			play();
+			play(0);
+
+		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_F4, this))
+			resume();
 
 		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_F2, this))
 			stop();
@@ -87,21 +103,22 @@ public class MusicController extends BaseController implements IInputProcessor {
 			return;
 		}
 
-		if (!mIsPlaying) {
+		if (!mIsPlaying & !mIsPaused) {
 			if (mAutoResumeAfterEnabled) {
 				resume();
 			} else
 				return;
 		}
 
-		updatePlayingState(core);
+		if(mIsPlaying)
+			updatePlayingState(core);
 
 	}
 
 	private void updatePlayingState(LintfordCore core) {
-		final float lGameTimeModifer = core.gameTime().timeModifier();
-		mMusicManager.audioSourceBank0().setPitch(lGameTimeModifer);
-		mMusicManager.audioSourceBank1().setPitch(lGameTimeModifer);
+//		final float lGameTimeModifer = core.gameTime().timeModifier();
+//		mMusicManager.audioSourceBank0().setPitch(lGameTimeModifer);
+//		mMusicManager.audioSourceBank1().setPitch(lGameTimeModifer);
 
 		if (mBank0Active) {
 			if (!mMusicManager.audioSourceBank0().isPlaying()) {
@@ -110,7 +127,7 @@ public class MusicController extends BaseController implements IInputProcessor {
 
 		} else {
 			if (!mMusicManager.audioSourceBank1().isPlaying()) {
-				prevSong();
+				nextSong();
 			}
 		}
 	}
@@ -127,32 +144,36 @@ public class MusicController extends BaseController implements IInputProcessor {
 		if (lSearchedSongIndex == MusicManager.NO_MUSIC_INDEX)
 			return;
 
-		int_play(lSearchedSongIndex);
-	}
-
-	public int getSongIndexByName(String songName) {
-		return mMusicManager.getMusicIndexByName(songName);
+		int_play(lSearchedSongIndex, MusicManager.NO_GROUP_INDEX);
 	}
 
 	public void play(int songIndex) {
 		if (mIsPlaying)
 			return;
 
-		Debug.debugManager().logger().i(getClass().getSimpleName(), ".play(" + songIndex + ")");
-
-		int_play(songIndex);
+		int_play(songIndex, MusicManager.NO_GROUP_INDEX);
 	}
 
-	public void play() {
+	public void play(int songIndex, int groupIndex) {
 		if (mIsPlaying)
 			return;
+		
+		mCurrentGroupIndex = groupIndex;
 
-		Debug.debugManager().logger().i(getClass().getSimpleName(), ".play(" + mCurrentSongIndex + ")");
-
-		int_play(mCurrentSongIndex);
+		int_play(songIndex, groupIndex);
 	}
 
-	private void int_play(int songIndex) {
+	public void playFromGroup(int songIndex, String groupName) {
+		final var lMusicGroupIndex = mMusicManager.getMusicGroupIndexByName(groupName);
+		if (lMusicGroupIndex != MusicManager.NO_GROUP_INDEX) {
+			play(songIndex, lMusicGroupIndex);
+			return;
+		}
+
+		play(songIndex, MusicManager.NO_GROUP_INDEX);
+	}
+
+	private void int_play(int songIndex, int groupIndex) {
 		if (mMusicManager.getNumberSondsLoaded() == 0)
 			return;
 
@@ -177,20 +198,36 @@ public class MusicController extends BaseController implements IInputProcessor {
 			}
 		}
 
-		if (mBank0Active) {
-			final var lSongAudioDataBuffer = mMusicManager.getAudioDataByIndex(songIndex);
-			mMusicManager.audioSourceBank0().play(lSongAudioDataBuffer.bufferID());
+		AudioData lNextSongAudioData = null;
 
-			mIsPlaying = true;
+		if (groupIndex != MusicManager.NO_GROUP_INDEX) {
+			// resolve the next song from the group indices
+			final var lMusicGroup = mMusicManager.getMusicGroupByIndex(groupIndex);
+			if (lMusicGroup == null) {
+				Debug.debugManager().logger().w(getClass().getSimpleName(), "MusicController requested invalid music group by id: " + groupIndex);
+				mCurrentGroupIndex = MusicManager.NO_GROUP_INDEX;
+				nextSong();
+				return;
+			}
+
+			final var lNumSongsInGroup = lMusicGroup.mSongIndices.size();
+			songIndex = songIndex % lNumSongsInGroup;
+			final var lSongIndex = lMusicGroup.mSongIndices.get(songIndex);
+			lNextSongAudioData = mMusicManager.getAudioDataByIndex(lSongIndex);
 
 		} else {
-			final var lSongAudioDataBuffer = mMusicManager.getAudioDataByIndex(songIndex);
-			mMusicManager.audioSourceBank1().play(lSongAudioDataBuffer.bufferID());
-
-			mIsPlaying = true;
+			lNextSongAudioData = mMusicManager.getAudioDataByIndex(songIndex);
 		}
 
+		if (mBank0Active)
+			mMusicManager.audioSourceBank0().play(lNextSongAudioData.bufferID());
+		else
+			mMusicManager.audioSourceBank1().play(lNextSongAudioData.bufferID());
+
+		mIsPlaying = true;
+
 		mCurrentSongIndex = songIndex;
+		mCurrentGroupIndex = groupIndex;
 	}
 
 	public void stop() {
@@ -225,6 +262,7 @@ public class MusicController extends BaseController implements IInputProcessor {
 		if (!mIsPlaying)
 			return;
 
+		mAutoResumeAfterEnabled = true;
 		mIsPlaying = false;
 		mIsPaused = true;
 
@@ -235,18 +273,26 @@ public class MusicController extends BaseController implements IInputProcessor {
 	}
 
 	public void nextSong() {
-		final int lNumberSongs = mMusicManager.getNumberSondsLoaded();
 		var lCurrentSongIndex = mCurrentSongIndex;
 
-		if (lCurrentSongIndex >= lNumberSongs - 1)
-			lCurrentSongIndex = 0;
-		else
+		if (mCurrentGroupIndex == MusicManager.NO_GROUP_INDEX) {
+			final int lNumberSongs = mMusicManager.getNumberSondsLoaded();
+			if (lCurrentSongIndex >= lNumberSongs - 1)
+				lCurrentSongIndex = 0;
+			else
+				lCurrentSongIndex++;
+		} else {
+			// constrain song indices to those within the current group of music
+			final var lMusicGroup = mMusicManager.getMusicGroupByIndex(mCurrentGroupIndex);
+			final var lNumSongInGroup = lMusicGroup.mSongIndices.size();
 			lCurrentSongIndex++;
+			lCurrentSongIndex = lCurrentSongIndex % lNumSongInGroup;
+		}
 
 		Debug.debugManager().logger().i(getClass().getSimpleName(), ".nextSong -> .play(" + lCurrentSongIndex + ")");
 
 		stop();
-		int_play(lCurrentSongIndex);
+		int_play(lCurrentSongIndex, mCurrentGroupIndex);
 	}
 
 	public void prevSong() {
@@ -261,7 +307,7 @@ public class MusicController extends BaseController implements IInputProcessor {
 		Debug.debugManager().logger().i(getClass().getSimpleName(), ".prevSong -> .play(" + lCurrentSongIndex + ")");
 
 		stop();
-		int_play(lCurrentSongIndex);
+		int_play(lCurrentSongIndex, mCurrentGroupIndex);
 	}
 
 	@Override

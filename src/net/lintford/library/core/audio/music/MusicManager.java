@@ -17,26 +17,41 @@ public class MusicManager {
 
 	public class MusicGroup {
 		public final String name;
-		public final List<Integer> mSongIndices = new ArrayList<>();
+		public final List<Integer> mSongIndices = new ArrayList<>(); // Audio Data Buffer (song) indices
 		public boolean mShuffle;
-		
+
 		public MusicGroup(String name) {
 			this.name = name;
 		}
-		
-		public void addSongIndex(int songIndex) { mSongIndices.add(songIndex); }
-		public void removeSongIndex(int songIndex) { mSongIndices.remove((Integer)songIndex); }
-		public void removeAllSongIndices() { mSongIndices.clear(); }
-		public boolean shuffle() {return mShuffle; }
-		public void shuffle(boolean newValue) { mShuffle = newValue; }
-		
+
+		public void addSongIndex(int songIndex) {
+			mSongIndices.add(songIndex);
+		}
+
+		public void removeSongIndex(int songIndex) {
+			mSongIndices.remove((Integer) songIndex);
+		}
+
+		public void removeAllSongIndices() {
+			mSongIndices.clear();
+		}
+
+		public boolean shuffle() {
+			return mShuffle;
+		}
+
+		public void shuffle(boolean newValue) {
+			mShuffle = newValue;
+		}
+
 	}
-	
+
 	// --------------------------------------
 	// Constants
 	// --------------------------------------
 
 	public static final int NO_MUSIC_INDEX = -1;
+	public static final int NO_GROUP_INDEX = -1;
 
 	// --------------------------------------
 	// Variables
@@ -46,7 +61,7 @@ public class MusicManager {
 	private boolean mIsMusicEnabled;
 	private final List<AudioData> mAudioDataBuffers = new ArrayList<>();
 	private final List<MusicGroup> mMusicGroups = new ArrayList<>();
-	
+
 	private AudioSource mAudioSourceBank0;
 	private AudioSource mAudioSourceBank1;
 
@@ -110,6 +125,57 @@ public class MusicManager {
 		return null;
 	}
 
+	public MusicGroup getMusicGroupByIndex(int index) {
+		if (index >= 0 && index < mMusicGroups.size()) {
+			return mMusicGroups.get(index);
+		}
+
+		return null;
+	}
+
+	public int getMusicGroupIndexByName(String name) {
+		final int lNumGroups = mMusicGroups.size();
+		for (int i = 0; i < lNumGroups; i++) {
+			if (mMusicGroups.get(i).name.equals(name)) {
+				return i;
+			}
+		}
+
+		return MusicManager.NO_GROUP_INDEX;
+	}
+
+	public MusicGroup getMusicGroupByName(String name) {
+		final int lNumGroups = mMusicGroups.size();
+		for (int i = 0; i < lNumGroups; i++) {
+			if (mMusicGroups.get(i).name.equals(name)) {
+				return mMusicGroups.get(i);
+			}
+		}
+
+		return null;
+	}
+
+	public MusicGroup getOrCreateMusicGroup(String newGroupName) {
+		final var lGroupExists = getMusicGroupByName(newGroupName);
+		if (lGroupExists != null) {
+			Debug.debugManager().logger().w(getClass().getSimpleName(), "Requested new music group denied - group name already exists");
+			return lGroupExists;
+		}
+
+		final var lNewMusicGroup = new MusicGroup(newGroupName);
+		mMusicGroups.add(lNewMusicGroup);
+		return lNewMusicGroup;
+	}
+
+	public void removeMusicGroup(String groupNameToRemove) {
+		final var lFoundMusicGroup = getMusicGroupByName(groupNameToRemove);
+		if (lFoundMusicGroup != null) {
+			lFoundMusicGroup.removeAllSongIndices();
+
+			mMusicGroups.remove(lFoundMusicGroup);
+		}
+	}
+
 	// --------------------------------------
 	// Constructors
 	// --------------------------------------
@@ -157,11 +223,18 @@ public class MusicManager {
 			final var lSoundName = lAudioDataDefinition.soundname;
 			final var lFilepath = lAudioDataDefinition.filepath;
 			final var lReload = lAudioDataDefinition.reload;
+			final var lGroupName = lAudioDataDefinition.group;
 
 			var lAudioDataBuffer = getMusicDataByName(lSoundName);
 			if (lReload || lAudioDataBuffer == null) {
 				lAudioDataBuffer = mAudioManager.loadAudioFile(lSoundName, lFilepath, lReload);
 				mAudioDataBuffers.add(lAudioDataBuffer);
+
+				if (lGroupName != null && lGroupName.length() > 0) {
+					final var lMusicGroup = getOrCreateMusicGroup(lGroupName);
+
+					lMusicGroup.addSongIndex(mAudioDataBuffers.size() - 1);
+				}
 
 				Debug.debugManager().logger().i(getClass().getSimpleName(), "Added AudioData file to music playlist: " + lSoundName);
 			}
