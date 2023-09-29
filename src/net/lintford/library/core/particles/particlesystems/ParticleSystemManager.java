@@ -109,6 +109,12 @@ public class ParticleSystemManager extends InstanceManager<ParticleSystemInstanc
 			}
 		}
 
+		createNewParticleSystemFromDefinitionName(particleSystemName);
+
+		return null;
+	}
+
+	public ParticleSystemInstance createNewParticleSystemFromDefinitionName(String particleSystemName) {
 		final var lParticleSystemDefinition = mParticleSystemDefinitionManager.getByName(particleSystemName);
 		if (lParticleSystemDefinition != null) {
 			final var lNewParticleSystem = new ParticleSystemInstance();
@@ -121,7 +127,7 @@ public class ParticleSystemManager extends InstanceManager<ParticleSystemInstanc
 			return lNewParticleSystem;
 		}
 
-		Debug.debugManager().logger().w(getClass().getSimpleName(), String.format("Couldn't find ParticleSystemDefinition '%s'", particleSystemName));
+		Debug.debugManager().logger().w(getClass().getSimpleName(), String.format("Couldn't resolve particle system by definition name '%s'", particleSystemName));
 
 		return null;
 	}
