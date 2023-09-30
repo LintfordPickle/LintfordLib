@@ -44,7 +44,7 @@ public class ParticleWispMovementModifier extends ParticleModifierBase {
 	@Override
 	public void updateParticle(LintfordCore core, Particle particle) {
 		float lAngle = (float) Math.atan2(particle.dy, particle.dx);
-		lAngle += RandomNumbers.RANDOM.nextFloat() * 10f;
+		lAngle += RandomNumbers.RANDOM.nextFloat() * 6f;
 
 		particle.dx += (float) Math.cos(lAngle);
 		particle.dy += (float) Math.sin(lAngle);

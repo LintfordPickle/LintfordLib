@@ -3,16 +3,15 @@ package net.lintford.library.core.particles.particlesystems.initializers;
 import net.lintford.library.core.maths.RandomNumbers;
 import net.lintford.library.core.particles.Particle;
 
-/** A specific implementation fo the {@link IParticleinitializer} interface which initializes particles with a color reminiscnt of a fire (orange / yellow) */
-public class ParticleFireColorInitializer extends ParticleInitializerBase {
+public class ParticleRGBColorInitializer extends ParticleInitializerBase {
 
 	// --------------------------------------
 	// Constants
 	// --------------------------------------
 
-	private static final long serialVersionUID = -8966764514890493840L;
+	private static final long serialVersionUID = 8470227714120105949L;
 
-	public static final String INITIALIZER_NAME = "ParticleFireColorInitializer";
+	public static final String INITIALIZER_NAME = "RGB Color Initializer";
 
 	// --------------------------------------
 	// Variables
@@ -26,17 +25,17 @@ public class ParticleFireColorInitializer extends ParticleInitializerBase {
 	// Constructor
 	// --------------------------------------
 
-	public ParticleFireColorInitializer() {
+	public ParticleRGBColorInitializer() {
 		super(INITIALIZER_NAME);
 
-		redMin = 209f / 255f;
-		redMax = 229f / 255f;
+		redMin = 0f / 255f;
+		redMax = 255f / 255f;
 
-		greenMin = 160f / 255f;
-		blueMax = 180f / 255f;
+		greenMin = 0f / 255f;
+		blueMax = 255f / 255f;
 
 		blueMin = 0f / 255f;
-		greenMax = 16f / 255f;
+		greenMax = 255f / 255f;
 
 	}
 

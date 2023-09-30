@@ -4,7 +4,7 @@ import net.lintford.library.core.maths.RandomNumbers;
 import net.lintford.library.core.particles.Particle;
 
 /** A specific implementation fo the {@link IParticleinitializer} interface which initializes particles with a color reminiscnt of a fire (orange / yellow) */
-public class ParticleWispColorInitializer extends ParticleInitializerBase {
+public class ParticleRGBAColorInitializer extends ParticleInitializerBase {
 
 	// --------------------------------------
 	// Constants
@@ -18,23 +18,28 @@ public class ParticleWispColorInitializer extends ParticleInitializerBase {
 	// Variables
 	// --------------------------------------
 
-	public final float mRMin, mRMax;
-	public final float mGMin, mBMax;
-	public final float mBMin, mGMax;
+	public final float redMin, redMax;
+	public final float greenMin, greenMax;
+	public final float blueMin, blueMax;
+	public final float alphaMinOffset, alphaMaxOffset, alphaDef;
 
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
-	public ParticleWispColorInitializer() {
+	public ParticleRGBAColorInitializer() {
 		super(INITIALIZER_NAME);
 
-		mRMin = 0.8f;
-		mRMax = 1f;
-		mGMin = 0.8f;
-		mGMax = 1f;
-		mBMin = 0.6f;
-		mBMax = 1f;
+		redMin = 0.f;
+		redMax = 1f;
+		greenMin = 0.f;
+		greenMax = 1f;
+		blueMin = 0.f;
+		blueMax = 1f;
+
+		alphaDef = .5f;
+		alphaMinOffset = 0.f;
+		alphaMaxOffset = .5f;
 	}
 
 	// --------------------------------------
@@ -43,10 +48,10 @@ public class ParticleWispColorInitializer extends ParticleInitializerBase {
 
 	@Override
 	public void initialize(Particle particle) {
-		particle.color.r = getRandomValue(mRMin, mRMax);
-		particle.color.g = getRandomValue(mGMin, mGMax);
-		particle.color.b = getRandomValue(mBMin, mBMax);
-		particle.color.a = 0.5f + getRandomValue(.0f, .5f);
+		particle.color.r = getRandomValue(redMin, redMax);
+		particle.color.g = getRandomValue(greenMin, greenMax);
+		particle.color.b = getRandomValue(blueMin, blueMax);
+		particle.color.a = alphaDef + getRandomValue(alphaMinOffset, alphaMaxOffset);
 	}
 
 	protected float getRandomValue(final float minValue, final float maxValue) {
