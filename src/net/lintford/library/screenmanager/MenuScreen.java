@@ -57,6 +57,8 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	protected float mLayoutPaddingHorizontal;
 	protected float mLayoutPaddingVertical;
 
+	protected float mMenuHeaderPadding;
+
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
@@ -465,7 +467,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		final var lHeaderFontHeight = mMenuHeaderFont.fontHeight() * lUiTextScale;
 
 		final float lMenuTitlePositionX = lHeaderRect.centerX() - lHeaderFontWidth * .5f;
-		final float lMenuTitlePositionY = lHeaderRect.top() + 5;
+		final float lMenuTitlePositionY = lHeaderRect.top() + mMenuHeaderPadding;
 
 		mMenuHeaderFont.begin(core.HUD());
 		mMenuHeaderFont.drawText(mMenuTitle, lMenuTitlePositionX, lMenuTitlePositionY, -0.01f, screenColor, lUiTextScale);
@@ -529,8 +531,8 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 	// mouse
 	public void setFocusOnEntry(MenuEntry entry) {
-		//		if (mActiveEntry != null)
-		//			mActiveEntry.onDeselection(mScreenManager.core().input());
+		// if (mActiveEntry != null)
+		// mActiveEntry.onDeselection(mScreenManager.core().input());
 
 		mScreenManager.contextHintManager().contextHintProvider(null);
 		mActiveEntry = null;
