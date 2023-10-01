@@ -4,7 +4,7 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.maths.RandomNumbers;
 import net.lintford.library.core.particles.Particle;
 
-public class ParticleRotationModifier extends ParticleModifierBase {
+public class ParticleRandomRotationModifierWithDrag extends ParticleModifierBase {
 
 	// --------------------------------------
 	// Constants
@@ -12,13 +12,20 @@ public class ParticleRotationModifier extends ParticleModifierBase {
 
 	private static final long serialVersionUID = -3528664477677918803L;
 
-	public static final String MODIFIER_NAME = "ParticleRotationModifier";
+	public static final String MODIFIER_NAME = "ParticleRandomRotationModifierWithDrag";
+
+	// --------------------------------------
+	// Variables
+	// --------------------------------------
+
+	public float minRandAmount = 0.f;
+	public float maxRandAmount = 10.f;
 
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
-	public ParticleRotationModifier() {
+	public ParticleRandomRotationModifierWithDrag() {
 		super(MODIFIER_NAME);
 
 	}
@@ -29,7 +36,8 @@ public class ParticleRotationModifier extends ParticleModifierBase {
 
 	@Override
 	public void initialize(Particle particle) {
-
+		if (minRandAmount > maxRandAmount)
+			minRandAmount = 0.f;
 	}
 
 	@Override
@@ -45,7 +53,7 @@ public class ParticleRotationModifier extends ParticleModifierBase {
 	public void updateParticle(LintfordCore core, Particle particle) {
 		final var lDelta = (float) core.appTime().elapsedTimeMilli();
 
-		particle.dr += RandomNumbers.random(0, 0.00f);
+		particle.dr += RandomNumbers.random(minRandAmount, maxRandAmount);
 		particle.rotationInRadians += particle.dr * lDelta;
 		particle.dr *= 0.98f;
 	}

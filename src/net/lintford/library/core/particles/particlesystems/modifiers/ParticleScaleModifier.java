@@ -17,6 +17,13 @@ public class ParticleScaleModifier extends ParticleModifierBase {
 	public static final float PARTICLE_FLOOR_BOUNCE_AMT = 0.5f;
 
 	// --------------------------------------
+	// Variables
+	// --------------------------------------
+
+	public float minScaleAmount;
+	public float maxScaleAmount;
+
+	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
@@ -31,7 +38,11 @@ public class ParticleScaleModifier extends ParticleModifierBase {
 
 	@Override
 	public void initialize(Particle particle) {
+		if (maxScaleAmount <= 0.f)
+			maxScaleAmount = 10.f;
 
+		if (minScaleAmount > maxScaleAmount)
+			minScaleAmount = 1.f;
 	}
 
 	@Override
@@ -47,6 +58,7 @@ public class ParticleScaleModifier extends ParticleModifierBase {
 	public void updateParticle(LintfordCore core, Particle particle) {
 		final var lNormalizedLifetime = particle.timeSinceStart / particle.lifeTime();
 
-		particle.scale = (1 - lNormalizedLifetime);
+		final var nv = (1 - lNormalizedLifetime);
+		particle.scale = minScaleAmount + (maxScaleAmount - minScaleAmount) * lNormalizedLifetime;
 	}
 }
