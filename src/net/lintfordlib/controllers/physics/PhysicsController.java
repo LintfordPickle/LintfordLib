@@ -36,7 +36,10 @@ public class PhysicsController extends BaseController {
 	public PhysicsController(ControllerManager controllerManager, IPhysicsControllerCallback callback, int entityGroupUid) {
 		super(controllerManager, CONTROLLER_NAME, entityGroupUid);
 
-		mWorld = callback.createPhysicsWorld();
+		if (callback != null) {
+			mWorld = callback.createPhysicsWorld();
+			mWorld.initialize();
+		}
 	}
 
 	// --------------------------------------
@@ -44,18 +47,20 @@ public class PhysicsController extends BaseController {
 	// --------------------------------------
 
 	@Override
+	public void unloadController() {
+		super.unloadController();
+
+		if (mWorld != null) {
+			mWorld.unload();
+			mWorld = null;
+		}
+	}
+
+	@Override
 	public void update(LintfordCore core) {
 		super.update(core);
 
 		mWorld.stepWorld((float) core.gameTime().elapsedTimeMilli() * 0.001f, NUM_PHYSICS_ITERATIONS);
-	}
-
-	@Override
-	public void unloadController() {
-		super.unloadController();
-
-		mWorld.unload();
-		mWorld = null;
 	}
 
 	public void setPhysicsWorldGravity(float gx, float gy) {
