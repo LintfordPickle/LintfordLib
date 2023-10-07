@@ -13,6 +13,12 @@
 bin/
 gen/
 
+# log files
+*.log
+
+# configuration files
+*.ini
+
 # Local configuration file (sdk path, etc)
 local.properties
 
