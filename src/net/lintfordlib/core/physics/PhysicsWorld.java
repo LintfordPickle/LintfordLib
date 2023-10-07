@@ -116,9 +116,13 @@ public class PhysicsWorld {
 	// --------------------------------------
 
 	public void initialize() {
+		if (mInitialized) {
+			Debug.debugManager().logger().w(getClass().getSimpleName(), "Cannot initialize the PhysicsController multiple times.");
+			return;
+		}
+
 		initializeCollisionPairPool();
 
-		// TODO: Only do this if in debug mode
 		if (Debug.debugManager().debugModeEnabled()) {
 			mDebugStatPhysicsCaption = new DebugStatTagCaption("Physics");
 			mDebugStatsNumBodies = new DebugStatTagInt("Num Bodies", 0, false);
@@ -281,17 +285,12 @@ public class PhysicsWorld {
 					if (lBodyA_aabb.intersectsAA(lBodyB_aabb) == false)
 						continue;
 
-					final var lWeAreIncludedinPhysics = lBodyA.maskBits() != 0 && lBodyB.maskBits() != 0;
-					if (lWeAreIncludedinPhysics == false)
-						continue;
-
 					final var lWeBothCollideWithOthers = lBodyA.categoryBits() != 0 && lBodyB.categoryBits() != 0;
 
 					final var passedFilterCollision = lWeBothCollideWithOthers == false || (lBodyA.maskBits() & lBodyB.categoryBits()) != 0 && (lBodyA.categoryBits() & lBodyB.maskBits()) != 0;
 
-					if (!passedFilterCollision) {
+					if (!passedFilterCollision)
 						continue;
-					}
 
 					final var lCollisionPair = getFreeCollisionPair();
 					lCollisionPair.bodyA = lBodyA;
