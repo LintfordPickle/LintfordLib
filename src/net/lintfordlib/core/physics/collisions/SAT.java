@@ -5,7 +5,7 @@ import java.util.List;
 import net.lintfordlib.ConstantsPhysics;
 import net.lintfordlib.core.maths.MathHelper;
 import net.lintfordlib.core.maths.Vector2f;
-import net.lintfordlib.core.physics.dynamics.RigidBody;
+import net.lintfordlib.core.physics.dynamics.Fixture;
 import net.lintfordlib.core.physics.dynamics.ShapeType;
 
 public class SAT {
@@ -45,12 +45,18 @@ public class SAT {
 	// Core-Methods
 	// ---------------------------------------------
 
-	public static boolean checkCollides(RigidBody bodyA, RigidBody bodyB, ContactManifold manifold) {
-		final var lShapeTypeA = bodyA.shapeType();
-		final var lShapeTypeB = bodyB.shapeType();
+	public static boolean checkCollides(Fixture fixtureA, Fixture fixtureB, ContactManifold manifold) {
+		final var lFixtureA = fixtureA;// lFixturesInA.get(i);
+		final var lFixtureB = fixtureB;// lFixturesInA.get(j);
 
-		manifold.bodyA = bodyA;
-		manifold.bodyB = bodyB;
+		final var lShapeTypeA = lFixtureA.shapeType();
+		final var lShapeTypeB = lFixtureB.shapeType();
+
+		manifold.fixtureA = lFixtureA;
+		manifold.fixtureB = lFixtureB;
+
+		final var bodyA = fixtureA.parent;
+		final var bodyB = fixtureB.parent;
 
 		// TODO: Still missing intersection tests for Box shapes (same as polygon, just half the axis checks needed).
 		if (lShapeTypeA == ShapeType.Box || lShapeTypeB == ShapeType.Box) {
@@ -59,41 +65,41 @@ public class SAT {
 
 		if (lShapeTypeA == ShapeType.Polygon) {
 			if (lShapeTypeB == ShapeType.Polygon)
-				return intersectsPolygons(bodyA.getTransformedVertices(), bodyB.getTransformedVertices(), manifold);
+				return intersectsPolygons(lFixtureA.getTransformedVertices(), lFixtureB.getTransformedVertices(), manifold);
 			else if (lShapeTypeB == ShapeType.Circle)
-				return intersectsCirclePolygon(bodyB.x, bodyB.y, bodyB.radius, bodyA.getTransformedVertices(), bodyA.x, bodyA.y, manifold);
+				return intersectsCirclePolygon(lFixtureB.x, lFixtureB.y, lFixtureB.radius, lFixtureA.getTransformedVertices(), bodyA.x, bodyA.y, manifold);
 			else if (lShapeTypeB == ShapeType.LineWidth) {
-				if (intersectsLinePolygon(bodyB.getTransformedVertices(), bodyA.getTransformedVertices(), bodyA.x, bodyA.y, manifold)) {
+				if (intersectsLinePolygon(lFixtureB.getTransformedVertices(), lFixtureA.getTransformedVertices(), bodyA.x, bodyA.y, manifold)) {
 					return true;
 				}
 			}
-			
+
 		} else if (lShapeTypeA == ShapeType.Circle) {
 			if (lShapeTypeB == ShapeType.Polygon) {
-				if (intersectsCirclePolygon(bodyA.x, bodyA.y, bodyA.radius, bodyB.getTransformedVertices(), bodyB.x, bodyB.y, manifold)) {
+				if (intersectsCirclePolygon(lFixtureA.x, lFixtureA.y, lFixtureA.radius, lFixtureB.getTransformedVertices(), bodyB.x, bodyB.y, manifold)) {
 					manifold.normal.x = -manifold.normal.x;
 					manifold.normal.y = -manifold.normal.y;
 					return true;
 				}
 
 			} else if (lShapeTypeB == ShapeType.Circle) {
-				if (intersectsCircles(bodyA.x, bodyA.y, bodyA.radius, bodyB.x, bodyB.y, bodyB.radius, manifold)) {
+				if (intersectsCircles(lFixtureA.x, lFixtureA.y, lFixtureA.radius, lFixtureB.x, lFixtureB.y, lFixtureB.radius, manifold)) {
 					return true;
 				}
 			} else if (lShapeTypeB == ShapeType.LineWidth) {
-				if (intersectsLineCircle(bodyB.getTransformedVertices(), bodyB.height, bodyA.x, bodyA.y, bodyA.radius, manifold)) {
+				if (intersectsLineCircle(lFixtureB.getTransformedVertices(), bodyB.height, lFixtureA.x, lFixtureA.y, lFixtureA.radius, manifold)) {
 					return true;
 				}
 			}
 		} else if (lShapeTypeA == ShapeType.LineWidth) {
 			if (lShapeTypeB == ShapeType.Polygon) {
-				if (intersectsLinePolygon(bodyA.getTransformedVertices(), bodyB.getTransformedVertices(), bodyB.x, bodyB.y, manifold)) {
+				if (intersectsLinePolygon(lFixtureA.getTransformedVertices(), lFixtureB.getTransformedVertices(), bodyB.x, bodyB.y, manifold)) {
 					manifold.normal.x = -manifold.normal.x;
 					manifold.normal.y = -manifold.normal.y;
 					return true;
 				}
 			} else if (lShapeTypeB == ShapeType.Circle) {
-				if (intersectsLineCircle(bodyA.getTransformedVertices(), bodyA.height, bodyB.x, bodyB.y, bodyB.radius, manifold)) {
+				if (intersectsLineCircle(lFixtureA.getTransformedVertices(), bodyA.height, lFixtureB.x, lFixtureB.y, lFixtureB.radius, manifold)) {
 					return true;
 				}
 			}
@@ -586,39 +592,40 @@ public class SAT {
 	// Contacts
 
 	public static void fillContactPoints(ContactManifold manifold) {
-		final var bodyA = manifold.bodyA;
-		final var bodyB = manifold.bodyB;
+		final var lFixtureA = manifold.fixtureA;
+		final var lFixtureB = manifold.fixtureB;
 
-		final var lShapeTypeA = bodyA.shapeType();
-		final var lShapeTypeB = bodyB.shapeType();
+		final var lShapeTypeA = lFixtureA.shapeType();
+		final var lShapeTypeB = lFixtureB.shapeType();
 
 		manifold.contactCount = 0;
 
 		if (lShapeTypeA == ShapeType.Polygon) {
 			if (lShapeTypeB == ShapeType.Polygon)
-				findPolygonPolygonContactPoints(bodyA.getTransformedVertices(), bodyB.getTransformedVertices(), manifold);
+				findPolygonPolygonContactPoints(lFixtureA.getTransformedVertices(), lFixtureB.getTransformedVertices(), manifold);
 			else if (lShapeTypeB == ShapeType.Circle)
-				findCirclePolygonContactPoint(bodyB.x, bodyB.y, bodyB.radius, bodyA.x, bodyA.y, bodyA.getTransformedVertices(), manifold);
+				findCirclePolygonContactPoint(lFixtureB.x, lFixtureB.y, lFixtureB.radius, lFixtureA.x, lFixtureA.y, lFixtureA.getTransformedVertices(), manifold);
 			else if (lShapeTypeB == ShapeType.LineWidth)
-				findLinePolygonContactPoints(bodyB.getTransformedVertices(), bodyA.getTransformedVertices(), manifold);
+				findLinePolygonContactPoints(lFixtureB.getTransformedVertices(), lFixtureA.getTransformedVertices(), manifold);
 
 		} else if (lShapeTypeA == ShapeType.Circle) {
 			if (lShapeTypeB == ShapeType.Polygon)
-				findCirclePolygonContactPoint(bodyA.x, bodyA.y, bodyA.radius, bodyB.x, bodyB.y, bodyB.getTransformedVertices(), manifold);
+				findCirclePolygonContactPoint(lFixtureA.x, lFixtureA.y, lFixtureA.radius, lFixtureB.x, lFixtureB.y, lFixtureB.getTransformedVertices(), manifold);
 			else if (lShapeTypeB == ShapeType.Circle)
-				findCircleCircleContactPoint(bodyA.x, bodyA.y, bodyA.radius, bodyB.x, bodyB.y, manifold);
+				findCircleCircleContactPoint(lFixtureA.x, lFixtureA.y, lFixtureA.radius, lFixtureB.x, lFixtureB.y, manifold);
 			else if (lShapeTypeB == ShapeType.LineWidth)
-				findLineCircleContactPoint(bodyB.getTransformedVertices(), bodyB.height, bodyA.x, bodyA.y, bodyA.radius, manifold);
+				findLineCircleContactPoint(lFixtureB.getTransformedVertices(), lFixtureB.height, lFixtureA.x, lFixtureA.y, lFixtureA.radius, manifold);
 
 		} else if (lShapeTypeA == ShapeType.LineWidth) {
 			if (lShapeTypeB == ShapeType.Polygon) {
-				findLinePolygonContactPoints(bodyB.getTransformedVertices(), bodyA.getTransformedVertices(), manifold);
+				findLinePolygonContactPoints(lFixtureB.getTransformedVertices(), lFixtureA.getTransformedVertices(), manifold);
 			} else if (lShapeTypeB == ShapeType.Circle) {
-				findLineCircleContactPoint(bodyA.getTransformedVertices(), bodyA.height, bodyB.x, bodyB.y, bodyB.radius, manifold);
+				findLineCircleContactPoint(lFixtureA.getTransformedVertices(), lFixtureA.height, lFixtureB.x, lFixtureB.y, lFixtureB.radius, manifold);
 			} else if (lShapeTypeB == ShapeType.LineWidth)
-				findLineLineContactPoints(bodyA.getTransformedVertices(), bodyA.height, bodyB.getTransformedVertices(), bodyB.height, manifold);
+				findLineLineContactPoints(lFixtureA.getTransformedVertices(), lFixtureA.height, lFixtureB.getTransformedVertices(), lFixtureB.height, manifold);
 
 		}
+
 	}
 
 	private static void findPolygonPolygonContactPoints(List<Vector2f> polyAVerts, List<Vector2f> polyBVerts, ContactManifold contactManifold) {

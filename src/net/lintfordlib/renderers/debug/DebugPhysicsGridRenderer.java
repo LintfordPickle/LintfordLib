@@ -8,7 +8,7 @@ import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.ResourceManager;
 import net.lintfordlib.core.graphics.linebatch.LineBatch;
 import net.lintfordlib.core.physics.PhysicsWorld;
-import net.lintfordlib.core.physics.dynamics.RigidBody;
+import net.lintfordlib.core.physics.dynamics.Fixture;
 import net.lintfordlib.core.physics.spatial.PhysicsHashGrid;
 import net.lintfordlib.renderers.BaseRenderer;
 import net.lintfordlib.renderers.RendererManager;
@@ -82,7 +82,7 @@ public class DebugPhysicsGridRenderer extends BaseRenderer {
 	// Methods
 	// ---------------------------------------------
 
-	private void drawSpatialHashGridGrid(LintfordCore core, PhysicsHashGrid<RigidBody> grid) {
+	private void drawSpatialHashGridGrid(LintfordCore core, PhysicsHashGrid<Fixture> grid) {
 		final var mBoundaryWidth = grid.boundaryWidth() * ConstantsPhysics.UnitsToPixels();
 		final var mBoundaryHeight = grid.boundaryHeight() * ConstantsPhysics.UnitsToPixels();
 
@@ -107,8 +107,8 @@ public class DebugPhysicsGridRenderer extends BaseRenderer {
 			for (int yy = 0; yy < mNumTilesHigh; yy++) {
 				mLineBatch.draw(-lHalfBW, -lHalfBH + (yy * lTileSizeH), lHalfBW, -lHalfBH + (yy * lTileSizeH), -0.01f, 1f, 1f, 0f, 1.0f);
 
-				final float xWorld = (-lHalfBW + xx * lTileSizeW + 1);
-				final float yWorld = (-lHalfBH + yy * lTileSizeH + 1);
+				final float xWorld = (xx * lTileSizeW);
+				final float yWorld = (yy * lTileSizeH);
 
 				final int lCellKey = grid.getCellKeyFromWorldPosition(xWorld, yWorld);
 				lFontUnit.drawText(String.valueOf(lCellKey), -lHalfBW + (xx * lTileSizeW) + 2f, -lHalfBH + (yy * lTileSizeH) + 1f, -0.001f, 0.5f);

@@ -3,41 +3,20 @@ package net.lintfordlib.core.physics.dynamics;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.lintfordlib.ConstantsPhysics;
-import net.lintfordlib.core.debug.Debug;
+import net.lintfordlib.core.entities.Entity;
 import net.lintfordlib.core.geometry.Rectangle;
 import net.lintfordlib.core.maths.MathHelper;
+import net.lintfordlib.core.maths.Transform;
 import net.lintfordlib.core.maths.Vector2f;
-import net.lintfordlib.core.physics.spatial.PhysicsGridEntity;
-import net.lintfordlib.core.physics.spatial.PhysicsHashGrid;
+import net.lintfordlib.core.physics.PhysicsWorld;
+import net.lintfordlib.core.physics.definitions.BodyDefinition;
 
-public class RigidBody extends PhysicsGridEntity {
+public class RigidBody extends Entity {
 
 	private static int uidCounter;
 
 	public static int getNewRigidBodyUid() {
 		return uidCounter++;
-	}
-
-	// --------------------------------------
-	// Inner-Classes
-	// --------------------------------------
-
-	private class BodyState {
-		private float x, y, radius, width, height, angle;
-
-		private boolean isBodyDirty(RigidBody body) {
-			return x != body.x || y != body.y || angle != body.angle || radius != body.radius || width != body.width || height != body.height;
-		}
-
-		private void update(RigidBody body) {
-			x = body.x;
-			y = body.y;
-			radius = body.radius;
-			width = body.width;
-			height = body.height;
-			angle = body.angle;
-		}
 	}
 
 	// --------------------------------------
@@ -48,19 +27,17 @@ public class RigidBody extends PhysicsGridEntity {
 	public boolean _isActive = true;
 	public int _updateCounter = 0;
 
-	private final BodyState state = new BodyState();
-	private transient final Rectangle mAABB = new Rectangle();
+	private final PhysicsWorld physicsWorld;
+	public final Transform transform = new Transform();
+	private final Rectangle mAABB = new Rectangle();
+	private Object userData;
 
-	public float x;
-
-	public float y;
+	public List<Fixture> fixtures = new ArrayList<>();
 
 	public float vx;
-
 	public float vy;
 
 	public float accX;
-
 	public float accY;
 
 	public float linearDampingX;
@@ -68,126 +45,31 @@ public class RigidBody extends PhysicsGridEntity {
 
 	public float torque;
 
-	public float angle;
-
 	public float angularVelocity;
 
 	private float mMass;
-	private float mRestitution;
+	private float mInvMass;
 
-	private transient float mArea;
-	private transient float mDensity;
-	private transient float mInvMass;
-
-	private transient float mStaticFriction;
-	private transient float mDynamicFriction;
-
-	private transient float mInertia;
-	private transient float mInvInertia;
-
-	private int mCategoryBit; // I'm a ..
-	private int mMaskBit; // I collide with ...
+	private float mInertia;
+	private float mInvInertia;
 
 	private boolean mIsStatic;
 
-	public float radius;
-
 	public float width;
-
 	public float height;
 
-	private final List<Vector2f> mLocalVertices;
-	private transient List<Vector2f> mTransformedVertices;
 	private boolean mManualIsDirty;
 
-	private ShapeType mShapeType;
-
-	private Object userData;
+	private int mCategoryBit; // I'm a ..
+	private int mMaskBit; // I collide with ...
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
 
-	public Object userData() {
-		return userData;
-	}
-
-	public void userData(Object userData) {
-		this.userData = userData;
-	}
-
-	public float dynamicFriction() {
-		return mDynamicFriction;
-	}
-
-	public float staticFriction() {
-		return mStaticFriction;
-	}
-
-	public boolean isManualDirty() {
-		return mManualIsDirty;
-	}
-
-	public void setManualDirty() {
-		mManualIsDirty = true;
-	}
-
-	public boolean isStatic() {
-		return mIsStatic;
-	}
-
-	public ShapeType shapeType() {
-		return mShapeType;
-	}
-
-	public List<Vector2f> getVertices() {
-		return mLocalVertices;
-	}
-
 	public Rectangle aabb() {
-		getTransformedVertices();
-
+		updateAABB();
 		return mAABB;
-	}
-
-	public List<Vector2f> getTransformedVertices() {
-		if (mManualIsDirty || state.isBodyDirty(this)) {
-			rebuildTransformedVertices();
-			rebuildAABB();
-
-			state.update(this);
-			mManualIsDirty = false;
-		}
-
-		return mTransformedVertices;
-	}
-
-	public float mass() {
-		return mMass;
-	}
-
-	public float invMass() {
-		return mInvMass;
-	}
-
-	public float inertia() {
-		return mInertia;
-	}
-
-	public float invInertia() {
-		return mInvInertia;
-	}
-
-	public float restitution() {
-		return mRestitution;
-	}
-
-	public float density() {
-		return mDensity;
-	}
-
-	public float area() {
-		return mArea;
 	}
 
 	/** I collide with */
@@ -210,55 +92,61 @@ public class RigidBody extends PhysicsGridEntity {
 		mCategoryBit = categoryBits;
 	}
 
+	public Object userData() {
+		return userData;
+	}
+
+	public void userData(Object userData) {
+		this.userData = userData;
+	}
+
+	public boolean isManualDirty() {
+		return mManualIsDirty;
+	}
+
+	public void setManualDirty() {
+		mManualIsDirty = true;
+	}
+
+	public boolean isStatic() {
+		return mIsStatic;
+	}
+
+	public float mass() {
+		return mMass;
+	}
+
+	public float invMass() {
+		return mInvMass;
+	}
+
+	public float inertia() {
+		return mInertia;
+	}
+
+	public float invInertia() {
+		return mInvInertia;
+	}
+
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
-	public RigidBody(int uid, float density, float restitution, float staticFriction, float dynamicFriction, float mass, float inertia, float area, boolean isStatic, float width, float height, float radius, ShapeType shapeType) {
+	public RigidBody(PhysicsWorld physicsWorld, int uid, BodyDefinition def) {
 		super(uid);
 
-		this.radius = radius;
-		this.width = width;
-		this.height = height;
+		this.physicsWorld = physicsWorld;
+		this.mIsStatic = def.isStatic;
 
-		this.mDensity = density;
-		this.mMass = mass;
-		this.mRestitution = restitution;
-		this.mArea = area;
-		this.mShapeType = shapeType;
-		this.mIsStatic = isStatic;
+		this.transform.position.x = def.position.x;
+		this.transform.position.y = def.position.y;
+		this.transform.rotation.set(def.angle);
 
-		this.mStaticFriction = staticFriction;
-		this.mDynamicFriction = dynamicFriction;
+		this.vx = def.linearVelocity.x;
+		this.vy = def.linearVelocity.y;
 
-		this.mInertia = inertia;
-
-		if (this.mIsStatic) {
-			this.mInvMass = 0.f;
-			this.mInertia = 0.f;
-		} else {
-			this.mInvMass = 1.f / this.mMass;
-			this.mInvInertia = 1.f / this.mInertia;
-		}
-
-		if (this.mShapeType == ShapeType.Polygon || this.mShapeType == ShapeType.Box) {
-			mLocalVertices = createBoxVertices(width, height);
-			mTransformedVertices = new ArrayList<>(mLocalVertices.size());
-		} else if (this.mShapeType == ShapeType.LineWidth) {
-			mLocalVertices = createLineVertices(width);
-			mTransformedVertices = new ArrayList<>(mLocalVertices.size());
-		} else {
-			mLocalVertices = createCircleVertices();
-		}
-
-		mTransformedVertices = new ArrayList<>(mLocalVertices.size());
-		final int lNumLocalVertices = mLocalVertices.size();
-		for (int i = 0; i < lNumLocalVertices; i++) {
-			mTransformedVertices.add(new Vector2f(mLocalVertices.get(i)));
-		}
-
-		this.linearDampingX = 1.f;
-		this.linearDampingY = 1.f;
+		this.linearDampingX = def.linearDamping;
+		this.linearDampingY = def.linearDamping;
 	}
 
 	// --------------------------------------
@@ -276,14 +164,12 @@ public class RigidBody extends PhysicsGridEntity {
 		vx += gravityX * time;
 		vy += gravityY * time;
 
-		x += vx * time;
-		y += vy * time;
+		transform.position.x += vx * time;
+		transform.position.y += vy * time;
+		transform.rotation.set(gravityY);
 
 		vx *= linearDampingX;
 		vy *= linearDampingY;
-
-		angle += angularVelocity * time;
-		angle = MathHelper.wrapAngle(angle);
 
 		accX = 0.f;
 		accY = 0.f;
@@ -296,183 +182,6 @@ public class RigidBody extends PhysicsGridEntity {
 
 	// --------------------------------------
 	// Methods
-	// --------------------------------------
-
-	private void rebuildAABB() {
-		float minX = Float.MAX_VALUE;
-		float minY = Float.MAX_VALUE;
-		float maxX = -Float.MAX_VALUE;
-		float maxY = -Float.MAX_VALUE;
-
-		if (mShapeType == ShapeType.Box || mShapeType == ShapeType.Polygon) {
-			float furthestVertDist = 0.f;
-
-			var vertices = mTransformedVertices;
-			final var lNumVertices = vertices.size();
-			for (int i = 0; i < lNumVertices; i++) {
-				var v = vertices.get(i);
-				if (v.x < minX)
-					minX = v.x;
-				if (v.x > maxX)
-					maxX = v.x;
-				if (v.y < minY)
-					minY = v.y;
-				if (v.y > maxY)
-					maxY = v.y;
-
-				final var lDist = Vector2f.dst(x, y, v.x, v.y);
-				if (lDist > furthestVertDist)
-					furthestVertDist = lDist;
-
-			}
-
-			radius = furthestVertDist;
-
-		} else if (mShapeType == ShapeType.LineWidth) {
-			final var sin = (float) Math.sin(angle);
-			final var cos = (float) Math.cos(angle);
-
-			final var hwc = width * .5f * cos;
-			final var hhc = height * cos;
-			final var hws = width * .5f * sin;
-			final var hhs = height * sin;
-
-			// bl
-			final var x0 = -hwc - hhs;
-			final var y0 = -hws + hhc;
-
-			// tl
-			final var x1 = -hwc - -hhs;
-			final var y1 = -hws + -hhc;
-
-			// tr
-			final var x2 = hwc - -hhs;
-			final var y2 = hws + -hhc;
-
-			// br
-			final var x3 = hwc - hhs;
-			final var y3 = hws + hhc;
-
-			minX = x + Math.min(Math.min(Math.min(x0, x1), x2), x3);
-			minY = y + Math.min(Math.min(Math.min(y0, y1), y2), y3);
-
-			maxX = x + Math.max(Math.max(Math.max(x0, x1), x2), x3);
-			maxY = y + Math.max(Math.max(Math.max(y0, y1), y2), y3);
-
-		} else {
-			minX = x - radius;
-			minY = y - radius;
-			maxX = x + radius;
-			maxY = y + radius;
-		}
-
-		mAABB.set(minX, minY, maxX - minX, maxY - minY);
-	}
-
-	private void rebuildTransformedVertices() {
-		switch (mShapeType) {
-		case Polygon: {
-
-			// vertex-centric implementation (polygons)
-			final var c = (float) Math.cos(angle);
-			final var s = (float) Math.sin(angle);
-
-			// local vertices have neither world position nor rotation
-			final var la = mLocalVertices.get(0);
-			final var lb = mLocalVertices.get(1);
-			final var lc = mLocalVertices.get(2);
-			final var ld = mLocalVertices.get(3);
-
-			float r_lax = la.x * c - la.y * s;
-			float r_lay = la.x * s + la.y * c;
-
-			final var wax = x + r_lax;
-			final var way = y + r_lay;
-
-			float r_lbx = lb.x * c - lb.y * s;
-			float r_lby = lb.x * s + lb.y * c;
-
-			final var wbx = x + r_lbx;
-			final var wby = y + r_lby;
-
-			float r_lcx = lc.x * c - lc.y * s;
-			float r_lcy = lc.x * s + lc.y * c;
-
-			final var wcx = x + r_lcx;
-			final var wcy = y + r_lcy;
-
-			float r_ldx = ld.x * c - ld.y * s;
-			float r_ldy = ld.x * s + ld.y * c;
-
-			final var wdx = x + r_ldx;
-			final var wdy = y + r_ldy;
-
-			mTransformedVertices.get(0).set(wax, way);
-			mTransformedVertices.get(1).set(wbx, wby);
-			mTransformedVertices.get(2).set(wcx, wcy);
-			mTransformedVertices.get(3).set(wdx, wdy);
-
-			break;
-		}
-		case Box: {
-			// vertex-centric implementation (polygons)
-			final var cos = (float) Math.cos(angle);
-			final var sin = (float) Math.sin(angle);
-
-			float lHalfW = width / 2f;
-			float lHalfH = height / 2f;
-
-			float x0 = -lHalfW * cos - lHalfH * sin;
-			float y0 = -lHalfW * sin + lHalfH * cos;
-
-			float x1 = -lHalfW * cos - -lHalfH * sin;
-			float y1 = -lHalfW * sin + -lHalfH * cos;
-
-			float x2 = lHalfW * cos - -lHalfH * sin;
-			float y2 = lHalfW * sin + -lHalfH * cos;
-
-			float x3 = lHalfW * cos - lHalfH * sin;
-			float y3 = lHalfW * sin + lHalfH * cos;
-
-			mTransformedVertices.get(0).set(x + x0, y + y0);
-			mTransformedVertices.get(1).set(x + x1, y + y1);
-			mTransformedVertices.get(2).set(x + x2, y + y2);
-			mTransformedVertices.get(3).set(x + x3, y + y3);
-
-			break;
-		}
-
-		case LineWidth: {
-			final var lWorldX = x;
-			final var lWorldY = y;
-
-			// note: for lines, we don't actually use local vertices, we directly calculate the world/transformed vertices
-			// using world position, the length and width of the wall and its rotation.
-
-			final var s = mTransformedVertices.get(0);
-			final var e = mTransformedVertices.get(1);
-
-			s.x = lWorldX - (float) Math.cos(angle) * width * .5f;
-			s.y = lWorldY - (float) Math.sin(angle) * width * .5f;
-
-			e.x = lWorldX + (float) Math.cos(angle) * width * .5f;
-			e.y = lWorldY + (float) Math.sin(angle) * width * .5f;
-
-			break;
-		}
-
-		default:
-		case Circle:
-
-			// note: for circles, there is only a single vertex, which is centered on the body centroid (x,y)
-
-			mTransformedVertices.get(0).set(x, y);
-			break;
-		}
-	}
-
-	// --------------------------------------
-	// Helper-Methods
 	// --------------------------------------
 
 	public void moveTo(float x, float y) {
@@ -501,248 +210,102 @@ public class RigidBody extends PhysicsGridEntity {
 		torque += Vector2f.cross(px - x, py - y, fx, fy);
 	}
 
-	public void setLocalVertices(Vector2f... verts) {
-		if (verts == null || verts.length != mLocalVertices.size())
-			return;
+	public void resetMassData() {
+		// Compute the mass from the fixtures - each fixture has its own density
+		mMass = 0.f;
+		mInvMass = 0.f;
+		mInertia = 0.f;
+		mInvInertia = 0.f;
 
-		switch (mShapeType) {
-		case Box:
-		case Polygon:
-			if (verts == null || verts.length != 4) {
-				Debug.debugManager().logger().w(getClass().getSimpleName(), "Cannot set RigidBody vertices on Box - vertex count incorrect!");
-				return;
-			}
-
-			mLocalVertices.get(0).set(verts[0]);
-			mLocalVertices.get(1).set(verts[1]);
-			mLocalVertices.get(2).set(verts[2]);
-			mLocalVertices.get(3).set(verts[3]);
-
-			break;
-
-		case LineWidth:
-			if (verts == null || verts.length != 2) {
-				Debug.debugManager().logger().w(getClass().getSimpleName(), "Cannot set RigidBody vertices on Line - vertex count incorrect!");
-				return;
-			}
-
-			mLocalVertices.get(0).set(verts[0]);
-			mLocalVertices.get(1).set(verts[1]);
-
-			break;
-
-		case Circle:
-			if (verts == null || verts.length != 1) {
-				Debug.debugManager().logger().w(getClass().getSimpleName(), "Cannot set RigidBody vertices on Circle - vertex count incorrect!");
-				return;
-			}
-
-			mLocalVertices.get(0).set(verts[0]);
-
-			break;
-
-		default:
+		if (mIsStatic) {
 			return;
 		}
 
-		rebuildTransformedVertices();
-		rebuildAABB();
+		// Accumalate mass over all fixtures
+		float localCenterX = 0.f;
+		float localCenterY = 0.f;
 
-		width = mAABB.width();
-		height = mAABB.height();
+		final var lNumFixtures = fixtures.size();
+		for (int i = 0; i < lNumFixtures; i++) {
+			final var lFixture = fixtures.get(i);
 
-		mArea = Math.abs(calculateArea());
-		mMass = mArea * mDensity;
-		radius = (float) Math.sqrt(width * width + height * height);
+			final var lMassData = lFixture.massData;
+			mMass += lMassData.mass;
+			localCenterX += lMassData.mass * lMassData.center.x;
+			localCenterY += lMassData.mass * lMassData.center.y;
 
-		// I = (1/12)m(h^2+w^2)
-		mInertia = (1.f / 12.f) * mMass * (height * height + width * width);
-		if (this.mIsStatic) {
-			this.mInvMass = 0.f;
-			this.mInertia = 0.f;
+			mInertia += lMassData.inertia;
+		}
+
+		// compute the center of mass
+		if (mMass > 0.f) {
+			mInvMass = 1.f / mMass;
+
+			localCenterX *= mInvMass;
+			localCenterY *= mInvMass;
+		}
+
+		if (mInertia > 0.f /* fixed rotation != false */) {
+			// center the inertia about the center of mass
+			mInertia -= mMass * (localCenterX * localCenterX + localCenterY * localCenterY);
+			mInvInertia = 1.f / mInertia;
 		} else {
-			this.mInvMass = 1.f / this.mMass;
-			this.mInvInertia = 1.f / this.mInertia;
+			mInertia = 0.f;
+			mInvInertia = 0.f;
 		}
-
-		mTransformedVertices = new ArrayList<>(mLocalVertices.size());
-		final int lNumLocalVertices = mLocalVertices.size();
-		for (int i = 0; i < lNumLocalVertices; i++) {
-			mTransformedVertices.add(new Vector2f(mLocalVertices.get(i)));
-		}
-
 	}
 
-	public void recalculateBoxCentroidAndRadius() {
-		final var verts = mLocalVertices;
-
-		final var localx = (verts.get(0).x + verts.get(1).x + verts.get(2).x + verts.get(3).x) / 4f;
-		final var localy = (verts.get(0).y + verts.get(1).y + verts.get(2).y + verts.get(3).y) / 4f;
-
-		x += localx;
-		y += localy;
-
-		mLocalVertices.get(0).x -= localx;
-		mLocalVertices.get(0).y -= localy;
-
-		mLocalVertices.get(1).x -= localx;
-		mLocalVertices.get(1).y -= localy;
-
-		mLocalVertices.get(2).x -= localx;
-		mLocalVertices.get(2).y -= localy;
-
-		mLocalVertices.get(3).x -= localx;
-		mLocalVertices.get(3).y -= localy;
-
-		final var lExtendMarginInPxs = 5.f;
-		final var lExtendMargin = ConstantsPhysics.toUnits(lExtendMarginInPxs);
-		radius = 0.f;
-		radius = Math.max(radius, Vector2f.dst(verts.get(2).x, verts.get(2).y, verts.get(0).x, verts.get(0).y));
-		radius = Math.max(radius, Vector2f.dst(verts.get(3).x, verts.get(3).y, verts.get(1).x, verts.get(1).y));
-		radius += lExtendMargin;
-	}
-
-	private static List<Vector2f> createBoxVertices(float width, float height) {
-		var newVertices = new ArrayList<Vector2f>(4);
-
-		float left = -width / 2f;
-		float right = left + width;
-		float bottom = -height / 2f;
-		float top = bottom + height;
-
-		// counter-clock-wise
-//		newVertices.add(new Vector2f(left, top));
-//		newVertices.add(new Vector2f(left, bottom));
-//		newVertices.add(new Vector2f(right, bottom));
-//		newVertices.add(new Vector2f(right, top));
-
-		// clock-wise
-		newVertices.add(new Vector2f(left, top));
-		newVertices.add(new Vector2f(right, top));
-		newVertices.add(new Vector2f(right, bottom));
-		newVertices.add(new Vector2f(left, bottom));
-
-		return newVertices;
-	}
-
-	private static List<Vector2f> createLineVertices(float lineLength) {
-		var newVertices = new ArrayList<Vector2f>(2);
-
-		newVertices.add(new Vector2f(-lineLength * .5f, 0.f)); // 0
-		newVertices.add(new Vector2f(+lineLength * .5f, 0.f)); // 1
-
-		return newVertices;
-	}
-
-	private static List<Vector2f> createCircleVertices() {
-		var newVertices = new ArrayList<Vector2f>(1);
-
-		// TODO: circles don't require any vertices (neither local nor world)
-
-		newVertices.add(new Vector2f(0.f, 0.f));
-
-		return newVertices;
-	}
-
-	// --------------------------------------
-	// Factory-Methods
-	// --------------------------------------
-
+	// TODO: Cache the area (only changes when fixture count changes)
 	public float calculateArea() {
-		float area = 0.f;
+		float totalArea = 0.f;
 
-		final int lNumVerts = mLocalVertices.size();
-		for (int i = 0; i < lNumVerts; i++) {
-			area += mLocalVertices.get(i).x * mLocalVertices.get((i + 1) % mLocalVertices.size()).y - mLocalVertices.get(i).y * mLocalVertices.get((i + 1) % mLocalVertices.size()).x;
+		final int lNumFixtures = fixtures.size();
+		for (int i = 0; i < lNumFixtures; i++) {
+			totalArea += fixtures.get(i).area();
 		}
 
-		return area / 2.f;
+		return totalArea;
 	}
 
-	public static RigidBody createCircleBody(float radius, float density, float restitution, float staticFriction, float dynamicFriction, boolean isStatic) {
-		final float lArea = radius * radius * (float) Math.PI;
-		final float lMass = lArea * density;
-		restitution = MathHelper.clamp(restitution, 0f, 1f);
-
-		// I = (1/2)mr^2
-		final float lInertia = .5f * lMass * radius * radius;
-
-		return new RigidBody(getNewRigidBodyUid(), density, restitution, staticFriction, dynamicFriction, lMass, lInertia, lArea, isStatic, 0.f, 0.f, radius, ShapeType.Circle);
+	public static RigidBody createRigidBody(PhysicsWorld physicsWorld, BodyDefinition definition) {
+		return new RigidBody(physicsWorld, getNewRigidBodyUid(), definition);
 	}
 
-	public static RigidBody createStaticLineBody(float width, float height, float density, float restitution, float staticFriction, float dynamicFriction) {
-		final boolean isStatic = true;
+	public void addFixture(Fixture fixture) {
+		if (fixtures.contains(fixture))
+			return;
 
-		if (height <= 0.f)
-			height = 0.01f;
+		final var hashGrid = physicsWorld.grid();
+		hashGrid.addEntity(fixture);
+		fixtures.add(fixture);
 
-		final float lArea = width * height;
-		final float lMass = lArea * density;
-		restitution = MathHelper.clamp(restitution, 0f, 1f);
-
-		final float lRadius = (float) Math.sqrt(width * width + height * height) * .5f;
-
-		// I = (1/12)m(h^2+w^2)
-		final float lInertia = (1.f / 12.f) * lMass * (height * height + width * width);
-
-		return new RigidBody(getNewRigidBodyUid(), density, restitution, staticFriction, dynamicFriction, lMass, lInertia, lArea, isStatic, width, height, lRadius, ShapeType.LineWidth);
+		resetMassData();
 	}
 
-	public static RigidBody createBoxBody(float width, float height, float density, float restitution, float staticFriction, float dynamicFriction, boolean isStatic) {
-		final float lArea = width * height;
-		final float lMass = lArea * density;
-		restitution = MathHelper.clamp(restitution, 0f, 1f);
+	private void updateAABB() {
+		float l = Float.MAX_VALUE;
+		float r = -Float.MAX_VALUE;
+		float t = Float.MAX_VALUE;
+		float b = -Float.MAX_VALUE;
 
-		final float lRadius = (float) Math.sqrt(width * width + height * height) * .5f;
+		final int lNumFixtures = fixtures.size();
+		for (int i = 0; i < lNumFixtures; i++) {
+			final var lFixture = fixtures.get(i);
+			final var lFAABB = lFixture.aabb();
+			if (lFAABB.left() < l)
+				l = lFAABB.left();
 
-		// I = (1/12)m(h^2+w^2)
-		final float lInertia = (1.f / 12.f) * lMass * (height * height + width * width);
+			if (lFAABB.right() > r)
+				r = lFAABB.right();
 
-		return new RigidBody(getNewRigidBodyUid(), density, restitution, staticFriction, dynamicFriction, lMass, lInertia, lArea, isStatic, width, height, lRadius, ShapeType.Box);
+			if (lFAABB.top() < t)
+				t = lFAABB.top();
+
+			if (lFAABB.bottom() > b)
+				b = lFAABB.bottom();
+
+		}
+
+		mAABB.set(l, t, (r - l), (b - t));
 	}
-
-	public static RigidBody createPolygonBody(float width, float height, float density, float restitution, float staticFriction, float dynamicFriction, boolean isStatic) {
-		final float lArea = width * height;
-		final float lMass = lArea * density;
-		restitution = MathHelper.clamp(restitution, 0f, 1f);
-
-		final float lRadius = (float) Math.sqrt(width * width + height * height) * .5f;
-
-		// I = (1/12)m(h^2+w^2)
-		final float lInertia = (1.f / 12.f) * lMass * (height * height + width * width);
-
-		return new RigidBody(getNewRigidBodyUid(), density, restitution, staticFriction, dynamicFriction, lMass, lInertia, lArea, isStatic, width, height, lRadius, ShapeType.Polygon);
-	}
-
-	// --------------------------------------
-	// Inherited-Methods
-	// --------------------------------------
-
-	@Override
-	public void fillEntityBounds(PhysicsHashGrid<?> grid) {
-		final var aabb = aabb();
-
-		minX = grid.getColumnAtX(aabb.left());
-		minY = grid.getRowAtY(aabb.top());
-
-		maxX = grid.getColumnAtX(aabb.right());
-		maxY = grid.getRowAtY(aabb.bottom());
-	}
-
-	@Override
-	public boolean isGridCacheOld(PhysicsHashGrid<?> grid) {
-		final var aabb = aabb();
-
-		final var newMinX = grid.getColumnAtX(aabb.left());
-		final var newMinY = grid.getRowAtY(aabb.top());
-
-		final var newMaxX = grid.getColumnAtX(aabb.right());
-		final var newMaxY = grid.getRowAtY(aabb.bottom());
-
-		if (newMinX == minX && newMinY == minY && newMaxX == maxX && newMaxY == maxY)
-			return false; // early out
-
-		return true;
-	}
-
 }

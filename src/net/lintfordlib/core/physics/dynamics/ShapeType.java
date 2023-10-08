@@ -4,7 +4,8 @@ package net.lintfordlib.core.physics.dynamics;
 
 public enum ShapeType {
 	Circle, 		// 1-verts
-	LineWidth, 		// 2-verts 
+	Line, 		    // 2-verts, no width
+	LineWidth, 		// 2-verts, with width 
 	Box, 			// 4-verts
-	Polygon, 		// 4-verts
+	Polygon, 		// n-verts
 }

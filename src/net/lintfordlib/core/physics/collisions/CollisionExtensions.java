@@ -1,90 +1,96 @@
 package net.lintfordlib.core.physics.collisions;
 
-import net.lintfordlib.core.maths.MathHelper;
 import net.lintfordlib.core.maths.Vector2f;
 import net.lintfordlib.core.physics.dynamics.RigidBody;
 import net.lintfordlib.core.physics.dynamics.ShapeType;
 
 public class CollisionExtensions {
 
-	/** returns true if the point lies within the radius of the body's bounding radius */
-	public static boolean intersectsBodyRadius(RigidBody body, float x, float y) {
-		final float xx = body.x - x;
-		final float yy = body.y - y;
-		return (xx * xx + yy * yy) < (body.radius * body.radius);
-	}
-
 	/** returns true if the point lies within the area of the rigid body. Note the implementation is different depending on the type of {@link ShapeType} */
 	public static boolean intersectsBody(RigidBody body, float x, float y) {
-		switch (body.shapeType()) {
-		case Box: {
 
-			final var lWorldVertices = body.getTransformedVertices();
-			final var a = lWorldVertices.get(0);
-			final var b = lWorldVertices.get(1);
-			final var c = lWorldVertices.get(2);
-			final var d = lWorldVertices.get(3);
+		// TODO: This looks like it belongs in the RigidBody class (or perhaps the fixture)
 
-			{ // tri a
-				float fAB = (y - a.y) * (b.x - a.x) - (x - a.x) * (b.y - a.y);
-				float fBC = (y - b.y) * (c.x - b.x) - (x - b.x) * (c.y - b.y);
-				float fCA = (y - c.y) * (a.x - c.x) - (x - c.x) * (a.y - c.y);
+		final var lFixturesList = body.fixtures;
+		final var lNumFixtures = lFixturesList.size();
+		for (int i = 0; i < lNumFixtures; i++) {
+			final var lFixtre = lFixturesList.get(i);
 
-				if (fAB * fBC > 0 && fBC * fCA > 0) {
-					return true;
-				}
+			switch (lFixtre.shapeType()) {
+			case Box: {
+
+//				final var lWorldVertices = body.getTransformedVertices();
+//				final var a = lWorldVertices.get(0);
+//				final var b = lWorldVertices.get(1);
+//				final var c = lWorldVertices.get(2);
+//				final var d = lWorldVertices.get(3);
+//
+//				{ // tri a
+//					float fAB = (y - a.y) * (b.x - a.x) - (x - a.x) * (b.y - a.y);
+//					float fBC = (y - b.y) * (c.x - b.x) - (x - b.x) * (c.y - b.y);
+//					float fCA = (y - c.y) * (a.x - c.x) - (x - c.x) * (a.y - c.y);
+//
+//					if (fAB * fBC > 0 && fBC * fCA > 0) {
+//						return true;
+//					}
+//				}
+//
+//				{ // tri b
+//					float fAC = (y - a.y) * (c.x - a.x) - (x - a.x) * (c.y - a.y);
+//					float fCD = (y - c.y) * (d.x - c.x) - (x - c.x) * (d.y - c.y);
+//					float fDA = (y - d.y) * (a.x - d.x) - (x - d.x) * (a.y - d.y);
+//
+//					if (fAC * fCD > 0 && fCD * fDA > 0) {
+//
+//						return true;
+//					}
+//				}
+
+				return false;
 			}
 
-			{ // tri b
-				float fAC = (y - a.y) * (c.x - a.x) - (x - a.x) * (c.y - a.y);
-				float fCD = (y - c.y) * (d.x - c.x) - (x - c.x) * (d.y - c.y);
-				float fDA = (y - d.y) * (a.x - d.x) - (x - d.x) * (a.y - d.y);
-
-				if (fAC * fCD > 0 && fCD * fDA > 0) {
-
-					return true;
-				}
+			case LineWidth: {
+//				final var lWorldVertices = body.getTransformedVertices();
+//				final var start = lWorldVertices.get(0);
+//				final var end = lWorldVertices.get(1);
+//
+//				float lLineX1 = end.x - start.x;
+//				float lLineY1 = end.y - start.y;
+//
+//				float lLineX2 = x - start.x;
+//				float lLineY2 = y - start.y;
+//
+//				float lEdgeLength = lLineX1 * lLineX1 + lLineY1 * lLineY1;
+//
+//				float v = lLineX1 * lLineX2 + lLineY1 * lLineY2;
+//				float t = MathHelper.clamp(v, 0.f, lEdgeLength) / lEdgeLength;
+//
+//				float lClosestPointX = start.x + t * lLineX1;
+//				float lClosestPointY = start.y + t * lLineY1;
+//
+//				float distance = (float) Math.sqrt((x - lClosestPointX) * (x - lClosestPointX) + (y - lClosestPointY) * (y - lClosestPointY));
+//
+//				final float lPointRadius = .5f;
+//				if (distance <= (body.radius + lPointRadius))
+//					return true;
+//
+//				return false;
 			}
 
-			return false;
-		}
+			default:
+			case Circle: {
+//				final float xx = body.x - x;
+//				final float yy = body.y - y;
+//				return (xx * xx + yy * yy) < (body.radius * body.radius);
+			}
 
-		case LineWidth: {
-			final var lWorldVertices = body.getTransformedVertices();
-			final var start = lWorldVertices.get(0);
-			final var end = lWorldVertices.get(1);
-
-			float lLineX1 = end.x - start.x;
-			float lLineY1 = end.y - start.y;
-
-			float lLineX2 = x - start.x;
-			float lLineY2 = y - start.y;
-
-			float lEdgeLength = lLineX1 * lLineX1 + lLineY1 * lLineY1;
-
-			float v = lLineX1 * lLineX2 + lLineY1 * lLineY2;
-			float t = MathHelper.clamp(v, 0.f, lEdgeLength) / lEdgeLength;
-
-			float lClosestPointX = start.x + t * lLineX1;
-			float lClosestPointY = start.y + t * lLineY1;
-
-			float distance = (float) Math.sqrt((x - lClosestPointX) * (x - lClosestPointX) + (y - lClosestPointY) * (y - lClosestPointY));
-
-			final float lPointRadius = .5f;
-			if (distance <= (body.radius + lPointRadius))
-				return true;
-
-			return false;
-		}
-
-		default:
-		case Circle: {
-			final float xx = body.x - x;
-			final float yy = body.y - y;
-			return (xx * xx + yy * yy) < (body.radius * body.radius);
-		}
+			}
 
 		}
+
+		// TODO: need to apply the transform to the fixture's local vertices for the check ...
+
+		return false;
 	}
 
 	/** Checks if a point is within a given circle */

@@ -1,7 +1,7 @@
 package net.lintfordlib.core.physics.collisions;
 
 import net.lintfordlib.core.maths.Vector2f;
-import net.lintfordlib.core.physics.dynamics.RigidBody;
+import net.lintfordlib.core.physics.dynamics.Fixture;
 
 public class ContactManifold {
 
@@ -15,8 +15,8 @@ public class ContactManifold {
 	public float impulseX;
 	public float impulseY;
 
-	public RigidBody bodyA;
-	public RigidBody bodyB;
+	public Fixture fixtureA;
+	public Fixture fixtureB;
 
 	public float depth;
 	public final Vector2f normal = new Vector2f();
@@ -37,10 +37,10 @@ public class ContactManifold {
 	// Methods
 	// --------------------------------------
 
-	public void initialize(RigidBody bodyA, RigidBody bodyB, float normalX, float normalY, float depth, float contact1X, float contact1Y, float contact2X, float contact2Y, int contactCount) {
+	public void initialize(Fixture fixtureA, Fixture fixtureB, float normalX, float normalY, float depth, float contact1X, float contact1Y, float contact2X, float contact2Y, int contactCount) {
 
-		this.bodyA = bodyA;
-		this.bodyB = bodyB;
+		this.fixtureA = fixtureA;
+		this.fixtureB = fixtureB;
 		this.normal.x = normalX;
 		this.normal.y = normalY;
 		this.depth = depth;
@@ -56,8 +56,8 @@ public class ContactManifold {
 	}
 
 	public void reset() {
-		bodyA = null;
-		bodyB = null;
+		fixtureA = null;
+		fixtureB = null;
 		enableResolveContact = true;
 
 		isIntersecting = false;

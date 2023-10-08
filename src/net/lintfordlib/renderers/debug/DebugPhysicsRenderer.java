@@ -10,6 +10,7 @@ import net.lintfordlib.controllers.physics.PhysicsController;
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.maths.Vector2f;
+import net.lintfordlib.core.physics.dynamics.Fixture;
 import net.lintfordlib.core.physics.dynamics.RigidBody;
 import net.lintfordlib.renderers.BaseRenderer;
 import net.lintfordlib.renderers.RendererManager;
@@ -23,7 +24,7 @@ public class DebugPhysicsRenderer extends BaseRenderer {
 	public static final String RENDERER_NAME = "Physics World Debug Renderer";
 
 	public static final boolean ScaleToScreenCoords = true;
-	public static final boolean RenderAABB = false;
+	public static final boolean RenderAABB = true;
 
 	public static final boolean RENDER_CONTACT_POINTS = false;
 	public static final List<Vector2f> DebugContactPoints = new ArrayList<>();
@@ -103,24 +104,44 @@ public class DebugPhysicsRenderer extends BaseRenderer {
 	}
 
 	private void debugDrawRigidBody(LintfordCore core, RigidBody body) {
+		final var lUnitToPixels = ConstantsPhysics.UnitsToPixels();
+
 		final var lLineBatch = rendererManager().uiLineBatch();
 		lLineBatch.lineType(GL11.GL_LINE_STRIP);
 
+		final var lFixtures = body.fixtures;
+		final var lFixtureCount = lFixtures.size();
+		for (int i = 0; i < lFixtureCount; i++) {
+			debugDrawFixture(core, lFixtures.get(i));
+		}
+
+		// Render body center
+		lLineBatch.begin(core.gameCamera());
+//		lLineBatch.drawCircle(body.x * lUnitToPixels, body.y * lUnitToPixels, body.angle, 3, 20, 0.8f, .4f, .4f, true);
+		lLineBatch.end();
+
+		if (RenderAABB)
+			Debug.debugManager().drawers().drawRectImmediate(core.gameCamera(), body.aabb().x() * lUnitToPixels, body.aabb().y() * lUnitToPixels, body.aabb().width() * lUnitToPixels, body.aabb().height() * lUnitToPixels, .93f, .86f, .98f);
+	}
+
+	private void debugDrawFixture(LintfordCore core, Fixture fixture) {
+		final var lUnitToPixels = ConstantsPhysics.UnitsToPixels();
 		float r = .6f;
 		float g = .7f;
 		float b = .2f;
-
-		if (body.isStatic()) {
+		final var lParentBody = fixture.parent;
+		if (lParentBody.isStatic()) {
 			r = .3f;
 			g = .9f;
 			b = .2f;
 		}
 
-		final var lUnitToPixels = ConstantsPhysics.UnitsToPixels();
+		final var lVertices = fixture.getTransformedVertices();
 
-		final var lVertices = body.getTransformedVertices();
+		final var lLineBatch = rendererManager().uiLineBatch();
+		lLineBatch.lineType(GL11.GL_LINE_STRIP);
 
-		switch (body.shapeType()) {
+		switch (fixture.shapeType()) {
 		case Polygon:
 		case Box: {
 			if (!ScaleToScreenCoords) {
@@ -151,27 +172,24 @@ public class DebugPhysicsRenderer extends BaseRenderer {
 		}
 
 		case Circle: {
-
 			if (!ScaleToScreenCoords)
-				Debug.debugManager().drawers().drawCircleImmediate(core.gameCamera(), body.x, body.y, body.radius);
+				Debug.debugManager().drawers().drawCircleImmediate(core.gameCamera(), lParentBody.x, lParentBody.y, fixture.radius);
 
 			else {
 				lLineBatch.begin(core.gameCamera());
-				lLineBatch.drawCircle(lVertices.get(0).x * lUnitToPixels, lVertices.get(0).y * lUnitToPixels, body.angle, body.radius * lUnitToPixels, 20, r, g, b, true);
+				lLineBatch.drawCircle(lVertices.get(0).x * lUnitToPixels, lVertices.get(0).y * lUnitToPixels, lParentBody.angle, fixture.radius * lUnitToPixels, 20, r, g, b, true);
 				lLineBatch.end();
 			}
 
 			break;
 		}
+		default:
+			break;
 
 		}
 
-		// Render body center
-		lLineBatch.begin(core.gameCamera());
-		lLineBatch.drawCircle(body.x * lUnitToPixels, body.y * lUnitToPixels, body.angle, 3, 20, 0.8f, .4f, .4f, true);
-		lLineBatch.end();
-
 		if (RenderAABB)
-			Debug.debugManager().drawers().drawRectImmediate(core.gameCamera(), body.aabb().x() * lUnitToPixels, body.aabb().y() * lUnitToPixels, body.aabb().width() * lUnitToPixels, body.aabb().height() * lUnitToPixels, .93f, .06f, .98f);
+			Debug.debugManager().drawers().drawRectImmediate(core.gameCamera(), fixture.aabb().x() * lUnitToPixels, fixture.aabb().y() * lUnitToPixels, fixture.aabb().width() * lUnitToPixels, fixture.aabb().height() * lUnitToPixels, .93f, .06f, .98f);
+
 	}
 }

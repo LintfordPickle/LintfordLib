@@ -12,6 +12,7 @@ import net.lintfordlib.core.debug.stats.DebugStatTagInt;
 import net.lintfordlib.core.maths.MathHelper;
 import net.lintfordlib.core.physics.collisions.ContactManifold;
 import net.lintfordlib.core.physics.collisions.SAT;
+import net.lintfordlib.core.physics.dynamics.Fixture;
 import net.lintfordlib.core.physics.dynamics.RigidBody;
 import net.lintfordlib.core.physics.interfaces.ICollisionCallback;
 import net.lintfordlib.core.physics.resolvers.ICollisionResolver;
@@ -25,8 +26,8 @@ public class PhysicsWorld {
 	// --------------------------------------
 
 	private class CollisionPair {
-		public RigidBody bodyA;
-		public RigidBody bodyB;
+		public Fixture bodyA;
+		public Fixture bodyB;
 	}
 
 	// --------------------------------------
@@ -42,7 +43,8 @@ public class PhysicsWorld {
 	private float mGravityX;
 	private float mGravityY; // mps/s
 
-	private PhysicsHashGrid<RigidBody> mWorldHashGrid;
+	private PhysicsHashGrid<Fixture> mWorldHashGrid;
+
 	private final List<RigidBody> mBodies = new ArrayList<>();
 
 	private final LinkedList<CollisionPair> mCollisionPairPool = new LinkedList<>();
@@ -77,7 +79,7 @@ public class PhysicsWorld {
 		mGravityY = y;
 	}
 
-	public PhysicsHashGrid<RigidBody> grid() {
+	public PhysicsHashGrid<Fixture> grid() {
 		return mWorldHashGrid;
 	}
 
@@ -229,26 +231,20 @@ public class PhysicsWorld {
 	private void stepBodies(float time) {
 		updateCounter++;
 
-		final var lActiveCellKeys = mWorldHashGrid.getActiveCellKeys();
-		final int lNumActiveCellKeys = lActiveCellKeys.size();
-		for (int i = 0; i < lNumActiveCellKeys; i++) {
-			final var lCellKey = lActiveCellKeys.get(i);
-			final var lCell = mWorldHashGrid.getCell(lCellKey);
-			final var lNumEntitiesInCell = lCell.size();
+		final var lNumBodies = mBodies.size();
+		for (int i = 0; i < lNumBodies; i++) {
+			final var lBody = mBodies.get(i);
 
-			boolean isCellActive = false;
-			for (int j = lNumEntitiesInCell - 1; j >= 0; j--) {
-				final var lBody = lCell.get(j);
+			if (lBody._updateCounter >= updateCounter)
+				continue;
 
-				if (lBody._updateCounter >= updateCounter)
-					continue;
+			lBody._updateCounter = updateCounter;
+			lBody.step(time, mGravityX, mGravityY);
 
-				lBody._updateCounter = updateCounter;
-				lBody.step(time, mGravityX, mGravityY);
-
-				mWorldHashGrid.updateEntity(lBody);
-
-				isCellActive = isCellActive || lBody._isActive;
+			final var lNumFixtures = lBody.fixtures.size();
+			for (int j = 0; j < lNumFixtures; j++) {
+				final var lFixture = lBody.fixtures.get(j);
+				mWorldHashGrid.updateEntity(lFixture);
 			}
 		}
 	}
@@ -277,17 +273,19 @@ public class PhysicsWorld {
 					if (lBodyA == lBodyB)
 						continue;
 
-					final var lBodyB_aabb = lBodyB.aabb();
-
-					if (lBodyA.isStatic() && lBodyB.isStatic())
+					if (lBodyA.parent.isStatic() && lBodyB.parent.isStatic())
 						continue;
+
+					final var lBodyB_aabb = lBodyB.aabb();
 
 					if (lBodyA_aabb.intersectsAA(lBodyB_aabb) == false)
 						continue;
 
-					final var lWeBothCollideWithOthers = lBodyA.categoryBits() != 0 && lBodyB.categoryBits() != 0;
+					// TODO: Fixtures as sensors?
+					// TODO: Fixtures with different categories and masks?
+					final var lWeBothCollideWithOthers = lBodyA.parent.categoryBits() != 0 && lBodyB.parent.categoryBits() != 0;
 
-					final var passedFilterCollision = lWeBothCollideWithOthers == false || (lBodyA.maskBits() & lBodyB.categoryBits()) != 0 && (lBodyA.categoryBits() & lBodyB.maskBits()) != 0;
+					final var passedFilterCollision = lWeBothCollideWithOthers == false || (lBodyA.parent.maskBits() & lBodyB.parent.categoryBits()) != 0 && (lBodyA.parent.categoryBits() & lBodyB.parent.maskBits()) != 0;
 
 					if (!passedFilterCollision)
 						continue;
@@ -309,22 +307,23 @@ public class PhysicsWorld {
 		for (int i = 0; i < lNumCollisionPairs; i++) {
 			final var lCollisionPair = mCollisionPair.get(i);
 
-			final var lBodyA = lCollisionPair.bodyA;
-			final var lBodyB = lCollisionPair.bodyB;
+			final var lFixtureA = lCollisionPair.bodyA;
+			final var lFixtureB = lCollisionPair.bodyB;
 
 			mContactManifold.reset();
 
-			if (SAT.checkCollides(lBodyA, lBodyB, mContactManifold)) {
+			if (SAT.checkCollides(lFixtureA, lFixtureB, mContactManifold)) {
 
-				final var includeFilter = lBodyA.maskBits() != 0 && lBodyB.maskBits() != 0 && lBodyA.categoryBits() != 0 && lBodyB.categoryBits() != 0;
-				final var passedFilterCollision = !includeFilter || (lBodyA.maskBits() & lBodyB.categoryBits()) != 0 && (lBodyA.categoryBits() & lBodyB.maskBits()) != 0;
-
-				if (!passedFilterCollision) {
-
-					// TODO: Handle the case of sensor bodies
-					returnCollisionPair(lCollisionPair);
-					break;
-				}
+				// TODO: A second category check ??
+//				final var includeFilter = lFixtureA.maskBits() != 0 && lFixtureB.maskBits() != 0 && lFixtureA.categoryBits() != 0 && lFixtureB.categoryBits() != 0;
+//				final var passedFilterCollision = !includeFilter || (lFixtureA.maskBits() & lFixtureB.categoryBits()) != 0 && (lFixtureA.categoryBits() & lFixtureB.maskBits()) != 0;
+//
+//				if (!passedFilterCollision) {
+//
+//					// TODO: Handle the case of sensor bodies
+//					returnCollisionPair(lCollisionPair);
+//					break;
+//				}
 
 				for (int j = 0; j < lNumCallbacks; j++) {
 					mCollisionCallbackList.get(j).preContact(mContactManifold);
@@ -335,7 +334,7 @@ public class PhysicsWorld {
 					continue;
 				}
 
-				separateBodiesByMTV(lBodyA, lBodyB, mContactManifold.normal.x * mContactManifold.depth, mContactManifold.normal.y * mContactManifold.depth);
+				separateBodiesByMTV(lFixtureA.parent, lFixtureB.parent, mContactManifold.normal.x * mContactManifold.depth, mContactManifold.normal.y * mContactManifold.depth);
 
 				SAT.fillContactPoints(mContactManifold);
 
@@ -367,24 +366,23 @@ public class PhysicsWorld {
 	// TODO: Move this to the collision package
 	private void separateBodiesByMTV(final RigidBody lBodyA, final RigidBody lBodyB, float mtvX, float mtvY) {
 		if (lBodyA.isStatic()) {
-			lBodyB.x += mtvX;
-			lBodyB.y += mtvY;
+			lBodyB.transform.position.x += mtvX;
+			lBodyB.transform.position.y += mtvY;
 		} else if (lBodyB.isStatic()) {
-			lBodyA.x -= mtvX;
-			lBodyA.y -= mtvY;
+			lBodyA.transform.position.x -= mtvX;
+			lBodyA.transform.position.y -= mtvY;
 		} else {
-			lBodyA.x += -mtvX / 2.f;
-			lBodyA.y += -mtvY / 2.f;
+			lBodyA.transform.position.x += -mtvX / 2.f;
+			lBodyA.transform.position.y += -mtvY / 2.f;
 
-			lBodyB.x += mtvX / 2.f;
-			lBodyB.y += mtvY / 2.f;
+			lBodyB.transform.position.x += mtvX / 2.f;
+			lBodyB.transform.position.y += mtvY / 2.f;
 		}
 	}
 
 	public void addBody(RigidBody newBody) {
-		mWorldHashGrid.addEntity(newBody);
-
-		mBodies.add(newBody);
+		if (mBodies.contains(newBody) == false)
+			mBodies.add(newBody);
 	}
 
 	public boolean removeBody(RigidBody body) {
@@ -393,7 +391,6 @@ public class PhysicsWorld {
 			return false;
 		}
 
-		mWorldHashGrid.removeEntity(body);
 		return mBodies.remove(body);
 	}
 

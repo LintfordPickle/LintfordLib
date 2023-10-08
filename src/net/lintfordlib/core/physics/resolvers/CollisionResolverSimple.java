@@ -9,11 +9,11 @@ public class CollisionResolverSimple implements ICollisionResolver {
 
 	@Override
 	public void resolveCollisions(ContactManifold manifold) {
-		final var lBodyA = manifold.bodyA;
-		final var lBodyB = manifold.bodyB;
+		final var lBodyA = manifold.fixtureA;
+		final var lBodyB = manifold.fixtureB;
 
-		final float relVelX = lBodyB.vx - lBodyA.vx;
-		final float relVelY = lBodyB.vy - lBodyA.vy;
+		final float relVelX = lBodyB.parent.vx - lBodyA.parent.vx;
+		final float relVelY = lBodyB.parent.vy - lBodyA.parent.vy;
 
 		final float dotVelNor = Vector2f.dot(relVelX, relVelY, manifold.normal.x, manifold.normal.y);
 
@@ -23,16 +23,16 @@ public class CollisionResolverSimple implements ICollisionResolver {
 		final float minRestitution = Math.min(lBodyA.restitution(), lBodyB.restitution());
 		float j = -(1.f + minRestitution) * dotVelNor;
 
-		j /= (lBodyA.invMass() + lBodyB.invMass());
+		j /= (lBodyA.parent.invMass() + lBodyB.parent.invMass());
 
 		final float impulseX = j * manifold.normal.x;
 		final float impulseY = j * manifold.normal.y;
 
-		lBodyA.vx -= impulseX * lBodyA.invMass();
-		lBodyA.vy -= impulseY * lBodyA.invMass();
+		lBodyA.parent.vx -= impulseX * lBodyA.parent.invMass();
+		lBodyA.parent.vy -= impulseY * lBodyA.parent.invMass();
 
-		lBodyB.vx += impulseX * lBodyB.invMass();
-		lBodyB.vy += impulseY * lBodyB.invMass();
+		lBodyB.parent.vx += impulseX * lBodyB.parent.invMass();
+		lBodyB.parent.vy += impulseY * lBodyB.parent.invMass();
 
 	}
 

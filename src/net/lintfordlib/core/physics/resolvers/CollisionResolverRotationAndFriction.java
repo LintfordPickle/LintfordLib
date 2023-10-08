@@ -8,8 +8,8 @@ public class CollisionResolverRotationAndFriction implements ICollisionResolver 
 
 	@Override
 	public void resolveCollisions(ContactManifold contact) {
-		final var lBodyA = contact.bodyA;
-		final var lBodyB = contact.bodyB;
+		final var lBodyA = contact.fixtureA;
+		final var lBodyB = contact.fixtureB;
 		final float normalX = contact.normal.x;
 		final float normalY = contact.normal.y;
 
@@ -36,8 +36,8 @@ public class CollisionResolverRotationAndFriction implements ICollisionResolver 
 			final float raPerp_x = -ra_y;
 			final float raPerp_y = ra_x;
 
-			final float angLinA_X = raPerp_x * lBodyA.angularVelocity;
-			final float angLinA_Y = raPerp_y * lBodyA.angularVelocity;
+			final float angLinA_X = raPerp_x * lBodyA.parent.angularVelocity;
+			final float angLinA_Y = raPerp_y * lBodyA.parent.angularVelocity;
 
 			final float rb_x = contactX - lBodyB.x;
 			final float rb_y = contactY - lBodyB.y;
@@ -45,12 +45,12 @@ public class CollisionResolverRotationAndFriction implements ICollisionResolver 
 			final float rbPerp_x = -rb_y;
 			final float rbPerp_y = rb_x;
 
-			final float angLinB_X = rbPerp_x * lBodyB.angularVelocity;
-			final float angLinB_Y = rbPerp_y * lBodyB.angularVelocity;
+			final float angLinB_X = rbPerp_x * lBodyB.parent.angularVelocity;
+			final float angLinB_Y = rbPerp_y * lBodyB.parent.angularVelocity;
 
 			// relative velocity at POC taking into account angular velocity
-			final float relVelX = (lBodyB.vx + angLinB_X) - (lBodyA.vx + angLinA_X);
-			final float relVelY = (lBodyB.vy + angLinB_Y) - (lBodyA.vy + angLinA_Y);
+			final float relVelX = (lBodyB.parent.vx + angLinB_X) - (lBodyA.parent.vx + angLinA_X);
+			final float relVelY = (lBodyB.parent.vy + angLinB_Y) - (lBodyA.parent.vy + angLinA_Y);
 
 			final float contactVelocityMagnitude = Vector2f.dot(relVelX, relVelY, normalX, normalY);
 
@@ -61,7 +61,7 @@ public class CollisionResolverRotationAndFriction implements ICollisionResolver 
 			final float rb_perp_dot_n = Vector2f.dot(rbPerp_x, rbPerp_y, normalX, normalY);
 
 			float j = -(1.f + e) * contactVelocityMagnitude;
-			j /= (lBodyA.invMass() + lBodyB.invMass()) + (ra_perp_dot_n * ra_perp_dot_n) * lBodyA.invInertia() + (rb_perp_dot_n * rb_perp_dot_n) * lBodyB.invInertia();
+			j /= (lBodyA.parent.invMass() + lBodyB.parent.invMass()) + (ra_perp_dot_n * ra_perp_dot_n) * lBodyA.parent.invInertia() + (rb_perp_dot_n * rb_perp_dot_n) * lBodyB.parent.invInertia();
 			j /= lContactCount;
 
 			if (i == 0) {
@@ -99,13 +99,13 @@ public class CollisionResolverRotationAndFriction implements ICollisionResolver 
 			final float rbX = i == 0 ? rb1X : rb2X;
 			final float rbY = i == 0 ? rb1Y : rb2Y;
 
-			lBodyA.vx += -_impulseX * lBodyA.invMass();
-			lBodyA.vy += -_impulseY * lBodyA.invMass();
-			lBodyA.angularVelocity += -Vector2f.cross(raX, raY, _impulseX, _impulseY) * lBodyA.invInertia();
+			lBodyA.parent.vx += -_impulseX * lBodyA.parent.invMass();
+			lBodyA.parent.vy += -_impulseY * lBodyA.parent.invMass();
+			lBodyA.parent.angularVelocity += -Vector2f.cross(raX, raY, _impulseX, _impulseY) * lBodyA.parent.invInertia();
 
-			lBodyB.vx += _impulseX * lBodyB.invMass();
-			lBodyB.vy += _impulseY * lBodyB.invMass();
-			lBodyB.angularVelocity += Vector2f.cross(rbX, rbY, _impulseX, _impulseY) * lBodyB.invInertia();
+			lBodyB.parent.vx += _impulseX * lBodyB.parent.invMass();
+			lBodyB.parent.vy += _impulseY * lBodyB.parent.invMass();
+			lBodyB.parent.angularVelocity += Vector2f.cross(rbX, rbY, _impulseX, _impulseY) * lBodyB.parent.invInertia();
 
 			contact.impulseX = _impulseX;
 			contact.impulseY = _impulseY;
@@ -124,8 +124,8 @@ public class CollisionResolverRotationAndFriction implements ICollisionResolver 
 			final float raPerp_x = -ra_y;
 			final float raPerp_y = ra_x;
 
-			final float angLinA_X = raPerp_x * lBodyA.angularVelocity;
-			final float angLinA_Y = raPerp_y * lBodyA.angularVelocity;
+			final float angLinA_X = raPerp_x * lBodyA.parent.angularVelocity;
+			final float angLinA_Y = raPerp_y * lBodyA.parent.angularVelocity;
 
 			final float rb_x = contactX - lBodyB.x;
 			final float rb_y = contactY - lBodyB.y;
@@ -133,12 +133,12 @@ public class CollisionResolverRotationAndFriction implements ICollisionResolver 
 			final float rbPerp_x = -rb_y;
 			final float rbPerp_y = rb_x;
 
-			final float angLinB_X = rbPerp_x * lBodyB.angularVelocity;
-			final float angLinB_Y = rbPerp_y * lBodyB.angularVelocity;
+			final float angLinB_X = rbPerp_x * lBodyB.parent.angularVelocity;
+			final float angLinB_Y = rbPerp_y * lBodyB.parent.angularVelocity;
 
 			// relative velocity at POC taking into account angular velocity
-			final float relVelX = (lBodyB.vx + angLinB_X) - (lBodyA.vx + angLinA_X);
-			final float relVelY = (lBodyB.vy + angLinB_Y) - (lBodyA.vy + angLinA_Y);
+			final float relVelX = (lBodyB.parent.vx + angLinB_X) - (lBodyA.parent.vx + angLinA_X);
+			final float relVelY = (lBodyB.parent.vy + angLinB_Y) - (lBodyA.parent.vy + angLinA_Y);
 
 			final float d = Vector2f.dot(relVelX, relVelY, normalX, normalY);
 			float tangent_X = relVelX - d * normalX;
@@ -155,7 +155,7 @@ public class CollisionResolverRotationAndFriction implements ICollisionResolver 
 			final float rb_perp_dot_t = Vector2f.dot(rbPerp_x, rbPerp_y, tangent_X, tangent_Y);
 
 			float jt = -Vector2f.dot(relVelX, relVelY, tangent_X, tangent_Y);
-			jt /= (lBodyA.invMass() + lBodyB.invMass()) + (ra_perp_dot_t * ra_perp_dot_t) * lBodyA.invInertia() + (rb_perp_dot_t * rb_perp_dot_t) * lBodyB.invInertia();
+			jt /= (lBodyA.parent.invMass() + lBodyB.parent.invMass()) + (ra_perp_dot_t * ra_perp_dot_t) * lBodyA.parent.invInertia() + (rb_perp_dot_t * rb_perp_dot_t) * lBodyB.parent.invInertia();
 			jt /= lContactCount;
 
 			if (i == 0) {
@@ -203,13 +203,13 @@ public class CollisionResolverRotationAndFriction implements ICollisionResolver 
 			final float rbX = i == 0 ? rb1X : rb2X;
 			final float rbY = i == 0 ? rb1Y : rb2Y;
 
-			lBodyA.vx += -_impulseX * lBodyA.invMass();
-			lBodyA.vy += -_impulseY * lBodyA.invMass();
-			lBodyA.angularVelocity += -Vector2f.cross(raX, raY, _impulseX, _impulseY) * lBodyA.invInertia();
+			lBodyA.parent.vx += -_impulseX * lBodyA.parent.invMass();
+			lBodyA.parent.vy += -_impulseY * lBodyA.parent.invMass();
+			lBodyA.parent.angularVelocity += -Vector2f.cross(raX, raY, _impulseX, _impulseY) * lBodyA.parent.invInertia();
 
-			lBodyB.vx += _impulseX * lBodyB.invMass();
-			lBodyB.vy += _impulseY * lBodyB.invMass();
-			lBodyB.angularVelocity += Vector2f.cross(rbX, rbY, _impulseX, _impulseY) * lBodyB.invInertia();
+			lBodyB.parent.vx += _impulseX * lBodyB.parent.invMass();
+			lBodyB.parent.vy += _impulseY * lBodyB.parent.invMass();
+			lBodyB.parent.angularVelocity += Vector2f.cross(rbX, rbY, _impulseX, _impulseY) * lBodyB.parent.invInertia();
 		}
 
 	}

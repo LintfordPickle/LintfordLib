@@ -1,8 +1,10 @@
-package net.lintfordlib.core.physics.dynamics;
+package net.lintfordlib.core.entities;
 
 import net.lintfordlib.ConstantsPhysics;
 import net.lintfordlib.core.geometry.partitioning.GridEntity;
 import net.lintfordlib.core.geometry.partitioning.SpatialHashGrid;
+import net.lintfordlib.core.physics.definitions.BodyDefinition;
+import net.lintfordlib.core.physics.dynamics.RigidBody;
 
 public abstract class RigidBodyEntity extends GridEntity {
 
@@ -36,14 +38,6 @@ public abstract class RigidBodyEntity extends GridEntity {
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
-
-	public void createPhysicsBodyPolygonBody(float widthInunits, float heightInUnits, float density) {
-		body = RigidBody.createPolygonBody(widthInunits, heightInUnits, density, .1f, .8f, .5f, false);
-	}
-
-	public void createPhysicsBodyCircleBody(float radiusInUnits, float density) {
-		body = RigidBody.createCircleBody(radiusInUnits, density, .1f, .8f, .5f, false);
-	}
 
 	public void unloadPhysicsBody() {
 		body = null;
