@@ -21,8 +21,8 @@ public class ParticleSystemDeserializer implements JsonDeserializer<ParticleSyst
 	// Constants
 	// --------------------------------------
 
-	public static final String INITIALIZER_PACKAGE_LOCATION = "net.lintford.library.core.particles.particlesystems.initializers.";
-	public static final String MODIFIER_PACKAGE_LOCATION = "net.lintford.library.core.particles.particlesystems.modifiers.";
+	public static final String INITIALIZER_PACKAGE_LOCATION = ParticleInitializerBase.class.getPackageName() + ".";
+	public static final String MODIFIER_PACKAGE_LOCATION = ParticleModifierBase.class.getPackageName() + ".";
 
 	public static final String PARTICLE_SYSTEM_MAX_PARTICLE_COUNT = "maxParticleCount";
 	public static final String PARTICLE_SYSTEM_NAME = "name";
@@ -41,6 +41,9 @@ public class ParticleSystemDeserializer implements JsonDeserializer<ParticleSyst
 
 	@Override
 	public ParticleSystemDefinition deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext deserializationContext) throws JsonParseException {
+		Debug.debugManager().logger().e(getClass().getSimpleName(), INITIALIZER_PACKAGE_LOCATION);
+		Debug.debugManager().logger().e(getClass().getSimpleName(), MODIFIER_PACKAGE_LOCATION);
+
 		final var lGson = new Gson();
 		final var lNewParticleSystemDefinition = new ParticleSystemDefinition();
 
