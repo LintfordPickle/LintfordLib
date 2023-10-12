@@ -9,17 +9,17 @@ public class CollisionExtensions {
 
 	/** returns true if the point lies within the radius of the body's bounding radius */
 	public static boolean intersectsBodyRadius(RigidBody body, float x, float y) {
-		final float xx = body.x - x;
-		final float yy = body.y - y;
-		return (xx * xx + yy * yy) < (body.radius * body.radius);
+		final float xx = body.transform.p.x - x;
+		final float yy = body.transform.p.y - y;
+		return (xx * xx + yy * yy) < (body.shape().radius() * body.shape().radius());
 	}
 
 	/** returns true if the point lies within the area of the rigid body. Note the implementation is different depending on the type of {@link ShapeType} */
 	public static boolean intersectsBody(RigidBody body, float x, float y) {
-		switch (body.shapeType()) {
+		switch (body.shape().shapeType()) {
 		case Box: {
 
-			final var lWorldVertices = body.getTransformedVertices();
+			final var lWorldVertices = body.getWorldVertices();
 			final var a = lWorldVertices.get(0);
 			final var b = lWorldVertices.get(1);
 			final var c = lWorldVertices.get(2);
@@ -50,7 +50,7 @@ public class CollisionExtensions {
 		}
 
 		case LineWidth: {
-			final var lWorldVertices = body.getTransformedVertices();
+			final var lWorldVertices = body.getWorldVertices();
 			final var start = lWorldVertices.get(0);
 			final var end = lWorldVertices.get(1);
 
@@ -71,7 +71,7 @@ public class CollisionExtensions {
 			float distance = (float) Math.sqrt((x - lClosestPointX) * (x - lClosestPointX) + (y - lClosestPointY) * (y - lClosestPointY));
 
 			final float lPointRadius = .5f;
-			if (distance <= (body.radius + lPointRadius))
+			if (distance <= (body.shape().radius() + lPointRadius))
 				return true;
 
 			return false;
@@ -79,9 +79,9 @@ public class CollisionExtensions {
 
 		default:
 		case Circle: {
-			final float xx = body.x - x;
-			final float yy = body.y - y;
-			return (xx * xx + yy * yy) < (body.radius * body.radius);
+			final float xx = body.transform.p.x - x;
+			final float yy = body.transform.p.y - y;
+			return (xx * xx + yy * yy) < (body.shape().radius() * body.shape().radius());
 		}
 
 		}

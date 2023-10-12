@@ -22,8 +22,7 @@ public class DebugPhysicsRenderer extends BaseRenderer {
 
 	public static final String RENDERER_NAME = "Physics World Debug Renderer";
 
-	public static final boolean ScaleToScreenCoords = true;
-	public static final boolean RenderAABB = false;
+	public static final boolean RenderAABB = true;
 
 	public static final boolean RENDER_CONTACT_POINTS = false;
 	public static final List<Vector2f> DebugContactPoints = new ArrayList<>();
@@ -118,48 +117,70 @@ public class DebugPhysicsRenderer extends BaseRenderer {
 
 		final var lUnitToPixels = ConstantsPhysics.UnitsToPixels();
 
-		final var lVertices = body.getTransformedVertices();
+		final var lVertices = body.getWorldVertices();
+		final var lShape = body.shape();
 
-		switch (body.shapeType()) {
-		case Polygon:
+		// TODO: Why do I need to get the body transform when I have the world vertices (because the circle only has the center)?
+
+		switch (lShape.shapeType()) {
+		case Polygon: {
+			lLineBatch.begin(core.gameCamera());
+			lLineBatch.draw(lVertices.get(0).x * lUnitToPixels, lVertices.get(0).y * lUnitToPixels, lVertices.get(1).x * lUnitToPixels, lVertices.get(1).y * lUnitToPixels, -0.01f, r, g, b, 1.f);
+			lLineBatch.draw(lVertices.get(1).x * lUnitToPixels, lVertices.get(1).y * lUnitToPixels, lVertices.get(2).x * lUnitToPixels, lVertices.get(2).y * lUnitToPixels, -0.01f, r, g, b, 1.f);
+			lLineBatch.draw(lVertices.get(2).x * lUnitToPixels, lVertices.get(2).y * lUnitToPixels, lVertices.get(3).x * lUnitToPixels, lVertices.get(3).y * lUnitToPixels, -0.01f, r, g, b, 1.f);
+			lLineBatch.draw(lVertices.get(3).x * lUnitToPixels, lVertices.get(3).y * lUnitToPixels, lVertices.get(0).x * lUnitToPixels, lVertices.get(0).y * lUnitToPixels, -0.01f, r, g, b, 1.f);
+			lLineBatch.end();
+
+			break;
+		}
+
 		case Box: {
-			if (!ScaleToScreenCoords) {
-				lLineBatch.begin(core.gameCamera());
-				lLineBatch.draw(lVertices.get(0).x, lVertices.get(0).y, lVertices.get(1).x, lVertices.get(1).y, -0.01f, r, g, b, 1.f);
-				lLineBatch.draw(lVertices.get(1).x, lVertices.get(1).y, lVertices.get(2).x, lVertices.get(2).y, -0.01f, r, g, b, 1.f);
-				lLineBatch.draw(lVertices.get(2).x, lVertices.get(2).y, lVertices.get(3).x, lVertices.get(3).y, -0.01f, r, g, b, 1.f);
-				lLineBatch.draw(lVertices.get(3).x, lVertices.get(3).y, lVertices.get(0).x, lVertices.get(0).y, -0.01f, r, g, b, 1.f);
-				lLineBatch.end();
 
-			} else {
-				lLineBatch.begin(core.gameCamera());
-				lLineBatch.draw(lVertices.get(0).x * lUnitToPixels, lVertices.get(0).y * lUnitToPixels, lVertices.get(1).x * lUnitToPixels, lVertices.get(1).y * lUnitToPixels, -0.01f, r, g, b, 1.f);
-				lLineBatch.draw(lVertices.get(1).x * lUnitToPixels, lVertices.get(1).y * lUnitToPixels, lVertices.get(2).x * lUnitToPixels, lVertices.get(2).y * lUnitToPixels, -0.01f, r, g, b, 1.f);
-				lLineBatch.draw(lVertices.get(2).x * lUnitToPixels, lVertices.get(2).y * lUnitToPixels, lVertices.get(3).x * lUnitToPixels, lVertices.get(3).y * lUnitToPixels, -0.01f, r, g, b, 1.f);
-				lLineBatch.draw(lVertices.get(3).x * lUnitToPixels, lVertices.get(3).y * lUnitToPixels, lVertices.get(0).x * lUnitToPixels, lVertices.get(0).y * lUnitToPixels, -0.01f, r, g, b, 1.f);
-				lLineBatch.end();
-			}
+			lLineBatch.begin(core.gameCamera());
+			lLineBatch.draw(lVertices.get(0).x * lUnitToPixels, lVertices.get(0).y * lUnitToPixels, lVertices.get(1).x * lUnitToPixels, lVertices.get(1).y * lUnitToPixels, -0.01f, r, g, b, 1.f);
+			lLineBatch.draw(lVertices.get(1).x * lUnitToPixels, lVertices.get(1).y * lUnitToPixels, lVertices.get(2).x * lUnitToPixels, lVertices.get(2).y * lUnitToPixels, -0.01f, r, g, b, 1.f);
+			lLineBatch.draw(lVertices.get(2).x * lUnitToPixels, lVertices.get(2).y * lUnitToPixels, lVertices.get(3).x * lUnitToPixels, lVertices.get(3).y * lUnitToPixels, -0.01f, r, g, b, 1.f);
+			lLineBatch.draw(lVertices.get(3).x * lUnitToPixels, lVertices.get(3).y * lUnitToPixels, lVertices.get(0).x * lUnitToPixels, lVertices.get(0).y * lUnitToPixels, -0.01f, r, g, b, 1.f);
+			lLineBatch.end();
 
 			break;
 		}
 
 		case LineWidth: {
+			final var lHeight = lShape.height() * lUnitToPixels * .5f;
+
+			final var sx = lVertices.get(0).x * lUnitToPixels;
+			final var sy = lVertices.get(0).y * lUnitToPixels;
+
+			final var ex = lVertices.get(1).x * lUnitToPixels;
+			final var ey = lVertices.get(1).y * lUnitToPixels;
+
+			final var lDst = Vector2f.dst(sx, sy, ex, ey);
+			final var linevx = (ex - sx) / lDst;
+			final var linevy = (ey - sy) / lDst;
+
+			final var tl_x = sx - -linevy * lHeight;
+			final var tl_y = sy - linevx * lHeight;
+			final var tr_x = ex - -linevy * lHeight;
+			final var tr_y = ey - +linevx * lHeight;
+			final var br_x = ex + -linevy * lHeight;
+			final var br_y = ey + linevx * lHeight;
+			final var bl_x = sx + -linevy * lHeight;
+			final var bl_y = sy + linevx * lHeight;
+
 			lLineBatch.begin(core.gameCamera());
-			lLineBatch.draw(lVertices.get(0).x * lUnitToPixels, lVertices.get(0).y * lUnitToPixels, lVertices.get(1).x * lUnitToPixels, lVertices.get(1).y * lUnitToPixels, -0.01f, r, g, b, 1.f);
+			lLineBatch.draw(tl_x, tl_y, tr_x, tr_y, -0.01f, r, g, b, 1.f);
+			lLineBatch.draw(tr_x, tr_y, br_x, br_y, -0.01f, r, g, b, 1.f);
+			lLineBatch.draw(br_x, br_y, bl_x, bl_y, -0.01f, r, g, b, 1.f);
+			lLineBatch.draw(bl_x, bl_y, tl_x, tl_y, -0.01f, r, g, b, 1.f);
 			lLineBatch.end();
 			break;
 		}
 
 		case Circle: {
-
-			if (!ScaleToScreenCoords)
-				Debug.debugManager().drawers().drawCircleImmediate(core.gameCamera(), body.x, body.y, body.radius);
-
-			else {
-				lLineBatch.begin(core.gameCamera());
-				lLineBatch.drawCircle(lVertices.get(0).x * lUnitToPixels, lVertices.get(0).y * lUnitToPixels, body.angle, body.radius * lUnitToPixels, 20, r, g, b, true);
-				lLineBatch.end();
-			}
+			lLineBatch.begin(core.gameCamera());
+			lLineBatch.drawCircle(lVertices.get(0).x * lUnitToPixels, lVertices.get(0).y * lUnitToPixels, body.transform.angle, lShape.radius() * lUnitToPixels, 20, r, g, b, true);
+			lLineBatch.end();
 
 			break;
 		}
@@ -168,7 +189,7 @@ public class DebugPhysicsRenderer extends BaseRenderer {
 
 		// Render body center
 		lLineBatch.begin(core.gameCamera());
-		lLineBatch.drawCircle(body.x * lUnitToPixels, body.y * lUnitToPixels, body.angle, 3, 20, 0.8f, .4f, .4f, true);
+		lLineBatch.drawCircle(body.transform.p.x * lUnitToPixels, body.transform.p.y * lUnitToPixels, body.transform.angle, 3, 20, 0.8f, .4f, .4f, true);
 		lLineBatch.end();
 
 		if (RenderAABB)

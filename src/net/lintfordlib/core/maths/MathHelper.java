@@ -1,5 +1,7 @@
 package net.lintfordlib.core.maths;
 
+import net.lintfordlib.ConstantsMath;
+
 public class MathHelper {
 
 	// --------------------------------------
@@ -251,7 +253,7 @@ public class MathHelper {
 		float lAngle = normalizeAngle(angleInRadians);
 		if (lAngle == 0)
 			return 0.f;
-		lAngle = MathConstants.TwoPi - lAngle;
+		lAngle = ConstantsMath.TwoPi - lAngle;
 
 		return lAngle;
 	}
@@ -262,10 +264,10 @@ public class MathHelper {
 	public static float invertAngleYAxis(float angleInRadians) {
 		float lAngle = normalizeAngle(angleInRadians);
 
-		if (lAngle < MathConstants.Pi) {
-			lAngle = MathConstants.Pi - lAngle;
+		if (lAngle < ConstantsMath.Pi) {
+			lAngle = ConstantsMath.Pi - lAngle;
 		} else {
-			lAngle = MathConstants.TwoPi - lAngle + MathConstants.Pi;
+			lAngle = ConstantsMath.TwoPi - lAngle + ConstantsMath.Pi;
 		}
 
 		return lAngle;
@@ -276,10 +278,10 @@ public class MathHelper {
 	 */
 	public static float normalizeAngle(float angle) {
 		if (angle < 0) {
-			final var lBackRevolutions = (int) (-angle / MathConstants.TwoPi);
-			return angle + MathConstants.TwoPi * (lBackRevolutions + 1);
+			final var lBackRevolutions = (int) (-angle / ConstantsMath.TwoPi);
+			return angle + ConstantsMath.TwoPi * (lBackRevolutions + 1);
 		} else {
-			return angle % MathConstants.TwoPi;
+			return angle % ConstantsMath.TwoPi;
 		}
 	}
 
@@ -307,5 +309,15 @@ public class MathHelper {
 
 	public static float windingOrderZFromCross(float ax, float ay, float bx, float by) {
 		return (ax * by) - (ay * bx);
+	}
+
+	public static boolean equalWithinEpsilon(float a, float b) {
+		return Math.abs(a - b) < ConstantsMath.EPSILON;
+	}
+
+	public static boolean equalWithinEpsilon(float p1x, float p1y, float p2x, float p2y) {
+		final float xx = p1x - p2x;
+		final float yy = p1y - p2y;
+		return (xx * xx + yy * yy) < ConstantsMath.EPSILON * ConstantsMath.EPSILON;
 	}
 }

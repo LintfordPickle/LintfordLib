@@ -37,14 +37,6 @@ public abstract class RigidBodyEntity extends GridEntity {
 	// Methods
 	// --------------------------------------
 
-	public void createPhysicsBodyPolygonBody(float widthInunits, float heightInUnits, float density) {
-		body = RigidBody.createPolygonBody(widthInunits, heightInUnits, density, .1f, .8f, .5f, false);
-	}
-
-	public void createPhysicsBodyCircleBody(float radiusInUnits, float density) {
-		body = RigidBody.createCircleBody(radiusInUnits, density, .1f, .8f, .5f, false);
-	}
-
 	public void unloadPhysicsBody() {
 		body = null;
 	}

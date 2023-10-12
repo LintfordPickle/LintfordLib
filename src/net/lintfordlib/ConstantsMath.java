@@ -1,9 +1,9 @@
-package net.lintfordlib.core.maths;
+package net.lintfordlib;
 
 /** Defines some oft used math constants */
-public class MathConstants {
+public class ConstantsMath {
 
-	public static final float Epsilon = 0.00001f;
+	public static final float EPSILON = 0.00001f;
     public static final float E = 2.718282f;
     public static final float Log10E = 0.4342945f;
     public static final float Log2E = 1.442695f;

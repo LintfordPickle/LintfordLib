@@ -1,21 +1,24 @@
 package net.lintfordlib.core.physics.resolvers;
 
+import net.lintfordlib.core.maths.MathHelper;
 import net.lintfordlib.core.maths.Vector2f;
 import net.lintfordlib.core.physics.collisions.ContactManifold;
-import net.lintfordlib.core.physics.collisions.SAT;
 
 public class CollisionResolverRotationAndFriction implements ICollisionResolver {
 
 	@Override
-	public void resolveCollisions(ContactManifold contact) {
+	public final void resolveCollisions(ContactManifold contact) {
 		final var lBodyA = contact.bodyA;
 		final var lBodyB = contact.bodyB;
 		final float normalX = contact.normal.x;
 		final float normalY = contact.normal.y;
 
-		final float e = Math.min(lBodyA.restitution(), lBodyB.restitution());
-		final float sf = (lBodyA.staticFriction() + lBodyB.staticFriction()) * .5f;
-		final float df = (lBodyA.dynamicFriction() + lBodyB.dynamicFriction()) * .5f;
+		final var lShapeA = lBodyA.shape();
+		final var lShapeB = lBodyB.shape();
+
+		final float e = Math.min(lShapeA.restitution(), lShapeB.restitution());
+		final float sf = (lShapeA.staticFriction() + lShapeB.staticFriction()) * .5f;
+		final float df = (lShapeA.dynamicFriction() + lShapeB.dynamicFriction()) * .5f;
 
 		float impulse1X = 0, impulse1Y = 0, impulse2X = 0, impulse2Y = 0;
 		float fImpulse1X = 0, fImpulse1Y = 0, fImpulse2X = 0, fImpulse2Y = 0;
@@ -30,8 +33,8 @@ public class CollisionResolverRotationAndFriction implements ICollisionResolver 
 			final float contactX = i == 0 ? contact.contact1.x : contact.contact2.x;
 			final float contactY = i == 0 ? contact.contact1.y : contact.contact2.y;
 
-			final float ra_x = contactX - lBodyA.x;
-			final float ra_y = contactY - lBodyA.y;
+			final float ra_x = contactX - lBodyA.transform.p.x;
+			final float ra_y = contactY - lBodyA.transform.p.y;
 
 			final float raPerp_x = -ra_y;
 			final float raPerp_y = ra_x;
@@ -39,8 +42,8 @@ public class CollisionResolverRotationAndFriction implements ICollisionResolver 
 			final float angLinA_X = raPerp_x * lBodyA.angularVelocity;
 			final float angLinA_Y = raPerp_y * lBodyA.angularVelocity;
 
-			final float rb_x = contactX - lBodyB.x;
-			final float rb_y = contactY - lBodyB.y;
+			final float rb_x = contactX - lBodyB.transform.p.x;
+			final float rb_y = contactY - lBodyB.transform.p.y;
 
 			final float rbPerp_x = -rb_y;
 			final float rbPerp_y = rb_x;
@@ -118,8 +121,8 @@ public class CollisionResolverRotationAndFriction implements ICollisionResolver 
 			final float contactX = i == 0 ? contact.contact1.x : contact.contact2.x;
 			final float contactY = i == 0 ? contact.contact1.y : contact.contact2.y;
 
-			final float ra_x = contactX - lBodyA.x;
-			final float ra_y = contactY - lBodyA.y;
+			final float ra_x = contactX - lBodyA.transform.p.x;
+			final float ra_y = contactY - lBodyA.transform.p.y;
 
 			final float raPerp_x = -ra_y;
 			final float raPerp_y = ra_x;
@@ -127,8 +130,8 @@ public class CollisionResolverRotationAndFriction implements ICollisionResolver 
 			final float angLinA_X = raPerp_x * lBodyA.angularVelocity;
 			final float angLinA_Y = raPerp_y * lBodyA.angularVelocity;
 
-			final float rb_x = contactX - lBodyB.x;
-			final float rb_y = contactY - lBodyB.y;
+			final float rb_x = contactX - lBodyB.transform.p.x;
+			final float rb_y = contactY - lBodyB.transform.p.y;
 
 			final float rbPerp_x = -rb_y;
 			final float rbPerp_y = rb_x;
@@ -144,7 +147,7 @@ public class CollisionResolverRotationAndFriction implements ICollisionResolver 
 			float tangent_X = relVelX - d * normalX;
 			float tangent_Y = relVelY - d * normalY;
 
-			if (SAT.equalWithinEpsilon(tangent_X, 0) && SAT.equalWithinEpsilon(tangent_Y, 0))
+			if (MathHelper.equalWithinEpsilon(tangent_X, 0) && MathHelper.equalWithinEpsilon(tangent_Y, 0))
 				continue;
 
 			final float tangentLength = (float) Math.sqrt(tangent_X * tangent_X + tangent_Y * tangent_Y);

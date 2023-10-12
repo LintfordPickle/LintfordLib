@@ -20,7 +20,7 @@ public class CollisionResolverSimple implements ICollisionResolver {
 		if (dotVelNor >= 0.f)
 			return;
 
-		final float minRestitution = Math.min(lBodyA.restitution(), lBodyB.restitution());
+		final float minRestitution = Math.min(lBodyA.shape().restitution(), lBodyB.shape().restitution());
 		float j = -(1.f + minRestitution) * dotVelNor;
 
 		j /= (lBodyA.invMass() + lBodyB.invMass());

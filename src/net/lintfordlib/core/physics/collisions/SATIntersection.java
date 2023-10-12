@@ -2,13 +2,12 @@ package net.lintfordlib.core.physics.collisions;
 
 import java.util.List;
 
-import net.lintfordlib.ConstantsPhysics;
 import net.lintfordlib.core.maths.MathHelper;
 import net.lintfordlib.core.maths.Vector2f;
 import net.lintfordlib.core.physics.dynamics.RigidBody;
 import net.lintfordlib.core.physics.dynamics.ShapeType;
 
-public class SAT {
+public class SATIntersection {
 
 	// ---------------------------------------------
 	// Inner-Classes
@@ -45,68 +44,130 @@ public class SAT {
 	// Core-Methods
 	// ---------------------------------------------
 
-	public static boolean checkCollides(RigidBody bodyA, RigidBody bodyB, ContactManifold manifold) {
-		final var lShapeTypeA = bodyA.shapeType();
-		final var lShapeTypeB = bodyB.shapeType();
+	public static final boolean checkCollides(final RigidBody bodyA, final RigidBody bodyB, final ContactManifold manifold) {
+		final var lShapeType = bodyA.shape().shapeType();
 
 		manifold.bodyA = bodyA;
 		manifold.bodyB = bodyB;
 
-		// TODO: Still missing intersection tests for Box shapes (same as polygon, just half the axis checks needed).
-		if (lShapeTypeA == ShapeType.Box || lShapeTypeB == ShapeType.Box) {
-			throw new IllegalArgumentException("Physics world doesn't support box bodies yet");
-		}
-
-		if (lShapeTypeA == ShapeType.Polygon) {
-			if (lShapeTypeB == ShapeType.Polygon)
-				return intersectsPolygons(bodyA.getTransformedVertices(), bodyB.getTransformedVertices(), manifold);
-			else if (lShapeTypeB == ShapeType.Circle)
-				return intersectsCirclePolygon(bodyB.x, bodyB.y, bodyB.radius, bodyA.getTransformedVertices(), bodyA.x, bodyA.y, manifold);
-			else if (lShapeTypeB == ShapeType.LineWidth) {
-				if (intersectsLinePolygon(bodyB.getTransformedVertices(), bodyA.getTransformedVertices(), bodyA.x, bodyA.y, manifold)) {
-					return true;
-				}
-			}
-			
-		} else if (lShapeTypeA == ShapeType.Circle) {
-			if (lShapeTypeB == ShapeType.Polygon) {
-				if (intersectsCirclePolygon(bodyA.x, bodyA.y, bodyA.radius, bodyB.getTransformedVertices(), bodyB.x, bodyB.y, manifold)) {
-					manifold.normal.x = -manifold.normal.x;
-					manifold.normal.y = -manifold.normal.y;
-					return true;
-				}
-
-			} else if (lShapeTypeB == ShapeType.Circle) {
-				if (intersectsCircles(bodyA.x, bodyA.y, bodyA.radius, bodyB.x, bodyB.y, bodyB.radius, manifold)) {
-					return true;
-				}
-			} else if (lShapeTypeB == ShapeType.LineWidth) {
-				if (intersectsLineCircle(bodyB.getTransformedVertices(), bodyB.height, bodyA.x, bodyA.y, bodyA.radius, manifold)) {
-					return true;
-				}
-			}
-		} else if (lShapeTypeA == ShapeType.LineWidth) {
-			if (lShapeTypeB == ShapeType.Polygon) {
-				if (intersectsLinePolygon(bodyA.getTransformedVertices(), bodyB.getTransformedVertices(), bodyB.x, bodyB.y, manifold)) {
-					manifold.normal.x = -manifold.normal.x;
-					manifold.normal.y = -manifold.normal.y;
-					return true;
-				}
-			} else if (lShapeTypeB == ShapeType.Circle) {
-				if (intersectsLineCircle(bodyA.getTransformedVertices(), bodyA.height, bodyB.x, bodyB.y, bodyB.radius, manifold)) {
-					return true;
-				}
-			}
-
-			// no line/line intersections for now (doesn't work)
+		if (lShapeType == ShapeType.Polygon) {
+			return intersectionsPolygonShape(bodyA, bodyB, manifold);
+		} else if (lShapeType == ShapeType.Box) {
+			return intersectionsPolygonShape(bodyA, bodyB, manifold);
+		} else if (lShapeType == ShapeType.LineWidth) {
+			return intersectionsLineWidthShape(bodyA, bodyB, manifold);
+		} else if (lShapeType == ShapeType.Circle) {
+			return intersectionsCircleShape(bodyA, bodyB, manifold);
 		}
 
 		return false;
 	}
 
+	private static boolean intersectionsPolygonShape(RigidBody bodyA, RigidBody bodyB, ContactManifold manifold) {
+		final var lShapeA = bodyA.shape();
+		final var lShapeB = bodyB.shape();
+
+		final var lShapeAWorldVertices = bodyA.getWorldVertices();
+		final var lShapeBWorldVertices = bodyB.getWorldVertices();
+
+		if (lShapeB.shapeType() == ShapeType.Polygon) {
+			return intersectsPolygons(lShapeAWorldVertices, lShapeBWorldVertices, manifold);
+		} else if (lShapeB.shapeType() == ShapeType.Box) {
+			return false; // TODO: Polygon Box intersection SAT
+		} else if (lShapeB.shapeType() == ShapeType.LineWidth) {
+			return intersectsLinePolygon(lShapeBWorldVertices, lShapeAWorldVertices, bodyA.transform.p.x, bodyA.transform.p.y, manifold);
+		} else if (lShapeB.shapeType() == ShapeType.Circle) {
+			return intersectsCirclePolygon(bodyB.transform.p.x, bodyB.transform.p.y, bodyB.shape().radius(), lShapeAWorldVertices, bodyA.transform.p.x, bodyA.transform.p.y, manifold);
+		}
+
+		return false;
+	}
+
+	private static boolean intersectionsBoxShape(RigidBody bodyA, RigidBody bodyB, ContactManifold manifold) {
+		final var lShapeA = bodyA.shape();
+		final var lShapeB = bodyB.shape();
+
+		final var lShapeAWorldVertices = bodyA.getWorldVertices();
+		final var lShapeBWorldVertices = bodyB.getWorldVertices();
+
+		if (lShapeB.shapeType() == ShapeType.Polygon) {
+			return false;// intersectsPolygons();
+		} else if (lShapeB.shapeType() == ShapeType.Box) {
+			return false;// intersectsLinePolygon();
+		} else if (lShapeB.shapeType() == ShapeType.LineWidth) {
+			return false;// intersectsLinePolygon();
+		} else if (lShapeB.shapeType() == ShapeType.Circle) {
+			return false;// intersectsLinePolygon();
+		}
+
+		return false;
+	}
+
+	private static boolean intersectionsLineWidthShape(RigidBody bodyA, RigidBody bodyB, ContactManifold manifold) {
+		final var lOtherShapeType = bodyB.shape().shapeType();
+
+		final var lShapeAWorldVertices = bodyA.getWorldVertices();
+		final var lShapeBWorldVertices = bodyB.getWorldVertices();
+
+		if (lOtherShapeType == ShapeType.Polygon) {
+			if (intersectsLinePolygon(lShapeAWorldVertices, bodyB.getWorldVertices(), bodyB.transform.p.x, bodyB.transform.p.y, manifold)) {
+				manifold.normal.x = -manifold.normal.x;
+				manifold.normal.y = -manifold.normal.y;
+				return true;
+			}
+		} else if (lOtherShapeType == ShapeType.Box) {
+			return false; // TODO: Line / Box intersections
+		} else if (lOtherShapeType == ShapeType.LineWidth) {
+			return false; // TODO: Line / Line intersections
+		} else if (lOtherShapeType == ShapeType.Circle) {
+			if (intersectsLineCircle(lShapeAWorldVertices, bodyA.shape().height(), bodyB.transform.p.x, bodyB.transform.p.y, bodyB.shape().radius(), manifold)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private static boolean intersectionsCircleShape(RigidBody bodyA, RigidBody bodyB, ContactManifold manifold) {
+		final var lShapeBType = bodyB.shape().shapeType();
+
+		final var lShapeAWorldVertices = bodyA.getWorldVertices();
+		final var lShapeBWorldVertices = bodyB.getWorldVertices();
+
+		switch (lShapeBType) {
+		case Polygon:
+			if (intersectsCirclePolygon(bodyA.transform.p.x, bodyA.transform.p.y, bodyA.shape().radius(), lShapeBWorldVertices, bodyB.transform.p.x, bodyB.transform.p.y, manifold)) {
+				manifold.normal.x = -manifold.normal.x;
+				manifold.normal.y = -manifold.normal.y;
+				return true;
+			}
+			return false;
+
+		case Box:
+			return false; // TODO: Circle box intersection
+
+		case LineWidth:
+			if (intersectsLineCircle(lShapeBWorldVertices, bodyB.shape().height() * .5f, bodyA.transform.p.x, bodyA.transform.p.y, bodyA.shape().radius(), manifold)) {
+				manifold.normal.x = -manifold.normal.x;
+				manifold.normal.y = -manifold.normal.y;
+				return true;
+			}
+			return false;
+
+		case Circle:
+			return intersectsCircles(lShapeAWorldVertices, bodyA.shape().radius(), lShapeBWorldVertices, bodyB.shape().radius(), manifold);
+
+		default:
+			return false;
+		}
+
+	}
+
 	// ---------------------------------------------
 	// Methods
 	// ---------------------------------------------
+
+	// Polygons
 
 	public static boolean intersectsPolygons(List<Vector2f> verticesA, List<Vector2f> verticesB, ContactManifold result) {
 		result.isIntersecting = true;
@@ -204,6 +265,12 @@ public class SAT {
 		return true;
 	}
 
+	public static boolean intersectsPolygonBox() {
+		return false;
+	}
+
+	// Circles
+
 	public static boolean intersectsCirclePolygon(float circleX, float circleY, float circleRadius, List<Vector2f> polygonVertices, float polygonCenterX, float polygonCenterY, ContactManifold result) {
 		result.isIntersecting = true;
 		result.normal.x = 0.f;
@@ -289,9 +356,15 @@ public class SAT {
 		return true;
 	}
 
-	public static boolean intersectsCircles(float circleAX, float circleAY, float radiusA, float circleBX, float circleBY, float radiusB, ContactManifold result) {
-		final float dist = Vector2f.dst(circleAX, circleAY, circleBX, circleBY);
-		final float radii = radiusA + radiusB;
+	public static boolean intersectsCircles(List<Vector2f> circleAWorldVertices, float radiusA, List<Vector2f> circleBWorldVertices, float radiusB, ContactManifold result) {
+		final var circleAX = circleAWorldVertices.get(0).x;
+		final var circleAY = circleAWorldVertices.get(0).y;
+
+		final var circleBX = circleBWorldVertices.get(0).x;
+		final var circleBY = circleBWorldVertices.get(0).y;
+
+		final var dist = Vector2f.dst(circleAX, circleAY, circleBX, circleBY);
+		final var radii = radiusA + radiusB;
 
 		result.isIntersecting = false;
 
@@ -307,6 +380,12 @@ public class SAT {
 
 		return true;
 	}
+
+	public static boolean intersectsCircleBox() {
+		return false;
+	}
+
+	// Lines
 
 	public static boolean intersectsLinePolygon(List<Vector2f> lineVertices, List<Vector2f> polygonVertices, float polygonCenterX, float polygonCenterY, ContactManifold result) {
 
@@ -526,6 +605,10 @@ public class SAT {
 		return true;
 	}
 
+	public static boolean intersectsLineBox() {
+		return false;
+	}
+
 	// Projections
 
 	private static void projectVertices(List<Vector2f> vertices, float axisX, float axisY, SatCollisionProjectionResult result) {
@@ -583,323 +666,6 @@ public class SAT {
 		}
 	}
 
-	// Contacts
-
-	public static void fillContactPoints(ContactManifold manifold) {
-		final var bodyA = manifold.bodyA;
-		final var bodyB = manifold.bodyB;
-
-		final var lShapeTypeA = bodyA.shapeType();
-		final var lShapeTypeB = bodyB.shapeType();
-
-		manifold.contactCount = 0;
-
-		if (lShapeTypeA == ShapeType.Polygon) {
-			if (lShapeTypeB == ShapeType.Polygon)
-				findPolygonPolygonContactPoints(bodyA.getTransformedVertices(), bodyB.getTransformedVertices(), manifold);
-			else if (lShapeTypeB == ShapeType.Circle)
-				findCirclePolygonContactPoint(bodyB.x, bodyB.y, bodyB.radius, bodyA.x, bodyA.y, bodyA.getTransformedVertices(), manifold);
-			else if (lShapeTypeB == ShapeType.LineWidth)
-				findLinePolygonContactPoints(bodyB.getTransformedVertices(), bodyA.getTransformedVertices(), manifold);
-
-		} else if (lShapeTypeA == ShapeType.Circle) {
-			if (lShapeTypeB == ShapeType.Polygon)
-				findCirclePolygonContactPoint(bodyA.x, bodyA.y, bodyA.radius, bodyB.x, bodyB.y, bodyB.getTransformedVertices(), manifold);
-			else if (lShapeTypeB == ShapeType.Circle)
-				findCircleCircleContactPoint(bodyA.x, bodyA.y, bodyA.radius, bodyB.x, bodyB.y, manifold);
-			else if (lShapeTypeB == ShapeType.LineWidth)
-				findLineCircleContactPoint(bodyB.getTransformedVertices(), bodyB.height, bodyA.x, bodyA.y, bodyA.radius, manifold);
-
-		} else if (lShapeTypeA == ShapeType.LineWidth) {
-			if (lShapeTypeB == ShapeType.Polygon) {
-				findLinePolygonContactPoints(bodyB.getTransformedVertices(), bodyA.getTransformedVertices(), manifold);
-			} else if (lShapeTypeB == ShapeType.Circle) {
-				findLineCircleContactPoint(bodyA.getTransformedVertices(), bodyA.height, bodyB.x, bodyB.y, bodyB.radius, manifold);
-			} else if (lShapeTypeB == ShapeType.LineWidth)
-				findLineLineContactPoints(bodyA.getTransformedVertices(), bodyA.height, bodyB.getTransformedVertices(), bodyB.height, manifold);
-
-		}
-	}
-
-	private static void findPolygonPolygonContactPoints(List<Vector2f> polyAVerts, List<Vector2f> polyBVerts, ContactManifold contactManifold) {
-
-		float minDist2 = Float.MAX_VALUE;
-
-		final int lNumVertsA = polyAVerts.size();
-		final int lNumVertsB = polyAVerts.size();
-		for (int i = 0; i < lNumVertsA; i++) {
-			final var p = polyAVerts.get(i);
-
-			for (int j = 0; j < lNumVertsB; j++) {
-				final var va = polyBVerts.get(j);
-				final var vb = polyBVerts.get((j + 1) % polyBVerts.size());
-
-				final var lPointSegmentDist = pointSegmentDistance2(p.x, p.y, va.x, va.y, vb.x, vb.y);
-
-				// a second point with ~same distance
-				if (equalWithinEpsilon(lPointSegmentDist.dist2, minDist2)) {
-					if (!equalWithinEpsilon(lPointSegmentDist.contactX, lPointSegmentDist.contactY, contactManifold.contact1.x, contactManifold.contact1.y)) {
-						contactManifold.contactCount = 2;
-						contactManifold.contact2.x = lPointSegmentDist.contactX;
-						contactManifold.contact2.y = lPointSegmentDist.contactY;
-					}
-				}
-
-				// new minimum distance found
-				else if (lPointSegmentDist.dist2 < minDist2) {
-					minDist2 = lPointSegmentDist.dist2;
-
-					contactManifold.contactCount = 1;
-					contactManifold.contact1.x = lPointSegmentDist.contactX;
-					contactManifold.contact1.y = lPointSegmentDist.contactY;
-				}
-			}
-		}
-
-		for (int i = 0; i < lNumVertsB; i++) {
-			final var p = polyBVerts.get(i);
-
-			for (int j = 0; j < lNumVertsA; j++) {
-				final var va = polyAVerts.get(j);
-				final var vb = polyAVerts.get((j + 1) % polyAVerts.size());
-
-				final var lPointSegmentDist = pointSegmentDistance2(p.x, p.y, va.x, va.y, vb.x, vb.y);
-
-				// a second point with ~same distance
-				if (equalWithinEpsilon(lPointSegmentDist.dist2, minDist2)) {
-					if (!equalWithinEpsilon(lPointSegmentDist.contactX, lPointSegmentDist.contactY, contactManifold.contact1.x, contactManifold.contact1.y)) {
-						contactManifold.contactCount = 2;
-						contactManifold.contact2.x = lPointSegmentDist.contactX;
-						contactManifold.contact2.y = lPointSegmentDist.contactY;
-					}
-				}
-
-				// new minimum distance found
-				else if (lPointSegmentDist.dist2 < minDist2) {
-					minDist2 = lPointSegmentDist.dist2;
-
-					contactManifold.contactCount = 1;
-					contactManifold.contact1.x = lPointSegmentDist.contactX;
-					contactManifold.contact1.y = lPointSegmentDist.contactY;
-				}
-			}
-		}
-	}
-
-	private static void findLinePolygonContactPoints(List<Vector2f> lineVerts, List<Vector2f> polyVerts, ContactManifold contactManifold) {
-		float minDist2 = Float.MAX_VALUE;
-
-		final int lNumVertsA = polyVerts.size();
-		for (int i = 0; i < lNumVertsA; i++) {
-			final var p = polyVerts.get(i);
-
-			final var va = lineVerts.get(0);
-			final var vb = lineVerts.get(1);
-
-			final var lPointSegmentDist = pointSegmentDistance2(p.x, p.y, va.x, va.y, vb.x, vb.y);
-
-			// a second point with ~same distance
-			if (equalWithinEpsilon(lPointSegmentDist.dist2, minDist2)) {
-				if (!equalWithinEpsilon(lPointSegmentDist.contactX, lPointSegmentDist.contactY, contactManifold.contact1.x, contactManifold.contact1.y)) {
-					contactManifold.contactCount = 2;
-					contactManifold.contact2.x = lPointSegmentDist.contactX;
-					contactManifold.contact2.y = lPointSegmentDist.contactY;
-				}
-			}
-
-			// new minimum distance found
-			else if (lPointSegmentDist.dist2 < minDist2) {
-				minDist2 = lPointSegmentDist.dist2;
-
-				contactManifold.contactCount = 1;
-				contactManifold.contact1.x = lPointSegmentDist.contactX;
-				contactManifold.contact1.y = lPointSegmentDist.contactY;
-			}
-		}
-
-		final int lNumVertsB = lineVerts.size();
-		for (int i = 0; i < lNumVertsB; i++) {
-			final var p = lineVerts.get(i);
-
-			for (int j = 0; j < lNumVertsA; j++) {
-				final var va = polyVerts.get(j);
-				final var vb = polyVerts.get((j + 1) % polyVerts.size());
-
-				final var lPointSegmentDist = pointSegmentDistance2(p.x, p.y, va.x, va.y, vb.x, vb.y);
-
-				// a second point with ~same distance
-				if (equalWithinEpsilon(lPointSegmentDist.dist2, minDist2)) {
-					if (!equalWithinEpsilon(lPointSegmentDist.contactX, lPointSegmentDist.contactY, contactManifold.contact1.x, contactManifold.contact1.y)) {
-						contactManifold.contactCount = 2;
-						contactManifold.contact2.x = lPointSegmentDist.contactX;
-						contactManifold.contact2.y = lPointSegmentDist.contactY;
-					}
-				}
-
-				// new minimum distance found
-				else if (lPointSegmentDist.dist2 < minDist2) {
-					minDist2 = lPointSegmentDist.dist2;
-
-					contactManifold.contactCount = 1;
-					contactManifold.contact1.x = lPointSegmentDist.contactX;
-					contactManifold.contact1.y = lPointSegmentDist.contactY;
-				}
-			}
-		}
-	}
-
-	private static void findCirclePolygonContactPoint(float circleAX, float circleAY, float radiusA, float polyCenterX, float polyCenterY, List<Vector2f> verts, ContactManifold contactManifold) {
-		float minDist2 = Float.MAX_VALUE;
-
-		final int lNumVerts = verts.size();
-		for (int i = 0; i < lNumVerts; i++) {
-			final var va = verts.get(i);
-			final var vb = verts.get((i + 1) % verts.size());
-
-			final var lPointSegmentDist = pointSegmentDistance2(circleAX, circleAY, va.x, va.y, vb.x, vb.y);
-			if (lPointSegmentDist.dist2 < minDist2) {
-				minDist2 = lPointSegmentDist.dist2;
-
-				contactManifold.contact1.x = lPointSegmentDist.contactX;
-				contactManifold.contact1.y = lPointSegmentDist.contactY;
-				contactManifold.contactCount = 1;
-			}
-		}
-	}
-
-	private static void findCircleCircleContactPoint(float circleAX, float circleAY, float radiusA, float circleBX, float circleBY, ContactManifold contactManifold) {
-		var abX = circleBX - circleAX;
-		var abY = circleBY - circleAY;
-
-		final var abLength = (float) Math.sqrt(abX * abX + abY * abY);
-
-		abX /= abLength;
-		abY /= abLength;
-
-		contactManifold.contact1.x = circleAX + abX * radiusA;
-		contactManifold.contact1.y = circleAY + abY * radiusA;
-		contactManifold.contactCount = 1;
-
-	}
-
-	private static void findLineCircleContactPoint(List<Vector2f> lineVertices, float lineRadius, float circleX, float circleY, float radius, ContactManifold manifold) {
-		final var sx = lineVertices.get(0).x;
-		final var sy = lineVertices.get(0).y;
-
-		final var ex = lineVertices.get(1).x;
-		final var ey = lineVertices.get(1).y;
-
-		final var lLineX1 = ex - sx;
-		final var lLineY1 = ey - sy;
-
-		final var lLineX2 = circleX - sx;
-		final var lLineY2 = circleY - sy;
-
-		final var lEdgeLength = lLineX1 * lLineX1 + lLineY1 * lLineY1;
-		final var v = lLineX1 * lLineX2 + lLineY1 * lLineY2;
-		final var t = MathHelper.clamp(v, 0.f, lEdgeLength) / lEdgeLength;
-
-		// project out towards circle by line radius
-		final float lClosestPointX = sx + t * lLineX1;
-		final float lClosestPointY = sy + t * lLineY1;
-
-		manifold.contact1.x = lClosestPointX - (lClosestPointX - circleX) * lineRadius;
-		manifold.contact1.y = lClosestPointY - (lClosestPointY - circleY) * lineRadius;
-		manifold.contactCount = 1;
-	}
-
-	private static void findLineLineContactPoints(List<Vector2f> lineAVertices, float lineARadius, List<Vector2f> lineBVertices, float lineBRadius, ContactManifold contactManifold) {
-
-		float minDist2 = Float.MAX_VALUE;
-
-		final int lNumVertsA = lineAVertices.size();
-		final int lNumVertsB = lineBVertices.size();
-		for (int i = 0; i < lNumVertsA; i++) {
-			final var p = lineAVertices.get(i);
-
-			for (int j = 0; j < lNumVertsB; j++) {
-				final var va = lineBVertices.get(j);
-				final var vb = lineBVertices.get((j + 1) % lineBVertices.size());
-
-				final var lPointSegmentDist = pointSegmentDistance2(p.x, p.y, va.x, va.y, vb.x, vb.y);
-
-				// a second point with ~same distance
-				if (equalWithinEpsilon(lPointSegmentDist.dist2, minDist2)) {
-					if (!equalWithinEpsilon(lPointSegmentDist.contactX, lPointSegmentDist.contactY, contactManifold.contact1.x, contactManifold.contact1.y)) {
-						contactManifold.contactCount = 2;
-						contactManifold.contact2.x = lPointSegmentDist.contactX;
-						contactManifold.contact2.y = lPointSegmentDist.contactY;
-					}
-				}
-
-				// new minimum distance found
-				else if (lPointSegmentDist.dist2 < minDist2) {
-					minDist2 = lPointSegmentDist.dist2;
-
-					contactManifold.contactCount = 1;
-					contactManifold.contact1.x = lPointSegmentDist.contactX;
-					contactManifold.contact1.y = lPointSegmentDist.contactY;
-				}
-			}
-		}
-
-		for (int i = 0; i < lNumVertsB; i++) {
-			final var p = lineBVertices.get(i);
-
-			for (int j = 0; j < lNumVertsA; j++) {
-				final var va = lineAVertices.get(j);
-				final var vb = lineAVertices.get((j + 1) % lineAVertices.size());
-
-				final var lPointSegmentDist = pointSegmentDistance2(p.x, p.y, va.x, va.y, vb.x, vb.y);
-
-				// a second point with ~same distance
-				if (equalWithinEpsilon(lPointSegmentDist.dist2, minDist2)) {
-					if (!equalWithinEpsilon(lPointSegmentDist.contactX, lPointSegmentDist.contactY, contactManifold.contact1.x, contactManifold.contact1.y)) {
-						contactManifold.contactCount = 2;
-						contactManifold.contact2.x = lPointSegmentDist.contactX;
-						contactManifold.contact2.y = lPointSegmentDist.contactY;
-					}
-				}
-
-				// new minimum distance found
-				else if (lPointSegmentDist.dist2 < minDist2) {
-					minDist2 = lPointSegmentDist.dist2;
-
-					contactManifold.contactCount = 1;
-					contactManifold.contact1.x = lPointSegmentDist.contactX;
-					contactManifold.contact1.y = lPointSegmentDist.contactY;
-				}
-			}
-		}
-
-	}
-
-	private static PointSegmentResult pointSegmentDistance2(float px, float py, float ax, float ay, float bx, float by) {
-		final var abX = bx - ax;
-		final var abY = by - ay;
-
-		final var apX = px - ax;
-		final var apY = py - ay;
-
-		final var proj = Vector2f.dot(abX, abY, apX, apY);
-		final var projLength = Vector2f.dst2(abX, abY);
-		final var d = proj / projLength;
-
-		if (d <= 0.f) {
-			pointSegmentResult.contactX = ax;
-			pointSegmentResult.contactY = ay;
-		} else if (d >= 1.f) {
-			pointSegmentResult.contactX = bx;
-			pointSegmentResult.contactY = by;
-		} else {
-			pointSegmentResult.contactX = ax + abX * d;
-			pointSegmentResult.contactY = ay + abY * d;
-		}
-
-		pointSegmentResult.dist2 = Vector2f.dst2(px, py, pointSegmentResult.contactX, pointSegmentResult.contactY);
-		return pointSegmentResult;
-	}
-
 	// Helper Methods
 
 	public static boolean isCwWinding(Vector2f a, Vector2f b, Vector2f c) {
@@ -919,13 +685,4 @@ public class SAT {
 		return Vector2f.cross(aXx, aXy, aYx, aYy) > 0;
 	}
 
-	public static boolean equalWithinEpsilon(float a, float b) {
-		return Math.abs(a - b) < ConstantsPhysics.EPSILON;
-	}
-
-	public static boolean equalWithinEpsilon(float p1x, float p1y, float p2x, float p2y) {
-		final float xx = p1x - p2x;
-		final float yy = p1y - p2y;
-		return (xx * xx + yy * yy) < ConstantsPhysics.EPSILON * ConstantsPhysics.EPSILON;
-	}
 }

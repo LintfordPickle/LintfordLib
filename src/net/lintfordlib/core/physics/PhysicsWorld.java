@@ -11,7 +11,8 @@ import net.lintfordlib.core.debug.stats.DebugStatTagFloat;
 import net.lintfordlib.core.debug.stats.DebugStatTagInt;
 import net.lintfordlib.core.maths.MathHelper;
 import net.lintfordlib.core.physics.collisions.ContactManifold;
-import net.lintfordlib.core.physics.collisions.SAT;
+import net.lintfordlib.core.physics.collisions.SATContacts;
+import net.lintfordlib.core.physics.collisions.SATIntersection;
 import net.lintfordlib.core.physics.dynamics.RigidBody;
 import net.lintfordlib.core.physics.interfaces.ICollisionCallback;
 import net.lintfordlib.core.physics.resolvers.ICollisionResolver;
@@ -314,7 +315,7 @@ public class PhysicsWorld {
 
 			mContactManifold.reset();
 
-			if (SAT.checkCollides(lBodyA, lBodyB, mContactManifold)) {
+			if (SATIntersection.checkCollides(lBodyA, lBodyB, mContactManifold)) {
 
 				final var includeFilter = lBodyA.maskBits() != 0 && lBodyB.maskBits() != 0 && lBodyA.categoryBits() != 0 && lBodyB.categoryBits() != 0;
 				final var passedFilterCollision = !includeFilter || (lBodyA.maskBits() & lBodyB.categoryBits()) != 0 && (lBodyA.categoryBits() & lBodyB.maskBits()) != 0;
@@ -337,7 +338,7 @@ public class PhysicsWorld {
 
 				separateBodiesByMTV(lBodyA, lBodyB, mContactManifold.normal.x * mContactManifold.depth, mContactManifold.normal.y * mContactManifold.depth);
 
-				SAT.fillContactPoints(mContactManifold);
+				SATContacts.fillContactPoints(mContactManifold);
 
 				for (int j = 0; j < lNumCallbacks; j++) {
 					mCollisionCallbackList.get(j).postContact(mContactManifold);
@@ -367,17 +368,17 @@ public class PhysicsWorld {
 	// TODO: Move this to the collision package
 	private void separateBodiesByMTV(final RigidBody lBodyA, final RigidBody lBodyB, float mtvX, float mtvY) {
 		if (lBodyA.isStatic()) {
-			lBodyB.x += mtvX;
-			lBodyB.y += mtvY;
+			lBodyB.transform.p.x += mtvX;
+			lBodyB.transform.p.y += mtvY;
 		} else if (lBodyB.isStatic()) {
-			lBodyA.x -= mtvX;
-			lBodyA.y -= mtvY;
+			lBodyA.transform.p.x -= mtvX;
+			lBodyA.transform.p.y -= mtvY;
 		} else {
-			lBodyA.x += -mtvX / 2.f;
-			lBodyA.y += -mtvY / 2.f;
+			lBodyA.transform.p.x += -mtvX / 2.f;
+			lBodyA.transform.p.y += -mtvY / 2.f;
 
-			lBodyB.x += mtvX / 2.f;
-			lBodyB.y += mtvY / 2.f;
+			lBodyB.transform.p.x += mtvX / 2.f;
+			lBodyB.transform.p.y += mtvY / 2.f;
 		}
 	}
 

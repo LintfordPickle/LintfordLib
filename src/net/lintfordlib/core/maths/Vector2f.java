@@ -197,12 +197,6 @@ public class Vector2f implements Serializable {
 		return this;
 	}
 
-	public static Vector2f add(Vector2f v0, Vector2f v1) {
-		float x = v0.x + v1.x;
-		float y = v0.y + v1.y;
-		return new Vector2f(x, y);
-	}
-
 	/**
 	 * Adds the given components to this vector
 	 * 
@@ -282,6 +276,25 @@ public class Vector2f implements Serializable {
 		x *= scalar;
 		y *= scalar;
 		return this;
+	}
+
+	/**
+	 * Multiples this {@link Vector2f} by the given rotation
+	 */
+	public Vector2f mul(Rotation r) {
+		final var xx = x;
+		final var yy = y;
+
+		x = r.c * xx - r.s * yy;
+		y = r.s * xx + r.c * yy;
+		return this;
+	}
+
+	/**
+	 * Multiples this {@link Vector2f} by the given rotation
+	 */
+	public static void mul(Vector2f out, Vector2f pos, Rotation r) {
+		out.set(r.c * pos.x - r.s, r.s * pos.y + r.c);
 	}
 
 	/**

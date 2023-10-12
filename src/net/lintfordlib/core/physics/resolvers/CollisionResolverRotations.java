@@ -9,10 +9,11 @@ public class CollisionResolverRotations implements ICollisionResolver {
 	public void resolveCollisions(ContactManifold contact) {
 		final var lBodyA = contact.bodyA;
 		final var lBodyB = contact.bodyB;
+
 		final float normalX = contact.normal.x;
 		final float normalY = contact.normal.y;
 
-		final float e = Math.min(lBodyA.restitution(), lBodyB.restitution());
+		final float e = Math.min(lBodyA.shape().restitution(), lBodyB.shape().restitution());
 
 		float impulse1X = 0, impulse1Y = 0, impulse2X = 0, impulse2Y = 0;
 		float ra1X = 0, ra1Y = 0, ra2X = 0, ra2Y = 0;
@@ -24,8 +25,8 @@ public class CollisionResolverRotations implements ICollisionResolver {
 			final float contactX = i == 0 ? contact.contact1.x : contact.contact2.x;
 			final float contactY = i == 0 ? contact.contact1.y : contact.contact2.y;
 
-			final float ra_x = contactX - lBodyA.x;
-			final float ra_y = contactY - lBodyA.y;
+			final float ra_x = contactX - lBodyA.transform.p.x;
+			final float ra_y = contactY - lBodyA.transform.p.y;
 
 			final float raPerp_x = -ra_y;
 			final float raPerp_y = ra_x;
@@ -33,8 +34,8 @@ public class CollisionResolverRotations implements ICollisionResolver {
 			final float angLinA_X = raPerp_x * lBodyA.angularVelocity;
 			final float angLinA_Y = raPerp_y * lBodyA.angularVelocity;
 
-			final float rb_x = contactX - lBodyB.x;
-			final float rb_y = contactY - lBodyB.y;
+			final float rb_x = contactX - lBodyB.transform.p.x;
+			final float rb_y = contactY - lBodyB.transform.p.y;
 
 			final float rbPerp_x = -rb_y;
 			final float rbPerp_y = rb_x;
@@ -54,10 +55,8 @@ public class CollisionResolverRotations implements ICollisionResolver {
 			final float ra_perp_dot_n = Vector2f.dot(raPerp_x, raPerp_y, normalX, normalY);
 			final float rb_perp_dot_n = Vector2f.dot(rbPerp_x, rbPerp_y, normalX, normalY);
 
-			final float denominator = lBodyA.invMass() + lBodyB.invMass() + 
-					(ra_perp_dot_n * ra_perp_dot_n) * lBodyA.invInertia() + 
-					(rb_perp_dot_n * rb_perp_dot_n) * lBodyB.invInertia();
-			
+			final float denominator = lBodyA.invMass() + lBodyB.invMass() + (ra_perp_dot_n * ra_perp_dot_n) * lBodyA.invInertia() + (rb_perp_dot_n * rb_perp_dot_n) * lBodyB.invInertia();
+
 			float j = -(1.f + e) * contactVelocityMagnitude;
 			j /= denominator;
 			j /= lContactCount;

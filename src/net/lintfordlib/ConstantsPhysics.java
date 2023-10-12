@@ -11,8 +11,6 @@ public class ConstantsPhysics {
 	public static final int MIN_ITERATIONS = 1;
 	public static final int MAX_ITERATIONS = 128;
 
-	public static final float EPSILON = 0.0005f; // .5 mm
-
 	private static float UNITS_TO_PIXELS = 32.f;
 	private static float PIXELS_TO_UNITS = 1.f / UNITS_TO_PIXELS;
 
@@ -40,12 +38,12 @@ public class ConstantsPhysics {
 		input.x *= PIXELS_TO_UNITS;
 		input.y *= PIXELS_TO_UNITS;
 	}
-	
+
 	public static void vector2fToPixels(Vector2f input) {
 		input.x *= UNITS_TO_PIXELS;
 		input.y *= UNITS_TO_PIXELS;
 	}
-	
+
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
