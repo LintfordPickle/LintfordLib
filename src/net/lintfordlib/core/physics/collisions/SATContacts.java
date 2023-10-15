@@ -65,6 +65,16 @@ public class SATContacts {
 			} else if (lShapeTypeB == ShapeType.LineWidth)
 				findLineLineContactPoints(bodyA.getWorldVertices(), bodyA.shape().height(), bodyB.getWorldVertices(), bodyB.shape().height(), manifold);
 
+		} else if (lShapeTypeA == ShapeType.Box) {
+			if (lShapeTypeB == ShapeType.Polygon)
+				findPolygonPolygonContactPoints(bodyA.getWorldVertices(), bodyB.getWorldVertices(), manifold);
+			else if (lShapeTypeB == ShapeType.Circle)
+				findCirclePolygonContactPoint(bodyB.transform.p.x, bodyB.transform.p.y, bodyB.shape().radius(), bodyA.transform.p.x, bodyA.transform.p.y, bodyA.getWorldVertices(), manifold);
+			else if (lShapeTypeB == ShapeType.LineWidth)
+				findLinePolygonContactPoints(bodyB.getWorldVertices(), bodyA.getWorldVertices(), manifold);
+			else if (lShapeTypeB == ShapeType.Box)
+				findLinePolygonContactPoints(bodyB.getWorldVertices(), bodyA.getWorldVertices(), manifold);
+
 		}
 	}
 
