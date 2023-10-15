@@ -92,6 +92,8 @@ public class LineShape extends BaseShape {
 		height = unitColDistToLine * 2.f;
 		radius = (float) Math.sqrt(width * width + height * height) * .5f;
 
+		computeMass();
+
 		// CCW winding order
 
 		final var s = (float) Math.sin(rotRadians);
@@ -119,11 +121,11 @@ public class LineShape extends BaseShape {
 	public static LineShape createLineShape(float unitLocalPosX, float unitLocalPosY, float unitWidth, float unitHeight, float rotRadians, float density, float restitution, float staticFriction, float dynamicFriction) {
 		final var lNewLineShape = new LineShape();
 
-		lNewLineShape.set(unitLocalPosX, unitLocalPosY, unitWidth, unitHeight, rotRadians);
-
 		lNewLineShape.staticFriction = MathHelper.clamp(staticFriction, 0.f, 1.f);
 		lNewLineShape.dynamicFriction = MathHelper.clamp(dynamicFriction, 0.f, 1.f);
 		lNewLineShape.restitution = MathHelper.clamp(restitution, 0f, 1f);
+
+		lNewLineShape.set(unitLocalPosX, unitLocalPosY, unitWidth, unitHeight, rotRadians);
 
 		return lNewLineShape;
 	}

@@ -67,10 +67,10 @@ public class CircleShape extends BaseShape {
 	public static CircleShape createCircleShape(float unitPositionX, float unitPositionY, float unitRadius, float density, float restitution, float staticFriction, float dynamicFriction) {
 		final var lNewCircleShape = new CircleShape();
 
-		lNewCircleShape.set(Arrays.asList(new Vector2f(unitPositionX, unitPositionY)), Math.abs(density), unitRadius);
 		lNewCircleShape.staticFriction = MathHelper.clamp(staticFriction, 0.f, 1.f);
 		lNewCircleShape.dynamicFriction = MathHelper.clamp(dynamicFriction, 0.f, 1.f);
 		lNewCircleShape.restitution = MathHelper.clamp(restitution, 0f, 1f);
+		lNewCircleShape.set(Arrays.asList(new Vector2f(unitPositionX, unitPositionY)), Math.abs(density), unitRadius);
 
 		return lNewCircleShape;
 	}
