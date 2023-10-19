@@ -78,6 +78,10 @@ public class Vector2f implements Serializable {
 		return (float) Math.sqrt(x * x + y * y);
 	}
 
+	public float len2() {
+		return x * x + y * y;
+	}
+
 	public static float dst(Vector2f x, Vector2f y) {
 		return dst(x.x, x.y, y.x, y.y);
 
