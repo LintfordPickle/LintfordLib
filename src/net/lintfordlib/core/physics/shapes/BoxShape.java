@@ -56,7 +56,7 @@ public class BoxShape extends BaseShape {
 		width = unitWidth;
 		height = unitHeight;
 		radius = (float) Math.sqrt(width * width + height * height) * .5f;
-		
+
 		computeMass();
 
 		final var s = (float) Math.sin(rotRadians);
@@ -89,6 +89,10 @@ public class BoxShape extends BaseShape {
 	// --------------------------------------
 	// Factory-Methods
 	// --------------------------------------
+
+	public static BoxShape createBoxShape(float unitWidth, float unitHeight, float rotRadians, float density, float restitution, float staticFriction, float dynamicFriction) {
+		return createBoxShape(0.f, 0.f, unitWidth, unitHeight, rotRadians, density, restitution, staticFriction, dynamicFriction);
+	}
 
 	public static BoxShape createBoxShape(float unitPositionX, float unitPositionY, float unitWidth, float unitHeight, float rotRadians, float density, float restitution, float staticFriction, float dynamicFriction) {
 		final var lNewBoxShape = new BoxShape();

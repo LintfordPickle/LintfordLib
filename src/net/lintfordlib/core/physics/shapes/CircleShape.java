@@ -64,6 +64,10 @@ public class CircleShape extends BaseShape {
 	// Factory Methods
 	// --------------------------------------
 
+	public static CircleShape createCircleShape(float unitRadius, float density, float restitution, float staticFriction, float dynamicFriction) {
+		return createCircleShape(0.f, 0.f, unitRadius, density, restitution, staticFriction, dynamicFriction);
+	}
+
 	public static CircleShape createCircleShape(float unitPositionX, float unitPositionY, float unitRadius, float density, float restitution, float staticFriction, float dynamicFriction) {
 		final var lNewCircleShape = new CircleShape();
 

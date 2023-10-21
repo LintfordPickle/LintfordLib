@@ -118,6 +118,10 @@ public class LineShape extends BaseShape {
 	// Factory-Methods
 	// --------------------------------------
 
+	public static LineShape createLineShape(float unitWidth, float unitHeight, float rotRadians, float density, float restitution, float staticFriction, float dynamicFriction) {
+		return createLineShape(0.f, 0.f, unitWidth, unitHeight, rotRadians, density, restitution, staticFriction, dynamicFriction);
+	}
+
 	public static LineShape createLineShape(float unitLocalPosX, float unitLocalPosY, float unitWidth, float unitHeight, float rotRadians, float density, float restitution, float staticFriction, float dynamicFriction) {
 		final var lNewLineShape = new LineShape();
 
