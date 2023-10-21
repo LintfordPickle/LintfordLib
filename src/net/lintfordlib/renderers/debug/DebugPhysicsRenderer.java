@@ -120,15 +120,20 @@ public class DebugPhysicsRenderer extends BaseRenderer {
 		final var lVertices = body.getWorldVertices();
 		final var lShape = body.shape();
 
-		// TODO: Why do I need to get the body transform when I have the world vertices (because the circle only has the center)?
-
 		switch (lShape.shapeType()) {
 		case Polygon: {
+
 			lLineBatch.begin(core.gameCamera());
-			lLineBatch.draw(lVertices.get(0).x * lUnitToPixels, lVertices.get(0).y * lUnitToPixels, lVertices.get(1).x * lUnitToPixels, lVertices.get(1).y * lUnitToPixels, -0.01f, r, g, b, 1.f);
-			lLineBatch.draw(lVertices.get(1).x * lUnitToPixels, lVertices.get(1).y * lUnitToPixels, lVertices.get(2).x * lUnitToPixels, lVertices.get(2).y * lUnitToPixels, -0.01f, r, g, b, 1.f);
-			lLineBatch.draw(lVertices.get(2).x * lUnitToPixels, lVertices.get(2).y * lUnitToPixels, lVertices.get(3).x * lUnitToPixels, lVertices.get(3).y * lUnitToPixels, -0.01f, r, g, b, 1.f);
-			lLineBatch.draw(lVertices.get(3).x * lUnitToPixels, lVertices.get(3).y * lUnitToPixels, lVertices.get(0).x * lUnitToPixels, lVertices.get(0).y * lUnitToPixels, -0.01f, r, g, b, 1.f);
+
+			final int lNumVertices = lVertices.size();
+			for (int i = 0; i < lNumVertices; i++) {
+				final var v0 = lVertices.get(i);
+				final var t = (i + 1) % lNumVertices;
+				final var v1 = lVertices.get(t);
+
+				lLineBatch.draw(v0.x * lUnitToPixels, v0.y * lUnitToPixels, v1.x * lUnitToPixels, v1.y * lUnitToPixels, -0.01f, r, g, b, 1.f);
+			}
+
 			lLineBatch.end();
 
 			break;
