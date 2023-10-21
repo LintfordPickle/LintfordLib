@@ -46,7 +46,7 @@ public class RigidBody extends PhysicsGridEntity {
 	protected float invInertia;
 
 	public float torque;
-	public float angularVelocity;
+	private float angularVelocity;
 
 	private int mCategoryBit; // I'm a ..
 	private int mMaskBit; // I collide with ...
@@ -56,6 +56,24 @@ public class RigidBody extends PhysicsGridEntity {
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public void setAngularVelocity(float angularVelocity) {
+		if (isStatic())
+			return;
+
+		this.angularVelocity = angularVelocity;
+	}
+
+	public void applyAngularVelocity(float angularVelocity) {
+		if (isStatic())
+			return;
+
+		this.angularVelocity += angularVelocity;
+	}
+
+	public float angularVelocity() {
+		return angularVelocity;
+	}
 
 	public float mass() {
 		return mass;

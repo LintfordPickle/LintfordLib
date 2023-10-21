@@ -60,7 +60,7 @@ public class PolygonShape extends BaseShape {
 			mTransformedVertices.add(new Vector2f(vertices.get(i)));
 		}
 
-		// TODO: Set wdith/height/radius?
+		// TODO: Set width/height/radius?
 
 	}
 
