@@ -63,9 +63,9 @@ public class BoxShape extends BaseShape {
 		final var c = (float) Math.cos(rotRadians);
 
 		final var l = -width * .5f;
-		final var b = -height * .5f;
+		final var b = height * .5f;
 		final var r = width * .5f;
-		final var t = height * .5f;
+		final var t = -height * .5f;
 
 		final var local_tl = new Vector2f(l * c - t * s, l * s + t * c);
 		final var local_tr = new Vector2f(r * c - t * s, r * s + t * c);
@@ -75,15 +75,18 @@ public class BoxShape extends BaseShape {
 		// CCW winding order
 		mLocalVertices.clear();
 		mLocalVertices.add(local_tl.add(unitPositionX, unitPositionY));
-		mLocalVertices.add(local_tr.add(unitPositionX, unitPositionY));
-		mLocalVertices.add(local_br.add(unitPositionX, unitPositionY));
 		mLocalVertices.add(local_bl.add(unitPositionX, unitPositionY));
+		mLocalVertices.add(local_br.add(unitPositionX, unitPositionY));
+		mLocalVertices.add(local_tr.add(unitPositionX, unitPositionY));
+
+		assert MathHelper.isTriangleCcw(mLocalVertices.get(0).x, mLocalVertices.get(0).y, mLocalVertices.get(1).x, mLocalVertices.get(1).y, mLocalVertices.get(2).x, mLocalVertices.get(2).y) : "BoxShape triangle 0 not CCW";
+		assert MathHelper.isTriangleCcw(mLocalVertices.get(0).x, mLocalVertices.get(0).y, mLocalVertices.get(2).x, mLocalVertices.get(2).y, mLocalVertices.get(3).x, mLocalVertices.get(3).y) : "BoxShape triangle 1 not CCW";
 
 		mTransformedVertices.clear();
 		mTransformedVertices.add(new Vector2f(local_tl));
-		mTransformedVertices.add(new Vector2f(local_tr));
-		mTransformedVertices.add(new Vector2f(local_br));
 		mTransformedVertices.add(new Vector2f(local_bl));
+		mTransformedVertices.add(new Vector2f(local_br));
+		mTransformedVertices.add(new Vector2f(local_tr));
 	}
 
 	// --------------------------------------
