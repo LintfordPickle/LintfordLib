@@ -13,12 +13,6 @@ public class SATIntersection {
 	// Inner-Classes
 	// ---------------------------------------------
 
-	private static class PointSegmentResult {
-		public float dist2;
-		public float contactX;
-		public float contactY;
-	}
-
 	private static class SatCollisionProjectionResult {
 		public float min;
 		public float max;
@@ -34,8 +28,6 @@ public class SATIntersection {
 	// ---------------------------------------------
 
 	public static final ContactManifold tempResult = new ContactManifold();
-
-	private static final PointSegmentResult pointSegmentResult = new PointSegmentResult();
 
 	private static final SatCollisionProjectionResult projectionResult1 = new SatCollisionProjectionResult();
 	private static final SatCollisionProjectionResult projectionResult2 = new SatCollisionProjectionResult();
@@ -53,7 +45,7 @@ public class SATIntersection {
 		if (lShapeType == ShapeType.Polygon) {
 			return intersectionsPolygonShape(bodyA, bodyB, manifold);
 		} else if (lShapeType == ShapeType.Box) {
-			return intersectionsPolygonShape(bodyA, bodyB, manifold);
+			return intersectionsBoxShape(bodyA, bodyB, manifold);
 		} else if (lShapeType == ShapeType.LineWidth) {
 			return intersectionsLineWidthShape(bodyA, bodyB, manifold);
 		} else if (lShapeType == ShapeType.Circle) {
@@ -64,7 +56,6 @@ public class SATIntersection {
 	}
 
 	private static boolean intersectionsPolygonShape(RigidBody bodyA, RigidBody bodyB, ContactManifold manifold) {
-		final var lShapeA = bodyA.shape();
 		final var lShapeB = bodyB.shape();
 
 		final var lShapeAWorldVertices = bodyA.getWorldVertices();
@@ -73,7 +64,7 @@ public class SATIntersection {
 		if (lShapeB.shapeType() == ShapeType.Polygon) {
 			return intersectsPolygons(lShapeAWorldVertices, lShapeBWorldVertices, manifold);
 		} else if (lShapeB.shapeType() == ShapeType.Box) {
-			return false; // TODO: Polygon Box intersection SAT
+			return intersectsPolygons(lShapeAWorldVertices, lShapeBWorldVertices, manifold);
 		} else if (lShapeB.shapeType() == ShapeType.LineWidth) {
 			return intersectsLinePolygon(lShapeBWorldVertices, lShapeAWorldVertices, bodyA.transform.p.x, bodyA.transform.p.y, manifold);
 		} else if (lShapeB.shapeType() == ShapeType.Circle) {
@@ -83,21 +74,22 @@ public class SATIntersection {
 		return false;
 	}
 
+	// TODO: Box specific intersection testing
+	@SuppressWarnings("unused")
 	private static boolean intersectionsBoxShape(RigidBody bodyA, RigidBody bodyB, ContactManifold manifold) {
-		final var lShapeA = bodyA.shape();
 		final var lShapeB = bodyB.shape();
 
 		final var lShapeAWorldVertices = bodyA.getWorldVertices();
 		final var lShapeBWorldVertices = bodyB.getWorldVertices();
 
 		if (lShapeB.shapeType() == ShapeType.Polygon) {
-			return false;// intersectsPolygons();
+			return intersectsPolygons(lShapeAWorldVertices, lShapeBWorldVertices, manifold);
 		} else if (lShapeB.shapeType() == ShapeType.Box) {
-			return false;// intersectsLinePolygon();
+			return intersectsPolygons(lShapeAWorldVertices, lShapeBWorldVertices, manifold);
 		} else if (lShapeB.shapeType() == ShapeType.LineWidth) {
-			return false;// intersectsLinePolygon();
+			return intersectsLinePolygon(lShapeBWorldVertices, lShapeAWorldVertices, bodyA.transform.p.x, bodyA.transform.p.y, manifold);
 		} else if (lShapeB.shapeType() == ShapeType.Circle) {
-			return false;// intersectsLinePolygon();
+			return intersectsCirclePolygon(bodyB.transform.p.x, bodyB.transform.p.y, bodyB.shape().radius(), lShapeAWorldVertices, bodyA.transform.p.x, bodyA.transform.p.y, manifold);
 		}
 
 		return false;
@@ -107,7 +99,6 @@ public class SATIntersection {
 		final var lOtherShapeType = bodyB.shape().shapeType();
 
 		final var lShapeAWorldVertices = bodyA.getWorldVertices();
-		final var lShapeBWorldVertices = bodyB.getWorldVertices();
 
 		if (lOtherShapeType == ShapeType.Polygon) {
 			if (intersectsLinePolygon(lShapeAWorldVertices, bodyB.getWorldVertices(), bodyB.transform.p.x, bodyB.transform.p.y, manifold)) {
@@ -116,7 +107,11 @@ public class SATIntersection {
 				return true;
 			}
 		} else if (lOtherShapeType == ShapeType.Box) {
-			return false; // TODO: Line / Box intersections
+			if (intersectsLinePolygon(lShapeAWorldVertices, bodyB.getWorldVertices(), bodyB.transform.p.x, bodyB.transform.p.y, manifold)) {
+				manifold.normal.x = -manifold.normal.x;
+				manifold.normal.y = -manifold.normal.y;
+				return true;
+			}
 		} else if (lOtherShapeType == ShapeType.LineWidth) {
 			return false; // TODO: Line / Line intersections
 		} else if (lOtherShapeType == ShapeType.Circle) {
@@ -144,7 +139,11 @@ public class SATIntersection {
 			return false;
 
 		case Box:
-			return false; // TODO: Circle box intersection
+			if (intersectsCirclePolygon(bodyA.transform.p.x, bodyA.transform.p.y, bodyA.shape().radius(), lShapeBWorldVertices, bodyB.transform.p.x, bodyB.transform.p.y, manifold)) {
+				manifold.normal.x = -manifold.normal.x;
+				manifold.normal.y = -manifold.normal.y;
+				return true;
+			}
 
 		case LineWidth:
 			if (intersectsLineCircle(lShapeBWorldVertices, bodyB.shape().height() * .5f, bodyA.transform.p.x, bodyA.transform.p.y, bodyA.shape().radius(), manifold)) {
@@ -176,7 +175,7 @@ public class SATIntersection {
 		result.depth = Float.MAX_VALUE;
 
 		final var lNumVertsA = verticesA.size();
-		final var lPolyAIsCwWinding = isCwWinding(verticesA.get(0), verticesA.get(1), verticesA.get(2));
+		final var lPolyAIsCwWinding = MathHelper.isCwWinding(verticesA.get(0), verticesA.get(1), verticesA.get(2));
 		for (int i = 0; i < lNumVertsA; i++) {
 			final var va = verticesA.get(i);
 			final var vb = verticesA.get((i + 1) % lNumVertsA);
@@ -220,7 +219,7 @@ public class SATIntersection {
 		}
 
 		final var lNumVertsB = verticesB.size();
-		final var lPolyBIsCwWinding = isCwWinding(verticesB.get(0), verticesB.get(1), verticesB.get(2));
+		final var lPolyBIsCwWinding = MathHelper.isCwWinding(verticesB.get(0), verticesB.get(1), verticesB.get(2));
 		for (int i = 0; i < lNumVertsB; i++) {
 			final var va = verticesB.get(i);
 			final var vb = verticesB.get((i + 1) % lNumVertsB);
@@ -278,7 +277,7 @@ public class SATIntersection {
 		result.depth = Float.MAX_VALUE;
 
 		final var lNumVertsA = polygonVertices.size();
-		final var lPolyIsCwWinding = isCwWinding(polygonVertices.get(0), polygonVertices.get(1), polygonVertices.get(2));
+		final var lPolyIsCwWinding = MathHelper.isCwWinding(polygonVertices.get(0), polygonVertices.get(1), polygonVertices.get(2));
 		for (int i = 0; i < lNumVertsA; i++) {
 			final var va = polygonVertices.get(i);
 			final var vb = polygonVertices.get((i + 1) % lNumVertsA);
@@ -399,9 +398,8 @@ public class SATIntersection {
 		result.normal.y = 0.f;
 		result.depth = Float.MAX_VALUE;
 
-		// first loop through polygons verts
 		final var lNumVertsA = polygonVertices.size();
-		final var lPolyIsCwWinding = isCwWinding(polygonVertices.get(0), polygonVertices.get(1), polygonVertices.get(2));
+		final var lPolyIsCwWinding = MathHelper.isCwWinding(polygonVertices.get(0), polygonVertices.get(1), polygonVertices.get(2));
 		for (int i = 0; i < lNumVertsA; i++) {
 			final var va = polygonVertices.get(i);
 			final var vb = polygonVertices.get((i + 1) % lNumVertsA);
@@ -665,24 +663,4 @@ public class SATIntersection {
 			toFill.max = t;
 		}
 	}
-
-	// Helper Methods
-
-	public static boolean isCwWinding(Vector2f a, Vector2f b, Vector2f c) {
-		final var aXLen = Vector2f.dst2(a.x, a.y, b.x, b.y);
-		if (aXLen == 0)
-			return false;
-
-		final var aXx = (b.x - a.x) / aXLen;
-		final var aXy = (b.y - a.y) / aXLen;
-
-		final var aYLen = Vector2f.dst2(a.x, a.y, c.x, c.y);
-		if (aYLen == 0)
-			return false;
-
-		final var aYx = (c.x - a.x) / aYLen;
-		final var aYy = (c.y - a.y) / aYLen;
-		return Vector2f.cross(aXx, aXy, aYx, aYy) > 0;
-	}
-
 }

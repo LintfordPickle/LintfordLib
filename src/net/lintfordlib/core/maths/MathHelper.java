@@ -295,6 +295,25 @@ public class MathHelper {
 		return wrapAngle(currentAngle + lDifference);
 	}
 
+	// polygon
+	
+	public static boolean isCwWinding(Vector2f a, Vector2f b, Vector2f c) {
+		final var aXLen = Vector2f.dst2(a.x, a.y, b.x, b.y);
+		if (aXLen == 0)
+			return false;
+
+		final var aXx = (b.x - a.x) / aXLen;
+		final var aXy = (b.y - a.y) / aXLen;
+
+		final var aYLen = Vector2f.dst2(a.x, a.y, c.x, c.y);
+		if (aYLen == 0)
+			return false;
+
+		final var aYx = (c.x - a.x) / aYLen;
+		final var aYy = (c.y - a.y) / aYLen;
+		return Vector2f.cross(aXx, aXy, aYx, aYy) > 0;
+	}
+	
 	/** returns true if the order of the vertices are Ccw, otherwise false */
 	public static boolean isTriangleCcw(float ax, float ay, float bx, float by, float cx, float cy) {
 		final float abx = bx - ax;
