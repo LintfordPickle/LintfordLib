@@ -114,7 +114,7 @@ public class SATContacts {
 		float minDist2 = Float.MAX_VALUE;
 
 		final int lNumVertsA = polyAVerts.size();
-		final int lNumVertsB = polyAVerts.size();
+		final int lNumVertsB = polyBVerts.size();
 		for (int i = 0; i < lNumVertsA; i++) {
 			final var p = polyAVerts.get(i);
 
