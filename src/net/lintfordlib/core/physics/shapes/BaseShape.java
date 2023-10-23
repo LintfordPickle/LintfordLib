@@ -22,7 +22,7 @@ public abstract class BaseShape {
 	protected float dynamicFriction;
 	protected float area;
 
-	protected final Vector2f localCenter = new Vector2f(); // TODO: Shape local centers
+	public final Vector2f localCenter = new Vector2f(); // TODO: Shape local centers
 	protected float mass;
 	protected float inertia;
 

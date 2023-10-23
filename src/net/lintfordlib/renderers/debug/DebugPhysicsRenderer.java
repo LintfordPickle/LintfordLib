@@ -22,7 +22,7 @@ public class DebugPhysicsRenderer extends BaseRenderer {
 
 	public static final String RENDERER_NAME = "Physics World Debug Renderer";
 
-	public static final boolean RenderAABB = true;
+	public static final boolean RenderAABB = false;
 
 	public static final boolean RENDER_CONTACT_POINTS = false;
 	public static final List<Vector2f> DebugContactPoints = new ArrayList<>();
@@ -196,6 +196,12 @@ public class DebugPhysicsRenderer extends BaseRenderer {
 		lLineBatch.begin(core.gameCamera());
 		lLineBatch.drawCircle(body.transform.p.x * lUnitToPixels, body.transform.p.y * lUnitToPixels, body.transform.angle, 3, 20, 0.8f, .4f, .4f, true);
 		lLineBatch.end();
+
+		// Render centroid
+		GL11.glPointSize(3.f);
+
+		final var localCenterPoint = new Vector2f(lShape.localCenter).mul(body.transform.q).add(body.transform.p);
+		Debug.debugManager().drawers().drawPointImmediate(core.gameCamera(), localCenterPoint.x * lUnitToPixels, localCenterPoint.y * lUnitToPixels);
 
 		if (RenderAABB)
 			Debug.debugManager().drawers().drawRectImmediate(core.gameCamera(), body.aabb().x() * lUnitToPixels, body.aabb().y() * lUnitToPixels, body.aabb().width() * lUnitToPixels, body.aabb().height() * lUnitToPixels, .93f, .06f, .98f);
