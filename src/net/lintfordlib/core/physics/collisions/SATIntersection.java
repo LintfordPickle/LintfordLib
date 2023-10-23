@@ -27,8 +27,6 @@ public class SATIntersection {
 	// Constants
 	// ---------------------------------------------
 
-	public static final ContactManifold tempResult = new ContactManifold();
-
 	private static final SatCollisionProjectionResult projectionResult1 = new SatCollisionProjectionResult();
 	private static final SatCollisionProjectionResult projectionResult2 = new SatCollisionProjectionResult();
 
@@ -66,7 +64,8 @@ public class SATIntersection {
 		} else if (lShapeB.shapeType() == ShapeType.Box) {
 			return intersectsPolygons(lShapeAWorldVertices, lShapeBWorldVertices, manifold);
 		} else if (lShapeB.shapeType() == ShapeType.LineWidth) {
-			return intersectsLinePolygon(lShapeBWorldVertices, lShapeAWorldVertices, bodyA.transform.p.x, bodyA.transform.p.y, manifold);
+			final var lLineRadius = bodyB.shape().height() * .5f;
+			return intersectsLinePolygon(lShapeBWorldVertices, lLineRadius, lShapeAWorldVertices, bodyA.transform.p.x, bodyA.transform.p.y, manifold);
 		} else if (lShapeB.shapeType() == ShapeType.Circle) {
 			return intersectsCirclePolygon(bodyB.transform.p.x, bodyB.transform.p.y, bodyB.shape().radius(), lShapeAWorldVertices, bodyA.transform.p.x, bodyA.transform.p.y, manifold);
 		}
@@ -74,20 +73,21 @@ public class SATIntersection {
 		return false;
 	}
 
-	// TODO: Box specific intersection testing
-	@SuppressWarnings("unused")
 	private static boolean intersectionsBoxShape(RigidBody bodyA, RigidBody bodyB, ContactManifold manifold) {
 		final var lShapeB = bodyB.shape();
 
 		final var lShapeAWorldVertices = bodyA.getWorldVertices();
 		final var lShapeBWorldVertices = bodyB.getWorldVertices();
 
+		// Shape A is a box
+
 		if (lShapeB.shapeType() == ShapeType.Polygon) {
 			return intersectsPolygons(lShapeAWorldVertices, lShapeBWorldVertices, manifold);
 		} else if (lShapeB.shapeType() == ShapeType.Box) {
 			return intersectsPolygons(lShapeAWorldVertices, lShapeBWorldVertices, manifold);
 		} else if (lShapeB.shapeType() == ShapeType.LineWidth) {
-			return intersectsLinePolygon(lShapeBWorldVertices, lShapeAWorldVertices, bodyA.transform.p.x, bodyA.transform.p.y, manifold);
+			final var lLineRadius = bodyB.shape().height() * .5f;
+			return intersectsLinePolygon(lShapeBWorldVertices, lLineRadius, lShapeAWorldVertices, bodyA.transform.p.x, bodyA.transform.p.y, manifold);
 		} else if (lShapeB.shapeType() == ShapeType.Circle) {
 			return intersectsCirclePolygon(bodyB.transform.p.x, bodyB.transform.p.y, bodyB.shape().radius(), lShapeAWorldVertices, bodyA.transform.p.x, bodyA.transform.p.y, manifold);
 		}
@@ -98,16 +98,17 @@ public class SATIntersection {
 	private static boolean intersectionsLineWidthShape(RigidBody bodyA, RigidBody bodyB, ContactManifold manifold) {
 		final var lOtherShapeType = bodyB.shape().shapeType();
 
-		final var lShapeAWorldVertices = bodyA.getWorldVertices();
+		final var lLineWorldVertices = bodyA.getWorldVertices();
+		final var lLineRadius = bodyA.shape().height() * .5f;
 
 		if (lOtherShapeType == ShapeType.Polygon) {
-			if (intersectsLinePolygon(lShapeAWorldVertices, bodyB.getWorldVertices(), bodyB.transform.p.x, bodyB.transform.p.y, manifold)) {
+			if (intersectsLinePolygon(lLineWorldVertices, lLineRadius, bodyB.getWorldVertices(), bodyB.transform.p.x, bodyB.transform.p.y, manifold)) {
 				manifold.normal.x = -manifold.normal.x;
 				manifold.normal.y = -manifold.normal.y;
 				return true;
 			}
 		} else if (lOtherShapeType == ShapeType.Box) {
-			if (intersectsLinePolygon(lShapeAWorldVertices, bodyB.getWorldVertices(), bodyB.transform.p.x, bodyB.transform.p.y, manifold)) {
+			if (intersectsLinePolygon(lLineWorldVertices, lLineRadius, bodyB.getWorldVertices(), bodyB.transform.p.x, bodyB.transform.p.y, manifold)) {
 				manifold.normal.x = -manifold.normal.x;
 				manifold.normal.y = -manifold.normal.y;
 				return true;
@@ -115,7 +116,7 @@ public class SATIntersection {
 		} else if (lOtherShapeType == ShapeType.LineWidth) {
 			return false; // TODO: Line / Line intersections
 		} else if (lOtherShapeType == ShapeType.Circle) {
-			if (intersectsLineCircle(lShapeAWorldVertices, bodyA.shape().height(), bodyB.transform.p.x, bodyB.transform.p.y, bodyB.shape().radius(), manifold)) {
+			if (intersectsLineCircle(lLineWorldVertices, lLineRadius, bodyB.transform.p.x, bodyB.transform.p.y, bodyB.shape().radius(), manifold)) {
 				return true;
 			}
 		}
@@ -144,9 +145,11 @@ public class SATIntersection {
 				manifold.normal.y = -manifold.normal.y;
 				return true;
 			}
+			return false;
 
 		case LineWidth:
-			if (intersectsLineCircle(lShapeBWorldVertices, bodyB.shape().height() * .5f, bodyA.transform.p.x, bodyA.transform.p.y, bodyA.shape().radius(), manifold)) {
+			final var lLineRadius = bodyB.shape().height() * .5f;
+			if (intersectsLineCircle(lShapeBWorldVertices, lLineRadius, bodyA.transform.p.x, bodyA.transform.p.y, bodyA.shape().radius(), manifold)) {
 				manifold.normal.x = -manifold.normal.x;
 				manifold.normal.y = -manifold.normal.y;
 				return true;
@@ -264,6 +267,7 @@ public class SATIntersection {
 		return true;
 	}
 
+	// TODO: Boxes should only project half of the edges
 	public static boolean intersectsPolygonBox() {
 		return false;
 	}
@@ -338,8 +342,8 @@ public class SATIntersection {
 
 		// overlap
 		final float minimumDepthValueA = (projectionResult1.max - projectionResult2.min);
-
 		if (minimumDepthValueA < result.depth) {
+			// this never seems to be hit
 			result.depth = minimumDepthValueA;
 			result.normal.x = axisX;
 			result.normal.y = axisY;
@@ -386,7 +390,7 @@ public class SATIntersection {
 
 	// Lines
 
-	public static boolean intersectsLinePolygon(List<Vector2f> lineVertices, List<Vector2f> polygonVertices, float polygonCenterX, float polygonCenterY, ContactManifold result) {
+	public static boolean intersectsLinePolygon(List<Vector2f> lineVertices, float lineRadius, List<Vector2f> polygonVertices, float polygonCenterX, float polygonCenterY, ContactManifold result) {
 
 		final float lsx = lineVertices.get(0).x;
 		final float lsy = lineVertices.get(0).y;
@@ -418,7 +422,7 @@ public class SATIntersection {
 			}
 
 			projectVertices(polygonVertices, axisX, axisY, projectionResult1);
-			projectLine(lsx, lsy, lex, ley, axisX, axisY, projectionResult2);
+			projectLineWidth(lsx, lsy, lex, ley, lineRadius, axisX, axisY, projectionResult2);
 
 			if (projectionResult1.min >= projectionResult2.max || projectionResult2.min >= projectionResult1.max) {
 				result.isIntersecting = false;
@@ -440,6 +444,11 @@ public class SATIntersection {
 				result.normal.x = -axisX;
 				result.normal.y = -axisY;
 			}
+
+			if (projectionResult1.min >= projectionResult2.max || projectionResult1.min >= projectionResult1.max) {
+				result.isIntersecting = false;
+				return false; // early out
+			}
 		}
 
 		// project on perp vector (normal) from line-center
@@ -454,7 +463,7 @@ public class SATIntersection {
 		axisY /= axisLength;
 
 		projectVertices(polygonVertices, axisX, axisY, projectionResult1);
-		projectLine(lsx, lsy, lex, ley, axisX, axisY, projectionResult2);
+		projectLineWidth(lsx, lsy, lex, ley, lineRadius, axisX, axisY, projectionResult2);
 
 		if (projectionResult1.min >= projectionResult2.max || projectionResult2.min >= projectionResult1.max) {
 			result.isIntersecting = false;
@@ -482,6 +491,7 @@ public class SATIntersection {
 		return true;
 	}
 
+	// This isn't a SAT test - just a point/line intersection test
 	public static boolean intersectsLineCircle(List<Vector2f> lineVertices, float lineRadius, float circleX, float circleY, float radius, ContactManifold result) {
 		final var sx = lineVertices.get(0).x;
 		final var sy = lineVertices.get(0).y;
@@ -544,8 +554,8 @@ public class SATIntersection {
 			axis01X /= axis01Length;
 			axis01Y /= axis01Length;
 
-			projectLine(ax, ay, bx, by, axis01X, axis01Y, projectionResult1);
-			projectLine(px, py, qx, qy, axis01X, axis01Y, projectionResult2);
+			projectLineWidth(ax, ay, bx, by, lineARadius, axis01X, axis01Y, projectionResult1);
+			projectLineWidth(px, py, qx, qy, lineBRadius, axis01X, axis01Y, projectionResult2);
 
 			if (projectionResult1.min >= projectionResult2.max || projectionResult1.min >= projectionResult2.max) {
 				return false; // early out
@@ -577,8 +587,8 @@ public class SATIntersection {
 
 			projectionResult1.min = 0;
 			projectionResult1.max = 0;
-			projectLine(px, py, qx, qy, axis02X, axis02Y, projectionResult1);
-			projectLine(ax, ay, bx, by, axis02X, axis02Y, projectionResult2);
+			projectLineWidth(px, py, qx, qy, lineARadius, axis02X, axis02Y, projectionResult1);
+			projectLineWidth(ax, ay, bx, by, lineBRadius, axis02X, axis02Y, projectionResult2);
 
 			if (projectionResult1.min >= projectionResult2.max || projectionResult1.min >= projectionResult2.max) {
 				return false; // early out
@@ -604,6 +614,7 @@ public class SATIntersection {
 	}
 
 	public static boolean intersectsLineBox() {
+		// TODO: Line / Box tests
 		return false;
 	}
 
@@ -656,6 +667,18 @@ public class SATIntersection {
 	private static void projectLine(float sx, float sy, float ex, float ey, float axisX, float axisY, SatCollisionProjectionResult toFill) {
 		toFill.min = Vector2f.dot(sx, sy, axisX, axisY);
 		toFill.max = Vector2f.dot(ex, ey, axisX, axisY);
+
+		if (toFill.min > toFill.max) {
+			final float t = toFill.min;
+			toFill.min = toFill.max;
+			toFill.max = t;
+		}
+
+	}
+
+	private static void projectLineWidth(float sx, float sy, float ex, float ey, float radius, float axisX, float axisY, SatCollisionProjectionResult toFill) {
+		toFill.min = Math.min(Vector2f.dot(sx - radius * axisX, sy - radius * axisY, axisX, axisY), Vector2f.dot(sx + radius * axisX, sy + radius * axisY, axisX, axisY));
+		toFill.max = Math.max(Vector2f.dot(ex - radius * axisX, ey - radius * axisY, axisX, axisY), Vector2f.dot(ex + radius * axisX, ey + radius * axisY, axisX, axisY));
 
 		if (toFill.min > toFill.max) {
 			final float t = toFill.min;
