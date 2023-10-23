@@ -64,7 +64,11 @@ public class CollisionResolverRotationAndFriction implements ICollisionResolver 
 			final float rb_perp_dot_n = Vector2f.dot(rbPerp_x, rbPerp_y, normalX, normalY);
 
 			float j = -(1.f + e) * contactVelocityMagnitude;
-			j /= (lBodyA.invMass() + lBodyB.invMass()) + (ra_perp_dot_n * ra_perp_dot_n) * lBodyA.invInertia() + (rb_perp_dot_n * rb_perp_dot_n) * lBodyB.invInertia();
+			
+			final var termA = (ra_perp_dot_n * ra_perp_dot_n) * lBodyA.invInertia();
+			final var termB = (rb_perp_dot_n * rb_perp_dot_n) * lBodyB.invInertia();
+			
+			j /= (lBodyA.invMass() + lBodyB.invMass()) + termA + termB;
 			j /= lContactCount;
 
 			if (i == 0) {
@@ -158,7 +162,11 @@ public class CollisionResolverRotationAndFriction implements ICollisionResolver 
 			final float rb_perp_dot_t = Vector2f.dot(rbPerp_x, rbPerp_y, tangent_X, tangent_Y);
 
 			float jt = -Vector2f.dot(relVelX, relVelY, tangent_X, tangent_Y);
-			jt /= (lBodyA.invMass() + lBodyB.invMass()) + (ra_perp_dot_t * ra_perp_dot_t) * lBodyA.invInertia() + (rb_perp_dot_t * rb_perp_dot_t) * lBodyB.invInertia();
+			
+			final var termA = (ra_perp_dot_t * ra_perp_dot_t) * lBodyA.invInertia();
+			final var termB = (rb_perp_dot_t * rb_perp_dot_t) * lBodyB.invInertia();
+			
+			jt /= (lBodyA.invMass() + lBodyB.invMass()) + termA + termB;
 			jt /= lContactCount;
 
 			if (i == 0) {
