@@ -316,11 +316,11 @@ public class MathHelper {
 	
 	/** returns true if the order of the vertices are Ccw, otherwise false */
 	public static boolean isTriangleCcw(float ax, float ay, float bx, float by, float cx, float cy) {
-		final float abx = bx - ax;
-		final float aby = by - ay;
+		final float abx = cx - ax;
+		final float aby = cy - ay;
 
-		final float acx = cx - ax;
-		final float acy = cy - ay;
+		final float acx = bx - ax;
+		final float acy = by - ay;
 
 		float z = windingOrderZFromCross(abx, aby, acx, acy);
 		return z > 0;
