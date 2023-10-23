@@ -128,6 +128,7 @@ public class LineShape extends BaseShape {
 		lNewLineShape.staticFriction = MathHelper.clamp(staticFriction, 0.f, 1.f);
 		lNewLineShape.dynamicFriction = MathHelper.clamp(dynamicFriction, 0.f, 1.f);
 		lNewLineShape.restitution = MathHelper.clamp(restitution, 0f, 1f);
+		lNewLineShape.density = (float) Math.abs(density);
 
 		lNewLineShape.set(unitLocalPosX, unitLocalPosY, unitWidth, unitHeight, rotRadians);
 
