@@ -179,6 +179,12 @@ public class DebugPhysicsRenderer extends BaseRenderer {
 			lLineBatch.draw(br_x, br_y, bl_x, bl_y, -0.01f, r, g, b, 1.f);
 			lLineBatch.draw(bl_x, bl_y, tl_x, tl_y, -0.01f, r, g, b, 1.f);
 			lLineBatch.end();
+			
+			lLineBatch.begin(core.gameCamera());
+			lLineBatch.drawCircle(sx, sy, body.transform.angle, lHeight, 13, r, g, b, true);
+			lLineBatch.drawCircle(ex, ey, body.transform.angle, lHeight, 13, r, g, b, true);
+			lLineBatch.end();
+			
 			break;
 		}
 
