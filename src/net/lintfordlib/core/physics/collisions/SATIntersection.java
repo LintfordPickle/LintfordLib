@@ -114,7 +114,13 @@ public class SATIntersection {
 				return true;
 			}
 		} else if (lOtherShapeType == ShapeType.LineWidth) {
-			return false; // TODO: Line / Line intersections
+			final var lLineBWorldVertices = bodyB.getWorldVertices();
+			final var lLineBRadius = bodyB.shape().height() * .5f;
+			if (intersectsLineLine(lLineWorldVertices, lLineRadius, lLineBWorldVertices, lLineBRadius, manifold)) {
+				manifold.normal.x = -manifold.normal.x;
+				manifold.normal.y = -manifold.normal.y;
+				return true;
+			}
 		} else if (lOtherShapeType == ShapeType.Circle) {
 			if (intersectsLineCircle(lLineWorldVertices, lLineRadius, bodyB.transform.p.x, bodyB.transform.p.y, bodyB.shape().radius(), manifold)) {
 				return true;
@@ -557,9 +563,8 @@ public class SATIntersection {
 			projectLineWidth(ax, ay, bx, by, lineARadius, axis01X, axis01Y, projectionResult1);
 			projectLineWidth(px, py, qx, qy, lineBRadius, axis01X, axis01Y, projectionResult2);
 
-			if (projectionResult1.min >= projectionResult2.max || projectionResult1.min >= projectionResult2.max) {
+			if (projectionResult1.min >= projectionResult2.max || projectionResult1.max <= projectionResult2.min)
 				return false; // early out
-			}
 
 			// overlap
 			final float minimumDepthValueA = Math.abs(projectionResult1.max - projectionResult2.min);
@@ -585,14 +590,11 @@ public class SATIntersection {
 			axis02X /= axis02Length;
 			axis02Y /= axis02Length;
 
-			projectionResult1.min = 0;
-			projectionResult1.max = 0;
 			projectLineWidth(px, py, qx, qy, lineARadius, axis02X, axis02Y, projectionResult1);
 			projectLineWidth(ax, ay, bx, by, lineBRadius, axis02X, axis02Y, projectionResult2);
 
-			if (projectionResult1.min >= projectionResult2.max || projectionResult1.min >= projectionResult2.max) {
+			if (projectionResult1.min >= projectionResult2.max || projectionResult1.max <= projectionResult2.min)
 				return false; // early out
-			}
 
 			// overlap
 			final float minimumDepthValueA = Math.abs(projectionResult1.max - projectionResult2.min);
@@ -664,6 +666,7 @@ public class SATIntersection {
 		}
 	}
 
+	@SuppressWarnings("unused")
 	private static void projectLine(float sx, float sy, float ex, float ey, float axisX, float axisY, SatCollisionProjectionResult toFill) {
 		toFill.min = Vector2f.dot(sx, sy, axisX, axisY);
 		toFill.max = Vector2f.dot(ex, ey, axisX, axisY);
@@ -673,17 +676,50 @@ public class SATIntersection {
 			toFill.min = toFill.max;
 			toFill.max = t;
 		}
-
 	}
 
 	private static void projectLineWidth(float sx, float sy, float ex, float ey, float radius, float axisX, float axisY, SatCollisionProjectionResult toFill) {
-		toFill.min = Math.min(Vector2f.dot(sx - radius * axisX, sy - radius * axisY, axisX, axisY), Vector2f.dot(sx + radius * axisX, sy + radius * axisY, axisX, axisY));
-		toFill.max = Math.max(Vector2f.dot(ex - radius * axisX, ey - radius * axisY, axisX, axisY), Vector2f.dot(ex + radius * axisX, ey + radius * axisY, axisX, axisY));
+		toFill.min = Float.MAX_VALUE;
+		toFill.max = Float.MIN_VALUE;
 
-		if (toFill.min > toFill.max) {
-			final float t = toFill.min;
-			toFill.min = toFill.max;
-			toFill.max = t;
-		}
+		var min = Float.MAX_VALUE;
+		var max = -Float.MAX_VALUE;
+		float proj = 0;
+
+		// TODO: Check if we can pre-compute these (obviously without the axis')
+
+		proj = Vector2f.dot(sx - radius * axisX, sy - radius * axisY, axisX, axisY);
+
+		if (proj < min)
+			min = proj;
+
+		if (proj > max)
+			max = proj;
+
+		proj = Vector2f.dot(sx + radius * axisX, sy + radius * axisY, axisX, axisY);
+
+		if (proj < min)
+			min = proj;
+
+		if (proj > max)
+			max = proj;
+
+		proj = Vector2f.dot(ex - radius * axisX, ey - radius * axisY, axisX, axisY);
+
+		if (proj < min)
+			min = proj;
+
+		if (proj > max)
+			max = proj;
+
+		proj = Vector2f.dot(ex + radius * axisX, ey + radius * axisY, axisX, axisY);
+
+		if (proj < min)
+			min = proj;
+
+		if (proj > max)
+			max = proj;
+
+		toFill.set(min, max);
 	}
 }
