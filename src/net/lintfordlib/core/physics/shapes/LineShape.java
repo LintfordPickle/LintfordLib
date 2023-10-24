@@ -77,7 +77,8 @@ public class LineShape extends BaseShape {
 		final var lWidth = maxX - minX;
 		final var lHeight = maxY - minY;
 
-		mAABB.set(minX, minY, lWidth, lHeight);
+		final var expand = height;
+		mAABB.set(minX - expand*.5f, minY-expand*.5f, lWidth+expand, lHeight+expand);
 	}
 
 	@Override
