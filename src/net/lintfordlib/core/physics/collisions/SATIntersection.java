@@ -35,11 +35,11 @@ public class SATIntersection {
 	// ---------------------------------------------
 
 	public static final boolean checkCollides(final RigidBody bodyA, final RigidBody bodyB, final ContactManifold manifold) {
-		final var lShapeType = bodyA.shape().shapeType();
 
 		manifold.bodyA = bodyA;
 		manifold.bodyB = bodyB;
 
+		final var lShapeType = bodyA.shape().shapeType();
 		if (lShapeType == ShapeType.Polygon) {
 			return intersectionsPolygonShape(bodyA, bodyB, manifold);
 		} else if (lShapeType == ShapeType.Box) {
@@ -53,43 +53,41 @@ public class SATIntersection {
 		return false;
 	}
 
-	private static boolean intersectionsPolygonShape(RigidBody bodyA, RigidBody bodyB, ContactManifold manifold) {
-		final var lShapeB = bodyB.shape();
+	private static boolean intersectionsPolygonShape(RigidBody polygonBody, RigidBody bodyB, ContactManifold manifold) {
+		final var lPolygonAVertices = polygonBody.getWorldVertices();
 
-		final var lShapeAWorldVertices = bodyA.getWorldVertices();
-		final var lShapeBWorldVertices = bodyB.getWorldVertices();
+		final var lShapeB = bodyB.shape();
+		final var lOtherShapeVertices = bodyB.getWorldVertices();
 
 		if (lShapeB.shapeType() == ShapeType.Polygon) {
-			return intersectsPolygons(lShapeAWorldVertices, lShapeBWorldVertices, manifold);
+			return intersectsPolygons(lPolygonAVertices, lOtherShapeVertices, manifold);
 		} else if (lShapeB.shapeType() == ShapeType.Box) {
-			return intersectsPolygons(lShapeAWorldVertices, lShapeBWorldVertices, manifold);
+			return intersectsPolygonBox(lOtherShapeVertices, lPolygonAVertices, manifold);
 		} else if (lShapeB.shapeType() == ShapeType.LineWidth) {
 			final var lLineRadius = bodyB.shape().height() * .5f;
-			return intersectsLinePolygon(lShapeBWorldVertices, lLineRadius, lShapeAWorldVertices, bodyA.transform.p.x, bodyA.transform.p.y, manifold);
+			return intersectsLinePolygon(lOtherShapeVertices, lLineRadius, lPolygonAVertices, manifold);
 		} else if (lShapeB.shapeType() == ShapeType.Circle) {
-			return intersectsCirclePolygon(bodyB.transform.p.x, bodyB.transform.p.y, bodyB.shape().radius(), lShapeAWorldVertices, bodyA.transform.p.x, bodyA.transform.p.y, manifold);
+			return intersectsCirclePolygon(bodyB.transform.p.x, bodyB.transform.p.y, bodyB.shape().radius(), lPolygonAVertices, polygonBody.transform.p.x, polygonBody.transform.p.y, manifold);
 		}
 
 		return false;
 	}
 
-	private static boolean intersectionsBoxShape(RigidBody bodyA, RigidBody bodyB, ContactManifold manifold) {
-		final var lShapeB = bodyB.shape();
+	private static boolean intersectionsBoxShape(RigidBody boxBody, RigidBody otherBody, ContactManifold manifold) {
+		final var lBoxAVertices = boxBody.getWorldVertices();
 
-		final var lShapeAWorldVertices = bodyA.getWorldVertices();
-		final var lShapeBWorldVertices = bodyB.getWorldVertices();
-
-		// Shape A is a box
+		final var lShapeB = otherBody.shape();
+		final var lShapeBWorldVertices = otherBody.getWorldVertices();
 
 		if (lShapeB.shapeType() == ShapeType.Polygon) {
-			return intersectsPolygons(lShapeAWorldVertices, lShapeBWorldVertices, manifold);
+			return intersectsPolygonBox(lBoxAVertices, lShapeBWorldVertices, manifold);
 		} else if (lShapeB.shapeType() == ShapeType.Box) {
-			return intersectsPolygons(lShapeAWorldVertices, lShapeBWorldVertices, manifold);
+			return intersectsBoxes(lBoxAVertices, lShapeBWorldVertices, manifold);
 		} else if (lShapeB.shapeType() == ShapeType.LineWidth) {
-			final var lLineRadius = bodyB.shape().height() * .5f;
-			return intersectsLinePolygon(lShapeBWorldVertices, lLineRadius, lShapeAWorldVertices, bodyA.transform.p.x, bodyA.transform.p.y, manifold);
+			final var lLineRadius = otherBody.shape().height() * .5f;
+			return intersectsLineBox(lShapeBWorldVertices, lLineRadius, lBoxAVertices, manifold);
 		} else if (lShapeB.shapeType() == ShapeType.Circle) {
-			return intersectsCirclePolygon(bodyB.transform.p.x, bodyB.transform.p.y, bodyB.shape().radius(), lShapeAWorldVertices, bodyA.transform.p.x, bodyA.transform.p.y, manifold);
+			return intersectsCircleBox(otherBody.transform.p.x, otherBody.transform.p.y, otherBody.shape().radius(), lBoxAVertices, boxBody.transform.p.x, boxBody.transform.p.y, manifold);
 		}
 
 		return false;
@@ -102,13 +100,13 @@ public class SATIntersection {
 		final var lLineRadius = bodyA.shape().height() * .5f;
 
 		if (lOtherShapeType == ShapeType.Polygon) {
-			if (intersectsLinePolygon(lLineWorldVertices, lLineRadius, bodyB.getWorldVertices(), bodyB.transform.p.x, bodyB.transform.p.y, manifold)) {
+			if (intersectsLinePolygon(lLineWorldVertices, lLineRadius, bodyB.getWorldVertices(), manifold)) {
 				manifold.normal.x = -manifold.normal.x;
 				manifold.normal.y = -manifold.normal.y;
 				return true;
 			}
 		} else if (lOtherShapeType == ShapeType.Box) {
-			if (intersectsLinePolygon(lLineWorldVertices, lLineRadius, bodyB.getWorldVertices(), bodyB.transform.p.x, bodyB.transform.p.y, manifold)) {
+			if (intersectsLineBox(lLineWorldVertices, lLineRadius, bodyB.getWorldVertices(), manifold)) {
 				manifold.normal.x = -manifold.normal.x;
 				manifold.normal.y = -manifold.normal.y;
 				return true;
@@ -146,7 +144,7 @@ public class SATIntersection {
 			return false;
 
 		case Box:
-			if (intersectsCirclePolygon(bodyA.transform.p.x, bodyA.transform.p.y, bodyA.shape().radius(), lShapeBWorldVertices, bodyB.transform.p.x, bodyB.transform.p.y, manifold)) {
+			if (intersectsCircleBox(bodyA.transform.p.x, bodyA.transform.p.y, bodyA.shape().radius(), lShapeBWorldVertices, bodyB.transform.p.x, bodyB.transform.p.y, manifold)) {
 				manifold.normal.x = -manifold.normal.x;
 				manifold.normal.y = -manifold.normal.y;
 				return true;
@@ -175,19 +173,19 @@ public class SATIntersection {
 	// Methods
 	// ---------------------------------------------
 
-	// Polygons
-
-	public static boolean intersectsPolygons(List<Vector2f> verticesA, List<Vector2f> verticesB, ContactManifold result) {
+	// Boxes
+	// TODO: Box reduction
+	public static boolean intersectsBoxes(List<Vector2f> boxAVertices, List<Vector2f> boxBVertices, ContactManifold result) {
 		result.isIntersecting = true;
 		result.normal.x = 0.f;
 		result.normal.y = 0.f;
 		result.depth = Float.MAX_VALUE;
 
-		final var lNumVertsA = verticesA.size();
-		final var lPolyAIsCwWinding = MathHelper.isCwWinding(verticesA.get(0), verticesA.get(1), verticesA.get(2));
+		final var lNumVertsA = boxAVertices.size();
+		final var lPolyAIsCwWinding = MathHelper.isCwWinding(boxAVertices.get(0), boxAVertices.get(1), boxAVertices.get(2));
 		for (int i = 0; i < lNumVertsA; i++) {
-			final var va = verticesA.get(i);
-			final var vb = verticesA.get((i + 1) % lNumVertsA);
+			final var va = boxAVertices.get(i);
+			final var vb = boxAVertices.get((i + 1) % lNumVertsA);
 
 			final var edgeX = vb.x - va.x;
 			final var edgeY = vb.y - va.y;
@@ -202,8 +200,8 @@ public class SATIntersection {
 				axisY = -edgeX / edgeLength;
 			}
 
-			projectVertices(verticesA, axisX, axisY, projectionResult1);
-			projectVertices(verticesB, axisX, axisY, projectionResult2);
+			projectVertices(boxAVertices, axisX, axisY, projectionResult1);
+			projectVertices(boxBVertices, axisX, axisY, projectionResult2);
 
 			if (projectionResult1.min >= projectionResult2.max || projectionResult1.min >= projectionResult2.max) {
 				result.isIntersecting = false;
@@ -227,11 +225,11 @@ public class SATIntersection {
 			}
 		}
 
-		final var lNumVertsB = verticesB.size();
-		final var lPolyBIsCwWinding = MathHelper.isCwWinding(verticesB.get(0), verticesB.get(1), verticesB.get(2));
+		final var lNumVertsB = boxBVertices.size();
+		final var lPolyBIsCwWinding = MathHelper.isCwWinding(boxBVertices.get(0), boxBVertices.get(1), boxBVertices.get(2));
 		for (int i = 0; i < lNumVertsB; i++) {
-			final var va = verticesB.get(i);
-			final var vb = verticesB.get((i + 1) % lNumVertsB);
+			final var va = boxBVertices.get(i);
+			final var vb = boxBVertices.get((i + 1) % lNumVertsB);
 
 			final var edgeX = vb.x - va.x;
 			final var edgeY = vb.y - va.y;
@@ -246,8 +244,8 @@ public class SATIntersection {
 				axisY = -edgeX / edgeLength;
 			}
 
-			projectVertices(verticesA, axisX, axisY, projectionResult1);
-			projectVertices(verticesB, axisX, axisY, projectionResult2);
+			projectVertices(boxAVertices, axisX, axisY, projectionResult1);
+			projectVertices(boxBVertices, axisX, axisY, projectionResult2);
 
 			if (projectionResult1.min >= projectionResult2.max || projectionResult1.min >= projectionResult2.max) {
 				return false; // early out
@@ -273,9 +271,199 @@ public class SATIntersection {
 		return true;
 	}
 
-	// TODO: Boxes should only project half of the edges
-	public static boolean intersectsPolygonBox() {
-		return false;
+	// Polygons
+
+	public static boolean intersectsPolygons(List<Vector2f> polygonAVertices, List<Vector2f> polygonBVertices, ContactManifold result) {
+		result.isIntersecting = true;
+		result.normal.x = 0.f;
+		result.normal.y = 0.f;
+		result.depth = Float.MAX_VALUE;
+
+		final var lNumVertsA = polygonAVertices.size();
+		final var lPolyAIsCwWinding = MathHelper.isCwWinding(polygonAVertices.get(0), polygonAVertices.get(1), polygonAVertices.get(2));
+		for (int i = 0; i < lNumVertsA; i++) {
+			final var va = polygonAVertices.get(i);
+			final var vb = polygonAVertices.get((i + 1) % lNumVertsA);
+
+			final var edgeX = vb.x - va.x;
+			final var edgeY = vb.y - va.y;
+
+			final var edgeLength = (float) Math.sqrt(edgeX * edgeX + edgeY * edgeY);
+
+			var axisX = -edgeY / edgeLength;
+			var axisY = edgeX / edgeLength;
+
+			if (lPolyAIsCwWinding == false) {
+				axisX = edgeY / edgeLength;
+				axisY = -edgeX / edgeLength;
+			}
+
+			projectVertices(polygonAVertices, axisX, axisY, projectionResult1);
+			projectVertices(polygonBVertices, axisX, axisY, projectionResult2);
+
+			if (projectionResult1.min >= projectionResult2.max || projectionResult1.min >= projectionResult2.max) {
+				result.isIntersecting = false;
+				return false; // early out
+			}
+
+			// overlap
+			final float minimumDepthValueA = (projectionResult1.max - projectionResult2.min);
+
+			if (minimumDepthValueA < result.depth) {
+				result.depth = minimumDepthValueA;
+				result.normal.x = axisX;
+				result.normal.y = axisY;
+			}
+
+			final float minimumDepthValueB = (projectionResult2.max - projectionResult1.min);
+			if (minimumDepthValueB < result.depth) {
+				result.depth = minimumDepthValueB;
+				result.normal.x = -axisX;
+				result.normal.y = -axisY;
+			}
+		}
+
+		final var lNumVertsB = polygonBVertices.size();
+		final var lPolyBIsCwWinding = MathHelper.isCwWinding(polygonBVertices.get(0), polygonBVertices.get(1), polygonBVertices.get(2));
+		for (int i = 0; i < lNumVertsB; i++) {
+			final var va = polygonBVertices.get(i);
+			final var vb = polygonBVertices.get((i + 1) % lNumVertsB);
+
+			final var edgeX = vb.x - va.x;
+			final var edgeY = vb.y - va.y;
+
+			final var edgeLength = (float) Math.sqrt(edgeX * edgeX + edgeY * edgeY);
+
+			var axisX = -edgeY / edgeLength;
+			var axisY = edgeX / edgeLength;
+
+			if (lPolyBIsCwWinding == false) {
+				axisX = edgeY / edgeLength;
+				axisY = -edgeX / edgeLength;
+			}
+
+			projectVertices(polygonAVertices, axisX, axisY, projectionResult1);
+			projectVertices(polygonBVertices, axisX, axisY, projectionResult2);
+
+			if (projectionResult1.min >= projectionResult2.max || projectionResult1.min >= projectionResult2.max) {
+				return false; // early out
+			}
+
+			// overlap
+			final float minimumDepthValueA = (projectionResult1.max - projectionResult2.min);
+
+			if (minimumDepthValueA < result.depth) {
+				result.depth = minimumDepthValueA;
+				result.normal.x = axisX;
+				result.normal.y = axisY;
+			}
+
+			final float minimumDepthValueB = (projectionResult2.max - projectionResult1.min);
+			if (minimumDepthValueB < result.depth) {
+				result.depth = minimumDepthValueB;
+				result.normal.x = -axisX;
+				result.normal.y = -axisY;
+			}
+		}
+
+		return true;
+	}
+
+	// TODO: Box reduction
+	public static boolean intersectsPolygonBox(List<Vector2f> boxVertices, List<Vector2f> polygonVertices, ContactManifold result) {
+		result.isIntersecting = true;
+		result.normal.x = 0.f;
+		result.normal.y = 0.f;
+		result.depth = Float.MAX_VALUE;
+
+		final var lNumVertsA = boxVertices.size();
+		final var lPolyAIsCwWinding = MathHelper.isCwWinding(boxVertices.get(0), boxVertices.get(1), boxVertices.get(2));
+		for (int i = 0; i < lNumVertsA; i++) {
+			final var va = boxVertices.get(i);
+			final var vb = boxVertices.get((i + 1) % lNumVertsA);
+
+			final var edgeX = vb.x - va.x;
+			final var edgeY = vb.y - va.y;
+
+			final var edgeLength = (float) Math.sqrt(edgeX * edgeX + edgeY * edgeY);
+
+			var axisX = -edgeY / edgeLength;
+			var axisY = edgeX / edgeLength;
+
+			if (lPolyAIsCwWinding == false) {
+				axisX = edgeY / edgeLength;
+				axisY = -edgeX / edgeLength;
+			}
+
+			projectVertices(boxVertices, axisX, axisY, projectionResult1);
+			projectVertices(polygonVertices, axisX, axisY, projectionResult2);
+
+			if (projectionResult1.min >= projectionResult2.max || projectionResult1.min >= projectionResult2.max) {
+				result.isIntersecting = false;
+				return false; // early out
+			}
+
+			// overlap
+			final float minimumDepthValueA = (projectionResult1.max - projectionResult2.min);
+
+			if (minimumDepthValueA < result.depth) {
+				result.depth = minimumDepthValueA;
+				result.normal.x = axisX;
+				result.normal.y = axisY;
+			}
+
+			final float minimumDepthValueB = (projectionResult2.max - projectionResult1.min);
+			if (minimumDepthValueB < result.depth) {
+				result.depth = minimumDepthValueB;
+				result.normal.x = -axisX;
+				result.normal.y = -axisY;
+			}
+		}
+
+		final var lNumVertsB = polygonVertices.size();
+		final var lPolyBIsCwWinding = MathHelper.isCwWinding(polygonVertices.get(0), polygonVertices.get(1), polygonVertices.get(2));
+		for (int i = 0; i < lNumVertsB; i++) {
+			final var va = polygonVertices.get(i);
+			final var vb = polygonVertices.get((i + 1) % lNumVertsB);
+
+			final var edgeX = vb.x - va.x;
+			final var edgeY = vb.y - va.y;
+
+			final var edgeLength = (float) Math.sqrt(edgeX * edgeX + edgeY * edgeY);
+
+			var axisX = -edgeY / edgeLength;
+			var axisY = edgeX / edgeLength;
+
+			if (lPolyBIsCwWinding == false) {
+				axisX = edgeY / edgeLength;
+				axisY = -edgeX / edgeLength;
+			}
+
+			projectVertices(boxVertices, axisX, axisY, projectionResult1);
+			projectVertices(polygonVertices, axisX, axisY, projectionResult2);
+
+			if (projectionResult1.min >= projectionResult2.max || projectionResult1.min >= projectionResult2.max) {
+				return false; // early out
+			}
+
+			// overlap
+			final float minimumDepthValueA = (projectionResult1.max - projectionResult2.min);
+
+			if (minimumDepthValueA < result.depth) {
+				result.depth = minimumDepthValueA;
+				result.normal.x = axisX;
+				result.normal.y = axisY;
+			}
+
+			final float minimumDepthValueB = (projectionResult2.max - projectionResult1.min);
+			if (minimumDepthValueB < result.depth) {
+				result.depth = minimumDepthValueB;
+				result.normal.x = -axisX;
+				result.normal.y = -axisY;
+			}
+		}
+
+		return true;
 	}
 
 	// Circles
@@ -390,14 +578,99 @@ public class SATIntersection {
 		return true;
 	}
 
-	public static boolean intersectsCircleBox() {
-		return false;
+	// TODO: Box reduction
+	public static boolean intersectsCircleBox(float circleX, float circleY, float circleRadius, List<Vector2f> boxVertices, float polygonCenterX, float polygonCenterY, ContactManifold result) {
+		result.isIntersecting = true;
+		result.normal.x = 0.f;
+		result.normal.y = 0.f;
+		result.depth = Float.MAX_VALUE;
+
+		// TODO: Performance check that the axis formed by the vector from circle center to box center is the fastest exit (assumes objects moving towards each other?)
+
+		{
+			float axisX = polygonCenterX - circleX;
+			float axisY = polygonCenterY - circleY;
+
+			final float axisLength = (float) Math.sqrt(axisX * axisX + axisY * axisY);
+
+			axisX /= axisLength;
+			axisY /= axisLength;
+
+			projectVertices(boxVertices, axisX, axisY, projectionResult1);
+			projectCircle(circleX, circleY, circleRadius, axisX, axisY, projectionResult2);
+
+			if (projectionResult1.min >= projectionResult2.max || projectionResult1.min >= projectionResult2.max) {
+				result.isIntersecting = false;
+				return false; // early out
+			}
+
+			// overlap
+			final float minimumDepthValueA = (projectionResult1.max - projectionResult2.min);
+			if (minimumDepthValueA < result.depth) {
+				// this never seems to be hit
+				result.depth = minimumDepthValueA;
+				result.normal.x = axisX;
+				result.normal.y = axisY;
+			}
+
+			final float minimumDepthValueB = (projectionResult2.max - projectionResult1.min);
+			if (minimumDepthValueB < result.depth) {
+				result.depth = minimumDepthValueB;
+				result.normal.x = -axisX;
+				result.normal.y = -axisY;
+			}
+		}
+
+		final var lNumVertsA = boxVertices.size();
+		final var lPolyIsCwWinding = MathHelper.isCwWinding(boxVertices.get(0), boxVertices.get(1), boxVertices.get(2));
+		for (int i = 0; i < lNumVertsA; i++) {
+			final var va = boxVertices.get(i);
+			final var vb = boxVertices.get((i + 1) % lNumVertsA);
+
+			final var edgeX = vb.x - va.x;
+			final var edgeY = vb.y - va.y;
+
+			final var edgeLength = (float) Math.sqrt(edgeX * edgeX + edgeY * edgeY);
+
+			var axisX = -edgeY / edgeLength;
+			var axisY = edgeX / edgeLength;
+
+			if (lPolyIsCwWinding == false) {
+				axisX = edgeY / edgeLength;
+				axisY = -edgeX / edgeLength;
+			}
+
+			projectVertices(boxVertices, axisX, axisY, projectionResult1);
+			projectCircle(circleX, circleY, circleRadius, axisX, axisY, projectionResult2);
+
+			if (projectionResult1.min >= projectionResult2.max || projectionResult1.min >= projectionResult2.max) {
+				result.isIntersecting = false;
+				return false; // early out
+			}
+
+			// overlap
+			final float minimumDepthValueA = (projectionResult1.max - projectionResult2.min);
+
+			if (minimumDepthValueA < result.depth) {
+				result.depth = minimumDepthValueA;
+				result.normal.x = axisX;
+				result.normal.y = axisY;
+			}
+
+			final float minimumDepthValueB = (projectionResult2.max - projectionResult1.min);
+			if (minimumDepthValueB < result.depth) {
+				result.depth = minimumDepthValueB;
+				result.normal.x = -axisX;
+				result.normal.y = -axisY;
+			}
+		}
+
+		return true;
 	}
 
 	// Lines
 
-	public static boolean intersectsLinePolygon(List<Vector2f> lineVertices, float lineRadius, List<Vector2f> polygonVertices, float polygonCenterX, float polygonCenterY, ContactManifold result) {
-
+	public static boolean intersectsLinePolygon(List<Vector2f> lineVertices, float lineRadius, List<Vector2f> polygonVertices, ContactManifold result) {
 		final float lsx = lineVertices.get(0).x;
 		final float lsy = lineVertices.get(0).y;
 		final float lex = lineVertices.get(1).x;
@@ -615,9 +888,105 @@ public class SATIntersection {
 		return true;
 	}
 
-	public static boolean intersectsLineBox() {
-		// TODO: Line / Box tests
-		return false;
+	// TODO: box reduction
+	public static boolean intersectsLineBox(List<Vector2f> lineVertices, float lineRadius, List<Vector2f> boxVertices, ContactManifold result) {
+		final float lsx = lineVertices.get(0).x;
+		final float lsy = lineVertices.get(0).y;
+		final float lex = lineVertices.get(1).x;
+		final float ley = lineVertices.get(1).y;
+
+		result.isIntersecting = true;
+		result.normal.x = 0.f;
+		result.normal.y = 0.f;
+		result.depth = Float.MAX_VALUE;
+
+		final var lNumVertsA = boxVertices.size();
+		final var lPolyIsCwWinding = MathHelper.isCwWinding(boxVertices.get(0), boxVertices.get(1), boxVertices.get(2));
+		for (int i = 0; i < lNumVertsA; i++) {
+			final var va = boxVertices.get(i);
+			final var vb = boxVertices.get((i + 1) % lNumVertsA);
+
+			final var edgeX = vb.x - va.x;
+			final var edgeY = vb.y - va.y;
+
+			final var edgeLength = (float) Math.sqrt(edgeX * edgeX + edgeY * edgeY);
+
+			var axisX = -edgeY / edgeLength;
+			var axisY = edgeX / edgeLength;
+
+			if (lPolyIsCwWinding == false) {
+				axisX = edgeY / edgeLength;
+				axisY = -edgeX / edgeLength;
+			}
+
+			projectVertices(boxVertices, axisX, axisY, projectionResult1);
+			projectLineWidth(lsx, lsy, lex, ley, lineRadius, axisX, axisY, projectionResult2);
+
+			if (projectionResult1.min >= projectionResult2.max || projectionResult2.min >= projectionResult1.max) {
+				result.isIntersecting = false;
+				return false; // early out
+			}
+
+			// overlap
+			final float minimumDepthValueA = (projectionResult1.max - projectionResult2.min);
+
+			if (minimumDepthValueA < result.depth) {
+				result.depth = minimumDepthValueA;
+				result.normal.x = axisX;
+				result.normal.y = axisY;
+			}
+
+			final float minimumDepthValueB = (projectionResult2.max - projectionResult1.min);
+			if (minimumDepthValueB < result.depth) {
+				result.depth = minimumDepthValueB;
+				result.normal.x = -axisX;
+				result.normal.y = -axisY;
+			}
+
+			if (projectionResult1.min >= projectionResult2.max || projectionResult1.min >= projectionResult1.max) {
+				result.isIntersecting = false;
+				return false; // early out
+			}
+		}
+
+		// project on perp vector (normal) from line-center
+		// ---
+
+		float axisX = -(ley - lsy) * .5f;
+		float axisY = (lex - lsx) * .5f;
+
+		final float axisLength = (float) Math.sqrt(axisX * axisX + axisY * axisY);
+
+		axisX /= axisLength;
+		axisY /= axisLength;
+
+		projectVertices(boxVertices, axisX, axisY, projectionResult1);
+		projectLineWidth(lsx, lsy, lex, ley, lineRadius, axisX, axisY, projectionResult2);
+
+		if (projectionResult1.min >= projectionResult2.max || projectionResult2.min >= projectionResult1.max) {
+			result.isIntersecting = false;
+			return false; // early out
+		}
+
+		// overlap
+		final float minimumDepthValueA = (projectionResult1.max - projectionResult2.min);
+
+		if (minimumDepthValueA < result.depth) {
+			result.depth = minimumDepthValueA;
+			result.normal.x = axisX;
+			result.normal.y = axisY;
+		}
+
+		final float minimumDepthValueB = (projectionResult2.max - projectionResult1.min);
+		if (minimumDepthValueB < result.depth) {
+			result.depth = minimumDepthValueB;
+			result.normal.x = -axisX;
+			result.normal.y = -axisY;
+		}
+
+		// ---
+
+		return true;
 	}
 
 	// Projections
