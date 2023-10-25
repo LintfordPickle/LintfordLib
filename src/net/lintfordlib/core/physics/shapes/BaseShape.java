@@ -96,7 +96,7 @@ public abstract class BaseShape {
 	}
 
 	public List<Vector2f> getTransformedVertices(Transform t) {
-		// if (updateFrameNeeded(t))
+		if (updateFrameNeeded(t))
 			updateFrame(t);
 
 		return mTransformedVertices;
