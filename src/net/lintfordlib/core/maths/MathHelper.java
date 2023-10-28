@@ -297,6 +297,10 @@ public class MathHelper {
 
 	// polygon
 	
+	public static boolean isCcwWinding(Vector2f a, Vector2f b, Vector2f c) {
+		return !isCwWinding(a,b,c);
+	}
+	
 	public static boolean isCwWinding(Vector2f a, Vector2f b, Vector2f c) {
 		final var aXLen = Vector2f.dst2(a.x, a.y, b.x, b.y);
 		if (aXLen == 0)
