@@ -1,5 +1,8 @@
 package net.lintfordlib.core.physics.collisions;
 
+import java.util.List;
+
+import net.lintfordlib.ConstantsPhysics;
 import net.lintfordlib.core.maths.MathHelper;
 import net.lintfordlib.core.maths.Vector2f;
 import net.lintfordlib.core.physics.dynamics.RigidBody;
@@ -17,8 +20,11 @@ public class CollisionExtensions {
 	/** returns true if the point lies within the area of the rigid body. Note the implementation is different depending on the type of {@link ShapeType} */
 	public static boolean intersectsBody(RigidBody body, float x, float y) {
 		switch (body.shape().shapeType()) {
-		case Box: {
+		case Polygon: {
+			return intersectsPointPolygon(x, y, body.getWorldVertices());
+		}
 
+		case Box: {
 			final var lWorldVertices = body.getWorldVertices();
 			final var a = lWorldVertices.get(0);
 			final var b = lWorldVertices.get(1);
@@ -70,8 +76,8 @@ public class CollisionExtensions {
 
 			float distance = (float) Math.sqrt((x - lClosestPointX) * (x - lClosestPointX) + (y - lClosestPointY) * (y - lClosestPointY));
 
-			final float lPointRadius = .5f;
-			if (distance <= (body.shape().radius() + lPointRadius))
+			final float lPointRadius = 1.f * ConstantsPhysics.PixelsToUnits();
+			if (distance <= (body.shape().radius() * lPointRadius))
 				return true;
 
 			return false;
@@ -79,16 +85,56 @@ public class CollisionExtensions {
 
 		default:
 		case Circle: {
-			final float xx = body.transform.p.x - x;
-			final float yy = body.transform.p.y - y;
-			return (xx * xx + yy * yy) < (body.shape().radius() * body.shape().radius());
+			return intersectsCirclePoint(body.transform.p.x, body.transform.p.y, body.shape().radius(), x, y);
 		}
 
 		}
 	}
 
+	// ----
+
+	/***
+	 * @param x               The x component of the input point to test.
+	 * @param y               The y component of the input point to test.
+	 * @param polygonVertices The Polygon vertices. The polygon must be concave and have a CCW winding order.
+	 * @return true if the point lies within the polygon, otherwise false
+	 */
+	public static final boolean intersectsPointPolygon(float x, float y, List<Vector2f> polygonVertices) {
+		int windingNumber = 0;
+		int n = polygonVertices.size();
+		for (int i = 0; i < n; i++) {
+			final var cur_i = i;
+			final var next_i = i + 1 == n ? 0 : i + 1;
+
+			if (polygonVertices.get(cur_i).y <= y) { // start y <= P.y
+				if (polygonVertices.get(next_i).y > y) { // an upward crossing
+					final var l = isLeft(polygonVertices.get(cur_i), polygonVertices.get(next_i), x, y);
+					if (l > 0) // the point left of edge
+						++windingNumber; // have a valid up intersect
+					else if (l == 0)
+						return true;
+				}
+			} else {
+				if (polygonVertices.get(next_i).y <= y) { // a downward crossing
+					final var l = isLeft(polygonVertices.get(cur_i), polygonVertices.get(next_i), x, y);
+					if (l < 0) // the point right of edge
+						--windingNumber; // have a valid down intersect
+					else if (l == 0)
+						return true;
+				}
+			}
+		}
+		return windingNumber != 0;
+	}
+
+	private static final float isLeft(Vector2f p0, Vector2f p1, float x, float y) {
+		return (int) ((p1.x - p0.x) * (y - p0.y) - (x - p0.x) * (p1.y - p0.y));
+	}
+
+	// ---
+
 	/** Checks if a point is within a given circle */
-	public static boolean intersectsCirclePoint(float circleX, float circleY, float circleRadius, float pointX, float pointY) {
+	public static final boolean intersectsCirclePoint(float circleX, float circleY, float circleRadius, float pointX, float pointY) {
 		final float lDist = (float) (circleX - pointX) * (circleX - pointX) + (circleY - pointY) * (circleY - pointY);
 		if (lDist < circleRadius * circleRadius) {
 			return true;
