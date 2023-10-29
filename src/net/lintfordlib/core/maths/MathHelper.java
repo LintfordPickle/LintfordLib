@@ -4,6 +4,10 @@ import net.lintfordlib.ConstantsMath;
 
 public class MathHelper {
 
+	// TODO: Refactor this class:
+	// Some of these methods are implemented already in Java.lang.math
+	// Some of these methods could be outsourced into a geometry related class, as they are not math related.
+
 	// --------------------------------------
 	// Constants
 	// --------------------------------------
@@ -296,11 +300,11 @@ public class MathHelper {
 	}
 
 	// polygon
-	
+
 	public static boolean isCcwWinding(Vector2f a, Vector2f b, Vector2f c) {
-		return !isCwWinding(a,b,c);
+		return !isCwWinding(a, b, c);
 	}
-	
+
 	public static boolean isCwWinding(Vector2f a, Vector2f b, Vector2f c) {
 		final var aXLen = Vector2f.dst2(a.x, a.y, b.x, b.y);
 		if (aXLen == 0)
@@ -317,7 +321,7 @@ public class MathHelper {
 		final var aYy = (c.y - a.y) / aYLen;
 		return Vector2f.cross(aXx, aXy, aYx, aYy) > 0;
 	}
-	
+
 	/** returns true if the order of the vertices are Ccw, otherwise false */
 	public static boolean isTriangleCcw(float ax, float ay, float bx, float by, float cx, float cy) {
 		final float abx = cx - ax;
