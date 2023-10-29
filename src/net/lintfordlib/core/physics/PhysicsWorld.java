@@ -64,6 +64,9 @@ public class PhysicsWorld {
 	private boolean mInitialized = false;
 	private int updateCounter = 0;
 
+	private final boolean enableMtvSeparation;
+	private final boolean enableCollisionResponse;
+
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
@@ -105,11 +108,17 @@ public class PhysicsWorld {
 	// --------------------------------------
 
 	public PhysicsWorld() {
-		this(100, 100, 10, 10);
+		this(null);
 	}
 
-	public PhysicsWorld(int fieldWidth, int fieldHeight, int numCellsWide, int numCellsHigh) {
-		mWorldHashGrid = new PhysicsHashGrid<>(fieldWidth, fieldHeight, numCellsWide, numCellsHigh);
+	public PhysicsWorld(PhysicsSettings settings) {
+		if (settings == null)
+			settings = PhysicsSettings.DefaultSettings;
+
+		mWorldHashGrid = new PhysicsHashGrid<>(settings.hashGridWidthInUnits, settings.hashGridHeightInUnits, settings.hashGridCellsWide, settings.hashGridCellsHigh);
+
+		enableMtvSeparation = settings.enable_mtv_separation;
+		enableCollisionResponse = settings.enable_collision_resolver;
 	}
 
 	// --------------------------------------
@@ -255,7 +264,6 @@ public class PhysicsWorld {
 	}
 
 	private void broadPhase() {
-		// TODO: Broad phrase double adds entities to the collision pairs if they cross grid boundaries.
 		final var lActiveCellKeys = mWorldHashGrid.getActiveCellKeys();
 		final int lNumActiveCellKeys = lActiveCellKeys.size();
 		for (int i = lNumActiveCellKeys - 1; i >= 0; i--) {
@@ -272,6 +280,8 @@ public class PhysicsWorld {
 				final var lBodyA = lCell.get(j);
 				final var lBodyA_aabb = lBodyA.aabb();
 
+				lBodyA.debugIsColliding = false;
+
 				for (int s = j + 1; s < lNumEntitiesInCell; s++) {
 					final var lBodyB = lCell.get(s);
 
@@ -279,7 +289,6 @@ public class PhysicsWorld {
 						continue;
 
 					final var lBodyB_aabb = lBodyB.aabb();
-
 					if (lBodyA.isStatic() && lBodyB.isStatic())
 						continue;
 
@@ -287,7 +296,6 @@ public class PhysicsWorld {
 						continue;
 
 					final var lWeBothCollideWithOthers = lBodyA.categoryBits() != 0 && lBodyB.categoryBits() != 0;
-
 					final var passedFilterCollision = lWeBothCollideWithOthers == false || (lBodyA.maskBits() & lBodyB.categoryBits()) != 0 && (lBodyA.categoryBits() & lBodyB.maskBits()) != 0;
 
 					if (!passedFilterCollision)
@@ -310,22 +318,24 @@ public class PhysicsWorld {
 		for (int i = 0; i < lNumCollisionPairs; i++) {
 			final var lCollisionPair = mCollisionPair.get(i);
 
+			mContactManifold.initialize(lCollisionPair.bodyA, lCollisionPair.bodyB);
+
 			final var lBodyA = lCollisionPair.bodyA;
 			final var lBodyB = lCollisionPair.bodyB;
 
-			mContactManifold.reset();
+			final var includeFilter = lBodyA.maskBits() != 0 && lBodyB.maskBits() != 0 && lBodyA.categoryBits() != 0 && lBodyB.categoryBits() != 0;
+			final var passedFilterCollision = !includeFilter || (lBodyA.maskBits() & lBodyB.categoryBits()) != 0 && (lBodyA.categoryBits() & lBodyB.maskBits()) != 0;
 
-			if (SATIntersection.checkCollides(lBodyA, lBodyB, mContactManifold)) {
+			if (!passedFilterCollision) {
+				// TODO: Handle the case of sensor bodies
 
-				final var includeFilter = lBodyA.maskBits() != 0 && lBodyB.maskBits() != 0 && lBodyA.categoryBits() != 0 && lBodyB.categoryBits() != 0;
-				final var passedFilterCollision = !includeFilter || (lBodyA.maskBits() & lBodyB.categoryBits()) != 0 && (lBodyA.categoryBits() & lBodyB.maskBits()) != 0;
+				returnCollisionPair(lCollisionPair);
+				break;
+			}
 
-				if (!passedFilterCollision) {
-
-					// TODO: Handle the case of sensor bodies
-					returnCollisionPair(lCollisionPair);
-					break;
-				}
+			if (SATIntersection.checkCollides(mContactManifold)) {
+				lBodyA.debugIsColliding = true;
+				lBodyB.debugIsColliding = true;
 
 				for (int j = 0; j < lNumCallbacks; j++) {
 					mCollisionCallbackList.get(j).preContact(mContactManifold);
@@ -336,7 +346,9 @@ public class PhysicsWorld {
 					continue;
 				}
 
-				separateBodiesByMTV(lBodyA, lBodyB, mContactManifold.normal.x * mContactManifold.depth, mContactManifold.normal.y * mContactManifold.depth);
+				if (enableMtvSeparation) {
+					separateBodiesByMTV(mContactManifold);
+				}
 
 				SATContacts.fillContactPoints(mContactManifold);
 
@@ -344,7 +356,7 @@ public class PhysicsWorld {
 					mCollisionCallbackList.get(j).postContact(mContactManifold);
 				}
 
-				if (mCollisionResolver != null) {
+				if (enableCollisionResponse && mCollisionResolver != null) {
 					for (int j = 0; j < lNumCallbacks; j++) {
 						mCollisionCallbackList.get(j).preSolve(mContactManifold);
 					}
@@ -365,20 +377,26 @@ public class PhysicsWorld {
 	// Methods
 	// --------------------------------------
 
-	// TODO: Move this to the collision package
-	private void separateBodiesByMTV(final RigidBody lBodyA, final RigidBody lBodyB, float mtvX, float mtvY) {
-		if (lBodyA.isStatic()) {
-			lBodyB.transform.p.x += mtvX;
-			lBodyB.transform.p.y += mtvY;
-		} else if (lBodyB.isStatic()) {
-			lBodyA.transform.p.x -= mtvX;
-			lBodyA.transform.p.y -= mtvY;
-		} else {
-			lBodyA.transform.p.x += -mtvX / 2.f;
-			lBodyA.transform.p.y += -mtvY / 2.f;
+	private void separateBodiesByMTV(final ContactManifold contact) {
+		final var lBodyA = contact.bodyA;
+		final var lBodyB = contact.bodyB;
 
-			lBodyB.transform.p.x += mtvX / 2.f;
-			lBodyB.transform.p.y += mtvY / 2.f;
+		// The Vector 'mtv' is the direction to push BodyB outside of BodyA
+		final var lMtvX = contact.normal.x * contact.depth;
+		final var lMtvY = contact.normal.y * contact.depth;
+
+		if (lBodyA.isStatic()) {
+			lBodyB.transform.p.x += lMtvX;
+			lBodyB.transform.p.y += lMtvY;
+		} else if (lBodyB.isStatic()) {
+			lBodyA.transform.p.x -= lMtvX;
+			lBodyA.transform.p.y -= lMtvY;
+		} else {
+			lBodyA.transform.p.x += -lMtvX / 2.f;
+			lBodyA.transform.p.y += -lMtvY / 2.f;
+
+			lBodyB.transform.p.x += lMtvX / 2.f;
+			lBodyB.transform.p.y += lMtvY / 2.f;
 		}
 	}
 

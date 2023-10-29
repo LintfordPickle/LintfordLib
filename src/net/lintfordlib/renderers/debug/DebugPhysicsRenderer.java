@@ -24,7 +24,7 @@ public class DebugPhysicsRenderer extends BaseRenderer {
 
 	public static final boolean RenderAABB = false;
 
-	public static final boolean RENDER_CONTACT_POINTS = false;
+	public static final boolean RENDER_CONTACT_POINTS = true;
 	public static final List<Vector2f> DebugContactPoints = new ArrayList<>();
 
 	// ---------------------------------------------
@@ -115,11 +115,24 @@ public class DebugPhysicsRenderer extends BaseRenderer {
 			b = .2f;
 		}
 
+		if (body.debugIsSelected) {
+			r = .96f;
+			g = .92f;
+			b = .09f;
+		}
+
+		if (body.debugIsColliding) {
+			r = .96f;
+			g = .12f;
+			b = .09f;
+		}
+
 		final var lUnitToPixels = ConstantsPhysics.UnitsToPixels();
 
 		final var lVertices = body.getWorldVertices();
 		final var lShape = body.shape();
 
+		lLineBatch.lineWidth(2.f);
 		switch (lShape.shapeType()) {
 		case Polygon: {
 
@@ -134,18 +147,6 @@ public class DebugPhysicsRenderer extends BaseRenderer {
 				lLineBatch.draw(v0.x * lUnitToPixels, v0.y * lUnitToPixels, v1.x * lUnitToPixels, v1.y * lUnitToPixels, -0.01f, r, g, b, 1.f);
 			}
 
-			lLineBatch.end();
-
-			break;
-		}
-
-		case Box: {
-
-			lLineBatch.begin(core.gameCamera());
-			lLineBatch.draw(lVertices.get(0).x * lUnitToPixels, lVertices.get(0).y * lUnitToPixels, lVertices.get(1).x * lUnitToPixels, lVertices.get(1).y * lUnitToPixels, -0.01f, r, g, b, 1.f);
-			lLineBatch.draw(lVertices.get(1).x * lUnitToPixels, lVertices.get(1).y * lUnitToPixels, lVertices.get(2).x * lUnitToPixels, lVertices.get(2).y * lUnitToPixels, -0.01f, r, g, b, 1.f);
-			lLineBatch.draw(lVertices.get(2).x * lUnitToPixels, lVertices.get(2).y * lUnitToPixels, lVertices.get(3).x * lUnitToPixels, lVertices.get(3).y * lUnitToPixels, -0.01f, r, g, b, 1.f);
-			lLineBatch.draw(lVertices.get(3).x * lUnitToPixels, lVertices.get(3).y * lUnitToPixels, lVertices.get(0).x * lUnitToPixels, lVertices.get(0).y * lUnitToPixels, -0.01f, r, g, b, 1.f);
 			lLineBatch.end();
 
 			break;
@@ -179,12 +180,12 @@ public class DebugPhysicsRenderer extends BaseRenderer {
 			lLineBatch.draw(br_x, br_y, bl_x, bl_y, -0.01f, r, g, b, 1.f);
 			lLineBatch.draw(bl_x, bl_y, tl_x, tl_y, -0.01f, r, g, b, 1.f);
 			lLineBatch.end();
-			
+
 			lLineBatch.begin(core.gameCamera());
 			lLineBatch.drawCircle(sx, sy, body.transform.angle, lHeight, 13, r, g, b, true);
 			lLineBatch.drawCircle(ex, ey, body.transform.angle, lHeight, 13, r, g, b, true);
 			lLineBatch.end();
-			
+
 			break;
 		}
 

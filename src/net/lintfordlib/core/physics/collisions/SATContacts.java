@@ -41,8 +41,6 @@ public class SATContacts {
 
 		if (lShapeTypeA == ShapeType.Polygon) {
 			findContactsOnPolygonShape(bodyA, bodyB, manifold);
-		} else if (lShapeTypeA == ShapeType.Box) {
-			findContactsOnBoxShape(bodyA, bodyB, manifold);
 		} else if (lShapeTypeA == ShapeType.LineWidth) {
 			findContactsOnLineShape(bodyA, bodyB, manifold);
 		} else if (lShapeTypeA == ShapeType.Circle) {
@@ -55,34 +53,16 @@ public class SATContacts {
 
 		if (lShapeTypeB == ShapeType.Polygon)
 			findPolygonPolygonContactPoints(bodyA.getWorldVertices(), bodyB.getWorldVertices(), manifold);
-		else if (lShapeTypeB == ShapeType.Box)
-			findPolygonPolygonContactPoints(bodyA.getWorldVertices(), bodyB.getWorldVertices(), manifold);
 		else if (lShapeTypeB == ShapeType.LineWidth)
 			findLinePolygonContactPoints(bodyB.getWorldVertices(), bodyA.getWorldVertices(), manifold);
 		else if (lShapeTypeB == ShapeType.Circle)
 			findCirclePolygonContactPoint(bodyB.transform.p.x, bodyB.transform.p.y, bodyB.shape().radius(), bodyA.transform.p.x, bodyA.transform.p.y, bodyA.getWorldVertices(), manifold);
-	}
-
-	private static void findContactsOnBoxShape(RigidBody bodyA, RigidBody bodyB, ContactManifold manifold) {
-		final var lShapeTypeB = bodyB.shape().shapeType();
-
-		if (lShapeTypeB == ShapeType.Polygon)
-			findPolygonPolygonContactPoints(bodyA.getWorldVertices(), bodyB.getWorldVertices(), manifold);
-		else if (lShapeTypeB == ShapeType.Box)
-			findPolygonPolygonContactPoints(bodyB.getWorldVertices(), bodyA.getWorldVertices(), manifold);
-		else if (lShapeTypeB == ShapeType.LineWidth)
-			findLinePolygonContactPoints(bodyB.getWorldVertices(), bodyA.getWorldVertices(), manifold);
-		else if (lShapeTypeB == ShapeType.Circle)
-			findCirclePolygonContactPoint(bodyB.transform.p.x, bodyB.transform.p.y, bodyB.shape().radius(), bodyA.transform.p.x, bodyA.transform.p.y, bodyA.getWorldVertices(), manifold);
-
 	}
 
 	private static void findContactsOnLineShape(RigidBody bodyA, RigidBody bodyB, ContactManifold manifold) {
 		final var lShapeTypeB = bodyB.shape().shapeType();
 
 		if (lShapeTypeB == ShapeType.Polygon)
-			findLinePolygonContactPoints(bodyB.getWorldVertices(), bodyA.getWorldVertices(), manifold);
-		if (lShapeTypeB == ShapeType.Box)
 			findLinePolygonContactPoints(bodyB.getWorldVertices(), bodyA.getWorldVertices(), manifold);
 		else if (lShapeTypeB == ShapeType.LineWidth)
 			findLineLineContactPoints(bodyA.getWorldVertices(), bodyA.shape().height(), bodyB.getWorldVertices(), bodyB.shape().height(), manifold);
@@ -95,8 +75,6 @@ public class SATContacts {
 		final var lShapeTypeB = bodyB.shape().shapeType();
 
 		if (lShapeTypeB == ShapeType.Polygon)
-			findCirclePolygonContactPoint(bodyA.transform.p.x, bodyA.transform.p.y, bodyA.shape().radius(), bodyB.transform.p.x, bodyB.transform.p.y, bodyB.getWorldVertices(), manifold);
-		if (lShapeTypeB == ShapeType.Box)
 			findCirclePolygonContactPoint(bodyA.transform.p.x, bodyA.transform.p.y, bodyA.shape().radius(), bodyB.transform.p.x, bodyB.transform.p.y, bodyB.getWorldVertices(), manifold);
 		else if (lShapeTypeB == ShapeType.LineWidth)
 			findLineCircleContactPoint(bodyB.getWorldVertices(), bodyB.shape().height(), bodyA.transform.p.x, bodyA.transform.p.y, bodyA.shape().radius(), manifold);
@@ -297,7 +275,6 @@ public class SATContacts {
 	}
 
 	private static void findLineLineContactPoints(List<Vector2f> lineAVertices, float lineARadius, List<Vector2f> lineBVertices, float lineBRadius, ContactManifold contactManifold) {
-
 		float minDist2 = Float.MAX_VALUE;
 
 		final int lNumVertsA = lineAVertices.size();

@@ -125,7 +125,43 @@ public class PolygonShape extends BaseShape {
 			assert MathHelper.isTriangleCcw(v0.x, v0.y, v1.x, v1.y, v2.x, v2.y) : "PolygonShape expects CCW winding order in local vertices.";
 		}
 
-		// TODO: Set wdith/height/radius?
+		rebuildAABB(null);
+		computeMass();
+	}
+
+	private void setAsBox(float unitPositionX, float unitPositionY, float unitWidth, float unitHeight, float rotRadians) {
+		width = unitWidth;
+		height = unitHeight;
+		radius = (float) Math.sqrt(width * width + height * height) * .5f;
+
+		final var s = (float) Math.sin(rotRadians);
+		final var c = (float) Math.cos(rotRadians);
+
+		final var l = -width * .5f;
+		final var b = height * .5f;
+		final var r = width * .5f;
+		final var t = -height * .5f;
+
+		final var local_tl = new Vector2f(l * c - t * s, l * s + t * c);
+		final var local_tr = new Vector2f(r * c - t * s, r * s + t * c);
+		final var local_br = new Vector2f(r * c - b * s, r * s + b * c);
+		final var local_bl = new Vector2f(l * c - b * s, l * s + b * c);
+
+		// CCW winding order
+		mLocalVertices.clear();
+		mLocalVertices.add(local_tl.add(unitPositionX, unitPositionY));
+		mLocalVertices.add(local_bl.add(unitPositionX, unitPositionY));
+		mLocalVertices.add(local_br.add(unitPositionX, unitPositionY));
+		mLocalVertices.add(local_tr.add(unitPositionX, unitPositionY));
+
+		assert MathHelper.isTriangleCcw(mLocalVertices.get(0).x, mLocalVertices.get(0).y, mLocalVertices.get(1).x, mLocalVertices.get(1).y, mLocalVertices.get(2).x, mLocalVertices.get(2).y) : "BoxShape triangle 0 not CCW";
+		assert MathHelper.isTriangleCcw(mLocalVertices.get(0).x, mLocalVertices.get(0).y, mLocalVertices.get(2).x, mLocalVertices.get(2).y, mLocalVertices.get(3).x, mLocalVertices.get(3).y) : "BoxShape triangle 1 not CCW";
+
+		mTransformedVertices.clear();
+		mTransformedVertices.add(new Vector2f(local_tl));
+		mTransformedVertices.add(new Vector2f(local_bl));
+		mTransformedVertices.add(new Vector2f(local_br));
+		mTransformedVertices.add(new Vector2f(local_tr));
 
 		rebuildAABB(null);
 		computeMass();
@@ -154,6 +190,22 @@ public class PolygonShape extends BaseShape {
 		lNewPolygonShape.set(localVertices);
 
 		return lNewPolygonShape;
+	}
+
+	public static PolygonShape createBoxShape(float unitWidth, float unitHeight, float rotRadians, float density, float restitution, float staticFriction, float dynamicFriction) {
+		return createBoxShape(0.f, 0.f, unitWidth, unitHeight, rotRadians, density, restitution, staticFriction, dynamicFriction);
+	}
+
+	public static PolygonShape createBoxShape(float unitPositionX, float unitPositionY, float unitWidth, float unitHeight, float rotRadians, float density, float restitution, float staticFriction, float dynamicFriction) {
+		final var lNewBoxShape = new PolygonShape();
+
+		lNewBoxShape.density = Math.abs(density);
+		lNewBoxShape.staticFriction = MathHelper.clamp(staticFriction, 0.f, 1.f);
+		lNewBoxShape.dynamicFriction = MathHelper.clamp(dynamicFriction, 0.f, 1.f);
+		lNewBoxShape.restitution = MathHelper.clamp(restitution, 0f, 1f);
+		lNewBoxShape.setAsBox(unitPositionX, unitPositionY, unitWidth, unitHeight, rotRadians);
+
+		return lNewBoxShape;
 	}
 
 }

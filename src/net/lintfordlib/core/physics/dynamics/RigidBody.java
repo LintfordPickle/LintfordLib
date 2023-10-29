@@ -53,6 +53,10 @@ public class RigidBody extends PhysicsGridEntity {
 
 	private boolean mIsStatic;
 
+	// TODO: Add debug variables to UserData
+	public boolean debugIsSelected;
+	public boolean debugIsColliding;
+
 	// --------------------------------------
 	// Properties
 	// --------------------------------------

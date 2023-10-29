@@ -37,27 +37,10 @@ public class ContactManifold {
 	// Methods
 	// --------------------------------------
 
-	public void initialize(RigidBody bodyA, RigidBody bodyB, float normalX, float normalY, float depth, float contact1X, float contact1Y, float contact2X, float contact2Y, int contactCount) {
-
+	public void initialize(RigidBody bodyA, RigidBody bodyB) {
 		this.bodyA = bodyA;
 		this.bodyB = bodyB;
-		this.normal.x = normalX;
-		this.normal.y = normalY;
-		this.depth = depth;
 
-		this.contact1.x = contact1X;
-		this.contact1.y = contact1Y;
-
-		this.contact2.x = contact2X;
-		this.contact2.y = contact2Y;
-
-		this.contactCount = contactCount;
-		isIntersecting = contactCount > 0;
-	}
-
-	public void reset() {
-		bodyA = null;
-		bodyB = null;
 		enableResolveContact = true;
 
 		isIntersecting = false;

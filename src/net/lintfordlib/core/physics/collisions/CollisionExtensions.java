@@ -17,6 +17,9 @@ public class CollisionExtensions {
 		return (xx * xx + yy * yy) < (body.shape().radius() * body.shape().radius());
 	}
 
+	// TODO: Split this method into separate methods for each shape
+	// TODO: A lot of methods in the SATIntersections class are actualy just algorithms that aren't SAT related, but belong in here
+
 	/** returns true if the point lies within the area of the rigid body. Note the implementation is different depending on the type of {@link ShapeType} */
 	public static boolean intersectsBody(RigidBody body, float x, float y) {
 		switch (body.shape().shapeType()) {
@@ -24,36 +27,36 @@ public class CollisionExtensions {
 			return intersectsPointPolygon(x, y, body.getWorldVertices());
 		}
 
-		case Box: {
-			final var lWorldVertices = body.getWorldVertices();
-			final var a = lWorldVertices.get(0);
-			final var b = lWorldVertices.get(1);
-			final var c = lWorldVertices.get(2);
-			final var d = lWorldVertices.get(3);
-
-			{ // tri a
-				float fAB = (y - a.y) * (b.x - a.x) - (x - a.x) * (b.y - a.y);
-				float fBC = (y - b.y) * (c.x - b.x) - (x - b.x) * (c.y - b.y);
-				float fCA = (y - c.y) * (a.x - c.x) - (x - c.x) * (a.y - c.y);
-
-				if (fAB * fBC > 0 && fBC * fCA > 0) {
-					return true;
-				}
-			}
-
-			{ // tri b
-				float fAC = (y - a.y) * (c.x - a.x) - (x - a.x) * (c.y - a.y);
-				float fCD = (y - c.y) * (d.x - c.x) - (x - c.x) * (d.y - c.y);
-				float fDA = (y - d.y) * (a.x - d.x) - (x - d.x) * (a.y - d.y);
-
-				if (fAC * fCD > 0 && fCD * fDA > 0) {
-
-					return true;
-				}
-			}
-
-			return false;
-		}
+//		case Box: {
+//			final var lWorldVertices = body.getWorldVertices();
+//			final var a = lWorldVertices.get(0);
+//			final var b = lWorldVertices.get(1);
+//			final var c = lWorldVertices.get(2);
+//			final var d = lWorldVertices.get(3);
+//
+//			{ // tri a
+//				float fAB = (y - a.y) * (b.x - a.x) - (x - a.x) * (b.y - a.y);
+//				float fBC = (y - b.y) * (c.x - b.x) - (x - b.x) * (c.y - b.y);
+//				float fCA = (y - c.y) * (a.x - c.x) - (x - c.x) * (a.y - c.y);
+//
+//				if (fAB * fBC > 0 && fBC * fCA > 0) {
+//					return true;
+//				}
+//			}
+//
+//			{ // tri b
+//				float fAC = (y - a.y) * (c.x - a.x) - (x - a.x) * (c.y - a.y);
+//				float fCD = (y - c.y) * (d.x - c.x) - (x - c.x) * (d.y - c.y);
+//				float fDA = (y - d.y) * (a.x - d.x) - (x - d.x) * (a.y - d.y);
+//
+//				if (fAC * fCD > 0 && fCD * fDA > 0) {
+//
+//					return true;
+//				}
+//			}
+//
+//			return false;
+//		}
 
 		case LineWidth: {
 			final var lWorldVertices = body.getWorldVertices();
@@ -128,7 +131,7 @@ public class CollisionExtensions {
 	}
 
 	private static final float isLeft(Vector2f p0, Vector2f p1, float x, float y) {
-		return (int) ((p1.x - p0.x) * (y - p0.y) - (x - p0.x) * (p1.y - p0.y));
+		return ((p1.x - p0.x) * (y - p0.y) - (x - p0.x) * (p1.y - p0.y));
 	}
 
 	// ---
