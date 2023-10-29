@@ -1,7 +1,5 @@
 package net.lintfordlib.core.physics.collisions;
 
-import java.util.List;
-
 import net.lintfordlib.ConstantsPhysics;
 import net.lintfordlib.core.maths.MathHelper;
 import net.lintfordlib.core.maths.Vector2f;
@@ -10,102 +8,128 @@ import net.lintfordlib.core.physics.dynamics.ShapeType;
 
 public class CollisionExtensions {
 
-	/** returns true if the point lies within the radius of the body's bounding radius */
-	public static boolean intersectsBodyRadius(RigidBody body, float x, float y) {
+	/***
+	 * Checks if the given point lies within a {@link RigidBody}s bounding radius. This assumes the RigidBody has a radius defined!
+	 * 
+	 * @param body The body against which the check should be made.
+	 * @param x    The x component of the point to check.
+	 * @param y    The x component of the point to check.
+	 * @return Returns true if the point lies within the radius of the body's bounding radius, otherwise false.
+	 */
+	public static boolean pointIntersectsBodyRadius(RigidBody body, float x, float y) {
 		final float xx = body.transform.p.x - x;
 		final float yy = body.transform.p.y - y;
 		return (xx * xx + yy * yy) < (body.shape().radius() * body.shape().radius());
 	}
 
-	// TODO: Split this method into separate methods for each shape
-	// TODO: A lot of methods in the SATIntersections class are actualy just algorithms that aren't SAT related, but belong in here
+	/***
+	 * Checks if the given point lies within the bounds of the box body.
+	 * 
+	 * @param body The box body against which to check.
+	 * @param x    The x component of the point to check.
+	 * @param y    The y component of the point to check.
+	 * @return Returns true if a collision is detected, otherwise false.
+	 */
+	public static final boolean pointIntersectsBoxBody(RigidBody body, float x, float y) {
 
-	/** returns true if the point lies within the area of the rigid body. Note the implementation is different depending on the type of {@link ShapeType} */
-	public static boolean intersectsBody(RigidBody body, float x, float y) {
-		switch (body.shape().shapeType()) {
-		case Polygon: {
-			return intersectsPointPolygon(x, y, body.getWorldVertices());
+		assert (body.getWorldVertices().size() == 4) : "pointIntersectsBoxPolygon requires 4 vertices";
+
+		final var lWorldVertices = body.getWorldVertices();
+		final var a = lWorldVertices.get(0);
+		final var b = lWorldVertices.get(1);
+		final var c = lWorldVertices.get(2);
+		final var d = lWorldVertices.get(3);
+
+		{ // tri a
+			float fAB = (y - a.y) * (b.x - a.x) - (x - a.x) * (b.y - a.y);
+			float fBC = (y - b.y) * (c.x - b.x) - (x - b.x) * (c.y - b.y);
+			float fCA = (y - c.y) * (a.x - c.x) - (x - c.x) * (a.y - c.y);
+
+			if (fAB * fBC > 0 && fBC * fCA > 0) {
+				return true;
+			}
 		}
 
-//		case Box: {
-//			final var lWorldVertices = body.getWorldVertices();
-//			final var a = lWorldVertices.get(0);
-//			final var b = lWorldVertices.get(1);
-//			final var c = lWorldVertices.get(2);
-//			final var d = lWorldVertices.get(3);
-//
-//			{ // tri a
-//				float fAB = (y - a.y) * (b.x - a.x) - (x - a.x) * (b.y - a.y);
-//				float fBC = (y - b.y) * (c.x - b.x) - (x - b.x) * (c.y - b.y);
-//				float fCA = (y - c.y) * (a.x - c.x) - (x - c.x) * (a.y - c.y);
-//
-//				if (fAB * fBC > 0 && fBC * fCA > 0) {
-//					return true;
-//				}
-//			}
-//
-//			{ // tri b
-//				float fAC = (y - a.y) * (c.x - a.x) - (x - a.x) * (c.y - a.y);
-//				float fCD = (y - c.y) * (d.x - c.x) - (x - c.x) * (d.y - c.y);
-//				float fDA = (y - d.y) * (a.x - d.x) - (x - d.x) * (a.y - d.y);
-//
-//				if (fAC * fCD > 0 && fCD * fDA > 0) {
-//
-//					return true;
-//				}
-//			}
-//
-//			return false;
-//		}
+		{ // tri b
+			float fAC = (y - a.y) * (c.x - a.x) - (x - a.x) * (c.y - a.y);
+			float fCD = (y - c.y) * (d.x - c.x) - (x - c.x) * (d.y - c.y);
+			float fDA = (y - d.y) * (a.x - d.x) - (x - d.x) * (a.y - d.y);
+
+			if (fAC * fCD > 0 && fCD * fDA > 0) {
+
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	public static final boolean pointIntersectsLineWidthBody(RigidBody lineWidthBody, float x, float y) {
+
+		assert (lineWidthBody.getWorldVertices().size() == 2) : "pointIntersectsLineWidthBody requires 2 vertices";
+
+		final var lWorldVertices = lineWidthBody.getWorldVertices();
+		final var start = lWorldVertices.get(0);
+		final var end = lWorldVertices.get(1);
+
+		final var lLineX1 = end.x - start.x;
+		final var lLineY1 = end.y - start.y;
+
+		final var lLineX2 = x - start.x;
+		final var lLineY2 = y - start.y;
+
+		final var lEdgeLength = lLineX1 * lLineX1 + lLineY1 * lLineY1;
+
+		final var v = lLineX1 * lLineX2 + lLineY1 * lLineY2;
+		final var t = MathHelper.clamp(v, 0.f, lEdgeLength) / lEdgeLength;
+
+		final var lClosestPointX = start.x + t * lLineX1;
+		final var lClosestPointY = start.y + t * lLineY1;
+
+		final var distance = (float) Math.sqrt((x - lClosestPointX) * (x - lClosestPointX) + (y - lClosestPointY) * (y - lClosestPointY));
+
+		final var lPointRadius = 1.f * ConstantsPhysics.PixelsToUnits();
+		final var lLineRadius = lineWidthBody.shape().height() * .5f;
+		if (distance <= (lLineRadius + lPointRadius))
+			return true;
+
+		return false;
+	}
+
+	/***
+	 * Checks if the given points lies within the bounds of the RidigBody. This function calls outs depending on the type of the attached {@link ShapeType}
+	 */
+	public static boolean pointIntersectsBody(RigidBody body, float x, float y) {
+		switch (body.shape().shapeType()) {
+		case Polygon: {
+			return intersectsPointPolygon(body, x, y);
+		}
 
 		case LineWidth: {
-			final var lWorldVertices = body.getWorldVertices();
-			final var start = lWorldVertices.get(0);
-			final var end = lWorldVertices.get(1);
-
-			float lLineX1 = end.x - start.x;
-			float lLineY1 = end.y - start.y;
-
-			float lLineX2 = x - start.x;
-			float lLineY2 = y - start.y;
-
-			float lEdgeLength = lLineX1 * lLineX1 + lLineY1 * lLineY1;
-
-			float v = lLineX1 * lLineX2 + lLineY1 * lLineY2;
-			float t = MathHelper.clamp(v, 0.f, lEdgeLength) / lEdgeLength;
-
-			float lClosestPointX = start.x + t * lLineX1;
-			float lClosestPointY = start.y + t * lLineY1;
-
-			float distance = (float) Math.sqrt((x - lClosestPointX) * (x - lClosestPointX) + (y - lClosestPointY) * (y - lClosestPointY));
-
-			final float lPointRadius = 1.f * ConstantsPhysics.PixelsToUnits();
-			final float lLineRadius = body.shape().height() * .5f;
-			if (distance <= (lLineRadius + lPointRadius))
-				return true;
-
-			return false;
+			return pointIntersectsLineWidthBody(body, x, y);
 		}
 
 		default:
 		case Circle: {
-			return intersectsCirclePoint(body.transform.p.x, body.transform.p.y, body.shape().radius(), x, y);
+			return pointIntersectsCircleBody(body, x, y);
 		}
 
 		}
 	}
 
-	// ----
-
 	/***
+	 * Checks if the given point lies within the bounds of a concave polygon.
+	 * 
 	 * @param x               The x component of the input point to test.
 	 * @param y               The y component of the input point to test.
 	 * @param polygonVertices The Polygon vertices. The polygon must be concave and have a CCW winding order.
 	 * @return true if the point lies within the polygon, otherwise false
 	 */
-	public static final boolean intersectsPointPolygon(float x, float y, List<Vector2f> polygonVertices) {
+	public static final boolean intersectsPointPolygon(RigidBody concavePolygonBody, float x, float y) {
+		final var polygonVertices = concavePolygonBody.getWorldVertices();
+
 		int windingNumber = 0;
-		int n = polygonVertices.size();
+		final int n = polygonVertices.size();
 		for (int i = 0; i < n; i++) {
 			final var cur_i = i;
 			final var next_i = i + 1 == n ? 0 : i + 1;
@@ -131,14 +155,19 @@ public class CollisionExtensions {
 		return windingNumber != 0;
 	}
 
+	// utility function used within intersectsPointPolygon for checking the winding order
 	private static final float isLeft(Vector2f p0, Vector2f p1, float x, float y) {
 		return ((p1.x - p0.x) * (y - p0.y) - (x - p0.x) * (p1.y - p0.y));
 	}
 
-	// ---
+	/***
+	 * Checks if the given point intersects a CircleShape.
+	 */
+	public static final boolean pointIntersectsCircleBody(RigidBody circleBody, float pointX, float pointY) {
+		final var circleX = circleBody.transform.p.x;
+		final var circleY = circleBody.transform.p.y;
+		final var circleRadius = circleBody.shape().radius();
 
-	/** Checks if a point is within a given circle */
-	public static final boolean intersectsCirclePoint(float circleX, float circleY, float circleRadius, float pointX, float pointY) {
 		final float lDist = (float) (circleX - pointX) * (circleX - pointX) + (circleY - pointY) * (circleY - pointY);
 		if (lDist < circleRadius * circleRadius) {
 			return true;
@@ -147,19 +176,39 @@ public class CollisionExtensions {
 		return false;
 	}
 
-	public static boolean doCirclesOverlap(float x1, float y1, float r1, float x2, float y2, float r2) {
+	/***
+	 * Checks for collisions between two circles.
+	 * 
+	 * @param x1 The x component of the first circle's center position.
+	 * @param y1 The y component of the first circle's center position.
+	 * @param r1 The radius of the first circle
+	 * @param x2 The x component of the second circle's center position.
+	 * @param y2 The y component of the second circle's center position.
+	 * @param r2 The radius of the first circle
+	 * @return true if a collision occurs, otherwise false.
+	 */
+	public static final boolean intersectsCircleCircle(float x1, float y1, float r1, float x2, float y2, float r2) {
 		return Math.abs((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)) < (r1 + r2) * (r1 + r2);
 	}
 
-	public static boolean intersectsLineLine(Vector2f a, Vector2f b, Vector2f p, Vector2f q, Vector2f outVector) {
-		final float l0x = b.x - a.x;
-		final float l0y = b.y - a.y;
-		final float l1x = q.x - p.x;
-		final float l1y = q.y - p.y;
+	/***
+	 * Checks for collisions between two line segments as defined by [a,b] and [p,q]. The resulting position of a collision is stored in {@link outVector}. If the lines do not collide, then {@link outVector} is not modified.
+	 * 
+	 * @param a         The start point of the first line segment.
+	 * @param b         The end point of the first line segment.
+	 * @param p         The start point of the second line segment.
+	 * @param q         The end point of the second line segment.
+	 * @param outVector The position of a collsion, if a collision occurs. Otherwise unmodified.
+	 * @return true if a collision occured, otherwise false.
+	 */
+	public static final boolean intersectsLineLine(Vector2f a, Vector2f b, Vector2f p, Vector2f q, Vector2f outVector) {
+		final var l0x = b.x - a.x;
+		final var l0y = b.y - a.y;
+		final var l1x = q.x - p.x;
+		final var l1y = q.y - p.y;
 
-		float s = (-l0y * (a.x - p.x) + l0x * (a.y - p.y)) / (-l1x * l0y + l0x * l1y);
-
-		float t = (l1x * (a.y - p.y) - l1y * (a.x - p.x)) / (-l1x * l0y + l0x * l1y);
+		final var s = (-l0y * (a.x - p.x) + l0x * (a.y - p.y)) / (-l1x * l0y + l0x * l1y);
+		final var t = (l1x * (a.y - p.y) - l1y * (a.x - p.x)) / (-l1x * l0y + l0x * l1y);
 
 		if (s >= 0 && s <= 1 && t >= 0 && t <= 1) {
 			outVector.x = a.x + (t * l0x);
@@ -167,6 +216,6 @@ public class CollisionExtensions {
 			return true;
 		}
 
-		return false; // No collision
+		return false;
 	}
 }
