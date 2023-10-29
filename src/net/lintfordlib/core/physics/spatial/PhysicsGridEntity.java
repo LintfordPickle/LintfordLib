@@ -9,11 +9,11 @@ public abstract class PhysicsGridEntity extends Entity {
 	// ---------------------------------------------
 
 	// -caching
-	public int minX;
-	public int minY;
+	public int minUnitX;
+	public int minUnitY;
 
-	public int maxX;
-	public int maxY;
+	public int maxUnitX;
+	public int maxUnitY;
 
 	public int queryId;
 
@@ -22,7 +22,7 @@ public abstract class PhysicsGridEntity extends Entity {
 	// ---------------------------------------------
 
 	public boolean isOnGrid() {
-		return minX != -1 && minY != -1 && maxX != -1 && maxY != -1;
+		return minUnitX != -1 && minUnitY != -1 && maxUnitX != -1 && maxUnitY != -1;
 	}
 
 	// ---------------------------------------------
@@ -39,10 +39,10 @@ public abstract class PhysicsGridEntity extends Entity {
 
 	public void clearGridCache() {
 		queryId = 0;
-		minX = 0;
-		maxX = 0;
-		minY = 0;
-		maxY = 0;
+		minUnitX = 0;
+		maxUnitX = 0;
+		minUnitY = 0;
+		maxUnitY = 0;
 	}
 
 	public abstract void fillEntityBounds(PhysicsHashGrid<?> grid);

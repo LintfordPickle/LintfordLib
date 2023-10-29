@@ -269,11 +269,11 @@ public class RigidBody extends PhysicsGridEntity {
 	public void fillEntityBounds(PhysicsHashGrid<?> grid) {
 		final var aabb = aabb();
 
-		minX = grid.getColumnAtX(aabb.left());
-		minY = grid.getRowAtY(aabb.top());
+		minUnitX = grid.getColumnAtX(aabb.left());
+		minUnitY = grid.getRowAtY(aabb.top());
 
-		maxX = grid.getColumnAtX(aabb.right());
-		maxY = grid.getRowAtY(aabb.bottom());
+		maxUnitX = grid.getColumnAtX(aabb.right());
+		maxUnitY = grid.getRowAtY(aabb.bottom());
 	}
 
 	@Override
@@ -286,7 +286,7 @@ public class RigidBody extends PhysicsGridEntity {
 		final var newMaxX = grid.getColumnAtX(aabb.right());
 		final var newMaxY = grid.getRowAtY(aabb.bottom());
 
-		if (newMinX == minX && newMinY == minY && newMaxX == maxX && newMaxY == maxY)
+		if (newMinX == minUnitX && newMinY == minUnitY && newMaxX == maxUnitX && newMaxY == maxUnitY)
 			return false; // early out
 
 		return true;

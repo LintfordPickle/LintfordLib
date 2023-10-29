@@ -3,6 +3,7 @@ package net.lintfordlib.core.physics.spatial;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.lintfordlib.ConstantsPhysics;
 import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.maths.MathHelper;
 
@@ -18,8 +19,8 @@ public class PhysicsHashGrid<T extends PhysicsGridEntity> {
 	// Variables
 	// ---------------------------------------------
 
-	private float mBoundaryWidth;
-	private float mBoundaryHeight;
+	private float mBoundaryWidthInUnits;
+	private float mBoundaryHeightInUnits;
 
 	private int mTilesWide;
 	private int mTilesHigh;
@@ -56,12 +57,12 @@ public class PhysicsHashGrid<T extends PhysicsGridEntity> {
 		return mCells.get(cellKey);
 	}
 
-	public float boundaryWidth() {
-		return mBoundaryWidth;
+	public float boundaryWidthInUnits() {
+		return mBoundaryWidthInUnits;
 	}
 
-	public float boundaryHeight() {
-		return mBoundaryHeight;
+	public float boundaryHeightInUnits() {
+		return mBoundaryHeightInUnits;
 	}
 
 	public int numTilesWide() {
@@ -79,9 +80,9 @@ public class PhysicsHashGrid<T extends PhysicsGridEntity> {
 	/**
 	 * Creates a spatial hash grid around 0,0 with the specified area dimensions and tile size
 	 */
-	public PhysicsHashGrid(int boundaryWidth, int boundaryHeight, int tilesWide, int tilesHigh) {
-		mBoundaryWidth = boundaryWidth;
-		mBoundaryHeight = boundaryHeight;
+	public PhysicsHashGrid(int boundaryWidthInUnits, int boundaryHeightInUnits, int tilesWide, int tilesHigh) {
+		mBoundaryWidthInUnits = boundaryWidthInUnits;
+		mBoundaryHeightInUnits = boundaryHeightInUnits;
 
 		mTilesWide = tilesWide;
 		mTilesHigh = tilesHigh;
@@ -101,8 +102,16 @@ public class PhysicsHashGrid<T extends PhysicsGridEntity> {
 	// ---------------------------------------------
 
 	public int getCellKeyFromWorldPosition(float worldX, float worldY) {
-		final int cellX = getColumnAtX(worldX);
-		final int cellY = getRowAtY(worldY);
+		final var lToUnits = ConstantsPhysics.PixelsToUnits();
+
+		final int cellX = getColumnAtX(worldX * lToUnits);
+		final int cellY = getRowAtY(worldY * lToUnits);
+		return getKey(cellX, cellY);
+	}
+	
+	public int getCellKeyFromUnitPosition(float unitX, float unitY) {
+		final int cellX = getColumnAtX(unitX);
+		final int cellY = getRowAtY(unitY);
 		return getKey(cellX, cellY);
 	}
 
@@ -125,18 +134,18 @@ public class PhysicsHashGrid<T extends PhysicsGridEntity> {
 		if (entity.isOnGrid() == false)
 			return;
 
-		for (int xx = entity.minX; xx <= entity.maxX; xx++) {
-			for (int yy = entity.minY; yy <= entity.maxY; yy++) {
+		for (int xx = entity.minUnitX; xx <= entity.maxUnitX; xx++) {
+			for (int yy = entity.minUnitY; yy <= entity.maxUnitY; yy++) {
 				final var lCellKey = getKey(xx, yy);
 				final var lCell = mCells.get(lCellKey); // O(1)
 				lCell.remove(entity); // O(n)
 			}
 		}
 
-		entity.minX = -1;
-		entity.minY = -1;
-		entity.maxX = -1;
-		entity.maxY = -1;
+		entity.minUnitX = -1;
+		entity.minUnitY = -1;
+		entity.maxUnitX = -1;
+		entity.maxUnitY = -1;
 	}
 
 	public void findNearbyEntities(List<T> toFill, float centerX, float centerY, float radius) {
@@ -188,8 +197,8 @@ public class PhysicsHashGrid<T extends PhysicsGridEntity> {
 	private void insertEntity(T entity) {
 		entity.fillEntityBounds(this);
 
-		for (int xx = entity.minX; xx <= entity.maxX; xx++) {
-			for (int yy = entity.minY; yy <= entity.maxY; yy++) {
+		for (int xx = entity.minUnitX; xx <= entity.maxUnitX; xx++) {
+			for (int yy = entity.minUnitY; yy <= entity.maxUnitY; yy++) {
 				final var lCellKey = getKey(xx, yy);
 
 				final var lCell = mCells.get(lCellKey); // O(1)
@@ -207,13 +216,13 @@ public class PhysicsHashGrid<T extends PhysicsGridEntity> {
 	}
 
 	public int getColumnAtX(float x) {
-		final float divisor = mBoundaryWidth / mTilesWide;
-		return MathHelper.clampi((int) ((x + mBoundaryWidth / 2.f) / divisor), 0, mTilesWide - 1);
+		final float divisor = mBoundaryWidthInUnits / mTilesWide;
+		return MathHelper.clampi((int) ((x + mBoundaryWidthInUnits / 2.f) / divisor), 0, mTilesWide - 1);
 	}
 
 	public int getRowAtY(float y) {
-		final float divisor = mBoundaryHeight / mTilesHigh;
-		return MathHelper.clampi((int) ((y + mBoundaryHeight / 2.f) / divisor), 0, mTilesHigh - 1);
+		final float divisor = mBoundaryHeightInUnits / mTilesHigh;
+		return MathHelper.clampi((int) ((y + mBoundaryHeightInUnits / 2.f) / divisor), 0, mTilesHigh - 1);
 	}
 
 }

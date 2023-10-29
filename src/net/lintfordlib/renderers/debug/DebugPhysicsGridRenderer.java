@@ -83,8 +83,8 @@ public class DebugPhysicsGridRenderer extends BaseRenderer {
 	// ---------------------------------------------
 
 	private void drawSpatialHashGridGrid(LintfordCore core, PhysicsHashGrid<RigidBody> grid) {
-		final var mBoundaryWidth = grid.boundaryWidth() * ConstantsPhysics.UnitsToPixels();
-		final var mBoundaryHeight = grid.boundaryHeight() * ConstantsPhysics.UnitsToPixels();
+		final var mBoundaryWidth = grid.boundaryWidthInUnits() * ConstantsPhysics.UnitsToPixels();
+		final var mBoundaryHeight = grid.boundaryHeightInUnits() * ConstantsPhysics.UnitsToPixels();
 
 		final var lHalfBW = mBoundaryWidth / 2.f;
 		final var lHalfBH = mBoundaryHeight / 2.f;
