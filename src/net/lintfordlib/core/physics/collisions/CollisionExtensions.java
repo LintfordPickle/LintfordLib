@@ -80,7 +80,8 @@ public class CollisionExtensions {
 			float distance = (float) Math.sqrt((x - lClosestPointX) * (x - lClosestPointX) + (y - lClosestPointY) * (y - lClosestPointY));
 
 			final float lPointRadius = 1.f * ConstantsPhysics.PixelsToUnits();
-			if (distance <= (body.shape().radius() * lPointRadius))
+			final float lLineRadius = body.shape().height() * .5f;
+			if (distance <= (lLineRadius + lPointRadius))
 				return true;
 
 			return false;

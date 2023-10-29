@@ -109,9 +109,6 @@ public class PolygonShape extends BaseShape {
 		for (int i = 0; i < lNumLocalVertices; i++) {
 			mLocalVertices.add(new Vector2f(vertices.get(i)));
 			mTransformedVertices.add(new Vector2f(vertices.get(i)));
-
-			System.out.println("(" + vertices.get(i).x + "," + vertices.get(i).y + ")");
-
 		}
 
 		// Ensure winding order is CCW

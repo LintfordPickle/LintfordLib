@@ -407,8 +407,8 @@ public class SATIntersection {
 			var axisX = edgeY / edgeLength;
 			var axisY = -edgeX / edgeLength;
 
-			projectLineWidth(lsx, lsy, lex, ley, lineRadius, axisX, axisY, projectionResult1);
 			projectVertices(polygonVertices, axisX, axisY, projectionResult2);
+			projectLineWidth(lsx, lsy, lex, ley, lineRadius, axisX, axisY, projectionResult1);
 
 			if (projectionResult1.min >= projectionResult2.max || projectionResult2.min >= projectionResult1.max) {
 				result.isIntersecting = false;
