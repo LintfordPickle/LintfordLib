@@ -85,8 +85,6 @@ public class Projection {
 		var max = -Float.MAX_VALUE;
 		float proj = 0;
 
-		// TODO: Check if we can pre-compute these (obviously without the axis')
-
 		proj = Vector2f.dot(sx - radius * axisX, sy - radius * axisY, axisX, axisY);
 
 		if (proj < min)
