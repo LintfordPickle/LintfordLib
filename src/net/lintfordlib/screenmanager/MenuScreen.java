@@ -608,7 +608,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 		mScreenManager.toolTip().toolTipProvider(null);
 
-		// TODO: play sound for menu entry changed
+		mScreenManager.uiSounds().play(ConstantsScreenManagerAudio.SCREENMANAGER_AUDIO_ENTRY_NAVIGATION_UP);
 	}
 
 	protected void onNavigationDown(LintfordCore core) {
@@ -625,7 +625,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 		mScreenManager.toolTip().toolTipProvider(null);
 
-		// TODO: play sound for menu entry changed
+		mScreenManager.uiSounds().play(ConstantsScreenManagerAudio.SCREENMANAGER_AUDIO_ENTRY_NAVIGATION_DOWN);
 	}
 
 	protected void onNavigationLeft(LintfordCore core) {

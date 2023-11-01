@@ -723,7 +723,7 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 			return;
 
 		mAnimationTimer = MenuScreen.ANIMATION_TIMER_LENGTH;
-		mScreenManager.uiSounds().play("SOUND_MENU_CLICK");
+		mScreenManager.uiSounds().play(ConstantsScreenManagerAudio.SCREENMANAGER_AUDIO_ENTRY_SELECTED);
 		mClickListener.menuEntryOnClick(inputManager, mMenuEntryID);
 	}
 
