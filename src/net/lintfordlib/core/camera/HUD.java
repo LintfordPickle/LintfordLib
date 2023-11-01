@@ -42,11 +42,6 @@ public class HUD implements ICamera, IResizeListener {
 	private float mScaledViewportWidth;
 	private float mScaledViewportHeight;
 
-	@Override
-	public Vector2f internalPosition() {
-		return position;
-	}
-
 	// --------------------------------------
 	// Properties
 	// --------------------------------------

@@ -26,7 +26,7 @@ import net.lintfordlib.options.MasterConfig;
 
 /**
  * @References Path Watcher: https://docs.oracle.com/javase/tutorial/essential/io/notification.html
- * @TODO Need to put the directory watcher into a separate thread, because it is blocking
+ * @TODO Directory watcher no longer working. Also need to put the directory watcher into a separate thread.
  */
 public class ResourceManager {
 
@@ -49,10 +49,6 @@ public class ResourceManager {
 	protected SpriteSheetManager mSpriteSheetManager;
 	protected AudioManager mAudioManager;
 	protected SpriteGraphRepository mSpriteGraphRepository;
-
-	// TODO: ResouceManagers still to be implemented:
-	// GeometryManager
-	// ShaderManager
 
 	private boolean mResourcesLoaded;
 	private boolean mMonitorResourcesForChanges;

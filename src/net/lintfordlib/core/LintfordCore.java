@@ -291,9 +291,7 @@ public abstract class LintfordCore {
 			}
 		}
 
-		// TODO: Need to set the target simulaation spede based on the display refresh rate / computer spec.
 		// The target simulation speed can be set in the CoreTime.targetElapsedTimeMilli. Examples:
-
 		// 30Hz is 33.33 ms
 		// 60Hz is 16.66 ms
 		// 90Hz is 11.111 ms

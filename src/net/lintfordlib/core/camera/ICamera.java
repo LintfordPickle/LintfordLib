@@ -10,11 +10,6 @@ public interface ICamera {
 
 	public static ICamera EMPTY = new ICamera() {
 
-		@Override
-		public Vector2f internalPosition() {
-			return Vector2f.Zero;
-		}
-
 		// --------------------------------------
 		// Variables
 		// --------------------------------------
@@ -162,9 +157,6 @@ public interface ICamera {
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
-
-	// TODO: Remove before commit
-	public Vector2f internalPosition();
 
 	public abstract Matrix4f projection();
 

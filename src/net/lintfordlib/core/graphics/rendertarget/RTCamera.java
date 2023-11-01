@@ -34,11 +34,6 @@ public class RTCamera implements ICamera {
 	protected final Matrix4f mProjectionMatrix;
 	protected final Matrix4f mViewMatrix;
 
-	@Override
-	public Vector2f internalPosition() {
-		return mInternalPosition;
-	}
-
 	protected float mMinX;
 	protected float mMaxX;
 	protected float mMinY;
@@ -190,7 +185,7 @@ public class RTCamera implements ICamera {
 //			mWindowWidth = 960; //lDisplayConfig.windowWidth();
 //			mWindowHeight = 540;//lDisplayConfig.windowHeight();
 //		}
-		
+
 		createView();
 		createOrtho(mViewportWidth, mViewportHeight);
 

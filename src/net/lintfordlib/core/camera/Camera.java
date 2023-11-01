@@ -393,9 +393,4 @@ public class Camera implements ICamera {
 	public float getPointCameraSpaceY(float pointY) {
 		return this.getMinY() + pointY * mScaleRatio.y / getZoomFactor();
 	}
-
-	@Override
-	public Vector2f internalPosition() {
-		return mInternalPosition;
-	}
 }
