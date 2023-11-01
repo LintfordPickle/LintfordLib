@@ -339,49 +339,37 @@ public class PhysicsWorld {
 			final var lBodyA = lCollisionPair.bodyA;
 			final var lBodyB = lCollisionPair.bodyB;
 
-			final var includeFilter = lBodyA.maskBits() != 0 && lBodyB.maskBits() != 0 && lBodyA.categoryBits() != 0 && lBodyB.categoryBits() != 0;
-			final var passedFilterCollision = !includeFilter || (lBodyA.maskBits() & lBodyB.categoryBits()) != 0 && (lBodyA.categoryBits() & lBodyB.maskBits()) != 0;
-
-			if (!passedFilterCollision) {
-				// TODO: Handle the case of sensor bodies
-
-				returnCollisionPair(lCollisionPair);
-				break;
-			}
-
 			if (SATIntersection.checkCollides(mContactManifold)) {
 				lBodyA.debugIsColliding = true;
 				lBodyB.debugIsColliding = true;
 
-				for (int j = 0; j < lNumCallbacks; j++) {
+				for (int j = 0; j < lNumCallbacks; j++)
 					mCollisionCallbackList.get(j).preContact(mContactManifold);
-				}
 
 				if (mContactManifold.enableResolveContact == false) {
 					returnCollisionPair(lCollisionPair);
 					continue;
 				}
 
-				if (enableMtvSeparation) {
+				final var lDealingWithSensorShape = lBodyA.isSensor() || lBodyB.isSensor();
+				if (enableMtvSeparation && !lDealingWithSensorShape)
 					separateBodiesByMTV(mContactManifold);
-				}
 
 				SATContacts.fillContactPoints(mContactManifold);
 
-				for (int j = 0; j < lNumCallbacks; j++) {
+				for (int j = 0; j < lNumCallbacks; j++)
 					mCollisionCallbackList.get(j).postContact(mContactManifold);
-				}
 
 				if (enableCollisionResponse && mCollisionResolver != null) {
-					for (int j = 0; j < lNumCallbacks; j++) {
+					for (int j = 0; j < lNumCallbacks; j++)
 						mCollisionCallbackList.get(j).preSolve(mContactManifold);
-					}
 
-					mCollisionResolver.resolveCollisions(mContactManifold);
+					if (!lDealingWithSensorShape)
+						mCollisionResolver.resolveCollisions(mContactManifold);
 
-					for (int j = 0; j < lNumCallbacks; j++) {
+					for (int j = 0; j < lNumCallbacks; j++)
 						mCollisionCallbackList.get(j).postSolve(mContactManifold);
-					}
+
 				}
 			}
 

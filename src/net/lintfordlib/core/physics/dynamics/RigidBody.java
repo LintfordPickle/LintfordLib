@@ -52,6 +52,7 @@ public class RigidBody extends PhysicsGridEntity {
 	private int mMaskBit; // I collide with ...
 
 	private boolean mIsStatic;
+	private boolean mIsSensor;
 
 	// TODO: Add debug variables to UserData
 	public boolean debugIsSelected;
@@ -115,6 +116,22 @@ public class RigidBody extends PhysicsGridEntity {
 
 	public void userData(Object userData) {
 		this.userData = userData;
+	}
+
+	/***
+	 * @returns true if this {@link RigidBody} is a sensor, otherwise false.
+	 */
+	public boolean isSensor() {
+		return mIsSensor;
+	}
+
+	/***
+	 * Sets the sensor state of this {@link RigidBody}. Sensor bodies still trigger collision callbacks in the narrow phase.
+	 * 
+	 * @param isSensor The value to set for the isSensor flag.
+	 */
+	public void isSensor(boolean isSensor) {
+		mIsSensor = isSensor;
 	}
 
 	public boolean isStatic() {
