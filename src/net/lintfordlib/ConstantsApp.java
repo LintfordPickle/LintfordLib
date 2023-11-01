@@ -80,4 +80,5 @@ public class ConstantsApp {
 		// Automagically replaces values which already exist
 		constTab.put(name.toUpperCase(), value);
 	}
+
 }

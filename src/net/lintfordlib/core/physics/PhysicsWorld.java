@@ -9,7 +9,7 @@ import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.maths.MathHelper;
 import net.lintfordlib.core.physics.collisions.ContactManifold;
 import net.lintfordlib.core.physics.collisions.SATContacts;
-import net.lintfordlib.core.physics.collisions.SATIntersection;
+import net.lintfordlib.core.physics.collisions.IntersectionTests;
 import net.lintfordlib.core.physics.dynamics.RigidBody;
 import net.lintfordlib.core.physics.interfaces.ICollisionCallback;
 import net.lintfordlib.core.physics.resolvers.CollisionResolverRotationAndFriction;
@@ -339,7 +339,7 @@ public class PhysicsWorld {
 			final var lBodyA = lCollisionPair.bodyA;
 			final var lBodyB = lCollisionPair.bodyB;
 
-			if (SATIntersection.checkCollides(mContactManifold)) {
+			if (IntersectionTests.checkCollides(mContactManifold)) {
 				lBodyA.debugIsColliding = true;
 				lBodyB.debugIsColliding = true;
 

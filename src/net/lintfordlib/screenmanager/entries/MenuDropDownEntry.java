@@ -68,7 +68,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 	public void noItemsFoundText(String newText) {
 		if (newText == null)
 			mNoItemsFoundText = NO_ITEMS_FOUND_TEXT;
-		
+
 		mNoItemsFoundText = newText;
 	}
 
@@ -384,10 +384,8 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 		if (mHasFocus && mEnabled) {
 			lSpriteBatch.begin(core.HUD());
 			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, (int) (lScreenOffset.x + centerX() - mW / 2), lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ, ColorConstants.MenuEntryHighlightColor);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, (int) (lScreenOffset.x + centerX() - (mW / 2) + 32), lScreenOffset.y + centerY() - mH / 2, mW - 64, mH, mZ,
-					ColorConstants.MenuEntryHighlightColor);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, (int) (lScreenOffset.x + centerX() + (mW / 2) - 32), lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ,
-					ColorConstants.MenuEntryHighlightColor);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, (int) (lScreenOffset.x + centerX() - (mW / 2) + 32), lScreenOffset.y + centerY() - mH / 2, mW - 64, mH, mZ, ColorConstants.MenuEntryHighlightColor);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, (int) (lScreenOffset.x + centerX() + (mW / 2) - 32), lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ, ColorConstants.MenuEntryHighlightColor);
 			lSpriteBatch.end();
 		}
 

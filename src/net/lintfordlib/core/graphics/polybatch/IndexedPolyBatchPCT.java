@@ -272,8 +272,6 @@ public class IndexedPolyBatchPCT {
 		if (!mResourcesLoaded || !mIsDrawing)
 			return;
 
-		// TODO: this causes crashes
-
 		if (mIndexCount == 0)
 			return;
 
@@ -318,8 +316,6 @@ public class IndexedPolyBatchPCT {
 
 		GL30.glBindVertexArray(0);
 	}
-
-	// ---
 
 	public void drawRect(Texture texture, Rectangle sourceRect, List<Vector2f> vertexArray, float zDepth, boolean closePolygon) {
 	}

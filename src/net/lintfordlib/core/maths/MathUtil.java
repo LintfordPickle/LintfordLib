@@ -16,7 +16,7 @@ public class MathUtil {
 	// Methods
 	// --------------------------------------
 
-	public static void allocResources() {
+	private static void allocResources() {
 		if (int_mat_float_buffer == null) {
 			int_mat_float_buffer = MemoryUtil.memAllocFloat(16);
 		}

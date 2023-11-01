@@ -1,26 +1,18 @@
 package net.lintfordlib.core.physics.collisions;
 
-import java.util.List;
-
 import net.lintfordlib.core.maths.MathHelper;
+import net.lintfordlib.core.maths.Projection;
+import net.lintfordlib.core.maths.Projection.SatCollisionProjectionResult;
 import net.lintfordlib.core.maths.Vector2f;
 import net.lintfordlib.core.physics.dynamics.RigidBody;
 
-public class SATIntersection {
-
-	// ---------------------------------------------
-	// Inner-Classes
-	// ---------------------------------------------
-
-	private static class SatCollisionProjectionResult {
-		public float min;
-		public float max;
-
-		public void set(float min, float max) {
-			this.min = min;
-			this.max = max;
-		}
-	}
+/***
+ * A collection of routines for checking for intersections between {@link RigidBody}s consisting of various {@link BaseShape} types. Most of the intersection tests use the sepaarating axis theroem when appropriate.
+ * 
+ * @author John Hampson 2023
+ *
+ */
+public class IntersectionTests {
 
 	// ---------------------------------------------
 	// Constants
@@ -152,8 +144,8 @@ public class SATIntersection {
 			final var axisX = edgeY / edgeLength;
 			final var axisY = -edgeX / edgeLength;
 
-			projectVertices(lPolygonAVertices, axisX, axisY, projectionResult1);
-			projectVertices(lPolygonBVertices, axisX, axisY, projectionResult2);
+			Projection.projectVertices(lPolygonAVertices, axisX, axisY, projectionResult1);
+			Projection.projectVertices(lPolygonBVertices, axisX, axisY, projectionResult2);
 
 			if (projectionResult1.min >= projectionResult2.max || projectionResult2.min >= projectionResult1.max) {
 				result.isIntersecting = false;
@@ -188,8 +180,8 @@ public class SATIntersection {
 			final var axisX = edgeY / edgeLength;
 			final var axisY = -edgeX / edgeLength;
 
-			projectVertices(lPolygonAVertices, axisX, axisY, projectionResult1);
-			projectVertices(lPolygonBVertices, axisX, axisY, projectionResult2);
+			Projection.projectVertices(lPolygonAVertices, axisX, axisY, projectionResult1);
+			Projection.projectVertices(lPolygonBVertices, axisX, axisY, projectionResult2);
 
 			if (projectionResult1.min >= projectionResult2.max || projectionResult2.min >= projectionResult1.max) {
 				result.isIntersecting = false;
@@ -222,7 +214,7 @@ public class SATIntersection {
 
 		result.bodyA = lCircleBody;
 		result.bodyB = lPolygonBody;
-		
+
 		result.isIntersecting = true;
 		result.normal.x = 0.f;
 		result.normal.y = 0.f;
@@ -249,8 +241,8 @@ public class SATIntersection {
 			final var axisX = edgeY / edgeLength;
 			final var axisY = -edgeX / edgeLength;
 
-			projectCircle(lCircleX, lCircleY, lCircleRadius, axisX, axisY, projectionResult1);
-			projectVertices(lPolygonVertices, axisX, axisY, projectionResult2);
+			Projection.projectCircle(lCircleX, lCircleY, lCircleRadius, axisX, axisY, projectionResult1);
+			Projection.projectVertices(lPolygonVertices, axisX, axisY, projectionResult2);
 
 			if (projectionResult1.min >= projectionResult2.max || projectionResult2.min >= projectionResult1.max) {
 				result.isIntersecting = false;
@@ -280,8 +272,8 @@ public class SATIntersection {
 		axisX /= axisLength;
 		axisY /= axisLength;
 
-		projectCircle(lCircleX, lCircleY, lCircleRadius, axisX, axisY, projectionResult1);
-		projectVertices(lPolygonVertices, axisX, axisY, projectionResult2);
+		Projection.projectCircle(lCircleX, lCircleY, lCircleRadius, axisX, axisY, projectionResult1);
+		Projection.projectVertices(lPolygonVertices, axisX, axisY, projectionResult2);
 
 		if (projectionResult1.min >= projectionResult2.max || projectionResult2.min >= projectionResult1.max) {
 			result.isIntersecting = false;
@@ -371,8 +363,8 @@ public class SATIntersection {
 			final var axisX = edgeY / axisLength;
 			final var axisY = -edgeX / axisLength;
 
-			projectLineWidth(lsx, lsy, lex, ley, lineRadius, axisX, axisY, projectionResult1);
-			projectVertices(polygonVertices, axisX, axisY, projectionResult2);
+			Projection.projectLineWidth(lsx, lsy, lex, ley, lineRadius, axisX, axisY, projectionResult1);
+			Projection.projectVertices(polygonVertices, axisX, axisY, projectionResult2);
 
 			if (projectionResult1.min >= projectionResult2.max || projectionResult2.min >= projectionResult1.max) {
 				result.isIntersecting = false;
@@ -407,8 +399,8 @@ public class SATIntersection {
 			var axisX = edgeY / edgeLength;
 			var axisY = -edgeX / edgeLength;
 
-			projectVertices(polygonVertices, axisX, axisY, projectionResult2);
-			projectLineWidth(lsx, lsy, lex, ley, lineRadius, axisX, axisY, projectionResult1);
+			Projection.projectVertices(polygonVertices, axisX, axisY, projectionResult2);
+			Projection.projectLineWidth(lsx, lsy, lex, ley, lineRadius, axisX, axisY, projectionResult1);
 
 			if (projectionResult1.min >= projectionResult2.max || projectionResult2.min >= projectionResult1.max) {
 				result.isIntersecting = false;
@@ -524,8 +516,8 @@ public class SATIntersection {
 			axis01X /= axis01Length;
 			axis01Y /= axis01Length;
 
-			projectLineWidth(ax, ay, bx, by, lLineARadius, axis01X, axis01Y, projectionResult1);
-			projectLineWidth(px, py, qx, qy, lLineBRadius, axis01X, axis01Y, projectionResult2);
+			Projection.projectLineWidth(ax, ay, bx, by, lLineARadius, axis01X, axis01Y, projectionResult1);
+			Projection.projectLineWidth(px, py, qx, qy, lLineBRadius, axis01X, axis01Y, projectionResult2);
 
 			if (projectionResult1.min >= projectionResult2.max || projectionResult2.min >= projectionResult1.max) {
 				result.isIntersecting = false;
@@ -555,8 +547,8 @@ public class SATIntersection {
 			axis02X /= axis02Length;
 			axis02Y /= axis02Length;
 
-			projectLineWidth(ax, ay, bx, by, lLineBRadius, axis02X, axis02Y, projectionResult1);
-			projectLineWidth(px, py, qx, qy, lLineARadius, axis02X, axis02Y, projectionResult2);
+			Projection.projectLineWidth(ax, ay, bx, by, lLineBRadius, axis02X, axis02Y, projectionResult1);
+			Projection.projectLineWidth(px, py, qx, qy, lLineARadius, axis02X, axis02Y, projectionResult2);
 
 			if (projectionResult1.min >= projectionResult2.max || projectionResult2.min >= projectionResult1.max) {
 				result.isIntersecting = false;
@@ -581,106 +573,4 @@ public class SATIntersection {
 		return true;
 	}
 
-	// Projections
-
-	private static void projectVertices(List<Vector2f> vertices, float axisX, float axisY, SatCollisionProjectionResult result) {
-		var min = Float.MAX_VALUE;
-		var max = -Float.MAX_VALUE;
-
-		final var lNumVerts = vertices.size();
-		for (int i = 0; i < lNumVerts; i++) {
-			final var v = vertices.get(i);
-			final var proj = Vector2f.dot(v.x, v.y, axisX, axisY);
-
-			if (proj < min)
-				min = proj;
-
-			if (proj > max)
-				max = proj;
-		}
-
-		result.set(min, max);
-	}
-
-	private static void projectCircle(float centerX, float centerY, float radius, float axisX, float axisY, SatCollisionProjectionResult result) {
-		final var axisLength = (float) Math.sqrt(axisX * axisX + axisY * axisY);
-
-		final var directionX = axisX / axisLength;
-		final var directionY = axisY / axisLength;
-
-		final var directionAndDirX = directionX * radius;
-		final var directionAndDirY = directionY * radius;
-
-		final var point1X = centerX + directionAndDirX;
-		final var point1Y = centerY + directionAndDirY;
-
-		final var point2X = centerX - directionAndDirX;
-		final var point2Y = centerY - directionAndDirY;
-
-		result.min = Vector2f.dot(point1X, point1Y, axisX, axisY);
-		result.max = Vector2f.dot(point2X, point2Y, axisX, axisY);
-
-		if (result.min > result.max) {
-			final float t = result.min;
-			result.min = result.max;
-			result.max = t;
-		}
-	}
-
-	@SuppressWarnings("unused")
-	private static void projectLine(float sx, float sy, float ex, float ey, float axisX, float axisY, SatCollisionProjectionResult toFill) {
-		toFill.min = Vector2f.dot(sx, sy, axisX, axisY);
-		toFill.max = Vector2f.dot(ex, ey, axisX, axisY);
-
-		if (toFill.min > toFill.max) {
-			final float t = toFill.min;
-			toFill.min = toFill.max;
-			toFill.max = t;
-		}
-	}
-
-	private static void projectLineWidth(float sx, float sy, float ex, float ey, float radius, float axisX, float axisY, SatCollisionProjectionResult toFill) {
-		toFill.min = Float.MAX_VALUE;
-		toFill.max = Float.MIN_VALUE;
-
-		var min = Float.MAX_VALUE;
-		var max = -Float.MAX_VALUE;
-		float proj = 0;
-
-		// TODO: Check if we can pre-compute these (obviously without the axis')
-
-		proj = Vector2f.dot(sx - radius * axisX, sy - radius * axisY, axisX, axisY);
-
-		if (proj < min)
-			min = proj;
-
-		if (proj > max)
-			max = proj;
-
-		proj = Vector2f.dot(sx + radius * axisX, sy + radius * axisY, axisX, axisY);
-
-		if (proj < min)
-			min = proj;
-
-		if (proj > max)
-			max = proj;
-
-		proj = Vector2f.dot(ex - radius * axisX, ey - radius * axisY, axisX, axisY);
-
-		if (proj < min)
-			min = proj;
-
-		if (proj > max)
-			max = proj;
-
-		proj = Vector2f.dot(ex + radius * axisX, ey + radius * axisY, axisX, axisY);
-
-		if (proj < min)
-			min = proj;
-
-		if (proj > max)
-			max = proj;
-
-		toFill.set(min, max);
-	}
 }
