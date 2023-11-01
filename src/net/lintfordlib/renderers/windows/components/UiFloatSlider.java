@@ -120,7 +120,6 @@ public class UiFloatSlider extends UIWidget {
 
 		final var lUpperYPosition = mY + mH * .25f;
 		final var lLowerYPosition = mY + mH * .75f;
-		final var lQHeight = mH * .25f;
 		final var lHalfHeight = mH * .5f;
 
 		final var lBackgroundColor = mIsEnabled ? ColorConstants.getColorWithRGBMod(ColorConstants.PrimaryColor, 1.f) : ColorConstants.getBlackWithAlpha(.4f);

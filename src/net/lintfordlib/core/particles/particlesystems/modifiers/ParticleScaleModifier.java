@@ -57,8 +57,6 @@ public class ParticleScaleModifier extends ParticleModifierBase {
 	@Override
 	public void updateParticle(LintfordCore core, Particle particle) {
 		final var lNormalizedLifetime = particle.timeSinceStart / particle.lifeTime();
-
-		final var nv = (1 - lNormalizedLifetime);
 		particle.scale = minScaleAmount + (maxScaleAmount - minScaleAmount) * lNormalizedLifetime;
 	}
 }
