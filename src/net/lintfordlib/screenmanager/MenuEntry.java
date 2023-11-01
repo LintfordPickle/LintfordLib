@@ -375,8 +375,6 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 		mScaleonFocus = false;
 		mHighlightOnHover = true;
 
-		// TODO: These numbers are a little magicy
-
 		mTopMargin = 3f;
 		mBottomMargin = 6f;
 		mLeftMargin = 10f;

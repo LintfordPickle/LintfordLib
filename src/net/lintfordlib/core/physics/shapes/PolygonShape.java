@@ -51,9 +51,9 @@ public class PolygonShape extends BaseShape {
 	public void computeMass() {
 		// mass, inertia and centroid
 
-		area = 0.f;
-		mass = 0.f;
-		inertia = 0.f;
+		mArea = 0.f;
+		mMass = 0.f;
+		mInertia = 0.f;
 		localCenter.set(0, 0);
 
 		float c_x = 0.f;
@@ -75,7 +75,7 @@ public class PolygonShape extends BaseShape {
 
 			final var D = Vector2f.cross(e1_x, e1_y, e2_x, e2_y);
 			float triangleArea = .5f * D;
-			area += triangleArea;
+			mArea += triangleArea;
 
 			// area weighted centroid
 			c_x += triangleArea * k_inv3 * (e1_x + e2_x);
@@ -88,19 +88,19 @@ public class PolygonShape extends BaseShape {
 		}
 
 		// center of mass
-		c_x *= 1.f / area;
-		c_y *= 1.f / area;
+		c_x *= 1.f / mArea;
+		c_y *= 1.f / mArea;
 
 		localCenter.x = c_x + s.x;
 		localCenter.y = c_y + s.y;
 
-		area = (float) Math.abs(area);
+		mArea = (float) Math.abs(mArea);
 
 		// total mass
-		mass = (float) Math.abs(density * area);
+		mMass = (float) Math.abs(mDensity * mArea);
 
 		// Inertia relative to local center (s)
-		inertia = (float) Math.abs(density * I);
+		mInertia = (float) Math.abs(mDensity * I);
 	}
 
 	private void set(List<Vector2f> vertices) {
@@ -127,17 +127,17 @@ public class PolygonShape extends BaseShape {
 	}
 
 	private void setAsBox(float unitPositionX, float unitPositionY, float unitWidth, float unitHeight, float rotRadians) {
-		width = unitWidth;
-		height = unitHeight;
-		radius = (float) Math.sqrt(width * width + height * height) * .5f;
+		mWidth = unitWidth;
+		mHeight = unitHeight;
+		mRadius = (float) Math.sqrt(mWidth * mWidth + mHeight * mHeight) * .5f;
 
 		final var s = (float) Math.sin(rotRadians);
 		final var c = (float) Math.cos(rotRadians);
 
-		final var l = -width * .5f;
-		final var b = height * .5f;
-		final var r = width * .5f;
-		final var t = -height * .5f;
+		final var l = -mWidth * .5f;
+		final var b = mHeight * .5f;
+		final var r = mWidth * .5f;
+		final var t = -mHeight * .5f;
 
 		final var local_tl = new Vector2f(l * c - t * s, l * s + t * c);
 		final var local_tr = new Vector2f(r * c - t * s, r * s + t * c);
@@ -179,10 +179,10 @@ public class PolygonShape extends BaseShape {
 
 		final var lNewPolygonShape = new PolygonShape();
 
-		lNewPolygonShape.density = Math.abs(density);
-		lNewPolygonShape.staticFriction = MathHelper.clamp(staticFriction, 0.f, 1.f);
-		lNewPolygonShape.dynamicFriction = MathHelper.clamp(dynamicFriction, 0.f, 1.f);
-		lNewPolygonShape.restitution = MathHelper.clamp(restitution, 0f, 1f);
+		lNewPolygonShape.mDensity = Math.abs(density);
+		lNewPolygonShape.mStaticFriction = MathHelper.clamp(staticFriction, 0.f, 1.f);
+		lNewPolygonShape.mDynamicFriction = MathHelper.clamp(dynamicFriction, 0.f, 1.f);
+		lNewPolygonShape.mRestitution = MathHelper.clamp(restitution, 0f, 1f);
 
 		lNewPolygonShape.set(localVertices);
 
@@ -196,10 +196,10 @@ public class PolygonShape extends BaseShape {
 	public static PolygonShape createBoxShape(float unitPositionX, float unitPositionY, float unitWidth, float unitHeight, float rotRadians, float density, float restitution, float staticFriction, float dynamicFriction) {
 		final var lNewBoxShape = new PolygonShape();
 
-		lNewBoxShape.density = Math.abs(density);
-		lNewBoxShape.staticFriction = MathHelper.clamp(staticFriction, 0.f, 1.f);
-		lNewBoxShape.dynamicFriction = MathHelper.clamp(dynamicFriction, 0.f, 1.f);
-		lNewBoxShape.restitution = MathHelper.clamp(restitution, 0f, 1f);
+		lNewBoxShape.mDensity = Math.abs(density);
+		lNewBoxShape.mStaticFriction = MathHelper.clamp(staticFriction, 0.f, 1.f);
+		lNewBoxShape.mDynamicFriction = MathHelper.clamp(dynamicFriction, 0.f, 1.f);
+		lNewBoxShape.mRestitution = MathHelper.clamp(restitution, 0f, 1f);
 		lNewBoxShape.setAsBox(unitPositionX, unitPositionY, unitWidth, unitHeight, rotRadians);
 
 		return lNewBoxShape;

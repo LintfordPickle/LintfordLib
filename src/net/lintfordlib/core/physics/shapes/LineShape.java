@@ -38,20 +38,20 @@ public class LineShape extends BaseShape {
 		final var l_x = vertices.get(0).x;
 		final var l_y = vertices.get(0).y;
 		
-		final var l_x00 = l_x -sey*height*.5f;
-		final var l_y00 = l_y +sex*height*.5f;
+		final var l_x00 = l_x -sey*mHeight*.5f;
+		final var l_y00 = l_y +sex*mHeight*.5f;
 		
-		final var l_x01 = l_x +sey*height*.5f;
-		final var l_y01 = l_y -sex*height*.5f;
+		final var l_x01 = l_x +sey*mHeight*.5f;
+		final var l_y01 = l_y -sex*mHeight*.5f;
 		
 		final var r_x = vertices.get(1).x;
 		final var r_y = vertices.get(1).y;
 		
-		final var r_x00 = r_x -sey*height*.5f;
-		final var r_y00 = r_y +sex*height*.5f;
+		final var r_x00 = r_x -sey*mHeight*.5f;
+		final var r_y00 = r_y +sex*mHeight*.5f;
 		
-		final var r_x01 = r_x +sey*height*.5f;
-		final var r_y01 = r_y -sex*height*.5f;
+		final var r_x01 = r_x +sey*mHeight*.5f;
+		final var r_y01 = r_y -sex*mHeight*.5f;
 		
 		if(l_x00 < minX) minX = l_x00;
 		if(l_x01 < minX) minX = l_x01;
@@ -77,21 +77,21 @@ public class LineShape extends BaseShape {
 		final var lWidth = maxX - minX;
 		final var lHeight = maxY - minY;
 
-		final var expand = height;
+		final var expand = mHeight;
 		mAABB.set(minX - expand*.5f, minY-expand*.5f, lWidth+expand, lHeight+expand);
 	}
 
 	@Override
 	public void computeMass() {
-		area = width * height;
-		mass = area * density;
-		inertia = (1.f / 12.f) * mass * (height * height + width * width);
+		mArea = mWidth * mHeight;
+		mMass = mArea * mDensity;
+		mInertia = (1.f / 12.f) * mMass * (mHeight * mHeight + mWidth * mWidth);
 	}
 
 	private void set(float unitPositionX, float unitPositionY, float unitWidth, float unitColDistToLine, float rotRadians) {
-		width = unitWidth;
-		height = unitColDistToLine * 2.f;
-		radius = (float) Math.sqrt(width * width + height * height) * .5f;
+		mWidth = unitWidth;
+		mHeight = unitColDistToLine * 2.f;
+		mRadius = (float) Math.sqrt(mWidth * mWidth + mHeight * mHeight) * .5f;
 
 		computeMass();
 
@@ -100,8 +100,8 @@ public class LineShape extends BaseShape {
 		final var s = (float) Math.sin(rotRadians);
 		final var c = (float) Math.cos(rotRadians);
 
-		final var local_l = new Vector2f(-width * .5f * c, -width * .5f * s);
-		final var local_r = new Vector2f(width * .5f * c, width * .5f * s);
+		final var local_l = new Vector2f(-mWidth * .5f * c, -mWidth * .5f * s);
+		final var local_r = new Vector2f(mWidth * .5f * c, mWidth * .5f * s);
 
 		localCenter.x = (local_l.x + local_r.x) * .5f;
 		localCenter.y = (local_l.y + local_r.y) * .5f;
@@ -126,10 +126,10 @@ public class LineShape extends BaseShape {
 	public static LineShape createLineShape(float unitLocalPosX, float unitLocalPosY, float unitWidth, float unitHeight, float rotRadians, float density, float restitution, float staticFriction, float dynamicFriction) {
 		final var lNewLineShape = new LineShape();
 
-		lNewLineShape.staticFriction = MathHelper.clamp(staticFriction, 0.f, 1.f);
-		lNewLineShape.dynamicFriction = MathHelper.clamp(dynamicFriction, 0.f, 1.f);
-		lNewLineShape.restitution = MathHelper.clamp(restitution, 0f, 1f);
-		lNewLineShape.density = (float) Math.abs(density);
+		lNewLineShape.mStaticFriction = MathHelper.clamp(staticFriction, 0.f, 1.f);
+		lNewLineShape.mDynamicFriction = MathHelper.clamp(dynamicFriction, 0.f, 1.f);
+		lNewLineShape.mRestitution = MathHelper.clamp(restitution, 0f, 1f);
+		lNewLineShape.mDensity = (float) Math.abs(density);
 
 		lNewLineShape.set(unitLocalPosX, unitLocalPosY, unitWidth, unitHeight, rotRadians);
 

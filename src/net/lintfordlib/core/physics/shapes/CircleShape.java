@@ -25,11 +25,11 @@ public class CircleShape extends BaseShape {
 
 	@Override
 	public void computeMass() {
-		area = (float) Math.PI * radius * radius;
-		mass = area * density;
+		mArea = (float) Math.PI * mRadius * mRadius;
+		mMass = mArea * mDensity;
 
 		// I = (1/2)mr^2
-		inertia = .5f * mass * radius * radius;
+		mInertia = .5f * mMass * mRadius * mRadius;
 	}
 
 	@Override
@@ -37,10 +37,10 @@ public class CircleShape extends BaseShape {
 		final var x = mTransformedVertices.get(0).x;
 		final var y = mTransformedVertices.get(0).y;
 
-		final var minX = x - radius;
-		final var minY = y - radius;
-		final var maxX = x + radius;
-		final var maxY = y + radius;
+		final var minX = x - mRadius;
+		final var minY = y - mRadius;
+		final var maxX = x + mRadius;
+		final var maxY = y + mRadius;
 
 		mAABB.set(minX, minY, maxX - minX, maxY - minY);
 	}
@@ -53,8 +53,8 @@ public class CircleShape extends BaseShape {
 
 		mLocalVertices.add(vertices.get(0));
 		mTransformedVertices.add(new Vector2f(vertices.get(0)));
-		this.density = density;
-		radius = unitRadius;
+		this.mDensity = density;
+		mRadius = unitRadius;
 
 		rebuildAABB(Transform.Identity);
 		computeMass();
@@ -71,9 +71,9 @@ public class CircleShape extends BaseShape {
 	public static CircleShape createCircleShape(float unitPositionX, float unitPositionY, float unitRadius, float density, float restitution, float staticFriction, float dynamicFriction) {
 		final var lNewCircleShape = new CircleShape();
 
-		lNewCircleShape.staticFriction = MathHelper.clamp(staticFriction, 0.f, 1.f);
-		lNewCircleShape.dynamicFriction = MathHelper.clamp(dynamicFriction, 0.f, 1.f);
-		lNewCircleShape.restitution = MathHelper.clamp(restitution, 0f, 1f);
+		lNewCircleShape.mStaticFriction = MathHelper.clamp(staticFriction, 0.f, 1.f);
+		lNewCircleShape.mDynamicFriction = MathHelper.clamp(dynamicFriction, 0.f, 1.f);
+		lNewCircleShape.mRestitution = MathHelper.clamp(restitution, 0f, 1f);
 		lNewCircleShape.set(Arrays.asList(new Vector2f(unitPositionX, unitPositionY)), Math.abs(density), unitRadius);
 
 		return lNewCircleShape;

@@ -15,24 +15,24 @@ public abstract class BaseShape {
 	// Variables
 	// --------------------------------------
 
-	// TODO: name properly
-	protected float restitution;
-	protected float density;
-	protected float staticFriction;
-	protected float dynamicFriction;
-	protected float area;
+	public final Vector2f localCenter = new Vector2f();
 
-	public final Vector2f localCenter = new Vector2f(); // TODO: Shape local centers
-	protected float mass;
-	protected float inertia;
+	protected float mRestitution;
+	protected float mDensity;
+	protected float mStaticFriction;
+	protected float mDynamicFriction;
+	protected float mArea;
 
-	protected float radius;
-	protected float width;
-	protected float height;
+	protected float mMass;
+	protected float mInertia;
+
+	protected float mRadius;
+	protected float mWidth;
+	protected float mHeight;
 	protected final List<Vector2f> mLocalVertices;
 	protected final List<Vector2f> mTransformedVertices;
 	protected boolean mManualIsDirty;
-	protected final Transform cacheT = new Transform();
+	protected final Transform mCachedTransform = new Transform();
 	protected ShapeType mShapeType;
 	protected final Rectangle mAABB;
 
@@ -41,40 +41,36 @@ public abstract class BaseShape {
 	// --------------------------------------
 
 	public float width() {
-		return width;
+		return mWidth;
 	}
 
 	public float height() {
-		return height;
+		return mHeight;
 	}
 
 	public float radius() {
-		return radius;
+		return mRadius;
 	}
 
-	// ---
-
 	public float restitution() {
-		return restitution;
+		return mRestitution;
 	}
 
 	public float dynamicFriction() {
-		return dynamicFriction;
+		return mDynamicFriction;
 	}
 
 	public float staticFriction() {
-		return staticFriction;
+		return mStaticFriction;
 	}
 
 	public float mass1() {
-		return mass;
+		return mMass;
 	}
 
 	public float inertia1() {
-		return inertia;
+		return mInertia;
 	}
-
-	// ---
 
 	public ShapeType shapeType() {
 		return mShapeType;
@@ -85,7 +81,7 @@ public abstract class BaseShape {
 	}
 
 	private boolean updateFrameNeeded(Transform t) {
-		return mManualIsDirty || !cacheT.compare(t);
+		return mManualIsDirty || !mCachedTransform.compare(t);
 	}
 
 	public Rectangle aabb(Transform t) {
@@ -131,7 +127,7 @@ public abstract class BaseShape {
 		rebuildAABB(t);
 
 		mManualIsDirty = false;
-		cacheT.set(t);
+		mCachedTransform.set(t);
 	}
 
 	public abstract void rebuildAABB(Transform t);
