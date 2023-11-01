@@ -26,6 +26,9 @@ public class MessageManager implements IMessageProvider {
 	protected final int mCapacity;
 	protected boolean mMirrorLogToConsole;
 
+	protected boolean mStripSpecialCharacters;
+	protected boolean mStripLineBreaks;
+
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
@@ -33,6 +36,22 @@ public class MessageManager implements IMessageProvider {
 	@Override
 	public List<Message> messages() {
 		return mMessages;
+	}
+
+	public void stripSpecialCharacter(boolean stripSpecialCharacters) {
+		mStripSpecialCharacters = stripSpecialCharacters;
+	}
+
+	public boolean stripSpecialCharacter() {
+		return mStripSpecialCharacters;
+	}
+
+	public void stripLineBreaks(boolean stripLineBreaks) {
+		mStripLineBreaks = stripLineBreaks;
+	}
+
+	public boolean stripLineBreaks() {
+		return mStripLineBreaks;
 	}
 
 	// --------------------------------------
@@ -66,19 +85,18 @@ public class MessageManager implements IMessageProvider {
 			return;
 		}
 
-		// TODO: Make this optional: Make sure there are no special characters contained in the string
-		// pMessage.message = pMessage.message.replaceAll("[^a-zA-Z0-9\\s+]", "");
+		if (mStripSpecialCharacters)
+			message.mMessage = message.mMessage.replaceAll("[^a-zA-Z0-9\\s+]", "");
 
-		// TODO: Make this optional: Remove new line and caridge return
-		message.message(message.message().replaceAll("(\\r\\n|\\r|\\n)", " "));
+		if (mStripLineBreaks)
+			message.mMessage = message.mMessage.replaceAll("(\\r\\n|\\r|\\n)", " ");
 
-		if (!mMessages.contains(message)) {
+		if (!mMessages.contains(message))
 			mMessages.add(message);
-		}
 
-		if (mMirrorLogToConsole) {
+		if (mMirrorLogToConsole)
 			System.out.printf("[%s] %s: %s\n", padRight(message.timestamp(), 12), padRight(message.tag(), 25), message.message());
-		}
+
 	}
 
 	public static String timeStamp() {

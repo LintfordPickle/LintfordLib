@@ -151,7 +151,7 @@ public class HudLayoutController extends BaseController {
 	}
 
 	private void updateMenuUiStructure(LintfordCore core) {
-		updateWindowUiComponentStructures(core); // FIXME: remove from update when finished
+		updateWindowUiComponentStructures(core);
 
 		final float lWindowWidth = core.config().display().windowWidth();
 		final float lWindowHeight = core.config().display().windowHeight();
