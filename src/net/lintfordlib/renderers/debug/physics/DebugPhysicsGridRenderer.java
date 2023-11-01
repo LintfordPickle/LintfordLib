@@ -1,4 +1,4 @@
-package net.lintfordlib.renderers.debug;
+package net.lintfordlib.renderers.debug.physics;
 
 import org.lwjgl.opengl.GL11;
 

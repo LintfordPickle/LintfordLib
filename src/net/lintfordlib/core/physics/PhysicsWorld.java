@@ -6,15 +6,15 @@ import java.util.List;
 
 import net.lintfordlib.ConstantsPhysics;
 import net.lintfordlib.core.debug.Debug;
-import net.lintfordlib.core.debug.stats.DebugStatTagCaption;
-import net.lintfordlib.core.debug.stats.DebugStatTagFloat;
-import net.lintfordlib.core.debug.stats.DebugStatTagInt;
 import net.lintfordlib.core.maths.MathHelper;
 import net.lintfordlib.core.physics.collisions.ContactManifold;
 import net.lintfordlib.core.physics.collisions.SATContacts;
 import net.lintfordlib.core.physics.collisions.SATIntersection;
 import net.lintfordlib.core.physics.dynamics.RigidBody;
 import net.lintfordlib.core.physics.interfaces.ICollisionCallback;
+import net.lintfordlib.core.physics.resolvers.CollisionResolverRotationAndFriction;
+import net.lintfordlib.core.physics.resolvers.CollisionResolverRotations;
+import net.lintfordlib.core.physics.resolvers.CollisionResolverSimple;
 import net.lintfordlib.core.physics.resolvers.ICollisionResolver;
 import net.lintfordlib.core.physics.spatial.PhysicsHashGrid;
 import net.lintfordlib.core.time.TimeConstants;
@@ -40,7 +40,7 @@ public class PhysicsWorld {
 	// Variables
 	// --------------------------------------
 
-	private float mGravityX;
+	private float mGravityX; // mps/s
 	private float mGravityY; // mps/s
 
 	private PhysicsHashGrid<RigidBody> mWorldHashGrid;
@@ -52,53 +52,113 @@ public class PhysicsWorld {
 
 	private ICollisionResolver mCollisionResolver;
 
-	// Debug
-	private DebugStatTagCaption mDebugStatPhysicsCaption;
-	private DebugStatTagInt mDebugStatsNumBodies;
-	private DebugStatTagFloat mDebugStepTimeInMm;
-	private DebugStatTagInt mDebugNumIterations;
-	private DebugStatTagInt mNumSpatialCells;
-	private DebugStatTagInt mNumActiveCells;
-
-	private boolean _lockedBodies;
+	private boolean _lockedBodies; //
 	private boolean mInitialized = false;
 	private int updateCounter = 0;
 
 	private final boolean enableMtvSeparation;
 	private final boolean enableCollisionResponse;
 
+	private int mNumIterations;
+	private double mStepTime;
+
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
 
-	/** Bodies are locked durin the step and broad phase and cannot be removed from the world during this time. */
+	/***
+	 * @return The number of iterations of the step and collision checks to perform per step.
+	 */
+	public int numIterations() {
+		return mNumIterations;
+	}
+
+	/***
+	 * Sets the number of iterations of step and collision checking to perform during each step of the world. The higher the number, the more stable the simulation will be.
+	 * 
+	 * @param numIterations The number of iterations to set. Value will be clamped between {@link ConstantsPhysics.MIN_ITERATIONS} and {@link ConstantsPhysics.MAX_ITERATIONS}
+	 */
+	public void numIterations(int numIterations) {
+		mNumIterations = MathHelper.clampi(numIterations, ConstantsPhysics.MIN_ITERATIONS, ConstantsPhysics.MAX_ITERATIONS);
+	}
+
+	/***
+	 * @return The last step time (over all iterations) in ms.
+	 */
+	public double stepTime() {
+		return mStepTime;
+	}
+
+	/***
+	 * Bodies are locked during the step and broad phase of the world update and cannot be modified during this time.
+	 * 
+	 * @return Returns true if the bodies are currently locked, otherwise false.
+	 */
 	public boolean bodiesLocked() {
 		return _lockedBodies;
 	}
 
+	/***
+	 * Sets the amount of gravity to be applied each frame.
+	 * 
+	 * @param x The x component of the desired gravity.
+	 * @param y The y component of the desired gravity.
+	 */
 	public void setGravity(float x, float y) {
 		mGravityX = x;
 		mGravityY = y;
 	}
 
+	/***
+	 * All {@link RigidBody} managed by the {@link PhysicsWorld} are held within the {@link PhysicsHashGrid}.
+	 * 
+	 * @return The current instance of {@link PhysicsHashGrid} managing the {@link PhysicsWorld}'s {@link RigidBody}s.
+	 */
 	public PhysicsHashGrid<RigidBody> grid() {
 		return mWorldHashGrid;
 	}
 
+	/***
+	 * 
+	 * @return A list of all {@link RigidBody}s currently managed by the {@link PhysicsWorld}.
+	 */
 	public List<RigidBody> bodies() {
 		return mBodies;
 	}
 
+	/***
+	 * @return Returns the number of {@link RigidBody} instances currently being managed by this {@link PhysicsWorld}.
+	 */
+	public int numBodies() {
+		return mBodies.size();
+	}
+
+	/***
+	 * Adds an instance of {@link ICollisionCallback} to the world for automatical callbacks. An instance can only be added once.
+	 * 
+	 * @param callback The instance to add.
+	 */
 	public void addCollisionCallback(ICollisionCallback callback) {
 		if (mCollisionCallbackList.contains(callback) == false)
 			mCollisionCallbackList.add(callback);
 	}
 
+	/***
+	 * Removes a previously added instance of {@link ICollisionCallback}.
+	 * 
+	 * @param callback The instance of {@link ICollisionCallback} to remove.
+	 */
 	public void removeCollisionCallback(ICollisionCallback callback) {
 		if (mCollisionCallbackList.contains(callback))
 			mCollisionCallbackList.remove(callback);
 	}
 
+	/***
+	 * Sets the collision resolver to be used when resolving collisions in the world step. There can only be one instance of {@link ICollisionResolver} used at a time.
+	 * 
+	 * @param resolver An instance of {@link ICollisionResolver} to use for collision resolution.
+	 * @see {@link CollisionResolverSimple}, {@link CollisionResolverRotations} and {@link CollisionResolverRotationAndFriction}.
+	 */
 	public void setContactResolver(ICollisionResolver resolver) {
 		mCollisionResolver = resolver;
 	}
@@ -133,22 +193,6 @@ public class PhysicsWorld {
 
 		initializeCollisionPairPool();
 
-		if (Debug.debugManager().debugModeEnabled()) {
-			mDebugStatPhysicsCaption = new DebugStatTagCaption("Physics");
-			mDebugStatsNumBodies = new DebugStatTagInt("Num Bodies", 0, false);
-			mDebugStepTimeInMm = new DebugStatTagFloat("step", 0.0f, false);
-			mDebugNumIterations = new DebugStatTagInt("Num Iterations", 0, false);
-			mNumSpatialCells = new DebugStatTagInt("Num Cells", 0, false);
-			mNumActiveCells = new DebugStatTagInt("Active Cells", 0, false);
-
-			Debug.debugManager().stats().addCustomStatTag(mDebugStatPhysicsCaption);
-			Debug.debugManager().stats().addCustomStatTag(mDebugStatsNumBodies);
-			Debug.debugManager().stats().addCustomStatTag(mDebugStepTimeInMm);
-			Debug.debugManager().stats().addCustomStatTag(mDebugNumIterations);
-			Debug.debugManager().stats().addCustomStatTag(mNumSpatialCells);
-			Debug.debugManager().stats().addCustomStatTag(mNumActiveCells);
-		}
-
 		mInitialized = true;
 	}
 
@@ -159,20 +203,6 @@ public class PhysicsWorld {
 	}
 
 	public void unload() {
-		Debug.debugManager().stats().removeCustomStatTag(mDebugStatPhysicsCaption);
-		Debug.debugManager().stats().removeCustomStatTag(mDebugStatsNumBodies);
-		Debug.debugManager().stats().removeCustomStatTag(mDebugStepTimeInMm);
-		Debug.debugManager().stats().removeCustomStatTag(mDebugNumIterations);
-		Debug.debugManager().stats().removeCustomStatTag(mNumSpatialCells);
-		Debug.debugManager().stats().removeCustomStatTag(mNumActiveCells);
-
-		mDebugStatPhysicsCaption = null;
-		mDebugStatsNumBodies = null;
-		mDebugStepTimeInMm = null;
-		mDebugNumIterations = null;
-		mNumSpatialCells = null;
-		mNumActiveCells = null;
-
 		mInitialized = false;
 
 		final int lNumObjectsInCollisionPool = mCollisionPairPool.size();
@@ -219,21 +249,7 @@ public class PhysicsWorld {
 			narrowPhase();
 		}
 
-		final var lDelta = ((System.nanoTime() - lSystemTimeBegin) / TimeConstants.NanoToMilli);
-		updateDebugStats(totalIterations, lDelta);
-
-	}
-
-	private void updateDebugStats(int totalIterations, double delta) {
-		if (Debug.debugManager().debugModeEnabled() == false)
-			return;
-
-		totalIterations = MathHelper.clampi(totalIterations, ConstantsPhysics.MIN_ITERATIONS, ConstantsPhysics.MAX_ITERATIONS);
-		mDebugNumIterations.setValue(totalIterations);
-		mDebugStatsNumBodies.setValue(mBodies.size());
-		mNumSpatialCells.setValue(mWorldHashGrid.getTotalCellCount());
-		mNumActiveCells.setValue(mWorldHashGrid.getActiveCellKeys().size());
-		mDebugStepTimeInMm.setValue((float) delta);
+		mStepTime = ((System.nanoTime() - lSystemTimeBegin) / TimeConstants.NanoToMilli);
 	}
 
 	private void stepBodies(float time) {
@@ -288,17 +304,17 @@ public class PhysicsWorld {
 					if (lBodyA == lBodyB)
 						continue;
 
-					final var lBodyB_aabb = lBodyB.aabb();
 					if (lBodyA.isStatic() && lBodyB.isStatic())
-						continue;
-
-					if (lBodyA_aabb.intersectsAA(lBodyB_aabb) == false)
 						continue;
 
 					final var lWeBothCollideWithOthers = lBodyA.categoryBits() != 0 && lBodyB.categoryBits() != 0;
 					final var passedFilterCollision = lWeBothCollideWithOthers == false || (lBodyA.maskBits() & lBodyB.categoryBits()) != 0 && (lBodyA.categoryBits() & lBodyB.maskBits()) != 0;
 
 					if (!passedFilterCollision)
+						continue;
+
+					final var lBodyB_aabb = lBodyB.aabb();
+					if (lBodyA_aabb.intersectsAA(lBodyB_aabb) == false)
 						continue;
 
 					final var lCollisionPair = getFreeCollisionPair();

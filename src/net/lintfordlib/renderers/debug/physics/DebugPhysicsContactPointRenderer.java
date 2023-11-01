@@ -1,4 +1,4 @@
-package net.lintfordlib.renderers.debug;
+package net.lintfordlib.renderers.debug.physics;
 
 import java.util.ArrayList;
 import java.util.List;
