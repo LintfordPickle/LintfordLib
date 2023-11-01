@@ -1,4 +1,4 @@
-package net.lintfordlib.core.helpers;
+package net.lintfordlib.core.maths;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;

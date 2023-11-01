@@ -1,5 +1,6 @@
 package net.lintfordlib.core.noise;
 
+import net.lintfordlib.core.maths.InterpolationHelper;
 import net.lintfordlib.core.maths.MathHelper;
 
 public class Noise {
@@ -94,16 +95,16 @@ public class Noise {
 
 	/**
 	 * Sets octave weighting for all none DomainWarp fratal types
+	 * 
 	 * @apiNote Keep between 0...1 to maintain -1...1 output bounding
-	 * */
+	 */
 	public void setFractalWeightedStrength(float weightedStrength) {
 		mWeightedStrength = weightedStrength;
 	}
 
 	/**
-	 * Sets strength of the fractal ping pong effect
-	 * Default: 2.0
-	 * */
+	 * Sets strength of the fractal ping pong effect Default: 2.0
+	 */
 	public void setFractalPingPongStrength(float pingPongStrength) {
 		mPingPongStrength = pingPongStrength;
 	}
@@ -257,7 +258,7 @@ public class Noise {
 		for (int i = 0; i < mOctaves; i++) {
 			float noise = genNoiseSingle(seed++, x, y);
 			sum += noise * amp;
-			amp *= MathHelper.lerp(1.0f, MathHelper.min(noise + 1, 2) * 0.5f, mWeightedStrength);
+			amp *= InterpolationHelper.lerp(1.0f, MathHelper.min(noise + 1, 2) * 0.5f, mWeightedStrength);
 
 			x *= mLacunarity;
 			y *= mLacunarity;
@@ -275,7 +276,7 @@ public class Noise {
 		for (int i = 0; i < mOctaves; i++) {
 			float noise = genNoiseSingle(seed++, x, y, z);
 			sum += noise * amp;
-			amp *= MathHelper.lerp(1.0f, (noise + 1) * 0.5f, mWeightedStrength);
+			amp *= InterpolationHelper.lerp(1.0f, (noise + 1) * 0.5f, mWeightedStrength);
 
 			x *= mLacunarity;
 			y *= mLacunarity;
@@ -298,7 +299,7 @@ public class Noise {
 			noise = Math.abs(noise) * 2.f - 1f;
 
 			sum += noise * amp;
-			amp *= MathHelper.lerp(1.0f, MathHelper.min(noise + 1, 2) * 0.5f, mWeightedStrength);
+			amp *= InterpolationHelper.lerp(1.0f, MathHelper.min(noise + 1, 2) * 0.5f, mWeightedStrength);
 
 			x *= mLacunarity;
 			y *= mLacunarity;
@@ -318,7 +319,7 @@ public class Noise {
 		for (int i = 0; i < mOctaves; i++) {
 			float noise = MathHelper.abs(genNoiseSingle(seed++, x, y));
 			sum += (noise * -2 + 1) * amp;
-			amp *= MathHelper.lerp(1.0f, 1 - noise, mWeightedStrength);
+			amp *= InterpolationHelper.lerp(1.0f, 1 - noise, mWeightedStrength);
 
 			x *= mLacunarity;
 			y *= mLacunarity;
@@ -336,7 +337,7 @@ public class Noise {
 		for (int i = 0; i < mOctaves; i++) {
 			float noise = MathHelper.abs(genNoiseSingle(seed++, x, y, z));
 			sum += (noise * -2 + 1) * amp;
-			amp *= MathHelper.lerp(1.0f, 1 - noise, mWeightedStrength);
+			amp *= InterpolationHelper.lerp(1.0f, 1 - noise, mWeightedStrength);
 
 			x *= mLacunarity;
 			y *= mLacunarity;
@@ -347,7 +348,7 @@ public class Noise {
 		return sum;
 	}
 
-	// Fractal PingPong 
+	// Fractal PingPong
 
 	private float genFractalPingPong(float x, float y) {
 		int seed = mSeed;
@@ -355,9 +356,9 @@ public class Noise {
 		float amp = mFractalBounding;
 
 		for (int i = 0; i < mOctaves; i++) {
-			float noise = MathHelper.pingPong((genNoiseSingle(seed++, x, y) + 1) * mPingPongStrength);
+			float noise = InterpolationHelper.pingPong((genNoiseSingle(seed++, x, y) + 1) * mPingPongStrength);
 			sum += (noise - 0.5f) * 2 * amp;
-			amp *= MathHelper.lerp(1.0f, noise, mWeightedStrength);
+			amp *= InterpolationHelper.lerp(1.0f, noise, mWeightedStrength);
 
 			x *= mLacunarity;
 			y *= mLacunarity;
@@ -373,9 +374,9 @@ public class Noise {
 		float amp = mFractalBounding;
 
 		for (int i = 0; i < mOctaves; i++) {
-			float noise = MathHelper.pingPong((genNoiseSingle(seed++, x, y, z) + 1) * mPingPongStrength);
+			float noise = InterpolationHelper.pingPong((genNoiseSingle(seed++, x, y, z) + 1) * mPingPongStrength);
 			sum += (noise - 0.5f) * 2 * amp;
-			amp *= MathHelper.lerp(1.0f, noise, mWeightedStrength);
+			amp *= InterpolationHelper.lerp(1.0f, noise, mWeightedStrength);
 
 			x *= mLacunarity;
 			y *= mLacunarity;

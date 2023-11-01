@@ -1,6 +1,6 @@
 package net.lintfordlib.core.noisebuilder;
 
-import net.lintfordlib.core.maths.MathHelper;
+import net.lintfordlib.core.maths.InterpolationHelper;
 
 public class NoiseBuilderSelect extends NoiseBuilderModuleBase {
 
@@ -420,9 +420,9 @@ public class NoiseBuilderSelect extends NoiseBuilderModuleBase {
 			} else {
 				float lower = threshold - falloff;
 				float upper = threshold + falloff;
-				float blendAmount = MathHelper.interpQuintic((control - lower) / (upper - lower));
+				float blendAmount = InterpolationHelper.quintic((control - lower) / (upper - lower));
 				mLastSelectLow = blendAmount < .5;
-				return MathHelper.lerp(mLow.get(x, y), mHigh.get(x, y), blendAmount);
+				return InterpolationHelper.lerp(mLow.get(x, y), mHigh.get(x, y), blendAmount);
 			}
 		} else {
 			if (control < threshold) {
@@ -449,8 +449,8 @@ public class NoiseBuilderSelect extends NoiseBuilderModuleBase {
 			} else {
 				float lower = threshold - falloff;
 				float upper = threshold + falloff;
-				float blendAmount = MathHelper.interpQuintic((control - lower) / (upper - lower));
-				return MathHelper.lerp(mLow.get(x, y, z), mHigh.get(x, y, z), blendAmount);
+				float blendAmount = InterpolationHelper.quintic((control - lower) / (upper - lower));
+				return InterpolationHelper.lerp(mLow.get(x, y, z), mHigh.get(x, y, z), blendAmount);
 			}
 		} else {
 			if (control < threshold) {

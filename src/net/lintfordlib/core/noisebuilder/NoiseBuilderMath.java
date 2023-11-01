@@ -1,6 +1,6 @@
 package net.lintfordlib.core.noisebuilder;
 
-import net.lintfordlib.core.maths.MathHelper;
+import net.lintfordlib.core.maths.InterpolationHelper;
 
 public class NoiseBuilderMath extends NoiseBuilderModuleBase {
 
@@ -67,7 +67,7 @@ public class NoiseBuilderMath extends NoiseBuilderModuleBase {
 	private float applyMathOperation(float v, float p) {
 		switch (mMathOperation) {
 		case Bias:
-			return MathHelper.bias(v, p);
+			return InterpolationHelper.bias(v, p);
 		default:
 			return v;
 		}
