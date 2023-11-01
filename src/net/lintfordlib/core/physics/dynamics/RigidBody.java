@@ -21,7 +21,6 @@ public class RigidBody extends PhysicsGridEntity {
 	// Variables
 	// --------------------------------------
 
-	// TODO: implement body sleeping
 	public boolean _isActive = true;
 	public int _updateCounter = 0;
 
@@ -54,7 +53,6 @@ public class RigidBody extends PhysicsGridEntity {
 	private boolean mIsStatic;
 	private boolean mIsSensor;
 
-	// TODO: Add debug variables to UserData
 	public boolean debugIsSelected;
 	public boolean debugIsColliding;
 
@@ -224,8 +222,6 @@ public class RigidBody extends PhysicsGridEntity {
 	}
 
 	private void resetMassData() {
-		// compute mass data from shapes. Each shape has its own density.
-
 		mass = 0.f;
 		invMass = 0.f;
 		inertia = 0.f;
@@ -235,22 +231,16 @@ public class RigidBody extends PhysicsGridEntity {
 			return;
 		}
 
-		// accumulate mass over all shapes.
-		mass += shape().mass1();
-		inertia += shape().inertia1();
+		mass += shape().mass();
+		inertia += shape().inertia();
 
 		if (mass > 0.f) {
 			invMass = 1.f / mass;
-
-			// TODO: adjust CoM
-
 		}
 
 		if (inertia > 0.f) {
-			// TODO: adjust inertia around CoM
 			invInertia = 1.f / inertia;
 		}
-
 	}
 
 	public void moveTo(float x, float y) {

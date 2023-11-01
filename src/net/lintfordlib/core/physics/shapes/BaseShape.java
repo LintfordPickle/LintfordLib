@@ -64,11 +64,11 @@ public abstract class BaseShape {
 		return mStaticFriction;
 	}
 
-	public float mass1() {
+	public float mass() {
 		return mMass;
 	}
 
-	public float inertia1() {
+	public float inertia() {
 		return mInertia;
 	}
 

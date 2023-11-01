@@ -74,8 +74,6 @@ public class SwaySpriteBatch extends SpriteBatch {
 		if (destRectangle == null)
 			return;
 
-		// TODO: Fix rotations
-
 		final float pDX = destRectangle.x();
 		final float pDY = destRectangle.y();
 		final float pDW = destRectangle.width();

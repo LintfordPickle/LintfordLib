@@ -122,9 +122,9 @@ public class DebugPhysicsRenderer extends BaseRenderer {
 		}
 
 		if (body.debugIsColliding) {
-			r = .96f;
-			g = .12f;
-			b = .09f;
+			r = .66f;
+			g = .62f;
+			b = .69f;
 		}
 
 		final var lUnitToPixels = ConstantsPhysics.UnitsToPixels();
