@@ -1,7 +1,7 @@
 package net.lintfordlib.core.physics.collisions;
 
 import net.lintfordlib.core.maths.Vector2f;
-import net.lintfordlib.core.physics.dynamics.RigidBody;
+import net.lintfordlib.core.physics.shapes.BaseShape;
 
 public class ContactManifold {
 
@@ -15,8 +15,9 @@ public class ContactManifold {
 	public float impulseX;
 	public float impulseY;
 
-	public RigidBody bodyA;
-	public RigidBody bodyB;
+	// TOOD: Rename to shape
+	public BaseShape shapeA;
+	public BaseShape shapeB;
 
 	public float depth;
 	public final Vector2f normal = new Vector2f();
@@ -37,9 +38,9 @@ public class ContactManifold {
 	// Methods
 	// --------------------------------------
 
-	public void initialize(RigidBody bodyA, RigidBody bodyB) {
-		this.bodyA = bodyA;
-		this.bodyB = bodyB;
+	public void initialize(BaseShape bodyA, BaseShape bodyB) {
+		this.shapeA = bodyA;
+		this.shapeB = bodyB;
 
 		enableResolveContact = true;
 

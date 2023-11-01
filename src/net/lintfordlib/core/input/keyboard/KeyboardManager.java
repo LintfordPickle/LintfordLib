@@ -1,5 +1,6 @@
 package net.lintfordlib.core.input.keyboard;
 
+
 import java.util.Arrays;
 
 import org.lwjgl.glfw.GLFW;

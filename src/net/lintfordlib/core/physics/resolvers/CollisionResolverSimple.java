@@ -5,28 +5,32 @@ import net.lintfordlib.core.physics.collisions.ContactManifold;
 
 public class CollisionResolverSimple implements ICollisionResolver {
 
-	// Provides linear collision response along the contact normal
-
+	/***
+	 * Provides simple linear collision response along the contact normal.
+	 */
 	@Override
-	public void resolveCollisions(ContactManifold manifold) {
-		final var lBodyA = manifold.bodyA;
-		final var lBodyB = manifold.bodyB;
+	public void resolveCollisions(ContactManifold contact) {
+		final var lShapeA = contact.shapeA;
+		final var lShapeB = contact.shapeB;
+
+		final var lBodyA = lShapeA.parentBody();
+		final var lBodyB = lShapeB.parentBody();
 
 		final float relVelX = lBodyB.vx - lBodyA.vx;
 		final float relVelY = lBodyB.vy - lBodyA.vy;
 
-		final float dotVelNor = Vector2f.dot(relVelX, relVelY, manifold.normal.x, manifold.normal.y);
+		final float dotVelNor = Vector2f.dot(relVelX, relVelY, contact.normal.x, contact.normal.y);
 
 		if (dotVelNor >= 0.f)
 			return;
 
-		final float minRestitution = Math.min(lBodyA.shape().restitution(), lBodyB.shape().restitution());
+		final float minRestitution = Math.min(lShapeA.restitution(), lShapeB.restitution());
 		float j = -(1.f + minRestitution) * dotVelNor;
 
 		j /= (lBodyA.invMass() + lBodyB.invMass());
 
-		final float impulseX = j * manifold.normal.x;
-		final float impulseY = j * manifold.normal.y;
+		final float impulseX = j * contact.normal.x;
+		final float impulseY = j * contact.normal.y;
 
 		lBodyA.vx -= impulseX * lBodyA.invMass();
 		lBodyA.vy -= impulseY * lBodyA.invMass();

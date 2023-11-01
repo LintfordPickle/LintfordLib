@@ -8,13 +8,14 @@ public class CollisionResolverRotationAndFriction implements ICollisionResolver 
 
 	@Override
 	public final void resolveCollisions(ContactManifold contact) {
-		final var lBodyA = contact.bodyA;
-		final var lBodyB = contact.bodyB;
+		final var lShapeA = contact.shapeA;
+		final var lShapeB = contact.shapeB;
+
+		final var lBodyA = lShapeA.parentBody();
+		final var lBodyB = lShapeB.parentBody();
+
 		final float normalX = contact.normal.x;
 		final float normalY = contact.normal.y;
-
-		final var lShapeA = lBodyA.shape();
-		final var lShapeB = lBodyB.shape();
 
 		final float e = Math.min(lShapeA.restitution(), lShapeB.restitution());
 		final float sf = (lShapeA.staticFriction() + lShapeB.staticFriction()) * .5f;
@@ -64,10 +65,10 @@ public class CollisionResolverRotationAndFriction implements ICollisionResolver 
 			final float rb_perp_dot_n = Vector2f.dot(rbPerp_x, rbPerp_y, normalX, normalY);
 
 			float j = -(1.f + e) * contactVelocityMagnitude;
-			
+
 			final var termA = (ra_perp_dot_n * ra_perp_dot_n) * lBodyA.invInertia();
 			final var termB = (rb_perp_dot_n * rb_perp_dot_n) * lBodyB.invInertia();
-			
+
 			j /= (lBodyA.invMass() + lBodyB.invMass()) + termA + termB;
 			j /= lContactCount;
 
@@ -162,10 +163,10 @@ public class CollisionResolverRotationAndFriction implements ICollisionResolver 
 			final float rb_perp_dot_t = Vector2f.dot(rbPerp_x, rbPerp_y, tangent_X, tangent_Y);
 
 			float jt = -Vector2f.dot(relVelX, relVelY, tangent_X, tangent_Y);
-			
+
 			final var termA = (ra_perp_dot_t * ra_perp_dot_t) * lBodyA.invInertia();
 			final var termB = (rb_perp_dot_t * rb_perp_dot_t) * lBodyB.invInertia();
-			
+
 			jt /= (lBodyA.invMass() + lBodyB.invMass()) + termA + termB;
 			jt /= lContactCount;
 

@@ -7,7 +7,6 @@ import org.lwjgl.opengl.GL11;
 
 import net.lintfordlib.ConstantsPhysics;
 import net.lintfordlib.core.LintfordCore;
-import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.physics.PhysicsWorld;
 import net.lintfordlib.core.physics.collisions.ContactManifold;
 import net.lintfordlib.core.physics.interfaces.ICollisionCallback;

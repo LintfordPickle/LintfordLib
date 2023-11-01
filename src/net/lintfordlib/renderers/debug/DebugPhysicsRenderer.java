@@ -10,7 +10,7 @@ import net.lintfordlib.controllers.physics.PhysicsController;
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.maths.Vector2f;
-import net.lintfordlib.core.physics.dynamics.RigidBody;
+import net.lintfordlib.core.physics.shapes.BaseShape;
 import net.lintfordlib.renderers.BaseRenderer;
 import net.lintfordlib.renderers.RendererManager;
 
@@ -22,7 +22,8 @@ public class DebugPhysicsRenderer extends BaseRenderer {
 
 	public static final String RENDERER_NAME = "Physics World Debug Renderer";
 
-	public static final boolean RenderAABB = false;
+	public static final boolean RenderAABB_Shapes = true;
+	public static final boolean RenderAABB_Bodys = false;
 
 	public static final boolean RENDER_CONTACT_POINTS = true;
 	public static final List<Vector2f> DebugContactPoints = new ArrayList<>();
@@ -67,11 +68,25 @@ public class DebugPhysicsRenderer extends BaseRenderer {
 		final var lRigidBodies = mPhysicsController.world().bodies();
 		final int lNumOfBodies = lRigidBodies.size();
 
+		final var lUnitToPixels = ConstantsPhysics.UnitsToPixels();
+
 		lLineBatch.begin(core.gameCamera());
 		for (int i = 0; i < lNumOfBodies; i++) {
 			final var lBody = lRigidBodies.get(i);
 
-			debugDrawRigidBody(core, lBody);
+			final int lNumShapes = lBody.shapes().size();
+			for (int j = 0; j < lNumShapes; j++) {
+				final var lShape = lBody.shapes().get(j);
+
+				debugDrawShape(core, lShape);
+			}
+
+			if (RenderAABB_Shapes)
+				Debug.debugManager().drawers().drawRectImmediate(core.gameCamera(), lBody.aabb().x() * lUnitToPixels - 1.f, lBody.aabb().y() * lUnitToPixels - 1.f, lBody.aabb().width() * lUnitToPixels + 2.f, lBody.aabb().height() * lUnitToPixels + 2.f, .43f, .06f, .698f);
+			
+			final var localCenterPoint = new Vector2f(lBody.cx, lBody.cy).mul(lBody.transform.q).add(lBody.transform.p);
+			Debug.debugManager().drawers().drawPointImmediate(core.gameCamera(), localCenterPoint.x * lUnitToPixels, localCenterPoint.y * lUnitToPixels);
+			
 		}
 		lLineBatch.end();
 
@@ -101,7 +116,7 @@ public class DebugPhysicsRenderer extends BaseRenderer {
 		Debug.debugManager().drawers().endPointRenderer();
 	}
 
-	private void debugDrawRigidBody(LintfordCore core, RigidBody body) {
+	private void debugDrawShape(LintfordCore core, BaseShape shape) {
 		final var lLineBatch = rendererManager().uiLineBatch();
 		lLineBatch.lineType(GL11.GL_LINE_STRIP);
 
@@ -109,19 +124,21 @@ public class DebugPhysicsRenderer extends BaseRenderer {
 		float g = .7f;
 		float b = .2f;
 
-		if (body.isStatic()) {
+		final var lParent = shape.parentBody();
+
+		if (lParent.isStatic()) {
 			r = .3f;
 			g = .9f;
 			b = .2f;
 		}
 
-		if (body.debugIsSelected) {
+		if (lParent.debugIsSelected) {
 			r = .96f;
 			g = .92f;
 			b = .09f;
 		}
 
-		if (body.debugIsColliding) {
+		if (lParent.debugIsColliding) {
 			r = .96f;
 			g = .12f;
 			b = .09f;
@@ -129,20 +146,20 @@ public class DebugPhysicsRenderer extends BaseRenderer {
 
 		final var lUnitToPixels = ConstantsPhysics.UnitsToPixels();
 
-		final var lVertices = body.getWorldVertices();
-		final var lShape = body.shape();
+		final var lTransform = lParent.transform;
+		final var lWorldVertices = shape.getTransformedVertices(lTransform);
 
 		lLineBatch.lineWidth(2.f);
-		switch (lShape.shapeType()) {
+		switch (shape.shapeType()) {
 		case Polygon: {
 
 			lLineBatch.begin(core.gameCamera());
 
-			final int lNumVertices = lVertices.size();
+			final int lNumVertices = lWorldVertices.size();
 			for (int i = 0; i < lNumVertices; i++) {
-				final var v0 = lVertices.get(i);
+				final var v0 = lWorldVertices.get(i);
 				final var t = (i + 1) % lNumVertices;
-				final var v1 = lVertices.get(t);
+				final var v1 = lWorldVertices.get(t);
 
 				lLineBatch.draw(v0.x * lUnitToPixels, v0.y * lUnitToPixels, v1.x * lUnitToPixels, v1.y * lUnitToPixels, -0.01f, r, g, b, 1.f);
 			}
@@ -153,13 +170,13 @@ public class DebugPhysicsRenderer extends BaseRenderer {
 		}
 
 		case LineWidth: {
-			final var lHeight = lShape.height() * lUnitToPixels * .5f;
+			final var lHeight = shape.height() * lUnitToPixels * .5f;
 
-			final var sx = lVertices.get(0).x * lUnitToPixels;
-			final var sy = lVertices.get(0).y * lUnitToPixels;
+			final var sx = lWorldVertices.get(0).x * lUnitToPixels;
+			final var sy = lWorldVertices.get(0).y * lUnitToPixels;
 
-			final var ex = lVertices.get(1).x * lUnitToPixels;
-			final var ey = lVertices.get(1).y * lUnitToPixels;
+			final var ex = lWorldVertices.get(1).x * lUnitToPixels;
+			final var ey = lWorldVertices.get(1).y * lUnitToPixels;
 
 			final var lDst = Vector2f.dst(sx, sy, ex, ey);
 			final var linevx = (ex - sx) / lDst;
@@ -182,8 +199,8 @@ public class DebugPhysicsRenderer extends BaseRenderer {
 			lLineBatch.end();
 
 			lLineBatch.begin(core.gameCamera());
-			lLineBatch.drawCircle(sx, sy, body.transform.angle, lHeight, 13, r, g, b, true);
-			lLineBatch.drawCircle(ex, ey, body.transform.angle, lHeight, 13, r, g, b, true);
+			lLineBatch.drawCircle(sx, sy, lTransform.angle, lHeight, 13, r, g, b, true);
+			lLineBatch.drawCircle(ex, ey, lTransform.angle, lHeight, 13, r, g, b, true);
 			lLineBatch.end();
 
 			break;
@@ -191,7 +208,7 @@ public class DebugPhysicsRenderer extends BaseRenderer {
 
 		case Circle: {
 			lLineBatch.begin(core.gameCamera());
-			lLineBatch.drawCircle(lVertices.get(0).x * lUnitToPixels, lVertices.get(0).y * lUnitToPixels, body.transform.angle, lShape.radius() * lUnitToPixels, 20, r, g, b, true);
+			lLineBatch.drawCircle(lWorldVertices.get(0).x * lUnitToPixels, lWorldVertices.get(0).y * lUnitToPixels, lTransform.angle, shape.radius() * lUnitToPixels, 20, r, g, b, true);
 			lLineBatch.end();
 
 			break;
@@ -201,16 +218,16 @@ public class DebugPhysicsRenderer extends BaseRenderer {
 
 		// Render body center
 		lLineBatch.begin(core.gameCamera());
-		lLineBatch.drawCircle(body.transform.p.x * lUnitToPixels, body.transform.p.y * lUnitToPixels, body.transform.angle, 3, 20, 0.8f, .4f, .4f, true);
+		lLineBatch.drawCircle(lTransform.p.x * lUnitToPixels, lTransform.p.y * lUnitToPixels, lTransform.angle, 3, 20, 0.8f, .4f, .4f, true);
 		lLineBatch.end();
 
 		// Render centroid
 		GL11.glPointSize(3.f);
 
-		final var localCenterPoint = new Vector2f(lShape.localCenter).mul(body.transform.q).add(body.transform.p);
+		final var localCenterPoint = new Vector2f(shape.localCenter).mul(lTransform.q).add(lTransform.p);
 		Debug.debugManager().drawers().drawPointImmediate(core.gameCamera(), localCenterPoint.x * lUnitToPixels, localCenterPoint.y * lUnitToPixels);
 
-		if (RenderAABB)
-			Debug.debugManager().drawers().drawRectImmediate(core.gameCamera(), body.aabb().x() * lUnitToPixels, body.aabb().y() * lUnitToPixels, body.aabb().width() * lUnitToPixels, body.aabb().height() * lUnitToPixels, .93f, .06f, .98f);
+		if (RenderAABB_Shapes)
+			Debug.debugManager().drawers().drawRectImmediate(core.gameCamera(), shape.aabb().x() * lUnitToPixels, shape.aabb().y() * lUnitToPixels, shape.aabb().width() * lUnitToPixels, shape.aabb().height() * lUnitToPixels, .93f, .06f, .98f);
 	}
 }

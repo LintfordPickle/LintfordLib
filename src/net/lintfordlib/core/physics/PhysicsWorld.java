@@ -16,6 +16,7 @@ import net.lintfordlib.core.physics.collisions.SATIntersection;
 import net.lintfordlib.core.physics.dynamics.RigidBody;
 import net.lintfordlib.core.physics.interfaces.ICollisionCallback;
 import net.lintfordlib.core.physics.resolvers.ICollisionResolver;
+import net.lintfordlib.core.physics.shapes.BaseShape;
 import net.lintfordlib.core.physics.spatial.PhysicsHashGrid;
 import net.lintfordlib.core.time.TimeConstants;
 
@@ -26,8 +27,8 @@ public class PhysicsWorld {
 	// --------------------------------------
 
 	private class CollisionPair {
-		public RigidBody bodyA;
-		public RigidBody bodyB;
+		public BaseShape shapeA;
+		public BaseShape shapeB;
 	}
 
 	// --------------------------------------
@@ -180,8 +181,8 @@ public class PhysicsWorld {
 			final var lCollisionPair = mCollisionPairPool.get(i);
 
 			if (lCollisionPair != null) {
-				lCollisionPair.bodyA = null;
-				lCollisionPair.bodyB = null;
+				lCollisionPair.shapeA = null;
+				lCollisionPair.shapeB = null;
 			}
 		}
 		mCollisionPairPool.clear();
@@ -217,6 +218,7 @@ public class PhysicsWorld {
 			_lockedBodies = false;
 
 			narrowPhase();
+
 		}
 
 		final var lDelta = ((System.nanoTime() - lSystemTimeBegin) / TimeConstants.NanoToMilli);
@@ -295,17 +297,29 @@ public class PhysicsWorld {
 					if (lBodyA_aabb.intersectsAA(lBodyB_aabb) == false)
 						continue;
 
-					final var lWeBothCollideWithOthers = lBodyA.categoryBits() != 0 && lBodyB.categoryBits() != 0;
-					final var passedFilterCollision = lWeBothCollideWithOthers == false || (lBodyA.maskBits() & lBodyB.categoryBits()) != 0 && (lBodyA.categoryBits() & lBodyB.maskBits()) != 0;
+					final int lNumShapesOnBodyA = lBodyA.shapes().size();
+					final int lNumShapesOnBodyB = lBodyB.shapes().size();
+					for (int p = 0; p < lNumShapesOnBodyA; p++) {
+						final var lBodyAShape = lBodyA.shapes().get(p);
+						for (int q = 0; q < lNumShapesOnBodyB; q++) {
+							final var lBodyBShape = lBodyB.shapes().get(q);
 
-					if (!passedFilterCollision)
-						continue;
+							final var lWeBothCollideWithOthers = lBodyAShape.categoryBits() != 0 && lBodyBShape.categoryBits() != 0;
+							final var passedFilterCollision = lWeBothCollideWithOthers == false || (lBodyAShape.maskBits() & lBodyBShape.categoryBits()) != 0 && (lBodyAShape.categoryBits() & lBodyBShape.maskBits()) != 0;
 
-					final var lCollisionPair = getFreeCollisionPair();
-					lCollisionPair.bodyA = lBodyA;
-					lCollisionPair.bodyB = lBodyB;
+							if (!passedFilterCollision)
+								continue;
 
-					mCollisionPair.add(lCollisionPair);
+							if (lBodyAShape.aabb(lBodyA.transform).intersectsAA(lBodyBShape.aabb(lBodyB.transform)) == false)
+								continue;
+
+							final var lCollisionPair = getFreeCollisionPair();
+							lCollisionPair.shapeA = lBodyAShape;
+							lCollisionPair.shapeB = lBodyBShape;
+
+							mCollisionPair.add(lCollisionPair);
+						}
+					}
 				}
 			}
 		}
@@ -318,24 +332,11 @@ public class PhysicsWorld {
 		for (int i = 0; i < lNumCollisionPairs; i++) {
 			final var lCollisionPair = mCollisionPair.get(i);
 
-			mContactManifold.initialize(lCollisionPair.bodyA, lCollisionPair.bodyB);
-
-			final var lBodyA = lCollisionPair.bodyA;
-			final var lBodyB = lCollisionPair.bodyB;
-
-			final var includeFilter = lBodyA.maskBits() != 0 && lBodyB.maskBits() != 0 && lBodyA.categoryBits() != 0 && lBodyB.categoryBits() != 0;
-			final var passedFilterCollision = !includeFilter || (lBodyA.maskBits() & lBodyB.categoryBits()) != 0 && (lBodyA.categoryBits() & lBodyB.maskBits()) != 0;
-
-			if (!passedFilterCollision) {
-				// TODO: Handle the case of sensor bodies
-
-				returnCollisionPair(lCollisionPair);
-				break;
-			}
+			mContactManifold.initialize(lCollisionPair.shapeA, lCollisionPair.shapeB);
 
 			if (SATIntersection.checkCollides(mContactManifold)) {
-				lBodyA.debugIsColliding = true;
-				lBodyB.debugIsColliding = true;
+				mContactManifold.shapeA.parentBody().debugIsColliding = true;
+				mContactManifold.shapeB.parentBody().debugIsColliding = true;
 
 				for (int j = 0; j < lNumCallbacks; j++) {
 					mCollisionCallbackList.get(j).preContact(mContactManifold);
@@ -378,8 +379,8 @@ public class PhysicsWorld {
 	// --------------------------------------
 
 	private void separateBodiesByMTV(final ContactManifold contact) {
-		final var lBodyA = contact.bodyA;
-		final var lBodyB = contact.bodyB;
+		final var lBodyA = contact.shapeA.parentBody();
+		final var lBodyB = contact.shapeB.parentBody();
 
 		// The Vector 'mtv' is the direction to push BodyB outside of BodyA
 		final var lMtvX = contact.normal.x * contact.depth;
@@ -443,8 +444,8 @@ public class PhysicsWorld {
 	}
 
 	private void returnCollisionPair(CollisionPair obj) {
-		obj.bodyA = null;
-		obj.bodyB = null;
+		obj.shapeA = null;
+		obj.shapeB = null;
 		mCollisionPairPool.addLast(obj);
 	}
 

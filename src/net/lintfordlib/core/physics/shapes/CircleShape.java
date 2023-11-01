@@ -30,6 +30,11 @@ public class CircleShape extends BaseShape {
 
 		// I = (1/2)mr^2
 		inertia = .5f * mass * radius * radius;
+
+		final var lVertices = mLocalVertices;
+		localCenter.x = lVertices.get(0).x;
+		localCenter.y = lVertices.get(0).y;
+
 	}
 
 	@Override

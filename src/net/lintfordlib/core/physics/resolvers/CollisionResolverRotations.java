@@ -7,13 +7,16 @@ public class CollisionResolverRotations implements ICollisionResolver {
 
 	@Override
 	public void resolveCollisions(ContactManifold contact) {
-		final var lBodyA = contact.bodyA;
-		final var lBodyB = contact.bodyB;
+		final var lShapeA = contact.shapeA;
+		final var lShapeB = contact.shapeB;
+
+		final var lBodyA = lShapeA.parentBody();
+		final var lBodyB = lShapeB.parentBody();
 
 		final float normalX = contact.normal.x;
 		final float normalY = contact.normal.y;
 
-		final float e = Math.min(lBodyA.shape().restitution(), lBodyB.shape().restitution());
+		final float e = Math.min(lShapeA.restitution(), lShapeB.restitution());
 
 		float impulse1X = 0, impulse1Y = 0, impulse2X = 0, impulse2Y = 0;
 		float ra1X = 0, ra1Y = 0, ra2X = 0, ra2Y = 0;

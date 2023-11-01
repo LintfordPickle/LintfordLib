@@ -1,5 +1,6 @@
 package net.lintfordlib.core.physics.dynamics;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import net.lintfordlib.core.geometry.Rectangle;
@@ -25,10 +26,16 @@ public class RigidBody extends PhysicsGridEntity {
 	public boolean _isActive = true;
 	public int _updateCounter = 0;
 
-	private BaseShape mShape;
+	private final List<BaseShape> mShapes = new ArrayList<>();
 	private Object userData;
 
 	public final Transform transform = new Transform();
+	private final Transform cacheT = new Transform();
+	private final Rectangle mAABB = new Rectangle();
+
+	// center of mass
+	public float cx;
+	public float cy;
 
 	public float vx;
 	public float vy;
@@ -48,9 +55,6 @@ public class RigidBody extends PhysicsGridEntity {
 	public float torque;
 	private float angularVelocity;
 
-	private int mCategoryBit; // I'm a ..
-	private int mMaskBit; // I collide with ...
-
 	private boolean mIsStatic;
 
 	// TODO: Add debug variables to UserData
@@ -60,6 +64,15 @@ public class RigidBody extends PhysicsGridEntity {
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public Rectangle aabb() {
+		if (!cacheT.compare(transform)) {
+			rebuildAABB();
+			cacheT.set(transform);
+		}
+
+		return mAABB;
+	}
 
 	public void setAngularVelocity(float angularVelocity) {
 		if (isStatic())
@@ -95,20 +108,6 @@ public class RigidBody extends PhysicsGridEntity {
 		return invInertia;
 	}
 
-	public List<Vector2f> getLocalVertices() {
-		return mShape.getVertices();
-	}
-
-	public List<Vector2f> getWorldVertices() {
-		return mShape.getTransformedVertices(transform);
-	}
-
-	public Rectangle aabb() {
-		if (mShape == null)
-			return null;
-		return mShape.aabb(transform);
-	}
-
 	public Object userData() {
 		return userData;
 	}
@@ -121,28 +120,8 @@ public class RigidBody extends PhysicsGridEntity {
 		return mIsStatic;
 	}
 
-	public BaseShape shape() {
-		return mShape;
-	}
-
-	/** I collide with */
-	public int maskBits() {
-		return mMaskBit;
-	}
-
-	/** I collide with */
-	public void maskBits(int maskBits) {
-		mMaskBit = maskBits;
-	}
-
-	/** I'm a */
-	public int categoryBits() {
-		return mCategoryBit;
-	}
-
-	/** I'm a */
-	public void categoryBits(int categoryBits) {
-		mCategoryBit = categoryBits;
+	public List<BaseShape> shapes() {
+		return mShapes;
 	}
 
 	// --------------------------------------
@@ -193,47 +172,86 @@ public class RigidBody extends PhysicsGridEntity {
 		accY = 0.f;
 		torque = 0.f;
 
-		// angularVelocity *= (float) Math.exp(-.97f * time);
+		calculateMassData();
 	}
 
 	// --------------------------------------
 	// Helper-Methods
 	// --------------------------------------
 
-	public void addShape(BaseShape shape) {
-		this.mShape = shape;
+	public void rebuildAABB() {
+		// iterate all shapes and grow the aabb to encompass all
+		final int lNumShapes = mShapes.size();
+		for (int i = 0; i < lNumShapes; i++) {
+			if (i == 0) {
+				mAABB.set(mShapes.get(i).aabb(transform));
+				continue;
+			}
 
-		resetMassData();
+			mAABB.updateABBToEncloseRectangle(mShapes.get(i).aabb(transform));
+		}
 	}
 
-	private void resetMassData() {
-		// compute mass data from shapes. Each shape has its own density.
+	public void addShape(BaseShape shape) {
+		if (mShapes.contains(shape) == false) {
+			mShapes.add(shape);
 
+			shape.attachShapeToBody(this);
+
+			calculateMassData();
+		}
+	}
+
+	public void removeShape(BaseShape shape) {
+		if (mShapes.contains(shape)) {
+			mShapes.remove(shape);
+
+			shape.detachShape();
+		}
+	}
+
+	private void calculateMassData() {
 		mass = 0.f;
 		invMass = 0.f;
 		inertia = 0.f;
 		invInertia = 0.f;
 
+		cx = 0;
+		cy = 0;
+
+		float w_cx = 0.f;
+		float w_cy = 0.f;
+
 		if (isStatic()) {
 			return;
 		}
 
-		// accumulate mass over all shapes.
-		mass += shape().mass1();
-		inertia += shape().inertia1();
+		// The mass for the body is the sum of the shape masses
+		final int lNumShapes = mShapes.size();
+		for (int i = 0; i < lNumShapes; i++) {
+			final var lShape = mShapes.get(i);
+
+			w_cx += lShape.mass() * lShape.localCenter.x;
+			w_cy += lShape.mass() * lShape.localCenter.y;
+
+			mass += lShape.mass();
+			inertia += lShape.inertia();
+		}
 
 		if (mass > 0.f) {
 			invMass = 1.f / mass;
-
-			// TODO: adjust CoM
-
+			w_cx *= invMass;
+			w_cy *= invMass;
 		}
 
 		if (inertia > 0.f) {
-			// TODO: adjust inertia around CoM
+			inertia -= mass * Vector2f.dot(w_cx, w_cx, w_cy, w_cy);
 			invInertia = 1.f / inertia;
 		}
 
+		// Move the center of mass
+		cx = w_cx;
+		cy = w_cy;
 	}
 
 	public void moveTo(float x, float y) {

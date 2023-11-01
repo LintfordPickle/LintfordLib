@@ -7,6 +7,7 @@ import net.lintfordlib.core.geometry.Rectangle;
 import net.lintfordlib.core.maths.Rotation;
 import net.lintfordlib.core.maths.Transform;
 import net.lintfordlib.core.maths.Vector2f;
+import net.lintfordlib.core.physics.dynamics.RigidBody;
 import net.lintfordlib.core.physics.dynamics.ShapeType;
 
 public abstract class BaseShape {
@@ -36,9 +37,19 @@ public abstract class BaseShape {
 	protected ShapeType mShapeType;
 	protected final Rectangle mAABB;
 
+	private int mCategoryBit; // I'm a ..
+	private int mMaskBit; // I collide with ...
+
+	private RigidBody mParent;
+	public Object userData;
+
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public RigidBody parentBody() {
+		return mParent;
+	}
 
 	public float width() {
 		return width;
@@ -52,8 +63,6 @@ public abstract class BaseShape {
 		return radius;
 	}
 
-	// ---
-
 	public float restitution() {
 		return restitution;
 	}
@@ -66,15 +75,13 @@ public abstract class BaseShape {
 		return staticFriction;
 	}
 
-	public float mass1() {
+	public float mass() {
 		return mass;
 	}
 
-	public float inertia1() {
+	public float inertia() {
 		return inertia;
 	}
-
-	// ---
 
 	public ShapeType shapeType() {
 		return mShapeType;
@@ -88,6 +95,13 @@ public abstract class BaseShape {
 		return mManualIsDirty || !cacheT.compare(t);
 	}
 
+	public Rectangle aabb() {
+		if (updateFrameNeeded(parentBody().transform))
+			updateFrame(parentBody().transform);
+
+		return mAABB;
+	}
+
 	public Rectangle aabb(Transform t) {
 		if (updateFrameNeeded(t))
 			updateFrame(t);
@@ -95,11 +109,35 @@ public abstract class BaseShape {
 		return mAABB;
 	}
 
+	public List<Vector2f> getTransformedVertices() {
+		return getTransformedVertices(mParent.transform);
+	}
+
 	public List<Vector2f> getTransformedVertices(Transform t) {
 		if (updateFrameNeeded(t))
 			updateFrame(t);
 
 		return mTransformedVertices;
+	}
+
+	/** I collide with */
+	public int maskBits() {
+		return mMaskBit;
+	}
+
+	/** I collide with */
+	public void maskBits(int maskBits) {
+		mMaskBit = maskBits;
+	}
+
+	/** I'm a */
+	public int categoryBits() {
+		return mCategoryBit;
+	}
+
+	/** I'm a */
+	public void categoryBits(int categoryBits) {
+		mCategoryBit = categoryBits;
 	}
 
 	// --------------------------------------
@@ -115,6 +153,20 @@ public abstract class BaseShape {
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
+
+	public void attachShapeToBody(RigidBody parentBody) {
+		assert (parentBody != null) : "BaseShape cannot be attached to a null-instance of RigidBody";
+		assert (parentBody.transform != null) : "ParentBody.Transform of BaseShape instance cannot be null";
+
+		mParent = parentBody;
+
+		mParent.addShape(this);
+	}
+
+	public void detachShape() {
+		mParent = null;
+		mParent.removeShape(this);
+	}
 
 	/**
 	 * Transforms the local vertices into world space and rebuilds the AABB.

@@ -16,7 +16,6 @@ public class PolygonShape extends BaseShape {
 
 	private PolygonShape() {
 		mShapeType = ShapeType.Polygon;
-
 	}
 
 	// --------------------------------------

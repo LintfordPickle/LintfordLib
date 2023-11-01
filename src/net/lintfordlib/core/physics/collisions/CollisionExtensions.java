@@ -5,6 +5,7 @@ import net.lintfordlib.core.maths.MathHelper;
 import net.lintfordlib.core.maths.Vector2f;
 import net.lintfordlib.core.physics.dynamics.RigidBody;
 import net.lintfordlib.core.physics.dynamics.ShapeType;
+import net.lintfordlib.core.physics.shapes.BaseShape;
 
 public class CollisionExtensions {
 
@@ -16,10 +17,11 @@ public class CollisionExtensions {
 	 * @param y    The x component of the point to check.
 	 * @return Returns true if the point lies within the radius of the body's bounding radius, otherwise false.
 	 */
-	public static boolean pointIntersectsBodyRadius(RigidBody body, float x, float y) {
-		final float xx = body.transform.p.x - x;
-		final float yy = body.transform.p.y - y;
-		return (xx * xx + yy * yy) < (body.shape().radius() * body.shape().radius());
+	public static boolean pointIntersectsBodyRadius(BaseShape body, float x, float y) {
+		final var lTransform = body.parentBody().transform;
+		final float xx = lTransform.p.x - x;
+		final float yy = lTransform.p.y - y;
+		return (xx * xx + yy * yy) < (body.radius() * body.radius());
 	}
 
 	/***
@@ -30,11 +32,11 @@ public class CollisionExtensions {
 	 * @param y    The y component of the point to check.
 	 * @return Returns true if a collision is detected, otherwise false.
 	 */
-	public static final boolean pointIntersectsBoxBody(RigidBody body, float x, float y) {
+	public static final boolean pointIntersectsBoxBody(BaseShape body, float x, float y) {
 
-		assert (body.getWorldVertices().size() == 4) : "pointIntersectsBoxPolygon requires 4 vertices";
+		final var lWorldVertices = body.getTransformedVertices();
+		assert (lWorldVertices.size() == 4) : "pointIntersectsBoxPolygon requires 4 vertices";
 
-		final var lWorldVertices = body.getWorldVertices();
 		final var a = lWorldVertices.get(0);
 		final var b = lWorldVertices.get(1);
 		final var c = lWorldVertices.get(2);
@@ -64,11 +66,11 @@ public class CollisionExtensions {
 		return false;
 	}
 
-	public static final boolean pointIntersectsLineWidthBody(RigidBody lineWidthBody, float x, float y) {
+	public static final boolean pointIntersectsLineWidthBody(BaseShape lineWidthBody, float x, float y) {
 
-		assert (lineWidthBody.getWorldVertices().size() == 2) : "pointIntersectsLineWidthBody requires 2 vertices";
+		final var lWorldVertices = lineWidthBody.getTransformedVertices();
+		assert (lWorldVertices.size() == 2) : "pointIntersectsLineWidthBody requires 2 vertices";
 
-		final var lWorldVertices = lineWidthBody.getWorldVertices();
 		final var start = lWorldVertices.get(0);
 		final var end = lWorldVertices.get(1);
 
@@ -89,7 +91,7 @@ public class CollisionExtensions {
 		final var distance = (float) Math.sqrt((x - lClosestPointX) * (x - lClosestPointX) + (y - lClosestPointY) * (y - lClosestPointY));
 
 		final var lPointRadius = 1.f * ConstantsPhysics.PixelsToUnits();
-		final var lLineRadius = lineWidthBody.shape().height() * .5f;
+		final var lLineRadius = lineWidthBody.height() * .5f;
 		if (distance <= (lLineRadius + lPointRadius))
 			return true;
 
@@ -99,8 +101,8 @@ public class CollisionExtensions {
 	/***
 	 * Checks if the given points lies within the bounds of the RidigBody. This function calls outs depending on the type of the attached {@link ShapeType}
 	 */
-	public static boolean pointIntersectsBody(RigidBody body, float x, float y) {
-		switch (body.shape().shapeType()) {
+	public static boolean pointIntersectsBody(BaseShape body, float x, float y) {
+		switch (body.shapeType()) {
 		case Polygon: {
 			return intersectsPointPolygon(body, x, y);
 		}
@@ -111,7 +113,12 @@ public class CollisionExtensions {
 
 		default:
 		case Circle: {
-			return pointIntersectsCircleBody(body, x, y);
+			final var lTransform = body.parentBody().transform;
+			final var lCirclePositionX = lTransform.p.x;
+			final var lCirclePositionY = lTransform.p.y;
+			final var lCircleRadius = body.radius();
+
+			return pointIntersectsCircleBody(lCirclePositionX, lCirclePositionY, lCircleRadius, x, y);
 		}
 
 		}
@@ -125,8 +132,8 @@ public class CollisionExtensions {
 	 * @param polygonVertices The Polygon vertices. The polygon must be concave and have a CCW winding order.
 	 * @return true if the point lies within the polygon, otherwise false
 	 */
-	public static final boolean intersectsPointPolygon(RigidBody concavePolygonBody, float x, float y) {
-		final var polygonVertices = concavePolygonBody.getWorldVertices();
+	public static final boolean intersectsPointPolygon(BaseShape concavePolygonBody, float x, float y) {
+		final var polygonVertices = concavePolygonBody.getTransformedVertices();
 
 		int windingNumber = 0;
 		final int n = polygonVertices.size();
@@ -163,12 +170,8 @@ public class CollisionExtensions {
 	/***
 	 * Checks if the given point intersects a CircleShape.
 	 */
-	public static final boolean pointIntersectsCircleBody(RigidBody circleBody, float pointX, float pointY) {
-		final var circleX = circleBody.transform.p.x;
-		final var circleY = circleBody.transform.p.y;
-		final var circleRadius = circleBody.shape().radius();
-
-		final float lDist = (float) (circleX - pointX) * (circleX - pointX) + (circleY - pointY) * (circleY - pointY);
+	public static final boolean pointIntersectsCircleBody(float circleX, float circleY, float circleRadius, float pointX, float pointY) {
+		final var lDist = (float) (circleX - pointX) * (circleX - pointX) + (circleY - pointY) * (circleY - pointY);
 		if (lDist < circleRadius * circleRadius) {
 			return true;
 		}

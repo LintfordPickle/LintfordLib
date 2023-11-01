@@ -2,8 +2,8 @@ package net.lintfordlib.core.physics.collisions;
 
 import net.lintfordlib.core.maths.MathHelper;
 import net.lintfordlib.core.maths.Vector2f;
-import net.lintfordlib.core.physics.dynamics.RigidBody;
 import net.lintfordlib.core.physics.dynamics.ShapeType;
+import net.lintfordlib.core.physics.shapes.BaseShape;
 
 public class SATContacts {
 
@@ -30,10 +30,10 @@ public class SATContacts {
 	// ---------------------------------------------
 
 	public static final void fillContactPoints(ContactManifold manifold) {
-		final var bodyA = manifold.bodyA;
-		final var bodyB = manifold.bodyB;
+		final var bodyA = manifold.shapeA;
+		final var bodyB = manifold.shapeB;
 
-		final var lShapeTypeA = bodyA.shape().shapeType();
+		final var lShapeTypeA = bodyA.shapeType();
 
 		manifold.contactCount = 0;
 
@@ -46,8 +46,8 @@ public class SATContacts {
 
 	}
 
-	private static void findContactsOnPolygonShape(RigidBody polygonBody, RigidBody otherBody, ContactManifold manifold) {
-		final var lShapeTypeB = otherBody.shape().shapeType();
+	private static void findContactsOnPolygonShape(BaseShape polygonBody, BaseShape otherBody, ContactManifold manifold) {
+		final var lShapeTypeB = otherBody.shapeType();
 
 		if (lShapeTypeB == ShapeType.Polygon)
 			findPolygonPolygonContactPoints(polygonBody, otherBody, manifold);
@@ -57,8 +57,8 @@ public class SATContacts {
 			findCirclePolygonContactPoint(polygonBody, otherBody, manifold);
 	}
 
-	private static void findContactsOnLineShape(RigidBody lineBody, RigidBody otherBody, ContactManifold manifold) {
-		final var lShapeTypeB = otherBody.shape().shapeType();
+	private static void findContactsOnLineShape(BaseShape lineBody, BaseShape otherBody, ContactManifold manifold) {
+		final var lShapeTypeB = otherBody.shapeType();
 
 		if (lShapeTypeB == ShapeType.Polygon)
 			findLinePolygonContactPoints(lineBody, otherBody, manifold);
@@ -69,8 +69,8 @@ public class SATContacts {
 
 	}
 
-	private static void findContactsOnCircleShape(RigidBody circleBody, RigidBody otherBody, ContactManifold manifold) {
-		final var lShapeTypeB = otherBody.shape().shapeType();
+	private static void findContactsOnCircleShape(BaseShape circleBody, BaseShape otherBody, ContactManifold manifold) {
+		final var lShapeTypeB = otherBody.shapeType();
 
 		if (lShapeTypeB == ShapeType.Polygon)
 			findCirclePolygonContactPoint(circleBody, otherBody, manifold);
@@ -85,9 +85,9 @@ public class SATContacts {
 	// Methods
 	// ---------------------------------------------
 
-	private static void findPolygonPolygonContactPoints(RigidBody polygonABody, RigidBody polygonBBody, ContactManifold contactManifold) {
-		final var polyAVerts = polygonABody.getWorldVertices();
-		final var polyBVerts = polygonBBody.getWorldVertices();
+	private static void findPolygonPolygonContactPoints(BaseShape polygonABody, BaseShape polygonBBody, ContactManifold contactManifold) {
+		final var polyAVerts = polygonABody.getTransformedVertices();
+		final var polyBVerts = polygonBBody.getTransformedVertices();
 
 		float minDist2 = Float.MAX_VALUE;
 
@@ -152,9 +152,9 @@ public class SATContacts {
 		}
 	}
 
-	private static void findLinePolygonContactPoints(RigidBody lineBody, RigidBody bodyPolygonBody, ContactManifold contactManifold) {
-		final var lineVerts = lineBody.getWorldVertices();
-		final var polyVerts = bodyPolygonBody.getWorldVertices();
+	private static void findLinePolygonContactPoints(BaseShape lineBody, BaseShape bodyPolygonBody, ContactManifold contactManifold) {
+		final var lineVerts = lineBody.getTransformedVertices();
+		final var polyVerts = bodyPolygonBody.getTransformedVertices();
 
 		float minDist2 = Float.MAX_VALUE;
 
@@ -217,11 +217,11 @@ public class SATContacts {
 		}
 	}
 
-	private static void findCirclePolygonContactPoint(RigidBody circleBody, RigidBody polygonBody, ContactManifold contactManifold) {
-		final var lCircleAX = circleBody.transform.p.x;
-		final var lCircleAY = circleBody.transform.p.y;
+	private static void findCirclePolygonContactPoint(BaseShape circleBody, BaseShape polygonBody, ContactManifold contactManifold) {
+		final var lCircleAX = circleBody.parentBody().transform.p.x;
+		final var lCircleAY = circleBody.parentBody().transform.p.y;
 
-		final var lPolygonVertices = polygonBody.getWorldVertices();
+		final var lPolygonVertices = polygonBody.getTransformedVertices();
 
 		float minDist2 = Float.MAX_VALUE;
 
@@ -241,13 +241,13 @@ public class SATContacts {
 		}
 	}
 
-	private static void findCircleCircleContactPoint(RigidBody circleABody, RigidBody circleBBody, ContactManifold contactManifold) {
-		float lCircleAX = circleABody.transform.p.x;
-		float lCircleAY = circleABody.transform.p.y;
-		float lRadiusA = circleABody.shape().radius();
+	private static void findCircleCircleContactPoint(BaseShape circleABody, BaseShape circleBBody, ContactManifold contactManifold) {
+		float lCircleAX = circleABody.parentBody().transform.p.x;
+		float lCircleAY = circleABody.parentBody().transform.p.y;
+		float lRadiusA = circleABody.radius();
 
-		float lCircleBX = circleBBody.transform.p.x;
-		float lCircleBY = circleBBody.transform.p.y;
+		float lCircleBX = circleBBody.parentBody().transform.p.x;
+		float lCircleBY = circleBBody.parentBody().transform.p.y;
 
 		var abX = lCircleBX - lCircleAX;
 		var abY = lCircleBY - lCircleAY;
@@ -263,12 +263,12 @@ public class SATContacts {
 
 	}
 
-	private static void findLineCircleContactPoint(RigidBody lineBody, RigidBody circleBody, ContactManifold manifold) {
-		final var lLineVertices = lineBody.getWorldVertices();
-		final var lLineRadius = lineBody.shape().height() * .5f;
+	private static void findLineCircleContactPoint(BaseShape lineBody, BaseShape circleBody, ContactManifold manifold) {
+		final var lLineVertices = lineBody.getTransformedVertices();
+		final var lLineRadius = lineBody.height() * .5f;
 
-		final var lCircleX = circleBody.transform.p.x;
-		final var lCircleY = circleBody.transform.p.y;
+		final var lCircleX = circleBody.parentBody().transform.p.x;
+		final var lCircleY = circleBody.parentBody().transform.p.y;
 
 		final var sx = lLineVertices.get(0).x;
 		final var sy = lLineVertices.get(0).y;
@@ -295,9 +295,9 @@ public class SATContacts {
 		manifold.contactCount = 1;
 	}
 
-	private static void findLineLineContactPoints(RigidBody lineABody, RigidBody lineBBody, ContactManifold contactManifold) {
-		final var lineAVertices = lineABody.getWorldVertices();
-		final var lineBVertices = lineBBody.getWorldVertices();
+	private static void findLineLineContactPoints(BaseShape lineABody, BaseShape lineBBody, ContactManifold contactManifold) {
+		final var lineAVertices = lineABody.getTransformedVertices();
+		final var lineBVertices = lineBBody.getTransformedVertices();
 
 		float minDist2 = Float.MAX_VALUE;
 

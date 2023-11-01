@@ -296,6 +296,18 @@ public class Rectangle implements Serializable {
 		mH += expandByAmount * 2;
 	}
 
+	public void updateABBToEncloseRectangle(Rectangle otherRect) {
+		final var minX = Math.min(mX, otherRect.x());
+		final var minY = Math.min(mY, otherRect.y());
+		final var maxX = Math.max(right(), otherRect.right());
+		final var maxY = Math.max(bottom(), otherRect.bottom());
+
+		final var lNewWidth = maxX - minX;
+		final var lNewHeight = maxY - minY;
+
+		set(minX, minY, lNewWidth, lNewHeight);
+	}
+
 	/** Expands the bounds of this rectangle to include the new point */
 	public void updateAABBToEnclosePoint(float pointX, float pointY) {
 		if (mX > pointX) {

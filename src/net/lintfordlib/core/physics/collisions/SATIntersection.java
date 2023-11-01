@@ -4,7 +4,7 @@ import java.util.List;
 
 import net.lintfordlib.core.maths.MathHelper;
 import net.lintfordlib.core.maths.Vector2f;
-import net.lintfordlib.core.physics.dynamics.RigidBody;
+import net.lintfordlib.core.physics.shapes.BaseShape;
 
 public class SATIntersection {
 
@@ -33,8 +33,8 @@ public class SATIntersection {
 	// Core-Methods
 	// ---------------------------------------------
 
-	public static final boolean checkCollides(final ContactManifold manifold) {
-		final var lShapeA = manifold.bodyA.shape();
+	public static boolean checkCollides(final ContactManifold manifold) {
+		final var lShapeA = manifold.shapeA;
 		final var lShapeAType = lShapeA.shapeType();
 
 		switch (lShapeAType) {
@@ -54,64 +54,63 @@ public class SATIntersection {
 
 	// ---
 
-	private static final boolean intersectionsPolygonShape(ContactManifold contactManifold) {
-		final var lShapeB = contactManifold.bodyB.shape();
+	private static boolean intersectionsPolygonShape(ContactManifold contactManifold) {
+		final var lShapeB = contactManifold.shapeB;
 		final var lShapeBType = lShapeB.shapeType();
 
-		final var lPolygonBody_A = contactManifold.bodyA;
-		final var lOtherBody_B = contactManifold.bodyB;
+		final var lPolygonShape_A = contactManifold.shapeA;
+		final var lOtherShape_B = contactManifold.shapeB;
 
 		switch (lShapeBType) {
 		case Polygon:
-			return intersectsPolygons(lPolygonBody_A, lOtherBody_B, contactManifold);
+			return intersectsPolygons(lPolygonShape_A, lOtherShape_B, contactManifold);
 
 		case LineWidth:
-			return intersectsLinePolygon(lOtherBody_B, lPolygonBody_A, contactManifold);
+			return intersectsLinePolygon(lOtherShape_B, lPolygonShape_A, contactManifold);
 
 		case Circle:
-			return intersectsCirclePolygon(lOtherBody_B, lPolygonBody_A, contactManifold);
+			return intersectsCirclePolygon(lOtherShape_B, lPolygonShape_A, contactManifold);
 		}
 
 		return false;
 	}
 
-	private static final boolean intersectionsLineWidthShape(ContactManifold contactManifold) {
-		final var lShapeB = contactManifold.bodyB.shape();
+	private static boolean intersectionsLineWidthShape(ContactManifold contactManifold) {
+		final var lShapeB = contactManifold.shapeB;
 		final var lShapeBType = lShapeB.shapeType();
 
-		final var lLineWidthBody_A = contactManifold.bodyA;
-		final var lOtherBody_B = contactManifold.bodyB;
+		final var lLineWidthShape_A = contactManifold.shapeA;
+		final var lOtherShape_B = contactManifold.shapeB;
 
 		switch (lShapeBType) {
 		case Polygon:
-			return intersectsLinePolygon(lLineWidthBody_A, lOtherBody_B, contactManifold);
+			return intersectsLinePolygon(lLineWidthShape_A, lOtherShape_B, contactManifold);
 
 		case LineWidth:
-			return intersectsLineLine(lLineWidthBody_A, lOtherBody_B, contactManifold);
+			return intersectsLineLine(lLineWidthShape_A, lOtherShape_B, contactManifold);
 
 		case Circle:
-			return intersectsLineCircle(lLineWidthBody_A, lOtherBody_B, contactManifold);
+			return intersectsLineCircle(lLineWidthShape_A, lOtherShape_B, contactManifold);
 		}
 
 		return false;
 	}
 
-	private static final boolean intersectionsCircleShape(ContactManifold contactManifold) {
-		final var lCircleBody_A = contactManifold.bodyA;
-		final var lOtherBody_B = contactManifold.bodyB;
+	private static boolean intersectionsCircleShape(ContactManifold contactManifold) {
+		final var lCircleShape_A = contactManifold.shapeA;
+		final var lOtherShape_B = contactManifold.shapeB;
 
-		final var lShapeB = lOtherBody_B.shape();
-		final var lShapeBType = lShapeB.shapeType();
+		final var lShapeBType = lOtherShape_B.shapeType();
 
 		switch (lShapeBType) {
 		case Polygon:
-			return intersectsCirclePolygon(lCircleBody_A, lOtherBody_B, contactManifold);
+			return intersectsCirclePolygon(lCircleShape_A, lOtherShape_B, contactManifold);
 
 		case LineWidth:
-			return intersectsLineCircle(lOtherBody_B, lCircleBody_A, contactManifold);
+			return intersectsLineCircle(lOtherShape_B, lCircleShape_A, contactManifold);
 
 		case Circle:
-			return intersectsCircles(lCircleBody_A, lOtherBody_B, contactManifold);
+			return intersectsCircles(lCircleShape_A, lOtherShape_B, contactManifold);
 
 		default:
 			return false;
@@ -124,15 +123,12 @@ public class SATIntersection {
 
 	// Polygons
 
-	private static final boolean intersectsPolygons(final RigidBody bodyA, final RigidBody bodyB, final ContactManifold result) {
-		final var lPolygonABody = bodyA;
-		final var lPolygonBBody = bodyB;
+	private static boolean intersectsPolygons(final BaseShape shapeA, final BaseShape shapeB, final ContactManifold result) {
+		result.shapeA = shapeA;
+		result.shapeB = shapeB;
 
-		result.bodyA = lPolygonABody;
-		result.bodyB = lPolygonBBody;
-
-		final var lPolygonAVertices = lPolygonABody.getWorldVertices();
-		final var lPolygonBVertices = lPolygonBBody.getWorldVertices();
+		final var lPolygonAVertices = shapeA.getTransformedVertices();
+		final var lPolygonBVertices = shapeB.getTransformedVertices();
 
 		result.isIntersecting = true;
 		result.normal.x = 0.f;
@@ -216,25 +212,27 @@ public class SATIntersection {
 
 	// Circles
 
-	private static final boolean intersectsCirclePolygon(final RigidBody bodyA, final RigidBody bodyB, final ContactManifold result) {
-		final var lCircleBody = bodyA;
-		final var lPolygonBody = bodyB;
+	private static boolean intersectsCirclePolygon(final BaseShape shapeA, final BaseShape shapeB, final ContactManifold result) {
+		final var lCircleShape = shapeA;
+		final var lPolygonShape = shapeB;
 
-		result.bodyA = lCircleBody;
-		result.bodyB = lPolygonBody;
-		
+		result.shapeA = lCircleShape;
+		result.shapeB = lPolygonShape;
+
 		result.isIntersecting = true;
 		result.normal.x = 0.f;
 		result.normal.y = 0.f;
 		result.depth = Float.MAX_VALUE;
 
-		final var lCircleX = lCircleBody.transform.p.x;
-		final var lCircleY = lCircleBody.transform.p.y;
-		final var lCircleRadius = lCircleBody.shape().radius();
+		final var lCircleVertices = lCircleShape.getTransformedVertices();
+		final var lCircleX = lCircleVertices.get(0).x;
+		final var lCircleY = lCircleVertices.get(0).y;
+		final var lCircleRadius = lCircleShape.radius();
 
-		final var lPolygonCenterX = lPolygonBody.transform.p.x;
-		final var lPolygonCenterY = lPolygonBody.transform.p.y;
-		final var lPolygonVertices = lPolygonBody.getWorldVertices();
+		// TODO: Calculate centroid of polygon
+		final var lPolygonCenterX = lPolygonShape.localCenter.x;
+		final var lPolygonCenterY = lPolygonShape.localCenter.y;
+		final var lPolygonVertices = lPolygonShape.getTransformedVertices();
 
 		final var lNumVertsA = lPolygonVertices.size();
 		for (int i = 0; i < lNumVertsA; i++) {
@@ -305,20 +303,22 @@ public class SATIntersection {
 		return true;
 	}
 
-	private static final boolean intersectsCircles(final RigidBody bodyA, final RigidBody bodyB, final ContactManifold result) {
-		final var lCircleABody = bodyA;
-		final var lCircleBBody = bodyB;
+	private static boolean intersectsCircles(final BaseShape shapeA, final BaseShape shapeB, final ContactManifold result) {
+		final var lCircleAShape = shapeA;
+		final var lCircleBShape = shapeB;
 
-		result.bodyA = lCircleABody;
-		result.bodyB = lCircleBBody;
+		result.shapeA = lCircleAShape;
+		result.shapeB = lCircleBShape;
 
-		final var lCircleAPositionX = lCircleABody.transform.p.x;
-		final var lCircleAPositionY = lCircleABody.transform.p.y;
-		final var lCircleARadius = lCircleABody.shape().radius();
+		final var lCircleAVertices = lCircleAShape.getTransformedVertices();
+		final var lCircleAPositionX = lCircleAVertices.get(0).x;
+		final var lCircleAPositionY = lCircleAVertices.get(0).y;
+		final var lCircleARadius = lCircleAShape.radius();
 
-		final var lCircleBPositionX = lCircleBBody.transform.p.x;
-		final var lCircleBPositionY = lCircleBBody.transform.p.y;
-		final var lCircleBRadius = lCircleBBody.shape().radius();
+		final var lCircleBVertices = lCircleBShape.getTransformedVertices();
+		final var lCircleBPositionX = lCircleBVertices.get(0).x;
+		final var lCircleBPositionY = lCircleBVertices.get(0).y;
+		final var lCircleBRadius = lCircleBShape.radius();
 
 		final var lDist = Vector2f.dst(lCircleAPositionX, lCircleAPositionY, lCircleBPositionX, lCircleBPositionY);
 		final var rLengthRadii = lCircleARadius + lCircleBRadius;
@@ -340,16 +340,17 @@ public class SATIntersection {
 
 	// Lines
 
-	private static final boolean intersectsLinePolygon(final RigidBody bodyA, final RigidBody bodyB, final ContactManifold result) {
-		final var lLineBody = bodyA;
-		final var lPolygonBody = bodyB;
+	private static boolean intersectsLinePolygon(final BaseShape shapeA, final BaseShape shapeB, final ContactManifold result) {
+		final var lLineShape = shapeA;
+		final var lPolygonShape = shapeB;
 
-		result.bodyA = lLineBody;
-		result.bodyB = lPolygonBody;
+		result.shapeA = lLineShape;
+		result.shapeB = lPolygonShape;
 
-		final var polygonVertices = lPolygonBody.getWorldVertices();
-		final var lineVertices = lLineBody.getWorldVertices();
-		final var lineRadius = lLineBody.shape().height() * .5f;
+		final var lineVertices = lLineShape.getTransformedVertices();
+		final var lineRadius = lLineShape.height() * .5f;
+
+		final var polygonVertices = lPolygonShape.getTransformedVertices();
 
 		final var lsx = lineVertices.get(0).x;
 		final var lsy = lineVertices.get(0).y;
@@ -434,19 +435,20 @@ public class SATIntersection {
 		return true;
 	}
 
-	private static final boolean intersectsLineCircle(final RigidBody bodyA, final RigidBody bodyB, final ContactManifold result) {
-		final var lLineBody = bodyA;
-		final var lCircleBody = bodyB;
+	private static boolean intersectsLineCircle(final BaseShape shapeA, final BaseShape shapeB, final ContactManifold result) {
+		final var lLineShape = shapeA;
+		final var lCircleShape = shapeB;
 
-		result.bodyA = lLineBody;
-		result.bodyB = lCircleBody;
+		result.shapeA = lLineShape;
+		result.shapeB = lCircleShape;
 
-		final var lLineVertices = lLineBody.getWorldVertices();
-		final var lLineRadius = lLineBody.shape().height() * .5f;
+		final var lLineVertices = lLineShape.getTransformedVertices();
+		final var lLineRadius = lLineShape.height() * .5f;
 
-		final var lCirclePositionX = lCircleBody.transform.p.x;
-		final var lCirclePositionY = lCircleBody.transform.p.y;
-		final var lCircleRadius = lCircleBody.shape().radius();
+		final var lCircleVertices = lCircleShape.getTransformedVertices();
+		final var lCirclePositionX = lCircleVertices.get(0).x;
+		final var lCirclePositionY = lCircleVertices.get(0).y;
+		final var lCircleRadius = lCircleShape.radius();
 
 		final var sx = lLineVertices.get(0).x;
 		final var sy = lLineVertices.get(0).y;
@@ -486,18 +488,18 @@ public class SATIntersection {
 		return false;
 	}
 
-	private static final boolean intersectsLineLine(final RigidBody bodyA, final RigidBody bodyB, final ContactManifold result) {
-		final var lLineABody = result.bodyA;
-		final var lLineBBody = result.bodyB;
+	private static boolean intersectsLineLine(final BaseShape shapeA, final BaseShape shapeB, final ContactManifold result) {
+		final var lLineAShape = result.shapeA;
+		final var lLineBShape = result.shapeB;
 
-		result.bodyA = lLineABody;
-		result.bodyB = lLineBBody;
+		result.shapeA = lLineAShape;
+		result.shapeB = lLineBShape;
 
-		final var lLineAVertices = lLineABody.getWorldVertices();
-		final var lLineARadius = lLineABody.shape().height() * .5f;
+		final var lLineAVertices = lLineAShape.getTransformedVertices();
+		final var lLineARadius = lLineAShape.height() * .5f;
 
-		final var lLineBVertices = lLineBBody.getWorldVertices();
-		final var lLineBRadius = lLineBBody.shape().height() * .5f;
+		final var lLineBVertices = lLineBShape.getTransformedVertices();
+		final var lLineBRadius = lLineBShape.height() * .5f;
 
 		result.isIntersecting = true;
 		result.normal.x = 0.f;
