@@ -153,8 +153,10 @@ public class HudLayoutController extends BaseController {
 	private void updateMenuUiStructure(LintfordCore core) {
 		updateWindowUiComponentStructures(core);
 
-		final float lWindowWidth = core.config().display().windowWidth();
-		final float lWindowHeight = core.config().display().windowHeight();
+		final var lHud = core.HUD();
+		final var lHudBB = lHud.boundingRectangle();
+		final float lWindowWidth = lHudBB.width();
+		final float lWindowHeight = lHudBB.height();
 
 		final float lVerticalInnerPadding = 1.f;
 		final float lModWidth = lWindowWidth - mWindowPaddingH * 2.f;
