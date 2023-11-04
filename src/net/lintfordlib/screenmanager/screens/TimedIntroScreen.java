@@ -59,7 +59,7 @@ public class TimedIntroScreen extends Screen {
 		mShowImageTimer = timer;
 
 		mTextureBatch = new TextureBatchPCT();
-		mSrcTextureRect = new Rectangle(0, 0, 800, 600);
+		mSrcTextureRect = new Rectangle(0, 0, 960, 540);
 	}
 
 	// --------------------------------------

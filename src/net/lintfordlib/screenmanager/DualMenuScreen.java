@@ -220,7 +220,7 @@ public class DualMenuScreen extends MenuScreen {
 
 		mScreenManager.toolTip().toolTipProvider(null);
 
-		// TODO: play sound for menu entry changed
+		mScreenManager.uiSounds().play(ConstantsScreenManagerAudio.SCREENMANAGER_AUDIO_ENTRY_NAVIGATION_UP);
 	}
 
 	protected void onNavigationDown(LintfordCore core) {
@@ -236,7 +236,7 @@ public class DualMenuScreen extends MenuScreen {
 
 		mScreenManager.toolTip().toolTipProvider(null);
 
-		// TODO: play sound for menu entry changed
+		mScreenManager.uiSounds().play(ConstantsScreenManagerAudio.SCREENMANAGER_AUDIO_ENTRY_NAVIGATION_DOWN);
 	}
 
 	@Override

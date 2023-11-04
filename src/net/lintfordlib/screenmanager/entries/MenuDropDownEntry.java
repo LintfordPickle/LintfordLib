@@ -16,6 +16,7 @@ import net.lintfordlib.renderers.ZLayers;
 import net.lintfordlib.renderers.windows.components.IScrollBarArea;
 import net.lintfordlib.renderers.windows.components.ScrollBar;
 import net.lintfordlib.renderers.windows.components.ScrollBarContentRectangle;
+import net.lintfordlib.screenmanager.ConstantsScreenManagerAudio;
 import net.lintfordlib.screenmanager.MenuEntry;
 import net.lintfordlib.screenmanager.MenuScreen;
 import net.lintfordlib.screenmanager.Screen;
@@ -201,7 +202,8 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 
 			if (core.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
 				if (mOpen) {
-					// TODO: play the menu clicked sound
+					mScreenManager.uiSounds().play(ConstantsScreenManagerAudio.SCREENMANAGER_AUDIO_ENTRY_OPEN);
+
 					final float lConsoleLineHeight = mItemHeight;
 					float lRelativeheight = core.HUD().getMouseCameraSpace().y - mWindowRectangle.y() - mScrollBar.currentYPos();
 

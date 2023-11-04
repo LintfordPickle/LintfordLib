@@ -8,6 +8,7 @@ import net.lintfordlib.core.graphics.ColorConstants;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
 import net.lintfordlib.core.input.InputManager;
 import net.lintfordlib.core.maths.MathHelper;
+import net.lintfordlib.screenmanager.ConstantsScreenManagerAudio;
 import net.lintfordlib.screenmanager.MenuEntry;
 import net.lintfordlib.screenmanager.MenuScreen;
 import net.lintfordlib.screenmanager.Screen;
@@ -148,7 +149,7 @@ public class MenuSliderEntry extends MenuEntry {
 					mValue = MathHelper.clampi(mValue, mLowerBound, mUpperBound);
 
 					onClick(core.input());
-					
+
 				} else {
 					mTrackingClick = false;
 				}
@@ -172,15 +173,16 @@ public class MenuSliderEntry extends MenuEntry {
 
 	@Override
 	public boolean onHandleKeyboardInput(LintfordCore core) {
-		// TODO: fix stop in slider entry
 		mStep = 1;
 		if (mIsActive) {
 			if (core.input().keyboard().isKeyDown(GLFW.GLFW_KEY_LEFT)) {
+				mScreenManager.uiSounds().play(ConstantsScreenManagerAudio.SCREENMANAGER_AUDIO_ENTRY_TICK);
 				setValue(mValue - mStep);
 				return true;
 			}
 
 			if (core.input().keyboard().isKeyDown(GLFW.GLFW_KEY_RIGHT)) {
+				mScreenManager.uiSounds().play(ConstantsScreenManagerAudio.SCREENMANAGER_AUDIO_ENTRY_TICK);
 				setValue(mValue + mStep);
 				return true;
 			}
