@@ -1,7 +1,10 @@
 package net.lintfordlib.core.camera;
 
+import net.lintfordlib.ConstantsDisplay;
+import net.lintfordlib.GameInfo;
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.geometry.Rectangle;
+import net.lintfordlib.core.maths.MathHelper;
 import net.lintfordlib.core.maths.Matrix4f;
 import net.lintfordlib.core.maths.Vector2f;
 import net.lintfordlib.options.DisplayManager;
@@ -129,8 +132,9 @@ public class HUD implements ICamera, IResizeListener {
 		if (mViewportWidth == 0 || mViewportHeight == 0)
 			return;
 
-		mViewportWidth = core.config().display().windowWidth();
-		mViewportHeight = core.config().display().windowHeight();
+		// prevent the Hud getting too small on 4k+ resolutions by artificially capping the dimensions for the HudCamera
+		mViewportWidth = MathHelper.clampi(core.config().display().windowWidth(), ConstantsDisplay.MIN_UI_HUD_WIDTH, ConstantsDisplay.MAX_UI_HUD_WIDTH);
+		mViewportHeight = MathHelper.clampi(core.config().display().windowHeight(), ConstantsDisplay.MIN_UI_HUD_HEIGHT, ConstantsDisplay.MAX_UI_HUD_HEIGHT);
 
 		if ((mViewportWidth % 2) == 1)
 			mViewportWidth = mViewportWidth + 1;
