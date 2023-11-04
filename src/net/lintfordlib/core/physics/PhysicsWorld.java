@@ -59,12 +59,20 @@ public class PhysicsWorld {
 	private final boolean enableMtvSeparation;
 	private final boolean enableCollisionResponse;
 
+	private int mCurrentIterationNr;
 	private int mNumIterations;
 	private double mStepTime;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	/***
+	 * @return Returns the current iteration number when queries from within the step method.
+	 */
+	public int currentIterationNr() {
+		return mCurrentIterationNr;
+	}
 
 	/***
 	 * @return The number of iterations of the step and collision checks to perform per step.
@@ -238,6 +246,7 @@ public class PhysicsWorld {
 
 		time /= (float) totalIterations;
 		for (int it = 0; it < totalIterations; it++) {
+			mCurrentIterationNr = it;
 
 			_lockedBodies = true;
 			mCollisionPair.clear();
@@ -248,6 +257,7 @@ public class PhysicsWorld {
 
 			narrowPhase();
 		}
+		mCurrentIterationNr = -1;
 
 		mStepTime = ((System.nanoTime() - lSystemTimeBegin) / TimeConstants.NanoToMilli);
 	}
