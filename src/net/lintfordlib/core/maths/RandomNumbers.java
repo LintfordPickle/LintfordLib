@@ -1,6 +1,6 @@
 package net.lintfordlib.core.maths;
 
-import java.util.Random;
+import java.util.SplittableRandom;
 
 public class RandomNumbers {
 
@@ -8,14 +8,30 @@ public class RandomNumbers {
 	// Constants
 	// --------------------------------------
 
-	public static Random RANDOM = new Random();
+	public static SplittableRandom RANDOM = new SplittableRandom();
 
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
 
+	public static int nextInt() {
+		return RANDOM.nextInt();
+	}
+
+	public static long nextLong() {
+		return RANDOM.nextLong();
+	}
+
+	public static double nextDouble() {
+		return RANDOM.nextDouble();
+	}
+
+	public static float nextFloat() {
+		return (RANDOM.nextInt() >>> 8) * 5.960464477539063E-8f;
+	}
+
 	public static void reseed() {
-		RANDOM = new Random();
+		RANDOM = new SplittableRandom();
 	}
 
 	public static final int randomSign() {
@@ -27,7 +43,7 @@ public class RandomNumbers {
 	}
 
 	public static final float random(final float minValue, final float maxValue) {
-		return minValue + RANDOM.nextFloat() * (maxValue - minValue);
+		return minValue + (float) RANDOM.nextDouble() * (maxValue - minValue);
 	}
 
 	public static final int random(final int minValue, final int maxValue) {
