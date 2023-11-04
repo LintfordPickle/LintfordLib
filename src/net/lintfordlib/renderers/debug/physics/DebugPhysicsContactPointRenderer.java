@@ -126,7 +126,7 @@ public class DebugPhysicsContactPointRenderer extends BaseRenderer implements IC
 		if (mWorld.currentIterationNr() != 0)
 			return;
 
-		if (mCurrentCount >= MAX_NUM_CONTACT_POINTS)
+		if (mCurrentCount >= MAX_NUM_CONTACT_POINTS - 1)
 			return;
 
 		for (int i = 0; i < manifold.contactCount; i++) {
