@@ -29,9 +29,7 @@ public class ListBox extends MenuEntry implements IScrollBarArea {
 
 	private static final long serialVersionUID = 6606453352329315889L;
 
-	// TODO: Replace this with the value from the IListBoxItem instances
-	public static int LISTBOX_HEIGHT = 350;
-	public static float LISTBOX_ITEM_VPADDING = 15; // The amound of space vertically between items
+	public static float LISTBOX_ITEM_VPADDING = 15;
 
 	public static final float LISTBOX_MIN_WIDTH = 400;
 	public static final float LISTBOX_MAX_WIDTH = 1024;

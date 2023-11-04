@@ -130,9 +130,6 @@ public class MenuSliderEntry extends MenuEntry {
 
 		if (core.input().mouse().tryAcquireMouseLeftClick(hashCode())) {
 			if (mEnabled) {
-
-				// TODO: Play menu click sound
-
 				mStep = 1;
 				if (mDownButton.intersectsAA(core.HUD().getMouseCameraSpace())) {
 					setValue(mValue - mStep);
