@@ -10,10 +10,10 @@ public class Vector2f implements Serializable {
 
 	private static final long serialVersionUID = -2295169699757910995L;
 
-	private final static Vector2f tmp = new Vector2f();
+	private final static Vector2f _tmp = new Vector2f();
 
 	public final static Vector2f Zero = new Vector2f();
-	public final static Vector2f One = new Vector2f();
+	public final static Vector2f One = new Vector2f(1, 1);
 
 	// --------------------------------------
 	// Variables
@@ -67,10 +67,6 @@ public class Vector2f implements Serializable {
 		return new Vector2f(this);
 	}
 
-	public static Vector2f cpy(Vector2f x) {
-		return new Vector2f(x);
-	}
-
 	/**
 	 * @return The euclidian length
 	 */
@@ -80,25 +76,6 @@ public class Vector2f implements Serializable {
 
 	public float len2() {
 		return x * x + y * y;
-	}
-
-	public static float dst(Vector2f x, Vector2f y) {
-		return dst(x.x, x.y, y.x, y.y);
-
-	}
-
-	public static float dst(float pX1, float pY1, float pX2, float pY2) {
-		return (float) Math.sqrt(dst2(pX1, pY1, pX2, pY2));
-	}
-
-	public static float dst2(float x, float y) {
-		return (x * x) + (y * y);
-	}
-
-	public static float dst2(float pX1, float pY1, float pX2, float pY2) {
-		float x = pX1 - pX2;
-		float y = pY1 - pY2;
-		return (x * x) + (y * y);
 	}
 
 	public Vector2f div(float pX, float pY) {
@@ -153,12 +130,6 @@ public class Vector2f implements Serializable {
 		x -= v.x;
 		y -= v.y;
 		return this;
-	}
-
-	public static Vector2f sub(Vector2f v0, Vector2f v1) {
-		float x = v0.x - v1.x;
-		float y = v0.y - v1.y;
-		return new Vector2f(x, y);
 	}
 
 	/**
@@ -266,10 +237,6 @@ public class Vector2f implements Serializable {
 		return x * vx + y * vy;
 	}
 
-	public static float dot(float x1, float y1, float x2, float y2) {
-		return x1 * x2 + y1 * y2;
-	}
-
 	/**
 	 * Multiplies this vector by a scalar
 	 * 
@@ -292,13 +259,6 @@ public class Vector2f implements Serializable {
 		x = r.c * xx - r.s * yy;
 		y = r.s * xx + r.c * yy;
 		return this;
-	}
-
-	/**
-	 * Multiples this {@link Vector2f} by the given rotation
-	 */
-	public static void mul(Vector2f out, Vector2f pos, Rotation r) {
-		out.set(r.c * pos.x - r.s, r.s * pos.y + r.c);
 	}
 
 	/**
@@ -338,12 +298,6 @@ public class Vector2f implements Serializable {
 		return this;
 	}
 
-	public static Vector2f scale(Vector2f v, float scalar) {
-		float x = v.x * scalar;
-		float y = v.y * scalar;
-		return new Vector2f(x, y);
-	}
-
 	/** Multiplies this vector by a scalar */
 	public Vector2f scale(float x, float y) {
 		this.x *= x;
@@ -368,7 +322,7 @@ public class Vector2f implements Serializable {
 	 * @return a temporary copy of this vector. Use with care as this is backed by a single static Vector2 instance. v1.tmp().add( v2.tmp() ) will not work!
 	 */
 	public Vector2f tmp() {
-		return tmp.set(this);
+		return _tmp.set(this);
 	}
 
 	/**
@@ -377,11 +331,6 @@ public class Vector2f implements Serializable {
 	 */
 	public float cross(final Vector2f v) {
 		return this.x * v.y - v.x * this.y;
-	}
-
-	/** Returns the magnitude of the vector that *would* result from a 3d cross product of the given *2d* vetors (taking the Z values as implicitly 0) */
-	public static float cross(float x1, float y1, float x2, float y2) {
-		return x1 * y2 - y1 * x2;
 	}
 
 	/**
@@ -402,7 +351,7 @@ public class Vector2f implements Serializable {
 		return false;
 	}
 
-	public final Vector2f reflected(Vector2f normal) {
+	public Vector2f reflected(Vector2f normal) {
 		return normal.mul(-2 * this.dot(normal)).add(this);
 	}
 
@@ -411,4 +360,58 @@ public class Vector2f implements Serializable {
 		return "[" + x + ":" + y + "]";
 	}
 
+	// --------------------------------------
+	// Class-Methods
+	// --------------------------------------
+
+	public static float dot(float x1, float y1, float x2, float y2) {
+		return x1 * x2 + y1 * y2;
+	}
+
+	/** Returns the magnitude of the vector that *would* result from a 3d cross product of the given *2d* vetors (taking the Z values as implicitly 0) */
+	public static float cross(float x1, float y1, float x2, float y2) {
+		return x1 * y2 - y1 * x2;
+	}
+
+	public static float dst(Vector2f x, Vector2f y) {
+		return dst(x.x, x.y, y.x, y.y);
+
+	}
+
+	public static float dst(float pX1, float pY1, float pX2, float pY2) {
+		return (float) Math.sqrt(dst2(pX1, pY1, pX2, pY2));
+	}
+
+	public static float dst2(float x, float y) {
+		return (x * x) + (y * y);
+	}
+
+	public static float dst2(float pX1, float pY1, float pX2, float pY2) {
+		float x = pX1 - pX2;
+		float y = pY1 - pY2;
+		return (x * x) + (y * y);
+	}
+
+	public static Vector2f sub(Vector2f v0, Vector2f v1) {
+		float x = v0.x - v1.x;
+		float y = v0.y - v1.y;
+		return new Vector2f(x, y);
+	}
+
+	public static Vector2f cpy(Vector2f x) {
+		return new Vector2f(x);
+	}
+
+	/**
+	 * Multiples this {@link Vector2f} by the given rotation
+	 */
+	public static void mul(Vector2f out, Vector2f pos, Rotation r) {
+		out.set(r.c * pos.x - r.s, r.s * pos.y + r.c);
+	}
+
+	public static Vector2f scale(Vector2f v, float scalar) {
+		float x = v.x * scalar;
+		float y = v.y * scalar;
+		return new Vector2f(x, y);
+	}
 }
