@@ -261,6 +261,13 @@ public class DebugStats extends Rectangle implements IScrollBarArea, IInputProce
 		((DebugStatTagString) getTagByID(TAG_ID_TIMESTEP)).mValue = mStringBuilder.toString();
 
 		mScrollBar.update(core);
+
+		mTimer += core.appTime().elapsedTimeMilli();
+		if (mTimer > 1000) {
+			mFrameCount = mDeltaFrameCount;
+			mDeltaFrameCount = 0;
+			mTimer -= 1000;
+		}
 	}
 
 	public void draw(LintfordCore core) {
@@ -274,13 +281,6 @@ public class DebugStats extends Rectangle implements IScrollBarArea, IInputProce
 		Debug.debugManager().stats().setTagValue(DebugStats.TAG_ID_WINDOW_SIZE, lDisplaySettings.windowWidth() + "x" + lDisplaySettings.windowHeight());
 
 		mDeltaFrameCount++;
-
-		mTimer += core.appTime().elapsedTimeMilli();
-		if (mTimer > 1000) {
-			mFrameCount = mDeltaFrameCount;
-			mDeltaFrameCount = 0;
-			mTimer -= 1000;
-		}
 
 		Debug.debugManager().stats().setTagValue(DebugStats.TAG_ID_FPS, mFrameCount);
 
