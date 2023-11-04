@@ -1,7 +1,6 @@
 package net.lintfordlib.controllers;
 
 import net.lintfordlib.controllers.core.ControllerManager;
-import net.lintfordlib.controllers.debug.BaseControllerWidget;
 import net.lintfordlib.core.LintfordCore;
 
 public abstract class BaseController {
@@ -14,7 +13,6 @@ public abstract class BaseController {
 	 * A group ID is assigned to all {@link BaseController} instances. It allows the developer to programmatically unload batches of particular parts of the game when required (i.e. unload the game controllers when returning to the main menu)
 	 */
 	protected int mEntityGroupUid;
-	protected BaseControllerWidget mBaseControllerWidget;
 	protected final int mControllerId;
 	protected ControllerManager mControllerManager;
 	protected String mControllerName;

@@ -1,7 +1,6 @@
 package net.lintfordlib.core.camera;
 
 import net.lintfordlib.ConstantsDisplay;
-import net.lintfordlib.GameInfo;
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.geometry.Rectangle;
 import net.lintfordlib.core.maths.MathHelper;

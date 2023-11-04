@@ -3,8 +3,6 @@ package net.lintfordlib.core.debug;
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.ResourceManager;
 import net.lintfordlib.core.debug.stats.DebugStats;
-import net.lintfordlib.renderers.debug.DebugControllerTreeRenderer;
-import net.lintfordlib.renderers.debug.DebugRendererTreeRenderer;
 
 public class Debug {
 
@@ -77,8 +75,6 @@ public class Debug {
 	private DebugConsole mDebugConsole;
 	private DebugDrawers mDebugDrawers;
 	private DebugStats mDebugStats;
-	private DebugRendererTreeRenderer mDebugRendererRenderer;
-	private DebugControllerTreeRenderer mDebugControllerRenderer;
 	private boolean mResourcesLoaded;
 
 	// --------------------------------------
@@ -128,8 +124,6 @@ public class Debug {
 		mDebugDrawers = new DebugDrawers(this);
 		mDebugConsole = new DebugConsole(this);
 		mDebugStats = new DebugStats(this);
-		mDebugControllerRenderer = new DebugControllerTreeRenderer(this);
-		mDebugRendererRenderer = new DebugRendererTreeRenderer(this);
 
 		addDebugConsoleCommands();
 
@@ -144,8 +138,6 @@ public class Debug {
 		mDebugConsole.loadResources(resourceManager);
 		mDebugDrawers.loadResources(resourceManager);
 		mDebugStats.loadResources(resourceManager);
-		mDebugControllerRenderer.loadResources(resourceManager);
-		mDebugRendererRenderer.loadResources(resourceManager);
 
 		mResourcesLoaded = true;
 	}
@@ -154,8 +146,6 @@ public class Debug {
 		mDebugConsole.unloadResources();
 		mDebugDrawers.unloadResources();
 		mDebugStats.unloadResources();
-		mDebugControllerRenderer.unloadResources();
-		mDebugRendererRenderer.unloadResources();
 
 		mResourcesLoaded = false;
 	}
@@ -163,8 +153,6 @@ public class Debug {
 	public void handleInput(LintfordCore core) {
 		mDebugConsole.handleInput(core);
 		mDebugStats.handleInput(core);
-		mDebugControllerRenderer.handleInput(core);
-		mDebugRendererRenderer.handleInput(core);
 	}
 
 	public void preUpdate(LintfordCore core) {
@@ -182,8 +170,6 @@ public class Debug {
 
 		mDebugConsole.update(core);
 		mDebugStats.update(core);
-		mDebugRendererRenderer.update(core);
-		mDebugControllerRenderer.update(core);
 	}
 
 	public void draw(LintfordCore core) {
@@ -192,8 +178,6 @@ public class Debug {
 
 		mDebugConsole.draw(core);
 		mDebugStats.draw(core);
-		mDebugControllerRenderer.draw(core);
-		mDebugRendererRenderer.draw(core);
 	}
 
 	// --------------------------------------

@@ -21,16 +21,14 @@ import net.lintfordlib.controllers.camera.CameraHUDController;
 import net.lintfordlib.controllers.core.ControllerManager;
 import net.lintfordlib.controllers.core.CoreTimeController;
 import net.lintfordlib.controllers.core.ResourceController;
-import net.lintfordlib.controllers.debug.DebugControllerTreeController;
-import net.lintfordlib.controllers.debug.DebugRendererTreeController;
 import net.lintfordlib.controllers.hud.HudLayoutController;
 import net.lintfordlib.core.camera.Camera;
 import net.lintfordlib.core.camera.HUD;
 import net.lintfordlib.core.camera.ICamera;
 import net.lintfordlib.core.debug.Debug;
+import net.lintfordlib.core.debug.Debug.DebugLogLevel;
 import net.lintfordlib.core.debug.DebugMemory;
 import net.lintfordlib.core.debug.GLDebug;
-import net.lintfordlib.core.debug.Debug.DebugLogLevel;
 import net.lintfordlib.core.graphics.fonts.BitmapFontManager;
 import net.lintfordlib.core.input.InputManager;
 import net.lintfordlib.core.input.KeyEventActionManager;
@@ -335,10 +333,6 @@ public abstract class LintfordCore {
 		long lWindowID = initializeGLFWWindow();
 
 		mControllerManager = new ControllerManager(this);
-		if (Debug.debugManager().debugManagerEnabled()) {
-			mControllerManager.addController(new DebugControllerTreeController(mControllerManager, CORE_ENTITY_GROUP_ID), CORE_ENTITY_GROUP_ID);
-			mControllerManager.addController(new DebugRendererTreeController(mControllerManager, CORE_ENTITY_GROUP_ID), CORE_ENTITY_GROUP_ID);
-		}
 
 		mResourceManager = new ResourceManager(mMasterConfig);
 		mResourceManager.addProtectedEntityGroupUid(CORE_ENTITY_GROUP_ID);
