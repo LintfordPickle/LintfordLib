@@ -1,5 +1,7 @@
 package net.lintfordlib.screenmanager.screens;
 
+import org.lwjgl.glfw.GLFW;
+
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.ResourceManager;
 import net.lintfordlib.core.geometry.Rectangle;
@@ -19,7 +21,8 @@ public class TimedIntroScreen extends Screen {
 	private Texture mBackgroundTexture;
 	private String mImageLocation;
 	private float mShowImageTime;
-	private float mShowImageTimer;
+	private float mMaxShowImageTimer;
+	private float mMinShowImageTimer;
 	private boolean mUserRequestSkip;
 	private boolean mTimedActionPerformed;
 	private Rectangle mSrcTextureRect;
@@ -47,16 +50,17 @@ public class TimedIntroScreen extends Screen {
 	// --------------------------------------
 
 	public TimedIntroScreen(ScreenManager screenManager, String imageLocation) {
-		this(screenManager, imageLocation, 3.0f);
+		this(screenManager, imageLocation, 1.f, 4.f);
 	}
 
-	public TimedIntroScreen(ScreenManager screenManager, String imageLocation, float timer) {
+	public TimedIntroScreen(ScreenManager screenManager, String imageLocation, float minTime, float maxTime) {
 		super(screenManager);
 
 		mImageLocation = imageLocation;
 
 		mShowImageTime = 0;
-		mShowImageTimer = timer;
+		mMinShowImageTimer = minTime;
+		mMaxShowImageTimer = maxTime;
 
 		mTextureBatch = new TextureBatchPCT();
 		mSrcTextureRect = new Rectangle(0, 0, 960, 540);
@@ -87,7 +91,10 @@ public class TimedIntroScreen extends Screen {
 		super.handleInput(core);
 
 		if (!mTimedActionPerformed) {
-			if (core.input().mouse().tryAcquireMouseLeftClick(hashCode()))
+			if (core.input().mouse().tryAcquireMouseLeftClick(hashCode()) || core.input().mouse().tryAcquireMouseRightClick(hashCode()))
+				mUserRequestSkip = true;
+
+			if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_ESCAPE, this) || core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_SPACE, this))
 				mUserRequestSkip = true;
 
 		}
@@ -102,7 +109,10 @@ public class TimedIntroScreen extends Screen {
 
 			mShowImageTime += deltaTime;
 
-			if (mShowImageTime >= mShowImageTimer || mUserRequestSkip) {
+			final var lMinTimeElapsed = mShowImageTime >= mMinShowImageTimer;
+			final var lMaxTimeElapsed = mShowImageTime >= mMaxShowImageTimer;
+
+			if ((lMinTimeElapsed && mUserRequestSkip) || lMaxTimeElapsed) {
 				if (mActionCallback != null)
 					mActionCallback.TimerFinished(this);
 
@@ -122,11 +132,11 @@ public class TimedIntroScreen extends Screen {
 		float lBottom = mBackgroundTexture.getTextureHeight();
 
 		if (mStretchBackgroundToFit) {
-			final var lDisplay = core.config().display();
-			lLeft = -lDisplay.windowWidth() / 2;
-			lRight = lDisplay.windowWidth();
-			lTop = -lDisplay.windowHeight() / 2;
-			lBottom = lDisplay.windowHeight();
+			final var lHudBoundingRectangle = core.HUD().boundingRectangle();
+			lLeft = -lHudBoundingRectangle.width() / 2;
+			lRight = lHudBoundingRectangle.width();
+			lTop = -lHudBoundingRectangle.height() / 2;
+			lBottom = lHudBoundingRectangle.height();
 		}
 
 		mTextureBatch.begin(core.HUD());
