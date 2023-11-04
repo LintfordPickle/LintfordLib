@@ -12,7 +12,7 @@ import net.lintfordlib.screenmanager.ScreenManagerConstants.LAYOUT_ALIGNMENT;
 import net.lintfordlib.screenmanager.ScreenManagerConstants.LAYOUT_WIDTH;
 import net.lintfordlib.screenmanager.layouts.BaseLayout;
 
-public class DualMenuScreen extends MenuScreen {
+public abstract class DualMenuScreen extends MenuScreen {
 
 	// --------------------------------------
 	// Variables
@@ -191,16 +191,6 @@ public class DualMenuScreen extends MenuScreen {
 		for (int i = 0; i < lRightLayoutCount; i++) {
 			mRightLayouts.get(i).draw(pCore, lMenuScreenZDepth + (i * 0.001f));
 		}
-	}
-
-	// --------------------------------------
-	// Methods
-	// --------------------------------------
-
-	@Override
-	protected void handleOnClick() {
-		// TODO Auto-generated method stub
-
 	}
 
 	// --------------------------------------
