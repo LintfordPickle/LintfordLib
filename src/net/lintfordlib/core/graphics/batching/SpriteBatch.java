@@ -80,6 +80,10 @@ public class SpriteBatch extends TextureBatchPCT {
 	}
 
 	public void draw(SpriteSheetDefinition spriteSheetDefinition, SpriteInstance spriteInstance, Rectangle destRectangle, float zDepth, Color colorTint) {
+		draw(spriteSheetDefinition, spriteInstance, destRectangle, 1.f, zDepth, colorTint);
+	}
+
+	public void draw(SpriteSheetDefinition spriteSheetDefinition, SpriteInstance spriteInstance, Rectangle destRectangle, float scale, float zDepth, Color colorTint) {
 		if (!mIsDrawing)
 			return;
 
@@ -92,7 +96,8 @@ public class SpriteBatch extends TextureBatchPCT {
 		final var lTexture = spriteSheetDefinition.texture();
 		final var lCurrentSpriteFrame = spriteInstance.currentSpriteFrame();
 
-		draw(lTexture, lCurrentSpriteFrame, destRectangle, zDepth, colorTint);
+		// Need to resolve the destination rectangle manually to account for the scaling
+		draw(lTexture, lCurrentSpriteFrame.x(), lCurrentSpriteFrame.y(), lCurrentSpriteFrame.width(), lCurrentSpriteFrame.height(), destRectangle.x() * scale, destRectangle.y() * scale, destRectangle.width() * scale, destRectangle.height() * scale, zDepth, colorTint);
 	}
 
 	// ---
