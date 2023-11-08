@@ -24,7 +24,7 @@ public class ParticleSystemManager extends InstanceManager<ParticleSystemInstanc
 		// --------------------------------------
 
 		public ParticleSystemDefinitionManager() {
-			loadDefinitionsFromMetaFile(ParticleFrameworkData.PARTICLE_SYSTEM_META_FILE);
+
 		}
 
 		// --------------------------------------
