@@ -91,8 +91,11 @@ public class ParticleRenderer {
 			final float lWidthScaled = lParticleInst.width * lParticleInst.scale;
 			final float lHeightScaled = lParticleInst.height * lParticleInst.scale;
 
-			textureBatch.drawAroundCenter(mTexture, lParticleInst.sx, lParticleInst.sy, lParticleInst.sw, lParticleInst.sh, lParticleInst.worldPositionX, lParticleInst.worldPositionY, lWidthScaled, lHeightScaled, -0.2f,
-					lParticleInst.rotationInRadians, lParticleInst.rox, lParticleInst.roy, lParticleInst.scale, lParticleInst.color);
+			textureBatch.drawAroundCenter(mTexture, 
+					lParticleInst.sx, lParticleInst.sy, lParticleInst.sw, lParticleInst.sh, 
+					lParticleInst.worldPositionX, lParticleInst.worldPositionY, lWidthScaled, lHeightScaled, 
+					lParticleInst.worldPositionZ, lParticleInst.rotationInRadians, lParticleInst.rox, lParticleInst.roy,
+					lParticleInst.scale, lParticleInst.color);
 		}
 
 	}

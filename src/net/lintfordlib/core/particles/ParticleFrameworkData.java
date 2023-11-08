@@ -40,4 +40,13 @@ public class ParticleFrameworkData {
 		mParticleEmitterManager = new ParticleEmitterManager(this);
 	}
 
+	public void loadFromMetaFiles() {
+		loadFromMetaFiles(PARTICLE_SYSTEM_META_FILE, PARTICLE_EMITTER_META_FILE);
+	}
+
+	public void loadFromMetaFiles(String particleSystemMetaFile, String particleEmitterMetaFile) {
+		mParticleSystemManager.definitionManager().loadDefinitionsFromMetaFile(particleSystemMetaFile);
+		mParticleEmitterManager.definitionManager().loadDefinitionsFromMetaFile(particleEmitterMetaFile);
+	}
+
 }

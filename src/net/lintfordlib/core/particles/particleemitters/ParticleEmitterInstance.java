@@ -150,7 +150,7 @@ public class ParticleEmitterInstance extends ClosedPooledBaseData {
 		if (mParticleSystem != null && mEmitTimer < 0) {
 			final int lAmtToSpawn = RandomNumbers.random(mEmitterDefinition.emitAmountMin(), mEmitterDefinition.emitAmountMax());
 			for (int i = 0; i < lAmtToSpawn; i++) {
-				mParticleSystem.spawnParticle(x, y, 0, 0);
+				mParticleSystem.spawnParticle(x, y, -.2f, 0, 0);
 			}
 
 			mEmitTimer = RandomNumbers.random(mEmitterDefinition.emitTimeMin(), mEmitterDefinition.emitTimeMax());

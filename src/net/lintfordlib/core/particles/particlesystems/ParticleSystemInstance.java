@@ -126,8 +126,8 @@ public class ParticleSystemInstance {
 	/**
 	 * Spawns a new {@link Particle} instance, foregoing the {@link IParticleinitializer}s attached to this {@link ParticleSystemInstance}. Insteadm you can specifiy the individual components of the particles.
 	 */
-	public Particle spawnParticle(float worldX, float worldY, float velocityX, float velocityY, float sourceX, float sourceY, float sourceW, float sourceH, float destWidth, float destHeight) {
-		final var lNewParticle = spawnParticle(worldX, worldY, velocityX, velocityY);
+	public Particle spawnParticle(float worldX, float worldY, float worldZ, float velocityX, float velocityY, float sourceX, float sourceY, float sourceW, float sourceH, float destWidth, float destHeight) {
+		final var lNewParticle = spawnParticle(worldX, worldY, worldY, velocityX, velocityY);
 		if (lNewParticle != null) {
 			lNewParticle.setupSourceTexture(sourceX, sourceY, sourceW, sourceH);
 			lNewParticle.setupDestTexture(destWidth, destHeight);
@@ -139,13 +139,13 @@ public class ParticleSystemInstance {
 	}
 
 	/** Spawns a new {@link Particle} and applys the {@link IParticleinitializer} attached to this {@link ParticleSystemInstance}. */
-	public Particle spawnParticle(float worldX, float worldY, float velocityX, float velocityY) {
+	public Particle spawnParticle(float worldX, float worldY, float worldZ, float velocityX, float velocityY) {
 		for (int i = 0; i < mCapacity; i++) {
 			final var lSpawnedParticle = mParticles.get(i);
 			if (lSpawnedParticle.isAssigned())
 				continue;
 
-			lSpawnedParticle.spawnParticle(worldX, worldY, velocityX, velocityY, mParticleSystemDefinition.particleLife);
+			lSpawnedParticle.spawnParticle(worldX, worldY, worldZ, velocityX, velocityY, mParticleSystemDefinition.particleLife);
 
 			applyInitializers(lSpawnedParticle);
 
