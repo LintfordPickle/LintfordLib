@@ -355,6 +355,8 @@ public abstract class LintfordCore {
 
 		onLoadResources();
 
+		finializeAppSetup();
+
 		long lDiff = (long) (mShowLogoTimeInMilli - (System.currentTimeMillis() - mShowLogoTimer));
 		if (lDiff > 0) {
 			try {
@@ -443,6 +445,13 @@ public abstract class LintfordCore {
 		Debug.debugManager().loadResources(mResourceManager);
 
 		GLDebug.checkGLErrorsException("LintfordCore onLoadResources");
+	}
+
+	/**
+	 * Called after the app initialization and resource have been loaded. This is a good time to instantiate any screens or game components that relie on core resources.
+	 */
+	protected void finializeAppSetup() {
+
 	}
 
 	/**
