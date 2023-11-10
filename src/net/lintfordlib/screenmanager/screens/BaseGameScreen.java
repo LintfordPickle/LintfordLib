@@ -66,6 +66,8 @@ public abstract class BaseGameScreen extends Screen {
 		new GameRendererController(lControllerManager, mRendererManager, entityGroupUid());
 		mGameCamera = mScreenManager.core().setNewGameCamera(mGameCamera);
 
+		createData(lCore);
+
 		createControllers(lControllerManager);
 		createRenderers(lCore);
 
@@ -98,6 +100,8 @@ public abstract class BaseGameScreen extends Screen {
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
+
+	protected abstract void createData(LintfordCore core);
 
 	protected abstract void createControllers(ControllerManager controllerManager);
 
