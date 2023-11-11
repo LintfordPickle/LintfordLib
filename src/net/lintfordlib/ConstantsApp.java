@@ -3,6 +3,7 @@ package net.lintfordlib;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.lintfordlib.core.ResourceGroupProvider;
 import net.lintfordlib.core.debug.Debug;
 
 public class ConstantsApp {
@@ -18,6 +19,8 @@ public class ConstantsApp {
 
 	public static final int BASE_RESOLUTION_WIDTH = 800;
 	public static final int BASE_RESOLUTION_HEIGHT = 500;
+
+	public static final int ENGINE_RESOURCE_GROUP_ID = ResourceGroupProvider.getRollingEntityNumber();
 
 	private static Map<String, String> constTab = new HashMap<>();
 
