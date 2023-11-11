@@ -124,6 +124,10 @@ public class UiInputText extends UIWidget implements IBufferedTextInputCallback 
 		mCancelRectangle = new Rectangle();
 		mEmptyString = "";
 		mMaxInputCharacters = 15;
+
+		mW = 100;
+		mH = 25.f;
+
 	}
 
 	// --------------------------------------

@@ -62,6 +62,8 @@ public class UiButton extends UIWidget {
 		this(pParentWindow);
 
 		mButtonLabel = labelText;
+		mW = 200;
+		mH = 25;
 	}
 
 	// --------------------------------------

@@ -95,7 +95,7 @@ public class UiIntSlider extends UIWidget {
 
 		mSliderLabel = NO_LABEL_TEXT;
 		mW = 200;
-		mH = 25;
+		mH = 50;
 	}
 
 	// --------------------------------------
@@ -139,14 +139,14 @@ public class UiIntSlider extends UIWidget {
 		final float SLIDER_WIDTH = 10;
 
 		final var lBackgroundColor = mIsEnabled ? ColorConstants.getColorWithRGBMod(ColorConstants.PrimaryColor, 1.f) : ColorConstants.getBlackWithAlpha(.4f);
-		spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, mX, mY + mH / 2 - SLIDER_RAIL_HEIGHT / 2, mW, SLIDER_RAIL_HEIGHT, 0f, lBackgroundColor);
+		spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, mX, mY + textFont.fontHeight() + mH / 2 - SLIDER_RAIL_HEIGHT / 2, mW, SLIDER_RAIL_HEIGHT, 0f, lBackgroundColor);
 		final var lNubbinColor = mIsEnabled ? ColorConstants.getColorWithRGBMod(ColorConstants.TertiaryColor, 1.f) : ColorConstants.getBlackWithAlpha(.4f);
-		spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, mX + mCurrentRelPosition - SLIDER_WIDTH / 2, mY + mH / 4, SLIDER_WIDTH, mH / 2, 0f, lNubbinColor);
+		spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, mX + mCurrentRelPosition - SLIDER_WIDTH / 2, mY + +textFont.fontHeight() + mH / 4, SLIDER_WIDTH, mH / 2, 0f, lNubbinColor);
 
-		textFont.drawText(mSliderLabel, mX, mY - textFont.fontHeight(), componentZDepth, ColorConstants.WHITE, 1.f);
+		textFont.drawText(mSliderLabel, mX, mY, componentZDepth, ColorConstants.WHITE, 1.f);
 		final String lQtyLabel = Integer.toString(mCurrentValue) + ((mQtyPostFix != null && mQtyPostFix.length() > 0) ? mQtyPostFix : "");
 		final float lQuantyTextWidth = textFont.getStringWidth(lQtyLabel);
-		textFont.drawText(lQtyLabel, mX + mW - lQuantyTextWidth, mY - textFont.fontHeight(), componentZDepth, ColorConstants.WHITE, 1.f);
+		textFont.drawText(lQtyLabel, mX + mW - lQuantyTextWidth, mY, componentZDepth, ColorConstants.WHITE, 1.f);
 	}
 
 	// --------------------------------------

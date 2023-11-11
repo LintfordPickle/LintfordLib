@@ -21,10 +21,19 @@ public class UiLabel extends UIWidget {
 	// --------------------------------------
 
 	private String mLabelText;
+	private boolean mShowBackgroundOnHover;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public boolean showBackgroundOnHover() {
+		return mShowBackgroundOnHover;
+	}
+
+	public void showBackgroundOnHover(boolean newValue) {
+		mShowBackgroundOnHover = newValue;
+	}
 
 	public void labelText(String labelText) {
 		mLabelText = labelText;
@@ -46,6 +55,7 @@ public class UiLabel extends UIWidget {
 		super(parentWindow);
 
 		mLabelText = labelText;
+		mShowBackgroundOnHover = false;
 	}
 
 	// --------------------------------------
@@ -57,9 +67,7 @@ public class UiLabel extends UIWidget {
 		final float lMouseX = core.HUD().getMouseWorldSpaceX();
 		final float lMouseY = core.HUD().getMouseWorldSpaceY();
 
-		final boolean lIsMouseHovering = intersectsAA(lMouseX, lMouseY);
-
-		if (lIsMouseHovering) {
+		if (mShowBackgroundOnHover && intersectsAA(lMouseX, lMouseY)) {
 			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_LEFT, mX, mY, 32, mH, componentZDepth, ColorConstants.MenuPanelPrimaryColor);
 			if (mW > 32) {
 				spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_MID, mX + 32, mY, mW - 64, mH, componentZDepth, ColorConstants.MenuPanelPrimaryColor);
@@ -68,6 +76,6 @@ public class UiLabel extends UIWidget {
 		}
 
 		final float lTextHeight = textFont.fontHeight();
-		textFont.drawText(mLabelText, mX + lHorizontalPadding, mY + mH / 2 - lTextHeight / 2, componentZDepth, ColorConstants.TextEntryColor, 1f, -1);
+		textFont.drawText(mLabelText, mX + lHorizontalPadding, mY + mH / 2 - lTextHeight / 2, componentZDepth - 0.01f, ColorConstants.TextEntryColor, 1f, -1);
 	}
 }

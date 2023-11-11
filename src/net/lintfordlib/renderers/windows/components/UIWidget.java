@@ -52,7 +52,7 @@ public abstract class UIWidget extends Rectangle implements IInputProcessor {
 	protected float mPaddingLeft;
 	protected float mPaddingRight;
 
-	private float mDesiredHeight;
+	protected float mDesiredHeight;
 
 	// --------------------------------------
 	// Properties

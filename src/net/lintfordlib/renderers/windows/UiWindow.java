@@ -440,8 +440,8 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 			mComponents.get(i).draw(core, lSpritebatch, mCoreSpritesheet, lTextFont, ZLayers.LAYER_GAME_UI + ((float) i * 0.001f));
 		}
 
-		lTextFont.end();
 		lSpritebatch.end();
+		lTextFont.end();
 
 		if (ConstantsApp.getBooleanValueDef("DRAW_UI_BOUNDS", false)) {
 			Debug.debugManager().drawers().drawRectImmediate(core.HUD(), mWindowArea);
