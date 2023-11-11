@@ -407,6 +407,16 @@ public class RendererManager implements IInputClickedFocusManager {
 	// Methods
 	// --------------------------------------
 
+	public BaseRenderer getRendererRequired(String rendererName) {
+		final var lRenderer = getRenderer(rendererName);
+
+		if (lRenderer == null) {
+			throw new RuntimeException("Required Renderer not found: " + rendererName + ". Check you are using the correct GroupEntityUid");
+		}
+
+		return lRenderer;
+	}
+
 	public BaseRenderer getRenderer(String rendererName) {
 		if (rendererName == null || rendererName.length() == 0) {
 			return null;
