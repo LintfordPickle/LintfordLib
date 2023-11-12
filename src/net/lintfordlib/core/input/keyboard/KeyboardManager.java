@@ -156,7 +156,7 @@ public class KeyboardManager {
 
 	public void startBufferedTextCapture(IBufferedTextInputCallback callbackFunction) {
 		if (mBufferedTextInputCallback != null) {
-			mBufferedTextInputCallback.captureStopped();
+			mBufferedTextInputCallback.onCaptureStopped();
 		}
 
 		mBufferedTextInputCallback = callbackFunction;
@@ -168,7 +168,7 @@ public class KeyboardManager {
 
 	public void stopBufferedTextCapture() {
 		if (mBufferedTextInputCallback != null) {
-			mBufferedTextInputCallback.captureStopped();
+			mBufferedTextInputCallback.onCaptureStopped();
 		}
 
 		mBufferedTextInputCallback = null;

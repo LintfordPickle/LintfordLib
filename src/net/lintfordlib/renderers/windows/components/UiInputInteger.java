@@ -291,4 +291,10 @@ public class UiInputInteger extends UIWidget implements IBufferedTextInputCallba
 	public boolean getEscapeFinishesInput() {
 		return true;
 	}
+
+	@Override
+	public void onCaptureStopped() {
+		mHasFocus = false;
+		mShowCaret = false;
+	}
 }

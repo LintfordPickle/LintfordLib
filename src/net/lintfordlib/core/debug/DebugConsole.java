@@ -777,7 +777,7 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 	}
 
 	@Override
-	public void captureStopped() {
+	public void onCaptureStopped() {
 		mHasFocus = false;
 	}
 

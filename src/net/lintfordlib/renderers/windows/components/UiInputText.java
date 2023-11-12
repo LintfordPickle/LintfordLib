@@ -119,6 +119,7 @@ public class UiInputText extends UIWidget implements IBufferedTextInputCallback 
 		super(parentWindow);
 
 		mResetOnDefaultClick = true;
+		mMouseClickBreaksInputTextFocus = true;
 		mInputField = new StringBuilder();
 
 		mCancelRectangle = new Rectangle();
@@ -127,7 +128,6 @@ public class UiInputText extends UIWidget implements IBufferedTextInputCallback 
 
 		mW = 100;
 		mH = 25.f;
-
 	}
 
 	// --------------------------------------
@@ -308,5 +308,11 @@ public class UiInputText extends UIWidget implements IBufferedTextInputCallback 
 	@Override
 	public boolean getEscapeFinishesInput() {
 		return true;
+	}
+
+	@Override
+	public void onCaptureStopped() {
+		mHasFocus = false;
+		mShowCaret = false;
 	}
 }
