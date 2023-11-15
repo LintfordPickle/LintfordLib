@@ -74,8 +74,8 @@ public class UiButtonToggle extends UIWidget {
 
 				mIsToggledOn = !mIsToggledOn;
 
-				if (mCallback != null && mClickTimer > MINIMUM_CLICK_TIMER) {
-					mCallback.widgetOnClick(core.input(), mUiWidgetUid);
+				if (mUiWidgetListenerCallback != null && mClickTimer > MINIMUM_CLICK_TIMER) {
+					mUiWidgetListenerCallback.widgetOnClick(core.input(), mUiWidgetListenerUid);
 					mClickTimer = 0;
 
 					return true;
@@ -101,17 +101,21 @@ public class UiButtonToggle extends UIWidget {
 	@Override
 	public void draw(LintfordCore core, SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheet, FontUnit textFont, float componentZDepth) {
 		final float lColorMod = mIsToggledOn ? 0.65f : mIsHoveredOver ? .9f : 1.f;
-
 		final var lColor = ColorConstants.getColorWithRGBMod(entityColor, lColorMod);
 
 		final var lTileSize = 32;
+
+		spriteBatch.begin(core.HUD());
 		spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X1_LEFT, mX, mY, lTileSize, mH, componentZDepth, lColor);
 		spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X1_MID, mX + lTileSize, mY, mW - lTileSize * 2, mH, componentZDepth, lColor);
 		spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X1_RIGHT, mX + mW - lTileSize, mY, lTileSize, mH, componentZDepth, lColor);
+		spriteBatch.end();
 
 		final var lButtonText = mButtonLabel != null ? mButtonLabel : NO_LABEL_TEXT;
 		final var lTextWidth = textFont.getStringWidth(lButtonText);
 
+		textFont.begin(core.HUD());
 		textFont.drawText(lButtonText, mX + mW / 2f - lTextWidth / 2f, mY + mH / 2f - textFont.fontHeight() / 2f, componentZDepth, ColorConstants.WHITE, 1.f);
+		textFont.end();
 	}
 }

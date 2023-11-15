@@ -16,9 +16,9 @@ import net.lintfordlib.core.graphics.fonts.FontUnit;
 import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
 import net.lintfordlib.core.input.mouse.IInputProcessor;
-import net.lintfordlib.renderers.windows.components.IScrollBarArea;
 import net.lintfordlib.renderers.windows.components.ScrollBar;
 import net.lintfordlib.renderers.windows.components.ScrollBarContentRectangle;
+import net.lintfordlib.renderers.windows.components.interfaces.IScrollBarArea;
 
 public class DebugStats extends Rectangle implements IScrollBarArea, IInputProcessor {
 
@@ -293,7 +293,7 @@ public class DebugStats extends Rectangle implements IScrollBarArea, IInputProce
 		mSpriteBatch._countDebugStats(true);
 
 		if (mContentRectangle.height() - this.height() > 0)
-			mContentRectangle.preDraw(core, mSpriteBatch, mCoreSpritesheet);
+			mContentRectangle.preDraw(core, mSpriteBatch);
 
 		mConsoleFont._countDebugStats(false);
 		mConsoleFont.begin(core.HUD());

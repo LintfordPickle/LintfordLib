@@ -30,25 +30,25 @@ public class UiBar {
 	// Properties
 	// --------------------------------------
 
-	public void innerBorderPadding(float pValue) {
-		if (pValue < 0f)
-			pValue = 0f;
-		if (pValue > h)
-			pValue = h;
+	public void innerBorderPadding(float value) {
+		if (value < 0f)
+			value = 0f;
+		if (value > h)
+			value = h;
 
-		mInnerBorderPadding = pValue;
+		mInnerBorderPadding = value;
 	}
 
-	public void isInverted(boolean pIsVertical) {
-		mIsInverted = pIsVertical;
+	public void isInverted(boolean isVertical) {
+		mIsInverted = isVertical;
 	}
 
 	public boolean isInverted() {
 		return mIsInverted;
 	}
 
-	public void isVertical(boolean pIsVertical) {
-		mIsVertical = pIsVertical;
+	public void isVertical(boolean isVertical) {
+		mIsVertical = isVertical;
 	}
 
 	public boolean isVertical() {
@@ -96,9 +96,9 @@ public class UiBar {
 	// Constructor
 	// --------------------------------------
 
-	public UiBar(float pMinValue, float pMaxValue) {
-		mMinValue = pMinValue;
-		mMaxValue = pMaxValue;
+	public UiBar(float minValue, float maxValue) {
+		mMinValue = minValue;
+		mMaxValue = maxValue;
 
 	}
 
@@ -106,15 +106,13 @@ public class UiBar {
 	// Core-Methods
 	// --------------------------------------
 
-	public void draw(LintfordCore pCore, SpriteBatch pSpriteBatch, FontUnit pTextFont, float pComponentZDepth) {
-		if (pSpriteBatch == null || !pSpriteBatch.isDrawing())
-			return;
+	public void draw(LintfordCore core, SpriteBatch spriteBatch, FontUnit textFont, float componentZDepth) {
 
-		final var lCoreTexture = pCore.resources().spriteSheetManager().coreSpritesheet();
-
+		final var lCoreTexture = core.resources().spriteSheetManager().coreSpritesheet();
 		float lBarWidth = MathHelper.scaleToRange(mCurValue, mMinValue, mMaxValue, 0, mIsVertical ? h : w);
 
-		pSpriteBatch.draw(lCoreTexture, CoreTextureNames.TEXTURE_WHITE, x, y, w, h, pComponentZDepth, UiBarOuterColor);
+		spriteBatch.begin(core.HUD());
+		spriteBatch.draw(lCoreTexture, CoreTextureNames.TEXTURE_WHITE, x, y, w, h, componentZDepth, UiBarOuterColor);
 
 		if (mIsVertical) {
 			lBarWidth = MathHelper.clamp(lBarWidth - mInnerBorderPadding * 2, 0, h);
@@ -126,7 +124,7 @@ public class UiBar {
 			float ww = !mIsInverted ? lWidth : lWidth;
 			float hh = !mIsInverted ? lHeight : lHeight;
 
-			pSpriteBatch.draw(lCoreTexture, CoreTextureNames.TEXTURE_WHITE, xx + mInnerBorderPadding, yy + mInnerBorderPadding, ww, hh, pComponentZDepth, UiBarInnerColor);
+			spriteBatch.draw(lCoreTexture, CoreTextureNames.TEXTURE_WHITE, xx + mInnerBorderPadding, yy + mInnerBorderPadding, ww, hh, componentZDepth, UiBarInnerColor);
 
 		} else {
 			lBarWidth = MathHelper.clamp(lBarWidth - mInnerBorderPadding * 2, 0, w);
@@ -138,7 +136,8 @@ public class UiBar {
 			float ww = !mIsInverted ? lWidth : lWidth;
 			float hh = !mIsInverted ? lHeight : lHeight;
 
-			pSpriteBatch.draw(lCoreTexture, CoreTextureNames.TEXTURE_WHITE, xx + mInnerBorderPadding, yy + mInnerBorderPadding, ww, hh, pComponentZDepth, UiBarInnerColor);
+			spriteBatch.draw(lCoreTexture, CoreTextureNames.TEXTURE_WHITE, xx + mInnerBorderPadding, yy + mInnerBorderPadding, ww, hh, componentZDepth, UiBarInnerColor);
 		}
+		spriteBatch.end();
 	}
 }

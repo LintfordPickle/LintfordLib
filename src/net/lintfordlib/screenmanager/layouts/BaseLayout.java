@@ -12,9 +12,9 @@ import net.lintfordlib.core.graphics.ColorConstants;
 import net.lintfordlib.core.graphics.batching.TextureBatch9Patch;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
 import net.lintfordlib.renderers.ZLayers;
-import net.lintfordlib.renderers.windows.components.IScrollBarArea;
 import net.lintfordlib.renderers.windows.components.ScrollBar;
 import net.lintfordlib.renderers.windows.components.ScrollBarContentRectangle;
+import net.lintfordlib.renderers.windows.components.interfaces.IScrollBarArea;
 import net.lintfordlib.screenmanager.MenuEntry;
 import net.lintfordlib.screenmanager.MenuScreen;
 import net.lintfordlib.screenmanager.ScreenManager;
@@ -473,7 +473,7 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 		}
 
 		if (mScrollBar.scrollBarEnabled()) {
-			mContentArea.preDraw(core, lSpriteBatch, lSpriteSheetCore);
+			mContentArea.preDraw(core, lSpriteBatch);
 		}
 
 		final int lMenuEntryCount = mMenuEntries.size();

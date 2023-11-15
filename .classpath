@@ -11,12 +11,12 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="libs/gson-2.8.6.jar"/>
 	<classpathentry kind="lib" path="libs/commons-collections4-4.4.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="jar:platform:/resource/LDLibrary/libs/commons-collections4-4.4-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/LWJGL3"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/LWJGL3-Windows"/>
+	<classpathentry kind="lib" path="libs/gson-2.10.1.jar"/>
 	<classpathentry kind="output" path="target/"/>
 </classpath>

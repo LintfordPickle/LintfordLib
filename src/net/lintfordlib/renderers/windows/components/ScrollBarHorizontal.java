@@ -11,6 +11,7 @@ import net.lintfordlib.core.input.IInputClickedFocusTracker;
 import net.lintfordlib.core.input.mouse.IInputProcessor;
 import net.lintfordlib.core.maths.MathHelper;
 import net.lintfordlib.renderers.ZLayers;
+import net.lintfordlib.renderers.windows.components.interfaces.IScrollBarArea;
 import net.lintfordlib.screenmanager.IInputClickedFocusManager;
 
 public class ScrollBarHorizontal extends Rectangle implements IInputProcessor, IInputClickedFocusTracker {
@@ -73,8 +74,8 @@ public class ScrollBarHorizontal extends Rectangle implements IInputProcessor, I
 		return mScrollBarArea != null ? mScrollBarArea.parentScreenHash() : -1;
 	}
 
-	public void isActive(boolean pIsActive) {
-		mIsActive = pIsActive;
+	public void isActive(boolean isActive) {
+		mIsActive = isActive;
 	}
 
 	public boolean isActive() {
@@ -85,24 +86,24 @@ public class ScrollBarHorizontal extends Rectangle implements IInputProcessor, I
 		return mScrollAcceleration;
 	}
 
-	public void scrollAbsAcceleration(float pNewAbsAcceleration) {
-		mScrollAcceleration = pNewAbsAcceleration;
+	public void scrollAbsAcceleration(float newAbsAcceleration) {
+		mScrollAcceleration = newAbsAcceleration;
 	}
 
-	public void scrollRelAcceleration(float pNewRelAcceleration) {
-		mScrollAcceleration += pNewRelAcceleration;
+	public void scrollRelAcceleration(float newRelAcceleration) {
+		mScrollAcceleration += newRelAcceleration;
 	}
 
 	public boolean scrollBarEnabled() {
 		return mIsActive && mScrollbarEnabled;
 	}
 
-	public void scrollBarEnabled(boolean pNewValue) {
-		mScrollbarEnabled = pNewValue;
+	public void scrollBarEnabled(boolean newValue) {
+		mScrollbarEnabled = newValue;
 	}
 
-	public void scrollBarAlpha(float pScrollbarAlpha) {
-		mScrollBarAlpha = (float) MathHelper.clamp(pScrollbarAlpha, 0.f, 1.f);
+	public void scrollBarAlpha(float scrollbarAlpha) {
+		mScrollBarAlpha = (float) MathHelper.clamp(scrollbarAlpha, 0.f, 1.f);
 	}
 
 	public float scrollBarAlpha() {
@@ -113,8 +114,8 @@ public class ScrollBarHorizontal extends Rectangle implements IInputProcessor, I
 		return mWindowRightOffset;
 	}
 
-	public void windowRightOffset(float pNewValue) {
-		mWindowRightOffset = pNewValue;
+	public void windowRightOffset(float newValue) {
+		mWindowRightOffset = newValue;
 	}
 
 	public boolean clickAction() {
@@ -132,10 +133,10 @@ public class ScrollBarHorizontal extends Rectangle implements IInputProcessor, I
 	// Constructor
 	// --------------------------------------
 
-	public ScrollBarHorizontal(IScrollBarArea pWindowBounds, Rectangle pContentBounds) {
-		super(pContentBounds);
+	public ScrollBarHorizontal(IScrollBarArea windowBounds, Rectangle contentBounds) {
+		super(contentBounds);
 
-		mScrollBarArea = pWindowBounds;
+		mScrollBarArea = windowBounds;
 		mWindowRightOffset = -25;
 		mIsActive = true;
 		mScrollbarAutoHide = true;
@@ -147,7 +148,7 @@ public class ScrollBarHorizontal extends Rectangle implements IInputProcessor, I
 	// Core-Methods
 	// --------------------------------------
 
-	public boolean handleInput(LintfordCore pCore, IInputClickedFocusManager pTrackedControlManager) {
+	public boolean handleInput(LintfordCore pCore, IInputClickedFocusManager trackedControlManager) {
 		mInputHandledInCoreFrame = true;
 
 		final var lMouseInScrollbarRegion = intersectsAA(pCore.HUD().getMouseCameraSpace());
@@ -176,8 +177,8 @@ public class ScrollBarHorizontal extends Rectangle implements IInputProcessor, I
 
 		if (!mClickActive && lCanAcquireMouse) {
 			mClickActive = true;
-			if (pTrackedControlManager != null) {
-				pTrackedControlManager.setTrackedClickedFocusControl(this);
+			if (trackedControlManager != null) {
+				trackedControlManager.setTrackedClickedFocusControl(this);
 			}
 			mLastMouseXPos = pCore.HUD().getMouseWorldSpaceX();
 		}
@@ -188,8 +189,8 @@ public class ScrollBarHorizontal extends Rectangle implements IInputProcessor, I
 		return true;
 	}
 
-	private void constrainScrollBarPosition(float pNewPositionSS) {
-		final float lMouseScreenSpaceX = pNewPositionSS;
+	private void constrainScrollBarPosition(float newPositionSS) {
+		final float lMouseScreenSpaceX = newPositionSS;
 		final float lMaxDiff = mScrollBarArea.fullContentArea().width() - mScrollBarArea.contentDisplayArea().width();
 
 		if (lMaxDiff > 0) {
@@ -205,7 +206,7 @@ public class ScrollBarHorizontal extends Rectangle implements IInputProcessor, I
 		}
 	}
 
-	public void update(LintfordCore pCore) {
+	public void update(LintfordCore core) {
 		if (mIsActive == false)
 			return;
 
@@ -216,16 +217,16 @@ public class ScrollBarHorizontal extends Rectangle implements IInputProcessor, I
 		}
 
 		if (mScrollbarEnabled) {
-			updateMovement(pCore);
-			updateBar(pCore);
+			updateMovement(core);
+			updateBar(core);
 		}
 	}
 
-	private void updateMovement(LintfordCore pCore) {
+	private void updateMovement(LintfordCore core) {
 		final var lContent = mScrollBarArea.fullContentArea();
 		mScrollbarEnabled = true;
 		if (mScrollbarEnabled) {
-			final float lDeltaTime = (float) pCore.appTime().elapsedTimeMilli() / 1000f;
+			final float lDeltaTime = (float) core.appTime().elapsedTimeMilli() / 1000f;
 			float lScrollSpeedFactor = mScrollPosition;
 
 			mScrollVelocity += mScrollAcceleration;
@@ -243,8 +244,8 @@ public class ScrollBarHorizontal extends Rectangle implements IInputProcessor, I
 		}
 	}
 
-	private void updateBar(LintfordCore pCore) {
-		mMouseTimer -= pCore.appTime().elapsedTimeMilli();
+	private void updateBar(LintfordCore core) {
+		mMouseTimer -= core.appTime().elapsedTimeMilli();
 
 		float lViewportHeight = mScrollBarArea.contentDisplayArea().width();
 		float lContentHeight = mScrollBarArea.fullContentArea().width();
@@ -263,41 +264,42 @@ public class ScrollBarHorizontal extends Rectangle implements IInputProcessor, I
 		set(lX, lY, lW, lH);
 	}
 
-	public void draw(LintfordCore pCore, SpriteBatch pSpriteBatch, SpriteSheetDefinition pCoreSpritesheet, float pZDepth) {
+	public void draw(LintfordCore core, SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheet, float zDepth) {
 		if (mIsActive == false)
 			return;
 
 		if (mScrollbarEnabled == false)
 			return;
 
-		// Scroll bar background
 		mScrollBarAlpha = 1.0f;
 		if (mMarkerMoveMod == 0.f) {
 			return;
 		}
 
 		// Render the actual scroll bar
-		final float bx = ARROW_SIZE + mScrollBarArea.contentDisplayArea().x() - (mScrollPosition / mMarkerMoveMod);
-
+		final var bx = ARROW_SIZE + mScrollBarArea.contentDisplayArea().x() - (mScrollPosition / mMarkerMoveMod);
 		final var lBackgroundColor = ColorConstants.getColorWithRGBMod(ColorConstants.TertiaryColor.r * .8f, ColorConstants.TertiaryColor.g * .8f, ColorConstants.TertiaryColor.b * .8f, .6f, .6f);
-		pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX + ARROW_SIZE, mY, mW - ARROW_SIZE * 2.f, ARROW_SIZE, pZDepth, lBackgroundColor);
+
+		spriteBatch.begin(core.HUD());
+		spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX + ARROW_SIZE, mY, mW - ARROW_SIZE * 2.f, ARROW_SIZE, zDepth, lBackgroundColor);
 
 		var lWhiteColorWithAlpha = ColorConstants.getWhiteWithAlpha(mScrollBarAlpha);
-		pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX + ARROW_SIZE, mY + ARROW_SIZE * .5f - 1.f, mW - ARROW_SIZE * 2.f, 2.f, pZDepth, lWhiteColorWithAlpha);
+		spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX + ARROW_SIZE, mY + ARROW_SIZE * .5f - 1.f, mW - ARROW_SIZE * 2.f, 2.f, zDepth, lWhiteColorWithAlpha);
 
 		// Draw the moving bar
-		final float lColorMod = mClickActive ? 0.35f : 0.55f;
+		final var lColorMod = mClickActive ? 0.35f : 0.55f;
 		final var lBarColor = ColorConstants.getColorWithRGBMod(ColorConstants.PrimaryColor.r * .8f, ColorConstants.PrimaryColor.g * .8f, ColorConstants.PrimaryColor.g * .8f, mScrollBarAlpha, lColorMod);
-		pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, bx, mY, mMarkerBarHeight, 16, pZDepth, lBarColor);
+		spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, bx, mY, mMarkerBarHeight, 16, zDepth, lBarColor);
 
 		lWhiteColorWithAlpha = ColorConstants.getWhiteWithAlpha(mScrollBarAlpha);
-		pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_SCROLLBAR_LEFT, mX, mY, ARROW_SIZE, ARROW_SIZE, pZDepth, lWhiteColorWithAlpha);
-		pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_SCROLLBAR_RIGHT, mX + mW - ARROW_SIZE, mY, ARROW_SIZE, ARROW_SIZE, pZDepth - 0.01f, lWhiteColorWithAlpha);
+		spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_SCROLLBAR_LEFT, mX, mY, ARROW_SIZE, ARROW_SIZE, zDepth, lWhiteColorWithAlpha);
+		spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_SCROLLBAR_RIGHT, mX + mW - ARROW_SIZE, mY, ARROW_SIZE, ARROW_SIZE, zDepth - 0.01f, lWhiteColorWithAlpha);
+		spriteBatch.end();
 
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
-			pSpriteBatch.begin(pCore.HUD());
-			pSpriteBatch.draw(pCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX, mY, mW, mH, ZLayers.LAYER_DEBUG, ColorConstants.Debug_Transparent_Magenta);
-			pSpriteBatch.end();
+			spriteBatch.begin(core.HUD());
+			spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX, mY, mW, mH, ZLayers.LAYER_DEBUG, ColorConstants.Debug_Transparent_Magenta);
+			spriteBatch.end();
 		}
 	}
 
@@ -353,12 +355,12 @@ public class ScrollBarHorizontal extends Rectangle implements IInputProcessor, I
 		return mScrollPosition;
 	}
 
-	public void RelCurrentXPos(float pAmt) {
-		mScrollPosition += pAmt;
+	public void RelCurrentXPos(float amt) {
+		mScrollPosition += amt;
 	}
 
-	public void AbsCurrentXPos(float pValue) {
-		mScrollPosition = pValue;
+	public void AbsCurrentXPos(float value) {
+		mScrollPosition = value;
 	}
 
 }

@@ -6,8 +6,7 @@ import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.geometry.Rectangle;
 import net.lintfordlib.core.graphics.ColorConstants;
 import net.lintfordlib.core.graphics.batching.SpriteBatch;
-import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
-import net.lintfordlib.core.graphics.textures.CoreTextureNames;
+import net.lintfordlib.renderers.windows.components.interfaces.IScrollBarArea;
 
 public class ScrollBarContentRectangle extends Rectangle {
 
@@ -30,61 +29,64 @@ public class ScrollBarContentRectangle extends Rectangle {
 		return mDepthPadding;
 	}
 
-	public void depthPadding(float pNewValue) {
-		mDepthPadding = pNewValue;
+	public void depthPadding(float newDepthPadding) {
+		mDepthPadding = newDepthPadding;
 	}
 
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
-	public ScrollBarContentRectangle(IScrollBarArea pParentArea) {
+	public ScrollBarContentRectangle(IScrollBarArea parentArea) {
 		super();
 
-		mParentArea = pParentArea;
+		mParentArea = parentArea;
 	}
 
 	// --------------------------------------
 	// Core-Methods
 	// --------------------------------------
 
-	public void update(LintfordCore pCore) {
+	public void update(LintfordCore core) {
 
 	}
 
-	public void preDraw(LintfordCore pCore, SpriteBatch pSpriteBatch, SpriteSheetDefinition pSpritesheetDefinition) {
-		preDraw(pCore, pSpriteBatch, pSpritesheetDefinition, mParentArea.contentDisplayArea());
+	public void preDraw(LintfordCore core, SpriteBatch spriteBatch) {
+		preDraw(core, spriteBatch, mParentArea.contentDisplayArea());
 	}
 
-	public void preDraw(LintfordCore pCore, SpriteBatch pSpriteBatch, SpriteSheetDefinition pSpritesheetDefinition, Rectangle pRectangle) {
+	public void preDraw(LintfordCore core, SpriteBatch spriteBatch, Rectangle rectangle) {
 		if (mPreDrawing)
 			return;
 
 		mPreDrawing = true;
 
+		final int componentUid = 1;
 		// We need to use a stencil buffer to clip the listbox items (which, when scrolling, could appear out-of-bounds of the listbox).
 		GL11.glEnable(GL11.GL_STENCIL_TEST);
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 
-		GL11.glStencilFunc(GL11.GL_ALWAYS, 1, 0xFF); // Set any stencil to 1
+		GL11.glStencilFunc(GL11.GL_ALWAYS, componentUid, 0xFFFFFFFF); // Set any stencil to 1
 		GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_REPLACE); // What should happen to stencil values
-		GL11.glStencilMask(0x0F); // Write to stencil buffer
 
-		// Make sure we are starting with a fresh stencil buffer
+		// TODO: explicitly ask to clear?
 		GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT); // Clear the stencil buffer
 
-		// Draw into the stencil buffer to mark the 'active' bits
-		pSpriteBatch.begin(pCore.HUD());
-		pSpriteBatch.draw(pSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, pRectangle.x() + mDepthPadding, pRectangle.y() + mDepthPadding, pRectangle.width() - mDepthPadding * 2 - ScrollBar.BAR_WIDTH, pRectangle.height() - mDepthPadding * 2, -10.0f,
-				ColorConstants.getBlackWithAlpha(0.f));
-		pSpriteBatch.end();
+		spriteBatch.begin(core.HUD());
+		spriteBatch.draw(null, 0, 0, 1, 1, rectangle.x() + mDepthPadding, rectangle.y() + mDepthPadding, rectangle.width() - mDepthPadding * 2 - ScrollBar.BAR_WIDTH, rectangle.height() - mDepthPadding * 2, -10.f, ColorConstants.getWhiteWithAlpha(0.f));
+		spriteBatch.end();
 
-		// Start the stencil buffer test to filter out everything outside of the scroll view
-		GL11.glStencilFunc(GL11.GL_EQUAL, 1, 0xFF); // Pass test if stencil value is 1
+		/*
+		 * GL_EQUAL: Passes if ( ref & mask ) = ( stencil & mask ).
+		 */
+
+		// Start the stencil buffer test
+		GL11.glStencilFunc(GL11.GL_EQUAL, componentUid, 0xFFFFFFFF); // Pass test if stencil value is 1
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
+
 	}
 
-	public void postDraw(LintfordCore pCore) {
+	public void postDraw(LintfordCore core) {
 		if (!mPreDrawing)
 			return;
 

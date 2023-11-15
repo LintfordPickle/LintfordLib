@@ -13,6 +13,8 @@ import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
 import net.lintfordlib.core.maths.MathHelper;
 import net.lintfordlib.renderers.windows.UiWindow;
+import net.lintfordlib.renderers.windows.components.interfaces.IScrollBarArea;
+import net.lintfordlib.renderers.windows.components.interfaces.IUiListBoxListener;
 
 public class UiVerticalTextListBox extends UIWidget implements IScrollBarArea {
 
@@ -72,6 +74,13 @@ public class UiVerticalTextListBox extends UIWidget implements IScrollBarArea {
 
 	public List<UiListBoxItem> items() {
 		return mItems;
+	}
+
+	public void selectedItemIndex(int newIndex) {
+		if (newIndex < 0 || newIndex >= mItems.size())
+			return;
+
+		mSelectedItemIndex = newIndex;
 	}
 
 	public int selectedItemIndex() {
@@ -166,12 +175,12 @@ public class UiVerticalTextListBox extends UIWidget implements IScrollBarArea {
 
 	@Override
 	public void draw(LintfordCore core, SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheetDefinition, FontUnit textFont, float componentZDepth) {
+
+		spriteBatch.begin(core.HUD());
 		TextureBatch9Patch.drawBackground(core, spriteBatch, coreSpritesheetDefinition, 32, (int) mX, (int) mY, (int) mW, (int) mH, ColorConstants.WHITE, false, componentZDepth);
-
 		spriteBatch.end();
-		textFont.end();
 
-		mContentArea.preDraw(core, spriteBatch, coreSpritesheetDefinition);
+		mContentArea.preDraw(core, spriteBatch);
 
 		spriteBatch.begin(core.HUD());
 		textFont.begin(core.HUD());
@@ -190,7 +199,8 @@ public class UiVerticalTextListBox extends UIWidget implements IScrollBarArea {
 			final var lTextPosX = lAssetPositionX + 5.f;
 			final var lTextPosY = lAssetPositionY + mAssetHeightInpx * .5f - textFont.fontHeight() * .5f;
 
-			final var lDisplayText = lItemToRender.displayName != null ? lItemToRender.displayName : String.valueOf(lItemToRender.itemUid);
+			String lDisplayText = lItemToRender.iconChar != 0 ? "|" + String.valueOf(lItemToRender.iconChar) + "| " : "";
+			lDisplayText += lItemToRender.displayName != null ? lItemToRender.displayName : String.valueOf(lItemToRender.itemUid);
 			textFont.drawText(lDisplayText, lTextPosX, lTextPosY, componentZDepth, 1.f);
 
 			lAssetPositionY += mAssetHeightInpx + mVerticalAssetSeparationInPx;
@@ -200,9 +210,6 @@ public class UiVerticalTextListBox extends UIWidget implements IScrollBarArea {
 		textFont.end();
 
 		mContentArea.postDraw(core);
-
-		spriteBatch.begin(core.HUD());
-		textFont.begin(core.HUD());
 
 		mScrollbar.draw(core, spriteBatch, coreSpritesheetDefinition, componentZDepth, 0.8f);
 

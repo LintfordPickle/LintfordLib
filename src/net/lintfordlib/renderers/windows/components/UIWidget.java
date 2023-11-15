@@ -9,6 +9,7 @@ import net.lintfordlib.core.graphics.fonts.FontUnit;
 import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintfordlib.core.input.mouse.IInputProcessor;
 import net.lintfordlib.renderers.windows.UiWindow;
+import net.lintfordlib.renderers.windows.components.interfaces.IUiWidgetInteractions;
 
 public abstract class UIWidget extends Rectangle implements IInputProcessor {
 
@@ -28,8 +29,8 @@ public abstract class UIWidget extends Rectangle implements IInputProcessor {
 	public Color entityColor = new Color(1.f, 1.f, 1.f, 1.f);
 	protected UiWindow mParentWindow;
 
-	protected IUiWidgetInteractions mCallback;
-	protected int mUiWidgetUid;
+	protected IUiWidgetInteractions mUiWidgetListenerCallback;
+	protected int mUiWidgetListenerUid;
 
 	protected boolean mIsEnabled;
 	protected boolean mIsVisible;
@@ -219,6 +220,10 @@ public abstract class UIWidget extends Rectangle implements IInputProcessor {
 
 	public abstract void draw(LintfordCore core, SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheet, FontUnit textFont, float componentZDepth);
 
+	// --------------------------------------
+	// Methods
+	// --------------------------------------
+	
 	@Override
 	public boolean isCoolDownElapsed() {
 		return mMouseTimer < 0;
@@ -245,11 +250,11 @@ public abstract class UIWidget extends Rectangle implements IInputProcessor {
 	}
 
 	public void setClickListener(IUiWidgetInteractions callback, int clickUid) {
-		mCallback = callback;
-		mUiWidgetUid = clickUid;
+		mUiWidgetListenerCallback = callback;
+		mUiWidgetListenerUid = clickUid;
 	}
 
 	public void removeClickListener() {
-		mCallback = null;
+		mUiWidgetListenerCallback = null;
 	}
 }

@@ -11,6 +11,7 @@ public class UiListBoxItem implements Comparable<UiListBoxItem> {
 
 	public String definitionName;
 	public String displayName;
+	public char iconChar;
 
 	public String spritesheetDefinitionName;
 	public String spriteName;

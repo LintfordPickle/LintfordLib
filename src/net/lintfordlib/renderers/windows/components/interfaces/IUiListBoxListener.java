@@ -1,4 +1,6 @@
-package net.lintfordlib.renderers.windows.components;
+package net.lintfordlib.renderers.windows.components.interfaces;
+
+import net.lintfordlib.renderers.windows.components.UiListBoxItem;
 
 public interface IUiListBoxListener {
 

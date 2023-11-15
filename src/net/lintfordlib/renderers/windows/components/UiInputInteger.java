@@ -189,19 +189,21 @@ public class UiInputInteger extends UIWidget implements IBufferedTextInputCallba
 
 	@Override
 	public void draw(LintfordCore core, SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheetDefinition, FontUnit textFont, float componentZDepth) {
+
+		spriteBatch.begin(core.HUD());
+
 		spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_LEFT, (int) mX, mY, 32, mH, componentZDepth, ColorConstants.MenuPanelPrimaryColor);
 		if (mW > 32) {
 			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_MID, (int) mX + 32, mY, mW - 64, mH, componentZDepth, ColorConstants.MenuPanelPrimaryColor);
 			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_RIGHT, (int) mX + mW - 32, mY, 32, mH, componentZDepth, ColorConstants.MenuPanelPrimaryColor);
 		}
 
-		// Draw the cancel button rectangle
 		final var lEraserColor = mCancelRectHovered ? ColorConstants.WHITE : ColorConstants.getWhiteWithAlpha(.5f);
 		spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_ERASER, mCancelRectangle, componentZDepth, lEraserColor);
 
 		final float lInputTextWidth = textFont.getStringWidth(mInputField.toString());
 
-		String lText = mInputField.toString();
+		var lText = mInputField.toString();
 		final float lTextHeight = textFont.fontHeight();
 		if (lText.length() == 0 && !mHasFocus) {
 			if (mEmptyString.isEmpty()) {
@@ -212,10 +214,15 @@ public class UiInputInteger extends UIWidget implements IBufferedTextInputCallba
 		}
 
 		final var lScale = 1.f;
+
+		textFont.begin(core.HUD());
 		textFont.drawText(lText, mX + 10, mY + mH * .5f - lTextHeight * .5f, componentZDepth, ColorConstants.TextEntryColor, lScale, FontUnit.NO_WORD_WRAP);
+		textFont.end();
 		if (mShowCaret && mHasFocus) {
 			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, mX + lInputTextWidth + 10, mY + mH * .5f - lTextHeight * .5f, textFont.fontHeight() / 2.f, textFont.fontHeight(), componentZDepth, ColorConstants.WHITE);
 		}
+		spriteBatch.end();
+
 	}
 
 	// --------------------------------------

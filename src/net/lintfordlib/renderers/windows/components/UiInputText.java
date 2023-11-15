@@ -33,16 +33,26 @@ public class UiInputText extends UIWidget implements IBufferedTextInputCallback 
 	private transient String mEmptyString;
 	private transient Rectangle mCancelRectangle;
 	private IUiInputKeyPressCallback mIUiInputKeyPressCallback;
+	private int mKeyListenerUid;
 	private transient int mStringLength;
 	private transient StringBuilder mInputField;
 	private transient boolean mResetOnDefaultClick;
 	private boolean mMouseClickBreaksInputTextFocus;
 	private boolean mCancelRectHovered;
 	private boolean mIsReadonly;
+	private float mTextScale;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public void textScale(float newTextScale) {
+		mTextScale = newTextScale;
+	}
+
+	public float textScale() {
+		return mTextScale;
+	}
 
 	public boolean isReadonly() {
 		return mIsReadonly;
@@ -124,10 +134,12 @@ public class UiInputText extends UIWidget implements IBufferedTextInputCallback 
 
 		mCancelRectangle = new Rectangle();
 		mEmptyString = "";
-		mMaxInputCharacters = 15;
+		mMaxInputCharacters = 60;
 
+		mTextScale = 1.f;
 		mW = 100;
 		mH = 25.f;
+
 	}
 
 	// --------------------------------------
@@ -201,6 +213,10 @@ public class UiInputText extends UIWidget implements IBufferedTextInputCallback 
 
 	@Override
 	public void draw(LintfordCore core, SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheetDefinition, FontUnit textFont, float componentZDepth) {
+
+		ContentRectangle.preDraw(core, spriteBatch, this, -0, 1);
+
+		spriteBatch.begin(core.HUD());
 		spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_LEFT, (int) mX, mY, 32, mH, componentZDepth, ColorConstants.MenuPanelPrimaryColor);
 		if (mW > 32) {
 			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_MID, (int) mX + 32, mY, mW - 64, mH, componentZDepth, ColorConstants.MenuPanelPrimaryColor);
@@ -209,8 +225,6 @@ public class UiInputText extends UIWidget implements IBufferedTextInputCallback 
 
 		final var lEraserColor = mCancelRectHovered ? ColorConstants.WHITE : ColorConstants.getWhiteWithAlpha(.5f);
 		spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_ERASER, mCancelRectangle, componentZDepth, lEraserColor);
-
-		final float lInputTextWidth = textFont.getStringWidth(mInputField.toString());
 
 		var lText = mInputField.toString();
 		final float lTextHeight = textFont.fontHeight();
@@ -226,19 +240,33 @@ public class UiInputText extends UIWidget implements IBufferedTextInputCallback 
 		if (isReadonly())
 			lTextColor = ColorConstants.GREY_DARK;
 
-		final float lScale = 1.f;
-		textFont.drawText(lText, mX + 10, mY + mH * .5f - lTextHeight * .5f, componentZDepth, lTextColor, lScale);
+		final float lScale = mTextScale;
+
+		final float lInputTextWidth = textFont.getStringWidth(mInputField.toString());
+		final var lIsTextTooLong = (lInputTextWidth + 10) * lScale > (mW - 32);
+		final var lDiff = (lInputTextWidth + 10) * lScale - (mW - 32);
+		final var lTextPosX = lIsTextTooLong ? mX + 10 - lDiff : mX + 10;
+
 		if (mShowCaret && mHasFocus) {
-			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, mX + lInputTextWidth + 10, mY + mH * .5f - lTextHeight * .5f, textFont.fontHeight() / 2.f, textFont.fontHeight(), componentZDepth, ColorConstants.WHITE);
+			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, lTextPosX + lInputTextWidth * lScale, mY + mH * .5f - lTextHeight * .5f * lScale, textFont.fontHeight() / 2.f * lScale, textFont.fontHeight() * lScale, componentZDepth, ColorConstants.WHITE);
 		}
+		spriteBatch.end();
+
+		textFont.begin(core.HUD());
+		textFont.drawText(lText, lTextPosX, mY + mH * .5f - lTextHeight * .5f * lScale, componentZDepth, lTextColor, lScale);
+		textFont.end();
+
+		ContentRectangle.postDraw(core);
+
 	}
 
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
 
-	public void setKeyUpdateListener(IUiInputKeyPressCallback keyUpdateListener) {
+	public void setKeyUpdateListener(IUiInputKeyPressCallback keyUpdateListener, int keyListenerUid) {
 		mIUiInputKeyPressCallback = keyUpdateListener;
+		mKeyListenerUid = keyListenerUid;
 	}
 
 	public void onClick(InputManager inputState) {
@@ -314,5 +342,13 @@ public class UiInputText extends UIWidget implements IBufferedTextInputCallback 
 	public void onCaptureStopped() {
 		mHasFocus = false;
 		mShowCaret = false;
+
+		if (mUiWidgetListenerCallback != null) {
+			mUiWidgetListenerCallback.widgetOnDataChanged(null, mUiWidgetListenerUid);
+		}
+
+		if (mIUiInputKeyPressCallback != null) {
+			mIUiInputKeyPressCallback.UiInputEnded(mKeyListenerUid);
+		}
 	}
 }

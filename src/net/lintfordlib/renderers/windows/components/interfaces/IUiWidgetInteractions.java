@@ -1,4 +1,4 @@
-package net.lintfordlib.renderers.windows.components;
+package net.lintfordlib.renderers.windows.components.interfaces;
 
 import net.lintfordlib.core.input.InputManager;
 

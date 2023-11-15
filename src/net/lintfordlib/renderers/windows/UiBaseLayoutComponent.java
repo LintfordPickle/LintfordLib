@@ -15,10 +15,10 @@ import net.lintfordlib.core.graphics.fonts.FontUnit;
 import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
 import net.lintfordlib.renderers.ZLayers;
-import net.lintfordlib.renderers.windows.components.IScrollBarArea;
 import net.lintfordlib.renderers.windows.components.ScrollBar;
 import net.lintfordlib.renderers.windows.components.ScrollBarContentRectangle;
 import net.lintfordlib.renderers.windows.components.UIWidget;
+import net.lintfordlib.renderers.windows.components.interfaces.IScrollBarArea;
 import net.lintfordlib.screenmanager.ScreenManagerConstants.FILLTYPE;
 import net.lintfordlib.screenmanager.ScreenManagerConstants.LAYOUT_WIDTH;
 
@@ -338,7 +338,7 @@ public class UiBaseLayoutComponent extends UIWidget implements IScrollBarArea {
 
 		if (mScrollBarsEnabled_Internal) {
 			mContentArea.depthPadding(6f);
-			mContentArea.preDraw(core, spriteBatch, coreSpritesheet);
+			mContentArea.preDraw(core, spriteBatch);
 		}
 
 		final int lCount = widgets().size();

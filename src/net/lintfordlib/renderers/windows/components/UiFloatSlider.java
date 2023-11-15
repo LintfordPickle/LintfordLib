@@ -31,9 +31,19 @@ public class UiFloatSlider extends UIWidget {
 	private float mCurrentRelPosition;
 	private float mCurrentValue;
 
+	private boolean mDrawLabel;
+
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public boolean drawLabel() {
+		return mDrawLabel;
+	}
+
+	public void drawLabel(boolean drawLabel) {
+		mDrawLabel = drawLabel;
+	}
 
 	public void setMinMax(float minValue, float maxValue) {
 		if (maxValue < minValue)
@@ -70,6 +80,7 @@ public class UiFloatSlider extends UIWidget {
 
 	public void sliderLabel(final String newLabel) {
 		mSliderLabel = newLabel;
+		mDrawLabel = true;
 	}
 
 	// --------------------------------------
@@ -103,8 +114,8 @@ public class UiFloatSlider extends UIWidget {
 				final float lMouseX = core.HUD().getMouseCameraSpace().x;
 				updateValue(MathHelper.clamp(lMouseX - mX, 0, mW));
 
-				if (mCallback != null)
-					mCallback.widgetOnDataChanged(core.input(), mUiWidgetUid);
+				if (mUiWidgetListenerCallback != null)
+					mUiWidgetListenerCallback.widgetOnDataChanged(core.input(), mUiWidgetListenerUid);
 
 				return true;
 			}
@@ -122,15 +133,19 @@ public class UiFloatSlider extends UIWidget {
 		final var lLowerYPosition = mY + mH * .75f;
 		final var lHalfHeight = mH * .5f;
 
+		spriteBatch.begin(core.HUD());
 		final var lBackgroundColor = mIsEnabled ? ColorConstants.getColorWithRGBMod(ColorConstants.PrimaryColor, 1.f) : ColorConstants.getBlackWithAlpha(.4f);
 		spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, mX, lLowerYPosition - lRailHeight * .5f, mW, lRailHeight, 0f, lBackgroundColor);
 		final var lNubbinColor = mIsEnabled ? ColorConstants.getColorWithRGBMod(ColorConstants.TertiaryColor, 1.f) : ColorConstants.getBlackWithAlpha(.4f);
 		spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, mX + mCurrentRelPosition - lSliderWidth / 2, lLowerYPosition - lHalfHeight * .5f, lSliderWidth, lHalfHeight, 0f, lNubbinColor);
+		spriteBatch.end();
 
-		// Render Slider label
+		textFont.begin(core.HUD());
 		final var lAmtText = String.format("%.2f", mCurrentValue);
-		textFont.drawText(mSliderLabel, mX, lUpperYPosition - textFont.fontHeight() * .5f, componentZDepth, ColorConstants.WHITE, 1f);
+		if (mDrawLabel)
+			textFont.drawText(mSliderLabel, mX, lUpperYPosition - textFont.fontHeight() * .5f, componentZDepth, ColorConstants.WHITE, 1f);
 		textFont.drawText(lAmtText, mX + mW - textFont.getStringWidth(lAmtText), lUpperYPosition - textFont.fontHeight() * .5f, -0.01f, ColorConstants.WHITE, 1f);
+		textFont.end();
 	}
 
 	// --------------------------------------

@@ -9,6 +9,7 @@ import net.lintfordlib.core.geometry.Rectangle;
 import net.lintfordlib.core.graphics.batching.SpriteBatch;
 import net.lintfordlib.core.graphics.fonts.FontUnit;
 import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
+import net.lintfordlib.renderers.windows.components.interfaces.IconIntFilter;
 
 public class UiIconFilter extends Rectangle {
 

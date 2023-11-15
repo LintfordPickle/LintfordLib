@@ -4,4 +4,6 @@ public interface IUiInputKeyPressCallback {
 
 	public void keyPressUpdate(int codePoint);
 
+	public void UiInputEnded(int inputUid);
+
 }

@@ -120,12 +120,16 @@ public class UIRadioButton extends UIWidget implements IInputProcessor {
 		final var lColorMod = mIsSelected ? 0.4f : 0.3f;
 		final var lColor = ColorConstants.getColorWithRGBMod(ColorConstants.PrimaryColor, lColorMod);
 
+		spriteBatch.begin(core.HUD());
 		spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX, mY, mW, mH, componentZDepth, lColor);
+		spriteBatch.end();
 
 		final var lButtonText = mButtonLabel != null ? mButtonLabel : NO_LABEL_TEXT;
 		final var lTextWidth = textFont.getStringWidth(lButtonText);
 
+		textFont.begin(core.HUD());
 		textFont.drawText(lButtonText, mX + mW / 2f - lTextWidth / 2f, mY + mH / 2f - textFont.fontHeight() / 4f, componentZDepth + 0.01f, ColorConstants.WHITE, 1f);
+		textFont.end();
 	}
 
 	// --------------------------------------

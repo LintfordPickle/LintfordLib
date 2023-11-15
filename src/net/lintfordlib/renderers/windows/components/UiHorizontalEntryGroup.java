@@ -129,7 +129,9 @@ public class UiHorizontalEntryGroup extends UIWidget {
 	@Override
 	public void draw(LintfordCore core, SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheetDefinition, FontUnit textFont, float componentZDepth) {
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
+			spriteBatch.begin(core.HUD());
 			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, mX, mY, mW, mH, -0.01f, ColorConstants.Debug_Transparent_Magenta);
+			spriteBatch.end();
 		}
 
 		final int lNumChildEntries = mChildWidgets.size();
@@ -185,21 +187,21 @@ public class UiHorizontalEntryGroup extends UIWidget {
 			lWeightTotal += mChildWidgets.get(i).layoutWeight();
 		}
 		final float lWeightCoefficient = lWeightTotal == 0.f ? 0.f : 1.f / lWeightTotal;
-		
+
 		final float lContentWidth = mW;
 		final float lSpacingW = 5.0f;
-		
+
 		final float lAdjustedContentWidth = lContentWidth - lSpacingW * 2.f - lChildEntryCount * lSpacingW;
 		float xx = mX + lSpacingW;
 		for (int i = 0; i < lChildEntryCount; i++) {
 			final var lWidget = mChildWidgets.get(i);
-			
+
 			final float lAdjustedWeight = lWidget.layoutWeight() * lWeightCoefficient;
-			final float lAdjustedWidth = lAdjustedContentWidth * lAdjustedWeight; 
+			final float lAdjustedWidth = lAdjustedContentWidth * lAdjustedWeight;
 			lWidget.setPosition(xx, mY);
 			lWidget.width(lAdjustedWidth);
 			lWidget.height(mH);
-			
+
 			xx += lAdjustedWidth + lSpacingW;
 		}
 	}

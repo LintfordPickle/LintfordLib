@@ -24,10 +24,10 @@ import net.lintfordlib.core.input.mouse.IInputProcessor;
 import net.lintfordlib.core.maths.Vector3f;
 import net.lintfordlib.core.messaging.Message;
 import net.lintfordlib.renderers.ZLayers;
-import net.lintfordlib.renderers.windows.components.IScrollBarArea;
 import net.lintfordlib.renderers.windows.components.ScrollBar;
 import net.lintfordlib.renderers.windows.components.ScrollBarContentRectangle;
 import net.lintfordlib.renderers.windows.components.UiInputText;
+import net.lintfordlib.renderers.windows.components.interfaces.IScrollBarArea;
 
 public class DebugConsole extends Rectangle implements IBufferedTextInputCallback, IScrollBarArea, IInputProcessor {
 

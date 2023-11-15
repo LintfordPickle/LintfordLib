@@ -115,7 +115,6 @@ public class UiIconToggleButton extends UIWidget {
 
 			if (mClickTimer > CLICK_TIMER) {
 				if (core.input().mouse().tryAcquireMouseLeftClick(hashCode())) {
-					// Callback to the listener and pass our ID
 					if (mCallback != null) {
 						mCallback.menuEntryOnClick(core.input(), mEntryUid);
 					}
@@ -148,30 +147,36 @@ public class UiIconToggleButton extends UIWidget {
 		if (!mIsVisible)
 			return;
 
-		if (mButtonSolidColorBackground) {
+		if (mButtonSolidColorBackground)
 			drawSolidColorBackground(core, spriteBatch, coreSpritesheetDefinition);
-		} else if (mButtonTexture != null) {
+		else if (mButtonTexture != null)
 			drawTextureBackground(core, spriteBatch);
-		}
 
 		if (mDrawButtonText && mButtonLabel != null && mButtonLabel.length() > 0) {
 			final float lTextWidth = textFont.getStringWidth(mButtonLabel);
+
+			textFont.begin(core.HUD());
 			textFont.drawText(mButtonLabel, mX + mW / 2f - lTextWidth / 2f, mY + mH / 2f - textFont.fontHeight() / 2f, componentZDepth, ColorConstants.WHITE, 1f);
+			textFont.end();
 		}
 	}
 
 	private void drawSolidColorBackground(LintfordCore core, SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheet) {
-		final float lColorMod = mHoveredOver ? mHoveredOver ? .9f : 1.f : .3f;
+		final var lColorMod = mHoveredOver ? mHoveredOver ? .9f : 1.f : .3f;
 		final var lColor = ColorConstants.getColorWithRGBMod(entityColor, lColorMod);
 
+		spriteBatch.begin(core.HUD());
 		spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX, mY, mW, mH, -1.0f, lColor);
+		spriteBatch.end();
 	}
 
-	private void drawTextureBackground(LintfordCore pCore, SpriteBatch pSpriteBatch) {
+	private void drawTextureBackground(LintfordCore core, SpriteBatch spriteBatch) {
 		final var lColorMod = mHoveredOver ? .5f : 1.f;
 		final var lColor = ColorConstants.getColorWithRGBMod(entityColor, lColorMod);
 
-		pSpriteBatch.draw(mButtonTexture, mSourceFrameIndex, mX, mY, mW, mH, -1.0f, lColor);
+		spriteBatch.begin(core.HUD());
+		spriteBatch.draw(mButtonTexture, mSourceFrameIndex, mX, mY, mW, mH, -1.0f, lColor);
+		spriteBatch.end();
 	}
 
 	// --------------------------------------

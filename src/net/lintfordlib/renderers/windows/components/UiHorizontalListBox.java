@@ -11,6 +11,7 @@ import net.lintfordlib.core.graphics.batching.TextureBatch9Patch;
 import net.lintfordlib.core.graphics.fonts.FontUnit;
 import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintfordlib.renderers.windows.UiWindow;
+import net.lintfordlib.renderers.windows.components.interfaces.IScrollBarArea;
 
 public class UiHorizontalListBox extends UIWidget implements IScrollBarArea {
 
@@ -121,12 +122,11 @@ public class UiHorizontalListBox extends UIWidget implements IScrollBarArea {
 
 	@Override
 	public void draw(LintfordCore core, SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheetDefinition, FontUnit textFont, float componentZDepth) {
+		spriteBatch.begin(core.HUD());
 		TextureBatch9Patch.drawBackground(core, spriteBatch, coreSpritesheetDefinition, 32, (int) mX, (int) mY, (int) mW, (int) mH, ColorConstants.WHITE, false, componentZDepth);
-
 		spriteBatch.end();
-		textFont.end();
 
-		mContentArea.preDraw(core, spriteBatch, coreSpritesheetDefinition);
+		mContentArea.preDraw(core, spriteBatch);
 
 		spriteBatch.begin(core.HUD());
 		textFont.begin(core.HUD());
@@ -135,20 +135,8 @@ public class UiHorizontalListBox extends UIWidget implements IScrollBarArea {
 		final var lNumAssets = mItems.size();
 		for (int i = 0; i < lNumAssets; i++) {
 			final var lAssetItemToRender = mItems.get(i);
-//			if (lAssetItemToRender.spriteSheetDefinition == null) {
-//				lAssetItemToRender.spriteSheetDefinition = core.resources().spriteSheetManager().getSpriteSheet(null, mEntityGroupUid);
-//			}
 
 			lAssetPositionX += mAssetSeparation;
-
-			// final var lSsDef = lAssetItemToRender.spriteSheetDefinition;
-
-//			if (i == mSelectedItemIndex) {
-//				final var lSelectedBackgroundColor = ColorConstants.getWhiteWithAlpha(0.4f);
-//				spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, lAssetPositionX - mAssetSeparation, mY + 2.f, 32 + mAssetSeparation * 2.f, 64, componentZDepth, lSelectedBackgroundColor);
-//			}
-
-			// spriteBatch.draw(lSsDef, lSsDef.getSpriteFrame(lAssetItemToRender.spriteName), lAssetPositionX, mY + 8, mAssetSize, mAssetSize, -0.01f, ColorConstants.WHITE);
 			textFont.drawText(lAssetItemToRender.displayName, lAssetPositionX, mY + 32 + 20, componentZDepth, 0.5f);
 
 			lAssetPositionX += mAssetSize + mAssetSeparation;
@@ -158,9 +146,6 @@ public class UiHorizontalListBox extends UIWidget implements IScrollBarArea {
 		textFont.end();
 
 		mContentArea.postDraw(core);
-
-		spriteBatch.begin(core.HUD());
-		textFont.begin(core.HUD());
 
 		mScrollbar.draw(core, spriteBatch, coreSpritesheetDefinition, componentZDepth);
 

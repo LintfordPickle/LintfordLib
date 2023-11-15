@@ -108,16 +108,16 @@ public class UITextButton extends UIWidget {
 
 	@Override
 	public void draw(LintfordCore core, SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheet, FontUnit textFont, float componentZDepth) {
-		final float lColorMod = mHoveredOver ? .3f : 1.f;
+		final var lColorMod = mHoveredOver ? .3f : 1.f;
 		final var lColor = ColorConstants.getColorWithRGBMod(ColorConstants.PrimaryColor, lColorMod);
 
-		// Draw the button background
+		spriteBatch.begin(core.HUD());
 		spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX, mY, 32, 32, componentZDepth, lColor);
+		spriteBatch.end();
 
 		final var lFontRenderer = mParentWindow.rendererManager().uiTextFont();
-
 		final var lButtonText = mButtonLabel != null ? mButtonLabel : NO_LABEL_TEXT;
-		final float lTextWidth = lFontRenderer.getStringWidth(lButtonText);
+		final var lTextWidth = lFontRenderer.getStringWidth(lButtonText);
 
 		lFontRenderer.drawText(lButtonText, mX + mW / 2f - lTextWidth / 2f, mY + mH / 2f - lFontRenderer.fontHeight() / 4f, componentZDepth, ColorConstants.WHITE, 1f);
 	}

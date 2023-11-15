@@ -135,18 +135,24 @@ public class UiIntSlider extends UIWidget {
 
 	@Override
 	public void draw(LintfordCore core, SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheetDefinition, FontUnit textFont, float componentZDepth) {
-		final float SLIDER_RAIL_HEIGHT = 4;
-		final float SLIDER_WIDTH = 10;
+		final var lSliderRailHeight = 4.f;
+		final var lSliderWidth = 10.f;
 
 		final var lBackgroundColor = mIsEnabled ? ColorConstants.getColorWithRGBMod(ColorConstants.PrimaryColor, 1.f) : ColorConstants.getBlackWithAlpha(.4f);
-		spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, mX, mY + textFont.fontHeight() + mH / 2 - SLIDER_RAIL_HEIGHT / 2, mW, SLIDER_RAIL_HEIGHT, 0f, lBackgroundColor);
 		final var lNubbinColor = mIsEnabled ? ColorConstants.getColorWithRGBMod(ColorConstants.TertiaryColor, 1.f) : ColorConstants.getBlackWithAlpha(.4f);
-		spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, mX + mCurrentRelPosition - SLIDER_WIDTH / 2, mY + +textFont.fontHeight() + mH / 4, SLIDER_WIDTH, mH / 2, 0f, lNubbinColor);
 
+		spriteBatch.begin(core.HUD());
+		spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, mX, mY + textFont.fontHeight() + mH / 2 - lSliderRailHeight / 2, mW, lSliderRailHeight, 0f, lBackgroundColor);
+		spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, mX + mCurrentRelPosition - lSliderWidth / 2, mY + +textFont.fontHeight() + mH / 4, lSliderWidth, mH / 2, 0f, lNubbinColor);
+		spriteBatch.end();
+
+		final var lQtyLabel = Integer.toString(mCurrentValue) + ((mQtyPostFix != null && mQtyPostFix.length() > 0) ? mQtyPostFix : "");
+		final var lQuantyTextWidth = textFont.getStringWidth(lQtyLabel);
+
+		textFont.begin(core.HUD());
 		textFont.drawText(mSliderLabel, mX, mY, componentZDepth, ColorConstants.WHITE, 1.f);
-		final String lQtyLabel = Integer.toString(mCurrentValue) + ((mQtyPostFix != null && mQtyPostFix.length() > 0) ? mQtyPostFix : "");
-		final float lQuantyTextWidth = textFont.getStringWidth(lQtyLabel);
 		textFont.drawText(lQtyLabel, mX + mW - lQuantyTextWidth, mY, componentZDepth, ColorConstants.WHITE, 1.f);
+		textFont.end();
 	}
 
 	// --------------------------------------

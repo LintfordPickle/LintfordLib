@@ -1,4 +1,4 @@
-package net.lintfordlib.renderers.windows.components;
+package net.lintfordlib.renderers.windows.components.interfaces;
 
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.geometry.Rectangle;
@@ -9,6 +9,7 @@ import net.lintfordlib.core.graphics.fonts.FontUnit;
 import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
 import net.lintfordlib.core.input.mouse.IInputProcessor;
+import net.lintfordlib.renderers.windows.components.UiIconFilter;
 
 public class IconIntFilter implements IInputProcessor {
 
@@ -98,6 +99,8 @@ public class IconIntFilter implements IInputProcessor {
 		final var lColorMod = mEnabled ? 1.f : .8f;
 		final var lColor = ColorConstants.getColorWithRGBMod(ColorConstants.WHITE, lColorMod);
 
+		spriteBatch.begin(core.HUD());
+
 		if (mEnabled) {
 			spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_BLUE, mUIDstRectangle.x() - 2, mUIDstRectangle.y() - 2, mUIDstRectangle.width() + 4, mUIDstRectangle.height() + 6, -0.5f, lColor);
 		} else {
@@ -112,10 +115,13 @@ public class IconIntFilter implements IInputProcessor {
 		}
 
 		spriteBatch.draw(mIconSpritesheetDefinition, mIconSpriteFrameIndex, mUIDstRectangle, componentZDepth, lColor);
+		spriteBatch.end();
 
 		if (mHoveredOver) {
 			final float lTextHalfW = textFont.getStringWidth(mFilterName) / 2;
+			textFont.begin(core.HUD());
 			textFont.drawText(mFilterName, mUIDstRectangle.x() + 16 - lTextHalfW, mUIDstRectangle.y() - 19, componentZDepth, ColorConstants.WHITE, 1f);
+			textFont.end();
 		}
 	}
 

@@ -1,6 +1,7 @@
-package net.lintfordlib.renderers.windows.components;
+package net.lintfordlib.renderers.windows.components.interfaces;
 
 import net.lintfordlib.core.geometry.Rectangle;
+import net.lintfordlib.renderers.windows.components.ScrollBarContentRectangle;
 
 public interface IScrollBarArea {
 

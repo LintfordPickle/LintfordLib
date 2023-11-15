@@ -39,11 +39,11 @@ public class UiButton extends UIWidget {
 	}
 
 	public int buttonListenerID() {
-		return mUiWidgetUid;
+		return mUiWidgetListenerUid;
 	}
 
 	public void buttonListenerID(final int pNewLabel) {
-		mUiWidgetUid = pNewLabel;
+		mUiWidgetListenerUid = pNewLabel;
 	}
 
 	// --------------------------------------
@@ -57,7 +57,7 @@ public class UiButton extends UIWidget {
 		mW = 200;
 		mH = 25;
 	}
-	
+
 	public UiButton(final UiWindow pParentWindow, String labelText) {
 		this(pParentWindow);
 
@@ -82,9 +82,9 @@ public class UiButton extends UIWidget {
 				mIsClicked = true;
 				final var MINIMUM_CLICK_TIMER = 200;
 
-				if (mCallback != null && mClickTimer > MINIMUM_CLICK_TIMER) {
+				if (mUiWidgetListenerCallback != null && mClickTimer > MINIMUM_CLICK_TIMER) {
 					mClickTimer = 0;
-					mCallback.widgetOnClick(core.input(), mUiWidgetUid);
+					mUiWidgetListenerCallback.widgetOnClick(core.input(), mUiWidgetListenerUid);
 
 					return true;
 				}
@@ -115,18 +115,22 @@ public class UiButton extends UIWidget {
 
 		final var lColor = ColorConstants.getColorWithRGBMod(entityColor, lColorMod);
 
+		spriteBatch.begin(core.HUD());
 		final var lTileSize = 32;
-		if(mW < lTileSize) {
+		if (mW < lTileSize) {
 			spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X1_MID, mX, mY, mW, mH, componentZDepth, lColor);
 		} else {
 			spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X1_LEFT, mX, mY, lTileSize, mH, componentZDepth, lColor);
 			spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X1_MID, mX + lTileSize, mY, mW - lTileSize * 2, mH, componentZDepth, lColor);
 			spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X1_RIGHT, mX + mW - lTileSize, mY, lTileSize, mH, componentZDepth, lColor);
 		}
+		spriteBatch.end();
 
 		final var lButtonText = mButtonLabel != null ? mButtonLabel : NO_LABEL_TEXT;
 		final var lTextWidth = textFont.getStringWidth(lButtonText);
 
+		textFont.begin(core.HUD());
 		textFont.drawText(lButtonText, mX + mW / 2f - lTextWidth / 2f, mY + mH / 2f - textFont.fontHeight() / 2f, componentZDepth, ColorConstants.WHITE, 1.f);
+		textFont.end();
 	}
 }

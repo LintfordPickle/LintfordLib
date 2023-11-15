@@ -69,7 +69,6 @@ public class UiLabelledFloat extends UIWidget {
 		final boolean lIsMouseHovering = intersectsAA(lMouseX, lMouseY);
 
 		if (lIsMouseHovering) {
-			// Renders the background of the input text widget
 			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_LEFT, mX, mY, 32, mH, componentZDepth, ColorConstants.MenuPanelPrimaryColor);
 			if (mW > 32) {
 				spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_MID, mX + 32, mY, mW - 64, mH, componentZDepth, ColorConstants.MenuPanelPrimaryColor);
@@ -77,10 +76,12 @@ public class UiLabelledFloat extends UIWidget {
 			}
 		}
 
-		final float lTextHeight = textFont.fontHeight();
-		textFont.drawText(mLabelText, mX + lHorizontalPadding, mY + mH / 2.f - lTextHeight / 2.f, componentZDepth, ColorConstants.TextEntryColor, 1f, -1);
+		final var lTextHeight = textFont.fontHeight();
+		final var lValueWidth = textFont.getStringWidth(Float.toString(mValueFloat));
 
-		final float lValueWidth = textFont.getStringWidth(Float.toString(mValueFloat));
+		textFont.begin(core.HUD());
+		textFont.drawText(mLabelText, mX + lHorizontalPadding, mY + mH / 2.f - lTextHeight / 2.f, componentZDepth, ColorConstants.TextEntryColor, 1f, -1);
 		textFont.drawText(Float.toString(mValueFloat), mX + mW - lValueWidth - lHorizontalPadding, mY + mH / 2 - lTextHeight / 2, componentZDepth, ColorConstants.TextEntryColor, 1f, -1);
+		textFont.end();
 	}
 }

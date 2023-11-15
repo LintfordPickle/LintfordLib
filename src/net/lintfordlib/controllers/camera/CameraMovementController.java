@@ -85,37 +85,38 @@ public class CameraMovementController extends BaseController {
 	// ---------------------------------------------
 
 	@Override
-	public void initialize(LintfordCore pCore) {
-		System.out.println("f");
+	public void initialize(LintfordCore core) {
+		super.initialize(core);
 	}
 
 	@Override
-	public boolean handleInput(LintfordCore pCore) {
+	public boolean handleInput(LintfordCore core) {
 		if (mGameCamera == null)
 			return false;
 
-		final float lElapsed = (float) pCore.appTime().elapsedTimeMilli() * 0.001f;
+		final float lElapsed = (float) core.appTime().elapsedTimeMilli() * 0.001f;
 		final float lOneOverCameraZoom = mGameCamera.getZoomFactorOverOne();
 		final float speed = CAMERA_MAN_MOVE_SPEED * lOneOverCameraZoom;
 
-		if (pCore.input().keyboard().isKeyDown(GLFW.GLFW_KEY_LEFT_CONTROL))
+		if (core.input().keyboard().isKeyDown(GLFW.GLFW_KEY_LEFT_CONTROL))
 			return false; // editor controls
-		if (pCore.input().keyboard().isKeyDown(GLFW.GLFW_KEY_A)) {
+
+		if (core.input().keyboard().isKeyDown(GLFW.GLFW_KEY_A)) {
 			mVelocity.x -= speed * lElapsed;
 			mPointToFollow = null; // stop auto follow
 
 		}
-		if (pCore.input().keyboard().isKeyDown(GLFW.GLFW_KEY_D)) {
+		if (core.input().keyboard().isKeyDown(GLFW.GLFW_KEY_D)) {
 			mVelocity.x += speed * lElapsed;
 			mPointToFollow = null; // stop auto follow
 
 		}
-		if (pCore.input().keyboard().isKeyDown(GLFW.GLFW_KEY_S)) {
+		if (core.input().keyboard().isKeyDown(GLFW.GLFW_KEY_S)) {
 			mVelocity.y += speed * lElapsed;
 			mPointToFollow = null; // stop auto follow
 
 		}
-		if (pCore.input().keyboard().isKeyDown(GLFW.GLFW_KEY_W)) {
+		if (core.input().keyboard().isKeyDown(GLFW.GLFW_KEY_W)) {
 			mVelocity.y -= speed * lElapsed;
 			mPointToFollow = null; // stop auto follow
 
@@ -124,7 +125,7 @@ public class CameraMovementController extends BaseController {
 	}
 
 	@Override
-	public void update(LintfordCore pCore) {
+	public void update(LintfordCore core) {
 		if (mGameCamera == null)
 			return;
 
@@ -142,7 +143,7 @@ public class CameraMovementController extends BaseController {
 			if (mVelocity.y > CAMERA_MAN_MOVE_SPEED_MAX)
 				mVelocity.y = CAMERA_MAN_MOVE_SPEED_MAX;
 
-			float elapsed = (float) pCore.appTime().elapsedTimeMilli();
+			float elapsed = (float) core.appTime().elapsedTimeMilli();
 
 			// Applys
 			float lCurX = mGameCamera.getPosition().x;
@@ -150,22 +151,22 @@ public class CameraMovementController extends BaseController {
 			if (mPlayArea != null && !mPlayArea.isEmpty()) {
 				if (lCurX - mGameCamera.getWidth() * .5f < mPlayArea.left()) {
 					lCurX = mPlayArea.left() + mGameCamera.getWidth() * .5f;
-					if (pCore.input().keyboard().isKeyDown(GLFW.GLFW_KEY_A)) // kill velocity
+					if (core.input().keyboard().isKeyDown(GLFW.GLFW_KEY_A)) // kill velocity
 						mVelocity.x = 0;
 				}
 				if (lCurX + mGameCamera.getWidth() * .5f > mPlayArea.right()) {
 					lCurX = mPlayArea.right() - mGameCamera.getWidth() * .5f;
-					if (pCore.input().keyboard().isKeyDown(GLFW.GLFW_KEY_D)) // kill velocity
+					if (core.input().keyboard().isKeyDown(GLFW.GLFW_KEY_D)) // kill velocity
 						mVelocity.x = 0;
 				}
 				if (lCurY - mGameCamera.getHeight() * .5f < mPlayArea.top()) {
 					lCurY = mPlayArea.top() + mGameCamera.getHeight() * .5f;
-					if (pCore.input().keyboard().isKeyDown(GLFW.GLFW_KEY_W)) // kill velocity
+					if (core.input().keyboard().isKeyDown(GLFW.GLFW_KEY_W)) // kill velocity
 						mVelocity.y = 0;
 				}
 				if (lCurY + mGameCamera.getHeight() * .5f > mPlayArea.bottom()) {
 					lCurY = mPlayArea.bottom() - mGameCamera.getHeight() * .5f;
-					if (pCore.input().keyboard().isKeyDown(GLFW.GLFW_KEY_S)) // kill velocity
+					if (core.input().keyboard().isKeyDown(GLFW.GLFW_KEY_S)) // kill velocity
 						mVelocity.y = 0;
 				}
 			}

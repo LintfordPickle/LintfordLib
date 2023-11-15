@@ -69,19 +69,25 @@ public class UiLabelledString extends UIWidget {
 		final boolean lIsMouseHovering = intersectsAA(lMouseX, lMouseY);
 
 		if (lIsMouseHovering) {
+			spriteBatch.begin(core.HUD());
 			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_LEFT, mX, mY, 32, mH, componentZDepth, ColorConstants.MenuPanelPrimaryColor);
 			if (mW > 32) {
 				spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_MID, mX + 32, mY, mW - 64, mH, componentZDepth, ColorConstants.MenuPanelPrimaryColor);
 				spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_RIGHT, mX + mW - 32, mY, 32, mH, componentZDepth, ColorConstants.MenuPanelPrimaryColor);
 			}
+			spriteBatch.end();
 		}
 
-		final float lTextHeight = textFont.fontHeight();
+		final var lTextHeight = textFont.fontHeight();
+
+		textFont.begin(core.HUD());
 		textFont.drawText(mLabelText, mX + lHorizontalPadding, mY + mH / 2 - lTextHeight / 2, componentZDepth, ColorConstants.TextEntryColor, 1f, -1);
 
 		if (mValueString != null && mValueString.length() > 0) {
-			final float lValueWidth = textFont.getStringWidth(mValueString);
+			final var lValueWidth = textFont.getStringWidth(mValueString);
 			textFont.drawText(mValueString, mX + mW - lValueWidth - lHorizontalPadding, mY + mH / 2 - lTextHeight / 2, componentZDepth, ColorConstants.TextEntryColor, 1f, -1);
 		}
+
+		textFont.end();
 	}
 }

@@ -18,10 +18,10 @@ import net.lintfordlib.core.maths.MathHelper;
 import net.lintfordlib.renderers.BaseRenderer;
 import net.lintfordlib.renderers.RendererManager;
 import net.lintfordlib.renderers.ZLayers;
-import net.lintfordlib.renderers.windows.components.IScrollBarArea;
 import net.lintfordlib.renderers.windows.components.ScrollBar;
 import net.lintfordlib.renderers.windows.components.ScrollBarContentRectangle;
 import net.lintfordlib.renderers.windows.components.UIWidget;
+import net.lintfordlib.renderers.windows.components.interfaces.IScrollBarArea;
 
 public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowChangeListener, IInputProcessor {
 
@@ -97,11 +97,11 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 	public boolean drawWindowBackground() {
 		return mDrawWindowBackground;
 	}
-	
+
 	public void drawWindowBackground(boolean drawWindowBackground) {
 		mDrawWindowBackground = drawWindowBackground;
 	}
-	
+
 	public HudLayoutController uiStructureController() {
 		return mUiStructureController;
 	}
@@ -405,28 +405,27 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 		final var lSpritebatch = mRendererManager.uiSpriteBatch();
 		final var lWindowColor = ColorConstants.getWhiteWithAlpha(mWindowAlpha);
 
-		final int x = (int) mWindowArea.x();
-		final int y = (int) mWindowArea.y();
-		final int w = (int) mWindowArea.width();
-		final int h = (int) mWindowArea.height();
+		final var x = (int) mWindowArea.x();
+		final var y = (int) mWindowArea.y();
+		final var w = (int) mWindowArea.width();
+		final var h = (int) mWindowArea.height();
 
 		// Draw the window background
-		if(mDrawWindowBackground) {
+		if (mDrawWindowBackground) {
 			lSpritebatch.begin(core.HUD());
 			TextureBatch9Patch.drawBackground(core, lSpritebatch, mCoreSpritesheet, 32, x, y, w, h, lWindowColor, false, -0.01f);
 			lSpritebatch.end();
 		}
 
-
-		float lTitleX = mWindowArea.x() + 5.f;
-		float lTitleY = mWindowArea.y() + 5.f;
+		final var lTitleX = mWindowArea.x() + 5.f;
+		final var lTitleY = mWindowArea.y() + 5.f;
 
 		if (mWindowTitle != null) {
 			lUiHeaderFont.begin(core.HUD());
 			lUiHeaderFont.drawText(mWindowTitle, lTitleX, lTitleY + getTitleBarHeight() * .5f - lUiHeaderFont.fontHeight() * .5f + 3.f, -0.01f, ColorConstants.WHITE, 1f);
 			lUiHeaderFont.end();
 		}
-		
+
 		lSpritebatch.begin(core.HUD());
 
 		if (mScrollBar.scrollBarEnabled())
