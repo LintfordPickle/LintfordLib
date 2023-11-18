@@ -1,5 +1,7 @@
 package net.lintfordlib.renderers.windows.components;
 
+import org.lwjgl.glfw.GLFW;
+
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.geometry.Rectangle;
 import net.lintfordlib.core.graphics.ColorConstants;
@@ -191,7 +193,6 @@ public class UiInputInteger extends UIWidget implements IBufferedTextInputCallba
 	public void draw(LintfordCore core, SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheetDefinition, FontUnit textFont, float componentZDepth) {
 
 		spriteBatch.begin(core.HUD());
-
 		spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_LEFT, (int) mX, mY, 32, mH, componentZDepth, ColorConstants.MenuPanelPrimaryColor);
 		if (mW > 32) {
 			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_MID, (int) mX + 32, mY, mW - 64, mH, componentZDepth, ColorConstants.MenuPanelPrimaryColor);
@@ -200,8 +201,9 @@ public class UiInputInteger extends UIWidget implements IBufferedTextInputCallba
 
 		final var lEraserColor = mCancelRectHovered ? ColorConstants.WHITE : ColorConstants.getWhiteWithAlpha(.5f);
 		spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_ERASER, mCancelRectangle, componentZDepth, lEraserColor);
+		spriteBatch.end();
 
-		final float lInputTextWidth = textFont.getStringWidth(mInputField.toString());
+		final var lInputTextWidth = textFont.getStringWidth(mInputField.toString());
 
 		var lText = mInputField.toString();
 		final float lTextHeight = textFont.fontHeight();
@@ -219,9 +221,9 @@ public class UiInputInteger extends UIWidget implements IBufferedTextInputCallba
 		textFont.drawText(lText, mX + 10, mY + mH * .5f - lTextHeight * .5f, componentZDepth, ColorConstants.TextEntryColor, lScale, FontUnit.NO_WORD_WRAP);
 		textFont.end();
 		if (mShowCaret && mHasFocus) {
+			spriteBatch.begin(core.HUD());
 			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, mX + lInputTextWidth + 10, mY + mH * .5f - lTextHeight * .5f, textFont.fontHeight() / 2.f, textFont.fontHeight(), componentZDepth, ColorConstants.WHITE);
 		}
-		spriteBatch.end();
 
 	}
 
@@ -251,11 +253,6 @@ public class UiInputInteger extends UIWidget implements IBufferedTextInputCallba
 	}
 
 	@Override
-	public StringBuilder getStringBuilder() {
-		return mInputField;
-	}
-
-	@Override
 	public boolean onEnterPressed() {
 		mHasFocus = false;
 		mShowCaret = false;
@@ -264,7 +261,20 @@ public class UiInputInteger extends UIWidget implements IBufferedTextInputCallba
 	}
 
 	@Override
+	public StringBuilder getStringBuilder() {
+		return mInputField;
+	}
+
+	@Override
 	public void onKeyPressed(int codePoint) {
+		if (codePoint == GLFW.GLFW_KEY_BACKSPACE) {
+			if (mInputField.length() > 0) {
+				mInputField.delete(mInputField.length() - 1, mInputField.length());
+			}
+		} else {
+			mInputField.append((char) codePoint);
+		}
+
 		mStringLength = mInputField.length();
 
 		if (mIUiInputKeyPressCallback != null) {

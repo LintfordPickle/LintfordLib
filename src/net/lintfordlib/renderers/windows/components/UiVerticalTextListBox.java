@@ -199,8 +199,7 @@ public class UiVerticalTextListBox extends UIWidget implements IScrollBarArea {
 			final var lTextPosX = lAssetPositionX + 5.f;
 			final var lTextPosY = lAssetPositionY + mAssetHeightInpx * .5f - textFont.fontHeight() * .5f;
 
-			String lDisplayText = lItemToRender.iconChar != 0 ? "|" + String.valueOf(lItemToRender.iconChar) + "| " : "";
-			lDisplayText += lItemToRender.displayName != null ? lItemToRender.displayName : String.valueOf(lItemToRender.itemUid);
+			final var lDisplayText = lItemToRender.displayName != null ? lItemToRender.displayName : String.valueOf(lItemToRender.itemUid);
 			textFont.drawText(lDisplayText, lTextPosX, lTextPosY, componentZDepth, 1.f);
 
 			lAssetPositionY += mAssetHeightInpx + mVerticalAssetSeparationInPx;

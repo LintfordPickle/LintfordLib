@@ -109,8 +109,8 @@ class BitmapFontDefinition {
 
 			lWidth += lGlyph.width() * textScale;
 		}
-		
-		if(lWidth > maxWidthFound)
+
+		if (lWidth > maxWidthFound)
 			maxWidthFound = lWidth;
 
 		return maxWidthFound;
@@ -147,6 +147,8 @@ class BitmapFontDefinition {
 		mEntityGroupUid = entityGroupUid;
 
 		final var lTextureManager = resourceManager.textureManager();
+
+		// TODO: Where is mUseSubPixelRendering actuall set from (json)?
 		final var lFilteringMode = mUseSubPixelRendering ? GL11.GL_LINEAR : GL11.GL_NEAREST;
 		mTexture = lTextureManager.getTextureOrLoad(mTextureName, mTextureFilepath, lFilteringMode, mEntityGroupUid);
 

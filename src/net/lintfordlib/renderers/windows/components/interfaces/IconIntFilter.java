@@ -108,8 +108,8 @@ public class IconIntFilter implements IInputProcessor {
 		}
 
 		if (mHoveredOver) {
-			final float lTextHalfW = textFont.getStringWidth(mFilterName) / 2;
-			final float lTextHeight = textFont.fontHeight();
+			final var lTextHalfW = textFont.getStringWidth(mFilterName) / 2;
+			final var lTextHeight = textFont.fontHeight();
 
 			spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_RED, mUIDstRectangle.x() + 16 - lTextHalfW, mUIDstRectangle.y() - 19, lTextHalfW * 2 + 4, lTextHeight, componentZDepth, ColorConstants.WHITE);
 		}
@@ -118,7 +118,7 @@ public class IconIntFilter implements IInputProcessor {
 		spriteBatch.end();
 
 		if (mHoveredOver) {
-			final float lTextHalfW = textFont.getStringWidth(mFilterName) / 2;
+			final var lTextHalfW = textFont.getStringWidth(mFilterName) / 2;
 			textFont.begin(core.HUD());
 			textFont.drawText(mFilterName, mUIDstRectangle.x() + 16 - lTextHalfW, mUIDstRectangle.y() - 19, componentZDepth, ColorConstants.WHITE, 1f);
 			textFont.end();

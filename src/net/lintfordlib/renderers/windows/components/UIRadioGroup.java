@@ -73,10 +73,17 @@ public class UIRadioGroup extends UIWidget implements EntryInteractions {
 
 	@Override
 	public void draw(LintfordCore core, SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheet, FontUnit textFont, float componentZDepth) {
+
+		spriteBatch.begin(core.HUD());
+		textFont.begin(core.HUD());
+
 		final int lButtonCount = mButtons.size();
 		for (int i = 0; i < lButtonCount; i++) {
 			mButtons.get(i).draw(core, spriteBatch, coreSpritesheet, textFont, componentZDepth);
 		}
+
+		spriteBatch.end();
+		textFont.end();
 	}
 
 	// --------------------------------------

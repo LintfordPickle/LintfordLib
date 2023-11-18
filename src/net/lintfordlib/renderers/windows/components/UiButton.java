@@ -111,8 +111,7 @@ public class UiButton extends UIWidget {
 		if (!mIsVisible)
 			return;
 
-		final float lColorMod = !mIsEnabled ? .4f : mIsHoveredOver ? .9f : 1.f;
-
+		final var lColorMod = !mIsEnabled ? .4f : mIsHoveredOver ? .9f : 1.f;
 		final var lColor = ColorConstants.getColorWithRGBMod(entityColor, lColorMod);
 
 		spriteBatch.begin(core.HUD());
@@ -130,7 +129,7 @@ public class UiButton extends UIWidget {
 		final var lTextWidth = textFont.getStringWidth(lButtonText);
 
 		textFont.begin(core.HUD());
-		textFont.drawText(lButtonText, mX + mW / 2f - lTextWidth / 2f, mY + mH / 2f - textFont.fontHeight() / 2f, componentZDepth, ColorConstants.WHITE, 1.f);
+		textFont.drawText(lButtonText, mX + mW / 2f - lTextWidth / 2f, (int) (mY + mH / 2f - textFont.fontHeight() / 2f), componentZDepth, ColorConstants.WHITE, 1.f);
 		textFont.end();
 	}
 }

@@ -11,10 +11,6 @@ public class UiListBoxItem implements Comparable<UiListBoxItem> {
 
 	public String definitionName;
 	public String displayName;
-	public char iconChar;
-
-	public String spritesheetDefinitionName;
-	public String spriteName;
 
 	// --------------------------------------
 	// Constructor
@@ -33,9 +29,8 @@ public class UiListBoxItem implements Comparable<UiListBoxItem> {
 	// Methods
 	// --------------------------------------
 
-	public void set(String definitionName, String displayName, String spritesheetDefinitionName, String spriteName) {
+	public void set(String definitionName, String displayName) {
 		this.definitionName = definitionName;
-		this.spriteName = spriteName;
 
 		this.displayName = displayName;
 	}

@@ -18,7 +18,7 @@ public class ConstantsDisplay {
 	public static final int MIN_UI_HUD_WIDTH = 800;
 	public static final int MIN_UI_HUD_HEIGHT = 600;
 
-	public static final int MAX_UI_HUD_WIDTH = 1920;
-	public static final int MAX_UI_HUD_HEIGHT = 1080;
+	public static final int MAX_UI_HUD_WIDTH = 3840;
+	public static final int MAX_UI_HUD_HEIGHT = 2160;
 
 }

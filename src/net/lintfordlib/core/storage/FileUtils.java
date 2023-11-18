@@ -6,12 +6,17 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
 
 import net.lintfordlib.core.debug.Debug;
 
@@ -21,20 +26,20 @@ public class FileUtils {
 	// Constants
 	// --------------------------------------
 
-	private static StringBuilder StringBuilder = new StringBuilder();
+	private static final StringBuilder mStringBuilder = new StringBuilder();
 
-	public static final String FILE_SEPARATOR = System.getProperty("file.separator");
-	public static final String NEW_LINE_CHARACTER = System.lineSeparator();
+	public static final String FILE_SEPERATOR = System.getProperty("file.separator");
+	public static final String LINE_SEPERATOR = System.getProperty("line.separator");
 
 	// --------------------------------------
 	// Helper-Methods
 	// --------------------------------------
 
 	private static void clearStringBuilder() {
-		if (StringBuilder.length() == 0)
+		if (mStringBuilder.length() == 0)
 			return;
 
-		StringBuilder.delete(0, StringBuilder.length() - 1);
+		mStringBuilder.delete(0, mStringBuilder.length() - 1);
 	}
 
 	public static String combinePath(String... fileParts) {
@@ -43,15 +48,15 @@ public class FileUtils {
 		if (fileParts.length == 0)
 			return null;
 
-		StringBuilder.append(fileParts[0]);
+		mStringBuilder.append(fileParts[0]);
 
 		final var lPartCount = fileParts.length;
 		for (int i = 1; i < lPartCount; i++) {
-			StringBuilder.append(FILE_SEPARATOR);
-			StringBuilder.append(fileParts[i]);
+			mStringBuilder.append(FILE_SEPERATOR);
+			mStringBuilder.append(fileParts[i]);
 		}
 
-		return StringBuilder.toString();
+		return mStringBuilder.toString();
 	}
 
 	public static String loadString(String resourcepath) {
@@ -77,8 +82,8 @@ public class FileUtils {
 				var lBuffer = "";
 
 				while ((lBuffer = lReader.readLine()) != null) {
-					StringBuilder.append(lBuffer);
-					StringBuilder.append(NEW_LINE_CHARACTER);
+					mStringBuilder.append(lBuffer);
+					mStringBuilder.append(LINE_SEPERATOR);
 				}
 			} finally {
 				if (lReader != null) {
@@ -91,7 +96,7 @@ public class FileUtils {
 			Debug.debugManager().logger().e(FileUtils.class.getSimpleName(), e.getMessage());
 		}
 
-		return StringBuilder.toString();
+		return mStringBuilder.toString();
 	}
 
 	/** Loads a binary file from within the jar and returns its contents as a string. */
@@ -106,8 +111,8 @@ public class FileUtils {
 				var lBuffer = "";
 
 				while ((lBuffer = lReader.readLine()) != null) {
-					StringBuilder.append(lBuffer);
-					StringBuilder.append(NEW_LINE_CHARACTER);
+					mStringBuilder.append(lBuffer);
+					mStringBuilder.append(LINE_SEPERATOR);
 				}
 			} finally {
 				if (lReader != null) {
@@ -119,7 +124,7 @@ public class FileUtils {
 			Debug.debugManager().logger().e(FileUtils.class.getSimpleName(), e.getMessage());
 		}
 
-		return StringBuilder.toString();
+		return mStringBuilder.toString();
 	}
 
 	/** Copies the source folder, and all its contents, to the destination folder. The destination folder is created if it doesn't already exist. */
@@ -212,5 +217,59 @@ public class FileUtils {
 		if (!file.delete()) {
 			throw new FileNotFoundException("Failed to delete file: " + file);
 		}
+	}
+
+	// --------------------------------------
+
+	public static List<File> getListOfFileInDirectory(String directory) {
+		return getListOfFileInDirectory(directory, new FilenameFilter() {
+			@Override
+			public boolean accept(File dir, String name) {
+				return true; // accepts all files
+			}
+		});
+	}
+
+	public static List<File> getListOfFileInDirectory(String directory, String extension) {
+		return getListOfFileInDirectory(directory, new FilenameFilter() {
+			@Override
+			public boolean accept(File dir, String name) {
+				return name.endsWith(extension);
+			}
+		});
+	}
+
+	public static List<File> getListOfFileInDirectory(String directory, FilenameFilter filter) {
+		final var lDirectory = new File(directory);
+		final var lListOfFiles = lDirectory.listFiles(filter);
+
+		if (lListOfFiles == null) {
+			return new ArrayList<File>();
+		}
+
+		return Arrays.asList(lListOfFiles);
+	}
+
+	public static List<File> getListOfFilesInDirectorySortedByDate(String directory, String extension) {
+		return getListOfFilesInDirectorySortedByDate(directory, new FilenameFilter() {
+
+			@Override
+			public boolean accept(File dir, String name) {
+				return name.endsWith(extension);
+			}
+		});
+	}
+
+	public static List<File> getListOfFilesInDirectorySortedByDate(String directory, FilenameFilter filter) {
+		final var lDirectory = new File(directory);
+		final var lFileList = lDirectory.listFiles(filter);
+
+		Arrays.sort(lFileList, new Comparator<File>() {
+			public int compare(File f1, File f2) {
+				return Long.valueOf(f2.lastModified()).compareTo(f1.lastModified());
+			}
+		});
+
+		return Arrays.asList(lFileList);
 	}
 }

@@ -20,8 +20,8 @@ import net.lintfordlib.core.input.IInputClickedFocusTracker;
 import net.lintfordlib.core.rendering.RenderState;
 import net.lintfordlib.options.DisplayManager;
 import net.lintfordlib.options.IResizeListener;
-import net.lintfordlib.renderers.windows.UIWindowChangeListener;
 import net.lintfordlib.renderers.windows.UiWindow;
+import net.lintfordlib.renderers.windows.components.interfaces.UIWindowChangeListener;
 import net.lintfordlib.screenmanager.IInputClickedFocusManager;
 
 public class RendererManager implements IInputClickedFocusManager {

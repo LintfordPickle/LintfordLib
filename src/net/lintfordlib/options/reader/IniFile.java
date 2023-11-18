@@ -12,7 +12,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.lintfordlib.core.debug.Debug;
-import net.lintfordlib.core.storage.AppStorage;
+import net.lintfordlib.core.storage.FileUtils;
 
 /**
  * A class for reading in pKey / pValue pairs from a configuration (*.INI) file.
@@ -183,19 +183,18 @@ public class IniFile {
 
 	public void saveConfig(String pFilename) throws IOException {
 		final var lConfigFile = new File(pFilename);
-		if(lConfigFile.getParentFile().exists() == false) {
+		if (lConfigFile.getParentFile().exists() == false) {
 			Debug.debugManager().logger().i(getClass().getSimpleName(), "Creating config directory: " + lConfigFile.getParentFile());
-			lConfigFile.mkdirs();	
+			lConfigFile.mkdirs();
 		}
-		
-		
+
 		try (BufferedWriter br = new BufferedWriter(new FileWriter(pFilename))) {
 
 			for (Map.Entry<String, Map<String, String>> sectionEntry : mEntries.entrySet()) {
 				String lSectionName = sectionEntry.getKey();
-				br.write("[" + lSectionName + "]" + AppStorage.LINE_SEPERATOR);
+				br.write("[" + lSectionName + "]" + FileUtils.LINE_SEPERATOR);
 				for (Map.Entry<String, String> lineEntry : sectionEntry.getValue().entrySet()) {
-					br.write(lineEntry.getKey() + "=" + lineEntry.getValue() + AppStorage.LINE_SEPERATOR);
+					br.write(lineEntry.getKey() + "=" + lineEntry.getValue() + FileUtils.LINE_SEPERATOR);
 
 				}
 			}

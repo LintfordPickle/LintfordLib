@@ -100,7 +100,7 @@ public class UiButtonToggle extends UIWidget {
 
 	@Override
 	public void draw(LintfordCore core, SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheet, FontUnit textFont, float componentZDepth) {
-		final float lColorMod = mIsToggledOn ? 0.65f : mIsHoveredOver ? .9f : 1.f;
+		final var lColorMod = mIsToggledOn ? 0.65f : mIsHoveredOver ? .9f : 1.f;
 		final var lColor = ColorConstants.getColorWithRGBMod(entityColor, lColorMod);
 
 		final var lTileSize = 32;

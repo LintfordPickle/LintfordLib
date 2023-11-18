@@ -181,6 +181,7 @@ public abstract class LintfordCore {
 	protected final CoreTime mCoreTime = new CoreTime();
 	protected final GameTime mGameTime = new GameTime();
 	protected ControllerManager mControllerManager;
+	protected final AppResources mAppResources = new AppResources();
 	protected ResourceManager mResourceManager;
 	protected CoreTimeController mCoreTimeController;
 	protected ResourceController mResourceController;
@@ -200,6 +201,10 @@ public abstract class LintfordCore {
 
 	public boolean isFixedTimeStep() {
 		return mIsFixedTimeStep;
+	}
+
+	public AppResources appResources() {
+		return mAppResources;
 	}
 
 	/**
@@ -451,7 +456,7 @@ public abstract class LintfordCore {
 	 * Called after the app initialization and resource have been loaded. This is a good time to instantiate any screens or game components that relie on core resources.
 	 */
 	protected void finializeAppSetup() {
-
+		
 	}
 
 	/**

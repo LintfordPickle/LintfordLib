@@ -22,6 +22,7 @@ import net.lintfordlib.renderers.windows.components.ScrollBar;
 import net.lintfordlib.renderers.windows.components.ScrollBarContentRectangle;
 import net.lintfordlib.renderers.windows.components.UIWidget;
 import net.lintfordlib.renderers.windows.components.interfaces.IScrollBarArea;
+import net.lintfordlib.renderers.windows.components.interfaces.UIWindowChangeListener;
 
 public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowChangeListener, IInputProcessor {
 
@@ -426,21 +427,14 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 			lUiHeaderFont.end();
 		}
 
-		lSpritebatch.begin(core.HUD());
-
 		if (mScrollBar.scrollBarEnabled())
 			mScrollBar.draw(core, lSpritebatch, mCoreSpritesheet, Z_DEPTH, mWindowAlpha);
-
-		lTextFont.begin(core.HUD());
 
 		// Draw the window components
 		final int lComponentCount = mComponents.size();
 		for (int i = 0; i < lComponentCount; i++) {
 			mComponents.get(i).draw(core, lSpritebatch, mCoreSpritesheet, lTextFont, ZLayers.LAYER_GAME_UI + ((float) i * 0.001f));
 		}
-
-		lSpritebatch.end();
-		lTextFont.end();
 
 		if (ConstantsApp.getBooleanValueDef("DRAW_UI_BOUNDS", false)) {
 			Debug.debugManager().drawers().drawRectImmediate(core.HUD(), mWindowArea);

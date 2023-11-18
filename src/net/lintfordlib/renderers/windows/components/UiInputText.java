@@ -1,5 +1,7 @@
 package net.lintfordlib.renderers.windows.components;
 
+import org.lwjgl.glfw.GLFW;
+
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.geometry.Rectangle;
 import net.lintfordlib.core.graphics.ColorConstants;
@@ -41,6 +43,8 @@ public class UiInputText extends UIWidget implements IBufferedTextInputCallback 
 	private boolean mCancelRectHovered;
 	private boolean mIsReadonly;
 	private float mTextScale;
+
+	private int mCursorPos;
 
 	// --------------------------------------
 	// Properties
@@ -174,16 +178,42 @@ public class UiInputText extends UIWidget implements IBufferedTextInputCallback 
 
 				onClick(core.input());
 				mHasFocus = true;
+				mCursorPos = mInputField.length();
 
 				return true;
 			}
 		}
 
-		if (mHasFocus && mMouseClickBreaksInputTextFocus && (core.input().mouse().isMouseLeftButtonDownTimed(this) || core.input().mouse().isMouseRightButtonDownTimed(this))) {
-			core.input().keyboard().stopBufferedTextCapture();
+		if (mHasFocus) {
 
-			mHasFocus = false;
-			mShowCaret = false;
+//			if (core.input().keyboard().isKeyDown(GLFW.GLFW_KEY_HOME, this)) {
+//				resetCoolDownTimer();
+//				mCursorPos = 0;
+//			}
+//
+//			if (core.input().keyboard().isKeyDown(GLFW.GLFW_KEY_END, this)) {
+//				resetCoolDownTimer();
+//				mCursorPos = mInputField.length();
+//			}
+//
+//			if (core.input().keyboard().isKeyDown(GLFW.GLFW_KEY_LEFT, this)) {
+//				resetCoolDownTimer();
+//				if (mCursorPos > 0)
+//					mCursorPos--;
+//			}
+//
+//			if (core.input().keyboard().isKeyDown(GLFW.GLFW_KEY_RIGHT, this)) {
+//				resetCoolDownTimer();
+//				if (mCursorPos < mInputField.length())
+//					mCursorPos++;
+//			}
+
+			if (mMouseClickBreaksInputTextFocus && (core.input().mouse().isMouseLeftButtonDownTimed(this) || core.input().mouse().isMouseRightButtonDownTimed(this))) {
+				core.input().keyboard().stopBufferedTextCapture();
+
+				mHasFocus = false;
+				mShowCaret = false;
+			}
 		}
 
 		return false;
@@ -195,10 +225,16 @@ public class UiInputText extends UIWidget implements IBufferedTextInputCallback 
 		if (mIsReadonly)
 			return;
 
+		if (mCursorPos > mInputField.length())
+			mCursorPos = mInputField.length();
+
+		if (mCursorPos > mMaxInputCharacters)
+			mCursorPos = mMaxInputCharacters;
+
 		mCaretFlashTimer += core.appTime().elapsedTimeMilli();
 
 		final int lCancelRectSize = 16;
-		mCancelRectangle.set(mX + mW - lCancelRectSize, mY + mH / 2 - lCancelRectSize / 2, lCancelRectSize, lCancelRectSize);
+		mCancelRectangle.set(mX + mW - lCancelRectSize - 4, mY + mH / 2 - lCancelRectSize / 2, lCancelRectSize, lCancelRectSize);
 
 		if (mHasFocus) {
 			if (mCaretFlashTimer > ConstantsUi.CARET_FLASH_TIME) {
@@ -207,14 +243,12 @@ public class UiInputText extends UIWidget implements IBufferedTextInputCallback 
 			}
 
 			if (mInputField.length() > mMaxInputCharacters)
-				mInputField.delete(mMaxInputCharacters, mInputField.length() - 1);
+				mInputField.delete(mInputField.length() - 2, mInputField.length() - 1);
 		}
 	}
 
 	@Override
 	public void draw(LintfordCore core, SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheetDefinition, FontUnit textFont, float componentZDepth) {
-
-		ContentRectangle.preDraw(core, spriteBatch, this, -0, 1);
 
 		spriteBatch.begin(core.HUD());
 		spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_LEFT, (int) mX, mY, 32, mH, componentZDepth, ColorConstants.MenuPanelPrimaryColor);
@@ -240,20 +274,26 @@ public class UiInputText extends UIWidget implements IBufferedTextInputCallback 
 		if (isReadonly())
 			lTextColor = ColorConstants.GREY_DARK;
 
-		final float lScale = mTextScale;
+		final var lScale = mTextScale;
+		final var lInputTextWidth = textFont.getStringWidth(mInputField.toString());
 
-		final float lInputTextWidth = textFont.getStringWidth(mInputField.toString());
-		final var lIsTextTooLong = (lInputTextWidth + 10) * lScale > (mW - 32);
-		final var lDiff = (lInputTextWidth + 10) * lScale - (mW - 32);
-		final var lTextPosX = lIsTextTooLong ? mX + 10 - lDiff : mX + 10;
+		final var first_part_of_string = mCursorPos > 0 ? mInputField.subSequence(0, mCursorPos) : "";
+		final var carot_position_x = textFont.getStringWidth(first_part_of_string.toString(), lScale);
+
+		final var lIsTextTooLong = carot_position_x > (mW - 32);
+		final var lTextOverlapWithBox = lInputTextWidth - (mW - 32);
+		final var lTextPosX = lIsTextTooLong ? mX - lTextOverlapWithBox : mX;
 
 		if (mShowCaret && mHasFocus) {
-			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, lTextPosX + lInputTextWidth * lScale, mY + mH * .5f - lTextHeight * .5f * lScale, textFont.fontHeight() / 2.f * lScale, textFont.fontHeight() * lScale, componentZDepth, ColorConstants.WHITE);
+			final var lCarotPositionX = lTextPosX + carot_position_x;
+			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, lCarotPositionX + 8, mY + mH * .5f - lTextHeight * .5f * lScale, 1.f, textFont.fontHeight() * lScale, componentZDepth, ColorConstants.WHITE);
 		}
 		spriteBatch.end();
+		final int lCancelRectSize = 16;
+		ContentRectangle.preDraw(core, spriteBatch, mX + 8, mY, mW - lCancelRectSize, mH, -0, 1);
 
 		textFont.begin(core.HUD());
-		textFont.drawText(lText, lTextPosX, mY + mH * .5f - lTextHeight * .5f * lScale, componentZDepth, lTextColor, lScale);
+		textFont.drawText(lText, lTextPosX + 8, mY + mH * .5f - lTextHeight * .5f * lScale, componentZDepth, lTextColor, lScale);
 		textFont.end();
 
 		ContentRectangle.postDraw(core);
@@ -290,11 +330,6 @@ public class UiInputText extends UIWidget implements IBufferedTextInputCallback 
 	}
 
 	@Override
-	public StringBuilder getStringBuilder() {
-		return mInputField;
-	}
-
-	@Override
 	public boolean onEnterPressed() {
 		mHasFocus = false;
 		mShowCaret = false;
@@ -304,6 +339,42 @@ public class UiInputText extends UIWidget implements IBufferedTextInputCallback 
 
 	@Override
 	public void onKeyPressed(int codePoint) {
+		if (codePoint == GLFW.GLFW_KEY_BACKSPACE) {
+			if (mInputField.length() > 0 && mCursorPos > 0) {
+				mInputField.delete(mCursorPos - 1, mCursorPos);
+				mCursorPos--;
+			}
+		}
+
+		else if (codePoint == GLFW.GLFW_KEY_HOME) {
+			mCursorPos = 0;
+		}
+
+		else if (codePoint == GLFW.GLFW_KEY_END) {
+			mCursorPos = mInputField.length();
+		}
+
+		else if (codePoint == GLFW.GLFW_KEY_LEFT) {
+			if (mCursorPos > 0)
+				mCursorPos--;
+			
+			mShowCaret = true;
+			mCaretFlashTimer = 0;
+		}
+
+		else if (codePoint == GLFW.GLFW_KEY_RIGHT) {
+			if (mCursorPos < mInputField.length())
+				mCursorPos++;
+			
+			mShowCaret = true;
+			mCaretFlashTimer = 0;
+		}
+
+		else {
+			mInputField.insert(mCursorPos, (char) codePoint);
+			mCursorPos++;
+		}
+
 		mStringLength = mInputField.length();
 
 		if (mIUiInputKeyPressCallback != null) {
@@ -317,13 +388,17 @@ public class UiInputText extends UIWidget implements IBufferedTextInputCallback 
 	}
 
 	@Override
+	public StringBuilder getStringBuilder() {
+		return mInputField;
+	}
+
+	@Override
 	public boolean onEscapePressed() {
-		if (mInputField.length() > 0) {
+		if (mInputField.length() > 0)
 			mInputField.delete(0, mInputField.length());
-		}
-		if (mTempString != null && mTempString.length() == 0) {
+
+		if (mTempString != null && mTempString.length() == 0)
 			mInputField.append(mTempString);
-		}
 
 		mStringLength = 0;
 

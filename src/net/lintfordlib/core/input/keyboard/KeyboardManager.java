@@ -48,18 +48,10 @@ public class KeyboardManager {
 							stopBufferedTextCapture();
 						}
 					}
-
-					else if (key == GLFW.GLFW_KEY_BACKSPACE) {
-						if (mBufferedTextInputCallback.getStringBuilder().length() > 0) {
-							mBufferedTextInputCallback.getStringBuilder().delete(mBufferedTextInputCallback.getStringBuilder().length() - 1, mBufferedTextInputCallback.getStringBuilder().length());
-							mBufferedTextInputCallback.onKeyPressed((char) key);
-						}
-					}
-
-					// Treat some keys as unbuffered
-					else if (key == GLFW.GLFW_KEY_LEFT || key == GLFW.GLFW_KEY_UP || key == GLFW.GLFW_KEY_RIGHT || key == GLFW.GLFW_KEY_DOWN) {
+					else if (key == GLFW.GLFW_KEY_BACKSPACE || key == GLFW.GLFW_KEY_LEFT || key == GLFW.GLFW_KEY_UP || key == GLFW.GLFW_KEY_RIGHT || key == GLFW.GLFW_KEY_DOWN || key == GLFW.GLFW_KEY_HOME || key == GLFW.GLFW_KEY_END) {
+						mBufferedTextInputCallback.onKeyPressed((char) key);
 						if (key < KEY_LIMIT) {
-							if (key != -1)
+							if (key != GLFW.GLFW_KEY_UNKNOWN)
 								mKeyButtonStates[key] = !(action == GLFW.GLFW_RELEASE);
 						}
 					}
@@ -68,14 +60,14 @@ public class KeyboardManager {
 			} else {
 				// normal Keyboad events
 				if (key < KEY_LIMIT) {
-					if (key != -1)
+					if (key != GLFW.GLFW_KEY_UNKNOWN)
 						mKeyButtonStates[key] = !(action == GLFW.GLFW_RELEASE);
 				}
 			}
 
 			// however, if this was a key release, then at least set the array to 0
 			if (action == GLFW.GLFW_RELEASE) {
-				if (key != -1)
+				if (key != GLFW.GLFW_KEY_UNKNOWN)
 					mKeyButtonStates[key] = false;
 			}
 		}
@@ -90,7 +82,6 @@ public class KeyboardManager {
 					mBufferedTextInputCallback.onKeyPressed(codepoint);
 					stopBufferedTextCapture();
 				} else {
-					mBufferedTextInputCallback.getStringBuilder().append((char) codepoint);
 					mBufferedTextInputCallback.onKeyPressed(codepoint);
 				}
 			}

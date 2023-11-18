@@ -1,4 +1,4 @@
-package net.lintfordlib.renderers.windows;
+package net.lintfordlib.renderers.windows.components.interfaces;
 
 public interface UIWindowChangeListener {
 

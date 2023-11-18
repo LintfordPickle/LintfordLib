@@ -72,28 +72,27 @@ public class UiWidgetBar extends UIWidget {
 
 	@Override
 	public void draw(LintfordCore core, SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheet, FontUnit textFont, float componentZDepth) {
-		textFont.begin(core.HUD());
-		textFont.drawText(mLabelString, mX + lHorizontalPadding, mY + 1, componentZDepth, ColorConstants.WHITE, 1.f);
-		textFont.end();
+		if (mLabelString != null && mLabelString.length() > 0) {
+			textFont.begin(core.HUD());
+			textFont.drawText(mLabelString, mX + lHorizontalPadding, mY + 1, componentZDepth, ColorConstants.WHITE, 1.f);
+			textFont.end();
+		}
 
-		final float lInnerBorderPadding = 1.f;
+		final var lInnerBorderPadding = 2.f;
+		final var lBarWidth = MathHelper.clamp(MathHelper.scaleToRange(mCurValue, mMinValue, mMaxValue, 0, mW) - lInnerBorderPadding, 0, mW - lHorizontalPadding * 2.f);
 
-		float lBarWidth = MathHelper.scaleToRange(mCurValue, mMinValue, mMaxValue, 0, mW);
-		lBarWidth = MathHelper.clamp(lBarWidth - lInnerBorderPadding * 2, 0, mW - lHorizontalPadding * 2.f);
+		if (lBarWidth > 0) {
+			final var inner_x = mX + lHorizontalPadding;
+			final var inner_y = mY + 25;
+			final var inner_w = lBarWidth;
+			final var inner_h = BAR_HEIGHT - lInnerBorderPadding * 2.f;
 
-		spriteBatch.begin(core.HUD());
-		spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX + lHorizontalPadding, mY + 25, mW - lHorizontalPadding * 2.f, BAR_HEIGHT, -0.1f, ColorConstants.BLACK);
-
-		float xx = mX + lHorizontalPadding;
-		float yy = mY + 25;
-		float ww = lBarWidth;
-		float hh = BAR_HEIGHT - lInnerBorderPadding * 2.f;
-
-		// Draw the inner bar
-		UiBarColor.setRGB(1.f, 0.f, 0.f);
-		spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, xx + lInnerBorderPadding, yy + lInnerBorderPadding, ww, hh, -0.1f, UiBarColor);
-		spriteBatch.end();
-
+			spriteBatch.begin(core.HUD());
+			spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX + lHorizontalPadding, mY + 25, mW - lHorizontalPadding * 2.f, BAR_HEIGHT, -0.1f, ColorConstants.BLACK);
+			UiBarColor.setRGB(1.f, 0.f, 0.f);
+			spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, inner_x + lInnerBorderPadding, inner_y + lInnerBorderPadding, inner_w, inner_h, -0.1f, UiBarColor);
+			spriteBatch.end();
+		}
 	}
 
 }

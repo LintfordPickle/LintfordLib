@@ -10,6 +10,7 @@ import net.lintfordlib.core.graphics.batching.SpriteBatch;
 import net.lintfordlib.core.graphics.batching.TextureBatch9Patch;
 import net.lintfordlib.core.graphics.fonts.FontUnit;
 import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
+import net.lintfordlib.core.graphics.textures.CoreTextureNames;
 import net.lintfordlib.renderers.windows.UiWindow;
 import net.lintfordlib.renderers.windows.components.interfaces.IScrollBarArea;
 
@@ -135,9 +136,15 @@ public class UiHorizontalListBox extends UIWidget implements IScrollBarArea {
 		final var lNumAssets = mItems.size();
 		for (int i = 0; i < lNumAssets; i++) {
 			final var lAssetItemToRender = mItems.get(i);
+			final var lIsSelectedItem = mSelectedItemIndex == i;
 
 			lAssetPositionX += mAssetSeparation;
 			textFont.drawText(lAssetItemToRender.displayName, lAssetPositionX, mY + 32 + 20, componentZDepth, 0.5f);
+
+			if (lIsSelectedItem) {
+				// TODO: The rendering and clicking position needs a lot of work
+				spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, mX + mAssetSize + (i * (mAssetSize + mAssetSeparation)), mY, mAssetSize, mAssetSize, componentZDepth, entityColor);
+			}
 
 			lAssetPositionX += mAssetSize + mAssetSeparation;
 		}

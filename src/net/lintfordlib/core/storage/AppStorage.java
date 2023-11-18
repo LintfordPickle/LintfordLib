@@ -11,10 +11,7 @@ public class AppStorage {
 	// Constants
 	// --------------------------------------
 
-	public static final String FILE_SEPERATOR = System.getProperty("file.separator");
-	public static final String LINE_SEPERATOR = System.getProperty("line.separator");
-
-	/** USe working directory for app storage (System.getProperty("user.dir")) */
+	/** Use working directory for app storage (System.getProperty("user.dir")) */
 	// https://docs.oracle.com/javase/tutorial/essential/environment/sysprop.html
 	public static boolean useLocalDirectory = true;
 
@@ -26,13 +23,13 @@ public class AppStorage {
 		String lSaveFolder = null;
 
 		if (useLocalDirectory) {
-			lSaveFolder = System.getProperty("user.dir") + FILE_SEPERATOR + "config" + FILE_SEPERATOR;
+			lSaveFolder = System.getProperty("user.dir") + FileUtils.FILE_SEPERATOR + "config" + FileUtils.FILE_SEPERATOR;
 		} else {
 			final var lOSName = System.getProperty("os.name").toLowerCase();
 			if (lOSName.startsWith("win")) {
-				lSaveFolder = System.getenv("AppData") + FILE_SEPERATOR + applicationName + FILE_SEPERATOR;
+				lSaveFolder = System.getenv("AppData") + FileUtils.FILE_SEPERATOR + applicationName + FileUtils.FILE_SEPERATOR;
 			} else if (lOSName.startsWith("linux") || lOSName.startsWith("mac") || lOSName.startsWith("darwin")) {
-				lSaveFolder = System.getProperty("user.home") + FILE_SEPERATOR + "." + applicationName + FILE_SEPERATOR;
+				lSaveFolder = System.getProperty("user.home") + FileUtils.FILE_SEPERATOR + "." + applicationName + FileUtils.FILE_SEPERATOR;
 			}
 		}
 
@@ -52,13 +49,13 @@ public class AppStorage {
 		String lSaveFolder = null;
 
 		if (useLocalDirectory) {
-			lSaveFolder = System.getProperty("user.dir") + FILE_SEPERATOR + "Data" + FILE_SEPERATOR;
+			lSaveFolder = System.getProperty("user.dir") + FileUtils.FILE_SEPERATOR + "Data" + FileUtils.FILE_SEPERATOR;
 		} else {
 			final var lOSName = System.getProperty("os.name").toLowerCase();
 			if (lOSName.startsWith("win")) {
-				lSaveFolder = System.getenv("AppData") + FILE_SEPERATOR + applicationName + FILE_SEPERATOR;
+				lSaveFolder = System.getenv("AppData") + FileUtils.FILE_SEPERATOR + applicationName + FileUtils.FILE_SEPERATOR;
 			} else if (lOSName.startsWith("linux") || lOSName.startsWith("mac") || lOSName.startsWith("darwin")) {
-				lSaveFolder = System.getProperty("user.home") + FILE_SEPERATOR + "." + applicationName + FILE_SEPERATOR;
+				lSaveFolder = System.getProperty("user.home") + FileUtils.FILE_SEPERATOR + "." + applicationName + FileUtils.FILE_SEPERATOR;
 			}
 		}
 
@@ -72,13 +69,13 @@ public class AppStorage {
 		String lSaveFolder = null;
 
 		if (useLocalDirectory) {
-			lSaveFolder = System.getProperty("user.dir") + FILE_SEPERATOR + "config" + FILE_SEPERATOR;
+			lSaveFolder = System.getProperty("user.dir") + FileUtils.FILE_SEPERATOR + "config" + FileUtils.FILE_SEPERATOR;
 		} else {
 			final var lOSName = System.getProperty("os.name").toLowerCase();
 			if (lOSName.startsWith("win")) {
-				lSaveFolder = System.getenv("AppData") + FILE_SEPERATOR + applicationName + FILE_SEPERATOR;
+				lSaveFolder = System.getenv("AppData") + FileUtils.FILE_SEPERATOR + applicationName + FileUtils.FILE_SEPERATOR;
 			} else if (lOSName.startsWith("linux") || lOSName.startsWith("mac") || lOSName.startsWith("darwin")) {
-				lSaveFolder = System.getProperty("user.home") + FILE_SEPERATOR + "." + applicationName + FILE_SEPERATOR;
+				lSaveFolder = System.getProperty("user.home") + FileUtils.FILE_SEPERATOR + "." + applicationName + FileUtils.FILE_SEPERATOR;
 			}
 		}
 

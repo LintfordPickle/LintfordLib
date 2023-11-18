@@ -303,8 +303,7 @@ public class FontUnit {
 						final var lDotGlyph = mFontDefinition.getGlyphFrame((int) '.');
 						if (lDotGlyph != null) {
 							for (int j = 0; j < lNumElpsis; j++) {
-								mFontRenderer.draw(mFontDefinition.texture(), lDotGlyph.x(), lDotGlyph.y(), lDotGlyph.width(), lDotGlyph.height(), (int) (lX) + j * lDotGlyph.width(), (int) lY,
-										lCurrentGlyph.width() * scale, lCurrentGlyph.height() * scale, zDepth, textColor);
+								mFontRenderer.draw(mFontDefinition.texture(), lDotGlyph.x(), lDotGlyph.y(), lDotGlyph.width(), lDotGlyph.height(), (int) (lX) + j * lDotGlyph.width(), (int) lY, lCurrentGlyph.width() * scale, lCurrentGlyph.height() * scale, zDepth, textColor);
 							}
 						}
 
@@ -322,8 +321,7 @@ public class FontUnit {
 				final var lDotGlyph = mFontDefinition.getGlyphFrame((int) '.');
 				if (lDotGlyph != null) {
 					for (int j = 0; j < lNumElpsis; j++) {
-						mFontRenderer.draw(mFontDefinition.texture(), lDotGlyph.x(), lDotGlyph.y(), (int) lDotGlyph.width(), lDotGlyph.height(), (int) (lX) + j * lDotGlyph.width(), (int) lY,
-								lCurrentGlyph.width() * scale, lCurrentGlyph.height() * scale, zDepth, textColor);
+						mFontRenderer.draw(mFontDefinition.texture(), lDotGlyph.x(), lDotGlyph.y(), (int) lDotGlyph.width(), (int) lDotGlyph.height(), (int) (lX) + j * lDotGlyph.width(), (int) lY, lCurrentGlyph.width() * scale, lCurrentGlyph.height() * scale, zDepth, textColor);
 					}
 				}
 
@@ -340,8 +338,10 @@ public class FontUnit {
 				continue;
 			}
 
-			mFontRenderer.draw(mFontDefinition.texture(), lCurrentGlyph.x(), lCurrentGlyph.y(), (int) lCurrentGlyph.width(), lCurrentGlyph.height(), (int) lX, (int) lY, lCurrentGlyph.width() * scale,
-					lCurrentGlyph.height() * scale, zDepth, textColor);
+			mFontRenderer.draw(mFontDefinition.texture(), 
+					lCurrentGlyph.x(), lCurrentGlyph.y(), (int) lCurrentGlyph.width(), (int) lCurrentGlyph.height(), 
+					(int) lX, (int) lY, (int) (lCurrentGlyph.width() * scale), (int) (lCurrentGlyph.height() * scale) + 0, 
+					zDepth, textColor);
 
 			if (lJustWrapped && lBreakCharFitsOnThisLine) {
 				lY += lScaledLineHeight;

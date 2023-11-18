@@ -13,7 +13,11 @@ public class ContentRectangle {
 	// Core-Methods
 	// --------------------------------------
 
-	public static void preDraw(LintfordCore core, SpriteBatch spriteBatch, Rectangle pRectangle, float depthPadding, int componentUid) {
+	public static void preDraw(LintfordCore core, SpriteBatch spriteBatch, Rectangle rectangle, float depthPadding, int componentUid) {
+		preDraw(core, spriteBatch, rectangle.x(), rectangle.y(), rectangle.width(), rectangle.height(), depthPadding, componentUid);
+	}
+
+	public static void preDraw(LintfordCore core, SpriteBatch spriteBatch, float rx, float ry, float rw, float rh, float depthPadding, int componentUid) {
 
 		// We need to use a stencil buffer to clip the listbox items (which, when scrolling, could appear out-of-bounds of the listbox).
 		GL11.glEnable(GL11.GL_STENCIL_TEST);
@@ -26,7 +30,7 @@ public class ContentRectangle {
 		GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT); // Clear the stencil buffer
 
 		spriteBatch.begin(core.HUD());
-		spriteBatch.draw(null, 0, 0, 1, 1, pRectangle.x() + depthPadding, pRectangle.y() + depthPadding, pRectangle.width() - depthPadding * 2, pRectangle.height() - depthPadding * 2, -10.f, ColorConstants.getWhiteWithAlpha(0.f));
+		spriteBatch.draw(null, 0, 0, 1, 1, rx + depthPadding, ry + depthPadding, rw - depthPadding * 2, rh - depthPadding * 2, -10.f, ColorConstants.getWhiteWithAlpha(0.f));
 		spriteBatch.end();
 
 		/*

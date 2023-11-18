@@ -462,11 +462,13 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 
 		final var lScreenBB = core.HUD().boundingRectangle();
 
-		mSpriteBatch.begin(core.HUD());
-		mConsoleFont.begin(core.HUD());
-
 		if (mConsoleState == CONSOLE_STATE.open) {
 			mConsoleBackgroundColor.setRGBA(0.f, 0.f, 0.f, .8f);
+
+			mScrollBar.draw(core, mSpriteBatch, mCoreSpritesheet, Z_DEPTH + 0.1f, 1.f);
+
+			mSpriteBatch.begin(core.HUD());
+
 			mSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_BLACK, lScreenBB.left(), lScreenBB.top(), lScreenBB.width(), lScreenBB.height(), Z_DEPTH, mConsoleBackgroundColor);
 			mSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_BLACK, mX, mY, mW, mH, Z_DEPTH, ColorConstants.MenuPanelPrimaryColor);
 
@@ -474,8 +476,7 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 			mSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX, mY + 50 - lTextHeight, mW, 2, Z_DEPTH, lBackgroundInputPanelColor);
 			mSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX + 157, mY + 50 - lTextHeight, 2, mH - 50, Z_DEPTH, lBackgroundInputPanelColor);
 			mSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX, mY + mH - lTextHeight, mW, lTextHeight, Z_DEPTH, lBackgroundInputPanelColor);
-
-			mScrollBar.draw(core, mSpriteBatch, mCoreSpritesheet, Z_DEPTH + 0.1f, 1.f);
+			mSpriteBatch.end();
 
 			mTAGFilterText.draw(core, mSpriteBatch, mCoreSpritesheet, mConsoleFont, -0.001f);
 			mMessageFilterText.draw(core, mSpriteBatch, mCoreSpritesheet, mConsoleFont, Z_DEPTH + 0.01f);
@@ -483,10 +484,14 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 			// the input line from the user will always be visible at the bottom of the console.
 			if (mInputText != null) {
 				final float INPUT_Y_OFFSET = 0;
+
+				mConsoleFont.begin(core.HUD());
 				mConsoleFont.drawText(PROMT_CHAR, -lDisplayConfig.windowWidth() * 0.5f + PADDING_LEFT, mY + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET, Z_DEPTH + 0.1f, ColorConstants.WHITE, 1f);
 				mConsoleFont.drawText(mInputText.toString(), -lDisplayConfig.windowWidth() * 0.5f + PADDING_LEFT + lInputTextXOffset, mY + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET, Z_DEPTH + 0.1f, ColorConstants.WHITE, 1f);
 				if (mShowCaret && mHasFocus)
 					mConsoleFont.drawText(CARET_CHAR, -lDisplayConfig.windowWidth() * 0.5f + PADDING_LEFT + lInputTextXOffset + mConsoleFont.getStringWidth(mInputText.toString()), mY + openHeight() - mConsoleLineHeight + INPUT_Y_OFFSET, Z_DEPTH + 0.1f, ColorConstants.WHITE, 1f);
+
+				mConsoleFont.end();
 			}
 		}
 
@@ -494,7 +499,9 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 		if (mAutoScroll == false)
 			lAutoScrollIconColor = ColorConstants.getWhiteWithAlpha(.1f);
 
+		mSpriteBatch.begin(core.HUD());
 		mSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_AUTOSCROLL, mAutoScrollIconRectangle, Z_DEPTH, lAutoScrollIconColor);
+		mSpriteBatch.end();
 
 		if (mFilterProcessed == false) {
 			synchronized (Debug.debugManager().logger()) {
@@ -503,9 +510,6 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 		} else {
 			drawMessages(core, mProcessedMessages);
 		}
-
-		mSpriteBatch.end();
-		mConsoleFont.end();
 	}
 
 	private void drawMessages(LintfordCore core, List<Message> messages) {
@@ -518,6 +522,8 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 		final var lHudBb = core.HUD().boundingRectangle();
 
 		final int lMessageCount = messages.size();
+
+		mConsoleFont.begin(core.HUD());
 		if (messages != null && lMessageCount > 0) {
 			for (int i = mLowerBound; i < mUpperBound; i++) {
 				if (i >= 0 && i < lMessageCount) {
@@ -549,6 +555,7 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 				}
 			}
 		}
+		mConsoleFont.end();
 	}
 
 	// --------------------------------------
@@ -725,11 +732,6 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 	}
 
 	@Override
-	public StringBuilder getStringBuilder() {
-		return mInputText;
-	}
-
-	@Override
 	public boolean getEnterFinishesInput() {
 		return false;
 	}
@@ -750,7 +752,19 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 	}
 
 	@Override
+	public StringBuilder getStringBuilder() {
+		return mInputText;
+	}
+
+	@Override
 	public void onKeyPressed(int codePoint) {
+		if (codePoint == GLFW.GLFW_KEY_BACKSPACE) {
+			if (mInputText.length() > 0) {
+				mInputText.delete(mInputText.length() - 1, mInputText.length());
+			}
+		} else {
+			mInputText.append((char) codePoint);
+		}
 
 	}
 

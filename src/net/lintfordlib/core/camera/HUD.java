@@ -131,9 +131,9 @@ public class HUD implements ICamera, IResizeListener {
 		if (mViewportWidth == 0 || mViewportHeight == 0)
 			return;
 
-		// prevent the Hud getting too small on 4k+ resolutions by artificially capping the dimensions for the HudCamera
-		mViewportWidth = MathHelper.clampi(core.config().display().windowWidth(), ConstantsDisplay.MIN_UI_HUD_WIDTH, ConstantsDisplay.MAX_UI_HUD_WIDTH);
-		mViewportHeight = MathHelper.clampi(core.config().display().windowHeight(), ConstantsDisplay.MIN_UI_HUD_HEIGHT, ConstantsDisplay.MAX_UI_HUD_HEIGHT);
+		// ensure a minimum Hud resolution
+		mViewportWidth = (int) MathHelper.max(core.config().display().windowWidth(), ConstantsDisplay.MIN_UI_HUD_WIDTH);
+		mViewportHeight = (int) MathHelper.max(core.config().display().windowHeight(), ConstantsDisplay.MIN_UI_HUD_HEIGHT);
 
 		if ((mViewportWidth % 2) == 1)
 			mViewportWidth = mViewportWidth + 1;
