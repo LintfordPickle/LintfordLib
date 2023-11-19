@@ -59,7 +59,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 	private transient ScrollBarContentRectangle mContentRectangle;
 	private transient ScrollBarContentRectangle mWindowRectangle;
 	private transient ScrollBar mScrollBar;
-	private boolean mAllowDuplicates;
+	private boolean mAllowDuplicateNames;
 	private String mNoItemsFoundText = NO_ITEMS_FOUND_TEXT;
 
 	// --------------------------------------
@@ -78,12 +78,12 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 		return super.height();// mOpen ? super.height() + mWindowRectangle.height() : super.height();
 	}
 
-	public boolean allowDuplicates() {
-		return mAllowDuplicates;
+	public boolean allowDuplicateNames() {
+		return mAllowDuplicateNames;
 	}
 
-	public void allowDuplicates(boolean newValue) {
-		mAllowDuplicates = newValue;
+	public void allowDuplicateNames(boolean newValue) {
+		mAllowDuplicateNames = newValue;
 	}
 
 	public List<MenuEnumEntryItem> items() {
@@ -522,13 +522,13 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 	}
 
 	public void addItem(MenuEnumEntryItem item) {
-		if (mAllowDuplicates) {
+		if (mItems.contains(item))
+			return;
+
+		if (mAllowDuplicateNames) {
 			mItems.add(item);
 			return;
 		}
-
-		if (mItems.contains(item))
-			return;
 
 		final int lNumItems = mItems.size();
 		for (int i = 0; i < lNumItems; i++) {
