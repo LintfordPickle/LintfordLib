@@ -223,7 +223,7 @@ public abstract class UIWidget extends Rectangle implements IInputProcessor {
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
-	
+
 	@Override
 	public boolean isCoolDownElapsed() {
 		return mMouseTimer < 0;
@@ -249,7 +249,7 @@ public abstract class UIWidget extends Rectangle implements IInputProcessor {
 		return true;
 	}
 
-	public void setClickListener(IUiWidgetInteractions callback, int clickUid) {
+	public void setUiWidgetListener(IUiWidgetInteractions callback, int clickUid) {
 		mUiWidgetListenerCallback = callback;
 		mUiWidgetListenerUid = clickUid;
 	}
