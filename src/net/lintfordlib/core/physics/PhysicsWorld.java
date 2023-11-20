@@ -187,6 +187,8 @@ public class PhysicsWorld {
 
 		enableMtvSeparation = settings.enable_mtv_separation;
 		enableCollisionResponse = settings.enable_collision_resolver;
+
+		setGravity(settings.gravityX, settings.gravityY);
 	}
 
 	// --------------------------------------
