@@ -22,6 +22,12 @@ public class Transform {
 		q.set(angle);
 	}
 
+	public void applyAngle(float a) {
+		angle = MathHelper.wrapAngle(angle + a);
+
+		q.set(angle);
+	}
+
 	public void set(Transform o) {
 		p.set(o.p);
 		q.set(o.q);
