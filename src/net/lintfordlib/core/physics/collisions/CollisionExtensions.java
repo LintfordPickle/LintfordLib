@@ -9,6 +9,30 @@ import net.lintfordlib.core.physics.dynamics.ShapeType;
 public class CollisionExtensions {
 
 	/***
+	 * Checks if the given points lies within the bounds of the RidigBody. This function calls outs depending on the type of the attached {@link ShapeType}
+	 */
+	public static boolean pointIntersectsBody(RigidBody body, float x, float y) {
+		if (pointIntersectsBodyRadius(body, x, y))
+			return false;
+
+		switch (body.shape().shapeType()) {
+		case Polygon: {
+			return intersectsPointPolygon(body, x, y);
+		}
+
+		case LineWidth: {
+			return pointIntersectsLineWidthBody(body, x, y);
+		}
+
+		default:
+		case Circle: {
+			return pointIntersectsCircleBody(body, x, y);
+		}
+
+		}
+	}
+
+	/***
 	 * Checks if the given point lies within a {@link RigidBody}s bounding radius. This assumes the RigidBody has a radius defined!
 	 * 
 	 * @param body The body against which the check should be made.
@@ -94,27 +118,6 @@ public class CollisionExtensions {
 			return true;
 
 		return false;
-	}
-
-	/***
-	 * Checks if the given points lies within the bounds of the RidigBody. This function calls outs depending on the type of the attached {@link ShapeType}
-	 */
-	public static boolean pointIntersectsBody(RigidBody body, float x, float y) {
-		switch (body.shape().shapeType()) {
-		case Polygon: {
-			return intersectsPointPolygon(body, x, y);
-		}
-
-		case LineWidth: {
-			return pointIntersectsLineWidthBody(body, x, y);
-		}
-
-		default:
-		case Circle: {
-			return pointIntersectsCircleBody(body, x, y);
-		}
-
-		}
 	}
 
 	/***
