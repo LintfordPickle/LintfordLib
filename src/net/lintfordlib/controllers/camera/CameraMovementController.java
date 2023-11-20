@@ -1,6 +1,6 @@
 package net.lintfordlib.controllers.camera;
 
-import org.joml.Vector2f;
+import net.lintfordlib.core.maths.Vector2f;
 import org.lwjgl.glfw.GLFW;
 
 import net.lintfordlib.controllers.BaseController;
