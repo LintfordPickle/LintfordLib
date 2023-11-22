@@ -247,7 +247,7 @@ public class FontUnit {
 		int lCharacterLength = text.length();
 		for (int i = 0; i < lCharacterLength; i++) {
 			char lCurrentCharacter = text.charAt(i);
-			final var lCurrentGlyph = mFontDefinition.getGlyphFrame((int) lCurrentCharacter);
+			var lCurrentGlyph = mFontDefinition.getGlyphFrame((int) lCurrentCharacter);
 
 			// Special characters
 			if (lCurrentCharacter == '\n' || lCurrentCharacter == '\r') {
@@ -312,8 +312,11 @@ public class FontUnit {
 				}
 			}
 
-			if (lCurrentGlyph == null)
-				continue;
+			if (lCurrentGlyph == null) {
+				// TODO: Render a 'glyph not found' character, otherwise we have hidden characters in the text
+				// continue;
+				lCurrentGlyph = mFontDefinition.getGlyphFrame((int) '?');
+			}
 
 			if (lJustWrapped && mWrapType == WrapType.WordWrapTrim) {
 				final int lNumElpsis = 3;
@@ -338,10 +341,7 @@ public class FontUnit {
 				continue;
 			}
 
-			mFontRenderer.draw(mFontDefinition.texture(), 
-					lCurrentGlyph.x(), lCurrentGlyph.y(), (int) lCurrentGlyph.width(), (int) lCurrentGlyph.height(), 
-					(int) lX, (int) lY, (int) (lCurrentGlyph.width() * scale), (int) (lCurrentGlyph.height() * scale) + 0, 
-					zDepth, textColor);
+			mFontRenderer.draw(mFontDefinition.texture(), lCurrentGlyph.x(), lCurrentGlyph.y(), (int) lCurrentGlyph.width(), (int) lCurrentGlyph.height(), (int) lX, (int) lY, (int) (lCurrentGlyph.width() * scale), (int) (lCurrentGlyph.height() * scale) + 0, zDepth, textColor);
 
 			if (lJustWrapped && lBreakCharFitsOnThisLine) {
 				lY += lScaledLineHeight;
