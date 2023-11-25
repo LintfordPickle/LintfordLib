@@ -212,6 +212,22 @@ public class Vector2f implements Serializable {
 		return this;
 	}
 
+	public Vector2f rotateRad(float ox, float oy, float radians) {
+		float cos = (float) Math.cos(radians);
+		float sin = (float) Math.sin(radians);
+
+		final float fx = x - ox;
+		final float fy = y - oy;
+
+		float newX = fx * cos - fy * sin;
+		float newY = fx * sin + fy * cos;
+
+		this.x = newX + ox;
+		this.y = newY + oy;
+
+		return this;
+	}
+
 	/** Rotates the Vector2 by 90 degrees in the specified direction, where >= 0 is counter-clockwise and < 0 is clockwise. */
 	public Vector2f rotate90(int dir) {
 		float x = this.x;
