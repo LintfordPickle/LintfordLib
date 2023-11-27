@@ -3,7 +3,7 @@ package net.lintfordlib.core.maths;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 
-public class NumberHelper {
+public class DecimalFormatHelper {
 
 	private static DecimalFormat decimalFormat;
 

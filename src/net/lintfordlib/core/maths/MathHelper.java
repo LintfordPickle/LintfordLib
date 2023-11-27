@@ -143,16 +143,20 @@ public class MathHelper {
 		return lAngle;
 	}
 
-	/**
-	 * Brings the angle within [0, TwoPi]
+	/***
+	 * Normalizes the angle to within [0, TwoPi]
+	 * 
+	 * @param angle The angle to be normalized.
+	 * @return The new angle scaled to within [0, TwoPi]
 	 */
 	public static float normalizeAngle(float angle) {
 		if (angle < 0) {
 			final var lBackRevolutions = (int) (-angle / ConstantsMath.TwoPi);
 			return angle + ConstantsMath.TwoPi * (lBackRevolutions + 1);
-		} else {
-			return angle % ConstantsMath.TwoPi;
 		}
+
+		return angle % ConstantsMath.TwoPi;
+
 	}
 
 	public static float turnToFace(float positionX, float positionY, float faceThisX, float faceThisY, float currentAngle, float turnSpeed) {
@@ -163,49 +167,6 @@ public class MathHelper {
 		final var lDifference = clamp(wrapAngle(lDesiredAngle - currentAngle), -turnSpeed, turnSpeed);
 
 		return wrapAngle(currentAngle + lDifference);
-	}
-
-	/***
-	 * Checks for collisions between two circles.
-	 * 
-	 * @param x1 The x component of the first circle's center position.
-	 * @param y1 The y component of the first circle's center position.
-	 * @param r1 The radius of the first circle
-	 * @param x2 The x component of the second circle's center position.
-	 * @param y2 The y component of the second circle's center position.
-	 * @param r2 The radius of the first circle
-	 * @return true if a collision occurs, otherwise false.
-	 */
-	public static final boolean intersectsCircleCircle(float x1, float y1, float r1, float x2, float y2, float r2) {
-		return Math.abs((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)) < (r1 + r2) * (r1 + r2);
-	}
-
-	/***
-	 * Checks for collisions between two line segments as defined by [a,b] and [p,q]. The resulting position of a collision is stored in {@link outVector}. If the lines do not collide, then {@link outVector} is not modified.
-	 * 
-	 * @param a         The start point of the first line segment.
-	 * @param b         The end point of the first line segment.
-	 * @param p         The start point of the second line segment.
-	 * @param q         The end point of the second line segment.
-	 * @param outVector The position of a collsion, if a collision occurs. Otherwise unmodified.
-	 * @return true if a collision occured, otherwise false.
-	 */
-	public static final boolean intersectsLineLine(Vector2f a, Vector2f b, Vector2f p, Vector2f q, Vector2f outVector) {
-		final var l0x = b.x - a.x;
-		final var l0y = b.y - a.y;
-		final var l1x = q.x - p.x;
-		final var l1y = q.y - p.y;
-
-		final var s = (-l0y * (a.x - p.x) + l0x * (a.y - p.y)) / (-l1x * l0y + l0x * l1y);
-		final var t = (l1x * (a.y - p.y) - l1y * (a.x - p.x)) / (-l1x * l0y + l0x * l1y);
-
-		if (s >= 0 && s <= 1 && t >= 0 && t <= 1) {
-			outVector.x = a.x + (t * l0x);
-			outVector.y = a.y + (t * l0y);
-			return true;
-		}
-
-		return false;
 	}
 
 	// polygon
@@ -228,6 +189,7 @@ public class MathHelper {
 
 		final var aYx = (c.x - a.x) / aYLen;
 		final var aYy = (c.y - a.y) / aYLen;
+
 		return Vector2f.cross(aXx, aXy, aYx, aYy) > 0;
 	}
 

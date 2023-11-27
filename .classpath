@@ -16,7 +16,7 @@
 			<attribute name="javadoc_location" value="jar:platform:/resource/LDLibrary/libs/commons-collections4-4.4-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/LWJGL3-Windows"/>
 	<classpathentry kind="lib" path="libs/gson-2.10.1.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/LWJGL3-Windows"/>
 	<classpathentry kind="output" path="target/"/>
 </classpath>

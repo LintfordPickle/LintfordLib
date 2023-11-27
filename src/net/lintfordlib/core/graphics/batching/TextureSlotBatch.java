@@ -28,6 +28,14 @@ public class TextureSlotBatch {
 	private int mTextureSlotIndex; // next free texture slot
 
 	// --------------------------------------
+	// Properties
+	// --------------------------------------
+
+	public boolean hasFreeSlot() {
+		return mTextureSlotIndex < MAX_TEXTURE_SLOTS;
+	}
+
+	// --------------------------------------
 	// Constructors
 	// --------------------------------------
 
@@ -39,28 +47,49 @@ public class TextureSlotBatch {
 	// Methods
 	// --------------------------------------
 
+	public boolean containsAnyTextures() {
+		return mTextureSlotIndex > 0;
+	}
+
 	public void clear() {
 		mTextureSlots.clear();
 		mTextureSlotIndex = 0;
+	}
+
+	public boolean containsTextureId(int textureId) {
+		final int lNumTextures = mTextureSlots.size();
+		for (int i = 0; i < lNumTextures; i++) {
+			if (mTextureSlots.get(i) == textureId) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public int getTextureSlotIndexFromUid(int textureUid) {
+		if (textureUid == -1)
+			return TEXTURE_SLOTS_TEXTURE_INVALID;
+
+		final int lNumTextures = mTextureSlots.size();
+		for (int i = 0; i < lNumTextures; i++) {
+			if (mTextureSlots.get(i) == textureUid) {
+				return i;
+			}
+		}
+
+		if (mTextureSlotIndex < MAX_TEXTURE_SLOTS) {
+			mTextureSlots.add(textureUid);
+			return mTextureSlotIndex++;
+		}
+
+		return TEXTURE_SLOTS_FULL;
 	}
 
 	public int getTextureSlotIndex(Texture texture) {
 		if (texture == null || texture.getTextureID() == -1)
 			return TEXTURE_SLOTS_TEXTURE_INVALID;
 
-		final int lNumTextures = mTextureSlots.size();
-		for (int i = 0; i < lNumTextures; i++) {
-			if (mTextureSlots.get(i) == texture.getTextureID()) {
-				return i;
-			}
-		}
-
-		if (mTextureSlotIndex < MAX_TEXTURE_SLOTS) {
-			mTextureSlots.add(texture.getTextureID());
-			return mTextureSlotIndex++;
-		}
-
-		return TEXTURE_SLOTS_FULL;
+		return getTextureSlotIndexFromUid(texture.getTextureID());
 	}
 
 	public void bindTextures() {
@@ -68,6 +97,13 @@ public class TextureSlotBatch {
 			GL13.glActiveTexture(GL13.GL_TEXTURE0 + i);
 			final int lTextureIdInSlot = mTextureSlots.get(i);
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, lTextureIdInSlot);
+		}
+	}
+
+	public void unbindTextures() {
+		for (int i = 0; i < mTextureSlotIndex; i++) {
+			GL13.glActiveTexture(GL13.GL_TEXTURE0 + i);
+			GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 		}
 	}
 }

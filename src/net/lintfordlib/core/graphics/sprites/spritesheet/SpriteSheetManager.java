@@ -80,6 +80,7 @@ public class SpriteSheetManager {
 		loadSpriteSheetFromResource("/res/spritesheets/core/spritesheetCore.json", LintfordCore.CORE_ENTITY_GROUP_ID);
 	}
 
+	// TODO: Recheck this - if the texture doesn't exist (based on the given name) its loaded, but takes the name from the definition file.
 	public SpriteSheetDefinition loadSpriteSheet(String spritesheetName, String filepath, int entityGroupUid) {
 		final var lExists = getSpriteSheet(spritesheetName, entityGroupUid);
 		if (lExists != null)

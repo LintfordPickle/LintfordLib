@@ -45,7 +45,7 @@ public class RigidBody extends PhysicsGridEntity {
 	protected float invInertia;
 
 	public float torque;
-	private float angularVelocity;
+	public float angularVelocity;
 
 	private int mCategoryBit; // I'm a ..
 	private int mMaskBit; // I collide with ...

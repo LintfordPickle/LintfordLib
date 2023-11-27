@@ -382,12 +382,14 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 		final var lFontHeight = lTextBoldFont.fontHeight() * lUiTextScale;
 		final var lSpriteBatch = mParentScreen.spriteBatch();
 
+		mW = (int) mW;
+		
 		lTextBoldFont.begin(core.HUD());
 		if (mHasFocus && mEnabled) {
 			lSpriteBatch.begin(core.HUD());
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, (int) (lScreenOffset.x + centerX() - mW / 2), lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ, ColorConstants.MenuEntryHighlightColor);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, (int) (lScreenOffset.x + centerX() - (mW / 2) + 32), lScreenOffset.y + centerY() - mH / 2, mW - 64, mH, mZ, ColorConstants.MenuEntryHighlightColor);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, (int) (lScreenOffset.x + centerX() + (mW / 2) - 32), lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ, ColorConstants.MenuEntryHighlightColor);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, (int) (lScreenOffset.x + centerX() - (int)mW / 2), lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ, ColorConstants.MenuEntryHighlightColor);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, (int) (lScreenOffset.x + centerX() - ((int)mW / 2) + 32), lScreenOffset.y + centerY() - mH / 2, (int) mW - 64, mH, mZ, ColorConstants.MenuEntryHighlightColor);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, (int) (lScreenOffset.x + centerX() + ((int)mW / 2) - 32), lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ, ColorConstants.MenuEntryHighlightColor);
 			lSpriteBatch.end();
 		}
 
@@ -445,7 +447,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 
 		if (mOpen) {
 			lSpriteBatch.begin(core.HUD());
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mWindowRectangle, mZ, ColorConstants.getBlackWithAlpha(0.8f));
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mWindowRectangle, mZ, ColorConstants.getBlackWithAlpha(1.f));
 			lSpriteBatch.end();
 
 			lTextBoldFont.begin(core.HUD());

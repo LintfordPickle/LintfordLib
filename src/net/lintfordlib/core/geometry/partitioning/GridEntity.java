@@ -35,7 +35,7 @@ public abstract class GridEntity extends Entity {
 		super(entityUid);
 
 		this.gridEntityType = GridEntityType;
-		
+
 		// default to not on grid
 		minX = -1;
 		minY = -1;
