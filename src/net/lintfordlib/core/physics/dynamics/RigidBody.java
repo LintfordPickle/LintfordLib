@@ -208,7 +208,7 @@ public class RigidBody extends PhysicsGridEntity {
 		accY = 0.f;
 		torque = 0.f;
 
-		// angularVelocity *= (float) Math.exp(-.97f * time);
+		angularVelocity *= (float) Math.exp(-.97f * time);
 	}
 
 	// --------------------------------------

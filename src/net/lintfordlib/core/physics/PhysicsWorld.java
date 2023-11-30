@@ -188,6 +188,8 @@ public class PhysicsWorld {
 		enableMtvSeparation = settings.enable_mtv_separation;
 		enableCollisionResponse = settings.enable_collision_resolver;
 
+		mCollisionResolver = new CollisionResolverSimple();
+
 		setGravity(settings.gravityX, settings.gravityY);
 	}
 
@@ -243,6 +245,9 @@ public class PhysicsWorld {
 			Debug.debugManager().logger().w(getClass().getSimpleName(), "Cannot step physics world - not initialized");
 			return;
 		}
+
+		if (mCollisionResolver == null)
+			throw new RuntimeException("Cannot step the PhysicsWorld without first attaching a collision resolver");
 
 		final var lSystemTimeBegin = System.nanoTime();
 
