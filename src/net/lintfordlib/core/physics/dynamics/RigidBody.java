@@ -94,9 +94,9 @@ public class RigidBody extends PhysicsGridEntity {
 		return invInertia;
 	}
 
-	public List<Vector2f> getLocalVertices() {
-		return mShape.getVertices();
-	}
+//	public List<Vector2f> getLocalVertices() {
+//		return mShape.getReadOnlyVertices();
+//	}
 
 	public List<Vector2f> getWorldVertices() {
 		return mShape.getTransformedVertices(transform);

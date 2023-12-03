@@ -103,7 +103,7 @@ public class PolygonShape extends BaseShape {
 		mInertia = (float) Math.abs(mDensity * I);
 	}
 
-	private void set(List<Vector2f> vertices) {
+	public void setLocalVertices(List<Vector2f> vertices) {
 		mLocalVertices.clear();
 		final int lNumLocalVertices = vertices.size();
 		for (int i = 0; i < lNumLocalVertices; i++) {
@@ -169,6 +169,20 @@ public class PolygonShape extends BaseShape {
 	// --------------------------------------
 
 	/**
+	 * Creates an empty polygon shape, into which you can set the local vertices later.
+	 */
+	public static PolygonShape createEmptyPolygonShape(float density, float restitution, float staticFriction, float dynamicFriction) {
+		final var lNewPolygonShape = new PolygonShape();
+
+		lNewPolygonShape.mDensity = Math.abs(density);
+		lNewPolygonShape.mStaticFriction = MathHelper.clamp(staticFriction, 0.f, 1.f);
+		lNewPolygonShape.mDynamicFriction = MathHelper.clamp(dynamicFriction, 0.f, 1.f);
+		lNewPolygonShape.mRestitution = MathHelper.clamp(restitution, 0f, 1f);
+
+		return lNewPolygonShape;
+	}
+
+	/**
 	 * The passed local vertices must form a convex polygon and be in CCW winding order.
 	 */
 	public static PolygonShape createPolygonShape(List<Vector2f> localVertices, float density, float restitution, float staticFriction, float dynamicFriction) {
@@ -184,7 +198,7 @@ public class PolygonShape extends BaseShape {
 		lNewPolygonShape.mDynamicFriction = MathHelper.clamp(dynamicFriction, 0.f, 1.f);
 		lNewPolygonShape.mRestitution = MathHelper.clamp(restitution, 0f, 1f);
 
-		lNewPolygonShape.set(localVertices);
+		lNewPolygonShape.setLocalVertices(localVertices);
 
 		return lNewPolygonShape;
 	}

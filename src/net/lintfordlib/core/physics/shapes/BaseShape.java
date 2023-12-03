@@ -1,6 +1,7 @@
 package net.lintfordlib.core.physics.shapes;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import net.lintfordlib.core.geometry.Rectangle;
@@ -76,8 +77,21 @@ public abstract class BaseShape {
 		return mShapeType;
 	}
 
-	public List<Vector2f> getVertices() {
-		return mLocalVertices;
+	public void setLocalVertices(Vector2f... vertices) {
+		mLocalVertices.clear();
+		mTransformedVertices.clear();
+
+		final int lNumVectors = vertices.length;
+		for (int i = 0; i < lNumVectors; i++) {
+			mLocalVertices.add(new Vector2f(vertices[i]));
+			mTransformedVertices.add(new Vector2f(vertices[i]));
+		}
+
+		mManualIsDirty = true;
+	}
+
+	public List<Vector2f> getReadOnlyVertices() {
+		return Collections.unmodifiableList(mLocalVertices);
 	}
 
 	private boolean updateFrameNeeded(Transform t) {
