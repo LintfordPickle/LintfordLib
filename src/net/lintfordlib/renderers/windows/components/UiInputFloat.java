@@ -18,7 +18,7 @@ import net.lintfordlib.core.input.keyboard.IUiInputKeyPressCallback;
 import net.lintfordlib.renderers.windows.ConstantsUi;
 import net.lintfordlib.renderers.windows.UiWindow;
 
-public class UiInputInteger extends UIWidget implements IBufferedTextInputCallback {
+public class UiInputFloat extends UIWidget implements IBufferedTextInputCallback {
 
 	// --------------------------------------
 	// Constants
@@ -27,7 +27,7 @@ public class UiInputInteger extends UIWidget implements IBufferedTextInputCallba
 	private static final long serialVersionUID = 3637330515154931480L;
 
 	// The UiInputInteger primarily only allows numerical characters as input. The characters in this list are whitelisted and will be added.
-	public static final List<Character> CHAR_WHITELIST = Arrays.asList('-');
+	public static final List<Character> CHAR_WHITELIST = Arrays.asList('-', '.');
 
 	// --------------------------------------
 	// Variables
@@ -55,21 +55,29 @@ public class UiInputInteger extends UIWidget implements IBufferedTextInputCallba
 	private transient StringBuilder mInputField;
 	private String mLabelText;
 
-	private int mValue;
+	private float mValue;
 	private boolean mIsValueBounded;
-	private int mMinValue;
-	private int mMaxValue;
+	private float mMinValue;
+	private float mMaxValue;
+	private float mStepSize;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
 
-	public int currentValue() {
-		return mValue;
+	public void stepSize(float newStepSize) {
+		if (newStepSize < 0.f)
+			newStepSize = 0.1f;
+
+		mStepSize = newStepSize;
 	}
 
-	public void currentValue(int newValue) {
-		mValue = newValue;
+	public float stepSize() {
+		return mStepSize;
+	}
+
+	public float currentValue() {
+		return mValue;
 	}
 
 	public String label() {
@@ -155,9 +163,9 @@ public class UiInputInteger extends UIWidget implements IBufferedTextInputCallba
 		return mInputField.toString().equals(mEmptyString);
 	}
 
-	public void setMinMax(int minValue, int maxValue) {
+	public void setMinMax(float minValue, float maxValue) {
 		if (minValue > maxValue) {
-			int t = minValue;
+			var t = minValue;
 			minValue = maxValue;
 			maxValue = t;
 
@@ -177,7 +185,7 @@ public class UiInputInteger extends UIWidget implements IBufferedTextInputCallba
 	// Constructor
 	// --------------------------------------
 
-	public UiInputInteger(UiWindow parentWindow) {
+	public UiInputFloat(UiWindow parentWindow) {
 		super(parentWindow);
 
 		mResetOnDefaultClick = true;
@@ -194,10 +202,10 @@ public class UiInputInteger extends UIWidget implements IBufferedTextInputCallba
 		mW = 100;
 		mH = 25.f;
 
-		mMinValue = -10;
-		mMaxValue = 10;
+		mMinValue = -10.f;
+		mMaxValue = 10.f;
 
-		mValue = 0;
+		mValue = 0.f;
 		mInputField.append(mValue);
 
 	}
@@ -217,10 +225,10 @@ public class UiInputInteger extends UIWidget implements IBufferedTextInputCallba
 				if (mIsValueBounded && mValue < mMinValue)
 					mValue = mMinValue;
 
-				updateIntegerValue();
+				updateFloatValue();
 
 				if (t != mValue) {
-					updateIntegerValue();
+					updateFloatValue();
 
 					if (mUiWidgetListenerCallback != null)
 						mUiWidgetListenerCallback.widgetOnDataChanged(null, mUiWidgetListenerUid);
@@ -237,11 +245,10 @@ public class UiInputInteger extends UIWidget implements IBufferedTextInputCallba
 					mValue = mMaxValue;
 
 				if (t != mValue) {
-					updateIntegerValue();
+					updateFloatValue();
 
 					if (mUiWidgetListenerCallback != null)
 						mUiWidgetListenerCallback.widgetOnDataChanged(null, mUiWidgetListenerUid);
-
 				}
 
 			}
@@ -364,7 +371,7 @@ public class UiInputInteger extends UIWidget implements IBufferedTextInputCallba
 	// Methods
 	// --------------------------------------
 
-	private void updateIntegerValue() {
+	private void updateFloatValue() {
 		mInputField.delete(0, mInputField.length());
 		mInputField.append(mValue);
 	}
@@ -401,7 +408,7 @@ public class UiInputInteger extends UIWidget implements IBufferedTextInputCallba
 
 		// Try and parse the input text to an int
 		try {
-			mValue = Integer.parseInt(mInputField.toString());
+			mValue = Float.parseFloat(mInputField.toString());
 
 		} catch (NumberFormatException e) {
 			mValue = mMinValue;
@@ -466,7 +473,7 @@ public class UiInputInteger extends UIWidget implements IBufferedTextInputCallba
 
 	@Override
 	public void onCaptureStarted() {
-		updateIntegerValue();
+		updateFloatValue();
 	}
 
 	@Override
@@ -481,6 +488,11 @@ public class UiInputInteger extends UIWidget implements IBufferedTextInputCallba
 		if (mIUiInputKeyPressCallback != null) {
 			mIUiInputKeyPressCallback.UiInputEnded(mKeyListenerUid);
 		}
+	}
+
+	@Override
+	public void resetCoolDownTimer() {
+		mMouseTimer = 30;
 	}
 
 }
