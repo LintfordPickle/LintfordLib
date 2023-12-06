@@ -1695,6 +1695,30 @@
       "anchorPoints": []
     },
     {
+      "name": "TEXTURE_WIDGET_LEFT_ARROW",
+      "x": 165,
+      "y": 294,
+      "w": 32,
+      "h": 32,
+      "pivotX": 0,
+      "pivotY": 0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "anchorPoints": []
+    },
+    {
+      "name": "TEXTURE_WIDGET_RIGHT_ARROW",
+      "x": 198,
+      "y": 294,
+      "w": 32,
+      "h": 32,
+      "pivotX": 0,
+      "pivotY": 0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "anchorPoints": []
+    },
+    {
       "name": "TEXTURE_BLACK",
       "x": 33,
       "y": 0,
