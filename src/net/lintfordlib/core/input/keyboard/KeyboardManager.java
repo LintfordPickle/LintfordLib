@@ -47,8 +47,7 @@ public class KeyboardManager {
 						if (mBufferedTextInputCallback.getEscapeFinishesInput()) {
 							stopBufferedTextCapture();
 						}
-					}
-					else if (key == GLFW.GLFW_KEY_BACKSPACE || key == GLFW.GLFW_KEY_LEFT || key == GLFW.GLFW_KEY_UP || key == GLFW.GLFW_KEY_RIGHT || key == GLFW.GLFW_KEY_DOWN || key == GLFW.GLFW_KEY_HOME || key == GLFW.GLFW_KEY_END) {
+					} else if (key == GLFW.GLFW_KEY_BACKSPACE || key == GLFW.GLFW_KEY_LEFT || key == GLFW.GLFW_KEY_UP || key == GLFW.GLFW_KEY_RIGHT || key == GLFW.GLFW_KEY_DOWN || key == GLFW.GLFW_KEY_HOME || key == GLFW.GLFW_KEY_END) {
 						mBufferedTextInputCallback.onKeyPressed((char) key);
 						if (key < KEY_LIMIT) {
 							if (key != GLFW.GLFW_KEY_UNKNOWN)
@@ -151,6 +150,10 @@ public class KeyboardManager {
 		}
 
 		mBufferedTextInputCallback = callbackFunction;
+		if (mBufferedTextInputCallback != null) {
+			mBufferedTextInputCallback.onCaptureStarted();
+		}
+
 	}
 
 	public boolean isSomeComponentCapturingKeyboardText() {

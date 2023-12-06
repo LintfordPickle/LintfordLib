@@ -21,5 +21,7 @@ public interface IBufferedTextInputCallback {
 		return false;
 	}
 
+	public void onCaptureStarted();
+	
 	public void onCaptureStopped();
 }

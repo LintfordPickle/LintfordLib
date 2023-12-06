@@ -296,6 +296,11 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 	}
 
 	@Override
+	public void onCaptureStarted() {
+
+	}
+	
+	@Override
 	public void onCaptureStopped() {
 		mHasFocus = false;
 		mShowCaret = false;
