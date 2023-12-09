@@ -165,13 +165,13 @@ public class UiHorizontalEntryGroup extends UIWidget {
 
 		final int lChildEntryCount = mChildWidgets.size();
 
-		final float lContentWidth = mW;
-		final float lSpacingW = 5.0f;
-		final float lWidgetWidth = (lContentWidth / lChildEntryCount) - lSpacingW * 2.f;
+		final float lInnerPadding = 5.f;
+		final float lContentWidth = mW + lInnerPadding;
+		final float lWidgetWidth = (lContentWidth / lChildEntryCount) - lInnerPadding;
 
 		for (int i = 0; i < lChildEntryCount; i++) {
 			final var lWidget = mChildWidgets.get(i);
-			lWidget.setPosition(mX + i * lWidgetWidth + lSpacingW * 2 * i, mY);
+			lWidget.setPosition(mX + (i * lWidgetWidth) + (i * lInnerPadding), mY);
 			lWidget.width(lWidgetWidth);
 			lWidget.height(mH);
 		}
