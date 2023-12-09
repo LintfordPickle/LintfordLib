@@ -31,10 +31,10 @@ public abstract class GridEntity extends Entity {
 	// Constructor
 	// ---------------------------------------------
 
-	public GridEntity(int entityUid, int GridEntityType) {
+	public GridEntity(int entityUid, int gridEntityType) {
 		super(entityUid);
 
-		this.gridEntityType = GridEntityType;
+		this.gridEntityType = gridEntityType;
 
 		// default to not on grid
 		minX = -1;
