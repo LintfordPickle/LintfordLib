@@ -31,7 +31,7 @@ public class KeyboardManager {
 				// Buffered input (here we just listen for special keys (backspace, return etc.) used to stop the input capture,
 				// but otherwise, we don't register or process the keys
 				if (action == GLFW.GLFW_PRESS) {
-					if (key == GLFW.GLFW_KEY_ENTER) {
+					if (key == GLFW.GLFW_KEY_ENTER || key == GLFW.GLFW_KEY_KP_ENTER) {
 						if (mBufferedTextInputCallback.onEnterPressed()) {
 							stopBufferedTextCapture();
 							return;
