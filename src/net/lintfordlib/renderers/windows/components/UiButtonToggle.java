@@ -65,6 +65,9 @@ public class UiButtonToggle extends UIWidget {
 
 	@Override
 	public boolean handleInput(LintfordCore core) {
+		if (isEnabled() == false)
+			return false;
+
 		if (!mIsClicked && intersectsAA(core.HUD().getMouseCameraSpace())) {
 			mIsHoveredOver = true;
 
