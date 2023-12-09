@@ -48,11 +48,11 @@ public abstract class GridEntity extends Entity {
 	// ---------------------------------------------
 
 	public void clearGridCache() {
-		queryId = 0;
-		minX = 0;
-		maxX = 0;
-		minY = 0;
-		maxY = 0;
+		queryId = -1;
+		minX = -1;
+		maxX = -1;
+		minY = -1;
+		maxY = -1;
 	}
 
 	public abstract void fillEntityBounds(SpatialHashGrid<?> grid);

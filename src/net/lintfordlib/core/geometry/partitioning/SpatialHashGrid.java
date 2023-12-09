@@ -71,6 +71,31 @@ public class SpatialHashGrid<T extends GridEntity> {
 	 * Creates a spatial hash grid around 0,0 with the specified area dimensions and tile size
 	 */
 	public SpatialHashGrid(int boundaryWidth, int boundaryHeight, int tilesWide, int tilesHigh) {
+		mCells = new ArrayList<>();
+
+		createNewHashGrid(boundaryWidth, boundaryHeight, tilesWide, tilesHigh);
+
+	}
+
+	public void createNewHashGrid(int boundaryWidth, int boundaryHeight, int tilesWide, int tilesHigh) {
+		if (boundaryWidth() == boundaryWidth && boundaryHeight() == boundaryHeight && numTilesWide() == tilesWide && numTilesHigh() == tilesHigh)
+			return;
+
+		// clear all entities and their caches, from all cells
+		final int lTotalNumCells = numTilesWide() * numTilesHigh();
+		for (int i = 0; i < lTotalNumCells; i++) {
+			final var lCell = getCell(i);
+			if (lCell == null || lCell.size() == 0)
+				continue;
+
+			final int lNumEntitiesInCell = lCell.size();
+			for (int j = 0; j < lNumEntitiesInCell; j++) {
+				lCell.get(j).clearGridCache();
+			}
+		}
+
+		mCells.clear();
+
 		mBoundaryWidth = boundaryWidth;
 		mBoundaryHeight = boundaryHeight;
 
@@ -78,12 +103,10 @@ public class SpatialHashGrid<T extends GridEntity> {
 		mTilesHigh = tilesHigh;
 		final int totalCells = mTilesWide * mTilesHigh;
 
-		Debug.debugManager().logger().i(getClass().getSimpleName(), "Created a HashGrid with " + totalCells + " total cells");
-
-		mCells = new ArrayList<>();
 		for (int i = 0; i < totalCells; i++) {
 			mCells.add(new ArrayList<>());
 		}
+
 	}
 
 	// ---------------------------------------------
