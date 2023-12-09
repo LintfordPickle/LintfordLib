@@ -27,8 +27,9 @@ public class CameraBoundsController extends BaseController {
 
 	public boolean mLimitBounds;
 
-	public float sceneWidthInPx;
-	public float sceneHeightInPx;
+	private float mSceneWidthInPx;
+	private float mSceneHeightInPx;
+	private boolean mDrawBounds;
 
 	// ---------------------------------------------
 	// Properties
@@ -39,8 +40,32 @@ public class CameraBoundsController extends BaseController {
 	}
 
 	public void setBounds(float sceneWidthInPx, float sceneHeightInPx) {
-		this.sceneWidthInPx = sceneWidthInPx;
-		this.sceneHeightInPx = sceneHeightInPx;
+		this.mSceneWidthInPx = sceneWidthInPx;
+		this.mSceneHeightInPx = sceneHeightInPx;
+	}
+
+	public boolean drawBounds() {
+		return mDrawBounds;
+	}
+
+	public void drawBounds(boolean shouldDrawBounds) {
+		mDrawBounds = shouldDrawBounds;
+	}
+
+	public void widthBoundInPx(float width) {
+		mSceneWidthInPx = width;
+	}
+
+	public float widthBoundInPx() {
+		return mSceneWidthInPx;
+	}
+
+	public void heightBoundInPx(float height) {
+		mSceneHeightInPx = height;
+	}
+
+	public float heightBoundInPx() {
+		return mSceneHeightInPx;
 	}
 
 	public void limitBounds(boolean limitBounds) {
@@ -66,10 +91,10 @@ public class CameraBoundsController extends BaseController {
 		mGameCamera = camera;
 		mCameraPositionRef = mGameCamera.getPosition();
 
-		sceneWidthInPx = 2048;
-		sceneHeightInPx = 2048;
+		mSceneWidthInPx = 2048;
+		mSceneHeightInPx = 2048;
 
-		mLimitBounds = true;
+		mLimitBounds = false;
 	}
 
 	// ---------------------------------------------
@@ -92,18 +117,18 @@ public class CameraBoundsController extends BaseController {
 			final var lCamHeight = mGameCamera.getHeight();
 
 			// ensure camera doesn't go beyond scene extents
-			if (sceneWidthInPx != 0) {
-				if (mCameraPositionRef.x - lCamWidth * .5f < -sceneWidthInPx * 0.5f)
-					mCameraPositionRef.x = -sceneWidthInPx * 0.5f + lCamWidth * .5f;
-				if (mCameraPositionRef.x + lCamWidth * .5f > sceneWidthInPx * 0.5f)
-					mCameraPositionRef.x = sceneWidthInPx * 0.5f - lCamWidth * .5f;
+			if (mSceneWidthInPx != 0) {
+				if (mCameraPositionRef.x - lCamWidth * .5f < -mSceneWidthInPx * 0.5f)
+					mCameraPositionRef.x = -mSceneWidthInPx * 0.5f + lCamWidth * .5f;
+				if (mCameraPositionRef.x + lCamWidth * .5f > mSceneWidthInPx * 0.5f)
+					mCameraPositionRef.x = mSceneWidthInPx * 0.5f - lCamWidth * .5f;
 			}
 
-			if (sceneHeightInPx != 0) {
-				if (mCameraPositionRef.y - lCamHeight * .5f < -sceneHeightInPx * 0.5f)
-					mCameraPositionRef.y = -sceneHeightInPx * 0.5f + lCamHeight * .5f;
-				if (mCameraPositionRef.y + lCamHeight * .5f > sceneHeightInPx * 0.5f)
-					mCameraPositionRef.y = sceneHeightInPx * 0.5f - lCamHeight * .5f;
+			if (mSceneHeightInPx != 0) {
+				if (mCameraPositionRef.y - lCamHeight * .5f < -mSceneHeightInPx * 0.5f)
+					mCameraPositionRef.y = -mSceneHeightInPx * 0.5f + lCamHeight * .5f;
+				if (mCameraPositionRef.y + lCamHeight * .5f > mSceneHeightInPx * 0.5f)
+					mCameraPositionRef.y = mSceneHeightInPx * 0.5f - lCamHeight * .5f;
 
 			}
 		}

@@ -26,7 +26,7 @@ public class DebugCameraBoundsDrawer extends BaseRenderer {
 
 	@Override
 	public boolean isInitialized() {
-		return true;
+		return mCameraBoundsController != null;
 	}
 
 	// --------------------------------------
@@ -50,17 +50,14 @@ public class DebugCameraBoundsDrawer extends BaseRenderer {
 
 	@Override
 	public void draw(LintfordCore core) {
-		if (!isActive())
+		if (!isActive() || !isInitialized())
 			return;
 
-		if (mCameraBoundsController == null) {
-			mCameraBoundsController = (CameraBoundsController) core.controllerManager().getControllerByNameRequired(CameraBoundsController.CONTROLLER_NAME, mEntityGroupUid);
-
-		} else {
-			final var x = -mCameraBoundsController.sceneWidthInPx * .5f;
-			final var y = -mCameraBoundsController.sceneHeightInPx * .5f;
-			final var w = mCameraBoundsController.sceneWidthInPx;
-			final var h = mCameraBoundsController.sceneHeightInPx;
+		if (mCameraBoundsController.drawBounds()) {
+			final var x = -mCameraBoundsController.widthBoundInPx() * .5f;
+			final var y = -mCameraBoundsController.heightBoundInPx() * .5f;
+			final var w = mCameraBoundsController.widthBoundInPx();
+			final var h = mCameraBoundsController.heightBoundInPx();
 
 			Debug.debugManager().drawers().drawRectImmediate(core.gameCamera(), x, y, w, h, 0f, 1f, 0f);
 		}
