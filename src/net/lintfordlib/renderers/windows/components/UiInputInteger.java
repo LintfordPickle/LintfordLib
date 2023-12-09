@@ -59,17 +59,33 @@ public class UiInputInteger extends UIWidget implements IBufferedTextInputCallba
 	private boolean mIsValueBounded;
 	private int mMinValue;
 	private int mMaxValue;
+	private int mStepSize;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public int stepSize() {
+		return mStepSize;
+	}
+
+	public void stepSize(int newStepSize) {
+		if (newStepSize <= 0)
+			newStepSize = 1;
+
+		mStepSize = newStepSize;
+	}
 
 	public int currentValue() {
 		return mValue;
 	}
 
 	public void currentValue(int newValue) {
+		if (mValue == newValue)
+			return;
+
 		mValue = newValue;
+		updateIntegerValue();
 	}
 
 	public String label() {
@@ -164,13 +180,18 @@ public class UiInputInteger extends UIWidget implements IBufferedTextInputCallba
 			mMinValue = minValue;
 			mMaxValue = maxValue;
 			mIsValueBounded = true;
+			return;
 
 		} else if (minValue == 0 && maxValue == 0) {
 			mMinValue = 0;
 			mMaxValue = 0;
 			mIsValueBounded = false;
+			return;
 		}
 
+		mMinValue = minValue;
+		mMaxValue = maxValue;
+		mIsValueBounded = true;
 	}
 
 	// --------------------------------------
@@ -197,6 +218,7 @@ public class UiInputInteger extends UIWidget implements IBufferedTextInputCallba
 		mMinValue = -10;
 		mMaxValue = 10;
 
+		mStepSize = 1;
 		mValue = 0;
 		mInputField.append(mValue);
 
@@ -213,7 +235,7 @@ public class UiInputInteger extends UIWidget implements IBufferedTextInputCallba
 		if (mDecrementRectangle.intersectsAA(core.HUD().getMouseCameraSpace())) {
 			if (core.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
 				var t = mValue;
-				mValue--;
+				mValue -= mStepSize;
 				if (mIsValueBounded && mValue < mMinValue)
 					mValue = mMinValue;
 
@@ -232,7 +254,7 @@ public class UiInputInteger extends UIWidget implements IBufferedTextInputCallba
 		else if (mIncrementRectangle.intersectsAA(core.HUD().getMouseCameraSpace())) {
 			if (core.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
 				var t = mValue;
-				mValue++;
+				mValue += mStepSize;
 				if (mIsValueBounded && mValue > mMaxValue)
 					mValue = mMaxValue;
 
@@ -407,6 +429,16 @@ public class UiInputInteger extends UIWidget implements IBufferedTextInputCallba
 			mValue = mMinValue;
 			mInputField.delete(0, mInputField.length());
 			mInputField.append(mValue);
+		}
+
+		if (mIsValueBounded) {
+			if (mValue < mMinValue)
+				mValue = mMinValue;
+
+			if (mValue > mMaxValue)
+				mValue = mMaxValue;
+
+			updateIntegerValue();
 		}
 
 		return getEnterFinishesInput();
