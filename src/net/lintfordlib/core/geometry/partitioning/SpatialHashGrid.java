@@ -3,7 +3,6 @@ package net.lintfordlib.core.geometry.partitioning;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.maths.MathHelper;
 
 public class SpatialHashGrid<T extends GridEntity> {
@@ -113,9 +112,9 @@ public class SpatialHashGrid<T extends GridEntity> {
 	// Methods
 	// ---------------------------------------------
 
-	public int getCellKeyFromWorldPosition(int worldX, int worldY) {
-		final int cellX = getCellIndexX(worldX);
-		final int cellY = getCellIndexY(worldY);
+	public int getCellKeyFromWorldPosition(float worldX, float worldY) {
+		final int cellX = getCellIndexX((int) worldX);
+		final int cellY = getCellIndexY((int) worldY);
 		return getKey(cellX, cellY);
 	}
 

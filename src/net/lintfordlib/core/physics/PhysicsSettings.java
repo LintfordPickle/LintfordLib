@@ -15,8 +15,8 @@ public final class PhysicsSettings {
 	public boolean enable_collision_resolver;
 	public boolean enable_mtv_separation;
 
-	public int hashGridWidthInUnits;
-	public int hashGridHeightInUnits;
+	public float hashGridWidthInUnits;
+	public float hashGridHeightInUnits;
 	public int hashGridCellsWide;
 	public int hashGridCellsHigh;
 
@@ -41,7 +41,7 @@ public final class PhysicsSettings {
 	// Methods
 	// ---------------------------------------------
 
-	public void initializeGrid(int withInUnits, int heightInUnits, int numCellsWide, int numCellsHigh) {
+	public void initializeGrid(float withInUnits, float heightInUnits, int numCellsWide, int numCellsHigh) {
 		hashGridWidthInUnits = withInUnits;
 		hashGridHeightInUnits = heightInUnits;
 		hashGridCellsWide = numCellsWide;

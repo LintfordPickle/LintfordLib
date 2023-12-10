@@ -80,7 +80,7 @@ public class PhysicsHashGrid<T extends PhysicsGridEntity> {
 	/**
 	 * Creates a spatial hash grid around 0,0 with the specified area dimensions and tile size
 	 */
-	public PhysicsHashGrid(int boundaryWidthInUnits, int boundaryHeightInUnits, int tilesWide, int tilesHigh) {
+	public PhysicsHashGrid(float boundaryWidthInUnits, float boundaryHeightInUnits, int tilesWide, int tilesHigh) {
 		mBoundaryWidthInUnits = boundaryWidthInUnits;
 		mBoundaryHeightInUnits = boundaryHeightInUnits;
 
@@ -108,7 +108,7 @@ public class PhysicsHashGrid<T extends PhysicsGridEntity> {
 		final int cellY = getRowAtY(worldY * lToUnits);
 		return getKey(cellX, cellY);
 	}
-	
+
 	public int getCellKeyFromUnitPosition(float unitX, float unitY) {
 		final int cellX = getColumnAtX(unitX);
 		final int cellY = getRowAtY(unitY);
