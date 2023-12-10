@@ -81,10 +81,22 @@ public class UiInputInteger extends UIWidget implements IBufferedTextInputCallba
 	}
 
 	public void currentValue(int newValue) {
-		if (mValue == newValue)
+		int v = newValue;
+
+		if (mIsValueBounded) {
+			if (v < mMinValue)
+				v = mMinValue;
+
+			if (v > mMaxValue)
+				v = mMaxValue;
+
+		}
+
+		if (mValue == v)
 			return;
 
-		mValue = newValue;
+		mValue = v;
+
 		updateIntegerValue();
 	}
 
@@ -449,7 +461,15 @@ public class UiInputInteger extends UIWidget implements IBufferedTextInputCallba
 		mHasFocus = false;
 		mShowCaret = false;
 
-		applyInputFieldAsValue();
+		if (applyInputFieldAsValue()) {
+			if (mUiWidgetListenerCallback != null) {
+				mUiWidgetListenerCallback.widgetOnDataChanged(null, mUiWidgetListenerUid);
+			}
+
+			if (mIUiInputKeyPressCallback != null) {
+				mIUiInputKeyPressCallback.UiInputEnded(mKeyListenerUid);
+			}
+		}
 
 		return getEnterFinishesInput();
 	}

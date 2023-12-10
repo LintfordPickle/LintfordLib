@@ -80,6 +80,26 @@ public class UiInputFloat extends UIWidget implements IBufferedTextInputCallback
 		return mValue;
 	}
 
+	public void currentValue(float newValue) {
+		float v = newValue;
+
+		if (mIsValueBounded) {
+			if (v < mMinValue)
+				v = mMinValue;
+
+			if (v > mMaxValue)
+				v = mMaxValue;
+
+		}
+
+		if (mValue == v)
+			return;
+
+		mValue = v;
+
+		updateFloatValue();
+	}
+
 	public String label() {
 		return mLabelText;
 	}
@@ -431,7 +451,15 @@ public class UiInputFloat extends UIWidget implements IBufferedTextInputCallback
 		mHasFocus = false;
 		mShowCaret = false;
 
-		applyInputFieldAsValue();
+		if (applyInputFieldAsValue()) {
+			if (mUiWidgetListenerCallback != null) {
+				mUiWidgetListenerCallback.widgetOnDataChanged(null, mUiWidgetListenerUid);
+			}
+
+			if (mIUiInputKeyPressCallback != null) {
+				mIUiInputKeyPressCallback.UiInputEnded(mKeyListenerUid);
+			}
+		}
 
 		return getEnterFinishesInput();
 	}
