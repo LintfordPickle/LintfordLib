@@ -390,7 +390,7 @@ public class UiInputFloat extends UIWidget implements IBufferedTextInputCallback
 	private boolean applyInputFieldAsValue() {
 		float tempValue = mMinValue;
 		try {
-			tempValue = Integer.parseInt(mInputField.toString());
+			tempValue = Float.parseFloat(mInputField.toString());
 
 		} catch (NumberFormatException e) {
 			tempValue = mMinValue;
