@@ -147,12 +147,9 @@ public class UiInputFloat extends UIWidget implements IBufferedTextInputCallback
 		mHasFocus = v;
 	}
 
-	public void inputString(String newValue) {
-		if (mInputField.length() > 0) {
-			mInputField.delete(0, mInputField.length());
-		}
-
-		mInputField.append(newValue);
+	public void inputString(float newValue) {
+		mValue = newValue;
+		updateFloatValue();
 	}
 
 	public StringBuilder inputString() {
@@ -371,6 +368,35 @@ public class UiInputFloat extends UIWidget implements IBufferedTextInputCallback
 	// Methods
 	// --------------------------------------
 
+	private boolean applyInputFieldAsValue() {
+		float tempValue = mMinValue;
+		try {
+			tempValue = Integer.parseInt(mInputField.toString());
+
+		} catch (NumberFormatException e) {
+			tempValue = mMinValue;
+			mInputField.delete(0, mInputField.length());
+			mInputField.append(mValue);
+		}
+
+		if (mValue == tempValue)
+			return false;
+
+		mValue = tempValue;
+
+		if (mIsValueBounded) {
+			if (mValue < mMinValue)
+				mValue = mMinValue;
+
+			if (mValue > mMaxValue)
+				mValue = mMaxValue;
+
+			updateFloatValue();
+		}
+
+		return true;
+	}
+
 	private void updateFloatValue() {
 		mInputField.delete(0, mInputField.length());
 		mInputField.append(mValue);
@@ -406,15 +432,7 @@ public class UiInputFloat extends UIWidget implements IBufferedTextInputCallback
 		mHasFocus = false;
 		mShowCaret = false;
 
-		// Try and parse the input text to an int
-		try {
-			mValue = Float.parseFloat(mInputField.toString());
-
-		} catch (NumberFormatException e) {
-			mValue = mMinValue;
-			mInputField.delete(0, mInputField.length());
-			mInputField.append(mValue);
-		}
+		applyInputFieldAsValue();
 
 		return getEnterFinishesInput();
 	}
@@ -481,12 +499,14 @@ public class UiInputFloat extends UIWidget implements IBufferedTextInputCallback
 		mHasFocus = false;
 		mShowCaret = false;
 
-		if (mUiWidgetListenerCallback != null) {
-			mUiWidgetListenerCallback.widgetOnDataChanged(null, mUiWidgetListenerUid);
-		}
+		if (applyInputFieldAsValue()) {
+			if (mUiWidgetListenerCallback != null) {
+				mUiWidgetListenerCallback.widgetOnDataChanged(null, mUiWidgetListenerUid);
+			}
 
-		if (mIUiInputKeyPressCallback != null) {
-			mIUiInputKeyPressCallback.UiInputEnded(mKeyListenerUid);
+			if (mIUiInputKeyPressCallback != null) {
+				mIUiInputKeyPressCallback.UiInputEnded(mKeyListenerUid);
+			}
 		}
 	}
 

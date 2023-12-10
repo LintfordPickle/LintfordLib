@@ -386,6 +386,35 @@ public class UiInputInteger extends UIWidget implements IBufferedTextInputCallba
 	// Methods
 	// --------------------------------------
 
+	private boolean applyInputFieldAsValue() {
+		int tempValue = mMinValue;
+		try {
+			tempValue = Integer.parseInt(mInputField.toString());
+
+		} catch (NumberFormatException e) {
+			tempValue = mMinValue;
+			mInputField.delete(0, mInputField.length());
+			mInputField.append(mValue);
+		}
+
+		if (mValue == tempValue)
+			return false;
+
+		mValue = tempValue;
+
+		if (mIsValueBounded) {
+			if (mValue < mMinValue)
+				mValue = mMinValue;
+
+			if (mValue > mMaxValue)
+				mValue = mMaxValue;
+
+			updateIntegerValue();
+		}
+
+		return true;
+	}
+
 	private void updateIntegerValue() {
 		mInputField.delete(0, mInputField.length());
 		mInputField.append(mValue);
@@ -421,25 +450,7 @@ public class UiInputInteger extends UIWidget implements IBufferedTextInputCallba
 		mHasFocus = false;
 		mShowCaret = false;
 
-		// Try and parse the input text to an int
-		try {
-			mValue = Integer.parseInt(mInputField.toString());
-
-		} catch (NumberFormatException e) {
-			mValue = mMinValue;
-			mInputField.delete(0, mInputField.length());
-			mInputField.append(mValue);
-		}
-
-		if (mIsValueBounded) {
-			if (mValue < mMinValue)
-				mValue = mMinValue;
-
-			if (mValue > mMaxValue)
-				mValue = mMaxValue;
-
-			updateIntegerValue();
-		}
+		applyInputFieldAsValue();
 
 		return getEnterFinishesInput();
 	}
@@ -506,13 +517,20 @@ public class UiInputInteger extends UIWidget implements IBufferedTextInputCallba
 		mHasFocus = false;
 		mShowCaret = false;
 
-		if (mUiWidgetListenerCallback != null) {
-			mUiWidgetListenerCallback.widgetOnDataChanged(null, mUiWidgetListenerUid);
-		}
+		if (applyInputFieldAsValue()) {
+			if (mUiWidgetListenerCallback != null) {
+				mUiWidgetListenerCallback.widgetOnDataChanged(null, mUiWidgetListenerUid);
+			}
 
-		if (mIUiInputKeyPressCallback != null) {
-			mIUiInputKeyPressCallback.UiInputEnded(mKeyListenerUid);
+			if (mIUiInputKeyPressCallback != null) {
+				mIUiInputKeyPressCallback.UiInputEnded(mKeyListenerUid);
+			}
 		}
+	}
+
+	@Override
+	public void resetCoolDownTimer() {
+		mMouseTimer = 30;
 	}
 
 }
