@@ -74,9 +74,8 @@ public class FloatingLayout extends BaseLayout implements IInputProcessor {
 	}
 
 	@Override
-	public void resetCoolDownTimer() {
-		mClickTimer = 200;
-
+	public void resetCoolDownTimer(float cooldownInMs) {
+		mClickTimer = cooldownInMs;
 	}
 
 	@Override

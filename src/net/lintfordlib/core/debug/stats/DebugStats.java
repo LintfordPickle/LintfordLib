@@ -71,7 +71,7 @@ public class DebugStats extends Rectangle implements IScrollBarArea, IInputProce
 	private float mTagLineHeight = 20.f;
 	private transient ScrollBarContentRectangle mContentRectangle;
 	private transient ScrollBar mScrollBar;
-	private float mMouseTimer;
+	private float mInputTimer;
 
 	// --------------------------------------
 	// Properties
@@ -198,8 +198,8 @@ public class DebugStats extends Rectangle implements IScrollBarArea, IInputProce
 	}
 
 	public void update(LintfordCore core) {
-		if (mMouseTimer >= 0)
-			mMouseTimer -= core.gameTime().elapsedTimeMilli();
+		if (mInputTimer >= 0)
+			mInputTimer -= core.gameTime().elapsedTimeMilli();
 
 		if (mIsOpen == false)
 			return;
@@ -417,13 +417,18 @@ public class DebugStats extends Rectangle implements IScrollBarArea, IInputProce
 
 	@Override
 	public boolean isCoolDownElapsed() {
-		return mMouseTimer < 0;
+		return mInputTimer < 0;
 	}
 
 	@Override
 	public void resetCoolDownTimer() {
-		mMouseTimer = IInputProcessor.INPUT_COOLDOWN_TIME;
-	};
+		resetCoolDownTimer(IInputProcessor.INPUT_COOLDOWN_TIME);
+	}
+
+	@Override
+	public void resetCoolDownTimer(float cooldownInMs) {
+		mInputTimer = cooldownInMs;
+	}
 
 	@Override
 	public boolean allowGamepadInput() {

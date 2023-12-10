@@ -334,9 +334,8 @@ public class ScrollBar extends Rectangle implements IInputProcessor, IInputClick
 	}
 
 	@Override
-	public void resetCoolDownTimer() {
-		mMouseTimer = 200;
-
+	public void resetCoolDownTimer(float cooldownInMs) {
+		mMouseTimer = cooldownInMs;
 	}
 
 	@Override

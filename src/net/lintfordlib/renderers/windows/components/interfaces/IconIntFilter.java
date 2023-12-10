@@ -135,8 +135,8 @@ public class IconIntFilter implements IInputProcessor {
 	}
 
 	@Override
-	public void resetCoolDownTimer() {
-		mMouseTimer = 200;
+	public void resetCoolDownTimer(float cooldownInMs) {
+		mMouseTimer = cooldownInMs;
 	}
 
 	@Override

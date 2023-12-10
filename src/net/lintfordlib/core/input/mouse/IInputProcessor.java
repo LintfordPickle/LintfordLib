@@ -6,7 +6,11 @@ public interface IInputProcessor {
 
 	boolean isCoolDownElapsed();
 
-	void resetCoolDownTimer();
+	default void resetCoolDownTimer() {
+		resetCoolDownTimer(INPUT_COOLDOWN_TIME);
+	}
+
+	void resetCoolDownTimer(float cooldownInMs);
 
 	boolean allowKeyboardInput();
 

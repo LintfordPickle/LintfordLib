@@ -17,6 +17,4 @@ public class ConstantsUi {
 
 	public static final float CARET_FLASH_TIME = 250;
 
-	public static final float MOUSE_TIMED_CLICK_TIMER_MS = 200;
-
 }

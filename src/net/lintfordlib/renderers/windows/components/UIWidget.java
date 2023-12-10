@@ -37,7 +37,7 @@ public abstract class UIWidget extends Rectangle implements IInputProcessor {
 	protected boolean mIsHoveredOver;
 	protected boolean mIsDoubleHeight;
 
-	protected float mMouseTimer;
+	protected float mInputTimer;
 
 	protected float mLayoutWeight;
 
@@ -213,8 +213,8 @@ public abstract class UIWidget extends Rectangle implements IInputProcessor {
 	}
 
 	public void update(LintfordCore core) {
-		if (mMouseTimer >= 0) {
-			mMouseTimer -= core.appTime().elapsedTimeMilli();
+		if (mInputTimer >= 0) {
+			mInputTimer -= core.appTime().elapsedTimeMilli();
 		}
 	}
 
@@ -226,12 +226,12 @@ public abstract class UIWidget extends Rectangle implements IInputProcessor {
 
 	@Override
 	public boolean isCoolDownElapsed() {
-		return mMouseTimer < 0;
+		return mInputTimer < 0;
 	}
 
 	@Override
-	public void resetCoolDownTimer() {
-		mMouseTimer = 200;
+	public void resetCoolDownTimer(float cooldownInMs) {
+		mInputTimer = cooldownInMs;
 	}
 
 	@Override

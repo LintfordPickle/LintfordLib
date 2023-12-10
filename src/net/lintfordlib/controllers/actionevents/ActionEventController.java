@@ -24,7 +24,7 @@ public abstract class ActionEventController<T extends IActionFrame> extends Base
 
 		public final ActionEventManager actionEventManager;
 
-		protected float mMouseClickTimer;
+		protected float mInputTimer;
 		public int gamepadUid;
 		public final boolean playbackAvailable;
 		public boolean isTempFrameConsumed;
@@ -55,17 +55,22 @@ public abstract class ActionEventController<T extends IActionFrame> extends Base
 
 		public void update(LintfordCore core) {
 			final var lDeltaTime = core.gameTime().elapsedTimeMilli();
-			mMouseClickTimer -= lDeltaTime;
+			mInputTimer -= lDeltaTime;
 		}
 
 		@Override
 		public boolean isCoolDownElapsed() {
-			return mMouseClickTimer <= 0;
+			return mInputTimer <= 0;
 		}
 
 		@Override
 		public void resetCoolDownTimer() {
-			mMouseClickTimer = MOUSE_CLICK_COOLDOWN_TIME;
+			resetCoolDownTimer(MOUSE_CLICK_COOLDOWN_TIME);
+		}
+
+		@Override
+		public void resetCoolDownTimer(float cooldownInMs) {
+			mInputTimer = cooldownInMs;
 		}
 
 		@Override

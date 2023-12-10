@@ -340,6 +340,6 @@ public class MenuSliderEntry extends MenuEntry {
 
 	@Override
 	public void resetCoolDownTimer() {
-		mClickTimer = 50;
+		mInputTimer = 50;
 	}
 }

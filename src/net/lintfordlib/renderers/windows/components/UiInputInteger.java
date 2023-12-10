@@ -233,7 +233,7 @@ public class UiInputInteger extends UIWidget implements IBufferedTextInputCallba
 			return false;
 
 		if (mDecrementRectangle.intersectsAA(core.HUD().getMouseCameraSpace())) {
-			if (core.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
+			if (core.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this, 30)) {
 				var t = mValue;
 				mValue -= mStepSize;
 				if (mIsValueBounded && mValue < mMinValue)
@@ -252,7 +252,7 @@ public class UiInputInteger extends UIWidget implements IBufferedTextInputCallba
 		}
 
 		else if (mIncrementRectangle.intersectsAA(core.HUD().getMouseCameraSpace())) {
-			if (core.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
+			if (core.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this, 30)) {
 				var t = mValue;
 				mValue += mStepSize;
 				if (mIsValueBounded && mValue > mMaxValue)
@@ -272,8 +272,7 @@ public class UiInputInteger extends UIWidget implements IBufferedTextInputCallba
 		else if (intersectsAA(core.HUD().getMouseCameraSpace())) {
 			if (core.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
 
-				onClick(core.input());
-				mHasFocus = true;
+				onClick(core.input(), true);
 
 				return true;
 			}
@@ -368,7 +367,7 @@ public class UiInputInteger extends UIWidget implements IBufferedTextInputCallba
 
 		if (mShowCaret && mHasFocus) {
 			final var lCarotPositionX = lTextPosX + lTextWidth;
-			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, lCarotPositionX, mY + mH * .5f - lTextHeight * .5f * mTextScale, 1.f, textFont.fontHeight() * mTextScale, componentZDepth, ColorConstants.WHITE);
+			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, (int) lCarotPositionX, mY + mH * .5f - lTextHeight * .5f * mTextScale, 1.f, textFont.fontHeight() * mTextScale, componentZDepth, ColorConstants.WHITE);
 		}
 		spriteBatch.end();
 		final int lCancelRectSize = 16;
@@ -425,11 +424,11 @@ public class UiInputInteger extends UIWidget implements IBufferedTextInputCallba
 		mKeyListenerUid = keyListenerUid;
 	}
 
-	public void onClick(InputManager inputState) {
+	public void onClick(InputManager inputState, boolean newFocus) {
 		if (mIsReadonly)
 			return;
 
-		mHasFocus = !mHasFocus;
+		mHasFocus = newFocus;
 
 		if (mHasFocus) {
 			inputState.keyboard().startBufferedTextCapture(this);
@@ -529,8 +528,8 @@ public class UiInputInteger extends UIWidget implements IBufferedTextInputCallba
 	}
 
 	@Override
-	public void resetCoolDownTimer() {
-		mMouseTimer = 30;
+	public void resetCoolDownTimer(float cooldownInMs) {
+		mInputTimer = cooldownInMs;
 	}
 
 }

@@ -88,7 +88,7 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 	protected boolean mShowInfoIcon;
 	protected boolean mShowWarnIcon;
 
-	protected float mClickTimer;
+	protected float mInputTimer;
 	private boolean mIsinitialized, mResourcesLoaded;
 	public float mZ;
 
@@ -480,8 +480,8 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 
 		final var lDeltaTime = (float) core.appTime().elapsedTimeMilli();
 
-		if (mClickTimer >= 0)
-			mClickTimer -= lDeltaTime;
+		if (mInputTimer >= 0)
+			mInputTimer -= lDeltaTime;
 
 		if (mAnimationTimer > 0)
 			mAnimationTimer -= lDeltaTime;
@@ -688,12 +688,12 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 
 	@Override
 	public boolean isCoolDownElapsed() {
-		return mClickTimer < 0;
+		return mInputTimer < 0;
 	}
 
 	@Override
-	public void resetCoolDownTimer() {
-		mClickTimer = IInputProcessor.INPUT_COOLDOWN_TIME;
+	public void resetCoolDownTimer(float cooldownInMs) {
+		mInputTimer = cooldownInMs;
 	}
 
 	@Override

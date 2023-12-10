@@ -331,9 +331,8 @@ public class ScrollBarHorizontal extends Rectangle implements IInputProcessor, I
 	}
 
 	@Override
-	public void resetCoolDownTimer() {
-		mMouseTimer = 200;
-
+	public void resetCoolDownTimer(float cooldownInMs) {
+		mMouseTimer = cooldownInMs;
 	}
 
 	@Override

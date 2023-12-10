@@ -60,7 +60,7 @@ public abstract class Screen implements IInputProcessor {
 	protected boolean mBlockGamepadInputInBackground;
 	protected boolean mBlockMouseInputInBackground;
 
-	protected float mMouseClickTimer;
+	protected float mInputTimer;
 	protected final Vector2f mScreenOffset = new Vector2f();
 
 	// --------------------------------------
@@ -242,8 +242,8 @@ public abstract class Screen implements IInputProcessor {
 	}
 
 	public void update(LintfordCore core, boolean otherScreenHasFocus, boolean coveredByOtherScreen) {
-		if (mMouseClickTimer > 0)
-			mMouseClickTimer -= core.appTime().elapsedTimeMilli();
+		if (mInputTimer > 0)
+			mInputTimer -= core.appTime().elapsedTimeMilli();
 
 		mOtherScreenHasFocus = otherScreenHasFocus;
 
@@ -348,11 +348,12 @@ public abstract class Screen implements IInputProcessor {
 
 	@Override
 	public boolean isCoolDownElapsed() {
-		return mMouseClickTimer <= 0;
+		return mInputTimer <= 0;
 	}
 
 	@Override
-	public void resetCoolDownTimer() {
-		mMouseClickTimer = 200;
+	public void resetCoolDownTimer(float cooldownInMs) {
+		mInputTimer = cooldownInMs;
 	}
+
 }

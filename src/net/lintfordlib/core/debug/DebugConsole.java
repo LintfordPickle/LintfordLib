@@ -100,7 +100,7 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 	private transient int mLowerBound;
 	private transient int mUpperBound;
 	private transient int mConsoleLineHeight;
-	private float mMouseTimer;
+	private float mInputTimer;
 	private transient boolean mAutoScroll;
 	private boolean mResourcesLoaded;
 	private UiInputText mTAGFilterText;
@@ -373,8 +373,8 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 		if (mConsoleState == CONSOLE_STATE.minimal)
 			mAutoScroll = true;
 
-		if (mMouseTimer >= 0)
-			mMouseTimer -= core.appTime().elapsedTimeMilli();
+		if (mInputTimer >= 0)
+			mInputTimer -= core.appTime().elapsedTimeMilli();
 
 		if (!mResourcesLoaded || mConsoleState == CONSOLE_STATE.closed)
 			return;
@@ -794,7 +794,7 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 	public void onCaptureStarted() {
 
 	}
-	
+
 	@Override
 	public void onCaptureStopped() {
 		mHasFocus = false;
@@ -802,12 +802,17 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 
 	@Override
 	public boolean isCoolDownElapsed() {
-		return mMouseTimer < 0;
+		return mInputTimer < 0;
 	}
 
 	@Override
 	public void resetCoolDownTimer() {
-		mMouseTimer = IInputProcessor.INPUT_COOLDOWN_TIME;
+		resetCoolDownTimer(IInputProcessor.INPUT_COOLDOWN_TIME);
+	}
+
+	@Override
+	public void resetCoolDownTimer(float cooldownInMs) {
+		mInputTimer = cooldownInMs;
 	}
 
 	@Override

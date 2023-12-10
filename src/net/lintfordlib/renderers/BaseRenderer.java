@@ -143,8 +143,9 @@ public abstract class BaseRenderer implements IInputProcessor {
 		return mInputTimer <= 0.f;
 	}
 
-	public void resetCoolDownTimer() {
-		mInputTimer = INPUT_COOLDOWN_TIME;
+	@Override
+	public void resetCoolDownTimer(float cooldownInMs) {
+		mInputTimer = cooldownInMs;
 	}
 
 	public boolean allowKeyboardInput() {

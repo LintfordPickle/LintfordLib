@@ -110,7 +110,7 @@ public class MusicController extends BaseController implements IInputProcessor {
 				return;
 		}
 
-		if(mIsPlaying)
+		if (mIsPlaying)
 			updatePlayingState(core);
 
 	}
@@ -157,7 +157,7 @@ public class MusicController extends BaseController implements IInputProcessor {
 	public void play(int songIndex, int groupIndex) {
 		if (mIsPlaying)
 			return;
-		
+
 		mCurrentGroupIndex = groupIndex;
 
 		int_play(songIndex, groupIndex);
@@ -317,7 +317,12 @@ public class MusicController extends BaseController implements IInputProcessor {
 
 	@Override
 	public void resetCoolDownTimer() {
-		mInputTimer = IInputProcessor.INPUT_COOLDOWN_TIME;
+		resetCoolDownTimer(IInputProcessor.INPUT_COOLDOWN_TIME);
+	}
+
+	@Override
+	public void resetCoolDownTimer(float cooldownInMs) {
+		mInputTimer = cooldownInMs;
 	}
 
 	// ---

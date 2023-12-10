@@ -62,7 +62,7 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 	protected float dx, dy;
 	protected float mWindowAlpha;
 
-	protected float mMouseClickTimer;
+	protected float mInputTimer;
 
 	protected ScrollBar mScrollBar;
 
@@ -374,8 +374,8 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 
 		updateWindowScales(core);
 
-		if (mMouseClickTimer >= 0)
-			mMouseClickTimer -= core.appTime().elapsedTimeMilli();
+		if (mInputTimer >= 0)
+			mInputTimer -= core.appTime().elapsedTimeMilli();
 
 		final int lComponentCount = mComponents.size();
 		for (int i = 0; i < lComponentCount; i++) {
@@ -541,12 +541,12 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 
 	@Override
 	public boolean isCoolDownElapsed() {
-		return mMouseClickTimer < 0;
+		return mInputTimer < 0;
 	}
-
+	
 	@Override
-	public void resetCoolDownTimer() {
-		mMouseClickTimer = 200;
+	public void resetCoolDownTimer(float cooldownInMs) {
+		mInputTimer = cooldownInMs;
 	}
 
 	@Override
