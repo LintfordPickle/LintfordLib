@@ -308,6 +308,9 @@ public class UiInputText extends UIWidget implements IBufferedTextInputCallback 
 
 		final var lInputTextWidth = textFont.getStringWidth(mInputField.toString());
 
+		if (mCursorPos >= mInputField.length())
+			mCursorPos = mInputField.length();
+
 		final var first_part_of_string = mCursorPos > 0 ? mInputField.subSequence(0, mCursorPos) : "";
 		final var carot_position_x = textFont.getStringWidth(first_part_of_string.toString(), mTextScale);
 
