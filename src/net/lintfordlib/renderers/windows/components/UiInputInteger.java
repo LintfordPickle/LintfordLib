@@ -167,12 +167,12 @@ public class UiInputInteger extends UIWidget implements IBufferedTextInputCallba
 		mHasFocus = v;
 	}
 
-	public void inputString(String newValue) {
-		if (mInputField.length() > 0) {
-			mInputField.delete(0, mInputField.length());
-		}
+	public void inputString(int newValue) {
+		if (mValue == newValue)
+			return;
 
-		mInputField.append(newValue);
+		mValue = newValue;
+		updateIntegerValue();
 	}
 
 	public StringBuilder inputString() {

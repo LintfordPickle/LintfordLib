@@ -1,5 +1,9 @@
 package net.lintfordlib.renderers.windows.components;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.Arrays;
 import java.util.List;
 
@@ -33,6 +37,8 @@ public class UiInputFloat extends UIWidget implements IBufferedTextInputCallback
 	// Variables
 	// --------------------------------------
 
+	private DecimalFormat decimalFormat;
+
 	private int mMaxInputCharacters;
 	private transient boolean mHasFocus;
 	private transient float mCaretFlashTimer;
@@ -56,6 +62,7 @@ public class UiInputFloat extends UIWidget implements IBufferedTextInputCallback
 	private String mLabelText;
 
 	private float mValue;
+	private int mNumDecimalPlaces;
 	private boolean mIsValueBounded;
 	private float mMinValue;
 	private float mMaxValue;
@@ -64,6 +71,30 @@ public class UiInputFloat extends UIWidget implements IBufferedTextInputCallback
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public int numDecimalPlaces() {
+		return mNumDecimalPlaces;
+	}
+
+	public void numDecimalPlaces(int numDecimalPlaces) {
+		if (numDecimalPlaces < 1)
+			numDecimalPlaces = 1;
+
+		if (numDecimalPlaces > 5)
+			numDecimalPlaces = 5;
+
+		if (mNumDecimalPlaces == numDecimalPlaces)
+			return;
+
+		var postFix = new String(new char[numDecimalPlaces]).replace('\0', '0');
+		final var decimalFormatSymbols = new DecimalFormatSymbols();
+		decimalFormatSymbols.setDecimalSeparator('.');
+		decimalFormatSymbols.setGroupingSeparator(',');
+
+		decimalFormat = new DecimalFormat("#,##0." + postFix, decimalFormatSymbols);
+
+		mNumDecimalPlaces = numDecimalPlaces;
+	}
 
 	public void stepSize(float newStepSize) {
 		if (newStepSize < 0.f)
@@ -168,6 +199,9 @@ public class UiInputFloat extends UIWidget implements IBufferedTextInputCallback
 	}
 
 	public void inputString(float newValue) {
+		if (mValue == newValue)
+			return;
+
 		mValue = newValue;
 		updateFloatValue();
 	}
@@ -224,6 +258,8 @@ public class UiInputFloat extends UIWidget implements IBufferedTextInputCallback
 
 		mValue = 0.f;
 		mInputField.append(mValue);
+
+		numDecimalPlaces(3);
 
 	}
 
@@ -387,6 +423,14 @@ public class UiInputFloat extends UIWidget implements IBufferedTextInputCallback
 	// Methods
 	// --------------------------------------
 
+	private void limitValueToDecimalPlaces() {
+		int dp = 3;
+		
+		BigDecimal bd = new BigDecimal(mValue);
+		bd = bd.setScale(dp, RoundingMode.HALF_UP);
+		mValue = bd.floatValue();
+	}
+
 	private boolean applyInputFieldAsValue() {
 		float tempValue = mMinValue;
 		try {
@@ -403,20 +447,24 @@ public class UiInputFloat extends UIWidget implements IBufferedTextInputCallback
 
 		mValue = tempValue;
 
+		limitValueToDecimalPlaces();
+
 		if (mIsValueBounded) {
 			if (mValue < mMinValue)
 				mValue = mMinValue;
 
 			if (mValue > mMaxValue)
 				mValue = mMaxValue;
-
-			updateFloatValue();
 		}
+		
+		updateFloatValue();
 
 		return true;
 	}
 
 	private void updateFloatValue() {
+		limitValueToDecimalPlaces();
+
 		mInputField.delete(0, mInputField.length());
 		mInputField.append(mValue);
 	}
