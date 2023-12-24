@@ -1,6 +1,14 @@
 package net.lintfordlib.renderers.windows.components;
 
-public class UiListBoxItem implements Comparable<UiListBoxItem> {
+import net.lintfordlib.core.geometry.Rectangle;
+
+public class UiListBoxItem extends Rectangle implements Comparable<UiListBoxItem> {
+
+	// --------------------------------------
+	// Constants
+	// --------------------------------------
+
+	private static final long serialVersionUID = -3976341798893720687L;
 
 	// --------------------------------------
 	// Variables
@@ -29,7 +37,7 @@ public class UiListBoxItem implements Comparable<UiListBoxItem> {
 	// Methods
 	// --------------------------------------
 
-	public void set(String definitionName, String displayName) {
+	public void setAsset(String definitionName, String displayName) {
 		this.definitionName = definitionName;
 
 		this.displayName = displayName;
