@@ -1,6 +1,10 @@
 package net.lintfordlib.core.entities.definitions;
 
-public abstract class BaseDefinition {
+import java.io.Serializable;
+
+public abstract class BaseDefinition implements Serializable {
+
+	private static final long serialVersionUID = 6822878552175422977L;
 
 	// --------------------------------------
 	// Constants
@@ -19,7 +23,7 @@ public abstract class BaseDefinition {
 
 	/** the name of the definition */
 	public String name;
-	
+
 	/** user friendly name for the front end */
 	public String displayName;
 
