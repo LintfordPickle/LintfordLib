@@ -282,6 +282,21 @@ public class Rectangle implements Serializable {
 		mH = height;
 	}
 
+	public void absMove(float absX, float absY) {
+		mX = absX;
+		mY = absY;
+	}
+
+	public void relMove(float dX, float dY) {
+		mX += dX;
+		mY += dY;
+	}
+
+	public void relResize(float dW, float dH) {
+		mW += dW;
+		mH += dH;
+	}
+
 	public void setCenter(float centerX, float centerY, float width, float height) {
 		mX = centerX - width / 2;
 		mY = centerY - height / 2;
