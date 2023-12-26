@@ -168,11 +168,12 @@ public class UiHorizontalListBox extends UIWidget implements IScrollBarArea {
 
 			}
 
-			final var lTextToRender = lAssetItemToRender.displayName.substring(0, Math.min(6, lAssetItemToRender.displayName.length()));
-			final var lTextWidth = textFont.getStringWidth(lTextToRender);
+			if (lAssetItemToRender.displayName != null) {
+				final var lTextToRender = lAssetItemToRender.displayName.substring(0, Math.min(6, lAssetItemToRender.displayName.length()));
+				final var lTextWidth = textFont.getStringWidth(lTextToRender);
 
-			textFont.drawText(lTextToRender, assetX + assetW * .5f - lTextWidth * .5f, mY + 32 + 20, componentZDepth, 1.f);
-
+				textFont.drawText(lTextToRender, assetX + assetW * .5f - lTextWidth * .5f, mY + 32 + 20, componentZDepth, 1.f);
+			}
 		}
 
 		spriteBatch.end();
