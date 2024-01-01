@@ -1,7 +1,7 @@
 package net.lintfordlib.controllers.geometry;
 
 import net.lintfordlib.controllers.BaseController;
-import net.lintfordlib.controllers.core.ControllerManager;
+import net.lintfordlib.controllers.ControllerManager;
 import net.lintfordlib.core.geometry.partitioning.GridEntity;
 import net.lintfordlib.core.geometry.partitioning.SpatialHashGrid;
 

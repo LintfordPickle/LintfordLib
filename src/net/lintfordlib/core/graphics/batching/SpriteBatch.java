@@ -100,6 +100,23 @@ public class SpriteBatch extends TextureBatchPCT {
 		draw(lTexture, lCurrentSpriteFrame.x(), lCurrentSpriteFrame.y(), lCurrentSpriteFrame.width(), lCurrentSpriteFrame.height(), destRectangle.x() * scale, destRectangle.y() * scale, destRectangle.width() * scale, destRectangle.height() * scale, zDepth, colorTint);
 	}
 
+	public void draw(SpriteSheetDefinition spriteSheetDefinition, SpriteInstance spriteInstance, float destX, float destY, float destW, float destH, float zDepth, Color colorTint) {
+		if (!mIsDrawing)
+			return;
+
+		if (spriteSheetDefinition == null)
+			return;
+
+		if (spriteInstance == null)
+			return;
+
+		final var lTexture = spriteSheetDefinition.texture();
+		final var lCurrentSpriteFrame = spriteInstance.currentSpriteFrame();
+
+		// Need to resolve the destination rectangle manually to account for the scaling
+		draw(lTexture, lCurrentSpriteFrame.x(), lCurrentSpriteFrame.y(), lCurrentSpriteFrame.width(), lCurrentSpriteFrame.height(), destX, destY, destW, destH, zDepth, colorTint);
+	}
+
 	// ---
 
 	public void drawQuadrilateral(SpriteSheetDefinition spriteSheetDefinition, SpriteInstance spriteInstance, List<Vector2f> dstPoints, float zDepth, Color colorTint) {

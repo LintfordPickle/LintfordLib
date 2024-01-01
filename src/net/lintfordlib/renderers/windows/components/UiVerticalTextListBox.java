@@ -10,7 +10,6 @@ import net.lintfordlib.core.graphics.batching.SpriteBatch;
 import net.lintfordlib.core.graphics.batching.TextureBatch9Patch;
 import net.lintfordlib.core.graphics.fonts.FontUnit;
 import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
-import net.lintfordlib.core.graphics.textures.CoreTextureNames;
 import net.lintfordlib.core.maths.MathHelper;
 import net.lintfordlib.renderers.windows.UiWindow;
 import net.lintfordlib.renderers.windows.components.interfaces.IScrollBarArea;
@@ -141,7 +140,14 @@ public class UiVerticalTextListBox extends UIWidget implements IScrollBarArea {
 		mScrollbar.handleInput(core, null);
 
 		if (intersectsAA(core.HUD().getMouseCameraSpace())) {
-			if (core.input().mouse().isMouseLeftButtonDownTimed(this) && core.input().mouse().tryAcquireMouseLeftClick(hashCode())) {
+			boolean itemSelected = false;
+			final var lNumitems = mItems.size();
+			for (int i = 0; i < lNumitems; i++) {
+				itemSelected |= mItems.get(i).handleInput(core);
+			}
+
+			// handle item selected separate from item input handling?
+			if (itemSelected || core.input().mouse().isMouseLeftButtonDownTimed(this) && core.input().mouse().tryAcquireMouseLeftClick(hashCode())) {
 				final var lMouseRelY = core.HUD().getMouseWorldSpaceY() - mY;
 				mSelectedItemIndex = (int) (((lMouseRelY - mScrollbar.currentYPos())) / (mAssetHeightInpx + mVerticalAssetSeparationInPx));
 
@@ -171,6 +177,29 @@ public class UiVerticalTextListBox extends UIWidget implements IScrollBarArea {
 		mDesiredHeight = mH;
 		mContentArea.set(mX, mY, mW, Math.max(mH, lContentHeight));
 		mScrollbar.update(core);
+
+		// Update the positions of the individual items
+
+		float lAssetPositionX = mX + mVerticalAssetSeparationInPx;
+		float lAssetPositionY = mY + mScrollbar.currentYPos();
+
+		final var lNumitems = mItems.size();
+		for (int i = 0; i < lNumitems; i++) {
+			final var lItemToRender = mItems.get(i);
+			lItemToRender.set(lAssetPositionX, lAssetPositionY, mW, mAssetHeightInpx);
+			lAssetPositionY += mAssetHeightInpx + mVerticalAssetSeparationInPx;
+
+			if (i == mSelectedItemIndex) {
+				final var lSelectedBackgroundColor = ColorConstants.getWhiteWithAlpha(0.4f);
+				lItemToRender.backgroundColor.setFromColor(lSelectedBackgroundColor);
+			} else if (i % 2 == 0) {
+				lItemToRender.backgroundColor.setRGBA(1.0f, 0.81f, 0.75f, 0.3f);
+			} else {
+				lItemToRender.backgroundColor.setRGBA(1.f, 1.f, 1.f, 0.f);
+			}
+
+			lItemToRender.update(core);
+		}
 	}
 
 	@Override
@@ -185,24 +214,10 @@ public class UiVerticalTextListBox extends UIWidget implements IScrollBarArea {
 		spriteBatch.begin(core.HUD());
 		textFont.begin(core.HUD());
 
-		float lAssetPositionX = mX + mVerticalAssetSeparationInPx;
-		float lAssetPositionY = mY + mScrollbar.currentYPos();
-
 		final var lNumitems = mItems.size();
 		for (int i = 0; i < lNumitems; i++) {
 			final var lItemToRender = mItems.get(i);
-			if (i == mSelectedItemIndex) {
-				final var lSelectedBackgroundColor = ColorConstants.getWhiteWithAlpha(0.4f);
-				spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, lAssetPositionX, lAssetPositionY, mW, mAssetHeightInpx, componentZDepth, lSelectedBackgroundColor);
-			}
-
-			final var lTextPosX = lAssetPositionX + 5.f;
-			final var lTextPosY = lAssetPositionY + mAssetHeightInpx * .5f - textFont.fontHeight() * .5f;
-
-			final var lDisplayText = lItemToRender.displayName != null ? lItemToRender.displayName : String.valueOf(lItemToRender.itemUid);
-			textFont.drawText(lDisplayText, lTextPosX, lTextPosY, componentZDepth, 1.f);
-
-			lAssetPositionY += mAssetHeightInpx + mVerticalAssetSeparationInPx;
+			lItemToRender.draw(core, spriteBatch, coreSpritesheetDefinition, textFont, componentZDepth);
 		}
 
 		spriteBatch.end();

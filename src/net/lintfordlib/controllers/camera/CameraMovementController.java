@@ -4,7 +4,7 @@ import net.lintfordlib.core.maths.Vector2f;
 import org.lwjgl.glfw.GLFW;
 
 import net.lintfordlib.controllers.BaseController;
-import net.lintfordlib.controllers.core.ControllerManager;
+import net.lintfordlib.controllers.ControllerManager;
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.camera.Camera;
 import net.lintfordlib.core.camera.ICamera;

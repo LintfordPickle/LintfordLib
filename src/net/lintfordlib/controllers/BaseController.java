@@ -1,6 +1,5 @@
 package net.lintfordlib.controllers;
 
-import net.lintfordlib.controllers.core.ControllerManager;
 import net.lintfordlib.core.LintfordCore;
 
 public abstract class BaseController {

@@ -1,6 +1,6 @@
 package net.lintfordlib.screenmanager.screens;
 
-import net.lintfordlib.controllers.core.ControllerManager;
+import net.lintfordlib.controllers.ControllerManager;
 import net.lintfordlib.controllers.player.PlayerSessionController;
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.ResourceManager;

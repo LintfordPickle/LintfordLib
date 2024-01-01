@@ -6,6 +6,7 @@ import java.util.Map;
 import org.lwjgl.glfw.GLFW;
 
 import net.lintfordlib.controllers.BaseController;
+import net.lintfordlib.controllers.ControllerManager;
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.input.mouse.MouseCursor;

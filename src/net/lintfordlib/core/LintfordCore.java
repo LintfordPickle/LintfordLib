@@ -16,9 +16,9 @@ import org.lwjgl.opengl.GL11;
 
 import net.lintfordlib.ConstantsApp;
 import net.lintfordlib.GameInfo;
+import net.lintfordlib.controllers.ControllerManager;
 import net.lintfordlib.controllers.camera.CameraController;
 import net.lintfordlib.controllers.camera.CameraHUDController;
-import net.lintfordlib.controllers.core.ControllerManager;
 import net.lintfordlib.controllers.core.CoreTimeController;
 import net.lintfordlib.controllers.core.ResourceController;
 import net.lintfordlib.controllers.hud.HudLayoutController;
@@ -35,6 +35,7 @@ import net.lintfordlib.core.input.KeyEventActionManager;
 import net.lintfordlib.core.maths.MathHelper;
 import net.lintfordlib.core.rendering.RenderState;
 import net.lintfordlib.core.time.TimeConstants;
+import net.lintfordlib.data.DataManager;
 import net.lintfordlib.options.DisplayManager;
 import net.lintfordlib.options.MasterConfig;
 import net.lintfordlib.renderers.RendererManager;
@@ -180,9 +181,7 @@ public abstract class LintfordCore {
 	protected InputManager mInputState;
 	protected final CoreTime mCoreTime = new CoreTime();
 	protected final GameTime mGameTime = new GameTime();
-	protected ControllerManager mControllerManager;
 	protected final AppResources mAppResources = new AppResources();
-	protected ResourceManager mResourceManager;
 	protected CoreTimeController mCoreTimeController;
 	protected ResourceController mResourceController;
 	protected CameraController mCameraController;
@@ -190,6 +189,11 @@ public abstract class LintfordCore {
 	protected ICamera mGameCamera;
 	protected HUD mHUD;
 	protected RenderState mRenderState;
+
+	protected DataManager mDataManager;
+	protected ControllerManager mControllerManager;
+	protected ResourceManager mResourceManager;
+
 	protected final float mShowLogoTimeInMilli = 3000;
 	protected long mShowLogoTimer;
 	protected boolean mIsHeadlessMode;
@@ -235,6 +239,10 @@ public abstract class LintfordCore {
 
 	public MasterConfig config() {
 		return mMasterConfig;
+	}
+
+	public DataManager dataManager() {
+		return mDataManager;
 	}
 
 	public ControllerManager controllerManager() {
@@ -329,28 +337,14 @@ public abstract class LintfordCore {
 	 * Creates a new OpenGL window, instantiates all auxiliary classes and starts the main game loop.
 	 */
 	public void createWindow() {
-		// Load the configuration files saved previously by the user (or else create new
-		// ones)
 		mMasterConfig = new MasterConfig(mGameInfo);
 
 		mInputState = new InputManager();
 
-		long lWindowID = initializeGLFWWindow();
+		var lWindowID = initializeGLFWWindow();
 
-		mControllerManager = new ControllerManager(this);
-
-		mResourceManager = new ResourceManager(mMasterConfig);
-		mResourceManager.addProtectedEntityGroupUid(CORE_ENTITY_GROUP_ID);
-
-		mResourceController = new ResourceController(mControllerManager, mResourceManager, CORE_ENTITY_GROUP_ID);
-		mCoreTimeController = new CoreTimeController(mControllerManager, mCoreTime, mGameTime, CORE_ENTITY_GROUP_ID);
-
-		// Create the HUD camera (always available)
-		mHUD = new HUD(mMasterConfig.display());
-		mHUD.update(this);
-		mCameraHUDController = new CameraHUDController(mControllerManager, mHUD, CORE_ENTITY_GROUP_ID);
-
-		mRenderState = new RenderState();
+		createCoreManagers();
+		createCoreControllers();
 
 		oninitializeGL();
 
@@ -373,6 +367,25 @@ public abstract class LintfordCore {
 
 		onRunGameLoop();
 	};
+
+	private void createCoreManagers() {
+		mDataManager = new DataManager(this);
+		mControllerManager = new ControllerManager(this);
+
+		mResourceManager = new ResourceManager(mMasterConfig);
+		mResourceManager.addProtectedEntityGroupUid(CORE_ENTITY_GROUP_ID);
+
+		mHUD = new HUD(mMasterConfig.display());
+		mHUD.update(this);
+
+		mRenderState = new RenderState();
+	}
+
+	private void createCoreControllers() {
+		mResourceController = new ResourceController(mControllerManager, mResourceManager, CORE_ENTITY_GROUP_ID);
+		mCoreTimeController = new CoreTimeController(mControllerManager, mCoreTime, mGameTime, CORE_ENTITY_GROUP_ID);
+		mCameraHUDController = new CameraHUDController(mControllerManager, mHUD, CORE_ENTITY_GROUP_ID);
+	}
 
 	protected void showStartUpLogo(long windowHandle) {
 		// by default just clear the window background to black and swap out the
@@ -456,7 +469,7 @@ public abstract class LintfordCore {
 	 * Called after the app initialization and resource have been loaded. This is a good time to instantiate any screens or game components that relie on core resources.
 	 */
 	protected void finializeAppSetup() {
-		
+
 	}
 
 	/**

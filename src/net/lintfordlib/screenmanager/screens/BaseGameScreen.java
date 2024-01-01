@@ -1,11 +1,12 @@
 package net.lintfordlib.screenmanager.screens;
 
-import net.lintfordlib.controllers.core.ControllerManager;
+import net.lintfordlib.controllers.ControllerManager;
 import net.lintfordlib.controllers.core.GameRendererController;
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.ResourceManager;
 import net.lintfordlib.core.camera.ICamera;
 import net.lintfordlib.core.time.LogicialCounter;
+import net.lintfordlib.data.DataManager;
 import net.lintfordlib.renderers.RendererManager;
 import net.lintfordlib.screenmanager.Screen;
 import net.lintfordlib.screenmanager.ScreenManager;
@@ -61,12 +62,13 @@ public abstract class BaseGameScreen extends Screen {
 		super.initialize();
 
 		final var lCore = screenManager().core();
+		final var lDataManager = lCore.dataManager();
 		final var lControllerManager = lCore.controllerManager();
 
 		new GameRendererController(lControllerManager, mRendererManager, entityGroupUid());
 		mGameCamera = mScreenManager.core().setNewGameCamera(mGameCamera);
 
-		createData(lCore);
+		createData(lDataManager);
 
 		createControllers(lControllerManager);
 		createRenderers(lCore);
@@ -101,7 +103,7 @@ public abstract class BaseGameScreen extends Screen {
 	// Methods
 	// --------------------------------------
 
-	protected abstract void createData(LintfordCore core);
+	protected abstract void createData(DataManager dataManager);
 
 	protected abstract void createControllers(ControllerManager controllerManager);
 

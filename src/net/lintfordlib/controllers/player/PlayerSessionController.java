@@ -1,7 +1,7 @@
 package net.lintfordlib.controllers.player;
 
 import net.lintfordlib.controllers.BaseController;
-import net.lintfordlib.controllers.core.ControllerManager;
+import net.lintfordlib.controllers.ControllerManager;
 import net.lintfordlib.core.splitscreen.PlayerSessionsManager;
 
 public class PlayerSessionController extends BaseController {

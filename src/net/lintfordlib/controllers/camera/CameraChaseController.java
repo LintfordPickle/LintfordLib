@@ -3,7 +3,7 @@ package net.lintfordlib.controllers.camera;
 import org.lwjgl.glfw.GLFW;
 
 import net.lintfordlib.controllers.BaseController;
-import net.lintfordlib.controllers.core.ControllerManager;
+import net.lintfordlib.controllers.ControllerManager;
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.camera.ICamera;
 import net.lintfordlib.core.maths.MathHelper;

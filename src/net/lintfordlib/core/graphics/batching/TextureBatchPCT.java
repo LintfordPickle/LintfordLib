@@ -427,6 +427,9 @@ public class TextureBatchPCT {
 		if (!mIsDrawing)
 			return;
 
+		if (mCamera.boundingRectangle().intersectsAA(pDX, pDY, pDW, pDH) == false)
+			return;
+
 		if (pTexture == null && TextureManager.USE_DEBUG_MISSING_TEXTURES)
 			pTexture = mResourceManager.textureManager().textureNotFound();
 

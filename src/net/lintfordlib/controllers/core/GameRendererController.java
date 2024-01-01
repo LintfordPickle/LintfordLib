@@ -1,6 +1,7 @@
 package net.lintfordlib.controllers.core;
 
 import net.lintfordlib.controllers.BaseController;
+import net.lintfordlib.controllers.ControllerManager;
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.renderers.RendererManager;
 

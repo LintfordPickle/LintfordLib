@@ -1,7 +1,7 @@
 package net.lintfordlib.controllers.messages;
 
 import net.lintfordlib.controllers.BaseController;
-import net.lintfordlib.controllers.core.ControllerManager;
+import net.lintfordlib.controllers.ControllerManager;
 import net.lintfordlib.core.messaging.IMessageProvider;
 import net.lintfordlib.core.messaging.MessageManager;
 

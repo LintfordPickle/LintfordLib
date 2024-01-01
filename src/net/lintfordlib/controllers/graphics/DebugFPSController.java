@@ -1,7 +1,7 @@
 package net.lintfordlib.controllers.graphics;
 
 import net.lintfordlib.controllers.BaseController;
-import net.lintfordlib.controllers.core.ControllerManager;
+import net.lintfordlib.controllers.ControllerManager;
 import net.lintfordlib.core.LintfordCore.CoreTime;
 
 /** If enabled, prints the FPS to the console. */

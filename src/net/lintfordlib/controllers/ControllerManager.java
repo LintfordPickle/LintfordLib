@@ -1,11 +1,10 @@
-package net.lintfordlib.controllers.core;
+package net.lintfordlib.controllers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.lintfordlib.controllers.BaseController;
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.debug.Debug;
 

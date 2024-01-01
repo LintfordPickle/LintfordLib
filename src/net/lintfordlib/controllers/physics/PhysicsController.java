@@ -1,7 +1,7 @@
 package net.lintfordlib.controllers.physics;
 
 import net.lintfordlib.controllers.BaseController;
-import net.lintfordlib.controllers.core.ControllerManager;
+import net.lintfordlib.controllers.ControllerManager;
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.physics.PhysicsWorld;
 
