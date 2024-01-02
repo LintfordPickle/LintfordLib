@@ -1,4 +1,4 @@
-package net.lintfordlib.data;
+package net.lintfordlib.data.scene;
 
 import java.io.File;
 import java.io.FilenameFilter;
