@@ -21,8 +21,8 @@ public class TimedIntroScreen extends Screen {
 	private Texture mBackgroundTexture;
 	private String mImageLocation;
 	private float mShowImageTime;
-	private float mMaxShowImageTimer;
-	private float mMinShowImageTimer;
+	private float mMaxShowImageTimerInMs;
+	private float mMinShowImageTimerInMs;
 	private boolean mUserRequestSkip;
 	private boolean mTimedActionPerformed;
 	private Rectangle mSrcTextureRect;
@@ -53,20 +53,20 @@ public class TimedIntroScreen extends Screen {
 		this(screenManager, imageLocation, 1.f, 4.f);
 	}
 
-	public TimedIntroScreen(ScreenManager screenManager, String imageLocation, float minTime, float maxTime) {
+	public TimedIntroScreen(ScreenManager screenManager, String imageLocation, float minTimeInMs, float maxTimeInMs) {
 		super(screenManager);
 
 		mImageLocation = imageLocation;
 
 		mShowImageTime = 0;
-		mMinShowImageTimer = minTime;
-		mMaxShowImageTimer = maxTime;
+		mMinShowImageTimerInMs = minTimeInMs;
+		mMaxShowImageTimerInMs = maxTimeInMs;
 
 		mTextureBatch = new TextureBatchPCT();
 		mSrcTextureRect = new Rectangle(0, 0, 960, 540);
 	}
 
-	// --------------------------------------
+	// --------------------------------------f
 	// Core-Methods
 	// --------------------------------------
 
@@ -105,12 +105,12 @@ public class TimedIntroScreen extends Screen {
 		super.update(core, otherScreenHasFocus, coveredByOtherScreen);
 
 		if (!mTimedActionPerformed) {
-			final float deltaTime = (float) core.appTime().elapsedTimeMilli() / 1000f;
+			final float deltaTime = (float) core.appTime().elapsedTimeMilli();
 
 			mShowImageTime += deltaTime;
 
-			final var lMinTimeElapsed = mShowImageTime >= mMinShowImageTimer;
-			final var lMaxTimeElapsed = mShowImageTime >= mMaxShowImageTimer;
+			final var lMinTimeElapsed = mShowImageTime >= mMinShowImageTimerInMs;
+			final var lMaxTimeElapsed = mShowImageTime >= mMaxShowImageTimerInMs;
 
 			if ((lMinTimeElapsed && mUserRequestSkip) || lMaxTimeElapsed) {
 				if (mActionCallback != null)
