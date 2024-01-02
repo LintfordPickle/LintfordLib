@@ -15,8 +15,8 @@ public final class PhysicsSettings {
 	public boolean enable_collision_resolver;
 	public boolean enable_mtv_separation;
 
-	public int hashGridWidthInUnits;
-	public int hashGridHeightInUnits;
+	public float hashGridWidthInUnits;
+	public float hashGridHeightInUnits;
 	public int hashGridCellsWide;
 	public int hashGridCellsHigh;
 
