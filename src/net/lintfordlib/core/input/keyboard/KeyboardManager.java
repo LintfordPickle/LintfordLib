@@ -108,6 +108,14 @@ public class KeyboardManager {
 	// Properties
 	// --------------------------------------
 
+	public boolean isAnyKeyDown() {
+		for (int i = 0; i < KEY_LIMIT; i++) {
+			if (mKeyButtonStates[i])
+				return true;
+		}
+		return false;
+	}
+
 	public boolean isKeyDown(int keyCode, IInputProcessor inputProcessor) {
 		if (inputProcessor != null && inputProcessor.allowKeyboardInput() == false)
 			return false;
