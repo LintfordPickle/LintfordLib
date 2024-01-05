@@ -478,7 +478,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 		final var lSpriteBatch = mParentScreen.spriteBatch();
 
 		if (mOpen) {
-			final float lSeparatorHalfWidth = lTextBoldFont.getStringWidth(":", lUiTextScale) * 0.5f;
+			final float lSeparatorHalfWidth = lTextBoldFont.getStringWidth(mSeparator, lUiTextScale) * 0.5f;
 
 			lSpriteBatch.begin(core.HUD());
 			final var ww = mWindowRectangle.width() * .5f;
