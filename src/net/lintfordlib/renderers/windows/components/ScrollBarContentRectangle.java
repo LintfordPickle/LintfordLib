@@ -62,7 +62,6 @@ public class ScrollBarContentRectangle extends Rectangle {
 		mPreDrawing = true;
 
 		GL11.glEnable(GL11.GL_STENCIL_TEST);
-		GL11.glDisable(GL11.GL_DEPTH_TEST);
 
 		GL11.glStencilFunc(GL11.GL_ALWAYS, stencilValue, 0xFFFFFFFF); // Set any stencil to stencilValue
 		GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_REPLACE); // What should happen to stencil values
@@ -78,7 +77,6 @@ public class ScrollBarContentRectangle extends Rectangle {
 		 */
 
 		GL11.glStencilFunc(GL11.GL_EQUAL, stencilValue, 0xFFFFFFFF); // Pass test if stencil value is stencilValue
-		GL11.glEnable(GL11.GL_DEPTH_TEST);
 
 	}
 
@@ -88,6 +86,5 @@ public class ScrollBarContentRectangle extends Rectangle {
 
 		mPreDrawing = false;
 		GL11.glDisable(GL11.GL_STENCIL_TEST);
-		GL11.glDisable(GL11.GL_DEPTH_TEST);
 	}
 }
