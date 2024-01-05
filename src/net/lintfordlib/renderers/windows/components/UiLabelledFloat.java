@@ -80,8 +80,8 @@ public class UiLabelledFloat extends UIWidget {
 		final var lValueWidth = textFont.getStringWidth(Float.toString(mValueFloat));
 
 		textFont.begin(core.HUD());
-		textFont.drawText(mLabelText, mX + lHorizontalPadding, mY + mH / 2.f - lTextHeight / 2.f, componentZDepth, ColorConstants.TextEntryColor, 1f, -1);
-		textFont.drawText(Float.toString(mValueFloat), mX + mW - lValueWidth - lHorizontalPadding, mY + mH / 2 - lTextHeight / 2, componentZDepth, ColorConstants.TextEntryColor, 1f, -1);
+		textFont.drawText(mLabelText, mX + HorizontalPadding, mY + mH / 2.f - lTextHeight / 2.f, componentZDepth, ColorConstants.TextEntryColor, 1f, -1);
+		textFont.drawText(Float.toString(mValueFloat), mX + mW - lValueWidth - HorizontalPadding, mY + mH / 2 - lTextHeight / 2, componentZDepth, ColorConstants.TextEntryColor, 1f, -1);
 		textFont.end();
 	}
 }

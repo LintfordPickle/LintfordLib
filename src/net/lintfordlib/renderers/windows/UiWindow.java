@@ -427,7 +427,7 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 			lUiHeaderFont.end();
 		}
 
-		if (mScrollBar.scrollBarEnabled() /* && mScrollBar.areaNeedsScrolling() */)
+		if (mScrollBar.scrollBarEnabled() && mScrollBar.areaNeedsScrolling())
 			mScrollBar.draw(core, lSpritebatch, mCoreSpritesheet, Z_DEPTH, mWindowAlpha);
 
 		// Draw the window components
@@ -543,7 +543,7 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 	public boolean isCoolDownElapsed() {
 		return mInputTimer < 0;
 	}
-	
+
 	@Override
 	public void resetCoolDownTimer(float cooldownInMs) {
 		mInputTimer = cooldownInMs;

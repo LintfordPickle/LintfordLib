@@ -19,8 +19,8 @@ public abstract class UIWidget extends Rectangle implements IInputProcessor {
 
 	private static final long serialVersionUID = 8734195273392955490L;
 
-	protected static final float lHorizontalPadding = 5.0f;
-	protected static final float lVerticalPadding = 5.0f;
+	protected static final float HorizontalPadding = 5.0f;
+	protected static final float VerticalPadding = 5.0f;
 
 	// --------------------------------------
 	// Variables

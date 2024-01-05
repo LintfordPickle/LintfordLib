@@ -82,8 +82,8 @@ public class UiLabelledInt extends UIWidget {
 		final var lValueWidth = textFont.getStringWidth(Integer.toString(mValueInt));
 
 		textFont.begin(core.HUD());
-		textFont.drawText(mLabelText, mX + lHorizontalPadding, mY + mH / 2 - lTextHeight / 2, componentZDepth, ColorConstants.TextEntryColor, 1f, -1);
-		textFont.drawText(Integer.toString(mValueInt), mX + mW - lValueWidth - lHorizontalPadding, mY + mH / 2 - lTextHeight / 2, componentZDepth, ColorConstants.TextEntryColor, 1f, -1);
+		textFont.drawText(mLabelText, mX + HorizontalPadding, mY + mH / 2 - lTextHeight / 2, componentZDepth, ColorConstants.TextEntryColor, 1f, -1);
+		textFont.drawText(Integer.toString(mValueInt), mX + mW - lValueWidth - HorizontalPadding, mY + mH / 2 - lTextHeight / 2, componentZDepth, ColorConstants.TextEntryColor, 1f, -1);
 		textFont.end();
 	}
 }

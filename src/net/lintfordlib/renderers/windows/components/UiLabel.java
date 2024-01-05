@@ -81,7 +81,7 @@ public class UiLabel extends UIWidget {
 			final float lTextHeight = textFont.fontHeight();
 
 			textFont.begin(core.HUD());
-			textFont.drawText(mLabelText, mX + lHorizontalPadding, mY + mH / 2 - lTextHeight / 2, componentZDepth - 0.01f, ColorConstants.TextEntryColor, 1f, -1);
+			textFont.drawText(mLabelText, mX + HorizontalPadding, mY + mH / 2 - lTextHeight / 2, componentZDepth - 0.01f, ColorConstants.TextEntryColor, 1f, -1);
 			textFont.end();
 		}
 	}
