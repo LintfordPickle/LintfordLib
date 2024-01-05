@@ -67,7 +67,7 @@ public class ScrollBarContentRectangle extends Rectangle {
 		GL11.glStencilFunc(GL11.GL_ALWAYS, stencilValue, 0xFFFFFFFF); // Set any stencil to stencilValue
 		GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_REPLACE); // What should happen to stencil values
 
-		// GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT); // Clear the stencil buffer
+		GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT); // Clear the stencil buffer
 
 		spriteBatch.begin(core.HUD());
 		spriteBatch.draw(null, 0, 0, 1, 1, rectangle.x() + mDepthPadding, rectangle.y() + mDepthPadding, rectangle.width() - mDepthPadding * 2 - ScrollBar.BAR_WIDTH, rectangle.height() - mDepthPadding * 2, -10.f, ColorConstants.getWhiteWithAlpha(0.f));
