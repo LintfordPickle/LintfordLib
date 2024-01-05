@@ -141,7 +141,7 @@ public class VideoOptionsScreen extends MenuScreen implements ITimedDialog {
 		mFullScreenEntry = new MenuEnumEntryIndexed<>(mScreenManager, this, "Fullscreen");
 		mFullScreenEntry.horizontalFillType(FILLTYPE.FILL_CONTAINER);
 
-		mResolutionEntry = new MenuDropDownEntry<>(mScreenManager, this);
+		mResolutionEntry = new MenuDropDownEntry<>(mScreenManager, this, "Resolution");
 		mResolutionEntry.horizontalFillType(FILLTYPE.FILL_CONTAINER);
 
 		mMonitorEntry = new MenuEnumEntryIndexed<>(mScreenManager, this, "Monitor");
