@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.lwjgl.glfw.GLFW;
-import org.lwjgl.opengl.GL11;
 
 import net.lintfordlib.ConstantsApp;
 import net.lintfordlib.core.LintfordCore;
@@ -22,7 +21,6 @@ import net.lintfordlib.screenmanager.MenuScreen;
 import net.lintfordlib.screenmanager.Screen;
 import net.lintfordlib.screenmanager.ScreenManager;
 
-/**  */
 public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 
 	private static final long serialVersionUID = -2874418532803740656L;
@@ -54,6 +52,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 	private int mSelectedIndex;
 	private int mHighlightedIndex;
 	private float mItemHeight;
+	private String mSeparator;
 	private List<MenuEnumEntryItem> mItems;
 	private transient boolean mOpen;
 	private transient ScrollBarContentRectangle mContentRectangle;
@@ -139,12 +138,32 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 		}
 	}
 
+	public String label() {
+		return mText;
+	}
+
+	public void label(String newValue) {
+		mText = newValue;
+	}
+
+	public String separator() {
+		return mSeparator;
+	}
+
+	public void separator(String newSeparatorValue) {
+		mSeparator = newSeparatorValue;
+	}
+
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
 	public MenuDropDownEntry(ScreenManager screenManager, MenuScreen parentScreen) {
-		super(screenManager, parentScreen, "");
+		this(screenManager, parentScreen, "");
+	}
+
+	public MenuDropDownEntry(ScreenManager screenManager, MenuScreen parentScreen, String label) {
+		super(screenManager, parentScreen, label);
 
 		mItems = new ArrayList<>();
 
@@ -156,6 +175,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 		mScrollBar = new ScrollBar(this, mContentRectangle);
 
 		mSelectedIndex = 0;
+		mSeparator = ":";
 
 		contextHintState.buttonA = true;
 	}
@@ -166,6 +186,8 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 
 	@Override
 	public boolean onHandleMouseInput(LintfordCore core) {
+		if (!mEnabled)
+			return false;
 
 		if (!core.input().mouse().isMouseMenuSelectionEnabled())
 			return false;
@@ -383,20 +405,29 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 		final var lSpriteBatch = mParentScreen.spriteBatch();
 
 		mW = (int) mW;
-		
-		lTextBoldFont.begin(core.HUD());
+
 		if (mHasFocus && mEnabled) {
 			lSpriteBatch.begin(core.HUD());
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, (int) (lScreenOffset.x + centerX() - (int)mW / 2), lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ, ColorConstants.MenuEntryHighlightColor);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, (int) (lScreenOffset.x + centerX() - ((int)mW / 2) + 32), lScreenOffset.y + centerY() - mH / 2, (int) mW - 64, mH, mZ, ColorConstants.MenuEntryHighlightColor);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, (int) (lScreenOffset.x + centerX() + ((int)mW / 2) - 32), lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ, ColorConstants.MenuEntryHighlightColor);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, (int) (lScreenOffset.x + centerX() - (int) mW / 2), lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ, ColorConstants.MenuEntryHighlightColor);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, (int) (lScreenOffset.x + centerX() - ((int) mW / 2) + 32), lScreenOffset.y + centerY() - mH / 2, (int) mW - 64, mH, mZ, ColorConstants.MenuEntryHighlightColor);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, (int) (lScreenOffset.x + centerX() + ((int) mW / 2) - 32), lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ, ColorConstants.MenuEntryHighlightColor);
 			lSpriteBatch.end();
+		}
+
+		final float lSeparatorHalfWidth = lTextBoldFont.getStringWidth(mSeparator, lUiTextScale) * 0.5f;
+		if (mText != null && mText.length() > 0) {
+			lTextBoldFont.begin(core.HUD());
+			final float lStringWidth = lTextBoldFont.getStringWidth(mText, 1.f);
+			lTextBoldFont.drawText(mText, lScreenOffset.x + (mX + mW / 2 - 10) - lStringWidth - lSeparatorHalfWidth, lScreenOffset.y + mY + mH / 2.f - lTextBoldFont.fontHeight() * 0.5f, mZ, textColor, 1.f, -1);
+			lTextBoldFont.drawText(mSeparator, lScreenOffset.x + mX + mW / 2 - lSeparatorHalfWidth, lScreenOffset.y + mY + mH / 2 - lTextBoldFont.fontHeight() * 0.5f, mZ, textColor, lUiTextScale, -1);
+			lTextBoldFont.end();
 		}
 
 		if (mItems == null || mItems.size() == 0) {
 			// LOCALIZATION: No entries added to dropdown list
-			final String lNoEntriesText = mNoItemsFoundText;
+			final var lNoEntriesText = mNoItemsFoundText;
 			final var lTextWidth = lTextBoldFont.getStringWidth(lNoEntriesText);
+			lTextBoldFont.begin(core.HUD());
 			lTextBoldFont.drawText(lNoEntriesText, lScreenOffset.x + mX + mW * .5f - lTextWidth * .5f, lScreenOffset.y + mY + mItemHeight / 2f - lFontHeight / 2f, mZ, textColor, lUiTextScale, -1);
 			lTextBoldFont.end();
 			return;
@@ -405,12 +436,13 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 		final var lSelectedMenuEnumEntryItem = mItems.get(mSelectedIndex);
 
 		// Render the selected item in the 'top spot'
-		final String lCurItem = lSelectedMenuEnumEntryItem.name;
-		final float lSelectedTextWidth = lTextBoldFont.getStringWidth(lCurItem);
-		lTextBoldFont.drawText(lCurItem, lScreenOffset.x + mX + mW * .5f + -lSelectedTextWidth / 2, lScreenOffset.y + mY + mItemHeight / 2f - lFontHeight / 2f, mZ, textColor, lUiTextScale, -1);
+		final var lCurItem = lSelectedMenuEnumEntryItem.name;
+		lTextBoldFont.begin(core.HUD());
+		lTextBoldFont.drawText(lCurItem, lScreenOffset.x + mX + mW / 2.f + 16.f + lSeparatorHalfWidth, lScreenOffset.y + mY + mH / 2.f - lTextBoldFont.fontHeight() * 0.5f, mZ, textColor, lUiTextScale, -1);
 		lTextBoldFont.end();
 
 		// CONTENT PANE
+		// Content is drawn in the postStencilDraw method
 
 		// Draw the down arrow
 		lSpriteBatch.begin(core.HUD());
@@ -446,49 +478,40 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 		final var lSpriteBatch = mParentScreen.spriteBatch();
 
 		if (mOpen) {
+			final float lSeparatorHalfWidth = lTextBoldFont.getStringWidth(":", lUiTextScale) * 0.5f;
+
 			lSpriteBatch.begin(core.HUD());
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mWindowRectangle, mZ, ColorConstants.getBlackWithAlpha(1.f));
+			final var ww = mWindowRectangle.width() * .5f;
+			final var hh = mWindowRectangle.height();
+
+			final var xx = mWindowRectangle.x() + ww;
+			final var yy = mWindowRectangle.y();
+
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, xx, yy, ww, hh, mZ, ColorConstants.getBlackWithAlpha(1.f));
 			lSpriteBatch.end();
 
 			lTextBoldFont.begin(core.HUD());
 
-			// We need to use a stencil buffer to clip the list box items (which, when scrolling, could appear out-of-bounds of the listbox).
-			GL11.glEnable(GL11.GL_STENCIL_TEST);
-			GL11.glDisable(GL11.GL_DEPTH_TEST);
-
-			GL11.glStencilFunc(GL11.GL_ALWAYS, 1, 0xFF); // Set any stencil to 1
-			GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_REPLACE); // What should happen to stencil values
-			GL11.glStencilMask(0xFF); // Write to stencil buffer
-
-			// Make sure we are starting with a fresh stencil buffer
-			GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT); // Clear the stencil buffer
-
-			lSpriteBatch.begin(core.HUD());
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_BLACK, mWindowRectangle, -8f, ColorConstants.getBlackWithAlpha(0.f));
-			lSpriteBatch.end();
-
-			// Start the stencil buffer test to filter out everything outside of the scroll view
-			GL11.glStencilFunc(GL11.GL_EQUAL, 1, 0xFF); // Pass test if stencil value is 1
+			mWindowRectangle.preDraw(core, lSpriteBatch);
 
 			float lYPos = mWindowRectangle.y() + mScrollBar.currentYPos();
 
 			final int lItemCount = mItems.size();
 			for (int i = 0; i < lItemCount; i++) {
 				final var lItem = mItems.get(i);
-				final float lItemTextWidth = lTextBoldFont.getStringWidth(lItem.name);
 
 				if (i == mHighlightedIndex)
 					textColor.setFromColor(ColorConstants.PrimaryColor);
 				else
 					textColor.setFromColor(ColorConstants.TextEntryColor);
 
-				lTextBoldFont.drawText(lItem.name, lScreenOffset.x + mX + mW / 2 - lItemTextWidth * .5f, lScreenOffset.y + lYPos, mZ + 0.1f, textColor, lUiTextScale, -1);
+				lTextBoldFont.drawText(lItem.name, lScreenOffset.x + mX + mW / 2.f + 16.f + lSeparatorHalfWidth, lScreenOffset.y + lYPos, mZ + 0.1f, textColor, lUiTextScale, -1);
 				lYPos += mItemHeight;
 			}
 
 			lTextBoldFont.end();
 
-			GL11.glDisable(GL11.GL_STENCIL_TEST);
+			mWindowRectangle.postDraw(core);
 		}
 
 		if (mOpen && mScrollBar.areaNeedsScrolling()) {
