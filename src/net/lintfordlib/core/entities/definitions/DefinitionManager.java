@@ -2,8 +2,10 @@ package net.lintfordlib.core.entities.definitions;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.MessageDigest;
@@ -15,14 +17,19 @@ import java.util.Map;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 
 import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.entities.EntityLocationProvider;
+import net.lintfordlib.core.storage.FileUtils;
 
 public abstract class DefinitionManager<T extends BaseDefinition> {
 
-	public static class MetaFileItems {
+	public static class MetaFileItems implements Serializable {
+
+		private static final long serialVersionUID = 1750417953009665723L;
+
 		public String rootDirectory;
 		public String[] itemFileLocations;
 		public int itemCount;
@@ -40,6 +47,8 @@ public abstract class DefinitionManager<T extends BaseDefinition> {
 
 	protected Map<String, T> mDefinitions;
 	protected short mDefinitionUIDCounter;
+
+	// TODO: The DefinitionLookUp was supposed to help
 	protected DefinitionLookUp mDefinitionsLookupTable;
 
 	// --------------------------------------
@@ -58,6 +67,7 @@ public abstract class DefinitionManager<T extends BaseDefinition> {
 		return mDefinitions.size();
 	}
 
+//
 	public short getNewDefinitionUID() {
 		return mDefinitionUIDCounter++;
 	}
@@ -101,6 +111,10 @@ public abstract class DefinitionManager<T extends BaseDefinition> {
 	// Core-Methods
 	// --------------------------------------
 
+	public void clearDefinitions() {
+		mDefinitions.clear();
+	}
+
 	public abstract void loadDefinitionsFromFolderWatcher(EntityLocationProvider entityLocationProvider);
 
 	public abstract void loadDefinitionsFromMetaFile(String metaFilepath);
@@ -137,6 +151,56 @@ public abstract class DefinitionManager<T extends BaseDefinition> {
 		return null;
 	}
 
+	public boolean isFileValidMetadataFile(String metaFilepath) {
+		if (metaFilepath == null || metaFilepath.length() == 0) {
+			Debug.debugManager().logger().w(getClass().getSimpleName(), "Metadata Filename is incorrectly formatted or null.");
+			return false;
+		}
+
+		try {
+			final var lGson = new GsonBuilder().create();
+			final var lFileContents = new String(Files.readAllBytes(Paths.get(metaFilepath)));
+			final var lItemsFileLocations = lGson.fromJson(lFileContents, MetaFileItems.class);
+
+			if (lItemsFileLocations == null || lItemsFileLocations.itemFileLocations == null || lItemsFileLocations.itemFileLocations.length == 0) {
+				Debug.debugManager().logger().w(getClass().getSimpleName(), "Couldn't load item filepaths from the Metafile!");
+				return false;
+			}
+
+			lItemsFileLocations.itemCount = lItemsFileLocations.itemFileLocations.length;
+			Debug.debugManager().logger().e(getClass().getSimpleName(), "Metadata file contains " + lItemsFileLocations.itemCount + " definitions");
+			return true;
+
+		} catch (IOException e) {
+			Debug.debugManager().logger().e(getClass().getSimpleName(), "Error while loading metafile filepaths.");
+			Debug.debugManager().logger().printException(getClass().getSimpleName(), e);
+		}
+
+		return false;
+	}
+
+	public void saveDefinitionsToMetadataFile(String metaFilepath) {
+		final var lMetaItemsList = new MetaFileItems();
+		lMetaItemsList.itemCount = mDefinitions.size();
+
+		int counter = 0;
+		for (var value : mDefinitions.values()) {
+			lMetaItemsList.itemFileLocations[counter] = value.filename;
+			counter++;
+		}
+
+		final var gson = new Gson();
+		try {
+			gson.toJson(lMetaItemsList, new FileWriter(metaFilepath));
+		} catch (JsonIOException e) {
+			Debug.debugManager().logger().e(getClass().getSimpleName(), "Failed to save meta data file - incorrect Json!");
+			Debug.debugManager().logger().printException(getClass().getSimpleName(), e);
+		} catch (IOException e) {
+			Debug.debugManager().logger().e(getClass().getSimpleName(), "Failed to save meta data file - incorrect Json!");
+			Debug.debugManager().logger().printException(getClass().getSimpleName(), e);
+		}
+	}
+
 	protected void loadDefinitionsFromFolderWatcherItems(EntityLocationProvider entityLocationProvider, final Gson gson, Class<T> classType) {
 		final var lFolderFileIterator = entityLocationProvider.getFileLocationIterator();
 		for (Iterator<String> lFileIterator = lFolderFileIterator; lFileIterator.hasNext();) {
@@ -146,13 +210,16 @@ public abstract class DefinitionManager<T extends BaseDefinition> {
 
 	protected void loadDefinitionsFromMetaFileItems(String metaFilepath, final Gson gson, Class<T> classType) {
 		final var lMetaItems = loadMetaFileItemsFromFilepath(metaFilepath);
+
 		if (lMetaItems == null || lMetaItems.itemCount == 0) {
 			Debug.debugManager().logger().w(getClass().getSimpleName(), String.format("Cannot load definition types %s, the given MetaFileItems contains no data", classType.getSimpleName()));
 			return;
 		}
 
 		for (int i = 0; i < lMetaItems.itemCount; i++) {
-			final var lDefinitionFilepath = lMetaItems.rootDirectory + lMetaItems.itemFileLocations[i] + ".json";
+			var lDefRootDirectory = System.getProperty("user.dir"); // If the user.dir was set (by the editor), then use it
+
+			final var lDefinitionFilepath = lDefRootDirectory + FileUtils.FILE_SEPERATOR + lMetaItems.rootDirectory + lMetaItems.itemFileLocations[i] + ".json";
 
 			final var lNewDef = loadDefinitionFromFile(lDefinitionFilepath, gson, classType);
 			if (lNewDef != null) {
@@ -179,6 +246,8 @@ public abstract class DefinitionManager<T extends BaseDefinition> {
 				if (lNewDefinition.name == null) {
 					Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Definition at path doesn't contain definition name: %s", filepath));
 				}
+
+				lNewDefinition.filename = filepath;
 
 				addDefintion(lNewDefinition);
 

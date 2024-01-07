@@ -10,6 +10,12 @@ import net.lintfordlib.core.particles.particlesystems.modifiers.ParticleModifier
 public class ParticleSystemDefinition extends BaseDefinition {
 
 	// --------------------------------------
+	// Constants
+	// --------------------------------------
+
+	private static final long serialVersionUID = 2707111867124189440L;
+
+	// --------------------------------------
 	// Variables
 	// --------------------------------------
 

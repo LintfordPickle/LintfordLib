@@ -54,9 +54,17 @@ public class ParticleFrameworkData extends BaseDataManager {
 		loadFromMetaFiles(PARTICLE_SYSTEM_META_FILE, PARTICLE_EMITTER_META_FILE);
 	}
 
-	public void loadFromMetaFiles(String particleSystemMetaFile, String particleEmitterMetaFile) {
-		mParticleSystemManager.definitionManager().loadDefinitionsFromMetaFile(particleSystemMetaFile);
+	public void loadParticleEmittersFromMetaFile(String particleEmitterMetaFile) {
 		mParticleEmitterManager.definitionManager().loadDefinitionsFromMetaFile(particleEmitterMetaFile);
+	}
+
+	public void loadParticleSystemsFromMetaFile(String particleSystemMetaFile) {
+		mParticleSystemManager.definitionManager().loadDefinitionsFromMetaFile(particleSystemMetaFile);
+	}
+
+	public void loadFromMetaFiles(String particleSystemMetaFile, String particleEmitterMetaFile) {
+		loadParticleSystemsFromMetaFile(particleSystemMetaFile);
+		loadParticleEmittersFromMetaFile(particleEmitterMetaFile);
 	}
 
 }

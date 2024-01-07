@@ -17,8 +17,7 @@ public class ParticleFrameworkController extends BaseController {
 	// Variables
 	// --------------------------------------
 
-	private ParticleFrameworkData mParticleFrameworkData;
-	private boolean mIsAssigned;
+	protected ParticleFrameworkData mParticleFrameworkData;
 
 	// --------------------------------------
 	// Properties
@@ -26,10 +25,6 @@ public class ParticleFrameworkController extends BaseController {
 
 	public ParticleFrameworkData particleFrameworkData() {
 		return mParticleFrameworkData;
-	}
-
-	public boolean isAssigned() {
-		return mIsAssigned;
 	}
 
 	// --------------------------------------
@@ -48,7 +43,6 @@ public class ParticleFrameworkController extends BaseController {
 		super(controllerManager, CONTROLLER_NAME, entityGroupUid);
 
 		mParticleFrameworkData = particleFrameworkData;
-		mIsAssigned = false;
 	}
 
 	// --------------------------------------

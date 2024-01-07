@@ -22,6 +22,8 @@ public abstract class UIWidget extends Rectangle implements IInputProcessor {
 	protected static final float HorizontalPadding = 5.0f;
 	protected static final float VerticalPadding = 5.0f;
 
+	public static final float DefaultWidthHeight = 25.f;
+
 	// --------------------------------------
 	// Variables
 	// --------------------------------------

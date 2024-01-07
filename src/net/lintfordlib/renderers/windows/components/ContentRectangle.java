@@ -45,6 +45,5 @@ public class ContentRectangle {
 
 	public static void postDraw(LintfordCore pCore) {
 		GL11.glDisable(GL11.GL_STENCIL_TEST);
-		GL11.glDisable(GL11.GL_DEPTH_TEST);
 	}
 }

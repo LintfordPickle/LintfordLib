@@ -54,6 +54,10 @@ public class ParticleSystemManager extends InstanceManager<ParticleSystemInstanc
 
 			loadDefinitionFromFile(pFilepath, lGson, ParticleSystemDefinition.class);
 		}
+
+		public void saveDefinitionEntriesToMetaFile(String metaDataFilename) {
+
+		}
 	}
 
 	// --------------------------------------

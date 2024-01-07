@@ -16,6 +16,7 @@ public abstract class BaseDefinition implements Serializable {
 	// Variables
 	// --------------------------------------
 
+	/** A unique id for this definition. Each definition is assigned a id at runtime that is unique to its domain. */
 	protected transient short mDefinitionUid;
 
 	/** used for linking entities */
@@ -26,6 +27,9 @@ public abstract class BaseDefinition implements Serializable {
 
 	/** user friendly name for the front end */
 	public String displayName;
+
+	/** The filename of definition datafile. */
+	public String filename;
 
 	// --------------------------------------
 	// Properties
