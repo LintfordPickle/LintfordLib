@@ -2,7 +2,6 @@ package net.lintfordlib.renderers.windows.components;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Arrays;
 import java.util.List;
@@ -36,8 +35,6 @@ public class UiInputFloat extends UIWidget implements IBufferedTextInputCallback
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
-
-	private DecimalFormat decimalFormat;
 
 	private int mMaxInputCharacters;
 	private transient boolean mHasFocus;
@@ -86,12 +83,9 @@ public class UiInputFloat extends UIWidget implements IBufferedTextInputCallback
 		if (mNumDecimalPlaces == numDecimalPlaces)
 			return;
 
-		var postFix = new String(new char[numDecimalPlaces]).replace('\0', '0');
 		final var decimalFormatSymbols = new DecimalFormatSymbols();
 		decimalFormatSymbols.setDecimalSeparator('.');
 		decimalFormatSymbols.setGroupingSeparator(',');
-
-		decimalFormat = new DecimalFormat("#,##0." + postFix, decimalFormatSymbols);
 
 		mNumDecimalPlaces = numDecimalPlaces;
 	}
@@ -237,6 +231,10 @@ public class UiInputFloat extends UIWidget implements IBufferedTextInputCallback
 	// --------------------------------------
 
 	public UiInputFloat(UiWindow parentWindow) {
+		this(parentWindow, "");
+	}
+
+	public UiInputFloat(UiWindow parentWindow, String label) {
 		super(parentWindow);
 
 		mResetOnDefaultClick = true;
@@ -248,6 +246,8 @@ public class UiInputFloat extends UIWidget implements IBufferedTextInputCallback
 
 		mEmptyString = "";
 		mMaxInputCharacters = 60;
+
+		mLabelText = label;
 
 		mTextScale = 1.f;
 		mW = 100;
@@ -425,7 +425,7 @@ public class UiInputFloat extends UIWidget implements IBufferedTextInputCallback
 
 	private void limitValueToDecimalPlaces() {
 		int dp = 3;
-		
+
 		BigDecimal bd = new BigDecimal(mValue);
 		bd = bd.setScale(dp, RoundingMode.HALF_UP);
 		mValue = bd.floatValue();
@@ -456,7 +456,7 @@ public class UiInputFloat extends UIWidget implements IBufferedTextInputCallback
 			if (mValue > mMaxValue)
 				mValue = mMaxValue;
 		}
-		
+
 		updateFloatValue();
 
 		return true;
