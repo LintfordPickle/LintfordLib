@@ -211,6 +211,10 @@ public class UiInputInteger extends UIWidget implements IBufferedTextInputCallba
 	// --------------------------------------
 
 	public UiInputInteger(UiWindow parentWindow) {
+		this(parentWindow, null);
+	}
+
+	public UiInputInteger(UiWindow parentWindow, String labelText) {
 		super(parentWindow);
 
 		mResetOnDefaultClick = true;
@@ -226,6 +230,8 @@ public class UiInputInteger extends UIWidget implements IBufferedTextInputCallba
 		mTextScale = 1.f;
 		mW = 100;
 		mH = 25.f;
+
+		mLabelText = labelText;
 
 		mMinValue = -10;
 		mMaxValue = 10;
@@ -335,7 +341,6 @@ public class UiInputInteger extends UIWidget implements IBufferedTextInputCallba
 
 	@Override
 	public void draw(LintfordCore core, SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheetDefinition, FontUnit textFont, float componentZDepth) {
-
 		var lTextColor = ColorConstants.TextEntryColor;
 		final float lTextHeight = textFont.fontHeight();
 
@@ -382,6 +387,7 @@ public class UiInputInteger extends UIWidget implements IBufferedTextInputCallba
 			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, (int) lCarotPositionX, mY + mH * .5f - lTextHeight * .5f * mTextScale, 1.f, textFont.fontHeight() * mTextScale, componentZDepth, ColorConstants.WHITE);
 		}
 		spriteBatch.end();
+
 		final int lCancelRectSize = 16;
 		ContentRectangle.preDraw(core, spriteBatch, mX + 8, mY, mW - lCancelRectSize, mH, -0, 1);
 
@@ -390,7 +396,6 @@ public class UiInputInteger extends UIWidget implements IBufferedTextInputCallba
 		textFont.end();
 
 		ContentRectangle.postDraw(core);
-
 	}
 
 	// --------------------------------------

@@ -149,11 +149,16 @@ public class UiInputText extends UIWidget implements IBufferedTextInputCallback 
 	// --------------------------------------
 
 	public UiInputText(UiWindow parentWindow) {
+		this(parentWindow, null);
+	}
+
+	public UiInputText(UiWindow parentWindow, String labelText) {
 		super(parentWindow);
 
 		mResetOnDefaultClick = true;
 		mMouseClickBreaksInputTextFocus = true;
 		mInputField = new StringBuilder();
+		mLabelText = labelText;
 
 		mCancelRectangle = new Rectangle();
 		mEmptyString = "";
@@ -162,7 +167,6 @@ public class UiInputText extends UIWidget implements IBufferedTextInputCallback 
 		mTextScale = 1.f;
 		mW = 100;
 		mH = 25.f;
-
 	}
 
 	// --------------------------------------
@@ -268,7 +272,6 @@ public class UiInputText extends UIWidget implements IBufferedTextInputCallback 
 
 	@Override
 	public void draw(LintfordCore core, SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheetDefinition, FontUnit textFont, float componentZDepth) {
-
 		var lTextColor = ColorConstants.TextEntryColor;
 		final float lTextHeight = textFont.fontHeight();
 
@@ -313,9 +316,11 @@ public class UiInputText extends UIWidget implements IBufferedTextInputCallback 
 
 		final var first_part_of_string = mCursorPos > 0 ? mInputField.subSequence(0, mCursorPos) : "";
 		final var carot_position_x = textFont.getStringWidth(first_part_of_string.toString(), mTextScale);
+		final int lCancelRectSize = 16;
+		final var mw = mLabelText == null ? mW - 32 : ww - lCancelRectSize - 16.f;
 
-		final var lIsTextTooLong = carot_position_x > (mW - 32);
-		final var lTextOverlapWithBox = lInputTextWidth - (mW - 32);
+		final var lIsTextTooLong = carot_position_x > mw;
+		final var lTextOverlapWithBox = lInputTextWidth - mw;
 		final var lTextPosX = lIsTextTooLong ? xx - lTextOverlapWithBox : xx;
 
 		if (mShowCaret && mHasFocus) {
@@ -323,8 +328,8 @@ public class UiInputText extends UIWidget implements IBufferedTextInputCallback 
 			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, lCarotPositionX + 8, mY + mH * .5f - lTextHeight * .5f * mTextScale, 1.f, textFont.fontHeight() * mTextScale, componentZDepth, ColorConstants.WHITE);
 		}
 		spriteBatch.end();
-		final int lCancelRectSize = 16;
-		ContentRectangle.preDraw(core, spriteBatch, mX + 8, mY, mW - lCancelRectSize, mH, -0, 1);
+
+		ContentRectangle.preDraw(core, spriteBatch, xx + 2.f, mY, ww - lCancelRectSize - 5.f, mH, -0, 1);
 
 		textFont.begin(core.HUD());
 		textFont.drawText(lText, lTextPosX + 8, mY + mH * .5f - lTextHeight * .5f * mTextScale, componentZDepth, lTextColor, mTextScale);
