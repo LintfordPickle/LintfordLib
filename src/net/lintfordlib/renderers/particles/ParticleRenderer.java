@@ -17,7 +17,7 @@ public class ParticleRenderer {
 	private ParticleSystemInstance mParticleSystem;
 	private ResourceManager mResourceManager;
 	private Texture mTexture;
-	private int mParticleRendererId;
+	private final int mParticleRendererId;
 	private int mEntityGroupId;
 	private boolean mResourcesLoaded;
 	private boolean mIsParticleLoaded;
@@ -42,6 +42,10 @@ public class ParticleRenderer {
 	/** Returns true if this {@link ParticleRenderer} has been assigned to a {@link ParticleController}, or false otherwise. */
 	public boolean isAssigned() {
 		return mIsAssigned;
+	}
+
+	public boolean isAssignedParticleSystemAlive() {
+		return mIsAssigned && (mParticleSystem != null && mParticleSystem.rendererId() == mParticleRendererId);
 	}
 
 	// --------------------------------------
@@ -91,10 +95,7 @@ public class ParticleRenderer {
 			final float lWidthScaled = lParticleInst.width * lParticleInst.scale;
 			final float lHeightScaled = lParticleInst.height * lParticleInst.scale;
 
-			textureBatch.drawAroundCenter(mTexture, 
-					lParticleInst.sx, lParticleInst.sy, lParticleInst.sw, lParticleInst.sh, 
-					lParticleInst.worldPositionX, lParticleInst.worldPositionY, lWidthScaled, lHeightScaled, 
-					lParticleInst.worldPositionZ, lParticleInst.rotationInRadians, lParticleInst.rox, lParticleInst.roy,
+			textureBatch.drawAroundCenter(mTexture, lParticleInst.sx, lParticleInst.sy, lParticleInst.sw, lParticleInst.sh, lParticleInst.worldPositionX, lParticleInst.worldPositionY, lWidthScaled, lHeightScaled, lParticleInst.worldPositionZ, lParticleInst.rotationInRadians, lParticleInst.rox, lParticleInst.roy,
 					lParticleInst.scale, lParticleInst.color);
 		}
 
@@ -110,9 +111,11 @@ public class ParticleRenderer {
 		mIsAssigned = true;
 	}
 
-	public void unassignedParticleSystem() {
-		mIsAssigned = false;
+	public void unassignParticleSystem() {
+		mTexture = null;
+		mParticleSystem = null;
 		mIsParticleLoaded = false;
+		mIsAssigned = false;
 	}
 
 	private void loadParticleContent(final ParticleSystemInstance particleSystemInst) {
@@ -121,6 +124,7 @@ public class ParticleRenderer {
 
 		final var lParticleDefinition = particleSystemInst.definition();
 
+		// TODO: The texture filter mode needs to come from the ParticleSystemDefinition
 		mTexture = mResourceManager.textureManager().loadTexture(lParticleDefinition.textureName(), lParticleDefinition.textureFilename(), GL11.GL_NEAREST, mEntityGroupId);
 		mIsParticleLoaded = mTexture != null;
 	}

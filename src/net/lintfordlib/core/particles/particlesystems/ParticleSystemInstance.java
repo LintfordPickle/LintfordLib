@@ -20,6 +20,7 @@ public class ParticleSystemInstance {
 	// Variables
 	// --------------------------------------
 
+	protected boolean mIsAssigned;
 	protected int mParticleSystemUid;
 	protected ParticleSystemDefinition mParticleSystemDefinition;
 	private List<Particle> mParticles;
@@ -68,7 +69,8 @@ public class ParticleSystemInstance {
 	// Core-Methods
 	// --------------------------------------
 
-	public void initialize(final int particleSystemUid, final ParticleSystemDefinition particleSystemDefinition) {
+	public void initialize(int particleSystemUid, ParticleSystemDefinition particleSystemDefinition) {
+		mIsAssigned = true;
 		mParticleSystemDefinition = particleSystemDefinition;
 		mParticleSystemUid = particleSystemUid;
 		mCapacity = mParticleSystemDefinition.maxParticleCount();
@@ -79,6 +81,13 @@ public class ParticleSystemInstance {
 		for (int i = 0; i < mCapacity; i++) {
 			mParticles.add(new Particle());
 		}
+	}
+
+	public void unload() {
+		mIsAssigned = false;
+		mParticleSystemDefinition = null;
+		mRendererId = NO_RENDERER_ASSIGNED;
+		mParticles.clear();
 	}
 
 	public void update(LintfordCore core) {
@@ -127,6 +136,9 @@ public class ParticleSystemInstance {
 	 * Spawns a new {@link Particle} instance, foregoing the {@link IParticleinitializer}s attached to this {@link ParticleSystemInstance}. Insteadm you can specifiy the individual components of the particles.
 	 */
 	public Particle spawnParticle(float worldX, float worldY, float worldZ, float velocityX, float velocityY, float sourceX, float sourceY, float sourceW, float sourceH, float destWidth, float destHeight) {
+		if (mIsAssigned == false)
+			return null;
+
 		final var lNewParticle = spawnParticle(worldX, worldY, worldY, velocityX, velocityY);
 		if (lNewParticle != null) {
 			lNewParticle.setupSourceTexture(sourceX, sourceY, sourceW, sourceH);
@@ -140,6 +152,9 @@ public class ParticleSystemInstance {
 
 	/** Spawns a new {@link Particle} and applys the {@link IParticleinitializer} attached to this {@link ParticleSystemInstance}. */
 	public Particle spawnParticle(float worldX, float worldY, float worldZ, float velocityX, float velocityY) {
+		if (mIsAssigned == false)
+			return null;
+
 		for (int i = 0; i < mCapacity; i++) {
 			final var lSpawnedParticle = mParticles.get(i);
 			if (lSpawnedParticle.isAssigned())

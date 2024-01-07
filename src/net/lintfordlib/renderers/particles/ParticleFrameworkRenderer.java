@@ -26,9 +26,9 @@ public class ParticleFrameworkRenderer extends BaseRenderer {
 	// Variables
 	// --------------------------------------
 
-	private TextureBatchPCT mTextureBatch;
-	private List<ParticleRenderer> mParticleRenderers;
-	private ParticleFrameworkController mParticleSystemController;
+	protected TextureBatchPCT mTextureBatch;
+	protected List<ParticleRenderer> mParticleRenderers;
+	protected ParticleFrameworkController mParticleSystemController;
 	private int mEntityGroupID;
 
 	// --------------------------------------
@@ -92,13 +92,16 @@ public class ParticleFrameworkRenderer extends BaseRenderer {
 		if (mParticleSystemController == null)
 			return;
 
-		final var lInstances = mParticleSystemController.particleFrameworkData().particleSystemManager().particleSystems();
+		final var lParticleSystemManager = mParticleSystemController.particleFrameworkData().particleSystemManager();
+		final var lInstances = lParticleSystemManager.particleSystems();
 		if (lInstances != null && lInstances.size() > 0) {
 			final int lNumParticleSystems = lInstances.size();
 			for (int i = 0; i < lNumParticleSystems; i++) {
 				maintainParticleSystemRenderer(lInstances.get(i));
 			}
 		}
+
+		cleanParticleSystemRenderers();
 	}
 
 	@Override
@@ -122,8 +125,18 @@ public class ParticleFrameworkRenderer extends BaseRenderer {
 		return RENDERER_ID++;
 	}
 
+	private void cleanParticleSystemRenderers() {
+		for (int i = 0; i < RENDERER_POOL_SIZE; i++) {
+			if (mParticleRenderers.get(i).isAssignedParticleSystemAlive() == false)
+				mParticleRenderers.get(i).unassignParticleSystem();
+		}
+	}
+
 	public void maintainParticleSystemRenderer(ParticleSystemInstance particleSystemInstance) {
 		if (particleSystemInstance.rendererId() != ParticleSystemInstance.NO_RENDERER_ASSIGNED)
+			return;
+		
+		if(particleSystemInstance.definition() == null)
 			return;
 
 		final var particleRenderer = getFreeParticleSystemRenderer();

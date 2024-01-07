@@ -100,8 +100,23 @@ public class ParticleSystemManager extends InstanceManager<ParticleSystemInstanc
 	// Methods
 	// --------------------------------------
 
+	public ParticleSystemInstance getParticleSystemByDefiniton(ParticleSystemDefinition particleSystemDef) {
+		final var lNumParticleSystems = mInstances.size();
+		for (var i = 0; i < lNumParticleSystems; i++) {
+			final var lParticleSystemInstance = mInstances.get(i);
+			if (!lParticleSystemInstance.isInitialized())
+				continue;
+
+			if (lParticleSystemInstance.definition().equals(particleSystemDef.name)) {
+				return mInstances.get(i);
+			}
+		}
+
+		return createNewParticleSystemFromDefinition(particleSystemDef);
+	}
+
 	/** Returns the {@link ParticleController} whose {@link ParticleSystemInstance}'s name matches the given {@link String}. null is returned if the ParticleController is not found. */
-	public ParticleSystemInstance getParticleSystemByName(final String particleSystemName) {
+	public ParticleSystemInstance getParticleSystemByName(String particleSystemName) {
 		final var lNumParticleSystems = mInstances.size();
 		for (var i = 0; i < lNumParticleSystems; i++) {
 			final var lParticleSystemInstance = mInstances.get(i);
@@ -118,21 +133,39 @@ public class ParticleSystemManager extends InstanceManager<ParticleSystemInstanc
 		return null;
 	}
 
-	public ParticleSystemInstance createNewParticleSystemFromDefinitionName(String particleSystemName) {
-		final var lParticleSystemDefinition = mParticleSystemDefinitionManager.getByName(particleSystemName);
-		if (lParticleSystemDefinition != null) {
+	public ParticleSystemInstance createNewParticleSystemFromDefinition(ParticleSystemDefinition particleSystemDef) {
+		if (particleSystemDef != null) {
 			final var lNewParticleSystem = new ParticleSystemInstance();
-			lNewParticleSystem.initialize(ParticleSystemUidCounter++, lParticleSystemDefinition);
+			lNewParticleSystem.initialize(ParticleSystemUidCounter++, particleSystemDef);
 
 			mInstances.add(lNewParticleSystem);
 
-			Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("Created new ParticleSystemInstance for ParticleSystemDefinition '%s'", lParticleSystemDefinition.name));
+			Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("Created new ParticleSystemInstance for ParticleSystemDefinition '%s'", particleSystemDef.name));
 
 			return lNewParticleSystem;
 		}
 
-		Debug.debugManager().logger().w(getClass().getSimpleName(), String.format("Couldn't resolve particle system by definition name '%s'", particleSystemName));
+		Debug.debugManager().logger().w(getClass().getSimpleName(), String.format("Couldn't resolve particle system by definition name '%s'", particleSystemDef));
 
 		return null;
 	}
+
+	public ParticleSystemInstance createNewParticleSystemFromDefinitionName(String particleSystemName) {
+		final var lParticleSystemDefinition = mParticleSystemDefinitionManager.getByName(particleSystemName);
+		return createNewParticleSystemFromDefinition(lParticleSystemDefinition);
+	}
+
+	public void returnParticleSystem(ParticleSystemInstance particleSystem) {
+		if (particleSystem == null)
+			return;
+
+		if (mInstances.contains(particleSystem)) {
+			mInstances.remove(particleSystem);
+		}
+
+		particleSystem.unload();
+		particleSystem = null;
+
+	}
+
 }
