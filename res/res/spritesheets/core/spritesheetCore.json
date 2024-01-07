@@ -1719,6 +1719,18 @@
       "anchorPoints": []
     },
     {
+      "name": "TEXTUREDIRECTORY",
+      "x": 231,
+      "y": 294,
+      "w": 32,
+      "h": 32,
+      "pivotX": 0,
+      "pivotY": 0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "anchorPoints": []
+    },
+    {
       "name": "TEXTURE_BLACK",
       "x": 33,
       "y": 0,
