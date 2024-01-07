@@ -411,7 +411,7 @@ public class DisplayManager extends IniFile {
 
 		glfwSetWindowSizeLimits(mMasterWindowId, gameInfo.minimumWindowWidth(), gameInfo.minimumWindowHeight(), GLFW_DONT_CARE, GLFW_DONT_CARE);
 
-		mOpenGlMainThreadId = Thread.currentThread().getId();
+		mOpenGlMainThreadId = Thread.currentThread().threadId();
 
 		// The main opengl thread is important, because it allows us to ensure that we only initial OpenGl ocntainers
 		// on the main context thread (as containers are not shared with shared contexts).
@@ -426,7 +426,6 @@ public class DisplayManager extends IniFile {
 		glfwShowWindow(mMasterWindowId);
 		mIsWindowFocused = glfwGetWindowAttrib(mMasterWindowId, GLFW_VISIBLE) != 0;
 
-		// Create only one size callback thing
 		if (mFrameBufferSizeCallback == null) {
 			mFrameBufferSizeCallback = new GLFWFramebufferSizeCallback() {
 				@Override
