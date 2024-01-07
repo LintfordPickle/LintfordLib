@@ -219,7 +219,7 @@ public class UiDropDownBox<T> extends UIWidget implements IInputClickedFocusMana
 		super.update(core);
 
 		if (mOpen) {
-			
+
 			mWindowRectangle.set(mX, mY + 25.f, mW, OPEN_HEIGHT);
 		} else {
 			mLabel = "Particle System:";
@@ -232,6 +232,9 @@ public class UiDropDownBox<T> extends UIWidget implements IInputClickedFocusMana
 			mWindowRectangle.set(this);
 			mWindowRectangle.expand(1);
 		}
+
+		mContentRectangle.height((mItems.size() + 1) * ITEM_HEIGHT);
+		mScrollBar.update(core);
 	}
 
 	@Override
@@ -259,7 +262,7 @@ public class UiDropDownBox<T> extends UIWidget implements IInputClickedFocusMana
 		} else {
 			drawSelectedItem(core, spriteBatch, textFont, coreSpritesheet, componentZDepth);
 
-			mWindowRectangle.preDraw(core, spriteBatch);
+			mWindowRectangle.preDraw(core, spriteBatch, mWindowRectangle, 1);
 			textFont.begin(core.HUD());
 			spriteBatch.begin(core.HUD());
 			final var lBlackWithAlpha = ColorConstants.getBlackWithAlpha(1.f);
@@ -285,7 +288,7 @@ public class UiDropDownBox<T> extends UIWidget implements IInputClickedFocusMana
 			textFont.end();
 
 			mWindowRectangle.postDraw(core);
-
+			mScrollBar.draw(core, spriteBatch, coreSpritesheet, componentZDepth, 1.f);
 		}
 
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
@@ -298,7 +301,6 @@ public class UiDropDownBox<T> extends UIWidget implements IInputClickedFocusMana
 
 			spriteBatch.end();
 		}
-
 	}
 
 	private void drawSelectedItem(LintfordCore core, SpriteBatch spriteBatch, FontUnit textFont, SpriteSheetDefinition coreSpritesheet, float componentZDepth) {
