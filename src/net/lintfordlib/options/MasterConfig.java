@@ -54,14 +54,14 @@ public class MasterConfig {
 	public MasterConfig(final GameInfo gameInfo) {
 		mGameInfo = gameInfo;
 
-		// Make sure that a game save directory exists for this application...
-		AppStorage.createGameDataDirectory(ConstantsApp.getStringValueDef(ConstantsApp.CONSTANT_APP_NAME_TAG, "LintfordLib"));
+		// Make sure that a game config and data directories exist for this application...
+		AppStorage.createGameDirectories(ConstantsApp.getStringValueDef(ConstantsApp.CONSTANT_APP_NAME_TAG, "LintfordLib"));
 
-		final String lDisplayConfigFilename = AppStorage.getGameDataDirectory() + VIDEO_CONFIG_FILENAME;
+		final String lDisplayConfigFilename = AppStorage.getGameConfigDirectory() + VIDEO_CONFIG_FILENAME;
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "Loading video settings from '" + lDisplayConfigFilename + "'");
 		mDisplayConfig = new DisplayManager(gameInfo, lDisplayConfigFilename);
 
-		final String lAudioConfigFilename = AppStorage.getGameDataDirectory() + AUDIO_CONFIG_FILENAME;
+		final String lAudioConfigFilename = AppStorage.getGameConfigDirectory() + AUDIO_CONFIG_FILENAME;
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "Loading audio settings from '" + lAudioConfigFilename + "'");
 		mAudioConfig = new AudioConfig(gameInfo, lAudioConfigFilename);
 	}

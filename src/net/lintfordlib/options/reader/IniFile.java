@@ -183,9 +183,10 @@ public class IniFile {
 
 	public void saveConfig(String pFilename) throws IOException {
 		final var lConfigFile = new File(pFilename);
-		if (lConfigFile.getParentFile().exists() == false) {
-			Debug.debugManager().logger().i(getClass().getSimpleName(), "Creating config directory: " + lConfigFile.getParentFile());
-			lConfigFile.mkdirs();
+		final var lParentDirectory = lConfigFile.getParentFile();
+		if (lParentDirectory != null && lConfigFile.getParentFile().exists() == false) {
+			Debug.debugManager().logger().i(getClass().getSimpleName(), "Creating config directory: " + lParentDirectory.getAbsolutePath());
+			lParentDirectory.mkdir();
 		}
 
 		try (BufferedWriter br = new BufferedWriter(new FileWriter(pFilename))) {
