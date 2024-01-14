@@ -136,6 +136,7 @@ public class Debug {
 
 	public void loadResources(final ResourceManager resourceManager) {
 		mDebugConsole.loadResources(resourceManager);
+		mDebugLogger.loadResources(resourceManager);
 		mDebugDrawers.loadResources(resourceManager);
 		mDebugStats.loadResources(resourceManager);
 
@@ -144,6 +145,7 @@ public class Debug {
 
 	public void unloadResources() {
 		mDebugConsole.unloadResources();
+		mDebugLogger.unloadResources();
 		mDebugDrawers.unloadResources();
 		mDebugStats.unloadResources();
 
@@ -169,6 +171,7 @@ public class Debug {
 		}
 
 		mDebugConsole.update(core);
+		mDebugLogger.update(core);
 		mDebugStats.update(core);
 	}
 
@@ -177,6 +180,7 @@ public class Debug {
 			return;
 
 		mDebugConsole.draw(core);
+		mDebugLogger.draw(core);
 		mDebugStats.draw(core);
 	}
 

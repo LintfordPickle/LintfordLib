@@ -7,11 +7,19 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Queue;
 
 import net.lintfordlib.ConstantsApp;
+import net.lintfordlib.core.LintfordCore;
+import net.lintfordlib.core.ResourceManager;
 import net.lintfordlib.core.debug.Debug.DebugLogLevel;
+import net.lintfordlib.core.graphics.ColorConstants;
+import net.lintfordlib.core.graphics.fonts.BitmapFontManager;
+import net.lintfordlib.core.graphics.fonts.FontUnit;
+import net.lintfordlib.core.maths.MathHelper;
 import net.lintfordlib.core.messaging.Message;
 import net.lintfordlib.core.time.DateHelper;
 
@@ -30,6 +38,8 @@ public class DebugLogger {
 	public static final String DEBUG_LOG_FILENAME = "debug";
 	public static final String LOG_FILE_EXTENSION = ".log";
 
+	private static final Date _date = new Date();
+
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
@@ -40,9 +50,43 @@ public class DebugLogger {
 	private List<Message> mLogLines;
 	private BufferedOutputStream mDebugLogBufferedOutputStream;
 
+	private transient FontUnit mConsoleFont;
+	private boolean mFlashMessagesEnabled;
+	private Queue<Message> mFlashMessageQueue = new LinkedList<>();
+	private Message mCurrentFlashMessage;
+	private float mCurrentFlashMessageAlpha;
+	private float mFlashMessageQueueDisplayTimer;
+	private static float FlashQueueMessageDisplayTimeMs = 1000;
+
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public boolean flashMessagesEneabeld() {
+		return mFlashMessagesEnabled;
+	}
+
+	public void flashMessagesEneabeld(boolean newValue) {
+		mFlashMessagesEnabled = newValue;
+	}
+
+	public void addFlashMessage(DebugLogLevel logLevel, String tag, String message) {
+		mFlashMessagesEnabled = true;
+		if (mFlashMessagesEnabled == false)
+			return;
+
+		final var lLogMessage = mLogLinePool.remove(0);
+
+		if (lLogMessage == null) {
+			System.err.println("DebugLogger: Unable to write to flash message queue (pool empty)?");
+			return;
+		}
+		_date.setTime(System.currentTimeMillis());
+		var lTimeStamp = SIMPLE_DATE_FORMAT.format(_date);
+		lLogMessage.setMessage(message, message, lTimeStamp, logLevel.logLevel);
+
+		mFlashMessageQueue.add(lLogMessage);
+	}
 
 	/** Returns all the messages currently in the log. */
 	public List<Message> logLines() {
@@ -75,6 +119,58 @@ public class DebugLogger {
 		}
 
 		openDebugLogOutputStream();
+	}
+
+	// --------------------------------------
+	// Core-Methods
+	// --------------------------------------
+
+	public void loadResources(ResourceManager resourceManager) {
+		mConsoleFont = resourceManager.fontManager().getFontUnit(BitmapFontManager.SYSTEM_FONT_CONSOLE_NAME);
+	}
+
+	public void unloadResources() {
+		mConsoleFont = null;
+	}
+
+	public void update(LintfordCore core) {
+		if (mFlashMessageQueue.size() > 0 || mCurrentFlashMessage != null) {
+			if (mCurrentFlashMessage == null) {
+				mCurrentFlashMessage = mFlashMessageQueue.poll();
+
+				mFlashMessageQueueDisplayTimer = FlashQueueMessageDisplayTimeMs;
+			}
+
+			if (mFlashMessageQueueDisplayTimer > 0.f) {
+				mFlashMessageQueueDisplayTimer -= core.appTime().elapsedTimeMilli();
+				final var v = (mFlashMessageQueueDisplayTimer * 10f) / FlashQueueMessageDisplayTimeMs;
+				mCurrentFlashMessageAlpha = MathHelper.clamp(v, 0.f, 1.f);
+			}
+
+			if (mFlashMessageQueueDisplayTimer < 0.f)
+				mCurrentFlashMessage = null;
+
+		}
+	}
+
+	public void draw(LintfordCore core) {
+		if (mCurrentFlashMessage != null) {
+
+			final var lHudRect = core.HUD().boundingRectangle();
+			final var lPadding = 5.f;
+
+			mConsoleFont.begin(core.HUD());
+
+			final var lColorRgb = DebugConsole.getMessageRGB(mCurrentFlashMessage.type());
+			final float lR = lColorRgb.x;
+			final float lG = lColorRgb.y;
+			final float lB = lColorRgb.z;
+
+			final var lTextColor = ColorConstants.getColor(lR, lG, lB, mCurrentFlashMessageAlpha);
+
+			mConsoleFont.drawText(mCurrentFlashMessage.message(), lHudRect.left() + lPadding, lHudRect.bottom() - mConsoleFont.fontHeight() - lPadding, -0.01f, lTextColor, 1.f);
+			mConsoleFont.end();
+		}
 	}
 
 	// --------------------------------------
@@ -115,7 +211,7 @@ public class DebugLogger {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
-		if (tag.equals("") || message.equals("")) {
+		if (tag == null || tag.equals("") || message == null || message.equals("")) {
 			return;
 		}
 
@@ -140,8 +236,11 @@ public class DebugLogger {
 				message = "[" + lThreadName + "] " + message;
 			}
 
-			var lTimeStamp = SIMPLE_DATE_FORMAT.format(new Date());
+			_date.setTime(System.currentTimeMillis());
+			var lTimeStamp = SIMPLE_DATE_FORMAT.format(_date);
 			lLogMessage.setMessage(tag, message, lTimeStamp, logLevel.logLevel);
+
+			addFlashMessage(logLevel, tag, message);
 
 			if (DEBUG_LOG_DEBUG_TO_FILE) {
 				writeDebugMessageToFile(lLogMessage.tag(), lLogMessage.timestamp(), lLogMessage.message());
