@@ -7,10 +7,15 @@ import net.lintfordlib.core.geometry.spritegraph.instances.SpriteGraphInstance;
 import net.lintfordlib.core.geometry.spritegraph.instances.SpriteGraphNodeInstance;
 
 /***
- * The {@link SpriteGraphAttachmentDefinition} defines properties for instantiating {@link SpriteGraphNodeInstance}s, which can be added onto an instrances of {@link SpriteGraphInstance}. 
- * More specifically, spritegraph attachments are added onto the {@link SpriteGraphNodeInstance}.
+ * The {@link SpriteGraphAttachmentDefinition} defines properties for instantiating {@link SpriteGraphNodeInstance}s, which can be added onto an instrances of {@link SpriteGraphInstance}. More specifically, spritegraph attachments are added onto the {@link SpriteGraphNodeInstance}.
  */
 public class SpriteGraphAttachmentDefinition extends BaseDefinition implements ISpriteGraphAttachmentDefinition {
+
+	// ---------------------------------------------
+	// Constants
+	// ---------------------------------------------
+
+	private static final long serialVersionUID = 1140253738602492395L;
 
 	// ---------------------------------------------
 	// Variables
