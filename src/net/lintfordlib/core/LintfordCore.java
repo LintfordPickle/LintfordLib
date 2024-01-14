@@ -302,6 +302,13 @@ public abstract class LintfordCore {
 			}
 		}
 
+		// Set a default workspace property to user.file
+		var defaultWorkspaceLocation = System.getProperty(ConstantsApp.WORKSPACE_PROPERTY_NAME);
+		if (defaultWorkspaceLocation == null) {
+			defaultWorkspaceLocation = System.getProperty("user.dir");
+			System.setProperty(ConstantsApp.WORKSPACE_PROPERTY_NAME, defaultWorkspaceLocation);
+		}
+
 		// The target simulation speed can be set in the CoreTime.targetElapsedTimeMilli. Examples:
 		// 30Hz is 33.33 ms
 		// 60Hz is 16.66 ms
