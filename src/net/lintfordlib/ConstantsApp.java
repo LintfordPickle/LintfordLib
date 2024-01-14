@@ -17,6 +17,8 @@ public class ConstantsApp {
 	public static final String CONSTANT_APP_NAME_TAG = "APP_NAME";
 	public static final String CONSTANT_IS_DEBUG_TAG = "DEBUG_APP";
 
+	public static final String WORKSPACE_PROPERTY_NAME = "LintfordWorkspace";
+
 	public static final int BASE_RESOLUTION_WIDTH = 800;
 	public static final int BASE_RESOLUTION_HEIGHT = 500;
 
