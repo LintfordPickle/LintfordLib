@@ -16,9 +16,10 @@ public class MasterConfig {
 
 	private static final String VIDEO_CONFIG_FILENAME = "Video.ini";
 	private static final String AUDIO_CONFIG_FILENAME = "Audio.ini";
+	private static final String RESOURCES_CONFIG_FILENAME = "Resources.ini";
 
 	public enum configuration {
-		audioConfig, videoConfig, all,
+		audioConfig, videoConfig, inputConfig, resourcePaths, all,
 	}
 
 	// --------------------------------------
@@ -28,6 +29,7 @@ public class MasterConfig {
 	// TODO: InputConfig for key and mouse mapping
 	private DisplayManager mDisplayConfig;
 	private AudioConfig mAudioConfig;
+	private ResourcePathsConfig mResourcePathsConfig;
 
 	private final GameInfo mGameInfo;
 
@@ -41,6 +43,10 @@ public class MasterConfig {
 
 	public DisplayManager display() {
 		return mDisplayConfig;
+	}
+
+	public ResourcePathsConfig resourcePaths() {
+		return mResourcePathsConfig;
 	}
 
 	public GameInfo gameInfor() {
@@ -64,6 +70,10 @@ public class MasterConfig {
 		final String lAudioConfigFilename = AppStorage.getGameConfigDirectory() + AUDIO_CONFIG_FILENAME;
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "Loading audio settings from '" + lAudioConfigFilename + "'");
 		mAudioConfig = new AudioConfig(gameInfo, lAudioConfigFilename);
+
+		final String lResourcePathConfigFilename = AppStorage.getGameConfigDirectory() + RESOURCES_CONFIG_FILENAME;
+		Debug.debugManager().logger().i(getClass().getSimpleName(), "Loading resource path config from '" + lResourcePathConfigFilename + "'");
+		mResourcePathsConfig = new ResourcePathsConfig(gameInfo, lResourcePathConfigFilename);
 	}
 
 	// --------------------------------------
@@ -102,6 +112,10 @@ public class MasterConfig {
 			mDisplayConfig.loadConfig();
 			break;
 
+		case resourcePaths:
+			mResourcePathsConfig.loadConfig();
+			break;
+
 		case all:
 		default:
 			loadConfigFiles(configuration.videoConfig);
@@ -117,6 +131,12 @@ public class MasterConfig {
 			break;
 		case videoConfig:
 			display().saveConfig();
+			break;
+		case inputConfig:
+			// TODO: save InputConfig (key bindings, senstivity etc.)
+			break;
+		case resourcePaths:
+			resourcePaths().saveConfig();
 			break;
 		case all:
 		default:
