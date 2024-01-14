@@ -97,7 +97,7 @@ public class ResourceManager {
 
 	// returns true if called on the main thread. otherwise false
 	public boolean isMainOpenGlThread() {
-		return Thread.currentThread().getId() == config().display().mainOpenGlThreadId();
+		return Thread.currentThread().threadId() == config().display().mainOpenGlThreadId();
 	}
 
 	// --------------------------------------
