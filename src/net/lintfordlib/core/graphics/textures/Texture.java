@@ -13,6 +13,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 import org.lwjgl.system.MemoryUtil;
 
+import net.lintfordlib.ConstantsApp;
 import net.lintfordlib.core.debug.Debug;
 
 public class Texture {
@@ -124,7 +125,7 @@ public class Texture {
 		String lCleanFilename = cleanFilename(filename);
 
 		try {
-			final var lFile = new File(lCleanFilename);
+			final var lFile = new File(System.getProperty(ConstantsApp.WORKSPACE_PROPERTY_NAME), lCleanFilename);
 			final var lFileSize = lFile.length();
 			final var lImage = ImageIO.read(lFile);
 
