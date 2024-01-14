@@ -2,6 +2,8 @@ package net.lintfordlib.core.particles.particlesystems.modifiers;
 
 import java.io.Serializable;
 
+import com.google.gson.annotations.SerializedName;
+
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.particles.Particle;
 
@@ -17,6 +19,7 @@ public abstract class ParticleModifierBase implements Serializable {
 	// Variables
 	// --------------------------------------
 
+	@SerializedName(value = "className")
 	protected String mModifierName;
 
 	// --------------------------------------

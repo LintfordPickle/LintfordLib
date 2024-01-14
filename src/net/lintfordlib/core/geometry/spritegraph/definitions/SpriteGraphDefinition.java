@@ -16,6 +16,12 @@ import net.lintfordlib.core.entities.definitions.BaseDefinition;
 public class SpriteGraphDefinition extends BaseDefinition {
 
 	// --------------------------------------
+	// Constants
+	// --------------------------------------
+
+	private static final long serialVersionUID = 9084295319658097867L;
+
+	// --------------------------------------
 	// Variables
 	// --------------------------------------
 

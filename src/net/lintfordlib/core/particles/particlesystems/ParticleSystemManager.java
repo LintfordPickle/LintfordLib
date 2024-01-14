@@ -1,5 +1,6 @@
 package net.lintfordlib.core.particles.particlesystems;
 
+import java.io.File;
 import java.util.List;
 
 import com.google.gson.GsonBuilder;
@@ -38,21 +39,21 @@ public class ParticleSystemManager extends InstanceManager<ParticleSystemInstanc
 		}
 
 		@Override
-		public void loadDefinitionsFromMetaFile(String pMetaFilepath) {
+		public void loadDefinitionsFromMetaFile(File filepath) {
 			final var gsonBuilder = new GsonBuilder();
 			gsonBuilder.registerTypeAdapter(ParticleSystemDefinition.class, new ParticleSystemDeserializer());
 			final var lGson = gsonBuilder.create();
 
-			loadDefinitionsFromMetaFileItems(pMetaFilepath, lGson, ParticleSystemDefinition.class);
+			loadDefinitionsFromMetaFileItems(filepath, lGson, ParticleSystemDefinition.class);
 		}
 
 		@Override
-		public void loadDefinitionFromFile(String pFilepath) {
+		public ParticleSystemDefinition loadDefinitionFromFile(File file) {
 			final var gsonBuilder = new GsonBuilder();
 			gsonBuilder.registerTypeAdapter(ParticleSystemDefinition.class, new ParticleSystemDeserializer());
 			final var lGson = gsonBuilder.create();
 
-			loadDefinitionFromFile(pFilepath, lGson, ParticleSystemDefinition.class);
+			return loadDefinitionFromFile(file, lGson, ParticleSystemDefinition.class);
 		}
 
 		public void saveDefinitionEntriesToMetaFile(String metaDataFilename) {

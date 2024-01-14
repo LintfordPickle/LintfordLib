@@ -44,8 +44,8 @@ public class SpriteGraphRepository extends EntityGroupManager {
 		}
 
 		@Override
-		public void loadDefinitionsFromMetaFile(String metaFileLocation) {
-			if (metaFileLocation == null || metaFileLocation.length() == 0) {
+		public void loadDefinitionsFromMetaFile(File metaFile) {
+			if (metaFile == null || metaFile.exists() == false) {
 				Debug.debugManager().logger().w(getClass().getSimpleName(), "SpriteGraphManager meta file cannot be null or empty when loading SpriteSheets.");
 				return;
 			}
@@ -53,11 +53,11 @@ public class SpriteGraphRepository extends EntityGroupManager {
 			final var lGson = new GsonBuilder().create();
 			SpriteGraphMetaData lSpriteGraphMetaData = null;
 			try {
-				String lMetaFileContents = new String(Files.readAllBytes(Paths.get(metaFileLocation)));
+				String lMetaFileContents = new String(Files.readAllBytes(Paths.get(metaFile.getAbsolutePath())));
 				lSpriteGraphMetaData = lGson.fromJson(lMetaFileContents, SpriteGraphMetaData.class);
 
 				if (lSpriteGraphMetaData == null || lSpriteGraphMetaData.spriteGraphLocations == null || lSpriteGraphMetaData.spriteGraphLocations.length == 0) {
-					Debug.debugManager().logger().w(getClass().getSimpleName(), "Couldn't load sprites from SpriteGraphDef meta file: " + metaFileLocation);
+					Debug.debugManager().logger().w(getClass().getSimpleName(), "Couldn't load sprites from SpriteGraphDef meta file: " + metaFile.getAbsolutePath());
 
 					return;
 				}
@@ -67,27 +67,29 @@ public class SpriteGraphRepository extends EntityGroupManager {
 
 			final int lSpriteGraphDefinitionCount = lSpriteGraphMetaData.spriteGraphLocations.length;
 			for (int i = 0; i < lSpriteGraphDefinitionCount; i++) {
-				loadDefinitionFromFile(lSpriteGraphMetaData.spriteGraphLocations[i]);
+				final var lSPriteDefinitionFile = new File(lSpriteGraphMetaData.spriteGraphLocations[i]);
+
+				loadDefinitionFromFile(lSPriteDefinitionFile);
 			}
 		}
 
 		@Override
-		public void loadDefinitionFromFile(String filepath) {
-			final var lSpriteGraphFile = new File(filepath);
-
-			if (!lSpriteGraphFile.exists()) {
-				Debug.debugManager().logger().w(getClass().getSimpleName(), "Error loading SpriteGraphDef from " + lSpriteGraphFile.getPath() + ". File doesn't exist!");
-				return;
+		public SpriteGraphDefinition loadDefinitionFromFile(File filepath) {
+			if (filepath == null || filepath.exists() == false) {
+				Debug.debugManager().logger().w(getClass().getSimpleName(), "Error loading SpriteGraphDef. File doesn't exist!");
+				return null;
 			}
 
-			final var lSpriteGraphDefinition = SpriteGraphDefinition.load(lSpriteGraphFile);
+			final var lSpriteGraphDefinition = SpriteGraphDefinition.load(filepath);
 			if (lSpriteGraphDefinition == null) {
-				return;
+				return null;
 			}
 
-			lSpriteGraphDefinition.filename(lSpriteGraphFile.getPath());
+			lSpriteGraphDefinition.filename(filepath.getPath());
 
 			addDefintion(lSpriteGraphDefinition);
+
+			return lSpriteGraphDefinition;
 		}
 
 		public void unloadDefinitions() {
@@ -208,7 +210,7 @@ public class SpriteGraphRepository extends EntityGroupManager {
 
 	public void loadSpriteGraphsFromMeta(String spritegraphMetafileLocation, int entityGroupUid) {
 		var lSpriteGraphGroup = spriteGraphGroup(entityGroupUid);
-		lSpriteGraphGroup.loadDefinitionsFromMetaFile(spritegraphMetafileLocation);
+		lSpriteGraphGroup.loadDefinitionsFromMetaFile(new File(spritegraphMetafileLocation));
 	}
 
 	public SpriteGraphDefinition getSpriteGraphDefinition(String spriteGraphDefinitionName, int entityGroupUid) {

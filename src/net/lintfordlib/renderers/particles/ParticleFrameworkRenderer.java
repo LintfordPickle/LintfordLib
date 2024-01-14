@@ -133,8 +133,10 @@ public class ParticleFrameworkRenderer extends BaseRenderer {
 	}
 
 	public void maintainParticleSystemRenderer(ParticleSystemInstance particleSystemInstance) {
-		if (particleSystemInstance.rendererId() != ParticleSystemInstance.NO_RENDERER_ASSIGNED)
+		if (particleSystemInstance.rendererId() != ParticleSystemInstance.NO_RENDERER_ASSIGNED) {
+			
 			return;
+		}
 		
 		if(particleSystemInstance.definition() == null)
 			return;

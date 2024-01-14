@@ -62,7 +62,12 @@ public class DefinitionLookUp extends BaseSaveDefinition {
 	// --------------------------------------
 
 	public boolean containsDefinitionName(String definitionName) {
-		return mDefinitionUidTable.containsValue(definitionName);
+		try {
+			return mDefinitionUidTable.containsValue(definitionName);
+		} catch (NullPointerException e) {
+			return false;
+		}
+
 	}
 
 	public boolean containsDefinitionUid(short definitionUid) {

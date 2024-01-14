@@ -2,6 +2,8 @@ package net.lintfordlib.core.particles.particlesystems.initializers;
 
 import java.io.Serializable;
 
+import com.google.gson.annotations.SerializedName;
+
 import net.lintfordlib.core.particles.Particle;
 
 public abstract class ParticleInitializerBase implements Serializable {
@@ -16,7 +18,16 @@ public abstract class ParticleInitializerBase implements Serializable {
 	// Variables
 	// --------------------------------------
 
+	@SerializedName(value = "className")
 	protected String mInitializerName;
+
+	// --------------------------------------
+	// Properties
+	// --------------------------------------
+
+	public String name() {
+		return mInitializerName;
+	}
 
 	// --------------------------------------
 	// Constructor

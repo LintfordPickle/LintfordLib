@@ -70,9 +70,9 @@ public class ParticleSystemInstance {
 	// --------------------------------------
 
 	public void initialize(int particleSystemUid, ParticleSystemDefinition particleSystemDefinition) {
+		mParticleSystemUid = particleSystemUid;
 		mIsAssigned = true;
 		mParticleSystemDefinition = particleSystemDefinition;
-		mParticleSystemUid = particleSystemUid;
 		mCapacity = mParticleSystemDefinition.maxParticleCount();
 
 		mRendererId = NO_RENDERER_ASSIGNED;
@@ -81,6 +81,36 @@ public class ParticleSystemInstance {
 		for (int i = 0; i < mCapacity; i++) {
 			mParticles.add(new Particle());
 		}
+	}
+
+	public void resyncWithDefinition() {
+		if (mIsAssigned == false || mParticleSystemDefinition == null)
+			return;
+
+		// force reassign of renderer (and a reload of the texture)
+		mRendererId = NO_RENDERER_ASSIGNED;
+
+		final var lDesiredNumParticles = mParticleSystemDefinition.maxParticleCount();
+		if (mParticles == null) {
+			for (int i = 0; i < lDesiredNumParticles; i++) {
+				mParticles.add(new Particle());
+			}
+		} else if (mParticles.size() < lDesiredNumParticles) {
+			// increase particle count
+			final var lCurCount = mParticles.size();
+			for (int i = lCurCount; i < lDesiredNumParticles; i++) {
+				mParticles.add(new Particle());
+			}
+		} else {
+			// reduce particle count
+			final var lCurCount = mParticles.size();
+			final var lAmtToRemove = lCurCount - lDesiredNumParticles;
+			for (int i = 0; i < lAmtToRemove; i++) {
+				mParticles.removeFirst();
+			}
+		}
+
+		mCapacity = lDesiredNumParticles;
 	}
 
 	public void unload() {

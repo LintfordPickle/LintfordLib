@@ -1,5 +1,6 @@
 package net.lintfordlib.core.particles.particleemitters;
 
+import java.io.File;
 import java.util.List;
 
 import com.google.gson.GsonBuilder;
@@ -22,7 +23,7 @@ public class ParticleEmitterManager extends ClosedPoolInstanceManager<ParticleEm
 		// --------------------------------------
 
 		public EmitterDefinitionManager() {
-			loadDefinitionsFromMetaFile(ParticleEmitterConstants.PARTICLE_EMITTER_META_FILENAME);
+			loadDefinitionsFromMetaFile(new File(ParticleEmitterConstants.PARTICLE_EMITTER_META_FILENAME));
 		}
 
 		// --------------------------------------
@@ -40,16 +41,16 @@ public class ParticleEmitterManager extends ClosedPoolInstanceManager<ParticleEm
 		}
 
 		@Override
-		public void loadDefinitionsFromMetaFile(String metaFilepath) {
+		public void loadDefinitionsFromMetaFile(File file) {
 			final var lGson = new GsonBuilder().create();
-			loadDefinitionsFromMetaFileItems(metaFilepath, lGson, ParticleEmitterDefinition.class);
+			loadDefinitionsFromMetaFileItems(file, lGson, ParticleEmitterDefinition.class);
 		}
 
 		@Override
-		public void loadDefinitionFromFile(String filepath) {
+		public ParticleEmitterDefinition loadDefinitionFromFile(File file) {
 			final var lGson = new GsonBuilder().create();
 
-			loadDefinitionFromFile(filepath, lGson, ParticleEmitterDefinition.class);
+			return loadDefinitionFromFile(file, lGson, ParticleEmitterDefinition.class);
 		}
 	}
 

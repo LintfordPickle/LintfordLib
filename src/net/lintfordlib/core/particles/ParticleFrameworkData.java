@@ -1,5 +1,8 @@
 package net.lintfordlib.core.particles;
 
+import java.io.File;
+
+import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.particles.particleemitters.ParticleEmitterManager;
 import net.lintfordlib.core.particles.particlesystems.ParticleSystemManager;
 import net.lintfordlib.data.BaseDataManager;
@@ -55,11 +58,23 @@ public class ParticleFrameworkData extends BaseDataManager {
 	}
 
 	public void loadParticleEmittersFromMetaFile(String particleEmitterMetaFile) {
-		mParticleEmitterManager.definitionManager().loadDefinitionsFromMetaFile(particleEmitterMetaFile);
+		final var lFile = new File(particleEmitterMetaFile);
+		if (lFile == null || lFile.exists() == false) {
+			Debug.debugManager().logger().e(getClass().getSimpleName(), "Unable to load particle emitters from meta file. The passed file doesn't exist.");
+			return;
+		}
+
+		mParticleEmitterManager.definitionManager().loadDefinitionsFromMetaFile(lFile);
 	}
 
 	public void loadParticleSystemsFromMetaFile(String particleSystemMetaFile) {
-		mParticleSystemManager.definitionManager().loadDefinitionsFromMetaFile(particleSystemMetaFile);
+		final var lFile = new File(particleSystemMetaFile);
+		if (lFile == null || lFile.exists() == false) {
+			Debug.debugManager().logger().e(getClass().getSimpleName(), "Unable to load particle systems from meta file. The passed file doesn't exist.");
+			return;
+		}
+
+		mParticleSystemManager.definitionManager().loadDefinitionsFromMetaFile(lFile);
 	}
 
 	public void loadFromMetaFiles(String particleSystemMetaFile, String particleEmitterMetaFile) {

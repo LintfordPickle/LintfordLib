@@ -2,12 +2,9 @@ package net.lintfordlib.core.entities.definitions;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Collection;
@@ -16,24 +13,14 @@ import java.util.Iterator;
 import java.util.Map;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 
+import net.lintfordlib.ConstantsApp;
 import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.entities.EntityLocationProvider;
 import net.lintfordlib.core.storage.FileUtils;
 
 public abstract class DefinitionManager<T extends BaseDefinition> {
-
-	public static class MetaFileItems implements Serializable {
-
-		private static final long serialVersionUID = 1750417953009665723L;
-
-		public String rootDirectory;
-		public String[] itemFileLocations;
-		public int itemCount;
-	}
 
 	// --------------------------------------
 	// Constants
@@ -67,7 +54,6 @@ public abstract class DefinitionManager<T extends BaseDefinition> {
 		return mDefinitions.size();
 	}
 
-//
 	public short getNewDefinitionUID() {
 		return mDefinitionUIDCounter++;
 	}
@@ -117,152 +103,81 @@ public abstract class DefinitionManager<T extends BaseDefinition> {
 
 	public abstract void loadDefinitionsFromFolderWatcher(EntityLocationProvider entityLocationProvider);
 
-	public abstract void loadDefinitionsFromMetaFile(String metaFilepath);
+	public abstract void loadDefinitionsFromMetaFile(File file);
 
-	public abstract void loadDefinitionFromFile(String filepath);
+	public abstract T loadDefinitionFromFile(File file);
 
 	public void afterDefinitionLoaded(T definition) {
-	}
-
-	protected MetaFileItems loadMetaFileItemsFromFilepath(final String filepath) {
-		if (filepath == null || filepath.length() == 0) {
-			Debug.debugManager().logger().w(getClass().getSimpleName(), "Couldn't load definitions files from a <null> Metafile!");
-			return null;
-		}
-
-		try {
-			final var lGson = new GsonBuilder().create();
-			final var lFileContents = new String(Files.readAllBytes(Paths.get(filepath)));
-			final var lItemsFileLocations = lGson.fromJson(lFileContents, MetaFileItems.class);
-
-			if (lItemsFileLocations == null || lItemsFileLocations.itemFileLocations == null || lItemsFileLocations.itemFileLocations.length == 0) {
-				Debug.debugManager().logger().w(getClass().getSimpleName(), "Couldn't load item filepaths from the Metafile!");
-
-				return null;
-			}
-
-			lItemsFileLocations.itemCount = lItemsFileLocations.itemFileLocations.length;
-			return lItemsFileLocations;
-		} catch (IOException e) {
-			Debug.debugManager().logger().e(getClass().getSimpleName(), "Error while loading metafile filepaths.");
-			Debug.debugManager().logger().printException(getClass().getSimpleName(), e);
-		}
-
-		return null;
-	}
-
-	public boolean isFileValidMetadataFile(String metaFilepath) {
-		if (metaFilepath == null || metaFilepath.length() == 0) {
-			Debug.debugManager().logger().w(getClass().getSimpleName(), "Metadata Filename is incorrectly formatted or null.");
-			return false;
-		}
-
-		try {
-			final var lGson = new GsonBuilder().create();
-			final var lFileContents = new String(Files.readAllBytes(Paths.get(metaFilepath)));
-			final var lItemsFileLocations = lGson.fromJson(lFileContents, MetaFileItems.class);
-
-			if (lItemsFileLocations == null || lItemsFileLocations.itemFileLocations == null || lItemsFileLocations.itemFileLocations.length == 0) {
-				Debug.debugManager().logger().w(getClass().getSimpleName(), "Couldn't load item filepaths from the Metafile!");
-				return false;
-			}
-
-			lItemsFileLocations.itemCount = lItemsFileLocations.itemFileLocations.length;
-			Debug.debugManager().logger().e(getClass().getSimpleName(), "Metadata file contains " + lItemsFileLocations.itemCount + " definitions");
-			return true;
-
-		} catch (IOException e) {
-			Debug.debugManager().logger().e(getClass().getSimpleName(), "Error while loading metafile filepaths.");
-			Debug.debugManager().logger().printException(getClass().getSimpleName(), e);
-		}
-
-		return false;
-	}
-
-	public void saveDefinitionsToMetadataFile(String metaFilepath) {
-		final var lMetaItemsList = new MetaFileItems();
-		lMetaItemsList.itemCount = mDefinitions.size();
-
-		int counter = 0;
-		for (var value : mDefinitions.values()) {
-			lMetaItemsList.itemFileLocations[counter] = value.filename;
-			counter++;
-		}
-
-		final var gson = new Gson();
-		try {
-			gson.toJson(lMetaItemsList, new FileWriter(metaFilepath));
-		} catch (JsonIOException e) {
-			Debug.debugManager().logger().e(getClass().getSimpleName(), "Failed to save meta data file - incorrect Json!");
-			Debug.debugManager().logger().printException(getClass().getSimpleName(), e);
-		} catch (IOException e) {
-			Debug.debugManager().logger().e(getClass().getSimpleName(), "Failed to save meta data file - incorrect Json!");
-			Debug.debugManager().logger().printException(getClass().getSimpleName(), e);
-		}
 	}
 
 	protected void loadDefinitionsFromFolderWatcherItems(EntityLocationProvider entityLocationProvider, final Gson gson, Class<T> classType) {
 		final var lFolderFileIterator = entityLocationProvider.getFileLocationIterator();
 		for (Iterator<String> lFileIterator = lFolderFileIterator; lFileIterator.hasNext();) {
-			loadDefinitionFromFile(lFileIterator.next(), gson, classType);
+
+			final var lFile = new File(lFileIterator.next());
+
+			loadDefinitionFromFile(lFile, gson, classType);
 		}
 	}
 
-	protected void loadDefinitionsFromMetaFileItems(String metaFilepath, final Gson gson, Class<T> classType) {
-		final var lMetaItems = loadMetaFileItemsFromFilepath(metaFilepath);
+	protected void loadDefinitionsFromMetaFileItems(File metaFile, final Gson gson, Class<T> classType) {
+		final var lMetaItems = AssetHeaderIo.loadFromFilepath(metaFile);
 
-		if (lMetaItems == null || lMetaItems.itemCount == 0) {
+		loadDefinitionsFromMetaFileItems(lMetaItems, gson, classType);
+	}
+
+	protected void loadDefinitionsFromMetaFileItems(AssetMetaHeader assetPackHeader, final Gson gson, Class<T> classType) {
+		if (assetPackHeader == null || assetPackHeader.numItems() == 0) {
 			Debug.debugManager().logger().w(getClass().getSimpleName(), String.format("Cannot load definition types %s, the given MetaFileItems contains no data", classType.getSimpleName()));
 			return;
 		}
 
-		for (int i = 0; i < lMetaItems.itemCount; i++) {
-			var lDefRootDirectory = System.getProperty("user.dir"); // If the user.dir was set (by the editor), then use it
+		var lDefRootDirectory = System.getProperty(ConstantsApp.WORKSPACE_PROPERTY_NAME);
 
-			final var lDefinitionFilepath = lDefRootDirectory + FileUtils.FILE_SEPERATOR + lMetaItems.rootDirectory + lMetaItems.itemFileLocations[i] + ".json";
+		for (int i = 0; i < assetPackHeader.numItems(); i++) {
+			final var lDefinitionFilepath = lDefRootDirectory + FileUtils.FILE_SEPERATOR + assetPackHeader.assetRootDirectory() + assetPackHeader.itemFilepaths().get(i);
+			final var lFile = new File(lDefinitionFilepath);
+			final var lNewDef = loadDefinitionFromFile(lFile, gson, classType);
 
-			final var lNewDef = loadDefinitionFromFile(lDefinitionFilepath, gson, classType);
 			if (lNewDef != null) {
 				afterDefinitionLoaded(lNewDef);
 			}
 		}
 	}
 
-	protected T loadDefinitionFromFile(String filepath, final Gson gson, Class<T> classType) {
-		final var lDefinitionFile = new File(filepath);
-
+	protected T loadDefinitionFromFile(File lDefinitionFile, final Gson gson, Class<T> classType) {
 		if (!lDefinitionFile.exists()) {
-			Debug.debugManager().logger().w(getClass().getSimpleName(), String.format("Error loading %s from file: %s (file not found)", classType.getSimpleName(), filepath));
+			Debug.debugManager().logger().w(getClass().getSimpleName(), String.format("Error loading %s from file: %s (file not found)", classType.getSimpleName(), lDefinitionFile.getAbsoluteFile()));
 			return null;
 		}
 
 		try {
-			Debug.debugManager().logger().v(getClass().getSimpleName(), String.format("Loading Definition type %s from file: %s", classType.getSimpleName(), filepath));
+			Debug.debugManager().logger().v(getClass().getSimpleName(), String.format("Loading Definition type %s from file: %s", classType.getSimpleName(), lDefinitionFile.getAbsoluteFile()));
 
 			final var lFileContents = new String(Files.readAllBytes(lDefinitionFile.toPath()));
 			final var lNewDefinition = gson.fromJson(lFileContents, classType);
 
 			if (lNewDefinition != null) {
 				if (lNewDefinition.name == null) {
-					Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Definition at path doesn't contain definition name: %s", filepath));
+					Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Definition at path doesn't contain definition name: %s", lDefinitionFile.getAbsoluteFile()));
 				}
 
-				lNewDefinition.filename = filepath;
+				lNewDefinition.filepath = lDefinitionFile.getAbsolutePath();
 
 				addDefintion(lNewDefinition);
 
 				return lNewDefinition;
 			} else {
-				Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Failed to parse %s from file: %s", classType.getSimpleName(), filepath));
+				Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Failed to parse %s from file: %s", classType.getSimpleName(), lDefinitionFile.getAbsoluteFile()));
 			}
 		} catch (JsonSyntaxException e) {
-			Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Failed to parse Json %s (JsonSyntaxException): %s", classType.getSimpleName(), filepath));
+			Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Failed to parse Json %s (JsonSyntaxException): %s", classType.getSimpleName(), lDefinitionFile.getAbsoluteFile()));
 			Debug.debugManager().logger().e(getClass().getSimpleName(), e.getMessage());
 		} catch (IOException e) {
-			Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Failed to parse Json %s (IOException): %s", classType.getSimpleName(), filepath));
+			Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Failed to parse Json %s (IOException): %s", classType.getSimpleName(), lDefinitionFile.getAbsoluteFile()));
 			Debug.debugManager().logger().e(getClass().getSimpleName(), e.getMessage());
 		} catch (NumberFormatException e) {
-			Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Failed to parse Json %s (NumberFormatException): %s", classType.getSimpleName(), filepath));
+			Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Failed to parse Json %s (NumberFormatException): %s", classType.getSimpleName(), lDefinitionFile.getAbsoluteFile()));
 			Debug.debugManager().logger().e(getClass().getSimpleName(), e.getMessage());
 		}
 
@@ -271,6 +186,9 @@ public abstract class DefinitionManager<T extends BaseDefinition> {
 
 	public void addDefintion(T newDefinition) {
 		if (newDefinition == null)
+			return;
+
+		if (newDefinition.name == null)
 			return;
 
 		short lDefinitionUid = 0;
