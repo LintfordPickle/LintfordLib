@@ -117,11 +117,11 @@ public class UiButton extends UIWidget {
 		spriteBatch.begin(core.HUD());
 		final var lTileSize = 32;
 		if (mW < lTileSize) {
-			spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X1_MID, mX, mY, mW, mH, componentZDepth, lColor);
+			spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X1_MID, (int) mX, mY, (int) mW, mH, componentZDepth, lColor);
 		} else {
-			spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X1_LEFT, mX, mY, lTileSize, mH, componentZDepth, lColor);
-			spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X1_MID, mX + lTileSize, mY, mW - lTileSize * 2, mH, componentZDepth, lColor);
-			spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X1_RIGHT, mX + mW - lTileSize, mY, lTileSize, mH, componentZDepth, lColor);
+			spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X1_LEFT, (int) mX, mY, (int) lTileSize, mH, componentZDepth, lColor);
+			spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X1_MID, (int) mX + lTileSize, mY, (int) mW - lTileSize * 2, mH, componentZDepth, lColor);
+			spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X1_RIGHT, (int) mX + (int) mW - lTileSize, mY, lTileSize, mH, componentZDepth, lColor);
 		}
 		spriteBatch.end();
 
