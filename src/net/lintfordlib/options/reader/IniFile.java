@@ -15,7 +15,7 @@ import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.storage.FileUtils;
 
 /**
- * A class for reading in pKey / pValue pairs from a configuration (*.INI) file.
+ * A class for reading in key / value pairs from a configuration (*.INI) file.
  */
 public class IniFile {
 
@@ -47,7 +47,6 @@ public class IniFile {
 			return;
 
 		mEntries.clear();
-
 	}
 
 	public IniFile(String pConfigFilename) {
@@ -61,35 +60,35 @@ public class IniFile {
 		lFile.createNewFile();
 	}
 
-	public boolean getBoolean(String pSectionName, String pKey, boolean pDefaultValue) {
-		Map<String, String> kv = mEntries.get(pSectionName);
+	public boolean getBoolean(String sectionName, String key, boolean pDefaultValue) {
+		Map<String, String> kv = mEntries.get(sectionName);
 		if (kv == null) {
 			return pDefaultValue;
 		}
 
-		return Boolean.parseBoolean(kv.get(pKey));
+		return Boolean.parseBoolean(kv.get(key));
 	}
 
-	public String getString(String pSectionName, String pKey, String pDefaultValue) {
-		Map<String, String> kv = mEntries.get(pSectionName);
+	public String getString(String sectionName, String key, String pDefaultValue) {
+		Map<String, String> kv = mEntries.get(sectionName);
 		if (kv == null) {
 			return pDefaultValue;
 		}
-		return kv.get(pKey);
+		return kv.get(key);
 	}
 
-	public int getInt(String pSectionName, String pKey, int pDefaultValue) {
-		if (mEntries == null || mEntries.size() == 0 || !mEntries.containsKey(pSectionName))
+	public int getInt(String sectionName, String key, int pDefaultValue) {
+		if (mEntries == null || mEntries.size() == 0 || !mEntries.containsKey(sectionName))
 			return pDefaultValue;
 
 		try {
-			Map<String, String> kv = mEntries.get(pSectionName);
+			Map<String, String> kv = mEntries.get(sectionName);
 			if (kv == null) {
 				return pDefaultValue;
 
 			}
 
-			return Integer.parseInt(kv.get(pKey));
+			return Integer.parseInt(kv.get(key));
 
 		} catch (NumberFormatException e) {
 			return pDefaultValue;
@@ -97,18 +96,18 @@ public class IniFile {
 		}
 	}
 
-	public long getLong(String pSectionName, String pKey, long pDefaultValue) {
-		if (mEntries == null || mEntries.size() == 0 || !mEntries.containsKey(pSectionName))
+	public long getLong(String sectionName, String key, long pDefaultValue) {
+		if (mEntries == null || mEntries.size() == 0 || !mEntries.containsKey(sectionName))
 			return pDefaultValue;
 
 		try {
-			Map<String, String> kv = mEntries.get(pSectionName);
+			Map<String, String> kv = mEntries.get(sectionName);
 			if (kv == null) {
 				return pDefaultValue;
 
 			}
 
-			return Long.parseLong(kv.get(pKey));
+			return Long.parseLong(kv.get(key));
 
 		} catch (NumberFormatException e) {
 			return pDefaultValue;
@@ -116,55 +115,70 @@ public class IniFile {
 		}
 	}
 
-	public float getFloat(String pSectionName, String pKey, float pDefaultValue) {
-		Map<String, String> kv = mEntries.get(pSectionName);
+	public float getFloat(String sectionName, String key, float pDefaultValue) {
+		Map<String, String> kv = mEntries.get(sectionName);
 		if (kv == null) {
 			return pDefaultValue;
 		}
-		return Float.parseFloat(kv.get(pKey));
+		return Float.parseFloat(kv.get(key));
 	}
 
-	public double getDouble(String pSectionName, String pKey, double pDefaultValue) {
-		Map<String, String> kv = mEntries.get(pSectionName);
+	public double getDouble(String sectionName, String key, double pDefaultValue) {
+		Map<String, String> kv = mEntries.get(sectionName);
 		if (kv == null) {
 			return pDefaultValue;
 		}
-		return Double.parseDouble(kv.get(pKey));
+		return Double.parseDouble(kv.get(key));
 	}
 
-	public void setValue(String pSectionName, String pName, String pValue) {
-		Map<String, String> pSection = mEntries.get(pSectionName);
+	public Map<String, String> getValues(String sectionName, Map<String, String> toFill) {
+		toFill.putAll(mEntries.get(sectionName));
+		return toFill;
+	}
+
+	public void setValues(String sectionName, Map<String, String> mavalue) {
+		Map<String, String> lSection = mEntries.get(sectionName);
+		if (lSection == null) {
+			lSection = new HashMap<>();
+			mEntries.put(sectionName, lSection);
+		}
+
+		lSection.putAll(mavalue);
+	}
+
+	public void setValue(String sectionName, String pName, String value) {
+		Map<String, String> pSection = mEntries.get(sectionName);
 
 		if (pSection == null) {
 			pSection = new HashMap<>();
-			mEntries.put(pSectionName, pSection);
+			mEntries.put(sectionName, pSection);
 		}
 
-		pSection.put(pName, pValue);
+		pSection.put(pName, value);
 	}
 
-	public void setValue(String pSectionName, String pName, int pValue) {
-		setValue(pSectionName, pName, String.valueOf(pValue));
-
-	}
-
-	public void setValue(String pSectionName, String pName, long pValue) {
-		setValue(pSectionName, pName, String.valueOf(pValue));
+	public void setValue(String sectionName, String pName, int value) {
+		setValue(sectionName, pName, String.valueOf(value));
 
 	}
 
-	public void setValue(String pSectionName, String pName, float pValue) {
-		setValue(pSectionName, pName, String.valueOf(pValue));
+	public void setValue(String sectionName, String pName, long value) {
+		setValue(sectionName, pName, String.valueOf(value));
 
 	}
 
-	public void setValue(String pSectionName, String pName, double pValue) {
-		setValue(pSectionName, pName, String.valueOf(pValue));
+	public void setValue(String sectionName, String pName, float value) {
+		setValue(sectionName, pName, String.valueOf(value));
 
 	}
 
-	public void setValue(String pSectionName, String pName, boolean pValue) {
-		setValue(pSectionName, pName, String.valueOf(pValue));
+	public void setValue(String sectionName, String pName, double value) {
+		setValue(sectionName, pName, String.valueOf(value));
+
+	}
+
+	public void setValue(String sectionName, String pName, boolean value) {
+		setValue(sectionName, pName, String.valueOf(value));
 	}
 
 	public void saveConfig() {
@@ -236,13 +250,13 @@ public class IniFile {
 				} else if (pSection != null) {
 					m = mKeyValue.matcher(line);
 					if (m.matches()) {
-						String pKey = m.group(1).trim();
-						String pValue = m.group(2).trim();
+						String key = m.group(1).trim();
+						String value = m.group(2).trim();
 						Map<String, String> kv = mEntries.get(pSection);
 						if (kv == null) {
 							mEntries.put(pSection, kv = new HashMap<>());
 						}
-						kv.put(pKey, pValue);
+						kv.put(key, value);
 					}
 				}
 			}
