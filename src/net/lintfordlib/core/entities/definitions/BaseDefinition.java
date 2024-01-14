@@ -28,8 +28,8 @@ public abstract class BaseDefinition implements Serializable {
 	/** user friendly name for the front end */
 	public String displayName;
 
-	/** The filename of definition datafile. */
-	public String filename;
+	/** The filepath of definition datafile. */
+	public transient String filepath;
 
 	// --------------------------------------
 	// Properties
