@@ -39,7 +39,8 @@ public class UiInputFile extends UIWidget implements IBufferedTextInputCallback 
 	private transient boolean mShowCaret;
 	private transient String mTempString;
 	private transient String mEmptyString;
-	private transient Rectangle mFileFolderRectangle;
+	private final transient Rectangle mFileInputAreaRectangle;
+	private final transient Rectangle mFileFolderRectangle;
 	private IUiInputKeyPressCallback mIUiInputKeyPressCallback;
 	private int mKeyListenerUid;
 	private transient int mStringLength;
@@ -53,13 +54,22 @@ public class UiInputFile extends UIWidget implements IBufferedTextInputCallback 
 	private File mFile;
 	private String mFileExtension;
 	private int mCursorPos;
-	private boolean mDirectorySelection;
 	private String mBaseDirectory;
 	private boolean mNumericInputOnly;
+	private boolean mSingleLine;
+	private boolean mDirectorySelection;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public boolean singleLine() {
+		return mSingleLine;
+	}
+
+	public void singleLine(boolean newValue) {
+		mSingleLine = newValue;
+	}
 
 	public String baseDirectory() {
 		return mBaseDirectory;
@@ -88,7 +98,7 @@ public class UiInputFile extends UIWidget implements IBufferedTextInputCallback 
 
 	public void file(File file) {
 		mFile = file;
-		inputString();
+
 		if (mFile != null) {
 			inputString(mFile.getAbsolutePath());
 		} else {
@@ -215,6 +225,7 @@ public class UiInputFile extends UIWidget implements IBufferedTextInputCallback 
 		mLabelText = labelText;
 
 		mFileFolderRectangle = new Rectangle();
+		mFileInputAreaRectangle = new Rectangle();
 		mEmptyString = "";
 		mMaxInputCharacters = 256;
 
@@ -305,8 +316,24 @@ public class UiInputFile extends UIWidget implements IBufferedTextInputCallback 
 
 		mCaretFlashTimer += core.appTime().elapsedTimeMilli();
 
+		// ---
+		mSingleLine = false;
+		final var lItemHeight = 25; // TODO: this is stored somewhere else already
+		mFileInputAreaRectangle.set(mX, mY, mW, lItemHeight);
+		if (mLabelText != null && mSingleLine) {
+			mFileInputAreaRectangle.x(mX + mW * .5f);
+			mFileInputAreaRectangle.width(mW * .5f);
+		}
+
+		if (mSingleLine == false) {
+			mFileInputAreaRectangle.y(mY + lItemHeight);
+		}
+
+		mDesiredHeight = mSingleLine ? lItemHeight : lItemHeight * 2;
+		// ---
+
 		final int lCancelRectSize = 16;
-		mFileFolderRectangle.set(mX + mW - lCancelRectSize - 4, mY + mH / 2 - lCancelRectSize / 2, lCancelRectSize, lCancelRectSize);
+		mFileFolderRectangle.set(mFileInputAreaRectangle.x() + mFileInputAreaRectangle.width() - lCancelRectSize - 4, mFileInputAreaRectangle.y() + mFileInputAreaRectangle.height() / 2 - lCancelRectSize / 2, lCancelRectSize, lCancelRectSize);
 
 		if (mHasFocus) {
 			if (mCaretFlashTimer > ConstantsUi.CARET_FLASH_TIME) {
@@ -324,23 +351,25 @@ public class UiInputFile extends UIWidget implements IBufferedTextInputCallback 
 		var lTextColor = ColorConstants.TextEntryColor;
 		final float lTextHeight = textFont.fontHeight();
 
-		var xx = mX;
-		var ww = mW;
+		final var lItemHeight = 25; // TODO: this is stored somewhere else already
 
 		if (mLabelText != null) {
 			textFont.begin(core.HUD());
-			textFont.drawText(mLabelText, mX, mY + mH * .5f - lTextHeight * .5f * mTextScale, componentZDepth, lTextColor, mTextScale);
+			textFont.drawText(mLabelText, mX, mY + lItemHeight * .5f - lTextHeight * .5f * mTextScale, componentZDepth, lTextColor, mTextScale);
 			textFont.end();
 
-			xx = mX + mW * .5f;
-			ww = mW * .5f;
 		}
 
 		spriteBatch.begin(core.HUD());
-		spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_LEFT, (int) xx, mY, 32, mH, componentZDepth, ColorConstants.MenuPanelPrimaryColor);
+
+		final var xx = mFileInputAreaRectangle.x();
+		final var yy = mFileInputAreaRectangle.y();
+		final var ww = mFileInputAreaRectangle.width();
+		final var hh = mFileInputAreaRectangle.height();
+		spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_LEFT, (int) xx, yy, 32, hh, componentZDepth, ColorConstants.MenuPanelPrimaryColor);
 		if (mW > 32) {
-			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_MID, (int) xx + 32, mY, ww - 64, mH, componentZDepth, ColorConstants.MenuPanelPrimaryColor);
-			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_RIGHT, (int) xx + ww - 32, mY, 32, mH, componentZDepth, ColorConstants.MenuPanelPrimaryColor);
+			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_MID, (int) xx + 32, yy, ww - 64, hh, componentZDepth, ColorConstants.MenuPanelPrimaryColor);
+			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_RIGHT, (int) xx + ww - 32, yy, 32, hh, componentZDepth, ColorConstants.MenuPanelPrimaryColor);
 		}
 
 		final var lEraserColor = mCancelRectHovered ? ColorConstants.WHITE : ColorConstants.getWhiteWithAlpha(.5f);
@@ -374,14 +403,14 @@ public class UiInputFile extends UIWidget implements IBufferedTextInputCallback 
 
 		if (mShowCaret && mHasFocus) {
 			final var lCarotPositionX = lTextPosX + carot_position_x;
-			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, lCarotPositionX + 8, mY + mH * .5f - lTextHeight * .5f * mTextScale, 1.f, textFont.fontHeight() * mTextScale, componentZDepth, ColorConstants.WHITE);
+			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, lCarotPositionX + 8, mFileInputAreaRectangle.y() + mFileInputAreaRectangle.height() * .5f - lTextHeight * .5f * mTextScale, 1.f, textFont.fontHeight() * mTextScale, componentZDepth, ColorConstants.WHITE);
 		}
 		spriteBatch.end();
 
 		ContentRectangle.preDraw(core, spriteBatch, xx + 2.f, mY, ww - lCancelRectSize - 5.f, mH, -0, 1);
 
 		textFont.begin(core.HUD());
-		textFont.drawText(lText, lTextPosX + 8, mY + mH * .5f - lTextHeight * .5f * mTextScale, componentZDepth, lTextColor, mTextScale);
+		textFont.drawText(lText, lTextPosX + 8, mFileInputAreaRectangle.y() + mFileInputAreaRectangle.height() * .5f - lTextHeight * .5f * mTextScale, componentZDepth, lTextColor, mTextScale);
 		textFont.end();
 
 		ContentRectangle.postDraw(core);
@@ -391,6 +420,22 @@ public class UiInputFile extends UIWidget implements IBufferedTextInputCallback 
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
+
+	public boolean trySetFile(String pathname) {
+		if (pathname == null || pathname.length() == 0)
+			return false;
+
+		mFile = new File(pathname);
+		if (mDirectorySelection) {
+			// make sure this is a directory
+			if (mFile.exists() != false || mFile.isDirectory() == false)
+				return false;
+		} else {
+			return mFile.exists();
+		}
+
+		return false;
+	}
 
 	public void setKeyUpdateListener(IUiInputKeyPressCallback keyUpdateListener, int keyListenerUid) {
 		mIUiInputKeyPressCallback = keyUpdateListener;
