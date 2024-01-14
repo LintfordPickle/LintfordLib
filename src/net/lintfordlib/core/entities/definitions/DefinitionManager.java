@@ -121,12 +121,12 @@ public abstract class DefinitionManager<T extends BaseDefinition> {
 	}
 
 	protected void loadDefinitionsFromMetaFileItems(File metaFile, final Gson gson, Class<T> classType) {
-		final var lMetaItems = AssetHeaderIo.loadFromFilepath(metaFile);
+		final var lMetaItems = MetaFileHeaderIo.loadFromFilepath(metaFile);
 
 		loadDefinitionsFromMetaFileItems(lMetaItems, gson, classType);
 	}
 
-	protected void loadDefinitionsFromMetaFileItems(AssetMetaHeader assetPackHeader, final Gson gson, Class<T> classType) {
+	protected void loadDefinitionsFromMetaFileItems(MetaFileHeader assetPackHeader, final Gson gson, Class<T> classType) {
 		if (assetPackHeader == null || assetPackHeader.numItems() == 0) {
 			Debug.debugManager().logger().w(getClass().getSimpleName(), String.format("Cannot load definition types %s, the given MetaFileItems contains no data", classType.getSimpleName()));
 			return;
