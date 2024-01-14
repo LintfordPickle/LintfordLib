@@ -27,6 +27,7 @@ public class UiListBoxItem extends Rectangle implements Comparable<UiListBoxItem
 	public int mMouseInputTimer;
 	public String definitionName;
 	public String displayName;
+	public Object data;
 
 	public final Color backgroundColor = new Color();
 

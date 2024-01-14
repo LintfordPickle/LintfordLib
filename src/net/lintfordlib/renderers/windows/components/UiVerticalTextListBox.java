@@ -3,6 +3,9 @@ package net.lintfordlib.renderers.windows.components;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.lwjgl.opengl.GL11;
+
+import net.lintfordlib.ConstantsApp;
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.geometry.Rectangle;
 import net.lintfordlib.core.graphics.ColorConstants;
@@ -10,6 +13,7 @@ import net.lintfordlib.core.graphics.batching.SpriteBatch;
 import net.lintfordlib.core.graphics.batching.TextureBatch9Patch;
 import net.lintfordlib.core.graphics.fonts.FontUnit;
 import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
+import net.lintfordlib.core.graphics.textures.CoreTextureNames;
 import net.lintfordlib.core.maths.MathHelper;
 import net.lintfordlib.renderers.windows.UiWindow;
 import net.lintfordlib.renderers.windows.components.interfaces.IScrollBarArea;
@@ -31,6 +35,7 @@ public class UiVerticalTextListBox extends UIWidget implements IScrollBarArea {
 	private int mSelectedItemIndex;
 	private transient boolean mHasFocus;
 	private ScrollBarContentRectangle mContentArea;
+	private transient ScrollBarContentRectangle mWindowRectangle;
 	private ScrollBar mScrollbar;
 	private float mVerticalAssetSeparationInPx;
 	private float mAssetHeightInpx;
@@ -125,10 +130,12 @@ public class UiVerticalTextListBox extends UIWidget implements IScrollBarArea {
 	public UiVerticalTextListBox(UiWindow parentWindow, int entityGroupUid) {
 		super(parentWindow);
 
-		mAssetHeightInpx = 32.f;
+		mAssetHeightInpx = 25.f;
 		mVerticalAssetSeparationInPx = 2.f;
 
 		mContentArea = new ScrollBarContentRectangle(this);
+		mWindowRectangle = new ScrollBarContentRectangle(parentWindow);
+
 		mScrollbar = new ScrollBar(this, mContentArea);
 	}
 
@@ -155,7 +162,7 @@ public class UiVerticalTextListBox extends UIWidget implements IScrollBarArea {
 				if (mSelectedItemIndex >= 0 && mSelectedItemIndex < mItems.size())
 					lSelectedItem = mItems.get(mSelectedItemIndex);
 
-				if (mCallbackListener != null)
+				if (lSelectedItem != null && mCallbackListener != null)
 					mCallbackListener.onItemSelected(lSelectedItem);
 
 				return true;
@@ -176,6 +183,7 @@ public class UiVerticalTextListBox extends UIWidget implements IScrollBarArea {
 		mH = MathHelper.clamp(lContentHeight, mMinHeight, mMaxHeight);
 		mDesiredHeight = mH;
 		mContentArea.set(mX, mY, mW, Math.max(mH, lContentHeight));
+		mWindowRectangle.set(mX, mY, mW, mH);
 		mScrollbar.update(core);
 
 		// Update the positions of the individual items
@@ -205,11 +213,21 @@ public class UiVerticalTextListBox extends UIWidget implements IScrollBarArea {
 	@Override
 	public void draw(LintfordCore core, SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheetDefinition, FontUnit textFont, float componentZDepth) {
 
+		GL11.glDisable(GL11.GL_DEPTH_TEST);
+
 		spriteBatch.begin(core.HUD());
 		TextureBatch9Patch.drawBackground(core, spriteBatch, coreSpritesheetDefinition, 32, (int) mX, (int) mY, (int) mW, (int) mH, ColorConstants.WHITE, false, componentZDepth);
 		spriteBatch.end();
 
-		mContentArea.preDraw(core, spriteBatch);
+		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
+			spriteBatch.begin(core.HUD());
+
+			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, mWindowRectangle, componentZDepth, ColorConstants.Debug_Transparent_Magenta);
+
+			spriteBatch.end();
+		}
+
+		mWindowRectangle.preDraw(core, spriteBatch, mWindowRectangle, 1);
 
 		spriteBatch.begin(core.HUD());
 		textFont.begin(core.HUD());
@@ -217,13 +235,13 @@ public class UiVerticalTextListBox extends UIWidget implements IScrollBarArea {
 		final var lNumitems = mItems.size();
 		for (int i = 0; i < lNumitems; i++) {
 			final var lItemToRender = mItems.get(i);
-			lItemToRender.draw(core, spriteBatch, coreSpritesheetDefinition, textFont, componentZDepth);
+			lItemToRender.draw(core, spriteBatch, coreSpritesheetDefinition, textFont, componentZDepth + 0.01f);
 		}
 
 		spriteBatch.end();
 		textFont.end();
 
-		mContentArea.postDraw(core);
+		mWindowRectangle.postDraw(core);
 
 		mScrollbar.draw(core, spriteBatch, coreSpritesheetDefinition, componentZDepth, 0.8f);
 
