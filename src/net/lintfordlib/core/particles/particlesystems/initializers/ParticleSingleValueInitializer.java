@@ -15,8 +15,8 @@ public abstract class ParticleSingleValueInitializer extends ParticleInitializer
 	// Variables
 	// --------------------------------------
 
-	protected float minValue;
-	protected float maxValue;
+	public float minValue;
+	public float maxValue;
 
 	// --------------------------------------
 	// Constructor
