@@ -124,6 +124,10 @@ public class UiDropDownBox<T> extends UIWidget implements IInputClickedFocusMana
 		}
 	}
 
+	public void clearItems() {
+		mItems.clear();
+	}
+
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
