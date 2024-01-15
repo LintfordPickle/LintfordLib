@@ -2,7 +2,7 @@ package net.lintfordlib.core.particles.particlesystems.initializers;
 
 import net.lintfordlib.core.particles.Particle;
 
-public class ParticleRandomSizeInitializer extends ParticleSingleValueInitializer {
+public class ParticleRandomSizeInitializer extends ParticleDoubleValueInitializer {
 
 	// --------------------------------------
 	// Constants
@@ -25,7 +25,8 @@ public class ParticleRandomSizeInitializer extends ParticleSingleValueInitialize
 	// --------------------------------------
 
 	@Override
-	public void onIntialiseParticle(Particle particle, float value) {
-		particle.scale = value;
+	public void onIntialiseParticle(Particle particle, float value, float value1) {
+		particle.width = value;
+		particle.height = value1;
 	}
 }
