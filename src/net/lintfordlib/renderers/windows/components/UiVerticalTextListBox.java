@@ -48,6 +48,11 @@ public class UiVerticalTextListBox extends UIWidget implements IScrollBarArea {
 	// Properties
 	// --------------------------------------
 
+	@Override
+	public void desiredHeight(float desiredHeight) {
+		mDesiredHeight = MathHelper.clamp(desiredHeight, mMinHeight, mMaxHeight);
+	}
+
 	public void setHeightMinMax(float min, float max) {
 		if (min <= 25) // actual minimum
 			min = 25;
@@ -162,6 +167,9 @@ public class UiVerticalTextListBox extends UIWidget implements IScrollBarArea {
 				if (mSelectedItemIndex >= 0 && mSelectedItemIndex < mItems.size())
 					lSelectedItem = mItems.get(mSelectedItemIndex);
 
+				if (mUiWidgetListenerCallback != null)
+					mUiWidgetListenerCallback.widgetOnDataChanged(core.input(), mUiWidgetListenerUid);
+
 				if (lSelectedItem != null && mCallbackListener != null)
 					mCallbackListener.onItemSelected(lSelectedItem);
 
@@ -180,7 +188,12 @@ public class UiVerticalTextListBox extends UIWidget implements IScrollBarArea {
 		final var lNumAssets = mItems.size();
 		final var lContentHeight = lNumAssets * (mAssetHeightInpx + mVerticalAssetSeparationInPx) + mVerticalAssetSeparationInPx;
 
-		mH = MathHelper.clamp(lContentHeight, mMinHeight, mMaxHeight);
+		if (mDesiredHeight != 0) {
+			mH = mDesiredHeight;
+		} else {
+			mH = MathHelper.clamp(lContentHeight, mMinHeight, mMaxHeight);
+		}
+
 		mDesiredHeight = mH;
 		mContentArea.set(mX, mY, mW, Math.max(mH, lContentHeight));
 		mWindowRectangle.set(mX, mY, mW, mH);
