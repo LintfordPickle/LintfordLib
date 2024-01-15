@@ -50,6 +50,7 @@ public class DebugLogger {
 	private List<Message> mLogLines;
 	private BufferedOutputStream mDebugLogBufferedOutputStream;
 
+	private int mMinimumFlashLevel = DebugLogLevel.warning.logLevel;
 	private transient FontUnit mConsoleFont;
 	private boolean mFlashMessagesEnabled;
 	private Queue<Message> mFlashMessageQueue = new LinkedList<>();
@@ -61,6 +62,14 @@ public class DebugLogger {
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public int flashMessageMinimumLogLevel() {
+		return mMinimumFlashLevel;
+	}
+
+	public void flashMessageMinimumLogLevel(int flashMessageMinimmumLogLevel) {
+		mMinimumFlashLevel = flashMessageMinimmumLogLevel;
+	}
 
 	public boolean flashMessagesEneabeld() {
 		return mFlashMessagesEnabled;
@@ -240,11 +249,11 @@ public class DebugLogger {
 			var lTimeStamp = SIMPLE_DATE_FORMAT.format(_date);
 			lLogMessage.setMessage(tag, message, lTimeStamp, logLevel.logLevel);
 
-			addFlashMessage(logLevel, tag, message);
+			if (logLevel.logLevel >= mMinimumFlashLevel)
+				addFlashMessage(logLevel, tag, message);
 
-			if (DEBUG_LOG_DEBUG_TO_FILE) {
+			if (DEBUG_LOG_DEBUG_TO_FILE)
 				writeDebugMessageToFile(lLogMessage.tag(), lLogMessage.timestamp(), lLogMessage.message());
-			}
 
 			mLogLines.add(lLogMessage);
 
