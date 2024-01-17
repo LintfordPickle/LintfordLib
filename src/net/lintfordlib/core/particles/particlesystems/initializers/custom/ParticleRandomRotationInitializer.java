@@ -1,29 +1,31 @@
 package net.lintfordlib.core.particles.particlesystems.initializers.custom;
 
 import net.lintfordlib.core.particles.Particle;
-import net.lintfordlib.core.particles.particlesystems.initializers.ParticleRandomSingleValueInitializer;
+import net.lintfordlib.core.particles.particlesystems.initializers.ParticleRandomDoubleValueInitializer;
 
-public class ParticleRandomRotationInitializer extends ParticleRandomSingleValueInitializer {
+public class ParticleRandomRotationInitializer extends ParticleRandomDoubleValueInitializer {
 
 	// --------------------------------------
 	// Constants
 	// --------------------------------------
 
-	private static final long serialVersionUID = -208992042047147087L;
+	private static final long serialVersionUID = 2557012472077666152L;
 
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
 	public ParticleRandomRotationInitializer() {
-		this(0.f, 1.f);
+		this(0.f, 0.f, 0.f, 0.f);
 	}
 
-	public ParticleRandomRotationInitializer(float minRotAmt, float maxRotAmt) {
+	public ParticleRandomRotationInitializer(float minRotAmt, float maxRotAmt, float minAVAmt, float maxAVAmt) {
 		super(ParticleRandomRotationInitializer.class.getSimpleName());
 
-		minValue = minRotAmt;
-		maxValue = maxRotAmt;
+		minValue0 = minRotAmt;
+		maxValue0 = maxRotAmt;
+		minValue1 = minAVAmt;
+		maxValue1 = maxAVAmt;
 	}
 
 	// --------------------------------------
@@ -31,7 +33,7 @@ public class ParticleRandomRotationInitializer extends ParticleRandomSingleValue
 	// --------------------------------------
 
 	@Override
-	public void onIntialiseParticle(Particle particle, float rotationAmount) {
+	public void onIntialiseParticle(Particle particle, float rotationAmount, float angVel) {
 		particle.rotationInRadians = rotationAmount;
 		particle.dr = rotationAmount;
 	}

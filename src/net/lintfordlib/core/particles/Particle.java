@@ -26,6 +26,7 @@ public class Particle {
 	public float rox;
 	public float roy;
 
+	// TODO: rename these to vx, vy and ang_vel
 	public float dx, dy, dr;
 	public final Color color = new Color();
 	public float scale;

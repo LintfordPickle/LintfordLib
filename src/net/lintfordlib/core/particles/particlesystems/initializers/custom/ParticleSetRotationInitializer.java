@@ -1,9 +1,9 @@
 package net.lintfordlib.core.particles.particlesystems.initializers.custom;
 
 import net.lintfordlib.core.particles.Particle;
-import net.lintfordlib.core.particles.particlesystems.initializers.ParticleSetSingleValueInitializer;
+import net.lintfordlib.core.particles.particlesystems.initializers.ParticleSetDoubleValueInitializer;
 
-public class ParticleSetRotationInitializer extends ParticleSetSingleValueInitializer {
+public class ParticleSetRotationInitializer extends ParticleSetDoubleValueInitializer {
 
 	// --------------------------------------
 	// Constants
@@ -16,13 +16,14 @@ public class ParticleSetRotationInitializer extends ParticleSetSingleValueInitia
 	// --------------------------------------
 
 	public ParticleSetRotationInitializer() {
-		this(0.f);
+		this(0.f, 0.f);
 	}
 
-	public ParticleSetRotationInitializer(float rot) {
+	public ParticleSetRotationInitializer(float rot, float angular_velocity) {
 		super(ParticleSetRotationInitializer.class.getSimpleName());
 
-		value = rot;
+		value0 = rot;
+		value1 = angular_velocity;
 	}
 
 	// --------------------------------------
@@ -30,7 +31,8 @@ public class ParticleSetRotationInitializer extends ParticleSetSingleValueInitia
 	// --------------------------------------
 
 	@Override
-	public void onIntialiseParticle(Particle particle, float rotation) {
+	public void onIntialiseParticle(Particle particle, float rotation, float angular_velocity) {
 		particle.rotationInRadians = rotation;
+		particle.dr = angular_velocity;
 	}
 }
