@@ -50,6 +50,12 @@ public class UiVerticalTextListBox extends UIWidget implements IScrollBarArea {
 
 	@Override
 	public void desiredHeight(float desiredHeight) {
+		if (desiredHeight <= 0) {
+			mDesiredHeight = 0;
+			return;
+		}
+
+		// otherwise, cap to between min and max
 		mDesiredHeight = MathHelper.clamp(desiredHeight, mMinHeight, mMaxHeight);
 	}
 
@@ -135,6 +141,9 @@ public class UiVerticalTextListBox extends UIWidget implements IScrollBarArea {
 	public UiVerticalTextListBox(UiWindow parentWindow, int entityGroupUid) {
 		super(parentWindow);
 
+		mMinHeight = Float.MIN_VALUE;
+		mMaxHeight = Float.MAX_VALUE;
+
 		mAssetHeightInpx = 25.f;
 		mVerticalAssetSeparationInPx = 2.f;
 
@@ -188,6 +197,9 @@ public class UiVerticalTextListBox extends UIWidget implements IScrollBarArea {
 		final var lNumAssets = mItems.size();
 		final var lContentHeight = lNumAssets * (mAssetHeightInpx + mVerticalAssetSeparationInPx) + mVerticalAssetSeparationInPx;
 
+		// TODO: The UiVerticalListBox height/desired needs more work.
+		// One issue is the rednering of the background below, we forces a minimum height of tileSize (which is 32!), can so the display overlaps the mPanelArea.
+
 		if (mDesiredHeight != 0) {
 			mH = mDesiredHeight;
 		} else {
@@ -228,9 +240,11 @@ public class UiVerticalTextListBox extends UIWidget implements IScrollBarArea {
 
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 
-		spriteBatch.begin(core.HUD());
-		TextureBatch9Patch.drawBackground(core, spriteBatch, coreSpritesheetDefinition, 32, (int) mX, (int) mY, (int) mW, (int) mH, ColorConstants.WHITE, false, componentZDepth);
-		spriteBatch.end();
+		if (mH > 32.f) {
+			spriteBatch.begin(core.HUD());
+			TextureBatch9Patch.drawBackground(core, spriteBatch, coreSpritesheetDefinition, 32, (int) mX, (int) mY, (int) mW, (int) mH, ColorConstants.WHITE, false, componentZDepth);
+			spriteBatch.end();
+		}
 
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
 			spriteBatch.begin(core.HUD());
@@ -256,7 +270,8 @@ public class UiVerticalTextListBox extends UIWidget implements IScrollBarArea {
 
 		mWindowRectangle.postDraw(core);
 
-		mScrollbar.draw(core, spriteBatch, coreSpritesheetDefinition, componentZDepth, 0.8f);
+		if (mScrollbar.scrollBarEnabled())
+			mScrollbar.draw(core, spriteBatch, coreSpritesheetDefinition, componentZDepth, 0.8f);
 
 	}
 
