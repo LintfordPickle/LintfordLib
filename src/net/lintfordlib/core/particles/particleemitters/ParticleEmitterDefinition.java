@@ -7,6 +7,12 @@ import net.lintfordlib.core.entities.definitions.BaseDefinition;
 public class ParticleEmitterDefinition extends BaseDefinition {
 
 	// --------------------------------------
+	// Constants
+	// --------------------------------------
+
+	private static final long serialVersionUID = -4696442942082963647L;
+
+	// --------------------------------------
 	// Variables
 	// --------------------------------------
 

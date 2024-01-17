@@ -123,9 +123,18 @@ public class ParticleRenderer {
 			return;
 
 		final var lParticleDefinition = particleSystemInst.definition();
+		mIsParticleLoaded = lParticleDefinition != null;
 
-		// TODO: The texture filter mode needs to come from the ParticleSystemDefinition
-		mTexture = mResourceManager.textureManager().loadTexture(lParticleDefinition.textureName(), lParticleDefinition.textureFilename(), GL11.GL_NEAREST, mEntityGroupId);
-		mIsParticleLoaded = mTexture != null;
+		// TODO: Add the option to load a texture from a texture asset (this would mean we don't need the filepath and the filter mode).
+
+		final var lTextureName = lParticleDefinition.textureName();
+		final var lTextureFilepath = lParticleDefinition.textureFilename();
+
+		if (lTextureName != null && lTextureFilepath != null) {
+			mTexture = mResourceManager.textureManager().loadTexture(lTextureName, lTextureFilepath, GL11.GL_NEAREST, mEntityGroupId);
+		} else {
+			// Fallback to engine white
+			mTexture = mResourceManager.textureManager().getTexture("TEXTURE_WHITE", LintfordCore.CORE_ENTITY_GROUP_ID);
+		}
 	}
 }

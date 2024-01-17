@@ -8,6 +8,13 @@
 			"wrapTIndex":1
 		},
 		{
+			"textureName":"TEXTURE_WHITE",
+			"filepath":"/res/textures/core/textureWhite.png",
+			"filterIndex":1,
+			"wrapSIndex":1,
+			"wrapTIndex":1
+		},
+		{
 			"textureName":"TEXTURE_CORE_LOGO",
 			"filepath":"/res/textures/core/textureLogo.png",
 			"filterIndex":1,

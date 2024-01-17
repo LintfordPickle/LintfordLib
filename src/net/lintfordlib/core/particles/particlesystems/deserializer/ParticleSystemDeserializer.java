@@ -21,7 +21,7 @@ public class ParticleSystemDeserializer implements JsonDeserializer<ParticleSyst
 	// Constants
 	// --------------------------------------
 
-	public static final String INITIALIZER_PACKAGE_LOCATION = ParticleInitializerBase.class.getPackageName() + ".";
+	public static final String INITIALIZER_PACKAGE_LOCATION = ParticleInitializerBase.class.getPackageName() + ".custom.";
 	public static final String MODIFIER_PACKAGE_LOCATION = ParticleModifierBase.class.getPackageName() + ".";
 
 	public static final String PARTICLE_SYSTEM_MAX_PARTICLE_COUNT = "maxParticleCount";

@@ -1,8 +1,9 @@
-package net.lintfordlib.core.particles.particlesystems.initializers;
+package net.lintfordlib.core.particles.particlesystems.initializers.custom;
 
 import net.lintfordlib.core.particles.Particle;
+import net.lintfordlib.core.particles.particlesystems.initializers.ParticleRandomDoubleValueInitializer;
 
-public class ParticleRandomSizeInitializer extends ParticleDoubleValueInitializer {
+public class ParticleRandomSizeInitializer extends ParticleRandomDoubleValueInitializer {
 
 	// --------------------------------------
 	// Constants
@@ -10,14 +11,20 @@ public class ParticleRandomSizeInitializer extends ParticleDoubleValueInitialize
 
 	private static final long serialVersionUID = -2507259383291058254L;
 
-	public static final String INITIALIZER_NAME = "ParticleRandomSizeInitializer";
-
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
 	public ParticleRandomSizeInitializer() {
-		super(INITIALIZER_NAME);
+		this(0.f, 5.f);
+	}
+
+	public ParticleRandomSizeInitializer(float minSize, float maxSize) {
+		this(minSize, maxSize, minSize, maxSize);
+	}
+
+	public ParticleRandomSizeInitializer(float minWidth, float maxWidth, float minHeight, float maxHeight) {
+		super(ParticleRandomSizeInitializer.class.getSimpleName());
 	}
 
 	// --------------------------------------

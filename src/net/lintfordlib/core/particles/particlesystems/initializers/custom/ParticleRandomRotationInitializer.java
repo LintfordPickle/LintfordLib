@@ -1,8 +1,9 @@
-package net.lintfordlib.core.particles.particlesystems.initializers;
+package net.lintfordlib.core.particles.particlesystems.initializers.custom;
 
 import net.lintfordlib.core.particles.Particle;
+import net.lintfordlib.core.particles.particlesystems.initializers.ParticleRandomSingleValueInitializer;
 
-public class ParticleRandomRotationInitializer extends ParticleSingleValueInitializer {
+public class ParticleRandomRotationInitializer extends ParticleRandomSingleValueInitializer {
 
 	// --------------------------------------
 	// Constants
@@ -10,15 +11,19 @@ public class ParticleRandomRotationInitializer extends ParticleSingleValueInitia
 
 	private static final long serialVersionUID = -208992042047147087L;
 
-	public static final String INITIALIZER_NAME = "ParticleRandomRotationInitializer";
-
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
 	public ParticleRandomRotationInitializer() {
-		super(INITIALIZER_NAME);
+		this(0.f, 1.f);
+	}
 
+	public ParticleRandomRotationInitializer(float minRotAmt, float maxRotAmt) {
+		super(ParticleRandomRotationInitializer.class.getSimpleName());
+
+		minValue = minRotAmt;
+		maxValue = maxRotAmt;
 	}
 
 	// --------------------------------------

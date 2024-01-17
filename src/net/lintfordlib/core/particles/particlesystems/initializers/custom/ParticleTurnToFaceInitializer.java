@@ -1,6 +1,7 @@
-package net.lintfordlib.core.particles.particlesystems.initializers;
+package net.lintfordlib.core.particles.particlesystems.initializers.custom;
 
 import net.lintfordlib.core.particles.Particle;
+import net.lintfordlib.core.particles.particlesystems.initializers.ParticleInitializerBase;
 
 public class ParticleTurnToFaceInitializer extends ParticleInitializerBase {
 
@@ -10,14 +11,12 @@ public class ParticleTurnToFaceInitializer extends ParticleInitializerBase {
 
 	private static final long serialVersionUID = -1511765721627415767L;
 
-	public static final String INITIALIZER_NAME = "ParticleTurnToFaceInitializer";
-
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
 	public ParticleTurnToFaceInitializer() {
-		super(INITIALIZER_NAME);
+		super(ParticleTurnToFaceInitializer.class.getSimpleName());
 	}
 
 	// --------------------------------------

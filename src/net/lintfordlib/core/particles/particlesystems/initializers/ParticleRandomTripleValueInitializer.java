@@ -3,7 +3,7 @@ package net.lintfordlib.core.particles.particlesystems.initializers;
 import net.lintfordlib.core.maths.RandomNumbers;
 import net.lintfordlib.core.particles.Particle;
 
-public abstract class ParticleTripleValueInitializer extends ParticleInitializerBase {
+public abstract class ParticleRandomTripleValueInitializer extends ParticleInitializerBase {
 
 	// --------------------------------------
 	// Constants
@@ -22,7 +22,7 @@ public abstract class ParticleTripleValueInitializer extends ParticleInitializer
 	// Constructor
 	// --------------------------------------
 
-	public ParticleTripleValueInitializer(final String definitionName) {
+	public ParticleRandomTripleValueInitializer(final String definitionName) {
 		super(definitionName);
 	}
 

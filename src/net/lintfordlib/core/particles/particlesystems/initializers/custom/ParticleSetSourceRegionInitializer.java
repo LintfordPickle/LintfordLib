@@ -1,20 +1,18 @@
-package net.lintfordlib.core.particles.particlesystems.initializers;
+package net.lintfordlib.core.particles.particlesystems.initializers.custom;
 
 import net.lintfordlib.core.particles.Particle;
+import net.lintfordlib.core.particles.particlesystems.initializers.ParticleInitializerBase;
 
 /**
- * Sets the initial source region of a {@link Particle} when it is spawned in the {@link SimpleAnimationRenderer}. This determines which area of the texture the particle takes the
- * image from.
+ * Sets the initial source region of a {@link Particle} when it is spawned in the {@link SimpleAnimationRenderer}. This determines which area of the texture the particle takes the image from.
  */
-public class ParticleSourceRegionInitializer extends ParticleInitializerBase {
+public class ParticleSetSourceRegionInitializer extends ParticleInitializerBase {
 
 	// --------------------------------------
 	// Constants
 	// --------------------------------------
 
 	private static final long serialVersionUID = -7136030399517539957L;
-
-	public static final String INITIALIZER_NAME = "ParticleSourceRegionInitializer";
 
 	// --------------------------------------
 	// Variables
@@ -29,8 +27,17 @@ public class ParticleSourceRegionInitializer extends ParticleInitializerBase {
 	// Constructor
 	// --------------------------------------
 
-	public ParticleSourceRegionInitializer() {
-		super(INITIALIZER_NAME);
+	public ParticleSetSourceRegionInitializer() {
+		this(0.f, 0.f, 10.f, 10.f);
+	}
+
+	public ParticleSetSourceRegionInitializer(float srcX, float srcY, float srcW, float srcH) {
+		super(ParticleSetSourceRegionInitializer.class.getSimpleName());
+
+		this.srcX = srcX;
+		this.srcY = srcY;
+		this.srcW = srcW;
+		this.srcH = srcH;
 	}
 
 	// --------------------------------------

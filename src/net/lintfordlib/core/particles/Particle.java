@@ -78,7 +78,7 @@ public class Particle {
 		mLifeTimeInMs = lifetimeInMs;
 		timeSinceStart = 0;
 
-		sx = sy = 1;
+		sw = sh = 1;
 		color.setRGBA(1.f, 1.f, 1.f, 1.f);
 
 		worldPositionX = worldX;

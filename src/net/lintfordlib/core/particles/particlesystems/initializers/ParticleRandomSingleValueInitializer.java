@@ -3,28 +3,26 @@ package net.lintfordlib.core.particles.particlesystems.initializers;
 import net.lintfordlib.core.maths.RandomNumbers;
 import net.lintfordlib.core.particles.Particle;
 
-public abstract class ParticleDoubleValueInitializer extends ParticleInitializerBase {
+public abstract class ParticleRandomSingleValueInitializer extends ParticleInitializerBase {
 
 	// --------------------------------------
 	// Constants
 	// --------------------------------------
 
-	private static final long serialVersionUID = 2006777299173719891L;
+	private static final long serialVersionUID = -8862569203266802997L;
 
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
-	public float minValue0;
-	public float maxValue0;
-	public float minValue1;
-	public float maxValue1;
+	public float minValue;
+	public float maxValue;
 
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
-	public ParticleDoubleValueInitializer(final String definitionName) {
+	public ParticleRandomSingleValueInitializer(final String definitionName) {
 		super(definitionName);
 	}
 
@@ -32,14 +30,14 @@ public abstract class ParticleDoubleValueInitializer extends ParticleInitializer
 	// Methods
 	// --------------------------------------
 
-	public abstract void onIntialiseParticle(final Particle particle, final float value0, final float value1);
+	public abstract void onIntialiseParticle(final Particle particle, final float value);
 
 	@Override
 	public void initialize(Particle particle) {
-		onIntialiseParticle(particle, getRandomValue(minValue0, maxValue0), getRandomValue(minValue1, maxValue1));
+		onIntialiseParticle(particle, getRandomValue());
 	}
 
-	protected float getRandomValue(float minValue, float maxValue) {
+	protected float getRandomValue() {
 		if (minValue == maxValue) {
 			return maxValue;
 		} else {
