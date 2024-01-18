@@ -23,6 +23,14 @@ public abstract class ParticleModifierBase implements Serializable {
 	protected String mModifierName;
 
 	// --------------------------------------
+	// Properties
+	// --------------------------------------
+
+	public String name() {
+		return mModifierName;
+	}
+
+	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 

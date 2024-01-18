@@ -42,11 +42,11 @@ public class RandomNumbers {
 		}
 	}
 
-	public static final float random(final float minValue, final float maxValue) {
+	public static final float random(float minValue, float maxValue) {
 		return minValue + (float) RANDOM.nextDouble() * (maxValue - minValue);
 	}
 
-	public static final int random(final int minValue, final int maxValue) {
+	public static final int random(int minValue, int maxValue) {
 		if (maxValue <= 0)
 			return 0;
 

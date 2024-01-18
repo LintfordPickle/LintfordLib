@@ -1,7 +1,8 @@
-package net.lintfordlib.core.particles.particlesystems.modifiers;
+package net.lintfordlib.core.particles.particlesystems.modifiers.custom;
 
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.particles.Particle;
+import net.lintfordlib.core.particles.particlesystems.modifiers.ParticleModifierBase;
 
 public class ParticleDragModifier extends ParticleModifierBase {
 
@@ -19,20 +20,20 @@ public class ParticleDragModifier extends ParticleModifierBase {
 	// Variables
 	// --------------------------------------
 
-	private float mDrag;
+	public float dragCoefficient;
 
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
 	public ParticleDragModifier() {
-		this(0.75f);
+		this(0.97f);
 	}
 
-	public ParticleDragModifier(float dragValue) {
+	public ParticleDragModifier(float dragCoefficient) {
 		super(MODIFIER_NAME);
 
-		mDrag = 0.75f;
+		this.dragCoefficient = dragCoefficient;
 	}
 
 	// --------------------------------------
@@ -51,12 +52,12 @@ public class ParticleDragModifier extends ParticleModifierBase {
 
 	@Override
 	public void updateParticle(LintfordCore core, Particle particle) {
-		particle.dx *= mDrag;
-		particle.dy *= mDrag;
+		particle.dx *= dragCoefficient;
+		particle.dy *= dragCoefficient;
 
 		if (Math.abs(particle.dx) < EPSILON)
 			particle.dx = 0;
-		if (Math.abs(particle.dy) < 0.001f)
+		if (Math.abs(particle.dy) < EPSILON)
 			particle.dy = 0;
 	}
 }

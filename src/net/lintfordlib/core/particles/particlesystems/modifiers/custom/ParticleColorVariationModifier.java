@@ -1,10 +1,12 @@
-package net.lintfordlib.core.particles.particlesystems.modifiers;
+package net.lintfordlib.core.particles.particlesystems.modifiers.custom;
 
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.maths.RandomNumbers;
 import net.lintfordlib.core.particles.Particle;
+import net.lintfordlib.core.particles.particlesystems.modifiers.ParticleModifierBase;
 
-public class ParticleFireColorModifier extends ParticleModifierBase {
+// slightly modifies the RGB of a particles color by a random amount.
+public class ParticleColorVariationModifier extends ParticleModifierBase {
 
 	// --------------------------------------
 	// Constants
@@ -12,31 +14,31 @@ public class ParticleFireColorModifier extends ParticleModifierBase {
 
 	private static final long serialVersionUID = -2141468031095805751L;
 
-	public static final String MODIFIER_NAME = "ParticleFireColorModifier";
+	public static final String MODIFIER_NAME = "ParticleColorVariationModifier";
 
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
-	public final float mRMin, mRMax;
-	public final float mGMin, mBMax;
-	public final float mBMin, mGMax;
+	public float minRed, maxRed;
+	public float minGreen, maxGreen;
+	public float minBlue, maxBlue;
 
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
-	public ParticleFireColorModifier() {
+	public ParticleColorVariationModifier() {
 		super(MODIFIER_NAME);
 
-		mRMin = 209f / 255f;
-		mRMax = 229f / 255f;
+		minRed = 209f / 255f;
+		maxRed = 229f / 255f;
 
-		mGMin = 6f / 255f;
-		mGMax = 26f / 255f;
+		minGreen = 6f / 255f;
+		maxGreen = 26f / 255f;
 
-		mBMin = 3f / 255f;
-		mBMax = 23f / 255f;
+		minBlue = 3f / 255f;
+		maxBlue = 23f / 255f;
 
 	}
 
@@ -61,9 +63,10 @@ public class ParticleFireColorModifier extends ParticleModifierBase {
 	@Override
 	public void updateParticle(LintfordCore core, Particle particle) {
 		final var lNormalizedLifetime = particle.timeSinceStart / particle.lifeTime();
-		particle.color.r = getRandomValue(mRMin, mRMax) * lNormalizedLifetime * (lNormalizedLifetime - particle.color.r);
-		particle.color.g = getRandomValue(mGMin, mGMax) * lNormalizedLifetime * (lNormalizedLifetime - particle.color.g);
-		particle.color.b = getRandomValue(mBMin, mBMax) * lNormalizedLifetime * (lNormalizedLifetime - particle.color.b);
+
+		particle.color.r = getRandomValue(minRed, maxRed) * lNormalizedLifetime * (lNormalizedLifetime - particle.color.r);
+		particle.color.g = getRandomValue(minGreen, maxGreen) * lNormalizedLifetime * (lNormalizedLifetime - particle.color.g);
+		particle.color.b = getRandomValue(minBlue, maxBlue) * lNormalizedLifetime * (lNormalizedLifetime - particle.color.b);
 	}
 
 	protected float getRandomValue(final float minValue, final float maxValue) {

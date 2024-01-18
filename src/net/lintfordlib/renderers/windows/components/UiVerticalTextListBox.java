@@ -223,10 +223,10 @@ public class UiVerticalTextListBox extends UIWidget implements IScrollBarArea {
 			lAssetPositionY += mAssetHeightInpx + mVerticalAssetSeparationInPx;
 
 			if (i == mSelectedItemIndex) {
-				final var lSelectedBackgroundColor = ColorConstants.getWhiteWithAlpha(0.4f);
+				final var lSelectedBackgroundColor = ColorConstants.getColor(255.f / 255.f, 83.f / 255.f, 15.f / 255.f, 0.4f);
 				lItemToRender.backgroundColor.setFromColor(lSelectedBackgroundColor);
 			} else if (i % 2 == 0) {
-				lItemToRender.backgroundColor.setRGBA(1.0f, 0.81f, 0.75f, 0.3f);
+				lItemToRender.backgroundColor.setRGBA(1.0f, 0.81f, 0.75f, 0.1f);
 			} else {
 				lItemToRender.backgroundColor.setRGBA(1.f, 1.f, 1.f, 0.f);
 			}

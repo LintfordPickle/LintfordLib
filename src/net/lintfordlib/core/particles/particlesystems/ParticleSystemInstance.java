@@ -210,6 +210,12 @@ public class ParticleSystemInstance {
 		for (int i = 0; i < lNumInitializers; i++) {
 			lInitializers.get(i).initialize(particle);
 		}
+
+		final var lModifiers = mParticleSystemDefinition.modifiers();
+		final int lNumModifiers = lModifiers.size();
+		for (int j = 0; j < lNumModifiers; j++) {
+			lModifiers.get(j).initialize(particle);
+		}
 	}
 
 	public void addInitializer(ParticleInitializerBase particleInitializerBase) {

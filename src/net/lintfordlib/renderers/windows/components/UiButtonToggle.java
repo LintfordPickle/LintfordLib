@@ -43,7 +43,7 @@ public class UiButtonToggle extends UIWidget {
 		return mButtonLabel;
 	}
 
-	public void buttonLabel(final String pNewLabel) {
+	public void buttonLabel(String pNewLabel) {
 		mButtonLabel = pNewLabel;
 	}
 
@@ -51,10 +51,14 @@ public class UiButtonToggle extends UIWidget {
 	// Constructor
 	// --------------------------------------
 
-	public UiButtonToggle(final UiWindow pParentWindow) {
+	public UiButtonToggle(UiWindow pParentWindow) {
+		this(pParentWindow, NO_LABEL_TEXT);
+	}
+
+	public UiButtonToggle(UiWindow pParentWindow, String label) {
 		super(pParentWindow);
 
-		mButtonLabel = NO_LABEL_TEXT;
+		mButtonLabel = label;
 		mW = 200;
 		mH = 25;
 	}

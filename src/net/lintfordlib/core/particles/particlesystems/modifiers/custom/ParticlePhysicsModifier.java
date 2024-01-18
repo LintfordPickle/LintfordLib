@@ -1,7 +1,8 @@
-package net.lintfordlib.core.particles.particlesystems.modifiers;
+package net.lintfordlib.core.particles.particlesystems.modifiers.custom;
 
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.particles.Particle;
+import net.lintfordlib.core.particles.particlesystems.modifiers.ParticleModifierBase;
 
 public class ParticlePhysicsModifier extends ParticleModifierBase {
 
@@ -17,12 +18,21 @@ public class ParticlePhysicsModifier extends ParticleModifierBase {
 	public static final float PARTICLE_FLOOR_BOUNCE_AMT = 0.5f;
 
 	// --------------------------------------
+	// Variables
+	// --------------------------------------
+
+	public boolean enableMovement;
+	public boolean enableRotation;
+
+	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
 	public ParticlePhysicsModifier() {
 		super(MODIFIER_NAME);
 
+		enableMovement = true;
+		enableRotation = true;
 	}
 
 	// --------------------------------------
@@ -47,8 +57,13 @@ public class ParticlePhysicsModifier extends ParticleModifierBase {
 	public void updateParticle(LintfordCore core, Particle particle) {
 		final var lDelta = (float) core.appTime().elapsedTimeMilli() / 1000f;
 
-		particle.worldPositionX += particle.dx * lDelta;
-		particle.worldPositionY += particle.dy * lDelta;
-		particle.rotationInRadians += Math.toRadians(particle.dr * lDelta);
+		if (enableMovement) {
+			particle.worldPositionX += particle.dx * lDelta;
+			particle.worldPositionY += particle.dy * lDelta;
+		}
+
+		if (enableRotation) {
+			particle.rotationInRadians += Math.toRadians(particle.dr);
+		}
 	}
 }

@@ -1,8 +1,9 @@
-package net.lintfordlib.core.particles.particlesystems.modifiers;
+package net.lintfordlib.core.particles.particlesystems.modifiers.custom;
 
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.maths.RandomNumbers;
 import net.lintfordlib.core.particles.Particle;
+import net.lintfordlib.core.particles.particlesystems.modifiers.ParticleModifierBase;
 
 public class ParticleRandomRotationModifierWithDrag extends ParticleModifierBase {
 

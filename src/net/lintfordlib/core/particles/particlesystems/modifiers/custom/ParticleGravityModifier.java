@@ -1,7 +1,8 @@
-package net.lintfordlib.core.particles.particlesystems.modifiers;
+package net.lintfordlib.core.particles.particlesystems.modifiers.custom;
 
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.particles.Particle;
+import net.lintfordlib.core.particles.particlesystems.modifiers.ParticleModifierBase;
 
 public class ParticleGravityModifier extends ParticleModifierBase {
 
@@ -10,8 +11,6 @@ public class ParticleGravityModifier extends ParticleModifierBase {
 	// --------------------------------------
 
 	private static final long serialVersionUID = -9190222394993500218L;
-
-	public static final String MODIFIER_NAME = "ParticleGravityModifier";
 
 	// --------------------------------------
 	// Variables
@@ -24,8 +23,13 @@ public class ParticleGravityModifier extends ParticleModifierBase {
 	// --------------------------------------
 
 	public ParticleGravityModifier() {
-		super(MODIFIER_NAME);
+		this(-.978f);
+	}
 
+	public ParticleGravityModifier(float gravity) {
+		super(ParticleGravityModifier.class.getSimpleName());
+
+		this.gravity = gravity;
 	}
 
 	// --------------------------------------
