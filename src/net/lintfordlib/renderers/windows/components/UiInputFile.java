@@ -305,17 +305,6 @@ public class UiInputFile extends UIWidget implements IBufferedTextInputCallback 
 	public void update(LintfordCore core) {
 		super.update(core);
 
-		if (mIsReadonly)
-			return;
-
-		if (mCursorPos > mInputField.length())
-			mCursorPos = mInputField.length();
-
-		if (mCursorPos > mMaxInputCharacters)
-			mCursorPos = mMaxInputCharacters;
-
-		mCaretFlashTimer += core.appTime().elapsedTimeMilli();
-
 		// ---
 		mSingleLine = false;
 		final var lItemHeight = 25; // TODO: this is stored somewhere else already
@@ -331,6 +320,17 @@ public class UiInputFile extends UIWidget implements IBufferedTextInputCallback 
 
 		mDesiredHeight = mSingleLine ? lItemHeight : lItemHeight * 2;
 		// ---
+
+		if (mIsReadonly)
+			return;
+
+		if (mCursorPos > mInputField.length())
+			mCursorPos = mInputField.length();
+
+		if (mCursorPos > mMaxInputCharacters)
+			mCursorPos = mMaxInputCharacters;
+
+		mCaretFlashTimer += core.appTime().elapsedTimeMilli();
 
 		final int lCancelRectSize = 16;
 		mFileFolderRectangle.set(mFileInputAreaRectangle.x() + mFileInputAreaRectangle.width() - lCancelRectSize - 4, mFileInputAreaRectangle.y() + mFileInputAreaRectangle.height() / 2 - lCancelRectSize / 2, lCancelRectSize, lCancelRectSize);
@@ -372,8 +372,10 @@ public class UiInputFile extends UIWidget implements IBufferedTextInputCallback 
 			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_RIGHT, (int) xx + ww - 32, yy, 32, hh, componentZDepth, ColorConstants.MenuPanelPrimaryColor);
 		}
 
-		final var lEraserColor = mCancelRectHovered ? ColorConstants.WHITE : ColorConstants.getWhiteWithAlpha(.5f);
-		spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTUREDIRECTORY, mFileFolderRectangle, componentZDepth, lEraserColor);
+		if (mIsReadonly == false) {
+			final var lDirectoryIconColor = mCancelRectHovered ? ColorConstants.WHITE : ColorConstants.getWhiteWithAlpha(.5f);
+			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTUREDIRECTORY, mFileFolderRectangle, componentZDepth, lDirectoryIconColor);
+		}
 
 		var lText = mInputField.toString();
 		if (lText.length() == 0 && !mHasFocus) {

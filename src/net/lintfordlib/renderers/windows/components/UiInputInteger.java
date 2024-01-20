@@ -51,6 +51,7 @@ public class UiInputInteger extends UIWidget implements IBufferedTextInputCallba
 	private boolean mMouseClickBreaksInputTextFocus;
 	private boolean mIsReadonly;
 	private float mTextScale;
+	private boolean mShowControlArrows;
 
 	private transient StringBuilder mInputField;
 	private String mLabelText;
@@ -64,6 +65,14 @@ public class UiInputInteger extends UIWidget implements IBufferedTextInputCallba
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public boolean showControlArrows() {
+		return mShowControlArrows;
+	}
+
+	public void showControlArrows(boolean newValue) {
+		mShowControlArrows = newValue;
+	}
 
 	public int stepSize() {
 		return mStepSize;
@@ -219,6 +228,7 @@ public class UiInputInteger extends UIWidget implements IBufferedTextInputCallba
 
 		mResetOnDefaultClick = true;
 		mMouseClickBreaksInputTextFocus = true;
+		mShowControlArrows = true;
 		mInputField = new StringBuilder();
 
 		mDecrementRectangle = new Rectangle();
@@ -250,7 +260,7 @@ public class UiInputInteger extends UIWidget implements IBufferedTextInputCallba
 		if (mIsReadonly)
 			return false;
 
-		if (mDecrementRectangle.intersectsAA(core.HUD().getMouseCameraSpace())) {
+		if (mShowControlArrows && mDecrementRectangle.intersectsAA(core.HUD().getMouseCameraSpace())) {
 			if (core.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this, 30)) {
 				var t = mValue;
 				mValue -= mStepSize;
@@ -269,7 +279,7 @@ public class UiInputInteger extends UIWidget implements IBufferedTextInputCallba
 			}
 		}
 
-		else if (mIncrementRectangle.intersectsAA(core.HUD().getMouseCameraSpace())) {
+		else if (mShowControlArrows && mIncrementRectangle.intersectsAA(core.HUD().getMouseCameraSpace())) {
 			if (core.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this, 30)) {
 				var t = mValue;
 				mValue += mStepSize;
@@ -324,9 +334,11 @@ public class UiInputInteger extends UIWidget implements IBufferedTextInputCallba
 			ww = mW * .5f;
 		}
 
-		final int lRectSize = 16;
-		mDecrementRectangle.set(xx + 4, mY + mH / 2 - lRectSize / 2, lRectSize, lRectSize);
-		mIncrementRectangle.set(xx + ww - lRectSize - 4, mY + mH / 2 - lRectSize / 2, lRectSize, lRectSize);
+		if (mShowControlArrows) {
+			final int lRectSize = 16;
+			mDecrementRectangle.set(xx + 4, mY + mH / 2 - lRectSize / 2, lRectSize, lRectSize);
+			mIncrementRectangle.set(xx + ww - lRectSize - 4, mY + mH / 2 - lRectSize / 2, lRectSize, lRectSize);
+		}
 
 		if (mHasFocus) {
 			if (mCaretFlashTimer > ConstantsUi.CARET_FLASH_TIME) {
@@ -363,9 +375,12 @@ public class UiInputInteger extends UIWidget implements IBufferedTextInputCallba
 			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_RIGHT, (int) xx + ww - 32, mY, 32, mH, componentZDepth, ColorConstants.MenuPanelPrimaryColor);
 		}
 
-		final var lIconColor = ColorConstants.WHITE; // TODO: hoevered / activated
-		spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WIDGET_LEFT_ARROW, mDecrementRectangle, componentZDepth, lIconColor);
-		spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WIDGET_RIGHT_ARROW, mIncrementRectangle, componentZDepth, lIconColor);
+		if (mShowControlArrows) {
+			final var lIconColor = ColorConstants.WHITE;
+			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WIDGET_LEFT_ARROW, mDecrementRectangle, componentZDepth, lIconColor);
+			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WIDGET_RIGHT_ARROW, mIncrementRectangle, componentZDepth, lIconColor);
+
+		}
 
 		var lText = mInputField.toString();
 		if (lText.length() == 0 && !mHasFocus) {
