@@ -23,7 +23,8 @@ public class ParticleSystemDefinition extends BaseDefinition {
 	public List<ParticleModifierBase> modifiers;
 
 	public int maxParticleCount;
-	public float particleLife;
+	public float particleLifeMin;
+	public float particleLifeMax;
 
 	public String textureName;
 	public String textureFilename;

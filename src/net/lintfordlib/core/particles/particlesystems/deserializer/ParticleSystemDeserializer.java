@@ -26,10 +26,12 @@ public class ParticleSystemDeserializer implements JsonDeserializer<ParticleSyst
 
 	public static final String PARTICLE_SYSTEM_MAX_PARTICLE_COUNT = "maxParticleCount";
 	public static final String PARTICLE_SYSTEM_NAME = "name";
+	public static final String PARTICLE_SYSTEM_DISPLAY_NAME = "displayName";
 	public static final String PARTICLE_SYSTEM_TEXTURE_NAME = "textureName";
 	public static final String PARTICLE_SYSTEM_TEXTURE_FILENAME = "textureFilename";
 	public static final String PARTICLE_SYSTEM_TEXTURE_FILTER = "textureFilterMode";
-	public static final String PARTICLE_SYSTEM_PARTICLE_LIFE = "particleLife";
+	public static final String PARTICLE_SYSTEM_PARTICLE_LIFE_MIN = "particleLifeMin";
+	public static final String PARTICLE_SYSTEM_PARTICLE_LIFE_MAX = "particleLifeMax";
 
 	public static final String PARTICLE_SYSTEM_INITIALIZER_LIST = "initializers";
 	public static final String PARTICLE_SYSTEM_MODIFIER_LIST = "modifiers";
@@ -57,6 +59,11 @@ public class ParticleSystemDeserializer implements JsonDeserializer<ParticleSyst
 		if (lTempPrimitive != null && !lTempPrimitive.isJsonNull()) {
 			lNewParticleSystemDefinition.name = lTempPrimitive.getAsString();
 		}
+		
+		lTempPrimitive = jsonElement.getAsJsonObject().getAsJsonPrimitive(PARTICLE_SYSTEM_DISPLAY_NAME);
+		if (lTempPrimitive != null && !lTempPrimitive.isJsonNull()) {
+			lNewParticleSystemDefinition.displayName = lTempPrimitive.getAsString();
+		}
 
 		lTempPrimitive = jsonElement.getAsJsonObject().getAsJsonPrimitive(PARTICLE_SYSTEM_TEXTURE_NAME);
 		if (lTempPrimitive != null && !lTempPrimitive.isJsonNull()) {
@@ -73,9 +80,14 @@ public class ParticleSystemDeserializer implements JsonDeserializer<ParticleSyst
 			lNewParticleSystemDefinition.textureFilterMode = lTempPrimitive.getAsInt();
 		}
 
-		lTempPrimitive = jsonElement.getAsJsonObject().getAsJsonPrimitive(PARTICLE_SYSTEM_PARTICLE_LIFE);
+		lTempPrimitive = jsonElement.getAsJsonObject().getAsJsonPrimitive(PARTICLE_SYSTEM_PARTICLE_LIFE_MIN);
 		if (lTempPrimitive != null && !lTempPrimitive.isJsonNull()) {
-			lNewParticleSystemDefinition.particleLife = lTempPrimitive.getAsFloat();
+			lNewParticleSystemDefinition.particleLifeMin = lTempPrimitive.getAsFloat();
+		}
+
+		lTempPrimitive = jsonElement.getAsJsonObject().getAsJsonPrimitive(PARTICLE_SYSTEM_PARTICLE_LIFE_MAX);
+		if (lTempPrimitive != null && !lTempPrimitive.isJsonNull()) {
+			lNewParticleSystemDefinition.particleLifeMax = lTempPrimitive.getAsFloat();
 		}
 
 		// Initializers

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.lintfordlib.core.LintfordCore;
+import net.lintfordlib.core.maths.RandomNumbers;
 import net.lintfordlib.core.particles.Particle;
 import net.lintfordlib.core.particles.particlesystems.initializers.ParticleInitializerBase;
 import net.lintfordlib.core.particles.particlesystems.modifiers.ParticleModifierBase;
@@ -190,7 +191,11 @@ public class ParticleSystemInstance {
 			if (lSpawnedParticle.isAssigned())
 				continue;
 
-			lSpawnedParticle.spawnParticle(worldX, worldY, worldZ, velocityX, velocityY, mParticleSystemDefinition.particleLife);
+			float particleLifeTime = mParticleSystemDefinition.particleLifeMin;
+			if (mParticleSystemDefinition.particleLifeMax != 0 && mParticleSystemDefinition.particleLifeMax > mParticleSystemDefinition.particleLifeMin)
+				particleLifeTime = RandomNumbers.random(mParticleSystemDefinition.particleLifeMin, mParticleSystemDefinition.particleLifeMax);
+
+			lSpawnedParticle.spawnParticle(worldX, worldY, worldZ, velocityX, velocityY, particleLifeTime);
 
 			applyInitializers(lSpawnedParticle);
 
