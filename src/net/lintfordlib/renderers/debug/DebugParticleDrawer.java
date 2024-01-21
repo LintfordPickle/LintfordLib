@@ -100,7 +100,7 @@ public class DebugParticleDrawer extends BaseRenderer implements IInputProcessor
 
 		Debug.debugManager().drawers().beginTextRenderer(core.HUD());
 
-		int lEmitterCount = mParticleFrameworkData.emitterManager().emitterInstances().size();
+		int lEmitterCount = mParticleFrameworkData.particleEmitterManager().emitterInstances().size();
 		Debug.debugManager().drawers().drawText(String.format("Num Emitters: %d", lEmitterCount), 0, 0);
 
 		int lSystemCount = mParticleFrameworkData.particleSystemManager().getNumParticleSystems();

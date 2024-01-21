@@ -3,6 +3,8 @@ package net.lintfordlib.core.particles.particleemitters;
 import com.google.gson.annotations.SerializedName;
 
 import net.lintfordlib.core.entities.definitions.BaseDefinition;
+import net.lintfordlib.core.particles.particleemitters.shapes.ParticleEmitterShape;
+import net.lintfordlib.core.particles.particleemitters.shapes.ParticleEmitterShape.EmitterType;
 
 public class ParticleEmitterDefinition extends BaseDefinition {
 
@@ -19,26 +21,34 @@ public class ParticleEmitterDefinition extends BaseDefinition {
 	@SerializedName(value = "childEmitters")
 	protected ParticleEmitterDefinition[] mChildEmitters;
 
+	public transient ParticleEmitterShape particleEmitterShape;
+
 	@SerializedName(value = "particleSystemName")
-	protected String mParticleSystemName;
+	public String particleSystemName;
 
 	@SerializedName(value = "emitTimeMin")
-	protected float mEmitTimeMin;
+	public float emitTimeMin;
 
 	@SerializedName(value = "emitTimeMax")
-	protected float mEmitTimeMax;
+	public float emitTimeMax;
 
 	@SerializedName(value = "emitAmountMin")
-	protected int mEmitAmountMin;
+	public int emitAmountMin;
 
 	@SerializedName(value = "emitAmountMax")
-	protected int mEmitAmountMax;
+	public int emitAmountMax;
 
 	@SerializedName(value = "positionRelOffsetX")
-	protected float mPositionRelOffsetX;
+	public float positionRelOffsetX;
 
 	@SerializedName(value = "positionRelOffsetY")
-	protected float mPositionRelOffsetY;
+	public float positionRelOffsetY;
+
+	@SerializedName(value = "positionRelOffsetRot")
+	public float positionRelOffsetRot;
+
+	@SerializedName(value = "emitterShape")
+	public EmitterType mEmitterShape;
 
 	// --------------------------------------
 	// Properties
@@ -48,31 +58,4 @@ public class ParticleEmitterDefinition extends BaseDefinition {
 		return mChildEmitters;
 	}
 
-	public String particleSystemName() {
-		return mParticleSystemName;
-	}
-
-	public float emitTimeMin() {
-		return mEmitTimeMin;
-	}
-
-	public float emitTimeMax() {
-		return mEmitTimeMax;
-	}
-
-	public int emitAmountMin() {
-		return mEmitAmountMin;
-	}
-
-	public int emitAmountMax() {
-		return mEmitAmountMax;
-	}
-
-	public float positionRelOffsetX() {
-		return mPositionRelOffsetX;
-	}
-
-	public float positionRelOffsetY() {
-		return mPositionRelOffsetY;
-	}
 }

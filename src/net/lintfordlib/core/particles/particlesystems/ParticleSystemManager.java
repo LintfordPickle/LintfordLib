@@ -86,6 +86,10 @@ public class ParticleSystemManager extends InstanceManager<ParticleSystemInstanc
 		return mParticleSystemDefinitionManager;
 	}
 
+	public ParticleFrameworkData particleFrameworkData() {
+		return mParticleFrameworkData;
+	}
+
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
@@ -102,15 +106,16 @@ public class ParticleSystemManager extends InstanceManager<ParticleSystemInstanc
 	// --------------------------------------
 
 	public ParticleSystemInstance getParticleSystemByDefiniton(ParticleSystemDefinition particleSystemDef) {
+		// If an instance already exists, then return it
 		final var lNumParticleSystems = mInstances.size();
 		for (var i = 0; i < lNumParticleSystems; i++) {
 			final var lParticleSystemInstance = mInstances.get(i);
 			if (!lParticleSystemInstance.isInitialized())
 				continue;
 
-			if (lParticleSystemInstance.definition().equals(particleSystemDef.name)) {
+			if (lParticleSystemInstance.definition().name.equals(particleSystemDef.name))
 				return mInstances.get(i);
-			}
+
 		}
 
 		return createNewParticleSystemFromDefinition(particleSystemDef);
@@ -124,14 +129,15 @@ public class ParticleSystemManager extends InstanceManager<ParticleSystemInstanc
 			if (!lParticleSystemInstance.isInitialized())
 				continue;
 
-			if (lParticleSystemInstance.definition().name.equals(particleSystemName)) {
+			final var lParticleSystemDefName = lParticleSystemInstance.definition().name;
+			final var lToFindName = particleSystemName;
+
+			if (lParticleSystemDefName.equals(lToFindName)) {
 				return mInstances.get(i);
 			}
 		}
 
-		createNewParticleSystemFromDefinitionName(particleSystemName);
-
-		return null;
+		return createNewParticleSystemFromDefinitionName(particleSystemName);
 	}
 
 	public ParticleSystemInstance createNewParticleSystemFromDefinition(ParticleSystemDefinition particleSystemDef) {
@@ -153,6 +159,12 @@ public class ParticleSystemManager extends InstanceManager<ParticleSystemInstanc
 
 	public ParticleSystemInstance createNewParticleSystemFromDefinitionName(String particleSystemName) {
 		final var lParticleSystemDefinition = mParticleSystemDefinitionManager.getByName(particleSystemName);
+
+		if (lParticleSystemDefinition == null) {
+			Debug.debugManager().logger().e(getClass().getSimpleName(), "Could not resolve particle system by name: " + particleSystemName);
+			return null;
+		}
+
 		return createNewParticleSystemFromDefinition(lParticleSystemDefinition);
 	}
 

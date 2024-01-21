@@ -6,6 +6,7 @@ import java.util.List;
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.maths.RandomNumbers;
 import net.lintfordlib.core.particles.Particle;
+import net.lintfordlib.core.particles.ParticleFrameworkData;
 import net.lintfordlib.core.particles.particlesystems.initializers.ParticleInitializerBase;
 import net.lintfordlib.core.particles.particlesystems.modifiers.ParticleModifierBase;
 
@@ -26,7 +27,6 @@ public class ParticleSystemInstance {
 	protected ParticleSystemDefinition mParticleSystemDefinition;
 	private List<Particle> mParticles;
 	private transient int mRendererId;
-
 	private int mCapacity;
 
 	// --------------------------------------
@@ -84,7 +84,7 @@ public class ParticleSystemInstance {
 		}
 	}
 
-	public void resyncWithDefinition() {
+	public void resyncWithDefinition(ParticleFrameworkData particleFramework) {
 		if (mIsAssigned == false || mParticleSystemDefinition == null)
 			return;
 

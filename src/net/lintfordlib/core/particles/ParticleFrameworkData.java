@@ -34,7 +34,7 @@ public class ParticleFrameworkData extends BaseDataManager {
 		return mParticleSystemManager;
 	}
 
-	public ParticleEmitterManager emitterManager() {
+	public ParticleEmitterManager particleEmitterManager() {
 		return mParticleEmitterManager;
 	}
 

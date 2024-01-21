@@ -58,7 +58,7 @@ public class ParticleFrameworkController extends BaseController {
 		if (!isInitialized())
 			return;
 
-		final var lEmitterInstanceList = mParticleFrameworkData.emitterManager().emitterInstances();
+		final var lEmitterInstanceList = mParticleFrameworkData.particleEmitterManager().emitterInstances();
 		final var lSystemInstanceList = mParticleFrameworkData.particleSystemManager().particleSystems();
 
 		final int lNumParticleEmitters = lEmitterInstanceList.size();
@@ -70,10 +70,16 @@ public class ParticleFrameworkController extends BaseController {
 			if (!lParticleEmitterInstance.isEnabled())
 				continue;
 
-			if (lParticleEmitterInstance.parentEntity() != null) {
-				// FIXME: take the position from the parentEntity's body (not implemented)
-//				lParticleEmitterInstance.x = lParticleEmitterInstance.parentEntity().body().x;
-//				lParticleEmitterInstance.y = lParticleEmitterInstance.parentEntity().body().y;
+			if (lParticleEmitterInstance.parentEmitterInst() != null) {
+				final var lParentInst = lParticleEmitterInstance.parentEmitterInst();
+				final var lEmitterDef = lParticleEmitterInstance.emitterDefinition();
+
+				lParticleEmitterInstance.x = lParentInst.x + lEmitterDef.positionRelOffsetX;
+				lParticleEmitterInstance.y = lParentInst.y + lEmitterDef.positionRelOffsetY;
+				lParticleEmitterInstance.rot = lParentInst.rot + lEmitterDef.positionRelOffsetRot;
+
+				if (lParentInst.isEnabled() == false)
+					continue;
 			}
 
 			lParticleEmitterInstance.update(core);

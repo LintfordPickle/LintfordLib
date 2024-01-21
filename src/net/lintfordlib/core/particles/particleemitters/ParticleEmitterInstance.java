@@ -2,7 +2,6 @@ package net.lintfordlib.core.particles.particleemitters;
 
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.debug.Debug;
-import net.lintfordlib.core.entities.Entity;
 import net.lintfordlib.core.entities.instances.ClosedPooledBaseData;
 import net.lintfordlib.core.maths.MathHelper;
 import net.lintfordlib.core.maths.RandomNumbers;
@@ -22,17 +21,19 @@ public class ParticleEmitterInstance extends ClosedPooledBaseData {
 	// Variables
 	// --------------------------------------
 
-	private transient Entity mAttachedToEntity;
+	protected transient ParticleEmitterDefinition mEmitterDefinition;
+
+	private transient ParticleEmitterInstance mParentEmitterInstance;
 	private transient ParticleEmitterInstance[] mChildEmitters;
 	private transient ParticleSystemInstance mParticleSystem;
 
 	public float x;
 	public float y;
+	public float rot;
 
 	private int mParticleSystemId;
 	protected int mEmitterInstanceId;
 	protected int mEmitterDefinitionId;
-	protected transient ParticleEmitterDefinition mEmitterDefinition;
 	public float mEmitTimer;
 	public float mEmitAmount;
 	private boolean enabled;
@@ -42,6 +43,10 @@ public class ParticleEmitterInstance extends ClosedPooledBaseData {
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public boolean isInitialized() {
+		return mEmitterDefinition != null;
+	}
 
 	public boolean isEnabled() {
 		return enabled;
@@ -62,16 +67,20 @@ public class ParticleEmitterInstance extends ClosedPooledBaseData {
 		}
 	}
 
+	public ParticleEmitterInstance[] childEmitters() {
+		return mChildEmitters;
+	}
+
 	public ParticleSystemInstance particleSystem() {
 		return mParticleSystem;
 	}
 
-	public Entity parentEntity() {
-		return mAttachedToEntity;
+	public ParticleEmitterInstance parentEmitterInst() {
+		return mParentEmitterInstance;
 	}
 
-	public void parentEntity(Entity newValue) {
-		mAttachedToEntity = newValue;
+	public void parentEmitterInst(ParticleEmitterInstance parentEmitterIntsance) {
+		mParentEmitterInstance = parentEmitterIntsance;
 	}
 
 	public void emitterInstanceId(final int emitterUid) {
@@ -92,6 +101,10 @@ public class ParticleEmitterInstance extends ClosedPooledBaseData {
 
 	public int particleEmitterDefId() {
 		return mEmitterDefinitionId;
+	}
+
+	public ParticleEmitterDefinition emitterDefinition() {
+		return mEmitterDefinition;
 	}
 
 	public float emitterEmitModifierNormalized() {
@@ -128,11 +141,24 @@ public class ParticleEmitterInstance extends ClosedPooledBaseData {
 	}
 
 	// --------------------------------------
-	// Methods
+	// Core-Methods
 	// --------------------------------------
 
 	public void initialise() {
 
+	}
+
+	public void resyncWithDefinition(ParticleFrameworkData particleFramework) {
+		if (isAssigned() == false)
+			return;
+
+		// TODO: Check first
+		resolveParticleSystems(particleFramework);
+		
+	}
+
+	public void unload() {
+		mEmitterDefinition = null;
 	}
 
 	public void update(LintfordCore core) {
@@ -142,18 +168,28 @@ public class ParticleEmitterInstance extends ClosedPooledBaseData {
 		if (mEmitterDefinition == null)
 			return;
 
-		x += mEmitterDefinition.positionRelOffsetX();
-		y += mEmitterDefinition.positionRelOffsetY();
+		x += mEmitterDefinition.positionRelOffsetX;
+		y += mEmitterDefinition.positionRelOffsetY;
 
 		mEmitTimer -= core.gameTime().elapsedTimeMilli() * mEmitterEmitModifier;
 
 		if (mParticleSystem != null && mEmitTimer < 0) {
-			final int lAmtToSpawn = RandomNumbers.random(mEmitterDefinition.emitAmountMin(), mEmitterDefinition.emitAmountMax());
+			final int lAmtToSpawn = RandomNumbers.random(mEmitterDefinition.emitAmountMin, mEmitterDefinition.emitAmountMax);
 			for (int i = 0; i < lAmtToSpawn; i++) {
-				mParticleSystem.spawnParticle(x, y, -.2f, 0, 0);
+
+				// The position and velocity is handled by the emitter shape
+
+				if (mEmitterDefinition.particleEmitterShape == null) {
+					mParticleSystem.spawnParticle(x, y, -.2f, 0, 0);
+				} else {
+					final float lHeading = 0.f;
+					final float lForce = 0.f;
+
+					mEmitterDefinition.particleEmitterShape.spawn(mParticleSystem, x, y, lHeading, lForce);
+				}
 			}
 
-			mEmitTimer = RandomNumbers.random(mEmitterDefinition.emitTimeMin(), mEmitterDefinition.emitTimeMax());
+			mEmitTimer = RandomNumbers.random(mEmitterDefinition.emitTimeMin, mEmitterDefinition.emitTimeMax);
 		}
 
 		final int lNumInnerInstances = mChildEmitters.length;
@@ -166,12 +202,17 @@ public class ParticleEmitterInstance extends ClosedPooledBaseData {
 			lChildParticleEmitterInstanceInst.x = x;
 			lChildParticleEmitterInstanceInst.y = y;
 
-			lChildParticleEmitterInstanceInst.update(core);
+			// all emitters, regardless of their place in the hierarchy, are updated from the ParticleFrameworkController
+			// lChildParticleEmitterInstanceInst.update(core);
 		}
 	}
 
-	public void assignEmitterDefinitionAndResolveParticleSystem(final short definitionUid, ParticleFrameworkData particleFramework) {
-		final var lEmitterDefintion = particleFramework.emitterManager().definitionManager().getByUid(definitionUid);
+	// --------------------------------------
+	// Methods
+	// --------------------------------------
+
+	public void assignEmitterDefinitionAndResolveParticleSystem(short definitionUid, ParticleFrameworkData particleFramework) {
+		final var lEmitterDefintion = particleFramework.particleEmitterManager().definitionManager().getByUid(definitionUid);
 		if (lEmitterDefintion == null) {
 			Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Failed to assign ParticleEmitter - EmitterDefId '%d' has no definition defined!", definitionUid));
 			return;
@@ -180,7 +221,7 @@ public class ParticleEmitterInstance extends ClosedPooledBaseData {
 		assignEmitterDefinitionAndResolveParticleSystem(lEmitterDefintion, particleFramework);
 	}
 
-	public void assignEmitterDefinitionAndResolveParticleSystem(final ParticleEmitterDefinition emitterDefinition, ParticleFrameworkData particleFramework) {
+	public void assignEmitterDefinitionAndResolveParticleSystem(ParticleEmitterDefinition emitterDefinition, ParticleFrameworkData particleFramework) {
 		if (emitterDefinition == null) {
 			Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Failed to assign ParticleEmitter - given EmitterDefinition is null!"));
 			return;
@@ -189,25 +230,39 @@ public class ParticleEmitterInstance extends ClosedPooledBaseData {
 		mEmitterDefinitionId = emitterDefinition.definitionUid();
 		mEmitterDefinition = emitterDefinition;
 
-		resolveParticleSystems(mEmitterDefinition, particleFramework);
+		resolveParticleSystems(particleFramework);
 	}
 
-	private void resolveParticleSystems(final ParticleEmitterDefinition emitterDefinition, ParticleFrameworkData particleFramework) {
-		mParticleSystem = particleFramework.particleSystemManager().getParticleSystemByName(emitterDefinition.particleSystemName());
+	private void resolveParticleSystems(ParticleFrameworkData particleFramework) {
+		if (mEmitterDefinition == null)
+			return;
 
-		if (mParticleSystem != null) {
-			mParticleSystemId = mParticleSystem.getPoolID();
+		final var lParticleSystemName = mEmitterDefinition.particleSystemName;
+		mParticleSystem = particleFramework.particleSystemManager().getParticleSystemByName(lParticleSystemName);
+
+		if (mParticleSystem == null && lParticleSystemName != null) {
+			// ignore
 		}
 
-		if (emitterDefinition.childEmitters() != null) {
-			final var lDefinitionChildEmitters = emitterDefinition.childEmitters();
+		if (mParticleSystem != null)
+			mParticleSystemId = mParticleSystem.getPoolID();
+
+		resolveChildParticleEmitters(particleFramework);
+	}
+
+	private void resolveChildParticleEmitters(ParticleFrameworkData particleFramework) {
+		if (mEmitterDefinition == null)
+			return;
+
+		if (mEmitterDefinition.childEmitters() != null) {
+			final var lDefinitionChildEmitters = mEmitterDefinition.childEmitters();
 			final int lNumChildEmitters = Math.min(MAX_NUM_CHILD_EMITTERS, lDefinitionChildEmitters.length);
 			for (int i = 0; i < lNumChildEmitters; i++) {
 				final var lChildEmitterDefinition = lDefinitionChildEmitters[i];
 				if (lChildEmitterDefinition == null)
 					continue;
 
-				final var lEmitterManager = particleFramework.emitterManager();
+				final var lEmitterManager = particleFramework.particleEmitterManager();
 				final var lEmitterInstance = lEmitterManager.getFreePooledItem();
 				mChildEmitters[i] = lEmitterInstance;
 				mChildEmitters[i].assignEmitterDefinitionAndResolveParticleSystem(lChildEmitterDefinition, particleFramework);
@@ -220,18 +275,5 @@ public class ParticleEmitterInstance extends ClosedPooledBaseData {
 		mEmitterDefinitionId = -1;
 		mParticleSystemId = -1;
 		mParticleSystem = null;
-
-		final int lNumChildEmitters = Math.min(MAX_NUM_CHILD_EMITTERS, mChildEmitters.length);
-		for (int i = 0; i < lNumChildEmitters; i++) {
-			final var lChildInst = mChildEmitters[i];
-
-			if (lChildInst == null)
-				continue;
-
-			// FIXME: Check that reset emitters are picked up (pooled) again by the emitter manager
-			lChildInst.reset();
-
-			mChildEmitters[i] = null;
-		}
 	}
 }
