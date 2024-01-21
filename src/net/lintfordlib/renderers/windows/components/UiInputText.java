@@ -44,6 +44,7 @@ public class UiInputText extends UIWidget implements IBufferedTextInputCallback 
 	private boolean mIsReadonly;
 	private float mTextScale;
 	private String mLabelText;
+	private boolean mSingleLine;
 
 	private int mCursorPos;
 
@@ -52,6 +53,14 @@ public class UiInputText extends UIWidget implements IBufferedTextInputCallback 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public boolean singleLine() {
+		return mSingleLine;
+	}
+
+	public void singleLine(boolean newValue) {
+		mSingleLine = newValue;
+	}
 
 	public String label() {
 		return mLabelText;

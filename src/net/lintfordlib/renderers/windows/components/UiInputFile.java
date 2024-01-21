@@ -306,7 +306,6 @@ public class UiInputFile extends UIWidget implements IBufferedTextInputCallback 
 		super.update(core);
 
 		// ---
-		mSingleLine = false;
 		final var lItemHeight = 25; // TODO: this is stored somewhere else already
 		mFileInputAreaRectangle.set(mX, mY, mW, lItemHeight);
 		if (mLabelText != null && mSingleLine) {
