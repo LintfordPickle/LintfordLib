@@ -63,6 +63,14 @@ public class UiDropDownBox<T> extends UIWidget implements IInputClickedFocusMana
 	// Properties
 	// --------------------------------------
 
+	public String label() {
+		return mLabel;
+	}
+
+	public void label(String newLabel) {
+		mLabel = newLabel;
+	}
+
 	public void noItemsFoundText(String newText) {
 		if (newText == null)
 			mNoItemsFoundText = NO_ITEMS_FOUND_TEXT;
@@ -133,9 +141,14 @@ public class UiDropDownBox<T> extends UIWidget implements IInputClickedFocusMana
 	// --------------------------------------
 
 	public UiDropDownBox(final UiWindow parentWindow) {
+		this(parentWindow, null);
+	}
+
+	public UiDropDownBox(final UiWindow parentWindow, String label) {
 		super(parentWindow);
 
 		mOpen = false;
+		mLabel = label;
 
 		mWindowRectangle = new ScrollBarContentRectangle(parentWindow);
 		mContentRectangle = new ScrollBarContentRectangle(parentWindow);
@@ -226,7 +239,6 @@ public class UiDropDownBox<T> extends UIWidget implements IInputClickedFocusMana
 
 			mWindowRectangle.set(mX, mY + 25.f, mW, OPEN_HEIGHT);
 		} else {
-			mLabel = "Particle System:";
 			if (mLabel != null) {
 				desiredHeight(50.f);
 			} else {
@@ -256,7 +268,7 @@ public class UiDropDownBox<T> extends UIWidget implements IInputClickedFocusMana
 
 		if (mLabel != null) {
 			textFont.begin(core.HUD());
-			textFont.drawText(mLabel, mX + HorizontalPadding, mY + UIWidget.DefaultWidthHeight * .5f - lFontHeight / 2f, componentZDepth, ColorConstants.WHITE, 1.f, -1);
+			textFont.drawText(mLabel, mX, mY + UIWidget.DefaultWidthHeight * .5f - lFontHeight / 2f, componentZDepth, ColorConstants.WHITE, 1.f, -1);
 			textFont.end();
 		}
 
