@@ -157,13 +157,13 @@ public class ParticleEmitterManager extends ClosedPoolInstanceManager<ParticleEm
 		return null;
 	}
 
-	public void addParticleEmitterInstance(final ParticleEmitterInstance particleEmitterInstance) {
+	public void addParticleEmitterInstance(ParticleEmitterInstance particleEmitterInstance) {
 		if (!mInstances.contains(particleEmitterInstance)) {
 			mInstances.add(particleEmitterInstance);
 		}
 	}
 
-	public void removeParticleEmitterInstance(final ParticleEmitterInstance particleEmitterInstance) {
+	public void removeParticleEmitterInstance(ParticleEmitterInstance particleEmitterInstance) {
 		particleEmitterInstance.reset();
 
 		final var lChildInstances = particleEmitterInstance.childEmitters();
@@ -190,5 +190,13 @@ public class ParticleEmitterManager extends ClosedPoolInstanceManager<ParticleEm
 	@Override
 	protected ParticleEmitterInstance createPoolObjectInstance() {
 		return new ParticleEmitterInstance();
+	}
+
+	public ParticleEmitterInstance getParticleEmitterByName(String particleEmitterName) {
+		final var lDefinition = mEmitterDefinitionManager.getByName(particleEmitterName);
+		if (lDefinition == null)
+			return null;
+
+		return createNewParticleEmitterFromDefinition(lDefinition);
 	}
 }
