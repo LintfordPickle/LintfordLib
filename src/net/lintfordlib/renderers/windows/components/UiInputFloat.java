@@ -240,7 +240,7 @@ public class UiInputFloat extends UIWidget implements IBufferedTextInputCallback
 	// --------------------------------------
 
 	public UiInputFloat(UiWindow parentWindow) {
-		this(parentWindow, "");
+		this(parentWindow, null);
 	}
 
 	public UiInputFloat(UiWindow parentWindow, String label) {
