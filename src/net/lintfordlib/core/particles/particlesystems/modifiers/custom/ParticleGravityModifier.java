@@ -16,20 +16,22 @@ public class ParticleGravityModifier extends ParticleModifierBase {
 	// Variables
 	// --------------------------------------
 
-	public float gravity;
+	public float gravityX;
+	public float gravityY;
 
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
 	public ParticleGravityModifier() {
-		this(-.978f);
+		this(0.f, .978f);
 	}
 
-	public ParticleGravityModifier(float gravity) {
+	public ParticleGravityModifier(float gravityX, float gravityY) {
 		super(ParticleGravityModifier.class.getSimpleName());
 
-		this.gravity = gravity;
+		this.gravityX = gravityX;
+		this.gravityY = gravityY;
 	}
 
 	// --------------------------------------
@@ -49,6 +51,8 @@ public class ParticleGravityModifier extends ParticleModifierBase {
 	@Override
 	public void updateParticle(LintfordCore core, Particle particle) {
 		final var lDeltaTime = (float) core.appTime().elapsedTimeMilli();
-		particle.dy += gravity * lDeltaTime;
+
+		particle.dx += gravityX * lDeltaTime;
+		particle.dy += gravityY * lDeltaTime;
 	}
 }

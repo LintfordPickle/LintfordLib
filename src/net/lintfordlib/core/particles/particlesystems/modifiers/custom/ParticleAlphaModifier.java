@@ -12,8 +12,6 @@ public class ParticleAlphaModifier extends ParticleModifierBase {
 
 	private static final long serialVersionUID = -5569879927420463121L;
 
-	public static final String MODIFIER_NAME = "ParticleAlphaModifier";
-
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
@@ -26,7 +24,7 @@ public class ParticleAlphaModifier extends ParticleModifierBase {
 	// --------------------------------------
 
 	public ParticleAlphaModifier() {
-		super(MODIFIER_NAME);
+		super(ParticleAlphaModifier.class.getSimpleName());
 
 	}
 

@@ -39,7 +39,7 @@ public class ParticleFrameworkController extends BaseController {
 	// Constructor
 	// --------------------------------------
 
-	public ParticleFrameworkController(final ControllerManager controllerManager, final ParticleFrameworkData particleFrameworkData, final int entityGroupUid) {
+	public ParticleFrameworkController(ControllerManager controllerManager, ParticleFrameworkData particleFrameworkData, int entityGroupUid) {
 		super(controllerManager, CONTROLLER_NAME, entityGroupUid);
 
 		mParticleFrameworkData = particleFrameworkData;

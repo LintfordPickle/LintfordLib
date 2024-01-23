@@ -13,8 +13,6 @@ public class ParticleRandomRotationModifierWithDrag extends ParticleModifierBase
 
 	private static final long serialVersionUID = -3528664477677918803L;
 
-	public static final String MODIFIER_NAME = "ParticleRandomRotationModifierWithDrag";
-
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
@@ -27,7 +25,7 @@ public class ParticleRandomRotationModifierWithDrag extends ParticleModifierBase
 	// --------------------------------------
 
 	public ParticleRandomRotationModifierWithDrag() {
-		super(MODIFIER_NAME);
+		super(ParticleRandomRotationModifierWithDrag.class.getSimpleName());
 
 	}
 

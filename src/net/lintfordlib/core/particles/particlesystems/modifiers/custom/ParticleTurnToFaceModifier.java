@@ -12,14 +12,12 @@ public class ParticleTurnToFaceModifier extends ParticleModifierBase {
 
 	private static final long serialVersionUID = -1511765721627415767L;
 
-	public static final String INITIALIZER_NAME = "ParticleTurnToFaceModifier";
-
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
 	public ParticleTurnToFaceModifier() {
-		super(INITIALIZER_NAME);
+		super(ParticleTurnToFaceModifier.class.getSimpleName());
 
 	}
 

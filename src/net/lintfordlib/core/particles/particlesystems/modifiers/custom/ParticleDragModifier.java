@@ -12,8 +12,6 @@ public class ParticleDragModifier extends ParticleModifierBase {
 
 	private static final long serialVersionUID = 2114770442744280867L;
 
-	public static final String MODIFIER_NAME = "ParticleDragModifier";
-
 	public static final float EPSILON = 0.001f;
 
 	// --------------------------------------
@@ -31,7 +29,7 @@ public class ParticleDragModifier extends ParticleModifierBase {
 	}
 
 	public ParticleDragModifier(float dragCoefficient) {
-		super(MODIFIER_NAME);
+		super(ParticleDragModifier.class.getSimpleName());
 
 		this.dragCoefficient = dragCoefficient;
 	}

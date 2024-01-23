@@ -154,11 +154,11 @@ public class ParticleEmitterInstance extends ClosedPooledBaseData {
 
 		// TODO: Check first
 		resolveParticleSystems(particleFramework);
-		
+
 	}
 
 	public void unload() {
-		mEmitterDefinition = null;
+		reset();
 	}
 
 	public void update(LintfordCore core) {
@@ -174,7 +174,10 @@ public class ParticleEmitterInstance extends ClosedPooledBaseData {
 		mEmitTimer -= core.gameTime().elapsedTimeMilli() * mEmitterEmitModifier;
 
 		if (mParticleSystem != null && mEmitTimer < 0) {
-			final int lAmtToSpawn = RandomNumbers.random(mEmitterDefinition.emitAmountMin, mEmitterDefinition.emitAmountMax);
+			final var emitAmtMin = mEmitterDefinition.emitAmountMin;
+			final var emitAmtMax = Math.max(emitAmtMin+1, mEmitterDefinition.emitAmountMax);
+			
+			final int lAmtToSpawn = RandomNumbers.random(emitAmtMin, emitAmtMax);
 			for (int i = 0; i < lAmtToSpawn; i++) {
 
 				// The position and velocity is handled by the emitter shape
@@ -263,8 +266,11 @@ public class ParticleEmitterInstance extends ClosedPooledBaseData {
 					continue;
 
 				final var lEmitterManager = particleFramework.particleEmitterManager();
-				final var lEmitterInstance = lEmitterManager.getFreePooledItem();
-				mChildEmitters[i] = lEmitterInstance;
+
+				if (mChildEmitters[i] == null) {
+					mChildEmitters[i] = lEmitterManager.getFreePooledItem();
+				}
+
 				mChildEmitters[i].assignEmitterDefinitionAndResolveParticleSystem(lChildEmitterDefinition, particleFramework);
 			}
 		}

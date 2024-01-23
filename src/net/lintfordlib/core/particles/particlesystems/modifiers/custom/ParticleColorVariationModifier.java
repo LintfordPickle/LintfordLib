@@ -14,8 +14,6 @@ public class ParticleColorVariationModifier extends ParticleModifierBase {
 
 	private static final long serialVersionUID = -2141468031095805751L;
 
-	public static final String MODIFIER_NAME = "ParticleColorVariationModifier";
-
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
@@ -29,7 +27,7 @@ public class ParticleColorVariationModifier extends ParticleModifierBase {
 	// --------------------------------------
 
 	public ParticleColorVariationModifier() {
-		super(MODIFIER_NAME);
+		super(ParticleColorVariationModifier.class.getSimpleName());
 
 		minRed = 209f / 255f;
 		maxRed = 229f / 255f;

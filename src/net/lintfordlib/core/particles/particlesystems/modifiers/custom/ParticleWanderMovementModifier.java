@@ -13,8 +13,6 @@ public class ParticleWanderMovementModifier extends ParticleModifierBase {
 
 	private static final long serialVersionUID = 6797729588507702695L;
 
-	public static final String MODIFIER_NAME = "ParticleWanderMovementModifier";
-
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
@@ -32,7 +30,7 @@ public class ParticleWanderMovementModifier extends ParticleModifierBase {
 	}
 
 	public ParticleWanderMovementModifier(float speed, float wanderAmtRad) {
-		super(MODIFIER_NAME);
+		super(ParticleWanderMovementModifier.class.getSimpleName());
 
 		this.speed = speed;
 		this.wanderAmtRad = wanderAmtRad;

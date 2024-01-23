@@ -12,8 +12,6 @@ public class ParticlePhysicsModifier extends ParticleModifierBase {
 
 	private static final long serialVersionUID = 3823714289519272208L;
 
-	public static final String MODIFIER_NAME = "ParticlePhysicsModifier";
-
 	/** The factor of the particle vertical velocity to conserve after collisions with the floor */
 	public static final float PARTICLE_FLOOR_BOUNCE_AMT = 0.5f;
 
@@ -29,7 +27,7 @@ public class ParticlePhysicsModifier extends ParticleModifierBase {
 	// --------------------------------------
 
 	public ParticlePhysicsModifier() {
-		super(MODIFIER_NAME);
+		super(ParticlePhysicsModifier.class.getSimpleName());
 
 		enableMovement = true;
 		enableRotation = true;

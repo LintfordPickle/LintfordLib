@@ -12,8 +12,6 @@ public class ParticleScaleInOutModifier extends ParticleModifierBase {
 
 	private static final long serialVersionUID = -7648472396754837764L;
 
-	public static final String MODIFIER_NAME = "ParticleScaleInOutModifier";
-
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
@@ -26,7 +24,7 @@ public class ParticleScaleInOutModifier extends ParticleModifierBase {
 	// --------------------------------------
 
 	public ParticleScaleInOutModifier() {
-		super(MODIFIER_NAME);
+		super(ParticleScaleInOutModifier.class.getSimpleName());
 
 	}
 

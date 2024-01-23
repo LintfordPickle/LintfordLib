@@ -12,8 +12,6 @@ public class ParticleScaleModifier extends ParticleModifierBase {
 
 	private static final long serialVersionUID = 6192144812340882247L;
 
-	public static final String MODIFIER_NAME = "ParticleScaleModifier";
-
 	/** The factor of the particle vertical velocity to conserve after collisions with the floor */
 	public static final float PARTICLE_FLOOR_BOUNCE_AMT = 0.5f;
 
@@ -29,7 +27,7 @@ public class ParticleScaleModifier extends ParticleModifierBase {
 	// --------------------------------------
 
 	public ParticleScaleModifier() {
-		super(MODIFIER_NAME);
+		super(ParticleScaleModifier.class.getSimpleName());
 
 	}
 
@@ -39,11 +37,7 @@ public class ParticleScaleModifier extends ParticleModifierBase {
 
 	@Override
 	public void initialize(Particle particle) {
-		if (maxScaleAmount <= 0.f)
-			maxScaleAmount = 10.f;
 
-		if (minScaleAmount > maxScaleAmount)
-			minScaleAmount = 1.f;
 	}
 
 	@Override
