@@ -1,0 +1,180 @@
+package net.lintfordlib.renderers.windows.components;
+
+import net.lintfordlib.core.LintfordCore;
+import net.lintfordlib.core.geometry.Rectangle;
+import net.lintfordlib.core.graphics.ColorConstants;
+import net.lintfordlib.core.graphics.batching.SpriteBatch;
+import net.lintfordlib.core.graphics.fonts.FontUnit;
+import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
+import net.lintfordlib.core.graphics.textures.CoreTextureNames;
+import net.lintfordlib.core.input.InputManager;
+import net.lintfordlib.core.input.keyboard.IUiInputKeyPressCallback;
+import net.lintfordlib.renderers.windows.UiWindow;
+
+public class UiCheckBox extends UIWidget {
+
+	// --------------------------------------
+	// Constants
+	// --------------------------------------
+
+	private static final long serialVersionUID = 3637330515154931480L;
+
+	// --------------------------------------
+	// Variables
+	// --------------------------------------
+
+	private transient boolean mHasFocus;
+	private boolean mIsChecked;
+	private transient Rectangle mBoxRectangle;
+	private boolean mIsReadonly;
+	private float mTextScale;
+	private String mLabelText;
+
+	// --------------------------------------
+	// Properties
+	// --------------------------------------
+
+	public boolean isChecked() {
+		return mIsChecked;
+	}
+
+	public void isChecked(boolean newValue) {
+		mIsChecked = newValue;
+	}
+
+	public String label() {
+		return mLabelText;
+	}
+
+	public void label(String newLabel) {
+		mLabelText = newLabel;
+	}
+
+	public void textScale(float newTextScale) {
+		mTextScale = newTextScale;
+	}
+
+	public float textScale() {
+		return mTextScale;
+	}
+
+	public boolean isReadonly() {
+		return mIsReadonly;
+	}
+
+	public void isReadonly(boolean newValue) {
+		mIsReadonly = newValue;
+	}
+
+	public boolean hasFocus() {
+		return mHasFocus;
+	}
+
+	public void hasFocus(boolean v) {
+		mHasFocus = v;
+	}
+
+	// --------------------------------------
+	// Constructor
+	// --------------------------------------
+
+	public UiCheckBox(UiWindow parentWindow) {
+		this(parentWindow, null);
+	}
+
+	public UiCheckBox(UiWindow parentWindow, String labelText) {
+		super(parentWindow);
+
+		mBoxRectangle = new Rectangle();
+
+		mTextScale = 1.f;
+		mW = 100;
+		mH = 25.f;
+
+		mLabelText = labelText;
+
+	}
+
+	// --------------------------------------
+	// Core-Methods
+	// --------------------------------------
+
+	public boolean handleInput(LintfordCore core) {
+		if (mIsReadonly)
+			return false;
+
+		if (mBoxRectangle.intersectsAA(core.HUD().getMouseCameraSpace())) {
+			if (core.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this, 30)) {
+
+				mIsChecked = !mIsChecked;
+
+				if (mUiWidgetListenerCallback != null)
+					mUiWidgetListenerCallback.widgetOnDataChanged(core.input(), mUiWidgetListenerUid);
+
+			}
+		}
+
+		else if (intersectsAA(core.HUD().getMouseCameraSpace())) {
+			if (core.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
+
+				onClick(core.input(), true);
+
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	public void update(LintfordCore core) {
+		super.update(core);
+
+		if (mIsReadonly)
+			return;
+
+		final var lRectSize = 25;
+		var xx = mX + mW * .75f - lRectSize / 2.f;
+
+		mBoxRectangle.set(xx, mY + mH / 2 - lRectSize / 2, lRectSize, lRectSize);
+	}
+
+	@Override
+	public void draw(LintfordCore core, SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheetDefinition, FontUnit textFont, float componentZDepth) {
+		var lTextColor = ColorConstants.TextEntryColor;
+		final float lTextHeight = textFont.fontHeight();
+
+		if (mLabelText != null) {
+			textFont.begin(core.HUD());
+			textFont.drawText(mLabelText, mX, mY + mH * .5f - lTextHeight * .5f * mTextScale, componentZDepth, lTextColor, mTextScale);
+			textFont.end();
+		}
+
+		spriteBatch.begin(core.HUD());
+		spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_CHECKBOX_UNCHECKED, mBoxRectangle, componentZDepth, ColorConstants.WHITE);
+		if (mIsChecked)
+			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_CHECKBOX_CHECKED, mBoxRectangle, componentZDepth, ColorConstants.WHITE);
+
+		spriteBatch.end();
+	}
+
+	// --------------------------------------
+	// Methods
+	// --------------------------------------
+
+	public void setKeyUpdateListener(IUiInputKeyPressCallback keyUpdateListener, int keyListenerUid) {
+
+	}
+
+	public void onClick(InputManager inputState, boolean newFocus) {
+		if (mIsReadonly)
+			return;
+
+		mHasFocus = newFocus;
+	}
+
+	@Override
+	public void resetCoolDownTimer(float cooldownInMs) {
+		mInputTimer = cooldownInMs;
+	}
+
+}
