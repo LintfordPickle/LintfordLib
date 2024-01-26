@@ -128,6 +128,9 @@ public abstract class BaseRenderer implements IInputProcessor {
 	}
 
 	public boolean handleInput(LintfordCore core) {
+		if (mInputTimer > 0.f)
+			mInputTimer -= core.gameTime().elapsedTimeMilli();
+
 		return false;
 	}
 
