@@ -190,4 +190,8 @@ public class CollisionExtensions {
 		return false;
 	}
 
+	public static boolean pointIntersectsAA(float x, float y, float w, float h, float pointX, float pointY) {
+		return ((((pointX < x + w) && (x < pointX)) && (pointY < y + h)) && (y < pointY));
+	}
+	
 }
