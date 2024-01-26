@@ -30,6 +30,11 @@ public class ParticleSystemDefinition extends BaseDefinition {
 	public String textureFilename;
 	public int textureFilterMode;
 
+	public String onDeathEmitterName;
+	
+	public int glSrcBlendFactor;
+	public int glDestBlendFactor;
+
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
@@ -55,6 +60,16 @@ public class ParticleSystemDefinition extends BaseDefinition {
 	/** Returns the filename of the texture. */
 	public String textureFilename() {
 		return textureFilename;
+	}
+
+	/** Returns the name of an emitter (in the current entityGroupUId) which should be invoked on each particles death. */
+	public void onDeathEmitterName(String newOnDeathEmitterName) {
+		onDeathEmitterName = newOnDeathEmitterName;
+	}
+
+	/** Returns the name of an emitter (in the current entityGroupUId) which should be invoked on each particles death. */
+	public String onDeathEmitterName() {
+		return onDeathEmitterName;
 	}
 
 	// --------------------------------------

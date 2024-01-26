@@ -23,9 +23,20 @@ public class ParticleRenderer {
 	private boolean mIsParticleLoaded;
 	private boolean mIsAssigned;
 
+	private int mSrcBlendFactor;
+	private int mDestBlendFactor;
+
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public int srcBlendFactor() {
+		return mSrcBlendFactor;
+	}
+
+	public int destBlendFactor() {
+		return mDestBlendFactor;
+	}
 
 	public int particleRendererId() {
 		return mParticleRendererId;
@@ -83,8 +94,13 @@ public class ParticleRenderer {
 		if (!mResourcesLoaded || !mIsParticleLoaded || !mIsAssigned)
 			return;
 
+		if (textureBatch.isDrawing() == false)
+			return;
+
 		final var lParticleSystem = mParticleSystem.particles();
 		final var lNumParticles = lParticleSystem.size();
+
+		final var lCamBounds = textureBatch.camera().boundingRectangle();
 
 		for (int i = 0; i < lNumParticles; i++) {
 			final var lParticleInst = lParticleSystem.get(i);
@@ -94,6 +110,9 @@ public class ParticleRenderer {
 
 			final float lWidthScaled = lParticleInst.width * lParticleInst.scale;
 			final float lHeightScaled = lParticleInst.height * lParticleInst.scale;
+
+			if (lCamBounds.intersectsAA(lParticleInst.worldPositionX, lParticleInst.worldPositionY, lParticleInst.width, lParticleInst.height) == false)
+				continue;
 
 			textureBatch.drawAroundCenter(mTexture, lParticleInst.sx, lParticleInst.sy, lParticleInst.sw, lParticleInst.sh, lParticleInst.worldPositionX, lParticleInst.worldPositionY, lWidthScaled, lHeightScaled, lParticleInst.worldPositionZ, lParticleInst.rotationInRadians, lParticleInst.rox, lParticleInst.roy,
 					lParticleInst.scale, lParticleInst.color);
@@ -105,7 +124,10 @@ public class ParticleRenderer {
 	// Methods
 	// --------------------------------------
 
-	public void assignParticleSystem(final ParticleSystemInstance particleSystem) {
+	public void assignParticleSystem(ParticleSystemInstance particleSystem) {
+		if (particleSystem.isAssigned() == false)
+			return;
+
 		mParticleSystem = particleSystem;
 		loadParticleContent(particleSystem);
 		mIsAssigned = true;
@@ -118,14 +140,12 @@ public class ParticleRenderer {
 		mIsAssigned = false;
 	}
 
-	private void loadParticleContent(final ParticleSystemInstance particleSystemInst) {
+	private void loadParticleContent(ParticleSystemInstance particleSystemInst) {
 		if (!mResourcesLoaded)
 			return;
 
 		final var lParticleDefinition = particleSystemInst.definition();
 		mIsParticleLoaded = lParticleDefinition != null;
-
-		// TODO: Add the option to load a texture from a texture asset (this would mean we don't need the filepath and the filter mode).
 
 		final var lTextureName = lParticleDefinition.textureName();
 		final var lTextureFilepath = lParticleDefinition.textureFilename();
@@ -136,5 +156,16 @@ public class ParticleRenderer {
 			// Fallback to engine white
 			mTexture = mResourceManager.textureManager().getTexture("TEXTURE_WHITE", LintfordCore.CORE_ENTITY_GROUP_ID);
 		}
+
+		// Set default blend factors
+		if (lParticleDefinition.glSrcBlendFactor == 0)
+			lParticleDefinition.glSrcBlendFactor = GL11.GL_SRC_ALPHA;
+
+		if (lParticleDefinition.glDestBlendFactor == 0)
+			lParticleDefinition.glDestBlendFactor = GL11.GL_ONE_MINUS_SRC_ALPHA;
+
+		mSrcBlendFactor = lParticleDefinition.glSrcBlendFactor;
+		mDestBlendFactor = lParticleDefinition.glDestBlendFactor;
+
 	}
 }
