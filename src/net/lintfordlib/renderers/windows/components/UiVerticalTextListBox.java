@@ -128,7 +128,7 @@ public class UiVerticalTextListBox extends UIWidget implements IScrollBarArea {
 	}
 
 	public UiListBoxItem getItemByIndex(int index) {
-		if (index < 0 || index != mItems.size())
+		if (index < 0 || index >= mItems.size())
 			return null;
 
 		return mItems.get(index);
