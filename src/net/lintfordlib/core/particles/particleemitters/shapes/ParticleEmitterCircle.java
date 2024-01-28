@@ -7,6 +7,12 @@ import net.lintfordlib.core.particles.particlesystems.ParticleSystemInstance;
 public class ParticleEmitterCircle extends ParticleEmitterShape {
 
 	// --------------------------------------
+	// Constants
+	// --------------------------------------
+
+	private static final long serialVersionUID = -1423935026127420797L;
+
+	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
@@ -21,7 +27,7 @@ public class ParticleEmitterCircle extends ParticleEmitterShape {
 	}
 
 	public ParticleEmitterCircle(float radius) {
-		super(EmitterType.Circle);
+		super(ParticleEmitterCircle.class.getSimpleName());
 
 		this.radius = radius;
 	}
@@ -32,9 +38,12 @@ public class ParticleEmitterCircle extends ParticleEmitterShape {
 
 	public void spawn(ParticleSystemInstance particleSystem, float worldX, float worldY, float heading, float force) {
 		final var lRandomHeading = RandomNumbers.nextFloat() * ConstantsMath.Pi * 2;
-		float xx = worldX + (float) Math.cos(lRandomHeading) * radius;
-		float yy = worldY + (float) Math.sin(lRandomHeading) * radius;
+		final var xx = worldX + (float) Math.cos(lRandomHeading) * radius;
+		final var yy = worldY + (float) Math.sin(lRandomHeading) * radius;
 
-		particleSystem.spawnParticle(xx, yy, -0.02f, .0f, .0f);
+		final var lVelX = (float) Math.cos(heading) * force;
+		final var lVelY = (float) Math.sin(heading) * force;
+
+		particleSystem.spawnParticle(xx, yy, -0.02f, lVelX, lVelY);
 	}
 }

@@ -8,11 +8,11 @@ import com.google.gson.GsonBuilder;
 import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.entities.EntityLocationProvider;
 import net.lintfordlib.core.entities.definitions.DefinitionManager;
-import net.lintfordlib.core.entities.instances.InstanceManager;
+import net.lintfordlib.core.entities.instances.PoolInstanceManager;
 import net.lintfordlib.core.particles.ParticleFrameworkData;
 import net.lintfordlib.core.particles.particlesystems.deserializer.ParticleSystemDeserializer;
 
-public class ParticleSystemManager extends InstanceManager<ParticleSystemInstance> {
+public class ParticleSystemManager extends PoolInstanceManager<ParticleSystemInstance> {
 
 	// --------------------------------------
 	// Constants
@@ -165,7 +165,7 @@ public class ParticleSystemManager extends InstanceManager<ParticleSystemInstanc
 
 	public ParticleSystemInstance createNewParticleSystemFromDefinition(ParticleSystemDefinition particleSystemDef) {
 		if (particleSystemDef != null) {
-			final var lNewParticleSystem = new ParticleSystemInstance();
+			final var lNewParticleSystem = getFreePooledItem();
 			lNewParticleSystem.assignSystemDefinitionAndResolveEmitters(ParticleSystemUidCounter++, particleSystemDef, mParticleFrameworkData);
 
 			mInstances.add(lNewParticleSystem);
@@ -191,6 +191,11 @@ public class ParticleSystemManager extends InstanceManager<ParticleSystemInstanc
 		particleSystem.unload();
 		particleSystem = null;
 
+	}
+
+	@Override
+	protected ParticleSystemInstance createNewInstance() {
+		return new ParticleSystemInstance();
 	}
 
 }

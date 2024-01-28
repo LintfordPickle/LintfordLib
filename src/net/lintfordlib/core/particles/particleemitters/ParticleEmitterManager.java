@@ -10,6 +10,7 @@ import net.lintfordlib.core.entities.EntityLocationProvider;
 import net.lintfordlib.core.entities.definitions.DefinitionManager;
 import net.lintfordlib.core.entities.instances.PoolInstanceManager;
 import net.lintfordlib.core.particles.ParticleFrameworkData;
+import net.lintfordlib.core.particles.particleemitters.deserializer.ParticleEmitterDeserializer;
 import net.lintfordlib.core.particles.particlesystems.ParticleSystemInstance;
 
 public class ParticleEmitterManager extends PoolInstanceManager<ParticleEmitterInstance> {
@@ -38,19 +39,27 @@ public class ParticleEmitterManager extends PoolInstanceManager<ParticleEmitterI
 
 		@Override
 		public void loadDefinitionsFromFolderWatcher(EntityLocationProvider entityLocationProvider) {
-			final var lGson = new GsonBuilder().create();
+			final var lGsonBuilder = new GsonBuilder();
+			lGsonBuilder.registerTypeAdapter(ParticleEmitterDefinition.class, new ParticleEmitterDeserializer());
+			final var lGson = lGsonBuilder.create();
+
 			loadDefinitionsFromFolderWatcherItems(entityLocationProvider, lGson, ParticleEmitterDefinition.class);
 		}
 
 		@Override
 		public void loadDefinitionsFromMetaFile(File file) {
-			final var lGson = new GsonBuilder().create();
+			final var lGsonBuilder = new GsonBuilder();
+			lGsonBuilder.registerTypeAdapter(ParticleEmitterDefinition.class, new ParticleEmitterDeserializer());
+			final var lGson = lGsonBuilder.create();
+
 			loadDefinitionsFromMetaFileItems(file, lGson, ParticleEmitterDefinition.class);
 		}
 
 		@Override
 		public ParticleEmitterDefinition loadDefinitionFromFile(File file) {
-			final var lGson = new GsonBuilder().create();
+			final var lGsonBuilder = new GsonBuilder();
+			lGsonBuilder.registerTypeAdapter(ParticleEmitterDefinition.class, new ParticleEmitterDeserializer());
+			final var lGson = lGsonBuilder.create();
 
 			return loadDefinitionFromFile(file, lGson, ParticleEmitterDefinition.class);
 		}

@@ -6,6 +6,12 @@ import net.lintfordlib.core.particles.particlesystems.ParticleSystemInstance;
 public class ParticleEmitterBox extends ParticleEmitterShape {
 
 	// --------------------------------------
+	// Constants
+	// --------------------------------------
+
+	private static final long serialVersionUID = 6641296486323457523L;
+
+	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
@@ -21,7 +27,7 @@ public class ParticleEmitterBox extends ParticleEmitterShape {
 	}
 
 	public ParticleEmitterBox(float width, float height) {
-		super(EmitterType.Point);
+		super(ParticleEmitterBox.class.getSimpleName());
 
 		this.width = width;
 		this.height = height;
@@ -45,6 +51,9 @@ public class ParticleEmitterBox extends ParticleEmitterShape {
 			yy = worldY + RandomNumbers.random(-height2, height2);
 		}
 
-		particleSystem.spawnParticle(xx, yy, -0.02f, .0f, .0f);
+		final var lVelX = (float) Math.cos(heading) * force;
+		final var lVelY = (float) Math.sin(heading) * force;
+
+		particleSystem.spawnParticle(xx, yy, -0.02f, lVelX, lVelY);
 	}
 }

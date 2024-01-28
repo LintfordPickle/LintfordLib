@@ -197,6 +197,10 @@ public class UiInputText extends UIWidget implements IBufferedTextInputCallback 
 
 					core.input().keyboard().stopBufferedTextCapture();
 
+					if (mUiWidgetListenerCallback != null) {
+						mUiWidgetListenerCallback.widgetOnDataChanged(null, mUiWidgetListenerUid);
+					}
+
 					mHasFocus = false;
 					mShowCaret = false;
 				}

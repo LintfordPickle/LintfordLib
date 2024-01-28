@@ -37,7 +37,7 @@ public class ParticleEmitterInstance extends GridEntity {
 	private boolean enabled;
 
 	public transient ParticleSystemInstance particleSystemInstance;
-	private float mEmitterEmitModifier; // [0,1]
+	private float mEmitterEmitTimerModifier; // [0,1]
 
 	public float rot;
 
@@ -106,17 +106,17 @@ public class ParticleEmitterInstance extends GridEntity {
 	}
 
 	public float emitterEmitModifierNormalized() {
-		return mEmitterEmitModifier;
+		return mEmitterEmitTimerModifier;
 	}
 
 	public void emitterEmitModifierNormalized(float newModifer) {
-		mEmitterEmitModifier = MathHelper.clamp(newModifer, 0.f, 1.f);
+		mEmitterEmitTimerModifier = MathHelper.clamp(newModifer, 0.f, 1.f);
 
 		final int lNumInnerInstances = mChildEmitterInstances.size();
 		for (int i = 0; i < lNumInnerInstances; i++) {
 			final var lChildParticleEmitterInstanceInst = mChildEmitterInstances.get(i);
 			if (lChildParticleEmitterInstanceInst != null) {
-				lChildParticleEmitterInstanceInst.emitterEmitModifierNormalized(mEmitterEmitModifier);
+				lChildParticleEmitterInstanceInst.emitterEmitModifierNormalized(mEmitterEmitTimerModifier);
 			}
 		}
 	}
@@ -135,7 +135,7 @@ public class ParticleEmitterInstance extends GridEntity {
 		mChildEmitterInstances = new ArrayList<>();
 		enabled = true;
 		mEmitterInstanceId = entityUid;
-		mEmitterEmitModifier = 1.f;
+		mEmitterEmitTimerModifier = 1.f;
 	}
 
 	// --------------------------------------
@@ -166,40 +166,15 @@ public class ParticleEmitterInstance extends GridEntity {
 		aabb.x(aabb.x() + mEmitterDefinition.positionRelOffsetX);
 		aabb.y(aabb.y() + mEmitterDefinition.positionRelOffsetY);
 
-		mEmitTimer -= core.gameTime().elapsedTimeMilli() * mEmitterEmitModifier;
+		mEmitTimer -= core.gameTime().elapsedTimeMilli() * mEmitterEmitTimerModifier;
 
-		if (mEmitTimer < 0) {
-			final var emitAmtMin = mEmitterDefinition.emitAmountMin;
-			final var emitAmtMax = Math.max(emitAmtMin + 1, mEmitterDefinition.emitAmountMax);
-
-			final int lAmtToSpawn = RandomNumbers.random(emitAmtMin, emitAmtMax);
-			for (int i = 0; i < lAmtToSpawn; i++) {
-
-				// The position and velocity is handled by the emitter shape
-				if (mEmitterDefinition.useSharedParticleSystem) {
-					if (mEmitterDefinition.ParticleEmitterShape == null) {
-						mEmitterDefinition.sharedParticleSystemInstance.spawnParticle(aabb.x(), aabb.y(), -.2f, 0, 0);
-					} else {
-						final float lHeading = 0.f;
-						final float lForce = 0.f;
-
-						mEmitterDefinition.ParticleEmitterShape.spawn(mEmitterDefinition.sharedParticleSystemInstance, aabb.x(), aabb.y(), lHeading, lForce);
-					}
-				} else {
-					if (particleSystemInstance != null) {
-						if (mEmitterDefinition.ParticleEmitterShape == null) {
-							particleSystemInstance.spawnParticle(aabb.x(), aabb.y(), -.2f, 0, 0);
-						} else {
-							final float lHeading = 0.f;
-							final float lForce = 0.f;
-
-							mEmitterDefinition.ParticleEmitterShape.spawn(particleSystemInstance, aabb.x(), aabb.y(), lHeading, lForce);
-						}
-					}
-				}
-			}
-
-			mEmitTimer = RandomNumbers.random(mEmitterDefinition.emitTimeMin, mEmitterDefinition.emitTimeMax);
+		switch (mEmitterDefinition.triggerType) {
+		case ParticleEmitterTrigger.PARTICLE_EMITTER_TRIGGER_TYPE_TIMER:
+			updateTimedEmitter(core);
+			break;
+		case ParticleEmitterTrigger.PARTICLE_EMITTER_TRIGGER_TYPE_TRIGGED:
+			updateTriggerEmitter(core);
+			break;
 		}
 
 		final int lNumInnerInstances = mChildEmitterInstances.size();
@@ -217,6 +192,50 @@ public class ParticleEmitterInstance extends GridEntity {
 			lChildParticleEmitterInstanceInst.update(core);
 
 		}
+	}
+
+	private void updateTimedEmitter(LintfordCore core) {
+		if (particleSystemInstance == null)
+			return;
+
+		if (mEmitTimer < 0) {
+			final var emitAmtMin = mEmitterDefinition.emitAmountMin;
+			final var emitAmtMax = Math.max(emitAmtMin + 1, mEmitterDefinition.emitAmountMax);
+
+			final int lAmtToSpawn = RandomNumbers.random(emitAmtMin, emitAmtMax);
+			for (int i = 0; i < lAmtToSpawn; i++) {
+
+				final float lHeading = 0.f;
+
+				final var emitForceMin = mEmitterDefinition.emitForceMin;
+				final var emitForceMax = Math.max(emitForceMin + 1, mEmitterDefinition.emitForceMax);
+				final var lForce = RandomNumbers.random(emitForceMin, emitForceMax);
+
+				final var lVelX = (float) Math.cos(lHeading) * lForce;
+				final var lVelY = (float) Math.sin(lHeading) * lForce;
+
+				// The position and velocity is handled by the emitter shape
+				if (mEmitterDefinition.useSharedParticleSystem) {
+					if (mEmitterDefinition.ParticleEmitterShape == null) {
+						mEmitterDefinition.sharedParticleSystemInstance.spawnParticle(aabb.x(), aabb.y(), -.2f, 0, 0);
+					} else {
+						mEmitterDefinition.ParticleEmitterShape.spawn(mEmitterDefinition.sharedParticleSystemInstance, aabb.x(), aabb.y(), lHeading, lForce);
+					}
+				} else {
+					if (mEmitterDefinition.ParticleEmitterShape == null) {
+						particleSystemInstance.spawnParticle(aabb.x(), aabb.y(), -.2f, lVelX, lVelY);
+					} else {
+						mEmitterDefinition.ParticleEmitterShape.spawn(particleSystemInstance, aabb.x(), aabb.y(), lHeading, lForce);
+					}
+				}
+			}
+
+			mEmitTimer = RandomNumbers.random(mEmitterDefinition.emitTimeMin, mEmitterDefinition.emitTimeMax);
+		}
+	}
+
+	private void updateTriggerEmitter(LintfordCore core) {
+		// ignored - triggered on external event
 	}
 
 	// --------------------------------------

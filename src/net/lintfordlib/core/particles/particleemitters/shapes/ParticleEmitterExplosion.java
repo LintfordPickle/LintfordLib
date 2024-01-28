@@ -7,6 +7,12 @@ import net.lintfordlib.core.particles.particlesystems.ParticleSystemInstance;
 public class ParticleEmitterExplosion extends ParticleEmitterShape {
 
 	// --------------------------------------
+	// Constants
+	// --------------------------------------
+
+	private static final long serialVersionUID = -8626880069039933115L;
+
+	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
@@ -21,7 +27,7 @@ public class ParticleEmitterExplosion extends ParticleEmitterShape {
 	}
 
 	public ParticleEmitterExplosion(float radius) {
-		super(EmitterType.Point);
+		super(ParticleEmitterExplosion.class.getSimpleName());
 
 		this.radius = radius;
 	}

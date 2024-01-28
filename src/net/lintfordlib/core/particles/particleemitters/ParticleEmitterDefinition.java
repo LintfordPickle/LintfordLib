@@ -8,7 +8,6 @@ import com.google.gson.annotations.SerializedName;
 import net.lintfordlib.core.entities.definitions.BaseDefinition;
 import net.lintfordlib.core.particles.ParticleFrameworkData;
 import net.lintfordlib.core.particles.particleemitters.shapes.ParticleEmitterShape;
-import net.lintfordlib.core.particles.particleemitters.shapes.ParticleEmitterShape.EmitterType;
 import net.lintfordlib.core.particles.particlesystems.ParticleSystemInstance;
 
 public class ParticleEmitterDefinition extends BaseDefinition {
@@ -23,16 +22,12 @@ public class ParticleEmitterDefinition extends BaseDefinition {
 	// Variables
 	// --------------------------------------
 
-	@SerializedName(value = "childEmitters")
-	protected List<ParticleEmitterDefinition> mChildEmitters = new ArrayList<>();
+	// see ParticleEmitterTriggerTypes
+	@SerializedName(value = "triggerType")
+	public int triggerType;
 
-	public boolean useSharedParticleSystem;
-	public transient ParticleSystemInstance sharedParticleSystemInstance;
-
+	@SerializedName(value = "emitterShape")
 	public ParticleEmitterShape ParticleEmitterShape;
-
-	@SerializedName(value = "particleSystemName")
-	public String particleSystemName;
 
 	@SerializedName(value = "emitTimeMin")
 	public float emitTimeMin;
@@ -46,6 +41,12 @@ public class ParticleEmitterDefinition extends BaseDefinition {
 	@SerializedName(value = "emitAmountMax")
 	public int emitAmountMax;
 
+	@SerializedName(value = "emitForceMin")
+	public float emitForceMin;
+
+	@SerializedName(value = "emitForceMax")
+	public float emitForceMax;
+
 	@SerializedName(value = "positionRelOffsetX")
 	public float positionRelOffsetX;
 
@@ -55,10 +56,17 @@ public class ParticleEmitterDefinition extends BaseDefinition {
 	@SerializedName(value = "positionRelOffsetRot")
 	public float positionRelOffsetRot;
 
-	@SerializedName(value = "emitterShape")
-	public EmitterType mEmitterShape;
+	@SerializedName(value = "particleSystemName")
+	public String particleSystemName;
+
+	@SerializedName(value = "useSharedParticleSystem")
+	public boolean useSharedParticleSystem;
+	public transient ParticleSystemInstance sharedParticleSystemInstance;
 
 	public transient ParticleEmitterDefinition parentEmitter;
+
+	@SerializedName(value = "childEmitters")
+	protected List<ParticleEmitterDefinition> mChildEmitters = new ArrayList<>();
 
 	// --------------------------------------
 	// Properties
@@ -163,6 +171,7 @@ public class ParticleEmitterDefinition extends BaseDefinition {
 		lNewDef.positionRelOffsetX = def.positionRelOffsetX;
 		lNewDef.positionRelOffsetY = def.positionRelOffsetY;
 		lNewDef.positionRelOffsetRot = def.positionRelOffsetRot;
+		lNewDef.triggerType = def.triggerType;
 
 		// Duplicate child emitters?
 		final var lNumChildren = def.childEmitters().size();

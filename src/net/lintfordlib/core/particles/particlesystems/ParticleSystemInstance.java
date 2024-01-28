@@ -94,7 +94,7 @@ public class ParticleSystemInstance {
 			return;
 
 		mOnDeathEmitter = frameworkData.particleEmitterManager().getParticleEmitterByName(lParticleEmitterName);
-		
+
 	}
 
 	public void resyncWithDefinition(ParticleFrameworkData particleFramework) {
@@ -123,6 +123,8 @@ public class ParticleSystemInstance {
 				mParticles.removeFirst();
 			}
 		}
+
+		// TODO: resync onDeathEmitter name
 
 		mCapacity = lDesiredNumParticles;
 	}
@@ -154,6 +156,13 @@ public class ParticleSystemInstance {
 			if (particle.lifeTime() != Particle.DO_NOT_DESPAWN_LIFETIME) {
 				particle.timeSinceStart += core.appTime().elapsedTimeMilli();
 				if (particle.timeSinceStart >= particle.lifeTime()) {
+
+					if (mOnDeathEmitter != null) {
+						mOnDeathEmitter.emitterDefinition();
+					}
+
+					// TODO: onDeathEmitter ..
+
 					particle.reset();
 					continue;
 				}
@@ -172,7 +181,7 @@ public class ParticleSystemInstance {
 	// Methods
 	// --------------------------------------
 
-	public void assignedRendererId(final int rendererId) {
+	public void assignedRendererId(int rendererId) {
 		mRendererId = rendererId;
 	}
 
@@ -255,6 +264,11 @@ public class ParticleSystemInstance {
 	}
 
 	public void reset() {
+		mIsAssigned = false;
+		mRendererId = -1;
+		mOnDeathEmitter = null;
+		mParticleSystemDefinition = null;
+
 		for (int i = 0; i < mCapacity; i++) {
 			mParticles.get(i).reset();
 		}

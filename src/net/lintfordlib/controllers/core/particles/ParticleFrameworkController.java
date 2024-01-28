@@ -82,6 +82,7 @@ public class ParticleFrameworkController extends BaseController {
 
 				if (lParentInst.isEnabled() == false)
 					continue;
+
 			}
 
 			lParticleEmitterInstance.update(core);
