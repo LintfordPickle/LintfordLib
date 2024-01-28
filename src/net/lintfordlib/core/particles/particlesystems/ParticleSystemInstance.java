@@ -7,6 +7,7 @@ import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.maths.RandomNumbers;
 import net.lintfordlib.core.particles.Particle;
 import net.lintfordlib.core.particles.ParticleFrameworkData;
+import net.lintfordlib.core.particles.particleemitters.ParticleEmitterInstance;
 import net.lintfordlib.core.particles.particlesystems.initializers.ParticleInitializerBase;
 import net.lintfordlib.core.particles.particlesystems.modifiers.ParticleModifierBase;
 
@@ -25,6 +26,7 @@ public class ParticleSystemInstance {
 	protected boolean mIsAssigned;
 	protected int mParticleSystemUid;
 	protected ParticleSystemDefinition mParticleSystemDefinition;
+	protected ParticleEmitterInstance mOnDeathEmitter;
 	private List<Particle> mParticles;
 	private transient int mRendererId;
 	private int mCapacity;
@@ -70,7 +72,7 @@ public class ParticleSystemInstance {
 	// Core-Methods
 	// --------------------------------------
 
-	public void initialize(int particleSystemUid, ParticleSystemDefinition particleSystemDefinition) {
+	public void assignSystemDefinitionAndResolveEmitters(int particleSystemUid, ParticleSystemDefinition particleSystemDefinition, ParticleFrameworkData frameworkData) {
 		mParticleSystemUid = particleSystemUid;
 		mIsAssigned = true;
 		mParticleSystemDefinition = particleSystemDefinition;
@@ -82,6 +84,17 @@ public class ParticleSystemInstance {
 		for (int i = 0; i < mCapacity; i++) {
 			mParticles.add(new Particle());
 		}
+
+		resolveOnDeathEmitter(frameworkData);
+	}
+
+	private void resolveOnDeathEmitter(ParticleFrameworkData frameworkData) {
+		final var lParticleEmitterName = mParticleSystemDefinition.onDeathEmitterName;
+		if (lParticleEmitterName == null || lParticleEmitterName.length() == 0)
+			return;
+
+		mOnDeathEmitter = frameworkData.particleEmitterManager().getParticleEmitterByName(lParticleEmitterName);
+		
 	}
 
 	public void resyncWithDefinition(ParticleFrameworkData particleFramework) {

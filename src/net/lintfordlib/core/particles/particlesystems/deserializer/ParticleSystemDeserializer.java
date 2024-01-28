@@ -32,6 +32,8 @@ public class ParticleSystemDeserializer implements JsonDeserializer<ParticleSyst
 	public static final String PARTICLE_SYSTEM_TEXTURE_FILTER = "textureFilterMode";
 	public static final String PARTICLE_SYSTEM_PARTICLE_LIFE_MIN = "particleLifeMin";
 	public static final String PARTICLE_SYSTEM_PARTICLE_LIFE_MAX = "particleLifeMax";
+	public static final String PARTICLE_SYSTEM_PARTICLE_SRC_BLEND = "glSrcBlendFactor";
+	public static final String PARTICLE_SYSTEM_PARTICLE_DEST_BLEND = "glDestBlendFactor";
 
 	public static final String PARTICLE_SYSTEM_INITIALIZER_LIST = "initializers";
 	public static final String PARTICLE_SYSTEM_MODIFIER_LIST = "modifiers";
@@ -59,7 +61,7 @@ public class ParticleSystemDeserializer implements JsonDeserializer<ParticleSyst
 		if (lTempPrimitive != null && !lTempPrimitive.isJsonNull()) {
 			lNewParticleSystemDefinition.name = lTempPrimitive.getAsString();
 		}
-		
+
 		lTempPrimitive = jsonElement.getAsJsonObject().getAsJsonPrimitive(PARTICLE_SYSTEM_DISPLAY_NAME);
 		if (lTempPrimitive != null && !lTempPrimitive.isJsonNull()) {
 			lNewParticleSystemDefinition.displayName = lTempPrimitive.getAsString();
@@ -88,6 +90,16 @@ public class ParticleSystemDeserializer implements JsonDeserializer<ParticleSyst
 		lTempPrimitive = jsonElement.getAsJsonObject().getAsJsonPrimitive(PARTICLE_SYSTEM_PARTICLE_LIFE_MAX);
 		if (lTempPrimitive != null && !lTempPrimitive.isJsonNull()) {
 			lNewParticleSystemDefinition.particleLifeMax = lTempPrimitive.getAsFloat();
+		}
+
+		lTempPrimitive = jsonElement.getAsJsonObject().getAsJsonPrimitive(PARTICLE_SYSTEM_PARTICLE_SRC_BLEND);
+		if (lTempPrimitive != null && !lTempPrimitive.isJsonNull()) {
+			lNewParticleSystemDefinition.glSrcBlendFactor = lTempPrimitive.getAsInt();
+		}
+
+		lTempPrimitive = jsonElement.getAsJsonObject().getAsJsonPrimitive(PARTICLE_SYSTEM_PARTICLE_DEST_BLEND);
+		if (lTempPrimitive != null && !lTempPrimitive.isJsonNull()) {
+			lNewParticleSystemDefinition.glDestBlendFactor = lTempPrimitive.getAsInt();
 		}
 
 		// Initializers

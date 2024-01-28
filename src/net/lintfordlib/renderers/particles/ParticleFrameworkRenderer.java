@@ -3,13 +3,19 @@ package net.lintfordlib.renderers.particles;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.lwjgl.opengl.GL11;
+
 import net.lintfordlib.controllers.core.particles.ParticleFrameworkController;
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.ResourceManager;
+import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.graphics.batching.TextureBatchPCT;
 import net.lintfordlib.core.particles.particlesystems.ParticleSystemInstance;
 import net.lintfordlib.renderers.BaseRenderer;
 import net.lintfordlib.renderers.RendererManager;
+
+// TODO: The RENDERER_POOL_SIZE constant is arbitrary
+// TODO: We only need to render (and therefore assign) renderers to particle systems when they are visible. Add frustum culling (Ps/Pe needs AABB).
 
 public class ParticleFrameworkRenderer extends BaseRenderer {
 
@@ -20,7 +26,7 @@ public class ParticleFrameworkRenderer extends BaseRenderer {
 	public static final String RENDERER_NAME = "Game Particle Renderer";
 
 	private static int RENDERER_ID;
-	private static final int RENDERER_POOL_SIZE = 32;
+	private static final int RENDERER_POOL_SIZE = 200;
 
 	// --------------------------------------
 	// Variables
@@ -38,6 +44,16 @@ public class ParticleFrameworkRenderer extends BaseRenderer {
 	@Override
 	public boolean isInitialized() {
 		return mParticleSystemController != null;
+	}
+
+	public int numAssignedParticleRenderers() {
+		var lNumAssignedRenderers = 0;
+		for (int i = 0; i < lNumAssignedRenderers; i++) {
+			if (mParticleRenderers.get(i).isAssigned())
+				lNumAssignedRenderers++;
+
+		}
+		return lNumAssignedRenderers;
 	}
 
 	// --------------------------------------
@@ -97,6 +113,9 @@ public class ParticleFrameworkRenderer extends BaseRenderer {
 		if (lInstances != null && lInstances.size() > 0) {
 			final int lNumParticleSystems = lInstances.size();
 			for (int i = 0; i < lNumParticleSystems; i++) {
+				if (lInstances.get(i).isAssigned() == false)
+					continue;
+
 				maintainParticleSystemRenderer(lInstances.get(i));
 			}
 		}
@@ -106,15 +125,34 @@ public class ParticleFrameworkRenderer extends BaseRenderer {
 
 	@Override
 	public void draw(LintfordCore core) {
-		mTextureBatch.begin(core.gameCamera());
+
+		int cacheSrcBlendFactor = -1;
+		int cacheDestBlendFactor = -1;
 
 		final int lNumParticleRenderers = mParticleRenderers.size();
 		for (int i = 0; i < lNumParticleRenderers; i++) {
-			if (mParticleRenderers.get(i).isAssigned())
-				mParticleRenderers.get(i).draw(core, mTextureBatch);
-		}
+			final var lParticleRenderer = mParticleRenderers.get(i);
 
-		mTextureBatch.end();
+			if (lParticleRenderer.isAssigned() == false)
+				continue;
+
+			final var lSrcBlendFactor = lParticleRenderer.srcBlendFactor();
+			final var lDestBlendFactor = lParticleRenderer.destBlendFactor();
+
+			if (cacheSrcBlendFactor != lSrcBlendFactor || cacheDestBlendFactor != lDestBlendFactor) {
+				cacheSrcBlendFactor = lSrcBlendFactor;
+				cacheDestBlendFactor = lDestBlendFactor;
+
+				mTextureBatch.setGlBlendEnabled(true);
+				mTextureBatch.setGlBlendFactor(lSrcBlendFactor, lDestBlendFactor);
+			}
+
+			mTextureBatch.begin(core.gameCamera());
+
+			lParticleRenderer.draw(core, mTextureBatch);
+
+			mTextureBatch.end();
+		}
 	}
 
 	// --------------------------------------
@@ -133,12 +171,7 @@ public class ParticleFrameworkRenderer extends BaseRenderer {
 	}
 
 	public void maintainParticleSystemRenderer(ParticleSystemInstance particleSystemInstance) {
-		if (particleSystemInstance.rendererId() != ParticleSystemInstance.NO_RENDERER_ASSIGNED) {
-			
-			return;
-		}
-		
-		if(particleSystemInstance.definition() == null)
+		if (particleSystemInstance.rendererId() != ParticleSystemInstance.NO_RENDERER_ASSIGNED)
 			return;
 
 		final var particleRenderer = getFreeParticleSystemRenderer();

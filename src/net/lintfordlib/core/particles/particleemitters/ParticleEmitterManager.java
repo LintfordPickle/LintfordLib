@@ -8,11 +8,11 @@ import com.google.gson.GsonBuilder;
 import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.entities.EntityLocationProvider;
 import net.lintfordlib.core.entities.definitions.DefinitionManager;
-import net.lintfordlib.core.entities.instances.ClosedPoolInstanceManager;
+import net.lintfordlib.core.entities.instances.PoolInstanceManager;
 import net.lintfordlib.core.particles.ParticleFrameworkData;
 import net.lintfordlib.core.particles.particlesystems.ParticleSystemInstance;
 
-public class ParticleEmitterManager extends ClosedPoolInstanceManager<ParticleEmitterInstance> {
+public class ParticleEmitterManager extends PoolInstanceManager<ParticleEmitterInstance> {
 
 	// --------------------------------------
 	// Inner-Classes
@@ -113,7 +113,7 @@ public class ParticleEmitterManager extends ClosedPoolInstanceManager<ParticleEm
 	// Methods
 	// --------------------------------------
 
-	public ParticleEmitterInstance getParticleEmitterByDefiniton(ParticleEmitterDefinition emitterDefinition) {
+	public ParticleEmitterInstance getParticleEmitterInstanceByDefiniton(ParticleEmitterDefinition emitterDefinition) {
 		// If an instance already exists, then return it
 		final var lNumParticleEmitters = mInstances.size();
 		for (var i = 0; i < lNumParticleEmitters; i++) {
@@ -134,7 +134,9 @@ public class ParticleEmitterManager extends ClosedPoolInstanceManager<ParticleEm
 	public ParticleEmitterInstance createNewParticleEmitterFromDefinition(ParticleEmitterDefinition emitterDefinition) {
 		if (emitterDefinition != null) {
 			final var lNewEmitterInst = getFreePooledItem();
-			lNewEmitterInst.assignEmitterDefinitionAndResolveParticleSystem(emitterDefinition, mParticleFrameworkData);
+			lNewEmitterInst.assignEmitterDefinition(emitterDefinition, mParticleFrameworkData);
+
+			emitterDefinition.initialize(mParticleFrameworkData);
 
 			mInstances.add(lNewEmitterInst);
 
@@ -167,28 +169,27 @@ public class ParticleEmitterManager extends ClosedPoolInstanceManager<ParticleEm
 		particleEmitterInstance.reset();
 
 		final var lChildInstances = particleEmitterInstance.childEmitters();
-		final var lNumChildEmitters = lChildInstances.length;
+		final var lNumChildEmitters = lChildInstances.size();
 		for (int i = 0; i < lNumChildEmitters; i++) {
-			if (lChildInstances[i] != null) {
-				lChildInstances[i].reset();
+			final var lEmitterInst = lChildInstances.get(i);
 
-				if (mInstances.contains(lChildInstances[i])) {
-					mInstances.remove(lChildInstances[i]);
-				}
+			if (lEmitterInst != null) {
+				lEmitterInst.reset();
 
-				lChildInstances[i] = null;
+				if (mInstances.contains(lEmitterInst))
+					mInstances.remove(lEmitterInst);
+
 			}
 		}
 
-		if (mInstances.contains(particleEmitterInstance)) {
+		if (mInstances.contains(particleEmitterInstance))
 			mInstances.remove(particleEmitterInstance);
-		}
 
-		returnPooledItem(particleEmitterInstance);
+		returnInstance(particleEmitterInstance);
 	}
 
 	@Override
-	protected ParticleEmitterInstance createPoolObjectInstance() {
+	protected ParticleEmitterInstance createNewInstance() {
 		return new ParticleEmitterInstance();
 	}
 

@@ -2,6 +2,7 @@ package net.lintfordlib.controllers.core.particles;
 
 import net.lintfordlib.controllers.BaseController;
 import net.lintfordlib.controllers.ControllerManager;
+import net.lintfordlib.controllers.geometry.SpatialHashGridController;
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.particles.ParticleFrameworkData;
 
@@ -18,6 +19,7 @@ public class ParticleFrameworkController extends BaseController {
 	// --------------------------------------
 
 	protected ParticleFrameworkData mParticleFrameworkData;
+	private SpatialHashGridController mSpatialHashGridController; // TODO: need to add all emitters to the hashgrid for the update
 
 	// --------------------------------------
 	// Properties
@@ -74,8 +76,8 @@ public class ParticleFrameworkController extends BaseController {
 				final var lParentInst = lParticleEmitterInstance.parentEmitterInst();
 				final var lEmitterDef = lParticleEmitterInstance.emitterDefinition();
 
-				lParticleEmitterInstance.x = lParentInst.x + lEmitterDef.positionRelOffsetX;
-				lParticleEmitterInstance.y = lParentInst.y + lEmitterDef.positionRelOffsetY;
+				lParticleEmitterInstance.aabb.x(lParentInst.aabb.x() + lEmitterDef.positionRelOffsetX);
+				lParticleEmitterInstance.aabb.y(lParentInst.aabb.y() + lEmitterDef.positionRelOffsetY);
 				lParticleEmitterInstance.rot = lParentInst.rot + lEmitterDef.positionRelOffsetRot;
 
 				if (lParentInst.isEnabled() == false)
