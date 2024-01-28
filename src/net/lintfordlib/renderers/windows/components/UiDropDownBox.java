@@ -57,6 +57,8 @@ public class UiDropDownBox<T> extends UIWidget implements IInputClickedFocusMana
 	private transient ScrollBar mScrollBar;
 	private boolean mAllowDuplicateNames;
 	private String mNoItemsFoundText = NO_ITEMS_FOUND_TEXT;
+	private final Rectangle mDownArrowRectangle = new Rectangle();
+	private boolean mDownArrowHovered;
 
 	// --------------------------------------
 	// Properties
@@ -164,6 +166,8 @@ public class UiDropDownBox<T> extends UIWidget implements IInputClickedFocusMana
 	public boolean handleInput(LintfordCore core) {
 		var lResult = super.handleInput(core);
 
+		mDownArrowHovered = mDownArrowRectangle.intersectsAA(core.HUD().getMouseCameraSpace().x, core.HUD().getMouseCameraSpace().y);
+
 		if (!core.input().mouse().isMouseMenuSelectionEnabled())
 			return false;
 
@@ -259,6 +263,7 @@ public class UiDropDownBox<T> extends UIWidget implements IInputClickedFocusMana
 			mWindowRectangle.expand(1);
 		}
 
+		mDownArrowRectangle.set(right() - 25, mY + mH - UIWidget.DefaultWidthHeight, 25, 25);
 		mContentRectangle.height((mItems.size() + lLabelOffset) * ITEM_HEIGHT);
 		mScrollBar.update(core);
 	}
@@ -315,7 +320,8 @@ public class UiDropDownBox<T> extends UIWidget implements IInputClickedFocusMana
 			textFont.end();
 
 			mWindowRectangle.postDraw(core);
-			mScrollBar.draw(core, spriteBatch, coreSpritesheet, componentZDepth, 1.f);
+			if (mScrollBar.scrollBarEnabled())
+				mScrollBar.draw(core, spriteBatch, coreSpritesheet, componentZDepth, 1.f);
 		}
 
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
@@ -359,9 +365,11 @@ public class UiDropDownBox<T> extends UIWidget implements IInputClickedFocusMana
 			textFont.end();
 		}
 
+		final var lIconColor = mDownArrowHovered ? ColorConstants.WHITE : ColorConstants.GREY_LIGHT;
+
 		// Draw the down arrow
 		spriteBatch.begin(core.HUD());
-		spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_DOWN, right() - 25, yy, 25, 25, componentZDepth, ColorConstants.WHITE);
+		spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_DOWN, mDownArrowRectangle, componentZDepth, lIconColor);
 		spriteBatch.end();
 	}
 
