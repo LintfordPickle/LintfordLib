@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.lintfordlib.core.LintfordCore;
+import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.maths.RandomNumbers;
 import net.lintfordlib.core.particles.Particle;
 import net.lintfordlib.core.particles.ParticleFrameworkData;
@@ -25,8 +26,8 @@ public class ParticleSystemInstance {
 
 	protected boolean mIsAssigned;
 	protected int mParticleSystemUid;
-	protected ParticleSystemDefinition mParticleSystemDefinition;
-	protected ParticleEmitterInstance mOnDeathEmitter;
+	protected transient ParticleSystemDefinition mParticleSystemDefinition;
+	protected transient ParticleEmitterInstance mOnDeathEmitter;
 	private List<Particle> mParticles;
 	private transient int mRendererId;
 	private int mCapacity;
@@ -125,6 +126,16 @@ public class ParticleSystemInstance {
 		}
 
 		// TODO: resync onDeathEmitter name
+		final var lOnDeathEmitterName = mParticleSystemDefinition.onDeathEmitterName;
+		if (lOnDeathEmitterName != null) {
+			final var lEmitterDefinition = particleFramework.particleEmitterManager().definitionManager().getByName(lOnDeathEmitterName);
+			if (lEmitterDefinition != null) {
+				particleFramework.particleEmitterManager().getParticleEmitterInstanceByDefiniton(lEmitterDefinition);
+			} else {
+				Debug.debugManager().logger().e(getClass().getSimpleName(), "Cannot resolve onDeathEmitter from name : " + lOnDeathEmitterName);
+			}
+
+		}
 
 		mCapacity = lDesiredNumParticles;
 	}
@@ -158,7 +169,10 @@ public class ParticleSystemInstance {
 				if (particle.timeSinceStart >= particle.lifeTime()) {
 
 					if (mOnDeathEmitter != null) {
-						mOnDeathEmitter.emitterDefinition();
+						mOnDeathEmitter.aabb.x(particle.worldPositionX);
+						mOnDeathEmitter.aabb.y(particle.worldPositionY);
+
+						mOnDeathEmitter.triggerSpawn(core);
 					}
 
 					// TODO: onDeathEmitter ..
