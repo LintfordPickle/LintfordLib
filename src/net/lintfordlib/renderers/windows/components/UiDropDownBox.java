@@ -186,10 +186,11 @@ public class UiDropDownBox<T> extends UIWidget implements IInputClickedFocusMana
 		else {
 			final var intersectsDropDown = mWindowRectangle.intersectsAA(core.HUD().getMouseCameraSpace());
 			if (intersectsDropDown && core.input().mouse().tryAcquireMouseOverThisComponent(hashCode())) {
+				final var lOffsetY = mLabel != null ? UIWidget.DefaultWidthHeight : 0.f;
 				if (mOpen) {
 					// Something inside the dropdown was highlighted / hovered over
 					final float lConsoleLineHeight = ITEM_HEIGHT;
-					float lRelativeheight = core.HUD().getMouseCameraSpace().y - mWindowRectangle.y() - mScrollBar.currentYPos();
+					float lRelativeheight = core.HUD().getMouseCameraSpace().y - mWindowRectangle.y() - mScrollBar.currentYPos() - lOffsetY;
 
 					int lRelativeIndex = (int) (lRelativeheight / lConsoleLineHeight);
 					int lSelectedIndex = lRelativeIndex;
@@ -206,7 +207,7 @@ public class UiDropDownBox<T> extends UIWidget implements IInputClickedFocusMana
 				if (core.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
 					if (mOpen) {
 						final float lConsoleLineHeight = ITEM_HEIGHT;
-						float lRelativeheight = core.HUD().getMouseCameraSpace().y - mWindowRectangle.y() - mScrollBar.currentYPos();
+						float lRelativeheight = core.HUD().getMouseCameraSpace().y - mWindowRectangle.y() - mScrollBar.currentYPos() - lOffsetY;
 
 						int lRelativeIndex = (int) (lRelativeheight / lConsoleLineHeight);
 						int lSelectedIndex = lRelativeIndex;
@@ -240,23 +241,25 @@ public class UiDropDownBox<T> extends UIWidget implements IInputClickedFocusMana
 	public void update(LintfordCore core) {
 		super.update(core);
 
+		final var lLabelOffset = mLabel != null ? 1 : 0;
+
 		if (mOpen) {
 			final var lNumItemsToRender = Math.min(mItems.size(), MAX_ITEMS_TO_DISPLAY);
-			final var lHeight = lNumItemsToRender * ITEM_HEIGHT;
+			final var lHeight = lNumItemsToRender * ITEM_HEIGHT + lLabelOffset * UIWidget.DefaultWidthHeight;
 
-			mWindowRectangle.set(mX, mY + 25.f, mW, lHeight);
+			mWindowRectangle.set(mX, mY + UIWidget.DefaultWidthHeight, mW, lHeight);
 		} else {
 			if (mLabel != null) {
-				desiredHeight(50.f);
+				desiredHeight(UIWidget.DefaultWidthHeight * 2.f);
 			} else {
-				desiredHeight(0.f);
+				desiredHeight(UIWidget.DefaultWidthHeight);
 			}
 
 			mWindowRectangle.set(this);
 			mWindowRectangle.expand(1);
 		}
 
-		mContentRectangle.height((mItems.size() + 1) * ITEM_HEIGHT);
+		mContentRectangle.height((mItems.size() + lLabelOffset) * ITEM_HEIGHT);
 		mScrollBar.update(core);
 	}
 
@@ -293,7 +296,8 @@ public class UiDropDownBox<T> extends UIWidget implements IInputClickedFocusMana
 			spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mWindowRectangle, componentZDepth, lBlackWithAlpha);
 			spriteBatch.end();
 
-			float lYPos = mWindowRectangle.y() + mScrollBar.currentYPos();// + mContentItemOffsetTop;
+			final var lOffsetY = mLabel != null ? UIWidget.DefaultWidthHeight : 0.f;
+			float lYPos = mWindowRectangle.y() + mScrollBar.currentYPos() + lOffsetY;
 
 			final int lItemCount = mItems.size();
 			for (int i = 0; i < lItemCount; i++) {
@@ -318,7 +322,7 @@ public class UiDropDownBox<T> extends UIWidget implements IInputClickedFocusMana
 			spriteBatch.begin(core.HUD());
 
 			final var lTransparentGreen = ColorConstants.getColor(2.f, .8f, .2f, .4f);
-			spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX, mY, mW, 25, componentZDepth, lTransparentGreen);
+			spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX, mY, mW, UIWidget.DefaultWidthHeight, componentZDepth, lTransparentGreen);
 
 			if (mOpen)
 				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mWindowRectangle, componentZDepth, ColorConstants.Debug_Transparent_Magenta);
