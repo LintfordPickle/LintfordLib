@@ -161,6 +161,10 @@ public class TextureBatchPCT {
 		mBlendFuncDstFactor = destFactor;
 	}
 
+	public ICamera camera() {
+		return mCamera;
+	}
+
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
