@@ -33,7 +33,7 @@ public class ParticleEmitterCone extends ParticleEmitterShape {
 
 	public void spawn(ParticleSystemInstance particleSystem, float worldX, float worldY, float heading, float force) {
 
-		final var nh = (float) Math.toRadians(-90);
+		final var nh = (float) Math.toRadians(this.heading);
 		final var nma2 = (float) Math.toRadians(maxAngle);
 
 		final var lRandomHeading = nh + RandomNumbers.random(0, nma2) - nma2 / 2.f;
