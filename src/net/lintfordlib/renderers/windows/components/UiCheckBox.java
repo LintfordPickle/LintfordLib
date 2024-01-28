@@ -129,9 +129,6 @@ public class UiCheckBox extends UIWidget {
 	public void update(LintfordCore core) {
 		super.update(core);
 
-		if (mIsReadonly)
-			return;
-
 		final var lRectSize = 25;
 		var xx = mX + mW * .75f - lRectSize / 2.f;
 
