@@ -134,7 +134,8 @@ public class ParticleSystemInstance {
 			} else {
 				Debug.debugManager().logger().e(getClass().getSimpleName(), "Cannot resolve onDeathEmitter from name : " + lOnDeathEmitterName);
 			}
-
+		} else {
+			mOnDeathEmitter = null;
 		}
 
 		mCapacity = lDesiredNumParticles;
@@ -174,8 +175,6 @@ public class ParticleSystemInstance {
 
 						mOnDeathEmitter.triggerSpawn(core);
 					}
-
-					// TODO: onDeathEmitter ..
 
 					particle.reset();
 					continue;

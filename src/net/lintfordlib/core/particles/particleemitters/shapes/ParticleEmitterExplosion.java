@@ -41,7 +41,6 @@ public class ParticleEmitterExplosion extends ParticleEmitterShape {
 		float xx = (float) Math.cos(lRandomHeading) * radius;
 		float yy = (float) Math.sin(lRandomHeading) * radius;
 
-		force = 50.f;
 		particleSystem.spawnParticle(worldX + xx, worldY + yy, -0.02f, xx * force, yy * force);
 	}
 }

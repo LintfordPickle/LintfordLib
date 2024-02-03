@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 import com.google.gson.annotations.SerializedName;
 
+import net.lintfordlib.core.LintfordCore;
+import net.lintfordlib.core.particles.particleemitters.ParticleEmitterInstance;
 import net.lintfordlib.core.particles.particlesystems.ParticleSystemInstance;
 
 public abstract class ParticleEmitterShape implements Serializable {
@@ -32,6 +34,10 @@ public abstract class ParticleEmitterShape implements Serializable {
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
+
+	public void update(LintfordCore core, ParticleEmitterInstance inst) {
+
+	}
 
 	public abstract void spawn(ParticleSystemInstance particleSystem, float worldX, float worldY, float heading, float force);
 

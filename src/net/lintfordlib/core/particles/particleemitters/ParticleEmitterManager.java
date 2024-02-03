@@ -185,14 +185,10 @@ public class ParticleEmitterManager extends PoolInstanceManager<ParticleEmitterI
 			if (lEmitterInst != null) {
 				lEmitterInst.reset();
 
-				if (mInstances.contains(lEmitterInst))
-					mInstances.remove(lEmitterInst);
+				returnInstance(particleEmitterInstance);
 
 			}
 		}
-
-		if (mInstances.contains(particleEmitterInstance))
-			mInstances.remove(particleEmitterInstance);
 
 		returnInstance(particleEmitterInstance);
 	}

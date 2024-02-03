@@ -23,9 +23,6 @@ public class ParticleEmitterPoint extends ParticleEmitterShape {
 	// --------------------------------------
 
 	public void spawn(ParticleSystemInstance particleSystem, float worldX, float worldY, float heading, float force) {
-		final var lVelX = (float) Math.cos(heading) * force;
-		final var lVelY = (float) Math.sin(heading) * force;
-
-		particleSystem.spawnParticle(worldX, worldY, -0.02f, lVelX, lVelY);
+		particleSystem.spawnParticle(worldX, worldY, -0.02f, 0, 0);
 	}
 }

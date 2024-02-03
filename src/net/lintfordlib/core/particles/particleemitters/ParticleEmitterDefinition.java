@@ -126,7 +126,7 @@ public class ParticleEmitterDefinition extends BaseDefinition {
 			if (lChildEmitterDefinition == null)
 				continue;
 
-			if (lChildEmitterDefinition.isInitialized() == false)
+			// if (lChildEmitterDefinition.isInitialized() == false)
 				lChildEmitterDefinition.resolveParticleSystems(particleFramework);
 
 		}

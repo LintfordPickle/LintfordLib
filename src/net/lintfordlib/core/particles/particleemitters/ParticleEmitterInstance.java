@@ -39,6 +39,8 @@ public class ParticleEmitterInstance extends GridEntity {
 	public transient ParticleSystemInstance particleSystemInstance;
 	private float mEmitterEmitTimerModifier; // [0,1]
 
+	// public Object shapeData;
+
 	public float rot;
 
 	// --------------------------------------
@@ -177,6 +179,14 @@ public class ParticleEmitterInstance extends GridEntity {
 			break;
 		}
 
+		// TODO: called update on the particle emitter shape, which can manage variables it needs and store them on the ParticleEmitterInstance (this)
+		// For example about the implementation, this could involve the ParticleEmitterInstance having a key/value collection, which the individual
+		// shapes can use to persists values over time - lifetime, position, target position ...
+
+		if (mEmitterDefinition.ParticleEmitterShape != null) {
+			mEmitterDefinition.ParticleEmitterShape.update(core, this);
+		}
+
 		final int lNumInnerInstances = mChildEmitterInstances.size();
 		for (int i = 0; i < lNumInnerInstances; i++) {
 			final var lChildParticleEmitterInstanceInst = mChildEmitterInstances.get(i);
@@ -303,7 +313,7 @@ public class ParticleEmitterInstance extends GridEntity {
 	}
 
 	private void resolveParticleSystem(ParticleEmitterDefinition emitterDefinition, ParticleFrameworkData particleFramework) {
-		if (emitterDefinition.particleSystemName != null) {
+		if (emitterDefinition.particleSystemName != null && emitterDefinition.particleSystemName.length() > 0) {
 			if (emitterDefinition.useSharedParticleSystem) {
 				particleSystemInstance = emitterDefinition.sharedParticleSystemInstance;
 			} else {
@@ -350,6 +360,7 @@ public class ParticleEmitterInstance extends GridEntity {
 		mEmitterInstanceId = -1;
 		mEmitterDefinitionId = -1;
 		mParticleSystemId = -1;
+		aabb.set(0, 0, 0, 0);
 	}
 
 	// --------------------------------------
