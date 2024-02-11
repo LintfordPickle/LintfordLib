@@ -50,17 +50,20 @@ public class ResourceMapLoader extends ResourceLoader {
 		mResourceManager.addProtectedEntityGroupUid(entityGroupUid);
 
 		final var lNumTextureMetaFiles = lResMap.textureMetaFiles.size();
+		Debug.debugManager().logger().i(getClass().getSimpleName(), "  loading " + lNumTextureMetaFiles + " texture meta files into " + entityGroupUid);
 		for (int i = 0; i < lNumTextureMetaFiles; i++) {
 			final var lTextureMetaFileToLoad = lResMap.textureMetaFiles.get(i);
 			mResourceManager.textureManager().loadTexturesFromMetafile(lTextureMetaFileToLoad, entityGroupUid);
 		}
 
 		final var lNumSpritesheetMetaFiles = lResMap.spritesheetMetaFiles.size();
+		Debug.debugManager().logger().i(getClass().getSimpleName(), "  loading " + lNumSpritesheetMetaFiles + " spritesheet meta files into " + entityGroupUid);
 		for (int i = 0; i < lNumSpritesheetMetaFiles; i++) {
 			final var lSpritesheetMetaFileToLoad = lResMap.spritesheetMetaFiles.get(i);
-			mResourceManager.spriteSheetManager().loadSpriteSheet(lSpritesheetMetaFileToLoad, entityGroupUid);
+			mResourceManager.spriteSheetManager().loadSpriteSheetFromMeta(lSpritesheetMetaFileToLoad, entityGroupUid);
 		}
 
+		Debug.debugManager().logger().i(getClass().getSimpleName(), "  loading fonts files into " + entityGroupUid);
 		mResourceManager.fontManager().loadBitmapFont("FONT_NULSHOCK_12", "res/fonts/fontNulshock12.json");
 		mResourceManager.fontManager().loadBitmapFont("FONT_NULSHOCK_16", "res/fonts/fontNulshock16.json");
 		mResourceManager.fontManager().loadBitmapFont("FONT_NULSHOCK_22", "res/fonts/fontNulshock22.json");
