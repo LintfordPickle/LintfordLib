@@ -86,7 +86,7 @@ public abstract class BaseRenderer implements IInputProcessor {
 	// Constructor
 	// --------------------------------------
 
-	public BaseRenderer(final RendererManager rendererManager, final String rendererName, final int entityGroupUid) {
+	public BaseRenderer(RendererManager rendererManager, String rendererName, int entityGroupUid) {
 		if (rendererManager == null)
 			throw new RuntimeException("Renderers must be provided with valid RendererManager!");
 
