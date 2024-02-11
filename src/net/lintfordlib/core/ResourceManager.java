@@ -1,5 +1,6 @@
 package net.lintfordlib.core;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -23,6 +24,8 @@ import net.lintfordlib.core.graphics.fonts.BitmapFontManager;
 import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetManager;
 import net.lintfordlib.core.graphics.textures.TextureManager;
 import net.lintfordlib.options.MasterConfig;
+import net.lintfordlib.options.ResourceMap;
+import net.lintfordlib.options.ResourceMapIo;
 
 /**
  * @References Path Watcher: https://docs.oracle.com/javase/tutorial/essential/io/notification.html
@@ -52,6 +55,7 @@ public class ResourceManager {
 
 	private boolean mResourcesLoaded;
 	private boolean mMonitorResourcesForChanges;
+	private ResourceMap mResourceMap;
 
 	private final List<Integer> mProtectedEntityGroupUids = new ArrayList<>();
 
@@ -136,6 +140,17 @@ public class ResourceManager {
 		mSpriteGraphRepository.unloadResources();
 
 		mResourcesLoaded = false;
+	}
+
+	public void loadResourcesFromResMap(File filepath, int entityGroupUid) {
+		mResourceMap = ResourceMapIo.tryLoadResourceMapFromFile(filepath);
+
+		if (mResourceMap == null)
+			return;
+
+		final var lBaseDirectory = filepath.getParent();
+		mResourceMap.loadResourcesIntoManager(this, lBaseDirectory, entityGroupUid);
+
 	}
 
 	public void update(LintfordCore core) {
