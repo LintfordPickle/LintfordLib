@@ -219,6 +219,11 @@ public class FileUtils {
 		}
 	}
 
+	public static String cleanFilename(String filename) {
+		// Replaces whitespace with an underscores
+		return filename.replaceAll("\\s+", "");
+	}
+
 	// --------------------------------------
 
 	public static List<File> getListOfFileInDirectory(String directory) {
