@@ -7,9 +7,11 @@ import java.io.ObjectOutputStream;
 import java.nio.file.Files;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import com.google.gson.Gson;
@@ -38,9 +40,21 @@ public abstract class DefinitionManager<T extends BaseDefinition> {
 	// TODO: The DefinitionLookUp was supposed to help
 	protected DefinitionLookUp mDefinitionsLookupTable;
 
+	private final List<IDefinitionManagerChangeListener> mChangeListeners = new ArrayList<>();
+
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public void addChangeListener(IDefinitionManagerChangeListener listener) {
+		if (mChangeListeners.contains(listener) == false)
+			mChangeListeners.add(listener);
+	}
+
+	public void removeChangeListener(IDefinitionManagerChangeListener listener) {
+		if (mChangeListeners.contains(listener))
+			mChangeListeners.remove(listener);
+	}
 
 	public Collection<T> definitions() {
 		return mDefinitions.values();
@@ -108,6 +122,7 @@ public abstract class DefinitionManager<T extends BaseDefinition> {
 	public abstract T loadDefinitionFromFile(File file);
 
 	public void afterDefinitionLoaded(T definition) {
+		notifyListenersOfChange();
 	}
 
 	protected void loadDefinitionsFromFolderWatcherItems(EntityLocationProvider entityLocationProvider, final Gson gson, Class<T> classType) {
@@ -166,6 +181,8 @@ public abstract class DefinitionManager<T extends BaseDefinition> {
 
 				addDefintion(lNewDefinition);
 
+				notifyListenersOfChange();
+				
 				return lNewDefinition;
 			} else {
 				Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Failed to parse %s from file: %s", classType.getSimpleName(), lDefinitionFile.getAbsoluteFile()));
@@ -206,6 +223,13 @@ public abstract class DefinitionManager<T extends BaseDefinition> {
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
+
+	private void notifyListenersOfChange() {
+		final var lNumListeners = mChangeListeners.size();
+		for (int i = 0; i < lNumListeners; i++) {
+			mChangeListeners.get(i).definitionManagerChanged();
+		}
+	}
 
 	private String bytesToHex(byte[] hash) {
 		StringBuffer hexString = new StringBuffer();
