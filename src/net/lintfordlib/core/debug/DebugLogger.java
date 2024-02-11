@@ -80,21 +80,21 @@ public class DebugLogger {
 	}
 
 	public void addFlashMessage(DebugLogLevel logLevel, String tag, String message) {
-		mFlashMessagesEnabled = true;
-		if (mFlashMessagesEnabled == false)
-			return;
-
-		final var lLogMessage = mLogLinePool.remove(0);
-
-		if (lLogMessage == null) {
-			System.err.println("DebugLogger: Unable to write to flash message queue (pool empty)?");
-			return;
-		}
-		_date.setTime(System.currentTimeMillis());
-		var lTimeStamp = SIMPLE_DATE_FORMAT.format(_date);
-		lLogMessage.setMessage(message, message, lTimeStamp, logLevel.logLevel);
-
-		mFlashMessageQueue.add(lLogMessage);
+//		mFlashMessagesEnabled = true;
+//		if (mFlashMessagesEnabled == false)
+//			return;
+//
+//		final var lLogMessage = mLogLinePool.remove(0);
+//
+//		if (lLogMessage == null) {
+//			System.err.println("DebugLogger: Unable to write to flash message queue (pool empty)?");
+//			return;
+//		}
+//		_date.setTime(System.currentTimeMillis());
+//		var lTimeStamp = SIMPLE_DATE_FORMAT.format(_date);
+//		lLogMessage.setMessage(message, message, lTimeStamp, logLevel.logLevel);
+//
+//		mFlashMessageQueue.add(lLogMessage);
 	}
 
 	/** Returns all the messages currently in the log. */
