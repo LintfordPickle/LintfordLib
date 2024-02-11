@@ -41,6 +41,7 @@ public class UiDropDownBox<T> extends UIWidget implements IInputClickedFocusMana
 	private static final float MAX_ITEMS_TO_DISPLAY = 6;
 	private static final float ITEM_HEIGHT = 25.f;
 
+	private static final int NO_ITEM_INDEX = -1;
 	private static final String NO_ITEMS_FOUND_TEXT = "No items found";
 
 	// --------------------------------------
@@ -94,14 +95,17 @@ public class UiDropDownBox<T> extends UIWidget implements IInputClickedFocusMana
 	public UiDropDownBoxItem selectedItem() {
 		if (mItems == null || mItems.size() == 0)
 			return null;
+		
+		if(mSelectedIndex == NO_ITEM_INDEX)
+			return null;
 
 		return mItems.get(mSelectedIndex);
 
 	}
 
 	public void setSelectedEntry(int index) {
-		if (index < 0)
-			index = 0;
+		if (index < -1)
+			index = NO_ITEM_INDEX;
 
 		if (index >= mItems.size())
 			index = mItems.size() - 1;
@@ -110,6 +114,11 @@ public class UiDropDownBox<T> extends UIWidget implements IInputClickedFocusMana
 	}
 
 	public void setSelectedEntry(String name) {
+		if (name == null) {
+			mSelectedIndex = NO_ITEM_INDEX;
+			return;
+		}
+
 		final int lNumDropDownItems = mItems.size();
 		for (int i = 0; i < lNumDropDownItems; i++) {
 			final var lDropDownItem = mItems.get(i);
@@ -121,6 +130,8 @@ public class UiDropDownBox<T> extends UIWidget implements IInputClickedFocusMana
 				return;
 			}
 		}
+
+		mSelectedIndex = NO_ITEM_INDEX;
 	}
 
 	public void setSelectEntry(T value) {
@@ -131,10 +142,13 @@ public class UiDropDownBox<T> extends UIWidget implements IInputClickedFocusMana
 				return;
 			}
 		}
+
+		mSelectedIndex = NO_ITEM_INDEX;
 	}
 
 	public void clearItems() {
 		mItems.clear();
+		mSelectedIndex = NO_ITEM_INDEX;
 	}
 
 	// --------------------------------------
