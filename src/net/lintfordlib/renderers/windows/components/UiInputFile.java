@@ -250,11 +250,8 @@ public class UiInputFile extends UIWidget implements IBufferedTextInputCallback 
 
 				try {
 					SwingUtilities.invokeAndWait(new Runnable() {
-
 						@Override
 						public void run() {
-							final var lBaseDirectoryFile = new File(mBaseDirectory);
-
 							var chooser = new JFileChooser();
 							chooser.setMultiSelectionEnabled(false);
 
@@ -267,6 +264,7 @@ public class UiInputFile extends UIWidget implements IBufferedTextInputCallback 
 							}
 
 							if (mBaseDirectory != null) {
+								final var lBaseDirectoryFile = new File(mBaseDirectory);
 								if (lBaseDirectoryFile.exists() && lBaseDirectoryFile.isDirectory())
 									chooser.setCurrentDirectory(lBaseDirectoryFile);
 							}
