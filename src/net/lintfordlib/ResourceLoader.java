@@ -26,6 +26,7 @@ public abstract class ResourceLoader extends Thread {
 
 	protected ResourceManager mResourceManager;
 	private boolean loadingThreadStarted;
+	private int mEntityGroupUid;
 	private DisplayManager mDisplayManager;
 	private long windowId;
 
@@ -104,11 +105,13 @@ public abstract class ResourceLoader extends Thread {
 	// Constructor
 	// ---------------------------------------------
 
-	public ResourceLoader(ResourceManager resourceManager, DisplayManager displayManager, boolean useBackgroundThread) {
+	public ResourceLoader(ResourceManager resourceManager, DisplayManager displayManager, boolean useBackgroundThread, int entityGroupUid) {
 		mResourceManager = resourceManager;
 		mDisplayManager = displayManager;
 		loadingThreadStarted = false;
 		windowId = displayManager.windowID();
+
+		mEntityGroupUid = entityGroupUid;
 
 		_loadOnBackgroundThread = useBackgroundThread;
 
@@ -129,7 +132,7 @@ public abstract class ResourceLoader extends Thread {
 			unloadResources();
 		} else {
 			loadingThreadStarted = true;
-			resourcesToLoadInBackground();
+			resourcesToLoadInBackground(mEntityGroupUid);
 		}
 	}
 
@@ -177,7 +180,7 @@ public abstract class ResourceLoader extends Thread {
 	private void loadResourcesOnBackgroundThread() {
 		final long lStartTime = System.currentTimeMillis();
 
-		resourcesToLoadInBackground();
+		resourcesToLoadInBackground(mEntityGroupUid);
 
 		final long elapsedMillis = System.currentTimeMillis() - lStartTime;
 
@@ -253,5 +256,5 @@ public abstract class ResourceLoader extends Thread {
 	// Methods
 	// ---------------------------------------------
 
-	protected abstract void resourcesToLoadInBackground();
+	protected abstract void resourcesToLoadInBackground(int entityGroupUid);
 }
