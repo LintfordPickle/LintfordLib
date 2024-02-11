@@ -1,9 +1,11 @@
 package net.lintfordlib.renderers.windows.components;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.lwjgl.glfw.GLFW;
@@ -246,30 +248,47 @@ public class UiInputFile extends UIWidget implements IBufferedTextInputCallback 
 			mCancelRectHovered = true;
 			if (core.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
 
-				var chooser = new JFileChooser();
-				chooser.setMultiSelectionEnabled(false);
+				try {
+					SwingUtilities.invokeAndWait(new Runnable() {
 
-				if (mDirectorySelection) {
-					chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-				} else {
-					var filter = new FileNameExtensionFilter("Definition Meta File", "json");
-					chooser.setFileFilter(filter);
-					chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+						@Override
+						public void run() {
+							final var lBaseDirectoryFile = new File(mBaseDirectory);
+
+							var chooser = new JFileChooser();
+							chooser.setMultiSelectionEnabled(false);
+
+							if (mDirectorySelection) {
+								chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+							} else {
+								var filter = new FileNameExtensionFilter("Definition Meta File", "json");
+								chooser.setFileFilter(filter);
+								chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+							}
+
+							if (mBaseDirectory != null) {
+								if (lBaseDirectoryFile.exists() && lBaseDirectoryFile.isDirectory())
+									chooser.setCurrentDirectory(lBaseDirectoryFile);
+							}
+
+							int returnVal = chooser.showOpenDialog(new JFrame());
+							if (returnVal == JFileChooser.APPROVE_OPTION) {
+								mFile = chooser.getSelectedFile();
+
+								inputString(mFile.getAbsolutePath());
+							}
+						}
+
+					});
+				} catch (InvocationTargetException e) {
+					e.printStackTrace();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
 				}
 
-				if (mBaseDirectory != null)
-					chooser.setCurrentDirectory(new File(mBaseDirectory));
+				if (mUiWidgetListenerCallback != null)
+					mUiWidgetListenerCallback.widgetOnDataChanged(core.input(), mUiWidgetListenerUid);
 
-				int returnVal = chooser.showOpenDialog(new JFrame());
-				if (returnVal == JFileChooser.APPROVE_OPTION) {
-					mFile = chooser.getSelectedFile();
-
-					inputString(mFile.getAbsolutePath());
-
-					if (mUiWidgetListenerCallback != null)
-						mUiWidgetListenerCallback.widgetOnDataChanged(core.input(), mUiWidgetListenerUid);
-
-				}
 				core.input().keyboard().stopBufferedTextCapture();
 
 				mHasFocus = false;
