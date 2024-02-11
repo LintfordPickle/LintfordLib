@@ -3,14 +3,10 @@ package net.lintfordlib.renderers.particles;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.lwjgl.opengl.GL11;
-
 import net.lintfordlib.controllers.core.particles.ParticleFrameworkController;
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.ResourceManager;
-import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.graphics.batching.SpriteBatch;
-import net.lintfordlib.core.graphics.batching.TextureBatchPCT;
 import net.lintfordlib.core.particles.particlesystems.ParticleSystemInstance;
 import net.lintfordlib.renderers.BaseRenderer;
 import net.lintfordlib.renderers.RendererManager;
@@ -95,8 +91,13 @@ public class ParticleFrameworkRenderer extends BaseRenderer {
 
 	@Override
 	public void unloadResources() {
-		mSpriteBatch.unloadResources();
-		mSpriteBatch = null;
+		if (mResourcesLoaded == false)
+			return;
+
+		if (mSpriteBatch != null) {
+			mSpriteBatch.unloadResources();
+			mSpriteBatch = null;
+		}
 
 		for (int i = 0; i < RENDERER_POOL_SIZE; i++) {
 			mParticleRenderers.get(i).unloadResources();
