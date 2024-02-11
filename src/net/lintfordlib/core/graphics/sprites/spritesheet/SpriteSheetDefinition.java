@@ -68,6 +68,10 @@ public class SpriteSheetDefinition {
 	// Properties
 	// --------------------------------------
 
+	public Map<String, SpriteDefinition> animationFrameMap() {
+		return mAnimationFramesMap;
+	}
+
 	public long fileSizeOnLoad() {
 		return mFileSizeOnLoad;
 	}
@@ -181,7 +185,7 @@ public class SpriteSheetDefinition {
 			}
 		}
 
-		// Create an AnimationFrames objects for each single SpriteFrame
+		// Create an AnimationFrame object for each single SpriteFrame, so that everything definition within a SpritesheetDefinition is accessible from within the mAnimationFramesMap
 		final int lSpriteFrameArrayCount = mSpriteFrames.length;
 		for (int i = 0; i < lSpriteFrameArrayCount; i++) {
 			final String lSpriteFrameName = mSpriteFrames[i].name();
