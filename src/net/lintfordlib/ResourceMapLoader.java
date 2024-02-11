@@ -63,6 +63,8 @@ public class ResourceMapLoader extends ResourceLoader {
 			mResourceManager.spriteSheetManager().loadSpriteSheetFromMeta(lSpritesheetMetaFileToLoad, entityGroupUid);
 		}
 
+		// TODO: Need to move the font loading into the meta structure
+
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "  loading fonts files into " + entityGroupUid);
 		mResourceManager.fontManager().loadBitmapFont("FONT_NULSHOCK_12", "res/fonts/fontNulshock12.json");
 		mResourceManager.fontManager().loadBitmapFont("FONT_NULSHOCK_16", "res/fonts/fontNulshock16.json");
