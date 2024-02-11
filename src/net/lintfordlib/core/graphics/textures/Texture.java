@@ -15,6 +15,7 @@ import org.lwjgl.system.MemoryUtil;
 
 import net.lintfordlib.ConstantsApp;
 import net.lintfordlib.core.debug.Debug;
+import net.lintfordlib.core.storage.FileUtils;
 
 public class Texture {
 
@@ -122,7 +123,7 @@ public class Texture {
 			return null;
 		}
 
-		String lCleanFilename = cleanFilename(filename);
+		final var lCleanFilename = FileUtils.cleanFilename(filename);
 
 		try {
 			final var lFile = new File(System.getProperty(ConstantsApp.WORKSPACE_PROPERTY_NAME), lCleanFilename);
@@ -235,10 +236,6 @@ public class Texture {
 		texture = null;
 	}
 
-	private static String cleanFilename(String filename) {
-		return filename.replaceAll("\\s+", "");
-	}
-
 	/**
 	 * Creates an OpenGL {@link Texture} from a {@link BufferedImage}.
 	 */
@@ -298,7 +295,7 @@ public class Texture {
 	}
 
 	public void reloadTexture(String textureFilename) {
-		String lCleanFilename = cleanFilename(textureFilename);
+		String lCleanFilename = FileUtils.cleanFilename(textureFilename);
 
 		try {
 			final var lTextureFile = new File(lCleanFilename);
