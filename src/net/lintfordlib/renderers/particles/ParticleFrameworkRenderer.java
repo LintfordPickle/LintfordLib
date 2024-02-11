@@ -9,6 +9,7 @@ import net.lintfordlib.controllers.core.particles.ParticleFrameworkController;
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.ResourceManager;
 import net.lintfordlib.core.debug.Debug;
+import net.lintfordlib.core.graphics.batching.SpriteBatch;
 import net.lintfordlib.core.graphics.batching.TextureBatchPCT;
 import net.lintfordlib.core.particles.particlesystems.ParticleSystemInstance;
 import net.lintfordlib.renderers.BaseRenderer;
@@ -32,7 +33,7 @@ public class ParticleFrameworkRenderer extends BaseRenderer {
 	// Variables
 	// --------------------------------------
 
-	protected TextureBatchPCT mTextureBatch;
+	protected SpriteBatch mSpriteBatch;
 	protected List<ParticleRenderer> mParticleRenderers;
 	protected ParticleFrameworkController mParticleSystemController;
 	private int mEntityGroupID;
@@ -65,7 +66,7 @@ public class ParticleFrameworkRenderer extends BaseRenderer {
 
 		mParticleRenderers = new ArrayList<>();
 		mEntityGroupID = entityGroupUid;
-		mTextureBatch = new TextureBatchPCT();
+		mSpriteBatch = new SpriteBatch();
 
 		for (int i = 0; i < RENDERER_POOL_SIZE; i++) {
 			mParticleRenderers.add(new ParticleRenderer(getNewRendererId(), mEntityGroupID));
@@ -83,7 +84,7 @@ public class ParticleFrameworkRenderer extends BaseRenderer {
 
 	@Override
 	public void loadResources(ResourceManager resourceManager) {
-		mTextureBatch.loadResources(resourceManager);
+		mSpriteBatch.loadResources(resourceManager);
 
 		for (int i = 0; i < RENDERER_POOL_SIZE; i++) {
 			mParticleRenderers.get(i).loadResources(resourceManager);
@@ -94,7 +95,8 @@ public class ParticleFrameworkRenderer extends BaseRenderer {
 
 	@Override
 	public void unloadResources() {
-		mTextureBatch.unloadResources();
+		mSpriteBatch.unloadResources();
+		mSpriteBatch = null;
 
 		for (int i = 0; i < RENDERER_POOL_SIZE; i++) {
 			mParticleRenderers.get(i).unloadResources();
@@ -143,15 +145,15 @@ public class ParticleFrameworkRenderer extends BaseRenderer {
 				cacheSrcBlendFactor = lSrcBlendFactor;
 				cacheDestBlendFactor = lDestBlendFactor;
 
-				mTextureBatch.setGlBlendEnabled(true);
-				mTextureBatch.setGlBlendFactor(lSrcBlendFactor, lDestBlendFactor);
+				mSpriteBatch.setGlBlendEnabled(true);
+				mSpriteBatch.setGlBlendFactor(lSrcBlendFactor, lDestBlendFactor);
 			}
 
-			mTextureBatch.begin(core.gameCamera());
+			mSpriteBatch.begin(core.gameCamera());
 
-			lParticleRenderer.draw(core, mTextureBatch);
+			lParticleRenderer.draw(core, mSpriteBatch);
 
-			mTextureBatch.end();
+			mSpriteBatch.end();
 		}
 	}
 

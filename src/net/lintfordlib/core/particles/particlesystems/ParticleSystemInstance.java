@@ -77,7 +77,7 @@ public class ParticleSystemInstance {
 		mParticleSystemUid = particleSystemUid;
 		mIsAssigned = true;
 		mParticleSystemDefinition = particleSystemDefinition;
-		mCapacity = mParticleSystemDefinition.maxParticleCount();
+		mCapacity = mParticleSystemDefinition.maxParticleCount;
 
 		mRendererId = NO_RENDERER_ASSIGNED;
 
@@ -105,7 +105,7 @@ public class ParticleSystemInstance {
 		// force reassign of renderer (and a reload of the texture)
 		mRendererId = NO_RENDERER_ASSIGNED;
 
-		final var lDesiredNumParticles = mParticleSystemDefinition.maxParticleCount();
+		final var lDesiredNumParticles = mParticleSystemDefinition.maxParticleCount;
 		if (mParticles == null) {
 			for (int i = 0; i < lDesiredNumParticles; i++) {
 				mParticles.add(new Particle());

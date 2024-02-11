@@ -4,8 +4,9 @@ import org.lwjgl.opengl.GL11;
 
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.ResourceManager;
-import net.lintfordlib.core.graphics.batching.TextureBatchPCT;
-import net.lintfordlib.core.graphics.textures.Texture;
+import net.lintfordlib.core.graphics.batching.SpriteBatch;
+import net.lintfordlib.core.graphics.sprites.SpriteFrame;
+import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintfordlib.core.particles.particlesystems.ParticleSystemInstance;
 
 public class ParticleRenderer {
@@ -16,7 +17,8 @@ public class ParticleRenderer {
 
 	private ParticleSystemInstance mParticleSystem;
 	private ResourceManager mResourceManager;
-	private Texture mTexture;
+	private SpriteSheetDefinition mSpritesheetDefinition;
+	private SpriteFrame mSpriteFrame;
 	private final int mParticleRendererId;
 	private int mEntityGroupId;
 	private boolean mResourcesLoaded;
@@ -90,7 +92,7 @@ public class ParticleRenderer {
 		mResourcesLoaded = false;
 	}
 
-	public void draw(LintfordCore core, TextureBatchPCT textureBatch) {
+	public void draw(LintfordCore core, SpriteBatch textureBatch) {
 		if (!mResourcesLoaded || !mIsParticleLoaded || !mIsAssigned)
 			return;
 
@@ -108,16 +110,17 @@ public class ParticleRenderer {
 			if (!lParticleInst.isAssigned())
 				continue;
 
-			final float lWidthScaled = lParticleInst.width * lParticleInst.scale;
-			final float lHeightScaled = lParticleInst.height * lParticleInst.scale;
-
 			if (lCamBounds.intersectsAA(lParticleInst.worldPositionX, lParticleInst.worldPositionY, lParticleInst.width, lParticleInst.height) == false)
 				continue;
 
-			textureBatch.drawAroundCenter(mTexture, lParticleInst.sx, lParticleInst.sy, lParticleInst.sw, lParticleInst.sh, lParticleInst.worldPositionX, lParticleInst.worldPositionY, lWidthScaled, lHeightScaled, lParticleInst.worldPositionZ, lParticleInst.rotationInRadians, lParticleInst.rox, lParticleInst.roy,
-					lParticleInst.scale, lParticleInst.color);
-		}
+			float lWidthScaled = mSpriteFrame != null ? mSpriteFrame.width() : lParticleInst.width;
+			float lHeightScaled = mSpriteFrame != null ? mSpriteFrame.height() : lParticleInst.height;
 
+			lWidthScaled *= lParticleInst.scale;
+			lHeightScaled *= lParticleInst.scale;
+
+			textureBatch.drawAroundCenter(mSpritesheetDefinition, mSpriteFrame, lParticleInst.worldPositionX, lParticleInst.worldPositionY, lWidthScaled, lHeightScaled, lParticleInst.rotationInRadians, lParticleInst.rox, lParticleInst.roy, -0.01f, lParticleInst.color);
+		}
 	}
 
 	// --------------------------------------
@@ -134,7 +137,7 @@ public class ParticleRenderer {
 	}
 
 	public void unassignParticleSystem() {
-		mTexture = null;
+		mSpritesheetDefinition = null;
 		mParticleSystem = null;
 		mIsParticleLoaded = false;
 		mIsAssigned = false;
@@ -147,15 +150,21 @@ public class ParticleRenderer {
 		final var lParticleDefinition = particleSystemInst.definition();
 		mIsParticleLoaded = lParticleDefinition != null;
 
-		final var lTextureName = lParticleDefinition.textureName();
-		final var lTextureFilepath = lParticleDefinition.textureFilename();
+		final var lSpritesheetName = lParticleDefinition.spritesheetName;
+		final var lSpriteName = lParticleDefinition.spriteName;
 
-		if (lTextureName != null && lTextureFilepath != null) {
-			mTexture = mResourceManager.textureManager().loadTexture(lTextureName, lTextureFilepath, GL11.GL_NEAREST, mEntityGroupId);
-		} else {
-			// Fallback to engine white
-			mTexture = mResourceManager.textureManager().getTexture("TEXTURE_WHITE", LintfordCore.CORE_ENTITY_GROUP_ID);
+		if (lSpritesheetName != null) {
+			mSpritesheetDefinition = mResourceManager.spriteSheetManager().getSpriteSheet(lSpritesheetName, mEntityGroupId);
+			final var lSpritesheetFilepath = lParticleDefinition.spritesheetFilepath;
+			if (mSpritesheetDefinition == null && lSpritesheetFilepath != null) {
+				mSpritesheetDefinition = mResourceManager.spriteSheetManager().loadSpriteSheet(lSpritesheetName, lSpritesheetFilepath, mEntityGroupId);
+			}
 		}
+
+		if (mSpritesheetDefinition == null)
+			mSpritesheetDefinition = mResourceManager.spriteSheetManager().coreSpritesheet();
+
+		mSpriteFrame = mSpritesheetDefinition.getSpriteFrame(lSpriteName);
 
 		// Set default blend factors
 		if (lParticleDefinition.glSrcBlendFactor == 0)

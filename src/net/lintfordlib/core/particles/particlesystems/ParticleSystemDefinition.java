@@ -26,12 +26,14 @@ public class ParticleSystemDefinition extends BaseDefinition {
 	public float particleLifeMin;
 	public float particleLifeMax;
 
-	public String textureName;
-	public String textureFilename;
+	public String spritesheetName;
+	public String spritesheetFilepath;
+	public String spriteName;
+
 	public int textureFilterMode;
 
 	public String onDeathEmitterName;
-	
+
 	public int glSrcBlendFactor;
 	public int glDestBlendFactor;
 
@@ -45,31 +47,6 @@ public class ParticleSystemDefinition extends BaseDefinition {
 
 	public List<ParticleModifierBase> modifiers() {
 		return modifiers;
-	}
-
-	/** Returns the maximum ammount of particles which can be spawned by instances of this {@link ParticleSystemDefinition}. */
-	public int maxParticleCount() {
-		return maxParticleCount;
-	}
-
-	/** Returns the internal texture name. */
-	public String textureName() {
-		return textureName;
-	}
-
-	/** Returns the filename of the texture. */
-	public String textureFilename() {
-		return textureFilename;
-	}
-
-	/** Returns the name of an emitter (in the current entityGroupUId) which should be invoked on each particles death. */
-	public void onDeathEmitterName(String newOnDeathEmitterName) {
-		onDeathEmitterName = newOnDeathEmitterName;
-	}
-
-	/** Returns the name of an emitter (in the current entityGroupUId) which should be invoked on each particles death. */
-	public String onDeathEmitterName() {
-		return onDeathEmitterName;
 	}
 
 	// --------------------------------------
