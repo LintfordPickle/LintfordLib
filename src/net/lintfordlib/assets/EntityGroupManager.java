@@ -1,4 +1,4 @@
-package net.lintfordlib.core;
+package net.lintfordlib.assets;
 
 public abstract class EntityGroupManager {
 

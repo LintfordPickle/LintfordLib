@@ -16,6 +16,8 @@ import org.lwjgl.opengl.GL11;
 
 import net.lintfordlib.ConstantsApp;
 import net.lintfordlib.GameInfo;
+import net.lintfordlib.assets.ResourceGroupProvider;
+import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.controllers.ControllerManager;
 import net.lintfordlib.controllers.camera.CameraController;
 import net.lintfordlib.controllers.camera.CameraHUDController;
@@ -181,7 +183,6 @@ public abstract class LintfordCore {
 	protected InputManager mInputState;
 	protected final CoreTime mCoreTime = new CoreTime();
 	protected final GameTime mGameTime = new GameTime();
-	protected final AppResources mAppResources = new AppResources();
 	protected CoreTimeController mCoreTimeController;
 	protected ResourceController mResourceController;
 	protected CameraController mCameraController;
@@ -205,10 +206,6 @@ public abstract class LintfordCore {
 
 	public boolean isFixedTimeStep() {
 		return mIsFixedTimeStep;
-	}
-
-	public AppResources appResources() {
-		return mAppResources;
 	}
 
 	/**

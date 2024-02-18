@@ -1,6 +1,6 @@
 package net.lintfordlib.core.graphics.fonts;
 
-import net.lintfordlib.core.ResourceManager;
+import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.core.camera.ICamera;
 import net.lintfordlib.core.debug.GLDebug;
 import net.lintfordlib.core.graphics.Color;

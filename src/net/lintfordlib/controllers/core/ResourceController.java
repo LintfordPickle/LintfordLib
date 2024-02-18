@@ -1,8 +1,8 @@
 package net.lintfordlib.controllers.core;
 
+import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.controllers.BaseController;
 import net.lintfordlib.controllers.ControllerManager;
-import net.lintfordlib.core.ResourceManager;
 
 public class ResourceController extends BaseController {
 

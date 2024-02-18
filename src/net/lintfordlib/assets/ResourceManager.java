@@ -1,4 +1,4 @@
-package net.lintfordlib.core;
+package net.lintfordlib.assets;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.lintfordlib.ConstantsApp;
+import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.audio.AudioManager;
 import net.lintfordlib.core.audio.music.MusicManager;
 import net.lintfordlib.core.debug.Debug;
@@ -24,8 +25,6 @@ import net.lintfordlib.core.graphics.fonts.BitmapFontManager;
 import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetManager;
 import net.lintfordlib.core.graphics.textures.TextureManager;
 import net.lintfordlib.options.MasterConfig;
-import net.lintfordlib.options.ResourceMap;
-import net.lintfordlib.options.ResourceMapIo;
 
 /**
  * @References Path Watcher: https://docs.oracle.com/javase/tutorial/essential/io/notification.html

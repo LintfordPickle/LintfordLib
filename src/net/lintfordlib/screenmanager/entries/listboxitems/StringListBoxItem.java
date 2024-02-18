@@ -5,12 +5,14 @@ import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.graphics.ColorConstants;
 import net.lintfordlib.core.graphics.batching.SpriteBatch;
-import net.lintfordlib.screenmanager.Screen;
+import net.lintfordlib.core.graphics.fonts.FontUnit;
+import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
+import net.lintfordlib.core.graphics.textures.CoreTextureNames;
 import net.lintfordlib.screenmanager.ScreenManager;
-import net.lintfordlib.screenmanager.entries.ListBox;
-import net.lintfordlib.screenmanager.entries.ListBoxItem;
+import net.lintfordlib.screenmanager.entries.MenuListBox;
+import net.lintfordlib.screenmanager.entries.MenuListBoxItem;
 
-public class StringListBoxItem extends ListBoxItem {
+public class StringListBoxItem extends MenuListBoxItem {
 
 	// --------------------------------------
 	// Constants
@@ -40,9 +42,10 @@ public class StringListBoxItem extends ListBoxItem {
 	// Constructor
 	// --------------------------------------
 
-	public StringListBoxItem(ScreenManager pScreenManager, ListBox parentListBox, int index, String value, int entityGroupUid) {
+	public StringListBoxItem(ScreenManager pScreenManager, MenuListBox parentListBox, int index, String value, int entityGroupUid) {
 		super(pScreenManager, parentListBox, index, entityGroupUid);
 
+		mH = 25;
 		mTextValue = value;
 	}
 
@@ -51,17 +54,18 @@ public class StringListBoxItem extends ListBoxItem {
 	// --------------------------------------
 
 	@Override
-	public void draw(LintfordCore core, Screen screen, SpriteBatch spriteBatch, float parentZDepth) {
+	public void draw(LintfordCore core, SpriteBatch spriteBatch, SpriteSheetDefinition coreDef, FontUnit fontUnit, float zDepth) {
+
+		if (entryColor.a > 0.f) {
+			spriteBatch.draw(coreDef, CoreTextureNames.TEXTURE_WHITE, mX, mY, mW, mH, zDepth, entryColor);
+		}
+
 		if (mTextValue != null && mTextValue.length() > 0) {
 			final float lScale = mScreenManager.UiStructureController().uiTextScaleFactor();
 			final var lFont = mParentListBox.parentScreen().font();
 			final float lFontHeight = lFont.getStringHeight(mTextValue, lScale);
 
-			mH = 10;
-
-			lFont.begin(core.HUD());
-			lFont.drawText(mTextValue, mX, mY - lFontHeight / 2, parentZDepth + .1f, ColorConstants.TextEntryColor, lScale, -1);
-			lFont.end();
+			lFont.drawText(mTextValue, mX, mY + mH / 2.f - lFontHeight / 2, zDepth, ColorConstants.TextEntryColor, lScale, -1);
 		}
 
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {

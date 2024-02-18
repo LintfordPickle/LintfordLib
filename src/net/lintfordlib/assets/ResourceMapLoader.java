@@ -1,11 +1,9 @@
-package net.lintfordlib;
+package net.lintfordlib.assets;
 
 import java.io.File;
 
-import net.lintfordlib.core.ResourceManager;
 import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.options.DisplayManager;
-import net.lintfordlib.options.ResourceMapIo;
 
 public class ResourceMapLoader extends ResourceLoader {
 
@@ -24,7 +22,6 @@ public class ResourceMapLoader extends ResourceLoader {
 		super(resourceManager, displayManager, true, entityGroupUid);
 
 		mResourceMapFilepath = resourceMapFilepath;
-
 	}
 
 	// ---------------------------------------------

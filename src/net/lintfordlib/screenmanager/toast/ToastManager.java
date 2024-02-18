@@ -3,8 +3,8 @@ package net.lintfordlib.screenmanager.toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.core.LintfordCore;
-import net.lintfordlib.core.ResourceManager;
 import net.lintfordlib.core.graphics.batching.TextureBatchPCT;
 import net.lintfordlib.core.graphics.fonts.FontMetaData;
 import net.lintfordlib.core.graphics.fonts.FontUnit;
@@ -78,7 +78,7 @@ public class ToastManager {
 		}
 
 		float lFinalX = -pCore.config().display().windowWidth() / 2;
-		float lFinalY = pCore.config().display().windowHeight() / 2 - 30;
+		float lFinalY = pCore.config().display().windowHeight() / 2 - 50;
 
 		for (int i = 0; i < SIZE_T; i++) {
 			ToastMessage lTM = mToastMessageUpdate.get(i);
@@ -98,9 +98,7 @@ public class ToastManager {
 				lTM.y += 500f * pCore.appTime().elapsedTimeMilli() / 1000f;
 
 			lFinalY -= 25;
-
 		}
-
 	}
 
 	public void draw(LintfordCore pCore) {

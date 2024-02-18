@@ -1,8 +1,8 @@
 package net.lintfordlib.screenmanager;
 
+import net.lintfordlib.assets.ResourceGroupProvider;
+import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.core.LintfordCore;
-import net.lintfordlib.core.ResourceGroupProvider;
-import net.lintfordlib.core.ResourceManager;
 import net.lintfordlib.core.LintfordCore.CoreTime;
 import net.lintfordlib.core.graphics.Color;
 import net.lintfordlib.core.graphics.ColorConstants;

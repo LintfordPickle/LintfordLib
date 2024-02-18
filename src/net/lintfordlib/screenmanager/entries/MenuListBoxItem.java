@@ -4,11 +4,12 @@ import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.geometry.Rectangle;
 import net.lintfordlib.core.graphics.Color;
 import net.lintfordlib.core.graphics.batching.SpriteBatch;
+import net.lintfordlib.core.graphics.fonts.FontUnit;
+import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintfordlib.screenmanager.MenuScreen;
-import net.lintfordlib.screenmanager.Screen;
 import net.lintfordlib.screenmanager.ScreenManager;
 
-public abstract class ListBoxItem extends Rectangle {
+public abstract class MenuListBoxItem extends Rectangle {
 
 	private static final long serialVersionUID = -1093948958243532531L;
 
@@ -17,15 +18,13 @@ public abstract class ListBoxItem extends Rectangle {
 	// --------------------------------------
 
 	protected ScreenManager mScreenManager;
-	protected ListBox mParentListBox;
+	protected MenuListBox mParentListBox;
 	public final Color textColor = new Color();
 	public final Color entryColor = new Color();
 	protected int mEntityGroupID;
 	protected int mItemIndex;
 	protected float mDoubleClickTimer;
 	protected int mDoubleClickLogicalCounter;
-	protected int mEntryWidth;
-	protected int mEntryHeight;
 
 	// --------------------------------------
 	// Properties
@@ -39,7 +38,7 @@ public abstract class ListBoxItem extends Rectangle {
 	// Constructor
 	// --------------------------------------
 
-	public ListBoxItem(ScreenManager screenManager, ListBox parentListBox, int index, int entityGroupUid) {
+	public MenuListBoxItem(ScreenManager screenManager, MenuListBox parentListBox, int index, int entityGroupUid) {
 		mScreenManager = screenManager;
 		mParentListBox = parentListBox;
 
@@ -47,8 +46,8 @@ public abstract class ListBoxItem extends Rectangle {
 
 		mItemIndex = index;
 
-		mEntryWidth = 600;
-		mEntryHeight = 64;
+		mW = 600;
+		mH = 64;
 	}
 
 	// --------------------------------------
@@ -76,7 +75,7 @@ public abstract class ListBoxItem extends Rectangle {
 
 			return true;
 		}
-	
+
 		if (intersectsUs && mDoubleClickLogicalCounter != -1) {
 			mDoubleClickTimer -= core.appTime().elapsedTimeMilli();
 
@@ -99,10 +98,8 @@ public abstract class ListBoxItem extends Rectangle {
 	}
 
 	public void update(LintfordCore core, MenuScreen screen) {
-		mW = mEntryWidth;
-		mH = mEntryHeight;
 	}
 
-	public abstract void draw(LintfordCore core, Screen screen, SpriteBatch spriteBatch, float parentZDepth);
+	public abstract void draw(LintfordCore core, SpriteBatch spriteBatch, SpriteSheetDefinition coreDef, FontUnit fontUnit, float zDepth);
 
 }

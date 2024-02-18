@@ -7,7 +7,7 @@ import java.util.Map;
 
 import com.google.gson.annotations.SerializedName;
 
-import net.lintfordlib.core.ResourceManager;
+import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.graphics.sprites.SpriteDefinition;
 import net.lintfordlib.core.graphics.sprites.SpriteFrame;

@@ -12,7 +12,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.stream.JsonReader;
 
-import net.lintfordlib.core.ResourceManager;
+import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.graphics.fonts.FontMetaData.BitmapFontDataDefinition;
 import net.lintfordlib.core.storage.FileUtils;

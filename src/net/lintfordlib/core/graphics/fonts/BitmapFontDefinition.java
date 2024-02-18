@@ -7,8 +7,8 @@ import org.lwjgl.opengl.GL11;
 
 import com.google.gson.annotations.SerializedName;
 
+import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.core.LintfordCore;
-import net.lintfordlib.core.ResourceManager;
 import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.graphics.sprites.SpriteFrame;
 import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetDefinition;

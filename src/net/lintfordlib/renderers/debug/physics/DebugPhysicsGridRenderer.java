@@ -3,9 +3,9 @@ package net.lintfordlib.renderers.debug.physics;
 import org.lwjgl.opengl.GL11;
 
 import net.lintfordlib.ConstantsPhysics;
+import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.controllers.physics.PhysicsController;
 import net.lintfordlib.core.LintfordCore;
-import net.lintfordlib.core.ResourceManager;
 import net.lintfordlib.core.graphics.linebatch.LineBatch;
 import net.lintfordlib.core.physics.PhysicsWorld;
 import net.lintfordlib.core.physics.dynamics.RigidBody;

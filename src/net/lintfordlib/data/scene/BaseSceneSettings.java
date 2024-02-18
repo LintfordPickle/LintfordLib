@@ -5,9 +5,9 @@ import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.lintfordlib.core.AppResources;
 import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.storage.FileUtils;
+import net.lintfordlib.options.ResourcePathsConfig;
 
 public abstract class BaseSceneSettings {
 
@@ -17,16 +17,18 @@ public abstract class BaseSceneSettings {
 
 	public static final String scenenameRegex = "[^a-zA-Z0-9]";
 
+	private String SCENES_DIR_KEY_NAME = "ScenesDirectoryPath";
+
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
-	private AppResources mAppResources;
+	private ResourcePathsConfig mResourcePathsConfig;
 
 	private String mSceneHeaderFileExtension = ".hdr";
 	private String mSceneDataFileExtension = ".data";
 
-	private String mScenesBaseDirectory = "scenes" + FileUtils.FILE_SEPERATOR;
+	private String mScenesBaseDirectory;
 
 	// --------------------------------------
 	// Properties
@@ -59,37 +61,22 @@ public abstract class BaseSceneSettings {
 	}
 
 	public String scenesDirectory() {
-		return mAppResources.defsDirectory() + mScenesBaseDirectory;
+		return mScenesBaseDirectory;
 	}
 
 	public void scenesDirectory(String newScenesDirectory) {
-		if (newScenesDirectory == null || newScenesDirectory.length() == 0) {
-			Debug.debugManager().logger().e(getClass().getSimpleName(), "Cannot set scenes resources directory to null or empty.");
-			return;
-		}
-
-		if (newScenesDirectory.startsWith(mAppResources.defsDirectory())) {
-			newScenesDirectory = newScenesDirectory.substring(mAppResources.defsDirectory().length());
-		}
-
-		if (newScenesDirectory.startsWith(mAppResources.root())) {
-			newScenesDirectory = newScenesDirectory.substring(mAppResources.root().length());
-		}
-
-		if (newScenesDirectory.endsWith(FileUtils.FILE_SEPERATOR) == false) {
-			newScenesDirectory = newScenesDirectory + FileUtils.FILE_SEPERATOR;
-		}
-
-		mScenesBaseDirectory = newScenesDirectory;
-		Debug.debugManager().logger().i(getClass().getSimpleName(), "Scenes resources directory set to : " + mScenesBaseDirectory);
+		// TODO: allow for modifying scenes directory
 	}
 
 	// --------------------------------------
 	// Constrcutor
 	// --------------------------------------
 
-	public BaseSceneSettings(AppResources appResources) {
-		mAppResources = appResources;
+	public BaseSceneSettings(ResourcePathsConfig paths) {
+		mResourcePathsConfig = paths;
+
+		// get (or set) the paths directory.
+		mScenesBaseDirectory = paths.getKeyValue(SCENES_DIR_KEY_NAME, "res/def/scenes/");
 	}
 
 	// --------------------------------------
@@ -107,8 +94,8 @@ public abstract class BaseSceneSettings {
 
 		final var lSubDirectoryList = lScenesDirectory.listFiles(lDirectoryFilter);
 		final List<File> lAllHeaderFiles = new ArrayList<>();
-		
-		if(lSubDirectoryList == null)
+
+		if (lSubDirectoryList == null)
 			return lAllHeaderFiles;
 
 		for (var subDir : lSubDirectoryList) {

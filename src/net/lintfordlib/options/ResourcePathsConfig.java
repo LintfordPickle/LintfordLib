@@ -34,6 +34,16 @@ public class ResourcePathsConfig extends IniFile {
 		return mPathKeyValuePairs.get(key);
 	}
 
+	public String getKeyValue(String key, String defaultValue) {
+		final var result = mPathKeyValuePairs.get(key);
+		if (result == null) {
+			insertOrUpdateValue(key, defaultValue);
+			return defaultValue;
+		}
+
+		return result;
+	}
+
 	/** Returns true if this map contains a mapping for the specifiedkey. More formally, returns true if and only if the mPathKeyValuePairs map contains a mapping for a key k such that Objects.equals(key, k). (There can beat most one such mapping.) */
 	public boolean containsKeyValue(String key) {
 		return mPathKeyValuePairs.containsKey(key);

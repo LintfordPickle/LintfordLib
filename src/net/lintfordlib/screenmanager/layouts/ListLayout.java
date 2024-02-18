@@ -27,9 +27,6 @@ public class ListLayout extends BaseLayout implements IInputProcessor {
 	public ListLayout(MenuScreen parentScreen) {
 		super(parentScreen);
 
-		mMinWidth = 0.f;
-		mMaxWidth = 900.f;
-
 		// inevitably, there is some portion of the background graphic which
 		// shouldn't have content rendered over it. E.g. The bevel graphic around the borders
 		mCropPaddingBottom = 0.f;

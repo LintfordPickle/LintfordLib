@@ -6,9 +6,9 @@ import java.util.List;
 
 import org.lwjgl.opengl.GL11;
 
+import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.controllers.hud.HudLayoutController;
 import net.lintfordlib.core.LintfordCore;
-import net.lintfordlib.core.ResourceManager;
 import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.graphics.batching.SpriteBatch;
 import net.lintfordlib.core.graphics.fonts.FontMetaData;

@@ -1,8 +1,8 @@
 package net.lintfordlib.screenmanager.screens;
 
+import net.lintfordlib.assets.ResourceGroupProvider;
+import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.core.LintfordCore;
-import net.lintfordlib.core.ResourceGroupProvider;
-import net.lintfordlib.core.ResourceManager;
 import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.time.TimeSpan;
 import net.lintfordlib.options.DisplayManager;

@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.google.gson.GsonBuilder;
 
-import net.lintfordlib.core.ResourceManager;
+import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.core.audio.AudioManager;
 import net.lintfordlib.core.audio.AudioSource;
 import net.lintfordlib.core.audio.AudioManager.AudioMetaData;

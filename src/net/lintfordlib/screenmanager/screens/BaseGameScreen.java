@@ -1,9 +1,9 @@
 package net.lintfordlib.screenmanager.screens;
 
+import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.controllers.ControllerManager;
 import net.lintfordlib.controllers.core.GameRendererController;
 import net.lintfordlib.core.LintfordCore;
-import net.lintfordlib.core.ResourceManager;
 import net.lintfordlib.core.camera.ICamera;
 import net.lintfordlib.core.time.LogicialCounter;
 import net.lintfordlib.data.DataManager;

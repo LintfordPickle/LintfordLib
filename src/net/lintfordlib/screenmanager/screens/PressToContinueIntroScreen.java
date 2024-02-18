@@ -2,8 +2,8 @@ package net.lintfordlib.screenmanager.screens;
 
 import org.lwjgl.glfw.GLFW;
 
+import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.core.LintfordCore;
-import net.lintfordlib.core.ResourceManager;
 import net.lintfordlib.core.graphics.ColorConstants;
 import net.lintfordlib.core.graphics.batching.TextureBatchPCT;
 import net.lintfordlib.core.graphics.textures.Texture;

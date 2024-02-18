@@ -1,4 +1,4 @@
-package net.lintfordlib.core;
+package net.lintfordlib.assets;
 
 import java.util.concurrent.atomic.AtomicInteger;
 

@@ -3,9 +3,9 @@ package net.lintfordlib.screenmanager;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.controllers.hud.HudLayoutController;
 import net.lintfordlib.core.LintfordCore;
-import net.lintfordlib.core.ResourceManager;
 import net.lintfordlib.core.audio.AudioFireAndForgetManager;
 import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.graphics.fonts.FontMetaData;

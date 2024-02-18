@@ -47,7 +47,6 @@ public class UiInputText extends UIWidget implements IBufferedTextInputCallback 
 	private boolean mSingleLine;
 
 	private int mCursorPos;
-
 	private boolean mNumericInputOnly;
 
 	// --------------------------------------

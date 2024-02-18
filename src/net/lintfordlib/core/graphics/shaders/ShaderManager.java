@@ -3,7 +3,7 @@ package net.lintfordlib.core.graphics.shaders;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.lintfordlib.core.ResourceManager;
+import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.core.debug.Debug;
 
 public class ShaderManager {

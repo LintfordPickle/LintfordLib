@@ -3,9 +3,11 @@ package net.lintfordlib.renderers.particles;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.lwjgl.opengl.GL11;
+
+import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.controllers.core.particles.ParticleFrameworkController;
 import net.lintfordlib.core.LintfordCore;
-import net.lintfordlib.core.ResourceManager;
 import net.lintfordlib.core.graphics.batching.SpriteBatch;
 import net.lintfordlib.core.particles.particlesystems.ParticleSystemInstance;
 import net.lintfordlib.renderers.BaseRenderer;
@@ -139,16 +141,16 @@ public class ParticleFrameworkRenderer extends BaseRenderer {
 			if (lParticleRenderer.isAssigned() == false)
 				continue;
 
-			final var lSrcBlendFactor = lParticleRenderer.srcBlendFactor();
-			final var lDestBlendFactor = lParticleRenderer.destBlendFactor();
-
-			if (cacheSrcBlendFactor != lSrcBlendFactor || cacheDestBlendFactor != lDestBlendFactor) {
-				cacheSrcBlendFactor = lSrcBlendFactor;
-				cacheDestBlendFactor = lDestBlendFactor;
-
-				mSpriteBatch.setGlBlendEnabled(true);
-				mSpriteBatch.setGlBlendFactor(lSrcBlendFactor, lDestBlendFactor);
-			}
+//			final var lSrcBlendFactor = lParticleRenderer.srcBlendFactor();
+//			final var lDestBlendFactor = lParticleRenderer.destBlendFactor();
+//
+//			if (cacheSrcBlendFactor != lSrcBlendFactor || cacheDestBlendFactor != lDestBlendFactor) {
+//				cacheSrcBlendFactor = lSrcBlendFactor;
+//				cacheDestBlendFactor = lDestBlendFactor;
+//
+//				mSpriteBatch.setGlBlendEnabled(true);
+//				mSpriteBatch.setGlBlendFactor(lSrcBlendFactor, lDestBlendFactor);
+//			}
 
 			mSpriteBatch.begin(core.gameCamera());
 

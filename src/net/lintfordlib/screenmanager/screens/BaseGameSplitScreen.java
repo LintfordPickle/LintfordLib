@@ -1,9 +1,9 @@
 package net.lintfordlib.screenmanager.screens;
 
+import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.controllers.ControllerManager;
 import net.lintfordlib.controllers.player.PlayerSessionController;
 import net.lintfordlib.core.LintfordCore;
-import net.lintfordlib.core.ResourceManager;
 import net.lintfordlib.core.splitscreen.IPlayerSession;
 import net.lintfordlib.core.splitscreen.PlayerSessionsManager;
 import net.lintfordlib.renderers.RendererManager;

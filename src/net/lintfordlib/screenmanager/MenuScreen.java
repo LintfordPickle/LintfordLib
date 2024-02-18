@@ -5,8 +5,8 @@ import java.util.List;
 
 import org.lwjgl.glfw.GLFW;
 
+import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.core.LintfordCore;
-import net.lintfordlib.core.ResourceManager;
 import net.lintfordlib.core.graphics.fonts.FontUnit;
 import net.lintfordlib.core.input.InputManager;
 import net.lintfordlib.core.maths.MathHelper;
@@ -327,25 +327,44 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		if (lUIHUDStructureController == null)
 			return;
 
-		final int lLeftLayoutCount = layoutList.size();
+		final var lLayoutCount = layoutList.size();
+		final var lScreenContentWidth = lUIHUDStructureController.menuMainRectangle().width();
 
-		final float lScreenContentWidth = lUIHUDStructureController.menuMainRectangle().width();
-
-		for (int i = 0; i < lLeftLayoutCount; i++) {
+		for (int i = 0; i < lLayoutCount; i++) {
 			final var lBaseLayout = layoutList.get(i);
 
 			// Layout size gets
 			float lLayoutWidth = lScreenContentWidth - mLayoutPaddingHorizontal * 2f;
 			if (lBaseLayout.layoutWidth() == LAYOUT_WIDTH.THREEQUARTER) {
-				lLayoutWidth = MathHelper.clamp(lScreenContentWidth / 4f * 3f - mLayoutPaddingHorizontal * 2f, 0.f, lBaseLayout.maxWidth());
+				if (lBaseLayout.maxWidthDefined())
+					lLayoutWidth = MathHelper.clamp(lScreenContentWidth / 4f * 3f - mLayoutPaddingHorizontal * 2f, 0.f, lBaseLayout.maxWidth());
+				else
+					lLayoutWidth = lScreenContentWidth / 4f * 3f - mLayoutPaddingHorizontal * 2f;
+
 			} else if (lBaseLayout.layoutWidth() == LAYOUT_WIDTH.TWOTHIRD) {
-				lLayoutWidth = MathHelper.clamp(lScreenContentWidth / 3f * 2f - mLayoutPaddingHorizontal * 2f, 0.f, lBaseLayout.maxWidth());
+				if (lBaseLayout.maxWidthDefined())
+					lLayoutWidth = MathHelper.clamp(lScreenContentWidth / 3f * 2f - mLayoutPaddingHorizontal * 2f, 0.f, lBaseLayout.maxWidth());
+				else
+					lLayoutWidth = lScreenContentWidth / 3f * 2f - mLayoutPaddingHorizontal * 2f;
+
 			} else if (lBaseLayout.layoutWidth() == LAYOUT_WIDTH.HALF) {
-				lLayoutWidth = MathHelper.clamp(lScreenContentWidth / 2f - mLayoutPaddingHorizontal * 2f, 0.f, lBaseLayout.maxWidth());
+				if (lBaseLayout.maxWidthDefined())
+					lLayoutWidth = MathHelper.clamp(lScreenContentWidth / 2f - mLayoutPaddingHorizontal * 2f, 0.f, lBaseLayout.maxWidth());
+				else
+					lLayoutWidth = lScreenContentWidth / 2f - mLayoutPaddingHorizontal * 2f;
+
 			} else if (lBaseLayout.layoutWidth() == LAYOUT_WIDTH.THIRD) {
-				lLayoutWidth = MathHelper.clamp(lScreenContentWidth / 3f - mLayoutPaddingHorizontal * 2f, 0.f, lBaseLayout.maxWidth());
+				if (lBaseLayout.maxWidthDefined())
+					lLayoutWidth = MathHelper.clamp(lScreenContentWidth / 3f - mLayoutPaddingHorizontal * 2f, 0.f, lBaseLayout.maxWidth());
+				else
+					lLayoutWidth = lScreenContentWidth / 3f - mLayoutPaddingHorizontal * 2f;
+
 			} else if (lBaseLayout.layoutWidth() == LAYOUT_WIDTH.QUARTER) {
-				lLayoutWidth = MathHelper.clamp(lScreenContentWidth / 4f - mLayoutPaddingHorizontal * 2f, 0.f, lBaseLayout.maxWidth());
+				if (lBaseLayout.maxWidthDefined())
+					lLayoutWidth = MathHelper.clamp(lScreenContentWidth / 4f - mLayoutPaddingHorizontal * 2f, 0.f, lBaseLayout.maxWidth());
+				else
+					lLayoutWidth = lScreenContentWidth / 4f - mLayoutPaddingHorizontal * 2f;
+
 			}
 
 			var lLayoutNewX = 0.f;
@@ -369,11 +388,11 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		var lLayoutHeight = (int) (lUIHUDStructureController.menuMainRectangle().height() - mScreenPaddingTop);
 
 		// See how many layouts only take what they need
-		int lCountOfSharers = lLeftLayoutCount;
+		int lCountOfSharers = lLayoutCount;
 		int lCountOfTakers = 0;
 		int heightTaken = 0;
 
-		for (int i = 0; i < lLeftLayoutCount; i++) {
+		for (int i = 0; i < lLayoutCount; i++) {
 			final var lBaseLayout = layoutList.get(i);
 			if (lBaseLayout.layoutFillType() == FILLTYPE.TAKE_WHATS_NEEDED) {
 				lCountOfTakers++;
@@ -390,7 +409,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		}
 
 		float lTop = lLayoutNewY;
-		for (int i = 0; i < lLeftLayoutCount; i++) {
+		for (int i = 0; i < lLayoutCount; i++) {
 			final var lBaseLayout = layoutList.get(i);
 
 			lBaseLayout.y(lTop);

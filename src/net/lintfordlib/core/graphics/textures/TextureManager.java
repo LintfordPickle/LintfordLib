@@ -14,9 +14,9 @@ import org.lwjgl.opengl.GL14;
 
 import com.google.gson.GsonBuilder;
 
-import net.lintfordlib.core.EntityGroupManager;
+import net.lintfordlib.assets.EntityGroupManager;
+import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.core.LintfordCore;
-import net.lintfordlib.core.ResourceManager;
 import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.debug.stats.DebugStats;
 import net.lintfordlib.core.storage.FileUtils;

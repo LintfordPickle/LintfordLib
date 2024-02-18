@@ -192,8 +192,6 @@ public class UiVerticalTextListBox extends UIWidget implements IScrollBarArea {
 	public void update(LintfordCore core) {
 		super.update(core);
 
-		mScrollbar.update(core);
-
 		final var lNumAssets = mItems.size();
 		final var lContentHeight = lNumAssets * (mAssetHeightInpx + mVerticalAssetSeparationInPx) + mVerticalAssetSeparationInPx;
 
@@ -248,9 +246,7 @@ public class UiVerticalTextListBox extends UIWidget implements IScrollBarArea {
 
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
 			spriteBatch.begin(core.HUD());
-
 			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, mWindowRectangle, componentZDepth, ColorConstants.Debug_Transparent_Magenta);
-
 			spriteBatch.end();
 		}
 

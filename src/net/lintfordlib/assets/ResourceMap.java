@@ -1,4 +1,4 @@
-package net.lintfordlib.options;
+package net.lintfordlib.assets;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -6,9 +6,11 @@ import java.util.List;
 
 import com.google.gson.annotations.SerializedName;
 
-import net.lintfordlib.core.ResourceManager;
 import net.lintfordlib.core.debug.Debug;
 
+/**
+ * Loaded by each individual project. Defines the locations to load the assets needed.
+ **/
 public class ResourceMap {
 
 	// --------------------------------------
@@ -22,10 +24,10 @@ public class ResourceMap {
 	// --------------------------------------
 
 	@SerializedName(value = "Textures")
-	public List<String> textureMetaFiles = new ArrayList<>();
+	public final List<String> textureMetaFiles = new ArrayList<>();
 
 	@SerializedName(value = "Spritesheets")
-	public List<String> spritesheetMetaFiles = new ArrayList<>();
+	public final List<String> spritesheetMetaFiles = new ArrayList<>();
 
 	// --------------------------------------
 	// Constructor

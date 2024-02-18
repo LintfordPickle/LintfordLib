@@ -2,8 +2,8 @@ package net.lintfordlib.renderers.debug;
 
 import org.lwjgl.glfw.GLFW;
 
+import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.core.LintfordCore;
-import net.lintfordlib.core.ResourceManager;
 import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.input.mouse.IInputProcessor;
 import net.lintfordlib.core.particles.ParticleFrameworkData;

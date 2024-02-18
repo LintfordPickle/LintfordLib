@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.lintfordlib.ConstantsApp;
+import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.core.LintfordCore;
-import net.lintfordlib.core.ResourceManager;
 import net.lintfordlib.core.geometry.Rectangle;
 import net.lintfordlib.core.graphics.Color;
 import net.lintfordlib.core.graphics.ColorConstants;
@@ -119,12 +119,20 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 		return mMaxWidth;
 	}
 
+	public boolean maxWidthDefined() {
+		return mMaxWidth != -1;
+	}
+
 	public void maxHeight(float maxHeight) {
 		mMaxHeight = maxHeight;
 	}
 
 	public float maxHeight() {
 		return mMaxHeight;
+	}
+
+	public boolean maxHeightDefined() {
+		return mMaxHeight != -1;
 	}
 
 	public void setEntryOffsetY(float newOffset) {
@@ -358,11 +366,6 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 		// limit mouse interaction within the baseLayout to within the contentDisplayArea
 		// due to the constraints imposed by the title bar, via the crop top and crop bottom, the contentDisplayArea is a subset of the layout
 		if (core.input().mouse().isMouseMenuSelectionEnabled() && contentDisplayArea().intersectsAA(core.HUD().getMouseCameraSpace())) {
-			if (true && core.input().mouse().tryAcquireMouseMiddle((hashCode()))) {
-				final float scrollAccelerationAmt = core.input().mouse().mouseWheelYOffset() * 250.0f;
-				mScrollBar.scrollRelAcceleration(scrollAccelerationAmt);
-			}
-
 			final int lCount = mMenuEntries.size();
 			for (int i = 0; i < lCount; i++) {
 				var lInputHandled = false;
@@ -370,6 +373,11 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 
 				if (lInputHandled)
 					return lInputHandled;
+			}
+
+			if (core.input().mouse().tryAcquireMouseMiddle((hashCode()))) {
+				final float scrollAccelerationAmt = core.input().mouse().mouseWheelYOffset() * 250.0f;
+				mScrollBar.scrollRelAcceleration(scrollAccelerationAmt);
 			}
 		}
 

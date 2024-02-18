@@ -23,11 +23,27 @@ public class MenuToggleEntry extends MenuEntry {
 	// --------------------------------------
 
 	private boolean mIsChecked;
+	private boolean mShowCheckedText;
 	private final String mSeparator = " : ";
+	private String mEnabledText;
+	private String mDisabledText;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public boolean showCheckedText() {
+		return mShowCheckedText;
+	}
+
+	public void showCheckedText(boolean showCheckedText) {
+		mShowCheckedText = showCheckedText;
+	}
+
+	public void setCheckedText(String disabledText, String enabledText) {
+		mDisabledText = disabledText;
+		mEnabledText = enabledText;
+	}
 
 	public void label(String label) {
 		mText = label;
@@ -61,6 +77,9 @@ public class MenuToggleEntry extends MenuEntry {
 
 		contextHintState.buttonAHint = "toggle";
 		contextHintState.keyReturnHint = "toggle";
+
+		mDisabledText = "Disabled";
+		mEnabledText = "Enabled";
 	}
 
 	// --------------------------------------
@@ -73,6 +92,40 @@ public class MenuToggleEntry extends MenuEntry {
 
 		mCoreSpritesheet = null;
 
+	}
+
+	public boolean onHandleMouseInput(LintfordCore core) {
+		if (mReadOnly)
+			return false;
+
+		if (mParentScreen == null)
+			return false;
+
+		if (!core.input().mouse().isMouseMenuSelectionEnabled()) {
+			mIsMouseOver = false;
+			return false;
+		}
+
+		if (!intersectsAA(core.HUD().getMouseCameraSpace()) || !core.input().mouse().isMouseOverThisComponent(hashCode())) {
+			mIsMouseOver = false;
+			return false;
+		}
+
+		mIsMouseOver = true;
+
+		if (!mHasFocus && mCanHaveFocus)
+			mParentScreen.setFocusOnEntry(this);
+
+		if (mToolTipEnabled)
+			mToolTipTimer += core.appTime().elapsedTimeMilli();
+
+		if (core.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
+			onClick(core.input());
+
+			return true;
+		}
+
+		return false;
 	}
 
 	@Override
@@ -127,7 +180,7 @@ public class MenuToggleEntry extends MenuEntry {
 		if (mIsChecked)
 			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_TICK, lScreenOffset.x + mX + mW / 2 + 16, lScreenOffset.y + mY, lTileSize, lTileSize, mZ, entryColor);
 		else
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_CROSS, lScreenOffset.x + centerX() + lTileSize / 2, lScreenOffset.y + mY + mH / 2 - lTileSize / 2, lTileSize, lTileSize, mZ, entryColor);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_EMPTY, lScreenOffset.x + centerX() + lTileSize / 2, lScreenOffset.y + mY + mH / 2 - lTileSize / 2, lTileSize, lTileSize, mZ, entryColor);
 
 		lSpriteBatch.end();
 
@@ -135,10 +188,12 @@ public class MenuToggleEntry extends MenuEntry {
 		lTextBoldFont.drawText(mText, lScreenOffset.x + mX + mW / 2 - lLabelWidth - SPACE_BETWEEN_TEXT - lSeparatorHalfWidth, lScreenOffset.y + mY + 32 / 2 - lTextHeight * 0.5f, mZ, textColor, lUiTextScale, -1);
 		lTextBoldFont.drawText(mSeparator, lScreenOffset.x + mX + mW / 2 - lSeparatorHalfWidth, lScreenOffset.y + mY + mH / 2 - lTextHeight * 0.5f, mZ, textColor, lUiTextScale, -1);
 
-		if (mIsChecked)
-			lTextBoldFont.drawText("Enabled", lScreenOffset.x + mX + mW / 2 + lSeparatorHalfWidth + lTileSize * 2, lScreenOffset.y + mY + mH / 2 - lTextHeight * 0.5f, mZ, textColor, lUiTextScale, -1);
-		else
-			lTextBoldFont.drawText("Disabled", lScreenOffset.x + mX + mW / 2 + lSeparatorHalfWidth + lTileSize * 2, lScreenOffset.y + mY + mH / 2 - lTextHeight * 0.5f, mZ, textColor, lUiTextScale, -1);
+		if (mShowCheckedText) {
+			if (mIsChecked)
+				lTextBoldFont.drawText(mEnabledText, lScreenOffset.x + mX + mW / 2 + lSeparatorHalfWidth + lTileSize * 2, lScreenOffset.y + mY + mH / 2 - lTextHeight * 0.5f, mZ, textColor, lUiTextScale, -1);
+			else
+				lTextBoldFont.drawText(mDisabledText, lScreenOffset.x + mX + mW / 2 + lSeparatorHalfWidth + lTileSize * 2, lScreenOffset.y + mY + mH / 2 - lTextHeight * 0.5f, mZ, textColor, lUiTextScale, -1);
+		}
 
 		lTextBoldFont.end();
 

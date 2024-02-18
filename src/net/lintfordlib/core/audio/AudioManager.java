@@ -39,7 +39,7 @@ import org.lwjgl.openal.ALUtil;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import net.lintfordlib.core.ResourceManager;
+import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.core.audio.data.AudioData;
 import net.lintfordlib.core.audio.data.OGGAudioData;
 import net.lintfordlib.core.audio.data.WaveAudioData;

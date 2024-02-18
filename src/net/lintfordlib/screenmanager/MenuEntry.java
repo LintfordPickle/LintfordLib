@@ -1,8 +1,8 @@
 package net.lintfordlib.screenmanager;
 
 import net.lintfordlib.ConstantsApp;
+import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.core.LintfordCore;
-import net.lintfordlib.core.ResourceManager;
 import net.lintfordlib.core.geometry.Rectangle;
 import net.lintfordlib.core.graphics.Color;
 import net.lintfordlib.core.graphics.ColorConstants;
@@ -31,6 +31,8 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 	protected static final float Z_STATE_MODIFIER_ACTIVE = 0.006f; // Entry active
 
 	public static final String SOUND_ON_CLICK_NAME = "SOUND_MENU_CLICK";
+
+	public static final int ENTRY_DEFAULT_HEIGHT = 32;
 
 	public static MenuEntry menuSeparator() {
 		final var lNewMenuSeparatorEntry = new MenuEntry(null, null, null);
@@ -75,8 +77,10 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 	protected String mText;
 	protected float mScale;
 	private float mScaleCounter;
+
 	protected EntryInteractions mClickListener;
 	protected int mMenuEntryID;
+
 	protected boolean mDrawBackground;
 	protected boolean mHighlightOnHover;
 	protected boolean mScaleonFocus;
@@ -365,6 +369,7 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 	public MenuEntry(ScreenManager screenManager, MenuScreen parentScreen, String menuEntryLabel) {
 		mScreenManager = screenManager;
 		mParentScreen = parentScreen;
+
 		mText = menuEntryLabel;
 
 		mEnableUpdateDraw = true;
@@ -386,7 +391,7 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 
 		mMinHeight = 4.f;
 		mMaxHeight = 512.f;
-		mDesiredHeight = 32.f;
+		mDesiredHeight = ENTRY_DEFAULT_HEIGHT;
 
 		mW = mDesiredWidth;
 		mH = mDesiredHeight;
@@ -493,7 +498,7 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 			mScaleCounter += lDeltaTime;
 			mScale = 0.75f + (float) (Math.cos(mScaleCounter) * 0.05f);
 		} else {
-			mScale = 0.75f;
+			mScale = 1.f; // 0.75f;
 		}
 
 		if ((mToolTipEnabled && mHasFocus) || mInfoIconDstRectangle.intersectsAA(core.HUD().getMouseCameraSpace())) {

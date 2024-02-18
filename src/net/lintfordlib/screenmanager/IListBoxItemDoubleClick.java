@@ -1,9 +1,9 @@
 package net.lintfordlib.screenmanager;
 
-import net.lintfordlib.screenmanager.entries.ListBoxItem;
+import net.lintfordlib.screenmanager.entries.MenuListBoxItem;
 
 public interface IListBoxItemDoubleClick {
 
-	void onListItemDoubleClicked(ListBoxItem listboxItem);
+	void onListItemDoubleClicked(MenuListBoxItem listboxItem);
 
 }

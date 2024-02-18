@@ -9,8 +9,8 @@ import java.util.Map;
 
 import com.google.gson.GsonBuilder;
 
-import net.lintfordlib.core.EntityGroupManager;
-import net.lintfordlib.core.ResourceManager;
+import net.lintfordlib.assets.EntityGroupManager;
+import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.entities.EntityLocationProvider;
 import net.lintfordlib.core.entities.definitions.DefinitionManager;

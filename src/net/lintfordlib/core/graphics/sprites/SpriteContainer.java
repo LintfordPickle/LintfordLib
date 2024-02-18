@@ -1,6 +1,6 @@
 package net.lintfordlib.core.graphics.sprites;
 
-import net.lintfordlib.core.ResourceManager;
+import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.core.geometry.Rectangle;
 import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 

@@ -1,6 +1,6 @@
 package net.lintfordlib.core.geometry.spritegraph;
 
-import net.lintfordlib.core.ResourceManager;
+import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.core.entities.instances.OpenPoolInstanceManager;
 import net.lintfordlib.core.geometry.spritegraph.definitions.SpriteGraphDefinition;
 import net.lintfordlib.core.geometry.spritegraph.instances.SpriteGraphInstance;

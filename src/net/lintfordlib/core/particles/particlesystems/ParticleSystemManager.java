@@ -25,7 +25,7 @@ public class ParticleSystemManager extends PoolInstanceManager<ParticleSystemIns
 		// --------------------------------------
 
 		public ParticleSystemDefinitionManager() {
-
+			loadDefinitionsFromMetaFile(new File(ParticleSystemConstants.PARTICLE_SYSTEM_META_FILENAME));
 		}
 
 		// --------------------------------------
