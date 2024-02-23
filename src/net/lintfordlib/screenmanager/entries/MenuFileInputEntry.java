@@ -99,10 +99,17 @@ public class MenuFileInputEntry extends MenuEntry implements IBufferedTextInputC
 			mInputField.delete(0, mInputField.length());
 		}
 
+		if (newValue == null) {
+			mFile = null;
+			return;
+		}
+
 		if (newValue != null)
 			mInputField.append(newValue);
 
 		mCursorPos = mInputField.length();
+
+		mFile = new File(newValue);
 
 	}
 
