@@ -14,6 +14,16 @@ public class ResourceMapLoader extends ResourceLoader {
 	protected float mRunningTime;
 	protected String mResourceMapFilepath;
 
+	protected boolean mLoadedFromResMapSuccessfully;
+
+	// ---------------------------------------------
+	// Properties
+	// ---------------------------------------------
+
+	public boolean loadedFromResMapSuccessfully() {
+		return mLoadedFromResMapSuccessfully;
+	}
+
 	// ---------------------------------------------
 	// Constructors
 	// ---------------------------------------------
@@ -34,14 +44,18 @@ public class ResourceMapLoader extends ResourceLoader {
 
 		final var lResMapFile = new File(mResourceMapFilepath);
 
-		if (lResMapFile == null || lResMapFile.exists() == false)
-			return;
+		if (lResMapFile == null || lResMapFile.exists() == false) {
+			Debug.debugManager().logger().e(getClass().getSimpleName(), "The ResMap.json file could not be found.");
+			throw new RuntimeException("The ResMap.json file could not be found.");
+		}
 
 		final var lResMap = ResourceMapIo.tryLoadResourceMapFromFile(lResMapFile);
 		if (lResMap == null) {
-			// Failed to load resource map
-			return;
+			Debug.debugManager().logger().e(getClass().getSimpleName(), "The ResMap.json file could not be loaded.");
+			throw new RuntimeException("The ResMap.json file could not be loaded.");
 		}
+
+		mLoadedFromResMapSuccessfully = true;
 
 		currentStatusMessage("Loading from res_map");
 		mResourceManager.addProtectedEntityGroupUid(entityGroupUid);

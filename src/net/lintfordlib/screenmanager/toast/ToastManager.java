@@ -47,6 +47,8 @@ public class ToastManager {
 		mTextureBatch = new TextureBatchPCT();
 
 		mToastCounter = 0;
+		mAddTimer = MIN_TIME_BETWEEN_ADD;
+
 		allocateNewMesssages(8);
 
 		FONTS_META.AddIfNotExists(FONT_TOAST_NAME, "/res/fonts/fontCore.json");
