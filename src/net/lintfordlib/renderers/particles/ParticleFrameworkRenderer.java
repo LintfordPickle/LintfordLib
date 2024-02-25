@@ -141,16 +141,16 @@ public class ParticleFrameworkRenderer extends BaseRenderer {
 			if (lParticleRenderer.isAssigned() == false)
 				continue;
 
-//			final var lSrcBlendFactor = lParticleRenderer.srcBlendFactor();
-//			final var lDestBlendFactor = lParticleRenderer.destBlendFactor();
-//
-//			if (cacheSrcBlendFactor != lSrcBlendFactor || cacheDestBlendFactor != lDestBlendFactor) {
-//				cacheSrcBlendFactor = lSrcBlendFactor;
-//				cacheDestBlendFactor = lDestBlendFactor;
-//
-//				mSpriteBatch.setGlBlendEnabled(true);
-//				mSpriteBatch.setGlBlendFactor(lSrcBlendFactor, lDestBlendFactor);
-//			}
+			final var lSrcBlendFactor = lParticleRenderer.srcBlendFactor();
+			final var lDestBlendFactor = lParticleRenderer.destBlendFactor();
+
+			if (cacheSrcBlendFactor != lSrcBlendFactor || cacheDestBlendFactor != lDestBlendFactor) {
+				cacheSrcBlendFactor = lSrcBlendFactor;
+				cacheDestBlendFactor = lDestBlendFactor;
+
+				mSpriteBatch.setGlBlendEnabled(true);
+				mSpriteBatch.setGlBlendFactor(lSrcBlendFactor, lDestBlendFactor);
+			}
 
 			mSpriteBatch.begin(core.gameCamera());
 
@@ -158,6 +158,9 @@ public class ParticleFrameworkRenderer extends BaseRenderer {
 
 			mSpriteBatch.end();
 		}
+
+		// restore blending
+		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 	}
 
 	// --------------------------------------
