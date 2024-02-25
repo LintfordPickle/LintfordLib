@@ -82,8 +82,8 @@ public class FafAnimationRenderer extends BaseRenderer implements AnimatedSprite
 
 			final var lAnimInstance = animationUpdateList.get(i);
 
-			final float lDstW = lAnimInstance.width() * 2.f;
-			final float lDstH = lAnimInstance.height() * 2.f;
+			final float lDstW = lAnimInstance.width();
+			final float lDstH = lAnimInstance.height();
 			final float lDstX = lAnimInstance.x() - lDstW * .5f;
 			final float lDstY = lAnimInstance.y() - lDstH * .5f;
 
