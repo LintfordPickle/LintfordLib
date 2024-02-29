@@ -96,6 +96,8 @@ public abstract class PlayerSessionsManager<T extends IPlayerSession> {
 		final var lCanvasWidth = lDisplaySettings.gameResolutionWidth();
 		final var lCanvasHeight = lDisplaySettings.gameResolutionHeight();
 
+		// TODO: only instantiate RTs for active players
+
 		final var lNumPlayerSessions = mPlayerSessions.size();
 		for (int i = 0; i < lNumPlayerSessions; i++) {
 			final var lPlayerSession = mPlayerSessions.get(i);

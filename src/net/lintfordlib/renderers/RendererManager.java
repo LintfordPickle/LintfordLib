@@ -557,17 +557,42 @@ public class RendererManager implements IInputClickedFocusManager {
 
 		lRenderTarget = new RenderTarget(name);
 		lRenderTarget.textureFilter(filterMode);
-		lRenderTarget.loadResources(width, height, scale);
-		lRenderTarget.initialiszeGl(width, height, scale);
+		lRenderTarget.loadResources();
+		lRenderTarget.initializeGl(width, height, scale);
 
 		mRenderTargets.add(lRenderTarget);
-
-		final int lNumRenderTargets = mRenderTargets.size();
-		Debug.debugManager().logger().i(getClass().getSimpleName(), "RenderTarget '" + name + "' added. Currently have " + lNumRenderTargets + " rendertargets.");
 
 		if (resizeWithWindow) {
 			mRenderTargetAutoResize.add(lRenderTarget);
 		}
+
+		final int lNumRenderTargets = mRenderTargets.size();
+		Debug.debugManager().logger().i(getClass().getSimpleName(), "RenderTarget '" + name + "' added. Currently have " + lNumRenderTargets + " rendertargets.");
+
+		return lRenderTarget;
+	}
+
+	public RenderTarget createRenderTarget(String name, String filename, int filterMode, boolean resizeWithWindow) {
+		var lRenderTarget = getRenderTarget(name);
+
+		if (lRenderTarget != null) {
+			Debug.debugManager().logger().i(getClass().getSimpleName(), "RenderTarget with name '" + name + "' already exists. No new RendreTarget will be created.");
+			return lRenderTarget;
+		}
+
+		lRenderTarget = new RenderTarget(name);
+		lRenderTarget.textureFilter(filterMode);
+		lRenderTarget.loadResources();
+		lRenderTarget.initializeGl("res/textures/texturePups.png");
+
+		mRenderTargets.add(lRenderTarget);
+
+		if (resizeWithWindow) {
+			mRenderTargetAutoResize.add(lRenderTarget);
+		}
+
+		final int lNumRenderTargets = mRenderTargets.size();
+		Debug.debugManager().logger().i(getClass().getSimpleName(), "RenderTarget '" + name + "' added. Currently have " + lNumRenderTargets + " rendertargets.");
 
 		return lRenderTarget;
 	}

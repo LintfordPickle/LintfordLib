@@ -2,7 +2,14 @@ package net.lintfordlib.core.graphics.rendertarget;
 
 import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER;
 
-import java.nio.FloatBuffer;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.IntBuffer;
+
+import javax.imageio.IIOException;
+import javax.imageio.ImageIO;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
@@ -12,6 +19,8 @@ import org.lwjgl.system.MemoryUtil;
 import net.lintfordlib.ConstantsApp;
 import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.debug.stats.DebugStats;
+import net.lintfordlib.core.graphics.textures.Texture;
+import net.lintfordlib.core.storage.FileUtils;
 
 public class RenderTarget {
 
@@ -32,8 +41,6 @@ public class RenderTarget {
 	private int mWidth;
 	private int mHeight;
 	private float mScale;
-
-	private FloatBuffer mTextureBufferData;
 
 	// --------------------------------------
 	// Properties
@@ -139,25 +146,50 @@ public class RenderTarget {
 	// Methods
 	// --------------------------------------
 
-	public void loadResources(int width, int height, float scale) {
+	public void loadResources() {
 
 	}
 
-	public void initialiszeGl(int width, int height, float scale) {
+	public void initializeGl(int width, int height, float scale) {
 		if (width == 0 || height == 0)
 			return;
+
+		mScale = 1.f;
+		mWidth = width;
+		mHeight = height;
+
+		final var lIntBuffer = MemoryUtil.memAllocInt(mWidth * mHeight * 4);
+		// lIntBuffer.flip();
+
+		initializeGl(lIntBuffer);
+
+	}
+
+	public void initializeGl(String fileName) {
+		var lBufferedImage = loadBufferedImage(fileName);
+
+		mScale = 1.f;
+		mWidth = lBufferedImage.getWidth();
+		mHeight = lBufferedImage.getHeight();
+
+		final var lPixelsARGB = lBufferedImage.getRGB(0, 0, mWidth, mHeight, null, 0, mWidth);
+
+		final var lIntBuffer = MemoryUtil.memAllocInt(lPixelsARGB.length);
+		lIntBuffer.put(lPixelsARGB);
+		lIntBuffer.flip();
+
+		initializeGl(lIntBuffer);
+
+		MemoryUtil.memFree(lIntBuffer);
+	}
+
+	private void initializeGl(IntBuffer buffer) {
 
 		if (mResourcesLoaded)
 			return;
 
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "Loading RenderTarget: " + mTargetName);
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "  GL texture filter mode enum: " + mTextureFilter);
-
-		mScale = scale;
-		mWidth = (int) (width * mScale);
-		mHeight = (int) (height * mScale);
-
-		createFloatBuffer();
 
 		mFramebufferID = GL30.glGenFramebuffers(); // gen container for texture and optional depth buffer
 		mColorTextureID = GL11.glGenTextures(); // gen texture to hold RGB data
@@ -169,7 +201,7 @@ public class RenderTarget {
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, mColorTextureID);
 
 		// Create an empty texture
-		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, mWidth, mHeight, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, mTextureBufferData);
+		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, 128, 128, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buffer);
 
 		// Set the texture filtering mode
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, mTextureFilter);
@@ -234,12 +266,6 @@ public class RenderTarget {
 		if (!mResourcesLoaded)
 			return;
 
-		// Delete float buffer
-		if (mTextureBufferData != null) {
-			mTextureBufferData.clear();
-			MemoryUtil.memFree(mTextureBufferData);
-		}
-
 		GL30.glDeleteFramebuffers(mFramebufferID);
 		mFramebufferID = -1;
 
@@ -275,7 +301,7 @@ public class RenderTarget {
 		mWidth = newWidth;
 		mHeight = newHeight;
 
-		createFloatBuffer();
+		final var lIntDataBuffer = createIntBuffer(mWidth, mHeight);
 
 		if (ConstantsApp.getBooleanValueDef("DEBUG_RENDER_TARGET_RESIZE", false)) {
 			Debug.debugManager().logger().i(getClass().getSimpleName(), "Loading RenderTarget: " + mTargetName);
@@ -297,7 +323,7 @@ public class RenderTarget {
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL12.GL_CLAMP_TO_EDGE);
 
 		// Create an empty texture
-		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, mWidth, mHeight, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, mTextureBufferData);
+		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, mWidth, mHeight, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, lIntDataBuffer);
 
 		if (mDepthBufferEnabled) {
 			GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, mDepthTextureID);
@@ -305,22 +331,49 @@ public class RenderTarget {
 		}
 
 		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
+		MemoryUtil.memFree(lIntDataBuffer);
 
 	}
 
-	private void createFloatBuffer() {
+	private IntBuffer createIntBuffer(int width, int height) {
 		final int lNewSize = mWidth * mHeight * 4;
-		if (mTextureBufferData != null) {
-			if (mTextureBufferData.capacity() != lNewSize) {
-				MemoryUtil.memFree(mTextureBufferData);
-				mTextureBufferData = MemoryUtil.memAllocFloat(lNewSize);
-			}
 
-			mTextureBufferData.clear();
+		final var lIntBuffer = MemoryUtil.memAllocInt(lNewSize);
+		lIntBuffer.flip();
 
-		} else {
-			mTextureBufferData = MemoryUtil.memAllocFloat(lNewSize);
+		return lIntBuffer;
+	}
+
+	private BufferedImage loadBufferedImage(String filePath) {
+		final var lBufferedImage = loadImageFromFile(filePath);
+		if (lBufferedImage == null) {
+			return null;
 		}
+
+		return lBufferedImage;
+
+	}
+
+	private BufferedImage loadImageFromFile(String filename) {
+		final var lCleanFilename = FileUtils.cleanFilename(filename);
+
+		try {
+			final var lFile = new File(System.getProperty(ConstantsApp.WORKSPACE_PROPERTY_NAME), lCleanFilename);
+			final var lImage = ImageIO.read(lFile);
+
+			Debug.debugManager().logger().v(Texture.class.getSimpleName(), "Loaded texture from file: " + filename);
+
+			return lImage;
+
+		} catch (FileNotFoundException e) {
+			Debug.debugManager().logger().e(Texture.class.getSimpleName(), "FileNotFoundException: Error loading texture from file (" + filename + ")");
+		} catch (IIOException e) {
+			Debug.debugManager().logger().e(Texture.class.getSimpleName(), "IIOException: Error loading texture from file (" + filename + ")");
+		} catch (IOException e) {
+			Debug.debugManager().logger().e(Texture.class.getSimpleName(), "IOException: Error loading texture from file (" + filename + ")");
+		}
+
+		return null;
 	}
 
 }
