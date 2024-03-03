@@ -146,11 +146,7 @@ public class RenderTarget {
 	// Methods
 	// --------------------------------------
 
-	public void loadResources() {
-
-	}
-
-	public void initializeGl(int width, int height, float scale) {
+	public void loadResources(int width, int height, float scale) {
 		if (width == 0 || height == 0)
 			return;
 
@@ -159,13 +155,11 @@ public class RenderTarget {
 		mHeight = height;
 
 		final var lIntBuffer = MemoryUtil.memAllocInt(mWidth * mHeight * 4);
-		// lIntBuffer.flip();
 
 		initializeGl(lIntBuffer);
-
 	}
 
-	public void initializeGl(String fileName) {
+	public void loadResources(String fileName) {
 		var lBufferedImage = loadBufferedImage(fileName);
 
 		mScale = 1.f;
@@ -201,7 +195,7 @@ public class RenderTarget {
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, mColorTextureID);
 
 		// Create an empty texture
-		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, 128, 128, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buffer);
+		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, mWidth, mHeight, 0, GL12.GL_BGRA, GL11.GL_UNSIGNED_BYTE, buffer);
 
 		// Set the texture filtering mode
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, mTextureFilter);
@@ -222,7 +216,7 @@ public class RenderTarget {
 			mDepthTextureID = GL30.glGenRenderbuffers();
 			GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, mDepthTextureID);
 			GL30.glRenderbufferStorage(GL30.GL_RENDERBUFFER, GL30.GL_DEPTH24_STENCIL8, mWidth, mHeight);
-			GL30.glFramebufferRenderbuffer(GL30.GL_FRAMEBUFFER, GL30.GL_DEPTH_STENCIL_ATTACHMENT, GL30.GL_RENDERBUFFER, mDepthTextureID); //
+			GL30.glFramebufferRenderbuffer(GL30.GL_FRAMEBUFFER, GL30.GL_DEPTH_STENCIL_ATTACHMENT, GL30.GL_RENDERBUFFER, mDepthTextureID);
 		}
 
 		int lCreationStatus = GL30.glCheckFramebufferStatus(GL30.GL_FRAMEBUFFER);
@@ -376,4 +370,43 @@ public class RenderTarget {
 		return null;
 	}
 
+	public void saveTextureToFile(String pPathname) {
+		int lWidth = mWidth;
+		int lHeight = mHeight;
+
+		int[] colorRGB = new int[lWidth * lHeight];
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, mColorTextureID);
+		GL11.glGetTexImage(GL11.GL_TEXTURE_2D, 0, GL12.GL_BGRA, GL11.GL_UNSIGNED_BYTE, colorRGB);
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
+
+		int[] convertedRGB = Texture.changeBGRAtoARGB(colorRGB, lWidth, lHeight);
+
+		// needs ARGB
+		saveTextureToFile(lWidth, lHeight, convertedRGB, pPathname);
+	}
+
+	public static boolean saveTextureToFile(int width, int height, int[] pData, String fileLocation) {
+		final var lImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+
+		int[] lTextureData = new int[width * height];
+		for (int i = 0; i < width * height; i++) {
+			int a = (pData[i] & 0xff000000) >> 24;
+			int r = (pData[i] & 0xff0000) >> 16;
+			int g = (pData[i] & 0xff00) >> 8;
+			int b = (pData[i] & 0xff);
+
+			lTextureData[i] = a << 24 | b << 16 | g << 8 | r;
+		}
+
+		lImage.setRGB(0, 0, width, height, lTextureData, 0, width);
+
+		try {
+			ImageIO.write(lImage, "png", new File(fileLocation));
+		} catch (IOException e) {
+			Debug.debugManager().logger().e(Texture.class.getSimpleName(), "Error saving png to disk : " + fileLocation);
+			return false;
+		}
+
+		return true;
+	}
 }

@@ -557,8 +557,7 @@ public class RendererManager implements IInputClickedFocusManager {
 
 		lRenderTarget = new RenderTarget(name);
 		lRenderTarget.textureFilter(filterMode);
-		lRenderTarget.loadResources();
-		lRenderTarget.initializeGl(width, height, scale);
+		lRenderTarget.loadResources(width, height, scale);
 
 		mRenderTargets.add(lRenderTarget);
 
@@ -582,8 +581,7 @@ public class RendererManager implements IInputClickedFocusManager {
 
 		lRenderTarget = new RenderTarget(name);
 		lRenderTarget.textureFilter(filterMode);
-		lRenderTarget.loadResources();
-		lRenderTarget.initializeGl("res/textures/texturePups.png");
+		lRenderTarget.loadResources("res/textures/texturePups.png");
 
 		mRenderTargets.add(lRenderTarget);
 
