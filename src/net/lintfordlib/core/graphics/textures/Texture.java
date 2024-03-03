@@ -196,7 +196,6 @@ public class Texture {
 
 		// needs ARGB
 		saveTextureToFile(lWidth, lHeight, convertedRGB, pPathname);
-
 	}
 
 	public static boolean saveTextureToFile(int width, int height, int[] pData, String fileLocation) {
@@ -366,7 +365,7 @@ public class Texture {
 	// Helpers
 	// --------------------------------------
 
-	static int[] changeARGBtoABGR(int[] input, int width, int height) {
+	public static int[] changeARGBtoABGR(int[] input, int width, int height) {
 		int[] lReturnData = new int[width * height];
 		for (int i = 0; i < width * height; i++) {
 			int a = (input[i] & 0xff000000) >> 24;
@@ -380,7 +379,7 @@ public class Texture {
 		return lReturnData;
 	}
 
-	static int[] changeABGRtoARGB(int[] input, int width, int height) {
+	public static int[] changeABGRtoARGB(int[] input, int width, int height) {
 		int[] lReturnData = new int[width * height];
 		for (int i = 0; i < width * height; i++) {
 			int a = (input[i] & 0xff000000) >> 24;
@@ -394,7 +393,7 @@ public class Texture {
 		return lReturnData;
 	}
 
-	static int[] changeBGRAtoARGB(int[] input, int width, int height) {
+	public static int[] changeBGRAtoARGB(int[] input, int width, int height) {
 		int[] lReturnData = new int[width * height];
 		for (int i = 0; i < width * height; i++) {
 			int b = (input[i] & 0xff000000) >> 24;
@@ -408,7 +407,7 @@ public class Texture {
 		return lReturnData;
 	}
 
-	static int[] changeARGBAtoRGBA(int[] input, int width, int height) {
+	public static int[] changeARGBAtoRGBA(int[] input, int width, int height) {
 		int[] lReturnData = new int[width * height];
 		for (int i = 0; i < width * height; i++) {
 			int a = (input[i] & 0xff000000) >> 24;
@@ -422,7 +421,7 @@ public class Texture {
 		return lReturnData;
 	}
 
-	static int[] changeRGBAtoARGB(int[] input, int width, int height) {
+	public static int[] changeRGBAtoARGB(int[] input, int width, int height) {
 		int[] lReturnData = new int[width * height];
 		for (int i = 0; i < width * height; i++) {
 			int r = (input[i] & 0xff000000) >> 24;
