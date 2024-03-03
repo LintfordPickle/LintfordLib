@@ -89,7 +89,14 @@ public class TextureSlotBatch {
 		if (texture == null || texture.getTextureID() == -1)
 			return TEXTURE_SLOTS_TEXTURE_INVALID;
 
-		return getTextureSlotIndexFromUid(texture.getTextureID());
+		return getTextureSlotIndex(texture.getTextureID());
+	}
+
+	public int getTextureSlotIndex(int textureId) {
+		if (textureId == -1)
+			return TEXTURE_SLOTS_TEXTURE_INVALID;
+
+		return getTextureSlotIndexFromUid(textureId);
 	}
 
 	public void bindTextures() {
