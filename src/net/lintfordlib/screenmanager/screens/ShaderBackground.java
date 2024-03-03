@@ -6,6 +6,7 @@ import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.graphics.ColorConstants;
 import net.lintfordlib.core.graphics.shaders.ShaderMVP_PCT;
+import net.lintfordlib.core.graphics.textures.Texture;
 import net.lintfordlib.screenmanager.Screen;
 import net.lintfordlib.screenmanager.ScreenManager;
 
@@ -201,7 +202,7 @@ public abstract class ShaderBackground extends Screen {
 		final var lHeight = lHudBoundingRectangle.height();
 
 		lTextureBatch.begin(core.HUD(), mBackgroundShader);
-		lTextureBatch.draw(null, 0, 0, 1, 1, lX, lY, lWidth, lHeight, -0.01f, ColorConstants.WHITE);
+		lTextureBatch.draw((Texture) null, 0, 0, 1, 1, lX, lY, lWidth, lHeight, -0.01f, ColorConstants.WHITE);
 		lTextureBatch.end();
 	}
 }

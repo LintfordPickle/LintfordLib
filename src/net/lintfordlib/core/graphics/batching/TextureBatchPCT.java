@@ -17,6 +17,7 @@ import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.debug.stats.DebugStats;
 import net.lintfordlib.core.geometry.Rectangle;
 import net.lintfordlib.core.graphics.Color;
+import net.lintfordlib.core.graphics.rendertarget.RenderTarget;
 import net.lintfordlib.core.graphics.shaders.ShaderMVP_PCT;
 import net.lintfordlib.core.graphics.textures.Texture;
 import net.lintfordlib.core.graphics.textures.TextureManager;
@@ -468,6 +469,63 @@ public class TextureBatchPCT {
 		float y3 = pDY + pDH;
 		float u3 = (pSX + pSW) / pTexture.getTextureWidth();
 		float v3 = (pSY + pSH) / pTexture.getTextureHeight();
+
+		addVertToBuffer(x0, y0, pZ, 1f, pTint.r, pTint.g, pTint.b, pTint.a, u0, v0, lTextureSlotIndex);
+		addVertToBuffer(x1, y1, pZ, 1f, pTint.r, pTint.g, pTint.b, pTint.a, u1, v1, lTextureSlotIndex);
+		addVertToBuffer(x2, y2, pZ, 1f, pTint.r, pTint.g, pTint.b, pTint.a, u2, v2, lTextureSlotIndex);
+		addVertToBuffer(x3, y3, pZ, 1f, pTint.r, pTint.g, pTint.b, pTint.a, u3, v3, lTextureSlotIndex);
+
+		mIndexCount += NUM_INDICES_PER_SPRITE;
+	}
+
+	public void draw(RenderTarget pTexture, float pSX, float pSY, float pSW, float pSH, Rectangle pDestRect, float pZ, Color pTint) {
+		if (pDestRect == null)
+			return;
+
+		draw(pTexture, pSX, pSY, pSW, pSH, pDestRect.x(), pDestRect.y(), pDestRect.width(), pDestRect.height(), pZ, pTint);
+	}
+
+	public void draw(RenderTarget texture, float pSX, float pSY, float pSW, float pSH, float pDX, float pDY, float pDW, float pDH, float pZ, Color pTint) {
+		if (!mIsDrawing)
+			return;
+
+		if (texture == null)
+			return;
+
+		if (mCamera.boundingRectangle().intersectsAA(pDX, pDY, pDW, pDH) == false)
+			return;
+
+		if (mIndexCount >= MAX_SPRITES * NUM_INDICES_PER_SPRITE - NUM_INDICES_PER_SPRITE)
+			flush();
+
+		float lTextureSlotIndex = mTextureSlots.getTextureSlotIndex(texture.colorTextureID());
+		if (lTextureSlotIndex == TextureSlotBatch.TEXTURE_SLOTS_TEXTURE_INVALID)
+			return;
+
+		if (lTextureSlotIndex == TextureSlotBatch.TEXTURE_SLOTS_FULL) {
+			flush(); // flush and try again
+			lTextureSlotIndex = mTextureSlots.getTextureSlotIndex(texture.colorTextureID());
+		}
+
+		float x0 = pDX;
+		float y0 = pDY + pDH;
+		float u0 = pSX / (float)texture.width();
+		float v0 = (pSY + pSH) / (float)texture.height();
+
+		float x1 = pDX;
+		float y1 = pDY;
+		float u1 = pSX / (float)texture.width();
+		float v1 = pSY / (float)texture.height();
+
+		float x2 = pDX + pDW;
+		float y2 = pDY;
+		float u2 = (pSX + pSW) / (float)texture.width();
+		float v2 = pSY / (float)texture.height();
+
+		float x3 = pDX + pDW;
+		float y3 = pDY + pDH;
+		float u3 = (pSX + pSW) / (float)texture.width();
+		float v3 = (pSY + pSH) / (float)texture.height();
 
 		addVertToBuffer(x0, y0, pZ, 1f, pTint.r, pTint.g, pTint.b, pTint.a, u0, v0, lTextureSlotIndex);
 		addVertToBuffer(x1, y1, pZ, 1f, pTint.r, pTint.g, pTint.b, pTint.a, u1, v1, lTextureSlotIndex);
