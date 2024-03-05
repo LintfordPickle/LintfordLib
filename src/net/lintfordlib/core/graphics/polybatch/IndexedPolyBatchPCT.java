@@ -5,7 +5,6 @@ import java.nio.IntBuffer;
 import java.util.List;
 
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
@@ -15,12 +14,13 @@ import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.core.camera.ICamera;
 import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.debug.stats.DebugStats;
-import net.lintfordlib.core.geometry.Rectangle;
+import net.lintfordlib.core.graphics.Color;
 import net.lintfordlib.core.graphics.batching.TextureSlotBatch;
 import net.lintfordlib.core.graphics.shaders.ShaderMVP_PCT;
 import net.lintfordlib.core.graphics.textures.Texture;
+import net.lintfordlib.core.graphics.textures.TextureManager;
 import net.lintfordlib.core.maths.Matrix4f;
-import net.lintfordlib.core.maths.Vector2f;
+import net.lintfordlib.core.maths.Vector4f;
 
 public class IndexedPolyBatchPCT {
 
@@ -56,6 +56,9 @@ public class IndexedPolyBatchPCT {
 	protected static final int NUM_VERTICES_PER_SPRITE = 4;
 	protected static final int NUM_INDICES_PER_SPRITE = 6;
 
+	public static final int MAX_LINES = 500;
+	public static final int NUM_VERTS_PER_LINE = 2;
+
 	protected static final int MAX_VERTEX_COUNT = MAX_SPRITES * NUM_VERTICES_PER_SPRITE;
 	protected static final int MAX_INDEX_COUNT = MAX_SPRITES * NUM_INDICES_PER_SPRITE;
 
@@ -63,6 +66,13 @@ public class IndexedPolyBatchPCT {
 	private static final String FRAG_FILENAME = "/res/shaders/shader_batch_pct.frag";
 
 	private static IntBuffer mIndexBuffer;
+
+	// @formatter:off
+	//  1 ---- 2
+	//  |      |
+	//  |      |
+	//  0------3
+	// @formatter:on
 
 	private static IntBuffer getIndexBuffer() {
 		if (mIndexBuffer == null) {
@@ -97,18 +107,22 @@ public class IndexedPolyBatchPCT {
 
 	protected FloatBuffer mBuffer;
 
+	private boolean mBlendEnabled;
+	private int mBlendFuncSrcFactor;
+	private int mBlendFuncDstFactor;
+
 	protected Matrix4f mModelMatrix;
 	protected int mVaoId = -1;
-	protected int mVioId = -1;
 	protected int mVboId = -1;
+	protected int mVioId = -1;
 
-	protected int mCurrentTexID;
-
+	protected ResourceManager mResourceManager;
 	protected boolean mResourcesLoaded;
 	protected boolean mAreGlContainersInitialized = false;
 	protected boolean mIsDrawing;
 
 	protected int mIndexCount = 0;
+	private boolean _countDebugStats;
 
 	// --------------------------------------
 	// Properties
@@ -116,6 +130,15 @@ public class IndexedPolyBatchPCT {
 
 	public boolean isDrawing() {
 		return mIsDrawing;
+	}
+
+	public void setGlBlendEnabled(boolean blendEnabled) {
+		mBlendEnabled = blendEnabled;
+	}
+
+	public void setGlBlendFactor(int sourceFactor, int destFactor) {
+		mBlendFuncSrcFactor = sourceFactor;
+		mBlendFuncDstFactor = destFactor;
 	}
 
 	// --------------------------------------
@@ -127,6 +150,10 @@ public class IndexedPolyBatchPCT {
 
 		mModelMatrix = new Matrix4f();
 		mResourcesLoaded = false;
+
+		mBlendEnabled = true;
+		mBlendFuncSrcFactor = GL11.GL_SRC_ALPHA;
+		mBlendFuncDstFactor = GL11.GL_ONE_MINUS_SRC_ALPHA;
 	}
 
 	// --------------------------------------
@@ -137,6 +164,7 @@ public class IndexedPolyBatchPCT {
 		if (mResourcesLoaded)
 			return;
 
+		mResourceManager = resourceManager;
 		mShader.loadResources(resourceManager);
 
 		mBuffer = MemoryUtil.memAllocFloat(MAX_SPRITES * NUM_VERTICES_PER_SPRITE * VertexDefinition.elementCount);
@@ -253,6 +281,8 @@ public class IndexedPolyBatchPCT {
 		mCamera = pCamera;
 
 		mBuffer.clear();
+		if (mIndexBuffer == null)
+			getIndexBuffer();
 		mIndexBuffer.clear();
 
 		mIndexCount = 0;
@@ -285,15 +315,15 @@ public class IndexedPolyBatchPCT {
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, mVboId);
 		GL15.glBufferSubData(GL15.GL_ARRAY_BUFFER, 0, mBuffer);
 
-		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, mVioId);
-		GL15.glBufferSubData(GL15.GL_ARRAY_BUFFER, 0, mIndexBuffer);
-
-		if (mCurrentTexID != -1) {
-			GL13.glActiveTexture(GL13.GL_TEXTURE0);
-			GL11.glBindTexture(GL11.GL_TEXTURE_2D, mCurrentTexID);
+		if (mBlendEnabled) {
+			GL11.glEnable(GL11.GL_BLEND);
+			GL11.glBlendFunc(mBlendFuncSrcFactor, mBlendFuncDstFactor);
 		} else {
-			return;
+			GL11.glDisable(GL11.GL_BLEND);
+			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		}
+
+		mTextureSlots.bindTextures();
 
 		mShader.projectionMatrix(mCamera.projection());
 		mShader.viewMatrix(mCamera.view());
@@ -301,27 +331,81 @@ public class IndexedPolyBatchPCT {
 
 		mShader.bind();
 
-		{
+		if (_countDebugStats) {
 			Debug.debugManager().stats().incTag(DebugStats.TAG_ID_DRAWCALLS);
 
 			final int lNumQuads = mIndexCount / NUM_INDICES_PER_SPRITE;
-			Debug.debugManager().stats().incTag(DebugStats.TAG_ID_DRAWCALLS);
 			Debug.debugManager().stats().incTag(DebugStats.TAG_ID_VERTS, lNumQuads * 4);
 			Debug.debugManager().stats().incTag(DebugStats.TAG_ID_TRIS, lNumQuads * 2);
 		}
 
 		GL11.glDrawElements(GL11.GL_TRIANGLES, mIndexCount, GL11.GL_UNSIGNED_INT, 0);
+		GL30.glBindVertexArray(0);
 
 		mShader.unbind();
 
-		GL30.glBindVertexArray(0);
+		mBuffer.clear();
+		mIndexCount = 0;
+
+		mTextureSlots.clear();
+
+		_countDebugStats = true;
 	}
 
-	public void drawRect(Texture texture, Rectangle sourceRect, List<Vector2f> vertexArray, float zDepth, boolean closePolygon) {
+	// TODO: TEMP - make a dedicated class for the decal rendering stuff
+	public void drawRect(Texture texture, List<Vector4f> vertexUvList, float bcx, float bcy, float zDepth, Color tint) {
+		if (!mIsDrawing || vertexUvList == null || vertexUvList.size() != 4)
+			return;
+
+		if (texture == null && TextureManager.USE_DEBUG_MISSING_TEXTURES)
+			texture = mResourceManager.textureManager().textureNotFound();
+
+		float lTextureSlotIndex = mTextureSlots.getTextureSlotIndex(texture);
+		if (lTextureSlotIndex == TextureSlotBatch.TEXTURE_SLOTS_TEXTURE_INVALID)
+			return;
+
+		if (lTextureSlotIndex == TextureSlotBatch.TEXTURE_SLOTS_FULL) {
+			flush(); // flush and try again
+			lTextureSlotIndex = mTextureSlots.getTextureSlotIndex(texture);
+		}
+
+		final int lNumVerts = vertexUvList.size();
+		for (int i = 0; i < lNumVerts; i++) {
+			final var v_x = bcx + vertexUvList.get(i).x;
+			final var v_y = bcy + vertexUvList.get(i).y;
+			final var v_u = vertexUvList.get(i).z;
+			final var v_v = vertexUvList.get(i).w;
+
+			addVertToBuffer(v_x, v_y, zDepth, 1.f, tint.r, tint.g, tint.b, tint.a, v_u, v_v, lTextureSlotIndex);
+		}
+
+		mIndexCount += NUM_INDICES_PER_SPRITE;
 	}
 
-	public void drawRect(Texture texture, Rectangle sourceRect, List<Vector2f> vertexArray, float zDepth, boolean closePolygon, float red, float green, float blue) {
+	public void drawRect(Texture texture, List<Vector4f> vertexUvList, float zDepth, float red, float green, float blue) {
+		if (!mIsDrawing || vertexUvList == null || vertexUvList.size() != 4)
+			return;
 
+		float lTextureSlotIndex = mTextureSlots.getTextureSlotIndex(texture);
+		if (lTextureSlotIndex == TextureSlotBatch.TEXTURE_SLOTS_TEXTURE_INVALID)
+			return;
+
+		if (lTextureSlotIndex == TextureSlotBatch.TEXTURE_SLOTS_FULL) {
+			flush(); // flush and try again
+			lTextureSlotIndex = mTextureSlots.getTextureSlotIndex(texture);
+		}
+
+		final int lNumVerts = vertexUvList.size();
+		for (int i = 0; i < lNumVerts; i++) {
+			final var v_x = vertexUvList.get(i).x;
+			final var v_y = vertexUvList.get(i).y;
+			final var v_u = vertexUvList.get(i).z;
+			final var v_v = vertexUvList.get(i).w;
+
+			addVertToBuffer(v_x, v_y, zDepth, 1.f, red, green, blue, 1.f, v_u, v_v, lTextureSlotIndex);
+		}
+
+		mIndexCount += NUM_INDICES_PER_SPRITE;
 	}
 
 	protected void addVertToBuffer(float x, float y, float z, float w, float r, float g, float b, float a, float u, float v, float texIndex) {
