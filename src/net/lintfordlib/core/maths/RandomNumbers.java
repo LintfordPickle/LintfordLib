@@ -33,6 +33,10 @@ public class RandomNumbers {
 	public static void reseed() {
 		RANDOM = new SplittableRandom();
 	}
+	
+	public static void reseed(long seed) {
+		RANDOM = new SplittableRandom(seed);
+	}
 
 	public static final int randomSign() {
 		if (RANDOM.nextBoolean()) {
