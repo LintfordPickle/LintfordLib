@@ -164,6 +164,15 @@ public class MouseManager {
 		return false;
 	}
 
+	public boolean isMouseLeftButtonDownTimed(IInputProcessor mouseProcessor, float cooldownTime) {
+		if (isMouseLeftButtonDown() && mouseProcessor.isCoolDownElapsed()) {
+			mouseProcessor.resetCoolDownTimer(cooldownTime);
+			return true;
+		}
+
+		return false;
+	}
+
 	public boolean isMouseRightButtonDownTimed(IInputProcessor mouseProcessor) {
 		if (isMouseRightButtonDown() && mouseProcessor.isCoolDownElapsed()) {
 			mouseProcessor.resetCoolDownTimer();
@@ -230,7 +239,7 @@ public class MouseManager {
 
 		return false;
 	}
-	
+
 	public boolean tryAcquireMouseLeftClickTimed(int hashCode, IInputProcessor mouseProcessor, float cooldownTime) {
 		if (isMouseLeftClickOwnerAssignedToUsOrNotAssigned(hashCode)) {
 			if (!mLeftMouseClickHandled && isMouseLeftButtonDown() && mouseProcessor.isCoolDownElapsed()) {
