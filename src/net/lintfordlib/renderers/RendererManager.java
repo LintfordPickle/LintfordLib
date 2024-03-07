@@ -14,7 +14,7 @@ import net.lintfordlib.core.graphics.batching.SpriteBatch;
 import net.lintfordlib.core.graphics.fonts.FontMetaData;
 import net.lintfordlib.core.graphics.fonts.FontUnit;
 import net.lintfordlib.core.graphics.linebatch.LineBatch;
-import net.lintfordlib.core.graphics.polybatch.IndexedPolyBatchPCT;
+import net.lintfordlib.core.graphics.polybatch.PolyBatchPCT;
 import net.lintfordlib.core.graphics.rendertarget.RenderTarget;
 import net.lintfordlib.core.input.IInputClickedFocusTracker;
 import net.lintfordlib.core.rendering.RenderState;
@@ -81,7 +81,7 @@ public class RendererManager implements IInputClickedFocusManager {
 
 	private SpriteBatch mSpriteBatch;
 	private LineBatch mLineBatch;
-	private IndexedPolyBatchPCT mPolyBatch;
+	private PolyBatchPCT mPolyBatch;
 
 	private List<RenderTarget> mRenderTargets;
 	private List<RenderTarget> mRenderTargetAutoResize;
@@ -189,7 +189,7 @@ public class RendererManager implements IInputClickedFocusManager {
 		return mSpriteBatch;
 	}
 
-	public IndexedPolyBatchPCT uiPolyBatch() {
+	public PolyBatchPCT uiPolyBatch() {
 		return mPolyBatch;
 	}
 
@@ -224,7 +224,7 @@ public class RendererManager implements IInputClickedFocusManager {
 
 		mSpriteBatch = new SpriteBatch();
 		mLineBatch = new LineBatch();
-		mPolyBatch = new IndexedPolyBatchPCT();
+		mPolyBatch = new PolyBatchPCT();
 
 		mListeners = new ArrayList<>();
 

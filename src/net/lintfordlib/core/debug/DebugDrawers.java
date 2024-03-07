@@ -1,8 +1,6 @@
 
 package net.lintfordlib.core.debug;
 
-import java.util.List;
-
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
@@ -22,7 +20,6 @@ import net.lintfordlib.core.graphics.polybatch.PolyBatchPC;
 import net.lintfordlib.core.graphics.rendertarget.RenderTarget;
 import net.lintfordlib.core.graphics.shaders.ShaderMVP_PT;
 import net.lintfordlib.core.graphics.textures.Texture;
-import net.lintfordlib.core.maths.Vector2f;
 
 public class DebugDrawers {
 
@@ -444,53 +441,4 @@ public class DebugDrawers {
 		mPointBatch.end();
 	}
 
-	public void beginPolyRenderer(ICamera camera) {
-		mPolyBatch.begin(camera);
-	}
-
-	public void drawPoly(List<Vector2f> vertices, boolean closePolygon) {
-		if (!mDebugManager.debugManagerEnabled())
-			return;
-
-		if (!mPolyBatch.isDrawing()) {
-			Debug.debugManager().logger().w(getClass().getSimpleName(), "Cannot draw poly (cached): the PolyRenderer has not been started (must call beginPolyRenderer() first)");
-			return;
-		}
-
-		drawPoly(vertices, 1.f, 1.f, 1.f, closePolygon);
-	}
-
-	public void drawPoly(List<Vector2f> vertices, float red, float green, float blue, boolean closePolygon) {
-		if (!mDebugManager.debugManagerEnabled())
-			return;
-
-		if (!mPolyBatch.isDrawing()) {
-			Debug.debugManager().logger().w(getClass().getSimpleName(), "Cannot draw poly (cached): the PolyRenderer has not been started (must call beginPolyRenderer() first)");
-			return;
-		}
-
-		drawPoly(vertices, vertices.size(), red, green, blue, closePolygon);
-	}
-
-	public void drawPoly(List<Vector2f> vertices, int numberVerts, float red, float green, float blue, boolean closePolygon) {
-		if (!mDebugManager.debugManagerEnabled())
-			return;
-
-		if (!mPolyBatch.isDrawing()) {
-			Debug.debugManager().logger().w(getClass().getSimpleName(), "Cannot draw poly (cached): the PolyRenderer has not been started (must call beginPolyRenderer() first)");
-			return;
-		}
-
-		mPolyBatch.drawVertices(vertices, numberVerts, -.1f, closePolygon, red, green, blue);
-	}
-
-	public void endPolyRenderer() {
-		if (!mDebugManager.debugManagerEnabled())
-			return;
-
-		if (!mPolyBatch.isDrawing())
-			return;
-
-		mPolyBatch.end();
-	}
 }

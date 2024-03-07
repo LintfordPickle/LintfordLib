@@ -509,23 +509,23 @@ public class TextureBatchPCT {
 
 		float x0 = pDX;
 		float y0 = pDY + pDH;
-		float u0 = pSX / (float)texture.width();
-		float v0 = (pSY + pSH) / (float)texture.height();
+		float u0 = pSX / (float) texture.width();
+		float v0 = (pSY + pSH) / (float) texture.height();
 
 		float x1 = pDX;
 		float y1 = pDY;
-		float u1 = pSX / (float)texture.width();
-		float v1 = pSY / (float)texture.height();
+		float u1 = pSX / (float) texture.width();
+		float v1 = pSY / (float) texture.height();
 
 		float x2 = pDX + pDW;
 		float y2 = pDY;
-		float u2 = (pSX + pSW) / (float)texture.width();
-		float v2 = pSY / (float)texture.height();
+		float u2 = (pSX + pSW) / (float) texture.width();
+		float v2 = pSY / (float) texture.height();
 
 		float x3 = pDX + pDW;
 		float y3 = pDY + pDH;
-		float u3 = (pSX + pSW) / (float)texture.width();
-		float v3 = (pSY + pSH) / (float)texture.height();
+		float u3 = (pSX + pSW) / (float) texture.width();
+		float v3 = (pSY + pSH) / (float) texture.height();
 
 		addVertToBuffer(x0, y0, pZ, 1f, pTint.r, pTint.g, pTint.b, pTint.a, u0, v0, lTextureSlotIndex);
 		addVertToBuffer(x1, y1, pZ, 1f, pTint.r, pTint.g, pTint.b, pTint.a, u1, v1, lTextureSlotIndex);

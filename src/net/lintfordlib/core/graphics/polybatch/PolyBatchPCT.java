@@ -20,9 +20,9 @@ import net.lintfordlib.core.graphics.shaders.ShaderMVP_PCT;
 import net.lintfordlib.core.graphics.textures.Texture;
 import net.lintfordlib.core.graphics.textures.TextureManager;
 import net.lintfordlib.core.maths.Matrix4f;
-import net.lintfordlib.core.maths.Vector4f;
+import net.lintfordlib.core.maths.Vector2f;
 
-public class IndexedPolyBatchPCT {
+public class PolyBatchPCT {
 
 	private class VertexDefinition {
 
@@ -55,9 +55,6 @@ public class IndexedPolyBatchPCT {
 	protected static final int MAX_SPRITES = 10000;
 	protected static final int NUM_VERTICES_PER_SPRITE = 4;
 	protected static final int NUM_INDICES_PER_SPRITE = 6;
-
-	public static final int MAX_LINES = 500;
-	public static final int NUM_VERTS_PER_LINE = 2;
 
 	protected static final int MAX_VERTEX_COUNT = MAX_SPRITES * NUM_VERTICES_PER_SPRITE;
 	protected static final int MAX_INDEX_COUNT = MAX_SPRITES * NUM_INDICES_PER_SPRITE;
@@ -128,6 +125,10 @@ public class IndexedPolyBatchPCT {
 	// Properties
 	// ------------------------------------
 
+	public void _countDebugStats(boolean enableStats) {
+		_countDebugStats = enableStats;
+	}
+
 	public boolean isDrawing() {
 		return mIsDrawing;
 	}
@@ -145,7 +146,7 @@ public class IndexedPolyBatchPCT {
 	// Constructor
 	// --------------------------------------
 
-	public IndexedPolyBatchPCT() {
+	public PolyBatchPCT() {
 		mShader = new ShaderMVP_PCT(ShaderMVP_PCT.SHADER_NAME, VERT_FILENAME, FRAG_FILENAME);
 
 		mModelMatrix = new Matrix4f();
@@ -219,6 +220,8 @@ public class IndexedPolyBatchPCT {
 
 		GL30.glBindVertexArray(0);
 		mAreGlContainersInitialized = true;
+
+		Debug.debugManager().stats().incTag(DebugStats.TAG_ID_BATCH_OBJECTS);
 	}
 
 	public void unloadResources() {
@@ -258,18 +261,20 @@ public class IndexedPolyBatchPCT {
 		}
 
 		mResourcesLoaded = false;
+
+		Debug.debugManager().stats().decTag(DebugStats.TAG_ID_BATCH_OBJECTS);
 	}
 
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
 
-	public void begin(ICamera pCamera) {
-		begin(pCamera, mShader);
+	public void begin(ICamera camera) {
+		begin(camera, mShader);
 	}
 
-	public void begin(ICamera pCamera, ShaderMVP_PCT pCustomShader) {
-		if (pCamera == null)
+	public void begin(ICamera camera, ShaderMVP_PCT customShader) {
+		if (camera == null)
 			return;
 
 		if (!mResourcesLoaded)
@@ -278,7 +283,7 @@ public class IndexedPolyBatchPCT {
 		if (mIsDrawing)
 			return;
 
-		mCamera = pCamera;
+		mCamera = camera;
 
 		mBuffer.clear();
 		if (mIndexBuffer == null)
@@ -288,6 +293,52 @@ public class IndexedPolyBatchPCT {
 		mIndexCount = 0;
 
 		mIsDrawing = true;
+	}
+
+	public void drawQuadrilateral(Texture texture, List<Vector2f> localVertices, List<Vector2f> uvs, float wx, float wy, float zDepth, Color tint) {
+		if (!mIsDrawing || localVertices == null)
+			return;
+
+		if (texture == null && TextureManager.USE_DEBUG_MISSING_TEXTURES)
+			texture = mResourceManager.textureManager().textureNotFound();
+
+		float lTextureSlotIndex = mTextureSlots.getTextureSlotIndex(texture);
+		if (lTextureSlotIndex == TextureSlotBatch.TEXTURE_SLOTS_TEXTURE_INVALID)
+			return;
+
+		if (lTextureSlotIndex == TextureSlotBatch.TEXTURE_SLOTS_FULL) {
+			flush(); // flush and try again
+			lTextureSlotIndex = mTextureSlots.getTextureSlotIndex(texture);
+		}
+
+		final int lNumVerts = localVertices.size();
+		for (int i = 0; i < lNumVerts; i++) {
+			final var v_x = wx + localVertices.get(i).x;
+			final var v_y = wy + localVertices.get(i).y;
+			final var v_u = uvs.get(i).x;
+			final var v_v = uvs.get(i).y;
+
+			addVertToBuffer(v_x, v_y, zDepth, 1.f, tint.r, tint.g, tint.b, tint.a, v_u, v_v, lTextureSlotIndex);
+		}
+
+		mIndexCount += NUM_INDICES_PER_SPRITE;
+	}
+
+	protected void addVertToBuffer(float x, float y, float z, float w, float r, float g, float b, float a, float u, float v, float texIndex) {
+		mBuffer.put(x);
+		mBuffer.put(y);
+		mBuffer.put(z);
+		mBuffer.put(w);
+
+		mBuffer.put(r);
+		mBuffer.put(g);
+		mBuffer.put(b);
+		mBuffer.put(a);
+
+		mBuffer.put(u);
+		mBuffer.put(v);
+
+		mBuffer.put(texIndex);
 	}
 
 	public void end() {
@@ -312,9 +363,10 @@ public class IndexedPolyBatchPCT {
 
 		GL30.glBindVertexArray(mVaoId);
 
-		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, mVboId);
+		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, mVboId); // TODO: Check if this is needed (we bound the ao after all?
 		GL15.glBufferSubData(GL15.GL_ARRAY_BUFFER, 0, mBuffer);
 
+		// mBlendEnabled = mBlendFuncSrcFactor != GL11.GL_SRC_ALPHA || mBlendFuncDstFactor != GL11.GL_ONE_MINUS_SRC_ALPHA;
 		if (mBlendEnabled) {
 			GL11.glEnable(GL11.GL_BLEND);
 			GL11.glBlendFunc(mBlendFuncSrcFactor, mBlendFuncDstFactor);
@@ -349,79 +401,9 @@ public class IndexedPolyBatchPCT {
 
 		mTextureSlots.clear();
 
-		_countDebugStats = true;
-	}
-
-	// TODO: TEMP - make a dedicated class for the decal rendering stuff
-	public void drawRect(Texture texture, List<Vector4f> vertexUvList, float bcx, float bcy, float zDepth, Color tint) {
-		if (!mIsDrawing || vertexUvList == null || vertexUvList.size() != 4)
-			return;
-
-		if (texture == null && TextureManager.USE_DEBUG_MISSING_TEXTURES)
-			texture = mResourceManager.textureManager().textureNotFound();
-
-		float lTextureSlotIndex = mTextureSlots.getTextureSlotIndex(texture);
-		if (lTextureSlotIndex == TextureSlotBatch.TEXTURE_SLOTS_TEXTURE_INVALID)
-			return;
-
-		if (lTextureSlotIndex == TextureSlotBatch.TEXTURE_SLOTS_FULL) {
-			flush(); // flush and try again
-			lTextureSlotIndex = mTextureSlots.getTextureSlotIndex(texture);
-		}
-
-		final int lNumVerts = vertexUvList.size();
-		for (int i = 0; i < lNumVerts; i++) {
-			final var v_x = bcx + vertexUvList.get(i).x;
-			final var v_y = bcy + vertexUvList.get(i).y;
-			final var v_u = vertexUvList.get(i).z;
-			final var v_v = vertexUvList.get(i).w;
-
-			addVertToBuffer(v_x, v_y, zDepth, 1.f, tint.r, tint.g, tint.b, tint.a, v_u, v_v, lTextureSlotIndex);
-		}
-
-		mIndexCount += NUM_INDICES_PER_SPRITE;
-	}
-
-	public void drawRect(Texture texture, List<Vector4f> vertexUvList, float zDepth, float red, float green, float blue) {
-		if (!mIsDrawing || vertexUvList == null || vertexUvList.size() != 4)
-			return;
-
-		float lTextureSlotIndex = mTextureSlots.getTextureSlotIndex(texture);
-		if (lTextureSlotIndex == TextureSlotBatch.TEXTURE_SLOTS_TEXTURE_INVALID)
-			return;
-
-		if (lTextureSlotIndex == TextureSlotBatch.TEXTURE_SLOTS_FULL) {
-			flush(); // flush and try again
-			lTextureSlotIndex = mTextureSlots.getTextureSlotIndex(texture);
-		}
-
-		final int lNumVerts = vertexUvList.size();
-		for (int i = 0; i < lNumVerts; i++) {
-			final var v_x = vertexUvList.get(i).x;
-			final var v_y = vertexUvList.get(i).y;
-			final var v_u = vertexUvList.get(i).z;
-			final var v_v = vertexUvList.get(i).w;
-
-			addVertToBuffer(v_x, v_y, zDepth, 1.f, red, green, blue, 1.f, v_u, v_v, lTextureSlotIndex);
-		}
-
-		mIndexCount += NUM_INDICES_PER_SPRITE;
-	}
-
-	protected void addVertToBuffer(float x, float y, float z, float w, float r, float g, float b, float a, float u, float v, float texIndex) {
-		mBuffer.put(x);
-		mBuffer.put(y);
-		mBuffer.put(z);
-		mBuffer.put(w);
-
-		mBuffer.put(r);
-		mBuffer.put(g);
-		mBuffer.put(b);
-		mBuffer.put(a);
-
-		mBuffer.put(u);
-		mBuffer.put(v);
-
-		mBuffer.put(texIndex);
+//		if (mBlendEnabled) {
+//			GL11.glDisable(GL11.GL_BLEND);
+//			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+//		}
 	}
 }

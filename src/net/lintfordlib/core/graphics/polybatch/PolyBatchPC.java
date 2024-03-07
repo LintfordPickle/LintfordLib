@@ -1,6 +1,7 @@
 package net.lintfordlib.core.graphics.polybatch;
 
 import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 import java.util.List;
 
 import org.lwjgl.opengl.GL11;
@@ -13,6 +14,7 @@ import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.core.camera.ICamera;
 import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.debug.stats.DebugStats;
+import net.lintfordlib.core.graphics.Color;
 import net.lintfordlib.core.graphics.shaders.ShaderMVP_PC;
 import net.lintfordlib.core.maths.Matrix4f;
 import net.lintfordlib.core.maths.Vector2f;
@@ -40,28 +42,71 @@ public class PolyBatchPC {
 	// Constants
 	// --------------------------------------
 
-	public static final int MAX_LINES = 500;
-	public static final int NUM_VERTS_PER_LINE = 2;
+	protected static final int MAX_SPRITES = 10000;
+	protected static final int NUM_VERTICES_PER_SPRITE = 4;
+	protected static final int NUM_INDICES_PER_SPRITE = 6;
+
+	protected static final int MAX_VERTEX_COUNT = MAX_SPRITES * NUM_VERTICES_PER_SPRITE;
+	protected static final int MAX_INDEX_COUNT = MAX_SPRITES * NUM_INDICES_PER_SPRITE;
 
 	private static final String VERT_FILENAME = "/res/shaders/shader_basic_pc.vert";
 	private static final String FRAG_FILENAME = "/res/shaders/shader_basic_pc.frag";
+
+	private static IntBuffer mIndexBuffer;
+
+	// @formatter:off
+	//  1 ---- 2
+	//  |      |
+	//  |      |
+	//  0------3
+	// @formatter:on
+
+	private static IntBuffer getIndexBuffer() {
+		if (mIndexBuffer == null) {
+			mIndexBuffer = MemoryUtil.memAllocInt(MAX_SPRITES * NUM_INDICES_PER_SPRITE);
+
+			mIndexBuffer.clear();
+			for (int i = 0; i < MAX_SPRITES; i++) {
+				final int offset = i * NUM_VERTICES_PER_SPRITE;
+				mIndexBuffer.put(offset + 1);
+				mIndexBuffer.put(offset + 0);
+				mIndexBuffer.put(offset + 2);
+
+				mIndexBuffer.put(offset + 2);
+				mIndexBuffer.put(offset + 0);
+				mIndexBuffer.put(offset + 3);
+			}
+			mIndexBuffer.flip();
+		}
+
+		return mIndexBuffer;
+	}
 
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
-	private int mVaoId = -1;
-	private int mVboId = -1;
-	private int mVertexCount = 0;
-
-	private ICamera mCamera;
+	protected ICamera mCamera;
 	private ShaderMVP_PC mShader;
-	private Matrix4f mModelMatrix;
-	private FloatBuffer mBuffer;
-	private boolean mIsDrawing;
-	private boolean mResourcesLoaded;
-	private int mLineMode;
+	private ShaderMVP_PC mCustomShader;
 
+	private FloatBuffer mBuffer;
+
+	private boolean mBlendEnabled;
+	private int mBlendFuncSrcFactor;
+	private int mBlendFuncDstFactor;
+
+	private Matrix4f mModelMatrix;
+	protected int mVaoId = -1;
+	protected int mVboId = -1;
+	protected int mVioId = -1;
+
+	protected ResourceManager mResourceManager;
+	private boolean mResourcesLoaded;
+	protected boolean mAreGlContainersInitialized = false;
+	private boolean mIsDrawing;
+
+	protected int mIndexCount = 0;
 	private boolean _countDebugStats = true;
 
 	// --------------------------------------
@@ -72,16 +117,17 @@ public class PolyBatchPC {
 		_countDebugStats = enableStats;
 	}
 
-	/**
-	 * Specifies what kind of primitives to render. Symbolic constants GL_POINTS, GL_LINE_STRIP, GL_LINE_LOOP, GL_LINES, GL_LINE_STRIP_ADJACENCY, GL_LINES_ADJACENCY, GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_TRIANGLES,
-	 * GL_TRIANGLE_STRIP_ADJACENCY, GL_TRIANGLES_ADJACENCY and GL_PATCHES are accepted.
-	 */
-	public void lineMode(int lineType) {
-		mLineMode = lineType;
-	}
-
 	public boolean isDrawing() {
 		return mIsDrawing;
+	}
+
+	public void setGlBlendEnabled(boolean blendEnabled) {
+		mBlendEnabled = blendEnabled;
+	}
+
+	public void setGlBlendFactor(int sourceFactor, int destFactor) {
+		mBlendFuncSrcFactor = sourceFactor;
+		mBlendFuncDstFactor = destFactor;
 	}
 
 	// --------------------------------------
@@ -100,7 +146,9 @@ public class PolyBatchPC {
 		mModelMatrix = new Matrix4f();
 		mResourcesLoaded = false;
 
-		mLineMode = GL11.GL_LINE_STRIP;
+		mBlendEnabled = true;
+		mBlendFuncSrcFactor = GL11.GL_SRC_ALPHA;
+		mBlendFuncDstFactor = GL11.GL_ONE_MINUS_SRC_ALPHA;
 	}
 
 	// --------------------------------------
@@ -111,38 +159,56 @@ public class PolyBatchPC {
 		if (mResourcesLoaded)
 			return;
 
+		mResourceManager = resourceManager;
 		mShader.loadResources(resourceManager);
+
+		mBuffer = MemoryUtil.memAllocFloat(MAX_SPRITES * NUM_VERTICES_PER_SPRITE * VertexDefinition.elementCount);
+		getIndexBuffer();
+
+		if (mVioId == -1)
+			mVioId = GL15.glGenBuffers();
+
+		if (mVboId == -1)
+			mVboId = GL15.glGenBuffers();
+
+		mResourcesLoaded = true;
+
+		if (resourceManager.isMainOpenGlThread())
+			initializeGlContainers();
+	}
+
+	private void initializeGlContainers() {
+		if (!mResourcesLoaded) {
+			Debug.debugManager().logger().i(getClass().getSimpleName(), "Cannot create Gl containers until resources have been loaded");
+			return;
+		}
+
+		if (mAreGlContainersInitialized)
+			return;
 
 		if (mVaoId == -1) {
 			mVaoId = GL30.glGenVertexArrays();
 			Debug.debugManager().logger().v(getClass().getSimpleName(), "[OpenGl] glGenVertexArrays: " + mVaoId);
 		}
 
-		if (mVboId == -1) {
-			mVboId = GL15.glGenBuffers();
-			Debug.debugManager().logger().v(getClass().getSimpleName(), "[OpenGl] glGenBuffers: vbo " + mVboId);
-		}
-
-		mBuffer = MemoryUtil.memAllocFloat(MAX_LINES * NUM_VERTS_PER_LINE * VertexDefinition.elementCount);
-
-		initializeGlContent();
-
-		Debug.debugManager().stats().incTag(DebugStats.TAG_ID_BATCH_OBJECTS);
-		mResourcesLoaded = true;
-	}
-
-	private void initializeGlContent() {
 		GL30.glBindVertexArray(mVaoId);
+
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, mVboId);
-		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, MAX_LINES * NUM_VERTS_PER_LINE * VertexDefinition.stride, GL15.GL_DYNAMIC_DRAW);
+		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, MAX_SPRITES * NUM_VERTICES_PER_SPRITE * VertexDefinition.stride, GL15.GL_DYNAMIC_DRAW);
 
 		GL20.glEnableVertexAttribArray(0);
-		GL20.glEnableVertexAttribArray(1);
-
 		GL20.glVertexAttribPointer(0, VertexDefinition.positionElementCount, GL11.GL_FLOAT, false, VertexDefinition.stride, VertexDefinition.positionByteOffset);
+
+		GL20.glEnableVertexAttribArray(1);
 		GL20.glVertexAttribPointer(1, VertexDefinition.colorElementCount, GL11.GL_FLOAT, false, VertexDefinition.stride, VertexDefinition.colorByteOffset);
 
+		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, mVioId);
+		GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, getIndexBuffer(), GL15.GL_STATIC_DRAW);
+
 		GL30.glBindVertexArray(0);
+		mAreGlContainersInitialized = true;
+
+		Debug.debugManager().stats().incTag(DebugStats.TAG_ID_BATCH_OBJECTS);
 	}
 
 	public void unloadResources() {
@@ -151,10 +217,22 @@ public class PolyBatchPC {
 
 		mShader.unloadResources();
 
+		if (mVaoId > -1) {
+			GL30.glDeleteVertexArrays(mVaoId);
+			Debug.debugManager().logger().v(getClass().getSimpleName(), "[OpenGl] glDeleteVertexArrays: " + mVaoId);
+			mVaoId = -1;
+		}
+
 		if (mVboId > -1) {
 			GL15.glDeleteBuffers(mVboId);
 			Debug.debugManager().logger().v(getClass().getSimpleName(), "[OpenGl] glDeleteBuffers VboId: " + mVboId);
 			mVboId = -1;
+		}
+
+		if (mVioId > -1) {
+			GL15.glDeleteBuffers(mVioId);
+			Debug.debugManager().logger().v("OpenGL", "IndexedPolyBatchPCT: Unloading mVioId = " + mVioId);
+			mVioId = -1;
 		}
 
 		if (mBuffer != null) {
@@ -162,14 +240,15 @@ public class PolyBatchPC {
 			MemoryUtil.memFree(mBuffer);
 		}
 
-		if (mVaoId > -1) {
-			GL30.glDeleteVertexArrays(mVaoId);
-			Debug.debugManager().logger().v(getClass().getSimpleName(), "[OpenGl] glDeleteVertexArrays: " + mVaoId);
-			mVaoId = -1;
+		if (mIndexBuffer != null) {
+			mIndexBuffer.clear();
+			MemoryUtil.memFree(mIndexBuffer);
+			mIndexBuffer = null;
 		}
 
-		Debug.debugManager().stats().decTag(DebugStats.TAG_ID_BATCH_OBJECTS);
 		mResourcesLoaded = false;
+
+		Debug.debugManager().stats().decTag(DebugStats.TAG_ID_BATCH_OBJECTS);
 	}
 
 	// --------------------------------------
@@ -177,131 +256,92 @@ public class PolyBatchPC {
 	// --------------------------------------
 
 	public void begin(ICamera camera) {
+		begin(camera, mShader);
+	}
+
+	public void begin(ICamera camera, ShaderMVP_PC customShader) {
 		if (camera == null)
+			return;
+
+		if (!mResourcesLoaded)
 			return;
 
 		if (mIsDrawing)
 			return;
 
 		mCamera = camera;
-
 		mBuffer.clear();
-		mVertexCount = 0;
+		if (mIndexBuffer == null)
+			getIndexBuffer();
+		mIndexBuffer.clear();
+
+		mIndexCount = 0;
+
 		mIsDrawing = true;
+
 	}
 
-	public void drawVertices(List<Vector2f> vertexArray, float zDepth, boolean closePolygon, float red, float green, float blue) {
-		if (vertexArray == null)
+	public void drawQuadrilateral(List<Vector2f> localVertices, float wx, float wy, float zDepth, boolean closePolygon, Color color) {
+		if (!mIsDrawing || localVertices == null || localVertices.size() < 2)
 			return;
 
-		drawVertices(vertexArray, vertexArray.size(), zDepth, closePolygon, red, green, blue);
-	}
+		final int lNumVerts = localVertices.size();
 
-	public void drawVertices(List<Vector2f> vertexArray, int numberVerts, float zDepth, boolean closePolygon, float red, float green, float blue) {
-		if (!mIsDrawing || vertexArray == null || vertexArray.size() < 2 || numberVerts < 2)
-			return;
+		for (int i = 0; i < lNumVerts; i++) {
+			final var v_x = wx + localVertices.get(i).x;
+			final var v_y = wy + localVertices.get(i).y;
 
-		int lLastIndex = 1;
-
-		final int lNumVerts = Math.min(vertexArray.size(), numberVerts);
-
-		for (int i = 0; i < lNumVerts - 1; i++) {
-			if (vertexArray.get(i) == null || vertexArray.get(i + 1) == null)
-				continue;
-
-			float px0 = vertexArray.get(i).x;
-			float py0 = vertexArray.get(i).y;
-
-			lLastIndex++;
-
-			if (mLineMode == GL11.GL_LINES) {
-				float px1 = vertexArray.get(i + 1).x;
-				float py1 = vertexArray.get(i + 1).y;
-				addEdge(px0, py0, px1, py1, zDepth, red, green, blue);
-			} else {
-				addPoint(px0, py0, zDepth, red, green, blue);
-			}
-		}
-
-		if (mLineMode == GL11.GL_LINE_STRIP) {
-			float px1 = vertexArray.get(lLastIndex - 1).x;
-			float py1 = vertexArray.get(lLastIndex - 1).y;
-			addPoint(px1, py1, zDepth, red, green, blue);
-		}
-
-		if (closePolygon) {
-			if (vertexArray.get(0) != null && vertexArray.get(lLastIndex - 1) != null) {
-				float px0 = vertexArray.get(0).x;
-				float py0 = vertexArray.get(0).y;
-
-				if (mLineMode == GL11.GL_LINES) {
-					float px1 = vertexArray.get(lLastIndex - 1).x;
-					float py1 = vertexArray.get(lLastIndex - 1).y;
-					addEdge(px0, py0, px1, py1, zDepth, red, green, blue);
-				} else {
-					addPoint(px0, py0, zDepth, red, green, blue);
-				}
-			}
+			addVertToBuffer(v_x, v_y, zDepth, color.r, color.g, color.b, color.a);
 		}
 	}
 
-	public void addPoint(float point1X, float point1Y, float zDepth, float red, float green, float blue) {
-		if (!mIsDrawing)
-			return;
-
-		if (mVertexCount / 2 >= MAX_LINES)
-			flush();
-
-		addVertToBuffer(point1X, point1Y, zDepth, 1f, red, green, blue, 1.f);
-	}
-
-	public void addEdge(float point1X, float point1Y, float point2X, float point2Y, float zDepth, float red, float green, float blue) {
-		if (!mIsDrawing)
-			return;
-
-		if (mVertexCount / 2 >= MAX_LINES)
-			flush();
-
-		addVertToBuffer(point1X, point1Y, zDepth, 1f, red, green, blue, 1.f);
-		addVertToBuffer(point2X, point2Y, zDepth, 1f, red, green, blue, 1.f);
-
-	}
-
-	private void addVertToBuffer(float x, float y, float z, float w, float r, float g, float b, float a) {
+	private void addVertToBuffer(float x, float y, float z, float r, float g, float b, float a) {
 		mBuffer.put(x);
 		mBuffer.put(y);
 		mBuffer.put(z);
-		mBuffer.put(w);
+		mBuffer.put(1.f);
 
 		mBuffer.put(r);
 		mBuffer.put(g);
 		mBuffer.put(b);
 		mBuffer.put(a);
 
-		mVertexCount++;
+		mIndexCount += NUM_INDICES_PER_SPRITE;
 	}
 
 	public void end() {
 		if (!mIsDrawing)
 			return;
 
-		mIsDrawing = false;
 		flush();
+		mIsDrawing = false;
 	}
 
 	private void flush() {
-		if (!mResourcesLoaded)
+		if (!mResourcesLoaded || !mIsDrawing)
 			return;
 
-		if (mVertexCount == 0)
+		if (mIndexCount == 0)
 			return;
 
 		mBuffer.flip();
 
+		if (!mAreGlContainersInitialized)
+			initializeGlContainers();
+
 		GL30.glBindVertexArray(mVaoId);
 
-		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, mVboId);
+		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, mVboId); // TODO: Check if this is needed (we bound the ao after all?
 		GL15.glBufferSubData(GL15.GL_ARRAY_BUFFER, 0, mBuffer);
+
+		mBlendEnabled = mBlendFuncSrcFactor != GL11.GL_SRC_ALPHA || mBlendFuncDstFactor != GL11.GL_ONE_MINUS_SRC_ALPHA;
+		if (mBlendEnabled) {
+			GL11.glEnable(GL11.GL_BLEND);
+			GL11.glBlendFunc(mBlendFuncSrcFactor, mBlendFuncDstFactor);
+		} else {
+			GL11.glDisable(GL11.GL_BLEND);
+			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		}
 
 		mShader.projectionMatrix(mCamera.projection());
 		mShader.viewMatrix(mCamera.view());
@@ -311,15 +351,23 @@ public class PolyBatchPC {
 
 		if (_countDebugStats) {
 			Debug.debugManager().stats().incTag(DebugStats.TAG_ID_DRAWCALLS);
-			Debug.debugManager().stats().incTag(DebugStats.TAG_ID_VERTS, mVertexCount);
+
+			final int lNumQuads = mIndexCount / NUM_INDICES_PER_SPRITE;
+			Debug.debugManager().stats().incTag(DebugStats.TAG_ID_VERTS, lNumQuads * 4);
+			Debug.debugManager().stats().incTag(DebugStats.TAG_ID_TRIS, lNumQuads * 2);
 		}
 
-		GL11.glDrawArrays(mLineMode, 0, mVertexCount);
-
+		GL11.glDrawElements(GL11.GL_TRIANGLES, mIndexCount, GL11.GL_UNSIGNED_INT, 0);
 		GL30.glBindVertexArray(0);
 
 		mShader.unbind();
 
 		mBuffer.clear();
+		mIndexCount = 0;
+
+		if (mBlendEnabled) {
+			GL11.glDisable(GL11.GL_BLEND);
+			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		}
 	}
 }
