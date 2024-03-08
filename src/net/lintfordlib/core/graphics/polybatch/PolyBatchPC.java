@@ -269,8 +269,15 @@ public class PolyBatchPC {
 		if (mIsDrawing)
 			return;
 
+		if (customShader != null)
+			mCustomShader = customShader;
+		else
+			mCustomShader = mShader;
+
 		mCamera = camera;
+
 		mBuffer.clear();
+
 		if (mIndexBuffer == null)
 			getIndexBuffer();
 		mIndexBuffer.clear();
@@ -278,11 +285,10 @@ public class PolyBatchPC {
 		mIndexCount = 0;
 
 		mIsDrawing = true;
-
 	}
 
 	public void drawQuadrilateral(List<Vector2f> localVertices, float wx, float wy, float zDepth, boolean closePolygon, Color color) {
-		if (!mIsDrawing || localVertices == null || localVertices.size() < 2)
+		if (!mIsDrawing || localVertices == null || localVertices.size() != 4)
 			return;
 
 		final int lNumVerts = localVertices.size();
@@ -343,11 +349,11 @@ public class PolyBatchPC {
 			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		}
 
-		mShader.projectionMatrix(mCamera.projection());
-		mShader.viewMatrix(mCamera.view());
-		mShader.modelMatrix(mModelMatrix);
+		mCustomShader.projectionMatrix(mCamera.projection());
+		mCustomShader.viewMatrix(mCamera.view());
+		mCustomShader.modelMatrix(mModelMatrix);
 
-		mShader.bind();
+		mCustomShader.bind();
 
 		if (_countDebugStats) {
 			Debug.debugManager().stats().incTag(DebugStats.TAG_ID_DRAWCALLS);
@@ -360,7 +366,7 @@ public class PolyBatchPC {
 		GL11.glDrawElements(GL11.GL_TRIANGLES, mIndexCount, GL11.GL_UNSIGNED_INT, 0);
 		GL30.glBindVertexArray(0);
 
-		mShader.unbind();
+		mCustomShader.unbind();
 
 		mBuffer.clear();
 		mIndexCount = 0;

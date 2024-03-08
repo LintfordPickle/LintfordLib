@@ -285,6 +285,11 @@ public class PolyBatchPCT {
 
 		mCamera = camera;
 
+		if (customShader != null)
+			mCustomShader = customShader;
+		else
+			mCustomShader = mShader;
+
 		mBuffer.clear();
 		if (mIndexBuffer == null)
 			getIndexBuffer();
@@ -297,6 +302,9 @@ public class PolyBatchPCT {
 
 	public void drawQuadrilateral(Texture texture, List<Vector2f> localVertices, List<Vector2f> uvs, float wx, float wy, float zDepth, Color tint) {
 		if (!mIsDrawing || localVertices == null)
+			return;
+
+		if (localVertices.size() != 4 || localVertices.size() != uvs.size())
 			return;
 
 		if (texture == null && TextureManager.USE_DEBUG_MISSING_TEXTURES)
@@ -377,11 +385,11 @@ public class PolyBatchPCT {
 
 		mTextureSlots.bindTextures();
 
-		mShader.projectionMatrix(mCamera.projection());
-		mShader.viewMatrix(mCamera.view());
-		mShader.modelMatrix(mModelMatrix);
+		mCustomShader.projectionMatrix(mCamera.projection());
+		mCustomShader.viewMatrix(mCamera.view());
+		mCustomShader.modelMatrix(mModelMatrix);
 
-		mShader.bind();
+		mCustomShader.bind();
 
 		if (_countDebugStats) {
 			Debug.debugManager().stats().incTag(DebugStats.TAG_ID_DRAWCALLS);
@@ -394,7 +402,7 @@ public class PolyBatchPCT {
 		GL11.glDrawElements(GL11.GL_TRIANGLES, mIndexCount, GL11.GL_UNSIGNED_INT, 0);
 		GL30.glBindVertexArray(0);
 
-		mShader.unbind();
+		mCustomShader.unbind();
 
 		mBuffer.clear();
 		mIndexCount = 0;
