@@ -2,8 +2,6 @@ package net.lintfordlib.core.binpacking;
 
 import java.util.List;
 
-import net.lintfordlib.core.debug.Debug;
-
 public class BinPacker {
 
 	// --------------------------------------
@@ -11,12 +9,17 @@ public class BinPacker {
 	// --------------------------------------
 
 	private final BinPackerNode mRootNode;
-	private int mWidth;
-	private int mHeight;
+	private final String mBinName;
+	private final int mWidth;
+	private final int mHeight;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public String name() {
+		return mBinName;
+	}
 
 	public int width() {
 		return mWidth;
@@ -30,9 +33,10 @@ public class BinPacker {
 	// COnstructor
 	// --------------------------------------
 
-	public BinPacker(int width, int height) {
+	public BinPacker(String binName, int width, int height) {
 		mWidth = width;
 		mHeight = height;
+		mBinName = binName;
 		mRootNode = new BinPackerNode(0, 0, width, height);
 	}
 
@@ -40,44 +44,54 @@ public class BinPacker {
 	// Methods
 	// --------------------------------------
 
-	public void fitNodes(List<IBinPackedItem> nodesToPack) {
-		final var lNumNodes = nodesToPack.size();
-		for (int i = 0; i < lNumNodes; i++) {
-			final var lBin = nodesToPack.get(i);
-			final var lBinWidth = lBin.binWidth();
-			final var lBinHeight = lBin.binHeight();
+	public List<IBinPackedItem> fitNodes(List<IBinPackedItem> nodesToPack) {
+		var lLastInsertionSuccessful = true;
+		while (lLastInsertionSuccessful && nodesToPack.size() > 0) {
 
-			final var foundNode = findNode(mRootNode, (int) lBinWidth, (int) lBinHeight);
+			final var lItem = nodesToPack.remove(0);
+
+			final var lItemWidth = lItem.itemWidth();
+			final var lItemHeight = lItem.itemHeight();
+
+			final var foundNode = findNode(mRootNode, (int) lItemWidth, (int) lItemHeight);
 			if (foundNode != null) {
-				splitNode(foundNode, (int) lBinWidth, (int) lBinHeight);
-				lBin.assignToBin((int) foundNode.x, (int) foundNode.y, lBinWidth, lBinHeight);
+				splitNode(foundNode, (int) lItemWidth, (int) lItemHeight);
+				lItem.assignToBin(mBinName, (int) foundNode.x, (int) foundNode.y, lItemWidth, lItemHeight);
 
-			} else {
-				Debug.debugManager().logger().w(getClass().getSimpleName(), "Couldn't fit bin into texture");
-			}
+			} else
+				lLastInsertionSuccessful = false;
 		}
+
+		// Return the list of remaining (unassigned) items
+		return nodesToPack;
 	}
 
 	private BinPackerNode findNode(BinPackerNode nodeToCheck, int width, int height) {
-		// go down the tree and find the next unused node
 		if (nodeToCheck.used) {
+
+			// As this node is being used, we can check down the tree to the right and below for free space.
 			var returnNode = findNode(nodeToCheck.right, width, height);
 
 			if (returnNode != null)
 				return returnNode;
 
 			return findNode(nodeToCheck.down, width, height);
+
 		} else if ((width <= nodeToCheck.width) && (height <= nodeToCheck.height)) {
-			return nodeToCheck; // this node is big enough
+
+			// As this node is not being used, and has enough space, we will use it.
+			return nodeToCheck;
 		}
 
-		return null; // not enough space
+		// Nothing found on this branch.
+		return null;
 	}
 
 	private void splitNode(BinPackerNode node, int width, int height) {
 		node.used = true;
-		node.down = new BinPackerNode(node.x, node.y + height, node.width, node.height - height);
+
 		node.right = new BinPackerNode(node.x + width, node.y, node.width - width, height);
+		node.down = new BinPackerNode(node.x, node.y + height, node.width, node.height - height);
 	}
 
 }

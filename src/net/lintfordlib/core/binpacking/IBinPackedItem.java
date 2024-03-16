@@ -1,21 +1,14 @@
 package net.lintfordlib.core.binpacking;
 
-import java.util.List;
-
-import net.lintfordlib.core.geometry.Rectangle;
-import net.lintfordlib.core.maths.Vector2f;
-
 public interface IBinPackedItem {
 
-	Rectangle world();
+	void assignToBin(String binName, float x, float y, float width, float height);
 
-	List<Vector2f> localVertices();
-	
-	List<Vector2f> uvs();
+	void unassign();
 
-	float worldCenterX();
+	boolean isAssigned();
 
-	float worldCenterY();
+	String getBinName();
 
 	float binPositionX();
 
@@ -25,5 +18,8 @@ public interface IBinPackedItem {
 
 	float binHeight();
 
-	void assignToBin(float x, float y, float width, float height);
+	float itemWidth();
+
+	float itemHeight();
+
 }
