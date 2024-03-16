@@ -47,6 +47,35 @@ public class PolygonShape extends BaseShape {
 		mAABB.set(minX, minY, maxX - minX, maxY - minY);
 	}
 
+	private void calculateBoundingRadius() {
+		float avgX = 0;
+		float avgY = 0;
+		float maxDistance = 0;
+
+		final var lNumVertices = mLocalVertices.size();
+
+		if (lNumVertices == 0)
+			return;
+
+		for (int i = 0; i < lNumVertices; i++) {
+			final var x = mLocalVertices.get(i).x;
+			final var y = mLocalVertices.get(i).y;
+
+			avgX += x;
+			avgY += y;
+
+			var distanceSquared = (x - avgX) * (x - avgX) + (y - avgY) * (y - avgY);
+			maxDistance = (float) Math.max(maxDistance, distanceSquared);
+		}
+
+		// Finalize center calculation
+		avgX /= lNumVertices;
+		avgY /= lNumVertices;
+
+		// Bounding radius is the maximum distance
+		mRadius = maxDistance;
+	}
+
 	@Override
 	public void computeMass() {
 		// mass, inertia and centroid
@@ -124,6 +153,7 @@ public class PolygonShape extends BaseShape {
 
 		rebuildAABB(null);
 		computeMass();
+		calculateBoundingRadius();
 	}
 
 	private void setAsBox(float unitPositionX, float unitPositionY, float unitWidth, float unitHeight, float rotRadians) {
