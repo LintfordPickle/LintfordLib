@@ -211,6 +211,10 @@ public class MathHelper {
 
 	// ---
 
+	public static boolean withinEpsilon(float a) {
+		return Math.abs(a) < ConstantsMath.EPSILON;
+	}
+	
 	public static boolean equalWithinEpsilon(float a, float b) {
 		return Math.abs(a - b) < ConstantsMath.EPSILON;
 	}
