@@ -304,13 +304,13 @@ public class PolyBatchPCT {
 		if (!mIsDrawing || localVertices == null)
 			return;
 
-		if (localVertices.size() != 4 || localVertices.size() != uvs.size())
+		if (localVertices.size() != 4)
 			return;
 
 		if (texture == null && TextureManager.USE_DEBUG_MISSING_TEXTURES)
 			texture = mResourceManager.textureManager().textureNotFound();
 
-		float lTextureSlotIndex = mTextureSlots.getTextureSlotIndex(texture);
+		var lTextureSlotIndex = (float) mTextureSlots.getTextureSlotIndex(texture);
 		if (lTextureSlotIndex == TextureSlotBatch.TEXTURE_SLOTS_TEXTURE_INVALID)
 			return;
 
@@ -319,12 +319,13 @@ public class PolyBatchPCT {
 			lTextureSlotIndex = mTextureSlots.getTextureSlotIndex(texture);
 		}
 
-		final int lNumVerts = localVertices.size();
+		final var lNumVerts = localVertices.size();
 		for (int i = 0; i < lNumVerts; i++) {
 			final var v_x = wx + localVertices.get(i).x;
 			final var v_y = wy + localVertices.get(i).y;
-			final var v_u = uvs.get(i).x;
-			final var v_v = uvs.get(i).y;
+
+			final var v_u = uvs != null ? uvs.get(i).x : 0.f;
+			final var v_v = uvs != null ? uvs.get(i).y : 0.f;
 
 			addVertToBuffer(v_x, v_y, zDepth, 1.f, tint.r, tint.g, tint.b, tint.a, v_u, v_v, lTextureSlotIndex);
 		}
