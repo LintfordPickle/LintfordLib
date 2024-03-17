@@ -12,7 +12,14 @@ import net.lintfordlib.core.binpacking.BinPacker;
 public class DecalManager {
 
 	public class DecalBin {
-		public BinPacker binPacker;
+		private BinPacker _BinPacker;
+
+		public BinPacker binPacker() {
+			if (_BinPacker == null)
+				_BinPacker = new BinPacker(binName, decalAtlasWidth, decalAtlasHeight);
+
+			return _BinPacker;
+		}
 
 		public String binName;
 		public String decalAtlasTextureName;
@@ -20,7 +27,6 @@ public class DecalManager {
 		public int decalAtlasHeight;
 
 		public DecalBin(String name, String textureFilename, int width, int height) {
-			binPacker = new BinPacker(name, width, height);
 			binName = name;
 			decalAtlasTextureName = textureFilename;
 			decalAtlasWidth = width;
