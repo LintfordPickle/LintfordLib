@@ -551,7 +551,13 @@ public class RendererManager implements IInputClickedFocusManager {
 		var lRenderTarget = getRenderTarget(name);
 
 		if (lRenderTarget != null) {
-			Debug.debugManager().logger().i(getClass().getSimpleName(), "RenderTarget with name '" + name + "' already exists. No new RendreTarget will be created.");
+			if (lRenderTarget.width() != width || lRenderTarget.height() != height) {
+				lRenderTarget.resize(width, height);
+				Debug.debugManager().logger().i(getClass().getSimpleName(), "RenderTarget with name '" + name + "' already exists. It will be resized.");
+			} else {
+				Debug.debugManager().logger().i(getClass().getSimpleName(), "RenderTarget with name '" + name + "' already exists. It will be reused.");
+			}
+
 			return lRenderTarget;
 		}
 
