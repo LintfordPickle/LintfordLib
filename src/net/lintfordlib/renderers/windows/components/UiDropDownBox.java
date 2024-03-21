@@ -3,6 +3,8 @@ package net.lintfordlib.renderers.windows.components;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.lwjgl.opengl.GL11;
+
 import net.lintfordlib.ConstantsApp;
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.geometry.Rectangle;
@@ -95,8 +97,8 @@ public class UiDropDownBox<T> extends UIWidget implements IInputClickedFocusMana
 	public UiDropDownBoxItem selectedItem() {
 		if (mItems == null || mItems.size() == 0)
 			return null;
-		
-		if(mSelectedIndex == NO_ITEM_INDEX)
+
+		if (mSelectedIndex == NO_ITEM_INDEX)
 			return null;
 
 		return mItems.get(mSelectedIndex);
@@ -220,6 +222,10 @@ public class UiDropDownBox<T> extends UIWidget implements IInputClickedFocusMana
 						lSelectedIndex = mItems.size() - 1;
 
 					mHighlightedIndex = lSelectedIndex;
+
+					if (core.input().mouse().isMouseLeftButtonDownTimed(this)) {
+						mOpen = false;
+					}
 				}
 
 				if (core.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
@@ -307,7 +313,10 @@ public class UiDropDownBox<T> extends UIWidget implements IInputClickedFocusMana
 		} else {
 			drawSelectedItem(core, spriteBatch, textFont, coreSpritesheet, componentZDepth);
 
-			mWindowRectangle.preDraw(core, spriteBatch, mWindowRectangle, 1);
+			mWindowRectangle.preDraw(core, spriteBatch, mWindowRectangle, 2);
+
+			GL11.glEnable(GL11.GL_DEPTH_TEST);
+
 			textFont.begin(core.HUD());
 			spriteBatch.begin(core.HUD());
 			final var lBlackWithAlpha = ColorConstants.getBlackWithAlpha(1.f);
@@ -327,7 +336,7 @@ public class UiDropDownBox<T> extends UIWidget implements IInputClickedFocusMana
 				else
 					entityColor.setFromColor(ColorConstants.TextEntryColor);
 
-				textFont.drawText(lItem.name, mX + 5.f, lYPos, componentZDepth, entityColor, 1.f, -1);
+				textFont.drawText(lItem.name, mX + 5.f, lYPos, -0.01f, entityColor, 1.f, -1);
 				lYPos += ITEM_HEIGHT;
 			}
 
