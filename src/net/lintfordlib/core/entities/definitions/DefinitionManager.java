@@ -182,7 +182,7 @@ public abstract class DefinitionManager<T extends BaseDefinition> {
 				addDefintion(lNewDefinition);
 
 				notifyListenersOfChange();
-				
+
 				return lNewDefinition;
 			} else {
 				Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Failed to parse %s from file: %s", classType.getSimpleName(), lDefinitionFile.getAbsoluteFile()));
@@ -205,8 +205,10 @@ public abstract class DefinitionManager<T extends BaseDefinition> {
 		if (newDefinition == null)
 			return;
 
-		if (newDefinition.name == null)
+		if (newDefinition.name == null) {
+			Debug.debugManager().logger().w(getClass().getSimpleName(), "The Definition at '" + newDefinition.filepath + "' is missing a name. The filename will be used instead");
 			return;
+		}
 
 		short lDefinitionUid = 0;
 		if (mDefinitionsLookupTable.containsDefinitionName(newDefinition.name)) {
