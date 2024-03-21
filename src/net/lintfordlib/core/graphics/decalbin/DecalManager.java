@@ -7,32 +7,7 @@ import java.util.Map;
 
 import com.google.gson.annotations.SerializedName;
 
-import net.lintfordlib.core.binpacking.BinPacker;
-
 public class DecalManager {
-
-	public class DecalBin {
-		private BinPacker _BinPacker;
-
-		public BinPacker binPacker() {
-			if (_BinPacker == null)
-				_BinPacker = new BinPacker(binName, decalAtlasWidth, decalAtlasHeight);
-
-			return _BinPacker;
-		}
-
-		public String binName;
-		public String decalAtlasTextureName;
-		public int decalAtlasWidth;
-		public int decalAtlasHeight;
-
-		public DecalBin(String name, String textureFilename, int width, int height) {
-			binName = name;
-			decalAtlasTextureName = textureFilename;
-			decalAtlasWidth = width;
-			decalAtlasHeight = height;
-		}
-	}
 
 	// --------------------------------------
 	// Constants
@@ -45,9 +20,12 @@ public class DecalManager {
 	// --------------------------------------
 
 	@SerializedName("DecalBins")
-	private final Map<String, DecalBin> mBins = new HashMap<>();
+	protected final Map<String, DecalBin> mBins = new HashMap<>();
 
+	// This list of receivers is only used to mark which items should be considered for packing into decal bins - it is not serialized with the track data
+	// (the individual items will contain their atlas UVs and atlas reference data).
 	private final List<IDecalBinPackedItem> mDecalReceivers = new ArrayList<>();
+
 	private int mDecalMapSizeWidth;
 	private int mDecalMapSizeHeight;
 
@@ -111,8 +89,8 @@ public class DecalManager {
 
 			if (mListener != null)
 				mListener.onItemAdded();
-		}
 
+		}
 	}
 
 	public void removeDecalReceiver(IDecalBinPackedItem receiver) {
@@ -121,22 +99,14 @@ public class DecalManager {
 
 			if (mListener != null)
 				mListener.onItemRemoved();
+
 		}
 	}
 
 	public void clearBins() {
 		mBins.clear();
-	}
 
-	public DecalBin getOrCreateBinPacker(String binName, int width, int height) {
-		var lBin = mBins.get(binName);
-
-		if (lBin == null) {
-			lBin = new DecalBin(binName, "res/textures/decalAtlases/" + binName + ".png", width, height);
-			mBins.put(binName, lBin);
-		}
-
-		return lBin;
-
+		if (mListener != null)
+			mListener.onItemRemoved();
 	}
 }
