@@ -62,6 +62,10 @@ public class SceneHeader {
 		mSceneDirectoryName = newBaseSceneDirectory;
 	}
 
+	public String sceneDataDirectory() {
+		return mSceneSettings.scenesDirectory() + baseScenesDirectory();
+	}
+	
 	public String sceneHeaderFilepath() {
 		return mSceneSettings.scenesDirectory() + baseScenesDirectory() + "scene" + mSceneSettings.sceneFileExtension();
 	}
