@@ -352,19 +352,25 @@ public class RenderTarget {
 		final var lCleanFilename = FileUtils.cleanFilename(filename);
 
 		try {
-			final var lFile = new File(System.getProperty(ConstantsApp.WORKSPACE_PROPERTY_NAME), lCleanFilename);
-			final var lImage = ImageIO.read(lFile);
+			final var lImageFile = new File(lCleanFilename);
+
+			if (lImageFile.exists() == false) {
+				Debug.debugManager().logger().e(Texture.class.getSimpleName(), "FileNotFoundException: Error loading texture from file (" + filename + "). File doesn't exist.");
+				return null;
+			}
+
+			final var lImage = ImageIO.read(lImageFile);
 
 			Debug.debugManager().logger().v(Texture.class.getSimpleName(), "Loaded texture from file: " + filename);
 
 			return lImage;
 
 		} catch (FileNotFoundException e) {
-			Debug.debugManager().logger().e(Texture.class.getSimpleName(), "FileNotFoundException: Error loading texture from file (" + filename + ")");
+			Debug.debugManager().logger().e(Texture.class.getSimpleName(), "FileNotFoundException: Error loading texture from file (" + filename + ").");
 		} catch (IIOException e) {
-			Debug.debugManager().logger().e(Texture.class.getSimpleName(), "IIOException: Error loading texture from file (" + filename + ")");
+			Debug.debugManager().logger().e(Texture.class.getSimpleName(), "IIOException: Error loading texture from file (" + filename + ").");
 		} catch (IOException e) {
-			Debug.debugManager().logger().e(Texture.class.getSimpleName(), "IOException: Error loading texture from file (" + filename + ")");
+			Debug.debugManager().logger().e(Texture.class.getSimpleName(), "IOException: Error loading texture from file (" + filename + ").");
 		}
 
 		return null;
@@ -374,26 +380,23 @@ public class RenderTarget {
 		int lWidth = mWidth;
 		int lHeight = mHeight;
 
-		int[] colorRGB = new int[lWidth * lHeight];
+		final var lColorARGB = new int[lWidth * lHeight];
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, mColorTextureID);
-		GL11.glGetTexImage(GL11.GL_TEXTURE_2D, 0, GL12.GL_BGRA, GL11.GL_UNSIGNED_BYTE, colorRGB);
+		GL11.glGetTexImage(GL11.GL_TEXTURE_2D, 0, GL12.GL_RGBA, GL11.GL_UNSIGNED_BYTE, lColorARGB);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 
-		int[] convertedRGB = Texture.changeBGRAtoARGB(colorRGB, lWidth, lHeight);
-
-		// needs ARGB
-		saveTextureToFile(lWidth, lHeight, convertedRGB, pPathname);
+		saveTextureToPngFile(lWidth, lHeight, lColorARGB, pPathname);
 	}
 
-	public static boolean saveTextureToFile(int width, int height, int[] pData, String fileLocation) {
+	public static boolean saveTextureToPngFile(int width, int height, int[] argbData, String fileLocation) {
 		final var lImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 
 		int[] lTextureData = new int[width * height];
 		for (int i = 0; i < width * height; i++) {
-			int a = (pData[i] & 0xff000000) >> 24;
-			int r = (pData[i] & 0xff0000) >> 16;
-			int g = (pData[i] & 0xff00) >> 8;
-			int b = (pData[i] & 0xff);
+			int a = (argbData[i] & 0xff000000) >> 24;
+			int r = (argbData[i] & 0xff0000) >> 16;
+			int g = (argbData[i] & 0xff00) >> 8;
+			int b = (argbData[i] & 0xff);
 
 			lTextureData[i] = a << 24 | b << 16 | g << 8 | r;
 		}
