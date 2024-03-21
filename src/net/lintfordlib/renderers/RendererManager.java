@@ -1,5 +1,6 @@
 package net.lintfordlib.renderers;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -577,7 +578,7 @@ public class RendererManager implements IInputClickedFocusManager {
 		return lRenderTarget;
 	}
 
-	public RenderTarget createRenderTarget(String name, String filename, int filterMode, boolean resizeWithWindow) {
+	public RenderTarget createRenderTarget(String name, File filename, int filterMode, boolean resizeWithWindow) {
 		var lRenderTarget = getRenderTarget(name);
 
 		if (lRenderTarget != null) {
@@ -587,7 +588,7 @@ public class RendererManager implements IInputClickedFocusManager {
 
 		lRenderTarget = new RenderTarget(name);
 		lRenderTarget.textureFilter(filterMode);
-		lRenderTarget.loadResources("res/textures/texturePups.png");
+		lRenderTarget.loadResources(filename.getAbsolutePath());
 
 		mRenderTargets.add(lRenderTarget);
 
