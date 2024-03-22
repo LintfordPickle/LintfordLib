@@ -182,6 +182,15 @@ public class MouseManager {
 		return false;
 	}
 
+	public boolean isMouseRightButtonDownTimed(IInputProcessor mouseProcessor, float cooldownTime) {
+		if (isMouseRightButtonDown() && mouseProcessor.isCoolDownElapsed()) {
+			mouseProcessor.resetCoolDownTimer(cooldownTime);
+			return true;
+		}
+
+		return false;
+	}
+
 	public boolean isMouseLeftClick(int hashCode) {
 		if (isMouseLeftClickOwnerAssignedToUsOrNotAssigned(hashCode)) {
 			return mMouseButtonStates[GLFW.GLFW_MOUSE_BUTTON_LEFT];
