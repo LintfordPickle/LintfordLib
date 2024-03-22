@@ -265,18 +265,18 @@ public abstract class UiPanel implements IScrollBarArea, UIWindowChangeListener,
 				}
 		}
 
-		final boolean result = false;
+		boolean result = false;
 		if (mIsPanelOpen) {
 			final int lNumWidgets = mWidgets.size();
 			for (int i = 0; i < lNumWidgets; i++) {
 				final var lWidget = mWidgets.get(i);
 
-				lWidget.handleInput(core);
+				final var tr = lWidget.handleInput(core);
+				result = result | tr;
 			}
 
 			if (mNestedPanel != null) {
 				if (mNestedPanel.handleInput(core)) {
-					System.out.println("weee");
 					return true;
 				}
 			}
@@ -351,7 +351,7 @@ public abstract class UiPanel implements IScrollBarArea, UIWindowChangeListener,
 
 	public void draw(LintfordCore core) {
 		final var rendererManager = mParentWindow.rendererManager();
-		
+
 		final var lFontUnit = rendererManager.uiTextFont();
 		final var lSpriteBatch = rendererManager.uiSpriteBatch();
 		final var mCoreSpriteSheet = mParentWindow.coreSpritesheet();
