@@ -46,13 +46,13 @@ public class ResourceMapLoader extends ResourceLoader {
 
 		if (lResMapFile == null || lResMapFile.exists() == false) {
 			Debug.debugManager().logger().e(getClass().getSimpleName(), "The ResMap.json file could not be found.");
-			throw new RuntimeException("The ResMap.json file could not be found.");
+			return;
 		}
 
 		final var lResMap = ResourceMapIo.tryLoadResourceMapFromFile(lResMapFile);
 		if (lResMap == null) {
 			Debug.debugManager().logger().e(getClass().getSimpleName(), "The ResMap.json file could not be loaded.");
-			throw new RuntimeException("The ResMap.json file could not be loaded.");
+			return;
 		}
 
 		mLoadedFromResMapSuccessfully = true;
