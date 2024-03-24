@@ -85,6 +85,7 @@ public class UiButton extends UIWidget {
 				if (mUiWidgetListenerCallback != null && mClickTimer > MINIMUM_CLICK_TIMER) {
 					mClickTimer = 0;
 					mUiWidgetListenerCallback.widgetOnClick(core.input(), mUiWidgetListenerUid);
+					mUiWidgetListenerCallback.widgetOnDataChanged(core.input(), mUiWidgetListenerUid);
 
 					return true;
 				}
