@@ -189,6 +189,30 @@ public class CollisionExtensions {
 
 		return false;
 	}
+	
+	public static boolean intersectsLineCircle(float lsx, float lsy, float lex, float ley, float lineRadius, float cwx, float cwy, float cr) {
+		final var lLineX1 = lex - lsx;
+		final var lLineY1 = ley - lsy;
+
+		final var lLineX2 = cwx - lsx;
+		final var lLineY2 = cwy - lsy;
+
+		final var lEdgeLength = lLineX1 * lLineX1 + lLineY1 * lLineY1;
+
+		final var v = lLineX1 * lLineX2 + lLineY1 * lLineY2;
+		final var t = MathHelper.clamp(v, 0.f, lEdgeLength) / lEdgeLength;
+
+		final var lClosestPointX = lsx + t * lLineX1;
+		final var lClosestPointY = lsy + t * lLineY1;
+
+		final var distance = (float) Math.sqrt((cwx - lClosestPointX) * (cwx - lClosestPointX) + (cwy - lClosestPointY) * (cwy - lClosestPointY));
+
+		final var lPointRadius = 1.f * ConstantsPhysics.PixelsToUnits();
+		if (distance <= (lineRadius + lPointRadius))
+			return true;
+
+		return false;
+	}
 
 	public static boolean pointIntersectsAA(float x, float y, float w, float h, float pointX, float pointY) {
 		return ((((pointX < x + w) && (x < pointX)) && (pointY < y + h)) && (y < pointY));
