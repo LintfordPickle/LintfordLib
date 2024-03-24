@@ -14,6 +14,7 @@ import net.lintfordlib.core.graphics.fonts.FontUnit;
 import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
 import net.lintfordlib.core.input.IInputClickedFocusTracker;
+import net.lintfordlib.core.maths.MathHelper;
 import net.lintfordlib.renderers.windows.UiWindow;
 import net.lintfordlib.renderers.windows.components.interfaces.IScrollBarArea;
 import net.lintfordlib.screenmanager.IInputClickedFocusManager;
@@ -208,39 +209,13 @@ public class UiDropDownBox<T> extends UIWidget implements IInputClickedFocusMana
 			if (intersectsDropDown && core.input().mouse().tryAcquireMouseOverThisComponent(hashCode())) {
 				final var lOffsetY = mLabel != null ? UIWidget.DefaultWidthHeight : 0.f;
 				if (mOpen) {
-					// Something inside the dropdown was highlighted / hovered over
-					final float lConsoleLineHeight = ITEM_HEIGHT;
-					float lRelativeheight = core.HUD().getMouseCameraSpace().y - mWindowRectangle.y() - mScrollBar.currentYPos() - lOffsetY;
-
-					int lRelativeIndex = (int) (lRelativeheight / lConsoleLineHeight);
-					int lSelectedIndex = lRelativeIndex;
-
-					if (lSelectedIndex < 0)
-						lSelectedIndex = 0;
-
-					if (lSelectedIndex >= mItems.size())
-						lSelectedIndex = mItems.size() - 1;
+					final var lConsoleLineHeight = ITEM_HEIGHT;
+					final var lRelativeHeight = core.HUD().getMouseCameraSpace().y - mWindowRectangle.y() - mScrollBar.currentYPos() - lOffsetY;
+					final var lSelectedIndex = MathHelper.clampi((int) (lRelativeHeight / lConsoleLineHeight), 0, mItems.size() - 1);
 
 					mHighlightedIndex = lSelectedIndex;
 
-					if (core.input().mouse().isMouseLeftButtonDownTimed(this)) {
-						mOpen = false;
-					}
-				}
-
-				if (core.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
-					if (mOpen) {
-						final float lConsoleLineHeight = ITEM_HEIGHT;
-						float lRelativeheight = core.HUD().getMouseCameraSpace().y - mWindowRectangle.y() - mScrollBar.currentYPos() - lOffsetY;
-
-						int lRelativeIndex = (int) (lRelativeheight / lConsoleLineHeight);
-						int lSelectedIndex = lRelativeIndex;
-
-						if (lSelectedIndex < 0)
-							lSelectedIndex = 0;
-
-						if (lSelectedIndex >= mItems.size())
-							lSelectedIndex = mItems.size() - 1;
+					if (core.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
 
 						mSelectedIndex = lSelectedIndex;
 
@@ -250,10 +225,11 @@ public class UiDropDownBox<T> extends UIWidget implements IInputClickedFocusMana
 						}
 
 						mOpen = false;
-
-					} else {
-						mOpen = true;
 					}
+				}
+
+				if (core.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
+					mOpen = true;
 				}
 			}
 		}
