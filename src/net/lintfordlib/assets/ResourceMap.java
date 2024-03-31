@@ -41,9 +41,6 @@ public class ResourceMap {
 	// --------------------------------------
 
 	public void loadResourcesIntoManager(ResourceManager resourceManager, String baseDirectory, int entityGroupUid) {
-
-		// TODO: need to unload resources first?
-
 		loadTexturesFromResMap(resourceManager, baseDirectory, entityGroupUid);
 		loadSpritesheetsFromResMap(resourceManager, baseDirectory, entityGroupUid);
 	}

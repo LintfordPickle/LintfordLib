@@ -35,6 +35,6 @@ public class ParticleRandomRotationInitializer extends ParticleRandomDoubleValue
 	@Override
 	public void onIntialiseParticle(Particle particle, float rotationAmount, float angVel) {
 		particle.rotationInRadians = rotationAmount;
-		particle.dr = rotationAmount;
+		particle.angVel = rotationAmount;
 	}
 }

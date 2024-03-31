@@ -26,8 +26,8 @@ public class Particle {
 	public float rox;
 	public float roy;
 
-	// TODO: rename these to vx, vy and ang_vel
-	public float dx, dy, dr;
+	public float vx, vy;
+	public float angVel;
 	public final Color color = new Color();
 	public float scale;
 
@@ -85,8 +85,8 @@ public class Particle {
 		worldPositionX = worldX;
 		worldPositionY = worldY;
 		worldPositionZ = worldZ;
-		dx = velocityX;
-		dy = velocityY;
+		vx = velocityX;
+		vy = velocityY;
 	}
 
 	public void reset() {
@@ -99,8 +99,8 @@ public class Particle {
 		worldPositionY = 0.f;
 		worldPositionZ = -.2f;
 
-		dx = 0f;
-		dy = 0f;
+		vx = 0f;
+		vy = 0f;
 	}
 
 	public void applyInitializer(ParticleInitializerBase particleInitializerBase) {

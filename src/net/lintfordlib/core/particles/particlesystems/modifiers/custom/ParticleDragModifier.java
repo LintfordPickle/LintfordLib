@@ -50,12 +50,12 @@ public class ParticleDragModifier extends ParticleModifierBase {
 
 	@Override
 	public void updateParticle(LintfordCore core, Particle particle) {
-		particle.dx *= dragCoefficient;
-		particle.dy *= dragCoefficient;
+		particle.vx *= dragCoefficient;
+		particle.vy *= dragCoefficient;
 
-		if (Math.abs(particle.dx) < EPSILON)
-			particle.dx = 0;
-		if (Math.abs(particle.dy) < EPSILON)
-			particle.dy = 0;
+		if (Math.abs(particle.vx) < EPSILON)
+			particle.vx = 0;
+		if (Math.abs(particle.vy) < EPSILON)
+			particle.vy = 0;
 	}
 }

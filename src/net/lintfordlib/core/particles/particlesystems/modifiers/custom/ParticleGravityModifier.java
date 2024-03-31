@@ -52,7 +52,7 @@ public class ParticleGravityModifier extends ParticleModifierBase {
 	public void updateParticle(LintfordCore core, Particle particle) {
 		final var lDeltaTime = (float) core.appTime().elapsedTimeMilli();
 
-		particle.dx += gravityX * lDeltaTime;
-		particle.dy += gravityY * lDeltaTime;
+		particle.vx += gravityX * lDeltaTime;
+		particle.vy += gravityY * lDeltaTime;
 	}
 }

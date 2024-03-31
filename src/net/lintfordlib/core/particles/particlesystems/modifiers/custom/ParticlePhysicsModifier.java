@@ -56,12 +56,12 @@ public class ParticlePhysicsModifier extends ParticleModifierBase {
 		final var lDelta = (float) core.appTime().elapsedTimeMilli() / 1000f;
 
 		if (enableMovement) {
-			particle.worldPositionX += particle.dx * lDelta;
-			particle.worldPositionY += particle.dy * lDelta;
+			particle.worldPositionX += particle.vx * lDelta;
+			particle.worldPositionY += particle.vy * lDelta;
 		}
 
 		if (enableRotation) {
-			particle.rotationInRadians += Math.toRadians(particle.dr);
+			particle.rotationInRadians += Math.toRadians(particle.angVel);
 		}
 	}
 }

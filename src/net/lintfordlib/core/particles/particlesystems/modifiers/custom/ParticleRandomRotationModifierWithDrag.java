@@ -52,8 +52,8 @@ public class ParticleRandomRotationModifierWithDrag extends ParticleModifierBase
 	public void updateParticle(LintfordCore core, Particle particle) {
 		final var lDelta = (float) core.appTime().elapsedTimeMilli();
 
-		particle.dr += RandomNumbers.random(minRandAmount, maxRandAmount);
-		particle.rotationInRadians += particle.dr * lDelta;
-		particle.dr *= 0.98f;
+		particle.angVel += RandomNumbers.random(minRandAmount, maxRandAmount);
+		particle.rotationInRadians += particle.angVel * lDelta;
+		particle.angVel *= 0.98f;
 	}
 }

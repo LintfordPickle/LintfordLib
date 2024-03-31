@@ -33,6 +33,6 @@ public class ParticleSetRotationInitializer extends ParticleSetDoubleValueInitia
 	@Override
 	public void onIntialiseParticle(Particle particle, float rotation, float angular_velocity) {
 		particle.rotationInRadians = rotation;
-		particle.dr = angular_velocity;
+		particle.angVel = angular_velocity;
 	}
 }

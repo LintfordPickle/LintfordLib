@@ -25,6 +25,6 @@ public class ParticleTurnToFaceInitializer extends ParticleInitializerBase {
 
 	@Override
 	public void initialize(Particle particle) {
-		particle.rotationInRadians = (float) Math.atan2(particle.dx, -particle.dy);
+		particle.rotationInRadians = (float) Math.atan2(particle.vx, -particle.vy);
 	}
 }

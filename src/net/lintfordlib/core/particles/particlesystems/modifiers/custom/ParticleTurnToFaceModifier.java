@@ -37,6 +37,6 @@ public class ParticleTurnToFaceModifier extends ParticleModifierBase {
 
 	@Override
 	public void updateParticle(LintfordCore core, Particle particle) {
-		particle.rotationInRadians = (float) Math.atan2(particle.dx, -particle.dy) + (float) Math.toRadians(90.f);
+		particle.rotationInRadians = (float) Math.atan2(particle.vx, -particle.vy) + (float) Math.toRadians(90.f);
 	}
 }

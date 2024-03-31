@@ -22,12 +22,19 @@ public class ParticleRandomOffsetInitializer extends ParticleRandomDoubleValueIn
 	public ParticleRandomOffsetInitializer(float offsetX, float offsetY) {
 		super(ParticleRandomOffsetInitializer.class.getSimpleName());
 
-		// TODO : This is not complete needs another constructor)
-
 		minValue0 = offsetX;
 		maxValue0 = offsetX;
 		minValue1 = offsetY;
 		maxValue1 = offsetY;
+	}
+
+	public ParticleRandomOffsetInitializer(float minOffsetX, float maxOffsetX, float minOffsetY, float maxOffsetY) {
+		super(ParticleRandomOffsetInitializer.class.getSimpleName());
+
+		minValue0 = minOffsetX;
+		maxValue0 = maxOffsetX;
+		minValue1 = minOffsetY;
+		maxValue1 = maxOffsetY;
 	}
 
 	// --------------------------------------
