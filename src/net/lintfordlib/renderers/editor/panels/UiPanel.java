@@ -19,7 +19,7 @@ import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
 import net.lintfordlib.core.input.mouse.IInputProcessor;
 import net.lintfordlib.data.editor.EditorLayerBrush;
-import net.lintfordlib.data.editor.HudTextureNames;
+
 import net.lintfordlib.renderers.windows.UiWindow;
 import net.lintfordlib.renderers.windows.components.ScrollBarContentRectangle;
 import net.lintfordlib.renderers.windows.components.UIWidget;
@@ -378,17 +378,17 @@ public abstract class UiPanel implements IScrollBarArea, UIWindowChangeListener,
 
 		if (mShowShowLayerButton) {
 			if (mIsLayerVisibleToggleOn) {
-				lSpriteBatch.draw(mHudSpritesheet, HudTextureNames.TEXTURE_SHOW_LAYER, mShowLayerButtonRect, -0.01f, ColorConstants.WHITE);
+				lSpriteBatch.draw(mHudSpritesheet, mHudSpritesheet.getSpriteInstance("TEXTURE_SHOW_LAYER"), mShowLayerButtonRect, -0.01f, ColorConstants.WHITE);
 			} else {
-				lSpriteBatch.draw(mHudSpritesheet, HudTextureNames.TEXTURE_HIDE_LAYER, mShowLayerButtonRect, -0.01f, ColorConstants.WHITE);
+				lSpriteBatch.draw(mHudSpritesheet, mHudSpritesheet.getSpriteInstance("TEXTURE_HIDE_LAYER"), mShowLayerButtonRect, -0.01f, ColorConstants.WHITE);
 			}
 		}
 
 		if (mShowActiveLayerButton) {
 			if (mIsLayerActiveToggleOn) {
-				lSpriteBatch.draw(mHudSpritesheet, HudTextureNames.TEXTURE_SET_LAYER_ON, mActiveLayerButtonRect, -0.01f, ColorConstants.WHITE);
+				lSpriteBatch.draw(mHudSpritesheet, mHudSpritesheet.getSpriteInstance("TEXTURE_SET_LAYER_ON"), mActiveLayerButtonRect, -0.01f, ColorConstants.WHITE);
 			} else {
-				lSpriteBatch.draw(mHudSpritesheet, HudTextureNames.TEXTURE_SET_LAYER_OFF, mActiveLayerButtonRect, -0.01f, ColorConstants.WHITE);
+				lSpriteBatch.draw(mHudSpritesheet, mHudSpritesheet.getSpriteInstance("TEXTURE_SET_LAYER_OFF"), mActiveLayerButtonRect, -0.01f, ColorConstants.WHITE);
 			}
 		}
 
