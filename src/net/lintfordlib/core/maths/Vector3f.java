@@ -51,4 +51,20 @@ public class Vector3f implements Serializable {
 		return (float) Math.sqrt((x * x) + (y * y) + (z * z));
 	}
 
+	public void set(float x) {
+		this.x = x;
+	}
+
+	public void set(float x, float y) {
+		this.x = x;
+		this.y = y;
+
+	}
+
+	public void set(float x, float y, float z) {
+		this.x = x;
+		this.y = y;
+		this.z = z;
+	}
+
 }
