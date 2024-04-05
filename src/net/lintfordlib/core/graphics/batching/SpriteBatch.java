@@ -178,6 +178,6 @@ public class SpriteBatch extends TextureBatchPCT {
 		final float srcW = spriteFrame.flipHorizontal() ? -spriteFrame.width() : spriteFrame.width();
 		final float srcH = spriteFrame.flipVertical() ? -spriteFrame.height() : spriteFrame.height();
 
-		drawAroundCenter(spriteSheetDefinition.texture(), srcX, srcY, srcW, srcH, destX, destY, destWidth, destHeight, -0.01f, rot, pivotX, pivotY, 1.f, colorTint);
+		drawAroundCenter(spriteSheetDefinition.texture(), srcX, srcY, srcW, srcH, destX, destY, destWidth, destHeight, zDepth, rot, pivotX, pivotY, 1.f, colorTint);
 	}
 }
