@@ -67,6 +67,12 @@ public class FileUtils {
 		if (resourcepath.charAt(0) == '/') {
 			return loadStringFromResource(resourcepath);
 		} else {
+			final var lFile = new File(resourcepath);
+			if (lFile.exists() == false) {
+				Debug.debugManager().logger().e(FileUtils.class.getSimpleName(), "Could not load string from file '" + resourcepath + "'. The file does not exist!");
+				return null;
+			}
+
 			return loadStringFromFile(resourcepath);
 		}
 	}
