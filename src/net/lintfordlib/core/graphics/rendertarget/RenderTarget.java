@@ -162,6 +162,9 @@ public class RenderTarget {
 	public void loadResources(String fileName) {
 		var lBufferedImage = loadBufferedImage(fileName);
 
+		if(lBufferedImage == null)
+			return;
+		
 		mScale = 1.f;
 		mWidth = lBufferedImage.getWidth();
 		mHeight = lBufferedImage.getHeight();
