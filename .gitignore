@@ -1,7 +1,6 @@
 .metadata
 bin/
 tmp/
-data/
 config/
 *.tmp
 *.bak
@@ -13,7 +12,6 @@ local.properties
 .loadpath
 .recommenders
 /target/
-/LDLibrary/
 
 #LintfordLib debug log
 debug.log
