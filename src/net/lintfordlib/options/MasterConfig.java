@@ -14,9 +14,9 @@ public class MasterConfig {
 	// Constants
 	// --------------------------------------
 
-	private static final String VIDEO_CONFIG_FILENAME = "Video.ini";
-	private static final String AUDIO_CONFIG_FILENAME = "Audio.ini";
-	private static final String RESOURCES_CONFIG_FILENAME = "Resources.ini";
+	private static final String VIDEO_CONFIG_FILENAME = "video.ini";
+	private static final String AUDIO_CONFIG_FILENAME = "audio.ini";
+	private static final String RESOURCES_CONFIG_FILENAME = "resources.ini";
 
 	public enum configuration {
 		audioConfig, videoConfig, inputConfig, resourcePaths, all,

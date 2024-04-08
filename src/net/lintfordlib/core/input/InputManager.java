@@ -62,7 +62,7 @@ public class InputManager {
 		mKeyboardManager = new KeyboardManager();
 		mGamepadManager = new GamepadManager();
 
-		final String lInputConfigFilename = AppStorage.getGameDataDirectory() + InputConfigFilename;
+		final String lInputConfigFilename = AppStorage.getGameConfigDirectory() + InputConfigFilename;
 		mEventActionManager = new KeyEventActionManager(this, lInputConfigFilename);
 	}
 
