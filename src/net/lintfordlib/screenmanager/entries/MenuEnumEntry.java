@@ -196,7 +196,7 @@ public class MenuEnumEntry extends MenuEntry {
 					return true;
 				}
 
-				if (mLeftButtonRectangle.intersectsAA(core.HUD().getMouseCameraSpace())) {
+				if (mRightButtonRectangle.intersectsAA(core.HUD().getMouseCameraSpace())) {
 					mSelectedIndex++;
 					if (mSelectedIndex >= mItems.size()) {
 						mSelectedIndex = 0;

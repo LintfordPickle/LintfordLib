@@ -1,5 +1,7 @@
 package net.lintfordlib.screenmanager.entries;
 
+import org.lwjgl.opengl.GL11;
+
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.graphics.ColorConstants;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
@@ -68,6 +70,8 @@ public class MenuLabelEntry extends MenuEntry {
 	public void draw(LintfordCore core, Screen screen, float parentZDepth) {
 		if (!enabled())
 			return;
+
+		GL11.glDisable(GL11.GL_DEPTH_TEST);
 
 		final var lTextBoldFont = mParentScreen.fontBold();
 		final var lScreenOffset = screen.screenPositionOffset();

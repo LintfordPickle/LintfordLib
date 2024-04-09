@@ -155,6 +155,59 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 	// --------------------------------------
 
 	@Override
+	public boolean onHandleMouseInput(LintfordCore core) {
+		if (!mEnableUpdateDraw || !mEnabled || isAnimating)
+			return false;
+
+		if (intersectsAA(core.HUD().getMouseCameraSpace()) && core.input().mouse().isMouseOverThisComponent(hashCode())) {
+			mIsMouseOver = true;
+			core.input().mouse().isMouseMenuSelectionEnabled(true);
+
+			if (!mHasFocus)
+				mParentScreen.setFocusOnEntry(this);
+
+			if (mToolTipEnabled)
+				mToolTipTimer += core.appTime().elapsedTimeMilli();
+
+			if (core.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
+
+				if (mLeftButtonRectangle.intersectsAA(core.HUD().getMouseCameraSpace())) {
+					mSelectedIndex--;
+					if (mSelectedIndex < 0) {
+						mSelectedIndex = mItems.size() - 1;
+					}
+
+					if (mClickListener != null)
+						mClickListener.onMenuEntryChanged(this);
+
+					return true;
+				}
+
+				if (mRightButtonRectangle.intersectsAA(core.HUD().getMouseCameraSpace())) {
+					mSelectedIndex++;
+					if (mSelectedIndex >= mItems.size()) {
+						mSelectedIndex = 0;
+					}
+
+					if (mClickListener != null)
+						mClickListener.onMenuEntryChanged(this);
+
+					return true;
+				}
+
+				onClick(core.input());
+				return true;
+			}
+
+		} else {
+			mIsMouseOver = false;
+			mToolTipTimer = 0;
+		}
+
+		return false;
+	}
+
+	@Override
 	public void update(LintfordCore core, MenuScreen screen) {
 		if (mEnableUpdateDraw == false)
 			return;
@@ -175,6 +228,8 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 		if (mEnableUpdateDraw == false)
 			return;
 
+		super.draw(core, screen, componentDepth);
+
 		mZ = componentDepth;
 
 		final var lTextureBatch = mParentScreen.spriteBatch();
@@ -186,9 +241,7 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 		if (mButtonsEnabled) {
 			lTextureBatch.begin(core.HUD());
 
-			// FIXME: Store this somewhere more central and accessable
-			final float lButtonSize = 32;
-
+			final var lButtonSize = mH;
 			final var lButtonColor = ColorConstants.getWhiteWithAlpha((mEnabled ? 1.f : 0.5f) * mParentScreen.screenColor.a);
 
 			lTextureBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_LEFT, mLeftButtonRectangle.x(), mLeftButtonRectangle.y(), lButtonSize, lButtonSize, mZ, lButtonColor);
@@ -211,7 +264,6 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 		lTextBoldFont.drawText(mLabel, mX + mW / 2 - 10 - (lLabelWidth * lAdjustedLabelScaleW) - lSeparatorHalfWidth, mY + mH / 2 - lFontHeight * 0.5f, mZ, textColor, lAdjustedLabelScaleW, -1);
 		lTextBoldFont.drawText(mSeparator, mX + mW / 2 - lSeparatorHalfWidth, mY + mH / 2 - lFontHeight * 0.5f, mZ, textColor, lUiTextScale, -1);
 
-		// Render the items
 		if (mSelectedIndex >= 0 && mSelectedIndex < mItems.size()) {
 			String lCurItem = mItems.get(mSelectedIndex).name;
 			final float EntryWidth = lTextBoldFont.getStringWidth(lCurItem);
@@ -223,8 +275,6 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 		}
 
 		lTextBoldFont.end();
-
-		super.draw(core, screen, componentDepth);
 	}
 
 	// --------------------------------------

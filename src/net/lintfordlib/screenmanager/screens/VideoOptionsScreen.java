@@ -103,9 +103,11 @@ public class VideoOptionsScreen extends MenuScreen implements ITimedDialog {
 
 		mConfirmChangesLayout.addMenuEntry(mChangesPendingWarning);
 		mConfirmChangesLayout.layoutFillType(FILLTYPE.TAKE_WHATS_NEEDED);
+		mConfirmChangesLayout.layoutWidth(LAYOUT_WIDTH.FULL);
 		mConfirmChangesLayout.setDrawBackground(true, ColorConstants.MenuPanelSecondaryColor);
 
 		final var lFooterList = new HorizontalLayout(this);
+		lFooterList.layoutFillType(FILLTYPE.TAKE_WHATS_NEEDED);
 
 		final var lBackButton = new MenuEntry(screenManager, this, "Back");
 		lBackButton.registerClickListener(this, BUTTON_CANCEL_CHANGES);
@@ -218,6 +220,14 @@ public class VideoOptionsScreen extends MenuScreen implements ITimedDialog {
 	// --------------------------------------
 
 	@Override
+	public void initialize() {
+		super.initialize();
+
+		mConfirmChangesLayout.visible(modifiedVideoConfig.isDifferent(currentVideoConfig));
+		mApplyButton.enabled(modifiedVideoConfig.isDifferent(currentVideoConfig));
+	}
+
+	@Override
 	protected void handleOnClick() {
 		switch (mClickAction.consume()) {
 
@@ -274,6 +284,8 @@ public class VideoOptionsScreen extends MenuScreen implements ITimedDialog {
 
 	@Override
 	public void onMenuEntryChanged(MenuEntry menuEntry) {
+		super.onMenuEntryChanged(menuEntry);
+
 		switch (menuEntry.entryID()) {
 		case BUTTON_FULLSCREEN:
 			modifiedVideoConfig.fullScreenIndex(mFullScreenEntry.selectedItem().value);
@@ -281,7 +293,27 @@ public class VideoOptionsScreen extends MenuScreen implements ITimedDialog {
 			if (modifiedVideoConfig.fullScreenIndex() == VideoSettings.FULLSCREEN_YES_INDEX) {
 				mMonitorEntry.enabled(true);
 				mResolutionEntry.enabled(true);
-				modifiedVideoConfig.monitorIndex(mMonitorEntry.selectedItem().value);
+
+				final var lSelectedMonitorIndex = mMonitorEntry.selectedItem().value;
+				modifiedVideoConfig.monitorIndex(lSelectedMonitorIndex);
+
+				final var lVidMode = GLFW.glfwGetVideoMode(GLFW.glfwGetPrimaryMonitor());
+
+				final var lVidModeItems = mResolutionEntry.items();
+				final var lNumItems = lVidModeItems.size();
+				for (int i = 0; i < lNumItems; i++) {
+					final var lItem = lVidModeItems.get(i).value;
+					if (lItem == null)
+						continue;
+
+					if (lVidMode.width() == lItem.width() && lVidMode.height() == lItem.height()) {
+						mResolutionEntry.setSelectEntry(lItem);
+						modifiedVideoConfig.windowWidth(mResolutionEntry.selectedItem().value.width());
+						modifiedVideoConfig.windowHeight(mResolutionEntry.selectedItem().value.height());
+						break;
+					}
+				}
+
 			} else {
 				mMonitorEntry.enabled(false);
 				mResolutionEntry.enabled(false);
@@ -305,6 +337,7 @@ public class VideoOptionsScreen extends MenuScreen implements ITimedDialog {
 			modifiedVideoConfig.refreshRate(mResolutionEntry.selectedItem().value.refreshRate());
 
 			break;
+
 		}
 
 		mConfirmChangesLayout.visible(modifiedVideoConfig.isDifferent(currentVideoConfig));
@@ -356,17 +389,18 @@ public class VideoOptionsScreen extends MenuScreen implements ITimedDialog {
 		final int lNumMonitors = lMonitorList.limit();
 		for (int i = 0; i < lNumMonitors; i++) {
 			long lMonitorHandle = lMonitorList.get();
-			String lMonitorFullName = (i == 0 ? "[Primary]" : "") + GLFW.glfwGetMonitorName(lMonitorHandle);
-			String lMonitorName = lMonitorFullName.substring(0, Math.min(lMonitorFullName.length(), 25));
-			MenuEnumEntryIndexed<Long>.MenuEnumEntryItem lTest = entry.new MenuEnumEntryItem(lMonitorName, lMonitorHandle);
+			final var lMonitorFullName = (i == 0 ? "[Primary]" : "") + GLFW.glfwGetMonitorName(lMonitorHandle);
+			final var lMonitorName = lMonitorFullName.substring(0, Math.min(lMonitorFullName.length(), 25));
+			final var lMonitorMenuEntry = entry.new MenuEnumEntryItem(lMonitorName, lMonitorHandle);
 
-			mMonitorEntry.addItem(lTest);
+			mMonitorEntry.addItem(lMonitorMenuEntry);
 		}
 	}
 
 	private void fillResolutions(MenuDropDownEntry<GLFWVidMode> entry, long windowHandle, float width, float height) {
 		entry.clearItems();
 
+		final var lDisplayConfig = screenManager().core().config().display();
 		final var lVideoModes = GLFW.glfwGetVideoModes(windowHandle);
 		final int lNumVideoModes = lVideoModes.limit();
 		for (int i = 0; i < lNumVideoModes; i++) {
@@ -382,12 +416,12 @@ public class VideoOptionsScreen extends MenuScreen implements ITimedDialog {
 				lName += "@" + lVidMode.refreshRate();
 
 			// Only add resolutions which meet our minimum and the selected aspect ratio
-			final int MIN_WINDOW_RESOLUTION_W = 640;
-			final int MIN_WINDOW_RESOLUTION_H = 480;
+			final int MIN_WINDOW_RESOLUTION_W = lDisplayConfig.minimumWindowWidth();
+			final int MIN_WINDOW_RESOLUTION_H = lDisplayConfig.minimumWindowHeight();
 
 			if (lVidMode.width() > MIN_WINDOW_RESOLUTION_W && lVidMode.height() > MIN_WINDOW_RESOLUTION_H) {
-				MenuDropDownEntry<GLFWVidMode>.MenuEnumEntryItem lTest = entry.new MenuEnumEntryItem(lName, lVidMode);
-				entry.addItem(lTest);
+				final var lResolutionEntry = entry.new MenuEnumEntryItem(lName, lVidMode);
+				entry.addItem(lResolutionEntry);
 			}
 		}
 	}

@@ -146,6 +146,15 @@ public abstract class BaseDialog extends MenuScreen {
 	// --------------------------------------
 
 	@Override
+	public void handleInput(LintfordCore core) {
+		super.handleInput(core);
+
+		// block elements under the dialog from acquiring a mouse over event
+		core.input().mouse().tryAcquireMouseOverThisComponent(hashCode());
+
+	}
+
+	@Override
 	public void updateLayoutSize(LintfordCore core) {
 		super.updateLayoutSize(core);
 
@@ -167,10 +176,9 @@ public abstract class BaseDialog extends MenuScreen {
 		if (mScreenState != ScreenState.Active || mScreenState == ScreenState.TransitionOn || mScreenState == ScreenState.TransitionOff)
 			return;
 
-		if(mResourcesLoaded == false)
+		if (mResourcesLoaded == false)
 			return;
-		
-		
+
 		final float lZDepth = ZLayers.LAYER_SCREENMANAGER + 0.05f;
 		final float lWindowWidth = core.HUD().boundingRectangle().width();
 		final float lWindowHeight = core.HUD().boundingRectangle().height();
@@ -180,7 +188,7 @@ public abstract class BaseDialog extends MenuScreen {
 		if (mDarkenBackground) {
 			final var lColor = ColorConstants.getBlackWithAlpha(.6f);
 			lSpriteBatch.begin(core.HUD());
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, -lWindowWidth * 0.5f, -lWindowHeight * 0.5f, lWindowWidth, lWindowHeight, ZLayers.LAYER_SCREENMANAGER - 0.1f, lColor);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, -lWindowWidth * 0.5f, -lWindowHeight * 0.5f, lWindowWidth, lWindowHeight, ZLayers.LAYER_SCREENMANAGER, lColor);
 			lSpriteBatch.end();
 		}
 
@@ -225,7 +233,7 @@ public abstract class BaseDialog extends MenuScreen {
 		if (mMenuTitle != null && mMenuTitle.length() > 0) {
 			mMenuFont.begin(core.HUD());
 			final float lHorizontalOffsetX = (lDrawIcon) ? 5.f : 0.f;
-			mMenuFont.drawText(mMenuTitle, -DIALOG_WIDTH / 2f + TEXT_HORIZONTAL_PADDING + lHorizontalOffsetX, -DIALOG_HEIGHT / 2f + 4.f, lZDepth, screenColor, 1.f);
+			mMenuFont.drawText(mMenuTitle, -DIALOG_WIDTH / 2f + TEXT_HORIZONTAL_PADDING + lHorizontalOffsetX, -DIALOG_HEIGHT / 2f + mMenuFont.fontHeight(), lZDepth, screenColor, 1.f);
 			mMenuFont.end();
 		}
 

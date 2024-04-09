@@ -445,7 +445,7 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 	}
 
 	public boolean onHandleMouseInput(LintfordCore core) {
-		if (mParentScreen == null)
+		if (mParentScreen == null || mEnabled == false)
 			return false;
 
 		if (!core.input().mouse().isMouseMenuSelectionEnabled()) {
@@ -547,18 +547,20 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 			final float lInnerWidth = mW - 32 * (use5Steps ? 4 : 2);
 			entryColor.a = lParentScreenAlpha;
 
-			if (isInClickedState()) {
-				entryColor.r = 1.f;
-				entryColor.g = 1.f;
-				entryColor.b = 1.f;
-			} else if (mHasFocus) {
-				entryColor.r = .8f;
-				entryColor.g = .8f;
-				entryColor.b = .8f;
-			} else {
-				entryColor.r = .6f;
-				entryColor.g = .6f;
-				entryColor.b = .6f;
+			if (mEnabled) {
+				if (isInClickedState()) {
+					entryColor.r = 1.f;
+					entryColor.g = 1.f;
+					entryColor.b = 1.f;
+				} else if (mHasFocus) {
+					entryColor.r = .8f;
+					entryColor.g = .8f;
+					entryColor.b = .8f;
+				} else {
+					entryColor.r = .6f;
+					entryColor.g = .6f;
+					entryColor.b = .6f;
+				}
 			}
 
 			lSpriteBatch.begin(core.HUD());
@@ -592,7 +594,7 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 			if (lMenuFont != null) {
 				lMenuFont.begin(core.HUD());
 				final float lStringWidth = lMenuFont.getStringWidth(mText, lUiTextScale);
-				final var lTextColor = ColorConstants.getColor(mHasFocus ? ColorConstants.FLAME : ColorConstants.TextHeadingColor);
+				final var lTextColor = ColorConstants.getColor(mEnabled == false ? ColorConstants.GREY_DARK : mHasFocus ? ColorConstants.FLAME : ColorConstants.TextHeadingColor);
 				lTextColor.a = lParentScreenAlpha;
 				lMenuFont.drawText(mText, lScreenOffset.x + centerX() - lStringWidth * 0.5f, lScreenOffset.y + centerY() - lMenuFont.fontHeight() * .5f, mZ, lTextColor, lUiTextScale);
 

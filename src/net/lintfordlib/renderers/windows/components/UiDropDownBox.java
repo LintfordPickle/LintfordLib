@@ -378,13 +378,11 @@ public class UiDropDownBox<T> extends UIWidget implements IInputClickedFocusMana
 
 	@Override
 	public void setTrackedClickedFocusControl(IInputClickedFocusTracker controlToTrack) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public IInputClickedFocusTracker getTrackedClickedFocusControl() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

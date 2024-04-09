@@ -105,6 +105,9 @@ public class DisplayManager extends IniFile {
 
 	private boolean mRecompileShaders = false;
 
+	private final int mMinimumWindowWidth;
+	private final int mMinimumWindowHeight;
+
 	private final int mGameResolutionWidth;
 	private final int mGameResolutionHeight;
 
@@ -183,6 +186,14 @@ public class DisplayManager extends IniFile {
 		return mStretchGameScreen;
 	}
 
+	public int minimumWindowWidth() {
+		return mMinimumWindowWidth;
+	}
+
+	public int minimumWindowHeight() {
+		return mMinimumWindowHeight;
+	}
+
 	public int gameResolutionWidth() {
 		return mGameResolutionWidth;
 	}
@@ -221,6 +232,9 @@ public class DisplayManager extends IniFile {
 
 	public DisplayManager(GameInfo gameInfo, String configFilename) {
 		super(configFilename);
+
+		mMinimumWindowWidth = gameInfo.minimumWindowWidth();
+		mMinimumWindowHeight = gameInfo.minimumWindowHeight();
 
 		mGameResolutionWidth = gameInfo.gameCanvasResolutionWidth();
 		mGameResolutionHeight = gameInfo.gameCanvasResolutionHeight();

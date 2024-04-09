@@ -58,8 +58,8 @@ public class AudioOptionsScreen extends MenuScreen {
 		final var lAudioListLayout = new ListLayout(this);
 		lAudioListLayout.paddingTop(10.f);
 		lAudioListLayout.paddingBottom(10.f);
-		lAudioListLayout.cropPaddingTop(9.f);
-		lAudioListLayout.cropPaddingBottom(13.f);
+		lAudioListLayout.cropPaddingTop(0.f);
+		lAudioListLayout.cropPaddingBottom(0.f);
 		lAudioListLayout.setDrawBackground(true, ColorConstants.MenuPanelSecondaryColor);
 		lAudioListLayout.layoutFillType(FILLTYPE.FILL_CONTAINER);
 		lAudioListLayout.showTitle(true);
@@ -69,6 +69,7 @@ public class AudioOptionsScreen extends MenuScreen {
 
 		/* Screen control buttons */
 		final var lHorizontalButtonLayout = new HorizontalLayout(this);
+		lHorizontalButtonLayout.layoutFillType(FILLTYPE.TAKE_WHATS_NEEDED);
 
 		final var lBackButton = new MenuEntry(screenManager, this, "Back");
 		lBackButton.registerClickListener(this, BUTTON_CANCEL_CHANGES);
