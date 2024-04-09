@@ -258,7 +258,7 @@ public class MenuSliderEntry extends MenuEntry {
 		// Draw the slider bar and caret
 		lSpriteBatch.begin(core.HUD());
 
-		final float lCaretPos = MathHelper.scaleToRange(mValue, mLowerBound, mUpperBound, 0, mBarWidth - 32 - 32);
+		final var lCaretPos = MathHelper.scaleToRange(mValue, mLowerBound, mUpperBound, 0, mBarWidth - 32 - 32);
 
 		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_SLIDER_HORIZONTAL_LEFT, lScreenOffset.x + mBarPosX, lScreenOffset.y + mY, 32, 32, mZ, entryColor);
 		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_SLIDER_HORIZONTAL_MID, lScreenOffset.x + mBarPosX + 32, lScreenOffset.y + mY, mBarWidth - 64 - 32, 32, mZ, entryColor);
@@ -266,34 +266,28 @@ public class MenuSliderEntry extends MenuEntry {
 		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_SLIDER_HORIZONTAL_NUBBLE, lScreenOffset.x + mBarPosX + lCaretPos, lScreenOffset.y + mY, 32, 32, mZ, entryColor);
 		lSpriteBatch.end();
 
-		final var lColorWhiteWithAlpha = ColorConstants.getWhiteWithAlpha(lParentScreenAlpha);
-
 		// draw the label to the left and the value //
 		lTextBoldFont.begin(core.HUD());
-		lTextBoldFont.drawText(mLabel, lScreenOffset.x + mX + mW / 2 - lLabelWidth - 10 - lSeparatorHalfWidth, lScreenOffset.y + mY + mH / 2f - lLabelHeight / 2f, mZ, lColorWhiteWithAlpha, lUiTextScale, -1);
-		lTextBoldFont.drawText(mSeparator, lScreenOffset.x + mX + mW / 2 - lSeparatorHalfWidth, lScreenOffset.y + mY + mH / 2f - lLabelHeight / 2f, mZ, lColorWhiteWithAlpha, lUiTextScale, -1);
+		lTextBoldFont.drawText(mLabel, lScreenOffset.x + mX + mW / 2 - lLabelWidth - 10 - lSeparatorHalfWidth, lScreenOffset.y + mY + mH / 2f - lLabelHeight / 2f, mZ, ColorConstants.getWhiteWithAlpha(lParentScreenAlpha), lUiTextScale, -1);
+		lTextBoldFont.drawText(mSeparator, lScreenOffset.x + mX + mW / 2 - lSeparatorHalfWidth, lScreenOffset.y + mY + mH / 2f - lLabelHeight / 2f, mZ, ColorConstants.getWhiteWithAlpha(lParentScreenAlpha), lUiTextScale, -1);
 
 		if (mShowValueEnabled) {
-			final float lValueStringWidth = lTextBoldFont.getStringWidth(Integer.toString(mValue), lUiTextScale);
-
-			String lValueString = String.valueOf(mValue);
+			var lValueString = String.valueOf(mValue);
 			if (mShowUnit && mUnit != null && lValueString.length() > 0) {
 				lValueString += mUnit;
 			}
+			final float lValueStringWidth = lTextBoldFont.getStringWidth(lValueString, lUiTextScale);
 
-			final float lLabelOffset = 0;
+			mShowGuideValuesEnabled = true;
 			if (mShowGuideValuesEnabled) {
-				final float lLowerBoundStringWidth = lTextBoldFont.getStringWidth(Integer.toString(mLowerBound));
-				lTextBoldFont.drawText(Integer.toString(mLowerBound), lScreenOffset.x + mBarPosX - lLowerBoundStringWidth / 2 + 16, lScreenOffset.y + mY + lLabelOffset + 16, mZ, lColorWhiteWithAlpha, 1f);
+				lTextBoldFont.drawText(Integer.toString(mLowerBound), lScreenOffset.x + mBarPosX + 24, lScreenOffset.y + mY + mH * .5f - lTextBoldFont.fontHeight() * .5f, mZ, ColorConstants.getWhiteWithAlpha(lParentScreenAlpha * .5f), 1f);
 			}
 
-			final float endPositionX = lCaretPos + 128.f + lValueStringWidth;
-			final float lValueStringPositionX = endPositionX > mBarPosX + mBarWidth ? lCaretPos : lCaretPos + 64f;
-			lTextBoldFont.drawText(lValueString, lScreenOffset.x + lValueStringPositionX, lScreenOffset.y + mY + mH * .5f - lLabelHeight * .5f + 16, mZ, lColorWhiteWithAlpha, lUiTextScale);
+			lTextBoldFont.drawText(lValueString, lScreenOffset.x + mBarPosX + mBarWidth * .5f - lValueStringWidth * .5f, lScreenOffset.y + mY + mH * .5f - lTextBoldFont.fontHeight() * .5f, mZ, ColorConstants.getWhiteWithAlpha(1.f), lUiTextScale);
 
 			if (mShowGuideValuesEnabled) {
 				final float lUpperBoundStringWidth = lTextBoldFont.getStringWidth(Integer.toString(mUpperBound));
-				lTextBoldFont.drawText(Integer.toString(mUpperBound), lScreenOffset.x + mBarPosX + mBarWidth - lUpperBoundStringWidth / 2 - 48, lScreenOffset.y + mY + lLabelOffset + 16, mZ, lColorWhiteWithAlpha, 1f);
+				lTextBoldFont.drawText(Integer.toString(mUpperBound), lScreenOffset.x + mBarPosX + mBarWidth - lUpperBoundStringWidth - 48, lScreenOffset.y + mY + mH * .5f - lTextBoldFont.fontHeight() * .5f, mZ, ColorConstants.getWhiteWithAlpha(lParentScreenAlpha * .5f), 1f);
 			}
 		}
 
