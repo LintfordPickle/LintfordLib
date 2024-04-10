@@ -44,6 +44,7 @@ public class VideoOptionsScreen extends MenuScreen implements ITimedDialog {
 
 	private static final int CONFIRMATION_TIMER_MILLI = 15000; // ms
 
+	private static final String FULLSCREEN_DISABLED = "Disabled";
 	private static final String FULLSCREEN_YES = "Yes";
 	private static final String FULLSCREEN_NO = "No";
 
@@ -153,9 +154,19 @@ public class VideoOptionsScreen extends MenuScreen implements ITimedDialog {
 		mVSync = new MenuToggleEntry(mScreenManager, this);
 		mVSync.horizontalFillType(FILLTYPE.FILL_CONTAINER);
 
-		mFullScreenEntry.addItem(mFullScreenEntry.new MenuEnumEntryItem(FULLSCREEN_NO, VideoSettings.FULLSCREEN_NO_INDEX));
-		mFullScreenEntry.addItem(mFullScreenEntry.new MenuEnumEntryItem(FULLSCREEN_YES, VideoSettings.FULLSCREEN_YES_INDEX));
-		mFullScreenEntry.setButtonsEnabled(true);
+		final var lDisplayConfig = screenManager().core().config().display();
+		if(lDisplayConfig.currentOptionsConfig().resizeable()) {
+			mFullScreenEntry.addItem(mFullScreenEntry.new MenuEnumEntryItem(FULLSCREEN_NO, VideoSettings.FULLSCREEN_NO_INDEX));
+			mFullScreenEntry.addItem(mFullScreenEntry.new MenuEnumEntryItem(FULLSCREEN_YES, VideoSettings.FULLSCREEN_YES_INDEX));
+			mFullScreenEntry.setButtonsEnabled(true);
+		} else {
+			mFullScreenEntry.addItem(mFullScreenEntry.new MenuEnumEntryItem(FULLSCREEN_DISABLED, VideoSettings.FULLSCREEN_YES_INDEX));
+			mFullScreenEntry.setButtonsEnabled(false);
+			mFullScreenEntry.enabled(false);
+			mFullScreenEntry.setToolTip("This option has been disabled");
+			mFullScreenEntry.showInfoButton(true);
+		}
+		
 		mVSync.label("V-Sync");
 
 		mFullScreenEntry.registerClickListener(this, BUTTON_FULLSCREEN);

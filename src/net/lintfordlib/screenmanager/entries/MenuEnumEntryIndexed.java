@@ -156,21 +156,20 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 
 	@Override
 	public boolean onHandleMouseInput(LintfordCore core) {
-		if (!mEnableUpdateDraw || !mEnabled || isAnimating)
+		if (!mEnableUpdateDraw || isAnimating)
 			return false;
 
 		if (intersectsAA(core.HUD().getMouseCameraSpace()) && core.input().mouse().isMouseOverThisComponent(hashCode())) {
 			mIsMouseOver = true;
 			core.input().mouse().isMouseMenuSelectionEnabled(true);
 
-			if (!mHasFocus)
-				mParentScreen.setFocusOnEntry(this);
-
 			if (mToolTipEnabled)
 				mToolTipTimer += core.appTime().elapsedTimeMilli();
 
-			if (core.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
+			if (mEnabled && !mHasFocus)
+				mParentScreen.setFocusOnEntry(this);
 
+			if (mEnabled && core.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
 				if (mLeftButtonRectangle.intersectsAA(core.HUD().getMouseCameraSpace())) {
 					mSelectedIndex--;
 					if (mSelectedIndex < 0) {
