@@ -508,7 +508,7 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 		}
 
 		final var lParentScreenIsActive = mParentScreen != null && !mParentScreen.mOtherScreenHasFocus;
-		if (lParentScreenIsActive && mToolTipEnabled && mToolTipTimer >= 1000 && mHasFocus) {
+		if (lParentScreenIsActive && mToolTipEnabled && mToolTipTimer >= 1000) {
 			mScreenManager.toolTip().toolTipProvider(this);
 		}
 	}
@@ -603,10 +603,10 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 		}
 
 		if (mShowInfoIcon)
-			drawInfoIcon(core, lSpriteBatch, mInfoIconDstRectangle, entryColor.a);
+			drawInfoIcon(core, lSpriteBatch, mInfoIconDstRectangle, 1.f);
 
 		if (mShowWarnIcon)
-			drawWarningIcon(core, lSpriteBatch, mWarnIconDstRectangle, entryColor.a);
+			drawWarningIcon(core, lSpriteBatch, mWarnIconDstRectangle, 1.f);
 
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
 			lSpriteBatch.begin(core.HUD());
