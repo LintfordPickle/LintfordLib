@@ -16,6 +16,8 @@ public class KeyEventActionManager extends IniFile {
 	// Variables
 	// --------------------------------------
 
+	private GameKeyActions mGameKeyActions;
+
 	private InputManager mInputManager;
 	private IInputProcessor mInputProcessor;
 
@@ -38,6 +40,10 @@ public class KeyEventActionManager extends IniFile {
 
 	public KeyEventAction getEventActionByUid(int eventActionUid) {
 		return mKeyboardEventActionMap.get(eventActionUid);
+	}
+
+	public GameKeyActions gameKeyActions() {
+		return mGameKeyActions;
 	}
 
 	// --------------------------------------
@@ -71,6 +77,11 @@ public class KeyEventActionManager extends IniFile {
 		// TODO: Missing Gamepad action updates
 		// and this needs to be across players ...
 
+	}
+
+	public void addGameKeyActions(GameKeyActions gameKeyActions) {
+		mGameKeyActions = gameKeyActions;
+		mGameKeyActions.registerKeyActions(this);
 	}
 
 	// --------------------------------------

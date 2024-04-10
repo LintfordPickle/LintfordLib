@@ -21,9 +21,10 @@ public class KeyboardManager {
 		@Override
 		public void invoke(long windowUid, int key, int scanCode, int action, int mods) {
 			if (mKeyInputCallback != null) {
-				mKeyInputCallback.keyInput(key, scanCode, action, mods);
-				stopKeyInputCapture();
-			}
+				if (mKeyInputCallback.keyInput(key, scanCode, action, mods)) {
+					stopKeyInputCapture();
+				}
+			} else // If we are listening for a single key press, then don't process the buffered text input below (I'm not sure about this)
 
 			// We need to handle keypresses differently depending on whether or not some UI component is
 			// using 'buffered' input.
