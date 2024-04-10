@@ -62,6 +62,9 @@ public class KeyEventActionManager extends IniFile {
 	public void update(LintfordCore core) {
 		final var lDeltaTime = (float) core.appTime().elapsedTimeMilli();
 
+		// TODO: The idea of the action list needs to be thought out a little more. I think we need to have an action list per player maybe (See (1) below))?
+		// This is because, there could potentially be 2 or more controllers connected, each controlling a different player.
+
 		// we poll the keyboard once for each of the registered key action events,
 		// this way the individual action players don't separately poll the keyboard and consume the key timers.
 		// we pass the optional input process, which controls if the event manager should be listening to (keyboard) events.
@@ -70,18 +73,17 @@ public class KeyEventActionManager extends IniFile {
 			final var lAction = mUpdateActionList.get(i);
 			final var lIsKeyDown = mInputManager.keyboard().isKeyDown(lAction.getBoundKeyCode(), mInputProcessor);
 
+			// (1)
+			final var lIsGamepadDown = mInputManager.gamepads().isGamepadButtonDown(lAction.getBoundKeyCode(), mInputProcessor);
+
 			lAction.incDownTimer(lDeltaTime);
-			lAction.isDown(lIsKeyDown);
+			lAction.isDown(lIsKeyDown || lIsGamepadDown);
 		}
-
-		// TODO: Missing Gamepad action updates
-		// and this needs to be across players ...
-
 	}
 
 	public void addGameKeyActions(GameKeyActions gameKeyActions) {
 		mGameKeyActions = gameKeyActions;
-		mGameKeyActions.registerKeyActions(this);
+		mGameKeyActions.registerEventActions(this);
 	}
 
 	// --------------------------------------

@@ -21,14 +21,15 @@ public abstract class GameKeyActions {
 	// Variables
 	// --------------------------------------
 
-	private List<GameKeyBind> mGameKeyMap = new ArrayList<>();
+	private List<GameKeyBind> mGameKeyboardMap = new ArrayList<>();
+	private List<GameKeyBind> mGameGamepadMap = new ArrayList<>();
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
 
 	public List<GameKeyBind> gameKeyMap() {
-		return mGameKeyMap;
+		return mGameKeyboardMap;
 	}
 
 	// --------------------------------------
@@ -42,15 +43,25 @@ public abstract class GameKeyActions {
 	// Methods
 	// --------------------------------------
 
-	void registerKeyActions(KeyEventActionManager keyEventActionManager) {
-		final int lNumActions = mGameKeyMap.size();
-		for (int i = 0; i < lNumActions; i++) {
-			final var n = mGameKeyMap.get(i);
+	void registerEventActions(KeyEventActionManager keyEventActionManager) {
+		final int lNumKbActions = mGameKeyboardMap.size();
+		for (int i = 0; i < lNumKbActions; i++) {
+			final var n = mGameKeyboardMap.get(i);
 			keyEventActionManager.registerNewKeyboardEventAction(n.eventActionUid, n.defaultBoundKeyCode);
+		}
+
+		final int lNumGpActions = mGameGamepadMap.size();
+		for (int i = 0; i < lNumGpActions; i++) {
+			final var n = mGameGamepadMap.get(i);
+			keyEventActionManager.registerNewGamepadEventAction(n.eventActionUid, n.defaultBoundKeyCode);
 		}
 	}
 
-	protected void addNewKeyBinding(String name, int eventActionUid, int defaultBoundKeyCode) {
-		mGameKeyMap.add(new GameKeyBind(name, eventActionUid, defaultBoundKeyCode));
+	protected void addNewGamepadBinding(String name, int eventActionUid, int defaultBoundKeyCode) {
+		mGameGamepadMap.add(new GameKeyBind(name, eventActionUid, defaultBoundKeyCode));
+	}
+
+	protected void addNewKeyboardBinding(String name, int eventActionUid, int defaultBoundKeyCode) {
+		mGameKeyboardMap.add(new GameKeyBind(name, eventActionUid, defaultBoundKeyCode));
 	}
 }
