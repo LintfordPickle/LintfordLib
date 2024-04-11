@@ -16,7 +16,6 @@ import net.lintfordlib.screenmanager.MenuScreen;
 import net.lintfordlib.screenmanager.Screen;
 import net.lintfordlib.screenmanager.ScreenManager;
 import net.lintfordlib.screenmanager.ScreenManagerConstants.FILLTYPE;
-import net.lintfordlib.screenmanager.screens.IValidateScreen;
 
 public class MenuKeyBindEntry extends MenuEntry implements IKeyInputCallback {
 
@@ -294,11 +293,6 @@ public class MenuKeyBindEntry extends MenuEntry implements IKeyInputCallback {
 			mEventAction.boundKeyCode(key);
 			mBindingKey = false;
 			mIsDirty = true;
-
-			if (mParentScreen != null && mParentScreen instanceof IValidateScreen) {
-				final var lValidateScreen = (IValidateScreen) mParentScreen;
-				lValidateScreen.validateScreen(this);
-			}
 
 			return true;
 		}
