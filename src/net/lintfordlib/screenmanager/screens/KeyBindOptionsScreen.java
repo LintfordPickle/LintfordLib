@@ -13,7 +13,7 @@ import net.lintfordlib.screenmanager.layouts.BaseLayout;
 import net.lintfordlib.screenmanager.layouts.HorizontalLayout;
 import net.lintfordlib.screenmanager.layouts.ListLayout;
 
-public class KeyBindOptionsScreen extends MenuScreen {
+public class KeyBindOptionsScreen extends MenuScreen implements IValidateScreen {
 
 	// --------------------------------------
 	// Constants
@@ -123,5 +123,18 @@ public class KeyBindOptionsScreen extends MenuScreen {
 			exitScreen();
 			break;
 		}
+	}
+
+	// --------------------------------------
+	// Callback-Methods
+	// --------------------------------------
+
+	@Override
+	public void validateScreen(MenuEntry e) {
+		// final var lInputManager = screenManager().core().input();
+		// final var lEventActionManager = lInputManager.eventActionManager();
+
+		// TODO: One of the key binds has just changed, so check the validity of the new binds.
+
 	}
 }
