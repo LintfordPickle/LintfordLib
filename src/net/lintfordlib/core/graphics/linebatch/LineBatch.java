@@ -258,7 +258,7 @@ public class LineBatch {
 		if (!mIsDrawing)
 			return;
 
-		drawRect(rectangle, originX, originY, scale, zDepth, 1f, 1f, 1f);
+		drawRect(rectangle, originX, originY, scale, zDepth, mR, mG, mB);
 	}
 
 	public void drawRect(Rectangle rectangle, float originX, float originY, float scale, float zDepth, float red, float green, float blue) {
