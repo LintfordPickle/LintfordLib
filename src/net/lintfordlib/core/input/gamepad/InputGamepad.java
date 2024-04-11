@@ -25,8 +25,6 @@ public class InputGamepad {
 	private int mNumHats;
 	private int mNumAxis;
 
-	private boolean mHasHats;
-
 	private String mJoystickName;
 	private boolean mIsActive;
 	private boolean mIsGamepadMappingAvailable;
@@ -104,8 +102,6 @@ public class InputGamepad {
 		final var lHatReturn = GLFW.glfwGetJoystickHats(mJoystickIndex);
 		if (lHatReturn != null) {
 			mNumHats = lHatReturn.limit();
-		} else {
-			mHasHats = false;
 		}
 	}
 

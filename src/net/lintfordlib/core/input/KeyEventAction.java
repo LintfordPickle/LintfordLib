@@ -4,6 +4,12 @@ import java.io.Serializable;
 
 public class KeyEventAction implements Serializable {
 
+	// TODO: Move these somewhere else
+	public static final int INPUT_DEVICE_NOTHING = 0;
+	public static final int INPUT_DEVICE_KEYBOARD = 1;
+	public static final int INPUT_DEVICE_GAMEPAD = 2;
+	public static final int INPUT_DEVICE_MOUSE = 3;
+
 	// --------------------------------------
 	// Constants
 	// --------------------------------------
@@ -19,6 +25,8 @@ public class KeyEventAction implements Serializable {
 
 	private final int mDefaultBoundKeyCode;
 	private final int mEventActionUid;
+
+	private int mInputDeviceType; // keyboard, gamepad, mouse
 	private int mBoundKeyCode;
 
 	private float mDownTimer;
@@ -29,6 +37,10 @@ public class KeyEventAction implements Serializable {
 	// Properties
 	// --------------------------------------
 
+	public int boundToInputDevice() {
+		return mInputDeviceType;
+	}
+
 	public int defaultBoundKeyCode() {
 		return mDefaultBoundKeyCode;
 	}
@@ -37,7 +49,8 @@ public class KeyEventAction implements Serializable {
 		return mEventActionUid;
 	}
 
-	public void boundKeyCode(int newKeyCode) {
+	public void boundKeyCode(int inputDeviceType, int newKeyCode) {
+		mInputDeviceType = inputDeviceType;
 		mBoundKeyCode = newKeyCode;
 	}
 
@@ -80,15 +93,15 @@ public class KeyEventAction implements Serializable {
 	// Constructors
 	// --------------------------------------
 
-	public KeyEventAction(int eventActionUid, int defaultBoundKeyCode) {
+	public KeyEventAction(int eventActionUid, int inputDeviceType, int defaultBoundKeyCode) {
 		mEventActionUid = eventActionUid;
 		mDefaultBoundKeyCode = defaultBoundKeyCode;
 		mBoundKeyCode = UNASSIGNED_KEY_CODE;
-
+		mInputDeviceType = inputDeviceType;
 	}
 
-	public KeyEventAction(int eventActionUid, int defaultBoundKeyCode, int initialBoundKeyCode) {
-		this(eventActionUid, defaultBoundKeyCode);
+	public KeyEventAction(int eventActionUid, int inputDeviceType, int defaultBoundKeyCode, int initialBoundKeyCode) {
+		this(eventActionUid, inputDeviceType, defaultBoundKeyCode);
 
 		mBoundKeyCode = initialBoundKeyCode;
 	}

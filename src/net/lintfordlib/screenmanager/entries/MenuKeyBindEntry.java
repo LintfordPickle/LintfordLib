@@ -291,7 +291,7 @@ public class MenuKeyBindEntry extends MenuEntry implements IKeyInputCallback {
 	public boolean keyInput(int key, int scanCode, int action, int mods) {
 		if (mBindingKey && isCoolDownElapsed()) {
 			Debug.debugManager().logger().i(getClass().getSimpleName(), "key bind invoke " + mEventAction.eventActionUid() + " called to " + GLFW.glfwGetKeyName(GLFW.glfwGetKeyScancode(key), scanCode));
-			mEventAction.boundKeyCode(key);
+			mEventAction.boundKeyCode(KeyEventAction.INPUT_DEVICE_KEYBOARD, key);
 			mBindingKey = false;
 			mIsDirty = true;
 

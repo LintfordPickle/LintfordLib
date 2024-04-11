@@ -91,4 +91,7 @@ public interface GameInfo {
 		return true;
 	}
 
+	public default int numberPlayers() {
+		return 1;
+	}
 }

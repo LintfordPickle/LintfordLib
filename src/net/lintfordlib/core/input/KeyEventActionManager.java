@@ -8,9 +8,27 @@ import java.util.Map;
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.input.mouse.IInputProcessor;
+import net.lintfordlib.core.maths.MathHelper;
 import net.lintfordlib.options.reader.IniFile;
 
 public class KeyEventActionManager extends IniFile {
+
+	public class PlayerKeyActionEvents {
+
+		public final int playerIndex;
+
+		final Map<Integer, KeyEventAction> eventActionMap = new HashMap<>();
+
+		public PlayerKeyActionEvents(int playerIndex) {
+			this.playerIndex = playerIndex;
+		}
+
+	}
+
+	// TODO: Make the number of players 'static' - i.e. defined by the game, not dynamically based on controllers connected
+	// TODO: Need to create a 'default' player collection to avoid NREs.
+
+	final List<KeyEventAction> mUpdateActionList = new ArrayList<>();
 
 	// --------------------------------------
 	// Variables
@@ -18,13 +36,11 @@ public class KeyEventActionManager extends IniFile {
 
 	private GameKeyActions mGameKeyActions;
 
+	private int _numPlayers;
 	private InputManager mInputManager;
 	private IInputProcessor mInputProcessor;
 
-	private final Map<Integer, KeyEventAction> mKeyboardEventActionMap = new HashMap<>();
-	private final Map<Integer, KeyEventAction> mGamepadEventActionMap = new HashMap<>();
-
-	private final List<KeyEventAction> mUpdateActionList = new ArrayList<>();
+	private final List<PlayerKeyActionEvents> playerEvents = new ArrayList<>();
 
 	// --------------------------------------
 	// Properties
@@ -38,12 +54,20 @@ public class KeyEventActionManager extends IniFile {
 		mInputProcessor = null;
 	}
 
-	public KeyEventAction getEventActionByUid(int eventActionUid) {
-		return mKeyboardEventActionMap.get(eventActionUid);
+	private PlayerKeyActionEvents getPlayerEvents(int playerIndex) {
+		return playerEvents.get(playerIndex);
+	}
+
+	public KeyEventAction getEventActionByUid(int playerIndex, int eventActionUid) {
+		return playerEvents.get(playerIndex).eventActionMap.get(eventActionUid);
 	}
 
 	public GameKeyActions gameKeyActions() {
 		return mGameKeyActions;
+	}
+
+	public Map<Integer, KeyEventAction> eventMapForPlayer(int playerIndex) {
+		return getPlayerEvents(playerIndex).eventActionMap;
 	}
 
 	// --------------------------------------
@@ -53,6 +77,7 @@ public class KeyEventActionManager extends IniFile {
 	public KeyEventActionManager(InputManager inputManager, String configFilename) {
 		super(configFilename);
 		mInputManager = inputManager;
+
 	}
 
 	// --------------------------------------
@@ -71,13 +96,35 @@ public class KeyEventActionManager extends IniFile {
 		final int lNumEventActions = mUpdateActionList.size();
 		for (int i = 0; i < lNumEventActions; i++) {
 			final var lAction = mUpdateActionList.get(i);
-			final var lIsKeyDown = mInputManager.keyboard().isKeyDown(lAction.getBoundKeyCode(), mInputProcessor);
 
-			// (1)
-			final var lIsGamepadDown = mInputManager.gamepads().isGamepadButtonDown(lAction.getBoundKeyCode(), mInputProcessor);
+			boolean lActionTrigged = false;
+			switch (lAction.boundToInputDevice()) {
+			default:
+			case KeyEventAction.INPUT_DEVICE_NOTHING:
+				break;
+
+			case KeyEventAction.INPUT_DEVICE_KEYBOARD:
+				lActionTrigged = mInputManager.keyboard().isKeyDown(lAction.getBoundKeyCode(), mInputProcessor);
+				break;
+
+			case KeyEventAction.INPUT_DEVICE_GAMEPAD:
+				lActionTrigged = mInputManager.gamepads().isGamepadButtonDown(lAction.getBoundKeyCode(), mInputProcessor);
+				break;
+			case KeyEventAction.INPUT_DEVICE_MOUSE:
+				// TODO: Allow binding of mouse input
+				break;
+			}
 
 			lAction.incDownTimer(lDeltaTime);
-			lAction.isDown(lIsKeyDown || lIsGamepadDown);
+			lAction.isDown(lActionTrigged);
+		}
+	}
+
+	public void setNumberPlayers(int numberPlayers) {
+		_numPlayers = MathHelper.clampi(numberPlayers, 1, 4);
+		playerEvents.clear();
+		for (int i = 0; i < _numPlayers; i++) {
+			playerEvents.add(new PlayerKeyActionEvents(i));
 		}
 	}
 
@@ -90,65 +137,38 @@ public class KeyEventActionManager extends IniFile {
 	// Methods
 	// --------------------------------------
 
-	public void registerNewKeyboardEventAction(int eventActionUid, int defaultKeyCode) {
-		if (mKeyboardEventActionMap.get(eventActionUid) != null)
-			return; // already taken
+	public void registerNewKeyboardEventAction(int playerIndex, int eventActionUid, int inputDeviceType, int defaultKeyCode) {
+		final var lPlayerKeys = getPlayerEvents(playerIndex);
 
-		final var lNewEventAction = new KeyEventAction(eventActionUid, defaultKeyCode);
-		mKeyboardEventActionMap.put(eventActionUid, lNewEventAction);
+		if (lPlayerKeys == null)
+			return; // doesn't exist
+
+		if (lPlayerKeys.eventActionMap.get(eventActionUid) != null)
+			return; // already assigned to player
+
+		final var lNewEventAction = new KeyEventAction(eventActionUid, inputDeviceType, defaultKeyCode);
 		mUpdateActionList.add(lNewEventAction);
 
-		Debug.debugManager().logger().i(getClass().getSimpleName(), "Registered new event action " + eventActionUid + " to key code [" + defaultKeyCode + "]");
+		lPlayerKeys.eventActionMap.put(eventActionUid, lNewEventAction);
+
+		Debug.debugManager().logger().i(getClass().getSimpleName(), "Registered new event action " + eventActionUid + " for player " + playerIndex + " to key code [" + defaultKeyCode + "]");
 	}
 
-	public void registerNewGamepadEventAction(int eventActionUid, int defaultKeyCode) {
-		if (mGamepadEventActionMap.get(eventActionUid) != null)
-			return; // already taken
-
-		final var lNewEventAction = new KeyEventAction(eventActionUid, defaultKeyCode);
-		mGamepadEventActionMap.put(eventActionUid, lNewEventAction);
-		mUpdateActionList.add(lNewEventAction);
-
-		Debug.debugManager().logger().i(getClass().getSimpleName(), "Registered new event action " + eventActionUid + " to key code [" + defaultKeyCode + "]");
-	}
-
-	public void registerNewGamepadAxisAction(int eventActionUid, int defaultKeyCode) {
-
-	}
-
-	public boolean getCurrentControlActionState(int eventActionUid) {
+	public boolean getCurrentControlActionState(int playerIndex, int eventActionUid) {
 		var actionState = false;
-		if (mInputProcessor == null || mInputProcessor.allowKeyboardInput()) {
-			final var lKeyboardEventAction = mKeyboardEventActionMap.get(eventActionUid);
-			if (lKeyboardEventAction != null) {
-				actionState |= lKeyboardEventAction.isDown();
-			}
-		}
-
-		if (mInputProcessor == null || mInputProcessor.allowGamepadInput()) {
-			final var lGamepadEventAction = mGamepadEventActionMap.get(eventActionUid);
-			if (lGamepadEventAction != null) {
-				actionState |= lGamepadEventAction.isDown();
-			}
+		final var lEventAction = getPlayerEvents(playerIndex).eventActionMap.get(eventActionUid);
+		if (lEventAction != null) {
+			actionState |= lEventAction.isDown();
 		}
 
 		return actionState;
 	}
 
-	public boolean getCurrentControlActionStateTimed(int eventActionUid) {
+	public boolean getCurrentControlActionStateTimed(int playerIndex, int eventActionUid) {
 		var actionState = false;
-		if (mInputProcessor == null || mInputProcessor.allowKeyboardInput()) {
-			final var lKeyboardEventAction = mKeyboardEventActionMap.get(eventActionUid);
-			if (lKeyboardEventAction != null) {
-				actionState |= lKeyboardEventAction.isDownTimed();
-			}
-		}
-
-		if (mInputProcessor == null || mInputProcessor.allowGamepadInput()) {
-			final var lGamepadEventAction = mGamepadEventActionMap.get(eventActionUid);
-			if (lGamepadEventAction != null) {
-				actionState |= lGamepadEventAction.isDownTimed();
-			}
+		final var lKeyboardEventAction = getPlayerEvents(playerIndex).eventActionMap.get(eventActionUid);
+		if (lKeyboardEventAction != null) {
+			actionState |= lKeyboardEventAction.isDownTimed();
 		}
 
 		return actionState;
@@ -164,10 +184,12 @@ public class KeyEventActionManager extends IniFile {
 	public void saveConfig() {
 		clearEntries();
 
-		for (var lKeyBindingEntry : mKeyboardEventActionMap.entrySet()) {
-			setValue(lSectionName, Integer.toString(lKeyBindingEntry.getKey()), Integer.toString(lKeyBindingEntry.getValue().getBoundKeyCode()));
+		// TODO: Finish saving (per player)
 
-		}
+//		for (var lKeyBindingEntry : mEventActionMap.entrySet()) {
+//			setValue(lSectionName, Integer.toString(lKeyBindingEntry.getKey()), Integer.toString(lKeyBindingEntry.getValue().getBoundKeyCode()));
+//
+//		}
 
 		super.saveConfig();
 	}
@@ -179,10 +201,11 @@ public class KeyEventActionManager extends IniFile {
 		if (isEmpty())
 			return;
 
-		// TODO: Does this work if the order of the keybinds changes (either in the file or in LintfordCore.onInitializeInputActions()) ?
-		for (var lKeyBindingEntry : mKeyboardEventActionMap.entrySet()) {
-			final var lValue = getInt(lSectionName, Integer.toString(lKeyBindingEntry.getValue().eventActionUid()), lKeyBindingEntry.getValue().defaultBoundKeyCode());
-			lKeyBindingEntry.getValue().boundKeyCode(lValue);
-		}
+		// TODO: Finish loading (per player)
+
+//		for (var lKeyBindingEntry : mEventActionMap.entrySet()) {
+//			final var lValue = getInt(lSectionName, Integer.toString(lKeyBindingEntry.getValue().eventActionUid()), lKeyBindingEntry.getValue().defaultBoundKeyCode());
+//			lKeyBindingEntry.getValue().boundKeyCode(lValue);
+//		}
 	}
 }

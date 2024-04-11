@@ -7,12 +7,16 @@ public abstract class GameKeyActions {
 
 	public class GameKeyBind {
 		public final String eventActionName;
+		public final int playerIndex;
 		public final int defaultBoundKeyCode;
 		public final int eventActionUid;
+		public final int inputDeviceType;
 
-		private GameKeyBind(String name, int eventActionUid, int defaultBoundKeyCode) {
+		private GameKeyBind(String name, int eventActionUid, int playerIndex, int inputDeviceType, int defaultBoundKeyCode) {
 			this.eventActionName = name;
 			this.eventActionUid = eventActionUid;
+			this.playerIndex = playerIndex;
+			this.inputDeviceType = inputDeviceType;
 			this.defaultBoundKeyCode = defaultBoundKeyCode;
 		}
 	}
@@ -21,22 +25,25 @@ public abstract class GameKeyActions {
 	// Variables
 	// --------------------------------------
 
-	private List<GameKeyBind> mGameKeyboardMap = new ArrayList<>();
-	private List<GameKeyBind> mGameGamepadMap = new ArrayList<>();
+	private List<GameKeyBind> mGameKeyBindMap = new ArrayList<>();
+	private List<GameKeyBind> mGameKeyBindAltMap = new ArrayList<>();
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
 
 	public List<GameKeyBind> gameKeyMap() {
-		return mGameKeyboardMap;
+		return mGameKeyBindMap;
 	}
 
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
-	public GameKeyActions() {
+	final int mNumPlayers;
+
+	public GameKeyActions(int numPlayers) {
+		mNumPlayers = numPlayers;
 	}
 
 	// --------------------------------------
@@ -44,24 +51,16 @@ public abstract class GameKeyActions {
 	// --------------------------------------
 
 	void registerEventActions(KeyEventActionManager keyEventActionManager) {
-		final int lNumKbActions = mGameKeyboardMap.size();
+		final int lNumKbActions = mGameKeyBindMap.size();
 		for (int i = 0; i < lNumKbActions; i++) {
-			final var n = mGameKeyboardMap.get(i);
-			keyEventActionManager.registerNewKeyboardEventAction(n.eventActionUid, n.defaultBoundKeyCode);
-		}
+			final var n = mGameKeyBindMap.get(i);
 
-		final int lNumGpActions = mGameGamepadMap.size();
-		for (int i = 0; i < lNumGpActions; i++) {
-			final var n = mGameGamepadMap.get(i);
-			keyEventActionManager.registerNewGamepadEventAction(n.eventActionUid, n.defaultBoundKeyCode);
+			keyEventActionManager.registerNewKeyboardEventAction(n.playerIndex, n.eventActionUid, n.inputDeviceType, n.defaultBoundKeyCode);
 		}
 	}
 
-	protected void addNewGamepadBinding(String name, int eventActionUid, int defaultBoundKeyCode) {
-		mGameGamepadMap.add(new GameKeyBind(name, eventActionUid, defaultBoundKeyCode));
-	}
+	protected void addNewKeyBinding(String name, int eventActionUid, int playerIndex, int inputDeviceType, int defaultBoundKeyCode) {
+		mGameKeyBindMap.add(new GameKeyBind(name, eventActionUid, playerIndex, inputDeviceType, defaultBoundKeyCode));
 
-	protected void addNewKeyboardBinding(String name, int eventActionUid, int defaultBoundKeyCode) {
-		mGameKeyboardMap.add(new GameKeyBind(name, eventActionUid, defaultBoundKeyCode));
 	}
 }

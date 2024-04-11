@@ -7,6 +7,7 @@ import net.lintfordlib.screenmanager.ScreenManager;
 import net.lintfordlib.screenmanager.ScreenManagerConstants.ALIGNMENT;
 import net.lintfordlib.screenmanager.ScreenManagerConstants.FILLTYPE;
 import net.lintfordlib.screenmanager.ScreenManagerConstants.LAYOUT_WIDTH;
+import net.lintfordlib.screenmanager.entries.MenuEnumEntry;
 import net.lintfordlib.screenmanager.entries.MenuKeyBindEntry;
 import net.lintfordlib.screenmanager.entries.MenuLabelEntry;
 import net.lintfordlib.screenmanager.layouts.BaseLayout;
@@ -26,6 +27,7 @@ public class KeyBindOptionsScreen extends MenuScreen implements IValidateScreen 
 	// --------------------------------------
 
 	private MenuEntry mBackButton;
+	private MenuEnumEntry mPlayerIndexSelection;
 	private ListLayout mKeyBindListLayout;
 
 	// --------------------------------------
@@ -45,6 +47,9 @@ public class KeyBindOptionsScreen extends MenuScreen implements IValidateScreen 
 		mKeyBindListLayout.layoutWidth(LAYOUT_WIDTH.THREEQUARTER);
 		mKeyBindListLayout.marginLeft(100);
 		mKeyBindListLayout.marginRight(100);
+
+		mPlayerIndexSelection = new MenuEnumEntry(screenManager, this, "Player Index");
+		mKeyBindListLayout.addMenuEntry(mPlayerIndexSelection);
 
 		createKeyBindSection(mKeyBindListLayout);
 
@@ -86,11 +91,11 @@ public class KeyBindOptionsScreen extends MenuScreen implements IValidateScreen 
 			for (int i = 0; i < lNumKeysMappedInGame; i++) {
 				final var lKeyMap = lGameKeyMap.get(i);
 
-				final var lRegisteredEventAction = actionEventManager.getEventActionByUid(lKeyMap.eventActionUid);
-				if (lRegisteredEventAction == null)
-					continue;
+//				final var lRegisteredEventAction = actionEventManager.getEventActionByUid(lKeyMap.eventActionUid);
+//				if (lRegisteredEventAction == null)
+//					continue;
 
-				final var lNewActionEntry = new MenuKeyBindEntry(mScreenManager, this, lRegisteredEventAction);
+				final var lNewActionEntry = new MenuKeyBindEntry(mScreenManager, this, null);
 				lNewActionEntry.horizontalFillType(FILLTYPE.FILL_CONTAINER);
 				lNewActionEntry.label(lKeyMap.eventActionName);
 				lNewActionEntry.registerClickListener(this, lKeyMap.eventActionUid);
