@@ -59,6 +59,9 @@ public class CameraPanel extends UiPanel {
 		addWidget(mEnableBoundsButton);
 
 		isLayerVisible(true);
+		
+		mShowShowLayerButton = false;
+		mShowActiveLayerButton = false;
 	}
 
 	// --------------------------------------
