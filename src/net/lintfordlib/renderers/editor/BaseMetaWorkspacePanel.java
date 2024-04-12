@@ -61,9 +61,6 @@ public abstract class BaseMetaWorkspacePanel extends UiPanel implements IUiListB
 	protected MetaFileHeader mSelectedAssetMetaHeader;
 	protected UiListBoxItem mSelectedMetaItem;
 
-	/** If set, the BaseMeta will attempt to load a previoulsy saved value from the resource config. */
-	protected String mResourceConfigKeyName;
-
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
@@ -71,16 +68,6 @@ public abstract class BaseMetaWorkspacePanel extends UiPanel implements IUiListB
 	@Override
 	public int layerOwnerHashCode() {
 		return hashCode();
-	}
-
-	/** If set, the BaseMeta will attempt to load a previoulsy saved value from the resource config. */
-	public String resourceConfigKeyName() {
-		return mResourceConfigKeyName;
-	}
-
-	/** If set, the BaseMeta will attempt to load a previoulsy saved value from the resource config. */
-	public void resourceConfigKeyName(String newResourceConfigKeyName) {
-		mResourceConfigKeyName = newResourceConfigKeyName;
 	}
 
 	public File metaFile() {
@@ -293,12 +280,12 @@ public abstract class BaseMetaWorkspacePanel extends UiPanel implements IUiListB
 
 	protected void newAssetPackHeaderSelected(File selectedMetaFile) {
 		// Try and save the newly selected item in the resources file
-		if (mResourceConfigKeyName != null) {
+		if (getResourceConfigKeyName() != null) {
 			final var lMetaFile = mMetaFileSelectionEntry.file();
 			if (lMetaFile == null)
 				return;
 
-			mResourcePathsConfig.insertOrUpdateValue(mResourceConfigKeyName, lMetaFile.getAbsolutePath());
+			mResourcePathsConfig.insertOrUpdateValue(getResourceConfigKeyName(), lMetaFile.getAbsolutePath());
 			mResourcePathsConfig.saveConfig();
 		}
 	}
@@ -424,15 +411,28 @@ public abstract class BaseMetaWorkspacePanel extends UiPanel implements IUiListB
 		assetItemsSaved();
 	}
 
+	/**
+	 * Used to restrieve a previously saved asset meta file location from the resources.ini config file.
+	 */
+	protected String getResourceConfigKeyName() {
+		return null;
+	}
+
 	private void resolveResourcePathsConfig() {
 		final var lCore = mParentWindow.rendererManager().core();
 		mResourcePathsConfig = lCore.config().resourcePaths();
 
-		final var lLastWorkspacePathname = mResourcePathsConfig.getKeyValue(ResourcePathsConfig.LAST_WORKSPACE_PATHNAME);
+		final var lLastWorkspacePathname = mResourcePathsConfig.getKeyValue(getResourceConfigKeyName());
 		if (lLastWorkspacePathname != null) {
 			final var lFile = new File(lLastWorkspacePathname);
-			if (lFile != null && lFile.isDirectory())
-				mMetaFileSelectionEntry.baseDirectory(lLastWorkspacePathname);
+			if (lFile != null) {
+				var lParentFolder = lFile.getAbsolutePath();
+				if (lFile.isDirectory() == false) {
+					lParentFolder = lFile.getParentFile().getAbsolutePath();
+				}
+
+				mMetaFileSelectionEntry.baseDirectory(lParentFolder);
+			}
 		}
 	}
 
