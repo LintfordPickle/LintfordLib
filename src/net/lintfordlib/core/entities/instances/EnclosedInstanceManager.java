@@ -1,7 +1,7 @@
 package net.lintfordlib.core.entities.instances;
 
 /**
- * An instance manager whose instances are maintained in an internal list. 
+ * An instance manager whose instances are maintained in an internal list.
  * 
  * Whether or not an item has been assigned or is free is handled internally.
  */
@@ -15,7 +15,17 @@ public abstract class EnclosedInstanceManager<T extends ClosedPooledBaseData> ex
 	public static final int MAXIMUM_ENLARGEN_POOL_AMOUNT = 256;
 
 	// --------------------------------------
-	// Constrcutor
+	// Variables
+	// --------------------------------------
+
+	private int mInstanceUidCounter;
+
+	protected int getNewInstanceUID() {
+		return mInstanceUidCounter++;
+	}
+
+	// --------------------------------------
+	// Constructor
 	// --------------------------------------
 
 	public EnclosedInstanceManager() {
