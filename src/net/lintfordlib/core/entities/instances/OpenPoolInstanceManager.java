@@ -83,7 +83,7 @@ public abstract class OpenPoolInstanceManager<T extends OpenPooledBaseData> exte
 
 		} else {
 			lInst = enlargenInstancePool(mEnlargePoolStepAmount);
-			mInstances.add(lInst);
+			// mInstances.add(lInst);
 		}
 
 		return lInst;
