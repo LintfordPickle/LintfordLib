@@ -311,15 +311,8 @@ public class MenuSliderEntry extends MenuEntry {
 
 	@Override
 	public void onClick(InputManager inputManager) {
-//		if (mClickListener == null || mMenuEntryID == -1)
-//			return;
-//
-////		if (mClickListener.isActionConsumed())
-////			return;
-////
-////		mAnimationTimer = MenuScreen.ANIMATION_TIMER_LENGTH;
-//		// mScreenManager.uiSounds().play("SOUND_MENU_CLICK");
-		mClickListener.menuEntryOnClick(inputManager, mMenuEntryID);
+		if (mClickListener != null)
+			mClickListener.menuEntryOnClick(inputManager, mMenuEntryID);
 	}
 
 	public void setValue(int newValue) {
