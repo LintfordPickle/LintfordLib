@@ -1,11 +1,10 @@
 <!-- 
 ====================================================================== 
-     Project     :	LintfordLib
+     Project     :	LintfordLib (linux)
      
      Required on environment path:
-      - LINT_LIBS_PATH
-      - LINT_TOOLS_PATH
-      - LINT_DIST_PATH 
+      - LINT_LIBS_PATH : 	Defines the location the artefacts will be placed after compilation and bundling of resources.
+      						n.b this is also used by the game projects to locate the latest LintfordLib.
      
 ====================================================================== 
 -->

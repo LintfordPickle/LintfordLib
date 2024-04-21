@@ -1,15 +1,14 @@
 <!-- 
 ====================================================================== 
-     Project     :	LintfordLib
+     Project     :	LintfordLib (x86-64)
      
      Required on environment path:
-      - LINT_LIBS_PATH
-      - LINT_TOOLS_PATH
-      - LINT_DIST_PATH 
+      - LINT_LIBS_PATH : 	Defines the location the artefacts will be placed after compilation and bundling of resources.
+      						n.b this is also used by the game projects to locate the latest LintfordLib.
      
 ====================================================================== 
 -->
-<project name="LintfordLib" basedir="." default="main">
+<project name="x86-64" basedir="." default="main">
 
 	<target name="main" depends="clean, init, copy.dep, compile, createjar" />
 
@@ -20,8 +19,6 @@
 	<property name="PLATFORM_NAME" value="x86_64" />
 
 	<property name="LIBS_PATH" value="${env.LINT_LIBS_PATH}" />
-	<property name="TOOLS_PATH" value="${env.LINT_TOOLS_PATH}" />
-	<property name="DIST_PATH" value="${env.LINT_DIST_PATH}" />
 
 	<property name="client-main-class">net.lintfordlib.LintfordMain</property>
 	<property name="compile-target-version" value="21" />
@@ -51,6 +48,7 @@
 		<delete dir="${dist.dir}" />
 	</target>
 
+
 	<!-- Create the output destination folders -->
 	<target name="init">
 		<echo message="Init" />
@@ -63,6 +61,7 @@
 		<mkdir dir="${dist.doc}" />
 		<mkdir dir="${dist.res}" />
 	</target>
+
 
 	<!-- This is to copy the resources into the correct dist subdirectory (not used by the library) -->
 	<target name="copy.dep">
@@ -105,7 +104,7 @@
 			<exclude name="**/*linux*" />
 			<exclude name="**/*macos*" />
 		</fileset>
-		
+
 		<fileset dir="${basedir}/${input.lib.dir}">
 			<include name="**/*.*" />
 			<exclude name="**/*javadoc*" />
@@ -113,8 +112,9 @@
 			<exclude name="**/*linux*" />
 			<exclude name="**/*macos*" />
 		</fileset>
-		
+
 	</path>
+
 
 	<!-- compile source -->
 	<target name="compile">
@@ -135,6 +135,7 @@
 		</mapper>
 	</pathconvert>
 
+
 	<!-- create jar -->
 	<target name="createjar" depends="compile">
 		<echo message="Create Jar" />
@@ -147,6 +148,5 @@
 			</manifest>
 		</jar>
 	</target>
-
 
 </project>
