@@ -3,7 +3,7 @@ package net.lintfordlib;
 public class ConstantsDisplay {
 
 	public static final int REFERENCE_GAME_RESOLUTION_W = 960;
-	public static final int REFERENCE_GAME_RESOLUTION_H = 540;
+	public static final int REFERENCE_GAME_RESOLUTION_H = 576;
 
 	/**
 	 * All UiComponents define their widths in relation to this base width. You should calculate the scale factor based on the canvas size, using CANVAS_SIZE / BASE_UI_COMPONENT_RESOLUTION_W
@@ -16,7 +16,7 @@ public class ConstantsDisplay {
 	public static final int REFERENCE_UI_RESOLUTION_H = 1080;
 
 	public static final int MIN_UI_HUD_WIDTH = 960;
-	public static final int MIN_UI_HUD_HEIGHT = 540;
+	public static final int MIN_UI_HUD_HEIGHT = 576;
 
 	public static final int MAX_UI_HUD_WIDTH = 3840;
 	public static final int MAX_UI_HUD_HEIGHT = 2160;
