@@ -60,6 +60,9 @@ public class CursorPanel extends UiPanel {
 		addWidget(mShowGridUid);
 
 		isLayerVisible(true);
+
+		mShowShowLayerButton = false;
+		mShowActiveLayerButton = false;
 	}
 
 	// --------------------------------------

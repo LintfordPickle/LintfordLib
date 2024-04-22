@@ -65,6 +65,8 @@ public abstract class BaseGameScreen extends Screen {
 		final var lDataManager = lCore.dataManager();
 		final var lControllerManager = lCore.controllerManager();
 
+		lDataManager.removeDataManagerGroup(entityGroupUid());
+
 		new GameRendererController(lControllerManager, mRendererManager, entityGroupUid());
 		mGameCamera = mScreenManager.core().setNewGameCamera(mGameCamera);
 

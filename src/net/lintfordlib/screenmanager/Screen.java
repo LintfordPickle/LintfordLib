@@ -7,6 +7,7 @@ import net.lintfordlib.core.LintfordCore.CoreTime;
 import net.lintfordlib.core.graphics.Color;
 import net.lintfordlib.core.graphics.ColorConstants;
 import net.lintfordlib.core.graphics.batching.SpriteBatch;
+import net.lintfordlib.core.graphics.linebatch.LineBatch;
 import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintfordlib.core.input.mouse.IInputProcessor;
 import net.lintfordlib.core.maths.Vector2f;
@@ -77,6 +78,10 @@ public abstract class Screen implements IInputProcessor {
 
 	public Vector2f screenPositionOffset() {
 		return mScreenOffset;
+	}
+
+	public LineBatch lineBatch() {
+		return mRendererManager.uiLineBatch();
 	}
 
 	public SpriteBatch spriteBatch() {

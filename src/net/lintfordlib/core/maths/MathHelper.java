@@ -20,6 +20,12 @@ public class MathHelper {
 		value = (value < min) ? min : value;
 		return value;
 	}
+	
+	public static double clampd(double value, double min, double max) {
+		value = (value > max) ? max : value;
+		value = (value < min) ? min : value;
+		return value;
+	}
 
 	public static int clampi(int value, int min, int max) {
 		value = (value > max) ? max : value;

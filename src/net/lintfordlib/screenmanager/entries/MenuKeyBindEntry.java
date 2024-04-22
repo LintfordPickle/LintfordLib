@@ -1,6 +1,7 @@
 package net.lintfordlib.screenmanager.entries;
 
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.opengl.GL11;
 
 import net.lintfordlib.ConstantsApp;
 import net.lintfordlib.core.LintfordCore;
@@ -36,9 +37,19 @@ public class MenuKeyBindEntry extends MenuEntry implements IKeyInputCallback {
 	private boolean mBindingKey;
 	private float mCaretFlashTimer;
 
+	private boolean mIsStateValid; //
+
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public boolean isStateValid() {
+		return mIsStateValid;
+	}
+
+	public void isStateValid(boolean newValue) {
+		mIsStateValid = newValue;
+	}
 
 	public KeyEventAction eventAction() {
 		return mEventAction;
@@ -83,6 +94,7 @@ public class MenuKeyBindEntry extends MenuEntry implements IKeyInputCallback {
 		mShow = true;
 
 		mCanHaveFocus = true;
+		mIsStateValid = true;
 
 		mIsDirty = true;
 		mVerticalFillType = FILLTYPE.TAKE_WHATS_NEEDED;
@@ -254,6 +266,15 @@ public class MenuKeyBindEntry extends MenuEntry implements IKeyInputCallback {
 		if (mShowWarnIcon)
 			drawWarningIcon(core, lSpriteBatch, mWarnIconDstRectangle, mParentScreen.screenColor.a);
 
+		if (!mIsStateValid) {
+			final var lLineBatch = mParentScreen.lineBatch();
+			lLineBatch.begin(core.HUD());
+			lLineBatch.changeColorNormalized(.7f, .04f, .02f, 1.f);
+			lLineBatch.lineType(GL11.GL_LINES);
+			lLineBatch.drawRect(this, -0.1f);
+			lLineBatch.end();
+		}
+
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
 			lSpriteBatch.begin(core.HUD());
 			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX, mY, mW, mH, mZ, ColorConstants.Debug_Transparent_Magenta);
@@ -267,11 +288,10 @@ public class MenuKeyBindEntry extends MenuEntry implements IKeyInputCallback {
 
 	@Override
 	public boolean keyInput(int key, int scanCode, int action, int mods) {
-		if (mHasFocus && isCoolDownElapsed()) {
+		if (mBindingKey && isCoolDownElapsed()) {
 			Debug.debugManager().logger().i(getClass().getSimpleName(), "key bind invoke " + mEventAction.eventActionUid() + " called to " + GLFW.glfwGetKeyName(GLFW.glfwGetKeyScancode(key), scanCode));
 			mEventAction.boundKeyCode(key);
 			mBindingKey = false;
-			// mHasFocus = false;
 			mIsDirty = true;
 
 			return true;

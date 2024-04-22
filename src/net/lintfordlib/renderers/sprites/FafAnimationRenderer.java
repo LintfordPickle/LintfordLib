@@ -17,9 +17,9 @@ public class FafAnimationRenderer extends BaseRenderer implements AnimatedSprite
 	// Variables
 	// --------------------------------------
 
-	private FafAnimationController mFafAnimationController;
+	protected FafAnimationController mFafAnimationController;
 
-	private final List<SpriteInstance> animationUpdateList = new ArrayList<>();
+	protected final List<SpriteInstance> animationUpdateList = new ArrayList<>();
 
 	// --------------------------------------
 	// Properties

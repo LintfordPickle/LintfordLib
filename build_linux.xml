@@ -1,0 +1,150 @@
+<!-- 
+====================================================================== 
+     Project     :	LintfordLib (linux)
+     
+     Required on environment path:
+      - LINT_LIBS_PATH : 	Defines the location the artefacts will be placed after compilation and bundling of resources.
+      						n.b this is also used by the game projects to locate the latest LintfordLib.
+     
+====================================================================== 
+-->
+<project name="LintfordLib" basedir="." default="main">
+
+	<target name="main" depends="clean, init, copy.dep, compile, createjar" />
+	
+	<property environment="env" />
+
+	<property name="PROJECT_NAME" value="FanTac" />
+	<property name="APPLICATION_NAME" value="Core" />
+	<property name="PLATFORM_NAME" value="linux" />
+	
+	<property name="LIBS_PATH" value="${env.LINT_LIBS_PATH}" />
+	<property name="TOOLS_PATH" value="${env.LINT_TOOLS_PATH}" />
+	<property name="DIST_PATH" value="${env.LINT_DIST_PATH}" />
+	
+	<property name="client-main-class">net.lintfordlib.LintfordMain</property>
+	<property name="compile-target-version" value="21"/>
+	<property name="compile-source-version" value="21"/>
+	
+	<!-- Input directories -->
+	<property name="input.src.dir" value="src" />
+	<property name="input.lib.dir" value="libs" />
+	<property name="input.res.dir" value="res/res" />
+	<property name="input.lib.natives.dir" value="natives" />
+
+	<!-- Output directories -->
+	<property name="base.output.dir" value="${LIBS_PATH}/LintfordLib" />
+
+	<property name="build.dir" value="${base.output.dir}/build" />
+	<property name="dist.dir" value="${base.output.dir}/${PLATFORM_NAME}" />
+
+	<property name="dist.lib" value="${dist.dir}/libs/" />
+	<property name="dist.doc" value="${dist.dir}/docs/" />
+	<property name="dist.res" value="${build.dir}/res/" />
+
+	
+	<!-- clean build -->
+	<target name="clean">
+		<echo message="Clean folders" />
+		
+		<delete dir="${dist.dir}" />
+	</target>
+
+	<!-- Create the output destination folders -->
+	<target name="init">
+		<echo message="Init" />
+		
+		<mkdir dir="${base.output.dir}" />
+		<mkdir dir="${build.dir}/classes" />
+		<mkdir dir="${dist.dir}" />
+		<mkdir dir="${dist.lib}" />
+		<mkdir dir="${dist.natives}" />
+		<mkdir dir="${dist.doc}" />
+		<mkdir dir="${dist.res}" />
+	</target>
+
+	<!-- This is to copy the resources into the correct dist subdirectory (not used by the library) -->
+	<target name="copy.dep">
+		<echo message="copying embedded resources" />
+		<copy todir="${dist.res}/res">
+			<fileset dir="${basedir}/${input.res.dir}">
+				<include name="**/*.*" />
+			</fileset>
+		</copy>
+		
+		<copy todir="${dist.lib}">
+			<fileset dir="${basedir}/${input.lib.dir}">
+				<include name="**/*.*" />
+				<exclude name="**/*javadoc*" />
+				<exclude name="**/*sources*" />
+				<exclude name="**/*windows*" />
+				<exclude name="**/*macos*" />
+			</fileset>
+		</copy>
+		
+		<copy todir="${dist.lib}">
+			<fileset dir="${basedir}/${input.lib.natives.dir}">
+				<include name="**/*.*" />
+				<exclude name="**/*javadoc*" />
+				<exclude name="**/*sources*" />
+				<exclude name="**/*windows*" />
+				<exclude name="**/*macos*" />
+			</fileset>
+		</copy>
+	</target>
+
+
+	
+	<!-- Define the set of .jar files in the dist lib dir for inclusion on the classpath. -->
+	<path id="build.class.path">
+		<fileset dir="${basedir}/${input.lib.dir}">
+			<include name="**/*.*" />
+			<exclude name="**/*javadoc*" />
+			<exclude name="**/*sources*" />
+			<exclude name="**/*windows*" />
+			<exclude name="**/*macos*" />
+		</fileset>
+		
+		<fileset dir="${basedir}/${input.lib.natives.dir}">
+			<include name="**/*.*" />
+			<exclude name="**/*javadoc*" />
+			<exclude name="**/*sources*" />
+			<exclude name="**/*windows*" />
+			<exclude name="**/*macos*" />
+		</fileset>
+	</path>
+	
+	<!-- compile source -->
+	<target name="compile">
+		<echo message="Compilation" />
+				
+		<javac srcdir="${input.src.dir}" destdir="${build.dir}/classes" classpathref="build.class.path" includeantruntime="false" />
+	</target>
+
+	
+	
+	<!-- We will add this jar files to the manifests classpath -->
+	<pathconvert property="manifest.classpath" pathsep=" ">
+		<path refid="build.class.path" />
+		<mapper>
+			<chainedmapper>
+				<flattenmapper />
+				<globmapper from="*.jar" to="libs/*.jar" />
+			</chainedmapper>
+		</mapper>
+	</pathconvert>
+	
+	<!-- create jar -->
+	<target name="createjar" depends="compile">
+		<echo message="Create Jar" />
+		
+		<jar destfile="${dist.dir}/LintfordLib.jar" basedir="${build.dir}/classes">
+			<fileset dir="${dist.res}" />
+			<manifest>
+				<attribute name="Main-Class" value="${client-main-class}" />
+				<attribute name="Class-Path" value="${manifest.classpath}" />
+			</manifest>
+		</jar>
+	</target>
+
+</project>
