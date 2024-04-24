@@ -20,7 +20,7 @@ public class MathHelper {
 		value = (value < min) ? min : value;
 		return value;
 	}
-	
+
 	public static double clampd(double value, double min, double max) {
 		value = (value > max) ? max : value;
 		value = (value < min) ? min : value;
@@ -165,14 +165,25 @@ public class MathHelper {
 
 	}
 
+	/**
+	 * Returns a new angle between the heading vector (faceThis - position) and the current angle, taking into consideration a maximum turn amount.
+	 */
 	public static float turnToFace(float positionX, float positionY, float faceThisX, float faceThisY, float currentAngle, float turnSpeed) {
-		final var lWorldX = faceThisX - positionX;
-		final var lWorldY = faceThisY - positionY;
+		final var lDirX = faceThisX - positionX;
+		final var lDirY = faceThisY - positionY;
 
-		final var lDesiredAngle = (float) Math.atan2(lWorldY, lWorldX);
+		final var lDesiredAngle = (float) Math.atan2(lDirY, lDirX);
 		final var lDifference = clamp(wrapAngle(lDesiredAngle - currentAngle), -turnSpeed, turnSpeed);
 
 		return wrapAngle(currentAngle + lDifference);
+	}
+
+	public static float turnToFace(float pTrackHeading, float pCurrentAngle, float pTurnSpeed) {
+		float difference = wrapAngle(pTrackHeading - pCurrentAngle);
+
+		difference = MathHelper.clamp(difference, -pTurnSpeed, pTurnSpeed);
+
+		return wrapAngle(difference);
 	}
 
 	// polygon
@@ -220,7 +231,7 @@ public class MathHelper {
 	public static boolean withinEpsilon(float a) {
 		return Math.abs(a) < ConstantsMath.EPSILON;
 	}
-	
+
 	public static boolean equalWithinEpsilon(float a, float b) {
 		return Math.abs(a - b) < ConstantsMath.EPSILON;
 	}
