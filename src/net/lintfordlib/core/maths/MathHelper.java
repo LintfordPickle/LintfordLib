@@ -38,8 +38,8 @@ public class MathHelper {
 	}
 
 	public static float distance2(float pX1, float pY1, float pX2, float pY2) {
-		float lengthX = (pX2 - pX1) * (pX2 - pX1);
-		float lengthY = (pY2 - pY1) * (pY2 - pY1);
+		final float lengthX = (pX2 - pX1) * (pX2 - pX1);
+		final float lengthY = (pY2 - pY1) * (pY2 - pY1);
 		return lengthX + lengthY;
 
 	}
@@ -77,35 +77,40 @@ public class MathHelper {
 		return (degrees * 0.01745329f);
 	}
 
-	public static float wrapAngle(float angle) {
-		angle = (float) Math.IEEEremainder(angle, Math.PI * 2.);
-		if (angle <= -Math.PI) {
-			angle += Math.PI * 2.;
-			return angle;
-		}
-		if (angle > Math.PI) {
-			angle -= Math.PI * 2.;
-		}
-		return angle;
+	public static float wrapAngle(float angleInRadians) {
+
+		if ((angleInRadians > -Math.PI) && (angleInRadians <= Math.PI))
+			return angleInRadians;
+
+		angleInRadians = (float) Math.IEEEremainder(angleInRadians, Math.PI * 2.);
+
+		if (angleInRadians <= -Math.PI)
+			return (float) (angleInRadians + Math.PI * 2.);
+
+		if (angleInRadians > Math.PI)
+			return (float) (angleInRadians - Math.PI * 2.);
+
+		return angleInRadians;
+
 	}
 
-	public static final boolean isEven(final int pV) {
+	public static final boolean isEven(int pV) {
 		return pV % 2 == 0;
 	}
 
-	public static final boolean isOdd(final int pV) {
-		return pV % 2 == 1;
+	public static final boolean isOdd(int pV) {
+		return (pV & 1) == 1;
 	}
 
-	public static float dot(final float pXA, final float pYA, final float pXB, final float pYB) {
+	public static float dot(float pXA, float pYA, float pXB, float pYB) {
 		return pXA * pXB + pYA * pYB;
 	}
 
-	public static float cross(final float pXA, final float pYA, final float pXB, final float pYB) {
+	public static float cross(float pXA, float pYA, float pXB, float pYB) {
 		return pXA * pYB - pXB * pYA;
 	}
 
-	public static float scaleToRange(final float oldValue, final float oldMin, final float oldMax, final float newMin, final float newMax) {
+	public static float scaleToRange(float oldValue, float oldMin, float oldMax, float newMin, float newMax) {
 		if (oldMax == oldMin)
 			return 1.f;
 
