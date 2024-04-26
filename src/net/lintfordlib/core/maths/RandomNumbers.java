@@ -33,7 +33,7 @@ public class RandomNumbers {
 	public static void reseed() {
 		RANDOM = new SplittableRandom();
 	}
-	
+
 	public static void reseed(long seed) {
 		RANDOM = new SplittableRandom(seed);
 	}
@@ -60,14 +60,14 @@ public class RandomNumbers {
 	/**
 	 * Returns a random true/false with the given percentage chance of being true.
 	 * 
-	 * @param percentChance a value between 0-100
+	 * @param percentChance a value between [0-100]
 	 * @return true or false
 	 */
 	public static final boolean getRandomChance(float percentChance) {
-		if (percentChance < 0)
-			percentChance = 0;
-		if (percentChance > 100)
-			percentChance = 100;
+		if (percentChance <= 0)
+			return false;
+		if (percentChance >= 100)
+			return true;
 
 		return RANDOM.nextInt(100) < percentChance;
 	}
