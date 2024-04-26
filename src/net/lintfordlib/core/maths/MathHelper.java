@@ -106,8 +106,21 @@ public class MathHelper {
 		return pXA * pXB + pYA * pYB;
 	}
 
-	public static float cross(float pXA, float pYA, float pXB, float pYB) {
-		return pXA * pYB - pXB * pYA;
+	// @formatter:off
+	/**
+	 * Returns the magnitude of the vector that would result from a regular 3D cross product of the 
+	 * input vectors, taking their Z values implicitly as 0 (i.e. treating the 2D space as a plane 
+	 * in the 3D space). The 3D cross product will be perpendicular to that plane, and thus have 
+	 * 0 X & Y components (thus the scalar returned is the Z value of the 3D cross product vector).
+	 * 
+	 * Note that the magnitude of the vector resulting from 3D cross product is also equal to the area 
+	 * of the parallelogram between the two vectors, which gives Implementation 1 another purpose. 
+	 * In addition, this area is signed and can be used to determine whether rotating from V1 to V2 
+	 * moves in an counter clockwise or clockwise direction.
+	 */
+	// @formatter:on
+	public static float cross(float v0_x, float v0_y, float v1_x, float v1_y) {
+		return v0_x * v1_y - v1_x * v0_y;
 	}
 
 	public static float scaleToRange(float oldValue, float oldMin, float oldMax, float newMin, float newMax) {
@@ -131,12 +144,10 @@ public class MathHelper {
 	 * Inverts the given angle (in radians) over the X axis
 	 */
 	public static float invertAngleXAxis(float angleInRadians) {
-		float lAngle = normalizeAngle(angleInRadians);
-		if (lAngle == 0)
+		if (angleInRadians == 0)
 			return 0.f;
-		lAngle = ConstantsMath.TwoPi - lAngle;
 
-		return lAngle;
+		return normalizeAngle(ConstantsMath.TwoPi - angleInRadians);
 	}
 
 	/**
@@ -223,24 +234,17 @@ public class MathHelper {
 		final float acx = bx - ax;
 		final float acy = by - ay;
 
-		float z = windingOrderZFromCross(abx, aby, acx, acy);
-		return z > 0;
-	}
-
-	public static float windingOrderZFromCross(float ax, float ay, float bx, float by) {
-		return (ax * by) - (ay * bx);
+		return cross(abx, aby, acx, acy) > 0;
 	}
 
 	// ---
 
-	public static boolean withinEpsilon(float a) {
-		return Math.abs(a) < ConstantsMath.EPSILON;
-	}
-
+	/** Checks the equality of two given values to within epsilon. */
 	public static boolean equalWithinEpsilon(float a, float b) {
 		return Math.abs(a - b) < ConstantsMath.EPSILON;
 	}
 
+	/** Checks the spatial equality of two given vectors to within epsilon. */
 	public static boolean equalWithinEpsilon(float p1x, float p1y, float p2x, float p2y) {
 		final float xx = p1x - p2x;
 		final float yy = p1y - p2y;
