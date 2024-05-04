@@ -380,6 +380,10 @@ public class Vector2f implements Serializable {
 	// Class-Methods
 	// --------------------------------------
 
+	public static float dot(Vector2f v0, Vector2f v1) {
+		return v0.x * v1.x + v0.y * v1.y;
+	}
+
 	public static float dot(float x1, float y1, float x2, float y2) {
 		return x1 * x2 + y1 * y2;
 	}
