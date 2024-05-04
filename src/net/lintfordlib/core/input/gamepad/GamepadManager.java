@@ -29,18 +29,22 @@ public class GamepadManager extends GLFWJoystickCallback {
 	private final List<InputGamepad> mUpdateControllerList = new ArrayList<>();
 	private final List<InputGamepad> mActiveControllers = Collections.unmodifiableList(mUpdateControllerList);
 
-	private IGamepadListener mGamepadListener;
+	private final List<IGamepadListener> mGamepadListeners = new ArrayList<>();
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
 
-	public void gamepadListener(IGamepadListener newGamepadListener) {
-		mGamepadListener = newGamepadListener;
+	public void addGamepadListener(IGamepadListener newGamepadListener) {
+		if (mGamepadListeners.contains(newGamepadListener) == false)
+			mGamepadListeners.add(newGamepadListener);
+
 	}
 
-	public IGamepadListener gamepadListener() {
-		return mGamepadListener;
+	public void removeGamepadListener(IGamepadListener newGamepadListener) {
+		if (mGamepadListeners.contains(newGamepadListener))
+			mGamepadListeners.remove(newGamepadListener);
+
 	}
 
 	public InputGamepad getGamepad(int gamepadId) {
@@ -119,6 +123,31 @@ public class GamepadManager extends GLFWJoystickCallback {
 		return false;
 	}
 
+	public boolean isGamepadButtonDown(int gamepadIndex, int glfwGamepadButtonIndex) {
+		if (gamepadIndex < 0 || gamepadIndex >= mActiveControllers.size())
+			return false;
+
+		if (mActiveControllers.get(gamepadIndex).getIsButtonDown(glfwGamepadButtonIndex)) {
+			return true;
+		}
+
+		return false;
+	}
+
+	public boolean isGamepadButtonDown(int gamepadIndex, int glfwGamepadButtonIndex, IInputProcessor inputProcessor) {
+		if (inputProcessor != null && inputProcessor.allowGamepadInput() == false)
+			return false;
+
+		if (gamepadIndex < 0 || gamepadIndex >= mActiveControllers.size())
+			return false;
+
+		if (mActiveControllers.get(gamepadIndex).getIsButtonDown(glfwGamepadButtonIndex)) {
+			return true;
+		}
+
+		return false;
+	}
+
 	public boolean isGamepadButtonDown(int glfwGamepadButtonIndex, IInputProcessor inputProcessor) {
 		if (inputProcessor != null && inputProcessor.allowGamepadInput() == false)
 			return false;
@@ -128,6 +157,25 @@ public class GamepadManager extends GLFWJoystickCallback {
 			if (mActiveControllers.get(i).getIsButtonDown(glfwGamepadButtonIndex)) {
 				return true;
 			}
+		}
+
+		return false;
+	}
+
+	public boolean isGamepadButtonDownTimed(int gamepadIndex, int glfwGamepadButtonIndex, IInputProcessor inputProcessor) {
+		if (inputProcessor != null && inputProcessor.allowGamepadInput() == false)
+			return false;
+
+		if (inputProcessor.isCoolDownElapsed() == false)
+			return false;
+
+		if (gamepadIndex < 0 || gamepadIndex >= mActiveControllers.size())
+			return false;
+
+		if (mActiveControllers.get(gamepadIndex).getIsButtonDown(glfwGamepadButtonIndex)) {
+
+			inputProcessor.resetCoolDownTimer();
+			return true;
 		}
 
 		return false;
@@ -171,8 +219,10 @@ public class GamepadManager extends GLFWJoystickCallback {
 			final var lJoystick = getInputGamepad(controllerIndex);
 			lJoystick.initialize();
 
-			if (mGamepadListener != null)
-				mGamepadListener.onGamepadConnected(lJoystick);
+			final int lNumListeners = mGamepadListeners.size();
+			for (int i = 0; i < lNumListeners; i++) {
+				mGamepadListeners.get(i).onGamepadConnected(lJoystick);
+			}
 
 			Debug.debugManager().logger().i(getClass().getSimpleName(), "Controller " + controllerIndex + " is present (" + lJoystick.name() + ")");
 			Debug.debugManager().logger().i(getClass().getSimpleName(), "Num Buttons: " + lJoystick.numButtons());
@@ -192,8 +242,11 @@ public class GamepadManager extends GLFWJoystickCallback {
 		if (lDisconnectedGamepad == null || lDisconnectedGamepad.isActive() == false)
 			return;
 
-		if (mGamepadListener != null)
-			mGamepadListener.onGamepadDisconnected(lDisconnectedGamepad);
+		final int lNumListeners = mGamepadListeners.size();
+		for (int i = 0; i < lNumListeners; i++) {
+			mGamepadListeners.get(i).onGamepadDisconnected(lDisconnectedGamepad);
+
+		}
 
 		lDisconnectedGamepad.reset();
 	}
