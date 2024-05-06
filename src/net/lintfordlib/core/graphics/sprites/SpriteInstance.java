@@ -30,6 +30,9 @@ public class SpriteInstance extends Rectangle {
 	/** A timer to track when to change frames */
 	private float mTimer;
 
+	/** Applied as a modified to the frame timer. Can be used to speed up or slow down the animation speed. */
+	private float mAnimSpeedModifier;
+
 	/**  */
 	@SerializedName(value = "loopingEnabled")
 	private boolean mLoopingEnabled;
@@ -47,6 +50,14 @@ public class SpriteInstance extends Rectangle {
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public void animSpeedMod(float newValue) {
+		mAnimSpeedModifier = newValue;
+	}
+
+	public float animSpeedMod() {
+		return mAnimSpeedModifier;
+	}
 
 	public Color color() {
 		return mColor;
@@ -119,7 +130,7 @@ public class SpriteInstance extends Rectangle {
 	// --------------------------------------
 
 	public SpriteInstance() {
-
+		mAnimSpeedModifier = 1.f;
 	}
 
 	// --------------------------------------
@@ -157,7 +168,7 @@ public class SpriteInstance extends Rectangle {
 			return;
 
 		if (mAnimationEnabled) {
-			mTimer += lDeltaTime;
+			mTimer += lDeltaTime * mAnimSpeedModifier;
 		}
 
 		// update the current frame
