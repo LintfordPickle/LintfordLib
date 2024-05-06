@@ -3,6 +3,7 @@ package net.lintfordlib.core.physics.dynamics;
 import net.lintfordlib.ConstantsPhysics;
 import net.lintfordlib.core.geometry.partitioning.GridEntity;
 import net.lintfordlib.core.geometry.partitioning.SpatialHashGrid;
+import net.lintfordlib.core.maths.Transform;
 
 public abstract class RigidBodyEntity extends GridEntity {
 
@@ -23,6 +24,13 @@ public abstract class RigidBodyEntity extends GridEntity {
 	// protect reference
 	public RigidBody body() {
 		return body;
+	}
+
+	public Transform transform() {
+		if (body == null)
+			return Transform.Identity;
+
+		return body.transform;
 	}
 
 	// --------------------------------------
