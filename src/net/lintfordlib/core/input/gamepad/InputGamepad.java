@@ -139,62 +139,62 @@ public class InputGamepad {
 	// --------------------------------------
 
 	public float getLeftTriggerAxis() {
-		if (mNumAxis <= GLFW.GLFW_GAMEPAD_AXIS_LEFT_X)
-			return 0.f;
-
 		if (mIsGamepadMappingAvailable)
 			return mGamepadMappingState.axes(GLFW.GLFW_GAMEPAD_AXIS_LEFT_TRIGGER);
+
+		if (mNumAxis <= GLFW.GLFW_GAMEPAD_AXIS_LEFT_X)
+			return 0.f;
 
 		return mJoystickAxes.get(GLFW.GLFW_GAMEPAD_AXIS_LEFT_TRIGGER);
 	}
 
 	public float getLeftAxisX() {
-		if (mNumAxis <= GLFW.GLFW_GAMEPAD_AXIS_LEFT_X)
-			return 0.f;
-
 		if (mIsGamepadMappingAvailable)
 			return mGamepadMappingState.axes(GLFW.GLFW_GAMEPAD_AXIS_LEFT_X);
+
+		if (mNumAxis <= GLFW.GLFW_GAMEPAD_AXIS_LEFT_X)
+			return 0.f;
 
 		return mJoystickAxes.get(GLFW.GLFW_GAMEPAD_AXIS_LEFT_X);
 	}
 
 	public float getLeftAxisY() {
-		if (mNumAxis <= GLFW.GLFW_GAMEPAD_AXIS_LEFT_Y)
-			return 0.f;
-
 		if (mIsGamepadMappingAvailable)
 			return mGamepadMappingState.axes(GLFW.GLFW_GAMEPAD_AXIS_LEFT_Y);
+
+		if (mNumAxis <= GLFW.GLFW_GAMEPAD_AXIS_LEFT_Y)
+			return 0.f;
 
 		return mJoystickAxes.get(GLFW.GLFW_GAMEPAD_AXIS_LEFT_Y);
 
 	}
 
 	public float getRightTriggerAxis() {
-		if (mNumAxis <= GLFW.GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER)
-			return 0.f;
-
 		if (mIsGamepadMappingAvailable)
 			return mGamepadMappingState.axes(GLFW.GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER);
+
+		if (mNumAxis <= GLFW.GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER)
+			return 0.f;
 
 		return mJoystickAxes.get(GLFW.GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER);
 	}
 
 	public float getRightAxisX() {
-		if (mNumAxis <= GLFW.GLFW_GAMEPAD_AXIS_RIGHT_X)
-			return 0.f;
-
 		if (mIsGamepadMappingAvailable)
 			return mGamepadMappingState.axes(GLFW.GLFW_GAMEPAD_AXIS_RIGHT_X);
+
+		if (mNumAxis <= GLFW.GLFW_GAMEPAD_AXIS_RIGHT_X)
+			return 0.f;
 
 		return mJoystickAxes.get(GLFW.GLFW_GAMEPAD_AXIS_RIGHT_X);
 	}
 
 	public float getRightAxisY() {
-		if (mNumAxis <= GLFW.GLFW_GAMEPAD_AXIS_RIGHT_Y)
-			return 0.f;
-
 		if (mIsGamepadMappingAvailable)
 			return mGamepadMappingState.axes(GLFW.GLFW_GAMEPAD_AXIS_RIGHT_Y);
+
+		if (mNumAxis <= GLFW.GLFW_GAMEPAD_AXIS_RIGHT_Y)
+			return 0.f;
 
 		return mJoystickAxes.get(GLFW.GLFW_GAMEPAD_AXIS_RIGHT_Y);
 	}
