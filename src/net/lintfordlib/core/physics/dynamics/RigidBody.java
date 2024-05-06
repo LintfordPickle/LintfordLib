@@ -17,6 +17,9 @@ public class RigidBody extends PhysicsGridEntity {
 		return uidCounter++;
 	}
 
+	public static final Vector2f Forward = new Vector2f(1.f, 0.f);
+	public static final Vector2f Left = new Vector2f(0.f, -1.f);
+
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
@@ -199,6 +202,10 @@ public class RigidBody extends PhysicsGridEntity {
 		transform.p.x += vx * time;
 		transform.p.y += vy * time;
 
+		// TODO: Check the linear damping
+		// vx *= 1.f / (1.f + time * linearDampingX);
+		// vy *= 1.f / (1.f + time * linearDampingY);
+
 		vx *= linearDampingX;
 		vy *= linearDampingY;
 
@@ -256,14 +263,38 @@ public class RigidBody extends PhysicsGridEntity {
 		this.transform.setAngle(a);
 	}
 
+	// -- Impulses: Change a body's velocity / angular velocity immediately
+
+	public void addAngularImpulse(float ai) {
+		angularVelocity += ai * invMass;
+	}
+
+	public void addImpulse(float ix, float iy) {
+		vx += ix * invMass;
+		vy += iy * invMass;
+	}
+
+	public void addImpulse(float ix, float iy, float px, float py) {
+		vx += ix * invMass;
+		vy += iy * invMass;
+
+		angularVelocity += invMass * Vector2f.cross(px - transform.p.x, py - transform.p.y, ix, iy);
+	}
+
+	// -- Forces: act gradually over time (should be applied as needed per update)
+
+	public void addTorque(float torque) {
+		torque += torque;
+	}
+
 	public void addForce(float fx, float fy) {
-		accY += fy * invMass;
 		accX += fx * invMass;
+		accY += fy * invMass;
 	}
 
 	public void addForceAtPoint(float fx, float fy, float px, float py) {
-		accY += fy * invMass;
 		accX += fx * invMass;
+		accY += fy * invMass;
 
 		torque += Vector2f.cross(px - transform.p.x, py - transform.p.y, fx, fy);
 	}
