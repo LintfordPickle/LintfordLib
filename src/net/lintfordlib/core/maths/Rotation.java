@@ -8,7 +8,7 @@ public class Rotation {
 
 	public float s = 0.f;
 	public float c = 1.f;
-	
+
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
@@ -30,13 +30,5 @@ public class Rotation {
 
 	public float getAngle() {
 		return (float) Math.atan2(s, c);
-	}
-
-	public Vector2f getXAxis(Vector2f inVector2f) {
-		return inVector2f.set(c, s);
-	}
-
-	public Vector2f getYAxis(Vector2f inVector2f) {
-		return inVector2f.set(-s, c);
 	}
 }
