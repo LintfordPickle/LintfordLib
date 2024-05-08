@@ -68,7 +68,7 @@ public class KeyBindOptionsScreen extends MenuScreen {
 	// --------------------------------------
 
 	private void createKeyBindSection(BaseLayout layout) {
-		final var lKeyBindOptionsTitle = new MenuLabelEntry(mScreenManager, this);
+		final var lKeyBindOptionsTitle = new MenuLabelEntry(screenManager, this);
 
 		lKeyBindOptionsTitle.label("KeyBinds");
 		lKeyBindOptionsTitle.drawButtonBackground(true);
@@ -76,7 +76,7 @@ public class KeyBindOptionsScreen extends MenuScreen {
 		lKeyBindOptionsTitle.horizontalFillType(FILLTYPE.FILL_CONTAINER);
 		layout.addMenuEntry(lKeyBindOptionsTitle);
 
-		final var inputManager = screenManager().core().input();
+		final var inputManager = screenManager.core().input();
 		final var actionEventManager = inputManager.eventActionManager();
 
 		final var lGameKeyBinds = actionEventManager.gameKeyActions();
@@ -90,7 +90,7 @@ public class KeyBindOptionsScreen extends MenuScreen {
 				if (lRegisteredEventAction == null)
 					continue;
 
-				final var lNewActionEntry = new MenuKeyBindEntry(mScreenManager, this, lRegisteredEventAction);
+				final var lNewActionEntry = new MenuKeyBindEntry(screenManager, this, lRegisteredEventAction);
 				lNewActionEntry.horizontalFillType(FILLTYPE.FILL_CONTAINER);
 				lNewActionEntry.label(lKeyMap.eventActionName);
 				lNewActionEntry.registerClickListener(this, lKeyMap.eventActionUid);
@@ -106,7 +106,7 @@ public class KeyBindOptionsScreen extends MenuScreen {
 
 	@Override
 	public void exitScreen() {
-		mScreenManager.core().input().eventActionManager().saveConfig();
+		screenManager.core().input().eventActionManager().saveConfig();
 
 		super.exitScreen();
 	}

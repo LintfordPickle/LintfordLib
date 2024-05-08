@@ -3,19 +3,6 @@ package net.lintfordlib.core.entities;
 public abstract class Entity {
 
 	// --------------------------------------
-	// Constants
-	// --------------------------------------
-
-	/**
-	 * @deprecated This property doesn't allow restoring the counter after deserialization and will cause collisions if new entities are instantiated. 
-	 */
-	private static int ENTITY_UID_COUNTER = 0;
-
-	public static int getNewEntityUid() {
-		return ENTITY_UID_COUNTER++;
-	}
-
-	// --------------------------------------
 	// Variables
 	// --------------------------------------
 

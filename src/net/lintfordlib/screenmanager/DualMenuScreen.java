@@ -208,9 +208,9 @@ public abstract class DualMenuScreen extends MenuScreen {
 		updateAllEntriesToMatchSelected(mLayouts, mSelectedLayoutIndex, mSelectedEntryIndex, !mRightColumnSelected);
 		updateAllEntriesToMatchSelected(mRightLayouts, mRightColumnSelectedLayoutIndex, mRightColumnSelectedEntryIndex, mRightColumnSelected);
 
-		mScreenManager.toolTip().toolTipProvider(null);
+		screenManager.toolTip().toolTipProvider(null);
 
-		mScreenManager.uiSounds().play(ConstantsScreenManagerAudio.SCREENMANAGER_AUDIO_ENTRY_NAVIGATION_UP);
+		screenManager.uiSounds().play(ConstantsScreenManagerAudio.SCREENMANAGER_AUDIO_ENTRY_NAVIGATION_UP);
 	}
 
 	protected void onNavigationDown(LintfordCore core) {
@@ -224,9 +224,9 @@ public abstract class DualMenuScreen extends MenuScreen {
 		updateAllEntriesToMatchSelected(mLayouts, mSelectedLayoutIndex, mSelectedEntryIndex, !mRightColumnSelected);
 		updateAllEntriesToMatchSelected(mRightLayouts, mRightColumnSelectedLayoutIndex, mRightColumnSelectedEntryIndex, mRightColumnSelected);
 
-		mScreenManager.toolTip().toolTipProvider(null);
+		screenManager.toolTip().toolTipProvider(null);
 
-		mScreenManager.uiSounds().play(ConstantsScreenManagerAudio.SCREENMANAGER_AUDIO_ENTRY_NAVIGATION_DOWN);
+		screenManager.uiSounds().play(ConstantsScreenManagerAudio.SCREENMANAGER_AUDIO_ENTRY_NAVIGATION_DOWN);
 	}
 
 	@Override
@@ -561,9 +561,9 @@ public abstract class DualMenuScreen extends MenuScreen {
 
 	public void setFocusOnEntry(MenuEntry entry) {
 		if (mActiveEntry != null)
-			mActiveEntry.onDeselection(mScreenManager.core().input());
+			mActiveEntry.onDeselection(screenManager.core().input());
 
-		mScreenManager.contextHintManager().contextHintProvider(null);
+		screenManager.contextHintManager().contextHintProvider(null);
 		mActiveEntry = null;
 
 		// left
@@ -579,7 +579,7 @@ public abstract class DualMenuScreen extends MenuScreen {
 				if (IsDesiredEntry) {
 					lEntry.mHasFocus = true;
 
-					mScreenManager.contextHintManager().contextHintProvider(lEntry);
+					screenManager.contextHintManager().contextHintProvider(lEntry);
 
 					mRightColumnSelected = false;
 					mSelectedLayoutIndex = i;
@@ -604,7 +604,7 @@ public abstract class DualMenuScreen extends MenuScreen {
 				if (IsDesiredEntry) {
 					lEntry.mHasFocus = true;
 
-					mScreenManager.contextHintManager().contextHintProvider(lEntry);
+					screenManager.contextHintManager().contextHintProvider(lEntry);
 
 					mRightColumnSelected = true;
 					mRightColumnSelectedEntryIndex = i;

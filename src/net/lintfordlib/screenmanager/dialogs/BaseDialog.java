@@ -8,6 +8,7 @@ import net.lintfordlib.core.graphics.textures.CoreTextureNames;
 import net.lintfordlib.core.graphics.textures.Texture;
 import net.lintfordlib.renderers.ZLayers;
 import net.lintfordlib.screenmanager.MenuScreen;
+import net.lintfordlib.screenmanager.Screen;
 import net.lintfordlib.screenmanager.ScreenManager;
 
 public abstract class BaseDialog extends MenuScreen {
@@ -78,7 +79,7 @@ public abstract class BaseDialog extends MenuScreen {
 	// --------------------------------------
 
 	protected String mMessageString;
-	protected MenuScreen mParentScreen;
+	protected Screen mParentScreen;
 	protected boolean mDrawBackground;
 	protected boolean mDarkenBackground;
 	protected SpriteSheetDefinition mIconSpritesheet;
@@ -121,7 +122,7 @@ public abstract class BaseDialog extends MenuScreen {
 	// Constructor
 	// --------------------------------------
 
-	public BaseDialog(ScreenManager screenManager, MenuScreen parentScreen, String dialogMessage) {
+	public BaseDialog(ScreenManager screenManager, Screen parentScreen, String dialogMessage) {
 		super(screenManager, "");
 
 		mParentScreen = parentScreen;

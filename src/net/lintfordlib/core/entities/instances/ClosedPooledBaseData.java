@@ -17,6 +17,7 @@ public abstract class ClosedPooledBaseData extends Entity {
 	public boolean isAssigned() {
 		return internalInUse;
 	}
+
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------

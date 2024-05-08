@@ -34,7 +34,8 @@ public abstract class Screen implements IInputProcessor {
 	// --------------------------------------
 
 	public final Color screenColor = new Color(ColorConstants.WHITE);
-	protected final ScreenManager mScreenManager;
+	public final ScreenManager screenManager;
+
 	protected final RendererManager mRendererManager;
 	protected SpriteSheetDefinition mCoreSpritesheet;
 	protected BaseTransition mTransitionOn;
@@ -67,10 +68,6 @@ public abstract class Screen implements IInputProcessor {
 	// --------------------------------------
 	// Properties
 	// -------------------------------------
-
-	public ScreenManager screenManager() {
-		return mScreenManager;
-	}
 
 	public RendererManager rendererManager() {
 		return mRendererManager;
@@ -177,13 +174,13 @@ public abstract class Screen implements IInputProcessor {
 
 	public Screen(ScreenManager screenManager, RendererManager rendererManager) {
 		mScreenState = ScreenState.Hidden;
-		mScreenManager = screenManager;
+		this.screenManager = screenManager;
 
 		mTransitionOn = new TransitionFadeIn(new TimeSpan(200));
 		mTransitionOff = new TransitionFadeOut(new TimeSpan(200));
 
 		if (rendererManager == null) {
-			mRendererManager = new RendererManager(mScreenManager.core(), ResourceGroupProvider.getRollingEntityNumber());
+			mRendererManager = new RendererManager(screenManager.core(), ResourceGroupProvider.getRollingEntityNumber());
 		} else {
 			mRendererManager = rendererManager;
 		}
@@ -232,7 +229,7 @@ public abstract class Screen implements IInputProcessor {
 		if (mRendererManager.decreaseGlContentCount())
 			mRendererManager.unloadResources();
 
-		mScreenManager.core().controllerManager().removeControllerGroup(entityGroupUid());
+		screenManager.core().controllerManager().removeControllerGroup(entityGroupUid());
 
 		mCoreSpritesheet = null;
 
@@ -243,7 +240,7 @@ public abstract class Screen implements IInputProcessor {
 	public void handleInput(LintfordCore core) {
 		mRendererManager.handleInput(core);
 
-		mScreenManager.core().controllerManager().handleInput(mScreenManager.core(), entityGroupUid());
+		screenManager.core().controllerManager().handleInput(screenManager.core(), entityGroupUid());
 	}
 
 	public void update(LintfordCore core, boolean otherScreenHasFocus, boolean coveredByOtherScreen) {
@@ -256,7 +253,7 @@ public abstract class Screen implements IInputProcessor {
 			mScreenState = ScreenState.TransitionOff;
 
 			if (updateTransition(core.appTime(), mTransitionOff))
-				mScreenManager.removeScreen(this);
+				screenManager.removeScreen(this);
 
 			return;
 		}
@@ -276,7 +273,7 @@ public abstract class Screen implements IInputProcessor {
 		}
 
 		if (!coveredByOtherScreen)
-			mScreenManager.core().controllerManager().update(mScreenManager.core(), entityGroupUid());
+			screenManager.core().controllerManager().update(screenManager.core(), entityGroupUid());
 
 		mRendererManager.update(core);
 
@@ -304,15 +301,15 @@ public abstract class Screen implements IInputProcessor {
 
 	public void exitScreen() {
 		if (mTransitionOff == null || mTransitionOff.timeSpan().equals(TimeSpan.zero())) {
-			mScreenManager.removeScreen(this);
+			screenManager.removeScreen(this);
 		} else {
 			mIsExiting = true;
 		}
 	}
 
 	public void onScreenAdded() {
-		mScreenManager.contextHintManager().drawVersionBar(mShowContextualFooterBar);
-		mScreenManager.contextHintManager().drawContextBackground(mShowContextualKeyHints);
+		screenManager.contextHintManager().drawVersionBar(mShowContextualFooterBar);
+		screenManager.contextHintManager().drawContextBackground(mShowContextualKeyHints);
 	}
 
 	public void onScreenRemoved() {
@@ -322,10 +319,10 @@ public abstract class Screen implements IInputProcessor {
 	}
 
 	public void onGainedFocus() {
-		mScreenManager.core().input().keyboard().stopBufferedTextCapture();
+		screenManager.core().input().keyboard().stopBufferedTextCapture();
 
-		mScreenManager.contextHintManager().drawVersionBar(mShowContextualFooterBar);
-		mScreenManager.contextHintManager().drawContextBackground(mShowContextualKeyHints);
+		screenManager.contextHintManager().drawVersionBar(mShowContextualFooterBar);
+		screenManager.contextHintManager().drawContextBackground(mShowContextualKeyHints);
 	}
 
 	public void onLostFocus() {

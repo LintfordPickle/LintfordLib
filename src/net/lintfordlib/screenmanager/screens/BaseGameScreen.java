@@ -46,7 +46,7 @@ public abstract class BaseGameScreen extends Screen {
 
 		mSingletonScreen = true;
 
-		mScreenManager.core().input().eventActionManager().setInputProcessor(this);
+		screenManager.core().input().eventActionManager().setInputProcessor(this);
 		mShowContextualKeyHints = false;
 
 		mGameInputLogicalCounter = new LogicialCounter();
@@ -61,14 +61,14 @@ public abstract class BaseGameScreen extends Screen {
 	public void initialize() {
 		super.initialize();
 
-		final var lCore = screenManager().core();
+		final var lCore = screenManager.core();
 		final var lDataManager = lCore.dataManager();
 		final var lControllerManager = lCore.controllerManager();
 
 		lDataManager.removeDataManagerGroup(entityGroupUid());
 
 		new GameRendererController(lControllerManager, mRendererManager, entityGroupUid());
-		mGameCamera = mScreenManager.core().setNewGameCamera(mGameCamera);
+		mGameCamera = screenManager.core().setNewGameCamera(mGameCamera);
 
 		createData(lDataManager);
 
@@ -121,7 +121,7 @@ public abstract class BaseGameScreen extends Screen {
 	public void exitScreen() {
 		super.exitScreen();
 
-		mScreenManager.core().input().eventActionManager().setInputProcessor(null);
-		mScreenManager.core().removeGameCamera();
+		screenManager.core().input().eventActionManager().setInputProcessor(null);
+		screenManager.core().removeGameCamera();
 	}
 }

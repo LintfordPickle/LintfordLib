@@ -76,7 +76,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	}
 
 	public float uiTextScale() {
-		return mScreenManager.UiStructureController().uiTextScaleFactor();
+		return screenManager.UiStructureController().uiTextScaleFactor();
 	}
 
 	public FontUnit font() {
@@ -206,42 +206,42 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		}
 
 		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_UP, this)) {
-			screenManager().contextHintManager().setKeyboardHints();
+			screenManager.contextHintManager().setKeyboardHints();
 			onNavigationUp(core);
 		}
 
 		if (core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_UP, this)) {
-			screenManager().contextHintManager().setGamePadHints();
+			screenManager.contextHintManager().setGamePadHints();
 			onNavigationUp(core);
 		}
 
 		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_DOWN, this)) {
-			screenManager().contextHintManager().setKeyboardHints();
+			screenManager.contextHintManager().setKeyboardHints();
 			onNavigationDown(core);
 		}
 
 		if (core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_DOWN, this)) {
-			screenManager().contextHintManager().setGamePadHints();
+			screenManager.contextHintManager().setGamePadHints();
 			onNavigationDown(core);
 		}
 
 		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_LEFT, this)) {
-			screenManager().contextHintManager().setKeyboardHints();
+			screenManager.contextHintManager().setKeyboardHints();
 			onNavigationLeft(core);
 		}
 
 		if (core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_LEFT, this)) {
-			screenManager().contextHintManager().setGamePadHints();
+			screenManager.contextHintManager().setGamePadHints();
 			onNavigationLeft(core);
 		}
 
 		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_RIGHT, this)) {
-			screenManager().contextHintManager().setKeyboardHints();
+			screenManager.contextHintManager().setKeyboardHints();
 			onNavigationRight(core);
 		}
 
 		if (core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_RIGHT, this)) {
-			screenManager().contextHintManager().setGamePadHints();
+			screenManager.contextHintManager().setGamePadHints();
 			onNavigationRight(core);
 		}
 
@@ -270,14 +270,14 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		if (!coveredByOtherScreen) {
 
 			if (mESCBackEnabled) {
-				mScreenManager.contextHintManager().screenManagerHintState().buttonB = true;
-				mScreenManager.contextHintManager().screenManagerHintState().buttonBHint = "back";
-				mScreenManager.contextHintManager().screenManagerHintState().keyEsc = true;
-				mScreenManager.contextHintManager().screenManagerHintState().keyEscHint = "back";
+				screenManager.contextHintManager().screenManagerHintState().buttonB = true;
+				screenManager.contextHintManager().screenManagerHintState().buttonBHint = "back";
+				screenManager.contextHintManager().screenManagerHintState().keyEsc = true;
+				screenManager.contextHintManager().screenManagerHintState().keyEscHint = "back";
 			} else {
-				mScreenManager.contextHintManager().screenManagerHintState().buttonB = false;
-				mScreenManager.contextHintManager().screenManagerHintState().buttonBHint = null;
-				mScreenManager.contextHintManager().screenManagerHintState().keyEsc = false;
+				screenManager.contextHintManager().screenManagerHintState().buttonB = false;
+				screenManager.contextHintManager().screenManagerHintState().buttonBHint = null;
+				screenManager.contextHintManager().screenManagerHintState().keyEsc = false;
 			}
 		}
 
@@ -478,7 +478,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		if (mMenuTitle == null || mMenuTitle.length() == 0 && mMenuHeaderFont == null)
 			return;
 
-		final var lUiStructureController = mScreenManager.UiStructureController();
+		final var lUiStructureController = screenManager.UiStructureController();
 		final float lUiTextScale = lUiStructureController.uiTextScaleFactor();
 
 		final var lHeaderRect = lUiStructureController.menuTitleRectangle();
@@ -553,7 +553,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		// if (mActiveEntry != null)
 		// mActiveEntry.onDeselection(mScreenManager.core().input());
 
-		mScreenManager.contextHintManager().contextHintProvider(null);
+		screenManager.contextHintManager().contextHintProvider(null);
 		mActiveEntry = null;
 
 		final int lNumLayouts = mLayouts.size();
@@ -566,7 +566,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 				if (IsDesiredEntry) {
 					lEntry.mHasFocus = true;
-					mScreenManager.contextHintManager().contextHintProvider(lEntry);
+					screenManager.contextHintManager().contextHintProvider(lEntry);
 
 					mSelectedLayoutIndex = i;
 					mSelectedEntryIndex = j;
@@ -603,7 +603,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 				if (lIsEntrySelected) {
 					lEntry.mHasFocus = true;
-					mScreenManager.contextHintManager().contextHintProvider(lEntry);
+					screenManager.contextHintManager().contextHintProvider(lEntry);
 				} else {
 					lEntry.mHasFocus = false;
 				}
@@ -625,9 +625,9 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 		updateAllEntriesToMatchSelected(mLayouts, mSelectedLayoutIndex, mSelectedEntryIndex, true);
 
-		mScreenManager.toolTip().toolTipProvider(null);
+		screenManager.toolTip().toolTipProvider(null);
 
-		mScreenManager.uiSounds().play(ConstantsScreenManagerAudio.SCREENMANAGER_AUDIO_ENTRY_NAVIGATION_UP);
+		screenManager.uiSounds().play(ConstantsScreenManagerAudio.SCREENMANAGER_AUDIO_ENTRY_NAVIGATION_UP);
 	}
 
 	protected void onNavigationDown(LintfordCore core) {
@@ -642,9 +642,9 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 		updateAllEntriesToMatchSelected(mLayouts, mSelectedLayoutIndex, mSelectedEntryIndex, true);
 
-		mScreenManager.toolTip().toolTipProvider(null);
+		screenManager.toolTip().toolTipProvider(null);
 
-		mScreenManager.uiSounds().play(ConstantsScreenManagerAudio.SCREENMANAGER_AUDIO_ENTRY_NAVIGATION_DOWN);
+		screenManager.uiSounds().play(ConstantsScreenManagerAudio.SCREENMANAGER_AUDIO_ENTRY_NAVIGATION_DOWN);
 	}
 
 	protected void onNavigationLeft(LintfordCore core) {
