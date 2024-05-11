@@ -140,8 +140,8 @@ public abstract class PlayerSessionsManager<T extends IPlayerSession> {
 			break;
 
 		case 2:
-			mPlayerSessions.get(0).getViewContainer().viewport().set(-lWindowWidth * .5f, -lWindowHeight * .5f, lWindowWidth, lWindowHeight);
-			mPlayerSessions.get(1).getViewContainer().viewport().set(0, -lWindowHeight * .5f, lWindowWidth, lWindowHeight);
+			mPlayerSessions.get(0).getViewContainer().viewport().set(-lWindowWidth * .5f, -lWindowHeight * .5f, lWindowWidth * .5f - 10f, lWindowHeight);
+			mPlayerSessions.get(1).getViewContainer().viewport().set(10, -lWindowHeight * .5f, lWindowWidth * .5f - 10f, lWindowHeight);
 			break;
 
 		case 3:
