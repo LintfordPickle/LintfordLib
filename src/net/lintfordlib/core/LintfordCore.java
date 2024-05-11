@@ -564,6 +564,8 @@ public abstract class LintfordCore {
 
 				mCoreTime.accumulatedElapsedTimeMilli = 0.0;
 
+				onHandleInput();
+				
 				onUpdate();
 			}
 

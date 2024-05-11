@@ -22,6 +22,9 @@ public class ToastManager {
 	private static final int MAX_TOASTPOOL_SIZE = 48;
 	private static final int MIN_TIME_BETWEEN_ADD = 250;
 
+	/** Specificies the amount of time, in milliseconds, that a message should be displayed in the tasot-message panel by default. */
+	public static final int DEFAULT_TOAST_MESSAGE_DISPLAY_TIME_MS = 1000;
+
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
@@ -128,6 +131,10 @@ public class ToastManager {
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
+
+	public void addMessage(String title, String message) {
+		addMessage(title, message, DEFAULT_TOAST_MESSAGE_DISPLAY_TIME_MS);
+	}
 
 	public void addMessage(String title, String message, int messageLifeTimeInMs) {
 		if (mAddTimer < MIN_TIME_BETWEEN_ADD)

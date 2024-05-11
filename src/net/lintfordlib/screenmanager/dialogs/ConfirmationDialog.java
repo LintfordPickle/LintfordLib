@@ -1,7 +1,7 @@
 package net.lintfordlib.screenmanager.dialogs;
 
 import net.lintfordlib.screenmanager.MenuEntry;
-import net.lintfordlib.screenmanager.MenuScreen;
+import net.lintfordlib.screenmanager.Screen;
 import net.lintfordlib.screenmanager.ScreenManager;
 import net.lintfordlib.screenmanager.layouts.BaseLayout;
 import net.lintfordlib.screenmanager.layouts.ListLayout;
@@ -39,15 +39,15 @@ public class ConfirmationDialog extends BaseDialog {
 	// Constructors
 	// --------------------------------------
 
-	public ConfirmationDialog(ScreenManager screenManager, MenuScreen parentScreen, String dialogMessage) {
+	public ConfirmationDialog(ScreenManager screenManager, Screen parentScreen, String dialogMessage) {
 		this(screenManager, parentScreen, "", dialogMessage, true);
 	}
 
-	public ConfirmationDialog(ScreenManager screenManager, MenuScreen parentScreen, String title, String dialogMessage) {
+	public ConfirmationDialog(ScreenManager screenManager, Screen parentScreen, String title, String dialogMessage) {
 		this(screenManager, parentScreen, title, dialogMessage, true);
 	}
 
-	public ConfirmationDialog(ScreenManager screenManager, MenuScreen parentScreen, String title, String dialogMessage, boolean withCancelButton) {
+	public ConfirmationDialog(ScreenManager screenManager, Screen parentScreen, String title, String dialogMessage, boolean withCancelButton) {
 		super(screenManager, parentScreen, dialogMessage);
 
 		mListLayout = new ListLayout(this);

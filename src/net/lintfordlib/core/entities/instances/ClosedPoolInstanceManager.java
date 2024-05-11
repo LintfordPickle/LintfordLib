@@ -4,8 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The {@link} pre-allocated, indexed instances and maintains them within a pool until they are required. The instances are then
- * maintains within a separate list until they are returned to the pool. All instances can be tracked with the main.
+ * Maintains a pool of pre-allocated, indexed {@link} instances until they are required. Instances 'in-use' are maintained within a separate list until they are returned to the pool. This is a closed system.
  */
 public abstract class ClosedPoolInstanceManager<T extends ClosedPooledBaseData> extends InstanceManager<T> {
 
@@ -95,7 +94,7 @@ public abstract class ClosedPoolInstanceManager<T extends ClosedPooledBaseData> 
 			if (mPooledItems.get(i).uid > mEntityInstanceCounter)
 				mEntityInstanceCounter = mPooledItems.get(i).uid;
 		}
-		
+
 		mEntityInstanceCounter++;
 	}
 

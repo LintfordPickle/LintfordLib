@@ -134,28 +134,29 @@ public class VideoOptionsScreen extends MenuScreen implements ITimedDialog {
 	// --------------------------------------
 
 	private void createVideoSection(BaseLayout layout) {
-		final var lVideoOptionsTitle = new MenuLabelEntry(mScreenManager, this);
+		final var lVideoOptionsTitle = new MenuLabelEntry(screenManager, this);
 
 		lVideoOptionsTitle.label("Video Options");
 		lVideoOptionsTitle.drawButtonBackground(true);
 		lVideoOptionsTitle.horizontalAlignment(ALIGNMENT.LEFT);
 		lVideoOptionsTitle.horizontalFillType(FILLTYPE.FILL_CONTAINER);
 
-		mFullScreenEntry = new MenuEnumEntryIndexed<>(mScreenManager, this, "Fullscreen");
+		mFullScreenEntry = new MenuEnumEntryIndexed<>(screenManager, this, "Fullscreen");
 		mFullScreenEntry.horizontalFillType(FILLTYPE.FILL_CONTAINER);
 
-		mResolutionEntry = new MenuDropDownEntry<>(mScreenManager, this, "Resolution");
+		mResolutionEntry = new MenuDropDownEntry<>(screenManager, this, "Resolution");
 		mResolutionEntry.horizontalFillType(FILLTYPE.FILL_CONTAINER);
 
-		mMonitorEntry = new MenuEnumEntryIndexed<>(mScreenManager, this, "Monitor");
+		mMonitorEntry = new MenuEnumEntryIndexed<>(screenManager, this, "Monitor");
 		mMonitorEntry.setButtonsEnabled(true);
 		mMonitorEntry.horizontalFillType(FILLTYPE.FILL_CONTAINER);
 
-		mVSync = new MenuToggleEntry(mScreenManager, this);
+		mVSync = new MenuToggleEntry(screenManager, this);
 		mVSync.horizontalFillType(FILLTYPE.FILL_CONTAINER);
 
-		final var lDisplayConfig = screenManager().core().config().display();
-		if(lDisplayConfig.currentOptionsConfig().resizeable()) {
+		final var lDisplayConfig = screenManager.core().config().display();
+
+		if (lDisplayConfig.currentOptionsConfig().resizeable()) {
 			mFullScreenEntry.addItem(mFullScreenEntry.new MenuEnumEntryItem(FULLSCREEN_NO, VideoSettings.FULLSCREEN_NO_INDEX));
 			mFullScreenEntry.addItem(mFullScreenEntry.new MenuEnumEntryItem(FULLSCREEN_YES, VideoSettings.FULLSCREEN_YES_INDEX));
 			mFullScreenEntry.setButtonsEnabled(true);
@@ -166,7 +167,7 @@ public class VideoOptionsScreen extends MenuScreen implements ITimedDialog {
 			mFullScreenEntry.setToolTip("This option has been disabled");
 			mFullScreenEntry.showInfoButton(true);
 		}
-		
+
 		mVSync.label("V-Sync");
 
 		mFullScreenEntry.registerClickListener(this, BUTTON_FULLSCREEN);
@@ -209,7 +210,7 @@ public class VideoOptionsScreen extends MenuScreen implements ITimedDialog {
 	public void exitScreen() {
 		// If the current settings are dirty then show a dialog to ask for confirmation (of losing changes) before leaving
 		if (modifiedVideoConfig.isDifferent(currentVideoConfig)) {
-			mConfirmationDialog = new ConfirmationDialog(mScreenManager, this, "You have some changes which have not been applied, are you sure you want to go back?");
+			mConfirmationDialog = new ConfirmationDialog(screenManager, this, "You have some changes which have not been applied, are you sure you want to go back?");
 			mConfirmationDialog.setDialogIcon(mCoreSpritesheet, CoreTextureNames.TEXTURE_ICON_WARNING);
 			mConfirmationDialog.dialogTitle("Unsaved Changes");
 			mConfirmationDialog.confirmEntry().entryText("Okay");
@@ -218,9 +219,9 @@ public class VideoOptionsScreen extends MenuScreen implements ITimedDialog {
 			mConfirmationDialog.cancelEntry().entryText("Cancel");
 			mConfirmationDialog.cancelEntry().registerClickListener(this, ConfirmationDialog.BUTTON_CONFIRM_NO);
 
-			mScreenManager.addScreen(mConfirmationDialog);
+			screenManager.addScreen(mConfirmationDialog);
 		} else {
-			mScreenManager.core().config().display().saveConfig();
+			screenManager.core().config().display().saveConfig();
 
 			super.exitScreen();
 		}
@@ -256,7 +257,7 @@ public class VideoOptionsScreen extends MenuScreen implements ITimedDialog {
 
 		case ConfirmationDialog.BUTTON_CONFIRM_YES: // exit without saving
 			if (mConfirmationDialog != null)
-				mScreenManager.removeScreen(mConfirmationDialog);
+				screenManager.removeScreen(mConfirmationDialog);
 
 			modifiedVideoConfig.copy(currentVideoConfig);
 
@@ -265,13 +266,13 @@ public class VideoOptionsScreen extends MenuScreen implements ITimedDialog {
 
 		case ConfirmationDialog.BUTTON_CONFIRM_NO: // go back and dont exit yet
 			if (mConfirmationDialog != null)
-				mScreenManager.removeScreen(mConfirmationDialog);
+				screenManager.removeScreen(mConfirmationDialog);
 
 			break;
 
 		case TimedConfirmationDialog.BUTTON_TIMED_CONFIRM_YES: // Revert to the last config
 			if (m15SecConfirmationDialog != null)
-				mScreenManager.removeScreen(m15SecConfirmationDialog);
+				screenManager.removeScreen(m15SecConfirmationDialog);
 
 			currentVideoConfig.copy(modifiedVideoConfig);
 			lastVideoConfig.copy(modifiedVideoConfig);
@@ -285,7 +286,7 @@ public class VideoOptionsScreen extends MenuScreen implements ITimedDialog {
 
 		case TimedConfirmationDialog.BUTTON_TIMED_CONFIRM_NO: // Revert to the last config
 			if (m15SecConfirmationDialog != null)
-				mScreenManager.removeScreen(m15SecConfirmationDialog);
+				screenManager.removeScreen(m15SecConfirmationDialog);
 
 			revertSettings();
 
@@ -381,7 +382,7 @@ public class VideoOptionsScreen extends MenuScreen implements ITimedDialog {
 
 		mDisplayManager.setGLFWMonitor(modifiedVideoConfig);
 
-		m15SecConfirmationDialog = new TimedConfirmationDialog(mScreenManager, this, "Your video settings have been changed. Do you want to keep these settings?");
+		m15SecConfirmationDialog = new TimedConfirmationDialog(screenManager, this, "Your video settings have been changed. Do you want to keep these settings?");
 		m15SecConfirmationDialog.dialogTitle("Confirm changes");
 
 		m15SecConfirmationDialog.confirmEntry().entryText("Keep Settings");
@@ -391,7 +392,7 @@ public class VideoOptionsScreen extends MenuScreen implements ITimedDialog {
 
 		m15SecConfirmationDialog.start(CONFIRMATION_TIMER_MILLI);
 
-		mScreenManager.addScreen(m15SecConfirmationDialog);
+		screenManager.addScreen(m15SecConfirmationDialog);
 	}
 
 	private void fillMonitorEntry(MenuEnumEntryIndexed<Long> entry) {
@@ -411,7 +412,7 @@ public class VideoOptionsScreen extends MenuScreen implements ITimedDialog {
 	private void fillResolutions(MenuDropDownEntry<GLFWVidMode> entry, long windowHandle, float width, float height) {
 		entry.clearItems();
 
-		final var lDisplayConfig = screenManager().core().config().display();
+		final var lDisplayConfig = screenManager.core().config().display();
 		final var lVideoModes = GLFW.glfwGetVideoModes(windowHandle);
 		final int lNumVideoModes = lVideoModes.limit();
 		for (int i = 0; i < lNumVideoModes; i++) {
@@ -466,7 +467,7 @@ public class VideoOptionsScreen extends MenuScreen implements ITimedDialog {
 	@Override
 	public void timeExpired() {
 		if (m15SecConfirmationDialog != null)
-			mScreenManager.removeScreen(m15SecConfirmationDialog);
+			screenManager.removeScreen(m15SecConfirmationDialog);
 
 		revertSettings();
 	}
@@ -474,7 +475,7 @@ public class VideoOptionsScreen extends MenuScreen implements ITimedDialog {
 	@Override
 	public void confirmation() {
 		if (m15SecConfirmationDialog != null)
-			mScreenManager.removeScreen(m15SecConfirmationDialog);
+			screenManager.removeScreen(m15SecConfirmationDialog);
 
 		currentVideoConfig.copy(modifiedVideoConfig);
 		exitScreen();
@@ -483,7 +484,7 @@ public class VideoOptionsScreen extends MenuScreen implements ITimedDialog {
 	@Override
 	public void decline() {
 		if (m15SecConfirmationDialog != null)
-			mScreenManager.removeScreen(m15SecConfirmationDialog);
+			screenManager.removeScreen(m15SecConfirmationDialog);
 
 		modifiedVideoConfig.copy(lastVideoConfig);
 		applyModifiedSettings();

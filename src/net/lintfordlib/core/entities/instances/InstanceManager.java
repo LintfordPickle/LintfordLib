@@ -1,5 +1,6 @@
 package net.lintfordlib.core.entities.instances;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,7 +9,13 @@ import com.google.gson.annotations.SerializedName;
 /**
  * The {@link InstanceManager} maintains an array of instances, beyond which, instances are not tracked.
  */
-public abstract class InstanceManager<T extends Object> {
+public abstract class InstanceManager<T extends Object> implements Serializable {
+
+	// --------------------------------------
+	// Constants
+	// --------------------------------------
+
+	private static final long serialVersionUID = 4560856840885105117L;
 
 	// --------------------------------------
 	// Variables

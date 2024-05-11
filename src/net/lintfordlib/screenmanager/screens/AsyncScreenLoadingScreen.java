@@ -40,7 +40,7 @@ public abstract class AsyncScreenLoadingScreen extends Screen {
 					lScreen.initialize();
 
 				if (lScreen != null && !lScreen.isResourcesLoaded())
-					lScreen.loadResources(mScreenManager.resources());
+					lScreen.loadResources(screenManager.resources());
 
 			}
 
@@ -87,7 +87,7 @@ public abstract class AsyncScreenLoadingScreen extends Screen {
 	protected AsyncScreenLoadingScreen(ScreenManager screenManager, RendererManager rendererManager) {
 		super(screenManager, rendererManager);
 
-		mDisplayManager = mScreenManager.core().config().display();
+		mDisplayManager = screenManager.core().config().display();
 
 		mTransitionOn = new TransitionFadeIn(new TimeSpan(1));
 		mTransitionOff = new TransitionFadeOut(new TimeSpan(1));
@@ -112,7 +112,7 @@ public abstract class AsyncScreenLoadingScreen extends Screen {
 	public void update(LintfordCore core, boolean otherScreenHasFocus, boolean coveredByOtherScreen) {
 		super.update(core, otherScreenHasFocus, coveredByOtherScreen);
 
-		if ((mScreenState == ScreenState.Active) && (mScreenManager.screens().size() == 1)) {
+		if ((mScreenState == ScreenState.Active) && (screenManager.screens().size() == 1)) {
 			if (hasLoadingStarted() == false) {
 				loadingThreadStarted = true;
 
@@ -131,7 +131,7 @@ public abstract class AsyncScreenLoadingScreen extends Screen {
 					final var lNumScreensToAdd = screensToLoad.length;
 					for (int i = 0; i < lNumScreensToAdd; i++) {
 						if (screensToLoad[i] != null) {
-							mScreenManager.addScreen(screensToLoad[i]);
+							screenManager.addScreen(screensToLoad[i]);
 						}
 					}
 				}

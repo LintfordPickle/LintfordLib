@@ -297,7 +297,7 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 	public BaseLayout(MenuScreen pParentScreen) {
 		super();
 
-		screenManager = pParentScreen.screenManager();
+		screenManager = pParentScreen.screenManager;
 		parentScreen = pParentScreen;
 		mMenuEntries = new ArrayList<>();
 
