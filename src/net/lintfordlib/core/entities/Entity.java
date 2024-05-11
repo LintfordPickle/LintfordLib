@@ -1,6 +1,14 @@
 package net.lintfordlib.core.entities;
 
-public abstract class Entity {
+import java.io.Serializable;
+
+public abstract class Entity implements Serializable {
+
+	// --------------------------------------
+	// Constants
+	// --------------------------------------
+
+	private static final long serialVersionUID = 4156471602194610824L;
 
 	// --------------------------------------
 	// Variables
