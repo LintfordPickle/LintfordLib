@@ -1,5 +1,7 @@
 package net.lintfordlib;
 
+import java.time.Year;
+
 public class GameVersion {
 
 	// --------------------------------------
@@ -10,6 +12,10 @@ public class GameVersion {
 	private static int APP_VERSION_MIN = 1;
 	private static int APP_VERSION_BUILD = 1;
 	private static String APP_POSTFIX = "032023";
+
+	public static final String Author = "LintfordPickle";
+	public static final String Delimitor = ".";
+	public static final String VersionYear = Year.now().toString();
 
 	private static final String DELIMITOR = ".";
 
