@@ -140,10 +140,10 @@ public abstract class BaseEditorSceneSelectionScreen extends MenuScreen {
 
 		final int lSceneHeaderCount = lListOfSceneHeaderFilesInDirectory.size();
 		for (int i = 0; i < lSceneHeaderCount; i++) {
-			final var lWorldFile = lListOfSceneHeaderFilesInDirectory.get(i);
+			final var lSceneHeaderFile = lListOfSceneHeaderFilesInDirectory.get(i);
 
-			final var lSceneHeader = SceneHeader.loadSceneHeaderFileFromFilepath(lWorldFile.getAbsoluteFile().getAbsolutePath());
-			lSceneHeader.initialize(lWorldFile.getParentFile().getAbsolutePath(), mSceneSettings);
+			final var lSceneHeader = SceneHeader.loadSceneHeaderFileFromFilepath(lSceneHeaderFile.getAbsoluteFile().getAbsolutePath());
+			lSceneHeader.initialize(lSceneHeaderFile.getParentFile().getAbsolutePath(), mSceneSettings);
 
 			final var lNewEntry = pEntry.new MenuEnumEntryItem(lSceneHeader.sceneName(), lSceneHeader);
 			pEntry.addItem(lNewEntry);
