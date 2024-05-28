@@ -113,12 +113,11 @@ public class EditorBrushRenderer extends BaseRenderer {
 		lFontUnit.begin(core.gameCamera());
 
 		Debug.debugManager().drawers().drawPointImmediate(core.gameCamera(), lCursorWorldX, lCursorWorldY);
-		// TODO: Add an engine wide pixel to meter conversion thing
 		Debug.debugManager().drawers().drawCircleImmediate(core.gameCamera(), lCursorWorldX, lCursorWorldY, 5.f, 30);
 
 		final var lFontXOffset = 6.f;
 		final var lFontYOffset = (lFontUnit.fontHeight() * .5f) / core.gameCamera().getZoomFactor();
-		final var lFontSize = 0.5f / core.gameCamera().getZoomFactor();
+		final var lFontSize = 1.f;
 
 		float lCursorTextPositionY = lCursorWorldY - lFontYOffset;
 		float lMouseTextPositionY = mMouseY - lFontYOffset;
@@ -132,5 +131,6 @@ public class EditorBrushRenderer extends BaseRenderer {
 		}
 
 		lFontUnit.end();
+
 	}
 }

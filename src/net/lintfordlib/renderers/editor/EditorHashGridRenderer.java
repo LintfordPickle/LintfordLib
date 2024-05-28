@@ -10,7 +10,6 @@ import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.controllers.editor.EditorHashGridController;
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.graphics.linebatch.LineBatch;
-import net.lintfordlib.core.maths.MathHelper;
 import net.lintfordlib.renderers.BaseRenderer;
 import net.lintfordlib.renderers.RendererManager;
 
@@ -130,17 +129,16 @@ public class EditorHashGridRenderer extends BaseRenderer {
 		mLineBatch.begin(core.gameCamera());
 		lFontUnit.begin(core.gameCamera());
 
-		final var lCamZoom = core.gameCamera().getZoomFactor();
-		final var lFontSize = MathHelper.clamp(0.8f / lCamZoom, .4f, 2.f);
-		final var lFontSpacing = 7.f / lCamZoom;
+		final var lFontSize = 1.f;
+		final var lFontSpacing = lFontUnit.fontHeight();
 
 		// FIXME: frustum culling
 
 		for (int xx = 0; xx < mNumTilesWide; xx++) {
-			mLineBatch.draw(-lHalfBW + (xx * lTileSizeW), -lHalfBH, -lHalfBW + (xx * lTileSizeW), lHalfBH, -0.01f, 1f, 0f, 0f, .5f);
+			mLineBatch.draw(-lHalfBW + (xx * lTileSizeW), -lHalfBH, -lHalfBW + (xx * lTileSizeW), lHalfBH, -0.01f, 1f, 0f, 0f, .75f);
 
 			for (int yy = 0; yy < mNumTilesHigh; yy++) {
-				mLineBatch.draw(-lHalfBW, -lHalfBH + (yy * lTileSizeH), lHalfBW, -lHalfBH + (yy * lTileSizeH), -0.01f, 1f, 1f, 0f, 1.0f);
+				mLineBatch.draw(-lHalfBW, -lHalfBH + (yy * lTileSizeH), lHalfBW, -lHalfBH + (yy * lTileSizeH), -0.01f, 1f, 1f, 0f, .75f);
 
 				final int lCellKey = lHashGrid.getCellKeyFromWorldPosition(-lHalfBW + (xx * lTileSizeW), -lHalfBH + (yy * lTileSizeH));
 				lFontUnit.drawText(String.valueOf(lCellKey), -lHalfBW + (xx * lTileSizeW) + 2f, -lHalfBH + (yy * lTileSizeH) + 1f, -0.001f, lFontSize);
