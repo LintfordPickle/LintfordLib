@@ -11,11 +11,11 @@ import net.lintfordlib.core.physics.spatial.PhysicsHashGrid;
 
 public class RigidBody extends PhysicsGridEntity {
 
-	private static int uidCounter;
+	// --------------------------------------
+	// Constants
+	// --------------------------------------
 
-	public static int getNewRigidBodyUid() {
-		return uidCounter++;
-	}
+	private static final long serialVersionUID = 6056805011159730461L;
 
 	public static final Vector2f Forward = new Vector2f(1.f, 0.f);
 	public static final Vector2f Left = new Vector2f(0.f, -1.f);
@@ -26,6 +26,8 @@ public class RigidBody extends PhysicsGridEntity {
 
 	public boolean _isActive = true;
 	public int _updateCounter = 0;
+
+	private static int uidCounter;
 
 	private BaseShape mShape;
 	private Object userData;
@@ -62,6 +64,10 @@ public class RigidBody extends PhysicsGridEntity {
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public static int getNewRigidBodyUid() {
+		return uidCounter++;
+	}
 
 	public void setAngularVelocity(float angularVelocity) {
 		if (isStatic())
