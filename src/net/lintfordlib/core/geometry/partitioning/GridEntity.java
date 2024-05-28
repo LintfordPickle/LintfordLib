@@ -5,6 +5,12 @@ import net.lintfordlib.core.entities.Entity;
 public abstract class GridEntity extends Entity {
 
 	// ---------------------------------------------
+	// Constants
+	// ---------------------------------------------
+
+	private static final long serialVersionUID = -5483114829103500322L;
+
+	// ---------------------------------------------
 	// Variables
 	// ---------------------------------------------
 

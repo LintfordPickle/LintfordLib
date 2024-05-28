@@ -5,6 +5,12 @@ import net.lintfordlib.core.entities.Entity;
 public abstract class PhysicsGridEntity extends Entity {
 
 	// ---------------------------------------------
+	// Constants
+	// ---------------------------------------------
+
+	private static final long serialVersionUID = 6519844922991326047L;
+
+	// ---------------------------------------------
 	// Variables
 	// ---------------------------------------------
 

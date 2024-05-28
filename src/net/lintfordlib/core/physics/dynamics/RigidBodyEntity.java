@@ -8,6 +8,12 @@ import net.lintfordlib.core.maths.Transform;
 public abstract class RigidBodyEntity extends GridEntity {
 
 	// --------------------------------------
+	// Constants
+	// --------------------------------------
+
+	private static final long serialVersionUID = 5079839439816085396L;
+
+	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
