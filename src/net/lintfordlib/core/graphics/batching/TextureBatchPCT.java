@@ -122,15 +122,9 @@ public class TextureBatchPCT {
 
 	protected int mIndexCount;
 
-	private boolean _countDebugStats;
-
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
-
-	public void _countDebugStats(boolean enableCountStats) {
-		_countDebugStats = enableCountStats;
-	}
 
 	public boolean isDrawing() {
 		return mIsDrawing;
@@ -382,7 +376,7 @@ public class TextureBatchPCT {
 
 		mCustomShader.bind();
 
-		if (_countDebugStats) {
+		if (Debug.debugManager().debugManagerEnabled()) {
 			Debug.debugManager().stats().incTag(DebugStats.TAG_ID_DRAWCALLS);
 
 			final int lNumQuads = mIndexCount / NUM_INDICES_PER_SPRITE;
@@ -401,8 +395,6 @@ public class TextureBatchPCT {
 		mIndexCount = 0;
 
 		mTextureSlots.clear();
-
-		_countDebugStats = true;
 	}
 
 	// ---

@@ -106,15 +106,9 @@ public class SubPixelTextureBatch {
 	private boolean mAreGlContainersInitialized = false;
 	protected int mIndexCount;
 
-	private boolean _countDebugStats = true;
-
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
-
-	public void _countDebugStats(boolean enableCountStats) {
-		_countDebugStats = enableCountStats;
-	}
 
 	public boolean isDrawing() {
 		return mIsDrawing;
@@ -516,7 +510,7 @@ public class SubPixelTextureBatch {
 
 		mShader.bind();
 
-		if (_countDebugStats) {
+		if (Debug.debugManager().debugManagerEnabled()) {
 			final int lNumQuads = mIndexCount / NUM_INDICES_PER_SPRITE;
 			Debug.debugManager().stats().incTag(DebugStats.TAG_ID_DRAWCALLS);
 			Debug.debugManager().stats().incTag(DebugStats.TAG_ID_VERTS, lNumQuads * 4);
@@ -530,8 +524,6 @@ public class SubPixelTextureBatch {
 
 		mBuffer.clear();
 		mTextureSlots.clear();
-
-		_countDebugStats = true;
 	}
 
 }

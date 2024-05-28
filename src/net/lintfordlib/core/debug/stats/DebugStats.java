@@ -286,16 +286,13 @@ public class DebugStats extends Rectangle implements IScrollBarArea, IInputProce
 
 		mLastDrawElapsed = core.appTime().elapsedTimeMilli();
 
-		mSpriteBatch._countDebugStats(false);
 		mSpriteBatch.begin(core.HUD());
 		mSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, this, -0.01f, ColorConstants.getColor(.05f, .05f, .05f, .95f));
 		mSpriteBatch.end();
-		mSpriteBatch._countDebugStats(true);
 
 		if (mContentRectangle.height() - this.height() > 0)
 			mContentRectangle.preDraw(core, mSpriteBatch);
 
-		mConsoleFont._countDebugStats(false);
 		mConsoleFont.begin(core.HUD());
 
 		float lTagPosY = y() + mScrollBar.currentYPos();
@@ -314,7 +311,6 @@ public class DebugStats extends Rectangle implements IScrollBarArea, IInputProce
 		}
 
 		mConsoleFont.end();
-		mConsoleFont._countDebugStats(true);
 
 		if (mContentRectangle.height() - this.height() > 0)
 			mContentRectangle.postDraw(core);

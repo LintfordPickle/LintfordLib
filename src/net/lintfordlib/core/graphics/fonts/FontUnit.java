@@ -38,10 +38,6 @@ public class FontUnit {
 	// Properties
 	// --------------------------------------
 
-	public void _countDebugStats(boolean enableDebugStats) {
-		mFontRenderer._countDebugStats(enableDebugStats);
-	}
-
 	public WrapType getWrapType() {
 		return mWrapType;
 	}

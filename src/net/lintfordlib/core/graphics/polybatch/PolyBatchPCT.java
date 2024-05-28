@@ -119,15 +119,10 @@ public class PolyBatchPCT {
 	protected boolean mIsDrawing;
 
 	protected int mIndexCount = 0;
-	private boolean _countDebugStats;
 
 	// --------------------------------------
 	// Properties
 	// ------------------------------------
-
-	public void _countDebugStats(boolean enableStats) {
-		_countDebugStats = enableStats;
-	}
 
 	public boolean isDrawing() {
 		return mIsDrawing;
@@ -392,10 +387,9 @@ public class PolyBatchPCT {
 
 		mCustomShader.bind();
 
-		if (_countDebugStats) {
-			Debug.debugManager().stats().incTag(DebugStats.TAG_ID_DRAWCALLS);
-
+		if (Debug.debugManager().debugManagerEnabled()) {
 			final int lNumQuads = mIndexCount / NUM_INDICES_PER_SPRITE;
+			Debug.debugManager().stats().incTag(DebugStats.TAG_ID_DRAWCALLS);
 			Debug.debugManager().stats().incTag(DebugStats.TAG_ID_VERTS, lNumQuads * 4);
 			Debug.debugManager().stats().incTag(DebugStats.TAG_ID_TRIS, lNumQuads * 2);
 		}
@@ -410,9 +404,5 @@ public class PolyBatchPCT {
 
 		mTextureSlots.clear();
 
-//		if (mBlendEnabled) {
-//			GL11.glDisable(GL11.GL_BLEND);
-//			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-//		}
 	}
 }

@@ -230,7 +230,7 @@ public class TexturedQuad {
 
 		GL30.glBindVertexArray(mVaoId);
 
-		{
+		if (Debug.debugManager().debugManagerEnabled()) {
 			Debug.debugManager().stats().incTag(DebugStats.TAG_ID_DRAWCALLS);
 			Debug.debugManager().stats().incTag(DebugStats.TAG_ID_VERTS, 6);
 			Debug.debugManager().stats().incTag(DebugStats.TAG_ID_TRIS, 2);

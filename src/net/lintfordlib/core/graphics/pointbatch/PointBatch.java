@@ -233,7 +233,7 @@ public class PointBatch {
 
 		mShader.bind();
 
-		{
+		if (Debug.debugManager().debugManagerEnabled()) {
 			Debug.debugManager().stats().incTag(DebugStats.TAG_ID_DRAWCALLS);
 			Debug.debugManager().stats().incTag(DebugStats.TAG_ID_VERTS, mVertexCount);
 		}
