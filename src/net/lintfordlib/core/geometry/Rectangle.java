@@ -336,4 +336,25 @@ public class Rectangle implements Serializable {
 		if (bottom() < pointY)
 			mH = pointY - mY;
 	}
+
+	public void updateAABBToEncloseRectangle(Rectangle other) {
+		if (mX > other.mX){
+			final float lDiffX = mX - other.x();
+			mX = other.x();
+			mW += lDiffX;
+		}
+
+		if (mY > other.mY){
+			final float lDiffY = mY - other.y();
+			mY = other.y();
+			mH += lDiffY;
+		}
+
+		if (right() < other.right())
+			mW = other.right() - mX;
+
+		if (bottom() < other.bottom())
+			mH = other.bottom() - mY;
+
+	}
 }
