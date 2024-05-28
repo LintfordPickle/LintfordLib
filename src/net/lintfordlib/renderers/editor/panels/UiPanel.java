@@ -242,6 +242,8 @@ public abstract class UiPanel implements IScrollBarArea, UIWindowChangeListener,
 			if (mActiveLayerButtonRect.intersectsAA(lMouseX, lMouseY))
 				if (core.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
 					handleSetLayerToggle(core);
+
+					widgetOnClick(core.input(), BUTTON_SET_LAYER);
 					return true;
 				}
 		}
