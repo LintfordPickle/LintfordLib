@@ -50,6 +50,12 @@ public abstract class PoolInstanceManager<T extends Object> {
 	// --------------------------------------
 
 	public void clearInstances() {
+		final var lNumInstances = mInstances.size();
+		for (int i = 0; i < lNumInstances; i++) {
+			if (mInstancePool.contains(mInstances.get(i)) == false)
+				mInstancePool.add(mInstances.get(i));
+		}
+
 		mInstances.clear();
 	}
 
