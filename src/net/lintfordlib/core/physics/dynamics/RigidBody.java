@@ -20,6 +20,10 @@ public class RigidBody extends PhysicsGridEntity {
 	public static final Vector2f Forward = new Vector2f(1.f, 0.f);
 	public static final Vector2f Left = new Vector2f(0.f, -1.f);
 
+	public enum BodyType {
+		Dynamic, Static, Kenetic,
+	}
+
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
@@ -55,7 +59,7 @@ public class RigidBody extends PhysicsGridEntity {
 	private int mCategoryBit; // I'm a ..
 	private int mMaskBit; // I collide with ...
 
-	private boolean mIsStatic;
+	private BodyType mBodyType;
 	private boolean mIsSensor;
 
 	public boolean debugIsSelected;
@@ -70,14 +74,19 @@ public class RigidBody extends PhysicsGridEntity {
 	}
 
 	public void setAngularVelocity(float angularVelocity) {
-		if (isStatic())
+		if (mBodyType == BodyType.Static)
 			return;
 
 		this.angularVelocity = angularVelocity;
 	}
 
+	public void setLinearVelocity(float vx, float vy) {
+		this.vx = vx;
+		this.vy = vy;
+	}
+
 	public void applyAngularVelocity(float angularVelocity) {
-		if (isStatic())
+		if (mBodyType == BodyType.Static)
 			return;
 
 		this.angularVelocity += angularVelocity;
@@ -102,10 +111,6 @@ public class RigidBody extends PhysicsGridEntity {
 	public float invInertia() {
 		return invInertia;
 	}
-
-//	public List<Vector2f> getLocalVertices() {
-//		return mShape.getReadOnlyVertices();
-//	}
 
 	public List<Vector2f> getWorldVertices() {
 		return mShape.getTransformedVertices(transform);
@@ -141,8 +146,11 @@ public class RigidBody extends PhysicsGridEntity {
 		mIsSensor = isSensor;
 	}
 
-	public boolean isStatic() {
-		return mIsStatic;
+	/**
+	 * Returns the {@link BodyType} set for this RigidBody instance.
+	 */
+	public BodyType bodyType() {
+		return mBodyType;
 	}
 
 	public BaseShape shape() {
@@ -173,14 +181,16 @@ public class RigidBody extends PhysicsGridEntity {
 	// Constructor
 	// --------------------------------------
 
-	public RigidBody(boolean isStatic) {
-		this(isStatic, 0, 0, 0);
+	public RigidBody(BodyType bodyType) {
+		this(bodyType, 0, 0, 0);
 	}
 
-	public RigidBody(boolean isStatic, float unitPositionX, float unitPositionY, float angle) {
+	public RigidBody(BodyType bodyType, float unitPositionX, float unitPositionY, float angle) {
 		super(getNewRigidBodyUid());
 
-		this.mIsStatic = isStatic;
+		assert (bodyType != null) : "Cannot create RigidBody instances with BodyType null";
+
+		this.mBodyType = bodyType;
 
 		this.linearDampingX = 1.f;
 		this.linearDampingY = 1.f;
@@ -195,8 +205,10 @@ public class RigidBody extends PhysicsGridEntity {
 	// --------------------------------------
 
 	public void step(float time, float gravityX, float gravityY) {
-		if (isStatic())
+		if (mBodyType == BodyType.Static)
 			return;
+
+		// BodyType.Dynamic and BodyType.kenetic bodies are adjusted during the step phase.
 
 		vx += accX * time;
 		vy += accY * time;
@@ -207,10 +219,6 @@ public class RigidBody extends PhysicsGridEntity {
 
 		transform.p.x += vx * time;
 		transform.p.y += vy * time;
-
-		// TODO: Check the linear damping
-		// vx *= 1.f / (1.f + time * linearDampingX);
-		// vy *= 1.f / (1.f + time * linearDampingY);
 
 		vx *= linearDampingX;
 		vy *= linearDampingY;
@@ -240,7 +248,7 @@ public class RigidBody extends PhysicsGridEntity {
 		inertia = 0.f;
 		invInertia = 0.f;
 
-		if (isStatic()) {
+		if (mBodyType == BodyType.Static) {
 			return;
 		}
 

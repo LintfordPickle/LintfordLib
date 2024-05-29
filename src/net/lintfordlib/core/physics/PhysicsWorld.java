@@ -11,6 +11,7 @@ import net.lintfordlib.core.physics.collisions.ContactManifold;
 import net.lintfordlib.core.physics.collisions.SATContacts;
 import net.lintfordlib.core.physics.collisions.IntersectionTests;
 import net.lintfordlib.core.physics.dynamics.RigidBody;
+import net.lintfordlib.core.physics.dynamics.RigidBody.BodyType;
 import net.lintfordlib.core.physics.interfaces.ICollisionCallback;
 import net.lintfordlib.core.physics.resolvers.CollisionResolverRotationAndFriction;
 import net.lintfordlib.core.physics.resolvers.CollisionResolverRotations;
@@ -321,7 +322,7 @@ public class PhysicsWorld {
 					if (lBodyA == lBodyB)
 						continue;
 
-					if (lBodyA.isStatic() && lBodyB.isStatic())
+					if (lBodyA.bodyType() == BodyType.Static && lBodyB.bodyType() == BodyType.Static)
 						continue;
 
 					final var lWeBothCollideWithOthers = lBodyA.categoryBits() != 0 && lBodyB.categoryBits() != 0;
@@ -406,12 +407,14 @@ public class PhysicsWorld {
 		final var lMtvX = contact.normal.x * contact.depth;
 		final var lMtvY = contact.normal.y * contact.depth;
 
-		if (lBodyA.isStatic()) {
+		if (lBodyA.bodyType() == BodyType.Static || lBodyA.bodyType() == BodyType.Kenetic) {
 			lBodyB.transform.p.x += lMtvX;
 			lBodyB.transform.p.y += lMtvY;
-		} else if (lBodyB.isStatic()) {
+
+		} else if (lBodyB.bodyType() == BodyType.Static || lBodyB.bodyType() == BodyType.Dynamic) {
 			lBodyA.transform.p.x -= lMtvX;
 			lBodyA.transform.p.y -= lMtvY;
+
 		} else {
 			lBodyA.transform.p.x += -lMtvX / 2.f;
 			lBodyA.transform.p.y += -lMtvY / 2.f;
