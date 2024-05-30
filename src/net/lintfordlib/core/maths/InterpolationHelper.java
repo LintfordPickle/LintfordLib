@@ -13,6 +13,7 @@ public class InterpolationHelper {
 		return ((((value1 * num7) + (value2 * num6)) + (tangent1 * num5)) + (tangent2 * num4));
 	}
 
+	// amount is normalized amount [0, 1]
 	public static float lerp(float value1, float value2, float amount) {
 		return (value1 + ((value2 - value1) * amount));
 	}
