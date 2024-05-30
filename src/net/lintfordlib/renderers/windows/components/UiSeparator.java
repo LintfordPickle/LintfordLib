@@ -54,9 +54,13 @@ public class UiSeparator extends UIWidget {
 	// --------------------------------------
 
 	public UiSeparator(UiWindow parentWindow) {
+		this(parentWindow, 3.f);
+	}
+
+	public UiSeparator(UiWindow parentWindow, float separatorHeight) {
 		super(parentWindow);
 
-		separatorHeight(3.f);
+		separatorHeight(separatorHeight);
 		mSeparatorColor.setFromColor(ColorConstants.TextEntryColor);
 	}
 
