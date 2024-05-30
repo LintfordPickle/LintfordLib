@@ -1,8 +1,9 @@
 package net.lintfordlib.controllers;
 
 import net.lintfordlib.core.LintfordCore;
+import net.lintfordlib.core.input.mouse.IInputProcessor;
 
-public abstract class BaseController {
+public abstract class BaseController implements IInputProcessor {
 
 	// --------------------------------------
 	// Variables
@@ -18,6 +19,8 @@ public abstract class BaseController {
 	protected boolean mIsActive;
 	protected boolean mIsInitialized;
 	protected boolean mUniqueController;
+
+	private float mMouseInputTimer;
 
 	// --------------------------------------
 	// Properties
@@ -102,6 +105,37 @@ public abstract class BaseController {
 	}
 
 	public void update(LintfordCore core) {
+		if (mMouseInputTimer > 0.f)
+			mMouseInputTimer -= core.gameTime().elapsedTimeMilli();
+	}
 
+	// --------------------------------------
+	// IInputProcessor-Methods
+	// --------------------------------------
+
+	@Override
+	public boolean isCoolDownElapsed() {
+		return mMouseInputTimer <= 0;
+	}
+
+	@Override
+	public void resetCoolDownTimer(float cooldownInMs) {
+		mMouseInputTimer = cooldownInMs;
+
+	}
+
+	@Override
+	public boolean allowKeyboardInput() {
+		return true;
+	}
+
+	@Override
+	public boolean allowGamepadInput() {
+		return false;
+	}
+
+	@Override
+	public boolean allowMouseInput() {
+		return false;
 	}
 }
