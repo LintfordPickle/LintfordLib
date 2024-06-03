@@ -218,20 +218,23 @@ public class UiInputFloat extends UIWidget implements IBufferedTextInputCallback
 	}
 
 	public void setMinMax(float minValue, float maxValue) {
-		if (minValue > maxValue) {
-			var t = minValue;
-			minValue = maxValue;
-			maxValue = t;
-
-			mMinValue = minValue;
-			mMaxValue = maxValue;
-			mIsValueBounded = true;
-
-		} else if (minValue == 0 && maxValue == 0) {
+		if (minValue == 0 && maxValue == 0) {
 			mMinValue = 0;
 			mMaxValue = 0;
 			mIsValueBounded = false;
+
+			return;
 		}
+
+		if (minValue > maxValue) {
+			final var t = minValue;
+			minValue = maxValue;
+			maxValue = t;
+		}
+
+		mMinValue = minValue;
+		mMaxValue = maxValue;
+		mIsValueBounded = true;
 
 	}
 
