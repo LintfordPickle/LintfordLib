@@ -5,6 +5,12 @@ import net.lintfordlib.core.entities.Entity;
 public abstract class ClosedPooledBaseData extends Entity {
 
 	// --------------------------------------
+	// Constants
+	// --------------------------------------
+
+	private static final long serialVersionUID = -4949156027289622380L;
+
+	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
@@ -34,7 +40,7 @@ public abstract class ClosedPooledBaseData extends Entity {
 
 	}
 
-	public void initInstance() {
+	void initInstance() {
 		internalInUse = true;
 	}
 

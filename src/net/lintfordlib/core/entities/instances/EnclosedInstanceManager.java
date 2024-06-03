@@ -11,6 +11,8 @@ public abstract class EnclosedInstanceManager<T extends ClosedPooledBaseData> ex
 	// Constants
 	// --------------------------------------
 
+	private static final long serialVersionUID = 6320366392042711375L;
+
 	public static final int DEFAULT_ENLARGEN_POOL_AMOUNT = 8;
 	public static final int MAXIMUM_ENLARGEN_POOL_AMOUNT = 256;
 
