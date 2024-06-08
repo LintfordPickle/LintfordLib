@@ -46,6 +46,7 @@ public class MenuListBox extends MenuEntry implements IScrollBarArea {
 	protected IListBoxItemDoubleClick mItemDoubleClickListener;
 	protected int mSelectedItem = -1;
 	protected boolean mClickActive;
+	protected int mItemHeight;
 
 	// --------------------------------------
 	// Properties
@@ -88,18 +89,27 @@ public class MenuListBox extends MenuEntry implements IScrollBarArea {
 
 	}
 
+	public int itemHeight() {
+		return mItemHeight;
+	}
+
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
 	public MenuListBox(ScreenManager screenManager, MenuScreen parentScreen) {
-		this(screenManager, parentScreen, null);
+		this(screenManager, parentScreen, 25, null);
 	}
 
-	public MenuListBox(ScreenManager screenManager, MenuScreen parentScreen, String menuEntryLabel) {
+	public MenuListBox(ScreenManager screenManager, MenuScreen parentScreen, int itemHeight) {
+		this(screenManager, parentScreen, itemHeight, null);
+	}
+
+	public MenuListBox(ScreenManager screenManager, MenuScreen parentScreen, int itemHeight, String menuEntryLabel) {
 		super(screenManager, parentScreen, menuEntryLabel);
 
 		mItems = new ArrayList<>();
+		mItemHeight = itemHeight;
 
 		mContentArea = new ScrollBarContentRectangle(this);
 
@@ -139,10 +149,16 @@ public class MenuListBox extends MenuEntry implements IScrollBarArea {
 
 			if (itemSelected || core.input().mouse().isMouseLeftButtonDownTimed(this) && core.input().mouse().tryAcquireMouseLeftClick(hashCode())) {
 				final var lMouseRelY = core.HUD().getMouseWorldSpaceY() - mY;
-				mSelectedItem = (int) (((lMouseRelY - mScrollBar.currentYPos())) / (25.f + LISTBOX_ITEM_VPADDING));
+
+				mSelectedItem = (int) (((lMouseRelY - mScrollBar.currentYPos())) / (mItemHeight + LISTBOX_ITEM_VPADDING));
 
 				if (mClickListener != null)
 					mClickListener.onMenuEntryChanged(this);
+
+				if (mSelecterListener != null) {
+					final var litem = mItems.get(mSelectedItem);
+					mSelecterListener.onListBoxItemSelected(litem, mSelectedItem);
+				}
 
 				return true;
 			}
