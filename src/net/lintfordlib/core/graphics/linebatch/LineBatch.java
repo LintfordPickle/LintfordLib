@@ -11,36 +11,22 @@ import org.lwjgl.system.MemoryUtil;
 import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.core.camera.ICamera;
 import net.lintfordlib.core.debug.Debug;
+import net.lintfordlib.core.debug.GLDebug;
 import net.lintfordlib.core.debug.stats.DebugStats;
 import net.lintfordlib.core.geometry.Rectangle;
+import net.lintfordlib.core.graphics.GraphicsCompatibility;
+import net.lintfordlib.core.graphics.common.VertexDataStructurePC;
 import net.lintfordlib.core.graphics.shaders.ShaderMVP_PT;
 import net.lintfordlib.core.maths.Matrix4f;
 
 public class LineBatch {
-
-	private class VertexDataStructure {
-
-		public static final int elementBytes = 4;
-
-		public static final int positionElementCount = 4;
-		public static final int colorElementCount = 4;
-
-		public static final int elementCount = positionElementCount + colorElementCount;
-
-		public static final int positionBytesCount = positionElementCount * elementBytes;
-		public static final int colorBytesCount = colorElementCount * elementBytes;
-
-		public static final int positionByteOffset = 0;
-		public static final int colorByteOffset = positionByteOffset + positionBytesCount;
-
-		public static final int stride = positionBytesCount + colorBytesCount;
-	}
 
 	// --------------------------------------
 	// Constants
 	// --------------------------------------
 
 	public static final int MAX_LINES = 5000;
+
 	public static final int NUM_VERTS_PER_LINE = 2;
 
 	private static final String VERT_FILENAME = "/res/shaders/shader_basic_pc.vert";
@@ -56,6 +42,7 @@ public class LineBatch {
 	private float mR, mG, mB, mA;
 
 	private ICamera mCamera;
+	private GraphicsCompatibility compatibility;
 	private ShaderMVP_PT mShader;
 	private Matrix4f mModelMatrix;
 	private FloatBuffer mBuffer;
@@ -88,6 +75,8 @@ public class LineBatch {
 
 	public void lineAntialiasing(boolean enableSmoothing) {
 		mAntiAliasing = enableSmoothing;
+
+		lineWidth(lineWidth());
 	}
 
 	public boolean lineAntialiasing() {
@@ -95,10 +84,20 @@ public class LineBatch {
 	}
 
 	public void lineWidth(float newWidth) {
-		if (newWidth < 1.f)
-			newWidth = 1.f;
-		if (newWidth > 10.f)
-			newWidth = 10.f;
+		if (mAntiAliasing) {
+			if (newWidth < compatibility.aliasedLineWidthMin())
+				newWidth = compatibility.aliasedLineWidthMin();
+
+			if (newWidth > compatibility.aliasedLineWidthMax())
+				newWidth = compatibility.aliasedLineWidthMax();
+		} else {
+			if (newWidth < compatibility.smoothLineWidthMin())
+				newWidth = compatibility.smoothLineWidthMin();
+
+			if (newWidth > compatibility.smoothLineWidthMax())
+				newWidth = compatibility.smoothLineWidthMax();
+		}
+
 		mGLLineWidth = newWidth;
 	}
 
@@ -138,7 +137,7 @@ public class LineBatch {
 
 		mA = mR = mG = mB = 1f;
 
-		mGLLineWidth = 2.f;
+		mGLLineWidth = 1.f;
 		mModelMatrix = new Matrix4f();
 		mResourcesLoaded = false;
 	}
@@ -151,6 +150,8 @@ public class LineBatch {
 		if (mResourcesLoaded)
 			return;
 
+		compatibility = resourceManager.graphicsCompatibility();
+
 		mShader.loadResources(resourceManager);
 
 		if (mVboId == -1) {
@@ -158,7 +159,7 @@ public class LineBatch {
 			Debug.debugManager().logger().v(getClass().getSimpleName(), "[OpenGl] glGenBuffers: vbo " + mVboId);
 		}
 
-		mBuffer = MemoryUtil.memAllocFloat(MAX_LINES * NUM_VERTS_PER_LINE * VertexDataStructure.elementCount);
+		mBuffer = MemoryUtil.memAllocFloat(MAX_LINES * NUM_VERTS_PER_LINE * VertexDataStructurePC.elementCount);
 
 		mResourcesLoaded = true;
 
@@ -181,13 +182,13 @@ public class LineBatch {
 
 		GL30.glBindVertexArray(mVaoId);
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, mVboId);
-		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, MAX_LINES * NUM_VERTS_PER_LINE * VertexDataStructure.stride, GL15.GL_DYNAMIC_DRAW);
+		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, MAX_LINES * NUM_VERTS_PER_LINE * VertexDataStructurePC.stride, GL15.GL_DYNAMIC_DRAW);
 
 		GL20.glEnableVertexAttribArray(0);
 		GL20.glEnableVertexAttribArray(1);
 
-		GL20.glVertexAttribPointer(0, VertexDataStructure.positionElementCount, GL11.GL_FLOAT, false, VertexDataStructure.stride, VertexDataStructure.positionByteOffset);
-		GL20.glVertexAttribPointer(1, VertexDataStructure.colorElementCount, GL11.GL_FLOAT, false, VertexDataStructure.stride, VertexDataStructure.colorByteOffset);
+		GL20.glVertexAttribPointer(0, VertexDataStructurePC.positionElementCount, GL11.GL_FLOAT, false, VertexDataStructurePC.stride, VertexDataStructurePC.positionByteOffset);
+		GL20.glVertexAttribPointer(1, VertexDataStructurePC.colorElementCount, GL11.GL_FLOAT, false, VertexDataStructurePC.stride, VertexDataStructurePC.colorByteOffset);
 
 		GL30.glBindVertexArray(0);
 
@@ -427,14 +428,19 @@ public class LineBatch {
 
 		GL30.glBindVertexArray(mVaoId);
 
-		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, mVboId);
+		GLDebug.checkGLErrorsException();
+
 		GL15.glBufferSubData(GL15.GL_ARRAY_BUFFER, 0, mBuffer);
+
+		GLDebug.checkGLErrorsException();
 
 		mShader.projectionMatrix(mCamera.projection());
 		mShader.viewMatrix(mCamera.view());
 		mShader.modelMatrix(mModelMatrix);
 
 		mShader.bind();
+
+		GLDebug.checkGLErrorsException();
 
 		if (Debug.debugManager().debugManagerEnabled()) {
 			Debug.debugManager().stats().incTag(DebugStats.TAG_ID_DRAWCALLS);
@@ -447,7 +453,10 @@ public class LineBatch {
 			GL11.glDisable(GL11.GL_LINE_SMOOTH);
 		}
 
+		GLDebug.checkGLErrorsException();
+
 		GL11.glLineWidth(mGLLineWidth);
+
 		GL11.glDrawArrays(mGLLineType, 0, mVertexCount);
 
 		GL30.glBindVertexArray(0);

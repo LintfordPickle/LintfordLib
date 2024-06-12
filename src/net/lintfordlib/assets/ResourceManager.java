@@ -21,6 +21,7 @@ import net.lintfordlib.core.audio.AudioManager;
 import net.lintfordlib.core.audio.music.MusicManager;
 import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.geometry.spritegraph.SpriteGraphRepository;
+import net.lintfordlib.core.graphics.GraphicsCompatibility;
 import net.lintfordlib.core.graphics.fonts.BitmapFontManager;
 import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetManager;
 import net.lintfordlib.core.graphics.textures.TextureManager;
@@ -40,6 +41,7 @@ public class ResourceManager {
 	// --------------------------------------
 
 	protected MasterConfig mConfig;
+	protected GraphicsCompatibility mGraphicsCompatibility;
 
 	protected Path mResourceTexturePath;
 	protected Path mResourceSpriteSheetPath;
@@ -72,6 +74,10 @@ public class ResourceManager {
 
 	public MasterConfig config() {
 		return mConfig;
+	}
+
+	public GraphicsCompatibility graphicsCompatibility() {
+		return mGraphicsCompatibility;
 	}
 
 	public SpriteSheetManager spriteSheetManager() {
@@ -110,6 +116,8 @@ public class ResourceManager {
 	public ResourceManager(MasterConfig config) {
 		mConfig = config;
 
+		mGraphicsCompatibility = new GraphicsCompatibility(this);
+
 		mFontManager = new BitmapFontManager();
 		mFontManager.initialize(this);
 		mTextureManager = new TextureManager();
@@ -126,6 +134,8 @@ public class ResourceManager {
 	// --------------------------------------
 
 	public void loadResources() {
+		mGraphicsCompatibility.initialize();
+
 		mTextureManager.loadResources(this);
 		mAudioManager.loadResources(this);
 		mSpriteGraphRepository.loadResources(this);
