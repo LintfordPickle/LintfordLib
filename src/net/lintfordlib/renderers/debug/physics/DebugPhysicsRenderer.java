@@ -139,7 +139,6 @@ public class DebugPhysicsRenderer extends BaseRenderer {
 		final var lVertices = body.getWorldVertices();
 		final var lShape = body.shape();
 
-		lLineBatch.lineWidth(2.f);
 		switch (lShape.shapeType()) {
 		case Polygon: {
 

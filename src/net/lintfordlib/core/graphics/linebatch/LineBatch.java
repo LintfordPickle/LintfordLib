@@ -11,7 +11,6 @@ import org.lwjgl.system.MemoryUtil;
 import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.core.camera.ICamera;
 import net.lintfordlib.core.debug.Debug;
-import net.lintfordlib.core.debug.GLDebug;
 import net.lintfordlib.core.debug.stats.DebugStats;
 import net.lintfordlib.core.geometry.Rectangle;
 import net.lintfordlib.core.graphics.GraphicsCompatibility;
@@ -428,19 +427,14 @@ public class LineBatch {
 
 		GL30.glBindVertexArray(mVaoId);
 
-		GLDebug.checkGLErrorsException();
-
+		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, mVboId);
 		GL15.glBufferSubData(GL15.GL_ARRAY_BUFFER, 0, mBuffer);
-
-		GLDebug.checkGLErrorsException();
 
 		mShader.projectionMatrix(mCamera.projection());
 		mShader.viewMatrix(mCamera.view());
 		mShader.modelMatrix(mModelMatrix);
 
 		mShader.bind();
-
-		GLDebug.checkGLErrorsException();
 
 		if (Debug.debugManager().debugManagerEnabled()) {
 			Debug.debugManager().stats().incTag(DebugStats.TAG_ID_DRAWCALLS);
@@ -453,10 +447,7 @@ public class LineBatch {
 			GL11.glDisable(GL11.GL_LINE_SMOOTH);
 		}
 
-		GLDebug.checkGLErrorsException();
-
 		GL11.glLineWidth(mGLLineWidth);
-
 		GL11.glDrawArrays(mGLLineType, 0, mVertexCount);
 
 		GL30.glBindVertexArray(0);

@@ -384,8 +384,6 @@ public class RendererManager implements IInputClickedFocusManager {
 
 	public void drawRenderers(LintfordCore core) {
 
-		GL11.glEnable(GL11.GL_DEPTH_TEST);
-
 		final int lNumBaseRenderers = mRenderers.size();
 		for (int i = 0; i < lNumBaseRenderers; i++) {
 			final var lRenderer = mRenderers.get(i);
@@ -397,8 +395,6 @@ public class RendererManager implements IInputClickedFocusManager {
 	}
 
 	public void drawWindowRenderers(LintfordCore core) {
-
-		GL11.glDisable(GL11.GL_DEPTH_TEST);
 
 		final int lNumWindowRenderers = mWindowRenderers.size();
 		for (int i = 0; i < lNumWindowRenderers; i++) {
