@@ -409,9 +409,9 @@ public abstract class LintfordCore {
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-		// Enable depth testing
+		// The default context state is DEPTH_TEST disabled
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
-		GL11.glDepthFunc(GL11.GL_LEQUAL);
+		GL11.glDepthFunc(GL11.GL_LESS);
 
 		// 2D Game - no face culling required (no 3d meshes)
 		GL11.glFrontFace(GL11.GL_CCW);
@@ -565,7 +565,7 @@ public abstract class LintfordCore {
 				mCoreTime.accumulatedElapsedTimeMilli = 0.0;
 
 				onHandleInput();
-				
+
 				onUpdate();
 			}
 
