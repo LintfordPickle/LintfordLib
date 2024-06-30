@@ -114,11 +114,12 @@ public class UiIntSlider extends UIWidget {
 
 	@Override
 	public boolean handleInput(LintfordCore core) {
-		if (!mIsEnabled) {
+		if (!mIsEnabled)
 			return false;
-		}
 
-		if (intersectsAA(core.HUD().getMouseCameraSpace()) && core.input().mouse().isMouseOverThisComponent(hashCode())) {
+		var lDoWeOwnMouse = core.input().mouse().isMouseLeftClickOwnerAssigned(hashCode()) && core.input().mouse().isMouseLeftButtonDown();
+
+		if (lDoWeOwnMouse || intersectsAA(core.HUD().getMouseCameraSpace()) && core.input().mouse().isMouseOverThisComponent(hashCode())) {
 			if (core.input().mouse().tryAcquireMouseLeftClick(hashCode())) {
 				final float lMouseX = core.HUD().getMouseCameraSpace().x;
 				updateValue(MathHelper.clamp(lMouseX - mX, 0, mW));

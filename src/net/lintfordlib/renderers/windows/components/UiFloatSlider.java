@@ -31,6 +31,8 @@ public class UiFloatSlider extends UIWidget {
 	private float mCurrentRelPosition;
 	private float mCurrentValue;
 
+	private float mHorizontalMargins;
+
 	private boolean mDrawLabel;
 
 	// --------------------------------------
@@ -67,7 +69,7 @@ public class UiFloatSlider extends UIWidget {
 
 	public void currentValue(float newValue) {
 		mCurrentValue = MathHelper.clamp(newValue, mMinValue, mMaxValue);
-		mCurrentRelPosition = MathHelper.scaleToRange(mCurrentValue, mMinValue, mMaxValue, 0, mW);
+		mCurrentRelPosition = MathHelper.scaleToRange(mCurrentValue, mMinValue, mMaxValue, 0, mW - mHorizontalMargins*2.f);
 	}
 
 	public float currentValue() {
@@ -98,6 +100,8 @@ public class UiFloatSlider extends UIWidget {
 		mSliderLabel = NO_LABEL_TEXT;
 		mW = 200;
 		mH = 25;
+
+		mHorizontalMargins = 5.f;
 	}
 
 	// --------------------------------------
@@ -109,10 +113,12 @@ public class UiFloatSlider extends UIWidget {
 		if (!mIsEnabled)
 			return false;
 
-		if (intersectsAA(core.HUD().getMouseCameraSpace()) && core.input().mouse().isMouseOverThisComponent(hashCode())) {
+		var lDoWeOwnMouse = core.input().mouse().isMouseLeftClickOwnerAssigned(hashCode()) && core.input().mouse().isMouseLeftButtonDown();
+
+		if (lDoWeOwnMouse || intersectsAA(core.HUD().getMouseCameraSpace()) && core.input().mouse().isMouseOverThisComponent(hashCode())) {
 			if (core.input().mouse().tryAcquireMouseLeftClick(hashCode())) {
 				final float lMouseX = core.HUD().getMouseCameraSpace().x;
-				updateValue(MathHelper.clamp(lMouseX - mX, 0, mW));
+				updateValue(MathHelper.clamp(lMouseX - mX, 0, mW - mHorizontalMargins * 2.f));
 
 				if (mUiWidgetListenerCallback != null)
 					mUiWidgetListenerCallback.widgetOnDataChanged(core.input(), mUiWidgetListenerUid);
@@ -135,9 +141,13 @@ public class UiFloatSlider extends UIWidget {
 
 		spriteBatch.begin(core.HUD());
 		final var lBackgroundColor = mIsEnabled ? ColorConstants.getColorWithRGBMod(ColorConstants.PrimaryColor, 1.f) : ColorConstants.getBlackWithAlpha(.4f);
-		spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, mX, lLowerYPosition - lRailHeight * .5f, mW, lRailHeight, 0f, lBackgroundColor);
+
+		// background bar
+		spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, mX + mHorizontalMargins, lLowerYPosition - lRailHeight * .5f, mW - mHorizontalMargins * 2.f, lRailHeight, 0f, lBackgroundColor);
 		final var lNubbinColor = mIsEnabled ? ColorConstants.getColorWithRGBMod(ColorConstants.TertiaryColor, 1.f) : ColorConstants.getBlackWithAlpha(.4f);
-		spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, mX + mCurrentRelPosition - lSliderWidth / 2, lLowerYPosition - lHalfHeight * .5f, lSliderWidth, lHalfHeight, 0f, lNubbinColor);
+
+		// position bar
+		spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, mX + mHorizontalMargins + mCurrentRelPosition - lSliderWidth / 2, lLowerYPosition - lHalfHeight * .5f, lSliderWidth, lHalfHeight, 0f, lNubbinColor);
 		spriteBatch.end();
 
 		textFont.begin(core.HUD());
@@ -154,6 +164,6 @@ public class UiFloatSlider extends UIWidget {
 
 	private void updateValue(float relPositionX) {
 		mCurrentRelPosition = relPositionX;
-		mCurrentValue = MathHelper.scaleToRange(mCurrentRelPosition, 0, mW, mMinValue, mMaxValue);
+		mCurrentValue = MathHelper.scaleToRange(mCurrentRelPosition, 0, mW - mHorizontalMargins * 2.f, mMinValue, mMaxValue);
 	}
 }
