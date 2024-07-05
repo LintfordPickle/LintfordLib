@@ -44,7 +44,7 @@ public class PhysicsWorld {
 	private float mGravityX; // mps/s
 	private float mGravityY; // mps/s
 
-	private PhysicsHashGrid<RigidBody> mWorldHashGrid;
+	private PhysicsHashGrid<RigidBody> mPhysicsHashGrid;
 	private final List<RigidBody> mBodies = new ArrayList<>();
 
 	private final LinkedList<CollisionPair> mCollisionPairPool = new LinkedList<>();
@@ -124,7 +124,7 @@ public class PhysicsWorld {
 	 * @return The current instance of {@link PhysicsHashGrid} managing the {@link PhysicsWorld}'s {@link RigidBody}s.
 	 */
 	public PhysicsHashGrid<RigidBody> grid() {
-		return mWorldHashGrid;
+		return mPhysicsHashGrid;
 	}
 
 	/***
@@ -184,7 +184,7 @@ public class PhysicsWorld {
 		if (settings == null)
 			settings = PhysicsSettings.DefaultSettings;
 
-		mWorldHashGrid = new PhysicsHashGrid<>(settings.hashGridWidthInUnits, settings.hashGridHeightInUnits, settings.hashGridCellsWide, settings.hashGridCellsHigh);
+		mPhysicsHashGrid = new PhysicsHashGrid<>(settings.hashGridWidthInUnits, settings.hashGridHeightInUnits, settings.hashGridCellsWide, settings.hashGridCellsHigh);
 
 		enableMtvSeparation = settings.enable_mtv_separation;
 		enableCollisionResponse = settings.enable_collision_resolver;
@@ -273,11 +273,11 @@ public class PhysicsWorld {
 	private void stepBodies(float time) {
 		updateCounter++;
 
-		final var lActiveCellKeys = mWorldHashGrid.getActiveCellKeys();
+		final var lActiveCellKeys = mPhysicsHashGrid.getActiveCellKeys();
 		final int lNumActiveCellKeys = lActiveCellKeys.size();
 		for (int i = 0; i < lNumActiveCellKeys; i++) {
 			final var lCellKey = lActiveCellKeys.get(i);
-			final var lCell = mWorldHashGrid.getCell(lCellKey);
+			final var lCell = mPhysicsHashGrid.getCell(lCellKey);
 			final var lNumEntitiesInCell = lCell.size();
 
 			boolean isCellActive = false;
@@ -290,7 +290,7 @@ public class PhysicsWorld {
 				lBody._updateCounter = updateCounter;
 				lBody.step(time, mGravityX, mGravityY);
 
-				mWorldHashGrid.updateEntity(lBody);
+				mPhysicsHashGrid.updateEntity(lBody);
 
 				isCellActive = isCellActive || lBody._isActive;
 			}
@@ -298,11 +298,11 @@ public class PhysicsWorld {
 	}
 
 	private void broadPhase() {
-		final var lActiveCellKeys = mWorldHashGrid.getActiveCellKeys();
+		final var lActiveCellKeys = mPhysicsHashGrid.getActiveCellKeys();
 		final int lNumActiveCellKeys = lActiveCellKeys.size();
 		for (int i = lNumActiveCellKeys - 1; i >= 0; i--) {
 			final var lCellKey = lActiveCellKeys.get(i);
-			final var lCell = mWorldHashGrid.getCell(lCellKey);
+			final var lCell = mPhysicsHashGrid.getCell(lCellKey);
 			final var lNumEntitiesInCell = lCell.size();
 
 			if (lNumEntitiesInCell == 0) {
@@ -325,8 +325,13 @@ public class PhysicsWorld {
 					if (lBodyA.bodyType() == BodyType.Static && lBodyB.bodyType() == BodyType.Static)
 						continue;
 
-					final var lWeBothCollideWithOthers = lBodyA.categoryBits() != 0 && lBodyB.categoryBits() != 0;
-					final var passedFilterCollision = lWeBothCollideWithOthers == false || (lBodyA.maskBits() & lBodyB.categoryBits()) != 0 && (lBodyA.categoryBits() & lBodyB.maskBits()) != 0;
+					if (lBodyA.categoryBits() == 0 || lBodyB.categoryBits() == 0)
+						continue;
+
+					if (lBodyA.maskBits() == 0 || lBodyB.maskBits() == 0)
+						continue;
+
+					final var passedFilterCollision = (lBodyA.maskBits() & lBodyB.categoryBits()) != 0 && (lBodyA.categoryBits() & lBodyB.maskBits()) != 0;
 
 					if (!passedFilterCollision)
 						continue;
@@ -425,7 +430,7 @@ public class PhysicsWorld {
 	}
 
 	public void addBody(RigidBody newBody) {
-		mWorldHashGrid.addEntity(newBody);
+		mPhysicsHashGrid.addEntity(newBody);
 
 		mBodies.add(newBody);
 	}
@@ -436,7 +441,7 @@ public class PhysicsWorld {
 			return false;
 		}
 
-		mWorldHashGrid.removeEntity(body);
+		mPhysicsHashGrid.removeEntity(body);
 		return mBodies.remove(body);
 	}
 
