@@ -11,7 +11,8 @@ public class PlayerSessionViewContainer {
 	// Variables
 	// ---------------------------------------------
 
-	private final Rectangle mViewport = new Rectangle();
+	private final Rectangle mGameViewport = new Rectangle();
+	private final Rectangle mHudViewport = new Rectangle();
 
 	private ICamera mPlayerCamera;
 	private RenderTarget mRenderTarget;
@@ -31,8 +32,12 @@ public class PlayerSessionViewContainer {
 	// Properties
 	// ---------------------------------------------
 
-	public Rectangle viewport() {
-		return mViewport;
+	public Rectangle gameViewport() {
+		return mGameViewport;
+	}
+
+	public Rectangle hudViewport() {
+		return mHudViewport;
 	}
 
 	public ICamera playerCamera() {

@@ -127,8 +127,11 @@ public abstract class PlayerSessionsManager<T extends IPlayerSession> {
 
 	private void updatePlayerViewports(LintfordCore core) {
 		final var lDisplayConfig = core.config().display();
-		final float lWindowWidth = lDisplayConfig.windowWidth();
-		final float lWindowHeight = lDisplayConfig.windowHeight();
+		final float lGameWindowWidth = lDisplayConfig.gameResolutionWidth();
+		final float lGameWindowHeight = lDisplayConfig.gameResolutionHeight();
+
+		final float lHudWindowWidth = lDisplayConfig.windowWidth();
+		final float lHudWindowHeight = lDisplayConfig.windowHeight();
 
 		// Create the viewports depending on how many players joined this game
 		int numPlayers = numActivePlayers();
@@ -136,25 +139,26 @@ public abstract class PlayerSessionsManager<T extends IPlayerSession> {
 		switch (numPlayers) {
 		default:
 		case 1:
-			mPlayerSessions.get(0).getViewContainer().viewport().set(-lWindowWidth * .5f, -lWindowHeight * .5f, lWindowWidth, lWindowHeight);
+			mPlayerSessions.get(0).getViewContainer().gameViewport().set(-lGameWindowWidth * .5f, -lGameWindowHeight * .5f, lGameWindowWidth, lGameWindowHeight);
+			mPlayerSessions.get(0).getViewContainer().hudViewport().set(-lHudWindowWidth * .5f, -lHudWindowHeight * .5f, lHudWindowWidth, lHudWindowHeight);
+
 			break;
 
 		case 2:
-			mPlayerSessions.get(0).getViewContainer().viewport().set(-lWindowWidth * .5f, -lWindowHeight * .5f, lWindowWidth * .5f - 10f, lWindowHeight);
-			mPlayerSessions.get(1).getViewContainer().viewport().set(10, -lWindowHeight * .5f, lWindowWidth * .5f - 10f, lWindowHeight);
+
+			final float lHalfWidth = lGameWindowWidth * .5f;
+			final float lHalfHeight = lGameWindowHeight * .5f;
+
+			mPlayerSessions.get(0).getViewContainer().gameViewport().set(-lHalfWidth, -lHalfHeight, lHalfWidth, lHalfHeight * 2);
+			mPlayerSessions.get(1).getViewContainer().gameViewport().set(0, -lHalfHeight, lHalfWidth, lHalfHeight * 2);
 			break;
 
 		case 3:
-			mPlayerSessions.get(0).getViewContainer().viewport().set(-lWindowWidth * .5f, -lWindowHeight * .5f, lWindowWidth * .5f, lWindowHeight * .5f);
-			mPlayerSessions.get(1).getViewContainer().viewport().set(0, -lWindowHeight * .5f, lWindowWidth * .5f, lWindowHeight * .5f);
-			mPlayerSessions.get(2).getViewContainer().viewport().set(-lWindowWidth * .5f, 0, lWindowWidth * .5f, lWindowHeight * .5f);
+
 			break;
 
 		case 4:
-			mPlayerSessions.get(0).getViewContainer().viewport().set(-lWindowWidth * .5f, -lWindowHeight * .5f, lWindowWidth, lWindowHeight);
-			mPlayerSessions.get(1).getViewContainer().viewport().set(0, -lWindowHeight * .5f, lWindowWidth, lWindowHeight);
-			mPlayerSessions.get(2).getViewContainer().viewport().set(-lWindowWidth * .5f, 0, lWindowWidth, lWindowHeight);
-			mPlayerSessions.get(3).getViewContainer().viewport().set(0, 0, lWindowWidth, lWindowHeight);
+
 			break;
 		}
 	}
