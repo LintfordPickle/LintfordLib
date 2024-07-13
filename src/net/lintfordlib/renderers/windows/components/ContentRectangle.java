@@ -22,7 +22,6 @@ public class ContentRectangle {
 
 		// We need to use a stencil buffer to clip the listbox items (which, when scrolling, could appear out-of-bounds of the listbox).
 		GL11.glEnable(GL11.GL_STENCIL_TEST);
-		GL11.glDisable(GL11.GL_DEPTH_TEST);
 
 		GL11.glStencilFunc(GL11.GL_ALWAYS, componentUid, 0xFF); // Set any stencil to 1
 		GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_REPLACE); // What should happen to stencil values
@@ -40,7 +39,6 @@ public class ContentRectangle {
 
 		// Start the stencil buffer test
 		GL11.glStencilFunc(GL11.GL_EQUAL, componentUid, 0xFF); // Pass test if stencil value is 1
-		GL11.glEnable(GL11.GL_DEPTH_TEST);
 
 	}
 
