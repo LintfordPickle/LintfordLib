@@ -596,7 +596,7 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 				final float lStringWidth = lMenuFont.getStringWidth(mText, lUiTextScale);
 				final var lTextColor = ColorConstants.getColor(mEnabled == false ? ColorConstants.GREY_DARK : mHasFocus ? ColorConstants.FLAME : ColorConstants.TextHeadingColor);
 				lTextColor.a = lParentScreenAlpha;
-				lMenuFont.drawText(mText, lScreenOffset.x + centerX() - lStringWidth * 0.5f, lScreenOffset.y + centerY() - lMenuFont.fontHeight() * .5f, mZ, lTextColor, lUiTextScale);
+				lMenuFont.drawText(mText, (int) (lScreenOffset.x + centerX() - lStringWidth * 0.5f), (int) (lScreenOffset.y + centerY() - lMenuFont.fontHeight() * .5f), mZ, lTextColor, lUiTextScale);
 
 				lMenuFont.end();
 			}

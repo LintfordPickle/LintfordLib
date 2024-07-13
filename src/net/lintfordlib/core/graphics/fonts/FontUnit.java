@@ -2,7 +2,6 @@ package net.lintfordlib.core.graphics.fonts;
 
 import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.core.camera.ICamera;
-import net.lintfordlib.core.debug.GLDebug;
 import net.lintfordlib.core.graphics.Color;
 import net.lintfordlib.core.graphics.ColorConstants;
 import net.lintfordlib.core.graphics.batching.SpriteBatch;
@@ -192,7 +191,6 @@ public class FontUnit {
 		mFontRenderer.loadResources(resouceManager);
 		mFontDefinition.loadResources(resouceManager);
 		mShaderSubPixel.loadResources(resouceManager);
-		GLDebug.checkGLErrorsException();
 	}
 
 	public void unloadResources() {

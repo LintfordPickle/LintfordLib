@@ -525,7 +525,7 @@ public class TextureManager extends EntityGroupManager {
 				final int lGlWrapSFilter = mapWrapMode(lTextureDataDefinition.filterIndex);
 				final int lGlWrapTFilter = mapWrapMode(lTextureDataDefinition.filterIndex);
 
-				final var lNewTexture = loadTexture(lTextureName, lFilepath, lGlFilterMode, lGlWrapSFilter, lGlWrapTFilter, true, entityGroupUid);
+				final var lNewTexture = loadTexture(lTextureName, lFilepath, lGlFilterMode, lGlWrapSFilter, lGlWrapTFilter, false, entityGroupUid);
 
 				if (lNewTexture != null) {
 					lNewTexture.reloadable(true);

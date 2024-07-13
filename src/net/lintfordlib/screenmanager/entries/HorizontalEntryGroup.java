@@ -141,18 +141,17 @@ public class HorizontalEntryGroup extends MenuEntry {
 
 	@Override
 	public void draw(LintfordCore pCore, Screen pScreen, float pParentZDepth) {
-		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", true)) {
-			final float lR = parentScreen().screenColor.r;
-			final float lG = parentScreen().screenColor.g;
-			final float lB = parentScreen().screenColor.b;
-
-			Debug.debugManager().drawers().drawRectImmediate(pCore.gameCamera(), mX, mY, mW, mH, 0.5f * lR, 0.2f * lG, lB);
-
-		}
-
 		final var lChildEntryCount = mChildEntries.size();
 		for (int i = 0; i < lChildEntryCount; i++) {
 			mChildEntries.get(i).draw(pCore, pScreen, pParentZDepth);
+		}
+
+		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
+			final var lR = parentScreen().screenColor.r;
+			final var lG = parentScreen().screenColor.g;
+			final var lB = parentScreen().screenColor.b;
+
+			Debug.debugManager().drawers().drawRectImmediate(pCore.gameCamera(), mX, mY, mW, mH, 0.5f * lR, 0.2f * lG, lB);
 		}
 	}
 
