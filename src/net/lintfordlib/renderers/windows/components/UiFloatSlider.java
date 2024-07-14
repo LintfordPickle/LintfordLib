@@ -69,7 +69,7 @@ public class UiFloatSlider extends UIWidget {
 
 	public void currentValue(float newValue) {
 		mCurrentValue = MathHelper.clamp(newValue, mMinValue, mMaxValue);
-		mCurrentRelPosition = MathHelper.scaleToRange(mCurrentValue, mMinValue, mMaxValue, 0, mW - mHorizontalMargins*2.f);
+		mCurrentRelPosition = MathHelper.scaleToRange(mCurrentValue, mMinValue, mMaxValue, 0, mW - mHorizontalMargins * 2.f);
 	}
 
 	public float currentValue() {
@@ -90,14 +90,18 @@ public class UiFloatSlider extends UIWidget {
 	// --------------------------------------
 
 	public UiFloatSlider(UiWindow parentWindow) {
-		this(parentWindow, -1);
+		this(parentWindow, NO_LABEL_TEXT, -1);
 	}
 
-	public UiFloatSlider(UiWindow parentWindow, int entryUid) {
+	public UiFloatSlider(UiWindow parentWindow, String label) {
+		this(parentWindow, label, -1);
+	}
+
+	public UiFloatSlider(UiWindow parentWindow, String label, int entryUid) {
 		super(parentWindow);
 
 		mIsDoubleHeight = true;
-		mSliderLabel = NO_LABEL_TEXT;
+		mSliderLabel = label;
 		mW = 200;
 		mH = 25;
 
