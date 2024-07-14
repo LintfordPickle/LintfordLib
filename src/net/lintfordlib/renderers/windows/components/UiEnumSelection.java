@@ -66,7 +66,7 @@ public class UiEnumSelection extends UIWidget {
 		return mButtonLabel;
 	}
 
-	public void buttonLabel(final String pNewLabel) {
+	public void buttonLabel(String pNewLabel) {
 		mButtonLabel = pNewLabel;
 	}
 
@@ -74,7 +74,7 @@ public class UiEnumSelection extends UIWidget {
 		return mUiWidgetListenerUid;
 	}
 
-	public void buttonListenerID(final int pNewLabel) {
+	public void buttonListenerID(int pNewLabel) {
 		mUiWidgetListenerUid = pNewLabel;
 	}
 
@@ -82,11 +82,21 @@ public class UiEnumSelection extends UIWidget {
 		return mItems.get(mSelectedIndex);
 	}
 
+	public void setSelectedItemByUid(int uid) {
+		final var lNumItems = mItems.size();
+		for (int i = 0; i < lNumItems; i++) {
+			if (mItems.get(i).uid == uid) {
+				mSelectedIndex = i;
+				return;
+			}
+		}
+	}
+
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
-	public UiEnumSelection(final UiWindow pParentWindow) {
+	public UiEnumSelection(UiWindow pParentWindow) {
 		super(pParentWindow);
 
 		mButtonLabel = NO_LABEL_TEXT;
