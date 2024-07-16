@@ -281,7 +281,7 @@ public class UiInputFloat extends UIWidget implements IBufferedTextInputCallback
 	// --------------------------------------
 
 	public boolean handleInput(LintfordCore core) {
-		if (mIsReadonly)
+		if (mIsReadonly || !mIsEnabled)
 			return false;
 
 		if (mShowControlArrows && mDecrementRectangle.intersectsAA(core.HUD().getMouseCameraSpace())) {
@@ -392,11 +392,14 @@ public class UiInputFloat extends UIWidget implements IBufferedTextInputCallback
 			ww = mW * .5f;
 		}
 
+		final var lColorMod = !mIsEnabled ? .4f : mIsHoveredOver ? .9f : 1.f;
+		final var lColor = ColorConstants.getColorWithRGBMod(ColorConstants.MenuPanelPrimaryColor, lColorMod);
+		
 		spriteBatch.begin(core.HUD());
-		spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_LEFT, (int) xx, mY, 32, mH, componentZDepth, ColorConstants.MenuPanelPrimaryColor);
+		spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_LEFT, (int) xx, mY, 32, mH, componentZDepth, lColor);
 		if (mW > 32) {
-			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_MID, (int) xx + 32, mY, ww - 64, mH, componentZDepth, ColorConstants.MenuPanelPrimaryColor);
-			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_RIGHT, (int) xx + ww - 32, mY, 32, mH, componentZDepth, ColorConstants.MenuPanelPrimaryColor);
+			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_MID, (int) xx + 32, mY, ww - 64, mH, componentZDepth, lColor);
+			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_RIGHT, (int) xx + ww - 32, mY, 32, mH, componentZDepth, lColor);
 		}
 
 		if (mShowControlArrows) {
