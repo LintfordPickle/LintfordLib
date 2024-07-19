@@ -10,6 +10,7 @@ import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.controllers.editor.EditorHashGridController;
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.graphics.linebatch.LineBatch;
+import net.lintfordlib.core.rendering.RenderPass;
 import net.lintfordlib.renderers.BaseRenderer;
 import net.lintfordlib.renderers.RendererManager;
 
@@ -99,7 +100,7 @@ public class EditorHashGridRenderer extends BaseRenderer {
 	}
 
 	@Override
-	public void draw(LintfordCore core) {
+	public void draw(LintfordCore core, RenderPass renderPass) {
 		if (mRenderHashGrid) {
 			drawSpatialHashGridGrid(core);
 		}

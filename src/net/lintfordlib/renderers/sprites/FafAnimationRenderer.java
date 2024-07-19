@@ -8,6 +8,7 @@ import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.graphics.ColorConstants;
 import net.lintfordlib.core.graphics.sprites.AnimatedSpriteListener;
 import net.lintfordlib.core.graphics.sprites.SpriteInstance;
+import net.lintfordlib.core.rendering.RenderPass;
 import net.lintfordlib.renderers.BaseRenderer;
 import net.lintfordlib.renderers.RendererManager;
 
@@ -65,7 +66,7 @@ public class FafAnimationRenderer extends BaseRenderer implements AnimatedSprite
 	}
 
 	@Override
-	public void draw(LintfordCore core) {
+	public void draw(LintfordCore core, RenderPass renderPass) {
 		if (!isInitialized())
 			return;
 

@@ -1,9 +1,13 @@
 package net.lintfordlib.renderers;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.input.mouse.IInputProcessor;
+import net.lintfordlib.core.rendering.RenderPass;
 
 public abstract class BaseRenderer implements IInputProcessor {
 
@@ -31,9 +35,31 @@ public abstract class BaseRenderer implements IInputProcessor {
 
 	protected float mInputTimer;
 
+	private List<Integer> registeredPasses;
+
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	/**
+	 * Checks to see if this instance if {@link BaseRenderer} is registed to use the current {@link RenderPass} type. Usage: Some renderers are designed to render into the color buffer, and so would register themselves to the RenderPass.COLOR_TYPE_INDEX. Others render into a light buffer etc.
+	 */
+	public boolean isRegisteredForPass(int passTypeIndex) {
+		if (passTypeIndex == 0) {
+			return registeredPasses == null || registeredPasses.contains(0);
+		}
+
+		return registeredPasses != null && registeredPasses.contains(passTypeIndex);
+	}
+
+	public void registerPassTypeIndex(int renderPassTypeIndex) {
+		if (registeredPasses == null)
+			registeredPasses = new ArrayList<>();
+
+		if (!registeredPasses.contains(renderPassTypeIndex))
+			registeredPasses.add(renderPassTypeIndex);
+
+	}
 
 	public void isManagedDraw(boolean newValue) {
 		mIsManagedDraw = newValue;
@@ -140,7 +166,13 @@ public abstract class BaseRenderer implements IInputProcessor {
 		return;
 	}
 
-	public abstract void draw(LintfordCore core);
+	public void draw(LintfordCore core, RenderPass renderPass) {
+
+	}
+
+	// --------------------------------------
+	// Methods
+	// --------------------------------------
 
 	public boolean isCoolDownElapsed() {
 		return mInputTimer <= 0.f;

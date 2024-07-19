@@ -17,7 +17,7 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry exported="true" kind="lib" path="libs/gson-2.10.1.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/LWJGL3"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/lwjgl"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.USER_LIBRARY/LWJGL3-Windows"/>
 	<classpathentry kind="output" path="target/"/>
 </classpath>

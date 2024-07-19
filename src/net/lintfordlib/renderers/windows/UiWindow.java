@@ -15,6 +15,7 @@ import net.lintfordlib.core.graphics.batching.TextureBatch9Patch;
 import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintfordlib.core.input.mouse.IInputProcessor;
 import net.lintfordlib.core.maths.MathHelper;
+import net.lintfordlib.core.rendering.RenderPass;
 import net.lintfordlib.renderers.BaseRenderer;
 import net.lintfordlib.renderers.RendererManager;
 import net.lintfordlib.renderers.ZLayers;
@@ -389,7 +390,7 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 	}
 
 	@Override
-	public void draw(LintfordCore core) {
+	public void draw(LintfordCore core, RenderPass pass) {
 		if (!isOpen())
 			return;
 

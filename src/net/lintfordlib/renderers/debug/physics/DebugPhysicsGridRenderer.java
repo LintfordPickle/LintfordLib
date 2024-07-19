@@ -10,6 +10,7 @@ import net.lintfordlib.core.graphics.linebatch.LineBatch;
 import net.lintfordlib.core.physics.PhysicsWorld;
 import net.lintfordlib.core.physics.dynamics.RigidBody;
 import net.lintfordlib.core.physics.spatial.PhysicsHashGrid;
+import net.lintfordlib.core.rendering.RenderPass;
 import net.lintfordlib.renderers.BaseRenderer;
 import net.lintfordlib.renderers.RendererManager;
 
@@ -74,7 +75,7 @@ public class DebugPhysicsGridRenderer extends BaseRenderer {
 	}
 
 	@Override
-	public void draw(LintfordCore core) {
+	public void draw(LintfordCore core, RenderPass renderPass) {
 		drawSpatialHashGridGrid(core, mWorld.grid());
 	}
 

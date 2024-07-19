@@ -10,6 +10,7 @@ import net.lintfordlib.controllers.core.particles.ParticleFrameworkController;
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.graphics.batching.SpriteBatch;
 import net.lintfordlib.core.particles.particlesystems.ParticleSystemInstance;
+import net.lintfordlib.core.rendering.RenderPass;
 import net.lintfordlib.renderers.BaseRenderer;
 import net.lintfordlib.renderers.RendererManager;
 
@@ -129,7 +130,7 @@ public class ParticleFrameworkRenderer extends BaseRenderer {
 	}
 
 	@Override
-	public void draw(LintfordCore core) {
+	public void draw(LintfordCore core, RenderPass renderPass) {
 
 		int cacheSrcBlendFactor = -1;
 		int cacheDestBlendFactor = -1;

@@ -280,6 +280,7 @@ public abstract class Screen implements IInputProcessor {
 	}
 
 	public void draw(LintfordCore core) {
+		// This will default to rendering all passes for both BaseRenderers and WindowRenderers.
 		mRendererManager.draw(core);
 	}
 

@@ -6,6 +6,7 @@ import org.lwjgl.opengl.GL11;
 import net.lintfordlib.controllers.editor.EditorBrushController;
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.debug.Debug;
+import net.lintfordlib.core.rendering.RenderPass;
 import net.lintfordlib.renderers.BaseRenderer;
 import net.lintfordlib.renderers.RendererManager;
 
@@ -85,7 +86,7 @@ public class EditorBrushRenderer extends BaseRenderer {
 	}
 
 	@Override
-	public void draw(LintfordCore core) {
+	public void draw(LintfordCore core, RenderPass renderPass) {
 		final var lCursorWorldX = mEditorBrushController.cursorWorldX();
 		final var lCursorWorldY = mEditorBrushController.cursorWorldY();
 

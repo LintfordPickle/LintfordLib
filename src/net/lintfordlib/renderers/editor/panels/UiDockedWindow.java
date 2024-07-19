@@ -5,6 +5,7 @@ import java.util.List;
 
 import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.core.LintfordCore;
+import net.lintfordlib.core.rendering.RenderPass;
 import net.lintfordlib.renderers.RendererManager;
 import net.lintfordlib.renderers.windows.UiWindow;
 
@@ -127,8 +128,8 @@ public abstract class UiDockedWindow extends UiWindow {
 	}
 
 	@Override
-	public void draw(LintfordCore core) {
-		super.draw(core);
+	public void draw(LintfordCore core, RenderPass renderPass) {
+		super.draw(core, renderPass);
 
 		final int lNumPanels = mEditorPanels.size();
 		for (int i = 0; i < lNumPanels; i++) {

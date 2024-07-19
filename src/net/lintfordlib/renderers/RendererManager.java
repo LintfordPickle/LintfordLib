@@ -18,6 +18,7 @@ import net.lintfordlib.core.graphics.linebatch.LineBatch;
 import net.lintfordlib.core.graphics.polybatch.PolyBatchPCT;
 import net.lintfordlib.core.graphics.rendertarget.RenderTarget;
 import net.lintfordlib.core.input.IInputClickedFocusTracker;
+import net.lintfordlib.core.rendering.RenderPass;
 import net.lintfordlib.core.rendering.RenderState;
 import net.lintfordlib.options.DisplayManager;
 import net.lintfordlib.options.IResizeListener;
@@ -91,11 +92,17 @@ public class RendererManager implements IInputClickedFocusManager {
 	private IResizeListener mResizeListener;
 	private int mRendererIdCounter;
 
+	protected final RenderState mRenderState = new RenderState();
+
 	protected IInputClickedFocusTracker mTrackedInputControl;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public RenderState renderState() {
+		return mRenderState;
+	}
 
 	public int entityGroupUid() {
 		return mEntityGroupUid;
@@ -176,10 +183,6 @@ public class RendererManager implements IInputClickedFocusManager {
 
 	public LintfordCore core() {
 		return mCore;
-	}
-
-	public RenderState currentRenderState() {
-		return mCore.renderState();
 	}
 
 	public DisplayManager displayConfig() {
@@ -374,7 +377,7 @@ public class RendererManager implements IInputClickedFocusManager {
 
 	public void draw(LintfordCore core) {
 		if (RENDER_GAME_RENDERABLES) {
-			drawRenderers(core);
+			drawRenderersAllPasses(core);
 		}
 
 		if (RENDER_UI_WINDOWS) {
@@ -382,27 +385,53 @@ public class RendererManager implements IInputClickedFocusManager {
 		}
 	}
 
-	public void drawRenderers(LintfordCore core) {
-
+	public void drawRenderersWithPass(LintfordCore core, RenderPass renderPass) {
 		final int lNumBaseRenderers = mRenderers.size();
-		for (int i = 0; i < lNumBaseRenderers; i++) {
-			final var lRenderer = mRenderers.get(i);
+
+		final var lRenderPassTypeIndex = renderPass.passTypeIndex();
+
+		for (int j = 0; j < lNumBaseRenderers; j++) {
+			final var lRenderer = mRenderers.get(j);
 			if (!lRenderer.isActive() || !lRenderer.isManagedDraw())
 				continue;
 
-			lRenderer.draw(core);
+			if (!lRenderer.isRegisteredForPass(lRenderPassTypeIndex))
+				continue;
+
+			lRenderer.draw(core, renderPass);
+		}
+	}
+
+	public void drawRenderersAllPasses(LintfordCore core) {
+		final var lRenderPasses = mRenderState.renderPasses();
+		final int lNumBaseRenderers = mRenderers.size();
+
+		final var lNumRenderPasses = lRenderPasses.size();
+		for (int i = 0; i < lNumRenderPasses; i++) {
+			final var lRenderPass = lRenderPasses.get(i);
+			final var lRenderPassTypeIndex = lRenderPass.passTypeIndex();
+
+			for (int j = 0; j < lNumBaseRenderers; j++) {
+				final var lRenderer = mRenderers.get(j);
+				if (!lRenderer.isActive() || !lRenderer.isManagedDraw())
+					continue;
+
+				if (!lRenderer.isRegisteredForPass(lRenderPassTypeIndex))
+					continue;
+
+				lRenderer.draw(core, lRenderPass);
+			}
 		}
 	}
 
 	public void drawWindowRenderers(LintfordCore core) {
-
 		final int lNumWindowRenderers = mWindowRenderers.size();
 		for (int i = 0; i < lNumWindowRenderers; i++) {
 			final var lWindow = mWindowRenderers.get(i);
 			if (!lWindow.isActive() || !lWindow.isOpen())
 				continue;
 
-			lWindow.draw(core);
+			lWindow.draw(core, RenderPass.DefaultRenderPass);
 		}
 	}
 

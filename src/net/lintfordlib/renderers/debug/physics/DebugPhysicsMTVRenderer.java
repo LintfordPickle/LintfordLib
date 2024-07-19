@@ -10,6 +10,7 @@ import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.physics.PhysicsWorld;
 import net.lintfordlib.core.physics.collisions.ContactManifold;
 import net.lintfordlib.core.physics.interfaces.ICollisionCallback;
+import net.lintfordlib.core.rendering.RenderPass;
 import net.lintfordlib.renderers.BaseRenderer;
 import net.lintfordlib.renderers.RendererManager;
 
@@ -87,7 +88,7 @@ public class DebugPhysicsMTVRenderer extends BaseRenderer implements ICollisionC
 	}
 
 	@Override
-	public void draw(LintfordCore core) {
+	public void draw(LintfordCore core, RenderPass renderPass) {
 		if (numAllocations == 0)
 			return;
 

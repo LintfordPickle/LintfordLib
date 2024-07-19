@@ -13,6 +13,7 @@ import net.lintfordlib.core.graphics.ColorConstants;
 import net.lintfordlib.core.maths.Vector2f;
 import net.lintfordlib.core.physics.dynamics.RigidBody;
 import net.lintfordlib.core.physics.dynamics.RigidBody.BodyType;
+import net.lintfordlib.core.rendering.RenderPass;
 import net.lintfordlib.renderers.BaseRenderer;
 import net.lintfordlib.renderers.RendererManager;
 
@@ -63,7 +64,7 @@ public class DebugPhysicsRenderer extends BaseRenderer {
 	}
 
 	@Override
-	public void draw(LintfordCore core) {
+	public void draw(LintfordCore core, RenderPass renderPass) {
 		final var lLineBatch = rendererManager().uiLineBatch();
 
 		final var lRigidBodies = mPhysicsController.world().bodies();

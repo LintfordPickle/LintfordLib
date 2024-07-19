@@ -7,6 +7,7 @@ import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.input.mouse.IInputProcessor;
 import net.lintfordlib.core.particles.ParticleFrameworkData;
+import net.lintfordlib.core.rendering.RenderPass;
 import net.lintfordlib.renderers.BaseRenderer;
 import net.lintfordlib.renderers.RendererManager;
 
@@ -94,7 +95,7 @@ public class DebugParticleDrawer extends BaseRenderer implements IInputProcessor
 	}
 
 	@Override
-	public void draw(LintfordCore core) {
+	public void draw(LintfordCore core, RenderPass renderPass) {
 		if (!mShowDebugInformation)
 			return;
 

@@ -189,7 +189,6 @@ public abstract class LintfordCore {
 	protected CameraHUDController mCameraHUDController;
 	protected ICamera mGameCamera;
 	protected HUD mHUD;
-	protected RenderState mRenderState;
 
 	protected DataManager mDataManager;
 	protected ControllerManager mControllerManager;
@@ -261,10 +260,6 @@ public abstract class LintfordCore {
 			return ICamera.EMPTY;
 
 		return mGameCamera;
-	}
-
-	public RenderState renderState() {
-		return mRenderState;
 	}
 
 	// ---------------------------------------------
@@ -381,8 +376,6 @@ public abstract class LintfordCore {
 
 		mHUD = new HUD(mMasterConfig.display());
 		mHUD.update(this);
-
-		mRenderState = new RenderState();
 	}
 
 	private void createCoreControllers() {

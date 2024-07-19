@@ -12,6 +12,7 @@ import net.lintfordlib.core.maths.Vector2f;
 import net.lintfordlib.core.physics.PhysicsWorld;
 import net.lintfordlib.core.physics.collisions.ContactManifold;
 import net.lintfordlib.core.physics.interfaces.ICollisionCallback;
+import net.lintfordlib.core.rendering.RenderPass;
 import net.lintfordlib.renderers.BaseRenderer;
 import net.lintfordlib.renderers.RendererManager;
 
@@ -93,7 +94,7 @@ public class DebugPhysicsContactPointRenderer extends BaseRenderer implements IC
 	}
 
 	@Override
-	public void draw(LintfordCore core) {
+	public void draw(LintfordCore core, RenderPass renderPass) {
 		final int lNumContactPoints = Math.min(debugContactPoints.size(), mCurrentCount);
 		if (lNumContactPoints == 0)
 			return;
