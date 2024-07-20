@@ -32,6 +32,13 @@ public class RenderPass {
 	// --------------------------------------
 
 	/**
+	 * Returns true if this RenderPass is the default RenderPass. That is, if this RenderPass is not a custom one. Otherwise false.
+	 */
+	public boolean isDefaultRenderPass() {
+		return mRenderPassTypeIndex == RENDER_PASS_DEFAULT;
+	}
+
+	/**
 	 * Identifies the current pass type. Different pass types have different {@link RenderTarget}s associated with them. See {@link RenderPass} for stanard type indices.
 	 */
 

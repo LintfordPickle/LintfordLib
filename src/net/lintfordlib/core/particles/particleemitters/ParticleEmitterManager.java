@@ -122,7 +122,7 @@ public class ParticleEmitterManager extends PoolInstanceManager<ParticleEmitterI
 	// Methods
 	// --------------------------------------
 
-	public ParticleEmitterInstance getParticleEmitterInstanceByDefiniton(ParticleEmitterDefinition emitterDefinition) {
+	public ParticleEmitterInstance getOrCreateNewParticleEmitterInstanceByDefiniton(ParticleEmitterDefinition emitterDefinition) {
 		// If an instance already exists, then return it
 		final var lNumParticleEmitters = mInstances.size();
 		for (var i = 0; i < lNumParticleEmitters; i++) {
@@ -138,6 +138,14 @@ public class ParticleEmitterManager extends PoolInstanceManager<ParticleEmitterI
 		}
 
 		return createNewParticleEmitterFromDefinition(emitterDefinition);
+	}
+
+	public ParticleEmitterInstance createNewParticleEmitterFromDefinitionName(String particleEmitterName) {
+		final var lDefinition = mEmitterDefinitionManager.getByName(particleEmitterName);
+		if (lDefinition == null)
+			return null;
+
+		return createNewParticleEmitterFromDefinition(lDefinition);
 	}
 
 	public ParticleEmitterInstance createNewParticleEmitterFromDefinition(ParticleEmitterDefinition emitterDefinition) {
@@ -198,11 +206,4 @@ public class ParticleEmitterManager extends PoolInstanceManager<ParticleEmitterI
 		return new ParticleEmitterInstance();
 	}
 
-	public ParticleEmitterInstance getParticleEmitterByName(String particleEmitterName) {
-		final var lDefinition = mEmitterDefinitionManager.getByName(particleEmitterName);
-		if (lDefinition == null)
-			return null;
-
-		return createNewParticleEmitterFromDefinition(lDefinition);
-	}
 }

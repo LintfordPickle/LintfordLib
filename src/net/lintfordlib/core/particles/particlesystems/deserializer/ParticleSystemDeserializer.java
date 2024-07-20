@@ -36,6 +36,7 @@ public class ParticleSystemDeserializer implements JsonDeserializer<ParticleSyst
 	public static final String PARTICLE_SYSTEM_PARTICLE_SRC_BLEND = "glSrcBlendFactor";
 	public static final String PARTICLE_SYSTEM_PARTICLE_DEST_BLEND = "glDestBlendFactor";
 	public static final String PARTICLE_SYSTEM_PARTICLE_ONDEATH_EMITTER_NAME = "onDeathEmitterName";
+	public static final String PARTICLE_SYSTEM_RENDER_PASS_ID = "renderPassId";
 
 	public static final String PARTICLE_SYSTEM_INITIALIZER_LIST = "initializers";
 	public static final String PARTICLE_SYSTEM_MODIFIER_LIST = "modifiers";
@@ -112,6 +113,11 @@ public class ParticleSystemDeserializer implements JsonDeserializer<ParticleSyst
 		lTempPrimitive = jsonElement.getAsJsonObject().getAsJsonPrimitive(PARTICLE_SYSTEM_PARTICLE_ONDEATH_EMITTER_NAME);
 		if (lTempPrimitive != null && !lTempPrimitive.isJsonNull()) {
 			lNewParticleSystemDefinition.onDeathEmitterName = lTempPrimitive.getAsString();
+		}
+
+		lTempPrimitive = jsonElement.getAsJsonObject().getAsJsonPrimitive(PARTICLE_SYSTEM_RENDER_PASS_ID);
+		if (lTempPrimitive != null && !lTempPrimitive.isJsonNull()) {
+			lNewParticleSystemDefinition.renderPassId = lTempPrimitive.getAsInt();
 		}
 
 		// Initializers

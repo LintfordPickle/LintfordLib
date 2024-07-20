@@ -132,14 +132,21 @@ public class ParticleFrameworkRenderer extends BaseRenderer {
 	@Override
 	public void draw(LintfordCore core, RenderPass renderPass) {
 
+		final var lIsDefaultRenderPass = renderPass.isDefaultRenderPass();
+
 		int cacheSrcBlendFactor = -1;
 		int cacheDestBlendFactor = -1;
+
+		GL11.glDepthMask(false);
 
 		final int lNumParticleRenderers = mParticleRenderers.size();
 		for (int i = 0; i < lNumParticleRenderers; i++) {
 			final var lParticleRenderer = mParticleRenderers.get(i);
 
 			if (lParticleRenderer.isAssigned() == false)
+				continue;
+
+			if (!lIsDefaultRenderPass && renderPass.passTypeIndex() != lParticleRenderer.renderPassId())
 				continue;
 
 			final var lSrcBlendFactor = lParticleRenderer.srcBlendFactor();
@@ -159,6 +166,8 @@ public class ParticleFrameworkRenderer extends BaseRenderer {
 
 			mSpriteBatch.end();
 		}
+
+		GL11.glDepthMask(true);
 
 		// restore blending
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);

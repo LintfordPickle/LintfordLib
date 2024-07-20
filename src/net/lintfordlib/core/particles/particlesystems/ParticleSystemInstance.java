@@ -29,8 +29,9 @@ public class ParticleSystemInstance {
 	protected transient ParticleSystemDefinition mParticleSystemDefinition;
 	protected transient ParticleEmitterInstance mOnDeathEmitter;
 	private List<Particle> mParticles;
-	private transient int mRendererId;
 	private int mCapacity;
+
+	private transient int mRendererId;
 
 	// --------------------------------------
 	// Properties
@@ -94,7 +95,7 @@ public class ParticleSystemInstance {
 		if (lParticleEmitterName == null || lParticleEmitterName.length() == 0)
 			return;
 
-		mOnDeathEmitter = frameworkData.particleEmitterManager().getParticleEmitterByName(lParticleEmitterName);
+		mOnDeathEmitter = frameworkData.particleEmitterManager().createNewParticleEmitterFromDefinitionName(lParticleEmitterName);
 
 	}
 
@@ -130,7 +131,7 @@ public class ParticleSystemInstance {
 		if (lOnDeathEmitterName != null) {
 			final var lEmitterDefinition = particleFramework.particleEmitterManager().definitionManager().getByName(lOnDeathEmitterName);
 			if (lEmitterDefinition != null) {
-				particleFramework.particleEmitterManager().getParticleEmitterInstanceByDefiniton(lEmitterDefinition);
+				particleFramework.particleEmitterManager().getOrCreateNewParticleEmitterInstanceByDefiniton(lEmitterDefinition);
 			} else {
 				Debug.debugManager().logger().e(getClass().getSimpleName(), "Cannot resolve onDeathEmitter from name : " + lOnDeathEmitterName);
 			}

@@ -13,7 +13,7 @@ public class ParticleSystemDefinition extends BaseDefinition {
 	// Constants
 	// --------------------------------------
 
-	private static final long serialVersionUID = 2707111867124189440L;
+	private static final long serialVersionUID = 4251129734513541228L;
 
 	// --------------------------------------
 	// Variables
@@ -36,6 +36,8 @@ public class ParticleSystemDefinition extends BaseDefinition {
 
 	public int glSrcBlendFactor;
 	public int glDestBlendFactor;
+
+	public int renderPassId;
 
 	// --------------------------------------
 	// Properties

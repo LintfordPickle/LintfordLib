@@ -22,7 +22,7 @@ public class ParticleEmitterDefinition extends BaseDefinition {
 	// Variables
 	// --------------------------------------
 
-	// see ParticleEmitterTriggerTypes
+	// see ParticleEmitterTrigger
 	@SerializedName(value = "triggerType")
 	public int triggerType;
 
@@ -34,6 +34,9 @@ public class ParticleEmitterDefinition extends BaseDefinition {
 
 	@SerializedName(value = "emitTimeMax")
 	public float emitTimeMax;
+
+	@SerializedName(value = "triggerCooldown")
+	public float triggerCooldown;
 
 	@SerializedName(value = "emitAmountMin")
 	public int emitAmountMin;
@@ -78,6 +81,10 @@ public class ParticleEmitterDefinition extends BaseDefinition {
 
 	public List<ParticleEmitterDefinition> childEmitters() {
 		return mChildEmitters;
+	}
+
+	public boolean isHead() {
+		return parentEmitter == null;
 	}
 
 	// --------------------------------------
@@ -127,7 +134,7 @@ public class ParticleEmitterDefinition extends BaseDefinition {
 				continue;
 
 			// if (lChildEmitterDefinition.isInitialized() == false)
-				lChildEmitterDefinition.resolveParticleSystems(particleFramework);
+			lChildEmitterDefinition.resolveParticleSystems(particleFramework);
 
 		}
 	}

@@ -19,6 +19,8 @@ public class ParticleEmitterInstance extends GridEntity {
 	// Constants
 	// --------------------------------------
 
+	private static final long serialVersionUID = 9168072331704352472L;
+
 	public static final int EMITTER_NOT_ASSIGNED_ID = -1;
 
 	// --------------------------------------
@@ -33,7 +35,12 @@ public class ParticleEmitterInstance extends GridEntity {
 	private int mParticleSystemId;
 	private int mEmitterInstanceId;
 	private int mEmitterDefinitionId;
+
 	private float mEmitTimer;
+
+	private boolean mTriggered;
+	private float mTriggerCooldownTimer;
+
 	private boolean enabled;
 
 	public transient ParticleSystemInstance particleSystemInstance;
@@ -46,6 +53,13 @@ public class ParticleEmitterInstance extends GridEntity {
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public void triggerEmission() {
+		if (mEmitterDefinition.triggerCooldown > 0 && mTriggerCooldownTimer > 0)
+			return; // cooldown not yet elapsed
+
+		mTriggered = true;
+	}
 
 	public boolean isInitialized() {
 		return mEmitterDefinition != null;
@@ -168,14 +182,22 @@ public class ParticleEmitterInstance extends GridEntity {
 		aabb.x(aabb.x() + mEmitterDefinition.positionRelOffsetX);
 		aabb.y(aabb.y() + mEmitterDefinition.positionRelOffsetY);
 
-		mEmitTimer -= core.gameTime().elapsedTimeMilli() * mEmitterEmitTimerModifier;
-
 		switch (mEmitterDefinition.triggerType) {
 		case ParticleEmitterTrigger.PARTICLE_EMITTER_TRIGGER_TYPE_TIMER:
+			if (mEmitTimer > 0)
+				mEmitTimer -= core.gameTime().elapsedTimeMilli() * mEmitterEmitTimerModifier;
+
 			updateTimedEmitter(core);
+
+			updateChildEmitters(core);
+
 			break;
 		case ParticleEmitterTrigger.PARTICLE_EMITTER_TRIGGER_TYPE_TRIGGED:
+			if (mTriggerCooldownTimer > 0)
+				mTriggerCooldownTimer -= core.gameTime().elapsedTimeMilli();
+
 			updateTriggerEmitter(core);
+
 			break;
 		}
 
@@ -187,6 +209,9 @@ public class ParticleEmitterInstance extends GridEntity {
 			mEmitterDefinition.ParticleEmitterShape.update(core, this);
 		}
 
+	}
+
+	private void updateChildEmitters(LintfordCore core) {
 		final int lNumInnerInstances = mChildEmitterInstances.size();
 		for (int i = 0; i < lNumInnerInstances; i++) {
 			final var lChildParticleEmitterInstanceInst = mChildEmitterInstances.get(i);
@@ -208,9 +233,9 @@ public class ParticleEmitterInstance extends GridEntity {
 		if (particleSystemInstance == null)
 			return;
 
-		if (mEmitTimer < 0) {
+		if (mEmitTimer <= 0) {
 			final var emitAmtMin = mEmitterDefinition.emitAmountMin;
-			final var emitAmtMax = Math.max(emitAmtMin + 1, mEmitterDefinition.emitAmountMax);
+			final var emitAmtMax = Math.max(emitAmtMin, mEmitterDefinition.emitAmountMax);
 
 			final int lAmtToSpawn = RandomNumbers.random(emitAmtMin, emitAmtMax);
 			for (int i = 0; i < lAmtToSpawn; i++) {
@@ -245,8 +270,11 @@ public class ParticleEmitterInstance extends GridEntity {
 	}
 
 	private void updateTriggerEmitter(LintfordCore core) {
-		if (particleSystemInstance == null)
+		if (!mTriggered && mEmitterDefinition.isHead())
 			return;
+
+		mTriggerCooldownTimer = mEmitterDefinition.triggerCooldown;
+		mTriggered = false;
 
 		final var emitAmtMin = mEmitterDefinition.emitAmountMin;
 		final var emitAmtMax = Math.max(emitAmtMin + 1, mEmitterDefinition.emitAmountMax);
@@ -278,6 +306,9 @@ public class ParticleEmitterInstance extends GridEntity {
 				}
 			}
 		}
+
+		updateChildEmitters(core);
+
 	}
 
 	public void triggerSpawn(LintfordCore core) {

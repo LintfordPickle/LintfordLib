@@ -8,6 +8,7 @@ import net.lintfordlib.core.graphics.batching.SpriteBatch;
 import net.lintfordlib.core.graphics.sprites.SpriteFrame;
 import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintfordlib.core.particles.particlesystems.ParticleSystemInstance;
+import net.lintfordlib.core.rendering.RenderPass;
 
 public class ParticleRenderer {
 
@@ -28,6 +29,8 @@ public class ParticleRenderer {
 	private int mSrcBlendFactor;
 	private int mDestBlendFactor;
 
+	private int mRenderPassId;
+
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
@@ -38,6 +41,13 @@ public class ParticleRenderer {
 
 	public int destBlendFactor() {
 		return mDestBlendFactor;
+	}
+
+	/**
+	 * Indicates on which {@link RenderPass} this @link {@link ParticleSystemInstance} is designated to render on. See {@link} for more RenderPass Ids, including the default render pass.
+	 */
+	public int renderPassId() {
+		return mRenderPassId;
 	}
 
 	public int particleRendererId() {
@@ -119,9 +129,7 @@ public class ParticleRenderer {
 			lWidthScaled *= lParticleInst.scale;
 			lHeightScaled *= lParticleInst.scale;
 
-			textureBatch.drawAroundCenter(mSpritesheetDefinition, mSpriteFrame, 
-					lParticleInst.worldPositionX, lParticleInst.worldPositionY, lWidthScaled, lHeightScaled, 
-					lParticleInst.rotationInRadians, lParticleInst.rox, lParticleInst.roy, lParticleInst.worldPositionZ, lParticleInst.color);
+			textureBatch.drawAroundCenter(mSpritesheetDefinition, mSpriteFrame, lParticleInst.worldPositionX, lParticleInst.worldPositionY, lWidthScaled, lHeightScaled, lParticleInst.rotationInRadians, lParticleInst.rox, lParticleInst.roy, lParticleInst.worldPositionZ, lParticleInst.color);
 		}
 	}
 
@@ -134,6 +142,7 @@ public class ParticleRenderer {
 			return;
 
 		mParticleSystem = particleSystem;
+
 		loadParticleContent(particleSystem);
 		mIsAssigned = true;
 	}
@@ -177,6 +186,8 @@ public class ParticleRenderer {
 
 		mSrcBlendFactor = lParticleDefinition.glSrcBlendFactor;
 		mDestBlendFactor = lParticleDefinition.glDestBlendFactor;
+
+		mRenderPassId = lParticleDefinition.renderPassId;
 
 	}
 }
