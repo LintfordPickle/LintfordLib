@@ -23,6 +23,7 @@ public class ParticleEmitterDeserializer implements JsonDeserializer<ParticleEmi
 	public static final String SHAPE_PACKAGE_LOCATION = ParticleEmitterShape.class.getPackageName() + ".";
 
 	public static final String PARTICLE_EMITTER_TRIGGER_TYPE = "triggerType";
+	public static final String PARTICLE_EMITTER_TRIGGER_COOLDOWN = "triggerCooldown";
 
 	public static final String PARTICLE_EMITTER_NAME = "name";
 	public static final String PARTICLE_EMITTER_DISPLAY_NAME = "displayname";
@@ -123,6 +124,16 @@ public class ParticleEmitterDeserializer implements JsonDeserializer<ParticleEmi
 		lTempPrimitive = jsonElement.getAsJsonObject().getAsJsonPrimitive(PARTICLE_EMITTER_SHARED_PS);
 		if (lTempPrimitive != null && !lTempPrimitive.isJsonNull()) {
 			lNewParticleEmitterDefinition.useSharedParticleSystem = lTempPrimitive.getAsBoolean();
+		}
+
+		lTempPrimitive = jsonElement.getAsJsonObject().getAsJsonPrimitive(PARTICLE_EMITTER_TRIGGER_TYPE);
+		if (lTempPrimitive != null && !lTempPrimitive.isJsonNull()) {
+			lNewParticleEmitterDefinition.triggerType = lTempPrimitive.getAsInt();
+		}
+
+		lTempPrimitive = jsonElement.getAsJsonObject().getAsJsonPrimitive(PARTICLE_EMITTER_TRIGGER_COOLDOWN);
+		if (lTempPrimitive != null && !lTempPrimitive.isJsonNull()) {
+			lNewParticleEmitterDefinition.triggerCooldown = lTempPrimitive.getAsFloat();
 		}
 
 		// Emitter Shape
