@@ -40,6 +40,7 @@ public class ParticleEmitterInstance extends GridEntity {
 
 	private boolean mTriggered;
 	private float mTriggerCooldownTimer;
+	private float mEmissionLengthMs;
 
 	private boolean enabled;
 
@@ -57,6 +58,8 @@ public class ParticleEmitterInstance extends GridEntity {
 	public void triggerEmission() {
 		if (mEmitterDefinition.triggerCooldown > 0 && mTriggerCooldownTimer > 0)
 			return; // cooldown not yet elapsed
+
+		mEmissionLengthMs = mEmitterDefinition.triggeredEmissionLengthMs;
 
 		mTriggered = true;
 	}
@@ -274,7 +277,10 @@ public class ParticleEmitterInstance extends GridEntity {
 			return;
 
 		mTriggerCooldownTimer = mEmitterDefinition.triggerCooldown;
-		mTriggered = false;
+
+		mEmissionLengthMs -= core.gameTime().elapsedTimeMilli();
+		if (mEmissionLengthMs <= 0)
+			mTriggered = false;
 
 		final var emitAmtMin = mEmitterDefinition.emitAmountMin;
 		final var emitAmtMax = Math.max(emitAmtMin + 1, mEmitterDefinition.emitAmountMax);

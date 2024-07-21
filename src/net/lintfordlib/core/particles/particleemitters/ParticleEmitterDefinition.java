@@ -26,6 +26,9 @@ public class ParticleEmitterDefinition extends BaseDefinition {
 	@SerializedName(value = "triggerType")
 	public int triggerType;
 
+	@SerializedName(value = "triggeredEmissionLengthMs")
+	public float triggeredEmissionLengthMs;
+	
 	@SerializedName(value = "emitterShape")
 	public ParticleEmitterShape ParticleEmitterShape;
 
@@ -179,7 +182,10 @@ public class ParticleEmitterDefinition extends BaseDefinition {
 		lNewDef.positionRelOffsetY = def.positionRelOffsetY;
 		lNewDef.positionRelOffsetRot = def.positionRelOffsetRot;
 		lNewDef.triggerType = def.triggerType;
-
+		lNewDef.triggerCooldown = def.triggerCooldown;
+		lNewDef.triggeredEmissionLengthMs = def.triggeredEmissionLengthMs;
+		
+		
 		// Duplicate child emitters?
 		final var lNumChildren = def.childEmitters().size();
 		for (int i = 0; i < lNumChildren; i++) {

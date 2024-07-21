@@ -24,6 +24,7 @@ public class ParticleEmitterDeserializer implements JsonDeserializer<ParticleEmi
 
 	public static final String PARTICLE_EMITTER_TRIGGER_TYPE = "triggerType";
 	public static final String PARTICLE_EMITTER_TRIGGER_COOLDOWN = "triggerCooldown";
+	public static final String PARTICLE_EMITTER_TRIGGER_LENGTH_MS = "triggeredEmissionLengthMs";
 
 	public static final String PARTICLE_EMITTER_NAME = "name";
 	public static final String PARTICLE_EMITTER_DISPLAY_NAME = "displayname";
@@ -134,6 +135,11 @@ public class ParticleEmitterDeserializer implements JsonDeserializer<ParticleEmi
 		lTempPrimitive = jsonElement.getAsJsonObject().getAsJsonPrimitive(PARTICLE_EMITTER_TRIGGER_COOLDOWN);
 		if (lTempPrimitive != null && !lTempPrimitive.isJsonNull()) {
 			lNewParticleEmitterDefinition.triggerCooldown = lTempPrimitive.getAsFloat();
+		}
+
+		lTempPrimitive = jsonElement.getAsJsonObject().getAsJsonPrimitive(PARTICLE_EMITTER_TRIGGER_LENGTH_MS);
+		if (lTempPrimitive != null && !lTempPrimitive.isJsonNull()) {
+			lNewParticleEmitterDefinition.triggeredEmissionLengthMs = lTempPrimitive.getAsFloat();
 		}
 
 		// Emitter Shape
