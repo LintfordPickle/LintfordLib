@@ -287,7 +287,7 @@ public class UiInputFloat extends UIWidget implements IBufferedTextInputCallback
 		if (mShowControlArrows && mDecrementRectangle.intersectsAA(core.HUD().getMouseCameraSpace())) {
 			if (core.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this, 30)) {
 				var t = mValue;
-				mValue--;
+				mValue -= mStepSize;
 				if (mIsValueBounded && mValue < mMinValue)
 					mValue = mMinValue;
 
@@ -306,7 +306,7 @@ public class UiInputFloat extends UIWidget implements IBufferedTextInputCallback
 		else if (mShowControlArrows && mIncrementRectangle.intersectsAA(core.HUD().getMouseCameraSpace())) {
 			if (core.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this, 30)) {
 				var t = mValue;
-				mValue++;
+				mValue += mStepSize;
 				if (mIsValueBounded && mValue > mMaxValue)
 					mValue = mMaxValue;
 
@@ -394,7 +394,7 @@ public class UiInputFloat extends UIWidget implements IBufferedTextInputCallback
 
 		final var lColorMod = !mIsEnabled ? .4f : mIsHoveredOver ? .9f : 1.f;
 		final var lColor = ColorConstants.getColorWithRGBMod(ColorConstants.MenuPanelPrimaryColor, lColorMod);
-		
+
 		spriteBatch.begin(core.HUD());
 		spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_LEFT, (int) xx, mY, 32, mH, componentZDepth, lColor);
 		if (mW > 32) {
