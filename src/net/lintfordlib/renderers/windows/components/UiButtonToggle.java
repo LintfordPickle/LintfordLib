@@ -107,8 +107,13 @@ public class UiButtonToggle extends UIWidget {
 
 	@Override
 	public void draw(LintfordCore core, SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheet, FontUnit textFont, float componentZDepth) {
-		final var lColorMod = mIsToggledOn ? 0.65f : mIsHoveredOver ? .9f : 1.f;
-		final var lColor = ColorConstants.getColorWithRGBMod(entityColor, lColorMod);
+		var lColor = ColorConstants.getColorWithRGBMod(entityColor, 1.f);
+
+		if (mIsToggledOn) {
+			lColor = ColorConstants.MenuEntrySelectedColor;
+		} else if (mIsHoveredOver) {
+			lColor = ColorConstants.MenuEntryHighlightColor;
+		}
 
 		final var lTileSize = 32;
 
