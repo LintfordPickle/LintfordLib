@@ -298,9 +298,10 @@ public class SpriteSheetManager {
 				if (lSpriteSheetGroup == null) {
 					lSpriteSheetGroup = new HashMap<>();
 					mSpriteSheetGroups.put(entityGroupUid, lSpriteSheetGroup);
-
 				}
 
+				Debug.debugManager().logger().i(getClass().getSimpleName(), "Loaded spritesheet " + lSpriteSheet.mSpriteSheetName);
+				
 				// Add the spritesheet to the collection, using the FILENAME as the key
 				lSpriteSheetGroup.put(lSpriteSheet.mSpriteSheetName, lSpriteSheet);
 
