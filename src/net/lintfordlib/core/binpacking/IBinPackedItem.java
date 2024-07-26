@@ -21,5 +21,7 @@ public interface IBinPackedItem {
 	float itemWidth();
 
 	float itemHeight();
+	
+	float area();
 
 }
