@@ -17,5 +17,7 @@ public interface IDecalBinPackedItem extends IBinPackedItem {
 	float worldCenterX();
 
 	float worldCenterY();
+	
+	float zDepth();
 
 }
