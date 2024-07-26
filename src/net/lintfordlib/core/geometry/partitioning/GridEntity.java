@@ -38,7 +38,7 @@ public abstract class GridEntity extends Entity {
 	// Constructor
 	// ---------------------------------------------
 
-	public GridEntity(int entityUid, int gridEntityType) {
+	protected GridEntity(int entityUid, int gridEntityType) {
 		super(entityUid);
 
 		this.gridEntityType = gridEntityType;
