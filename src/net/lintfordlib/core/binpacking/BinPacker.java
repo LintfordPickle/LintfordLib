@@ -46,7 +46,7 @@ public class BinPacker {
 
 	public List<IBinPackedItem> fitNodes(List<IBinPackedItem> nodesToPack) {
 		var lLastInsertionSuccessful = true;
-		while (lLastInsertionSuccessful && nodesToPack.size() > 0) {
+		while (lLastInsertionSuccessful && !nodesToPack.isEmpty()) {
 
 			final var lItem = nodesToPack.remove(0);
 
@@ -56,10 +56,12 @@ public class BinPacker {
 			final var foundNode = findNode(mRootNode, (int) lItemWidth, (int) lItemHeight);
 			if (foundNode != null) {
 				splitNode(foundNode, (int) lItemWidth, (int) lItemHeight);
-				lItem.assignToBin(mBinName, (int) foundNode.x, (int) foundNode.y, lItemWidth, lItemHeight);
+				lItem.assignToBin(mBinName, foundNode.x, foundNode.y, lItemWidth, lItemHeight);
 
-			} else
+			} else {
+				nodesToPack.add(lItem);
 				lLastInsertionSuccessful = false;
+			}
 		}
 
 		// Return the list of remaining (unassigned) items
