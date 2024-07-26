@@ -182,7 +182,7 @@ public abstract class UiPanel implements IScrollBarArea, UIWindowChangeListener,
 	// Constructor
 	// --------------------------------------
 
-	public UiPanel(UiWindow parentWindow, String panelTitle, int entityGroupUid) {
+	protected UiPanel(UiWindow parentWindow, String panelTitle, int entityGroupUid) {
 		mParentWindow = parentWindow;
 		mPanelTitle = panelTitle;
 		mEntityGroupUid = entityGroupUid;

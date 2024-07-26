@@ -233,7 +233,7 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 	// Constructor
 	// --------------------------------------
 
-	public UiWindow(final RendererManager rendererManager, final String rendererName, final int entityGroupUid) {
+	public UiWindow(RendererManager rendererManager, String rendererName, int entityGroupUid) {
 		super(rendererManager, rendererName, entityGroupUid);
 
 		mComponents = new ArrayList<>();
