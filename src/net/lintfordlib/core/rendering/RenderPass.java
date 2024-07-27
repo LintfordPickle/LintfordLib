@@ -20,10 +20,7 @@ public class RenderPass {
 	// Variables
 	// --------------------------------------
 
-	/**
-	 * The id of the current buffer being rendered into. This is not final, because there are potentially several (one for each player viewport).
-	 */
-	public int mBufferUid;
+	public RenderTarget mPassRt;
 
 	private final int mRenderPassTypeIndex;
 
@@ -47,14 +44,14 @@ public class RenderPass {
 	}
 
 	/**
-	 * Returns the OpenGL buffer id of the buffer for this render pass.
+	 * Returns the {@link RenderTarget} associated with this RenderPass.
 	 */
-	public int getBufferId() {
-		return mBufferUid;
+	public RenderTarget passRenderTarget() {
+		return mPassRt;
 	}
 
-	public void setBufferId(int bufferId) {
-		mBufferUid = bufferId;
+	public void passRenderTarget(RenderTarget rt) {
+		mPassRt = rt;
 	}
 
 	// --------------------------------------
