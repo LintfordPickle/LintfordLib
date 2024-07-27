@@ -116,7 +116,7 @@ public abstract class BaseShape {
 	// Constructor
 	// --------------------------------------
 
-	public BaseShape() {
+	protected BaseShape() {
 		mLocalVertices = new ArrayList<>();
 		mTransformedVertices = new ArrayList<>();
 		mAABB = new Rectangle();
