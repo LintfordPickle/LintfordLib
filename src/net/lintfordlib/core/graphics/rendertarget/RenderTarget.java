@@ -159,7 +159,7 @@ public class RenderTarget {
 		initializeGl(lIntBuffer);
 	}
 
-	public void loadResources(String fileName) {
+	public void loadResourcesFromImage(String fileName) {
 		var lBufferedImage = loadBufferedImage(fileName);
 
 		if(lBufferedImage == null)

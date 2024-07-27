@@ -609,7 +609,7 @@ public class RendererManager implements IInputClickedFocusManager {
 		return lRenderTarget;
 	}
 
-	public RenderTarget createRenderTarget(String name, File filename, int filterMode, boolean resizeWithWindow) {
+	public RenderTarget createRenderTargetFromImage(String name, File filename, int filterMode, boolean resizeWithWindow) {
 		var lRenderTarget = getRenderTarget(name);
 
 		if (lRenderTarget != null) {
@@ -619,7 +619,7 @@ public class RendererManager implements IInputClickedFocusManager {
 
 		lRenderTarget = new RenderTarget(name);
 		lRenderTarget.textureFilter(filterMode);
-		lRenderTarget.loadResources(filename.getAbsolutePath());
+		lRenderTarget.loadResourcesFromImage(filename.getAbsolutePath());
 
 		mRenderTargets.add(lRenderTarget);
 
