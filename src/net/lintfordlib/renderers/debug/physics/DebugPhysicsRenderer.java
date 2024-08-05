@@ -51,6 +51,9 @@ public class DebugPhysicsRenderer extends BaseRenderer {
 
 	public DebugPhysicsRenderer(RendererManager rendererManager, int entityGroupID) {
 		super(rendererManager, RENDERER_NAME, entityGroupID);
+
+		registerPassTypeIndex(RenderPass.RENDER_PASS_COLOR);
+
 	}
 
 	// ---------------------------------------------
@@ -70,6 +73,8 @@ public class DebugPhysicsRenderer extends BaseRenderer {
 		final var lRigidBodies = mPhysicsController.world().bodies();
 		final int lNumOfBodies = lRigidBodies.size();
 
+		GL11.glEnable(GL11.GL_DEPTH_TEST);
+
 		lLineBatch.begin(core.gameCamera());
 		for (int i = 0; i < lNumOfBodies; i++) {
 			final var lBody = lRigidBodies.get(i);
@@ -77,6 +82,8 @@ public class DebugPhysicsRenderer extends BaseRenderer {
 			debugDrawRigidBody(core, lBody);
 		}
 		lLineBatch.end();
+
+		GL11.glDisable(GL11.GL_DEPTH_TEST);
 
 		if (RENDER_CONTACT_POINTS) {
 			drawDebugContactPoints(core);

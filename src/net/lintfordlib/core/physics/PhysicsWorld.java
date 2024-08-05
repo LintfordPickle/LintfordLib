@@ -53,7 +53,7 @@ public class PhysicsWorld {
 
 	private ICollisionResolver mCollisionResolver;
 
-	private boolean _lockedBodies; //
+	private boolean mAreBodiesLocked;
 	private boolean mInitialized = false;
 	private int updateCounter = 0;
 
@@ -104,7 +104,7 @@ public class PhysicsWorld {
 	 * @return Returns true if the bodies are currently locked, otherwise false.
 	 */
 	public boolean bodiesLocked() {
-		return _lockedBodies;
+		return mAreBodiesLocked;
 	}
 
 	/***
@@ -148,7 +148,7 @@ public class PhysicsWorld {
 	 * @param callback The instance to add.
 	 */
 	public void addCollisionCallback(ICollisionCallback callback) {
-		if (mCollisionCallbackList.contains(callback) == false)
+		if (!mCollisionCallbackList.contains(callback))
 			mCollisionCallbackList.add(callback);
 	}
 
@@ -242,26 +242,26 @@ public class PhysicsWorld {
 	}
 
 	public void stepWorld(float time, int totalIterations) {
-		if (mInitialized == false) {
+		if (!mInitialized) {
 			Debug.debugManager().logger().w(getClass().getSimpleName(), "Cannot step physics world - not initialized");
 			return;
 		}
 
 		if (mCollisionResolver == null)
-			throw new RuntimeException("Cannot step the PhysicsWorld without first attaching a collision resolver");
+			return;
 
 		final var lSystemTimeBegin = System.nanoTime();
 
-		time /= (float) totalIterations;
+		time /= totalIterations;
 		for (int it = 0; it < totalIterations; it++) {
 			mCurrentIterationNr = it;
 
-			_lockedBodies = true;
+			mAreBodiesLocked = true;
 			mCollisionPair.clear();
 			stepBodies(time);
 
 			broadPhase();
-			_lockedBodies = false;
+			mAreBodiesLocked = false;
 
 			narrowPhase();
 		}
@@ -337,7 +337,7 @@ public class PhysicsWorld {
 						continue;
 
 					final var lBodyB_aabb = lBodyB.aabb();
-					if (lBodyA_aabb.intersectsAA(lBodyB_aabb) == false)
+					if (!lBodyA_aabb.intersectsAA(lBodyB_aabb))
 						continue;
 
 					final var lCollisionPair = getFreeCollisionPair();
@@ -369,7 +369,7 @@ public class PhysicsWorld {
 				for (int j = 0; j < lNumCallbacks; j++)
 					mCollisionCallbackList.get(j).preContact(mContactManifold);
 
-				if (mContactManifold.enableResolveContact == false) {
+				if (!mContactManifold.enableResolveContact) {
 					returnCollisionPair(lCollisionPair);
 					continue;
 				}
@@ -436,7 +436,7 @@ public class PhysicsWorld {
 	}
 
 	public boolean removeBody(RigidBody body) {
-		if (_lockedBodies) {
+		if (mAreBodiesLocked) {
 			Debug.debugManager().logger().w(getClass().getSimpleName(), "Cannot remove bodies from the physics world while the _LockedBodies flag is set");
 			return false;
 		}
@@ -453,14 +453,12 @@ public class PhysicsWorld {
 	}
 
 	private CollisionPair getFreeCollisionPair() {
-		if (mCollisionPairPool.size() > 0) {
-			final var obj = mCollisionPairPool.removeFirst();
-			return obj;
+		if (!mCollisionPairPool.isEmpty()) {
+			return mCollisionPairPool.removeFirst();
 		}
 
 		enlargeCollisionPairPool(8);
-		final var obj = mCollisionPairPool.removeFirst();
-		return obj;
+		return mCollisionPairPool.removeFirst();
 	}
 
 	// -----

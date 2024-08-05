@@ -86,10 +86,6 @@ public class ParticleRenderer {
 	// Core-Methods
 	// --------------------------------------
 
-	public void initialize() {
-
-	}
-
 	public void loadResources(ResourceManager resourceManager) {
 		mResourceManager = resourceManager;
 
@@ -106,7 +102,7 @@ public class ParticleRenderer {
 		if (!mResourcesLoaded || !mIsParticleLoaded || !mIsAssigned)
 			return;
 
-		if (textureBatch.isDrawing() == false)
+		if (!textureBatch.isDrawing())
 			return;
 
 		final var lParticleSystem = mParticleSystem.particles();

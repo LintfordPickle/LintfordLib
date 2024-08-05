@@ -2,6 +2,10 @@ package net.lintfordlib.core.maths;
 
 public class Transform {
 
+	// --------------------------------------
+	// Constants
+	// --------------------------------------
+
 	public static final Transform Identity = new Transform();
 
 	// --------------------------------------

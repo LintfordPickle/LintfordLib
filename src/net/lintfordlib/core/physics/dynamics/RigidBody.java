@@ -119,6 +119,7 @@ public class RigidBody extends PhysicsGridEntity {
 	public Rectangle aabb() {
 		if (mShape == null)
 			return null;
+
 		return mShape.aabb(transform);
 	}
 

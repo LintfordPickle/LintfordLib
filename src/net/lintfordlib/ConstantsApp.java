@@ -18,19 +18,22 @@ public class ConstantsApp {
 
 	public static final String WORKSPACE_PROPERTY_NAME = "LintfordWorkspace";
 
-	public static final int BASE_RESOLUTION_WIDTH = 800;
-	public static final int BASE_RESOLUTION_HEIGHT = 500;
-
 	private static Map<String, String> constTab = new HashMap<>();
+
+	// ---------------------------------------------
+	// ctor
+	// ---------------------------------------------
+
+	private ConstantsApp() {
+	}
 
 	// ---------------------------------------------
 	// Methods
 	// ---------------------------------------------
 
 	public static String getStringValueDef(String name, String defaultValue) {
-		if (constTab.containsKey(name)) {
+		if (constTab.containsKey(name))
 			return constTab.get(name);
-		}
 
 		Debug.debugManager().logger().w(TAG, "String value was not found: " + name);
 
@@ -40,8 +43,7 @@ public class ConstantsApp {
 	public static float getFloatValueDef(String name, float defaultValue) {
 		if (constTab.containsKey(name)) {
 			try {
-				float lValue = Float.valueOf(constTab.get(name));
-				return lValue;
+				return Float.parseFloat(constTab.get(name));
 			} catch (Exception e) {
 				Debug.debugManager().logger().w(TAG, "Float value was not found: " + name);
 			}
@@ -53,8 +55,7 @@ public class ConstantsApp {
 	public static int getIntValueDef(String name, int defaultValue) {
 		if (constTab.containsKey(name)) {
 			try {
-				int lValue = Integer.valueOf(constTab.get(name));
-				return lValue;
+				return Integer.parseInt(constTab.get(name));
 			} catch (Exception e) {
 				Debug.debugManager().logger().w(TAG, "Integer value was not found: " + name);
 			}
@@ -66,8 +67,7 @@ public class ConstantsApp {
 	public static boolean getBooleanValueDef(String name, boolean defaultValue) {
 		if (constTab.containsKey(name)) {
 			try {
-				boolean lValue = Boolean.valueOf(constTab.get(name));
-				return lValue;
+				return Boolean.parseBoolean(constTab.get(name));
 			} catch (Exception e) {
 				Debug.debugManager().logger().w(TAG, "Boolean value was not found: " + name);
 			}

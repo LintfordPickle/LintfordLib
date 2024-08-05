@@ -2,18 +2,17 @@ package net.lintfordlib.core.maths;
 
 import java.util.List;
 
-import net.lintfordlib.ConstantsPhysics;
-
-// @formatter:off
-
 public class CollisionExtensions {
+
+	private CollisionExtensions() {
+	}
 
 	/***
 	 * Checks if the given point lies within the bounds of the box body.
 	 * 
 	 * @param vertices The 4 vertices which form the quadrilateral polygon.
-	 * @param x        The x component of the point to check.
-	 * @param y        The y component of the point to check.
+	 * @param x        The Y component of the point to check.
+	 * @param y        The X component of the point to check.
 	 * @return Returns true if the point is within one of the triangles which form the polygon.
 	 */
 	public static final boolean pointIntersectsQuadrilateralPolygon(List<Vector2f> vertices, float x, float y) {
@@ -50,13 +49,14 @@ public class CollisionExtensions {
 	 * @param vertices   The 2 vertices which form the start and end of the line.
 	 * @param lineRadius The half width of the line.
 	 * @param x          The X component of the point to test.
-	 * @param y          The X component of the point to test.
+	 * @param y          The Y component of the point to test.
+	 * @param pr         The radius of the point to check.
 	 * 
 	 * @return True if a collision is detected, otherwise false.
 	 */
-	public static final boolean pointIntersectsLineWidth(List<Vector2f> vertices, float lineRadius, float x, float y) {
-
-		assert (vertices.size() == 2) : "pointIntersectsLineWidth requires 2 vertices";
+	public static final boolean pointIntersectsLineWidth(List<Vector2f> vertices, float lineRadius, float x, float y, float pr) {
+		if (vertices == null || vertices.size() <= 2)
+			return false;
 
 		final var start = vertices.get(0);
 		final var end = vertices.get(1);
@@ -76,20 +76,48 @@ public class CollisionExtensions {
 		final var lClosestPointY = start.y + t * lLineY1;
 
 		final var distance = (float) Math.sqrt((x - lClosestPointX) * (x - lClosestPointX) + (y - lClosestPointY) * (y - lClosestPointY));
+		return distance <= (lineRadius + pr);
+	}
 
-		final var lPointRadius = 1.f * ConstantsPhysics.PixelsToUnits();
-		if (distance <= (lineRadius + lPointRadius))
-			return true;
+	/**
+	 * Checks for collision between a point and a lineWidth (that is, a line which has a width). Note that this collision detection causes the line to appear larger at each end, by exactly the radius of the line.
+	 * 
+	 * @param lsx        The X coordinate of the start of the line to check against.
+	 * @param lsy        The Y coordinate of the start of the line to check against.
+	 * @param lex        The X coordinate of the end of the line to check against.
+	 * @param ley        The Y coordinate of the end of the line to check against.
+	 * @param lineRadius The radius of the line.
+	 * @param cwx        The X component of the circle to test.
+	 * @param cwy        The Y component of the circle to test.
+	 * @param cr         The radius of the circle to check.
+	 * 
+	 * @return True if a collision is detected, otherwise false.
+	 */
+	public static boolean intersectsLineCircle(float lsx, float lsy, float lex, float ley, float lineRadius, float cwx, float cwy, float cr) {
+		final var lLineX1 = lex - lsx;
+		final var lLineY1 = ley - lsy;
 
-		return false;
+		final var lLineX2 = cwx - lsx;
+		final var lLineY2 = cwy - lsy;
+
+		final var lEdgeLength = lLineX1 * lLineX1 + lLineY1 * lLineY1;
+
+		final var v = lLineX1 * lLineX2 + lLineY1 * lLineY2;
+		final var t = MathHelper.clamp(v, 0.f, lEdgeLength) / lEdgeLength;
+
+		final var lClosestPointX = lsx + t * lLineX1;
+		final var lClosestPointY = lsy + t * lLineY1;
+
+		final var distance = (float) Math.sqrt((cwx - lClosestPointX) * (cwx - lClosestPointX) + (cwy - lClosestPointY) * (cwy - lClosestPointY));
+		return distance <= (lineRadius + cr);
 	}
 
 	/***
 	 * Checks if the given point lies within the bounds of a concave polygon.
 	 * 
 	 * @param vertices The Polygon vertices. The polygon must be concave and have a CCW winding order.
-	 * @param x        The x component of the input point to test.
-	 * @param y        The y component of the input point to test.
+	 * @param x        The X component of the input point to test.
+	 * @param y        The Y component of the input point to test.
 	 * 
 	 * @return true if the point lies within the polygon, otherwise false
 	 */
@@ -147,18 +175,16 @@ public class CollisionExtensions {
 	/***
 	 * Checks for collisions between two circles.
 	 * 
-	 * @param circle1CenterX The x component of the first circle's center position.
-	 * @param circle1CenterY The y component of the first circle's center position.
-	 * @param circle1Radius The radius of the first circle
-	 * @param circle2CenterX The x component of the second circle's center position.
-	 * @param circle2CenterY The y component of the second circle's center position.
-	 * @param circle2Radius The radius of the first circle
+	 * @param circle1CenterX The X component of the first circle's center position.
+	 * @param circle1CenterY The Y component of the first circle's center position.
+	 * @param circle1Radius  The radius of the first circle
+	 * @param circle2CenterX The X component of the second circle's center position.
+	 * @param circle2CenterY The Y component of the second circle's center position.
+	 * @param circle2Radius  The radius of the first circle
 	 * 
 	 * @return True if a collision occurs, otherwise false.
 	 */
-	public static final boolean intersectsCircleCircle(
-			float circle1CenterX, float circle1CenterY, float circle1Radius, 
-			float circle2CenterX, float circle2CenterY, float circle2Radius) {
+	public static final boolean intersectsCircleCircle(float circle1CenterX, float circle1CenterY, float circle1Radius, float circle2CenterX, float circle2CenterY, float circle2Radius) {
 		return Math.abs((circle1CenterX - circle2CenterX) * (circle1CenterX - circle2CenterX) + (circle1CenterY - circle2CenterY) * (circle1CenterY - circle2CenterY)) < (circle1Radius + circle2Radius) * (circle1Radius + circle2Radius);
 	}
 
@@ -189,33 +215,9 @@ public class CollisionExtensions {
 
 		return false;
 	}
-	
-	public static boolean intersectsLineCircle(float lsx, float lsy, float lex, float ley, float lineRadius, float cwx, float cwy, float cr) {
-		final var lLineX1 = lex - lsx;
-		final var lLineY1 = ley - lsy;
-
-		final var lLineX2 = cwx - lsx;
-		final var lLineY2 = cwy - lsy;
-
-		final var lEdgeLength = lLineX1 * lLineX1 + lLineY1 * lLineY1;
-
-		final var v = lLineX1 * lLineX2 + lLineY1 * lLineY2;
-		final var t = MathHelper.clamp(v, 0.f, lEdgeLength) / lEdgeLength;
-
-		final var lClosestPointX = lsx + t * lLineX1;
-		final var lClosestPointY = lsy + t * lLineY1;
-
-		final var distance = (float) Math.sqrt((cwx - lClosestPointX) * (cwx - lClosestPointX) + (cwy - lClosestPointY) * (cwy - lClosestPointY));
-
-		final var lPointRadius = 1.f * ConstantsPhysics.PixelsToUnits();
-		if (distance <= (lineRadius + lPointRadius))
-			return true;
-
-		return false;
-	}
 
 	public static boolean pointIntersectsAA(float x, float y, float w, float h, float pointX, float pointY) {
 		return ((((pointX < x + w) && (x < pointX)) && (pointY < y + h)) && (y < pointY));
 	}
-	
+
 }

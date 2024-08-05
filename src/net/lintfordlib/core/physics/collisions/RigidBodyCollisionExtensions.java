@@ -1,12 +1,16 @@
 package net.lintfordlib.core.physics.collisions;
 
+import net.lintfordlib.ConstantsPhysics;
 import net.lintfordlib.core.maths.CollisionExtensions;
 import net.lintfordlib.core.physics.dynamics.RigidBody;
 
 public class RigidBodyCollisionExtensions {
 
+	private RigidBodyCollisionExtensions() {
+	}
+
 	public static boolean pointIntersectsBody(RigidBody body, float x, float y) {
-		if (pointIntersectsBodyRadius(body, x, y) == false)
+		if (!pointIntersectsBodyRadius(body, x, y))
 			return false;
 
 		switch (body.shape().shapeType()) {
@@ -47,7 +51,7 @@ public class RigidBodyCollisionExtensions {
 		assert (lLineVertices.size() == 2) : "pointIntersectsLineWidthBody requires 2 vertices for the line.";
 
 		final var lLineRadius = lineWidthBody.shape().height() * .5f;
-		return CollisionExtensions.pointIntersectsLineWidth(lLineVertices, lLineRadius, x, y);
+		return CollisionExtensions.pointIntersectsLineWidth(lLineVertices, lLineRadius, x, y, 1.f * ConstantsPhysics.PixelsToUnits());
 	}
 
 	public static final boolean intersectsPointPolygonBody(RigidBody concavePolygonBody, float x, float y) {

@@ -43,8 +43,9 @@ public abstract class RigidBodyEntity extends GridEntity {
 	// Constructor
 	// --------------------------------------
 
-	public RigidBodyEntity(int entityUid, int collEntityType) {
+	protected RigidBodyEntity(int entityUid, int collEntityType) {
 		super(entityUid, collEntityType);
+
 	}
 
 	// --------------------------------------
@@ -52,7 +53,11 @@ public abstract class RigidBodyEntity extends GridEntity {
 	// --------------------------------------
 
 	public void unloadPhysicsBody() {
-		body = null;
+		if (body != null) {
+			body.userData(null);
+			body = null;
+		}
+
 	}
 
 	@Override

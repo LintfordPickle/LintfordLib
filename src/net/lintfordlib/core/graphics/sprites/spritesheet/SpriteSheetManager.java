@@ -74,7 +74,9 @@ public class SpriteSheetManager {
 	// Constructor
 	// --------------------------------------
 
-	/** Creates a new instance of {@link SpriteSheetManager}. */
+	/**
+	 * Creates a new instance of {@link SpriteSheetManager}.
+	 */
 	public SpriteSheetManager() {
 		mSpriteSheetGroups = new HashMap<>();
 		mSpriteSheetGroups.put(LintfordCore.CORE_ENTITY_GROUP_ID, new HashMap<String, SpriteSheetDefinition>());
@@ -106,7 +108,16 @@ public class SpriteSheetManager {
 			mChangeListeners.remove(listener);
 	}
 
-	// TODO: Recheck this - if the texture doesn't exist (based on the given name) its loaded, but takes the name from the definition file.
+	/**
+	 * Attempts to retrieve the {@link SpriteSheetDefinition} with the given name. If no spritesheet definition can be found, then it is automatically loaded using the given {@link filepath} parameter.
+	 * 
+	 * @param spritesheetName The name of the Spritesheet to attempt to load.
+	 * @param filepath        The filepath of the Spritesheet to load, should it not yet have been.
+	 * @param entityGroupUid  The entityGroupUid to use when loading the resource.
+	 * 
+	 * @implNote If no SpritesheetDefinition with the given name can be found, then it will be loaded from the filepath provided. The new SpritesheetDefinition will be assigned the name in the definition file, and *not* the parameter.
+	 */
+
 	public SpriteSheetDefinition loadSpriteSheet(String spritesheetName, String filepath, int entityGroupUid) {
 		final var lExists = getSpriteSheet(spritesheetName, entityGroupUid);
 		if (lExists != null)
@@ -140,16 +151,19 @@ public class SpriteSheetManager {
 			return null;
 		}
 
-		final Gson GSON = new GsonBuilder().create();
+		final Gson gson = new GsonBuilder().create();
 
 		try {
 			final var lFileContents = new String(Files.readAllBytes(lFile.toPath()));
-			final var lSpriteSheetDefinition = GSON.fromJson(lFileContents, SpriteSheetDefinition.class);
+			final var lSpriteSheetDefinition = gson.fromJson(lFileContents, SpriteSheetDefinition.class);
 
-			// Check the integrity of the loaded spritsheet
-			if (lSpriteSheetDefinition == null || lSpriteSheetDefinition.getSpriteCount() == 0) {
-				Debug.debugManager().logger().w(getClass().getSimpleName(), lSpriteSheetDefinition.mSpriteSheetName + " has no SpriteMap Sprites defined (SpriteMap is empty!) " + lFile.getPath());
+			if (lSpriteSheetDefinition == null) {
+				Debug.debugManager().logger().w(getClass().getSimpleName(), " Error deserializing Spritesheetdefinition '" + lFile.getPath() + "'.");
+				return null;
 			}
+
+			if (lSpriteSheetDefinition.getSpriteCount() == 0)
+				Debug.debugManager().logger().w(getClass().getSimpleName(), lSpriteSheetDefinition.mSpriteSheetName + " has no SpriteMap Sprites defined (SpriteMap is empty!) " + lFile.getPath());
 
 			Debug.debugManager().logger().v(getClass().getSimpleName(), "SpriteSheet " + lFile.getPath() + " loaded (" + lSpriteSheetDefinition.mSpriteSheetName + ")");
 
@@ -301,7 +315,7 @@ public class SpriteSheetManager {
 				}
 
 				Debug.debugManager().logger().i(getClass().getSimpleName(), "Loaded spritesheet " + lSpriteSheet.mSpriteSheetName);
-				
+
 				// Add the spritesheet to the collection, using the FILENAME as the key
 				lSpriteSheetGroup.put(lSpriteSheet.mSpriteSheetName, lSpriteSheet);
 

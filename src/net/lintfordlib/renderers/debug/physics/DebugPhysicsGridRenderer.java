@@ -45,6 +45,8 @@ public class DebugPhysicsGridRenderer extends BaseRenderer {
 	public DebugPhysicsGridRenderer(RendererManager rendererManager, int entityGroupID) {
 		super(rendererManager, RENDERER_NAME, entityGroupID);
 
+		registerPassTypeIndex(RenderPass.RENDER_PASS_COLOR);
+
 		mLineBatch = new LineBatch();
 	}
 
