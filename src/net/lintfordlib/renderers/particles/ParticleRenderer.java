@@ -116,7 +116,7 @@ public class ParticleRenderer {
 			if (!lParticleInst.isAssigned())
 				continue;
 
-			if (lCamBounds.intersectsAA(lParticleInst.worldPositionX, lParticleInst.worldPositionY, lParticleInst.width, lParticleInst.height) == false)
+			if (!lCamBounds.intersectsAA(lParticleInst.worldPositionX, lParticleInst.worldPositionY, lParticleInst.width, lParticleInst.height))
 				continue;
 
 			float lWidthScaled = mSpriteFrame != null ? mSpriteFrame.width() : lParticleInst.width;
@@ -125,7 +125,7 @@ public class ParticleRenderer {
 			lWidthScaled *= lParticleInst.scale;
 			lHeightScaled *= lParticleInst.scale;
 
-			textureBatch.drawAroundCenter(mSpritesheetDefinition, mSpriteFrame, lParticleInst.worldPositionX, lParticleInst.worldPositionY, lWidthScaled, lHeightScaled, lParticleInst.rotationInRadians, lParticleInst.rox, lParticleInst.roy, lParticleInst.worldPositionZ, lParticleInst.color);
+			textureBatch.drawAroundCenter(mSpritesheetDefinition, mSpriteFrame, lParticleInst.worldPositionX, lParticleInst.worldPositionY, lWidthScaled, lHeightScaled, lParticleInst.rotationInRadians, lParticleInst.rox, lParticleInst.roy, lParticleInst.zDepth, lParticleInst.color);
 		}
 	}
 

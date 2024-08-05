@@ -33,7 +33,7 @@ public class Particle {
 
 	public float worldPositionX;
 	public float worldPositionY;
-	public float worldPositionZ;
+	public float zDepth;
 	public float rotationInRadians;
 
 	// --------------------------------------
@@ -74,7 +74,7 @@ public class Particle {
 		height = destinationHeight;
 	}
 
-	public void spawnParticle(float worldX, float worldY, float worldZ, float velocityX, float velocityY, float lifetimeInMs) {
+	public void spawnParticle(float worldX, float worldY, float zDepth, float velocityX, float velocityY, float lifetimeInMs) {
 		mIsFree = false;
 		mLifeTimeInMs = lifetimeInMs;
 		timeSinceStart = 0;
@@ -84,7 +84,8 @@ public class Particle {
 
 		worldPositionX = worldX;
 		worldPositionY = worldY;
-		worldPositionZ = worldZ;
+		this.zDepth = zDepth;
+
 		vx = velocityX;
 		vy = velocityY;
 	}
@@ -97,7 +98,7 @@ public class Particle {
 
 		worldPositionX = 0.f;
 		worldPositionY = 0.f;
-		worldPositionZ = -.2f;
+		zDepth = -.01f;
 
 		vx = 0f;
 		vy = 0f;

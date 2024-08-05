@@ -7,13 +7,16 @@ import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.particles.particleemitters.ParticleEmitterInstance;
 import net.lintfordlib.core.particles.particlesystems.ParticleSystemInstance;
 
+// A2B traverses a path and ends when it reaches the end of the path
 public class ParticleEmitterA2B extends ParticleEmitterShape {
 
 	private class A2BShapeInstData {
 		float startX;
 		float startY;
+		float startZ;
 		float endX;
 		float endY;
+		float endZ;
 		float lifeTime;
 		float emitTimer;
 		boolean isInUse;
@@ -63,9 +66,28 @@ public class ParticleEmitterA2B extends ParticleEmitterShape {
 	// Methods
 	// --------------------------------------
 
-	public void spawn(ParticleSystemInstance particleSystem, float worldX, float worldY, float heading, float force) {
+	public void spawn(ParticleSystemInstance particleSystem, float worldX, float worldY, float zDepth, float heading, float force) {
 
-		spawnNewPath(worldX, worldY, worldX + 50.f, worldY + 75.f);
+		final var endX = worldX + (float) Math.cos(heading) * force;
+		final var endY = worldX + (float) Math.sin(heading) * force;
+
+		spawnNewPath(worldX, worldY, zDepth, endX, endY, zDepth);
+	}
+
+	private void spawnNewPath(float startX, float startY, float startZDepth, float endX, float endY, float endZDepth) {
+		final var lNewInstData = getFreeShapeInstData();
+		if (lNewInstData == null)
+			return; // nothing free yet
+
+		lNewInstData.startX = startX;
+		lNewInstData.startY = startY;
+		lNewInstData.startZ = startZDepth;
+		lNewInstData.endX = endX;
+		lNewInstData.endY = endY;
+		lNewInstData.endZ = endZDepth;
+		lNewInstData.lifeTime = 0.f;
+		lNewInstData.isInUse = true;
+
 	}
 
 	@Override
@@ -77,7 +99,6 @@ public class ParticleEmitterA2B extends ParticleEmitterShape {
 
 		final var dt = (float) core.gameTime().elapsedTimeMilli() / 1000.f;
 
-		// A2B traverses a path and ends when it reaches the end of the path
 		// TODO: for now, cheating on the life time
 		final float endTime = 7.5f;
 
@@ -89,10 +110,11 @@ public class ParticleEmitterA2B extends ParticleEmitterShape {
 				curInst.lifeTime += dt;
 
 				if (curInst.emitTimer <= 0.f) {
-					// TODO: need to work out the actual position using normalized life time
 					final var xx = curInst.startX + curInst.endX * (curInst.lifeTime / endTime);
 					final var yy = curInst.startY + curInst.endY * (curInst.lifeTime / endTime);
-					inst.particleSystemInstance.spawnParticle(xx, yy, -0.01f, 0.f, 0.f);
+					final var zz = curInst.startZ + curInst.endZ * (curInst.lifeTime / endTime);
+
+					inst.particleSystemInstance.spawnParticle(xx, yy, zz, 0.f, 0.f);
 					curInst.emitTimer = emitPeriod;
 				}
 
@@ -103,23 +125,9 @@ public class ParticleEmitterA2B extends ParticleEmitterShape {
 		}
 	}
 
-	private void spawnNewPath(float startX, float startY, float endX, float endY) {
-		final var lNewInstData = getFreeShapeInstData();
-		if (lNewInstData == null)
-			return; // nothing free yet
-
-		lNewInstData.startX = startX;
-		lNewInstData.startY = startY;
-		lNewInstData.endX = endX;
-		lNewInstData.endY = endY;
-		lNewInstData.lifeTime = 0.f;
-		lNewInstData.isInUse = true;
-
-	}
-
 	private A2BShapeInstData getFreeShapeInstData() {
 		for (int i = 0; i < MAX_POOL_SIZE; i++) {
-			if (mEmitterInstPointsPool.get(i).isInUse == false)
+			if (!mEmitterInstPointsPool.get(i).isInUse)
 				return mEmitterInstPointsPool.get(i);
 		}
 		return null;

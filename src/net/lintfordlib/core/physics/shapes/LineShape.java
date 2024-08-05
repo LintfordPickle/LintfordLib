@@ -78,7 +78,7 @@ public class LineShape extends BaseShape {
 		final var lHeight = maxY - minY;
 
 		final var expand = mHeight;
-		mAABB.set(minX - expand*.5f, minY-expand*.5f, lWidth+expand, lHeight+expand);
+		mAABB.set(minX - expand * .5f, minY - expand * .5f, lWidth + expand, lHeight + expand);
 	}
 
 	@Override
@@ -90,7 +90,7 @@ public class LineShape extends BaseShape {
 
 	private void set(float unitPositionX, float unitPositionY, float unitWidth, float unitColDistToLine, float rotRadians) {
 		mWidth = unitWidth;
-		mHeight = unitColDistToLine * 2.f;
+		mHeight = unitColDistToLine;
 		mRadius = (float) Math.sqrt(mWidth * mWidth + mHeight * mHeight) * .5f;
 
 		computeMass();
@@ -129,7 +129,7 @@ public class LineShape extends BaseShape {
 		lNewLineShape.mStaticFriction = MathHelper.clamp(staticFriction, 0.f, 1.f);
 		lNewLineShape.mDynamicFriction = MathHelper.clamp(dynamicFriction, 0.f, 1.f);
 		lNewLineShape.mRestitution = MathHelper.clamp(restitution, 0f, 1f);
-		lNewLineShape.mDensity = (float) Math.abs(density);
+		lNewLineShape.mDensity = Math.abs(density);
 
 		lNewLineShape.set(unitLocalPosX, unitLocalPosY, unitWidth, unitHeight, rotRadians);
 

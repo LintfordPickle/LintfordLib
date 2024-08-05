@@ -39,12 +39,12 @@ public class ParticlePhysicsModifier extends ParticleModifierBase {
 
 	@Override
 	public void initialize(Particle particle) {
-
+		// ignore
 	}
 
 	@Override
 	public void update(LintfordCore core) {
-
+		// ignore
 	}
 
 	// --------------------------------------
@@ -53,11 +53,11 @@ public class ParticlePhysicsModifier extends ParticleModifierBase {
 
 	@Override
 	public void updateParticle(LintfordCore core, Particle particle) {
-		final var lDelta = (float) core.appTime().elapsedTimeMilli() / 1000f;
+		final var dt = (float) core.appTime().elapsedTimeMilli() / 1000f;
 
 		if (enableMovement) {
-			particle.worldPositionX += particle.vx * lDelta;
-			particle.worldPositionY += particle.vy * lDelta;
+			particle.worldPositionX += particle.vx * dt;
+			particle.worldPositionY += particle.vy * dt;
 		}
 
 		if (enableRotation) {

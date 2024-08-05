@@ -31,7 +31,7 @@ public class ParticleEmitterCone extends ParticleEmitterShape {
 	// Methods
 	// --------------------------------------
 
-	public void spawn(ParticleSystemInstance particleSystem, float worldX, float worldY, float heading, float force) {
+	public void spawn(ParticleSystemInstance particleSystem, float worldX, float worldY, float zDepth, float heading, float force) {
 
 		final var nh = (float) Math.toRadians(this.heading);
 		final var nma2 = (float) Math.toRadians(maxAngle);
@@ -41,7 +41,7 @@ public class ParticleEmitterCone extends ParticleEmitterShape {
 		final var lVelX = (float) Math.cos(lRandomHeading) * force;
 		final var lVelY = (float) Math.sin(lRandomHeading) * force;
 
-		particleSystem.spawnParticle(worldX, worldY, -0.02f, lVelX, lVelY);
+		particleSystem.spawnParticle(worldX, worldY, zDepth, lVelX, lVelY);
 
 	}
 }

@@ -33,11 +33,11 @@ public abstract class ParticleInitializerBase implements Serializable {
 	// Constructor
 	// --------------------------------------
 
-	public ParticleInitializerBase() {
+	protected ParticleInitializerBase() {
 
 	}
 
-	public ParticleInitializerBase(final String initializerName) {
+	protected ParticleInitializerBase(final String initializerName) {
 		mInitializerName = initializerName;
 	}
 

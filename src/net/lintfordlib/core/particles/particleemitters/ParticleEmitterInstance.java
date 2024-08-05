@@ -47,9 +47,8 @@ public class ParticleEmitterInstance extends GridEntity {
 	public transient ParticleSystemInstance particleSystemInstance;
 	private float mEmitterEmitTimerModifier; // [0,1]
 
-	// public Object shapeData;
-
 	public float rot;
+	public float zDepth;
 
 	// --------------------------------------
 	// Properties
@@ -149,7 +148,7 @@ public class ParticleEmitterInstance extends GridEntity {
 	}
 
 	public ParticleEmitterInstance(int entityUid) {
-		super(entityUid, -1); // TODO: Filter in hashgrid for Particle emitters
+		super(entityUid, -1);
 
 		mChildEmitterInstances = new ArrayList<>();
 		enabled = true;
@@ -160,16 +159,6 @@ public class ParticleEmitterInstance extends GridEntity {
 	// --------------------------------------
 	// Core-Methods
 	// --------------------------------------
-
-	public void initialise() {
-
-	}
-
-	public void resyncWithDefinition(ParticleFrameworkData particleFramework) {
-		if (isAssigned() == false)
-			return;
-
-	}
 
 	public void unload() {
 		reset();
@@ -224,6 +213,7 @@ public class ParticleEmitterInstance extends GridEntity {
 
 			lChildParticleEmitterInstanceInst.aabb.x(aabb.x());
 			lChildParticleEmitterInstanceInst.aabb.y(aabb.y());
+			lChildParticleEmitterInstanceInst.zDepth = zDepth;
 			lChildParticleEmitterInstanceInst.rot = rot;
 
 			// All emitters, regardless of their place in the hierarchy, are updated from the ParticleFrameworkController
@@ -255,15 +245,15 @@ public class ParticleEmitterInstance extends GridEntity {
 				// The position and velocity is handled by the emitter shape
 				if (mEmitterDefinition.useSharedParticleSystem) {
 					if (mEmitterDefinition.ParticleEmitterShape == null) {
-						mEmitterDefinition.sharedParticleSystemInstance.spawnParticle(aabb.x(), aabb.y(), -.2f, 0, 0);
+						mEmitterDefinition.sharedParticleSystemInstance.spawnParticle(aabb.x(), aabb.y(), zDepth, 0, 0);
 					} else {
-						mEmitterDefinition.ParticleEmitterShape.spawn(mEmitterDefinition.sharedParticleSystemInstance, aabb.x(), aabb.y(), lHeading, lForce);
+						mEmitterDefinition.ParticleEmitterShape.spawn(mEmitterDefinition.sharedParticleSystemInstance, aabb.x(), aabb.y(), zDepth, lHeading, lForce);
 					}
 				} else {
 					if (mEmitterDefinition.ParticleEmitterShape == null) {
-						particleSystemInstance.spawnParticle(aabb.x(), aabb.y(), -.2f, lVelX, lVelY);
+						particleSystemInstance.spawnParticle(aabb.x(), aabb.y(), zDepth, lVelX, lVelY);
 					} else {
-						mEmitterDefinition.ParticleEmitterShape.spawn(particleSystemInstance, aabb.x(), aabb.y(), lHeading, lForce);
+						mEmitterDefinition.ParticleEmitterShape.spawn(particleSystemInstance, aabb.x(), aabb.y(), zDepth, lHeading, lForce);
 					}
 				}
 			}
@@ -300,15 +290,15 @@ public class ParticleEmitterInstance extends GridEntity {
 			// The position and velocity is handled by the emitter shape
 			if (mEmitterDefinition.useSharedParticleSystem) {
 				if (mEmitterDefinition.ParticleEmitterShape == null) {
-					mEmitterDefinition.sharedParticleSystemInstance.spawnParticle(aabb.x(), aabb.y(), -.2f, 0, 0);
+					mEmitterDefinition.sharedParticleSystemInstance.spawnParticle(aabb.x(), aabb.y(), zDepth, 0, 0);
 				} else {
-					mEmitterDefinition.ParticleEmitterShape.spawn(mEmitterDefinition.sharedParticleSystemInstance, aabb.x(), aabb.y(), lHeading, lForce);
+					mEmitterDefinition.ParticleEmitterShape.spawn(mEmitterDefinition.sharedParticleSystemInstance, aabb.x(), aabb.y(), zDepth, lHeading, lForce);
 				}
 			} else {
 				if (mEmitterDefinition.ParticleEmitterShape == null) {
-					particleSystemInstance.spawnParticle(aabb.x(), aabb.y(), -.2f, lVelX, lVelY);
+					particleSystemInstance.spawnParticle(aabb.x(), aabb.y(), zDepth, lVelX, lVelY);
 				} else {
-					mEmitterDefinition.ParticleEmitterShape.spawn(particleSystemInstance, aabb.x(), aabb.y(), lHeading, lForce);
+					mEmitterDefinition.ParticleEmitterShape.spawn(particleSystemInstance, aabb.x(), aabb.y(), zDepth, lHeading, lForce);
 				}
 			}
 		}
@@ -337,7 +327,7 @@ public class ParticleEmitterInstance extends GridEntity {
 
 	public void assignEmitterDefinition(ParticleEmitterDefinition emitterDefinition, ParticleFrameworkData particleFramework) {
 		if (emitterDefinition == null) {
-			Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Failed to assign ParticleEmitter - given EmitterDefinition is null!"));
+			Debug.debugManager().logger().e(getClass().getSimpleName(), "Failed to assign ParticleEmitter - given EmitterDefinition is null!");
 			return;
 		}
 
@@ -416,15 +406,21 @@ public class ParticleEmitterInstance extends GridEntity {
 	@Override
 	public boolean isGridCacheOld(SpatialHashGrid<?> grid) {
 		final float newMinX = grid.getCellIndexX((int) aabb.left());
+		if (newMinX != minX)
+			return true;
+
 		final float newMinY = grid.getCellIndexY((int) aabb.top());
+		if (newMinY != minY)
+			return true;
 
 		final float newMaxX = grid.getCellIndexX((int) aabb.right());
+		if (newMaxX != maxX)
+			return true;
+
 		final float newMaxY = grid.getCellIndexY((int) aabb.bottom());
+		if (newMaxY != maxY)
+			return true;
 
-		if (newMinX == minX && newMinY == minY && newMaxX == maxX && newMaxY == maxY)
-			return false; // early out
-
-		return true;
+		return false;
 	}
-
 }

@@ -36,11 +36,11 @@ public class ParticleEmitterExplosion extends ParticleEmitterShape {
 	// Methods
 	// --------------------------------------
 
-	public void spawn(ParticleSystemInstance particleSystem, float worldX, float worldY, float heading, float force) {
+	public void spawn(ParticleSystemInstance particleSystem, float worldX, float worldY, float zDepth, float heading, float force) {
 		final var lRandomHeading = RandomNumbers.nextFloat() * ConstantsMath.Pi * 2;
 		float xx = (float) Math.cos(lRandomHeading) * radius;
 		float yy = (float) Math.sin(lRandomHeading) * radius;
 
-		particleSystem.spawnParticle(worldX + xx, worldY + yy, -0.02f, xx * force, yy * force);
+		particleSystem.spawnParticle(worldX + xx, worldY + yy, zDepth, xx * force, yy * force);
 	}
 }

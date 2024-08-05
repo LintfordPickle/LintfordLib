@@ -75,13 +75,14 @@ public class ParticleFrameworkController extends BaseController {
 			if (lParticleEmitterInstance.parentEmitterInst() != null) {
 				final var lParentInst = lParticleEmitterInstance.parentEmitterInst();
 
-				if (lParentInst.isEnabled() == false)
+				if (!lParentInst.isEnabled())
 					continue;
 
 				final var lEmitterDef = lParticleEmitterInstance.emitterDefinition();
 
 				lParticleEmitterInstance.aabb.x(lParentInst.aabb.x() + lEmitterDef.positionRelOffsetX);
 				lParticleEmitterInstance.aabb.y(lParentInst.aabb.y() + lEmitterDef.positionRelOffsetY);
+				lParticleEmitterInstance.zDepth = lParentInst.zDepth;
 				lParticleEmitterInstance.rot = lParentInst.rot + lEmitterDef.positionRelOffsetRot;
 
 			}

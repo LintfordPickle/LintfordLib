@@ -137,6 +137,7 @@ public class ParticleFrameworkRenderer extends BaseRenderer {
 		int cacheSrcBlendFactor = -1;
 		int cacheDestBlendFactor = -1;
 
+		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glDepthMask(false);
 
 		final int lNumParticleRenderers = mParticleRenderers.size();

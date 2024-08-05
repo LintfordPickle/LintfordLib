@@ -63,14 +63,6 @@ public class ParticleSystemInstance {
 	}
 
 	// --------------------------------------
-	// Constructor
-	// --------------------------------------
-
-	public ParticleSystemInstance() {
-
-	}
-
-	// --------------------------------------
 	// Core-Methods
 	// --------------------------------------
 
@@ -173,6 +165,7 @@ public class ParticleSystemInstance {
 					if (mOnDeathEmitter != null) {
 						mOnDeathEmitter.aabb.x(particle.worldPositionX);
 						mOnDeathEmitter.aabb.y(particle.worldPositionY);
+						mOnDeathEmitter.zDepth = particle.zDepth;
 
 						mOnDeathEmitter.triggerSpawn(core);
 					}
@@ -202,11 +195,11 @@ public class ParticleSystemInstance {
 	/**
 	 * Spawns a new {@link Particle} instance, foregoing the {@link IParticleinitializer}s attached to this {@link ParticleSystemInstance}. Insteadm you can specifiy the individual components of the particles.
 	 */
-	public Particle spawnParticle(float worldX, float worldY, float worldZ, float velocityX, float velocityY, float sourceX, float sourceY, float sourceW, float sourceH, float destWidth, float destHeight) {
-		if (mIsAssigned == false)
+	public Particle spawnParticle(float worldX, float worldY, float zDepth, float velocityX, float velocityY, float sourceX, float sourceY, float sourceW, float sourceH, float destWidth, float destHeight) {
+		if (!mIsAssigned)
 			return null;
 
-		final var lNewParticle = spawnParticle(worldX, worldY, worldY, velocityX, velocityY);
+		final var lNewParticle = spawnParticle(worldX, worldY, zDepth, velocityX, velocityY);
 		if (lNewParticle != null) {
 			lNewParticle.setupSourceTexture(sourceX, sourceY, sourceW, sourceH);
 			lNewParticle.setupDestTexture(destWidth, destHeight);
@@ -218,8 +211,8 @@ public class ParticleSystemInstance {
 	}
 
 	/** Spawns a new {@link Particle} and applys the {@link IParticleinitializer} attached to this {@link ParticleSystemInstance}. */
-	public Particle spawnParticle(float worldX, float worldY, float worldZ, float velocityX, float velocityY) {
-		if (mIsAssigned == false)
+	public Particle spawnParticle(float worldX, float worldY, float zDepth, float velocityX, float velocityY) {
+		if (!mIsAssigned)
 			return null;
 
 		for (int i = 0; i < mCapacity; i++) {
@@ -231,7 +224,7 @@ public class ParticleSystemInstance {
 			if (mParticleSystemDefinition.particleLifeMax != 0 && mParticleSystemDefinition.particleLifeMax > mParticleSystemDefinition.particleLifeMin)
 				particleLifeTime = RandomNumbers.random(mParticleSystemDefinition.particleLifeMin, mParticleSystemDefinition.particleLifeMax);
 
-			lSpawnedParticle.spawnParticle(worldX, worldY, worldZ, velocityX, velocityY, particleLifeTime);
+			lSpawnedParticle.spawnParticle(worldX, worldY, zDepth, velocityX, velocityY, particleLifeTime);
 
 			applyInitializers(lSpawnedParticle);
 
