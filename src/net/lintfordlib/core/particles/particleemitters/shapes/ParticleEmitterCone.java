@@ -16,8 +16,8 @@ public class ParticleEmitterCone extends ParticleEmitterShape {
 	// --------------------------------------
 
 	public float radius;
-	public float heading;
-	public float maxAngle;
+	public float headingDegs;
+	public float maxAngleDegs;
 
 	// --------------------------------------
 	// Constructor
@@ -31,15 +31,15 @@ public class ParticleEmitterCone extends ParticleEmitterShape {
 	// Methods
 	// --------------------------------------
 
-	public void spawn(ParticleSystemInstance particleSystem, float worldX, float worldY, float zDepth, float heading, float force) {
+	public void spawn(ParticleSystemInstance particleSystem, float worldX, float worldY, float zDepth, float glHeadingRads, float forceX, float forceY) {
 
-		final var nh = (float) Math.toRadians(this.heading);
-		final var nma2 = (float) Math.toRadians(maxAngle);
+		final var nh = glHeadingRads + (float) Math.toRadians(this.headingDegs);
+		final var nma2 = (float) Math.toRadians(maxAngleDegs);
 
 		final var lRandomHeading = nh + RandomNumbers.random(0, nma2) - nma2 / 2.f;
 
-		final var lVelX = (float) Math.cos(lRandomHeading) * force;
-		final var lVelY = (float) Math.sin(lRandomHeading) * force;
+		final var lVelX = (float) Math.cos(lRandomHeading) * forceX;
+		final var lVelY = (float) Math.sin(lRandomHeading) * forceY;
 
 		particleSystem.spawnParticle(worldX, worldY, zDepth, lVelX, lVelY);
 

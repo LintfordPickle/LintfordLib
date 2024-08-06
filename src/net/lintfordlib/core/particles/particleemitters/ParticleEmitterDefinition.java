@@ -28,7 +28,7 @@ public class ParticleEmitterDefinition extends BaseDefinition {
 
 	@SerializedName(value = "triggeredEmissionLengthMs")
 	public float triggeredEmissionLengthMs;
-	
+
 	@SerializedName(value = "emitterShape")
 	public ParticleEmitterShape ParticleEmitterShape;
 
@@ -95,7 +95,7 @@ public class ParticleEmitterDefinition extends BaseDefinition {
 	// --------------------------------------
 
 	public void initialize(ParticleFrameworkData particleFramework) {
-		if (isInitialized() == false)
+		if (!isInitialized())
 			resolveParticleSystems(particleFramework);
 
 		resolveChildEmitterParticleSystems(particleFramework);
@@ -136,9 +136,7 @@ public class ParticleEmitterDefinition extends BaseDefinition {
 			if (lChildEmitterDefinition == null)
 				continue;
 
-			// if (lChildEmitterDefinition.isInitialized() == false)
 			lChildEmitterDefinition.resolveParticleSystems(particleFramework);
-
 		}
 	}
 
@@ -176,7 +174,7 @@ public class ParticleEmitterDefinition extends BaseDefinition {
 		lNewDef.emitTimeMax = def.emitTimeMax;
 		lNewDef.emitAmountMin = def.emitAmountMin;
 		lNewDef.emitAmountMax = def.emitAmountMax;
-		// lNewDef.filepath = def.filepath;
+
 		lNewDef.useSharedParticleSystem = def.useSharedParticleSystem;
 		lNewDef.positionRelOffsetX = def.positionRelOffsetX;
 		lNewDef.positionRelOffsetY = def.positionRelOffsetY;
@@ -184,8 +182,7 @@ public class ParticleEmitterDefinition extends BaseDefinition {
 		lNewDef.triggerType = def.triggerType;
 		lNewDef.triggerCooldown = def.triggerCooldown;
 		lNewDef.triggeredEmissionLengthMs = def.triggeredEmissionLengthMs;
-		
-		
+
 		// Duplicate child emitters?
 		final var lNumChildren = def.childEmitters().size();
 		for (int i = 0; i < lNumChildren; i++) {

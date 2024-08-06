@@ -66,10 +66,10 @@ public class ParticleEmitterA2B extends ParticleEmitterShape {
 	// Methods
 	// --------------------------------------
 
-	public void spawn(ParticleSystemInstance particleSystem, float worldX, float worldY, float zDepth, float heading, float force) {
+	public void spawn(ParticleSystemInstance particleSystem, float worldX, float worldY, float zDepth, float heading, float forceX, float forceY) {
 
-		final var endX = worldX + (float) Math.cos(heading) * force;
-		final var endY = worldX + (float) Math.sin(heading) * force;
+		final var endX = worldX + (float) Math.cos(heading) * forceX;
+		final var endY = worldX + (float) Math.sin(heading) * forceY;
 
 		spawnNewPath(worldX, worldY, zDepth, endX, endY, zDepth);
 	}

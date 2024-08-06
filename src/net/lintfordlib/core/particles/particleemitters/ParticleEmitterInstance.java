@@ -28,7 +28,7 @@ public class ParticleEmitterInstance extends GridEntity {
 	// --------------------------------------
 
 	private transient ParticleEmitterDefinition mEmitterDefinition;
-	public final Rectangle aabb = new Rectangle(0, 0, 1, 1);
+
 	private transient ParticleEmitterInstance mParentEmitterInstance;
 	private transient List<ParticleEmitterInstance> mChildEmitterInstances;
 
@@ -47,20 +47,36 @@ public class ParticleEmitterInstance extends GridEntity {
 	public transient ParticleSystemInstance particleSystemInstance;
 	private float mEmitterEmitTimerModifier; // [0,1]
 
-	public float rot;
+	// Global state settings
+	public final Rectangle aabb = new Rectangle(0, 0, 1, 1);
+	public float globalForceX;
+	public float globalForceY;
+	public float globalRotRads;
 	public float zDepth;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
 
+	public boolean isTriggedEmission() {
+		return mEmitterDefinition.triggerType == ParticleEmitterTrigger.PARTICLE_EMITTER_TRIGGER_TYPE_TRIGGED;
+	}
+
 	public void triggerEmission() {
-		if (mEmitterDefinition.triggerCooldown > 0 && mTriggerCooldownTimer > 0)
-			return; // cooldown not yet elapsed
+		if (!isCoolDowned())
+			return;
 
 		mEmissionLengthMs = mEmitterDefinition.triggeredEmissionLengthMs;
 
 		mTriggered = true;
+	}
+
+	public boolean isCoolDowned() {
+		final var lHasCooldown = mEmitterDefinition.triggerCooldown > 0;
+		if (!lHasCooldown)
+			return true;
+
+		return mTriggerCooldownTimer <= 0;
 	}
 
 	public boolean isInitialized() {
@@ -214,7 +230,9 @@ public class ParticleEmitterInstance extends GridEntity {
 			lChildParticleEmitterInstanceInst.aabb.x(aabb.x());
 			lChildParticleEmitterInstanceInst.aabb.y(aabb.y());
 			lChildParticleEmitterInstanceInst.zDepth = zDepth;
-			lChildParticleEmitterInstanceInst.rot = rot;
+			lChildParticleEmitterInstanceInst.globalForceX = globalForceX;
+			lChildParticleEmitterInstanceInst.globalForceY = globalForceY;
+			lChildParticleEmitterInstanceInst.globalRotRads = globalRotRads;
 
 			// All emitters, regardless of their place in the hierarchy, are updated from the ParticleFrameworkController
 			lChildParticleEmitterInstanceInst.update(core);
@@ -233,27 +251,32 @@ public class ParticleEmitterInstance extends GridEntity {
 			final int lAmtToSpawn = RandomNumbers.random(emitAmtMin, emitAmtMax);
 			for (int i = 0; i < lAmtToSpawn; i++) {
 
-				final float lHeading = 0.f;
+				final float lHeadingRads = globalRotRads; // + objRotRads
 
-				final var emitForceMin = mEmitterDefinition.emitForceMin;
-				final var emitForceMax = Math.max(emitForceMin + 1, mEmitterDefinition.emitForceMax);
-				final var lForce = RandomNumbers.random(emitForceMin, emitForceMax);
+				final var lObjForceMin = mEmitterDefinition.emitForceMin;
+				final var lObjForceMax = Math.max(lObjForceMin + 1, mEmitterDefinition.emitForceMax);
+				final var lObjForceX = RandomNumbers.random(lObjForceMin, lObjForceMax);
+				final var lObjForceY = RandomNumbers.random(lObjForceMin, lObjForceMax);
 
-				final var lVelX = (float) Math.cos(lHeading) * lForce;
-				final var lVelY = (float) Math.sin(lHeading) * lForce;
+				final var fx = globalForceX == 0 ? 1.f : globalForceX;
+				final var fy = globalForceY == 0 ? 1.f : globalForceY;
 
 				// The position and velocity is handled by the emitter shape
 				if (mEmitterDefinition.useSharedParticleSystem) {
 					if (mEmitterDefinition.ParticleEmitterShape == null) {
 						mEmitterDefinition.sharedParticleSystemInstance.spawnParticle(aabb.x(), aabb.y(), zDepth, 0, 0);
 					} else {
-						mEmitterDefinition.ParticleEmitterShape.spawn(mEmitterDefinition.sharedParticleSystemInstance, aabb.x(), aabb.y(), zDepth, lHeading, lForce);
+						mEmitterDefinition.ParticleEmitterShape.spawn(mEmitterDefinition.sharedParticleSystemInstance, aabb.x(), aabb.y(), zDepth, lHeadingRads, lObjForceX * fx, lObjForceY * fy);
 					}
 				} else {
 					if (mEmitterDefinition.ParticleEmitterShape == null) {
+
+						final var lVelX = (float) Math.cos(lHeadingRads) * lObjForceX * fx;
+						final var lVelY = (float) Math.sin(lHeadingRads) * lObjForceY * fy;
+
 						particleSystemInstance.spawnParticle(aabb.x(), aabb.y(), zDepth, lVelX, lVelY);
 					} else {
-						mEmitterDefinition.ParticleEmitterShape.spawn(particleSystemInstance, aabb.x(), aabb.y(), zDepth, lHeading, lForce);
+						mEmitterDefinition.ParticleEmitterShape.spawn(particleSystemInstance, aabb.x(), aabb.y(), zDepth, lHeadingRads, lObjForceX * fx, lObjForceY * fy);
 					}
 				}
 			}
@@ -278,27 +301,32 @@ public class ParticleEmitterInstance extends GridEntity {
 		final int lAmtToSpawn = RandomNumbers.random(emitAmtMin, emitAmtMax);
 		for (int i = 0; i < lAmtToSpawn; i++) {
 
-			final float lHeading = 0.f;
+			final float lHeadingRads = globalRotRads; // + objRotRads
 
-			final var emitForceMin = mEmitterDefinition.emitForceMin;
-			final var emitForceMax = Math.max(emitForceMin + 1, mEmitterDefinition.emitForceMax);
-			final var lForce = RandomNumbers.random(emitForceMin, emitForceMax);
-
-			final var lVelX = (float) Math.cos(lHeading) * lForce;
-			final var lVelY = (float) Math.sin(lHeading) * lForce;
+			final var lObjForceMin = mEmitterDefinition.emitForceMin;
+			final var lObjForceMax = Math.max(lObjForceMin + 1, mEmitterDefinition.emitForceMax);
+			final var lObjForceX = RandomNumbers.random(lObjForceMin, lObjForceMax);
+			final var lObjForceY = RandomNumbers.random(lObjForceMin, lObjForceMax);
+			
+			final var fx = globalForceX == 0 ? 1.f : globalForceX;
+			final var fy = globalForceY == 0 ? 1.f : globalForceY;
 
 			// The position and velocity is handled by the emitter shape
 			if (mEmitterDefinition.useSharedParticleSystem) {
 				if (mEmitterDefinition.ParticleEmitterShape == null) {
 					mEmitterDefinition.sharedParticleSystemInstance.spawnParticle(aabb.x(), aabb.y(), zDepth, 0, 0);
 				} else {
-					mEmitterDefinition.ParticleEmitterShape.spawn(mEmitterDefinition.sharedParticleSystemInstance, aabb.x(), aabb.y(), zDepth, lHeading, lForce);
+					mEmitterDefinition.ParticleEmitterShape.spawn(mEmitterDefinition.sharedParticleSystemInstance, aabb.x(), aabb.y(), zDepth, lHeadingRads, lObjForceX * fx, lObjForceY * fy);
 				}
 			} else {
 				if (mEmitterDefinition.ParticleEmitterShape == null) {
+
+					final var lVelX = (float) Math.cos(lHeadingRads) * lObjForceX * fx;
+					final var lVelY = (float) Math.sin(lHeadingRads) * lObjForceY * fy;
+
 					particleSystemInstance.spawnParticle(aabb.x(), aabb.y(), zDepth, lVelX, lVelY);
 				} else {
-					mEmitterDefinition.ParticleEmitterShape.spawn(particleSystemInstance, aabb.x(), aabb.y(), zDepth, lHeading, lForce);
+					mEmitterDefinition.ParticleEmitterShape.spawn(particleSystemInstance, aabb.x(), aabb.y(), zDepth, lHeadingRads, lObjForceX * fx, lObjForceY * fy);
 				}
 			}
 		}

@@ -29,10 +29,6 @@ public class SpriteFrame extends Rectangle implements Serializable {
 		return mName;
 	}
 
-	public float getDefaultRotation() {
-		return mRotationInRadians;
-	}
-
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------

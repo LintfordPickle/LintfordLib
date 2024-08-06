@@ -39,6 +39,6 @@ public abstract class ParticleEmitterShape implements Serializable {
 
 	}
 
-	public abstract void spawn(ParticleSystemInstance particleSystem, float worldX, float worldY, float zDepth, float heading, float force);
+	public abstract void spawn(ParticleSystemInstance particleSystem, float worldX, float worldY, float zDepth, float heading, float forceX, float forceY);
 
 }

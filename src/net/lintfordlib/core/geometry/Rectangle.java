@@ -38,27 +38,12 @@ public class Rectangle implements Serializable {
 	@SerializedName(value = "pivotY")
 	protected float mPivotY;
 
-	@SerializedName(value = "rotation")
-	protected float mRotationInRadians;
-
 	protected boolean mFlipHorizontal;
 	protected boolean mFlipVertical;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
-
-	public float rotationInRadians() {
-		return mRotationInRadians;
-	}
-
-	public void rotationInRadians(float absRotation) {
-		mRotationInRadians = absRotation;
-	}
-
-	public void rotationInRadiansRel(float relRotation) {
-		mRotationInRadians += relRotation;
-	}
 
 	public float x() {
 		return mX;
@@ -338,13 +323,13 @@ public class Rectangle implements Serializable {
 	}
 
 	public void updateAABBToEncloseRectangle(Rectangle other) {
-		if (mX > other.mX){
+		if (mX > other.mX) {
 			final float lDiffX = mX - other.x();
 			mX = other.x();
 			mW += lDiffX;
 		}
 
-		if (mY > other.mY){
+		if (mY > other.mY) {
 			final float lDiffY = mY - other.y();
 			mY = other.y();
 			mH += lDiffY;

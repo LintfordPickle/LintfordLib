@@ -37,7 +37,7 @@ public class ParticleEmitterBox extends ParticleEmitterShape {
 	// Methods
 	// --------------------------------------
 
-	public void spawn(ParticleSystemInstance particleSystem, float worldX, float worldY, float zDepth, float heading, float force) {
+	public void spawn(ParticleSystemInstance particleSystem, float worldX, float worldY, float zDepth, float heading, float forceX, float forceY) {
 		float xx = worldX;
 		float yy = worldY;
 
@@ -51,8 +51,8 @@ public class ParticleEmitterBox extends ParticleEmitterShape {
 			yy = worldY + RandomNumbers.random(-height2, height2);
 		}
 
-		final var lVelX = (float) Math.cos(heading) * force;
-		final var lVelY = (float) Math.sin(heading) * force;
+		final var lVelX = (float) Math.cos(heading) * forceX;
+		final var lVelY = (float) Math.sin(heading) * forceY;
 
 		particleSystem.spawnParticle(xx, yy, zDepth, lVelX, lVelY);
 	}

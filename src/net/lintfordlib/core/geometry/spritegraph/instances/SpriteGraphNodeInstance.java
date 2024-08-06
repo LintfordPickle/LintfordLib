@@ -314,8 +314,8 @@ public class SpriteGraphNodeInstance extends OpenPooledBaseData {
 			final float lSpriteHalfWidth = (int) (lSpriteWidth / 2f);
 			final float lSpriteHalfHeight = (int) (lSpriteHeight / 2f);
 
-			final float lRotationAdapted = mSpriteInstance.flipHorizontal() ? -lRotationRadians : lRotationRadians;
-			mSpriteInstance.rotationInRadians(lRotationAdapted);
+			// final float lRotationAdapted = mSpriteInstance.flipHorizontal() ? -lRotationRadians : lRotationRadians;
+			// mSpriteInstance.rotationInRadians(lRotationAdapted);
 			mSpriteInstance.set(mPositionX - lSpriteHalfWidth, mPositionY - lSpriteHalfHeight, lSpriteWidth, lSpriteHeight);
 		}
 

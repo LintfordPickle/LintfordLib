@@ -83,7 +83,7 @@ public class ParticleFrameworkController extends BaseController {
 				lParticleEmitterInstance.aabb.x(lParentInst.aabb.x() + lEmitterDef.positionRelOffsetX);
 				lParticleEmitterInstance.aabb.y(lParentInst.aabb.y() + lEmitterDef.positionRelOffsetY);
 				lParticleEmitterInstance.zDepth = lParentInst.zDepth;
-				lParticleEmitterInstance.rot = lParentInst.rot + lEmitterDef.positionRelOffsetRot;
+				lParticleEmitterInstance.globalRotRads = lParentInst.globalRotRads + lEmitterDef.positionRelOffsetRot;
 
 			}
 
