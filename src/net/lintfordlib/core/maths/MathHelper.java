@@ -194,10 +194,13 @@ public class MathHelper {
 		return wrapAngle(currentAngle + lDifference);
 	}
 
-	public static float turnToFace(float pTrackHeading, float pCurrentAngle, float pTurnSpeed) {
-		float difference = wrapAngle(pTrackHeading - pCurrentAngle);
+	/**
+	 * Returns an amount to adjust the an angle by towards moving it to the target angle.
+	 */
+	public static float turnToFace(float trackHeading, float currentAngle, float turnSpeed) {
+		float difference = wrapAngle(trackHeading - currentAngle);
 
-		difference = MathHelper.clamp(difference, -pTurnSpeed, pTurnSpeed);
+		difference = MathHelper.clamp(difference, -turnSpeed, turnSpeed);
 
 		return wrapAngle(difference);
 	}
