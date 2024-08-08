@@ -11,6 +11,14 @@ import net.lintfordlib.core.graphics.textures.Texture;
 public class ContentRectangle {
 
 	// --------------------------------------
+	// ctor
+	// --------------------------------------
+
+	private ContentRectangle() {
+
+	}
+
+	// --------------------------------------
 	// Core-Methods
 	// --------------------------------------
 
