@@ -57,18 +57,12 @@ public class PlayerSessionViewContainer {
 	}
 
 	// ---------------------------------------------
-	// Constructor
-	// ---------------------------------------------
-
-	public PlayerSessionViewContainer() {
-
-	}
-
-	// ---------------------------------------------
 	// Methods
 	// ---------------------------------------------
 
 	public void init(ICamera camera, RenderTarget renderTarget) {
+		reset();
+
 		mPlayerCamera = camera;
 		mRenderTarget = renderTarget;
 
@@ -78,6 +72,15 @@ public class PlayerSessionViewContainer {
 	public void reset() {
 		mPlayerCamera = null;
 		mRenderTarget = null;
+
+		viewportOffset.set(0.f, 0.f);
+		desiredPosition.set(0.f, 0.f);
+		position.set(0.f, 0.f);
+		velocity.set(0.f, 0.f);
+		lookAhead.set(0.f, 0.f);
+
+		cameraZoomFactor = 1.f;
+		cameraZoomVelocity = 0.f;
 
 		mIsInitialized = false;
 	}
