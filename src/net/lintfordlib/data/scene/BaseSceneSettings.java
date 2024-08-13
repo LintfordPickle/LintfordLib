@@ -72,7 +72,7 @@ public abstract class BaseSceneSettings {
 	// Constrcutor
 	// --------------------------------------
 
-	public BaseSceneSettings(ResourcePathsConfig paths) {
+	protected BaseSceneSettings(ResourcePathsConfig paths) {
 		mResourcePathsConfig = paths;
 
 		// get (or set) the paths directory.

@@ -7,7 +7,7 @@ import net.lintfordlib.data.scene.SceneHeader;
 import net.lintfordlib.screenmanager.entries.MenuDropDownEntry;
 import net.lintfordlib.screenmanager.layouts.ListLayout;
 
-public abstract class BaseEditorSceneSelectionScreen extends MenuScreen {
+public abstract class BaseEditorSceneSelectionScreen<T extends SceneHeader> extends MenuScreen {
 
 	// ---------------------------------------------
 	// Constants
@@ -23,8 +23,8 @@ public abstract class BaseEditorSceneSelectionScreen extends MenuScreen {
 	// Variables
 	// ---------------------------------------------
 
-	private BaseSceneSettings mSceneSettings;
-	private MenuDropDownEntry<SceneHeader> mSceneFilenameEntries;
+	protected BaseSceneSettings mSceneSettings;
+	protected MenuDropDownEntry<T> mSceneFilenameEntries;
 
 	protected String mTextureHudLocation = "res/textures/textureHud.png";
 	protected String mSpritesheetHudLocation = "res/spritesheets/spritesheetHud.json";
@@ -49,15 +49,15 @@ public abstract class BaseEditorSceneSelectionScreen extends MenuScreen {
 	// Constructors
 	// ---------------------------------------------
 
-	public BaseEditorSceneSelectionScreen(ScreenManager screenManager, BaseSceneSettings sceneSettings, boolean enableBackButton) {
+	protected BaseEditorSceneSelectionScreen(ScreenManager screenManager, BaseSceneSettings sceneSettings, boolean enableBackButton) {
 		super(screenManager, TITLE);
 
 		mSceneSettings = sceneSettings;
 		final var lListLayout = new ListLayout(this);
 
-		mSceneFilenameEntries = new MenuDropDownEntry<SceneHeader>(screenManager, this);
+		mSceneFilenameEntries = new MenuDropDownEntry<>(screenManager, this);
 		mSceneFilenameEntries.allowDuplicateNames(true);
-		populateDropDownListWithTrackFilenames(mSceneFilenameEntries);
+		populateDropDownListWithSceneFilenames(mSceneFilenameEntries);
 
 		final var lCreateNewTrack = new MenuEntry(screenManager, this, "Create New");
 		lCreateNewTrack.registerClickListener(this, BUTTON_CREATE_NEW_ID);
@@ -77,12 +77,11 @@ public abstract class BaseEditorSceneSelectionScreen extends MenuScreen {
 			final var lBackButton = new MenuEntry(screenManager, this, "Back");
 			lBackButton.registerClickListener(this, BUTTON_BACK_ID);
 			lListLayout.addMenuEntry(lBackButton);
+		} else {
+			mESCBackEnabled = false;
 		}
 
 		addLayout(lListLayout);
-
-		if (enableBackButton == false)
-			mESCBackEnabled = false; // cannot esc out
 
 	}
 
@@ -106,11 +105,6 @@ public abstract class BaseEditorSceneSelectionScreen extends MenuScreen {
 	}
 
 	@Override
-	public void unloadResources() {
-		super.unloadResources();
-	}
-
-	@Override
 	protected void handleOnClick() {
 		switch (mClickAction.consume()) {
 		case BUTTON_CREATE_NEW_ID:
@@ -120,7 +114,7 @@ public abstract class BaseEditorSceneSelectionScreen extends MenuScreen {
 		case BUTTON_LOAD_ID:
 			if (mSceneFilenameEntries.selectedItem() != null) {
 				final var lGameFileHeader = mSceneFilenameEntries.selectedItem().value;
-				OnLoadScene(lGameFileHeader);
+				onLoadScene(lGameFileHeader);
 			}
 
 			break;
@@ -128,25 +122,16 @@ public abstract class BaseEditorSceneSelectionScreen extends MenuScreen {
 		case BUTTON_BACK_ID:
 			exitScreen();
 			break;
+
+		default:
+			// ignore
+			break;
 		}
 	}
 
 	protected abstract void onCreateNewScene();
 
-	protected abstract void OnLoadScene(SceneHeader sceneHeader);
+	protected abstract void onLoadScene(T sceneHeader);
 
-	private void populateDropDownListWithTrackFilenames(MenuDropDownEntry<SceneHeader> pEntry) {
-		final var lListOfSceneHeaderFilesInDirectory = mSceneSettings.getListOfHeaderFilesInScenesDirectory();
-
-		final int lSceneHeaderCount = lListOfSceneHeaderFilesInDirectory.size();
-		for (int i = 0; i < lSceneHeaderCount; i++) {
-			final var lSceneHeaderFile = lListOfSceneHeaderFilesInDirectory.get(i);
-
-			final var lSceneHeader = SceneHeader.loadSceneHeaderFileFromFilepath(lSceneHeaderFile.getAbsoluteFile().getAbsolutePath());
-			lSceneHeader.initialize(lSceneHeaderFile.getParentFile().getAbsolutePath(), mSceneSettings);
-
-			final var lNewEntry = pEntry.new MenuEnumEntryItem(lSceneHeader.sceneName(), lSceneHeader);
-			pEntry.addItem(lNewEntry);
-		}
-	}
+	protected abstract void populateDropDownListWithSceneFilenames(MenuDropDownEntry<T> pEntry);
 }

@@ -3,9 +3,12 @@ package net.lintfordlib.data.scene;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Serializable;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -14,7 +17,13 @@ import com.google.gson.annotations.SerializedName;
 import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.storage.FileUtils;
 
-public class SceneHeader {
+public class SceneHeader implements Serializable {
+
+	// ---------------------------------------------
+	// Constants
+	// ---------------------------------------------
+
+	private static final long serialVersionUID = 1301516618574644330L;
 
 	// ---------------------------------------------
 	// Variables
@@ -26,6 +35,9 @@ public class SceneHeader {
 	private transient boolean mIsValid;
 	private transient BaseSceneSettings mSceneSettings;
 	private transient String mSceneDirectoryName;
+
+	@SerializedName(value = "Values")
+	private Map<String, String> mKeyValues = new HashMap<>();
 
 	// ---------------------------------------------
 	// Properties
@@ -65,7 +77,7 @@ public class SceneHeader {
 	public String sceneDataDirectory() {
 		return mSceneSettings.scenesDirectory() + baseScenesDirectory();
 	}
-	
+
 	public String sceneHeaderFilepath() {
 		return mSceneSettings.scenesDirectory() + baseScenesDirectory() + "scene" + mSceneSettings.sceneFileExtension();
 	}
@@ -112,7 +124,7 @@ public class SceneHeader {
 		mIsValid = mSceneName != null && mSceneName != null;
 	}
 
-	public static SceneHeader loadSceneHeaderFileFromFilepath(final String filepath) {
+	public static SceneHeader loadSceneHeaderFileFromFilepath(String filepath) {
 		if (filepath == null || filepath.length() == 0) {
 			Debug.debugManager().logger().e(SceneHeader.class.getSimpleName(), "Filepath for SceneHeader file cannot be null or empty!");
 			return null;
@@ -165,5 +177,4 @@ public class SceneHeader {
 			Debug.debugManager().logger().printException(getClass().getSimpleName(), e);
 		}
 	}
-
 }

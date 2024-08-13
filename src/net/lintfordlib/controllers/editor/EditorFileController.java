@@ -60,6 +60,10 @@ public class EditorFileController extends BaseController {
 		mCallbackListener = null;
 	}
 
+	public SceneHeader sceneHeader() {
+		return mSceneHeader;
+	}
+
 	// ---------------------------------------------
 	// Constructor
 	// ---------------------------------------------
