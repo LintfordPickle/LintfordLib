@@ -20,7 +20,7 @@ public abstract class Entity implements Serializable {
 	// Constructor
 	// --------------------------------------
 
-	public Entity(int uid) {
+	protected Entity(int uid) {
 		this.uid = uid;
 	}
 

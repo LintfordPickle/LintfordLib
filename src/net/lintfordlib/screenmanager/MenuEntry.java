@@ -83,7 +83,7 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 
 	protected boolean mDrawBackground;
 	protected boolean mHighlightOnHover;
-	protected boolean mScaleonFocus;
+	protected boolean mScaleOnFocus;
 	protected float mAnimationTimer;
 	protected boolean mToolTipEnabled;
 	protected boolean mIsMouseOver;
@@ -377,7 +377,7 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 		mAffectParentStructure = true;
 		mCanHaveFocus = true;
 		mDrawBackground = true;
-		mScaleonFocus = false;
+		mScaleOnFocus = false;
 		mHighlightOnHover = true;
 
 		mTopMargin = 3f;
@@ -445,7 +445,7 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 	}
 
 	public boolean onHandleMouseInput(LintfordCore core) {
-		if (mParentScreen == null || mEnabled == false)
+		if (mParentScreen == null || !mEnabled)
 			return false;
 
 		if (!core.input().mouse().isMouseMenuSelectionEnabled()) {
@@ -491,14 +491,11 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 		if (mAnimationTimer > 0)
 			mAnimationTimer -= lDeltaTime;
 
-		if (mScaleonFocus && mHasFocus && canHaveFocus()) {
-			mScaleCounter += lDeltaTime;
-			mScale = 0.75f + (float) (Math.cos(mScaleCounter) * 0.05f);
-		} else if (mHasFocus && mScaleonFocus) {
+		if (mHasFocus && mScaleOnFocus) {
 			mScaleCounter += lDeltaTime;
 			mScale = 0.75f + (float) (Math.cos(mScaleCounter) * 0.05f);
 		} else {
-			mScale = 1.f; // 0.75f;
+			mScale = 1.f;
 		}
 
 		if ((mToolTipEnabled && mHasFocus) || mInfoIconDstRectangle.intersectsAA(core.HUD().getMouseCameraSpace())) {
@@ -675,7 +672,7 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 	}
 
 	public void onViewportChange(float width, float height) {
-
+		// ignored
 	}
 
 	@Override

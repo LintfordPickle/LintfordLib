@@ -2,6 +2,7 @@ package net.lintfordlib.renderers.editor.panels;
 
 import net.lintfordlib.controllers.editor.EditorFileController;
 import net.lintfordlib.core.LintfordCore;
+import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.input.InputManager;
 import net.lintfordlib.renderers.windows.UiWindow;
 import net.lintfordlib.renderers.windows.components.UiButton;
@@ -98,6 +99,7 @@ public class FileInfoPanel extends UiPanel {
 		addWidget(mDirectoryNameLabel);
 		addWidget(mWorldDirectoryName);
 		addWidget(mHorizontalGroup);
+
 	}
 
 	// --------------------------------------
@@ -123,7 +125,7 @@ public class FileInfoPanel extends UiPanel {
 	public void widgetOnClick(InputManager inputManager, int entryUid) {
 		switch (entryUid) {
 		case BUTTON_NEW:
-			System.out.println("New Track Clicked");
+			Debug.debugManager().logger().i(getClass().getSimpleName(), "New Track Clicked");
 			break;
 
 		case BUTTON_SAVE:
@@ -139,6 +141,9 @@ public class FileInfoPanel extends UiPanel {
 		case BUTTON_VALIDATE_PATH:
 			break;
 
+		default:
+			// ignore
+			break;
 		}
 	}
 
@@ -151,6 +156,10 @@ public class FileInfoPanel extends UiPanel {
 
 		case ENTRY_DIRECTORY_NAME:
 			mEditorFileController.worldDirectory(mWorldDirectoryName.inputString().toString());
+			break;
+
+		default:
+			// ignore
 			break;
 		}
 	}

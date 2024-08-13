@@ -51,10 +51,13 @@ public class MenuLabelEntry extends MenuEntry {
 	// --------------------------------------
 
 	public MenuLabelEntry(ScreenManager screenManager, MenuScreen parentScreen) {
-		super(screenManager, parentScreen, "");
+		this(screenManager, parentScreen, "");
+	}
+
+	public MenuLabelEntry(ScreenManager screenManager, MenuScreen parentScreen, String label) {
+		super(screenManager, parentScreen, label);
 
 		mDrawBackground = false;
-		mText = "Unnamed Label";
 
 		mCanHaveFocus = false;
 		entryColor.setFromColor(ColorConstants.getColorWithRGBMod(ColorConstants.TertiaryColor, .5f));
