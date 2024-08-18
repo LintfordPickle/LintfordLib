@@ -157,13 +157,11 @@ public class SceneHeader implements Serializable {
 			return;
 		}
 
-		// TODO: This isn't the correct place to be doing logical on the file system.
-
 		final var lSaveDirectory = new File(lSceneHeaderFile);
 		final var lParentDirectory = lSaveDirectory.getParentFile();
 
-		if (lParentDirectory.exists() == false) {
-			if (lParentDirectory.mkdirs() == false) {
+		if (!lParentDirectory.exists()) {
+			if (!lParentDirectory.mkdirs()) {
 				Debug.debugManager().logger().e(getClass().getSimpleName(), "Unable to save the scene data into " + lSceneHeaderFile);
 				return;
 			}

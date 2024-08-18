@@ -44,7 +44,7 @@ public class ResourceMapLoader extends ResourceLoader {
 
 		final var lResMapFile = new File(mResourceMapFilepath);
 
-		if (lResMapFile == null || lResMapFile.exists() == false) {
+		if (!lResMapFile.exists()) {
 			Debug.debugManager().logger().e(getClass().getSimpleName(), "The ResMap.json file could not be found.");
 			return;
 		}

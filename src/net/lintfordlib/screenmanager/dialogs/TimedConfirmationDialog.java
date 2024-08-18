@@ -89,7 +89,7 @@ public class TimedConfirmationDialog extends BaseDialog {
 
 	@Override
 	public void draw(LintfordCore core) {
-		if (mScreenState != ScreenState.Active && mScreenState != ScreenState.TransitionOn && mScreenState != ScreenState.TransitionOff)
+		if (mScreenState != ScreenState.ACTIVE && mScreenState != ScreenState.TRANSITION_ON && mScreenState != ScreenState.TRANSITION_OFF)
 			return;
 
 		super.draw(core);

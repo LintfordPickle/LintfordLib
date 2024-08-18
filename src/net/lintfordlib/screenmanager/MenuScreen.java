@@ -198,7 +198,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 		if (mESCBackEnabled) {
 			if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_ESCAPE, this) || core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_B, this)) {
-				if (mScreenState == ScreenState.Active) {
+				if (mScreenState == ScreenState.ACTIVE) {
 					exitScreen();
 					return;
 				}
@@ -440,7 +440,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 	@Override
 	public void draw(LintfordCore core) {
-		if (mScreenState != ScreenState.Active && mScreenState != ScreenState.TransitionOn && mScreenState != ScreenState.TransitionOff)
+		if (mScreenState != ScreenState.ACTIVE && mScreenState != ScreenState.TRANSITION_ON && mScreenState != ScreenState.TRANSITION_OFF)
 			return;
 
 		if (!mIsinitialized)

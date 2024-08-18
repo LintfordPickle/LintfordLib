@@ -82,7 +82,7 @@ public abstract class BaseRenderer implements IInputProcessor {
 	}
 
 	/** Returns the comparative Z depth for this renderer. See RendererZTable for a list of relative values. */
-	public int ZDepth() {
+	public int zDepth() {
 		return 0;
 	}
 
@@ -112,7 +112,7 @@ public abstract class BaseRenderer implements IInputProcessor {
 	// Constructor
 	// --------------------------------------
 
-	public BaseRenderer(RendererManager rendererManager, String rendererName, int entityGroupUid) {
+	protected BaseRenderer(RendererManager rendererManager, String rendererName, int entityGroupUid) {
 		if (rendererManager == null)
 			throw new RuntimeException("Renderers must be provided with valid RendererManager!");
 

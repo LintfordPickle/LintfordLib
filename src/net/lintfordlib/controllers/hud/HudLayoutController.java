@@ -165,8 +165,8 @@ public class HudLayoutController extends BaseController {
 		float lRemainingHeight = lModHeight;
 		final float lMinimumTitleHeight = mMinimumTitleHeight;
 		final float lMinimumFooterHeight = mFooterHeight;
-		final float lTitleHeight = (float) Math.max(lMinimumTitleHeight, lModHeight * .15f - lVerticalInnerPadding);
-		final float lFooterHeight = (float) Math.max(lMinimumFooterHeight, lModHeight * .10f - lVerticalInnerPadding);
+		final float lTitleHeight = Math.max(lMinimumTitleHeight, lModHeight * .15f - lVerticalInnerPadding);
+		final float lFooterHeight = Math.max(lMinimumFooterHeight, lModHeight * .10f - lVerticalInnerPadding);
 		lRemainingHeight -= lTitleHeight;
 		lRemainingHeight -= lFooterHeight;
 

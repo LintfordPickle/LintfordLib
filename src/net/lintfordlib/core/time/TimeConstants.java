@@ -1,5 +1,7 @@
 package net.lintfordlib.core.time;
 
+import java.util.concurrent.TimeUnit;
+
 public class TimeConstants {
 
 	public static final int SecondsPerHour = 3600;
@@ -27,5 +29,14 @@ public class TimeConstants {
 	public static final long MinSeconds = -922337203685L;
 	public static final long MaxMilliSeconds = 0x346dc5d638865L;
 	public static final long MinMilliSeconds = -922337203685477L;
+
+	public static long minutesFromMilliseconds(long ms) {
+		return TimeUnit.MILLISECONDS.toMinutes(ms);
+
+	}
+
+	public static long secondsFromMilliseconds(long ms) {
+		return TimeUnit.MILLISECONDS.toSeconds(ms);
+	}
 
 }

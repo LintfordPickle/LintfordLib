@@ -120,7 +120,8 @@ public class MenuImageEntry extends MenuEntry {
 		super.update(core, screen);
 
 		final var lParentLayoutCropped = mParentLayout.cropPaddingBottom() + mParentLayout.cropPaddingTop();
-		final var lAvailableHeight = mParentLayout.height() - mParentLayout.marginBottom() - mParentLayout.marginTop() - lParentLayoutCropped - mParentLayout.titleBarSize() - 50;
+		
+		final var lAvailableHeight = mParentLayout.height() - mParentLayout.marginBottom() - mParentLayout.marginTop() - lParentLayoutCropped - mParentLayout.titleBarSize();
 		final var lAvailableWidth = MathHelper.clamp(mParentLayout.width() - mParentLayout.marginLeft() - mParentLayout.marginRight(), 120, mMaximumWidth);
 
 		if (mMainTexture != null) {

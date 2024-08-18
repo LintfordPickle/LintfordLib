@@ -112,7 +112,7 @@ public abstract class AsyncScreenLoadingScreen extends Screen {
 	public void update(LintfordCore core, boolean otherScreenHasFocus, boolean coveredByOtherScreen) {
 		super.update(core, otherScreenHasFocus, coveredByOtherScreen);
 
-		if ((mScreenState == ScreenState.Active) && (screenManager.screens().size() == 1)) {
+		if ((mScreenState == ScreenState.ACTIVE) && (screenManager.screens().size() == 1)) {
 			if (hasLoadingStarted() == false) {
 				loadingThreadStarted = true;
 

@@ -37,11 +37,11 @@ public abstract class BaseGameScreen extends Screen {
 	// Constructor
 	// --------------------------------------
 
-	public BaseGameScreen(ScreenManager screenManager) {
+	protected BaseGameScreen(ScreenManager screenManager) {
 		this(screenManager, null);
 	}
 
-	public BaseGameScreen(ScreenManager screenManager, RendererManager rendererManager) {
+	protected BaseGameScreen(ScreenManager screenManager, RendererManager rendererManager) {
 		super(screenManager, rendererManager);
 
 		mSingletonScreen = true;

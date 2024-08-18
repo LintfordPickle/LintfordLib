@@ -203,7 +203,7 @@ public class ScreenManager implements IInputClickedFocusManager {
 			lScreen.acceptGamepadInput = acceptGamepadInput;
 			lScreen.acceptMouseInput = acceptMouseInput;
 
-			if (lScreen.screenState() == ScreenState.Active)
+			if (lScreen.screenState() == ScreenState.ACTIVE)
 				lScreen.handleInput(core);
 
 			acceptKeyboardInput = acceptKeyboardInput && !lScreen.mBlockKeyboardInputInBackground;
@@ -231,14 +231,14 @@ public class ScreenManager implements IInputClickedFocusManager {
 			final var lNextScreenToAdd = mScreensToAdd.get(0);
 			final var lTopScreen = getTopScreen();
 			if (lTopScreen != null) {
-				if (lTopScreen.screenState() == ScreenState.Active) {
+				if (lTopScreen.screenState() == ScreenState.ACTIVE) {
 					lTopScreen.onLostFocus();
 					if (lNextScreenToAdd.showBackgroundScreens() == false && lNextScreenToAdd.alwaysOnTop() == false)
 						lTopScreen.transitionOff();
 					else {
 						lReadyToAddScreen = true;
 					}
-				} else if (lTopScreen.screenState() == ScreenState.Hidden || lNextScreenToAdd.showBackgroundScreens()) {
+				} else if (lTopScreen.screenState() == ScreenState.HIDDEN || lNextScreenToAdd.showBackgroundScreens()) {
 					lReadyToAddScreen = true;
 				}
 			} else {
@@ -271,7 +271,7 @@ public class ScreenManager implements IInputClickedFocusManager {
 
 		final var lTopMostScreen = getTopScreen();
 		if (lTopMostScreen != null) {
-			if (lTopMostScreen.screenState() == ScreenState.Hidden && lTopMostScreen.isExiting() == false)
+			if (lTopMostScreen.screenState() == ScreenState.HIDDEN && lTopMostScreen.isExiting() == false)
 				lTopMostScreen.transitionOn();
 		}
 
@@ -285,7 +285,7 @@ public class ScreenManager implements IInputClickedFocusManager {
 
 			lScreen.update(core, lOtherScreenHasFocus, lCoveredByOtherScreen);
 
-			if (lScreen.screenState() == ScreenState.TransitionOn || lScreen.screenState() == ScreenState.Active) {
+			if (lScreen.screenState() == ScreenState.TRANSITION_ON || lScreen.screenState() == ScreenState.ACTIVE) {
 				lOtherScreenHasFocus = true;
 			}
 			if (!lScreen.isPopup()) {
@@ -312,7 +312,7 @@ public class ScreenManager implements IInputClickedFocusManager {
 		final var lNumScreens = mScreensToUpdate.size();
 		for (int i = 0; i < lNumScreens; i++) {
 			final var lScreen = mScreensToUpdate.get(i);
-			if (lScreen.screenState() == ScreenState.Hidden && !lScreen.showBackgroundScreens())
+			if (lScreen.screenState() == ScreenState.HIDDEN && !lScreen.showBackgroundScreens())
 				continue;
 
 			lScreen.draw(core);

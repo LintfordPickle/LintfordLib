@@ -23,10 +23,10 @@ public abstract class Screen implements IInputProcessor {
 	// Enums
 	// --------------------------------------
 
-	protected final float INPUT_TIMER_WAIT = 100.0f;
+	protected static final float INPUT_TIMER_WAIT = 100.0f;
 
 	public enum ScreenState {
-		TransitionOn, Active, TransitionOff, Hidden,
+		TRANSITION_ON, ACTIVE, TRANSITION_OFF, HIDDEN,
 	}
 
 	// --------------------------------------
@@ -54,9 +54,9 @@ public abstract class Screen implements IInputProcessor {
 	protected boolean mShowContextualFooterBar;
 	protected boolean mShowContextualKeyHints;
 
-	public boolean acceptMouseInput;
-	public boolean acceptKeyboardInput;
-	public boolean acceptGamepadInput;
+	protected boolean acceptMouseInput;
+	protected boolean acceptKeyboardInput;
+	protected boolean acceptGamepadInput;
 
 	protected boolean mBlockKeyboardInputInBackground;
 	protected boolean mBlockGamepadInputInBackground;
@@ -123,7 +123,7 @@ public abstract class Screen implements IInputProcessor {
 	}
 
 	public boolean isActive() {
-		return !mOtherScreenHasFocus && (mScreenState == ScreenState.Active || mScreenState == ScreenState.TransitionOn);
+		return !mOtherScreenHasFocus && (mScreenState == ScreenState.ACTIVE || mScreenState == ScreenState.TRANSITION_ON);
 	}
 
 	/** If true, underlying screens in the stack will be visible in the background of this popup screen */
@@ -149,14 +149,14 @@ public abstract class Screen implements IInputProcessor {
 	}
 
 	public void transitionOff() {
-		if (mScreenState == ScreenState.Active) {
-			mScreenState = ScreenState.TransitionOff;
+		if (mScreenState == ScreenState.ACTIVE) {
+			mScreenState = ScreenState.TRANSITION_OFF;
 		}
 	}
 
 	public void transitionOn() {
-		if (mScreenState == ScreenState.Hidden) {
-			mScreenState = ScreenState.TransitionOn;
+		if (mScreenState == ScreenState.HIDDEN) {
+			mScreenState = ScreenState.TRANSITION_ON;
 		}
 	}
 
@@ -168,12 +168,12 @@ public abstract class Screen implements IInputProcessor {
 	// Constructors
 	// --------------------------------------
 
-	public Screen(ScreenManager screenManager) {
+	protected Screen(ScreenManager screenManager) {
 		this(screenManager, new RendererManager(screenManager.core(), ResourceGroupProvider.getRollingEntityNumber()));
 	}
 
-	public Screen(ScreenManager screenManager, RendererManager rendererManager) {
-		mScreenState = ScreenState.Hidden;
+	protected Screen(ScreenManager screenManager, RendererManager rendererManager) {
+		mScreenState = ScreenState.HIDDEN;
 		this.screenManager = screenManager;
 
 		mTransitionOn = new TransitionFadeIn(new TimeSpan(200));
@@ -250,7 +250,7 @@ public abstract class Screen implements IInputProcessor {
 		mOtherScreenHasFocus = otherScreenHasFocus;
 
 		if (mIsExiting) {
-			mScreenState = ScreenState.TransitionOff;
+			mScreenState = ScreenState.TRANSITION_OFF;
 
 			if (updateTransition(core.appTime(), mTransitionOff))
 				screenManager.removeScreen(this);
@@ -258,15 +258,15 @@ public abstract class Screen implements IInputProcessor {
 			return;
 		}
 
-		if (mScreenState == ScreenState.TransitionOff) {
+		if (mScreenState == ScreenState.TRANSITION_OFF) {
 			if (mTransitionOff == null || updateTransition(core.appTime(), mTransitionOff)) {
-				mScreenState = ScreenState.Hidden;
+				mScreenState = ScreenState.HIDDEN;
 				if (mTransitionOff != null)
 					mTransitionOff.reset();
 			}
-		} else if (mScreenState == ScreenState.TransitionOn) {
+		} else if (mScreenState == ScreenState.TRANSITION_ON) {
 			if (mTransitionOn == null || updateTransition(core.appTime(), mTransitionOn)) {
-				mScreenState = ScreenState.Active;
+				mScreenState = ScreenState.ACTIVE;
 				if (mTransitionOn != null)
 					mTransitionOn.reset();
 			}
@@ -293,11 +293,7 @@ public abstract class Screen implements IInputProcessor {
 			return true;
 
 		transition.updateTransition(this, gameTime);
-
-		if (transition.isFinished())
-			return true; // finished
-
-		return false; // not finished
+		return transition.isFinished();
 	}
 
 	public void exitScreen() {

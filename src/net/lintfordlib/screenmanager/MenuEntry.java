@@ -712,7 +712,7 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 
 	@Override
 	public boolean isParentActive() {
-		return mParentScreen.isExiting() == false && mParentScreen.screenState() == ScreenState.Active;
+		return mParentScreen.isExiting() == false && mParentScreen.screenState() == ScreenState.ACTIVE;
 	}
 
 	public void onDeselection(InputManager inputManager) {

@@ -20,10 +20,19 @@ public class PhysicsController extends BaseController {
 	// --------------------------------------
 
 	private PhysicsWorld mWorld;
+	private boolean mSimulationRunning;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public void simulationRunning(boolean setSimulationRunning) {
+		mSimulationRunning = setSimulationRunning;
+	}
+
+	public boolean isSimulationRunning() {
+		return mSimulationRunning;
+	}
 
 	public PhysicsWorld world() {
 		return mWorld;
@@ -59,6 +68,9 @@ public class PhysicsController extends BaseController {
 	@Override
 	public void update(LintfordCore core) {
 		super.update(core);
+
+		if (!mSimulationRunning)
+			return;
 
 		mWorld.stepWorld((float) core.gameTime().elapsedTimeMilli() * 0.001f, NUM_PHYSICS_ITERATIONS);
 	}

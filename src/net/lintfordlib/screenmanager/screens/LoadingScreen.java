@@ -58,7 +58,7 @@ public class LoadingScreen extends Screen {
 		super.update(core, otherScreenHasFocus, coveredByOtherScreen);
 
 		// Wait until all the other screens have exited
-		if ((mScreenState == ScreenState.Active) && (mScreenManager.screens().size() == 1)) {
+		if ((mScreenState == ScreenState.ACTIVE) && (mScreenManager.screens().size() == 1)) {
 			final int lScreenCount = mScreensToLoad.length;
 			for (int i = 0; i < lScreenCount; i++) {
 				final var lScreen = mScreensToLoad[i];
