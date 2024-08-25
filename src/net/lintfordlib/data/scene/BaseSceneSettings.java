@@ -1,7 +1,7 @@
 package net.lintfordlib.data.scene;
 
 import java.io.File;
-import java.io.FilenameFilter;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,9 +15,9 @@ public abstract class BaseSceneSettings {
 	// Constants
 	// --------------------------------------
 
-	public static final String scenenameRegex = "[^a-zA-Z0-9]";
+	public static final String SCENENAME_REGEX = "[^a-zA-Z0-9]";
 
-	private String SCENES_DIR_KEY_NAME = "ScenesDirectoryPath";
+	public static final String SCENES_DIR_KEY_NAME = "ScenesDirKeyName";
 
 	// --------------------------------------
 	// Variables
@@ -65,7 +65,12 @@ public abstract class BaseSceneSettings {
 	}
 
 	public void scenesDirectory(String newScenesDirectory) {
-		// TODO: allow for modifying scenes directory
+		if (newScenesDirectory == null) {
+			Debug.debugManager().logger().e(getClass().getSimpleName(), "Unable to set new scenesDirectory to <null>");
+			return;
+		}
+
+		mScenesBaseDirectory = mResourcePathsConfig.insertOrUpdateValue(SCENES_DIR_KEY_NAME, newScenesDirectory);
 	}
 
 	// --------------------------------------
@@ -76,30 +81,27 @@ public abstract class BaseSceneSettings {
 		mResourcePathsConfig = paths;
 
 		// get (or set) the paths directory.
-		mScenesBaseDirectory = paths.getKeyValue(SCENES_DIR_KEY_NAME, "res/def/scenes/");
+		final var lPath = new File("res/def/scenes/");
+		mScenesBaseDirectory = paths.getKeyValue(SCENES_DIR_KEY_NAME, lPath.getAbsolutePath());
 	}
 
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
 
-	public List<File> getListOfHeaderFilesInScenesDirectory() {
-		final var lScenesDirectory = new File(scenesDirectory());
-		final var lDirectoryFilter = new FilenameFilter() {
-			@Override
-			public boolean accept(File dir, String name) {
-				return new File(dir, name).isDirectory();
-			}
-		};
+	public List<File> getListOfHeaderFilesInScenesDirectory(String subDirectory) {
+		final var path = Paths.get(scenesDirectory(), subDirectory);
 
-		final var lSubDirectoryList = lScenesDirectory.listFiles(lDirectoryFilter);
+		final var lScenesDirectory = path.toFile();
+		final var lSubDirectoryList = lScenesDirectory.listFiles((dir, name) -> new File(dir, name).isDirectory());
+
 		final List<File> lAllHeaderFiles = new ArrayList<>();
 
 		if (lSubDirectoryList == null)
 			return lAllHeaderFiles;
 
 		for (var subDir : lSubDirectoryList) {
-			final var lFilesInSubDir = FileUtils.getListOfFileInDirectory(subDir.getAbsolutePath(), mSceneHeaderFileExtension);
+			final var lFilesInSubDir = FileUtils.getListOfFilesInDirectory(subDir.getPath(), mSceneHeaderFileExtension);
 			lAllHeaderFiles.addAll(lFilesInSubDir);
 		}
 

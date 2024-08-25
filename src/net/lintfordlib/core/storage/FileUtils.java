@@ -15,7 +15,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 
 import net.lintfordlib.core.debug.Debug;
@@ -30,6 +29,14 @@ public class FileUtils {
 
 	public static final String FILE_SEPERATOR = System.getProperty("file.separator");
 	public static final String LINE_SEPERATOR = System.getProperty("line.separator");
+
+	// --------------------------------------
+	// Constructor
+	// --------------------------------------
+
+	private FileUtils() {
+
+	}
 
 	// --------------------------------------
 	// Helper-Methods
@@ -68,7 +75,7 @@ public class FileUtils {
 			return loadStringFromResource(resourcepath);
 		} else {
 			final var lFile = new File(resourcepath);
-			if (lFile.exists() == false) {
+			if (!lFile.exists()) {
 				Debug.debugManager().logger().e(FileUtils.class.getSimpleName(), "Could not load string from file '" + resourcepath + "'. The file does not exist!");
 				return null;
 			}
@@ -81,24 +88,19 @@ public class FileUtils {
 	public static String loadStringFromFile(String filepath) {
 		clearStringBuilder();
 
-		try {
-			BufferedReader lReader = null;
-			try {
-				lReader = new BufferedReader(new FileReader(filepath));
-				var lBuffer = "";
+		try (final var reader = new BufferedReader(new FileReader(filepath))) {
+			var lBuffer = "";
 
-				while ((lBuffer = lReader.readLine()) != null) {
-					mStringBuilder.append(lBuffer);
-					mStringBuilder.append(LINE_SEPERATOR);
-				}
-			} finally {
-				if (lReader != null) {
-					lReader.close();
-				}
+			while ((lBuffer = reader.readLine()) != null) {
+				mStringBuilder.append(lBuffer);
+				mStringBuilder.append(LINE_SEPERATOR);
 			}
 
+		} catch (FileNotFoundException e) {
+			Debug.debugManager().logger().e(FileUtils.class.getSimpleName(), "Error loading text resource (File not found): " + filepath);
+			Debug.debugManager().logger().e(FileUtils.class.getSimpleName(), e.getMessage());
 		} catch (IOException e) {
-			Debug.debugManager().logger().e(FileUtils.class.getSimpleName(), "Error loading text resource " + String.format("Error loading file %s", filepath.toString()));
+			Debug.debugManager().logger().e(FileUtils.class.getSimpleName(), "Error loading text resource (IOException): " + filepath);
 			Debug.debugManager().logger().e(FileUtils.class.getSimpleName(), e.getMessage());
 		}
 
@@ -110,23 +112,19 @@ public class FileUtils {
 		clearStringBuilder();
 
 		try {
-			InputStream lInputStream = FileUtils.class.getResourceAsStream(resourceLocation);
-			BufferedReader lReader = null;
-			try {
-				lReader = new BufferedReader(new InputStreamReader(lInputStream));
+			final var lInputStream = FileUtils.class.getResourceAsStream(resourceLocation);
+
+			try (final var reader = new BufferedReader(new InputStreamReader(lInputStream))) {
 				var lBuffer = "";
 
-				while ((lBuffer = lReader.readLine()) != null) {
+				while ((lBuffer = reader.readLine()) != null) {
 					mStringBuilder.append(lBuffer);
 					mStringBuilder.append(LINE_SEPERATOR);
 				}
-			} finally {
-				if (lReader != null) {
-					lReader.close();
-				}
 			}
+
 		} catch (IOException e) {
-			Debug.debugManager().logger().e(FileUtils.class.getSimpleName(), "Error loading text resource " + resourceLocation.toString());
+			Debug.debugManager().logger().e(FileUtils.class.getSimpleName(), "Error loading text resource: " + resourceLocation);
 			Debug.debugManager().logger().e(FileUtils.class.getSimpleName(), e.getMessage());
 		}
 
@@ -134,50 +132,40 @@ public class FileUtils {
 	}
 
 	/** Copies the source folder, and all its contents, to the destination folder. The destination folder is created if it doesn't already exist. */
-	public static void copyFolder(File sourceFolder, File destinationFolder) {
-		if (sourceFolder.isDirectory()) {
-			if (!destinationFolder.exists()) {
-				destinationFolder.mkdirs();
+	public static void copyFolder(File sourceFile, File destFile) {
+		if (sourceFile.isDirectory()) {
+			if (!destFile.exists()) {
+				destFile.mkdirs();
 			}
 
-			final String files[] = sourceFolder.list();
+			final String[] files = sourceFile.list();
 
 			for (String file : files) {
-				final var srcFile = new File(sourceFolder, file);
-				final var destFile = new File(destinationFolder, file);
-
-				copyFolder(srcFile, destFile);
+				copyFolder(new File(sourceFile, file), new File(destFile, file));
 			}
 
 		} else {
-			InputStream in = null;
-			OutputStream out = null;
-
-			try {
-				in = new FileInputStream(sourceFolder);
-				out = new FileOutputStream(destinationFolder);
-
-				byte[] buffer = new byte[1024];
-
-				int length;
-				while ((length = in.read(buffer)) > 0) {
-					out.write(buffer, 0, length);
-				}
+			try (InputStream in = new FileInputStream(sourceFile)) {
+				writeToFile(sourceFile, in);
 			} catch (Exception e) {
-				try {
-					if (in != null)
-						in.close();
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
-
-				try {
-					if (out != null)
-						out.close();
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
+				Debug.debugManager().logger().e(FileUtils.class.getSimpleName(), "Error copying file: " + sourceFile.getPath());
+				Debug.debugManager().logger().e(FileUtils.class.getSimpleName(), e.getMessage());
 			}
+		}
+	}
+
+	private static void writeToFile(File destFile, InputStream streamToWrite) {
+		try (OutputStream out = new FileOutputStream(destFile)) {
+			byte[] buffer = new byte[1024];
+
+			int length;
+			while ((length = streamToWrite.read(buffer)) > 0) {
+				out.write(buffer, 0, length);
+			}
+
+		} catch (Exception e) {
+			Debug.debugManager().logger().e(FileUtils.class.getSimpleName(), "Error writing to file: " + destFile.getPath());
+			Debug.debugManager().logger().e(FileUtils.class.getSimpleName(), e.getMessage());
 		}
 	}
 
@@ -220,9 +208,10 @@ public class FileUtils {
 				deleteFile(lFileInDirectory);
 			}
 		}
-		if (!file.delete()) {
+
+		if (!file.delete())
 			throw new FileNotFoundException("Failed to delete file: " + file);
-		}
+
 	}
 
 	public static String cleanFilename(String filename) {
@@ -230,56 +219,41 @@ public class FileUtils {
 		return filename.replaceAll("\\s+", "");
 	}
 
+	public static String separatorsToSystem(String filePath) {
+		final var lFile = new File(filePath);
+		return lFile.getPath();
+	}
+
 	// --------------------------------------
 
-	public static List<File> getListOfFileInDirectory(String directory) {
-		return getListOfFileInDirectory(directory, new FilenameFilter() {
-			@Override
-			public boolean accept(File dir, String name) {
-				return true; // accepts all files
-			}
-		});
+	public static List<File> getListOfFilesInDirectory(String directory) {
+		// accepts all files
+		return getListOfFilesInDirectory(directory, (dir, name) -> true);
 	}
 
-	public static List<File> getListOfFileInDirectory(String directory, String extension) {
-		return getListOfFileInDirectory(directory, new FilenameFilter() {
-			@Override
-			public boolean accept(File dir, String name) {
-				return name.endsWith(extension);
-			}
-		});
+	public static List<File> getListOfFilesInDirectory(String directory, String extension) {
+		return getListOfFilesInDirectory(directory, (dir, name) -> name.endsWith(extension));
 	}
 
-	public static List<File> getListOfFileInDirectory(String directory, FilenameFilter filter) {
+	public static List<File> getListOfFilesInDirectory(String directory, FilenameFilter filter) {
 		final var lDirectory = new File(directory);
 		final var lListOfFiles = lDirectory.listFiles(filter);
 
-		if (lListOfFiles == null) {
-			return new ArrayList<File>();
-		}
+		if (lListOfFiles == null)
+			return new ArrayList<>();
 
 		return Arrays.asList(lListOfFiles);
 	}
 
 	public static List<File> getListOfFilesInDirectorySortedByDate(String directory, String extension) {
-		return getListOfFilesInDirectorySortedByDate(directory, new FilenameFilter() {
-
-			@Override
-			public boolean accept(File dir, String name) {
-				return name.endsWith(extension);
-			}
-		});
+		return getListOfFilesInDirectorySortedByDate(directory, (dir, name) -> name.endsWith(extension));
 	}
 
 	public static List<File> getListOfFilesInDirectorySortedByDate(String directory, FilenameFilter filter) {
 		final var lDirectory = new File(directory);
 		final var lFileList = lDirectory.listFiles(filter);
 
-		Arrays.sort(lFileList, new Comparator<File>() {
-			public int compare(File f1, File f2) {
-				return Long.valueOf(f2.lastModified()).compareTo(f1.lastModified());
-			}
-		});
+		Arrays.sort(lFileList, (file1, file2) -> Long.compare(file2.lastModified(), file1.lastModified()));
 
 		return Arrays.asList(lFileList);
 	}

@@ -49,15 +49,15 @@ public class ResourcePathsConfig extends IniFile {
 		return mPathKeyValuePairs.containsKey(key);
 	}
 
-	public void insertOrUpdateValue(String key, String value) {
-		mPathKeyValuePairs.compute(key, (k, v) -> value);
+	public String insertOrUpdateValue(String key, String value) {
+		return mPathKeyValuePairs.compute(key, (k, v) -> value);
 	}
 
 	/**
 	 * If the specified key is not already associated with a value (or is mapped to {@code null}), then the value is inserted into the map.
 	 */
-	public void insertIfNotExists(String key, String value) {
-		mPathKeyValuePairs.computeIfAbsent(key, (k) -> value);
+	public String insertIfNotExists(String key, String value) {
+		return mPathKeyValuePairs.computeIfAbsent(key, k -> value);
 	}
 
 	// --------------------------------------

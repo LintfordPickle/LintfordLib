@@ -15,15 +15,17 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.SerializedName;
 
 import net.lintfordlib.core.debug.Debug;
-import net.lintfordlib.core.storage.FileUtils;
 
-public class SceneHeader implements Serializable {
+public abstract class SceneHeader implements Serializable {
 
 	// ---------------------------------------------
 	// Constants
 	// ---------------------------------------------
 
 	private static final long serialVersionUID = 1301516618574644330L;
+
+	public static final String DATA_FILENAME = "scene.data";
+	public static final String HEADER_FILENAME = "scene.hdr";
 
 	// ---------------------------------------------
 	// Variables
@@ -34,7 +36,8 @@ public class SceneHeader implements Serializable {
 
 	private transient boolean mIsValid;
 	private transient BaseSceneSettings mSceneSettings;
-	private transient String mSceneDirectoryName;
+
+	private transient String mSceneDirectory;
 
 	@SerializedName(value = "Values")
 	private Map<String, String> mKeyValues = new HashMap<>();
@@ -42,6 +45,10 @@ public class SceneHeader implements Serializable {
 	// ---------------------------------------------
 	// Properties
 	// ---------------------------------------------
+
+	public BaseSceneSettings sceneSettings() {
+		return mSceneSettings;
+	}
 
 	public String sceneName() {
 		return mSceneName;
@@ -57,33 +64,28 @@ public class SceneHeader implements Serializable {
 		validateHeader();
 	}
 
-	public String baseScenesDirectory() {
-		return mSceneDirectoryName;
+	public String sceneDirectory() {
+		return mSceneDirectory;
 	}
 
-	public void baseSceneDirectory(String newBaseSceneDirectory) {
+	public void setSceneDirectory(String newBaseSceneDirectory) {
 		if (newBaseSceneDirectory == null || newBaseSceneDirectory.length() == 0) {
 			Debug.debugManager().logger().e(getClass().getSimpleName(), "Cannot set scene directory name to null or empty.");
 			return;
 		}
 
-		if (newBaseSceneDirectory.endsWith(FileUtils.FILE_SEPERATOR) == false) {
-			newBaseSceneDirectory = newBaseSceneDirectory + FileUtils.FILE_SEPERATOR;
-		}
+		if (!newBaseSceneDirectory.endsWith(File.separator))
+			newBaseSceneDirectory += File.separator;
 
-		mSceneDirectoryName = newBaseSceneDirectory;
-	}
-
-	public String sceneDataDirectory() {
-		return mSceneSettings.scenesDirectory() + baseScenesDirectory();
+		mSceneDirectory = newBaseSceneDirectory;
 	}
 
 	public String sceneHeaderFilepath() {
-		return mSceneSettings.scenesDirectory() + baseScenesDirectory() + "scene" + mSceneSettings.sceneFileExtension();
+		return mSceneDirectory + File.separator + HEADER_FILENAME;
 	}
 
 	public String sceneDataFilepath() {
-		return mSceneSettings.scenesDirectory() + baseScenesDirectory() + "scene" + mSceneSettings.sceneDataExtension();
+		return mSceneDirectory + File.separator + DATA_FILENAME;
 	}
 
 	public boolean isSceneValid() {
@@ -96,11 +98,11 @@ public class SceneHeader implements Serializable {
 	// Constructor
 	// ---------------------------------------------
 
-	public SceneHeader(BaseSceneSettings settings) {
+	protected SceneHeader(BaseSceneSettings settings) {
 		mSceneSettings = settings;
 	}
 
-	public SceneHeader(String sceneName, BaseSceneSettings settings) {
+	protected SceneHeader(String sceneName, BaseSceneSettings settings) {
 		this(settings);
 
 		mSceneName = sceneName;
@@ -112,10 +114,8 @@ public class SceneHeader implements Serializable {
 	// Methods
 	// ---------------------------------------------
 
-	public void initialize(String baseSceneDirectory, BaseSceneSettings settings) {
-		final var lSceneDirectory = new File(baseSceneDirectory);
-		baseSceneDirectory(lSceneDirectory.getName());
-
+	public void initialize(String sceneDirectory, BaseSceneSettings settings) {
+		setSceneDirectory(sceneDirectory);
 		mSceneSettings = settings;
 	}
 

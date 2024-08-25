@@ -36,12 +36,12 @@ public class EditorFileController extends BaseController {
 		}
 	}
 
-	public String worldDirectory() {
-		return mSceneHeader.baseScenesDirectory();
+	public String sceneDirectory() {
+		return mSceneHeader.sceneDirectory();
 	}
 
 	public void worldDirectory(String newWorldDirectory) {
-		mSceneHeader.baseSceneDirectory(newWorldDirectory);
+		mSceneHeader.setSceneDirectory(newWorldDirectory);
 
 		if (mCallbackListener != null) {
 			mCallbackListener.onFilepathChanged(newWorldDirectory);
@@ -49,7 +49,7 @@ public class EditorFileController extends BaseController {
 	}
 
 	public String sceneFullFilepath() {
-		return worldDirectory() + sceneName();
+		return sceneDirectory() + sceneName();
 	}
 
 	public void setCallbackListener(IEditorFileControllerListener listener) {

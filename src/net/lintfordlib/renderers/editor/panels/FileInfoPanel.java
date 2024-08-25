@@ -115,8 +115,7 @@ public class FileInfoPanel extends UiPanel {
 		mEditorFileController = (EditorFileController) lControllerManager.getControllerByNameRequired(EditorFileController.CONTROLLER_NAME, mEntityGroupUid);
 
 		mSceneName.inputString(mEditorFileController.sceneName());
-		mWorldDirectoryName.inputString(mEditorFileController.worldDirectory());
-
+		mWorldDirectoryName.inputString(mEditorFileController.sceneDirectory());
 	}
 
 	// --------------------------------------

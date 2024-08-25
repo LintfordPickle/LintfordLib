@@ -294,6 +294,8 @@ public abstract class LintfordCore {
 			}
 		}
 
+		mMasterConfig = new MasterConfig(mGameInfo);
+
 		// Set a default workspace property to user.file
 		var defaultWorkspaceLocation = System.getProperty(ConstantsApp.WORKSPACE_PROPERTY_NAME);
 		if (defaultWorkspaceLocation == null) {
@@ -336,8 +338,6 @@ public abstract class LintfordCore {
 	 * Creates a new OpenGL window, instantiates all auxiliary classes and starts the main game loop.
 	 */
 	public void createWindow() {
-		mMasterConfig = new MasterConfig(mGameInfo);
-
 		mInputState = new InputManager();
 
 		var lWindowID = initializeGLFWWindow();
