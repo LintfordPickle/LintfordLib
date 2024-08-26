@@ -49,8 +49,8 @@ public class LabelValueListBoxItem extends MenuListBoxItem {
 	// Constructor
 	// --------------------------------------
 
-	public LabelValueListBoxItem(ScreenManager screenManager, MenuListBox parentListBox, int index, String label, String value, int entityGroupUid) {
-		super(screenManager, parentListBox, index, entityGroupUid);
+	public LabelValueListBoxItem(ScreenManager screenManager, MenuListBox parentListBox, String label, String value, int entityGroupUid) {
+		super(screenManager, parentListBox, entityGroupUid);
 
 		mLabelValue = label;
 		mTextValue = value;

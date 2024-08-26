@@ -6,6 +6,7 @@ import java.util.List;
 import org.lwjgl.opengl.GL11;
 
 import net.lintfordlib.core.LintfordCore;
+import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.geometry.Rectangle;
 import net.lintfordlib.core.graphics.ColorConstants;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
@@ -44,7 +45,7 @@ public class MenuListBox extends MenuEntry implements IScrollBarArea {
 	protected float mLastMouseYPos;
 	protected IListBoxItemSelected mSelecterListener;
 	protected IListBoxItemDoubleClick mItemDoubleClickListener;
-	protected int mSelectedItem = -1;
+	protected int mSelectedItemIndex = -1;
 	protected boolean mClickActive;
 	protected int mItemHeight;
 
@@ -53,17 +54,30 @@ public class MenuListBox extends MenuEntry implements IScrollBarArea {
 	// --------------------------------------
 
 	public int selectedIndex() {
-		return mSelectedItem;
+		return mSelectedItemIndex;
 	}
 
 	public void selectedIndex(int i) {
 		if (mSelecterListener != null && (i >= 0 && i < mItems.size())) {
 			MenuListBoxItem litem = mItems.get(i);
 			mSelecterListener.onListBoxItemSelected(litem, i);
-
 		}
 
-		mSelectedItem = i;
+		mSelectedItemIndex = i;
+	}
+
+	public void selectedItem(MenuListBoxItem item) {
+		if (!mItems.contains(item))
+			return;
+
+		final var indexOfItem = mItems.indexOf(item);
+		if (indexOfItem == -1)
+			return;
+
+		mSelectedItemIndex = indexOfItem;
+		if (mSelecterListener != null)
+			mSelecterListener.onListBoxItemSelected(item, mSelectedItemIndex);
+
 	}
 
 	public void itemDoubleClicked(int i) {
@@ -76,7 +90,26 @@ public class MenuListBox extends MenuEntry implements IScrollBarArea {
 			mItemDoubleClickListener.onListItemDoubleClicked(lItem);
 		}
 
-		mSelectedItem = i;
+		mSelectedItemIndex = i;
+	}
+
+	public void itemDoubleClicked(MenuListBoxItem item) {
+		if (!mItems.contains(item))
+			return;
+
+		final var indexOfItem = mItems.indexOf(item);
+		if (indexOfItem == -1)
+			return;
+
+		mSelectedItemIndex = indexOfItem;
+
+		if (mItemDoubleClickListener != null) {
+			if (mSelecterListener != null) {
+				mSelecterListener.onListBoxItemSelected(item, indexOfItem);
+			}
+
+			mItemDoubleClickListener.onListItemDoubleClicked(item);
+		}
 	}
 
 	public List<MenuListBoxItem> items() {
@@ -134,11 +167,8 @@ public class MenuListBox extends MenuEntry implements IScrollBarArea {
 
 	@Override
 	public boolean onHandleMouseInput(LintfordCore core) {
-		if (mScrollBar.scrollBarEnabled()) {
-			if (mScrollBar.handleInput(core, mScreenManager)) {
-				return true;
-			}
-		}
+		if (mScrollBar.scrollBarEnabled() && mScrollBar.handleInput(core, mScreenManager))
+			return true;
 
 		if (intersectsAA(core.HUD().getMouseCameraSpace())) {
 			boolean itemSelected = false;
@@ -150,15 +180,16 @@ public class MenuListBox extends MenuEntry implements IScrollBarArea {
 			if (itemSelected || core.input().mouse().isMouseLeftButtonDownTimed(this) && core.input().mouse().tryAcquireMouseLeftClick(hashCode())) {
 				final var lMouseRelY = core.HUD().getMouseWorldSpaceY() - mY;
 
-				mSelectedItem = (int) (((lMouseRelY - mScrollBar.currentYPos())) / (mItemHeight + LISTBOX_ITEM_VPADDING));
+				mSelectedItemIndex = (int) ((lMouseRelY - mScrollBar.currentYPos()) / (mItemHeight + LISTBOX_ITEM_VPADDING));
 
 				if (mClickListener != null)
 					mClickListener.onMenuEntryChanged(this);
 
-				if (mSelecterListener != null) {
-					final var litem = mItems.get(mSelectedItem);
-					mSelecterListener.onListBoxItemSelected(litem, mSelectedItem);
-				}
+				// being hanled in selectedIndex(i) - called from the menubox items
+//				if (mSelecterListener != null) {
+//					final var litem = mItems.get(mSelectedItem);
+//					mSelecterListener.onListBoxItemSelected(litem, mSelectedItem);
+//				}
 
 				return true;
 			}
@@ -181,7 +212,7 @@ public class MenuListBox extends MenuEntry implements IScrollBarArea {
 		for (int i = 0; i < lCount; i++) {
 			final var lItem = mItems.get(i);
 
-			if (i == mSelectedItem) {
+			if (i == mSelectedItemIndex) {
 				lItem.entryColor.setRGBA(1.f, .44f, .1f, 0.4f);
 			} else {
 				lItem.entryColor.setRGBA(.3f, .3f, .3f, 0.2f);
@@ -261,6 +292,9 @@ public class MenuListBox extends MenuEntry implements IScrollBarArea {
 			lSpriteBatch.end();
 		}
 
+		for (int i = 0; i < mItems.size(); i++)
+			Debug.debugManager().drawers().drawRectImmediate(core.HUD(), mItems.get(i));
+
 	}
 
 	// --------------------------------------
@@ -285,24 +319,14 @@ public class MenuListBox extends MenuEntry implements IScrollBarArea {
 	}
 
 	public MenuListBoxItem getSelectedItem() {
-		for (int i = 0; i < mItems.size(); i++) {
-			if (mItems.get(i).mItemIndex == mSelectedItem)
-				return mItems.get(i);
-		}
+		if (mSelectedItemIndex < 0 || mSelectedItemIndex >= mItems.size())
+			return null;
 
-		return null;
+		return mItems.get(mSelectedItemIndex);
 	}
 
 	public boolean isItemSelected() {
-		if (mSelectedItem == -1)
-			return false;
-
-		for (int i = 0; i < mItems.size(); i++) {
-			if (mItems.get(i).mItemIndex == mSelectedItem)
-				return true;
-		}
-
-		return false;
+		return mSelectedItemIndex < 0 || mSelectedItemIndex >= mItems.size();
 	}
 
 	public void clearListBox() {

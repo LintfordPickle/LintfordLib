@@ -22,29 +22,18 @@ public abstract class MenuListBoxItem extends Rectangle {
 	public final Color textColor = new Color();
 	public final Color entryColor = new Color();
 	protected int mEntityGroupID;
-	protected int mItemIndex;
 	protected float mDoubleClickTimer;
 	protected int mDoubleClickLogicalCounter;
-
-	// --------------------------------------
-	// Properties
-	// --------------------------------------
-
-	public int itemIndex() {
-		return mItemIndex;
-	}
 
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
-	public MenuListBoxItem(ScreenManager screenManager, MenuListBox parentListBox, int index, int entityGroupUid) {
+	protected MenuListBoxItem(ScreenManager screenManager, MenuListBox parentListBox, int entityGroupUid) {
 		mScreenManager = screenManager;
 		mParentListBox = parentListBox;
 
 		mEntityGroupID = entityGroupUid;
-
-		mItemIndex = index;
 
 		mW = 600;
 		mH = 64;
@@ -71,7 +60,7 @@ public abstract class MenuListBoxItem extends Rectangle {
 		}
 
 		if (intersectsUs && areWeFreeToUseMouse && canWeAcquireLeftMouse) {
-			mParentListBox.selectedIndex(mItemIndex);
+			mParentListBox.selectedItem(this);
 
 			return true;
 		}
@@ -84,7 +73,7 @@ public abstract class MenuListBoxItem extends Rectangle {
 				mDoubleClickTimer = 0.f;
 			} else if (mDoubleClickLogicalCounter != core.input().mouse().mouseLeftButtonLogicalTimer()) {
 				mDoubleClickLogicalCounter = core.input().mouse().mouseLeftButtonLogicalTimer();
-				mParentListBox.itemDoubleClicked(mItemIndex);
+				mParentListBox.itemDoubleClicked(this);
 
 				return true;
 			}

@@ -42,8 +42,8 @@ public class StringListBoxItem extends MenuListBoxItem {
 	// Constructor
 	// --------------------------------------
 
-	public StringListBoxItem(ScreenManager pScreenManager, MenuListBox parentListBox, int index, String value, int entityGroupUid) {
-		super(pScreenManager, parentListBox, index, entityGroupUid);
+	public StringListBoxItem(ScreenManager pScreenManager, MenuListBox parentListBox, String value, int entityGroupUid) {
+		super(pScreenManager, parentListBox, entityGroupUid);
 
 		mH = 25;
 		mTextValue = value;
