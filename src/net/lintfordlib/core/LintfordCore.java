@@ -293,6 +293,8 @@ public abstract class LintfordCore {
 				}
 			}
 		}
+		
+		Debug.debugManager(lNewLogLevel);
 
 		mMasterConfig = new MasterConfig(mGameInfo);
 
@@ -309,7 +311,7 @@ public abstract class LintfordCore {
 		// 90Hz is 11.111 ms
 		// 120Hz is 8.33 ms
 
-		Debug.debugManager(lNewLogLevel);
+		
 
 		registerGameInfoConstants(gameInfo);
 
