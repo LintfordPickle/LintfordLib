@@ -415,7 +415,7 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 		// Draw the window background
 		if (mDrawWindowBackground) {
 			lSpritebatch.begin(core.HUD());
-			TextureBatch9Patch.drawBackground(core, lSpritebatch, mCoreSpritesheet, 32, x, y, w, h, lWindowColor, false, -0.01f);
+			TextureBatch9Patch.drawBackground(lSpritebatch, mCoreSpritesheet, 32, x, y, w, h, lWindowColor, false, -0.01f);
 			lSpritebatch.end();
 		}
 

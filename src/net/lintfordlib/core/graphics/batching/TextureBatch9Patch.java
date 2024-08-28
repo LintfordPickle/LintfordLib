@@ -1,14 +1,24 @@
 package net.lintfordlib.core.graphics.batching;
 
-import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.graphics.Color;
 import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
 
 //@formatter:off
 public class TextureBatch9Patch {
-
-	public static void drawBackground(LintfordCore core, SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheet, float tileSize, int x, int y, int w, int h, Color color, boolean withTitlebar, float componentDepth) {
+	
+	// --------------------------------------
+	// Constructor (static)
+	// --------------------------------------
+	
+	private TextureBatch9Patch() {
+	}
+	
+	// --------------------------------------
+	// Methods
+	// --------------------------------------
+	
+	public static void drawBackground(SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheet, float tileSize, int x, int y, int w, int h, Color color, boolean withTitlebar, float componentDepth) {
 		if (withTitlebar) {
 			if (h < 64) {
 				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT,     x,                  y,                tileSize,         tileSize,         componentDepth, color);

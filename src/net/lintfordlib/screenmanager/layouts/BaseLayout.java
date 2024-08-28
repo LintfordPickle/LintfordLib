@@ -294,7 +294,7 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 	// Constructor
 	// --------------------------------------
 
-	public BaseLayout(MenuScreen pParentScreen) {
+	protected BaseLayout(MenuScreen pParentScreen) {
 		super();
 
 		screenManager = pParentScreen.screenManager;
@@ -467,7 +467,7 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 			final int h = (int) mH;
 
 			lSpriteBatch.begin(core.HUD());
-			TextureBatch9Patch.drawBackground(core, lSpriteBatch, lSpriteSheetCore, ts, x, y, w, h, lColor, mShowTitle, componentDepth);
+			TextureBatch9Patch.drawBackground(lSpriteBatch, lSpriteSheetCore, ts, x, y, w, h, lColor, mShowTitle, componentDepth);
 			lSpriteBatch.end();
 		}
 

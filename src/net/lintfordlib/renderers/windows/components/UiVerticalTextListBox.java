@@ -157,6 +157,7 @@ public class UiVerticalTextListBox extends UIWidget implements IScrollBarArea {
 	// Core-Methods
 	// --------------------------------------
 
+	@Override
 	public boolean handleInput(LintfordCore core) {
 		mScrollbar.handleInput(core, null);
 
@@ -172,7 +173,7 @@ public class UiVerticalTextListBox extends UIWidget implements IScrollBarArea {
 				final var lMouseRelY = core.HUD().getMouseWorldSpaceY() - mY;
 				mSelectedItemIndex = (int) (((lMouseRelY - mScrollbar.currentYPos())) / (mAssetHeightInpx + mVerticalAssetSeparationInPx));
 
-				var lSelectedItem = (UiListBoxItem) null;
+				UiListBoxItem lSelectedItem = null;
 				if (mSelectedItemIndex >= 0 && mSelectedItemIndex < mItems.size())
 					lSelectedItem = mItems.get(mSelectedItemIndex);
 
@@ -189,6 +190,7 @@ public class UiVerticalTextListBox extends UIWidget implements IScrollBarArea {
 		return false;
 	}
 
+	@Override
 	public void update(LintfordCore core) {
 		super.update(core);
 
@@ -240,7 +242,7 @@ public class UiVerticalTextListBox extends UIWidget implements IScrollBarArea {
 
 		if (mH > 32.f) {
 			spriteBatch.begin(core.HUD());
-			TextureBatch9Patch.drawBackground(core, spriteBatch, coreSpritesheetDefinition, 32, (int) mX, (int) mY, (int) mW, (int) mH, ColorConstants.WHITE, false, componentZDepth);
+			TextureBatch9Patch.drawBackground(spriteBatch, coreSpritesheetDefinition, 32, (int) mX, (int) mY, (int) mW, (int) mH, ColorConstants.WHITE, false, componentZDepth);
 			spriteBatch.end();
 		}
 
@@ -284,7 +286,7 @@ public class UiVerticalTextListBox extends UIWidget implements IScrollBarArea {
 	}
 
 	public void addItem(UiListBoxItem newItem) {
-		if (mItems.contains(newItem) == false) {
+		if (!mItems.contains(newItem)) {
 			mItems.add(newItem);
 
 			if (mCallbackListener != null) {

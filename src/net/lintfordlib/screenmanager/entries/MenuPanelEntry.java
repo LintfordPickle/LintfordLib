@@ -47,8 +47,6 @@ public class MenuPanelEntry extends MenuEntry {
 
 	@Override
 	public void draw(LintfordCore core, Screen screen, float parentZDepth) {
-		// super.draw(core, screen, parentZDepth);
-
 		mZ = parentZDepth;
 
 		final var lScreenOffset = screen.screenPositionOffset();
@@ -67,7 +65,7 @@ public class MenuPanelEntry extends MenuEntry {
 			final int h = (int) mH;
 
 			lSpriteBatch.begin(core.HUD());
-			TextureBatch9Patch.drawBackground(core, lSpriteBatch, mCoreSpritesheet, ts, x, y, w, h, lColor, false, -0.01f);
+			TextureBatch9Patch.drawBackground(lSpriteBatch, mCoreSpritesheet, ts, x, y, w, h, lColor, false, -0.01f);
 			lSpriteBatch.end();
 		}
 

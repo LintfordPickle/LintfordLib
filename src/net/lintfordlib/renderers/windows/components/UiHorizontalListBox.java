@@ -129,7 +129,7 @@ public class UiHorizontalListBox extends UIWidget implements IScrollBarArea {
 	@Override
 	public void draw(LintfordCore core, SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheetDefinition, FontUnit textFont, float componentZDepth) {
 		spriteBatch.begin(core.HUD());
-		TextureBatch9Patch.drawBackground(core, spriteBatch, coreSpritesheetDefinition, 32, (int) mX, (int) mY, (int) mW, (int) mH, ColorConstants.WHITE, false, componentZDepth);
+		TextureBatch9Patch.drawBackground(spriteBatch, coreSpritesheetDefinition, 32, (int) mX, (int) mY, (int) mW, (int) mH, ColorConstants.WHITE, false, componentZDepth);
 		spriteBatch.end();
 
 		mContentArea.preDraw(core, spriteBatch);
