@@ -75,13 +75,12 @@ public class DebugPhysicsRenderer extends BaseRenderer {
 
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 
-		lLineBatch.begin(core.gameCamera());
+		// Double line batching going on here ...
 		for (int i = 0; i < lNumOfBodies; i++) {
 			final var lBody = lRigidBodies.get(i);
 
 			debugDrawRigidBody(core, lBody);
 		}
-		lLineBatch.end();
 
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 

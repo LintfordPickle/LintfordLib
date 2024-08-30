@@ -6,11 +6,14 @@ import static org.lwjgl.opengl.GL11.glClearColor;
 import org.lwjgl.opengl.GL11;
 
 import net.lintfordlib.core.LintfordCore;
+import net.lintfordlib.core.camera.Camera;
 import net.lintfordlib.core.debug.Debug.DebugLogLevel;
 import net.lintfordlib.core.graphics.ColorConstants;
 import net.lintfordlib.core.graphics.batching.TextureBatchPCT;
+import net.lintfordlib.screenmanager.ScreenManager;
+import net.lintfordlib.screens.DemoPhysicsScreen;
 
-public class LintfordMain extends LintfordCore {
+public class LintfordMainDemoScenes extends LintfordCore {
 
 	private static final String APPLICATION_NAME = "LintfordLib";
 
@@ -62,7 +65,7 @@ public class LintfordMain extends LintfordCore {
 
 		};
 
-		var lClient = new LintfordMain(lGameInfo, args);
+		var lClient = new LintfordMainDemoScenes(lGameInfo, args);
 		lClient.createWindow();
 	}
 
@@ -71,15 +74,18 @@ public class LintfordMain extends LintfordCore {
 	// ---------------------------------------------
 
 	private boolean mStretchStartUpLogo;
+	protected ScreenManager mScreenManager;
 
 	// ---------------------------------------------
 	// Constructor
 	// ---------------------------------------------
 
-	public LintfordMain(GameInfo gameInfo, String[] args) {
+	public LintfordMainDemoScenes(GameInfo gameInfo, String[] args) {
 		super(gameInfo, args);
 
 		mStretchStartUpLogo = false;
+		mScreenManager = new ScreenManager(this);
+
 	}
 
 	// ---------------------------------------------
@@ -110,5 +116,50 @@ public class LintfordMain extends LintfordCore {
 		lTextureBatch.end();
 
 		glfwSwapBuffers(windowHandle);
+	}
+
+	@Override
+	protected void onInitializeApp() {
+		super.onInitializeApp();
+
+		mScreenManager.addScreen(new DemoPhysicsScreen(mScreenManager));
+		mScreenManager.initialize();
+	}
+
+	@Override
+	protected void onLoadResources() {
+		super.onLoadResources();
+
+		mGameCamera = new Camera(mMasterConfig.display());
+		mScreenManager.loadResources(mResourceManager);
+	}
+
+	@Override
+	protected void onUnloadResources() {
+		super.onUnloadResources();
+
+		mScreenManager.unloadResources();
+	}
+
+	@Override
+	protected void onHandleInput() {
+		super.onHandleInput();
+
+		gameCamera().handleInput(this);
+		mScreenManager.handleInput(this);
+	}
+
+	@Override
+	protected void onUpdate() {
+		super.onUpdate();
+
+		mScreenManager.update(this);
+	}
+
+	@Override
+	protected void onDraw() {
+		super.onDraw();
+
+		mScreenManager.draw(this);
 	}
 }

@@ -97,6 +97,8 @@ public class ColorConstants {
 	public static final Color GREY_DARK = new Color(100f / 255f, 100f / 255f, 100f / 255f);
 	public static final Color BLACK = new Color(0.f, 0.f, 0.f);
 
+	public static final Color CORNFLOWER_BLUE = new Color(100f / 255f, 149f / 255f, 237f / 255f);
+
 	public static final Color RED = new Color(255f / 255f, 0f / 255f, 0f / 255f);
 	public static final Color GREEN = new Color(0f / 255f, 255f / 255f, 0f / 255f);
 	public static final Color BLUE = new Color(0f / 255f, 0f / 255f, 255f / 255f);
