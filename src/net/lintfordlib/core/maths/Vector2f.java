@@ -10,10 +10,13 @@ public class Vector2f implements Serializable {
 
 	private static final long serialVersionUID = -2295169699757910995L;
 
-	private final static Vector2f _tmp = new Vector2f();
+	private static final Vector2f _tmp = new Vector2f();
 
-	public final static Vector2f Zero = new Vector2f();
-	public final static Vector2f One = new Vector2f(1, 1);
+	public static final Vector2f Zero = new Vector2f();
+	public static final Vector2f One = new Vector2f(1, 1);
+
+	public static final Vector2f Up = new Vector2f(0, -1);
+	public static final Vector2f Right = new Vector2f(1, 0);
 
 	// --------------------------------------
 	// Variables
@@ -230,13 +233,13 @@ public class Vector2f implements Serializable {
 
 	/** Rotates the Vector2 by 90 degrees in the specified direction, where >= 0 is counter-clockwise and < 0 is clockwise. */
 	public Vector2f rotate90(int dir) {
-		float x = this.x;
+		final var lx = this.x;
 		if (dir >= 0) {
 			this.x = -y;
-			y = x;
+			y = lx;
 		} else {
 			this.x = y;
-			y = -x;
+			y = -lx;
 		}
 		return this;
 	}
@@ -265,6 +268,12 @@ public class Vector2f implements Serializable {
 		return this;
 	}
 
+	public Vector2f mul(Vector2f o) {
+		x *= o.x;
+		y *= o.y;
+		return this;
+	}
+
 	/**
 	 * Multiples this {@link Vector2f} by the given rotation
 	 */
@@ -282,9 +291,9 @@ public class Vector2f implements Serializable {
 	 * @return the distance between this and the other vector
 	 */
 	public float dst(Vector2f v) {
-		float x_d = v.x - x;
-		float y_d = v.y - y;
-		return (float) Math.sqrt(x_d * x_d + y_d * y_d);
+		float xx = v.x - x;
+		float yy = v.y - y;
+		return (float) Math.sqrt(xx * xx + yy * yy);
 	}
 
 	/**
@@ -293,9 +302,9 @@ public class Vector2f implements Serializable {
 	 * @return the distance between this and the other vector
 	 */
 	public float dst(float x, float y) {
-		float x_d = x - this.x;
-		float y_d = y - this.y;
-		return (float) Math.sqrt(x_d * x_d + y_d * y_d);
+		float xx = x - this.x;
+		float yy = y - this.y;
+		return (float) Math.sqrt(xx * xx + yy * yy);
 	}
 
 	/**
@@ -303,15 +312,9 @@ public class Vector2f implements Serializable {
 	 * @return the squared distance between this and the other vector
 	 */
 	public float dst2(Vector2f v) {
-		float x_d = v.x - x;
-		float y_d = v.y - y;
-		return x_d * x_d + y_d * y_d;
-	}
-
-	public Vector2f scale(float scalar) {
-		x *= scalar;
-		y *= scalar;
-		return this;
+		float xx = v.x - x;
+		float yy = v.y - y;
+		return xx * xx + yy * yy;
 	}
 
 	/** Multiplies this vector by a scalar */
@@ -356,15 +359,11 @@ public class Vector2f implements Serializable {
 		return Math.abs(this.x) + Math.abs(this.y);
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		//
-		if (obj instanceof Vector2f) {
-			Vector2f other = (Vector2f) obj;
-			return x == other.x && y == other.y && super.equals(obj);
-		}
+	public boolean vectorsEqual(Vector2f other) {
+		if (other == null)
+			return false;
 
-		return false;
+		return x == other.x && y == other.y;
 	}
 
 	public Vector2f reflected(Vector2f normal) {
