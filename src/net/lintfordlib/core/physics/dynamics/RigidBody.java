@@ -209,8 +209,6 @@ public class RigidBody extends PhysicsGridEntity {
 		if (mBodyType == BodyType.Static)
 			return;
 
-		// BodyType.Dynamic and BodyType.kenetic bodies are adjusted during the step phase.
-
 		vx += accX * time;
 		vy += accY * time;
 		angularVelocity += torque * time;
@@ -249,20 +247,18 @@ public class RigidBody extends PhysicsGridEntity {
 		inertia = 0.f;
 		invInertia = 0.f;
 
-		if (mBodyType == BodyType.Static) {
+		if (mBodyType == BodyType.Static)
 			return;
-		}
 
 		mass += shape().mass();
 		inertia += shape().inertia();
 
-		if (mass > 0.f) {
+		if (mass > 0.f)
 			invMass = 1.f / mass;
-		}
 
-		if (inertia > 0.f) {
+		if (inertia > 0.f)
 			invInertia = 1.f / inertia;
-		}
+
 	}
 
 	public void moveTo(float x, float y) {
@@ -299,7 +295,7 @@ public class RigidBody extends PhysicsGridEntity {
 	// -- Forces: act gradually over time (should be applied as needed per update)
 
 	public void addTorque(float torque) {
-		torque += torque;
+		this.torque += torque;
 	}
 
 	public void addForce(float fx, float fy) {
@@ -307,6 +303,7 @@ public class RigidBody extends PhysicsGridEntity {
 		accY += fy * invMass;
 	}
 
+	// TODO: These appear to be world Points - I think local would make more sense?
 	public void addForceAtPoint(float fx, float fy, float px, float py) {
 		accX += fx * invMass;
 		accY += fy * invMass;
