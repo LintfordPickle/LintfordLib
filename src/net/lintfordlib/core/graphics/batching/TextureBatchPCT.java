@@ -313,7 +313,7 @@ public class TextureBatchPCT {
 	}
 
 	public void begin(ICamera pCamera, ShaderMVP_PCT pCustomShader) {
-		if (pCamera == null)
+		if (!mResourcesLoaded || pCamera == null)
 			return;
 
 		if (mIsDrawing) {
