@@ -226,10 +226,13 @@ public abstract class Screen implements IInputProcessor {
 	}
 
 	public void unloadResources() {
-		if (mRendererManager.decreaseGlContentCount())
+		if (mRendererManager.decreaseGlContentCount()) {
 			mRendererManager.unloadResources();
+			
+			
+			screenManager.core().controllerManager().removeControllerGroup(entityGroupUid());
 
-		screenManager.core().controllerManager().removeControllerGroup(entityGroupUid());
+		}
 
 		mCoreSpritesheet = null;
 
