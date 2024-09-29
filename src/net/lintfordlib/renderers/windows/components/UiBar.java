@@ -15,20 +15,39 @@ public class UiBar {
 	// --------------------------------------
 
 	private float x, y, w, h;
-	private final Color UiBarOuterColor = new Color(1.f, 1.f, 1.f, 1.f);
-	private final Color UiBarInnerColor = new Color(1.f, 1.f, 1.f, 1.f);
+	private final Color mUiBarOuterColor = new Color(1.f, 1.f, 1.f, 1.f);
+	private final Color mUiBarInnerColor = new Color(1.f, 1.f, 1.f, 1.f);
 	private float mInnerBorderPadding = 1.f;
+
+	private String mLabel;
 
 	private float mMinValue;
 	private float mMaxValue;
 	private float mCurValue;
 
-	private boolean mIsVertical;
 	private boolean mIsInverted;
+	private float mBarSizeAsPercentageOfWidth; // [0,1]
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	/** Returns the normalized factor representing the point along the width that the bar starts (left is label, right is bar). */
+	public float barAsPercentageOfWidth() {
+		return mBarSizeAsPercentageOfWidth;
+	}
+
+	public void barAsPercentageOfWidth(float newValue) {
+		mBarSizeAsPercentageOfWidth = MathHelper.clamp(newValue, 0, 1);
+	}
+
+	public void label(String newLabel) {
+		mLabel = newLabel;
+	}
+
+	public String label() {
+		return mLabel;
+	}
 
 	public void innerBorderPadding(float value) {
 		if (value < 0f)
@@ -45,14 +64,6 @@ public class UiBar {
 
 	public boolean isInverted() {
 		return mIsInverted;
-	}
-
-	public void isVertical(boolean isVertical) {
-		mIsVertical = isVertical;
-	}
-
-	public boolean isVertical() {
-		return mIsVertical;
 	}
 
 	public void setDestRectangle(Rectangle pRect) {
@@ -72,7 +83,7 @@ public class UiBar {
 	}
 
 	public void setOuterColor(float pR, float pG, float pB, float pA) {
-		UiBarOuterColor.setRGBA(pR, pG, pB, pA);
+		mUiBarOuterColor.setRGBA(pR, pG, pB, pA);
 	}
 
 	public void setInnerColor(Color pColor) {
@@ -80,7 +91,7 @@ public class UiBar {
 	}
 
 	public void setInnerColor(float pR, float pG, float pB, float pA) {
-		UiBarInnerColor.setRGBA(pR, pG, pB, pA);
+		mUiBarInnerColor.setRGBA(pR, pG, pB, pA);
 	}
 
 	public void setCurrentValue(float pValue) {
@@ -96,10 +107,15 @@ public class UiBar {
 	// Constructor
 	// --------------------------------------
 
+	public UiBar() {
+		mBarSizeAsPercentageOfWidth = .5f;
+	}
+
 	public UiBar(float minValue, float maxValue) {
 		mMinValue = minValue;
 		mMaxValue = maxValue;
 
+		mBarSizeAsPercentageOfWidth = .5f;
 	}
 
 	// --------------------------------------
@@ -107,37 +123,28 @@ public class UiBar {
 	// --------------------------------------
 
 	public void draw(LintfordCore core, SpriteBatch spriteBatch, FontUnit textFont, float componentZDepth) {
-
 		final var lCoreTexture = core.resources().spriteSheetManager().coreSpritesheet();
-		float lBarWidth = MathHelper.scaleToRange(mCurValue, mMinValue, mMaxValue, 0, mIsVertical ? h : w);
+
+		final var lFullBarWidth = w * mBarSizeAsPercentageOfWidth;
+		final var lFullBarPosX = x + (w * (1 - mBarSizeAsPercentageOfWidth));
+		final var lInnerBarWidth = MathHelper.scaleToRange(mCurValue, mMinValue, mMaxValue, 0, lFullBarWidth);
+
+		textFont.drawText(mLabel, x, y, -0.01f, 1.f);
 
 		spriteBatch.begin(core.HUD());
-		spriteBatch.draw(lCoreTexture, CoreTextureNames.TEXTURE_WHITE, x, y, w, h, componentZDepth, UiBarOuterColor);
+		// Outer
+		spriteBatch.draw(lCoreTexture, CoreTextureNames.TEXTURE_WHITE, lFullBarPosX, y, lFullBarWidth, h, componentZDepth, mUiBarOuterColor);
 
-		if (mIsVertical) {
-			lBarWidth = MathHelper.clamp(lBarWidth - mInnerBorderPadding * 2, 0, h);
-			float lWidth = w - mInnerBorderPadding * 2;
-			float lHeight = lBarWidth;
+		// Inner
+		mInnerBorderPadding = 2;
+		final var lHeight = h - mInnerBorderPadding * 2;
 
-			float xx = x;
-			float yy = !mIsInverted ? y + h - mInnerBorderPadding * 2 - lHeight : y;
-			float ww = !mIsInverted ? lWidth : lWidth;
-			float hh = !mIsInverted ? lHeight : lHeight;
+		final var xx = !mIsInverted ? lFullBarPosX : x + w - mInnerBorderPadding * 2 - lInnerBarWidth;
+		final var yy = y;
+		final var ww = !mIsInverted ? lInnerBarWidth : -lInnerBarWidth;
+		final var hh = !mIsInverted ? lHeight : -lHeight;
+		spriteBatch.draw(lCoreTexture, CoreTextureNames.TEXTURE_WHITE, xx + mInnerBorderPadding, yy + mInnerBorderPadding, ww, hh, componentZDepth, mUiBarInnerColor);
 
-			spriteBatch.draw(lCoreTexture, CoreTextureNames.TEXTURE_WHITE, xx + mInnerBorderPadding, yy + mInnerBorderPadding, ww, hh, componentZDepth, UiBarInnerColor);
-
-		} else {
-			lBarWidth = MathHelper.clamp(lBarWidth - mInnerBorderPadding * 2, 0, w);
-			float lWidth = lBarWidth;
-			float lHeight = h - mInnerBorderPadding * 2;
-
-			float xx = !mIsInverted ? x : x + w - mInnerBorderPadding * 2 - lWidth;
-			float yy = y;
-			float ww = !mIsInverted ? lWidth : lWidth;
-			float hh = !mIsInverted ? lHeight : lHeight;
-
-			spriteBatch.draw(lCoreTexture, CoreTextureNames.TEXTURE_WHITE, xx + mInnerBorderPadding, yy + mInnerBorderPadding, ww, hh, componentZDepth, UiBarInnerColor);
-		}
 		spriteBatch.end();
 	}
 }
