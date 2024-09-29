@@ -41,6 +41,7 @@ public abstract class PlayerSessionsManager<T extends IPlayerSession> {
 	public T getPlayerSession(int sessionIndex) {
 		if (sessionIndex < 0 || sessionIndex >= mPlayerSessions.size())
 			return null;
+
 		return mPlayerSessions.get(sessionIndex);
 	}
 
@@ -49,7 +50,7 @@ public abstract class PlayerSessionsManager<T extends IPlayerSession> {
 	// ---------------------------------------------
 
 	// ref BaseGameSplitScreen
-	public PlayerSessionsManager(RendererManager rendererManager) {
+	protected PlayerSessionsManager(RendererManager rendererManager) {
 		mPlayerSessions.add(createNewPlayerSession(false));
 		mPlayerSessions.add(createNewPlayerSession(true));
 		mPlayerSessions.add(createNewPlayerSession(true));
@@ -63,7 +64,7 @@ public abstract class PlayerSessionsManager<T extends IPlayerSession> {
 	// ---------------------------------------------
 	// Methods
 	// ---------------------------------------------
-
+	
 	protected abstract T createNewPlayerSession(boolean canBeDeactivated);
 
 	public void initialize(LintfordCore core) {
@@ -190,6 +191,9 @@ public abstract class PlayerSessionsManager<T extends IPlayerSession> {
 		case 2:
 			mPlayerSessions.get(1).enablePlayer(true);
 			break;
+
+		default:
+			// ignore
 		}
 	}
 
@@ -211,5 +215,4 @@ public abstract class PlayerSessionsManager<T extends IPlayerSession> {
 
 		mNumberActivePlayers--;
 	}
-
 }
