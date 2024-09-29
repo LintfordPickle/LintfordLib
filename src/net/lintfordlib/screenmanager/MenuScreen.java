@@ -10,6 +10,7 @@ import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.graphics.fonts.FontUnit;
 import net.lintfordlib.core.input.InputManager;
 import net.lintfordlib.core.maths.MathHelper;
+import net.lintfordlib.renderers.RendererManager;
 import net.lintfordlib.renderers.ZLayers;
 import net.lintfordlib.screenmanager.ScreenManagerConstants.FILLTYPE;
 import net.lintfordlib.screenmanager.ScreenManagerConstants.LAYOUT_ALIGNMENT;
@@ -59,12 +60,19 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 	protected float mMenuHeaderPadding;
 
+	protected float mUiScale;
+
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
 
 	public boolean isEntryActive() {
 		return mActiveEntry != null;
+	}
+
+	/** Scale factor between [1,2] representing the difference of the window and the base resolution. */
+	public float uiScale() {
+		return mUiScale;
 	}
 
 	public LAYOUT_ALIGNMENT layoutAlignment() {
@@ -115,8 +123,12 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	// Constructor
 	// --------------------------------------
 
-	public MenuScreen(ScreenManager screenManager, String menuTitle) {
-		super(screenManager);
+	protected MenuScreen(ScreenManager screenManager, String menuTitle) {
+		this(screenManager, menuTitle, null);
+	}
+
+	protected MenuScreen(ScreenManager screenManager, String menuTitle, RendererManager rendererManager) {
+		super(screenManager, rendererManager);
 
 		mLayouts = new ArrayList<>();
 
@@ -196,13 +208,9 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 		super.handleInput(core);
 
-		if (mESCBackEnabled) {
-			if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_ESCAPE, this) || core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_B, this)) {
-				if (mScreenState == ScreenState.ACTIVE) {
-					exitScreen();
-					return;
-				}
-			}
+		if (mESCBackEnabled && (mScreenState == ScreenState.ACTIVE) && core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_ESCAPE, this) || core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_B, this)) {
+			onEscPressed();
+			return;
 		}
 
 		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_UP, this)) {
@@ -266,6 +274,9 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 		if (!mIsinitialized)
 			return;
+
+		final var lDisplayConfig = core.config().display();
+		mUiScale = MathHelper.scaleToRange(lDisplayConfig.windowHeight(), 500, 960, 1, 2);
 
 		if (!coveredByOtherScreen) {
 
@@ -536,6 +547,10 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		}
 	}
 
+	protected void onEscPressed() {
+		exitScreen();
+	}
+
 	// INPUT INTERACTION --------------------
 
 	@Override
@@ -548,7 +563,8 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		mActiveEntry = null;
 	}
 
-	// mouse
+	// MOUSE
+
 	public void setFocusOnEntry(MenuEntry entry) {
 		// if (mActiveEntry != null)
 		// mActiveEntry.onDeselection(mScreenManager.core().input());
