@@ -131,7 +131,6 @@ public class UiBar {
 
 		textFont.drawText(mLabel, x, y, -0.01f, 1.f);
 
-		spriteBatch.begin(core.HUD());
 		// Outer
 		spriteBatch.draw(lCoreTexture, CoreTextureNames.TEXTURE_WHITE, lFullBarPosX, y, lFullBarWidth, h, componentZDepth, mUiBarOuterColor);
 
@@ -145,6 +144,5 @@ public class UiBar {
 		final var hh = !mIsInverted ? lHeight : -lHeight;
 		spriteBatch.draw(lCoreTexture, CoreTextureNames.TEXTURE_WHITE, xx + mInnerBorderPadding, yy + mInnerBorderPadding, ww, hh, componentZDepth, mUiBarInnerColor);
 
-		spriteBatch.end();
 	}
 }
