@@ -18,14 +18,6 @@ public class FontMetaData {
 	public List<BitmapFontDataDefinition> items = new ArrayList<>();
 
 	// --------------------------------------
-	// Constructor
-	// --------------------------------------
-
-	public FontMetaData() {
-
-	}
-
-	// --------------------------------------
 	// Methods
 	// --------------------------------------
 
