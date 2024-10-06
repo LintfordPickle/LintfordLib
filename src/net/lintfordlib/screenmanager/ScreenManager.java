@@ -46,7 +46,6 @@ public class ScreenManager implements IInputClickedFocusManager {
 	private boolean mResourcesLoaded;
 	private int mScreenUIDCounter;
 	private HudLayoutController mUiStructureController;
-	private IResizeListener mResizeListener;
 	protected float mColumnMaxWidth;
 	protected IInputClickedFocusTracker mTrackedInputControl;
 
@@ -143,6 +142,7 @@ public class ScreenManager implements IInputClickedFocusManager {
 	}
 
 	public void loadResources(final ResourceManager resourceManager) {
+		IResizeListener mResizeListener;
 		mResourceManager = resourceManager;
 
 		final int lScreenToAddCount = mScreensToAdd.size();
@@ -188,7 +188,7 @@ public class ScreenManager implements IInputClickedFocusManager {
 	}
 
 	public void handleInput(LintfordCore core) {
-		if (mScreens == null || mScreens.size() == 0)
+		if (mScreens.isEmpty())
 			return;
 
 		var acceptKeyboardInput = true;
@@ -212,43 +212,13 @@ public class ScreenManager implements IInputClickedFocusManager {
 		}
 
 		if (mTrackedInputControl != null) {
-			if (mTrackedInputControl.inputHandledInCoreFrame() == false) {
+			if (!mTrackedInputControl.inputHandledInCoreFrame()) {
 				mTrackedInputControl.handleInput(core, this);
 			}
 
 			mTrackedInputControl.resetInputHandledInCoreFrameFlag();
-			if (core.input().mouse().isMouseLeftButtonDown() == false) {
+			if (!core.input().mouse().isMouseLeftButtonDown()) {
 				mTrackedInputControl = null;
-			}
-		}
-	}
-
-	private void updateScreensToAdd(LintfordCore core) {
-		// First update transitions
-		final int lToAddCount = mScreensToAdd.size();
-		if (lToAddCount > 0) {
-			boolean lReadyToAddScreen = false;
-			final var lNextScreenToAdd = mScreensToAdd.get(0);
-			final var lTopScreen = getTopScreen();
-			if (lTopScreen != null) {
-				if (lTopScreen.screenState() == ScreenState.ACTIVE) {
-					lTopScreen.onLostFocus();
-					if (lNextScreenToAdd.showBackgroundScreens() == false && lNextScreenToAdd.alwaysOnTop() == false)
-						lTopScreen.transitionOff();
-					else {
-						lReadyToAddScreen = true;
-					}
-				} else if (lTopScreen.screenState() == ScreenState.HIDDEN || lNextScreenToAdd.showBackgroundScreens()) {
-					lReadyToAddScreen = true;
-				}
-			} else {
-				lReadyToAddScreen = true;
-			}
-
-			if (lReadyToAddScreen) {
-				mScreensToAdd.remove(0);
-				lNextScreenToAdd.transitionOn();
-				mScreens.add(lNextScreenToAdd);
 			}
 		}
 	}
@@ -260,7 +230,7 @@ public class ScreenManager implements IInputClickedFocusManager {
 		boolean lOtherScreenHasFocus = false;
 		boolean lCoveredByOtherScreen = false;
 
-		updateScreensToAdd(core);
+		updateScreensToAdd();
 
 		mScreensToUpdate.clear();
 
@@ -271,16 +241,16 @@ public class ScreenManager implements IInputClickedFocusManager {
 
 		final var lTopMostScreen = getTopScreen();
 		if (lTopMostScreen != null) {
-			if (lTopMostScreen.screenState() == ScreenState.HIDDEN && lTopMostScreen.isExiting() == false)
+			if (lTopMostScreen.screenState() == ScreenState.HIDDEN && !lTopMostScreen.isExiting())
 				lTopMostScreen.transitionOn();
 		}
 
-		while (mScreensToUpdate.size() > 0) {
+		while (!mScreensToUpdate.isEmpty()) {
 			final var lScreen = mScreensToUpdate.get(mScreensToUpdate.size() - 1);
 
 			mScreensToUpdate.remove(mScreensToUpdate.size() - 1);
 
-			if (mScreensToAdd.size() > 0)
+			if (!mScreensToAdd.isEmpty())
 				lCoveredByOtherScreen = true;
 
 			lScreen.update(core, lOtherScreenHasFocus, lCoveredByOtherScreen);
@@ -327,6 +297,36 @@ public class ScreenManager implements IInputClickedFocusManager {
 	// Methods
 	// --------------------------------------
 
+	private void updateScreensToAdd() {
+		// First update transitions
+		final int lToAddCount = mScreensToAdd.size();
+		if (lToAddCount > 0) {
+			boolean lReadyToAddScreen = false;
+			final var lNextScreenToAdd = mScreensToAdd.get(0);
+			final var lTopScreen = getTopScreen();
+			if (lTopScreen != null) {
+				if (lTopScreen.screenState() == ScreenState.ACTIVE) {
+					lTopScreen.onLostFocus();
+					if (!lNextScreenToAdd.showBackgroundScreens() && !lNextScreenToAdd.alwaysOnTop())
+						lTopScreen.transitionOff();
+					else {
+						lReadyToAddScreen = true;
+					}
+				} else if (lTopScreen.screenState() == ScreenState.HIDDEN || lNextScreenToAdd.showBackgroundScreens()) {
+					lReadyToAddScreen = true;
+				}
+			} else {
+				lReadyToAddScreen = true;
+			}
+
+			if (lReadyToAddScreen) {
+				mScreensToAdd.remove(0);
+				lNextScreenToAdd.transitionOn();
+				mScreens.add(lNextScreenToAdd);
+			}
+		}
+	}
+
 	public void addScreen(Screen screenToAdd) {
 		if (screenToAdd.singletonScreen()) {
 			final int lScreenCount = mScreens.size();
@@ -358,12 +358,12 @@ public class ScreenManager implements IInputClickedFocusManager {
 	}
 
 	public Screen getTopScreen() {
-		if (mScreens == null || mScreens.size() == 0)
+		if (mScreens.isEmpty())
 			return null;
 
 		final int lScreenCount = mScreens.size();
 		for (int i = lScreenCount - 1; i >= 0; i--) {
-			if (mScreens.get(i).alwaysOnTop() == false)
+			if (!mScreens.get(i).alwaysOnTop())
 				return mScreens.get(i);
 		}
 
@@ -411,11 +411,11 @@ public class ScreenManager implements IInputClickedFocusManager {
 
 		System.gc();
 
-		if (loadingScreen.isinitialized() == false) {
+		if (!loadingScreen.isinitialized()) {
 			loadingScreen.initialize();
 		}
 
-		if (loadingScreen.isResourcesLoaded() == false) {
+		if (!loadingScreen.isResourcesLoaded()) {
 			loadingScreen.loadResources(mResourceManager);
 		}
 

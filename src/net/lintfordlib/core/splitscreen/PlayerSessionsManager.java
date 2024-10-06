@@ -64,7 +64,7 @@ public abstract class PlayerSessionsManager<T extends IPlayerSession> {
 	// ---------------------------------------------
 	// Methods
 	// ---------------------------------------------
-	
+
 	protected abstract T createNewPlayerSession(boolean canBeDeactivated);
 
 	public void initialize(LintfordCore core) {
@@ -128,11 +128,11 @@ public abstract class PlayerSessionsManager<T extends IPlayerSession> {
 
 	private void updatePlayerViewports(LintfordCore core) {
 		final var lDisplayConfig = core.config().display();
-		final float lGameWindowWidth = lDisplayConfig.gameResolutionWidth();
-		final float lGameWindowHeight = lDisplayConfig.gameResolutionHeight();
+		final var lGameWindowWidth = lDisplayConfig.gameResolutionWidth();
+		final var lGameWindowHeight = lDisplayConfig.gameResolutionHeight();
 
-		final float lHudWindowWidth = lDisplayConfig.windowWidth();
-		final float lHudWindowHeight = lDisplayConfig.windowHeight();
+		final var lHudWindowWidth = lDisplayConfig.uiResolutionWidth();
+		final var lHudWindowHeight = lDisplayConfig.uiResolutionHeight();
 
 		// Create the viewports depending on how many players joined this game
 		int numPlayers = numActivePlayers();

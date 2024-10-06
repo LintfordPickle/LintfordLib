@@ -321,14 +321,14 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	}
 
 	public void updateLayoutSize(LintfordCore core) {
-		if (mRendererManager == null || mLayouts.size() == 0)
+		if (mRendererManager == null || mLayouts.isEmpty())
 			return;
 
 		updateLayout(core, mLayouts, mLayoutAlignment);
 	}
 
 	protected void updateLayout(LintfordCore core, List<BaseLayout> layoutList, LAYOUT_ALIGNMENT alignment) {
-		if (layoutList == null || layoutList.size() == 0)
+		if (layoutList == null || layoutList.isEmpty())
 			return;
 
 		if (mRendererManager == null)
@@ -650,7 +650,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		if (mActiveEntry != null)
 			return;
 
-		if (acceptGamepadInput == false && acceptKeyboardInput == false)
+		if (!acceptGamepadInput && !acceptKeyboardInput)
 			return;
 
 		core.input().mouse().isMouseMenuSelectionEnabled(false);
