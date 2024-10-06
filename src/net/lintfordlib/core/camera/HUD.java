@@ -117,13 +117,11 @@ public class HUD implements ICamera, IResizeListener {
 
 	@Override
 	public void handleInput(LintfordCore core) {
-		float lWindowWidth = mViewportWidth;
-		float lWindowHeight = mViewportHeight;
+		final var lWindowWidth = mScaledViewportWidth;
+		final var lWindowHeight = mScaledViewportHeight;
 
-		mScaleRatio.set((mViewportWidth / (float) mDisplayConfig.windowWidth()), (mViewportHeight / (float) mDisplayConfig.windowHeight()));
-
-		mMouseHUDSpace.x = -lWindowWidth * .5f + (core.input().mouse().mouseWindowCoords().x) * mScaleRatio.x;
-		mMouseHUDSpace.y = -lWindowHeight * .5f + (core.input().mouse().mouseWindowCoords().y) * mScaleRatio.y;
+		mMouseHUDSpace.x = -lWindowWidth * .5f + core.input().mouse().mouseWindowCoords().x * mScaleRatio.x;
+		mMouseHUDSpace.y = -lWindowHeight * .5f + core.input().mouse().mouseWindowCoords().y * mScaleRatio.y;
 	}
 
 	@Override
@@ -131,9 +129,12 @@ public class HUD implements ICamera, IResizeListener {
 		if (mViewportWidth == 0 || mViewportHeight == 0)
 			return;
 
+		final var lWindowWidth = (float) mDisplayConfig.windowWidth();
+		final var lWindowHeight = (float) mDisplayConfig.windowHeight();
+
 		// ensure a minimum Hud resolution
-		mViewportWidth = (int) MathHelper.max(core.config().display().windowWidth(), ConstantsDisplay.MIN_UI_HUD_WIDTH);
-		mViewportHeight = (int) MathHelper.max(core.config().display().windowHeight(), ConstantsDisplay.MIN_UI_HUD_HEIGHT);
+		mViewportWidth = (int) MathHelper.max(lWindowWidth, ConstantsDisplay.MIN_UI_HUD_WIDTH);
+		mViewportHeight = (int) MathHelper.max(lWindowHeight, ConstantsDisplay.MIN_UI_HUD_HEIGHT);
 
 		if ((mViewportWidth % 2) == 1)
 			mViewportWidth = mViewportWidth + 1;
@@ -141,14 +142,17 @@ public class HUD implements ICamera, IResizeListener {
 		if ((mViewportHeight % 2) == 1)
 			mViewportHeight = mViewportHeight + 1;
 
-		mViewMatrix.setIdentity();
-		mViewMatrix.translate(position.x, position.y, 0);
-		mViewMatrix.scale(1.f, 1.f, 1.f);
+		createView();
+		if (mDisplayConfig.stretchUiScreen()) {
+			mScaleRatio.set(mDisplayConfig.uiResolutionWidth() / lWindowWidth, mDisplayConfig.uiResolutionHeight() / lWindowHeight);
+			createOrtho(mDisplayConfig.uiResolutionWidth(), mDisplayConfig.uiResolutionHeight());
+		} else {
+			mScaleRatio.set(1.f, 1.f);
+			createOrtho(mViewportWidth, mViewportHeight);
+		}
 
-		createOrtho(mViewportWidth, mViewportHeight);
-
-		mBoundingRectangle.width(mViewportWidth);
-		mBoundingRectangle.height(mViewportHeight);
+		mBoundingRectangle.width(mScaledViewportWidth);
+		mBoundingRectangle.height(mScaledViewportHeight);
 		mBoundingRectangle.setCenterPosition(0, 0);
 
 	}
@@ -157,9 +161,15 @@ public class HUD implements ICamera, IResizeListener {
 	// Methods
 	// --------------------------------------
 
+	private void createView() {
+		mViewMatrix.setIdentity();
+		mViewMatrix.translate(position.x, position.y, 0);
+		mViewMatrix.scale(1.f, 1.f, 1.f);
+	}
+
 	private void createOrtho(int gameViewportWidth, int gameViewportHeight) {
 		mProjectionMatrix.setIdentity();
-		mProjectionMatrix.createOrtho(-gameViewportWidth / 2, gameViewportWidth / 2, gameViewportHeight / 2, -gameViewportHeight / 2, Z_NEAR, Z_FAR);
+		mProjectionMatrix.createOrtho(-gameViewportWidth / 2.f, gameViewportWidth / 2.f, gameViewportHeight / 2.f, -gameViewportHeight / 2.f, Z_NEAR, Z_FAR);
 
 		mScaledViewportWidth = gameViewportWidth * getZoomFactorOverOne();
 		mScaledViewportHeight = gameViewportHeight * getZoomFactorOverOne();
@@ -192,12 +202,12 @@ public class HUD implements ICamera, IResizeListener {
 
 	@Override
 	public float getPointCameraSpaceX(float pointX) {
-		return (-mScaledViewportWidth * 0.5f + (pointX * mScaleRatio.x));
+		return this.getMinX() + (pointX * mScaleRatio.x) / getZoomFactor();
 	}
 
 	@Override
 	public float getPointCameraSpaceY(float pointY) {
-		return (-mScaledViewportHeight * 0.5f + (pointY * mScaleRatio.y));
+		return this.getMinY() + pointY * mScaleRatio.y / getZoomFactor();
 	}
 
 	@Override

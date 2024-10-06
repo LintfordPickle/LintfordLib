@@ -33,6 +33,8 @@ public class VideoSettings {
 	private int mWindowPositionY;
 	private int mWindowWidth;
 	private int mWindowHeight;
+	private int mUiWidth;
+	private int mUiHeight;
 	private int mRefreshRate;
 	private int mFullScreenIndex;
 	private int mAspectRatioIndex;
@@ -74,6 +76,22 @@ public class VideoSettings {
 
 	public void windowHeight(int windowHeight) {
 		mWindowHeight = windowHeight;
+	}
+
+	public int uiWidth() {
+		return mUiWidth;
+	}
+
+	public void uiWidth(int newUiWidth) {
+		mUiWidth = newUiWidth;
+	}
+
+	public int uiHeight() {
+		return mUiHeight;
+	}
+
+	public void uiHeight(int newUiHeight) {
+		mUiHeight = newUiHeight;
 	}
 
 	public int refreshRate() {

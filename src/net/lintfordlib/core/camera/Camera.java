@@ -248,7 +248,6 @@ public class Camera implements ICamera {
 		mProjectionMatrix.setIdentity();
 		mProjectionMatrix.createOrtho(-gameViewportWidth * 0.5f, gameViewportWidth * 0.5f, gameViewportheight * 0.5f, -gameViewportheight * 0.5f, Z_NEAR, Z_FAR);
 
-		// Update the scaled camera dimensions based on what we used for the projection matrix
 		mScaledWindowWidth = gameViewportWidth * getZoomFactorOverOne();
 		mScaledWindowHeight = gameViewportheight * getZoomFactorOverOne();
 	}

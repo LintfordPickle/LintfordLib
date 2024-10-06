@@ -102,6 +102,11 @@ public class DisplayManager extends IniFile {
 	private long mOffscreenWindowId;
 
 	private boolean mStretchGameScreen = false;
+	private boolean mStretchUiScreen = false;
+	// used to restore the game stretch mode if a particular screen chooses to use the app-default (set in the GameInfo).
+	private boolean mDefaultGameScreen;
+	// used to restore the ui stretch mode if a particular screen chooses to use the app-default (set in the GameInfo).
+	private boolean mDefaultUiScreen;
 
 	private boolean mRecompileShaders = false;
 
@@ -184,6 +189,28 @@ public class DisplayManager extends IniFile {
 
 	public boolean stretchGameScreen() {
 		return mStretchGameScreen;
+	}
+
+	public void stretchGameScreen(boolean newStretchValue) {
+		mStretchGameScreen = newStretchValue;
+	}
+
+	public boolean stretchUiScreen() {
+		return mStretchUiScreen;
+	}
+
+	public void stretchUiScreen(boolean newStretchValue) {
+		mStretchUiScreen = newStretchValue;
+	}
+
+	/** Used to restore the stretch-mode for the GameCanvas resolution. This is needed because certain screens may need to use the full native resolution (like an editor). */
+	public void restoreGameStretch() {
+		mStretchGameScreen = mDefaultGameScreen;
+	}
+
+	/** Used to restore the stretch-mode for the Ui resolution. This is needed because certain screens may need to use the full native resolution (like an editor). */
+	public void restoreUiStretch() {
+		mStretchUiScreen = mDefaultUiScreen;
 	}
 
 	public int minimumWindowWidth() {
@@ -305,17 +332,20 @@ public class DisplayManager extends IniFile {
 			mDisplaySettings.fullScreenIndex(gameInfo.defaultFullScreen() ? VideoSettings.FULLSCREEN_YES_INDEX : VideoSettings.FULLSCREEN_NO_INDEX);
 			mDisplaySettings.windowWidth(gameInfo.gameCanvasResolutionWidth());
 			mDisplaySettings.windowHeight(gameInfo.gameCanvasResolutionHeight());
+			mDisplaySettings.uiWidth(gameInfo.uiCanvasResolutionWidth());
+			mDisplaySettings.uiHeight(gameInfo.uiCanvasResolutionHeight());
 			mDisplaySettings.resizeable(gameInfo.windowResizeable());
 
 			saveConfig();
 		} else {
-			// Get the values we need
+			// Need to check the monitor index is still valid before using it from the save file.
 			// final var lSavedMonitorIndex = getLong("Settings", "MonitorIndex", glfwGetPrimaryMonitor());
-			// TODO: Verify the monitor index is (still?) valid
-
 			// mDisplaySettings.monitorIndex(lSavedMonitorIndex);
 			mDisplaySettings.windowWidth(getInt(SECTION_NAME_SETTINGS, "WindowWidth", gameInfo.gameCanvasResolutionWidth()));
 			mDisplaySettings.windowHeight(getInt(SECTION_NAME_SETTINGS, "WindowHeight", gameInfo.gameCanvasResolutionHeight()));
+			mDisplaySettings.uiWidth(getInt(SECTION_NAME_SETTINGS, "UiHeight", gameInfo.uiCanvasResolutionWidth()));
+			mDisplaySettings.uiHeight(getInt(SECTION_NAME_SETTINGS, "UiHeight", gameInfo.uiCanvasResolutionHeight()));
+
 			mDisplaySettings.fullScreenIndex(getInt(SECTION_NAME_SETTINGS, "WindowFullscreen", VideoSettings.FULLSCREEN_NO_INDEX));
 			mDisplaySettings.vSyncEnabled(getBoolean(SECTION_NAME_SETTINGS, "vSync", true));
 			mDisplaySettings.resizeable(gameInfo.windowResizeable()); // not overridable from config file
@@ -335,6 +365,8 @@ public class DisplayManager extends IniFile {
 		setValue(SECTION_NAME_SETTINGS, "MonitorIndex", mDisplaySettings.monitorIndex());
 		setValue(SECTION_NAME_SETTINGS, "WindowWidth", mDisplaySettings.windowWidth());
 		setValue(SECTION_NAME_SETTINGS, "WindowHeight", mDisplaySettings.windowHeight());
+		setValue(SECTION_NAME_SETTINGS, "UiWidth", mDisplaySettings.uiWidth());
+		setValue(SECTION_NAME_SETTINGS, "UiHeight", mDisplaySettings.uiHeight());
 		setValue(SECTION_NAME_SETTINGS, "WindowFullscreen", mDisplaySettings.fullScreenIndex());
 		setValue(SECTION_NAME_SETTINGS, "vSync", mDisplaySettings.vSyncEnabled());
 
@@ -460,6 +492,10 @@ public class DisplayManager extends IniFile {
 		oninitializeGL();
 
 		mStretchGameScreen = gameInfo.stretchGameResolution();
+		mDefaultGameScreen = mStretchGameScreen;
+
+		mStretchUiScreen = gameInfo.stretchUiResolution();
+		mDefaultUiScreen = mStretchUiScreen;
 
 		changeResolution(mDisplaySettings.windowWidth(), mDisplaySettings.windowHeight());
 
@@ -687,4 +723,5 @@ public class DisplayManager extends IniFile {
 			return ASPECT_RATIO_STANDARD_HD_INDEX;
 		}
 	}
+
 }
