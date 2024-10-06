@@ -65,6 +65,12 @@ public abstract class Screen implements IInputProcessor {
 	protected float mInputTimer;
 	protected final Vector2f mScreenOffset = new Vector2f();
 
+	public boolean mOverrideUiStretch;
+	public boolean mStretchUiResolution;
+
+	public boolean mOverrideGameStretch;
+	public boolean mStretchGameResolution;
+
 	// --------------------------------------
 	// Properties
 	// -------------------------------------
@@ -228,8 +234,7 @@ public abstract class Screen implements IInputProcessor {
 	public void unloadResources() {
 		if (mRendererManager.decreaseGlContentCount()) {
 			mRendererManager.unloadResources();
-			
-			
+
 			screenManager.core().controllerManager().removeControllerGroup(entityGroupUid());
 
 		}
