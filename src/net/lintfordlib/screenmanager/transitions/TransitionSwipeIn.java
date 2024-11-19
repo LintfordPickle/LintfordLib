@@ -14,7 +14,7 @@ public class TransitionSwipeIn extends BaseTransition {
 		Left, Right
 	}
 
-	private static final float SWIPE_SPEED = 300.f;
+	private static final float SWIPE_SPEED = 1800.f;
 
 	// --------------------------------------
 	// Variables
@@ -41,6 +41,7 @@ public class TransitionSwipeIn extends BaseTransition {
 
 		final float lDirection = mSwipeInDirection == SwipeInDirection.Left ? -1.f : 1.f;
 		final var lScreenOffset = screen.screenPositionOffset();
+
 		final float lScreenOffsetY = lScreenOffset.y;
 		lScreenOffset.set((-1.f + mProgressNormalized) * lDirection * SWIPE_SPEED, lScreenOffsetY);
 	}

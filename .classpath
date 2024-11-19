@@ -19,5 +19,10 @@
 	<classpathentry exported="true" kind="lib" path="libs/gson-2.10.1.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/lwjgl"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.USER_LIBRARY/LWJGL3-Windows"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/5"/>
+	<classpathentry kind="lib" path="libs/mockito-core-5.14.2.jar"/>
+	<classpathentry kind="lib" path="libs/objenesis-3.4.jar"/>
+	<classpathentry kind="lib" path="libs/byte-buddy-1.15.10.jar"/>
+	<classpathentry kind="lib" path="libs/byte-buddy-agent-1.15.10.jar"/>
 	<classpathentry kind="output" path="target/"/>
 </classpath>

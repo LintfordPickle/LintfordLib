@@ -149,7 +149,7 @@ class BitmapFontDefinition {
 		final var lTextureManager = resourceManager.textureManager();
 
 		// TODO: Where is mUseSubPixelRendering actuall set from (json)?
-		final var lFilteringMode = mUseSubPixelRendering ? GL11.GL_LINEAR : GL11.GL_NEAREST;
+		final var lFilteringMode = GL11.GL_NEAREST;// mUseSubPixelRendering ? GL11.GL_LINEAR : GL11.GL_NEAREST;
 		mTexture = lTextureManager.getTextureOrLoad(mTextureName, mTextureFilepath, lFilteringMode, mEntityGroupUid);
 
 		if (lTextureManager.isTextureLoaded(mTexture) == false) {

@@ -113,7 +113,7 @@ public abstract class AsyncScreenLoadingScreen extends Screen {
 		super.update(core, otherScreenHasFocus, coveredByOtherScreen);
 
 		if ((mScreenState == ScreenState.ACTIVE) && (screenManager.screens().size() == 1)) {
-			if (hasLoadingStarted() == false) {
+			if (!hasLoadingStarted()) {
 				loadingThreadStarted = true;
 
 				mBackgroundThread = new ScreenManagerScreenLoader();
@@ -125,7 +125,7 @@ public abstract class AsyncScreenLoadingScreen extends Screen {
 				onAfterAssetsLoaded();
 
 			} else {
-				if (mActivateLoadedScreens && mIsExiting == false) {
+				if (mActivateLoadedScreens && !isExiting()) {
 					exitScreen();
 
 					final var lNumScreensToAdd = screensToLoad.length;

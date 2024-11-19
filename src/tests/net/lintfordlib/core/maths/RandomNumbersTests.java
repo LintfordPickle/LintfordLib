@@ -1,12 +1,14 @@
-package net.lintfordlib.core.maths;
+package tests.net.lintfordlib.core.maths;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.RepeatedTest;
 
+import net.lintfordlib.core.maths.RandomNumbers;
+
 class RandomNumbersTests {
 
-	@RepeatedTest(10)
+	@RepeatedTest(1000)
 	void random_ReturnsARandomBoundedIntValue_ShouldReturnAnIntWithinTheSpecifiedBounds() {
 		// arrange
 		final int low = 2;
@@ -18,10 +20,9 @@ class RandomNumbersTests {
 		// assert
 		assertTrue(result >= low, "Random integer value was lower than low bound.");
 		assertTrue(result < high, "Random integer value was higher than high bound.");
-
 	}
 
-	@RepeatedTest(10)
+	@RepeatedTest(1000)
 	void random_ReturnsARandomBoundedFloatValue_ShouldReturnAFloatWithinTheSpecifiedBounds() {
 		// arrange
 		final float low = 2.f;
@@ -33,6 +34,5 @@ class RandomNumbersTests {
 		// assert
 		assertTrue(result >= low, "Random float value was lower than low bound.");
 		assertTrue(result < high, "Random float value was higher than high bound.");
-
 	}
 }

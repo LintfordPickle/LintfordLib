@@ -16,6 +16,10 @@ import net.lintfordlib.renderers.RendererManager;
 import net.lintfordlib.screenmanager.transitions.BaseTransition;
 import net.lintfordlib.screenmanager.transitions.TransitionFadeIn;
 import net.lintfordlib.screenmanager.transitions.TransitionFadeOut;
+import net.lintfordlib.screenmanager.transitions.TransitionSwipeIn;
+import net.lintfordlib.screenmanager.transitions.TransitionSwipeIn.SwipeInDirection;
+import net.lintfordlib.screenmanager.transitions.TransitionSwipeOut;
+import net.lintfordlib.screenmanager.transitions.TransitionSwipeOut.SwipeOutDirection;
 
 public abstract class Screen implements IInputProcessor {
 
@@ -25,9 +29,18 @@ public abstract class Screen implements IInputProcessor {
 
 	protected static final float INPUT_TIMER_WAIT = 100.0f;
 
+	// @formatter:off
 	public enum ScreenState {
-		TRANSITION_ON, ACTIVE, TRANSITION_OFF, HIDDEN,
+		NONE,					// Screen not yet transitioned.
+		ACTIVE, 				// Screen is the active screen
+		HIDDEN,					// Screen is in background / sleeping
+		
+		TRANSITION_STARTING,	// screen has been added to the stack
+		TRANSITION_SLEEPING,	// screen is moving down the stack 
+		TRANSITION_RESUMING, 	// screen is being recalled from the stack
+		TRANSITION_EXITING 		// screen is exiting the stack
 	}
+	// @formatter:on
 
 	// --------------------------------------
 	// Variables
@@ -38,10 +51,14 @@ public abstract class Screen implements IInputProcessor {
 
 	protected final RendererManager mRendererManager;
 	protected SpriteSheetDefinition mCoreSpritesheet;
+
 	protected BaseTransition mTransitionOn;
 	protected BaseTransition mTransitionOff;
+	protected BaseTransition mTransitionResume;
+	protected BaseTransition mTransitionExit;
+
 	protected ScreenState mScreenState;
-	protected boolean mIsExiting;
+
 	protected boolean mOtherScreenHasFocus;
 	protected boolean mResourcesLoaded;
 	protected boolean mGlInitialized;
@@ -65,15 +82,31 @@ public abstract class Screen implements IInputProcessor {
 	protected float mInputTimer;
 	protected final Vector2f mScreenOffset = new Vector2f();
 
-	public boolean mOverrideUiStretch;
-	public boolean mStretchUiResolution;
+	protected boolean mOverrideUiStretch;
+	protected boolean mStretchUiResolution;
 
-	public boolean mOverrideGameStretch;
-	public boolean mStretchGameResolution;
+	protected boolean mOverrideGameStretch;
+	protected boolean mStretchGameResolution;
 
 	// --------------------------------------
 	// Properties
 	// -------------------------------------
+
+	public boolean overrideUiStretch() {
+		return mOverrideUiStretch;
+	}
+
+	public boolean strectchUiResolution() {
+		return mStretchUiResolution;
+	}
+
+	public boolean overrideGameStretch() {
+		return mOverrideGameStretch;
+	}
+
+	public boolean strectchGameResolution() {
+		return mStretchGameResolution;
+	}
 
 	public RendererManager rendererManager() {
 		return mRendererManager;
@@ -129,7 +162,7 @@ public abstract class Screen implements IInputProcessor {
 	}
 
 	public boolean isActive() {
-		return !mOtherScreenHasFocus && (mScreenState == ScreenState.ACTIVE || mScreenState == ScreenState.TRANSITION_ON);
+		return !mOtherScreenHasFocus && (mScreenState == ScreenState.ACTIVE || mScreenState == ScreenState.TRANSITION_STARTING);
 	}
 
 	/** If true, underlying screens in the stack will be visible in the background of this popup screen */
@@ -139,30 +172,38 @@ public abstract class Screen implements IInputProcessor {
 
 	/** If true, this screen is currently in the process (transition) of exiting */
 	public boolean isExiting() {
-		return mIsExiting;
-	}
-
-	public void isExiting(boolean pIsExiting) {
-		mIsExiting = pIsExiting;
-	}
-
-	public void setTransitionOn(BaseTransition transitionOn) {
-		mTransitionOn = transitionOn;
-	}
-
-	public void setTransitionOff(BaseTransition transitionOff) {
-		mTransitionOff = transitionOff;
-	}
-
-	public void transitionOff() {
-		if (mScreenState == ScreenState.ACTIVE) {
-			mScreenState = ScreenState.TRANSITION_OFF;
-		}
+		return mScreenState == ScreenState.TRANSITION_EXITING;
 	}
 
 	public void transitionOn() {
+		System.out.println("Screen transitionOn() : " + getClass().getSimpleName());
+
+		if (mScreenState == ScreenState.NONE) {
+			mScreenState = ScreenState.TRANSITION_STARTING;
+		}
+	}
+
+	public void transitionOff() {
+		System.out.println("Screen transitionOff() : " + getClass().getSimpleName());
+
+		if (mScreenState == ScreenState.ACTIVE) {
+			mScreenState = ScreenState.TRANSITION_SLEEPING;
+		}
+	}
+
+	public void transitionExit() {
+		System.out.println("Screen transitionExit() : " + getClass().getSimpleName());
+
+		if (mScreenState == ScreenState.ACTIVE) {
+			mScreenState = ScreenState.TRANSITION_EXITING;
+		}
+	}
+
+	public void transitionResume() {
+		System.out.println("Screen transitionResume() : " + getClass().getSimpleName());
+
 		if (mScreenState == ScreenState.HIDDEN) {
-			mScreenState = ScreenState.TRANSITION_ON;
+			mScreenState = ScreenState.TRANSITION_RESUMING;
 		}
 	}
 
@@ -179,11 +220,12 @@ public abstract class Screen implements IInputProcessor {
 	}
 
 	protected Screen(ScreenManager screenManager, RendererManager rendererManager) {
-		mScreenState = ScreenState.HIDDEN;
 		this.screenManager = screenManager;
 
-		mTransitionOn = new TransitionFadeIn(new TimeSpan(200));
-		mTransitionOff = new TransitionFadeOut(new TimeSpan(200));
+		mTransitionOn = new TransitionSwipeIn(new TimeSpan(250), SwipeInDirection.Right);
+		mTransitionOff = new TransitionFadeOut(new TimeSpan(250));
+		mTransitionResume = new TransitionFadeIn(new TimeSpan(250));
+		mTransitionExit = new TransitionSwipeOut(new TimeSpan(250), SwipeOutDirection.Left);
 
 		if (rendererManager == null) {
 			mRendererManager = new RendererManager(screenManager.core(), ResourceGroupProvider.getRollingEntityNumber());
@@ -208,9 +250,10 @@ public abstract class Screen implements IInputProcessor {
 	// --------------------------------------
 
 	public void initialize() {
-		mIsExiting = false;
-		mResourcesLoaded = false;
+		System.out.println("State set to NONE : " + getClass().getSimpleName());
+		mScreenState = ScreenState.NONE;
 
+		mResourcesLoaded = false;
 		mRendererManager.initialize();
 
 		mIsinitialized = true;
@@ -236,7 +279,6 @@ public abstract class Screen implements IInputProcessor {
 			mRendererManager.unloadResources();
 
 			screenManager.core().controllerManager().removeControllerGroup(entityGroupUid());
-
 		}
 
 		mCoreSpritesheet = null;
@@ -257,27 +299,50 @@ public abstract class Screen implements IInputProcessor {
 
 		mOtherScreenHasFocus = otherScreenHasFocus;
 
-		if (mIsExiting) {
-			mScreenState = ScreenState.TRANSITION_OFF;
-
-			if (updateTransition(core.appTime(), mTransitionOff))
+		switch (mScreenState) {
+		case TRANSITION_EXITING:
+			if (mTransitionExit == null || updateTransition(core.appTime(), mTransitionExit)) {
 				screenManager.removeScreen(this);
 
-			return;
-		}
+				if (mTransitionExit != null)
+					mTransitionExit.reset();
 
-		if (mScreenState == ScreenState.TRANSITION_OFF) {
+				System.out.println("transition EXIT finished : " + getClass().getSimpleName());
+			}
+
+			break;
+
+		case TRANSITION_SLEEPING:
 			if (mTransitionOff == null || updateTransition(core.appTime(), mTransitionOff)) {
 				mScreenState = ScreenState.HIDDEN;
 				if (mTransitionOff != null)
 					mTransitionOff.reset();
+
+				System.out.println("transition SLEEP finished : " + getClass().getSimpleName());
 			}
-		} else if (mScreenState == ScreenState.TRANSITION_ON) {
+			break;
+
+		case TRANSITION_RESUMING:
+			if (mTransitionResume == null || updateTransition(core.appTime(), mTransitionResume)) {
+				mScreenState = ScreenState.ACTIVE;
+				if (mTransitionResume != null)
+					mTransitionResume.reset();
+
+				System.out.println("transition RESUME finished : " + getClass().getSimpleName());
+			}
+			break;
+
+		case TRANSITION_STARTING:
 			if (mTransitionOn == null || updateTransition(core.appTime(), mTransitionOn)) {
 				mScreenState = ScreenState.ACTIVE;
 				if (mTransitionOn != null)
 					mTransitionOn.reset();
+
+				System.out.println("transition START finished : " + getClass().getSimpleName());
 			}
+			break;
+
+		default: // fall-through / active
 		}
 
 		if (!coveredByOtherScreen)
@@ -304,11 +369,31 @@ public abstract class Screen implements IInputProcessor {
 		return transition.isFinished();
 	}
 
-	public void exitScreen() {
+	public void sleepScreen() {
+		System.out.println("sleepScreen()");
 		if (mTransitionOff == null || mTransitionOff.timeSpan().equals(TimeSpan.zero())) {
+			mScreenState = ScreenState.HIDDEN;
+		} else {
+			mScreenState = ScreenState.TRANSITION_SLEEPING;
+		}
+	}
+
+	public void resumeScreen() {
+		System.out.println("resumeScreen()");
+		if (mTransitionResume == null || mTransitionResume.timeSpan().equals(TimeSpan.zero())) {
+			mScreenState = ScreenState.ACTIVE;
+		} else {
+			mScreenState = ScreenState.TRANSITION_RESUMING;
+		}
+	}
+
+	public void exitScreen() {
+		System.out.println("exitScreen()");
+		if (mTransitionExit == null || mTransitionExit.timeSpan().equals(TimeSpan.zero())) {
 			screenManager.removeScreen(this);
 		} else {
-			mIsExiting = true;
+			mScreenState = ScreenState.TRANSITION_EXITING;
+			screenManager.startPreviousScreenResumeTransition(this);
 		}
 	}
 
@@ -362,5 +447,4 @@ public abstract class Screen implements IInputProcessor {
 	public void resetCoolDownTimer(float cooldownInMs) {
 		mInputTimer = cooldownInMs;
 	}
-
 }

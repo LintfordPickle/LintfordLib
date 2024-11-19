@@ -14,7 +14,7 @@ public class TransitionSwipeOut extends BaseTransition {
 		Left, Right
 	}
 
-	private static final float SWIPE_SPEED = 300.f;
+	private static final float SWIPE_SPEED = 1800.f;
 
 	// --------------------------------------
 	// Variables
@@ -41,6 +41,8 @@ public class TransitionSwipeOut extends BaseTransition {
 
 		final var lScreenOffset = screen.screenPositionOffset();
 		final float lScreenOffsetY = lScreenOffset.y;
-		lScreenOffset.set(0.f - mProgressNormalized * mSwipeDirection * SWIPE_SPEED, lScreenOffsetY);
+		lScreenOffset.set(-1.f - mProgressNormalized * mSwipeDirection * SWIPE_SPEED, lScreenOffsetY);
+
+		System.out.println("swipe out: " + lScreenOffset.x);
 	}
 }

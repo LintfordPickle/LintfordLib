@@ -37,7 +37,7 @@ public abstract class BaseTransition {
 	// Constructor
 	// --------------------------------------
 
-	public BaseTransition(TimeSpan transitionTime) {
+	protected BaseTransition(TimeSpan transitionTime) {
 		mTransitionTime = transitionTime;
 	}
 
@@ -51,12 +51,11 @@ public abstract class BaseTransition {
 			mProgress += deltaTime;
 
 			final float ms = (float) mTransitionTime.milliseconds();
-			mProgressNormalized = (float) MathHelper.clamp(mProgress / ms, 0.f, 1.f);
+			mProgressNormalized = MathHelper.clamp(mProgress / ms, 0.f, 1.f);
 		}
 	}
 
 	public void reset() {
 		mProgress = 0;
 	}
-
 }

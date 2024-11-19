@@ -266,16 +266,15 @@ public class ScrollBar extends Rectangle implements IInputProcessor, IInputClick
 	}
 
 	public void draw(LintfordCore core, SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheet, float zDepth, float alpha) {
-		if (mIsActive == false)
+		if (!mIsActive)
 			return;
 
 		spriteBatch.begin(core.HUD());
 
 		// Scroll bar background
 		mScrollBarAlpha = 1.0f;
-		if (mMarkerMoveMod == 0.f) {
+		if (mMarkerMoveMod == 0.f)
 			return;
-		}
 
 		// Render the actual scroll bar
 		final float by = ARROW_SIZE + mScrollBarArea.contentDisplayArea().y() - (mScrollPosition / mMarkerMoveMod);

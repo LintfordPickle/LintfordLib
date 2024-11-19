@@ -17,6 +17,7 @@ public class UiBar {
 	private float x, y, w, h;
 	private final Color mUiBarOuterColor = new Color(1.f, 1.f, 1.f, 1.f);
 	private final Color mUiBarInnerColor = new Color(1.f, 1.f, 1.f, 1.f);
+	private final Color mUiBarTextColor = new Color(1.f, 1.f, 1.f, 1.f);
 	private float mInnerBorderPadding = 1.f;
 
 	private String mLabel;
@@ -94,6 +95,14 @@ public class UiBar {
 		mUiBarInnerColor.setRGBA(pR, pG, pB, pA);
 	}
 
+	public void setTextColor(Color pColor) {
+		setTextColor(pColor.r, pColor.g, pColor.b, pColor.a);
+	}
+
+	public void setTextColor(float pR, float pG, float pB, float pA) {
+		mUiBarTextColor.setRGBA(pR, pG, pB, pA);
+	}
+
 	public void setCurrentValue(float pValue) {
 		mCurValue = MathHelper.clamp(pValue, mMinValue, mMaxValue);
 	}
@@ -129,7 +138,7 @@ public class UiBar {
 		final var lFullBarPosX = x + (w * (1 - mBarSizeAsPercentageOfWidth));
 		final var lInnerBarWidth = MathHelper.scaleToRange(mCurValue, mMinValue, mMaxValue, 0, lFullBarWidth);
 
-		textFont.drawText(mLabel, x, y, -0.01f, 1.f);
+		textFont.drawText(mLabel, x, y, -0.01f, mUiBarTextColor, 1.f);
 
 		// Outer
 		spriteBatch.draw(lCoreTexture, CoreTextureNames.TEXTURE_WHITE, lFullBarPosX, y, lFullBarWidth, h, componentZDepth, mUiBarOuterColor);
@@ -143,6 +152,5 @@ public class UiBar {
 		final var ww = !mIsInverted ? lInnerBarWidth : -lInnerBarWidth;
 		final var hh = !mIsInverted ? lHeight : -lHeight;
 		spriteBatch.draw(lCoreTexture, CoreTextureNames.TEXTURE_WHITE, xx + mInnerBorderPadding, yy + mInnerBorderPadding, ww, hh, componentZDepth, mUiBarInnerColor);
-
 	}
 }

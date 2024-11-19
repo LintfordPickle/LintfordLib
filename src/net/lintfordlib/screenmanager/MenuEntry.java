@@ -16,7 +16,10 @@ import net.lintfordlib.screenmanager.Screen.ScreenState;
 import net.lintfordlib.screenmanager.ScreenManagerConstants.ALIGNMENT;
 import net.lintfordlib.screenmanager.ScreenManagerConstants.FILLTYPE;
 import net.lintfordlib.screenmanager.entries.EntryInteractions;
+import net.lintfordlib.screenmanager.entries.animators.EntryAnimation;
+import net.lintfordlib.screenmanager.entries.animators.ScaleAnimator;
 
+// TODO: remove the inheritance to Rectangle (serializable) and use composition (AABB) instead
 public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipProvider, IContextHintProvider {
 
 	// --------------------------------------
@@ -51,6 +54,8 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 	protected ScreenManager mScreenManager;
 	protected MenuScreen mParentScreen;
 
+	protected final Rectangle aabb = new Rectangle();
+
 	protected ALIGNMENT mHorizontalAlignment = ALIGNMENT.CENTER;
 	protected ALIGNMENT mVerticalAlignment = ALIGNMENT.CENTER;
 	protected FILLTYPE mHorizontalFillType = FILLTYPE.TAKE_WHATS_NEEDED;
@@ -76,14 +81,12 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 	protected boolean mAffectParentStructure;
 	protected String mText;
 	protected float mScale;
-	private float mScaleCounter;
 
 	protected EntryInteractions mClickListener;
 	protected int mMenuEntryID;
 
 	protected boolean mDrawBackground;
 	protected boolean mHighlightOnHover;
-	protected boolean mScaleOnFocus;
 	protected float mAnimationTimer;
 	protected boolean mToolTipEnabled;
 	protected boolean mIsMouseOver;
@@ -93,7 +96,8 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 	protected boolean mShowWarnIcon;
 
 	protected float mInputTimer;
-	private boolean mIsinitialized, mResourcesLoaded;
+	private boolean mIsinitialized;
+	private boolean mResourcesLoaded;
 	public float mZ;
 
 	// padding is the spacing within the component
@@ -114,8 +118,8 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 	protected float mMinHeight;
 	protected float mMaxWidth;
 	protected float mMaxHeight;
-	protected boolean isAnimating;
-	protected float animationTimeRemaining;
+
+	protected final EntryAnimation mAnimation = new EntryAnimation(this, new ScaleAnimator());
 
 	// --------------------------------------
 	// Properties
@@ -362,6 +366,14 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 		mDesiredHeight = newValue;
 	}
 
+	public float scale() {
+		return mScale;
+	}
+
+	public void scale(float newValue) {
+		mScale = newValue;
+	}
+
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
@@ -377,7 +389,6 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 		mAffectParentStructure = true;
 		mCanHaveFocus = true;
 		mDrawBackground = true;
-		mScaleOnFocus = false;
 		mHighlightOnHover = true;
 
 		mTopMargin = 3f;
@@ -389,6 +400,7 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 		mMaxWidth = 2048.f;
 		mDesiredWidth = 400.f;
 
+		mScale = 1.f;
 		mMinHeight = 4.f;
 		mMaxHeight = 512.f;
 		mDesiredHeight = ENTRY_DEFAULT_HEIGHT;
@@ -458,6 +470,9 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 			return false;
 		}
 
+		if (!mIsMouseOver)
+			mAnimation.start();
+
 		mIsMouseOver = true;
 
 		if (!mHasFocus && mCanHaveFocus)
@@ -479,6 +494,8 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 		if (!mAffectParentStructure && !mEnableUpdateDraw)
 			return;
 
+		mAnimation.update(core);
+
 		final float lParentScreenAlpha = screen.screenColor.a;
 		entryColor.a = lParentScreenAlpha;
 		textColor.a = lParentScreenAlpha;
@@ -490,13 +507,6 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 
 		if (mAnimationTimer > 0)
 			mAnimationTimer -= lDeltaTime;
-
-		if (mHasFocus && mScaleOnFocus) {
-			mScaleCounter += lDeltaTime;
-			mScale = 0.75f + (float) (Math.cos(mScaleCounter) * 0.05f);
-		} else {
-			mScale = 1.f;
-		}
 
 		if ((mToolTipEnabled && mHasFocus) || mInfoIconDstRectangle.intersectsAA(core.HUD().getMouseCameraSpace())) {
 			mToolTipTimer += core.gameTime().elapsedTimeMilli();
@@ -541,7 +551,7 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 			final float lTileSize = 32;
 			final float lHalfWidth = (int) (mW * .5f);
 			int lLeft = (int) (lScreenOffset.x + centerX() - lHalfWidth);
-			final float lInnerWidth = mW - 32 * (use5Steps ? 4 : 2);
+			final float lInnerWidth = (int) (mW - 32 * (use5Steps ? 4 : 2)) - 1;
 			entryColor.a = lParentScreenAlpha;
 
 			if (mEnabled) {
@@ -585,15 +595,15 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 
 		// Render the MenuEntry label
 		if (mText != null && mText.length() > 0) {
-			final float lUiTextScale = mScreenManager.UiStructureController().uiTextScaleFactor();
+			final float lUiTextScale = mScreenManager.UiStructureController().uiTextScaleFactor() * mScale;
 			final var lMenuFont = mParentScreen.font();
 
 			if (lMenuFont != null) {
 				lMenuFont.begin(core.HUD());
 				final float lStringWidth = lMenuFont.getStringWidth(mText, lUiTextScale);
-				final var lTextColor = ColorConstants.getColor(mEnabled == false ? ColorConstants.GREY_DARK : mHasFocus ? ColorConstants.FLAME : ColorConstants.TextHeadingColor);
+				final var lTextColor = ColorConstants.getColor(!mEnabled ? ColorConstants.GREY_DARK : mHasFocus ? ColorConstants.FLAME : ColorConstants.TextHeadingColor);
 				lTextColor.a = lParentScreenAlpha;
-				lMenuFont.drawText(mText, (int) (lScreenOffset.x + centerX() - lStringWidth * 0.5f), (int) (lScreenOffset.y + centerY() - lMenuFont.fontHeight() * .5f), mZ, lTextColor, lUiTextScale);
+				lMenuFont.drawText(mText, lScreenOffset.x + centerX() - lStringWidth * 0.5f, lScreenOffset.y + centerY() - lMenuFont.fontHeight() * .5f, mZ, lTextColor, lUiTextScale);
 
 				lMenuFont.end();
 			}
@@ -613,7 +623,7 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 	}
 
 	public void postStencilDraw(LintfordCore core, Screen screen, float parentZDepth) {
-
+		// ignored in base
 	}
 
 	// --------------------------------------
@@ -712,11 +722,11 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 
 	@Override
 	public boolean isParentActive() {
-		return mParentScreen.isExiting() == false && mParentScreen.screenState() == ScreenState.ACTIVE;
+		return !mParentScreen.isExiting() && mParentScreen.screenState() == ScreenState.ACTIVE;
 	}
 
 	public void onDeselection(InputManager inputManager) {
-
+		// ignored in base
 	}
 
 	public void onClick(InputManager inputManager) {
@@ -729,6 +739,10 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 		mAnimationTimer = MenuScreen.ANIMATION_TIMER_LENGTH;
 		mScreenManager.uiSounds().play(ConstantsScreenManagerAudio.SCREENMANAGER_AUDIO_ENTRY_SELECTED);
 		mClickListener.menuEntryOnClick(inputManager, mMenuEntryID);
+	}
+
+	protected void animate(float totalAnimTime, float timeRemaining) {
+
 	}
 
 	@Override

@@ -455,8 +455,9 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 		final var lSpriteBatch = parentScreen.spriteBatch();
 		final var lSpriteSheetCore = core.resources().spriteSheetManager().coreSpritesheet();
 
+		final var lScreenOffset = parentScreen.screenPositionOffset();
+
 		if (mDrawBackground) {
-			final var lScreenOffset = parentScreen.screenPositionOffset();
 			final int ts = 32;
 
 			final var lColor = ColorConstants.getColorWithAlpha(layoutColor, layoutColor.a * parentScreen.screenColor.a);
@@ -476,7 +477,7 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 			final var lWhiteColorWithAlpha = ColorConstants.getWhiteWithAlpha(parentScreen.screenColor.a);
 
 			lTitleFont.begin(core.HUD());
-			lTitleFont.drawText(mLayoutTitle, mX + 20.f, mY + 20.f - (lTitleFont.fontHeight() / 2.f), componentDepth, lWhiteColorWithAlpha, 1.0f);
+			lTitleFont.drawText(mLayoutTitle, lScreenOffset.x + mX + 20.f, mY + 20.f - (lTitleFont.fontHeight() / 2.f), componentDepth, lWhiteColorWithAlpha, 1.0f);
 			lTitleFont.end();
 		}
 
@@ -503,7 +504,7 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
 			lSpriteBatch.begin(core.HUD());
-			lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_WHITE, mX, mY, mW, mH, ZLayers.LAYER_DEBUG, ColorConstants.Debug_Transparent_Magenta);
+			lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + mX, mY, mW, mH, ZLayers.LAYER_DEBUG, ColorConstants.Debug_Transparent_Magenta);
 			lSpriteBatch.end();
 		}
 	}

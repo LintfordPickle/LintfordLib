@@ -34,7 +34,7 @@ public class ScreenManager implements IInputClickedFocusManager {
 	private LintfordCore mLWJGLCore;
 
 	private final List<Screen> mScreens = new ArrayList<>();
-	private final List<Screen> mScreensToUpdate = new ArrayList<>();
+	private final List<Screen> mScreensToDraw = new ArrayList<>();
 	private final List<Screen> mScreensToAdd = new ArrayList<>();
 
 	private ToolTip mToolTip;
@@ -232,11 +232,11 @@ public class ScreenManager implements IInputClickedFocusManager {
 
 		updateScreensToAdd();
 
-		mScreensToUpdate.clear();
+		mScreensToDraw.clear();
 
 		final int lCount = mScreens.size();
 		for (int i = 0; i < lCount; i++) {
-			mScreensToUpdate.add(mScreens.get(i));
+			mScreensToDraw.add(mScreens.get(i));
 		}
 
 		final var lTopMostScreen = getTopScreen();
@@ -245,17 +245,17 @@ public class ScreenManager implements IInputClickedFocusManager {
 				lTopMostScreen.transitionOn();
 		}
 
-		while (!mScreensToUpdate.isEmpty()) {
-			final var lScreen = mScreensToUpdate.get(mScreensToUpdate.size() - 1);
+		while (!mScreensToDraw.isEmpty()) {
+			final var lScreen = mScreensToDraw.get(mScreensToDraw.size() - 1);
 
-			mScreensToUpdate.remove(mScreensToUpdate.size() - 1);
+			mScreensToDraw.remove(mScreensToDraw.size() - 1);
 
 			if (!mScreensToAdd.isEmpty())
 				lCoveredByOtherScreen = true;
 
 			lScreen.update(core, lOtherScreenHasFocus, lCoveredByOtherScreen);
 
-			if (lScreen.screenState() == ScreenState.TRANSITION_ON || lScreen.screenState() == ScreenState.ACTIVE) {
+			if (lScreen.screenState() == ScreenState.TRANSITION_STARTING || lScreen.screenState() == ScreenState.ACTIVE) {
 				lOtherScreenHasFocus = true;
 			}
 			if (!lScreen.isPopup()) {
@@ -272,16 +272,17 @@ public class ScreenManager implements IInputClickedFocusManager {
 		if (!mIsinitialized || !mResourcesLoaded)
 			return;
 
-		mScreensToUpdate.clear();
+		mScreensToDraw.clear();
 
 		final int lCount = mScreens.size();
 		for (int i = 0; i < lCount; i++) {
-			mScreensToUpdate.add(mScreens.get(i));
+			mScreensToDraw.add(mScreens.get(i));
 		}
 
-		final var lNumScreens = mScreensToUpdate.size();
+		final var lNumScreens = mScreensToDraw.size();
 		for (int i = 0; i < lNumScreens; i++) {
-			final var lScreen = mScreensToUpdate.get(i);
+			final var lScreen = mScreensToDraw.get(i);
+
 			if (lScreen.screenState() == ScreenState.HIDDEN && !lScreen.showBackgroundScreens())
 				continue;
 
@@ -341,7 +342,8 @@ public class ScreenManager implements IInputClickedFocusManager {
 		}
 
 		if (!screenToAdd.isResourcesLoaded()) {
-			screenToAdd.isExiting(false);
+			// TODO: Is screenToAdd.isExiting(false) still needed, as we now have a transition.STARTING case ...
+			// screenToAdd.isExiting(false);
 
 			if (mIsinitialized && !screenToAdd.isinitialized())
 				screenToAdd.initialize();
@@ -380,17 +382,24 @@ public class ScreenManager implements IInputClickedFocusManager {
 
 		if (mScreens.contains(screenToRemove)) {
 			// if this screen was the top screen, then the screen below gains focus
-			if (mScreens.size() > 1 && mScreens.get(mScreens.size() - 1) == screenToRemove) {
-				mScreens.get(mScreens.size() - 2).onGainedFocus();
-			}
+			startPreviousScreenResumeTransition(screenToRemove);
 
 			mScreens.remove(screenToRemove);
 		}
 
-		if (mScreensToUpdate.contains(screenToRemove))
-			mScreensToUpdate.remove(screenToRemove);
+		if (mScreensToDraw.contains(screenToRemove))
+			mScreensToDraw.remove(screenToRemove);
 
 		Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("Removed screen '%s'", screenToRemove.getClass().getSimpleName()));
+	}
+
+	public void startPreviousScreenResumeTransition(Screen screenToRemove) {
+		if (mScreens.size() > 1 && mScreens.get(mScreens.size() - 1) == screenToRemove) {
+			final var lNextScreen = mScreens.get(mScreens.size() - 2);
+
+			lNextScreen.transitionResume();
+			lNextScreen.onGainedFocus(); // TODO: OnFocus before resume finished ?
+		}
 	}
 
 	public void exitGame() {

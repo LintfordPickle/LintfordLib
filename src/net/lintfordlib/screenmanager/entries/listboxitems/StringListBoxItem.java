@@ -8,6 +8,7 @@ import net.lintfordlib.core.graphics.batching.SpriteBatch;
 import net.lintfordlib.core.graphics.fonts.FontUnit;
 import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
+import net.lintfordlib.screenmanager.Screen;
 import net.lintfordlib.screenmanager.ScreenManager;
 import net.lintfordlib.screenmanager.entries.MenuListBox;
 import net.lintfordlib.screenmanager.entries.MenuListBoxItem;
@@ -54,10 +55,12 @@ public class StringListBoxItem extends MenuListBoxItem {
 	// --------------------------------------
 
 	@Override
-	public void draw(LintfordCore core, SpriteBatch spriteBatch, SpriteSheetDefinition coreDef, FontUnit fontUnit, float zDepth) {
+	public void draw(LintfordCore core, Screen screen, SpriteBatch spriteBatch, SpriteSheetDefinition coreDef, FontUnit fontUnit, float zDepth) {
+
+		final var lTransitionOffset = screen.screenPositionOffset();
 
 		if (entryColor.a > 0.f) {
-			spriteBatch.draw(coreDef, CoreTextureNames.TEXTURE_WHITE, mX, mY, mW, mH, zDepth, entryColor);
+			spriteBatch.draw(coreDef, CoreTextureNames.TEXTURE_WHITE, lTransitionOffset.x + mX, lTransitionOffset.y + mY, mW, mH, zDepth, entryColor);
 		}
 
 		if (mTextValue != null && mTextValue.length() > 0) {
@@ -65,7 +68,7 @@ public class StringListBoxItem extends MenuListBoxItem {
 			final var lFont = mParentListBox.parentScreen().font();
 			final float lFontHeight = lFont.getStringHeight(mTextValue, lScale);
 
-			lFont.drawText(mTextValue, mX, mY + mH / 2.f - lFontHeight / 2, zDepth, ColorConstants.TextEntryColor, lScale, -1);
+			lFont.drawText(mTextValue, lTransitionOffset.x + mX, lTransitionOffset.y + mY + mH / 2.f - lFontHeight / 2, zDepth, ColorConstants.TextEntryColor, lScale, -1);
 		}
 
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {

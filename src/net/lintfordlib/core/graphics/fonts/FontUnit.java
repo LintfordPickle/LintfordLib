@@ -29,7 +29,7 @@ public class FontUnit {
 	// --------------------------------------
 
 	private BitmapFontDefinition mFontDefinition;
-	private SpriteBatch mFontRenderer;
+	private SpriteBatch mFontRenderer; // TODO: Don't need a dedicated SpriteBatch per FontUnit!
 	private ShaderSubPixel mShaderSubPixel;
 	private WrapType mWrapType = WrapType.WordWrap;
 
@@ -241,7 +241,7 @@ public class FontUnit {
 		int lCharacterLength = text.length();
 		for (int i = 0; i < lCharacterLength; i++) {
 			char lCurrentCharacter = text.charAt(i);
-			var lCurrentGlyph = mFontDefinition.getGlyphFrame((int) lCurrentCharacter);
+			var lCurrentGlyph = mFontDefinition.getGlyphFrame(lCurrentCharacter);
 
 			// Special characters
 			if (lCurrentCharacter == '\n' || lCurrentCharacter == '\r') {
@@ -268,7 +268,7 @@ public class FontUnit {
 					if ((lX == positionX) || BREAK_CHARS.indexOf(lCurrentCharacter) >= 0) {
 						for (int j = i + 1; j < text.length(); j++) {
 							char lCharcterNext = text.charAt(j);
-							var lNextGlyph = mFontDefinition.getGlyphFrame((int) lCharcterNext);
+							var lNextGlyph = mFontDefinition.getGlyphFrame(lCharcterNext);
 
 							if (lNextGlyph == null)
 								continue;
@@ -293,11 +293,10 @@ public class FontUnit {
 				} else if (mWrapType == WrapType.LetterCountTrim) {
 					final int lNumElpsis = 3;
 					if (i >= wrapWidth - lNumElpsis) {
-
-						final var lDotGlyph = mFontDefinition.getGlyphFrame((int) '.');
+						final var lDotGlyph = mFontDefinition.getGlyphFrame('.');
 						if (lDotGlyph != null) {
 							for (int j = 0; j < lNumElpsis; j++) {
-								mFontRenderer.draw(mFontDefinition.texture(), lDotGlyph.x(), lDotGlyph.y(), lDotGlyph.width(), lDotGlyph.height(), (int) (lX) + j * lDotGlyph.width(), (int) lY, lCurrentGlyph.width() * scale, lCurrentGlyph.height() * scale, zDepth, textColor);
+								mFontRenderer.draw(mFontDefinition.texture(), lDotGlyph.x(), lDotGlyph.y(), lDotGlyph.width(), lDotGlyph.height(), lX + j * lDotGlyph.width(), lY, lCurrentGlyph.width() * scale, lCurrentGlyph.height() * scale, zDepth, textColor);
 							}
 						}
 
@@ -307,18 +306,16 @@ public class FontUnit {
 			}
 
 			if (lCurrentGlyph == null) {
-				// TODO: Render a 'glyph not found' character, otherwise we have hidden characters in the text
-				// continue;
-				lCurrentGlyph = mFontDefinition.getGlyphFrame((int) '?');
+				lCurrentGlyph = mFontDefinition.getGlyphFrame('?');
 			}
 
 			if (lJustWrapped && mWrapType == WrapType.WordWrapTrim) {
 				final int lNumElpsis = 3;
 
-				final var lDotGlyph = mFontDefinition.getGlyphFrame((int) '.');
+				final var lDotGlyph = mFontDefinition.getGlyphFrame('.');
 				if (lDotGlyph != null) {
 					for (int j = 0; j < lNumElpsis; j++) {
-						mFontRenderer.draw(mFontDefinition.texture(), lDotGlyph.x(), lDotGlyph.y(), (int) lDotGlyph.width(), (int) lDotGlyph.height(), (int) (lX) + j * lDotGlyph.width(), (int) lY, lCurrentGlyph.width() * scale, lCurrentGlyph.height() * scale, zDepth, textColor);
+						mFontRenderer.draw(mFontDefinition.texture(), lDotGlyph.x(), lDotGlyph.y(), lDotGlyph.width(), lDotGlyph.height(), lX + j * lDotGlyph.width(), lY, lCurrentGlyph.width() * scale, lCurrentGlyph.height() * scale, zDepth, textColor);
 					}
 				}
 
@@ -335,7 +332,8 @@ public class FontUnit {
 				continue;
 			}
 
-			mFontRenderer.draw(mFontDefinition.texture(), lCurrentGlyph.x(), lCurrentGlyph.y(), (int) lCurrentGlyph.width(), (int) lCurrentGlyph.height(), (int) lX, (int) lY, (int) (lCurrentGlyph.width() * scale), (int) (lCurrentGlyph.height() * scale) + 0, zDepth, textColor);
+			if (lCurrentGlyph != null)
+				mFontRenderer.draw(mFontDefinition.texture(), lCurrentGlyph.x(), lCurrentGlyph.y(), lCurrentGlyph.width(), lCurrentGlyph.height(), lX, lY, lCurrentGlyph.width() * scale, lCurrentGlyph.height() * scale, zDepth, textColor);
 
 			if (lJustWrapped && lBreakCharFitsOnThisLine) {
 				lY += lScaledLineHeight;
@@ -347,6 +345,11 @@ public class FontUnit {
 			lJustWrapped = false;
 			lBreakCharFitsOnThisLine = true;
 		}
+	}
+
+	public void drawShadowedText(String text, float positionX, float positionY, float zDepth, float shadowXOffset, float shadowYOffset, float scale, Color shadowColor, Color foreColor) {
+		drawText(text, positionX + shadowXOffset, positionY + shadowYOffset, zDepth, shadowColor, scale, -1);
+		drawText(text, positionX, positionY, zDepth, foreColor, scale, -1);
 	}
 
 	public void end() {

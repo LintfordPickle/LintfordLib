@@ -156,7 +156,7 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 
 	@Override
 	public boolean onHandleMouseInput(LintfordCore core) {
-		if (!mEnableUpdateDraw || isAnimating)
+		if (!mEnableUpdateDraw)
 			return false;
 
 		if (intersectsAA(core.HUD().getMouseCameraSpace()) && core.input().mouse().isMouseOverThisComponent(hashCode())) {

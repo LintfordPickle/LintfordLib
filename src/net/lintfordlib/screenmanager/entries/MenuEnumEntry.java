@@ -22,6 +22,8 @@ public class MenuEnumEntry extends MenuEntry {
 
 	private static final long serialVersionUID = 2194989174357016245L;
 
+	private static final String SEPARATOR = ":";
+
 	public class EnumEntryItem implements Comparable<EnumEntryItem> {
 
 		// --------------------------------------
@@ -70,7 +72,6 @@ public class MenuEnumEntry extends MenuEntry {
 
 	private String mLabel;
 	private boolean mIsChecked;
-	private final String mSeparator = ":";
 	private List<EnumEntryItem> mItems;
 	private int mSelectedIndex;
 	private boolean mEnableScaleTextToWidth;
@@ -173,7 +174,7 @@ public class MenuEnumEntry extends MenuEntry {
 
 	@Override
 	public boolean onHandleMouseInput(LintfordCore core) {
-		if (!mEnableUpdateDraw || !mEnabled || isAnimating)
+		if (!mEnableUpdateDraw || !mEnabled)
 			return false;
 
 		if (intersectsAA(core.HUD().getMouseCameraSpace()) && core.input().mouse().isMouseOverThisComponent(hashCode())) {
@@ -223,6 +224,7 @@ public class MenuEnumEntry extends MenuEntry {
 		// Update the button positions to line up with this entry
 		mLeftButtonRectangle.setPosition(mX + mW / 2 + 16, mY);
 		mRightButtonRectangle.setPosition(mX + mW - 32, mY);
+
 	}
 
 	@Override
@@ -241,7 +243,7 @@ public class MenuEnumEntry extends MenuEntry {
 			lAdjustedScaleW = (mW / 2) / lTextWidth;
 
 		final float lTextHeight = lTextBoldFont.getStringHeight(mLabel, lUiTextScale);
-		final float lSeparatorHalfWidth = lTextBoldFont.getStringWidth(mSeparator, lUiTextScale) * 0.5f;
+		final float lSeparatorHalfWidth = lTextBoldFont.getStringWidth(SEPARATOR, lUiTextScale) * 0.5f;
 
 		final var lTextureBatch = mParentScreen.spriteBatch();
 
@@ -259,7 +261,7 @@ public class MenuEnumEntry extends MenuEntry {
 		lTextBoldFont.begin(core.HUD());
 		final float lStringWidth = lTextBoldFont.getStringWidth(mLabel, lAdjustedScaleW);
 		lTextBoldFont.drawText(mLabel, lScreenOffset.x + (mX + mW / 2 - 10) - lStringWidth - lSeparatorHalfWidth, lScreenOffset.y + mY + mH / 2.f - lTextBoldFont.getStringHeight(mLabel, lAdjustedScaleW) * 0.5f, parentZDepth, textColor, lAdjustedScaleW, -1);
-		lTextBoldFont.drawText(mSeparator, lScreenOffset.x + mX + mW / 2 - lSeparatorHalfWidth, lScreenOffset.y + mY + mH / 2 - lTextHeight * 0.5f, parentZDepth, textColor, lUiTextScale, -1);
+		lTextBoldFont.drawText(SEPARATOR, lScreenOffset.x + mX + mW / 2 - lSeparatorHalfWidth, lScreenOffset.y + mY + mH / 2 - lTextHeight * 0.5f, parentZDepth, textColor, lUiTextScale, -1);
 
 		if (mItems.size() > 0) {
 			final var lCurItem = mItems.get(mSelectedIndex).name();

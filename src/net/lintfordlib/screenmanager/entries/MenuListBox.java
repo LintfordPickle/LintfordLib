@@ -220,9 +220,11 @@ public class MenuListBox extends MenuEntry implements IScrollBarArea {
 
 			lItem.update(core, screen);
 
+			final var lTransitionOffset = screen.screenPositionOffset();
+
 			final float lInnerPadding = mScrollBar.scrollBarEnabled() ? mScrollBar.width() : 0;
 			mItems.get(i).width(mW - marginLeft() - marginRight() - lInnerPadding);
-			mItems.get(i).setPosition(mX + marginLeft(), mY + marginTop() + mScrollBar.currentYPos() + mItemYPos);
+			mItems.get(i).setPosition(lTransitionOffset.x + mX + marginLeft(), lTransitionOffset.y + mY + marginTop() + mScrollBar.currentYPos() + mItemYPos);
 
 			mItemYPos += lItem.height() + LISTBOX_ITEM_VPADDING;
 			lTotalContentHeight += lItem.height() + LISTBOX_ITEM_VPADDING;
@@ -245,7 +247,7 @@ public class MenuListBox extends MenuEntry implements IScrollBarArea {
 
 		lSpriteBatch.begin(core.HUD());
 		final var lTileSize = 32;
-		final var lBackgroundColor = ColorConstants.getColor(.15f, .15f, .15f, 0.4f);
+		final var lBackgroundColor = ColorConstants.getColor(.15f, .15f, .65f, 0.74f);
 		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_LEFT, (int) (lScreenOffset.x + mX), (int) (lScreenOffset.y + mY), lTileSize, lTileSize, parentZDepth, lBackgroundColor);
 		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_MID, (int) (lScreenOffset.x + mX + lTileSize), (int) (lScreenOffset.y + mY), (int) mW - lTileSize * 2, lTileSize, parentZDepth, lBackgroundColor);
 		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_RIGHT, (int) (lScreenOffset.x + mX + (int) mW - lTileSize), (int) (lScreenOffset.y + mY), lTileSize, lTileSize, parentZDepth, lBackgroundColor);
@@ -278,7 +280,8 @@ public class MenuListBox extends MenuEntry implements IScrollBarArea {
 		lFontUnit.begin(core.HUD());
 		lSpriteBatch.begin(core.HUD());
 		for (int i = 0; i < mItems.size(); i++)
-			mItems.get(i).draw(core, lSpriteBatch, mCoreSpritesheet, lFontUnit, parentZDepth);
+			// TODO: This isn't the only place, but I think we can make an interface of the transitional data (i.e. the screen) to pass around
+			mItems.get(i).draw(core, screen, lSpriteBatch, mCoreSpritesheet, lFontUnit, parentZDepth);
 
 		lSpriteBatch.end();
 		lFontUnit.end();

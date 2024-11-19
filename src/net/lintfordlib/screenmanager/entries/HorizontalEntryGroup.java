@@ -7,6 +7,7 @@ import net.lintfordlib.ConstantsApp;
 import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.debug.Debug;
+import net.lintfordlib.core.input.InputManager;
 import net.lintfordlib.screenmanager.MenuEntry;
 import net.lintfordlib.screenmanager.MenuScreen;
 import net.lintfordlib.screenmanager.Screen;
@@ -21,6 +22,7 @@ public class HorizontalEntryGroup extends MenuEntry {
 	// --------------------------------------
 
 	private List<MenuEntry> mChildEntries;
+	private int mSelectedEntryUid;
 
 	// --------------------------------------
 	// Properties
@@ -35,13 +37,12 @@ public class HorizontalEntryGroup extends MenuEntry {
 		if (!pNewValue) {
 			int lCount = entries().size();
 			for (int i = 0; i < lCount; i++) {
-				entries().get(i).hasFocus(false);
+				// entries().get(i).hasFocus(false);
 			}
 
 		}
 
 		super.hasFocus(pNewValue);
-
 	}
 
 	// --------------------------------------
@@ -95,6 +96,7 @@ public class HorizontalEntryGroup extends MenuEntry {
 	@Override
 	public boolean onHandleMouseInput(LintfordCore core) {
 		if (intersectsAA(core.HUD().getMouseCameraSpace())) {
+
 			final var lChildEntryCount = mChildEntries.size();
 			for (int i = 0; i < lChildEntryCount; i++) {
 				if (mChildEntries.get(i).onHandleMouseInput(core)) {
@@ -145,6 +147,10 @@ public class HorizontalEntryGroup extends MenuEntry {
 		for (int i = 0; i < lChildEntryCount; i++) {
 			mChildEntries.get(i).draw(pCore, pScreen, pParentZDepth);
 		}
+		
+		if(mHasFocus) {
+			System.out.println("HorizontalEntryGroup: mHasFocus is  true");
+		}
 
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
 			final var lR = parentScreen().screenColor.r;
@@ -158,6 +164,29 @@ public class HorizontalEntryGroup extends MenuEntry {
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
+
+	@Override
+	public void onClick(InputManager inputManager) {
+		if (mChildEntries.isEmpty())
+			return;
+
+		final var lSelectedItem = mChildEntries.get(mSelectedEntryUid);
+		if (lSelectedItem != null)
+			lSelectedItem.onClick(inputManager);
+
+	}
+
+	public void navigatePrev() {
+		mSelectedEntryUid--;
+		if (mSelectedEntryUid < 0)
+			mSelectedEntryUid = mChildEntries.size();
+	}
+
+	public void navigateNext() {
+		mSelectedEntryUid++;
+		if (mSelectedEntryUid >= mChildEntries.size())
+			mSelectedEntryUid = 0;
+	}
 
 	private void updateEntries() {
 		// Here we will use the position given to us by the parent screen and use it

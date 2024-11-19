@@ -6,6 +6,7 @@ import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.graphics.batching.SpriteBatch;
 import net.lintfordlib.core.graphics.fonts.FontUnit;
 import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
+import net.lintfordlib.screenmanager.Screen;
 import net.lintfordlib.screenmanager.ScreenManager;
 import net.lintfordlib.screenmanager.entries.MenuListBox;
 import net.lintfordlib.screenmanager.entries.MenuListBoxItem;
@@ -61,11 +62,13 @@ public class LabelValueListBoxItem extends MenuListBoxItem {
 	// --------------------------------------
 
 	@Override
-	public void draw(LintfordCore core, SpriteBatch spriteBatch, SpriteSheetDefinition coreDef, FontUnit fontUnit, float zDepth) {
+	public void draw(LintfordCore core, Screen screen, SpriteBatch spriteBatch, SpriteSheetDefinition coreDef, FontUnit fontUnit, float zDepth) {
 		if (mLabelValue != null && mLabelValue.length() > 0) {
 
 			if (mTextValue == null)
 				mTextValue = "";
+
+			final var lTransitionOffset = screen.screenPositionOffset();
 
 			final float lScale = mScreenManager.UiStructureController().uiTextScaleFactor();
 			final var lFont = mParentListBox.parentScreen().font();
@@ -73,8 +76,8 @@ public class LabelValueListBoxItem extends MenuListBoxItem {
 			mH = 10;
 
 			lFont.begin(core.HUD());
-			lFont.drawText(mLabelValue, mX, mY, zDepth, textColor, lScale, -1);
-			lFont.drawText(mTextValue, mX + mW / 2, mY, zDepth, textColor, lScale, -1);
+			lFont.drawText(mLabelValue, lTransitionOffset.x + mX, lTransitionOffset.y + mY, zDepth, textColor, lScale, -1);
+			lFont.drawText(mTextValue, lTransitionOffset.x + mX + mW / 2, lTransitionOffset.y + mY, zDepth, textColor, lScale, -1);
 			lFont.end();
 		}
 

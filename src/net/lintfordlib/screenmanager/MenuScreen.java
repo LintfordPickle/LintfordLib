@@ -451,9 +451,6 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 	@Override
 	public void draw(LintfordCore core) {
-		if (mScreenState != ScreenState.ACTIVE && mScreenState != ScreenState.TRANSITION_ON && mScreenState != ScreenState.TRANSITION_OFF)
-			return;
-
 		if (!mIsinitialized)
 			return;
 
@@ -500,24 +497,22 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		final float lMenuTitlePositionY = lHeaderRect.top() + lHeaderRect.height() * 0.5f;//
 
 		mMenuHeaderFont.begin(core.HUD());
-		mMenuHeaderFont.drawText(mMenuTitle, lMenuTitlePositionX, lMenuTitlePositionY, -0.01f, screenColor, lUiTextScale);
+		mMenuHeaderFont.drawText(mMenuTitle, screenPositionOffset().x + lMenuTitlePositionX, screenPositionOffset().y + lMenuTitlePositionY, -0.01f, screenColor, lUiTextScale);
 		mMenuHeaderFont.end();
 
-		if (mMenuFont != null) {
-			mMenuFont.begin(core.HUD());
+		mMenuFont.begin(core.HUD());
 
-			final float lOverTitleWidth = mMenuFont.getStringWidth(mMenuOverTitle, lUiTextScale);
-			if (mMenuOverTitle != null && mMenuOverTitle.length() > 0) {
-				mMenuFont.drawText(mMenuOverTitle, lHeaderRect.centerX() - lOverTitleWidth * .5f, lMenuTitlePositionY, -0.01f, screenColor, lUiTextScale);
-			}
-
-			final float lSubTitleWidth = mMenuFont.getStringWidth(mMenuSubTitle, lUiTextScale);
-			if (mMenuSubTitle != null && mMenuSubTitle.length() > 0) {
-				mMenuFont.drawText(mMenuSubTitle, lHeaderRect.centerX() - lSubTitleWidth * .5f, lMenuTitlePositionY + lHeaderFontHeight, -0.01f, screenColor, lUiTextScale);
-			}
-
-			mMenuFont.end();
+		final float lOverTitleWidth = mMenuFont.getStringWidth(mMenuOverTitle, lUiTextScale);
+		if (mMenuOverTitle != null && mMenuOverTitle.length() > 0) {
+			mMenuFont.drawText(mMenuOverTitle, screenPositionOffset().x + lHeaderRect.centerX() - lOverTitleWidth * .5f, screenPositionOffset().y + lMenuTitlePositionY, -0.01f, screenColor, lUiTextScale);
 		}
+
+		final float lSubTitleWidth = mMenuFont.getStringWidth(mMenuSubTitle, lUiTextScale);
+		if (mMenuSubTitle != null && mMenuSubTitle.length() > 0) {
+			mMenuFont.drawText(mMenuSubTitle, screenPositionOffset().x + lHeaderRect.centerX() - lSubTitleWidth * .5f, screenPositionOffset().y + lMenuTitlePositionY + lHeaderFontHeight, -0.01f, screenColor, lUiTextScale);
+		}
+
+		mMenuFont.end();
 	}
 
 	protected void onCancel() {

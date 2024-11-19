@@ -1,8 +1,10 @@
-package net.lintfordlib.core.maths;
+package tests.net.lintfordlib.core.maths;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
+
+import net.lintfordlib.core.maths.MathHelper;
 
 class MathHelperTests {
 

@@ -82,13 +82,13 @@ public class LoadingScreen extends Screen {
 					// All screens have the ability to override either the game resolution and/or the ui resolution, to use something other than was specified in the GameInfo.
 					// So that the transition between soft-resolutions is not jarring, we do this now at the end of the loading screen.
 					final var lConfig = lCore.config();
-					if (lScreen.mOverrideUiStretch) {
+					if (lScreen.overrideUiStretch()) {
 						lConfig.display().stretchUiScreen(mStretchUiResolution);
 					} else if (!lScreen.showBackgroundScreens()) {
 						lConfig.display().restoreUiStretch();
 					}
 
-					if (lScreen.mOverrideGameStretch) {
+					if (lScreen.overrideGameStretch()) {
 						lConfig.display().stretchGameScreen(mStretchGameResolution);
 					} else if (!lScreen.showBackgroundScreens()) {
 						lConfig.display().restoreGameStretch();

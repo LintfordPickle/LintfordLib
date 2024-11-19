@@ -7,6 +7,7 @@ import net.lintfordlib.core.graphics.batching.SpriteBatch;
 import net.lintfordlib.core.graphics.fonts.FontUnit;
 import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintfordlib.screenmanager.MenuScreen;
+import net.lintfordlib.screenmanager.Screen;
 import net.lintfordlib.screenmanager.ScreenManager;
 
 public abstract class MenuListBoxItem extends Rectangle {
@@ -89,6 +90,6 @@ public abstract class MenuListBoxItem extends Rectangle {
 	public void update(LintfordCore core, MenuScreen screen) {
 	}
 
-	public abstract void draw(LintfordCore core, SpriteBatch spriteBatch, SpriteSheetDefinition coreDef, FontUnit fontUnit, float zDepth);
+	public abstract void draw(LintfordCore core, Screen screen, SpriteBatch spriteBatch, SpriteSheetDefinition coreDef, FontUnit fontUnit, float zDepth);
 
 }
