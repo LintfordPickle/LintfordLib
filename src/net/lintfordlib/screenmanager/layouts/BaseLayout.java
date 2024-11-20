@@ -493,8 +493,11 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 		if (mScrollBar.scrollBarEnabled()) {
 			mContentArea.postDraw(core);
 			lSpriteBatch.begin(core.HUD());
+			mScrollBar.positionOffset.x = lScreenOffset.x;
+			mScrollBar.positionOffset.y = lScreenOffset.y;
+
 			mScrollBar.scrollBarAlpha(parentScreen.screenColor.a);
-			mScrollBar.draw(core, lSpriteBatch, lSpriteSheetCore, componentDepth + .1f, parentScreen.screenColor.a);
+			mScrollBar.draw(core, lSpriteBatch, lSpriteSheetCore, componentDepth + .1f);
 			lSpriteBatch.end();
 		}
 

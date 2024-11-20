@@ -268,7 +268,7 @@ public class UiDropDownBox<T> extends UIWidget implements IInputClickedFocusMana
 	public void draw(LintfordCore core, SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheet, FontUnit textFont, float componentZDepth) {
 		final var lFontHeight = textFont.fontHeight();
 
-		if (mItems == null || mItems.size() == 0) {
+		if (mItems == null || mItems.isEmpty()) {
 			textFont.begin(core.HUD());
 			textFont.drawText(mNoItemsFoundText, mX + HorizontalPadding, mY + mH / 2f - lFontHeight / 2f, componentZDepth, ColorConstants.WHITE, 1.f, -1);
 			textFont.end();
@@ -319,8 +319,11 @@ public class UiDropDownBox<T> extends UIWidget implements IInputClickedFocusMana
 			textFont.end();
 
 			mWindowRectangle.postDraw(core);
-			if (mScrollBar.scrollBarEnabled())
-				mScrollBar.draw(core, spriteBatch, coreSpritesheet, componentZDepth, 1.f);
+
+			if (mScrollBar.scrollBarEnabled()) {
+				mScrollBar.scrollBarAlpha(1.f);
+				mScrollBar.draw(core, spriteBatch, coreSpritesheet, componentZDepth);
+			}
 		}
 
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {

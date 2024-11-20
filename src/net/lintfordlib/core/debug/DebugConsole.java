@@ -465,7 +465,8 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 		if (mConsoleState == CONSOLE_STATE.open) {
 			mConsoleBackgroundColor.setRGBA(0.f, 0.f, 0.f, .8f);
 
-			mScrollBar.draw(core, mSpriteBatch, mCoreSpritesheet, Z_DEPTH + 0.1f, 1.f);
+			mScrollBar.scrollBarAlpha(1.f);
+			mScrollBar.draw(core, mSpriteBatch, mCoreSpritesheet, Z_DEPTH + 0.1f);
 
 			mSpriteBatch.begin(core.HUD());
 

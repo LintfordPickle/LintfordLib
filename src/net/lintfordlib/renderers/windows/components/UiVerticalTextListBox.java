@@ -268,8 +268,10 @@ public class UiVerticalTextListBox extends UIWidget implements IScrollBarArea {
 
 		mWindowRectangle.postDraw(core);
 
-		if (mScrollbar.scrollBarEnabled())
-			mScrollbar.draw(core, spriteBatch, coreSpritesheetDefinition, componentZDepth, 0.8f);
+		if (mScrollbar.scrollBarEnabled()) {
+			mScrollbar.scrollBarAlpha(.8f);
+			mScrollbar.draw(core, spriteBatch, coreSpritesheetDefinition, componentZDepth);
+		}
 
 	}
 

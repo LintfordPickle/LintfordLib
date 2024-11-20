@@ -353,7 +353,8 @@ public class UiBaseLayoutComponent extends UIWidget implements IScrollBarArea {
 
 		if (mScrollBarsEnabled_Internal) {
 			mContentArea.postDraw(core);
-			mScrollBar.draw(core, spriteBatch, coreSpritesheet, componentZDepth + .1f, .8f);
+			mScrollBar.scrollBarAlpha(.8f);
+			mScrollBar.draw(core, spriteBatch, coreSpritesheet, componentZDepth + .1f);
 		}
 
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {

@@ -280,7 +280,6 @@ public class MenuListBox extends MenuEntry implements IScrollBarArea {
 		lFontUnit.begin(core.HUD());
 		lSpriteBatch.begin(core.HUD());
 		for (int i = 0; i < mItems.size(); i++)
-			// TODO: This isn't the only place, but I think we can make an interface of the transitional data (i.e. the screen) to pass around
 			mItems.get(i).draw(core, screen, lSpriteBatch, mCoreSpritesheet, lFontUnit, parentZDepth);
 
 		lSpriteBatch.end();
@@ -291,7 +290,13 @@ public class MenuListBox extends MenuEntry implements IScrollBarArea {
 		drawDebugCollidableBounds(core, lSpriteBatch);
 		if (mScrollBar.scrollBarEnabled()) {
 			lSpriteBatch.begin(core.HUD());
-			mScrollBar.draw(core, lSpriteBatch, mCoreSpritesheet, parentZDepth, 1.f);
+
+			mScrollBar.positionOffset.x = lScreenOffset.x;
+			mScrollBar.positionOffset.y = lScreenOffset.y;
+
+			mScrollBar.scrollBarAlpha(1.f);
+
+			mScrollBar.draw(core, lSpriteBatch, mCoreSpritesheet, parentZDepth);
 			lSpriteBatch.end();
 		}
 
