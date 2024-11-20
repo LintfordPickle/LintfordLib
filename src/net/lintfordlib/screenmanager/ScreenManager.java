@@ -308,11 +308,11 @@ public class ScreenManager implements IInputClickedFocusManager {
 			if (lTopScreen != null) {
 				if (lTopScreen.screenState() == ScreenState.ACTIVE) {
 					lTopScreen.onLostFocus();
-					if (!lNextScreenToAdd.showBackgroundScreens() && !lNextScreenToAdd.alwaysOnTop())
-						lTopScreen.transitionOff();
-					else {
+					lTopScreen.transitionOff();
+
+					if (lTopScreen.showBackgroundScreens())
 						lReadyToAddScreen = true;
-					}
+
 				} else if (lTopScreen.screenState() == ScreenState.HIDDEN || lNextScreenToAdd.showBackgroundScreens()) {
 					lReadyToAddScreen = true;
 				}

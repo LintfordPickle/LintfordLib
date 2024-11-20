@@ -1,9 +1,8 @@
-package net.lintfordlib.screenmanager.entries.animators;
+package net.lintfordlib.screenmanager.animations;
 
 import net.lintfordlib.core.maths.MathHelper;
-import net.lintfordlib.screenmanager.MenuEntry;
 
-public class ScaleAnimator implements Animator {
+public class UiScaleAnimator implements BaseUiAnimation {
 
 	// --------------------------------------
 	// Variables
@@ -39,7 +38,12 @@ public class ScaleAnimator implements Animator {
 
 	@Override
 	public boolean interuptable() {
-		return true;
+		return false;
+	}
+
+	@Override
+	public boolean isLooping() {
+		return false;
 	}
 
 	public float normalizedRunningTime(float remainingTime) {
@@ -48,18 +52,11 @@ public class ScaleAnimator implements Animator {
 	}
 
 	// --------------------------------------
-	// Constructor
-	// --------------------------------------
-
-	public ScaleAnimator() {
-	}
-
-	// --------------------------------------
 	// Core-Methods
 	// --------------------------------------
 
 	@Override
-	public void animate(MenuEntry entry, float remainingTime) {
+	public void animate(IUiAnimationTarget animationTarget, float remainingTime) {
 		if (remainingTime > 0) {
 			final var normalizedTime = normalizedRunningTime(remainingTime);
 
@@ -68,9 +65,9 @@ public class ScaleAnimator implements Animator {
 			// rangeValue in [0,1] * magnitude
 			final var rangeValue = (float) (1 - ((Math.cos(scaleRange) + 1.) * .5)) * mMagnitude;
 
-			entry.scale(1.f + rangeValue);
+			animationTarget.scale(1.f + rangeValue);
 		} else
-			entry.scale(1.f);
+			animationTarget.scale(1.f);
 
 	}
 }

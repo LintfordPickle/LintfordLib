@@ -1,4 +1,4 @@
-package net.lintfordlib.screenmanager.entries.animators;
+package net.lintfordlib.screenmanager.animations;
 
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.screenmanager.MenuEntry;
@@ -6,30 +6,26 @@ import net.lintfordlib.screenmanager.MenuEntry;
 /**
  * Automates the animations for {@link MenuEntry} instances.
  */
-public class EntryAnimation {
-
-	// --------------------------------------
-	// Constants
-	// --------------------------------------
+public class AnimationController {
 
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
-	public final MenuEntry entry;
+	public final IUiAnimationTarget entry;
 	public float animationLength;
 	public float timeRemaining;
-	public Animator mAnimator;
+	public BaseUiAnimation mAnimator;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
 
 	public boolean isAnimating() {
-		return mAnimator != null && timeRemaining > 0;
+		return mAnimator != null && mAnimator.isLooping() || timeRemaining > 0;
 	}
 
-	public void setAnimator(Animator animator) {
+	public void setAnimator(BaseUiAnimation animator) {
 		mAnimator = animator;
 	}
 
@@ -37,11 +33,11 @@ public class EntryAnimation {
 	// Constructor
 	// --------------------------------------
 
-	public EntryAnimation(MenuEntry parentEntry) {
+	public AnimationController(IUiAnimationTarget parentEntry) {
 		entry = parentEntry;
 	}
 
-	public EntryAnimation(MenuEntry parentEntry, Animator animator) {
+	public AnimationController(IUiAnimationTarget parentEntry, BaseUiAnimation animator) {
 		this(parentEntry);
 
 		mAnimator = animator;
@@ -59,6 +55,9 @@ public class EntryAnimation {
 			return;
 
 		timeRemaining -= core.gameTime().elapsedTimeMilli();
+		if (timeRemaining < 0 && mAnimator.isLooping())
+			timeRemaining += mAnimator.totalRunningTimeInMs();
+
 		mAnimator.animate(entry, timeRemaining);
 	}
 
@@ -74,5 +73,15 @@ public class EntryAnimation {
 			return;
 
 		timeRemaining = mAnimator.totalRunningTimeInMs();
+	}
+
+	public void stop() {
+		if (mAnimator == null)
+			return;
+
+		if (!mAnimator.interuptable())
+			return;
+
+		timeRemaining = 0.f;
 	}
 }

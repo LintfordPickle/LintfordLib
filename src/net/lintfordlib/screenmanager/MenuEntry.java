@@ -15,12 +15,13 @@ import net.lintfordlib.core.maths.Vector2f;
 import net.lintfordlib.screenmanager.Screen.ScreenState;
 import net.lintfordlib.screenmanager.ScreenManagerConstants.ALIGNMENT;
 import net.lintfordlib.screenmanager.ScreenManagerConstants.FILLTYPE;
+import net.lintfordlib.screenmanager.animations.AnimationController;
+import net.lintfordlib.screenmanager.animations.IUiAnimationTarget;
+import net.lintfordlib.screenmanager.animations.UiScaleAnimator;
 import net.lintfordlib.screenmanager.entries.EntryInteractions;
-import net.lintfordlib.screenmanager.entries.animators.EntryAnimation;
-import net.lintfordlib.screenmanager.entries.animators.ScaleAnimator;
 
 // TODO: remove the inheritance to Rectangle (serializable) and use composition (AABB) instead
-public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipProvider, IContextHintProvider {
+public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipProvider, IContextHintProvider, IUiAnimationTarget {
 
 	// --------------------------------------
 	// Constants
@@ -119,7 +120,7 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 	protected float mMaxWidth;
 	protected float mMaxHeight;
 
-	protected final EntryAnimation mAnimation = new EntryAnimation(this, new ScaleAnimator());
+	protected final AnimationController mAnimation = new AnimationController(this, new UiScaleAnimator());
 
 	// --------------------------------------
 	// Properties
@@ -366,10 +367,12 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 		mDesiredHeight = newValue;
 	}
 
+	@Override
 	public float scale() {
 		return mScale;
 	}
 
+	@Override
 	public void scale(float newValue) {
 		mScale = newValue;
 	}
@@ -467,8 +470,11 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 
 		if (!intersectsAA(core.HUD().getMouseCameraSpace()) || !core.input().mouse().isMouseOverThisComponent(hashCode())) {
 			mIsMouseOver = false;
+			mAnimation.stop();
 			return false;
 		}
+
+		// isHovering
 
 		if (!mIsMouseOver)
 			mAnimation.start();

@@ -225,8 +225,8 @@ public class FontUnit {
 		if (text == null)
 			return;
 
-		int lX = (int) positionX;
-		int lY = (int) positionY;
+		var lX = positionX;
+		var lY = positionY;
 
 		int lWrapWidth = 0;
 		boolean lJustWrapped = false;
@@ -248,7 +248,6 @@ public class FontUnit {
 				lX = (int) positionX;
 				lY += mFontDefinition.getFontHeight() + lLineSpacing;
 				lWrapWidth = 0;
-				lWordWidth = 0;
 				lClearedWord = false;
 				continue;
 			}

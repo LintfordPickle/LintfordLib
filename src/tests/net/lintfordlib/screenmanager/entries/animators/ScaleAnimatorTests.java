@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import net.lintfordlib.screenmanager.MenuEntry;
-import net.lintfordlib.screenmanager.entries.animators.ScaleAnimator;
+import net.lintfordlib.screenmanager.animations.UiScaleAnimator;
 
 class ScaleAnimatorTests {
 
@@ -25,7 +25,7 @@ class ScaleAnimatorTests {
 	@Test
 	void animate_ScaleValueIsLoopable_ScaleShouldBe1WhenAnimationIsFinished() {
 		// arrange
-		final var sut = new ScaleAnimator();
+		final var sut = new UiScaleAnimator();
 		sut.animationLengthMs(1000);
 
 		// act
@@ -38,7 +38,7 @@ class ScaleAnimatorTests {
 	@Test
 	void animate_ScaleValueIsLoopable_ScaleShouldBe1WhenAnimationIsStarted() {
 		// arrange
-		final var sut = new ScaleAnimator();
+		final var sut = new UiScaleAnimator();
 		sut.animationLengthMs(1000);
 
 		// act
@@ -51,7 +51,7 @@ class ScaleAnimatorTests {
 	@Test
 	void animate_ScaleValueIsLoopable_ScaleShouldBeAsStartedWhenNegativeElapsedTimeProvided() {
 		// arrange
-		final var sut = new ScaleAnimator();
+		final var sut = new UiScaleAnimator();
 		sut.animationLengthMs(1000);
 
 		// act
@@ -64,7 +64,7 @@ class ScaleAnimatorTests {
 	@Test
 	void animate_ScaleValueIsProperlySet_ScaleShouldBeHalfWhenTimeHalfIsReached() {
 		// arrange
-		final var sut = new ScaleAnimator();
+		final var sut = new UiScaleAnimator();
 		sut.animationLengthMs(1000);
 		sut.magnitude(1.f);
 
@@ -78,7 +78,7 @@ class ScaleAnimatorTests {
 	@Test
 	void animate_ScaleMagnitudeIsCorrectlyUsed_TheScaleAnimatorCorrecltyAppliesTheMagnitude() {
 		// arrange
-		final var sut = new ScaleAnimator();
+		final var sut = new UiScaleAnimator();
 		sut.animationLengthMs(1000);
 		sut.magnitude(2.f);
 
@@ -92,7 +92,7 @@ class ScaleAnimatorTests {
 	@Test
 	void animate_ScaleValueIsProperlySetAccordingToAnimationLength_ScaleShouldBeeQuarterWayWhenQuarterTimeHalfIsReached() {
 		// arrange
-		final var sut = new ScaleAnimator();
+		final var sut = new UiScaleAnimator();
 		sut.animationLengthMs(2000);
 		sut.magnitude(1.f);
 
@@ -108,7 +108,7 @@ class ScaleAnimatorTests {
 	@Test
 	void normlizeRuningTime_ReturnsTheNormalizedRunningTime_ReturnValueShouldBeEqual0IfNegativeInput() {
 		// arrange
-		final var sut = new ScaleAnimator();
+		final var sut = new UiScaleAnimator();
 		sut.animationLengthMs(2000);
 		sut.magnitude(1.f);
 
@@ -122,7 +122,7 @@ class ScaleAnimatorTests {
 	@Test
 	void normlizeRuningTime_ReturnsTheNormalizedRunningTime_ReturnValueShouldBeEqual1IfHigherThanUpperBoundInput() {
 		// arrange
-		final var sut = new ScaleAnimator();
+		final var sut = new UiScaleAnimator();
 		sut.animationLengthMs(2000);
 		sut.magnitude(1.f);
 
@@ -136,7 +136,7 @@ class ScaleAnimatorTests {
 	@Test
 	void normlizeRuningTime_ReturnsTheNormalizedRunningTime_ReturnValueShouldBeQuarterIfQuartterTimeElapsed() {
 		// arrange
-		final var sut = new ScaleAnimator();
+		final var sut = new UiScaleAnimator();
 		sut.animationLengthMs(2000);
 		sut.magnitude(1.f);
 
@@ -150,7 +150,7 @@ class ScaleAnimatorTests {
 	@Test
 	void normlizeRuningTime_ReturnsTheNormalizedRunningTime_ReturnValueShouldBeCorrectPercentageOfAnimationLength() {
 		// arrange
-		final var sut = new ScaleAnimator();
+		final var sut = new UiScaleAnimator();
 		sut.animationLengthMs(10000);
 
 		// act
