@@ -33,11 +33,6 @@ public class MenuLabelEntry extends MenuEntry {
 		mTrimText = newValue;
 	}
 
-	@Override
-	public boolean hasFocus() {
-		return super.hasFocus();
-	}
-
 	public void label(String newLabel) {
 		mText = newLabel;
 	}
@@ -85,16 +80,16 @@ public class MenuLabelEntry extends MenuEntry {
 
 		if (mDrawBackground) {
 			lSpriteBatch.begin(core.HUD());
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_LABEL_LEFT, (int) (lScreenOffset.x + mX), lScreenOffset.y + mY, 32, 32, parentZDepth + .15f, entryColor);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_LABEL_LEFT, lScreenOffset.x + mX, lScreenOffset.y + mY, 32, 32, parentZDepth + .15f, entryColor);
 
 			final float lMidLength = mW - 64;
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_LABEL_MID, (int) (lScreenOffset.x + mX + 32), lScreenOffset.y + mY, lMidLength, 32, parentZDepth + .15f, entryColor);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_LABEL_MID, lScreenOffset.x + mX + 32, lScreenOffset.y + mY, lMidLength, 32, parentZDepth + .15f, entryColor);
 
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_LABEL_RIGHT, (int) (lScreenOffset.x + mX + lMidLength + 32), lScreenOffset.y + mY, 32, 32, parentZDepth + .15f, entryColor);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_LABEL_RIGHT, lScreenOffset.x + mX + lMidLength + 32, lScreenOffset.y + mY, 32, 32, parentZDepth + .15f, entryColor);
 			lSpriteBatch.end();
 		}
 
-		float lX = mX + mW / 2 - lLabelWidth / 2; // Center label
+		float lX;
 		switch (mHorizontalAlignment) {
 		case LEFT:
 			lX = mX;

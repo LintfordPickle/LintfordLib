@@ -11,6 +11,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import org.lwjgl.glfw.GLFW;
 
 import net.lintfordlib.core.LintfordCore;
+import net.lintfordlib.core.camera.ICamera;
 import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.geometry.Rectangle;
 import net.lintfordlib.core.graphics.ColorConstants;
@@ -259,16 +260,17 @@ public class MenuFileInputEntry extends MenuEntry implements IBufferedTextInputC
 		if (lTextBoldFont == null)
 			return;
 
-		final float lUiTextScale = 1.f; // mParentScreen.uiTextScale();
+		final float lUiTextScale = mParentScreen.uiTextScale();
 
 		entryColor.setRGB(1.f, 1.f, 1.f);
 		mDrawBackground = true;
+		ICamera hud = core.HUD();
 		if (mDrawBackground) {
 			boolean use5Steps = mW > 32 * 8;
 
 			final float lTileSize = 32;
 			final float lHalfWidth = (int) (mW * .5f);
-			int lLeft = (int) (lScreenOffset.x + centerX() - lHalfWidth);
+			float lLeft = lScreenOffset.x + centerX() - lHalfWidth;
 			final float lInnerWidth = mW - 32 * (use5Steps ? 4 : 2);
 			entryColor.a = 1.f;
 
@@ -286,7 +288,7 @@ public class MenuFileInputEntry extends MenuEntry implements IBufferedTextInputC
 				entryColor.b = .6f;
 			}
 
-			lSpriteBatch.begin(core.HUD());
+			lSpriteBatch.begin(hud);
 			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_TITLE_HORIZONTAL_LEFT, lLeft, lScreenOffset.y + centerY() - mH / 2, lTileSize, mH, mZ, entryColor);
 			if (use5Steps)
 				lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_TITLE_HORIZONTAL_MID_LEFT, lLeft += 32, lScreenOffset.y + centerY() - mH / 2, lTileSize, mH, mZ, entryColor);
@@ -298,7 +300,7 @@ public class MenuFileInputEntry extends MenuEntry implements IBufferedTextInputC
 		}
 
 		if (mHasFocus || mIsActive) {
-			lSpriteBatch.begin(core.HUD());
+			lSpriteBatch.begin(hud);
 			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - mW / 2, lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ, ColorConstants.MenuEntryHighlightColor);
 			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - (mW / 2) + 32, lScreenOffset.y + centerY() - mH / 2, mW - 64, mH, mZ, ColorConstants.MenuEntryHighlightColor);
 			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() + (mW / 2) - 32, lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ, ColorConstants.MenuEntryHighlightColor);
@@ -315,19 +317,19 @@ public class MenuFileInputEntry extends MenuEntry implements IBufferedTextInputC
 		if (mCursorPos >= mInputField.length())
 			mCursorPos = mInputField.length();
 
-		final var first_part_of_string = mCursorPos > 0 ? mInputField.subSequence(0, mCursorPos) : "";
-		final var carot_position_x = lTextBoldFont.getStringWidth(first_part_of_string.toString(), 1.f);
+		final var lFirstPartOfString = mCursorPos > 0 ? mInputField.subSequence(0, mCursorPos) : "";
+		final var lCarotPositionX = lTextBoldFont.getStringWidth(lFirstPartOfString.toString(), 1.f);
 		final int lCancelRectSize = 32;
 		final var mw = mLabel == null ? mW - 32 : mInputAreaRectangle.width() - lCancelRectSize - 16.f;
 
-		final var lIsTextTooLong = carot_position_x > mw;
+		final var lIsTextTooLong = lCarotPositionX > mw;
 		final var lTextOverlapWithBox = lInputTextWidth - mw;
 		final var lTextPosX = lIsTextTooLong ? mInputAreaRectangle.x() - lTextOverlapWithBox : mInputAreaRectangle.x();
 
-		lTextBoldFont.begin(core.HUD());
+		lTextBoldFont.begin(hud);
 		final float lTextHeight = lTextBoldFont.fontHeight();
 
-		lTextBoldFont.begin(core.HUD());
+		lTextBoldFont.begin(hud);
 		if (mLabel != null) {
 			final var lY = mY + ENTRY_DEFAULT_HEIGHT / 2.f - lTextHeight * .5f;
 			lTextBoldFont.drawText(mLabel, mX, lY, mZ, textColor, 1.f);
@@ -337,15 +339,15 @@ public class MenuFileInputEntry extends MenuEntry implements IBufferedTextInputC
 
 		ContentRectangle.preDraw(core, lSpriteBatch, mInputAreaRectangle.x() + 2.f, mY, mInputAreaRectangle.width() - lCancelRectSize - 5.f, mH, -0, 1);
 
-		lTextBoldFont.begin(core.HUD());
+		lTextBoldFont.begin(hud);
 		lTextBoldFont.drawText(mInputField.toString(), lTextPosX + 8, mInputAreaRectangle.y() + mInputAreaRectangle.height() * .5f - lTextHeight * .5f, mZ, textColor, 1.f);
 		lTextBoldFont.end();
 
 		ContentRectangle.postDraw(core);
 
 		if (mShowCaret && mHasFocus) {
-			lSpriteBatch.begin(core.HUD());
-			final var lCaretPositionX = lScreenOffset.x + lTextPosX + carot_position_x + 7;
+			lSpriteBatch.begin(hud);
+			final var lCaretPositionX = lScreenOffset.x + lTextPosX + lCarotPositionX + 7;
 			final var lCaretPositionY = lScreenOffset.y + mInputAreaRectangle.y() + mInputAreaRectangle.height() * .5f - lTextHeight * .5f;
 
 			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lCaretPositionX, lCaretPositionY, lTextHeight / 2.f, lTextHeight, mZ, ColorConstants.WHITE);
@@ -355,7 +357,7 @@ public class MenuFileInputEntry extends MenuEntry implements IBufferedTextInputC
 		lTextBoldFont.end();
 
 		final var lDirectoryIconColor = mCancelRectHovered ? ColorConstants.WHITE : ColorConstants.getWhiteWithAlpha(.5f);
-		lSpriteBatch.begin(core.HUD());
+		lSpriteBatch.begin(hud);
 		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTUREDIRECTORY, mFileFolderRectangle, mZ, lDirectoryIconColor);
 		lSpriteBatch.end();
 
@@ -370,7 +372,7 @@ public class MenuFileInputEntry extends MenuEntry implements IBufferedTextInputC
 
 		drawDebugCollidableBounds(core, lSpriteBatch);
 
-		Debug.debugManager().drawers().drawRectImmediate(core.HUD(), mInputAreaRectangle);
+		Debug.debugManager().drawers().drawRectImmediate(hud, mInputAreaRectangle);
 	}
 
 	// --------------------------------------

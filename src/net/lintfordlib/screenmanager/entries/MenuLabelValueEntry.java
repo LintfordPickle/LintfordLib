@@ -70,7 +70,7 @@ public class MenuLabelValueEntry extends MenuLabelEntry {
 		final float lLabelWidth = lTextBoldFont.getStringWidth(mText, lUiTextScale);
 		final float lFontHeight = lTextBoldFont.fontHeight() * lUiTextScale;
 
-		float lX = mX + mW / 2 - lLabelWidth / 2;
+		float lX;
 		switch (mHorizontalAlignment) {
 		case LEFT:
 			lX = mX;

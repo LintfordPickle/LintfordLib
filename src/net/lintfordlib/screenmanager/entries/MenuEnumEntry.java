@@ -242,14 +242,15 @@ public class MenuEnumEntry extends MenuEntry {
 		if (mEnableScaleTextToWidth && mW / 2 < lTextWidth && lTextWidth > 0)
 			lAdjustedScaleW = (mW / 2) / lTextWidth;
 
-		final float lTextHeight = lTextBoldFont.getStringHeight(mLabel, lUiTextScale);
-		final float lSeparatorHalfWidth = lTextBoldFont.getStringWidth(SEPARATOR, lUiTextScale) * 0.5f;
+		final var lTextHeight = lTextBoldFont.getStringHeight(mLabel, lUiTextScale);
+		final var lSeparatorHalfWidth = lTextBoldFont.getStringWidth(SEPARATOR, lUiTextScale) * 0.5f;
 
 		final var lTextureBatch = mParentScreen.spriteBatch();
 
 		lTextureBatch.begin(core.HUD());
-		final float lArrowButtonSize = 32;
-		final float lArrowButtonPaddingY = mLeftButtonRectangle.height() - lArrowButtonSize;
+		final var lArrowButtonSize = 32;
+		final var lArrowButtonPaddingY = mLeftButtonRectangle.height() - lArrowButtonSize;
+
 		if (mButtonsEnabled) {
 			final var lColorWhiteWithAlpha = ColorConstants.getWhiteWithAlpha(lParentScreenAlpha);
 			lTextureBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_LEFT, lScreenOffset.x + mLeftButtonRectangle.x(), lScreenOffset.y + mLeftButtonRectangle.y() + lArrowButtonPaddingY, lArrowButtonSize, lArrowButtonSize, 0f, lColorWhiteWithAlpha);
@@ -259,11 +260,11 @@ public class MenuEnumEntry extends MenuEntry {
 		lTextureBatch.end();
 
 		lTextBoldFont.begin(core.HUD());
-		final float lStringWidth = lTextBoldFont.getStringWidth(mLabel, lAdjustedScaleW);
-		lTextBoldFont.drawText(mLabel, lScreenOffset.x + (mX + mW / 2 - 10) - lStringWidth - lSeparatorHalfWidth, lScreenOffset.y + mY + mH / 2.f - lTextBoldFont.getStringHeight(mLabel, lAdjustedScaleW) * 0.5f, parentZDepth, textColor, lAdjustedScaleW, -1);
+		final var lStringWidth = lTextBoldFont.getStringWidth(mLabel, lAdjustedScaleW);
+		lTextBoldFont.drawText(mLabel, lScreenOffset.x + mX + mW / 2 - 10 - lStringWidth - lSeparatorHalfWidth, lScreenOffset.y + mY + mH / 2.f - lTextBoldFont.getStringHeight(mLabel, lAdjustedScaleW) * 0.5f, parentZDepth, textColor, lAdjustedScaleW, -1);
 		lTextBoldFont.drawText(SEPARATOR, lScreenOffset.x + mX + mW / 2 - lSeparatorHalfWidth, lScreenOffset.y + mY + mH / 2 - lTextHeight * 0.5f, parentZDepth, textColor, lUiTextScale, -1);
 
-		if (mItems.size() > 0) {
+		if (!mItems.isEmpty()) {
 			final var lCurItem = mItems.get(mSelectedIndex).name();
 			final var EntryWidth = lTextBoldFont.getStringWidth(lCurItem, lUiTextScale);
 

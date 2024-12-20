@@ -55,17 +55,11 @@ public class MenuPanelEntry extends MenuEntry {
 		final var lSpriteBatch = mParentScreen.spriteBatch();
 
 		if (mDrawBackground) {
-			final int ts = 32;
-
+			final var lTileSize = 32.f;
 			final var lColor = ColorConstants.getWhiteWithAlpha(lParentScreenAlpha);
 
-			final int x = (int) (lScreenOffset.x + mX);
-			final int y = (int) (lScreenOffset.y + mY);
-			final int w = (int) mW;
-			final int h = (int) mH;
-
 			lSpriteBatch.begin(core.HUD());
-			TextureBatch9Patch.drawBackground(lSpriteBatch, mCoreSpritesheet, ts, x, y, w, h, lColor, false, -0.01f);
+			TextureBatch9Patch.drawBackground(lSpriteBatch, mCoreSpritesheet, lTileSize, lScreenOffset.x + mX, lScreenOffset.y + mY, mW, mH, lColor, false, -0.01f);
 			lSpriteBatch.end();
 		}
 

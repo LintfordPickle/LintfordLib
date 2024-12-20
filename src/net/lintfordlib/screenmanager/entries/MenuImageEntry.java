@@ -120,7 +120,7 @@ public class MenuImageEntry extends MenuEntry {
 		super.update(core, screen);
 
 		final var lParentLayoutCropped = mParentLayout.cropPaddingBottom() + mParentLayout.cropPaddingTop();
-		
+
 		final var lAvailableHeight = mParentLayout.height() - mParentLayout.marginBottom() - mParentLayout.marginTop() - lParentLayoutCropped - mParentLayout.titleBarSize();
 		final var lAvailableWidth = MathHelper.clamp(mParentLayout.width() - mParentLayout.marginLeft() - mParentLayout.marginRight(), 120, mMaximumWidth);
 
@@ -191,7 +191,7 @@ public class MenuImageEntry extends MenuEntry {
 		else if (mShowMissingTextureText) {
 			final float lTextWidth = mUiFont.getStringWidth(mMissingTextureText);
 			mUiFont.begin(core.HUD());
-			mUiFont.drawText(mMissingTextureText, lScreenOffset.x + mX + mFittedWidth / 2f - lTextWidth / 2f, lScreenOffset.y + (int) (mY + mFittedHeight / 2), parentZDepth + .1f, ColorConstants.WHITE, 1f);
+			mUiFont.drawText(mMissingTextureText, lScreenOffset.x + mX + mFittedWidth / 2f - lTextWidth / 2f, lScreenOffset.y + mY + mFittedHeight / 2, parentZDepth + .1f, ColorConstants.WHITE, 1f);
 			mUiFont.end();
 		}
 

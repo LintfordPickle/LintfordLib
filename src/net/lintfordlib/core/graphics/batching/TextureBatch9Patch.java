@@ -18,7 +18,7 @@ public class TextureBatch9Patch {
 	// Methods
 	// --------------------------------------
 	
-	public static void drawBackground(SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheet, float tileSize, int x, int y, int w, int h, Color color, boolean withTitlebar, float componentDepth) {
+	public static void drawBackground(SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheet, float tileSize, float x, float y, float w, float h, Color color, boolean withTitlebar, float componentDepth) {
 		if (withTitlebar) {
 			if (h < 64) {
 				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT,     x,                  y,                tileSize,         tileSize,         componentDepth, color);

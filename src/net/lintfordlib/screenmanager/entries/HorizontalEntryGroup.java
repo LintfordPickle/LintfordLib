@@ -147,10 +147,6 @@ public class HorizontalEntryGroup extends MenuEntry {
 		for (int i = 0; i < lChildEntryCount; i++) {
 			mChildEntries.get(i).draw(pCore, pScreen, pParentZDepth);
 		}
-		
-		if(mHasFocus) {
-			System.out.println("HorizontalEntryGroup: mHasFocus is  true");
-		}
 
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
 			final var lR = parentScreen().screenColor.r;

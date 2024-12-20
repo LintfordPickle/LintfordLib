@@ -213,10 +213,10 @@ public class MenuKeyBindEntry extends MenuEntry implements IKeyInputCallback {
 		entryColor.setRGB(1.f, 1.f, 1.f);
 		textColor.a = mParentScreen.screenColor.a;
 
-		final float lUiTextScale = mParentScreen.uiTextScale();
+		final var lUiTextScale = mParentScreen.uiTextScale();
 
-		final float lLabelWidth = lTextBoldFont.getStringWidth(mText, lUiTextScale);
-		final float lFontHeight = lTextBoldFont.fontHeight() * lUiTextScale;
+		final var lLabelWidth = lTextBoldFont.getStringWidth(mText, lUiTextScale);
+		final var lFontHeight = lTextBoldFont.fontHeight() * lUiTextScale;
 
 		final var lSpriteBatch = mParentScreen.spriteBatch();
 
@@ -228,8 +228,8 @@ public class MenuKeyBindEntry extends MenuEntry implements IKeyInputCallback {
 		} else if (mHasFocus) {
 			lSpriteBatch.begin(core.HUD());
 			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, centerX() - mW / 2, centerY() - mH / 2, 32, mH, parentZDepth + .15f, ColorConstants.MenuEntryHighlightColor);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, centerX() - (mW / 2) + 32, centerY() - mH / 2, mW - 64, mH, parentZDepth + .15f, ColorConstants.MenuEntryHighlightColor);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, centerX() + (mW / 2) - 32, centerY() - mH / 2, 32, mH, parentZDepth + .15f, ColorConstants.MenuEntryHighlightColor);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, centerX() - mW / 2 + 32, centerY() - mH / 2, mW - 64, mH, parentZDepth + .15f, ColorConstants.MenuEntryHighlightColor);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, centerX() + mW / 2 - 32, centerY() - mH / 2, 32, mH, parentZDepth + .15f, ColorConstants.MenuEntryHighlightColor);
 			lSpriteBatch.end();
 		}
 

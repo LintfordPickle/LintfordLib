@@ -72,11 +72,6 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 		mNoItemsFoundText = newText;
 	}
 
-	@Override
-	public float height() {
-		return super.height();// mOpen ? super.height() + mWindowRectangle.height() : super.height();
-	}
-
 	public boolean allowDuplicateNames() {
 		return mAllowDuplicateNames;
 	}
@@ -97,7 +92,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 	}
 
 	public MenuEnumEntryItem selectedItem() {
-		if (mItems == null || mItems.size() == 0)
+		if (mItems == null || mItems.isEmpty())
 			return null;
 
 		return mItems.get(mSelectedIndex);
@@ -198,7 +193,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 		if (!core.input().mouse().isMouseOverThisComponent(hashCode()))
 			return false;
 
-		if (mHasFocus == false)
+		if (!mHasFocus)
 			mParentScreen.setFocusOnEntry(this);
 
 		if (mOpen && mScrollBar.handleInput(core, mScreenManager))
@@ -362,7 +357,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 		mIsActive = mOpen;
 
 		final var lMouseMenuControls = core.input().mouse().isMouseMenuSelectionEnabled();
-		if (mOpen && mScrollBar.scrollBarEnabled() && lMouseMenuControls == false) {
+		if (mOpen && mScrollBar.scrollBarEnabled() && !lMouseMenuControls) {
 			final var lCurrentIndex = mHighlightedIndex;
 			final var lEntryTopExtent = mContentRectangle.y() + (lCurrentIndex * mItemHeight);
 			final var lEntryBottomExtent = mContentRectangle.y() + ((lCurrentIndex + 1) * mItemHeight);
@@ -408,9 +403,9 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 
 		if (mHasFocus && mEnabled) {
 			lSpriteBatch.begin(core.HUD());
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, (int) (lScreenOffset.x + centerX() - (int) mW / 2), lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ, ColorConstants.MenuEntryHighlightColor);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, (int) (lScreenOffset.x + centerX() - ((int) mW / 2) + 32), lScreenOffset.y + centerY() - mH / 2, (int) mW - 64, mH, mZ, ColorConstants.MenuEntryHighlightColor);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, (int) (lScreenOffset.x + centerX() + ((int) mW / 2) - 32), lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ, ColorConstants.MenuEntryHighlightColor);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - mW / 2, lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ, ColorConstants.MenuEntryHighlightColor);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - mW / 2 + 32, lScreenOffset.y + centerY() - mH / 2, mW - 64, mH, mZ, ColorConstants.MenuEntryHighlightColor);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() + mW / 2 - 32, lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ, ColorConstants.MenuEntryHighlightColor);
 			lSpriteBatch.end();
 		}
 
@@ -423,7 +418,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 			lTextBoldFont.end();
 		}
 
-		if (mItems == null || mItems.size() == 0) {
+		if (mItems == null || mItems.isEmpty()) {
 			// LOCALIZATION: No entries added to dropdown list
 			final var lNoEntriesText = mNoItemsFoundText;
 			final var lTextWidth = lTextBoldFont.getStringWidth(lNoEntriesText);

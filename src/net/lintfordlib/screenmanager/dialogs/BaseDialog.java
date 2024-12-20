@@ -195,8 +195,8 @@ public abstract class BaseDialog extends MenuScreen {
 
 		final float TILE_SIZE = 32f;
 		if (mDrawBackground) {
-			final float x = -DIALOG_WIDTH / 2;
-			final float y = -DIALOG_HEIGHT / 2;
+			final float x = -DIALOG_WIDTH / 2.f;
+			final float y = -DIALOG_HEIGHT / 2.f;
 			final float w = DIALOG_WIDTH;
 			final float h = DIALOG_HEIGHT;
 
@@ -219,12 +219,12 @@ public abstract class BaseDialog extends MenuScreen {
 
 		final boolean lDrawIcon = mIconSpriteFrameIndex != -1 && mIconSpritesheet != null;
 		if (lDrawIcon) {
-			final float x = -DIALOG_WIDTH / 2;
-			final float y = -DIALOG_HEIGHT / 2;
+			final float x = -DIALOG_WIDTH / 2.f;
+			final float y = -DIALOG_HEIGHT / 2.f;
 
 			final var lSpriteFrame = mIconSpritesheet.getSpriteFrame(mIconSpriteFrameIndex);
-			final float lIconWidth = lSpriteFrame.width();
-			final float lIconHeight = lSpriteFrame.height();
+			final var lIconWidth = lSpriteFrame.width();
+			final var lIconHeight = lSpriteFrame.height();
 
 			lSpriteBatch.begin(core.HUD());
 			lSpriteBatch.draw(mIconSpritesheet, lSpriteFrame, x + 15.f, y + TILE_SIZE + 15.f, lIconWidth, lIconHeight, lZDepth, ColorConstants.WHITE);

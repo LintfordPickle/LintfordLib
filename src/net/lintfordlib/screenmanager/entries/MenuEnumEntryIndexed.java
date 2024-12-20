@@ -224,7 +224,7 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 
 	@Override
 	public void draw(LintfordCore core, Screen screen, float componentDepth) {
-		if (mEnableUpdateDraw == false)
+		if (!mEnableUpdateDraw)
 			return;
 
 		super.draw(core, screen, componentDepth);
@@ -251,13 +251,13 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 
 		final var lTextBoldFont = mParentScreen.fontBold();
 
-		final float lLabelWidth = lTextBoldFont.getStringWidth(mLabel, lUiTextScale);
+		final var lLabelWidth = lTextBoldFont.getStringWidth(mLabel, lUiTextScale);
 		float lAdjustedLabelScaleW = lUiTextScale;
 		if (mEnableScaleTextToWidth && mW * 0.4f < lLabelWidth && lLabelWidth > 0)
 			lAdjustedLabelScaleW = (mW * 0.4f) / lLabelWidth;
 
-		final float lFontHeight = lTextBoldFont.fontHeight() * lUiTextScale;
-		final float lSeparatorHalfWidth = lTextBoldFont.getStringWidth(mSeparator, lUiTextScale) * 0.5f;
+		final var lFontHeight = lTextBoldFont.fontHeight() * lUiTextScale;
+		final var lSeparatorHalfWidth = lTextBoldFont.getStringWidth(mSeparator, lUiTextScale) * 0.5f;
 
 		lTextBoldFont.begin(core.HUD());
 		lTextBoldFont.drawText(mLabel, mX + mW / 2 - 10 - (lLabelWidth * lAdjustedLabelScaleW) - lSeparatorHalfWidth, mY + mH / 2 - lFontHeight * 0.5f, mZ, textColor, lAdjustedLabelScaleW, -1);

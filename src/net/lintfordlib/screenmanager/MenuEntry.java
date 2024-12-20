@@ -476,8 +476,10 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 
 		// isHovering
 
-		if (!mIsMouseOver)
+		if (!mIsMouseOver) {
 			mAnimation.start();
+			mScreenManager.uiSounds().play(ConstantsScreenManagerAudio.SCREENMANAGER_AUDIO_ENTRY_OVER);
+		}
 
 		mIsMouseOver = true;
 
@@ -553,11 +555,11 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 
 		if (mDrawBackground) {
 			boolean use5Steps = mW > 32 * 8;
-
-			final float lTileSize = 32;
-			final float lHalfWidth = (int) (mW * .5f);
-			int lLeft = (int) (lScreenOffset.x + centerX() - lHalfWidth);
-			final float lInnerWidth = (int) (mW - 32 * (use5Steps ? 4 : 2)) - 1;
+			use5Steps = false;
+			final var lTileSize = 32.f;
+			final var lHalfWidth = mW * .5f;
+			var lLeft = lScreenOffset.x + centerX() - lHalfWidth;
+			final var lInnerWidth = (mW - 32 * (use5Steps ? 4 : 2));
 			entryColor.a = lParentScreenAlpha;
 
 			if (mEnabled) {
@@ -579,10 +581,10 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 			lSpriteBatch.begin(core.HUD());
 			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_BUTTON_HORIZONTAL_LEFT, lLeft, lScreenOffset.y + centerY() - mH / 2, lTileSize, mH, mZ, entryColor);
 			if (use5Steps)
-				lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_BUTTON_HORIZONTAL_MIDLEFT, lLeft += 32, lScreenOffset.y + centerY() - mH / 2, lTileSize, mH, mZ, entryColor);
+				lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_BUTTON_HORIZONTAL_MIDLEFT, lLeft += 32.f, lScreenOffset.y + centerY() - mH / 2, lTileSize, mH, mZ, entryColor);
 			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_BUTTON_HORIZONTAL_MID, lLeft += 32, lScreenOffset.y + centerY() - mH / 2, lInnerWidth, mH, mZ, entryColor);
 			if (use5Steps)
-				lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_BUTTON_HORIZONTAL_MIDRIGHT, (lLeft -= 32) + lHalfWidth * 2 - 96, lScreenOffset.y + centerY() - mH / 2, lTileSize, mH, mZ, entryColor);
+				lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_BUTTON_HORIZONTAL_MIDRIGHT, (lLeft -= 32) + lHalfWidth * 2.f - 96.f, lScreenOffset.y + centerY() - mH / 2, lTileSize, mH, mZ, entryColor);
 			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_BUTTON_HORIZONTAL_RIGHT, (lLeft -= 32) + lHalfWidth * 2 - 32, lScreenOffset.y + centerY() - mH / 2, lTileSize, mH, mZ, entryColor);
 			lSpriteBatch.end();
 		}
@@ -594,8 +596,8 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 
 			lSpriteBatch.begin(core.HUD());
 			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - mW / 2, lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ, lColor);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - (mW / 2) + 32, lScreenOffset.y + centerY() - mH / 2, mW - 64, mH, mZ, lColor);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() + (mW / 2) - 32, lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ, lColor);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - mW / 2 + 32, lScreenOffset.y + centerY() - mH / 2, mW - 64, mH, mZ, lColor);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() + mW / 2 - 32, lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ, lColor);
 			lSpriteBatch.end();
 		}
 

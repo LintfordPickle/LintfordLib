@@ -53,6 +53,7 @@ public class MenuToggleEntry extends MenuEntry {
 		return mText;
 	}
 
+	@Override
 	public void entryText(String text) {
 		mText = text;
 	}
@@ -148,15 +149,15 @@ public class MenuToggleEntry extends MenuEntry {
 			return;
 
 		final var lTextBoldFont = mParentScreen.fontBold();
-		final float lUiTextScale = mParentScreen.uiTextScale();
+		final var lUiTextScale = mParentScreen.uiTextScale();
 
-		final float lLabelWidth = lTextBoldFont.getStringWidth(mText, lUiTextScale);
-		final float lTextHeight = lTextBoldFont.fontHeight() * lUiTextScale;
-		final float lSeparatorHalfWidth = lTextBoldFont.getStringWidth(mSeparator, lUiTextScale) * 0.5f;
+		final var lLabelWidth = lTextBoldFont.getStringWidth(mText, lUiTextScale);
+		final var lTextHeight = lTextBoldFont.fontHeight() * lUiTextScale;
+		final var lSeparatorHalfWidth = lTextBoldFont.getStringWidth(mSeparator, lUiTextScale) * 0.5f;
 
 		final var lSpriteBatch = mParentScreen.spriteBatch();
 
-		final float lTileSize = 32;
+		final var lTileSize = 32.f;
 
 		final var lScreenOffset = screen.screenPositionOffset();
 		final var lParentScreenAlpha = screen.screenColor.a;
@@ -169,8 +170,8 @@ public class MenuToggleEntry extends MenuEntry {
 		if (mHasFocus) {
 			lSpriteBatch.begin(core.HUD());
 			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - mW / 2, lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ, ColorConstants.MenuEntryHighlightColor);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - (mW / 2) + 32, lScreenOffset.y + centerY() - mH / 2, mW - 64, mH, mZ, ColorConstants.MenuEntryHighlightColor);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() + (mW / 2) - 32, lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ, ColorConstants.MenuEntryHighlightColor);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - mW / 2 + 32, lScreenOffset.y + centerY() - mH / 2, mW - 64, mH, mZ, ColorConstants.MenuEntryHighlightColor);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() + mW / 2 - 32, lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ, ColorConstants.MenuEntryHighlightColor);
 			lSpriteBatch.end();
 		}
 
