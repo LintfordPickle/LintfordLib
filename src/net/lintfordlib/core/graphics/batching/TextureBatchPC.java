@@ -18,6 +18,9 @@ import net.lintfordlib.core.graphics.Color;
 import net.lintfordlib.core.graphics.shaders.ShaderMVP_PC;
 import net.lintfordlib.core.maths.Matrix4f;
 
+//Note - we use half pixel correction to attempt to sample the correct texels when applying the Uvs.
+//https://learn.microsoft.com/en-us/windows/win32/direct3d9/directly-mapping-texels-to-pixels?redirectedfrom=MSDN
+
 public class TextureBatchPC {
 
 	private static class VertexDataStructure {
@@ -53,6 +56,13 @@ public class TextureBatchPC {
 	protected static final String FRAG_FILENAME = "/res/shaders/shader_batch_pc.frag";
 
 	private static IntBuffer mIndexBuffer;
+
+	// @formatter:off
+	//  1 ---- 2
+	//  |      |
+	//  |      |
+	//  0------3
+	// @formatter:on
 
 	private static IntBuffer getIndexBuffer() {
 		if (mIndexBuffer == null) {
@@ -113,12 +123,12 @@ public class TextureBatchPC {
 		return mResourcesLoaded;
 	}
 
-	public void modelMatrix(Matrix4f pNewMatrix) {
-		if (pNewMatrix == null) {
+	public void modelMatrix(Matrix4f modelMatrix) {
+		if (modelMatrix == null) {
 			mModelMatrix = new Matrix4f();
 			mModelMatrix.setIdentity();
 		} else {
-			mModelMatrix = pNewMatrix;
+			mModelMatrix = modelMatrix;
 		}
 	}
 
@@ -126,13 +136,13 @@ public class TextureBatchPC {
 		return mModelMatrix;
 	}
 
-	public void setGlBlendEnabled(boolean pBlendEnabled) {
-		mBlendEnabled = pBlendEnabled;
+	public void setGlBlendEnabled(boolean blendEnabled) {
+		mBlendEnabled = blendEnabled;
 	}
 
-	public void setGlBlendFactor(int pSrcFactor, int pDstFactor) {
-		mBlendFuncSrcFactor = pSrcFactor;
-		mBlendFuncDstFactor = pDstFactor;
+	public void setGlBlendFactor(int srcFactor, int dtFactor) {
+		mBlendFuncSrcFactor = srcFactor;
+		mBlendFuncDstFactor = dtFactor;
 	}
 
 	// --------------------------------------
@@ -262,23 +272,23 @@ public class TextureBatchPC {
 	// Methods
 	// --------------------------------------
 
-	public void begin(ICamera pCamera) {
-		begin(pCamera, mShader);
+	public void begin(ICamera camera) {
+		begin(camera, mShader);
 	}
 
-	public void begin(ICamera pCamera, ShaderMVP_PC pCustomShader) {
-		if (pCamera == null)
+	public void begin(ICamera camera, ShaderMVP_PC customShader) {
+		if (camera == null)
 			return;
 
 		if (mIsDrawing)
 			return;
 
-		if (pCustomShader != null)
-			mCustomShader = pCustomShader;
+		if (customShader != null)
+			mCustomShader = customShader;
 		else
 			mCustomShader = mShader;
 
-		mCamera = pCamera;
+		mCamera = camera;
 
 		if (mBuffer != null)
 			mBuffer.clear();
@@ -345,101 +355,101 @@ public class TextureBatchPC {
 
 	// ---
 
-	public void draw(Rectangle pSrcRect, Rectangle pDestRect, float pZ, Color color) {
-		if (pSrcRect == null || pDestRect == null)
+	public void draw(Rectangle srcRect, Rectangle destRect, float zDepth, Color colorTint) {
+		if (srcRect == null || destRect == null)
 			return;
 
-		draw(pSrcRect.x(), pSrcRect.y(), pSrcRect.width(), pSrcRect.height(), pDestRect, pZ, color);
+		draw(srcRect.x(), srcRect.y(), srcRect.width(), srcRect.height(), destRect, zDepth, colorTint);
 	}
 
-	public void draw(Rectangle pSrcRect, float pDX, float pDY, float pDW, float pDH, float pZ, Color color) {
-		if (pSrcRect == null)
+	public void draw(Rectangle srcRect, float dx, float dy, float dw, float dh, float zDepth, Color colorTint) {
+		if (srcRect == null)
 			return;
 
-		draw(pDX, pDY, pDW, pDH, pZ, color);
+		draw(dx, dy, dw, dh, zDepth, colorTint);
 	}
 
-	public void draw(float pSX, float pSY, float pSW, float pSH, Rectangle pDestRect, float pZ, Color color) {
-		if (pDestRect == null)
+	public void draw(float sx, float sy, float sw, float sh, Rectangle destRect, float zDepth, Color colorTint) {
+		if (destRect == null)
 			return;
 
-		draw(pDestRect.x(), pDestRect.y(), pDestRect.width(), pDestRect.height(), pZ, color);
+		draw(destRect.x(), destRect.y(), destRect.width(), destRect.height(), zDepth, colorTint);
 	}
 
-	public void draw(float pDX, float pDY, float pDW, float pDH, float pZ, Color color) {
+	public void draw(float dx, float dy, float dw, float dh, float zDepth, Color colorTint) {
 		if (!mIsDrawing)
 			return;
 
 		if (mIndexCount >= MAX_SPRITES * NUM_INDICES_PER_SPRITE - NUM_INDICES_PER_SPRITE)
 			flush();
 
-		float x0 = pDX;
-		float y0 = pDY + pDH;
+		final var x0 = dx;
+		final var y0 = dy + dh;
 
-		float x1 = pDX;
-		float y1 = pDY;
+		final var x1 = dx;
+		final var y1 = dy;
 
-		float x2 = pDX + pDW;
-		float y2 = pDY;
+		final var x2 = dx + dw;
+		final var y2 = dy;
 
-		float x3 = pDX + pDW;
-		float y3 = pDY + pDH;
+		final var x3 = dx + dw;
+		final var y3 = dy + dh;
 
-		addVertToBuffer(x0, y0, pZ, 1f, color.r, color.g, color.b, color.a);
-		addVertToBuffer(x1, y1, pZ, 1f, color.r, color.g, color.b, color.a);
-		addVertToBuffer(x2, y2, pZ, 1f, color.r, color.g, color.b, color.a);
-		addVertToBuffer(x3, y3, pZ, 1f, color.r, color.g, color.b, color.a);
+		addVertToBuffer(x0, y0, zDepth, 1f, colorTint.r, colorTint.g, colorTint.b, colorTint.a);
+		addVertToBuffer(x1, y1, zDepth, 1f, colorTint.r, colorTint.g, colorTint.b, colorTint.a);
+		addVertToBuffer(x2, y2, zDepth, 1f, colorTint.r, colorTint.g, colorTint.b, colorTint.a);
+		addVertToBuffer(x3, y3, zDepth, 1f, colorTint.r, colorTint.g, colorTint.b, colorTint.a);
 
 		mIndexCount += NUM_INDICES_PER_SPRITE;
 	}
 
 	// ---
 
-	public void drawAroundCenter(Rectangle destRectangle, float pZ, float pRot, float pROX, float pROY, float pScale, Color color) {
-		if (destRectangle == null)
+	public void drawAroundCenter(Rectangle destRect, float zDepth, float rota, float rotx, float roty, float scale, Color colorTint) {
+		if (destRect == null)
 			return;
 
-		drawAroundCenter(destRectangle.x(), destRectangle.y(), destRectangle.width(), destRectangle.height(), pZ, pRot, pROX, pROY, pScale, color);
+		drawAroundCenter(destRect.x(), destRect.y(), destRect.width(), destRect.height(), zDepth, rota, rotx, roty, scale, colorTint);
 	}
 
-	public void drawAroundCenter(float pDX, float pDY, float pDW, float pDH, float pZ, float pRot, float pROX, float pROY, float pScale, Color color) {
+	public void drawAroundCenter(float dx, float dy, float dw, float dh, float zDepth, float rota, float rotx, float roty, float scale, Color colorTint) {
 		if (!mResourcesLoaded)
 			return;
 
 		if (!mIsDrawing)
 			return;
 
-		float sin = (float) Math.sin(pRot);
-		float cos = (float) Math.cos(pRot);
+		final var sin = (float) Math.sin(rota);
+		final var cos = (float) Math.cos(rota);
 
-		float lHalfW = (pDW * pScale) / 2f;
-		float lHalfH = (pDH * pScale) / 2f;
+		final var lHalfW = (dw * scale) / 2f;
+		final var lHalfH = (dh * scale) / 2f;
 
 		// define the origin of this sprite
 		// note: the rotation origin is not scaled with the sprite (this should be performed before calling this function)
-		float originX = -pROX;
-		float originY = -pROY;
+		final var originX = -rotx;
+		final var originY = -roty;
 
 		// Vertex 0 (bottom left)
-		float x0 = -(lHalfW - originX) * cos - (lHalfH + originY) * sin;
-		float y0 = -(lHalfW - originX) * sin + (lHalfH + originY) * cos;
+		final var x0 = -(lHalfW - originX) * cos - (lHalfH + originY) * sin;
+		final var y0 = -(lHalfW - originX) * sin + (lHalfH + originY) * cos;
 
 		// Vertex 1 (top left)
-		float x1 = -(lHalfW - originX) * cos - (-lHalfH + originY) * sin;
-		float y1 = -(lHalfW - originX) * sin + (-lHalfH + originY) * cos;
+		final var x1 = -(lHalfW - originX) * cos - (-lHalfH + originY) * sin;
+		final var y1 = -(lHalfW - originX) * sin + (-lHalfH + originY) * cos;
 
 		// Vertex 2 (top right)
-		float x2 = (lHalfW + originX) * cos - (-lHalfH + originY) * sin;
-		float y2 = (lHalfW + originX) * sin + (-lHalfH + originY) * cos;
+		final var x2 = (lHalfW + originX) * cos - (-lHalfH + originY) * sin;
+		final var y2 = (lHalfW + originX) * sin + (-lHalfH + originY) * cos;
 
 		// Vertex 3 (bottom right)
-		float x3 = (lHalfW + originX) * cos - (lHalfH + originY) * sin;
-		float y3 = (lHalfW + originX) * sin + (lHalfH + originY) * cos;
+		final var x3 = (lHalfW + originX) * cos - (lHalfH + originY) * sin;
+		final var y3 = (lHalfW + originX) * sin + (lHalfH + originY) * cos;
 
-		addVertToBuffer(pDX + x0, pDY + y0, pZ, 1f, color.r, color.g, color.b, color.a);
-		addVertToBuffer(pDX + x1, pDY + y1, pZ, 1f, color.r, color.g, color.b, color.a);
-		addVertToBuffer(pDX + x2, pDY + y2, pZ, 1f, color.r, color.g, color.b, color.a);
-		addVertToBuffer(pDX + x3, pDY + y3, pZ, 1f, color.r, color.g, color.b, color.a);
+		addVertToBuffer(dx + x0, dy + y0, zDepth, 1f, colorTint.r, colorTint.g, colorTint.b, colorTint.a);
+		addVertToBuffer(dx + x1, dy + y1, zDepth, 1f, colorTint.r, colorTint.g, colorTint.b, colorTint.a);
+		addVertToBuffer(dx + x2, dy + y2, zDepth, 1f, colorTint.r, colorTint.g, colorTint.b, colorTint.a);
+		addVertToBuffer(dx + x3, dy + y3, zDepth, 1f, colorTint.r, colorTint.g, colorTint.b, colorTint.a);
 
 		mIndexCount += NUM_INDICES_PER_SPRITE;
 	}

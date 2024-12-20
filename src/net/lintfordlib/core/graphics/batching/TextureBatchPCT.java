@@ -24,6 +24,9 @@ import net.lintfordlib.core.graphics.textures.TextureManager;
 import net.lintfordlib.core.maths.Matrix4f;
 import net.lintfordlib.core.maths.Vector2f;
 
+// Note - we use half pixel correction to attempt to sample the correct texels when applying the Uvs.
+// https://learn.microsoft.com/en-us/windows/win32/direct3d9/directly-mapping-texels-to-pixels?redirectedfrom=MSDN
+
 public class TextureBatchPCT {
 
 	private static class VertexDefinition {
@@ -121,10 +124,19 @@ public class TextureBatchPCT {
 	protected boolean mIsDrawing;
 
 	protected int mIndexCount;
+	protected boolean mUseHalfPixelCorrection;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public boolean useHalfPixelCorrection() {
+		return mUseHalfPixelCorrection;
+	}
+
+	public void useHalfPixelCorrection(boolean useHalfPixelCorrection) {
+		mUseHalfPixelCorrection = useHalfPixelCorrection;
+	}
 
 	public boolean isDrawing() {
 		return mIsDrawing;
@@ -192,6 +204,8 @@ public class TextureBatchPCT {
 		mBlendEnabled = true;
 		mBlendFuncSrcFactor = GL11.GL_SRC_ALPHA;
 		mBlendFuncDstFactor = GL11.GL_ONE_MINUS_SRC_ALPHA;
+
+		mUseHalfPixelCorrection = true;
 	}
 
 	// --------------------------------------
@@ -308,12 +322,12 @@ public class TextureBatchPCT {
 	// Methods
 	// --------------------------------------
 
-	public void begin(ICamera pCamera) {
-		begin(pCamera, mShader);
+	public void begin(ICamera camera) {
+		begin(camera, mShader);
 	}
 
-	public void begin(ICamera pCamera, ShaderMVP_PCT pCustomShader) {
-		if (!mResourcesLoaded || pCamera == null)
+	public void begin(ICamera camera, ShaderMVP_PCT customShader) {
+		if (!mResourcesLoaded || camera == null)
 			return;
 
 		if (mIsDrawing) {
@@ -321,12 +335,12 @@ public class TextureBatchPCT {
 			return;
 		}
 
-		if (pCustomShader != null)
-			mCustomShader = pCustomShader;
+		if (customShader != null)
+			mCustomShader = customShader;
 		else
 			mCustomShader = mShader;
 
-		mCamera = pCamera;
+		mCamera = camera;
 
 		if (mBuffer != null)
 			mBuffer.clear();
@@ -399,265 +413,302 @@ public class TextureBatchPCT {
 
 	// ---
 
-	public void draw(Texture pTexture, Rectangle pSrcRect, Rectangle pDestRect, float pZ, Color pTint) {
-		if (pSrcRect == null || pDestRect == null)
+	public void draw(Texture tex, Rectangle srcRect, Rectangle destRect, float zDepth, Color colorTint) {
+		if (srcRect == null || destRect == null)
 			return;
 
-		draw(pTexture, pSrcRect.x(), pSrcRect.y(), pSrcRect.width(), pSrcRect.height(), pDestRect, pZ, pTint);
+		draw(tex, srcRect.x(), srcRect.y(), srcRect.width(), srcRect.height(), destRect, zDepth, colorTint);
 	}
 
-	public void draw(Texture pTexture, Rectangle pSrcRect, float pDX, float pDY, float pDW, float pDH, float pZ, Color pTint) {
-		if (pSrcRect == null)
+	public void draw(Texture tex, Rectangle srcRect, float dx, float dy, float dw, float dh, float zDepth, Color colorTint) {
+		if (srcRect == null)
 			return;
 
-		draw(pTexture, pSrcRect.x(), pSrcRect.y(), pSrcRect.width(), pSrcRect.height(), pDX, pDY, pDW, pDH, pZ, pTint);
+		draw(tex, srcRect.x(), srcRect.y(), srcRect.width(), srcRect.height(), dx, dy, dw, dh, zDepth, colorTint);
 	}
 
-	public void draw(Texture pTexture, float pSX, float pSY, float pSW, float pSH, Rectangle pDestRect, float pZ, Color pTint) {
-		if (pDestRect == null)
+	public void draw(Texture tex, float sx, float sy, float sw, float sh, Rectangle destRect, float zDepth, Color colorTint) {
+		if (destRect == null)
 			return;
 
-		draw(pTexture, pSX, pSY, pSW, pSH, pDestRect.x(), pDestRect.y(), pDestRect.width(), pDestRect.height(), pZ, pTint);
+		draw(tex, sx, sy, sw, sh, destRect.x(), destRect.y(), destRect.width(), destRect.height(), zDepth, colorTint);
 	}
 
-	public void draw(Texture pTexture, float pSX, float pSY, float pSW, float pSH, float pDX, float pDY, float pDW, float pDH, float pZ, Color pTint) {
+	public void draw(Texture tex, float sx, float sy, float sw, float sh, float dx, float dy, float dw, float dh, float zDepth, Color colorTint) {
 		if (!mIsDrawing)
 			return;
 
-		if (mCamera.boundingRectangle().intersectsAA(pDX, pDY, pDW, pDH) == false)
+		if (!mCamera.boundingRectangle().intersectsAA(dx, dy, dw, dh))
 			return;
 
-		if (pTexture == null && TextureManager.USE_DEBUG_MISSING_TEXTURES)
-			pTexture = mResourceManager.textureManager().textureNotFound();
+		if (tex == null) {
+			if (TextureManager.USE_DEBUG_MISSING_TEXTURES)
+				tex = mResourceManager.textureManager().textureNotFound();
+			else
+				return;
+		}
 
 		if (mIndexCount >= MAX_SPRITES * NUM_INDICES_PER_SPRITE - NUM_INDICES_PER_SPRITE)
 			flush();
 
-		float lTextureSlotIndex = mTextureSlots.getTextureSlotIndex(pTexture);
+		int lTextureSlotIndex = mTextureSlots.getTextureSlotIndex(tex);
 		if (lTextureSlotIndex == TextureSlotBatch.TEXTURE_SLOTS_TEXTURE_INVALID)
 			return;
 
 		if (lTextureSlotIndex == TextureSlotBatch.TEXTURE_SLOTS_FULL) {
 			flush(); // flush and try again
-			lTextureSlotIndex = mTextureSlots.getTextureSlotIndex(pTexture);
+			lTextureSlotIndex = mTextureSlots.getTextureSlotIndex(tex);
 		}
 
-		float x0 = pDX;
-		float y0 = pDY + pDH;
-		float u0 = pSX / pTexture.getTextureWidth();
-		float v0 = (pSY + pSH) / pTexture.getTextureHeight();
+		final float texWidth = tex.getTextureWidth();
+		final float texHeight = tex.getTextureHeight();
 
-		float x1 = pDX;
-		float y1 = pDY;
-		float u1 = pSX / pTexture.getTextureWidth();
-		float v1 = pSY / pTexture.getTextureHeight();
+		final var pcx = mUseHalfPixelCorrection ? .5f : .0f;
+		final var pcy = mUseHalfPixelCorrection ? .5f : .0f;
 
-		float x2 = pDX + pDW;
-		float y2 = pDY;
-		float u2 = (pSX + pSW) / pTexture.getTextureWidth();
-		float v2 = pSY / pTexture.getTextureHeight();
+		final var x0 = dx;
+		final var y0 = dy + dh;
+		final var u0 = (sx + pcx) / texWidth;
+		final var v0 = (sy + sh - pcy) / texHeight;
 
-		float x3 = pDX + pDW;
-		float y3 = pDY + pDH;
-		float u3 = (pSX + pSW) / pTexture.getTextureWidth();
-		float v3 = (pSY + pSH) / pTexture.getTextureHeight();
+		final var x1 = dx;
+		final var y1 = dy;
+		final var u1 = (sx + pcx) / texWidth;
+		final var v1 = (sy + pcy) / texHeight;
 
-		addVertToBuffer(x0, y0, pZ, 1f, pTint.r, pTint.g, pTint.b, pTint.a, u0, v0, lTextureSlotIndex);
-		addVertToBuffer(x1, y1, pZ, 1f, pTint.r, pTint.g, pTint.b, pTint.a, u1, v1, lTextureSlotIndex);
-		addVertToBuffer(x2, y2, pZ, 1f, pTint.r, pTint.g, pTint.b, pTint.a, u2, v2, lTextureSlotIndex);
-		addVertToBuffer(x3, y3, pZ, 1f, pTint.r, pTint.g, pTint.b, pTint.a, u3, v3, lTextureSlotIndex);
+		final var x2 = dx + dw;
+		final var y2 = dy;
+		final var u2 = (sx + sw - pcx) / texWidth;
+		final var v2 = (sy + pcy) / texHeight;
 
-		mIndexCount += NUM_INDICES_PER_SPRITE;
-	}
+		final var x3 = dx + dw;
+		final var y3 = dy + dh;
+		final var u3 = (sx + sw - pcx) / texWidth;
+		final var v3 = (sy + sh - pcy) / texHeight;
 
-	public void draw(RenderTarget pTexture, float pSX, float pSY, float pSW, float pSH, Rectangle pDestRect, float pZ, Color pTint) {
-		if (pDestRect == null)
-			return;
-
-		draw(pTexture, pSX, pSY, pSW, pSH, pDestRect.x(), pDestRect.y(), pDestRect.width(), pDestRect.height(), pZ, pTint);
-	}
-
-	public void draw(RenderTarget texture, float pSX, float pSY, float pSW, float pSH, float pDX, float pDY, float pDW, float pDH, float pZ, Color pTint) {
-		if (!mIsDrawing)
-			return;
-
-		if (texture == null)
-			return;
-
-		if (mCamera.boundingRectangle().intersectsAA(pDX, pDY, pDW, pDH) == false)
-			return;
-
-		if (mIndexCount >= MAX_SPRITES * NUM_INDICES_PER_SPRITE - NUM_INDICES_PER_SPRITE)
-			flush();
-
-		float lTextureSlotIndex = mTextureSlots.getTextureSlotIndex(texture.colorTextureID());
-		if (lTextureSlotIndex == TextureSlotBatch.TEXTURE_SLOTS_TEXTURE_INVALID)
-			return;
-
-		if (lTextureSlotIndex == TextureSlotBatch.TEXTURE_SLOTS_FULL) {
-			flush(); // flush and try again
-			lTextureSlotIndex = mTextureSlots.getTextureSlotIndex(texture.colorTextureID());
-		}
-
-		float x0 = pDX;
-		float y0 = pDY + pDH;
-		float u0 = pSX / (float) texture.width();
-		float v0 = (pSY + pSH) / (float) texture.height();
-
-		float x1 = pDX;
-		float y1 = pDY;
-		float u1 = pSX / (float) texture.width();
-		float v1 = pSY / (float) texture.height();
-
-		float x2 = pDX + pDW;
-		float y2 = pDY;
-		float u2 = (pSX + pSW) / (float) texture.width();
-		float v2 = pSY / (float) texture.height();
-
-		float x3 = pDX + pDW;
-		float y3 = pDY + pDH;
-		float u3 = (pSX + pSW) / (float) texture.width();
-		float v3 = (pSY + pSH) / (float) texture.height();
-
-		addVertToBuffer(x0, y0, pZ, 1f, pTint.r, pTint.g, pTint.b, pTint.a, u0, v0, lTextureSlotIndex);
-		addVertToBuffer(x1, y1, pZ, 1f, pTint.r, pTint.g, pTint.b, pTint.a, u1, v1, lTextureSlotIndex);
-		addVertToBuffer(x2, y2, pZ, 1f, pTint.r, pTint.g, pTint.b, pTint.a, u2, v2, lTextureSlotIndex);
-		addVertToBuffer(x3, y3, pZ, 1f, pTint.r, pTint.g, pTint.b, pTint.a, u3, v3, lTextureSlotIndex);
+		addVertToBuffer(x0, y0, zDepth, 1f, colorTint.r, colorTint.g, colorTint.b, colorTint.a, u0, v0, lTextureSlotIndex);
+		addVertToBuffer(x1, y1, zDepth, 1f, colorTint.r, colorTint.g, colorTint.b, colorTint.a, u1, v1, lTextureSlotIndex);
+		addVertToBuffer(x2, y2, zDepth, 1f, colorTint.r, colorTint.g, colorTint.b, colorTint.a, u2, v2, lTextureSlotIndex);
+		addVertToBuffer(x3, y3, zDepth, 1f, colorTint.r, colorTint.g, colorTint.b, colorTint.a, u3, v3, lTextureSlotIndex);
 
 		mIndexCount += NUM_INDICES_PER_SPRITE;
 	}
 
 	// ---
 
-	public void drawQuadrilateral(Texture texture, Rectangle srcRect, List<Vector2f> dstPoints, float zDepth, Color colorTint) {
-		drawQuadrilateral(texture, srcRect.x(), srcRect.y(), srcRect.width(), srcRect.height(), dstPoints, zDepth, colorTint);
+	public void draw(RenderTarget renderTartget, float sx, float sy, float sw, float sh, Rectangle destRect, float zDepth, Color colorTint) {
+		if (destRect == null)
+			return;
+
+		draw(renderTartget, sx, sy, sw, sh, destRect.x(), destRect.y(), destRect.width(), destRect.height(), zDepth, colorTint);
 	}
 
-	public void drawQuadrilateral(Texture texture, float sx, float sy, float sw, float sh, List<Vector2f> dstPoints, float pZ, Color pTint) {
+	public void draw(RenderTarget renderTarget, float sx, float sy, float sw, float sh, float dx, float dy, float dw, float dh, float zDepth, Color colorTint) {
+		if (!mIsDrawing)
+			return;
+
+		if (renderTarget == null)
+			return;
+
+		if (!mCamera.boundingRectangle().intersectsAA(dx, dy, dw, dh))
+			return;
+
+		if (mIndexCount >= MAX_SPRITES * NUM_INDICES_PER_SPRITE - NUM_INDICES_PER_SPRITE)
+			flush();
+
+		int lTextureSlotIndex = mTextureSlots.getTextureSlotIndex(renderTarget.colorTextureID());
+		if (lTextureSlotIndex == TextureSlotBatch.TEXTURE_SLOTS_TEXTURE_INVALID)
+			return;
+
+		if (lTextureSlotIndex == TextureSlotBatch.TEXTURE_SLOTS_FULL) {
+			flush(); // flush and try again
+			lTextureSlotIndex = mTextureSlots.getTextureSlotIndex(renderTarget.colorTextureID());
+		}
+
+		final var rtWidth = renderTarget.width();
+		final var rtHeight = renderTarget.height();
+
+		final var pcx = mUseHalfPixelCorrection ? .5f : .0f;
+		final var pcy = mUseHalfPixelCorrection ? .5f : .0f;
+
+		final var x0 = dx;
+		final var y0 = dy + dh;
+		final var u0 = (sx + pcx) / rtWidth;
+		final var v0 = (sy + sh - pcy) / rtHeight;
+
+		final var x1 = dx;
+		final var y1 = dy;
+		final var u1 = (sx + pcx) / rtWidth;
+		final var v1 = (sy + pcy) / rtHeight;
+
+		final var x2 = dx + dw;
+		final var y2 = dy;
+		final var u2 = (sx + sw - pcx) / rtWidth;
+		final var v2 = (sy + pcy) / rtHeight;
+
+		final var x3 = dx + dw;
+		final var y3 = dy + dh;
+		final var u3 = (sx + sw - pcx) / rtWidth;
+		final var v3 = (sy + sh - pcy) / rtHeight;
+
+		addVertToBuffer(x0, y0, zDepth, 1f, colorTint.r, colorTint.g, colorTint.b, colorTint.a, u0, v0, lTextureSlotIndex);
+		addVertToBuffer(x1, y1, zDepth, 1f, colorTint.r, colorTint.g, colorTint.b, colorTint.a, u1, v1, lTextureSlotIndex);
+		addVertToBuffer(x2, y2, zDepth, 1f, colorTint.r, colorTint.g, colorTint.b, colorTint.a, u2, v2, lTextureSlotIndex);
+		addVertToBuffer(x3, y3, zDepth, 1f, colorTint.r, colorTint.g, colorTint.b, colorTint.a, u3, v3, lTextureSlotIndex);
+
+		mIndexCount += NUM_INDICES_PER_SPRITE;
+	}
+
+	// ---
+
+	public void drawQuadrilateral(Texture tex, Rectangle srcRect, List<Vector2f> dstPoints, float zDepth, Color colorTint) {
+		drawQuadrilateral(tex, srcRect.x(), srcRect.y(), srcRect.width(), srcRect.height(), dstPoints, zDepth, colorTint);
+	}
+
+	public void drawQuadrilateral(Texture tex, float sx, float sy, float sw, float sh, List<Vector2f> dstPoints, float zDepth, Color colorTint) {
 		if (dstPoints == null || dstPoints.size() != 4)
 			return; // Quadrilateral requires exactly 4 points
 
 		if (!mIsDrawing)
 			return;
 
-		if (texture == null && TextureManager.USE_DEBUG_MISSING_TEXTURES)
-			texture = mResourceManager.textureManager().textureNotFound();
+		if (tex == null) {
+			if (TextureManager.USE_DEBUG_MISSING_TEXTURES)
+				tex = mResourceManager.textureManager().textureNotFound();
+			else
+				return;
+		}
 
 		if (mIndexCount >= MAX_SPRITES * NUM_INDICES_PER_SPRITE - NUM_INDICES_PER_SPRITE)
 			flush();
 
-		float lTextureSlotIndex = mTextureSlots.getTextureSlotIndex(texture);
+		int lTextureSlotIndex = mTextureSlots.getTextureSlotIndex(tex);
 		if (lTextureSlotIndex == TextureSlotBatch.TEXTURE_SLOTS_TEXTURE_INVALID)
 			return;
 
 		if (lTextureSlotIndex == TextureSlotBatch.TEXTURE_SLOTS_FULL) {
 			flush(); // flush and try again
-			lTextureSlotIndex = mTextureSlots.getTextureSlotIndex(texture);
+			lTextureSlotIndex = mTextureSlots.getTextureSlotIndex(tex);
 		}
 
-		float x0 = dstPoints.get(0).x;
-		float y0 = dstPoints.get(0).y;
-		float u0 = sx / texture.getTextureWidth();
-		float v0 = (sy + sh) / texture.getTextureHeight();
+		final var texWidth = tex.getTextureWidth();
+		final var texHeight = tex.getTextureHeight();
 
-		float x1 = dstPoints.get(1).x;
-		float y1 = dstPoints.get(1).y;
-		float u1 = sx / texture.getTextureWidth();
-		float v1 = sy / texture.getTextureHeight();
+		final var pcx = mUseHalfPixelCorrection ? .5f : .0f;
+		final var pcy = mUseHalfPixelCorrection ? .5f : .0f;
 
-		float x2 = dstPoints.get(2).x;
-		float y2 = dstPoints.get(2).y;
-		float u2 = (sx + sw) / texture.getTextureWidth();
-		float v2 = sy / texture.getTextureHeight();
+		final var x0 = dstPoints.get(0).x;
+		final var y0 = dstPoints.get(0).y;
+		final var u0 = (sx + pcx) / texWidth;
+		final var v0 = (sy + sh - pcy) / texHeight;
 
-		float x3 = dstPoints.get(3).x;
-		float y3 = dstPoints.get(3).y;
-		float u3 = (sx + sw) / texture.getTextureWidth();
-		float v3 = (sy + sh) / texture.getTextureHeight();
+		final var x1 = dstPoints.get(1).x;
+		final var y1 = dstPoints.get(1).y;
+		final var u1 = (sx + pcx) / texWidth;
+		final var v1 = (sy + pcy) / texHeight;
 
-		addVertToBuffer(x0, y0, pZ, 1f, pTint.r, pTint.g, pTint.b, pTint.a, u0, v0, lTextureSlotIndex);
-		addVertToBuffer(x1, y1, pZ, 1f, pTint.r, pTint.g, pTint.b, pTint.a, u1, v1, lTextureSlotIndex);
-		addVertToBuffer(x2, y2, pZ, 1f, pTint.r, pTint.g, pTint.b, pTint.a, u2, v2, lTextureSlotIndex);
-		addVertToBuffer(x3, y3, pZ, 1f, pTint.r, pTint.g, pTint.b, pTint.a, u3, v3, lTextureSlotIndex);
+		final var x2 = dstPoints.get(2).x;
+		final var y2 = dstPoints.get(2).y;
+		final var u2 = (sx + sw - pcx) / texWidth;
+		final var v2 = (sy + pcy) / texHeight;
+
+		final var x3 = dstPoints.get(3).x;
+		final var y3 = dstPoints.get(3).y;
+		final var u3 = (sx + sw - pcx) / texWidth;
+		final var v3 = (sy + sh - pcy) / texHeight;
+
+		addVertToBuffer(x0, y0, zDepth, 1f, colorTint.r, colorTint.g, colorTint.b, colorTint.a, u0, v0, lTextureSlotIndex);
+		addVertToBuffer(x1, y1, zDepth, 1f, colorTint.r, colorTint.g, colorTint.b, colorTint.a, u1, v1, lTextureSlotIndex);
+		addVertToBuffer(x2, y2, zDepth, 1f, colorTint.r, colorTint.g, colorTint.b, colorTint.a, u2, v2, lTextureSlotIndex);
+		addVertToBuffer(x3, y3, zDepth, 1f, colorTint.r, colorTint.g, colorTint.b, colorTint.a, u3, v3, lTextureSlotIndex);
 
 		mIndexCount += NUM_INDICES_PER_SPRITE;
 	}
 
 	// ---
 
-	public void drawAroundCenter(Texture pTexture, Rectangle pSrcRect, float pDX, float pDY, float pDW, float pDH, float pZ, float pRot, float pROX, float pROY, float pScale, Color pTint) {
-		if (pSrcRect == null)
+	public void drawAroundCenter(Texture tex, Rectangle srcRect, float dx, float dy, float dw, float dh, float zDepth, float rota, float rotx, float roty, float scale, Color colorTint) {
+		if (srcRect == null)
 			return;
 
-		drawAroundCenter(pTexture, pSrcRect.x(), pSrcRect.y(), pSrcRect.width(), pSrcRect.height(), pDX, pDY, pDW, pDH, pZ, pRot, pROX, pROY, pScale, pTint);
+		drawAroundCenter(tex, srcRect.x(), srcRect.y(), srcRect.width(), srcRect.height(), dx, dy, dw, dh, zDepth, rota, rotx, roty, scale, colorTint);
 	}
 
-	public void drawAroundCenter(Texture pTexture, float pSX, float pSY, float pSW, float pSH, float pDX, float pDY, float pDW, float pDH, float pZ, float pRot, float pROX, float pROY, float pScale, Color pTint) {
-
+	public void drawAroundCenter(Texture tex, float sx, float sy, float sq, float sh, float dx, float dy, float dw, float dh, float zDepth, float rota, float rotx, float roty, float scale, Color colorTint) {
 		if (!mResourcesLoaded)
 			return;
 
 		if (!mIsDrawing)
 			return;
 
-		if (pTexture == null && TextureManager.USE_DEBUG_MISSING_TEXTURES)
-			pTexture = mResourceManager.textureManager().textureNotFound();
+		if (tex == null) {
+			if (TextureManager.USE_DEBUG_MISSING_TEXTURES)
+				tex = mResourceManager.textureManager().textureNotFound();
+			else
+				return;
+		}
 
-		float lTextureSlotIndex = mTextureSlots.getTextureSlotIndex(pTexture);
+		var lTextureSlotIndex = mTextureSlots.getTextureSlotIndex(tex);
 		if (lTextureSlotIndex == TextureSlotBatch.TEXTURE_SLOTS_TEXTURE_INVALID)
 			return;
 
 		if (lTextureSlotIndex == TextureSlotBatch.TEXTURE_SLOTS_FULL) {
 			flush(); // flush and try again
-			lTextureSlotIndex = mTextureSlots.getTextureSlotIndex(pTexture);
+			lTextureSlotIndex = mTextureSlots.getTextureSlotIndex(tex);
 		}
 
-		float sin = (float) Math.sin(pRot);
-		float cos = (float) Math.cos(pRot);
+		final var texWidth = tex.getTextureWidth();
+		final var texHeight = tex.getTextureHeight();
 
-		float lHalfW = (pDW * pScale) / 2f;
-		float lHalfH = (pDH * pScale) / 2f;
+		final var sin = (float) Math.sin(rota);
+		final var cos = (float) Math.cos(rota);
+
+		final var lHalfW = (dw * scale) / 2f;
+		final var lHalfH = (dh * scale) / 2f;
 
 		// define the origin of this sprite
 		// note: the rotation origin is not scaled with the sprite (this should be performed before calling this function)
-		float originX = -pROX;
-		float originY = -pROY;
+		final var originX = -rotx;
+		final var originY = -roty;
+
+		final var pcx = mUseHalfPixelCorrection ? .5f : .0f;
+		final var pcy = mUseHalfPixelCorrection ? .5f : .0f;
 
 		// Vertex 0 (bottom left)
-		float x0 = -(lHalfW - originX) * cos - (lHalfH + originY) * sin;
-		float y0 = -(lHalfW - originX) * sin + (lHalfH + originY) * cos;
-		float u0 = pSX / pTexture.getTextureWidth();
-		float v0 = (pSY + pSH) / pTexture.getTextureHeight();
+		final var x0 = -(lHalfW - originX) * cos - (lHalfH + originY) * sin;
+		final var y0 = -(lHalfW - originX) * sin + (lHalfH + originY) * cos;
+		final var u0 = (sx + pcx) / texWidth;
+		final var v0 = (sy + sh - pcy) / texHeight;
 
 		// Vertex 1 (top left)
-		float x1 = -(lHalfW - originX) * cos - (-lHalfH + originY) * sin;
-		float y1 = -(lHalfW - originX) * sin + (-lHalfH + originY) * cos;
-		float u1 = pSX / pTexture.getTextureWidth();
-		float v1 = pSY / pTexture.getTextureHeight();
+		final var x1 = -(lHalfW - originX) * cos - (-lHalfH + originY) * sin;
+		final var y1 = -(lHalfW - originX) * sin + (-lHalfH + originY) * cos;
+		final var u1 = (sx + pcx) / texWidth;
+		final var v1 = (sy + pcy) / texHeight;
 
 		// Vertex 2 (top right)
-		float x2 = (lHalfW + originX) * cos - (-lHalfH + originY) * sin;
-		float y2 = (lHalfW + originX) * sin + (-lHalfH + originY) * cos;
-		float u2 = (pSX + pSW) / pTexture.getTextureWidth();
-		float v2 = pSY / pTexture.getTextureHeight();
+		final var x2 = (lHalfW + originX) * cos - (-lHalfH + originY) * sin;
+		final var y2 = (lHalfW + originX) * sin + (-lHalfH + originY) * cos;
+		final var u2 = (sx + sq - pcx) / texWidth;
+		final var v2 = (sy + pcy) / texHeight;
 
 		// Vertex 3 (bottom right)
-		float x3 = (lHalfW + originX) * cos - (lHalfH + originY) * sin;
-		float y3 = (lHalfW + originX) * sin + (lHalfH + originY) * cos;
-		float u3 = (pSX + pSW) / pTexture.getTextureWidth();
-		float v3 = (pSY + pSH) / pTexture.getTextureHeight();
+		final var x3 = (lHalfW + originX) * cos - (lHalfH + originY) * sin;
+		final var y3 = (lHalfW + originX) * sin + (lHalfH + originY) * cos;
+		final var u3 = (sx + sq - pcx) / texWidth;
+		final var v3 = (sy + sh - pcy) / texHeight;
 
-		addVertToBuffer(pDX + x0, pDY + y0, pZ, 1f, pTint.r, pTint.g, pTint.b, pTint.a, u0, v0, lTextureSlotIndex);
-		addVertToBuffer(pDX + x1, pDY + y1, pZ, 1f, pTint.r, pTint.g, pTint.b, pTint.a, u1, v1, lTextureSlotIndex);
-		addVertToBuffer(pDX + x2, pDY + y2, pZ, 1f, pTint.r, pTint.g, pTint.b, pTint.a, u2, v2, lTextureSlotIndex);
-		addVertToBuffer(pDX + x3, pDY + y3, pZ, 1f, pTint.r, pTint.g, pTint.b, pTint.a, u3, v3, lTextureSlotIndex);
+		addVertToBuffer(dx + x0, dy + y0, zDepth, 1f, colorTint.r, colorTint.g, colorTint.b, colorTint.a, u0, v0, lTextureSlotIndex);
+		addVertToBuffer(dx + x1, dy + y1, zDepth, 1f, colorTint.r, colorTint.g, colorTint.b, colorTint.a, u1, v1, lTextureSlotIndex);
+		addVertToBuffer(dx + x2, dy + y2, zDepth, 1f, colorTint.r, colorTint.g, colorTint.b, colorTint.a, u2, v2, lTextureSlotIndex);
+		addVertToBuffer(dx + x3, dy + y3, zDepth, 1f, colorTint.r, colorTint.g, colorTint.b, colorTint.a, u3, v3, lTextureSlotIndex);
 
 		mIndexCount += NUM_INDICES_PER_SPRITE;
 	}
 
 	// ---
 
-	protected void addVertToBuffer(float x, float y, float z, float w, float r, float g, float b, float a, float u, float v, float texIndex) {
+	protected void addVertToBuffer(float x, float y, float z, float w, float r, float g, float b, float a, float u, float v, int texIndex) {
 		mBuffer.put(x);
 		mBuffer.put(y);
 		mBuffer.put(z);

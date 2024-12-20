@@ -30,18 +30,11 @@ public class SwaySpriteBatch extends SpriteBatch {
 	}
 
 	// --------------------------------------
-	// Constructor
-	// --------------------------------------
-
-	public SwaySpriteBatch() {
-
-	}
-
-	// --------------------------------------
 	// Methods
 	// --------------------------------------
 
-	public void draw(SpriteSheetDefinition spriteSheetDefinition, SpriteInstance spriteInstance, Rectangle destRectangle, float zDepth, Color colorTint) {
+	@Override
+	public void draw(SpriteSheetDefinition spriteSheetDefinition, SpriteInstance spriteInstance, Rectangle destRect, float zDepth, Color colorTint) {
 		if (spriteSheetDefinition == null)
 			return;
 
@@ -54,78 +47,79 @@ public class SwaySpriteBatch extends SpriteBatch {
 		final var lTexture = spriteSheetDefinition.texture();
 		final var lCurrentFrame = spriteInstance.currentSpriteFrame();
 
-		drawGrass(lTexture, lCurrentFrame, destRectangle, zDepth, colorTint);
+		drawGrass(lTexture, lCurrentFrame, destRect, zDepth, colorTint);
 	}
 
-	public void drawGrass(Texture texture, Rectangle sourceRectangle, Rectangle destRectangle, float zDepth, Color colorTint) {
-		if (sourceRectangle == null)
+	public void drawGrass(Texture tex, Rectangle srcRect, Rectangle destRect, float zDepth, Color colorTint) {
+		if (srcRect == null)
 			return;
 
-		drawGrass(texture, sourceRectangle.x(), sourceRectangle.y(), sourceRectangle.width(), sourceRectangle.height(), destRectangle, zDepth, colorTint);
+		drawGrass(tex, srcRect.x(), srcRect.y(), srcRect.width(), srcRect.height(), destRect, zDepth, colorTint);
 	}
 
-	public void drawGrass(Texture texture, float sourceX, float sourceY, float sourceWidth, float sourceHeight, Rectangle destRectangle, float zDepth, Color colorTint) {
+	public void drawGrass(Texture tex, float sx, float sy, float sw, float sh, Rectangle destRect, float zDepth, Color colorTint) {
 		if (!isLoaded())
 			return;
 
 		if (!mIsDrawing)
 			return;
 
-		if (destRectangle == null)
+		if (destRect == null)
 			return;
 
-		final float pDX = destRectangle.x();
-		final float pDY = destRectangle.y();
-		final float pDW = destRectangle.width();
-		final float pDH = destRectangle.height();
+		final float pDX = destRect.x();
+		final float pDY = destRect.y();
+		final float pDW = destRect.width();
+		final float pDH = destRect.height();
 
-		if (texture == null) {
+		if (tex == null) {
 			if (TextureManager.USE_DEBUG_MISSING_TEXTURES) {
-				texture = mResourceManager.textureManager().textureNotFound();
+				tex = mResourceManager.textureManager().textureNotFound();
 			} else {
 				return;
 			}
 		}
 
-		float lTextureSlotIndex = mTextureSlots.getTextureSlotIndex(texture);
+		int lTextureSlotIndex = mTextureSlots.getTextureSlotIndex(tex);
 		if (lTextureSlotIndex == TextureSlotBatch.TEXTURE_SLOTS_TEXTURE_INVALID)
 			return;
 
 		if (lTextureSlotIndex == TextureSlotBatch.TEXTURE_SLOTS_FULL) {
 			flush(); // flush and try again
-			lTextureSlotIndex = mTextureSlots.getTextureSlotIndex(texture);
+			lTextureSlotIndex = mTextureSlots.getTextureSlotIndex(tex);
 		}
 
-		final float lHalfWPixel = (1f / texture.getTextureWidth()) * 0.5f;
-		final float lHalfHPixel = (1f / texture.getTextureHeight()) * 0.5f;
+		final var pcx = useHalfPixelCorrection() ? .5f : .0f;
+		final var pcy = useHalfPixelCorrection() ? .5f : .0f;
 
 		// Vertex 0
 		float x0 = pDX;
 		float y0 = pDY;
-		float u0 = sourceX / texture.getTextureWidth() + lHalfWPixel;
-		float v0 = sourceY / (float) texture.getTextureHeight() + lHalfHPixel;
+		float u0 = (sx + pcx) / tex.getTextureWidth();
+		float v0 = (sy + pcy) / tex.getTextureHeight();
 
 		// Vertex 1
 		float x1 = pDX + pDW;
 		float y1 = pDY;
-		float u1 = (sourceX + sourceWidth) / texture.getTextureWidth() - lHalfWPixel;
-		float v1 = sourceY / texture.getTextureHeight() + lHalfHPixel;
+		float u1 = (sx + sw - pcx) / tex.getTextureWidth();
+		float v1 = (sy + pcy) / tex.getTextureHeight();
 
 		// Vertex 2
 		float x2 = pDX;
 		float y2 = pDY + pDH;
-		float u2 = sourceX / texture.getTextureWidth() + lHalfWPixel;
-		float v2 = (sourceY + sourceHeight) / texture.getTextureHeight() - lHalfHPixel;
+		float u2 = (sx + pcx) / tex.getTextureWidth();
+		float v2 = (sy + sh - pcy) / tex.getTextureHeight();
 
 		// Vertex 3
 		float x3 = pDX + pDW;
 		float y3 = pDY + pDH;
-		float u3 = (sourceX + sourceWidth) / texture.getTextureWidth() - lHalfWPixel;
-		float v3 = (sourceY + sourceHeight) / texture.getTextureHeight() - lHalfHPixel;
+		float u3 = (sx + sw - pcx) / tex.getTextureWidth();
+		float v3 = (sy + sh - pcy) / tex.getTextureHeight();
 
 		float lBottom = mSwayBottomOfSprite ? 1.0f : 0.0f;
 		float lTop = !mSwayBottomOfSprite ? 1.0f : 0.0f;
 
+		// TOOD : The winding order here seems incorrect (not being updated with the rest of the engine?)
 		// CCW 102203
 		addVertToBuffer(x1, y1, zDepth, 1f, lTop, 0f, 0f, colorTint.a, u1, v1, lTextureSlotIndex); // 1
 		addVertToBuffer(x0, y0, zDepth, 1f, lTop, 0f, 0f, colorTint.a, u0, v0, lTextureSlotIndex); // 0
