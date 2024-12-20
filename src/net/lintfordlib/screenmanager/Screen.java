@@ -281,6 +281,9 @@ public abstract class Screen implements IInputProcessor {
 			screenManager.core().controllerManager().removeControllerGroup(entityGroupUid());
 		}
 
+		mRendererManager.removeAllListeners();
+		mRendererManager.removeAllRenderers();
+
 		mCoreSpritesheet = null;
 
 		mResourcesLoaded = false;
@@ -353,6 +356,9 @@ public abstract class Screen implements IInputProcessor {
 	}
 
 	public void draw(LintfordCore core) {
+		if (!mRendererManager.isLoaded())
+			throw new RuntimeException("The RendererManager has been unloaded!");
+
 		// This will default to rendering all passes for both BaseRenderers and WindowRenderers.
 		mRendererManager.draw(core);
 	}
@@ -403,9 +409,7 @@ public abstract class Screen implements IInputProcessor {
 	}
 
 	public void onScreenRemoved() {
-		mRendererManager.unloadResources();
-		mRendererManager.removeAllListeners();
-		mRendererManager.removeAllRenderers();
+
 	}
 
 	public void onGainedFocus() {
