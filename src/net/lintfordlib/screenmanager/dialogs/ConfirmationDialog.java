@@ -3,7 +3,6 @@ package net.lintfordlib.screenmanager.dialogs;
 import net.lintfordlib.screenmanager.MenuEntry;
 import net.lintfordlib.screenmanager.Screen;
 import net.lintfordlib.screenmanager.ScreenManager;
-import net.lintfordlib.screenmanager.layouts.BaseLayout;
 import net.lintfordlib.screenmanager.layouts.ListLayout;
 
 public class ConfirmationDialog extends BaseDialog {
@@ -52,8 +51,6 @@ public class ConfirmationDialog extends BaseDialog {
 
 		mListLayout = new ListLayout(this);
 
-		createMenuEntries(mListLayout);
-
 		mConfirmEntry = new MenuEntry(screenManager, this, "Okay");
 		mConfirmEntry.registerClickListener(this, BUTTON_CONFIRM_YES);
 
@@ -78,10 +75,6 @@ public class ConfirmationDialog extends BaseDialog {
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
-
-	protected void createMenuEntries(BaseLayout layout) {
-
-	}
 
 	@Override
 	protected void handleOnClick() {
