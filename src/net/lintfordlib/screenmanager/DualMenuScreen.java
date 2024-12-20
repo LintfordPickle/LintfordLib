@@ -7,6 +7,7 @@ import org.lwjgl.glfw.GLFW;
 
 import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.core.LintfordCore;
+import net.lintfordlib.renderers.RendererManager;
 import net.lintfordlib.renderers.ZLayers;
 import net.lintfordlib.screenmanager.ScreenManagerConstants.LAYOUT_ALIGNMENT;
 import net.lintfordlib.screenmanager.ScreenManagerConstants.LAYOUT_WIDTH;
@@ -28,8 +29,12 @@ public abstract class DualMenuScreen extends MenuScreen {
 	// Constructor
 	// --------------------------------------
 
-	public DualMenuScreen(ScreenManager pScreenManager, String pMenuTitle) {
-		super(pScreenManager, pMenuTitle);
+	protected DualMenuScreen(ScreenManager screenManager, String menuTitle) {
+		this(screenManager, menuTitle, null);
+	}
+
+	protected DualMenuScreen(ScreenManager screenManager, String menuTitle, RendererManager rendererManager) {
+		super(screenManager, menuTitle, rendererManager);
 
 		mRightLayouts = new ArrayList<>();
 
@@ -197,6 +202,7 @@ public abstract class DualMenuScreen extends MenuScreen {
 	// Overriden-Methods
 	// --------------------------------------
 
+	@Override
 	protected void onNavigationUp(LintfordCore core) {
 		if (isEntryActive())
 			return;
@@ -213,6 +219,7 @@ public abstract class DualMenuScreen extends MenuScreen {
 		screenManager.uiSounds().play(ConstantsScreenManagerAudio.SCREENMANAGER_AUDIO_ENTRY_NAVIGATION_UP);
 	}
 
+	@Override
 	protected void onNavigationDown(LintfordCore core) {
 		if (isEntryActive())
 			return;
@@ -617,5 +624,4 @@ public abstract class DualMenuScreen extends MenuScreen {
 			}
 		}
 	}
-
 }
