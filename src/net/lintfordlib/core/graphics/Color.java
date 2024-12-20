@@ -2,6 +2,10 @@ package net.lintfordlib.core.graphics;
 
 public class Color {
 
+	public static Color GetNewColorFromRGBA(float red, float green, float blue) {
+		return new Color(red / 255.f, green / 255.f, blue / 255.f);
+	}
+
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
