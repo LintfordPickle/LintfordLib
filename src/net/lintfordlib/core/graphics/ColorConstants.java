@@ -114,4 +114,14 @@ public class ColorConstants {
 	public static final Color BLUE_SKY = new Color(64f / 255f, 156f / 255f, 255f / 255f);
 	public static final Color OVERCAST = new Color(201f / 255f, 226f / 255f, 255f / 255f);
 
+	// Skin Tones
+	public static final Color SKINTONE00 = Color.GetNewColorFromRGBA(237.f, 207.f, 199.f);
+	public static final Color SKINTONE01 = Color.GetNewColorFromRGBA(226.f, 168.f, 152.f);
+	public static final Color SKINTONE02 = Color.GetNewColorFromRGBA(204.f, 154.f, 139.f);
+	public static final Color SKINTONE03 = Color.GetNewColorFromRGBA(209.f, 148.f, 119.f);
+	public static final Color SKINTONE04 = Color.GetNewColorFromRGBA(196.f, 146.f, 107.f);
+	public static final Color SKINTONE05 = Color.GetNewColorFromRGBA(89.f, 48.f, 16.f);
+
+	public static final Color[] SKINTONES = new Color[] { SKINTONE00, SKINTONE01, SKINTONE02, SKINTONE03, SKINTONE04, SKINTONE05 };
+
 }
