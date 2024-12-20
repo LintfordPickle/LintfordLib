@@ -230,7 +230,7 @@ public class HUD implements ICamera, IResizeListener {
 	 */
 	@Override
 	public void setZoomFactor(float zoomFactor) {
-
+		// ignore
 	}
 
 	@Override
