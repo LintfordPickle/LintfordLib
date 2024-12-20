@@ -95,6 +95,10 @@ public class SpriteSheetDefinition {
 		return mAnimationFramesMap.size();
 	}
 
+	public int getSpriteFrameCount() {
+		return mSpriteFrames.length;
+	}
+
 	public boolean reloadable() {
 		return mIsReloadable;
 	}
