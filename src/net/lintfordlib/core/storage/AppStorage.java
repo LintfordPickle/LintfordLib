@@ -7,6 +7,10 @@ import net.lintfordlib.core.debug.Debug;
 
 public class AppStorage {
 
+	private AppStorage() {
+
+	}
+
 	// --------------------------------------
 	// Constants
 	// --------------------------------------
@@ -15,8 +19,8 @@ public class AppStorage {
 	// https://docs.oracle.com/javase/tutorial/essential/environment/sysprop.html
 	public static boolean useLocalDirectory = true;
 
-	public static final String DataFolderName = "data";
-	public static final String ConfigFolderName = "config";
+	public static final String DATA_FOLDER_NAME = "data";
+	public static final String CONFIG_FOLDER_NAME = "config";
 
 	// --------------------------------------
 	// Methods
@@ -27,14 +31,14 @@ public class AppStorage {
 		final var lConfigFolder = getGameConfigDirectory(applicationName);
 
 		final var lConfigDirectory = new File(String.valueOf(lConfigFolder));
-		if (lConfigDirectory != null && !lConfigDirectory.exists()) {
-			Debug.debugManager().logger().i("Storage", "Creating game config directory at: " + lConfigFolder);
+		if (!lConfigDirectory.exists()) {
+			Debug.debugManager().logger().i(AppStorage.class.getSimpleName(), "Creating game config directory at: " + lConfigFolder);
 			lConfigDirectory.mkdir();
 		}
 
 		final var lDataDirectory = new File(String.valueOf(lDataFolder));
-		if (lDataDirectory != null && !lDataDirectory.exists()) {
-			Debug.debugManager().logger().i("Storage", "Creating game data directory at: " + lDataFolder);
+		if (!lDataDirectory.exists()) {
+			Debug.debugManager().logger().i(AppStorage.class.getSimpleName(), "Creating game data directory at: " + lDataFolder);
 			lDataDirectory.mkdir();
 		}
 
@@ -48,13 +52,13 @@ public class AppStorage {
 		String lDataFolder = null;
 
 		if (useLocalDirectory) {
-			lDataFolder = System.getProperty("user.dir") + FileUtils.FILE_SEPERATOR + DataFolderName + FileUtils.FILE_SEPERATOR;
+			lDataFolder = System.getProperty("user.dir") + FileUtils.FILE_SEPERATOR + DATA_FOLDER_NAME + FileUtils.FILE_SEPERATOR;
 		} else {
 			final var lOSName = System.getProperty("os.name").toLowerCase();
 			if (lOSName.startsWith("win")) {
-				lDataFolder = System.getenv("AppData") + FileUtils.FILE_SEPERATOR + applicationName + FileUtils.FILE_SEPERATOR + DataFolderName + FileUtils.FILE_SEPERATOR;
+				lDataFolder = System.getenv("AppData") + FileUtils.FILE_SEPERATOR + applicationName + FileUtils.FILE_SEPERATOR + DATA_FOLDER_NAME + FileUtils.FILE_SEPERATOR;
 			} else if (lOSName.startsWith("linux") || lOSName.startsWith("mac") || lOSName.startsWith("darwin")) {
-				lDataFolder = System.getProperty("user.home") + FileUtils.FILE_SEPERATOR + "." + applicationName + FileUtils.FILE_SEPERATOR + DataFolderName + FileUtils.FILE_SEPERATOR;
+				lDataFolder = System.getProperty("user.home") + FileUtils.FILE_SEPERATOR + "." + applicationName + FileUtils.FILE_SEPERATOR + DATA_FOLDER_NAME + FileUtils.FILE_SEPERATOR;
 			}
 		}
 
@@ -68,13 +72,13 @@ public class AppStorage {
 		String lSaveFolder = null;
 
 		if (useLocalDirectory) {
-			lSaveFolder = System.getProperty("user.dir") + FileUtils.FILE_SEPERATOR + ConfigFolderName + FileUtils.FILE_SEPERATOR;
+			lSaveFolder = System.getProperty("user.dir") + FileUtils.FILE_SEPERATOR + CONFIG_FOLDER_NAME + FileUtils.FILE_SEPERATOR;
 		} else {
 			final var lOSName = System.getProperty("os.name").toLowerCase();
 			if (lOSName.startsWith("win")) {
-				lSaveFolder = System.getenv("AppData") + FileUtils.FILE_SEPERATOR + applicationName + FileUtils.FILE_SEPERATOR + ConfigFolderName + FileUtils.FILE_SEPERATOR;
+				lSaveFolder = System.getenv("AppData") + FileUtils.FILE_SEPERATOR + applicationName + FileUtils.FILE_SEPERATOR + CONFIG_FOLDER_NAME + FileUtils.FILE_SEPERATOR;
 			} else if (lOSName.startsWith("linux") || lOSName.startsWith("mac") || lOSName.startsWith("darwin")) {
-				lSaveFolder = System.getProperty("user.home") + FileUtils.FILE_SEPERATOR + "." + applicationName + FileUtils.FILE_SEPERATOR + ConfigFolderName + FileUtils.FILE_SEPERATOR;
+				lSaveFolder = System.getProperty("user.home") + FileUtils.FILE_SEPERATOR + "." + applicationName + FileUtils.FILE_SEPERATOR + CONFIG_FOLDER_NAME + FileUtils.FILE_SEPERATOR;
 			}
 		}
 
