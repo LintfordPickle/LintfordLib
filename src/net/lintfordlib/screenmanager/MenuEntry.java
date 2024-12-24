@@ -555,7 +555,6 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 
 		if (mDrawBackground) {
 			boolean use5Steps = mW > 32 * 8;
-			use5Steps = false;
 			final var lTileSize = 32.f;
 			final var lHalfWidth = mW * .5f;
 			var lLeft = lScreenOffset.x + centerX() - lHalfWidth;
@@ -609,9 +608,11 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 			if (lMenuFont != null) {
 				lMenuFont.begin(core.HUD());
 				final float lStringWidth = lMenuFont.getStringWidth(mText, lUiTextScale);
+				final var lShadowTextColor = ColorConstants.BLACK;
 				final var lTextColor = ColorConstants.getColor(!mEnabled ? ColorConstants.GREY_DARK : mHasFocus ? ColorConstants.FLAME : ColorConstants.TextHeadingColor);
+				lShadowTextColor.a = lParentScreenAlpha;
 				lTextColor.a = lParentScreenAlpha;
-				lMenuFont.drawText(mText, lScreenOffset.x + centerX() - lStringWidth * 0.5f, lScreenOffset.y + centerY() - lMenuFont.fontHeight() * .5f, mZ, lTextColor, lUiTextScale);
+				lMenuFont.drawShadowedText(mText, lScreenOffset.x + centerX() - lStringWidth * 0.5f, lScreenOffset.y + centerY() - lMenuFont.fontHeight() * .5f, mZ, 1.f, 1.f, lUiTextScale, lShadowTextColor, lTextColor);
 
 				lMenuFont.end();
 			}

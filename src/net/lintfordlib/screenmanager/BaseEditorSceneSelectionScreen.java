@@ -2,7 +2,7 @@ package net.lintfordlib.screenmanager;
 
 import net.lintfordlib.ConstantsEditor;
 import net.lintfordlib.assets.ResourceManager;
-import net.lintfordlib.data.scene.BaseSceneSettings;
+import net.lintfordlib.data.scene.BaseGameResourcePaths;
 import net.lintfordlib.data.scene.SceneHeader;
 import net.lintfordlib.screenmanager.entries.MenuDropDownEntry;
 import net.lintfordlib.screenmanager.layouts.ListLayout;
@@ -23,7 +23,7 @@ public abstract class BaseEditorSceneSelectionScreen<T extends SceneHeader> exte
 	// Variables
 	// ---------------------------------------------
 
-	protected BaseSceneSettings mSceneSettings;
+	protected BaseGameResourcePaths mSceneSettings;
 	protected MenuDropDownEntry<T> mSceneFilenameEntries;
 
 	protected String mTextureHudLocation = "res/textures/textureHud.png";
@@ -33,7 +33,7 @@ public abstract class BaseEditorSceneSelectionScreen<T extends SceneHeader> exte
 	// Properities
 	// ---------------------------------------------
 
-	public BaseSceneSettings sceneSettings() {
+	public BaseGameResourcePaths gameResourcePaths() {
 		return mSceneSettings;
 	}
 
@@ -49,7 +49,7 @@ public abstract class BaseEditorSceneSelectionScreen<T extends SceneHeader> exte
 	// Constructors
 	// ---------------------------------------------
 
-	protected BaseEditorSceneSelectionScreen(ScreenManager screenManager, BaseSceneSettings sceneSettings, boolean enableBackButton) {
+	protected BaseEditorSceneSelectionScreen(ScreenManager screenManager, BaseGameResourcePaths sceneSettings, boolean enableBackButton) {
 		super(screenManager, TITLE);
 
 		mSceneSettings = sceneSettings;
@@ -57,7 +57,6 @@ public abstract class BaseEditorSceneSelectionScreen<T extends SceneHeader> exte
 
 		mSceneFilenameEntries = new MenuDropDownEntry<>(screenManager, this);
 		mSceneFilenameEntries.allowDuplicateNames(true);
-		populateDropDownListWithSceneFilenames(mSceneFilenameEntries);
 
 		final var lCreateNewTrack = new MenuEntry(screenManager, this, "Create New");
 		lCreateNewTrack.registerClickListener(this, BUTTON_CREATE_NEW_ID);
@@ -88,6 +87,13 @@ public abstract class BaseEditorSceneSelectionScreen<T extends SceneHeader> exte
 	// ---------------------------------------------
 	// Methods
 	// ---------------------------------------------
+
+	@Override
+	public void initialize() {
+		super.initialize();
+
+		populateDropDownListWithSceneFilenames(mSceneFilenameEntries);
+	}
 
 	@Override
 	public void loadResources(ResourceManager resourceManager) {

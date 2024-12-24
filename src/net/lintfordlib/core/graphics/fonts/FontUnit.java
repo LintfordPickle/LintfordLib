@@ -6,7 +6,6 @@ import net.lintfordlib.core.graphics.Color;
 import net.lintfordlib.core.graphics.ColorConstants;
 import net.lintfordlib.core.graphics.batching.SpriteBatch;
 import net.lintfordlib.core.graphics.shaders.ShaderMVP_PCT;
-import net.lintfordlib.core.graphics.shaders.ShaderSubPixel;
 
 public class FontUnit {
 
@@ -30,7 +29,6 @@ public class FontUnit {
 
 	private BitmapFontDefinition mFontDefinition;
 	private SpriteBatch mFontRenderer; // TODO: Don't need a dedicated SpriteBatch per FontUnit!
-	private ShaderSubPixel mShaderSubPixel;
 	private WrapType mWrapType = WrapType.WordWrap;
 
 	// --------------------------------------
@@ -180,7 +178,6 @@ public class FontUnit {
 	public FontUnit(BitmapFontDefinition bitmapFontDefinition) {
 		mFontDefinition = bitmapFontDefinition;
 		mFontRenderer = new SpriteBatch();
-		mShaderSubPixel = new ShaderSubPixel("SubPixelShader", ShaderSubPixel.VERT_FILENAME, ShaderSubPixel.FRAG_FILENAME);
 	}
 
 	// --------------------------------------
@@ -190,20 +187,15 @@ public class FontUnit {
 	public void loadResources(ResourceManager resouceManager) {
 		mFontRenderer.loadResources(resouceManager);
 		mFontDefinition.loadResources(resouceManager);
-		mShaderSubPixel.loadResources(resouceManager);
 	}
 
 	public void unloadResources() {
 		mFontRenderer.unloadResources();
 		mFontDefinition.unloadResources();
-		mShaderSubPixel.unloadResources();
 	}
 
 	public void begin(ICamera camera) {
-		if (mFontDefinition.mUseSubPixelRendering)
-			mFontRenderer.begin(camera, mShaderSubPixel);
-		else
-			mFontRenderer.begin(camera);
+		mFontRenderer.begin(camera);
 	}
 
 	public void begin(ICamera camera, ShaderMVP_PCT customShader) {

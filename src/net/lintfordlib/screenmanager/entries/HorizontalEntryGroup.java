@@ -12,6 +12,7 @@ import net.lintfordlib.screenmanager.MenuEntry;
 import net.lintfordlib.screenmanager.MenuScreen;
 import net.lintfordlib.screenmanager.Screen;
 import net.lintfordlib.screenmanager.ScreenManager;
+import net.lintfordlib.screenmanager.ScreenManagerConstants.FILLTYPE;
 
 public class HorizontalEntryGroup extends MenuEntry {
 
@@ -153,7 +154,7 @@ public class HorizontalEntryGroup extends MenuEntry {
 			final var lG = parentScreen().screenColor.g;
 			final var lB = parentScreen().screenColor.b;
 
-			Debug.debugManager().drawers().drawRectImmediate(pCore.gameCamera(), mX, mY, mW, mH, 0.5f * lR, 0.2f * lG, lB);
+			Debug.debugManager().drawers().drawRectImmediate(pCore.gameCamera(), pScreen.screenPositionOffset().x + mX, pScreen.screenPositionOffset().y + mY, mW, mH, 0.5f * lR, 0.2f * lG, lB);
 		}
 	}
 
@@ -187,7 +188,7 @@ public class HorizontalEntryGroup extends MenuEntry {
 	private void updateEntries() {
 		// Here we will use the position given to us by the parent screen and use it
 		// to orientation our children (for now just horizontally).
-		if (mChildEntries == null || mChildEntries.size() == 0)
+		if (mChildEntries == null || mChildEntries.isEmpty())
 			return;
 
 		int lCount = mChildEntries.size();
@@ -198,16 +199,47 @@ public class HorizontalEntryGroup extends MenuEntry {
 			}
 		}
 
-		final float lHPadding = 10.f;
-		final float lHSpace = (mW - lHPadding) / lCount;
-
+		// how much horizontal h_space can be *shared* and how much h_space should be pre-allocated
+		var takenSpace = 0.f;
 		for (int i = 0; i < lCount; i++) {
-			final var MenuEntry = mChildEntries.get(i);
-			float lPosX = mX + (lHSpace + lHPadding) * i;
-			float lPosY = mY;
+			final var lEntry = mChildEntries.get(i);
+			if (lEntry.horizontalFillType() == FILLTYPE.TAKE_DESIRED_SIZE)
+				takenSpace += lEntry.desiredWidth();
 
-			MenuEntry.width(lHSpace);
-			MenuEntry.setPosition(lPosX, lPosY + mChildEntries.get(i).marginTop());
+			takenSpace += lEntry.marginLeft() + lEntry.marginRight();
+
+		}
+
+		final float lHPadding = 0.f; // the padding of *this* control, that is, left and right
+		final float lHInnerSpacing = 0.f;
+		final float lHSpace = (mW - takenSpace) / lCount;
+
+		var neededWidth = lHPadding * 2.f;
+		for (int i = 0; i < lCount; i++) {
+			final var lEntry = mChildEntries.get(i);
+			final var lEWidth = lEntry.horizontalFillType() == FILLTYPE.TAKE_DESIRED_SIZE ? lEntry.desiredWidth() : lHSpace;
+			neededWidth += lEntry.marginLeft() + lEWidth + lEntry.marginRight();
+			if (i < lCount - 1)
+				neededWidth += lHInnerSpacing;
+		}
+
+		final var lCenterX = mX + mW / 2;
+		float lPosX = lCenterX - neededWidth / 2 + lHPadding;
+		for (int i = 0; i < lCount; i++) {
+			final var lEntry = mChildEntries.get(i);
+
+			final var lEWidth = lEntry.horizontalFillType() == FILLTYPE.TAKE_DESIRED_SIZE ? lEntry.desiredWidth() : lHSpace;
+
+			final var lPosY = mY;
+
+			lPosX += lEntry.marginLeft();
+
+			lEntry.width(50);
+			lEntry.setPosition(lPosX, lPosY);
+			lEntry.width(lEWidth);
+
+			lPosX += lHInnerSpacing + lEWidth;
+			lPosX += lEntry.marginRight();
 		}
 	}
 

@@ -62,12 +62,12 @@ public abstract class DualMenuScreen extends MenuScreen {
 	}
 
 	@Override
-	public void loadResources(ResourceManager pResourceManager) {
-		super.loadResources(pResourceManager);
+	public void loadResources(ResourceManager resourceManager) {
+		super.loadResources(resourceManager);
 
 		final int lLayoutCount = mRightLayouts.size();
 		for (int i = 0; i < lLayoutCount; i++) {
-			mRightLayouts.get(i).loadResources(pResourceManager);
+			mRightLayouts.get(i).loadResources(resourceManager);
 		}
 	}
 
@@ -95,7 +95,7 @@ public abstract class DualMenuScreen extends MenuScreen {
 			}
 		}
 
-		if (mLayouts.size() == 0 && mRightLayouts.size() == 0)
+		if (mLayouts.isEmpty() && mRightLayouts.isEmpty())
 			return; // nothing to do
 
 		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_UP, this) || core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_UP, this)) {
@@ -121,7 +121,8 @@ public abstract class DualMenuScreen extends MenuScreen {
 			final var lSelectedEntryIndex = mRightColumnSelected ? mRightColumnSelectedEntryIndex : mSelectedEntryIndex;
 			final var lEntry = getSelectedEntry(lSelectedLayouts, lSelectedLayoutIndex, lSelectedEntryIndex);
 
-			lEntry.onClick(core.input());
+			if (lEntry != null)
+				lEntry.onClick(core.input());
 		}
 
 		final var lLeftLayoutCount = mLayouts.size();
@@ -176,25 +177,25 @@ public abstract class DualMenuScreen extends MenuScreen {
 	}
 
 	@Override
-	public void draw(LintfordCore pCore) {
+	public void draw(LintfordCore core) {
 		if (mScreenState != ScreenState.ACTIVE && mScreenState != ScreenState.TRANSITION_STARTING && mScreenState != ScreenState.TRANSITION_SLEEPING)
 			return;
 
-		mRendererManager.draw(pCore);
+		mRendererManager.draw(core);
 
 		final float lMenuScreenZDepth = ZLayers.LAYER_SCREENMANAGER;
 
-		drawMenuTitle(pCore);
+		drawMenuTitle(core);
 
 		// Draw each layout in turn.
 		final var lLeftLayoutCount = mLayouts.size();
 		for (int i = 0; i < lLeftLayoutCount; i++) {
-			mLayouts.get(i).draw(pCore, lMenuScreenZDepth + (i * 0.001f));
+			mLayouts.get(i).draw(core, lMenuScreenZDepth + (i * 0.001f));
 		}
 
 		final var lRightLayoutCount = mRightLayouts.size();
 		for (int i = 0; i < lRightLayoutCount; i++) {
-			mRightLayouts.get(i).draw(pCore, lMenuScreenZDepth + (i * 0.001f));
+			mRightLayouts.get(i).draw(core, lMenuScreenZDepth + (i * 0.001f));
 		}
 	}
 

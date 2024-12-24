@@ -12,10 +12,10 @@ import net.lintfordlib.screenmanager.ScreenManager;
 import net.lintfordlib.screenmanager.ScreenManagerConstants.FILLTYPE;
 import net.lintfordlib.screenmanager.ScreenManagerConstants.LAYOUT_WIDTH;
 import net.lintfordlib.screenmanager.dialogs.ConfirmationDialog;
+import net.lintfordlib.screenmanager.entries.HorizontalEntryGroup;
 import net.lintfordlib.screenmanager.entries.MenuSliderEntry;
 import net.lintfordlib.screenmanager.entries.MenuToggleEntry;
 import net.lintfordlib.screenmanager.layouts.BaseLayout;
-import net.lintfordlib.screenmanager.layouts.HorizontalLayout;
 import net.lintfordlib.screenmanager.layouts.ListLayout;
 
 public class AudioOptionsScreen extends MenuScreen {
@@ -68,19 +68,23 @@ public class AudioOptionsScreen extends MenuScreen {
 		createAudioSection(lAudioListLayout);
 
 		/* Screen control buttons */
-		final var lHorizontalButtonLayout = new HorizontalLayout(this);
-		lHorizontalButtonLayout.layoutFillType(FILLTYPE.TAKE_WHATS_NEEDED);
-
+		final var lHorizontalButtonLayout = new HorizontalEntryGroup(screenManager, this);
+		lHorizontalButtonLayout.horizontalFillType(FILLTYPE.THREEQUARTER_PARENT);
+		
 		final var lBackButton = new MenuEntry(screenManager, this, "Back");
 		lBackButton.registerClickListener(this, BUTTON_CANCEL_CHANGES);
 		final var lApplyButton = new MenuEntry(screenManager, this, "Apply");
 		lApplyButton.registerClickListener(this, BUTTON_APPLY_CHANGES);
 
-		lHorizontalButtonLayout.addMenuEntry(lBackButton);
-		lHorizontalButtonLayout.addMenuEntry(lApplyButton);
+		lHorizontalButtonLayout.addEntry(lBackButton);
+		lHorizontalButtonLayout.addEntry(lApplyButton);
 
+		final var lButtonLayout = new ListLayout(this);
+		lButtonLayout.layoutFillType(FILLTYPE.TAKE_WHATS_NEEDED);
+		lButtonLayout.addMenuEntry(lHorizontalButtonLayout);
+		
 		addLayout(lAudioListLayout);
-		addLayout(lHorizontalButtonLayout);
+		addLayout(lButtonLayout);
 
 		mSelectedLayoutIndex = 0;
 		mSelectedEntryIndex = 0;

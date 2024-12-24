@@ -33,6 +33,10 @@ public abstract class BaseTransition {
 		return mTransitionTime;
 	}
 
+	public void timeSpan(TimeSpan newTimeSpan) {
+		mTransitionTime = newTimeSpan;
+	}
+
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------

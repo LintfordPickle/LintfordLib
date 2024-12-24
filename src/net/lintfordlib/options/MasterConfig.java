@@ -73,7 +73,7 @@ public class MasterConfig {
 
 		final String lResourcePathConfigFilename = AppStorage.getGameConfigDirectory() + RESOURCES_CONFIG_FILENAME;
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "Loading resource path config from '" + lResourcePathConfigFilename + "'");
-		mResourcePathsConfig = new ResourcePathsConfig(gameInfo, lResourcePathConfigFilename);
+		mResourcePathsConfig = new ResourcePathsConfig(lResourcePathConfigFilename);
 	}
 
 	// --------------------------------------

@@ -35,7 +35,6 @@ public abstract class SceneHeader implements Serializable {
 	private String mSceneName;
 
 	private transient boolean mIsValid;
-	private transient BaseSceneSettings mSceneSettings;
 
 	private transient String mSceneDirectory;
 
@@ -45,10 +44,6 @@ public abstract class SceneHeader implements Serializable {
 	// ---------------------------------------------
 	// Properties
 	// ---------------------------------------------
-
-	public BaseSceneSettings sceneSettings() {
-		return mSceneSettings;
-	}
 
 	public String sceneName() {
 		return mSceneName;
@@ -98,13 +93,11 @@ public abstract class SceneHeader implements Serializable {
 	// Constructor
 	// ---------------------------------------------
 
-	protected SceneHeader(BaseSceneSettings settings) {
-		mSceneSettings = settings;
+	protected SceneHeader() {
+
 	}
 
-	protected SceneHeader(String sceneName, BaseSceneSettings settings) {
-		this(settings);
-
+	protected SceneHeader(String sceneName) {
 		mSceneName = sceneName;
 
 		validateHeader();
@@ -114,9 +107,8 @@ public abstract class SceneHeader implements Serializable {
 	// Methods
 	// ---------------------------------------------
 
-	public void initialize(String sceneDirectory, BaseSceneSettings settings) {
+	public void initialize(String sceneDirectory, BaseGameResourcePaths settings) {
 		setSceneDirectory(sceneDirectory);
-		mSceneSettings = settings;
 	}
 
 	public void validateHeader() {

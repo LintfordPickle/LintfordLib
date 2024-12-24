@@ -31,9 +31,6 @@ class BitmapFontDefinition {
 	/** The unique name given to this {@link BitmapFontDefinition}. */
 	protected boolean mReloadable;
 
-	@SerializedName(value = "useSubPixelRendering")
-	protected boolean mUseSubPixelRendering;
-
 	/** The name of the {@link Texture} associated to this {@link BitmapFontDefinition} */
 	@SerializedName(value = "textureName")
 	protected String mTextureName;
@@ -126,7 +123,6 @@ class BitmapFontDefinition {
 
 	public BitmapFontDefinition() {
 		mGlyphMap = new HashMap<>();
-		mUseSubPixelRendering = false;
 	}
 
 	// --------------------------------------

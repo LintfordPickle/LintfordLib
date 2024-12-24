@@ -3,7 +3,6 @@ package net.lintfordlib.options;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.lintfordlib.GameInfo;
 import net.lintfordlib.options.reader.IniFile;
 
 public class ResourcePathsConfig extends IniFile {
@@ -64,7 +63,7 @@ public class ResourcePathsConfig extends IniFile {
 	// Constructor
 	// --------------------------------------
 
-	public ResourcePathsConfig(GameInfo gameInfo, String configFilename) {
+	public ResourcePathsConfig(String configFilename) {
 		super(configFilename);
 
 		loadConfig();

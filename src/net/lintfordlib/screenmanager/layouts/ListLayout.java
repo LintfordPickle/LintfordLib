@@ -144,7 +144,7 @@ public class ListLayout extends BaseLayout implements IInputProcessor {
 			lYPos += lMenuEntry.marginBottom();
 		}
 
-		if (mScrollBar.scrollBarEnabled() == false) {
+		if (!mScrollBar.scrollBarEnabled()) {
 			mScrollBar.resetBarTop();
 		}
 	}

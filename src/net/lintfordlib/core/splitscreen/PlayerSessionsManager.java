@@ -22,13 +22,19 @@ public abstract class PlayerSessionsManager<T extends IPlayerSession> {
 	// Variables
 	// ---------------------------------------------
 
-	private RendererManager mRendererManager;
 	private int mNumberActivePlayers = 1;
 	private final List<T> mPlayerSessions = new ArrayList<>();
+
+	private RendererManager mRendererManager;
+	private boolean mIsResourcesLoaded;
 
 	// ---------------------------------------------
 	// Properties
 	// ---------------------------------------------
+
+	public boolean isResourcesLoaded() {
+		return mIsResourcesLoaded;
+	}
 
 	public int numActivePlayers() {
 		return mNumberActivePlayers;
@@ -50,7 +56,7 @@ public abstract class PlayerSessionsManager<T extends IPlayerSession> {
 	// ---------------------------------------------
 
 	// ref BaseGameSplitScreen
-	protected PlayerSessionsManager(RendererManager rendererManager) {
+	protected PlayerSessionsManager() {
 		mPlayerSessions.add(createNewPlayerSession(false));
 		mPlayerSessions.add(createNewPlayerSession(true));
 		mPlayerSessions.add(createNewPlayerSession(true));
@@ -58,7 +64,7 @@ public abstract class PlayerSessionsManager<T extends IPlayerSession> {
 
 		mPlayerSessions.get(0).enablePlayer(true);
 
-		mRendererManager = rendererManager;
+		mIsResourcesLoaded = false;
 	}
 
 	// ---------------------------------------------
@@ -92,7 +98,15 @@ public abstract class PlayerSessionsManager<T extends IPlayerSession> {
 		}
 	}
 
-	public void loadResource(ResourceManager resourceManager) {
+	public void loadResource(RendererManager rendererManager, ResourceManager resourceManager) {
+		if (mIsResourcesLoaded)
+			return;
+
+		if (mRendererManager != null)
+			throw new RuntimeException("PlayerSessionManager was already loaded!");
+
+		mRendererManager = rendererManager;
+
 		final var lDisplaySettings = resourceManager.config().display();
 		final var lCanvasWidth = lDisplaySettings.gameResolutionWidth();
 		final var lCanvasHeight = lDisplaySettings.gameResolutionHeight();
@@ -109,6 +123,8 @@ public abstract class PlayerSessionsManager<T extends IPlayerSession> {
 
 			lPlayerViewContainer.init(lRTCamera, lRenderTarget);
 		}
+
+		mIsResourcesLoaded = true;
 	}
 
 	public void unloadResources() {
@@ -120,6 +136,9 @@ public abstract class PlayerSessionsManager<T extends IPlayerSession> {
 			mRendererManager.unloadRenderTarget(lPlayerViewContainer.renderTarget());
 			lPlayerViewContainer.reset();
 		}
+
+		mRendererManager = null;
+		mIsResourcesLoaded = false;
 	}
 
 	public void update(LintfordCore core) {

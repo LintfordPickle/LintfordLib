@@ -360,7 +360,7 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 	}
 
 	public boolean handleInput(LintfordCore core) {
-		if (mMenuEntries == null || mMenuEntries.size() == 0)
+		if (mMenuEntries == null || mMenuEntries.isEmpty())
 			return false; // nothing to do
 
 		// limit mouse interaction within the baseLayout to within the contentDisplayArea

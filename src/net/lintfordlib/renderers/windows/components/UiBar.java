@@ -3,6 +3,7 @@ package net.lintfordlib.renderers.windows.components;
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.geometry.Rectangle;
 import net.lintfordlib.core.graphics.Color;
+import net.lintfordlib.core.graphics.ColorConstants;
 import net.lintfordlib.core.graphics.batching.SpriteBatch;
 import net.lintfordlib.core.graphics.fonts.FontUnit;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
@@ -138,7 +139,7 @@ public class UiBar {
 		final var lFullBarPosX = x + (w * (1 - mBarSizeAsPercentageOfWidth));
 		final var lInnerBarWidth = MathHelper.scaleToRange(mCurValue, mMinValue, mMaxValue, 0, lFullBarWidth);
 
-		textFont.drawText(mLabel, x, y, -0.01f, mUiBarTextColor, 1.f);
+		textFont.drawShadowedText(mLabel, x, y, -0.01f, 1.f, 1.f, 1.f, ColorConstants.BLACK, ColorConstants.WHITE);
 
 		// Outer
 		spriteBatch.draw(lCoreTexture, CoreTextureNames.TEXTURE_WHITE, lFullBarPosX, y, lFullBarWidth, h, componentZDepth, mUiBarOuterColor);

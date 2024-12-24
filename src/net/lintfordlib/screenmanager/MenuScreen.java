@@ -7,6 +7,7 @@ import org.lwjgl.glfw.GLFW;
 
 import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.core.LintfordCore;
+import net.lintfordlib.core.graphics.ColorConstants;
 import net.lintfordlib.core.graphics.fonts.FontUnit;
 import net.lintfordlib.core.input.InputManager;
 import net.lintfordlib.core.maths.MathHelper;
@@ -407,7 +408,8 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 			final var lBaseLayout = layoutList.get(i);
 			if (lBaseLayout.layoutFillType() == FILLTYPE.TAKE_WHATS_NEEDED) {
 				lCountOfTakers++;
-				heightTaken += lBaseLayout.getEntryHeight();
+				final var lTitleHeight = lBaseLayout.titleBarSize();
+				heightTaken += lBaseLayout.getEntryHeight() + lTitleHeight;
 			}
 		}
 
@@ -435,16 +437,20 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 				lBaseLayout.height(lNewHeight);
 				lBaseLayout.updateStructure();
-				lTop += lBaseLayout.getEntryHeight() + mLayoutPaddingVertical;
+
+				lTop += lBaseLayout.getEntryHeight() + lBaseLayout.marginBottom() + lTitleHeight + mLayoutPaddingVertical;
+
 			} else {
 				// sharers
 				int lNewHeight = lSizeOfEachShareElement;
 				if (lBaseLayout.maxHeight() != -1 && lNewHeight > lBaseLayout.maxHeight()) {
 					lNewHeight = (int) lBaseLayout.maxHeight();
 				}
+
 				lBaseLayout.height(lNewHeight);
 				lBaseLayout.updateStructure();
 				lTop += lSizeOfEachShareElement + mLayoutPaddingVertical;
+
 			}
 		}
 	}
@@ -489,6 +495,12 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		final var lUiStructureController = screenManager.UiStructureController();
 		final float lUiTextScale = lUiStructureController.uiTextScaleFactor();
 
+		final var lShadowTextColor = ColorConstants.BLACK;
+		final var lTextColor = ColorConstants.TextHeadingColor;
+
+		lShadowTextColor.a = screenColor.a;
+		lTextColor.a = screenColor.a;
+
 		final var lHeaderRect = lUiStructureController.menuTitleRectangle();
 		final var lHeaderFontWidth = mMenuHeaderFont.getStringWidth(mMenuTitle, lUiTextScale);
 		final var lHeaderFontHeight = mMenuHeaderFont.fontHeight() * lUiTextScale;
@@ -497,19 +509,19 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		final float lMenuTitlePositionY = lHeaderRect.top() + lHeaderRect.height() * 0.5f;//
 
 		mMenuHeaderFont.begin(core.HUD());
-		mMenuHeaderFont.drawText(mMenuTitle, screenPositionOffset().x + lMenuTitlePositionX, screenPositionOffset().y + lMenuTitlePositionY, -0.01f, screenColor, lUiTextScale);
+		mMenuHeaderFont.drawShadowedText(mMenuTitle, screenPositionOffset().x + lMenuTitlePositionX, screenPositionOffset().y + lMenuTitlePositionY, -0.01f, 2.f, 2.f, 1.f, lShadowTextColor, lTextColor);
 		mMenuHeaderFont.end();
 
 		mMenuFont.begin(core.HUD());
 
 		final float lOverTitleWidth = mMenuFont.getStringWidth(mMenuOverTitle, lUiTextScale);
 		if (mMenuOverTitle != null && mMenuOverTitle.length() > 0) {
-			mMenuFont.drawText(mMenuOverTitle, screenPositionOffset().x + lHeaderRect.centerX() - lOverTitleWidth * .5f, screenPositionOffset().y + lMenuTitlePositionY, -0.01f, screenColor, lUiTextScale);
+			mMenuFont.drawShadowedText(mMenuOverTitle, screenPositionOffset().x + lHeaderRect.centerX() - lOverTitleWidth * .5f, screenPositionOffset().y + lMenuTitlePositionY - mMenuHeaderFont.fontHeight() / 2, -.01f, 1.f, 1.f, 1.f, lShadowTextColor, lTextColor);
 		}
 
 		final float lSubTitleWidth = mMenuFont.getStringWidth(mMenuSubTitle, lUiTextScale);
 		if (mMenuSubTitle != null && mMenuSubTitle.length() > 0) {
-			mMenuFont.drawText(mMenuSubTitle, screenPositionOffset().x + lHeaderRect.centerX() - lSubTitleWidth * .5f, screenPositionOffset().y + lMenuTitlePositionY + lHeaderFontHeight, -0.01f, screenColor, lUiTextScale);
+			mMenuFont.drawShadowedText(mMenuSubTitle, screenPositionOffset().x + lHeaderRect.centerX() - lSubTitleWidth * .5f, screenPositionOffset().y + lMenuTitlePositionY + lHeaderFontHeight, -.01f, 1.f, 1.f, 1.f, lShadowTextColor, lTextColor);
 		}
 
 		mMenuFont.end();
