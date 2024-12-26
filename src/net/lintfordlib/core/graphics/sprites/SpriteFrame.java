@@ -18,6 +18,9 @@ public class SpriteFrame extends Rectangle implements Serializable {
 	@SerializedName(value = "name")
 	private String mName;
 
+	@SerializedName(value = "anchorToPointName")
+	private String mAnchorToPointName;
+
 	@SerializedName(value = "anchorPoints")
 	private SpriteAnchor[] mAnchorPoints;
 
@@ -64,6 +67,10 @@ public class SpriteFrame extends Rectangle implements Serializable {
 		}
 
 		return mAnchorPoints[arrayIndex];
+	}
+
+	public String getAnchorToPointName() {
+		return mAnchorToPointName;
 	}
 
 	public SpriteAnchor getAnchorByName(String anchorName) {
