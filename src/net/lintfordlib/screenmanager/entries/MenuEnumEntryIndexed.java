@@ -285,6 +285,18 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 		super.onClick(inputManager);
 
 		mHasFocus = !mHasFocus;
+
+		if (mClickListener != null)
+			mClickListener.onMenuEntryChanged(this);
+
+		mSelectedIndex++;
+		if (mSelectedIndex >= mItems.size()) {
+			mSelectedIndex = 0;
+		}
+
+		if (mClickListener != null)
+			mClickListener.onMenuEntryChanged(this);
+
 	}
 
 	public void addItem(MenuEnumEntryItem item) {

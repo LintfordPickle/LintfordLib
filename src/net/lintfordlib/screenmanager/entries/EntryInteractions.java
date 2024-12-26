@@ -15,9 +15,9 @@ public interface EntryInteractions {
 	}
 
 	public default void onMenuEntryActivated(MenuEntry activeEntry) {
-	};
+	}
 
 	public default void onMenuEntryDeactivated(MenuEntry activeEntry) {
-	};
+	}
 
 }

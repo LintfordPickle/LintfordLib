@@ -194,6 +194,10 @@ public class MenuEnumEntry extends MenuEntry {
 					if (mSelectedIndex < 0) {
 						mSelectedIndex = mItems.size() - 1;
 					}
+
+					if (mClickListener != null)
+						mClickListener.onMenuEntryChanged(this);
+
 					return true;
 				}
 
@@ -202,6 +206,10 @@ public class MenuEnumEntry extends MenuEntry {
 					if (mSelectedIndex >= mItems.size()) {
 						mSelectedIndex = 0;
 					}
+
+					if (mClickListener != null)
+						mClickListener.onMenuEntryChanged(this);
+
 					return true;
 				}
 
@@ -287,6 +295,8 @@ public class MenuEnumEntry extends MenuEntry {
 			mSelectedIndex = 0;
 		}
 
+		if (mClickListener != null)
+			mClickListener.onMenuEntryChanged(this);
 	}
 
 	public void addItem(String itemName) {
@@ -313,5 +323,10 @@ public class MenuEnumEntry extends MenuEntry {
 
 	public void sortItems() {
 		mItems.sort(Comparator.naturalOrder());
+	}
+
+	public void clearItems() {
+		mItems.clear();
+
 	}
 }
