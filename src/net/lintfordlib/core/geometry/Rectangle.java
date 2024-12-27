@@ -196,7 +196,9 @@ public class Rectangle implements Serializable {
 	}
 
 	public boolean intersectsAA(float x, float y, float w, float h) {
-		return ((((x < right()) && (left() < x + w)) && (y < bottom())) && (top() < y + h));
+		final var horizontalCheck = (x < right()) && (left() < x + w);
+		final var verticalCheck = (y < bottom()) && (top() < y + h);
+		return horizontalCheck && verticalCheck;
 	}
 
 	/**
