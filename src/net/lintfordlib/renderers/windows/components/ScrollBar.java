@@ -157,8 +157,11 @@ public class ScrollBar extends Rectangle implements IInputProcessor, IInputClick
 	public boolean handleInput(LintfordCore core, IInputClickedFocusManager trackedControlManager) {
 		mInputHandledInCoreFrame = true;
 
-		final var lMouseInScrollbarRegion = intersectsAA(core.HUD().getMouseCameraSpace());
-		final var lMouseInContentRegion = mScrollBarArea.contentDisplayArea().intersectsAA(core.HUD().getMouseCameraSpace());
+		var lMouseHud = core.HUD().getMouseCameraSpace();
+
+		final var lMouseInScrollbarRegion = intersectsAA(lMouseHud);
+		final var lMouseInContentRegion = mScrollBarArea.contentDisplayArea().intersectsAA(lMouseHud);
+
 		final var lLeftMouseButtonDown = core.input().mouse().isMouseLeftButtonDown();
 		final var lDoWeAlreadyHaveTheMouse = core.input().mouse().isMouseLeftClickOwnerAssigned(hashCode()) && core.input().mouse().isMouseLeftButtonDown();
 		var ttt = lMouseInScrollbarRegion && lMouseInContentRegion && core.input().mouse().tryAcquireMouseLeftClick(hashCode());
@@ -181,6 +184,8 @@ public class ScrollBar extends Rectangle implements IInputProcessor, IInputClick
 		if (!core.input().mouse().isMouseOverThisComponent(hashCode())) {
 			return false;
 		}
+
+		// TODO: Add clickable down/up arrows
 
 		if (!mClickActive && lCanAcquireMouse) {
 			mClickActive = true;
@@ -214,7 +219,7 @@ public class ScrollBar extends Rectangle implements IInputProcessor, IInputClick
 	}
 
 	public void update(LintfordCore core) {
-		if (mIsActive == false)
+		if (!mIsActive)
 			return;
 
 		if (mScrollbarAutoHide) {
@@ -275,8 +280,6 @@ public class ScrollBar extends Rectangle implements IInputProcessor, IInputClick
 		if (mMarkerMoveMod == 0.f)
 			return;
 
-		spriteBatch.begin(core.HUD());
-
 		// Scroll bar background
 
 		// Render the actual scroll bar
@@ -298,12 +301,8 @@ public class ScrollBar extends Rectangle implements IInputProcessor, IInputClick
 		spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_SCROLLBAR_UP, positionOffset.x + mX, positionOffset.y + mY + 3, ARROW_SIZE, ARROW_SIZE, zDepth, lWhiteColorWithAlpha);
 		spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_SCROLLBAR_DOWN, positionOffset.x + mX, positionOffset.y + mY + mH - ARROW_SIZE - 3, ARROW_SIZE, ARROW_SIZE, zDepth - 0.01f, lWhiteColorWithAlpha);
 
-		spriteBatch.end();
-
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
-			spriteBatch.begin(core.HUD());
 			spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, positionOffset.x + mX, positionOffset.y + mY, mW, mH, ZLayers.LAYER_DEBUG, ColorConstants.Debug_Transparent_Magenta);
-			spriteBatch.end();
 		}
 
 	}
