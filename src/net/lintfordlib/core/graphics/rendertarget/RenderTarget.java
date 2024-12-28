@@ -2,6 +2,7 @@ package net.lintfordlib.core.graphics.rendertarget;
 
 import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER;
 
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -162,9 +163,9 @@ public class RenderTarget {
 	public void loadResourcesFromImage(String fileName) {
 		var lBufferedImage = loadBufferedImage(fileName);
 
-		if(lBufferedImage == null)
+		if (lBufferedImage == null)
 			return;
-		
+
 		mScale = 1.f;
 		mWidth = lBufferedImage.getWidth();
 		mHeight = lBufferedImage.getHeight();
@@ -385,11 +386,13 @@ public class RenderTarget {
 
 		final var lColorARGB = new int[lWidth * lHeight];
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, mColorTextureID);
-		GL11.glGetTexImage(GL11.GL_TEXTURE_2D, 0, GL12.GL_RGBA, GL11.GL_UNSIGNED_BYTE, lColorARGB);
+		GL11.glGetTexImage(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, lColorARGB);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 
 		saveTextureToPngFile(lWidth, lHeight, lColorARGB, pPathname);
 	}
+
+	// TODO: Move these methods elsewhere - Rts not related to BufferedImage operations.
 
 	public static boolean saveTextureToPngFile(int width, int height, int[] argbData, String fileLocation) {
 		final var lImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
@@ -406,13 +409,31 @@ public class RenderTarget {
 
 		lImage.setRGB(0, 0, width, height, lTextureData, 0, width);
 
+		final var imageToSave = createFlipped(lImage);
+
 		try {
-			ImageIO.write(lImage, "png", new File(fileLocation));
+			ImageIO.write(imageToSave, "png", new File(fileLocation));
 		} catch (IOException e) {
 			Debug.debugManager().logger().e(Texture.class.getSimpleName(), "Error saving png to disk : " + fileLocation);
 			return false;
 		}
 
 		return true;
+	}
+
+	private static BufferedImage createFlipped(BufferedImage image) {
+		AffineTransform at = new AffineTransform();
+		at.concatenate(AffineTransform.getScaleInstance(1, -1));
+		at.concatenate(AffineTransform.getTranslateInstance(0, -image.getHeight()));
+		return createTransformed(image, at);
+	}
+
+	private static BufferedImage createTransformed(BufferedImage image, AffineTransform at) {
+		final var newImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
+		final var g = newImage.createGraphics();
+		g.transform(at);
+		g.drawImage(image, 0, 0, null);
+		g.dispose();
+		return newImage;
 	}
 }
