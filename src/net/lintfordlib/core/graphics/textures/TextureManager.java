@@ -27,18 +27,19 @@ public class TextureManager extends EntityGroupManager {
 	// Inner-Classes
 	// --------------------------------------
 
+	// used for loading lots of textures at once (defined within a meta files).
 	public class TextureDataDefinition {
-		public String textureName;
-		public String filepath;
-		public int filterIndex;
-		public int wrapSIndex;
-		public int wrapTIndex;
+		private String textureName;
+		private String filepath;
+		private int filterIndex;
 	}
 
+	// used for loading lots of textures at once (defined within a meta files).
 	public class TextureMetaData {
-		public TextureDataDefinition[] textureDefinitions;
+		private TextureDataDefinition[] textureDefinitions;
 	}
 
+	// used as a colection for textures, identified by a common key.
 	public class TextureGroup {
 
 		// --------------------------------------
@@ -121,14 +122,7 @@ public class TextureManager extends EntityGroupManager {
 	}
 
 	public TextureGroup textureGroup(int entityGroupUid) {
-		if (!mTextureGroupMap.containsKey(entityGroupUid)) {
-			TextureGroup lNewTextureGroup = new TextureGroup(entityGroupUid);
-			mTextureGroupMap.put(entityGroupUid, lNewTextureGroup);
-
-			return lNewTextureGroup;
-		}
-
-		return mTextureGroupMap.get(entityGroupUid);
+		return mTextureGroupMap.computeIfAbsent(entityGroupUid, k -> new TextureGroup(entityGroupUid));
 	}
 
 	public int textureGroupCount() {
@@ -160,7 +154,7 @@ public class TextureManager extends EntityGroupManager {
 	}
 
 	public boolean isTextureLoaded(Texture texture) {
-		return (texture != null && texture.name().equals(TextureManager.TEXTURE_NOT_FOUND_NAME) == false);
+		return (texture != null && !texture.name().equals(TextureManager.TEXTURE_NOT_FOUND_NAME));
 	}
 
 	public Texture getTextureOrLoad(String textureName, String textureFilepath, int textureFilter, int entityGroupUid) {
@@ -218,8 +212,8 @@ public class TextureManager extends EntityGroupManager {
 		loadTexturesFromMetafile(CORE_META_FILE, LintfordCore.CORE_ENTITY_GROUP_ID);
 
 		mTextureNotFound = loadTexture(TEXTURE_NOT_FOUND_NAME, new int[] { 0xFFFF00FF, 0xFFFF00FF, 0xFFFF00FF, 0xFFFF00FF }, 2, 2, LintfordCore.CORE_ENTITY_GROUP_ID);
-		mTextureWhite = loadTexture(TEXTURE_WHITE_NAME, new int[] { 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF }, 2, 2, GL11.GL_NEAREST, GL12.GL_REPEAT, GL12.GL_REPEAT, LintfordCore.CORE_ENTITY_GROUP_ID);
-		mTextureBlack = loadTexture(TEXTURE_BLACK_NAME, new int[] { 0xFF000000, 0xFF000000, 0xFF000000, 0xFF000000 }, 2, 2, GL11.GL_NEAREST, GL12.GL_REPEAT, GL12.GL_REPEAT, LintfordCore.CORE_ENTITY_GROUP_ID);
+		mTextureWhite = loadTexture(TEXTURE_WHITE_NAME, new int[] { 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF }, 2, 2, GL11.GL_NEAREST, GL11.GL_REPEAT, GL11.GL_REPEAT, LintfordCore.CORE_ENTITY_GROUP_ID);
+		mTextureBlack = loadTexture(TEXTURE_BLACK_NAME, new int[] { 0xFF000000, 0xFF000000, 0xFF000000, 0xFF000000 }, 2, 2, GL11.GL_NEAREST, GL11.GL_REPEAT, GL11.GL_REPEAT, LintfordCore.CORE_ENTITY_GROUP_ID);
 	}
 
 	// --------------------------------------
@@ -308,7 +302,7 @@ public class TextureManager extends EntityGroupManager {
 	}
 
 	public Texture loadTexture(String textureName, String textureLocation, int filter, boolean reload, int entityGroupUid) {
-		return loadTexture(textureName, textureLocation, filter, GL12.GL_REPEAT, GL12.GL_REPEAT, reload, entityGroupUid);
+		return loadTexture(textureName, textureLocation, filter, GL11.GL_REPEAT, GL11.GL_REPEAT, reload, entityGroupUid);
 	}
 
 	public Texture loadTexture(String textureName, String textureLocation, int filter, int wrapModeS, int wrapModeT, int entityGroupUid) {
@@ -337,7 +331,7 @@ public class TextureManager extends EntityGroupManager {
 		if (textureLocation.charAt(0) == '/') {
 			lTexture = Texture.loadTextureFromResource(textureName, textureLocation, filter);
 		} else {
-			lTexture = Texture.loadTextureFromFile(textureName, textureLocation, filter);
+			lTexture = Texture.loadTextureFromFile(textureName, textureLocation, filter, wrapModeS, wrapModeT);
 		}
 
 		if (lTexture != null) {
@@ -354,18 +348,14 @@ public class TextureManager extends EntityGroupManager {
 	}
 
 	private TextureGroup getTextureGroup(int entityGroupUid) {
-		TextureGroup lTextureGroup = mTextureGroupMap.get(entityGroupUid);
-		if (lTextureGroup == null) {
-			Debug.debugManager().logger().w(getClass().getSimpleName(), String.format("EntityGroupID does not exist! Creating a new one", entityGroupUid));
-			lTextureGroup = new TextureGroup(entityGroupUid);
-			mTextureGroupMap.put(entityGroupUid, lTextureGroup);
-
-		}
-		return lTextureGroup;
+		return mTextureGroupMap.computeIfAbsent(entityGroupUid, v -> {
+			Debug.debugManager().logger().w(getClass().getSimpleName(), "EntityGroupID does not exist! Creating a new one");
+			return new TextureGroup(entityGroupUid);
+		});
 	}
 
 	public Texture loadTexture(String textureName, int[] colorDataARGB, int width, int height, int entityGroupUid) {
-		return loadTexture(textureName, colorDataARGB, width, height, GL11.GL_NEAREST, GL12.GL_REPEAT, GL12.GL_REPEAT, entityGroupUid);
+		return loadTexture(textureName, colorDataARGB, width, height, GL11.GL_NEAREST, GL11.GL_REPEAT, GL11.GL_REPEAT, entityGroupUid);
 	}
 
 	public Texture loadTexture(String name, int[] colorDataARGB, int width, int height, int filter, int wrapSMode, int wrapTMode, int entityGroupUid) {
@@ -456,21 +446,15 @@ public class TextureManager extends EntityGroupManager {
 		if (texture == null)
 			return; // already lost reference
 
-		TextureGroup lTextureGroup = mTextureGroupMap.get(entityGroupUid);
-		if (lTextureGroup == null) {
-			return;
-
-		} else if (lTextureGroup.mTextureMap.containsValue(texture)) {
+		final var lTextureGroup = mTextureGroupMap.get(entityGroupUid);
+		if (lTextureGroup.mTextureMap.containsValue(texture)) {
 			String lTextureName = texture.name();
 			Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("unloading texture: %s from texture group %d", lTextureName, entityGroupUid));
 
 			Texture.unloadTexture(texture);
 
 			lTextureGroup.mTextureMap.remove(lTextureName);
-			texture = null;
 		}
-
-		return;
 	}
 
 	public void unloadEntityGroup(int entityGroupUid) {
@@ -482,14 +466,12 @@ public class TextureManager extends EntityGroupManager {
 		final int lTextureCount = lTextureGroup.mTextureMap.size();
 		Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("Unloading TextureGroup %d (freeing total %d textures)", entityGroupUid, lTextureCount));
 
-		if (lTextureGroup != null) {
-			final var lIterator = lTextureGroup.mTextureMap.entrySet().iterator();
-			while (lIterator.hasNext()) {
-				final var lNextTexture = lIterator.next();
-				Texture.unloadTexture(lNextTexture.getValue());
+		final var lIterator = lTextureGroup.mTextureMap.entrySet().iterator();
+		while (lIterator.hasNext()) {
+			final var lNextTexture = lIterator.next();
+			Texture.unloadTexture(lNextTexture.getValue());
 
-				lIterator.remove();
-			}
+			lIterator.remove();
 		}
 	}
 
@@ -548,10 +530,9 @@ public class TextureManager extends EntityGroupManager {
 	 * 1 = GL_NEAREST 2 = GL_LINEAR
 	 */
 	private int mapTextureFilterMode(int filterModeIndex) {
-		switch (filterModeIndex) {
-		case 1:
+		if (filterModeIndex == 1) {
 			return GL11.GL_NEAREST;
-		default:
+		} else {
 			return GL11.GL_LINEAR;
 		}
 	}
@@ -568,7 +549,7 @@ public class TextureManager extends EntityGroupManager {
 		case 2:
 			return GL14.GL_MIRRORED_REPEAT;
 		case 3:
-			return GL12.GL_REPEAT;
+			return GL11.GL_REPEAT;
 		default:
 			return GL12.GL_CLAMP_TO_EDGE;
 		}

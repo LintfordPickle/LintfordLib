@@ -118,7 +118,7 @@ public class Texture {
 	// --------------------------------------
 
 	// package access (textures should be loaded using the texture manager.
-	static Texture loadTextureFromFile(String ptextureName, String filename, int filter) {
+	static Texture loadTextureFromFile(String ptextureName, String filename, int filter, int wrapModeS, int wrapModeT) {
 		if (filename == null || filename.length() == 0) {
 			return null;
 		}
@@ -130,7 +130,7 @@ public class Texture {
 			final var lFileSize = lFile.length();
 			final var lImage = ImageIO.read(lFile);
 
-			final var lNewTexture = createTexture(ptextureName, filename, lImage, filter);
+			final var lNewTexture = createTexture(ptextureName, filename, lImage, filter, wrapModeS, wrapModeT);
 			lNewTexture.fileSizeOnLoad(lFileSize);
 			lNewTexture.reloadable(true);
 
@@ -172,9 +172,6 @@ public class Texture {
 			Debug.debugManager().logger().v(Texture.class.getSimpleName(), "Loaded texture from resource: " + filename);
 
 			return lNewTexture;
-		} catch (FileNotFoundException e) {
-			Debug.debugManager().logger().e(Texture.class.getSimpleName(), "Error loading texture from resource (" + filename + " )");
-			Debug.debugManager().logger().printException(Texture.class.getSimpleName(), e);
 		} catch (IOException e) {
 			Debug.debugManager().logger().e(Texture.class.getSimpleName(), "Error loading texture from resource (" + filename + " )");
 			Debug.debugManager().logger().printException(Texture.class.getSimpleName(), e);
@@ -232,28 +229,25 @@ public class Texture {
 		texture.mTextureLocation = null;
 		texture.mTextureWidth = 0;
 		texture.mTextureHeight = 0;
-		texture = null;
 	}
 
 	/**
 	 * Creates an OpenGL {@link Texture} from a {@link BufferedImage}.
 	 */
 	static Texture createTexture(String textureName, String textureLocation, BufferedImage image, int filter) {
+		return createTexture(textureName, textureLocation, image, filter, GL11.GL_REPEAT, GL11.GL_REPEAT);
+	}
+
+	/**
+	 * Creates an OpenGL {@link Texture} from a {@link BufferedImage}.
+	 */
+	static Texture createTexture(String textureName, String textureLocation, BufferedImage image, int filter, int wrapModeS, int wrapModeT) {
 		final int lWidth = image.getWidth();
 		final int lHeight = image.getHeight();
 
 		final var lPixelsARGB = image.getRGB(0, 0, lWidth, lHeight, null, 0, lWidth);
-//		final var lFlippedImage = new int[lWidth * lHeight];
-//
-//		// AWT coordinates are [0,0] top-left, opengl [0,0] is bottom right
-//		for (int y = 0; y < lHeight; y++) {
-//			for (int x = 0; x < lWidth; x++) {
-//				final int lInvertedY = lHeight - 1 - y;
-//				lFlippedImage[lInvertedY * lWidth + x] = lPixelsARGB[y * lWidth + x];
-//			}
-//		}
 
-		return createTexture(textureName, textureLocation, lPixelsARGB, lWidth, lHeight, filter, GL12.GL_REPEAT, GL12.GL_REPEAT);
+		return createTexture(textureName, textureLocation, lPixelsARGB, lWidth, lHeight, filter, wrapModeS, wrapModeT);
 	}
 
 	/**
@@ -277,7 +271,6 @@ public class Texture {
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 
 		MemoryUtil.memFree(lIntBuffer);
-		lIntBuffer = null;
 
 		final var lNewTexture = new Texture(textureName, lTexID, textureLocation, width, height, filter);
 
@@ -318,9 +311,6 @@ public class Texture {
 			reloadable(true);
 
 			Debug.debugManager().logger().i(getClass().getSimpleName(), "Reloaded texture: " + mTextureLocation);
-		} catch (FileNotFoundException e) {
-			Debug.debugManager().logger().e(Texture.class.getSimpleName(), "Error loading texture from file (" + textureFilename + ")");
-			Debug.debugManager().logger().printException(Texture.class.getSimpleName(), e);
 		} catch (IOException e) {
 			Debug.debugManager().logger().e(Texture.class.getSimpleName(), "Error loading texture from file (" + textureFilename + ")");
 			Debug.debugManager().logger().printException(Texture.class.getSimpleName(), e);
