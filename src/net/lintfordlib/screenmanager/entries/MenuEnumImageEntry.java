@@ -17,22 +17,33 @@ import net.lintfordlib.screenmanager.MenuScreen;
 import net.lintfordlib.screenmanager.Screen;
 import net.lintfordlib.screenmanager.ScreenManager;
 
-public class MenuEnumEntryImageIndexed extends MenuEntry {
+public class MenuEnumImageEntry extends MenuEntry {
 
 	private static final long serialVersionUID = -4902595949146396834L;
 
 	public class MenuEnumEntryItem {
+		public final int uid;
 		public final String spriteFrameName;
 		public final Color color = new Color(ColorConstants.WHITE);
 
 		public MenuEnumEntryItem(String spriteFrameName) {
-			this.spriteFrameName = spriteFrameName;
+			this(spriteFrameName, -1);
+		}
+
+		public MenuEnumEntryItem(String spriteFrameName, int uid) {
+			this(spriteFrameName, uid, ColorConstants.WHITE);
 		}
 
 		public MenuEnumEntryItem(String spriteFrameName, Color color) {
+			this(spriteFrameName, -1, color);
+		}
+
+		public MenuEnumEntryItem(String spriteFrameName, int uid, Color color) {
+			this.uid = uid;
 			this.spriteFrameName = spriteFrameName;
 			this.color.setFromColor(color);
 		}
+
 	}
 
 	// --------------------------------------
@@ -52,6 +63,7 @@ public class MenuEnumEntryImageIndexed extends MenuEntry {
 
 	private String mSpriteSheetDefinitionName;
 	private SpriteSheetDefinition mImageSpriteSheetDefinition;
+	private ResourceManager mResourceManager;
 
 	// --------------------------------------
 	// Properties
@@ -127,19 +139,28 @@ public class MenuEnumEntryImageIndexed extends MenuEntry {
 		mIsChecked = newValue;
 	}
 
+	public void setNewSpriteSheetDefinition() {
+		// TODO: if control already loaded, then we need to clean up first and reload the correct sprites ...
+	}
+
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
-	public MenuEnumEntryImageIndexed(ScreenManager screenManager, MenuScreen parentScreen, String label, int entityGroupUid) {
+	public MenuEnumImageEntry(ScreenManager screenManager, MenuScreen parentScreen, int entityGroupUid) {
+		this(screenManager, parentScreen, null, entityGroupUid);
+	}
+
+	public MenuEnumImageEntry(ScreenManager screenManager, MenuScreen parentScreen, String spritesheetName, int entityGroupUid) {
 		super(screenManager, parentScreen, "");
 
-		mLabel = label;
 		mItems = new ArrayList<>();
 		mSelectedIndex = 0;
 		mEntityGroupUid = entityGroupUid;
 		mLeftButtonRectangle = new Rectangle(0, 0, 25, 25);
 		mRightButtonRectangle = new Rectangle(0, 0, 25, 25);
+
+		mSpriteSheetDefinitionName = spritesheetName;
 
 		mHighlightOnHover = false;
 		mDrawBackground = false;
@@ -155,17 +176,26 @@ public class MenuEnumEntryImageIndexed extends MenuEntry {
 	public void loadResources(ResourceManager resourceManager) {
 		super.loadResources(resourceManager);
 
+		mResourceManager = resourceManager;
+
 		if (mSpriteSheetDefinitionName == null || mSpriteSheetDefinitionName.length() == 0) {
 			mImageSpriteSheetDefinition = resourceManager.spriteSheetManager().coreSpritesheet();
 		} else {
 
 			mImageSpriteSheetDefinition = resourceManager.spriteSheetManager().getSpriteSheet(mSpriteSheetDefinitionName, mEntityGroupUid);
 
-			if (mImageSpriteSheetDefinition != null) {
+			if (mImageSpriteSheetDefinition == null) {
 				Debug.debugManager().logger().e(getClass().getSimpleName(), "MenuEnumEntryImageIndxed couldn't load requested SpriteSheetDefinition: " + mSpriteSheetDefinitionName);
 				mImageSpriteSheetDefinition = resourceManager.spriteSheetManager().coreSpritesheet();
 			}
 		}
+	}
+
+	@Override
+	public void unloadResources() {
+		super.unloadResources();
+
+		mResourceManager = null;
 	}
 
 	@Override
@@ -261,13 +291,11 @@ public class MenuEnumEntryImageIndexed extends MenuEntry {
 		entryColor.a = mParentScreen.screenColor.a;
 
 		if (mButtonsEnabled) {
-
 			final var lButtonSize = mH;
 			final var lButtonColor = ColorConstants.getWhiteWithAlpha((mEnabled ? 1.f : 0.5f) * mParentScreen.screenColor.a);
 
 			lTextureBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_LEFT, mLeftButtonRectangle.x(), mLeftButtonRectangle.y(), lButtonSize, lButtonSize, mZ, lButtonColor);
 			lTextureBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_RIGHT, mRightButtonRectangle.x(), mRightButtonRectangle.y(), lButtonSize, lButtonSize, mZ, lButtonColor);
-
 		}
 
 		final var lTextBoldFont = mParentScreen.fontBold();
@@ -291,7 +319,7 @@ public class MenuEnumEntryImageIndexed extends MenuEntry {
 			final var lSpriteFrame = mImageSpriteSheetDefinition.getSpriteFrame(lSpriteFrameName);
 			final var lSpriteColor = lSelectedItem.color;
 
-			lTextureBatch.draw(mImageSpriteSheetDefinition, lSpriteFrame, lScreenOffsetX + mX + (mW / 4 * 3) - lTileSize / 2, lScreenOffsetY + mY + mH / 2 - lTileSize / 2, lTileSize, lTileSize, mZ, lSpriteColor);
+			lTextureBatch.draw(mImageSpriteSheetDefinition, lSpriteFrame, lScreenOffsetX + mX + (mW / 6 * 4.65f) - lTileSize / 2, lScreenOffsetY + mY + mH / 2 - lTileSize / 2, lTileSize, lTileSize, mZ, lSpriteColor);
 		}
 
 		lTextBoldFont.end();
