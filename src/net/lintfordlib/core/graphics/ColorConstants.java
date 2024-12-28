@@ -1,7 +1,13 @@
 package net.lintfordlib.core.graphics;
 
+// @formatter:off
+
 public class ColorConstants {
 
+	private ColorConstants() {
+		// non instantiatable
+	}
+	
 	// --------------------------------------
 	// Constant Methods
 	// --------------------------------------
@@ -122,6 +128,41 @@ public class ColorConstants {
 	public static final Color SKINTONE04 = Color.GetNewColorFromRGBA(196.f, 146.f, 107.f);
 	public static final Color SKINTONE05 = Color.GetNewColorFromRGBA(89.f, 48.f, 16.f);
 
-	public static final Color[] SKINTONES = new Color[] { SKINTONE00, SKINTONE01, SKINTONE02, SKINTONE03, SKINTONE04, SKINTONE05 };
+	private static final Color[] SKINTONES = new Color[] { SKINTONE00, SKINTONE01, SKINTONE02, SKINTONE03, SKINTONE04, SKINTONE05 };
 
+	public static Color[] skinTones() {
+		return SKINTONES;
+	}
+
+	private static final Color[] HAIRCOLORS = new Color[] { 
+			new Color(19.f / 255.f, 18.f / 255.f, 16.f / 255.f), 
+			new Color(19.f / 255.f, 18.f / 255.f, 16.f / 255.f), // Black
+			new Color(44.f / 255.f, 34.f / 255.f, 43.f / 255.f), // Off-Black
+			new Color(59.f / 255.f, 48.f / 255.f, 38.f / 255.f), // Dark Brown
+			new Color(78.f / 255.f, 87.f / 255.f, 63.f / 255.f), // Med. Dark Brown
+			new Color(98.f / 255.f, 68.f / 255.f, 69.f / 255.f), // Chestnut Brown
+			new Color(112.f / 255.f, 47.f / 255.f, 43.f / 255.f), // Rust
+			new Color(106.f / 255.f, 78.f / 255.f, 66.f / 255.f), // Lt. Chestnut Brown
+			new Color(85.f / 255.f, 72.f / 255.f, 56.f / 255.f), // Dark Golden Brown
+			new Color(167.f / 255.f, 133.f / 255.f, 106.f / 255.f), // Light Golden Brown
+			new Color(194.f / 255.f, 151.f / 255.f, 128.f / 255.f), // Dark Honey Blonde
+			new Color(220.f / 255.f, 208.f / 255.f, 186.f / 255.f), // Bleached Blonde
+			new Color(229.f / 255.f, 200.f / 255.f, 168.f / 255.f), // Pale Golden Blonde
+			new Color(165.f / 255.f, 137.f / 255.f, 70.f / 255.f), // Strawberry Blonde
+			new Color(145.f / 255.f, 85.f / 255.f, 61.f / 255.f), // Light Auburn
+			new Color(225.f / 255.f, 245.f / 255.f, 225.f / 255.f), // White Blonde
+			new Color(202.f / 255.f, 191.f / 255.f, 177.f / 255.f), // Plaburn Blonde
+			new Color(141.f / 255.f, 74.f / 255.f, 67f / 255.f), // Russet Red
+			new Color(191.f / 255.f, 74.f / 255.f, 67f / 255.f), //
+			new Color(221.f / 255.f, 54.f / 255.f, 67f / 255.f), //
+			new Color(118.f / 255.f, 221.f / 255.f, 17f / 255.f), //
+			new Color(78.f / 255.f, 131.f / 255.f, 32f / 255.f), //
+			new Color(78.f / 255.f, 131.f / 255.f, 222f / 255.f), //
+			new Color(118.f / 255.f, 128.f / 255.f, 189f / 255.f) //
+	};
+
+	public static Color[] hairColors() {
+		return HAIRCOLORS;
+	}
+	
 }
