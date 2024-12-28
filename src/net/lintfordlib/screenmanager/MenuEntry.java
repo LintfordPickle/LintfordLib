@@ -68,6 +68,7 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 	protected SpriteSheetDefinition mCoreSpritesheet;
 
 	public final ContextHintState contextHintState = new ContextHintState();
+	protected float mSeparatorOffsetX;
 
 	protected boolean mEnabled;
 	protected boolean mReadOnly; // Same as enabled, but the text is not greyed (legibility)
@@ -125,6 +126,14 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public float separatorOffsetX() {
+		return mSeparatorOffsetX;
+	}
+
+	public void separatorOffsetX(float newOffsetX) {
+		mSeparatorOffsetX = newOffsetX;
+	}
 
 	public boolean affectsParentStructure() {
 		return mAffectParentStructure;
