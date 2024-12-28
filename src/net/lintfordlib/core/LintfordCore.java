@@ -266,15 +266,15 @@ public abstract class LintfordCore {
 	// Constructor
 	// ---------------------------------------------
 
-	public LintfordCore(GameInfo gameInfo) {
+	protected LintfordCore(GameInfo gameInfo) {
 		this(gameInfo, null);
 	}
 
-	public LintfordCore(GameInfo gameInfo, String[] args) {
+	protected LintfordCore(GameInfo gameInfo, String[] args) {
 		this(gameInfo, args, false);
 	}
 
-	public LintfordCore(GameInfo gameInfo, String[] args, boolean isHeadlessMode) {
+	protected LintfordCore(GameInfo gameInfo, String[] args, boolean isHeadlessMode) {
 		mGameInfo = gameInfo;
 		mIsHeadlessMode = isHeadlessMode;
 
@@ -293,7 +293,7 @@ public abstract class LintfordCore {
 				}
 			}
 		}
-		
+
 		Debug.debugManager(lNewLogLevel);
 
 		mMasterConfig = new MasterConfig(mGameInfo);
@@ -310,8 +310,6 @@ public abstract class LintfordCore {
 		// 60Hz is 16.66 ms
 		// 90Hz is 11.111 ms
 		// 120Hz is 8.33 ms
-
-		
 
 		registerGameInfoConstants(gameInfo);
 
@@ -367,7 +365,7 @@ public abstract class LintfordCore {
 		}
 
 		onRunGameLoop();
-	};
+	}
 
 	private void createCoreManagers() {
 		mDataManager = new DataManager(this);
