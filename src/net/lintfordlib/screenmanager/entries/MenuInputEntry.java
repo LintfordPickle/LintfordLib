@@ -2,8 +2,8 @@ package net.lintfordlib.screenmanager.entries;
 
 import org.lwjgl.glfw.GLFW;
 
+import java.util.Objects;
 import net.lintfordlib.core.LintfordCore;
-import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.geometry.Rectangle;
 import net.lintfordlib.core.graphics.ColorConstants;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
@@ -88,11 +88,22 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 	}
 
 	public void inputString(String newValue) {
+		if (Objects.equals(mInputField.toString(), newValue))
+			return;
+
 		if (mInputField.length() > 0) {
 			mInputField.delete(0, mInputField.length());
 		}
+
 		if (newValue != null)
 			mInputField.append(newValue);
+
+		// Set caret position to last char
+		mCursorPos = mInputField.length();
+
+		if (mClickListener != null) {
+			mClickListener.onMenuEntryChanged(this);
+		}
 
 	}
 
@@ -149,7 +160,7 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 		}
 		mSingleLine = true;
 		if (mSingleLine) {
-			mInputAreaRectangle.set(mX + mW / 2.f, mY, mW / 2.f, mH);
+			mInputAreaRectangle.set(mX + mW / 2.f + mSeparatorOffsetX, mY, mW / 2.f + -(mSeparatorOffsetX), mH);
 		} else {
 			mInputAreaRectangle.set(mX, mY + mH / 2.f, mW, mH / 2.f);
 		}
@@ -201,9 +212,11 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 		if (mCursorPos >= mInputField.length())
 			mCursorPos = mInputField.length();
 
-		final var first_part_of_string = mCursorPos > 0 ? mInputField.subSequence(0, mCursorPos) : "";
-		final var carot_position_x = lTextBoldFont.getStringWidth(first_part_of_string.toString(), 1.f) + lTextBoldFont.getStringWidth(" ");
 		final int lCancelRectSize = 16;
+
+		final var firstPartOfString = mCursorPos > 0 ? mInputField.subSequence(0, mCursorPos) : "";
+		final var caretPositionX = lTextBoldFont.getStringWidth(firstPartOfString.toString(), 1.f) + lTextBoldFont.getStringWidth(" ");
+
 		float lCutoffWidth;
 		if (mSingleLine) {
 			lCutoffWidth = mW / 2 - 8 - 32;
@@ -211,7 +224,7 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 			lCutoffWidth = mLabel == null ? mW - 32 : mInputAreaRectangle.width() - lCancelRectSize;
 		}
 
-		final var lIsTextTooLong = carot_position_x > lCutoffWidth;
+		final var lIsTextTooLong = caretPositionX > lCutoffWidth;
 		final var lInputTextWidth = lTextBoldFont.getStringWidth(mInputField.toString(), lUiTextScale);
 		final var lTextOverlapWithBox = lInputTextWidth - lCutoffWidth;
 
@@ -229,7 +242,7 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 		if (mSingleLine) {
 			// Draw the center separator char
 			final var mSeparator = " : ";
-			final var lCenterX = mX + mW / 2.f;
+			final var lCenterX = mX + mW / 2.f + mSeparatorOffsetX;
 			final var lLabelTextPositionY = mY + ENTRY_DEFAULT_HEIGHT / 2.f - lTextHeight * .5f;
 			final var lSeparatorHalfWidth = lTextBoldFont.getStringWidth(mSeparator, lUiTextScale) * 0.5f;
 			lTextBoldFont.drawText(mSeparator, lScreenOffset.x + lCenterX - lSeparatorHalfWidth, lScreenOffset.y + lLabelTextPositionY, mZ, textColor, 1.f);
@@ -238,9 +251,10 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 		if (mLabel != null) {
 			if (mSingleLine) {
 				final var lLabelTextPositionY = mY + ENTRY_DEFAULT_HEIGHT / 2.f - lTextHeight * .5f;
-				final var lCenterX = mX + mW / 2.f;
-				final var lSeparatorWidth = lTextBoldFont.getStringWidth(mLabel, lUiTextScale);
-				lTextBoldFont.drawText(mLabel, lScreenOffset.x + lCenterX - lSeparatorWidth - 32, lScreenOffset.y + lLabelTextPositionY, mZ, textColor, 1.f);
+
+				final var lCenterX = mX + mW / 2.f + mSeparatorOffsetX;
+				final var lLabelWidth = lTextBoldFont.getStringWidth(mLabel, lUiTextScale);
+				lTextBoldFont.drawText(mLabel, lScreenOffset.x + lCenterX - lLabelWidth - 32, lScreenOffset.y + lLabelTextPositionY, mZ, textColor, 1.f);
 			} else {
 				final var lLabelTextPositionY = mY + ENTRY_DEFAULT_HEIGHT / 2.f - lTextHeight * .5f;
 				lTextBoldFont.drawText(mLabel, lScreenOffset.x + mX, lScreenOffset.y + lLabelTextPositionY, mZ, textColor, 1.f);
@@ -252,7 +266,7 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 		ContentRectangle.preDraw(core, lSpriteBatch, lScreenOffset.x + mInputAreaRectangle.x() + 2.f, mY, lScreenOffset.y + mInputAreaRectangle.width() - lCancelRectSize - 5.f, mH, -0, 1);
 
 		lTextBoldFont.begin(core.HUD());
-		lTextBoldFont.drawText(mInputField.toString(), lScreenOffset.x + lTextPosX + 8, lScreenOffset.y + mInputAreaRectangle.y() + mInputAreaRectangle.height() * .5f - lTextHeight * .5f, mZ, textColor, 1.f);
+		lTextBoldFont.drawText(mInputField.toString(), lScreenOffset.x + lTextPosX + 8 + mSeparatorOffsetX, lScreenOffset.y + mInputAreaRectangle.y() + mInputAreaRectangle.height() * .5f - lTextHeight * .5f, mZ, textColor, 1.f);
 		lTextBoldFont.end();
 
 		ContentRectangle.postDraw(core);
@@ -260,7 +274,7 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 		if (mShowCaret && mHasFocus) {
 			lSpriteBatch.begin(core.HUD());
 			final var lCaretWidth = 0.f;
-			final var lCaretPositionX = lScreenOffset.x + lTextPosX + carot_position_x + lCaretWidth;
+			final var lCaretPositionX = lScreenOffset.x + lTextPosX + caretPositionX + lCaretWidth + mSeparatorOffsetX;
 			final var lCaretPositionY = lScreenOffset.y + mInputAreaRectangle.y() + mInputAreaRectangle.height() * .5f - lTextHeight * .5f;
 
 			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lCaretPositionX, lCaretPositionY, lTextHeight / 2.f, lTextHeight, mZ, ColorConstants.WHITE);
@@ -413,5 +427,9 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 	public void onCaptureStopped() {
 		mHasFocus = false;
 		mShowCaret = false;
+
+		if (mClickListener != null) {
+			mClickListener.onMenuEntryChanged(this);
+		}
 	}
 }
