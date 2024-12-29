@@ -126,9 +126,17 @@ public class Texture {
 		final var lCleanFilename = FileUtils.cleanFilename(filename);
 
 		try {
-			final var lFile = new File(System.getProperty(ConstantsApp.WORKSPACE_PROPERTY_NAME), lCleanFilename);
-			final var lFileSize = lFile.length();
-			final var lImage = ImageIO.read(lFile);
+			final var lWorkspaceFile = System.getProperty(ConstantsApp.WORKSPACE_PROPERTY_NAME);
+
+			File textureFile;
+			if (lCleanFilename.startsWith(lWorkspaceFile)) {
+				textureFile = new File(lCleanFilename);
+			} else {
+				textureFile = new File(lWorkspaceFile, lCleanFilename);
+			}
+
+			final var lFileSize = textureFile.length();
+			final var lImage = ImageIO.read(textureFile);
 
 			final var lNewTexture = createTexture(ptextureName, filename, lImage, filter, wrapModeS, wrapModeT);
 			lNewTexture.fileSizeOnLoad(lFileSize);
