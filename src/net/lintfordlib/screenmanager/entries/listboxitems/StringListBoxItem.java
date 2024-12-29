@@ -55,8 +55,7 @@ public class StringListBoxItem extends MenuListBoxItem {
 	// --------------------------------------
 
 	@Override
-	public void draw(LintfordCore core, Screen screen, SpriteBatch spriteBatch, SpriteSheetDefinition coreDef, FontUnit fontUnit, float zDepth) {
-
+	public void draw(LintfordCore core, Screen screen, SpriteBatch spriteBatch, SpriteSheetDefinition coreDef, FontUnit fontUnit, float zDepth, boolean isSelected) {
 		final var lTransitionOffset = screen.screenPositionOffset();
 
 		if (entryColor.a > 0.f) {

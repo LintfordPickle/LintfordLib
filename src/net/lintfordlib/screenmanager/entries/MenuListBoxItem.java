@@ -90,5 +90,5 @@ public abstract class MenuListBoxItem extends Rectangle {
 	public void update(LintfordCore core, MenuScreen screen) {
 	}
 
-	public abstract void draw(LintfordCore core, Screen screen, SpriteBatch spriteBatch, SpriteSheetDefinition coreDef, FontUnit fontUnit, float zDepth);
+	public abstract void draw(LintfordCore core, Screen screen, SpriteBatch spriteBatch, SpriteSheetDefinition coreDef, FontUnit fontUnit, float zDepth, boolean isSelected);
 }

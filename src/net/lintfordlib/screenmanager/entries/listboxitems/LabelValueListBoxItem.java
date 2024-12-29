@@ -62,7 +62,7 @@ public class LabelValueListBoxItem extends MenuListBoxItem {
 	// --------------------------------------
 
 	@Override
-	public void draw(LintfordCore core, Screen screen, SpriteBatch spriteBatch, SpriteSheetDefinition coreDef, FontUnit fontUnit, float zDepth) {
+	public void draw(LintfordCore core, Screen screen, SpriteBatch spriteBatch, SpriteSheetDefinition coreDef, FontUnit fontUnit, float zDepth, boolean isSelected) {
 		if (mLabelValue != null && mLabelValue.length() > 0) {
 
 			if (mTextValue == null)
