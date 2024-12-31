@@ -139,7 +139,7 @@ public class UiBar {
 		final var lFullBarPosX = x + (w * (1 - mBarSizeAsPercentageOfWidth));
 		final var lInnerBarWidth = MathHelper.scaleToRange(mCurValue, mMinValue, mMaxValue, 0, lFullBarWidth);
 
-		textFont.drawShadowedText(mLabel, x, y, -0.01f, 1.f, 1.f, 1.f, ColorConstants.BLACK, ColorConstants.WHITE);
+		textFont.drawShadowedText(mLabel, x, y + h / 2 - textFont.fontHeight() / 2, -0.01f, 1.f, 1.f, 1.f, ColorConstants.BLACK, ColorConstants.WHITE);
 
 		// Outer
 		spriteBatch.draw(lCoreTexture, CoreTextureNames.TEXTURE_WHITE, lFullBarPosX, y, lFullBarWidth, h, componentZDepth, mUiBarOuterColor);
