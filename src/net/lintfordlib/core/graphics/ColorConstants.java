@@ -17,18 +17,18 @@ public class ColorConstants {
 	 */
 	private static final Color TempColor = new Color();
 
-	public static Color getWhiteWithAlpha(float alphalpha) {
-		TempColor.setRGBA(1.f, 1.f, 1.f, alphalpha);
+	public static Color getWhiteWithAlpha(float alpha) {
+		TempColor.setRGBA(1.f, 1.f, 1.f, alpha);
 		return TempColor;
 	}
 
-	public static Color getBlackWithAlpha(float alphalpha) {
-		TempColor.setRGBA(0.f, 0.f, 0.f, alphalpha);
+	public static Color getBlackWithAlpha(float alpha) {
+		TempColor.setRGBA(0.f, 0.f, 0.f, alpha);
 		return TempColor;
 	}
 
-	public static Color getColorWithAlpha(Color pColor, float alphalpha) {
-		TempColor.setRGBA(pColor.r, pColor.g, pColor.b, alphalpha);
+	public static Color getColorWithAlpha(Color pColor, float alpha) {
+		TempColor.setRGBA(pColor.r, pColor.g, pColor.b, alpha);
 		return TempColor;
 	}
 
