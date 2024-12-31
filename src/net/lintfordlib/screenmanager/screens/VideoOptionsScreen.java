@@ -27,6 +27,7 @@ import net.lintfordlib.screenmanager.layouts.ListLayout;
 
 // TODO: Monitor and Aspect Ratio are only considered in fullscreen mode
 // TODO: Need to add a 15 second cooldown when applying settings for the first time
+// TODO: The 'Apply' button is sometimes disabled when changing from windowed/fullscreen - and the changes cannot be carried over.
 public class VideoOptionsScreen extends MenuScreen implements ITimedDialog {
 
 	// --------------------------------------
@@ -172,7 +173,6 @@ public class VideoOptionsScreen extends MenuScreen implements ITimedDialog {
 
 		mFullScreenEntry.registerClickListener(this, BUTTON_FULLSCREEN);
 		mResolutionEntry.registerClickListener(this, BUTTON_RESOLUTION);
-		mResolutionEntry.setToolTip("In windowed mode, you can drag the window borders to change the size!");
 		mResolutionEntry.showInfoButton(true);
 		mMonitorEntry.registerClickListener(this, BUTTON_MONITOR);
 		mVSync.registerClickListener(this, BUTTON_VSYNC);
@@ -215,6 +215,7 @@ public class VideoOptionsScreen extends MenuScreen implements ITimedDialog {
 			mConfirmationDialog.dialogTitle("Unsaved Changes");
 			mConfirmationDialog.confirmEntry().entryText("Okay");
 			mConfirmationDialog.confirmEntry().registerClickListener(this, ConfirmationDialog.BUTTON_CONFIRM_YES);
+			mConfirmationDialog.resetCoolDownTimer(300);
 
 			mConfirmationDialog.cancelEntry().entryText("Cancel");
 			mConfirmationDialog.cancelEntry().registerClickListener(this, ConfirmationDialog.BUTTON_CONFIRM_NO);

@@ -54,6 +54,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 	private float mItemHeight;
 	private String mSeparator;
 	private List<MenuEnumEntryItem> mItems;
+	protected boolean mIsInputActive;
 	private transient boolean mOpen;
 	private transient ScrollBarContentRectangle mContentRectangle;
 	private transient ScrollBarContentRectangle mWindowRectangle;
@@ -84,12 +85,12 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 		return mItems;
 	}
 
-	@Override
-	public void isActive(boolean newValue) {
-		super.isActive(newValue);
-
-		mOpen = mIsActive;
-	}
+//	@Override
+//	public void isActive(boolean newValue) {
+//		super.isActive(newValue);
+//
+//		mOpen = mIsInputActive;
+//	}
 
 	public MenuEnumEntryItem selectedItem() {
 		if (mItems == null || mItems.isEmpty())
@@ -267,8 +268,10 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 
 	@Override
 	public boolean onHandleKeyboardInput(LintfordCore core) {
+		if (!mIsActive)
+			return false;
 
-		if (mIsActive) {
+		if (mIsInputActive) {
 			if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_UP, this)) {
 				mSelectedIndex--;
 
@@ -295,8 +298,10 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 
 	@Override
 	public boolean onHandleGamepadInput(LintfordCore core) {
+		if (!mIsActive)
+			return false;
 
-		if (mIsActive) {
+		if (mIsInputActive) {
 			if (core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_UP, this)) {
 				mSelectedIndex--;
 
@@ -324,6 +329,9 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 	@Override
 	public void update(LintfordCore core, MenuScreen screen) {
 		super.update(core, screen);
+
+		if (!mIsActive)
+			return;
 
 		if (mShowInfoIcon)
 			mInfoIconDstRectangle.set(mX, mY, 32f, 32f);
@@ -354,7 +362,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 			mOpen = false;
 		}
 
-		mIsActive = mOpen;
+		mIsInputActive = mOpen;
 
 		final var lMouseMenuControls = core.input().mouse().isMouseMenuSelectionEnabled();
 		if (mOpen && mScrollBar.scrollBarEnabled() && !lMouseMenuControls) {
@@ -526,9 +534,9 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 	public void onClick(InputManager inputManager) {
 		super.onClick(inputManager);
 
-		mIsActive = !mIsActive;
+		mIsInputActive = !mIsInputActive;
 
-		if (mIsActive) {
+		if (mIsInputActive) {
 			mParentScreen.onMenuEntryActivated(this);
 			mOpen = true;
 		} else {
@@ -542,7 +550,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 		super.onDeselection(inputManager);
 
 		mOpen = false;
-		mIsActive = false;
+		mIsInputActive = false;
 	}
 
 	public void addItem(MenuEnumEntryItem item) {

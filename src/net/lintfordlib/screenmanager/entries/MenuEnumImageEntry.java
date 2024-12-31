@@ -63,7 +63,6 @@ public class MenuEnumImageEntry extends MenuEntry {
 
 	private String mSpriteSheetDefinitionName;
 	private SpriteSheetDefinition mImageSpriteSheetDefinition;
-	private ResourceManager mResourceManager;
 
 	// --------------------------------------
 	// Properties
@@ -176,8 +175,6 @@ public class MenuEnumImageEntry extends MenuEntry {
 	public void loadResources(ResourceManager resourceManager) {
 		super.loadResources(resourceManager);
 
-		mResourceManager = resourceManager;
-
 		if (mSpriteSheetDefinitionName == null || mSpriteSheetDefinitionName.length() == 0) {
 			mImageSpriteSheetDefinition = resourceManager.spriteSheetManager().coreSpritesheet();
 		} else {
@@ -189,13 +186,6 @@ public class MenuEnumImageEntry extends MenuEntry {
 				mImageSpriteSheetDefinition = resourceManager.spriteSheetManager().coreSpritesheet();
 			}
 		}
-	}
-
-	@Override
-	public void unloadResources() {
-		super.unloadResources();
-
-		mResourceManager = null;
 	}
 
 	@Override

@@ -596,7 +596,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 				} else {
 					lEntry.mHasFocus = false;
-					lEntry.mIsActive = false;
+					//lEntry.mIsActive = false;
 				}
 			}
 		}

@@ -229,6 +229,9 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 
 		super.draw(core, screen, componentDepth);
 
+		final var lScreenOffsetX = screen.screenPositionOffset().x;
+		final var lScreenOffsetY = screen.screenPositionOffset().y;
+
 		mZ = componentDepth;
 
 		final var lTextureBatch = mParentScreen.spriteBatch();
@@ -243,8 +246,8 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 			final var lButtonSize = mH;
 			final var lButtonColor = ColorConstants.getWhiteWithAlpha((mEnabled ? 1.f : 0.5f) * mParentScreen.screenColor.a);
 
-			lTextureBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_LEFT, mLeftButtonRectangle.x(), mLeftButtonRectangle.y(), lButtonSize, lButtonSize, mZ, lButtonColor);
-			lTextureBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_RIGHT, mRightButtonRectangle.x(), mRightButtonRectangle.y(), lButtonSize, lButtonSize, mZ, lButtonColor);
+			lTextureBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_LEFT, lScreenOffsetX + mLeftButtonRectangle.x(), lScreenOffsetY + mLeftButtonRectangle.y(), lButtonSize, lButtonSize, mZ, lButtonColor);
+			lTextureBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_RIGHT, lScreenOffsetX + mRightButtonRectangle.x(), lScreenOffsetY + mRightButtonRectangle.y(), lButtonSize, lButtonSize, mZ, lButtonColor);
 
 			lTextureBatch.end();
 		}
@@ -260,8 +263,8 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 		final var lSeparatorHalfWidth = lTextBoldFont.getStringWidth(mSeparator, lUiTextScale) * 0.5f;
 
 		lTextBoldFont.begin(core.HUD());
-		lTextBoldFont.drawText(mLabel, mX + mW / 2 - 10 - (lLabelWidth * lAdjustedLabelScaleW) - lSeparatorHalfWidth, mY + mH / 2 - lFontHeight * 0.5f, mZ, textColor, lAdjustedLabelScaleW, -1);
-		lTextBoldFont.drawText(mSeparator, mX + mW / 2 - lSeparatorHalfWidth, mY + mH / 2 - lFontHeight * 0.5f, mZ, textColor, lUiTextScale, -1);
+		lTextBoldFont.drawText(mLabel, lScreenOffsetX + mX + mW / 2 - 10 - (lLabelWidth * lAdjustedLabelScaleW) - lSeparatorHalfWidth, lScreenOffsetY + mY + mH / 2 - lFontHeight * 0.5f, mZ, textColor, lAdjustedLabelScaleW, -1);
+		lTextBoldFont.drawText(mSeparator, lScreenOffsetX + mX + mW / 2 - lSeparatorHalfWidth, lScreenOffsetY + mY + mH / 2 - lFontHeight * 0.5f, mZ, textColor, lUiTextScale, -1);
 
 		if (mSelectedIndex >= 0 && mSelectedIndex < mItems.size()) {
 			String lCurItem = mItems.get(mSelectedIndex).name;
@@ -270,7 +273,7 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 			if (mEnableScaleTextToWidth && mW * 0.35f < EntryWidth && EntryWidth > 0)
 				lAdjustedEntryScaleW = (mW * 0.35f) / EntryWidth;
 
-			lTextBoldFont.drawText(lCurItem, mX + (mW / 4 * 3) - (EntryWidth * lAdjustedEntryScaleW) / 2, mY + mH / 2 - lFontHeight * 0.5f, componentDepth, textColor, lAdjustedEntryScaleW, -1);
+			lTextBoldFont.drawText(lCurItem, lScreenOffsetX + mX + (mW / 4 * 3) - (EntryWidth * lAdjustedEntryScaleW) / 2, lScreenOffsetY + mY + mH / 2 - lFontHeight * 0.5f, componentDepth, textColor, lAdjustedEntryScaleW, -1);
 		}
 
 		lTextBoldFont.end();

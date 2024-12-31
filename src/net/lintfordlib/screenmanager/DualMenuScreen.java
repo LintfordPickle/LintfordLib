@@ -595,7 +595,6 @@ public abstract class DualMenuScreen extends MenuScreen {
 
 				} else {
 					lEntry.mHasFocus = false;
-					lEntry.mIsActive = false;
 				}
 			}
 		}
@@ -620,7 +619,6 @@ public abstract class DualMenuScreen extends MenuScreen {
 
 				} else {
 					lEntry.mHasFocus = false;
-					lEntry.mIsActive = false;
 				}
 			}
 		}

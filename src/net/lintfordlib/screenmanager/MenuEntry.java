@@ -38,14 +38,19 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 
 	public static final int ENTRY_DEFAULT_HEIGHT = 32;
 
-	public static MenuEntry menuSeparator() {
-		final var lNewMenuSeparatorEntry = new MenuEntry(null, null, null);
-		lNewMenuSeparatorEntry.enabled(false);
-		lNewMenuSeparatorEntry.enabled(false);
-		lNewMenuSeparatorEntry.active(false);
-		lNewMenuSeparatorEntry.drawButtonBackground(false);
+	private static MenuEntry MENU_SEPARATOR;
 
-		return lNewMenuSeparatorEntry;
+	public static MenuEntry menuSeparator() {
+		if (MENU_SEPARATOR == null) {
+			MENU_SEPARATOR = new MenuEntry(null, null, null);
+
+			MENU_SEPARATOR.enabled(false);
+			MENU_SEPARATOR.isActive(false);
+			MENU_SEPARATOR.enableUpdateDraw(false);
+			MENU_SEPARATOR.drawButtonBackground(false);
+		}
+
+		return MENU_SEPARATOR;
 	}
 
 	// --------------------------------------
@@ -319,12 +324,12 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 		mReadOnly = readOnly;
 	}
 
-	public boolean activeUpdateDraw() {
+	public boolean enableUpdateDraw() {
 		return mEnableUpdateDraw;
 	}
 
-	public void active(boolean enabled) {
-		mEnableUpdateDraw = enabled;
+	public void enableUpdateDraw(boolean enableUpdateDraw) {
+		mEnableUpdateDraw = enableUpdateDraw;
 	}
 
 	@Override
@@ -398,6 +403,7 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 
 		mEnableUpdateDraw = true;
 		mEnabled = true;
+		mIsActive = true;
 		mAffectParentStructure = true;
 		mCanHaveFocus = true;
 		mDrawBackground = true;
@@ -469,6 +475,9 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 	}
 
 	public boolean onHandleMouseInput(LintfordCore core) {
+		if (!mIsActive)
+			return false;
+
 		if (mParentScreen == null || !mEnabled)
 			return false;
 
@@ -508,7 +517,7 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 	}
 
 	public void update(LintfordCore core, MenuScreen screen) {
-		if (!mAffectParentStructure && !mEnableUpdateDraw)
+		if (!mIsActive || !mAffectParentStructure && !mEnableUpdateDraw)
 			return;
 
 		mAnimation.update(core);

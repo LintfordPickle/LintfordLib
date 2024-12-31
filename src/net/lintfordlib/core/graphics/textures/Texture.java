@@ -128,6 +128,8 @@ public class Texture {
 		try {
 			final var lWorkspaceFile = System.getProperty(ConstantsApp.WORKSPACE_PROPERTY_NAME);
 
+			// NOTE: loading a texture from an absolue path that is not within the games subdirectories (res/) will not work.
+			// is this an issue?
 			File textureFile;
 			if (lCleanFilename.startsWith(lWorkspaceFile)) {
 				textureFile = new File(lCleanFilename);

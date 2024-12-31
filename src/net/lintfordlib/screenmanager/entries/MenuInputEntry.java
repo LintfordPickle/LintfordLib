@@ -4,6 +4,7 @@ import org.lwjgl.glfw.GLFW;
 
 import java.util.Objects;
 import net.lintfordlib.core.LintfordCore;
+import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.geometry.Rectangle;
 import net.lintfordlib.core.graphics.ColorConstants;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
@@ -34,6 +35,7 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 	private final Rectangle mInputAreaRectangle = new Rectangle();
 	private float mCaretFlashTimer;
 	private boolean mShowCaret;
+	protected boolean mIsInputActive;
 	private String mTempString;
 	private boolean mEnableScaleTextToWidth;
 	private StringBuilder mInputField;
@@ -150,22 +152,24 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 	public void update(LintfordCore core, MenuScreen screen) {
 		super.update(core, screen);
 
+		if (!mIsActive)
+			return;
+
 		if (!mEnableUpdateDraw)
 			return;
 
 		if (!mEnabled || mReadOnly) {
 			mHasFocus = false;
-			mIsActive = false;
+			mIsInputActive = false;
 			return;
 		}
-		mSingleLine = true;
 		if (mSingleLine) {
 			mInputAreaRectangle.set(mX + mW / 2.f + mSeparatorOffsetX, mY, mW / 2.f + -(mSeparatorOffsetX), mH);
 		} else {
 			mInputAreaRectangle.set(mX, mY + mH / 2.f, mW, mH / 2.f);
 		}
 
-		if (mIsActive) {
+		if (mIsInputActive) {
 			final double lDeltaTime = core.appTime().elapsedTimeMilli();
 			mCaretFlashTimer += lDeltaTime;
 
@@ -180,7 +184,7 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 
 	@Override
 	public void draw(LintfordCore core, Screen screen, float parentZDepth) {
-		if (!mEnableUpdateDraw)
+		if (!mEnableUpdateDraw || !mIsActive)
 			return;
 
 		final var lTextBoldFont = mParentScreen.fontBold();
@@ -196,7 +200,7 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 
 		entryColor.setRGB(1.f, 1.f, 1.f);
 
-		if (mHasFocus || mIsActive) {
+		if (mHasFocus || mIsInputActive) {
 			lSpriteBatch.begin(core.HUD());
 			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - mW / 2, lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ, ColorConstants.MenuEntryHighlightColor);
 			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - mW / 2 + 32, lScreenOffset.y + centerY() - mH / 2, mW - 64, mH, mZ, ColorConstants.MenuEntryHighlightColor);
@@ -239,6 +243,8 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 		lTextBoldFont.begin(core.HUD());
 		final float lTextHeight = lTextBoldFont.fontHeight();
 
+		final var lSingleLineTextOffsetX = (mSingleLine ? mSeparatorOffsetX : 0.f);
+		
 		if (mSingleLine) {
 			// Draw the center separator char
 			final var mSeparator = " : ";
@@ -266,7 +272,7 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 		ContentRectangle.preDraw(core, lSpriteBatch, lScreenOffset.x + mInputAreaRectangle.x() + 2.f, mY, lScreenOffset.y + mInputAreaRectangle.width() - lCancelRectSize - 5.f, mH, -0, 1);
 
 		lTextBoldFont.begin(core.HUD());
-		lTextBoldFont.drawText(mInputField.toString(), lScreenOffset.x + lTextPosX + 8 + mSeparatorOffsetX, lScreenOffset.y + mInputAreaRectangle.y() + mInputAreaRectangle.height() * .5f - lTextHeight * .5f, mZ, textColor, 1.f);
+		lTextBoldFont.drawText(mInputField.toString(), lScreenOffset.x + lTextPosX + 8 + lSingleLineTextOffsetX, lScreenOffset.y + mInputAreaRectangle.y() + mInputAreaRectangle.height() * .5f - lTextHeight * .5f, mZ, textColor, 1.f);
 		lTextBoldFont.end();
 
 		ContentRectangle.postDraw(core);
@@ -274,7 +280,7 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 		if (mShowCaret && mHasFocus) {
 			lSpriteBatch.begin(core.HUD());
 			final var lCaretWidth = 0.f;
-			final var lCaretPositionX = lScreenOffset.x + lTextPosX + caretPositionX + lCaretWidth + mSeparatorOffsetX;
+			final var lCaretPositionX = lScreenOffset.x + lTextPosX + caretPositionX + lCaretWidth + lSingleLineTextOffsetX;
 			final var lCaretPositionY = lScreenOffset.y + mInputAreaRectangle.y() + mInputAreaRectangle.height() * .5f - lTextHeight * .5f;
 
 			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lCaretPositionX, lCaretPositionY, lTextHeight / 2.f, lTextHeight, mZ, ColorConstants.WHITE);
@@ -293,6 +299,8 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 			drawWarningIcon(core, lSpriteBatch, mWarnIconDstRectangle, 1.f);
 
 		drawDebugCollidableBounds(core, lSpriteBatch);
+
+		Debug.debugManager().drawers().drawRectImmediate(core.HUD(), mInputAreaRectangle);
 	}
 
 	// --------------------------------------
@@ -303,34 +311,32 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 	public void onClick(InputManager inputState) {
 		super.onClick(inputState);
 
-		if (mReadOnly)
+		if (mReadOnly || !mIsActive)
 			return;
 
-		mIsActive = !mIsActive;
+		mIsInputActive = !mIsInputActive;
 
-		if (mIsActive) {
+		if (mIsInputActive) {
+			inputState.keyboard().startBufferedTextCapture(this);
 			mParentScreen.onMenuEntryActivated(this);
 
-			inputState.keyboard().startBufferedTextCapture(this);
 		} else {
 			inputState.keyboard().stopBufferedTextCapture();
 			mParentScreen.onMenuEntryDeactivated(this);
+
 		}
 
 		if (mInputField.length() > 0)
 			mTempString = mInputField.toString();
 
-		if (mResetOnDefaultClick && mInputField.toString().equals(mDefaultText)) {
-			if (mInputField.length() > 0) {
-				mInputField.delete(0, mInputField.length());
-			}
-		}
+		if (mResetOnDefaultClick && mInputField.toString().equals(mDefaultText) && mInputField.length() > 0)
+			mInputField.delete(0, mInputField.length());
 
 	}
 
 	@Override
 	public void onDeselection(InputManager inputManager) {
-		if (mIsActive)
+		if (mIsInputActive)
 			inputManager.keyboard().stopBufferedTextCapture();
 
 	}
@@ -342,7 +348,7 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 
 	@Override
 	public boolean onEnterPressed() {
-		mIsActive = false;
+		mIsInputActive = false;
 		mParentScreen.onMenuEntryDeactivated(this);
 		mShowCaret = false;
 
@@ -365,7 +371,7 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 		if (mTempString != null && mTempString.length() == 0)
 			mInputField.append(mTempString);
 
-		mIsActive = false;
+		mIsInputActive = false;
 		mShowCaret = false;
 
 		return getEscapeFinishesInput();
