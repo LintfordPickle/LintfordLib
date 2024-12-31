@@ -51,6 +51,10 @@ public abstract class PlayerSessionsManager<T extends IPlayerSession> {
 		return mPlayerSessions.get(sessionIndex);
 	}
 
+	public T mainPlayerSession() {
+		return mPlayerSessions.get(0);
+	}
+
 	// ---------------------------------------------
 	// Constructor
 	// ---------------------------------------------
