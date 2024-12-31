@@ -23,7 +23,7 @@ class BitmapFontDefinition {
 	// --------------------------------------
 
 	/** Textures referenced within this spritesheet need to be referenced with the correct entity group Id. */
-	protected transient int mEntityGroupUid;
+	protected int mEntityGroupUid;
 
 	/** The height of the largest glyph is taken to be the height of the font. */
 	protected float mFontHeight;
@@ -39,7 +39,7 @@ class BitmapFontDefinition {
 	protected String mTextureFilepath;
 
 	/** The {@link Texture} instance associated with this {@link SpriteSheetDBitmapFontDefinitionefinition} */
-	protected transient Texture mTexture;
+	protected Texture mTexture;
 
 	/**
 	 * In order to detect changes to the SpriteSheet when trying to reload textures, we will store the file size of the texture each time it is loaded.
@@ -92,17 +92,18 @@ class BitmapFontDefinition {
 		float lWidth = 0.f;
 		final int lCharCount = text.length();
 		for (int i = 0; i < lCharCount; i++) {
-			if (text.charAt(i) == '\n' || text.charAt(i) == '\r') {
-				if (lWidth > maxWidthFound) {
-					maxWidthFound = lWidth;
-					lWidth = 0;
-					continue;
-				}
+			final var lIsBreakLineChar = text.charAt(i) == '\n' || text.charAt(i) == '\r';
+			if (lIsBreakLineChar && lWidth > maxWidthFound) {
+				maxWidthFound = lWidth;
+				lWidth = 0;
+				continue;
 			}
 
-			final var lGlyph = getGlyphFrame((int) text.charAt(i));
-			if (lGlyph == null)
+			final var lGlyph = getGlyphFrame(text.charAt(i));
+			if (lGlyph == null) {
+				lWidth += getGlyphFrame(' ').width() * textScale;
 				continue;
+			}
 
 			lWidth += lGlyph.width() * textScale;
 		}
@@ -111,6 +112,7 @@ class BitmapFontDefinition {
 			maxWidthFound = lWidth;
 
 		return maxWidthFound;
+
 	}
 
 	public float getFontHeight() {
@@ -144,11 +146,10 @@ class BitmapFontDefinition {
 
 		final var lTextureManager = resourceManager.textureManager();
 
-		// TODO: Where is mUseSubPixelRendering actuall set from (json)?
-		final var lFilteringMode = GL11.GL_NEAREST;// mUseSubPixelRendering ? GL11.GL_LINEAR : GL11.GL_NEAREST;
+		final var lFilteringMode = GL11.GL_NEAREST;
 		mTexture = lTextureManager.getTextureOrLoad(mTextureName, mTextureFilepath, lFilteringMode, mEntityGroupUid);
 
-		if (lTextureManager.isTextureLoaded(mTexture) == false) {
+		if (!lTextureManager.isTextureLoaded(mTexture)) {
 			Debug.debugManager().logger().e(getClass().getSimpleName(), "Cannot locate texture " + mTextureName);
 		}
 
