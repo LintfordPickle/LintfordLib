@@ -71,10 +71,11 @@ public class UiSeparator extends UIWidget {
 	@Override
 	public void draw(LintfordCore core, SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheetDefinition, FontUnit textFont, float componentZDepth) {
 		spriteBatch.begin(core.HUD());
-		spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_LEFT, mX, mY, 32, mSeparatorHeight, componentZDepth, mSeparatorColor);
+		spriteBatch.setColor(mSeparatorColor);
+		spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_LEFT, mX, mY, 32, mSeparatorHeight, componentZDepth);
 		if (mW > 32) {
-			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_MID, mX + 32, mY, mW - 64, mSeparatorHeight, componentZDepth, mSeparatorColor);
-			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_RIGHT, mX + mW - 32, mY, 32, mSeparatorHeight, componentZDepth, mSeparatorColor);
+			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_MID, mX + 32, mY, mW - 64, mSeparatorHeight, componentZDepth);
+			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_RIGHT, mX + mW - 32, mY, 32, mSeparatorHeight, componentZDepth);
 		}
 		spriteBatch.end();
 	}

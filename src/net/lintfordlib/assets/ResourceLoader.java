@@ -11,7 +11,6 @@ import org.lwjgl.opengl.GL32;
 
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.debug.Debug;
-import net.lintfordlib.core.graphics.ColorConstants;
 import net.lintfordlib.core.graphics.fonts.FontUnit;
 import net.lintfordlib.core.maths.MathHelper;
 import net.lintfordlib.core.time.TimeConstants;
@@ -46,6 +45,7 @@ public abstract class ResourceLoader extends Thread {
 	private float minimumTimeToShowLogos = 4000; // ms
 
 	private long mGlSyncObjectId = -1;
+	private StringBuilder mStringBuilder = new StringBuilder();
 	private boolean _loadOnBackgroundThread = true;
 
 	// --------------------------------------
@@ -104,7 +104,7 @@ public abstract class ResourceLoader extends Thread {
 	// Constructor
 	// ---------------------------------------------
 
-	public ResourceLoader(ResourceManager resourceManager, DisplayManager displayManager, boolean useBackgroundThread, int entityGroupUid) {
+	protected ResourceLoader(ResourceManager resourceManager, DisplayManager displayManager, boolean useBackgroundThread, int entityGroupUid) {
 		mResourceManager = resourceManager;
 		mDisplayManager = displayManager;
 		loadingThreadStarted = false;
@@ -240,14 +240,16 @@ public abstract class ResourceLoader extends Thread {
 
 		final var lLeft = lHudBoundingBox.left();
 		final var lBottom = lHudBoundingBox.bottom();
-		var message = currentStatusMessage() + " ";
+		mStringBuilder.delete(0, mStringBuilder.length());
+		mStringBuilder.append(currentStatusMessage());
+		mStringBuilder.append(" ");
 		for (int i = 0; i < mPeriodCount; i++) {
-			message += '.';
+			mStringBuilder.append(".");
 		}
 
 		mSystemFont.begin(lHud);
-		final var lTextColor = ColorConstants.getColor(mTextColorR, mTextColorG, mTextColorB);
-		mSystemFont.drawText(message, lLeft + 5.f, lBottom - mSystemFont.fontHeight() - 5.f, -0.01f, lTextColor, 1.f);
+		mSystemFont.setTextColorRGB(mTextColorR, mTextColorG, mTextColorB);
+		mSystemFont.drawText(mStringBuilder.toString(), lLeft + 5.f, lBottom - mSystemFont.fontHeight() - 5.f, -0.01f, 1.f);
 		mSystemFont.end();
 	}
 

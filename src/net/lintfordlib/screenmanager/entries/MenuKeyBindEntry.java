@@ -110,7 +110,7 @@ public class MenuKeyBindEntry extends MenuEntry implements IKeyInputCallback {
 			return false;
 
 		if (mHasFocus && core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_ENTER, this)) {
-			if (core.input().keyboard().isSomeComponentCapturingInputKeys() == false) {
+			if (!core.input().keyboard().isSomeComponentCapturingInputKeys()) {
 				if (mEventAction == null) {
 					Debug.debugManager().logger().e(getClass().getSimpleName(), "Error calibrating EventAction. The EventAction has not been correctly registered. Check the stack trace below:");
 					Debug.debugManager().logger().printStacktrace(getClass().getSimpleName());
@@ -134,7 +134,7 @@ public class MenuKeyBindEntry extends MenuEntry implements IKeyInputCallback {
 			return false;
 
 		if (mHasFocus && core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_A, this)) {
-			if (core.input().keyboard().isSomeComponentCapturingInputKeys() == false) {
+			if (!core.input().keyboard().isSomeComponentCapturingInputKeys()) {
 				if (mEventAction == null) {
 					Debug.debugManager().logger().e(getClass().getSimpleName(), "Error calibrating EventAction. The EventAction has not been correctly registered. Check the stack trace below:");
 					Debug.debugManager().logger().printStacktrace(getClass().getSimpleName());
@@ -163,7 +163,7 @@ public class MenuKeyBindEntry extends MenuEntry implements IKeyInputCallback {
 		}
 
 		if (mHasFocus && core.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
-			if (core.input().keyboard().isSomeComponentCapturingInputKeys() == false) {
+			if (!core.input().keyboard().isSomeComponentCapturingInputKeys()) {
 				if (mEventAction == null) {
 					Debug.debugManager().logger().e(getClass().getSimpleName(), "Error calibrating EventAction. The EventAction has not been correctly registered. Check the stack trace below:");
 					Debug.debugManager().logger().printStacktrace(getClass().getSimpleName());
@@ -222,14 +222,16 @@ public class MenuKeyBindEntry extends MenuEntry implements IKeyInputCallback {
 
 		if (mDrawBackground) {
 			lSpriteBatch.begin(core.HUD());
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX, mY, mW, mH, parentZDepth + .15f, entryColor);
+			lSpriteBatch.setColor(entryColor);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX, mY, mW, mH, parentZDepth + .15f);
 			lSpriteBatch.end();
 
 		} else if (mHasFocus) {
 			lSpriteBatch.begin(core.HUD());
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, centerX() - mW / 2, centerY() - mH / 2, 32, mH, parentZDepth + .15f, ColorConstants.MenuEntryHighlightColor);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, centerX() - mW / 2 + 32, centerY() - mH / 2, mW - 64, mH, parentZDepth + .15f, ColorConstants.MenuEntryHighlightColor);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, centerX() + mW / 2 - 32, centerY() - mH / 2, 32, mH, parentZDepth + .15f, ColorConstants.MenuEntryHighlightColor);
+			lSpriteBatch.setColor(ColorConstants.MenuEntryHighlightColor);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, centerX() - mW / 2, centerY() - mH / 2, 32, mH, parentZDepth + .15f);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, centerX() - mW / 2 + 32, centerY() - mH / 2, mW - 64, mH, parentZDepth + .15f);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, centerX() + mW / 2 - 32, centerY() - mH / 2, 32, mH, parentZDepth + .15f);
 			lSpriteBatch.end();
 		}
 
@@ -238,8 +240,9 @@ public class MenuKeyBindEntry extends MenuEntry implements IKeyInputCallback {
 		mCaretFlashTimer += core.appTime().elapsedTimeMilli() * 0.001f;
 
 		lTextBoldFont.begin(core.HUD());
-		lTextBoldFont.drawText(mText, lX - lLabelWidth - 20.f, mY + mH / 2f - lFontHeight / 2f, parentZDepth + .15f, textColor, lUiTextScale);
-		lTextBoldFont.drawText(":", lX - 5.f, mY + mH / 2f - lFontHeight / 2f, parentZDepth + .15f, textColor, lUiTextScale);
+		lTextBoldFont.setTextColor(textColor);
+		lTextBoldFont.drawText(mText, lX - lLabelWidth - 20.f, mY + mH / 2f - lFontHeight / 2f, parentZDepth + .15f, lUiTextScale);
+		lTextBoldFont.drawText(":", lX - 5.f, mY + mH / 2f - lFontHeight / 2f, parentZDepth + .15f, lUiTextScale);
 
 		if (mBindingKey) {
 			final String lBoundKeyText = "|";
@@ -247,15 +250,16 @@ public class MenuKeyBindEntry extends MenuEntry implements IKeyInputCallback {
 			final var lColor = ColorConstants.getColorWithRGBMod(ColorConstants.PrimaryColor, lColorMod);
 
 			lSpriteBatch.begin(core.HUD());
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX, mY, mW, mH, parentZDepth + .15f, lColor);
+			lSpriteBatch.setColor(lColor);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX, mY, mW, mH, parentZDepth + .15f);
 			lSpriteBatch.end();
 
 			if (mCaretFlashTimer % 1.f > .5f) {
-				lTextBoldFont.drawText(lBoundKeyText, lX + 20.f, mY + mH / 2f - lFontHeight / 2f, parentZDepth + .15f, textColor, lUiTextScale);
+				lTextBoldFont.drawText(lBoundKeyText, lX + 20.f, mY + mH / 2f - lFontHeight / 2f, parentZDepth + .15f, lUiTextScale);
 			}
 
 		} else if (mBoundKeyText != null && mBoundKeyText.length() > 0) {
-			lTextBoldFont.drawText(mBoundKeyText, lX + 20.f, mY + mH / 2f - lFontHeight / 2f, parentZDepth + .15f, textColor, lUiTextScale);
+			lTextBoldFont.drawText(mBoundKeyText, lX + 20.f, mY + mH / 2f - lFontHeight / 2f, parentZDepth + .15f, lUiTextScale);
 		}
 
 		lTextBoldFont.end();
@@ -277,7 +281,8 @@ public class MenuKeyBindEntry extends MenuEntry implements IKeyInputCallback {
 
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
 			lSpriteBatch.begin(core.HUD());
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX, mY, mW, mH, mZ, ColorConstants.Debug_Transparent_Magenta);
+			lSpriteBatch.setColor(ColorConstants.Debug_Transparent_Magenta);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX, mY, mW, mH, mZ);
 			lSpriteBatch.end();
 		}
 	}

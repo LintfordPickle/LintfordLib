@@ -112,14 +112,16 @@ public class UITextButton extends UIWidget {
 		final var lColor = ColorConstants.getColorWithRGBMod(ColorConstants.PrimaryColor, lColorMod);
 
 		spriteBatch.begin(core.HUD());
-		spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX, mY, 32, 32, componentZDepth, lColor);
+		spriteBatch.setColor(lColor);
+		spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX, mY, 32, 32, componentZDepth);
 		spriteBatch.end();
 
 		final var lFontRenderer = mParentWindow.rendererManager().uiTextFont();
 		final var lButtonText = mButtonLabel != null ? mButtonLabel : NO_LABEL_TEXT;
 		final var lTextWidth = lFontRenderer.getStringWidth(lButtonText);
 
-		lFontRenderer.drawText(lButtonText, mX + mW / 2f - lTextWidth / 2f, mY + mH / 2f - lFontRenderer.fontHeight() / 4f, componentZDepth, ColorConstants.WHITE, 1f);
+		lFontRenderer.setTextColorRGBA(1.f, 1.f, 1.f, 1.f);
+		lFontRenderer.drawText(lButtonText, mX + mW / 2f - lTextWidth / 2f, mY + mH / 2f - lFontRenderer.fontHeight() / 4f, componentZDepth, 1f);
 	}
 
 	// --------------------------------------

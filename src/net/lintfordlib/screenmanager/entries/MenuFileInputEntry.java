@@ -78,11 +78,6 @@ public class MenuFileInputEntry extends MenuEntry implements IBufferedTextInputC
 		mEnableScaleTextToWidth = newValue;
 	}
 
-	@Override
-	public boolean hasFocus() {
-		return super.hasFocus();
-	}
-
 	public void label(String newLabel) {
 		mLabel = newLabel;
 	}
@@ -91,6 +86,7 @@ public class MenuFileInputEntry extends MenuEntry implements IBufferedTextInputC
 		return mLabel;
 	}
 
+	@Override
 	public String entryText() {
 		return inputString();
 	}
@@ -105,8 +101,7 @@ public class MenuFileInputEntry extends MenuEntry implements IBufferedTextInputC
 			return;
 		}
 
-		if (newValue != null)
-			mInputField.append(newValue);
+		mInputField.append(newValue);
 
 		mCursorPos = mInputField.length();
 
@@ -165,36 +160,31 @@ public class MenuFileInputEntry extends MenuEntry implements IBufferedTextInputC
 			if (core.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
 
 				try {
-					SwingUtilities.invokeAndWait(new Runnable() {
-						@Override
-						public void run() {
-							var chooser = new JFileChooser();
-							chooser.setMultiSelectionEnabled(false);
+					SwingUtilities.invokeAndWait(() -> {
+						var chooser = new JFileChooser();
+						chooser.setMultiSelectionEnabled(false);
 
-							if (mDirectorySelection) {
-								chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-							} else {
-								var filter = new FileNameExtensionFilter("Definition Meta File", "json");
-								chooser.setFileFilter(filter);
-								chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-							}
+						if (mDirectorySelection) {
+							chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+						} else {
+							var filter = new FileNameExtensionFilter("Definition Meta File", "json");
+							chooser.setFileFilter(filter);
+							chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+						}
 
-							if (mBaseDirectory != null) {
-								final var lBaseDirectoryFile = new File(mBaseDirectory);
-								if (lBaseDirectoryFile.exists() && lBaseDirectoryFile.isDirectory())
-									chooser.setCurrentDirectory(lBaseDirectoryFile);
-							}
+						if (mBaseDirectory != null) {
+							final var lBaseDirectoryFile = new File(mBaseDirectory);
+							if (lBaseDirectoryFile.exists() && lBaseDirectoryFile.isDirectory())
+								chooser.setCurrentDirectory(lBaseDirectoryFile);
+						}
 
-							int returnVal = chooser.showOpenDialog(new JFrame());
-							if (returnVal == JFileChooser.APPROVE_OPTION) {
-								mFile = chooser.getSelectedFile();
-								inputString(mFile.getAbsolutePath());
-							}
+						int returnVal = chooser.showOpenDialog(new JFrame());
+						if (returnVal == JFileChooser.APPROVE_OPTION) {
+							mFile = chooser.getSelectedFile();
+							inputString(mFile.getAbsolutePath());
 						}
 					});
-				} catch (InvocationTargetException e) {
-					e.printStackTrace();
-				} catch (InterruptedException e) {
+				} catch (InvocationTargetException | InterruptedException e) {
 					e.printStackTrace();
 				}
 
@@ -231,7 +221,7 @@ public class MenuFileInputEntry extends MenuEntry implements IBufferedTextInputC
 
 		mInputAreaRectangle.set(mX, mY + mH / 2.f, mW, mH / 2.f);
 		final int lCancelRectSize = 32;
-		mFileFolderRectangle.set(mInputAreaRectangle.x() + mInputAreaRectangle.width() - lCancelRectSize - 4, mInputAreaRectangle.y() + mInputAreaRectangle.height() / 2 - lCancelRectSize / 2, lCancelRectSize, lCancelRectSize);
+		mFileFolderRectangle.set(mInputAreaRectangle.x() + mInputAreaRectangle.width() - lCancelRectSize - 4.f, mInputAreaRectangle.y() + mInputAreaRectangle.height() / 2 - lCancelRectSize / 2.f, lCancelRectSize, lCancelRectSize);
 
 		if (mIsActive) {
 			final double lDeltaTime = core.appTime().elapsedTimeMilli();
@@ -289,21 +279,23 @@ public class MenuFileInputEntry extends MenuEntry implements IBufferedTextInputC
 			}
 
 			lSpriteBatch.begin(hud);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_TITLE_HORIZONTAL_LEFT, lLeft, lScreenOffset.y + centerY() - mH / 2, lTileSize, mH, mZ, entryColor);
+			lSpriteBatch.setColor(entryColor);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_TITLE_HORIZONTAL_LEFT, lLeft, lScreenOffset.y + centerY() - mH / 2, lTileSize, mH, mZ);
 			if (use5Steps)
-				lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_TITLE_HORIZONTAL_MID_LEFT, lLeft += 32, lScreenOffset.y + centerY() - mH / 2, lTileSize, mH, mZ, entryColor);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_TITLE_HORIZONTAL_MID, lLeft += 32, lScreenOffset.y + centerY() - mH / 2, lInnerWidth, mH, mZ, entryColor);
+				lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_TITLE_HORIZONTAL_MID_LEFT, lLeft += 32, lScreenOffset.y + centerY() - mH / 2, lTileSize, mH, mZ);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_TITLE_HORIZONTAL_MID, lLeft += 32, lScreenOffset.y + centerY() - mH / 2, lInnerWidth, mH, mZ);
 			if (use5Steps)
-				lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_TITLE_HORIZONTAL_MID_RIGHT, (lLeft -= 32) + lHalfWidth * 2 - 96, lScreenOffset.y + centerY() - mH / 2, lTileSize, mH, mZ, entryColor);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_TITLE_HORIZONTAL_RIGHT, (lLeft -= 32) + lHalfWidth * 2 - 32, lScreenOffset.y + centerY() - mH / 2, lTileSize, mH, mZ, entryColor);
+				lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_TITLE_HORIZONTAL_MID_RIGHT, (lLeft -= 32) + lHalfWidth * 2 - 96, lScreenOffset.y + centerY() - mH / 2, lTileSize, mH, mZ);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_TITLE_HORIZONTAL_RIGHT, (lLeft -= 32) + lHalfWidth * 2 - 32, lScreenOffset.y + centerY() - mH / 2, lTileSize, mH, mZ);
 			lSpriteBatch.end();
 		}
 
 		if (mHasFocus || mIsActive) {
 			lSpriteBatch.begin(hud);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - mW / 2, lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ, ColorConstants.MenuEntryHighlightColor);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - (mW / 2) + 32, lScreenOffset.y + centerY() - mH / 2, mW - 64, mH, mZ, ColorConstants.MenuEntryHighlightColor);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() + (mW / 2) - 32, lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ, ColorConstants.MenuEntryHighlightColor);
+			lSpriteBatch.setColor(ColorConstants.MenuEntryHighlightColor);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - mW / 2, lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - (mW / 2) + 32, lScreenOffset.y + centerY() - mH / 2, mW - 64, mH, mZ);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() + (mW / 2) - 32, lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ);
 			lSpriteBatch.end();
 		}
 
@@ -329,10 +321,11 @@ public class MenuFileInputEntry extends MenuEntry implements IBufferedTextInputC
 		lTextBoldFont.begin(hud);
 		final float lTextHeight = lTextBoldFont.fontHeight();
 
-		lTextBoldFont.begin(hud);
+		lTextBoldFont.setTextColor(textColor);
+
 		if (mLabel != null) {
 			final var lY = mY + ENTRY_DEFAULT_HEIGHT / 2.f - lTextHeight * .5f;
-			lTextBoldFont.drawText(mLabel, mX, lY, mZ, textColor, 1.f);
+			lTextBoldFont.drawText(mLabel, mX, lY, mZ, 1.f);
 		}
 
 		lTextBoldFont.end();
@@ -340,25 +333,28 @@ public class MenuFileInputEntry extends MenuEntry implements IBufferedTextInputC
 		ContentRectangle.preDraw(core, lSpriteBatch, mInputAreaRectangle.x() + 2.f, mY, mInputAreaRectangle.width() - lCancelRectSize - 5.f, mH, -0, 1);
 
 		lTextBoldFont.begin(hud);
-		lTextBoldFont.drawText(mInputField.toString(), lTextPosX + 8, mInputAreaRectangle.y() + mInputAreaRectangle.height() * .5f - lTextHeight * .5f, mZ, textColor, 1.f);
+		lTextBoldFont.setTextColor(textColor);
+		lTextBoldFont.drawText(mInputField.toString(), lTextPosX + 8, mInputAreaRectangle.y() + mInputAreaRectangle.height() * .5f - lTextHeight * .5f, mZ, 1.f);
 		lTextBoldFont.end();
 
 		ContentRectangle.postDraw(core);
 
 		if (mShowCaret && mHasFocus) {
-			lSpriteBatch.begin(hud);
 			final var lCaretPositionX = lScreenOffset.x + lTextPosX + lCarotPositionX + 7;
 			final var lCaretPositionY = lScreenOffset.y + mInputAreaRectangle.y() + mInputAreaRectangle.height() * .5f - lTextHeight * .5f;
 
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lCaretPositionX, lCaretPositionY, lTextHeight / 2.f, lTextHeight, mZ, ColorConstants.WHITE);
+			lSpriteBatch.begin(hud);
+			lSpriteBatch.setColorRGBA(1.f, 1.f, 1.f, 1.f);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lCaretPositionX, lCaretPositionY, lTextHeight / 2.f, lTextHeight, mZ);
 			lSpriteBatch.end();
 		}
 
 		lTextBoldFont.end();
 
-		final var lDirectoryIconColor = mCancelRectHovered ? ColorConstants.WHITE : ColorConstants.getWhiteWithAlpha(.5f);
+		final var lDirectoryIconColor = mCancelRectHovered ? ColorConstants.WHITE() : ColorConstants.getWhiteWithAlpha(.5f);
 		lSpriteBatch.begin(hud);
-		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTUREDIRECTORY, mFileFolderRectangle, mZ, lDirectoryIconColor);
+		lSpriteBatch.setColor(lDirectoryIconColor);
+		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTUREDIRECTORY, mFileFolderRectangle, mZ);
 		lSpriteBatch.end();
 
 		if (!mEnabled)
@@ -481,7 +477,7 @@ public class MenuFileInputEntry extends MenuEntry implements IBufferedTextInputC
 		}
 
 		else {
-			if (mNumericInputOnly && Character.isDigit((char) codePoint) == false)
+			if (mNumericInputOnly && !Character.isDigit((char) codePoint))
 				return;
 
 			mInputField.insert(mCursorPos, (char) codePoint);
@@ -491,7 +487,7 @@ public class MenuFileInputEntry extends MenuEntry implements IBufferedTextInputC
 
 	@Override
 	public void onCaptureStarted() {
-
+		// ignored
 	}
 
 	@Override

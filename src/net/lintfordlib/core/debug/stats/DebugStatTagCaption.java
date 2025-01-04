@@ -1,6 +1,5 @@
 package net.lintfordlib.core.debug.stats;
 
-import net.lintfordlib.core.graphics.ColorConstants;
 import net.lintfordlib.core.graphics.fonts.FontUnit;
 
 public class DebugStatTagCaption extends DebugStatTag<String> {
@@ -27,6 +26,7 @@ public class DebugStatTagCaption extends DebugStatTag<String> {
 
 	@Override
 	public void draw(FontUnit fontUnit, float positionX, float positionY) {
-		fontUnit.drawText(String.format("%s", mLabel), positionX, positionY, -0.01f, ColorConstants.getColor(mRed, mGreen, mBlue), 1.f, -1);
+		fontUnit.setTextColorRGBA(mRed, mGreen, mBlue, 1.f);
+		fontUnit.drawText(String.format("%s", mLabel), positionX, positionY, -0.01f, 1.f, -1);
 	}
 }

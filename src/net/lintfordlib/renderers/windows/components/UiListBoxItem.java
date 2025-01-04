@@ -62,7 +62,8 @@ public class UiListBoxItem extends Rectangle implements Comparable<UiListBoxItem
 		final var lTextPosY = mY + mH * .5f - fontUnit.fontHeight() * .5f;
 
 		if (backgroundColor.a > 0.f) {
-			spriteBatch.draw(coreDef, CoreTextureNames.TEXTURE_WHITE, mX, mY, mW, mH, zDepth, backgroundColor);
+			spriteBatch.setColor(backgroundColor);
+			spriteBatch.draw(coreDef, CoreTextureNames.TEXTURE_WHITE, mX, mY, mW, mH, zDepth);
 		}
 
 		final var lDisplayText = displayName != null ? displayName : String.valueOf(itemUid);

@@ -15,7 +15,6 @@ import net.lintfordlib.core.camera.ICamera;
 import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.debug.stats.DebugStats;
 import net.lintfordlib.core.geometry.Rectangle;
-import net.lintfordlib.core.graphics.Color;
 import net.lintfordlib.core.graphics.shaders.ShaderMVP_PT;
 import net.lintfordlib.core.graphics.textures.Texture;
 import net.lintfordlib.core.graphics.textures.TextureManager;
@@ -451,14 +450,14 @@ public class TextureBatchPT {
 
 	// ---
 
-	public void drawAroundCenter(Texture tex, Rectangle srcRect, float dx, float dy, float dw, float dh, float zDepth, float rota, float rotx, float roty, float scale, Color colorTint) {
+	public void drawAroundCenter(Texture tex, Rectangle srcRect, float dx, float dy, float dw, float dh, float zDepth, float rota, float rotx, float roty, float scale) {
 		if (srcRect == null)
 			return;
 
-		drawAroundCenter(tex, srcRect.x(), srcRect.y(), srcRect.width(), srcRect.height(), dx, dy, dw, dh, zDepth, rota, rotx, roty, scale, colorTint);
+		drawAroundCenter(tex, srcRect.x(), srcRect.y(), srcRect.width(), srcRect.height(), dx, dy, dw, dh, zDepth, rota, rotx, roty, scale);
 	}
 
-	public void drawAroundCenter(Texture tex, float sx, float sy, float sw, float sh, float dx, float dy, float dw, float dh, float zDepth, float rota, float rotx, float roty, float scale, Color colorTint) {
+	public void drawAroundCenter(Texture tex, float sx, float sy, float sw, float sh, float dx, float dy, float dw, float dh, float zDepth, float rota, float rotx, float roty, float scale) {
 		if (!mResourcesLoaded)
 			return;
 

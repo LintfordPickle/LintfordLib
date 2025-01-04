@@ -60,10 +60,9 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 	protected boolean mUiInputFromUiManager;
 	protected boolean mIsWindowMoveable;
 	protected boolean mIsWindowMoving;
-	protected float dx, dy;
+	protected float dx;
+	protected float dy;
 	protected float mWindowAlpha;
-
-	protected float mInputTimer;
 
 	protected ScrollBar mScrollBar;
 
@@ -270,6 +269,7 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 		mUiStructureController = (HudLayoutController) core.controllerManager().getControllerByName(HudLayoutController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
 	}
 
+	@Override
 	public void loadResources(ResourceManager resourceManager) {
 		super.loadResources(resourceManager);
 
@@ -281,6 +281,7 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 		mResourcesLoaded = true;
 	}
 
+	@Override
 	public boolean handleInput(LintfordCore core) {
 		if (!isActive() || !isOpen())
 			return false;
@@ -325,7 +326,7 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 			return true;
 		}
 
-		if (mIsWindowMoveable && !mIsWindowMoving && lMouseOverWindow) {
+		if (mIsWindowMoveable && lMouseOverWindow) {
 			if (core.input().mouse().tryAcquireMouseLeftClick(hashCode())) {
 				if (!mMouseDownLastUpdate) {
 					mMouseDownLastUpdate = true;
@@ -364,6 +365,7 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 		return mIsMouseOver;
 	}
 
+	@Override
 	public void update(LintfordCore core) {
 		if (!isOpen())
 			return;
@@ -424,7 +426,8 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 
 		if (mWindowTitle != null) {
 			lUiHeaderFont.begin(core.HUD());
-			lUiHeaderFont.drawText(mWindowTitle, lTitleX, lTitleY + getTitleBarHeight() * .5f - lUiHeaderFont.fontHeight() * .5f + 3.f, -0.01f, ColorConstants.WHITE, 1f);
+			lUiHeaderFont.setTextColorRGBA(1.f, 1.f, 1.f, 1.f);
+			lUiHeaderFont.drawText(mWindowTitle, lTitleX, lTitleY + getTitleBarHeight() * .5f - lUiHeaderFont.fontHeight() * .5f + 3.f, -0.01f, 1f);
 			lUiHeaderFont.end();
 		}
 
@@ -436,7 +439,7 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 		// Draw the window components
 		final int lComponentCount = mComponents.size();
 		for (int i = 0; i < lComponentCount; i++) {
-			mComponents.get(i).draw(core, lSpritebatch, mCoreSpritesheet, lTextFont, ZLayers.LAYER_GAME_UI + ((float) i * 0.001f));
+			mComponents.get(i).draw(core, lSpritebatch, mCoreSpritesheet, lTextFont, ZLayers.LAYER_GAME_UI + (i * 0.001f));
 		}
 
 		if (ConstantsApp.getBooleanValueDef("DRAW_UI_BOUNDS", false)) {
@@ -530,12 +533,12 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 
 	@Override
 	public void onWindowClosed() {
-
+		// ignore
 	}
 
 	@Override
 	public void onWindowOpened() {
-
+		// ignore
 	}
 
 	// --------------------------------------

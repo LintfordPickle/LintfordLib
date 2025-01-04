@@ -84,7 +84,8 @@ public class MenuLabelValueEntry extends MenuLabelEntry {
 		}
 
 		lTextBoldFont.begin(core.HUD());
-		lTextBoldFont.drawText(mValueText, lScreenOffset.x + lX + 100.f, lScreenOffset.y + mY + mH / 2f - lFontHeight / 2f, parentZDepth + .15f, textColor, lUiTextScale);
+		lTextBoldFont.setTextColor(textColor);
+		lTextBoldFont.drawText(mValueText, lScreenOffset.x + lX + 100.f, lScreenOffset.y + mY + mH / 2f - lFontHeight / 2f, parentZDepth + .15f, lUiTextScale);
 		lTextBoldFont.end();
 	}
 }

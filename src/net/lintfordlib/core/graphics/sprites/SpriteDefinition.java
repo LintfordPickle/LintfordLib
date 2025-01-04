@@ -124,7 +124,7 @@ public class SpriteDefinition implements Serializable {
 			final var lSpriteFrame = spriteSheetDefinition.getSpriteFrame(mAnimationSpriteIndices[i]);
 
 			if (lSpriteFrame == null) {
-				Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("SpriteFrame missing in spritesheet: '%s'", mAnimationSpriteIndices[i]));
+				Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("[%s] SpriteFrame in mAnimationSpriteIndices is missing in spritesheet: '%d'", mName, mAnimationSpriteIndices[i]));
 				continue;
 			}
 
@@ -153,7 +153,7 @@ public class SpriteDefinition implements Serializable {
 
 	/** returns the frame of an animation from the internal timer. */
 	public SpriteFrame getSpriteFrame(int frameIndex) {
-		if (mSpriteFrames == null || mSpriteFrames.size() == 0)
+		if (mSpriteFrames == null || mSpriteFrames.isEmpty())
 			return null;
 
 		final int lFrameCount = this.mSpriteFrames.size();

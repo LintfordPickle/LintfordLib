@@ -281,6 +281,7 @@ public class UiInputFloat extends UIWidget implements IBufferedTextInputCallback
 	// Core-Methods
 	// --------------------------------------
 
+	@Override
 	public boolean handleInput(LintfordCore core) {
 		if (mIsReadonly || !mIsEnabled)
 			return false;
@@ -342,6 +343,7 @@ public class UiInputFloat extends UIWidget implements IBufferedTextInputCallback
 		return false;
 	}
 
+	@Override
 	public void update(LintfordCore core) {
 		super.update(core);
 
@@ -360,8 +362,8 @@ public class UiInputFloat extends UIWidget implements IBufferedTextInputCallback
 
 		if (mShowControlArrows) {
 			final int lRectSize = 16;
-			mDecrementRectangle.set(xx + 4, mY + mH / 2 - lRectSize / 2, lRectSize, lRectSize);
-			mIncrementRectangle.set(xx + ww - lRectSize - 4, mY + mH / 2 - lRectSize / 2, lRectSize, lRectSize);
+			mDecrementRectangle.set(xx + 4, mY + mH / 2 - lRectSize / 2.f, lRectSize, lRectSize);
+			mIncrementRectangle.set(xx + ww - lRectSize - 4, mY + mH / 2 - lRectSize / 2.f, lRectSize, lRectSize);
 		}
 
 		if (mHasFocus) {
@@ -386,7 +388,8 @@ public class UiInputFloat extends UIWidget implements IBufferedTextInputCallback
 
 		if (mLabelText != null) {
 			textFont.begin(core.HUD());
-			textFont.drawText(mLabelText, mX, mY + mH * .5f - lTextHeight * .5f * mTextScale, componentZDepth, lTextColor, mTextScale);
+			textFont.setTextColor(lTextColor);
+			textFont.drawText(mLabelText, mX, mY + mH * .5f - lTextHeight * .5f * mTextScale, componentZDepth, mTextScale);
 			textFont.end();
 
 			xx = mX + mW * .5f;
@@ -397,16 +400,17 @@ public class UiInputFloat extends UIWidget implements IBufferedTextInputCallback
 		final var lColor = ColorConstants.getColorWithRGBMod(ColorConstants.MenuPanelPrimaryColor, lColorMod);
 
 		spriteBatch.begin(core.HUD());
-		spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_LEFT, (int) xx, mY, 32, mH, componentZDepth, lColor);
+		spriteBatch.setColor(lColor);
+		spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_LEFT, (int) xx, mY, 32, mH, componentZDepth);
 		if (mW > 32) {
-			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_MID, (int) xx + 32, mY, ww - 64, mH, componentZDepth, lColor);
-			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_RIGHT, (int) xx + ww - 32, mY, 32, mH, componentZDepth, lColor);
+			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_MID, (int) xx + 32.f, mY, ww - 64, mH, componentZDepth);
+			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_RIGHT, (int) xx + ww - 32.f, mY, 32, mH, componentZDepth);
 		}
 
 		if (mShowControlArrows) {
-			final var lIconColor = ColorConstants.WHITE;
-			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WIDGET_LEFT_ARROW, mDecrementRectangle, componentZDepth, lIconColor);
-			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WIDGET_RIGHT_ARROW, mIncrementRectangle, componentZDepth, lIconColor);
+			spriteBatch.setColorRGBA(1.f, 1.f, 1.f, 1.f);
+			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WIDGET_LEFT_ARROW, mDecrementRectangle, componentZDepth);
+			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WIDGET_RIGHT_ARROW, mIncrementRectangle, componentZDepth);
 		}
 
 		var lText = mInputField.toString();
@@ -419,21 +423,25 @@ public class UiInputFloat extends UIWidget implements IBufferedTextInputCallback
 		}
 
 		if (isReadonly())
-			lTextColor = ColorConstants.GREY_DARK;
+			lTextColor = ColorConstants.GREY_DARK();
 
 		final var lTextWidth = textFont.getStringWidth(mInputField.toString(), mTextScale);
 		final var lTextPosX = xx + ww / 2.f - lTextWidth * .5f;
 
 		if (mShowCaret && mHasFocus) {
 			final var lCarotPositionX = lTextPosX + lTextWidth;
-			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, (int) lCarotPositionX, mY + mH * .5f - lTextHeight * .5f * mTextScale, 1.f, textFont.fontHeight() * mTextScale, componentZDepth, ColorConstants.WHITE);
+			spriteBatch.setColorRGBA(1.f, 1.f, 1.f, 1.f);
+			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, (int) lCarotPositionX, mY + mH * .5f - lTextHeight * .5f * mTextScale, 1.f, textFont.fontHeight() * mTextScale, componentZDepth);
 		}
+
 		spriteBatch.end();
+
 		final int lCancelRectSize = 16;
 		ContentRectangle.preDraw(core, spriteBatch, mX + 8, mY, mW - lCancelRectSize, mH, -0, 1);
 
 		textFont.begin(core.HUD());
-		textFont.drawText(lText, lTextPosX, mY + mH * .5f - lTextHeight * .5f * mTextScale, componentZDepth, lTextColor, mTextScale);
+		textFont.setTextColor(lTextColor);
+		textFont.drawText(lText, lTextPosX, mY + mH * .5f - lTextHeight * .5f * mTextScale, componentZDepth, mTextScale);
 		textFont.end();
 
 		ContentRectangle.postDraw(core);
@@ -445,10 +453,9 @@ public class UiInputFloat extends UIWidget implements IBufferedTextInputCallback
 	// --------------------------------------
 
 	private void limitValueToDecimalPlaces() {
-		int dp = 3;
+		final var decimalPlaces = 3;
 
-		BigDecimal bd = new BigDecimal(mValue);
-		bd = bd.setScale(dp, RoundingMode.HALF_UP);
+		final var bd = BigDecimal.valueOf(mValue).setScale(decimalPlaces, RoundingMode.HALF_UP);
 		mValue = bd.floatValue();
 	}
 
@@ -543,7 +550,7 @@ public class UiInputFloat extends UIWidget implements IBufferedTextInputCallback
 			return;
 		} else if (CHAR_WHITELIST.contains((char) codePoint)) {
 			// skip
-		} else if (Character.isDigit((char) codePoint) == false)
+		} else if (!Character.isDigit((char) codePoint))
 			return;
 
 		mInputField.append((char) codePoint);

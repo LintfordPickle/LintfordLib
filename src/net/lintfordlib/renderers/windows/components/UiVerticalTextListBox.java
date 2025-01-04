@@ -171,7 +171,7 @@ public class UiVerticalTextListBox extends UIWidget implements IScrollBarArea {
 			// handle item selected separate from item input handling?
 			if (itemSelected || core.input().mouse().isMouseLeftButtonDownTimed(this) && core.input().mouse().tryAcquireMouseLeftClick(hashCode())) {
 				final var lMouseRelY = core.HUD().getMouseWorldSpaceY() - mY;
-				mSelectedItemIndex = (int) (((lMouseRelY - mScrollbar.currentYPos())) / (mAssetHeightInpx + mVerticalAssetSeparationInPx));
+				mSelectedItemIndex = (int) ((lMouseRelY - mScrollbar.currentYPos()) / (mAssetHeightInpx + mVerticalAssetSeparationInPx));
 
 				UiListBoxItem lSelectedItem = null;
 				if (mSelectedItemIndex >= 0 && mSelectedItemIndex < mItems.size())
@@ -197,7 +197,7 @@ public class UiVerticalTextListBox extends UIWidget implements IScrollBarArea {
 		final var lNumAssets = mItems.size();
 		final var lContentHeight = lNumAssets * (mAssetHeightInpx + mVerticalAssetSeparationInPx) + mVerticalAssetSeparationInPx;
 
-		// TODO: The UiVerticalListBox height/desired needs more work.
+		// TODO: The UiVerticalListBox height/desired needs more work.,
 		// One issue is the rednering of the background below, we forces a minimum height of tileSize (which is 32!), can so the display overlaps the mPanelArea.
 
 		if (mDesiredHeight != 0) {
@@ -242,13 +242,14 @@ public class UiVerticalTextListBox extends UIWidget implements IScrollBarArea {
 
 		if (mH > 32.f) {
 			spriteBatch.begin(core.HUD());
-			TextureBatch9Patch.drawBackground(spriteBatch, coreSpritesheetDefinition, 32, (int) mX, (int) mY, (int) mW, (int) mH, ColorConstants.WHITE, false, componentZDepth);
+			TextureBatch9Patch.drawBackground(spriteBatch, coreSpritesheetDefinition, 32, mX, mY, mW, mH, ColorConstants.WHITE(), false, componentZDepth);
 			spriteBatch.end();
 		}
 
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
 			spriteBatch.begin(core.HUD());
-			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, mWindowRectangle, componentZDepth, ColorConstants.Debug_Transparent_Magenta);
+			spriteBatch.setColor(ColorConstants.Debug_Transparent_Magenta);
+			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, mWindowRectangle, componentZDepth);
 			spriteBatch.end();
 		}
 

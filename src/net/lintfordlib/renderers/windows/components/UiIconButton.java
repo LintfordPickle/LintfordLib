@@ -147,7 +147,8 @@ public class UiIconButton extends UIWidget {
 		if (mDrawButtonText && mButtonLabel != null && mButtonLabel.length() > 0) {
 			final float lTextWidth = textFont.getStringWidth(mButtonLabel);
 			textFont.begin(core.HUD());
-			textFont.drawText(mButtonLabel, mX + mW / 2f - lTextWidth / 2f, mY + mH / 2f - textFont.fontHeight() / 2f, componentZDepth, ColorConstants.WHITE, 1f);
+			textFont.setTextColorRGBA(1.f, 1.f, 1.f, 1.f);
+			textFont.drawText(mButtonLabel, mX + mW / 2f - lTextWidth / 2f, mY + mH / 2f - textFont.fontHeight() / 2f, componentZDepth, 1f);
 			textFont.end();
 		}
 	}
@@ -157,7 +158,8 @@ public class UiIconButton extends UIWidget {
 		final var lColor = ColorConstants.getColorWithRGBMod(entityColor, lColorMod);
 
 		spriteBatch.begin(core.HUD());
-		spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX, mY, mW, mH, -1.0f, lColor);
+		spriteBatch.setColor(lColor);
+		spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX, mY, mW, mH, -1.0f);
 		spriteBatch.end();
 	}
 
@@ -166,7 +168,8 @@ public class UiIconButton extends UIWidget {
 		final var lColor = ColorConstants.getColorWithRGBMod(entityColor, lColorMod);
 
 		spriteBatch.begin(core.HUD());
-		spriteBatch.draw(mButtonTexture, mSourceFrameIndex, mX, mY, mW, mH, -1.0f, lColor);
+		spriteBatch.setColor(lColor);
+		spriteBatch.draw(mButtonTexture, mSourceFrameIndex, mX, mY, mW, mH, -1.0f);
 		spriteBatch.end();
 
 	}
@@ -175,16 +178,16 @@ public class UiIconButton extends UIWidget {
 	// Methods
 	// --------------------------------------
 
-	public void setClickListener(final EntryInteractions callbackObject, int entryUid) {
+	public void setClickListener(EntryInteractions callbackObject, int entryUid) {
 		mCallback = callbackObject;
 		mEntryUid = entryUid;
 	}
 
-	public void removeClickListener(final EntryInteractions callbackObject) {
+	public void removeClickListener(EntryInteractions callbackObject) {
 		mCallback = null;
 	}
 
-	public void setTextureSource(final SpriteSheetDefinition spritesheetDefinition, final int spriteFrameIndex) {
+	public void setTextureSource(SpriteSheetDefinition spritesheetDefinition, final int spriteFrameIndex) {
 		mButtonSolidColorBackground = false;
 
 		mButtonTexture = spritesheetDefinition;

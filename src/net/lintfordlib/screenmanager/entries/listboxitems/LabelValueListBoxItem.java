@@ -76,8 +76,9 @@ public class LabelValueListBoxItem extends MenuListBoxItem {
 			mH = 10;
 
 			lFont.begin(core.HUD());
-			lFont.drawText(mLabelValue, lTransitionOffset.x + mX, lTransitionOffset.y + mY, zDepth, textColor, lScale, -1);
-			lFont.drawText(mTextValue, lTransitionOffset.x + mX + mW / 2, lTransitionOffset.y + mY, zDepth, textColor, lScale, -1);
+			lFont.setTextColor(textColor);
+			lFont.drawText(mLabelValue, lTransitionOffset.x + mX, lTransitionOffset.y + mY, zDepth, lScale, -1);
+			lFont.drawText(mTextValue, lTransitionOffset.x + mX + mW / 2, lTransitionOffset.y + mY, zDepth, lScale, -1);
 			lFont.end();
 		}
 

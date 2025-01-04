@@ -26,6 +26,8 @@ import net.lintfordlib.renderers.windows.UiWindow;
 import net.lintfordlib.renderers.windows.components.interfaces.UIWindowChangeListener;
 import net.lintfordlib.screenmanager.IInputClickedFocusManager;
 
+// TODO: The RendererManager need to be sharing ALOT more of its resources with other render managers ..
+
 public class RendererManager implements IInputClickedFocusManager {
 
 	// --------------------------------------

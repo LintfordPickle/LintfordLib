@@ -3,7 +3,6 @@ package net.lintfordlib.screenmanager.screens;
 import org.lwjgl.opengl.GL11;
 
 import net.lintfordlib.core.LintfordCore;
-import net.lintfordlib.core.graphics.ColorConstants;
 import net.lintfordlib.core.graphics.fonts.FontUnit;
 import net.lintfordlib.core.time.TimeSpan;
 import net.lintfordlib.screenmanager.Screen;
@@ -77,7 +76,13 @@ public class LoadingScreen extends Screen {
 			for (int i = 0; i < lScreenCount; i++) {
 				final var lScreen = mScreensToLoad[i];
 				if (lScreen != null) {
-					mScreenManager.addScreen(lScreen);
+
+					if (i < lScreenCount - 1)
+						lScreen.forceScreenState(ScreenState.HIDDEN);
+					else
+						lScreen.forceScreenState(ScreenState.ACTIVE);
+
+					mScreenManager.addScreenToStack(lScreen);
 
 					// All screens have the ability to override either the game resolution and/or the ui resolution, to use something other than was specified in the GameInfo.
 					// So that the transition between soft-resolutions is not jarring, we do this now at the end of the loading screen.
@@ -119,7 +124,8 @@ public class LoadingScreen extends Screen {
 			final float lTextPositionY = lWindowHeight * 0.5f - lTextHeight - lTextPadding;
 
 			mFontUnit.begin(core.HUD());
-			mFontUnit.drawText(lLoadingText, lTextPositionX, lTextPositionY, -0.1f, ColorConstants.WHITE, 1f, -1);
+			mFontUnit.setTextColorRGBA(1.f, 1.f, 1.f, 1.f);
+			mFontUnit.drawText(lLoadingText, lTextPositionX, lTextPositionY, -0.1f, 1f, -1);
 			mFontUnit.end();
 		}
 	}

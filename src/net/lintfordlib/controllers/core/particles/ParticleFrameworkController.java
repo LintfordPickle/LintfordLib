@@ -2,7 +2,6 @@ package net.lintfordlib.controllers.core.particles;
 
 import net.lintfordlib.controllers.BaseController;
 import net.lintfordlib.controllers.ControllerManager;
-import net.lintfordlib.controllers.geometry.SpatialHashGridController;
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.particles.ParticleFrameworkData;
 
@@ -19,7 +18,6 @@ public class ParticleFrameworkController extends BaseController {
 	// --------------------------------------
 
 	protected ParticleFrameworkData mParticleFrameworkData;
-	private SpatialHashGridController mSpatialHashGridController; // TODO: need to add all emitters to the hashgrid for the update
 
 	// --------------------------------------
 	// Properties
@@ -33,6 +31,7 @@ public class ParticleFrameworkController extends BaseController {
 	// Properties
 	// --------------------------------------
 
+	@Override
 	public boolean isInitialized() {
 		return mParticleFrameworkData != null;
 	}
@@ -52,10 +51,6 @@ public class ParticleFrameworkController extends BaseController {
 	// --------------------------------------
 
 	@Override
-	public void initialize(LintfordCore core) {
-
-	}
-
 	public void update(LintfordCore core) {
 		if (!isInitialized())
 			return;

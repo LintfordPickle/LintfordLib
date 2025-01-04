@@ -130,7 +130,8 @@ public class UiHorizontalEntryGroup extends UIWidget {
 	public void draw(LintfordCore core, SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheetDefinition, FontUnit textFont, float componentZDepth) {
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
 			spriteBatch.begin(core.HUD());
-			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, mX, mY, mW, mH, -0.01f, ColorConstants.Debug_Transparent_Magenta);
+			spriteBatch.setColor(ColorConstants.Debug_Transparent_Magenta);
+			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, mX, mY, mW, mH, -0.01f);
 			spriteBatch.end();
 		}
 

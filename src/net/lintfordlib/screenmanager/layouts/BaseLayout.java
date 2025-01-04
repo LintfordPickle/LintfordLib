@@ -41,7 +41,7 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 
 	public final ScreenManager screenManager;
 	public final MenuScreen parentScreen;
-	public final Color layoutColor = new Color(ColorConstants.WHITE);
+	public final Color layoutColor = new Color(ColorConstants.WHITE());
 
 	protected List<MenuEntry> mMenuEntries;
 	protected int mFocusedEntryIndex;
@@ -421,7 +421,7 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 		mScrollBar.update(core);
 
 		final var lMouseMenuControls = core.input().mouse().isMouseMenuSelectionEnabled();
-		if (lFocusedEntry != null && mScrollBar.scrollBarEnabled() && lMouseMenuControls == false) {
+		if (lFocusedEntry != null && mScrollBar.scrollBarEnabled() && !lMouseMenuControls) {
 			final var lWindowTopExtent = contentDisplayRectange.y() + mCropPaddingTop;
 			final var lWindowBottomExtent = contentDisplayRectange.bottom() - mCropPaddingBottom;
 
@@ -460,7 +460,7 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 		if (mDrawBackground) {
 			final int ts = 32;
 
-			final var lColor = ColorConstants.getColorWithAlpha(layoutColor, layoutColor.a * parentScreen.screenColor.a);
+			final var lColor = ColorConstants.getColorWithAlpha(layoutColor, parentScreen.screenColor.a);
 
 			final int x = (int) (lScreenOffset.x + mX);
 			final int y = (int) (lScreenOffset.y + mY);
@@ -474,10 +474,10 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 
 		if (mShowTitle) {
 			final var lTitleFont = parentScreen.rendererManager().uiHeaderFont();
-			final var lWhiteColorWithAlpha = ColorConstants.getWhiteWithAlpha(parentScreen.screenColor.a);
 
 			lTitleFont.begin(core.HUD());
-			lTitleFont.drawText(mLayoutTitle, lScreenOffset.x + mX + 20.f, mY + 20.f - (lTitleFont.fontHeight() / 2.f), componentDepth, lWhiteColorWithAlpha, 1.0f);
+			lTitleFont.setTextColorRGBA(1.f, 1.f, 1.f, parentScreen.screenColor.a);
+			lTitleFont.drawText(mLayoutTitle, lScreenOffset.x + mX + 20.f, mY + 20.f - (lTitleFont.fontHeight() / 2.f), componentDepth, 1.0f);
 			lTitleFont.end();
 		}
 
@@ -507,7 +507,8 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
 			lSpriteBatch.begin(core.HUD());
-			lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + mX, mY, mW, mH, ZLayers.LAYER_DEBUG, ColorConstants.Debug_Transparent_Magenta);
+			lSpriteBatch.setColor(ColorConstants.Debug_Transparent_Magenta);
+			lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + mX, mY, mW, mH, ZLayers.LAYER_DEBUG);
 			lSpriteBatch.end();
 		}
 	}
@@ -546,10 +547,7 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 	}
 
 	public boolean hasEntry(int menuIndex) {
-		if (menuIndex < 0 || menuIndex >= mMenuEntries.size())
-			return false;
-
-		return true;
+		return menuIndex < 0 || menuIndex >= mMenuEntries.size();
 	}
 
 	public float getEntryWidth() {

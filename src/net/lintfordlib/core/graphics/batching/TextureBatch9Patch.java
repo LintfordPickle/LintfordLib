@@ -19,52 +19,54 @@ public class TextureBatch9Patch {
 	// --------------------------------------
 	
 	public static void drawBackground(SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheet, float tileSize, float x, float y, float w, float h, Color color, boolean withTitlebar, float componentDepth) {
+		spriteBatch.setColor(color);
+		
 		if (withTitlebar) {
 			if (h < 64) {
-				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT,     x,                  y,                tileSize,         tileSize,         componentDepth, color);
-				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_MID,      x + tileSize,       y,                w - tileSize * 2, tileSize,         componentDepth, color);
-				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_RIGHT,    x + w - tileSize,   y,                tileSize,         tileSize,         componentDepth, color);
+				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT,     x,                  y,                tileSize,         tileSize,         componentDepth);
+				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_MID,      x + tileSize,       y,                w - tileSize * 2, tileSize,         componentDepth);
+				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_RIGHT,    x + w - tileSize,   y,                tileSize,         tileSize,         componentDepth);
 
-				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_BOTTOM_LEFT,  x,                  y + h - tileSize, tileSize,         tileSize,         componentDepth, color);
-				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_BOTTOM_MID,   x + tileSize,       y + h - tileSize, w - tileSize * 2, tileSize,         componentDepth, color);
-				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_BOTTOM_RIGHT, x + w - tileSize,   y + h - tileSize, tileSize,         tileSize,         componentDepth, color);
+				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_BOTTOM_LEFT,  x,                  y + h - tileSize, tileSize,         tileSize,         componentDepth);
+				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_BOTTOM_MID,   x + tileSize,       y + h - tileSize, w - tileSize * 2, tileSize,         componentDepth);
+				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_BOTTOM_RIGHT, x + w - tileSize,   y + h - tileSize, tileSize,         tileSize,         componentDepth);
 				
 			} else {
-				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT,     x,                  y,                tileSize,         tileSize,         componentDepth, color);
-				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_MID,      x + tileSize,       y,                w - tileSize * 2, tileSize,         componentDepth, color);
-				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_RIGHT,    x + w - tileSize,   y,                tileSize,         tileSize,         componentDepth, color);
+				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT,     x,                  y,                tileSize,         tileSize,         componentDepth);
+				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_MID,      x + tileSize,       y,                w - tileSize * 2, tileSize,         componentDepth);
+				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_RIGHT,    x + w - tileSize,   y,                tileSize,         tileSize,         componentDepth);
 
-				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_MID_LEFT,     x,                  y + tileSize,     tileSize,         h - tileSize * 2, componentDepth, color);
-				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_MID_CENTER,   x + tileSize,       y + tileSize,     w - tileSize * 2, h - 64,           componentDepth, color);
-				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_MID_RIGHT,    x + w - tileSize,   y + tileSize,     tileSize,         h - tileSize * 2, componentDepth, color);
+				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_MID_LEFT,     x,                  y + tileSize,     tileSize,         h - tileSize * 2, componentDepth);
+				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_MID_CENTER,   x + tileSize,       y + tileSize,     w - tileSize * 2, h - 64,           componentDepth);
+				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_MID_RIGHT,    x + w - tileSize,   y + tileSize,     tileSize,         h - tileSize * 2, componentDepth);
 
-				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_BOTTOM_LEFT,  x,                  y + h - tileSize, tileSize,         tileSize,         componentDepth, color);
-				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_BOTTOM_MID,   x + tileSize,       y + h - tileSize, w - tileSize * 2, tileSize,         componentDepth, color);
-				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_BOTTOM_RIGHT, x + w - tileSize,   y + h - tileSize, tileSize,         tileSize,         componentDepth, color);
+				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_BOTTOM_LEFT,  x,                  y + h - tileSize, tileSize,         tileSize,         componentDepth);
+				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_BOTTOM_MID,   x + tileSize,       y + h - tileSize, w - tileSize * 2, tileSize,         componentDepth);
+				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_BOTTOM_RIGHT, x + w - tileSize,   y + h - tileSize, tileSize,         tileSize,         componentDepth);
 				
 			}
 		} else {
 			if (h < 64) {
-				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_LEFT,     x,                  y,                   tileSize,         tileSize,         componentDepth, color);
-				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_MID,      x + tileSize,       y,                   w - tileSize * 2, tileSize,         componentDepth, color);
-				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_RIGHT,    x + w - tileSize,   y,                   tileSize,         tileSize,         componentDepth, color);
+				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_LEFT,     x,                  y,                   tileSize,         tileSize,         componentDepth);
+				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_MID,      x + tileSize,       y,                   w - tileSize * 2, tileSize,         componentDepth);
+				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_RIGHT,    x + w - tileSize,   y,                   tileSize,         tileSize,         componentDepth);
 
-				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_LEFT,  x,                  y + h - tileSize,    tileSize,         tileSize,         componentDepth, color);
-				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_MID,   x + tileSize,       y + h - tileSize,    w - tileSize * 2, tileSize,         componentDepth, color);
-				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_RIGHT, x + w - tileSize,   y + h - tileSize,    tileSize,         tileSize,         componentDepth, color);
+				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_LEFT,  x,                  y + h - tileSize,    tileSize,         tileSize,         componentDepth);
+				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_MID,   x + tileSize,       y + h - tileSize,    w - tileSize * 2, tileSize,         componentDepth);
+				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_RIGHT, x + w - tileSize,   y + h - tileSize,    tileSize,         tileSize,         componentDepth);
 				
 			} else {
-				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_LEFT,     x,                  y,                   tileSize,         tileSize,         componentDepth, color);
-				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_MID,      x + tileSize,       y,                   w - tileSize * 2, tileSize,         componentDepth, color);
-				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_RIGHT,    x + w - tileSize,   y,                   tileSize,         tileSize,         componentDepth, color);
+				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_LEFT,     x,                  y,                   tileSize,         tileSize,         componentDepth);
+				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_MID,      x + tileSize,       y,                   w - tileSize * 2, tileSize,         componentDepth);
+				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_RIGHT,    x + w - tileSize,   y,                   tileSize,         tileSize,         componentDepth);
 
-				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_MID_LEFT,     x,                  y + tileSize,        tileSize,         h - tileSize * 2, componentDepth, color);
-				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_MID_CENTER,   x + tileSize,       y + tileSize,        w - tileSize * 2, h - 64,           componentDepth, color);
-				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_MID_RIGHT,    x + w - tileSize,   y + tileSize,        tileSize,         h - tileSize * 2, componentDepth, color);
+				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_MID_LEFT,     x,                  y + tileSize,        tileSize,         h - tileSize * 2, componentDepth);
+				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_MID_CENTER,   x + tileSize,       y + tileSize,        w - tileSize * 2, h - 64,           componentDepth);
+				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_MID_RIGHT,    x + w - tileSize,   y + tileSize,        tileSize,         h - tileSize * 2, componentDepth);
 
-				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_LEFT,  x,                  y + h - tileSize,    tileSize,         tileSize,         componentDepth, color);
-				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_MID,   x + tileSize,       y + h - tileSize,    w - tileSize * 2, tileSize,         componentDepth, color);
-				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_RIGHT, x + w - tileSize,   y + h - tileSize,    tileSize,         tileSize,         componentDepth, color);
+				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_LEFT,  x,                  y + h - tileSize,    tileSize,         tileSize,         componentDepth);
+				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_MID,   x + tileSize,       y + h - tileSize,    w - tileSize * 2, tileSize,         componentDepth);
+				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_RIGHT, x + w - tileSize,   y + h - tileSize,    tileSize,         tileSize,         componentDepth);
 			}
 		}
 	}

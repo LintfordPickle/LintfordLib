@@ -6,7 +6,6 @@ import java.util.List;
 import net.lintfordlib.ConstantsApp;
 import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.core.LintfordCore;
-import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.geometry.Rectangle;
 import net.lintfordlib.core.graphics.Color;
 import net.lintfordlib.core.graphics.ColorConstants;
@@ -38,7 +37,7 @@ public class UiBaseLayoutComponent extends UIWidget implements IScrollBarArea {
 	protected LAYOUT_WIDTH mLayoutWidth = LAYOUT_WIDTH.THREEQUARTER;
 	protected FILLTYPE mLayoutFillType = FILLTYPE.FILL_CONTAINER;
 
-	public final Color layoutColor = new Color(ColorConstants.WHITE);
+	public final Color layoutColor = new Color(ColorConstants.WHITE());
 
 	protected List<UIWidget> mUiWidgets;
 	protected int mSelectedEntry = 0;
@@ -192,17 +191,18 @@ public class UiBaseLayoutComponent extends UIWidget implements IScrollBarArea {
 	// Core-Methods
 	// --------------------------------------
 
+	@Override
 	public void initialize() {
 		int lCount = mUiWidgets.size();
 		for (int i = 0; i < lCount; i++) {
 			mUiWidgets.get(i).initialize();
 		}
 
-		// width = getEntryWidth();
 		mH = getDesiredHeight();
 
 	}
 
+	@Override
 	public void loadResources(ResourceManager resourceManager) {
 		final int lWidgetCount = mUiWidgets.size();
 		for (int i = 0; i < lWidgetCount; i++) {
@@ -212,6 +212,7 @@ public class UiBaseLayoutComponent extends UIWidget implements IScrollBarArea {
 		mResourcesLoaded = true;
 	}
 
+	@Override
 	public void unloadResources() {
 		final int lWidgetCount = mUiWidgets.size();
 		for (int i = 0; i < lWidgetCount; i++) {
@@ -221,20 +222,22 @@ public class UiBaseLayoutComponent extends UIWidget implements IScrollBarArea {
 		mResourcesLoaded = false;
 	}
 
+	@Override
 	public boolean handleInput(LintfordCore core) {
-		if (widgets() == null || widgets().size() == 0)
+		if (widgets() == null || widgets().isEmpty())
 			return false; // nothing to do
 
 		final var lEntryCount = widgets().size();
 		for (int i = 0; i < lEntryCount; i++) {
 			final var lMenuEntry = widgets().get(i);
-			if (lMenuEntry.handleInput(core)) {
-				// return true;
-			}
+
+			lMenuEntry.handleInput(core);
+
+			// Chance here to return true if child entry handled the input ...
 		}
 
 		if (intersectsAA(core.HUD().getMouseCameraSpace())) {
-			if (true && core.input().mouse().tryAcquireMouseMiddle((hashCode()))) {
+			if (core.input().mouse().tryAcquireMouseMiddle((hashCode()))) {
 				mZScrollAcceleration += core.input().mouse().mouseWheelYOffset() * 250.0f;
 			}
 		}
@@ -246,6 +249,7 @@ public class UiBaseLayoutComponent extends UIWidget implements IScrollBarArea {
 		return false;
 	}
 
+	@Override
 	public void update(LintfordCore core) {
 		final int lCount = mUiWidgets.size();
 		for (int i = 0; i < lCount; i++) {
@@ -309,30 +313,26 @@ public class UiBaseLayoutComponent extends UIWidget implements IScrollBarArea {
 		if (mDrawBackground) {
 			if (mH < 64) {
 				spriteBatch.begin(core.HUD());
-				final float lAlpha = 0.8f;
-				final var lColor = ColorConstants.getColor(0.1f, 0.1f, 0.1f, lAlpha);
-				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX, mY, mW, mH, componentZDepth, lColor);
+				spriteBatch.setColorRGBA(0.1f, 0.1f, 0.1f, .8f);
+				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX, mY, mW, mH, componentZDepth);
 				spriteBatch.end();
 			} else {
 				final float TILE_SIZE = 32;
 
 				spriteBatch.begin(core.HUD());
-				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT, mX, mY, TILE_SIZE, TILE_SIZE, componentZDepth, layoutColor);
-				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT, mX + TILE_SIZE, mY, mW - TILE_SIZE * 2, TILE_SIZE, componentZDepth, layoutColor);
-				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT, mX + mW - TILE_SIZE, mY, TILE_SIZE, TILE_SIZE, componentZDepth, layoutColor);
+				spriteBatch.setColor(layoutColor);
+				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT, mX, mY, TILE_SIZE, TILE_SIZE, componentZDepth);
+				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT, mX + TILE_SIZE, mY, mW - TILE_SIZE * 2, TILE_SIZE, componentZDepth);
+				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT, mX + mW - TILE_SIZE, mY, TILE_SIZE, TILE_SIZE, componentZDepth);
 
-				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT, mX, mY + TILE_SIZE, TILE_SIZE, mH - TILE_SIZE * 2, componentZDepth, layoutColor);
-				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT, mX + TILE_SIZE, mY + TILE_SIZE, mW - TILE_SIZE * 2, mH - 64, componentZDepth, layoutColor);
-				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT, mX + mW - TILE_SIZE, mY + TILE_SIZE, TILE_SIZE, mH - TILE_SIZE * 2, componentZDepth, layoutColor);
+				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT, mX, mY + TILE_SIZE, TILE_SIZE, mH - TILE_SIZE * 2, componentZDepth);
+				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT, mX + TILE_SIZE, mY + TILE_SIZE, mW - TILE_SIZE * 2, mH - 64, componentZDepth);
+				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT, mX + mW - TILE_SIZE, mY + TILE_SIZE, TILE_SIZE, mH - TILE_SIZE * 2, componentZDepth);
 
-				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT, mX, mY + mH - TILE_SIZE, TILE_SIZE, TILE_SIZE, componentZDepth, layoutColor);
-				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT, mX + TILE_SIZE, mY + mH - TILE_SIZE, mW - TILE_SIZE * 2, TILE_SIZE, componentZDepth, layoutColor);
-				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT, mX + mW - TILE_SIZE, mY + mH - TILE_SIZE, TILE_SIZE, TILE_SIZE, componentZDepth, layoutColor);
+				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT, mX, mY + mH - TILE_SIZE, TILE_SIZE, TILE_SIZE, componentZDepth);
+				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT, mX + TILE_SIZE, mY + mH - TILE_SIZE, mW - TILE_SIZE * 2, TILE_SIZE, componentZDepth);
+				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT, mX + mW - TILE_SIZE, mY + mH - TILE_SIZE, TILE_SIZE, TILE_SIZE, componentZDepth);
 				spriteBatch.end();
-
-				if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_OUTLINES", false)) {
-					Debug.debugManager().drawers().drawRectImmediate(core.HUD(), this);
-				}
 			}
 		}
 
@@ -359,7 +359,8 @@ public class UiBaseLayoutComponent extends UIWidget implements IScrollBarArea {
 
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
 			spriteBatch.begin(core.HUD());
-			spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX, mY, mW, mH, ZLayers.LAYER_DEBUG, ColorConstants.Debug_Transparent_Magenta);
+			spriteBatch.setColor(ColorConstants.Debug_Transparent_Magenta);
+			spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX, mY, mW, mH, ZLayers.LAYER_DEBUG);
 			spriteBatch.end();
 		}
 	}

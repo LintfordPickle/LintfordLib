@@ -16,7 +16,6 @@ import net.lintfordlib.ConstantsApp;
 import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.debug.Debug.DebugLogLevel;
-import net.lintfordlib.core.graphics.ColorConstants;
 import net.lintfordlib.core.graphics.fonts.BitmapFontManager;
 import net.lintfordlib.core.graphics.fonts.FontUnit;
 import net.lintfordlib.core.maths.MathHelper;
@@ -51,7 +50,7 @@ public class DebugLogger {
 	private BufferedOutputStream mDebugLogBufferedOutputStream;
 
 	private int mMinimumFlashLevel = DebugLogLevel.warning.logLevel;
-	private transient FontUnit mConsoleFont;
+	private FontUnit mConsoleFont;
 	private boolean mFlashMessagesEnabled;
 	private Queue<Message> mFlashMessageQueue = new LinkedList<>();
 	private Message mCurrentFlashMessage;
@@ -143,7 +142,7 @@ public class DebugLogger {
 	}
 
 	public void update(LintfordCore core) {
-		if (mFlashMessageQueue.size() > 0 || mCurrentFlashMessage != null) {
+		if (!mFlashMessageQueue.isEmpty() || mCurrentFlashMessage != null) {
 			if (mCurrentFlashMessage == null) {
 				mCurrentFlashMessage = mFlashMessageQueue.poll();
 
@@ -168,16 +167,16 @@ public class DebugLogger {
 			final var lHudRect = core.HUD().boundingRectangle();
 			final var lPadding = 5.f;
 
-			mConsoleFont.begin(core.HUD());
-
 			final var lColorRgb = DebugConsole.getMessageRGB(mCurrentFlashMessage.type());
+
 			final float lR = lColorRgb.x;
 			final float lG = lColorRgb.y;
 			final float lB = lColorRgb.z;
 
-			final var lTextColor = ColorConstants.getColor(lR, lG, lB, mCurrentFlashMessageAlpha);
+			mConsoleFont.begin(core.HUD());
 
-			mConsoleFont.drawText(mCurrentFlashMessage.message(), lHudRect.left() + lPadding, lHudRect.bottom() - mConsoleFont.fontHeight() - lPadding, -0.01f, lTextColor, 1.f);
+			mConsoleFont.setTextColorRGBA(lR, lG, lB, mCurrentFlashMessageAlpha);
+			mConsoleFont.drawText(mCurrentFlashMessage.message(), lHudRect.left() + lPadding, lHudRect.bottom() - mConsoleFont.fontHeight() - lPadding, -0.01f, 1.f);
 			mConsoleFont.end();
 		}
 	}
@@ -226,7 +225,7 @@ public class DebugLogger {
 
 		if (logLevel.logLevel >= mDebugManager.getLogLevel().logLevel) {
 			Message lLogMessage = null;
-			if (mLogLinePool.size() > 0) {
+			if (!mLogLinePool.isEmpty()) {
 				// Remove from the pool until empty
 				lLogMessage = mLogLinePool.remove(0);
 

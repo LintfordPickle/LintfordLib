@@ -331,7 +331,7 @@ public abstract class UiPanel implements IScrollBarArea, UIWindowChangeListener,
 				mPanelArea.y() + lInsetSize, 
 				lTitleButtonSize,
 				lTitleButtonSize);
-		lButtonCounter++;
+
 		}
 		// @formatter:on
 
@@ -355,14 +355,15 @@ public abstract class UiPanel implements IScrollBarArea, UIWindowChangeListener,
 		final var rendererManager = mParentWindow.rendererManager();
 
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
-		
+
 		final var lFontUnit = rendererManager.uiTextFont();
 		final var lSpriteBatch = rendererManager.uiSpriteBatch();
 		final var mCoreSpriteSheet = mParentWindow.coreSpritesheet();
 
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
 			lSpriteBatch.begin(core.HUD());
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mPanelArea, -0.01f, ColorConstants.Debug_Transparent_Magenta);
+			lSpriteBatch.setColor(ColorConstants.Debug_Transparent_Magenta);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mPanelArea, -0.01f);
 			lSpriteBatch.end();
 		}
 
@@ -370,37 +371,39 @@ public abstract class UiPanel implements IScrollBarArea, UIWindowChangeListener,
 			drawBackground(core, lSpriteBatch, true, -0.02f);
 
 		lSpriteBatch.begin(core.HUD());
+		lSpriteBatch.setColorRGBA(1.f, 1.f, 1.f, 1.f);
+
 		if (mRenderPanelTitle) {
 			mPanelBarHeight = 20.f;
 			lFontUnit.begin(core.HUD());
 			final var lTextWidth = lFontUnit.getStringWidth(mPanelTitle);
 			lFontUnit.drawText(mPanelTitle, mPanelArea.x() + 5.f, mPanelArea.y() + 5.f, -0.01f, 1.f);
 			if (mIsPanelOpen && mPanelTitleUnderline)
-				lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mPanelArea.x() + 5.f, mPanelArea.y() + lFontUnit.fontHeight() + 5.f, lTextWidth, 1.f, -0.01f, ColorConstants.WHITE);
+				lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mPanelArea.x() + 5.f, mPanelArea.y() + lFontUnit.fontHeight() + 5.f, lTextWidth, 1.f, -0.01f);
 			lFontUnit.end();
 		}
 
 		if (mShowShowLayerButton) {
 			if (mIsLayerVisibleToggleOn) {
-				lSpriteBatch.draw(mHudSpritesheet, mHudSpritesheet.getSpriteInstance("TEXTURE_SHOW_LAYER"), mShowLayerButtonRect, -0.01f, ColorConstants.WHITE);
+				lSpriteBatch.draw(mHudSpritesheet, mHudSpritesheet.getSpriteInstance("TEXTURE_SHOW_LAYER"), mShowLayerButtonRect, -0.01f);
 			} else {
-				lSpriteBatch.draw(mHudSpritesheet, mHudSpritesheet.getSpriteInstance("TEXTURE_HIDE_LAYER"), mShowLayerButtonRect, -0.01f, ColorConstants.WHITE);
+				lSpriteBatch.draw(mHudSpritesheet, mHudSpritesheet.getSpriteInstance("TEXTURE_HIDE_LAYER"), mShowLayerButtonRect, -0.01f);
 			}
 		}
 
 		if (mShowActiveLayerButton) {
 			if (mIsLayerActiveToggleOn) {
-				lSpriteBatch.draw(mHudSpritesheet, mHudSpritesheet.getSpriteInstance("TEXTURE_SET_LAYER_ON"), mActiveLayerButtonRect, -0.01f, ColorConstants.WHITE);
+				lSpriteBatch.draw(mHudSpritesheet, mHudSpritesheet.getSpriteInstance("TEXTURE_SET_LAYER_ON"), mActiveLayerButtonRect, -0.01f);
 			} else {
-				lSpriteBatch.draw(mHudSpritesheet, mHudSpritesheet.getSpriteInstance("TEXTURE_SET_LAYER_OFF"), mActiveLayerButtonRect, -0.01f, ColorConstants.WHITE);
+				lSpriteBatch.draw(mHudSpritesheet, mHudSpritesheet.getSpriteInstance("TEXTURE_SET_LAYER_OFF"), mActiveLayerButtonRect, -0.01f);
 			}
 		}
 
 		if (mIsExpandable) {
 			if (mIsPanelOpen) {
-				lSpriteBatch.draw(mCoreSpriteSheet, CoreTextureNames.TEXTURE_EXPAND, mExpandRectangle, -0.01f, ColorConstants.WHITE);
+				lSpriteBatch.draw(mCoreSpriteSheet, CoreTextureNames.TEXTURE_EXPAND, mExpandRectangle, -0.01f);
 			} else {
-				lSpriteBatch.draw(mCoreSpriteSheet, CoreTextureNames.TEXTURE_COLLAPSE, mExpandRectangle, -0.01f, ColorConstants.WHITE);
+				lSpriteBatch.draw(mCoreSpriteSheet, CoreTextureNames.TEXTURE_COLLAPSE, mExpandRectangle, -0.01f);
 			}
 		}
 		lSpriteBatch.end();
@@ -410,7 +413,7 @@ public abstract class UiPanel implements IScrollBarArea, UIWindowChangeListener,
 			final int lNumWidgets = mWidgets.size();
 			for (int i = 0; i < lNumWidgets; i++) {
 				final var lWidget = mWidgets.get(i);
-				
+
 				lWidget.draw(core, lSpriteBatch, mCoreSpriteSheet, lFontUnit, zDepth -= 0.03f);
 			}
 
@@ -425,39 +428,41 @@ public abstract class UiPanel implements IScrollBarArea, UIWindowChangeListener,
 	private void drawBackground(LintfordCore core, SpriteBatch spriteBatch, boolean withTitlebar, float componentDepth) {
 		final var lSpriteSheetCore = core.resources().spriteSheetManager().coreSpritesheet();
 
-		final int lTileSize = 32;
-		final int posX = (int) mPanelArea.x();
-		final int posY = (int) mPanelArea.y();
-		final int width = (int) mPanelArea.width();
-		final int height = (int) mPanelArea.height();
-		final var layoutColor = ColorConstants.WHITE;
+		final var lTileSize = 32.f;
+		final var posX = mPanelArea.x();
+		final var posY = mPanelArea.y();
+		final var width = mPanelArea.width();
+		final var height = mPanelArea.height();
+		final var layoutColor = ColorConstants.WHITE();
 
 		spriteBatch.begin(core.HUD());
-		if (mIsPanelOpen == false) {
-			spriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X1_LEFT, posX, posY, lTileSize, lTileSize, componentDepth, layoutColor);
-			spriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X1_MID, posX + lTileSize, posY, width - lTileSize * 2, lTileSize, componentDepth, layoutColor);
-			spriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X1_RIGHT, posX + width - lTileSize, posY, lTileSize, lTileSize, componentDepth, layoutColor);
+		spriteBatch.setColor(layoutColor);
+
+		if (!mIsPanelOpen) {
+			spriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X1_LEFT, posX, posY, lTileSize, lTileSize, componentDepth);
+			spriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X1_MID, posX + lTileSize, posY, width - lTileSize * 2, lTileSize, componentDepth);
+			spriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X1_RIGHT, posX + width - lTileSize, posY, lTileSize, lTileSize, componentDepth);
 		} else {
 			if (height < 64) {
-				spriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_LEFT, posX, posY, lTileSize, lTileSize, componentDepth, layoutColor);
-				spriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_MID, posX + lTileSize, posY, width - lTileSize * 2, lTileSize, componentDepth, layoutColor);
-				spriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_RIGHT, posX + width - lTileSize, posY, lTileSize, lTileSize, componentDepth, layoutColor);
+				spriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_LEFT, posX, posY, lTileSize, lTileSize, componentDepth);
+				spriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_MID, posX + lTileSize, posY, width - lTileSize * 2, lTileSize, componentDepth);
+				spriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_RIGHT, posX + width - lTileSize, posY, lTileSize, lTileSize, componentDepth);
 
-				spriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_LEFT, posX, posY + height - lTileSize, lTileSize, lTileSize, componentDepth, layoutColor);
-				spriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_MID, posX + lTileSize, posY + height - lTileSize, width - lTileSize * 2, lTileSize, componentDepth, layoutColor);
-				spriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_RIGHT, posX + width - lTileSize, posY + height - lTileSize, lTileSize, lTileSize, componentDepth, layoutColor);
+				spriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_LEFT, posX, posY + height - lTileSize, lTileSize, lTileSize, componentDepth);
+				spriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_MID, posX + lTileSize, posY + height - lTileSize, width - lTileSize * 2, lTileSize, componentDepth);
+				spriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_RIGHT, posX + width - lTileSize, posY + height - lTileSize, lTileSize, lTileSize, componentDepth);
 			} else {
-				spriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_LEFT, posX, posY, lTileSize, lTileSize, componentDepth, layoutColor);
-				spriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_MID, posX + lTileSize, posY, width - lTileSize * 2 + 1, lTileSize, componentDepth, layoutColor);
-				spriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_RIGHT, posX + width - lTileSize, posY, lTileSize, lTileSize, componentDepth, layoutColor);
+				spriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_LEFT, posX, posY, lTileSize, lTileSize, componentDepth);
+				spriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_MID, posX + lTileSize, posY, width - lTileSize * 2, lTileSize, componentDepth);
+				spriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_RIGHT, posX + width - lTileSize, posY, lTileSize, lTileSize, componentDepth);
 
-				spriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_MID_LEFT, posX, posY + lTileSize, lTileSize, height - lTileSize * 2 + 1, componentDepth, layoutColor);
-				spriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_MID_CENTER, posX + lTileSize, posY + lTileSize, width - lTileSize * 2 + 1, height - 64 + 1, componentDepth, layoutColor);
-				spriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_MID_RIGHT, posX + width - lTileSize, posY + lTileSize, lTileSize, height - lTileSize * 2 + 1, componentDepth, layoutColor);
+				spriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_MID_LEFT, posX, posY + lTileSize, lTileSize, height - lTileSize * 2, componentDepth);
+				spriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_MID_CENTER, posX + lTileSize, posY + lTileSize, width - lTileSize * 2, height - 64, componentDepth);
+				spriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_MID_RIGHT, posX + width - lTileSize, posY + lTileSize, lTileSize, height - lTileSize * 2, componentDepth);
 
-				spriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_LEFT, posX, posY + height - lTileSize, lTileSize, lTileSize, componentDepth, layoutColor);
-				spriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_MID, posX + lTileSize, posY + height - lTileSize, width - lTileSize * 2 + 1, lTileSize, componentDepth, layoutColor);
-				spriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_RIGHT, posX + width - lTileSize, posY + height - lTileSize, lTileSize, lTileSize, componentDepth, layoutColor);
+				spriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_LEFT, posX, posY + height - lTileSize, lTileSize, lTileSize, componentDepth);
+				spriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_MID, posX + lTileSize, posY + height - lTileSize, width - lTileSize * 2, lTileSize, componentDepth);
+				spriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_RIGHT, posX + width - lTileSize, posY + height - lTileSize, lTileSize, lTileSize, componentDepth);
 			}
 		}
 

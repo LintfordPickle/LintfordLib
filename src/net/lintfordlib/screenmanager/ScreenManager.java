@@ -265,7 +265,6 @@ public class ScreenManager implements IInputClickedFocusManager {
 
 		mToastManager.update(core);
 		mToolTip.update(core);
-		mContextHintManager.update(core);
 	}
 
 	public void draw(LintfordCore core) {
@@ -328,23 +327,23 @@ public class ScreenManager implements IInputClickedFocusManager {
 		}
 	}
 
+	/**
+	 * Adds the given {@link Screen} instance to the ScreensToAdd stack. The screen will be processed in the order in which they are added. Alls transitions will play out (i.e. TransitionOn).
+	 */
 	public void addScreen(Screen screenToAdd) {
 		if (screenToAdd.singletonScreen()) {
 			final int lScreenCount = mScreens.size();
-			final var pNewScreenSImpleName = screenToAdd.getClass().getSimpleName();
+			final var lNewScreenName = screenToAdd.getClass().getSimpleName();
 			for (int i = 0; i < lScreenCount; i++) {
 				final var lScreen = mScreens.get(i);
-				if (lScreen.getClass().getSimpleName().equals(pNewScreenSImpleName)) {
-					Debug.debugManager().logger().e(this.getClass().getSimpleName(), "Cannot add second SingletonScreen instance: " + pNewScreenSImpleName);
+				if (lScreen.getClass().getSimpleName().equals(lNewScreenName)) {
+					Debug.debugManager().logger().e(this.getClass().getSimpleName(), "Cannot add second SingletonScreen instance: " + lNewScreenName);
 					return;
 				}
 			}
 		}
 
 		if (!screenToAdd.isResourcesLoaded()) {
-			// TODO: Is screenToAdd.isExiting(false) still needed, as we now have a transition.STARTING case ...
-			// screenToAdd.isExiting(false);
-
 			if (mIsinitialized && !screenToAdd.isinitialized())
 				screenToAdd.initialize();
 
@@ -357,6 +356,25 @@ public class ScreenManager implements IInputClickedFocusManager {
 		mScreensToAdd.add(screenToAdd);
 
 		Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("Added screen '%s'", screenToAdd.getClass().getSimpleName()));
+	}
+
+	/**
+	 * Adds the given screen to the top of the screens stack. No transitions will be carried oput on the pased screen, nor on the screens already in the stack!
+	 */
+	public void addScreenToStack(Screen screenToAdd) {
+		if (!mScreensToAdd.contains(screenToAdd)) {
+
+			if (!screenToAdd.isResourcesLoaded()) {
+				if (mIsinitialized && !screenToAdd.isinitialized())
+					screenToAdd.initialize();
+
+				if (mResourcesLoaded)
+					screenToAdd.loadResources(mResourceManager);
+			}
+
+			mScreensToAdd.add(screenToAdd);
+		}
+
 	}
 
 	public Screen getTopScreen() {

@@ -4,7 +4,6 @@ import org.lwjgl.opengl.GL11;
 
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.geometry.Rectangle;
-import net.lintfordlib.core.graphics.ColorConstants;
 import net.lintfordlib.core.graphics.batching.SpriteBatch;
 import net.lintfordlib.core.graphics.textures.Texture;
 import net.lintfordlib.renderers.windows.components.interfaces.IScrollBarArea;
@@ -48,10 +47,6 @@ public class ScrollBarContentRectangle extends Rectangle {
 	// Core-Methods
 	// --------------------------------------
 
-	public void update(LintfordCore core) {
-
-	}
-
 	public void preDraw(LintfordCore core, SpriteBatch spriteBatch) {
 		preDraw(core, spriteBatch, mParentArea.contentDisplayArea(), 1);
 	}
@@ -71,12 +66,11 @@ public class ScrollBarContentRectangle extends Rectangle {
 		GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT); // Clear the stencil buffer
 
 		spriteBatch.begin(core.HUD());
-		spriteBatch.draw((Texture) null, 0, 0, 1, 1, rectangle.x() + mDepthPadding, rectangle.y() + mDepthPadding, rectangle.width() - mDepthPadding * 2 - ScrollBar.BAR_WIDTH, rectangle.height() - mDepthPadding * 2, -10.f, ColorConstants.getWhiteWithAlpha(0.f));
+		spriteBatch.setColorRGBA(1.f, 1.f, 1.f, 0.f);
+		spriteBatch.draw((Texture) null, 0, 0, 1, 1, rectangle.x() + mDepthPadding, rectangle.y() + mDepthPadding, rectangle.width() - mDepthPadding * 2 - ScrollBar.BAR_WIDTH, rectangle.height() - mDepthPadding * 2, -10.f);
 		spriteBatch.end();
 
-		/*
-		 * GL_EQUAL: Passes if ( ref & mask ) = ( stencil & mask ).
-		 */
+		// GL_EQUAL: Passes if ( ref & mask ) = ( stencil & mask ).
 
 		GL11.glStencilFunc(GL11.GL_EQUAL, stencilValue, 0xFFFFFFFF); // Pass test if stencil value is stencilValue
 

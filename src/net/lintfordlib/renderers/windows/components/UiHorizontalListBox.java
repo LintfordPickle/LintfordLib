@@ -95,6 +95,7 @@ public class UiHorizontalListBox extends UIWidget implements IScrollBarArea {
 	// Core-Methods
 	// --------------------------------------
 
+	@Override
 	public boolean handleInput(LintfordCore core) {
 		mScrollbar.handleInput(core, null);
 
@@ -114,6 +115,7 @@ public class UiHorizontalListBox extends UIWidget implements IScrollBarArea {
 		return false;
 	}
 
+	@Override
 	public void update(LintfordCore core) {
 		super.update(core);
 
@@ -129,12 +131,13 @@ public class UiHorizontalListBox extends UIWidget implements IScrollBarArea {
 	@Override
 	public void draw(LintfordCore core, SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheetDefinition, FontUnit textFont, float componentZDepth) {
 		spriteBatch.begin(core.HUD());
-		TextureBatch9Patch.drawBackground(spriteBatch, coreSpritesheetDefinition, 32, (int) mX, (int) mY, (int) mW, (int) mH, ColorConstants.WHITE, false, componentZDepth);
+		TextureBatch9Patch.drawBackground(spriteBatch, coreSpritesheetDefinition, 32, mX, mY, mW, mH, ColorConstants.WHITE(), false, componentZDepth);
 		spriteBatch.end();
 
 		mContentArea.preDraw(core, spriteBatch);
 
 		spriteBatch.begin(core.HUD());
+		spriteBatch.setColor(entityColor);
 		textFont.begin(core.HUD());
 
 		final var lNumAssets = mItems.size();
@@ -160,7 +163,7 @@ public class UiHorizontalListBox extends UIWidget implements IScrollBarArea {
 					final var lImageSize = 32.f;
 					spriteDestRect.set(assetX + assetW * .5f - lImageSize * .5f, mY + 5.f, lImageSize, lImageSize);
 
-					spriteBatch.draw(spriteDef, spriteInst, spriteDestRect, componentZDepth, entityColor);
+					spriteBatch.draw(spriteDef, spriteInst, spriteDestRect, componentZDepth);
 				}
 
 				if (lIsSelectedItem)

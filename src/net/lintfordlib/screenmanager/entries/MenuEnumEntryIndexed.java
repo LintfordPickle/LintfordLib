@@ -5,7 +5,6 @@ import java.util.List;
 
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.geometry.Rectangle;
-import net.lintfordlib.core.graphics.ColorConstants;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
 import net.lintfordlib.core.input.InputManager;
 import net.lintfordlib.screenmanager.MenuEntry;
@@ -208,7 +207,7 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 
 	@Override
 	public void update(LintfordCore core, MenuScreen screen) {
-		if (mEnableUpdateDraw == false)
+		if (!mEnableUpdateDraw)
 			return;
 
 		super.update(core, screen);
@@ -241,13 +240,12 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 		entryColor.a = mParentScreen.screenColor.a;
 
 		if (mButtonsEnabled) {
-			lTextureBatch.begin(core.HUD());
-
 			final var lButtonSize = mH;
-			final var lButtonColor = ColorConstants.getWhiteWithAlpha((mEnabled ? 1.f : 0.5f) * mParentScreen.screenColor.a);
 
-			lTextureBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_LEFT, lScreenOffsetX + mLeftButtonRectangle.x(), lScreenOffsetY + mLeftButtonRectangle.y(), lButtonSize, lButtonSize, mZ, lButtonColor);
-			lTextureBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_RIGHT, lScreenOffsetX + mRightButtonRectangle.x(), lScreenOffsetY + mRightButtonRectangle.y(), lButtonSize, lButtonSize, mZ, lButtonColor);
+			lTextureBatch.begin(core.HUD());
+			lTextureBatch.setColorRGBA(1.f, 1.f, 1.f, (mEnabled ? 1.f : 0.5f) * mParentScreen.screenColor.a);
+			lTextureBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_LEFT, lScreenOffsetX + mLeftButtonRectangle.x(), lScreenOffsetY + mLeftButtonRectangle.y(), lButtonSize, lButtonSize, mZ);
+			lTextureBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_RIGHT, lScreenOffsetX + mRightButtonRectangle.x(), lScreenOffsetY + mRightButtonRectangle.y(), lButtonSize, lButtonSize, mZ);
 
 			lTextureBatch.end();
 		}
@@ -263,8 +261,9 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 		final var lSeparatorHalfWidth = lTextBoldFont.getStringWidth(mSeparator, lUiTextScale) * 0.5f;
 
 		lTextBoldFont.begin(core.HUD());
-		lTextBoldFont.drawText(mLabel, lScreenOffsetX + mX + mW / 2 - 10 - (lLabelWidth * lAdjustedLabelScaleW) - lSeparatorHalfWidth, lScreenOffsetY + mY + mH / 2 - lFontHeight * 0.5f, mZ, textColor, lAdjustedLabelScaleW, -1);
-		lTextBoldFont.drawText(mSeparator, lScreenOffsetX + mX + mW / 2 - lSeparatorHalfWidth, lScreenOffsetY + mY + mH / 2 - lFontHeight * 0.5f, mZ, textColor, lUiTextScale, -1);
+		lTextBoldFont.setTextColor(textColor);
+		lTextBoldFont.drawText(mLabel, lScreenOffsetX + mX + mW / 2 - 10 - (lLabelWidth * lAdjustedLabelScaleW) - lSeparatorHalfWidth, lScreenOffsetY + mY + mH / 2 - lFontHeight * 0.5f, mZ, lAdjustedLabelScaleW, -1);
+		lTextBoldFont.drawText(mSeparator, lScreenOffsetX + mX + mW / 2 - lSeparatorHalfWidth, lScreenOffsetY + mY + mH / 2 - lFontHeight * 0.5f, mZ, lUiTextScale, -1);
 
 		if (mSelectedIndex >= 0 && mSelectedIndex < mItems.size()) {
 			String lCurItem = mItems.get(mSelectedIndex).name;
@@ -273,7 +272,7 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 			if (mEnableScaleTextToWidth && mW * 0.35f < EntryWidth && EntryWidth > 0)
 				lAdjustedEntryScaleW = (mW * 0.35f) / EntryWidth;
 
-			lTextBoldFont.drawText(lCurItem, lScreenOffsetX + mX + (mW / 4 * 3) - (EntryWidth * lAdjustedEntryScaleW) / 2, lScreenOffsetY + mY + mH / 2 - lFontHeight * 0.5f, componentDepth, textColor, lAdjustedEntryScaleW, -1);
+			lTextBoldFont.drawText(lCurItem, lScreenOffsetX + mX + (mW / 4 * 3) - (EntryWidth * lAdjustedEntryScaleW) / 2, lScreenOffsetY + mY + mH / 2 - lFontHeight * 0.5f, componentDepth, lAdjustedEntryScaleW, -1);
 		}
 
 		lTextBoldFont.end();

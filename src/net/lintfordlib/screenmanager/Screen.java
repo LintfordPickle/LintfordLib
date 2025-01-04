@@ -46,7 +46,7 @@ public abstract class Screen implements IInputProcessor {
 	// Variables
 	// --------------------------------------
 
-	public final Color screenColor = new Color(ColorConstants.WHITE);
+	public final Color screenColor = new Color(ColorConstants.WHITE());
 	public final ScreenManager screenManager;
 
 	protected final RendererManager mRendererManager;
@@ -211,6 +211,10 @@ public abstract class Screen implements IInputProcessor {
 		return mScreenState;
 	}
 
+	public void forceScreenState(ScreenState newState) {
+		mScreenState = newState;
+	}
+
 	// --------------------------------------
 	// Constructors
 	// --------------------------------------
@@ -222,10 +226,10 @@ public abstract class Screen implements IInputProcessor {
 	protected Screen(ScreenManager screenManager, RendererManager rendererManager) {
 		this.screenManager = screenManager;
 
-		mTransitionOn = new TransitionSwipeIn(new TimeSpan(250), SwipeInDirection.Right);
-		mTransitionOff = new TransitionFadeOut(new TimeSpan(250));
-		mTransitionResume = new TransitionFadeIn(new TimeSpan(250));
-		mTransitionExit = new TransitionSwipeOut(new TimeSpan(250), SwipeOutDirection.Left);
+		mTransitionOn = new TransitionSwipeIn(new TimeSpan(200), SwipeInDirection.Right);
+		mTransitionOff = new TransitionFadeOut(new TimeSpan(150));
+		mTransitionResume = new TransitionFadeIn(new TimeSpan(150));
+		mTransitionExit = new TransitionSwipeOut(new TimeSpan(200), SwipeOutDirection.Left);
 
 		if (rendererManager == null) {
 			mRendererManager = new RendererManager(screenManager.core(), ResourceGroupProvider.getRollingEntityNumber());

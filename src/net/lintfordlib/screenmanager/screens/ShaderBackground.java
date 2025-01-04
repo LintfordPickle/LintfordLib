@@ -4,7 +4,6 @@ import org.lwjgl.opengl.GL20;
 
 import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.core.LintfordCore;
-import net.lintfordlib.core.graphics.ColorConstants;
 import net.lintfordlib.core.graphics.shaders.ShaderMVP_PCT;
 import net.lintfordlib.core.graphics.textures.Texture;
 import net.lintfordlib.screenmanager.Screen;
@@ -142,7 +141,7 @@ public abstract class ShaderBackground extends Screen {
 	// Constructor
 	// --------------------------------------
 
-	public ShaderBackground(ScreenManager screenManager, String vertFilepath, String fragFilepath) {
+	protected ShaderBackground(ScreenManager screenManager, String vertFilepath, String fragFilepath) {
 		super(screenManager);
 
 		mBackgroundShader = new BackgroundShader(vertFilepath, fragFilepath);
@@ -202,7 +201,8 @@ public abstract class ShaderBackground extends Screen {
 		final var lHeight = lHudBoundingRectangle.height();
 
 		lTextureBatch.begin(core.HUD(), mBackgroundShader);
-		lTextureBatch.draw((Texture) null, 0, 0, 1, 1, lX, lY, lWidth, lHeight, -0.01f, ColorConstants.WHITE);
+		lTextureBatch.setColorRGBA(1.f, 1.f, 1.f, 1.f);
+		lTextureBatch.draw((Texture) null, 0, 0, 1, 1, lX, lY, lWidth, lHeight, -0.01f);
 		lTextureBatch.end();
 	}
 }

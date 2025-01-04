@@ -5,7 +5,6 @@ import java.util.List;
 
 import net.lintfordlib.controllers.core.FafAnimationController;
 import net.lintfordlib.core.LintfordCore;
-import net.lintfordlib.core.graphics.ColorConstants;
 import net.lintfordlib.core.graphics.sprites.AnimatedSpriteListener;
 import net.lintfordlib.core.graphics.sprites.SpriteInstance;
 import net.lintfordlib.core.rendering.RenderPass;
@@ -78,6 +77,8 @@ public class FafAnimationRenderer extends BaseRenderer implements AnimatedSprite
 
 		final var lSpriteBatch = rendererManager().uiSpriteBatch();
 		lSpriteBatch.begin(core.gameCamera());
+		lSpriteBatch.setColorRGBA(1.f, 1.f, 1.f, 1.f);
+		
 		final int lNumAnimations = animationUpdateList.size();
 		for (int i = 0; i < lNumAnimations; i++) {
 
@@ -88,7 +89,7 @@ public class FafAnimationRenderer extends BaseRenderer implements AnimatedSprite
 			final float lDstX = lAnimInstance.x() - lDstW * .5f;
 			final float lDstY = lAnimInstance.y() - lDstH * .5f;
 
-			lSpriteBatch.draw(lSpritesheetDefinition, lAnimInstance.currentSpriteFrame(), lDstX, lDstY, lDstW, lDstH, -0.4f, ColorConstants.WHITE);
+			lSpriteBatch.draw(lSpritesheetDefinition, lAnimInstance.currentSpriteFrame(), lDstX, lDstY, lDstW, lDstH, -0.4f);
 		}
 
 		lSpriteBatch.end();
@@ -100,12 +101,12 @@ public class FafAnimationRenderer extends BaseRenderer implements AnimatedSprite
 
 	@Override
 	public void onStarted(SpriteInstance spriteInstance) {
-
+		// ignore
 	}
 
 	@Override
 	public void onLooped(SpriteInstance spriteInstance) {
-
+		// ignore
 	}
 
 	@Override

@@ -2,7 +2,6 @@ package net.lintfordlib.renderers.windows.components;
 
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.graphics.Color;
-import net.lintfordlib.core.graphics.ColorConstants;
 import net.lintfordlib.core.graphics.batching.SpriteBatch;
 import net.lintfordlib.core.graphics.fonts.FontUnit;
 import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
@@ -38,7 +37,6 @@ public class UiWidgetBar extends UIWidget {
 
 	public void setColor(float pR, float pG, float pB, float pA) {
 		UiBarColor.setRGBA(pR, pG, pB, pA);
-
 	}
 
 	public void setCurrentValue(float pValue) {
@@ -74,7 +72,8 @@ public class UiWidgetBar extends UIWidget {
 	public void draw(LintfordCore core, SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheet, FontUnit textFont, float componentZDepth) {
 		if (mLabelString != null && mLabelString.length() > 0) {
 			textFont.begin(core.HUD());
-			textFont.drawText(mLabelString, mX + HorizontalPadding, mY + 1, componentZDepth, ColorConstants.WHITE, 1.f);
+			textFont.setTextColorRGBA(1.f, 1.f, 1.f, 1.f);
+			textFont.drawText(mLabelString, mX + HorizontalPadding, mY + 1, componentZDepth, 1.f);
 			textFont.end();
 		}
 
@@ -88,9 +87,10 @@ public class UiWidgetBar extends UIWidget {
 			final var inner_h = BAR_HEIGHT - lInnerBorderPadding * 2.f;
 
 			spriteBatch.begin(core.HUD());
-			spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX + HorizontalPadding, mY + 25, mW - HorizontalPadding * 2.f, BAR_HEIGHT, -0.1f, ColorConstants.BLACK);
-			UiBarColor.setRGB(1.f, 0.f, 0.f);
-			spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, inner_x + lInnerBorderPadding, inner_y + lInnerBorderPadding, inner_w, inner_h, -0.1f, UiBarColor);
+			spriteBatch.setColorRGBA(0.f, 0.f, 0.f, 1.f);
+			spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX + HorizontalPadding, mY + 25, mW - HorizontalPadding * 2.f, BAR_HEIGHT, -0.1f);
+			spriteBatch.setColor(UiBarColor);
+			spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, inner_x + lInnerBorderPadding, inner_y + lInnerBorderPadding, inner_w, inner_h, -0.1f);
 			spriteBatch.end();
 		}
 	}

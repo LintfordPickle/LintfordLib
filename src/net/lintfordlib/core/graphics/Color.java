@@ -34,7 +34,7 @@ public class Color {
 		a = alpha;
 	}
 
-	public Color(final Color otherColor) {
+	public Color(Color otherColor) {
 		r = otherColor.r;
 		g = otherColor.g;
 		b = otherColor.b;

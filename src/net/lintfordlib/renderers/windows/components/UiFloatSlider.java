@@ -143,22 +143,26 @@ public class UiFloatSlider extends UIWidget {
 		final var lLowerYPosition = mY + mH * .75f;
 		final var lHalfHeight = mH * .5f;
 
-		spriteBatch.begin(core.HUD());
 		final var lBackgroundColor = mIsEnabled ? ColorConstants.getColorWithRGBMod(ColorConstants.PrimaryColor, 1.f) : ColorConstants.getBlackWithAlpha(.4f);
 
+		spriteBatch.begin(core.HUD());
+		spriteBatch.setColor(lBackgroundColor);
+
 		// background bar
-		spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, mX + mHorizontalMargins, lLowerYPosition - lRailHeight * .5f, mW - mHorizontalMargins * 2.f, lRailHeight, 0f, lBackgroundColor);
+		spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, mX + mHorizontalMargins, lLowerYPosition - lRailHeight * .5f, mW - mHorizontalMargins * 2.f, lRailHeight, 0f);
 		final var lNubbinColor = mIsEnabled ? ColorConstants.getColorWithRGBMod(ColorConstants.TertiaryColor, 1.f) : ColorConstants.getBlackWithAlpha(.4f);
 
 		// position bar
-		spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, mX + mHorizontalMargins + mCurrentRelPosition - lSliderWidth / 2, lLowerYPosition - lHalfHeight * .5f, lSliderWidth, lHalfHeight, 0f, lNubbinColor);
+		spriteBatch.setColor(lNubbinColor);
+		spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, mX + mHorizontalMargins + mCurrentRelPosition - lSliderWidth / 2, lLowerYPosition - lHalfHeight * .5f, lSliderWidth, lHalfHeight, 0f);
 		spriteBatch.end();
 
 		textFont.begin(core.HUD());
+		textFont.setTextColorRGBA(1.f, 1.f, 1.f, 1.f);
 		final var lAmtText = String.format("%.2f", mCurrentValue);
 		if (mDrawLabel)
-			textFont.drawText(mSliderLabel, mX, lUpperYPosition - textFont.fontHeight() * .5f, componentZDepth, ColorConstants.WHITE, 1f);
-		textFont.drawText(lAmtText, mX + mW - textFont.getStringWidth(lAmtText), lUpperYPosition - textFont.fontHeight() * .5f, -0.01f, ColorConstants.WHITE, 1f);
+			textFont.drawText(mSliderLabel, mX, lUpperYPosition - textFont.fontHeight() * .5f, componentZDepth, 1f);
+		textFont.drawText(lAmtText, mX + mW - textFont.getStringWidth(lAmtText), lUpperYPosition - textFont.fontHeight() * .5f, -0.01f, 1f);
 		textFont.end();
 	}
 

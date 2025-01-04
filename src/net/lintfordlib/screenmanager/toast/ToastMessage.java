@@ -1,7 +1,6 @@
 package net.lintfordlib.screenmanager.toast;
 
 import net.lintfordlib.core.LintfordCore;
-import net.lintfordlib.core.graphics.ColorConstants;
 import net.lintfordlib.core.graphics.batching.TextureBatchPCT;
 import net.lintfordlib.core.graphics.fonts.FontUnit;
 
@@ -18,19 +17,12 @@ public class ToastMessage {
 	float xx, yy;
 
 	// --------------------------------------
-	// Constructor
-	// --------------------------------------
-
-	public ToastMessage() {
-
-	}
-
-	// --------------------------------------
 	// Core-Methods
 	// --------------------------------------
 
 	public void draw(LintfordCore core, FontUnit fontUnit, TextureBatchPCT textureBatch) {
-		fontUnit.drawText(messageText, x, y, -0.1f, ColorConstants.WHITE, 1f, -1);
+		fontUnit.setTextColorRGBA(1.f, 1.f, 1.f, 1.f);
+		fontUnit.drawText(messageText, x, y, -0.1f, 1f, -1);
 	}
 
 	public void init(String title, String message, float timeInMs) {

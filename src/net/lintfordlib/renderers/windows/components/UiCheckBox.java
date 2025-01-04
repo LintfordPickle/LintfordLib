@@ -99,6 +99,7 @@ public class UiCheckBox extends UIWidget {
 	// Core-Methods
 	// --------------------------------------
 
+	@Override
 	public boolean handleInput(LintfordCore core) {
 		if (mIsReadonly)
 			return false;
@@ -126,30 +127,32 @@ public class UiCheckBox extends UIWidget {
 		return false;
 	}
 
+	@Override
 	public void update(LintfordCore core) {
 		super.update(core);
 
 		final var lRectSize = 25;
 		var xx = mX + mW * .75f - lRectSize / 2.f;
 
-		mBoxRectangle.set(xx, mY + mH / 2 - lRectSize / 2, lRectSize, lRectSize);
+		mBoxRectangle.set(xx, mY + mH / 2 - lRectSize / 2.f, lRectSize, lRectSize);
 	}
 
 	@Override
 	public void draw(LintfordCore core, SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheetDefinition, FontUnit textFont, float componentZDepth) {
-		var lTextColor = ColorConstants.TextEntryColor;
 		final float lTextHeight = textFont.fontHeight();
 
 		if (mLabelText != null) {
 			textFont.begin(core.HUD());
-			textFont.drawText(mLabelText, mX, mY + mH * .5f - lTextHeight * .5f * mTextScale, componentZDepth, lTextColor, mTextScale);
+			textFont.setTextColor(ColorConstants.TextEntryColor);
+			textFont.drawText(mLabelText, mX, mY + mH * .5f - lTextHeight * .5f * mTextScale, componentZDepth, mTextScale);
 			textFont.end();
 		}
 
 		spriteBatch.begin(core.HUD());
-		spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_CHECKBOX_UNCHECKED, mBoxRectangle, componentZDepth, ColorConstants.WHITE);
+		spriteBatch.setColorRGBA(1.f, 1.f, 1.f, 1.f);
+		spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_CHECKBOX_UNCHECKED, mBoxRectangle, componentZDepth);
 		if (mIsChecked)
-			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_CHECKBOX_CHECKED, mBoxRectangle, componentZDepth, ColorConstants.WHITE);
+			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_CHECKBOX_CHECKED, mBoxRectangle, componentZDepth);
 
 		spriteBatch.end();
 	}
@@ -159,7 +162,7 @@ public class UiCheckBox extends UIWidget {
 	// --------------------------------------
 
 	public void setKeyUpdateListener(IUiInputKeyPressCallback keyUpdateListener, int keyListenerUid) {
-
+		// ignore
 	}
 
 	public void onClick(InputManager inputState, boolean newFocus) {

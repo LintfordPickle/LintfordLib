@@ -19,8 +19,8 @@ public class IconIntFilter implements IInputProcessor {
 
 	private UiIconFilter mUIIconFilter;
 	private int mFilterValue;
-	private transient SpriteSheetDefinition mIconSpritesheetDefinition;
-	private transient int mIconSpriteFrameIndex;
+	private SpriteSheetDefinition mIconSpritesheetDefinition;
+	private int mIconSpriteFrameIndex;
 	private Rectangle mUIDstRectangle;
 	private boolean mEnabled;
 	private String mFilterName;
@@ -97,30 +97,34 @@ public class IconIntFilter implements IInputProcessor {
 
 	public void draw(LintfordCore core, SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheet, FontUnit textFont, float componentZDepth) {
 		final var lColorMod = mEnabled ? 1.f : .8f;
-		final var lColor = ColorConstants.getColorWithRGBMod(ColorConstants.WHITE, lColorMod);
+		final var lColor = ColorConstants.getColorWithRGBMod(ColorConstants.WHITE(), lColorMod);
 
 		spriteBatch.begin(core.HUD());
+		spriteBatch.setColor(lColor);
 
 		if (mEnabled) {
-			spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_BLUE, mUIDstRectangle.x() - 2, mUIDstRectangle.y() - 2, mUIDstRectangle.width() + 4, mUIDstRectangle.height() + 6, -0.5f, lColor);
+			spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_BLUE, mUIDstRectangle.x() - 2, mUIDstRectangle.y() - 2, mUIDstRectangle.width() + 4, mUIDstRectangle.height() + 6, -0.5f);
 		} else {
-			spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_GREEN, mUIDstRectangle.x() - 2, mUIDstRectangle.y() - 2, mUIDstRectangle.width() + 4, mUIDstRectangle.height() + 6, -0.5f, lColor);
+			spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_GREEN, mUIDstRectangle.x() - 2, mUIDstRectangle.y() - 2, mUIDstRectangle.width() + 4, mUIDstRectangle.height() + 6, -0.5f);
 		}
 
 		if (mHoveredOver) {
 			final var lTextHalfW = textFont.getStringWidth(mFilterName) / 2;
 			final var lTextHeight = textFont.fontHeight();
 
-			spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_RED, mUIDstRectangle.x() + 16 - lTextHalfW, mUIDstRectangle.y() - 19, lTextHalfW * 2 + 4, lTextHeight, componentZDepth, ColorConstants.WHITE);
+			spriteBatch.setColorRGBA(1.f, 1.f, 1.f, 1.f);
+			spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_RED, mUIDstRectangle.x() + 16 - lTextHalfW, mUIDstRectangle.y() - 19, lTextHalfW * 2 + 4, lTextHeight, componentZDepth);
 		}
 
-		spriteBatch.draw(mIconSpritesheetDefinition, mIconSpriteFrameIndex, mUIDstRectangle, componentZDepth, lColor);
+		spriteBatch.setColor(lColor);
+		spriteBatch.draw(mIconSpritesheetDefinition, mIconSpriteFrameIndex, mUIDstRectangle, componentZDepth);
 		spriteBatch.end();
 
 		if (mHoveredOver) {
 			final var lTextHalfW = textFont.getStringWidth(mFilterName) / 2;
 			textFont.begin(core.HUD());
-			textFont.drawText(mFilterName, mUIDstRectangle.x() + 16 - lTextHalfW, mUIDstRectangle.y() - 19, componentZDepth, ColorConstants.WHITE, 1f);
+			textFont.setTextColorRGBA(1.f, 1.f, 1.f, 1.f);
+			textFont.drawText(mFilterName, mUIDstRectangle.x() + 16 - lTextHalfW, mUIDstRectangle.y() - 19, componentZDepth, 1f);
 			textFont.end();
 		}
 	}

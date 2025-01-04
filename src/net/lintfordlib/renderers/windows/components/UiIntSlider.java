@@ -46,8 +46,6 @@ public class UiIntSlider extends UIWidget {
 	public void setMinMax(int minValue, int maxValue) {
 		if (maxValue < minValue)
 			maxValue = minValue;
-		if (minValue > maxValue)
-			minValue = maxValue;
 
 		mMinValue = minValue;
 		mMaxValue = maxValue;
@@ -143,16 +141,19 @@ public class UiIntSlider extends UIWidget {
 		final var lNubbinColor = mIsEnabled ? ColorConstants.getColorWithRGBMod(ColorConstants.TertiaryColor, 1.f) : ColorConstants.getBlackWithAlpha(.4f);
 
 		spriteBatch.begin(core.HUD());
-		spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, mX, mY + textFont.fontHeight() + mH / 2 - lSliderRailHeight / 2, mW, lSliderRailHeight, 0f, lBackgroundColor);
-		spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, mX + mCurrentRelPosition - lSliderWidth / 2, mY + +textFont.fontHeight() + mH / 4, lSliderWidth, mH / 2, 0f, lNubbinColor);
+		spriteBatch.setColor(lBackgroundColor);
+		spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, mX, mY + textFont.fontHeight() + mH / 2 - lSliderRailHeight / 2, mW, lSliderRailHeight, 0f);
+		spriteBatch.setColor(lNubbinColor);
+		spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, mX + mCurrentRelPosition - lSliderWidth / 2, mY + +textFont.fontHeight() + mH / 4, lSliderWidth, mH / 2, 0f);
 		spriteBatch.end();
 
 		final var lQtyLabel = Integer.toString(mCurrentValue) + ((mQtyPostFix != null && mQtyPostFix.length() > 0) ? mQtyPostFix : "");
 		final var lQuantyTextWidth = textFont.getStringWidth(lQtyLabel);
 
 		textFont.begin(core.HUD());
-		textFont.drawText(mSliderLabel, mX, mY, componentZDepth, ColorConstants.WHITE, 1.f);
-		textFont.drawText(lQtyLabel, mX + mW - lQuantyTextWidth, mY, componentZDepth, ColorConstants.WHITE, 1.f);
+		textFont.setTextColorRGBA(1.f, 1.f, 1.f, 1.f);
+		textFont.drawText(mSliderLabel, mX, mY, componentZDepth, 1.f);
+		textFont.drawText(lQtyLabel, mX + mW - lQuantyTextWidth, mY, componentZDepth, 1.f);
 		textFont.end();
 	}
 

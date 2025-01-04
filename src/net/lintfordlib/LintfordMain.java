@@ -7,7 +7,6 @@ import org.lwjgl.opengl.GL11;
 
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.debug.Debug.DebugLogLevel;
-import net.lintfordlib.core.graphics.ColorConstants;
 import net.lintfordlib.core.graphics.batching.TextureBatchPCT;
 
 public class LintfordMain extends LintfordCore {
@@ -67,17 +66,38 @@ public class LintfordMain extends LintfordCore {
 	}
 
 	// ---------------------------------------------
+	// Variables
+	// ---------------------------------------------
+
+	private boolean mStretchStartupLogo;
+
+	// ---------------------------------------------
+	// Properties
+	// ---------------------------------------------
+
+	public boolean stretchStartUpLogo() {
+		return mStretchStartupLogo;
+	}
+
+	public void stretchStartUpLogo(boolean newValue) {
+		mStretchStartupLogo = newValue;
+	}
+
+	// ---------------------------------------------
 	// Constructor
 	// ---------------------------------------------
 
 	public LintfordMain(GameInfo gameInfo, String[] args) {
 		super(gameInfo, args);
+
+		mStretchStartupLogo = false;
 	}
 
 	// ---------------------------------------------
 	// Methods
 	// ---------------------------------------------
 
+	@Override
 	protected void showStartUpLogo(long windowHandle) {
 		super.showStartUpLogo(windowHandle);
 
@@ -88,17 +108,17 @@ public class LintfordMain extends LintfordCore {
 
 		mShowLogoTimer = System.currentTimeMillis();
 
-		final var lStretchLogoToFit = false;
 		final var lSrcWidth = lTexture.getTextureWidth();
 		final var lSrcHeight = lTexture.getTextureHeight();
 
-		final var lDstWidth = lStretchLogoToFit ? mHUD.getWidth() : lSrcWidth;
-		final var lDstHeight = lStretchLogoToFit ? mHUD.getHeight() : lSrcHeight;
+		final var lDstWidth = mStretchStartupLogo ? mHUD.getWidth() : lSrcWidth;
+		final var lDstHeight = mStretchStartupLogo ? mHUD.getHeight() : lSrcHeight;
 
 		final var lTextureBatch = new TextureBatchPCT();
 		lTextureBatch.loadResources(mResourceManager);
 		lTextureBatch.begin(mHUD);
-		lTextureBatch.draw(lTexture, 0, 0, lSrcWidth, lSrcHeight, -lDstWidth * .5f, -lDstHeight * .5f, lDstWidth, lDstHeight, -0.1f, ColorConstants.WHITE);
+		lTextureBatch.setColorRGBA(1.f, 1.f, 1.f, 1.f);
+		lTextureBatch.draw(lTexture, 0, 0, lSrcWidth, lSrcHeight, -lDstWidth * .5f, -lDstHeight * .5f, lDstWidth, lDstHeight, -0.1f);
 		lTextureBatch.end();
 
 		glfwSwapBuffers(windowHandle);

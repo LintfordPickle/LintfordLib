@@ -71,8 +71,8 @@ public class SpriteGraphRenderer extends SpriteBatch {
 			var lSpritesheetDefinition = lAttachment.spritesheetDefinition();
 
 			if (spriteGraphNode.spriteInstance() != null) {
-				var lAttachmentColor = ColorConstants.getColor(lAttachment.attachmentColorTint());
-				draw(lSpritesheetDefinition, spriteGraphNode.spriteInstance(), spriteGraphNode.spriteInstance(), -0.1f, lAttachmentColor);
+				setColor(ColorConstants.getColor(lAttachment.attachmentColorTint()));
+				draw(lSpritesheetDefinition, spriteGraphNode.spriteInstance(), spriteGraphNode.spriteInstance(), -0.1f);
 			}
 
 			if (RENDER_DEBUG) {

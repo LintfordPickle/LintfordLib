@@ -4,7 +4,6 @@ import org.lwjgl.glfw.GLFW;
 
 import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.core.LintfordCore;
-import net.lintfordlib.core.graphics.ColorConstants;
 import net.lintfordlib.core.graphics.batching.TextureBatchPCT;
 import net.lintfordlib.core.graphics.textures.Texture;
 import net.lintfordlib.options.DisplayManager;
@@ -146,16 +145,16 @@ public class PressToContinueIntroScreen extends Screen {
 			lHeight = lDisplay.windowHeight();
 		}
 
-		final var lColor = ColorConstants.getWhiteWithAlpha(mWhiteFlashAlphaAmt);
-
 		mTextureBatch.begin(core.HUD());
-		mTextureBatch.draw(mBackgroundTexture, 0, 0, mBackgroundTexture.getTextureWidth(), mBackgroundTexture.getTextureHeight(), lX, lY, lWidth, lHeight, mBackgroundZDepth, lColor);
+		mTextureBatch.setColorRGBA(1.f, 1.f, 1.f, mWhiteFlashAlphaAmt);
+		mTextureBatch.draw(mBackgroundTexture, 0, 0, mBackgroundTexture.getTextureWidth(), mBackgroundTexture.getTextureHeight(), lX, lY, lWidth, lHeight, mBackgroundZDepth);
 		mTextureBatch.end();
 
 		drawScreenContents(core);
 
 		mTextureBatch.begin(core.HUD());
-		mTextureBatch.draw(core.resources().textureManager().textureWhite(), 0, 0, 2, 2, lX, lY, lWidth, lHeight, mFlashZDepth, lColor);
+		mTextureBatch.setColorRGBA(1.f, 1.f, 1.f, mWhiteFlashAlphaAmt);
+		mTextureBatch.draw(core.resources().textureManager().textureWhite(), 0, 0, 2, 2, lX, lY, lWidth, lHeight, mFlashZDepth);
 		mTextureBatch.end();
 	}
 

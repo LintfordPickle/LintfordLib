@@ -24,14 +24,14 @@ public class MenuEnumImageEntry extends MenuEntry {
 	public class MenuEnumEntryItem {
 		public final int uid;
 		public final String spriteFrameName;
-		public final Color color = new Color(ColorConstants.WHITE);
+		public final Color color = new Color(ColorConstants.WHITE());
 
 		public MenuEnumEntryItem(String spriteFrameName) {
 			this(spriteFrameName, -1);
 		}
 
 		public MenuEnumEntryItem(String spriteFrameName, int uid) {
-			this(spriteFrameName, uid, ColorConstants.WHITE);
+			this(spriteFrameName, uid, ColorConstants.WHITE());
 		}
 
 		public MenuEnumEntryItem(String spriteFrameName, Color color) {
@@ -282,10 +282,10 @@ public class MenuEnumImageEntry extends MenuEntry {
 
 		if (mButtonsEnabled) {
 			final var lButtonSize = mH;
-			final var lButtonColor = ColorConstants.getWhiteWithAlpha((mEnabled ? 1.f : 0.5f) * mParentScreen.screenColor.a);
 
-			lTextureBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_LEFT, mLeftButtonRectangle.x(), mLeftButtonRectangle.y(), lButtonSize, lButtonSize, mZ, lButtonColor);
-			lTextureBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_RIGHT, mRightButtonRectangle.x(), mRightButtonRectangle.y(), lButtonSize, lButtonSize, mZ, lButtonColor);
+			lTextureBatch.setColorRGBA(1.f, 1.f, 1.f, (mEnabled ? 1.f : 0.5f) * mParentScreen.screenColor.a);
+			lTextureBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_LEFT, mLeftButtonRectangle.x(), mLeftButtonRectangle.y(), lButtonSize, lButtonSize, mZ);
+			lTextureBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_RIGHT, mRightButtonRectangle.x(), mRightButtonRectangle.y(), lButtonSize, lButtonSize, mZ);
 		}
 
 		final var lTextBoldFont = mParentScreen.fontBold();
@@ -299,17 +299,18 @@ public class MenuEnumImageEntry extends MenuEntry {
 		final var lSeparatorHalfWidth = lTextBoldFont.getStringWidth(mSeparator, lUiTextScale) * 0.5f;
 
 		lTextBoldFont.begin(core.HUD());
-		lTextBoldFont.drawText(mLabel, lScreenOffsetX + mX + mW / 2 - 10 - (lLabelWidth * lAdjustedLabelScaleW) - lSeparatorHalfWidth, lScreenOffsetY + mY + mH / 2 - lFontHeight * 0.5f, mZ, textColor, lAdjustedLabelScaleW, -1);
-		lTextBoldFont.drawText(mSeparator, lScreenOffsetX + mX + mW / 2 - lSeparatorHalfWidth, lScreenOffsetY + mY + mH / 2 - lFontHeight * 0.5f, mZ, textColor, lUiTextScale, -1);
+		lTextBoldFont.setTextColor(textColor);
+		lTextBoldFont.drawText(mLabel, lScreenOffsetX + mX + mW / 2 - 10 - (lLabelWidth * lAdjustedLabelScaleW) - lSeparatorHalfWidth, lScreenOffsetY + mY + mH / 2 - lFontHeight * 0.5f, mZ, lAdjustedLabelScaleW, -1);
+		lTextBoldFont.drawText(mSeparator, lScreenOffsetX + mX + mW / 2 - lSeparatorHalfWidth, lScreenOffsetY + mY + mH / 2 - lFontHeight * 0.5f, mZ, lUiTextScale, -1);
 
 		final var lTileSize = mH - 2.f;
 		if (mSelectedIndex >= 0 && mSelectedIndex < mItems.size()) {
 			final var lSelectedItem = mItems.get(mSelectedIndex);
 			final var lSpriteFrameName = lSelectedItem.spriteFrameName;
 			final var lSpriteFrame = mImageSpriteSheetDefinition.getSpriteFrame(lSpriteFrameName);
-			final var lSpriteColor = lSelectedItem.color;
 
-			lTextureBatch.draw(mImageSpriteSheetDefinition, lSpriteFrame, lScreenOffsetX + mX + (mW / 6 * 4.65f) - lTileSize / 2, lScreenOffsetY + mY + mH / 2 - lTileSize / 2, lTileSize, lTileSize, mZ, lSpriteColor);
+			lTextureBatch.setColor(lSelectedItem.color);
+			lTextureBatch.draw(mImageSpriteSheetDefinition, lSpriteFrame, lScreenOffsetX + mX + (mW / 6 * 4.65f) - lTileSize / 2, lScreenOffsetY + mY + mH / 2 - lTileSize / 2, lTileSize, lTileSize, mZ);
 		}
 
 		lTextBoldFont.end();

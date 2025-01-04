@@ -27,7 +27,7 @@ public class UiInputInteger extends UIWidget implements IBufferedTextInputCallba
 	private static final long serialVersionUID = 3637330515154931480L;
 
 	// The UiInputInteger primarily only allows numerical characters as input. The characters in this list are whitelisted and will be added.
-	public static final List<Character> CHAR_WHITELIST = Arrays.asList('-');
+	private static final List<Character> CHAR_WHITELIST = Arrays.asList('-');
 
 	// --------------------------------------
 	// Variables
@@ -164,6 +164,7 @@ public class UiInputInteger extends UIWidget implements IBufferedTextInputCallba
 		return mStringLength;
 	}
 
+	@Override
 	public boolean isEmpty() {
 		return isEmptyString();
 	}
@@ -256,6 +257,7 @@ public class UiInputInteger extends UIWidget implements IBufferedTextInputCallba
 	// Core-Methods
 	// --------------------------------------
 
+	@Override
 	public boolean handleInput(LintfordCore core) {
 		if (mIsReadonly)
 			return false;
@@ -318,6 +320,7 @@ public class UiInputInteger extends UIWidget implements IBufferedTextInputCallba
 		return false;
 	}
 
+	@Override
 	public void update(LintfordCore core) {
 		super.update(core);
 
@@ -336,8 +339,8 @@ public class UiInputInteger extends UIWidget implements IBufferedTextInputCallba
 
 		if (mShowControlArrows) {
 			final int lRectSize = 16;
-			mDecrementRectangle.set(xx + 4, mY + mH / 2 - lRectSize / 2, lRectSize, lRectSize);
-			mIncrementRectangle.set(xx + ww - lRectSize - 4, mY + mH / 2 - lRectSize / 2, lRectSize, lRectSize);
+			mDecrementRectangle.set(xx + 4, mY + mH / 2 - lRectSize / 2.f, lRectSize, lRectSize);
+			mIncrementRectangle.set(xx + ww - lRectSize - 4, mY + mH / 2 - lRectSize / 2.f, lRectSize, lRectSize);
 		}
 
 		if (mHasFocus) {
@@ -361,7 +364,8 @@ public class UiInputInteger extends UIWidget implements IBufferedTextInputCallba
 
 		if (mLabelText != null) {
 			textFont.begin(core.HUD());
-			textFont.drawText(mLabelText, mX, mY + mH * .5f - lTextHeight * .5f * mTextScale, componentZDepth, lTextColor, mTextScale);
+			textFont.setTextColor(lTextColor);
+			textFont.drawText(mLabelText, mX, mY + mH * .5f - lTextHeight * .5f * mTextScale, componentZDepth, mTextScale);
 			textFont.end();
 
 			xx = mX + mW * .5f;
@@ -369,17 +373,17 @@ public class UiInputInteger extends UIWidget implements IBufferedTextInputCallba
 		}
 
 		spriteBatch.begin(core.HUD());
-		spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_LEFT, (int) xx, mY, 32, mH, componentZDepth, ColorConstants.MenuPanelPrimaryColor);
+		spriteBatch.setColor(ColorConstants.MenuPanelPrimaryColor);
+		spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_LEFT, xx, mY, 32, mH, componentZDepth);
 		if (mW > 32) {
-			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_MID, (int) xx + 32, mY, ww - 64, mH, componentZDepth, ColorConstants.MenuPanelPrimaryColor);
-			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_RIGHT, (int) xx + ww - 32, mY, 32, mH, componentZDepth, ColorConstants.MenuPanelPrimaryColor);
+			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_MID, xx + 32.f, mY, ww - 64, mH, componentZDepth);
+			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_RIGHT, xx + ww - 32, mY, 32, mH, componentZDepth);
 		}
 
 		if (mShowControlArrows) {
-			final var lIconColor = ColorConstants.WHITE;
-			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WIDGET_LEFT_ARROW, mDecrementRectangle, componentZDepth, lIconColor);
-			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WIDGET_RIGHT_ARROW, mIncrementRectangle, componentZDepth, lIconColor);
-
+			spriteBatch.setColorRGBA(1.f, 1.f, 1.f, 1.f);
+			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WIDGET_LEFT_ARROW, mDecrementRectangle, componentZDepth);
+			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WIDGET_RIGHT_ARROW, mIncrementRectangle, componentZDepth);
 		}
 
 		var lText = mInputField.toString();
@@ -392,14 +396,15 @@ public class UiInputInteger extends UIWidget implements IBufferedTextInputCallba
 		}
 
 		if (isReadonly())
-			lTextColor = ColorConstants.GREY_DARK;
+			lTextColor = ColorConstants.GREY_DARK();
 
 		final var lTextWidth = textFont.getStringWidth(mInputField.toString(), mTextScale);
 		final var lTextPosX = xx + ww / 2.f - lTextWidth * .5f;
 
 		if (mShowCaret && mHasFocus) {
 			final var lCarotPositionX = lTextPosX + lTextWidth;
-			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, (int) lCarotPositionX, mY + mH * .5f - lTextHeight * .5f * mTextScale, 1.f, textFont.fontHeight() * mTextScale, componentZDepth, ColorConstants.WHITE);
+			spriteBatch.setColorRGBA(1.f, 1.f, 1.f, 1.f);
+			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, (int) lCarotPositionX, mY + mH * .5f - lTextHeight * .5f * mTextScale, 1.f, textFont.fontHeight() * mTextScale, componentZDepth);
 		}
 		spriteBatch.end();
 
@@ -407,7 +412,8 @@ public class UiInputInteger extends UIWidget implements IBufferedTextInputCallba
 		ContentRectangle.preDraw(core, spriteBatch, mX + 8, mY, mW - lCancelRectSize, mH, -0, 1);
 
 		textFont.begin(core.HUD());
-		textFont.drawText(lText, lTextPosX, mY + mH * .5f - lTextHeight * .5f * mTextScale, componentZDepth, lTextColor, mTextScale);
+		textFont.setTextColor(lTextColor);
+		textFont.drawText(lText, lTextPosX, mY + mH * .5f - lTextHeight * .5f * mTextScale, componentZDepth, mTextScale);
 		textFont.end();
 
 		ContentRectangle.postDraw(core);
@@ -504,7 +510,7 @@ public class UiInputInteger extends UIWidget implements IBufferedTextInputCallba
 			return;
 		} else if (CHAR_WHITELIST.contains((char) codePoint)) {
 			// skip
-		} else if (Character.isDigit((char) codePoint) == false)
+		} else if (!Character.isDigit((char) codePoint))
 			return;
 
 		mInputField.append((char) codePoint);

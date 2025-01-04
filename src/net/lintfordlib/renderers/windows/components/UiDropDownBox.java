@@ -268,9 +268,10 @@ public class UiDropDownBox<T> extends UIWidget implements IInputClickedFocusMana
 	public void draw(LintfordCore core, SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheet, FontUnit textFont, float componentZDepth) {
 		final var lFontHeight = textFont.fontHeight();
 
-		if (mItems == null || mItems.isEmpty()) {
+		if (mItems.isEmpty()) {
 			textFont.begin(core.HUD());
-			textFont.drawText(mNoItemsFoundText, mX + HorizontalPadding, mY + mH / 2f - lFontHeight / 2f, componentZDepth, ColorConstants.WHITE, 1.f, -1);
+			textFont.setTextColorRGBA(1.f, 1.f, 1.f, 1.f);
+			textFont.drawText(mNoItemsFoundText, mX + HorizontalPadding, mY + mH / 2f - lFontHeight / 2f, componentZDepth, 1.f, -1);
 			textFont.end();
 			return;
 		}
@@ -279,11 +280,12 @@ public class UiDropDownBox<T> extends UIWidget implements IInputClickedFocusMana
 
 		if (mLabel != null) {
 			textFont.begin(core.HUD());
-			textFont.drawText(mLabel, mX, mY + UIWidget.DefaultWidthHeight * .5f - lFontHeight / 2f, componentZDepth, ColorConstants.WHITE, 1.f, -1);
+			textFont.setTextColorRGBA(1.f, 1.f, 1.f, 1.f);
+			textFont.drawText(mLabel, mX, mY + UIWidget.DefaultWidthHeight * .5f - lFontHeight / 2f, componentZDepth, 1.f, -1);
 			textFont.end();
 		}
 
-		if (mOpen == false) {
+		if (!mOpen) {
 			drawSelectedItem(core, spriteBatch, textFont, coreSpritesheet, componentZDepth);
 
 		} else {
@@ -295,9 +297,8 @@ public class UiDropDownBox<T> extends UIWidget implements IInputClickedFocusMana
 
 			textFont.begin(core.HUD());
 			spriteBatch.begin(core.HUD());
-			final var lBlackWithAlpha = ColorConstants.getBlackWithAlpha(1.f);
-
-			spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mWindowRectangle, componentZDepth, lBlackWithAlpha);
+			spriteBatch.setColorRGBA(0.f, 0.f, 0.f, 1.f);
+			spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mWindowRectangle, componentZDepth);
 			spriteBatch.end();
 
 			final var lOffsetY = mLabel != null ? UIWidget.DefaultWidthHeight : 0.f;
@@ -308,11 +309,12 @@ public class UiDropDownBox<T> extends UIWidget implements IInputClickedFocusMana
 				final var lItem = mItems.get(i);
 
 				if (i == mHighlightedIndex)
-					entityColor.setFromColor(ColorConstants.GREEN);
+					entityColor.setFromColor(ColorConstants.GREEN());
 				else
 					entityColor.setFromColor(ColorConstants.TextEntryColor);
 
-				textFont.drawText(lItem.name, mX + 5.f, lYPos, -0.01f, entityColor, 1.f, -1);
+				textFont.setTextColor(entityColor);
+				textFont.drawText(lItem.name, mX + 5.f, lYPos, -0.01f, 1.f, -1);
 				lYPos += ITEM_HEIGHT;
 			}
 
@@ -329,13 +331,14 @@ public class UiDropDownBox<T> extends UIWidget implements IInputClickedFocusMana
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
 			spriteBatch.begin(core.HUD());
 
-			final var lTransparentGreen = ColorConstants.getColor(2.f, .8f, .2f, .4f);
-			spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX, mY, mW, UIWidget.DefaultWidthHeight, componentZDepth, lTransparentGreen);
+			spriteBatch.setColorRGBA(2.f, .8f, .2f, .4f);
+			spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX, mY, mW, UIWidget.DefaultWidthHeight, componentZDepth);
 
+			spriteBatch.setColor(ColorConstants.Debug_Transparent_Magenta);
 			if (mOpen)
-				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mWindowRectangle, componentZDepth, ColorConstants.Debug_Transparent_Magenta);
+				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mWindowRectangle, componentZDepth);
 			else
-				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, this, componentZDepth, ColorConstants.Debug_Transparent_Magenta);
+				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, this, componentZDepth);
 
 			spriteBatch.end();
 		}
@@ -347,31 +350,35 @@ public class UiDropDownBox<T> extends UIWidget implements IInputClickedFocusMana
 		var ww = mW;
 
 		spriteBatch.begin(core.HUD());
-		spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_LEFT, (int) xx, yy, 32, UIWidget.DefaultWidthHeight, componentZDepth, ColorConstants.MenuPanelPrimaryColor);
+		spriteBatch.setColor(ColorConstants.MenuPanelPrimaryColor);
+		spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_LEFT, xx, yy, 32, UIWidget.DefaultWidthHeight, componentZDepth);
 		if (mW > 32) {
-			spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_MID, (int) xx + 32, yy, ww - 64, UIWidget.DefaultWidthHeight, componentZDepth, ColorConstants.MenuPanelPrimaryColor);
-			spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_RIGHT, (int) xx + ww - 32, yy, 32, UIWidget.DefaultWidthHeight, componentZDepth, ColorConstants.MenuPanelPrimaryColor);
+			spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_MID, xx + 32.f, yy, ww - 64, UIWidget.DefaultWidthHeight, componentZDepth);
+			spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_RIGHT, xx + ww - 32.f, yy, 32, UIWidget.DefaultWidthHeight, componentZDepth);
 		}
 		spriteBatch.end();
+
+		textFont.begin(core.HUD());
+		textFont.setTextColorRGBA(1.f, 1.f, 1.f, 1.f);
 
 		if (mSelectedIndex > -1) {
 			final var lSelectedMenuEnumEntryItem = mItems.get(mSelectedIndex);
 			final var lCurItemName = lSelectedMenuEnumEntryItem.name;
 
-			textFont.begin(core.HUD());
-			textFont.drawText(lCurItemName, mX + HorizontalPadding, yy + UIWidget.DefaultWidthHeight * .5f - textFont.fontHeight() / 2f, componentZDepth, ColorConstants.WHITE, 1.f, -1);
-			textFont.end();
+			textFont.drawText(lCurItemName, mX + HorizontalPadding, yy + UIWidget.DefaultWidthHeight * .5f - textFont.fontHeight() / 2f, componentZDepth, 1.f, -1);
+
 		} else {
-			textFont.begin(core.HUD());
-			textFont.drawText("No item selected", mX + HorizontalPadding, yy + UIWidget.DefaultWidthHeight * .5f - textFont.fontHeight() / 2f, componentZDepth, ColorConstants.WHITE, 1.f, -1);
-			textFont.end();
+			textFont.drawText("No item selected", mX + HorizontalPadding, yy + UIWidget.DefaultWidthHeight * .5f - textFont.fontHeight() / 2f, componentZDepth, 1.f, -1);
 		}
 
-		final var lIconColor = mDownArrowHovered ? ColorConstants.WHITE : ColorConstants.GREY_LIGHT;
+		textFont.end();
+
+		final var lIconColor = mDownArrowHovered ? ColorConstants.WHITE() : ColorConstants.GREY_LIGHT();
 
 		// Draw the down arrow
 		spriteBatch.begin(core.HUD());
-		spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_DOWN, mDownArrowRectangle, componentZDepth, lIconColor);
+		spriteBatch.setColor(lIconColor);
+		spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_DOWN, mDownArrowRectangle, componentZDepth);
 		spriteBatch.end();
 	}
 
@@ -381,7 +388,7 @@ public class UiDropDownBox<T> extends UIWidget implements IInputClickedFocusMana
 
 	@Override
 	public void setTrackedClickedFocusControl(IInputClickedFocusTracker controlToTrack) {
-
+		//
 	}
 
 	@Override

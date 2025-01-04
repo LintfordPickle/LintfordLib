@@ -1,10 +1,10 @@
 package net.lintfordlib.screenmanager.entries;
 
+import java.util.Objects;
+
 import org.lwjgl.glfw.GLFW;
 
-import java.util.Objects;
 import net.lintfordlib.core.LintfordCore;
-import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.geometry.Rectangle;
 import net.lintfordlib.core.graphics.ColorConstants;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
@@ -72,11 +72,6 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 		mEnableScaleTextToWidth = newValue;
 	}
 
-	@Override
-	public boolean hasFocus() {
-		return super.hasFocus();
-	}
-
 	public void label(String newLabel) {
 		mLabel = newLabel;
 	}
@@ -85,6 +80,7 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 		return mLabel;
 	}
 
+	@Override
 	public String entryText() {
 		return inputString();
 	}
@@ -202,9 +198,10 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 
 		if (mHasFocus || mIsInputActive) {
 			lSpriteBatch.begin(core.HUD());
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - mW / 2, lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ, ColorConstants.MenuEntryHighlightColor);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - mW / 2 + 32, lScreenOffset.y + centerY() - mH / 2, mW - 64, mH, mZ, ColorConstants.MenuEntryHighlightColor);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() + mW / 2 - 32, lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ, ColorConstants.MenuEntryHighlightColor);
+			lSpriteBatch.setColor(ColorConstants.MenuEntryHighlightColor);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - mW / 2, lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - mW / 2 + 32, lScreenOffset.y + centerY() - mH / 2, mW - 64, mH, mZ);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() + mW / 2 - 32, lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ);
 			lSpriteBatch.end();
 		}
 
@@ -241,17 +238,18 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 		}
 
 		lTextBoldFont.begin(core.HUD());
+		lTextBoldFont.setTextColor(textColor);
 		final float lTextHeight = lTextBoldFont.fontHeight();
 
 		final var lSingleLineTextOffsetX = (mSingleLine ? mSeparatorOffsetX : 0.f);
-		
+
 		if (mSingleLine) {
 			// Draw the center separator char
 			final var mSeparator = " : ";
 			final var lCenterX = mX + mW / 2.f + mSeparatorOffsetX;
 			final var lLabelTextPositionY = mY + ENTRY_DEFAULT_HEIGHT / 2.f - lTextHeight * .5f;
 			final var lSeparatorHalfWidth = lTextBoldFont.getStringWidth(mSeparator, lUiTextScale) * 0.5f;
-			lTextBoldFont.drawText(mSeparator, lScreenOffset.x + lCenterX - lSeparatorHalfWidth, lScreenOffset.y + lLabelTextPositionY, mZ, textColor, 1.f);
+			lTextBoldFont.drawText(mSeparator, lScreenOffset.x + lCenterX - lSeparatorHalfWidth, lScreenOffset.y + lLabelTextPositionY, mZ, 1.f);
 		}
 
 		if (mLabel != null) {
@@ -260,10 +258,10 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 
 				final var lCenterX = mX + mW / 2.f + mSeparatorOffsetX;
 				final var lLabelWidth = lTextBoldFont.getStringWidth(mLabel, lUiTextScale);
-				lTextBoldFont.drawText(mLabel, lScreenOffset.x + lCenterX - lLabelWidth - 32, lScreenOffset.y + lLabelTextPositionY, mZ, textColor, 1.f);
+				lTextBoldFont.drawText(mLabel, lScreenOffset.x + lCenterX - lLabelWidth - 32, lScreenOffset.y + lLabelTextPositionY, mZ, 1.f);
 			} else {
 				final var lLabelTextPositionY = mY + ENTRY_DEFAULT_HEIGHT / 2.f - lTextHeight * .5f;
-				lTextBoldFont.drawText(mLabel, lScreenOffset.x + mX, lScreenOffset.y + lLabelTextPositionY, mZ, textColor, 1.f);
+				lTextBoldFont.drawText(mLabel, lScreenOffset.x + mX, lScreenOffset.y + lLabelTextPositionY, mZ, 1.f);
 			}
 		}
 
@@ -272,18 +270,20 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 		ContentRectangle.preDraw(core, lSpriteBatch, lScreenOffset.x + mInputAreaRectangle.x() + 2.f, mY, lScreenOffset.y + mInputAreaRectangle.width() - lCancelRectSize - 5.f, mH, -0, 1);
 
 		lTextBoldFont.begin(core.HUD());
-		lTextBoldFont.drawText(mInputField.toString(), lScreenOffset.x + lTextPosX + 8 + lSingleLineTextOffsetX, lScreenOffset.y + mInputAreaRectangle.y() + mInputAreaRectangle.height() * .5f - lTextHeight * .5f, mZ, textColor, 1.f);
+		lTextBoldFont.setTextColor(textColor);
+		lTextBoldFont.drawText(mInputField.toString(), lScreenOffset.x + lTextPosX + 8 + lSingleLineTextOffsetX, lScreenOffset.y + mInputAreaRectangle.y() + mInputAreaRectangle.height() * .5f - lTextHeight * .5f, mZ, 1.f);
 		lTextBoldFont.end();
 
 		ContentRectangle.postDraw(core);
 
 		if (mShowCaret && mHasFocus) {
-			lSpriteBatch.begin(core.HUD());
 			final var lCaretWidth = 0.f;
 			final var lCaretPositionX = lScreenOffset.x + lTextPosX + caretPositionX + lCaretWidth + lSingleLineTextOffsetX;
 			final var lCaretPositionY = lScreenOffset.y + mInputAreaRectangle.y() + mInputAreaRectangle.height() * .5f - lTextHeight * .5f;
 
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lCaretPositionX, lCaretPositionY, lTextHeight / 2.f, lTextHeight, mZ, ColorConstants.WHITE);
+			lSpriteBatch.begin(core.HUD());
+			lSpriteBatch.setColor(entryColor);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lCaretPositionX, lCaretPositionY, lTextHeight / 2.f, lTextHeight, mZ);
 			lSpriteBatch.end();
 		}
 
@@ -299,8 +299,6 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 			drawWarningIcon(core, lSpriteBatch, mWarnIconDstRectangle, 1.f);
 
 		drawDebugCollidableBounds(core, lSpriteBatch);
-
-		Debug.debugManager().drawers().drawRectImmediate(core.HUD(), mInputAreaRectangle);
 	}
 
 	// --------------------------------------
@@ -416,7 +414,7 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 		}
 
 		else {
-			if (mNumericInputOnly && Character.isDigit((char) codePoint) == false)
+			if (mNumericInputOnly && !Character.isDigit((char) codePoint))
 				return;
 
 			mInputField.insert(mCursorPos, (char) codePoint);
@@ -426,7 +424,7 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 
 	@Override
 	public void onCaptureStarted() {
-
+		// ignore
 	}
 
 	@Override

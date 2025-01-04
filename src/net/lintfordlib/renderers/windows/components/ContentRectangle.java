@@ -4,7 +4,6 @@ import org.lwjgl.opengl.GL11;
 
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.geometry.Rectangle;
-import net.lintfordlib.core.graphics.ColorConstants;
 import net.lintfordlib.core.graphics.batching.SpriteBatch;
 import net.lintfordlib.core.graphics.textures.Texture;
 
@@ -34,11 +33,11 @@ public class ContentRectangle {
 		GL11.glStencilFunc(GL11.GL_ALWAYS, componentUid, 0xFF); // Set any stencil to 1
 		GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_REPLACE); // What should happen to stencil values
 
-		// TODO: explicitly ask to clear?
 		GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT); // Clear the stencil buffer
 
 		spriteBatch.begin(core.HUD());
-		spriteBatch.draw((Texture) null, 0, 0, 1, 1, rx + depthPadding, ry + depthPadding, rw - depthPadding * 2, rh - depthPadding * 2, -10.f, ColorConstants.getWhiteWithAlpha(0.f));
+		spriteBatch.setColorRGBA(1.f, 1.f, 1.f, 0.f);
+		spriteBatch.draw((Texture) null, 0, 0, 1, 1, rx + depthPadding, ry + depthPadding, rw - depthPadding * 2, rh - depthPadding * 2, -10.f);
 		spriteBatch.end();
 
 		/*

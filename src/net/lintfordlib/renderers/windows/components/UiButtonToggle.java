@@ -115,19 +115,21 @@ public class UiButtonToggle extends UIWidget {
 			lColor = ColorConstants.MenuEntryHighlightColor;
 		}
 
-		final var lTileSize = 32;
+		final float lTileSize = 32.f;
 
 		spriteBatch.begin(core.HUD());
-		spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X1_LEFT, mX, mY, lTileSize, mH, componentZDepth, lColor);
-		spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X1_MID, mX + lTileSize, mY, mW - lTileSize * 2, mH, componentZDepth, lColor);
-		spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X1_RIGHT, mX + mW - lTileSize, mY, lTileSize, mH, componentZDepth, lColor);
+		spriteBatch.setColor(lColor);
+		spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X1_LEFT, mX, mY, lTileSize, mH, componentZDepth);
+		spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X1_MID, mX + lTileSize, mY, mW - lTileSize * 2, mH, componentZDepth);
+		spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X1_RIGHT, mX + mW - lTileSize, mY, lTileSize, mH, componentZDepth);
 		spriteBatch.end();
 
 		final var lButtonText = mButtonLabel != null ? mButtonLabel : NO_LABEL_TEXT;
 		final var lTextWidth = textFont.getStringWidth(lButtonText);
 
 		textFont.begin(core.HUD());
-		textFont.drawText(lButtonText, mX + mW / 2f - lTextWidth / 2f, mY + mH / 2f - textFont.fontHeight() / 2f, componentZDepth, ColorConstants.WHITE, 1.f);
+		textFont.setTextColorRGBA(1.f, 1.f, 1.f, 1.f);
+		textFont.drawText(lButtonText, mX + mW / 2f - lTextWidth / 2f, mY + mH / 2f - textFont.fontHeight() / 2f, componentZDepth, 1.f);
 		textFont.end();
 	}
 }

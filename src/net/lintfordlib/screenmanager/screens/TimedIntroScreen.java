@@ -140,7 +140,8 @@ public class TimedIntroScreen extends Screen {
 		}
 
 		mTextureBatch.begin(core.HUD());
-		mTextureBatch.draw(mBackgroundTexture, mSrcTextureRect, lLeft, lTop, lRight, lBottom, -1f, screenColor);
+		mTextureBatch.setColor(screenColor);
+		mTextureBatch.draw(mBackgroundTexture, mSrcTextureRect, lLeft, lTop, lRight, lBottom, -1f);
 		mTextureBatch.end();
 	}
 

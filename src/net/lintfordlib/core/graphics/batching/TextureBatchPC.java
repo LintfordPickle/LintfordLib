@@ -111,9 +111,38 @@ public class TextureBatchPC {
 
 	protected int mIndexCount;
 
+	private float mR;
+	private float mG;
+	private float mB;
+	private float mA;
+
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public void setColorA(float a) {
+		mA = a;
+	}
+
+	public void setColorRGB(float r, float g, float b) {
+		mR = r;
+		mG = g;
+		mB = b;
+	}
+
+	public void setColorRGBA(float r, float g, float b, float a) {
+		mR = r;
+		mG = g;
+		mB = b;
+		mA = a;
+	}
+
+	public void setColor(Color color) {
+		mR = color.r;
+		mG = color.g;
+		mB = color.b;
+		mA = color.a;
+	}
 
 	public boolean isDrawing() {
 		return mIsDrawing;
@@ -163,6 +192,8 @@ public class TextureBatchPC {
 		mBlendEnabled = true;
 		mBlendFuncSrcFactor = GL11.GL_SRC_ALPHA;
 		mBlendFuncDstFactor = GL11.GL_ONE_MINUS_SRC_ALPHA;
+
+		setColorRGBA(1.f, 1.f, 1.f, 1.f);
 	}
 
 	// --------------------------------------
@@ -355,28 +386,7 @@ public class TextureBatchPC {
 
 	// ---
 
-	public void draw(Rectangle srcRect, Rectangle destRect, float zDepth, Color colorTint) {
-		if (srcRect == null || destRect == null)
-			return;
-
-		draw(srcRect.x(), srcRect.y(), srcRect.width(), srcRect.height(), destRect, zDepth, colorTint);
-	}
-
-	public void draw(Rectangle srcRect, float dx, float dy, float dw, float dh, float zDepth, Color colorTint) {
-		if (srcRect == null)
-			return;
-
-		draw(dx, dy, dw, dh, zDepth, colorTint);
-	}
-
-	public void draw(float sx, float sy, float sw, float sh, Rectangle destRect, float zDepth, Color colorTint) {
-		if (destRect == null)
-			return;
-
-		draw(destRect.x(), destRect.y(), destRect.width(), destRect.height(), zDepth, colorTint);
-	}
-
-	public void draw(float dx, float dy, float dw, float dh, float zDepth, Color colorTint) {
+	public void draw(float dx, float dy, float dw, float dh, float zDepth) {
 		if (!mIsDrawing)
 			return;
 
@@ -395,24 +405,24 @@ public class TextureBatchPC {
 		final var x3 = dx + dw;
 		final var y3 = dy + dh;
 
-		addVertToBuffer(x0, y0, zDepth, 1f, colorTint.r, colorTint.g, colorTint.b, colorTint.a);
-		addVertToBuffer(x1, y1, zDepth, 1f, colorTint.r, colorTint.g, colorTint.b, colorTint.a);
-		addVertToBuffer(x2, y2, zDepth, 1f, colorTint.r, colorTint.g, colorTint.b, colorTint.a);
-		addVertToBuffer(x3, y3, zDepth, 1f, colorTint.r, colorTint.g, colorTint.b, colorTint.a);
+		addVertToBuffer(x0, y0, zDepth, 1f);
+		addVertToBuffer(x1, y1, zDepth, 1f);
+		addVertToBuffer(x2, y2, zDepth, 1f);
+		addVertToBuffer(x3, y3, zDepth, 1f);
 
 		mIndexCount += NUM_INDICES_PER_SPRITE;
 	}
 
 	// ---
 
-	public void drawAroundCenter(Rectangle destRect, float zDepth, float rota, float rotx, float roty, float scale, Color colorTint) {
+	public void drawAroundCenter(Rectangle destRect, float zDepth, float rota, float rotx, float roty, float scale) {
 		if (destRect == null)
 			return;
 
-		drawAroundCenter(destRect.x(), destRect.y(), destRect.width(), destRect.height(), zDepth, rota, rotx, roty, scale, colorTint);
+		drawAroundCenter(destRect.x(), destRect.y(), destRect.width(), destRect.height(), zDepth, rota, rotx, roty, scale);
 	}
 
-	public void drawAroundCenter(float dx, float dy, float dw, float dh, float zDepth, float rota, float rotx, float roty, float scale, Color colorTint) {
+	public void drawAroundCenter(float dx, float dy, float dw, float dh, float zDepth, float rota, float rotx, float roty, float scale) {
 		if (!mResourcesLoaded)
 			return;
 
@@ -446,25 +456,25 @@ public class TextureBatchPC {
 		final var x3 = (lHalfW + originX) * cos - (lHalfH + originY) * sin;
 		final var y3 = (lHalfW + originX) * sin + (lHalfH + originY) * cos;
 
-		addVertToBuffer(dx + x0, dy + y0, zDepth, 1f, colorTint.r, colorTint.g, colorTint.b, colorTint.a);
-		addVertToBuffer(dx + x1, dy + y1, zDepth, 1f, colorTint.r, colorTint.g, colorTint.b, colorTint.a);
-		addVertToBuffer(dx + x2, dy + y2, zDepth, 1f, colorTint.r, colorTint.g, colorTint.b, colorTint.a);
-		addVertToBuffer(dx + x3, dy + y3, zDepth, 1f, colorTint.r, colorTint.g, colorTint.b, colorTint.a);
+		addVertToBuffer(dx + x0, dy + y0, zDepth, 1f);
+		addVertToBuffer(dx + x1, dy + y1, zDepth, 1f);
+		addVertToBuffer(dx + x2, dy + y2, zDepth, 1f);
+		addVertToBuffer(dx + x3, dy + y3, zDepth, 1f);
 
 		mIndexCount += NUM_INDICES_PER_SPRITE;
 	}
 
 	// ---
 
-	protected void addVertToBuffer(float x, float y, float z, float w, float r, float g, float b, float a) {
+	protected void addVertToBuffer(float x, float y, float z, float w) {
 		mBuffer.put(x);
 		mBuffer.put(y);
 		mBuffer.put(z);
 		mBuffer.put(w);
 
-		mBuffer.put(r);
-		mBuffer.put(g);
-		mBuffer.put(b);
-		mBuffer.put(a);
+		mBuffer.put(mR);
+		mBuffer.put(mG);
+		mBuffer.put(mB);
+		mBuffer.put(mA);
 	}
 }

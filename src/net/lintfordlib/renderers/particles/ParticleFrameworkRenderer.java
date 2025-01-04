@@ -25,7 +25,7 @@ public class ParticleFrameworkRenderer extends BaseRenderer {
 
 	public static final String RENDERER_NAME = "Game Particle Renderer";
 
-	private static int RENDERER_ID;
+	private static int RENDERER_ID = 0;
 	private static final int RENDERER_POOL_SIZE = 200;
 
 	// --------------------------------------
@@ -94,7 +94,7 @@ public class ParticleFrameworkRenderer extends BaseRenderer {
 
 	@Override
 	public void unloadResources() {
-		if (mResourcesLoaded == false)
+		if (!mResourcesLoaded)
 			return;
 
 		if (mSpriteBatch != null) {
@@ -116,10 +116,10 @@ public class ParticleFrameworkRenderer extends BaseRenderer {
 
 		final var lParticleSystemManager = mParticleSystemController.particleFrameworkData().particleSystemManager();
 		final var lInstances = lParticleSystemManager.particleSystems();
-		if (lInstances != null && lInstances.size() > 0) {
+		if (lInstances != null && !lInstances.isEmpty()) {
 			final int lNumParticleSystems = lInstances.size();
 			for (int i = 0; i < lNumParticleSystems; i++) {
-				if (lInstances.get(i).isAssigned() == false)
+				if (!lInstances.get(i).isAssigned())
 					continue;
 
 				maintainParticleSystemRenderer(lInstances.get(i));
@@ -144,7 +144,7 @@ public class ParticleFrameworkRenderer extends BaseRenderer {
 		for (int i = 0; i < lNumParticleRenderers; i++) {
 			final var lParticleRenderer = mParticleRenderers.get(i);
 
-			if (lParticleRenderer.isAssigned() == false)
+			if (!lParticleRenderer.isAssigned())
 				continue;
 
 			if (!lIsDefaultRenderPass && renderPass.passTypeIndex() != lParticleRenderer.renderPassId())
@@ -178,13 +178,13 @@ public class ParticleFrameworkRenderer extends BaseRenderer {
 	// Methods
 	// --------------------------------------
 
-	public int getNewRendererId() {
+	public static int getNewRendererId() {
 		return RENDERER_ID++;
 	}
 
 	private void cleanParticleSystemRenderers() {
 		for (int i = 0; i < RENDERER_POOL_SIZE; i++) {
-			if (mParticleRenderers.get(i).isAssignedParticleSystemAlive() == false)
+			if (!mParticleRenderers.get(i).isAssignedParticleSystemAlive())
 				mParticleRenderers.get(i).unassignParticleSystem();
 		}
 	}

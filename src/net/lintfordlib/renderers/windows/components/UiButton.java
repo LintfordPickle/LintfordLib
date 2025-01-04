@@ -116,13 +116,15 @@ public class UiButton extends UIWidget {
 		final var lColor = ColorConstants.getColorWithRGBMod(entityColor, lColorMod);
 
 		spriteBatch.begin(core.HUD());
-		final var lTileSize = 32;
+		spriteBatch.setColor(lColor);
+
+		final float lTileSize = 32.f;
 		if (mW < lTileSize) {
-			spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X1_MID, (int) mX, mY, (int) mW, mH, componentZDepth, lColor);
+			spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X1_MID, mX, mY, mW, mH, componentZDepth);
 		} else {
-			spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X1_LEFT, (int) mX, mY, (int) lTileSize, mH, componentZDepth, lColor);
-			spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X1_MID, (int) mX + lTileSize, mY, (int) mW - lTileSize * 2, mH, componentZDepth, lColor);
-			spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X1_RIGHT, (int) mX + (int) mW - lTileSize, mY, lTileSize, mH, componentZDepth, lColor);
+			spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X1_LEFT, mX, mY, lTileSize, mH, componentZDepth);
+			spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X1_MID, mX + lTileSize, mY, mW - lTileSize * 2, mH, componentZDepth);
+			spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X1_RIGHT, mX + mW - lTileSize, mY, lTileSize, mH, componentZDepth);
 		}
 		spriteBatch.end();
 
@@ -130,7 +132,8 @@ public class UiButton extends UIWidget {
 		final var lTextWidth = textFont.getStringWidth(lButtonText);
 
 		textFont.begin(core.HUD());
-		textFont.drawText(lButtonText, mX + mW / 2f - lTextWidth / 2f, (int) (mY + mH / 2f - textFont.fontHeight() / 2f), componentZDepth, ColorConstants.WHITE, 1.f);
+		textFont.setTextColorRGBA(1.f, 1.f, 1.f, 1.f);
+		textFont.drawText(lButtonText, mX + mW / 2f - lTextWidth / 2f, (int) (mY + mH / 2f - textFont.fontHeight() / 2f), componentZDepth, 1.f);
 		textFont.end();
 	}
 }

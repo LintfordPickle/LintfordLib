@@ -9,7 +9,6 @@ import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.geometry.Rectangle;
-import net.lintfordlib.core.graphics.ColorConstants;
 import net.lintfordlib.core.graphics.batching.SpriteBatch;
 import net.lintfordlib.core.graphics.fonts.BitmapFontManager;
 import net.lintfordlib.core.graphics.fonts.FontUnit;
@@ -287,7 +286,8 @@ public class DebugStats extends Rectangle implements IScrollBarArea, IInputProce
 		mLastDrawElapsed = core.appTime().elapsedTimeMilli();
 
 		mSpriteBatch.begin(core.HUD());
-		mSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, this, -0.01f, ColorConstants.getColor(.05f, .05f, .05f, .95f));
+		mSpriteBatch.setColorRGBA(.05f, .05f, .05f, .95f);
+		mSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, this, -0.01f);
 		mSpriteBatch.end();
 
 		if (mContentRectangle.height() - this.height() > 0)

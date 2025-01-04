@@ -6,7 +6,6 @@ import java.util.List;
 
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.geometry.Rectangle;
-import net.lintfordlib.core.graphics.ColorConstants;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
 import net.lintfordlib.core.input.InputManager;
 import net.lintfordlib.screenmanager.MenuEntry;
@@ -62,6 +61,7 @@ public class MenuEnumEntry extends MenuEntry {
 		public int compareTo(EnumEntryItem o) {
 			if (mOrder == o.order())
 				return 0;
+
 			return mOrder < o.order() ? -1 : 1;
 		}
 	}
@@ -260,23 +260,25 @@ public class MenuEnumEntry extends MenuEntry {
 		final var lArrowButtonPaddingY = mLeftButtonRectangle.height() - lArrowButtonSize;
 
 		if (mButtonsEnabled) {
-			final var lColorWhiteWithAlpha = ColorConstants.getWhiteWithAlpha(lParentScreenAlpha);
-			lTextureBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_LEFT, lScreenOffset.x + mLeftButtonRectangle.x(), lScreenOffset.y + mLeftButtonRectangle.y() + lArrowButtonPaddingY, lArrowButtonSize, lArrowButtonSize, 0f, lColorWhiteWithAlpha);
-			lTextureBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_RIGHT, lScreenOffset.x + mRightButtonRectangle.x(), lScreenOffset.y + mRightButtonRectangle.y() + lArrowButtonPaddingY, lArrowButtonSize, lArrowButtonSize, 0f, lColorWhiteWithAlpha);
+			lTextureBatch.setColorRGBA(1.f, 1.f, 1.f, lParentScreenAlpha);
+			lTextureBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_LEFT, lScreenOffset.x + mLeftButtonRectangle.x(), lScreenOffset.y + mLeftButtonRectangle.y() + lArrowButtonPaddingY, lArrowButtonSize, lArrowButtonSize, 0f);
+			lTextureBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_RIGHT, lScreenOffset.x + mRightButtonRectangle.x(), lScreenOffset.y + mRightButtonRectangle.y() + lArrowButtonPaddingY, lArrowButtonSize, lArrowButtonSize, 0f);
 		}
 
 		lTextureBatch.end();
 
-		lTextBoldFont.begin(core.HUD());
 		final var lStringWidth = lTextBoldFont.getStringWidth(mLabel, lAdjustedScaleW);
-		lTextBoldFont.drawText(mLabel, lScreenOffset.x + mX + mW / 2 - 10 - lStringWidth - lSeparatorHalfWidth, lScreenOffset.y + mY + mH / 2.f - lTextBoldFont.getStringHeight(mLabel, lAdjustedScaleW) * 0.5f, parentZDepth, textColor, lAdjustedScaleW, -1);
-		lTextBoldFont.drawText(SEPARATOR, lScreenOffset.x + mX + mW / 2 - lSeparatorHalfWidth, lScreenOffset.y + mY + mH / 2 - lTextHeight * 0.5f, parentZDepth, textColor, lUiTextScale, -1);
+
+		lTextBoldFont.begin(core.HUD());
+		lTextBoldFont.setTextColor(textColor);
+		lTextBoldFont.drawText(mLabel, lScreenOffset.x + mX + mW / 2 - 10 - lStringWidth - lSeparatorHalfWidth, lScreenOffset.y + mY + mH / 2.f - lTextBoldFont.getStringHeight(mLabel, lAdjustedScaleW) * 0.5f, parentZDepth, lAdjustedScaleW, -1);
+		lTextBoldFont.drawText(SEPARATOR, lScreenOffset.x + mX + mW / 2 - lSeparatorHalfWidth, lScreenOffset.y + mY + mH / 2 - lTextHeight * 0.5f, parentZDepth, lUiTextScale, -1);
 
 		if (!mItems.isEmpty()) {
 			final var lCurItem = mItems.get(mSelectedIndex).name();
 			final var EntryWidth = lTextBoldFont.getStringWidth(lCurItem, lUiTextScale);
 
-			lTextBoldFont.drawText(lCurItem, lScreenOffset.x + mX + (mW / 6 * 4.65f) - EntryWidth / 2, lScreenOffset.y + mY + mH / 2 - lTextHeight * 0.5f, parentZDepth, textColor, lUiTextScale, -1);
+			lTextBoldFont.drawText(lCurItem, lScreenOffset.x + mX + (mW / 6 * 4.65f) - EntryWidth / 2, lScreenOffset.y + mY + mH / 2 - lTextHeight * 0.5f, parentZDepth, lUiTextScale, -1);
 		}
 
 		lTextBoldFont.end();

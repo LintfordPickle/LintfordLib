@@ -18,13 +18,14 @@ public class MenuToggleEntry extends MenuEntry {
 	private static final long serialVersionUID = 51472065385268475L;
 	private static final float SPACE_BETWEEN_TEXT = 15;
 
+	private static final String SEPARATOR_STRING = " : ";
+
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
 	private boolean mIsChecked;
 	private boolean mShowCheckedText;
-	private final String mSeparator = " : ";
 	private String mEnabledText;
 	private String mDisabledText;
 
@@ -95,6 +96,7 @@ public class MenuToggleEntry extends MenuEntry {
 
 	}
 
+	@Override
 	public boolean onHandleMouseInput(LintfordCore core) {
 		if (mReadOnly)
 			return false;
@@ -153,7 +155,7 @@ public class MenuToggleEntry extends MenuEntry {
 
 		final var lLabelWidth = lTextBoldFont.getStringWidth(mText, lUiTextScale);
 		final var lTextHeight = lTextBoldFont.fontHeight() * lUiTextScale;
-		final var lSeparatorHalfWidth = lTextBoldFont.getStringWidth(mSeparator, lUiTextScale) * 0.5f;
+		final var lSeparatorHalfWidth = lTextBoldFont.getStringWidth(SEPARATOR_STRING, lUiTextScale) * 0.5f;
 
 		final var lSpriteBatch = mParentScreen.spriteBatch();
 
@@ -169,31 +171,33 @@ public class MenuToggleEntry extends MenuEntry {
 
 		if (mHasFocus) {
 			lSpriteBatch.begin(core.HUD());
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - mW / 2, lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ, ColorConstants.MenuEntryHighlightColor);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - mW / 2 + 32, lScreenOffset.y + centerY() - mH / 2, mW - 64, mH, mZ, ColorConstants.MenuEntryHighlightColor);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() + mW / 2 - 32, lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ, ColorConstants.MenuEntryHighlightColor);
+			lSpriteBatch.setColor(ColorConstants.MenuEntryHighlightColor);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - mW / 2, lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - mW / 2 + 32, lScreenOffset.y + centerY() - mH / 2, mW - 64, mH, mZ);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() + mW / 2 - 32, lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ);
 			lSpriteBatch.end();
 		}
 
 		lSpriteBatch.begin(core.HUD());
-
+		lSpriteBatch.setColor(entryColor);
 		// Render the check box (either ticked or empty)
 		if (mIsChecked)
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_TICK, lScreenOffset.x + mX + mW / 2 + 16, lScreenOffset.y + mY, lTileSize, lTileSize, mZ, entryColor);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_TICK, lScreenOffset.x + mX + mW / 2 + 16, lScreenOffset.y + mY, lTileSize, lTileSize, mZ);
 		else
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_EMPTY, lScreenOffset.x + centerX() + lTileSize / 2, lScreenOffset.y + mY + mH / 2 - lTileSize / 2, lTileSize, lTileSize, mZ, entryColor);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_EMPTY, lScreenOffset.x + centerX() + lTileSize / 2, lScreenOffset.y + mY + mH / 2 - lTileSize / 2, lTileSize, lTileSize, mZ);
 
 		lSpriteBatch.end();
 
 		lTextBoldFont.begin(core.HUD());
-		lTextBoldFont.drawText(mText, lScreenOffset.x + mX + mW / 2 - lLabelWidth - SPACE_BETWEEN_TEXT - lSeparatorHalfWidth, lScreenOffset.y + mY + 32 / 2 - lTextHeight * 0.5f, mZ, textColor, lUiTextScale, -1);
-		lTextBoldFont.drawText(mSeparator, lScreenOffset.x + mX + mW / 2 - lSeparatorHalfWidth, lScreenOffset.y + mY + mH / 2 - lTextHeight * 0.5f, mZ, textColor, lUiTextScale, -1);
+		lTextBoldFont.setTextColor(textColor);
+		lTextBoldFont.drawText(mText, lScreenOffset.x + mX + mW / 2 - lLabelWidth - SPACE_BETWEEN_TEXT - lSeparatorHalfWidth, lScreenOffset.y + mY + 32.f / 2.f - lTextHeight * 0.5f, mZ, lUiTextScale, -1);
+		lTextBoldFont.drawText(SEPARATOR_STRING, lScreenOffset.x + mX + mW / 2 - lSeparatorHalfWidth, lScreenOffset.y + mY + mH / 2 - lTextHeight * 0.5f, mZ, lUiTextScale, -1);
 
 		if (mShowCheckedText) {
 			if (mIsChecked)
-				lTextBoldFont.drawText(mEnabledText, lScreenOffset.x + mX + mW / 2 + lSeparatorHalfWidth + lTileSize * 2, lScreenOffset.y + mY + mH / 2 - lTextHeight * 0.5f, mZ, textColor, lUiTextScale, -1);
+				lTextBoldFont.drawText(mEnabledText, lScreenOffset.x + mX + mW / 2 + lSeparatorHalfWidth + lTileSize * 2, lScreenOffset.y + mY + mH / 2 - lTextHeight * 0.5f, mZ, lUiTextScale, -1);
 			else
-				lTextBoldFont.drawText(mDisabledText, lScreenOffset.x + mX + mW / 2 + lSeparatorHalfWidth + lTileSize * 2, lScreenOffset.y + mY + mH / 2 - lTextHeight * 0.5f, mZ, textColor, lUiTextScale, -1);
+				lTextBoldFont.drawText(mDisabledText, lScreenOffset.x + mX + mW / 2 + lSeparatorHalfWidth + lTileSize * 2, lScreenOffset.y + mY + mH / 2 - lTextHeight * 0.5f, mZ, lUiTextScale, -1);
 		}
 
 		lTextBoldFont.end();

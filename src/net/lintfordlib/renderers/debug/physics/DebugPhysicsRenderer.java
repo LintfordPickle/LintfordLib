@@ -9,7 +9,6 @@ import net.lintfordlib.ConstantsPhysics;
 import net.lintfordlib.controllers.physics.PhysicsController;
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.debug.Debug;
-import net.lintfordlib.core.graphics.ColorConstants;
 import net.lintfordlib.core.maths.Vector2f;
 import net.lintfordlib.core.physics.dynamics.RigidBody;
 import net.lintfordlib.core.physics.dynamics.RigidBody.BodyType;
@@ -116,30 +115,30 @@ public class DebugPhysicsRenderer extends BaseRenderer {
 		lLineBatch.lineType(GL11.GL_LINE_STRIP);
 
 		// yellow
-		float r = ColorConstants.YELLOW.r;
-		float g = ColorConstants.YELLOW.g;
-		float b = ColorConstants.YELLOW.b;
+		float r = 1;
+		float g = 1;
+		float b = 0;
 
 		if (body.bodyType() == BodyType.Static) { // green
-			r = ColorConstants.GREEN.r;
-			g = ColorConstants.GREEN.g;
-			b = ColorConstants.GREEN.b;
+			r = 0;
+			g = 1;
+			b = 0;
 		} else if (body.bodyType() == BodyType.Kenetic) {
-			r = ColorConstants.BLUE.r;
-			g = ColorConstants.BLUE.g;
-			b = ColorConstants.BLUE.b;
+			r = 0;
+			g = 0;
+			b = 1;
 		}
 
 		if (body.debugIsSelected) {
-			r = ColorConstants.WHITE.r;
-			g = ColorConstants.WHITE.g;
-			b = ColorConstants.WHITE.b;
+			r = 1;
+			g = 1;
+			b = 1;
 		}
 
 		if (body.debugIsColliding) {
-			r = ColorConstants.RED.r;
-			g = ColorConstants.RED.g;
-			b = ColorConstants.RED.b;
+			r = 1;
+			g = 0;
+			b = 0;
 		}
 
 		final var lUnitToPixels = ConstantsPhysics.UnitsToPixels();

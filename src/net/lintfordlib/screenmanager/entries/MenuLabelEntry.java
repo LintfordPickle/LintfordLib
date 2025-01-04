@@ -79,13 +79,14 @@ public class MenuLabelEntry extends MenuEntry {
 		final var lSpriteBatch = mParentScreen.spriteBatch();
 
 		if (mDrawBackground) {
-			lSpriteBatch.begin(core.HUD());
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_LABEL_LEFT, lScreenOffset.x + mX, lScreenOffset.y + mY, 32, 32, parentZDepth + .15f, entryColor);
-
 			final float lMidLength = mW - 64;
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_LABEL_MID, lScreenOffset.x + mX + 32, lScreenOffset.y + mY, lMidLength, 32, parentZDepth + .15f, entryColor);
 
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_LABEL_RIGHT, lScreenOffset.x + mX + lMidLength + 32, lScreenOffset.y + mY, 32, 32, parentZDepth + .15f, entryColor);
+			lSpriteBatch.setColor(entryColor);
+
+			lSpriteBatch.begin(core.HUD());
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_LABEL_LEFT, lScreenOffset.x + mX, lScreenOffset.y + mY, 32, 32, parentZDepth + .15f);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_LABEL_MID, lScreenOffset.x + mX + 32, lScreenOffset.y + mY, lMidLength, 32, parentZDepth + .15f);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_LABEL_RIGHT, lScreenOffset.x + mX + lMidLength + 32, lScreenOffset.y + mY, 32, 32, parentZDepth + .15f);
 			lSpriteBatch.end();
 		}
 
@@ -103,7 +104,8 @@ public class MenuLabelEntry extends MenuEntry {
 		}
 
 		lTextBoldFont.begin(core.HUD());
-		lTextBoldFont.drawText(mText, lScreenOffset.x + lX + 15.f, lScreenOffset.y + mY + mH / 2f - lFontHeight / 2f, parentZDepth + .15f, textColor, lUiTextScale);
+		lTextBoldFont.setTextColor(textColor);
+		lTextBoldFont.drawText(mText, lScreenOffset.x + lX + 15.f, lScreenOffset.y + mY + mH / 2f - lFontHeight / 2f, parentZDepth + .15f, lUiTextScale);
 		lTextBoldFont.end();
 
 		if (mShowInfoIcon)

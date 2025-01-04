@@ -67,7 +67,7 @@ public abstract class BaseController implements IInputProcessor {
 	// Constructor
 	// --------------------------------------
 
-	public BaseController(ControllerManager controllerManager, String controllerName, int entityGroupUid) {
+	protected BaseController(ControllerManager controllerManager, String controllerName, int entityGroupUid) {
 		if (controllerManager == null)
 			throw new RuntimeException("ControllerManager cannot be null!");
 

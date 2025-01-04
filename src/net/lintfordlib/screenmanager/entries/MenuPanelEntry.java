@@ -17,8 +17,6 @@ public class MenuPanelEntry extends MenuEntry {
 	// Variables
 	// --------------------------------------
 
-	private String mText;
-
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
@@ -70,9 +68,11 @@ public class MenuPanelEntry extends MenuEntry {
 			if (lMenuFont != null) {
 				lMenuFont.begin(core.HUD());
 				final float lStringWidth = lMenuFont.getStringWidth(mText, lUiTextScale);
-				final var lTextColor = ColorConstants.getColor(mHasFocus ? ColorConstants.FLAME : ColorConstants.TextHeadingColor);
+				final var lTextColor = ColorConstants.getTempColorCopy(mHasFocus ? ColorConstants.MenuEntryHighlightColor : ColorConstants.TextHeadingColor);
 				lTextColor.a = lParentScreenAlpha;
-				lMenuFont.drawText(mText, lScreenOffset.x + centerX() - lStringWidth * 0.5f, lScreenOffset.y + mY + paddingTop(), mZ, lTextColor, lUiTextScale);
+
+				lMenuFont.setTextColor(lTextColor);
+				lMenuFont.drawText(mText, lScreenOffset.x + centerX() - lStringWidth * 0.5f, lScreenOffset.y + mY + paddingTop(), mZ, lUiTextScale);
 				lMenuFont.end();
 			}
 		}

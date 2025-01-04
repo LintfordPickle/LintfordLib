@@ -59,7 +59,8 @@ public class StringListBoxItem extends MenuListBoxItem {
 		final var lTransitionOffset = screen.screenPositionOffset();
 
 		if (entryColor.a > 0.f) {
-			spriteBatch.draw(coreDef, CoreTextureNames.TEXTURE_WHITE, lTransitionOffset.x + mX, lTransitionOffset.y + mY, mW, mH, zDepth, entryColor);
+			spriteBatch.setColor(entryColor);
+			spriteBatch.draw(coreDef, CoreTextureNames.TEXTURE_WHITE, lTransitionOffset.x + mX, lTransitionOffset.y + mY, mW, mH, zDepth);
 		}
 
 		if (mTextValue != null && mTextValue.length() > 0) {
@@ -67,7 +68,8 @@ public class StringListBoxItem extends MenuListBoxItem {
 			final var lFont = mParentListBox.parentScreen().font();
 			final float lFontHeight = lFont.getStringHeight(mTextValue, lScale);
 
-			lFont.drawText(mTextValue, lTransitionOffset.x + mX, lTransitionOffset.y + mY + mH / 2.f - lFontHeight / 2, zDepth, ColorConstants.TextEntryColor, lScale, -1);
+			lFont.setTextColor(ColorConstants.TextEntryColor);
+			lFont.drawText(mTextValue, lTransitionOffset.x + mX, lTransitionOffset.y + mY + mH / 2.f - lFontHeight / 2, zDepth, lScale, -1);
 		}
 
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {

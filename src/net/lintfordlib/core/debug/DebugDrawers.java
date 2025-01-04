@@ -9,7 +9,6 @@ import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.camera.ICamera;
 import net.lintfordlib.core.geometry.Rectangle;
-import net.lintfordlib.core.graphics.ColorConstants;
 import net.lintfordlib.core.graphics.batching.TextureBatchPCT;
 import net.lintfordlib.core.graphics.fonts.BitmapFontManager;
 import net.lintfordlib.core.graphics.fonts.FontUnit;
@@ -38,7 +37,6 @@ public class DebugDrawers {
 	private FontUnit mSystemFontUnit;
 	private PointBatch mImmediatePointBatch;
 	private LineBatch mImmediateLineBatch;
-	private PolyBatchPC mImmediatePolyBatch;
 	private PointBatch mPointBatch;
 	private LineBatch mLineBatch;
 	private PolyBatchPC mPolyBatch;
@@ -62,7 +60,6 @@ public class DebugDrawers {
 
 		mImmediatePointBatch = new PointBatch();
 		mImmediateLineBatch = new LineBatch();
-		mImmediatePolyBatch = new PolyBatchPC();
 
 		mPointBatch = new PointBatch();
 		mLineBatch = new LineBatch();
@@ -96,7 +93,6 @@ public class DebugDrawers {
 
 		mImmediatePointBatch.loadResources(resourceManager);
 		mImmediateLineBatch.loadResources(resourceManager);
-		mImmediatePolyBatch.loadResources(resourceManager);
 
 		mPointBatch.loadResources(resourceManager);
 		mLineBatch.loadResources(resourceManager);
@@ -113,7 +109,6 @@ public class DebugDrawers {
 
 		mImmediatePointBatch.unloadResources();
 		mImmediateLineBatch.unloadResources();
-		mImmediatePolyBatch.unloadResources();
 
 		mPointBatch.unloadResources();
 		mLineBatch.unloadResources();
@@ -193,15 +188,6 @@ public class DebugDrawers {
 		mImmediateLineBatch.begin(camera);
 		mImmediateLineBatch.drawRect(x, y, width, height, -.01f, red, green, blue);
 		mImmediateLineBatch.end();
-	}
-
-	public void drawPolyImmediate(ICamera camera, Rectangle rectangle) {
-		if (!mDebugManager.debugManagerEnabled())
-			return;
-
-		mImmediatePolyBatch.begin(camera);
-		// mImmediatePolyBatch.drawRect(rectangle, -.1f, true, 1.f, 1.f, 1.f);
-		mImmediatePolyBatch.end();
 	}
 
 	public void drawCircleImmediate(ICamera camera, float x, float y, float radius) {
@@ -297,7 +283,8 @@ public class DebugDrawers {
 			return;
 		}
 
-		mTextureBatch.draw(texture, sourceX, sourceY, sourceWidth, sourceHeight, destX, destY, destW, destH, zDepth, ColorConstants.WHITE);
+		mTextureBatch.setColorRGBA(1.f, 1.f, 1.f, 1.f);
+		mTextureBatch.draw(texture, sourceX, sourceY, sourceWidth, sourceHeight, destX, destY, destW, destH, zDepth);
 	}
 
 	public void endTextureRenderer() {
@@ -426,7 +413,8 @@ public class DebugDrawers {
 			return;
 		}
 
-		mSystemFontUnit.drawText(text, x, y, -.01f, ColorConstants.WHITE, scale);
+		mSystemFontUnit.setTextColorRGBA(1.f, 1.f, 1.f, 1.f);
+		mSystemFontUnit.drawText(text, x, y, -.01f, scale);
 	}
 
 	public void endTextRenderer() {

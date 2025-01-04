@@ -45,7 +45,7 @@ public class BitmapFontManager {
 	// --------------------------------------
 
 	public FontUnit getFontUnit(String bitmapFontName) {
-		if (getFontUnitExists(bitmapFontName) == false) {
+		if (!getFontUnitExists(bitmapFontName)) {
 			Debug.debugManager().logger().e(getClass().getSimpleName(), "Failed to retrieve FontUnit: " + bitmapFontName);
 			return getCoreFont();
 		}

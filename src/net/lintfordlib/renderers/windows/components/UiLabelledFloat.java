@@ -69,10 +69,13 @@ public class UiLabelledFloat extends UIWidget {
 		final boolean lIsMouseHovering = intersectsAA(lMouseX, lMouseY);
 
 		if (lIsMouseHovering) {
-			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_LEFT, mX, mY, 32, mH, componentZDepth, ColorConstants.MenuPanelPrimaryColor);
+			spriteBatch.begin(core.HUD());
+			spriteBatch.setColor(ColorConstants.MenuPanelPrimaryColor);
+
+			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_LEFT, mX, mY, 32, mH, componentZDepth);
 			if (mW > 32) {
-				spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_MID, mX + 32, mY, mW - 64, mH, componentZDepth, ColorConstants.MenuPanelPrimaryColor);
-				spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_RIGHT, mX + mW - 32, mY, 32, mH, componentZDepth, ColorConstants.MenuPanelPrimaryColor);
+				spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_MID, mX + 32, mY, mW - 64, mH, componentZDepth);
+				spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_RIGHT, mX + mW - 32, mY, 32, mH, componentZDepth);
 			}
 		}
 
@@ -80,8 +83,9 @@ public class UiLabelledFloat extends UIWidget {
 		final var lValueWidth = textFont.getStringWidth(Float.toString(mValueFloat));
 
 		textFont.begin(core.HUD());
-		textFont.drawText(mLabelText, mX + HorizontalPadding, mY + mH / 2.f - lTextHeight / 2.f, componentZDepth, ColorConstants.TextEntryColor, 1f, -1);
-		textFont.drawText(Float.toString(mValueFloat), mX + mW - lValueWidth - HorizontalPadding, mY + mH / 2 - lTextHeight / 2, componentZDepth, ColorConstants.TextEntryColor, 1f, -1);
+		textFont.setTextColor(ColorConstants.TextEntryColor);
+		textFont.drawText(mLabelText, mX + HorizontalPadding, mY + mH / 2.f - lTextHeight / 2.f, componentZDepth, 1f, -1);
+		textFont.drawText(Float.toString(mValueFloat), mX + mW - lValueWidth - HorizontalPadding, mY + mH / 2 - lTextHeight / 2, componentZDepth, 1f, -1);
 		textFont.end();
 	}
 }

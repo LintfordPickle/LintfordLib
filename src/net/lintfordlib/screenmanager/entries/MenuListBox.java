@@ -9,7 +9,6 @@ import net.lintfordlib.ConstantsApp;
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.geometry.Rectangle;
-import net.lintfordlib.core.graphics.ColorConstants;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
 import net.lintfordlib.renderers.windows.components.ScrollBar;
 import net.lintfordlib.renderers.windows.components.ScrollBarContentRectangle;
@@ -236,18 +235,18 @@ public class MenuListBox extends MenuEntry implements IScrollBarArea {
 
 		lSpriteBatch.begin(core.HUD());
 		final var lTileSize = 32;
-		final var lBackgroundColor = ColorConstants.getColor(.15f, .15f, .65f, 0.74f);
-		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_LEFT, lScreenOffset.x + mX, lScreenOffset.y + mY, lTileSize, lTileSize, parentZDepth, lBackgroundColor);
-		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_MID, lScreenOffset.x + mX + lTileSize, lScreenOffset.y + mY, mW - lTileSize * 2, lTileSize, parentZDepth, lBackgroundColor);
-		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_RIGHT, lScreenOffset.x + mX + mW - lTileSize, lScreenOffset.y + mY, lTileSize, lTileSize, parentZDepth, lBackgroundColor);
+		lSpriteBatch.setColorRGBA(.15f, .15f, .65f, 0.74f);
+		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_LEFT, lScreenOffset.x + mX, lScreenOffset.y + mY, lTileSize, lTileSize, parentZDepth);
+		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_MID, lScreenOffset.x + mX + lTileSize, lScreenOffset.y + mY, mW - lTileSize * 2, lTileSize, parentZDepth);
+		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_RIGHT, lScreenOffset.x + mX + mW - lTileSize, lScreenOffset.y + mY, lTileSize, lTileSize, parentZDepth);
 
-		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_MID_LEFT, lScreenOffset.x + mX, lScreenOffset.y + mY + lTileSize, lTileSize, mH - lTileSize * 2, parentZDepth, lBackgroundColor);
-		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_MID_CENTER, lScreenOffset.x + mX + lTileSize, lScreenOffset.y + mY + lTileSize, mW - lTileSize * 2, mH - 64, parentZDepth, lBackgroundColor);
-		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_MID_RIGHT, lScreenOffset.x + mX + mW - lTileSize, lScreenOffset.y + mY + lTileSize, lTileSize, mH - lTileSize * 2, parentZDepth, lBackgroundColor);
+		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_MID_LEFT, lScreenOffset.x + mX, lScreenOffset.y + mY + lTileSize, lTileSize, mH - lTileSize * 2, parentZDepth);
+		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_MID_CENTER, lScreenOffset.x + mX + lTileSize, lScreenOffset.y + mY + lTileSize, mW - lTileSize * 2, mH - 64, parentZDepth);
+		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_MID_RIGHT, lScreenOffset.x + mX + mW - lTileSize, lScreenOffset.y + mY + lTileSize, lTileSize, mH - lTileSize * 2, parentZDepth);
 
-		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_LEFT, lScreenOffset.x + mX, lScreenOffset.y + mY + mH - lTileSize, lTileSize, lTileSize, parentZDepth, lBackgroundColor);
-		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_MID, lScreenOffset.x + mX + lTileSize, lScreenOffset.y + mY + mH - lTileSize, mW - lTileSize * 2, lTileSize, parentZDepth, lBackgroundColor);
-		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_RIGHT, lScreenOffset.x + mX + mW - lTileSize, lScreenOffset.y + mY + mH - lTileSize, lTileSize, lTileSize, parentZDepth, lBackgroundColor);
+		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_LEFT, lScreenOffset.x + mX, lScreenOffset.y + mY + mH - lTileSize, lTileSize, lTileSize, parentZDepth);
+		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_MID, lScreenOffset.x + mX + lTileSize, lScreenOffset.y + mY + mH - lTileSize, mW - lTileSize * 2, lTileSize, parentZDepth);
+		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_RIGHT, lScreenOffset.x + mX + mW - lTileSize, lScreenOffset.y + mY + mH - lTileSize, lTileSize, lTileSize, parentZDepth);
 		lSpriteBatch.end();
 
 		GL11.glEnable(GL11.GL_STENCIL_TEST);
@@ -258,10 +257,10 @@ public class MenuListBox extends MenuEntry implements IScrollBarArea {
 
 		GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT); // Clear the stencil buffer
 
-		// Fill in the renderable parts of the list box (this is needed!)
+		// Fill in the renderable parts of the list box (although alpha is 0, this is needed!)
 		lSpriteBatch.begin(core.HUD());
-		final var lColor = ColorConstants.getWhiteWithAlpha(0.f);
-		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_BLACK, mX, mY + 2, mW, mH - 4, parentZDepth, lColor);
+		lSpriteBatch.setColorRGBA(1.f, 1.f, 1.f, 0.f);
+		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_BLACK, mX, mY + 2, mW, mH - 4, parentZDepth);
 		lSpriteBatch.end();
 
 		GL11.glStencilFunc(GL11.GL_EQUAL, 1, 0xFF);

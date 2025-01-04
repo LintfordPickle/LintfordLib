@@ -2,8 +2,6 @@ package net.lintfordlib.screenmanager;
 
 import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.core.LintfordCore;
-import net.lintfordlib.core.graphics.Color;
-import net.lintfordlib.core.graphics.ColorConstants;
 import net.lintfordlib.core.graphics.batching.SpriteBatch;
 import net.lintfordlib.core.graphics.fonts.FontUnit;
 import net.lintfordlib.core.graphics.fonts.FontUnit.WrapType;
@@ -16,7 +14,7 @@ public class ToolTip {
 	// Constants
 	// --------------------------------------
 
-	final float TOOLTIP_PANEL_WIDTH = 400;
+	private static final float TOOLTIP_PANEL_WIDTH = 400;
 
 	// --------------------------------------
 	// Variables
@@ -80,7 +78,7 @@ public class ToolTip {
 
 	public void update(LintfordCore core) {
 		if (mToolTipProvider != null) {
-			if (mToolTipProvider.isParentActive() == false) {
+			if (!mToolTipProvider.isParentActive()) {
 				mToolTipProvider = null;
 				return;
 			}
@@ -100,7 +98,7 @@ public class ToolTip {
 		final var lTextPadding = 5f;
 		final var lToolTipText = mToolTipProvider.toolTipText();
 
-		mMenuFont.setWrapType(WrapType.WordWrap);
+		mMenuFont.setWrapType(WrapType.WORD_WRAP);
 		float lToolTipTextHeight = mMenuFont.getStringHeightWrapping(lToolTipText, 350.f);
 
 		mTopOfScreen = !mToolTipProvider.isTopHalfOfScreen();
@@ -108,31 +106,30 @@ public class ToolTip {
 		final var lPositionX = -TOOLTIP_PANEL_WIDTH * .5f;
 		final var lPositionY = mTopOfScreen ? lHudBoundingBox.top() + lHudBoundingBox.height() / 4 : lHudBoundingBox.centerY() + lHudBoundingBox.height() / 4;
 
-		final var lColor = ColorConstants.getColor(.21f, .11f, .13f, 1.f);
-
 		// Render the background
 		mSpriteBatch.begin(core.HUD());
-		draw9Patch(mSpriteBatch, mCoreSpritesheet, 32.f, lPositionX - lTextPadding, lPositionY - lTextPadding, TOOLTIP_PANEL_WIDTH + lTextPadding * 2, lToolTipTextHeight + lTextPadding * 3, -0.01f, lColor);
+		mSpriteBatch.setColorRGBA(.21f, .11f, .13f, 1.f);
+		draw9Patch(mSpriteBatch, 32.f, lPositionX - lTextPadding, lPositionY - lTextPadding, TOOLTIP_PANEL_WIDTH + lTextPadding * 2, lToolTipTextHeight + lTextPadding * 3, -0.01f);
 		mSpriteBatch.end();
 
 		mMenuFont.begin(core.HUD());
-		mMenuFont.drawText(lToolTipText, lPositionX + lTextPadding, lPositionY, -0.01f, ColorConstants.WHITE, 1.f, 350.f);
+		mMenuFont.drawText(lToolTipText, lPositionX + lTextPadding, lPositionY, -0.01f, 1.f, 350.f);
 		mMenuFont.end();
 	}
 
-	private void draw9Patch(SpriteBatch spriteBatch, SpriteSheetDefinition spritesheetDefinition, float tileSize, float x, float y, float w, float h, float z, Color colorTint) {
+	private void draw9Patch(SpriteBatch spriteBatch, float tileSize, float x, float y, float w, float h, float z) {
 		// @formatter:off
-		spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_LEFT,     x,            y, tileSize+1, tileSize+1, z, colorTint);
-		spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_MID,      x + tileSize, y, w - (tileSize-1)*2, tileSize+1, z, colorTint);
-		spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_RIGHT,    x + w - 32,   y, tileSize+1, tileSize+1, z, colorTint);
+		spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_LEFT,     x,            y, tileSize+1, tileSize+1, z);
+		spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_MID,      x + tileSize, y, w - (tileSize-1)*2, tileSize+1, z);
+		spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_RIGHT,    x + w - 32,   y, tileSize+1, tileSize+1, z);
 
-		spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_MID_LEFT,     x,            y + 32, tileSize+1, h - 64, z, colorTint);
-		spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_MID_CENTER,   x + tileSize, y + 32, w - (tileSize-1)*2, h - 64, z, colorTint);
-		spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_MID_RIGHT,    x + w - 32,   y + 32, tileSize+1, h - 64, z, colorTint);
+		spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_MID_LEFT,     x,            y + 32, tileSize+1, h - 64, z);
+		spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_MID_CENTER,   x + tileSize, y + 32, w - (tileSize-1)*2, h - 64, z);
+		spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_MID_RIGHT,    x + w - 32,   y + 32, tileSize+1, h - 64, z);
 
-		spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_LEFT,  x,            y + h - 32, tileSize+1, tileSize+1, z, colorTint);
-		spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_MID,   x + tileSize, y + h - 32, w - (tileSize-1)*2, tileSize+1, z, colorTint);
-		spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_RIGHT, x + w - 32,   y + h - 32, tileSize+1, tileSize+1, z, colorTint);
+		spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_LEFT,  x,            y + h - 32, tileSize+1, tileSize+1, z);
+		spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_MID,   x + tileSize, y + h - 32, w - (tileSize-1)*2, tileSize+1, z);
+		spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_RIGHT, x + w - 32,   y + h - 32, tileSize+1, tileSize+1, z);
 		//@formatter:on
 	}
 }

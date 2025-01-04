@@ -120,9 +120,52 @@ public class PolyBatchPCT {
 
 	protected int mIndexCount = 0;
 
+	private float mR;
+	private float mG;
+	private float mB;
+	private float mA;
+
 	// --------------------------------------
 	// Properties
 	// ------------------------------------
+
+	public void setColorA(float a) {
+		mA = a;
+	}
+
+	public void setColorRGB(float r, float g, float b) {
+		mR = r;
+		mG = g;
+		mB = b;
+	}
+
+	public void setColorRGBA(float r, float g, float b, float a) {
+		mR = r;
+		mG = g;
+		mB = b;
+		mA = a;
+	}
+
+	public void setColorWhite() {
+		mR = 1;
+		mG = 1;
+		mB = 1;
+		mA = 1;
+	}
+
+	public void setColorBlack() {
+		mR = 0;
+		mG = 0;
+		mB = 0;
+		mA = 1;
+	}
+
+	public void setColor(Color color) {
+		mR = color.r;
+		mG = color.g;
+		mB = color.b;
+		mA = color.a;
+	}
 
 	public boolean isDrawing() {
 		return mIsDrawing;
@@ -295,7 +338,7 @@ public class PolyBatchPCT {
 		mIsDrawing = true;
 	}
 
-	public void drawQuadrilateral(Texture texture, List<Vector2f> localVertices, List<Vector2f> uvs, float wx, float wy, float zDepth, Color tint) {
+	public void drawQuadrilateral(Texture texture, List<Vector2f> localVertices, List<Vector2f> uvs, float wx, float wy, float zDepth) {
 		if (!mIsDrawing || localVertices == null)
 			return;
 
@@ -322,22 +365,22 @@ public class PolyBatchPCT {
 			final var v_u = uvs != null ? uvs.get(i).x : 0.f;
 			final var v_v = uvs != null ? uvs.get(i).y : 0.f;
 
-			addVertToBuffer(v_x, v_y, zDepth, 1.f, tint.r, tint.g, tint.b, tint.a, v_u, v_v, lTextureSlotIndex);
+			addVertToBuffer(v_x, v_y, zDepth, 1.f, v_u, v_v, lTextureSlotIndex);
 		}
 
 		mIndexCount += NUM_INDICES_PER_SPRITE;
 	}
 
-	protected void addVertToBuffer(float x, float y, float z, float w, float r, float g, float b, float a, float u, float v, float texIndex) {
+	protected void addVertToBuffer(float x, float y, float z, float w, float u, float v, float texIndex) {
 		mBuffer.put(x);
 		mBuffer.put(y);
 		mBuffer.put(z);
 		mBuffer.put(w);
 
-		mBuffer.put(r);
-		mBuffer.put(g);
-		mBuffer.put(b);
-		mBuffer.put(a);
+		mBuffer.put(mR);
+		mBuffer.put(mG);
+		mBuffer.put(mB);
+		mBuffer.put(mA);
 
 		mBuffer.put(u);
 		mBuffer.put(v);

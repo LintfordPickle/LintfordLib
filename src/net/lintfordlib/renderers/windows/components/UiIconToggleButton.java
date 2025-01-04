@@ -156,17 +156,19 @@ public class UiIconToggleButton extends UIWidget {
 			final float lTextWidth = textFont.getStringWidth(mButtonLabel);
 
 			textFont.begin(core.HUD());
-			textFont.drawText(mButtonLabel, mX + mW / 2f - lTextWidth / 2f, mY + mH / 2f - textFont.fontHeight() / 2f, componentZDepth, ColorConstants.WHITE, 1f);
+			textFont.setShadowColorRGBA(1.f, 1.f, 1.f, 1.f);
+			textFont.drawText(mButtonLabel, mX + mW / 2f - lTextWidth / 2f, mY + mH / 2f - textFont.fontHeight() / 2f, componentZDepth, 1f);
 			textFont.end();
 		}
 	}
 
 	private void drawSolidColorBackground(LintfordCore core, SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheet) {
-		final var lColorMod = mHoveredOver ? mHoveredOver ? .9f : 1.f : .3f;
+		final var lColorMod = mHoveredOver ? .9f : 1.f;
 		final var lColor = ColorConstants.getColorWithRGBMod(entityColor, lColorMod);
 
 		spriteBatch.begin(core.HUD());
-		spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX, mY, mW, mH, -1.0f, lColor);
+		spriteBatch.setColor(lColor);
+		spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX, mY, mW, mH, -1.0f);
 		spriteBatch.end();
 	}
 
@@ -175,7 +177,8 @@ public class UiIconToggleButton extends UIWidget {
 		final var lColor = ColorConstants.getColorWithRGBMod(entityColor, lColorMod);
 
 		spriteBatch.begin(core.HUD());
-		spriteBatch.draw(mButtonTexture, mSourceFrameIndex, mX, mY, mW, mH, -1.0f, lColor);
+		spriteBatch.setColor(lColor);
+		spriteBatch.draw(mButtonTexture, mSourceFrameIndex, mX, mY, mW, mH, -1.0f);
 		spriteBatch.end();
 	}
 

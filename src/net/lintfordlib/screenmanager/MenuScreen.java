@@ -495,12 +495,6 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		final var lUiStructureController = screenManager.UiStructureController();
 		final float lUiTextScale = lUiStructureController.uiTextScaleFactor();
 
-		final var lShadowTextColor = ColorConstants.BLACK;
-		final var lTextColor = ColorConstants.TextHeadingColor;
-
-		lShadowTextColor.a = screenColor.a;
-		lTextColor.a = screenColor.a;
-
 		final var lHeaderRect = lUiStructureController.menuTitleRectangle();
 		final var lHeaderFontWidth = mMenuHeaderFont.getStringWidth(mMenuTitle, lUiTextScale);
 		final var lHeaderFontHeight = mMenuHeaderFont.fontHeight() * lUiTextScale;
@@ -509,19 +503,28 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		final float lMenuTitlePositionY = lHeaderRect.top() + lHeaderRect.height() * 0.5f;//
 
 		mMenuHeaderFont.begin(core.HUD());
-		mMenuHeaderFont.drawShadowedText(mMenuTitle, screenPositionOffset().x + lMenuTitlePositionX, screenPositionOffset().y + lMenuTitlePositionY, -0.01f, 2.f, 2.f, 1.f, lShadowTextColor, lTextColor);
+
+		mMenuHeaderFont.setTextColorA(screenColor.a);
+		mMenuHeaderFont.setShadowColorA(screenColor.a);
+
+		mMenuFont.setTextColorA(screenColor.a);
+		mMenuFont.setShadowColorA(screenColor.a);
+
+		mMenuHeaderFont.drawShadowedText(mMenuTitle, screenPositionOffset().x + lMenuTitlePositionX, screenPositionOffset().y + lMenuTitlePositionY, -0.01f, 2.f, 2.f, 1.f);
 		mMenuHeaderFont.end();
 
 		mMenuFont.begin(core.HUD());
 
+		mMenuFont.setTextColor(ColorConstants.TextHeadingColor);
+
 		final float lOverTitleWidth = mMenuFont.getStringWidth(mMenuOverTitle, lUiTextScale);
 		if (mMenuOverTitle != null && mMenuOverTitle.length() > 0) {
-			mMenuFont.drawShadowedText(mMenuOverTitle, screenPositionOffset().x + lHeaderRect.centerX() - lOverTitleWidth * .5f, screenPositionOffset().y + lMenuTitlePositionY - mMenuHeaderFont.fontHeight() / 2, -.01f, 1.f, 1.f, 1.f, lShadowTextColor, lTextColor);
+			mMenuFont.drawShadowedText(mMenuOverTitle, screenPositionOffset().x + lHeaderRect.centerX() - lOverTitleWidth * .5f, screenPositionOffset().y + lMenuTitlePositionY - mMenuHeaderFont.fontHeight() / 2, -.01f, 1.f, 1.f, 1.f);
 		}
 
 		final float lSubTitleWidth = mMenuFont.getStringWidth(mMenuSubTitle, lUiTextScale);
 		if (mMenuSubTitle != null && mMenuSubTitle.length() > 0) {
-			mMenuFont.drawShadowedText(mMenuSubTitle, screenPositionOffset().x + lHeaderRect.centerX() - lSubTitleWidth * .5f, screenPositionOffset().y + lMenuTitlePositionY + lHeaderFontHeight, -.01f, 1.f, 1.f, 1.f, lShadowTextColor, lTextColor);
+			mMenuFont.drawShadowedText(mMenuSubTitle, screenPositionOffset().x + lHeaderRect.centerX() - lSubTitleWidth * .5f, screenPositionOffset().y + lMenuTitlePositionY + lHeaderFontHeight, -.01f, 1.f, 1.f, 1.f);
 		}
 
 		mMenuFont.end();
@@ -573,9 +576,6 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	// MOUSE
 
 	public void setFocusOnEntry(MenuEntry entry) {
-		// if (mActiveEntry != null)
-		// mActiveEntry.onDeselection(mScreenManager.core().input());
-
 		screenManager.contextHintManager().contextHintProvider(null);
 		mActiveEntry = null;
 
@@ -596,7 +596,6 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 				} else {
 					lEntry.mHasFocus = false;
-					//lEntry.mIsActive = false;
 				}
 			}
 		}
@@ -607,7 +606,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	}
 
 	protected MenuEntry getSelectedEntry(List<BaseLayout> selectedLayouts, int selectedLayoutIndex, int selectedEntryIndex) {
-		if (selectedLayouts == null || selectedLayouts.size() == 0)
+		if (selectedLayouts == null || selectedLayouts.isEmpty())
 			return null;
 
 		final var lLayout = selectedLayouts.get(selectedLayoutIndex);
@@ -617,7 +616,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	protected void updateAllEntriesToMatchSelected(List<BaseLayout> layouts, int selectedLayoutIndex, int selectedEntryIndex, boolean focusSelected) {
 		final int lNumLayouts = layouts.size();
 		for (int i = 0; i < lNumLayouts; i++) {
-			final var lIsLayoutSelected = focusSelected & i == selectedLayoutIndex;
+			final var lIsLayoutSelected = focusSelected && i == selectedLayoutIndex;
 			final var lLayout = layouts.get(i);
 			final int lNumEntries = lLayout.entries().size();
 			for (int j = 0; j < lNumEntries; j++) {
@@ -640,7 +639,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		if (mActiveEntry != null)
 			return;
 
-		if (acceptGamepadInput == false && acceptKeyboardInput == false)
+		if (!acceptGamepadInput && !acceptKeyboardInput)
 			return;
 
 		core.input().mouse().isMouseMenuSelectionEnabled(false);
@@ -684,17 +683,15 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		if (mActiveEntry != null)
 			return;
 
-		boolean found = false;
-
 		var checkEntryIndex = mSelectedEntryIndex;
 
 		if (mSelectedLayoutIndex >= mLayouts.size())
 			mSelectedLayoutIndex = 0;
 
-		if (mLayouts.size() == 0)
+		if (mLayouts.isEmpty())
 			return;
 
-		while (found == false) {
+		while (true) {
 			checkEntryIndex--;
 
 			if (checkEntryIndex < 0) {
@@ -704,7 +701,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 					// whatever layout is now active, go with it
 					final var lLayout = mLayouts.get(mSelectedLayoutIndex);
 
-					if (lLayout.entries().size() == 0) {
+					if (lLayout.entries().isEmpty()) {
 						mSelectedEntryIndex = 0;
 						return;
 					}
@@ -726,7 +723,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 					final var lLayout = mLayouts.get(mSelectedLayoutIndex);
 					checkEntryIndex = lLayout.entries().size() - 1;
 
-					if (lLayout.entries().size() == 0) {
+					if (lLayout.entries().isEmpty()) {
 						mSelectedEntryIndex = 0;
 						return;
 					}
@@ -735,7 +732,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 						return;
 
 					final var lFoundEntry = lLayout.entries().get(checkEntryIndex);
-					if (lFoundEntry.enabled() == false)
+					if (!lFoundEntry.enabled())
 						continue;
 
 					mSelectedEntryIndex = checkEntryIndex;
@@ -750,15 +747,13 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 				}
 
 				final var lFoundEntry = lLayout.entries().get(checkEntryIndex);
-				if (lFoundEntry.enabled() == false)
+				if (!lFoundEntry.enabled())
 					continue;
 
 				mSelectedEntryIndex = checkEntryIndex;
 				return;
 			}
 		}
-
-		return;
 	}
 
 	protected void getPreviousEnabledLayout() {
@@ -772,8 +767,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 			return;
 		}
 
-		boolean found = false;
-		while (found == false) {
+		while (true) {
 			selectedLayoutIndex--;
 
 			if (selectedLayoutIndex == mSelectedLayoutIndex)
@@ -783,7 +777,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 				selectedLayoutIndex = mLayouts.size() - 1;
 
 				final var lLayout = mLayouts.get(selectedLayoutIndex);
-				if (lLayout.entries().size() == 0) {
+				if (lLayout.entries().isEmpty()) {
 					selectedLayoutIndex--;
 					continue;
 				}
@@ -793,7 +787,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 			}
 
 			final var lLayout = mLayouts.get(selectedLayoutIndex);
-			if (lLayout.entries().size() == 0) {
+			if (lLayout.entries().isEmpty()) {
 				selectedLayoutIndex--;
 				continue;
 			}
@@ -802,8 +796,6 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 			return;
 
 		}
-
-		return;
 	}
 
 	protected void getNextEnabledEntry() {
@@ -815,7 +807,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 		var checkEntryIndex = mSelectedEntryIndex;
 
-		if (mLayouts.size() == 0)
+		if (mLayouts.isEmpty())
 			return;
 
 		while (currentTry < maxTries) {
@@ -827,7 +819,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 				checkEntryIndex = 0;
 
 				final var lNextLayout = mLayouts.get(mSelectedLayoutIndex);
-				if (lNextLayout.entries().get(checkEntryIndex).enabled() == false)
+				if (!lNextLayout.entries().get(checkEntryIndex).enabled())
 					continue;
 
 				mSelectedEntryIndex = 0;
@@ -839,20 +831,15 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 				}
 
 				final var lFoundEntry = lLayout.entries().get(checkEntryIndex);
-				if (lFoundEntry.enabled() == false) {
+				if (!lFoundEntry.enabled()) {
 					currentTry++;
 					continue;
 				}
-
-				if (checkEntryIndex == mSelectedEntryIndex)
-					return;
 
 				mSelectedEntryIndex = checkEntryIndex;
 				return;
 			}
 		}
-
-		return;
 	}
 
 	protected void getNextEnabledLayout() {
@@ -866,8 +853,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 			return;
 		}
 
-		boolean found = false;
-		while (found == false) {
+		while (true) {
 			selectedLayoutIndex++;
 
 			if (selectedLayoutIndex == mSelectedLayoutIndex) {
@@ -878,7 +864,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 				selectedLayoutIndex = 0;
 
 				final var lLayout = mLayouts.get(selectedLayoutIndex);
-				if (lLayout.entries().size() == 0) {
+				if (lLayout.entries().isEmpty()) {
 					selectedLayoutIndex++;
 					continue;
 				}
@@ -888,7 +874,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 			}
 
 			final var lLayout = mLayouts.get(selectedLayoutIndex);
-			if (lLayout.entries().size() == 0) {
+			if (lLayout.entries().isEmpty()) {
 				selectedLayoutIndex++;
 				continue;
 			}
@@ -896,8 +882,5 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 			mSelectedLayoutIndex = selectedLayoutIndex;
 			return;
 		}
-
-		return;
 	}
-
 }

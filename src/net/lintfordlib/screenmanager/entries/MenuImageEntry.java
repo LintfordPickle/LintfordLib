@@ -2,7 +2,6 @@ package net.lintfordlib.screenmanager.entries;
 
 import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.core.LintfordCore;
-import net.lintfordlib.core.graphics.ColorConstants;
 import net.lintfordlib.core.graphics.fonts.FontUnit;
 import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
@@ -177,6 +176,7 @@ public class MenuImageEntry extends MenuEntry {
 		final var lSpriteBatch = lParentScreen.spriteBatch();
 
 		lSpriteBatch.begin(core.HUD());
+		lSpriteBatch.setColor(entryColor);
 
 		final var lScreenOffset = screen.screenPositionOffset();
 
@@ -184,23 +184,24 @@ public class MenuImageEntry extends MenuEntry {
 			final int lTextureWidth = mMainTexture.getTextureWidth();
 			final int lTextureHeight = mMainTexture.getTextureHeight();
 
-			lSpriteBatch.draw(mMainTexture, 0, 0, lTextureWidth, lTextureHeight, lScreenOffset.x + mX, lScreenOffset.y + mY, mFittedWidth, mFittedHeight, parentZDepth + .1f, entryColor);
+			lSpriteBatch.draw(mMainTexture, 0, 0, lTextureWidth, lTextureHeight, lScreenOffset.x + mX, lScreenOffset.y + mY, mFittedWidth, mFittedHeight, parentZDepth + .1f);
 
 		}
 
 		else if (mShowMissingTextureText) {
 			final float lTextWidth = mUiFont.getStringWidth(mMissingTextureText);
 			mUiFont.begin(core.HUD());
-			mUiFont.drawText(mMissingTextureText, lScreenOffset.x + mX + mFittedWidth / 2f - lTextWidth / 2f, lScreenOffset.y + mY + mFittedHeight / 2, parentZDepth + .1f, ColorConstants.WHITE, 1f);
+			mUiFont.setTextColorRGBA(1.f, 1.f, 1.f, 1.f);
+			mUiFont.drawText(mMissingTextureText, lScreenOffset.x + mX + mFittedWidth / 2f - lTextWidth / 2f, lScreenOffset.y + mY + mFittedHeight / 2, parentZDepth + .1f, 1f);
 			mUiFont.end();
 		}
 
 		else if (mMissingTextureSpritesheet != null) {
-			lSpriteBatch.draw(mMissingTextureSpritesheet, mMissingTextureSpriteFrameIndex, lScreenOffset.x + mX, lScreenOffset.y + mY, mFittedWidth, mFittedHeight, parentZDepth + .1f, entryColor);
+			lSpriteBatch.draw(mMissingTextureSpritesheet, mMissingTextureSpriteFrameIndex, lScreenOffset.x + mX, lScreenOffset.y + mY, mFittedWidth, mFittedHeight, parentZDepth + .1f);
 		}
 
 		else if (mCoreSpritesheet != null) {
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + mX, lScreenOffset.y + mY, mFittedWidth, mFittedHeight, parentZDepth + .1f, entryColor);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + mX, lScreenOffset.y + mY, mFittedWidth, mFittedHeight, parentZDepth + .1f);
 		}
 
 		lSpriteBatch.end();

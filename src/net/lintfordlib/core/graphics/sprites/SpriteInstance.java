@@ -45,7 +45,7 @@ public class SpriteInstance extends Rectangle {
 	private float mTimeAliveInMs;
 	private float mLifeTime;
 
-	private Color mColor = new Color(ColorConstants.WHITE);
+	private Color mColor = new Color(ColorConstants.WHITE());
 
 	// --------------------------------------
 	// Properties

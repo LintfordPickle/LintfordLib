@@ -3,7 +3,6 @@ package net.lintfordlib.renderers.windows.components;
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.geometry.Rectangle;
 import net.lintfordlib.core.graphics.Color;
-import net.lintfordlib.core.graphics.ColorConstants;
 import net.lintfordlib.core.graphics.batching.SpriteBatch;
 import net.lintfordlib.core.graphics.fonts.FontUnit;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
@@ -139,10 +138,13 @@ public class UiBar {
 		final var lFullBarPosX = x + (w * (1 - mBarSizeAsPercentageOfWidth));
 		final var lInnerBarWidth = MathHelper.scaleToRange(mCurValue, mMinValue, mMaxValue, 0, lFullBarWidth);
 
-		textFont.drawShadowedText(mLabel, x, y + h / 2 - textFont.fontHeight() / 2, -0.01f, 1.f, 1.f, 1.f, ColorConstants.BLACK, ColorConstants.WHITE);
+		textFont.setTextColorRGBA(1.f, 1.f, 1.f, 1.f);
+		textFont.setShadowColorRGBA(0.f, 0.f, 0.f, 1.f);
+		textFont.drawShadowedText(mLabel, x, y + h / 2 - textFont.fontHeight() / 2, -0.01f, 1.f, 1.f, 1.f);
 
 		// Outer
-		spriteBatch.draw(lCoreTexture, CoreTextureNames.TEXTURE_WHITE, lFullBarPosX, y, lFullBarWidth, h, componentZDepth, mUiBarOuterColor);
+		spriteBatch.setColor(mUiBarOuterColor);
+		spriteBatch.draw(lCoreTexture, CoreTextureNames.TEXTURE_WHITE, lFullBarPosX, y, lFullBarWidth, h, componentZDepth);
 
 		// Inner
 		mInnerBorderPadding = 2;
@@ -152,6 +154,8 @@ public class UiBar {
 		final var yy = y;
 		final var ww = !mIsInverted ? lInnerBarWidth : -lInnerBarWidth;
 		final var hh = !mIsInverted ? lHeight : -lHeight;
-		spriteBatch.draw(lCoreTexture, CoreTextureNames.TEXTURE_WHITE, xx + mInnerBorderPadding, yy + mInnerBorderPadding, ww, hh, componentZDepth, mUiBarInnerColor);
+
+		spriteBatch.setColor(mUiBarInnerColor);
+		spriteBatch.draw(lCoreTexture, CoreTextureNames.TEXTURE_WHITE, xx + mInnerBorderPadding, yy + mInnerBorderPadding, ww, hh, componentZDepth);
 	}
 }
