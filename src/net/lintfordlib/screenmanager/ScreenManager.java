@@ -362,7 +362,7 @@ public class ScreenManager implements IInputClickedFocusManager {
 	 * Adds the given screen to the top of the screens stack. No transitions will be carried oput on the pased screen, nor on the screens already in the stack!
 	 */
 	public void addScreenToStack(Screen screenToAdd) {
-		if (!mScreensToAdd.contains(screenToAdd)) {
+		if (!mScreens.contains(screenToAdd)) {
 
 			if (!screenToAdd.isResourcesLoaded()) {
 				if (mIsinitialized && !screenToAdd.isinitialized())
@@ -372,7 +372,8 @@ public class ScreenManager implements IInputClickedFocusManager {
 					screenToAdd.loadResources(mResourceManager);
 			}
 
-			mScreensToAdd.add(screenToAdd);
+			screenToAdd.onScreenAdded();
+			mScreens.add(screenToAdd);
 		}
 
 	}

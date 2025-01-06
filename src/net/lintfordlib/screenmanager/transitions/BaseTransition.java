@@ -62,4 +62,6 @@ public abstract class BaseTransition {
 	public void reset() {
 		mProgress = 0;
 	}
+
+	public abstract void applyFinishedEffects(Screen screen);
 }

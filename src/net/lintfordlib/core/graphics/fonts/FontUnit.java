@@ -1,5 +1,7 @@
 package net.lintfordlib.core.graphics.fonts;
 
+import org.lwjgl.opengl.GL11;
+
 import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.core.camera.ICamera;
 import net.lintfordlib.core.graphics.Color;
@@ -21,9 +23,7 @@ public class FontUnit {
 	public static final int NO_WIDTH_CAP = -1;
 
 	public enum WrapType {
-		WORD_WRAP, 
-		WORD_WRAP_TRIM, 
-		LETTER_COUNT_TRIM
+		WORD_WRAP, WORD_WRAP_TRIM, LETTER_COUNT_TRIM
 	}
 
 	// --------------------------------------

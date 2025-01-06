@@ -78,7 +78,7 @@ public class Rectangle implements Serializable {
 	}
 
 	public float width() {
-		return mW;
+		return mW * mScaleX;
 	}
 
 	public void width(float width) {
@@ -90,7 +90,7 @@ public class Rectangle implements Serializable {
 	}
 
 	public void height(float height) {
-		mH = height;
+		mH = height * mScaleY;
 	}
 
 	public boolean flipHorizontal() {

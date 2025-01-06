@@ -26,8 +26,6 @@ public class ContentRectangle {
 	}
 
 	public static void preDraw(LintfordCore core, SpriteBatch spriteBatch, float rx, float ry, float rw, float rh, float depthPadding, int componentUid) {
-
-		// We need to use a stencil buffer to clip the listbox items (which, when scrolling, could appear out-of-bounds of the listbox).
 		GL11.glEnable(GL11.GL_STENCIL_TEST);
 
 		GL11.glStencilFunc(GL11.GL_ALWAYS, componentUid, 0xFF); // Set any stencil to 1

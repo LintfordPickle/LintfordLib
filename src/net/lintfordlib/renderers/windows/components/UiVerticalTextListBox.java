@@ -242,7 +242,8 @@ public class UiVerticalTextListBox extends UIWidget implements IScrollBarArea {
 
 		if (mH > 32.f) {
 			spriteBatch.begin(core.HUD());
-			TextureBatch9Patch.drawBackground(spriteBatch, coreSpritesheetDefinition, 32, mX, mY, mW, mH, ColorConstants.WHITE(), false, componentZDepth);
+			spriteBatch.setColorWhite();
+			TextureBatch9Patch.drawBackground(spriteBatch, coreSpritesheetDefinition, 32, mX, mY, mW, mH, false, componentZDepth);
 			spriteBatch.end();
 		}
 

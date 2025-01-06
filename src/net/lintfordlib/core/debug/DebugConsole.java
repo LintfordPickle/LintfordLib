@@ -547,7 +547,7 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 
 					// Draw TAG
 					mConsoleFont.setWrapType(WrapType.LETTER_COUNT_TRIM);
-					mConsoleFont.drawText("dickdickdickdick", mX + POSITION_OFFSET_TAG, lHudBb.top() - lTextPosition, ZLayers.LAYER_DEBUG + 0.1f, lTextureScale, 18);
+					mConsoleFont.drawText(lMessage.tag(), mX + POSITION_OFFSET_TAG, lHudBb.top() - lTextPosition, ZLayers.LAYER_DEBUG + 0.1f, lTextureScale, 18);
 
 					// Draw MESSAGE
 					mConsoleFont.setWrapType(WrapType.LETTER_COUNT_TRIM);

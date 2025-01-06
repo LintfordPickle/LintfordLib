@@ -27,17 +27,19 @@ public class LoadingScreen extends Screen {
 	protected Screen[] mScreensToLoad;
 	protected final boolean mLoadingIsSlow;
 	protected FontUnit mFontUnit;
+	protected boolean mTransitionScreensEnabled;
 
 	// --------------------------------------
 	// Constructors
 	// --------------------------------------
 
-	public LoadingScreen(ScreenManager screenManager, boolean loadingIsSlow, Screen... screensToLoad) {
+	public LoadingScreen(ScreenManager screenManager, boolean loadingIsSlow, boolean transitionScreensEnabled, Screen... screensToLoad) {
 		super(screenManager);
 
 		mScreenManager = screenManager;
 		mScreensToLoad = screensToLoad;
 
+		mTransitionScreensEnabled = transitionScreensEnabled;
 		mLoadingIsSlow = loadingIsSlow;
 
 		mTransitionOn = new TransitionFadeIn(new TimeSpan(500));
@@ -76,11 +78,17 @@ public class LoadingScreen extends Screen {
 			for (int i = 0; i < lScreenCount; i++) {
 				final var lScreen = mScreensToLoad[i];
 				if (lScreen != null) {
+					if (mTransitionScreensEnabled) {
+						if (i == lScreenCount - 1)
+							lScreen.transitionOn(false);
+						else {
+							if (lScreen.canBeHidden())
+								lScreen.transitionOff(true);
+							else
+								lScreen.transitionOn(true);
 
-					if (i < lScreenCount - 1)
-						lScreen.forceScreenState(ScreenState.HIDDEN);
-					else
-						lScreen.forceScreenState(ScreenState.ACTIVE);
+						}
+					}
 
 					mScreenManager.addScreenToStack(lScreen);
 

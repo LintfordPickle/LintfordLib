@@ -10,7 +10,6 @@ import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.camera.ICamera;
 import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.geometry.Rectangle;
-import net.lintfordlib.core.graphics.ColorConstants;
 import net.lintfordlib.core.graphics.batching.TextureBatch9Patch;
 import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintfordlib.core.input.mouse.IInputProcessor;
@@ -407,7 +406,6 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 		final var lUiHeaderFont = mRendererManager.uiHeaderFont();
 		final var lTextFont = mRendererManager.uiTextFont();
 		final var lSpritebatch = mRendererManager.uiSpriteBatch();
-		final var lWindowColor = ColorConstants.getWhiteWithAlpha(mWindowAlpha);
 
 		final var x = (int) mWindowArea.x();
 		final var y = (int) mWindowArea.y();
@@ -417,7 +415,8 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 		// Draw the window background
 		if (mDrawWindowBackground) {
 			lSpritebatch.begin(core.HUD());
-			TextureBatch9Patch.drawBackground(lSpritebatch, mCoreSpritesheet, 32, x, y, w, h, lWindowColor, false, -0.01f);
+			lSpritebatch.setColorRGBA(1.f, 1.f, 1.f, mWindowAlpha);
+			TextureBatch9Patch.drawBackground(lSpritebatch, mCoreSpritesheet, 32, x, y, w, h, false, -0.01f);
 			lSpritebatch.end();
 		}
 

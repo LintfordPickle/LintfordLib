@@ -468,7 +468,8 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 			final int h = (int) mH;
 
 			lSpriteBatch.begin(core.HUD());
-			TextureBatch9Patch.drawBackground(lSpriteBatch, lSpriteSheetCore, ts, x, y, w, h, lColor, mShowTitle, componentDepth);
+			lSpriteBatch.setColor(lColor);
+			TextureBatch9Patch.drawBackground(lSpriteBatch, lSpriteSheetCore, ts, x, y, w, h, mShowTitle, componentDepth);
 			lSpriteBatch.end();
 		}
 

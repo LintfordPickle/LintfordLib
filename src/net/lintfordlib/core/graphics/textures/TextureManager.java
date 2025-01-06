@@ -89,6 +89,10 @@ public class TextureManager extends EntityGroupManager {
 	/** When enabled, missing textures will be filled with a magenta color. */
 	public static final boolean USE_DEBUG_MISSING_TEXTURES = true;
 
+	/*
+	 * These three texture names are loaded when the tTextureManager is instantiated. They are potentially shared between many resource groups, and are therefore protected so they are not inadvertently unloaded when, for example, changing scenes.
+	 */
+
 	public static final String TEXTURE_WHITE_NAME = "TEXTURE_WHITE";
 	public static final String TEXTURE_BLACK_NAME = "TEXTURE_BLACK";
 	public static final String TEXTURE_NOT_FOUND_NAME = "TEXTURE_NOT_FOUND";

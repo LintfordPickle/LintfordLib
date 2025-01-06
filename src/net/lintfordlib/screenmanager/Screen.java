@@ -67,6 +67,7 @@ public abstract class Screen implements IInputProcessor {
 	protected boolean mIsPopup;
 	protected boolean mAlwaysOnTop;
 	protected boolean mShowMouseCursor;
+	protected boolean mCanBeHidden; // cannot be hidden
 	protected boolean mShowBackgroundScreens;
 	protected boolean mShowContextualFooterBar;
 	protected boolean mShowContextualKeyHints;
@@ -175,35 +176,102 @@ public abstract class Screen implements IInputProcessor {
 		return mScreenState == ScreenState.TRANSITION_EXITING;
 	}
 
-	public void transitionOn() {
-		System.out.println("Screen transitionOn() : " + getClass().getSimpleName());
+	/**
+	 * Indicates whether or not this screen can be transition into the {@link ScreenState.HIDDEN} state. Some screens, for example the menu background screen, should always be active, even if they are not the top most in the screen stack.
+	 */
+	public boolean canBeHidden() {
+		return mCanBeHidden;
+	}
 
-		if (mScreenState == ScreenState.NONE) {
-			mScreenState = ScreenState.TRANSITION_STARTING;
+	public void transitionOn() {
+		transitionOn(false);
+	}
+
+	public void transitionOn(boolean forceInstance) {
+		if (!forceInstance) {
+			System.out.println("Screen transitionOn() w/ transition : " + getClass().getSimpleName());
+
+			if (mScreenState == ScreenState.NONE) {
+				mScreenState = ScreenState.TRANSITION_STARTING;
+			}
+		} else {
+			System.out.println("Screen transitionOn() w/o transition : " + getClass().getSimpleName());
+
+			mScreenState = ScreenState.ACTIVE;
+			mTransitionOn.applyFinishedEffects(this);
+
+			if (mTransitionOn != null)
+				mTransitionOn.reset();
 		}
+
 	}
 
 	public void transitionOff() {
-		System.out.println("Screen transitionOff() : " + getClass().getSimpleName());
+		transitionOff(false);
+	}
 
-		if (mScreenState == ScreenState.ACTIVE) {
-			mScreenState = ScreenState.TRANSITION_SLEEPING;
+	public void transitionOff(boolean forceInstance) {
+		if (!mCanBeHidden)
+			return;
+
+		if (!forceInstance) {
+			System.out.println("Screen transitionOff() w/ transition: " + getClass().getSimpleName());
+
+			if (mScreenState == ScreenState.ACTIVE) {
+				mScreenState = ScreenState.TRANSITION_SLEEPING;
+			}
+		} else {
+			System.out.println("Screen transitionOff() w/o transition: " + getClass().getSimpleName());
+
+			mScreenState = ScreenState.HIDDEN;
+			mTransitionOff.applyFinishedEffects(this);
+
+			if (mTransitionOff != null)
+				mTransitionOff.reset();
 		}
+
 	}
 
 	public void transitionExit() {
-		System.out.println("Screen transitionExit() : " + getClass().getSimpleName());
+		transitionExit(false);
+	}
 
-		if (mScreenState == ScreenState.ACTIVE) {
-			mScreenState = ScreenState.TRANSITION_EXITING;
+	public void transitionExit(boolean forceInstant) {
+		if (!forceInstant) {
+			System.out.println("Screen transitionExit() w/ transition: " + getClass().getSimpleName());
+
+			if (mScreenState == ScreenState.ACTIVE) {
+				mScreenState = ScreenState.TRANSITION_EXITING;
+			}
+		} else {
+			System.out.println("Screen transitionExit() w/o transition: " + getClass().getSimpleName());
+
+			screenManager.removeScreen(this);
 		}
+
 	}
 
 	public void transitionResume() {
-		System.out.println("Screen transitionResume() : " + getClass().getSimpleName());
+		transitionResume(false);
+	}
 
-		if (mScreenState == ScreenState.HIDDEN) {
-			mScreenState = ScreenState.TRANSITION_RESUMING;
+	public void transitionResume(boolean forceInstant) {
+
+		if (!forceInstant) {
+			System.out.println("Screen transitionResume() w/ transition: " + getClass().getSimpleName());
+
+			if (mScreenState == ScreenState.HIDDEN) {
+				mScreenState = ScreenState.TRANSITION_RESUMING;
+			}
+		} else {
+			System.out.println("Screen transitionResume() w/o transition: " + getClass().getSimpleName());
+
+			mScreenState = ScreenState.ACTIVE;
+			mTransitionResume.applyFinishedEffects(this);
+
+			if (mTransitionResume != null)
+				mTransitionResume.reset();
+
 		}
 	}
 
@@ -226,6 +294,8 @@ public abstract class Screen implements IInputProcessor {
 	protected Screen(ScreenManager screenManager, RendererManager rendererManager) {
 		this.screenManager = screenManager;
 
+		mScreenState = ScreenState.NONE;
+
 		mTransitionOn = new TransitionSwipeIn(new TimeSpan(200), SwipeInDirection.Right);
 		mTransitionOff = new TransitionFadeOut(new TimeSpan(150));
 		mTransitionResume = new TransitionFadeIn(new TimeSpan(150));
@@ -242,6 +312,8 @@ public abstract class Screen implements IInputProcessor {
 		mResourcesLoaded = false;
 		mShowMouseCursor = true;
 
+		mCanBeHidden = true;
+
 		mBlockKeyboardInputInBackground = true;
 		mBlockMouseInputInBackground = true;
 		mBlockGamepadInputInBackground = true;
@@ -254,9 +326,6 @@ public abstract class Screen implements IInputProcessor {
 	// --------------------------------------
 
 	public void initialize() {
-		System.out.println("State set to NONE : " + getClass().getSimpleName());
-		mScreenState = ScreenState.NONE;
-
 		mResourcesLoaded = false;
 		mRendererManager.initialize();
 

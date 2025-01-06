@@ -234,6 +234,9 @@ public class Texture {
 		if (texture == null)
 			return;
 
+		if (texture.name() != null && texture.name().equals(TextureManager.TEXTURE_NOT_FOUND_NAME))
+			return;
+
 		GL11.glDeleteTextures(texture.mTextureId);
 		texture.mTextureId = -1;
 		texture.mTextureLocation = null;

@@ -6,7 +6,6 @@ import java.util.List;
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.geometry.Rectangle;
-import net.lintfordlib.core.graphics.ColorConstants;
 import net.lintfordlib.core.graphics.batching.SpriteBatch;
 import net.lintfordlib.core.graphics.batching.TextureBatch9Patch;
 import net.lintfordlib.core.graphics.fonts.FontUnit;
@@ -131,7 +130,8 @@ public class UiHorizontalListBox extends UIWidget implements IScrollBarArea {
 	@Override
 	public void draw(LintfordCore core, SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheetDefinition, FontUnit textFont, float componentZDepth) {
 		spriteBatch.begin(core.HUD());
-		TextureBatch9Patch.drawBackground(spriteBatch, coreSpritesheetDefinition, 32, mX, mY, mW, mH, ColorConstants.WHITE(), false, componentZDepth);
+		spriteBatch.setColorWhite();
+		TextureBatch9Patch.drawBackground(spriteBatch, coreSpritesheetDefinition, 32, mX, mY, mW, mH, false, componentZDepth);
 		spriteBatch.end();
 
 		mContentArea.preDraw(core, spriteBatch);

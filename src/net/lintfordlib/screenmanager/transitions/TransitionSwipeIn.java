@@ -45,4 +45,12 @@ public class TransitionSwipeIn extends BaseTransition {
 		final float lScreenOffsetY = lScreenOffset.y;
 		lScreenOffset.set((-1.f + mProgressNormalized) * lDirection * SWIPE_SPEED, lScreenOffsetY);
 	}
+
+	@Override
+	public void applyFinishedEffects(Screen screen) {
+		final float lDirection = mSwipeInDirection == SwipeInDirection.Left ? -1.f : 1.f;
+		final var lScreenOffset = screen.screenPositionOffset();
+		final float lScreenOffsetY = lScreenOffset.y;
+		lScreenOffset.set((-1.f + 1.f) * lDirection * SWIPE_SPEED, lScreenOffsetY);
+	}
 }

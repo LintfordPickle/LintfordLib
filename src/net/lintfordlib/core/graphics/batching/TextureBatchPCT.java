@@ -497,8 +497,10 @@ public class TextureBatchPCT {
 			flush();
 
 		int lTextureSlotIndex = mTextureSlots.getTextureSlotIndex(tex);
-		if (lTextureSlotIndex == TextureSlotBatch.TEXTURE_SLOTS_TEXTURE_INVALID)
+		if (lTextureSlotIndex == TextureSlotBatch.TEXTURE_SLOTS_TEXTURE_INVALID) {
+			Debug.debugManager().logger().e(getClass().getSimpleName(), "Cannot resolve texture / texture slot for rendering. Have you accidently unloaded a texture?");
 			return;
+		}
 
 		if (lTextureSlotIndex == TextureSlotBatch.TEXTURE_SLOTS_FULL) {
 			flush(); // flush and try again

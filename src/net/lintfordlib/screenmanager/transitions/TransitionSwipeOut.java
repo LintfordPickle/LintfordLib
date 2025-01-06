@@ -42,7 +42,12 @@ public class TransitionSwipeOut extends BaseTransition {
 		final var lScreenOffset = screen.screenPositionOffset();
 		final float lScreenOffsetY = lScreenOffset.y;
 		lScreenOffset.set(-1.f - mProgressNormalized * mSwipeDirection * SWIPE_SPEED, lScreenOffsetY);
+	}
 
-		System.out.println("swipe out: " + lScreenOffset.x);
+	@Override
+	public void applyFinishedEffects(Screen screen) {
+		final var lScreenOffset = screen.screenPositionOffset();
+		final float lScreenOffsetY = lScreenOffset.y;
+		lScreenOffset.set(-1.f - 1.f * mSwipeDirection * SWIPE_SPEED, lScreenOffsetY);
 	}
 }

@@ -289,7 +289,7 @@ public class RigidBody extends PhysicsGridEntity {
 		vx += ix * invMass;
 		vy += iy * invMass;
 
-		angularVelocity += invMass * Vector2f.cross(px - transform.p.x, py - transform.p.y, ix, iy);
+		// angularVelocity += invMass * Vector2f.cross(px - transform.p.x, py - transform.p.y, ix, iy);
 	}
 
 	// -- Forces: act gradually over time (should be applied as needed per update)
