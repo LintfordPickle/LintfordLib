@@ -179,13 +179,13 @@ public class TexturedQuad {
 		final var u3 = 1.f;
 		final var v3 = 0.f;
 
-		mBuffer.put(x0).put(y0).put(z0).put(w0).put(u0).put(v0);
 		mBuffer.put(x1).put(y1).put(z1).put(w1).put(u1).put(v1);
+		mBuffer.put(x0).put(y0).put(z0).put(w0).put(u0).put(v0);
 		mBuffer.put(x2).put(y2).put(z2).put(w2).put(u2).put(v2);
 
 		mBuffer.put(x2).put(y2).put(z2).put(w2).put(u2).put(v2);
-		mBuffer.put(x3).put(y3).put(z3).put(w3).put(u3).put(v3);
 		mBuffer.put(x0).put(y0).put(z0).put(w0).put(u0).put(v0);
+		mBuffer.put(x3).put(y3).put(z3).put(w3).put(u3).put(v3);
 
 		mBuffer.flip();
 	}
