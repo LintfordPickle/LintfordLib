@@ -1,7 +1,5 @@
 package net.lintfordlib.core.graphics.fonts;
 
-import org.lwjgl.opengl.GL11;
-
 import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.core.camera.ICamera;
 import net.lintfordlib.core.graphics.Color;

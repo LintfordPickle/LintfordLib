@@ -358,16 +358,17 @@ public class RenderTarget {
 		try {
 			final var lImageFile = new File(lCleanFilename);
 
-			if (lImageFile.exists() == false) {
+			if (!lImageFile.exists()) {
 				Debug.debugManager().logger().e(Texture.class.getSimpleName(), "FileNotFoundException: Error loading texture from file (" + filename + "). File doesn't exist.");
 				return null;
 			}
 
 			final var lImage = ImageIO.read(lImageFile);
+			final var lImageToLoad = createFlipped(lImage);
 
 			Debug.debugManager().logger().v(Texture.class.getSimpleName(), "Loaded texture from file: " + filename);
 
-			return lImage;
+			return lImageToLoad;
 
 		} catch (FileNotFoundException e) {
 			Debug.debugManager().logger().e(Texture.class.getSimpleName(), "FileNotFoundException: Error loading texture from file (" + filename + ").");
