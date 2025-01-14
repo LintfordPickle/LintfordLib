@@ -130,7 +130,7 @@ public class UiEnumSelection extends UIWidget {
 					mClickTimer = 0;
 
 					if (mUiWidgetListenerCallback != null)
-						mUiWidgetListenerCallback.widgetOnClick(core.input(), mUiWidgetListenerUid);
+						mUiWidgetListenerCallback.widgetOnDataChanged(core.input(), mUiWidgetListenerUid);
 
 					return true;
 				}
@@ -149,7 +149,7 @@ public class UiEnumSelection extends UIWidget {
 					mClickTimer = 0;
 
 					if (mUiWidgetListenerCallback != null)
-						mUiWidgetListenerCallback.widgetOnClick(core.input(), mUiWidgetListenerUid);
+						mUiWidgetListenerCallback.widgetOnDataChanged(core.input(), mUiWidgetListenerUid);
 
 					return true;
 				}
@@ -207,8 +207,8 @@ public class UiEnumSelection extends UIWidget {
 		if (mSelectedIndex >= 0 && mSelectedIndex < mItems.size()) {
 			final var lItem = mItems.get(mSelectedIndex);
 			final var lItemDisplayName = lItem.displayName;
-			final var lNoTextWidth = textFont.getStringWidth(lItemDisplayName);
-			textFont.drawText(lItemDisplayName, mX + mW / 2f - lNoTextWidth / 2f, mY + mH - ARROW_SIZE - ARROW_PADDING, componentZDepth, lScale);
+			final var lTextItemWidth = textFont.getStringWidth(lItemDisplayName);
+			textFont.drawText(lItemDisplayName, mX + mW - mW / 3.f - lTextItemWidth / 2f, mY + mH / 2 - textFont.fontHeight() / 2, componentZDepth, lScale);
 		} else {
 			final var lNoItemSelectedText = "";
 			final var lNoTextWidth = textFont.getStringWidth(lNoItemSelectedText);
