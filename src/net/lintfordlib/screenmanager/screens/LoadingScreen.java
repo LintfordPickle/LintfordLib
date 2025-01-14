@@ -96,13 +96,13 @@ public class LoadingScreen extends Screen {
 					// So that the transition between soft-resolutions is not jarring, we do this now at the end of the loading screen.
 					final var lConfig = lCore.config();
 					if (lScreen.overrideUiStretch()) {
-						lConfig.display().stretchUiScreen(mStretchUiResolution);
+						lConfig.display().stretchUiScreen(stretchUiResolution());
 					} else if (!lScreen.showBackgroundScreens()) {
 						lConfig.display().restoreUiStretch();
 					}
 
 					if (lScreen.overrideGameStretch()) {
-						lConfig.display().stretchGameScreen(mStretchGameResolution);
+						lConfig.display().stretchGameScreen(stretchGameResolution());
 					} else if (!lScreen.showBackgroundScreens()) {
 						lConfig.display().restoreGameStretch();
 					}
