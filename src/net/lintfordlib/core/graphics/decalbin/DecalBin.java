@@ -30,7 +30,7 @@ public class DecalBin {
 		return mBinName;
 	}
 
-	public String decalAtlasFilepath() {
+	public String decalAtlasLocalFilepath() {
 		return mDecalAtlasTextureName;
 	}
 
