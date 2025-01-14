@@ -32,14 +32,15 @@ public abstract class SceneHeader implements Serializable {
 	// ---------------------------------------------
 
 	@SerializedName(value = "SceneName")
-	private String mSceneName;
+	protected String mSceneName;
 
+	protected transient String _cmpName;
 	private transient boolean mIsValid;
 
-	private transient String mSceneDirectory;
+	protected transient String mSceneDirectory;
 
 	@SerializedName(value = "Values")
-	private Map<String, String> mKeyValues = new HashMap<>();
+	protected Map<String, String> mKeyValues = new HashMap<>();
 
 	// ---------------------------------------------
 	// Properties
@@ -56,7 +57,12 @@ public abstract class SceneHeader implements Serializable {
 		if (lPointOccursAt > -1)
 			mSceneName = mSceneName.substring(0, lPointOccursAt);
 
-		validateHeader();
+		isHeaderValid();
+	}
+
+	/** Returns the name of this scene in upper case, so it can be easily compared to other entities. */
+	public String cmpName() {
+		return _cmpName;
 	}
 
 	public String sceneDirectory() {
@@ -84,9 +90,19 @@ public abstract class SceneHeader implements Serializable {
 	}
 
 	public boolean isSceneValid() {
-		validateHeader();
+		// TODO: validate the integrity of the scene
 
-		return mIsValid;
+		return isHeaderValid();
+	}
+
+	public boolean headerExistsOnDisk() {
+		final var lHeaderFile = new File(sceneHeaderFilepath());
+		return lHeaderFile.exists();
+	}
+
+	public boolean dataExistsOnDisk() {
+		final var lDataFile = new File(sceneDataFilepath());
+		return lDataFile.exists();
 	}
 
 	// ---------------------------------------------
@@ -100,7 +116,7 @@ public abstract class SceneHeader implements Serializable {
 	protected SceneHeader(String sceneName) {
 		mSceneName = sceneName;
 
-		validateHeader();
+		isHeaderValid();
 	}
 
 	// ---------------------------------------------
@@ -111,9 +127,15 @@ public abstract class SceneHeader implements Serializable {
 		setSceneDirectory(sceneDirectory);
 	}
 
-	public void validateHeader() {
-		// TODO: Validate the directory + filename
-		mIsValid = mSceneName != null && mSceneName != null;
+	/**
+	 * Checks if both the header and data files, as specified in the SceneHeader, exist on the disk. This is not the case when, for example, creating new levels in the editor.
+	 */
+	public boolean isHeaderValid() {
+		final var lHeaderExists = headerExistsOnDisk();
+		if (!lHeaderExists)
+			return false;
+
+		return dataExistsOnDisk();
 	}
 
 	public static SceneHeader loadSceneHeaderFileFromFilepath(String filepath) {
@@ -131,6 +153,8 @@ public abstract class SceneHeader implements Serializable {
 				Debug.debugManager().logger().e(SceneHeader.class.getSimpleName(), "Couldn't deserialize SceneHeader file!");
 				return null;
 			}
+
+			lSceneHeader._cmpName = lSceneHeader.sceneName().toUpperCase();
 
 			return lSceneHeader;
 		} catch (IOException e) {
