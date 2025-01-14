@@ -83,9 +83,11 @@ public abstract class Screen implements IInputProcessor {
 	protected float mInputTimer;
 	protected final Vector2f mScreenOffset = new Vector2f();
 
+	/** Can be set by a screen to indicate that it wishes to override the UiResolution with the flag value in {@link mStretchUiResolution}. This property is only evaluated during loading screens. */
 	protected boolean mOverrideUiStretch;
 	protected boolean mStretchUiResolution;
 
+	/** Can be set by a screen to indicate that it wishes to override the GameResolution with the flag value in {@link mStretchGameResolution}. This property is only evaluated during loading screens. */
 	protected boolean mOverrideGameStretch;
 	protected boolean mStretchGameResolution;
 
@@ -97,7 +99,7 @@ public abstract class Screen implements IInputProcessor {
 		return mOverrideUiStretch;
 	}
 
-	public boolean strectchUiResolution() {
+	public boolean stretchUiResolution() {
 		return mStretchUiResolution;
 	}
 
@@ -105,7 +107,7 @@ public abstract class Screen implements IInputProcessor {
 		return mOverrideGameStretch;
 	}
 
-	public boolean strectchGameResolution() {
+	public boolean stretchGameResolution() {
 		return mStretchGameResolution;
 	}
 
