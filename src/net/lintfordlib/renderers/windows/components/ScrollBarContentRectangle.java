@@ -52,6 +52,10 @@ public class ScrollBarContentRectangle extends Rectangle {
 	}
 
 	public void preDraw(LintfordCore core, SpriteBatch spriteBatch, Rectangle rectangle, int stencilValue) {
+		preDraw(core, spriteBatch, rectangle, 1, false);
+	}
+
+	public void preDraw(LintfordCore core, SpriteBatch spriteBatch, Rectangle rectangle, int stencilValue, boolean scrollBarEnabled) {
 		if (mPreDrawing)
 			return;
 
@@ -67,7 +71,8 @@ public class ScrollBarContentRectangle extends Rectangle {
 
 		spriteBatch.begin(core.HUD());
 		spriteBatch.setColorRGBA(1.f, 1.f, 1.f, 0.f);
-		spriteBatch.draw((Texture) null, 0, 0, 1, 1, rectangle.x() + mDepthPadding, rectangle.y() + mDepthPadding, rectangle.width() - mDepthPadding * 2 - ScrollBar.BAR_WIDTH, rectangle.height() - mDepthPadding * 2, -10.f);
+		final var lScrolbarWidth = scrollBarEnabled ? ScrollBar.BAR_WIDTH : 0.f;
+		spriteBatch.draw((Texture) null, 0, 0, 1, 1, rectangle.x() + mDepthPadding, rectangle.y() + mDepthPadding, rectangle.width() - mDepthPadding * 2 - lScrolbarWidth, rectangle.height() - mDepthPadding * 2, -10.f);
 		spriteBatch.end();
 
 		// GL_EQUAL: Passes if ( ref & mask ) = ( stencil & mask ).
