@@ -452,6 +452,7 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 	}
 
 	public void unloadResources() {
+		mCoreSpritesheet = null;
 		mResourcesLoaded = false;
 	}
 
