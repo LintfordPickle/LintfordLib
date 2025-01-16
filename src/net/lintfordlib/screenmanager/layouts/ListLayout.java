@@ -137,9 +137,9 @@ public class ListLayout extends BaseLayout implements IInputProcessor {
 				lMenuEntry.height(lSizeOfEachFillElement - lMenuEntry.marginBottom() - lMenuEntry.marginTop());
 			}
 
+			lYPos += lMenuEntry.marginTop();
 			lMenuEntry.y(lYPos);
 
-			lYPos += lMenuEntry.marginTop();
 			lYPos += lMenuEntry.height();
 			lYPos += lMenuEntry.marginBottom();
 		}
