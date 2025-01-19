@@ -460,7 +460,7 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 		if (mDrawBackground) {
 			final int ts = 32;
 
-			final var lColor = ColorConstants.getColorWithAlpha(layoutColor, parentScreen.screenColor.a);
+			final var lColor = ColorConstants.getColorWithAlpha(layoutColor, layoutColor.a * parentScreen.screenColor.a);
 
 			final int x = (int) (lScreenOffset.x + mX);
 			final int y = (int) (lScreenOffset.y + mY);
