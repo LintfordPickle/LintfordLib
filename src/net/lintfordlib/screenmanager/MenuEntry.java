@@ -395,6 +395,10 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 	// Constructor
 	// --------------------------------------
 
+	public MenuEntry(ScreenManager screenManager, MenuScreen parentScreen) {
+		this(screenManager, parentScreen, null);
+	}
+
 	public MenuEntry(ScreenManager screenManager, MenuScreen parentScreen, String menuEntryLabel) {
 		mScreenManager = screenManager;
 		mParentScreen = parentScreen;
