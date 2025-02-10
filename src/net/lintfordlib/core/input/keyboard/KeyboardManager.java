@@ -134,10 +134,10 @@ public class KeyboardManager {
 	}
 
 	public boolean isKeyDownTimed(int keyCode, IInputProcessor inputProcessor) {
-		if (inputProcessor.allowKeyboardInput() == false)
+		if (inputProcessor != null && !inputProcessor.allowKeyboardInput())
 			return false;
 
-		if (inputProcessor.isCoolDownElapsed() == false)
+		if (inputProcessor != null && !inputProcessor.isCoolDownElapsed())
 			return false;
 
 		if (keyCode >= KEY_LIMIT) {
@@ -146,7 +146,9 @@ public class KeyboardManager {
 		}
 
 		if (mKeyButtonStates[keyCode]) {
-			inputProcessor.resetCoolDownTimer();
+			if (inputProcessor != null)
+				inputProcessor.resetCoolDownTimer();
+
 			return true;
 		}
 
