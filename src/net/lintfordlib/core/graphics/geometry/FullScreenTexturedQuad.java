@@ -16,17 +16,10 @@ public class FullScreenTexturedQuad extends TexturedQuad implements IResizeListe
 	protected int mWindowHeight;
 
 	// --------------------------------------
-	// Constructor
-	// --------------------------------------
-
-	public FullScreenTexturedQuad() {
-
-	}
-
-	// --------------------------------------
 	// Core-Methods
 	// --------------------------------------
 
+	@Override
 	public void loadResources(ResourceManager resourceManager) {
 		super.loadResources(resourceManager);
 
@@ -38,6 +31,8 @@ public class FullScreenTexturedQuad extends TexturedQuad implements IResizeListe
 
 		createModelMatrix();
 	}
+
+	@Override
 
 	public void unloadResources() {
 		super.unloadResources();

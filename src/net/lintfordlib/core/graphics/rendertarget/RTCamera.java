@@ -180,12 +180,6 @@ public class RTCamera implements ICamera {
 		mAcceleration.x = 0.0f;
 		mAcceleration.y = 0.0f;
 
-//		final var lDisplayConfig = core.config().display();
-//		if(lDisplayConfig.stretchGameScreen()) {
-//			mWindowWidth = 960; //lDisplayConfig.windowWidth();
-//			mWindowHeight = 540;//lDisplayConfig.windowHeight();
-//		}
-
 		createView();
 		createOrtho(mViewportWidth, mViewportHeight);
 

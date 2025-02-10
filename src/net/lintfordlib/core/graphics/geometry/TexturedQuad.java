@@ -153,7 +153,7 @@ public class TexturedQuad {
 		final var z0 = 0.f;
 		final var w0 = 1.f;
 		final var u0 = 0.f;
-		final var v0 = 0.f;
+		final var v0 = 1.f;
 
 		// vert 1
 		final var x1 = -.5f;
@@ -161,7 +161,7 @@ public class TexturedQuad {
 		final var z1 = 0.f;
 		final var w1 = 1.f;
 		final var u1 = 0.f;
-		final var v1 = 1.f;
+		final var v1 = 0.f;
 
 		// vert 2
 		final var x2 = .5f;
@@ -169,7 +169,7 @@ public class TexturedQuad {
 		final var z2 = 0.f;
 		final var w2 = 1.f;
 		final var u2 = 1.f;
-		final var v2 = 1.f;
+		final var v2 = 0.f;
 
 		// vert 4
 		final var x3 = .5f;
@@ -177,7 +177,7 @@ public class TexturedQuad {
 		final var z3 = 0.f;
 		final var w3 = 1.f;
 		final var u3 = 1.f;
-		final var v3 = 0.f;
+		final var v3 = 1.f;
 
 		mBuffer.put(x1).put(y1).put(z1).put(w1).put(u1).put(v1);
 		mBuffer.put(x0).put(y0).put(z0).put(w0).put(u0).put(v0);
