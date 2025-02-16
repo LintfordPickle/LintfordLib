@@ -135,6 +135,10 @@ public class TextureBatchPCT {
 	// Properties
 	// --------------------------------------
 
+	public void textureIdOffset(int numProtectedTextureIndices) {
+		mTextureSlots.textureSlotOffset(numProtectedTextureIndices);
+	}
+
 	public boolean useHalfPixelCorrection() {
 		return mUseHalfPixelCorrection;
 	}

@@ -27,20 +27,18 @@ public class TextureSlotBatch {
 	private final List<Integer> mTextureSlots = new ArrayList<>();
 	private int mTextureSlotIndex; // next free texture slot
 
+	private int mNumProtectedTextureIds;
+
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
 
-	public boolean hasFreeSlot() {
-		return mTextureSlotIndex < MAX_TEXTURE_SLOTS;
+	public void textureSlotOffset(int numProtectedTextureIndices) {
+		mNumProtectedTextureIds = numProtectedTextureIndices;
 	}
 
-	// --------------------------------------
-	// Constructors
-	// --------------------------------------
-
-	public TextureSlotBatch() {
-
+	public boolean hasFreeSlot() {
+		return mTextureSlotIndex < MAX_TEXTURE_SLOTS;
 	}
 
 	// --------------------------------------
@@ -101,7 +99,7 @@ public class TextureSlotBatch {
 
 	public void bindTextures() {
 		for (int i = 0; i < mTextureSlotIndex; i++) {
-			GL13.glActiveTexture(GL13.GL_TEXTURE0 + i);
+			GL13.glActiveTexture(GL13.GL_TEXTURE0 + mNumProtectedTextureIds + i);
 			final int lTextureIdInSlot = mTextureSlots.get(i);
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, lTextureIdInSlot);
 		}
