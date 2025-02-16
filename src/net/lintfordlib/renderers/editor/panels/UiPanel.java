@@ -126,7 +126,7 @@ public abstract class UiPanel implements IScrollBarArea, UIWindowChangeListener,
 	}
 
 	public float getPanelFullHeight() {
-		if (mIsPanelOpen == false)
+		if (!mIsPanelOpen)
 			return 32.f; // standard panel title height
 
 		float totalHeight = mPaddingTop;
@@ -481,7 +481,6 @@ public abstract class UiPanel implements IScrollBarArea, UIWindowChangeListener,
 			mEditorBrushController.setActiveLayer(this, mEditorActiveLayerUid, layerOwnerHashCode());
 		}
 
-		isLayerActive(mEditorBrushController.isLayerActive(mEditorActiveLayerUid));
 		mIsLayerActiveToggleOn = mEditorActiveLayerUid != EditorLayerBrush.NO_LAYER_UID && mEditorBrushController.isLayerActive(mEditorActiveLayerUid);
 	}
 
@@ -577,7 +576,7 @@ public abstract class UiPanel implements IScrollBarArea, UIWindowChangeListener,
 
 	@Override
 	public void onLayerDeselected() {
-
+		mIsLayerActiveToggleOn = mEditorActiveLayerUid != EditorLayerBrush.NO_LAYER_UID && mEditorBrushController.isLayerActive(mEditorActiveLayerUid);
 	}
 
 	@Override

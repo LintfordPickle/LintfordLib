@@ -1,5 +1,8 @@
 package net.lintfordlib.controllers.editor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.lintfordlib.controllers.BaseController;
 import net.lintfordlib.controllers.ControllerManager;
 import net.lintfordlib.data.editor.EditorLayerBrush;
@@ -27,9 +30,19 @@ public class EditorBrushController extends BaseController {
 	private boolean mShowCursorGridUid;
 	private boolean mShowHeight;
 
+	private List<IBrushActivityPanel> mPanels = new ArrayList<>();
+
 	// ---------------------------------------------
 	// Properties
 	// ---------------------------------------------
+
+	public void addPanelListener(IBrushActivityPanel panel) {
+		this.mPanels.add(panel);
+	}
+
+	public void removePanelListener(IBrushActivityPanel panel) {
+		this.mPanels.remove(panel);
+	}
 
 	public boolean showPosition() {
 		return mShowCursorPosition;
@@ -94,14 +107,11 @@ public class EditorBrushController extends BaseController {
 		if (mEditorBrush == null)
 			return;
 
-		if (mEditorBrush.isOwner(ownerHash) == false)
+		if (!mEditorBrush.isOwner(ownerHash))
 			return; // don't own layer
 
-		if (mEditorBrush.isActionSet() == false)
+		if (!mEditorBrush.isActionSet())
 			return; // no action set
-
-		if (mIBrushModeCallback != null)
-			mIBrushModeCallback.onLayerDeselected();
 
 		mDoingWhatMessage = null;
 
@@ -134,15 +144,15 @@ public class EditorBrushController extends BaseController {
 	}
 
 	public void setActiveLayer(IBrushModeCallback callback, int newLayerUid, int ownerHash) {
-		if(mEditorBrush == null)
+		if (mEditorBrush == null)
 			return;
-		
+
 		clearActiveLayer(ownerHash);
 
 		if (mEditorBrush.isBrushLayer(newLayerUid))
 			return; // already set
 
-		if (mEditorBrush.isBrushLayer(EditorLayerBrush.NO_LAYER_UID) == false)
+		if (!mEditorBrush.isBrushLayer(EditorLayerBrush.NO_LAYER_UID))
 			return; // something else is set
 
 		mEditorBrush.brushLayer(newLayerUid, ownerHash);
@@ -154,9 +164,9 @@ public class EditorBrushController extends BaseController {
 	}
 
 	public boolean isLayerActive(int layerUid) {
-		if(mEditorBrush == null)
+		if (mEditorBrush == null)
 			return false;
-		
+
 		return mEditorBrush.isBrushLayer(layerUid);
 	}
 
