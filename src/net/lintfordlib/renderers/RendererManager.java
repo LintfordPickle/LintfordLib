@@ -284,20 +284,14 @@ public class RendererManager implements IInputClickedFocusManager {
 
 		final int lRendererCount = mRenderers.size();
 		for (int i = 0; i < lRendererCount; i++) {
-			if (!mRenderers.get(i).isLoaded() && mResourcesLoaded) {
+			if (!mRenderers.get(i).isLoaded()) {
 				mRenderers.get(i).loadResources(resourceManager);
 			}
 		}
 
-		{ // Register a window resize listener so we can reload the RenderTargets when the window size changes
-			mResizeListener = new IResizeListener() {
-				@Override
-				public void onResize(final int pWidth, final int pHeight) {
-					reloadRenderTargets(pWidth, pHeight);
-				}
-			};
-			mDisplayConfig.addResizeListener(mResizeListener);
-		}
+		// Register a window resize listener so we can reload the RenderTargets when the window size changes
+		mResizeListener = this::reloadRenderTargets;
+		mDisplayConfig.addResizeListener(mResizeListener);
 
 		mResourcesLoaded = true;
 	}
