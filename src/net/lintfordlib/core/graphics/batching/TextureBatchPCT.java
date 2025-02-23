@@ -135,6 +135,10 @@ public class TextureBatchPCT {
 	// Properties
 	// --------------------------------------
 
+	public ShaderMVP_PCT shader() {
+		return mShader;
+	}
+
 	public void textureIdOffset(int numProtectedTextureIndices) {
 		mTextureSlots.textureSlotOffset(numProtectedTextureIndices);
 	}
@@ -520,22 +524,22 @@ public class TextureBatchPCT {
 		final var x0 = dx;
 		final var y0 = dy + dh;
 		final var u0 = (sx + pcx) / texWidth;
-		final var v0 = (sy + sh - pcy) / texHeight;
+		final var v0 = (sy + pcy) / texHeight;
 
 		final var x1 = dx;
 		final var y1 = dy;
 		final var u1 = (sx + pcx) / texWidth;
-		final var v1 = (sy + pcy) / texHeight;
+		final var v1 = (sy + sh - pcy) / texHeight;
 
 		final var x2 = dx + dw;
 		final var y2 = dy;
 		final var u2 = (sx + sw - pcx) / texWidth;
-		final var v2 = (sy + pcy) / texHeight;
+		final var v2 = (sy + sh - pcy) / texHeight;
 
 		final var x3 = dx + dw;
 		final var y3 = dy + dh;
 		final var u3 = (sx + sw - pcx) / texWidth;
-		final var v3 = (sy + sh - pcy) / texHeight;
+		final var v3 = (sy + pcy) / texHeight;
 
 		addVertToBuffer(x0, y0, zDepth, 1f, u0, v0, lTextureSlotIndex);
 		addVertToBuffer(x1, y1, zDepth, 1f, u1, v1, lTextureSlotIndex);
@@ -547,11 +551,11 @@ public class TextureBatchPCT {
 
 	// ---
 
-	public void draw(RenderTarget renderTartget, float sx, float sy, float sw, float sh, Rectangle destRect, float zDepth) {
+	public void draw(RenderTarget renderTarget, float sx, float sy, float sw, float sh, Rectangle destRect, float zDepth) {
 		if (destRect == null)
 			return;
 
-		draw(renderTartget, sx, sy, sw, sh, destRect.x(), destRect.y(), destRect.width(), destRect.height(), zDepth);
+		draw(renderTarget, sx, sy, sw, sh, destRect.x(), destRect.y(), destRect.width(), destRect.height(), zDepth);
 	}
 
 	public void draw(RenderTarget renderTarget, float sx, float sy, float sw, float sh, float dx, float dy, float dw, float dh, float zDepth) {
@@ -651,22 +655,22 @@ public class TextureBatchPCT {
 		final var x0 = dstPoints.get(0).x;
 		final var y0 = dstPoints.get(0).y;
 		final var u0 = (sx + pcx) / texWidth;
-		final var v0 = (sy + sh - pcy) / texHeight;
+		final var v0 = (sy + pcy) / texHeight;
 
 		final var x1 = dstPoints.get(1).x;
 		final var y1 = dstPoints.get(1).y;
 		final var u1 = (sx + pcx) / texWidth;
-		final var v1 = (sy + pcy) / texHeight;
+		final var v1 = (sy + sh - pcy) / texHeight;
 
 		final var x2 = dstPoints.get(2).x;
 		final var y2 = dstPoints.get(2).y;
 		final var u2 = (sx + sw - pcx) / texWidth;
-		final var v2 = (sy + pcy) / texHeight;
+		final var v2 = (sy + sh - pcy) / texHeight;
 
 		final var x3 = dstPoints.get(3).x;
 		final var y3 = dstPoints.get(3).y;
 		final var u3 = (sx + sw - pcx) / texWidth;
-		final var v3 = (sy + sh - pcy) / texHeight;
+		final var v3 = (sy + pcy) / texHeight;
 
 		addVertToBuffer(x0, y0, zDepth, 1f, u0, v0, lTextureSlotIndex);
 		addVertToBuffer(x1, y1, zDepth, 1f, u1, v1, lTextureSlotIndex);
@@ -729,25 +733,25 @@ public class TextureBatchPCT {
 		final var x0 = -(lHalfW - originX) * cos - (lHalfH + originY) * sin;
 		final var y0 = -(lHalfW - originX) * sin + (lHalfH + originY) * cos;
 		final var u0 = (sx + pcx) / texWidth;
-		final var v0 = (sy + sh - pcy) / texHeight;
+		final var v0 = (sy + pcy) / texHeight;
 
 		// Vertex 1 (top left)
 		final var x1 = -(lHalfW - originX) * cos - (-lHalfH + originY) * sin;
 		final var y1 = -(lHalfW - originX) * sin + (-lHalfH + originY) * cos;
 		final var u1 = (sx + pcx) / texWidth;
-		final var v1 = (sy + pcy) / texHeight;
+		final var v1 = (sy + sh - pcy) / texHeight;
 
 		// Vertex 2 (top right)
 		final var x2 = (lHalfW + originX) * cos - (-lHalfH + originY) * sin;
 		final var y2 = (lHalfW + originX) * sin + (-lHalfH + originY) * cos;
 		final var u2 = (sx + sq - pcx) / texWidth;
-		final var v2 = (sy + pcy) / texHeight;
+		final var v2 = (sy + sh - pcy) / texHeight;
 
 		// Vertex 3 (bottom right)
 		final var x3 = (lHalfW + originX) * cos - (lHalfH + originY) * sin;
 		final var y3 = (lHalfW + originX) * sin + (lHalfH + originY) * cos;
 		final var u3 = (sx + sq - pcx) / texWidth;
-		final var v3 = (sy + sh - pcy) / texHeight;
+		final var v3 = (sy + pcy) / texHeight;
 
 		addVertToBuffer(dx + x0, dy + y0, zDepth, 1f, u0, v0, lTextureSlotIndex);
 		addVertToBuffer(dx + x1, dy + y1, zDepth, 1f, u1, v1, lTextureSlotIndex);

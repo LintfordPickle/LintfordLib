@@ -423,22 +423,22 @@ public class TextureBatchPT {
 		float x0 = dx;
 		float y0 = dy + dh;
 		float u0 = (sx + pcx) / texWidth;
-		float v0 = (sy + sh - pcy) / texHeight;
+		float v0 = (sy + pcy) / texHeight;
 
 		float x1 = dx;
 		float y1 = dy;
 		float u1 = (sx + pcx) / texWidth;
-		float v1 = (sy + pcy) / texHeight;
+		float v1 = (sy + sh - pcy) / texHeight;
 
 		float x2 = dx + dw;
 		float y2 = dy;
 		float u2 = (sx + sw - pcx) / texWidth;
-		float v2 = (sy + pcy) / texHeight;
+		float v2 = (sy + sh - pcy) / texHeight;
 
 		float x3 = dx + dw;
 		float y3 = dy + dh;
 		float u3 = (sx + sw - pcx) / texWidth;
-		float v3 = (sy + sh - pcy) / texHeight;
+		float v3 = (sy + pcy) / texHeight;
 
 		addVertToBuffer(x0, y0, zDepth, 1f, u0, v0, lTextureSlotIndex);
 		addVertToBuffer(x1, y1, zDepth, 1f, u1, v1, lTextureSlotIndex);
@@ -500,22 +500,22 @@ public class TextureBatchPT {
 		final var x0 = -(lHalfW - originX) * cos - (lHalfH + originY) * sin;
 		final var y0 = -(lHalfW - originX) * sin + (lHalfH + originY) * cos;
 		final var u0 = (sx + pcx) / texWidth;
-		final var v0 = (sy + sh - pcy) / texHeight;
+		final var v0 = (sy + pcy) / texHeight;
 
 		final var x1 = -(lHalfW - originX) * cos - (-lHalfH + originY) * sin;
 		final var y1 = -(lHalfW - originX) * sin + (-lHalfH + originY) * cos;
 		final var u1 = (sx + pcx) / texWidth;
-		final var v1 = (sy + pcy) / texHeight;
+		final var v1 = (sy + sh - pcy) / texHeight;
 
 		final var x2 = (lHalfW + originX) * cos - (-lHalfH + originY) * sin;
 		final var y2 = (lHalfW + originX) * sin + (-lHalfH + originY) * cos;
 		final var u2 = (sx + sw - pcx) / texWidth;
-		final var v2 = (sy + pcy) / texHeight;
+		final var v2 = (sy + sh - pcy) / texHeight;
 
 		final var x3 = (lHalfW + originX) * cos - (lHalfH + originY) * sin;
 		final var y3 = (lHalfW + originX) * sin + (lHalfH + originY) * cos;
 		final var u3 = (sx + sw - pcx) / texWidth;
-		final var v3 = (sy + sh - pcy) / texHeight;
+		final var v3 = (sy + pcy) / texHeight;
 
 		addVertToBuffer(dx + x0, dy + y0, zDepth, 1f, u0, v0, lTextureSlotIndex);
 		addVertToBuffer(dx + x1, dy + y1, zDepth, 1f, u1, v1, lTextureSlotIndex);

@@ -31,9 +31,6 @@ public abstract class Shader {
 	// Constants
 	// --------------------------------------
 
-	public static final String BASIC_VERT_FILENAME = "/res/shaders/shader_basic_pct.vert";
-	public static final String BASIC_FRAG_FILENAME = "/res/shaders/shader_basic_pct.frag";
-
 	private static final String DEBUG_TAG_VERT_NAME = "OpenGL Vert";
 	private static final String DEBUG_TAG_FRAG_NAME = "OpenGL Frag";
 
@@ -62,7 +59,7 @@ public abstract class Shader {
 	// Constructor
 	// --------------------------------------
 
-	public Shader(String shaderName, String vertFilename, String fragFilename) {
+	protected Shader(String shaderName, String vertFilename, String fragFilename) {
 		mName = shaderName;
 
 		mVertPathname = vertFilename;

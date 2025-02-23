@@ -11,11 +11,11 @@ public class ShaderMVP_PCT extends Shader {
 	// Constants
 	// --------------------------------------
 
-	public final static String SHADER_NAME = "ShaderMVP_PCT";
+	public static final String SHADER_NAME = "ShaderMVP_PCT";
 
-	public final static String SHADER_UNIFORM_PROJECTION_NAME = "projectionMatrix";
-	public final static String SHADER_UNIFORM_VIEW_NAME = "viewMatrix";
-	public final static String SHADER_UNIFORM_MODEL_NAME = "modelMatrix";
+	public static final String SHADER_UNIFORM_PROJECTION_NAME = "projectionMatrix";
+	public static final String SHADER_UNIFORM_VIEW_NAME = "viewMatrix";
+	public static final String SHADER_UNIFORM_MODEL_NAME = "modelMatrix";
 
 	// --------------------------------------
 	// Variables
@@ -103,7 +103,7 @@ public class ShaderMVP_PCT extends Shader {
 	@Override
 	protected void getUniformLocations() {
 		super.getUniformLocations();
-		
+
 		mProjectionMatrixLocation = GL20.glGetUniformLocation(shaderID(), SHADER_UNIFORM_PROJECTION_NAME);
 		mViewMatrixLocation = GL20.glGetUniformLocation(shaderID(), SHADER_UNIFORM_VIEW_NAME);
 		mModelMatrixLocation = GL20.glGetUniformLocation(shaderID(), SHADER_UNIFORM_MODEL_NAME);

@@ -149,17 +149,29 @@ class BitmapFontDefinition {
 		final var lFilteringMode = GL11.GL_NEAREST;
 		mTexture = lTextureManager.getTextureOrLoad(mTextureName, mTextureFilepath, lFilteringMode, mEntityGroupUid);
 
+		if (mTexture == null) {
+			Debug.debugManager().logger().e(getClass().getSimpleName(), "Failed to load texture " + mTextureName);
+			return;
+		}
+
 		if (!lTextureManager.isTextureLoaded(mTexture)) {
 			Debug.debugManager().logger().e(getClass().getSimpleName(), "Cannot locate texture " + mTextureName);
 		}
 
+		final var lTextureHeight = mTexture.getTextureHeight();
+
+		int lFontHeight = 0;
+		for (final var lEntry : mGlyphMap.entrySet()) {
+			final var lSpriteFrame = lEntry.getValue();
+
+			final var lNewY = lSpriteFrame.y() + lSpriteFrame.height();
+			lSpriteFrame.y(lTextureHeight - lNewY);
+
+			if (lSpriteFrame.height() > lFontHeight)
+				lFontHeight = (int) lSpriteFrame.height();
+		}
+
 		if (mFontHeight == 0) {
-			int lFontHeight = 0;
-			for (final var lEntry : mGlyphMap.entrySet()) {
-				final var lSpriteFrame = lEntry.getValue();
-				if (lSpriteFrame.height() > lFontHeight)
-					lFontHeight = (int) lSpriteFrame.height();
-			}
 			mFontHeight = lFontHeight;
 		}
 	}

@@ -99,7 +99,7 @@ public class SpriteSheetManager {
 	}
 
 	public void addChangeListener(ISpritesheetManagerChangeListener listener) {
-		if (mChangeListeners.contains(listener) == false)
+		if (!mChangeListeners.contains(listener))
 			mChangeListeners.add(listener);
 	}
 

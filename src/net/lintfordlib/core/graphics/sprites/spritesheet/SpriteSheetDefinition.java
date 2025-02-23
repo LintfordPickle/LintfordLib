@@ -163,8 +163,14 @@ public class SpriteSheetDefinition {
 
 		final var lTextureManager = resourceManager.textureManager();
 		mTexture = lTextureManager.getTexture(mTextureName, mEntityGroupUid);
-		if (mTexture == null || mTexture.name().equals(TextureManager.TEXTURE_NOT_FOUND_NAME)) {
+		if (mTexture == null) {
 			Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Spritesheet '%s' cannot locate texture %s in EntityGroupID %d.", mSpriteSheetName, mTextureName, entityGroupUid));
+			return;
+		}
+
+		if (mTexture.name().equals(TextureManager.TEXTURE_NOT_FOUND_NAME)) {
+			Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Spritesheet '%s' cannot locate texture %s in EntityGroupID %d.", mSpriteSheetName, mTextureName, entityGroupUid));
+			return;
 		}
 
 		mTextureWidth = mTexture.getTextureWidth();
@@ -180,8 +186,6 @@ public class SpriteSheetDefinition {
 		if (mAnimationFramesMap == null) {
 			mAnimationFramesMap = new HashMap<>();
 		} else {
-			// If the SpriteSheet definition had animations, then iterate over them
-			// Resolve the Sprite references in the Animations
 			for (Map.Entry<String, SpriteDefinition> entry : mAnimationFramesMap.entrySet()) {
 				final var lSpriteDefinition = entry.getValue();
 				lSpriteDefinition.name(entry.getKey());
@@ -189,14 +193,19 @@ public class SpriteSheetDefinition {
 			}
 		}
 
+		// Process Spriteframes
+		// TODO: convert the coordinates from normal to opengl (top-left to bottom-right)
 		// Create an AnimationFrame object for each single SpriteFrame, so that everything definition within a SpritesheetDefinition is accessible from within the mAnimationFramesMap
-		final int lSpriteFrameArrayCount = mSpriteFrames.length;
-		for (int i = 0; i < lSpriteFrameArrayCount; i++) {
-			final String lSpriteFrameName = mSpriteFrames[i].name();
+		final int lNumSpriteFrames = mSpriteFrames.length;
+		for (int i = 0; i < lNumSpriteFrames; i++) {
+			final var lSpriteFrame = mSpriteFrames[i];
+			final var lNewY = lSpriteFrame.y() + lSpriteFrame.height();
+			lSpriteFrame.y(mTextureHeight - lNewY);
+
+			final String lSpriteFrameName = lSpriteFrame.name();
 			if (mAnimationFramesMap.containsKey(lSpriteFrameName)) {
 				continue;
 			}
-			final var lSpriteFrame = mSpriteFrames[i];
 			final var lNewSprite = new SpriteDefinition();
 			lNewSprite.name(lSpriteFrameName);
 			lNewSprite.addFrame(lSpriteFrame);

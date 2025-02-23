@@ -14,24 +14,24 @@ import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.debug.stats.DebugStats;
 import net.lintfordlib.core.maths.Matrix4f;
 
-public class TexturedQuad {
+public class TexturedQuad_PT {
 
 	private class VertexDefinition {
 
-		public static final int elementBytes = 4;
+		public static final int ELEMNT_BYTES = 4;
 
-		public static final int positionElementCount = 4;
-		public static final int textureElementCount = 2;
+		public static final int POSITION_ELEMENT_COUNT = 4;
+		public static final int TEXTURE_ELEMENT_COUNT = 2;
 
-		public static final int elementCount = positionElementCount + textureElementCount;
+		public static final int ELEMENT_COUNT = POSITION_ELEMENT_COUNT + TEXTURE_ELEMENT_COUNT;
 
-		public static final int positionBytesCount = positionElementCount * elementBytes;
-		public static final int textureBytesCount = textureElementCount * elementBytes;
+		public static final int POSITION_BYTES_COUNT = POSITION_ELEMENT_COUNT * ELEMNT_BYTES;
+		public static final int TEXTURE_BYTES_COUNT = TEXTURE_ELEMENT_COUNT * ELEMNT_BYTES;
 
-		public static final int positionByteOffset = 0;
-		public static final int textureByteOffset = positionByteOffset + positionBytesCount;
+		public static final int POSITION_BYTE_OFFSET = 0;
+		public static final int TEXTURE_BYTE_OFFSET = POSITION_BYTE_OFFSET + POSITION_BYTES_COUNT;
 
-		public static final int stride = positionBytesCount + textureBytesCount;
+		public static final int STRIDE = POSITION_BYTES_COUNT + TEXTURE_BYTES_COUNT;
 	}
 
 	// --------------------------------------
@@ -52,12 +52,12 @@ public class TexturedQuad {
 	// Properties
 	// --------------------------------------
 
-	/** Returns the Z Depth this {@link TexturedQuad}s modelmatrix will be translated to upon request. */
+	/** Returns the Z Depth this {@link TexturedQuad_PT}s modelmatrix will be translated to upon request. */
 	public float zDepth() {
 		return mZDepth;
 	}
 
-	/** Sets a new ZDepth value for this {@link TexturedQuad}. */
+	/** Sets a new ZDepth value for this {@link TexturedQuad_PT}. */
 	public void zDepth(float zDepth) {
 		mZDepth = zDepth;
 	}
@@ -88,7 +88,7 @@ public class TexturedQuad {
 	// Constructor
 	// --------------------------------------
 
-	public TexturedQuad() {
+	public TexturedQuad_PT() {
 		mModelMatrix = new Matrix4f();
 		createModelMatrix();
 
@@ -104,7 +104,7 @@ public class TexturedQuad {
 		if (mResourcesLoaded)
 			return;
 
-		mBuffer = MemoryUtil.memAllocFloat(6 * VertexDefinition.elementCount);
+		mBuffer = MemoryUtil.memAllocFloat(6 * VertexDefinition.ELEMENT_COUNT);
 		if (mVboId == -1) {
 			mVboId = GL15.glGenBuffers();
 			Debug.debugManager().logger().v(getClass().getSimpleName(), "[OpenGl] glGenBuffers: vbo " + mVboId);
@@ -138,8 +138,8 @@ public class TexturedQuad {
 		GL20.glEnableVertexAttribArray(0);
 		GL20.glEnableVertexAttribArray(1);
 
-		GL20.glVertexAttribPointer(0, VertexDefinition.positionElementCount, GL11.GL_FLOAT, false, VertexDefinition.stride, VertexDefinition.positionByteOffset);
-		GL20.glVertexAttribPointer(1, VertexDefinition.textureElementCount, GL11.GL_FLOAT, false, VertexDefinition.stride, VertexDefinition.textureByteOffset);
+		GL20.glVertexAttribPointer(0, VertexDefinition.POSITION_ELEMENT_COUNT, GL11.GL_FLOAT, false, VertexDefinition.STRIDE, VertexDefinition.POSITION_BYTE_OFFSET);
+		GL20.glVertexAttribPointer(1, VertexDefinition.TEXTURE_ELEMENT_COUNT, GL11.GL_FLOAT, false, VertexDefinition.STRIDE, VertexDefinition.TEXTURE_BYTE_OFFSET);
 
 		GL30.glBindVertexArray(0);
 
@@ -153,7 +153,7 @@ public class TexturedQuad {
 		final var z0 = 0.f;
 		final var w0 = 1.f;
 		final var u0 = 0.f;
-		final var v0 = 1.f;
+		final var v0 = 0.f;
 
 		// vert 1
 		final var x1 = -.5f;
@@ -161,7 +161,7 @@ public class TexturedQuad {
 		final var z1 = 0.f;
 		final var w1 = 1.f;
 		final var u1 = 0.f;
-		final var v1 = 0.f;
+		final var v1 = 1.f;
 
 		// vert 2
 		final var x2 = .5f;
@@ -169,7 +169,7 @@ public class TexturedQuad {
 		final var z2 = 0.f;
 		final var w2 = 1.f;
 		final var u2 = 1.f;
-		final var v2 = 0.f;
+		final var v2 = 1.f;
 
 		// vert 4
 		final var x3 = .5f;
@@ -177,7 +177,7 @@ public class TexturedQuad {
 		final var z3 = 0.f;
 		final var w3 = 1.f;
 		final var u3 = 1.f;
-		final var v3 = 1.f;
+		final var v3 = 0.f;
 
 		mBuffer.put(x1).put(y1).put(z1).put(w1).put(u1).put(v1);
 		mBuffer.put(x0).put(y0).put(z0).put(w0).put(u0).put(v0);

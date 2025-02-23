@@ -12,7 +12,7 @@ import net.lintfordlib.core.geometry.Rectangle;
 import net.lintfordlib.core.graphics.batching.TextureBatchPCT;
 import net.lintfordlib.core.graphics.fonts.BitmapFontManager;
 import net.lintfordlib.core.graphics.fonts.FontUnit;
-import net.lintfordlib.core.graphics.geometry.TexturedQuad;
+import net.lintfordlib.core.graphics.geometry.TexturedQuad_PT;
 import net.lintfordlib.core.graphics.linebatch.LineBatch;
 import net.lintfordlib.core.graphics.pointbatch.PointBatch;
 import net.lintfordlib.core.graphics.polybatch.PolyBatchPC;
@@ -41,7 +41,7 @@ public class DebugDrawers {
 	private LineBatch mLineBatch;
 	private PolyBatchPC mPolyBatch;
 	private TextureBatchPCT mTextureBatch;
-	private TexturedQuad mTexturedQuad;
+	private TexturedQuad_PT mTexturedQuad;
 	private ShaderMVP_PT mBasicShader;
 
 	public LineBatch immediateLineBatch() {
@@ -66,7 +66,7 @@ public class DebugDrawers {
 		mPolyBatch = new PolyBatchPC();
 
 		mTextureBatch = new TextureBatchPCT();
-		mTexturedQuad = new TexturedQuad();
+		mTexturedQuad = new TexturedQuad_PT();
 
 		mBasicShader = new ShaderMVP_PT("BasicShaderPT", VERT_FILENAME, FRAG_FILENAME) {
 			@Override

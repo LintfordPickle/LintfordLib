@@ -1,5 +1,6 @@
 package net.lintfordlib.core.graphics.textures;
 
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -138,7 +139,7 @@ public class Texture {
 			}
 
 			final var lFileSize = textureFile.length();
-			final var lImage = ImageIO.read(textureFile);
+			final var lImage = createFlipped(ImageIO.read(textureFile));
 
 			final var lNewTexture = createTexture(ptextureName, filename, lImage, filter, wrapModeS, wrapModeT);
 			lNewTexture.fileSizeOnLoad(lFileSize);
@@ -173,7 +174,7 @@ public class Texture {
 
 			filename = filename.replace("//", "/");
 
-			final var lImage = ImageIO.read(lInputStream);
+			final var lImage = createFlipped(ImageIO.read(lInputStream));
 
 			final var lNewTexture = createTexture(textureName, filename, lImage, filter);
 			lNewTexture.fileSizeOnLoad(0);
@@ -436,5 +437,21 @@ public class Texture {
 		}
 
 		return lReturnData;
+	}
+
+	private static BufferedImage createFlipped(BufferedImage image) {
+		AffineTransform at = new AffineTransform();
+		at.concatenate(AffineTransform.getScaleInstance(1, -1));
+		at.concatenate(AffineTransform.getTranslateInstance(0, -image.getHeight()));
+		return createTransformed(image, at);
+	}
+
+	private static BufferedImage createTransformed(BufferedImage image, AffineTransform at) {
+		final var newImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
+		final var g = newImage.createGraphics();
+		g.transform(at);
+		g.drawImage(image, 0, 0, null);
+		g.dispose();
+		return newImage;
 	}
 }
