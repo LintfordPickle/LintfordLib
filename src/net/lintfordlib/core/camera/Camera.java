@@ -18,15 +18,9 @@ public class Camera implements ICamera {
 	// Constants
 	// --------------------------------------
 
-	/**
-	 * The near plane (Z_NEAR) distance for front clipping. This defines the closest distance objects will be rendered from the HUD position.
-	 */
 	public static final float Z_NEAR = 0.0f;
 
-	/**
-	 * The far plane (Z_FAR) distance for rear clipping. This defines the closest distance objects will be rendered from the HUD position.
-	 */
-	public static final float Z_FAR = 10.0f;
+	public static final float Z_FAR = -10.0f;
 
 	protected static final float ZOOM_ACCELERATE_AMOUNT = 0.1f;
 	protected static final float DRAG = 0.9365f;

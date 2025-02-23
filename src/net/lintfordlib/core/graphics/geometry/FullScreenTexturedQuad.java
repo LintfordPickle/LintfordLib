@@ -4,7 +4,7 @@ import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.options.DisplayManager;
 import net.lintfordlib.options.IResizeListener;
 
-public class FullScreenTexturedQuad extends TexturedQuad implements IResizeListener {
+public class FullScreenTexturedQuad extends TexturedQuad_PT implements IResizeListener {
 
 	// --------------------------------------
 	// Variables

@@ -156,9 +156,9 @@ public class Matrix4f implements Serializable {
 	}
 
 	public void createOrthoRightHand(float left, float right, float bottom, float top, float near, float far) {
-		m00 = 2f / (right - left);
-		m11 = 2f / (top - bottom);
-		m22 = -(2f / (far - near));
+		m00 = 2.f / (right - left);
+		m11 = 2.f / (top - bottom);
+		m22 = 2.f / (far - near);
 
 		m30 = -(right + left) / (right - left);
 		m31 = -(top + bottom) / (top - bottom);

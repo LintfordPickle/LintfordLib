@@ -10,7 +10,7 @@ import net.lintfordlib.options.DisplayManager;
 import net.lintfordlib.options.IResizeListener;
 
 /**
- * Defines a simple HUD Camera which implements the {@link ICamera} interface. The HUD renders objects from -0 (-Z_NEAR) to -10 (-Z_FAR)
+ * Defines a simple HUD Camera which implements the {@link ICamera} interface. The HUD renders objects from -0 [Z_NEAR] to [Z_FAR]
  */
 public class HUD implements ICamera, IResizeListener {
 
@@ -18,15 +18,8 @@ public class HUD implements ICamera, IResizeListener {
 	// Constants
 	// --------------------------------------
 
-	/**
-	 * The near plane (Z_NEAR) distance for front clipping. This defines the closest distance objects will be rendered from the HUD position.
-	 */
 	public static final float Z_NEAR = 0.0f;
-
-	/**
-	 * The far plane (Z_FAR) distance for rear clipping. This defines the closest distance objects will be rendered from the HUD position.
-	 */
-	public static final float Z_FAR = 10.0f;
+	public static final float Z_FAR = -10.0f;
 
 	// --------------------------------------
 	// Variables
