@@ -19,7 +19,7 @@ public class HUD implements ICamera, IResizeListener {
 	// --------------------------------------
 
 	public static final float Z_NEAR = 0.0f;
-	public static final float Z_FAR = -10.0f;
+	public static final float Z_FAR = 10.0f;
 
 	// --------------------------------------
 	// Variables
@@ -156,8 +156,7 @@ public class HUD implements ICamera, IResizeListener {
 
 	private void createView() {
 		mViewMatrix.setIdentity();
-		mViewMatrix.translate(position.x, position.y, 0);
-		mViewMatrix.scale(1.f, 1.f, 1.f);
+		mViewMatrix.createLookAt(0.f, 0.f, 0.f, 0.f, 0.f, -1f, 0.f, 1.f, 0.f);
 	}
 
 	private void createOrtho(int gameViewportWidth, int gameViewportHeight) {

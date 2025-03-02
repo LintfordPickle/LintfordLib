@@ -145,11 +145,11 @@ public class ContextHintManager {
 
 		mSpriteBatch.setColor(ColorConstants.GREY_DARK());
 		if (mDrawFooterBar)
-			mSpriteBatch.draw(mCoreSpritesheetDefinition, CoreTextureNames.TEXTURE_FOOTER_TRANSITION, lHudBoundingBox.right() - 512, lHudBoundingBox.bottom() - lVersionTextHeight - 2, 64, lVersionTextHeight + 2.f, -.1f);
+			mSpriteBatch.draw(mCoreSpritesheetDefinition, CoreTextureNames.TEXTURE_FOOTER_TRANSITION, lHudBoundingBox.right() - 512, lHudBoundingBox.bottom() - lVersionTextHeight - 2, 64, lVersionTextHeight + 2.f, .1f);
 		else
-			mSpriteBatch.draw(mCoreSpritesheetDefinition, CoreTextureNames.TEXTURE_FOOTER_END_64X64, lHudBoundingBox.right() - 512, lHudBoundingBox.bottom() - lVersionTextHeight - 2, 64, lVersionTextHeight + 2.f, -.1f);
+			mSpriteBatch.draw(mCoreSpritesheetDefinition, CoreTextureNames.TEXTURE_FOOTER_END_64X64, lHudBoundingBox.right() - 512, lHudBoundingBox.bottom() - lVersionTextHeight - 2, 64, lVersionTextHeight + 2.f, .1f);
 
-		mSpriteBatch.draw(mCoreSpritesheetDefinition, CoreTextureNames.TEXTURE_FOOTER_64X64, lHudBoundingBox.right() - (512 - 64), lHudBoundingBox.bottom() - lVersionTextHeight - 2, lHudBoundingBox.width(), lVersionTextHeight + 2.f, -.1f);
+		mSpriteBatch.draw(mCoreSpritesheetDefinition, CoreTextureNames.TEXTURE_FOOTER_64X64, lHudBoundingBox.right() - (512 - 64), lHudBoundingBox.bottom() - lVersionTextHeight - 2, lHudBoundingBox.width(), lVersionTextHeight + 2.f, .1f);
 
 		if (mGamePadHintsEnabled)
 			drawGamePadHints(core);
@@ -251,14 +251,14 @@ public class ContextHintManager {
 
 		if (hintText != null) {
 			mPositionMarker.x -= font.getStringWidth(hintText);
-			font.drawText(hintText, mPositionMarker.x, mPositionMarker.y + ICON_SIZE * .5f - font.fontHeight() * .5f, -0.01f, 1.f);
+			font.drawText(hintText, mPositionMarker.x, mPositionMarker.y + ICON_SIZE * .5f - font.fontHeight() * .5f, .01f, 1.f);
 			mPositionMarker.x -= SPACING;
 		}
 
 		mPositionMarker.x -= ICON_SIZE;
 
 		spriteBatch.setColorRGBA(1.f, 1.f, 1.f, 1.f);
-		spriteBatch.draw(mCoreSpritesheetDefinition, mCoreSpritesheetDefinition.getSpriteFrame(spriteFrameIndex), mPositionMarker.x, mPositionMarker.y, ICON_SIZE, ICON_SIZE, -0.1f);
+		spriteBatch.draw(mCoreSpritesheetDefinition, mCoreSpritesheetDefinition.getSpriteFrame(spriteFrameIndex), mPositionMarker.x, mPositionMarker.y, ICON_SIZE, ICON_SIZE, .1f);
 
 		mPositionMarker.x -= SPACING;
 	}
@@ -271,19 +271,19 @@ public class ContextHintManager {
 		if (hintText != null) {
 
 			font.setTextColorRGBA(1.f, 1.f, 1.f, 1.f);
-			font.drawText(hintText, mPositionMarker.x - lKeyHintWidth, mPositionMarker.y + ICON_SIZE * .5f - font.fontHeight() * .5f, -0.001f, 1.f);
+			font.drawText(hintText, mPositionMarker.x - lKeyHintWidth, mPositionMarker.y + ICON_SIZE * .5f - font.fontHeight() * .5f, .001f, 1.f);
 
 			mPositionMarker.x -= 10.f;
 			mPositionMarker.x -= lKeyHintWidth;
 			spriteBatch.setColorRGBA(1.f, 1.f, 1.f, 1.f);
-			spriteBatch.draw(mCoreSpritesheetDefinition, mCoreSpritesheetDefinition.getSpriteFrame(CoreTextureNames.TEXTURE_KEY_END_RIGHT), mPositionMarker.x, mPositionMarker.y, 7, ICON_SIZE, -0.01f);
-			spriteBatch.draw(mCoreSpritesheetDefinition, mCoreSpritesheetDefinition.getSpriteFrame(CoreTextureNames.TEXTURE_KEY_MID), mPositionMarker.x - lKeyTextWidth, mPositionMarker.y, lKeyTextWidth, ICON_SIZE, -0.01f);
+			spriteBatch.draw(mCoreSpritesheetDefinition, mCoreSpritesheetDefinition.getSpriteFrame(CoreTextureNames.TEXTURE_KEY_END_RIGHT), mPositionMarker.x, mPositionMarker.y, 7, ICON_SIZE, .01f);
+			spriteBatch.draw(mCoreSpritesheetDefinition, mCoreSpritesheetDefinition.getSpriteFrame(CoreTextureNames.TEXTURE_KEY_MID), mPositionMarker.x - lKeyTextWidth, mPositionMarker.y, lKeyTextWidth, ICON_SIZE, .01f);
 			mPositionMarker.x -= lKeyTextWidth;
 			font.setTextColor(ColorConstants.GREY_DARK());
-			font.drawText(keyText, mPositionMarker.x, mPositionMarker.y + ICON_SIZE * .5f - font.fontHeight() * .5f, -0.001f, 1.f);
+			font.drawText(keyText, mPositionMarker.x, mPositionMarker.y + ICON_SIZE * .5f - font.fontHeight() * .5f, .001f, 1.f);
 			mPositionMarker.x -= 7.f;
 
-			spriteBatch.draw(mCoreSpritesheetDefinition, mCoreSpritesheetDefinition.getSpriteFrame(CoreTextureNames.TEXTURE_KEY_END_LEFT), mPositionMarker.x, mPositionMarker.y, 7, ICON_SIZE, -0.01f);
+			spriteBatch.draw(mCoreSpritesheetDefinition, mCoreSpritesheetDefinition.getSpriteFrame(CoreTextureNames.TEXTURE_KEY_END_LEFT), mPositionMarker.x, mPositionMarker.y, 7, ICON_SIZE, .01f);
 			mPositionMarker.x -= SPACING;
 		}
 	}

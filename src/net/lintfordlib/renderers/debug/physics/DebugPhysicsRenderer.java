@@ -157,7 +157,7 @@ public class DebugPhysicsRenderer extends BaseRenderer {
 				final var t = (i + 1) % lNumVertices;
 				final var v1 = lVertices.get(t);
 
-				lLineBatch.draw(v0.x * lUnitToPixels, v0.y * lUnitToPixels, v1.x * lUnitToPixels, v1.y * lUnitToPixels, -0.01f, r, g, b, 1.f);
+				lLineBatch.draw(v0.x * lUnitToPixels, v0.y * lUnitToPixels, v1.x * lUnitToPixels, v1.y * lUnitToPixels, .01f, r, g, b, 1.f);
 			}
 
 			lLineBatch.end();
@@ -188,10 +188,10 @@ public class DebugPhysicsRenderer extends BaseRenderer {
 			final var bl_y = sy + linevx * lHeight;
 
 			lLineBatch.begin(core.gameCamera());
-			lLineBatch.draw(tl_x, tl_y, tr_x, tr_y, -0.01f, r, g, b, 1.f);
-			lLineBatch.draw(tr_x, tr_y, br_x, br_y, -0.01f, r, g, b, 1.f);
-			lLineBatch.draw(br_x, br_y, bl_x, bl_y, -0.01f, r, g, b, 1.f);
-			lLineBatch.draw(bl_x, bl_y, tl_x, tl_y, -0.01f, r, g, b, 1.f);
+			lLineBatch.draw(tl_x, tl_y, tr_x, tr_y, .01f, r, g, b, 1.f);
+			lLineBatch.draw(tr_x, tr_y, br_x, br_y, .01f, r, g, b, 1.f);
+			lLineBatch.draw(br_x, br_y, bl_x, bl_y, .01f, r, g, b, 1.f);
+			lLineBatch.draw(bl_x, bl_y, tl_x, tl_y, .01f, r, g, b, 1.f);
 			lLineBatch.end();
 
 			lLineBatch.begin(core.gameCamera());

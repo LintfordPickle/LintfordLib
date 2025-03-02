@@ -275,7 +275,7 @@ public class MenuKeyBindEntry extends MenuEntry implements IKeyInputCallback {
 			lLineBatch.begin(core.HUD());
 			lLineBatch.changeColorNormalized(.7f, .04f, .02f, 1.f);
 			lLineBatch.lineType(GL11.GL_LINES);
-			lLineBatch.drawRect(this, -0.1f);
+			lLineBatch.drawRect(this, .1f);
 			lLineBatch.end();
 		}
 

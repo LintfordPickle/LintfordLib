@@ -175,8 +175,8 @@ public class Texture {
 			filename = filename.replace("//", "/");
 
 			final var lImage = createFlipped(ImageIO.read(lInputStream));
-
 			final var lNewTexture = createTexture(textureName, filename, lImage, filter);
+
 			lNewTexture.fileSizeOnLoad(0);
 			lNewTexture.reloadable(false);
 

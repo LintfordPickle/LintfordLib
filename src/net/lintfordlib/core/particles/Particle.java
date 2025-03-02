@@ -98,7 +98,7 @@ public class Particle {
 
 		worldPositionX = 0.f;
 		worldPositionY = 0.f;
-		zDepth = -.01f;
+		zDepth = .01f;
 
 		vx = 0f;
 		vy = 0f;

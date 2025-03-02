@@ -19,8 +19,7 @@ public class Camera implements ICamera {
 	// --------------------------------------
 
 	public static final float Z_NEAR = 0.0f;
-
-	public static final float Z_FAR = -10.0f;
+	public static final float Z_FAR = 10.0f;
 
 	protected static final float ZOOM_ACCELERATE_AMOUNT = 0.1f;
 	protected static final float DRAG = 0.9365f;
@@ -234,6 +233,7 @@ public class Camera implements ICamera {
 
 	public void createView() {
 		mViewMatrix.setIdentity();
+		mViewMatrix.createLookAt(0.f, 0.f, 0.f, 0.f, 0.f, -1f, 0.f, 1.f, 0.f);
 		mViewMatrix.scale(mZoomFactor, mZoomFactor, 1f);
 		mViewMatrix.translate(-mInternalPosition.x * getZoomFactor(), -mInternalPosition.y * getZoomFactor(), 0f);
 	}

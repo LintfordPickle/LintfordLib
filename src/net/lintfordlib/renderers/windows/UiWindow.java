@@ -416,7 +416,7 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 		if (mDrawWindowBackground) {
 			lSpritebatch.begin(core.HUD());
 			lSpritebatch.setColorRGBA(1.f, 1.f, 1.f, mWindowAlpha);
-			TextureBatch9Patch.drawBackground(lSpritebatch, mCoreSpritesheet, 32, x, y, w, h, false, -0.01f);
+			TextureBatch9Patch.drawBackground(lSpritebatch, mCoreSpritesheet, 32, x, y, w, h, false, .01f);
 			lSpritebatch.end();
 		}
 
@@ -426,7 +426,7 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 		if (mWindowTitle != null) {
 			lUiHeaderFont.begin(core.HUD());
 			lUiHeaderFont.setTextColorRGBA(1.f, 1.f, 1.f, 1.f);
-			lUiHeaderFont.drawText(mWindowTitle, lTitleX, lTitleY + getTitleBarHeight() * .5f - lUiHeaderFont.fontHeight() * .5f + 3.f, -0.01f, 1f);
+			lUiHeaderFont.drawText(mWindowTitle, lTitleX, lTitleY + getTitleBarHeight() * .5f - lUiHeaderFont.fontHeight() * .5f + 3.f, .01f, 1f);
 			lUiHeaderFont.end();
 		}
 

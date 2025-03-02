@@ -131,13 +131,13 @@ public class UiHorizontalEntryGroup extends UIWidget {
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
 			spriteBatch.begin(core.HUD());
 			spriteBatch.setColor(ColorConstants.Debug_Transparent_Magenta);
-			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, mX, mY, mW, mH, -0.01f);
+			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, mX, mY, mW, mH, .01f);
 			spriteBatch.end();
 		}
 
 		final int lNumChildEntries = mChildWidgets.size();
 		for (int i = 0; i < lNumChildEntries; i++) {
-			mChildWidgets.get(i).draw(core, spriteBatch, coreSpritesheetDefinition, textFont, componentZDepth + 0.01f);
+			mChildWidgets.get(i).draw(core, spriteBatch, coreSpritesheetDefinition, textFont, componentZDepth - .01f);
 		}
 	}
 

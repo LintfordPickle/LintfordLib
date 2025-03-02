@@ -140,7 +140,7 @@ public class UiBar {
 
 		textFont.setTextColorRGBA(1.f, 1.f, 1.f, 1.f);
 		textFont.setShadowColorRGBA(0.f, 0.f, 0.f, 1.f);
-		textFont.drawShadowedText(mLabel, x, y + h / 2 - textFont.fontHeight() / 2, -0.01f, 1.f, 1.f, 1.f);
+		textFont.drawShadowedText(mLabel, x, y + h / 2 - textFont.fontHeight() / 2, componentZDepth, 1.f, 1.f, 1.f);
 
 		// Outer
 		spriteBatch.setColor(mUiBarOuterColor);

@@ -109,11 +109,11 @@ public class ToolTip {
 		// Render the background
 		mSpriteBatch.begin(core.HUD());
 		mSpriteBatch.setColorRGBA(.21f, .11f, .13f, 1.f);
-		draw9Patch(mSpriteBatch, 32.f, lPositionX - lTextPadding, lPositionY - lTextPadding, TOOLTIP_PANEL_WIDTH + lTextPadding * 2, lToolTipTextHeight + lTextPadding * 3, -0.01f);
+		draw9Patch(mSpriteBatch, 32.f, lPositionX - lTextPadding, lPositionY - lTextPadding, TOOLTIP_PANEL_WIDTH + lTextPadding * 2, lToolTipTextHeight + lTextPadding * 3, .01f);
 		mSpriteBatch.end();
 
 		mMenuFont.begin(core.HUD());
-		mMenuFont.drawText(lToolTipText, lPositionX + lTextPadding, lPositionY, -0.01f, 1.f, 350.f);
+		mMenuFont.drawText(lToolTipText, lPositionX + lTextPadding, lPositionY, .01f, 1.f, 350.f);
 		mMenuFont.end();
 	}
 

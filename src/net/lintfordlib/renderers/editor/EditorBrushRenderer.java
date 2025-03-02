@@ -104,10 +104,10 @@ public class EditorBrushRenderer extends BaseRenderer {
 		final var lFontUnit = mRendererManager.uiTextFont();
 
 		lFontUnit.begin(core.HUD());
-		lFontUnit.drawText("brush: " + lEditorBrush.brushLayer(), lHudBounds.left() + 5.f, lHudBounds.bottom() - lFontUnit.fontHeight() - 5.f, -0.01f, 1.f);
+		lFontUnit.drawText("brush: " + lEditorBrush.brushLayer(), lHudBounds.left() + 5.f, lHudBounds.bottom() - lFontUnit.fontHeight() - 5.f, .01f, 1.f);
 		final var lDoingWhat = mEditorBrushController.doingWhatMessage();
 		if (lDoingWhat != null) {
-			lFontUnit.drawText(lDoingWhat, lHudBounds.left() + 5.f, lHudBounds.bottom() - lFontUnit.fontHeight() * 2 - 5.f, -0.01f, 1.f);
+			lFontUnit.drawText(lDoingWhat, lHudBounds.left() + 5.f, lHudBounds.bottom() - lFontUnit.fontHeight() * 2 - 5.f, .01f, 1.f);
 		}
 		lFontUnit.end();
 
@@ -125,10 +125,10 @@ public class EditorBrushRenderer extends BaseRenderer {
 
 		if (mEditorBrushController.showPosition()) {
 			var mouseDebugText = String.format("(%.2f,%.2f)", mMouseX, mMouseY);
-			lFontUnit.drawText(mouseDebugText, mMouseX + lFontXOffset, lMouseTextPositionY += lFontYOffset, -0.001f, lFontSize);
+			lFontUnit.drawText(mouseDebugText, mMouseX + lFontXOffset, lMouseTextPositionY += lFontYOffset, .001f, lFontSize);
 
 			var cursorDebugText = String.format("(%.2f,%.2f)", lCursorWorldX, lCursorWorldY);
-			lFontUnit.drawText(cursorDebugText, lCursorWorldX + lFontXOffset, lCursorTextPositionY += lFontYOffset, -0.001f, lFontSize);
+			lFontUnit.drawText(cursorDebugText, lCursorWorldX + lFontXOffset, lCursorTextPositionY += lFontYOffset, .001f, lFontSize);
 		}
 
 		lFontUnit.end();

@@ -105,7 +105,7 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 	protected float mInputTimer;
 	private boolean mIsinitialized;
 	private boolean mResourcesLoaded;
-	public float mZ;
+	protected float mZ;
 
 	// padding is the spacing within the component
 	protected float mTopPadding;

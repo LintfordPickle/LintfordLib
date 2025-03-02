@@ -526,7 +526,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 			mScrollBar.positionOffset.y = lScreenOffset.y;
 
 			mScrollBar.scrollBarAlpha(screen.screenColor.a);
-			mScrollBar.draw(core, lSpriteBatch, mCoreSpritesheet, -0.1f);
+			mScrollBar.draw(core, lSpriteBatch, mCoreSpritesheet, .1f);
 		}
 	}
 

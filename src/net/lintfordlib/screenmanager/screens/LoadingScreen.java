@@ -124,7 +124,7 @@ public class LoadingScreen extends Screen {
 			final var lWindowHeight = core.config().display().windowHeight();
 			final var lTextPadding = 5.0f;
 
-			final String lLoadingText = "Loading ...";
+			final var lLoadingText = "Loading ...";
 			final var lTextWidth = mFontUnit.getStringWidth(lLoadingText);
 			final var lTextHeight = mFontUnit.getStringHeight(lLoadingText);
 
@@ -133,7 +133,7 @@ public class LoadingScreen extends Screen {
 
 			mFontUnit.begin(core.HUD());
 			mFontUnit.setTextColorRGBA(1.f, 1.f, 1.f, 1.f);
-			mFontUnit.drawText(lLoadingText, lTextPositionX, lTextPositionY, -0.1f, 1f, -1);
+			mFontUnit.drawText(lLoadingText, lTextPositionX, lTextPositionY, .1f, 1f, -1);
 			mFontUnit.end();
 		}
 	}

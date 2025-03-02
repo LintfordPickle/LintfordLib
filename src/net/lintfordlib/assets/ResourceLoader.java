@@ -249,7 +249,7 @@ public abstract class ResourceLoader extends Thread {
 
 		mSystemFont.begin(lHud);
 		mSystemFont.setTextColorRGB(mTextColorR, mTextColorG, mTextColorB);
-		mSystemFont.drawText(mStringBuilder.toString(), lLeft + 5.f, lBottom - mSystemFont.fontHeight() - 5.f, -0.01f, 1.f);
+		mSystemFont.drawText(mStringBuilder.toString(), lLeft + 5.f, lBottom - mSystemFont.fontHeight() - 5.f, .01f, 1.f);
 		mSystemFont.end();
 	}
 

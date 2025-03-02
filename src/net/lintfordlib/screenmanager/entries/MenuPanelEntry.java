@@ -57,7 +57,7 @@ public class MenuPanelEntry extends MenuEntry {
 
 			lSpriteBatch.begin(core.HUD());
 			lSpriteBatch.setColorRGBA(1.f, 1.f, 1.f, lParentScreenAlpha);
-			TextureBatch9Patch.drawBackground(lSpriteBatch, mCoreSpritesheet, lTileSize, lScreenOffset.x + mX, lScreenOffset.y + mY, mW, mH, false, -0.01f);
+			TextureBatch9Patch.drawBackground(lSpriteBatch, mCoreSpritesheet, lTileSize, lScreenOffset.x + mX, lScreenOffset.y + mY, mW, mH, false, .01f);
 			lSpriteBatch.end();
 		}
 

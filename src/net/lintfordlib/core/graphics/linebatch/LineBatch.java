@@ -341,17 +341,17 @@ public class LineBatch {
 
 	public void drawCircle(float positionX, float positionY, float angle, float radius, int segCount, float r, float g, float b, boolean drawAngleMarker) {
 		if (drawAngleMarker)
-			draw(positionX, positionY, -0.01f, 1f, 1f, 1f, 1f);
+			draw(positionX, positionY, .01f, 1f, 1f, 1f, 1f);
 
 		final int lNumSegments = segCount / 2;
 		for (float i = 0; i < 2 * Math.PI; i += Math.PI / lNumSegments) {
 			float xx = positionX + (float) (radius * Math.cos(angle + i));
 			float yy = positionY + (float) (radius * Math.sin(angle + i));
 
-			draw(xx, yy, -0.01f, r, g, b, 1f);
+			draw(xx, yy, 0.01f, r, g, b, 1f);
 		}
 
-		draw(positionX + (float) (radius * Math.cos(angle)), positionY + (float) (radius * Math.sin(angle)), -0.01f, 1f, 1f, 1f, 1f);
+		draw(positionX + (float) (radius * Math.cos(angle)), positionY + (float) (radius * Math.sin(angle)), .01f, 1f, 1f, 1f, 1f);
 	}
 
 	public void draw(float point0X, float point0Y, float point1X, float point1Y, float zDepth, float red, float green, float blue) {

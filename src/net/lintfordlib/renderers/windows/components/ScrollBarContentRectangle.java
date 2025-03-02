@@ -72,7 +72,7 @@ public class ScrollBarContentRectangle extends Rectangle {
 		spriteBatch.begin(core.HUD());
 		spriteBatch.setColorRGBA(1.f, 1.f, 1.f, 0.f);
 		final var lScrolbarWidth = scrollBarEnabled ? ScrollBar.BAR_WIDTH : 0.f;
-		spriteBatch.draw((Texture) null, 0, 0, 1, 1, rectangle.x() + mDepthPadding, rectangle.y() + mDepthPadding, rectangle.width() - mDepthPadding * 2 - lScrolbarWidth, rectangle.height() - mDepthPadding * 2, -10.f);
+		spriteBatch.draw((Texture) null, 0, 0, 1, 1, rectangle.x() + mDepthPadding, rectangle.y() + mDepthPadding, rectangle.width() - mDepthPadding * 2 - lScrolbarWidth, rectangle.height() - mDepthPadding * 2, 10.f);
 		spriteBatch.end();
 
 		// GL_EQUAL: Passes if ( ref & mask ) = ( stencil & mask ).

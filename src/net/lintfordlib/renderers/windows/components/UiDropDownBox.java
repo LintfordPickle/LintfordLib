@@ -314,7 +314,7 @@ public class UiDropDownBox<T> extends UIWidget implements IInputClickedFocusMana
 					entityColor.setFromColor(ColorConstants.TextEntryColor);
 
 				textFont.setTextColor(entityColor);
-				textFont.drawText(lItem.name, mX + 5.f, lYPos, -0.01f, 1.f, -1);
+				textFont.drawText(lItem.name, mX + 5.f, lYPos, .01f, 1.f, -1);
 				lYPos += ITEM_HEIGHT;
 			}
 

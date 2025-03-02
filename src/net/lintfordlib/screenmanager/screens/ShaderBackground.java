@@ -202,7 +202,7 @@ public abstract class ShaderBackground extends Screen {
 
 		lTextureBatch.begin(core.HUD(), mBackgroundShader);
 		lTextureBatch.setColorRGBA(1.f, 1.f, 1.f, 1.f);
-		lTextureBatch.draw((Texture) null, 0, 0, 1, 1, lX, lY, lWidth, lHeight, -0.01f);
+		lTextureBatch.draw((Texture) null, 0, 0, 1, 1, lX, lY, lWidth, lHeight, .01f);
 		lTextureBatch.end();
 	}
 }

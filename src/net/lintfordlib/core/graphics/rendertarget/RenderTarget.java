@@ -2,6 +2,7 @@ package net.lintfordlib.core.graphics.rendertarget;
 
 import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER;
 
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -362,7 +363,7 @@ public class RenderTarget {
 				return null;
 			}
 
-			final var lImage = ImageIO.read(lImageFile);
+			final var lImage = createFlipped(ImageIO.read(lImageFile));
 
 			Debug.debugManager().logger().v(Texture.class.getSimpleName(), "Loaded texture from file: " + filename);
 
@@ -407,13 +408,29 @@ public class RenderTarget {
 		lImage.setRGB(0, 0, width, height, lTextureData, 0, width);
 
 		try {
-			ImageIO.write(lImage, "png", new File(fileLocation));
+			ImageIO.write(createFlipped(lImage), "png", new File(fileLocation));
 		} catch (IOException e) {
 			Debug.debugManager().logger().e(Texture.class.getSimpleName(), "Error saving png to disk : " + fileLocation);
 			return false;
 		}
 
 		return true;
+	}
+
+	private static BufferedImage createFlipped(BufferedImage image) {
+		AffineTransform at = new AffineTransform();
+		at.concatenate(AffineTransform.getScaleInstance(1, -1));
+		at.concatenate(AffineTransform.getTranslateInstance(0, -image.getHeight()));
+		return createTransformed(image, at);
+	}
+
+	private static BufferedImage createTransformed(BufferedImage image, AffineTransform at) {
+		final var newImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
+		final var g = newImage.createGraphics();
+		g.transform(at);
+		g.drawImage(image, 0, 0, null);
+		g.dispose();
+		return newImage;
 	}
 
 }

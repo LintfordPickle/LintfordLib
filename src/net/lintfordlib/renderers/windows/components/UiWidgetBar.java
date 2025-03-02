@@ -88,9 +88,9 @@ public class UiWidgetBar extends UIWidget {
 
 			spriteBatch.begin(core.HUD());
 			spriteBatch.setColorRGBA(0.f, 0.f, 0.f, 1.f);
-			spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX + HorizontalPadding, mY + 25, mW - HorizontalPadding * 2.f, BAR_HEIGHT, -0.1f);
+			spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX + HorizontalPadding, mY + 25, mW - HorizontalPadding * 2.f, BAR_HEIGHT, .1f);
 			spriteBatch.setColor(UiBarColor);
-			spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, inner_x + lInnerBorderPadding, inner_y + lInnerBorderPadding, inner_w, inner_h, -0.1f);
+			spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, inner_x + lInnerBorderPadding, inner_y + lInnerBorderPadding, inner_w, inner_h, .1f);
 			spriteBatch.end();
 		}
 	}

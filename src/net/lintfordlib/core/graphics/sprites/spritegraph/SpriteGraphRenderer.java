@@ -61,7 +61,7 @@ public class SpriteGraphRenderer extends SpriteBatch {
 
 		if (RENDER_DEBUG) {
 			renderSpriteTreeNodeDebug(core, spriteGraphInstance, spriteGraphInstance.rootNode());
-			Debug.debugManager().drawers().drawPointImmediate(core.gameCamera(), spriteGraphInstance.x, spriteGraphInstance.y, -0.01f, 1f, 1f, 1f, 1f);
+			Debug.debugManager().drawers().drawPointImmediate(core.gameCamera(), spriteGraphInstance.x, spriteGraphInstance.y, .01f, 1f, 1f, 1f, 1f);
 		}
 	}
 
@@ -72,7 +72,7 @@ public class SpriteGraphRenderer extends SpriteBatch {
 
 			if (spriteGraphNode.spriteInstance() != null) {
 				setColor(ColorConstants.getColor(lAttachment.attachmentColorTint()));
-				draw(lSpritesheetDefinition, spriteGraphNode.spriteInstance(), spriteGraphNode.spriteInstance(), -0.1f);
+				draw(lSpritesheetDefinition, spriteGraphNode.spriteInstance(), spriteGraphNode.spriteInstance(), .1f);
 			}
 
 			if (RENDER_DEBUG) {
@@ -93,7 +93,7 @@ public class SpriteGraphRenderer extends SpriteBatch {
 			final var lPositionX = spriteGraphNode.positionX();
 			final var lPositionY = spriteGraphNode.positionY();
 
-			Debug.debugManager().drawers().drawPointImmediate(core.gameCamera(), lPositionX, lPositionY, -0.01f, 0f, 1f, 0f, 1f);
+			Debug.debugManager().drawers().drawPointImmediate(core.gameCamera(), lPositionX, lPositionY, .01f, 0f, 1f, 0f, 1f);
 		}
 
 		{ // anchors - yellow
@@ -109,7 +109,7 @@ public class SpriteGraphRenderer extends SpriteBatch {
 					final var lAnchorWorldX = spriteGraphNode.positionX() + (lFlipHorizontal ? -lAnchorPoint.localX() : lAnchorPoint.localX()) * lSpriteFrame.scaleX();
 					final var lAnchorWorldY = spriteGraphNode.positionY() + (lFlipVertical ? -lAnchorPoint.localY() : lAnchorPoint.localY()) * lSpriteFrame.scaleY();
 
-					Debug.debugManager().drawers().drawPointImmediate(core.gameCamera(), lAnchorWorldX, lAnchorWorldY, -0.01f, 1f, 1f, 0f, 1f);
+					Debug.debugManager().drawers().drawPointImmediate(core.gameCamera(), lAnchorWorldX, lAnchorWorldY, .01f, 1f, 1f, 0f, 1f);
 				}
 			}
 		}

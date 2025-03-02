@@ -41,6 +41,6 @@ public class DebugStatTagInt extends DebugStatTag<Integer> {
 	@Override
 	public void draw(FontUnit fontUnit, float positionX, float positionY) {
 		fontUnit.setTextColorRGBA(mRed, mGreen, mBlue, 1.f);
-		fontUnit.drawText(String.format("%s : %d", mLabel, mValue), positionX, positionY, -0.01f, 1.f, -1);
+		fontUnit.drawText(String.format("%s : %d", mLabel, mValue), positionX, positionY, .01f, 1.f, -1);
 	}
 }

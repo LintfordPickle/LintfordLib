@@ -336,7 +336,7 @@ public class ScrollBarHorizontal extends Rectangle implements IInputProcessor, I
 		else
 			spriteBatch.setColorWhite();
 
-		spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_SCROLLBAR_RIGHT, mRightArrowRect, zDepth - 0.01f);
+		spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_SCROLLBAR_RIGHT, mRightArrowRect, zDepth + 0.01f);
 		spriteBatch.end();
 
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {

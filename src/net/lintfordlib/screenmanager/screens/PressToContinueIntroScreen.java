@@ -60,9 +60,9 @@ public class PressToContinueIntroScreen extends Screen {
 
 		mTextureBatch = new TextureBatchPCT();
 
-		mBackgroundZDepth = -1.0f;
-		mContentZDepth = -0.5f;
-		mFlashZDepth = -0.01f;
+		mBackgroundZDepth = 1.0f;
+		mContentZDepth = .5f;
+		mFlashZDepth = .01f;
 	}
 
 	// --------------------------------------

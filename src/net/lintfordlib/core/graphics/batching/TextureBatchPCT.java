@@ -589,22 +589,22 @@ public class TextureBatchPCT {
 		final var x0 = dx;
 		final var y0 = dy + dh;
 		final var u0 = (sx + pcx) / rtWidth;
-		final var v0 = (sy + sh - pcy) / rtHeight;
+		final var v0 = (sy + pcy) / rtHeight;
 
 		final var x1 = dx;
 		final var y1 = dy;
 		final var u1 = (sx + pcx) / rtWidth;
-		final var v1 = (sy + pcy) / rtHeight;
+		final var v1 = (sy + sh - pcy) / rtHeight;
 
 		final var x2 = dx + dw;
 		final var y2 = dy;
 		final var u2 = (sx + sw - pcx) / rtWidth;
-		final var v2 = (sy + pcy) / rtHeight;
+		final var v2 = (sy + sh - pcy) / rtHeight;
 
 		final var x3 = dx + dw;
 		final var y3 = dy + dh;
 		final var u3 = (sx + sw - pcx) / rtWidth;
-		final var v3 = (sy + sh - pcy) / rtHeight;
+		final var v3 = (sy + pcy) / rtHeight;
 
 		addVertToBuffer(x0, y0, zDepth, 1f, u0, v0, lTextureSlotIndex);
 		addVertToBuffer(x1, y1, zDepth, 1f, u1, v1, lTextureSlotIndex);

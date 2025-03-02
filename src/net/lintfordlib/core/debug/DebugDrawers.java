@@ -29,6 +29,8 @@ public class DebugDrawers {
 	protected static final String VERT_FILENAME = "/res/shaders/shader_basic_pt.vert";
 	protected static final String FRAG_FILENAME = "/res/shaders/shader_basic_pt.frag";
 
+	private static final float DEBUG_DRAWERS_Z_DEPTH = 0.01f;
+
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
@@ -122,37 +124,41 @@ public class DebugDrawers {
 	// 'Immediate' mode renderers
 
 	public void drawPointImmediate(ICamera camera, float x, float y) {
-		drawPointImmediate(camera, x, y, -0.01f);
+		drawPointImmediate(camera, x, y, DEBUG_DRAWERS_Z_DEPTH);
 	}
 
-	public void drawPointImmediate(ICamera camera, float x, float y, float z) {
-		drawPointImmediate(camera, x, y, z, 1f, 1f, 1f, 1f);
+	public void drawPointImmediate(ICamera camera, float x, float y, float zDepth) {
+		drawPointImmediate(camera, x, y, zDepth, 1f, 1f, 1f, 1f);
 	}
 
-	public void drawPointImmediate(ICamera camera, float x, float y, float z, float red, float green, float blue, float alpha) {
+	public void drawPointImmediate(ICamera camera, float x, float y, float red, float green, float blue, float alpha) {
+		drawPointImmediate(camera, x, y, DEBUG_DRAWERS_Z_DEPTH, 1f, 1f, 1f, 1f);
+	}
+
+	public void drawPointImmediate(ICamera camera, float x, float y, float zDepth, float red, float green, float blue, float alpha) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
 		mImmediatePointBatch.begin(camera);
-		mImmediatePointBatch.draw(x, y, z, red, green, blue, alpha);
+		mImmediatePointBatch.draw(x, y, zDepth, red, green, blue, alpha);
 		mImmediatePointBatch.end();
 	}
 
 	public void drawLineImmediate(ICamera camera, float startX, float startY, float endX, float endY) {
-		drawLineImmediate(camera, startX, startY, endX, endY, -0.01f);
+		drawLineImmediate(camera, startX, startY, endX, endY, DEBUG_DRAWERS_Z_DEPTH);
 	}
 
-	public void drawLineImmediate(ICamera camera, float startX, float startY, float endX, float endY, float z) {
-		drawLineImmediate(camera, startX, startY, endX, endY, z, 1f, 1f, 1f);
+	public void drawLineImmediate(ICamera camera, float startX, float startY, float endX, float endY, float zDepth) {
+		drawLineImmediate(camera, startX, startY, endX, endY, zDepth, 1f, 1f, 1f);
 	}
 
-	public void drawLineImmediate(ICamera camera, float startX, float startY, float endX, float endY, float z, float red, float green, float blue) {
+	public void drawLineImmediate(ICamera camera, float startX, float startY, float endX, float endY, float zDepth, float red, float green, float blue) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
 		mLineBatch.lineType(GL11.GL_LINES);
 		mLineBatch.begin(camera);
-		mLineBatch.draw(startX, startY, endX, endY, -0.01f, red, green, blue);
+		mLineBatch.draw(startX, startY, endX, endY, zDepth, red, green, blue);
 		mLineBatch.end();
 	}
 
@@ -163,31 +169,44 @@ public class DebugDrawers {
 		drawRectImmediate(camera, destRectangle.left(), destRectangle.top(), destRectangle.width(), destRectangle.height());
 	}
 
-	public void drawRectImmediate(ICamera camera, float x, float y, float width, float height) {
-		drawRectImmediate(camera, x, y, width, height, 1f, 1f, 1f);
-	}
-
 	public void drawRectImmediate(ICamera camera, Rectangle destRectangle, float red, float green, float blue) {
-		drawRectImmediate(camera, destRectangle.left(), destRectangle.top(), destRectangle.width(), destRectangle.height(), red, green, blue);
+		if (destRectangle == null)
+			return;
+
+		drawRectImmediate(camera, destRectangle.left(), destRectangle.top(), destRectangle.width(), destRectangle.height(), DEBUG_DRAWERS_Z_DEPTH, red, green, blue);
 	}
 
-	public void drawRectImmediate(ICamera camera, Rectangle destRectangle, float lineWidth, float red, float green, float blue) {
-		drawRectImmediate(camera, destRectangle.left(), destRectangle.top(), destRectangle.width(), destRectangle.height(), lineWidth, red, green, blue);
+	public void drawRectImmediate(ICamera camera, Rectangle destRectangle, float zDepth) {
+		drawRectImmediate(camera, destRectangle.left(), destRectangle.top(), destRectangle.width(), destRectangle.height(), DEBUG_DRAWERS_Z_DEPTH, 1.f, 1.f, 1.f);
+	}
+
+	public void drawRectImmediate(ICamera camera, Rectangle destRectangle, float zDepth, float red, float green, float blue) {
+		drawRectImmediate(camera, destRectangle.left(), destRectangle.top(), destRectangle.width(), destRectangle.height(), zDepth, red, green, blue);
+	}
+
+	public void drawRectImmediate(ICamera camera, float x, float y, float width, float height) {
+		drawRectImmediate(camera, x, y, width, height, DEBUG_DRAWERS_Z_DEPTH, 1f, 1f, 1f);
 	}
 
 	public void drawRectImmediate(ICamera camera, float x, float y, float width, float height, float red, float green, float blue) {
-		drawRectImmediate(camera, x, y, width, height, 1f, red, green, blue);
+		drawRectImmediate(camera, x, y, width, height, DEBUG_DRAWERS_Z_DEPTH, red, green, blue);
 	}
 
-	public void drawRectImmediate(ICamera camera, float x, float y, float width, float height, float lineWidth, float red, float green, float blue) {
+	public void drawRectImmediate(ICamera camera, float x, float y, float width, float height, float zDepth, float red, float green, float blue) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
 		mImmediateLineBatch.lineType(GL11.GL_LINES);
-		mImmediateLineBatch.lineWidth(lineWidth);
 		mImmediateLineBatch.begin(camera);
-		mImmediateLineBatch.drawRect(x, y, width, height, -.01f, red, green, blue);
+		mImmediateLineBatch.drawRect(x, y, width, height, DEBUG_DRAWERS_Z_DEPTH, red, green, blue);
 		mImmediateLineBatch.end();
+	}
+
+	public void rectWidth(float newWidth) {
+		if (newWidth <= 1)
+			newWidth = 1.f;
+
+		mImmediateLineBatch.lineWidth(newWidth);
 	}
 
 	public void drawCircleImmediate(ICamera camera, float x, float y, float radius) {
@@ -207,6 +226,10 @@ public class DebugDrawers {
 	}
 
 	public void drawCircleImmediate(ICamera camera, float x, float y, float radius, int segCount, int glLineType, float glLineWidth, float r, float g, float b) {
+		drawCircleImmediate(camera, x, y, DEBUG_DRAWERS_Z_DEPTH, radius, segCount, glLineType, glLineWidth, r, g, b);
+	}
+
+	public void drawCircleImmediate(ICamera camera, float x, float y, float zDepth, float radius, int segCount, int glLineType, float glLineWidth, float r, float g, float b) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
@@ -220,10 +243,10 @@ public class DebugDrawers {
 			float xx = x + (float) (radius * Math.cos(i));
 			float yy = y + (float) (radius * Math.sin(i));
 
-			mImmediateLineBatch.draw(xx, yy, -0.01f, r, g, b, 1f);
+			mImmediateLineBatch.draw(xx, yy, DEBUG_DRAWERS_Z_DEPTH, r, g, b, 1f);
 		}
 
-		mImmediateLineBatch.draw(x + (float) (radius * Math.cos(0)), y + (float) (radius * Math.sin(0)), -0.01f, 1f, 1f, 1f, 1f);
+		mImmediateLineBatch.draw(x + (float) (radius * Math.cos(0)), y + (float) (radius * Math.sin(0)), DEBUG_DRAWERS_Z_DEPTH, 1f, 1f, 1f, 1f);
 		mImmediateLineBatch.end();
 	}
 
@@ -327,7 +350,7 @@ public class DebugDrawers {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
-		mPointBatch.draw(x, y, -0.01f, red, green, blue, alpha);
+		mPointBatch.draw(x, y, DEBUG_DRAWERS_Z_DEPTH, red, green, blue, alpha);
 	}
 
 	public void drawLine(float startX, float startY, float endX, float endY) {
@@ -341,7 +364,7 @@ public class DebugDrawers {
 		if (!mLineBatch.isDrawing())
 			return;
 
-		mLineBatch.draw(startX, startY, endX, endY, -0.01f, red, green, blue);
+		mLineBatch.draw(startX, startY, endX, endY, DEBUG_DRAWERS_Z_DEPTH, red, green, blue);
 	}
 
 	public void drawRect(Rectangle rectangle, float red, float green, float blue) {
@@ -356,7 +379,7 @@ public class DebugDrawers {
 			return;
 
 		mLineBatch.lineType(GL11.GL_LINES);
-		mLineBatch.drawRect(x, y, width, height, -.01f, red, green, blue);
+		mLineBatch.drawRect(x, y, width, height, DEBUG_DRAWERS_Z_DEPTH, red, green, blue);
 	}
 
 	public void drawCircle(float x, float y, float radius) {
@@ -382,10 +405,10 @@ public class DebugDrawers {
 			float xx = x + (float) (radius * Math.cos(i));
 			float yy = y + (float) (radius * Math.sin(i));
 
-			mLineBatch.draw(xx, yy, -0.01f, 1f, 1f, 1f, 1f);
+			mLineBatch.draw(xx, yy, DEBUG_DRAWERS_Z_DEPTH, 1f, 1f, 1f, 1f);
 		}
 
-		mLineBatch.draw(x + (float) (radius * Math.cos(-initialAngle)), y + (float) (radius * Math.sin(-initialAngle)), -0.01f, 1f, 1f, 1f, 1f);
+		mLineBatch.draw(x + (float) (radius * Math.cos(-initialAngle)), y + (float) (radius * Math.sin(-initialAngle)), DEBUG_DRAWERS_Z_DEPTH, 1f, 1f, 1f, 1f);
 	}
 
 	public void endLineRenderer() {
@@ -414,7 +437,7 @@ public class DebugDrawers {
 		}
 
 		mSystemFontUnit.setTextColorRGBA(1.f, 1.f, 1.f, 1.f);
-		mSystemFontUnit.drawText(text, x, y, -.01f, scale);
+		mSystemFontUnit.drawText(text, x, y, DEBUG_DRAWERS_Z_DEPTH, scale);
 	}
 
 	public void endTextRenderer() {

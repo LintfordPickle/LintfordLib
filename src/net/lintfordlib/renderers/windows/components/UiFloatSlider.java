@@ -162,7 +162,7 @@ public class UiFloatSlider extends UIWidget {
 		final var lAmtText = String.format("%.2f", mCurrentValue);
 		if (mDrawLabel)
 			textFont.drawText(mSliderLabel, mX, lUpperYPosition - textFont.fontHeight() * .5f, componentZDepth, 1f);
-		textFont.drawText(lAmtText, mX + mW - textFont.getStringWidth(lAmtText), lUpperYPosition - textFont.fontHeight() * .5f, -0.01f, 1f);
+		textFont.drawText(lAmtText, mX + mW - textFont.getStringWidth(lAmtText), lUpperYPosition - textFont.fontHeight() * .5f, .01f, 1f);
 		textFont.end();
 	}
 

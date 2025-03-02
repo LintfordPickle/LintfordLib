@@ -118,7 +118,7 @@ public class LintfordMain extends LintfordCore {
 		lTextureBatch.loadResources(mResourceManager);
 		lTextureBatch.begin(mHUD);
 		lTextureBatch.setColorRGBA(1.f, 1.f, 1.f, 1.f);
-		lTextureBatch.draw(lTexture, 0, 0, lSrcWidth, lSrcHeight, -lDstWidth * .5f, -lDstHeight * .5f, lDstWidth, lDstHeight, -0.1f);
+		lTextureBatch.draw(lTexture, 0, 0, lSrcWidth, lSrcHeight, -lDstWidth * .5f, -lDstHeight * .5f, lDstWidth, lDstHeight, .1f);
 		lTextureBatch.end();
 
 		glfwSwapBuffers(windowHandle);

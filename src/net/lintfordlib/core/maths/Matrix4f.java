@@ -146,7 +146,7 @@ public class Matrix4f implements Serializable {
 	public void createOrthoLeftHand(float left, float right, float bottom, float top, float near, float far) {
 		m00 = 2f / (right - left);
 		m11 = 2f / (top - bottom);
-		m22 = (2f / (far - near));
+		m22 = 2f / (far - near);
 
 		m30 = -(right + left) / (right - left);
 		m31 = -(top + bottom) / (top - bottom);
@@ -160,11 +160,77 @@ public class Matrix4f implements Serializable {
 		m11 = 2.f / (top - bottom);
 		m22 = 2.f / (far - near);
 
-		m30 = -(right + left) / (right - left);
-		m31 = -(top + bottom) / (top - bottom);
-		m32 = -(far + near) / (far - near);
+		m30 = -((right + left) / (right - left));
+		m31 = -((top + bottom) / (top - bottom));
+		m32 = -((far + near) / (far - near));
 
 		m33 = 1f;
+	}
+
+	/**
+	 * Set this matrix to be a "lookat" transformation for a right-handed coordinate system, that aligns <code>-z</code> with <code>center - eye</code>.
+	 * 
+	 * @param eyeX    the x-coordinate of the eye/camera location
+	 * @param eyeY    the y-coordinate of the eye/camera location
+	 * @param eyeZ    the z-coordinate of the eye/camera location
+	 * @param centerX the x-coordinate of the point to look at
+	 * @param centerY the y-coordinate of the point to look at
+	 * @param centerZ the z-coordinate of the point to look at
+	 * @param upX     the x-coordinate of the up vector
+	 * @param upY     the y-coordinate of the up vector
+	 * @param upZ     the z-coordinate of the up vector
+	 * @return this
+	 */
+	public void createLookAt(float eyeX, float eyeY, float eyeZ, float centerX, float centerY, float centerZ, float upX, float upY, float upZ) {
+
+		// Compute direction from position to lookAt
+		float dirX, dirY, dirZ;
+		dirX = eyeX - centerX;
+		dirY = eyeY - centerY;
+		dirZ = eyeZ - centerZ;
+
+		// Normalize direction
+		float invDirLength = 1.f / (float) Math.sqrt(dirX * dirX + dirY * dirY + dirZ * dirZ);
+		dirX *= invDirLength;
+		dirY *= invDirLength;
+		dirZ *= invDirLength;
+
+		// left = up x direction
+		float leftX, leftY, leftZ;
+		leftX = upY * dirZ - upZ * dirY;
+		leftY = upZ * dirX - upX * dirZ;
+		leftZ = upX * dirY - upY * dirX;
+
+		// normalize left
+		float invLeftLength = 1.f / (float) Math.sqrt(leftX * leftX + leftY * leftY + leftZ * leftZ);
+		leftX *= invLeftLength;
+		leftY *= invLeftLength;
+		leftZ *= invLeftLength;
+
+		// up = direction x left
+		float upnX = dirY * leftZ - dirZ * leftY;
+		float upnY = dirZ * leftX - dirX * leftZ;
+		float upnZ = dirX * leftY - dirY * leftX;
+
+		m00 = leftX;
+		m01 = upnX;
+		m02 = dirX;
+		m03 = 0.0f;
+
+		m10 = leftY;
+		m11 = upnY;
+		m12 = dirY;
+		m13 = 0.0f;
+
+		m20 = leftZ;
+		m21 = upnZ;
+		m22 = dirZ;
+		m23 = 0.0f;
+
+		m30 = -(leftX * eyeX + leftY * eyeY + leftZ * eyeZ);
+		m31 = -(upnX * eyeX + upnY * eyeY + upnZ * eyeZ);
+		m32 = -(dirX * eyeX + dirY * eyeY + dirZ * eyeZ);
+		m33 = 1.0f;
 	}
 
 	public void translate(Vector3f position) {

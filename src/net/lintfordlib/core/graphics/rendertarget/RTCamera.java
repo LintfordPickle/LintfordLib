@@ -14,7 +14,7 @@ public class RTCamera implements ICamera {
 	// --------------------------------------
 
 	public static final float Z_NEAR = 0.0f;
-	public static final float Z_FAR = -10.0f;
+	public static final float Z_FAR = 10.0f;
 
 	protected static final float ZOOM_ACCELERATE_AMOUNT = 0.1f;
 	protected static final float DRAG = 0.9365f;
@@ -188,18 +188,19 @@ public class RTCamera implements ICamera {
 
 	public void createView() {
 		mViewMatrix.setIdentity();
+		mViewMatrix.createLookAt(0.f, 0.f, 0.f, 0.f, 0.f, -1f, 0.f, 1.f, 0.f);
 		mViewMatrix.scale(mZoomFactor, mZoomFactor, 1f);
 		mViewMatrix.translate((int) (-mInternalPosition.x * getZoomFactor()), (int) (-mInternalPosition.y * getZoomFactor()), 0f);
 	}
 
-	private void createOrtho(final float gameViewportWidth, final float gameViewportheight) {
+	private void createOrtho(float gameViewportWidth, float gameViewportheight) {
 		mProjectionMatrix.setIdentity();
 		mProjectionMatrix.createOrtho(-gameViewportWidth * 0.5f, gameViewportWidth * 0.5f, gameViewportheight * 0.5f, -gameViewportheight * 0.5f, Z_NEAR, Z_FAR);
 	}
 
-	private void updateZoomBounds(final float gameViewportWidth, final float gameViewportheight) {
+	private void updateZoomBounds(float gameViewportWidth, float gameViewportHeight) {
 		mScaledViewportWidth = gameViewportWidth * getZoomFactorOverOne();
-		mScaledViewportHeight = gameViewportheight * getZoomFactorOverOne();
+		mScaledViewportHeight = gameViewportHeight * getZoomFactorOverOne();
 
 		mMinX = mInternalPosition.x - mScaledViewportWidth / 2.0f;
 		mMinY = mInternalPosition.y - mScaledViewportHeight / 2.0f;

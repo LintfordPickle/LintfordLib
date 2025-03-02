@@ -363,58 +363,61 @@ public abstract class UiPanel implements IScrollBarArea, UIWindowChangeListener,
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
 			lSpriteBatch.begin(core.HUD());
 			lSpriteBatch.setColor(ColorConstants.Debug_Transparent_Magenta);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mPanelArea, -0.01f);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mPanelArea, .01f);
 			lSpriteBatch.end();
 		}
 
 		if (mDrawBackground)
-			drawBackground(core, lSpriteBatch, true, -0.02f);
+			drawBackground(core, lSpriteBatch, true, .02f);
 
 		lSpriteBatch.begin(core.HUD());
 		lSpriteBatch.setColorRGBA(1.f, 1.f, 1.f, 1.f);
+
+		final var zDepth = .01f;
 
 		if (mRenderPanelTitle) {
 			mPanelBarHeight = 20.f;
 			lFontUnit.begin(core.HUD());
 			final var lTextWidth = lFontUnit.getStringWidth(mPanelTitle);
-			lFontUnit.drawText(mPanelTitle, mPanelArea.x() + 5.f, mPanelArea.y() + 5.f, -0.01f, 1.f);
+			lFontUnit.drawText(mPanelTitle, mPanelArea.x() + 5.f, mPanelArea.y() + 5.f, zDepth, 1.f);
 			if (mIsPanelOpen && mPanelTitleUnderline)
-				lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mPanelArea.x() + 5.f, mPanelArea.y() + lFontUnit.fontHeight() + 5.f, lTextWidth, 1.f, -0.01f);
+				lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mPanelArea.x() + 5.f, mPanelArea.y() + lFontUnit.fontHeight() + 5.f, lTextWidth, 1.f, zDepth);
 			lFontUnit.end();
 		}
 
 		if (mShowShowLayerButton) {
 			if (mIsLayerVisibleToggleOn) {
-				lSpriteBatch.draw(mHudSpritesheet, mHudSpritesheet.getSpriteInstance("TEXTURE_SHOW_LAYER"), mShowLayerButtonRect, -0.01f);
+				lSpriteBatch.draw(mHudSpritesheet, mHudSpritesheet.getSpriteInstance("TEXTURE_SHOW_LAYER"), mShowLayerButtonRect, zDepth);
 			} else {
-				lSpriteBatch.draw(mHudSpritesheet, mHudSpritesheet.getSpriteInstance("TEXTURE_HIDE_LAYER"), mShowLayerButtonRect, -0.01f);
+				lSpriteBatch.draw(mHudSpritesheet, mHudSpritesheet.getSpriteInstance("TEXTURE_HIDE_LAYER"), mShowLayerButtonRect, zDepth);
 			}
 		}
 
 		if (mShowActiveLayerButton) {
 			if (mIsLayerActiveToggleOn) {
-				lSpriteBatch.draw(mHudSpritesheet, mHudSpritesheet.getSpriteInstance("TEXTURE_SET_LAYER_ON"), mActiveLayerButtonRect, -0.01f);
+				lSpriteBatch.draw(mHudSpritesheet, mHudSpritesheet.getSpriteInstance("TEXTURE_SET_LAYER_ON"), mActiveLayerButtonRect, zDepth);
 			} else {
-				lSpriteBatch.draw(mHudSpritesheet, mHudSpritesheet.getSpriteInstance("TEXTURE_SET_LAYER_OFF"), mActiveLayerButtonRect, -0.01f);
+				lSpriteBatch.draw(mHudSpritesheet, mHudSpritesheet.getSpriteInstance("TEXTURE_SET_LAYER_OFF"), mActiveLayerButtonRect, zDepth);
 			}
 		}
 
 		if (mIsExpandable) {
 			if (mIsPanelOpen) {
-				lSpriteBatch.draw(mCoreSpriteSheet, CoreTextureNames.TEXTURE_EXPAND, mExpandRectangle, -0.01f);
+				lSpriteBatch.draw(mCoreSpriteSheet, CoreTextureNames.TEXTURE_EXPAND, mExpandRectangle, zDepth);
 			} else {
-				lSpriteBatch.draw(mCoreSpriteSheet, CoreTextureNames.TEXTURE_COLLAPSE, mExpandRectangle, -0.01f);
+				lSpriteBatch.draw(mCoreSpriteSheet, CoreTextureNames.TEXTURE_COLLAPSE, mExpandRectangle, zDepth);
 			}
 		}
 		lSpriteBatch.end();
 
-		float zDepth = -0.01f;
+		var zoff = zDepth;
 		if (mIsPanelOpen) {
 			final int lNumWidgets = mWidgets.size();
 			for (int i = 0; i < lNumWidgets; i++) {
 				final var lWidget = mWidgets.get(i);
 
-				lWidget.draw(core, lSpriteBatch, mCoreSpriteSheet, lFontUnit, zDepth -= 0.03f);
+				zoff += .03f;
+				lWidget.draw(core, lSpriteBatch, mCoreSpriteSheet, lFontUnit, zoff);
 			}
 
 			if (mNestedPanel != null)

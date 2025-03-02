@@ -510,7 +510,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		mMenuFont.setTextColorA(screenColor.a);
 		mMenuFont.setShadowColorA(screenColor.a);
 
-		mMenuHeaderFont.drawShadowedText(mMenuTitle, screenPositionOffset().x + lMenuTitlePositionX, screenPositionOffset().y + lMenuTitlePositionY, -0.01f, 2.f, 2.f, 1.f);
+		mMenuHeaderFont.drawShadowedText(mMenuTitle, screenPositionOffset().x + lMenuTitlePositionX, screenPositionOffset().y + lMenuTitlePositionY, .01f, 2.f, 2.f, 1.f);
 		mMenuHeaderFont.end();
 
 		mMenuFont.begin(core.HUD());
@@ -519,12 +519,12 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 		final float lOverTitleWidth = mMenuFont.getStringWidth(mMenuOverTitle, lUiTextScale);
 		if (mMenuOverTitle != null && mMenuOverTitle.length() > 0) {
-			mMenuFont.drawShadowedText(mMenuOverTitle, screenPositionOffset().x + lHeaderRect.centerX() - lOverTitleWidth * .5f, screenPositionOffset().y + lMenuTitlePositionY - mMenuHeaderFont.fontHeight() / 2, -.01f, 1.f, 1.f, 1.f);
+			mMenuFont.drawShadowedText(mMenuOverTitle, screenPositionOffset().x + lHeaderRect.centerX() - lOverTitleWidth * .5f, screenPositionOffset().y + lMenuTitlePositionY - mMenuHeaderFont.fontHeight() / 2, .01f, 1.f, 1.f, 1.f);
 		}
 
 		final float lSubTitleWidth = mMenuFont.getStringWidth(mMenuSubTitle, lUiTextScale);
 		if (mMenuSubTitle != null && mMenuSubTitle.length() > 0) {
-			mMenuFont.drawShadowedText(mMenuSubTitle, screenPositionOffset().x + lHeaderRect.centerX() - lSubTitleWidth * .5f, screenPositionOffset().y + lMenuTitlePositionY + lHeaderFontHeight, -.01f, 1.f, 1.f, 1.f);
+			mMenuFont.drawShadowedText(mMenuSubTitle, screenPositionOffset().x + lHeaderRect.centerX() - lSubTitleWidth * .5f, screenPositionOffset().y + lMenuTitlePositionY + lHeaderFontHeight, .01f, 1.f, 1.f, 1.f);
 		}
 
 		mMenuFont.end();

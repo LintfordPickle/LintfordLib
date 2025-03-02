@@ -176,7 +176,7 @@ public class DebugLogger {
 			mConsoleFont.begin(core.HUD());
 
 			mConsoleFont.setTextColorRGBA(lR, lG, lB, mCurrentFlashMessageAlpha);
-			mConsoleFont.drawText(mCurrentFlashMessage.message(), lHudRect.left() + lPadding, lHudRect.bottom() - mConsoleFont.fontHeight() - lPadding, -0.01f, 1.f);
+			mConsoleFont.drawText(mCurrentFlashMessage.message(), lHudRect.left() + lPadding, lHudRect.bottom() - mConsoleFont.fontHeight() - lPadding, .01f, 1.f);
 			mConsoleFont.end();
 		}
 	}

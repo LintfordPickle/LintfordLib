@@ -287,7 +287,7 @@ public class DebugStats extends Rectangle implements IScrollBarArea, IInputProce
 
 		mSpriteBatch.begin(core.HUD());
 		mSpriteBatch.setColorRGBA(.05f, .05f, .05f, .95f);
-		mSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, this, -0.01f);
+		mSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, this, .01f);
 		mSpriteBatch.end();
 
 		if (mContentRectangle.height() - this.height() > 0)

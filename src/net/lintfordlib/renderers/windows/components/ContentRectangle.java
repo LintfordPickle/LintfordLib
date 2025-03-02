@@ -3,6 +3,7 @@ package net.lintfordlib.renderers.windows.components;
 import org.lwjgl.opengl.GL11;
 
 import net.lintfordlib.core.LintfordCore;
+import net.lintfordlib.core.camera.Camera;
 import net.lintfordlib.core.geometry.Rectangle;
 import net.lintfordlib.core.graphics.batching.SpriteBatch;
 import net.lintfordlib.core.graphics.textures.Texture;
@@ -35,7 +36,7 @@ public class ContentRectangle {
 
 		spriteBatch.begin(core.HUD());
 		spriteBatch.setColorRGBA(1.f, 1.f, 1.f, 0.f);
-		spriteBatch.draw((Texture) null, 0, 0, 1, 1, rx + depthPadding, ry + depthPadding, rw - depthPadding * 2, rh - depthPadding * 2, -10.f);
+		spriteBatch.draw((Texture) null, 0, 0, 1, 1, rx + depthPadding, ry + depthPadding, rw - depthPadding * 2, rh - depthPadding * 2, Camera.Z_FAR);
 		spriteBatch.end();
 
 		/*

@@ -111,7 +111,7 @@ public class DebugPhysicsMTVRenderer extends BaseRenderer implements ICollisionC
 			final var lMtvX = lContact.nx * lContact.depth;
 			final var lMtvY = lContact.ny * lContact.depth;
 
-			lLineBatch.draw(lCP0x * lToPixels, lCP0y * lToPixels, (lCP0x + lMtvX) * lToPixels, (lCP0y + lMtvY) * lToPixels, -0.01f, 1.f, 1.f, 1.f);
+			lLineBatch.draw(lCP0x * lToPixels, lCP0y * lToPixels, (lCP0x + lMtvX) * lToPixels, (lCP0y + lMtvY) * lToPixels, .01f, 1.f, 1.f, 1.f);
 		}
 
 		lLineBatch.end();

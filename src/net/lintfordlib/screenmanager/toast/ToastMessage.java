@@ -22,7 +22,7 @@ public class ToastMessage {
 
 	public void draw(LintfordCore core, FontUnit fontUnit, TextureBatchPCT textureBatch) {
 		fontUnit.setTextColorRGBA(1.f, 1.f, 1.f, 1.f);
-		fontUnit.drawText(messageText, x, y, -0.1f, 1f, -1);
+		fontUnit.drawText(messageText, x, y, .1f, 1f, -1);
 	}
 
 	public void init(String title, String message, float timeInMs) {
