@@ -2,6 +2,8 @@ package net.lintfordlib.core.binpacking;
 
 import java.util.List;
 
+import net.lintfordlib.core.debug.Debug;
+
 public class BinPacker {
 
 	// --------------------------------------
@@ -60,6 +62,7 @@ public class BinPacker {
 
 			} else {
 				nodesToPack.add(lItem);
+				Debug.debugManager().logger().w(getClass().getSimpleName(), "Failed to fit node in bin! No more space");
 				lLastInsertionSuccessful = false;
 			}
 		}

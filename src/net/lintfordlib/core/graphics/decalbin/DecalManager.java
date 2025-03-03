@@ -26,8 +26,8 @@ public class DecalManager {
 	// (the individual items will contain their atlas UVs and atlas reference data).
 	private final List<IDecalBinPackedItem> mDecalReceivers = new ArrayList<>();
 
-	private int mDecalMapSizeWidth;
-	private int mDecalMapSizeHeight;
+	protected int mDecalBinWidth;
+	protected int mDecalBinHeight;
 
 	private IDecalManagerListener mListener;
 
@@ -47,14 +47,6 @@ public class DecalManager {
 		return mListener;
 	}
 
-	public int decalMapSizeWidth() {
-		return mDecalMapSizeWidth;
-	}
-
-	public int decalMapSizeHeight() {
-		return mDecalMapSizeHeight;
-	}
-
 	public List<IDecalBinPackedItem> decalReceivers() {
 		return mDecalReceivers;
 	}
@@ -66,13 +58,39 @@ public class DecalManager {
 		return mDecalReceivers.get(binUid);
 	}
 
+	public int binWidth() {
+		return mDecalBinWidth;
+	}
+
+	public void binWidth(int newWidth) {
+		if (newWidth < 128)
+			newWidth = 128;
+
+		if (newWidth > 2048)
+			newWidth = 2048;
+
+		mDecalBinWidth = newWidth;
+	}
+
+	public int binHeight() {
+		return mDecalBinHeight;
+	}
+
+	public void binHeight(int newHeight) {
+		if (newHeight < 128)
+			newHeight = 128;
+
+		if (newHeight > 2048)
+			newHeight = 2048;
+
+		mDecalBinHeight = newHeight;
+	}
+
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
 	public DecalManager() {
-		mDecalMapSizeWidth = 2048;
-		mDecalMapSizeHeight = 2048;
 	}
 
 	// --------------------------------------
