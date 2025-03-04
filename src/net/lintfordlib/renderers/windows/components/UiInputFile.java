@@ -457,6 +457,8 @@ public class UiInputFile extends UIWidget implements IBufferedTextInputCallback 
 			if (mFile.exists() != false || mFile.isDirectory() == false)
 				return false;
 		} else {
+			mInputField.delete(0, mInputField.length());
+			mInputField.append(pathname);
 			return mFile.exists();
 		}
 
@@ -584,6 +586,8 @@ public class UiInputFile extends UIWidget implements IBufferedTextInputCallback 
 	public void onCaptureStopped() {
 		mHasFocus = false;
 		mShowCaret = false;
+		
+		trySetFile(mInputField.toString());
 
 		if (mUiWidgetListenerCallback != null) {
 			mUiWidgetListenerCallback.widgetOnDataChanged(null, mUiWidgetListenerUid);
