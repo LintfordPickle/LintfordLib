@@ -106,6 +106,22 @@ public class UiDropDownBox<T> extends UIWidget implements IInputClickedFocusMana
 
 	}
 
+	public T getObjectByIndex(int index) {
+		if (index < 0 || index >= mItems.size())
+			return null;
+
+		return mItems.get(index).value;
+	}
+
+	public T getObjectByName(String name) {
+		final var lNumItems = mItems.size();
+		for (int i = 0; i < lNumItems; i++) {
+			if (mItems.get(i).name.equals(name))
+				return mItems.get(i).value;
+		}
+		return null;
+	}
+
 	public void setSelectedEntry(int index) {
 		if (index < -1)
 			index = NO_ITEM_INDEX;
@@ -385,6 +401,13 @@ public class UiDropDownBox<T> extends UIWidget implements IInputClickedFocusMana
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
+
+	public void addNewItem(String name, T object) {
+		if (mItems.contains(object))
+			return;
+
+		mItems.add(new UiDropDownBoxItem(name, object));
+	}
 
 	@Override
 	public void setTrackedClickedFocusControl(IInputClickedFocusTracker controlToTrack) {
