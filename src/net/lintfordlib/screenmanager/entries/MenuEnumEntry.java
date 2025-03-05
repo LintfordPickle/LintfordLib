@@ -6,6 +6,7 @@ import java.util.List;
 
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.geometry.Rectangle;
+import net.lintfordlib.core.graphics.ColorConstants;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
 import net.lintfordlib.core.input.InputManager;
 import net.lintfordlib.screenmanager.MenuEntry;
@@ -177,7 +178,8 @@ public class MenuEnumEntry extends MenuEntry {
 		if (!mEnableUpdateDraw || !mEnabled)
 			return false;
 
-		if (intersectsAA(core.HUD().getMouseCameraSpace()) && core.input().mouse().isMouseOverThisComponent(hashCode())) {
+		final var lDoesIntersect = intersectsAA(core.HUD().getMouseCameraSpace());
+		if (lDoesIntersect && core.input().mouse().isMouseOverThisComponent(hashCode())) {
 			mIsMouseOver = true;
 			core.input().mouse().isMouseMenuSelectionEnabled(true);
 
@@ -187,9 +189,9 @@ public class MenuEnumEntry extends MenuEntry {
 			if (mToolTipEnabled)
 				mToolTipTimer += core.appTime().elapsedTimeMilli();
 
-			if (core.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
-
-				if (mLeftButtonRectangle.intersectsAA(core.HUD().getMouseCameraSpace())) {
+			final var lLeftMouseTimed = core.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this);
+			if (lLeftMouseTimed) {
+				if (mButtonsEnabled && mLeftButtonRectangle.intersectsAA(core.HUD().getMouseCameraSpace())) {
 					mSelectedIndex--;
 					if (mSelectedIndex < 0) {
 						mSelectedIndex = mItems.size() - 1;
@@ -201,7 +203,7 @@ public class MenuEnumEntry extends MenuEntry {
 					return true;
 				}
 
-				if (mRightButtonRectangle.intersectsAA(core.HUD().getMouseCameraSpace())) {
+				if (mButtonsEnabled && mRightButtonRectangle.intersectsAA(core.HUD().getMouseCameraSpace())) {
 					mSelectedIndex++;
 					if (mSelectedIndex >= mItems.size()) {
 						mSelectedIndex = 0;
@@ -229,10 +231,11 @@ public class MenuEnumEntry extends MenuEntry {
 	public void update(LintfordCore core, MenuScreen screen) {
 		super.update(core, screen);
 
-		// Update the button positions to line up with this entry
-		mLeftButtonRectangle.setPosition(mX + mW / 2 + 16, mY);
-		mRightButtonRectangle.setPosition(mX + mW - 32, mY);
-
+		if (mButtonsEnabled) {
+			final var lArrowButtonSize = Math.min(mH, 32.f);
+			mLeftButtonRectangle.setPosition(mX + mW / 2 + lArrowButtonSize * .5f, mY);
+			mRightButtonRectangle.setPosition(mX + mW - lArrowButtonSize, mY);
+		}
 	}
 
 	@Override
@@ -256,13 +259,12 @@ public class MenuEnumEntry extends MenuEntry {
 		final var lTextureBatch = mParentScreen.spriteBatch();
 
 		lTextureBatch.begin(core.HUD());
-		final var lArrowButtonSize = 32;
-		final var lArrowButtonPaddingY = mLeftButtonRectangle.height() - lArrowButtonSize;
+		final var lArrowButtonSize = Math.min(mH, 32.f);
 
 		if (mButtonsEnabled) {
 			lTextureBatch.setColorRGBA(1.f, 1.f, 1.f, lParentScreenAlpha);
-			lTextureBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_LEFT, lScreenOffset.x + mLeftButtonRectangle.x(), lScreenOffset.y + mLeftButtonRectangle.y() + lArrowButtonPaddingY, lArrowButtonSize, lArrowButtonSize, 0f);
-			lTextureBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_RIGHT, lScreenOffset.x + mRightButtonRectangle.x(), lScreenOffset.y + mRightButtonRectangle.y() + lArrowButtonPaddingY, lArrowButtonSize, lArrowButtonSize, 0f);
+			lTextureBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_LEFT, lScreenOffset.x + mLeftButtonRectangle.x(), lScreenOffset.y + mLeftButtonRectangle.y(), lArrowButtonSize, lArrowButtonSize, 0f);
+			lTextureBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_RIGHT, lScreenOffset.x + mRightButtonRectangle.x(), lScreenOffset.y + mRightButtonRectangle.y(), lArrowButtonSize, lArrowButtonSize, 0f);
 		}
 
 		lTextureBatch.end();
