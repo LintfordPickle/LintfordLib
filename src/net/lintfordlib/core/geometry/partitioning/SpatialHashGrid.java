@@ -126,6 +126,9 @@ public class SpatialHashGrid<T extends GridEntity> {
 		if (entity == null)
 			return;
 
+		if (entity.isOnGrid() == false)
+			return;
+
 		if (entity.isGridCacheOld(this) == false)
 			return;
 
