@@ -30,7 +30,7 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 	// Constants
 	// --------------------------------------
 
-	protected static final float Z_DEPTH = -2.f;
+	protected static final float Z_DEPTH = 2.f;
 
 	// --------------------------------------
 	// Variables
