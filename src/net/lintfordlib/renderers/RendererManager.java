@@ -173,12 +173,20 @@ public class RendererManager implements IInputClickedFocusManager {
 	public void initialize() {
 		mUiStructureController = (HudLayoutController) mCore.controllerManager().getControllerByNameRequired(HudLayoutController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
 
+		mIsinitialized = true;
+	}
+
+	public void initializeRenderers() {
 		final int lRendererCount = mRenderers.size();
 		for (int i = 0; i < lRendererCount; i++) {
 			mRenderers.get(i).initialize(mCore);
 		}
 
-		mIsinitialized = true;
+		// TODO: these are the same, separated by stage/pass
+		final int lUiRendererCount = mWindowRenderers.size();
+		for (int i = 0; i < lUiRendererCount; i++) {
+			mWindowRenderers.get(i).initialize(mCore);
+		}
 	}
 
 	public void loadResources(ResourceManager resourceManager) {
@@ -193,6 +201,14 @@ public class RendererManager implements IInputClickedFocusManager {
 		for (int i = 0; i < lRendererCount; i++) {
 			if (!mRenderers.get(i).isLoaded()) {
 				mRenderers.get(i).loadResources(resourceManager);
+			}
+		}
+
+		// TODO: these are the same, separated by stage/pass
+		final int lUiRendererCount = mWindowRenderers.size();
+		for (int i = 0; i < lUiRendererCount; i++) {
+			if (!mWindowRenderers.get(i).isLoaded()) {
+				mWindowRenderers.get(i).loadResources(resourceManager);
 			}
 		}
 

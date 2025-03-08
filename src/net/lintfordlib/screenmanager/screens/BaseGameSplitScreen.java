@@ -1,6 +1,5 @@
 package net.lintfordlib.screenmanager.screens;
 
-import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.controllers.ControllerManager;
 import net.lintfordlib.controllers.player.PlayerSessionController;
 import net.lintfordlib.core.LintfordCore;
@@ -53,11 +52,4 @@ public abstract class BaseGameSplitScreen<T extends IPlayerSession> extends Base
 	protected void initializeControllers(LintfordCore core) {
 		mPlayerSessionController.initialize(core);
 	}
-
-	protected abstract void createRenderers(LintfordCore core);
-
-	protected abstract void initializeRenderers(LintfordCore core);
-
-	protected abstract void loadRendererResources(ResourceManager resourceManager);
-
 }

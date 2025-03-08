@@ -408,6 +408,10 @@ public class TextureBatchPCT {
 
 		flush();
 		textureIdOffset(0);
+
+		setGlBlendEnabled(true);
+		setGlBlendFactor(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+
 		mIsDrawing = false;
 	}
 

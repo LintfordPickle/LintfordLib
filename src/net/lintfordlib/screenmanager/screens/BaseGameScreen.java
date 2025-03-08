@@ -1,6 +1,5 @@
 package net.lintfordlib.screenmanager.screens;
 
-import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.controllers.ControllerManager;
 import net.lintfordlib.controllers.core.GameRendererController;
 import net.lintfordlib.core.LintfordCore;
@@ -77,17 +76,10 @@ public abstract class BaseGameScreen extends Screen {
 
 		initializeControllers(lCore);
 
-		initializeRenderers(lCore);
+		mRendererManager.initializeRenderers();
 
 		createRendererStructure(lCore);
 		ensureDefaultRenderStructure(lCore);
-	}
-
-	@Override
-	public void loadResources(ResourceManager resourceManager) {
-		super.loadResources(resourceManager);
-
-		loadRendererResources(resourceManager);
 	}
 
 	@Override
@@ -116,15 +108,11 @@ public abstract class BaseGameScreen extends Screen {
 
 	protected abstract void createRenderers(LintfordCore core);
 
-	protected abstract void initializeRenderers(LintfordCore core);
-
 	protected abstract void createRendererStructure(LintfordCore core);
 
 	private void ensureDefaultRenderStructure(LintfordCore core) {
 		// TODO: If no renderer structure was defined / created, then setup a default color stage
 	}
-
-	protected abstract void loadRendererResources(ResourceManager resourceManager);
 
 	@Override
 	public void exitScreen() {

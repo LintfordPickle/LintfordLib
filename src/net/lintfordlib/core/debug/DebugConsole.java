@@ -453,6 +453,13 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 		final float lInputTextXOffset = 14;
 
 		if (mConsoleState == CONSOLE_STATE.open) {
+			// background black color
+			lSpriteBatch.begin(core.HUD());
+			lSpriteBatch.setColor(ColorConstants.MenuPanelPrimaryColor);
+			lSpriteBatch.setColorA(.9f);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_BLACK, mX, mY, mW, mH, Z_DEPTH);
+			lSpriteBatch.end();
+
 			// the input line from the user will always be visible at the bottom of the console.
 			if (mInputText != null) {
 				final float INPUT_Y_OFFSET = 0;
