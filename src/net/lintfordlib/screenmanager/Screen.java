@@ -356,7 +356,6 @@ public abstract class Screen implements IInputProcessor {
 			screenManager.core().controllerManager().removeControllerGroup(entityGroupUid());
 		}
 
-		mRendererManager.removeAllListeners();
 		mRendererManager.removeAllRenderers();
 
 		mCoreSpritesheet = null;

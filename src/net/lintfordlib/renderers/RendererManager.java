@@ -19,7 +19,6 @@ import net.lintfordlib.core.rendering.SharedResources;
 import net.lintfordlib.options.DisplayManager;
 import net.lintfordlib.options.IResizeListener;
 import net.lintfordlib.renderers.windows.UiWindow;
-import net.lintfordlib.renderers.windows.components.interfaces.UIWindowChangeListener;
 import net.lintfordlib.screenmanager.IInputClickedFocusManager;
 
 // TODO: The RendererManager need to be sharing ALOT more of its resources with other render managers ..
@@ -57,16 +56,10 @@ public class RendererManager implements IInputClickedFocusManager {
 	private List<BaseRenderer> mRenderers;
 	private List<UiWindow> mWindowRenderers; // TODO: remove this in the new version (using the structure)
 
-	// START SHARE - move to SharedResources class and share amoungst all RendererManagers
-
-	// END SHARE
-
 	protected float mTitleHeight;
 
 	private boolean mIsinitialized;
 	private boolean mResourcesLoaded;
-
-	private List<UIWindowChangeListener> mListeners;
 
 	private List<RenderTarget> mRenderTargets;
 	private List<RenderTarget> mRenderTargetAutoResize;
@@ -157,8 +150,6 @@ public class RendererManager implements IInputClickedFocusManager {
 		mWindowRenderers = new ArrayList<>();
 		mRenderTargets = new ArrayList<>();
 		mRenderTargetAutoResize = new ArrayList<>();
-
-		mListeners = new ArrayList<>();
 
 		mIsinitialized = false;
 		mResourcesLoaded = false;
@@ -412,22 +403,6 @@ public class RendererManager implements IInputClickedFocusManager {
 
 		mWindowRenderers.clear();
 		mRenderers.clear();
-	}
-
-	public void addChangeListener(UIWindowChangeListener listener) {
-		if (!mListeners.contains(listener)) {
-			mListeners.add(listener);
-		}
-	}
-
-	public void removeListener(UIWindowChangeListener listener) {
-		if (mListeners.contains(listener)) {
-			mListeners.remove(listener);
-		}
-	}
-
-	public void removeAllListeners() {
-		mListeners.clear();
 	}
 
 	/** Unloads all {@link BaseRenderer} instances registered to this {@link RendererManager} which have the given gorup ID assigned to them. */
