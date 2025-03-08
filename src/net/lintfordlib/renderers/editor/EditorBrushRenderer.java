@@ -101,7 +101,7 @@ public class EditorBrushRenderer extends BaseRenderer {
 		final var lHudBounds = core.HUD().boundingRectangle();
 		final var lEditorBrush = mEditorBrushController.brush();
 
-		final var lFontUnit = mRendererManager.uiTextFont();
+		final var lFontUnit = core.sharedResources().uiTextFont();
 
 		lFontUnit.begin(core.HUD());
 		lFontUnit.drawText("brush: " + lEditorBrush.brushLayer(), lHudBounds.left() + 5.f, lHudBounds.bottom() - lFontUnit.fontHeight() - 5.f, .01f, 1.f);

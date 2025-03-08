@@ -12,7 +12,6 @@ import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.geometry.Rectangle;
 import net.lintfordlib.core.graphics.ColorConstants;
-import net.lintfordlib.core.graphics.batching.SpriteBatch;
 import net.lintfordlib.core.graphics.fonts.BitmapFontManager;
 import net.lintfordlib.core.graphics.fonts.FontUnit;
 import net.lintfordlib.core.graphics.fonts.FontUnit.WrapType;
@@ -91,7 +90,6 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 	private transient ScrollBar mScrollBar;
 	private transient boolean mShowCaret;
 	private transient float mCaretTimer;
-	private transient SpriteBatch mSpriteBatch;
 	private transient FontUnit mConsoleFont;
 	private transient boolean mHasFocus;
 	private transient int mLowerBound;
@@ -165,8 +163,6 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 
 			mConsoleState = CONSOLE_STATE.closed;
 
-			mSpriteBatch = new SpriteBatch();
-
 			mContentRectangle = new ScrollBarContentRectangle(this);
 			mScrollBar = new ScrollBar(this, mContentRectangle);
 
@@ -187,6 +183,7 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 			mAutoScrollIconRectangle = new Rectangle();
 		}
 
+		mTextScaleFactor = 1.f;
 		mResourcesLoaded = false;
 	}
 
@@ -199,7 +196,6 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 			return;
 
 		mConsoleFont = resourceManager.fontManager().getFontUnit(BitmapFontManager.SYSTEM_FONT_CONSOLE_NAME);
-		mSpriteBatch.loadResources(resourceManager);
 
 		mCoreSpritesheet = resourceManager.spriteSheetManager().coreSpritesheet();
 
@@ -213,7 +209,6 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 		Debug.debugManager().logger().v(getClass().getSimpleName(), "DebugConsole unloading GL content");
 
 		mConsoleFont = null;
-		mSpriteBatch.unloadResources();
 
 		mResourcesLoaded = false;
 	}
@@ -388,7 +383,6 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 		mTAGFilterText.update(core);
 		mMessageFilterText.update(core);
 
-		mTextScaleFactor = .5f;
 		doFilterText();
 
 		// Update the window content
@@ -451,6 +445,7 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 			return;
 
 		final var lDisplayConfig = core.config().display();
+		final var lSpriteBatch = core.sharedResources().uiSpriteBatch();
 
 		final float Z_DEPTH = ZLayers.LAYER_DEBUG;
 
@@ -458,19 +453,6 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 		final float lInputTextXOffset = 14;
 
 		if (mConsoleState == CONSOLE_STATE.open) {
-			mSpriteBatch.begin(core.HUD());
-
-			mSpriteBatch.setColor(ColorConstants.MenuPanelPrimaryColor);
-			mSpriteBatch.setColorA(.9f);
-			mSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_BLACK, mX, mY, mW, mH, Z_DEPTH);
-
-			mScrollBar.scrollBarAlpha(1.f);
-			mSpriteBatch.setColorWhite();
-
-			mScrollBar.draw(core, mSpriteBatch, mCoreSpritesheet, Z_DEPTH - 0.01f);
-
-			mSpriteBatch.end();
-
 			// the input line from the user will always be visible at the bottom of the console.
 			if (mInputText != null) {
 				final float INPUT_Y_OFFSET = 0;
@@ -490,10 +472,10 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 		if (!mAutoScroll)
 			lAutoScrollIconColor = ColorConstants.getWhiteWithAlpha(.1f);
 
-		mSpriteBatch.begin(core.HUD());
-		mSpriteBatch.setColor(lAutoScrollIconColor);
-		mSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_AUTOSCROLL, mAutoScrollIconRectangle, Z_DEPTH);
-		mSpriteBatch.end();
+		lSpriteBatch.begin(core.HUD());
+		lSpriteBatch.setColor(lAutoScrollIconColor);
+		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_AUTOSCROLL, mAutoScrollIconRectangle, Z_DEPTH);
+		lSpriteBatch.end();
 
 		if (!mFilterProcessed) {
 			synchronized (Debug.debugManager().logger()) {
@@ -501,6 +483,15 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 			}
 		} else {
 			drawMessages(core, mProcessedMessages);
+		}
+
+		if (mConsoleState == CONSOLE_STATE.open) {
+			lSpriteBatch.begin(core.HUD());
+
+			mScrollBar.scrollBarAlpha(1.f);
+			lSpriteBatch.setColorWhite();
+			mScrollBar.draw(core, lSpriteBatch, mCoreSpritesheet, Z_DEPTH - .1f);
+			lSpriteBatch.end();
 		}
 	}
 
@@ -521,8 +512,8 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 			mMessageFilterText.textScale(mTextScaleFactor);
 			mMessageFilterText.set(mX + POSITION_OFFSET_MESSAGE, mY + 4, 200 * mTextScaleFactor, 25 * mTextScaleFactor);
 
-			mTAGFilterText.draw(core, mSpriteBatch, mCoreSpritesheet, mConsoleFont, ZLayers.LAYER_DEBUG + 0.1f);
-			mMessageFilterText.draw(core, mSpriteBatch, mCoreSpritesheet, mConsoleFont, ZLayers.LAYER_DEBUG + 0.1f);
+			mTAGFilterText.draw(core, core.sharedResources(), mCoreSpritesheet, mConsoleFont, ZLayers.LAYER_DEBUG + 0.1f);
+			mMessageFilterText.draw(core, core.sharedResources(), mCoreSpritesheet, mConsoleFont, ZLayers.LAYER_DEBUG + 0.1f);
 		}
 
 		final var lMessageCount = messages.size();

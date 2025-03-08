@@ -403,9 +403,10 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 
 		mWindowAlpha = 0.95f;
 
-		final var lUiHeaderFont = mRendererManager.uiHeaderFont();
-		final var lTextFont = mRendererManager.uiTextFont();
-		final var lSpritebatch = mRendererManager.uiSpriteBatch();
+		final var lSharedResources = mRendererManager.sharedResources();
+		final var lUiHeaderFont = lSharedResources.uiHeaderFont();
+		final var lTextFont = lSharedResources.uiTextFont();
+		final var lSpritebatch = lSharedResources.uiSpriteBatch();
 
 		final var x = (int) mWindowArea.x();
 		final var y = (int) mWindowArea.y();
@@ -431,7 +432,6 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 		}
 
 		if (mScrollBar.scrollBarEnabled() && mScrollBar.areaNeedsScrolling()) {
-
 			mScrollBar.scrollBarAlpha(mWindowAlpha);
 
 			lSpritebatch.begin(core.HUD());
@@ -442,7 +442,7 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 		// Draw the window components
 		final int lComponentCount = mComponents.size();
 		for (int i = 0; i < lComponentCount; i++) {
-			mComponents.get(i).draw(core, lSpritebatch, mCoreSpritesheet, lTextFont, ZLayers.LAYER_GAME_UI + (i * 0.001f));
+			mComponents.get(i).draw(core, lSharedResources, mCoreSpritesheet, lTextFont, ZLayers.LAYER_GAME_UI + (i * 0.001f));
 		}
 
 		if (ConstantsApp.getBooleanValueDef("DRAW_UI_BOUNDS", false)) {

@@ -120,11 +120,11 @@ public abstract class Screen implements IInputProcessor {
 	}
 
 	public LineBatch lineBatch() {
-		return mRendererManager.uiLineBatch();
+		return screenManager.sharerdResources().uiLineBatch();
 	}
 
 	public SpriteBatch spriteBatch() {
-		return mRendererManager.uiSpriteBatch();
+		return screenManager.sharerdResources().uiSpriteBatch();
 	}
 
 	public int entityGroupUid() {

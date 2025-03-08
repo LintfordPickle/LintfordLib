@@ -2,11 +2,11 @@ package net.lintfordlib.renderers.windows.components;
 
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.graphics.ColorConstants;
-import net.lintfordlib.core.graphics.batching.SpriteBatch;
 import net.lintfordlib.core.graphics.fonts.FontUnit;
 import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
 import net.lintfordlib.core.maths.MathHelper;
+import net.lintfordlib.core.rendering.SharedResources;
 import net.lintfordlib.renderers.windows.UiWindow;
 
 public class UiFloatSlider extends UIWidget {
@@ -135,7 +135,7 @@ public class UiFloatSlider extends UIWidget {
 	}
 
 	@Override
-	public void draw(LintfordCore core, SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheetDefinition, FontUnit textFont, float componentZDepth) {
+	public void draw(LintfordCore core, SharedResources sharedResources, SpriteSheetDefinition coreSpritesheetDefinition, FontUnit textFont, float componentZDepth) {
 		final float lRailHeight = 4;
 		final float lSliderWidth = 10;
 
@@ -145,17 +145,19 @@ public class UiFloatSlider extends UIWidget {
 
 		final var lBackgroundColor = mIsEnabled ? ColorConstants.getColorWithRGBMod(ColorConstants.PrimaryColor, 1.f) : ColorConstants.getBlackWithAlpha(.4f);
 
-		spriteBatch.begin(core.HUD());
-		spriteBatch.setColor(lBackgroundColor);
+		final var lSpriteBatch = sharedResources.uiSpriteBatch();
+
+		lSpriteBatch.begin(core.HUD());
+		lSpriteBatch.setColor(lBackgroundColor);
 
 		// background bar
-		spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, mX + mHorizontalMargins, lLowerYPosition - lRailHeight * .5f, mW - mHorizontalMargins * 2.f, lRailHeight, 0f);
+		lSpriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, mX + mHorizontalMargins, lLowerYPosition - lRailHeight * .5f, mW - mHorizontalMargins * 2.f, lRailHeight, 0f);
 		final var lNubbinColor = mIsEnabled ? ColorConstants.getColorWithRGBMod(ColorConstants.TertiaryColor, 1.f) : ColorConstants.getBlackWithAlpha(.4f);
 
 		// position bar
-		spriteBatch.setColor(lNubbinColor);
-		spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, mX + mHorizontalMargins + mCurrentRelPosition - lSliderWidth / 2, lLowerYPosition - lHalfHeight * .5f, lSliderWidth, lHalfHeight, 0f);
-		spriteBatch.end();
+		lSpriteBatch.setColor(lNubbinColor);
+		lSpriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, mX + mHorizontalMargins + mCurrentRelPosition - lSliderWidth / 2, lLowerYPosition - lHalfHeight * .5f, lSliderWidth, lHalfHeight, 0f);
+		lSpriteBatch.end();
 
 		textFont.begin(core.HUD());
 		textFont.setTextColorRGBA(1.f, 1.f, 1.f, 1.f);

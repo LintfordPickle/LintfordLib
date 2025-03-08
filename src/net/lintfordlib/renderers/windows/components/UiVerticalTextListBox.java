@@ -9,12 +9,12 @@ import net.lintfordlib.ConstantsApp;
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.geometry.Rectangle;
 import net.lintfordlib.core.graphics.ColorConstants;
-import net.lintfordlib.core.graphics.batching.SpriteBatch;
 import net.lintfordlib.core.graphics.batching.TextureBatch9Patch;
 import net.lintfordlib.core.graphics.fonts.FontUnit;
 import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
 import net.lintfordlib.core.maths.MathHelper;
+import net.lintfordlib.core.rendering.SharedResources;
 import net.lintfordlib.renderers.windows.UiWindow;
 import net.lintfordlib.renderers.windows.components.interfaces.IScrollBarArea;
 import net.lintfordlib.renderers.windows.components.interfaces.IUiListBoxListener;
@@ -236,43 +236,45 @@ public class UiVerticalTextListBox extends UIWidget implements IScrollBarArea {
 	}
 
 	@Override
-	public void draw(LintfordCore core, SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheetDefinition, FontUnit textFont, float componentZDepth) {
+	public void draw(LintfordCore core, SharedResources sharedResources, SpriteSheetDefinition coreSpritesheetDefinition, FontUnit textFont, float componentZDepth) {
 
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 
+		final var lSpriteBatch = sharedResources.uiSpriteBatch();
+
 		if (mH > 32.f) {
-			spriteBatch.begin(core.HUD());
-			spriteBatch.setColorWhite();
-			TextureBatch9Patch.drawBackground(spriteBatch, coreSpritesheetDefinition, 32, mX, mY, mW, mH, false, componentZDepth);
-			spriteBatch.end();
+			lSpriteBatch.begin(core.HUD());
+			lSpriteBatch.setColorWhite();
+			TextureBatch9Patch.drawBackground(lSpriteBatch, coreSpritesheetDefinition, 32, mX, mY, mW, mH, false, componentZDepth);
+			lSpriteBatch.end();
 		}
 
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
-			spriteBatch.begin(core.HUD());
-			spriteBatch.setColor(ColorConstants.Debug_Transparent_Magenta);
-			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, mWindowRectangle, componentZDepth);
-			spriteBatch.end();
+			lSpriteBatch.begin(core.HUD());
+			lSpriteBatch.setColor(ColorConstants.Debug_Transparent_Magenta);
+			lSpriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, mWindowRectangle, componentZDepth);
+			lSpriteBatch.end();
 		}
 
-		mWindowRectangle.preDraw(core, spriteBatch, mWindowRectangle, 1);
+		mWindowRectangle.preDraw(core, lSpriteBatch, mWindowRectangle, 1);
 
-		spriteBatch.begin(core.HUD());
+		lSpriteBatch.begin(core.HUD());
 		textFont.begin(core.HUD());
 
 		final var lNumitems = mItems.size();
 		for (int i = 0; i < lNumitems; i++) {
 			final var lItemToRender = mItems.get(i);
-			lItemToRender.draw(core, spriteBatch, coreSpritesheetDefinition, textFont, componentZDepth + 0.01f);
+			lItemToRender.draw(core, lSpriteBatch, coreSpritesheetDefinition, textFont, componentZDepth + 0.01f);
 		}
 
-		spriteBatch.end();
+		lSpriteBatch.end();
 		textFont.end();
 
 		mWindowRectangle.postDraw(core);
 
 		if (mScrollbar.scrollBarEnabled()) {
 			mScrollbar.scrollBarAlpha(.8f);
-			mScrollbar.draw(core, spriteBatch, coreSpritesheetDefinition, componentZDepth);
+			mScrollbar.draw(core, lSpriteBatch, coreSpritesheetDefinition, componentZDepth);
 		}
 
 	}

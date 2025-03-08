@@ -9,7 +9,6 @@ import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.geometry.Rectangle;
-import net.lintfordlib.core.graphics.batching.SpriteBatch;
 import net.lintfordlib.core.graphics.fonts.BitmapFontManager;
 import net.lintfordlib.core.graphics.fonts.FontUnit;
 import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
@@ -59,7 +58,6 @@ public class DebugStats extends Rectangle implements IScrollBarArea, IInputProce
 	private double mLastUpdateElapsed;
 	private double mLastDrawElapsed;
 	private SpriteSheetDefinition mCoreSpritesheet;
-	private SpriteBatch mSpriteBatch;
 	private StringBuilder mStringBuilder;
 	private int mDeltaFrameCount;
 	private int mFrameCount;
@@ -97,7 +95,6 @@ public class DebugStats extends Rectangle implements IScrollBarArea, IInputProce
 
 		mTags = new ArrayList<>();
 		mStringBuilder = new StringBuilder();
-		mSpriteBatch = new SpriteBatch();
 
 		mContentRectangle = new ScrollBarContentRectangle(this);
 		mScrollBar = new ScrollBar(this, mContentRectangle);
@@ -145,8 +142,6 @@ public class DebugStats extends Rectangle implements IScrollBarArea, IInputProce
 
 		mCoreSpritesheet = resourceManager.spriteSheetManager().coreSpritesheet();
 		mConsoleFont = resourceManager.fontManager().getFontUnit(BitmapFontManager.SYSTEM_FONT_CONSOLE_NAME);
-
-		mSpriteBatch.loadResources(resourceManager);
 	}
 
 	public void unloadResources() {
@@ -154,8 +149,6 @@ public class DebugStats extends Rectangle implements IScrollBarArea, IInputProce
 			return;
 
 		Debug.debugManager().logger().v(getClass().getSimpleName(), "DebugStats unloading GL content");
-
-		mSpriteBatch.unloadResources();
 
 		mConsoleFont = null;
 		mCoreSpritesheet = null;
@@ -285,13 +278,15 @@ public class DebugStats extends Rectangle implements IScrollBarArea, IInputProce
 
 		mLastDrawElapsed = core.appTime().elapsedTimeMilli();
 
-		mSpriteBatch.begin(core.HUD());
-		mSpriteBatch.setColorRGBA(.05f, .05f, .05f, .95f);
-		mSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, this, .01f);
-		mSpriteBatch.end();
+		final var lSpriteBatch = core.sharedResources().uiSpriteBatch();
+
+		lSpriteBatch.begin(core.HUD());
+		lSpriteBatch.setColorRGBA(.05f, .05f, .05f, .95f);
+		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, this, .01f);
+		lSpriteBatch.end();
 
 		if (mContentRectangle.height() - this.height() > 0)
-			mContentRectangle.preDraw(core, mSpriteBatch);
+			mContentRectangle.preDraw(core, lSpriteBatch);
 
 		mConsoleFont.begin(core.HUD());
 

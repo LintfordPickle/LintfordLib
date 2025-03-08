@@ -474,7 +474,7 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 		}
 
 		if (mShowTitle) {
-			final var lTitleFont = parentScreen.rendererManager().uiHeaderFont();
+			final var lTitleFont = parentScreen.rendererManager().sharedResources().uiHeaderFont();
 
 			lTitleFont.begin(core.HUD());
 			lTitleFont.setTextColorRGBA(1.f, 1.f, 1.f, parentScreen.screenColor.a);

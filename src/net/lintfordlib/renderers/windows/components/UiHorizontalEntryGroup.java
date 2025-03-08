@@ -7,10 +7,10 @@ import net.lintfordlib.ConstantsApp;
 import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.graphics.ColorConstants;
-import net.lintfordlib.core.graphics.batching.SpriteBatch;
 import net.lintfordlib.core.graphics.fonts.FontUnit;
 import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
+import net.lintfordlib.core.rendering.SharedResources;
 import net.lintfordlib.renderers.windows.UiWindow;
 
 public class UiHorizontalEntryGroup extends UIWidget {
@@ -127,17 +127,19 @@ public class UiHorizontalEntryGroup extends UIWidget {
 	}
 
 	@Override
-	public void draw(LintfordCore core, SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheetDefinition, FontUnit textFont, float componentZDepth) {
+	public void draw(LintfordCore core, SharedResources sharedResources, SpriteSheetDefinition coreSpritesheetDefinition, FontUnit textFont, float componentZDepth) {
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
-			spriteBatch.begin(core.HUD());
-			spriteBatch.setColor(ColorConstants.Debug_Transparent_Magenta);
-			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, mX, mY, mW, mH, .01f);
-			spriteBatch.end();
+			final var lSpriteBatch = sharedResources.uiSpriteBatch();
+
+			lSpriteBatch.begin(core.HUD());
+			lSpriteBatch.setColor(ColorConstants.Debug_Transparent_Magenta);
+			lSpriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, mX, mY, mW, mH, .01f);
+			lSpriteBatch.end();
 		}
 
 		final int lNumChildEntries = mChildWidgets.size();
 		for (int i = 0; i < lNumChildEntries; i++) {
-			mChildWidgets.get(i).draw(core, spriteBatch, coreSpritesheetDefinition, textFont, componentZDepth - .01f);
+			mChildWidgets.get(i).draw(core, sharedResources, coreSpritesheetDefinition, textFont, componentZDepth - .01f);
 		}
 	}
 

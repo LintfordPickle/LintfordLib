@@ -52,7 +52,6 @@ public class DebugPhysicsRenderer extends BaseRenderer {
 		super(rendererManager, RENDERER_NAME, entityGroupID);
 
 		registerPassTypeIndex(RenderPass.RENDER_PASS_COLOR);
-
 	}
 
 	// ---------------------------------------------
@@ -67,7 +66,7 @@ public class DebugPhysicsRenderer extends BaseRenderer {
 
 	@Override
 	public void draw(LintfordCore core, RenderPass renderPass) {
-		final var lLineBatch = rendererManager().uiLineBatch();
+		final var lLineBatch = core.sharedResources().uiLineBatch();
 
 		final var lRigidBodies = mPhysicsController.world().bodies();
 		final int lNumOfBodies = lRigidBodies.size();
@@ -111,7 +110,7 @@ public class DebugPhysicsRenderer extends BaseRenderer {
 	}
 
 	private void debugDrawRigidBody(LintfordCore core, RigidBody body) {
-		final var lLineBatch = rendererManager().uiLineBatch();
+		final var lLineBatch = core.sharedResources().uiLineBatch();
 		lLineBatch.lineType(GL11.GL_LINE_STRIP);
 
 		// yellow

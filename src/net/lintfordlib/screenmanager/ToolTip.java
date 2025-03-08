@@ -21,7 +21,6 @@ public class ToolTip {
 	// --------------------------------------
 
 	private FontUnit mMenuFont;
-	private SpriteBatch mSpriteBatch;
 	private SpriteSheetDefinition mCoreSpritesheet;
 	private IToolTipProvider mToolTipProvider;
 	private boolean mTopOfScreen;
@@ -54,7 +53,6 @@ public class ToolTip {
 	// --------------------------------------
 
 	public ToolTip() {
-		mSpriteBatch = new SpriteBatch();
 		mTopOfScreen = true;
 	}
 
@@ -63,15 +61,11 @@ public class ToolTip {
 	// --------------------------------------
 
 	public void loadResources(ResourceManager resourceManager) {
-		mSpriteBatch.loadResources(resourceManager);
-
 		mCoreSpritesheet = resourceManager.spriteSheetManager().coreSpritesheet();
 		mMenuFont = resourceManager.fontManager().getFontUnit(ScreenManager.FONT_MENU_TOOLTIP_NAME);
 	}
 
 	public void unloadResources() {
-		mSpriteBatch.unloadResources();
-
 		mCoreSpritesheet = null;
 		mMenuFont = null;
 	}
@@ -106,12 +100,15 @@ public class ToolTip {
 		final var lPositionX = -TOOLTIP_PANEL_WIDTH * .5f;
 		final var lPositionY = mTopOfScreen ? lHudBoundingBox.top() + lHudBoundingBox.height() / 4 : lHudBoundingBox.centerY() + lHudBoundingBox.height() / 4;
 
-		// Render the background
-		mSpriteBatch.begin(core.HUD());
-		mSpriteBatch.setColorRGBA(.21f, .11f, .13f, 1.f);
-		draw9Patch(mSpriteBatch, 32.f, lPositionX - lTextPadding, lPositionY - lTextPadding, TOOLTIP_PANEL_WIDTH + lTextPadding * 2, lToolTipTextHeight + lTextPadding * 3, .01f);
-		mSpriteBatch.end();
+		final var lSpriteBatch = core.sharedResources().uiSpriteBatch();
 
+		// Background
+		lSpriteBatch.begin(core.HUD());
+		lSpriteBatch.setColorRGBA(.21f, .11f, .13f, 1.f);
+		draw9Patch(lSpriteBatch, 32.f, lPositionX - lTextPadding, lPositionY - lTextPadding, TOOLTIP_PANEL_WIDTH + lTextPadding * 2, lToolTipTextHeight + lTextPadding * 3, .01f);
+		lSpriteBatch.end();
+
+		// Tooltip
 		mMenuFont.begin(core.HUD());
 		mMenuFont.drawText(lToolTipText, lPositionX + lTextPadding, lPositionY, .01f, 1.f, 350.f);
 		mMenuFont.end();

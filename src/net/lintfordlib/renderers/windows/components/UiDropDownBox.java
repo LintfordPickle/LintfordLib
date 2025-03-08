@@ -15,6 +15,7 @@ import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
 import net.lintfordlib.core.input.IInputClickedFocusTracker;
 import net.lintfordlib.core.maths.MathHelper;
+import net.lintfordlib.core.rendering.SharedResources;
 import net.lintfordlib.renderers.windows.UiWindow;
 import net.lintfordlib.renderers.windows.components.interfaces.IScrollBarArea;
 import net.lintfordlib.screenmanager.IInputClickedFocusManager;
@@ -281,8 +282,9 @@ public class UiDropDownBox<T> extends UIWidget implements IInputClickedFocusMana
 	}
 
 	@Override
-	public void draw(LintfordCore core, SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheet, FontUnit textFont, float componentZDepth) {
+	public void draw(LintfordCore core, SharedResources sharedResources, SpriteSheetDefinition coreSpritesheet, FontUnit textFont, float componentZDepth) {
 		final var lFontHeight = textFont.fontHeight();
+		final var lSpriteBatch = sharedResources.uiSpriteBatch();
 
 		if (mItems.isEmpty()) {
 			textFont.begin(core.HUD());
@@ -302,20 +304,20 @@ public class UiDropDownBox<T> extends UIWidget implements IInputClickedFocusMana
 		}
 
 		if (!mOpen) {
-			drawSelectedItem(core, spriteBatch, textFont, coreSpritesheet, componentZDepth);
+			drawSelectedItem(core, lSpriteBatch, textFont, coreSpritesheet, componentZDepth);
 
 		} else {
-			drawSelectedItem(core, spriteBatch, textFont, coreSpritesheet, componentZDepth);
+			drawSelectedItem(core, lSpriteBatch, textFont, coreSpritesheet, componentZDepth);
 
-			mWindowRectangle.preDraw(core, spriteBatch, mWindowRectangle, 2);
+			mWindowRectangle.preDraw(core, lSpriteBatch, mWindowRectangle, 2);
 
 			GL11.glEnable(GL11.GL_DEPTH_TEST);
 
 			textFont.begin(core.HUD());
-			spriteBatch.begin(core.HUD());
-			spriteBatch.setColorRGBA(0.f, 0.f, 0.f, 1.f);
-			spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mWindowRectangle, componentZDepth);
-			spriteBatch.end();
+			lSpriteBatch.begin(core.HUD());
+			lSpriteBatch.setColorRGBA(0.f, 0.f, 0.f, 1.f);
+			lSpriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mWindowRectangle, componentZDepth);
+			lSpriteBatch.end();
 
 			final var lOffsetY = mLabel != null ? UIWidget.DefaultWidthHeight : 0.f;
 			float lYPos = mWindowRectangle.y() + mScrollBar.currentYPos() + lOffsetY;
@@ -340,23 +342,23 @@ public class UiDropDownBox<T> extends UIWidget implements IInputClickedFocusMana
 
 			if (mScrollBar.scrollBarEnabled()) {
 				mScrollBar.scrollBarAlpha(1.f);
-				mScrollBar.draw(core, spriteBatch, coreSpritesheet, componentZDepth);
+				mScrollBar.draw(core, lSpriteBatch, coreSpritesheet, componentZDepth);
 			}
 		}
 
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
-			spriteBatch.begin(core.HUD());
+			lSpriteBatch.begin(core.HUD());
 
-			spriteBatch.setColorRGBA(2.f, .8f, .2f, .4f);
-			spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX, mY, mW, UIWidget.DefaultWidthHeight, componentZDepth);
+			lSpriteBatch.setColorRGBA(2.f, .8f, .2f, .4f);
+			lSpriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX, mY, mW, UIWidget.DefaultWidthHeight, componentZDepth);
 
-			spriteBatch.setColor(ColorConstants.Debug_Transparent_Magenta);
+			lSpriteBatch.setColor(ColorConstants.Debug_Transparent_Magenta);
 			if (mOpen)
-				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mWindowRectangle, componentZDepth);
+				lSpriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mWindowRectangle, componentZDepth);
 			else
-				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, this, componentZDepth);
+				lSpriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, this, componentZDepth);
 
-			spriteBatch.end();
+			lSpriteBatch.end();
 		}
 	}
 

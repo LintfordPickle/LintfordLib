@@ -70,7 +70,7 @@ public class HorizontalLayout extends BaseLayout implements IInputProcessor {
 	public void updateStructure() {
 		super.updateStructure();
 
-		final float lTitleHeight = mShowTitle ? parentScreen.rendererManager().headerFontHeight() : 0.f;
+		final float lTitleHeight = mShowTitle ? parentScreen.rendererManager().sharedResources().headerFontHeight() : 0.f;
 
 		float lYPos = mY + mEntryOffsetFromTop + lTitleHeight + mScrollBar.currentYPos() + mCropPaddingTop + paddingTop();
 

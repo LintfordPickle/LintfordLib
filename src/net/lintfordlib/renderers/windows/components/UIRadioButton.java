@@ -2,11 +2,11 @@ package net.lintfordlib.renderers.windows.components;
 
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.graphics.ColorConstants;
-import net.lintfordlib.core.graphics.batching.SpriteBatch;
 import net.lintfordlib.core.graphics.fonts.FontUnit;
 import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
 import net.lintfordlib.core.input.mouse.IInputProcessor;
+import net.lintfordlib.core.rendering.SharedResources;
 import net.lintfordlib.renderers.windows.UiWindow;
 import net.lintfordlib.screenmanager.entries.EntryInteractions;
 
@@ -71,15 +71,15 @@ public class UIRadioButton extends UIWidget implements IInputProcessor {
 	// Constructor
 	// --------------------------------------
 
-	public UIRadioButton(final UiWindow parentWindow) {
+	public UIRadioButton(UiWindow parentWindow) {
 		this(parentWindow, 0);
 	}
 
-	public UIRadioButton(final UiWindow parentWindow, final int entryUid) {
+	public UIRadioButton(UiWindow parentWindow, int entryUid) {
 		this(parentWindow, NO_LABEL_TEXT, entryUid);
 	}
 
-	public UIRadioButton(final UiWindow parentWindow, final String label, final int entryUid) {
+	public UIRadioButton(UiWindow parentWindow, String label, int entryUid) {
 		super(parentWindow);
 
 		mClickID = entryUid;
@@ -116,16 +116,16 @@ public class UIRadioButton extends UIWidget implements IInputProcessor {
 	}
 
 	@Override
-	public void draw(LintfordCore core, SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheet, FontUnit textFont, float componentZDepth) {
+	public void draw(LintfordCore core, SharedResources sharedResources, SpriteSheetDefinition coreSpritesheet, FontUnit textFont, float componentZDepth) {
 		final var lColorMod = mIsSelected ? 0.4f : 0.3f;
 		final var lColor = ColorConstants.getColorWithRGBMod(ColorConstants.PrimaryColor, lColorMod);
 
-		// Sprite batching in parent UiRadioGroup
+		final var lSpriteBatch = sharedResources.uiSpriteBatch();
 
-		spriteBatch.begin(core.HUD());
-		spriteBatch.setColor(lColor);
-		spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX, mY, mW, mH, componentZDepth);
-		spriteBatch.end();
+		lSpriteBatch.begin(core.HUD());
+		lSpriteBatch.setColor(lColor);
+		lSpriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX, mY, mW, mH, componentZDepth);
+		lSpriteBatch.end();
 
 		final var lButtonText = mButtonLabel != null ? mButtonLabel : NO_LABEL_TEXT;
 		final var lTextWidth = textFont.getStringWidth(lButtonText);

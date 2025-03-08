@@ -181,7 +181,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		mMenuFont = resourceManager.fontManager().getFontUnit(ScreenManager.FONT_MENU_ENTRY_NAME);
 		mMenuFontBold = resourceManager.fontManager().getFontUnit(ScreenManager.FONT_MENU_BOLD_ENTRY_NAME);
 		mMenuHeaderFont = resourceManager.fontManager().getFontUnit(ScreenManager.FONT_MENU_TITLE_NAME);
-		mTitleFontHeight = mRendererManager.headerFontHeight();
+		mTitleFontHeight = mRendererManager.sharedResources().headerFontHeight();
 
 		final int lCount = mLayouts.size();
 		for (int i = 0; i < lCount; i++) {

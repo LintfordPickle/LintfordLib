@@ -3,12 +3,12 @@ package net.lintfordlib.renderers.windows.components;
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.geometry.Rectangle;
 import net.lintfordlib.core.graphics.ColorConstants;
-import net.lintfordlib.core.graphics.batching.SpriteBatch;
 import net.lintfordlib.core.graphics.fonts.FontUnit;
 import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
 import net.lintfordlib.core.input.InputManager;
 import net.lintfordlib.core.input.keyboard.IUiInputKeyPressCallback;
+import net.lintfordlib.core.rendering.SharedResources;
 import net.lintfordlib.renderers.windows.UiWindow;
 
 public class UiCheckBox extends UIWidget {
@@ -138,7 +138,7 @@ public class UiCheckBox extends UIWidget {
 	}
 
 	@Override
-	public void draw(LintfordCore core, SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheetDefinition, FontUnit textFont, float componentZDepth) {
+	public void draw(LintfordCore core, SharedResources sharedResources, SpriteSheetDefinition coreSpritesheetDefinition, FontUnit textFont, float componentZDepth) {
 		final float lTextHeight = textFont.fontHeight();
 
 		if (mLabelText != null) {
@@ -148,13 +148,15 @@ public class UiCheckBox extends UIWidget {
 			textFont.end();
 		}
 
-		spriteBatch.begin(core.HUD());
-		spriteBatch.setColorRGBA(1.f, 1.f, 1.f, 1.f);
-		spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_CHECKBOX_UNCHECKED, mBoxRectangle, componentZDepth);
-		if (mIsChecked)
-			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_CHECKBOX_CHECKED, mBoxRectangle, componentZDepth);
+		final var lSpriteBatch = sharedResources.uiSpriteBatch();
 
-		spriteBatch.end();
+		lSpriteBatch.begin(core.HUD());
+		lSpriteBatch.setColorRGBA(1.f, 1.f, 1.f, 1.f);
+		lSpriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_CHECKBOX_UNCHECKED, mBoxRectangle, componentZDepth);
+		if (mIsChecked)
+			lSpriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_CHECKBOX_CHECKED, mBoxRectangle, componentZDepth);
+
+		lSpriteBatch.end();
 	}
 
 	// --------------------------------------

@@ -2,11 +2,11 @@ package net.lintfordlib.renderers.windows.components;
 
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.graphics.Color;
-import net.lintfordlib.core.graphics.batching.SpriteBatch;
 import net.lintfordlib.core.graphics.fonts.FontUnit;
 import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
 import net.lintfordlib.core.maths.MathHelper;
+import net.lintfordlib.core.rendering.SharedResources;
 import net.lintfordlib.renderers.windows.UiWindow;
 
 public class UiWidgetBar extends UIWidget {
@@ -69,7 +69,7 @@ public class UiWidgetBar extends UIWidget {
 	// --------------------------------------
 
 	@Override
-	public void draw(LintfordCore core, SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheet, FontUnit textFont, float componentZDepth) {
+	public void draw(LintfordCore core, SharedResources sharedResources, SpriteSheetDefinition coreSpritesheet, FontUnit textFont, float componentZDepth) {
 		if (mLabelString != null && mLabelString.length() > 0) {
 			textFont.begin(core.HUD());
 			textFont.setTextColorRGBA(1.f, 1.f, 1.f, 1.f);
@@ -81,17 +81,19 @@ public class UiWidgetBar extends UIWidget {
 		final var lBarWidth = MathHelper.clamp(MathHelper.scaleToRange(mCurValue, mMinValue, mMaxValue, 0, mW) - lInnerBorderPadding, 0, mW - HorizontalPadding * 2.f);
 
 		if (lBarWidth > 0) {
+			final var lSpriteBatch = sharedResources.uiSpriteBatch();
+
 			final var inner_x = mX + HorizontalPadding;
 			final var inner_y = mY + 25;
 			final var inner_w = lBarWidth;
 			final var inner_h = BAR_HEIGHT - lInnerBorderPadding * 2.f;
 
-			spriteBatch.begin(core.HUD());
-			spriteBatch.setColorRGBA(0.f, 0.f, 0.f, 1.f);
-			spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX + HorizontalPadding, mY + 25, mW - HorizontalPadding * 2.f, BAR_HEIGHT, .1f);
-			spriteBatch.setColor(UiBarColor);
-			spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, inner_x + lInnerBorderPadding, inner_y + lInnerBorderPadding, inner_w, inner_h, .1f);
-			spriteBatch.end();
+			lSpriteBatch.begin(core.HUD());
+			lSpriteBatch.setColorRGBA(0.f, 0.f, 0.f, 1.f);
+			lSpriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX + HorizontalPadding, mY + 25, mW - HorizontalPadding * 2.f, BAR_HEIGHT, .1f);
+			lSpriteBatch.setColor(UiBarColor);
+			lSpriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, inner_x + lInnerBorderPadding, inner_y + lInnerBorderPadding, inner_w, inner_h, .1f);
+			lSpriteBatch.end();
 		}
 	}
 

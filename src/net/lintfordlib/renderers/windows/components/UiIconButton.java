@@ -7,6 +7,7 @@ import net.lintfordlib.core.graphics.batching.SpriteBatch;
 import net.lintfordlib.core.graphics.fonts.FontUnit;
 import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
+import net.lintfordlib.core.rendering.SharedResources;
 import net.lintfordlib.renderers.windows.UiWindow;
 import net.lintfordlib.screenmanager.entries.EntryInteractions;
 
@@ -135,14 +136,14 @@ public class UiIconButton extends UIWidget {
 	}
 
 	@Override
-	public void draw(LintfordCore core, SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheetDefinition, FontUnit textFont, float componentZDepth) {
+	public void draw(LintfordCore core, SharedResources sharedResources, SpriteSheetDefinition coreSpritesheetDefinition, FontUnit textFont, float componentZDepth) {
 		if (!mIsVisible)
 			return;
 
 		if (mButtonSolidColorBackground)
-			drawSolidColorBackground(core, spriteBatch, coreSpritesheetDefinition);
+			drawSolidColorBackground(core, sharedResources.uiSpriteBatch(), coreSpritesheetDefinition);
 		else if (mButtonTexture != null)
-			drawTextureBackground(core, spriteBatch);
+			drawTextureBackground(core, sharedResources.uiSpriteBatch());
 
 		if (mDrawButtonText && mButtonLabel != null && mButtonLabel.length() > 0) {
 			final float lTextWidth = textFont.getStringWidth(mButtonLabel);

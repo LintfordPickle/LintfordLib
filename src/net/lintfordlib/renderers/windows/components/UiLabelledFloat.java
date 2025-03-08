@@ -2,10 +2,10 @@ package net.lintfordlib.renderers.windows.components;
 
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.graphics.ColorConstants;
-import net.lintfordlib.core.graphics.batching.SpriteBatch;
 import net.lintfordlib.core.graphics.fonts.FontUnit;
 import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
+import net.lintfordlib.core.rendering.SharedResources;
 import net.lintfordlib.renderers.windows.UiWindow;
 
 public class UiLabelledFloat extends UIWidget {
@@ -62,21 +62,25 @@ public class UiLabelledFloat extends UIWidget {
 	// --------------------------------------
 
 	@Override
-	public void draw(LintfordCore core, SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheetDefinition, FontUnit textFont, float componentZDepth) {
+	public void draw(LintfordCore core, SharedResources sharedResources, SpriteSheetDefinition coreSpritesheetDefinition, FontUnit textFont, float componentZDepth) {
 		final float lMouseX = core.HUD().getMouseWorldSpaceX();
 		final float lMouseY = core.HUD().getMouseWorldSpaceY();
 
 		final boolean lIsMouseHovering = intersectsAA(lMouseX, lMouseY);
 
 		if (lIsMouseHovering) {
-			spriteBatch.begin(core.HUD());
-			spriteBatch.setColor(ColorConstants.MenuPanelPrimaryColor);
+			final var lSpriteBatch = sharedResources.uiSpriteBatch();
 
-			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_LEFT, mX, mY, 32, mH, componentZDepth);
+			lSpriteBatch.begin(core.HUD());
+			lSpriteBatch.setColor(ColorConstants.MenuPanelPrimaryColor);
+
+			lSpriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_LEFT, mX, mY, 32, mH, componentZDepth);
 			if (mW > 32) {
-				spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_MID, mX + 32, mY, mW - 64, mH, componentZDepth);
-				spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_RIGHT, mX + mW - 32, mY, 32, mH, componentZDepth);
+				lSpriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_MID, mX + 32, mY, mW - 64, mH, componentZDepth);
+				lSpriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_RIGHT, mX + mW - 32, mY, 32, mH, componentZDepth);
 			}
+
+			lSpriteBatch.end();
 		}
 
 		final var lTextHeight = textFont.fontHeight();

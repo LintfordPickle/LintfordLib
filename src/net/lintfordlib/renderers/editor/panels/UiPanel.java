@@ -352,12 +352,13 @@ public abstract class UiPanel implements IScrollBarArea, UIWindowChangeListener,
 	}
 
 	public void draw(LintfordCore core) {
-		final var rendererManager = mParentWindow.rendererManager();
+		final var lSharedResources = core.sharedResources();
 
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 
-		final var lFontUnit = rendererManager.uiTextFont();
-		final var lSpriteBatch = rendererManager.uiSpriteBatch();
+		final var lFontUnit = lSharedResources.uiTextFont();
+		final var lSpriteBatch = lSharedResources.uiSpriteBatch();
+
 		final var mCoreSpriteSheet = mParentWindow.coreSpritesheet();
 
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
@@ -417,7 +418,7 @@ public abstract class UiPanel implements IScrollBarArea, UIWindowChangeListener,
 				final var lWidget = mWidgets.get(i);
 
 				zoff += .03f;
-				lWidget.draw(core, lSpriteBatch, mCoreSpriteSheet, lFontUnit, zoff);
+				lWidget.draw(core, lSharedResources, mCoreSpriteSheet, lFontUnit, zoff);
 			}
 
 			if (mNestedPanel != null)

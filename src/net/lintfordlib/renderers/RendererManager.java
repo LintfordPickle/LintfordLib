@@ -11,15 +11,11 @@ import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.controllers.hud.HudLayoutController;
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.debug.Debug;
-import net.lintfordlib.core.graphics.batching.SpriteBatch;
-import net.lintfordlib.core.graphics.fonts.FontMetaData;
-import net.lintfordlib.core.graphics.fonts.FontUnit;
-import net.lintfordlib.core.graphics.linebatch.LineBatch;
-import net.lintfordlib.core.graphics.polybatch.PolyBatchPCT;
 import net.lintfordlib.core.graphics.rendertarget.RenderTarget;
 import net.lintfordlib.core.input.IInputClickedFocusTracker;
 import net.lintfordlib.core.rendering.RenderPass;
 import net.lintfordlib.core.rendering.RenderState;
+import net.lintfordlib.core.rendering.SharedResources;
 import net.lintfordlib.options.DisplayManager;
 import net.lintfordlib.options.IResizeListener;
 import net.lintfordlib.renderers.windows.UiWindow;
@@ -33,15 +29,6 @@ public class RendererManager implements IInputClickedFocusManager {
 	// --------------------------------------
 	// Constants
 	// --------------------------------------
-
-	public static final FontMetaData RendererManagerFonts = new FontMetaData();
-
-	public static final String HUD_FONT_TEXT_BOLD_SMALL_NAME = "HUD_FONT_TEXT_BOLD_SMALL_NAME";
-
-	public static final String UI_FONT_TEXT_NAME = "UI_FONT_TEXT_NAME";
-	public static final String UI_FONT_TEXT_BOLD_NAME = "UI_FONT_TEXT_BOLD_NAME";
-	public static final String UI_FONT_HEADER_NAME = "UI_FONT_HEADER_NAME";
-	public static final String UI_FONT_TITLE_NAME = "UI_FONT_TITLE_NAME";
 
 	/** This refers to the BaseRenderers responsible for rendering the game components. */
 	public static final boolean RENDER_GAME_RENDERABLES = true;
@@ -60,7 +47,7 @@ public class RendererManager implements IInputClickedFocusManager {
 	protected final int mEntityGroupUid;
 
 	private LintfordCore mCore;
-	private ResourceManager mResourceManager;
+
 	private DisplayManager mDisplayConfig;
 
 	/** Tracks the number of times a loadResources method is called using this renderManager/entityGroupId */
@@ -68,24 +55,18 @@ public class RendererManager implements IInputClickedFocusManager {
 
 	private HudLayoutController mUiStructureController;
 	private List<BaseRenderer> mRenderers;
-	private List<UiWindow> mWindowRenderers;
+	private List<UiWindow> mWindowRenderers; // TODO: remove this in the new version (using the structure)
 
-	protected FontUnit mHudTextBoldSmallFont;
+	// START SHARE - move to SharedResources class and share amoungst all RendererManagers
 
-	protected FontUnit mUiTextFont;
-	protected FontUnit mUiTextBoldFont;
-	protected FontUnit mUiHeaderFont;
-	protected FontUnit mUiTitleFont;
+	// END SHARE
+
 	protected float mTitleHeight;
 
 	private boolean mIsinitialized;
 	private boolean mResourcesLoaded;
 
 	private List<UIWindowChangeListener> mListeners;
-
-	private SpriteBatch mSpriteBatch;
-	private LineBatch mLineBatch;
-	private PolyBatchPCT mPolyBatch;
 
 	private List<RenderTarget> mRenderTargets;
 	private List<RenderTarget> mRenderTargetAutoResize;
@@ -95,6 +76,7 @@ public class RendererManager implements IInputClickedFocusManager {
 	private int mRendererIdCounter;
 
 	protected final RenderState mRenderState = new RenderState();
+	protected SharedResources mSharedResources;
 
 	protected IInputClickedFocusTracker mTrackedInputControl;
 
@@ -127,50 +109,6 @@ public class RendererManager implements IInputClickedFocusManager {
 		return mSharedGlContentCount <= 0;
 	}
 
-	public FontUnit hudTextBoldSmallFont() {
-		return mHudTextBoldSmallFont;
-	}
-
-	public FontUnit uiTextFont() {
-		return mUiTextFont;
-	}
-
-	public float textFontHeight() {
-		if (mUiTextFont == null)
-			return 0.f;
-		return mUiTextFont.fontHeight();
-	}
-
-	public FontUnit uiTextBoldFont() {
-		return mUiTextBoldFont;
-	}
-
-	public float textBoldFontHeight() {
-		if (mUiTextBoldFont == null)
-			return 0.f;
-		return mUiTextBoldFont.fontHeight();
-	}
-
-	public FontUnit uiHeaderFont() {
-		return mUiHeaderFont;
-	}
-
-	public float headerFontHeight() {
-		if (mUiHeaderFont == null)
-			return 0.f;
-		return mUiHeaderFont.fontHeight();
-	}
-
-	public FontUnit uiTitleFont() {
-		return mUiTitleFont;
-	}
-
-	public float titleFontHeight() {
-		if (mUiTitleFont == null)
-			return 0.f;
-		return mUiTitleFont.fontHeight();
-	}
-
 	public boolean isinitialized() {
 		return mIsinitialized;
 	}
@@ -191,18 +129,6 @@ public class RendererManager implements IInputClickedFocusManager {
 		return mDisplayConfig;
 	}
 
-	public SpriteBatch uiSpriteBatch() {
-		return mSpriteBatch;
-	}
-
-	public PolyBatchPCT uiPolyBatch() {
-		return mPolyBatch;
-	}
-
-	public LineBatch uiLineBatch() {
-		return mLineBatch;
-	}
-
 	public List<BaseRenderer> baseRenderers() {
 		return mRenderers;
 	}
@@ -213,6 +139,10 @@ public class RendererManager implements IInputClickedFocusManager {
 
 	public HudLayoutController uiStructureController() {
 		return mUiStructureController;
+	}
+
+	public SharedResources sharedResources() {
+		return mSharedResources;
 	}
 
 	// --------------------------------------
@@ -228,21 +158,12 @@ public class RendererManager implements IInputClickedFocusManager {
 		mRenderTargets = new ArrayList<>();
 		mRenderTargetAutoResize = new ArrayList<>();
 
-		mSpriteBatch = new SpriteBatch();
-		mLineBatch = new LineBatch();
-		mPolyBatch = new PolyBatchPCT();
-
 		mListeners = new ArrayList<>();
 
 		mIsinitialized = false;
 		mResourcesLoaded = false;
 
-		RendererManagerFonts.AddIfNotExists(HUD_FONT_TEXT_BOLD_SMALL_NAME, "/res/fonts/fontCoreText.json");
-
-		RendererManagerFonts.AddIfNotExists(UI_FONT_TEXT_NAME, "/res/fonts/fontCoreText.json");
-		RendererManagerFonts.AddIfNotExists(UI_FONT_TEXT_BOLD_NAME, "/res/fonts/fontCoreText.json");
-		RendererManagerFonts.AddIfNotExists(UI_FONT_HEADER_NAME, "/res/fonts/fontCoreText.json");
-		RendererManagerFonts.AddIfNotExists(UI_FONT_TITLE_NAME, "/res/fonts/fontCoreText.json");
+		mSharedResources = core.sharedResources();
 	}
 
 	// --------------------------------------
@@ -266,20 +187,6 @@ public class RendererManager implements IInputClickedFocusManager {
 
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "Loading Resources for all registered renderers");
 
-		mResourceManager = resourceManager;
-		mResourceManager.increaseReferenceCounts(mEntityGroupUid);
-
-		mHudTextBoldSmallFont = resourceManager.fontManager().getFontUnit(HUD_FONT_TEXT_BOLD_SMALL_NAME);
-
-		mUiTextFont = resourceManager.fontManager().getFontUnit(UI_FONT_TEXT_NAME);
-		mUiTextBoldFont = resourceManager.fontManager().getFontUnit(UI_FONT_TEXT_BOLD_NAME);
-		mUiHeaderFont = resourceManager.fontManager().getFontUnit(UI_FONT_HEADER_NAME);
-		mUiTitleFont = resourceManager.fontManager().getFontUnit(UI_FONT_TITLE_NAME);
-
-		mSpriteBatch.loadResources(resourceManager);
-		mLineBatch.loadResources(resourceManager);
-		mPolyBatch.loadResources(resourceManager);
-
 		mDisplayConfig = resourceManager.config().display();
 
 		final int lRendererCount = mRenderers.size();
@@ -293,6 +200,7 @@ public class RendererManager implements IInputClickedFocusManager {
 		mResizeListener = this::reloadRenderTargets;
 		mDisplayConfig.addResizeListener(mResizeListener);
 
+		mSharedResources.loadResources(resourceManager);
 		mResourcesLoaded = true;
 	}
 
@@ -312,20 +220,8 @@ public class RendererManager implements IInputClickedFocusManager {
 			mWindowRenderers.get(i).unloadResources();
 		}
 
-		mSpriteBatch.unloadResources();
-		mLineBatch.unloadResources();
-		mPolyBatch.unloadResources();
-
-		mUiTextFont = null;
-		mUiTextBoldFont = null;
-		mUiHeaderFont = null;
-		mUiTitleFont = null;
-
 		mDisplayConfig.removeResizeListener(mResizeListener);
 		mDisplayConfig = null;
-
-		mResourceManager.decreaseReferenceCounts(mEntityGroupUid);
-		mResourceManager = null;
 
 		mResourcesLoaded = false;
 	}

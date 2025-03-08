@@ -10,6 +10,7 @@ import net.lintfordlib.core.audio.AudioFireAndForgetManager;
 import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.graphics.fonts.FontMetaData;
 import net.lintfordlib.core.input.IInputClickedFocusTracker;
+import net.lintfordlib.core.rendering.SharedResources;
 import net.lintfordlib.options.IResizeListener;
 import net.lintfordlib.screenmanager.Screen.ScreenState;
 import net.lintfordlib.screenmanager.toast.ToastManager;
@@ -40,6 +41,7 @@ public class ScreenManager implements IInputClickedFocusManager {
 	private ToolTip mToolTip;
 	private ContextHintManager mContextHintManager;
 	private ResourceManager mResourceManager;
+	private SharedResources mSharedResources;
 	private AudioFireAndForgetManager mUISoundManager;
 	private ToastManager mToastManager;
 	private boolean mIsinitialized;
@@ -71,6 +73,11 @@ public class ScreenManager implements IInputClickedFocusManager {
 
 	public void columnMaxWidth(float newColumnMaxWidth) {
 		mColumnMaxWidth = newColumnMaxWidth;
+	}
+
+	// TODO: See about remove this reference in favour of the Core reference.
+	public SharedResources sharerdResources() {
+		return mSharedResources;
 	}
 
 	public ToastManager toastManager() {
@@ -124,6 +131,8 @@ public class ScreenManager implements IInputClickedFocusManager {
 		ScreenManagerFonts.AddIfNotExists(FONT_MENU_ENTRY_NAME, "/res/fonts/fontCoreText.json");
 		ScreenManagerFonts.AddIfNotExists(FONT_MENU_BOLD_ENTRY_NAME, "/res/fonts/fontCoreText.json");
 		ScreenManagerFonts.AddIfNotExists(FONT_MENU_TOOLTIP_NAME, "/res/fonts/fontCoreText.json");
+
+		mSharedResources = core.sharedResources();
 	}
 
 	// --------------------------------------
@@ -145,6 +154,8 @@ public class ScreenManager implements IInputClickedFocusManager {
 		IResizeListener mResizeListener;
 		mResourceManager = resourceManager;
 
+		mSharedResources.loadResources(resourceManager);
+
 		final int lScreenToAddCount = mScreensToAdd.size();
 		for (int i = 0; i < lScreenToAddCount; i++) {
 			mScreensToAdd.get(i).loadResources(resourceManager);
@@ -155,7 +166,6 @@ public class ScreenManager implements IInputClickedFocusManager {
 
 		mToolTip.loadResources(resourceManager);
 		mToastManager.loadResources(resourceManager);
-		mContextHintManager.loadGlContent(mResourceManager);
 
 		// Add a viewport listener so the screenmanager screens can react to changes in window size
 		mResizeListener = new IResizeListener() {
@@ -180,7 +190,8 @@ public class ScreenManager implements IInputClickedFocusManager {
 
 		mToolTip.unloadResources();
 		mToastManager.unloadResources();
-		mContextHintManager.unloadResources();
+
+		mSharedResources.unloadResources();
 
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "Finished ScreenManager.UnloadResources");
 

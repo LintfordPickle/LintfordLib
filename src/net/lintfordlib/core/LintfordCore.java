@@ -36,11 +36,11 @@ import net.lintfordlib.core.input.InputManager;
 import net.lintfordlib.core.input.KeyEventActionManager;
 import net.lintfordlib.core.maths.MathHelper;
 import net.lintfordlib.core.rendering.RenderState;
+import net.lintfordlib.core.rendering.SharedResources;
 import net.lintfordlib.core.time.TimeConstants;
 import net.lintfordlib.data.DataManager;
 import net.lintfordlib.options.DisplayManager;
 import net.lintfordlib.options.MasterConfig;
-import net.lintfordlib.renderers.RendererManager;
 import net.lintfordlib.screenmanager.ScreenManager;
 
 /**
@@ -193,6 +193,7 @@ public abstract class LintfordCore {
 	protected DataManager mDataManager;
 	protected ControllerManager mControllerManager;
 	protected ResourceManager mResourceManager;
+	protected SharedResources mSharedResources;
 
 	protected final float mShowLogoTimeInMilli = 3000;
 	protected long mShowLogoTimer;
@@ -231,6 +232,10 @@ public abstract class LintfordCore {
 	/** Returns the {@link ResourceManager}. */
 	public ResourceManager resources() {
 		return mResourceManager;
+	}
+
+	public SharedResources sharedResources() {
+		return mSharedResources;
 	}
 
 	public MasterConfig config() {
@@ -304,6 +309,8 @@ public abstract class LintfordCore {
 			defaultWorkspaceLocation = System.getProperty("user.dir");
 			System.setProperty(ConstantsApp.WORKSPACE_PROPERTY_NAME, defaultWorkspaceLocation);
 		}
+
+		mSharedResources = new SharedResources(ResourceGroupProvider.getRollingEntityNumber());
 
 		// The target simulation speed can be set in the CoreTime.targetElapsedTimeMilli. Examples:
 		// 30Hz is 33.33 ms
@@ -431,7 +438,7 @@ public abstract class LintfordCore {
 		lFontManager.loadBitmapFontDefinitionsFromMetaData(BitmapFontManager.CoreFonts);
 
 		lFontManager.loadBitmapFontDefinitionsFromMetaData(ScreenManager.ScreenManagerFonts);
-		lFontManager.loadBitmapFontDefinitionsFromMetaData(RendererManager.RendererManagerFonts);
+		lFontManager.loadBitmapFontDefinitionsFromMetaData(SharedResources.RendererManagerFonts);
 	}
 
 	/**
@@ -457,6 +464,8 @@ public abstract class LintfordCore {
 		onLoadBitmapFonts();
 
 		mResourceManager.loadResources();
+		mSharedResources.loadResources(mResourceManager);
+
 		Debug.debugManager().loadResources(mResourceManager);
 
 		GLDebug.checkGLErrorsException("LintfordCore onLoadResources");
@@ -474,6 +483,9 @@ public abstract class LintfordCore {
 	 */
 	protected void onUnloadResources() {
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "Unloading GL content");
+
+		mSharedResources.unloadResources();
+
 		Debug.debugManager().unloadResources();
 
 		mResourceManager.unloadContent();

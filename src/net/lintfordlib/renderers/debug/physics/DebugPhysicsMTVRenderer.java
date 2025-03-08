@@ -92,8 +92,8 @@ public class DebugPhysicsMTVRenderer extends BaseRenderer implements ICollisionC
 		if (numAllocations == 0)
 			return;
 
-		final var lFontUnit = mRendererManager.uiTextFont();
-		final var lLineBatch = mRendererManager.uiLineBatch();
+		final var lFontUnit = core.sharedResources().uiTextFont();
+		final var lLineBatch = core.sharedResources().uiLineBatch();
 
 		lFontUnit.begin(core.gameCamera());
 

@@ -98,7 +98,7 @@ public class DebugPhysicsGridRenderer extends BaseRenderer {
 		final var lTileSizeW = mBoundaryWidth / mNumTilesWide;
 		final var lTileSizeH = mBoundaryHeight / mNumTilesHigh;
 
-		final var lFontUnit = mRendererManager.uiTextFont();
+		final var lFontUnit = core.sharedResources().uiTextFont();
 
 		mLineBatch.lineType(GL11.GL_LINES);
 		mLineBatch.begin(core.gameCamera());

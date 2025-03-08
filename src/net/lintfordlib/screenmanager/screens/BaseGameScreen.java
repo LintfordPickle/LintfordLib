@@ -78,6 +78,9 @@ public abstract class BaseGameScreen extends Screen {
 		initializeControllers(lCore);
 
 		initializeRenderers(lCore);
+
+		createRendererStructure(lCore);
+		ensureDefaultRenderStructure(lCore);
 	}
 
 	@Override
@@ -114,6 +117,12 @@ public abstract class BaseGameScreen extends Screen {
 	protected abstract void createRenderers(LintfordCore core);
 
 	protected abstract void initializeRenderers(LintfordCore core);
+
+	protected abstract void createRendererStructure(LintfordCore core);
+
+	private void ensureDefaultRenderStructure(LintfordCore core) {
+		// TODO: If no renderer structure was defined / created, then setup a default color stage
+	}
 
 	protected abstract void loadRendererResources(ResourceManager resourceManager);
 

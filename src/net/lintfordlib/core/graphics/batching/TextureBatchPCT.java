@@ -407,6 +407,7 @@ public class TextureBatchPCT {
 			return;
 
 		flush();
+		textureIdOffset(0);
 		mIsDrawing = false;
 	}
 

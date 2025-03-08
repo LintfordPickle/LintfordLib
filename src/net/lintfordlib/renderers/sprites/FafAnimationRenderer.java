@@ -71,14 +71,14 @@ public class FafAnimationRenderer extends BaseRenderer implements AnimatedSprite
 
 		final var lSpritesheetDefinition = mFafAnimationController.spritesheetDefintion();
 
-		if (lSpritesheetDefinition == null) {
+		if (lSpritesheetDefinition == null)
 			return;
-		}
 
-		final var lSpriteBatch = rendererManager().uiSpriteBatch();
+		final var lSpriteBatch = core.sharedResources().uiSpriteBatch();
+
 		lSpriteBatch.begin(core.gameCamera());
 		lSpriteBatch.setColorRGBA(1.f, 1.f, 1.f, 1.f);
-		
+
 		final int lNumAnimations = animationUpdateList.size();
 		for (int i = 0; i < lNumAnimations; i++) {
 
@@ -89,7 +89,7 @@ public class FafAnimationRenderer extends BaseRenderer implements AnimatedSprite
 			final float lDstX = lAnimInstance.x() - lDstW * .5f;
 			final float lDstY = lAnimInstance.y() - lDstH * .5f;
 
-			lSpriteBatch.draw(lSpritesheetDefinition, lAnimInstance.currentSpriteFrame(), lDstX, lDstY, lDstW, lDstH, -0.4f);
+			lSpriteBatch.draw(lSpritesheetDefinition, lAnimInstance.currentSpriteFrame(), lDstX, lDstY, lDstW, lDstH, 0.4f);
 		}
 
 		lSpriteBatch.end();

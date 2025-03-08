@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.lintfordlib.core.LintfordCore;
-import net.lintfordlib.core.graphics.batching.SpriteBatch;
 import net.lintfordlib.core.graphics.fonts.FontUnit;
 import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintfordlib.core.input.InputManager;
+import net.lintfordlib.core.rendering.SharedResources;
 import net.lintfordlib.renderers.windows.UiWindow;
 import net.lintfordlib.screenmanager.entries.EntryInteractions;
 
@@ -72,17 +72,19 @@ public class UIRadioGroup extends UIWidget implements EntryInteractions {
 	}
 
 	@Override
-	public void draw(LintfordCore core, SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheet, FontUnit textFont, float componentZDepth) {
+	public void draw(LintfordCore core, SharedResources sharedResources, SpriteSheetDefinition coreSpritesheet, FontUnit textFont, float componentZDepth) {
 
-		spriteBatch.begin(core.HUD());
+		final var lSpriteBatch = sharedResources.uiSpriteBatch();
+
+		lSpriteBatch.begin(core.HUD());
 		textFont.begin(core.HUD());
 
 		final int lButtonCount = mButtons.size();
 		for (int i = 0; i < lButtonCount; i++) {
-			mButtons.get(i).draw(core, spriteBatch, coreSpritesheet, textFont, componentZDepth);
+			mButtons.get(i).draw(core, sharedResources, coreSpritesheet, textFont, componentZDepth);
 		}
 
-		spriteBatch.end();
+		lSpriteBatch.end();
 		textFont.end();
 	}
 

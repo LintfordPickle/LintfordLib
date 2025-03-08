@@ -7,7 +7,7 @@ import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
 import net.lintfordlib.core.graphics.textures.Texture;
 import net.lintfordlib.core.maths.MathHelper;
-import net.lintfordlib.renderers.RendererManager;
+import net.lintfordlib.core.rendering.SharedResources;
 import net.lintfordlib.screenmanager.MenuEntry;
 import net.lintfordlib.screenmanager.MenuScreen;
 import net.lintfordlib.screenmanager.Screen;
@@ -96,7 +96,7 @@ public class MenuImageEntry extends MenuEntry {
 	public void loadResources(ResourceManager resourceManager) {
 		super.loadResources(resourceManager);
 
-		mUiFont = resourceManager.fontManager().getFontUnit(RendererManager.UI_FONT_TEXT_BOLD_NAME);
+		mUiFont = resourceManager.fontManager().getFontUnit(SharedResources.UI_FONT_TEXT_BOLD_NAME);
 	}
 
 	@Override

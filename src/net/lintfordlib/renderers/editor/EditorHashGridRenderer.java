@@ -6,10 +6,8 @@ import java.util.List;
 
 import org.lwjgl.opengl.GL11;
 
-import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.controllers.editor.EditorHashGridController;
 import net.lintfordlib.core.LintfordCore;
-import net.lintfordlib.core.graphics.linebatch.LineBatch;
 import net.lintfordlib.core.rendering.RenderPass;
 import net.lintfordlib.renderers.BaseRenderer;
 import net.lintfordlib.renderers.RendererManager;
@@ -27,7 +25,6 @@ public class EditorHashGridRenderer extends BaseRenderer {
 	// ---------------------------------------------
 
 	protected EditorHashGridController mHashGridController;
-	protected LineBatch mLineBatch;
 	private boolean mRenderHashGrid;
 	private boolean mFilterContents = false;
 	private List<Integer> mFilterWhitelist = new ArrayList<>();
@@ -68,8 +65,6 @@ public class EditorHashGridRenderer extends BaseRenderer {
 
 	public EditorHashGridRenderer(RendererManager rendererManager, int entityGroupID) {
 		super(rendererManager, RENDERER_NAME, entityGroupID);
-
-		mLineBatch = new LineBatch();
 	}
 
 	// ---------------------------------------------
@@ -86,24 +81,10 @@ public class EditorHashGridRenderer extends BaseRenderer {
 	}
 
 	@Override
-	public void loadResources(ResourceManager resourceManager) {
-		super.loadResources(resourceManager);
-
-		mLineBatch.loadResources(resourceManager);
-	}
-
-	@Override
-	public void unloadResources() {
-		super.unloadResources();
-
-		mLineBatch.unloadResources();
-	}
-
-	@Override
 	public void draw(LintfordCore core, RenderPass renderPass) {
-		if (mRenderHashGrid) {
+		if (mRenderHashGrid)
 			drawSpatialHashGridGrid(core);
-		}
+
 	}
 
 	// ---------------------------------------------
@@ -111,6 +92,10 @@ public class EditorHashGridRenderer extends BaseRenderer {
 	// ---------------------------------------------
 
 	private void drawSpatialHashGridGrid(LintfordCore core) {
+
+		final var lLineBatch = core.sharedResources().uiLineBatch();
+		final var lFontUnit = core.sharedResources().uiTextFont();
+
 		final var lHashGrid = mHashGridController.hashGrid();
 		final var mBoundaryWidth = lHashGrid.boundaryWidth();
 		final var mBoundaryHeight = lHashGrid.boundaryHeight();
@@ -124,10 +109,8 @@ public class EditorHashGridRenderer extends BaseRenderer {
 		final float lTileSizeW = mBoundaryWidth / (float) mNumTilesWide;
 		final float lTileSizeH = mBoundaryHeight / (float) mNumTilesHigh;
 
-		final var lFontUnit = mRendererManager.uiTextFont();
-
-		mLineBatch.lineType(GL11.GL_LINES);
-		mLineBatch.begin(core.gameCamera());
+		lLineBatch.lineType(GL11.GL_LINES);
+		lLineBatch.begin(core.gameCamera());
 		lFontUnit.begin(core.gameCamera());
 
 		final var lFontSize = 1.f;
@@ -136,10 +119,10 @@ public class EditorHashGridRenderer extends BaseRenderer {
 		// FIXME: frustum culling
 
 		for (int xx = 0; xx < mNumTilesWide; xx++) {
-			mLineBatch.draw(-lHalfBW + (xx * lTileSizeW), -lHalfBH, -lHalfBW + (xx * lTileSizeW), lHalfBH, .01f, 1f, 0f, 0f, .75f);
+			lLineBatch.draw(-lHalfBW + (xx * lTileSizeW), -lHalfBH, -lHalfBW + (xx * lTileSizeW), lHalfBH, .01f, 1f, 0f, 0f, .75f);
 
 			for (int yy = 0; yy < mNumTilesHigh; yy++) {
-				mLineBatch.draw(-lHalfBW, -lHalfBH + (yy * lTileSizeH), lHalfBW, -lHalfBH + (yy * lTileSizeH), .01f, 1f, 1f, 0f, .75f);
+				lLineBatch.draw(-lHalfBW, -lHalfBH + (yy * lTileSizeH), lHalfBW, -lHalfBH + (yy * lTileSizeH), .01f, 1f, 1f, 0f, .75f);
 
 				final int lCellKey = lHashGrid.getCellKeyFromWorldPosition(-lHalfBW + (xx * lTileSizeW), -lHalfBH + (yy * lTileSizeH));
 				lFontUnit.drawText(String.valueOf(lCellKey), -lHalfBW + (xx * lTileSizeW) + 2f, -lHalfBH + (yy * lTileSizeH) + 1f, .001f, lFontSize);
@@ -164,7 +147,7 @@ public class EditorHashGridRenderer extends BaseRenderer {
 			}
 		}
 
-		mLineBatch.end();
+		lLineBatch.end();
 		lFontUnit.end();
 	}
 }

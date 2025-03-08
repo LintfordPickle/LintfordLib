@@ -35,7 +35,6 @@ public abstract class SceneHeader implements Serializable {
 	protected String mSceneName;
 
 	protected transient String _cmpName;
-	private transient boolean mIsValid;
 
 	protected transient String mSceneDirectory;
 

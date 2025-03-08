@@ -8,13 +8,13 @@ import org.lwjgl.glfw.GLFW;
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.geometry.Rectangle;
 import net.lintfordlib.core.graphics.ColorConstants;
-import net.lintfordlib.core.graphics.batching.SpriteBatch;
 import net.lintfordlib.core.graphics.fonts.FontUnit;
 import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
 import net.lintfordlib.core.input.InputManager;
 import net.lintfordlib.core.input.keyboard.IBufferedTextInputCallback;
 import net.lintfordlib.core.input.keyboard.IUiInputKeyPressCallback;
+import net.lintfordlib.core.rendering.SharedResources;
 import net.lintfordlib.renderers.windows.ConstantsUi;
 import net.lintfordlib.renderers.windows.UiWindow;
 
@@ -355,7 +355,7 @@ public class UiInputInteger extends UIWidget implements IBufferedTextInputCallba
 	}
 
 	@Override
-	public void draw(LintfordCore core, SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheetDefinition, FontUnit textFont, float componentZDepth) {
+	public void draw(LintfordCore core, SharedResources sharedResources, SpriteSheetDefinition coreSpritesheetDefinition, FontUnit textFont, float componentZDepth) {
 		var lTextColor = ColorConstants.TextEntryColor;
 		final float lTextHeight = textFont.fontHeight();
 
@@ -372,18 +372,20 @@ public class UiInputInteger extends UIWidget implements IBufferedTextInputCallba
 			ww = mW * .5f;
 		}
 
-		spriteBatch.begin(core.HUD());
-		spriteBatch.setColor(ColorConstants.MenuPanelPrimaryColor);
-		spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_LEFT, xx, mY, 32, mH, componentZDepth);
+		final var lSpriteBatch = sharedResources.uiSpriteBatch();
+
+		lSpriteBatch.begin(core.HUD());
+		lSpriteBatch.setColor(ColorConstants.MenuPanelPrimaryColor);
+		lSpriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_LEFT, xx, mY, 32, mH, componentZDepth);
 		if (mW > 32) {
-			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_MID, xx + 32.f, mY, ww - 64, mH, componentZDepth);
-			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_RIGHT, xx + ww - 32, mY, 32, mH, componentZDepth);
+			lSpriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_MID, xx + 32.f, mY, ww - 64, mH, componentZDepth);
+			lSpriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_RIGHT, xx + ww - 32, mY, 32, mH, componentZDepth);
 		}
 
 		if (mShowControlArrows) {
-			spriteBatch.setColorRGBA(1.f, 1.f, 1.f, 1.f);
-			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WIDGET_LEFT_ARROW, mDecrementRectangle, componentZDepth);
-			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WIDGET_RIGHT_ARROW, mIncrementRectangle, componentZDepth);
+			lSpriteBatch.setColorRGBA(1.f, 1.f, 1.f, 1.f);
+			lSpriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WIDGET_LEFT_ARROW, mDecrementRectangle, componentZDepth);
+			lSpriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WIDGET_RIGHT_ARROW, mIncrementRectangle, componentZDepth);
 		}
 
 		var lText = mInputField.toString();
@@ -403,13 +405,13 @@ public class UiInputInteger extends UIWidget implements IBufferedTextInputCallba
 
 		if (mShowCaret && mHasFocus) {
 			final var lCarotPositionX = lTextPosX + lTextWidth;
-			spriteBatch.setColorRGBA(1.f, 1.f, 1.f, 1.f);
-			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, (int) lCarotPositionX, mY + mH * .5f - lTextHeight * .5f * mTextScale, 1.f, textFont.fontHeight() * mTextScale, componentZDepth);
+			lSpriteBatch.setColorRGBA(1.f, 1.f, 1.f, 1.f);
+			lSpriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, (int) lCarotPositionX, mY + mH * .5f - lTextHeight * .5f * mTextScale, 1.f, textFont.fontHeight() * mTextScale, componentZDepth);
 		}
-		spriteBatch.end();
+		lSpriteBatch.end();
 
 		final int lCancelRectSize = 16;
-		ContentRectangle.preDraw(core, spriteBatch, mX + 8, mY, mW - lCancelRectSize, mH, -0, 1);
+		ContentRectangle.preDraw(core, lSpriteBatch, mX + 8, mY, mW - lCancelRectSize, mH, -0, 1);
 
 		textFont.begin(core.HUD());
 		textFont.setTextColor(lTextColor);

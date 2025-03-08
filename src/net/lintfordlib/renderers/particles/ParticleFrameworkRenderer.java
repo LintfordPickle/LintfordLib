@@ -8,7 +8,6 @@ import org.lwjgl.opengl.GL11;
 import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.controllers.core.particles.ParticleFrameworkController;
 import net.lintfordlib.core.LintfordCore;
-import net.lintfordlib.core.graphics.batching.SpriteBatch;
 import net.lintfordlib.core.particles.particlesystems.ParticleSystemInstance;
 import net.lintfordlib.core.rendering.RenderPass;
 import net.lintfordlib.renderers.BaseRenderer;
@@ -32,7 +31,6 @@ public class ParticleFrameworkRenderer extends BaseRenderer {
 	// Variables
 	// --------------------------------------
 
-	protected SpriteBatch mSpriteBatch;
 	protected List<ParticleRenderer> mParticleRenderers;
 	protected ParticleFrameworkController mParticleSystemController;
 	private int mEntityGroupID;
@@ -65,7 +63,6 @@ public class ParticleFrameworkRenderer extends BaseRenderer {
 
 		mParticleRenderers = new ArrayList<>();
 		mEntityGroupID = entityGroupUid;
-		mSpriteBatch = new SpriteBatch();
 
 		for (int i = 0; i < RENDERER_POOL_SIZE; i++) {
 			mParticleRenderers.add(new ParticleRenderer(getNewRendererId(), mEntityGroupID));
@@ -83,11 +80,9 @@ public class ParticleFrameworkRenderer extends BaseRenderer {
 
 	@Override
 	public void loadResources(ResourceManager resourceManager) {
-		mSpriteBatch.loadResources(resourceManager);
 
-		for (int i = 0; i < RENDERER_POOL_SIZE; i++) {
+		for (int i = 0; i < RENDERER_POOL_SIZE; i++)
 			mParticleRenderers.get(i).loadResources(resourceManager);
-		}
 
 		mResourcesLoaded = true;
 	}
@@ -97,14 +92,8 @@ public class ParticleFrameworkRenderer extends BaseRenderer {
 		if (!mResourcesLoaded)
 			return;
 
-		if (mSpriteBatch != null) {
-			mSpriteBatch.unloadResources();
-			mSpriteBatch = null;
-		}
-
-		for (int i = 0; i < RENDERER_POOL_SIZE; i++) {
+		for (int i = 0; i < RENDERER_POOL_SIZE; i++)
 			mParticleRenderers.get(i).unloadResources();
-		}
 
 		mResourcesLoaded = false;
 	}
@@ -140,6 +129,8 @@ public class ParticleFrameworkRenderer extends BaseRenderer {
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glDepthMask(false);
 
+		final var lSpriteBatch = core.sharedResources().uiSpriteBatch();
+
 		final int lNumParticleRenderers = mParticleRenderers.size();
 		for (int i = 0; i < lNumParticleRenderers; i++) {
 			final var lParticleRenderer = mParticleRenderers.get(i);
@@ -157,15 +148,15 @@ public class ParticleFrameworkRenderer extends BaseRenderer {
 				cacheSrcBlendFactor = lSrcBlendFactor;
 				cacheDestBlendFactor = lDestBlendFactor;
 
-				mSpriteBatch.setGlBlendEnabled(true);
-				mSpriteBatch.setGlBlendFactor(lSrcBlendFactor, lDestBlendFactor);
+				lSpriteBatch.setGlBlendEnabled(true);
+				lSpriteBatch.setGlBlendFactor(lSrcBlendFactor, lDestBlendFactor);
 			}
 
-			mSpriteBatch.begin(core.gameCamera());
+			lSpriteBatch.begin(core.gameCamera());
 
-			lParticleRenderer.draw(core, mSpriteBatch);
+			lParticleRenderer.draw(core, lSpriteBatch);
 
-			mSpriteBatch.end();
+			lSpriteBatch.end();
 		}
 
 		GL11.glDepthMask(true);

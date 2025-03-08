@@ -13,13 +13,13 @@ import org.lwjgl.glfw.GLFW;
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.geometry.Rectangle;
 import net.lintfordlib.core.graphics.ColorConstants;
-import net.lintfordlib.core.graphics.batching.SpriteBatch;
 import net.lintfordlib.core.graphics.fonts.FontUnit;
 import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
 import net.lintfordlib.core.input.InputManager;
 import net.lintfordlib.core.input.keyboard.IBufferedTextInputCallback;
 import net.lintfordlib.core.input.keyboard.IUiInputKeyPressCallback;
+import net.lintfordlib.core.rendering.SharedResources;
 import net.lintfordlib.renderers.windows.ConstantsUi;
 import net.lintfordlib.renderers.windows.UiWindow;
 
@@ -365,7 +365,7 @@ public class UiInputFile extends UIWidget implements IBufferedTextInputCallback 
 	}
 
 	@Override
-	public void draw(LintfordCore core, SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheetDefinition, FontUnit textFont, float componentZDepth) {
+	public void draw(LintfordCore core, SharedResources sharedResources, SpriteSheetDefinition coreSpritesheetDefinition, FontUnit textFont, float componentZDepth) {
 		var lTextColor = ColorConstants.TextEntryColor;
 		final float lTextHeight = textFont.fontHeight();
 
@@ -379,23 +379,25 @@ public class UiInputFile extends UIWidget implements IBufferedTextInputCallback 
 
 		}
 
-		spriteBatch.begin(core.HUD());
+		final var lSpriteBatch = sharedResources.uiSpriteBatch();
+
+		lSpriteBatch.begin(core.HUD());
 
 		final var xx = mFileInputAreaRectangle.x();
 		final var yy = mFileInputAreaRectangle.y();
 		final var ww = mFileInputAreaRectangle.width();
 		final var hh = mFileInputAreaRectangle.height();
 
-		spriteBatch.setColor(ColorConstants.MenuPanelPrimaryColor);
-		spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_LEFT, (int) xx, yy, 32, hh, componentZDepth);
+		lSpriteBatch.setColor(ColorConstants.MenuPanelPrimaryColor);
+		lSpriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_LEFT, (int) xx, yy, 32, hh, componentZDepth);
 		if (mW > 32) {
-			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_MID, (int) xx + 32, yy, ww - 64, hh, componentZDepth);
-			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_RIGHT, (int) xx + ww - 32, yy, 32, hh, componentZDepth);
+			lSpriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_MID, (int) xx + 32, yy, ww - 64, hh, componentZDepth);
+			lSpriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_RIGHT, (int) xx + ww - 32, yy, 32, hh, componentZDepth);
 		}
 
 		if (!mIsReadonly) {
-			spriteBatch.setColorRGBA(1.f, 1.f, 1.f, mCancelRectHovered ? 1.f : .5f);
-			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTUREDIRECTORY, mFileFolderRectangle, componentZDepth);
+			lSpriteBatch.setColorRGBA(1.f, 1.f, 1.f, mCancelRectHovered ? 1.f : .5f);
+			lSpriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTUREDIRECTORY, mFileFolderRectangle, componentZDepth);
 		}
 
 		var lText = mInputField.toString();
@@ -427,12 +429,12 @@ public class UiInputFile extends UIWidget implements IBufferedTextInputCallback 
 		if (mShowCaret && mHasFocus) {
 			final var lCarotPositionX = lTextPosX + lCaretPositionX;
 
-			spriteBatch.setColorRGBA(1.f, 1.f, 1.f, 1.f);
-			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, lCarotPositionX + 8, mFileInputAreaRectangle.y() + mFileInputAreaRectangle.height() * .5f - lTextHeight * .5f * mTextScale, 1.f, textFont.fontHeight() * mTextScale, componentZDepth);
+			lSpriteBatch.setColorRGBA(1.f, 1.f, 1.f, 1.f);
+			lSpriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, lCarotPositionX + 8, mFileInputAreaRectangle.y() + mFileInputAreaRectangle.height() * .5f - lTextHeight * .5f * mTextScale, 1.f, textFont.fontHeight() * mTextScale, componentZDepth);
 		}
-		spriteBatch.end();
+		lSpriteBatch.end();
 
-		ContentRectangle.preDraw(core, spriteBatch, xx + 2.f, mY, ww - lCancelRectSize - 5.f, mH, -0, 1);
+		ContentRectangle.preDraw(core, lSpriteBatch, xx + 2.f, mY, ww - lCancelRectSize - 5.f, mH, -0, 1);
 
 		textFont.begin(core.HUD());
 		textFont.setTextColor(lTextColor);
@@ -586,7 +588,7 @@ public class UiInputFile extends UIWidget implements IBufferedTextInputCallback 
 	public void onCaptureStopped() {
 		mHasFocus = false;
 		mShowCaret = false;
-		
+
 		trySetFile(mInputField.toString());
 
 		if (mUiWidgetListenerCallback != null) {

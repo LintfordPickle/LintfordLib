@@ -9,10 +9,10 @@ import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.geometry.Rectangle;
 import net.lintfordlib.core.graphics.Color;
 import net.lintfordlib.core.graphics.ColorConstants;
-import net.lintfordlib.core.graphics.batching.SpriteBatch;
 import net.lintfordlib.core.graphics.fonts.FontUnit;
 import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
+import net.lintfordlib.core.rendering.SharedResources;
 import net.lintfordlib.renderers.ZLayers;
 import net.lintfordlib.renderers.windows.components.ScrollBar;
 import net.lintfordlib.renderers.windows.components.ScrollBarContentRectangle;
@@ -304,41 +304,43 @@ public class UiBaseLayoutComponent extends UIWidget implements IScrollBarArea {
 		}
 	}
 
-	public void draw(LintfordCore core, SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheet, FontUnit textFont, float componentZDepth) {
+	@Override
+	public void draw(LintfordCore core, SharedResources sharedResources, SpriteSheetDefinition coreSpritesheet, FontUnit textFont, float componentZDepth) {
 		if (!mEnabled || !mVisible)
 			return;
 
-		final var lFontUnit = mParentWindow.rendererManager().uiTextFont();
+		final var lFontUnit = mParentWindow.rendererManager().sharedResources().uiTextFont();
+		final var lSpriteBatch = sharedResources.uiSpriteBatch();
 
 		if (mDrawBackground) {
 			if (mH < 64) {
-				spriteBatch.begin(core.HUD());
-				spriteBatch.setColorRGBA(0.1f, 0.1f, 0.1f, .8f);
-				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX, mY, mW, mH, componentZDepth);
-				spriteBatch.end();
+				lSpriteBatch.begin(core.HUD());
+				lSpriteBatch.setColorRGBA(0.1f, 0.1f, 0.1f, .8f);
+				lSpriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX, mY, mW, mH, componentZDepth);
+				lSpriteBatch.end();
 			} else {
 				final float TILE_SIZE = 32;
 
-				spriteBatch.begin(core.HUD());
-				spriteBatch.setColor(layoutColor);
-				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT, mX, mY, TILE_SIZE, TILE_SIZE, componentZDepth);
-				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT, mX + TILE_SIZE, mY, mW - TILE_SIZE * 2, TILE_SIZE, componentZDepth);
-				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT, mX + mW - TILE_SIZE, mY, TILE_SIZE, TILE_SIZE, componentZDepth);
+				lSpriteBatch.begin(core.HUD());
+				lSpriteBatch.setColor(layoutColor);
+				lSpriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT, mX, mY, TILE_SIZE, TILE_SIZE, componentZDepth);
+				lSpriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT, mX + TILE_SIZE, mY, mW - TILE_SIZE * 2, TILE_SIZE, componentZDepth);
+				lSpriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT, mX + mW - TILE_SIZE, mY, TILE_SIZE, TILE_SIZE, componentZDepth);
 
-				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT, mX, mY + TILE_SIZE, TILE_SIZE, mH - TILE_SIZE * 2, componentZDepth);
-				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT, mX + TILE_SIZE, mY + TILE_SIZE, mW - TILE_SIZE * 2, mH - 64, componentZDepth);
-				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT, mX + mW - TILE_SIZE, mY + TILE_SIZE, TILE_SIZE, mH - TILE_SIZE * 2, componentZDepth);
+				lSpriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT, mX, mY + TILE_SIZE, TILE_SIZE, mH - TILE_SIZE * 2, componentZDepth);
+				lSpriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT, mX + TILE_SIZE, mY + TILE_SIZE, mW - TILE_SIZE * 2, mH - 64, componentZDepth);
+				lSpriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT, mX + mW - TILE_SIZE, mY + TILE_SIZE, TILE_SIZE, mH - TILE_SIZE * 2, componentZDepth);
 
-				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT, mX, mY + mH - TILE_SIZE, TILE_SIZE, TILE_SIZE, componentZDepth);
-				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT, mX + TILE_SIZE, mY + mH - TILE_SIZE, mW - TILE_SIZE * 2, TILE_SIZE, componentZDepth);
-				spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT, mX + mW - TILE_SIZE, mY + mH - TILE_SIZE, TILE_SIZE, TILE_SIZE, componentZDepth);
-				spriteBatch.end();
+				lSpriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT, mX, mY + mH - TILE_SIZE, TILE_SIZE, TILE_SIZE, componentZDepth);
+				lSpriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT, mX + TILE_SIZE, mY + mH - TILE_SIZE, mW - TILE_SIZE * 2, TILE_SIZE, componentZDepth);
+				lSpriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_TOP_LEFT, mX + mW - TILE_SIZE, mY + mH - TILE_SIZE, TILE_SIZE, TILE_SIZE, componentZDepth);
+				lSpriteBatch.end();
 			}
 		}
 
 		if (mScrollBarsEnabled_Internal) {
 			mContentArea.depthPadding(6f);
-			mContentArea.preDraw(core, spriteBatch);
+			mContentArea.preDraw(core, lSpriteBatch);
 		}
 
 		final int lCount = widgets().size();
@@ -348,20 +350,20 @@ public class UiBaseLayoutComponent extends UIWidget implements IScrollBarArea {
 			if (!lWidget.isVisible())
 				continue;
 
-			lWidget.draw(core, spriteBatch, coreSpritesheet, lFontUnit, componentZDepth + .1f);
+			lWidget.draw(core, sharedResources, coreSpritesheet, lFontUnit, componentZDepth + .1f);
 		}
 
 		if (mScrollBarsEnabled_Internal) {
 			mContentArea.postDraw(core);
 			mScrollBar.scrollBarAlpha(.8f);
-			mScrollBar.draw(core, spriteBatch, coreSpritesheet, componentZDepth + .1f);
+			mScrollBar.draw(core, lSpriteBatch, coreSpritesheet, componentZDepth + .1f);
 		}
 
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
-			spriteBatch.begin(core.HUD());
-			spriteBatch.setColor(ColorConstants.Debug_Transparent_Magenta);
-			spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX, mY, mW, mH, ZLayers.LAYER_DEBUG);
-			spriteBatch.end();
+			lSpriteBatch.begin(core.HUD());
+			lSpriteBatch.setColor(ColorConstants.Debug_Transparent_Magenta);
+			lSpriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX, mY, mW, mH, ZLayers.LAYER_DEBUG);
+			lSpriteBatch.end();
 		}
 	}
 

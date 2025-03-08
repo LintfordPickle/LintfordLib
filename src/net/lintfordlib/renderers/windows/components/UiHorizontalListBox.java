@@ -6,10 +6,10 @@ import java.util.List;
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.geometry.Rectangle;
-import net.lintfordlib.core.graphics.batching.SpriteBatch;
 import net.lintfordlib.core.graphics.batching.TextureBatch9Patch;
 import net.lintfordlib.core.graphics.fonts.FontUnit;
 import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
+import net.lintfordlib.core.rendering.SharedResources;
 import net.lintfordlib.renderers.windows.UiWindow;
 import net.lintfordlib.renderers.windows.components.interfaces.IScrollBarArea;
 
@@ -128,16 +128,18 @@ public class UiHorizontalListBox extends UIWidget implements IScrollBarArea {
 	}
 
 	@Override
-	public void draw(LintfordCore core, SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheetDefinition, FontUnit textFont, float componentZDepth) {
-		spriteBatch.begin(core.HUD());
-		spriteBatch.setColorWhite();
-		TextureBatch9Patch.drawBackground(spriteBatch, coreSpritesheetDefinition, 32, mX, mY, mW, mH, false, componentZDepth);
-		spriteBatch.end();
+	public void draw(LintfordCore core, SharedResources sharedResources, SpriteSheetDefinition coreSpritesheetDefinition, FontUnit textFont, float componentZDepth) {
+		final var lSpriteBatch = sharedResources.uiSpriteBatch();
 
-		mContentArea.preDraw(core, spriteBatch);
+		lSpriteBatch.begin(core.HUD());
+		lSpriteBatch.setColorWhite();
+		TextureBatch9Patch.drawBackground(lSpriteBatch, coreSpritesheetDefinition, 32, mX, mY, mW, mH, false, componentZDepth);
+		lSpriteBatch.end();
 
-		spriteBatch.begin(core.HUD());
-		spriteBatch.setColor(entityColor);
+		mContentArea.preDraw(core, lSpriteBatch);
+
+		lSpriteBatch.begin(core.HUD());
+		lSpriteBatch.setColor(entityColor);
 		textFont.begin(core.HUD());
 
 		final var lNumAssets = mItems.size();
@@ -163,7 +165,7 @@ public class UiHorizontalListBox extends UIWidget implements IScrollBarArea {
 					final var lImageSize = 32.f;
 					spriteDestRect.set(assetX + assetW * .5f - lImageSize * .5f, mY + 5.f, lImageSize, lImageSize);
 
-					spriteBatch.draw(spriteDef, spriteInst, spriteDestRect, componentZDepth);
+					lSpriteBatch.draw(spriteDef, spriteInst, spriteDestRect, componentZDepth);
 				}
 
 				if (lIsSelectedItem)
@@ -179,7 +181,7 @@ public class UiHorizontalListBox extends UIWidget implements IScrollBarArea {
 			}
 		}
 
-		spriteBatch.end();
+		lSpriteBatch.end();
 		textFont.end();
 
 		mContentArea.postDraw(core);
@@ -187,7 +189,7 @@ public class UiHorizontalListBox extends UIWidget implements IScrollBarArea {
 		// DEBUG
 		Debug.debugManager().drawers().drawRectImmediate(core.HUD(), this, 1.f, 0.f, 0.f);
 
-		mScrollbar.draw(core, spriteBatch, coreSpritesheetDefinition, componentZDepth);
+		mScrollbar.draw(core, lSpriteBatch, coreSpritesheetDefinition, componentZDepth);
 
 	}
 
