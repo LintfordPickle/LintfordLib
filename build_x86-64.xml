@@ -120,7 +120,13 @@
 	<target name="compile">
 		<echo message="Compilation" />
 
-		<javac srcdir="${input.src.dir}" destdir="${build.dir}/classes" classpathref="build.class.path" includeantruntime="false" />
+		<javac 
+			srcdir="${input.src.dir}" 
+			destdir="${build.dir}/classes" 
+			classpathref="build.class.path" 
+			includeantruntime="false">
+			<exclude name="tests/**"/>
+		</javac>
 	</target>
 
 
